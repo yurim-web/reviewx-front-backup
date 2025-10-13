@@ -1,0 +1,184 @@
+/* 패널티 관련 스타일 */
+
+/* 패널티 콘텐츠 영역 */
+.penalty_content {
+  padding: 0;
+  background: #fff;
+}
+
+/* 패널티 섹션 타이틀 */
+.penalty_section_title {
+  color: #444;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 18px; /* 100% */
+  letter-spacing: -0.36px;
+
+  padding-bottom: 24px;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+/* 패널티 단계 섹션 */
+.penalty_stage_section {
+  padding-bottom: 40px;
+}
+
+.penalty_status_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.warning_status {
+  color: #ff6b35;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+.penalty_stage_info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.penalty_stage_bar {
+  width: 100%;
+}
+
+.stage_bar_container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 32px;
+}
+
+.left_stage_bar {
+  position: absolute;
+  left: 44px;
+  width: 42%;
+  height: 4px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.right_stage_bar {
+  position: absolute;
+  right: 44px;
+  width: 42%;
+  height: 4px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.stage_bar_fill {
+  height: 100%;
+  background: #ff6b35;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.warning_label {
+  color: #f60;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 18px; /* 100% */
+  letter-spacing: -0.36px;
+
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.caution_label {
+  color: #848484;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 18px; /* 100% */
+  letter-spacing: -0.36px;
+
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.stop_label {
+  color: #848484;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 18px; /* 100% */
+  letter-spacing: -0.36px;
+
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* 패널티 내역 섹션 */
+.penalty_history_section {
+  padding-top: 0;
+}
+
+.penalty_list {
+  display: flex;
+  flex-direction: column;
+}
+
+.penalty_item {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 24px 0px 24px 0px;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+/* 패널티 태그 부분 */
+.penalty_point_badge {
+  display: flex;
+  padding: 8px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  background: #f60;
+
+  /* 태그 속 글자 스타일 */
+  color: #fff;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+}
+
+.penalty_details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.penalty_title_text {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+}
+
+.penalty_date {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
+}

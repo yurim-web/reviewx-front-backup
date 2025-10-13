@@ -1,0 +1,444 @@
+/* 캠페인 관리 페이지 스타일 */
+
+.container {
+  position: relative;
+  width: 100%;
+}
+
+/* Main Content */
+.main_content {
+  background-color: white;
+  width: 1000px;
+  margin: 0 auto;
+  min-height: calc(100vh - 80px);
+  padding-bottom: 24px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Tab Navigation */
+.tab_navigation {
+  align-items: center;
+  border-bottom: 1px solid #d9d9d9;
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+.tab_navigation_container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+}
+
+.left_tabs,
+.right_tabs {
+  display: flex;
+  gap: 24px;
+}
+
+.tab {
+  color: #848484;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 20px; /* 100% */
+  letter-spacing: -0.4px;
+
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.tab.active {
+  font-weight: 700;
+  color: #444;
+}
+
+/* Statistics */
+.statistics {
+  padding: 0 40px;
+  /* padding-bottom: 16px; */
+  position: relative;
+}
+
+.statistics::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0.5px;
+  background-color: #d9d9d9;
+}
+
+.stat_tab_navigation {
+  margin-top: -8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.left_stat_tabs {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.stat_tab {
+  color: #848484;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 18px; /* 100% */
+  letter-spacing: -0.36px;
+
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  padding-bottom: 16px;
+  position: relative;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat_tab.active {
+  font-weight: 700;
+  color: #444444;
+}
+
+.stat_tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #444444;
+  z-index: 1;
+}
+
+.stat_number {
+  color: #848484;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+}
+
+.stat_tab.active .stat_number {
+  color: #444444;
+  font-weight: 700;
+}
+
+/* Campaign List */
+.campaign_list {
+  padding: 16px 40px 0px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.empty_state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.campaign_card {
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+}
+
+.campaign_content {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.campaign_image {
+  width: 92px;
+  height: 92px;
+  flex-shrink: 0;
+  aspect-ratio: 1/1;
+
+  border-radius: 4px;
+  background: #d9d9d9;
+}
+
+.campaign_image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.campaign_info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.campaign_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.cam_cate_icon {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 스토어 아이콘 */
+.cam_icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+
+.cam_icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 카테 고리 글자  */
+.cam_type span {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+}
+
+/* 태그 */
+.cam_tag {
+  padding: 4px 8px;
+  border-radius: 4px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* 태그 속 글자 스타일 */
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+}
+
+/* 마감임박 */
+.cam_tag.urgent {
+  background-color: #ff6b6b;
+}
+
+/* 기본 스타일?? */
+.cam_tag.normal {
+  background-color: #848484;
+}
+
+.campaign_title {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 22px; /* 137.5% */
+  letter-spacing: -0.32px;
+
+  padding-bottom: 8px;
+}
+
+.campaign_status {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
+
+  padding-bottom: 12px;
+}
+
+/* 버튼 액션 영역 */
+.campaign_actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* 기본 버튼 스타일 */
+.action_button {
+  flex: 1;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 16px;
+
+  /* 버튼 속 글자 css */
+  text-align: center;
+  text-overflow: ellipsis;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+  transition: all 0.2s ease;
+}
+
+/* 주요 액션 버튼 (콘텐츠 등록하기, 콘텐츠 재등록하기) */
+.primary_button {
+  border-radius: 4px;
+  border: 1px solid #444;
+  background: #fff;
+  color: #444444;
+}
+
+/* 일반 액션 버튼 (신청 취소하기, 콘텐츠 수정하기) */
+.default_button {
+  border: 1px solid #444;
+  background: #fff;
+  color: #444;
+}
+
+/* 보조 버튼 (콘텐츠 확인하기) */
+.secondary_button {
+  border: 1px solid #848484;
+  background: #fff;
+  color: #848484;
+}
+
+/* 경고 버튼 (콘텐츠 반려 사유보기, 패널티 내역보기) */
+.danger_button {
+  border: 1px solid #ff0000;
+  background: #fff;
+  color: #ff0000;
+}
+
+/* 이전 버전 호환성 유지 */
+.cancel_button {
+  flex: 1;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background: #fff;
+  cursor: pointer;
+  padding: 16px;
+
+  color: #444;
+  text-align: center;
+  text-overflow: ellipsis;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  transition: all 0.2s ease;
+}
+
+.cancel_button:hover {
+  background: #f5f5f5;
+}
+
+.reason_button {
+  color: #ff0000;
+  border: 1px solid #ff0000;
+  background: #fff;
+}
+
+.reason_button:hover {
+  background: #fff5f5;
+}
+
+.penalty_button {
+  border: 1px solid #ff0000;
+  background: #fff;
+  color: #ff0000;
+}
+
+.penalty_button:hover {
+  background: #fff5f5;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .main_content {
+    width: 100%;
+    padding: 24px 0px;
+  }
+
+  .header_content {
+    width: 100%;
+    padding: 0 20px;
+  }
+
+  .tab_navigation_container {
+    padding: 0 20px;
+  }
+
+  .statistics {
+    padding: 0 20px;
+  }
+
+  .statistics::after {
+    left: 0;
+    right: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .campaign_content {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .campaign_image {
+    width: 92px;
+    height: 92px;
+    flex-shrink: 0;
+    aspect-ratio: 1/1;
+    border-radius: 4px;
+    background: #d9d9d9;
+  }
+
+  .campaign_header {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .statistics {
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .left_tabs,
+  .right_tabs {
+    gap: 16px;
+  }
+
+  .tab {
+    font-size: 18px;
+  }
+
+  .stat_tab_navigation {
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .stat_tab {
+    font-size: 16px;
+  }
+}

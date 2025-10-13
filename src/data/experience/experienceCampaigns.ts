@@ -1,0 +1,418 @@
+/**
+ * 체험단 캠페인 데이터 타입 정의
+ */
+interface ExperienceCampaignData {
+  id: string; // 캠페인 고유 식별자
+  title: string; // 캠페인 제목
+  category: string; // 캠페인 카테고리 (체험단)
+  categoryIcon: string; // 카테고리 아이콘
+  image: string; // 메인 제품 이미지 경로
+  subcategory: string; // 세부 카테고리 (생활, 뷰티, 식품 등)
+  points: number; // 지급 포인트 (숫자)
+  description: string; // 제품 설명 및 제공 내역
+  recruitment: {
+    current: number; // 현재 지원자 수
+    total: number; // 총 모집 인원
+  };
+  schedule: string; // 날짜/시간 형식 일정 (예: "1/25 (화) 10:00\n모집 오픈")
+  dayCount: string; // 남은 일수 형식 (예: "D-6")
+  detailedSchedule: {
+    applicationStart: string; // 신청 시작일시
+    applicationEnd: string; // 신청 마감일
+    announcement: string; // 선정 발표일
+    registrationPeriod: string; // 등록 기간
+  };
+  campaign_detail_image: string; // 캠페인 상세 이미지 경로
+  channel: string; // 채널 정보 (블로그, 인스타그램, 유튜브 등)
+}
+
+/**
+ * 체험단 캠페인 데이터
+ * 체험단 페이지에서 사용되는 전용 데이터
+ */
+export const experienceCampaigns: ExperienceCampaignData[] = [
+  {
+    id: "experience_1",
+    title: "스킨케어 체험단",
+    category: "체험단",
+    categoryIcon: "/images/brand_logo/oliveyoung.svg",
+    image: "/images/main/campaign_img/eximg_1.png",
+    subcategory: "뷰티",
+    points: 50000,
+    description: "프리미엄 스킨케어 제품 체험단 모집",
+    recruitment: {
+      current: 289,
+      total: 5,
+    },
+    schedule: "",
+    dayCount: "D-5",
+    detailedSchedule: {
+      applicationStart: "2025-01-28",
+      applicationEnd: "2025-02-12",
+      announcement: "2025-02-14",
+      registrationPeriod: "2025-02-17 ~ 2025-02-24",
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    channel: "올리브영",
+  },
+  {
+    id: "experience_2",
+    title: "헬스케어 체험단",
+    category: "체험단",
+    categoryIcon: "/images/brand_logo/youtube.svg",
+    image: "/images/main/campaign_img/eximg_2.png",
+    subcategory: "건강",
+    points: 45000,
+    description: "건강 관리 제품 체험단 모집",
+    recruitment: {
+      current: 156,
+      total: 8,
+    },
+    schedule: "",
+    dayCount: "D-3",
+    detailedSchedule: {
+      applicationStart: "2025-01-30",
+      applicationEnd: "2025-02-14",
+      announcement: "2025-02-16",
+      registrationPeriod: "2025-02-19 ~ 2025-02-26",
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    channel: "유튜브",
+  },
+  {
+    id: "experience_3",
+    title: "홈데코 체험단",
+    category: "체험단",
+    categoryIcon: "/images/brand_logo/naverblog.svg",
+    image: "/images/main/campaign_img/eximg_3.png",
+    subcategory: "생활",
+    points: 38000,
+    description: "인테리어 홈데코 제품 체험단",
+    recruitment: {
+      current: 89,
+      total: 6,
+    },
+    schedule: "",
+    dayCount: "긴급",
+    detailedSchedule: {
+      applicationStart: "2025-01-25",
+      applicationEnd: "2025-02-10",
+      announcement: "2025-02-12",
+      registrationPeriod: "2025-02-15 ~ 2025-02-22",
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    channel: "블로그",
+  },
+  {
+    id: "experience_4",
+    title: "패션 체험단",
+    category: "체험단",
+    categoryIcon: "/images/brand_logo/insta.svg",
+    image: "/images/main/campaign_img/eximg_4.png",
+    subcategory: "패션",
+    points: 42000,
+    description: "프리미엄 패션 브랜드 체험단",
+    recruitment: {
+      current: 178,
+      total: 10,
+    },
+    schedule: "",
+    dayCount: "D-7",
+    detailedSchedule: {
+      applicationStart: "2025-01-26",
+      applicationEnd: "2025-02-11",
+      announcement: "2025-02-13",
+      registrationPeriod: "2025-02-16 ~ 2025-02-23",
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    channel: "인스타그램",
+  },
+  {
+    id: "experience_5",
+    title: "식품 체험단",
+    category: "체험단",
+    categoryIcon: "/images/brand_logo/coupang.svg",
+    image: "/images/main/campaign_img/eximg_5.png",
+    subcategory: "식품",
+    points: 32000,
+    description: "유기농 식품 브랜드 체험단",
+    recruitment: {
+      current: 145,
+      total: 15,
+    },
+    schedule: "",
+    dayCount: "D-6",
+    detailedSchedule: {
+      applicationStart: "2025-01-27",
+      applicationEnd: "2025-02-12",
+      announcement: "2025-02-14",
+      registrationPeriod: "2025-02-17 ~ 2025-02-24",
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    channel: "쿠팡",
+  },
+  {
+    id: "experience_6",
+    title: "디지털 체험단",
+    category: "체험단",
+    categoryIcon: "/images/brand_logo/navershop.svg",
+    image: "/images/main/campaign_img/eximg_6.png",
+    subcategory: "디지털",
+    points: 55000,
+    description: "최신 디지털 기기 체험단",
+    recruitment: {
+      current: 98,
+      total: 4,
+    },
+    schedule: "",
+    dayCount: "D-4",
+    detailedSchedule: {
+      applicationStart: "2025-01-29",
+      applicationEnd: "2025-02-13",
+      announcement: "2025-02-15",
+      registrationPeriod: "2025-02-18 ~ 2025-02-25",
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    channel: "네이버쇼핑",
+  },
+  {
+    id: "experience_7",
+    title: "반려동물 체험단",
+    category: "체험단",
+    categoryIcon: "/images/brand_logo/naverblog.svg",
+    image: "/images/main/campaign_img/eximg_7.png",
+    subcategory: "반려동물",
+    points: 35000,
+    description: "반려동물 용품 체험단",
+    recruitment: {
+      current: 67,
+      total: 8,
+    },
+    schedule: "",
+    dayCount: "D-2",
+    detailedSchedule: {
+      applicationStart: "2025-01-31",
+      applicationEnd: "2025-02-15",
+      announcement: "2025-02-17",
+      registrationPeriod: "2025-02-20 ~ 2025-02-27",
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    channel: "블로그",
+  },
+  {
+    id: "experience_8",
+    title: "스포츠 체험단",
+    category: "체험단",
+    categoryIcon: "/images/brand_logo/youtube.svg",
+    image: "/images/main/campaign_img/eximg_8.png",
+    subcategory: "스포츠",
+    points: 40000,
+    description: "스포츠 용품 체험단",
+    recruitment: {
+      current: 123,
+      total: 7,
+    },
+    schedule: "",
+    dayCount: "D-8",
+    detailedSchedule: {
+      applicationStart: "2025-01-24",
+      applicationEnd: "2025-02-09",
+      announcement: "2025-02-11",
+      registrationPeriod: "2025-02-14 ~ 2025-02-21",
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    channel: "유튜브",
+  },
+  {
+    id: "experience_9",
+    title: "뷰티 체험단",
+    category: "체험단",
+    categoryIcon: "/images/brand_logo/oliveyoung.svg",
+    image: "/images/main/campaign_img/eximg_9.png",
+    subcategory: "뷰티",
+    points: 48000,
+    description: "프리미엄 뷰티 브랜드 체험단",
+    recruitment: {
+      current: 45,
+      total: 3,
+    },
+    schedule: "",
+    dayCount: "D-1",
+    detailedSchedule: {
+      applicationStart: "2025-02-01",
+      applicationEnd: "2025-02-16",
+      announcement: "2025-02-18",
+      registrationPeriod: "2025-02-21 ~ 2025-02-28",
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    channel: "올리브영",
+  },
+  {
+    id: "experience_10",
+    title: "여행 체험단",
+    category: "체험단",
+    categoryIcon: "/images/brand_logo/insta.svg",
+    image: "/images/main/campaign_img/eximg_10.png",
+    subcategory: "여행",
+    points: 60000,
+    description: "프리미엄 여행 서비스 체험단",
+    recruitment: {
+      current: 167,
+      total: 2,
+    },
+    schedule: "",
+    dayCount: "D-9",
+    detailedSchedule: {
+      applicationStart: "2025-01-23",
+      applicationEnd: "2025-02-08",
+      announcement: "2025-02-10",
+      registrationPeriod: "2025-02-13 ~ 2025-02-20",
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    channel: "인스타그램",
+  },
+  {
+    id: "experience_11",
+    title: "문화 체험단",
+    category: "체험단",
+    categoryIcon: "/images/brand_logo/naverblog.svg",
+    image: "/images/main/campaign_img/eximg_11.png",
+    subcategory: "문화",
+    points: 28000,
+    description: "문화 예술 체험단",
+    recruitment: {
+      current: 134,
+      total: 12,
+    },
+    schedule: "",
+    dayCount: "D-6",
+    detailedSchedule: {
+      applicationStart: "2025-01-27",
+      applicationEnd: "2025-02-12",
+      announcement: "2025-02-14",
+      registrationPeriod: "2025-02-17 ~ 2025-02-24",
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    channel: "블로그",
+  },
+  {
+    id: "experience_12",
+    title: "게임 체험단",
+    category: "체험단",
+    categoryIcon: "/images/brand_logo/youtube.svg",
+    image: "/images/main/campaign_img/eximg_12.png",
+    subcategory: "게임",
+    points: 33000,
+    description: "최신 게임 체험단",
+    recruitment: {
+      current: 89,
+      total: 9,
+    },
+    schedule: "",
+    dayCount: "긴급",
+    detailedSchedule: {
+      applicationStart: "2025-01-25",
+      applicationEnd: "2025-02-10",
+      announcement: "2025-02-12",
+      registrationPeriod: "2025-02-15 ~ 2025-02-22",
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    channel: "유튜브",
+  },
+  {
+    id: "experience_13",
+    title: "자동차 체험단",
+    category: "체험단",
+    categoryIcon: "/images/brand_logo/navershop.svg",
+    image: "/images/main/campaign_img/eximg_13.png",
+    subcategory: "자동차",
+    points: 65000,
+    description: "프리미엄 자동차 체험단",
+    recruitment: {
+      current: 23,
+      total: 2,
+    },
+    schedule: "",
+    dayCount: "D-4",
+    detailedSchedule: {
+      applicationStart: "2025-01-29",
+      applicationEnd: "2025-02-13",
+      announcement: "2025-02-15",
+      registrationPeriod: "2025-02-18 ~ 2025-02-25",
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    channel: "네이버쇼핑",
+  },
+  {
+    id: "experience_14",
+    title: "액세서리 체험단",
+    category: "체험단",
+    categoryIcon: "/images/brand_logo/insta.svg",
+    image: "/images/main/campaign_img/eximg_1.png",
+    subcategory: "액세서리",
+    points: 30000,
+    description: "프리미엄 액세서리 체험단",
+    recruitment: {
+      current: 78,
+      total: 6,
+    },
+    schedule: "",
+    dayCount: "D-7",
+    detailedSchedule: {
+      applicationStart: "2025-01-26",
+      applicationEnd: "2025-02-11",
+      announcement: "2025-02-13",
+      registrationPeriod: "2025-02-16 ~ 2025-02-23",
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    channel: "인스타그램",
+  },
+  {
+    id: "experience_15",
+    title: "음향기기 체험단",
+    category: "체험단",
+    categoryIcon: "/images/brand_logo/youtube.svg",
+    image: "/images/main/campaign_img/eximg_2.png",
+    subcategory: "디지털",
+    points: 52000,
+    description: "프리미엄 음향기기 체험단",
+    recruitment: {
+      current: 56,
+      total: 4,
+    },
+    schedule: "",
+    dayCount: "D-5",
+    detailedSchedule: {
+      applicationStart: "2025-01-28",
+      applicationEnd: "2025-02-12",
+      announcement: "2025-02-14",
+      registrationPeriod: "2025-02-17 ~ 2025-02-24",
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    channel: "유튜브",
+  },
+  {
+    id: "experience_16",
+    title: "건강식품 체험단",
+    category: "체험단",
+    categoryIcon: "/images/brand_logo/coupang.svg",
+    image: "/images/main/campaign_img/eximg_3.png",
+    subcategory: "건강",
+    points: 37000,
+    description: "프리미엄 건강식품 체험단",
+    recruitment: {
+      current: 112,
+      total: 8,
+    },
+    schedule: "",
+    dayCount: "D-3",
+    detailedSchedule: {
+      applicationStart: "2025-01-30",
+      applicationEnd: "2025-02-14",
+      announcement: "2025-02-16",
+      registrationPeriod: "2025-02-19 ~ 2025-02-26",
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    channel: "쿠팡",
+  },
+];

@@ -1,0 +1,108 @@
+/* 캠페인 상세 페이지 헤더 스타일 */
+
+/* 상단 그라데이션 바 */
+/* 헤더 */
+.gradient_bar {
+  background: linear-gradient(90deg, #ffacae 0%, #d90074 100%);
+  padding: 26px 40px;
+  position: relative;
+}
+
+.header_controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+}
+
+.back_button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.back_button img {
+  width: 28px;
+  height: 28px;
+}
+
+.right_icons {
+  display: flex;
+  gap: 24px;
+}
+
+.bookmark_icon,
+.user_icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.bookmark_icon img,
+.user_icon img {
+  width: 28px;
+  height: 28px;
+}
+
+/* 반응형 css 코드 */
+
+/* ✅ 모바일 공통 — 0~739px */
+@media (max-width: 739px) {
+  /* 헤더 */
+  .gradient_bar {
+    height: 80px;
+    padding: 28px 32px;
+    position: relative;
+  }
+
+  .header_controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+  }
+
+  .back_button {
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  .back_button img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .right_icons {
+    display: flex;
+    gap: 16px;
+  }
+
+  .bookmark_icon,
+  .user_icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  .bookmark_icon img,
+  .user_icon img {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* ✅ 태블릿 세로(portrait) 전용 — 740~1100px */
+@media (min-width: 740px) and (max-width: 1100px) and (orientation: portrait) {
+}
+/* ✅ 태블릿 가로(landscape) 전용 — 740~1100px */
+@media (min-width: 740px) and (max-width: 1366px) and (orientation: landscape) {
+}

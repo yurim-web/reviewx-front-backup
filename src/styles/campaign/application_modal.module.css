@@ -1,0 +1,290 @@
+/* 캠페인 신청하기 모달 스타일 css */
+
+/* 모달 오버레이 */
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* 모달 컨테이너 */
+.modal_container {
+  background: white;
+  width: 100%;
+  max-width: 1000px;
+  min-height: 400px;
+  max-height: 80vh;
+  border-radius: 40px 40px 0 0;
+  position: relative;
+  animation: slideUp 0.3s ease-out;
+  /* overflow: hidden; */
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* 모달 헤더 */
+.modal_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 40px 24px 40px;
+}
+
+/* 모달 타이틀  */
+.modal_title {
+  color: #444;
+  text-overflow: ellipsis;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 20px; /* 100% */
+  letter-spacing: -0.4px;
+}
+
+/* 모달창 닫기 버튼 */
+.close_button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 컨텐츠 영역 */
+.modal_content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* 섹션 공통 스타일 */
+.section {
+  padding: 0px 40px;
+}
+
+.section_title {
+  margin: 0 0 16px 0;
+
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
+}
+
+/* 신청자 정보 */
+.user_info_container {
+  background: #f6f6f6;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 80px;
+}
+
+.user_info {
+  flex: 1;
+}
+
+/* 이름 */
+.user_name {
+  font-weight: 500;
+  font-size: 16px;
+  color: #999999;
+}
+
+/* 주소 부분 */
+.user_address {
+  font-weight: 500;
+  font-size: 16px;
+  color: #999999;
+}
+
+.user_zipcode {
+  font-weight: 500;
+  font-size: 16px;
+  color: #999999;
+}
+
+/* 채널 정보 */
+.channel_container {
+  background: white;
+  border: 1px solid #848484;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  height: 78px;
+}
+
+.channel_icon {
+  background: #a8a8a8;
+  border-radius: 4px;
+  width: 28px;
+  height: 28px;
+  margin-right: 16px;
+}
+
+.channel_info {
+  flex: 1;
+}
+
+.channel_name {
+  font-weight: 500;
+  font-size: 16px;
+  color: #444444;
+}
+
+.channel_url {
+  font-weight: 500;
+  font-size: 14px;
+  color: #848484;
+}
+
+.more_button {
+  font-size: 20px;
+  color: #666666;
+  cursor: pointer;
+  padding: 4px;
+}
+
+/* 메모 입력 */
+.memo_container {
+  width: 100%;
+}
+
+.memo_input {
+  width: 100%;
+  height: 56px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 0 20px;
+  background: white;
+  /* 인풋 속 글자 css */
+
+  color: #999;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+}
+
+.memo_input::placeholder {
+  color: #999999;
+}
+
+.memo_input:focus {
+  outline: none;
+}
+
+/* 동의 섹션 */
+.agreement_container {
+  width: 100%;
+}
+
+.checkbox_label {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  cursor: pointer;
+  width: 100%;
+  align-items: center;
+  padding-top: 8px;
+}
+
+.checkbox {
+  /* margin-top: 2px; */
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+  background: #d9d9d9;
+  appearance: none;
+  cursor: pointer;
+  position: relative;
+}
+
+.checkbox:checked {
+  background: #555555;
+  border-color: #555555;
+}
+
+.checkbox:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* 동의버튼 텍스트 */
+.agreement_text {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+}
+
+/* 하단 버튼 영역 */
+.button_container {
+  position: relative;
+  margin-top: auto;
+  padding: 40px 40px 40px 40px;
+}
+
+.connect_button {
+  width: 100%;
+  height: 56px;
+  background: #555555;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  /* 버튼 속 글자 css */
+  color: #fff;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+}

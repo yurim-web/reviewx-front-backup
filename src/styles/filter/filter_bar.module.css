@@ -1,0 +1,485 @@
+/* 필터/정렬 바 컴포넌트 스타일 */
+
+.filter_bar {
+  background: white;
+  padding: 40px 40px 0 40px;
+  margin: 0 auto;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filter_buttons_container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filter_buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 필터 버튼 기본  */
+.filter_button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 12px;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+  background: #fff;
+
+  /* 버튼 속 글자 css */
+
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+.filter_button:hover {
+  border: 1px solid #444;
+}
+
+/* 추후에 아이콘으로 변경 예정정 */
+.filter_icon {
+  width: 16px;
+  height: 16px;
+  background: #999;
+  border-radius: 2px;
+}
+
+.dropdown_icon {
+  width: 16px;
+  height: 16px;
+  aspect-ratio: 1/1;
+  transition: transform 0.2s ease;
+
+  /* margin-left: 4px; */
+}
+
+.dropdown_icon_rotated {
+  transform: rotate(180deg);
+}
+
+/* 드롭다운 컨테이너 */
+.dropdown_container {
+  position: relative;
+  display: inline-block;
+}
+
+/* 드롭다운 메뉴 */
+.dropdown_menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
+  z-index: 1000;
+  /* margin-top: 4px; */
+}
+
+/* 드롭다운 아이템 */
+.dropdown_item {
+  width: 100%;
+  padding: 5px 16px;
+  border: none;
+  background: white;
+  color: #333;
+  font-size: 14px;
+  font-weight: 400;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  /* border-bottom: 1px solid #f0f0f0; */
+}
+
+.dropdown_item:last-child {
+  border-bottom: none;
+}
+
+.dropdown_item:hover {
+  background: #f8f8f8;
+}
+
+.dropdown_item_selected:hover {
+  background: #d6e7ff;
+}
+
+/* 최신순 드롭다운 버튼 */
+.sort_button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: white;
+
+  /* 글자 css */
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: auto;
+}
+
+.sort_button:hover {
+  border: 1px solid #444;
+}
+
+/* 활성 필터 태그 */
+.active_filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px;
+
+  background: #f9f9f9;
+  min-height: 40px;
+  align-items: center;
+  border-radius: 4px;
+}
+
+.filter_tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  /* 글자부분 */
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
+}
+
+/* x아이콘 */
+.remove_tag {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+/* X 아이콘 스타일 */
+.remove_icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* 활성 필터 버튼 스타일 */
+.filter_button_active {
+  border: 1px solid #444 !important;
+  color: #444 !important;
+}
+
+/* ========== 모달 스타일 ========== */
+
+/* 모달 오버레이 (배경) */
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* 모달 콘텐츠 */
+.modal_content {
+  background: white;
+  width: 100%;
+  max-width: 1000px;
+  border-radius: 40px 40px 0 0;
+  padding: 40px;
+  position: relative;
+  animation: slideUp 0.3s ease-out;
+
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* 모달 헤더 */
+.modal_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 모달 제목 */
+.modal_title {
+  color: #444;
+  text-overflow: ellipsis;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 20px; /* 100% */
+  letter-spacing: -0.4px;
+}
+
+/* 모달 닫기 버튼 */
+.modal_close_button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal_close_button img {
+  width: 20px;
+  height: 20px;
+}
+
+/* 모달 바디 */
+.modal_body {
+}
+
+/* 모달 라벨 */
+.modal_label {
+  color: #848484;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
+  padding-bottom: 24px;
+}
+
+/* 옵션 그리드 (2단 레이아웃) */
+.options_grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px 24px;
+  max-height: none;
+  padding-bottom: 8px;
+}
+
+/* 옵션 아이템 */
+.option_item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+/* 체크박스 */
+.option_checkbox {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  cursor: pointer;
+  appearance: none;
+  background: white;
+  position: relative;
+}
+
+.option_checkbox:checked {
+  background: #555;
+  border-color: #555;
+}
+
+.option_checkbox:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* 옵션 라벨 */
+.option_label {
+  color: #444;
+  text-overflow: ellipsis;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+}
+
+/* 모달 푸터 */
+.modal_footer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+}
+
+/* 필터 적용 버튼 */
+.apply_button {
+  width: 100%;
+  padding: 20px;
+  background: #555;
+  border: none;
+  border-radius: 8px;
+
+  /* 버튼속 글자 */
+  color: #fff;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+/* 초기화 버튼 */
+.reset_button {
+  background: none;
+  border: none;
+
+  /* 글자 css */
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+
+  cursor: pointer;
+  transition: color 0.2s ease;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 초기화 아이콘 */
+.reset_icon {
+  width: 16px;
+  height: 16px;
+  background: #d9d9d9;
+  border-radius: 4px;
+}
+
+/* 세로 레이아웃용 옵션 그리드 */
+.options_vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* 지역 필터 전용 스타일 */
+.region_section_title {
+  margin: 0 0 24px 0;
+
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
+}
+
+.region_tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  /* padding-bottom: 16px; */
+  border-bottom: 1px solid #e0e0e0;
+  position: relative;
+}
+
+.region_tab {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 16px;
+  color: #999;
+  white-space: nowrap;
+  padding: 0px 0px 16px 0px;
+  position: relative;
+  font-weight: 500;
+}
+
+.region_tab:hover {
+  color: #666;
+}
+
+.region_tab_active {
+  color: #333;
+}
+
+.region_tab_active::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #333;
+  border-radius: 1px;
+  z-index: 1;
+}
+
+.sub_regions_container {
+  margin-top: 16px;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.sub_regions_container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sub_regions_container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.sub_regions_container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.sub_regions_container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

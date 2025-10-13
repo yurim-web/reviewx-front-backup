@@ -1,0 +1,394 @@
+/* 포인트 페이지 스타일 - Figma 디자인에 맞춤 */
+
+.point_page {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background-color: #f2f2f2;
+  font-family: "Pretendard", sans-serif;
+}
+
+/* 헤더 배경 */
+.header_background {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1000px;
+  height: 80px;
+  background-color: #d9d9d9;
+}
+
+/* 로고 */
+.logo {
+  position: absolute;
+  top: 28px;
+  left: 500px;
+  font-size: 20px;
+  font-weight: 500;
+  color: #333;
+  line-height: 24px;
+}
+
+/* 우측 상단 버튼들 */
+.header_buttons {
+  position: absolute;
+  top: 26px;
+  right: 68px;
+  display: flex;
+  gap: 24px;
+}
+
+.close_button {
+  width: 28px;
+  height: 28px;
+  background-color: #a8a8a8;
+  border-radius: 4px;
+}
+
+/* 메인 탭 네비게이션 */
+.main_tabs {
+  position: absolute;
+  top: 104px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1000px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.campaign_tab {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.account_tab {
+  display: flex;
+  align-items: center;
+}
+
+.tab_text {
+  font-size: 20px;
+  font-weight: 500;
+  color: #848484;
+  line-height: 20px;
+}
+
+.tab_text.active {
+  font-weight: 700;
+  color: #444;
+}
+
+/* 구분선들 */
+.divider_line {
+  position: absolute;
+  top: 148px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1000px;
+  height: 1px;
+  background-color: #e0e0e0;
+}
+
+.divider_line_2 {
+  position: absolute;
+  top: 198px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1000px;
+  height: 1px;
+  background-color: #e0e0e0;
+}
+
+.active_underline {
+  position: absolute;
+  top: 198px;
+  left: 500px;
+  width: 31px;
+  height: 2px;
+  background-color: #333;
+}
+
+/* 포인트 요약 정보 */
+.point_summary_section {
+  position: absolute;
+  top: 238px;
+  left: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.point_label {
+  font-size: 16px;
+  font-weight: 500;
+  color: #444;
+  line-height: 16px;
+}
+
+.point_amount {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.amount_number {
+  font-size: 40px;
+  font-weight: 700;
+  color: #444;
+  line-height: 40px;
+}
+
+.amount_unit {
+  font-size: 40px;
+  font-weight: 500;
+  color: #848484;
+  line-height: 40px;
+}
+
+.withdrawal_button {
+  position: absolute;
+  top: 262px;
+  right: 68px;
+  width: 144px;
+  height: 50px;
+  background-color: #d9d9d9;
+  border: none;
+  border-radius: 24px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #444;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.withdrawal_button:hover {
+  background-color: #c9c9c9;
+}
+
+/* 포인트 세부 탭 네비게이션 */
+.point_tabs {
+  position: absolute;
+  top: 164px;
+  left: 500px;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.point_tab {
+  font-size: 18px;
+  font-weight: 500;
+  color: #848484;
+  line-height: 18px;
+  cursor: pointer;
+}
+
+.point_tab.active {
+  font-weight: 700;
+  color: #444;
+}
+
+/* 포인트 내역 리스트 */
+.history_list {
+  position: absolute;
+  top: 352px;
+  left: 500px;
+  width: 920px;
+}
+
+.history_item {
+  position: relative;
+  height: 86px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.history_divider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: #e0e0e0;
+}
+
+/* 상태 배지 */
+.status_badge {
+  width: 44px;
+  height: 32px;
+  background-color: #a8a8a8;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 500;
+  color: white;
+  line-height: 16px;
+  flex-shrink: 0;
+}
+
+/* 내역 정보 */
+.history_info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.history_description {
+  font-size: 16px;
+  font-weight: 500;
+  color: #444;
+  line-height: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history_date {
+  font-size: 14px;
+  font-weight: 500;
+  color: #848484;
+  line-height: 14px;
+}
+
+/* 포인트 정보 */
+.point_info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.point_change {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 16px;
+}
+
+.point_change.positive {
+  color: #2dc469;
+}
+
+.point_change.negative {
+  color: #2b7fff;
+}
+
+.point_balance {
+  font-size: 14px;
+  font-weight: 500;
+  color: #a8a8a8;
+  line-height: 14px;
+}
+
+/* 반응형 */
+@media (max-width: 1200px) {
+  .point_page {
+    padding: 0 20px;
+  }
+
+  .header_background,
+  .main_tabs,
+  .divider_line,
+  .divider_line_2,
+  .history_list {
+    width: calc(100% - 40px);
+    left: 20px;
+    transform: none;
+  }
+
+  .logo {
+    left: 20px;
+  }
+
+  .header_buttons {
+    right: 20px;
+  }
+
+  .point_summary_section {
+    left: 20px;
+  }
+
+  .withdrawal_button {
+    right: 20px;
+  }
+
+  .point_tabs {
+    left: 20px;
+  }
+
+  .active_underline {
+    left: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .point_page {
+    padding: 0 16px;
+  }
+
+  .header_background,
+  .main_tabs,
+  .divider_line,
+  .divider_line_2,
+  .history_list {
+    width: calc(100% - 32px);
+    left: 16px;
+  }
+
+  .logo {
+    left: 16px;
+  }
+
+  .header_buttons {
+    right: 16px;
+  }
+
+  .point_summary_section {
+    left: 16px;
+  }
+
+  .withdrawal_button {
+    right: 16px;
+    width: 120px;
+    height: 40px;
+    font-size: 14px;
+  }
+
+  .point_tabs {
+    left: 16px;
+  }
+
+  .active_underline {
+    left: 16px;
+  }
+
+  .amount_number,
+  .amount_unit {
+    font-size: 32px;
+    line-height: 32px;
+  }
+
+  .history_item {
+    height: auto;
+    padding: 16px 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .history_info {
+    width: 100%;
+  }
+
+  .point_info {
+    align-items: flex-start;
+  }
+}

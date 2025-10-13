@@ -1,0 +1,816 @@
+/**
+ * 캠페인 상세 페이지 스타일
+ * 캠페인 상세 정보를 표시하는 페이지의 모든 스타일을 정의
+ */
+
+/* ===== 메인 컨테이너 ===== */
+.campaign_detail_container {
+  min-height: 100vh; /* 최소 화면 높이 */
+  padding: 40px 0px; /* 상하 패딩 */
+}
+
+/* ===== 태그 및 포인트 섹션 ===== */
+.tags_section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* 좌우 정렬 */
+  padding: 0px 40px 20px 40px; /* 좌우 패딩, 하단 여백 */
+}
+
+.tag_icon_container {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* 아이콘 간격 */
+}
+
+.tag_icon {
+  width: 30px;
+  height: 30px;
+}
+
+/* 캠페인 타입 태그 (배송형, 체험형 등) */
+.tag_box {
+  border-radius: 4px;
+  border: 1px solid #d90074; /* 핑크 테두리 */
+  padding: 8px;
+  color: #d90074;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 서브 카테고리 태그 (생활, 뷰티 등) */
+.subcategory_tag {
+  padding: 8px;
+  border-radius: 4px;
+  border: none;
+  background: rgba(255, 174, 0, 0.2); /* 연한 오렌지 배경 */
+  color: #444;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 포인트 표시 */
+.points {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #d90074;
+  color: #d90074;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* ===== 제품 정보 섹션 ===== */
+.product_info {
+  display: flex;
+  flex-direction: column;
+  gap: 24px; /* 요소 간 간격 */
+  padding: 0 40px; /* 좌우 패딩 */
+}
+
+.product_info_title {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* 제목과 설명 간격 */
+}
+
+/* 제품 제목 */
+.product_title {
+  color: #333;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: -0.48px;
+}
+
+/* 제품 설명 */
+.product_description {
+  color: #555;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 메인 제품 이미지 컨테이너 */
+.main_image_container {
+  width: 100%;
+}
+
+.main_image_container img {
+  width: 100%;
+  height: 500px;
+  border-radius: 4px;
+  object-fit: cover; /* 이미지 비율 유지하며 컨테이너에 맞춤 */
+}
+
+/* ===== 캠페인 정보 섹션 ===== */
+.campaign_info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative; /* 그라데이션 배경을 위한 기준점 */
+}
+
+/* 그라데이션 배경 오버레이 */
+.gradient_background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, #fff 150%);
+  border-radius: 8px;
+  z-index: 1; /* 다른 요소 위에 표시 */
+  pointer-events: none; /* 클릭 이벤트 방해하지 않음 */
+}
+
+/* 캠페인 정보 항목 컨테이너 */
+.info_item_container {
+  display: flex;
+  justify-content: space-between; /* 라벨과 값 좌우 정렬 */
+  align-items: center;
+}
+
+/* 정보 라벨 (모집 인원, 모집 기간 등) */
+.label {
+  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 정보 값 */
+.value {
+  color: #848484;
+  text-align: right;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 현재 지원자 수 (강조 표시) */
+.current_count {
+  color: #333;
+  text-align: right;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 구분자 (/) */
+.separator {
+  color: #848484;
+}
+
+/* 총 모집 인원 */
+.total_count {
+  color: #848484;
+}
+
+/* 모집 기간 값 강조 */
+.recruitment_info {
+  color: #333;
+  font-weight: 600;
+}
+
+/* ===== 캠페인 신청 버튼 ===== */
+.apply_button {
+  width: 100%;
+  border-radius: 12px;
+  background: #d90074; /* 핑크 배경 */
+  color: #fff;
+  border: none;
+  padding: 24px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  cursor: pointer;
+}
+
+/* ===== 캠페인 정보 섹션 제목 ===== */
+.campaign_info_text_line {
+  display: block;
+  width: 100%;
+  padding: 55px 0px 24px 0px;
+  border-bottom: 2px solid #d90074; /* 하단 핑크 라인 */
+  text-align: center;
+  color: #d90074;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: -0.4px;
+}
+
+/* ===== 캠페인 상세 이미지 섹션 ===== */
+.campaign_detail_image_container {
+  width: 100%;
+  height: 500px;
+  position: relative;
+  overflow: hidden;
+  transition: height 0.3s ease; /* 부드러운 확장/축소 애니메이션 */
+}
+
+.campaign_detail_image_container > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top; /* 이미지 상단 부분 우선 표시 */
+  transition: height 0.3s ease;
+}
+
+/* 이미지 확장 상태 */
+.campaign_detail_image_container.expanded {
+  height: auto; /* 원본 크기로 확장 */
+}
+
+.campaign_detail_image_container.expanded > img {
+  height: auto;
+  object-fit: contain; /* 비율 유지하며 전체 표시 */
+}
+
+/* 이미지 확장/축소 버튼 */
+.expand_image_button {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%); /* 가로 중앙 정렬 */
+  cursor: pointer;
+  border-radius: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #fff;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.05); /* 그림자 효과 */
+  padding: 14px 27px;
+  color: #333;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+}
+
+/* ===== 리뷰 가이드라인 컨테이너 ===== */
+.review_guidelines_container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding: 24px 40px;
+}
+
+/* ===== 상세 정보 컨테이너 ===== */
+.campaign_detail_info_container {
+  display: flex;
+  flex-direction: column;
+  padding: 0px 40px;
+}
+
+/* ===== 정보 항목 박스 (제공내역, 키워드, 안내사항 등) ===== */
+.info_item_box {
+  display: flex;
+  align-items: flex-start;
+  border-top: 1px solid rgba(0, 0, 0, 0.1); /* 상단 구분선 */
+  padding: 28px 0px;
+}
+
+/* 라벨 박스 (제공내역, 키워드 등) */
+.label_box {
+  width: 200px;
+  padding: 0px 12px;
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+}
+
+/* 내용 박스 */
+.content_box {
+  padding: 0px 12px;
+  width: 720px;
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 26px;
+  letter-spacing: -0.32px;
+}
+
+/* ===== 키워드 섹션 ===== */
+.label_keyword_box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+/* 복사 버튼 */
+.copy_tag_button {
+  display: inline-flex;
+  padding: 4px 8px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  background: rgba(217, 0, 116, 0.1); /* 연한 핑크 배경 */
+  color: #d90074;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  cursor: pointer;
+}
+
+/* 키워드 텍스트 박스 */
+.keyword_text_box {
+  width: 100%;
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 26px;
+  letter-spacing: -0.32px;
+}
+
+/* ===== 안내 사항 섹션 ===== */
+.requirement_container {
+  display: flex;
+  gap: 28px; /* 아이콘 간 간격 */
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* 하단 구분선 */
+}
+
+/* 안내 사항 아이템 (키워드 삽입, 이미지 첨부 등) */
+.requirement_item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+/* 안내 사항 아이콘 */
+.requirement_icon {
+  width: 40px;
+  height: 40px;
+}
+
+/* 중요 안내 사항 컨테이너 */
+.important_note_container {
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  border-bottom: none; /* 구분선 제거 */
+  padding-bottom: 0px;
+}
+
+/* ===== 텍스트 스타일 ===== */
+/* 안내 사항 텍스트 */
+.guideline_text {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 26px;
+  letter-spacing: -0.32px;
+}
+
+/* 추가 안내 사항 텍스트 (더 작은 폰트) */
+.additional_guideline_text {
+  color: #848484;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 25px;
+  letter-spacing: -0.26px;
+}
+
+/* 강조 텍스트 (밑줄) */
+.text_line {
+  font-weight: 700;
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-skip-ink: auto;
+  text-decoration-thickness: auto;
+  text-underline-offset: auto;
+  text-underline-position: from-font;
+}
+
+/* 반응형 css 코드 */
+
+/* ✅ 모바일 공통 — 0~739px */
+
+@media (max-width: 739px) {
+  /* ===== 태그 및 포인트 섹션 ===== */
+  .tags_section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* 좌우 정렬 */
+    padding: 0px 24px 20px 24px; /* 좌우 패딩 24px, 하단 여백 */
+  }
+
+  .tag_icon_container {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* 아이콘 간격 */
+  }
+
+  .tag_icon {
+    width: 25px;
+    height: 25px;
+  }
+
+  /* 캠페인 타입 태그 (배송형, 체험형 등) */
+  .tag_box {
+    padding: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 13px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 서브 카테고리 태그 (생활, 뷰티 등) */
+  .subcategory_tag {
+    padding: 6px;
+    border: none;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 13px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 포인트 표시 */
+  .points {
+    padding: 8px 6px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 13px;
+    letter-spacing: -0.28px;
+  }
+
+  /* ===== 제품 정보 섹션 ===== */
+  .product_info {
+    display: flex;
+    flex-direction: column;
+    gap: 24px; /* 요소 간 간격 */
+    padding: 0 24px; /* 좌우 패딩 24px */
+  }
+
+  .product_info_title {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* 제목과 설명 간격 */
+  }
+
+  /* 제품 제목 */
+  .product_title {
+    font-size: 24px;
+    line-height: 29px;
+    letter-spacing: -0.4px;
+
+    /* 자연스러운 줄바꿈 */
+
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+
+  /* 제품 설명 */
+  .product_description {
+    /* 자연스러운 줄바꿈 */
+
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    font-size: 13px;
+    line-height: 18px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 메인 제품 이미지  */
+  .main_image_container img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover; /* 이미지 비율 유지하며 컨테이너에 맞춤 */
+  }
+
+  /* ===== 캠페인 정보 섹션 ===== */
+  .campaign_info {
+    gap: 20px;
+    position: relative; /* 그라데이션 배경을 위한 기준점 */
+  }
+
+  /* 그라데이션 배경 오버레이 */
+  .gradient_background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, #fff 150%);
+    border-radius: 8px;
+    z-index: 1; /* 다른 요소 위에 표시 */
+    pointer-events: none; /* 클릭 이벤트 방해하지 않음 */
+  }
+
+  /* 캠페인 정보 항목 컨테이너 */
+  .info_item_container {
+    display: flex;
+    justify-content: space-between; /* 라벨과 값 좌우 정렬 */
+    align-items: center;
+  }
+
+  /* 정보 라벨 (모집 인원, 모집 기간 등) */
+  .label {
+    font-size: 15px;
+    line-height: 15px;
+    letter-spacing: -0.3px;
+  }
+
+  /* 정보 값 */
+  .value {
+    font-size: 15px;
+    line-height: 15px;
+    letter-spacing: -0.32px;
+  }
+
+  /* 현재 지원자 수 (강조 표시) */
+  .current_count {
+    font-size: 15px;
+    line-height: 15px;
+    letter-spacing: -0.32px;
+  }
+
+  /* ===== 캠페인 신청 버튼 ===== */
+  .apply_button {
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  /* ===== 캠페인 정보 섹션 제목 ===== */
+  .campaign_info_text_line {
+    padding: 40px 0px 20px 0px;
+    font-size: 18px;
+    line-height: 18px;
+    letter-spacing: -0.36px;
+  }
+
+  /* ===== 캠페인 상세 이미지 섹션 ===== */
+  .campaign_detail_image_container {
+    width: 100%;
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+    transition: height 0.3s ease; /* 부드러운 확장/축소 애니메이션 */
+  }
+
+  .campaign_detail_image_container > img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    object-position: top; /* 이미지 상단 부분 우선 표시 */
+    transition: height 0.3s ease;
+  }
+
+  /* 이미지 확장 상태 */
+  .campaign_detail_image_container.expanded {
+    height: auto; /* 원본 크기로 확장 */
+  }
+
+  .campaign_detail_image_container.expanded > img {
+    height: auto;
+    object-fit: contain; /* 비율 유지하며 전체 표시 */
+  }
+
+  /* 이미지 확장/축소 버튼 */
+  .expand_image_button {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%); /* 가로 중앙 정렬 */
+    cursor: pointer;
+    border-radius: 30px;
+    background: #fff;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.05); /* 그림자 효과 */
+    padding: 14px 27px;
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.36px;
+  }
+
+  /* ===== 리뷰 가이드라인 컨테이너 ===== */
+  .review_guidelines_container {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    padding: 20px 24px;
+  }
+
+  /* ===== 상세 정보 컨테이너 ===== */
+
+  .campaign_detail_info_container {
+    display: flex;
+    flex-direction: column;
+    padding: 0px 24px;
+  }
+
+  /* ===== 정보 항목 박스 (제공내역, 키워드, 안내사항 등) ===== */
+
+  .info_item_box {
+    display: flex;
+    flex-direction: column; /* 모바일에서는 세로 배치 */
+
+    align-items: flex-start;
+
+    border-top: 1px solid rgba(0, 0, 0, 0.1); /* 상단 구분선 */
+
+    padding: 20px 0px;
+    gap: 12px; /* 라벨과 내용 사이 간격 */
+  }
+
+  /* 라벨 박스 (제공내역, 키워드 등) */
+  .label_box {
+    width: 100%; /* 모바일에서는 전체 너비 사용 */
+    padding: 0px;
+    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: -0.32px;
+  }
+
+  /* 내용 박스 */
+  .content_box {
+    padding: 0px;
+    width: 100%; /* 모바일에서는 전체 너비 사용 */
+    color: #444;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+    letter-spacing: -0.28px;
+  }
+
+  /* ===== 키워드 섹션 ===== */
+  .label_keyword_box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+
+  /* 복사 버튼 */
+  .copy_tag_button {
+    display: inline-flex;
+    padding: 4px 8px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    background: rgba(217, 0, 116, 0.1); /* 연한 핑크 배경 */
+    color: #d90074;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+    cursor: pointer;
+  }
+
+  /* 키워드 텍스트 박스 */
+  .keyword_text_box {
+    width: 100%;
+    color: #444;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+    letter-spacing: -0.28px;
+  }
+
+  /* ===== 안내 사항 섹션 ===== */
+  .requirement_container {
+    display: flex;
+    flex-wrap: wrap; /* 모바일에서 줄바꿈 허용 */
+    gap: 16px; /* 아이콘 간 간격 줄임 */
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* 하단 구분선 */
+    justify-content: space-between; /* 아이콘들을 균등하게 분배 */
+  }
+
+  /* 안내 사항 아이템 (키워드 삽입, 이미지 첨부 등) */
+  .requirement_item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    flex: 1; /* 각 아이템이 균등한 공간 차지 */
+    min-width: 0; /* flex 아이템이 축소될 수 있도록 */
+  }
+
+  /* 안내 사항 아이콘 */
+  .requirement_icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* 안내 사항 텍스트 */
+  .requirement_item span {
+    font-size: 12px;
+    line-height: 14px;
+    text-align: center;
+    word-break: keep-all;
+  }
+
+  /* 중요 안내 사항 컨테이너 */
+  .important_note_container {
+    padding-top: 24px;
+    display: flex;
+    flex-direction: column;
+    border-bottom: none; /* 구분선 제거 */
+    padding-bottom: 0px;
+  }
+
+  /* ===== 텍스트 스타일 ====== */
+
+  /* 안내 사항 텍스트 */
+  .guideline_text {
+    color: #444;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+    letter-spacing: -0.28px;
+    word-break: keep-all; /* 자연스러운 줄바꿈 */
+    overflow-wrap: break-word;
+  }
+
+  /* 추가 안내 사항 텍스트 (더 작은 폰트) */
+  .additional_guideline_text {
+    color: #848484;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: -0.24px;
+    word-break: keep-all; /* 자연스러운 줄바꿈 */
+    overflow-wrap: break-word;
+  }
+
+  /* 강조 텍스트 (밑줄) */
+  .text_line {
+    font-weight: 700;
+    text-decoration-line: underline;
+    text-decoration-style: solid;
+    text-decoration-skip-ink: auto;
+    text-decoration-thickness: auto;
+    text-underline-offset: auto;
+    text-underline-position: from-font;
+  }
+}
+
+/* ✅ 태블릿 세로(portrait) 전용 — 740~1100px */
+@media (min-width: 740px) and (max-width: 1100px) and (orientation: portrait) {
+  .tags_section {
+    padding: 0px 56px 20px 56px;
+  }
+
+  .product_info {
+    padding: 0px 56px;
+  }
+
+  .campaign_detail_image_container {
+    height: 400px;
+  }
+
+  .review_guidelines_container {
+    padding: 20px 56px;
+  }
+
+  .campaign_detail_info_container {
+    padding: 0px 56px;
+  }
+}
+/* ✅ 태블릿 가로(landscape) 전용 — 740~1100px */
+@media (min-width: 740px) and (max-width: 1366px) and (orientation: landscape) {
+  .tags_section {
+    padding: 0px 56px 20px 56px;
+  }
+
+  .product_info {
+    padding: 0px 56px;
+  }
+
+  .campaign_detail_image_container {
+    height: 400px;
+  }
+
+  .review_guidelines_container {
+    padding: 20px 56px;
+  }
+
+  .campaign_detail_info_container {
+    padding: 0px 56px;
+  }
+}

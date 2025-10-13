@@ -1,0 +1,60 @@
+/* 메인페이지 스타일 */
+:global(header) {
+  width: 100%;
+  background: linear-gradient(90deg, #ffacae 0%, #d90074 100%);
+  height: 80px;
+}
+
+.header_container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 40px;
+}
+
+/* 헤더로고 부분 */
+.header_logo {
+  color: #fff;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 24px; /* 85.714% */
+  letter-spacing: -0.56px;
+}
+
+/* 헤더 메뉴 아이콘 부분 */
+.menu_icon_box {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.menu_icon_box > img {
+  cursor: pointer;
+}
+
+/* 반응형 스타일 css 코드 */
+
+/* ✅ 모바일 공통 — 0~739px */
+@media (max-width: 739px) {
+  .header_container {
+    padding: 28px 32px;
+  }
+
+  /* 헤더 메뉴 아이콘 부분 */
+  .menu_icon_box {
+    gap: 16px;
+  }
+
+  .menu_icon_box img {
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* ✅ 태블릿 세로(portrait) 전용 — 740~1100px */
+@media (min-width: 740px) and (max-width: 1100px) and (orientation: portrait) {
+}
+/* ✅ 태블릿 가로(landscape) 전용 — 740~1100px */
+@media (min-width: 740px) and (max-width: 1366px) and (orientation: landscape) {
+}
