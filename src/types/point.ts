@@ -5,12 +5,12 @@
  */
 export interface PointHistory {
   id: string;
-  type: "earned" | "spent" | "withdrawn"; // 획득/사용/출금
+  type: "earned" | "withdrawn"; // 적립/출금
   amount: number; // 포인트 금액
   description: string; // 포인트 내역 설명
   campaign_id?: string; // 관련 캠페인 ID (있는 경우)
   date: string; // 날짜 (YYYY-MM-DD)
-  status?: "completed" | "pending" | "failed"; // 상태
+  status: "earned" | "completed" | "pending" | "failed"; // 상태: 적립/완료/신청/취소
   balance: number; // 거래 후 잔액
 }
 

@@ -1,0 +1,289 @@
+/* 출금 신청 페이지 스타일 */
+.request_page {
+  background-color: #f2f2f2;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* 메인 컨텐츠 */
+.main_content {
+  background-color: white;
+  max-width: 1000px;
+  margin: 0 auto;
+  min-height: calc(100vh - 80px);
+  padding-bottom: 100px;
+}
+
+.container {
+  margin: 0 auto;
+  /* padding: 0 40px; */
+}
+
+/* 제목 */
+.page_title {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 20px;
+  letter-spacing: -0.4px;
+  color: #444444;
+  margin: 0;
+  padding: 24px 40px;
+}
+
+.title_divider {
+  width: 100%;
+  height: 0.5px;
+  background-color: #d9d9d9;
+}
+
+/* 보유 포인트 섹션 */
+.available_points_section {
+  padding: 40px;
+}
+
+.points_label {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  color: #444444;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.points_amount {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.amount_number {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 40px;
+  letter-spacing: -0.8px;
+  color: #444444;
+}
+
+.amount_unit {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 40px;
+  line-height: 40px;
+  letter-spacing: -0.8px;
+  color: #848484;
+}
+
+/* 구분선 */
+.available_points_section::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 1px;
+  background-color: #d9d9d9;
+  margin-top: 40px;
+}
+
+/* 폼 섹션 */
+.form_section {
+  padding: 0px 40px 40px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.form_group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form_label {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  color: #444444;
+}
+
+.form_input {
+  width: 100%;
+  height: 56px;
+  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+  background-color: white;
+  padding: 0 20px;
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  color: #444444;
+  box-sizing: border-box;
+}
+
+.form_input::placeholder {
+  color: #999999;
+}
+
+.form_input:focus {
+  outline: none;
+  border-color: #444444;
+}
+
+.form_input.disabled {
+  background-color: #f6f6f6;
+  color: #999999;
+  cursor: not-allowed;
+}
+
+.form_input.error {
+  border-color: #ff4444;
+}
+
+/* 에러 메시지 */
+.error_message {
+  overflow: hidden;
+  color: #ff4040;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
+
+  margin-top: 12px;
+}
+
+/* 헬퍼 텍스트 */
+.helper_text {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 14px;
+  letter-spacing: -0.24px;
+  color: #848484;
+  margin-top: 4px;
+}
+
+/* 안내 사항 섹션 */
+.notice_section {
+  padding: 0px 40px 40px 40px;
+}
+
+.notice_title {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  color: #444444;
+  margin: 0 0 16px 0;
+}
+
+.notice_list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: #848484;
+}
+
+.notice_list li {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 25px;
+  letter-spacing: -0.26px;
+  color: #848484;
+  padding-left: 19.5px;
+  position: relative;
+}
+
+.notice_list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #848484;
+}
+
+/* 출금 신청 버튼 */
+
+.submit_button_section {
+  padding: 0px 40px 0px 40px;
+}
+.submit_button {
+  width: 100%;
+  height: 56px;
+  background-color: #555555;
+  border-radius: 8px;
+  border: none;
+  font-family: "Pretendard", sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  color: white;
+  cursor: pointer;
+  margin-top: 64px;
+  transition: background-color 0.2s;
+}
+
+.submit_button:hover {
+  background-color: #444444;
+}
+
+.submit_button:active {
+  background-color: #333333;
+}
+
+.submit_button.disabled,
+.submit_button:disabled {
+  background-color: #d9d9d9;
+  color: #999999;
+  cursor: not-allowed;
+}
+
+.submit_button.disabled:hover,
+.submit_button:disabled:hover {
+  background-color: #d9d9d9;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1040px) {
+  .header,
+  .main_content {
+    max-width: 100%;
+  }
+
+  .container {
+    padding: 0 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page_title {
+    font-size: 18px;
+  }
+
+  .amount_number,
+  .amount_unit {
+    font-size: 32px;
+  }
+
+  .form_input {
+    font-size: 14px;
+    height: 48px;
+  }
+
+  .submit_button {
+    font-size: 14px;
+    height: 48px;
+  }
+
+  .notice_list li {
+    font-size: 12px;
+    line-height: 22px;
+  }
+}
