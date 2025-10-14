@@ -99,7 +99,7 @@ export const visitCampaigns: VisitCampaignData[] = [
     description: "헬스장 방문 후 유튜브 리뷰 영상 제작",
     recruitment: { current: 123, total: 10 },
     schedule: "",
-    dayCount: "D-7",
+    dayCount: "마감임박",
     detailedSchedule: {
       applicationStart: "2025-01-26",
       applicationEnd: "2025-02-11",
@@ -120,7 +120,7 @@ export const visitCampaigns: VisitCampaignData[] = [
     description: "쇼핑몰 방문 후 쇼핑 리뷰 작성",
     recruitment: { current: 156, total: 12 },
     schedule: "",
-    dayCount: "D-6",
+    dayCount: "마감임박",
     detailedSchedule: {
       applicationStart: "2025-01-27",
       applicationEnd: "2025-02-12",
@@ -141,7 +141,7 @@ export const visitCampaigns: VisitCampaignData[] = [
     description: "미술관 방문 후 전시 리뷰 작성",
     recruitment: { current: 78, total: 15 },
     schedule: "",
-    dayCount: "D-4",
+    dayCount: "마감임박",
     detailedSchedule: {
       applicationStart: "2025-01-29",
       applicationEnd: "2025-02-13",
@@ -149,7 +149,7 @@ export const visitCampaigns: VisitCampaignData[] = [
       purchasePeriod: "2025-02-15 ~ 2025-02-18",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "블로그",
+    channel: "네이버 블로그",
   },
   {
     id: "visit_7",
@@ -162,7 +162,7 @@ export const visitCampaigns: VisitCampaignData[] = [
     description: "프리미엄 스파 방문 후 체험 리뷰",
     recruitment: { current: 34, total: 3 },
     schedule: "",
-    dayCount: "D-2",
+    dayCount: "마감임박",
     detailedSchedule: {
       applicationStart: "2025-01-31",
       applicationEnd: "2025-02-15",
@@ -233,7 +233,7 @@ export const visitCampaigns: VisitCampaignData[] = [
       purchasePeriod: "2025-02-10 ~ 2025-02-13",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "블로그",
+    channel: "네이버 블로그",
   },
   {
     id: "visit_11",
@@ -359,6 +359,6 @@ export const visitCampaigns: VisitCampaignData[] = [
       purchasePeriod: "2025-02-16 ~ 2025-02-19",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "블로그",
+    channel: "네이버 블로그",
   },
 ];
