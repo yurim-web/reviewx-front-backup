@@ -12,7 +12,7 @@ export default function Header() {
         <div className={styles.menu_icon_box}>
           {/* 가이드로 연결 */}
           <a
-            href="https://example.com/guide"
+            href="https://markx.dev/guide_book"
             target="_blank"
             rel="noopener noreferrer"
           >

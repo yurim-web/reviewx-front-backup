@@ -20,7 +20,7 @@ export default function SubHeader() {
         </button>
         <div className={styles.right_icons}>
           <a
-            href="https://example.com/guide"
+            href="https://markx.dev/guide_book"
             target="_blank"
             rel="noopener noreferrer"
             className={styles.bookmark_icon}
