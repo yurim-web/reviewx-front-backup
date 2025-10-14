@@ -1,9 +1,20 @@
-// 캠페인 목록 컴포넌트
-// 선택된 탭에 따라 필터링된 캠페인 목록을 표시
+/**
+ * 캠페인 목록 컴포넌트 (Campaign List Component)
+ *
+ * 📚 학습 포인트:
+ * 1. 조건부 렌더링으로 다른 UI 표시
+ * 2. 배열 필터링과 map을 통한 리스트 렌더링
+ * 3. 컴포넌트 간 분기 처리와 역할 분담
+ *
+ * 🎯 기능:
+ * - 선택된 탭에 따라 필터링된 캠페인 목록 표시
+ * - 패널티 탭: PenaltyContent 컴포넌트 표시
+ * - 나머지 탭: 해당 상태의 캠페인 카드 목록 표시
+ */
 
 import type { CampaignApplication, StatTab } from "@/types/campaignManagement";
 import CampaignCard from "./CampaignCard";
-import PenaltyContent from "./PenaltyContent";
+import PenaltyContent from "./PenaltyContent"; // 패널티 컴포넌트 다시 import
 import styles from "../../styles/campaign_management/campaign_management.module.css";
 
 interface CampaignListProps {
@@ -13,14 +24,17 @@ interface CampaignListProps {
 
 /**
  * 캠페인 목록을 표시하는 컴포넌트
- * - 패널티 탭: 패널티 내역 화면
+ * - 패널티 탭: PenaltyContent 컴포넌트 표시
  * - 그 외: 해당 상태의 캠페인 카드 목록
  */
 export default function CampaignList({
   campaigns,
   activeStatTab,
 }: CampaignListProps) {
-  // 패널티 탭인 경우 별도 화면 표시
+  /* ========================================
+     패널티 탭 처리
+     - 패널티 탭인 경우 PenaltyContent 컴포넌트 렌더링
+  ======================================== */
   if (activeStatTab === "패널티") {
     return <PenaltyContent />;
   }

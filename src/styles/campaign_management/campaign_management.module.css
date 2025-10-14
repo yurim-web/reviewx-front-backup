@@ -3,6 +3,7 @@
 .container {
   position: relative;
   width: 100%;
+  padding-top: 80px;
 }
 
 /* Main Content */

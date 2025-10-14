@@ -23,7 +23,7 @@ export default function WithdrawalRequestPage() {
     accountNumber: "000000000000",
     residentNumber: "800102-*******",
     // 포인트 임의로 바꾸는 부분!!!!
-    availablePoints: 10000000, // API에서 실제 보유 포인트를 가져와야 함
+    availablePoints: 100000, // API에서 실제 보유 포인트를 가져와야 함
   };
 
   // 최소/최대 금액 상수
@@ -169,7 +169,9 @@ export default function WithdrawalRequestPage() {
             </div>
 
             {/* 출금 신청 */}
-            <div className={styles.form_group}>
+            <div
+              className={`${styles.form_group} ${styles.withdrawal_amount_group}`}
+            >
               <label className={styles.form_label}>출금 신청</label>
               <input
                 type="text"
@@ -182,11 +184,6 @@ export default function WithdrawalRequestPage() {
               />
               {errorMessage && (
                 <span className={styles.error_message}>{errorMessage}</span>
-              )}
-              {!errorMessage && withdrawalAmount && (
-                <span className={styles.helper_text}>
-                  출금은 최소 10,000원 이상부터 신청할 수 있습니다.
-                </span>
               )}
             </div>
 

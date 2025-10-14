@@ -22,7 +22,8 @@ src/
 │   └── campaignManagement.ts           # 타입 정의
 └── styles/
     └── campaign_management/
-        └── campaign_management.module.css
+        ├── campaign_management.module.css
+        └── penalty.module.css          # 패널티 컴포넌트 스타일
 ```
 
 ## 🧩 컴포넌트 설명

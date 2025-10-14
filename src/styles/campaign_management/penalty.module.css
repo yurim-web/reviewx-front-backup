@@ -1,5 +1,58 @@
 /* 패널티 관련 스타일 */
 
+/* ========================================
+   패널티 페이지 헤더 영역
+   - 뒤로가기 버튼과 페이지 제목
+======================================== */
+
+/* 패널티 페이지 헤더 컨테이너 */
+.penalty_page_header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 0 24px 0;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 32px;
+}
+
+/* 뒤로가기 버튼 */
+.back_button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  align-self: flex-start;
+}
+
+.back_button:hover {
+  color: #333;
+}
+
+.back_button:active {
+  color: #000;
+}
+
+/* 패널티 페이지 제목 */
+.penalty_page_title {
+  color: #333;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.48px;
+  margin: 0;
+}
+
+/* ========================================
+   기존 패널티 컨텐츠 영역
+======================================== */
+
 /* 패널티 콘텐츠 영역 */
 .penalty_content {
   padding: 0;

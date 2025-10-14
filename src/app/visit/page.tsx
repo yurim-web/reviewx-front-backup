@@ -193,7 +193,16 @@ export default function VisitPage() {
 
   return (
     <>
+      {/* 메인 메뉴 컴포넌트 - 헤더(80px) 밑에 고정 */}
       <MainMenu />
+
+      {/* 
+        레이아웃 시프트 방지를 위한 placeholder 
+        - 헤더(80px) + MainMenu(약 69px) = 149px
+        - fixed된 헤더와 메뉴가 콘텐츠를 가리지 않도록 공간 확보
+      */}
+      <div style={{ height: "149px" }}></div>
+
       <main className={styles.delivery_page}>
         {/* 필터/정렬 바 */}
         <FilterBar

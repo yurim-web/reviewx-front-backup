@@ -1,34 +1,51 @@
 /**
- * 패널티 내역 컴포넌트
+ * 패널티 내역 컴포넌트 (Penalty Content Component)
+ *
+ * 📚 학습 포인트:
+ * 1. React 함수형 컴포넌트 기본 구조
+ * 2. TypeScript 타입과 인터페이스 정의
+ * 3. 조건부 렌더링과 배열 렌더링
+ * 4. CSS 모듈과 인라인 스타일 사용법
+ * 5. 접근성 속성과 의미적 HTML 태그
+ *
+ * 🎯 기능:
  * - 사용자의 패널티 현황과 내역을 보여주는 컴포넌트
+ * - 패널티 단계별 진행 상황 시각화
+ * - 패널티 내역 리스트 표시
+ * - 빈 상태 처리
  */
 
 import styles from "../../styles/campaign_management/campaign_management.module.css";
 import penaltyStyles from "../../styles/campaign_management/penalty.module.css";
 
-// TypeScript 타입 정의 - 패널티 상태 (4가지 상태)
+/* ========================================
+   TypeScript 타입 정의 섹션
+   - 타입 안전성을 위한 데이터 구조 정의
+======================================== */
+
+// 패널티 상태 타입 - 4가지 가능한 상태를 정의
+// union 타입: | (파이프) 기호로 여러 타입 중 하나를 의미
 type PenaltyStatus = "활동 가능" | "경고 조치" | "이용 정지 15일" | "영구 정지";
 
-// TypeScript 타입 정의 - 패널티 종류 (4가지 종류)
+// 패널티 종류 타입 - 4가지 패널티 분류
 type PenaltyType = "경고" | "주의" | "정지" | "제재";
 
 // 개별 패널티 아이템의 구조를 정의하는 인터페이스
+// interface는 객체의 형태를 정의하는 TypeScript 문법
 interface PenaltyItem {
-  id: string; // 고유 ID
-  type: PenaltyType; // 패널티 종류
-  title: string; // 패널티 제목
-  date: string; // 발생 날짜
+  id: string; // 고유 식별자 (React key로도 사용)
+  type: PenaltyType; // 패널티 분류
+  title: string; // 패널티 제목/사유
+  date: string; // 발생 날짜 (YYYY-MM-DD 형식)
 }
 
 /* ========================================
-   목업 데이터 (Mock Data)
-   - 실제 개발에서는 API에서 받아올 데이터
-   - 지금은 테스트용으로 하드코딩된 샘플 데이터
+   목업 데이터 (Mock Data) 섹션
+   - 실제 개발에서는 API나 데이터베이스에서 가져올 데이터
+   - 현재는 테스트/개발용 하드코딩된 샘플 데이터
 ======================================== */
 
-// 패널티 내역 목업 데이터 (배열) - 이미지 기준으로 업데이트
-// 빈 상태를 보고싶다면 주석처리하기~
-
+// 패널티 내역 목업 데이터 - 배열 형태로 여러 패널티 기록 저장
 const mockPenaltyData: PenaltyItem[] = [
   { id: "1", type: "정지", title: "캠페인 지각 제출", date: "2025-09-12" },
   { id: "2", type: "주의", title: "캠페인 반복 반려", date: "2025-09-10" },
@@ -58,59 +75,59 @@ const mockPenaltyData: PenaltyItem[] = [
   },
 ];
 
-// 패널티 내역 목업 데이터 (배열) - 빈 상태 테스트용으로 빈 배열
-// 빈상태 보고 싶을때 위에꺼 주석처리하고 이거 주석 풀기!!
+// 빈 상태 테스트용 - 아래 주석을 해제하고 위 데이터를 주석처리하면 빈 상태를 볼 수 있음
 // const mockPenaltyData: PenaltyItem[] = [];
 
-// 사용자 현재 패널티 상태 목업 데이터 (객체)
+// 사용자 현재 상태 목업 데이터
 // as PenaltyStatus는 TypeScript 타입 단언(Type Assertion)
 const mockUserStatus = {
-  currentStatus: "이용 정지 15일" as PenaltyStatus, // 현재 패널티 상태
-  penaltyCount: 12, // 총 패널티 횟수
+  currentStatus: "이용 정지 15일" as PenaltyStatus,
+  penaltyCount: 12,
 };
 
 /* ========================================
    설정 객체들 (Configuration Objects)
-   - 반복되는 설정들을 객체로 관리
-   - switch문 대신 객체 사용 (성능상 이점)
+   - 반복되는 조건문을 객체로 대체하여 성능 향상과 코드 간소화
 ======================================== */
 
 // 패널티 상태별 CSS 클래스와 진행바 설정
-// 객체의 키(key)가 패널티 상태, 값(value)이 설정
-const statusConfig = {
+// Record<K, V> 타입: 키 타입 K와 값 타입 V를 가진 객체 타입
+const statusConfig: Record<
+  PenaltyStatus,
+  {
+    className: string;
+    progress: { leftWidth: string; rightWidth: string };
+  }
+> = {
   "활동 가능": {
-    className: penaltyStyles.active_status, // CSS 클래스명
-    progress: { leftWidth: "0%", rightWidth: "0%" }, // 진행바 너비 (활동 가능: 진행바 없음)
+    className: penaltyStyles.active_status,
+    progress: { leftWidth: "0%", rightWidth: "0%" },
   },
   "경고 조치": {
     className: penaltyStyles.warning_status,
-    progress: { leftWidth: "30%", rightWidth: "0%" }, // 경고: 왼쪽 30%만
-  },
-  "이용 정지": {
-    className: penaltyStyles.suspension_status,
-    progress: { leftWidth: "100%", rightWidth: "30%" }, // 정지: 왼쪽 100%, 오른쪽 30%
+    progress: { leftWidth: "30%", rightWidth: "0%" },
   },
   "이용 정지 15일": {
     className: penaltyStyles.suspension_status,
-    progress: { leftWidth: "100%", rightWidth: "30%" }, // 정지: 왼쪽 100%, 오른쪽 30%
+    progress: { leftWidth: "100%", rightWidth: "30%" },
   },
   "영구 정지": {
     className: penaltyStyles.permanent_ban_status,
-    progress: { leftWidth: "100%", rightWidth: "100%" }, // 영구정지: 모든 바 100%
+    progress: { leftWidth: "100%", rightWidth: "100%" },
   },
 };
 
 // 패널티 타입별 배지 CSS 클래스 설정
-// 객체 키는 따옴표 없이도 사용 가능 (유효한 식별자인 경우)
-const typeBadgeClasses = {
-  경고: penaltyStyles.warning_badge, // 경고 배지 스타일
-  주의: penaltyStyles.caution_badge, // 주의 배지 스타일
-  정지: penaltyStyles.stop_badge, // 정지 배지 스타일
-  제재: penaltyStyles.sanction_badge, // 제재 배지 스타일
+// Record<PenaltyType, string>: 패널티 타입을 키로, CSS 클래스명을 값으로 하는 객체
+const typeBadgeClasses: Record<PenaltyType, string> = {
+  경고: penaltyStyles.warning_badge,
+  주의: penaltyStyles.caution_badge,
+  정지: penaltyStyles.stop_badge,
+  제재: penaltyStyles.sanction_badge,
 };
 
 /* ========================================
-   메인 React 컴포넌트
+   메인 React 컴포넌트 (Main Component)
    - React 함수형 컴포넌트 (Function Component)
    - export default로 내보내서 다른 파일에서 import 가능
 ======================================== */
@@ -144,7 +161,6 @@ export default function PenaltyContent() {
 
   // 주의 라벨 활성화 조건 (이용정지 또는 영구정지일 때)
   const isCautionActive =
-    userStatus.currentStatus === "이용 정지" ||
     userStatus.currentStatus === "이용 정지 15일" ||
     userStatus.currentStatus === "영구 정지";
 
@@ -277,3 +293,43 @@ export default function PenaltyContent() {
     </main>
   );
 }
+
+/* ========================================
+   📚 학습 정리 및 추천 학습 순서
+======================================== */
+
+/*
+🎯 이 컴포넌트에서 배운 핵심 개념들:
+
+1. React 기초:
+   - 함수형 컴포넌트 구조
+   - JSX 문법과 JavaScript 표현식 삽입 {}
+   - 조건부 렌더링 (삼항 연산자)
+   - 리스트 렌더링 (.map(), key prop)
+
+2. TypeScript 기초:
+   - type과 interface 정의
+   - union 타입 (|)
+   - Record 타입
+   - 타입 단언 (as)
+
+3. JavaScript ES6+ 문법:
+   - 구조 분해 할당 (destructuring)
+   - 템플릿 리터럴 (`${}`)
+   - 화살표 함수 (map의 콜백)
+   - 논리 연산자 (||)
+
+4. CSS 모듈:
+   - import와 사용법
+   - 클래스명 동적 결합
+   - 인라인 스타일 객체 사용법
+
+5. 접근성 (Accessibility):
+   - ARIA 속성 (role, aria-label, aria-hidden)
+   - 의미적 HTML 태그 사용 (<time>, <main>, <section>)
+
+📈 추천 학습 순서:
+1. React JSX 문법과 컴포넌트 → 2. TypeScript 기본 타입과 인터페이스
+3. JavaScript 배열 메소드 (.map(), .filter()) → 4. CSS 모듈과 스타일링
+5. 조건부 렌더링과 리스트 렌더링 → 6. 접근성 기본 개념
+*/
