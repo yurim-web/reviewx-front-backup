@@ -138,7 +138,7 @@
 
 /* Campaign List */
 .campaign_list {
-  padding: 16px 40px 0px 40px;
+  padding: 16px 40px 80px 40px;
   display: flex;
   flex-direction: column;
   gap: 24px;

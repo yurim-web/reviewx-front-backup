@@ -13,8 +13,6 @@
   font-weight: 500;
   line-height: 18px; /* 100% */
   letter-spacing: -0.36px;
-
-  padding-bottom: 24px;
 }
 
 /* 패널티 단계 섹션 */
@@ -127,7 +125,6 @@
 .penalty_history_section {
   padding-top: 0;
 }
-
 .penalty_list {
   display: flex;
   flex-direction: column;
@@ -180,4 +177,101 @@
   font-weight: 500;
   line-height: 14px; /* 100% */
   letter-spacing: -0.28px;
+}
+
+/* 패널티 상태별 스타일 */
+.penalty_status_base {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 1단계 = 이용가능 */
+.active_status {
+  color: #3c7cf2; /* 파란색 - 활동 가능 */
+}
+
+.warning_status {
+  color: #ff6600; /* 주황색 - 경고 조치 */
+}
+
+.suspension_status {
+  color: #ff4040; /* 빨간색 - 이용 정지 */
+}
+
+.permanent_ban_status {
+  color: #444444; /* 검정색 - 영구 정지 */
+}
+
+/* 진행바 오른쪽 채우기 */
+.right_stage_bar_fill {
+  height: 100%;
+  background: #ff0000; /* 빨간색 */
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* 주의 라벨 활성화 상태 */
+/* 패널티가 이용정지 or 영구정지일때만 활성화 됨! */
+.caution_label_active {
+  color: #ff0000; /* 빨간색으로 변경 */
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+/* 패널티 타입별 배지 색상  */
+/* 배지 - 경고 */
+.warning_badge {
+  background: #ff6600;
+}
+
+/* 배지 - 주의 */
+.caution_badge {
+  background: #ff0000;
+}
+
+/* 배지 - 정지 */
+.stop_badge {
+  background: #333333;
+}
+
+/* 배지 - 제재 */
+.sanction_badge {
+  background: #848484;
+}
+
+/* 빈 상태 스타일 */
+.empty_penalty_state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 0;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+.empty_penalty_message {
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* 패널티 내역 타이틀 */
+.penalty_history_title {
+  color: #444;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 18px; /* 100% */
+  letter-spacing: -0.36px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #d9d9d9;
 }
