@@ -28,8 +28,15 @@ export default function Home() {
     // React Fragment (<>...</>) 사용
     // 불필요한 div 래퍼 없이 여러 요소를 그룹화할 수 있습니다
     <>
-      {/* 메인 메뉴 컴포넌트 */}
+      {/* 메인 메뉴 컴포넌트 - 헤더(80px) 밑에 고정 */}
       <MainMenu />
+
+      {/* 
+        레이아웃 시프트 방지를 위한 placeholder 
+        - 헤더(80px) + MainMenu(약 69px) = 149px
+        - fixed된 헤더와 메뉴가 콘텐츠를 가리지 않도록 공간 확보
+      */}
+      <div style={{ height: "149px" }}></div>
 
       {/* ⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️ == 메인 콘텐츠 영역 == ⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️ */}
       <article className={styles.container}>

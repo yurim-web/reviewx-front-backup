@@ -1,49 +1,62 @@
-/* 출금 신청 페이지 스타일 */
+/* ============================================
+   출금 신청 페이지 전체 레이아웃
+   ============================================ */
+
+/* 페이지 전체 배경 */
 .request_page {
   background-color: #f2f2f2;
   min-height: 100vh;
   width: 100%;
 }
 
-/* 메인 컨텐츠 */
+/* 메인 컨텐츠 영역 (흰색 배경) */
 .main_content {
   background-color: white;
   max-width: 1000px;
   margin: 0 auto;
   min-height: calc(100vh - 80px);
-  padding-bottom: 100px;
+  padding-bottom: 80px;
 }
 
+/* 컨테이너 */
 .container {
   margin: 0 auto;
+  padding-top: 80px;
   /* padding: 0 40px; */
 }
 
-/* 제목 */
+/* ============================================
+   페이지 제목 영역
+   ============================================ */
+
+/* 페이지 제목 "포인트 출금 신청" */
 .page_title {
-  font-family: "Pretendard", sans-serif;
-  font-weight: 700;
-  font-size: 20px;
-  line-height: 20px;
-  letter-spacing: -0.4px;
-  color: #444444;
-  margin: 0;
   padding: 24px 40px;
+  color: #444;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 20px; /* 100% */
+  letter-spacing: -0.4px;
 }
 
+/* 제목 아래 구분선 */
 .title_divider {
   width: 100%;
   height: 0.5px;
   background-color: #d9d9d9;
 }
 
-/* 보유 포인트 섹션 */
+/* ============================================
+   보유 포인트 표시 영역
+   ============================================ */
+
+/* 보유 포인트 전체 섹션 */
 .available_points_section {
   padding: 40px;
 }
 
+/* "보유 포인트" 라벨 */
 .points_label {
-  font-family: "Pretendard", sans-serif;
   font-weight: 500;
   font-size: 18px;
   line-height: 18px;
@@ -53,14 +66,15 @@
   margin-bottom: 16px;
 }
 
+/* 포인트 금액과 단위를 감싸는 컨테이너 */
 .points_amount {
   display: flex;
   align-items: baseline;
   gap: 4px;
 }
 
+/* 포인트 숫자 (예: 100,000) */
 .amount_number {
-  font-family: "Pretendard", sans-serif;
   font-weight: 700;
   font-size: 40px;
   line-height: 40px;
@@ -68,8 +82,8 @@
   color: #444444;
 }
 
+/* 포인트 단위 (P) */
 .amount_unit {
-  font-family: "Pretendard", sans-serif;
   font-weight: 500;
   font-size: 40px;
   line-height: 40px;
@@ -77,7 +91,7 @@
   color: #848484;
 }
 
-/* 구분선 */
+/* 보유 포인트 섹션 아래 구분선 */
 .available_points_section::after {
   content: "";
   display: block;
@@ -87,22 +101,32 @@
   margin-top: 40px;
 }
 
-/* 폼 섹션 */
+/* ============================================
+   폼 입력 영역
+   ============================================ */
+
+/* 폼 전체 섹션 (예금주, 은행, 계좌번호, 출금신청 등) */
 .form_section {
   padding: 0px 40px 40px 40px;
   display: flex;
   flex-direction: column;
-  gap: 26px;
+  gap: 20px;
 }
 
+/* 각 폼 그룹 (라벨 + 입력필드) */
 .form_group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
+/* 출금신청 입력 필드의 위쪽 여백 */
+.withdrawal_amount_group {
+  margin-top: 20px;
+}
+
+/* 폼 라벨 (예금주, 은행, 계좌번호 등) */
 .form_label {
-  font-family: "Pretendard", sans-serif;
   font-weight: 500;
   font-size: 14px;
   line-height: 14px;
@@ -110,6 +134,7 @@
   color: #444444;
 }
 
+/* 입력 필드 기본 스타일 */
 .form_input {
   width: 100%;
   height: 56px;
@@ -117,7 +142,6 @@
   border: 1px solid #d9d9d9;
   background-color: white;
   padding: 0 20px;
-  font-family: "Pretendard", sans-serif;
   font-weight: 500;
   font-size: 16px;
   line-height: 16px;
@@ -126,81 +150,83 @@
   box-sizing: border-box;
 }
 
+/* 입력 필드 플레이스홀더 */
 .form_input::placeholder {
   color: #999999;
 }
 
+/* 입력 필드 포커스 상태 */
 .form_input:focus {
   outline: none;
   border-color: #444444;
 }
 
+/* 비활성화된 입력 필드 (예금주, 은행 등) */
 .form_input.disabled {
   background-color: #f6f6f6;
   color: #999999;
   cursor: not-allowed;
 }
 
+/* 에러 상태의 입력 필드 */
 .form_input.error {
-  border-color: #ff4444;
+  border-color: #ff4040;
 }
 
-/* 에러 메시지 */
+/* ============================================
+   에러 메시지
+   ============================================ */
+
+/* 에러 메시지 텍스트 */
 .error_message {
-  overflow: hidden;
   color: #ff4040;
   font-size: 14px;
   font-weight: 600;
   line-height: 14px; /* 100% */
   letter-spacing: -0.28px;
-
   margin-top: 12px;
 }
 
-/* 헬퍼 텍스트 */
-.helper_text {
-  font-family: "Pretendard", sans-serif;
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 14px;
-  letter-spacing: -0.24px;
-  color: #848484;
-  margin-top: 4px;
-}
+/* ============================================
+   출금 안내 사항 영역
+   ============================================ */
 
-/* 안내 사항 섹션 */
+/* 안내 사항 전체 섹션 */
 .notice_section {
-  padding: 0px 40px 40px 40px;
+  padding: 0px 40px 0px 40px;
 }
 
+/* "출금 안내 사항" 제목 */
 .notice_title {
-  font-family: "Pretendard", sans-serif;
-  font-weight: 500;
+  color: #444;
   font-size: 14px;
-  line-height: 14px;
+  font-weight: 500;
+  line-height: 14px; /* 100% */
   letter-spacing: -0.28px;
-  color: #444444;
-  margin: 0 0 16px 0;
+  margin: 0 0 8px 0;
 }
 
+/* 안내 사항 리스트 컨테이너 */
 .notice_list {
   list-style: none;
   padding: 0;
   margin: 0;
   color: #848484;
+  padding-left: 10px;
 }
 
+/* 안내 사항 각 항목 */
 .notice_list li {
-  font-family: "Pretendard", sans-serif;
-  font-weight: 500;
-  font-size: 13px;
-  line-height: 25px;
-  letter-spacing: -0.26px;
   color: #848484;
-  padding-left: 19.5px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 25px; /* 192.308% */
+  letter-spacing: -0.26px;
+  padding-left: 13px;
   position: relative;
 }
 
+/* 안내 사항 불릿 포인트 (•) */
 .notice_list li::before {
   content: "•";
   position: absolute;
@@ -208,82 +234,35 @@
   color: #848484;
 }
 
-/* 출금 신청 버튼 */
+/* ============================================
+   출금 신청 버튼
+   ============================================ */
 
+/* 버튼 섹션 컨테이너 */
 .submit_button_section {
-  padding: 0px 40px 0px 40px;
+  padding: 40px 40px 0px 40px;
 }
+
+/* 출금 신청 버튼 */
 .submit_button {
   width: 100%;
   height: 56px;
   background-color: #555555;
   border-radius: 8px;
   border: none;
-  font-family: "Pretendard", sans-serif;
-  font-weight: 700;
+  cursor: pointer;
+
+  /* 버튼속 글자 css */
   font-size: 16px;
-  line-height: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
   letter-spacing: -0.32px;
   color: white;
-  cursor: pointer;
-  margin-top: 64px;
-  transition: background-color 0.2s;
 }
 
-.submit_button:hover {
-  background-color: #444444;
-}
-
-.submit_button:active {
-  background-color: #333333;
-}
-
+/* 비활성화된 버튼 */
 .submit_button.disabled,
 .submit_button:disabled {
   background-color: #d9d9d9;
-  color: #999999;
-  cursor: not-allowed;
-}
-
-.submit_button.disabled:hover,
-.submit_button:disabled:hover {
-  background-color: #d9d9d9;
-}
-
-/* 반응형 디자인 */
-@media (max-width: 1040px) {
-  .header,
-  .main_content {
-    max-width: 100%;
-  }
-
-  .container {
-    padding: 0 20px;
-  }
-}
-
-@media (max-width: 768px) {
-  .page_title {
-    font-size: 18px;
-  }
-
-  .amount_number,
-  .amount_unit {
-    font-size: 32px;
-  }
-
-  .form_input {
-    font-size: 14px;
-    height: 48px;
-  }
-
-  .submit_button {
-    font-size: 14px;
-    height: 48px;
-  }
-
-  .notice_list li {
-    font-size: 12px;
-    line-height: 22px;
-  }
+  color: #848484;
 }

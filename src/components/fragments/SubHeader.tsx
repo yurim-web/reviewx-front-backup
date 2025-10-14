@@ -1,3 +1,12 @@
+/**
+ * 서브헤더 컴포넌트
+ * 캠페인 상세 페이지 등에서 사용되는 헤더
+ * - 뒤로가기 버튼
+ * - 가이드북 링크
+ * - 마이페이지 링크
+ * - 항상 상단에 고정됨 (position: fixed)
+ */
+
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -13,6 +22,7 @@ export default function SubHeader() {
   };
 
   return (
+    // 항상 fixed 클래스 적용
     <div className={styles.gradient_bar}>
       <div className={styles.header_controls}>
         <button className={styles.back_button} onClick={handleGoBack}>

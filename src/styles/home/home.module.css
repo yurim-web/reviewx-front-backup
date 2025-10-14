@@ -2,13 +2,20 @@
 
 /* 메인 카테고리 메뉴 부분 */
 .main_menu_container {
+  position: fixed; /* 헤더 밑에 고정 */
+  top: 80px; /* 헤더(80px) 바로 아래에 배치 */
+  left: 0;
+  right: 0;
   width: 100%;
+  max-width: 1000px; /* 최대 너비 제한 */
+  margin: 0 auto; /* 가운데 정렬 */
   padding: 24px 40px;
   display: flex;
   align-items: center;
   gap: 24px;
-
+  background-color: white; /* 배경색 추가 */
   border-bottom: 1px solid #d9d9d9;
+  z-index: 99; /* 헤더(100)보다 낮지만 콘텐츠보다는 위에 */
 }
 
 .main_menu_item {
@@ -71,11 +78,18 @@
 @media (max-width: 739px) {
   /* 메인 카테고리 메뉴 부분 */
   .main_menu_container {
+    position: fixed; /* 헤더 밑에 고정 */
+    top: 80px; /* 헤더(80px) 바로 아래에 배치 */
+    left: 0;
+    right: 0;
+    width: 100%;
     padding: 20px 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 0px;
+    background-color: white; /* 배경색 추가 */
+    z-index: 99; /* 헤더(100)보다 낮지만 콘텐츠보다는 위에 */
   }
 
   .main_menu_item {

@@ -4,6 +4,7 @@
   min-height: 100vh;
   background: white;
   position: relative;
+  padding-top: 80px;
 }
 
 /* 헤더 영역 */
