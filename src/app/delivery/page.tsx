@@ -23,10 +23,15 @@ export default function DeliveryPage() {
   const [activeFilters, setActiveFilters] = useState<{
     channels: string[];
     categories: string[];
+    sort: string;
   }>({
     channels: [],
     categories: [],
+    sort: "latest",
   });
+
+  // 마감임박 필터 상태
+  const [closingSoon, setClosingSoon] = useState(false);
 
   // 필터 변경 핸들러
   const handleFilterChange = (filters: any) => {
@@ -50,11 +55,50 @@ export default function DeliveryPage() {
           : [];
       }
 
+      // 정렬 옵션 업데이트
+      if (filters.sort !== undefined) {
+        newFilters.sort = filters.sort || "latest";
+      }
+
       return newFilters;
     });
-
-    // 여기서 실제 캠페인 필터링 로직을 추가할 수 있습니다
   };
+
+  // 필터링된 캠페인 목록
+  const filteredCampaigns = delivery_campaigns.filter((campaign) => {
+    // 카테고리 필터
+    const categoryMatch =
+      activeFilters.categories.length === 0 ||
+      activeFilters.categories.includes(campaign.subcategory);
+
+    // 채널 필터
+    const channelMatch =
+      activeFilters.channels.length === 0 ||
+      activeFilters.channels.includes(campaign.channel);
+
+    // 마감임박 필터
+    const closingSoonMatch = !closingSoon || campaign.dayCount === "마감임박";
+
+    return categoryMatch && channelMatch && closingSoonMatch;
+  });
+
+  // 정렬된 캠페인 목록
+  const sortedCampaigns = [...filteredCampaigns].sort((a, b) => {
+    switch (activeFilters.sort) {
+      case "points_high":
+        return b.points - a.points;
+      case "points_low":
+        return a.points - b.points;
+      case "recruitment_high":
+        return b.recruitment.current - a.recruitment.current;
+      case "recruitment_low":
+        return a.recruitment.current - b.recruitment.current;
+      case "latest":
+      default:
+        // 최신순 (ID 기준 내림차순)
+        return b.id.localeCompare(a.id);
+    }
+  });
 
   return (
     <>
@@ -76,6 +120,8 @@ export default function DeliveryPage() {
           categoryOptions={deliveryCategoryOptions}
           channelOptions={deliveryChannelOptions}
           sortOptions={deliverySortOptions}
+          closingSoon={closingSoon}
+          onClosingSoonChange={setClosingSoon}
         />
 
         <section className={styles.campaign_container}>
@@ -84,8 +130,8 @@ export default function DeliveryPage() {
 
           {/* 배송형 캠페인 그리드 */}
           <div className={styles.campaign_grid}>
-            {delivery_campaigns.length > 0 ? (
-              delivery_campaigns.map((campaign) => (
+            {sortedCampaigns.length > 0 ? (
+              sortedCampaigns.map((campaign) => (
                 <CampaignBox
                   key={campaign.id}
                   campaign={campaign}
@@ -95,8 +141,8 @@ export default function DeliveryPage() {
             ) : (
               <div className={styles.empty_state}>
                 <div className={styles.empty_icon}>📦</div>
-                <h3>현재 진행중인 배송형 캠페인이 없습니다</h3>
-                <p>새로운 캠페인을 기다려주세요!</p>
+                <h3>필터 조건에 맞는 배송형 캠페인이 없습니다</h3>
+                <p>다른 필터를 선택해보세요!</p>
               </div>
             )}
           </div>
