@@ -14,7 +14,7 @@ import DetailHeader from "@/components/campaign_detail/DetailHeader";
 import DetailProductInfo from "@/components/campaign_detail/DetailProductInfo";
 import DetailScheduleInfo from "@/components/campaign_detail/DetailScheduleInfo";
 import DetailImage from "@/components/campaign_detail/DetailImage";
-import DetailGuidelinesSection from "@/components/campaign_detail/DetailGuidelinesSection";
+import DetailGuidelinesSectionExperience from "@/components/campaign_detail/DetailGuidelinesSectionExperience";
 
 interface ExperienceDetailPageProps {
   params: Promise<{ id: string }>;
@@ -212,7 +212,16 @@ export default function ExperienceDetailPage({
         <DetailImage image={campaign.campaign_detail_image} />
 
         {/* 안내 사항들 */}
-        <DetailGuidelinesSection description={campaign.description} />
+        <DetailGuidelinesSectionExperience
+          description={campaign.description}
+          keyword={campaign.keyword}
+          onCopyKeyword={() => {
+            navigator.clipboard.writeText(campaign.keyword);
+            alert("키워드가 복사되었습니다!");
+          }}
+          requirements={campaign.requirements}
+          guidelineTexts={campaign.guidelineTexts}
+        />
       </section>
 
       {/* 하단 고정 영역: 그라데이션 + 신청 버튼 */}
