@@ -31,7 +31,11 @@ interface FilterBarProps {
   // 지역 필터 사용 여부
   useRegionFilter?: boolean;
   // 정렬 옵션 (외부에서 주입)
-  sortOptions?: string[];
+  sortOptions?: string[] | { value: string; label: string }[];
+  // 마감임박 필터 상태
+  closingSoon?: boolean;
+  // 마감임박 필터 변경 핸들러
+  onClosingSoonChange?: (closingSoon: boolean) => void;
 }
 
 export default function FilterBar({
@@ -41,12 +45,13 @@ export default function FilterBar({
   channelOptions,
   useRegionFilter = false,
   sortOptions = ["최신순", "인기순", "마감임박순", "포인트높은순"],
+  closingSoon = false,
+  onClosingSoonChange,
 }: FilterBarProps) {
   // 컴포넌트 외부 클릭 감지를 위한 루트 ref
   const containerRef = useRef<HTMLDivElement>(null);
 
   // 필터 상태 관리
-  const [closingSoon, setClosingSoon] = useState(false); // 마감임박 필터 활성화 상태
   const [selectedSort, setSelectedSort] = useState("최신순"); // 실제 선택된 정렬 옵션
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false); // 카테고리 모달 열림 상태
   const [isChannelModalOpen, setIsChannelModalOpen] = useState(false); // 채널 모달 열림 상태
@@ -109,7 +114,10 @@ export default function FilterBar({
   };
 
   // 정렬 선택/해제 핸들러 (모달 내부용)
-  const handleSortToggle = (sort: string) => {
+  const handleSortToggle = (
+    option: string | { value: string; label: string }
+  ) => {
+    const sort = typeof option === "string" ? option : option.value;
     setTempSort(sort);
   };
 
@@ -126,7 +134,10 @@ export default function FilterBar({
   };
 
   // 모달 내에서 카테고리 선택/해제 핸들러
-  const handleCategoryToggle = (category: string) => {
+  const handleCategoryToggle = (
+    option: string | { value: string; label: string }
+  ) => {
+    const category = typeof option === "string" ? option : option.value;
     if (category === "전체") {
       // "전체" 선택 시: 모든 항목이 선택되어 있으면 전체 해제, 아니면 전체 선택
       const allCategories = categoryOptions.filter((opt) => opt !== "전체");
@@ -146,7 +157,10 @@ export default function FilterBar({
   };
 
   // 모달 내에서 채널 선택/해제 핸들러
-  const handleChannelToggle = (channel: string) => {
+  const handleChannelToggle = (
+    option: string | { value: string; label: string }
+  ) => {
+    const channel = typeof option === "string" ? option : option.value;
     if (channel === "전체") {
       // "전체" 선택 시: 모든 항목이 선택되어 있으면 전체 해제, 아니면 전체 선택
       const allChannels = channelOptions.filter((opt) => opt !== "전체");
@@ -310,8 +324,7 @@ export default function FilterBar({
                 closingSoon ? styles.filter_button_active : ""
               }`}
               onClick={() => {
-                setClosingSoon(!closingSoon);
-                onFilterChange?.({ closingSoon: !closingSoon });
+                onClosingSoonChange?.(!closingSoon);
               }}
             >
               <div className={styles.filter_icon}></div>

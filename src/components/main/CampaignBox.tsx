@@ -38,11 +38,28 @@ export default function CampaignBox({
   campaign,
   basePath = "/campaign",
 }: CampaignBoxProps) {
+  // 캠페인 타입에 따른 올바른 경로 결정
+  const getCampaignPath = (campaign: any) => {
+    switch (campaign.category) {
+      case "배송형":
+        return `/delivery/${campaign.id}`;
+      case "방문형":
+        return `/visit/${campaign.id}`;
+      case "구매평":
+        return `/review/${campaign.id}`;
+      case "체험단":
+        return `/experience/${campaign.id}`;
+      case "기자단":
+        return `/reporter/${campaign.id}`;
+      default:
+        return `${basePath}/${campaign.id}`;
+    }
+  };
+
   return (
     // Next.js Link 컴포넌트 사용
-    // href에 동적 경로를 설정: /campaign/[id] 형태
-    // campaign.id가 1이면 /campaign/1로 이동합니다
-    <Link href={`${basePath}/${campaign.id}`} className={styles.campaign_link}>
+    // href에 동적 경로를 설정: 캠페인 타입에 따라 올바른 경로로 이동
+    <Link href={getCampaignPath(campaign)} className={styles.campaign_link}>
       <div className={styles.campaign_box}>
         {/* 상단 라벨 - D-숫자 동적 표시 (dayCount가 있을 때만) */}
         {campaign.dayCount && (

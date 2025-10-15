@@ -1,8 +1,8 @@
 /**
  * 캠페인 헤더 컴포넌트
- * 
+ *
  * 목적: 캠페인 상세 페이지 상단의 태그와 포인트 정보를 표시합니다.
- * 
+ *
  * 주요 기능:
  * - 카테고리 아이콘 및 태그 표시
  * - 서브카테고리 태그 표시
@@ -16,16 +16,17 @@ import styles from "../../styles/campaign/campaign_detail.module.css";
  * TypeScript: 컴포넌트에 전달되는 데이터의 타입을 정의합니다.
  */
 interface CampaignHeaderProps {
-  categoryIcon: string;    // 카테고리 아이콘 이미지 경로
-  category: string;         // 카테고리 이름 (예: 배송형, 방문형 등)
-  subcategory: string;      // 서브카테고리 이름 (예: 뷰티, 푸드 등)
-  points: number;           // 포인트 (숫자)
-  altText?: string;         // 이미지 alt 속성 (선택사항)
+  categoryIcon: string; // 카테고리 아이콘 이미지 경로
+  category: string; // 카테고리 이름 (예: 배송형, 방문형 등)
+  subcategory: string; // 서브카테고리 이름 (예: 뷰티, 푸드 등)
+  region?: string; // 지역 정보 (예: 서울 강남/서초) - 선택사항
+  points: number; // 포인트 (숫자)
+  altText?: string; // 이미지 alt 속성 (선택사항)
 }
 
 /**
  * 캠페인 헤더 컴포넌트
- * 
+ *
  * @param props - CampaignHeaderProps 타입의 속성들
  * @returns 태그와 포인트 정보를 담은 JSX 요소
  */
@@ -33,6 +34,7 @@ export default function CampaignHeader({
   categoryIcon,
   category,
   subcategory,
+  region,
   points,
   altText = "category_tag",
 }: CampaignHeaderProps) {
@@ -44,17 +46,16 @@ export default function CampaignHeader({
       {/* 왼쪽: 태그 정보 */}
       <div className={styles.tag_icon_container}>
         {/* 카테고리 아이콘 */}
-        <img
-          className={styles.tag_icon}
-          src={categoryIcon}
-          alt={altText}
-        />
-        
+        <img className={styles.tag_icon} src={categoryIcon} alt={altText} />
+
         {/* 카테고리 태그 (예: 배송형) */}
         <div className={styles.tag_box}>{category}</div>
-        
+
         {/* 서브카테고리 태그 (예: 뷰티) */}
         <div className={styles.subcategory_tag}>{subcategory}</div>
+
+        {/* 지역 태그 (예: 서울 강남/서초) - 지역 정보가 있을 때만 표시 */}
+        {region && <div className={styles.region_tag}>{region}</div>}
       </div>
 
       {/* 오른쪽: 포인트 정보 */}
@@ -77,4 +78,3 @@ export default function CampaignHeader({
 // 3. 선택적 속성 (optional): altText?: string
 // 4. 기본값 설정: altText = "category_tag"
 // 5. toLocaleString(): 숫자 포맷팅 메서드
-

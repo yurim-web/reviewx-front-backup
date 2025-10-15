@@ -8,9 +8,9 @@ interface ModalFilterProps {
   onClose: () => void;
   title: string;
   sectionTitle?: string; // 섹션 제목 (카테고리, 채널 등)
-  options: string[];
+  options: string[] | { value: string; label: string }[];
   selectedValues: string | string[];
-  onOptionChange: (option: string) => void;
+  onOptionChange: (option: string | { value: string; label: string }) => void;
   onApply: () => void;
   onReset: () => void;
   type?: "checkbox" | "radio";
@@ -34,17 +34,21 @@ export default function ModalFilter({
 }: ModalFilterProps) {
   if (!isOpen) return null;
 
-  const isSelected = (option: string) => {
+  const isSelected = (option: string | { value: string; label: string }) => {
+    const optionValue = typeof option === "string" ? option : option.value;
     if (Array.isArray(selectedValues)) {
-      if (option === "전체") {
+      if (optionValue === "전체") {
         return (
           selectedValues.length ===
-          options.filter((opt) => opt !== "전체").length
+          options.filter((opt) => {
+            const optValue = typeof opt === "string" ? opt : opt.value;
+            return optValue !== "전체";
+          }).length
         );
       }
-      return selectedValues.includes(option);
+      return selectedValues.includes(optionValue);
     }
-    return selectedValues === option;
+    return selectedValues === optionValue;
   };
 
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -81,17 +85,24 @@ export default function ModalFilter({
                 : styles.options_grid
             }
           >
-            {options.map((option) => (
-              <label key={option} className={styles.option_item}>
+            {options.map((option, index) => (
+              <label
+                key={
+                  typeof option === "object" ? option.value || index : option
+                }
+                className={styles.option_item}
+              >
                 <input
                   type={type}
                   name={type === "radio" ? "modal-option" : undefined}
-                  value={option}
+                  value={typeof option === "object" ? option.value : option}
                   checked={isSelected(option)}
                   onChange={() => onOptionChange(option)}
                   className={styles.option_checkbox}
                 />
-                <span className={styles.option_label}>{option}</span>
+                <span className={styles.option_label}>
+                  {typeof option === "object" ? option.label : option}
+                </span>
               </label>
             ))}
           </div>

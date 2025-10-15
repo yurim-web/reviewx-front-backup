@@ -14,8 +14,12 @@ import ApplicationModal from "@/components/campaign/ApplicationModal";
 
 // CSS 모듈 import
 import styles from "../../../styles/campaign/campaign_detail.module.css";
-import { mockCampaigns_1 } from "@/data/main/mainFirstCampaigns";
-import { mockCampaigns_2 } from "@/data/main/mainSecondCampaigns";
+// 각 캠페인 타입별 실제 데이터를 import
+import { deliveryCampaigns } from "@/data/delivery/deliveryCampaigns";
+import { visitCampaigns } from "@/data/visit/visitCampaigns";
+import { reviewCampaigns } from "@/data/review/reviewCampaigns";
+import { experienceCampaigns } from "@/data/experience/experienceCampaigns";
+import { reporterCampaigns } from "@/data/reporter/reporterCampaigns";
 import MainMenu from "@/components/main/MainMenu";
 import DetailHeader from "@/components/campaign_detail/DetailHeader";
 import DetailProductInfo from "@/components/campaign_detail/DetailProductInfo";
@@ -45,8 +49,14 @@ export default function CampaignDetailPage({
   // ========================================
 
   // URL에서 추출된 ID로 캠페인 데이터 조회
-  // 모든 캠페인 배열에서 해당 ID를 가진 캠페인을 찾습니다
-  const allCampaigns = [...mockCampaigns_1, ...mockCampaigns_2];
+  // 모든 캠페인 타입의 데이터에서 해당 ID를 가진 캠페인을 찾습니다
+  const allCampaigns = [
+    ...deliveryCampaigns,
+    ...visitCampaigns,
+    ...reviewCampaigns,
+    ...experienceCampaigns,
+    ...reporterCampaigns,
+  ];
   const campaign = allCampaigns.find((c) => c.id === resolvedParams.id);
 
   // 모달 열림 상태 관리
