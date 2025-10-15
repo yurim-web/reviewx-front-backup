@@ -51,6 +51,7 @@ export default function ApplicationModalType3({
         <div className={styles.modal_content}>
           {/* 신청자 채널 정보 섹션 */}
           <div className={styles.section}>
+            <h3 className={styles.section_title}>신청자 정보</h3>
             <div className={styles.channel_container}>
               <div className={styles.channel_icon}></div>
               <div className={styles.channel_info}>
