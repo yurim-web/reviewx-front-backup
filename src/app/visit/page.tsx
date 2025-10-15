@@ -119,7 +119,7 @@ export default function VisitPage() {
     if (activeFilters.categories.length > 0) {
       console.log("📂 카테고리 필터 적용:", activeFilters.categories);
       filtered = filtered.filter((campaign) =>
-        activeFilters.categories.includes(campaign.category)
+        activeFilters.categories.includes(campaign.subcategory)
       );
     }
 
@@ -135,7 +135,7 @@ export default function VisitPage() {
     if (activeFilters.regions.length > 0) {
       console.log("🌍 지역 필터 적용:", activeFilters.regions);
       filtered = filtered.filter((campaign) =>
-        activeFilters.regions.includes(campaign.subcategory)
+        activeFilters.regions.includes(campaign.region)
       );
     }
 
@@ -212,6 +212,8 @@ export default function VisitPage() {
           channelOptions={visitChannelOptions}
           useRegionFilter={useVisitRegionFilter}
           sortOptions={visitSortOptions}
+          closingSoon={closingSoon}
+          onClosingSoonChange={setClosingSoon}
         />
 
         <section className={styles.campaign_container}>
