@@ -53,6 +53,19 @@
   letter-spacing: -0.28px;
 }
 
+/* 지역 태그 (서울 강남/서초 등) */
+.region_tag {
+  padding: 8px;
+  border-radius: 4px;
+  border: none;
+  background: rgba(0, 123, 255, 0.1); /* 연한 파란색 배경 */
+  color: #007bff;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
 /* 포인트 표시 */
 .points {
   padding: 8px;
@@ -385,6 +398,13 @@
   font-weight: 500;
   line-height: 26px;
   letter-spacing: -0.32px;
+}
+
+/* 홍보 링크 스타일 */
+.promotion_link {
+  color: #333;
+  cursor: pointer;
+  word-break: break-all;
 }
 
 /* ===== 안내 사항 섹션 ===== */
@@ -757,6 +777,8 @@
     line-height: 22px;
     letter-spacing: -0.28px;
   }
+
+
 
   /* ===== 안내 사항 섹션 ===== */
   .requirement_container {
