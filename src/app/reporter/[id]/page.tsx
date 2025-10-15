@@ -14,7 +14,7 @@ import DetailHeader from "@/components/campaign_detail/DetailHeader";
 import DetailProductInfo from "@/components/campaign_detail/DetailProductInfo";
 import DetailScheduleInfo from "@/components/campaign_detail/DetailScheduleInfo";
 import DetailImage from "@/components/campaign_detail/DetailImage";
-import DetailGuidelinesSection from "@/components/campaign_detail/DetailGuidelinesSection";
+import DetailGuidelinesSectionReporter from "@/components/campaign_detail/DetailGuidelinesSectionReporter";
 
 interface ReporterDetailPageProps {
   params: Promise<{ id: string }>;
@@ -184,42 +184,15 @@ export default function ReporterDetailPage({
         <DetailImage image={campaign.campaign_detail_image} />
 
         {/* 안내 사항들 */}
-        <DetailGuidelinesSection
+        <DetailGuidelinesSectionReporter
           description={campaign.description}
-          requirements={[
-            {
-              icon: "/images/campaign_detail/keyword_icon.svg",
-              alt: "키워드아이콘",
-              text: "키워드 삽입",
-            },
-            {
-              icon: "/images/campaign_detail/product_link_icon.svg",
-              alt: "제품링크아이콘",
-              text: "관련 링크 삽입",
-            },
-            {
-              icon: "/images/campaign_detail/text_icon.svg",
-              alt: "텍스트아이콘",
-              text: "2,000자 이상",
-            },
-            {
-              icon: "/images/campaign_detail/photo_icon.svg",
-              alt: "사진아이콘",
-              text: "15장 이상",
-            },
-            {
-              icon: "/images/campaign_detail/video_icon.svg",
-              alt: "비디오아이콘",
-              text: "리포팅 영상 2개",
-            },
-          ]}
-          guidelineTexts={[
-            "기자단 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
-            "★★기자단 활동은 전문적이고 객관적인 시각으로 작성해주세요!! 해당 분야에 대한 깊이있는 지식과 경험을 바탕으로 작성해주세요★",
-            "★제공된 기자단 활동을 모두 활용하여 작성해주세요 - 전문적인 리포팅 필수 - 객관적이고 정확한 정보 제공 - 독자에게 유용한 정보 포함<br />★기자단 리포팅은 전문적이고 신뢰성 있게 작성 부탁드립니다★<br />★활동 시 실제 경험하는 모습 사진 필수 첨부해주세요★<br />★기자단 활동에 대한 평가는 객관적으로 작성해주세요★",
-            "★기자단 캠페인 입니다★ -페이백은 클라우드리뷰 캐쉬로 지급되며 캐쉬환급시 3.3% 공제 후 지급됩니다 <br /> 1. 본 캠페인은 [기자단]으로 진행되며, 포스팅은 업체 홍보목적으로 이용될 수 있습니다<br /> 2. 당첨당일 기자단 활동 시작해주세요<br /> 3. 기간 내 리포팅 및 작성 등록 불가할 경우 페이백 미지급 및 선정취소<br /> 4. 안내된 사항 필수로 숙지하시어 진행해 주셔야 합니다<br /> ★기자단 리포팅 작성 시에는 전문적이고 객관적으로 작성해주세요<br /> ★ [본인이 직접 경험하고 분석한 내용에 대하여 작성해주세요]",
-            "- 미준수 시 처리 방향에 대한 책임은 기자단에게 있는 점 주의 부탁드립니다 <br /> - 활동 불가 및 활동 착오할 경우 : 페이백 미지급 및 선정취소 <br /> - 리포팅 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 전문적인 장비로 촬영해주세요 - 성의없는 리포팅은 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 기자단 활동 정보는 정확하게 기재해주세요 (활동 장소, 시간, 참여자 등)<br />- 제공받은 혜택으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 혜택 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리포팅 등록기간 내 리포팅 미등록시 서비스이용료 및 혜택 가격에 대하여 비용이 청구됩니다.<br /> - 리포팅 등록기간 필수로 지켜주시기 바랍니다. <br />- 기자단의 경우 활동 내용과 함께 관련 정보, 참고 자료등을 기재해주세요. <br />- 기자단 캠페인의 경우 전문적인 리포팅을 꼭 해주세요",
-          ]}
+          keyword={campaign.keyword}
+          onCopyKeyword={() => {
+            navigator.clipboard.writeText(campaign.keyword);
+            alert("키워드가 복사되었습니다!");
+          }}
+          requirements={campaign.requirements}
+          guidelineTexts={campaign.guidelineTexts}
         />
       </section>
 
