@@ -138,7 +138,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       registrationPeriod: "2025-02-12 ~ 2025-02-15",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "블로그",
+    channel: "네이버 블로그",
     keyword: "#패션기자단 #패션트렌드 #패션리뷰 #블로그 #전문리뷰",
     requirements: [
       "text_1500",
@@ -177,7 +177,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       registrationPeriod: "2025-02-13 ~ 2025-02-16",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "블로그",
+    channel: "네이버 블로그",
     keyword: "#푸드기자단 #맛집리뷰 #식품리뷰 #블로그 #전문리뷰",
     requirements: [
       "text_1800",
@@ -200,7 +200,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     category: "기자단",
     categoryIcon: "/images/brand_logo/youtube.svg",
     image: "/images/main/campaign_img/eximg_5.png",
-    subcategory: "여행",
+    subcategory: "여가",
     points: 90000,
     description: "국내외 여행지 리포팅 기자단",
     recruitment: {
@@ -279,7 +279,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     category: "기자단",
     categoryIcon: "/images/brand_logo/youtube.svg",
     image: "/images/main/campaign_img/eximg_7.png",
-    subcategory: "게임",
+    subcategory: "디지털",
     points: 70000,
     description: "게임 리뷰 및 소식 리포팅 기자단",
     recruitment: {
@@ -318,7 +318,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     category: "기자단",
     categoryIcon: "/images/brand_logo/naverblog.svg",
     image: "/images/main/campaign_img/eximg_8.png",
-    subcategory: "건강",
+    subcategory: "뷰티",
     points: 65000,
     description: "건강 및 웰빙 정보 리포팅 기자단",
     recruitment: {
@@ -334,7 +334,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       registrationPeriod: "2025-02-11 ~ 2025-02-14",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "블로그",
+    channel: "네이버 블로그",
     keyword: "#건강기자단 #건강정보 #웰빙리뷰 #블로그 #전문리뷰",
     requirements: [
       "text_1600",
@@ -451,7 +451,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       registrationPeriod: "2025-02-14 ~ 2025-02-17",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "블로그",
+    channel: "네이버 블로그",
     keyword: "#반려동물기자단 #펫케어 #반려동물리뷰 #블로그 #전문리뷰",
     requirements: [
       "text_1600",
@@ -529,7 +529,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       registrationPeriod: "2025-02-15 ~ 2025-02-18",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "블로그",
+    channel: "네이버 블로그",
     keyword: "#부동산기자단 #부동산시장 #부동산분석 #블로그 #전문리뷰",
     requirements: [
       "text_2000",
@@ -646,7 +646,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       registrationPeriod: "2025-02-16 ~ 2025-02-19",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "블로그",
+    channel: "네이버 블로그",
     keyword: "",
     requirements: [
       "text_1800",

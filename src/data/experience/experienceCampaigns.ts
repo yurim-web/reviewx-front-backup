@@ -56,7 +56,7 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       registrationPeriod: "2025-02-17 ~ 2025-02-24",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "올리브영",
+    channel: "네이버 블로그",
     keyword: "#스킨케어체험 #뷰티체험단 #화장품체험 #올리브영 #솔직후기",
     requirements: [
       "text_2000",
@@ -79,7 +79,7 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
     category: "체험단",
     categoryIcon: "/images/brand_logo/youtube.svg",
     image: "/images/main/campaign_img/eximg_2.png",
-    subcategory: "건강",
+    subcategory: "뷰티",
     points: 45000,
     description: "건강 관리 제품 체험단 모집",
     recruitment: {
@@ -134,7 +134,7 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       registrationPeriod: "2025-02-15 ~ 2025-02-22",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "블로그",
+    channel: "네이버 블로그",
     keyword: "#홈데코체험 #인테리어 #체험단 #블로그 #홈스타일링",
     requirements: [
       "text_1200",
@@ -208,7 +208,7 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       registrationPeriod: "2025-02-17 ~ 2025-02-24",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "쿠팡",
+    channel: "인스타그램",
     keyword: "#식품체험 #건강식품 #유기농 #쿠팡 #맛후기",
     requirements: [
       "text_1000",
@@ -245,7 +245,7 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       registrationPeriod: "2025-02-18 ~ 2025-02-25",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버쇼핑",
+    channel: "릴스",
     keyword: "#디지털체험 #최신기술 #가전제품 #네이버쇼핑 #테크리뷰",
     requirements: [
       "text_2500",
@@ -282,7 +282,7 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       registrationPeriod: "2025-02-20 ~ 2025-02-27",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "블로그",
+    channel: "네이버 블로그",
     keyword: "#반려동물체험 #펫케어 #펫용품 #블로그 #반려동물리뷰",
     requirements: [
       "text_1300",
@@ -303,7 +303,7 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
     category: "체험단",
     categoryIcon: "/images/brand_logo/youtube.svg",
     image: "/images/main/campaign_img/eximg_8.png",
-    subcategory: "스포츠",
+    subcategory: "여가",
     points: 40000,
     description: "스포츠 용품 체험단",
     recruitment: {
@@ -356,7 +356,7 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       registrationPeriod: "2025-02-21 ~ 2025-02-28",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "올리브영",
+    channel: "네이버 블로그",
     keyword: "#뷰티체험 #화장품리뷰 #올리브영 #뷰티블로거 #메이크업",
     requirements: [
       "text_2200",
@@ -430,7 +430,7 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       registrationPeriod: "2025-02-17 ~ 2025-02-24",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "블로그",
+    channel: "네이버 블로그",
     keyword: "#문화체험 #예술리뷰 #문화생활 #블로그 #아트리뷰",
     requirements: [
       "text_900",
@@ -504,7 +504,7 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       registrationPeriod: "2025-02-18 ~ 2025-02-25",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버쇼핑",
+    channel: "릴스",
     keyword: "#자동차체험 #카리뷰 #자동차용품 #네이버쇼핑 #드라이빙",
     requirements: [
       "text_2800",
@@ -599,7 +599,7 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
     category: "체험단",
     categoryIcon: "/images/brand_logo/coupang.svg",
     image: "/images/main/campaign_img/eximg_3.png",
-    subcategory: "건강",
+    subcategory: "뷰티",
     points: 37000,
     description: "프리미엄 건강식품 체험단",
     recruitment: {
@@ -615,7 +615,7 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       registrationPeriod: "2025-02-19 ~ 2025-02-26",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "쿠팡",
+    channel: "인스타그램",
     keyword: "#건강식품체험 #영양제리뷰 #건강관리 #쿠팡 #웰니스",
     requirements: [
       "text_1100",

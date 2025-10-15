@@ -56,7 +56,7 @@ export const visitCampaigns: VisitCampaignData[] = [
       purchasePeriod: "2025-02-14 ~ 2025-02-17",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "블로그",
+    channel: "네이버 블로그",
     keyword: "#맛집추천 #강남식당 #방문후기 #솔직리뷰",
     guidelineTexts: [
       "식당 방문형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
@@ -137,7 +137,7 @@ export const visitCampaigns: VisitCampaignData[] = [
       purchasePeriod: "2025-02-12 ~ 2025-02-15",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "올리브영",
+    channel: "인스타그램",
     keyword: "#뷰티샵추천 #압구정네일샵 #미용실후기 #뷰티체험",
     guidelineTexts: [
       "뷰티샵 방문형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
@@ -217,7 +217,7 @@ export const visitCampaigns: VisitCampaignData[] = [
       purchasePeriod: "2025-02-14 ~ 2025-02-17",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버쇼핑",
+    channel: "네이버 블로그",
     keyword: "#명동쇼핑몰 #쇼핑투어 #명동쇼핑추천 #패션쇼핑",
     guidelineTexts: [
       "헬스장 방문형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
@@ -337,7 +337,7 @@ export const visitCampaigns: VisitCampaignData[] = [
       purchasePeriod: "2025-02-11 ~ 2025-02-14",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "쿠팡",
+    channel: "유튜브",
     keyword: "#반려동물카페 #펫카페 #강아지카페 #분당카페",
     guidelineTexts: [
       "헬스장 방문형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
@@ -497,7 +497,7 @@ export const visitCampaigns: VisitCampaignData[] = [
       purchasePeriod: "2025-02-12 ~ 2025-02-15",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "올리브영",
+    channel: "인스타그램",
     keyword: "#프리미엄호텔 #일산호텔 #호캉스 #호텔숙박후기",
     guidelineTexts: [
       "헬스장 방문형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
@@ -537,7 +537,7 @@ export const visitCampaigns: VisitCampaignData[] = [
       purchasePeriod: "2025-02-15 ~ 2025-02-18",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버쇼핑",
+    channel: "네이버 블로그",
     keyword: "#수영장추천 #피트니스센터 #수원수영장 #수영체험",
     guidelineTexts: [
       "헬스장 방문형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
@@ -617,7 +617,7 @@ export const visitCampaigns: VisitCampaignData[] = [
       purchasePeriod: "2025-02-14 ~ 2025-02-17",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "쿠팡",
+    channel: "유튜브",
     keyword: "#프리미엄노래방 #부천노래방 #노래방후기 #엔터테인먼트",
     guidelineTexts: [
       "헬스장 방문형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",

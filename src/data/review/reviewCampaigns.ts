@@ -64,7 +64,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
       registrationPeriod: "2025-02-17 ~ 2025-02-24",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버쇼핑",
+    channel: "네이버 쇼핑",
     keyword: "#스마트폰리뷰 #최신폰 #구매후기 #솔직리뷰 #디지털기기",
     purchaseLink:
       "https://smartstore.naver.com/example-store/products/smartphone123",
@@ -189,7 +189,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
       registrationPeriod: "2025-02-16 ~ 2025-02-23",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "인스타그램",
+    channel: "컬리",
     keyword: "#의류리뷰 #패션 #옷 #구매후기 #솔직리뷰",
     purchaseLink: "https://www.instagram.com/shopping/example-product",
     requirements: [
@@ -230,7 +230,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
       registrationPeriod: "2025-02-17 ~ 2025-02-24",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "블로그",
+    channel: "카카오 쇼핑",
     keyword: "#식품리뷰 #음식 #구매후기 #솔직리뷰 #맛집",
     purchaseLink: "https://blog.naver.com/example-food-review",
     requirements: [
@@ -271,7 +271,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
       registrationPeriod: "2025-02-18 ~ 2025-02-25",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버쇼핑",
+    channel: "네이버 쇼핑",
     keyword: "#책리뷰 #독서 #문화 #구매후기 #솔직리뷰",
     purchaseLink: "https://shopping.naver.com/example-book",
     requirements: [
@@ -312,7 +312,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
       registrationPeriod: "2025-02-20 ~ 2025-02-27",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "유튜브",
+    channel: "오늘의집",
     keyword: "#운동화리뷰 #신발 #패션 #구매후기 #솔직리뷰",
     purchaseLink: "https://www.youtube.com/watch?v=example-shoes",
     requirements: [
@@ -394,7 +394,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
       registrationPeriod: "2025-02-21 ~ 2025-02-28",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버쇼핑",
+    channel: "네이버 쇼핑",
     keyword: "#자동차용품 #액세서리 #구매후기 #솔직리뷰 #자동차",
     purchaseLink: "https://shopping.naver.com/example-car-accessories",
     requirements: [
@@ -435,7 +435,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
       registrationPeriod: "2025-02-13 ~ 2025-02-20",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "블로그",
+    channel: "카카오 쇼핑",
     keyword: "#홈데코 #인테리어 #구매후기 #솔직리뷰 #생활용품",
     purchaseLink: "https://blog.naver.com/example-homedeco-review",
     requirements: [
@@ -518,7 +518,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
       registrationPeriod: "2025-02-15 ~ 2025-02-22",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "유튜브",
+    channel: "오늘의집",
     keyword: "#게임리뷰 #게임 #구매후기 #솔직리뷰 #플레이영상",
     purchaseLink: "https://www.youtube.com/watch?v=example-game-review",
     requirements: [
@@ -559,7 +559,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
       registrationPeriod: "2025-02-18 ~ 2025-02-25",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "인스타그램",
+    channel: "컬리",
     keyword: "#여행용품 #여행 #구매후기 #솔직리뷰 #트래블",
     purchaseLink: "https://www.instagram.com/shopping/example-travel-items",
     requirements: [
@@ -600,7 +600,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
       registrationPeriod: "2025-02-16 ~ 2025-02-23",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버쇼핑",
+    channel: "네이버 쇼핑",
     keyword: "#스포츠용품 #운동 #구매후기 #솔직리뷰 #피트니스",
     purchaseLink: "https://shopping.naver.com/example-sports-items",
     requirements: [
@@ -641,7 +641,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
       registrationPeriod: "2025-02-17 ~ 2025-02-24",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "블로그",
+    channel: "카카오 쇼핑",
     keyword: "#액세서리 #패션 #구매후기 #솔직리뷰 #스타일링",
     purchaseLink: "https://blog.naver.com/example-accessories-review",
     requirements: [
@@ -682,7 +682,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
       registrationPeriod: "2025-02-19 ~ 2025-02-26",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "유튜브",
+    channel: "오늘의집",
     keyword: "#음향기기 #오디오 #구매후기 #솔직리뷰 #음질테스트",
     purchaseLink: "https://www.youtube.com/watch?v=example-audio-review",
     requirements: [

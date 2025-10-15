@@ -64,7 +64,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       registrationPeriod: "2025-02-13 ~ 2025-02-20",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버쇼핑",
+    channel: "네이버 블로그",
     keyword: "#세르프 #박신혜리프팅 #뷰티 #스킨케어 #리프팅크림",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
     requirements: [
@@ -105,7 +105,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       registrationPeriod: "2025-02-11 ~ 2025-02-18",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버쇼핑",
+    channel: "네이버 블로그",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
     requirements: [
@@ -129,7 +129,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     category: "배송형",
     categoryIcon: "/images/brand_logo/insta.svg",
     image: "/images/main/campaign_img/eximg_13.png",
-    subcategory: "액세서리",
+    subcategory: "패션",
     points: 20000,
     description: "고급스러운 가죽 여권 케이스와 네임택 체험단",
     recruitment: {
@@ -187,7 +187,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       registrationPeriod: "2025-02-20 ~ 2025-02-27",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "블로그",
+    channel: "네이버 블로그",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
     requirements: [
@@ -228,7 +228,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       registrationPeriod: "2025-02-15 ~ 2025-02-22",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "올리브영",
+    channel: "인스타그램",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
     requirements: [
@@ -269,7 +269,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       registrationPeriod: "2025-02-17 ~ 2025-02-24",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "쿠팡",
+    channel: "유튜브",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
     requirements: [
@@ -351,7 +351,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       registrationPeriod: "2025-02-16 ~ 2025-02-23",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "블로그",
+    channel: "네이버 블로그",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
     requirements: [
@@ -392,7 +392,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       registrationPeriod: "2025-02-19 ~ 2025-02-26",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "올리브영",
+    channel: "인스타그램",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
     requirements: [
@@ -433,7 +433,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       registrationPeriod: "2025-02-12 ~ 2025-02-19",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "쿠팡",
+    channel: "유튜브",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
     requirements: [
@@ -474,7 +474,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       registrationPeriod: "2025-02-10 ~ 2025-02-17",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버쇼핑",
+    channel: "네이버 블로그",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
     requirements: [
@@ -557,7 +557,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       registrationPeriod: "2025-02-11 ~ 2025-02-18",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "블로그",
+    channel: "네이버 블로그",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
     requirements: [
@@ -639,7 +639,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       registrationPeriod: "2025-02-14 ~ 2025-02-21",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "쿠팡",
+    channel: "유튜브",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
     requirements: [
@@ -680,7 +680,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       registrationPeriod: "2025-02-15 ~ 2025-02-22",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버쇼핑",
+    channel: "네이버 블로그",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
     requirements: ["text_1500", "photo_10", "product_link", "keyword"],
