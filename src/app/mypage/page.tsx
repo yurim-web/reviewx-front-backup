@@ -90,7 +90,12 @@ export default function MypagePage() {
 
             {/* 메뉴 리스트 */}
             <div className={styles.menu_list}>
-              <button className={styles.menu_item}>
+              <button
+                className={styles.menu_item}
+                onClick={() =>
+                  window.open("https://markx.dev/guide_book", "_blank")
+                }
+              >
                 <div className={styles.menu_icon} />
                 <div className={styles.menu_text}>이용 가이드</div>
               </button>
@@ -108,7 +113,12 @@ export default function MypagePage() {
                 <div className={styles.menu_icon} />
                 <div className={styles.menu_text}>자주 묻는 질문</div>
               </button>
-              <button className={styles.menu_item}>
+              <button
+                className={styles.menu_item}
+                onClick={() =>
+                  window.open("https://pf.kakao.com/_xjxdxoxG/chat", "_blank")
+                }
+              >
                 <div className={styles.menu_icon} />
                 <div className={styles.menu_text}>카카오톡 상담</div>
               </button>
