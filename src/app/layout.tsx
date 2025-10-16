@@ -8,8 +8,8 @@ import Header from "@/components/fragments/Header";
 // 프리텐다드 폰트는 CSS에서 CDN으로 로드
 
 export const metadata: Metadata = {
-  title: "ReviewX",
-  description: "Next.js Base Project",
+  title: "ReviewX | 리뷰 캠페인 플랫폼",
+  description: "리뷰 캠페인 플랫폼",
 };
 
 export default function RootLayout({

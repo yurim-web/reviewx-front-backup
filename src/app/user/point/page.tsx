@@ -1,3 +1,5 @@
+//  포인트 관리 페이지
+
 "use client";
 
 import { useState } from "react";

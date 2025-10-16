@@ -12,13 +12,13 @@ export async function generateMetadata({
 
   if (!campaign) {
     return {
-      title: "캠페인을 찾을 수 없습니다 - ReviewX",
+      title: "ReviewX | 캠페인을 찾을 수 없습니다",
       description: "요청하신 배송형 캠페인을 찾을 수 없습니다",
     };
   }
 
   return {
-    title: `${campaign.title} - 배송형 캠페인 - ReviewX`,
+    title: `${campaign.title} | ReviewX | 배송형 캠페인`,
     description: campaign.description,
   };
 }

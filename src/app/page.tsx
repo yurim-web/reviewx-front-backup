@@ -20,8 +20,8 @@ import { reporterCampaigns } from "@/data/user/reporter/reporterCampaigns";
 
 // 페이지 메타데이터 설정
 export const metadata: Metadata = {
-  title: "ReviewX - 홈",
-  description: "ReviewX 메인 페이지 - 다양한 리뷰 캠페인을 만나보세요",
+  title: "ReviewX | 리뷰 캠페인 플랫폼",
+  description: "리뷰 캠페인 플랫폼 메인 페이지입니다",
 };
 
 // React 함수형 컴포넌트 (기본 export)

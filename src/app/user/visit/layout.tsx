@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "방문형 캠페인 - ReviewX",
+  title: "ReviewX | 방문형 캠페인",
   description: "방문형 리뷰 캠페인 목록",
 };
 

@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "포인트 - ReviewX",
-  description: "포인트 관리 페이지",
+  title: "ReviewX | 포인트 관리",
+  description: "포인트 관리",
 };
 
 export default function PointLayout({
