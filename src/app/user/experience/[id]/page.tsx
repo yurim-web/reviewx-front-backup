@@ -4,9 +4,9 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import { use, useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import SubHeader from "@/components/fragments/SubHeader";
-import ApplicationModalType3 from "@/components/user/campaign/ApplicationModalType3";
+import ApplicationModalType3 from "@/components/user/campaign_detail/modal/ApplicationModalType3";
 import styles from "../../../../styles/user/campaign/campaign_detail.module.css";
 import { experienceCampaigns } from "@/data/user/experience/experienceCampaigns";
 import MainMenu from "@/components/main/MainMenu";
@@ -14,10 +14,10 @@ import DetailHeader from "@/components/user/campaign_detail/DetailHeader";
 import DetailProductInfo from "@/components/user/campaign_detail/DetailProductInfo";
 import DetailScheduleInfo from "@/components/user/campaign_detail/DetailScheduleInfo";
 import DetailImage from "@/components/user/campaign_detail/DetailImage";
-import DetailGuidelinesSectionExperience from "@/components/user/campaign_detail/DetailGuidelinesSectionExperience";
+import DetailGuidelinesSectionExperience from "@/components/user/campaign_detail/guidelines/DetailGuidelinesSectionExperience";
 
 interface ExperienceDetailPageProps {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }
 
 export default function ExperienceDetailPage({
@@ -27,13 +27,8 @@ export default function ExperienceDetailPage({
   // 1. 데이터 및 상태 관리
   // ========================================
 
-  // params를 동기적으로 사용하기 위해 use() 훅 사용
-  const resolvedParams = use(params);
-
   // URL의 id와 일치하는 캠페인 데이터 찾기
-  const campaign = experienceCampaigns.find(
-    (c) => String(c.id) === resolvedParams.id
-  );
+  const campaign = experienceCampaigns.find((c) => String(c.id) === params.id);
 
   // 신청 모달 표시 상태
   const [isModalOpen, setIsModalOpen] = useState(false);

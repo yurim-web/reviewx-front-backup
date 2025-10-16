@@ -1,3 +1,7 @@
+/* ========================================
+   🖼️ 캠페인 상세 이미지 컴포넌트 (확장/축소)
+   ======================================== */
+
 /**
  * 캠페인 상세 이미지 컴포넌트
  *
@@ -12,7 +16,7 @@
 "use client";
 
 import { useState } from "react";
-import styles from "../../../styles/user/campaign/campaign_detail.module.css";
+import styles from "../../../styles/user/campaign/campaign_detail/detail_image.module.css";
 
 /**
  * Props 인터페이스

@@ -1,26 +1,33 @@
+/* ========================================
+   ⚠️ 유의사항 컴포넌트 (공통 안내사항)
+   ======================================== */
+
 /**
- * 추가 안내사항 컴포넌트
+ * 유의사항 컴포넌트
  *
- * 목적: 캠페인 상세 페이지에서 공통으로 사용되는 추가 안내사항을 표시합니다.
+ * 목적: 배송형, 방문형, 구매평, 체험단, 기자단 상세페이지에 공통으로 사용되는 유의사항을 표시합니다.
  *
  * 주요 기능:
  * - 캠페인 참여 시 주의사항 안내
  * - 패널티 관련 안내
  * - 콘텐츠 유지 기간 안내
+ * - 양도/판매/교환 금지 안내
+ * - 허위·과장 금지 안내
+ * - 미션 불이행 시 패널티 안내
  */
 
-import styles from "../../../styles/user/campaign/campaign_detail.module.css";
+import styles from "../../../styles/user/campaign/campaign_detail/detail_guidelines_section.module.css";
 
 /**
- * 추가 안내사항 컴포넌트
+ * 유의사항 컴포넌트
  *
- * Props 없이 고정된 안내사항을 표시합니다.
- * 모든 캠페인 타입에서 동일한 내용을 사용합니다.
+ * Props 없이 고정된 유의사항을 표시합니다.
+ * 배송형, 방문형, 구매평, 체험단, 기자단 모든 캠페인 타입에서 동일한 내용을 사용합니다.
  */
 export default function AdditionalGuidelines() {
   return (
     <div className={styles.info_item_box}>
-      <div className={styles.label_box}>추가 안내 사항</div>
+      <div className={styles.label_box}>유의 사항</div>
       <div
         className={`${styles.content_box} ${styles.additional_guideline_text}`}
       >

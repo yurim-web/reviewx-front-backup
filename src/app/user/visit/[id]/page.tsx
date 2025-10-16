@@ -3,28 +3,25 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import { use, useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import SubHeader from "@/components/fragments/SubHeader";
-import ApplicationModal from "@/components/user/campaign/ApplicationModal";
+import ApplicationModal from "@/components/user/campaign_detail/modal/ApplicationModal";
 import styles from "../../../../styles/user/campaign/campaign_detail.module.css";
 import { visitCampaigns } from "@/data/user/visit/visitCampaigns";
-import ApplicationModalType3 from "@/components/user/campaign/ApplicationModalType3";
+import ApplicationModalType3 from "@/components/user/campaign_detail/modal/ApplicationModalType3";
 import MainMenu from "@/components/main/MainMenu";
 import DetailHeader from "@/components/user/campaign_detail/DetailHeader";
 import DetailProductInfo from "@/components/user/campaign_detail/DetailProductInfo";
 import DetailScheduleInfo from "@/components/user/campaign_detail/DetailScheduleInfo";
 import DetailImage from "@/components/user/campaign_detail/DetailImage";
-import DetailGuidelinesSectionVisit from "@/components/user/campaign_detail/DetailGuidelinesSectionVisit";
+import DetailGuidelinesSectionVisit from "@/components/user/campaign_detail/guidelines/DetailGuidelinesSectionVisit";
 
 interface VisitDetailPageProps {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }
 
 export default function VisitDetailPage({ params }: VisitDetailPageProps) {
-  const resolvedParams = use(params);
-  const campaign = visitCampaigns.find(
-    (c) => String(c.id) === resolvedParams.id
-  );
+  const campaign = visitCampaigns.find((c) => String(c.id) === params.id);
   const [isModalOpen, setIsModalOpen] = useState(false);
   // 캠페인 정보 라벨 고정 상태 관리
   const [isCampaignInfoFixed, setIsCampaignInfoFixed] = useState(false);

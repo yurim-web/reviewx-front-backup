@@ -1,3 +1,7 @@
+/* ========================================
+   📝 캠페인 안내사항 섹션 컴포넌트
+   ======================================== */
+
 /**
  * 캠페인 안내사항 섹션 컴포넌트
  *
@@ -10,8 +14,8 @@
  * - 추가 안내사항 컴포넌트
  */
 
-import AdditionalGuidelines from "../campaign/AdditionalGuidelines";
-import styles from "../../../styles/user/campaign/campaign_detail.module.css";
+import AdditionalGuidelines from "../AdditionalGuidelines";
+import styles from "../../../../styles/user/campaign/campaign_detail/detail_guidelines_section.module.css";
 
 /**
  * 요구사항 항목 인터페이스

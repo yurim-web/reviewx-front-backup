@@ -1,3 +1,7 @@
+/* ========================================
+   📅 캠페인 일정 정보 컴포넌트
+   ======================================== */
+
 /**
  * 캠페인 일정 정보 컴포넌트
  *
@@ -10,7 +14,7 @@
  * - 추가 일정 정보 (동적으로 추가 가능)
  */
 
-import styles from "../../../styles/user/campaign/campaign_detail.module.css";
+import styles from "../../../styles/user/campaign/campaign_detail/detail_schedule_info.module.css";
 
 /**
  * 일정 항목 인터페이스

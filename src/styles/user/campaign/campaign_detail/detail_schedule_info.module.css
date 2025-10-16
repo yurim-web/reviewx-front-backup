@@ -1,0 +1,127 @@
+/* ========================================
+   캠페인 일정 정보 컴포넌트 스타일
+   ======================================== */
+
+/* ===== 캠페인 정보 섹션 ===== */
+.campaign_info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative; /* 그라데이션 배경을 위한 기준점 */
+}
+
+/* 그라데이션 배경 오버레이 */
+.gradient_background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, #fff 150%);
+  border-radius: 8px;
+  z-index: 1; /* 다른 요소 위에 표시 */
+  pointer-events: none; /* 클릭 이벤트 방해하지 않음 */
+}
+
+/* 캠페인 정보 항목 컨테이너 */
+.info_item_container {
+  display: flex;
+  justify-content: space-between; /* 라벨과 값 좌우 정렬 */
+  align-items: center;
+}
+
+/* 정보 라벨 (모집 인원, 모집 기간 등) */
+.label {
+  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 정보 값 */
+.value {
+  color: #848484;
+  text-align: right;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 현재 지원자 수 (강조 표시) */
+.current_count {
+  color: #333;
+  text-align: right;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 구분자 (/) */
+.separator {
+  color: #848484;
+}
+
+/* 총 모집 인원 */
+.total_count {
+  color: #848484;
+}
+
+/* 모집 기간 값 강조 */
+.recruitment_info {
+  color: #333;
+  font-weight: 600;
+}
+
+/* ===== 반응형 스타일 ===== */
+
+/* ✅ 모바일 공통 — 0~739px */
+@media (max-width: 739px) {
+  .campaign_info {
+    gap: 20px;
+    position: relative; /* 그라데이션 배경을 위한 기준점 */
+  }
+
+  /* 그라데이션 배경 오버레이 */
+  .gradient_background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, #fff 150%);
+    border-radius: 8px;
+    z-index: 1; /* 다른 요소 위에 표시 */
+    pointer-events: none; /* 클릭 이벤트 방해하지 않음 */
+  }
+
+  /* 캠페인 정보 항목 컨테이너 */
+  .info_item_container {
+    display: flex;
+    justify-content: space-between; /* 라벨과 값 좌우 정렬 */
+    align-items: center;
+  }
+
+  /* 정보 라벨 (모집 인원, 모집 기간 등) */
+  .label {
+    font-size: 15px;
+    line-height: 15px;
+    letter-spacing: -0.3px;
+  }
+
+  /* 정보 값 */
+  .value {
+    font-size: 15px;
+    line-height: 15px;
+    letter-spacing: -0.32px;
+  }
+
+  /* 현재 지원자 수 (강조 표시) */
+  .current_count {
+    font-size: 15px;
+    line-height: 15px;
+    letter-spacing: -0.32px;
+  }
+}

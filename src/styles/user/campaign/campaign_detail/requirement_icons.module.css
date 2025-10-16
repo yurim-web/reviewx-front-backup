@@ -1,0 +1,74 @@
+/* ========================================
+   요구사항 아이콘 컴포넌트 스타일
+   ======================================== */
+
+/* ===== 안내 사항 섹션 ===== */
+.requirement_container {
+  display: flex;
+  justify-content: flex-start;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* 하단 구분선 */
+}
+
+/* 안내 사항 아이템 (키워드 삽입, 이미지 첨부 등) */
+.requirement_item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  width: 144px;
+}
+
+/* 안내 사항 아이콘 */
+.requirement_icon {
+  width: 40px;
+  height: 40px;
+}
+
+/* 안내 사항 텍스트 */
+.requirement_text {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  text-align: center;
+}
+
+/* ===== 반응형 스타일 ===== */
+
+/* ✅ 모바일 공통 — 0~739px */
+@media (max-width: 739px) {
+  .requirement_container {
+    display: flex;
+    flex-wrap: wrap; /* 모바일에서 줄바꿈 허용 */
+    gap: 16px; /* 아이콘 간 간격 줄임 */
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* 하단 구분선 */
+    justify-content: space-between; /* 아이콘들을 균등하게 분배 */
+  }
+
+  /* 안내 사항 아이템 (키워드 삽입, 이미지 첨부 등) */
+  .requirement_item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    flex: 1; /* 각 아이템이 균등한 공간 차지 */
+    min-width: 0; /* flex 아이템이 축소될 수 있도록 */
+  }
+
+  /* 안내 사항 아이콘 */
+  .requirement_icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* 안내 사항 텍스트 */
+  .requirement_text {
+    font-size: 12px;
+    line-height: 14px;
+    text-align: center;
+    word-break: keep-all;
+  }
+}

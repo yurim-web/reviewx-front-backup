@@ -1,21 +1,34 @@
-// 캠페인 상세 페이지에서 신청하기 버튼 누르면 나오는 모달창!
+/* ========================================
+   ⭐ 구매평 상세페이지 신청 모달
+   ======================================== */
 
-// 배송형에서 !!!
+/**
+ * 캠페인 신청 모달 컴포넌트 (Type 2)
+ *
+ * 목적: 구매평 상세 페이지에서 캠페인 신청하기 버튼을 눌렀을 때 나오는 모달창입니다.
+ *
+ * 주요 기능:
+ * - 신청자 정보 표시
+ * - 채널 정보 표시
+ * - 메모 입력
+ * - 동의 체크박스
+ * - 캠페인 신청 처리
+ */
 
 "use client";
 
 import { useState } from "react";
-import styles from "../../../styles/user/campaign/application_modal.module.css";
+import styles from "../../../../styles/user/campaign/application_modal.module.css";
 
-interface ApplicationModalProps {
+interface ApplicationModalType2Props {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export default function ApplicationModal({
+export default function ApplicationModalType2({
   isOpen,
   onClose,
-}: ApplicationModalProps) {
+}: ApplicationModalType2Props) {
   const [isAgreed, setIsAgreed] = useState(false);
   const [memo, setMemo] = useState("");
 
@@ -60,25 +73,6 @@ export default function ApplicationModal({
                 <div className={styles.user_address}>
                   인천 남동구 장자로 6번길 2, 1층
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* 채널 정보 섹션 */}
-          <div className={styles.section}>
-            <div className={styles.channel_container}>
-              <div className={styles.channel_icon}></div>
-              <div className={styles.channel_info}>
-                <div className={styles.channel_name}>네이버 블로그</div>
-                <div className={styles.channel_url}>
-                  https://blog.naver.com/catcat12344
-                </div>
-              </div>
-              <div className={styles.more_button}>
-                <img
-                  src="/images/campaign_detail/detail_icon.svg"
-                  alt="더보기"
-                />
               </div>
             </div>
           </div>

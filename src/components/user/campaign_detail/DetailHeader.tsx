@@ -1,3 +1,7 @@
+/* ========================================
+   🏷️ 캠페인 헤더 컴포넌트 (태그 & 포인트)
+   ======================================== */
+
 /**
  * 캠페인 헤더 컴포넌트
  *
@@ -9,7 +13,7 @@
  * - 포인트 정보 표시
  */
 
-import styles from "../../../styles/user/campaign/campaign_detail.module.css";
+import styles from "../../../styles/user/campaign/campaign_detail/detail_header.module.css";
 
 /**
  * Props 인터페이스
@@ -69,12 +73,3 @@ export default function CampaignHeader({
     </article>
   );
 }
-
-// ========================================
-// 학습 포인트
-// ========================================
-// 1. Props: 부모 컴포넌트에서 데이터를 받아오는 방법
-// 2. TypeScript 인터페이스: 타입 안정성 확보
-// 3. 선택적 속성 (optional): altText?: string
-// 4. 기본값 설정: altText = "category_tag"
-// 5. toLocaleString(): 숫자 포맷팅 메서드

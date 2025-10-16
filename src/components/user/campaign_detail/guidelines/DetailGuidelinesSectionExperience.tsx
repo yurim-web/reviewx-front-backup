@@ -1,3 +1,7 @@
+/* ========================================
+   🧪 체험단 캠페인 안내사항 섹션 컴포넌트
+   ======================================== */
+
 /**
  * 체험단 캠페인 전용 가이드라인 섹션 컴포넌트
  *
@@ -8,14 +12,9 @@
  * - 유의사항 (가이드라인 텍스트)
  */
 
-import styles from "../../../styles/user/campaign/campaign_detail.module.css";
-import AdditionalGuidelines from "../campaign/AdditionalGuidelines";
-
-interface RequirementItem {
-  icon: string;
-  alt: string;
-  text: string;
-}
+import styles from "../../../../styles/user/campaign/campaign_detail/detail_guidelines_section.module.css";
+import AdditionalGuidelines from "../AdditionalGuidelines";
+import RequirementIcons from "../RequirementIcons";
 
 interface DetailGuidelinesSectionExperienceProps {
   description?: string; // 제공내역 설명
@@ -24,135 +23,6 @@ interface DetailGuidelinesSectionExperienceProps {
   requirements?: string[]; // 요구사항 코드 목록
   guidelineTexts?: string[]; // 유의사항 텍스트 목록
 }
-
-// 요구사항 코드를 RequirementItem으로 매핑하는 객체
-const requirementMapping: Record<
-  string,
-  { icon: string; alt: string; text: string }
-> = {
-  // 1. 글자 관련
-  text_1500: {
-    icon: "/images/campaign_detail/text_icon.svg",
-    alt: "텍스트아이콘",
-    text: "1,500자 이상",
-  },
-
-  // 2. 사진 관련
-  photo_10: {
-    icon: "/images/campaign_detail/photo_icon.svg",
-    alt: "사진아이콘",
-    text: "10장 이상",
-  },
-  // 3. 비디오 관련
-  video_120: {
-    icon: "/images/campaign_detail/video_icon.svg",
-    alt: "비디오아이콘",
-    text: "1개 이상, 120초 이상",
-  },
-  // 4. 링크 관련
-  product_link: {
-    icon: "/images/campaign_detail/product_link_icon.svg",
-    alt: "링크아이콘",
-    text: "링크 첨부",
-  },
-  // 5. 키워드 관련
-  keyword: {
-    icon: "/images/campaign_detail/keyword_icon.svg",
-    alt: "키워드아이콘",
-    text: "키워드/태그 첨부",
-  },
-};
-
-// 요구사항 코드 배열을 RequirementItem 배열로 변환하는 함수
-function getRequirementItems(requirementCodes: string[]): RequirementItem[] {
-  return requirementCodes.map((code) => {
-    // 기본 매핑에서 찾기
-    if (requirementMapping[code]) {
-      return requirementMapping[code];
-    }
-
-    // text_숫자 패턴 처리 (예: text_800, text_2500 등)
-    const textMatch = code.match(/^text_(\d+)$/);
-    if (textMatch) {
-      const number = textMatch[1];
-      return {
-        icon: "/images/campaign_detail/text_icon.svg",
-        alt: "텍스트아이콘",
-        text: `${number}자 이상`,
-      };
-    }
-
-    // photo_숫자 패턴 처리 (예: photo_5, photo_15 등)
-    const photoMatch = code.match(/^photo_(\d+)$/);
-    if (photoMatch) {
-      const number = photoMatch[1];
-      return {
-        icon: "/images/campaign_detail/photo_icon.svg",
-        alt: "사진아이콘",
-        text: `${number}장 이상`,
-      };
-    }
-
-    // video_개수_시간 패턴 처리 (예: video_1_120, video_2_180 등)
-    const videoDoubleMatch = code.match(/^video_(\d+)_(\d+)$/);
-    if (videoDoubleMatch) {
-      const count = videoDoubleMatch[1];
-      const seconds = videoDoubleMatch[2];
-      return {
-        icon: "/images/campaign_detail/video_icon.svg",
-        alt: "비디오아이콘",
-        text: `${count}개 이상, ${seconds}초 이상`,
-      };
-    }
-
-    // video_숫자 패턴 처리 (시간만, 개수는 1개로 기본값) (예: video_60, video_180 등)
-    const videoMatch = code.match(/^video_(\d+)$/);
-    if (videoMatch) {
-      const number = videoMatch[1];
-      return {
-        icon: "/images/campaign_detail/video_icon.svg",
-        alt: "비디오아이콘",
-        text: `1개 이상, ${number}초 이상`,
-      };
-    }
-
-    // 기본값
-    return {
-      icon: "/images/campaign_detail/keyword_icon.svg",
-      alt: "기본아이콘",
-      text: "요구사항",
-    };
-  });
-}
-
-// 기본 요구사항 (데이터가 없을 때 사용)
-const defaultRequirements: RequirementItem[] = [
-  {
-    icon: "/images/campaign_detail/text_icon.svg",
-    alt: "텍스트아이콘",
-    text: "1,500자 이상",
-  },
-  {
-    icon: "/images/campaign_detail/photo_icon.svg",
-    alt: "사진아이콘",
-    text: "10장 이상",
-  },
-  {
-    icon: "/images/campaign_detail/video_icon.svg",
-    alt: "비디오아이콘",
-    text: "1개 이상, 120초 이상",
-  },
-  {
-    icon: "/images/campaign_detail/product_link_icon.svg",
-    alt: "링크아이콘",
-    text: "링크 첨부",
-  },
-  {
-    icon: "/images/campaign_detail/keyword_icon.svg",
-    alt: "키워드아이콘",
-    text: "키워드/태그 첨부",
-  },
-];
 
 // 기본 유의사항 텍스트 (데이터가 없을 때 사용)
 const defaultGuidelineTexts: string[] = [
@@ -170,10 +40,6 @@ export default function DetailGuidelinesSectionExperience({
   requirements,
   guidelineTexts,
 }: DetailGuidelinesSectionExperienceProps) {
-  // 실제 사용할 요구사항과 가이드라인 텍스트 결정
-  const activeRequirements = requirements
-    ? getRequirementItems(requirements)
-    : defaultRequirements;
   const activeGuidelineTexts = guidelineTexts || defaultGuidelineTexts;
 
   return (
@@ -213,18 +79,7 @@ export default function DetailGuidelinesSectionExperience({
         <div className={styles.label_box}>안내사항</div>
         <div className={styles.content_box}>
           {/* 요구사항 아이콘 리스트 */}
-          <div className={styles.requirement_container}>
-            {activeRequirements.map((item, index) => (
-              <div key={index} className={styles.requirement_item}>
-                <img
-                  className={styles.requirement_icon}
-                  src={item.icon}
-                  alt={item.alt}
-                />
-                <span className={styles.requirement_text}>{item.text}</span>
-              </div>
-            ))}
-          </div>
+          <RequirementIcons requirements={requirements} />
 
           {/* 상세 가이드라인 */}
           <div

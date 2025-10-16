@@ -1,3 +1,7 @@
+/* ========================================
+   📦 캠페인 제품 정보 컴포넌트
+   ======================================== */
+
 /**
  * 캠페인 제품 정보 컴포넌트
  *
@@ -11,7 +15,7 @@
  */
 
 import { ReactNode } from "react";
-import styles from "../../../styles/user/campaign/campaign_detail.module.css";
+import styles from "../../../styles/user/campaign/campaign_detail/detail_product_info.module.css";
 
 /**
  * Props 인터페이스
