@@ -16,7 +16,7 @@
 
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  /* gap: 24px; */
 }
 
 /* Tab Navigation */
@@ -25,6 +25,10 @@
   border-bottom: 1px solid #d9d9d9;
   padding-top: 24px;
   padding-bottom: 24px;
+  position: sticky;
+  top: 80px; /* 서브헤더 바로 아래에 고정 */
+  background: white;
+  z-index: 90;
 }
 
 .tab_navigation_container {
@@ -47,7 +51,7 @@
   line-height: 20px; /* 100% */
   letter-spacing: -0.4px;
 
-  background: none;
+  background: white;
   border: none;
   cursor: pointer;
   padding: 0;
@@ -61,9 +65,11 @@
 
 /* Statistics */
 .statistics {
-  padding: 0 40px;
-  /* padding-bottom: 16px; */
-  position: relative;
+  padding: 0px 40px; /* 상하 패딩 추가 */
+  position: sticky;
+  top: 148.5px; /* TabNavigation(65px) + 서브헤더(80px) = 145px 아래에 고정 */
+  background: white;
+  z-index: 85;
 }
 
 .statistics::after {
@@ -77,10 +83,11 @@
 }
 
 .stat_tab_navigation {
-  margin-top: -8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%; /* 전체 너비 차지 */
+  background: white; /* 배경을 흰색으로 설정 */
 }
 
 .left_stat_tabs {
@@ -100,6 +107,7 @@
   border: none;
   cursor: pointer;
   padding: 0;
+  padding-top: 18px;
   padding-bottom: 16px;
   position: relative;
   transition: color 0.2s ease;
@@ -111,6 +119,7 @@
 .stat_tab.active {
   font-weight: 700;
   color: #444444;
+  background: white; /* 활성 탭 배경을 흰색으로 설정 */
 }
 
 .stat_tab.active::after {
@@ -139,7 +148,7 @@
 
 /* Campaign List */
 .campaign_list {
-  padding: 16px 40px 80px 40px;
+  padding: 40px 40px 80px 40px;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -441,5 +450,21 @@
 
   .stat_tab {
     font-size: 16px;
+  }
+
+  /* 모바일에서 탭 네비게이션 고정 위치 조정 */
+  .tab_navigation {
+    top: 60px; /* 모바일에서는 서브헤더 높이가 다를 수 있음 */
+    padding: 16px 0;
+  }
+
+  .tab_navigation_container {
+    padding: 0 24px;
+  }
+
+  /* 모바일에서 통계 탭 고정 위치 조정 */
+  .statistics {
+    top: 125px; /* 모바일에서 조정된 TabNavigation 위치 */
+    padding: 0 24px;
   }
 }

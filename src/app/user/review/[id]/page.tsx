@@ -1,4 +1,27 @@
-// 구매평 상세 페이지
+/* ========================================
+   ⭐ 구매평 캠페인 상세 페이지
+   ======================================== */
+
+/**
+ * 구매평 캠페인 상세 페이지
+ *
+ * 목적: 구매평 캠페인의 상세 정보를 보여주고 신청할 수 있는 상세 페이지입니다.
+ *
+ * 페이지 경로:
+ * - /user/review/[id] (동적 라우팅)
+ *
+ * 사용 파일:
+ * - 컴포넌트: SubHeader, ApplicationModal, ApplicationModalType2, MainMenu, DetailHeader, DetailProductInfo, DetailScheduleInfo, DetailImage, DetailGuidelinesSectionReview
+ * - 데이터: reviewCampaigns
+ * - CSS: campaign_detail.module.css
+ *
+ * 주요 기능:
+ * - 구매평 캠페인 상세 정보 표시
+ * - 스크롤 시 캠페인 정보 라벨 상단 고정
+ * - 캠페인 신청 모달 (Type2)
+ * - 구매링크/키워드 복사 기능
+ * - 하단 고정 신청 버튼
+ */
 
 "use client";
 

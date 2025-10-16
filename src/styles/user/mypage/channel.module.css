@@ -1,0 +1,126 @@
+/* ========================================
+   📺 채널 섹션
+   ======================================== */
+
+/* 채널 연결 섹션 */
+.channel_section {
+  padding: 40px 40px;
+}
+
+/* 채널 플랫폼 아이템 */
+.platform_item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.platform_item:last-child {
+  border-bottom: none;
+}
+
+.platform_icon {
+  width: 28px;
+  height: 28px;
+  background: #a8a8a8;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.platform_info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.platform_name {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  color: #444;
+}
+
+.platform_url,
+.platform_status {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  color: #848484;
+}
+
+.more_button {
+  width: 28px;
+  height: 28px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 채널 그리드 */
+.channel_grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.channel_item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  background: white;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  min-height: 78px;
+}
+
+.channel_icon {
+  width: 28px;
+  height: 28px;
+  background: #a8a8a8;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.channel_info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.channel_name {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  color: #444;
+}
+
+.channel_url,
+.channel_status {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  color: #848484;
+}
+
+.channel_more_button {
+  width: 28px;
+  height: 28px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center; /* 채널 아이템 내에서 세로 가운데 정렬 */
+}

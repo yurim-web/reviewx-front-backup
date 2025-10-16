@@ -1,3 +1,22 @@
+/* ========================================
+   🔗 채널 연결 모달 컴포넌트
+   ======================================== */
+
+/**
+ * 채널 연결 모달 컴포넌트
+ *
+ * 목적: 마이페이지의 채널 섹션에서 채널을 연결할 때 사용되는 모달창입니다.
+ *
+ * 사용 페이지:
+ * - /user/mypage (채널 탭 - 채널 연결 시)
+ *
+ * 주요 기능:
+ * - 채널별 URL 입력 (네이버 블로그, 인스타그램, 유튜브, 틱톡)
+ * - 채널별 플레이스홀더 텍스트 제공
+ * - 채널 연결 처리
+ * - 모달 오버레이 클릭으로 닫기
+ */
+
 "use client";
 
 import React, { useState } from "react";
@@ -36,6 +55,8 @@ export default function ChannelConnectModal({
       onClose();
     }
   };
+
+  // 임시 데이터!
 
   const getChannelPlaceholder = () => {
     switch (channelName) {

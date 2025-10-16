@@ -1,4 +1,28 @@
-// 배송형 페이지
+/* ========================================
+   🚚 배송형 캠페인 목록 페이지
+   ======================================== */
+
+/**
+ * 배송형 캠페인 목록 페이지
+ *
+ * 목적: 배송형 캠페인 목록을 조회하고 필터링할 수 있는 캠페인 목록 페이지입니다.
+ *
+ * 페이지 경로:
+ * - /user/delivery
+ *
+ * 사용 파일:
+ * - 컴포넌트: CampaignBox, Titletext, FilterBar, MainMenu
+ * - 데이터: deliveryCampaigns, deliveryCategoryOptions, deliveryChannelOptions, deliverySortOptions
+ * - CSS: delivery.module.css
+ *
+ * 주요 기능:
+ * - 배송형 캠페인 목록 표시
+ * - 카테고리/채널 필터링
+ * - 마감임박 필터
+ * - 정렬 옵션 (최신순, 포인트순, 모집률순)
+ * - 캠페인 상세 페이지로 이동
+ * - 빈 상태 처리 (필터 조건에 맞는 캠페인이 없을 때)
+ */
 
 "use client";
 

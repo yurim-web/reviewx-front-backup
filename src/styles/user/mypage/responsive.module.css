@@ -1,0 +1,129 @@
+/* ========================================
+   📱 반응형 디자인
+   ======================================== */
+
+/* ✅ 모바일 공통 — 0~739px */
+@media (max-width: 739px) {
+  .mypage_header {
+    padding: 0 32px;
+  }
+
+  .header_logo {
+    font-size: 18px;
+  }
+
+  .close_button {
+    width: 24px;
+    height: 24px;
+  }
+
+  .top_tab_container,
+  .sub_tab_container,
+  .profile_section,
+  .menu_list,
+  .channel_section {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+
+  .top_tab_menu {
+    gap: 16px;
+  }
+
+  .top_tab_item,
+  .account_button {
+    font-size: 18px;
+  }
+
+  .sub_tab_container {
+    gap: 16px;
+  }
+
+  .sub_tab_item {
+    font-size: 16px;
+  }
+
+  .sub_tab_indicator {
+    left: 32px;
+  }
+
+  .sub_tab_indicator_channel {
+    left: 80px; /* 모바일에서 "프로필" 텍스트 너비 + gap(16px) */
+    width: 40px; /* 모바일에서 "채널" 텍스트 너비 */
+  }
+
+  .profile_image {
+    width: 60px;
+    height: 60px;
+  }
+
+  .profile_nickname {
+    font-size: 16px;
+  }
+
+  .menu_item {
+    gap: 8px;
+  }
+
+  .menu_icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .menu_text {
+    font-size: 16px;
+  }
+
+  .platform_name,
+  .channel_name {
+    font-size: 14px;
+  }
+
+  .platform_url,
+  .platform_status,
+  .channel_url,
+  .channel_status {
+    font-size: 12px;
+  }
+
+  .channel_grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .channel_item {
+    padding: 12px;
+    min-height: 60px;
+  }
+
+  .platform_icon,
+  .channel_icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .more_button,
+  .channel_more_button {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* 모바일에서 탭 고정 위치 조정 */
+  .top_tab_container {
+    top: 60px; /* 모바일에서는 서브헤더 높이가 다를 수 있음 */
+    padding: 16px 24px;
+  }
+
+  .sub_tab_container {
+    top: 125px; /* 모바일에서 조정된 탭 네비게이션 위치 */
+    padding: 12px 24px;
+  }
+}
+
+/* ✅ 태블릿 세로(portrait) 전용 — 740~1100px */
+@media (min-width: 740px) and (max-width: 1100px) and (orientation: portrait) {
+}
+
+/* ✅ 태블릿 가로(landscape) 전용 — 740~1366px */
+@media (min-width: 740px) and (max-width: 1366px) and (orientation: landscape) {
+}

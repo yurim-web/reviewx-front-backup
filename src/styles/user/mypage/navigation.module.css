@@ -1,0 +1,102 @@
+/* ========================================
+   🗂️ 메인 탭 네비게이션 (캠페인/포인트/계정)
+   ======================================== */
+
+/* 메인 탭 컨테이너 - 상단 고정 */
+.top_tab_container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 40px;
+  border-bottom: 1px solid #e0e0e0;
+  position: sticky;
+  top: 80px; /* 서브헤더(80px) 바로 아래에 고정 */
+  background: white;
+  z-index: 90;
+}
+
+.top_tab_menu {
+  display: flex;
+  gap: 24px;
+}
+
+.top_tab_item {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.4px;
+  color: #848484;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.top_tab_item.active {
+  color: #444;
+  font-weight: 700;
+}
+
+.account_button {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 20px;
+  letter-spacing: -0.4px;
+  color: #444;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+/* ========================================
+   📑 서브 탭 네비게이션 (프로필/채널)
+   ======================================== */
+
+/* 서브 탭 컨테이너 - 상단 고정 */
+.sub_tab_container {
+  display: flex;
+  gap: 24px;
+  padding: 16px 40px;
+  border-bottom: 1px solid #e0e0e0;
+  position: sticky;
+  top: 148.5px; /* 메인 탭 네비게이션 아래에 고정 */
+  background: white;
+  z-index: 85;
+}
+
+.sub_tab_item {
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  color: #848484;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  position: relative;
+}
+
+.sub_tab_item.active {
+  color: #444;
+  font-weight: 700;
+}
+
+.sub_tab_indicator {
+  position: absolute;
+  bottom: -1px;
+  left: 40px;
+  width: 46px;
+  height: 2px;
+  background: #444;
+}
+
+.sub_tab_indicator_channel {
+  position: absolute;
+  bottom: -1px;
+  left: 104px; /* "프로필" 텍스트 너비 + gap(24px) */
+  width: 43px;
+  height: 2px;
+  background: #444;
+}

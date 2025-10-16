@@ -1,4 +1,27 @@
-// 배송형 상세 페이지
+/* ========================================
+   🚚 배송형 캠페인 상세 페이지
+   ======================================== */
+
+/**
+ * 배송형 캠페인 상세 페이지
+ *
+ * 목적: 배송형 캠페인의 상세 정보를 보여주고 신청할 수 있는 상세 페이지입니다.
+ *
+ * 페이지 경로:
+ * - /user/delivery/[id] (동적 라우팅)
+ *
+ * 사용 파일:
+ * - 컴포넌트: SubHeader, ApplicationModal, MainMenu, DetailHeader, DetailProductInfo, DetailScheduleInfo, DetailImage, DetailGuidelinesSectionDelivery
+ * - 데이터: deliveryCampaigns
+ * - CSS: campaign_detail.module.css
+ *
+ * 주요 기능:
+ * - 배송형 캠페인 상세 정보 표시
+ * - 스크롤 시 캠페인 정보 라벨 상단 고정
+ * - 캠페인 신청 모달
+ * - 홍보링크/키워드 복사 기능
+ * - 하단 고정 신청 버튼
+ */
 
 "use client";
 

@@ -1,6 +1,27 @@
-// 메인 홈 페이지 (Next.js App Router)
-// 이 파일은 Next.js 13+ App Router의 메인 페이지입니다
-// src/app/page.tsx 파일은 자동으로 "/" 경로(루트 경로)에 매핑됩니다
+/* ========================================
+   🏠 메인 홈 페이지
+   ======================================== */
+
+/**
+ * 메인 홈 페이지
+ *
+ * 목적: 리뷰 캠페인 플랫폼의 메인 홈페이지로, 선정 확률 높은 캠페인과 인기 캠페인을 보여줍니다.
+ *
+ * 페이지 경로:
+ * - / (루트 경로)
+ *
+ * 사용 파일:
+ * - 컴포넌트: MainMenu, CampaignBox, Titletext
+ * - 데이터: deliveryCampaigns, visitCampaigns, reviewCampaigns, experienceCampaigns, reporterCampaigns
+ * - CSS: home.module.css
+ *
+ * 주요 기능:
+ * - 메인 배너 표시
+ * - 선정 확률 높은 캠페인 섹션 (각 타입별 1-2개씩 선별)
+ * - 지금 인기 많은 캠페인 섹션 (각 타입별 1-2개씩 선별)
+ * - 캠페인 상세 페이지로 이동
+ * - 메인 메뉴 상단 고정
+ */
 
 import type { Metadata } from "next";
 

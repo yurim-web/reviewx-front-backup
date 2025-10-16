@@ -1,13 +1,41 @@
+/* ========================================
+   👤 마이페이지 메인 페이지
+   ======================================== */
+
+/**
+ * 마이페이지 메인 페이지
+ *
+ * 목적: 사용자의 프로필 정보, 채널 연결, 메뉴 등을 관리하는 마이페이지입니다.
+ *
+ * 페이지 경로:
+ * - /user/mypage
+ *
+ * 사용 파일:
+ * - 컴포넌트: TabNavigation, SubHeader, ChannelSection, SubTabNavigation
+ * - 타입: MainTab
+ * - CSS: layout.module.css, navigation.module.css, profile.module.css, channel.module.css
+ *
+ * 주요 기능:
+ * - 프로필 정보 표시 및 편집
+ * - 채널 연결 관리 (네이버 블로그, 인스타그램, 유튜브, 틱톡)
+ * - 이용 가이드, 공지사항, FAQ, 카카오톡 상담 메뉴
+ * - 탭 네비게이션 (프로필/채널)
+ * - 상단 고정 탭 네비게이션
+ */
+
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 import type { MainTab } from "@/types/campaignManagement";
-import styles from "../../../styles/user/mypage/mypage.module.css";
+import layoutStyles from "../../../styles/user/mypage/layout.module.css";
+import navigationStyles from "../../../styles/user/mypage/navigation.module.css";
+import profileStyles from "../../../styles/user/mypage/profile.module.css";
+import channelStyles from "../../../styles/user/mypage/channel.module.css";
 import SubHeader from "@/components/fragments/SubHeader";
 import ChannelSection from "@/components/user/mypage/ChannelSection";
-import StoreSection from "@/components/user/mypage/StoreSection";
+import SubTabNavigation from "@/components/user/mypage/SubTabNavigation";
 
 export default function MypagePage() {
   const router = useRouter();
@@ -28,53 +56,6 @@ export default function MypagePage() {
     { name: "틱톡", status: "disconnected" as const },
   ]);
 
-  // 스토어 데이터 상태
-  const [stores, setStores] = useState([
-    {
-      name: "네이버 쇼핑",
-      storeId: "gdhong12",
-      email: "",
-      status: "connected" as const,
-    },
-    {
-      name: "쿠팡",
-      storeId: "",
-      email: "gdong@naver.com",
-      status: "connected" as const,
-    },
-    {
-      name: "카카오 쇼핑",
-      storeId: "",
-      email: "gdhong@kakao.com",
-      status: "connected" as const,
-    },
-    {
-      name: "카카오 선물하기",
-      storeId: "",
-      email: "",
-      status: "disconnected" as const,
-    },
-    {
-      name: "오늘의집",
-      storeId: "",
-      email: "",
-      status: "disconnected" as const,
-    },
-    {
-      name: "올리브영",
-      storeId: "",
-      email: "",
-      status: "disconnected" as const,
-    },
-    { name: "컬리", storeId: "", email: "", status: "disconnected" as const },
-    {
-      name: "지그재그",
-      storeId: "",
-      email: "",
-      status: "disconnected" as const,
-    },
-  ]);
-
   const handleBackClick = () => {
     router.back();
   };
@@ -93,29 +74,10 @@ export default function MypagePage() {
     );
   };
 
-  // 스토어 연결 핸들러
-  const handleStoreUpdate = (
-    storeName: string,
-    storeInfo: { storeId: string; email: string }
-  ) => {
-    setStores((prev) =>
-      prev.map((store) =>
-        store.name === storeName
-          ? {
-              name: store.name,
-              storeId: storeInfo.storeId,
-              email: storeInfo.email,
-              status: "connected" as const,
-            }
-          : store
-      )
-    );
-  };
-
   return (
-    <div className={styles.mypage_container}>
+    <div className={layoutStyles.mypage_container}>
       {/* 메인 컨텐츠 */}
-      <main className={styles.main_content}>
+      <main className={layoutStyles.main_content}>
         {/* 상단 탭 네비게이션: 캠페인/포인트/계정/커뮤니티 */}
         <TabNavigation
           activeTab={activeTopTab}
@@ -123,45 +85,25 @@ export default function MypagePage() {
         />
 
         {/* 서브 탭 (프로필/채널·스토어) */}
-        <div className={styles.sub_tab_container}>
-          <button
-            className={`${styles.sub_tab_item} ${
-              activeSubTab === "profile" ? styles.active : ""
-            }`}
-            onClick={() => setActiveSubTab("profile")}
-          >
-            프로필
-          </button>
-          <button
-            className={`${styles.sub_tab_item} ${
-              activeSubTab === "channel" ? styles.active : ""
-            }`}
-            onClick={() => setActiveSubTab("channel")}
-          >
-            채널 · 스토어
-          </button>
-          {activeSubTab === "profile" && (
-            <div className={styles.sub_tab_indicator} />
-          )}
-          {activeSubTab === "channel" && (
-            <div className={styles.sub_tab_indicator_channel} />
-          )}
-        </div>
+        <SubTabNavigation
+          activeSubTab={activeSubTab}
+          setActiveSubTab={setActiveSubTab}
+        />
 
         {/* 프로필 섹션 */}
         {activeSubTab === "profile" && (
           <>
-            <div className={styles.profile_section}>
-              <div className={styles.profile_info}>
-                <div className={styles.profile_image} />
-                <div className={styles.profile_details}>
-                  <div className={styles.profile_role}>리뷰어</div>
-                  <div className={styles.profile_nickname_container}>
-                    <div className={styles.profile_nickname}>
+            <div className={profileStyles.profile_section}>
+              <div className={profileStyles.profile_info}>
+                <div className={profileStyles.profile_image} />
+                <div className={profileStyles.profile_details}>
+                  <div className={profileStyles.profile_role}>리뷰어</div>
+                  <div className={profileStyles.profile_nickname_container}>
+                    <div className={profileStyles.profile_nickname}>
                       양치하는고양이123456
                     </div>
                     <svg
-                      className={styles.edit_icon}
+                      className={profileStyles.edit_icon}
                       width="16"
                       height="16"
                       viewBox="0 0 16 16"
@@ -183,52 +125,49 @@ export default function MypagePage() {
             </div>
 
             {/* 메뉴 리스트 */}
-            <div className={styles.menu_list}>
+            <div className={profileStyles.menu_list}>
               <button
-                className={styles.menu_item}
+                className={profileStyles.menu_item}
                 onClick={() =>
                   window.open("https://markx.dev/guide_book", "_blank")
                 }
               >
-                <div className={styles.menu_icon} />
-                <div className={styles.menu_text}>이용 가이드</div>
+                <div className={profileStyles.menu_icon} />
+                <div className={profileStyles.menu_text}>이용 가이드</div>
               </button>
               <button
-                className={styles.menu_item}
+                className={profileStyles.menu_item}
                 onClick={() => router.push("/user/notice")}
               >
-                <div className={styles.menu_icon} />
-                <div className={styles.menu_text}>공지사항</div>
+                <div className={profileStyles.menu_icon} />
+                <div className={profileStyles.menu_text}>공지사항</div>
               </button>
               <button
-                className={styles.menu_item}
+                className={profileStyles.menu_item}
                 onClick={() => router.push("/user/faq")}
               >
-                <div className={styles.menu_icon} />
-                <div className={styles.menu_text}>자주 묻는 질문</div>
+                <div className={profileStyles.menu_icon} />
+                <div className={profileStyles.menu_text}>자주 묻는 질문</div>
               </button>
               <button
-                className={styles.menu_item}
+                className={profileStyles.menu_item}
                 onClick={() =>
                   window.open("https://pf.kakao.com/_xjxdxoxG/chat", "_blank")
                 }
               >
-                <div className={styles.menu_icon} />
-                <div className={styles.menu_text}>카카오톡 상담</div>
+                <div className={profileStyles.menu_icon} />
+                <div className={profileStyles.menu_text}>카카오톡 상담</div>
               </button>
             </div>
           </>
         )}
 
-        {/* 채널·스토어 섹션 */}
+        {/* 채널 섹션 */}
         {activeSubTab === "channel" && (
-          <>
-            <ChannelSection
-              channels={channels}
-              onChannelUpdate={handleChannelUpdate}
-            />
-            <StoreSection stores={stores} onStoreUpdate={handleStoreUpdate} />
-          </>
+          <ChannelSection
+            channels={channels}
+            onChannelUpdate={handleChannelUpdate}
+          />
         )}
       </main>
     </div>
