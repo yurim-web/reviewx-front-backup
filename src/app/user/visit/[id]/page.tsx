@@ -44,7 +44,9 @@ interface VisitDetailPageProps {
 }
 
 export default function VisitDetailPage({ params }: VisitDetailPageProps) {
-  const campaign = visitCampaigns.find((c) => String(c.id) === params.id);
+  const campaign = visitCampaigns.find(
+    (c) => String(c.id) === String(params.id)
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   // 캠페인 정보 라벨 고정 상태 관리
   const [isCampaignInfoFixed, setIsCampaignInfoFixed] = useState(false);

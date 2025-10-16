@@ -202,6 +202,7 @@ export default function FilterBar({
 
   // 지역 선택 변경 핸들러 (RegionFilter에서 사용)
   const handleRegionChange = (regions: string[]) => {
+    console.log("🔧 FilterBar - 지역 변경:", regions);
     setTempRegions(regions);
   };
 
@@ -218,8 +219,14 @@ export default function FilterBar({
   };
 
   // 지역 필터 적용하기
-  const handleRegionApply = () => {
-    onFilterChange?.({ region: tempRegions.join(",") });
+  const handleRegionApply = (regions?: string[]) => {
+    const regionsToApply = regions || tempRegions;
+    console.log("🔧 FilterBar - 지역 필터 적용:", regionsToApply);
+    console.log(
+      "🔧 FilterBar - 전달할 region 문자열:",
+      regionsToApply.join(",")
+    );
+    onFilterChange?.({ region: regionsToApply.join(",") });
     setIsRegionModalOpen(false);
   };
 
@@ -349,7 +356,7 @@ export default function FilterBar({
               }}
             >
               <div className={styles.filter_icon}></div>
-              <span>마감임박</span>
+              <span>긴급</span>
             </button>
           </div>
 

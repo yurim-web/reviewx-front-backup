@@ -70,7 +70,7 @@ export default function VisitPage() {
   // 각각의 필터 타입별로 상태를 업데이트합니다
 
   const handleFilterChange = (filters: any) => {
-    console.log("Visit filters:", filters); // 개발자 도구에서 필터 변경사항 확인용
+    console.log("🔧 VisitPage - 필터 변경:", filters); // 개발자 도구에서 필터 변경사항 확인용
 
     // 마감임박 필터 처리
     if (filters.closingSoon !== undefined) {
@@ -104,11 +104,14 @@ export default function VisitPage() {
 
       // 지역 필터 업데이트
       if (filters.region !== undefined) {
+        console.log("🔧 VisitPage - 지역 필터 원본:", filters.region);
         newFilters.regions = filters.region
           ? filters.region.split(",").filter((r: string) => r.trim())
           : [];
+        console.log("🔧 VisitPage - 지역 필터 업데이트:", newFilters.regions);
       }
 
+      console.log("🔧 VisitPage - setActiveFilters 호출:", newFilters);
       return newFilters; // 새로운 필터 상태 반환
     });
   };
@@ -121,6 +124,7 @@ export default function VisitPage() {
 
   const filteredAndSortedCampaigns = useMemo(() => {
     console.log("🔄 캠페인 필터링 및 정렬 시작"); // 언제 재계산되는지 확인용
+    console.log("🔄 현재 activeFilters:", activeFilters);
 
     // 1단계: 기본 캠페인 데이터 복사
     let filtered = [...visitCampaigns];
@@ -157,9 +161,37 @@ export default function VisitPage() {
     // 지역 필터 적용
     if (activeFilters.regions.length > 0) {
       console.log("🌍 지역 필터 적용:", activeFilters.regions);
-      filtered = filtered.filter((campaign) =>
-        activeFilters.regions.includes(campaign.region)
+      console.log("🌍 필터링 전 캠페인 수:", filtered.length);
+      console.log(
+        "🌍 캠페인들의 지역 정보:",
+        filtered.map((c) => c.region)
       );
+
+      filtered = filtered.filter((campaign) => {
+        // 지역 필터와 캠페인 지역 매칭 로직
+        const isMatch = activeFilters.regions.some((filterRegion) => {
+          // 1. 정확한 매칭 (예: "서울 > 강남구" === "서울 > 강남구")
+          if (filterRegion === campaign.region) {
+            return true;
+          }
+
+          // 2. 전체 지역 매칭 (예: "서울 > 서울 전체"와 "서울 > 강남구" 매칭)
+          if (filterRegion.endsWith(" 전체")) {
+            const mainRegion = filterRegion.split(" > ")[0];
+            return campaign.region.startsWith(`${mainRegion} >`);
+          }
+
+          return false;
+        });
+
+        console.log(
+          `🌍 캠페인 "${campaign.title}" (${campaign.region}) 매칭:`,
+          isMatch
+        );
+        return isMatch;
+      });
+
+      console.log("🌍 필터링 후 캠페인 수:", filtered.length);
     }
 
     // 3단계: 정렬 적용
