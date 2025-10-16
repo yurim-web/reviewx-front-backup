@@ -2,7 +2,7 @@
 
 import type { Metadata } from "next";
 // 프리텐다드 폰트는 CDN으로 로드
-import "./globals.css";
+import "../styles/globals.css";
 import Header from "@/components/fragments/Header";
 
 // 프리텐다드 폰트는 CSS에서 CDN으로 로드

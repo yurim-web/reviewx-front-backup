@@ -12,11 +12,11 @@ import styles from "../styles/home/home.module.css";
 import Titletext from "@/components/main/Titletext";
 
 // 각 캠페인 타입별 실제 데이터를 import
-import { deliveryCampaigns } from "@/data/delivery/deliveryCampaigns";
-import { visitCampaigns } from "@/data/visit/visitCampaigns";
-import { reviewCampaigns } from "@/data/review/reviewCampaigns";
-import { experienceCampaigns } from "@/data/experience/experienceCampaigns";
-import { reporterCampaigns } from "@/data/reporter/reporterCampaigns";
+import { deliveryCampaigns } from "@/data/user/delivery/deliveryCampaigns";
+import { visitCampaigns } from "@/data/user/visit/visitCampaigns";
+import { reviewCampaigns } from "@/data/user/review/reviewCampaigns";
+import { experienceCampaigns } from "@/data/user/experience/experienceCampaigns";
+import { reporterCampaigns } from "@/data/user/reporter/reporterCampaigns";
 
 // 페이지 메타데이터 설정
 export const metadata: Metadata = {

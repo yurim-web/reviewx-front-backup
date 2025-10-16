@@ -37,7 +37,7 @@ export default function SubHeader() {
           >
             <img src="/images/header/header_book.svg" alt="book" />
           </a>
-          <Link href="/mypage" className={styles.user_icon}>
+          <Link href="/user/mypage" className={styles.user_icon}>
             <img src="/images/header/header_user.svg" alt="user" />
           </Link>
         </div>

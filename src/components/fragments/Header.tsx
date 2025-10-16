@@ -19,7 +19,7 @@ export default function Header() {
             <img src="/images/header/header_book.svg" alt="book" />
           </a>
           {/* 마이페이지로 연결 */}
-          <Link href="/campaign_management">
+          <Link href="/user/campaign_management">
             <img src="/images/header/header_user.svg" alt="user" />
           </Link>
         </div>

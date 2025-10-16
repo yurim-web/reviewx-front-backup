@@ -21,41 +21,41 @@ export default function MainMenu() {
       </Link>
       <Link
         className={`${styles.main_menu_item} ${
-          pathname === "/delivery" ? styles.main_menu_item_active : ""
+          pathname === "/user/delivery" ? styles.main_menu_item_active : ""
         }`}
-        href="/delivery"
+        href="/user/delivery"
       >
         배송형
       </Link>
       <Link
         className={`${styles.main_menu_item} ${
-          pathname === "/visit" ? styles.main_menu_item_active : ""
+          pathname === "/user/visit" ? styles.main_menu_item_active : ""
         }`}
-        href="/visit"
+        href="/user/visit"
       >
         방문형
       </Link>
       <Link
         className={`${styles.main_menu_item} ${
-          pathname === "/review" ? styles.main_menu_item_active : ""
+          pathname === "/user/review" ? styles.main_menu_item_active : ""
         }`}
-        href="/review"
+        href="/user/review"
       >
         구매평
       </Link>
       <Link
         className={`${styles.main_menu_item} ${
-          pathname === "/experience" ? styles.main_menu_item_active : ""
+          pathname === "/user/experience" ? styles.main_menu_item_active : ""
         }`}
-        href="/experience"
+        href="/user/experience"
       >
         체험단
       </Link>
       <Link
         className={`${styles.main_menu_item} ${
-          pathname === "/reporter" ? styles.main_menu_item_active : ""
+          pathname === "/user/reporter" ? styles.main_menu_item_active : ""
         }`}
-        href="/reporter"
+        href="/user/reporter"
       >
         기자단
       </Link>

@@ -9,7 +9,7 @@ import Link from "next/link";
 // CSS 모듈을 import
 // Next.js에서는 CSS 모듈을 사용하여 스타일을 컴포넌트별로 격리할 수 있습니다
 // 파일명.module.css 형태로 작성하면 됩니다
-import styles from "../../styles/campaign/campaign_box.module.css";
+import styles from "../../styles/user/campaign/campaign_box.module.css";
 
 // TypeScript 인터페이스 정의
 // 컴포넌트가 받을 props의 타입을 정의합니다
@@ -28,7 +28,7 @@ interface CampaignBoxProps {
     };
     schedule?: string; // 스케줄 정보 (선택적)
   };
-  basePath?: string; // 링크 기본 경로 (기본값: /campaign)
+  basePath?: string; // 링크 기본 경로 (기본값: /user/delivery)
 }
 
 // React 함수형 컴포넌트
@@ -36,21 +36,21 @@ interface CampaignBoxProps {
 // props로 campaign 데이터를 받아서 UI를 렌더링합니다
 export default function CampaignBox({
   campaign,
-  basePath = "/campaign",
+  basePath = "/user/delivery",
 }: CampaignBoxProps) {
   // 캠페인 타입에 따른 올바른 경로 결정
   const getCampaignPath = (campaign: any) => {
     switch (campaign.category) {
       case "배송형":
-        return `/delivery/${campaign.id}`;
+        return `/user/delivery/${campaign.id}`;
       case "방문형":
-        return `/visit/${campaign.id}`;
+        return `/user/visit/${campaign.id}`;
       case "구매평":
-        return `/review/${campaign.id}`;
+        return `/user/review/${campaign.id}`;
       case "체험단":
-        return `/experience/${campaign.id}`;
+        return `/user/experience/${campaign.id}`;
       case "기자단":
-        return `/reporter/${campaign.id}`;
+        return `/user/reporter/${campaign.id}`;
       default:
         return `${basePath}/${campaign.id}`;
     }
