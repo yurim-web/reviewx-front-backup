@@ -16,6 +16,9 @@
   background-color: white; /* 배경색 추가 */
   border-bottom: 1px solid #d9d9d9;
   z-index: 99; /* 헤더(100)보다 낮지만 콘텐츠보다는 위에 */
+  /* 스크롤 경고 방지를 위한 속성 추가 */
+  scroll-margin-top: 0;
+  scroll-snap-align: none;
 }
 
 .main_menu_item {

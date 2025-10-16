@@ -2,8 +2,10 @@
 
 // app/layout.tsx
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "../styles/globals.css";
 import Header from "@/components/fragments/Header";
+import Loading from "./loading";
 
 export const metadata: Metadata = {
   title: "ReviewX | 리뷰 캠페인 플랫폼",
@@ -26,18 +28,16 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
         />
 
-        {/* ✅ 개발 환경에서만 react-devtools standalone 연결 */}
-        {process.env.NODE_ENV === "development" && (
-          <script src="http://localhost:8097"></script>
-        )}
+        {/* React DevTools는 브라우저 확장 프로그램으로 사용 */}
       </head>
 
       {/* 실제 보이는 콘텐츠 영역 */}
       <body className="antialiased">
         <Header />
-        <main>{children}</main>
+        <main>
+          <Suspense fallback={<Loading />}>{children}</Suspense>
+        </main>
       </body>
     </html>
   );
 }
-

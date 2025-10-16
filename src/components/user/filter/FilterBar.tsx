@@ -85,16 +85,19 @@ export default function FilterBar({
 
   // 모달이 열릴 때 body 스크롤 방지
   useEffect(() => {
-    if (
+    const hasOpenModal =
       isCategoryModalOpen ||
       isChannelModalOpen ||
       isRegionModalOpen ||
-      isSortModalOpen
-    ) {
+      isSortModalOpen;
+
+    if (hasOpenModal) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
     }
+
+    // cleanup 함수 - 컴포넌트 언마운트 시 스크롤 복원
     return () => {
       document.body.style.overflow = "unset";
     };

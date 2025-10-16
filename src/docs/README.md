@@ -212,6 +212,10 @@ POST /api/campaigns/delivery/{id}/apply
 GET /api/user/campaigns?status=신청
 - 사용자 신청/선정/완료/취소반려 캠페인 목록
 - 통계 정보 (신청/선정/완료/취소반려/패널티 개수)
+
+GET /api/user/penalty
+- 사용자 현재 패널티 상태 (활동 가능/경고 조치/이용 정지 7일/15일/30일/영구 정지)
+- 패널티 내역 목록 (경고/주의/정지/제재)
 ```
 
 ### **👤 마이페이지** - `/user/mypage` (`app/user/mypage/page.tsx`)
@@ -341,6 +345,29 @@ interface CampaignData {
 }
 ```
 
+#### **패널티 데이터 구조**
+
+```typescript
+interface PenaltyHistory {
+  id: string; // 패널티 내역 ID
+  type: "경고" | "주의" | "정지" | "제재"; // 패널티 분류
+  title: string; // 패널티 제목/사유
+  date: string; // 발생 날짜 (YYYY-MM-DD 형식)
+  campaign_id?: string; // 관련 캠페인 ID
+}
+
+interface UserPenaltyStatus {
+  currentStatus:
+    | "활동 가능"
+    | "경고 조치"
+    | "이용 정지 7일"
+    | "이용 정지 15일"
+    | "이용 정지 30일"
+    | "영구 정지";
+  penaltyCount: number; // 총 패널티 횟수
+}
+```
+
 #### **포인트 데이터 구조**
 
 ```typescript
@@ -390,6 +417,8 @@ interface PointHistory {
 - **사용자 ID**: 숫자형 자동증가
 - **포인트**: 정수형 (원 단위)
 - **날짜**: ISO 8601 형식 (`2025-01-20`)
+- **패널티 상태**: enum 타입 (활동 가능, 경고 조치, 이용 정지 7일/15일/30일, 영구 정지)
+- **패널티 타입**: enum 타입 (경고, 주의, 정지, 제재)
 
 ### **API 응답 형식**
 
@@ -450,6 +479,17 @@ type SortOption = "최신순" | "인기순" | "마감임박순" | "캐시순";
 type MainTab = "campaign" | "point" | "account" | "community";
 type StatTab = "신청" | "선정" | "완료" | "취소/반려" | "패널티";
 
+// 패널티 관련
+type PenaltyStatus =
+  | "활동 가능"
+  | "경고 조치"
+  | "이용 정지 7일"
+  | "이용 정지 15일"
+  | "이용 정지 30일"
+  | "영구 정지";
+
+type PenaltyType = "경고" | "주의" | "정지" | "제재";
+
 // 포인트 관련
 type PointType = "earned" | "withdrawn";
 type PointStatus = "earned" | "completed" | "pending" | "failed";
@@ -467,6 +507,7 @@ type PointStatus = "earned" | "completed" | "pending" | "failed";
 - [ ] `GET /api/campaigns/{type}/{id}` - 캠페인 상세
 - [ ] `POST /api/campaigns/{type}/{id}/apply` - 캠페인 신청
 - [ ] `GET /api/user/campaigns` - 사용자 캠페인 목록
+- [ ] `GET /api/user/penalty` - 패널티 현황 및 내역
 - [ ] `GET /api/user/points` - 포인트 정보
 - [ ] `POST /api/user/points/withdrawal` - 출금 신청
 - [ ] `POST /api/auth/login` - 로그인
@@ -477,6 +518,7 @@ type PointStatus = "earned" | "completed" | "pending" | "failed";
 - [ ] `campaigns` - 캠페인 정보
 - [ ] `users` - 사용자 정보
 - [ ] `campaign_applications` - 캠페인 신청
+- [ ] `penalty_history` - 패널티 내역
 - [ ] `point_history` - 포인트 내역
 - [ ] `withdrawal_requests` - 출금 신청
 

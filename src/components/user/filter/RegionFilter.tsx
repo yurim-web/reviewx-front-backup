@@ -326,6 +326,8 @@ export default function RegionFilter({
     } else {
       document.body.style.overflow = "unset";
     }
+
+    // cleanup 함수 - 컴포넌트 언마운트 시 스크롤 복원
     return () => {
       document.body.style.overflow = "unset";
     };

@@ -26,9 +26,15 @@ import penaltyStyles from "../../../styles/user/campaign_management/penalty.modu
    - 타입 안전성을 위한 데이터 구조 정의
 ======================================== */
 
-// 패널티 상태 타입 - 4가지 가능한 상태를 정의
+// 패널티 상태 타입 - 6가지 가능한 상태를 정의
 // union 타입: | (파이프) 기호로 여러 타입 중 하나를 의미
-type PenaltyStatus = "활동 가능" | "경고 조치" | "이용 정지 15일" | "영구 정지";
+type PenaltyStatus =
+  | "활동 가능"
+  | "경고 조치"
+  | "이용 정지 7일"
+  | "이용 정지 15일"
+  | "이용 정지 30일"
+  | "영구 정지";
 
 // 패널티 종류 타입 - 4가지 패널티 분류
 type PenaltyType = "경고" | "주의" | "정지" | "제재";
@@ -110,9 +116,17 @@ const statusConfig: Record<
     className: penaltyStyles.warning_status,
     progress: { leftWidth: "30%", rightWidth: "0%" },
   },
+  "이용 정지 7일": {
+    className: penaltyStyles.suspension_status,
+    progress: { leftWidth: "100%", rightWidth: "20%" },
+  },
   "이용 정지 15일": {
     className: penaltyStyles.suspension_status,
     progress: { leftWidth: "100%", rightWidth: "30%" },
+  },
+  "이용 정지 30일": {
+    className: penaltyStyles.suspension_status,
+    progress: { leftWidth: "100%", rightWidth: "50%" },
   },
   "영구 정지": {
     className: penaltyStyles.permanent_ban_status,
@@ -164,7 +178,9 @@ export default function PenaltyContent() {
 
   // 주의 라벨 활성화 조건 (이용정지 또는 영구정지일 때)
   const isCautionActive =
+    userStatus.currentStatus === "이용 정지 7일" ||
     userStatus.currentStatus === "이용 정지 15일" ||
+    userStatus.currentStatus === "이용 정지 30일" ||
     userStatus.currentStatus === "영구 정지";
 
   // 삼항 연산자(Ternary Operator) 사용
