@@ -17,7 +17,7 @@
  * - 카테고리 아이콘 + 타입 조합 (CamCateIcon)
  */
 
-import styles from "../../../styles/user/campaign_management/campaign_management.module.css";
+import cardStyles from "../../../styles/user/campaign_management/campaign_card.module.css";
 
 /**
  * 마감 임박 또는 D-day 태그
@@ -33,8 +33,8 @@ export function CamTag({
 }) {
   return (
     <div
-      className={`${styles.cam_tag} ${
-        isUrgent ? styles.urgent : styles.normal
+      className={`${cardStyles.cam_tag} ${
+        isUrgent ? cardStyles.urgent : cardStyles.normal
       }`}
     >
       <span>{isUrgent ? "마감임박" : `${remainingDays}일 전`}</span>
@@ -47,7 +47,7 @@ export function CamTag({
  */
 export function CamType({ type }: { type: "배송형" | "방문형" }) {
   return (
-    <div className={styles.cam_type}>
+    <div className={cardStyles.cam_type}>
       <span>{type}</span>
     </div>
   );
@@ -58,7 +58,7 @@ export function CamType({ type }: { type: "배송형" | "방문형" }) {
  */
 export function CamIcon({ icon }: { icon: string }) {
   return (
-    <div className={styles.cam_icon}>
+    <div className={cardStyles.cam_icon}>
       <img src={icon} alt="브랜드 아이콘" />
     </div>
   );
@@ -77,7 +77,7 @@ export function CamCateIcon({
   type: "배송형" | "방문형";
 }) {
   return (
-    <div className={styles.cam_cate_icon}>
+    <div className={cardStyles.cam_cate_icon}>
       <CamIcon icon={icon} />
       <CamType type={type} />
     </div>

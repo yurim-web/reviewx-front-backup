@@ -30,8 +30,10 @@ import { useState } from "react";
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 import StatisticsTab from "@/components/user/campaign_management/StatisticsTab";
 import CampaignList from "@/components/user/campaign_management/CampaignList";
+import PenaltyContent from "@/components/user/campaign_management/PenaltyContent";
 import type { CampaignApplication, MainTab } from "@/types/campaignManagement";
-import styles from "../../../styles/user/campaign_management/campaign_management.module.css";
+import layoutStyles from "../../../styles/user/campaign_management/layout.module.css";
+import cardStyles from "../../../styles/user/campaign_management/campaign_card.module.css";
 
 /**
  * 목업 캠페인 데이터
@@ -150,9 +152,9 @@ export default function CampaignManagementPage() {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={layoutStyles.container}>
       {/* 메인 컨텐츠 영역 */}
-      <div className={styles.main_content}>
+      <div className={layoutStyles.main_content}>
         {/* 상단 탭 네비게이션: 캠페인/포인트/계정/커뮤니티 */}
         <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
 
@@ -164,12 +166,16 @@ export default function CampaignManagementPage() {
         />
 
         {/* 캠페인 목록 또는 패널티 내역 */}
-        <div className={styles.campaign_list}>
+        {activeStatTab === "패널티" ? (
+          <div className={cardStyles.campaign_list}>
+            <PenaltyContent />
+          </div>
+        ) : (
           <CampaignList
             campaigns={mockApplications}
             activeStatTab={activeStatTab}
           />
-        </div>
+        )}
       </div>
     </div>
   );

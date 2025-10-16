@@ -1,0 +1,97 @@
+/* 캠페인 관리 페이지 반응형 디자인 */
+
+/* 반응형 디자인 - 태블릿 (1200px 이하) */
+@media (max-width: 1200px) {
+  .main_content {
+    width: 100%; /* 전체 너비 사용 */
+    padding: 24px 0px;
+  }
+
+  .header_content {
+    width: 100%;
+    padding: 0 20px;
+  }
+
+  .tab_navigation_container {
+    padding: 0 20px; /* 좌우 패딩 축소 */
+  }
+
+  .statistics {
+    padding: 0 20px; /* 좌우 패딩 축소 */
+  }
+
+  .statistics::after {
+    left: 0;
+    right: 0;
+  }
+}
+
+/* 반응형 디자인 - 모바일 (768px 이하) */
+@media (max-width: 768px) {
+  /* 캠페인 카드 레이아웃을 세로로 변경 */
+  .campaign_content {
+    flex-direction: column; /* 이미지와 정보를 세로로 배치 */
+    gap: 12px;
+  }
+
+  /* 캠페인 이미지 크기 유지 */
+  .campaign_image {
+    width: 92px;
+    height: 92px;
+    flex-shrink: 0;
+    aspect-ratio: 1/1;
+    border-radius: 4px;
+    background: #d9d9d9;
+  }
+
+  /* 캠페인 헤더를 세로로 배치 */
+  .campaign_header {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  /* 통계 탭들을 줄바꿈 허용 */
+  .statistics {
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  /* 탭 간격 축소 */
+  .left_tabs,
+  .right_tabs {
+    gap: 16px;
+  }
+
+  /* 탭 폰트 크기 축소 */
+  .tab {
+    font-size: 18px;
+  }
+
+  /* 통계 탭 네비게이션 줄바꿈 허용 */
+  .stat_tab_navigation {
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  /* 통계 탭 폰트 크기 축소 */
+  .stat_tab {
+    font-size: 16px;
+  }
+
+  /* 모바일에서 탭 네비게이션 고정 위치 조정 */
+  .tab_navigation {
+    top: 60px; /* 모바일에서는 서브헤더 높이가 다를 수 있음 */
+    padding: 16px 0;
+  }
+
+  .tab_navigation_container {
+    padding: 0 24px;
+  }
+
+  /* 모바일에서 통계 탭 고정 위치 조정 */
+  .statistics {
+    top: 125px; /* 모바일에서 조정된 TabNavigation 위치 */
+    padding: 0 24px;
+  }
+}

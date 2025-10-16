@@ -20,8 +20,7 @@
 
 import type { CampaignApplication, StatTab } from "@/types/campaignManagement";
 import CampaignCard from "./CampaignCard";
-import PenaltyContent from "./PenaltyContent"; // 패널티 컴포넌트 다시 import
-import styles from "../../../styles/user/campaign_management/campaign_management.module.css";
+import cardStyles from "../../../styles/user/campaign_management/campaign_card.module.css";
 
 interface CampaignListProps {
   campaigns: CampaignApplication[];
@@ -38,12 +37,8 @@ export default function CampaignList({
   activeStatTab,
 }: CampaignListProps) {
   /* ========================================
-     패널티 탭 처리
-     - 패널티 탭인 경우 PenaltyContent 컴포넌트 렌더링
+     패널티 탭은 메인 페이지에서 별도 처리
   ======================================== */
-  if (activeStatTab === "패널티") {
-    return <PenaltyContent />;
-  }
 
   /**
    * 현재 선택된 탭에 맞는 캠페인만 필터링
@@ -66,7 +61,7 @@ export default function CampaignList({
   // 필터링 결과가 없는 경우 빈 상태 메시지 표시
   if (filteredCampaigns.length === 0) {
     return (
-      <div className={styles.empty_state}>
+      <div className={cardStyles.empty_state}>
         <p>{activeStatTab} 상태의 캠페인이 없습니다.</p>
       </div>
     );
@@ -74,7 +69,7 @@ export default function CampaignList({
 
   // 캠페인 카드 목록 렌더링
   return (
-    <>
+    <div className={cardStyles.campaign_list}>
       {filteredCampaigns.map((campaign) => (
         <CampaignCard
           key={campaign.id}
@@ -82,6 +77,6 @@ export default function CampaignList({
           activeTab={activeStatTab}
         />
       ))}
-    </>
+    </div>
   );
 }

@@ -18,7 +18,7 @@
  * - TypeScript 타입 안전성과 접근성 지원
  */
 
-import styles from "../../../styles/user/campaign_management/campaign_management.module.css";
+// 캠페인 관리 공용 스타일 필요 없음. 필요 시 개별 모듈을 import 하세요.
 import penaltyStyles from "../../../styles/user/campaign_management/penalty.module.css";
 
 /* ========================================
@@ -196,7 +196,7 @@ export default function PenaltyContent() {
   ======================================== */
 
   return (
-    <main className={penaltyStyles.penalty_content}>
+    <div className={penaltyStyles.penalty_content}>
       {/* ========== 패널티 현황 섹션 ========== */}
       <section className={penaltyStyles.penalty_stage_section}>
         {/* 패널티 현황 헤더 */}
@@ -309,6 +309,6 @@ export default function PenaltyContent() {
           </div>
         )}
       </section>
-    </main>
+    </div>
   );
 }

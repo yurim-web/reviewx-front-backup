@@ -18,7 +18,7 @@
  */
 
 import type { CampaignStats, StatTab } from "@/types/campaignManagement";
-import styles from "../../../styles/user/campaign_management/campaign_management.module.css";
+import styles from "../../../styles/user/campaign_management/statistics.module.css";
 
 interface StatisticsTabProps {
   activeStatTab: StatTab;

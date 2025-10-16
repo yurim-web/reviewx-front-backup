@@ -19,7 +19,8 @@
  */
 
 import type { CampaignApplication, StatTab } from "@/types/campaignManagement";
-import styles from "../../../styles/user/campaign_management/campaign_management.module.css";
+import cardStyles from "../../../styles/user/campaign_management/campaign_card.module.css";
+import buttonStyles from "../../../styles/user/campaign_management/buttons.module.css";
 import { CamTag, CamCateIcon } from "./CampaignTag";
 
 interface CampaignCardProps {
@@ -77,21 +78,21 @@ export default function CampaignCard({
       buttonText === "콘텐츠 재등록하기" ||
       buttonText === "패널티 해제하기"
     ) {
-      return `${styles.action_button} ${styles.primary_button}`;
+      return `${buttonStyles.action_button} ${buttonStyles.primary_button}`;
     }
 
     // 경고 버튼 - 빨간색 테두리 (패널티 관련)
     if (buttonText === "패널티 내역보기") {
-      return `${styles.action_button} ${styles.danger_button}`;
+      return `${buttonStyles.action_button} ${buttonStyles.danger_button}`;
     }
 
     // 보조 버튼 - 회색 테두리 (확인하기)
     if (buttonText === "콘텐츠 확인하기") {
-      return `${styles.action_button} ${styles.secondary_button}`;
+      return `${buttonStyles.action_button} ${buttonStyles.secondary_button}`;
     }
 
     // 일반 버튼 - 기본 검은색 테두리
-    return `${styles.action_button} ${styles.default_button}`;
+    return `${buttonStyles.action_button} ${buttonStyles.default_button}`;
   };
 
   /**
@@ -115,18 +116,18 @@ export default function CampaignCard({
   };
 
   return (
-    <div className={styles.campaign_card}>
+    <div className={cardStyles.campaign_card}>
       {/* 캠페인 정보 영역 */}
-      <div className={styles.campaign_content}>
+      <div className={cardStyles.campaign_content}>
         {/* 캠페인 이미지 */}
-        <div className={styles.campaign_image}>
+        <div className={cardStyles.campaign_image}>
           {/* TODO: 실제 이미지 추가 시 여기에 img 태그 추가 */}
         </div>
 
         {/* 캠페인 상세 정보 */}
-        <div className={styles.campaign_info}>
+        <div className={cardStyles.campaign_info}>
           {/* 헤더: 카테고리 아이콘 + 마감 태그 */}
-          <div className={styles.campaign_header}>
+          <div className={cardStyles.campaign_header}>
             <CamCateIcon
               category={campaign.category}
               icon={campaign.categoryIcon}
@@ -139,33 +140,35 @@ export default function CampaignCard({
           </div>
 
           {/* 캠페인 제목 */}
-          <h3 className={styles.campaign_title}>{campaign.title}</h3>
+          <h3 className={cardStyles.campaign_title}>{campaign.title}</h3>
 
           {/* 캠페인 상태 설명 */}
-          <p className={styles.campaign_status}>{getStatusText()}</p>
+          <p className={cardStyles.campaign_status}>{getStatusText()}</p>
         </div>
       </div>
 
       {/* 액션 버튼 영역 */}
-      <div className={styles.campaign_actions}>
+      <div className={buttonStyles.campaign_actions}>
         {/* 취소/반려 탭이면서 콘텐츠가 반려된 경우: 2개 버튼 표시 */}
         {activeTab === "취소/반려" &&
         campaign.subStatus === "content_rejected" ? (
           <>
             <button
-              className={`${styles.action_button} ${styles.danger_button}`}
+              className={`${buttonStyles.action_button} ${buttonStyles.danger_button}`}
             >
               콘텐츠 반려 사유보기
             </button>
             <button
-              className={`${styles.action_button} ${styles.primary_button}`}
+              className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
             >
               콘텐츠 재등록하기
             </button>
           </>
         ) : /* 취소/반려 탭이면서 패널티인 경우 */
         activeTab === "취소/반려" && campaign.subStatus === "penalty" ? (
-          <button className={`${styles.action_button} ${styles.danger_button}`}>
+          <button
+            className={`${buttonStyles.action_button} ${buttonStyles.danger_button}`}
+          >
             패널티 내역보기
           </button>
         ) : (
@@ -176,3 +179,6 @@ export default function CampaignCard({
     </div>
   );
 }
+
+
+
