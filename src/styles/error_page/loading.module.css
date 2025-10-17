@@ -1,53 +1,64 @@
+/* ========================================
+   로딩 페이지 스타일
+   ======================================== */
+
 .loading_container {
-  min-height: calc(100vh - 80px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: white;
+  background-color: rgba(0, 0, 0, 0.3);
+  /* backdrop-filter: blur(2px); */
+  z-index: 9999;
 }
 
 .loading_content {
   text-align: center;
-  max-width: 600px;
-  padding: 40px 20px;
-}
-
-.loading_title {
-  font-size: 48px;
-  font-weight: bold;
-  color: black;
-  margin: 0 0 30px 0;
-  letter-spacing: 2px;
-}
-
-.loading_message {
-  margin-bottom: 40px;
-}
-
-.loading_message p {
-  font-size: 16px;
-  color: black;
-  margin: 8px 0;
-  line-height: 1.5;
+  padding: 0;
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  position: relative;
+  z-index: 1;
 }
 
 .loading_illustration {
-  margin: 40px 0;
+  margin: 0;
   display: flex;
+  align-items: center;
   justify-content: center;
 }
 
-.loading_spinner {
-  width: 60px;
-  height: 60px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #000;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto;
+.loading_container_wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-@keyframes spin {
+.white_circle {
+  width: 90px;
+  height: 90px;
+  background-color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.loading_icon {
+  width: 57px;
+  height: 57px;
+  animation: rotate 1.2s linear infinite;
+}
+
+@keyframes rotate {
   0% {
     transform: rotate(0deg);
   }
@@ -57,10 +68,7 @@
 }
 
 .loading_dots {
-  margin-top: 20px;
-  font-size: 24px;
-  font-weight: bold;
-  color: black;
+  display: none;
 }
 
 .loading_dots span {
@@ -85,20 +93,5 @@
   }
   100% {
     opacity: 0;
-  }
-}
-
-@media (max-width: 768px) {
-  .loading_title {
-    font-size: 36px;
-  }
-
-  .loading_message p {
-    font-size: 14px;
-  }
-
-  .loading_spinner {
-    width: 50px;
-    height: 50px;
   }
 }

@@ -26,7 +26,7 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, use } from "react";
 import SubHeader from "@/components/fragments/SubHeader";
 import ApplicationModal from "@/components/user/campaign_detail/modal/ApplicationModal";
 import styles from "../../../../styles/user/campaign/campaign_detail.module.css";
@@ -40,13 +40,15 @@ import DetailImage from "@/components/user/campaign_detail/DetailImage";
 import DetailGuidelinesSectionReporter from "@/components/user/campaign_detail/guidelines/DetailGuidelinesSectionReporter";
 
 interface ReporterDetailPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default function ReporterDetailPage({
   params,
 }: ReporterDetailPageProps) {
-  const campaign = reporterCampaigns.find((c) => String(c.id) === params.id);
+  // Next.js 15에서 params는 Promise이므로 React.use()로 unwrap
+  const { id } = use(params);
+  const campaign = reporterCampaigns.find((c) => String(c.id) === id);
   const [isModalOpen, setIsModalOpen] = useState(false);
   // 캠페인 정보 라벨 고정 상태 관리
   const [isCampaignInfoFixed, setIsCampaignInfoFixed] = useState(false);

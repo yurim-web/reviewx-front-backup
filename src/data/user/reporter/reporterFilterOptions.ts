@@ -36,4 +36,9 @@ export const reporterChannelOptions = [
 ];
 
 // 기자단 정렬 옵션
-export const reporterSortOptions = ["최신순", "인기순", "마감임박순", "캐시순"];
+export const reporterSortOptions = [
+  "최신순",
+  "인기순",
+  "마감임박순",
+  "포인트순",
+];

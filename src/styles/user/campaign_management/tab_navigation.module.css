@@ -40,7 +40,6 @@
   border: none;
   cursor: pointer;
   padding: 0;
-  transition: color 0.2s ease; /* 색상 변화 애니메이션 */
 }
 
 /* 활성화된 탭 스타일 */

@@ -21,7 +21,7 @@
 
 /* 포인트 요약 섹션 (보유포인트 + 출금신청 버튼) */
 .point_summary_section {
-  padding: 24px 40px;
+  padding: 40px 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -31,7 +31,7 @@
 .point_summary_info {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
 }
 
 /* "보유포인트" 라벨 */
@@ -76,6 +76,7 @@
 
 /* ============================================
    포인트 탭 네비게이션
+   
    ============================================ */
 
 /* 탭 네비게이션 전체 컨테이너 */

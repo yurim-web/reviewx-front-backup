@@ -26,7 +26,7 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, use } from "react";
 import SubHeader from "@/components/fragments/SubHeader";
 import ApplicationModalType3 from "@/components/user/campaign_detail/modal/ApplicationModalType3";
 import styles from "../../../../styles/user/campaign/campaign_detail.module.css";
@@ -39,7 +39,7 @@ import DetailImage from "@/components/user/campaign_detail/DetailImage";
 import DetailGuidelinesSectionExperience from "@/components/user/campaign_detail/guidelines/DetailGuidelinesSectionExperience";
 
 interface ExperienceDetailPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default function ExperienceDetailPage({
@@ -49,8 +49,11 @@ export default function ExperienceDetailPage({
   // 1. 데이터 및 상태 관리
   // ========================================
 
+  // Next.js 15에서 params는 Promise이므로 React.use()로 unwrap
+  const { id } = use(params);
+
   // URL의 id와 일치하는 캠페인 데이터 찾기
-  const campaign = experienceCampaigns.find((c) => String(c.id) === params.id);
+  const campaign = experienceCampaigns.find((c) => String(c.id) === id);
 
   // 신청 모달 표시 상태
   const [isModalOpen, setIsModalOpen] = useState(false);

@@ -362,6 +362,35 @@
   font-weight: bold;
 }
 
+/* 라디오 버튼 */
+.option_radio {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #d9d9d9;
+  border-radius: 50%;
+  cursor: pointer;
+  appearance: none;
+  background: white;
+  position: relative;
+}
+
+.option_radio:checked {
+  background: #555;
+  border-color: #555;
+}
+
+.option_radio:checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+}
+
 /* 옵션 라벨 */
 .option_label {
   color: #444;

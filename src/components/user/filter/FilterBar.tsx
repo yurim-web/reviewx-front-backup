@@ -28,6 +28,7 @@ import { useRef, useState, useEffect } from "react";
 import styles from "../../../styles/filter/filter_bar.module.css";
 import ModalFilter from "./ModalFilter";
 import RegionFilter from "./RegionFilter";
+import SortModalFilter from "./SortModalFilter";
 
 // FilterBar 컴포넌트의 props 타입 정의
 interface FilterBarProps {
@@ -57,6 +58,8 @@ interface FilterBarProps {
   closingSoon?: boolean;
   // 마감임박 필터 변경 핸들러
   onClosingSoonChange?: (closingSoon: boolean) => void;
+  // 기본 정렬값
+  defaultSort?: string;
 }
 
 export default function FilterBar({
@@ -68,6 +71,7 @@ export default function FilterBar({
   sortOptions = ["최신순", "인기순", "마감임박순", "포인트높은순"],
   closingSoon = false,
   onClosingSoonChange,
+  defaultSort = "최신순",
 }: FilterBarProps) {
   // 컴포넌트 외부 클릭 감지를 위한 루트 ref
   const containerRef = useRef<HTMLDivElement>(null);
@@ -137,24 +141,15 @@ export default function FilterBar({
     setIsSortModalOpen(false);
   };
 
-  // 정렬 선택/해제 핸들러 (모달 내부용)
+  // 정렬 선택/해제 핸들러 (모달 내부용) - 선택 즉시 적용
   const handleSortToggle = (
     option: string | { value: string; label: string }
   ) => {
     const sort = typeof option === "string" ? option : option.value;
     setTempSort(sort);
-  };
-
-  // 정렬 적용 핸들러
-  const handleSortApply = () => {
-    setSelectedSort(tempSort);
-    onFilterChange?.({ sortBy: tempSort });
-    setIsSortModalOpen(false);
-  };
-
-  // 정렬 초기화 핸들러
-  const handleSortReset = () => {
-    setTempSort("최신순");
+    setSelectedSort(sort);
+    onFilterChange?.({ sortBy: sort });
+    setIsSortModalOpen(false); // 선택 후 모달 닫기
   };
 
   // 모달 내에서 카테고리 선택/해제 핸들러
@@ -479,17 +474,14 @@ export default function FilterBar({
       )}
 
       {/* 정렬 모달 */}
-      <ModalFilter
+      <SortModalFilter
         isOpen={isSortModalOpen}
-        onClose={() => setIsSortModalOpen(false)}
+        onClose={handleSortModalClose}
         title="정렬"
         options={sortOptions}
-        selectedValues={tempSort}
+        selectedValue={tempSort}
         onOptionChange={handleSortToggle}
-        onApply={handleSortApply}
-        onReset={handleSortReset}
-        type="radio"
-        layout="vertical"
+        defaultSort={defaultSort}
       />
     </>
   );

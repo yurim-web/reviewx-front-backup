@@ -51,7 +51,7 @@ export default function DeliveryPage() {
   }>({
     channels: [],
     categories: [],
-    sort: "latest",
+    sort: "최신순",
   });
 
   // 마감임박 필터 상태
@@ -60,6 +60,7 @@ export default function DeliveryPage() {
   // 필터 변경 핸들러
   const handleFilterChange = (filters: any) => {
     console.log("필터 변경:", filters);
+    console.log("정렬 필터:", filters.sortBy);
 
     // 새로운 필터 상태 업데이트
     setActiveFilters((prev) => {
@@ -80,10 +81,12 @@ export default function DeliveryPage() {
       }
 
       // 정렬 옵션 업데이트
-      if (filters.sort !== undefined) {
-        newFilters.sort = filters.sort || "latest";
+      if (filters.sortBy !== undefined) {
+        newFilters.sort = filters.sortBy || "최신순";
+        console.log("정렬 변경됨:", newFilters.sort);
       }
 
+      console.log("새로운 필터 상태:", newFilters);
       return newFilters;
     });
   };
@@ -109,15 +112,16 @@ export default function DeliveryPage() {
   // 정렬된 캠페인 목록
   const sortedCampaigns = [...filteredCampaigns].sort((a, b) => {
     switch (activeFilters.sort) {
-      case "points_high":
-        return b.points - a.points;
-      case "points_low":
-        return a.points - b.points;
-      case "recruitment_high":
+      case "인기순":
         return b.recruitment.current - a.recruitment.current;
-      case "recruitment_low":
-        return a.recruitment.current - b.recruitment.current;
-      case "latest":
+      case "마감임박순":
+        // 마감임박인 것들을 우선으로 정렬
+        if (a.dayCount === "마감임박" && b.dayCount !== "마감임박") return -1;
+        if (b.dayCount === "마감임박" && a.dayCount !== "마감임박") return 1;
+        return b.id.localeCompare(a.id);
+      case "포인트순":
+        return b.points - a.points;
+      case "최신순":
       default:
         // 최신순 (ID 기준 내림차순)
         return b.id.localeCompare(a.id);
@@ -146,6 +150,7 @@ export default function DeliveryPage() {
           sortOptions={deliverySortOptions}
           closingSoon={closingSoon}
           onClosingSoonChange={setClosingSoon}
+          defaultSort="최신순"
         />
 
         <section className={styles.campaign_container}>

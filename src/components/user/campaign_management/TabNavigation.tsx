@@ -30,7 +30,7 @@ interface TabNavigationProps {
 
 /**
  * 상단 메인 탭 네비게이션
- * 캠페인, 포인트, 계정, 커뮤니티 탭을 표시
+ * 캠페인, 포인트, 계정 탭을 표시
  */
 export default function TabNavigation({
   activeTab,
@@ -76,7 +76,7 @@ export default function TabNavigation({
           </button>
         </div>
 
-        {/* 오른쪽 탭: 계정, 커뮤니티 (추후 구현) */}
+        {/* 오른쪽 탭: 계정 */}
         <div className={styles.right_tabs}>
           <button
             className={`${styles.tab} ${
@@ -91,3 +91,4 @@ export default function TabNavigation({
     </div>
   );
 }
+

@@ -26,7 +26,7 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, use } from "react";
 import SubHeader from "@/components/fragments/SubHeader";
 import ApplicationModal from "@/components/user/campaign_detail/modal/ApplicationModal";
 import styles from "../../../../styles/user/campaign/campaign_detail.module.css";
@@ -40,13 +40,13 @@ import DetailImage from "@/components/user/campaign_detail/DetailImage";
 import DetailGuidelinesSectionVisit from "@/components/user/campaign_detail/guidelines/DetailGuidelinesSectionVisit";
 
 interface VisitDetailPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default function VisitDetailPage({ params }: VisitDetailPageProps) {
-  const campaign = visitCampaigns.find(
-    (c) => String(c.id) === String(params.id)
-  );
+  // Next.js 15에서 params는 Promise이므로 React.use()로 unwrap
+  const { id } = use(params);
+  const campaign = visitCampaigns.find((c) => String(c.id) === String(id));
   const [isModalOpen, setIsModalOpen] = useState(false);
   // 캠페인 정보 라벨 고정 상태 관리
   const [isCampaignInfoFixed, setIsCampaignInfoFixed] = useState(false);

@@ -51,7 +51,7 @@ export default function ExperiencePage() {
   }>({
     channels: [],
     categories: [],
-    sort: "latest",
+    sort: "최신순",
   });
 
   const [closingSoon, setClosingSoon] = useState<boolean>(false);
@@ -63,8 +63,12 @@ export default function ExperiencePage() {
       setClosingSoon(filters.closingSoon);
     }
 
-    if (filters.sort !== undefined) {
-      setActiveFilters((prev) => ({ ...prev, sort: filters.sort || "latest" }));
+    if (filters.sortBy !== undefined) {
+      setActiveFilters((prev) => ({
+        ...prev,
+        sort: filters.sortBy || "최신순",
+      }));
+      console.log("정렬 변경됨:", filters.sortBy);
     }
 
     setActiveFilters((prev) => {
@@ -116,19 +120,21 @@ export default function ExperiencePage() {
     console.log("🔄 정렬 적용:", activeFilters.sort);
 
     switch (activeFilters.sort) {
-      case "points_high":
-        filtered.sort((a, b) => b.points - a.points);
-        break;
-      case "points_low":
-        filtered.sort((a, b) => a.points - b.points);
-        break;
-      case "recruitment_high":
+      case "인기순":
         filtered.sort((a, b) => b.recruitment.current - a.recruitment.current);
         break;
-      case "recruitment_low":
-        filtered.sort((a, b) => a.recruitment.current - b.recruitment.current);
+      case "마감임박순":
+        // 마감임박인 것들을 우선으로 정렬
+        filtered.sort((a, b) => {
+          if (a.dayCount === "마감임박" && b.dayCount !== "마감임박") return -1;
+          if (b.dayCount === "마감임박" && a.dayCount !== "마감임박") return 1;
+          return b.id.localeCompare(a.id);
+        });
         break;
-      case "latest":
+      case "포인트순":
+        filtered.sort((a, b) => b.points - a.points);
+        break;
+      case "최신순":
       default:
         filtered.sort((a, b) => b.id.localeCompare(a.id));
         break;
@@ -160,6 +166,7 @@ export default function ExperiencePage() {
           sortOptions={experienceSortOptions}
           closingSoon={closingSoon}
           onClosingSoonChange={setClosingSoon}
+          defaultSort="최신순"
         />
 
         <section className={styles.campaign_container}>
