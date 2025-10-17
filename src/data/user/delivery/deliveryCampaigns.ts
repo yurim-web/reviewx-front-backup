@@ -66,7 +66,8 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버 블로그",
     keyword: "#세르프 #박신혜리프팅 #뷰티 #스킨케어 #리프팅크림",
-    promotionLink: "https://smartstore.naver.com/example-store/products/123456",
+    promotionLink:
+      "https://smartstore.naver.com/example-store/products/1234564565656565656565656565656565664545454545454545456456",
     requirements: [
       "text_2000",
       "photo_15",

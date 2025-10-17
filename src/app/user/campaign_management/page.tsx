@@ -89,6 +89,32 @@ const mockApplications: CampaignApplication[] = [
     hasContent: true,
   },
   {
+    id: "8",
+    title: "[올리브영] 헤어케어 제품 리뷰 캠페인",
+    category: "올리브영",
+    categoryIcon: "/images/brand_logo/oliveyoung.svg",
+    image: "/images/campaign_detail/exdetail_1.png",
+    status: "선정",
+    remainingDays: 5,
+    type: "배송형",
+    isUrgent: false,
+    subStatus: "content_not_registered", // 콘텐츠 등록 안함
+    hasContent: false,
+  },
+  {
+    id: "9",
+    title: "[네이버쇼핑] 뷰티 제품 체험단",
+    category: "네이버쇼핑",
+    categoryIcon: "/images/brand_logo/navershop.svg",
+    image: "/images/campaign_detail/exdetail_1.png",
+    status: "선정",
+    remainingDays: 7,
+    type: "배송형",
+    isUrgent: false,
+    subStatus: "content_not_registered", // 콘텐츠 등록 안함
+    hasContent: false,
+  },
+  {
     id: "5",
     title: "유튜브 크리에이터 콘텐츠 제작",
     category: "유튜브",
@@ -135,6 +161,7 @@ export default function CampaignManagementPage() {
   const [activeTab, setActiveTab] = useState<MainTab>("campaign");
 
   // 통계 탭 상태 (신청 / 선정 / 완료 / 취소반려 / 패널티)
+  // 메뉴부분
   const [activeStatTab, setActiveStatTab] = useState<
     "신청" | "선정" | "완료" | "취소/반려" | "패널티"
   >("신청");
@@ -164,7 +191,6 @@ export default function CampaignManagementPage() {
           setActiveStatTab={setActiveStatTab}
           stats={mockStats}
         />
-
         {/* 캠페인 목록 또는 패널티 내역 */}
         {activeStatTab === "패널티" ? (
           <div className={cardStyles.campaign_list}>

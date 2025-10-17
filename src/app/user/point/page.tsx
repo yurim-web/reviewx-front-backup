@@ -27,7 +27,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Header from "@/components/fragments/Header";
@@ -45,9 +45,25 @@ export default function PointPage() {
   const router = useRouter();
   const [activeMainTab, setActiveMainTab] = useState<MainTab>("point");
   const [activePointTab, setActivePointTab] = useState<PointTab>("all");
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const [showTooltip, setShowTooltip] = useState(false);
+  const tooltipRef = useRef<HTMLSpanElement>(null);
 
   const handleWithdrawalClick = () => {
     router.push("/user/point/withdrawal_request");
+  };
+
+  const handleMouseEnter = (e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setTooltipPosition({
+      x: rect.right + 8,
+      y: rect.top + rect.height / 2,
+    });
+    setShowTooltip(true);
+  };
+
+  const handleMouseLeave = () => {
+    setShowTooltip(false);
   };
 
   // 탭에 따라 데이터 필터링
@@ -128,7 +144,11 @@ export default function PointPage() {
                         <span className={styles.main_text}>
                           {history.description}
                         </span>
-                        <div className={styles.reason_section}>
+                        <div
+                          className={styles.reason_section}
+                          onMouseEnter={handleMouseEnter}
+                          onMouseLeave={handleMouseLeave}
+                        >
                           <div className={styles.reason_icon}>
                             <Image
                               src="/images/management_page/cancel_info.svg"
@@ -138,7 +158,17 @@ export default function PointPage() {
                             />
                           </div>
                           <span className={styles.reason_text}>사유보기</span>
-                          <span className={styles.reason_content}>
+                          <span
+                            ref={tooltipRef}
+                            className={styles.reason_content}
+                            style={{
+                              left: tooltipPosition.x,
+                              top: tooltipPosition.y,
+                              transform: "translateY(-50%)",
+                              opacity: showTooltip ? 1 : 0,
+                              visibility: showTooltip ? "visible" : "hidden",
+                            }}
+                          >
                             예금주와 본인 명의 불일치
                           </span>
                         </div>

@@ -44,12 +44,13 @@
 .content_box {
   padding: 0px 12px;
   width: 720px;
+  
   /* 글자 css */
   color: #444;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
-  line-height: 18px; /* 128.571% */
-  letter-spacing: -0.28px;
+  line-height: 26px; /* 162.5% */
+  letter-spacing: -0.32px;
 }
 
 /* ===== 키워드 섹션 ===== */
@@ -90,7 +91,11 @@
 .promotion_link {
   color: #333;
   cursor: pointer;
-  word-break: break-all;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
 }
 
 /* 중요 안내 사항 컨테이너 */

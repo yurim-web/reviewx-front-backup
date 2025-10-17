@@ -1,0 +1,99 @@
+/* 캠페인 관리 페이지 통계 섹션 */
+
+/* 통계 섹션 - 캠페인 수량 표시 탭들 */
+.statistics {
+  padding: 0px 40px; /* 좌우 패딩 */
+  position: sticky; /* 스크롤 시 고정 */
+  top: 148.5px; /* TabNavigation(65px) + 서브헤더(80px) = 145px 아래에 고정 */
+  background: white;
+  z-index: 85; /* 탭 네비게이션보다 낮은 우선순위 */
+}
+
+/* 통계 섹션 하단 구분선 */
+.statistics::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0.5px;
+  background-color: #d9d9d9;
+}
+
+/* 통계 탭 네비게이션 컨테이너 */
+.stat_tab_navigation {
+  display: flex;
+  gap: 24px;
+  /* justify-content: space-between; */
+  align-items: center;
+  width: 100%; /* 전체 너비 차지 */
+  background: white; /* 배경을 흰색으로 설정 */
+}
+
+/* 좌측 통계 탭들 (전체, 진행중, 완료, 반려 등) */
+.left_stat_tabs {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+/* 개별 통계 탭 버튼 */
+.stat_tab {
+  color: #848484; /* 기본 회색 */
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 18px; /* 100% */
+  letter-spacing: -0.36px;
+
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  position: relative;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px; /* 텍스트와 숫자 간격 */
+}
+
+/* 활성화된 통계 탭 */
+.stat_tab.active {
+  font-weight: 700;
+  color: #444444;
+  background: white; /* 활성 탭 배경을 흰색으로 설정 */
+}
+
+/* 활성화된 통계 탭 하단 강조선 */
+.stat_tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #444444;
+  z-index: 1;
+}
+
+/* 통계 탭의 숫자 부분 (예: "전체 (5)") */
+.stat_number {
+  color: #848484;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+}
+
+/* 활성화된 통계 탭의 숫자 스타일 */
+.stat_tab.active .stat_number {
+  color: #444444;
+  font-weight: 700;
+}
+
+/* JS에서 `${styles.stat_tab} ${styles.active}` 처럼 사용할 수 있도록 보조 클래스 */
+.active {
+  font-weight: 700;
+  color: #444444;
+}

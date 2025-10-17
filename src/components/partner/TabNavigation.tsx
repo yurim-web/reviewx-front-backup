@@ -8,9 +8,7 @@
  * 목적: 캠페인, 포인트, 계정 등 주요 섹션 간 네비게이션을 담당하는 상단 탭입니다.
  *
  * 사용 페이지:
- * - /user/campaign_management (캠페인 관리 페이지)
- * - /user/point (포인트 페이지)
- * - /user/mypage (마이페이지)
+ * - /partner (파트너 캠페인 관리 페이지)
  *
  * 주요 기능:
  * - 캠페인/포인트/계정 탭 전환
@@ -21,7 +19,7 @@
 
 import { useRouter } from "next/navigation";
 import type { MainTab } from "@/types/campaignManagement";
-import styles from "../../../styles/user/campaign_management/tab_navigation.module.css";
+import styles from "../../styles/partner/tab_navigation.module.css";
 
 interface TabNavigationProps {
   activeTab: MainTab;
@@ -40,17 +38,21 @@ export default function TabNavigation({
 
   const handleCampaignClick = () => {
     setActiveTab("campaign");
-    router.push("/user/campaign_management");
+    router.push("/partner");
   };
 
   const handlePointClick = () => {
     setActiveTab("point");
-    router.push("/user/point");
+    router.push("/partner/point");
   };
 
   const handleAccountClick = () => {
     setActiveTab("account");
-    router.push("/user/mypage");
+    router.push("/partner/account");
+  };
+
+  const handleCreateCampaignClick = () => {
+    router.push("/partner/campaign/create");
   };
 
   return (
@@ -76,8 +78,14 @@ export default function TabNavigation({
           </button>
         </div>
 
-        {/* 오른쪽 탭: 계정 */}
+        {/* 오른쪽: 새 캠페인 등록 버튼과 계정 탭 */}
         <div className={styles.right_tabs}>
+          <button
+            className={styles.create_campaign_button}
+            onClick={handleCreateCampaignClick}
+          >
+            새 캠페인 등록
+          </button>
           <button
             className={`${styles.tab} ${
               activeTab === "account" ? styles.active : ""

@@ -1,0 +1,21 @@
+/* 파트너 캠페인 관리 페이지 기본 레이아웃 */
+
+/* 전체 페이지 컨테이너 */
+.container {
+  position: relative;
+  width: 100%;
+  background-color: #f2f2f2;
+  min-height: 100vh;
+}
+
+/* 메인 콘텐츠 영역 - 중앙 정렬된 흰색 배경 */
+.main_content {
+  background-color: white;
+  width: 100%;
+  margin: 0 auto;
+  min-height: 100vh;
+  max-width: 1200px;
+
+  display: flex;
+  flex-direction: column;
+}

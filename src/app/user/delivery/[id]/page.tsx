@@ -127,10 +127,7 @@ export default function DeliveryDetailPage({
       {/* 서브헤더: 항상 상단에 고정 */}
       <SubHeader />
 
-      {/* 
-        메인 카테고리 메뉴: SubHeader(80px) 아래에 고정 
-        캠페인 정보 라벨이 고정되면 숨김 (isCampaignInfoFixed가 true일 때)
-      */}
+      {/* 메인 카테고리 메뉴: SubHeader(80px) 아래에 고정 캠페인 정보 라벨이 고정되면 숨김 (isCampaignInfoFixed가 true일 때) */}
       {!isCampaignInfoFixed && (
         <div
           style={{

@@ -18,10 +18,12 @@
  * - 반려된 콘텐츠의 경우 2개 버튼 표시
  */
 
+import { useState } from "react";
 import type { CampaignApplication, StatTab } from "@/types/campaignManagement";
 import cardStyles from "../../../styles/user/campaign_management/campaign_card.module.css";
 import buttonStyles from "../../../styles/user/campaign_management/buttons.module.css";
 import { CamTag, CamCateIcon } from "./CampaignTag";
+import ReceiptRegistrationModal from "./ReceiptRegistrationModal";
 
 interface CampaignCardProps {
   campaign: CampaignApplication;
@@ -36,6 +38,15 @@ export default function CampaignCard({
   campaign,
   activeTab,
 }: CampaignCardProps) {
+  const [isContentModalOpen, setIsContentModalOpen] = useState(false);
+
+  const handleContentButtonClick = () => {
+    setIsContentModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsContentModalOpen(false);
+  };
   /**
    * 현재 탭과 캠페인 상태에 따른 버튼 텍스트 결정
    */
@@ -173,12 +184,24 @@ export default function CampaignCard({
           </button>
         ) : (
           /* 그 외의 경우: 상태에 맞는 1개 버튼 표시 */
-          <button className={getButtonStyle()}>{getButtonText()}</button>
+          <button
+            className={getButtonStyle()}
+            onClick={
+              getButtonText() === "콘텐츠 등록하기"
+                ? handleContentButtonClick
+                : undefined
+            }
+          >
+            {getButtonText()}
+          </button>
         )}
       </div>
+
+      {/* 콘텐츠 등록 모달 */}
+      <ReceiptRegistrationModal
+        isOpen={isContentModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 }
-
-
-

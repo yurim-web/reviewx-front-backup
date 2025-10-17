@@ -14,6 +14,7 @@
   align-items: center;
 }
 
+/* 이미지 들어가는 부분 */
 .profile_image {
   width: 80px;
   height: 80px;
@@ -25,7 +26,7 @@
 .profile_details {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 12px;
 }
 
 .profile_role {
