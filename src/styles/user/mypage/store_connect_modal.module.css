@@ -1,4 +1,14 @@
-/* 스토어 연결 모달 스타일 */
+/* ========================================
+   🏪 스토어 연결 모달 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - ChannelConnectModal.tsx (채널 연결 모달 컴포넌트)
+ * 
+ * 사용 페이지:
+ * - /user/mypage (마이페이지)
+ */
 .modal_overlay {
   position: fixed;
   top: 0;
@@ -37,7 +47,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-    padding: 20px 20px 4px;
+  padding: 20px 20px 4px;
 }
 
 .modal_title {

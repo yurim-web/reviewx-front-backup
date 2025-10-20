@@ -1,4 +1,20 @@
-/* 메인페이지 스타일 css 코드 */
+/* ========================================
+   🏠 메인페이지 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - page.tsx (메인 홈페이지)
+ * - MainMenu.tsx (메인 카테고리 메뉴)
+ * 
+ * 사용 페이지:
+ * - / (메인 홈페이지)
+ * - /user/delivery (배송형 캠페인 목록)
+ * - /user/visit (방문형 캠페인 목록)
+ * - /user/review (구매평 캠페인 목록)
+ * - /user/experience (체험단 캠페인 목록)
+ * - /user/reporter (기자단 캠페인 목록)
+ */
 
 /* 메인 카테고리 메뉴 부분 */
 .main_menu_container {
@@ -144,8 +160,8 @@
     padding: 20px 56px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 0px;
+    /* justify-content: space-between; */
+    gap: 24px;
   }
 
   .main_menu_item {
@@ -196,8 +212,8 @@
     padding: 20px 56px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 0px;
+    /* justify-content: space-between; */
+    gap: 24px;
   }
 
   .main_menu_item {

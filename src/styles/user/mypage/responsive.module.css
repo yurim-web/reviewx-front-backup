@@ -2,6 +2,16 @@
    📱 반응형 디자인
    ======================================== */
 
+/**
+ * 사용 컴포넌트:
+ * - page.tsx (마이페이지 메인 페이지)
+ * - SubTabNavigation.tsx (서브 탭 네비게이션 컴포넌트)
+ * - ChannelSection.tsx (채널 섹션 컴포넌트)
+ * 
+ * 사용 페이지:
+ * - /user/mypage (마이페이지)
+ */
+
 /* ✅ 모바일 공통 — 0~739px */
 @media (max-width: 739px) {
   .mypage_header {

@@ -1,4 +1,22 @@
-/* 필터/정렬 바 컴포넌트 스타일 */
+/* ========================================
+   🔍 필터/정렬 바 컴포넌트 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - FilterBar.tsx (메인 필터 바 컴포넌트)
+ * - ModalFilter.tsx (필터 모달 컴포넌트)
+ * - RegionFilter.tsx (지역 필터 컴포넌트)
+ * - SortModalFilter.tsx (정렬 모달 컴포넌트)
+ * 
+ * 사용 페이지:
+ * - /user/delivery (배송형 캠페인 목록)
+ * - /user/visit (방문형 캠페인 목록)
+ * - /user/review (구매평 캠페인 목록)
+ * - /user/experience (체험단 캠페인 목록)
+ * - /user/reporter (기자단 캠페인 목록)
+ * 
+ */
 
 /* 스크롤바 너비 조정 - 모든 필터에 적용 */
 .modal_content *::-webkit-scrollbar {

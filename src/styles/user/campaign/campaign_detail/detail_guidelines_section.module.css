@@ -1,6 +1,25 @@
 /* ========================================
-   캠페인 가이드라인 섹션 컴포넌트 스타일
+   📝 캠페인 가이드라인 섹션 컴포넌트 스타일
    ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - DetailGuidelinesSection.tsx (기본 가이드라인 섹션)
+ * - DetailGuidelinesSectionDelivery.tsx (배송형 캠페인 전용)
+ * - DetailGuidelinesSectionExperience.tsx (체험단 캠페인 전용)
+ * - DetailGuidelinesSectionVisit.tsx (방문형 캠페인 전용)
+ * - DetailGuidelinesSectionReview.tsx (구매평 캠페인 전용)
+ * - DetailGuidelinesSectionReporter.tsx (기자단 캠페인 전용)
+ * - AdditionalGuidelines.tsx (추가 안내사항 컴포넌트)
+ * 
+ * 사용 페이지:
+ * - /user/delivery/[id] (배송형 캠페인 상세)
+ * - /user/visit/[id] (방문형 캠페인 상세)
+ * - /user/review/[id] (구매평 캠페인 상세)
+ * - /user/experience/[id] (체험단 캠페인 상세)
+ * - /user/reporter/[id] (기자단 캠페인 상세)
+ * 
+ */
 
 /* ===== 리뷰 가이드라인 컨테이너 ===== */
 .review_guidelines_container {
@@ -44,7 +63,7 @@
 .content_box {
   padding: 0px 12px;
   width: 720px;
-  
+
   /* 글자 css */
   color: #444;
   font-size: 16px;
