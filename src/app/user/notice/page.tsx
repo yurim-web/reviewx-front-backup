@@ -15,7 +15,7 @@
  * - CSS: notice.module.css
  *
  * 주요 기능:
- * - 카테고리별 공지사항 필터링 (전체, 중요, 소식, 체험단, 이벤트)
+ * - 카테고리별 공지사항 필터링 (전체, 중요, 소식, 미션형, 이벤트)
  * - 공지사항 목록 표시 (제목, 날짜, 카테고리)
  * - 메인 헤더 숨김 처리
  */
@@ -64,7 +64,7 @@ const mockNotices: NoticeItem[] = [
     id: 5,
     title: "리뷰X 보유 캐시 변동 안내문",
     date: "2025-09-12",
-    category: "체험단",
+    category: "미션형",
   },
   {
     id: 6,
@@ -74,7 +74,7 @@ const mockNotices: NoticeItem[] = [
   },
 ];
 
-const categories = ["전체", "중요", "소식", "체험단", "이벤트"];
+const categories = ["전체", "중요", "소식", "미션형", "이벤트"];
 
 export default function NoticePage() {
   const router = useRouter();

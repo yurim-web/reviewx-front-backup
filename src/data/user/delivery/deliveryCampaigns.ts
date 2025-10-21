@@ -44,7 +44,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     image: "/images/main/campaign_img/eximg_9.png",
     subcategory: "뷰티",
     points: 30000,
-    description: "박신혜 리프팅 세르프 제품 체험단 모집",
+    description: "박신혜 리프팅 세르프 제품 미션형 모집",
     recruitment: {
       current: 607,
       total: 2,
@@ -91,7 +91,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     image: "/images/main/campaign_img/eximg_10.png",
     subcategory: "생활",
     points: 25000,
-    description: "붓기 완화에 도움되는 뮬차 체험단 모집",
+    description: "붓기 완화에 도움되는 뮬차 미션형 모집",
     recruitment: {
       current: 106,
       total: 10,
@@ -126,13 +126,13 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
   },
   {
     id: "delivery_3",
-    title: "가죽 여권 케이스+네임택 실체험단 모집",
+    title: "가죽 여권 케이스+네임택 실미션형 모집",
     category: "배송형",
     categoryIcon: "/images/brand_logo/insta.svg",
     image: "/images/main/campaign_img/eximg_13.png",
     subcategory: "패션",
     points: 20000,
-    description: "고급스러운 가죽 여권 케이스와 네임택 체험단",
+    description: "고급스러운 가죽 여권 케이스와 네임택 미션형",
     recruitment: {
       current: 89,
       total: 15,
@@ -173,7 +173,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     image: "/images/main/campaign_img/eximg_2.png",
     subcategory: "뷰티",
     points: 35000,
-    description: "고농도 비타민C로 피부 탄력 개선 체험단",
+    description: "고농도 비타민C로 피부 탄력 개선 미션형",
     recruitment: {
       current: 234,
       total: 8,
@@ -214,7 +214,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     image: "/images/main/campaign_img/eximg_4.png",
     subcategory: "생활",
     points: 18000,
-    description: "아기 피부에 안전한 유기농 세제 체험단",
+    description: "아기 피부에 안전한 유기농 세제 미션형",
     recruitment: {
       current: 156,
       total: 20,
@@ -255,7 +255,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     image: "/images/main/campaign_img/eximg_5.png",
     subcategory: "반려동물",
     points: 28000,
-    description: "영양 균형이 완벽한 프리미엄 강아지 사료 체험단",
+    description: "영양 균형이 완벽한 프리미엄 강아지 사료 미션형",
     recruitment: {
       current: 78,
       total: 12,
@@ -296,7 +296,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     image: "/images/main/campaign_img/eximg_6.png",
     subcategory: "기타",
     points: 40000,
-    description: "유튜브 영상 제작에 필요한 크리에이터 키트 체험단",
+    description: "유튜브 영상 제작에 필요한 크리에이터 키트 미션형",
     recruitment: {
       current: 345,
       total: 5,
@@ -337,7 +337,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     image: "/images/main/campaign_img/eximg_7.png",
     subcategory: "생활",
     points: 32000,
-    description: "집에서 하는 홈트레이닝에 필요한 용품 세트 체험단",
+    description: "집에서 하는 홈트레이닝에 필요한 용품 세트 미션형",
     recruitment: {
       current: 198,
       total: 10,
@@ -378,7 +378,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     image: "/images/main/campaign_img/eximg_1.png",
     subcategory: "뷰티",
     points: 45000,
-    description: "모든 피부 타입에 맞는 프리미엄 스킨케어 세트 체험단",
+    description: "모든 피부 타입에 맞는 프리미엄 스킨케어 세트 미션형",
     recruitment: {
       current: 289,
       total: 8,
@@ -419,7 +419,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     image: "/images/main/campaign_img/eximg_3.png",
     subcategory: "식품",
     points: 22000,
-    description: "신선한 과일로 만든 유기농 주스 세트 체험단",
+    description: "신선한 과일로 만든 유기농 주스 세트 미션형",
     recruitment: {
       current: 134,
       total: 25,
@@ -460,7 +460,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     image: "/images/main/campaign_img/eximg_8.png",
     subcategory: "디지털",
     points: 55000,
-    description: "건강 관리와 스타일을 동시에 잡는 스마트 워치 체험단",
+    description: "건강 관리와 스타일을 동시에 잡는 스마트 워치 미션형",
     recruitment: {
       current: 456,
       total: 6,
@@ -501,7 +501,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     image: "/images/main/campaign_img/eximg_11.png",
     subcategory: "뷰티",
     points: 38000,
-    description: "세계적인 브랜드의 프리미엄 향수 컬렉션 체험단",
+    description: "세계적인 브랜드의 프리미엄 향수 컬렉션 미션형",
     recruitment: {
       current: 167,
       total: 12,
@@ -543,7 +543,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     image: "/images/main/campaign_img/eximg_12.png",
     subcategory: "식품",
     points: 26000,
-    description: "집에서 즐기는 프리미엄 원두 커피 세트 체험단",
+    description: "집에서 즐기는 프리미엄 원두 커피 세트 미션형",
     recruitment: {
       current: 203,
       total: 18,
@@ -584,7 +584,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     image: "/images/main/campaign_img/eximg_4.png",
     subcategory: "생활",
     points: 42000,
-    description: "수면의 질을 높여주는 프리미엄 베개 세트 체험단",
+    description: "수면의 질을 높여주는 프리미엄 베개 세트 미션형",
     recruitment: {
       current: 312,
       total: 7,
@@ -625,7 +625,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     image: "/images/main/campaign_img/eximg_5.png",
     subcategory: "반려동물",
     points: 31000,
-    description: "고양이 건강을 위한 전문 영양 사료 체험단",
+    description: "고양이 건강을 위한 전문 영양 사료 미션형",
     recruitment: {
       current: 145,
       total: 14,
@@ -666,7 +666,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     image: "/images/main/campaign_img/eximg_7.png",
     subcategory: "패션",
     points: 48000,
-    description: "편안함과 스타일을 겸비한 프리미엄 운동화 체험단",
+    description: "편안함과 스타일을 겸비한 프리미엄 운동화 미션형",
     recruitment: {
       current: 278,
       total: 9,

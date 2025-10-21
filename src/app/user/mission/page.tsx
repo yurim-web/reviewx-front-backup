@@ -1,22 +1,22 @@
 /* ========================================
-   🧪 체험단 캠페인 목록 페이지
+   🎯 미션형 캠페인 목록 페이지
    ======================================== */
 
 /**
- * 체험단 캠페인 목록 페이지
+ * 미션형 캠페인 목록 페이지
  *
- * 목적: 체험단 캠페인 목록을 조회하고 필터링할 수 있는 캠페인 목록 페이지입니다.
+ * 목적: 미션형 캠페인 목록을 조회하고 필터링할 수 있는 캠페인 목록 페이지입니다.
  *
  * 페이지 경로:
- * - /user/experience
+ * - /user/mission
  *
  * 사용 파일:
  * - 컴포넌트: CampaignBox, Titletext, MainMenu, FilterBar
- * - 데이터: experienceCampaigns, experienceCategoryOptions, experienceChannelOptions, experienceSortOptions
+ * - 데이터: missionCampaigns, missionCategoryOptions, missionChannelOptions, missionSortOptions
  * - CSS: delivery.module.css
  *
  * 주요 기능:
- * - 체험단 캠페인 목록 표시
+ * - 미션형 캠페인 목록 표시
  * - 카테고리/채널 필터링
  * - 마감임박 필터
  * - 정렬 옵션 (최신순, 포인트순, 모집률순)
@@ -32,16 +32,16 @@ import CampaignBox from "@/components/main/CampaignBox";
 import Titletext from "@/components/main/Titletext";
 import MainMenu from "@/components/main/MainMenu";
 import FilterBar from "@/components/user/filter/FilterBar";
-import { experienceCampaigns } from "@/data/user/experience/experienceCampaigns";
+import { missionCampaigns } from "@/data/user/mission/missionCampaigns";
 import {
-  experienceCategoryOptions,
-  experienceChannelOptions,
-  experienceSortOptions,
-} from "@/data/user/experience/experienceFilterOptions";
+  missionCategoryOptions,
+  missionChannelOptions,
+  missionSortOptions,
+} from "@/data/user/mission/missionFilterOptions";
 import styles from "../../../styles/user/delivery/delivery.module.css";
 
-export default function ExperiencePage() {
-  const experience_campaigns = experienceCampaigns;
+export default function MissionPage() {
+  const mission_campaigns = missionCampaigns;
 
   // 필터 상태 관리
   const [activeFilters, setActiveFilters] = useState<{
@@ -57,7 +57,7 @@ export default function ExperiencePage() {
   const [closingSoon, setClosingSoon] = useState<boolean>(false);
 
   const handleFilterChange = (filters: any) => {
-    console.log("Experience filters:", filters);
+    console.log("Mission filters:", filters);
 
     if (filters.closingSoon !== undefined) {
       setClosingSoon(filters.closingSoon);
@@ -91,9 +91,9 @@ export default function ExperiencePage() {
   };
 
   const filteredAndSortedCampaigns = useMemo(() => {
-    console.log("🔄 체험단 캠페인 필터링 및 정렬 시작");
+    console.log("🔄 미션형 캠페인 필터링 및 정렬 시작");
 
-    let filtered = [...experience_campaigns];
+    let filtered = [...mission_campaigns];
 
     if (closingSoon) {
       console.log("⏰ 마감임박 필터 적용 중...");
@@ -142,7 +142,7 @@ export default function ExperiencePage() {
 
     console.log(`✅ 최종 결과: ${filtered.length}개 캠페인`);
     return filtered;
-  }, [experience_campaigns, activeFilters, closingSoon]);
+  }, [mission_campaigns, activeFilters, closingSoon]);
 
   return (
     <>
@@ -161,29 +161,29 @@ export default function ExperiencePage() {
         <FilterBar
           onFilterChange={handleFilterChange}
           activeFilters={activeFilters}
-          categoryOptions={experienceCategoryOptions}
-          channelOptions={experienceChannelOptions}
-          sortOptions={experienceSortOptions}
+          categoryOptions={missionCategoryOptions}
+          channelOptions={missionChannelOptions}
+          sortOptions={missionSortOptions}
           closingSoon={closingSoon}
           onClosingSoonChange={setClosingSoon}
           defaultSort="최신순"
         />
 
         <section className={styles.campaign_container}>
-          <Titletext main_title="체험단" />
+          <Titletext main_title="미션형" />
           <div className={styles.campaign_grid}>
             {filteredAndSortedCampaigns.length > 0 ? (
               filteredAndSortedCampaigns.map((campaign) => (
                 <CampaignBox
                   key={campaign.id}
                   campaign={campaign}
-                  basePath="/user/experience"
+                  basePath="/user/mission"
                 />
               ))
             ) : (
               <div className={styles.empty_state}>
                 <div className={styles.empty_icon}>🎯</div>
-                <h3>현재 진행중인 체험단 캠페인이 없습니다</h3>
+                <h3>현재 진행중인 미션형 캠페인이 없습니다</h3>
                 <p>새로운 캠페인을 기다려주세요!</p>
               </div>
             )}

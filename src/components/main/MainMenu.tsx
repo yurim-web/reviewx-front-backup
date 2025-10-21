@@ -43,14 +43,7 @@ export default function MainMenu() {
       >
         구매평
       </Link>
-      <Link
-        className={`${styles.main_menu_item} ${
-          pathname === "/user/experience" ? styles.main_menu_item_active : ""
-        }`}
-        href="/user/experience"
-      >
-        체험단
-      </Link>
+
       <Link
         className={`${styles.main_menu_item} ${
           pathname === "/user/reporter" ? styles.main_menu_item_active : ""
@@ -58,6 +51,14 @@ export default function MainMenu() {
         href="/user/reporter"
       >
         기자단
+      </Link>
+      <Link
+        className={`${styles.main_menu_item} ${
+          pathname === "/user/mission" ? styles.main_menu_item_active : ""
+        }`}
+        href="/user/mission"
+      >
+        미션형
       </Link>
     </section>
   );

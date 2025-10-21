@@ -36,7 +36,7 @@ export const partnerCampaigns: PartnerCampaign[] = [
   },
   {
     id: "2",
-    title: "화장품 브랜드 체험단 모집",
+    title: "화장품 브랜드 미션형 모집",
     type: "방문형",
     status: "선정",
     deadline: "2024-01-20",
@@ -104,7 +104,7 @@ export const partnerCampaigns: PartnerCampaign[] = [
   },
   {
     id: "7",
-    title: "스포츠 용품 체험단",
+    title: "스포츠 용품 미션형",
     type: "배송형",
     status: "신청",
     deadline: "2024-01-14",

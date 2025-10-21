@@ -1,9 +1,9 @@
 /**
- * 체험단 캠페인 필터 옵션 데이터
+ * 미션형 캠페인 필터 옵션 데이터
  */
 
-// 체험단 카테고리 옵션
-export const experienceCategoryOptions = [
+// 미션형 카테고리 옵션
+export const missionCategoryOptions = [
   // 왼쪽
   "전체",
   "식품",
@@ -22,8 +22,8 @@ export const experienceCategoryOptions = [
   "기타",
 ];
 
-// 체험단 채널 옵션
-export const experienceChannelOptions = [
+// 미션형 채널 옵션
+export const missionChannelOptions = [
   "네이버 블로그",
   "인스타그램",
   "릴스",
@@ -34,8 +34,8 @@ export const experienceChannelOptions = [
   "쇼츠",
 ];
 
-// 체험단 정렬 옵션
-export const experienceSortOptions = [
+// 미션형 정렬 옵션
+export const missionSortOptions = [
   "최신순",
   "인기순",
   "마감임박순",

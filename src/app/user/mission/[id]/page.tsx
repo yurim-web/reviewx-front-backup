@@ -1,22 +1,22 @@
 /* ========================================
-   🧪 체험단 캠페인 상세 페이지
+   🎯 미션형 캠페인 상세 페이지
    ======================================== */
 
 /**
- * 체험단 캠페인 상세 페이지
+ * 미션형 캠페인 상세 페이지
  *
- * 목적: 체험단 캠페인의 상세 정보를 보여주고 신청할 수 있는 상세 페이지입니다.
+ * 목적: 미션형 캠페인의 상세 정보를 보여주고 신청할 수 있는 상세 페이지입니다.
  *
  * 페이지 경로:
- * - /user/experience/[id] (동적 라우팅)
+ * - /user/mission/[id] (동적 라우팅)
  *
  * 사용 파일:
- * - 컴포넌트: SubHeader, ApplicationModalType3, MainMenu, DetailHeader, DetailProductInfo, DetailScheduleInfo, DetailImage, DetailGuidelinesSectionExperience
- * - 데이터: experienceCampaigns
+ * - 컴포넌트: SubHeader, ApplicationModalType3, MainMenu, DetailHeader, DetailProductInfo, DetailScheduleInfo, DetailImage, DetailGuidelinesSectionMission
+ * - 데이터: missionCampaigns
  * - CSS: campaign_detail.module.css
  *
  * 주요 기능:
- * - 체험단 캠페인 상세 정보 표시
+ * - 미션형 캠페인 상세 정보 표시
  * - 스크롤 시 캠페인 정보 라벨 상단 고정
  * - 캠페인 신청 모달 (Type3)
  * - 키워드 복사 기능
@@ -30,21 +30,19 @@ import { useEffect, useState, useRef, use } from "react";
 import SubHeader from "@/components/fragments/SubHeader";
 import ApplicationModalType3 from "@/components/user/campaign_detail/modal/ApplicationModalType3";
 import styles from "../../../../styles/user/campaign/campaign_detail.module.css";
-import { experienceCampaigns } from "@/data/user/experience/experienceCampaigns";
+import { missionCampaigns } from "@/data/user/mission/missionCampaigns";
 import MainMenu from "@/components/main/MainMenu";
 import DetailHeader from "@/components/user/campaign_detail/DetailHeader";
 import DetailProductInfo from "@/components/user/campaign_detail/DetailProductInfo";
 import DetailScheduleInfo from "@/components/user/campaign_detail/DetailScheduleInfo";
 import DetailImage from "@/components/user/campaign_detail/DetailImage";
-import DetailGuidelinesSectionExperience from "@/components/user/campaign_detail/guidelines/DetailGuidelinesSectionExperience";
+import DetailGuidelinesSectionMission from "@/components/user/campaign_detail/guidelines/DetailGuidelinesSectionMission";
 
-interface ExperienceDetailPageProps {
+interface MissionDetailPageProps {
   params: Promise<{ id: string }>;
 }
 
-export default function ExperienceDetailPage({
-  params,
-}: ExperienceDetailPageProps) {
+export default function MissionDetailPage({ params }: MissionDetailPageProps) {
   // ========================================
   // 1. 데이터 및 상태 관리
   // ========================================
@@ -53,7 +51,7 @@ export default function ExperienceDetailPage({
   const { id } = use(params);
 
   // URL의 id와 일치하는 캠페인 데이터 찾기
-  const campaign = experienceCampaigns.find((c) => String(c.id) === id);
+  const campaign = missionCampaigns.find((c) => String(c.id) === id);
 
   // 신청 모달 표시 상태
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -187,7 +185,7 @@ export default function ExperienceDetailPage({
           category={campaign.category}
           subcategory={campaign.subcategory}
           points={campaign.points}
-          altText="experience_tag"
+          altText="mission_tag"
         />
 
         {/* 제품 정보 */}
@@ -232,8 +230,15 @@ export default function ExperienceDetailPage({
         <DetailImage image={campaign.campaign_detail_image} />
 
         {/* 안내 사항들 */}
-        <DetailGuidelinesSectionExperience
+        <DetailGuidelinesSectionMission
           description={campaign.description}
+          productLink={campaign.productLink}
+          onCopyProductLink={() => {
+            if (campaign.productLink) {
+              navigator.clipboard.writeText(campaign.productLink);
+              alert("홍보링크가 복사되었습니다!");
+            }
+          }}
           keyword={campaign.keyword}
           onCopyKeyword={() => {
             navigator.clipboard.writeText(campaign.keyword);

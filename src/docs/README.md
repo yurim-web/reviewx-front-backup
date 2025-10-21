@@ -6,7 +6,7 @@ ReviewX는 리뷰 캠페인 플랫폼으로, 사용자들이 다양한 캠페인
 
 ### **주요 기능**
 
-- 5가지 캠페인 타입 (배송형, 방문형, 구매평, 체험단, 기자단)
+- 5가지 캠페인 타입 (배송형, 방문형, 구매평, 미션형, 기자단)
 - 캠페인 신청/관리 시스템
 - 포인트 적립/출금 시스템
 - 사용자 프로필 관리
@@ -30,9 +30,9 @@ reviewx-web/
 │   │   │   ├── review/                # 🛒 구매평 캠페인
 │   │   │   │   ├── page.tsx           # 구매평 목록 페이지
 │   │   │   │   └── [id]/              # 구매평 상세 페이지
-│   │   │   ├── experience/            # 🎯 체험단 캠페인
-│   │   │   │   ├── page.tsx           # 체험단 목록 페이지
-│   │   │   │   └── [id]/              # 체험단 상세 페이지
+│   │   │   ├── experience/            # 🎯 미션형 캠페인
+│   │   │   │   ├── page.tsx           # 미션형 목록 페이지
+│   │   │   │   └── [id]/              # 미션형 상세 페이지
 │   │   │   ├── reporter/              # 📰 기자단 캠페인
 │   │   │   │   ├── page.tsx           # 기자단 목록 페이지
 │   │   │   │   └── [id]/              # 기자단 상세 페이지
@@ -91,7 +91,7 @@ reviewx-web/
 │   │   │   ├── delivery/             # 배송형 캠페인 데이터
 │   │   │   ├── visit/                # 방문형 캠페인 데이터
 │   │   │   ├── review/               # 구매평 캠페인 데이터
-│   │   │   ├── experience/           # 체험단 캠페인 데이터
+│   │   │   ├── experience/           # 미션형 캠페인 데이터
 │   │   │   ├── reporter/             # 기자단 캠페인 데이터
 │   │   │   ├── campaign_management/  # 캠페인 관리 데이터
 │   │   │   └── point/                # 포인트 데이터
@@ -134,7 +134,7 @@ reviewx-web/
 | DetailGuidelinesSectionDelivery   | `DetailGuidelinesSectionDelivery.tsx`   | 배송형 상세 | 가이드라인 (배송형) |
 | DetailGuidelinesSectionVisit      | `DetailGuidelinesSectionVisit.tsx`      | 방문형 상세 | 가이드라인 (방문형) |
 | DetailGuidelinesSectionReview     | `DetailGuidelinesSectionReview.tsx`     | 구매평 상세 | 가이드라인 (구매평) |
-| DetailGuidelinesSectionExperience | `DetailGuidelinesSectionExperience.tsx` | 체험단 상세 | 가이드라인 (체험단) |
+| DetailGuidelinesSectionExperience | `DetailGuidelinesSectionExperience.tsx` | 미션형 상세 | 가이드라인 (미션형) |
 | DetailGuidelinesSectionReporter   | `DetailGuidelinesSectionReporter.tsx`   | 기자단 상세 | 가이드라인 (기자단) |
 
 ### **📂 user/campaign_management/** - 캠페인 관리용 컴포넌트
@@ -228,7 +228,7 @@ GET /api/campaigns/review
 GET /api/campaigns/review/filters
 ```
 
-### **🎯 체험단 페이지** - `/user/experience` (`app/user/experience/page.tsx`)
+### **🎯 미션형 페이지** - `/user/mission` (`app/user/mission/page.tsx`)
 
 **사용 컴포넌트**: MainMenu, FilterBar, CampaignBox, Titletext  
 **필요한 API**:
@@ -431,7 +431,7 @@ data/user/
 │   ├── reviewCampaigns.ts              # 구매평 캠페인 16개
 │   └── reviewFilterOptions.ts          # 필터 옵션
 ├── experience/
-│   ├── experienceCampaigns.ts          # 체험단 캠페인 16개
+│   ├── experienceCampaigns.ts          # 미션형 캠페인 16개
 │   └── experienceFilterOptions.ts      # 필터 옵션
 ├── reporter/
 │   ├── reporterCampaigns.ts            # 기자단 캠페인 16개
@@ -447,7 +447,7 @@ data/user/
 - **배송형**: `delivery_1`, `delivery_2`, ..., `delivery_16`
 - **방문형**: `visit_1`, `visit_2`, ..., `visit_16`
 - **구매평**: `review_1`, `review_2`, ..., `review_16`
-- **체험단**: `experience_1`, `experience_2`, ..., `experience_16`
+- **미션형**: `experience_1`, `experience_2`, ..., `experience_16`
 - **기자단**: `reporter_1`, `reporter_2`, ..., `reporter_16`
 
 #### **사용자 ID**
@@ -591,7 +591,7 @@ interface PointHistory {
 
 ```typescript
 // 캠페인 타입
-type CampaignType = "배송형" | "방문형" | "구매평" | "체험단" | "기자단";
+type CampaignType = "배송형" | "방문형" | "구매평" | "미션형" | "기자단";
 
 // 캠페인 상태
 type CampaignStatus = "신청" | "선정" | "완료" | "취소/반려";

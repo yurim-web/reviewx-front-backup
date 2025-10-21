@@ -25,6 +25,7 @@ interface ReporterCampaignData {
   campaign_detail_image: string; // 캠페인 상세 이미지 경로
   channel: string; // 채널 정보 (블로그, 인스타그램, 유튜브 등)
   keyword: string; // 캠페인 키워드
+  productLink?: string; // 홍보링크 (선택적)
   requirements: string[]; // 캠페인별 요구사항 코드 목록
   guidelineTexts: string[]; // 유의사항 텍스트 목록
 }
@@ -62,6 +63,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
     keyword: "#테크기자단 #IT뉴스 #기술리포트 #유튜브 #전문리뷰",
+    productLink: "https://example.com/tech-product",
     requirements: [
       "text_3000",
       "photo_25",
@@ -101,6 +103,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
     keyword: "#뷰티기자단 #화장품리뷰 #뷰티트렌드 #인스타그램 #전문리뷰",
+    productLink: "https://example.com/beauty-product",
     requirements: [
       "text_2000",
       "photo_15",

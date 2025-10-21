@@ -47,8 +47,8 @@ export default function CampaignBox({
         return `/user/visit/${campaign.id}`;
       case "구매평":
         return `/user/review/${campaign.id}`;
-      case "체험단":
-        return `/user/experience/${campaign.id}`;
+      case "미션형":
+        return `/user/mission/${campaign.id}`;
       case "기자단":
         return `/user/reporter/${campaign.id}`;
       default:

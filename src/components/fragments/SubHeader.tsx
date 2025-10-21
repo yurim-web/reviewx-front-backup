@@ -9,16 +9,22 @@
 
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import styles from "../../styles/fragments/sub_header.module.css";
 
 export default function SubHeader() {
   const router = useRouter();
+  const pathname = usePathname();
 
   // 뒤로가기 함수
   const handleGoBack = () => {
-    router.back();
+    // 파트너 캠페인 생성 페이지에서는 홈으로 이동
+    if (pathname?.startsWith("/partner/campaign/create")) {
+      router.push("/partner");
+    } else {
+      router.back();
+    }
   };
 
   return (

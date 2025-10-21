@@ -1,10 +1,10 @@
 /**
- * 체험단 캠페인 데이터 타입 정의
+ * 미션형 캠페인 데이터 타입 정의
  */
-interface ExperienceCampaignData {
+interface MissionCampaignData {
   id: string; // 캠페인 고유 식별자
   title: string; // 캠페인 제목
-  category: string; // 캠페인 카테고리 (체험단)
+  category: string; // 캠페인 카테고리 (미션형)
   categoryIcon: string; // 카테고리 아이콘
   image: string; // 메인 제품 이미지 경로
   subcategory: string; // 세부 카테고리 (생활, 뷰티, 식품 등)
@@ -25,25 +25,25 @@ interface ExperienceCampaignData {
   campaign_detail_image: string; // 캠페인 상세 이미지 경로
   channel: string; // 채널 정보 (블로그, 인스타그램, 유튜브 등)
   keyword: string; // 캠페인 키워드
+  productLink?: string; // 홍보링크 (선택적)
   requirements: string[]; // 캠페인별 요구사항 코드 목록
   guidelineTexts: string[]; // 유의사항 텍스트 목록
 }
 
 /**
- * 체험단 캠페인 데이터
- * 체험단 페이지에서 사용되는 전용 데이터
+ * 미션형 캠페인 데이터
+ * 미션형 페이지에서 사용되는 전용 데이터
  */
-export const experienceCampaigns: ExperienceCampaignData[] = [
-  
+export const missionCampaigns: MissionCampaignData[] = [
   {
-    id: "experience_1",
-    title: "스킨케어 체험단",
-    category: "체험단",
+    id: "mission_1",
+    title: "스킨케어 미션형",
+    category: "미션형",
     categoryIcon: "/images/brand_logo/oliveyoung.svg",
     image: "/images/main/campaign_img/eximg_1.png",
     subcategory: "뷰티",
     points: 50000,
-    description: "프리미엄 스킨케어 제품 체험단 모집",
+    description: "프리미엄 스킨케어 제품 미션형 모집",
     recruitment: {
       current: 289,
       total: 5,
@@ -58,7 +58,8 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버 블로그",
-    keyword: "#스킨케어체험 #뷰티체험단 #화장품체험 #올리브영 #솔직후기",
+    keyword: "#스킨케어체험 #뷰티미션형 #화장품체험 #올리브영 #솔직후기",
+    productLink: "https://example.com/skincare-product",
     requirements: [
       "text_2000",
       "photo_15",
@@ -67,22 +68,22 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       "keyword",
     ],
     guidelineTexts: [
-      "체험단 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
+      "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★제품 수령 후 충분한 체험 기간을 가지고 솔직한 후기를 작성해주세요!!★",
-      "★제공된 제품을 모두 활용하여 작성해주세요 - 스킨케어 제품의 모든 단계를 체험해보세요 - 사용감, 효과, 향, 질감 등 다양한 측면에서 리뷰 작성 - 실제 사용 전후 비교 사진과 체험 과정을 상세히 기록<br />★체험단 리뷰는 인위적이기 않고 최대한 자연스럽게 작성 부탁드립니다★<br />★체험단 작성 시 실제 제품을 사용하시는 모습과 변화 과정 사진 필수 첨부해주세요★<br />★체험 결과에 대한 솔직한 평가를 부탁드립니다★",
-      "★체험단 작성 / 무료 체험 캠페인 입니다 (구매 없이 체험 후 리뷰 작성)★ <br /> 1. 본 캠페인은 [무료 체험]으로 진행되며, 포스팅은 업체 홍보목적으로 이용될 수 있습니다<br /> 2. 선정 후 제품 수령 후 최소 1주일 이상 체험 진행해주세요<br /> 3. 기간 내 리뷰 작성 및 등록 불가할 경우 다음 캠페인 참여 제한<br /> 4. 안내된 사항 필수로 숙지하시어 진행해 주셔야 합니다<br /> ★체험단 작성 시에는 너무 인위적이지 않게 자연스럽게 작성해주세요<br /> ★ [본인이 직접 체험한 제품 특장점과 개선점에 대하여 솔직하게 작성해주세요]",
-      "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 제품 미수령 및 체험 불가할 경우 : 다음 캠페인 참여 제한 <br /> - 체험단 리뷰 작성 불가할 경우 : 다음 캠페인 참여 제한 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 다음 캠페인 참여가 제한됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험단의 경우 체험 과정과 결과를 상세히 기록해주세요 - 사용 전후 비교 사진은 필수입니다",
+      "★제공된 제품을 모두 활용하여 작성해주세요 - 스킨케어 제품의 모든 단계를 체험해보세요 - 사용감, 효과, 향, 질감 등 다양한 측면에서 리뷰 작성 - 실제 사용 전후 비교 사진과 체험 과정을 상세히 기록<br />★미션형 리뷰는 인위적이기 않고 최대한 자연스럽게 작성 부탁드립니다★<br />★미션형 작성 시 실제 제품을 사용하시는 모습과 변화 과정 사진 필수 첨부해주세요★<br />★체험 결과에 대한 솔직한 평가를 부탁드립니다★",
+      "★미션형 작성 / 무료 체험 캠페인 입니다 (구매 없이 체험 후 리뷰 작성)★ <br /> 1. 본 캠페인은 [무료 체험]으로 진행되며, 포스팅은 업체 홍보목적으로 이용될 수 있습니다<br /> 2. 선정 후 제품 수령 후 최소 1주일 이상 체험 진행해주세요<br /> 3. 기간 내 리뷰 작성 및 등록 불가할 경우 다음 캠페인 참여 제한<br /> 4. 안내된 사항 필수로 숙지하시어 진행해 주셔야 합니다<br /> ★미션형 작성 시에는 너무 인위적이지 않게 자연스럽게 작성해주세요<br /> ★ [본인이 직접 체험한 제품 특장점과 개선점에 대하여 솔직하게 작성해주세요]",
+      "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 제품 미수령 및 체험 불가할 경우 : 다음 캠페인 참여 제한 <br /> - 미션형 리뷰 작성 불가할 경우 : 다음 캠페인 참여 제한 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 다음 캠페인 참여가 제한됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 미션형의 경우 체험 과정과 결과를 상세히 기록해주세요 - 사용 전후 비교 사진은 필수입니다",
     ],
   },
   {
-    id: "experience_2",
-    title: "헬스케어 체험단",
-    category: "체험단",
+    id: "mission_2",
+    title: "헬스케어 미션형",
+    category: "미션형",
     categoryIcon: "/images/brand_logo/youtube.svg",
     image: "/images/main/campaign_img/eximg_2.png",
     subcategory: "뷰티",
     points: 45000,
-    description: "건강 관리 제품 체험단 모집",
+    description: "건강 관리 제품 미션형 모집",
     recruitment: {
       current: 156,
       total: 8,
@@ -97,7 +98,8 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
-    keyword: "#헬스케어체험 #건강관리 #체험단 #유튜브 #솔직후기",
+    keyword: "#헬스케어체험 #건강관리 #미션형 #유튜브 #솔직후기",
+    productLink: "https://example.com/healthcare-product",
     requirements: [
       "text_1800",
       "photo_12",
@@ -106,22 +108,22 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       "keyword",
     ],
     guidelineTexts: [
-      "체험단 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
+      "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★제품 수령 후 충분한 체험 기간을 가지고 솔직한 후기를 작성해주세요!!★",
-      "★제공된 제품을 모두 활용하여 작성해주세요 - 건강관리 제품의 모든 기능을 체험해보세요 - 사용법, 효과, 편의성 등 다양한 측면에서 리뷰 작성 - 실제 사용 과정과 체험 결과를 상세히 기록<br />★체험단 리뷰는 인위적이기 않고 최대한 자연스럽게 작성 부탁드립니다★<br />★체험단 작성 시 실제 제품을 사용하시는 모습과 변화 과정 사진 필수 첨부해주세요★<br />★체험 결과에 대한 솔직한 평가를 부탁드립니다★",
-      "★체험단 작성 / 무료 체험 캠페인 입니다 (구매 없이 체험 후 리뷰 작성)★ <br /> 1. 본 캠페인은 [무료 체험]으로 진행되며, 포스팅은 업체 홍보목적으로 이용될 수 있습니다<br /> 2. 선정 후 제품 수령 후 최소 2주일 이상 체험 진행해주세요<br /> 3. 기간 내 리뷰 작성 및 등록 불가할 경우 다음 캠페인 참여 제한<br /> 4. 안내된 사항 필수로 숙지하시어 진행해 주셔야 합니다<br /> ★체험단 작성 시에는 너무 인위적이지 않게 자연스럽게 작성해주세요<br /> ★ [본인이 직접 체험한 제품 특장점과 개선점에 대하여 솔직하게 작성해주세요]",
-      "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 제품 미수령 및 체험 불가할 경우 : 다음 캠페인 참여 제한 <br /> - 체험단 리뷰 작성 불가할 경우 : 다음 캠페인 참여 제한 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 다음 캠페인 참여가 제한됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험단의 경우 체험 과정과 결과를 상세히 기록해주세요 - 건강 관련 제품은 개인차가 있을 수 있으니 객관적으로 작성해주세요",
+      "★제공된 제품을 모두 활용하여 작성해주세요 - 건강관리 제품의 모든 기능을 체험해보세요 - 사용법, 효과, 편의성 등 다양한 측면에서 리뷰 작성 - 실제 사용 과정과 체험 결과를 상세히 기록<br />★미션형 리뷰는 인위적이기 않고 최대한 자연스럽게 작성 부탁드립니다★<br />★미션형 작성 시 실제 제품을 사용하시는 모습과 변화 과정 사진 필수 첨부해주세요★<br />★체험 결과에 대한 솔직한 평가를 부탁드립니다★",
+      "★미션형 작성 / 무료 체험 캠페인 입니다 (구매 없이 체험 후 리뷰 작성)★ <br /> 1. 본 캠페인은 [무료 체험]으로 진행되며, 포스팅은 업체 홍보목적으로 이용될 수 있습니다<br /> 2. 선정 후 제품 수령 후 최소 2주일 이상 체험 진행해주세요<br /> 3. 기간 내 리뷰 작성 및 등록 불가할 경우 다음 캠페인 참여 제한<br /> 4. 안내된 사항 필수로 숙지하시어 진행해 주셔야 합니다<br /> ★미션형 작성 시에는 너무 인위적이지 않게 자연스럽게 작성해주세요<br /> ★ [본인이 직접 체험한 제품 특장점과 개선점에 대하여 솔직하게 작성해주세요]",
+      "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 제품 미수령 및 체험 불가할 경우 : 다음 캠페인 참여 제한 <br /> - 미션형 리뷰 작성 불가할 경우 : 다음 캠페인 참여 제한 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 다음 캠페인 참여가 제한됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 미션형의 경우 체험 과정과 결과를 상세히 기록해주세요 - 건강 관련 제품은 개인차가 있을 수 있으니 객관적으로 작성해주세요",
     ],
   },
   {
-    id: "experience_3",
-    title: "홈데코 체험단",
-    category: "체험단",
+    id: "mission_3",
+    title: "홈데코 미션형",
+    category: "미션형",
     categoryIcon: "/images/brand_logo/naverblog.svg",
     image: "/images/main/campaign_img/eximg_3.png",
     subcategory: "생활",
     points: 38000,
-    description: "인테리어 홈데코 제품 체험단",
+    description: "인테리어 홈데코 제품 미션형",
     recruitment: {
       current: 89,
       total: 6,
@@ -136,7 +138,7 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버 블로그",
-    keyword: "#홈데코체험 #인테리어 #체험단 #블로그 #홈스타일링",
+    keyword: "#홈데코체험 #인테리어 #미션형 #블로그 #홈스타일링",
     requirements: [
       "text_1200",
       "photo_20",
@@ -145,20 +147,20 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       "keyword",
     ],
     guidelineTexts: [
-      "체험단 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
+      "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★제품을 실제 홈 인테리어에 적용하여 체험해주세요!!★",
       "★홈데코 제품의 특성과 실제 사용 효과를 상세히 기록해주세요★",
     ],
   },
   {
-    id: "experience_4",
-    title: "패션 체험단",
-    category: "체험단",
+    id: "mission_4",
+    title: "패션 미션형",
+    category: "미션형",
     categoryIcon: "/images/brand_logo/insta.svg",
     image: "/images/main/campaign_img/eximg_4.png",
     subcategory: "패션",
     points: 42000,
-    description: "프리미엄 패션 브랜드 체험단",
+    description: "프리미엄 패션 브랜드 미션형",
     recruitment: {
       current: 178,
       total: 10,
@@ -182,20 +184,20 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       "keyword",
     ],
     guidelineTexts: [
-      "체험단 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
+      "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★실제 착용 모습과 스타일링 과정을 자세히 보여주세요!!★",
       "★다양한 코디 방법과 패션 아이템의 특징을 상세히 기록해주세요★",
     ],
   },
   {
-    id: "experience_5",
-    title: "식품 체험단",
-    category: "체험단",
+    id: "mission_5",
+    title: "식품 미션형",
+    category: "미션형",
     categoryIcon: "/images/brand_logo/coupang.svg",
     image: "/images/main/campaign_img/eximg_5.png",
     subcategory: "식품",
     points: 32000,
-    description: "유기농 식품 브랜드 체험단",
+    description: "유기농 식품 브랜드 미션형",
     recruitment: {
       current: 145,
       total: 15,
@@ -219,20 +221,20 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       "keyword",
     ],
     guidelineTexts: [
-      "체험단 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
+      "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★실제 섭취 과정과 맛, 효과를 상세히 기록해주세요!!★",
       "★식품의 특징과 조리 과정을 자세히 보여주세요★",
     ],
   },
   {
-    id: "experience_6",
-    title: "디지털 체험단",
-    category: "체험단",
+    id: "mission_6",
+    title: "디지털 미션형",
+    category: "미션형",
     categoryIcon: "/images/brand_logo/navershop.svg",
     image: "/images/main/campaign_img/eximg_6.png",
     subcategory: "디지털",
     points: 55000,
-    description: "최신 디지털 기기 체험단",
+    description: "최신 디지털 기기 미션형",
     recruitment: {
       current: 98,
       total: 4,
@@ -256,20 +258,20 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       "keyword",
     ],
     guidelineTexts: [
-      "체험단 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
+      "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★기기의 기능과 성능을 상세히 테스트하고 기록해주세요!!★",
       "★실제 사용 환경에서의 성능과 장단점을 객관적으로 평가해주세요★",
     ],
   },
   {
-    id: "experience_7",
-    title: "반려동물 체험단",
-    category: "체험단",
+    id: "mission_7",
+    title: "반려동물 미션형",
+    category: "미션형",
     categoryIcon: "/images/brand_logo/naverblog.svg",
     image: "/images/main/campaign_img/eximg_7.png",
     subcategory: "반려동물",
     points: 35000,
-    description: "반려동물 용품 체험단",
+    description: "반려동물 용품 미션형",
     recruitment: {
       current: 67,
       total: 8,
@@ -293,20 +295,20 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       "keyword",
     ],
     guidelineTexts: [
-      "체험단 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
+      "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★반려동물의 실제 사용 모습과 반응을 자세히 기록해주세요!!★",
       "★제품 사용 전후 반려동물의 변화를 관찰하고 기록해주세요★",
     ],
   },
   {
-    id: "experience_8",
-    title: "스포츠 체험단",
-    category: "체험단",
+    id: "mission_8",
+    title: "스포츠 미션형",
+    category: "미션형",
     categoryIcon: "/images/brand_logo/youtube.svg",
     image: "/images/main/campaign_img/eximg_8.png",
     subcategory: "여가",
     points: 40000,
-    description: "스포츠 용품 체험단",
+    description: "스포츠 용품 미션형",
     recruitment: {
       current: 123,
       total: 7,
@@ -330,20 +332,20 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       "keyword",
     ],
     guidelineTexts: [
-      "체험단 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
+      "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★실제 운동 시 사용 모습과 성능을 자세히 보여주세요!!★",
       "★운동 효과와 제품의 기능성을 객관적으로 평가해주세요★",
     ],
   },
   {
-    id: "experience_9",
-    title: "뷰티 체험단",
-    category: "체험단",
+    id: "mission_9",
+    title: "뷰티 미션형",
+    category: "미션형",
     categoryIcon: "/images/brand_logo/oliveyoung.svg",
     image: "/images/main/campaign_img/eximg_9.png",
     subcategory: "뷰티",
     points: 48000,
-    description: "프리미엄 뷰티 브랜드 체험단",
+    description: "프리미엄 뷰티 브랜드 미션형",
     recruitment: {
       current: 45,
       total: 3,
@@ -367,20 +369,20 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       "keyword",
     ],
     guidelineTexts: [
-      "체험단 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
+      "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★사용 전후 비교와 실제 발색, 지속력을 상세히 기록해주세요!!★",
       "★메이크업 과정과 최종 결과를 단계별로 보여주세요★",
     ],
   },
   {
-    id: "experience_10",
-    title: "여행 체험단",
-    category: "체험단",
+    id: "mission_10",
+    title: "여행 미션형",
+    category: "미션형",
     categoryIcon: "/images/brand_logo/insta.svg",
     image: "/images/main/campaign_img/eximg_10.png",
     subcategory: "여행",
     points: 60000,
-    description: "프리미엄 여행 서비스 체험단",
+    description: "프리미엄 여행 서비스 미션형",
     recruitment: {
       current: 167,
       total: 2,
@@ -404,20 +406,20 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       "keyword",
     ],
     guidelineTexts: [
-      "체험단 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
+      "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★여행 전 과정과 서비스 경험을 자세히 기록해주세요!!★",
       "★여행지의 특색과 서비스의 장단점을 솔직하게 리뷰해주세요★",
     ],
   },
   {
-    id: "experience_11",
-    title: "문화 체험단",
-    category: "체험단",
+    id: "mission_11",
+    title: "문화 미션형",
+    category: "미션형",
     categoryIcon: "/images/brand_logo/naverblog.svg",
     image: "/images/main/campaign_img/eximg_11.png",
     subcategory: "문화",
     points: 28000,
-    description: "문화 예술 체험단",
+    description: "문화 예술 미션형",
     recruitment: {
       current: 134,
       total: 12,
@@ -441,20 +443,20 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       "keyword",
     ],
     guidelineTexts: [
-      "체험단 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
+      "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★문화 예술 작품의 감상평과 체험 소감을 자세히 작성해주세요!!★",
       "★문화 체험의 과정과 느낀 점을 솔직하게 기록해주세요★",
     ],
   },
   {
-    id: "experience_12",
-    title: "게임 체험단",
-    category: "체험단",
+    id: "mission_12",
+    title: "게임 미션형",
+    category: "미션형",
     categoryIcon: "/images/brand_logo/youtube.svg",
     image: "/images/main/campaign_img/eximg_12.png",
     subcategory: "게임",
     points: 33000,
-    description: "최신 게임 체험단",
+    description: "최신 게임 미션형",
     recruitment: {
       current: 89,
       total: 9,
@@ -478,20 +480,20 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       "keyword",
     ],
     guidelineTexts: [
-      "체험단 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
+      "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★게임 플레이 영상과 실제 체험 소감을 자세히 기록해주세요!!★",
       "★게임의 특징과 재미 요소를 객관적으로 평가해주세요★",
     ],
   },
   {
-    id: "experience_13",
-    title: "자동차 체험단",
-    category: "체험단",
+    id: "mission_13",
+    title: "자동차 미션형",
+    category: "미션형",
     categoryIcon: "/images/brand_logo/navershop.svg",
     image: "/images/main/campaign_img/eximg_13.png",
     subcategory: "자동차",
     points: 65000,
-    description: "프리미엄 자동차 체험단",
+    description: "프리미엄 자동차 미션형",
     recruitment: {
       current: 23,
       total: 2,
@@ -515,20 +517,20 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       "keyword",
     ],
     guidelineTexts: [
-      "체험단 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
+      "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★실제 주행 테스트와 자동차 용품 사용 과정을 자세히 기록해주세요!!★",
       "★차량 성능과 용품의 효과를 객관적으로 평가해주세요★",
     ],
   },
   {
-    id: "experience_14",
-    title: "액세서리 체험단",
-    category: "체험단",
+    id: "mission_14",
+    title: "액세서리 미션형",
+    category: "미션형",
     categoryIcon: "/images/brand_logo/insta.svg",
     image: "/images/main/campaign_img/eximg_1.png",
     subcategory: "액세서리",
     points: 30000,
-    description: "프리미엄 액세서리 체험단",
+    description: "프리미엄 액세서리 미션형",
     recruitment: {
       current: 78,
       total: 6,
@@ -552,20 +554,20 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       "keyword",
     ],
     guidelineTexts: [
-      "체험단 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
+      "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★다양한 코디와 실제 착용 모습을 자세히 보여주세요!!★",
       "★액세서리의 품질과 스타일링 효과를 상세히 기록해주세요★",
     ],
   },
   {
-    id: "experience_15",
-    title: "음향기기 체험단",
-    category: "체험단",
+    id: "mission_15",
+    title: "음향기기 미션형",
+    category: "미션형",
     categoryIcon: "/images/brand_logo/youtube.svg",
     image: "/images/main/campaign_img/eximg_2.png",
     subcategory: "디지털",
     points: 52000,
-    description: "프리미엄 음향기기 체험단",
+    description: "프리미엄 음향기기 미션형",
     recruitment: {
       current: 56,
       total: 4,
@@ -589,20 +591,20 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       "keyword",
     ],
     guidelineTexts: [
-      "체험단 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
+      "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★다양한 음악 장르별 음질 테스트를 자세히 기록해주세요!!★",
       "★음향기기의 성능과 특징을 객관적으로 평가해주세요★",
     ],
   },
   {
-    id: "experience_16",
-    title: "건강식품 체험단",
-    category: "체험단",
+    id: "mission_16",
+    title: "건강식품 미션형",
+    category: "미션형",
     categoryIcon: "/images/brand_logo/coupang.svg",
     image: "/images/main/campaign_img/eximg_3.png",
     subcategory: "뷰티",
     points: 37000,
-    description: "프리미엄 건강식품 체험단",
+    description: "프리미엄 건강식품 미션형",
     recruitment: {
       current: 112,
       total: 8,
@@ -626,7 +628,7 @@ export const experienceCampaigns: ExperienceCampaignData[] = [
       "keyword",
     ],
     guidelineTexts: [
-      "체험단 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
+      "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★장기간 섭취 후 실제 효과와 변화를 자세히 기록해주세요!!★",
       "★건강식품의 성분과 효능을 객관적으로 평가해주세요★",
     ],

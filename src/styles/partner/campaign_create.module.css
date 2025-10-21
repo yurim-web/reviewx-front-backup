@@ -1,98 +1,70 @@
 /* ========================================
-   파트너 캠페인 등록 페이지 스타일
+   캠페인 생성 폼 스타일
    ======================================== */
 
-/**
- * 파트너 캠페인 등록 페이지 관련 스타일
- * 
- * 목적: 파트너가 새 캠페인을 등록하는 페이지의 스타일
- * 
- * 주요 구성요소:
- * - 페이지 헤더 (뒤로가기, 제목, 긴급 토글)
- * - 캠페인 등록 폼
- * - 섹션별 폼 그룹
- * - 이미지 업로드 영역
- * - 버튼 및 입력 필드
- */
-
-/* ========================================
-   페이지 헤더 영역
-   - 뒤로가기, 제목, 긴급 토글
-======================================== */
-
+/* 페이지 헤더 */
 .page_header {
-  position: relative;
-  width: 100%;
-  height: 80px;
-  background: #d9d9d9;
-  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 0;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 24px;
 }
 
 .page_title {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  color: #444444;
-  font-size: 20px;
+  font-family: "Pretendard", sans-serif;
   font-weight: 600;
-  line-height: 20px;
-  letter-spacing: -0.4px;
+  font-size: 20px;
+  line-height: 1.2;
+  color: #444444;
   margin: 0;
+  letter-spacing: -0.4px;
 }
 
-/* ========================================
-   캠페인 등록 폼 영역
-   - 전체 폼 컨테이너
-======================================== */
-
-.campaign_create_form {
+/* 긴급 체크박스 */
+.urgent_checkbox {
   display: flex;
-  flex-direction: column;
-  gap: 40px;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+/* 폼 컨테이너 */
+.campaign_form {
   max-width: 920px;
   margin: 0 auto;
-  padding: 32px 40px;
-  background: white;
+  padding: 0 20px;
 }
 
-/* ========================================
-   폼 섹션
-   - 각 섹션별 그룹화
-======================================== */
-
-.form_section {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+/* 섹션 */
+.section {
+  margin-bottom: 48px;
 }
 
 .section_title {
-  color: #444444;
-  font-size: 18px;
+  font-family: "Pretendard", sans-serif;
   font-weight: 600;
-  line-height: 18px;
+  font-size: 18px;
+  line-height: 1.2;
+  color: #444444;
+  margin: 0 0 24px 0;
   letter-spacing: -0.36px;
-  margin: 0 0 8px 0;
 }
 
-/* ========================================
-   폼 그룹
-   - 개별 입력 필드 그룹
-======================================== */
-
+/* 폼 그룹 */
 .form_group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  position: relative;
+  margin-bottom: 24px;
 }
 
 .form_label {
-  color: #444444;
-  font-size: 14px;
+  display: block;
+  font-family: "Pretendard", sans-serif;
   font-weight: 500;
-  line-height: 14px;
+  font-size: 14px;
+  line-height: 1.2;
+  color: #444444;
+  margin-bottom: 8px;
   letter-spacing: -0.28px;
 }
 
@@ -101,161 +73,87 @@
   margin-left: 2px;
 }
 
-/* ========================================
-   캠페인 유형 버튼
-   - 배송형, 방문형 등 선택 버튼
-======================================== */
-
+/* 캠페인 유형 버튼들 */
 .campaign_type_buttons {
   display: flex;
-  gap: 12px;
-  width: 100%;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-.type_button {
+.campaign_type_button {
   flex: 1;
+  min-width: 168px;
   height: 56px;
-  background: white;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
+  background: #fff;
   color: #848484;
-  font-size: 16px;
+  font-family: "Pretendard", sans-serif;
   font-weight: 500;
-  line-height: 16px;
-  letter-spacing: -0.32px;
+  font-size: 16px;
+  line-height: 1.2;
   cursor: pointer;
   transition: all 0.2s ease;
+  letter-spacing: -0.32px;
 }
 
-.type_button:hover {
-  border-color: #999;
-}
-
-.type_button_active {
-  background: white;
+.campaign_type_button:hover {
   border-color: #444444;
   color: #444444;
 }
 
-/* ========================================
-   폼 입력 필드
-   - 텍스트, 숫자, 날짜 입력
-======================================== */
+.campaign_type_button.active {
+  border-color: #444444;
+  color: #444444;
+  background: #fff;
+}
 
-.form_input {
+/* 폼 입력 요소들 */
+.form_input,
+.form_select,
+.form_textarea {
+  width: 100%;
   height: 56px;
   padding: 0 16px;
-  background: white;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
+  background: #fff;
   color: #444444;
-  font-size: 16px;
+  font-family: "Pretendard", sans-serif;
   font-weight: 500;
-  line-height: 16px;
-  letter-spacing: -0.32px;
-  outline: none;
+  font-size: 16px;
+  line-height: 1.2;
   transition: border-color 0.2s ease;
+  letter-spacing: -0.32px;
 }
 
-.form_input:focus {
-  border-color: #007bff;
-}
-
-.form_input::placeholder {
-  color: #999999;
+.form_input:focus,
+.form_select:focus,
+.form_textarea:focus {
+  outline: none;
+  border-color: #444444;
 }
 
 .form_textarea {
-  min-height: 280px;
+  height: auto;
+  min-height: 120px;
   padding: 16px;
-  background: white;
-  border: 1px solid #d9d9d9;
-  border-radius: 8px;
-  color: #444444;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 24px;
-  letter-spacing: -0.28px;
-  outline: none;
   resize: vertical;
-  transition: border-color 0.2s ease;
 }
 
-.form_textarea:focus {
-  border-color: #007bff;
-}
-
-.form_textarea::placeholder {
-  color: #999999;
-}
-
-.unit {
-  position: absolute;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #444444;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 16px;
-  letter-spacing: -0.32px;
-  pointer-events: none;
-}
-
-/* ========================================
-   이미지 업로드 영역
-   - 썸네일 이미지 업로드
-======================================== */
-
+/* 이미지 업로드 영역 */
 .image_upload_area {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-}
-
-.image_preview {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
 }
 
-.image_item {
-  position: relative;
+.image_upload_placeholder {
   width: 120px;
   height: 120px;
-}
-
-.uploaded_image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid #d9d9d9;
-}
-
-.image_placeholder {
-  width: 120px;
-  height: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f8f9fa;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
-}
-
-.upload_icon {
-  width: 32px;
-  height: 32px;
-  opacity: 0.5;
-}
-
-.add_image_button {
-  width: 120px;
-  height: 120px;
-  background: #f8f9fa;
-  border: 1px solid #d9d9d9;
-  border-radius: 8px;
+  background: #f2f2f2;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -263,95 +161,218 @@
   transition: all 0.2s ease;
 }
 
-.add_image_button:hover {
-  background: #e9ecef;
-  border-color: #999;
+.image_upload_placeholder:hover {
+  border-color: #444444;
+  background: #f8f8f8;
 }
 
-.hidden_input {
-  display: none;
+.image_upload_placeholder span {
+  font-size: 32px;
+  color: #999999;
+  font-weight: 300;
 }
 
-/* ========================================
-   참여/제출 옵션
-   - 글자 수, 이미지 수 등 옵션 설정
-======================================== */
+/* 주소 입력 그룹 */
+.address_input_group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
 
-.participation_option {
+.address_input_group .form_input {
+  flex: 1;
+}
+
+.postal_code_button {
+  height: 56px;
+  padding: 0 20px;
+  border: 1px solid #444444;
+  border-radius: 8px;
+  background: #fff;
+  color: #444444;
+  font-family: "Pretendard", sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  letter-spacing: -0.32px;
+}
+
+.postal_code_button:hover {
+  background: #f8f8f8;
+}
+
+/* 포인트 입력 그룹 */
+.points_input_group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.points_input_group .form_input {
+  flex: 1;
+}
+
+.points_unit {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #444444;
+  white-space: nowrap;
+  letter-spacing: -0.32px;
+}
+
+.charge_button {
+  height: 56px;
+  padding: 0 20px;
+  border: 1px solid #444444;
+  border-radius: 8px;
+  background: #fff;
+  color: #444444;
+  font-family: "Pretendard", sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  letter-spacing: -0.32px;
+}
+
+.charge_button:hover {
+  background: #f8f8f8;
+}
+
+/* 카운트 입력 그룹 */
+.count_input_group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.count_input_group .form_input {
+  flex: 1;
+}
+
+.count_unit {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #444444;
+  white-space: nowrap;
+  letter-spacing: -0.32px;
+}
+
+/* 체크박스 그룹 */
+.checkbox_group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.checkbox_label {
   display: flex;
   align-items: center;
   gap: 12px;
+  cursor: pointer;
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #444444;
+  letter-spacing: -0.32px;
+}
+
+.checkbox_label input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  appearance: none;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.checkbox_label input[type="checkbox"]:checked {
+  border-color: #444444;
+  background: #444444;
+}
+
+.checkbox_label input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* 옵션 입력 그룹 */
+.option_input_group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
   margin-bottom: 16px;
 }
 
 .option_label {
-  color: #444444;
-  font-size: 16px;
+  font-family: "Pretendard", sans-serif;
   font-weight: 500;
-  line-height: 16px;
-  letter-spacing: -0.32px;
-  min-width: 120px;
-}
-
-.option_input {
-  width: 120px;
-  height: 40px;
-  padding: 0 12px;
-  background: white;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  color: #444444;
   font-size: 16px;
-  font-weight: 500;
-  text-align: center;
-  outline: none;
-}
-
-.option_input:focus {
-  border-color: #007bff;
-}
-
-.option_unit {
   color: #444444;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 16px;
+  white-space: nowrap;
   letter-spacing: -0.32px;
 }
 
-/* ========================================
-   체크박스 옵션
-   - 체크박스 형태의 옵션들
-======================================== */
-
-.checkbox_option {
+.number_input_group {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 8px;
 }
 
-.checkbox_option input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
-  accent-color: #444444;
-  cursor: pointer;
-}
-
-.checkbox_option label {
+.number_input {
+  width: 80px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
   color: #444444;
-  font-size: 16px;
+  font-family: "Pretendard", sans-serif;
   font-weight: 500;
-  line-height: 16px;
+  font-size: 16px;
+  text-align: center;
   letter-spacing: -0.32px;
-  cursor: pointer;
 }
 
-/* ========================================
-   유의 사항 영역
-   - 미리 정의된 유의 사항 표시
-======================================== */
+.number_input:focus {
+  outline: none;
+  border-color: #444444;
+}
 
+.input_unit {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #444444;
+  white-space: nowrap;
+  letter-spacing: -0.32px;
+}
+
+/* 비디오 입력 그룹 */
+.video_input_group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 유의 사항 */
 .notice_content {
   background: #f6f6f6;
   border: 1px solid #d9d9d9;
@@ -366,21 +387,13 @@
 }
 
 .notice_content li {
-  color: #999999;
-  font-size: 13px;
+  font-family: "Pretendard", sans-serif;
   font-weight: 500;
-  line-height: 23px;
-  letter-spacing: -0.26px;
-  margin-bottom: 8px;
-  padding-left: 16px;
-  position: relative;
-}
-
-.notice_content li:before {
-  content: "•";
+  font-size: 13px;
+  line-height: 1.77;
   color: #999999;
-  position: absolute;
-  left: 0;
+  margin-bottom: 8px;
+  letter-spacing: -0.26px;
 }
 
 .notice_content li:last-child {
@@ -388,38 +401,35 @@
 }
 
 .notice_content strong {
-  color: #999999;
   font-weight: 700;
   text-decoration: underline;
 }
 
-/* ========================================
-   제출 버튼 영역
-   - 등록하기 버튼
-======================================== */
-
-.submit_section {
+/* 제출 버튼 */
+.submit_button_container {
   display: flex;
   justify-content: center;
-  padding: 40px 0;
+  margin-top: 48px;
 }
 
 .submit_button {
-  width: 920px;
+  width: 100%;
+  max-width: 920px;
   height: 56px;
-  background: #555555;
   border: none;
   border-radius: 8px;
-  color: white;
-  font-size: 16px;
+  background: #555555;
+  color: #fff;
+  font-family: "Pretendard", sans-serif;
   font-weight: 600;
-  line-height: 16px;
-  letter-spacing: -0.32px;
+  font-size: 16px;
+  line-height: 1.2;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  letter-spacing: -0.32px;
 }
 
-.submit_button:hover {
+.submit_button:hover:not(:disabled) {
   background: #444444;
 }
 
@@ -428,51 +438,38 @@
   cursor: not-allowed;
 }
 
-/* ========================================
-   반응형 디자인
-   - 모바일 및 태블릿 환경 대응
-======================================== */
-
+/* 반응형 디자인 */
 @media (max-width: 768px) {
-  .campaign_create_form {
-    padding: 24px 16px;
-  }
-
-  .page_header {
-    height: 60px;
-  }
-
-  .page_title {
-    font-size: 18px;
+  .campaign_form {
+    padding: 0 16px;
   }
 
   .campaign_type_buttons {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .type_button {
-    flex: 1;
-    min-width: calc(50% - 4px);
-    height: 48px;
-    font-size: 14px;
-  }
-
-  .image_upload_area {
     flex-direction: column;
   }
 
-  .participation_option {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .option_label {
+  .campaign_type_button {
     min-width: auto;
   }
 
-  .submit_button {
+  .address_input_group,
+  .points_input_group,
+  .count_input_group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .postal_code_button,
+  .charge_button {
     width: 100%;
+  }
+
+  .option_input_group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .video_input_group {
+    flex-wrap: wrap;
   }
 }

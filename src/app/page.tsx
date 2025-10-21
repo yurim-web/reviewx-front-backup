@@ -12,7 +12,7 @@
  *
  * 사용 파일:
  * - 컴포넌트: MainMenu, CampaignBox, Titletext
- * - 데이터: deliveryCampaigns, visitCampaigns, reviewCampaigns, experienceCampaigns, reporterCampaigns
+ * - 데이터: deliveryCampaigns, visitCampaigns, reviewCampaigns, missionCampaigns, reporterCampaigns
  * - CSS: home.module.css
  *
  * 주요 기능:
@@ -36,7 +36,7 @@ import Titletext from "@/components/main/Titletext";
 import { deliveryCampaigns } from "@/data/user/delivery/deliveryCampaigns";
 import { visitCampaigns } from "@/data/user/visit/visitCampaigns";
 import { reviewCampaigns } from "@/data/user/review/reviewCampaigns";
-import { experienceCampaigns } from "@/data/user/experience/experienceCampaigns";
+import { missionCampaigns } from "@/data/user/mission/missionCampaigns";
 import { reporterCampaigns } from "@/data/user/reporter/reporterCampaigns";
 
 // 페이지 메타데이터 설정
@@ -54,7 +54,7 @@ export default function Home() {
     ...deliveryCampaigns.slice(0, 2),
     ...reviewCampaigns.slice(0, 2),
     ...visitCampaigns.slice(0, 2),
-    ...experienceCampaigns.slice(0, 1),
+    ...missionCampaigns.slice(0, 1),
     ...reporterCampaigns.slice(0, 1),
   ];
 
@@ -63,7 +63,7 @@ export default function Home() {
     ...deliveryCampaigns.slice(2, 4),
     ...reviewCampaigns.slice(2, 4),
     ...visitCampaigns.slice(2, 4),
-    ...experienceCampaigns.slice(1, 2),
+    ...missionCampaigns.slice(1, 2),
     ...reporterCampaigns.slice(1, 2),
   ];
 

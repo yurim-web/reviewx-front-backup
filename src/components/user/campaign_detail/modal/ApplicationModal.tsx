@@ -54,7 +54,7 @@ export default function ApplicationModal({
       <div className={styles.modal_container}>
         {/* 모달 헤더 */}
         <div className={styles.modal_header}>
-          <h2 className={styles.modal_title}>체험단 신청</h2>
+          <h2 className={styles.modal_title}>미션형 신청</h2>
           <button className={styles.close_button} onClick={onClose}>
             <img src="/images/filter/x_icon.svg" alt="닫기" />
           </button>

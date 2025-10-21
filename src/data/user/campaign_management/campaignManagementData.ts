@@ -55,7 +55,7 @@ export const campaignManagementData: CampaignApplication[] = [
   // 선정 상태 캠페인들 (id: 3-6)
   {
     id: "3",
-    title: "스킨케어 세트 체험단",
+    title: "스킨케어 세트 미션형",
     category: "올리브영",
     categoryIcon: "/images/brand_logo/oliveyoung.svg",
     image: "/images/main/campaign_img/eximg_2.png",

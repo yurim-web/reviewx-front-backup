@@ -21,50 +21,21 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import CampaignCreateForm from "@/components/partner/campaign/CampaignCreateForm";
-import campaignCreateStyles from "@/styles/partner/campaign_create.module.css";
-import layoutStyles from "../../../../styles/partner/layout.module.css";
 
+/**
+ * 파트너 캠페인 생성 메인 페이지
+ * 배송형 캠페인 생성 페이지로 리다이렉트
+ */
 export default function PartnerCampaignCreatePage() {
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  /**
-   * 캠페인 등록 처리
-   */
-  const handleSubmit = async (formData: any) => {
-    setIsSubmitting(true);
-    try {
-      // TODO: API 호출로 캠페인 등록
-      console.log("캠페인 등록 데이터:", formData);
+  useEffect(() => {
+    // 메인 캠페인 생성 페이지 접근 시 배송형 캠페인 생성 페이지로 리다이렉트
+    router.replace("/partner/campaign/create/delivery");
+  }, [router]);
 
-      // 등록 성공 시 캠페인 관리 페이지로 이동
-      router.push("/partner");
-    } catch (error) {
-      console.error("캠페인 등록 실패:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return (
-    <div className={layoutStyles.container}>
-      {/* 메인 컨텐츠 영역 */}
-      <div className={layoutStyles.main_content}>
-        {/* 페이지 헤더 */}
-        <div className={campaignCreateStyles.page_header}>
-          <h1 className={campaignCreateStyles.page_title}>새 캠페인 등록</h1>
-        </div>
-
-        {/* 캠페인 등록 폼 */}
-        <CampaignCreateForm
-          onSubmit={handleSubmit}
-          isSubmitting={isSubmitting}
-        />
-      </div>
-    </div>
-  );
+  // 리다이렉트 중에는 아무것도 렌더링하지 않음
+  return null;
 }
-

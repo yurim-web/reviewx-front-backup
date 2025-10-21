@@ -44,6 +44,7 @@ import {
   partnerCampaigns,
   partnerCampaignStats,
 } from "@/data/partner/partnerCampaigns";
+import DetailGuidelinesSectionDelivery from "@/components/user/campaign_detail/guidelines/DetailGuidelinesSectionDelivery";
 
 /**
  * 파트너 캠페인 관리 메인 페이지 컴포넌트
@@ -81,3 +82,5 @@ export default function PartnerCampaignPage() {
     </div>
   );
 }
+
+

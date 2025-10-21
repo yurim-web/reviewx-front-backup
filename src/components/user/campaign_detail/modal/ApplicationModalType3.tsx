@@ -1,11 +1,11 @@
 /* ========================================
-   🏢 방문형/체험단/기자단 상세페이지 신청 모달
+   🏢 방문형/미션형/기자단 상세페이지 신청 모달
    ======================================== */
 
 /**
  * 캠페인 신청 모달 컴포넌트 (Type 3)
  *
- * 목적: 방문형, 체험단, 기자단 상세 페이지에서 캠페인 신청하기 버튼을 눌렀을 때 나오는 공통 모달창입니다.
+ * 목적: 방문형, 미션형, 기자단 상세 페이지에서 캠페인 신청하기 버튼을 눌렀을 때 나오는 공통 모달창입니다.
  *
  * 주요 기능:
  * - 신청자 정보 표시
@@ -54,7 +54,7 @@ export default function ApplicationModalType3({
       <div className={styles.modal_container}>
         {/* 모달 헤더 */}
         <div className={styles.modal_header}>
-          <h2 className={styles.modal_title}>체험단 신청</h2>
+          <h2 className={styles.modal_title}>미션형 신청</h2>
           <button className={styles.close_button} onClick={onClose}>
             <img src="/images/filter/x_icon.svg" alt="닫기" />
           </button>

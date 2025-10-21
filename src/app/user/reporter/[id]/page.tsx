@@ -208,6 +208,13 @@ export default function ReporterDetailPage({
         {/* 안내 사항들 */}
         <DetailGuidelinesSectionReporter
           description={campaign.description}
+          productLink={campaign.productLink}
+          onCopyProductLink={() => {
+            if (campaign.productLink) {
+              navigator.clipboard.writeText(campaign.productLink);
+              alert("홍보링크가 복사되었습니다!");
+            }
+          }}
           keyword={campaign.keyword}
           onCopyKeyword={() => {
             navigator.clipboard.writeText(campaign.keyword);
