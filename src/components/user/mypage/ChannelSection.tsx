@@ -113,6 +113,7 @@ export default function ChannelSection({
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         channelName={selectedChannel || ""}
+        initialUrl={channels.find((ch) => ch.name === selectedChannel)?.url}
         onConnect={handleConnect}
       />
     </>

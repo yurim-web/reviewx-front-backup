@@ -52,6 +52,26 @@ export default function EditProfilePage() {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
+  // 필수 입력 필드 검증 함수
+  const validateRequiredFields = () => {
+    const requiredFields = {
+      phone: formData.phone.trim(),
+      postalCode: formData.postalCode.trim(),
+      address: formData.address.trim(),
+      accountHolder: formData.accountHolder.trim(),
+      bank: formData.bank.trim(),
+      accountNumber: formData.accountNumber.trim(),
+      ssnFront: formData.ssnFront.trim(),
+      ssnBack: formData.ssnBack.trim(),
+    };
+
+    // 모든 필수 필드가 입력되었는지 확인
+    return Object.values(requiredFields).every((value) => value.length > 0);
+  };
+
+  // 저장하기 버튼 활성화 상태
+  const isSaveButtonEnabled = validateRequiredFields();
+
   const handleBack = () => {
     router.back();
   };
@@ -115,8 +135,10 @@ export default function EditProfilePage() {
   };
 
   const handleSave = () => {
-    // 저장 로직
-    console.log("저장", formData);
+    if (isSaveButtonEnabled) {
+      // 저장 로직
+      console.log("저장", formData);
+    }
   };
 
   const handleProfilePhotoUpload = () => {
@@ -172,13 +194,14 @@ export default function EditProfilePage() {
       {/* 메인 컨텐츠 */}
       <main className={styles.main_content}>
         <h1 className={styles.page_title}>내 정보 수정</h1>
-        <div className={styles.divider} />
+
         <section className={styles.section_container}>
           {/* 기본 정보 섹션 */}
           <h2 className={styles.section_title}>기본 정보</h2>
 
           {/* 프로필 사진 */}
-          <div className={styles.profile_photo_section}>
+
+          <article className={styles.field_article}>
             <label className={styles.field_label}>프로필 사진</label>
             <div className={styles.profile_upload_container}>
               <div className={styles.profile_image_wrapper}>
@@ -228,10 +251,10 @@ export default function EditProfilePage() {
                 )}
               </div>
             </div>
-          </div>
+          </article>
 
           {/* 닉네임 */}
-          <div className={styles.field_group}>
+          <article className={styles.field_article}>
             <label className={styles.field_label} htmlFor="nickname">
               닉네임
             </label>
@@ -243,10 +266,10 @@ export default function EditProfilePage() {
               value={formData.nickname}
               onChange={handleInputChange}
             />
-          </div>
+          </article>
 
           {/* 이름 (비활성화) */}
-          <div className={styles.field_group}>
+          <article className={styles.field_article}>
             <label className={styles.field_label} htmlFor="name">
               이름
             </label>
@@ -258,10 +281,10 @@ export default function EditProfilePage() {
               value={formData.name}
               disabled
             />
-          </div>
+          </article>
 
           {/* 이메일 (비활성화) */}
-          <div className={styles.field_group}>
+          <article className={styles.field_article}>
             <label className={styles.field_label} htmlFor="email">
               이메일
             </label>
@@ -273,12 +296,12 @@ export default function EditProfilePage() {
               value={formData.email}
               disabled
             />
-          </div>
+          </article>
 
           {/* 휴대폰 번호 */}
-          <div className={styles.field_group}>
+          <article className={styles.field_article}>
             <label className={styles.field_label} htmlFor="phone">
-              휴대폰 번호
+              휴대폰 번호<span className={styles.required_asterisk}>*</span>
             </label>
             <div className={styles.input_with_button}>
               <div className={styles.phone_input_container}>
@@ -309,12 +332,12 @@ export default function EditProfilePage() {
                 인증번호 받기
               </button>
             </div>
-          </div>
+          </article>
 
           {/* 주소 */}
-          <div className={styles.field_group}>
+          <article className={styles.field_article}>
             <label className={styles.field_label} htmlFor="postalCode">
-              주소
+              주소<span className={styles.required_asterisk}>*</span>
             </label>
             <div className={styles.input_with_button}>
               <input
@@ -323,7 +346,7 @@ export default function EditProfilePage() {
                 name="postalCode"
                 className={styles.input_field}
                 value={formData.postalCode}
-                disabled
+                readOnly
               />
               <button
                 className={styles.postal_button}
@@ -332,40 +355,36 @@ export default function EditProfilePage() {
                 우편번호 찾기
               </button>
             </div>
-          </div>
+            <div className={styles.field_group}>
+              <input
+                type="text"
+                id="address"
+                name="address"
+                className={styles.input_field}
+                value={formData.address}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className={styles.field_group}>
+              <input
+                type="text"
+                id="detailAddress"
+                name="detailAddress"
+                className={styles.input_field}
+                value={formData.detailAddress}
+                onChange={handleInputChange}
+                placeholder=""
+              />
+            </div>
+          </article>
 
-          {/* 주소 상세 */}
-          <div className={styles.field_group}>
-            <input
-              type="text"
-              id="address"
-              name="address"
-              className={styles.input_field}
-              value={formData.address}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          {/* 상세 주소 */}
-          <div className={styles.field_group}>
-            <input
-              type="text"
-              id="detailAddress"
-              name="detailAddress"
-              className={styles.input_field}
-              value={formData.detailAddress}
-              onChange={handleInputChange}
-              placeholder=""
-            />
-          </div>
-
-          {/* 본인 명의 계좌 정보 */}
+          {/* 본인 명의 계좌 정보 제목 !*/}
           <h3 className={styles.section_subtitle}>본인 명의 계좌 정보</h3>
 
           {/* 예금주 */}
-          <div className={styles.field_group}>
+          <article className={styles.field_article}>
             <label className={styles.field_label} htmlFor="accountHolder">
-              예금주
+              예금주<span className={styles.required_asterisk}>*</span>
             </label>
             <input
               type="text"
@@ -375,12 +394,12 @@ export default function EditProfilePage() {
               value={formData.accountHolder}
               onChange={handleInputChange}
             />
-          </div>
+          </article>
 
           {/* 은행 */}
-          <div className={styles.field_group}>
+          <article className={styles.field_article}>
             <label className={styles.field_label} htmlFor="bank">
-              은행
+              은행<span className={styles.required_asterisk}>*</span>
             </label>
             <input
               type="text"
@@ -390,12 +409,12 @@ export default function EditProfilePage() {
               value={formData.bank}
               onChange={handleInputChange}
             />
-          </div>
+          </article>
 
           {/* 계좌번호 */}
-          <div className={styles.field_group}>
+          <article className={styles.field_article}>
             <label className={styles.field_label} htmlFor="accountNumber">
-              계좌번호
+              계좌번호<span className={styles.required_asterisk}>*</span>
             </label>
             <input
               type="text"
@@ -405,12 +424,12 @@ export default function EditProfilePage() {
               value={formData.accountNumber}
               onChange={handleInputChange}
             />
-          </div>
+          </article>
 
           {/* 주민등록번호 */}
-          <div className={styles.field_group}>
+          <article className={styles.field_article}>
             <label className={styles.field_label} htmlFor="ssnFront">
-              주민등록번호
+              주민등록번호<span className={styles.required_asterisk}>*</span>
             </label>
             <div className={styles.ssn_container}>
               <input
@@ -433,11 +452,17 @@ export default function EditProfilePage() {
                 maxLength={7}
               />
             </div>
-          </div>
+          </article>
         </section>
         <div className={styles.save_button_container}>
           {/* 저장하기 버튼 */}
-          <button className={styles.save_button} onClick={handleSave}>
+          <button
+            className={`${styles.save_button} ${
+              !isSaveButtonEnabled ? styles.disabled_button : ""
+            }`}
+            onClick={handleSave}
+            disabled={!isSaveButtonEnabled}
+          >
             저장하기
           </button>
         </div>

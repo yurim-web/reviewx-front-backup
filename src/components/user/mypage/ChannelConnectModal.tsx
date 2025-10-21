@@ -19,7 +19,8 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import styles from "../../../styles/user/mypage/channel_connect_modal.module.css";
 
 interface ChannelConnectModalProps {
@@ -27,6 +28,7 @@ interface ChannelConnectModalProps {
   onClose: () => void;
   channelName: string;
   channelIcon?: string;
+  initialUrl?: string; // 이미 연결된 URL (수정용)
   onConnect: (accountInfo: { username: string; url: string }) => void;
 }
 
@@ -35,10 +37,43 @@ export default function ChannelConnectModal({
   onClose,
   channelName,
   channelIcon,
+  initialUrl,
   onConnect,
 }: ChannelConnectModalProps) {
   const [username, setUsername] = useState("");
   const [url, setUrl] = useState("");
+
+  // 모달이 열릴 때마다 입력값 초기화 또는 기존 URL 설정
+  useEffect(() => {
+    if (isOpen) {
+      setUsername("");
+      setUrl(initialUrl || ""); // 기존 URL이 있으면 설정, 없으면 빈 문자열
+    }
+  }, [isOpen, initialUrl]);
+
+  // URL 유효성 검사 함수
+  const isValidUrl = (urlString: string): boolean => {
+    if (!urlString.trim()) return false;
+
+    try {
+      // URL 객체를 생성하여 유효성 검사
+      const url = new URL(urlString);
+
+      // http 또는 https 프로토콜만 허용
+      const isValidProtocol =
+        url.protocol === "http:" || url.protocol === "https:";
+
+      // 호스트명이 있는지 확인 (www 포함)
+      const hasValidHost = url.hostname && url.hostname.length > 0;
+
+      return isValidProtocol && hasValidHost;
+    } catch {
+      return false;
+    }
+  };
+
+  // 버튼 활성화 상태 계산
+  const isButtonEnabled = isValidUrl(url);
 
   if (!isOpen) return null;
 
@@ -49,7 +84,7 @@ export default function ChannelConnectModal({
   };
 
   const handleConnect = () => {
-    if (url.trim()) {
+    if (isButtonEnabled) {
       onConnect({ username: "", url: url.trim() });
       setUrl("");
       onClose();
@@ -98,15 +133,12 @@ export default function ChannelConnectModal({
         <div className={styles.modal_header}>
           <h3 className={styles.modal_title}>{channelName} 연결</h3>
           <button className={styles.modal_close_button} onClick={onClose}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M18 6L6 18M6 6L18 18"
-                stroke="#666"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <Image
+              src="/images/filter/x_icon.svg"
+              alt="닫기"
+              width={20}
+              height={20}
+            />
           </button>
         </div>
 
@@ -128,9 +160,11 @@ export default function ChannelConnectModal({
         {/* 모달 푸터 */}
         <div className={styles.modal_footer}>
           <button
-            className={styles.connect_button}
+            className={`${styles.connect_button} ${
+              !isButtonEnabled ? styles.disabled_button : ""
+            }`}
             onClick={handleConnect}
-            disabled={!url.trim()}
+            disabled={!isButtonEnabled}
           >
             채널 연결하기
           </button>
