@@ -53,6 +53,26 @@
   cursor: pointer;
 }
 
+/* 새로운 캠페인 등록 버튼 */
+.new_campaign_button {
+  background: #fff;
+  color: #d90074;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.new_campaign_button:hover {
+  background: #f8f8f8;
+  transform: translateY(-1px);
+}
+
 /* 반응형 스타일 css 코드 */
 
 /* ✅ 모바일 공통 — 0~739px */
@@ -71,6 +91,12 @@
     width: 24px;
     height: 24px;
   }
+
+  /* 모바일에서 새로운 캠페인 등록 버튼 */
+  .new_campaign_button {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
 }
 
 /* ✅ 태블릿 세로(portrait) 전용 — 740~1100px */
@@ -79,5 +105,3 @@
 /* ✅ 태블릿 가로(landscape) 전용 — 740~1100px */
 @media (min-width: 740px) and (max-width: 1366px) and (orientation: landscape) {
 }
-
-
