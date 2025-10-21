@@ -105,6 +105,10 @@ export default function CampaignCard({
       case "취소/반려":
         if (campaign.subStatus === "penalty") {
           return "패널티 내역보기";
+        } else if (campaign.subStatus === "content_rejected") {
+          return "콘텐츠 반려 사유보기";
+        } else if (campaign.subStatus === "receipt_rejected") {
+          return "구매 영수증 재등록하기";
         } else {
           return "콘텐츠 재등록하기";
         }
@@ -127,13 +131,17 @@ export default function CampaignCard({
       buttonText === "콘텐츠 재등록하기" ||
       buttonText === "구매 영수증 등록하기" ||
       buttonText === "구매 영수증 수정하기" ||
+      buttonText === "구매 영수증 재등록하기" ||
       buttonText === "패널티 해제하기"
     ) {
       return `${buttonStyles.action_button} ${buttonStyles.primary_button}`;
     }
 
     // 경고 버튼 - 빨간색 테두리 (패널티 관련)
-    if (buttonText === "패널티 내역보기") {
+    if (
+      buttonText === "패널티 내역보기" ||
+      buttonText === "콘텐츠 반려 사유보기"
+    ) {
       return `${buttonStyles.action_button} ${buttonStyles.danger_button}`;
     }
 
@@ -202,12 +210,12 @@ export default function CampaignCard({
       <div className={buttonStyles.campaign_actions}>
         {/* 취소/반려 탭이면서 콘텐츠가 반려된 경우: 2개 버튼 표시 */}
         {activeTab === "취소/반려" &&
-        campaign.subStatus === "content_rejected" ? (
+        campaign.subStatus === "content_rejected,re_register" ? (
           <>
             <button
               className={`${buttonStyles.action_button} ${buttonStyles.danger_button}`}
             >
-              콘텐츠 반려 사유보기
+              콘텐츠 반려 사유 보기
             </button>
             <button
               className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
@@ -215,13 +223,28 @@ export default function CampaignCard({
               콘텐츠 재등록하기
             </button>
           </>
-        ) : /* 취소/반려 탭이면서 패널티인 경우 */
+        ) : /* 취소/반려 탭이면서 패널티(버튼 1개)인 경우 */
         activeTab === "취소/반려" && campaign.subStatus === "penalty" ? (
           <button
             className={`${buttonStyles.action_button} ${buttonStyles.danger_button}`}
           >
-            패널티 내역보기
+            패널티 내역 보기
           </button>
+        ) : /* 취소/반려 탭이면서 패널티(버튼 2개)인 경우 */
+        activeTab === "취소/반려" &&
+          campaign.subStatus === "penalty,content_rejected" ? (
+          <>
+            <button
+              className={`${buttonStyles.action_button} ${buttonStyles.danger_button}`}
+            >
+              패널티 내역 보기
+            </button>
+            <button
+              className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
+            >
+              콘텐츠 재등록하기
+            </button>
+          </>
         ) : (
           /* 그 외의 경우: 상태에 맞는 1개 버튼 표시 */
           <button className={getButtonStyle()} onClick={handleButtonClick}>

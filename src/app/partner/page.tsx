@@ -39,65 +39,11 @@ import type {
   PartnerCampaign,
 } from "@/types/partner";
 
-/**
- * 목업 캠페인 데이터
- * TODO: 실제로는 API에서 데이터를 가져와야 함
- */
-const mockCampaigns: PartnerCampaign[] = [
-  {
-    id: "1",
-    title:
-      "푸러블 고농축 캡슐세제 플라워, 1개, 110개입 푸러블 고농축 세제 플라워 1개 110개입 푸러블 고농축 세제품...",
-    type: "배송형",
-    status: "신청",
-    deadline: "캠페인 선정 발표까지 1일 남았습니다.",
-    applicants: 0,
-    recruits: 12,
-  },
-  {
-    id: "2",
-    title: "[이야온] 진동클렌저",
-    type: "방문형",
-    status: "선정",
-    deadline: "오픈까지 2일 남았습니다.",
-    applicants: 0,
-    recruits: 12,
-  },
-
-  {
-    id: "3",
-    title: "[1만캐시 지급] MBC에브리원 <시골경찰 리턴즈> 9회 보고 리뷰 쓰자",
-    type: "방문형",
-    status: "완료",
-    deadline: "마감까지 2일 남았습니다.",
-    applicants: 0,
-    recruits: 12,
-    submissions: 4,
-    selected: 0,
-  },
-  {
-    id: "4",
-    title: "[서울/영등포] 남자왁싱 체험단 모집",
-    type: "방문형",
-    status: "취소/반려",
-    deadline: "마감까지 2일 남았습니다.",
-    applicants: 0,
-    recruits: 12,
-    submissions: 0,
-    selected: 0,
-  },
-  {
-    id: "5",
-    title: "택배닥스 체험단 모집",
-    type: "방문형",
-    status: "완료",
-    deadline: "당첨자 선정하기",
-    applicants: 0,
-    recruits: 12,
-    submissions: 0,
-    selected: 0,
-  },
-];
+// 임시 데이터 import
+import {
+  partnerCampaigns,
+  partnerCampaignStats,
+} from "@/data/partner/partnerCampaigns";
 
 /**
  * 파트너 캠페인 관리 메인 페이지 컴포넌트
@@ -109,17 +55,8 @@ export default function PartnerCampaignPage() {
   // 통계 탭 상태 (전체 / 예정 / 신청 / 진행 / 종료 / 취소)
   const [activeStatTab, setActiveStatTab] = useState<PartnerStatTab>("전체");
 
-  /**
-   * 각 상태별 캠페인 개수 계산
-   */
-  const mockStats: PartnerCampaignStats = {
-    전체: mockCampaigns.length,
-    예정: mockCampaigns.filter((c) => c.status === "신청").length,
-    신청: mockCampaigns.filter((c) => c.status === "신청").length,
-    진행: mockCampaigns.filter((c) => c.status === "선정").length,
-    종료: mockCampaigns.filter((c) => c.status === "완료").length,
-    취소: mockCampaigns.filter((c) => c.status === "취소/반려").length,
-  };
+  // 임시 데이터에서 통계 정보 사용
+  const stats: PartnerCampaignStats = partnerCampaignStats;
 
   return (
     <div className={layoutStyles.container}>
@@ -132,11 +69,14 @@ export default function PartnerCampaignPage() {
         <StatisticsTab
           activeStatTab={activeStatTab}
           setActiveStatTab={setActiveStatTab}
-          stats={mockStats}
+          stats={stats}
         />
 
         {/* 캠페인 목록 */}
-        <CampaignList campaigns={mockCampaigns} activeStatTab={activeStatTab} />
+        <CampaignList
+          campaigns={partnerCampaigns}
+          activeStatTab={activeStatTab}
+        />
       </div>
     </div>
   );

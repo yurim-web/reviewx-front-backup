@@ -136,37 +136,24 @@ export default function CampaignCard({
   };
 
   /**
-   * 현재 탭에 따른 상태 텍스트 표시
+   * 현재 탭에 따른 상태 텍스트 표시 (데이터 기반)
    */
   const getStatusText = () => {
-    switch (activeTab) {
-      case "전체":
-        // 전체 탭에서는 캠페인 상태에 따라 텍스트 결정
-        switch (campaign.status) {
-          case "신청":
-            return `캠페인 선정 발표까지 1일 남았습니다.`;
-          case "선정":
-            return "캠페인에 선정되었습니다. 진행해주세요.";
-          case "완료":
-            return "캠페인이 완료되었습니다.";
-          case "취소/반려":
-            return "캠페인 신청이 취소되었습니다.";
-          default:
-            return `캠페인 선정 발표까지 1일 남았습니다.`;
-        }
-      case "예정":
-        return `캠페인 선정 발표까지 1일 남았습니다.`;
-      case "신청":
-        return `캠페인 선정 발표까지 1일 남았습니다.`;
-      case "진행":
-        return "캠페인에 선정되었습니다. 진행해주세요.";
-      case "종료":
-        return "캠페인이 완료되었습니다.";
-      case "취소":
-        return "캠페인 신청이 취소되었습니다.";
-      default:
-        return `캠페인 선정 발표까지 1일 남았습니다.`;
+    // 데이터에서 제공되는 statusMessage를 직접 사용
+    // 탭에 따라 다른 메시지가 필요한 경우를 위한 fallback 로직
+    if (campaign.statusMessage) {
+      return campaign.statusMessage;
     }
+
+    // fallback: 데이터에 statusMessage가 없는 경우 기본 메시지
+    const fallbackMessages = {
+      신청: `캠페인 선정 발표까지 ${campaign.remainingDays}일 남았습니다.`,
+      선정: "캠페인에 선정되었습니다. 진행해주세요.",
+      완료: "캠페인이 완료되었습니다.",
+      "취소/반려": "캠페인 신청이 취소되었습니다.",
+    };
+
+    return fallbackMessages[campaign.status] || fallbackMessages["신청"];
   };
 
   return (

@@ -113,7 +113,7 @@ export default function ContentRegistrationModal({
         {/* 닫기 버튼 */}
         <button className={styles.close_button} onClick={onClose}>
           <Image
-            src="/images/icons/close_icon.svg"
+            src="/images/filter/x_icon.svg"
             alt="닫기"
             width={20}
             height={20}

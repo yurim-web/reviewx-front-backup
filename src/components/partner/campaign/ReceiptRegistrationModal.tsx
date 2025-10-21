@@ -120,6 +120,8 @@ export default function ReceiptRegistrationModal({
               alt="닫기"
               width={24}
               height={24}
+              priority
+              unoptimized
             />
           </button>
         </div>

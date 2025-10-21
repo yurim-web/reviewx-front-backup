@@ -5,6 +5,8 @@ export interface PartnerCampaign {
   type: "배송형" | "방문형";
   status: "신청" | "선정" | "완료" | "취소/반려";
   deadline: string;
+  remainingDays: number; // 남은 일수 (동적 계산된 값)
+  statusMessage: string; // 상태별 메시지 (데이터에서 제공)
   applicants: number;
   recruits: number;
   submissions?: number;
