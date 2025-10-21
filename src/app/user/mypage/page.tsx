@@ -27,6 +27,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 import type { MainTab } from "@/types/campaignManagement";
 import layoutStyles from "../../../styles/user/mypage/layout.module.css";
@@ -103,20 +104,14 @@ export default function MypagePage() {
                       양치하는고양이123456
                     </div>
 
-                    <svg
+                    <Image
                       className={profileStyles.edit_icon}
-                      width="16"
-                      height="16"
-                      viewBox="0 0 16 16"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
+                      src="/images/icons/chevron_right.svg"
+                      alt="프로필 편집 이동"
+                      width={16}
+                      height={16}
                       onClick={() => router.push("/user/mypage/edit")}
-                    >
-                      <path
-                        d="M4.70179 2.40511C4.64165 2.34146 4.59463 2.26659 4.56342 2.18477C4.53221 2.10295 4.51742 2.01578 4.51989 1.92825C4.52237 1.84072 4.54206 1.75453 4.57785 1.6746C4.61363 1.59468 4.66481 1.52258 4.72846 1.46244C4.79211 1.40229 4.86698 1.35527 4.9488 1.32406C5.03061 1.29285 5.11778 1.27806 5.20531 1.28054C5.29285 1.28302 5.37904 1.30271 5.45896 1.3385C5.53889 1.37428 5.61098 1.42546 5.67112 1.48911L11.3378 7.48911C11.4548 7.61288 11.52 7.77676 11.52 7.94711C11.52 8.11745 11.4548 8.28133 11.3378 8.40511L5.67112 14.4058C5.61138 14.4708 5.5393 14.5233 5.45908 14.5603C5.37886 14.5972 5.2921 14.6179 5.20384 14.621C5.11558 14.6241 5.02757 14.6097 4.94493 14.5786C4.8623 14.5474 4.78667 14.5001 4.72246 14.4395C4.65825 14.3788 4.60672 14.3061 4.57088 14.2253C4.53503 14.1446 4.51558 14.0576 4.51366 13.9693C4.51174 13.881 4.52738 13.7932 4.55968 13.711C4.59197 13.6288 4.64028 13.5538 4.70179 13.4904L9.93646 7.94711L4.70179 2.40511Z"
-                        fill="#444444"
-                      />
-                    </svg>
+                    />
                   </div>
                 </div>
               </div>

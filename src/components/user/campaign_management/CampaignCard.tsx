@@ -24,6 +24,7 @@ import cardStyles from "../../../styles/user/campaign_management/campaign_card.m
 import buttonStyles from "../../../styles/user/campaign_management/buttons.module.css";
 import { CamTag, CamCateIcon } from "./CampaignTag";
 import ReceiptRegistrationModal from "./ReceiptRegistrationModal";
+import ContentRegistrationModal from "./ContentRegistrationModal";
 
 interface CampaignCardProps {
   campaign: CampaignApplication;
@@ -39,13 +40,44 @@ export default function CampaignCard({
   activeTab,
 }: CampaignCardProps) {
   const [isContentModalOpen, setIsContentModalOpen] = useState(false);
+  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
 
   const handleContentButtonClick = () => {
     setIsContentModalOpen(true);
   };
 
+  const handleReceiptButtonClick = () => {
+    setIsReceiptModalOpen(true);
+  };
+
   const handleCloseModal = () => {
     setIsContentModalOpen(false);
+  };
+
+  const handleCloseReceiptModal = () => {
+    setIsReceiptModalOpen(false);
+  };
+
+  /**
+   * 버튼 클릭 핸들러
+   */
+  const handleButtonClick = () => {
+    const buttonText = getButtonText();
+
+    if (
+      buttonText === "구매 영수증 등록하기" ||
+      buttonText === "구매 영수증 수정하기"
+    ) {
+      handleReceiptButtonClick();
+    } else if (
+      buttonText === "콘텐츠 등록하기" ||
+      buttonText === "콘텐츠 수정하기"
+    ) {
+      handleContentButtonClick();
+    } else {
+      // 다른 버튼들의 로직 처리
+      console.log(`${buttonText} 버튼 클릭됨`);
+    }
   };
   /**
    * 현재 탭과 캠페인 상태에 따른 버튼 텍스트 결정
@@ -55,8 +87,14 @@ export default function CampaignCard({
       case "신청":
         return "신청 취소하기";
       case "선정":
+        // 구매 영수증 관련 상태 처리
+        if (campaign.subStatus === "receipt_not_registered") {
+          return "구매 영수증 등록하기";
+        } else if (campaign.subStatus === "receipt_registered") {
+          return "구매 영수증 수정하기";
+        }
         // 콘텐츠 등록 여부에 따라 다른 버튼 표시
-        if (campaign.subStatus === "content_not_registered") {
+        else if (campaign.subStatus === "content_not_registered") {
           return "콘텐츠 등록하기";
         } else if (campaign.subStatus === "content_registered") {
           return "콘텐츠 수정하기";
@@ -83,10 +121,12 @@ export default function CampaignCard({
   const getButtonStyle = () => {
     const buttonText = getButtonText();
 
-    // 주요 액션 버튼 - 검은색 배경 (콘텐츠 등록, 재등록 등)
+    // 주요 액션 버튼 - 검은색 배경 (콘텐츠 등록, 재등록, 구매 영수증 등록 등)
     if (
       buttonText === "콘텐츠 등록하기" ||
       buttonText === "콘텐츠 재등록하기" ||
+      buttonText === "구매 영수증 등록하기" ||
+      buttonText === "구매 영수증 수정하기" ||
       buttonText === "패널티 해제하기"
     ) {
       return `${buttonStyles.action_button} ${buttonStyles.primary_button}`;
@@ -184,23 +224,24 @@ export default function CampaignCard({
           </button>
         ) : (
           /* 그 외의 경우: 상태에 맞는 1개 버튼 표시 */
-          <button
-            className={getButtonStyle()}
-            onClick={
-              getButtonText() === "콘텐츠 등록하기"
-                ? handleContentButtonClick
-                : undefined
-            }
-          >
+          <button className={getButtonStyle()} onClick={handleButtonClick}>
             {getButtonText()}
           </button>
         )}
       </div>
 
       {/* 콘텐츠 등록 모달 */}
-      <ReceiptRegistrationModal
+      <ContentRegistrationModal
         isOpen={isContentModalOpen}
         onClose={handleCloseModal}
+        campaignTitle={campaign.title}
+      />
+
+      {/* 구매 영수증 등록 모달 */}
+      <ReceiptRegistrationModal
+        isOpen={isReceiptModalOpen}
+        onClose={handleCloseReceiptModal}
+        campaignTitle={campaign.title}
       />
     </div>
   );

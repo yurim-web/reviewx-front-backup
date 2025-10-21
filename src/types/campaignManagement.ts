@@ -19,6 +19,8 @@ export interface CampaignApplication {
     | "content_not_registered" // 콘텐츠 미등록 (선정 후 아직 등록 안함)
     | "content_registered" // 콘텐츠 등록 완료
     | "content_rejected" // 콘텐츠 반려됨 (수정 필요)
+    | "receipt_not_registered" // 구매 영수증 미등록
+    | "receipt_registered" // 구매 영수증 등록 완료
     | "penalty"; // 패널티 부과됨
 
   hasContent?: boolean; // 콘텐츠 보유 여부

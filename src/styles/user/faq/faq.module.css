@@ -227,11 +227,17 @@
 /* ✅ 태블릿 세로(portrait) 전용 — 740~1100px */
 @media (min-width: 740px) and (max-width: 1100px) and (orientation: portrait) {
   .main_content {
-    padding: 20px 36px;
+    padding: 0px 0px;
+  }
+  .section_container {
+    padding: 24px 56px;
+  }
+  .page_title {
+    padding: 24px 56px;
   }
 
   .faq_question {
-    padding: 20px 36px;
+    padding: 20px 20px;
   }
 
   .answer_content {
@@ -242,11 +248,17 @@
 /* ✅ 태블릿 가로(landscape) 전용 — 740~1366px */
 @media (min-width: 740px) and (max-width: 1366px) and (orientation: landscape) {
   .main_content {
-    padding: 20px 36px;
+    padding: 0px 0px;
+  }
+  .section_container {
+    padding: 24px 56px;
+  }
+  .page_title {
+    padding: 24px 56px;
   }
 
   .faq_question {
-    padding: 20px 36px;
+    padding: 20px 20px;
   }
 
   .answer_content {

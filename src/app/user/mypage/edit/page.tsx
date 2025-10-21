@@ -24,6 +24,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import styles from "../../../../styles/user/mypage/edit_profile.module.css";
 import SubHeader from "@/components/fragments/SubHeader";
 
@@ -35,7 +36,7 @@ export default function EditProfilePage() {
     nickname: "양치하는고양이123456",
     name: "홍길동",
     email: "gdhong@naver.com",
-    phone: "010-1234-5678",
+    phone: "",
     postalCode: "13561",
     address: "경기 성남시 분당구 정자일로 95",
     detailAddress: "",
@@ -63,7 +64,47 @@ export default function EditProfilePage() {
     }));
   };
 
+  // 휴대폰 번호 전용 핸들러
+  const handlePhoneInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value;
+
+    // 숫자만 추출
+    const numbersOnly = value.replace(/[^0-9]/g, "");
+
+    // 11자리 제한
+    const limitedNumbers = numbersOnly.slice(0, 11);
+
+    // 하이픈 자동 추가
+    let formattedPhone = "";
+    if (limitedNumbers.length >= 1) {
+      formattedPhone = limitedNumbers.slice(0, 3);
+      if (limitedNumbers.length >= 4) {
+        formattedPhone += "-" + limitedNumbers.slice(3, 7);
+        if (limitedNumbers.length >= 8) {
+          formattedPhone += "-" + limitedNumbers.slice(7, 11);
+        }
+      }
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      phone: formattedPhone,
+    }));
+  };
+
+  // 휴대폰 번호 형식 검증
+  const isValidPhoneNumber = (phone: string) => {
+    const phoneRegex = /^010-\d{4}-\d{4}$/;
+    return phoneRegex.test(phone);
+  };
+
   const handleVerificationRequest = () => {
+    // 휴대폰 번호 형식 검증
+    if (!isValidPhoneNumber(formData.phone)) {
+      alert("올바른 휴대폰 번호 형식을 입력해주세요. (예: 010-0000-0000)");
+      return;
+    }
+
     // 인증번호 요청 로직
     console.log("인증번호 요청");
   };
@@ -164,14 +205,12 @@ export default function EditProfilePage() {
                   onClick={handleProfilePhotoUpload}
                   title="프로필 사진 변경"
                 >
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                    <path
-                      d="M6 1V11M1 6H11"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                    />
-                  </svg>
+                  <Image
+                    src="/images/icons/refresh_icon.svg"
+                    alt="프로필 사진 업로드"
+                    width={12}
+                    height={12}
+                  />
                 </div>
                 {profileImage && (
                   <div
@@ -179,14 +218,12 @@ export default function EditProfilePage() {
                     onClick={handleRemoveProfilePhoto}
                     title="프로필 사진 삭제"
                   >
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                      <path
-                        d="M9 3L3 9M3 3L9 9"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                      />
-                    </svg>
+                    <Image
+                      src="/images/icons/close_x_small.svg"
+                      alt="프로필 사진 삭제"
+                      width={12}
+                      height={12}
+                    />
                   </div>
                 )}
               </div>
@@ -251,38 +288,17 @@ export default function EditProfilePage() {
                   name="phone"
                   className={styles.input_field}
                   value={formData.phone}
-                  onChange={handleInputChange}
+                  onChange={handlePhoneInputChange}
+                  placeholder="010-0000-0000"
                 />
                 {isPhoneVerified && (
                   <div className={styles.phone_check_icon}>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 16 16"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <g clipPath="url(#clip0_267_133)">
-                        <path
-                          d="M8 15C8.91942 15.0011 9.83 14.8206 10.6794 14.4687C11.5289 14.1169 12.3004 13.6006 12.9497 12.9497C13.6006 12.3004 14.1169 11.5289 14.4687 10.6794C14.8206 9.83 15.0011 8.91942 15 8C15.0011 7.08058 14.8206 6.17 14.4687 5.32057C14.1169 4.47115 13.6006 3.69961 12.9497 3.0503C12.3004 2.39936 11.5289 1.88313 10.6794 1.53128C9.83 1.17942 8.91942 0.998872 8 1.00001C7.08058 0.998872 6.17 1.17942 5.32057 1.53128C4.47115 1.88313 3.69961 2.39936 3.0503 3.0503C2.39936 3.69961 1.88313 4.47115 1.53128 5.32057C1.17942 6.17 0.998872 7.08058 1.00001 8C0.998872 8.91942 1.17942 9.83 1.53128 10.6794C1.88313 11.5289 2.39936 12.3004 3.0503 12.9497C3.69961 13.6006 4.47115 14.1169 5.32057 14.4687C6.17 14.8206 7.08058 15.0011 8 15Z"
-                          stroke="#2DC469"
-                          strokeWidth="1.6"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M5 8L7 10L11 6"
-                          stroke="#2DC469"
-                          strokeWidth="1.6"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </g>
-                      <defs>
-                        <clipPath id="clip0_267_133">
-                          <rect width="16" height="16" fill="white" />
-                        </clipPath>
-                      </defs>
-                    </svg>
+                    <Image
+                      src="/images/icons/phone_verified.svg"
+                      alt="인증 완료"
+                      width={16}
+                      height={16}
+                    />
                   </div>
                 )}
               </div>

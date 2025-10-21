@@ -18,10 +18,12 @@
  * - 반려된 콘텐츠의 경우 2개 버튼 표시
  */
 
+import { useState } from "react";
 import type { PartnerStatTab } from "@/types/partner";
 import type { PartnerCampaign } from "@/types/partner";
 import cardStyles from "../../styles/partner/campaign_card.module.css";
 import buttonStyles from "../../styles/partner/buttons.module.css";
+import ReceiptRegistrationModal from "./campaign/ReceiptRegistrationModal";
 
 interface CampaignCardProps {
   campaign: PartnerCampaign;
@@ -36,6 +38,20 @@ export default function CampaignCard({
   campaign,
   activeTab,
 }: CampaignCardProps) {
+  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+
+  /**
+   * 버튼 클릭 핸들러
+   */
+  const handleButtonClick = (buttonText: string) => {
+    if (buttonText === "구매 영수증 등록하기") {
+      setIsReceiptModalOpen(true);
+    } else {
+      // 다른 버튼들의 로직 처리
+      console.log(`${buttonText} 버튼 클릭됨`);
+    }
+  };
+
   /**
    * 현재 탭과 캠페인 상태에 따른 버튼 텍스트 결정
    */
@@ -188,13 +204,28 @@ export default function CampaignCard({
 
       {/* 액션 버튼 영역 */}
       <div className={buttonStyles.campaign_actions}>
-        <button className={getButtonStyle()}>{getButtonText()}</button>
+        <button
+          className={getButtonStyle()}
+          onClick={() => handleButtonClick(getButtonText())}
+        >
+          {getButtonText()}
+        </button>
         {getSecondButtonText() && (
-          <button className={getSecondButtonStyle()}>
+          <button
+            className={getSecondButtonStyle()}
+            onClick={() => handleButtonClick(getSecondButtonText()!)}
+          >
             {getSecondButtonText()}
           </button>
         )}
       </div>
+
+      {/* 구매 영수증 등록 모달 */}
+      <ReceiptRegistrationModal
+        isOpen={isReceiptModalOpen}
+        onClose={() => setIsReceiptModalOpen(false)}
+        campaignTitle={campaign.title}
+      />
     </div>
   );
 }

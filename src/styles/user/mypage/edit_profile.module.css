@@ -123,12 +123,16 @@
   padding: 0 20px;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 16px;
-  letter-spacing: -0.32px;
+  /* 글자 css */
+  overflow: hidden;
   color: #444;
-  background: white;
+  text-overflow: ellipsis;
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
 }
 
 .input_field::placeholder {
@@ -171,7 +175,7 @@
   background: #d9d9d9;
   position: relative;
   overflow: hidden;
-  border: 2px solid #e0e0e0;
+  /* border: 2px solid #e0e0e0; */
 }
 
 .profile_image img {
@@ -195,15 +199,15 @@
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
-  gap: 4px;
+  gap: 16px;
   margin-top: -8px;
 }
 
 .emoji_dot {
-  width: 4px;
-  height: 4px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: #666;
+  background: #ffffff;
 }
 
 .emoji_mouth {
@@ -211,10 +215,10 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 24px;
+  width: 32px;
   height: 3px;
-  background: #666;
-  margin-top: 8px;
+  background: #ffffff;
+  margin-top: 9px;
 }
 
 .photo_upload_icon {
@@ -223,20 +227,14 @@
   right: 0;
   width: 24px;
   height: 24px;
-  background: #444;
+  background: white;
+  border: 1.5px solid #444;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  transition: all 0.2s ease;
-  color: white;
-}
-
-.photo_upload_icon:hover {
-  background: #333;
-  transform: scale(1.05);
+  fill: #fff;
 }
 
 .photo_remove_icon {
@@ -436,6 +434,9 @@
     padding: 0 32px;
   }
 
+  .section_container {
+    padding: 24px 24px 0px 24px;
+  }
   .back_button,
   .close_button {
     width: 24px;
@@ -443,7 +444,7 @@
   }
 
   .main_content {
-    padding: 104px 32px 32px;
+    padding: 24px 0px 30px 0px;
   }
 
   .page_title {

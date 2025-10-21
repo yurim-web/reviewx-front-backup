@@ -105,8 +105,8 @@
     padding: 20px 24px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 0px;
+    justify-content: flex-start;
+    gap: 20px;
     background-color: white; /* 배경색 추가 */
     z-index: 99; /* 헤더(100)보다 낮지만 콘텐츠보다는 위에 */
   }

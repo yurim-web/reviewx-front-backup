@@ -111,7 +111,20 @@ const mockApplications: CampaignApplication[] = [
     remainingDays: 7,
     type: "배송형",
     isUrgent: false,
-    subStatus: "content_not_registered", // 콘텐츠 등록 안함
+    subStatus: "receipt_not_registered", // 구매 영수증 등록 안함
+    hasContent: false,
+  },
+  {
+    id: "10",
+    title: "[쿠팡] 생활용품 체험단 모집",
+    category: "쿠팡",
+    categoryIcon: "/images/brand_logo/coupang.svg",
+    image: "/images/campaign_detail/exdetail_1.png",
+    status: "선정",
+    remainingDays: 4,
+    type: "배송형",
+    isUrgent: false,
+    subStatus: "receipt_registered", // 구매 영수증 등록 완료
     hasContent: false,
   },
   {

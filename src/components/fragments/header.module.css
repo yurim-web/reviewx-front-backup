@@ -79,3 +79,5 @@
 /* ✅ 태블릿 가로(landscape) 전용 — 740~1100px */
 @media (min-width: 740px) and (max-width: 1366px) and (orientation: landscape) {
 }
+
+

@@ -1,17 +1,50 @@
-// 공통 레이아웃
+/* ========================================
+   🏠 루트 레이아웃 (Root Layout)
+   ======================================== */
 
-// app/layout.tsx
+/**
+ * Next.js App Router의 루트 레이아웃 컴포넌트
+ *
+ * 목적: 모든 페이지에 공통으로 적용되는 최상위 레이아웃
+ *
+ * 주요 기능:
+ * - 전체 애플리케이션의 HTML 구조 정의
+ * - 공통 메타데이터 설정 (title, description)
+ * - Pretendard 폰트 로드
+ * - 공통 Header 컴포넌트 렌더링
+ * - 페이지별 children 컴포넌트 렌더링
+ * - 로딩 상태 처리 (Suspense)
+ *
+ * 적용 범위:
+ * - 모든 페이지 (/user/*, /partner/*, / 등)
+ * - 각 페이지는 이 레이아웃을 기반으로 렌더링됨
+ *
+ * 사용 컴포넌트:
+ * - Header: 상단 네비게이션 헤더
+ * - Loading: 페이지 로딩 중 표시되는 컴포넌트
+ *
+ * 참고사항:
+ * - Next.js 13+ App Router 구조
+ * - children prop으로 각 페이지 컴포넌트가 전달됨
+ * - 일부 페이지(출금신청 등)에서는 Header를 숨김 처리함
+ */
+
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import "../styles/globals.css";
 import Header from "@/components/fragments/Header";
 import Loading from "./loading";
 
+// 전체 애플리케이션의 메타데이터 설정
 export const metadata: Metadata = {
   title: "ReviewX | 리뷰 캠페인 플랫폼",
   description: "리뷰 캠페인 플랫폼",
 };
 
+/**
+ * 루트 레이아웃 컴포넌트
+ * @param children - 각 페이지의 컴포넌트
+ */
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -20,21 +53,23 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
-        {/* Pretendard 폰트 (CDN) */}
+        {/* Pretendard 폰트 (CDN) - 한국어 웹폰트 */}
         <link
           rel="stylesheet"
           as="style"
           crossOrigin=""
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
         />
-
-        {/* React DevTools는 브라우저 확장 프로그램으로 사용 */}
       </head>
 
       {/* 실제 보이는 콘텐츠 영역 */}
       <body className="antialiased">
+        {/* 공통 상단 헤더 (일부 페이지에서 숨김 처리됨) */}
         <Header />
+
+        {/* 메인 콘텐츠 영역 */}
         <main>
+          {/* 페이지별 컴포넌트를 Suspense로 감싸서 로딩 처리 */}
           <Suspense fallback={<Loading />}>{children}</Suspense>
         </main>
       </body>
