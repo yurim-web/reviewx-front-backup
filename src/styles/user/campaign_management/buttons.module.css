@@ -109,3 +109,36 @@
 .penalty_button:hover {
   background: #fff5f5;
 }
+
+/* ========================================
+   뒤로가기 버튼 스타일
+   ======================================== */
+
+/* 뒤로가기 버튼 */
+.back_button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fff;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* 뒤로가기 버튼 호버 효과 */
+.back_button:hover {
+  background: #f8f9fa;
+  border-color: #d0d0d0;
+}
+
+/* 뒤로가기 버튼 아이콘 */
+.back_button svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+}

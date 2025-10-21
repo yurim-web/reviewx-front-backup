@@ -15,6 +15,7 @@
 
 "use client";
 
+import { useRouter } from "next/navigation";
 import styles from "../../../styles/user/point/point.module.css";
 
 interface PointTabNavigationProps {
@@ -26,6 +27,26 @@ export default function PointTabNavigation({
   activePointTab,
   setActivePointTab,
 }: PointTabNavigationProps) {
+  const router = useRouter();
+
+  /**
+   * 포인트 탭 클릭 핸들러
+   * 각 탭 클릭 시 해당 페이지로 이동
+   */
+  const handlePointTabClick = (tab: "all" | "earned" | "withdrawn") => {
+    switch (tab) {
+      case "all":
+        router.push("/user/point/all");
+        break;
+      case "earned":
+        router.push("/user/point/earned");
+        break;
+      case "withdrawn":
+        router.push("/user/point/withdrawn");
+        break;
+    }
+  };
+
   return (
     <article className={styles.point_tab_navigation}>
       <div className={styles.left_point_tabs}>
@@ -33,7 +54,7 @@ export default function PointTabNavigation({
           className={`${styles.point_tab} ${
             activePointTab === "all" ? styles.active : ""
           }`}
-          onClick={() => setActivePointTab("all")}
+          onClick={() => handlePointTabClick("all")}
         >
           <span>전체</span>
         </button>
@@ -42,7 +63,7 @@ export default function PointTabNavigation({
           className={`${styles.point_tab} ${
             activePointTab === "earned" ? styles.active : ""
           }`}
-          onClick={() => setActivePointTab("earned")}
+          onClick={() => handlePointTabClick("earned")}
         >
           <span>적립</span>
         </button>
@@ -51,7 +72,7 @@ export default function PointTabNavigation({
           className={`${styles.point_tab} ${
             activePointTab === "withdrawn" ? styles.active : ""
           }`}
-          onClick={() => setActivePointTab("withdrawn")}
+          onClick={() => handlePointTabClick("withdrawn")}
         >
           <span>출금</span>
         </button>

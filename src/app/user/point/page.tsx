@@ -27,184 +27,21 @@
 
 "use client";
 
-import { useState, useRef } from "react";
-import Image from "next/image";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Header from "@/components/fragments/Header";
-import TabNavigation from "@/components/user/campaign_management/TabNavigation";
-import PointTabNavigation from "@/components/user/point/PointTabNavigation";
-import { MainTab } from "@/types/campaignManagement";
-import { PointTab } from "@/types/point";
-import { pointHistoryData } from "@/data/user/point/pointData";
-import styles from "../../../styles/user/point/point.module.css";
 
 /**
- * 포인트 메인 페이지 - Figma 디자인에 맞춤
+ * 포인트 메인 페이지 컴포넌트
+ * 전체 탭 페이지로 리다이렉트
  */
 export default function PointPage() {
   const router = useRouter();
-  const [activeMainTab, setActiveMainTab] = useState<MainTab>("point");
-  const [activePointTab, setActivePointTab] = useState<PointTab>("all");
-  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
-  const [showTooltip, setShowTooltip] = useState(false);
-  const tooltipRef = useRef<HTMLSpanElement>(null);
 
-  const handleWithdrawalClick = () => {
-    router.push("/user/point/withdrawal_request");
-  };
+  useEffect(() => {
+    // 메인 포인트 페이지 접근 시 전체 탭으로 리다이렉트
+    router.replace("/user/point/all");
+  }, [router]);
 
-  const handleMouseEnter = (e: React.MouseEvent) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    setTooltipPosition({
-      x: rect.right + 8,
-      y: rect.top + rect.height / 2,
-    });
-    setShowTooltip(true);
-  };
-
-  const handleMouseLeave = () => {
-    setShowTooltip(false);
-  };
-
-  // 탭에 따라 데이터 필터링
-  const filteredHistoryData = pointHistoryData.filter((history) => {
-    if (activePointTab === "all") return true;
-    if (activePointTab === "earned") return history.status === "earned";
-    if (activePointTab === "withdrawn")
-      return ["completed", "pending", "failed"].includes(history.status);
-    return true;
-  });
-
-  return (
-    <div className={styles.point_page}>
-      <main className={styles.main_content}>
-        <div className={styles.container}>
-          {/* 메인 탭 네비게이션 */}
-          <TabNavigation
-            activeTab={activeMainTab}
-            setActiveTab={setActiveMainTab}
-          />
-
-          {/* 포인트 세부 탭 네비게이션 */}
-          <PointTabNavigation
-            activePointTab={activePointTab}
-            setActivePointTab={setActivePointTab}
-          />
-
-          {/* 포인트 요약 정보 */}
-          <article className={styles.point_summary_section}>
-            <div className={styles.point_summary_info}>
-              <span className={styles.point_label}>보유 포인트</span>
-              <div className={styles.point_amount}>
-                <span className={styles.amount_number}>511,200</span>
-                <span className={styles.amount_unit}>P</span>
-              </div>
-            </div>
-
-            <button
-              className={styles.withdrawal_button}
-              onClick={handleWithdrawalClick}
-            >
-              출금 신청하기
-            </button>
-          </article>
-
-          {/* 포인트 내역 리스트 */}
-          <article className={styles.history_list}>
-            {filteredHistoryData.map((history) => (
-              <div key={history.id} className={styles.history_item}>
-                {/* 상태 배지 */}
-                <div className={styles.status_badge_container}>
-                  <div
-                    className={`${styles.status_badge} ${
-                      history.status === "earned"
-                        ? styles.earned
-                        : history.status === "completed"
-                        ? styles.completed
-                        : history.status === "pending"
-                        ? styles.pending
-                        : styles.cancelled
-                    }`}
-                  >
-                    {history.status === "earned"
-                      ? "적립"
-                      : history.status === "completed"
-                      ? "완료"
-                      : history.status === "pending"
-                      ? "신청"
-                      : "취소"}
-                  </div>
-                </div>
-
-                {/* 내역 정보 */}
-                <div className={styles.history_info}>
-                  <div className={styles.history_description}>
-                    {history.status === "failed" ? (
-                      <div className={styles.cancelled_description}>
-                        <span className={styles.main_text}>
-                          {history.description}
-                        </span>
-                        <div
-                          className={styles.reason_section}
-                          onMouseEnter={handleMouseEnter}
-                          onMouseLeave={handleMouseLeave}
-                        >
-                          <div className={styles.reason_icon}>
-                            <Image
-                              src="/images/management_page/cancel_info.svg"
-                              alt="정보 아이콘"
-                              width={16}
-                              height={16}
-                            />
-                          </div>
-                          <span className={styles.reason_text}>사유보기</span>
-                          <span
-                            ref={tooltipRef}
-                            className={styles.reason_content}
-                            style={{
-                              left: tooltipPosition.x,
-                              top: tooltipPosition.y,
-                              transform: "translateY(-50%)",
-                              opacity: showTooltip ? 1 : 0,
-                              visibility: showTooltip ? "visible" : "hidden",
-                            }}
-                          >
-                            예금주와 본인 명의 불일치
-                          </span>
-                        </div>
-                      </div>
-                    ) : (
-                      history.description
-                    )}
-                  </div>
-                  <div className={styles.history_date}>{history.date}</div>
-                </div>
-
-                {/* 포인트 정보 */}
-                <div className={styles.point_info}>
-                  <div
-                    className={`${styles.point_change} ${
-                      history.status === "failed"
-                        ? styles.cancelled_amount
-                        : history.amount > 0
-                        ? styles.positive
-                        : styles.negative
-                    }`}
-                  >
-                    {history.amount > 0
-                      ? `+ ${history.amount.toLocaleString()}`
-                      : `${history.amount.toLocaleString()}`}{" "}
-                    P
-                  </div>
-                  <div className={styles.point_balance}>
-                    {history.balance.toLocaleString()} P
-                  </div>
-                </div>
-              </div>
-            ))}
-          </article>
-        </div>
-      </main>
-    </div>
-  );
+  // 리다이렉트 중에는 아무것도 렌더링하지 않음
+  return null;
 }

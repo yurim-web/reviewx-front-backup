@@ -176,18 +176,6 @@
 
 /* ✅ 모바일 공통 — 0~739px */
 @media (max-width: 739px) {
-  .header {
-    padding: 16px 32px;
-  }
-
-  .header_title {
-    font-size: 18px;
-  }
-
-  .main_content {
-    padding: 16px 32px;
-  }
-
   .category_container {
     gap: 8px;
     margin-bottom: 24px;
@@ -225,9 +213,6 @@
 
 /* ✅ 태블릿 세로(portrait) 전용 — 740~1100px */
 @media (min-width: 740px) and (max-width: 1100px) and (orientation: portrait) {
-  .main_content {
-    padding: 0px 0px;
-  }
   .section_container {
     padding: 24px 56px;
   }
@@ -246,9 +231,6 @@
 
 /* ✅ 태블릿 가로(landscape) 전용 — 740~1366px */
 @media (min-width: 740px) and (max-width: 1366px) and (orientation: landscape) {
-  .main_content {
-    padding: 0px 0px;
-  }
   .section_container {
     padding: 24px 56px;
   }

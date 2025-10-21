@@ -25,14 +25,56 @@ reviewx-web/
 │   │   │   │   ├── page.tsx           # 배송형 목록 페이지
 │   │   │   │   └── [id]/              # 배송형 상세 페이지
 │   │   │   ├── visit/                 # 📍 방문형 캠페인
+│   │   │   │   ├── page.tsx           # 방문형 목록 페이지
+│   │   │   │   └── [id]/              # 방문형 상세 페이지
 │   │   │   ├── review/                # 🛒 구매평 캠페인
+│   │   │   │   ├── page.tsx           # 구매평 목록 페이지
+│   │   │   │   └── [id]/              # 구매평 상세 페이지
 │   │   │   ├── experience/            # 🎯 체험단 캠페인
+│   │   │   │   ├── page.tsx           # 체험단 목록 페이지
+│   │   │   │   └── [id]/              # 체험단 상세 페이지
 │   │   │   ├── reporter/              # 📰 기자단 캠페인
+│   │   │   │   ├── page.tsx           # 기자단 목록 페이지
+│   │   │   │   └── [id]/              # 기자단 상세 페이지
+│   │   │   ├── campaign_management/   # 📊 캠페인 관리
+│   │   │   │   ├── page.tsx           # 메인 페이지 (신청 탭으로 리다이렉트)
+│   │   │   │   ├── applied/           # 신청 탭 페이지
+│   │   │   │   │   └── page.tsx       # 신청 상태 캠페인 목록
+│   │   │   │   ├── selected/          # 선정 탭 페이지
+│   │   │   │   │   └── page.tsx       # 선정 상태 캠페인 목록
+│   │   │   │   ├── completed/         # 완료 탭 페이지
+│   │   │   │   │   └── page.tsx       # 완료 상태 캠페인 목록
+│   │   │   │   ├── cancelled/         # 취소/반려 탭 페이지
+│   │   │   │   │   └── page.tsx       # 취소/반려 상태 캠페인 목록
+│   │   │   │   └── penalty/           # 패널티 탭 페이지
+│   │   │   │       └── page.tsx       # 패널티 현황 및 내역
 │   │   │   ├── mypage/                # 👤 마이페이지
+│   │   │   │   ├── page.tsx           # 메인 페이지 (프로필 탭으로 리다이렉트)
+│   │   │   │   ├── profile/           # 프로필 탭 페이지
+│   │   │   │   │   └── page.tsx       # 프로필 정보 및 메뉴
+│   │   │   │   ├── channel/           # 채널 탭 페이지
+│   │   │   │   │   └── page.tsx       # 채널 연결 관리
+│   │   │   │   └── edit/              # 프로필 편집
+│   │   │   │       └── page.tsx       # 프로필 수정 페이지
 │   │   │   ├── point/                 # 💰 포인트 관리
+│   │   │   │   ├── page.tsx           # 메인 페이지 (전체 탭으로 리다이렉트)
+│   │   │   │   ├── all/               # 전체 탭 페이지
+│   │   │   │   │   └── page.tsx       # 모든 포인트 내역
+│   │   │   │   ├── earned/            # 적립 탭 페이지
+│   │   │   │   │   └── page.tsx       # 적립 포인트 내역
+│   │   │   │   ├── withdrawn/         # 출금 탭 페이지
+│   │   │   │   │   └── page.tsx       # 출금 포인트 내역
+│   │   │   │   └── withdrawal_request/ # 출금 신청
+│   │   │   │       └── page.tsx       # 출금 신청 페이지
 │   │   │   ├── notice/                # 📢 공지사항
+│   │   │   │   └── page.tsx           # 공지사항 목록
 │   │   │   └── faq/                   # ❓ FAQ
-│   │   └── campaign_management/      # 📊 캠페인 관리
+│   │   │       └── page.tsx           # 자주 묻는 질문
+│   │   └── partner/                   # 🤝 파트너 관련 페이지
+│   │       ├── page.tsx               # 파트너 메인 페이지
+│   │       └── campaign/              # 파트너 캠페인 관리
+│   │           └── create/            # 캠페인 생성
+│   │               └── page.tsx       # 캠페인 생성 페이지
 │   ├── components/                   # 🧩 컴포넌트
 │   │   ├── main/                     # 메인 페이지용 컴포넌트
 │   │   ├── user/                     # 사용자 관련 컴포넌트
@@ -40,16 +82,20 @@ reviewx-web/
 │   │   │   ├── campaign_detail/      # 캠페인 상세용 컴포넌트
 │   │   │   ├── campaign_management/  # 캠페인 관리용 컴포넌트
 │   │   │   ├── filter/               # 필터링 컴포넌트
-│   │   │   └── mypage/               # 마이페이지 컴포넌트
+│   │   │   ├── mypage/               # 마이페이지 컴포넌트
+│   │   │   └── point/                # 포인트 관련 컴포넌트
+│   │   ├── partner/                  # 파트너 관련 컴포넌트
 │   │   └── fragments/                # 공통 조각 컴포넌트
 │   ├── data/                         # 📊 데이터 파일
-│   │   └── user/                     # 사용자 관련 데이터
-│   │       ├── delivery/             # 배송형 캠페인 데이터
-│   │       ├── visit/                # 방문형 캠페인 데이터
-│   │       ├── review/               # 구매평 캠페인 데이터
-│   │       ├── experience/           # 체험단 캠페인 데이터
-│   │       ├── reporter/             # 기자단 캠페인 데이터
-│   │       └── point/                # 포인트 데이터
+│   │   ├── user/                     # 사용자 관련 데이터
+│   │   │   ├── delivery/             # 배송형 캠페인 데이터
+│   │   │   ├── visit/                # 방문형 캠페인 데이터
+│   │   │   ├── review/               # 구매평 캠페인 데이터
+│   │   │   ├── experience/           # 체험단 캠페인 데이터
+│   │   │   ├── reporter/             # 기자단 캠페인 데이터
+│   │   │   ├── campaign_management/  # 캠페인 관리 데이터
+│   │   │   └── point/                # 포인트 데이터
+│   │   └── partner/                  # 파트너 관련 데이터
 │   ├── styles/                       # 🎨 CSS 파일
 │   └── types/                        # 📝 TypeScript 타입 정의
 └── public/                           # 🖼️ 이미지 등 정적 파일
@@ -95,12 +141,12 @@ reviewx-web/
 
 | 컴포넌트       | 파일                 | 사용 페이지 | 용도                                     |
 | -------------- | -------------------- | ----------- | ---------------------------------------- |
-| TabNavigation  | `TabNavigation.tsx`  | 2개 페이지  | 메인 탭 (캠페인/포인트/계정/커뮤니티)    |
-| StatisticsTab  | `StatisticsTab.tsx`  | 캠페인 관리 | 통계 탭 (신청/선정/완료/취소반려/패널티) |
-| CampaignList   | `CampaignList.tsx`   | 캠페인 관리 | 캠페인 목록 컨테이너                     |
-| CampaignCard   | `CampaignCard.tsx`   | 캠페인 관리 | 개별 캠페인 카드                         |
-| PenaltyContent | `PenaltyContent.tsx` | 캠페인 관리 | 패널티 내역 화면                         |
-| CampaignTag    | `CampaignTag.tsx`    | 캠페인 관리 | 태그들 (마감임박, 타입 등)               |
+| TabNavigation  | `TabNavigation.tsx`  | 8개 페이지  | 메인 탭 (캠페인/포인트/계정/커뮤니티)    |
+| StatisticsTab  | `StatisticsTab.tsx`  | 5개 페이지  | 통계 탭 (신청/선정/완료/취소반려/패널티) |
+| CampaignList   | `CampaignList.tsx`   | 4개 페이지  | 캠페인 목록 컨테이너                     |
+| CampaignCard   | `CampaignCard.tsx`   | 4개 페이지  | 개별 캠페인 카드                         |
+| PenaltyContent | `PenaltyContent.tsx` | 1개 페이지  | 패널티 내역 화면                         |
+| CampaignTag    | `CampaignTag.tsx`    | 4개 페이지  | 태그들 (마감임박, 타입 등)               |
 
 ### **📂 user/filter/** - 필터링 컴포넌트
 
@@ -109,6 +155,20 @@ reviewx-web/
 | FilterBar    | `FilterBar.tsx`    | 5개 페이지  | 필터/정렬 바 |
 | ModalFilter  | `ModalFilter.tsx`  | 5개 페이지  | 모달 필터    |
 | RegionFilter | `RegionFilter.tsx` | 5개 페이지  | 지역 필터    |
+
+### **📂 user/mypage/** - 마이페이지 컴포넌트
+
+| 컴포넌트            | 파일                      | 사용 페이지 | 용도                  |
+| ------------------- | ------------------------- | ----------- | --------------------- |
+| SubTabNavigation    | `SubTabNavigation.tsx`    | 2개 페이지  | 서브 탭 (프로필/채널) |
+| ChannelSection      | `ChannelSection.tsx`      | 1개 페이지  | 채널 연결 관리 섹션   |
+| ChannelConnectModal | `ChannelConnectModal.tsx` | 1개 페이지  | 채널 연결 모달        |
+
+### **📂 user/point/** - 포인트 관련 컴포넌트
+
+| 컴포넌트           | 파일                     | 사용 페이지 | 용도                       |
+| ------------------ | ------------------------ | ----------- | -------------------------- |
+| PointTabNavigation | `PointTabNavigation.tsx` | 3개 페이지  | 포인트 탭 (전체/적립/출금) |
 
 ### **📂 fragments/** - 공통 조각 컴포넌트
 
@@ -203,24 +263,68 @@ POST /api/campaigns/delivery/{id}/apply
 - 캠페인 신청
 ```
 
-### **📊 캠페인 관리 페이지** - `/user/campaign_management` (`app/user/campaign_management/page.tsx`)
+### **📊 캠페인 관리 페이지들**
 
-**사용 컴포넌트**: TabNavigation, StatisticsTab, CampaignList, CampaignCard, PenaltyContent, CampaignTag  
+#### **신청 탭** - `/user/campaign_management/applied` (`app/user/campaign_management/applied/page.tsx`)
+
+**사용 컴포넌트**: TabNavigation, StatisticsTab, CampaignList, CampaignCard  
 **필요한 API**:
 
 ```
 GET /api/user/campaigns?status=신청
-- 사용자 신청/선정/완료/취소반려 캠페인 목록
+- 사용자 신청 상태 캠페인 목록
 - 통계 정보 (신청/선정/완료/취소반려/패널티 개수)
+```
 
+#### **선정 탭** - `/user/campaign_management/selected` (`app/user/campaign_management/selected/page.tsx`)
+
+**사용 컴포넌트**: TabNavigation, StatisticsTab, CampaignList, CampaignCard  
+**필요한 API**:
+
+```
+GET /api/user/campaigns?status=선정
+- 사용자 선정 상태 캠페인 목록
+- 통계 정보 (신청/선정/완료/취소반려/패널티 개수)
+```
+
+#### **완료 탭** - `/user/campaign_management/completed` (`app/user/campaign_management/completed/page.tsx`)
+
+**사용 컴포넌트**: TabNavigation, StatisticsTab, CampaignList, CampaignCard  
+**필요한 API**:
+
+```
+GET /api/user/campaigns?status=완료
+- 사용자 완료 상태 캠페인 목록
+- 통계 정보 (신청/선정/완료/취소반려/패널티 개수)
+```
+
+#### **취소/반려 탭** - `/user/campaign_management/cancelled` (`app/user/campaign_management/cancelled/page.tsx`)
+
+**사용 컴포넌트**: TabNavigation, StatisticsTab, CampaignList, CampaignCard  
+**필요한 API**:
+
+```
+GET /api/user/campaigns?status=취소/반려
+- 사용자 취소/반려 상태 캠페인 목록
+- 통계 정보 (신청/선정/완료/취소반려/패널티 개수)
+```
+
+#### **패널티 탭** - `/user/campaign_management/penalty` (`app/user/campaign_management/penalty/page.tsx`)
+
+**사용 컴포넌트**: TabNavigation, StatisticsTab, PenaltyContent  
+**필요한 API**:
+
+```
 GET /api/user/penalty
 - 사용자 현재 패널티 상태 (활동 가능/경고 조치/이용 정지 7일/15일/30일/영구 정지)
 - 패널티 내역 목록 (경고/주의/정지/제재)
 ```
 
-### **👤 마이페이지** - `/user/mypage` (`app/user/mypage/page.tsx`)
+### **👤 마이페이지들**
 
-**사용 컴포넌트**: TabNavigation  
+#### **프로필 탭** - `/user/mypage/profile` (`app/user/mypage/profile/page.tsx`)
+
+**사용 컴포넌트**: TabNavigation, SubTabNavigation  
 **필요한 API**:
 
 ```
@@ -231,18 +335,62 @@ PUT /api/user/profile
 - 프로필 수정
 ```
 
-### **💰 포인트 페이지** - `/user/point` (`app/user/point/page.tsx`)
+#### **채널 탭** - `/user/mypage/channel` (`app/user/mypage/channel/page.tsx`)
 
-**사용 컴포넌트**: TabNavigation  
+**사용 컴포넌트**: TabNavigation, SubTabNavigation, ChannelSection  
+**필요한 API**:
+
+```
+GET /api/user/channels
+- 사용자 연결된 채널 목록
+
+POST /api/user/channels
+- 채널 연결
+
+DELETE /api/user/channels/{channelId}
+- 채널 연결 해제
+```
+
+### **💰 포인트 페이지들**
+
+#### **전체 탭** - `/user/point/all` (`app/user/point/all/page.tsx`)
+
+**사용 컴포넌트**: TabNavigation, PointTabNavigation  
 **필요한 API**:
 
 ```
 GET /api/user/points
 - 포인트 요약 정보 (총 보유, 출금 가능, 대기 중)
-- 포인트 내역 (적립/출금)
+- 모든 포인트 내역 (적립/출금)
 
 POST /api/user/points/withdrawal
 - 출금 신청
+```
+
+#### **적립 탭** - `/user/point/earned` (`app/user/point/earned/page.tsx`)
+
+**사용 컴포넌트**: TabNavigation, PointTabNavigation  
+**필요한 API**:
+
+```
+GET /api/user/points?type=earned
+- 적립 포인트 내역만 필터링
+
+GET /api/user/points/summary
+- 포인트 요약 정보
+```
+
+#### **출금 탭** - `/user/point/withdrawn` (`app/user/point/withdrawn/page.tsx`)
+
+**사용 컴포넌트**: TabNavigation, PointTabNavigation  
+**필요한 API**:
+
+```
+GET /api/user/points?type=withdrawn
+- 출금 관련 포인트 내역만 필터링 (완료/신청/취소)
+
+GET /api/user/points/summary
+- 포인트 요약 정보
 ```
 
 ### **📢 공지사항** - `/user/notice` (`app/user/notice/page.tsx`)
@@ -391,8 +539,10 @@ interface PointHistory {
 
 1. **MainMenu** - 15개 페이지에서 사용 ⭐⭐⭐
 2. **CampaignBox** - 6개 페이지에서 사용 ⭐⭐⭐
-3. **FilterBar** - 5개 페이지에서 사용 ⭐⭐
-4. **TabNavigation** - 2개 페이지에서 사용 ⭐⭐
+3. **TabNavigation** - 8개 페이지에서 사용 ⭐⭐⭐
+4. **FilterBar** - 5개 페이지에서 사용 ⭐⭐
+5. **StatisticsTab** - 5개 페이지에서 사용 ⭐⭐
+6. **PointTabNavigation** - 3개 페이지에서 사용 ⭐⭐
 
 ### **페이지별 전용 컴포넌트**
 
@@ -494,6 +644,39 @@ type PenaltyType = "경고" | "주의" | "정지" | "제재";
 type PointType = "earned" | "withdrawn";
 type PointStatus = "earned" | "completed" | "pending" | "failed";
 ```
+
+---
+
+## 🔗 **새로운 URL 구조 (탭 페이지 분리)**
+
+### **캠페인 관리 페이지들**
+
+- `/user/campaign_management` → `/user/campaign_management/applied` (리다이렉트)
+- `/user/campaign_management/applied` - 신청 탭
+- `/user/campaign_management/selected` - 선정 탭
+- `/user/campaign_management/completed` - 완료 탭
+- `/user/campaign_management/cancelled` - 취소/반려 탭
+- `/user/campaign_management/penalty` - 패널티 탭
+
+### **마이페이지들**
+
+- `/user/mypage` → `/user/mypage/profile` (리다이렉트)
+- `/user/mypage/profile` - 프로필 탭
+- `/user/mypage/channel` - 채널 탭
+
+### **포인트 페이지들**
+
+- `/user/point` → `/user/point/all` (리다이렉트)
+- `/user/point/all` - 전체 탭
+- `/user/point/earned` - 적립 탭
+- `/user/point/withdrawn` - 출금 탭
+
+### **장점**
+
+- **새로고침 안전**: 각 탭이 고유한 URL을 가져 새로고침 시에도 상태 유지
+- **브라우저 히스토리**: 뒤로가기/앞으로가기 버튼 지원
+- **직접 접근**: URL로 특정 탭에 직접 접근 가능
+- **SEO 친화적**: 각 탭이 독립적인 페이지로 검색 엔진 최적화 가능
 
 ---
 

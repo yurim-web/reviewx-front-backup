@@ -25,6 +25,9 @@ import cardStyles from "../../../styles/user/campaign_management/campaign_card.m
 interface CampaignListProps {
   campaigns: CampaignApplication[];
   activeStatTab: StatTab;
+  onTabChange?: (
+    tab: "신청" | "선정" | "완료" | "취소/반려" | "패널티"
+  ) => void;
 }
 
 /**
@@ -35,6 +38,7 @@ interface CampaignListProps {
 export default function CampaignList({
   campaigns,
   activeStatTab,
+  onTabChange,
 }: CampaignListProps) {
   /* ========================================
      패널티 탭은 메인 페이지에서 별도 처리
@@ -75,6 +79,7 @@ export default function CampaignList({
           key={campaign.id}
           campaign={campaign}
           activeTab={activeStatTab}
+          onTabChange={onTabChange}
         />
       ))}
     </div>

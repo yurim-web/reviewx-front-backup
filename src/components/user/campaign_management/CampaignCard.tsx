@@ -19,6 +19,7 @@
  */
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import type { CampaignApplication, StatTab } from "@/types/campaignManagement";
 import cardStyles from "../../../styles/user/campaign_management/campaign_card.module.css";
 import buttonStyles from "../../../styles/user/campaign_management/buttons.module.css";
@@ -29,6 +30,9 @@ import ContentRegistrationModal from "./ContentRegistrationModal";
 interface CampaignCardProps {
   campaign: CampaignApplication;
   activeTab: StatTab;
+  onTabChange?: (
+    tab: "신청" | "선정" | "완료" | "취소/반려" | "패널티"
+  ) => void;
 }
 
 /**
@@ -38,9 +42,13 @@ interface CampaignCardProps {
 export default function CampaignCard({
   campaign,
   activeTab,
+  onTabChange,
 }: CampaignCardProps) {
   const [isContentModalOpen, setIsContentModalOpen] = useState(false);
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+
+  // Next.js의 useRouter 훅을 사용하여 라우팅 기능 가져오기
+  const router = useRouter();
 
   const handleContentButtonClick = () => {
     setIsContentModalOpen(true);
@@ -74,6 +82,9 @@ export default function CampaignCard({
       buttonText === "콘텐츠 수정하기"
     ) {
       handleContentButtonClick();
+    } else if (buttonText === "패널티 내역보기") {
+      // 패널티 내역 보기 버튼 클릭 시 패널티 전용 페이지로 이동
+      router.push("/user/campaign_management/penalty");
     } else {
       // 다른 버튼들의 로직 처리
       console.log(`${buttonText} 버튼 클릭됨`);
@@ -105,7 +116,7 @@ export default function CampaignCard({
       case "취소/반려":
         if (campaign.subStatus === "penalty") {
           return "패널티 내역보기";
-        } else if (campaign.subStatus === "content_rejected") {
+        } else if (campaign.subStatus === "content_rejected,re_register") {
           return "콘텐츠 반려 사유보기";
         } else if (campaign.subStatus === "receipt_rejected") {
           return "구매 영수증 재등록하기";
@@ -227,6 +238,7 @@ export default function CampaignCard({
         activeTab === "취소/반려" && campaign.subStatus === "penalty" ? (
           <button
             className={`${buttonStyles.action_button} ${buttonStyles.danger_button}`}
+            onClick={() => router.push("/user/campaign_management/penalty")}
           >
             패널티 내역 보기
           </button>
@@ -236,6 +248,7 @@ export default function CampaignCard({
           <>
             <button
               className={`${buttonStyles.action_button} ${buttonStyles.danger_button}`}
+              onClick={() => router.push("/user/campaign_management/penalty")}
             >
               패널티 내역 보기
             </button>

@@ -18,6 +18,7 @@
 
 "use client";
 
+import { useRouter } from "next/navigation";
 import styles from "../../../styles/user/mypage/navigation.module.css";
 
 interface SubTabNavigationProps {
@@ -29,13 +30,30 @@ export default function SubTabNavigation({
   activeSubTab,
   setActiveSubTab,
 }: SubTabNavigationProps) {
+  const router = useRouter();
+
+  /**
+   * 서브 탭 클릭 핸들러
+   * 각 탭 클릭 시 해당 페이지로 이동
+   */
+  const handleSubTabClick = (tab: "profile" | "channel") => {
+    switch (tab) {
+      case "profile":
+        router.push("/user/mypage/profile");
+        break;
+      case "channel":
+        router.push("/user/mypage/channel");
+        break;
+    }
+  };
+
   return (
     <div className={styles.sub_tab_container}>
       <button
         className={`${styles.sub_tab_item} ${
           activeSubTab === "profile" ? styles.active : ""
         }`}
-        onClick={() => setActiveSubTab("profile")}
+        onClick={() => handleSubTabClick("profile")}
       >
         프로필
       </button>
@@ -43,7 +61,7 @@ export default function SubTabNavigation({
         className={`${styles.sub_tab_item} ${
           activeSubTab === "channel" ? styles.active : ""
         }`}
-        onClick={() => setActiveSubTab("channel")}
+        onClick={() => handleSubTabClick("channel")}
       >
         채널
       </button>

@@ -17,6 +17,7 @@
  * - 상단 고정으로 스크롤 시에도 접근 가능
  */
 
+import { useRouter } from "next/navigation";
 import type { CampaignStats, StatTab } from "@/types/campaignManagement";
 import styles from "../../../styles/user/campaign_management/statistics.module.css";
 
@@ -36,6 +37,34 @@ export default function StatisticsTab({
   setActiveStatTab,
   stats,
 }: StatisticsTabProps) {
+  // Next.js의 useRouter 훅을 사용하여 라우팅 기능 가져오기
+  const router = useRouter();
+
+  /**
+   * 통계 탭 클릭 핸들러
+   * 각 탭 클릭 시 해당 페이지로 이동
+   */
+  const handleStatTabClick = (
+    tab: "신청" | "선정" | "완료" | "취소/반려" | "패널티"
+  ) => {
+    switch (tab) {
+      case "신청":
+        router.push("/user/campaign_management/applied");
+        break;
+      case "선정":
+        router.push("/user/campaign_management/selected");
+        break;
+      case "완료":
+        router.push("/user/campaign_management/completed");
+        break;
+      case "취소/반려":
+        router.push("/user/campaign_management/cancelled");
+        break;
+      case "패널티":
+        router.push("/user/campaign_management/penalty");
+        break;
+    }
+  };
   /* ========================================
      JSX 반환 (JSX Return)
      - 통계 탭 네비게이션 UI 렌더링
@@ -55,7 +84,7 @@ export default function StatisticsTab({
             className={`${styles.stat_tab} ${
               activeStatTab === "신청" ? styles.active : ""
             }`}
-            onClick={() => setActiveStatTab("신청")} // 상태 변경으로 필터링
+            onClick={() => handleStatTabClick("신청")} // 페이지 이동
           >
             <span>신청</span>
             <span className={styles.stat_number}>{stats.신청}</span>
@@ -66,7 +95,7 @@ export default function StatisticsTab({
             className={`${styles.stat_tab} ${
               activeStatTab === "선정" ? styles.active : ""
             }`}
-            onClick={() => setActiveStatTab("선정")} // 상태 변경으로 필터링
+            onClick={() => handleStatTabClick("선정")} // 페이지 이동
           >
             <span>선정</span>
             <span className={styles.stat_number}>{stats.선정}</span>
@@ -77,7 +106,7 @@ export default function StatisticsTab({
             className={`${styles.stat_tab} ${
               activeStatTab === "완료" ? styles.active : ""
             }`}
-            onClick={() => setActiveStatTab("완료")} // 상태 변경으로 필터링
+            onClick={() => handleStatTabClick("완료")} // 페이지 이동
           >
             <span>완료</span>
             <span className={styles.stat_number}>{stats.완료}</span>
@@ -88,7 +117,7 @@ export default function StatisticsTab({
             className={`${styles.stat_tab} ${
               activeStatTab === "취소/반려" ? styles.active : ""
             }`}
-            onClick={() => setActiveStatTab("취소/반려")} // 상태 변경으로 필터링
+            onClick={() => handleStatTabClick("취소/반려")} // 페이지 이동
           >
             <span>취소/반려</span>
             <span className={styles.stat_number}>{stats["취소/반려"]}</span>
@@ -100,7 +129,7 @@ export default function StatisticsTab({
           className={`${styles.stat_tab} ${
             activeStatTab === "패널티" ? styles.active : ""
           }`}
-          onClick={() => setActiveStatTab("패널티")} // 다른 탭들과 동일한 상태 변경 방식
+          onClick={() => handleStatTabClick("패널티")} // 패널티 전용 페이지로 이동
         >
           <span>패널티</span>
           {/* <span className={styles.stat_number}>{stats.패널티}</span> */}
