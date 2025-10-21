@@ -106,7 +106,7 @@ export default function NoticePage() {
       <main className={styles.main_content}>
         {/* 페이지 제목 */}
         <h1 className={styles.page_title}>공지사항</h1>
-        <div className={styles.divider} />
+
         <section className={styles.section_container}>
           {/* 카테고리 필터 */}
           <div className={styles.category_container}>
