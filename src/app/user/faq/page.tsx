@@ -71,7 +71,6 @@ export default function FAQPage() {
       <main className={styles.main_content}>
         {/* 페이지 제목 */}
         <h1 className={styles.page_title}>자주 묻는 질문</h1>
-        <div className={styles.divider} />
         <section className={styles.section_container}>
           {/* 카테고리 필터 */}
           <div className={styles.category_container}>
@@ -115,6 +114,7 @@ export default function FAQPage() {
                   </div>
                 </button>
 
+                {/* 답변 내용 */}
                 {expandedItems.includes(faq.id) && (
                   <div className={styles.faq_answer}>
                     <div className={styles.answer_content}>

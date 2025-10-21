@@ -28,12 +28,11 @@
   line-height: 20px; /* 100% */
   letter-spacing: -0.4px;
   padding: 24px 40px;
-}
-
-.divider {
-  width: 100%;
-  height: 1px;
-  background: #e0e0e0;
+  position: sticky;
+  top: 80px; /* SubHeader 높이만큼 아래로 */
+  background: white;
+  z-index: 10;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 /* 카테고리 필터 */
