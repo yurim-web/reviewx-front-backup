@@ -22,15 +22,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import TabNavigation from "@/components/user/campaign_management/TabNavigation";
-import StatisticsTab from "@/components/user/campaign_management/StatisticsTab";
+import CampaignManagementHeader from "@/components/user/campaign_management/CampaignManagementHeader";
 import PenaltyContent from "@/components/user/campaign_management/PenaltyContent";
 import type { MainTab } from "@/types/campaignManagement";
 import layoutStyles from "../../../../styles/user/campaign_management/layout.module.css";
 import cardStyles from "../../../../styles/user/campaign_management/campaign_card.module.css";
-
-// 임시 데이터 import
-import { campaignManagementStats } from "@/data/user/campaign_management/campaignManagementData";
 
 /**
  * 패널티 전용 페이지 컴포넌트
@@ -52,9 +48,6 @@ export default function PenaltyPage() {
     "신청" | "선정" | "완료" | "취소/반려" | "패널티"
   >("패널티");
 
-  // 임시 데이터에서 통계 정보 사용
-  const stats = campaignManagementStats;
-
   /**
    * 통계 탭 변경 핸들러
    * 패널티가 아닌 다른 탭을 클릭하면 캠페인 관리 페이지로 이동
@@ -74,14 +67,12 @@ export default function PenaltyPage() {
     <div className={layoutStyles.container}>
       {/* 메인 컨텐츠 영역 */}
       <div className={layoutStyles.main_content}>
-        {/* 상단 탭 네비게이션: 캠페인/포인트/계정 */}
-        <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
-
-        {/* 통계 탭: 신청/선정/완료/취소반려/패널티 */}
-        <StatisticsTab
+        {/* 공통 헤더: 상단 탭 네비게이션 + 통계 탭 */}
+        <CampaignManagementHeader
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
           activeStatTab={activeStatTab}
           setActiveStatTab={handleStatTabChange}
-          stats={stats}
         />
 
         {/* 패널티 컨텐츠 영역 */}

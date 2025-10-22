@@ -11,6 +11,8 @@ export interface PartnerCampaign {
   recruits: number;
   submissions?: number;
   selected?: number;
+  brand?: string; // 브랜드명 (쿠팡, 네이버쇼핑 등)
+  brandLogo?: string; // 브랜드 로고 URL
 }
 
 // 파트너 캠페인 통계 정보
@@ -21,6 +23,7 @@ export interface PartnerCampaignStats {
   진행: number;
   종료: number;
   취소: number;
+  패널티: number;
 }
 
 // 파트너 통계 탭 타입 정의
@@ -30,7 +33,8 @@ export type PartnerStatTab =
   | "신청"
   | "진행"
   | "종료"
-  | "취소";
+  | "취소"
+  | "패널티";
 
 // 파트너 패널티 관련 타입 정의
 export type PartnerPenaltyStatus =

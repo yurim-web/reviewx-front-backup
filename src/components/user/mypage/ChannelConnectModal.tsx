@@ -11,8 +11,8 @@
  * - /user/mypage (채널 탭 - 채널 연결 시)
  *
  * 주요 기능:
- * - 채널별 URL 입력 (네이버 블로그, 인스타그램, 유튜브, 틱톡)
- * - 채널별 플레이스홀더 텍스트 제공
+ * - 채널별 URL 입력 (네이버 블로그, 인스타그램, 유튜브)
+ * - 채널별 다른 입력 형태 제공 (전체 URL, @ 프리픽스, 도메인 프리픽스)
  * - 채널 연결 처리
  * - 모달 오버레이 클릭으로 닫기
  */
@@ -72,8 +72,13 @@ export default function ChannelConnectModal({
     }
   };
 
-  // 버튼 활성화 상태 계산
-  const isButtonEnabled = isValidUrl(url);
+  /**
+   * 버튼 활성화 상태 계산
+   * - 모든 채널: username 입력 시 활성화
+   */
+  const isButtonEnabled = (): boolean => {
+    return username.trim().length > 0;
+  };
 
   if (!isOpen) return null;
 
@@ -84,42 +89,30 @@ export default function ChannelConnectModal({
   };
 
   const handleConnect = () => {
-    if (isButtonEnabled) {
-      onConnect({ username: "", url: url.trim() });
+    if (isButtonEnabled()) {
+      onConnect({ username, url: url.trim() });
       setUrl("");
+      setUsername("");
       onClose();
     }
   };
 
   // 임시 데이터!
 
+  /**
+   * 네이버 블로그용 플레이스홀더 텍스트 생성
+   * 네이버 블로그는 전체 URL을 입력받습니다.
+   */
   const getChannelPlaceholder = () => {
     switch (channelName) {
       case "네이버 블로그":
         return "https://blog.naver.com/your-id";
       case "인스타그램":
-        return "https://instagram.com/your-id";
+        return "인스타그램 아이디 입력";
       case "유튜브":
-        return "https://youtube.com/@your-id";
-      case "틱톡":
-        return "https://tiktok.com/@your-id";
+        return "유튜브 핸들(아이디) 입력";
       default:
-        return "https://example.com/your-id";
-    }
-  };
-
-  const getUsernamePlaceholder = () => {
-    switch (channelName) {
-      case "네이버 블로그":
-        return "블로그 ID";
-      case "인스타그램":
-        return "인스타그램 ID";
-      case "유튜브":
-        return "유튜브 채널명";
-      case "틱톡":
-        return "틱톡 ID";
-      default:
-        return "사용자 ID";
+        return "URL을 입력해주세요";
     }
   };
 
@@ -142,18 +135,69 @@ export default function ChannelConnectModal({
           </button>
         </div>
 
-        {/* 모달 바디 */}
+        {/* 모달 바디 - 채널별로 다른 입력 형태 제공 */}
         <div className={styles.modal_body}>
           <div className={styles.input_section}>
-            <div className={styles.input_group}>
-              <input
-                type="url"
-                className={styles.input_field}
-                placeholder={getChannelPlaceholder()}
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-              />
-            </div>
+            {/* 네이버 블로그: https://blog.naver.com/ 고정 + 아이디 입력 */}
+            {channelName === "네이버 블로그" && (
+              <div className={styles.input_group}>
+                <div className={styles.prefix_input_group}>
+                  <span className={styles.prefix_text}>
+                    https://blog.naver.com/
+                  </span>
+                  <input
+                    type="text"
+                    className={styles.input_field_with_prefix}
+                    placeholder="네이버 블로그 아이디 입력"
+                    value={username}
+                    onChange={(e) => {
+                      setUsername(e.target.value);
+                      setUrl(`https://blog.naver.com/${e.target.value}`);
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* 인스타그램: @ 고정 + 아이디 입력 */}
+            {channelName === "인스타그램" && (
+              <div className={styles.input_group}>
+                <div className={styles.prefix_input_group}>
+                  <span className={styles.prefix_text}>@</span>
+                  <input
+                    type="text"
+                    className={styles.input_field_with_prefix}
+                    placeholder="인스타그램 아이디 입력"
+                    value={username}
+                    onChange={(e) => {
+                      setUsername(e.target.value);
+                      setUrl(`@ ${e.target.value}`);
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* 유튜브: https://www.youtube.com/@ 고정 + 핸들 입력 */}
+            {channelName === "유튜브" && (
+              <div className={styles.input_group}>
+                <div className={styles.prefix_input_group}>
+                  <span className={styles.prefix_text}>
+                    https://www.youtube.com/@
+                  </span>
+                  <input
+                    type="text"
+                    className={styles.input_field_with_prefix}
+                    placeholder="유튜브 핸들(아이디) 입력"
+                    value={username}
+                    onChange={(e) => {
+                      setUsername(e.target.value);
+                      setUrl(`https://www.youtube.com/@${e.target.value}`);
+                    }}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -161,10 +205,10 @@ export default function ChannelConnectModal({
         <div className={styles.modal_footer}>
           <button
             className={`${styles.connect_button} ${
-              !isButtonEnabled ? styles.disabled_button : ""
+              !isButtonEnabled() ? styles.disabled_button : ""
             }`}
             onClick={handleConnect}
-            disabled={!isButtonEnabled}
+            disabled={!isButtonEnabled()}
           >
             채널 연결하기
           </button>

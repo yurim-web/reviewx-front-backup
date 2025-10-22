@@ -1,8 +1,9 @@
 import { Metadata } from "next";
+import PartnerHeader from "@/components/fragments/PartnerHeader";
 
 export const metadata: Metadata = {
-  title: "ReviewX | 리뷰 캠페인 플랫폼",
-  description: "리뷰 캠페인 플랫폼 메인 페이지입니다",
+  title: "ReviewX | 파트너 캠페인 관리",
+  description: "파트너 캠페인 관리 플랫폼입니다",
 };
 
 export default function PartnerLayout({
@@ -10,5 +11,10 @@ export default function PartnerLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <>
+      <PartnerHeader />
+      {children}
+    </>
+  );
 }

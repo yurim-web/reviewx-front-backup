@@ -11,7 +11,7 @@
  * - /user/mypage/channel
  *
  * 주요 기능:
- * - 채널 연결 관리 (네이버 블로그, 인스타그램, 유튜브, 틱톡)
+ * - 채널 연결 관리 (네이버 블로그, 인스타그램, 유튜브)
  * - 채널 연결/해제 기능
  * - URL 기반 라우팅으로 새로고침 시에도 페이지 유지
  */
@@ -34,7 +34,7 @@ export default function ChannelPage() {
     "channel"
   );
 
-  // 채널 데이터 상태
+  // 채널 데이터 상태 - 사용자가 연결할 수 있는 소셜 미디어 채널 목록
   const [channels, setChannels] = useState([
     {
       name: "네이버 블로그",
@@ -43,7 +43,6 @@ export default function ChannelPage() {
     },
     { name: "인스타그램", status: "disconnected" as const },
     { name: "유튜브", status: "disconnected" as const },
-    { name: "틱톡", status: "disconnected" as const },
   ]);
 
   /**

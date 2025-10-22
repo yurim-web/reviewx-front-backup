@@ -51,10 +51,6 @@ export default function TabNavigation({
     router.push("/partner/account");
   };
 
-  const handleCreateCampaignClick = () => {
-    router.push("/partner/campaign/create");
-  };
-
   return (
     <div className={styles.tab_navigation}>
       <div className={styles.tab_navigation_container}>
@@ -80,12 +76,6 @@ export default function TabNavigation({
 
         {/* 오른쪽: 새 캠페인 등록 버튼과 계정 탭 */}
         <div className={styles.right_tabs}>
-          <button
-            className={styles.create_campaign_button}
-            onClick={handleCreateCampaignClick}
-          >
-            새 캠페인 등록
-          </button>
           <button
             className={`${styles.tab} ${
               activeTab === "account" ? styles.active : ""

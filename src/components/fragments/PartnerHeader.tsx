@@ -24,7 +24,7 @@ export default function PartnerHeader() {
   return (
     <header>
       <nav className={styles.header_container}>
-        <Link href="/">
+        <Link href="/partner">
           <h1 className={styles.header_logo}>RX.</h1>
         </Link>
         <div className={styles.menu_icon_box}>

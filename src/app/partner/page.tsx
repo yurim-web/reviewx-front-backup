@@ -29,7 +29,6 @@ import { useEffect } from "react";
 
 // 컴포넌트들을 import
 // @/는 src/를 가리키는 별칭입니다 (tsconfig.json에서 설정됨)
-import PartnerHeader from "@/components/fragments/PartnerHeader";
 import MainMenu from "@/components/main/MainMenu";
 import CampaignBox from "@/components/main/CampaignBox";
 import styles from "../../styles/home/home.module.css";
@@ -48,16 +47,6 @@ import { reporterCampaigns } from "@/data/user/reporter/reporterCampaigns";
 // React 함수형 컴포넌트 (기본 export)
 // Next.js에서는 이 컴포넌트가 페이지가 됩니다
 export default function PartnerHome() {
-  // 기본 헤더 숨기기 (PartnerHeader만 표시)
-  useEffect(() => {
-    const header = document.querySelector("header");
-    if (header) header.style.display = "none";
-
-    // 컴포넌트가 언마운트될 때 헤더 다시 표시
-    return () => {
-      if (header) header.style.display = "block";
-    };
-  }, []);
   // 각 캠페인 타입에서 데이터를 가져와서 조합
   // 선정 확률 높은 캠페인 - 각 타입에서 앞부분 데이터 가져오기
   const highProbabilityCampaigns = [
@@ -81,9 +70,6 @@ export default function PartnerHome() {
     // React Fragment (<>...</>) 사용
     // 불필요한 div 래퍼 없이 여러 요소를 그룹화할 수 있습니다
     <>
-      {/* 파트너 전용 헤더 */}
-      <PartnerHeader />
-
       {/* 메인 메뉴 컴포넌트 - 헤더(80px) 밑에 고정 */}
       <MainMenu />
 

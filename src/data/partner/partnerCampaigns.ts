@@ -26,13 +26,15 @@ export const partnerCampaigns: PartnerCampaign[] = [
     type: "배송형",
     status: "신청",
     deadline: "2024-01-15",
-    remainingDays: 3,
+    remainingDays: 10,
     statusMessage:
       "이 캠페인은 특별한 조건이 있습니다. 자세한 내용을 확인해주세요.",
     applicants: 45,
     recruits: 10,
     submissions: 0,
     selected: 0,
+    brand: "쿠팡",
+    brandLogo: "/images/brand_logo/coupang.svg",
   },
   {
     id: "2",
@@ -41,11 +43,13 @@ export const partnerCampaigns: PartnerCampaign[] = [
     status: "선정",
     deadline: "2024-01-20",
     remainingDays: 8,
-    statusMessage: "축하합니다! 선정되셨습니다. 콘텐츠 제작을 시작해주세요.",
+    statusMessage: "캠페인 당첨자를 선정해 주세요.",
     applicants: 120,
     recruits: 15,
-    submissions: 5,
-    selected: 15,
+    submissions: 0,
+    selected: 0,
+    brand: "네이버쇼핑",
+    brandLogo: "/images/brand_logo/navershop.svg",
   },
   {
     id: "3",
@@ -59,6 +63,8 @@ export const partnerCampaigns: PartnerCampaign[] = [
     recruits: 20,
     submissions: 20,
     selected: 20,
+    brand: "쿠팡",
+    brandLogo: "/images/brand_logo/coupang.svg",
   },
   {
     id: "4",
@@ -73,6 +79,8 @@ export const partnerCampaigns: PartnerCampaign[] = [
     recruits: 12,
     submissions: 0,
     selected: 0,
+    brand: "11번가",
+    brandLogo: "/images/brand_logo/kakaopre.svg",
   },
   {
     id: "5",
@@ -87,6 +95,8 @@ export const partnerCampaigns: PartnerCampaign[] = [
     recruits: 25,
     submissions: 0,
     selected: 0,
+    brand: "쿠팡",
+    brandLogo: "/images/brand_logo/coupang.svg",
   },
   {
     id: "6",
@@ -101,6 +111,8 @@ export const partnerCampaigns: PartnerCampaign[] = [
     recruits: 8,
     submissions: 2,
     selected: 8,
+    brand: "네이버쇼핑",
+    brandLogo: "/images/brand_logo/navershop.svg",
   },
   {
     id: "7",
@@ -108,12 +120,14 @@ export const partnerCampaigns: PartnerCampaign[] = [
     type: "배송형",
     status: "신청",
     deadline: "2024-01-14",
-    remainingDays: 2,
+    remainingDays: 3,
     statusMessage: "마감이 임박했습니다! 서둘러 신청해주세요.",
     applicants: 75,
     recruits: 15,
     submissions: 0,
     selected: 0,
+    brand: "쿠팡",
+    brandLogo: "/images/brand_logo/coupang.svg",
   },
   {
     id: "8",
@@ -128,6 +142,8 @@ export const partnerCampaigns: PartnerCampaign[] = [
     recruits: 10,
     submissions: 10,
     selected: 10,
+    brand: "11번가",
+    brandLogo: "/images/brand_logo/kakaopre.svg",
   },
 ];
 
@@ -137,9 +153,18 @@ export const getCampaignsByTab = (tab: string): PartnerCampaign[] => {
     case "전체":
       return partnerCampaigns;
     case "예정":
-      return partnerCampaigns.filter((campaign) => campaign.status === "신청");
+      // 아직 신청 시작 전 (7일 이상 남은 캠페인)
+      return partnerCampaigns.filter(
+        (campaign) => campaign.status === "신청" && campaign.remainingDays > 7
+      );
     case "신청":
-      return partnerCampaigns.filter((campaign) => campaign.status === "신청");
+      // 현재 신청 받고 있음 (7일 이내, 아직 마감 안된 캠페인)
+      return partnerCampaigns.filter(
+        (campaign) =>
+          campaign.status === "신청" &&
+          campaign.remainingDays <= 7 &&
+          campaign.remainingDays > 0
+      );
     case "진행":
       return partnerCampaigns.filter((campaign) => campaign.status === "선정");
     case "종료":
@@ -156,9 +181,14 @@ export const getCampaignsByTab = (tab: string): PartnerCampaign[] => {
 // 캠페인 통계 데이터
 export const partnerCampaignStats = {
   전체: partnerCampaigns.length,
-  예정: partnerCampaigns.filter((c) => c.status === "신청").length,
-  신청: partnerCampaigns.filter((c) => c.status === "신청").length,
+  예정: partnerCampaigns.filter(
+    (c) => c.status === "신청" && c.remainingDays > 7
+  ).length,
+  신청: partnerCampaigns.filter(
+    (c) => c.status === "신청" && c.remainingDays <= 7 && c.remainingDays > 0
+  ).length,
   진행: partnerCampaigns.filter((c) => c.status === "선정").length,
   종료: partnerCampaigns.filter((c) => c.status === "완료").length,
   취소: partnerCampaigns.filter((c) => c.status === "취소/반려").length,
+  패널티: 0, // 임시로 0으로 설정 (실제로는 패널티 데이터가 있을 때 증가)
 };

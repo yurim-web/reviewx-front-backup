@@ -57,20 +57,18 @@
 .new_campaign_button {
   background: #fff;
   color: #d90074;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  /* 버튼 속 글자 css */
+  color: #ff5694;
+  text-align: right;
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
   font-weight: 600;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: all 0.2s ease;
-  border: none;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
   cursor: pointer;
-}
-
-.new_campaign_button:hover {
-  background: #f8f8f8;
-  transform: translateY(-1px);
 }
 
 /* 반응형 스타일 css 코드 */

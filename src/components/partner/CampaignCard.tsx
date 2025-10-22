@@ -53,86 +53,114 @@ export default function CampaignCard({
   };
 
   /**
-   * 현재 탭과 캠페인 상태에 따른 버튼 텍스트 결정
+   * 각 탭별로 표시할 버튼들 결정
    */
-  const getButtonText = () => {
+  const getCampaignButtons = () => {
     switch (activeTab) {
+      case "예정":
+        return [
+          { text: "캠페인 삭제하기", type: "secondary" },
+          { text: "캠페인 수정하기", type: "primary" },
+        ];
+
+      case "신청":
+        return [
+          { text: "캠페인 관리하기", type: "secondary" },
+          { text: "신청내역 확인하기", type: "primary" },
+        ];
+
+      case "진행":
+        // selected가 0이면 당첨자 선정 단계, 0보다 크면 콘텐츠 검수/확인 단계
+        if ((campaign.selected || 0) === 0) {
+          return [{ text: "당첨자 선정하기", type: "primary" }];
+        } else {
+          return [
+            {
+              text: `콘텐츠 검수하기 (${campaign.submissions || 0})`,
+              type: "secondary",
+            },
+            {
+              text: `콘텐츠 확인하기 (${campaign.submissions || 0})`,
+              type: "primary",
+            },
+          ];
+        }
+
+      case "종료":
+        return [
+          {
+            text: `콘텐츠 검수하기 (${campaign.submissions || 0})`,
+            type: "secondary",
+          },
+          {
+            text: `콘텐츠 확인하기 (${campaign.submissions || 0})`,
+            type: "primary",
+          },
+        ];
+
+      case "취소":
+        return [{ text: "패널티 내역보기", type: "danger" }];
+
       case "전체":
-        // 전체 탭에서는 캠페인 상태에 따라 버튼 텍스트 결정
+        // 전체 탭에서는 캠페인 상태에 따라 버튼 결정
         switch (campaign.status) {
           case "신청":
-            return "신청 취소하기";
+            return [
+              { text: "캠페인 관리하기", type: "secondary" },
+              { text: "신청내역 확인하기", type: "primary" },
+            ];
           case "선정":
-            return "콘텐츠 등록하기";
+            // selected가 0이면 당첨자 선정 단계, 0보다 크면 콘텐츠 검수/확인 단계
+            if ((campaign.selected || 0) === 0) {
+              return [{ text: "당첨자 선정하기", type: "primary" }];
+            } else {
+              return [
+                {
+                  text: `콘텐츠 검수하기 (${campaign.submissions || 0})`,
+                  type: "secondary",
+                },
+                {
+                  text: `콘텐츠 확인하기 (${campaign.submissions || 0})`,
+                  type: "primary",
+                },
+              ];
+            }
           case "완료":
-            return "콘텐츠 확인하기";
+            return [
+              {
+                text: `콘텐츠 검수하기 (${campaign.submissions || 0})`,
+                type: "secondary",
+              },
+              {
+                text: `콘텐츠 확인하기 (${campaign.submissions || 0})`,
+                type: "primary",
+              },
+            ];
           case "취소/반려":
-            return "콘텐츠 재등록하기";
+            return [{ text: "패널티 내역보기", type: "danger" }];
           default:
-            return "신청 취소하기";
+            return [{ text: "캠페인 관리하기", type: "secondary" }];
         }
-      case "예정":
-        return "신청 취소하기";
-      case "신청":
-        return "신청 취소하기";
-      case "진행":
-        return "콘텐츠 등록하기";
-      case "종료":
-        return "콘텐츠 확인하기";
-      case "취소":
-        return "콘텐츠 재등록하기";
+
       default:
-        return "신청 취소하기";
+        return [{ text: "캠페인 관리하기", type: "secondary" }];
     }
   };
 
   /**
-   * 진행 탭일 때 두 번째 버튼 텍스트
+   * 버튼 타입에 따른 스타일 클래스 결정
    */
-  const getSecondButtonText = () => {
-    if (
-      activeTab === "진행" ||
-      (activeTab === "전체" && campaign.status === "선정")
-    ) {
-      return "구매 영수증 등록하기";
+  const getButtonStyle = (buttonType: string) => {
+    switch (buttonType) {
+      case "primary":
+        return `${buttonStyles.action_button} ${buttonStyles.primary_button}`;
+      case "secondary":
+        return `${buttonStyles.action_button} ${buttonStyles.secondary_button}`;
+      case "danger":
+        return `${buttonStyles.action_button} ${buttonStyles.danger_button}`;
+      default:
+        return `${buttonStyles.action_button} ${buttonStyles.default_button}`;
     }
-    return null;
-  };
-
-  /**
-   * 버튼 텍스트에 따른 스타일 클래스 결정
-   */
-  const getButtonStyle = () => {
-    const buttonText = getButtonText();
-
-    // 주요 액션 버튼 - 검은색 배경 (콘텐츠 등록, 재등록 등)
-    if (
-      buttonText === "콘텐츠 등록하기" ||
-      buttonText === "콘텐츠 재등록하기"
-    ) {
-      return `${buttonStyles.action_button} ${buttonStyles.primary_button}`;
-    }
-
-    // 보조 버튼 - 회색 테두리 (확인하기)
-    if (buttonText === "콘텐츠 확인하기") {
-      return `${buttonStyles.action_button} ${buttonStyles.secondary_button}`;
-    }
-
-    // 일반 버튼 - 기본 검은색 테두리
-    return `${buttonStyles.action_button} ${buttonStyles.default_button}`;
-  };
-
-  /**
-   * 두 번째 버튼의 스타일 클래스 결정
-   */
-  const getSecondButtonStyle = () => {
-    const secondButtonText = getSecondButtonText();
-
-    if (secondButtonText === "구매 영수증 등록하기") {
-      return `${buttonStyles.action_button} ${buttonStyles.secondary_button}`;
-    }
-
-    return `${buttonStyles.action_button} ${buttonStyles.default_button}`;
   };
 
   /**
@@ -158,8 +186,7 @@ export default function CampaignCard({
 
   return (
     <div className={cardStyles.campaign_card}>
-      {/* 캠페인 정보 영역 */}
-      <div className={cardStyles.campaign_content}>
+      <div className={cardStyles.campaign_content_container}>
         {/* 캠페인 이미지 */}
         <div className={cardStyles.campaign_image}>
           {/* TODO: 실제 이미지 추가 시 여기에 img 태그 추가 */}
@@ -167,17 +194,58 @@ export default function CampaignCard({
 
         {/* 캠페인 상세 정보 */}
         <div className={cardStyles.campaign_info}>
-          {/* 헤더: 타입 아이콘 + 마감 태그 */}
+          {/* 헤더: 타입 아이콘 + 신청자 수 */}
           <div className={cardStyles.campaign_header}>
             <div className={cardStyles.campaign_type}>
-              <div
-                className={`${cardStyles.type_icon} ${
-                  cardStyles[
-                    `type_${campaign.type === "배송형" ? "delivery" : "visit"}`
-                  ]
-                }`}
-              />
+              {campaign.brandLogo ? (
+                <img
+                  src={campaign.brandLogo}
+                  alt={campaign.brand || campaign.type}
+                  className={cardStyles.brand_logo}
+                />
+              ) : (
+                <div
+                  className={`${cardStyles.type_icon} ${
+                    cardStyles[
+                      `type_${
+                        campaign.type === "배송형" ? "delivery" : "visit"
+                      }`
+                    ]
+                  }`}
+                />
+              )}
               <span className={cardStyles.type_text}>{campaign.type}</span>
+            </div>
+
+            {/* 신청자 수 표시 */}
+            <div className={cardStyles.applicant_count}>
+              {campaign.status === "선정" ? (
+                // 진행 중인 캠페인: 검수/제출/선정 수 표시
+                <>
+                  <span className={cardStyles.applicant_current}>
+                    검수 {campaign.submissions || 0}명
+                  </span>
+                  <span className={cardStyles.applicant_separator}>|</span>
+                  <span className={cardStyles.applicant_current}>
+                    제출 {campaign.submissions || 0}명
+                  </span>
+                  <span className={cardStyles.applicant_separator}>|</span>
+                  <span className={cardStyles.applicant_total}>
+                    선정 {campaign.selected || 0}명
+                  </span>
+                </>
+              ) : (
+                // 일반 캠페인: 신청/모집 수 표시
+                <>
+                  <span className={cardStyles.applicant_current}>
+                    신청 {campaign.applicants || 0}명
+                  </span>
+                  <span className={cardStyles.applicant_separator}>|</span>
+                  <span className={cardStyles.applicant_total}>
+                    모집 {campaign.recruits || 0}명
+                  </span>
+                </>
+              )}
             </div>
           </div>
 
@@ -190,21 +258,16 @@ export default function CampaignCard({
       </div>
 
       {/* 액션 버튼 영역 */}
-      <div className={buttonStyles.campaign_actions}>
-        <button
-          className={getButtonStyle()}
-          onClick={() => handleButtonClick(getButtonText())}
-        >
-          {getButtonText()}
-        </button>
-        {getSecondButtonText() && (
+      <div className={cardStyles.campaign_actions}>
+        {getCampaignButtons().map((button, index) => (
           <button
-            className={getSecondButtonStyle()}
-            onClick={() => handleButtonClick(getSecondButtonText()!)}
+            key={index}
+            className={getButtonStyle(button.type)}
+            onClick={() => handleButtonClick(button.text)}
           >
-            {getSecondButtonText()}
+            {button.text}
           </button>
-        )}
+        ))}
       </div>
 
       {/* 구매 영수증 등록 모달 */}

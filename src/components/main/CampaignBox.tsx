@@ -28,7 +28,7 @@ interface CampaignBoxProps {
     };
     schedule?: string; // 스케줄 정보 (선택적)
   };
-  basePath?: string; // 링크 기본 경로 (기본값: /user/delivery)
+  basePath?: string; // 링크 기본 경로 (기본값: /delivery)
 }
 
 // React 함수형 컴포넌트
@@ -36,21 +36,21 @@ interface CampaignBoxProps {
 // props로 campaign 데이터를 받아서 UI를 렌더링합니다
 export default function CampaignBox({
   campaign,
-  basePath = "/user/delivery",
+  basePath = "/delivery",
 }: CampaignBoxProps) {
   // 캠페인 타입에 따른 올바른 경로 결정
   const getCampaignPath = (campaign: any) => {
     switch (campaign.category) {
       case "배송형":
-        return `/user/delivery/${campaign.id}`;
+        return `/delivery/${campaign.id}`;
       case "방문형":
-        return `/user/visit/${campaign.id}`;
+        return `/visit/${campaign.id}`;
       case "구매평":
-        return `/user/review/${campaign.id}`;
+        return `/review/${campaign.id}`;
       case "미션형":
-        return `/user/mission/${campaign.id}`;
+        return `/mission/${campaign.id}`;
       case "기자단":
-        return `/user/reporter/${campaign.id}`;
+        return `/reporter/${campaign.id}`;
       default:
         return `${basePath}/${campaign.id}`;
     }

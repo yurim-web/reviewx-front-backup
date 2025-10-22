@@ -47,10 +47,12 @@
 
 /* 경고 버튼 (콘텐츠 반려 사유보기, 패널티 내역보기) */
 .danger_button {
-  border: 1px solid #ff0000; /* 빨간색 테두리 */
-  background: #fff;
-  color: #ff0000;
+  border: 1px solid #ff4444 !important; /* 빨간색 테두리 */
+  background: #fff !important;
+  color: #ff4444 !important;
 }
+
+
 
 /* 이전 버전 호환성을 위한 레거시 버튼 스타일들 */
 .cancel_button {

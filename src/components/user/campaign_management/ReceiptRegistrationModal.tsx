@@ -129,14 +129,12 @@ export default function ReceiptRegistrationModal({
           {uploadedImages.length === 0 ? (
             <div className={styles.image_upload_area} onClick={openFileInput}>
               <div className={styles.upload_placeholder}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M12 5V19M5 12H19"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-                </svg>
+                <Image
+                  src="/images/icons/plus_icon.svg"
+                  alt="이미지 추가"
+                  width={56}
+                  height={56}
+                />
               </div>
             </div>
           ) : (
@@ -169,14 +167,12 @@ export default function ReceiptRegistrationModal({
               ))}
               {uploadedImages.length < 7 && (
                 <div className={styles.add_more_button} onClick={openFileInput}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path
-                      d="M12 5V19M5 12H19"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                  </svg>
+                  <Image
+                    src="/images/icons/plus_icon.svg"
+                    alt="이미지 추가"
+                    width={56}
+                    height={56}
+                  />
                 </div>
               )}
             </div>

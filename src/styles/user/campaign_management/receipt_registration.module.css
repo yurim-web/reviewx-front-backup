@@ -88,7 +88,7 @@
 .image_grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 16px;
+  gap: 12px;
   width: 100%;
   max-width: 920px;
   margin: 0 auto;
@@ -139,13 +139,17 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #999;
   transition: background-color 0.2s;
+}
+
+/* 플러스 아이콘 스타일 */
+.add_more_button img {
+  width: 56px;
+  height: 56px;
 }
 
 .add_more_button:hover {
   background-color: #e8e8e8;
-  color: #666;
 }
 
 /* 숨겨진 파일 입력 */

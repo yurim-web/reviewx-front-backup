@@ -6,14 +6,15 @@
  * 파트너 캠페인 관리 메인 페이지
  *
  * 목적: 파트너가 생성한 캠페인들을 관리하고 모니터링하는 페이지입니다.
+ * 이제 공통 헤더 컴포넌트를 사용하여 중복 코드를 제거합니다.
  *
  * 페이지 경로:
- * - /partner/campaign_management
+ * - /partner/campaign_management (전체 탭)
  *
  * 사용 파일:
- * - 컴포넌트: TabNavigation, StatisticsTab, CampaignList
- * - 타입: MainTab
- * - CSS: layout.module.css, campaign_card.module.css
+ * - 컴포넌트: PartnerCampaignManagementHeader, CampaignList
+ * - 타입: MainTab, PartnerStatTab
+ * - CSS: layout.module.css
  *
  * 주요 기능:
  * - 캠페인/포인트 탭 네비게이션
@@ -25,25 +26,14 @@
 "use client";
 
 import { useState } from "react";
-import TabNavigation from "@/components/partner/TabNavigation";
-import StatisticsTab from "@/components/partner/StatisticsTab";
+import PartnerCampaignManagementHeader from "@/components/partner/campaign_management/PartnerCampaignManagementHeader";
 import CampaignList from "@/components/partner/CampaignList";
-import PenaltyContent from "@/components/partner/PenaltyContent";
 import type { MainTab } from "@/types/campaignManagement";
+import type { PartnerStatTab } from "@/types/partner";
 import layoutStyles from "../../../styles/partner/layout.module.css";
-import cardStyles from "../../../styles/partner/campaign_card.module.css";
-
-import type {
-  PartnerStatTab,
-  PartnerCampaignStats,
-  PartnerCampaign,
-} from "@/types/partner";
 
 // 임시 데이터 import
-import {
-  partnerCampaigns,
-  partnerCampaignStats,
-} from "@/data/partner/partnerCampaigns";
+import { partnerCampaigns } from "@/data/partner/partnerCampaigns";
 
 /**
  * 파트너 캠페인 관리 메인 페이지 컴포넌트
@@ -55,24 +45,49 @@ export default function PartnerCampaignManagementPage() {
   // 통계 탭 상태 (전체 / 예정 / 신청 / 진행 / 종료 / 취소)
   const [activeStatTab, setActiveStatTab] = useState<PartnerStatTab>("전체");
 
-  // 임시 데이터에서 통계 정보 사용
-  const stats: PartnerCampaignStats = partnerCampaignStats;
+  /**
+   * 통계 탭 변경 핸들러
+   * 각 탭 클릭 시 해당 페이지로 이동
+   */
+  const handleStatTabChange = (tab: PartnerStatTab) => {
+    switch (tab) {
+      case "전체":
+        // 현재 페이지이므로 아무것도 하지 않음
+        break;
+      case "예정":
+        window.location.href = "/partner/campaign_management/scheduled";
+        break;
+      case "신청":
+        window.location.href = "/partner/campaign_management/applied";
+        break;
+      case "진행":
+        window.location.href = "/partner/campaign_management/progress";
+        break;
+      case "종료":
+        window.location.href = "/partner/campaign_management/completed";
+        break;
+      case "취소":
+        window.location.href = "/partner/campaign_management/cancelled";
+        break;
+      case "패널티":
+        window.location.href = "/partner/campaign_management/penalty";
+        break;
+    }
+  };
 
   return (
     <div className={layoutStyles.container}>
       {/* 메인 컨텐츠 영역 */}
       <div className={layoutStyles.main_content}>
-        {/* 상단 탭 네비게이션: 캠페인/포인트 */}
-        <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
-
-        {/* 통계 탭: 전체/예정/신청/진행/종료/취소 */}
-        <StatisticsTab
+        {/* 공통 헤더: 상단 탭 네비게이션 + 통계 탭 */}
+        <PartnerCampaignManagementHeader
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
           activeStatTab={activeStatTab}
-          setActiveStatTab={setActiveStatTab}
-          stats={stats}
+          setActiveStatTab={handleStatTabChange}
         />
 
-        {/* 캠페인 목록 */}
+        {/* 전체 캠페인 목록 */}
         <CampaignList
           campaigns={partnerCampaigns}
           activeStatTab={activeStatTab}
