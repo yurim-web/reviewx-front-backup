@@ -38,7 +38,7 @@ import {
   reporterChannelOptions,
   reporterSortOptions,
 } from "@/data/user/reporter/reporterFilterOptions";
-import styles from "../../styles/user/delivery/delivery.module.css";
+import styles from "../../../styles/user/delivery/delivery.module.css";
 
 export default function ReporterPage() {
   const reporter_campaigns = reporterCampaigns;
@@ -177,7 +177,7 @@ export default function ReporterPage() {
                 <CampaignBox
                   key={campaign.id}
                   campaign={campaign}
-                  basePath="/reporter"
+                  basePath="/campaign/reporter"
                 />
               ))
             ) : (
@@ -193,5 +193,3 @@ export default function ReporterPage() {
     </>
   );
 }
-
-

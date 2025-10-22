@@ -1,25 +1,25 @@
 /* ========================================
-   🚶 방문형 캠페인 상세 페이지
+   ⭐ 구매평 캠페인 상세 페이지
    ======================================== */
 
 /**
- * 방문형 캠페인 상세 페이지
+ * 구매평 캠페인 상세 페이지
  *
- * 목적: 방문형 캠페인의 상세 정보를 보여주고 신청할 수 있는 상세 페이지입니다.
+ * 목적: 구매평 캠페인의 상세 정보를 보여주고 신청할 수 있는 상세 페이지입니다.
  *
  * 페이지 경로:
- * - /visit/[id] (기존 /user/visit/[id]에서 변경)
+ * - /review/[id] (기존 /user/review/[id]에서 변경)
  *
  * 사용 파일:
- * - 컴포넌트: SubHeader, ApplicationModal, ApplicationModalType3, MainMenu, DetailHeader, DetailProductInfo, DetailScheduleInfo, DetailImage, DetailGuidelinesSectionVisit
- * - 데이터: visitCampaigns
+ * - 컴포넌트: SubHeader, ApplicationModal, ApplicationModalType2, MainMenu, DetailHeader, DetailProductInfo, DetailScheduleInfo, DetailImage, DetailGuidelinesSectionReview
+ * - 데이터: reviewCampaigns
  * - CSS: campaign_detail.module.css
  *
  * 주요 기능:
- * - 방문형 캠페인 상세 정보 표시
+ * - 구매평 캠페인 상세 정보 표시
  * - 스크롤 시 캠페인 정보 라벨 상단 고정
- * - 캠페인 신청 모달 (Type3)
- * - 방문주소/방문링크/키워드 복사 기능
+ * - 캠페인 신청 모달 (Type2)
+ * - 구매링크/키워드 복사 기능
  * - 하단 고정 신청 버튼
  */
 
@@ -29,24 +29,24 @@ import { notFound } from "next/navigation";
 import { useEffect, useState, useRef, use } from "react";
 import SubHeader from "@/components/fragments/SubHeader";
 import ApplicationModal from "@/components/user/campaign_detail/modal/ApplicationModal";
-import styles from "../../../styles/user/campaign/campaign_detail.module.css";
-import { visitCampaigns } from "@/data/user/visit/visitCampaigns";
-import ApplicationModalType3 from "@/components/user/campaign_detail/modal/ApplicationModalType3";
+import styles from "../../../../styles/user/campaign/campaign_detail.module.css";
+import { reviewCampaigns } from "@/data/user/review/reviewCampaigns";
+import ApplicationModalType2 from "@/components/user/campaign_detail/modal/ApplicationModalType2";
 import MainMenu from "@/components/main/MainMenu";
 import DetailHeader from "@/components/user/campaign_detail/DetailHeader";
 import DetailProductInfo from "@/components/user/campaign_detail/DetailProductInfo";
 import DetailScheduleInfo from "@/components/user/campaign_detail/DetailScheduleInfo";
 import DetailImage from "@/components/user/campaign_detail/DetailImage";
-import DetailGuidelinesSectionVisit from "@/components/user/campaign_detail/guidelines/DetailGuidelinesSectionVisit";
+import DetailGuidelinesSectionReview from "@/components/user/campaign_detail/guidelines/DetailGuidelinesSectionReview";
 
-interface VisitDetailPageProps {
+interface ReviewDetailPageProps {
   params: Promise<{ id: string }>;
 }
 
-export default function VisitDetailPage({ params }: VisitDetailPageProps) {
+export default function ReviewDetailPage({ params }: ReviewDetailPageProps) {
   // Next.js 15에서 params는 Promise이므로 React.use()로 unwrap
   const { id } = use(params);
-  const campaign = visitCampaigns.find((c) => String(c.id) === String(id));
+  const campaign = reviewCampaigns.find((c) => String(c.id) === id);
   const [isModalOpen, setIsModalOpen] = useState(false);
   // 캠페인 정보 라벨 고정 상태 관리
   const [isCampaignInfoFixed, setIsCampaignInfoFixed] = useState(false);
@@ -161,9 +161,8 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
           categoryIcon={campaign.categoryIcon}
           category={campaign.category}
           subcategory={campaign.subcategory}
-          region={campaign.region}
           points={campaign.points}
-          altText="visit_tag"
+          altText="review_tag"
         />
 
         {/* 제품 정보 */}
@@ -181,8 +180,12 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
             announcement={campaign.detailedSchedule.announcement}
             additionalSchedules={[
               {
-                label: "등록 기간",
+                label: "구매 기간",
                 value: campaign.detailedSchedule.purchasePeriod,
+              },
+              {
+                label: "등록 기간",
+                value: campaign.detailedSchedule.registrationPeriod,
               },
             ]}
           />
@@ -205,22 +208,14 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
         <DetailImage image={campaign.campaign_detail_image} />
 
         {/* 안내 사항들 */}
-        <DetailGuidelinesSectionVisit
+        <DetailGuidelinesSectionReview
           description={campaign.description}
-          visitAddress={campaign.visitAddress}
-          addressGuide={campaign.addressGuide}
-          visitLink={campaign.visitLink}
+          purchaseLink={campaign.purchaseLink}
           keyword={campaign.keyword}
-          onCopyVisitAddress={() => {
-            if (campaign.visitAddress) {
-              navigator.clipboard.writeText(campaign.visitAddress);
-              alert("방문 주소가 복사되었습니다!");
-            }
-          }}
-          onCopyVisitLink={() => {
-            if (campaign.visitLink) {
-              navigator.clipboard.writeText(campaign.visitLink);
-              alert("방문 링크가 복사되었습니다!");
+          onCopyPurchaseLink={() => {
+            if (campaign.purchaseLink) {
+              navigator.clipboard.writeText(campaign.purchaseLink);
+              alert("구매링크가 복사되었습니다!");
             }
           }}
           onCopyKeyword={() => {
@@ -244,7 +239,7 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
       </div>
 
       {/* 신청 모달 */}
-      <ApplicationModalType3
+      <ApplicationModalType2
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />

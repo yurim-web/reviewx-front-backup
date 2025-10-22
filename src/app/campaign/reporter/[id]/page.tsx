@@ -1,22 +1,22 @@
 /* ========================================
-   🎯 미션형 캠페인 상세 페이지
+   📰 기자단 캠페인 상세 페이지
    ======================================== */
 
 /**
- * 미션형 캠페인 상세 페이지
+ * 기자단 캠페인 상세 페이지
  *
- * 목적: 미션형 캠페인의 상세 정보를 보여주고 신청할 수 있는 상세 페이지입니다.
+ * 목적: 기자단 캠페인의 상세 정보를 보여주고 신청할 수 있는 상세 페이지입니다.
  *
  * 페이지 경로:
- * - /mission/[id] (기존 /user/mission/[id]에서 변경)
+ * - /reporter/[id] (기존 /user/reporter/[id]에서 변경)
  *
  * 사용 파일:
- * - 컴포넌트: SubHeader, ApplicationModalType3, MainMenu, DetailHeader, DetailProductInfo, DetailScheduleInfo, DetailImage, DetailGuidelinesSectionMission
- * - 데이터: missionCampaigns
+ * - 컴포넌트: SubHeader, ApplicationModal, ApplicationModalType3, MainMenu, DetailHeader, DetailProductInfo, DetailScheduleInfo, DetailImage, DetailGuidelinesSectionReporter
+ * - 데이터: reporterCampaigns
  * - CSS: campaign_detail.module.css
  *
  * 주요 기능:
- * - 미션형 캠페인 상세 정보 표시
+ * - 기자단 캠페인 상세 정보 표시
  * - 스크롤 시 캠페인 정보 라벨 상단 고정
  * - 캠페인 신청 모달 (Type3)
  * - 키워드 복사 기능
@@ -28,61 +28,43 @@
 import { notFound } from "next/navigation";
 import { useEffect, useState, useRef, use } from "react";
 import SubHeader from "@/components/fragments/SubHeader";
+import ApplicationModal from "@/components/user/campaign_detail/modal/ApplicationModal";
+import styles from "../../../../styles/user/campaign/campaign_detail.module.css";
+import { reporterCampaigns } from "@/data/user/reporter/reporterCampaigns";
 import ApplicationModalType3 from "@/components/user/campaign_detail/modal/ApplicationModalType3";
-import styles from "../../../styles/user/campaign/campaign_detail.module.css";
-import { missionCampaigns } from "@/data/user/mission/missionCampaigns";
 import MainMenu from "@/components/main/MainMenu";
 import DetailHeader from "@/components/user/campaign_detail/DetailHeader";
 import DetailProductInfo from "@/components/user/campaign_detail/DetailProductInfo";
 import DetailScheduleInfo from "@/components/user/campaign_detail/DetailScheduleInfo";
 import DetailImage from "@/components/user/campaign_detail/DetailImage";
-import DetailGuidelinesSectionMission from "@/components/user/campaign_detail/guidelines/DetailGuidelinesSectionMission";
+import DetailGuidelinesSectionReporter from "@/components/user/campaign_detail/guidelines/DetailGuidelinesSectionReporter";
 
-interface MissionDetailPageProps {
+interface ReporterDetailPageProps {
   params: Promise<{ id: string }>;
 }
 
-export default function MissionDetailPage({ params }: MissionDetailPageProps) {
-  // ========================================
-  // 1. 데이터 및 상태 관리
-  // ========================================
-
+export default function ReporterDetailPage({
+  params,
+}: ReporterDetailPageProps) {
   // Next.js 15에서 params는 Promise이므로 React.use()로 unwrap
   const { id } = use(params);
-
-  // URL의 id와 일치하는 캠페인 데이터 찾기
-  const campaign = missionCampaigns.find((c) => String(c.id) === id);
-
-  // 신청 모달 표시 상태
+  const campaign = reporterCampaigns.find((c) => String(c.id) === id);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // 캠페인 정보 라벨 고정 상태 관리 (스크롤 시 상단 고정 여부)
+  // 캠페인 정보 라벨 고정 상태 관리
   const [isCampaignInfoFixed, setIsCampaignInfoFixed] = useState(false);
 
-  // ========================================
-  // 2. Refs (DOM 참조)
-  // ========================================
-
-  // 캠페인 정보 라벨 요소에 대한 참조
-  // useRef: 컴포넌트가 리렌더링되어도 값이 유지되는 변수
+  // 캠페인 정보 라벨 요소에 대한 참조 (useRef)
   const campaignInfoLabelRef = useRef<HTMLDivElement>(null);
 
-  // 캠페인 정보 라벨의 초기 위치를 저장 (페이지 최상단부터의 거리)
+  // 캠페인 정보 라벨의 초기 위치를 저장 (한 번만 계산)
   const initialLabelPositionRef = useRef<number | null>(null);
 
-  // 캠페인 데이터가 없으면 404 페이지로 이동
   if (!campaign) return notFound();
 
-  // ========================================
-  // 3. Side Effects (부수 효과)
-  // ========================================
-
-  // 메인 헤더 숨기기 (SubHeader만 표시)
+  // 메인 헤더 숨기기 (캠페인 상세와 동일 동작)
   useEffect(() => {
     const header = document.querySelector("header");
     if (header) header.style.display = "none";
-
-    // 컴포넌트가 언마운트될 때 헤더 다시 표시
     return () => {
       if (header) header.style.display = "block";
     };
@@ -90,17 +72,17 @@ export default function MissionDetailPage({ params }: MissionDetailPageProps) {
 
   // 초기 로드 시 캠페인 정보 라벨의 위치를 한 번만 저장
   useEffect(() => {
-    // DOM이 완전히 로드된 후 위치 계산 (100ms 딜레이)
+    // DOM이 완전히 로드된 후 위치 계산
     const timer = setTimeout(() => {
       if (
         campaignInfoLabelRef.current &&
         initialLabelPositionRef.current === null
       ) {
-        // 라벨의 현재 화면상 위치 가져오기
+        // 라벨의 절대 위치를 저장
+        // 이 시점에서는 MainMenu가 fixed로 고정되어 있음
         const rect = campaignInfoLabelRef.current.getBoundingClientRect();
         const scrollY = window.scrollY;
-
-        // 페이지 최상단부터 라벨까지의 실제 거리 계산
+        // 페이지 최상단부터 라벨까지의 실제 거리
         const absolutePosition = rect.top + scrollY;
         initialLabelPositionRef.current = absolutePosition;
       }
@@ -121,7 +103,7 @@ export default function MissionDetailPage({ params }: MissionDetailPageProps) {
       // 캠페인 정보 라벨이 화면 상단 80px 위치(SubHeader 바로 아래)에 도달하면 고정
       const triggerPoint = initialLabelPositionRef.current - 80;
 
-      // 스크롤이 트리거 포인트에 도달했을 때 라벨 고정
+      // 캠페인 정보 라벨 고정: 스크롤이 트리거 포인트에 도달했을 때
       if (scrollY >= triggerPoint) {
         setIsCampaignInfoFixed(true);
       } else {
@@ -141,13 +123,9 @@ export default function MissionDetailPage({ params }: MissionDetailPageProps) {
     };
   }, []);
 
-  // ========================================
-  // 4. 렌더링
-  // ========================================
-
   return (
     <>
-      {/* 서브헤더: 항상 상단에 고정 (position: fixed, top: 0) */}
+      {/* 서브헤더: 항상 상단에 고정 */}
       <SubHeader />
 
       {/* 
@@ -180,12 +158,13 @@ export default function MissionDetailPage({ params }: MissionDetailPageProps) {
       <div style={{ height: isCampaignInfoFixed ? "80px" : "149px" }}></div>
 
       <section className={styles.campaign_detail_container}>
+        {/* 태그 및 포인트 */}
         <DetailHeader
           categoryIcon={campaign.categoryIcon}
           category={campaign.category}
           subcategory={campaign.subcategory}
           points={campaign.points}
-          altText="mission_tag"
+          altText="reporter_tag"
         />
 
         {/* 제품 정보 */}
@@ -210,10 +189,8 @@ export default function MissionDetailPage({ params }: MissionDetailPageProps) {
           />
         </DetailProductInfo>
 
-        {/* 
-          캠페인 정보 섹션 라벨 
-          스크롤이 이 요소에 도달하면 fixed 클래스 추가하여 상단 고정 
-        */}
+        {/* 캠페인 정보 섹션 라벨 */}
+        {/* 스크롤이 이 요소에 도달하면 fixed 클래스 추가하여 상단 고정 */}
         <div
           ref={campaignInfoLabelRef}
           className={`${styles.campaign_info_text_line} ${
@@ -222,7 +199,6 @@ export default function MissionDetailPage({ params }: MissionDetailPageProps) {
         >
           캠페인 정보
         </div>
-
         {/* 캠페인 정보가 fixed될 때 레이아웃 시프트 방지용 placeholder */}
         {isCampaignInfoFixed && <div style={{ height: "101px" }}></div>}
 
@@ -230,7 +206,7 @@ export default function MissionDetailPage({ params }: MissionDetailPageProps) {
         <DetailImage image={campaign.campaign_detail_image} />
 
         {/* 안내 사항들 */}
-        <DetailGuidelinesSectionMission
+        <DetailGuidelinesSectionReporter
           description={campaign.description}
           productLink={campaign.productLink}
           onCopyProductLink={() => {

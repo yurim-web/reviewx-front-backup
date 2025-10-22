@@ -21,42 +21,42 @@ export default function MainMenu() {
       </Link>
       <Link
         className={`${styles.main_menu_item} ${
-          pathname === "/delivery" ? styles.main_menu_item_active : ""
+          pathname === "/campaign/delivery" ? styles.main_menu_item_active : ""
         }`}
-        href="/delivery"
+        href="/campaign/delivery"
       >
         배송형
       </Link>
       <Link
         className={`${styles.main_menu_item} ${
-          pathname === "/visit" ? styles.main_menu_item_active : ""
+          pathname === "/campaign/visit" ? styles.main_menu_item_active : ""
         }`}
-        href="/visit"
+        href="/campaign/visit"
       >
         방문형
       </Link>
       <Link
         className={`${styles.main_menu_item} ${
-          pathname === "/review" ? styles.main_menu_item_active : ""
+          pathname === "/campaign/review" ? styles.main_menu_item_active : ""
         }`}
-        href="/review"
+        href="/campaign/review"
       >
         구매평
       </Link>
 
       <Link
         className={`${styles.main_menu_item} ${
-          pathname === "/reporter" ? styles.main_menu_item_active : ""
+          pathname === "/campaign/reporter" ? styles.main_menu_item_active : ""
         }`}
-        href="/reporter"
+        href="/campaign/reporter"
       >
         기자단
       </Link>
       <Link
         className={`${styles.main_menu_item} ${
-          pathname === "/mission" ? styles.main_menu_item_active : ""
+          pathname === "/campaign/mission" ? styles.main_menu_item_active : ""
         }`}
-        href="/mission"
+        href="/campaign/mission"
       >
         미션형
       </Link>

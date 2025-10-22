@@ -36,7 +36,7 @@ import {
   deliveryChannelOptions,
   deliverySortOptions,
 } from "@/data/user/delivery/deliveryFilterOptions";
-import styles from "../../styles/user/delivery/delivery.module.css";
+import styles from "../../../styles/user/delivery/delivery.module.css";
 import MainMenu from "@/components/main/MainMenu";
 
 export default function DeliveryPage() {
@@ -164,7 +164,7 @@ export default function DeliveryPage() {
                 <CampaignBox
                   key={campaign.id}
                   campaign={campaign}
-                  basePath="/delivery"
+                  basePath="/campaign/delivery"
                 />
               ))
             ) : (
@@ -180,5 +180,3 @@ export default function DeliveryPage() {
     </>
   );
 }
-
-

@@ -39,7 +39,7 @@ import {
   useVisitRegionFilter,
   visitSortOptions,
 } from "@/data/user/visit/visitFilterOptions";
-import styles from "../../styles/user/delivery/delivery.module.css";
+import styles from "../../../styles/user/delivery/delivery.module.css";
 
 export default function VisitPage() {
   // =================================================================
@@ -282,7 +282,7 @@ export default function VisitPage() {
                 <CampaignBox
                   key={campaign.id} // React의 고유 key (리스트 렌더링 최적화)
                   campaign={campaign} // 캠페인 데이터 props로 전달
-                  basePath="/visit" // 상세 페이지 경로 설정
+                  basePath="/campaign/visit" // 상세 페이지 경로 설정
                 />
               ))
             ) : (
@@ -358,5 +358,3 @@ export default function VisitPage() {
 - React Developer Tools로 컴포넌트 상태 모니터링
 - Network 탭으로 데이터 로딩 확인 (향후 API 연동 시)
 */
-
-
