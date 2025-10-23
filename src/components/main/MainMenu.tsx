@@ -13,7 +13,9 @@ export default function MainMenu() {
     <section className={styles.main_menu_container}>
       <Link
         className={`${styles.main_menu_item} ${
-          pathname === "/" ? styles.main_menu_item_active : ""
+          pathname === "/" || pathname === "/partner" || pathname === "/user"
+            ? styles.main_menu_item_active
+            : ""
         }`}
         href="/"
       >

@@ -15,19 +15,27 @@
   position: relative;
   width: 100%;
   padding-top: 80px; /* 헤더 높이만큼 상단 여백 */
-  background-color: #f2f2f2;
+  background-color: white;
+  min-height: 100vh;
+}
+
+.mypage_container {
+  position: relative;
+  width: 100%;
+  padding-top: 80px; /* 헤더 높이만큼 상단 여백 */
+  background-color: white;
   min-height: 100vh;
 }
 
 /* 메인 콘텐츠 영역 - 중앙 정렬된 흰색 배경 */
-.main_content {
+/* .main_content {
   background-color: white;
   width: 100%;
   margin: 0 auto;
-  min-height: calc(100vh - 80px); /* 헤더 제외한 전체 높이 */
+  min-height: calc(100vh - 80px);
   max-width: 1200px;
   padding-bottom: 24px;
 
   display: flex;
   flex-direction: column;
-}
+} */

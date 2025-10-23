@@ -24,7 +24,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import styles from "../../../styles/user/notice/notice.module.css";
+import styles from "../../styles/user/notice/notice.module.css";
 import SubHeader from "@/components/fragments/SubHeader";
 
 interface NoticeItem {

@@ -105,14 +105,14 @@ export default function ProfilePage() {
           </button>
           <button
             className={profileStyles.menu_item}
-            onClick={() => router.push("/user/notice")}
+            onClick={() => router.push("/notice")}
           >
             <div className={profileStyles.menu_icon} />
             <div className={profileStyles.menu_text}>공지사항</div>
           </button>
           <button
             className={profileStyles.menu_item}
-            onClick={() => router.push("/user/faq")}
+            onClick={() => router.push("/faq")}
           >
             <div className={profileStyles.menu_icon} />
             <div className={profileStyles.menu_text}>자주 묻는 질문</div>

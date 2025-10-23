@@ -26,7 +26,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import styles from "../../../styles/user/faq/faq.module.css";
+import styles from "../../styles/user/faq/faq.module.css";
 import SubHeader from "@/components/fragments/SubHeader";
 import {
   faqData,

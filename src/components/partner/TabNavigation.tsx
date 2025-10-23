@@ -38,7 +38,7 @@ export default function TabNavigation({
 
   const handleCampaignClick = () => {
     setActiveTab("campaign");
-    router.push("/partner");
+    router.push("/partner/campaign_management");
   };
 
   const handlePointClick = () => {
@@ -47,8 +47,8 @@ export default function TabNavigation({
   };
 
   const handleAccountClick = () => {
-    setActiveTab("account");
-    router.push("/partner/account");
+    setActiveTab("mypage");
+    router.push("/partner/mypage");
   };
 
   return (
