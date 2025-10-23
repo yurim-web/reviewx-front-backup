@@ -10,7 +10,7 @@
   padding: 24px 40px;
   border-bottom: 1px solid #e0e0e0;
   position: sticky;
-  top: 0;
+  top: 80px;
   background-color: white;
   z-index: 100;
 }
@@ -33,31 +33,67 @@
   margin-bottom: 24px;
 }
 
+/* 페이지 헤더 내 긴급 체크박스 */
+.header_urgent_checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 긴급 체크박스가 체크되었을 때 스타일 */
+.header_urgent_checkbox .checkbox_label input[type="checkbox"]:checked {
+  border-color: #ff2626;
+  background: white;
+}
+
+.header_urgent_checkbox .checkbox_label input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #ff2626;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* 긴급 체크박스가 체크되었을 때 텍스트 색상 변경 */
+.header_urgent_checkbox .checkbox_label.urgent_checked {
+  color: #ff2626;
+  font-weight: 600;
+}
+
 /* 폼 컨테이너 */
 .campaign_form {
   max-width: 1000px;
   margin: 0 auto;
   padding: 40px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
 }
 
 /* 섹션 */
 .section {
-  margin-bottom: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .section_title {
-  font-family: "Pretendard", sans-serif;
-  font-weight: 600;
+  color: #444;
   font-size: 18px;
-  line-height: 1.2;
-  color: #444444;
-  margin: 0 0 24px 0;
+  font-weight: 600;
+  line-height: 18px;
   letter-spacing: -0.36px;
+  padding-bottom: 4px;
 }
 
 /* 폼 그룹 */
 .form_group {
-  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .form_label {
@@ -67,20 +103,17 @@
   font-size: 14px;
   line-height: 1.2;
   color: #444444;
-  margin-bottom: 8px;
   letter-spacing: -0.28px;
 }
 
 .required {
   color: #ff2626;
-  margin-left: 2px;
 }
 
 /* 캠페인 유형 버튼들 */
 .campaign_type_buttons {
   display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .campaign_type_button {
@@ -279,12 +312,15 @@
 .checkbox_label {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   cursor: pointer;
-  font-family: "Pretendard", sans-serif;
-  font-weight: 500;
+  /* 긴급 글자 css */
+  color: #444;
+  font-family: Pretendard;
   font-size: 16px;
-  color: #444444;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
   letter-spacing: -0.32px;
 }
 
@@ -412,23 +448,19 @@
 .submit_button_container {
   display: flex;
   justify-content: center;
-  margin-top: 48px;
 }
 
 .submit_button {
   width: 100%;
-  max-width: 920px;
   height: 56px;
   border: none;
   border-radius: 8px;
   background: #555555;
   color: #fff;
-  font-family: "Pretendard", sans-serif;
   font-weight: 600;
   font-size: 16px;
   line-height: 1.2;
   cursor: pointer;
-  transition: background-color 0.2s ease;
   letter-spacing: -0.32px;
 }
 

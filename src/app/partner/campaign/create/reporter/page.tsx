@@ -23,16 +23,15 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import SubHeader from "@/components/fragments/SubHeader";
-import CampaignCreateFormBase, {
-  CampaignFormData,
-} from "@/components/partner/campaign/CampaignCreateFormBase";
-import campaignCreateStyles from "@/styles/partner/campaign_create.module.css";
+import ReporterCampaignForm from "@/components/partner/campaign/campaign_create_form/ReporterCampaignForm";
+import { CampaignFormData } from "@/types/campaign";
+import campaignCreateStyles from "@/styles/partner/campaign_create/campaign_create.module.css";
 import layoutStyles from "../../../../../styles/partner/layout.module.css";
 
 export default function ReporterCampaignCreatePage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUrgent, setIsUrgent] = useState(false);
 
   /**
    * 캠페인 등록 처리
@@ -40,8 +39,11 @@ export default function ReporterCampaignCreatePage() {
   const handleSubmit = async (formData: CampaignFormData) => {
     setIsSubmitting(true);
     try {
+      // 긴급 상태를 폼 데이터에 추가
+      const finalFormData = { ...formData, isUrgent };
+
       // TODO: API 호출로 기자단 캠페인 등록
-      console.log("기자단 캠페인 등록 데이터:", formData);
+      console.log("기자단 캠페인 등록 데이터:", finalFormData);
 
       // 등록 성공 시 캠페인 관리 페이지로 이동
       router.push("/partner");
@@ -52,40 +54,37 @@ export default function ReporterCampaignCreatePage() {
     }
   };
 
-  // 메인 헤더 숨기기 (SubHeader만 표시)
-  useEffect(() => {
-    const header = document.querySelector("header");
-    if (header) header.style.display = "none";
-
-    // 컴포넌트가 언마운트될 때 헤더 다시 표시
-    return () => {
-      if (header) header.style.display = "block";
-    };
-  }, []);
-
   return (
-    <>
-      <SubHeader />
-      <div className={layoutStyles.container}>
-        {/* 메인 컨텐츠 영역 */}
-        <div className={layoutStyles.main_content}>
-          {/* 페이지 헤더 */}
-          <div className={campaignCreateStyles.page_header}>
-            <h1 className={campaignCreateStyles.page_title}>새 캠페인 등록</h1>
-            {/* 긴급 체크박스는 폼 내부로 이동 */}
-          </div>
+    <div className={layoutStyles.container}>
+      {/* 메인 컨텐츠 영역 */}
+      <div className={layoutStyles.main_content}>
+        {/* 페이지 헤더 */}
+        <div className={campaignCreateStyles.page_header}>
+          <h1 className={campaignCreateStyles.page_title}>새 캠페인 등록</h1>
 
-          {/* 기자단 캠페인 등록 폼 */}
-          <CampaignCreateFormBase
-            campaignType="기자단"
-            onSubmit={handleSubmit}
-            isSubmitting={isSubmitting}
-          />
+          {/* 긴급 체크박스 */}
+          <div className={campaignCreateStyles.header_urgent_checkbox}>
+            <label
+              className={`${campaignCreateStyles.checkbox_label} ${
+                isUrgent ? campaignCreateStyles.urgent_checked : ""
+              }`}
+            >
+              <span>긴급</span>
+              <input
+                type="checkbox"
+                checked={isUrgent}
+                onChange={(e) => setIsUrgent(e.target.checked)}
+              />
+            </label>
+          </div>
         </div>
+
+        {/* 기자단 캠페인 등록 폼 */}
+        <ReporterCampaignForm
+          onSubmit={handleSubmit}
+          isSubmitting={isSubmitting}
+        />
       </div>
-    </>
+    </div>
   );
 }
-
-
-

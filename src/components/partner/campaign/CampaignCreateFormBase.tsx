@@ -22,7 +22,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import styles from "@/styles/partner/campaign_create.module.css";
+import styles from "@/styles/partner/campaign_create/campaign_create.module.css";
 
 // 캠페인 유형 타입 정의
 export type CampaignType = "배송형" | "방문형" | "구매평" | "기자단" | "미션형";
@@ -200,11 +200,11 @@ export default function CampaignCreateFormBase({
   return (
     <form onSubmit={handleSubmit} className={styles.campaign_form}>
       {/* 캠페인 정보 섹션 */}
-      <div className={styles.section}>
+      <section className={styles.section}>
         <h2 className={styles.section_title}>캠페인 정보</h2>
 
         {/* 캠페인 유형 */}
-        <div className={styles.form_group}>
+        <article className={styles.form_group}>
           <label className={styles.form_label}>
             캠페인 유형<span className={styles.required}>*</span>
           </label>
@@ -222,10 +222,10 @@ export default function CampaignCreateFormBase({
               </button>
             ))}
           </div>
-        </div>
+        </article>
 
         {/* 등록 플랫폼 */}
-        <div className={styles.form_group}>
+        <article className={styles.form_group}>
           <label className={styles.form_label}>
             등록 플랫폼<span className={styles.required}>*</span>
           </label>
@@ -242,10 +242,10 @@ export default function CampaignCreateFormBase({
               </option>
             ))}
           </select>
-        </div>
+        </article>
 
         {/* 썸네일/상세 이미지 */}
-        <div className={styles.form_group}>
+        <article className={styles.form_group}>
           <label className={styles.form_label}>
             썸네일/상세 이미지<span className={styles.required}>*</span>
           </label>
@@ -254,10 +254,10 @@ export default function CampaignCreateFormBase({
               <span>+</span>
             </div>
           </div>
-        </div>
+        </article>
 
         {/* 캠페인 제목 */}
-        <div className={styles.form_group}>
+        <article className={styles.form_group}>
           <label className={styles.form_label}>
             캠페인 제목<span className={styles.required}>*</span>
           </label>
@@ -268,10 +268,10 @@ export default function CampaignCreateFormBase({
             onChange={(e) => updateFormData("title", e.target.value)}
             placeholder="캠페인 제목을 입력하세요"
           />
-        </div>
+        </article>
 
         {/* 카테고리 */}
-        <div className={styles.form_group}>
+        <article className={styles.form_group}>
           <label className={styles.form_label}>
             카테고리<span className={styles.required}>*</span>
           </label>
@@ -286,11 +286,11 @@ export default function CampaignCreateFormBase({
               </option>
             ))}
           </select>
-        </div>
+        </article>
 
         {/* 방문형 전용: 지역 */}
         {campaignType === "방문형" && (
-          <div className={styles.form_group}>
+          <article className={styles.form_group}>
             <label className={styles.form_label}>
               지역<span className={styles.required}>*</span>
             </label>
@@ -318,11 +318,11 @@ export default function CampaignCreateFormBase({
               <option value="경남">경남</option>
               <option value="제주">제주</option>
             </select>
-          </div>
+          </article>
         )}
 
         {/* 브랜드명 */}
-        <div className={styles.form_group}>
+        <article className={styles.form_group}>
           <label className={styles.form_label}>
             브랜드명<span className={styles.required}>*</span>
           </label>
@@ -333,10 +333,10 @@ export default function CampaignCreateFormBase({
             onChange={(e) => updateFormData("brandName", e.target.value)}
             placeholder="브랜드명을 입력하세요"
           />
-        </div>
+        </article>
 
         {/* 제공 내역 */}
-        <div className={styles.form_group}>
+        <article className={styles.form_group}>
           <label className={styles.form_label}>
             제공 내역<span className={styles.required}>*</span>
           </label>
@@ -347,10 +347,10 @@ export default function CampaignCreateFormBase({
             onChange={(e) => updateFormData("providedItems", e.target.value)}
             placeholder="제공 내역을 입력하세요"
           />
-        </div>
+        </article>
 
         {/* 홍보 링크 (배송형) / 방문 링크 (방문형) */}
-        <div className={styles.form_group}>
+        <article className={styles.form_group}>
           <label className={styles.form_label}>
             {campaignType === "방문형" ? "방문 링크" : "홍보 링크"}
           </label>
@@ -370,12 +370,12 @@ export default function CampaignCreateFormBase({
             }
             placeholder="링크를 입력하세요"
           />
-        </div>
+        </article>
 
         {/* 방문형 전용: 방문 주소 */}
         {campaignType === "방문형" && (
           <>
-            <div className={styles.form_group}>
+            <article className={styles.form_group}>
               <label className={styles.form_label}>
                 방문 주소<span className={styles.required}>*</span>
               </label>
@@ -393,9 +393,9 @@ export default function CampaignCreateFormBase({
                   우편번호 찾기
                 </button>
               </div>
-            </div>
+            </article>
 
-            <div className={styles.form_group}>
+            <article className={styles.form_group}>
               <label className={styles.form_label}>주소 상세 안내</label>
               <input
                 type="text"
@@ -406,12 +406,12 @@ export default function CampaignCreateFormBase({
                 }
                 placeholder="상세 주소 안내를 입력하세요"
               />
-            </div>
+            </article>
           </>
         )}
 
         {/* 보유 포인트 */}
-        <div className={styles.form_group}>
+        <article className={styles.form_group}>
           <label className={styles.form_label}>보유 포인트</label>
           <div className={styles.points_input_group}>
             <input
@@ -428,10 +428,10 @@ export default function CampaignCreateFormBase({
               포인트 충전하기
             </button>
           </div>
-        </div>
+        </article>
 
         {/* 추가 지급 포인트 */}
-        <div className={styles.form_group}>
+        <article className={styles.form_group}>
           <label className={styles.form_label}>추가 지급 포인트</label>
           <div className={styles.points_input_group}>
             <input
@@ -448,10 +448,10 @@ export default function CampaignCreateFormBase({
             />
             <span className={styles.points_unit}>P</span>
           </div>
-        </div>
+        </article>
 
         {/* 모집 인원 */}
-        <div className={styles.form_group}>
+        <article className={styles.form_group}>
           <label className={styles.form_label}>
             모집 인원<span className={styles.required}>*</span>
           </label>
@@ -470,10 +470,10 @@ export default function CampaignCreateFormBase({
             />
             <span className={styles.count_unit}>명</span>
           </div>
-        </div>
+        </article>
 
         {/* 모집 기간 */}
-        <div className={styles.form_group}>
+        <article className={styles.form_group}>
           <label className={styles.form_label}>
             모집 기간<span className={styles.required}>*</span>
           </label>
@@ -486,10 +486,10 @@ export default function CampaignCreateFormBase({
             }
             placeholder="2025-09-30 ~ 2025-10-06"
           />
-        </div>
+        </article>
 
         {/* 선정 날짜 */}
-        <div className={styles.form_group}>
+        <article className={styles.form_group}>
           <label className={styles.form_label}>
             선정 날짜<span className={styles.required}>*</span>
           </label>
@@ -500,10 +500,10 @@ export default function CampaignCreateFormBase({
             onChange={(e) => updateFormData("announcementDate", e.target.value)}
             placeholder="2025-10-08"
           />
-        </div>
+        </article>
 
         {/* 등록 기간 */}
-        <div className={styles.form_group}>
+        <article className={styles.form_group}>
           <label className={styles.form_label}>
             등록 기간<span className={styles.required}>*</span>
           </label>
@@ -516,10 +516,10 @@ export default function CampaignCreateFormBase({
             }
             placeholder="2025-10-08 ~ 2025-10-19"
           />
-        </div>
+        </article>
 
         {/* 키워드 */}
-        <div className={styles.form_group}>
+        <article className={styles.form_group}>
           <label className={styles.form_label}>
             키워드<span className={styles.required}>*</span>
           </label>
@@ -530,15 +530,15 @@ export default function CampaignCreateFormBase({
             onChange={(e) => updateFormData("keywords", e.target.value)}
             placeholder="#키워드 #태그 #입력"
           />
-        </div>
-      </div>
+        </article>
+      </section>
 
       {/* 캠페인 안내 섹션 */}
-      <div className={styles.section}>
+      <section className={styles.section}>
         <h2 className={styles.section_title}>캠페인 안내</h2>
 
         {/* 간편 안내 */}
-        <div className={styles.form_group}>
+        <article className={styles.form_group}>
           <label className={styles.form_label}>간편 안내</label>
           <textarea
             className={styles.form_textarea}
@@ -547,10 +547,10 @@ export default function CampaignCreateFormBase({
             placeholder="캠페인 안내 사항을 입력하세요"
             rows={10}
           />
-        </div>
+        </article>
 
         {/* 참여/제출 옵션 */}
-        <div className={styles.form_group}>
+        <article className={styles.form_group}>
           <label className={styles.form_label}>
             참여/제출 옵션<span className={styles.required}>*</span>
           </label>
@@ -674,10 +674,10 @@ export default function CampaignCreateFormBase({
             />
             <span>본문 키워드/태그 첨부</span>
           </label>
-        </div>
+        </article>
 
         {/* 안내 사항 */}
-        <div className={styles.form_group}>
+        <article className={styles.form_group}>
           <label className={styles.form_label}>
             안내 사항<span className={styles.required}>*</span>
           </label>
@@ -688,10 +688,10 @@ export default function CampaignCreateFormBase({
             placeholder="상세한 안내 사항을 입력하세요"
             rows={10}
           />
-        </div>
+        </article>
 
         {/* 유의 사항 */}
-        <div className={styles.form_group}>
+        <article className={styles.form_group}>
           <label className={styles.form_label}>유의 사항</label>
           <div className={styles.notice_content}>
             <ul>
@@ -733,20 +733,8 @@ export default function CampaignCreateFormBase({
               </li>
             </ul>
           </div>
-        </div>
-      </div>
-
-      {/* 긴급 체크박스 */}
-      <div className={styles.urgent_checkbox}>
-        <label className={styles.checkbox_label}>
-          <input
-            type="checkbox"
-            checked={formData.isUrgent}
-            onChange={(e) => updateFormData("isUrgent", e.target.checked)}
-          />
-          <span>긴급</span>
-        </label>
-      </div>
+        </article>
+      </section>
 
       {/* 등록하기 버튼 */}
       <div className={styles.submit_button_container}>

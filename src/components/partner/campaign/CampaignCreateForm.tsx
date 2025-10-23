@@ -21,7 +21,7 @@
 "use client";
 
 import { useState } from "react";
-import styles from "../../../styles/partner/campaign_create.module.css";
+import styles from "../../../styles/partner/campaign_create/campaign_create.module.css";
 
 interface CampaignCreateFormProps {
   onSubmit: (formData: CampaignFormData) => void;
