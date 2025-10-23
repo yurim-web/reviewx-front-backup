@@ -7,9 +7,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 24px 0;
+  padding: 24px 40px;
   border-bottom: 1px solid #e0e0e0;
-  margin-bottom: 24px;
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 100;
 }
 
 .page_title {
@@ -32,9 +35,9 @@
 
 /* 폼 컨테이너 */
 .campaign_form {
-  max-width: 920px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 40px 40px;
 }
 
 /* 섹션 */

@@ -46,6 +46,9 @@ export default function CampaignCard({
   const handleButtonClick = (buttonText: string) => {
     if (buttonText === "구매 영수증 등록하기") {
       setIsReceiptModalOpen(true);
+    } else if (buttonText === "패널티 내역보기") {
+      // 패널티 내역 페이지로 이동
+      window.location.href = "/partner/campaign_management/penalty";
     } else {
       // 다른 버튼들의 로직 처리
       console.log(`${buttonText} 버튼 클릭됨`);
@@ -53,114 +56,72 @@ export default function CampaignCard({
   };
 
   /**
-   * 각 탭별로 표시할 버튼들 결정
+   * 현재 탭과 캠페인 subStatus에 따른 버튼 텍스트 결정
    */
-  const getCampaignButtons = () => {
+  const getButtonText = () => {
+    // subStatus 기반으로 버튼 결정 (USER와 동일한 방식)
+    if (campaign.subStatus === "applicant_management") {
+      return "신청내역 확인하기";
+    } else if (campaign.subStatus === "winner_selection") {
+      return "당첨자 선정하기";
+    } else if (campaign.subStatus === "content_review") {
+      return `콘텐츠 확인하기 (${campaign.submissions || 0})`;
+    } else if (campaign.subStatus === "penalty") {
+      return "패널티 내역보기";
+    }
+
+    // fallback: subStatus가 없는 경우 탭 기반으로 결정
     switch (activeTab) {
       case "예정":
-        return [
-          { text: "캠페인 삭제하기", type: "secondary" },
-          { text: "캠페인 수정하기", type: "primary" },
-        ];
-
+        return "캠페인 수정하기";
       case "신청":
-        return [
-          { text: "캠페인 관리하기", type: "secondary" },
-          { text: "신청내역 확인하기", type: "primary" },
-        ];
-
+        return "신청내역 확인하기";
       case "진행":
-        // selected가 0이면 당첨자 선정 단계, 0보다 크면 콘텐츠 검수/확인 단계
-        if ((campaign.selected || 0) === 0) {
-          return [{ text: "당첨자 선정하기", type: "primary" }];
-        } else {
-          return [
-            {
-              text: `콘텐츠 검수하기 (${campaign.submissions || 0})`,
-              type: "secondary",
-            },
-            {
-              text: `콘텐츠 확인하기 (${campaign.submissions || 0})`,
-              type: "primary",
-            },
-          ];
-        }
-
+        return "당첨자 선정하기";
       case "종료":
-        return [
-          {
-            text: `콘텐츠 검수하기 (${campaign.submissions || 0})`,
-            type: "secondary",
-          },
-          {
-            text: `콘텐츠 확인하기 (${campaign.submissions || 0})`,
-            type: "primary",
-          },
-        ];
-
+        return `콘텐츠 확인하기 (${campaign.submissions || 0})`;
       case "취소":
-        return [{ text: "패널티 내역보기", type: "danger" }];
-
-      case "전체":
-        // 전체 탭에서는 캠페인 상태에 따라 버튼 결정
-        switch (campaign.status) {
-          case "신청":
-            return [
-              { text: "캠페인 관리하기", type: "secondary" },
-              { text: "신청내역 확인하기", type: "primary" },
-            ];
-          case "선정":
-            // selected가 0이면 당첨자 선정 단계, 0보다 크면 콘텐츠 검수/확인 단계
-            if ((campaign.selected || 0) === 0) {
-              return [{ text: "당첨자 선정하기", type: "primary" }];
-            } else {
-              return [
-                {
-                  text: `콘텐츠 검수하기 (${campaign.submissions || 0})`,
-                  type: "secondary",
-                },
-                {
-                  text: `콘텐츠 확인하기 (${campaign.submissions || 0})`,
-                  type: "primary",
-                },
-              ];
-            }
-          case "완료":
-            return [
-              {
-                text: `콘텐츠 검수하기 (${campaign.submissions || 0})`,
-                type: "secondary",
-              },
-              {
-                text: `콘텐츠 확인하기 (${campaign.submissions || 0})`,
-                type: "primary",
-              },
-            ];
-          case "취소/반려":
-            return [{ text: "패널티 내역보기", type: "danger" }];
-          default:
-            return [{ text: "캠페인 관리하기", type: "secondary" }];
-        }
-
+        return "패널티 내역보기";
       default:
-        return [{ text: "캠페인 관리하기", type: "secondary" }];
+        return "캠페인 관리하기";
     }
   };
 
   /**
-   * 버튼 타입에 따른 스타일 클래스 결정
+   * 버튼 텍스트에 따른 스타일 클래스 결정
    */
-  const getButtonStyle = (buttonType: string) => {
-    switch (buttonType) {
-      case "primary":
-        return `${buttonStyles.action_button} ${buttonStyles.primary_button}`;
-      case "secondary":
-        return `${buttonStyles.action_button} ${buttonStyles.secondary_button}`;
-      case "danger":
-        return `${buttonStyles.action_button} ${buttonStyles.danger_button}`;
-      default:
-        return `${buttonStyles.action_button} ${buttonStyles.default_button}`;
+  const getButtonStyle = () => {
+    const buttonText = getButtonText();
+
+    // 주요 액션 버튼 - 검은색 배경 (콘텐츠 등록, 재등록, 구매 영수증 등록 등)
+    if (
+      buttonText === "콘텐츠 등록하기" ||
+      buttonText === "콘텐츠 재등록하기" ||
+      buttonText === "구매 영수증 등록하기" ||
+      buttonText === "구매 영수증 수정하기" ||
+      buttonText === "구매 영수증 재등록하기" ||
+      buttonText === "패널티 해제하기" ||
+      buttonText === "당첨자 선정하기" ||
+      buttonText === "캠페인 수정하기"
+    ) {
+      return `${buttonStyles.action_button} ${buttonStyles.primary_button}`;
     }
+
+    // 경고 버튼 - 빨간색 테두리 (패널티 관련)
+    if (
+      buttonText === "패널티 내역보기" ||
+      buttonText === "콘텐츠 반려 사유보기"
+    ) {
+      return `${buttonStyles.action_button} ${buttonStyles.danger_button}`;
+    }
+
+    // 보조 버튼 - 회색 테두리 (확인하기)
+    if (buttonText.includes("확인하기")) {
+      return `${buttonStyles.action_button} ${buttonStyles.secondary_button}`;
+    }
+
+    // 일반 버튼 - 기본 검은색 테두리
+    return `${buttonStyles.action_button} ${buttonStyles.default_button}`;
   };
 
   /**
@@ -259,15 +220,29 @@ export default function CampaignCard({
 
       {/* 액션 버튼 영역 */}
       <div className={cardStyles.campaign_actions}>
-        {getCampaignButtons().map((button, index) => (
+        {/* 콘텐츠 검수 및 승인 단계: 2개 버튼 표시 */}
+        {campaign.subStatus === "content_review,content_approval" ? (
+          <>
+            <button
+              className={`${buttonStyles.action_button} ${buttonStyles.secondary_button}`}
+            >
+              콘텐츠 검수하기 ({campaign.submissions || 0})
+            </button>
+            <button
+              className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
+            >
+              콘텐츠 확인하기 ({campaign.submissions || 0})
+            </button>
+          </>
+        ) : (
+          /* 그 외의 경우: 상태에 맞는 1개 버튼 표시 */
           <button
-            key={index}
-            className={getButtonStyle(button.type)}
-            onClick={() => handleButtonClick(button.text)}
+            className={getButtonStyle()}
+            onClick={() => handleButtonClick(getButtonText())}
           >
-            {button.text}
+            {getButtonText()}
           </button>
-        ))}
+        )}
       </div>
 
       {/* 구매 영수증 등록 모달 */}

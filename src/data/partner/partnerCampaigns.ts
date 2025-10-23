@@ -35,6 +35,7 @@ export const partnerCampaigns: PartnerCampaign[] = [
     selected: 0,
     brand: "쿠팡",
     brandLogo: "/images/brand_logo/coupang.svg",
+    subStatus: "applicant_management", // 신청 관리 단계
   },
   {
     id: "2",
@@ -50,6 +51,7 @@ export const partnerCampaigns: PartnerCampaign[] = [
     selected: 0,
     brand: "네이버쇼핑",
     brandLogo: "/images/brand_logo/navershop.svg",
+    subStatus: "winner_selection", // 당첨자 선정 단계
   },
   {
     id: "3",
@@ -65,6 +67,7 @@ export const partnerCampaigns: PartnerCampaign[] = [
     selected: 20,
     brand: "쿠팡",
     brandLogo: "/images/brand_logo/coupang.svg",
+    subStatus: "content_review,content_approval", // 콘텐츠 검수 및 승인 단계 (2개 버튼)
   },
   {
     id: "4",
@@ -81,6 +84,7 @@ export const partnerCampaigns: PartnerCampaign[] = [
     selected: 0,
     brand: "11번가",
     brandLogo: "/images/brand_logo/kakaopre.svg",
+    subStatus: "penalty", // 패널티 상태
   },
   {
     id: "5",
@@ -97,6 +101,7 @@ export const partnerCampaigns: PartnerCampaign[] = [
     selected: 0,
     brand: "쿠팡",
     brandLogo: "/images/brand_logo/coupang.svg",
+    subStatus: "applicant_management", // 신청 관리 단계
   },
   {
     id: "6",
@@ -113,6 +118,7 @@ export const partnerCampaigns: PartnerCampaign[] = [
     selected: 8,
     brand: "네이버쇼핑",
     brandLogo: "/images/brand_logo/navershop.svg",
+    subStatus: "content_review,content_approval", // 콘텐츠 검수 및 승인 단계 (2개 버튼)
   },
   {
     id: "7",
@@ -128,6 +134,7 @@ export const partnerCampaigns: PartnerCampaign[] = [
     selected: 0,
     brand: "쿠팡",
     brandLogo: "/images/brand_logo/coupang.svg",
+    subStatus: "applicant_management", // 신청 관리 단계
   },
   {
     id: "8",
@@ -144,6 +151,7 @@ export const partnerCampaigns: PartnerCampaign[] = [
     selected: 10,
     brand: "11번가",
     brandLogo: "/images/brand_logo/kakaopre.svg",
+    subStatus: "content_review,content_approval", // 콘텐츠 검수 및 승인 단계 (2개 버튼)
   },
 ];
 
