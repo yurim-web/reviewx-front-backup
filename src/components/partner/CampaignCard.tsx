@@ -70,8 +70,8 @@ export default function CampaignCard({
       return "패널티 내역보기";
     }
 
-    // fallback: subStatus가 없는 경우 탭 기반으로 결정
-    switch (activeTab) {
+    // fallback: subStatus가 없는 경우 캠페인 status 기반으로 결정
+    switch (campaign.status) {
       case "예정":
         return "캠페인 수정하기";
       case "신청":
@@ -180,7 +180,7 @@ export default function CampaignCard({
 
             {/* 신청자 수 표시 */}
             <div className={cardStyles.applicant_count}>
-              {campaign.status === "선정" ? (
+              {campaign.status === "선정" || campaign.status === "진행" ? (
                 // 진행 중인 캠페인: 검수/제출/선정 수 표시
                 <>
                   <span className={cardStyles.applicant_current}>
@@ -189,6 +189,21 @@ export default function CampaignCard({
                   <span className={cardStyles.applicant_separator}>|</span>
                   <span className={cardStyles.applicant_current}>
                     제출 {campaign.submissions || 0}명
+                  </span>
+                  <span className={cardStyles.applicant_separator}>|</span>
+                  <span className={cardStyles.applicant_total}>
+                    선정 {campaign.selected || 0}명
+                  </span>
+                </>
+              ) : campaign.status === "종료" || campaign.status === "취소" ? (
+                // 종료/취소 캠페인: 신청/모집/선정 수 표시
+                <>
+                  <span className={cardStyles.applicant_current}>
+                    신청 {campaign.applicants || 0}명
+                  </span>
+                  <span className={cardStyles.applicant_separator}>|</span>
+                  <span className={cardStyles.applicant_current}>
+                    모집 {campaign.recruits || 0}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
                   <span className={cardStyles.applicant_total}>
@@ -232,6 +247,22 @@ export default function CampaignCard({
               className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
             >
               콘텐츠 확인하기 ({campaign.submissions || 0})
+            </button>
+          </>
+        ) : campaign.subStatus === "campaign_edit,applicant_management" ? (
+          /* 캠페인 수정 및 신청 관리 단계: 2개 버튼 표시 */
+          <>
+            <button
+              className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
+              onClick={() => handleButtonClick("캠페인 관리하기")}
+            >
+              캠페인 관리하기
+            </button>
+            <button
+              className={`${buttonStyles.action_button} ${buttonStyles.secondary_button}`}
+              onClick={() => handleButtonClick("신청내역 확인하기")}
+            >
+              신청내역 확인하기
             </button>
           </>
         ) : (

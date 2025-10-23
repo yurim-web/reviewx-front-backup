@@ -44,21 +44,15 @@ export default function CampaignList({
       case "전체":
         return true; // 모든 캠페인 표시
       case "예정":
-        // 아직 신청 시작 전 (7일 이상 남은 캠페인)
-        return campaign.status === "신청" && campaign.remainingDays > 7;
+        return campaign.status === "예정";
       case "신청":
-        // 현재 신청 받고 있음 (7일 이내, 아직 마감 안된 캠페인)
-        return (
-          campaign.status === "신청" &&
-          campaign.remainingDays <= 7 &&
-          campaign.remainingDays > 0
-        );
+        return campaign.status === "신청";
       case "진행":
-        return campaign.status === "선정"; // 진행 상태는 선정 상태로 매핑
+        return campaign.status === "진행";
       case "종료":
-        return campaign.status === "완료"; // 종료 상태는 완료 상태로 매핑
+        return campaign.status === "종료";
       case "취소":
-        return campaign.status === "취소/반려"; // 취소 상태는 취소/반려 상태로 매핑
+        return campaign.status === "취소";
       default:
         return true;
     }

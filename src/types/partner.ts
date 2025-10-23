@@ -2,8 +2,8 @@
 export interface PartnerCampaign {
   id: string;
   title: string;
-  type: "배송형" | "방문형";
-  status: "신청" | "선정" | "완료" | "취소/반려";
+  type: "배송형" | "방문형" | "구매평" | "기자단" | "미션형";
+  status: "예정" | "신청" | "진행" | "종료" | "취소";
   deadline: string;
   remainingDays: number; // 남은 일수 (동적 계산된 값)
   statusMessage: string; // 상태별 메시지 (데이터에서 제공)
