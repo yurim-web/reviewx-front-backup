@@ -34,7 +34,6 @@
   border: 1px solid #d9d9d9;
   border-radius: 8px;
   padding: 20px;
-  font-family: "Pretendard", sans-serif;
   font-weight: 500;
   font-size: 13px;
   line-height: 1.77;
@@ -64,4 +63,21 @@
   left: 0;
   color: #999999;
   font-size: 16px;
+}
+
+/* 밑줄 스타일 */
+.highlight {
+  color: #999;
+  font-family: Pretendard;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 23px;
+  letter-spacing: -0.26px;
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-skip-ink: auto;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: auto;
+  text-underline-position: from-font;
 }

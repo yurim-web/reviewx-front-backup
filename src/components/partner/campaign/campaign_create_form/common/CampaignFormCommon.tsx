@@ -16,7 +16,10 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { CampaignType, PlatformType, CampaignFormData } from "@/types/campaign";
-import styles from "@/styles/partner/campaign_create/campaign_create.module.css";
+// 분리된 CSS 모듈들 import
+import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
+import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
+import guideStyles from "@/styles/partner/campaign_create/campaign_guide.module.css";
 import dropdownStyles from "@/styles/partner/campaign_create/custom_dropdown.module.css";
 
 // 캠페인 유형 옵션
@@ -90,17 +93,17 @@ export function CampaignTypeSelector({
   onTypeChange,
 }: CampaignTypeSelectorProps) {
   return (
-    <article className={styles.form_group}>
-      <label className={styles.form_label}>
-        캠페인 유형<span className={styles.required}>*</span>
+    <article className={infoStyles.form_group}>
+      <label className={infoStyles.form_label}>
+        캠페인 유형<span className={infoStyles.required}>*</span>
       </label>
-      <div className={styles.campaign_type_buttons}>
+      <div className={headerStyles.campaign_type_buttons}>
         {campaignTypes.map((type) => (
           <button
             key={type}
             type="button"
-            className={`${styles.campaign_type_button} ${
-              currentType === type ? styles.active : ""
+            className={`${headerStyles.campaign_type_button} ${
+              currentType === type ? headerStyles.active : ""
             }`}
             onClick={() => onTypeChange(type)}
           >

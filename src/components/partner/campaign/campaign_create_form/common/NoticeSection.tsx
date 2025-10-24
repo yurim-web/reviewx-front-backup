@@ -23,7 +23,8 @@ export default function NoticeSection() {
         <ul>
           <li>
             선정된 캠페인은 타인에게 양도 · 판매 · 교환이 불가합니다. 적발 시
-            제품/서비스 정가 및 배송비가 청구되며, 영구 차단될 수 있습니다.
+            <span className={styles.highlight}>제품/서비스 정가 및 배송비가 청구되며, 영구 차단</span>될 수
+            있습니다.
           </li>
           <li>
             허위 · 과장 · 비방 · 타사 비교 등 소비자를 오인시킬 수 있는 표현은

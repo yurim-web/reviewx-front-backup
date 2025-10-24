@@ -41,9 +41,9 @@ export interface CampaignFormData {
   visitLink?: string; // 방문형에만 필요
   visitAddress?: string; // 방문형에만 필요
   addressDetail?: string; // 방문형에만 필요
-  currentPoints: number;
-  additionalPoints: number;
-  recruitmentCount: number;
+  currentPoints: string | number;
+  additionalPoints: string | number;
+  recruitmentCount: string | number;
   recruitmentPeriod: string;
   announcementDate: string;
   registrationPeriod: string;
@@ -53,10 +53,10 @@ export interface CampaignFormData {
   adultOnly: boolean;
   allowReParticipation: boolean;
   allowLateSubmission: boolean;
-  minTextLength: number;
-  minImageCount: number;
-  videoCount?: number;
-  videoDuration?: number;
+  minTextLength: string | number;
+  minImageCount: string | number;
+  videoCount?: string | number;
+  videoDuration?: string | number;
   requireLinkAttachment: boolean;
   requireKeywordAttachment: boolean;
 

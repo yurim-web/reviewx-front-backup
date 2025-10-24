@@ -25,8 +25,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import ReviewCampaignForm from "@/components/partner/campaign/campaign_create_form/ReviewCampaignForm";
 import { CampaignFormData } from "@/types/campaign";
-import campaignCreateStyles from "@/styles/partner/campaign_create/campaign_create.module.css";
+// 분리된 CSS 모듈들 import
 import layoutStyles from "../../../../../styles/partner/layout.module.css";
+import PageHeader from "@/components/partner/campaign/campaign_create_form/common/PageHeader";
 
 export default function ReviewCampaignCreatePage() {
   const router = useRouter();
@@ -59,25 +60,11 @@ export default function ReviewCampaignCreatePage() {
       {/* 메인 컨텐츠 영역 */}
       <div className={layoutStyles.main_content}>
         {/* 페이지 헤더 */}
-        <div className={campaignCreateStyles.page_header}>
-          <h1 className={campaignCreateStyles.page_title}>새 캠페인 등록</h1>
-
-          {/* 긴급 체크박스 */}
-          <div className={campaignCreateStyles.header_urgent_checkbox}>
-            <label
-              className={`${campaignCreateStyles.checkbox_label} ${
-                isUrgent ? campaignCreateStyles.urgent_checked : ""
-              }`}
-            >
-              <span>긴급</span>
-              <input
-                type="checkbox"
-                checked={isUrgent}
-                onChange={(e) => setIsUrgent(e.target.checked)}
-              />
-            </label>
-          </div>
-        </div>
+        <PageHeader
+          title="새 캠페인 등록"
+          onUrgentChange={setIsUrgent}
+          initialUrgent={isUrgent}
+        />
 
         {/* 구매평 캠페인 등록 폼 */}
         <ReviewCampaignForm

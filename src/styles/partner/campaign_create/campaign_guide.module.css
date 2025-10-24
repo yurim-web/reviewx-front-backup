@@ -1,0 +1,400 @@
+/* ========================================
+   📝 캠페인 생성 폼 안내 및 버튼 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - 모든 캠페인 생성 폼 컴포넌트
+ * 
+ * 주요 기능:
+ * - 캠페인 안내 섹션
+ * - 옵션 입력 박스
+ * - 체크박스
+ * - 제출 버튼
+ * - 유의사항
+ */
+
+/* 체크박스 그룹 - 동의/선택 항목들 */
+.checkbox_group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* 체크박스 라벨 - 텍스트 + 체크박스 */
+.checkbox_label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: #444;
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 체크박스 입력 요소 - 긴급 체크박스 제외 */
+.checkbox_label:not(.header_urgent_checkbox .checkbox_label)
+  input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  appearance: none;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.checkbox_label:not(.header_urgent_checkbox .checkbox_label)
+  input[type="checkbox"]:checked {
+  border-color: #444444;
+  background: #fff;
+}
+
+.checkbox_label:not(.header_urgent_checkbox .checkbox_label)
+  input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #444444;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* 옵션 입력 그룹 */
+.option_input_group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.option_label {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #444444;
+  white-space: nowrap;
+  letter-spacing: -0.32px;
+}
+
+.number_input_group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.number_input {
+  width: 80px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+  color: #444444;
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  text-align: center;
+  letter-spacing: -0.32px;
+}
+
+.number_input:focus {
+  outline: none;
+  border-color: #444444;
+}
+
+.input_unit {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #444444;
+  white-space: nowrap;
+  letter-spacing: -0.32px;
+}
+
+/* 비디오 입력 그룹 */
+.video_input_group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 간편 안내 옵션 박스 */
+.option_input_box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+/* 옵션 입력 박스 체크박스 - 긴급 체크박스 제외 */
+.option_input_box:not(.header_urgent_checkbox) input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  appearance: none;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.option_input_box:not(.header_urgent_checkbox) input[type="checkbox"]:checked {
+  border-color: #444444;
+  background: #fff;
+}
+
+.option_input_box:not(.header_urgent_checkbox)
+  input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #444444;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.option_input_box .option_label {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #444444;
+  letter-spacing: -0.32px;
+  flex: 1;
+  cursor: pointer;
+}
+
+.option_input_box .option_value {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #444444;
+  letter-spacing: -0.32px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.option_input_value {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.underline_input {
+  border: none;
+  border-bottom: 1px solid #d9d9d9;
+  background: transparent;
+  color: #444;
+  text-align: center;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+
+  width: 40px;
+  padding: 4px 0;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.underline_input::-webkit-outer-spin-button,
+.underline_input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+.unit_text {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #444444;
+  letter-spacing: -0.32px;
+  white-space: nowrap;
+}
+
+/* 고정 높이 textarea */
+.fixed_height_textarea {
+  width: 100%;
+  height: 280px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  background: #fff;
+  padding: 20px;
+  outline: none;
+  resize: none !important;
+  overflow-y: auto;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+
+  /* 인풋창 속 글자 css */
+  color: #444;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 24px; /* 171.429% */
+  letter-spacing: -0.28px;
+}
+
+.fixed_height_textarea::placeholder {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 24px; 
+  letter-spacing: -0.28px;
+}
+
+/* 제출 버튼 컨테이너 */
+.submit_button_container {
+  display: flex;
+  justify-content: center;
+}
+
+/* 제출 버튼 - "캠페인 등록하기" */
+.submit_button {
+  width: 100%;
+  height: 56px;
+  border: none;
+  border-radius: 8px;
+  background: #555555;
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.2;
+  cursor: pointer;
+  letter-spacing: -0.32px;
+}
+
+.submit_button:hover:not(:disabled) {
+  background: #444444;
+}
+
+.submit_button:disabled {
+  background: #999999;
+  cursor: not-allowed;
+}
+
+/* 유의사항 */
+.notice_content {
+  background: #f6f6f6;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 20px;
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.77;
+  color: #999999;
+  letter-spacing: -0.26px;
+}
+
+.notice_content ul {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.notice_content li {
+  margin-bottom: 0;
+  position: relative;
+  padding-left: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.notice_content li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #000000;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.notice_content strong {
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+/* 환불방법 안내 */
+.refund_guide {
+  margin-top: 16px;
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.77;
+  color: #999999;
+  letter-spacing: -0.26px;
+}
+
+.refund_guide ol {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.refund_guide li {
+  margin-bottom: 0;
+}
+
+/* 개발자 노트 */
+.developer_note {
+  margin-top: 16px;
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.77;
+  color: #999999;
+  letter-spacing: -0.26px;
+  word-break: break-all;
+}
+
+/* 스크롤바 스타일링 */
+.fixed_height_textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+.fixed_height_textarea::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.fixed_height_textarea::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 4px;
+}
+
+.fixed_height_textarea::-webkit-scrollbar-thumb:hover {
+  background: #999999;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .option_input_group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .video_input_group {
+    flex-wrap: wrap;
+  }
+}

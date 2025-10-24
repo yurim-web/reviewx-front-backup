@@ -1,0 +1,162 @@
+/* ========================================
+   📝 캠페인 생성 폼 헤더 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - 모든 캠페인 생성 폼 컴포넌트
+ * 
+ * 주요 기능:
+ * - 페이지 헤더
+ * - 긴급 체크박스
+ * - 캠페인 유형 선택 버튼
+ */
+
+/* 페이지 헤더 - 상단 고정 헤더 */
+.page_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 40px;
+  border-bottom: 1px solid #e0e0e0;
+  position: sticky;
+  top: 80px;
+  background-color: white;
+  z-index: 100;
+}
+
+/* 페이지 제목 - "새 캠페인 등록" */
+.page_title {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1.2;
+  color: #444444;
+  margin: 0;
+  letter-spacing: -0.4px;
+}
+
+/* 긴급 체크박스 - 헤더 우측 */
+.urgent_checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 헤더 긴급 체크박스 컨테이너 */
+.header_urgent_checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.checkbox_label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 긴급 체크박스 - 체크된 상태 - 더 구체적인 선택자 */
+.header_urgent_checkbox .checkbox_label input[type="checkbox"]:checked,
+div.header_urgent_checkbox label.checkbox_label input[type="checkbox"]:checked {
+  border: 2px solid #ff2626 !important;
+  background: white !important;
+}
+
+.header_urgent_checkbox .checkbox_label input[type="checkbox"]:checked::after,
+div.header_urgent_checkbox
+  label.checkbox_label
+  input[type="checkbox"]:checked::after {
+  content: "✓" !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  color: #ff2626 !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  display: block !important;
+}
+
+.header_urgent_checkbox .checkbox_label.urgent_checked {
+  color: #ff2626;
+  font-weight: 600;
+}
+
+/* 긴급 체크박스 전용 클래스 */
+.urgent_checkbox {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid #d9d9d9 !important;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  appearance: none;
+  position: relative;
+}
+
+.urgent_checkbox:hover {
+  border-color: #ff2626;
+}
+
+.urgent_checkbox:checked {
+  border: 1.5px solid #ff2626 !important;
+  background: white !important;
+}
+
+.urgent_checkbox:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #ff2626 !important;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* 캠페인 유형 선택 버튼들 - 배송형, 방문형 등 */
+.campaign_type_buttons {
+  display: flex;
+  gap: 20px;
+}
+
+/* 개별 캠페인 유형 버튼 */
+.campaign_type_button {
+  flex: 1;
+  min-width: 168px;
+  height: 56px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  background: #fff;
+  color: #848484;
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: -0.32px;
+}
+
+.campaign_type_button:hover {
+  border-color: #444444;
+  color: #444444;
+}
+
+/* 선택된 캠페인 유형 버튼 */
+.campaign_type_button.active {
+  border-color: #444444;
+  color: #444444;
+  background: #fff;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .campaign_type_buttons {
+    flex-direction: column;
+  }
+
+  .campaign_type_button {
+    min-width: auto;
+  }
+}
