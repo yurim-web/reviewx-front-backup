@@ -13,10 +13,11 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { CampaignType, PlatformType, CampaignFormData } from "@/types/campaign";
 import styles from "@/styles/partner/campaign_create/campaign_create.module.css";
+import dropdownStyles from "@/styles/partner/campaign_create/custom_dropdown.module.css";
 
 // 캠페인 유형 옵션
 export const campaignTypes: CampaignType[] = [
@@ -112,35 +113,6 @@ export function CampaignTypeSelector({
 }
 
 /**
- * 플랫폼 선택 컴포넌트
- */
-interface PlatformSelectorProps {
-  value: PlatformType;
-  onChange: (platform: PlatformType) => void;
-}
-
-export function PlatformSelector({ value, onChange }: PlatformSelectorProps) {
-  return (
-    <article className={styles.form_group}>
-      <label className={styles.form_label}>
-        등록 플랫폼<span className={styles.required}>*</span>
-      </label>
-      <select
-        className={styles.form_select}
-        value={value}
-        onChange={(e) => onChange(e.target.value as PlatformType)}
-      >
-        {platforms.map((platform) => (
-          <option key={platform} value={platform}>
-            {platform}
-          </option>
-        ))}
-      </select>
-    </article>
-  );
-}
-
-/**
  * 이미지 업로드 컴포넌트
  */
 export function ImageUpload() {
@@ -159,76 +131,114 @@ export function ImageUpload() {
 }
 
 /**
- * 기본 정보 입력 컴포넌트
+ * 커스텀 드롭다운 컴포넌트
+ *
+ * 목적: Figma 디자인에 맞는 커스텀 드롭다운 UI 제공
+ *
+ * 주요 기능:
+ * - 클릭 시 옵션 리스트 표시/숨김
+ * - 옵션 선택 시 드롭다운 닫기
+ * - 외부 클릭 시 드롭다운 닫기
+ * - 키보드 네비게이션 지원
  */
-interface BasicInfoProps {
-  formData: CampaignFormData;
-  onUpdate: (field: keyof CampaignFormData, value: any) => void;
+interface CustomDropdownProps {
+  value: string;
+  options: string[];
+  onChange: (value: string) => void;
+  placeholder?: string;
 }
 
-export function BasicInfo({ formData, onUpdate }: BasicInfoProps) {
+export function CustomDropdown({
+  value,
+  options,
+  onChange,
+  placeholder = "선택하세요",
+}: CustomDropdownProps) {
+  // 드롭다운 열림/닫힘 상태 관리
+  const [is_open, setIsOpen] = useState(false);
+
+  // 드롭다운 컨테이너 참조
+  const dropdown_ref = useRef<HTMLDivElement>(null);
+
+  // 선택된 옵션의 표시 텍스트
+  const display_text = value || placeholder;
+
+  // 옵션 선택 핸들러
+  const handle_option_select = (option: string) => {
+    onChange(option);
+    setIsOpen(false); // 선택 후 드롭다운 닫기
+  };
+
+  // 드롭다운 토글 핸들러
+  const toggle_dropdown = () => {
+    setIsOpen(!is_open);
+  };
+
+  // 외부 클릭 감지
+  useEffect(() => {
+    const handle_click_outside = (event: MouseEvent) => {
+      if (
+        dropdown_ref.current &&
+        !dropdown_ref.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    // 드롭다운이 열려있을 때만 이벤트 리스너 추가
+    if (is_open) {
+      document.addEventListener("mousedown", handle_click_outside);
+    }
+
+    // 클린업 함수
+    return () => {
+      document.removeEventListener("mousedown", handle_click_outside);
+    };
+  }, [is_open]);
+
   return (
-    <>
-      {/* 캠페인 제목 */}
-      <article className={styles.form_group}>
-        <label className={styles.form_label}>
-          캠페인 제목<span className={styles.required}>*</span>
-        </label>
-        <input
-          type="text"
-          className={styles.form_input}
-          value={formData.title}
-          onChange={(e) => onUpdate("title", e.target.value)}
-          placeholder="캠페인 제목을 입력하세요"
+    <div ref={dropdown_ref} className={dropdownStyles.custom_dropdown}>
+      {/* 드롭다운 버튼 (선택된 값 표시) */}
+      <button
+        type="button"
+        className={`${dropdownStyles.dropdown_button} ${
+          is_open ? dropdownStyles.open : ""
+        }`}
+        onClick={toggle_dropdown}
+        aria-expanded={is_open}
+        aria-haspopup="listbox"
+      >
+        <span className={dropdownStyles.dropdown_text}>{display_text}</span>
+        {/* 화살표 아이콘 */}
+        <img
+          src="/images/icons/dropdown_arrow.svg"
+          alt="드롭다운 화살표"
+          className={`${dropdownStyles.dropdown_arrow} ${
+            is_open ? dropdownStyles.rotated : ""
+          }`}
         />
-      </article>
+      </button>
 
-      {/* 카테고리 */}
-      <article className={styles.form_group}>
-        <label className={styles.form_label}>
-          카테고리<span className={styles.required}>*</span>
-        </label>
-        <select
-          className={styles.form_select}
-          value={formData.category}
-          onChange={(e) => onUpdate("category", e.target.value)}
-        >
-          {categories.map((category) => (
-            <option key={category} value={category}>
-              {category}
-            </option>
+      {/* 드롭다운 옵션 리스트 */}
+      {is_open && (
+        <div className={dropdownStyles.dropdown_options}>
+          {options.map((option) => (
+            <button
+              key={option}
+              type="button"
+              className={`${dropdownStyles.dropdown_option} ${
+                value === option ? dropdownStyles.selected : ""
+              }`}
+              onClick={() => handle_option_select(option)}
+              role="option"
+              aria-selected={value === option}
+            >
+              {option}
+            </button>
           ))}
-        </select>
-      </article>
-
-      {/* 브랜드명 */}
-      <article className={styles.form_group}>
-        <label className={styles.form_label}>
-          브랜드명<span className={styles.required}>*</span>
-        </label>
-        <input
-          type="text"
-          className={styles.form_input}
-          value={formData.brandName}
-          onChange={(e) => onUpdate("brandName", e.target.value)}
-          placeholder="브랜드명을 입력하세요"
-        />
-      </article>
-
-      {/* 제공 내역 */}
-      <article className={styles.form_group}>
-        <label className={styles.form_label}>
-          제공 내역<span className={styles.required}>*</span>
-        </label>
-        <input
-          type="text"
-          className={styles.form_input}
-          value={formData.providedItems}
-          onChange={(e) => onUpdate("providedItems", e.target.value)}
-          placeholder="제공 내역을 입력하세요"
-        />
-      </article>
-    </>
+        </div>
+      )}
+    </div>
   );
 }
 

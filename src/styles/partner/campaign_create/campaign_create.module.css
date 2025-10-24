@@ -170,6 +170,17 @@
   border-color: #444444;
 }
 
+/* 숫자 입력 필드 스피너 제거 */
+.form_input[type="number"]::-webkit-outer-spin-button,
+.form_input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.form_input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 .form_textarea {
   height: auto;
   min-height: 120px;
@@ -245,19 +256,26 @@
   display: flex;
   gap: 12px;
   align-items: center;
+  position: relative;
 }
 
 .points_input_group .form_input {
   flex: 1;
+  padding-right: 40px; /* P 글자를 위한 공간 확보 */
 }
 
 .points_unit {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
   font-family: "Pretendard", sans-serif;
   font-weight: 500;
   font-size: 16px;
   color: #444444;
   white-space: nowrap;
   letter-spacing: -0.32px;
+  pointer-events: none; /* 클릭 방해하지 않도록 */
 }
 
 .charge_button {
@@ -286,19 +304,26 @@
   display: flex;
   gap: 12px;
   align-items: center;
+  position: relative;
 }
 
 .count_input_group .form_input {
   flex: 1;
+  padding-right: 40px; /* 명 글자를 위한 공간 확보 */
 }
 
 .count_unit {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
   font-family: "Pretendard", sans-serif;
   font-weight: 500;
   font-size: 16px;
   color: #444444;
   white-space: nowrap;
   letter-spacing: -0.32px;
+  pointer-events: none; /* 클릭 방해하지 않도록 */
 }
 
 /* 체크박스 그룹 */
@@ -431,12 +456,7 @@
   font-size: 13px;
   line-height: 1.77;
   color: #999999;
-  margin-bottom: 8px;
   letter-spacing: -0.26px;
-}
-
-.notice_content li:last-child {
-  margin-bottom: 0;
 }
 
 .notice_content strong {
@@ -507,4 +527,236 @@
   .video_input_group {
     flex-wrap: wrap;
   }
+}
+
+/* 간편 안내 옵션 박스 */
+.option_input_box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  background: #fff;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.option_input_box:hover {
+  border-color: #444444;
+}
+
+.option_input_box input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  appearance: none;
+  position: relative;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.option_input_box input[type="checkbox"]:checked {
+  border-color: #444444;
+  background: #444444;
+}
+
+.option_input_box input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.option_input_box .option_label {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #444444;
+  letter-spacing: -0.32px;
+  flex: 1;
+  cursor: pointer;
+}
+
+.option_input_box .option_value {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #444444;
+  letter-spacing: -0.32px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.option_input_value {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.underline_input {
+  border: none;
+  border-bottom: 1px solid #d9d9d9;
+  background: transparent;
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #444444;
+  letter-spacing: -0.32px;
+  text-align: center;
+  width: 80px;
+  padding: 4px 0;
+  outline: none;
+  transition: border-color 0.2s ease;
+  /* 숫자 입력 필드 스피너 제거 */
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+
+.underline_input::-webkit-outer-spin-button,
+.underline_input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.underline_input:focus {
+  border-bottom-color: #444444;
+}
+
+.underline_input:hover {
+  border-bottom-color: #444444;
+}
+
+.unit_text {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #444444;
+  letter-spacing: -0.32px;
+  white-space: nowrap;
+}
+
+/* 고정 높이 textarea */
+.fixed_height_textarea {
+  width: 100%;
+  height: 280px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  background: #fff;
+  padding: 16px;
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #444444;
+  letter-spacing: -0.32px;
+  line-height: 1.5;
+  outline: none;
+  resize: none;
+  overflow-y: auto;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.fixed_height_textarea::placeholder {
+  color: #999999;
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 스크롤바 스타일링 */
+.fixed_height_textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+.fixed_height_textarea::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.fixed_height_textarea::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 4px;
+}
+
+.fixed_height_textarea::-webkit-scrollbar-thumb:hover {
+  background: #999999;
+}
+
+/* 환불방법 안내 */
+.refund_guide {
+  margin-top: 16px;
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.77;
+  color: #999999;
+  letter-spacing: -0.26px;
+}
+
+.refund_guide ol {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.refund_guide li {
+  margin-bottom: 0;
+}
+
+.developer_note {
+  margin-top: 16px;
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.77;
+  color: #999999;
+  letter-spacing: -0.26px;
+  word-break: break-all;
+}
+
+/* 유의 사항 */
+.notice_content {
+  background: #f6f6f6;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 20px;
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.77;
+  color: #999999;
+  letter-spacing: -0.26px;
+}
+
+.notice_content ul {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.notice_content li {
+  margin-bottom: 0;
+  position: relative;
+  padding-left: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.notice_content li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #000000;
+  font-weight: bold;
+  font-size: 16px;
 }

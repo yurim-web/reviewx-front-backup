@@ -1,0 +1,67 @@
+/* ========================================
+   📋 유의 사항 섹션 스타일
+   ======================================== */
+
+/**
+ * 유의 사항 섹션 전용 CSS 모듈
+ *
+ * 목적: 모든 캠페인 폼에서 공통으로 사용되는 유의 사항 스타일
+ *
+ * 주요 스타일:
+ * - 폼 그룹 레이아웃
+ * - 유의 사항 컨테이너 스타일링
+ * - 불릿 포인트 리스트 스타일링
+ */
+
+/* 폼 그룹 */
+.form_group {
+  margin-bottom: 32px;
+}
+
+.form_label {
+  display: block;
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: #444444;
+  letter-spacing: -0.28px;
+  margin-bottom: 12px;
+}
+
+/* 유의 사항 컨테이너 */
+.notice_content {
+  background: #f6f6f6;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 20px;
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.77;
+  color: #999999;
+  letter-spacing: -0.26px;
+}
+
+/* 리스트 스타일 */
+.notice_content ul {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.notice_content li {
+  margin-bottom: 0;
+  position: relative;
+  padding-left: 16px;
+  display: flex;
+  align-items: center;
+}
+
+/* 불릿 포인트 */
+.notice_content li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #999999;
+  font-size: 16px;
+}
