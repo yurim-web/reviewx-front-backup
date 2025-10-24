@@ -20,7 +20,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import styles from "../../../styles/user/campaign_management/content_registration.module.css";
+import styles from "../../../../styles/user/campaign_management/modals/content_registration.module.css";
 
 interface ContentRegistrationModalProps {
   isOpen: boolean;

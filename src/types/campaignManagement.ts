@@ -12,7 +12,7 @@ export interface CampaignApplication {
   status: "신청" | "선정" | "완료" | "취소/반려"; // 캠페인 진행 상태
   remainingDays: number; // 남은 일수
   statusMessage: string; // 상태별 메시지 (데이터에서 제공)
-  type: "배송형" | "방문형"; // 캠페인 타입
+  type: "배송형" | "방문형" | "구매평" | "기자단" | "미션형"; // 캠페인 타입
   isUrgent: boolean; // 마감 임박 여부
 
   // 추가 상태 정보 (옵셔널)

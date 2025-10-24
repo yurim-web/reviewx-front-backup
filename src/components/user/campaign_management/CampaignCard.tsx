@@ -25,7 +25,9 @@ import cardStyles from "../../../styles/user/campaign_management/campaign_card.m
 import buttonStyles from "../../../styles/user/campaign_management/buttons.module.css";
 import { CamTag, CamCateIcon } from "./CampaignTag";
 import ReceiptRegistrationModal from "./ReceiptRegistrationModal";
-import ContentRegistrationModal from "./ContentRegistrationModal";
+import ContentRegistrationModal from "./modals/ContentRegistrationModal";
+import ImageUploadModal from "./modals/ImageUploadModal";
+import CombinedContentModal from "./modals/CombinedContentModal";
 
 interface CampaignCardProps {
   campaign: CampaignApplication;
@@ -266,12 +268,28 @@ export default function CampaignCard({
         )}
       </div>
 
-      {/* 콘텐츠 등록 모달 */}
-      <ContentRegistrationModal
-        isOpen={isContentModalOpen}
-        onClose={handleCloseModal}
-        campaignTitle={campaign.title}
-      />
+      {/* 캠페인 타입별 콘텐츠 등록 모달 */}
+      {campaign.type === "미션형" && (
+        <CombinedContentModal
+          isOpen={isContentModalOpen}
+          onClose={handleCloseModal}
+          campaignTitle={campaign.title}
+        />
+      )}
+      {campaign.type === "구매평" && (
+        <ImageUploadModal
+          isOpen={isContentModalOpen}
+          onClose={handleCloseModal}
+          campaignTitle={campaign.title}
+        />
+      )}
+      {["배송형", "방문형", "기자단"].includes(campaign.type) && (
+        <ContentRegistrationModal
+          isOpen={isContentModalOpen}
+          onClose={handleCloseModal}
+          campaignTitle={campaign.title}
+        />
+      )}
 
       {/* 구매 영수증 등록 모달 */}
       <ReceiptRegistrationModal
