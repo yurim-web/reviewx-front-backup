@@ -27,28 +27,65 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import styles from "../../../../styles/user/mypage/edit_profile.module.css";
 import SubHeader from "@/components/fragments/SubHeader";
+import { CustomDropdown } from "@/components/partner/campaign/campaign_create_form/common/CampaignFormCommon";
 
 export default function EditProfilePage() {
   const router = useRouter();
 
+  // 은행 옵션 배열
+  const bank_options = [
+    "국민은행",
+    "기업은행",
+    "농협은행",
+    "신한은행",
+    "우리은행",
+    "하나은행",
+    "한국씨티은행",
+    "산업은행",
+    "SC제일은행",
+    "iM뱅크",
+    "경남은행",
+    "광주은행",
+    "부산은행",
+    "산림조합중앙회",
+    "저축은행",
+    "새마을금고",
+    "수협은행",
+    "신협중앙회",
+    "우체국",
+    "전북은행",
+    "제주은행",
+    "도이치은행",
+    "뱅크오브아메리카",
+    "중국건설은행",
+    "중국공상은행",
+    "중국은행",
+    "BNP파리바은행",
+    "HSBCX은행",
+    "JP모간체이스은행",
+    "카카오뱅크",
+    "케이뱅크",
+    "토스뱅크",
+  ];
+
   // 폼 상태 관리
   const [formData, setFormData] = useState({
-    nickname: "양치하는고양이123456",
-    name: "홍길동",
-    email: "gdhong@naver.com",
+    nickname: "",
+    name: "",
+    email: "",
     phone: "",
-    postalCode: "13561",
-    address: "경기 성남시 분당구 정자일로 95",
+    postalCode: "12354545",
+    address: "",
     detailAddress: "",
-    serviceName: "NAVER",
-    accountHolder: "홍길동",
-    bank: "우리은행",
-    accountNumber: "000000000000",
-    ssnFront: "801212",
+    serviceName: "",
+    accountHolder: "",
+    bank: "",
+    accountNumber: "",
+    ssnFront: "",
     ssnBack: "",
   });
 
-  const [isPhoneVerified, setIsPhoneVerified] = useState(true);
+  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -182,8 +219,13 @@ export default function EditProfilePage() {
   useEffect(() => {
     const header = document.querySelector("header");
     if (header) header.style.display = "none";
+
+    // 부드러운 스크롤 동작 설정
+    document.documentElement.style.scrollBehavior = "smooth";
+
     return () => {
       if (header) header.style.display = "block";
+      document.documentElement.style.scrollBehavior = "auto";
     };
   }, []);
 
@@ -265,6 +307,7 @@ export default function EditProfilePage() {
               className={styles.input_field}
               value={formData.nickname}
               onChange={handleInputChange}
+              placeholder="{자동닉네임 혹은 네이버/카카오 닉네임}"
             />
           </article>
 
@@ -280,6 +323,7 @@ export default function EditProfilePage() {
               className={styles.input_field}
               value={formData.name}
               disabled
+              placeholder="{가입 시 등록한 이름}"
             />
           </article>
 
@@ -295,6 +339,7 @@ export default function EditProfilePage() {
               className={styles.input_field}
               value={formData.email}
               disabled
+              placeholder="{가입 시 등록한 이메일}"
             />
           </article>
 
@@ -312,7 +357,7 @@ export default function EditProfilePage() {
                   className={styles.input_field}
                   value={formData.phone}
                   onChange={handlePhoneInputChange}
-                  placeholder="010-0000-0000"
+                  placeholder="{가입 시 등록되어 있는 휴대폰 번호}"
                 />
                 {isPhoneVerified && (
                   <div className={styles.phone_check_icon}>
@@ -347,6 +392,7 @@ export default function EditProfilePage() {
                 className={styles.input_field}
                 value={formData.postalCode}
                 readOnly
+                placeholder="우편번호"
               />
               <button
                 className={styles.postal_button}
@@ -363,6 +409,7 @@ export default function EditProfilePage() {
                 className={styles.input_field}
                 value={formData.address}
                 onChange={handleInputChange}
+                placeholder="기본 주소"
               />
             </div>
             <div className={styles.field_group}>
@@ -373,7 +420,7 @@ export default function EditProfilePage() {
                 className={styles.input_field}
                 value={formData.detailAddress}
                 onChange={handleInputChange}
-                placeholder=""
+                placeholder="상세 주소 입력"
               />
             </div>
           </article>
@@ -393,6 +440,7 @@ export default function EditProfilePage() {
               className={styles.input_field}
               value={formData.accountHolder}
               onChange={handleInputChange}
+              placeholder="회원 이름과 동일한 예금주 입력"
             />
           </article>
 
@@ -401,13 +449,13 @@ export default function EditProfilePage() {
             <label className={styles.field_label} htmlFor="bank">
               은행<span className={styles.required_asterisk}>*</span>
             </label>
-            <input
-              type="text"
-              id="bank"
-              name="bank"
-              className={styles.input_field}
+            <CustomDropdown
               value={formData.bank}
-              onChange={handleInputChange}
+              options={bank_options}
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, bank: value }))
+              }
+              placeholder="은행 선택"
             />
           </article>
 
@@ -423,6 +471,7 @@ export default function EditProfilePage() {
               className={styles.input_field}
               value={formData.accountNumber}
               onChange={handleInputChange}
+              placeholder="- 제외"
             />
           </article>
 
@@ -440,6 +489,7 @@ export default function EditProfilePage() {
                 value={formData.ssnFront}
                 onChange={handleInputChange}
                 maxLength={6}
+                placeholder="생년월일 6자리"
               />
               <span className={styles.ssn_separator}>-</span>
               <input
@@ -450,6 +500,7 @@ export default function EditProfilePage() {
                 value={formData.ssnBack}
                 onChange={handleInputChange}
                 maxLength={7}
+                placeholder="뒤 7자리"
               />
             </div>
           </article>

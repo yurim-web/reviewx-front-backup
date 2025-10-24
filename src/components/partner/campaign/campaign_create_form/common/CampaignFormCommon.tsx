@@ -156,6 +156,8 @@ export function CustomDropdown({
 }: CustomDropdownProps) {
   // 드롭다운 열림/닫힘 상태 관리
   const [is_open, setIsOpen] = useState(false);
+  // 드롭다운이 위쪽으로 열릴지 아래쪽으로 열릴지 결정하는 상태
+  const [is_open_upward, setIsOpenUpward] = useState(false);
 
   // 드롭다운 컨테이너 참조
   const dropdown_ref = useRef<HTMLDivElement>(null);
@@ -171,7 +173,37 @@ export function CustomDropdown({
 
   // 드롭다운 토글 핸들러
   const toggle_dropdown = () => {
-    setIsOpen(!is_open);
+    const new_is_open = !is_open;
+    setIsOpen(new_is_open);
+
+    // 드롭다운이 열릴 때 화면 위치 계산
+    if (new_is_open && dropdown_ref.current) {
+      const rect = dropdown_ref.current.getBoundingClientRect();
+      const viewport_height = window.innerHeight;
+      const dropdown_height = 400; // 드롭다운 최대 높이
+
+      // 화면 하단에서 드롭다운 높이만큼의 여유 공간이 있는지 확인
+      const space_below = viewport_height - rect.bottom;
+      const space_above = rect.top;
+
+      // 아래쪽 공간이 부족하고 위쪽 공간이 충분하면 위쪽으로 열기
+      if (space_below < dropdown_height && space_above > dropdown_height) {
+        setIsOpenUpward(true);
+      } else {
+        setIsOpenUpward(false);
+      }
+
+      // 드롭다운이 열릴 때 해당 요소로 스크롤 (위쪽으로 열릴 때만)
+      if (!is_open_upward) {
+        setTimeout(() => {
+          dropdown_ref.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+            inline: "nearest",
+          });
+        }, 100);
+      }
+    }
   };
 
   // 외부 클릭 감지
@@ -221,7 +253,11 @@ export function CustomDropdown({
 
       {/* 드롭다운 옵션 리스트 */}
       {is_open && (
-        <div className={dropdownStyles.dropdown_options}>
+        <div
+          className={`${dropdownStyles.dropdown_options} ${
+            is_open_upward ? dropdownStyles.dropdown_options_upward : ""
+          }`}
+        >
           {options.map((option) => (
             <button
               key={option}
