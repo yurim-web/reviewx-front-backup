@@ -258,11 +258,6 @@ export default function ReporterCampaignForm({
             onChange={handleImageSelect}
             style={{ display: "none" }}
           />
-
-          {/* 업로드 가이드 텍스트 */}
-          <p className={infoStyles.upload_guide}>
-            최대 7개까지 업로드 가능 (각 파일 최대 5MB)
-          </p>
         </article>
 
         {/* 캠페인 제목 */}
