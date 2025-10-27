@@ -12,7 +12,7 @@
 .dropdown_button {
   width: 100%;
   height: 56px;
-  padding: 0 16px;
+  padding: 20px;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
   background: #fff;
@@ -28,19 +28,6 @@
   align-items: center;
   justify-content: space-between;
   text-align: left;
-}
-
-.dropdown_button:hover {
-  border-color: #444444;
-}
-
-.dropdown_button:focus {
-  outline: none;
-  border-color: #444444;
-}
-
-.dropdown_button.open {
-  border-color: #444444;
 }
 
 /* 드롭다운 텍스트 */
@@ -76,12 +63,12 @@
   background: #fff;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
-  z-index: 1000;
+  z-index: 50;
   max-height: 369px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  /* gap: 4px; */
+
   padding: 4px;
 }
 
@@ -108,20 +95,23 @@
 
 /* 드롭다운 스크롤바 스타일링 */
 .dropdown_options::-webkit-scrollbar {
-  width: 5px;
-  padding: 4px;
+  width: 24px; /* 스크롤바 전체 너비 증가 (border 10px * 2 + thumb 너비 고려) */
 }
 
 .dropdown_options::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 3px;
+  background: transparent; /* 트랙을 투명하게 */
+  margin: 4px 0; /* 위아래 여백 */
 }
 
 .dropdown_options::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
+  background: #d9d9d9;
+  border-radius: 100px;
+  /* 스크롤바가 오른쪽 끝에서 떨어지도록 좌우에 여백 - 10px로 증가 */
+  border: 10px solid transparent;
+  background-clip: padding-box;
 }
 
 .dropdown_options::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: #999999;
+  background-clip: padding-box;
 }

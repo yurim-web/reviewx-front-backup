@@ -27,7 +27,7 @@ export type PlatformType =
 export interface CampaignFormData {
   // 기본 정보
   campaignType: CampaignType;
-  platform: PlatformType;
+  platform?: PlatformType | ""; // 미션형에는 없음
   title: string;
   category: string;
   region?: string; // 방문형에만 필요
@@ -42,9 +42,11 @@ export interface CampaignFormData {
   visitAddress?: string; // 방문형에만 필요
   addressDetail?: string; // 방문형에만 필요
   currentPoints: string | number;
+  purchasePoints?: string | number; // 구매평에만 필요
   additionalPoints: string | number;
   recruitmentCount: string | number;
   recruitmentPeriod: string;
+  purchasePeriod?: string; // 구매평에만 필요
   announcementDate: string;
   registrationPeriod: string;
   keywords: string;
@@ -59,6 +61,8 @@ export interface CampaignFormData {
   videoDuration?: string | number;
   requireLinkAttachment: boolean;
   requireKeywordAttachment: boolean;
+  requireContentLink?: boolean; // 미션형에만 필요
+  requireContentImage?: boolean; // 미션형에만 필요
 
   // 안내 사항
   guidelines: string;

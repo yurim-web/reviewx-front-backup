@@ -138,7 +138,8 @@
   border-radius: 8px;
   background: #fff;
   cursor: pointer;
-  transition: border-color 0.2s ease;
+  /* transition: border-color 0.2s ease; */
+  height: 56px;
 }
 
 /* 옵션 입력 박스 체크박스 - 긴급 체크박스 제외 */
@@ -172,17 +173,21 @@
 }
 
 .option_input_box .option_label {
-  font-family: "Pretendard", sans-serif;
   font-weight: 500;
   font-size: 16px;
-  color: #444444;
+  color: #848484; /* 체크 전 기본 색상 */
   letter-spacing: -0.32px;
   flex: 1;
   cursor: pointer;
 }
 
+/* 체크박스가 체크되었을 때 레이블 색상 변경 */
+.option_input_box input[type="checkbox"]:checked ~ .option_label,
+.option_input_box input[type="checkbox"]:checked + .option_label {
+  color: #444444; /* 체크 후 색상 */
+}
+
 .option_input_box .option_value {
-  font-family: "Pretendard", sans-serif;
   font-weight: 500;
   font-size: 16px;
   color: #444444;
@@ -194,7 +199,7 @@
 .option_input_value {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   flex-shrink: 0;
 }
 
@@ -260,7 +265,7 @@
   color: #848484;
   font-size: 14px;
   font-weight: 500;
-  line-height: 24px; 
+  line-height: 24px;
   letter-spacing: -0.28px;
 }
 
@@ -285,10 +290,7 @@
   letter-spacing: -0.32px;
 }
 
-.submit_button:hover:not(:disabled) {
-  background: #444444;
-}
-
+/* 비활성화? */
 .submit_button:disabled {
   background: #999999;
   cursor: not-allowed;
@@ -370,21 +372,25 @@
 
 /* 스크롤바 스타일링 */
 .fixed_height_textarea::-webkit-scrollbar {
-  width: 8px;
+  width: 24px; /* 스크롤바 전체 너비 증가 (border 10px * 2 + thumb 너비 고려) */
 }
 
 .fixed_height_textarea::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
+  background: transparent; /* 트랙을 투명하게 */
+  margin: 4px 0; /* 위아래 여백 */
 }
 
 .fixed_height_textarea::-webkit-scrollbar-thumb {
   background: #d9d9d9;
-  border-radius: 4px;
+  border-radius: 100px;
+  /* 스크롤바가 오른쪽 끝에서 떨어지도록 좌우에 여백 - 10px로 증가 */
+  border: 10px solid transparent;
+  background-clip: padding-box;
 }
 
 .fixed_height_textarea::-webkit-scrollbar-thumb:hover {
   background: #999999;
+  background-clip: padding-box;
 }
 
 /* 반응형 디자인 */

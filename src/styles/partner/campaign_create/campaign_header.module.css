@@ -138,11 +138,6 @@ div.header_urgent_checkbox
   letter-spacing: -0.32px;
 }
 
-.campaign_type_button:hover {
-  border-color: #444444;
-  color: #444444;
-}
-
 /* 선택된 캠페인 유형 버튼 */
 .campaign_type_button.active {
   border-color: #444444;

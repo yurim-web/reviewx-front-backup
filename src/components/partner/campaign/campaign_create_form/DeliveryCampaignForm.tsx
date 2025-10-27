@@ -17,7 +17,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   CampaignFormData,
@@ -106,6 +106,122 @@ export default function DeliveryCampaignForm({
   };
 
   /**
+   * 숫자에 쉼표 추가하는 포맷팅 함수
+   * 학습 포인트:
+   * - replace(/,/g, ''): 기존 쉼표를 모두 제거 (입력 중에 쉼표가 포함된 경우 처리)
+   * - /,/g: 정규식에서 g 플래그는 전역 검색을 의미 (모든 쉼표를 찾아서 제거)
+   * - Number.isNaN(): 입력값이 숫자가 아닌지 확인
+   * - String(): 숫자나 undefined를 문자열로 변환
+   */
+  const formatNumberWithComma = (
+    value: string | number | undefined
+  ): string => {
+    // undefined나 null이면 빈 문자열 반환
+    if (value === undefined || value === null) return "";
+
+    // 문자열로 변환
+    const stringValue = String(value);
+
+    // 쉼표 제거 후 숫자만 추출
+    const numericValue = stringValue.replace(/,/g, "");
+
+    // 빈 문자열이면 그대로 반환
+    if (numericValue === "") return "";
+
+    // 숫자가 아니면 빈 문자열 반환
+    if (isNaN(Number(numericValue))) return "";
+
+    // 숫자에 쉼표 추가하여 반환
+    return Number(numericValue).toLocaleString("ko-KR");
+  };
+
+  /**
+   * 숫자 입력 핸들러 (숫자만 입력 가능 + 쉼표 자동 추가)
+   * 학습 포인트:
+   * - 이 함수는 키 입력 전에 실행되어 특정 키만 허용
+   * - 숫자(0-9), 백스페이스, Delete, Tab, 화살표 등 특수키만 허용
+   * - Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X 등의 단축키도 허용
+   */
+  const handleNumericInput = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    field: keyof CampaignFormData
+  ) => {
+    // 허용할 키들
+    const allowedKeys = [
+      "Backspace",
+      "Delete",
+      "Tab",
+      "ArrowLeft",
+      "ArrowRight",
+      "ArrowUp",
+      "ArrowDown",
+      "Home",
+      "End",
+    ];
+
+    // Ctrl, Cmd 키와 함께 사용되는 키 (복사, 붙여넣기 등)
+    const isCtrlKey = e.ctrlKey || e.metaKey;
+    const isAllowedKeyWithCtrl = ["a", "c", "v", "x"].includes(
+      e.key.toLowerCase()
+    );
+
+    // 입력된 키가 숫자인지 확인
+    const isNumeric = /^[0-9]$/.test(e.key);
+
+    // 허용된 키가 아니면 입력 방지
+    if (
+      !isNumeric &&
+      !allowedKeys.includes(e.key) &&
+      !(isCtrlKey && isAllowedKeyWithCtrl)
+    ) {
+      e.preventDefault();
+    }
+  };
+
+  /**
+   * 숫자 입력 변경 핸들러 (쉼표 자동 추가)
+   * 학습 포인트:
+   * - 사용자가 입력한 값을 포맷팅된 형태로 화면에 표시
+   * - 실제 데이터는 쉼표 없이 저장
+   * - 커서 위치를 보정하여 자연스러운 입력 경험 제공
+   */
+  const handleNumericChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: keyof CampaignFormData
+  ) => {
+    const inputValue = e.target.value;
+    const inputElement = e.target;
+
+    // 기존 커서 위치 저장
+    const cursorPosition = inputElement.selectionStart || 0;
+
+    // 쉼표 개수 계산
+    const beforeCursor = inputValue.substring(0, cursorPosition);
+    const commasBeforeCursor = (beforeCursor.match(/,/g) || []).length;
+
+    // 실제 값 저장 (쉼표 제거)
+    const numericValue = inputValue.replace(/,/g, "");
+
+    // 화면에 표시할 값 업데이트
+    setFormData((prev) => ({
+      ...prev,
+      [field]: numericValue, // 실제 저장값은 쉼표 없이
+    }));
+
+    // 다음 렌더링 후 커서 위치 복원
+    setTimeout(() => {
+      const newValue = formatNumberWithComma(numericValue);
+      const newCommasBeforeCursor = (
+        newValue.substring(0, cursorPosition).match(/,/g) || []
+      ).length;
+      const cursorOffset = newCommasBeforeCursor - commasBeforeCursor;
+      const newCursorPosition = cursorPosition + cursorOffset;
+
+      inputElement.setSelectionRange(newCursorPosition, newCursorPosition);
+    }, 0);
+  };
+
+  /**
    * 이미지 파일 선택 처리
    */
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -184,6 +300,65 @@ export default function DeliveryCampaignForm({
   };
 
   /**
+   * 필수 요소 유효성 검사
+   * 라벨에 *가 있는 모든 필드를 체크합니다.
+   *
+   * 학습 포인트:
+   * - useMemo: 의존성 배열(formData, uploadedImages)이 변경될 때만 재계산
+   * - trim(): 문자열의 앞뒤 공백 제거 (사용자가 스페이스만 입력한 경우 방지)
+   * - 논리 연산자(&&): 모든 조건이 true여야 true 반환
+   */
+  const isFormValid = useMemo(() => {
+    // 이미지가 최소 1개 이상 업로드되었는지 확인
+    const hasImages = uploadedImages.length > 0;
+
+    // 필수 텍스트 필드들이 모두 입력되었는지 확인
+    // platform은 CustomDropdown에서 기본값이 설정되어 있으므로 별도 체크 불필요
+    const hasRequiredFields =
+      formData.title.trim() !== "" &&
+      formData.category !== "" &&
+      formData.providedItems.trim() !== "" &&
+      formData.recruitmentCount !== "" &&
+      formData.recruitmentPeriod.trim() !== "" &&
+      formData.announcementDate.trim() !== "" &&
+      formData.registrationPeriod.trim() !== "" &&
+      formData.keywords.trim() !== "" &&
+      formData.guidelines.trim() !== "";
+
+    const isValid = hasImages && hasRequiredFields;
+
+    // 버튼이 활성화되었을 때 콘솔에 로그 출력
+    if (isValid) {
+      console.log("필수 입력완료 버튼 활성화");
+    }
+
+    // 디버깅: 필드별 상태 확인
+    console.log("=== 폼 검증 상태 ===");
+    console.log("이미지 업로드:", hasImages, "개수:", uploadedImages.length);
+    console.log("제목:", formData.title.trim() !== "" ? "✓" : "✗");
+    console.log("카테고리:", formData.category !== "" ? "✓" : "✗");
+    console.log("제공내역:", formData.providedItems.trim() !== "" ? "✓" : "✗");
+    console.log("모집인원:", formData.recruitmentCount !== "" ? "✓" : "✗");
+    console.log(
+      "모집기간:",
+      formData.recruitmentPeriod.trim() !== "" ? "✓" : "✗"
+    );
+    console.log(
+      "선정날짜:",
+      formData.announcementDate.trim() !== "" ? "✓" : "✗"
+    );
+    console.log(
+      "등록기간:",
+      formData.registrationPeriod.trim() !== "" ? "✓" : "✗"
+    );
+    console.log("키워드:", formData.keywords.trim() !== "" ? "✓" : "✗");
+    console.log("안내사항:", formData.guidelines.trim() !== "" ? "✓" : "✗");
+    console.log("버튼 활성화:", isValid ? "✓" : "✗");
+
+    return isValid;
+  }, [formData, uploadedImages]);
+
+  /**
    * 폼 제출 처리
    */
   const handleSubmit = (e: React.FormEvent) => {
@@ -212,7 +387,7 @@ export default function DeliveryCampaignForm({
             value={formData.platform}
             options={platforms}
             onChange={(value) => updateFormData("platform", value)}
-            placeholder="플랫폼을 선택하세요"
+            placeholder="플랫폼 선택"
           />
         </article>
 
@@ -291,7 +466,7 @@ export default function DeliveryCampaignForm({
             value={formData.category}
             options={categories}
             onChange={(value) => updateFormData("category", value)}
-            placeholder="카테고리를 선택"
+            placeholder="카테고리 선택"
           />
         </article>
 
@@ -305,6 +480,7 @@ export default function DeliveryCampaignForm({
             className={infoStyles.form_input}
             value={formData.brandName}
             readOnly
+            placeholder="{상호명}"
           />
         </article>
 
@@ -344,6 +520,7 @@ export default function DeliveryCampaignForm({
                 className={infoStyles.form_input}
                 value={formData.currentPoints}
                 readOnly
+                placeholder="{보유 포인트 잔액}"
               />
               <span className={infoStyles.points_unit}>P</span>
             </div>
@@ -451,14 +628,14 @@ export default function DeliveryCampaignForm({
         {/* 키워드 */}
         <article className={infoStyles.form_group}>
           <label className={infoStyles.form_label}>
-            키워드<span className={infoStyles.required}>*</span>
+            키워드/태그<span className={infoStyles.required}>*</span>
           </label>
           <input
             type="text"
             className={infoStyles.form_input}
             value={formData.keywords}
             onChange={(e) => updateFormData("keywords", e.target.value)}
-            placeholder="최대 10개 입력 가능"
+            placeholder="본문 내 첨부 키워드/해시태그/계정 태그 등"
           />
         </article>
 
@@ -482,18 +659,18 @@ export default function DeliveryCampaignForm({
             <label htmlFor="minTextLength" className={guideStyles.option_label}>
               글자 수
             </label>
-            <div className={guideStyles.option_input_value}>
-              <input
-                type="number"
-                className={guideStyles.underline_input}
-                value={formData.minTextLength}
-                onChange={(e) =>
-                  updateFormData("minTextLength", e.target.value)
-                }
-                min="0"
-              />
-              <span className={guideStyles.unit_text}>자 이상</span>
-            </div>
+            {checkboxStates.minTextLength && (
+              <div className={guideStyles.option_input_value}>
+                <input
+                  type="text"
+                  className={guideStyles.underline_input}
+                  value={formatNumberWithComma(formData.minTextLength)}
+                  onChange={(e) => handleNumericChange(e, "minTextLength")}
+                  onKeyDown={(e) => handleNumericInput(e, "minTextLength")}
+                />
+                <span className={guideStyles.unit_text}>자 이상</span>
+              </div>
+            )}
           </div>
 
           {/* 이미지 장수 */}
@@ -512,18 +689,18 @@ export default function DeliveryCampaignForm({
             <label htmlFor="minImageCount" className={guideStyles.option_label}>
               이미지 장수
             </label>
-            <div className={guideStyles.option_input_value}>
-              <input
-                type="number"
-                className={guideStyles.underline_input}
-                value={formData.minImageCount}
-                onChange={(e) =>
-                  updateFormData("minImageCount", e.target.value)
-                }
-                min="0"
-              />
-              <span className={guideStyles.unit_text}>장 이상</span>
-            </div>
+            {checkboxStates.minImageCount && (
+              <div className={guideStyles.option_input_value}>
+                <input
+                  type="text"
+                  className={guideStyles.underline_input}
+                  value={formatNumberWithComma(formData.minImageCount)}
+                  onChange={(e) => handleNumericChange(e, "minImageCount")}
+                  onKeyDown={(e) => handleNumericInput(e, "minImageCount")}
+                />
+                <span className={guideStyles.unit_text}>장 이상</span>
+              </div>
+            )}
           </div>
 
           {/* 동영상 개수, 초수 */}
@@ -543,7 +720,29 @@ export default function DeliveryCampaignForm({
             <label htmlFor="videoCount" className={guideStyles.option_label}>
               동영상 개수, 초수
             </label>
-            <div className={guideStyles.option_input_value}></div>
+            {checkboxStates.videoCount && (
+              <div className={guideStyles.option_input_value}>
+                {/* 동영상 개수 입력 필드 */}
+                <input
+                  type="text"
+                  className={guideStyles.underline_input}
+                  value={formatNumberWithComma(formData.videoCount)}
+                  onChange={(e) => handleNumericChange(e, "videoCount")}
+                  onKeyDown={(e) => handleNumericInput(e, "videoCount")}
+                />
+                <span className={guideStyles.unit_text}>개 이상</span>
+
+                {/* 동영상 초수 입력 필드 */}
+                <input
+                  type="text"
+                  className={guideStyles.underline_input}
+                  value={formatNumberWithComma(formData.videoDuration)}
+                  onChange={(e) => handleNumericChange(e, "videoDuration")}
+                  onKeyDown={(e) => handleNumericInput(e, "videoDuration")}
+                />
+                <span className={guideStyles.unit_text}>초 이상</span>
+              </div>
+            )}
           </div>
 
           {/* 본문 링크 첨부 */}
@@ -666,7 +865,7 @@ export default function DeliveryCampaignForm({
         <button
           type="submit"
           className={guideStyles.submit_button}
-          disabled={isSubmitting}
+          disabled={isSubmitting || !isFormValid}
         >
           {isSubmitting ? "등록 중..." : "등록하기"}
         </button>
