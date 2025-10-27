@@ -1,0 +1,234 @@
+/* ========================================
+   👤 신청자 카드 컴포넌트 스타일
+   ======================================== */
+
+/**
+ * 신청자 카드 컴포넌트 스타일
+ *
+ * 목적: 신청자 카드 컴포넌트의 스타일을 정의합니다.
+ *
+ * 사용 위치:
+ * - ApplicantCard 컴포넌트
+ *
+ * 📌 CSS 모듈 분리의 장점:
+ * 1. 관심사 분리: 각 컴포넌트의 스타일을 독립적으로 관리
+ * 2. 재사용성: 컴포넌트와 함께 이동 가능
+ * 3. 유지보수: 스타일 수정 시 해당 컴포넌트만 영향
+ * 4. 명확성: 어떤 스타일이 어떤 컴포넌트에 속하는지 명확
+ */
+
+/* ========== 신청자 카드 ========== */
+/* 개별 신청자 카드 컨테이너 */
+.applicant_card {
+  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+
+  gap: 12px;
+  position: relative;
+  min-height: 396px;
+}
+
+/* 프로필 영역 */
+.profile_section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 프로필 이미지 */
+.profile_image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #d9d9d9;
+}
+
+/* 프로필 정보 컨테이너 */
+.profile_info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+/* 사용자 타입 (리뷰어/인플루언서) */
+.user_type {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+/* 닉네임 */
+.nickname {
+  color: #444;
+
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 채널 영역 */
+.channel_section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f9f9f9;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+/* 채널 아이콘 */
+.channel_icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+}
+
+/* 채널 ID */
+.channel_id {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: #444444;
+  letter-spacing: -0.28px;
+}
+
+/* 회원 타입 (모범 회원/이용 제한) */
+.member_type {
+  background: #f9f9f9;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-family: "Pretendard", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #444444;
+  text-align: center;
+  letter-spacing: -0.28px;
+}
+
+/* 통계 영역 (일방문, 총방문, 이웃수) */
+.stats_section {
+  background: #f9f9f9;
+  padding: 12px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* 통계 아이템 */
+.stat_item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 통계 라벨 */
+.stat_label {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: #848484;
+  letter-spacing: -0.28px;
+}
+
+/* 통계 값 */
+.stat_value {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: #444444;
+  text-align: right;
+  letter-spacing: -0.28px;
+}
+
+/* 메모 영역 */
+.memo_section {
+  background: #f9f9f9;
+  padding: 12px;
+  border-radius: 4px;
+  position: relative;
+}
+
+/* 메모 텍스트 */
+.memo_text {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1.33;
+  color: #848484;
+  letter-spacing: -0.24px;
+  word-break: break-all;
+}
+
+/* 메모 구분선 */
+.memo_divider {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 36px;
+  background: #d9d9d9;
+}
+
+/* ========== 액션 버튼 ========== */
+/* 액션 버튼 컨테이너 */
+.action_button {
+  margin-top: auto;
+}
+
+/* 선정하기 버튼 */
+.select_button {
+  width: 100%;
+  background: white;
+  border: 1px solid #444444;
+  border-radius: 4px;
+  padding: 12px;
+  font-family: "Pretendard", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #444444;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: -0.28px;
+}
+
+/* 선정하기 버튼 호버 효과 */
+.select_button:hover {
+  background: #f8f8f8;
+}
+
+/* 이용 제한 계정 버튼 (비활성화) */
+.restricted_button {
+  width: 100%;
+  background: #d9d9d9;
+  border: none;
+  border-radius: 4px;
+  padding: 12px;
+  font-family: "Pretendard", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #999999;
+  cursor: not-allowed;
+  letter-spacing: -0.28px;
+}
+
+/* ========== 반응형 디자인 ========== */
+/* 태블릿 크기 (1200px 이하) */
+@media (max-width: 1200px) {
+  .applicant_card {
+    min-height: 360px;
+  }
+}
+
+/* 모바일 크기 (768px 이하) */
+@media (max-width: 768px) {
+  .applicant_card {
+    min-height: auto;
+  }
+}

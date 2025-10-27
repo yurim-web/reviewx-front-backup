@@ -19,7 +19,7 @@
  */
 
 // 캠페인 관리 공용 스타일 필요 없음. 필요 시 개별 모듈을 import 하세요.
-import penaltyStyles from "../../styles/partner/penalty.module.css";
+import penaltyStyles from "../../../styles/partner/penalty.module.css";
 
 /* ========================================
    TypeScript 타입 정의 섹션

@@ -18,7 +18,7 @@
  */
 
 import type { PartnerCampaignStats, PartnerStatTab } from "@/types/partner";
-import styles from "../../styles/partner/statistics.module.css";
+import styles from "../../../styles/partner/statistics.module.css";
 
 interface StatisticsTabProps {
   activeStatTab: PartnerStatTab;
@@ -114,7 +114,6 @@ export default function StatisticsTab({
             <span>취소</span>
             <span className={styles.stat_number}>{stats.취소}</span>
           </button>
-
         </div>
       </div>
       <div>

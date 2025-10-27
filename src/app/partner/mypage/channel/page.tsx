@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import PartnerTabNavigation from "@/components/partner/TabNavigation";
+import PartnerTabNavigation from "@/components/partner/campaign_management/TabNavigation";
 import PartnerSubTabNavigation from "@/components/partner/SubTabNavigation";
 import layoutStyles from "../../../../styles/partner/layout.module.css";
 import styles from "../../../../styles/user/mypage/channel.module.css";

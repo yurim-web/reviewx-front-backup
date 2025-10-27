@@ -1,0 +1,75 @@
+/* ========================================
+   🔽 정렬 드롭다운 스타일
+   ======================================== */
+
+/* 정렬 필터 컨테이너 */
+.sort_filter {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* 정렬 선택 드롭다운 버튼 */
+.sort_select {
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+
+  /* 글자 css */
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 드롭다운 화살표 이미지 */
+.dropdown_arrow {
+  pointer-events: none; /* 클릭 이벤트 방지 */
+  transition: transform 0.2s ease; /* 회전 애니메이션 */
+  transform: rotate(0deg); /* 초기 상태: 회전 없음 */
+}
+
+/* 드롭다운 열림 시 화살표 회전 */
+.arrow_rotated {
+  transform: rotate(180deg); /* 180도 회전 */
+}
+
+/* 드롭다운 메뉴 */
+.dropdown_menu {
+  position: absolute;
+  top: calc(100% + 0px);
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  z-index: 50;
+  overflow: hidden;
+}
+
+/* 드롭다운 아이템 */
+.dropdown_item {
+  width: 100%;
+  padding: 12px ;
+  background: white;
+  border: none;
+  text-align: left;
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  cursor: pointer;
+}
+
+/* 활성화된 드롭다운 아이템 */
+.dropdown_item_active {
+  background-color: #f2f2f2;
+  font-weight: 600;
+  color: #444444;
+}

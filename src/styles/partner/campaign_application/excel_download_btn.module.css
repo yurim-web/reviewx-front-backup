@@ -1,0 +1,35 @@
+/* ========================================
+   📥 엑셀 다운로드 버튼 스타일
+   ======================================== */
+
+/* 다운로드 버튼 그룹 */
+.download_btn_group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* 다운로드 버튼 */
+.download_button {
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  cursor: pointer;
+
+  /* 버튼 속 글자  */
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 엑셀 아이콘 */
+.download_button img {
+  width: 16px;
+  height: 16px;
+}

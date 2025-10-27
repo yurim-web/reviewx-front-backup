@@ -1,0 +1,164 @@
+/* ========================================
+   📋 캠페인 정보 카드 스타일
+   ======================================== */
+
+.campaign_info_card_conainer {
+  padding: 0px 40px;
+}
+
+/* 캠페인 정보 카드 */
+.campaign_info_card {
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.campaign_info_top {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+/* 이미지 영역*/
+.campaign_image {
+  width: 92px;
+  height: 92px;
+  background-color: #d9d9d9;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.campaign_image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.campaign_details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.campaign_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 카테고리 영역 */
+.campaign_category {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+.campaign_category img {
+  width: 20px;
+  height: 20px;
+}
+
+/* 캠페인 상태 영역 */
+.campaign_status {
+  background: #f2f2f2;
+  padding: 8px 12px;
+  border-radius: 8px;
+
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+.campaign_title {
+  width: 100%;
+  overflow: hidden;
+  color: #444;
+  text-overflow: ellipsis;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 22px;
+  letter-spacing: -0.32px;
+
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.campaign_notice {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
+  padding-top: 16px;
+}
+
+.campaign_schedule {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #f9f9f9;
+  padding: 16px;
+  border-radius: 4px;
+  min-width: 280px;
+}
+
+.schedule_item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.schedule_label {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #444444;
+  letter-spacing: -0.28px;
+}
+
+.schedule_value {
+  font-family: "Pretendard", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: #848484;
+  letter-spacing: -0.28px;
+  text-align: right;
+}
+
+.schedule_value strong {
+  font-weight: 600;
+  color: #444444;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1200px) {
+  .campaign_info_card {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .campaign_schedule {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .campaign_info_card {
+    margin: 16px 20px;
+    padding: 16px;
+  }
+}

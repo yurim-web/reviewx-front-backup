@@ -21,7 +21,7 @@
 import type { PartnerStatTab } from "@/types/partner";
 import type { PartnerCampaign } from "@/types/partner";
 import CampaignCard from "./CampaignCard";
-import cardStyles from "../../styles/partner/campaign_card.module.css";
+import cardStyles from "../../../styles/partner/campaign_card.module.css";
 
 interface CampaignListProps {
   campaigns: PartnerCampaign[];

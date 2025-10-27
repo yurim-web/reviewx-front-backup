@@ -19,7 +19,7 @@
 
 import { useRouter } from "next/navigation";
 import type { MainTab } from "@/types/campaignManagement";
-import styles from "../../styles/partner/tab_navigation.module.css";
+import styles from "../../../styles/partner/tab_navigation.module.css";
 
 interface TabNavigationProps {
   activeTab: MainTab;

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import PartnerTabNavigation from "@/components/partner/TabNavigation";
+import PartnerTabNavigation from "@/components/partner/campaign_management/TabNavigation";
 import PartnerSubTabNavigation from "@/components/partner/SubTabNavigation";
 import layoutStyles from "../../../styles/partner/layout.module.css";
 import profileStyles from "../../../styles/user/mypage/profile.module.css";

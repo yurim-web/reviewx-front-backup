@@ -515,10 +515,9 @@ export default function MissionCampaignForm({
               <input
                 type="text"
                 className={infoStyles.form_input}
-                value={formData.additionalPoints}
-                onChange={(e) =>
-                  updateFormData("additionalPoints", e.target.value)
-                }
+                value={formatNumberWithComma(formData.additionalPoints)}
+                onChange={(e) => handleNumericChange(e, "additionalPoints")}
+                onKeyDown={(e) => handleNumericInput(e, "additionalPoints")}
                 placeholder="캠페인 수행에 대한 추가 지급 포인트"
               />
               <span className={infoStyles.points_unit}>P</span>

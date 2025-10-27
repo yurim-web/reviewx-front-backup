@@ -205,7 +205,7 @@
 /* 포인트 단위 표시 - P */
 .points_unit {
   position: absolute;
-  right: 16px;
+  right: 20px;
   top: 50%;
   transform: translateY(-50%);
   font-family: "Pretendard", sans-serif;
@@ -251,7 +251,7 @@
 /* 카운트 단위 표시 - 명 */
 .count_unit {
   position: absolute;
-  right: 16px;
+  right: 20px;
   top: 50%;
   transform: translateY(-50%);
   font-family: "Pretendard", sans-serif;

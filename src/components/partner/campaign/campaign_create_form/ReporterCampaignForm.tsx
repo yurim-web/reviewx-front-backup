@@ -381,7 +381,7 @@ export default function ReporterCampaignForm({
             등록 플랫폼<span className={infoStyles.required}>*</span>
           </label>
           <CustomDropdown
-            value={formData.platform}
+            value={formData.platform || ""}
             options={platforms}
             onChange={(value) => updateFormData("platform", value)}
             placeholder="플랫폼 선택"
@@ -528,10 +528,9 @@ export default function ReporterCampaignForm({
               <input
                 type="text"
                 className={infoStyles.form_input}
-                value={formData.additionalPoints}
-                onChange={(e) =>
-                  updateFormData("additionalPoints", e.target.value)
-                }
+                value={formatNumberWithComma(formData.additionalPoints)}
+                onChange={(e) => handleNumericChange(e, "additionalPoints")}
+                onKeyDown={(e) => handleNumericInput(e, "additionalPoints")}
                 placeholder="캠페인 수행에 대한 추가 지급 포인트"
               />
               <span className={infoStyles.points_unit}>P</span>

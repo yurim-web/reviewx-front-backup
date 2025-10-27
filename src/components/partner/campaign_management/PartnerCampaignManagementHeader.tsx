@@ -25,8 +25,8 @@
 
 "use client";
 
-import TabNavigation from "@/components/partner/TabNavigation";
-import StatisticsTab from "@/components/partner/StatisticsTab";
+import TabNavigation from "./TabNavigation";
+import StatisticsTab from "./StatisticsTab";
 import type { MainTab } from "@/types/campaignManagement";
 import type { PartnerStatTab, PartnerCampaignStats } from "@/types/partner";
 

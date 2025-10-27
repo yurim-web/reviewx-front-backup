@@ -25,6 +25,9 @@ import { useState, useEffect } from "react";
 import PartnerHeader from "@/components/fragments/PartnerHeader";
 import styles from "../../../../styles/partner/campaign_application/campaign_application.module.css";
 import layoutStyles from "../../../../styles/partner/layout.module.css";
+import Campaignbanner, {
+  CampaignInfo,
+} from "@/components/partner/campaign_application/CampaignInfoBox";
 
 // 신청자 데이터 타입 정의
 interface Applicant {
@@ -40,21 +43,6 @@ interface Applicant {
   memo: string;
   selectionStatus: "미선택" | "선정하기" | "이용제한 계정";
   channel: "네이버" | "네이버 인플루언서";
-}
-
-// 캠페인 정보 타입 정의
-interface CampaignInfo {
-  id: string;
-  title: string;
-  image: string;
-  status: "모집 중" | "진행 중" | "종료";
-  category: string;
-  recruitmentPeriod: string;
-  announcementDate: string;
-  registrationPeriod: string;
-  recruitedCount: number;
-  totalCount: number;
-  daysLeft: number;
 }
 
 // 임시 데이터 (실제로는 API에서 가져올 데이터)
@@ -234,60 +222,8 @@ export default function ReporterCampaignApplicationPage() {
           <h1 className={styles.page_title}>기자단 캠페인 신청 내역</h1>
         </div>
 
-        {/* 캠페인 정보 카드 */}
-        <div className={styles.campaign_info_card}>
-          <div className={styles.campaign_image}>
-            <img src={mockCampaignInfo.image} alt="캠페인 이미지" />
-          </div>
-
-          <div className={styles.campaign_details}>
-            <div className={styles.campaign_header}>
-              <div className={styles.campaign_category}>
-                <img
-                  src="/images/icons/phone_verified.svg"
-                  alt="카테고리 아이콘"
-                />
-                <span>{mockCampaignInfo.category}</span>
-              </div>
-              <div className={styles.campaign_status}>
-                {mockCampaignInfo.status}
-              </div>
-            </div>
-
-            <h2 className={styles.campaign_title}>{mockCampaignInfo.title}</h2>
-            <p className={styles.campaign_notice}>
-              캠페인 선정 발표까지 {mockCampaignInfo.daysLeft}일 남았습니다.
-            </p>
-          </div>
-
-          <div className={styles.campaign_schedule}>
-            <div className={styles.schedule_item}>
-              <span className={styles.schedule_label}>모집 인원</span>
-              <span className={styles.schedule_value}>
-                <strong>{mockCampaignInfo.recruitedCount}명</strong> /{" "}
-                {mockCampaignInfo.totalCount}명
-              </span>
-            </div>
-            <div className={styles.schedule_item}>
-              <span className={styles.schedule_label}>모집 기간</span>
-              <span className={styles.schedule_value}>
-                {mockCampaignInfo.recruitmentPeriod}
-              </span>
-            </div>
-            <div className={styles.schedule_item}>
-              <span className={styles.schedule_label}>선정 발표</span>
-              <span className={styles.schedule_value}>
-                {mockCampaignInfo.announcementDate}
-              </span>
-            </div>
-            <div className={styles.schedule_item}>
-              <span className={styles.schedule_label}>등록 기간</span>
-              <span className={styles.schedule_value}>
-                {mockCampaignInfo.registrationPeriod}
-              </span>
-            </div>
-          </div>
-        </div>
+        {/* 캠페인 정보 배너 - 공통 컴포넌트 사용 */}
+        <Campaignbanner campaignInfo={mockCampaignInfo} />
 
         {/* 필터 및 다운로드 버튼 */}
         <div className={styles.filter_section}>

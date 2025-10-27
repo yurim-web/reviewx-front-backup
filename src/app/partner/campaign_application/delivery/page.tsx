@@ -25,97 +25,19 @@ import { useState, useEffect } from "react";
 import PartnerHeader from "@/components/fragments/PartnerHeader";
 import styles from "../../../../styles/partner/campaign_application/campaign_application.module.css";
 import layoutStyles from "../../../../styles/partner/layout.module.css";
+import Campaignbanner from "@/components/partner/campaign_application/CampaignInfoBox";
+import ExcelDownloadBtn from "@/components/partner/campaign_application/ExcelDownloadBtn";
+import SortDropdown from "@/components/partner/campaign_application/SortDropdown";
+import ApplicantCard from "@/components/partner/campaign_application/ApplicantCard";
 
-// 신청자 데이터 타입 정의
-interface Applicant {
-  id: string;
-  nickname: string;
-  userType: "리뷰어" | "인플루언서";
-  profileImage: string;
-  channelIcon: string;
-  memberType: "모범 회원" | "이용 제한";
-  dailyVisits: number;
-  totalVisits: number;
-  neighbors: number;
-  memo: string;
-  selectionStatus: "미선택" | "선정하기" | "이용제한 계정";
-  channel: "네이버" | "네이버 인플루언서";
-}
-
-// 캠페인 정보 타입 정의
-interface CampaignInfo {
-  id: string;
-  title: string;
-  image: string;
-  status: "모집 중" | "진행 중" | "종료";
-  category: string;
-  recruitmentPeriod: string;
-  announcementDate: string;
-  registrationPeriod: string;
-  recruitedCount: number;
-  totalCount: number;
-  daysLeft: number;
-}
-
-// 임시 데이터 (실제로는 API에서 가져올 데이터)
-const mockCampaignInfo: CampaignInfo = {
-  id: "1",
-  title: "나만의 향수만들기 체험 [그리디센트]",
-  image: "/images/main/campaign_img/eximg_1.png",
-  status: "모집 중",
-  category: "배송형",
-  recruitmentPeriod: "2025-09-02 ~ 2025-09-14",
-  announcementDate: "2025-09-16",
-  registrationPeriod: "2025-09-22 ~ 2025-09-30",
-  recruitedCount: 20,
-  totalCount: 100,
-  daysLeft: 30,
-};
-
-const mockApplicants: Applicant[] = [
-  {
-    id: "1",
-    nickname: "배송리뷰어1",
-    userType: "리뷰어",
-    profileImage: "/images/icons/phone_verified.svg",
-    channelIcon: "/images/icons/phone_verified.svg",
-    memberType: "모범 회원",
-    dailyVisits: 135,
-    totalVisits: 526000,
-    neighbors: 1031,
-    memo: "배송형 캠페인에 관심이 많습니다. 꼼꼼한 리뷰를 작성하겠습니다.",
-    selectionStatus: "미선택",
-    channel: "네이버",
-  },
-  {
-    id: "2",
-    nickname: "배송인플루언서1",
-    userType: "인플루언서",
-    profileImage: "/images/icons/phone_verified.svg",
-    channelIcon: "/images/icons/phone_verified.svg",
-    memberType: "모범 회원",
-    dailyVisits: 200,
-    totalVisits: 800000,
-    neighbors: 2500,
-    memo: "안녕하세요 :) 무상으로 서비스를 제공해주시는만큼 감사히 사용하겠습니다.",
-    selectionStatus: "미선택",
-    channel: "네이버 인플루언서",
-  },
-  {
-    id: "3",
-    nickname: "배송리뷰어2",
-    userType: "리뷰어",
-    profileImage: "/images/icons/phone_verified.svg",
-    channelIcon: "/images/icons/phone_verified.svg",
-    memberType: "이용 제한",
-    dailyVisits: 50,
-    totalVisits: 100000,
-    neighbors: 200,
-    memo: "배송형 제품에 대한 경험이 많습니다.",
-    selectionStatus: "이용제한 계정",
-    channel: "네이버",
-  },
-];
+// 📦 목업 데이터 import
+// 별도 파일로 분리된 데이터를 가져옴
+import {
+  mockCampaignInfo,
+  mockApplicants,
+  mockSelectedApplicants,
+  type Applicant,
+} from "@/data/partner/campaign_application/delivery";
 
 /**
  * 배송형 캠페인 신청내역 페이지 컴포넌트
@@ -126,8 +48,31 @@ export default function DeliveryCampaignApplicationPage() {
     "applicants"
   );
 
-  // 정렬 상태 관리
-  const [sortOrder, setSortOrder] = useState<"latest" | "oldest">("latest");
+  // 정렬 상태 관리 (최신순, 인기순, 마감임박순, 포인트순)
+  type SortOption = "latest" | "popular" | "deadline" | "point";
+  const [sortOrder, setSortOrder] = useState<SortOption>("latest");
+
+  /**
+   * 탭별 데이터 개수 계산
+   * - 신청 탭: 전체 신청자 수
+   * - 선정 탭: 선정된 신청자 수
+   */
+  const applicantsCount = mockApplicants.length;
+  const selectedCount = mockSelectedApplicants.length;
+
+  /**
+   * 현재 활성화된 탭에 따라 표시할 데이터 결정
+   *
+   * 📌 삼항 연산자 사용:
+   * - activeTab이 "applicants"면 mockApplicants 사용
+   * - 그렇지 않으면 mockSelectedApplicants 사용
+   *
+   * 📌 동적 데이터 렌더링:
+   * - 신청 탭: 모든 신청자 목록 표시
+   * - 선정 탭: 선정된 신청자만 표시
+   */
+  const currentApplicants =
+    activeTab === "applicants" ? mockApplicants : mockSelectedApplicants;
 
   // 기본 헤더 숨기기 (PartnerHeader만 표시)
   useEffect(() => {
@@ -146,182 +91,51 @@ export default function DeliveryCampaignApplicationPage() {
     // 실제로는 API 호출로 선정 처리
   };
 
-  // 신청자 카드 컴포넌트
-  const ApplicantCard = ({ applicant }: { applicant: Applicant }) => (
-    <div className={styles.applicant_card}>
-      {/* 프로필 영역 */}
-      <div className={styles.profile_section}>
-        <img
-          src={applicant.profileImage}
-          alt="프로필"
-          className={styles.profile_image}
-        />
-        <div className={styles.profile_info}>
-          <div className={styles.nickname}>{applicant.nickname}</div>
-          <div className={styles.user_type}>{applicant.userType}</div>
-        </div>
-      </div>
+  // 엑셀 다운로드 핸들러
+  const handleDownloadApplicants = () => {
+    console.log("신청자 목록 다운로드");
+    // 실제로는 API 호출로 엑셀 파일 다운로드
+  };
 
-      {/* 채널 아이콘 */}
-      <div className={styles.channel_section}>
-        <img
-          src={applicant.channelIcon}
-          alt="채널"
-          className={styles.channel_icon}
-        />
-        <span className={styles.channel_id}>id</span>
-      </div>
-
-      {/* 회원 타입 */}
-      <div className={styles.member_type}>{applicant.memberType}</div>
-
-      {/* 통계 정보 */}
-      <div className={styles.stats_section}>
-        <div className={styles.stat_item}>
-          <span className={styles.stat_label}>일방문</span>
-          <span className={styles.stat_value}>
-            {applicant.dailyVisits.toLocaleString()}
-          </span>
-        </div>
-        <div className={styles.stat_item}>
-          <span className={styles.stat_label}>총방문</span>
-          <span className={styles.stat_value}>
-            {applicant.totalVisits.toLocaleString()}
-          </span>
-        </div>
-        <div className={styles.stat_item}>
-          <span className={styles.stat_label}>이웃수</span>
-          <span className={styles.stat_value}>
-            {applicant.neighbors.toLocaleString()}
-          </span>
-        </div>
-      </div>
-
-      {/* 메모 영역 */}
-      <div className={styles.memo_section}>
-        <div className={styles.memo_text}>{applicant.memo}</div>
-        <div className={styles.memo_divider}></div>
-      </div>
-
-      {/* 액션 버튼 */}
-      <div className={styles.action_button}>
-        {applicant.selectionStatus === "미선택" && (
-          <button
-            className={styles.select_button}
-            onClick={() => handleSelectApplicant(applicant.id)}
-          >
-            선정하기
-          </button>
-        )}
-        {applicant.selectionStatus === "이용제한 계정" && (
-          <button className={styles.restricted_button} disabled>
-            이용 제한 계정
-          </button>
-        )}
-      </div>
-    </div>
-  );
+  const handleDownloadSelected = () => {
+    console.log("선정자 목록 다운로드");
+    // 실제로는 API 호출로 엑셀 파일 다운로드
+  };
 
   return (
     <div className={layoutStyles.container}>
       {/* 파트너 헤더 */}
       <PartnerHeader />
+      {/* 페이지 제목 */}
+      <div className={styles.page_header}>
+        <h1 className={styles.page_title}>캠페인 신청 내역</h1>
+      </div>
 
       {/* 메인 콘텐츠 */}
-      <div className={layoutStyles.main_content}>
-        {/* 페이지 제목 */}
-        <div className={styles.page_header}>
-          <h1 className={styles.page_title}>배송형 캠페인 신청 내역</h1>
-        </div>
+      <section className={styles.campaign_application_section}>
+        {/* 캠페인 정보 박스 */}
+        <Campaignbanner campaignInfo={mockCampaignInfo} />
 
-        {/* 캠페인 정보 카드 */}
-        <div className={styles.campaign_info_card}>
-          <div className={styles.campaign_image}>
-            <img src={mockCampaignInfo.image} alt="캠페인 이미지" />
-          </div>
+        <article className={styles.download_section}>
+          {/* 다운로드 버튼 */}
+          <ExcelDownloadBtn
+            onDownloadApplicants={handleDownloadApplicants}
+            onDownloadSelected={handleDownloadSelected}
+          />
 
-          <div className={styles.campaign_details}>
-            <div className={styles.campaign_header}>
-              <div className={styles.campaign_category}>
-                <img
-                  src="/images/icons/phone_verified.svg"
-                  alt="카테고리 아이콘"
-                />
-                <span>{mockCampaignInfo.category}</span>
-              </div>
-              <div className={styles.campaign_status}>
-                {mockCampaignInfo.status}
-              </div>
-            </div>
-
-            <h2 className={styles.campaign_title}>{mockCampaignInfo.title}</h2>
-            <p className={styles.campaign_notice}>
-              캠페인 선정 발표까지 {mockCampaignInfo.daysLeft}일 남았습니다.
-            </p>
-          </div>
-
-          <div className={styles.campaign_schedule}>
-            <div className={styles.schedule_item}>
-              <span className={styles.schedule_label}>모집 인원</span>
-              <span className={styles.schedule_value}>
-                <strong>{mockCampaignInfo.recruitedCount}명</strong> /{" "}
-                {mockCampaignInfo.totalCount}명
-              </span>
-            </div>
-            <div className={styles.schedule_item}>
-              <span className={styles.schedule_label}>모집 기간</span>
-              <span className={styles.schedule_value}>
-                {mockCampaignInfo.recruitmentPeriod}
-              </span>
-            </div>
-            <div className={styles.schedule_item}>
-              <span className={styles.schedule_label}>선정 발표</span>
-              <span className={styles.schedule_value}>
-                {mockCampaignInfo.announcementDate}
-              </span>
-            </div>
-            <div className={styles.schedule_item}>
-              <span className={styles.schedule_label}>등록 기간</span>
-              <span className={styles.schedule_value}>
-                {mockCampaignInfo.registrationPeriod}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* 필터 및 다운로드 버튼 */}
-        <div className={styles.filter_section}>
-          <button className={styles.download_button}>
-            <img src="/images/icons/phone_verified.svg" alt="다운로드" />
-            신청자 목록 다운로드
-          </button>
-          <button className={styles.download_button}>
-            <img src="/images/icons/phone_verified.svg" alt="다운로드" />
-            선정자 목록 다운로드
-          </button>
-          <div className={styles.sort_filter}>
-            <select
-              value={sortOrder}
-              onChange={(e) =>
-                setSortOrder(e.target.value as "latest" | "oldest")
-              }
-              className={styles.sort_select}
-            >
-              <option value="latest">최신순</option>
-              <option value="oldest">오래된순</option>
-            </select>
-          </div>
-        </div>
+          {/* 정렬 필터 */}
+          <SortDropdown sortOrder={sortOrder} onSortChange={setSortOrder} />
+        </article>
 
         {/* 탭 네비게이션 */}
-        <div className={styles.tab_navigation}>
+        <article className={styles.tab_navigation}>
           <button
             className={`${styles.tab_button} ${
               activeTab === "applicants" ? styles.active : ""
             }`}
             onClick={() => setActiveTab("applicants")}
           >
-            신청 <span className={styles.tab_count}>12</span>
+            신청 <span className={styles.tab_count}>{applicantsCount}</span>
           </button>
           <button
             className={`${styles.tab_button} ${
@@ -329,17 +143,36 @@ export default function DeliveryCampaignApplicationPage() {
             }`}
             onClick={() => setActiveTab("selected")}
           >
-            선정 <span className={styles.tab_count}>4</span>
+            선정 <span className={styles.tab_count}>{selectedCount}</span>
           </button>
-        </div>
+        </article>
 
         {/* 신청자 목록 그리드 */}
-        <div className={styles.applicants_grid}>
-          {mockApplicants.map((applicant) => (
-            <ApplicantCard key={applicant.id} applicant={applicant} />
+        {/* 
+          📌 currentApplicants 사용:
+          - activeTab 상태에 따라 동적으로 변경되는 데이터
+          - 신청 탭: mockApplicants 표시
+          - 선정 탭: mockSelectedApplicants 표시
+          
+          📌 map 함수:
+          - 배열의 각 요소를 컴포넌트로 변환
+          - key prop: React가 효율적으로 렌더링하기 위해 필수
+          
+          📌 ApplicantCard 컴포넌트 사용:
+          - 별도 파일로 분리된 재사용 가능한 컴포넌트
+          - applicant: 신청자 정보 데이터
+          - onSelect: 선정하기 버튼 클릭 핸들러
+        */}
+        <article className={styles.applicants_grid}>
+          {currentApplicants.map((applicant) => (
+            <ApplicantCard
+              key={applicant.id}
+              applicant={applicant}
+              onSelect={handleSelectApplicant}
+            />
           ))}
-        </div>
-      </div>
+        </article>
+      </section>
     </div>
   );
 }

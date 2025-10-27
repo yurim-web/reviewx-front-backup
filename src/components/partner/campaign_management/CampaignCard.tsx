@@ -21,9 +21,9 @@
 import { useState } from "react";
 import type { PartnerStatTab } from "@/types/partner";
 import type { PartnerCampaign } from "@/types/partner";
-import cardStyles from "../../styles/partner/campaign_card.module.css";
-import buttonStyles from "../../styles/partner/buttons.module.css";
-import ReceiptRegistrationModal from "./campaign/ReceiptRegistrationModal";
+import cardStyles from "../../../styles/partner/campaign_card.module.css";
+import buttonStyles from "../../../styles/partner/buttons.module.css";
+import ReceiptRegistrationModal from "../campaign/ReceiptRegistrationModal";
 
 interface CampaignCardProps {
   campaign: PartnerCampaign;

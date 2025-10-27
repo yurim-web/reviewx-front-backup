@@ -395,7 +395,7 @@ export default function VisitCampaignForm({
             등록 플랫폼<span className={infoStyles.required}>*</span>
           </label>
           <CustomDropdown
-            value={formData.platform}
+            value={formData.platform || ""}
             options={platforms}
             onChange={(value) => updateFormData("platform", value)}
             placeholder="플랫폼 선택"
@@ -591,13 +591,9 @@ export default function VisitCampaignForm({
               <input
                 type="text"
                 className={infoStyles.form_input}
-                value={formData.additionalPoints}
-                onChange={(e) =>
-                  updateFormData(
-                    "additionalPoints",
-                    parseInt(e.target.value) || 0
-                  )
-                }
+                value={formatNumberWithComma(formData.additionalPoints)}
+                onChange={(e) => handleNumericChange(e, "additionalPoints")}
+                onKeyDown={(e) => handleNumericInput(e, "additionalPoints")}
                 placeholder="캠페인 수행에 대한 추가 지급 포인트"
               />
               <span className={infoStyles.points_unit}>P</span>

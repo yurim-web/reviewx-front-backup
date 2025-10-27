@@ -27,7 +27,7 @@
 
 import { useState } from "react";
 import PartnerCampaignManagementHeader from "@/components/partner/campaign_management/PartnerCampaignManagementHeader";
-import CampaignList from "@/components/partner/CampaignList";
+import CampaignList from "@/components/partner/campaign_management/CampaignList";
 import type { MainTab } from "@/types/campaignManagement";
 import type { PartnerStatTab } from "@/types/partner";
 import layoutStyles from "../../../styles/partner/layout.module.css";
