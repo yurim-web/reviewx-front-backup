@@ -28,7 +28,7 @@ import layoutStyles from "../../../../styles/partner/layout.module.css";
 import Campaignbanner from "@/components/partner/campaign_application/CampaignInfoBox";
 import ExcelDownloadBtn from "@/components/partner/campaign_application/ExcelDownloadBtn";
 import SortDropdown from "@/components/partner/campaign_application/SortDropdown";
-import ApplicantCard from "@/components/partner/campaign_application/ApplicantCard";
+import DeliveryApplicantCard from "@/components/partner/campaign_application/delivery_card/ApplicantCard";
 
 // 📦 목업 데이터 import
 // 별도 파일로 분리된 데이터를 가져옴
@@ -114,6 +114,7 @@ export default function DeliveryCampaignApplicationPage() {
       {/* 메인 콘텐츠 */}
       <section className={styles.campaign_application_section}>
         {/* 캠페인 정보 박스 */}
+        {/* 배송형 전용 */}
         <Campaignbanner campaignInfo={mockCampaignInfo} />
 
         <article className={styles.download_section}>
@@ -147,7 +148,7 @@ export default function DeliveryCampaignApplicationPage() {
           </button>
         </article>
 
-        {/* 신청자 목록 그리드 */}
+        {/* 배송형 신청자 목록 그리드 */}
         {/* 
           📌 currentApplicants 사용:
           - activeTab 상태에 따라 동적으로 변경되는 데이터
@@ -158,17 +159,21 @@ export default function DeliveryCampaignApplicationPage() {
           - 배열의 각 요소를 컴포넌트로 변환
           - key prop: React가 효율적으로 렌더링하기 위해 필수
           
-          📌 ApplicantCard 컴포넌트 사용:
-          - 별도 파일로 분리된 재사용 가능한 컴포넌트
+          📌 DeliveryApplicantCard 컴포넌트 사용:
+          - 배송형 전용 신청자 카드 컴포넌트
+          - 배송 주소, 배송 상태 등 배송형 특화 기능 포함
           - applicant: 신청자 정보 데이터
           - onSelect: 선정하기 버튼 클릭 핸들러
+          - deliveryAddress: 배송 주소 정보 (배송형 특화)
+          - deliveryStatus: 배송 상태 정보 (배송형 특화)
         */}
         <article className={styles.applicants_grid}>
           {currentApplicants.map((applicant) => (
-            <ApplicantCard
+            <DeliveryApplicantCard
               key={applicant.id}
               applicant={applicant}
               onSelect={handleSelectApplicant}
+              deliveryAddress="서울특별시 강남구 테헤란로 123, 456동 789호"
             />
           ))}
         </article>
