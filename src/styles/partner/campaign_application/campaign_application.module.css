@@ -25,6 +25,8 @@
 /* ========== 전체 컨텐츠 영역 ========== */
 .campaign_application_section {
   padding: 40px 0px;
+  background: white;
+  min-height: calc(100vh - 80px); /* 헤더 높이 제외한 전체 높이 */
 }
 
 /* ========== 다운로드 버튼 영역 ========== */
@@ -58,19 +60,24 @@
   gap: 4px;
   background: none;
   border: none;
-  font-family: "Pretendard", sans-serif;
-  font-weight: 600;
-  font-size: 18px;
-  color: #444444;
   cursor: pointer;
-  transition: all 0.2s ease;
-  letter-spacing: -0.36px;
   position: relative;
+  padding: 24px;
+
+  /* 버튼 속 글자 css */
+  color: #848484;
+  text-align: center;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: -0.36px;
 }
 
 /* 활성화된 탭 */
 .tab_button.active {
   color: #444444;
+  font-weight: 600;
 }
 
 /* 비활성화된 탭 */
@@ -103,4 +110,68 @@
   gap: 24px;
   padding: 24px 40px;
   background: white;
+  min-height: 400px; /* 최소 높이 설정 */
+}
+
+/* 빈 상태 스타일 */
+.empty_state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem;
+  color: #6b7280;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.empty_state p {
+  font-size: 1rem;
+  margin: 0;
+  color: #848484;
+}
+
+/* ========== 반응형 디자인 ========== */
+@media (max-width: 768px) {
+  .page_header {
+    padding: 16px 20px;
+  }
+
+  .download_section {
+    padding: 16px 20px;
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .tab_navigation {
+    margin: 0 20px;
+  }
+
+  .applicants_grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+    padding: 16px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .applicants_grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .page_header {
+    padding: 12px 16px;
+  }
+
+  .download_section {
+    padding: 12px 16px;
+  }
+
+  .tab_navigation {
+    margin: 0 16px;
+  }
 }

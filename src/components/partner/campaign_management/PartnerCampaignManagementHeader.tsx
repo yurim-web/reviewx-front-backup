@@ -30,8 +30,8 @@ import StatisticsTab from "./StatisticsTab";
 import type { MainTab } from "@/types/campaignManagement";
 import type { PartnerStatTab, PartnerCampaignStats } from "@/types/partner";
 
-// 임시 데이터 import
-import { partnerCampaignStats } from "@/data/partner/partnerCampaigns";
+// 공용 데이터 import
+import { getCampaignStats } from "@/data/partner/sharedCampaigns";
 
 interface PartnerCampaignManagementHeaderProps {
   /** 현재 활성 메인 탭 (캠페인/포인트/계정) */
@@ -59,8 +59,8 @@ export default function PartnerCampaignManagementHeader({
   activeStatTab,
   setActiveStatTab,
 }: PartnerCampaignManagementHeaderProps) {
-  // 임시 데이터에서 통계 정보 사용
-  const stats: PartnerCampaignStats = partnerCampaignStats;
+  // 공용 데이터에서 통계 정보 사용
+  const stats: PartnerCampaignStats = getCampaignStats();
 
   return (
     <>

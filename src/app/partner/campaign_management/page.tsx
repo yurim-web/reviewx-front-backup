@@ -32,8 +32,11 @@ import type { MainTab } from "@/types/campaignManagement";
 import type { PartnerStatTab } from "@/types/partner";
 import layoutStyles from "../../../styles/partner/layout.module.css";
 
-// 임시 데이터 import
-import { partnerCampaigns } from "@/data/partner/partnerCampaigns";
+// 공용 데이터 import
+import {
+  convertToPartnerCampaigns,
+  getCampaignsByTab,
+} from "@/data/partner/sharedCampaigns";
 
 /**
  * 파트너 캠페인 관리 메인 페이지 컴포넌트
@@ -89,7 +92,7 @@ export default function PartnerCampaignManagementPage() {
 
         {/* 전체 캠페인 목록 */}
         <CampaignList
-          campaigns={partnerCampaigns}
+          campaigns={getCampaignsByTab(activeStatTab)}
           activeStatTab={activeStatTab}
         />
       </div>

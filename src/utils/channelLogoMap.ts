@@ -27,6 +27,8 @@ export const channel_logo_map: Record<string, string> = {
   네이버클립: "/images/brand_logo/naverclip.svg",
   인스타그램: "/images/brand_logo/insta.svg",
   유튜브: "/images/brand_logo/youtube.svg",
+  릴스: "/images/brand_logo/reels.svg",
+  숏츠: "/images/brand_logo/shots.svg",
   기본: "/images/icons/phone_verified.svg",
 };
 

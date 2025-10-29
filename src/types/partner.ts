@@ -14,6 +14,7 @@ export interface PartnerCampaign {
   brand?: string; // 브랜드명 (쿠팡, 네이버쇼핑 등)
   brandLogo?: string; // 브랜드 로고 URL
   subStatus?: string; // 서브 상태 (버튼 종류 결정용)
+  image?: string; // 카드 썸네일 이미지 URL
 }
 
 // 파트너 캠페인 통계 정보

@@ -27,8 +27,8 @@ import type { MainTab } from "@/types/campaignManagement";
 import type { PartnerStatTab } from "@/types/partner";
 import layoutStyles from "../../../../styles/partner/layout.module.css";
 
-// 임시 데이터 import
-import { partnerCampaigns } from "@/data/partner/partnerCampaigns";
+// 공용 데이터 import
+import { getCampaignsByTab } from "@/data/partner/sharedCampaigns";
 
 /**
  * 예정 탭 페이지 컴포넌트
@@ -84,7 +84,7 @@ export default function ScheduledPage() {
 
         {/* 예정 상태 캠페인 목록 */}
         <CampaignList
-          campaigns={partnerCampaigns}
+          campaigns={getCampaignsByTab(activeStatTab)}
           activeStatTab={activeStatTab}
         />
       </div>

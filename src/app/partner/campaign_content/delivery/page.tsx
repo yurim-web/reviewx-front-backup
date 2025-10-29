@@ -23,13 +23,13 @@
 
 import { useState, useEffect } from "react";
 import PartnerHeader from "@/components/fragments/PartnerHeader";
-import styles from "../../../../styles/partner/campaign_application/campaign_application.module.css";
-import layoutStyles from "../../../../styles/partner/layout.module.css";
-import Campaignbanner from "@/components/partner/campaign_details/CampaignInfoBox";
-import ContentExcelDownloadBtn from "@/components/partner/campaign_details/ContentExcelDownloadBtn";
-import SortDropdown from "@/components/partner/campaign_details/SortDropdown";
-import NaverBlogReviewCard from "@/components/partner/campaign_details/card_type/naverblog/NaverBlogReviewCard";
-import NaverBlogCompletedCard from "@/components/partner/campaign_details/card_type/naverblog/NaverBlogCompletedCard";
+import styles from "@/styles/partner/campaign_application/campaign_application.module.css";
+import layoutStyles from "@/styles/partner/layout.module.css";
+import Campaignbanner from "@/components/partner/campaign_application/CampaignInfoBox";
+import ContentExcelDownloadBtn from "@/components/partner/campaign_application/ContentExcelDownloadBtn";
+import SortDropdown from "@/components/partner/campaign_application/SortDropdown";
+import NaverBlogReviewCard from "@/components/partner/campaign_application/card_type/naverblog/NaverBlogReviewCard";
+import NaverBlogCompletedCard from "@/components/partner/campaign_application/card_type/naverblog/NaverBlogCompletedCard";
 
 // 📦 목업 데이터 import
 // 별도 파일로 분리된 데이터를 가져옴

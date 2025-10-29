@@ -3,7 +3,7 @@
    ======================================== */
 
 /* 전체 컨테이너 */
-.campaign_info_card_conainer {
+.campaign_info_card_container {
   padding: 0px 40px;
 }
 
@@ -41,7 +41,7 @@
 }
 
 /* 캠페인 상세정보 영역 */
-.campaign_details {
+.campaign_application {
   flex: 1;
   display: flex;
   flex-direction: column;

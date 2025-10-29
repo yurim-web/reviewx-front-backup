@@ -1,0 +1,292 @@
+/* ========================================
+   📋 캠페인 목록 페이지 스타일
+   ======================================== */
+
+/* 페이지 헤더 스타일 */
+.page_header {
+  margin-bottom: 2rem;
+}
+
+.page_title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 0.5rem;
+}
+
+.page_description {
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* 필터 섹션 스타일 */
+.filter_section {
+  margin-bottom: 2rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.filter_buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filter_button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  background-color: #ffffff;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter_button:hover {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.filter_button.active {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+  color: #ffffff;
+}
+
+/* 캠페인 목록 그리드 스타일 */
+.campaign_list_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* 캠페인 카드 스타일 */
+.campaign_card {
+  background-color: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.campaign_card:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+  transform: translateY(-2px);
+}
+
+/* 캠페인 이미지 스타일 */
+.campaign_image {
+  width: 100%;
+  height: 200px;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.campaign_image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 캠페인 정보 스타일 */
+.campaign_info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.campaign_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.campaign_category {
+  background-color: #f3f4f6;
+  color: #374151;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.campaign_status {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* 상태별 색상 */
+.status_모집_중 {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.status_선정_중 {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status_마감 {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.status_진행_중 {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status_종료 {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.campaign_title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+/* 캠페인 통계 스타일 */
+.campaign_stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+}
+
+.stat_item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stat_label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+}
+
+.stat_value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+/* 캠페인 기간 스타일 */
+.campaign_period {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-top: 1px solid #e5e5e5;
+}
+
+.period_label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.period_value {
+  font-size: 0.75rem;
+  color: #374151;
+}
+
+/* 남은 일수 스타일 */
+.days_left {
+  background-color: #fef3c7;
+  color: #92400e;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+/* 클릭 힌트 스타일 */
+.click_hint {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #3b82f6;
+  color: #ffffff;
+  padding: 0.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transform: translateY(100%);
+  transition: transform 0.2s ease;
+}
+
+.campaign_card:hover .click_hint {
+  transform: translateY(0);
+}
+
+/* 빈 상태 스타일 */
+.empty_state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem;
+  color: #6b7280;
+}
+
+.empty_state p {
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .campaign_list_grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .campaign_card {
+    padding: 1rem;
+  }
+
+  .campaign_image {
+    height: 150px;
+  }
+
+  .campaign_stats {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .stat_item {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .filter_buttons {
+    justify-content: center;
+  }
+}

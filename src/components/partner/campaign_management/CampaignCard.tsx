@@ -42,6 +42,13 @@ export default function CampaignCard({
 
   /**
    * 버튼 클릭 핸들러
+   *
+   * 🎓 학습 포인트: 조건부 네비게이션과 동적 라우팅
+   *
+   * 📌 네비게이션 패턴:
+   * 1. 캠페인 타입에 따라 다른 신청내역 페이지로 이동
+   * 2. 캠페인 ID를 URL 파라미터로 전달
+   * 3. Next.js router를 사용한 프로그래밍적 네비게이션
    */
   const handleButtonClick = (buttonText: string) => {
     if (buttonText === "구매 영수증 등록하기") {
@@ -49,6 +56,48 @@ export default function CampaignCard({
     } else if (buttonText === "패널티 내역보기") {
       // 패널티 내역 페이지로 이동
       window.location.href = "/partner/campaign_management/penalty";
+    } else if (buttonText === "신청내역 확인하기") {
+      // 캠페인 타입에 따라 다른 신청내역 페이지로 이동 (신청 탭)
+      const getCampaignTypePath = (type: string) => {
+        switch (type) {
+          case "배송형":
+            return "delivery";
+          case "방문형":
+            return "visit";
+          case "구매평":
+            return "review";
+          case "기자단":
+            return "reporter";
+          case "미션형":
+            return "mission";
+          default:
+            return "delivery"; // 기본값
+        }
+      };
+
+      const campaignTypePath = getCampaignTypePath(campaign.type);
+      window.location.href = `/partner/campaign_application/${campaignTypePath}/${campaign.id}`;
+    } else if (buttonText === "당첨자 선정하기") {
+      // 캠페인 타입에 따라 다른 신청내역 페이지로 이동 (선정 탭)
+      const getCampaignTypePath = (type: string) => {
+        switch (type) {
+          case "배송형":
+            return "delivery";
+          case "방문형":
+            return "visit";
+          case "구매평":
+            return "review";
+          case "기자단":
+            return "reporter";
+          case "미션형":
+            return "mission";
+          default:
+            return "delivery"; // 기본값
+        }
+      };
+
+      const campaignTypePath = getCampaignTypePath(campaign.type);
+      window.location.href = `/partner/campaign_application/${campaignTypePath}/${campaign.id}?tab=selected`;
     } else {
       // 다른 버튼들의 로직 처리
       console.log(`${buttonText} 버튼 클릭됨`);
@@ -135,11 +184,15 @@ export default function CampaignCard({
     }
 
     // fallback: 데이터에 statusMessage가 없는 경우 기본 메시지
-    const fallbackMessages = {
+    const fallbackMessages: Record<string, string> = {
       신청: `캠페인 선정 발표까지 ${campaign.remainingDays}일 남았습니다.`,
       선정: "캠페인에 선정되었습니다. 진행해주세요.",
       완료: "캠페인이 완료되었습니다.",
       "취소/반려": "캠페인 신청이 취소되었습니다.",
+      예정: "캠페인이 예정되어 있습니다.",
+      진행: "캠페인이 진행 중입니다.",
+      종료: "캠페인이 종료되었습니다.",
+      취소: "캠페인이 취소되었습니다.",
     };
 
     return fallbackMessages[campaign.status] || fallbackMessages["신청"];
@@ -150,7 +203,9 @@ export default function CampaignCard({
       <div className={cardStyles.campaign_content_container}>
         {/* 캠페인 이미지 */}
         <div className={cardStyles.campaign_image}>
-          {/* TODO: 실제 이미지 추가 시 여기에 img 태그 추가 */}
+          {campaign.image ? (
+            <img src={campaign.image} alt="캠페인 이미지" />
+          ) : null}
         </div>
 
         {/* 캠페인 상세 정보 */}
@@ -180,7 +235,7 @@ export default function CampaignCard({
 
             {/* 신청자 수 표시 */}
             <div className={cardStyles.applicant_count}>
-              {campaign.status === "선정" || campaign.status === "진행" ? (
+              {campaign.status === "진행" ? (
                 // 진행 중인 캠페인: 검수/제출/선정 수 표시
                 <>
                   <span className={cardStyles.applicant_current}>
