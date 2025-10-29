@@ -13,9 +13,6 @@
  * 검수카드 특징:
  * - 신청자 프로필 정보 표시 (닉네임, 사용자 타입, 프로필 이미지)
  * - 채널 정보 표시 (채널 아이콘, 채널 ID)
- * - 회원 타입 표시 (모범 회원 / 이용 제한)
- * - 통계 정보 표시 (일방문, 총방문, 이웃수)
- * - 메모/자기소개 표시
  * - 콘텐츠 확인하기 버튼 (콘텐츠 검수)
  * - 등록일 정보 표시
  * - 승인/반려 버튼 (검수 결과 처리)
@@ -29,23 +26,19 @@
 
 "use client";
 
-import { Applicant } from "@/data/partner/campaign_application/delivery";
+import { ReviewApplicant } from "@/data/partner/campaign_application/delivery_review_completed";
 import styles from "@/styles/partner/campaign_application/delivery/delivery_card_shared.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
 
-interface ReviewApplicantCardProps {
+interface DeliveryReviewCardProps {
   /** 검수 대상 신청자 정보 객체 */
-  applicant: Applicant;
+  applicant: ReviewApplicant;
   /** 콘텐츠 확인하기 버튼 클릭 핸들러 함수 */
   onContentCheck: (applicantId: string) => void;
   /** 승인 버튼 클릭 핸들러 함수 */
   onApprove: (applicantId: string) => void;
   /** 반려 버튼 클릭 핸들러 함수 */
   onReject: (applicantId: string) => void;
-  /** 등록일 정보 */
-  registrationDate?: string;
-  /** 배송 주소 정보 (배송형 특화) */
-  deliveryAddress?: string;
 }
 
 /**
@@ -62,17 +55,15 @@ interface ReviewApplicantCardProps {
  * - 승인/반려 버튼으로 검수 결과 처리
  * - 검수 워크플로우에 최적화된 UI
  *
- * @param props - ReviewApplicantCardProps 타입의 props
+ * @param props - DeliveryReviewCardProps 타입의 props
  * @returns JSX 요소
  */
-export default function ReviewApplicantCard({
+export default function NaverBlogReviewCard({
   applicant,
   onContentCheck,
   onApprove,
   onReject,
-  registrationDate,
-  deliveryAddress,
-}: ReviewApplicantCardProps) {
+}: DeliveryReviewCardProps) {
   /**
    * 채널 아이콘 경로 가져오기
    *
@@ -87,19 +78,25 @@ export default function ReviewApplicantCard({
   const channel_icon_src = getChannelLogo(applicant.channel);
 
   return (
-    <div className={styles.delivery_applicant_card}>
+    <article className={styles.applicant_card}>
       {/* 프로필 영역: 프로필 이미지, 닉네임, 사용자 타입 */}
       <div className={styles.profile_section}>
-        <img
-          src={applicant.profileImage || "/images/default-profile.png"}
-          alt={`${applicant.nickname} 프로필`}
-          className={styles.profile_image}
-        />
+        <div className={styles.profile_image_container}>
+          {applicant.profileImage ? (
+            <img
+              src={applicant.profileImage}
+              alt="프로필"
+              className={styles.profile_image}
+            />
+          ) : (
+            <div className={styles.profile_placeholder}></div>
+          )}
+        </div>
         <div className={styles.profile_info}>
           {/* 사용자 타입 표시 (리뷰어 / 인플루언서) */}
-          <div className={styles.user_type}>{applicant.userType}</div>
+          <span className={styles.user_type}>{applicant.userType}</span>
           {/* 닉네임 표시 */}
-          <div className={styles.nickname}>{applicant.nickname}</div>
+          <span className={styles.nickname}>{applicant.nickname}</span>
         </div>
       </div>
 
@@ -110,85 +107,26 @@ export default function ReviewApplicantCard({
           alt={`${applicant.channel} 채널`}
           className={styles.channel_icon}
         />
-        {/* 
-          📌 하드코딩된 텍스트:
-          - 현재 "id"로 고정되어 있음
-          - 실제로는 applicant.channelId 같은 prop을 사용해야 함
-        */}
-        <span className={styles.channel_id}>id</span>
+
+        <span className={styles.applicant_id}>{applicant.Id}</span>
       </div>
 
-      {/* 회원 타입 표시 */}
-      <div className={styles.member_type}>{applicant.memberType}</div>
+      {/* 콘텐츠 확인하기 버튼 */}
+      <button
+        className={styles.content_check_button}
+        onClick={() => onContentCheck(applicant.id)}
+        aria-label={`${applicant.nickname} 콘텐츠 확인하기`}
+      >
+        콘텐츠 확인하기
+      </button>
 
-      {/* 배송 주소 정보 (배송형 특화) */}
-      {deliveryAddress && (
-        <div className={styles.delivery_address_section}>
-          <div className={styles.delivery_address_label}>배송 주소</div>
-          <div className={styles.delivery_address_text}>{deliveryAddress}</div>
-        </div>
-      )}
-
-      {/* 통계 정보 영역: 일방문, 총방문, 이웃수 */}
-      <div className={styles.stats_section}>
-        {/* 
-          📌 통계 아이템 1: 일방문
-          - toLocaleString(): 숫자를 천 단위 콤마로 표시
-          - 예: 135 -> "135", 1350 -> "1,350"
-        */}
-        <div className={styles.stat_item}>
-          <span className={styles.stat_label}>일방문</span>
-          <span className={styles.stat_value}>
-            {applicant.dailyVisits.toLocaleString()}
-          </span>
-        </div>
-
-        {/* 통계 아이템 2: 총방문 */}
-        <div className={styles.stat_item}>
-          <span className={styles.stat_label}>총방문</span>
-          <span className={styles.stat_value}>
-            {applicant.totalVisits.toLocaleString()}
-          </span>
-        </div>
-
-        {/* 통계 아이템 3: 이웃수 */}
-        <div className={styles.stat_item}>
-          <span className={styles.stat_label}>이웃수</span>
-          <span className={styles.stat_value}>
-            {applicant.neighbors.toLocaleString()}
-          </span>
-        </div>
-      </div>
-
-      {/* 메모 영역: 신청자가 작성한 자기소개 */}
-      <div className={styles.memo_section}>
-        <div className={styles.memo_text}>{applicant.memo}</div>
-        <div className={styles.memo_divider}></div>
+      {/* 등록일 정보 표시 */}
+      <div className={styles.registration_info}>
+        {applicant.registrationDate} 등록
       </div>
 
       {/* 액션 버튼 영역: 콘텐츠 확인하기, 승인/반려 */}
-      <div className={styles.action_button}>
-        {/* 
-          📌 콘텐츠 확인하기 버튼:
-          - 검수 대상 콘텐츠를 확인하는 버튼
-          - 전체 너비로 강조 표시
-          - 클릭 시 콘텐츠 상세 페이지로 이동
-        */}
-        <button
-          className={styles.content_check_button}
-          onClick={() => onContentCheck(applicant.id)}
-          aria-label={`${applicant.nickname} 콘텐츠 확인하기`}
-        >
-          콘텐츠 확인하기
-        </button>
-
-        {/* 등록일 정보 표시 */}
-        {registrationDate && (
-          <div className={styles.registration_info}>
-            {registrationDate} 등록
-          </div>
-        )}
-
+      <div className={styles.action_button_section}>
         {/* 
           📌 승인/반려 버튼:
           - 검수 결과를 처리하는 버튼들
@@ -198,14 +136,14 @@ export default function ReviewApplicantCard({
         */}
         <div className={styles.approval_buttons}>
           <button
-            className={styles.approve_button}
+            className={`${styles.action_button} ${styles.approve_button}`}
             onClick={() => onApprove(applicant.id)}
             aria-label={`${applicant.nickname} 승인`}
           >
             승인
           </button>
           <button
-            className={styles.reject_button}
+            className={`${styles.action_button} ${styles.reject_button}`}
             onClick={() => onReject(applicant.id)}
             aria-label={`${applicant.nickname} 반려`}
           >
@@ -213,6 +151,6 @@ export default function ReviewApplicantCard({
           </button>
         </div>
       </div>
-    </div>
+    </article>
   );
 }

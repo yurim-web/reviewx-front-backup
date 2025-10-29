@@ -25,15 +25,13 @@ import CampaignSchedule from "./CampaignSchedule";
 
 // 브랜드 로고 매핑 객체
 // 브랜드 이름을 입력하면 해당하는 로고 이미지 경로를 반환
+// KEY는 공백 제거한 정규화 문자열을 사용 (예: "네이버 클립" → "네이버클립")
 const brandLogoMap: Record<string, string> = {
-  "네이버 쇼핑": "/images/brand_logo/navershop.svg",
-  쿠팡: "/images/brand_logo/coupang.svg",
-  인스타: "/images/brand_logo/insta.svg",
-  카카오선물하기: "/images/brand_logo/kakaopre.svg",
-  "네이버 블로그": "/images/brand_logo/naverblog.svg",
-  올리브영: "/images/brand_logo/oliveyoung.svg",
-  "오늘의 집": "/images/brand_logo/todayhouse.svg",
+  네이버블로그: "/images/brand_logo/naverblog.svg",
+  네이버클립: "/images/brand_logo/naverclip.svg",
+  인스타그램: "/images/brand_logo/insta.svg",
   유튜브: "/images/brand_logo/youtube.svg",
+  기본: "/images/icons/phone_verified.svg",
 };
 
 // 캠페인 정보 타입 정의
@@ -87,10 +85,11 @@ export default function Campaignbanner({ campaignInfo }: CampaignbannerProps) {
    * 2. 없으면 기본 아이콘 사용
    */
   const getBrandLogo = () => {
-    if (campaignInfo.brandName && brandLogoMap[campaignInfo.brandName]) {
-      return brandLogoMap[campaignInfo.brandName];
-    }
-    return "/images/icons/phone_verified.svg";
+    if (!campaignInfo.brandName) return "/images/icons/phone_verified.svg";
+
+    // 공백 제거하여 정규화 (예: "네이버 클립" → "네이버클립")
+    const normalized = campaignInfo.brandName.replace(/\s+/g, "");
+    return brandLogoMap[normalized] ?? "/images/icons/phone_verified.svg";
   };
 
   return (

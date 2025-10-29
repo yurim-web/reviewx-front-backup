@@ -1,5 +1,5 @@
 /* ========================================
-   📋 캠페인 정보 카드 스타일
+   📋 맨 윗 부분 캠페인 정보 카드 스타일
    ======================================== */
 
 .campaign_info_card_conainer {
@@ -109,11 +109,10 @@
 .campaign_schedule {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 16px;
   background: #f9f9f9;
-  padding: 16px;
+  padding: 20px;
   border-radius: 4px;
-  min-width: 280px;
 }
 
 .schedule_item {
@@ -123,42 +122,23 @@
 }
 
 .schedule_label {
-  font-family: "Pretendard", sans-serif;
-  font-weight: 600;
+  color: #848484;
   font-size: 14px;
-  color: #444444;
+  font-weight: 500;
+  line-height: 14px;
   letter-spacing: -0.28px;
 }
 
 .schedule_value {
-  font-family: "Pretendard", sans-serif;
-  font-weight: 500;
-  font-size: 14px;
   color: #848484;
-  letter-spacing: -0.28px;
   text-align: right;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
 }
 
 .schedule_value strong {
   font-weight: 600;
   color: #444444;
-}
-
-/* 반응형 디자인 */
-@media (max-width: 1200px) {
-  .campaign_info_card {
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .campaign_schedule {
-    min-width: auto;
-  }
-}
-
-@media (max-width: 768px) {
-  .campaign_info_card {
-    margin: 16px 20px;
-    padding: 16px;
-  }
 }

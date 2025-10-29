@@ -1,49 +1,73 @@
 /* ========================================
-   📦 배송형 신청자 카드 컴포넌트
+   👤 신청자 카드 컴포넌트
    ======================================== */
 
 /**
- * 배송형 신청자 카드 컴포넌트
+ * 신청자 카드 컴포넌트
  *
- * 목적: 배송형 캠페인에 신청한 사용자의 정보를 카드 형태로 표시하는 전용 컴포넌트입니다.
+ * 목적: 캠페인에 신청한 사용자의 정보를 카드 형태로 표시하는 컴포넌트입니다.
  *
  * 사용 위치:
- * - /partner/campaign_application/delivery (배송형 캠페인 신청자 목록)
+ * - /partner/campaign_application/delivery (배송형)
+ * - /partner/campaign_application/mission (미션형)
+ * - /partner/campaign_application/review (리뷰형)
+ * - /partner/campaign_application/reporter (기자단형)
+ * - /partner/campaign_application/visit (방문형)
  *
- * 배송형 캠페인 특화 기능:
+ * 주요 기능:
  * - 신청자 프로필 정보 표시 (닉네임, 사용자 타입, 프로필 이미지)
  * - 채널 정보 표시 (채널 아이콘, 채널 ID)
  * - 회원 타입 표시 (모범 회원 / 이용 제한)
- * - 배송 관련 통계 정보 표시 (일방문, 총방문, 이웃수)
- * - 배송 주소 정보 표시 (배송형 특화)
+ * - 통계 정보 표시 (일방문, 총방문, 이웃수)
  * - 메모/자기소개 표시
  * - 선정하기 버튼 (미선택 상태)
  * - 이용 제한 표시 (이용제한 계정 상태)
  *
- * 📌 배송형 캠페인의 특징:
- * 1. 제품을 무료로 배송받아 리뷰 작성
- * 2. 배송 주소 확인이 중요
- * 3. 제품 수령 후 리뷰 작성 기한 관리
- * 4. 배송 상태 추적 가능
+ * 📌 컴포넌트 분리의 장점:
+ * 1. 재사용성: 같은 컴포넌트를 여러 곳에서 사용 가능
+ * 2. 가독성: 페이지 코드가 간결해짐
+ * 3. 유지보수: 컴포넌트만 수정하면 모든 곳에 반영
+ * 4. 테스트: 개별 컴포넌트 테스트 용이
  */
 
 "use client";
 
-import { Applicant } from "@/data/partner/campaign_application/delivery";
-import styles from "@/styles/partner/campaign_application/delivery/delivery_card_shared.module.css";
-import { getChannelLogo } from "@/utils/channelLogoMap";
+import { Applicant } from "@/data/partner/campaign_application/delivery_applicants";
+import styles from "../../../styles/partner/campaign_application/applicant_card.module.css";
 
-interface DeliveryApplicantCardProps {
-  /** 배송형 신청자 정보 객체 */
+/**
+ * 채널 이름과 아이콘 경로를 매핑하는 객체
+ *
+ * 📌 Record 타입:
+ * - TypeScript의 유틸리티 타입
+ * - Record<키타입, 값타입> 형태
+ * - 문자열 키와 문자열 값을 가진 객체를 정의
+ *
+ * 📌 사용 예시:
+ * - "네이버" -> "/images/brand_logo/navershop.svg"
+ * - "네이버 인플루언서" -> "/images/brand_logo/naverblog.svg"
+ */
+const channel_logo_map: Record<string, string> = {
+  네이버: "/images/brand_logo/navershop.svg",
+  네이버블로그: "/images/brand_logo/naverblog.svg",
+  네이버쇼핑: "/images/brand_logo/navershop.svg",
+  쿠팡: "/images/brand_logo/coupang.svg",
+  인스타: "/images/brand_logo/insta.svg",
+  카카오선물하기: "/images/brand_logo/kakaopre.svg",
+  올리브영: "/images/brand_logo/oliveyoung.svg",
+  오늘의집: "/images/brand_logo/todayhouse.svg",
+  유튜브: "/images/brand_logo/youtube.svg",
+};
+
+interface ApplicantCardProps {
+  /** 신청자 정보 객체 */
   applicant: Applicant;
   /** 선정하기 버튼 클릭 핸들러 함수 */
   onSelect: (applicantId: string) => void;
-  /** 배송 주소 정보 (배송형 특화) */
-  deliveryAddress?: string;
 }
 
 /**
- * 배송형 신청자 카드 컴포넌트
+ * 신청자 카드 컴포넌트
  *
  * 📌 React 함수형 컴포넌트:
  * - props를 매개변수로 받음
@@ -51,48 +75,42 @@ interface DeliveryApplicantCardProps {
  * - JSX를 반환하여 UI 렌더링
  *
  * 📌 구조분해할당 예시:
- * const { applicant, onSelect, deliveryAddress } = props;
+ * const { applicant, onSelect } = props;
  * 위 코드를 매개변수에서 바로 사용하여 간결하게 작성
  *
- * 📌 배송형 특화 기능:
- * - deliveryAddress: 배송 주소 정보 표시
- * - 배송 관련 UI 요소 추가
- *
- * @param props - DeliveryApplicantCardProps 타입의 props
+ * @param props - ApplicantCardProps 타입의 props
  * @returns JSX 요소
  */
-export default function DeliveryApplicantCard({
+export default function ApplicantCard({
   applicant,
   onSelect,
-  deliveryAddress,
-}: DeliveryApplicantCardProps) {
+}: ApplicantCardProps) {
   /**
    * 채널 아이콘 경로 가져오기
    *
-   * 📌 getChannelLogo 함수 사용:
-   * - 유틸리티 함수를 통해 채널 로고 경로 가져오기
-   * - 기본값 처리로 안전한 접근
-   * - 중앙 집중식 관리로 유지보수 용이
+   * 📌 channel_logo_map 사용:
+   * - applicant.channel 값을 키로 사용하여 아이콘 경로 가져오기
+   * - 모든 채널이 매핑되어 있으므로 항상 올바른 아이콘 표시
    *
    * 📌 예시:
    * - applicant.channel = "네이버" -> "/images/brand_logo/navershop.svg"
    * - applicant.channel = "쿠팡" -> "/images/brand_logo/coupang.svg"
    */
-  const channel_icon_src = getChannelLogo(applicant.channel);
+  const channel_icon_src = channel_logo_map[applicant.channel];
 
   return (
-    <div className={styles.delivery_applicant_card}>
+    <div className={styles.applicant_card}>
       {/* 프로필 영역: 프로필 이미지, 닉네임, 사용자 타입 */}
       <div className={styles.profile_section}>
         <img
-          src={applicant.profileImage || "/images/default-profile.png"}
-          alt={`${applicant.nickname} 프로필`}
+          src={applicant.profileImage}
+          alt=""
           className={styles.profile_image}
         />
         <div className={styles.profile_info}>
-          {/* 사용자 타입 표시 (리뷰어 / 인플루언서) */}
-          <div className={styles.user_type}>{applicant.userType}</div>
           {/* 닉네임 표시 */}
+          <div className={styles.user_type}>{applicant.userType}</div>
+          {/* 사용자 타입 표시 (리뷰어 / 인플루언서) */}
           <div className={styles.nickname}>{applicant.nickname}</div>
         </div>
       </div>
@@ -101,7 +119,7 @@ export default function DeliveryApplicantCard({
       <div className={styles.channel_section}>
         <img
           src={channel_icon_src}
-          alt={`${applicant.channel} 채널`}
+          alt="채널"
           className={styles.channel_icon}
         />
         {/* 
@@ -114,14 +132,6 @@ export default function DeliveryApplicantCard({
 
       {/* 회원 타입 표시 */}
       <div className={styles.member_type}>{applicant.memberType}</div>
-
-      {/* 배송 주소 정보 (배송형 특화) */}
-      {deliveryAddress && (
-        <div className={styles.delivery_address_section}>
-          <div className={styles.delivery_address_label}>배송 주소</div>
-          <div className={styles.delivery_address_text}>{deliveryAddress}</div>
-        </div>
-      )}
 
       {/* 통계 정보 영역: 일방문, 총방문, 이웃수 */}
       <div className={styles.stats_section}>
@@ -174,7 +184,6 @@ export default function DeliveryApplicantCard({
           <button
             className={styles.select_button}
             onClick={() => onSelect(applicant.id)}
-            aria-label={`${applicant.nickname} 신청자 선정하기`}
           >
             선정하기
           </button>
@@ -186,11 +195,7 @@ export default function DeliveryApplicantCard({
           - 클릭 불가능한 상태
         */}
         {applicant.selectionStatus === "이용제한 계정" && (
-          <button
-            className={styles.restricted_button}
-            disabled
-            aria-label="이용 제한 계정"
-          >
+          <button className={styles.restricted_button} disabled>
             이용 제한 계정
           </button>
         )}

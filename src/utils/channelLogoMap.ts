@@ -21,16 +21,13 @@
  * - "쿠팡" -> "/images/brand_logo/coupang.svg"
  */
 
+// KEY는 공백 제거한 정규화 문자열을 사용 (예: "네이버 클립" → "네이버클립")
 export const channel_logo_map: Record<string, string> = {
-  네이버: "/images/brand_logo/navershop.svg",
   네이버블로그: "/images/brand_logo/naverblog.svg",
-  네이버쇼핑: "/images/brand_logo/navershop.svg",
-  쿠팡: "/images/brand_logo/coupang.svg",
-  인스타: "/images/brand_logo/insta.svg",
-  카카오선물하기: "/images/brand_logo/kakaopre.svg",
-  올리브영: "/images/brand_logo/oliveyoung.svg",
-  오늘의집: "/images/brand_logo/todayhouse.svg",
+  네이버클립: "/images/brand_logo/naverclip.svg",
+  인스타그램: "/images/brand_logo/insta.svg",
   유튜브: "/images/brand_logo/youtube.svg",
+  기본: "/images/icons/phone_verified.svg",
 };
 
 /**
@@ -45,5 +42,8 @@ export const channel_logo_map: Record<string, string> = {
  * @returns 해당 채널의 로고 아이콘 경로
  */
 export function getChannelLogo(channelName: string): string {
-  return channel_logo_map[channelName] || "/images/brand_logo/default.svg";
+  if (!channelName) return "/images/icons/phone_verified.svg";
+  // 공백 제거하여 정규화
+  const normalized = channelName.replace(/\s+/g, "");
+  return channel_logo_map[normalized] ?? "/images/icons/phone_verified.svg";
 }

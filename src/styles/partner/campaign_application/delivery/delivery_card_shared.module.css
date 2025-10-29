@@ -3,334 +3,337 @@
    ======================================== */
 
 /* 공통 카드 컨테이너 */
-.delivery_applicant_card {
-  background: #ffffff;
-  border: 1px solid #e5e5e5;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  transition: all 0.2s ease-in-out;
+
+/* 카드 스타일 */
+.applicant_card {
+  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  /* 카드 최소 높이! */
+  /* max-height: 396px; */
+  height: fit-content;
+}
+/* 선정탭 카드 스타일 -- 선정탭에만 있음 */
+.selected_card {
+  border: 1px solid #444;
 }
 
-.delivery_applicant_card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  transform: translateY(-2px);
-}
-
-/* 선정된 카드 스타일 (점선 테두리) */
-.delivery_applicant_card.selected {
-  border: 2px dashed #1976d2;
-  background: #f8f9ff;
+/* 선정탭 - 인플루언서 카드 스타일 -- 선정탭에만 있음 */
+.selected_card_influencer {
+  border: 1px solid #2dc469;
 }
 
 /* 프로필 섹션 */
 .profile_section {
   display: flex;
   align-items: center;
-  margin-bottom: 16px;
+  gap: 12px;
+}
+
+/* 프로필 이미지 컨테이너 */
+.profile_image_container {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #d9d9d9;
 }
 
 .profile_image {
-  width: 48px;
-  height: 48px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  margin-right: 12px;
-  border: 2px solid #f0f0f0;
 }
-
+/* 프로필 이미지 없을 때 대체! */
+.profile_placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #d9d9d9;
+}
+/* 프로필 정보 컨테이너 */
 .profile_info {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
+/* 유저 타입 글자 */
 .user_type {
-  font-size: 12px;
-  color: #999999;
-  margin-bottom: 4px;
-  font-weight: 400;
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
 }
 
+/* 닉네임 글자 */
 .nickname {
-  font-size: 16px;
+  color: #444;
+  font-size: 14px;
   font-weight: 600;
-  color: #00c851;
-  margin: 0;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  overflow: hidden;
+  width: 128px;
 }
 
 /* 채널 섹션 */
 .channel_section {
+  border-radius: 4px;
+  background: #f9f9f9;
+  padding: 12px;
+
   display: flex;
   align-items: center;
-  background: #f8f9fa;
-  padding: 8px 12px;
-  border-radius: 8px;
-  margin-bottom: 12px;
+  gap: 4px;
 }
 
+/* 채널로고 이미지 스타일 */
 .channel_icon {
-  width: 20px;
-  height: 20px;
-  margin-right: 8px;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
 }
 
-.channel_id {
+/* 신청자 아이디 */
+.applicant_id {
+  color: #444;
   font-size: 14px;
-  color: #333333;
   font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
 }
 
 /* 회원 타입 */
 .member_type {
-  background: #e8f5e8;
-  color: #00c851;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
-  text-align: center;
-  margin-bottom: 16px;
-  display: inline-block;
+  border-radius: 4px;
+  background: #f9f9f9;
+  padding: 12px;
+
+  /* 회원 타입 글자 */
+  color: #444;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 14px;
+  letter-spacing: -0.28px;
 }
 
 /* 통계 섹션 */
 .stats_section {
-  background: #f8f9fa;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 16px;
+  border-radius: 4px;
+  background: #f9f9f9;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
-
+/* 통계 아이템 */
 .stat_item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
-}
 
-.stat_item:last-child {
-  margin-bottom: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
 }
-
+/* 통계 라벨 */
 .stat_label {
-  font-size: 14px;
-  color: #666666;
-  font-weight: 400;
+  color: #848484;
 }
-
+/* 통계 값 */
 .stat_value {
-  font-size: 14px;
-  color: #333333;
-  font-weight: 600;
+  color: #444444;
 }
 
 /* 메모 섹션 */
 .memo_section {
-  background: #f8f9fa;
-  border-radius: 8px;
+  border-radius: 4px;
+  background: #f9f9f9;
   padding: 12px;
-  margin-bottom: 16px;
-  position: relative;
+  max-height: 56px;
+  min-height: 56px;
 }
 
+/* 메모 텍스트 */
 .memo_text {
-  font-size: 13px;
-  color: #333333;
-  line-height: 1.5;
-  max-height: 60px;
+  color: #848484;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.24px;
+  max-height: 36px;
   overflow-y: auto;
-  padding-right: 8px;
+  word-wrap: break-word;
 }
 
-.memo_divider {
-  position: absolute;
-  bottom: 0;
-  left: 12px;
-  right: 12px;
-  height: 1px;
-  background: linear-gradient(to right, transparent, #e5e5e5, transparent);
+/* 메모 텍스트 스크롤바 스타일링 */
+.memo_text::-webkit-scrollbar {
+  width: 4px; /* 스크롤바 전체 너비를 줄임 */
+}
+
+.memo_text::-webkit-scrollbar-track {
+  background: transparent; /* 트랙을 투명하게 */
+}
+
+.memo_text::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 100px;
+  /* 스크롤바를 왼쪽에서 조금 떼게 */
+  border-left: 1px solid transparent;
+  background-clip: padding-box;
+}
+
+.memo_text::-webkit-scrollbar-thumb:hover {
+  background: #999999;
+  background-clip: padding-box;
 }
 
 /* 액션 버튼 섹션 */
-.action_button {
+.action_button_section {
   display: flex;
   justify-content: center;
-  gap: 8px;
+  padding-top: 4px;
 }
 
-/* 기본 버튼 스타일 */
-.select_button {
-  background: #ffffff;
-  border: 1px solid #333333;
-  color: #333333;
-  padding: 12px 24px;
-  border-radius: 8px;
+/* 기본 버튼 스타일 -- 공통된 스타일 */
+.action_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 12px;
+  height: 38px;
+
+  /* 버튼 속 글자  */
+  text-align: center;
   font-size: 14px;
   font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  min-width: 120px;
+  line-height: 14px;
+  letter-spacing: -0.28px;
 }
 
-.select_button:hover {
-  background: #333333;
-  color: #ffffff;
-  transform: translateY(-1px);
-}
-
-.select_button:active {
-  transform: translateY(0);
+/* 선정하기 버튼 스타일 */
+.select_button {
+  background: #fff;
+  border: 1px solid #444;
+  color: #444;
 }
 
 /* 이용 제한 버튼 */
 .restricted_button {
-  background: #f8f9fa;
-  border: 1px solid #dee2e6;
-  color: #6c757d;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: not-allowed;
-  min-width: 120px;
+  background: #d9d9d9;
+  border: 1px solid #d9d9d9;
+  color: #999;
+}
+
+/* 이용제한 계정 카드 전체 블러 효과 */
+.restricted_card {
+  border-radius: 4px;
+  background: rgba(249, 249, 249, 0.1);
+  position: relative;
+}
+
+/* 이용제한 계정 카드의 모든 콘텐츠에 블러 적용 (버튼 제외) */
+.restricted_card .profile_section,
+.restricted_card .channel_section,
+.restricted_card .member_type,
+.restricted_card .stats_section,
+.restricted_card .memo_section {
+  filter: blur(8px);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* 이용제한 계정 카드의 버튼 영역 - 블러 제거 */
+.restricted_card .action_button_section {
+  position: relative;
+  filter: none !important;
+  opacity: 1 !important;
 }
 
 /* 선택 취소 버튼 */
 .cancel_button {
-  background: #6c757d;
-  border: 1px solid #6c757d;
-  color: #ffffff;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  min-width: 120px;
+  background: #444;
+  border: 1px solid #444;
+  color: #fff;
 }
 
-.cancel_button:hover {
-  background: #5a6268;
-  transform: translateY(-1px);
+/* 인플루언서 닉네임 - 초록색 */
+.influencer_nickname {
+  color: #22c55e !important;
 }
 
-/* 콘텐츠 확인 버튼 */
+/* 인플루언서 선택 취소 버튼 - 초록색 */
+.influencer_cancel_button {
+  background: #22c55e;
+  border: 1px solid #22c55e;
+  color: #fff;
+}
+
+/* 콘텐츠 확인하기  버튼 -- 검수, 완료 탭에만 있음*/
 .content_check_button {
-  background: #495057;
-  border: 1px solid #495057;
-  color: #ffffff;
-  padding: 12px 24px;
-  border-radius: 8px;
+  border-radius: 4px;
+  background: #444;
+  color: #fff;
+  padding: 12px;
+  cursor: pointer;
+
+  /* 버튼 속 글자 스타일 */
+  color: #fff;
+  text-align: center;
   font-size: 14px;
   font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  width: 100%;
-  margin-bottom: 12px;
+  line-height: 14px;
+  letter-spacing: -0.28px;
 }
 
-.content_check_button:hover {
-  background: #343a40;
-  transform: translateY(-1px);
-}
-
-/* 등록일 정보 */
+/* 등록일 정보 -- 검수, 완료 탭에만 있음 */
 .registration_info {
-  font-size: 12px;
-  color: #666666;
+  color: #848484;
   text-align: center;
-  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
 }
 
 /* 검수 완료 버튼 */
 .completed_button {
-  background: #f8f9fa;
-  border: 1px solid #dee2e6;
-  color: #6c757d;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: not-allowed;
-  width: 100%;
+  border: 1px solid #d9d9d9;
+  color: #848484;
+  background: #d9d9d9;
+  cursor: auto;
 }
 
-/* 승인/반려 버튼 */
+/* 승인/반려 버튼 -- 검수 탭에만 있음 */
 .approval_buttons {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   width: 100%;
 }
 
+/* 승인버튼 */
 .approve_button {
-  flex: 1;
-  background: #ffffff;
-  border: 1px solid #28a745;
-  color: #28a745;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  border: 1px solid #444;
+  color: #444444;
 }
 
-.approve_button:hover {
-  background: #28a745;
-  color: #ffffff;
-}
-
+/* 반려버튼 */
 .reject_button {
-  flex: 1;
-  background: #ffffff;
-  border: 1px solid #dc3545;
-  color: #dc3545;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
-
-.reject_button:hover {
-  background: #dc3545;
-  color: #ffffff;
-}
-
-/* 반응형 디자인 */
-@media (max-width: 768px) {
-  .delivery_applicant_card {
-    padding: 16px;
-    margin-bottom: 12px;
-  }
-
-  .profile_image {
-    width: 40px;
-    height: 40px;
-  }
-
-  .nickname {
-    font-size: 15px;
-  }
-
-  .stats_section {
-    padding: 12px;
-  }
-
-  .select_button,
-  .cancel_button,
-  .restricted_button {
-    padding: 10px 20px;
-    font-size: 13px;
-  }
-
-  .content_check_button {
-    padding: 10px 20px;
-    font-size: 13px;
-  }
-
-  .approval_buttons {
-    flex-direction: column;
-  }
+  border: 1px solid #444;
+  color: #444444;
 }

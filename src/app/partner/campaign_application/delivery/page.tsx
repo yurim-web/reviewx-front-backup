@@ -24,11 +24,22 @@
 import { useState, useEffect } from "react";
 import PartnerHeader from "@/components/fragments/PartnerHeader";
 import styles from "../../../../styles/partner/campaign_application/campaign_application.module.css";
+import sortDropdownStyles from "../../../../styles/partner/campaign_application/sort_dropdown.module.css";
+
 import layoutStyles from "../../../../styles/partner/layout.module.css";
-import Campaignbanner from "@/components/partner/campaign_application/CampaignInfoBox";
-import ExcelDownloadBtn from "@/components/partner/campaign_application/ExcelDownloadBtn";
-import SortDropdown from "@/components/partner/campaign_application/SortDropdown";
-import DeliveryApplicantCard from "@/components/partner/campaign_application/delivery_card/ApplicantCard";
+import Campaignbanner from "@/components/partner/campaign_details/CampaignInfoBox";
+import ExcelDownloadBtn from "@/components/partner/campaign_details/ExcelDownloadBtn";
+import PartnerSortModalFilter from "@/components/partner/campaign_details/PartnerSortModalFilter";
+// 동적 카드 컴포넌트 로딩을 위한 import (제거)
+// import { getCardTypeFromBrandName } from "@/utils/cardTypeMapper";
+// 현재 구현된 카드 컴포넌트들 (임시)
+import NaverBlogCard from "@/components/partner/campaign_details/card_type/naverblog/NaverBlogCard";
+import NaverClipCard from "@/components/partner/campaign_details/card_type/naverclip/NaverClipCard";
+import NaverClipSelectedCard from "@/components/partner/campaign_details/card_type/naverclip/NaverClipSelectedCard";
+import InstagramCard from "@/components/partner/campaign_details/card_type/instagram/InstagramCard";
+import InstagramSelectedCard from "@/components/partner/campaign_details/card_type/instagram/InstagramSelectedCard";
+import YoutubeCard from "@/components/partner/campaign_details/card_type/youtube/YoutubeCard";
+import YoutubeSelectedCard from "@/components/partner/campaign_details/card_type/youtube/YoutubeSelectedCard";
 
 // 📦 목업 데이터 import
 // 별도 파일로 분리된 데이터를 가져옴
@@ -36,14 +47,23 @@ import {
   mockCampaignInfo,
   mockApplicants,
   mockSelectedApplicants,
+  mockNaverClipApplicants,
+  mockNaverClipSelectedApplicants,
+  mockInstagramApplicants,
+  mockInstagramSelectedApplicants,
+  mockYoutubeApplicants,
+  mockYoutubeSelectedApplicants,
   type Applicant,
-} from "@/data/partner/campaign_application/delivery";
+  type NaverClipApplicant,
+  type InstagramApplicant,
+  type YoutubeApplicant,
+} from "@/data/partner/campaign_application/delivery_applicants";
 
 /**
  * 배송형 캠페인 신청내역 페이지 컴포넌트
  */
 export default function DeliveryCampaignApplicationPage() {
-  // 탭 상태 관리 (신청/선정)
+  // 탭 상태 관리 (신청/선정만 사용)
   const [activeTab, setActiveTab] = useState<"applicants" | "selected">(
     "applicants"
   );
@@ -52,27 +72,178 @@ export default function DeliveryCampaignApplicationPage() {
   type SortOption = "latest" | "popular" | "deadline" | "point";
   const [sortOrder, setSortOrder] = useState<SortOption>("latest");
 
+  // 정렬 모달 상태 관리
+  const [isSortModalOpen, setIsSortModalOpen] = useState(false);
+
+  // 정렬 옵션 정의
+  const sortOptions = [
+    { value: "latest", label: "최신순" },
+    { value: "popular", label: "인기순" },
+    { value: "deadline", label: "마감임박순" },
+    { value: "point", label: "포인트순" },
+  ];
+
+  /**
+   * 브랜드 혼합 보기: 모든 브랜드의 신청/선정 데이터를 병합해서 한 화면에 표시
+   */
+  const allApplicants: Array<
+    Applicant | NaverClipApplicant | InstagramApplicant | YoutubeApplicant
+  > = [
+    ...mockApplicants,
+    ...mockNaverClipApplicants,
+    ...mockInstagramApplicants,
+    ...mockYoutubeApplicants,
+  ];
+  const allSelectedApplicants: Array<
+    Applicant | NaverClipApplicant | InstagramApplicant | YoutubeApplicant
+  > = [
+    ...mockSelectedApplicants,
+    ...mockNaverClipSelectedApplicants,
+    ...mockInstagramSelectedApplicants,
+    ...mockYoutubeSelectedApplicants,
+  ];
+
   /**
    * 탭별 데이터 개수 계산
    * - 신청 탭: 전체 신청자 수
    * - 선정 탭: 선정된 신청자 수
+   * - 검수 탭: 검수 중인 신청자 수
+   * - 완료 탭: 완료된 신청자 수
    */
-  const applicantsCount = mockApplicants.length;
-  const selectedCount = mockSelectedApplicants.length;
+  type AllApplicant =
+    | Applicant
+    | NaverClipApplicant
+    | InstagramApplicant
+    | YoutubeApplicant;
+
+  // 화면 내 로컬 상태: 신청/선정 리스트를 상태로 관리하여 카드 이동 처리
+  const [applicantsState, setApplicantsState] =
+    useState<AllApplicant[]>(allApplicants);
+  const [selectedState, setSelectedState] = useState<AllApplicant[]>(
+    allSelectedApplicants
+  );
+
+  const applicantsCount = applicantsState.length;
+  const selectedCount = selectedState.length;
 
   /**
    * 현재 활성화된 탭에 따라 표시할 데이터 결정
    *
-   * 📌 삼항 연산자 사용:
-   * - activeTab이 "applicants"면 mockApplicants 사용
-   * - 그렇지 않으면 mockSelectedApplicants 사용
-   *
-   * 📌 동적 데이터 렌더링:
+   * 📌 신청내역 페이지 데이터 선택:
    * - 신청 탭: 모든 신청자 목록 표시
    * - 선정 탭: 선정된 신청자만 표시
+   * - 브랜드별로 다른 데이터 사용
    */
-  const currentApplicants =
-    activeTab === "applicants" ? mockApplicants : mockSelectedApplicants;
+  const getCurrentApplicants = () => {
+    switch (activeTab) {
+      case "applicants":
+        return applicantsState;
+      case "selected":
+        return selectedState;
+      default:
+        return applicantsState;
+    }
+  };
+
+  const currentApplicants = getCurrentApplicants();
+
+  /**
+   * brandName에 따라 적절한 카드 컴포넌트를 렌더링하는 함수
+   *
+   * 📌 직접적인 컴포넌트 렌더링:
+   * - brandName을 직접 확인하여 해당 카드 컴포넌트 사용
+   * - 각 브랜드별로 명시적으로 컴포넌트 선택
+   * - 확장 가능한 구조로 새로운 브랜드 추가 용이
+   * - 브랜드별로 다른 데이터 타입 사용
+   *
+   * @param applicant - 신청자 데이터 (Applicant | NaverClipApplicant)
+   * @param isSelected - 선정 탭 여부
+   * @returns JSX 요소
+   */
+  const renderCardComponent = (
+    applicant:
+      | Applicant
+      | NaverClipApplicant
+      | InstagramApplicant
+      | YoutubeApplicant,
+    isSelected: boolean = false
+  ) => {
+    // 개별 신청자의 channel 기준으로 카드 컴포넌트 선택
+    switch (applicant.channel) {
+      case "네이버블로그":
+        return (
+          <NaverBlogCard
+            applicant={applicant as Applicant}
+            variant={isSelected ? "selected" : "applicant"}
+            onSelect={handleSelectApplicant}
+            onCancel={handleCancelApplicant}
+          />
+        );
+
+      case "네이버클립":
+        if (isSelected) {
+          return (
+            <NaverClipSelectedCard
+              applicant={applicant as NaverClipApplicant}
+              onCancel={handleCancelApplicant}
+            />
+          );
+        } else {
+          return (
+            <NaverClipCard
+              applicant={applicant as NaverClipApplicant}
+              onSelect={handleSelectApplicant}
+            />
+          );
+        }
+
+      case "인스타그램":
+        if (isSelected) {
+          return (
+            <InstagramSelectedCard
+              applicant={applicant as InstagramApplicant}
+              onCancel={handleCancelApplicant}
+            />
+          );
+        } else {
+          return (
+            <InstagramCard
+              applicant={applicant as InstagramApplicant}
+              onSelect={handleSelectApplicant}
+            />
+          );
+        }
+      case "유튜브":
+        if (isSelected) {
+          return (
+            <YoutubeSelectedCard
+              applicant={applicant as YoutubeApplicant}
+              onCancel={handleCancelApplicant}
+            />
+          );
+        } else {
+          return (
+            <YoutubeCard
+              applicant={applicant as YoutubeApplicant}
+              onSelect={handleSelectApplicant}
+            />
+          );
+        }
+      // case "기본":
+      //   return <CommonCard ... />;
+
+      default:
+        // 기본값: 네이버블로그 카드 사용
+        return (
+          <NaverBlogCard
+            applicant={applicant as Applicant}
+            variant={isSelected ? "selected" : "applicant"}
+            onSelect={handleSelectApplicant}
+            onCancel={handleCancelApplicant}
+          />
+        );
+    }
+  };
 
   // 기본 헤더 숨기기 (PartnerHeader만 표시)
   useEffect(() => {
@@ -88,7 +259,95 @@ export default function DeliveryCampaignApplicationPage() {
   // 선정하기 버튼 클릭 핸들러
   const handleSelectApplicant = (applicantId: string) => {
     console.log("선정하기:", applicantId);
-    // 실제로는 API 호출로 선정 처리
+
+    // 신청 목록에서 해당 신청자 찾기
+    setApplicantsState((prevApplicants) => {
+      const target = prevApplicants.find((a) => a.id === applicantId);
+      if (!target) {
+        console.log(
+          "신청 목록에서 해당 신청자를 찾을 수 없습니다:",
+          applicantId
+        );
+        return prevApplicants;
+      }
+
+      console.log("선정 전 상태:", target.selectionStatus);
+
+      // 신청 리스트에서 제거
+      const nextApplicants = prevApplicants.filter((a) => a.id !== applicantId);
+
+      // 상태값 업데이트: selectionStatus를 "선정하기"로 변경하여 선정 리스트로 이동
+      const moved: AllApplicant = {
+        ...target,
+        selectionStatus: "선정하기",
+      } as AllApplicant;
+
+      console.log("선정 후 상태:", moved.selectionStatus);
+
+      // 선정 리스트에 추가 (별도로 처리)
+      setSelectedState((prevSelected) => {
+        // 이미 선정 리스트에 있는지 확인
+        const isAlreadySelected = prevSelected.some(
+          (a) => a.id === applicantId
+        );
+        if (isAlreadySelected) {
+          console.log("이미 선정된 신청자입니다:", applicantId);
+          return prevSelected;
+        }
+        return [moved, ...prevSelected];
+      });
+
+      return nextApplicants;
+    });
+
+    // 탭 자동 전환 제거 - 카드만 이동
+  };
+
+  // 선택 취소 버튼 클릭 핸들러
+  const handleCancelApplicant = (applicantId: string) => {
+    console.log("선택 취소:", applicantId);
+
+    // 선정 목록에서 해당 신청자 찾기
+    setSelectedState((prevSelected) => {
+      const target = prevSelected.find((a) => a.id === applicantId);
+      if (!target) {
+        console.log(
+          "선정 목록에서 해당 신청자를 찾을 수 없습니다:",
+          applicantId
+        );
+        return prevSelected;
+      }
+
+      console.log("선정 취소 전 상태:", target.selectionStatus);
+
+      // 선정 리스트에서 제거
+      const nextSelected = prevSelected.filter((a) => a.id !== applicantId);
+
+      // 상태값 업데이트: selectionStatus를 "미선택"으로 변경하여 신청 리스트로 이동
+      const moved: AllApplicant = {
+        ...target,
+        selectionStatus: "미선택",
+      } as AllApplicant;
+
+      console.log("선정 취소 후 상태:", moved.selectionStatus);
+
+      // 신청 리스트에 추가 (별도로 처리)
+      setApplicantsState((prevApplicants) => {
+        // 이미 신청 리스트에 있는지 확인
+        const isAlreadyInApplicants = prevApplicants.some(
+          (a) => a.id === applicantId
+        );
+        if (isAlreadyInApplicants) {
+          console.log("이미 신청 리스트에 있는 신청자입니다:", applicantId);
+          return prevApplicants;
+        }
+        return [moved, ...prevApplicants];
+      });
+
+      return nextSelected;
+    });
+
+    // 탭 자동 전환 제거 - 카드만 이동
   };
 
   // 엑셀 다운로드 핸들러
@@ -100,6 +359,21 @@ export default function DeliveryCampaignApplicationPage() {
   const handleDownloadSelected = () => {
     console.log("선정자 목록 다운로드");
     // 실제로는 API 호출로 엑셀 파일 다운로드
+  };
+
+  // 정렬 모달 핸들러들
+  const handleSortModalOpen = () => {
+    setIsSortModalOpen(true);
+  };
+
+  const handleSortModalClose = () => {
+    setIsSortModalOpen(false);
+  };
+
+  const handleSortOptionChange = (option: { value: string; label: string }) => {
+    setSortOrder(option.value as SortOption);
+    setIsSortModalOpen(false);
+    console.log("정렬 변경:", option.label);
   };
 
   return (
@@ -124,11 +398,26 @@ export default function DeliveryCampaignApplicationPage() {
             onDownloadSelected={handleDownloadSelected}
           />
 
-          {/* 정렬 필터 */}
-          <SortDropdown sortOrder={sortOrder} onSortChange={setSortOrder} />
+          {/* 정렬 필터 - 모달 방식 */}
+          <button
+            className={`${sortDropdownStyles.sort_modal_trigger} ${
+              isSortModalOpen ? sortDropdownStyles.sort_modal_trigger_open : ""
+            }`}
+            onClick={handleSortModalOpen}
+          >
+            <span className={sortDropdownStyles.sort_trigger_text}>
+              {sortOptions.find((option) => option.value === sortOrder)
+                ?.label || "최신순"}
+            </span>
+            <img
+              src="/images/filter/part_dropdown_arrow.svg"
+              alt="정렬 선택"
+              className={sortDropdownStyles.sort_trigger_arrow}
+            />
+          </button>
         </article>
 
-        {/* 탭 네비게이션 */}
+        {/* 신청내역 탭 네비게이션 - 신청/선정만 표시 */}
         <article className={styles.tab_navigation}>
           <button
             className={`${styles.tab_button} ${
@@ -150,34 +439,37 @@ export default function DeliveryCampaignApplicationPage() {
 
         {/* 배송형 신청자 목록 그리드 */}
         {/* 
-          📌 currentApplicants 사용:
-          - activeTab 상태에 따라 동적으로 변경되는 데이터
-          - 신청 탭: mockApplicants 표시
-          - 선정 탭: mockSelectedApplicants 표시
+          📌 신청내역 페이지 컴포넌트:
+          - 신청 탭: DeliveryCard (선정하기 버튼)
+          - 선정 탭: DeliverySelectedCard (선택 취소 버튼)
           
-          📌 map 함수:
-          - 배열의 각 요소를 컴포넌트로 변환
-          - key prop: React가 효율적으로 렌더링하기 위해 필수
-          
-          📌 DeliveryApplicantCard 컴포넌트 사용:
-          - 배송형 전용 신청자 카드 컴포넌트
-          - 배송 주소, 배송 상태 등 배송형 특화 기능 포함
-          - applicant: 신청자 정보 데이터
-          - onSelect: 선정하기 버튼 클릭 핸들러
-          - deliveryAddress: 배송 주소 정보 (배송형 특화)
-          - deliveryStatus: 배송 상태 정보 (배송형 특화)
+          📌 조건부 렌더링:
+          - activeTab에 따라 다른 컴포넌트와 핸들러 사용
         */}
         <article className={styles.applicants_grid}>
-          {currentApplicants.map((applicant) => (
-            <DeliveryApplicantCard
-              key={applicant.id}
-              applicant={applicant}
-              onSelect={handleSelectApplicant}
-              deliveryAddress="서울특별시 강남구 테헤란로 123, 456동 789호"
-            />
-          ))}
+          {currentApplicants.map((applicant, index) => {
+            // 동적 카드 컴포넌트 렌더링
+            // key를 고유하게 만들기 위해 탭과 인덱스를 조합
+            return (
+              <div key={`${activeTab}-${applicant.id}-${index}`}>
+                {renderCardComponent(applicant, activeTab === "selected")}
+              </div>
+            );
+          })}
         </article>
       </section>
+
+      {/* 정렬 모달 */}
+      <PartnerSortModalFilter
+        isOpen={isSortModalOpen}
+        onClose={handleSortModalClose}
+        title="정렬"
+        options={sortOptions}
+        selectedValue={sortOrder}
+        onOptionChange={handleSortOptionChange}
+        showReset={false}
+        defaultSort="latest"
+      />
     </div>
   );
 }

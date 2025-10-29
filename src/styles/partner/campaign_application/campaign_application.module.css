@@ -38,8 +38,11 @@
 }
 
 /* ========== 탭 네비게이션 ========== */
-/* 신청/선정 탭 네비게이션 */
+/* 신청/선정 탭 네비게이션 (스크롤 시 고정) */
 .tab_navigation {
+  position: sticky;
+  top: 148px; /* 페이지 제목 아래 고정 */
+  z-index: 9;
   background: white;
   border-bottom: 1px solid #d9d9d9;
   display: flex;
@@ -100,25 +103,4 @@
   gap: 24px;
   padding: 24px 40px;
   background: white;
-}
-
-/* 반응형 디자인 */
-@media (max-width: 1200px) {
-  .applicants_grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
-    padding: 16px 20px;
-  }
-}
-
-@media (max-width: 768px) {
-  .page_header {
-    padding: 16px 20px;
-  }
-
-  .applicants_grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-    padding: 16px 20px;
-  }
 }
