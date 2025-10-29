@@ -5,7 +5,7 @@
 "use client";
 
 import { YoutubeApplicant } from "@/data/partner/campaign_application/delivery_applicants";
-import styles from "@/styles/partner/campaign_application/delivery/delivery_card_shared.module.css";
+import styles from "@/styles/partner/campaign_application/card/applicant_card_shared.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
 
 interface YoutubeSelectedCardProps {
@@ -85,4 +85,3 @@ export default function YoutubeSelectedCard({
     </article>
   );
 }
-

@@ -27,7 +27,7 @@
 "use client";
 
 import { CompletedApplicant } from "@/data/partner/campaign_application/delivery_review_completed";
-import styles from "@/styles/partner/campaign_application/delivery/delivery_card_shared.module.css";
+import styles from "@/styles/partner/campaign_application/card/applicant_card_shared.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
 
 interface DeliveryCompletedCardProps {

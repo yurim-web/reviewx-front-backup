@@ -1,8 +1,8 @@
 /* ========================================
-   📊 정렬 모달 스타일
+   📊 정렬 드롭다운 모달 스타일
    ======================================== */
 
-/* 정렬 모달 오버레이 */
+/* 모달 배경 오버레이 */
 .sort_modal_overlay {
   position: fixed;
   top: 0;
@@ -17,7 +17,7 @@
   padding: 0;
 }
 
-/* 정렬 모달 콘텐츠 */
+/* 모달 콘텐츠 */
 .sort_modal_content {
   background: white;
   border-radius: 40px 40px 0 0;
@@ -28,6 +28,7 @@
   animation: slideUp 0.3s ease-out;
 }
 
+/* 모달 슬라이드업 애니메이션 */
 @keyframes slideUp {
   from {
     transform: translateY(100%);
@@ -37,7 +38,7 @@
   }
 }
 
-/* 정렬 모달 헤더 */
+/* 모달 헤더 */
 .sort_modal_header {
   display: flex;
   justify-content: space-between;
@@ -46,6 +47,7 @@
   position: relative;
 }
 
+/* 모달 제목 */
 .sort_modal_title {
   color: #444;
   font-size: 20px;
@@ -54,6 +56,7 @@
   letter-spacing: -0.4px;
 }
 
+/* 모달 닫기 버튼 */
 .sort_modal_close_button {
   background: none;
   border: none;
@@ -68,19 +71,21 @@
   height: 20px;
 }
 
-/* 정렬 모달 바디 */
+/* 모달 바디 */
 .sort_modal_body {
   padding: 32px 40px 40px 40px;
   flex: 1;
   overflow-y: auto;
 }
 
+/* 정렬 옵션 리스트 */
 .sort_options_vertical {
   display: flex;
   flex-direction: column;
   gap: 32px;
 }
 
+/* 정렬 옵션 아이템 */
 .sort_option_item {
   display: flex;
   align-items: center;
@@ -92,6 +97,7 @@
   background-color: transparent;
 }
 
+/* 라디오 버튼 */
 .sort_option_radio {
   width: 20px;
   height: 20px;
@@ -99,6 +105,7 @@
   cursor: pointer;
 }
 
+/* 정렬 옵션 라벨 */
 .sort_option_label {
   color: #444;
   font-size: 16px;
@@ -109,9 +116,10 @@
 }
 
 /* ========================================
-   🔽 정렬 모달 트리거 버튼 스타일
+   🔽 정렬 드롭다운 트리거 버튼
    ======================================== */
 
+/* 정렬 버튼 */
 .sort_modal_trigger {
   display: flex;
   align-items: center;
@@ -124,6 +132,7 @@
   cursor: pointer;
 }
 
+/* 정렬 버튼 텍스트 */
 .sort_trigger_text {
   color: #444;
   font-size: 16px;
@@ -132,6 +141,7 @@
   letter-spacing: -0.32px;
 }
 
+/* 정렬 버튼 화살표 */
 .sort_trigger_arrow {
   width: 16px;
   height: 16px;
@@ -139,7 +149,7 @@
   transition: transform 0.2s;
 }
 
-/* 모달이 열렸을 때 화살표 회전 */
+/* 모달 열렸을 때 화살표 회전 */
 .sort_modal_trigger_open .sort_trigger_arrow {
   transform: rotate(180deg);
 }
