@@ -22,6 +22,7 @@
 
 import styles from "@/styles/partner/campaign_application/campaign_infocard.module.css";
 import CampaignSchedule from "./CampaignSchedule";
+import { getStatusMessage } from "@/data/partner/utils/campaignHelpers";
 
 // 브랜드 로고 매핑 객체
 // 브랜드 이름을 입력하면 해당하는 로고 이미지 경로를 반환
@@ -50,7 +51,8 @@ export interface CampaignInfo {
     | "등록 중"
     | "마감"
     | "진행 중"
-    | "종료";
+    | "종료"
+    | "취소";
   category: string;
   /** 브랜드 이름 (선택적) - 배송형 등에서만 사용 */
   brandName?: string;
@@ -62,6 +64,8 @@ export interface CampaignInfo {
   recruitedCount: number;
   totalCount: number;
   daysLeft: number;
+  /** 캠페인 상태 설명 텍스트 */
+  statusText?: string;
 }
 
 /**
@@ -132,7 +136,8 @@ export default function Campaignbanner({ campaignInfo }: CampaignbannerProps) {
 
             <h2 className={styles.campaign_title}>{campaignInfo.title}</h2>
             <p className={styles.campaign_notice}>
-              캠페인 선정 발표까지 {campaignInfo.daysLeft}일 남았습니다.
+              {campaignInfo.statusText ||
+                getStatusMessage(campaignInfo.status, campaignInfo.daysLeft)}
             </p>
           </div>
         </div>

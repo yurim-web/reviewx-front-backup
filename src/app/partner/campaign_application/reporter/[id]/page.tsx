@@ -28,7 +28,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import PartnerHeader from "@/components/fragments/PartnerHeader";
 import Loading from "@/app/loading";
 import styles from "@/styles/partner/campaign_application/campaign_application.module.css";
-import sortDropdownStyles from "@/styles/partner/campaign_application/sort_dropdown.module.css";
+import SortFilterControl from "@/components/partner/campaign_application/SortFilterControl";
 
 import layoutStyles from "@/styles/partner/layout.module.css";
 import Campaignbanner from "@/components/partner/campaign_application/CampaignInfoBox";
@@ -429,23 +429,13 @@ export default function ReporterCampaignApplicationPage() {
             onDownloadSelected={handleDownloadSelected}
           />
 
-          {/* 정렬 필터 - 모달 방식 */}
-          <button
-            className={`${sortDropdownStyles.sort_modal_trigger} ${
-              isSortModalOpen ? sortDropdownStyles.sort_modal_trigger_open : ""
-            }`}
-            onClick={handleSortModalOpen}
-          >
-            <span className={sortDropdownStyles.sort_trigger_text}>
-              {sortOptions.find((option) => option.value === sortOrder)
-                ?.label || "최신순"}
-            </span>
-            <img
-              src="/images/filter/part_dropdown_arrow.svg"
-              alt="정렬 선택"
-              className={sortDropdownStyles.sort_trigger_arrow}
-            />
-          </button>
+          {/* 정렬 트리거 + 모달 통합 */}
+          <SortFilterControl
+            options={sortOptions}
+            value={sortOrder}
+            onChange={(opt) => setSortOrder(opt.value as SortOption)}
+            defaultSort="latest"
+          />
         </article>
 
         {/* 신청내역 탭 네비게이션 - 신청/선정만 표시 */}
@@ -478,17 +468,7 @@ export default function ReporterCampaignApplicationPage() {
         </article>
       </section>
 
-      {/* 정렬 모달 */}
-      <PartnerSortModalFilter
-        isOpen={isSortModalOpen}
-        onClose={handleSortModalClose}
-        title="정렬"
-        options={sortOptions}
-        selectedValue={sortOrder}
-        onOptionChange={handleSortOptionChange}
-        showReset={false}
-        defaultSort="latest"
-      />
+      {/* 정렬 모달은 SortFilterControl 내부에서 관리 */}
     </>
   );
 }

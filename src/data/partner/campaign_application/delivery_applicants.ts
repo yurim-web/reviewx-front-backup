@@ -18,6 +18,7 @@
  */
 
 import { CampaignInfo } from "@/components/partner/campaign_application/CampaignInfoBox";
+import type { ContentByTab } from "../campaign_contents/types";
 
 // 기본 신청자 데이터 타입 정의
 export interface Applicant {
@@ -110,4 +111,6 @@ export interface CampaignWithApplicants {
     applicants: AllApplicant[];
     selectedApplicants: AllApplicant[];
   };
+  /** 선택: 진행/검수 상세에서 바로 사용할 콘텐츠 데이터 */
+  contents?: ContentByTab;
 }

@@ -38,7 +38,7 @@ export default function DeliveryCampaignLayout({
   children,
 }: DeliveryCampaignLayoutProps) {
   return (
-    <div className={layoutStyles.container}>
+    <div className={layoutStyles.container} >
       {/* 파트너 헤더 - 모든 파트너 페이지에서 공통으로 사용 */}
       <PartnerHeader />
 
@@ -48,15 +48,6 @@ export default function DeliveryCampaignLayout({
   );
 }
 
-/**
- * 메타데이터 설정
- *
- * 메타데이터 기능:
- * 1. 페이지 제목 설정
- * 2. SEO 최적화
- * 3. 브라우저 탭 제목 표시
- * 4. 소셜 미디어 공유 시 표시될 정보
- */
 export const metadata = {
   title: "배송형 캠페인 신청내역 | ReviewX",
   description: "배송형 캠페인의 신청자 관리 및 선정자 관리 페이지입니다.",

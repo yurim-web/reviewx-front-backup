@@ -33,7 +33,7 @@ export default function MissionCampaignApplicationLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className={layoutStyles.container}>
+    <div className={layoutStyles.container} >
       {/* 파트너 전용 헤더 */}
       <PartnerHeader />
 

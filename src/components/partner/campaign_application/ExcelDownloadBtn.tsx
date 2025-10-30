@@ -25,25 +25,54 @@ import styles from "@/styles/partner/campaign_application/excel_download_btn.mod
 interface ExcelDownloadBtnProps {
   onDownloadApplicants: () => void;
   onDownloadSelected: () => void;
+  // 선택적: 결과보고서 다운로드 버튼 핸들러 (제공 시 버튼 노출)
+  onDownloadReport?: () => void;
 }
 
 export default function ExcelDownloadBtn({
   onDownloadApplicants,
   onDownloadSelected,
+  onDownloadReport,
 }: ExcelDownloadBtnProps) {
   return (
     <div className={styles.download_btn_group}>
       {/* 신청자 목록 다운로드 버튼 */}
-      <button className={styles.download_button} onClick={onDownloadApplicants}>
+      <button
+        className={styles.download_button}
+        onClick={() => {
+          console.log("신청자 목록 다운로드 버튼 클릭");
+          onDownloadApplicants();
+        }}
+      >
         <img src="/images/excel_icon.png" alt="다운로드" />
         신청자 목록 다운로드
       </button>
 
       {/* 선정자 목록 다운로드 버튼 */}
-      <button className={styles.download_button} onClick={onDownloadSelected}>
+      <button
+        className={styles.download_button}
+        onClick={() => {
+          console.log("선정자 목록 다운로드 버튼 클릭");
+          onDownloadSelected();
+        }}
+      >
         <img src="/images/excel_icon.png" alt="다운로드" />
         선정자 목록 다운로드
       </button>
+
+      {/* 결과보고서 다운로드 버튼 (옵션) */}
+      {onDownloadReport ? (
+        <button
+          className={styles.download_button}
+          onClick={() => {
+            console.log("결과보고서 다운로드 버튼 클릭");
+            onDownloadReport();
+          }}
+        >
+          <img src="/images/excel_icon.png" alt="다운로드" />
+          결과보고서 다운로드
+        </button>
+      ) : null}
     </div>
   );
 }

@@ -34,6 +34,7 @@ import { Suspense } from "react";
 import "../styles/globals.css";
 import Header from "@/components/fragments/Header";
 import Loading from "./loading";
+import ConsoleFilter from "@/components/dev/ConsoleFilter";
 
 // 전체 애플리케이션의 메타데이터 설정
 export const metadata: Metadata = {
@@ -66,6 +67,8 @@ export default function RootLayout({
       <body className="antialiased">
         {/* 공통 상단 헤더 (일부 페이지에서 숨김 처리됨) */}
         <Header />
+        {/* 개발환경 콘솔 노이즈 필터 */}
+        <ConsoleFilter />
 
         {/* 메인 콘텐츠 영역 */}
         <main>

@@ -1,0 +1,72 @@
+.contents_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 16px;
+}
+
+.page_title {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.type_list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.type_link {
+  display: inline-block;
+  padding: 12px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  text-align: center;
+  color: #111827;
+  background: #fff;
+}
+
+/* 탭 스타일 */
+.tab_container {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tab_button {
+  padding: 8px 12px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 8px;
+  color: #111827;
+}
+
+.tab_button_active {
+  border-color: #111827;
+  background: #111827;
+  color: #fff;
+}
+
+.section_header {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.content_list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.empty_state {
+  padding: 20px;
+  border: 1px dashed #e5e7eb;
+  border-radius: 8px;
+  color: #6b7280;
+  background: #fafafa;
+}
+

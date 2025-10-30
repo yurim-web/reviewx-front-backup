@@ -18,12 +18,18 @@
  * - 반려된 콘텐츠의 경우 2개 버튼 표시
  */
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { PartnerStatTab } from "@/types/partner";
 import type { PartnerCampaign } from "@/types/partner";
 import cardStyles from "../../../styles/partner/campaign_card.module.css";
 import buttonStyles from "../../../styles/partner/buttons.module.css";
 import ReceiptRegistrationModal from "../campaign/ReceiptRegistrationModal";
+import { getClosedContentsById } from "@/data/partner/sharedCampaigns";
+import { getVisitContentsById } from "@/data/partner/campaign_contents/visit";
+import { getDeliveryContentsById } from "@/data/partner/campaign_contents/delivery";
+import { getReporterContentsById } from "@/data/partner/campaign_contents/reporter";
+import { getPurchaseReviewContentsById } from "@/data/partner/campaign_contents/review";
+import { getMissionContentsById } from "@/data/partner/campaign_contents/mission";
 
 interface CampaignCardProps {
   campaign: PartnerCampaign;
@@ -39,6 +45,58 @@ export default function CampaignCard({
   activeTab,
 }: CampaignCardProps) {
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+
+  // 캠페인 타입/상태에 따른 콘텐츠 검수/완료 개수 계산 (초기 렌더 시 메모)
+  const { reviewingCount, completedCount } = useMemo(() => {
+    const id = String(campaign.id);
+
+    const getByType = () => {
+      switch (campaign.type) {
+        case "방문형":
+          return getVisitContentsById(id);
+        case "배송형":
+          return getDeliveryContentsById(id);
+        case "기자단":
+          return getReporterContentsById(id);
+        case "구매평":
+          return getPurchaseReviewContentsById(id);
+        case "미션형":
+          return getMissionContentsById(id);
+        default:
+          return { reviewing: [], completed: [] };
+      }
+    };
+
+    const contents =
+      campaign.status === "종료" || campaign.status === "취소"
+        ? getClosedContentsById(id) || { reviewing: [], completed: [] }
+        : getByType();
+    return {
+      reviewingCount: contents?.reviewing?.length ?? 0,
+      completedCount: contents?.completed?.length ?? 0,
+    };
+  }, [campaign.id]);
+
+  // 콘텐츠 검수/확인 버튼 표시 여부 판별
+  const isContentStage = useMemo(() => {
+    const s = campaign.subStatus || "";
+    // 서브 상태로 판별
+    if (s.includes("content_review") || s.includes("content_approval")) {
+      return true;
+    }
+    // 종료 상태일 때 2버튼 형태 지원
+    if (campaign.status === "종료") {
+      return true;
+    }
+    // 진행 상태에서도 콘텐츠 데이터가 있으면 2버튼 형태 지원
+    if (
+      campaign.status === "진행" &&
+      (reviewingCount > 0 || completedCount > 0)
+    ) {
+      return true;
+    }
+    return false;
+  }, [campaign.subStatus, campaign.status, reviewingCount, completedCount]);
 
   /**
    * 버튼 클릭 핸들러
@@ -177,8 +235,7 @@ export default function CampaignCard({
    * 현재 탭에 따른 상태 텍스트 표시 (데이터 기반)
    */
   const getStatusText = () => {
-    // 데이터에서 제공되는 statusMessage를 직접 사용
-    // 탭에 따라 다른 메시지가 필요한 경우를 위한 fallback 로직
+    // 데이터에서 제공되는 statusMessage를 직접 사용 (우선순위 1)
     if (campaign.statusMessage) {
       return campaign.statusMessage;
     }
@@ -190,8 +247,8 @@ export default function CampaignCard({
       완료: "캠페인이 완료되었습니다.",
       "취소/반려": "캠페인 신청이 취소되었습니다.",
       예정: "캠페인이 예정되어 있습니다.",
-      진행: "캠페인이 진행 중입니다.",
-      종료: "캠페인이 종료되었습니다.",
+      진행: "캠페인 당첨자를 선정해 주세요.",
+      종료: "캠페인 콘텐츠를 검수해 주세요.",
       취소: "캠페인이 취소되었습니다.",
     };
 
@@ -239,19 +296,34 @@ export default function CampaignCard({
                 // 진행 중인 캠페인: 검수/제출/선정 수 표시
                 <>
                   <span className={cardStyles.applicant_current}>
-                    검수 {campaign.submissions || 0}명
+                    검수 {reviewingCount}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
                   <span className={cardStyles.applicant_current}>
-                    제출 {campaign.submissions || 0}명
+                    제출 {completedCount}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
                   <span className={cardStyles.applicant_total}>
                     선정 {campaign.selected || 0}명
                   </span>
                 </>
-              ) : campaign.status === "종료" || campaign.status === "취소" ? (
-                // 종료/취소 캠페인: 신청/모집/선정 수 표시
+              ) : campaign.status === "종료" ? (
+                // 종료 캠페인: 검수/제출/선정 수 표시
+                <>
+                  <span className={cardStyles.applicant_current}>
+                    검수 {reviewingCount}명
+                  </span>
+                  <span className={cardStyles.applicant_separator}>|</span>
+                  <span className={cardStyles.applicant_current}>
+                    제출 {completedCount}명
+                  </span>
+                  <span className={cardStyles.applicant_separator}>|</span>
+                  <span className={cardStyles.applicant_total}>
+                    선정 {campaign.selected || 0}명
+                  </span>
+                </>
+              ) : campaign.status === "취소" ? (
+                // 취소 캠페인: 신청/모집/선정 수 표시
                 <>
                   <span className={cardStyles.applicant_current}>
                     신청 {campaign.applicants || 0}명
@@ -290,18 +362,58 @@ export default function CampaignCard({
 
       {/* 액션 버튼 영역 */}
       <div className={cardStyles.campaign_actions}>
-        {/* 콘텐츠 검수 및 승인 단계: 2개 버튼 표시 */}
-        {campaign.subStatus === "content_review,content_approval" ? (
+        {/* 콘텐츠 검수 및 승인 단계: 2개 버튼 표시 (진행 탭 내 공존 가능) */}
+        {isContentStage ? (
           <>
             <button
               className={`${buttonStyles.action_button} ${buttonStyles.secondary_button}`}
+              onClick={() => {
+                const getCampaignTypePath = (type: string) => {
+                  switch (type) {
+                    case "배송형":
+                      return "delivery";
+                    case "방문형":
+                      return "visit";
+                    case "구매평":
+                      return "review";
+                    case "기자단":
+                      return "reporter";
+                    case "미션형":
+                      return "mission";
+                    default:
+                      return "delivery";
+                  }
+                };
+                const campaignTypePath = getCampaignTypePath(campaign.type);
+                window.location.href = `/partner/campaign_contents/${campaignTypePath}/${campaign.id}?tab=검수`;
+              }}
             >
-              콘텐츠 검수하기 ({campaign.submissions || 0})
+              콘텐츠 검수하기 ({reviewingCount})
             </button>
             <button
               className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
+              onClick={() => {
+                const getCampaignTypePath = (type: string) => {
+                  switch (type) {
+                    case "배송형":
+                      return "delivery";
+                    case "방문형":
+                      return "visit";
+                    case "구매평":
+                      return "review";
+                    case "기자단":
+                      return "reporter";
+                    case "미션형":
+                      return "mission";
+                    default:
+                      return "delivery";
+                  }
+                };
+                const campaignTypePath = getCampaignTypePath(campaign.type);
+                window.location.href = `/partner/campaign_contents/${campaignTypePath}/${campaign.id}?tab=완료`;
+              }}
             >
-              콘텐츠 확인하기 ({campaign.submissions || 0})
+              콘텐츠 확인하기 ({completedCount})
             </button>
           </>
         ) : campaign.subStatus === "campaign_edit,applicant_management" ? (
