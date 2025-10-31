@@ -43,7 +43,7 @@ export default function TabNavigation({
 
   const handlePointClick = () => {
     setActiveTab("point");
-    router.push("/partner/point");
+    router.push("/partner/point/all");
   };
 
   const handleAccountClick = () => {

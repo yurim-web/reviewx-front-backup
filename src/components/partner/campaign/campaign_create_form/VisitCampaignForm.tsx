@@ -39,41 +39,50 @@ import {
 } from "./common/CampaignFormCommon";
 import NoticeSection from "./common/NoticeSection";
 
+interface VisitCampaignFormProps
+  extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
+  /** 캠페인 수정 시 초기 데이터 (선택사항) */
+  initialData?: CampaignFormData | null;
+}
+
 export default function VisitCampaignForm({
   onSubmit,
   isSubmitting,
-}: Omit<CampaignCreateFormBaseProps, "campaignType">) {
+  initialData,
+}: VisitCampaignFormProps) {
   const router = useRouter();
-  const [formData, setFormData] = useState<CampaignFormData>({
-    campaignType: "방문형",
-    platform: "네이버 블로그",
-    title: "",
-    category: "",
-    region: "",
-    brandName: "",
-    providedItems: "",
-    visitLink: "",
-    visitAddress: "",
-    addressDetail: "",
-    currentPoints: "",
-    additionalPoints: "",
-    recruitmentCount: "",
-    recruitmentPeriod: "",
-    announcementDate: "",
-    registrationPeriod: "",
-    keywords: "",
-    adultOnly: false,
-    allowReParticipation: false,
-    allowLateSubmission: false,
-    minTextLength: "",
-    minImageCount: "",
-    videoCount: "",
-    videoDuration: "",
-    requireLinkAttachment: false,
-    requireKeywordAttachment: false,
-    guidelines: "",
-    isUrgent: false,
-  });
+  const [formData, setFormData] = useState<CampaignFormData>(
+    initialData || {
+      campaignType: "방문형",
+      platform: "네이버 블로그",
+      title: "",
+      category: "",
+      region: "",
+      brandName: "",
+      providedItems: "",
+      visitLink: "",
+      visitAddress: "",
+      addressDetail: "",
+      currentPoints: "",
+      additionalPoints: "",
+      recruitmentCount: "",
+      recruitmentPeriod: "",
+      announcementDate: "",
+      registrationPeriod: "",
+      keywords: "",
+      adultOnly: false,
+      allowReParticipation: false,
+      allowLateSubmission: false,
+      minTextLength: "",
+      minImageCount: "",
+      videoCount: "",
+      videoDuration: "",
+      requireLinkAttachment: false,
+      requireKeywordAttachment: false,
+      guidelines: "",
+      isUrgent: false,
+    }
+  );
 
   // 이미지 업로드 관련 state
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
@@ -504,6 +513,7 @@ export default function VisitCampaignForm({
             className={infoStyles.form_input}
             value={formData.brandName}
             readOnly
+            placeholder="{상호명}"
           />
         </article>
 

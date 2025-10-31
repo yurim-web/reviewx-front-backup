@@ -35,6 +35,7 @@ import Campaignbanner from "@/components/partner/campaign_application/CampaignIn
 import PageHeader from "@/components/partner/campaign_application/PageHeader";
 import ExcelDownloadBtn from "@/components/partner/campaign_application/ExcelDownloadBtn";
 import PartnerSortModalFilter from "@/components/partner/campaign_application/PartnerSortModalFilter";
+import EmptyApplicantsList from "@/components/partner/campaign_application/EmptyApplicantsList";
 
 // 구매평 전용 카드 컴포넌트들 (basic 타입만 사용)
 import BasicCard from "@/components/partner/campaign_application/card_type/basic/BasicCard";
@@ -429,15 +430,19 @@ export default function ReviewCampaignApplicationPage() {
           - 구매평은 basic 카드 타입만 사용
         */}
         <article className={styles.applicants_grid}>
-          {currentApplicants.map((applicant, index) => {
-            // 동적 카드 컴포넌트 렌더링
-            // key를 고유하게 만들기 위해 탭과 인덱스를 조합
-            return (
-              <div key={`${activeTab}-${applicant.id}-${index}`}>
-                {renderCardComponent(applicant, activeTab === "selected")}
-              </div>
-            );
-          })}
+          {currentApplicants.length === 0 ? (
+            <EmptyApplicantsList />
+          ) : (
+            currentApplicants.map((applicant, index) => {
+              // 동적 카드 컴포넌트 렌더링
+              // key를 고유하게 만들기 위해 탭과 인덱스를 조합
+              return (
+                <div key={`${activeTab}-${applicant.id}-${index}`}>
+                  {renderCardComponent(applicant, activeTab === "selected")}
+                </div>
+              );
+            })
+          )}
         </article>
       </section>
 

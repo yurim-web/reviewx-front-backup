@@ -38,10 +38,16 @@ import {
 } from "./common/CampaignFormCommon";
 import NoticeSection from "./common/NoticeSection";
 
+interface MissionCampaignFormProps extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
+  /** 캠페인 수정 시 초기 데이터 (선택사항) */
+  initialData?: CampaignFormData | null;
+}
+
 export default function MissionCampaignForm({
   onSubmit,
   isSubmitting,
-}: Omit<CampaignCreateFormBaseProps, "campaignType">) {
+  initialData,
+}: MissionCampaignFormProps) {
   const router = useRouter();
 
   // 이미지 업로드 관련 상태
@@ -55,28 +61,29 @@ export default function MissionCampaignForm({
     videoCount: false,
   });
 
-  const [formData, setFormData] = useState<CampaignFormData>({
-    campaignType: "미션형",
-    title: "",
-    category: "",
-    brandName: "",
-    providedItems: "",
-    promotionLink: "",
-    currentPoints: "58,000",
-    additionalPoints: "",
-    recruitmentCount: "",
-    recruitmentPeriod: "",
-    announcementDate: "",
-    registrationPeriod: "",
-    keywords: "",
-    adultOnly: false,
-    allowReParticipation: false,
-    allowLateSubmission: false,
-    minTextLength: "",
-    minImageCount: "",
-    videoCount: "",
-    videoDuration: "",
-    requireLinkAttachment: false,
+  const [formData, setFormData] = useState<CampaignFormData>(
+    initialData || {
+      campaignType: "미션형",
+      title: "",
+      category: "",
+      brandName: "",
+      providedItems: "",
+      promotionLink: "",
+      currentPoints: "58,000",
+      additionalPoints: "",
+      recruitmentCount: "",
+      recruitmentPeriod: "",
+      announcementDate: "",
+      registrationPeriod: "",
+      keywords: "",
+      adultOnly: false,
+      allowReParticipation: false,
+      allowLateSubmission: false,
+      minTextLength: "",
+      minImageCount: "",
+      videoCount: "",
+      videoDuration: "",
+      requireLinkAttachment: false,
     requireKeywordAttachment: false,
     requireContentLink: false,
     requireContentImage: false,

@@ -4,6 +4,10 @@
    ======================================== */
 import type { CampaignWithContents } from "./sharedCampaigns";
 import type { CampaignWithApplicants } from "./campaign_application/delivery_applicants";
+import type { ContentByTab } from "./sharedCampaigns";
+import { getClosedContentsById } from "./sharedCampaigns";
+import { CampaignFormData } from "@/types/campaign";
+import { calculateCampaignStatus, calculateDaysLeft } from "./delivery";
 
 export const reviewClosedCampaigns: CampaignWithContents[] = [
   {
@@ -30,7 +34,9 @@ export const reviewClosedCampaigns: CampaignWithContents[] = [
           status: "검수",
           userType: "인플루언서",
           nickname: "구매-1",
-          reviewType: 1,
+          channelId: "review_user_903_1",
+          channel: "인스타그램",
+          actionType: "1",
         },
         {
           id: "903-r-2",
@@ -38,7 +44,9 @@ export const reviewClosedCampaigns: CampaignWithContents[] = [
           status: "검수",
           userType: "인플루언서",
           nickname: "구매-2",
-          reviewType: 2,
+          channelId: "review_user_903_2",
+          channel: "인스타그램",
+          actionType: "2",
           updatedAt: "2025-11-02T10:25:00.000Z",
         },
         {
@@ -47,7 +55,9 @@ export const reviewClosedCampaigns: CampaignWithContents[] = [
           status: "검수",
           userType: "인플루언서",
           nickname: "구매-3",
-          reviewType: 3,
+          channelId: "review_user_903_3",
+          channel: "인스타그램",
+          actionType: "3",
           isRejected: true,
         },
         {
@@ -56,7 +66,9 @@ export const reviewClosedCampaigns: CampaignWithContents[] = [
           status: "검수",
           userType: "인플루언서",
           nickname: "구매-4",
-          reviewType: 4,
+          channelId: "review_user_903_4",
+          channel: "인스타그램",
+          actionType: "4",
           isLate: true,
         },
         {
@@ -65,7 +77,9 @@ export const reviewClosedCampaigns: CampaignWithContents[] = [
           status: "검수",
           userType: "인플루언서",
           nickname: "구매-5(검수)",
-          reviewType: 2,
+          channelId: "review_user_903_5",
+          channel: "인스타그램",
+          actionType: "2",
         },
         {
           id: "903-r-6",
@@ -73,7 +87,9 @@ export const reviewClosedCampaigns: CampaignWithContents[] = [
           status: "검수",
           userType: "인플루언서",
           nickname: "구매-6(검수)",
-          reviewType: 1,
+          channelId: "review_user_903_6",
+          channel: "인스타그램",
+          actionType: "1",
           isRejected: true,
         },
       ],
@@ -84,7 +100,9 @@ export const reviewClosedCampaigns: CampaignWithContents[] = [
           status: "완료",
           userType: "인플루언서",
           nickname: "구매-5",
-          reviewType: 2,
+          channelId: "review_user_903_c1",
+          channel: "인스타그램",
+          actionType: "2",
         },
         {
           id: "903-c-2",
@@ -92,7 +110,9 @@ export const reviewClosedCampaigns: CampaignWithContents[] = [
           status: "완료",
           userType: "인플루언서",
           nickname: "구매-6",
-          reviewType: 1,
+          channelId: "review_user_903_c2",
+          channel: "인스타그램",
+          actionType: "1",
           updatedAt: "2025-11-01T19:40:00.000Z",
         },
         {
@@ -101,7 +121,9 @@ export const reviewClosedCampaigns: CampaignWithContents[] = [
           status: "완료",
           userType: "인플루언서",
           nickname: "구매-7",
-          reviewType: 5,
+          channelId: "review_user_903_c3",
+          channel: "인스타그램",
+          actionType: "5",
           isLate: true,
         },
         {
@@ -110,7 +132,9 @@ export const reviewClosedCampaigns: CampaignWithContents[] = [
           status: "완료",
           userType: "인플루언서",
           nickname: "구매-8",
-          reviewType: 4,
+          channelId: "review_user_903_c4",
+          channel: "인스타그램",
+          actionType: "4",
         },
         {
           id: "903-c-5",
@@ -118,7 +142,9 @@ export const reviewClosedCampaigns: CampaignWithContents[] = [
           status: "완료",
           userType: "인플루언서",
           nickname: "구매-9",
-          reviewType: 2,
+          channelId: "review_user_903_c5",
+          channel: "인스타그램",
+          actionType: "2",
         },
       ],
     },
@@ -130,7 +156,7 @@ export const reviewClosedCampaigns: CampaignWithContents[] = [
    - sharedCampaigns.ts 병합용
    ======================================== */
 export const reviewCampaigns: CampaignWithApplicants[] = [
-  // 진행 중
+  // 진행 중 - 콘텐츠 있음 (2버튼 표시)
   {
     campaignInfo: {
       id: "18",
@@ -242,6 +268,89 @@ export const reviewCampaigns: CampaignWithApplicants[] = [
         },
       ],
     },
+    // 콘텐츠 데이터: 각 캠페인 정보 아래에 콘텐츠 목록 포함
+    // 설명: deliveryClosedCampaigns와 동일한 형태로, campaignInfo 아래에 contents를 포함합니다.
+    contents: {
+      reviewing: [
+        {
+          id: "pr-r-1",
+          createdAt: "2025-01-15T14:00:00.000Z",
+          status: "검수",
+          userType: "리뷰어",
+          nickname: "구매평리뷰어1",
+          channelId: "review_user_001",
+          channel: "네이버블로그",
+          actionType: "1",
+        },
+        {
+          id: "pr-r-2",
+          createdAt: "2025-01-15T14:30:00.000Z",
+          status: "검수",
+          userType: "인플루언서",
+          nickname: "구매평인플루언서1",
+          channelId: "review_user_002",
+          channel: "인스타그램",
+          actionType: "2",
+          updatedAt: "2025-01-15T15:00:00.000Z",
+        },
+        {
+          id: "pr-r-3",
+          createdAt: "2025-01-15T15:15:00.000Z",
+          status: "검수",
+          userType: "리뷰어",
+          nickname: "구매평리뷰어2",
+          channelId: "review_user_003",
+          channel: "네이버블로그",
+          actionType: "3",
+          isRejected: true,
+        },
+        {
+          id: "pr-r-4",
+          createdAt: "2025-01-15T15:45:00.000Z",
+          status: "검수",
+          userType: "인플루언서",
+          nickname: "구매평인플루언서2",
+          channelId: "review_user_004",
+          channel: "인스타그램",
+          actionType: "4",
+          isLate: true,
+        },
+      ],
+      completed: [
+        {
+          id: "pr-c-1",
+          createdAt: "2025-01-12T10:00:00.000Z",
+          status: "완료",
+          userType: "리뷰어",
+          nickname: "구매평완료리뷰어1",
+          channelId: "review_user_005",
+          channel: "네이버블로그",
+          actionType: "1",
+        },
+        {
+          id: "pr-c-2",
+          createdAt: "2025-01-12T11:00:00.000Z",
+          status: "완료",
+          userType: "인플루언서",
+          nickname: "구매평완료인플루언서1",
+          channelId: "review_user_006",
+          channel: "인스타그램",
+          actionType: "2",
+          updatedAt: "2025-01-12T12:00:00.000Z",
+        },
+        {
+          id: "pr-c-3",
+          createdAt: "2025-01-12T12:30:00.000Z",
+          status: "완료",
+          userType: "리뷰어",
+          nickname: "구매평완료리뷰어2",
+          channelId: "review_user_007",
+          channel: "네이버블로그",
+          actionType: "4",
+          isLate: true,
+        },
+      ],
+    },
   },
   // 진행 중(콘텐츠 없음 표시용)
   {
@@ -340,3 +449,221 @@ export const reviewCampaigns: CampaignWithApplicants[] = [
     },
   },
 ];
+
+/* ========================================
+   🛒 구매평 콘텐츠 조회 함수
+   - 진행 중인 캠페인의 콘텐츠 데이터를 조회합니다
+   ======================================== */
+
+/**
+ * 구매평 캠페인의 콘텐츠 데이터를 조회하는 함수
+ *
+ * 설명:
+ * - 캠페인 ID를 받아서 해당 캠페인의 콘텐츠(검수 중/완료)를 반환합니다.
+ * - 종료/취소된 캠페인은 getClosedContentsById 함수를 사용합니다.
+ * - 진행 중인 캠페인은 reviewCampaigns 배열에서 해당 ID를 찾아 contents를 반환합니다.
+ * - 각 캠페인 데이터가 campaignInfo 아래에 contents를 포함하는 구조입니다.
+ *
+ * 반환 타입: ContentByTab
+ * - reviewing: 검수 중인 콘텐츠 배열
+ * - completed: 완료된 콘텐츠 배열
+ *
+ * 학습 포인트:
+ * - 함수 매개변수: campaignId (캠페인 ID)
+ * - 조건부 반환: if 문으로 특정 ID에 대한 처리
+ * - 배열 메서드: find() 메서드로 배열에서 특정 조건의 요소를 찾습니다.
+ * - 옵셔널 체이닝: ?. 연산자로 안전하게 속성에 접근합니다.
+ * - 널 병합 연산자: ?? 연산자로 기본값을 제공합니다.
+ *
+ * @param campaignId - 조회할 캠페인의 ID
+ * @returns 검수 중/완료된 콘텐츠를 담은 객체
+ */
+export function getPurchaseReviewContentsById(
+  campaignId: string
+): ContentByTab {
+  // 종료/취소 탭 데이터(구매평): 903 매핑
+  // 설명: 종료/취소된 캠페인은 sharedCampaigns의 closedCampaigns에서 가져옵니다.
+  if (campaignId === "903") {
+    return (
+      getClosedContentsById(campaignId) ?? { reviewing: [], completed: [] }
+    );
+  }
+
+  // 진행 중인 캠페인의 콘텐츠 조회
+  // 설명: reviewCampaigns 배열에서 해당 ID의 캠페인을 찾아서 contents를 반환합니다.
+  // find() 메서드: 배열에서 조건에 맞는 첫 번째 요소를 반환합니다.
+  const campaign = reviewCampaigns.find(
+    (c) => c.campaignInfo.id === campaignId
+  );
+
+  // 캠페인을 찾았고 contents가 있으면 반환
+  // 옵셔널 체이닝(?.)과 널 병합 연산자(??)를 사용해 안전하게 값을 가져옵니다.
+  if (campaign?.contents) {
+    return campaign.contents;
+  }
+
+  // 콘텐츠가 없는 경우 빈 배열 반환
+  // 설명: 진행 중이지만 아직 콘텐츠가 업로드되지 않은 경우입니다.
+  return { reviewing: [], completed: [] };
+}
+
+/* ========================================
+   🛒 구매평 캠페인 등록 함수
+   - 폼 데이터를 CampaignWithApplicants 형태로 변환
+   ======================================== */
+
+/**
+ * 새 구매평 캠페인 ID 생성
+ *
+ * @returns 새로운 캠페인 ID (기존 ID 중 최대값 + 1)
+ */
+function generateNewReviewCampaignId(): string {
+  // 기존 캠페인 ID 중 최대값 찾기
+  const existingIds = reviewCampaigns
+    .map((c) => parseInt(c.campaignInfo.id))
+    .filter((id) => !isNaN(id));
+  const maxId = existingIds.length > 0 ? Math.max(...existingIds) : 900;
+
+  return String(maxId + 1);
+}
+
+/**
+ * 폼 데이터를 CampaignWithApplicants 형태로 변환하여 새 구매평 캠페인 생성
+ *
+ * 설명:
+ * - 구매평 캠페인 등록 폼에서 입력한 데이터를 reviewCampaigns 구조에 맞게 변환합니다.
+ * - 새 캠페인 ID를 자동 생성합니다.
+ *
+ * @param formData - 폼에서 입력받은 캠페인 데이터
+ * @param imageUrl - 업로드된 이미지 URL (첫 번째 이미지 사용)
+ * @returns 새로 생성된 CampaignWithApplicants 객체
+ */
+export function createReviewCampaign(
+  formData: CampaignFormData,
+  imageUrl: string = "/images/main/campaign_img/eximg_5.png"
+): CampaignWithApplicants {
+  // 새 캠페인 ID 생성
+  const newId = generateNewReviewCampaignId();
+
+  // 선정 날짜까지 남은 일수 계산
+  const daysLeft = formData.announcementDate
+    ? calculateDaysLeft(formData.announcementDate.split(" ")[0])
+    : 0;
+
+  // 모집 인원을 숫자로 변환
+  const totalCount = Number(formData.recruitmentCount) || 0;
+
+  // 캠페인 상태 결정 함수 호출
+  const campaignStatus = calculateCampaignStatus(
+    formData.recruitmentPeriod,
+    formData.announcementDate
+  );
+
+  // 플랫폼명 정규화 (공백 제거하여 로고 매핑 일치시키기)
+  const normalizedBrandName = formData.platform
+    ? formData.platform.replace(/\s+/g, "")
+    : "기본";
+
+  return {
+    campaignInfo: {
+      id: newId,
+      title: formData.title,
+      image: imageUrl,
+      status: campaignStatus,
+      category: "구매평",
+      brandName: normalizedBrandName,
+      recruitmentPeriod: formData.recruitmentPeriod,
+      announcementDate: formData.announcementDate,
+      registrationPeriod: formData.registrationPeriod,
+      recruitedCount: 0,
+      totalCount: totalCount,
+      daysLeft: daysLeft,
+    },
+    applicantData: {
+      applicants: [],
+      selectedApplicants: [],
+    },
+  };
+}
+
+/**
+ * 구매평 캠페인 수정
+ *
+ * 설명:
+ * - 기존 구매평 캠페인을 수정합니다.
+ * - 캠페인 ID는 유지하고, 나머지 정보만 업데이트합니다.
+ * - 신청자 데이터는 유지합니다.
+ *
+ * @param campaignId - 수정할 캠페인 ID
+ * @param formData - 폼에서 입력받은 캠페인 데이터
+ * @param imageUrl - 업로드된 이미지 URL
+ * @returns 수정된 CampaignWithApplicants 객체
+ */
+export function updateReviewCampaign(
+  campaignId: string,
+  formData: CampaignFormData,
+  imageUrl: string = "/images/main/campaign_img/eximg_5.png"
+): CampaignWithApplicants {
+  // 기존 캠페인 데이터 찾기
+  const existingCampaign = reviewCampaigns.find(
+    (c) => c.campaignInfo.id === campaignId
+  );
+
+  // 기존 신청자 데이터 유지
+  const existingApplicantData = existingCampaign?.applicantData || {
+    applicants: [],
+    selectedApplicants: [],
+  };
+
+  // 선정 날짜까지 남은 일수 계산
+  const daysLeft = formData.announcementDate
+    ? calculateDaysLeft(formData.announcementDate.split(" ")[0])
+    : 0;
+
+  // 모집 인원을 숫자로 변환
+  const totalCount = Number(formData.recruitmentCount) || 0;
+
+  // 캠페인 상태 결정 함수 호출
+  const campaignStatus = calculateCampaignStatus(
+    formData.recruitmentPeriod,
+    formData.announcementDate
+  );
+
+  // 플랫폼명 정규화 (공백 제거하여 로고 매핑 일치시키기)
+  const normalizedBrandName = formData.platform
+    ? formData.platform.replace(/\s+/g, "")
+    : "기본";
+
+  return {
+    campaignInfo: {
+      id: campaignId, // 기존 ID 유지
+      title: formData.title,
+      image: imageUrl,
+      status: campaignStatus,
+      category: "구매평",
+      brandName: normalizedBrandName,
+      recruitmentPeriod: formData.recruitmentPeriod,
+      announcementDate: formData.announcementDate,
+      registrationPeriod: formData.registrationPeriod,
+      purchasePeriod: formData.purchasePeriod || "",
+      recruitedCount: existingCampaign?.campaignInfo.recruitedCount || 0, // 기존 신청자 수 유지
+      totalCount: totalCount,
+      daysLeft: daysLeft,
+    },
+    applicantData: existingApplicantData, // 기존 신청자 데이터 유지
+  };
+}
+
+/**
+ * 새 구매평 캠페인을 reviewCampaigns 배열에 추가
+ *
+ * @param formData - 폼에서 입력받은 캠페인 데이터
+ * @param imageUrl - 업로드된 이미지 URL
+ * @returns 새로 생성된 CampaignWithApplicants 객체
+ */
+export function addReviewCampaign(
+  formData: CampaignFormData,
+  imageUrl: string = "/images/main/campaign_img/eximg_5.png"
+): CampaignWithApplicants {
+  return createReviewCampaign(formData, imageUrl);
+}

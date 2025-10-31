@@ -25,6 +25,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import ReviewCampaignForm from "@/components/partner/campaign/campaign_create_form/ReviewCampaignForm";
 import { CampaignFormData } from "@/types/campaign";
+import { addReviewCampaign } from "@/data/partner/review";
 // 분리된 CSS 모듈들 import
 import layoutStyles from "../../../../../styles/partner/layout.module.css";
 import PageHeader from "@/components/partner/campaign/campaign_create_form/common/PageHeader";
@@ -43,13 +44,43 @@ export default function ReviewCampaignCreatePage() {
       // 긴급 상태를 폼 데이터에 추가
       const finalFormData = { ...formData, isUrgent };
 
-      // TODO: API 호출로 구매평 캠페인 등록
-      console.log("구매평 캠페인 등록 데이터:", finalFormData);
+      // 이미지 URL 처리
+      let imageUrl = "/images/main/campaign_img/eximg_5.png";
 
-      // 등록 성공 시 캠페인 관리 페이지로 이동
-      router.push("/partner");
+      // 폼 데이터를 CampaignWithApplicants 형태로 변환
+      const newCampaign = addReviewCampaign(finalFormData, imageUrl);
+
+      // localStorage에 임시 저장
+      const storedCampaigns = localStorage.getItem("reviewCampaigns");
+      const campaigns = storedCampaigns ? JSON.parse(storedCampaigns) : [];
+      campaigns.push(newCampaign);
+      localStorage.setItem("reviewCampaigns", JSON.stringify(campaigns));
+
+      console.log("구매평 캠페인 등록 완료:", newCampaign);
+
+      // 등록 성공 시 캠페인 상태에 맞는 탭으로 이동
+      const campaignStatus = newCampaign.campaignInfo.status;
+      let redirectPath = "/partner/campaign_management";
+
+      switch (campaignStatus) {
+        case "대기 중":
+          redirectPath = "/partner/campaign_management/scheduled";
+          break;
+        case "모집 중":
+          redirectPath = "/partner/campaign_management/applied";
+          break;
+        case "진행 중":
+          redirectPath = "/partner/campaign_management/progress";
+          break;
+        default:
+          redirectPath = "/partner/campaign_management";
+          break;
+      }
+
+      router.replace(redirectPath);
     } catch (error) {
       console.error("구매평 캠페인 등록 실패:", error);
+      alert("캠페인 등록에 실패했습니다. 다시 시도해주세요.");
     } finally {
       setIsSubmitting(false);
     }

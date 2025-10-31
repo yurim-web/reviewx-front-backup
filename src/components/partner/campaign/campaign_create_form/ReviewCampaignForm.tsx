@@ -38,10 +38,16 @@ import {
 } from "./common/CampaignFormCommon";
 import NoticeSection from "./common/NoticeSection";
 
+interface ReviewCampaignFormProps extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
+  /** 캠페인 수정 시 초기 데이터 (선택사항) */
+  initialData?: CampaignFormData | null;
+}
+
 export default function ReviewCampaignForm({
   onSubmit,
   isSubmitting,
-}: Omit<CampaignCreateFormBaseProps, "campaignType">) {
+  initialData,
+}: ReviewCampaignFormProps) {
   const router = useRouter();
 
   // 이미지 업로드 관련 상태
@@ -55,28 +61,29 @@ export default function ReviewCampaignForm({
     videoCount: false,
   });
 
-  const [formData, setFormData] = useState<CampaignFormData>({
-    campaignType: "구매평",
-    platform: "네이버 블로그",
-    title: "",
-    category: "",
-    brandName: "",
-    providedItems: "",
-    promotionLink: "",
-    currentPoints: "58,000",
-    purchasePoints: "",
-    additionalPoints: "",
-    recruitmentCount: "",
-    recruitmentPeriod: "",
-    purchasePeriod: "",
-    announcementDate: "",
-    registrationPeriod: "",
-    keywords: "",
-    adultOnly: false,
-    allowReParticipation: false,
-    allowLateSubmission: false,
-    minTextLength: "",
-    minImageCount: "",
+  const [formData, setFormData] = useState<CampaignFormData>(
+    initialData || {
+      campaignType: "구매평",
+      platform: "네이버 블로그",
+      title: "",
+      category: "",
+      brandName: "",
+      providedItems: "",
+      promotionLink: "",
+      currentPoints: "58,000",
+      purchasePoints: "",
+      additionalPoints: "",
+      recruitmentCount: "",
+      recruitmentPeriod: "",
+      purchasePeriod: "",
+      announcementDate: "",
+      registrationPeriod: "",
+      keywords: "",
+      adultOnly: false,
+      allowReParticipation: false,
+      allowLateSubmission: false,
+      minTextLength: "",
+      minImageCount: "",
     videoCount: "",
     videoDuration: "",
     requireLinkAttachment: false,

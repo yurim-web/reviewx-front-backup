@@ -14,14 +14,14 @@ import PageHeader from "@/components/partner/campaign_application/PageHeader";
 import ExcelDownloadBtn from "@/components/partner/campaign_application/ExcelDownloadBtn";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import { getClosedContentsById } from "@/data/partner/sharedCampaigns";
-import { getPurchaseReviewContentsById } from "@/data/partner/campaign_contents/review";
+import { getPurchaseReviewContentsById } from "@/data/partner/review";
 import ReviewInspectionCard from "@/components/partner/campaign_contents/card_type/purchase_review_card/ReviewInspectionCard";
 import ReviewCompletedCard from "@/components/partner/campaign_contents/card_type/purchase_review_card/ReviewCompletedCard";
 import ReviewRejectedReviewCard from "@/components/partner/campaign_contents/card_type/purchase_review_card/ReviewRejectedReviewCard";
 import ReviewRejectedReceiptCard from "@/components/partner/campaign_contents/card_type/purchase_review_card/ReviewRejectedReceiptCard";
 import ReviewPendingCard from "@/components/partner/campaign_contents/card_type/purchase_review_card/ReviewPendingCard";
 import type { ExperienceApplicant as ReviewApplicant } from "@/components/partner/campaign_contents/card_type/purchase_review_card/ReviewTypes";
-import type { ContentItem } from "@/data/partner/campaign_contents/types";
+import type { ContentItem } from "@/data/partner/sharedCampaigns";
 
 type TabKey = "검수" | "완료";
 

@@ -38,10 +38,16 @@ import {
 } from "./common/CampaignFormCommon";
 import NoticeSection from "./common/NoticeSection";
 
+interface ReporterCampaignFormProps extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
+  /** 캠페인 수정 시 초기 데이터 (선택사항) */
+  initialData?: CampaignFormData | null;
+}
+
 export default function ReporterCampaignForm({
   onSubmit,
   isSubmitting,
-}: Omit<CampaignCreateFormBaseProps, "campaignType">) {
+  initialData,
+}: ReporterCampaignFormProps) {
   const router = useRouter();
 
   // 이미지 업로드 관련 상태
@@ -55,28 +61,29 @@ export default function ReporterCampaignForm({
     videoCount: false,
   });
 
-  const [formData, setFormData] = useState<CampaignFormData>({
-    campaignType: "기자단",
-    platform: "",
-    title: "",
-    category: "",
-    brandName: "",
-    providedItems: "",
-    promotionLink: "",
-    currentPoints: "58,000", // 보유 포인트 ( 이 계정에 남아있는 포인트 값을 불러온다)
-    additionalPoints: "",
-    recruitmentCount: "",
-    recruitmentPeriod: "",
-    announcementDate: "",
-    registrationPeriod: "",
-    keywords: "",
-    adultOnly: false,
-    allowReParticipation: false,
-    allowLateSubmission: false,
-    minTextLength: "",
-    minImageCount: "",
-    videoCount: "",
-    videoDuration: "",
+  const [formData, setFormData] = useState<CampaignFormData>(
+    initialData || {
+      campaignType: "기자단",
+      platform: "",
+      title: "",
+      category: "",
+      brandName: "",
+      providedItems: "",
+      promotionLink: "",
+      currentPoints: "58,000", // 보유 포인트 ( 이 계정에 남아있는 포인트 값을 불러온다)
+      additionalPoints: "",
+      recruitmentCount: "",
+      recruitmentPeriod: "",
+      announcementDate: "",
+      registrationPeriod: "",
+      keywords: "",
+      adultOnly: false,
+      allowReParticipation: false,
+      allowLateSubmission: false,
+      minTextLength: "",
+      minImageCount: "",
+      videoCount: "",
+      videoDuration: "",
     requireLinkAttachment: false,
     requireKeywordAttachment: false,
     guidelines: "",

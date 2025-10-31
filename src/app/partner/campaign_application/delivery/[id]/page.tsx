@@ -34,6 +34,7 @@ import layoutStyles from "@/styles/partner/layout.module.css";
 import Campaignbanner from "@/components/partner/campaign_application/CampaignInfoBox";
 import ExcelDownloadBtn from "@/components/partner/campaign_application/ExcelDownloadBtn";
 import PartnerSortModalFilter from "@/components/partner/campaign_application/PartnerSortModalFilter";
+import EmptyApplicantsList from "@/components/partner/campaign_application/EmptyApplicantsList";
 // 동적 카드 컴포넌트 로딩을 위한 import (제거)
 // import { getCardTypeFromBrandName } from "@/utils/cardTypeMapper";
 // 현재 구현된 카드 컴포넌트들 (임시)
@@ -491,15 +492,19 @@ export default function DeliveryCampaignApplicationPage() {
           - activeTab에 따라 다른 컴포넌트와 핸들러 사용
         */}
         <article className={styles.applicants_grid}>
-          {currentApplicants.map((applicant, index) => {
-            // 동적 카드 컴포넌트 렌더링
-            // key를 고유하게 만들기 위해 탭과 인덱스를 조합
-            return (
-              <div key={`${activeTab}-${applicant.id}-${index}`}>
-                {renderCardComponent(applicant, activeTab === "selected")}
-              </div>
-            );
-          })}
+          {currentApplicants.length === 0 ? (
+            <EmptyApplicantsList />
+          ) : (
+            currentApplicants.map((applicant, index) => {
+              // 동적 카드 컴포넌트 렌더링
+              // key를 고유하게 만들기 위해 탭과 인덱스를 조합
+              return (
+                <div key={`${activeTab}-${applicant.id}-${index}`}>
+                  {renderCardComponent(applicant, activeTab === "selected")}
+                </div>
+              );
+            })
+          )}
         </article>
       </section>
 

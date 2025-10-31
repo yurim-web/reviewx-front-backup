@@ -38,38 +38,48 @@ import {
 } from "./common/CampaignFormCommon";
 import NoticeSection from "./common/NoticeSection";
 
+interface DeliveryCampaignFormProps extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
+  /** 캠페인 수정 시 초기 데이터 (선택사항) */
+  initialData?: CampaignFormData | null;
+}
+
 export default function DeliveryCampaignForm({
   onSubmit,
   isSubmitting,
-}: Omit<CampaignCreateFormBaseProps, "campaignType">) {
+  initialData,
+}: DeliveryCampaignFormProps) {
   const router = useRouter();
-  const [formData, setFormData] = useState<CampaignFormData>({
-    campaignType: "배송형",
-    platform: "네이버 블로그",
-    title: "",
-    category: "",
-    brandName: "",
-    providedItems: "",
-    promotionLink: "",
-    currentPoints: "",
-    additionalPoints: "",
-    recruitmentCount: "",
-    recruitmentPeriod: "",
-    announcementDate: "",
-    registrationPeriod: "",
-    keywords: "",
-    adultOnly: false,
-    allowReParticipation: false,
-    allowLateSubmission: false,
-    minTextLength: "",
-    minImageCount: "",
-    videoCount: "",
-    videoDuration: "",
-    requireLinkAttachment: false,
-    requireKeywordAttachment: false,
-    guidelines: "",
-    isUrgent: false,
-  });
+  
+  // 초기 데이터가 있으면 사용하고, 없으면 기본값 사용
+  const [formData, setFormData] = useState<CampaignFormData>(
+    initialData || {
+      campaignType: "배송형",
+      platform: "네이버 블로그",
+      title: "",
+      category: "",
+      brandName: "",
+      providedItems: "",
+      promotionLink: "",
+      currentPoints: "",
+      additionalPoints: "",
+      recruitmentCount: "",
+      recruitmentPeriod: "",
+      announcementDate: "",
+      registrationPeriod: "",
+      keywords: "",
+      adultOnly: false,
+      allowReParticipation: false,
+      allowLateSubmission: false,
+      minTextLength: "",
+      minImageCount: "",
+      videoCount: "",
+      videoDuration: "",
+      requireLinkAttachment: false,
+      requireKeywordAttachment: false,
+      guidelines: "",
+      isUrgent: false,
+    }
+  );
 
   // 이미지 업로드 관련 state
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
@@ -360,10 +370,24 @@ export default function DeliveryCampaignForm({
 
   /**
    * 폼 제출 처리
+   *
+   * 설명:
+   * - 폼 데이터와 업로드된 이미지를 함께 onSubmit으로 전달합니다.
+   * - 이미지는 formData.thumbnailImage와 formData.detailImages로 전달됩니다.
    */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+
+    // 업로드된 이미지 파일을 폼 데이터에 추가
+    const formDataWithImages = {
+      ...formData,
+      // 첫 번째 이미지를 썸네일로 사용
+      thumbnailImage: uploadedImages[0],
+      // 나머지 이미지를 상세 이미지로 사용
+      detailImages: uploadedImages.slice(1),
+    };
+
+    onSubmit(formDataWithImages);
   };
 
   return (
