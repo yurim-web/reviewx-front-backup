@@ -163,6 +163,7 @@ export default function MissionCampaignEditPage() {
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}
           initialData={initialData}
+          mode="edit"
         />
       </div>
     </div>

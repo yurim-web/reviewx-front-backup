@@ -227,6 +227,7 @@ export default function DeliveryCampaignEditPage() {
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}
           initialData={initialData}
+          mode="edit"
         />
       </div>
     </div>

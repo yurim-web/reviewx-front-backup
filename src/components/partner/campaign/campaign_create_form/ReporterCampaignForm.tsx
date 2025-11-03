@@ -41,14 +41,24 @@ import NoticeSection from "./common/NoticeSection";
 interface ReporterCampaignFormProps extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
   /** 캠페인 수정 시 초기 데이터 (선택사항) */
   initialData?: CampaignFormData | null;
+  /** 폼 동작 모드: 생성/수정 */
+  mode?: "create" | "edit";
 }
 
 export default function ReporterCampaignForm({
   onSubmit,
   isSubmitting,
   initialData,
+  mode = "create",
 }: ReporterCampaignFormProps) {
   const router = useRouter();
+  const isEditMode = mode === "edit";
+
+  // 수정 모드에서 편집 가능 필드 정의 (이미지, 제공 내역, 홍보 링크, 추가 지급 포인트)
+  const isEditableField = (field: string): boolean => {
+    const editable = new Set(["images", "providedItems", "promotionLink", "additionalPoints"]);
+    return editable.has(field);
+  };
 
   // 이미지 업로드 관련 상태
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
@@ -314,6 +324,7 @@ export default function ReporterCampaignForm({
    * - 논리 연산자(&&): 모든 조건이 true여야 true 반환
    */
   const isFormValid = useMemo(() => {
+    if (isEditMode) return true;
     // 이미지가 최소 1개 이상 업로드되었는지 확인
     const hasImages = uploadedImages.length > 0;
 
@@ -380,6 +391,7 @@ export default function ReporterCampaignForm({
         <CampaignTypeSelector
           currentType="기자단"
           onTypeChange={handleCampaignTypeChange}
+          disabled={isEditMode}
         />
 
         {/* 플랫폼 선택 */}
@@ -391,6 +403,7 @@ export default function ReporterCampaignForm({
             value={formData.platform || ""}
             options={platforms}
             onChange={(value) => updateFormData("platform", value)}
+            disabled={isEditMode && !isEditableField("platform")}
             placeholder="플랫폼 선택"
           />
         </article>
@@ -423,7 +436,8 @@ export default function ReporterCampaignForm({
             {imagePreviews.length < 7 && (
               <div
                 className={infoStyles.image_upload_placeholder}
-                onClick={handleUploadClick}
+                onClick={isEditMode && !isEditableField("images") ? undefined : handleUploadClick}
+                style={isEditMode && !isEditableField("images") ? { pointerEvents: "none", opacity: 0.5 } : undefined}
               >
                 <img src="/images/icons/plus_icon.svg" alt="이미지 추가" />
               </div>
@@ -438,6 +452,7 @@ export default function ReporterCampaignForm({
             multiple
             onChange={handleImageSelect}
             style={{ display: "none" }}
+            disabled={isEditMode && !isEditableField("images")}
           />
         </article>
 
@@ -452,6 +467,7 @@ export default function ReporterCampaignForm({
             value={formData.title}
             onChange={(e) => updateFormData("title", e.target.value)}
             placeholder="지역, 브랜드, 제공하는 서비스/제품 등"
+            readOnly={isEditMode && !isEditableField("title")}
           />
         </article>
 
@@ -464,6 +480,7 @@ export default function ReporterCampaignForm({
             value={formData.category}
             options={categories}
             onChange={(value) => updateFormData("category", value)}
+            disabled={isEditMode && !isEditableField("category")}
             placeholder="카테고리 선택"
           />
         </article>
@@ -493,6 +510,7 @@ export default function ReporterCampaignForm({
             value={formData.providedItems}
             onChange={(e) => updateFormData("providedItems", e.target.value)}
             placeholder="제공하는 서비스/제품/포인트 등 한줄 설명"
+            readOnly={isEditMode && !isEditableField("providedItems")}
           />
         </article>
 
@@ -505,6 +523,7 @@ export default function ReporterCampaignForm({
             value={formData.promotionLink}
             onChange={(e) => updateFormData("promotionLink", e.target.value)}
             placeholder="링크를 입력하세요"
+            readOnly={isEditMode && !isEditableField("promotionLink")}
           />
         </article>
 
@@ -539,6 +558,7 @@ export default function ReporterCampaignForm({
                 onChange={(e) => handleNumericChange(e, "additionalPoints")}
                 onKeyDown={(e) => handleNumericInput(e, "additionalPoints")}
                 placeholder="캠페인 수행에 대한 추가 지급 포인트"
+                readOnly={isEditMode && !isEditableField("additionalPoints")}
               />
               <span className={infoStyles.points_unit}>P</span>
             </div>
@@ -561,6 +581,7 @@ export default function ReporterCampaignForm({
                 }
                 placeholder="0"
                 min="0"
+                readOnly={isEditMode && !isEditableField("recruitmentCount")}
               />
               <span className={infoStyles.count_unit}>명</span>
             </div>
@@ -580,6 +601,7 @@ export default function ReporterCampaignForm({
               updateFormData("recruitmentPeriod", e.target.value)
             }
             placeholder=""
+            readOnly={isEditMode && !isEditableField("recruitmentPeriod")}
           />
         </article>
 
@@ -594,6 +616,7 @@ export default function ReporterCampaignForm({
             value={formData.announcementDate}
             onChange={(e) => updateFormData("announcementDate", e.target.value)}
             placeholder=""
+            readOnly={isEditMode && !isEditableField("announcementDate")}
           />
         </article>
 
@@ -610,6 +633,7 @@ export default function ReporterCampaignForm({
               updateFormData("registrationPeriod", e.target.value)
             }
             placeholder=""
+            readOnly={isEditMode && !isEditableField("registrationPeriod")}
           />
         </article>
       </section>
@@ -629,13 +653,14 @@ export default function ReporterCampaignForm({
             value={formData.keywords}
             onChange={(e) => updateFormData("keywords", e.target.value)}
             placeholder="최대 10개 입력 가능"
+            readOnly={isEditMode && !isEditableField("keywords")}
           />
         </article>
 
         {/* 간편 안내 */}
         <article className={infoStyles.form_group}>
           <label className={infoStyles.form_label}>간편 안내</label>
-
+          <div className={isEditMode ? guideStyles.locked_section : undefined}>
           {/* 글자 수 */}
           <div className={guideStyles.option_input_box}>
             <input
@@ -775,6 +800,7 @@ export default function ReporterCampaignForm({
             </label>
             <span className={guideStyles.option_value}></span>
           </div>
+          </div>
         </article>
 
         {/* 참여/제출 옵션 */}
@@ -860,7 +886,7 @@ export default function ReporterCampaignForm({
           className={guideStyles.submit_button}
           disabled={isSubmitting || !isFormValid}
         >
-          {isSubmitting ? "등록 중..." : "등록하기"}
+          {isSubmitting ? (isEditMode ? "수정 중..." : "등록 중...") : (isEditMode ? "수정하기" : "등록하기")}
         </button>
       </div>
     </form>

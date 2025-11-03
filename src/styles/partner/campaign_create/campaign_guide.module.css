@@ -296,6 +296,12 @@
   cursor: not-allowed;
 }
 
+/* 수정 모드에서 간편 안내 전체 잠금용 */
+.locked_section {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
 /* 유의사항 */
 .notice_content {
   background: #f6f6f6;

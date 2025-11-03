@@ -86,11 +86,13 @@ export const regions = [
 interface CampaignTypeSelectorProps {
   currentType: CampaignType;
   onTypeChange: (type: CampaignType) => void;
+  disabled?: boolean;
 }
 
 export function CampaignTypeSelector({
   currentType,
   onTypeChange,
+  disabled = false,
 }: CampaignTypeSelectorProps) {
   return (
     <article className={infoStyles.form_group}>
@@ -104,8 +106,9 @@ export function CampaignTypeSelector({
             type="button"
             className={`${headerStyles.campaign_type_button} ${
               currentType === type ? headerStyles.active : ""
-            }`}
-            onClick={() => onTypeChange(type)}
+            } ${disabled ? headerStyles.disabled_button : ""}`}
+            onClick={disabled ? undefined : () => onTypeChange(type)}
+            disabled={disabled}
           >
             {type}
           </button>
@@ -149,6 +152,7 @@ interface CustomDropdownProps {
   options: string[];
   onChange: (value: string) => void;
   placeholder?: string;
+  disabled?: boolean;
 }
 
 export function CustomDropdown({
@@ -156,6 +160,7 @@ export function CustomDropdown({
   options,
   onChange,
   placeholder = "선택하세요",
+  disabled = false,
 }: CustomDropdownProps) {
   // 드롭다운 열림/닫힘 상태 관리
   const [is_open, setIsOpen] = useState(false);
@@ -176,6 +181,7 @@ export function CustomDropdown({
 
   // 드롭다운 토글 핸들러
   const toggle_dropdown = () => {
+    if (disabled) return;
     const new_is_open = !is_open;
     setIsOpen(new_is_open);
 
@@ -238,10 +244,11 @@ export function CustomDropdown({
         type="button"
         className={`${dropdownStyles.dropdown_button} ${
           is_open ? dropdownStyles.open : ""
-        }`}
+        } ${disabled ? dropdownStyles.disabled : ""}`}
         onClick={toggle_dropdown}
         aria-expanded={is_open}
         aria-haspopup="listbox"
+        disabled={disabled}
       >
         <span className={dropdownStyles.dropdown_text}>{display_text}</span>
         {/* 화살표 아이콘 */}

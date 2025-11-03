@@ -167,6 +167,7 @@ export default function ReviewCampaignEditPage() {
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}
           initialData={initialData}
+          mode="edit"
         />
       </div>
     </div>

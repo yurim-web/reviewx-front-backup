@@ -281,3 +281,15 @@
     width: 100%;
   }
 }
+
+/* 수정 모드(읽기 전용) 시각화 */
+.locked_input {
+  background-color: #f5f5f7;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.locked_placeholder {
+  pointer-events: none;
+  opacity: 0.5;
+}
