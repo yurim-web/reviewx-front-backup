@@ -301,7 +301,8 @@ export const reviewCampaigns: CampaignWithApplicants[] = [
           nickname: "구매평리뷰어2",
           channelId: "review_user_003",
           channel: "",
-          actionType: 1,
+          actionType: 2,
+          thumbnailSrc: "/images/test_img/eximg3.png",
           isRejected: true,
         },
         {
@@ -343,7 +344,7 @@ export const reviewCampaigns: CampaignWithApplicants[] = [
           actionType: 1,
           updatedAt: "2025-01-12T12:00:00.000Z",
           receiptImages: [
-            "",
+            "/images/test_img/eximg3.png",
           ],
         },
         {
@@ -354,11 +355,9 @@ export const reviewCampaigns: CampaignWithApplicants[] = [
           nickname: "구매평완료리뷰어2",
           channelId: "review_user_007",
           channel: "네이버블로그",
-          actionType: 1,
+          actionType: 2,
           isLate: true,
-          receiptImages: [
-       
-          ],
+          thumbnailSrc: "/images/test_img/eximg3.png",
         },
       ],
     },

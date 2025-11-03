@@ -168,7 +168,11 @@ export default function PurchaseReviewContentsDetailPage() {
                     <ReviewRejectedReviewCard
                       key={item.id}
                       applicant={{ ...applicant, reviewType: 5 }}
-                      onCheckReview={() => {}}
+                      onCheckReview={() =>
+                        openReceiptModal(
+                          item.thumbnailSrc ? [item.thumbnailSrc] : []
+                        )
+                      }
                       onHandleReject={() => {}}
                       dateLabel={dateLabel}
                     />
@@ -200,11 +204,15 @@ export default function PurchaseReviewContentsDetailPage() {
                     />
                   );
                 }
-                return (
+                  return (
                   <ReviewInspectionCard
                     key={item.id}
                     applicant={{ ...applicant, reviewType: 1 }}
-                    onCheckReview={() => {}}
+                      onCheckReview={() =>
+                        openReceiptModal(
+                          item.thumbnailSrc ? [item.thumbnailSrc] : []
+                        )
+                      }
                     onApprove={() => {}}
                     onReject={() => {}}
                     dateLabel={dateLabel}
@@ -221,7 +229,11 @@ export default function PurchaseReviewContentsDetailPage() {
                     reviewType: isReceiptFlow ? 2 : 3,
                   }}
                   onCheckReceipt={isReceiptFlow ? () => openReceiptModal(item.receiptImages) : undefined}
-                  onCheckReview={!isReceiptFlow ? () => {} : undefined}
+                  onCheckReview={!isReceiptFlow
+                    ? () => openReceiptModal(
+                        item.thumbnailSrc ? [item.thumbnailSrc] : []
+                      )
+                    : undefined}
                   dateLabel={dateLabel}
                 />
               );
