@@ -1,20 +1,19 @@
 /* ========================================
-   💰 파트너 전체 포인트 내역 페이지
+   💰 파트너 포인트 사용 내역 페이지
    ======================================== */
 
 /**
- * 파트너 전체 포인트 내역 페이지
+ * 파트너 포인트 사용 내역 페이지
  *
- * 목적: 모든 파트너 포인트 내역을 보여주는 독립적인 페이지입니다.
+ * 목적: 파트너의 포인트 사용 내역만 보여주는 페이지입니다.
  *
  * 페이지 경로:
- * - /partner/point/all
+ * - /partner/point/withdrawn
  *
  * 주요 기능:
- * - 모든 포인트 내역 표시 (적립, 출금, 완료, 신청, 취소)
+ * - 포인트 사용 내역만 표시 (type: "withdrawn")
  * - 보유 포인트 현황 표시
- * - 출금 신청 기능
- * - URL 기반 라우팅으로 새로고침 시에도 페이지 유지
+ * - 포인트 충전 기능
  */
 
 "use client";
@@ -30,14 +29,12 @@ import { partnerPointHistoryData, partnerPointSummary } from "@/data/partner/poi
 import styles from "@/styles/user/point/point.module.css";
 
 /**
- * 파트너 전체 포인트 내역 페이지 컴포넌트
+ * 파트너 포인트 사용 내역 페이지 컴포넌트
  */
-export default function PartnerAllPointPage() {
+export default function PartnerWithdrawnPointPage() {
   const router = useRouter();
   const [activeMainTab, setActiveMainTab] = useState<MainTab>("point");
-  const [activePointTab, setActivePointTab] = useState<PointTab>("all");
-  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
-  const [showTooltip, setShowTooltip] = useState(false);
+  const [activePointTab, setActivePointTab] = useState<PointTab>("withdrawn");
   const tooltipRef = useRef<HTMLSpanElement>(null);
 
   /**
@@ -47,13 +44,13 @@ export default function PartnerAllPointPage() {
   const handlePointTabChange = (tab: PointTab) => {
     switch (tab) {
       case "all":
-        // 현재 페이지이므로 아무것도 하지 않음
+        window.location.href = "/partner/point/all";
         break;
       case "earned":
         window.location.href = "/partner/point/earned";
         break;
       case "withdrawn":
-        window.location.href = "/partner/point/withdrawn";
+        // 현재 페이지이므로 아무것도 하지 않음
         break;
     }
   };
@@ -62,33 +59,14 @@ export default function PartnerAllPointPage() {
    * 충전 버튼 클릭 핸들러
    * 포인트 충전 페이지로 이동
    */
-  const handleWithdrawalClick = () => {
+  const handleChargeClick = () => {
     router.push("/partner/point/charge");
   };
 
-  /**
-   * 툴팁 표시 핸들러
-   * 마우스 오버 시 툴팁 위치 설정
-   */
-  const handleMouseEnter = (e: React.MouseEvent) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    setTooltipPosition({
-      x: rect.right + 8,
-      y: rect.top + rect.height / 2,
-    });
-    setShowTooltip(true);
-  };
-
-  /**
-   * 툴팁 숨김 핸들러
-   * 마우스 아웃 시 툴팁 숨김
-   */
-  const handleMouseLeave = () => {
-    setShowTooltip(false);
-  };
-
-  // 전체 데이터 표시 (필터링 없음)
-  const filteredHistoryData = partnerPointHistoryData;
+  // 사용 내역만 필터링 (type: "withdrawn")
+  const filteredHistoryData = partnerPointHistoryData.filter(
+    (history) => history.type === "withdrawn"
+  );
 
   return (
     <div className={styles.point_page}>
@@ -118,13 +96,13 @@ export default function PartnerAllPointPage() {
 
             <button
               className={styles.withdrawal_button}
-              onClick={handleWithdrawalClick}
+              onClick={handleChargeClick}
             >
               포인트 충전하기
             </button>
           </article>
 
-          {/* 포인트 내역 리스트 */}
+          {/* 포인트 사용 내역 리스트 */}
           <article className={styles.history_list}>
             {filteredHistoryData.map((history) => (
               <div key={history.id} className={styles.history_item}>
@@ -160,43 +138,7 @@ export default function PartnerAllPointPage() {
                 {/* 내역 정보 */}
                 <div className={styles.history_info}>
                   <div className={styles.history_description}>
-                    {history.status === "failed" ? (
-                      <div className={styles.cancelled_description}>
-                        <span className={styles.main_text}>
-                          {history.description}
-                        </span>
-                        <div
-                          className={styles.reason_section}
-                          onMouseEnter={handleMouseEnter}
-                          onMouseLeave={handleMouseLeave}
-                        >
-                          <div className={styles.reason_icon}>
-                            <Image
-                              src="/images/management_page/cancel_info.svg"
-                              alt="정보 아이콘"
-                              width={16}
-                              height={16}
-                            />
-                          </div>
-                          <span className={styles.reason_text}>사유보기</span>
-                          <span
-                            ref={tooltipRef}
-                            className={styles.reason_content}
-                            style={{
-                              left: tooltipPosition.x,
-                              top: tooltipPosition.y,
-                              transform: "translateY(-50%)",
-                              opacity: showTooltip ? 1 : 0,
-                              visibility: showTooltip ? "visible" : "hidden",
-                            }}
-                          >
-                            예금주와 본인 명의 불일치
-                          </span>
-                        </div>
-                      </div>
-                    ) : (
-                      history.description
-                    )}
+                    {history.description}
                   </div>
                   <div className={styles.history_date}>{history.date}</div>
                 </div>
@@ -229,3 +171,4 @@ export default function PartnerAllPointPage() {
     </div>
   );
 }
+

@@ -81,10 +81,12 @@ export interface ContentItem {
   isRejected?: boolean;
   /** 지연 여부 (true면 마감일을 넘긴 콘텐츠) */
   isLate?: boolean;
-  /** 액션 타입 (미션형 전용, 선택사항) */
-  actionType?: string;
+  /** 액션 타입 (구매평/미션형 전용, 선택사항) - 숫자 1: 구매영수증 확인, 문자열 "1"~"4": 리뷰/링크/이미지 타입 */
+  actionType?: string | number;
   /** 미션 타입 (미션형 전용, 선택사항) */
   missionType?: string;
+  /** 구매 영수증 이미지 목록 (구매평 영수증 흐름 전용) */
+  receiptImages?: string[];
 }
 
 /**

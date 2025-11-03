@@ -74,7 +74,7 @@ export default function EditProfilePage() {
     name: "",
     email: "",
     phone: "",
-    postalCode: "12354545",
+    postalCode: "",
     address: "",
     detailAddress: "",
     serviceName: "",
@@ -275,6 +275,7 @@ export default function EditProfilePage() {
                     alt="프로필 사진 업로드"
                     width={12}
                     height={12}
+                    unoptimized
                   />
                 </div>
                 {profileImage && (
@@ -465,7 +466,7 @@ export default function EditProfilePage() {
               계좌번호<span className={styles.required_asterisk}>*</span>
             </label>
             <input
-              type="text"
+              type="number"
               id="accountNumber"
               name="accountNumber"
               className={styles.input_field}
@@ -482,7 +483,7 @@ export default function EditProfilePage() {
             </label>
             <div className={styles.ssn_container}>
               <input
-                type="text"
+                type="number"
                 id="ssnFront"
                 name="ssnFront"
                 className={styles.input_field}

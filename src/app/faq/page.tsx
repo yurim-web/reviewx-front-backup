@@ -96,8 +96,20 @@ export default function FAQPage() {
                   onClick={() => handleToggleExpand(faq.id)}
                 >
                   <div className={styles.question_content}>
-                    <span className={styles.question_number}>Q.</span>
-                    <span className={styles.question_text}>{faq.question}</span>
+                    <span
+                      className={`${styles.question_number} ${
+                        expandedItems.includes(faq.id) ? styles.expanded_question : ""
+                      }`}
+                    >
+                      Q.
+                    </span>
+                    <span
+                      className={`${styles.question_text} ${
+                        expandedItems.includes(faq.id) ? styles.expanded_question : ""
+                      }`}
+                    >
+                      {faq.question}
+                    </span>
                   </div>
                   <div
                     className={`${styles.expand_icon} ${

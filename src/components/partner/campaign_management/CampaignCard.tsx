@@ -24,7 +24,7 @@ import type { PartnerCampaign } from "@/types/partner";
 import cardStyles from "../../../styles/partner/campaign_card.module.css";
 import buttonStyles from "../../../styles/partner/buttons.module.css";
 import ReceiptRegistrationModal from "../campaign/ReceiptRegistrationModal";
-import { getClosedContentsById } from "@/data/partner/sharedCampaigns";
+import { getClosedContentsById, getCampaignById } from "@/data/partner/sharedCampaigns";
 import { getVisitContentsById } from "@/data/partner/visit";
 import { getDeliveryContentsById } from "@/data/partner/delivery";
 import { getReporterContentsById } from "@/data/partner/reporter";
@@ -67,15 +67,44 @@ export default function CampaignCard({
       }
     };
 
-    const contents =
-      campaign.status === "종료" || campaign.status === "취소"
-        ? getClosedContentsById(id) || { reviewing: [], completed: [] }
-        : getByType();
+    // 종료/취소 상태인 경우: closedCampaigns에서 먼저 찾고, 없으면 getCampaignById에서 contents 확인
+    if (campaign.status === "종료" || campaign.status === "취소") {
+      const closedContents = getClosedContentsById(id);
+      if (closedContents) {
+        return {
+          reviewingCount: closedContents.reviewing?.length ?? 0,
+          completedCount: closedContents.completed?.length ?? 0,
+        };
+      }
+      // closedCampaigns에 없으면 getCampaignById에서 contents 확인
+      const campaignData = getCampaignById(id);
+      if (campaignData && (campaignData as any).contents) {
+        const contents = (campaignData as any).contents;
+        return {
+          reviewingCount: contents.reviewing?.length ?? 0,
+          completedCount: contents.completed?.length ?? 0,
+        };
+      }
+      return { reviewingCount: 0, completedCount: 0 };
+    }
+
+    // 진행 중/진행 상태인 경우: getCampaignById에서 contents 확인, 없으면 타입별 함수 호출
+    const campaignData = getCampaignById(id);
+    if (campaignData && (campaignData as any).contents) {
+      const contents = (campaignData as any).contents;
+      return {
+        reviewingCount: contents.reviewing?.length ?? 0,
+        completedCount: contents.completed?.length ?? 0,
+      };
+    }
+
+    // getCampaignById에 contents가 없으면 타입별 함수로 조회
+    const contents = getByType();
     return {
       reviewingCount: contents?.reviewing?.length ?? 0,
       completedCount: contents?.completed?.length ?? 0,
     };
-  }, [campaign.id]);
+  }, [campaign.id, campaign.type, campaign.status]);
 
   // 콘텐츠 검수/확인 버튼 표시 여부 판별
   const isContentStage = useMemo(() => {
@@ -193,7 +222,7 @@ export default function CampaignCard({
     } else if (campaign.subStatus === "winner_selection") {
       return "당첨자 선정하기";
     } else if (campaign.subStatus === "content_review") {
-      return `콘텐츠 확인하기 (${campaign.submissions || 0})`;
+      return `콘텐츠 확인하기 (${completedCount})`;
     } else if (campaign.subStatus === "penalty") {
       return "패널티 내역보기";
     }
@@ -207,7 +236,7 @@ export default function CampaignCard({
       case "진행":
         return "당첨자 선정하기";
       case "종료":
-        return `콘텐츠 확인하기 (${campaign.submissions || 0})`;
+        return `콘텐츠 확인하기 (${completedCount})`;
       case "취소":
         return "패널티 내역보기";
       default:
@@ -415,7 +444,7 @@ export default function CampaignCard({
               신청내역 확인하기
             </button>
           </>
-        ) : campaign.subStatus === "content_review,content_approval" ? (
+        ) : isContentStage ? (
           /* 종료 탭 또는 콘텐츠 단계: 콘텐츠 검수하기 + 콘텐츠 확인하기 */
           <>
             <button

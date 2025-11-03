@@ -113,6 +113,9 @@
 
 .notice_content {
   padding: 24px 0px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .notice_title {
@@ -121,10 +124,10 @@
   line-height: 24px;
   letter-spacing: -0.32px;
   color: #444;
-  margin-bottom: 8px;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  width: 920px;
   -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
   overflow: hidden;
   text-overflow: ellipsis;
 }

@@ -8,74 +8,91 @@ import { PointHistory, PointSummary } from "@/types/point";
  * 파트너 포인트 요약 정보 (샘플 데이터)
  */
 export const partnerPointSummary: PointSummary = {
-  total_points: 511200,
-  available_points: 511200,
-  pending_points: 0,
+  total_points: 4311885, // 전체 보유 포인트
+  available_points: 4311885, // 사용 가능한 포인트
+  pending_points: 0, // 처리 대기 중인 포인트
 };
 
 /**
- * 파트너 포인트 내역 (샘플 데이터)
- */
+ * * 파트너 포인트 내역 (샘플 데이터) */
+
+
 export const partnerPointHistoryData: PointHistory[] = [
   {
-    id: "1",
-    type: "earned",
-    amount: 150000,
-    description:
-      "[풋필터] 트롯바비 홍지윤 pick! 아치까지 받쳐주는 발 편한 자세 교정 키높이 깔창 2set(1.5cm 1켤레 + 2.5cm 1켤레) 구매평",
-    campaign_id: "camp_001",
-    date: "2025-09-12",
-    status: "earned",
-    balance: 4311885,
+    id: "1", // 거래 고유 ID
+    type: "earned", // 거래 유형 - "earned"=충전, "withdrawn"=사용
+    amount: 16000, // 포인트 변동 금액 (양수=증가, 음수=감소)
+    description: "포인트 충전", // 내역 설명 텍스트
+    campaign_id: "camp_001", // 연관된 캠페인 ID (선택사항)
+    date: "2025-09-21", // 거래 발생 날짜 (YYYY-MM-DD)
+    status: "earned", // 거래 상태 - "earned"/"completed"/"pending"/"failed"
+    balance: 495200, // 거래 후 남은 포인트 잔액
   },
   {
     id: "2",
     type: "earned",
-    amount: 50000,
-    description:
-      "멜킨 엘프리 마사지 멜킨 엘프리 마사지멜킨 엘프리 마사지 멜킨 엘프리 마사지 멜킨 엘프리 마사지멜킨 엘프리 마사지",
-    campaign_id: "camp_002",
-    date: "2025-09-10",
-    status: "earned",
-    balance: 4161885,
-  },
-  {
-    id: "3",
-    type: "withdrawn",
-    amount: -36000,
-    description: "출금 완료",
-    date: "2025-09-06",
-    status: "completed",
-    balance: 6161885,
-  },
-  {
-    id: "4",
-    type: "earned",
     amount: 27500,
-    description:
-      "[라운지엑스24h] 라운지엑스24h 원그로브점 성수샌드 2개(낱개) + 음료 2잔 체험권",
-    campaign_id: "camp_004",
+    description: "포인트 충전",
+    campaign_id: "camp_002",
     date: "2025-09-01",
     status: "earned",
     balance: 6125885,
   },
   {
+    id: "3",
+    type: "earned",
+    amount: 150000,
+    description: "포인트 충전",
+    campaign_id: "camp_003",
+    date: "2025-09-12",
+    status: "earned",
+    balance: 4311885,
+  },
+  {
+    id: "4",
+    type: "earned",
+    amount: 150000,
+    description: "포인트 충전",
+    campaign_id: "camp_004",
+    date: "2025-09-10",
+    status: "earned",
+    balance: 4161885,
+  },
+  {
     id: "5",
-    type: "withdrawn",
-    amount: -2000000,
-    description: "출금 신청 반려",
-    date: "2025-09-01",
-    status: "failed",
-    balance: 7311885,
+    type: "earned",
+    amount: 50000,
+    description: "포인트 충전",
+    date: "2025-09-06",
+    status: "earned",
+    balance: 6161885,
   },
   {
     id: "6",
+    type: "withdrawn", // 사용(출금) 유형
+    amount: -1500000, // 음수=포인트 차감
+    description: "리뷰어 포인트 지급", // 리뷰어에게 포인트를 지급한 내역
+    date: "2025-09-28",
+    status: "completed", // 완료된 거래
+    balance: 6225985,
+  },
+  {
+    id: "7",
     type: "withdrawn",
-    amount: -100000,
-    description: "출금 신청 중",
-    date: "2025-08-28",
-    status: "pending",
-    balance: 9311885,
+    amount: -2000000,
+    description: "리뷰어 포인트 지급",
+    date: "2025-09-11",
+    status: "completed",
+    balance: 5259112,
+  },
+  {
+    id: "8",
+    type: "withdrawn",
+    amount: -27000,
+    description: "리뷰어 포인트 지급",
+    date: "2025-09-01",
+    status: "completed",
+    balance: 7311885,
   },
 ];
 

@@ -198,6 +198,18 @@
   color: #7b1fa2;
 }
 
+/* 충전 상태 배지 (회색 #a8a8a8) */
+.status_badge.charged {
+  background: #a8a8a8;
+  color: #ffffff;
+}
+
+/* 사용 상태 배지 (진한 회색 #555555) */
+.status_badge.used {
+  background: #555555;
+  color: #ffffff;
+}
+
 /* 신청 상태 배지 (파란색) */
 .status_badge.pending {
   background: #e3f2fd;
