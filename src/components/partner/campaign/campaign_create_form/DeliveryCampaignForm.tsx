@@ -56,12 +56,22 @@ export default function DeliveryCampaignForm({
   
   // 수정 모드에서 편집 가능 필드 정의
   const isEditableField = (field: string): boolean => {
-    // 이미지(썸네일/상세), 제공 내역, 홍보 링크, 추가 지급 포인트만 편집 가능
+    // 이미지(썸네일/상세), 제공 내역, 홍보 링크, 추가 지급 포인트, 참여/제출 옵션만 편집 가능
     const editable = new Set([
       "images", // 업로드/삭제 버튼 제어용 가상 키
       "providedItems",
       "promotionLink",
       "additionalPoints",
+      // 참여/제출 옵션 필드들
+      "adultOnly",
+      "allowReParticipation",
+      "allowLateSubmission",
+      "minTextLength",
+      "minImageCount",
+      "videoCount",
+      "videoDuration",
+      "requireLinkAttachment",
+      "requireKeywordAttachment",
     ]);
     return editable.has(field);
   };
@@ -394,6 +404,12 @@ export default function DeliveryCampaignForm({
    * 설명:
    * - 폼 데이터와 업로드된 이미지를 함께 onSubmit으로 전달합니다.
    * - 이미지는 formData.thumbnailImage와 formData.detailImages로 전달됩니다.
+   * - thumbnailImageUrl은 첫 번째 이미지의 미리보기 URL(Data URL)을 전달합니다.
+   *   이는 캠페인 카드에서 썸네일을 표시하는 데 사용됩니다.
+   *
+   * 학습 포인트:
+   * - File 객체와 Data URL(이미지 미리보기)을 함께 전달하여
+   *   서버 업로드와 클라이언트 표시를 모두 지원합니다.
    */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -401,8 +417,10 @@ export default function DeliveryCampaignForm({
     // 업로드된 이미지 파일을 폼 데이터에 추가
     const formDataWithImages = {
       ...formData,
-      // 첫 번째 이미지를 썸네일로 사용
+      // 첫 번째 이미지를 썸네일로 사용 (File 객체)
       thumbnailImage: uploadedImages[0],
+      // 첫 번째 이미지의 미리보기 URL (Data URL) - 캠페인 카드 표시용
+      thumbnailImageUrl: imagePreviews[0] || undefined,
       // 나머지 이미지를 상세 이미지로 사용
       detailImages: uploadedImages.slice(1),
     };
@@ -935,7 +953,7 @@ export default function DeliveryCampaignForm({
           className={guideStyles.submit_button}
           disabled={isSubmitting || !isFormValid}
         >
-          {isSubmitting ? (isEditMode ? "수정 중..." : "등록 중...") : (isEditMode ? "수정하기" : "등록하기")}
+          {isSubmitting ? (isEditMode ? "저장 중..." : "등록 중...") : (isEditMode ? "저장하기" : "등록하기")}
         </button>
       </div>
     </form>

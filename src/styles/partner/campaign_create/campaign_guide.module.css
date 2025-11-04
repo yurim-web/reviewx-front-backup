@@ -261,6 +261,14 @@
   letter-spacing: -0.28px;
 }
 
+/* readOnly 상태의 textarea 스타일 (수정 모드) */
+.fixed_height_textarea:read-only {
+  background: #f6f6f6;
+  color: #999;
+  cursor: default;
+  border-color: #d9d9d9;
+}
+
 .fixed_height_textarea::placeholder {
   color: #848484;
   font-size: 14px;
@@ -299,7 +307,48 @@
 /* 수정 모드에서 간편 안내 전체 잠금용 */
 .locked_section {
   pointer-events: none;
-  opacity: 0.5;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 잠금된 섹션 내부의 옵션 입력 박스 - 읽기 전용 필드 스타일과 동일하게 */
+.locked_section .option_input_box {
+  background: #f6f6f6;
+  border-color: #d9d9d9;
+  cursor: default;
+}
+
+/* 잠금된 섹션 내부의 체크박스 - 읽기 전용 스타일 */
+.locked_section input[type="checkbox"] {
+  border-color: #d9d9d9;
+  background: #f6f6f6;
+  cursor: default;
+}
+
+/* 잠금된 섹션 내부의 레이블 - 읽기 전용 필드와 동일한 텍스트 색상 */
+.locked_section .option_label {
+  color: #999;
+  cursor: default;
+}
+
+/* 잠금된 섹션 내부의 밑줄 입력 필드 - 읽기 전용 필드 스타일과 동일하게 */
+.locked_section .underline_input {
+  background: #f6f6f6;
+  border-bottom-color: #d9d9d9;
+  color: #999;
+  cursor: default;
+  outline: none;
+}
+
+/* 잠금된 섹션 내부의 값 텍스트 - 읽기 전용 필드와 동일한 텍스트 색상 */
+.locked_section .option_value {
+  color: #999;
+}
+
+/* 잠금된 섹션 내부의 단위 텍스트 - 읽기 전용 필드와 동일한 텍스트 색상 */
+.locked_section .unit_text {
+  color: #999;
 }
 
 /* 유의사항 */

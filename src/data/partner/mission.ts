@@ -5,7 +5,6 @@
 import type { CampaignWithApplicants } from "./campaign_application/delivery_applicants";
 import type { CampaignWithContents } from "./sharedCampaigns";
 import type { ContentByTab, ContentItem } from "./sharedCampaigns";
-import { getClosedContentsById } from "./sharedCampaigns";
 import { CampaignFormData } from "@/types/campaign";
 import { calculateCampaignStatus, calculateDaysLeft } from "./delivery";
 
@@ -17,7 +16,8 @@ export const missionCampaigns: CampaignWithApplicants[] = [
       title: "화장품 브랜드 미션형 모집",
       image: "/images/main/campaign_img/eximg_4.png",
       status: "진행 중",
-      category: "미션형",
+      campaignType: "미션형",
+      category: "뷰티",
       brandName: "",
       recruitmentPeriod: "2024-01-12 ~ 2024-01-20",
       announcementDate: "2024-01-20",
@@ -237,7 +237,8 @@ export const missionCampaigns: CampaignWithApplicants[] = [
       title: "[진행] 미션형 새 테스트 캠페인",
       image: "/images/main/campaign_img/eximg_4.png",
       status: "진행 중" as const,
-      category: "미션형",
+      campaignType: "미션형",
+      category: "뷰티",
       brandName: "",
       recruitmentPeriod: "2025-10-25 ~ 2025-11-05",
       announcementDate: "2025-11-05",
@@ -359,7 +360,8 @@ export const missionCampaigns: CampaignWithApplicants[] = [
       title: "[신청] 미션형 샘플 캠페인",
       image: "/images/main/campaign_img/eximg_4.png",
       status: "모집 중" as const,
-      category: "미션형",
+      campaignType: "미션형",
+      category: "뷰티",
       brandName: "",
       recruitmentPeriod: "2025-11-05 ~ 2025-11-15",
       announcementDate: "2025-11-15",
@@ -378,7 +380,8 @@ export const missionCampaigns: CampaignWithApplicants[] = [
       title: "[예정] 미션형 샘플 캠페인",
       image: "/images/main/campaign_img/eximg_4.png",
       status: "대기 중" as const,
-      category: "미션형",
+      campaignType: "미션형",
+      category: "뷰티",
       brandName: "",
       recruitmentPeriod: "2025-11-06 ~ 2025-11-16",
       announcementDate: "2025-11-16",
@@ -402,7 +405,8 @@ export const missionClosedCampaigns: CampaignWithContents[] = [
       title: "[취소] 미션형 캠페인 - 이미지/링크",
       image: "/images/main/campaign_img/eximg_4.png",
       status: "취소",
-      category: "미션형",
+      campaignType: "미션형",
+      category: "뷰티",
       brandName: "",
       recruitmentPeriod: "2024-04-10 ~ 2024-04-16",
       announcementDate: "2024-04-16",
@@ -555,11 +559,15 @@ export const missionClosedCampaigns: CampaignWithContents[] = [
  */
 export function getMissionContentsById(campaignId: string): ContentByTab {
   // 종료/취소 탭 데이터(미션형): 904 매핑
-  // 설명: 종료/취소된 캠페인은 sharedCampaigns의 closedCampaigns에서 가져옵니다.
+  // 설명: 종료/취소된 캠페인은 missionClosedCampaigns를 직접 참조 (순환 참조 방지)
   if (campaignId === "904") {
-    return (
-      getClosedContentsById(campaignId) ?? { reviewing: [], completed: [] }
+    const closedCampaign = missionClosedCampaigns.find(
+      (c) => c.campaignInfo.id === campaignId
     );
+    if (closedCampaign?.contents) {
+      return closedCampaign.contents;
+    }
+    return { reviewing: [], completed: [] };
   }
 
   // 진행 중인 캠페인의 콘텐츠 조회
@@ -641,7 +649,8 @@ export function createMissionCampaign(
       title: formData.title,
       image: imageUrl,
       status: campaignStatus,
-      category: "미션형",
+      campaignType: "미션형",
+      category: formData.category || "기타",
       brandName: normalizedBrandName,
       recruitmentPeriod: formData.recruitmentPeriod,
       announcementDate: formData.announcementDate,
@@ -709,7 +718,8 @@ export function updateMissionCampaign(
       title: formData.title,
       image: imageUrl,
       status: campaignStatus,
-      category: "미션형",
+      campaignType: "미션형",
+      category: formData.category || "기타",
       brandName: normalizedBrandName,
       recruitmentPeriod: formData.recruitmentPeriod,
       announcementDate: formData.announcementDate,

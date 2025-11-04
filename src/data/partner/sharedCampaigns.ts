@@ -115,6 +115,7 @@ export interface CampaignWithContents {
     title: string;
     image: string;
     status: string;
+    campaignType: "배송형" | "방문형" | "구매평" | "기자단" | "미션형";
     category: string;
     brandName: string;
     recruitmentPeriod: string;
@@ -661,7 +662,7 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
       id: campaign.campaignInfo.id,
       title: campaign.campaignInfo.title,
       image: campaign.campaignInfo.image,
-      type: campaign.campaignInfo.category as
+      type: campaign.campaignInfo.campaignType as
         | "배송형"
         | "방문형"
         | "구매평"
@@ -683,7 +684,7 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
       brand: campaign.campaignInfo.brandName,
       brandLogo: getBrandLogo(
         campaign.campaignInfo.brandName || "기본",
-        campaign.campaignInfo.category
+        campaign.campaignInfo.campaignType
       ),
       // 계산된 탭(상태)을 기반으로 서브 상태 결정
       subStatus: getSubStatus(

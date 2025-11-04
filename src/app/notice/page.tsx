@@ -34,6 +34,7 @@ interface NoticeItem {
   category: string;
 }
 
+// 임시 목업  데이터
 const mockNotices: NoticeItem[] = [
   {
     id: 1,
@@ -123,17 +124,23 @@ export default function NoticePage() {
             ))}
           </div>
 
-          {/* 공지사항 목록 */}
-          <div className={styles.notice_list}>
-            {filteredNotices.map((notice) => (
-              <div key={notice.id} className={styles.notice_item}>
-                <div className={styles.notice_content}>
-                  <div className={styles.notice_title}>{notice.title}</div>
-                  <div className={styles.notice_date}>{notice.date}</div>
+          {/* 공지사항 목록 또는 빈 상태 */}
+          {filteredNotices.length > 0 ? (
+            <div className={styles.notice_list}>
+              {filteredNotices.map((notice) => (
+                <div key={notice.id} className={styles.notice_item}>
+                  <div className={styles.notice_content}>
+                    <div className={styles.notice_title}>{notice.title}</div>
+                    <div className={styles.notice_date}>{notice.date}</div>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className={styles.empty_state}>
+              <p className={styles.empty_text}>공지사항이 없습니다.</p>
+            </div>
+          )}
         </section>
       </main>
     </div>

@@ -32,6 +32,7 @@ export interface CampaignFormData {
   category: string;
   region?: string; // 방문형에만 필요
   thumbnailImage?: File;
+  thumbnailImageUrl?: string; // 업로드된 이미지의 미리보기 URL (Data URL)
   detailImages?: File[];
 
   // 상세 정보

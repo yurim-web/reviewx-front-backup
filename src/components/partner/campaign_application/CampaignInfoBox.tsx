@@ -45,6 +45,9 @@ export interface CampaignInfo {
     | "진행 중"
     | "종료"
     | "취소";
+  /** 캠페인 유형 - 배송형, 방문형, 구매평, 기자단, 미션형 */
+  campaignType: "배송형" | "방문형" | "구매평" | "기자단" | "미션형";
+  /** 카테고리 - 식품, 뷰티, 가전, 유아동, 여가, 서비스, 생활, 패션, 가구, 디지털, 문화, 반려동물, 기타 */
   category: string;
   /** 브랜드 이름 (선택적) - 배송형 등에서만 사용 */
   brandName?: string;
@@ -97,11 +100,11 @@ export default function Campaignbanner({ campaignInfo }: CampaignbannerProps) {
                 <img
                   src={getBrandLogo(
                     campaignInfo.brandName || "기본",
-                    campaignInfo.category
+                    campaignInfo.campaignType
                   )}
-                  alt={`${campaignInfo.category} 브랜드 로고`}
+                  alt={`${campaignInfo.campaignType} 브랜드 로고`}
                 />
-                <span>{campaignInfo.category}</span>
+                <span>{campaignInfo.campaignType}</span>
               </div>
 
               <div className={styles.campaign_status}>

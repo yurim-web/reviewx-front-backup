@@ -61,6 +61,8 @@ export default function FAQPage() {
     );
   };
 
+  // 🔍 빈 상태 테스트: 아래 주석을 해제하면 빈 상태를 확인할 수 있습니다
+  // const filteredFAQs: FAQItem[] = [];
   const filteredFAQs = getFAQsByCategory(selectedCategory);
 
   return (
@@ -87,57 +89,63 @@ export default function FAQPage() {
             ))}
           </div>
 
-          {/* FAQ 목록 */}
-          <div className={styles.faq_list}>
-            {filteredFAQs.map((faq) => (
-              <div key={faq.id} className={styles.faq_item}>
-                <button
-                  className={styles.faq_question}
-                  onClick={() => handleToggleExpand(faq.id)}
-                >
-                  <div className={styles.question_content}>
-                    <span
-                      className={`${styles.question_number} ${
-                        expandedItems.includes(faq.id) ? styles.expanded_question : ""
-                      }`}
-                    >
-                      Q.
-                    </span>
-                    <span
-                      className={`${styles.question_text} ${
-                        expandedItems.includes(faq.id) ? styles.expanded_question : ""
-                      }`}
-                    >
-                      {faq.question}
-                    </span>
-                  </div>
-                  <div
-                    className={`${styles.expand_icon} ${
-                      expandedItems.includes(faq.id) ? styles.expanded : ""
-                    }`}
+          {/* FAQ 목록 또는 빈 상태 */}
+          {filteredFAQs.length > 0 ? (
+            <div className={styles.faq_list}>
+              {filteredFAQs.map((faq) => (
+                <div key={faq.id} className={styles.faq_item}>
+                  <button
+                    className={styles.faq_question}
+                    onClick={() => handleToggleExpand(faq.id)}
                   >
-                    {/* 토글 버튼 아이콘  */}
-                    <Image
-                      src="/images/icons/dropdown_arrow.svg"
-                      alt="펼치기/접기"
-                      width={16}
-                      height={16}
-                    />
-                  </div>
-                </button>
-
-                {/* 답변 내용 */}
-                {expandedItems.includes(faq.id) && (
-                  <div className={styles.faq_answer}>
-                    <div className={styles.answer_content}>
-                      <span className={styles.answer_number}>A.</span>
-                      <span className={styles.answer_text}>{faq.answer}</span>
+                    <div className={styles.question_content}>
+                      <span
+                        className={`${styles.question_number} ${
+                          expandedItems.includes(faq.id) ? styles.expanded_question : ""
+                        }`}
+                      >
+                        Q.
+                      </span>
+                      <span
+                        className={`${styles.question_text} ${
+                          expandedItems.includes(faq.id) ? styles.expanded_question : ""
+                        }`}
+                      >
+                        {faq.question}
+                      </span>
                     </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+                    <div
+                      className={`${styles.expand_icon} ${
+                        expandedItems.includes(faq.id) ? styles.expanded : ""
+                      }`}
+                    >
+                      {/* 토글 버튼 아이콘  */}
+                      <Image
+                        src="/images/icons/dropdown_arrow.svg"
+                        alt="펼치기/접기"
+                        width={16}
+                        height={16}
+                      />
+                    </div>
+                  </button>
+
+                  {/* 답변 내용 */}
+                  {expandedItems.includes(faq.id) && (
+                    <div className={styles.faq_answer}>
+                      <div className={styles.answer_content}>
+                        <span className={styles.answer_number}>A.</span>
+                        <span className={styles.answer_text}>{faq.answer}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className={styles.empty_state}>
+              <p className={styles.empty_text}>자주 묻는 질문이 없습니다.</p>
+            </div>
+          )}
         </section>
       </main>
     </div>

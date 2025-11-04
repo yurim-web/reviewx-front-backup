@@ -5,7 +5,6 @@
 import type { CampaignWithContents } from "./sharedCampaigns";
 import type { CampaignWithApplicants } from "./campaign_application/delivery_applicants";
 import type { ContentByTab } from "./sharedCampaigns";
-import { getClosedContentsById } from "./sharedCampaigns";
 import { CampaignFormData } from "@/types/campaign";
 import { calculateCampaignStatus, calculateDaysLeft } from "./delivery";
 
@@ -16,7 +15,8 @@ export const reviewClosedCampaigns: CampaignWithContents[] = [
       title: "[종료] 구매평 캠페인 - 영수증/링크/이미지",
       image: "/images/main/campaign_img/eximg_3.png",
       status: "종료",
-      category: "구매평",
+      campaignType: "구매평",
+      category: "식품",
       brandName: "",
       recruitmentPeriod: "2024-03-01 ~ 2024-03-07",
       announcementDate: "2024-03-07",
@@ -163,7 +163,8 @@ export const reviewCampaigns: CampaignWithApplicants[] = [
       title: "프리미엄 화장품 구매평 작성 캠페인",
       image: "/images/main/campaign_img/eximg_5.png",
       status: "진행 중",
-      category: "구매평",
+      campaignType: "구매평",
+      category: "식품",
       brandName: "",
       recruitmentPeriod: "2024-01-15 ~ 2024-01-22",
       announcementDate: "2024-01-22",
@@ -369,7 +370,8 @@ export const reviewCampaigns: CampaignWithApplicants[] = [
       title: "[진행] 구매평 캠페인 진행",
       image: "/images/main/campaign_img/eximg_5.png",
       status: "진행 중" as const,
-      category: "구매평",
+      campaignType: "구매평",
+      category: "식품",
       brandName: "",
       recruitmentPeriod: "2025-10-22 ~ 2025-11-02",
       announcementDate: "2025-11-02",
@@ -389,7 +391,8 @@ export const reviewCampaigns: CampaignWithApplicants[] = [
       title: "[예정] 구매평 샘플 캠페인",
       image: "/images/main/campaign_img/eximg_5.png",
       status: "대기 중" as const,
-      category: "구매평",
+      campaignType: "구매평",
+      category: "식품",
       brandName: "",
       recruitmentPeriod: "2025-11-05 ~ 2025-11-12",
       announcementDate: "2025-11-12",
@@ -408,7 +411,8 @@ export const reviewCampaigns: CampaignWithApplicants[] = [
       title: "[신청] 구매평 샘플 캠페인",
       image: "/images/main/campaign_img/eximg_5.png",
       status: "모집 중" as const,
-      category: "구매평",
+      campaignType: "구매평",
+      category: "식품",
       brandName: "기본",
       recruitmentPeriod: "2025-11-03 ~ 2025-11-13",
       announcementDate: "2025-11-13",
@@ -492,11 +496,15 @@ export function getPurchaseReviewContentsById(
   campaignId: string
 ): ContentByTab {
   // 종료/취소 탭 데이터(구매평): 903 매핑
-  // 설명: 종료/취소된 캠페인은 sharedCampaigns의 closedCampaigns에서 가져옵니다.
+  // 설명: 종료/취소된 캠페인은 reviewClosedCampaigns를 직접 참조 (순환 참조 방지)
   if (campaignId === "903") {
-    return (
-      getClosedContentsById(campaignId) ?? { reviewing: [], completed: [] }
+    const closedCampaign = reviewClosedCampaigns.find(
+      (c) => c.campaignInfo.id === campaignId
     );
+    if (closedCampaign?.contents) {
+      return closedCampaign.contents;
+    }
+    return { reviewing: [], completed: [] };
   }
 
   // 진행 중인 캠페인의 콘텐츠 조회
@@ -580,7 +588,8 @@ export function createReviewCampaign(
       title: formData.title,
       image: imageUrl,
       status: campaignStatus,
-      category: "구매평",
+      campaignType: "구매평",
+      category: formData.category || "기타",
       brandName: normalizedBrandName,
       recruitmentPeriod: formData.recruitmentPeriod,
       announcementDate: formData.announcementDate,
@@ -650,7 +659,8 @@ export function updateReviewCampaign(
       title: formData.title,
       image: imageUrl,
       status: campaignStatus,
-      category: "구매평",
+      campaignType: "구매평",
+      category: formData.category || "기타",
       brandName: normalizedBrandName,
       recruitmentPeriod: formData.recruitmentPeriod,
       announcementDate: formData.announcementDate,

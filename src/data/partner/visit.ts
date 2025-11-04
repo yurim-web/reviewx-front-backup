@@ -5,7 +5,6 @@
 import type { CampaignWithContents } from "./sharedCampaigns";
 import type { CampaignWithApplicants } from "./campaign_application/delivery_applicants";
 import type { ContentByTab } from "./sharedCampaigns";
-import { getClosedContentsById } from "./sharedCampaigns";
 import { CampaignFormData } from "@/types/campaign";
 import { calculateCampaignStatus, calculateDaysLeft } from "./delivery";
 
@@ -16,7 +15,8 @@ export const visitClosedCampaigns: CampaignWithContents[] = [
       title: "[종료] 카페 체험 방문 캠페인",
       image: "/images/main/campaign_img/eximg_2.png",
       status: "종료",
-      category: "방문형",
+      campaignType: "방문형",
+      category: "여가",
       brandName: "네이버블로그",
       recruitmentPeriod: "2024-01-05 ~ 2024-01-10",
       announcementDate: "2024-01-10",
@@ -107,7 +107,8 @@ export const visitCampaigns: CampaignWithApplicants[] = [
       title: "카페 체험 방문 캠페인 [스타벅스]",
       image: "/images/main/campaign_img/eximg_2.png",
       status: "모집 중",
-      category: "방문형",
+      campaignType: "방문형",
+      category: "여가",
       brandName: "인스타그램",
       recruitmentPeriod: "2024-01-10 ~ 2024-01-20",
       announcementDate: "2024-01-20",
@@ -201,7 +202,8 @@ export const visitCampaigns: CampaignWithApplicants[] = [
       title: "릴스 협찬 방문 캠페인",
       image: "/images/main/campaign_img/eximg_5.png",
       status: "모집 중",
-      category: "방문형",
+      campaignType: "방문형",
+      category: "여가",
       brandName: "릴스",
       recruitmentPeriod: "2025-01-10 ~ 2025-01-20",
       announcementDate: "2025-01-20",
@@ -247,7 +249,8 @@ export const visitCampaigns: CampaignWithApplicants[] = [
       title: "네이버클립 숏폼 체험단",
       image: "/images/main/campaign_img/eximg_6.png",
       status: "모집 중",
-      category: "방문형",
+      campaignType: "방문형",
+      category: "여가",
       brandName: "네이버클립",
       recruitmentPeriod: "2025-01-12 ~ 2025-01-22",
       announcementDate: "2025-01-22",
@@ -306,7 +309,8 @@ export const visitCampaigns: CampaignWithApplicants[] = [
       title: "숏츠 영상 체험 캠페인",
       image: "/images/main/campaign_img/eximg_7.png",
       status: "진행 중",
-      category: "방문형",
+      campaignType: "방문형",
+      category: "여가",
       brandName: "숏츠",
       recruitmentPeriod: "2025-01-05 ~ 2025-01-15",
       announcementDate: "2025-01-15",
@@ -354,7 +358,8 @@ export const visitCampaigns: CampaignWithApplicants[] = [
       title: "[예정] 방문형 샘플 캠페인",
       image: "/images/main/campaign_img/eximg_2.png",
       status: "대기 중" as const,
-      category: "방문형",
+      campaignType: "방문형",
+      category: "여가",
       brandName: "네이버클립",
       recruitmentPeriod: "2025-11-08 ~ 2025-11-18",
       announcementDate: "2025-11-18",
@@ -372,7 +377,8 @@ export const visitCampaigns: CampaignWithApplicants[] = [
       title: "[진행] 방문형 체험단 진행",
       image: "/images/main/campaign_img/eximg_2.png",
       status: "진행 중" as const,
-      category: "방문형",
+      campaignType: "방문형",
+      category: "여가",
       brandName: "인스타그램",
       recruitmentPeriod: "2025-10-25 ~ 2025-11-05",
       announcementDate: "2025-11-05",
@@ -391,7 +397,8 @@ export const visitCampaigns: CampaignWithApplicants[] = [
       title: "[신청] 방문형 샘플 캠페인",
       image: "/images/main/campaign_img/eximg_2.png",
       status: "모집 중" as const,
-      category: "방문형",
+      campaignType: "방문형",
+      category: "여가",
       brandName: "인스타그램",
       recruitmentPeriod: "2025-11-02 ~ 2025-11-12",
       announcementDate: "2025-11-12",
@@ -469,10 +476,15 @@ export const visitCampaigns: CampaignWithApplicants[] = [
  */
 export function getVisitContentsById(campaignId: string): ContentByTab {
   // 종료/취소 탭 데이터(방문형): 901 매핑
+  // 순환 참조를 피하기 위해 visitClosedCampaigns를 직접 참조
   if (campaignId === "901") {
-    return (
-      getClosedContentsById(campaignId) ?? { reviewing: [], completed: [] }
+    const closedCampaign = visitClosedCampaigns.find(
+      (c) => c.campaignInfo.id === campaignId
     );
+    if (closedCampaign?.contents) {
+      return closedCampaign.contents;
+    }
+    return { reviewing: [], completed: [] };
   }
 
   // 진행 중인 캠페인의 콘텐츠 조회
@@ -500,7 +512,8 @@ export function getVisitContentsById(campaignId: string): ContentByTab {
       title: "프리미엄 화장품 구매평 작성 캠페인",
       image: "/images/main/campaign_img/eximg_5.png",
       status: "진행 중",
-      category: "구매평",
+      campaignType: "구매평",
+      category: "식품",
       brandName: "기본",
       recruitmentPeriod: "2024-01-15 ~ 2024-01-22",
       announcementDate: "2024-01-22",
@@ -613,7 +626,8 @@ export function getVisitContentsById(campaignId: string): ContentByTab {
       title: "[진행] 구매평 캠페인 진행",
       image: "/images/main/campaign_img/eximg_5.png",
       status: "진행 중" as const,
-      category: "구매평",
+      campaignType: "구매평",
+      category: "식품",
       brandName: "기본",
       recruitmentPeriod: "2025-10-22 ~ 2025-11-02",
       announcementDate: "2025-11-02",
@@ -633,7 +647,8 @@ export function getVisitContentsById(campaignId: string): ContentByTab {
       title: "[예정] 구매평 샘플 캠페인",
       image: "/images/main/campaign_img/eximg_5.png",
       status: "대기 중" as const,
-      category: "구매평",
+      campaignType: "구매평",
+      category: "식품",
       brandName: "기본",
       recruitmentPeriod: "2025-11-05 ~ 2025-11-12",
       announcementDate: "2025-11-12",
@@ -652,7 +667,8 @@ export function getVisitContentsById(campaignId: string): ContentByTab {
       title: "[신청] 구매평 샘플 캠페인",
       image: "/images/main/campaign_img/eximg_5.png",
       status: "모집 중" as const,
-      category: "구매평",
+      campaignType: "구매평",
+      category: "식품",
       brandName: "기본",
       recruitmentPeriod: "2025-11-03 ~ 2025-11-13",
       announcementDate: "2025-11-13",
@@ -767,7 +783,8 @@ export function createVisitCampaign(
       title: formData.title,
       image: imageUrl,
       status: campaignStatus,
-      category: "방문형",
+      campaignType: "방문형",
+      category: formData.category || "기타",
       brandName: normalizedBrandName,
       recruitmentPeriod: formData.recruitmentPeriod,
       announcementDate: formData.announcementDate,
@@ -837,7 +854,8 @@ export function updateVisitCampaign(
       title: formData.title,
       image: imageUrl,
       status: campaignStatus,
-      category: "방문형",
+      campaignType: "방문형",
+      category: formData.category || "기타",
       brandName: normalizedBrandName,
       recruitmentPeriod: formData.recruitmentPeriod,
       announcementDate: formData.announcementDate,

@@ -27,12 +27,12 @@ export const getStatusMessage = (status: string, daysLeft: number): string => {
 
 /**
  * 브랜드 로고 경로 반환
- * - 카테고리(구매평/미션형) 우선, 그 외는 브랜드명 매핑
+ * - 캠페인 유형(구매평/미션형) 우선, 그 외는 브랜드명 매핑
  * - 브랜드명 정규화: 공백 제거하여 "네이버 블로그" → "네이버블로그" 변환
  */
-export const getBrandLogo = (brandName: string, category?: string): string => {
-  if (category === "구매평") return "/images/brand_logo/review.svg";
-  if (category === "미션형") return "/images/brand_logo/misssion.svg";
+export const getBrandLogo = (brandName: string, campaignType?: string): string => {
+  if (campaignType === "구매평") return "/images/brand_logo/review.svg";
+  if (campaignType === "미션형") return "/images/brand_logo/misssion.svg";
 
   // 브랜드명 정규화 (공백 제거)
   // 예: "네이버 블로그" → "네이버블로그", "네이버 클립" → "네이버클립"

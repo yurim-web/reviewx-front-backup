@@ -45,7 +45,9 @@ export default function ReviewCampaignCreatePage() {
       const finalFormData = { ...formData, isUrgent };
 
       // 이미지 URL 처리
-      let imageUrl = "/images/main/campaign_img/eximg_5.png";
+      // 폼에서 전달받은 thumbnailImageUrl을 사용 (Data URL 형식)
+      // 실제 프로덕션에서는 이미지를 서버에 업로드하고 URL을 받아와야 합니다
+      let imageUrl = formData.thumbnailImageUrl || "/images/main/campaign_img/eximg_5.png"; // 업로드된 이미지 또는 기본 이미지
 
       // 폼 데이터를 CampaignWithApplicants 형태로 변환
       const newCampaign = addReviewCampaign(finalFormData, imageUrl);

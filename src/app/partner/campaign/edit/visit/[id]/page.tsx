@@ -40,16 +40,25 @@ function campaignToFormData(
 ): CampaignFormData {
   const info = campaign.campaignInfo;
 
-  // 브랜드명을 플랫폼 형식으로 변환 (공백 추가)
+  // 브랜드명을 플랫폼 이름으로 매핑
+  const brandNameToPlatform: Record<string, string> = {
+    "네이버블로그": "네이버 블로그",
+    "네이버클립": "네이버 클립",
+    "인스타그램": "인스타그램",
+    "릴스": "릴스",
+    "유튜브": "유튜브",
+    "쇼츠": "쇼츠",
+  };
+
   const platformName = info.brandName
-    ? info.brandName.replace(/([가-힣])([가-힣])/g, "$1 $2").trim()
-    : "";
+    ? brandNameToPlatform[info.brandName] || "네이버 블로그"
+    : "네이버 블로그";
 
   return {
-    campaignType: info.category as "방문형",
+    campaignType: info.campaignType as "방문형",
     platform: (platformName as any) || "네이버 블로그",
     title: info.title || "",
-    category: info.category || "",
+    category: info.category || "기타",
     region: "", // 현재 데이터에 없음
     brandName: info.brandName || "",
     providedItems: "", // 현재 데이터에 없음
@@ -99,7 +108,7 @@ export default function VisitCampaignEditPage() {
         return;
       }
 
-      if (campaign.campaignInfo.category !== "방문형") {
+      if (campaign.campaignInfo.campaignType !== "방문형") {
         setError("방문형 캠페인이 아닙니다.");
         setIsLoading(false);
         return;
@@ -120,10 +129,19 @@ export default function VisitCampaignEditPage() {
     try {
       const finalFormData = { ...formData, isUrgent };
 
-      let imageUrl = "/images/main/campaign_img/eximg_2.png";
-      const existingCampaign = getCampaignById(campaignId);
-      if (existingCampaign) {
-        imageUrl = existingCampaign.campaignInfo.image;
+      // 이미지 URL 처리
+      // 폼에서 전달받은 thumbnailImageUrl을 우선 사용 (새로 업로드한 이미지)
+      // 없으면 기존 이미지 URL 유지
+      let imageUrl = formData.thumbnailImageUrl;
+
+      // 새 이미지가 없으면 기존 이미지 URL 사용
+      if (!imageUrl) {
+        const existingCampaign = getCampaignById(campaignId);
+        if (existingCampaign) {
+          imageUrl = existingCampaign.campaignInfo.image;
+        } else {
+          imageUrl = "/images/main/campaign_img/eximg_2.png"; // 기본 이미지
+        }
       }
 
       const updatedCampaign = updateVisitCampaign(

@@ -54,9 +54,18 @@ export default function ReporterCampaignForm({
   const router = useRouter();
   const isEditMode = mode === "edit";
 
-  // 수정 모드에서 편집 가능 필드 정의 (이미지, 제공 내역, 홍보 링크, 추가 지급 포인트)
+  // 수정 모드에서 편집 가능 필드 정의 (이미지, 제공 내역, 홍보 링크, 추가 지급 포인트, 참여/제출 옵션)
   const isEditableField = (field: string): boolean => {
-    const editable = new Set(["images", "providedItems", "promotionLink", "additionalPoints"]);
+    const editable = new Set([
+      "images",
+      "providedItems",
+      "promotionLink",
+      "additionalPoints",
+      // 참여/제출 옵션 필드들
+      "adultOnly",
+      "allowReParticipation",
+      "allowLateSubmission",
+    ]);
     return editable.has(field);
   };
 
@@ -375,10 +384,31 @@ export default function ReporterCampaignForm({
 
   /**
    * 폼 제출 처리
+   *
+   * 설명:
+   * - 폼 데이터와 업로드된 이미지를 함께 onSubmit으로 전달합니다.
+   * - thumbnailImageUrl은 첫 번째 이미지의 미리보기 URL(Data URL)을 전달합니다.
+   *   이는 캠페인 카드에서 썸네일을 표시하는 데 사용됩니다.
+   *
+   * 학습 포인트:
+   * - File 객체와 Data URL(이미지 미리보기)을 함께 전달하여
+   *   서버 업로드와 클라이언트 표시를 모두 지원합니다.
    */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+
+    // 업로드된 이미지 파일을 폼 데이터에 추가
+    const formDataWithImages = {
+      ...formData,
+      // 첫 번째 이미지를 썸네일로 사용 (File 객체)
+      thumbnailImage: uploadedImages[0],
+      // 첫 번째 이미지의 미리보기 URL (Data URL) - 캠페인 카드 표시용
+      thumbnailImageUrl: imagePreviews[0] || undefined,
+      // 나머지 이미지를 상세 이미지로 사용
+      detailImages: uploadedImages.slice(1),
+    };
+
+    onSubmit(formDataWithImages);
   };
 
   return (
@@ -816,6 +846,7 @@ export default function ReporterCampaignForm({
               id="adultOnly"
               checked={formData.adultOnly}
               onChange={(e) => updateFormData("adultOnly", e.target.checked)}
+              disabled={isEditMode && !isEditableField("adultOnly")}
             />
             <label htmlFor="adultOnly" className={guideStyles.option_label}>
               만 19세 이상 참여 허용 (성인인증이 필요한 제품/서비스)
@@ -832,6 +863,7 @@ export default function ReporterCampaignForm({
               onChange={(e) =>
                 updateFormData("allowReParticipation", e.target.checked)
               }
+              disabled={isEditMode && !isEditableField("allowReParticipation")}
             />
             <label
               htmlFor="allowReParticipation"
@@ -851,6 +883,7 @@ export default function ReporterCampaignForm({
               onChange={(e) =>
                 updateFormData("allowLateSubmission", e.target.checked)
               }
+              disabled={isEditMode && !isEditableField("allowLateSubmission")}
             />
             <label
               htmlFor="allowLateSubmission"
@@ -872,6 +905,7 @@ export default function ReporterCampaignForm({
             value={formData.guidelines}
             onChange={(e) => updateFormData("guidelines", e.target.value)}
             placeholder="캠페인 전체 안내 사항, 미션, 기타 참고 사항 등"
+            readOnly={isEditMode && !isEditableField("guidelines")}
           />
         </article>
 
@@ -886,7 +920,7 @@ export default function ReporterCampaignForm({
           className={guideStyles.submit_button}
           disabled={isSubmitting || !isFormValid}
         >
-          {isSubmitting ? (isEditMode ? "수정 중..." : "등록 중...") : (isEditMode ? "수정하기" : "등록하기")}
+          {isSubmitting ? (isEditMode ? "저장 중..." : "등록 중...") : (isEditMode ? "저장하기" : "등록하기")}
         </button>
       </div>
     </form>

@@ -27,10 +27,10 @@ function campaignToFormData(campaign: CampaignWithApplicants): CampaignFormData 
   const info = campaign.campaignInfo;
 
   return {
-    campaignType: info.category as "미션형",
+    campaignType: info.campaignType as "미션형",
     platform: "",
     title: info.title || "",
-    category: info.category || "",
+    category: info.category || "기타",
     brandName: info.brandName || "",
     providedItems: "",
     currentPoints: "",
@@ -76,7 +76,7 @@ export default function MissionCampaignEditPage() {
         return;
       }
 
-      if (campaign.campaignInfo.category !== "미션형") {
+      if (campaign.campaignInfo.campaignType !== "미션형") {
         setError("미션형 캠페인이 아닙니다.");
         setIsLoading(false);
         return;
@@ -97,10 +97,19 @@ export default function MissionCampaignEditPage() {
     try {
       const finalFormData = { ...formData, isUrgent };
 
-      let imageUrl = "/images/main/campaign_img/eximg_4.png";
-      const existingCampaign = getCampaignById(campaignId);
-      if (existingCampaign) {
-        imageUrl = existingCampaign.campaignInfo.image;
+      // 이미지 URL 처리
+      // 폼에서 전달받은 thumbnailImageUrl을 우선 사용 (새로 업로드한 이미지)
+      // 없으면 기존 이미지 URL 유지
+      let imageUrl = formData.thumbnailImageUrl;
+
+      // 새 이미지가 없으면 기존 이미지 URL 사용
+      if (!imageUrl) {
+        const existingCampaign = getCampaignById(campaignId);
+        if (existingCampaign) {
+          imageUrl = existingCampaign.campaignInfo.image;
+        } else {
+          imageUrl = "/images/main/campaign_img/eximg_4.png"; // 기본 이미지
+        }
       }
 
       const updatedCampaign = updateMissionCampaign(campaignId, finalFormData, imageUrl);

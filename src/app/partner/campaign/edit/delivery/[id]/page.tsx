@@ -46,17 +46,26 @@ import PageHeader from "@/components/partner/campaign/campaign_create_form/commo
 function campaignToFormData(campaign: CampaignWithApplicants): CampaignFormData {
   const info = campaign.campaignInfo;
 
-  // 브랜드명을 플랫폼 형식으로 변환 (공백 추가)
-  // 예: "네이버블로그" → "네이버 블로그"
+  // 브랜드명을 플랫폼 이름으로 매핑
+  // brandName이 실제 플랫폼 이름과 다를 수 있으므로 매핑 테이블 사용
+  const brandNameToPlatform: Record<string, string> = {
+    "네이버블로그": "네이버 블로그",
+    "네이버클립": "네이버 클립",
+    "인스타그램": "인스타그램",
+    "릴스": "릴스",
+    "유튜브": "유튜브",
+    "쇼츠": "쇼츠",
+  };
+
   const platformName = info.brandName
-    ? info.brandName.replace(/([가-힣])([가-힣])/g, "$1 $2").trim()
-    : "";
+    ? brandNameToPlatform[info.brandName] || "네이버 블로그"
+    : "네이버 블로그";
 
   return {
-    campaignType: info.category as "배송형",
+    campaignType: info.campaignType as "배송형",
     platform: (platformName as any) || "네이버 블로그",
     title: info.title || "",
-    category: info.category || "",
+    category: info.category || "기타",
     brandName: info.brandName || "",
     providedItems: "", // 현재 데이터에 없음
     promotionLink: "", // 현재 데이터에 없음
@@ -103,7 +112,7 @@ export default function DeliveryCampaignEditPage() {
       }
 
       // 배송형 캠페인이 아닌 경우
-      if (campaign.campaignInfo.category !== "배송형") {
+      if (campaign.campaignInfo.campaignType !== "배송형") {
         setError("배송형 캠페인이 아닙니다.");
         setIsLoading(false);
         return;
@@ -135,14 +144,20 @@ export default function DeliveryCampaignEditPage() {
       // 긴급 상태를 폼 데이터에 추가
       const finalFormData = { ...formData, isUrgent };
 
-      // 이미지 URL 처리 (실제로는 업로드 후 서버에서 URL을 받아야 함)
-      // 현재는 기존 이미지 URL 유지 또는 업로드된 새 이미지 사용
-      let imageUrl = "/images/main/campaign_img/eximg_1.png"; // 기본 이미지
+      // 이미지 URL 처리
+      // 폼에서 전달받은 thumbnailImageUrl을 우선 사용 (새로 업로드한 이미지)
+      // 없으면 기존 이미지 URL 유지
+      // 실제 프로덕션에서는 이미지를 서버에 업로드하고 URL을 받아와야 합니다
+      let imageUrl = formData.thumbnailImageUrl; // 새로 업로드한 이미지 URL
 
-      // 기존 캠페인 데이터 가져오기
-      const existingCampaign = getCampaignById(campaignId);
-      if (existingCampaign) {
-        imageUrl = existingCampaign.campaignInfo.image;
+      // 새 이미지가 없으면 기존 이미지 URL 사용
+      if (!imageUrl) {
+        const existingCampaign = getCampaignById(campaignId);
+        if (existingCampaign) {
+          imageUrl = existingCampaign.campaignInfo.image;
+        } else {
+          imageUrl = "/images/main/campaign_img/eximg_1.png"; // 기본 이미지
+        }
       }
 
       // TODO: 실제 프로덕션에서는 이미지 업로드 API 호출
