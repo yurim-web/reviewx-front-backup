@@ -1,17 +1,5 @@
-# ReviewX 프로젝트 백엔드 개발자용 가이드
+# ReviewX 프로젝트 가이드?
 
-## 🎯 **프로젝트 개요**
-
-ReviewX는 리뷰 캠페인 플랫폼으로, 사용자들이 다양한 캠페인에 참여하여 제품을 체험하고 리뷰를 작성하는 서비스입니다.
-
-### **주요 기능**
-
-- 5가지 캠페인 타입 (배송형, 방문형, 구매평, 미션형, 기자단)
-- 캠페인 신청/관리 시스템
-- 포인트 적립/출금 시스템
-- 사용자 프로필 관리
-
----
 
 ## 📁 **프로젝트 폴더 구조**
 
@@ -36,68 +24,76 @@ reviewx-web/
 │   │   │   ├── reporter/              # 📰 기자단 캠페인
 │   │   │   │   ├── page.tsx           # 기자단 목록 페이지
 │   │   │   │   └── [id]/              # 기자단 상세 페이지
-│   │   │   ├── campaign_management/   # 📊 캠페인 관리
+│   │   │   ├── campaign_management/   # 📊 캠페인 관리 (사용자)
 │   │   │   │   ├── page.tsx           # 메인 페이지 (신청 탭으로 리다이렉트)
 │   │   │   │   ├── applied/           # 신청 탭 페이지
-│   │   │   │   │   └── page.tsx       # 신청 상태 캠페인 목록
 │   │   │   │   ├── selected/          # 선정 탭 페이지
-│   │   │   │   │   └── page.tsx       # 선정 상태 캠페인 목록
 │   │   │   │   ├── completed/         # 완료 탭 페이지
-│   │   │   │   │   └── page.tsx       # 완료 상태 캠페인 목록
 │   │   │   │   ├── cancelled/         # 취소/반려 탭 페이지
-│   │   │   │   │   └── page.tsx       # 취소/반려 상태 캠페인 목록
 │   │   │   │   └── penalty/           # 패널티 탭 페이지
-│   │   │   │       └── page.tsx       # 패널티 현황 및 내역
 │   │   │   ├── mypage/                # 👤 마이페이지
-│   │   │   │   ├── page.tsx           # 메인 페이지 (프로필 탭으로 리다이렉트)
-│   │   │   │   ├── profile/           # 프로필 탭 페이지
-│   │   │   │   │   └── page.tsx       # 프로필 정보 및 메뉴
-│   │   │   │   ├── channel/           # 채널 탭 페이지
-│   │   │   │   │   └── page.tsx       # 채널 연결 관리
+│   │   │   │   ├── page.tsx           # 메인 페이지
+│   │   │   │   ├── profile/           # 프로필 탭
+│   │   │   │   ├── channel/           # 채널 탭
 │   │   │   │   └── edit/              # 프로필 편집
-│   │   │   │       └── page.tsx       # 프로필 수정 페이지
 │   │   │   ├── point/                 # 💰 포인트 관리
-│   │   │   │   ├── page.tsx           # 메인 페이지 (전체 탭으로 리다이렉트)
-│   │   │   │   ├── all/               # 전체 탭 페이지
-│   │   │   │   │   └── page.tsx       # 모든 포인트 내역
-│   │   │   │   ├── earned/            # 적립 탭 페이지
-│   │   │   │   │   └── page.tsx       # 적립 포인트 내역
-│   │   │   │   ├── withdrawn/         # 출금 탭 페이지
-│   │   │   │   │   └── page.tsx       # 출금 포인트 내역
+│   │   │   │   ├── page.tsx           # 메인 페이지
+│   │   │   │   ├── all/               # 전체 탭
+│   │   │   │   ├── earned/            # 적립 탭
+│   │   │   │   ├── withdrawn/         # 출금 탭
 │   │   │   │   └── withdrawal_request/ # 출금 신청
-│   │   │   │       └── page.tsx       # 출금 신청 페이지
 │   │   │   ├── notice/                # 📢 공지사항
-│   │   │   │   └── page.tsx           # 공지사항 목록
 │   │   │   └── faq/                   # ❓ FAQ
-│   │   │       └── page.tsx           # 자주 묻는 질문
 │   │   └── partner/                   # 🤝 파트너 관련 페이지
-│   │       ├── page.tsx               # 파트너 메인 페이지
-│   │       └── campaign/              # 파트너 캠페인 관리
-│   │           └── create/            # 캠페인 생성
-│   │               └── page.tsx       # 캠페인 생성 페이지
+│   │       ├── campaign_management/   # 📊 캠페인 관리 (파트너)
+│   │       │   ├── page.tsx           # 전체 탭
+│   │       │   ├── scheduled/         # 예정 탭
+│   │       │   ├── applied/           # 신청 탭
+│   │       │   ├── progress/          # 진행 탭
+│   │       │   ├── completed/         # 종료 탭
+│   │       │   ├── cancelled/         # 취소 탭
+│   │       │   └── penalty/           # 패널티 탭
+│   │       ├── campaign_application/  # 📋 신청내역 관리
+│   │       │   └── [type]/            # 타입별 신청내역
+│   │       │       └── [id]/          # 특정 캠페인 신청내역
+│   │       ├── campaign_contents/     # 📝 콘텐츠 검수
+│   │       │   └── [type]/            # 타입별 콘텐츠
+│   │       │       └── [id]/          # 특정 캠페인 콘텐츠
+│   │       ├── campaign/edit/         # ✏️ 캠페인 수정
+│   │       │   └── [type]/            # 타입별 수정 폼
+│   │       │       └── [id]/          # 특정 캠페인 수정
+│   │       ├── campaign/create/       # ➕ 캠페인 생성
+│   │       ├── point/                 # 💰 파트너 포인트 관리
+│   │       └── mypage/                # 👤 파트너 마이페이지
 │   ├── components/                   # 🧩 컴포넌트
 │   │   ├── main/                     # 메인 페이지용 컴포넌트
 │   │   ├── user/                     # 사용자 관련 컴포넌트
 │   │   │   ├── campaign/             # 캠페인 공통 컴포넌트
 │   │   │   ├── campaign_detail/      # 캠페인 상세용 컴포넌트
 │   │   │   ├── campaign_management/  # 캠페인 관리용 컴포넌트
+│   │   │   │   └── modals/           # 모달 컴포넌트들
 │   │   │   ├── filter/               # 필터링 컴포넌트
 │   │   │   ├── mypage/               # 마이페이지 컴포넌트
 │   │   │   └── point/                # 포인트 관련 컴포넌트
 │   │   ├── partner/                  # 파트너 관련 컴포넌트
+│   │   │   ├── campaign_management/  # 캠페인 관리 컴포넌트
+│   │   │   │   └── modals/           # 모달 컴포넌트들
+│   │   │   │       └── CampaignManagementModal.tsx  # 캠페인 관리 모달
+│   │   │   ├── campaign_application/ # 신청내역 컴포넌트
+│   │   │   ├── campaign_contents/    # 콘텐츠 관리 컴포넌트
+│   │   │   └── campaign_create_form/ # 캠페인 생성 폼
 │   │   └── fragments/                # 공통 조각 컴포넌트
 │   ├── data/                         # 📊 데이터 파일
 │   │   ├── user/                     # 사용자 관련 데이터
-│   │   │   ├── delivery/             # 배송형 캠페인 데이터
-│   │   │   ├── visit/                # 방문형 캠페인 데이터
-│   │   │   ├── review/               # 구매평 캠페인 데이터
-│   │   │   ├── experience/           # 미션형 캠페인 데이터
-│   │   │   ├── reporter/             # 기자단 캠페인 데이터
-│   │   │   ├── campaign_management/  # 캠페인 관리 데이터
-│   │   │   └── point/                # 포인트 데이터
 │   │   └── partner/                  # 파트너 관련 데이터
 │   ├── styles/                       # 🎨 CSS 파일
+│   │   ├── user/                     # 사용자 스타일
+│   │   └── partner/                  # 파트너 스타일
+│   │       └── campaign_management/  # 캠페인 관리 스타일
+│   │           └── campaign_management_modal.module.css
 │   └── types/                        # 📝 TypeScript 타입 정의
+│       ├── user/                     # 사용자 타입
+│       └── partner/                  # 파트너 타입
 └── public/                           # 🖼️ 이미지 등 정적 파일
     └── images/                       # 이미지 파일들
 ```
@@ -114,68 +110,37 @@ reviewx-web/
 | CampaignBox | `CampaignBox.tsx` | 6개 페이지  | 캠페인 카드 (가장 많이 사용됨) |
 | Titletext   | `Titletext.tsx`   | 6개 페이지  | 페이지 제목                    |
 
-### **📂 user/campaign/** - 캠페인 공통 컴포넌트
-
-| 컴포넌트              | 파일                        | 사용 페이지 | 용도               |
-| --------------------- | --------------------------- | ----------- | ------------------ |
-| ApplicationModal      | `ApplicationModal.tsx`      | 캠페인 상세 | 지원 모달 (기본형) |
-| ApplicationModalType2 | `ApplicationModalType2.tsx` | 캠페인 상세 | 지원 모달 (타입2)  |
-| ApplicationModalType3 | `ApplicationModalType3.tsx` | 캠페인 상세 | 지원 모달 (타입3)  |
-| AdditionalGuidelines  | `AdditionalGuidelines.tsx`  | 캠페인 상세 | 추가 가이드라인    |
-
-### **📂 user/campaign_detail/** - 캠페인 상세용 컴포넌트
-
-| 컴포넌트                          | 파일                                    | 사용 페이지 | 용도                |
-| --------------------------------- | --------------------------------------- | ----------- | ------------------- |
-| DetailHeader                      | `DetailHeader.tsx`                      | 캠페인 상세 | 상세 페이지 헤더    |
-| DetailImage                       | `DetailImage.tsx`                       | 캠페인 상세 | 이미지 갤러리       |
-| DetailProductInfo                 | `DetailProductInfo.tsx`                 | 캠페인 상세 | 제품 정보           |
-| DetailScheduleInfo                | `DetailScheduleInfo.tsx`                | 캠페인 상세 | 일정 정보           |
-| DetailGuidelinesSectionDelivery   | `DetailGuidelinesSectionDelivery.tsx`   | 배송형 상세 | 가이드라인 (배송형) |
-| DetailGuidelinesSectionVisit      | `DetailGuidelinesSectionVisit.tsx`      | 방문형 상세 | 가이드라인 (방문형) |
-| DetailGuidelinesSectionReview     | `DetailGuidelinesSectionReview.tsx`     | 구매평 상세 | 가이드라인 (구매평) |
-| DetailGuidelinesSectionExperience | `DetailGuidelinesSectionExperience.tsx` | 미션형 상세 | 가이드라인 (미션형) |
-| DetailGuidelinesSectionReporter   | `DetailGuidelinesSectionReporter.tsx`   | 기자단 상세 | 가이드라인 (기자단) |
-
-### **📂 user/campaign_management/** - 캠페인 관리용 컴포넌트
+### **📂 user/campaign_management/** - 캠페인 관리용 컴포넌트 (사용자)
 
 | 컴포넌트       | 파일                 | 사용 페이지 | 용도                                     |
 | -------------- | -------------------- | ----------- | ---------------------------------------- |
-| TabNavigation  | `TabNavigation.tsx`  | 8개 페이지  | 메인 탭 (캠페인/포인트/계정/커뮤니티)    |
+| TabNavigation  | `TabNavigation.tsx`  | 8개 페이지  | 메인 탭 (캠페인/포인트/계정)             |
 | StatisticsTab  | `StatisticsTab.tsx`  | 5개 페이지  | 통계 탭 (신청/선정/완료/취소반려/패널티) |
 | CampaignList   | `CampaignList.tsx`   | 4개 페이지  | 캠페인 목록 컨테이너                     |
 | CampaignCard   | `CampaignCard.tsx`   | 4개 페이지  | 개별 캠페인 카드                         |
 | PenaltyContent | `PenaltyContent.tsx` | 1개 페이지  | 패널티 내역 화면                         |
 | CampaignTag    | `CampaignTag.tsx`    | 4개 페이지  | 태그들 (마감임박, 타입 등)               |
 
-### **📂 user/filter/** - 필터링 컴포넌트
+**모달 컴포넌트:**
+- `modals/ContentRegistrationModal.tsx` - 콘텐츠 등록 모달
+- `modals/ImageUploadModal.tsx` - 이미지 업로드 모달
+- `modals/CombinedContentModal.tsx` - 통합 콘텐츠 모달
 
-| 컴포넌트     | 파일               | 사용 페이지 | 용도         |
-| ------------ | ------------------ | ----------- | ------------ |
-| FilterBar    | `FilterBar.tsx`    | 5개 페이지  | 필터/정렬 바 |
-| ModalFilter  | `ModalFilter.tsx`  | 5개 페이지  | 모달 필터    |
-| RegionFilter | `RegionFilter.tsx` | 5개 페이지  | 지역 필터    |
+### **📂 partner/campaign_management/** - 캠페인 관리용 컴포넌트 (파트너)
 
-### **📂 user/mypage/** - 마이페이지 컴포넌트
+| 컴포넌트                          | 파일                                    | 사용 페이지 | 용도                                     |
+| --------------------------------- | --------------------------------------- | ----------- | ---------------------------------------- |
+| PartnerCampaignManagementHeader   | `PartnerCampaignManagementHeader.tsx`   | 6개 페이지  | 파트너 캠페인 관리 공통 헤더             |
+| TabNavigation                     | `TabNavigation.tsx`                     | 6개 페이지  | 메인 탭 (캠페인/포인트/계정)             |
+| StatisticsTab                     | `StatisticsTab.tsx`                     | 6개 페이지  | 통계 탭 (전체/예정/신청/진행/종료/취소) |
+| CampaignList                      | `CampaignList.tsx`                      | 6개 페이지  | 캠페인 목록 컨테이너                     |
+| CampaignCard                      | `CampaignCard.tsx`                      | 6개 페이지  | 개별 캠페인 카드                         |
+| CampaignManagementModal           | `modals/CampaignManagementModal.tsx`    | 6개 페이지  | 캠페인 관리 모달 (수정/삭제) ⭐ **신규** |
 
-| 컴포넌트            | 파일                      | 사용 페이지 | 용도                  |
-| ------------------- | ------------------------- | ----------- | --------------------- |
-| SubTabNavigation    | `SubTabNavigation.tsx`    | 2개 페이지  | 서브 탭 (프로필/채널) |
-| ChannelSection      | `ChannelSection.tsx`      | 1개 페이지  | 채널 연결 관리 섹션   |
-| ChannelConnectModal | `ChannelConnectModal.tsx` | 1개 페이지  | 채널 연결 모달        |
-
-### **📂 user/point/** - 포인트 관련 컴포넌트
-
-| 컴포넌트           | 파일                     | 사용 페이지 | 용도                       |
-| ------------------ | ------------------------ | ----------- | -------------------------- |
-| PointTabNavigation | `PointTabNavigation.tsx` | 3개 페이지  | 포인트 탭 (전체/적립/출금) |
-
-### **📂 fragments/** - 공통 조각 컴포넌트
-
-| 컴포넌트  | 파일            | 사용 페이지 | 용도      |
-| --------- | --------------- | ----------- | --------- |
-| Header    | `Header.tsx`    | 거의 모든   | 공통 헤더 |
-| SubHeader | `SubHeader.tsx` | 캠페인 상세 | 서브 헤더 |
+**주요 기능:**
+- "캠페인 관리하기" 버튼 클릭 시 모달 표시
+- 모달에서 캠페인 수정/삭제 옵션 제공
+- 캠페인 타입에 따른 수정 페이지 자동 라우팅
 
 ---
 
@@ -263,9 +228,9 @@ POST /api/campaigns/delivery/{id}/apply
 - 캠페인 신청
 ```
 
-### **📊 캠페인 관리 페이지들**
+### **📊 캠페인 관리 페이지들 (사용자)**
 
-#### **신청 탭** - `/user/campaign_management/applied` (`app/user/campaign_management/applied/page.tsx`)
+#### **신청 탭** - `/user/campaign_management/applied`
 
 **사용 컴포넌트**: TabNavigation, StatisticsTab, CampaignList, CampaignCard  
 **필요한 API**:
@@ -276,55 +241,114 @@ GET /api/user/campaigns?status=신청
 - 통계 정보 (신청/선정/완료/취소반려/패널티 개수)
 ```
 
-#### **선정 탭** - `/user/campaign_management/selected` (`app/user/campaign_management/selected/page.tsx`)
+#### **선정 탭** - `/user/campaign_management/selected`
 
-**사용 컴포넌트**: TabNavigation, StatisticsTab, CampaignList, CampaignCard  
 **필요한 API**:
 
 ```
 GET /api/user/campaigns?status=선정
 - 사용자 선정 상태 캠페인 목록
-- 통계 정보 (신청/선정/완료/취소반려/패널티 개수)
 ```
 
-#### **완료 탭** - `/user/campaign_management/completed` (`app/user/campaign_management/completed/page.tsx`)
+#### **완료 탭** - `/user/campaign_management/completed`
 
-**사용 컴포넌트**: TabNavigation, StatisticsTab, CampaignList, CampaignCard  
 **필요한 API**:
 
 ```
 GET /api/user/campaigns?status=완료
 - 사용자 완료 상태 캠페인 목록
-- 통계 정보 (신청/선정/완료/취소반려/패널티 개수)
 ```
 
-#### **취소/반려 탭** - `/user/campaign_management/cancelled` (`app/user/campaign_management/cancelled/page.tsx`)
+#### **취소/반려 탭** - `/user/campaign_management/cancelled`
 
-**사용 컴포넌트**: TabNavigation, StatisticsTab, CampaignList, CampaignCard  
 **필요한 API**:
 
 ```
 GET /api/user/campaigns?status=취소/반려
 - 사용자 취소/반려 상태 캠페인 목록
-- 통계 정보 (신청/선정/완료/취소반려/패널티 개수)
 ```
 
-#### **패널티 탭** - `/user/campaign_management/penalty` (`app/user/campaign_management/penalty/page.tsx`)
+#### **패널티 탭** - `/user/campaign_management/penalty`
 
-**사용 컴포넌트**: TabNavigation, StatisticsTab, PenaltyContent  
 **필요한 API**:
 
 ```
 GET /api/user/penalty
-- 사용자 현재 패널티 상태 (활동 가능/경고 조치/이용 정지 7일/15일/30일/영구 정지)
-- 패널티 내역 목록 (경고/주의/정지/제재)
+- 사용자 현재 패널티 상태
+- 패널티 내역 목록
 ```
 
-### **👤 마이페이지들**
+### **🤝 파트너 캠페인 관리 페이지들**
 
-#### **프로필 탭** - `/user/mypage/profile` (`app/user/mypage/profile/page.tsx`)
+#### **전체 탭** - `/partner/campaign_management`
 
-**사용 컴포넌트**: TabNavigation, SubTabNavigation  
+**사용 컴포넌트**: PartnerCampaignManagementHeader, CampaignList, CampaignCard, CampaignManagementModal  
+**필요한 API**:
+
+```
+GET /api/partner/campaigns
+- 파트너의 모든 캠페인 목록
+- 통계 정보 (전체/예정/신청/진행/종료/취소 개수)
+
+GET /api/partner/campaigns/{id}
+- 캠페인 상세 정보
+
+PUT /api/partner/campaigns/{id}
+- 캠페인 수정
+
+DELETE /api/partner/campaigns/{id}
+- 캠페인 삭제
+```
+
+#### **예정 탭** - `/partner/campaign_management/scheduled`
+
+**필요한 API**:
+
+```
+GET /api/partner/campaigns?status=예정
+- 예정 상태 캠페인 목록
+```
+
+#### **신청 탭** - `/partner/campaign_management/applied`
+
+**필요한 API**:
+
+```
+GET /api/partner/campaigns?status=신청
+- 신청 상태 캠페인 목록
+```
+
+#### **진행 탭** - `/partner/campaign_management/progress`
+
+**필요한 API**:
+
+```
+GET /api/partner/campaigns?status=진행
+- 진행 상태 캠페인 목록
+```
+
+#### **종료 탭** - `/partner/campaign_management/completed`
+
+**필요한 API**:
+
+```
+GET /api/partner/campaigns?status=종료
+- 종료 상태 캠페인 목록
+```
+
+#### **취소 탭** - `/partner/campaign_management/cancelled`
+
+**필요한 API**:
+
+```
+GET /api/partner/campaigns?status=취소
+- 취소 상태 캠페인 목록
+```
+
+### **👤 마이페이지들 (사용자)**
+
+#### **프로필 탭** - `/user/mypage/profile`
+
 **필요한 API**:
 
 ```
@@ -335,9 +359,8 @@ PUT /api/user/profile
 - 프로필 수정
 ```
 
-#### **채널 탭** - `/user/mypage/channel` (`app/user/mypage/channel/page.tsx`)
+#### **채널 탭** - `/user/mypage/channel`
 
-**사용 컴포넌트**: TabNavigation, SubTabNavigation, ChannelSection  
 **필요한 API**:
 
 ```
@@ -351,11 +374,10 @@ DELETE /api/user/channels/{channelId}
 - 채널 연결 해제
 ```
 
-### **💰 포인트 페이지들**
+### **💰 포인트 페이지들 (사용자)**
 
-#### **전체 탭** - `/user/point/all` (`app/user/point/all/page.tsx`)
+#### **전체 탭** - `/user/point/all`
 
-**사용 컴포넌트**: TabNavigation, PointTabNavigation  
 **필요한 API**:
 
 ```
@@ -367,50 +389,22 @@ POST /api/user/points/withdrawal
 - 출금 신청
 ```
 
-#### **적립 탭** - `/user/point/earned` (`app/user/point/earned/page.tsx`)
+#### **적립 탭** - `/user/point/earned`
 
-**사용 컴포넌트**: TabNavigation, PointTabNavigation  
 **필요한 API**:
 
 ```
 GET /api/user/points?type=earned
 - 적립 포인트 내역만 필터링
-
-GET /api/user/points/summary
-- 포인트 요약 정보
 ```
 
-#### **출금 탭** - `/user/point/withdrawn` (`app/user/point/withdrawn/page.tsx`)
+#### **출금 탭** - `/user/point/withdrawn`
 
-**사용 컴포넌트**: TabNavigation, PointTabNavigation  
 **필요한 API**:
 
 ```
 GET /api/user/points?type=withdrawn
-- 출금 관련 포인트 내역만 필터링 (완료/신청/취소)
-
-GET /api/user/points/summary
-- 포인트 요약 정보
-```
-
-### **📢 공지사항** - `/user/notice` (`app/user/notice/page.tsx`)
-
-**사용 컴포넌트**: MainMenu  
-**필요한 API**:
-
-```
-GET /api/notices
-- 공지사항 목록
-```
-
-### **❓ FAQ** - `/user/faq` (`app/user/faq/page.tsx`)
-
-**사용 컴포넌트**: MainMenu  
-**필요한 API**:
-
-```
-GET /api/faq
-- FAQ 목록
+- 출금 관련 포인트 내역만 필터링
 ```
 
 ---
@@ -420,24 +414,23 @@ GET /api/faq
 ### **📂 data/** 구조
 
 ```
-data/user/
-├── delivery/
-│   ├── deliveryCampaigns.ts             # 배송형 캠페인 16개
-│   └── deliveryFilterOptions.ts         # 필터 옵션
-├── visit/
-│   ├── visitCampaigns.ts               # 방문형 캠페인 16개
-│   └── visitFilterOptions.ts           # 필터 옵션
-├── review/
-│   ├── reviewCampaigns.ts              # 구매평 캠페인 16개
-│   └── reviewFilterOptions.ts          # 필터 옵션
-├── experience/
-│   ├── experienceCampaigns.ts          # 미션형 캠페인 16개
-│   └── experienceFilterOptions.ts      # 필터 옵션
-├── reporter/
-│   ├── reporterCampaigns.ts            # 기자단 캠페인 16개
-│   └── reporterFilterOptions.ts        # 필터 옵션
-└── point/
-    └── pointData.ts                     # 포인트 데이터
+data/
+├── user/
+│   ├── delivery/              # 배송형 캠페인 데이터
+│   ├── visit/                 # 방문형 캠페인 데이터
+│   ├── review/                # 구매평 캠페인 데이터
+│   ├── experience/            # 미션형 캠페인 데이터
+│   ├── reporter/              # 기자단 캠페인 데이터
+│   ├── campaign_management/   # 캠페인 관리 데이터
+│   └── point/                 # 포인트 데이터
+└── partner/
+    ├── delivery.ts            # 배송형 캠페인 데이터
+    ├── visit.ts               # 방문형 캠페인 데이터
+    ├── review.ts              # 구매평 캠페인 데이터
+    ├── mission.ts             # 미션형 캠페인 데이터
+    ├── reporter.ts            # 기자단 캠페인 데이터
+    ├── sharedCampaigns.ts     # 공용 캠페인 데이터
+    └── campaign_application/  # 신청내역 데이터
 ```
 
 ### **🔑 ID 값 설명**
@@ -462,34 +455,25 @@ data/user/
 
 ### **📋 주요 데이터 구조**
 
-#### **캠페인 데이터 구조**
+#### **파트너 캠페인 데이터 구조**
 
 ```typescript
-interface CampaignData {
+interface PartnerCampaign {
   id: string; // 캠페인 고유 ID
   title: string; // 캠페인 제목
-  category: string; // 캠페인 타입 (배송형, 방문형 등)
-  categoryIcon: string; // 카테고리 아이콘 경로
-  image: string; // 메인 이미지 경로
-  subcategory: string; // 세부 카테고리 (뷰티, 생활 등)
-  points: number; // 지급 포인트
-  description: string; // 제품 설명
-  recruitment: {
-    current: number; // 현재 지원자 수
-    total: number; // 총 모집 인원
-  };
-  detailedSchedule: {
-    applicationStart: string; // 신청 시작일
-    applicationEnd: string; // 신청 마감일
-    announcement: string; // 선정 발표일
-    purchasePeriod: string; // 구매 기간
-    registrationPeriod: string; // 등록 기간
-  };
-  channel: string; // 채널 정보
-  keyword: string; // 캠페인 키워드
-  promotionLink?: string; // 홍보링크
-  requirements: string[]; // 요구사항 목록
-  guidelineTexts: string[]; // 가이드라인 텍스트
+  image: string; // 캠페인 대표 이미지
+  status: "대기 중" | "모집 중" | "진행 중" | "종료" | "취소";
+  campaignType: "배송형" | "방문형" | "구매평" | "기자단" | "미션형";
+  category: string; // 카테고리
+  brandName: string; // 브랜드명
+  recruitmentPeriod: string; // 모집 기간
+  announcementDate: string; // 선정 날짜
+  registrationPeriod: string; // 등록 기간
+  purchasedPeriod?: string; // 구매 기간 (구매평용)
+  recruitedCount: number; // 현재 모집된 인원
+  totalCount: number; // 전체 모집 인원
+  daysLeft: number; // 선정까지 남은 일수
+  subStatus?: string; // 서브 상태 (버튼 종류 결정)
 }
 ```
 
@@ -539,15 +523,15 @@ interface PointHistory {
 
 1. **MainMenu** - 15개 페이지에서 사용 ⭐⭐⭐
 2. **CampaignBox** - 6개 페이지에서 사용 ⭐⭐⭐
-3. **TabNavigation** - 8개 페이지에서 사용 ⭐⭐⭐
-4. **FilterBar** - 5개 페이지에서 사용 ⭐⭐
-5. **StatisticsTab** - 5개 페이지에서 사용 ⭐⭐
-6. **PointTabNavigation** - 3개 페이지에서 사용 ⭐⭐
+3. **TabNavigation** - 14개 페이지에서 사용 (유저 8개 + 파트너 6개) ⭐⭐⭐
+4. **CampaignCard** - 10개 페이지에서 사용 (유저 4개 + 파트너 6개) ⭐⭐⭐
+5. **FilterBar** - 5개 페이지에서 사용 ⭐⭐
+6. **StatisticsTab** - 11개 페이지에서 사용 (유저 5개 + 파트너 6개) ⭐⭐⭐
 
 ### **페이지별 전용 컴포넌트**
 
 - **캠페인 상세**: DetailHeader, DetailImage, DetailProductInfo 등
-- **캠페인 관리**: StatisticsTab, CampaignList, PenaltyContent 등
+- **파트너 캠페인 관리**: CampaignManagementModal ⭐ **신규 추가**
 - **필터링**: ModalFilter, RegionFilter
 
 ---
@@ -556,19 +540,26 @@ interface PointHistory {
 
 ### **API 개발 우선순위**
 
-1. **1순위**: 캠페인 목록 API (5개 타입별)
+1. **1순위**: 캠페인 목록 API (5개 타입별) - 사용자/파트너 공통
 2. **2순위**: 캠페인 상세 API (5개 타입별)
-3. **3순위**: 사용자 관련 API (캠페인 관리, 포인트)
-4. **4순위**: 인증/인가 API
+3. **3순위**: 파트너 캠페인 관리 API ⭐ **중요**
+   - 캠페인 목록 조회
+   - 캠페인 수정 (PUT)
+   - 캠페인 삭제 (DELETE)
+4. **4순위**: 사용자 관련 API (캠페인 신청, 포인트)
+5. **5순위**: 인증/인가 API
 
 ### **데이터베이스 설계 시 주의사항**
 
 - **캠페인 ID**: 문자열 형식 (`delivery_1`, `visit_2` 등)
 - **사용자 ID**: 숫자형 자동증가
+- **파트너 ID**: 숫자형 자동증가
 - **포인트**: 정수형 (원 단위)
 - **날짜**: ISO 8601 형식 (`2025-01-20`)
+- **캠페인 상태**: 
+  - 사용자: `"신청" | "선정" | "완료" | "취소/반려"`
+  - 파트너: `"대기 중" | "모집 중" | "진행 중" | "종료" | "취소"`
 - **패널티 상태**: enum 타입 (활동 가능, 경고 조치, 이용 정지 7일/15일/30일, 영구 정지)
-- **패널티 타입**: enum 타입 (경고, 주의, 정지, 제재)
 
 ### **API 응답 형식**
 
@@ -593,8 +584,11 @@ interface PointHistory {
 // 캠페인 타입
 type CampaignType = "배송형" | "방문형" | "구매평" | "미션형" | "기자단";
 
-// 캠페인 상태
-type CampaignStatus = "신청" | "선정" | "완료" | "취소/반려";
+// 사용자 캠페인 상태
+type UserCampaignStatus = "신청" | "선정" | "완료" | "취소/반려";
+
+// 파트너 캠페인 상태
+type PartnerCampaignStatus = "대기 중" | "모집 중" | "진행 중" | "종료" | "취소";
 
 // 필터 옵션
 type FilterCategory =
@@ -645,11 +639,21 @@ type PointType = "earned" | "withdrawn";
 type PointStatus = "earned" | "completed" | "pending" | "failed";
 ```
 
+### **파트너 관련 타입**
+
+```typescript
+// 파트너 메인 탭
+type PartnerMainTab = "campaign" | "point" | "account";
+
+// 파트너 통계 탭
+type PartnerStatTab = "전체" | "예정" | "신청" | "진행" | "종료" | "취소";
+```
+
 ---
 
-## 🔗 **새로운 URL 구조 (탭 페이지 분리)**
+## 🔗 **URL 구조 (탭 페이지 분리)**
 
-### **캠페인 관리 페이지들**
+### **사용자 캠페인 관리 페이지들**
 
 - `/user/campaign_management` → `/user/campaign_management/applied` (리다이렉트)
 - `/user/campaign_management/applied` - 신청 탭
@@ -658,58 +662,35 @@ type PointStatus = "earned" | "completed" | "pending" | "failed";
 - `/user/campaign_management/cancelled` - 취소/반려 탭
 - `/user/campaign_management/penalty` - 패널티 탭
 
-### **마이페이지들**
+### **파트너 캠페인 관리 페이지들** ⭐ **중요**
+
+- `/partner/campaign_management` - 전체 탭
+- `/partner/campaign_management/scheduled` - 예정 탭
+- `/partner/campaign_management/applied` - 신청 탭
+- `/partner/campaign_management/progress` - 진행 탭
+- `/partner/campaign_management/completed` - 종료 탭
+- `/partner/campaign_management/cancelled` - 취소 탭
+- `/partner/campaign_management/penalty` - 패널티 탭
+
+**캠페인 관리 기능:**
+- "캠페인 관리하기" 버튼 클릭 시 모달 표시
+- 모달에서 수정/삭제 옵션 제공
+- 수정: `/partner/campaign/edit/{type}/{id}` 로 이동
+- 삭제: API 호출 필요
+
+### **마이페이지들 (사용자)**
 
 - `/user/mypage` → `/user/mypage/profile` (리다이렉트)
 - `/user/mypage/profile` - 프로필 탭
 - `/user/mypage/channel` - 채널 탭
 
-### **포인트 페이지들**
+### **포인트 페이지들 (사용자)**
 
 - `/user/point` → `/user/point/all` (리다이렉트)
 - `/user/point/all` - 전체 탭
 - `/user/point/earned` - 적립 탭
 - `/user/point/withdrawn` - 출금 탭
 
-### **장점**
 
-- **새로고침 안전**: 각 탭이 고유한 URL을 가져 새로고침 시에도 상태 유지
-- **브라우저 히스토리**: 뒤로가기/앞으로가기 버튼 지원
-- **직접 접근**: URL로 특정 탭에 직접 접근 가능
-- **SEO 친화적**: 각 탭이 독립적인 페이지로 검색 엔진 최적화 가능
 
----
 
-## 🚀 **백엔드 개발 체크리스트**
-
-### **필수 구현 API**
-
-- [ ] `GET /api/campaigns/main` - 메인 페이지 캠페인 목록
-- [ ] `GET /api/campaigns/{type}` - 캠페인 목록 (5개 타입)
-- [ ] `GET /api/campaigns/{type}/filters` - 필터 옵션
-- [ ] `GET /api/campaigns/{type}/{id}` - 캠페인 상세
-- [ ] `POST /api/campaigns/{type}/{id}/apply` - 캠페인 신청
-- [ ] `GET /api/user/campaigns` - 사용자 캠페인 목록
-- [ ] `GET /api/user/penalty` - 패널티 현황 및 내역
-- [ ] `GET /api/user/points` - 포인트 정보
-- [ ] `POST /api/user/points/withdrawal` - 출금 신청
-- [ ] `POST /api/auth/login` - 로그인
-- [ ] `POST /api/auth/register` - 회원가입
-
-### **데이터베이스 테이블**
-
-- [ ] `campaigns` - 캠페인 정보
-- [ ] `users` - 사용자 정보
-- [ ] `campaign_applications` - 캠페인 신청
-- [ ] `penalty_history` - 패널티 내역
-- [ ] `point_history` - 포인트 내역
-- [ ] `withdrawal_requests` - 출금 신청
-
-### **보안 및 인증**
-
-- [ ] JWT 토큰 구현
-- [ ] Spring Security 설정
-- [ ] API 권한 관리
-- [ ] Rate Limiting 적용
-
----

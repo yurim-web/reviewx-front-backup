@@ -1,14 +1,124 @@
 /* ========================================
-   🎯 미션형 캠페인 데이터 (캠페인 info + 신청 카드 + 콘텐츠)
-   - sharedCampaigns.ts에서 타입별 데이터 분리
+   🎯 미션형 캠페인 데이터 타입 정의
    ======================================== */
+
+/**
+ * 미션형 캠페인 데이터 타입 정의
+ *
+ * 이 파일에서 사용하는 모든 미션형 캠페인 데이터의 타입을 정의합니다.
+ * 공통 타입은 sharedCampaigns.ts에서 import하여 사용합니다.
+ */
+
 import type { CampaignWithApplicants } from "./campaign_application/delivery_applicants";
 import type { CampaignWithContents } from "./sharedCampaigns";
 import type { ContentByTab, ContentItem } from "./sharedCampaigns";
 import { CampaignFormData } from "@/types/user/user";
 import { calculateCampaignStatus, calculateDaysLeft } from "./delivery";
 
-export const missionCampaigns: CampaignWithApplicants[] = [
+/**
+ * 미션형 캠페인 통합 데이터 구조
+ *
+ * 미션형 캠페인의 모든 상태(종료/취소/진행/예정/신청)를 하나의 구조로 통일합니다.
+ * - 종료/취소 캠페인: campaignInfo + contents (필수)
+ * - 진행/예정/신청 캠페인: campaignInfo + applicantData (필수) + contents (선택)
+ */
+export interface MissionCampaignDataItem {
+  campaignInfo: {
+    id: string; // 캠페인 고유 식별자
+    title: string; // 캠페인 제목
+    image: string; // 메인 캠페인 이미지 경로
+    status: "진행 중" | "대기 중" | "모집 중" | "종료" | "취소"; // 캠페인 상태 (모든 상태 포함)
+    campaignType: "미션형"; // 캠페인 타입 (미션형 고정)
+    category: string; // 캠페인 카테고리 (뷰티, 식품, 생활 등)
+    brandName: string; // 브랜드명 (플랫폼명, 미션형은 보통 빈 문자열)
+    recruitmentPeriod: string; // 모집 기간 (예: "2024-01-12 ~ 2024-01-20")
+    announcementDate: string; // 선정 발표일 (예: "2024-01-20")
+    registrationPeriod: string; // 등록 기간 (예: "2024-01-22 ~ 2024-01-30")
+    recruitedCount: number; // 현재 모집된 인원 수 (자동 계산됨)
+    totalCount: number; // 총 모집 인원 수
+    daysLeft: number; // 남은 일수 (양수면 남은 일수, 음수면 지난 일수)
+    statusText?: string; // 상태 텍스트 (예: "캠페인 콘텐츠를 검수해 주세요.", 선택사항)
+  };
+  // 신청자 데이터 (선택사항 - 진행/예정/신청 캠페인에만 있음)
+  applicantData?: {
+    applicants: Array<{
+      id: string; // 신청자 고유 식별자
+      Id: string; // 신청자 내부 ID
+      nickname: string; // 신청자 닉네임
+      userType: "리뷰어" | "인플루언서"; // 사용자 타입
+      profileImage: string; // 프로필 이미지 경로
+      memberType: "모범 회원" | "주의 회원" | "경고 회원" | "이용 제한"; // 회원 타입
+      memo: string; // 메모
+      selectionStatus: "미선택" | "선정하기" | "이용제한 계정"; // 선정 상태
+      channel: string; // 채널 정보 (기본)
+    }>;
+    selectedApplicants: Array<{
+      id: string; // 선정된 신청자 고유 식별자
+      Id: string; // 선정된 신청자 내부 ID
+      nickname: string; // 신청자 닉네임
+      userType: "리뷰어" | "인플루언서"; // 사용자 타입
+      profileImage: string; // 프로필 이미지 경로
+      memberType: "모범 회원" | "주의 회원" | "경고 회원" | "이용 제한"; // 회원 타입
+      memo: string; // 메모
+      selectionStatus: "선정하기"; // 선정 상태 (선정된 신청자는 "선정하기" 고정)
+      channel: string; // 채널 정보 (기본)
+    }>;
+  };
+  // 콘텐츠 데이터 (선택사항 - 종료/취소 캠페인에는 필수, 진행/예정/신청 캠페인에는 선택)
+  contents?: {
+    reviewing: Array<{
+      id: string; // 콘텐츠 고유 식별자
+      createdAt: string; // 생성일시 (ISO 8601 형식)
+      status: "검수"; // 콘텐츠 상태
+      userType: "리뷰어" | "인플루언서"; // 사용자 타입
+      nickname: string; // 작성자 닉네임
+      channelId: string; // 채널 식별자
+      channel: string; // 채널명
+      actionType?: string | number; // 액션 타입 (미션형은 "2" 고정)
+      missionType?: string; // 미션 타입 ("1": 이미지+링크 확인, "4": 반려, "7": 완료)
+      updatedAt?: string; // 수정일시 (선택사항)
+      isRejected?: boolean; // 거절 여부 (선택사항)
+      isLate?: boolean; // 지연 여부 (선택사항)
+    }>;
+    completed: Array<{
+      id: string; // 콘텐츠 고유 식별자
+      createdAt: string; // 생성일시 (ISO 8601 형식)
+      status: "완료"; // 콘텐츠 상태
+      userType: "리뷰어" | "인플루언서"; // 사용자 타입
+      nickname: string; // 작성자 닉네임
+      channelId: string; // 채널 식별자
+      channel: string; // 채널명
+      actionType?: string | number; // 액션 타입 (미션형은 "2" 고정)
+      missionType?: string; // 미션 타입 ("7": 완료)
+      updatedAt?: string; // 수정일시 (선택사항)
+      isLate?: boolean; // 지연 여부 (선택사항)
+    }>;
+  };
+}
+
+/**
+ * 미션형 캠페인 종료/취소 데이터 타입
+ *
+ * 종료되거나 취소된 미션형 캠페인의 데이터 구조입니다.
+ * MissionCampaignDataItem[] 타입을 사용하여 통일된 구조로 관리합니다.
+ */
+export type MissionClosedCampaignData = MissionCampaignDataItem[];
+
+/**
+ * 미션형 캠페인 진행/예정/신청 데이터 타입
+ *
+ * 진행 중, 예정, 신청 중인 미션형 캠페인의 데이터 구조입니다.
+ * MissionCampaignDataItem[] 타입을 사용하여 통일된 구조로 관리합니다.
+ */
+export type MissionCampaignData = MissionCampaignDataItem[];
+
+/* ========================================
+   🎯 미션형 캠페인 데이터 (캠페인 info + 신청 카드 + 콘텐츠)
+   - sharedCampaigns.ts에서 타입별 데이터 분리
+   - MissionCampaignDataItem 인터페이스로 통일된 구조 사용
+   ======================================== */
+
+export const missionCampaigns: MissionCampaignDataItem[] = [
   // 진행 탭(진행 중) - 기존 미션형 캠페인 (콘텐츠 있음)
   {
     campaignInfo: {
@@ -419,8 +529,9 @@ missionCampaigns.forEach((campaign) => {
 /* ========================================
    🎯 미션형 (종료/취소) 콘텐츠 데이터
    - closedCampaigns.ts 병합용
+   - MissionCampaignDataItem 인터페이스로 통일된 구조 사용
    ======================================== */
-export const missionClosedCampaigns: CampaignWithContents[] = [
+export const missionClosedCampaigns: MissionCampaignDataItem[] = [
   {
     campaignInfo: {
       id: "904",
@@ -631,20 +742,21 @@ function generateNewMissionCampaignId(): string {
 }
 
 /**
- * 폼 데이터를 CampaignWithApplicants 형태로 변환하여 새 미션형 캠페인 생성
+ * 폼 데이터를 MissionCampaignDataItem 형태로 변환하여 새 미션형 캠페인 생성
  *
  * 설명:
  * - 미션형 캠페인 등록 폼에서 입력한 데이터를 missionCampaigns 구조에 맞게 변환합니다.
  * - 새 캠페인 ID를 자동 생성합니다.
+ * - MissionCampaignDataItem 인터페이스를 사용하여 통일된 구조로 생성합니다.
  *
  * @param formData - 폼에서 입력받은 캠페인 데이터
  * @param imageUrl - 업로드된 이미지 URL (첫 번째 이미지 사용)
- * @returns 새로 생성된 CampaignWithApplicants 객체
+ * @returns 새로 생성된 MissionCampaignDataItem 객체 (CampaignWithApplicants와 호환됨)
  */
 export function createMissionCampaign(
   formData: CampaignFormData,
   imageUrl: string = "/images/main/campaign_img/eximg_4.png"
-): CampaignWithApplicants {
+): MissionCampaignDataItem {
   // 새 캠페인 ID 생성
   const newId = generateNewMissionCampaignId();
 
@@ -695,17 +807,18 @@ export function createMissionCampaign(
  * - 기존 미션형 캠페인을 수정합니다.
  * - 캠페인 ID는 유지하고, 나머지 정보만 업데이트합니다.
  * - 신청자 데이터는 유지합니다.
+ * - MissionCampaignDataItem 인터페이스를 사용하여 통일된 구조로 반환합니다.
  *
  * @param campaignId - 수정할 캠페인 ID
  * @param formData - 폼에서 입력받은 캠페인 데이터
  * @param imageUrl - 업로드된 이미지 URL
- * @returns 수정된 CampaignWithApplicants 객체
+ * @returns 수정된 MissionCampaignDataItem 객체 (CampaignWithApplicants와 호환됨)
  */
 export function updateMissionCampaign(
   campaignId: string,
   formData: CampaignFormData,
   imageUrl: string = "/images/main/campaign_img/eximg_4.png"
-): CampaignWithApplicants {
+): MissionCampaignDataItem {
   // 기존 캠페인 데이터 찾기
   const existingCampaign = missionCampaigns.find(
     (c) => c.campaignInfo.id === campaignId
@@ -757,13 +870,16 @@ export function updateMissionCampaign(
 /**
  * 새 미션형 캠페인을 missionCampaigns 배열에 추가
  *
+ * 설명:
+ * - MissionCampaignDataItem 인터페이스를 사용하여 통일된 구조로 캠페인을 생성합니다.
+ *
  * @param formData - 폼에서 입력받은 캠페인 데이터
  * @param imageUrl - 업로드된 이미지 URL
- * @returns 새로 생성된 CampaignWithApplicants 객체
+ * @returns 새로 생성된 MissionCampaignDataItem 객체 (CampaignWithApplicants와 호환됨)
  */
 export function addMissionCampaign(
   formData: CampaignFormData,
   imageUrl: string = "/images/main/campaign_img/eximg_4.png"
-): CampaignWithApplicants {
+): MissionCampaignDataItem {
   return createMissionCampaign(formData, imageUrl);
 }
