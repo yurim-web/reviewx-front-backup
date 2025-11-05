@@ -106,20 +106,7 @@ export default function WithdrawalRequestPage() {
     }
   };
 
-  // 메인 헤더 숨기기
-  useEffect(() => {
-    const header = document.querySelector("header");
-    if (header) {
-      header.style.display = "none";
-    }
 
-    // 컴포넌트 언마운트 시 헤더 다시 보이기
-    return () => {
-      if (header) {
-        header.style.display = "block";
-      }
-    };
-  }, []);
 
   return (
     <div className={styles.request_page}>

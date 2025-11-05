@@ -156,19 +156,7 @@ export default function EditProfilePage() {
   };
 
 
-  // 메인 헤더 숨기기 (캠페인 상세와 동일 동작)
-  useEffect(() => {
-    const header = document.querySelector("header");
-    if (header) header.style.display = "none";
 
-    // 부드러운 스크롤 동작 설정
-    document.documentElement.style.scrollBehavior = "smooth";
-
-    return () => {
-      if (header) header.style.display = "block";
-      document.documentElement.style.scrollBehavior = "auto";
-    };
-  }, []);
 
   return (
     <div className={styles.edit_profile_container}>
