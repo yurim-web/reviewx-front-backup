@@ -306,12 +306,12 @@ export const visitCampaigns: CampaignWithApplicants[] = [
   {
     campaignInfo: {
       id: "106",
-      title: "숏츠 영상 체험 캠페인",
+      title: "쇼츠 영상 체험 캠페인",
       image: "/images/main/campaign_img/eximg_7.png",
       status: "진행 중",
       campaignType: "방문형",
       category: "여가",
-      brandName: "숏츠",
+      brandName: "쇼츠",
       recruitmentPeriod: "2025-01-05 ~ 2025-01-15",
       announcementDate: "2025-01-15",
       registrationPeriod: "2025-01-17 ~ 2025-01-25",

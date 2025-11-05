@@ -18,13 +18,13 @@ import ExperienceCompletedCard from "@/components/partner/campaign_contents/card
 import ExperienceRejectedCard from "@/components/partner/campaign_contents/card_type/experience_card/ExperienceRejectedCard";
 import type { ExperienceApplicant } from "@/components/partner/campaign_contents/card_type/experience_card/ExperienceTypes";
 
-type TabKey = "검수" | "완료";
+type TabKey = "확인" | "완료";
 
 export default function DeliveryContentsDetailPage() {
   const { id } = useParams<{ id: string }>();
   const searchParams = useSearchParams();
   const initialTab: TabKey =
-    searchParams?.get("tab") === "완료" ? "완료" : "검수";
+    searchParams?.get("tab") === "완료" ? "완료" : "확인";
   const [activeTab, setActiveTab] = useState<TabKey>(initialTab);
   const [sortOrder, setSortOrder] = useState<
     "latest" | "popular" | "deadline" | "point"
@@ -99,11 +99,11 @@ export default function DeliveryContentsDetailPage() {
         <article className={appStyles.tab_navigation}>
           <button
             className={`${appStyles.tab_button} ${
-              activeTab === "검수" ? appStyles.active : ""
+              activeTab === "확인" ? appStyles.active : ""
             }`}
-            onClick={() => setActiveTab("검수")}
+            onClick={() => setActiveTab("확인")}
           >
-            검수 <span className={appStyles.tab_count}>{reviewCount}</span>
+            확인 <span className={appStyles.tab_count}>{reviewCount}</span>
           </button>
           <button
             className={`${appStyles.tab_button} ${
@@ -117,7 +117,7 @@ export default function DeliveryContentsDetailPage() {
 
         {/* 카드 그리드 */}
         <article className={appStyles.applicants_grid}>
-          {(activeTab === "검수" ? contents.reviewing : contents.completed).map(
+          {(activeTab === "확인" ? contents.reviewing : contents.completed).map(
             (item) => {
               // 콘텐츠 → 경험형 카드 데이터 매핑 (신청내역 카드 형태 맞춤)
               const brandChannel = campaignInfo?.brandName ?? item.channel;
@@ -137,7 +137,7 @@ export default function DeliveryContentsDetailPage() {
                 ? "수정"
                 : "등록";
 
-              if (activeTab === "검수") {
+              if (activeTab === "확인") {
                 if (item.isRejected) {
                   return (
                     <ExperienceRejectedCard
