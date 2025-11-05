@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack --port 3002",
+    "dev": "next dev --turbopack --port 8081",
     "build": "next build --turbopack",
-    "start": "next start --port 3002",
-    "lint": "eslint"
+    "start": "next start --port 8081",
+    "lint": "eslint"  
   },
   "dependencies": {
     "react": "19.1.0",
