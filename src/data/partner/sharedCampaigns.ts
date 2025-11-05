@@ -580,7 +580,11 @@ export function getSharedCampaigns(): CampaignWithApplicants[] {
     console.error("reviewCampaigns 로드 실패:", error);
   }
 
-  return [
+  // 삭제된 캠페인 ID 목록 가져오기
+  const deletedCampaignIds = getDeletedCampaignIds();
+
+  // 모든 캠페인을 병합
+  const allCampaigns = [
     // 타입 분리된 카테고리 병합
     ...reporterCampaigns,
     ...deliveryCampaigns,
@@ -603,6 +607,29 @@ export function getSharedCampaigns(): CampaignWithApplicants[] {
       applicantData: { applicants: [], selectedApplicants: [] },
     })),
   ];
+
+  // 삭제된 캠페인 ID 목록에 있는 캠페인을 필터링하여 제외
+  // 🎓 학습 포인트: 배열 filter와 includes 메서드
+  // - filter는 조건에 맞는 요소만 남기고 나머지는 제거
+  // - includes는 배열에 특정 값이 포함되어 있는지 확인
+  // - !deletedCampaignIds.includes(...): 삭제 목록에 없는 캠페인만 남김
+  // 
+  // 중요: ID 타입 불일치 방지를 위해 문자열로 변환하여 비교
+  const filteredCampaigns = allCampaigns.filter((campaign) => {
+    const campaignId = String(campaign.campaignInfo.id);
+    const isDeleted = deletedCampaignIds.includes(campaignId);
+    if (isDeleted) {
+      console.log(`[getSharedCampaigns] 삭제된 캠페인 필터링: ID=${campaignId}, 제목=${campaign.campaignInfo.title}`);
+    }
+    return !isDeleted;
+  });
+
+  if (deletedCampaignIds.length > 0) {
+    console.log(`[getSharedCampaigns] 삭제된 캠페인 ID 목록:`, deletedCampaignIds);
+    console.log(`[getSharedCampaigns] 필터링 전 캠페인 수: ${allCampaigns.length}, 필터링 후: ${filteredCampaigns.length}`);
+  }
+
+  return filteredCampaigns;
 }
 
 /**
@@ -827,3 +854,153 @@ export const getCampaignStats = () => {
     패널티: 0,
   };
 };
+
+/**
+ * 삭제된 캠페인 ID 목록을 가져오는 함수
+ *
+ * 설명:
+ * - localStorage에 저장된 삭제된 캠페인 ID 목록을 반환합니다.
+ * - 정적 데이터에 있는 캠페인도 삭제 목록에 추가하면 목록에서 제외됩니다.
+ *
+ * @returns 삭제된 캠페인 ID 배열
+ */
+function getDeletedCampaignIds(): string[] {
+  if (typeof window === "undefined") return [];
+
+  try {
+    const stored = localStorage.getItem("deletedCampaignIds");
+    if (!stored) {
+      console.log("[getDeletedCampaignIds] 삭제 목록이 없음");
+      return [];
+    }
+
+    const deletedIds: string[] = JSON.parse(stored);
+    const result = Array.isArray(deletedIds) ? deletedIds.map(id => String(id)) : [];
+    console.log(`[getDeletedCampaignIds] 삭제된 캠페인 ID 목록:`, result);
+    return result;
+  } catch (error) {
+    console.error("삭제된 캠페인 ID 목록 불러오기 실패:", error);
+    return [];
+  }
+}
+
+/**
+ * 삭제된 캠페인 ID 목록에 추가하는 함수
+ *
+ * @param campaignId - 삭제할 캠페인 ID (문자열로 변환됨)
+ */
+function addDeletedCampaignId(campaignId: string): void {
+  if (typeof window === "undefined") return;
+
+  try {
+    const deletedIds = getDeletedCampaignIds();
+    // ID를 문자열로 확실히 변환하여 비교
+    const campaignIdStr = String(campaignId);
+    
+    if (!deletedIds.includes(campaignIdStr)) {
+      deletedIds.push(campaignIdStr);
+      localStorage.setItem("deletedCampaignIds", JSON.stringify(deletedIds));
+      console.log(`[addDeletedCampaignId] 삭제 목록에 추가됨: ID=${campaignIdStr}, 현재 삭제 목록:`, deletedIds);
+    } else {
+      console.log(`[addDeletedCampaignId] 이미 삭제 목록에 있음: ID=${campaignIdStr}`);
+    }
+  } catch (error) {
+    console.error("삭제된 캠페인 ID 추가 실패:", error);
+  }
+}
+
+/**
+ * 캠페인 삭제 함수
+ *
+ * 설명:
+ * - localStorage에 저장된 캠페인을 삭제합니다.
+ * - 캠페인 타입에 따라 적절한 localStorage 키에서 삭제합니다.
+ * - 정적 데이터에 있는 캠페인도 삭제 목록에 추가하여 목록에서 제외합니다.
+ * - 실제 프로덕션에서는 API를 통해 서버에서 캠페인을 삭제해야 합니다.
+ *
+ * 학습 포인트:
+ * - localStorage: 브라우저 로컬 저장소에 데이터 저장/삭제
+ * - JSON.parse/JSON.stringify: 객체를 문자열로 변환하여 저장
+ * - 배열 filter: 특정 조건에 맞는 요소만 남기고 나머지는 제거
+ *
+ * @param campaignId - 삭제할 캠페인 ID
+ * @param campaignType - 캠페인 타입 ("배송형" | "방문형" | "구매평" | "기자단" | "미션형")
+ * @returns 삭제 성공 여부 (boolean)
+ */
+export function deleteCampaign(
+  campaignId: string,
+  campaignType: "배송형" | "방문형" | "구매평" | "기자단" | "미션형"
+): boolean {
+  if (typeof window === "undefined") {
+    console.error("localStorage는 브라우저 환경에서만 사용할 수 있습니다.");
+    return false;
+  }
+
+  try {
+    // 캠페인 타입에 따라 localStorage 키 결정
+    let storageKey: string;
+    switch (campaignType) {
+      case "배송형":
+        storageKey = "deliveryCampaigns";
+        break;
+      case "방문형":
+        storageKey = "visitCampaigns";
+        break;
+      case "구매평":
+        storageKey = "reviewCampaigns";
+        break;
+      case "기자단":
+        storageKey = "reporterCampaigns";
+        break;
+      case "미션형":
+        storageKey = "missionCampaigns";
+        break;
+      default:
+        console.error(`알 수 없는 캠페인 타입: ${campaignType}`);
+        return false;
+    }
+
+    // 1. localStorage에서 해당 타입의 캠페인 배열 불러오기
+    const stored = localStorage.getItem(storageKey);
+    let deletedFromLocalStorage = false;
+
+    if (stored) {
+      const campaigns: CampaignWithApplicants[] = JSON.parse(stored);
+      if (Array.isArray(campaigns)) {
+        // 삭제할 캠페인을 제외한 나머지 캠페인만 필터링
+        // 🎓 학습 포인트: 배열 filter 메서드
+        // - filter는 조건에 맞는 요소만 남기고 나머지는 제거한 새로운 배열을 반환
+        // - campaign.campaignInfo.id !== campaignId: ID가 다른 캠페인만 남김
+        // - 즉, ID가 일치하는 캠페인은 제거됨
+        const filteredCampaigns = campaigns.filter(
+          (campaign) => campaign.campaignInfo.id !== campaignId
+        );
+
+        // 삭제 전후 개수 비교하여 실제로 삭제되었는지 확인
+        if (filteredCampaigns.length < campaigns.length) {
+          // 필터링된 배열을 다시 localStorage에 저장
+          // 🎓 학습 포인트: JSON.stringify
+          // - JavaScript 객체를 JSON 문자열로 변환하여 localStorage에 저장
+          // - localStorage는 문자열만 저장할 수 있기 때문
+          localStorage.setItem(storageKey, JSON.stringify(filteredCampaigns));
+          deletedFromLocalStorage = true;
+          console.log(
+            `localStorage에서 캠페인 삭제 완료: ID=${campaignId}, 타입=${campaignType}, 남은 캠페인 수=${filteredCampaigns.length}`
+          );
+        }
+      }
+    }
+
+    // 2. 삭제된 캠페인 ID 목록에 추가 (정적 데이터에 있는 캠페인도 제외하기 위해)
+    // 이렇게 하면 localStorage에 없는 정적 데이터의 캠페인도 목록에서 제외됩니다
+    addDeletedCampaignId(campaignId);
+
+    console.log(
+      `캠페인 삭제 처리 완료: ID=${campaignId}, 타입=${campaignType}, localStorage에서 삭제=${deletedFromLocalStorage}, 삭제 목록에 추가됨`
+    );
+    return true;
+  } catch (error) {
+    console.error("캠페인 삭제 중 오류 발생:", error);
+    return false;
+  }
+}

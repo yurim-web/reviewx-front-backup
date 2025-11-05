@@ -25,7 +25,8 @@ import cardStyles from "../../../styles/partner/campaign_card.module.css";
 import buttonStyles from "../../../styles/partner/buttons.module.css";
 import ReceiptRegistrationModal from "../campaign_contents/ReceiptRegistrationModal";
 import CampaignManagementModal from "./modals/CampaignManagementModal";
-import { getClosedContentsById, getCampaignById } from "@/data/partner/sharedCampaigns";
+import CampaignDeleteConfirmModal from "./modals/CampaignDeleteConfirmModal";
+import { getClosedContentsById, getCampaignById, deleteCampaign } from "@/data/partner/sharedCampaigns";
 import { getVisitContentsById } from "@/data/partner/visit";
 import { getDeliveryContentsById } from "@/data/partner/delivery";
 import { getReporterContentsById } from "@/data/partner/reporter";
@@ -47,6 +48,7 @@ export default function CampaignCard({
 }: CampaignCardProps) {
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
   const [isManagementModalOpen, setIsManagementModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // 캠페인 타입/상태에 따른 콘텐츠 검수/완료 개수 계산 (초기 렌더 시 메모)
   const { reviewingCount, completedCount } = useMemo(() => {
@@ -165,6 +167,9 @@ export default function CampaignCard({
 
       const campaignTypePath = getCampaignTypePath(campaign.type);
       window.location.href = `/partner/campaign/edit/${campaignTypePath}/${campaign.id}`;
+    } else if (buttonText === "캠페인 삭제하기") {
+      // 삭제 확인 모달 열기
+      setIsDeleteModalOpen(true);
     } else if (buttonText === "패널티 내역보기") {
       // 패널티 내역 페이지로 이동
       window.location.href = "/partner/campaign_management/penalty";
@@ -527,6 +532,52 @@ export default function CampaignCard({
         campaignTitle={campaign.title}
         campaignType={campaign.type}
         campaignId={campaign.id}
+      />
+
+      {/* 캠페인 삭제 확인 모달 */}
+      <CampaignDeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        campaignTitle={campaign.title}
+        campaignId={campaign.id}
+        onConfirm={() => {
+          /**
+           * 캠페인 삭제 확인 핸들러
+           * 
+           * 🎓 학습 포인트: localStorage 기반 데이터 삭제
+           * - 실제 프로덕션에서는 API를 통해 서버에서 캠페인을 삭제해야 합니다
+           * - 현재는 프론트엔드 개발을 위해 localStorage에서 삭제합니다
+           * - 삭제 후 페이지를 새로고침하여 목록을 업데이트합니다
+           */
+          const campaignIdString = String(campaign.id);
+          const campaignType = campaign.type as
+            | "배송형"
+            | "방문형"
+            | "구매평"
+            | "기자단"
+            | "미션형";
+
+          console.log(`[CampaignCard] 캠페인 삭제 시도: ID=${campaignIdString}, 타입=${campaignType}, 제목=${campaign.title}`);
+
+          // localStorage에서 캠페인 삭제
+          const deleteSuccess = deleteCampaign(campaignIdString, campaignType);
+
+          console.log(`[CampaignCard] 삭제 결과: ${deleteSuccess ? "성공" : "실패"}`);
+
+          if (deleteSuccess) {
+            // 삭제 성공 시 알림 표시
+            alert("캠페인이 삭제되었습니다.");
+            // 페이지 새로고침하여 업데이트된 캠페인 목록 표시
+            // 🎓 학습 포인트: window.location.reload()
+            // - 페이지를 새로고침하여 최신 데이터를 불러옵니다
+            // - getCampaignsByTab() 함수가 매번 최신 localStorage 데이터를 읽어오므로
+            //   새로고침하면 삭제된 캠페인이 목록에서 사라집니다
+            window.location.reload();
+          } else {
+            // 삭제 실패 시 에러 메시지 표시
+            alert("캠페인 삭제에 실패했습니다. 다시 시도해주세요.");
+          }
+        }}
       />
     </div>
   );

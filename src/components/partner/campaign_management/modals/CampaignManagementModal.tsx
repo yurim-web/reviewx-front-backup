@@ -22,6 +22,7 @@
 
 import Image from "next/image";
 import styles from "../../../../styles/partner/campaign_management/campaign_management_modal.module.css";
+import { deleteCampaign } from "@/data/partner/sharedCampaigns";
 
 /**
  * CampaignManagementModal 컴포넌트의 Props 타입 정의
@@ -106,11 +107,30 @@ export default function CampaignManagementModal({
       "정말로 이 캠페인을 삭제하시겠습니까?\n삭제된 캠페인은 복구할 수 없습니다."
     );
 
-    if (isConfirmed) {
-      // TODO: 실제 캠페인 삭제 API 호출 로직 추가
-      console.log("캠페인 삭제하기:", campaignTitle, campaignId);
-      alert("캠페인이 삭제되었습니다.");
-      onClose(); // 모달 닫기
+    if (isConfirmed && campaignId && campaignType) {
+      // 캠페인 삭제 함수 호출
+      const campaignIdString = String(campaignId);
+      const campaignTypeStr = campaignType as
+        | "배송형"
+        | "방문형"
+        | "구매평"
+        | "기자단"
+        | "미션형";
+
+      console.log(`[CampaignManagementModal] 캠페인 삭제 시도: ID=${campaignIdString}, 타입=${campaignTypeStr}, 제목=${campaignTitle}`);
+
+      const deleteSuccess = deleteCampaign(campaignIdString, campaignTypeStr);
+
+      console.log(`[CampaignManagementModal] 삭제 결과: ${deleteSuccess ? "성공" : "실패"}`);
+
+      if (deleteSuccess) {
+        alert("캠페인이 삭제되었습니다.");
+        onClose(); // 모달 닫기
+        // 페이지 새로고침하여 업데이트된 캠페인 목록 표시
+        window.location.reload();
+      } else {
+        alert("캠페인 삭제에 실패했습니다. 다시 시도해주세요.");
+      }
     }
     // 취소를 선택한 경우에는 아무 동작도 하지 않음 (모달 유지)
   };

@@ -22,7 +22,7 @@ export const missionCampaigns: CampaignWithApplicants[] = [
       recruitmentPeriod: "2024-01-12 ~ 2024-01-20",
       announcementDate: "2024-01-20",
       registrationPeriod: "2024-01-22 ~ 2024-01-30",
-      recruitedCount: 8,
+      recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 10,
       daysLeft: 5,
       statusText: "캠페인 콘텐츠를 검수해 주세요.",
@@ -243,7 +243,7 @@ export const missionCampaigns: CampaignWithApplicants[] = [
       recruitmentPeriod: "2025-10-25 ~ 2025-11-05",
       announcementDate: "2025-11-05",
       registrationPeriod: "2025-11-06 ~ 2025-11-14",
-      recruitedCount: 7,
+      recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 12,
       daysLeft: 5,
       statusText: "캠페인 콘텐츠를 검수해 주세요.",
@@ -366,7 +366,7 @@ export const missionCampaigns: CampaignWithApplicants[] = [
       recruitmentPeriod: "2025-11-05 ~ 2025-11-15",
       announcementDate: "2025-11-15",
       registrationPeriod: "2025-11-17 ~ 2025-11-25",
-      recruitedCount: 0,
+      recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 10,
       daysLeft: 13,
     },
@@ -386,13 +386,35 @@ export const missionCampaigns: CampaignWithApplicants[] = [
       recruitmentPeriod: "2025-11-06 ~ 2025-11-16",
       announcementDate: "2025-11-16",
       registrationPeriod: "2025-11-18 ~ 2025-11-26",
-      recruitedCount: 0,
+      recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 10,
       daysLeft: 8,
     },
     applicantData: { applicants: [], selectedApplicants: [] },
   },
 ];
+
+/* ========================================
+   📊 신청자 수 자동 계산 로직
+   - 각 캠페인의 recruitedCount를 applicantData.applicants 배열 길이로 자동 설정
+   - 데이터 일관성을 유지하기 위해 배열 정의 직후 실행됩니다
+   ======================================== */
+
+/**
+ * missionCampaigns 배열의 각 캠페인에 대해 recruitedCount를 자동 계산합니다
+ *
+ * 설명:
+ * - 각 캠페인의 applicantData.applicants 배열의 길이를 계산하여
+ *   campaignInfo.recruitedCount에 자동으로 설정합니다.
+ * - 이렇게 하면 신청자 데이터를 추가/제거할 때마다 수동으로 숫자를 맞출 필요가 없습니다.
+ */
+missionCampaigns.forEach((campaign) => {
+  // 각 캠페인의 신청자 배열 길이를 계산하여 recruitedCount에 설정
+  // 설명: applicantData.applicants가 undefined일 수 있으므로 옵셔널 체이닝(?.)과 널 병합 연산자(??)를 사용
+  // applicants가 없으면 빈 배열([])로 간주하고, 그 길이는 0이 됩니다
+  campaign.campaignInfo.recruitedCount =
+    campaign.applicantData?.applicants?.length ?? 0;
+});
 
 /* ========================================
    🎯 미션형 (종료/취소) 콘텐츠 데이터
@@ -724,7 +746,7 @@ export function updateMissionCampaign(
       recruitmentPeriod: formData.recruitmentPeriod,
       announcementDate: formData.announcementDate,
       registrationPeriod: formData.registrationPeriod,
-      recruitedCount: existingCampaign?.campaignInfo.recruitedCount || 0, // 기존 신청자 수 유지
+      recruitedCount: existingApplicantData?.applicants?.length ?? 0, // 자동 계산 (applicantData.applicants.length)
       totalCount: totalCount,
       daysLeft: daysLeft,
     },

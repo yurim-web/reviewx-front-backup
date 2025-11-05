@@ -170,7 +170,7 @@ export const reviewCampaigns: CampaignWithApplicants[] = [
       announcementDate: "2024-01-22",
       purchasePeriod: "2024-01-23 ~ 2024-01-25",
       registrationPeriod: "2024-01-24 ~ 2024-02-01",
-      recruitedCount: 12,
+      recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 15,
       daysLeft: 3,
       statusText: "캠페인 콘텐츠를 검수해 주세요.",
@@ -377,7 +377,7 @@ export const reviewCampaigns: CampaignWithApplicants[] = [
       announcementDate: "2025-11-02",
       purchasePeriod: "2025-11-03 ~ 2025-11-05",
       registrationPeriod: "2025-11-04 ~ 2025-11-12",
-      recruitedCount: 6,
+      recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 10,
       daysLeft: 4,
       statusText: "캠페인 당첨자를 선정해 주세요.",
@@ -398,7 +398,7 @@ export const reviewCampaigns: CampaignWithApplicants[] = [
       announcementDate: "2025-11-12",
       purchasePeriod: "2025-11-13 ~ 2025-11-15",
       registrationPeriod: "2025-11-14 ~ 2025-11-22",
-      recruitedCount: 0,
+      recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 6,
       daysLeft: 7,
     },
@@ -418,7 +418,7 @@ export const reviewCampaigns: CampaignWithApplicants[] = [
       announcementDate: "2025-11-13",
       purchasePeriod: "2025-11-14 ~ 2025-11-16",
       registrationPeriod: "2025-11-15 ~ 2025-11-23",
-      recruitedCount: 1,
+      recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 8,
       daysLeft: 11,
     },
@@ -465,6 +465,29 @@ export const reviewCampaigns: CampaignWithApplicants[] = [
 ];
 
 /* ========================================
+   📊 신청자 수 자동 계산 로직
+   - 각 캠페인의 recruitedCount를 applicantData.applicants 배열 길이로 자동 설정
+   - 데이터 일관성을 유지하기 위해 배열 정의 직후 실행됩니다
+   ======================================== */
+
+/**
+ * reviewCampaigns 배열의 각 캠페인에 대해 recruitedCount를 자동 계산합니다
+ *
+ * 설명:
+ * - 각 캠페인의 applicantData.applicants 배열의 길이를 계산하여
+ *   campaignInfo.recruitedCount에 자동으로 설정합니다.
+ * - 이렇게 하면 신청자 데이터를 추가/제거할 때마다 수동으로 숫자를 맞출 필요가 없습니다.
+
+ */
+reviewCampaigns.forEach((campaign) => {
+  // 각 캠페인의 신청자 배열 길이를 계산하여 recruitedCount에 설정
+  // 설명: applicantData.applicants가 undefined일 수 있으므로 옵셔널 체이닝(?.)과 널 병합 연산자(??)를 사용
+  // applicants가 없으면 빈 배열([])로 간주하고, 그 길이는 0이 됩니다
+  campaign.campaignInfo.recruitedCount =
+    campaign.applicantData?.applicants?.length ?? 0;
+});
+
+/* ========================================
    🛒 구매평 콘텐츠 조회 함수
    - 진행 중인 캠페인의 콘텐츠 데이터를 조회합니다
    ======================================== */
@@ -481,13 +504,6 @@ export const reviewCampaigns: CampaignWithApplicants[] = [
  * 반환 타입: ContentByTab
  * - reviewing: 검수 중인 콘텐츠 배열
  * - completed: 완료된 콘텐츠 배열
- *
- * 학습 포인트:
- * - 함수 매개변수: campaignId (캠페인 ID)
- * - 조건부 반환: if 문으로 특정 ID에 대한 처리
- * - 배열 메서드: find() 메서드로 배열에서 특정 조건의 요소를 찾습니다.
- * - 옵셔널 체이닝: ?. 연산자로 안전하게 속성에 접근합니다.
- * - 널 병합 연산자: ?? 연산자로 기본값을 제공합니다.
  *
  * @param campaignId - 조회할 캠페인의 ID
  * @returns 검수 중/완료된 콘텐츠를 담은 객체
@@ -666,7 +682,7 @@ export function updateReviewCampaign(
       announcementDate: formData.announcementDate,
       registrationPeriod: formData.registrationPeriod,
       purchasePeriod: formData.purchasePeriod || "",
-      recruitedCount: existingCampaign?.campaignInfo.recruitedCount || 0, // 기존 신청자 수 유지
+      recruitedCount: existingApplicantData?.applicants?.length ?? 0, // 자동 계산 (applicantData.applicants.length)
       totalCount: totalCount,
       daysLeft: daysLeft,
     },

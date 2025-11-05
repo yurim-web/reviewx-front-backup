@@ -1,0 +1,145 @@
+/* ========================================
+   ⚠️ 캠페인 삭제 확인 모달 스타일 (파트너)
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - CampaignDeleteConfirmModal 컴포넌트
+ * 
+ * 주요 기능:
+ * - 모달 오버레이 (배경 어두운 레이어)
+ * - 모달 컨테이너 (흰색 박스)
+ * - 메시지 영역
+ * - 액션 버튼 (취소, 삭제하기)
+ * - 닫기 버튼 (X 아이콘)
+ */
+
+/* 모달 오버레이 - 전체 화면을 덮는 어두운 배경 */
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* 모달 컨테이너 - 실제 모달 내용이 들어가는 흰색 박스 */
+.modal_container {
+  position: relative;
+  background-color: white;
+  border-radius: 12px;
+  padding: 32px 24px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* 모달 제목 */
+.modal_title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 24px 0;
+  text-align: center;
+  color: #1a1a1a;
+}
+
+/* 메시지 컨테이너 - 삭제 확인 메시지와 경고 메시지를 담는 영역 */
+.message_container {
+  margin-bottom: 24px;
+}
+
+/* 메시지 텍스트 - 주요 확인 메시지 */
+.message_text {
+  font-size: 16px;
+  color: #1a1a1a;
+  text-align: center;
+  margin: 0 0 16px 0;
+  line-height: 1.5;
+}
+
+/* 캠페인 제목 텍스트 - 삭제할 캠페인의 제목을 표시 */
+.campaign_title_text {
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+  margin: 0 0 12px 0;
+  padding: 12px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+/* 경고 텍스트 - 복구 불가능하다는 경고 메시지 */
+.warning_text {
+  font-size: 14px;
+  color: #e74c3c;
+  text-align: center;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* 액션 버튼 영역 - 취소와 삭제하기 버튼을 담는 컨테이너 */
+.action_buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 액션 버튼 기본 스타일 */
+.action_button {
+  width: 100%;
+  padding: 14px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+/* 취소 버튼 - 회색 테두리 스타일 */
+.cancel_button {
+  background-color: white;
+  color: #666;
+  border: 1px solid #d9d9d9;
+}
+
+.cancel_button:hover {
+  background-color: #f5f5f5;
+  border-color: #999;
+}
+
+/* 삭제 확인 버튼 - 빨간색 배경 스타일 */
+.confirm_button {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.confirm_button:hover {
+  background-color: #c0392b;
+}
+
+/* 닫기 버튼 - 우측 상단 X 아이콘 */
+.close_button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+.close_button:hover {
+  opacity: 0.7;
+}
+
