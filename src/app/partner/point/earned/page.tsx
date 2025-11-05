@@ -23,8 +23,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import TabNavigation from "@/components/partner/campaign_management/TabNavigation";
 import PartnerPointTabNavigation from "@/components/partner/point/PointTabNavigation";
-import { MainTab } from "@/types/campaignManagement";
-import { PointTab } from "@/types/point";
+import { PartnerMainTab, PartnerPointTab } from "@/types/partner/partner";
 import { partnerPointHistoryData, partnerPointSummary } from "@/data/partner/point/pointData";
 import styles from "@/styles/user/point/point.module.css";
 
@@ -33,15 +32,15 @@ import styles from "@/styles/user/point/point.module.css";
  */
 export default function PartnerEarnedPointPage() {
   const router = useRouter();
-  const [activeMainTab, setActiveMainTab] = useState<MainTab>("point");
-  const [activePointTab, setActivePointTab] = useState<PointTab>("earned");
+  const [activeMainTab, setActiveMainTab] = useState<PartnerMainTab>("point");
+  const [activePointTab, setActivePointTab] = useState<PartnerPointTab>("earned");
   const tooltipRef = useRef<HTMLSpanElement>(null);
 
   /**
    * 포인트 탭 변경 핸들러
    * 각 탭 클릭 시 해당 페이지로 이동
    */
-  const handlePointTabChange = (tab: PointTab) => {
+  const handlePointTabChange = (tab: PartnerPointTab) => {
     switch (tab) {
       case "all":
         window.location.href = "/partner/point/all";

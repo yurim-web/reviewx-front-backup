@@ -5,7 +5,7 @@
 import type { CampaignWithApplicants } from "./campaign_application/delivery_applicants";
 import type { CampaignWithContents } from "./sharedCampaigns";
 import type { ContentByTab, ContentItem } from "./sharedCampaigns";
-import { CampaignFormData } from "@/types/campaign";
+import { CampaignFormData } from "@/types/user/user";
 import { calculateCampaignStatus, calculateDaysLeft } from "./delivery";
 
 export const missionCampaigns: CampaignWithApplicants[] = [

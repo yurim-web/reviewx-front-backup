@@ -5,10 +5,12 @@
  * - 가이드북 링크
  * - 마이페이지 링크
  * - 항상 상단에 고정됨 (position: fixed)
+ * - 메인 헤더를 자동으로 숨김 (SubHeader가 표시될 때는 메인 헤더 숨김)
  */
 
 "use client";
 
+import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import styles from "../../styles/fragments/sub_header.module.css";
@@ -16,6 +18,19 @@ import styles from "../../styles/fragments/sub_header.module.css";
 export default function SubHeader() {
   const router = useRouter();
   const pathname = usePathname();
+
+  // 메인 헤더 숨기기 처리
+  // SubHeader가 마운트될 때 메인 헤더를 숨기고, 언마운트될 때 다시 표시
+  useEffect(() => {
+    const header = document.querySelector("header");
+    if (header) header.style.display = "none";
+
+    // cleanup 함수: 컴포넌트가 언마운트될 때 실행
+    // 메인 헤더를 다시 표시하여 다른 페이지에서 정상적으로 보이도록 함
+    return () => {
+      if (header) header.style.display = "block";
+    };
+  }, []); // 빈 의존성 배열: 컴포넌트 마운트/언마운트 시에만 실행
 
   // 뒤로가기 함수
   const handleGoBack = () => {

@@ -26,7 +26,7 @@
 
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 import StatisticsTab from "@/components/user/campaign_management/StatisticsTab";
-import type { MainTab } from "@/types/campaignManagement";
+import type { MainTab } from "@/types/user/user";
 
 // 임시 데이터 import
 import { campaignManagementStats } from "@/data/user/campaign_management/campaignManagementData";

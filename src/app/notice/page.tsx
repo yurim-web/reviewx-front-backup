@@ -81,15 +81,6 @@ export default function NoticePage() {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState("전체");
 
-  // 메인 헤더 숨기고 서브헤더만 표시
-  useEffect(() => {
-    const header = document.querySelector("header");
-    if (header) header.style.display = "none";
-    return () => {
-      if (header) header.style.display = "block";
-    };
-  }, []);
-
   const handleBackClick = () => {
     router.back();
   };

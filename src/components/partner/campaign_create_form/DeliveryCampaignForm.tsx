@@ -1,16 +1,16 @@
 /* ========================================
-   📍 방문형 캠페인 생성 폼 컴포넌트
+   📦 배송형 캠페인 생성 폼 컴포넌트
    ======================================== */
 
 /**
- * 방문형 캠페인 생성 폼 컴포넌트
+ * 배송형 캠페인 생성 폼 컴포넌트
  *
- * 목적: 방문형 캠페인 등록을 위한 전용 폼 컴포넌트
+ * 목적: 배송형 캠페인 등록을 위한 전용 폼 컴포넌트
  *
  * 주요 기능:
- * - 방문형 캠페인 기본 정보 입력
+ * - 배송형 캠페인 기본 정보 입력
  * - 썸네일/상세 이미지 업로드
- * - 방문형 캠페인 상세 정보 입력 (지역, 방문 주소 등)
+ * - 배송형 캠페인 상세 정보 입력
  * - 참여/제출 옵션 설정
  * - 안내 사항 및 유의 사항
  */
@@ -22,7 +22,7 @@ import { useRouter } from "next/navigation";
 import {
   CampaignFormData,
   CampaignCreateFormBaseProps,
-} from "@/types/campaign";
+} from "@/types/user/user";
 // 분리된 CSS 모듈들 import
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
@@ -32,56 +32,60 @@ import styles from "@/styles/partner/campaign_create/campaign_create.module.css"
 // 공통 컴포넌트들 import
 import {
   CampaignTypeSelector,
-  regions,
   CustomDropdown,
   platforms,
   categories,
 } from "./common/CampaignFormCommon";
 import NoticeSection from "./common/NoticeSection";
 
-interface VisitCampaignFormProps
-  extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
+interface DeliveryCampaignFormProps extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
   /** 캠페인 수정 시 초기 데이터 (선택사항) */
   initialData?: CampaignFormData | null;
   /** 폼 동작 모드: 생성/수정 */
   mode?: "create" | "edit";
 }
 
-export default function VisitCampaignForm({
+export default function DeliveryCampaignForm({
   onSubmit,
   isSubmitting,
   initialData,
   mode = "create",
-}: VisitCampaignFormProps) {
+}: DeliveryCampaignFormProps) {
   const router = useRouter();
   const isEditMode = mode === "edit";
-
-  // 수정 모드에서 편집 가능 필드 정의 (이미지, 제공 내역, 방문 링크, 추가 지급 포인트, 참여/제출 옵션)
+  
+  // 수정 모드에서 편집 가능 필드 정의
   const isEditableField = (field: string): boolean => {
+    // 이미지(썸네일/상세), 제공 내역, 홍보 링크, 추가 지급 포인트, 참여/제출 옵션만 편집 가능
     const editable = new Set([
-      "images",
+      "images", // 업로드/삭제 버튼 제어용 가상 키
       "providedItems",
-      "visitLink",
+      "promotionLink",
       "additionalPoints",
       // 참여/제출 옵션 필드들
       "adultOnly",
       "allowReParticipation",
       "allowLateSubmission",
+      "minTextLength",
+      "minImageCount",
+      "videoCount",
+      "videoDuration",
+      "requireLinkAttachment",
+      "requireKeywordAttachment",
     ]);
     return editable.has(field);
   };
+  
+  // 초기 데이터가 있으면 사용하고, 없으면 기본값 사용
   const [formData, setFormData] = useState<CampaignFormData>(
     initialData || {
-      campaignType: "방문형",
+      campaignType: "배송형",
       platform: "네이버 블로그",
       title: "",
       category: "",
-      region: "",
       brandName: "",
       providedItems: "",
-      visitLink: "",
-      visitAddress: "",
-      addressDetail: "",
+      promotionLink: "",
       currentPoints: "",
       additionalPoints: "",
       recruitmentCount: "",
@@ -318,11 +322,11 @@ export default function VisitCampaignForm({
    * 캠페인 유형 변경 시 페이지 이동
    */
   const handleCampaignTypeChange = (type: string) => {
-    if (type === "방문형") return; // 현재 타입과 같으면 이동하지 않음
+    if (type === "배송형") return; // 현재 타입과 같으면 이동하지 않음
 
     // 캠페인 유형에 따른 페이지 경로 매핑
     const typeRoutes: Record<string, string> = {
-      배송형: "/partner/campaign/create/delivery",
+      방문형: "/partner/campaign/create/visit",
       구매평: "/partner/campaign/create/review",
       기자단: "/partner/campaign/create/reporter",
       미션형: "/partner/campaign/create/mission",
@@ -341,7 +345,10 @@ export default function VisitCampaignForm({
    * - 논리 연산자(&&): 모든 조건이 true여야 true 반환
    */
   const isFormValid = useMemo(() => {
-    if (isEditMode) return true;
+    if (isEditMode) {
+      // 수정 모드에서는 제한된 필드만 변경되므로 전체 필수 검증을 완화
+      return true;
+    }
     // 이미지가 최소 1개 이상 업로드되었는지 확인
     const hasImages = uploadedImages.length > 0;
 
@@ -350,9 +357,7 @@ export default function VisitCampaignForm({
     const hasRequiredFields =
       formData.title.trim() !== "" &&
       formData.category !== "" &&
-      formData.region !== "" &&
       formData.providedItems.trim() !== "" &&
-      (formData.visitAddress?.trim() ?? "") !== "" &&
       formData.recruitmentCount !== "" &&
       formData.recruitmentPeriod.trim() !== "" &&
       formData.announcementDate.trim() !== "" &&
@@ -372,12 +377,7 @@ export default function VisitCampaignForm({
     console.log("이미지 업로드:", hasImages, "개수:", uploadedImages.length);
     console.log("제목:", formData.title.trim() !== "" ? "✓" : "✗");
     console.log("카테고리:", formData.category !== "" ? "✓" : "✗");
-    console.log("지역:", formData.region !== "" ? "✓" : "✗");
     console.log("제공내역:", formData.providedItems.trim() !== "" ? "✓" : "✗");
-    console.log(
-      "방문주소:",
-      (formData.visitAddress?.trim() ?? "") !== "" ? "✓" : "✗"
-    );
     console.log("모집인원:", formData.recruitmentCount !== "" ? "✓" : "✗");
     console.log(
       "모집기간:",
@@ -403,6 +403,7 @@ export default function VisitCampaignForm({
    *
    * 설명:
    * - 폼 데이터와 업로드된 이미지를 함께 onSubmit으로 전달합니다.
+   * - 이미지는 formData.thumbnailImage와 formData.detailImages로 전달됩니다.
    * - thumbnailImageUrl은 첫 번째 이미지의 미리보기 URL(Data URL)을 전달합니다.
    *   이는 캠페인 카드에서 썸네일을 표시하는 데 사용됩니다.
    *
@@ -435,7 +436,7 @@ export default function VisitCampaignForm({
 
         {/* 캠페인 유형 선택 */}
         <CampaignTypeSelector
-          currentType="방문형"
+          currentType="배송형"
           onTypeChange={handleCampaignTypeChange}
           disabled={isEditMode}
         />
@@ -537,20 +538,6 @@ export default function VisitCampaignForm({
           />
         </article>
 
-        {/* 지역 선택 */}
-        <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>
-            지역<span className={infoStyles.required}>*</span>
-          </label>
-          <CustomDropdown
-            value={formData.region || ""}
-            options={regions}
-            onChange={(value) => updateFormData("region", value)}
-            disabled={isEditMode && !isEditableField("region")}
-            placeholder="지역 선택"
-          />
-        </article>
-
         {/* 브랜드명 */}
         <article className={infoStyles.form_group}>
           <label className={infoStyles.form_label}>
@@ -580,49 +567,16 @@ export default function VisitCampaignForm({
           />
         </article>
 
-        {/* 방문 주소 */}
+        {/* 홍보 링크 */}
         <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>
-            방문 주소<span className={infoStyles.required}>*</span>
-          </label>
-          <div className={infoStyles.postal_input_group}>
-            <input
-              type="text"
-              className={infoStyles.form_input}
-              value={formData.visitAddress}
-              onChange={(e) => updateFormData("visitAddress", e.target.value)}
-              placeholder="캠페인 방문 주소"
-              readOnly={isEditMode && !isEditableField("visitAddress")}
-            />
-            <button type="button" className={infoStyles.charge_button}>
-              우편번호 찾기
-            </button>
-          </div>
-        </article>
-
-        {/* 주소 상세 안내 */}
-        <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>주소 상세 안내</label>
-          <input
-            type="text"
-            className={infoStyles.form_input}
-            value={formData.addressDetail}
-            onChange={(e) => updateFormData("addressDetail", e.target.value)}
-            placeholder="캠페인 방문 상세 주소 안내"
-            readOnly={isEditMode && !isEditableField("addressDetail")}
-          />
-        </article>
-
-        {/* 방문 링크 */}
-        <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>방문 링크</label>
+          <label className={infoStyles.form_label}>홍보 링크</label>
           <input
             type="url"
             className={infoStyles.form_input}
-            value={formData.visitLink}
-            onChange={(e) => updateFormData("visitLink", e.target.value)}
-            placeholder="캠페인 방문 링크"
-            readOnly={isEditMode && !isEditableField("visitLink")}
+            value={formData.promotionLink}
+            onChange={(e) => updateFormData("promotionLink", e.target.value)}
+            placeholder="캠페인 홍보 링크"
+            readOnly={isEditMode && !isEditableField("promotionLink")}
           />
         </article>
 
@@ -636,6 +590,7 @@ export default function VisitCampaignForm({
                 className={infoStyles.form_input}
                 value={formData.currentPoints}
                 readOnly
+                placeholder="{보유 포인트 잔액}"
               />
               <span className={infoStyles.points_unit}>P</span>
             </div>
@@ -759,7 +714,7 @@ export default function VisitCampaignForm({
         {/* 간편 안내 */}
         <article className={infoStyles.form_group}>
           <label className={infoStyles.form_label}>간편 안내</label>
-          <div className={isEditMode ? guideStyles.locked_section : undefined}>
+          <div className={isEditMode ? `${guideStyles.guide_section} ${guideStyles.locked_section}` : guideStyles.guide_section}>
           {/* 글자 수 */}
           <div className={guideStyles.option_input_box}>
             <input
@@ -772,6 +727,7 @@ export default function VisitCampaignForm({
                   updateFormData("minTextLength", "");
                 }
               }}
+              disabled={isEditMode && !isEditableField("minTextLength")}
             />
             <label htmlFor="minTextLength" className={guideStyles.option_label}>
               글자 수
@@ -784,6 +740,7 @@ export default function VisitCampaignForm({
                   value={formatNumberWithComma(formData.minTextLength)}
                   onChange={(e) => handleNumericChange(e, "minTextLength")}
                   onKeyDown={(e) => handleNumericInput(e, "minTextLength")}
+                  readOnly={isEditMode && !isEditableField("minTextLength")}
                 />
                 <span className={guideStyles.unit_text}>자 이상</span>
               </div>
@@ -802,6 +759,7 @@ export default function VisitCampaignForm({
                   updateFormData("minImageCount", "");
                 }
               }}
+              disabled={isEditMode && !isEditableField("minImageCount")}
             />
             <label htmlFor="minImageCount" className={guideStyles.option_label}>
               이미지 장수
@@ -814,6 +772,7 @@ export default function VisitCampaignForm({
                   value={formatNumberWithComma(formData.minImageCount)}
                   onChange={(e) => handleNumericChange(e, "minImageCount")}
                   onKeyDown={(e) => handleNumericInput(e, "minImageCount")}
+                  readOnly={isEditMode && !isEditableField("minImageCount")}
                 />
                 <span className={guideStyles.unit_text}>장 이상</span>
               </div>
@@ -833,6 +792,7 @@ export default function VisitCampaignForm({
                   updateFormData("videoDuration", "");
                 }
               }}
+              disabled={isEditMode && !isEditableField("videoCount")}
             />
             <label htmlFor="videoCount" className={guideStyles.option_label}>
               동영상 개수, 초수
@@ -846,6 +806,7 @@ export default function VisitCampaignForm({
                   value={formatNumberWithComma(formData.videoCount)}
                   onChange={(e) => handleNumericChange(e, "videoCount")}
                   onKeyDown={(e) => handleNumericInput(e, "videoCount")}
+                  readOnly={isEditMode && !isEditableField("videoCount")}
                 />
                 <span className={guideStyles.unit_text}>개 이상</span>
 
@@ -856,6 +817,7 @@ export default function VisitCampaignForm({
                   value={formatNumberWithComma(formData.videoDuration)}
                   onChange={(e) => handleNumericChange(e, "videoDuration")}
                   onKeyDown={(e) => handleNumericInput(e, "videoDuration")}
+                  readOnly={isEditMode && !isEditableField("videoDuration")}
                 />
                 <span className={guideStyles.unit_text}>초 이상</span>
               </div>
@@ -871,6 +833,7 @@ export default function VisitCampaignForm({
               onChange={(e) =>
                 updateFormData("requireLinkAttachment", e.target.checked)
               }
+              disabled={isEditMode && !isEditableField("requireLinkAttachment")}
             />
             <label
               htmlFor="requireLinkAttachment"
@@ -890,6 +853,7 @@ export default function VisitCampaignForm({
               onChange={(e) =>
                 updateFormData("requireKeywordAttachment", e.target.checked)
               }
+              disabled={isEditMode && !isEditableField("requireKeywordAttachment")}
             />
             <label
               htmlFor="requireKeywordAttachment"

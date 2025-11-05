@@ -33,7 +33,7 @@ import {
   faqCategories,
   getFAQsByCategory,
   type FAQItem,
-} from "@/data/user/faq/faqData";
+} from "@/data/faq/faqData";
 
 // 카테고리는 faqData.ts에서 import
 
@@ -41,15 +41,6 @@ export default function FAQPage() {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const [expandedItems, setExpandedItems] = useState<number[]>([]);
-
-  // 메인 헤더 숨기고 서브헤더만 표시
-  useEffect(() => {
-    const header = document.querySelector("header");
-    if (header) header.style.display = "none";
-    return () => {
-      if (header) header.style.display = "block";
-    };
-  }, []);
 
   const handleBackClick = () => {
     router.back();

@@ -23,12 +23,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import MissionCampaignForm from "@/components/partner/campaign/campaign_create_form/MissionCampaignForm";
-import { CampaignFormData } from "@/types/campaign";
+import MissionCampaignForm from "@/components/partner/campaign_create_form/MissionCampaignForm";
+import { CampaignFormData } from "@/types/user/user";
 import { addMissionCampaign } from "@/data/partner/mission";
 // 분리된 CSS 모듈들 import
 import layoutStyles from "../../../../../styles/partner/layout.module.css";
-import PageHeader from "@/components/partner/campaign/campaign_create_form/common/PageHeader";
+import PageHeader from "@/components/partner/campaign_create_form/common/PageHeader";
 
 export default function MissionCampaignCreatePage() {
   const router = useRouter();

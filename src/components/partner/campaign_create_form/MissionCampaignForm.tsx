@@ -1,16 +1,16 @@
 /* ========================================
-   📦 배송형 캠페인 생성 폼 컴포넌트
+   🎯 미션형 캠페인 생성 폼 컴포넌트
    ======================================== */
 
 /**
- * 배송형 캠페인 생성 폼 컴포넌트
+ * 미션형 캠페인 생성 폼 컴포넌트
  *
- * 목적: 배송형 캠페인 등록을 위한 전용 폼 컴포넌트
+ * 목적: 미션형 캠페인 등록을 위한 전용 폼 컴포넌트
  *
  * 주요 기능:
- * - 배송형 캠페인 기본 정보 입력
+ * - 미션형 캠페인 기본 정보 입력
  * - 썸네일/상세 이미지 업로드
- * - 배송형 캠페인 상세 정보 입력
+ * - 미션형 캠페인 상세 정보 입력
  * - 참여/제출 옵션 설정
  * - 안내 사항 및 유의 사항
  */
@@ -22,7 +22,7 @@ import { useRouter } from "next/navigation";
 import {
   CampaignFormData,
   CampaignCreateFormBaseProps,
-} from "@/types/campaign";
+} from "@/types/user/user";
 // 분리된 CSS 모듈들 import
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
@@ -38,27 +38,26 @@ import {
 } from "./common/CampaignFormCommon";
 import NoticeSection from "./common/NoticeSection";
 
-interface DeliveryCampaignFormProps extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
+interface MissionCampaignFormProps extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
   /** 캠페인 수정 시 초기 데이터 (선택사항) */
   initialData?: CampaignFormData | null;
   /** 폼 동작 모드: 생성/수정 */
   mode?: "create" | "edit";
 }
 
-export default function DeliveryCampaignForm({
+export default function MissionCampaignForm({
   onSubmit,
   isSubmitting,
   initialData,
   mode = "create",
-}: DeliveryCampaignFormProps) {
+}: MissionCampaignFormProps) {
   const router = useRouter();
   const isEditMode = mode === "edit";
-  
-  // 수정 모드에서 편집 가능 필드 정의
+
+  // 수정 모드에서 편집 가능 필드 정의 (이미지, 제공 내역, 홍보 링크, 추가 지급 포인트, 참여/제출 옵션)
   const isEditableField = (field: string): boolean => {
-    // 이미지(썸네일/상세), 제공 내역, 홍보 링크, 추가 지급 포인트, 참여/제출 옵션만 편집 가능
     const editable = new Set([
-      "images", // 업로드/삭제 버튼 제어용 가상 키
+      "images",
       "providedItems",
       "promotionLink",
       "additionalPoints",
@@ -66,27 +65,32 @@ export default function DeliveryCampaignForm({
       "adultOnly",
       "allowReParticipation",
       "allowLateSubmission",
-      "minTextLength",
-      "minImageCount",
-      "videoCount",
-      "videoDuration",
-      "requireLinkAttachment",
-      "requireKeywordAttachment",
+      "requireContentLink",
+      "requireContentImage",
     ]);
     return editable.has(field);
   };
-  
-  // 초기 데이터가 있으면 사용하고, 없으면 기본값 사용
+
+  // 이미지 업로드 관련 상태
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+
+  // 체크박스 상태 관리
+  const [checkboxStates, setCheckboxStates] = useState({
+    minTextLength: false,
+    minImageCount: false,
+    videoCount: false,
+  });
+
   const [formData, setFormData] = useState<CampaignFormData>(
     initialData || {
-      campaignType: "배송형",
-      platform: "네이버 블로그",
+      campaignType: "미션형",
       title: "",
       category: "",
       brandName: "",
       providedItems: "",
       promotionLink: "",
-      currentPoints: "",
+      currentPoints: "58,000",
       additionalPoints: "",
       recruitmentCount: "",
       recruitmentPeriod: "",
@@ -101,21 +105,11 @@ export default function DeliveryCampaignForm({
       videoCount: "",
       videoDuration: "",
       requireLinkAttachment: false,
-      requireKeywordAttachment: false,
-      guidelines: "",
-      isUrgent: false,
-    }
-  );
-
-  // 이미지 업로드 관련 state
-  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-
-  // 체크박스 상태 관리
-  const [checkboxStates, setCheckboxStates] = useState({
-    minTextLength: false,
-    minImageCount: false,
-    videoCount: false,
+    requireKeywordAttachment: false,
+    requireContentLink: false,
+    requireContentImage: false,
+    guidelines: "",
+    isUrgent: false,
   });
 
   /**
@@ -139,6 +133,19 @@ export default function DeliveryCampaignForm({
       ...prev,
       [field]: checked,
     }));
+
+    // 체크박스가 해제되면 해당 필드를 빈 문자열로 설정
+    if (!checked) {
+      const fieldMapping: Record<
+        keyof typeof checkboxStates,
+        keyof CampaignFormData
+      > = {
+        minTextLength: "minTextLength",
+        minImageCount: "minImageCount",
+        videoCount: "videoCount",
+      };
+      updateFormData(fieldMapping[field], "");
+    }
   };
 
   /**
@@ -260,76 +267,60 @@ export default function DeliveryCampaignForm({
   /**
    * 이미지 파일 선택 처리
    */
-  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (!files) return;
-
-    const newFiles = Array.from(files);
-    const validFiles = newFiles.filter((file) => {
-      // 이미지 파일 타입 검증
-      if (!file.type.startsWith("image/")) {
-        alert("이미지 파일만 업로드 가능합니다.");
-        return false;
-      }
-      // 파일 크기 검증 (5MB 제한)
-      if (file.size > 5 * 1024 * 1024) {
-        alert("파일 크기는 5MB 이하여야 합니다.");
-        return false;
-      }
-      return true;
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const validFiles = files.filter((file) => {
+      const isValidType = file.type.startsWith("image/");
+      const isValidSize = file.size <= 5 * 1024 * 1024; // 5MB 제한
+      return isValidType && isValidSize;
     });
 
-    if (validFiles.length === 0) return;
-
-    // 기존 이미지와 새 이미지 합치기 (최대 7개 제한)
-    const totalImages = uploadedImages.length + validFiles.length;
-    if (totalImages > 7) {
-      alert("최대 7개의 이미지만 업로드 가능합니다.");
+    if (uploadedImages.length + validFiles.length > 7) {
+      alert("최대 7개의 이미지만 업로드할 수 있습니다.");
       return;
     }
 
-    setUploadedImages((prev) => [...prev, ...validFiles]);
+    const newImages = [...uploadedImages, ...validFiles];
+    setUploadedImages(newImages);
 
-    // 이미지 미리보기 생성
-    validFiles.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (e.target?.result) {
-          setImagePreviews((prev) => [...prev, e.target!.result as string]);
-        }
-      };
-      reader.readAsDataURL(file);
-    });
+    // 미리보기 URL 생성
+    const newPreviews = validFiles.map((file) => URL.createObjectURL(file));
+    setImagePreviews([...imagePreviews, ...newPreviews]);
   };
 
   /**
    * 이미지 제거 처리
    */
   const handleImageRemove = (index: number) => {
-    setUploadedImages((prev) => prev.filter((_, i) => i !== index));
-    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+    const newImages = uploadedImages.filter((_, i) => i !== index);
+    const newPreviews = imagePreviews.filter((_, i) => i !== index);
+
+    setUploadedImages(newImages);
+    setImagePreviews(newPreviews);
   };
 
   /**
-   * 이미지 업로드 버튼 클릭 처리
+   * 업로드 버튼 클릭 처리
    */
   const handleUploadClick = () => {
-    const input = document.getElementById("image-upload") as HTMLInputElement;
-    input?.click();
+    const fileInput = document.getElementById(
+      "image-upload"
+    ) as HTMLInputElement;
+    fileInput?.click();
   };
 
   /**
    * 캠페인 유형 변경 시 페이지 이동
    */
   const handleCampaignTypeChange = (type: string) => {
-    if (type === "배송형") return; // 현재 타입과 같으면 이동하지 않음
+    if (type === "미션형") return; // 현재 타입과 같으면 이동하지 않음
 
     // 캠페인 유형에 따른 페이지 경로 매핑
     const typeRoutes: Record<string, string> = {
+      배송형: "/partner/campaign/create/delivery",
       방문형: "/partner/campaign/create/visit",
       구매평: "/partner/campaign/create/review",
       기자단: "/partner/campaign/create/reporter",
-      미션형: "/partner/campaign/create/mission",
     };
 
     router.push(typeRoutes[type]);
@@ -345,15 +336,11 @@ export default function DeliveryCampaignForm({
    * - 논리 연산자(&&): 모든 조건이 true여야 true 반환
    */
   const isFormValid = useMemo(() => {
-    if (isEditMode) {
-      // 수정 모드에서는 제한된 필드만 변경되므로 전체 필수 검증을 완화
-      return true;
-    }
+    if (isEditMode) return true;
     // 이미지가 최소 1개 이상 업로드되었는지 확인
     const hasImages = uploadedImages.length > 0;
 
     // 필수 텍스트 필드들이 모두 입력되었는지 확인
-    // platform은 CustomDropdown에서 기본값이 설정되어 있으므로 별도 체크 불필요
     const hasRequiredFields =
       formData.title.trim() !== "" &&
       formData.category !== "" &&
@@ -403,7 +390,6 @@ export default function DeliveryCampaignForm({
    *
    * 설명:
    * - 폼 데이터와 업로드된 이미지를 함께 onSubmit으로 전달합니다.
-   * - 이미지는 formData.thumbnailImage와 formData.detailImages로 전달됩니다.
    * - thumbnailImageUrl은 첫 번째 이미지의 미리보기 URL(Data URL)을 전달합니다.
    *   이는 캠페인 카드에서 썸네일을 표시하는 데 사용됩니다.
    *
@@ -436,24 +422,10 @@ export default function DeliveryCampaignForm({
 
         {/* 캠페인 유형 선택 */}
         <CampaignTypeSelector
-          currentType="배송형"
+          currentType="미션형"
           onTypeChange={handleCampaignTypeChange}
           disabled={isEditMode}
         />
-
-        {/* 플랫폼 선택 */}
-        <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>
-            등록 플랫폼<span className={infoStyles.required}>*</span>
-          </label>
-          <CustomDropdown
-            value={formData.platform || ""}
-            options={platforms}
-            onChange={(value) => updateFormData("platform", value)}
-            disabled={isEditMode && !isEditableField("platform")}
-            placeholder="플랫폼 선택"
-          />
-        </article>
 
         {/* 이미지 업로드 */}
         <article className={infoStyles.form_group}>
@@ -466,33 +438,27 @@ export default function DeliveryCampaignForm({
               <div key={index} className={infoStyles.image_preview_container}>
                 <img
                   src={preview}
-                  alt={`업로드된 이미지 ${index + 1}`}
+                  alt={`미리보기 ${index + 1}`}
                   className={infoStyles.image_preview}
                 />
                 <button
                   type="button"
                   className={infoStyles.image_remove_button}
                   onClick={() => handleImageRemove(index)}
-                  aria-label="이미지 제거"
                 >
                   ×
                 </button>
               </div>
             ))}
 
-            {/* 이미지 업로드 버튼 (최대 7개까지) */}
-            {uploadedImages.length < 7 && (
+            {/* 업로드 버튼 (최대 7개까지) */}
+            {imagePreviews.length < 7 && (
               <div
                 className={infoStyles.image_upload_placeholder}
                 onClick={isEditMode && !isEditableField("images") ? undefined : handleUploadClick}
                 style={isEditMode && !isEditableField("images") ? { pointerEvents: "none", opacity: 0.5 } : undefined}
               >
-                <img
-                  src="/images/icons/plus_icon.svg"
-                  alt="이미지 추가"
-                  width="56"
-                  height="56"
-                />
+                <img src="/images/icons/plus_icon.svg" alt="이미지 추가" />
               </div>
             )}
           </div>
@@ -519,7 +485,7 @@ export default function DeliveryCampaignForm({
             className={infoStyles.form_input}
             value={formData.title}
             onChange={(e) => updateFormData("title", e.target.value)}
-            placeholder="지역, 브랜드, 제공하는 서비스/제품 등"
+            placeholder="캠페인 제목"
             readOnly={isEditMode && !isEditableField("title")}
           />
         </article>
@@ -548,7 +514,6 @@ export default function DeliveryCampaignForm({
             className={infoStyles.form_input}
             value={formData.brandName}
             readOnly
-            placeholder="{상호명}"
           />
         </article>
 
@@ -562,7 +527,7 @@ export default function DeliveryCampaignForm({
             className={infoStyles.form_input}
             value={formData.providedItems}
             onChange={(e) => updateFormData("providedItems", e.target.value)}
-            placeholder="제공하는 서비스/제품/포인트 등 한줄 설명"
+            placeholder="제공 내역을 입력하세요"
             readOnly={isEditMode && !isEditableField("providedItems")}
           />
         </article>
@@ -575,7 +540,7 @@ export default function DeliveryCampaignForm({
             className={infoStyles.form_input}
             value={formData.promotionLink}
             onChange={(e) => updateFormData("promotionLink", e.target.value)}
-            placeholder="캠페인 홍보 링크"
+            placeholder="링크를 입력하세요"
             readOnly={isEditMode && !isEditableField("promotionLink")}
           />
         </article>
@@ -590,7 +555,6 @@ export default function DeliveryCampaignForm({
                 className={infoStyles.form_input}
                 value={formData.currentPoints}
                 readOnly
-                placeholder="{보유 포인트 잔액}"
               />
               <span className={infoStyles.points_unit}>P</span>
             </div>
@@ -706,7 +670,7 @@ export default function DeliveryCampaignForm({
             className={infoStyles.form_input}
             value={formData.keywords}
             onChange={(e) => updateFormData("keywords", e.target.value)}
-            placeholder="본문 내 첨부 키워드/해시태그/계정 태그 등"
+            placeholder="최대 10개 입력 가능"
             readOnly={isEditMode && !isEditableField("keywords")}
           />
         </article>
@@ -714,7 +678,7 @@ export default function DeliveryCampaignForm({
         {/* 간편 안내 */}
         <article className={infoStyles.form_group}>
           <label className={infoStyles.form_label}>간편 안내</label>
-          <div className={isEditMode ? guideStyles.locked_section : undefined}>
+          <div className={isEditMode ? `${guideStyles.guide_section} ${guideStyles.locked_section}` : guideStyles.guide_section}>
           {/* 글자 수 */}
           <div className={guideStyles.option_input_box}>
             <input
@@ -727,7 +691,6 @@ export default function DeliveryCampaignForm({
                   updateFormData("minTextLength", "");
                 }
               }}
-              disabled={isEditMode && !isEditableField("minTextLength")}
             />
             <label htmlFor="minTextLength" className={guideStyles.option_label}>
               글자 수
@@ -740,7 +703,6 @@ export default function DeliveryCampaignForm({
                   value={formatNumberWithComma(formData.minTextLength)}
                   onChange={(e) => handleNumericChange(e, "minTextLength")}
                   onKeyDown={(e) => handleNumericInput(e, "minTextLength")}
-                  readOnly={isEditMode && !isEditableField("minTextLength")}
                 />
                 <span className={guideStyles.unit_text}>자 이상</span>
               </div>
@@ -759,7 +721,6 @@ export default function DeliveryCampaignForm({
                   updateFormData("minImageCount", "");
                 }
               }}
-              disabled={isEditMode && !isEditableField("minImageCount")}
             />
             <label htmlFor="minImageCount" className={guideStyles.option_label}>
               이미지 장수
@@ -772,7 +733,6 @@ export default function DeliveryCampaignForm({
                   value={formatNumberWithComma(formData.minImageCount)}
                   onChange={(e) => handleNumericChange(e, "minImageCount")}
                   onKeyDown={(e) => handleNumericInput(e, "minImageCount")}
-                  readOnly={isEditMode && !isEditableField("minImageCount")}
                 />
                 <span className={guideStyles.unit_text}>장 이상</span>
               </div>
@@ -792,7 +752,6 @@ export default function DeliveryCampaignForm({
                   updateFormData("videoDuration", "");
                 }
               }}
-              disabled={isEditMode && !isEditableField("videoCount")}
             />
             <label htmlFor="videoCount" className={guideStyles.option_label}>
               동영상 개수, 초수
@@ -806,7 +765,6 @@ export default function DeliveryCampaignForm({
                   value={formatNumberWithComma(formData.videoCount)}
                   onChange={(e) => handleNumericChange(e, "videoCount")}
                   onKeyDown={(e) => handleNumericInput(e, "videoCount")}
-                  readOnly={isEditMode && !isEditableField("videoCount")}
                 />
                 <span className={guideStyles.unit_text}>개 이상</span>
 
@@ -817,7 +775,6 @@ export default function DeliveryCampaignForm({
                   value={formatNumberWithComma(formData.videoDuration)}
                   onChange={(e) => handleNumericChange(e, "videoDuration")}
                   onKeyDown={(e) => handleNumericInput(e, "videoDuration")}
-                  readOnly={isEditMode && !isEditableField("videoDuration")}
                 />
                 <span className={guideStyles.unit_text}>초 이상</span>
               </div>
@@ -833,7 +790,6 @@ export default function DeliveryCampaignForm({
               onChange={(e) =>
                 updateFormData("requireLinkAttachment", e.target.checked)
               }
-              disabled={isEditMode && !isEditableField("requireLinkAttachment")}
             />
             <label
               htmlFor="requireLinkAttachment"
@@ -853,7 +809,6 @@ export default function DeliveryCampaignForm({
               onChange={(e) =>
                 updateFormData("requireKeywordAttachment", e.target.checked)
               }
-              disabled={isEditMode && !isEditableField("requireKeywordAttachment")}
             />
             <label
               htmlFor="requireKeywordAttachment"
@@ -871,6 +826,46 @@ export default function DeliveryCampaignForm({
           <label className={infoStyles.form_label}>
             참여/제출 옵션<span className={infoStyles.required}>*</span>
           </label>
+
+          {/* 콘텐츠 링크 제출 */}
+          <div className={guideStyles.option_input_box}>
+            <input
+              type="checkbox"
+              id="requireContentLink"
+              checked={formData.requireContentLink}
+              onChange={(e) =>
+                updateFormData("requireContentLink", e.target.checked)
+              }
+              disabled={isEditMode && !isEditableField("requireContentLink")}
+            />
+            <label
+              htmlFor="requireContentLink"
+              className={guideStyles.option_label}
+            >
+              콘텐츠 링크 제출
+            </label>
+            <div className={guideStyles.option_input_value}></div>
+          </div>
+
+          {/* 콘텐츠 이미지 제출 */}
+          <div className={guideStyles.option_input_box}>
+            <input
+              type="checkbox"
+              id="requireContentImage"
+              checked={formData.requireContentImage}
+              onChange={(e) =>
+                updateFormData("requireContentImage", e.target.checked)
+              }
+              disabled={isEditMode && !isEditableField("requireContentImage")}
+            />
+            <label
+              htmlFor="requireContentImage"
+              className={guideStyles.option_label}
+            >
+              콘텐츠 이미지 제출
+            </label>
+            <div className={guideStyles.option_input_value}></div>
+          </div>
 
           {/* 만 19세 이상 참여 허용 */}
           <div className={guideStyles.option_input_box}>

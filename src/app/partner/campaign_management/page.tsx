@@ -28,8 +28,8 @@
 import { useState } from "react";
 import PartnerCampaignManagementHeader from "@/components/partner/campaign_management/PartnerCampaignManagementHeader";
 import CampaignList from "@/components/partner/campaign_management/CampaignList";
-import type { MainTab } from "@/types/campaignManagement";
-import type { PartnerStatTab } from "@/types/partner";
+import type { PartnerMainTab } from "@/types/partner/partner";
+import type { PartnerStatTab } from "@/types/partner/partner";
 import layoutStyles from "../../../styles/partner/layout.module.css";
 
 // 공용 데이터 import
@@ -43,7 +43,7 @@ import {
  */
 export default function PartnerCampaignManagementPage() {
   // 상단 메인 탭 상태 (캠페인 / 포인트)
-  const [activeTab, setActiveTab] = useState<MainTab>("campaign");
+  const [activeTab, setActiveTab] = useState<PartnerMainTab>("campaign");
 
   // 통계 탭 상태 (전체 / 예정 / 신청 / 진행 / 종료 / 취소)
   const [activeStatTab, setActiveStatTab] = useState<PartnerStatTab>("전체");

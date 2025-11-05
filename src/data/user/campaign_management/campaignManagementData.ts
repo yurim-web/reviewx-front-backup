@@ -16,7 +16,7 @@
  * - 실제 날짜 기반 remainingDays 계산
  */
 
-import type { CampaignApplication } from "@/types/campaignManagement";
+import type { CampaignApplication } from "@/types/user/user";
 
 // 임시 유저 캠페인 관리 데이터 (신청 > 선정 > 완료 > 취소/반려 순서)
 export const campaignManagementData: CampaignApplication[] = [

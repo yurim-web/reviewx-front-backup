@@ -132,9 +132,6 @@ export default function WithdrawalRequestPage() {
           {/* 제목 */}
           <h1 className={styles.page_title}>포인트 출금 신청</h1>
 
-          {/* 구분선 */}
-          <div className={styles.title_divider} />
-
           {/* 보유 포인트 */}
           <div className={styles.available_points_section}>
             <span className={styles.points_label}>보유 포인트</span>

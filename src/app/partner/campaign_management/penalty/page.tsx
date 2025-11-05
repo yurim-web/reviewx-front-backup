@@ -23,8 +23,8 @@
 import { useState } from "react";
 import PartnerCampaignManagementHeader from "@/components/partner/campaign_management/PartnerCampaignManagementHeader";
 import PenaltyContent from "@/components/partner/campaign_management/PenaltyContent";
-import type { MainTab } from "@/types/campaignManagement";
-import type { PartnerStatTab } from "@/types/partner";
+import type { PartnerMainTab } from "@/types/partner/partner";
+import type { PartnerStatTab } from "@/types/partner/partner";
 import layoutStyles from "../../../../styles/partner/layout.module.css";
 import cardStyles from "../../../../styles/partner/campaign_card.module.css";
 
@@ -33,7 +33,7 @@ import cardStyles from "../../../../styles/partner/campaign_card.module.css";
  */
 export default function PenaltyPage() {
   // 상단 메인 탭 상태 (캠페인 / 포인트)
-  const [activeTab, setActiveTab] = useState<MainTab>("campaign");
+  const [activeTab, setActiveTab] = useState<PartnerMainTab>("campaign");
 
   // 통계 탭 상태 - 패널티 탭이 활성화된 상태로 설정
   const [activeStatTab, setActiveStatTab] = useState<PartnerStatTab>("패널티");

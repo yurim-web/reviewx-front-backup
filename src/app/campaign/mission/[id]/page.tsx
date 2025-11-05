@@ -77,16 +77,7 @@ export default function MissionDetailPage({ params }: MissionDetailPageProps) {
   // 3. Side Effects (부수 효과)
   // ========================================
 
-  // 메인 헤더 숨기기 (SubHeader만 표시)
-  useEffect(() => {
-    const header = document.querySelector("header");
-    if (header) header.style.display = "none";
-
-    // 컴포넌트가 언마운트될 때 헤더 다시 표시
-    return () => {
-      if (header) header.style.display = "block";
-    };
-  }, []);
+  // 메인 헤더 숨기기는 SubHeader 컴포넌트에서 자동으로 처리됨
 
   // 초기 로드 시 캠페인 정보 라벨의 위치를 한 번만 저장
   useEffect(() => {

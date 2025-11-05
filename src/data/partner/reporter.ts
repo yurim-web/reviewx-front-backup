@@ -4,7 +4,7 @@
    ======================================== */
 import type { CampaignWithApplicants } from "./campaign_application/delivery_applicants";
 import type { ContentByTab } from "./sharedCampaigns";
-import { CampaignFormData } from "@/types/campaign";
+import { CampaignFormData } from "@/types/user/user";
 import { calculateCampaignStatus, calculateDaysLeft } from "./delivery";
 
 export const reporterCampaigns: CampaignWithApplicants[] = [

@@ -18,12 +18,12 @@
  */
 
 import { useRouter } from "next/navigation";
-import type { MainTab } from "@/types/campaignManagement";
+import type { PartnerMainTab } from "@/types/partner/partner";
 import styles from "../../../styles/partner/tab_navigation.module.css";
 
 interface TabNavigationProps {
-  activeTab: MainTab;
-  setActiveTab: (tab: MainTab) => void;
+  activeTab: PartnerMainTab;
+  setActiveTab: (tab: PartnerMainTab) => void;
 }
 
 /**
@@ -47,7 +47,7 @@ export default function TabNavigation({
   };
 
   const handleAccountClick = () => {
-    setActiveTab("mypage");
+    setActiveTab("account");
     router.push("/partner/mypage");
   };
 

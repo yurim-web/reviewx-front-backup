@@ -1,16 +1,16 @@
 /* ========================================
-   🛒 구매평 캠페인 생성 폼 컴포넌트
+   📰 기자단 캠페인 생성 폼 컴포넌트
    ======================================== */
 
 /**
- * 구매평 캠페인 생성 폼 컴포넌트
+ * 기자단 캠페인 생성 폼 컴포넌트
  *
- * 목적: 구매평 캠페인 등록을 위한 전용 폼 컴포넌트
+ * 목적: 기자단 캠페인 등록을 위한 전용 폼 컴포넌트
  *
  * 주요 기능:
- * - 구매평 캠페인 기본 정보 입력
+ * - 기자단 캠페인 기본 정보 입력
  * - 썸네일/상세 이미지 업로드
- * - 구매평 캠페인 상세 정보 입력
+ * - 기자단 캠페인 상세 정보 입력
  * - 참여/제출 옵션 설정
  * - 안내 사항 및 유의 사항
  */
@@ -22,7 +22,7 @@ import { useRouter } from "next/navigation";
 import {
   CampaignFormData,
   CampaignCreateFormBaseProps,
-} from "@/types/campaign";
+} from "@/types/user/user";
 // 분리된 CSS 모듈들 import
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
@@ -38,23 +38,23 @@ import {
 } from "./common/CampaignFormCommon";
 import NoticeSection from "./common/NoticeSection";
 
-interface ReviewCampaignFormProps extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
+interface ReporterCampaignFormProps extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
   /** 캠페인 수정 시 초기 데이터 (선택사항) */
   initialData?: CampaignFormData | null;
   /** 폼 동작 모드: 생성/수정 */
   mode?: "create" | "edit";
 }
 
-export default function ReviewCampaignForm({
+export default function ReporterCampaignForm({
   onSubmit,
   isSubmitting,
   initialData,
   mode = "create",
-}: ReviewCampaignFormProps) {
+}: ReporterCampaignFormProps) {
   const router = useRouter();
   const isEditMode = mode === "edit";
 
-  // 수정 모드에서 편집 가능 필드 정의 (이미지, 제공 내역, 구매 링크, 추가 지급 포인트, 참여/제출 옵션)
+  // 수정 모드에서 편집 가능 필드 정의 (이미지, 제공 내역, 홍보 링크, 추가 지급 포인트, 참여/제출 옵션)
   const isEditableField = (field: string): boolean => {
     const editable = new Set([
       "images",
@@ -82,19 +82,17 @@ export default function ReviewCampaignForm({
 
   const [formData, setFormData] = useState<CampaignFormData>(
     initialData || {
-      campaignType: "구매평",
-      platform: "네이버 블로그",
+      campaignType: "기자단",
+      platform: "",
       title: "",
       category: "",
       brandName: "",
       providedItems: "",
       promotionLink: "",
-      currentPoints: "58,000",
-      purchasePoints: "",
+      currentPoints: "58,000", // 보유 포인트 ( 이 계정에 남아있는 포인트 값을 불러온다)
       additionalPoints: "",
       recruitmentCount: "",
       recruitmentPeriod: "",
-      purchasePeriod: "",
       announcementDate: "",
       registrationPeriod: "",
       keywords: "",
@@ -103,8 +101,8 @@ export default function ReviewCampaignForm({
       allowLateSubmission: false,
       minTextLength: "",
       minImageCount: "",
-    videoCount: "",
-    videoDuration: "",
+      videoCount: "",
+      videoDuration: "",
     requireLinkAttachment: false,
     requireKeywordAttachment: false,
     guidelines: "",
@@ -312,13 +310,13 @@ export default function ReviewCampaignForm({
    * 캠페인 유형 변경 시 페이지 이동
    */
   const handleCampaignTypeChange = (type: string) => {
-    if (type === "구매평") return; // 현재 타입과 같으면 이동하지 않음
+    if (type === "기자단") return; // 현재 타입과 같으면 이동하지 않음
 
     // 캠페인 유형에 따른 페이지 경로 매핑
     const typeRoutes: Record<string, string> = {
       배송형: "/partner/campaign/create/delivery",
       방문형: "/partner/campaign/create/visit",
-      기자단: "/partner/campaign/create/reporter",
+      구매평: "/partner/campaign/create/review",
       미션형: "/partner/campaign/create/mission",
     };
 
@@ -344,12 +342,8 @@ export default function ReviewCampaignForm({
       formData.title.trim() !== "" &&
       formData.category !== "" &&
       formData.providedItems.trim() !== "" &&
-      (formData.promotionLink?.trim() ?? "") !== "" &&
-      formData.purchasePoints !== "" &&
-      formData.purchasePoints !== undefined &&
       formData.recruitmentCount !== "" &&
       formData.recruitmentPeriod.trim() !== "" &&
-      (formData.purchasePeriod?.trim() ?? "") !== "" &&
       formData.announcementDate.trim() !== "" &&
       formData.registrationPeriod.trim() !== "" &&
       formData.keywords.trim() !== "" &&
@@ -368,24 +362,10 @@ export default function ReviewCampaignForm({
     console.log("제목:", formData.title.trim() !== "" ? "✓" : "✗");
     console.log("카테고리:", formData.category !== "" ? "✓" : "✗");
     console.log("제공내역:", formData.providedItems.trim() !== "" ? "✓" : "✗");
-    console.log(
-      "구매링크:",
-      (formData.promotionLink?.trim() ?? "") !== "" ? "✓" : "✗"
-    );
-    console.log(
-      "구매지급포인트:",
-      formData.purchasePoints !== "" && formData.purchasePoints !== undefined
-        ? "✓"
-        : "✗"
-    );
     console.log("모집인원:", formData.recruitmentCount !== "" ? "✓" : "✗");
     console.log(
       "모집기간:",
       formData.recruitmentPeriod.trim() !== "" ? "✓" : "✗"
-    );
-    console.log(
-      "구매기간:",
-      (formData.purchasePeriod?.trim() ?? "") !== "" ? "✓" : "✗"
     );
     console.log(
       "선정날짜:",
@@ -439,10 +419,24 @@ export default function ReviewCampaignForm({
 
         {/* 캠페인 유형 선택 */}
         <CampaignTypeSelector
-          currentType="구매평"
+          currentType="기자단"
           onTypeChange={handleCampaignTypeChange}
           disabled={isEditMode}
         />
+
+        {/* 플랫폼 선택 */}
+        <article className={infoStyles.form_group}>
+          <label className={infoStyles.form_label}>
+            등록 플랫폼<span className={infoStyles.required}>*</span>
+          </label>
+          <CustomDropdown
+            value={formData.platform || ""}
+            options={platforms}
+            onChange={(value) => updateFormData("platform", value)}
+            disabled={isEditMode && !isEditableField("platform")}
+            placeholder="플랫폼 선택"
+          />
+        </article>
 
         {/* 이미지 업로드 */}
         <article className={infoStyles.form_group}>
@@ -550,17 +544,15 @@ export default function ReviewCampaignForm({
           />
         </article>
 
-        {/* 구매 링크 */}
+        {/* 홍보 링크 */}
         <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>
-            구매 링크<span className={infoStyles.required}>*</span>
-          </label>
+          <label className={infoStyles.form_label}>홍보 링크</label>
           <input
             type="url"
             className={infoStyles.form_input}
             value={formData.promotionLink}
             onChange={(e) => updateFormData("promotionLink", e.target.value)}
-            placeholder="제품 구매 링크"
+            placeholder="링크를 입력하세요"
             readOnly={isEditMode && !isEditableField("promotionLink")}
           />
         </article>
@@ -581,27 +573,6 @@ export default function ReviewCampaignForm({
             <button type="button" className={infoStyles.charge_button}>
               포인트 충전하기
             </button>
-          </div>
-        </article>
-
-        {/* 구매 지급 포인트 */}
-        <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>
-            구매 지급 포인트<span className={infoStyles.required}>*</span>
-          </label>
-          <div className={infoStyles.points_input_group}>
-            <div style={{ position: "relative", flex: 1 }}>
-              <input
-                type="text"
-                className={infoStyles.form_input}
-                value={formatNumberWithComma(formData.purchasePoints)}
-                onChange={(e) => handleNumericChange(e, "purchasePoints")}
-                onKeyDown={(e) => handleNumericInput(e, "purchasePoints")}
-                placeholder="배송비 포함 구매 금액에 대한 지급 포인트"
-                readOnly={isEditMode && !isEditableField("purchasePoints")}
-              />
-              <span className={infoStyles.points_unit}>P</span>
-            </div>
           </div>
         </article>
 
@@ -679,21 +650,6 @@ export default function ReviewCampaignForm({
           />
         </article>
 
-        {/* 구매기간 */}
-        <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>
-            구매기간<span className={infoStyles.required}>*</span>
-          </label>
-          <input
-            type="text"
-            className={infoStyles.form_input}
-            value={formData.purchasePeriod}
-            onChange={(e) => updateFormData("purchasePeriod", e.target.value)}
-            placeholder=""
-            readOnly={isEditMode && !isEditableField("purchasePeriod")}
-          />
-        </article>
-
         {/* 등록 기간 */}
         <article className={infoStyles.form_group}>
           <label className={infoStyles.form_label}>
@@ -734,7 +690,7 @@ export default function ReviewCampaignForm({
         {/* 간편 안내 */}
         <article className={infoStyles.form_group}>
           <label className={infoStyles.form_label}>간편 안내</label>
-          <div className={isEditMode ? guideStyles.locked_section : undefined}>
+          <div className={isEditMode ? `${guideStyles.guide_section} ${guideStyles.locked_section}` : guideStyles.guide_section}>
           {/* 글자 수 */}
           <div className={guideStyles.option_input_box}>
             <input

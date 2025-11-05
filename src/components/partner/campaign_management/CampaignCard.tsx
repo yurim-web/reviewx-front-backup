@@ -19,8 +19,8 @@
  */
 
 import { useMemo, useState } from "react";
-import type { PartnerStatTab } from "@/types/partner";
-import type { PartnerCampaign } from "@/types/partner";
+import type { PartnerStatTab } from "@/types/partner/partner";
+import type { PartnerCampaign } from "@/types/partner/partner";
 import cardStyles from "../../../styles/partner/campaign_card.module.css";
 import buttonStyles from "../../../styles/partner/buttons.module.css";
 import ReceiptRegistrationModal from "../campaign_contents/ReceiptRegistrationModal";

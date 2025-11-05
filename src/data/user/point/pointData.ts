@@ -1,4 +1,4 @@
-import { PointHistory, PointSummary } from "@/types/point";
+import { PointHistory, PointSummary } from "@/types/user/user";
 
 /**
  * 포인트 요약 정보 (샘플 데이터)

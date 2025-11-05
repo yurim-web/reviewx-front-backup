@@ -138,7 +138,6 @@
   border-radius: 8px;
   background: #fff;
   cursor: pointer;
-  /* transition: border-color 0.2s ease; */
   height: 56px;
 }
 
@@ -212,7 +211,7 @@
   font-size: 16px;
   font-style: normal;
   font-weight: 500;
-  line-height: 16px; /* 100% */
+  line-height: 16px;
   letter-spacing: -0.32px;
 
   width: 40px;
@@ -302,6 +301,13 @@
 .submit_button:disabled {
   background: #999999;
   cursor: not-allowed;
+}
+
+/* 간편 안내 섹션 기본 레이아웃 */
+.guide_section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 /* 수정 모드에서 간편 안내 전체 잠금용 */

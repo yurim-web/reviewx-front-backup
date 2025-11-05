@@ -18,7 +18,7 @@
  * - 조건부 렌더링으로 다른 UI 표시
  */
 
-import type { CampaignApplication, StatTab } from "@/types/campaignManagement";
+import type { CampaignApplication, StatTab } from "@/types/user/user";
 import CampaignCard from "./CampaignCard";
 import cardStyles from "../../../styles/user/campaign_management/campaign_card.module.css";
 

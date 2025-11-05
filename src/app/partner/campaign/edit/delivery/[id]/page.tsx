@@ -23,14 +23,14 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import DeliveryCampaignForm from "@/components/partner/campaign/campaign_create_form/DeliveryCampaignForm";
-import { CampaignFormData } from "@/types/campaign";
+import DeliveryCampaignForm from "@/components/partner/campaign_create_form/DeliveryCampaignForm";
+import { CampaignFormData } from "@/types/user/user";
 import { updateDeliveryCampaign } from "@/data/partner/delivery";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 // 분리된 CSS 모듈들 import
 import layoutStyles from "../../../../../../styles/partner/layout.module.css";
-import PageHeader from "@/components/partner/campaign/campaign_create_form/common/PageHeader";
+import PageHeader from "@/components/partner/campaign_create_form/common/PageHeader";
 
 /**
  * 캠페인 데이터를 폼 데이터로 변환
