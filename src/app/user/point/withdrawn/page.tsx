@@ -24,8 +24,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 import PointTabNavigation from "@/components/user/point/PointTabNavigation";
-import { MainTab } from "@/types/campaignManagement";
-import { PointTab } from "@/types/point";
+import { MainTab, PointTab } from "@/types/user/user";
 import { pointHistoryData } from "@/data/user/point/pointData";
 import styles from "../../../../styles/user/point/point.module.css";
 

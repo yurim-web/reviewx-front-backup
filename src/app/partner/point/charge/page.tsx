@@ -37,7 +37,7 @@ export default function PartnerPointChargePage() {
 
   // 파트너 정보 (실제로는 API에서 가져와야 함)
   const partnerInfo = {
-    availablePoints: 511200,
+    availablePoints: "",
     companyName: "주식회사 청명종합광고기획",
     ownerName: "김민회",
     businessNumber: "123-45-67890",
@@ -50,10 +50,14 @@ export default function PartnerPointChargePage() {
   const MAX_AMOUNT = 5000000;
 
   // 충전 예정 포인트 계산 (1:1 비율)
-  const chargePoints = chargeAmount
-    ? Number(chargeAmount.replace(/,/g, ""))
-    : 0;
+  // selectedAmount가 있으면 그 값을 사용, 없으면 chargeAmount에서 계산
+  const chargePoints = selectedAmount !== null 
+    ? selectedAmount 
+    : chargeAmount 
+      ? Number(chargeAmount.replace(/,/g, ""))
+      : 0;
 
+  // 신청 후 포인트 계산: 현재 보유 포인트 + 충전 예정 포인트
   const postPoints = partnerInfo.availablePoints + chargePoints;
 
   // 유효성 검사 및 버튼 활성화 조건
@@ -87,6 +91,25 @@ export default function PartnerPointChargePage() {
 
     // TODO: 실제 결제/입금 확인 요청 API 호출
     const actionLabel = activeTab === "bank" ? "입금 확인 요청" : "결제";
+    
+    // 현재 날짜를 YYYY-MM-DD 형식으로 생성
+    const today = new Date();
+    const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    
+    // 새로운 충전 내역 생성
+    const newHistory = {
+      id: `charge_${Date.now()}`, // 고유 ID 생성 (타임스탬프 사용)
+      type: "earned" as const, // 충전 타입
+      amount: chargePoints, // 충전 금액
+      description: "포인트 충전", // 내역 설명
+      date: formattedDate, // 오늘 날짜
+      status: activeTab === "bank" ? "pending" as const : "earned" as const, // 무통장 입금은 "신청", 카드 결제는 "충전"
+      balance: 0, // 잔액은 all 페이지에서 계산됨
+    };
+    
+    // localStorage에 새 충전 내역 저장 (all 페이지에서 불러와서 표시)
+    localStorage.setItem("partner_new_point_history", JSON.stringify(newHistory));
+    
     alert(`${actionLabel}이 완료되었습니다. (${chargePoints.toLocaleString()}원)`);
     router.push("/partner/point/all");
   };
@@ -199,7 +222,7 @@ export default function PartnerPointChargePage() {
               </div>
 
               <ul className={styles.account_notice_list} >
-                <li>아래 계좌로 신청할 금액을 입금 후 결제 포인트 충전 요청을 진행해 주세요.</li>
+                <li> •  아래 계좌로 신청할 금액을 입금 후 결제 포인트 충전 요청을 진행해 주세요.</li>
               </ul>
               </article>
 

@@ -59,14 +59,7 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
 
   if (!campaign) return notFound();
 
-  // 메인 헤더 숨기기 (캠페인 상세와 동일 동작)
-  useEffect(() => {
-    const header = document.querySelector("header");
-    if (header) header.style.display = "none";
-    return () => {
-      if (header) header.style.display = "block";
-    };
-  }, []);
+  // 메인 헤더 숨기기는 SubHeader 컴포넌트에서 자동으로 처리됨
 
   // 초기 로드 시 캠페인 정보 라벨의 위치를 한 번만 저장
   useEffect(() => {

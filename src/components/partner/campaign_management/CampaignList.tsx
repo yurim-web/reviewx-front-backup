@@ -18,8 +18,8 @@
  * - 조건부 렌더링으로 다른 UI 표시
  */
 
-import type { PartnerStatTab } from "@/types/partner";
-import type { PartnerCampaign } from "@/types/partner";
+import type { PartnerStatTab } from "@/types/partner/partner";
+import type { PartnerCampaign } from "@/types/partner/partner";
 import CampaignCard from "./CampaignCard";
 import cardStyles from "../../../styles/partner/campaign_card.module.css";
 

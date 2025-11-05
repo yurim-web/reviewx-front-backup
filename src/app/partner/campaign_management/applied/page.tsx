@@ -23,8 +23,8 @@
 import { useState } from "react";
 import PartnerCampaignManagementHeader from "@/components/partner/campaign_management/PartnerCampaignManagementHeader";
 import CampaignList from "@/components/partner/campaign_management/CampaignList";
-import type { MainTab } from "@/types/campaignManagement";
-import type { PartnerStatTab } from "@/types/partner";
+import type { PartnerMainTab } from "@/types/partner/partner";
+import type { PartnerStatTab } from "@/types/partner/partner";
 import layoutStyles from "../../../../styles/partner/layout.module.css";
 
 // 공용 데이터 import
@@ -35,7 +35,7 @@ import { getCampaignsByTab } from "@/data/partner/sharedCampaigns";
  */
 export default function AppliedPage() {
   // 상단 메인 탭 상태 (캠페인 / 포인트)
-  const [activeTab, setActiveTab] = useState<MainTab>("campaign");
+  const [activeTab, setActiveTab] = useState<PartnerMainTab>("campaign");
 
   // 통계 탭 상태 - 신청 탭이 활성화된 상태로 설정
   const [activeStatTab, setActiveStatTab] = useState<PartnerStatTab>("신청");

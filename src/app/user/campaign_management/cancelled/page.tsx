@@ -21,7 +21,7 @@
 import { useState } from "react";
 import CampaignManagementHeader from "@/components/user/campaign_management/CampaignManagementHeader";
 import CampaignList from "@/components/user/campaign_management/CampaignList";
-import type { MainTab } from "@/types/campaignManagement";
+import type { MainTab } from "@/types/user/user";
 import layoutStyles from "../../../../styles/user/campaign_management/layout.module.css";
 
 // 임시 데이터 import

@@ -30,7 +30,6 @@
 .container {
   margin: 0 auto;
   padding-top: 148px;
-  /* padding: 0 40px; */
 }
 
 /* ============================================
@@ -56,10 +55,6 @@
   border-bottom: 0.5px solid #d9d9d9;
 }
 
-/* 제목 아래 구분선 - 제목에 통합됨 */
-.title_divider {
-  display: none; /* 제목의 border-bottom으로 대체 */
-}
 
 /* ============================================
    보유 포인트 표시 영역

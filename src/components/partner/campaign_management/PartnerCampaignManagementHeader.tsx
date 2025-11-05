@@ -27,17 +27,17 @@
 
 import TabNavigation from "./TabNavigation";
 import StatisticsTab from "./StatisticsTab";
-import type { MainTab } from "@/types/campaignManagement";
-import type { PartnerStatTab, PartnerCampaignStats } from "@/types/partner";
+import type { PartnerMainTab } from "@/types/partner/partner";
+import type { PartnerStatTab, PartnerCampaignStats } from "@/types/partner/partner";
 
 // 공용 데이터 import
 import { getCampaignStats } from "@/data/partner/sharedCampaigns";
 
 interface PartnerCampaignManagementHeaderProps {
   /** 현재 활성 메인 탭 (캠페인/포인트/계정) */
-  activeTab: MainTab;
+  activeTab: PartnerMainTab;
   /** 메인 탭 변경 핸들러 */
-  setActiveTab: (tab: MainTab) => void;
+  setActiveTab: (tab: PartnerMainTab) => void;
   /** 현재 활성 통계 탭 (전체/예정/신청/진행/종료/취소) */
   activeStatTab: PartnerStatTab;
   /** 통계 탭 변경 핸들러 */

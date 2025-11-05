@@ -15,13 +15,13 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import ReviewCampaignForm from "@/components/partner/campaign/campaign_create_form/ReviewCampaignForm";
-import { CampaignFormData } from "@/types/campaign";
+import ReviewCampaignForm from "@/components/partner/campaign_create_form/ReviewCampaignForm";
+import { CampaignFormData } from "@/types/user/user";
 import { updateReviewCampaign } from "@/data/partner/review";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import layoutStyles from "../../../../../../styles/partner/layout.module.css";
-import PageHeader from "@/components/partner/campaign/campaign_create_form/common/PageHeader";
+import PageHeader from "@/components/partner/campaign_create_form/common/PageHeader";
 
 function campaignToFormData(campaign: CampaignWithApplicants): CampaignFormData {
   const info = campaign.campaignInfo;

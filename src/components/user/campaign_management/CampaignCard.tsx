@@ -20,7 +20,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { CampaignApplication, StatTab } from "@/types/campaignManagement";
+import type { CampaignApplication, StatTab } from "@/types/user/user";
 import cardStyles from "../../../styles/user/campaign_management/campaign_card.module.css";
 import buttonStyles from "../../../styles/user/campaign_management/buttons.module.css";
 import { CamTag, CamCateIcon } from "./CampaignTag";

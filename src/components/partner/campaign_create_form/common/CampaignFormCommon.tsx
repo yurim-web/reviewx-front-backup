@@ -14,7 +14,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { CampaignType, PlatformType } from "@/types/campaign";
+import { CampaignType, PlatformType } from "@/types/user/user";
 // 분리된 CSS 모듈들 import
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";

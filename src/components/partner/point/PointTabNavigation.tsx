@@ -18,9 +18,11 @@
 import { useRouter } from "next/navigation";
 import styles from "@/styles/user/point/point.module.css";
 
+import type { PartnerPointTab } from "@/types/partner/partner";
+
 interface PartnerPointTabNavigationProps {
-  activePointTab: "all" | "earned" | "withdrawn";
-  setActivePointTab: (tab: "all" | "earned" | "withdrawn") => void;
+  activePointTab: PartnerPointTab;
+  setActivePointTab: (tab: PartnerPointTab) => void;
 }
 
 export default function PartnerPointTabNavigation({
@@ -33,7 +35,7 @@ export default function PartnerPointTabNavigation({
    * 포인트 탭 클릭 핸들러
    * 각 탭 클릭 시 해당 페이지로 이동
    */
-  const handlePointTabClick = (tab: "all" | "earned" | "withdrawn") => {
+  const handlePointTabClick = (tab: PartnerPointTab) => {
     switch (tab) {
       case "all":
         router.push("/partner/point/all");

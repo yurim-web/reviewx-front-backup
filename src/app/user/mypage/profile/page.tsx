@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 import SubTabNavigation from "@/components/user/mypage/SubTabNavigation";
-import type { MainTab } from "@/types/campaignManagement";
+import type { MainTab } from "@/types/user/user";
 import layoutStyles from "../../../../styles/user/mypage/layout.module.css";
 import profileStyles from "../../../../styles/user/mypage/profile.module.css";
 

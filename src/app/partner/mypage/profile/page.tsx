@@ -7,11 +7,11 @@ import PartnerTabNavigation from "@/components/partner/campaign_management/TabNa
 import PartnerSubTabNavigation from "@/components/partner/SubTabNavigation";
 import layoutStyles from "../../../../styles/partner/layout.module.css";
 import styles from "../../../../styles/user/mypage/profile.module.css";
-import type { MainTab } from "@/types/campaignManagement";
+import type { PartnerMainTab } from "@/types/partner/partner";
 
 export default function PartnerProfilePage() {
   const router = useRouter();
-  const [activeTopTab, setActiveTopTab] = useState<MainTab>("account");
+  const [activeTopTab, setActiveTopTab] = useState<PartnerMainTab>("account");
   const [activeSubTab, setActiveSubTab] = useState<"profile">("profile");
 
   return (

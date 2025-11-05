@@ -22,7 +22,7 @@ import { useState } from "react";
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 import SubTabNavigation from "@/components/user/mypage/SubTabNavigation";
 import ChannelSection from "@/components/user/mypage/ChannelSection";
-import type { MainTab } from "@/types/campaignManagement";
+import type { MainTab } from "@/types/user/user";
 import layoutStyles from "../../../../styles/user/mypage/layout.module.css";
 
 /**

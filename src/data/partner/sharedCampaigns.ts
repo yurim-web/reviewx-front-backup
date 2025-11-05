@@ -17,7 +17,7 @@
  * - 중복 데이터 제거
  */
 
-import type { PartnerCampaign } from "@/types/partner";
+import type { PartnerCampaign } from "@/types/partner/partner";
 import {
   getStatusMessage,
   getBrandLogo,
@@ -622,7 +622,17 @@ export const sharedCampaigns: CampaignWithApplicants[] = getSharedCampaigns();
  * - 매번 최신 sharedCampaigns 데이터를 사용합니다.
  */
 export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
-  return getSharedCampaigns().map((campaign) => {
+  const sharedCampaigns = getSharedCampaigns();
+  
+  // 중복 제거: 같은 id를 가진 캠페인 중 마지막 것만 유지
+  // (localStorage의 캠페인이 나중에 오므로 우선순위를 가짐)
+  const uniqueCampaignsMap = new Map<string, typeof sharedCampaigns[0]>();
+  for (const campaign of sharedCampaigns) {
+    uniqueCampaignsMap.set(campaign.campaignInfo.id, campaign);
+  }
+  const uniqueCampaigns = Array.from(uniqueCampaignsMap.values());
+  
+  return uniqueCampaigns.map((campaign) => {
     // 날짜 기반으로 탭(상태) 계산
     // 우선 순위: 명시적으로 취소된 캠페인은 그대로 "취소"
     let calculatedTab: "예정" | "신청" | "진행" | "종료" | "취소" = "예정";

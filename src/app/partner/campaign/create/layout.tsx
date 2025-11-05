@@ -22,7 +22,6 @@
 
 "use client";
 
-import { useEffect } from "react";
 import SubHeader from "@/components/fragments/SubHeader";
 
 /**
@@ -31,29 +30,14 @@ import SubHeader from "@/components/fragments/SubHeader";
  * @param children - 하위 페이지 컴포넌트들
  *
  * 주요 기능:
- * 1. 메인 헤더 숨기기/표시 관리
- * 2. SubHeader 렌더링
- * 3. 페이지 컨테이너 스타일링
+ * 1. SubHeader 렌더링 (메인 헤더 숨기기는 SubHeader 컴포넌트 내부에서 처리)
+ * 2. 페이지 컨테이너 스타일링
  */
 export default function CampaignCreateLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // useEffect: 컴포넌트가 마운트될 때 실행되는 훅
-  // 의존성 배열이 빈 배열이므로 컴포넌트가 처음 렌더링될 때만 실행
-  useEffect(() => {
-    // 메인 헤더 숨기기 (SubHeader만 표시)
-    const header = document.querySelector("header");
-    if (header) header.style.display = "none";
-
-    // cleanup 함수: 컴포넌트가 언마운트될 때 실행
-    // 메모리 누수 방지와 상태 정리를 위해 중요
-    return () => {
-      if (header) header.style.display = "block";
-    };
-  }, []); // 빈 의존성 배열: 컴포넌트 마운트/언마운트 시에만 실행
-
   return (
     <div>
       {/* 서브헤더 컴포넌트 - 모든 캠페인 생성 페이지에서 공통으로 사용 */}

@@ -5,7 +5,7 @@
 import type { CampaignWithApplicants } from "./campaign_application/delivery_applicants";
 import type { CampaignWithContents } from "./sharedCampaigns";
 import type { ContentByTab, ContentItem } from "./sharedCampaigns";
-import type { CampaignFormData } from "@/types/campaign";
+import type { CampaignFormData } from "@/types/user/user";
 
 export const deliveryCampaigns: CampaignWithApplicants[] = [
   // 진행 탭(진행 중) - 콘텐츠 있음 (2버튼 표시)

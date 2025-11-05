@@ -1,16 +1,16 @@
 /* ========================================
-   📰 기자단 캠페인 생성 폼 컴포넌트
+   📍 방문형 캠페인 생성 폼 컴포넌트
    ======================================== */
 
 /**
- * 기자단 캠페인 생성 폼 컴포넌트
+ * 방문형 캠페인 생성 폼 컴포넌트
  *
- * 목적: 기자단 캠페인 등록을 위한 전용 폼 컴포넌트
+ * 목적: 방문형 캠페인 등록을 위한 전용 폼 컴포넌트
  *
  * 주요 기능:
- * - 기자단 캠페인 기본 정보 입력
+ * - 방문형 캠페인 기본 정보 입력
  * - 썸네일/상세 이미지 업로드
- * - 기자단 캠페인 상세 정보 입력
+ * - 방문형 캠페인 상세 정보 입력 (지역, 방문 주소 등)
  * - 참여/제출 옵션 설정
  * - 안내 사항 및 유의 사항
  */
@@ -22,7 +22,7 @@ import { useRouter } from "next/navigation";
 import {
   CampaignFormData,
   CampaignCreateFormBaseProps,
-} from "@/types/campaign";
+} from "@/types/user/user";
 // 분리된 CSS 모듈들 import
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
@@ -32,34 +32,36 @@ import styles from "@/styles/partner/campaign_create/campaign_create.module.css"
 // 공통 컴포넌트들 import
 import {
   CampaignTypeSelector,
+  regions,
   CustomDropdown,
   platforms,
   categories,
 } from "./common/CampaignFormCommon";
 import NoticeSection from "./common/NoticeSection";
 
-interface ReporterCampaignFormProps extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
+interface VisitCampaignFormProps
+  extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
   /** 캠페인 수정 시 초기 데이터 (선택사항) */
   initialData?: CampaignFormData | null;
   /** 폼 동작 모드: 생성/수정 */
   mode?: "create" | "edit";
 }
 
-export default function ReporterCampaignForm({
+export default function VisitCampaignForm({
   onSubmit,
   isSubmitting,
   initialData,
   mode = "create",
-}: ReporterCampaignFormProps) {
+}: VisitCampaignFormProps) {
   const router = useRouter();
   const isEditMode = mode === "edit";
 
-  // 수정 모드에서 편집 가능 필드 정의 (이미지, 제공 내역, 홍보 링크, 추가 지급 포인트, 참여/제출 옵션)
+  // 수정 모드에서 편집 가능 필드 정의 (이미지, 제공 내역, 방문 링크, 추가 지급 포인트, 참여/제출 옵션)
   const isEditableField = (field: string): boolean => {
     const editable = new Set([
       "images",
       "providedItems",
-      "promotionLink",
+      "visitLink",
       "additionalPoints",
       // 참여/제출 옵션 필드들
       "adultOnly",
@@ -68,28 +70,19 @@ export default function ReporterCampaignForm({
     ]);
     return editable.has(field);
   };
-
-  // 이미지 업로드 관련 상태
-  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-
-  // 체크박스 상태 관리
-  const [checkboxStates, setCheckboxStates] = useState({
-    minTextLength: false,
-    minImageCount: false,
-    videoCount: false,
-  });
-
   const [formData, setFormData] = useState<CampaignFormData>(
     initialData || {
-      campaignType: "기자단",
-      platform: "",
+      campaignType: "방문형",
+      platform: "네이버 블로그",
       title: "",
       category: "",
+      region: "",
       brandName: "",
       providedItems: "",
-      promotionLink: "",
-      currentPoints: "58,000", // 보유 포인트 ( 이 계정에 남아있는 포인트 값을 불러온다)
+      visitLink: "",
+      visitAddress: "",
+      addressDetail: "",
+      currentPoints: "",
       additionalPoints: "",
       recruitmentCount: "",
       recruitmentPeriod: "",
@@ -103,10 +96,22 @@ export default function ReporterCampaignForm({
       minImageCount: "",
       videoCount: "",
       videoDuration: "",
-    requireLinkAttachment: false,
-    requireKeywordAttachment: false,
-    guidelines: "",
-    isUrgent: false,
+      requireLinkAttachment: false,
+      requireKeywordAttachment: false,
+      guidelines: "",
+      isUrgent: false,
+    }
+  );
+
+  // 이미지 업로드 관련 state
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+
+  // 체크박스 상태 관리
+  const [checkboxStates, setCheckboxStates] = useState({
+    minTextLength: false,
+    minImageCount: false,
+    videoCount: false,
   });
 
   /**
@@ -130,19 +135,6 @@ export default function ReporterCampaignForm({
       ...prev,
       [field]: checked,
     }));
-
-    // 체크박스가 해제되면 해당 필드를 빈 문자열로 설정
-    if (!checked) {
-      const fieldMapping: Record<
-        keyof typeof checkboxStates,
-        keyof CampaignFormData
-      > = {
-        minTextLength: "minTextLength",
-        minImageCount: "minImageCount",
-        videoCount: "videoCount",
-      };
-      updateFormData(fieldMapping[field], "");
-    }
   };
 
   /**
@@ -264,59 +256,75 @@ export default function ReporterCampaignForm({
   /**
    * 이미지 파일 선택 처리
    */
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    const validFiles = files.filter((file) => {
-      const isValidType = file.type.startsWith("image/");
-      const isValidSize = file.size <= 5 * 1024 * 1024; // 5MB 제한
-      return isValidType && isValidSize;
+  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files) return;
+
+    const newFiles = Array.from(files);
+    const validFiles = newFiles.filter((file) => {
+      // 이미지 파일 타입 검증
+      if (!file.type.startsWith("image/")) {
+        alert("이미지 파일만 업로드 가능합니다.");
+        return false;
+      }
+      // 파일 크기 검증 (5MB 제한)
+      if (file.size > 5 * 1024 * 1024) {
+        alert("파일 크기는 5MB 이하여야 합니다.");
+        return false;
+      }
+      return true;
     });
 
-    if (uploadedImages.length + validFiles.length > 7) {
-      alert("최대 7개의 이미지만 업로드할 수 있습니다.");
+    if (validFiles.length === 0) return;
+
+    // 기존 이미지와 새 이미지 합치기 (최대 7개 제한)
+    const totalImages = uploadedImages.length + validFiles.length;
+    if (totalImages > 7) {
+      alert("최대 7개의 이미지만 업로드 가능합니다.");
       return;
     }
 
-    const newImages = [...uploadedImages, ...validFiles];
-    setUploadedImages(newImages);
+    setUploadedImages((prev) => [...prev, ...validFiles]);
 
-    // 미리보기 URL 생성
-    const newPreviews = validFiles.map((file) => URL.createObjectURL(file));
-    setImagePreviews([...imagePreviews, ...newPreviews]);
+    // 이미지 미리보기 생성
+    validFiles.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          setImagePreviews((prev) => [...prev, e.target!.result as string]);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
   };
 
   /**
    * 이미지 제거 처리
    */
   const handleImageRemove = (index: number) => {
-    const newImages = uploadedImages.filter((_, i) => i !== index);
-    const newPreviews = imagePreviews.filter((_, i) => i !== index);
-
-    setUploadedImages(newImages);
-    setImagePreviews(newPreviews);
+    setUploadedImages((prev) => prev.filter((_, i) => i !== index));
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   /**
-   * 업로드 버튼 클릭 처리
+   * 이미지 업로드 버튼 클릭 처리
    */
   const handleUploadClick = () => {
-    const fileInput = document.getElementById(
-      "image-upload"
-    ) as HTMLInputElement;
-    fileInput?.click();
+    const input = document.getElementById("image-upload") as HTMLInputElement;
+    input?.click();
   };
 
   /**
    * 캠페인 유형 변경 시 페이지 이동
    */
   const handleCampaignTypeChange = (type: string) => {
-    if (type === "기자단") return; // 현재 타입과 같으면 이동하지 않음
+    if (type === "방문형") return; // 현재 타입과 같으면 이동하지 않음
 
     // 캠페인 유형에 따른 페이지 경로 매핑
     const typeRoutes: Record<string, string> = {
       배송형: "/partner/campaign/create/delivery",
-      방문형: "/partner/campaign/create/visit",
       구매평: "/partner/campaign/create/review",
+      기자단: "/partner/campaign/create/reporter",
       미션형: "/partner/campaign/create/mission",
     };
 
@@ -338,10 +346,13 @@ export default function ReporterCampaignForm({
     const hasImages = uploadedImages.length > 0;
 
     // 필수 텍스트 필드들이 모두 입력되었는지 확인
+    // platform은 CustomDropdown에서 기본값이 설정되어 있으므로 별도 체크 불필요
     const hasRequiredFields =
       formData.title.trim() !== "" &&
       formData.category !== "" &&
+      formData.region !== "" &&
       formData.providedItems.trim() !== "" &&
+      (formData.visitAddress?.trim() ?? "") !== "" &&
       formData.recruitmentCount !== "" &&
       formData.recruitmentPeriod.trim() !== "" &&
       formData.announcementDate.trim() !== "" &&
@@ -361,7 +372,12 @@ export default function ReporterCampaignForm({
     console.log("이미지 업로드:", hasImages, "개수:", uploadedImages.length);
     console.log("제목:", formData.title.trim() !== "" ? "✓" : "✗");
     console.log("카테고리:", formData.category !== "" ? "✓" : "✗");
+    console.log("지역:", formData.region !== "" ? "✓" : "✗");
     console.log("제공내역:", formData.providedItems.trim() !== "" ? "✓" : "✗");
+    console.log(
+      "방문주소:",
+      (formData.visitAddress?.trim() ?? "") !== "" ? "✓" : "✗"
+    );
     console.log("모집인원:", formData.recruitmentCount !== "" ? "✓" : "✗");
     console.log(
       "모집기간:",
@@ -419,7 +435,7 @@ export default function ReporterCampaignForm({
 
         {/* 캠페인 유형 선택 */}
         <CampaignTypeSelector
-          currentType="기자단"
+          currentType="방문형"
           onTypeChange={handleCampaignTypeChange}
           disabled={isEditMode}
         />
@@ -449,27 +465,33 @@ export default function ReporterCampaignForm({
               <div key={index} className={infoStyles.image_preview_container}>
                 <img
                   src={preview}
-                  alt={`미리보기 ${index + 1}`}
+                  alt={`업로드된 이미지 ${index + 1}`}
                   className={infoStyles.image_preview}
                 />
                 <button
                   type="button"
                   className={infoStyles.image_remove_button}
                   onClick={() => handleImageRemove(index)}
+                  aria-label="이미지 제거"
                 >
                   ×
                 </button>
               </div>
             ))}
 
-            {/* 업로드 버튼 (최대 7개까지) */}
-            {imagePreviews.length < 7 && (
+            {/* 이미지 업로드 버튼 (최대 7개까지) */}
+            {uploadedImages.length < 7 && (
               <div
                 className={infoStyles.image_upload_placeholder}
                 onClick={isEditMode && !isEditableField("images") ? undefined : handleUploadClick}
                 style={isEditMode && !isEditableField("images") ? { pointerEvents: "none", opacity: 0.5 } : undefined}
               >
-                <img src="/images/icons/plus_icon.svg" alt="이미지 추가" />
+                <img
+                  src="/images/icons/plus_icon.svg"
+                  alt="이미지 추가"
+                  width="56"
+                  height="56"
+                />
               </div>
             )}
           </div>
@@ -515,6 +537,20 @@ export default function ReporterCampaignForm({
           />
         </article>
 
+        {/* 지역 선택 */}
+        <article className={infoStyles.form_group}>
+          <label className={infoStyles.form_label}>
+            지역<span className={infoStyles.required}>*</span>
+          </label>
+          <CustomDropdown
+            value={formData.region || ""}
+            options={regions}
+            onChange={(value) => updateFormData("region", value)}
+            disabled={isEditMode && !isEditableField("region")}
+            placeholder="지역 선택"
+          />
+        </article>
+
         {/* 브랜드명 */}
         <article className={infoStyles.form_group}>
           <label className={infoStyles.form_label}>
@@ -544,16 +580,49 @@ export default function ReporterCampaignForm({
           />
         </article>
 
-        {/* 홍보 링크 */}
+        {/* 방문 주소 */}
         <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>홍보 링크</label>
+          <label className={infoStyles.form_label}>
+            방문 주소<span className={infoStyles.required}>*</span>
+          </label>
+          <div className={infoStyles.postal_input_group}>
+            <input
+              type="text"
+              className={infoStyles.form_input}
+              value={formData.visitAddress}
+              onChange={(e) => updateFormData("visitAddress", e.target.value)}
+              placeholder="캠페인 방문 주소"
+              readOnly={isEditMode && !isEditableField("visitAddress")}
+            />
+            <button type="button" className={infoStyles.charge_button}>
+              우편번호 찾기
+            </button>
+          </div>
+        </article>
+
+        {/* 주소 상세 안내 */}
+        <article className={infoStyles.form_group}>
+          <label className={infoStyles.form_label}>주소 상세 안내</label>
+          <input
+            type="text"
+            className={infoStyles.form_input}
+            value={formData.addressDetail}
+            onChange={(e) => updateFormData("addressDetail", e.target.value)}
+            placeholder="캠페인 방문 상세 주소 안내"
+            readOnly={isEditMode && !isEditableField("addressDetail")}
+          />
+        </article>
+
+        {/* 방문 링크 */}
+        <article className={infoStyles.form_group}>
+          <label className={infoStyles.form_label}>방문 링크</label>
           <input
             type="url"
             className={infoStyles.form_input}
-            value={formData.promotionLink}
-            onChange={(e) => updateFormData("promotionLink", e.target.value)}
-            placeholder="링크를 입력하세요"
-            readOnly={isEditMode && !isEditableField("promotionLink")}
+            value={formData.visitLink}
+            onChange={(e) => updateFormData("visitLink", e.target.value)}
+            placeholder="캠페인 방문 링크"
+            readOnly={isEditMode && !isEditableField("visitLink")}
           />
         </article>
 
@@ -682,7 +751,7 @@ export default function ReporterCampaignForm({
             className={infoStyles.form_input}
             value={formData.keywords}
             onChange={(e) => updateFormData("keywords", e.target.value)}
-            placeholder="최대 10개 입력 가능"
+            placeholder="본문 내 첨부 키워드/해시태그/계정 태그 등"
             readOnly={isEditMode && !isEditableField("keywords")}
           />
         </article>
@@ -690,7 +759,7 @@ export default function ReporterCampaignForm({
         {/* 간편 안내 */}
         <article className={infoStyles.form_group}>
           <label className={infoStyles.form_label}>간편 안내</label>
-          <div className={isEditMode ? guideStyles.locked_section : undefined}>
+          <div className={isEditMode ? `${guideStyles.guide_section} ${guideStyles.locked_section}` : guideStyles.guide_section}>
           {/* 글자 수 */}
           <div className={guideStyles.option_input_box}>
             <input
