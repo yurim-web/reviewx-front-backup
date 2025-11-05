@@ -25,6 +25,7 @@
 
 "use client";
 
+import { useState, useEffect } from "react";
 import TabNavigation from "./TabNavigation";
 import StatisticsTab from "./StatisticsTab";
 import type { PartnerMainTab } from "@/types/partner/partner";
@@ -52,6 +53,11 @@ interface PartnerCampaignManagementHeaderProps {
  * - 재사용 가능한 컴포넌트로 설계
  * - 각 페이지에서 동일한 헤더 구조를 제공
  * - 파트너 전용 탭과 통계 정보를 처리
+ *
+ * Hydration 에러 해결:
+ * - localStorage를 사용하는 getCampaignStats()는 서버와 클라이언트에서 다른 값을 반환할 수 있습니다.
+ * - useState와 useEffect를 사용하여 클라이언트에서만 통계를 계산하도록 수정했습니다.
+ * - 초기 렌더링 시에는 기본값(0)을 사용하고, 클라이언트 마운트 후 실제 통계를 계산합니다.
  */
 export default function PartnerCampaignManagementHeader({
   activeTab,
@@ -59,8 +65,56 @@ export default function PartnerCampaignManagementHeader({
   activeStatTab,
   setActiveStatTab,
 }: PartnerCampaignManagementHeaderProps) {
-  // 공용 데이터에서 통계 정보 사용
-  const stats: PartnerCampaignStats = getCampaignStats();
+  /* ========================================
+     통계 상태 관리 (Statistics State Management)
+     ======================================== */
+
+  /**
+   * useState 훅: 컴포넌트의 상태를 관리하는 React 훅
+   * 
+   * 설명:
+   * - 통계 데이터를 컴포넌트 상태로 저장합니다.
+   * - 초기값은 서버와 클라이언트가 동일하게 렌더링되도록 모든 값이 0인 객체입니다.
+   * - setStats 함수를 사용하여 상태를 업데이트할 수 있습니다.
+   * 
+   * 학습 포인트:
+   * - useState: React의 상태 관리 훅입니다.
+   * - 배열 구조분해할당: [상태값, 상태변경함수] = useState(초기값)
+   * - 객체 타입: PartnerCampaignStats 타입의 객체를 상태로 관리합니다.
+   */
+  const [stats, setStats] = useState<PartnerCampaignStats>({
+    전체: 0,
+    예정: 0,
+    신청: 0,
+    진행: 0,
+    종료: 0,
+    취소: 0,
+    패널티: 0,
+  });
+
+  /**
+   * useEffect 훅: 컴포넌트의 부수 효과(side effects)를 처리하는 React 훅
+   * 
+   * 설명:
+   * - 컴포넌트가 클라이언트에서 마운트된 후에만 실행됩니다.
+   * - localStorage를 사용하는 getCampaignStats()를 호출하여 실제 통계를 계산합니다.
+   * - 의존성 배열이 비어있으므로 컴포넌트 마운트 시 한 번만 실행됩니다.
+   * 
+   * Hydration 에러 해결 원리:
+   * - 서버 사이드 렌더링(SSR) 시: 초기값(모두 0)으로 렌더링됩니다.
+   * - 클라이언트 마운트 후: useEffect가 실행되어 실제 통계를 계산하고 상태를 업데이트합니다.
+   * - 이렇게 하면 서버와 클라이언트의 초기 렌더링 결과가 일치하여 hydration 에러가 발생하지 않습니다.
+   * 
+   * 학습 포인트:
+   * - useEffect: 컴포넌트의 생명주기와 관련된 작업을 처리합니다.
+   * - 의존성 배열([]): 빈 배열이면 컴포넌트 마운트 시 한 번만 실행됩니다.
+   * - setState: 상태를 업데이트하면 컴포넌트가 리렌더링됩니다.
+   */
+  useEffect(() => {
+    // 클라이언트에서만 실행되므로 localStorage 접근 가능
+    const calculatedStats = getCampaignStats();
+    setStats(calculatedStats);
+  }, []);
 
   return (
     <>
