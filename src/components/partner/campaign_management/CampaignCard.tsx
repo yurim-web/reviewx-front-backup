@@ -24,6 +24,7 @@ import type { PartnerCampaign } from "@/types/partner/partner";
 import cardStyles from "../../../styles/partner/campaign_card.module.css";
 import buttonStyles from "../../../styles/partner/buttons.module.css";
 import ReceiptRegistrationModal from "../campaign_contents/ReceiptRegistrationModal";
+import CampaignManagementModal from "./modals/CampaignManagementModal";
 import { getClosedContentsById, getCampaignById } from "@/data/partner/sharedCampaigns";
 import { getVisitContentsById } from "@/data/partner/visit";
 import { getDeliveryContentsById } from "@/data/partner/delivery";
@@ -45,6 +46,7 @@ export default function CampaignCard({
   activeTab,
 }: CampaignCardProps) {
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+  const [isManagementModalOpen, setIsManagementModalOpen] = useState(false);
 
   // 캠페인 타입/상태에 따른 콘텐츠 검수/완료 개수 계산 (초기 렌더 시 메모)
   const { reviewingCount, completedCount } = useMemo(() => {
@@ -140,6 +142,8 @@ export default function CampaignCard({
   const handleButtonClick = (buttonText: string) => {
     if (buttonText === "구매 영수증 등록하기") {
       setIsReceiptModalOpen(true);
+    } else if (buttonText === "캠페인 관리하기") {
+      setIsManagementModalOpen(true);
     } else if (buttonText === "캠페인 수정하기") {
       // 캠페인 타입에 따라 다른 수정 페이지로 이동
       const getCampaignTypePath = (type: string) => {
@@ -514,6 +518,15 @@ export default function CampaignCard({
         isOpen={isReceiptModalOpen}
         onClose={() => setIsReceiptModalOpen(false)}
         campaignTitle={campaign.title}
+      />
+
+      {/* 캠페인 관리 모달 */}
+      <CampaignManagementModal
+        isOpen={isManagementModalOpen}
+        onClose={() => setIsManagementModalOpen(false)}
+        campaignTitle={campaign.title}
+        campaignType={campaign.type}
+        campaignId={campaign.id}
       />
     </div>
   );
