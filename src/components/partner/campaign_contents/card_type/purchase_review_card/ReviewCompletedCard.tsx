@@ -13,12 +13,14 @@ import type { ExperienceApplicant } from "./ReviewTypes";
 interface ReviewCompletedCardProps {
   applicant: ExperienceApplicant;
   onCheckReview?: (applicantId: string) => void;
+  onCheckReceipt?: (applicantId: string) => void;
   dateLabel?: string;
 }
 
 export default function ReviewCompletedCard({
   applicant,
   onCheckReview,
+  onCheckReceipt,
   dateLabel = "수정",
 }: ReviewCompletedCardProps) {
   const channel_icon_src = getChannelLogo(applicant.channel);
@@ -48,11 +50,21 @@ export default function ReviewCompletedCard({
       <button
         className={styles.content_check_button}
         onClick={() => {
+          const isReceiptFlow = [2, 4, 6].includes(
+            Number(applicant.reviewType) as number
+          );
+          if (isReceiptFlow) {
+            console.log("구매 영수증 확인 클릭", applicant.id);
+            onCheckReceipt?.(applicant.id);
+            return;
+          }
           console.log("리뷰 확인 클릭", applicant.id);
           onCheckReview?.(applicant.id);
         }}
       >
-        리뷰 확인
+        {[2, 4, 6].includes(Number(applicant.reviewType) as number)
+          ? "구매영수증 확인하기"
+          : "리뷰 확인"}
       </button>
 
       {/* 등록/수정/지각 등록 */}

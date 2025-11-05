@@ -13,12 +13,12 @@ import PageHeader from "@/components/partner/campaign_application/PageHeader";
 import ExcelDownloadBtn from "@/components/partner/campaign_application/ExcelDownloadBtn";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import { getClosedContentsById } from "@/data/partner/sharedCampaigns";
-import { getMissionContentsById } from "@/data/partner/campaign_contents/mission";
+import { getMissionContentsById } from "@/data/partner/mission";
 import MissionInspectionCard from "@/components/partner/campaign_contents/card_type/mission_card/MissionInspectionCard";
 import MissionCompletedCard from "@/components/partner/campaign_contents/card_type/mission_card/MissionCompletedCard";
 import MissionRejectedCard from "@/components/partner/campaign_contents/card_type/mission_card/MissionRejectedCard";
 import type { ExperienceApplicant as MissionApplicant } from "@/components/partner/campaign_contents/card_type/mission_card/MissionTypes";
-import type { ContentItem } from "@/data/partner/campaign_contents/types";
+import type { ContentItem } from "@/data/partner/sharedCampaigns";
 
 type TabKey = "검수" | "완료";
 

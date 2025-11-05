@@ -14,12 +14,10 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { CampaignType, PlatformType, CampaignFormData } from "@/types/campaign";
+import { CampaignType, PlatformType } from "@/types/campaign";
 // 분리된 CSS 모듈들 import
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
-import guideStyles from "@/styles/partner/campaign_create/campaign_guide.module.css";
 import dropdownStyles from "@/styles/partner/campaign_create/custom_dropdown.module.css";
 
 // 캠페인 유형 옵션
@@ -86,11 +84,13 @@ export const regions = [
 interface CampaignTypeSelectorProps {
   currentType: CampaignType;
   onTypeChange: (type: CampaignType) => void;
+  disabled?: boolean;
 }
 
 export function CampaignTypeSelector({
   currentType,
   onTypeChange,
+  disabled = false,
 }: CampaignTypeSelectorProps) {
   return (
     <article className={infoStyles.form_group}>
@@ -104,30 +104,13 @@ export function CampaignTypeSelector({
             type="button"
             className={`${headerStyles.campaign_type_button} ${
               currentType === type ? headerStyles.active : ""
-            }`}
-            onClick={() => onTypeChange(type)}
+            } ${disabled ? headerStyles.disabled_button : ""}`}
+            onClick={disabled ? undefined : () => onTypeChange(type)}
+            disabled={disabled}
           >
             {type}
           </button>
         ))}
-      </div>
-    </article>
-  );
-}
-
-/**
- * 이미지 업로드 컴포넌트
- */
-export function ImageUpload() {
-  return (
-    <article className={styles.form_group}>
-      <label className={styles.form_label}>
-        썸네일/상세 이미지<span className={styles.required}>*</span>
-      </label>
-      <div className={styles.image_upload_area}>
-        <div className={styles.image_upload_placeholder}>
-          <span>+</span>
-        </div>
       </div>
     </article>
   );
@@ -149,6 +132,7 @@ interface CustomDropdownProps {
   options: string[];
   onChange: (value: string) => void;
   placeholder?: string;
+  disabled?: boolean;
 }
 
 export function CustomDropdown({
@@ -156,6 +140,7 @@ export function CustomDropdown({
   options,
   onChange,
   placeholder = "선택하세요",
+  disabled = false,
 }: CustomDropdownProps) {
   // 드롭다운 열림/닫힘 상태 관리
   const [is_open, setIsOpen] = useState(false);
@@ -176,6 +161,7 @@ export function CustomDropdown({
 
   // 드롭다운 토글 핸들러
   const toggle_dropdown = () => {
+    if (disabled) return;
     const new_is_open = !is_open;
     setIsOpen(new_is_open);
 
@@ -238,10 +224,11 @@ export function CustomDropdown({
         type="button"
         className={`${dropdownStyles.dropdown_button} ${
           is_open ? dropdownStyles.open : ""
-        }`}
+        } ${disabled ? dropdownStyles.disabled : ""}`}
         onClick={toggle_dropdown}
         aria-expanded={is_open}
         aria-haspopup="listbox"
+        disabled={disabled}
       >
         <span className={dropdownStyles.dropdown_text}>{display_text}</span>
         {/* 화살표 아이콘 */}
@@ -278,362 +265,5 @@ export function CustomDropdown({
         </div>
       )}
     </div>
-  );
-}
-
-/**
- * 포인트 관련 컴포넌트
- */
-interface PointsSectionProps {
-  formData: CampaignFormData;
-  onUpdate: (field: keyof CampaignFormData, value: any) => void;
-}
-
-export function PointsSection({ formData, onUpdate }: PointsSectionProps) {
-  return (
-    <>
-      {/* 보유 포인트 */}
-      <article className={styles.form_group}>
-        <label className={styles.form_label}>보유 포인트</label>
-        <div className={styles.points_input_group}>
-          <input
-            type="number"
-            className={styles.form_input}
-            value={formData.currentPoints}
-            onChange={(e) =>
-              onUpdate("currentPoints", parseInt(e.target.value) || 0)
-            }
-            placeholder="0"
-          />
-          <span className={styles.points_unit}>P</span>
-          <button type="button" className={styles.charge_button}>
-            포인트 충전하기
-          </button>
-        </div>
-      </article>
-
-      {/* 추가 지급 포인트 */}
-      <article className={styles.form_group}>
-        <label className={styles.form_label}>추가 지급 포인트</label>
-        <div className={styles.points_input_group}>
-          <input
-            type="text"
-            className={styles.form_input}
-            value={formData.additionalPoints}
-            onChange={(e) =>
-              onUpdate("additionalPoints", parseInt(e.target.value) || 0)
-            }
-            placeholder="캠페인 수행에 대한 추가 지급 포인트"
-          />
-          <span className={styles.points_unit}>P</span>
-        </div>
-      </article>
-    </>
-  );
-}
-
-/**
- * 모집 정보 컴포넌트
- */
-interface RecruitmentInfoProps {
-  formData: CampaignFormData;
-  onUpdate: (field: keyof CampaignFormData, value: any) => void;
-}
-
-export function RecruitmentInfo({ formData, onUpdate }: RecruitmentInfoProps) {
-  return (
-    <>
-      {/* 모집 인원 */}
-      <article className={styles.form_group}>
-        <label className={styles.form_label}>
-          모집 인원<span className={styles.required}>*</span>
-        </label>
-        <div className={styles.count_input_group}>
-          <input
-            type="number"
-            className={styles.form_input}
-            value={formData.recruitmentCount}
-            onChange={(e) =>
-              onUpdate("recruitmentCount", parseInt(e.target.value) || 1)
-            }
-            min="1"
-          />
-          <span className={styles.count_unit}>명</span>
-        </div>
-      </article>
-
-      {/* 모집 기간 */}
-      <article className={styles.form_group}>
-        <label className={styles.form_label}>
-          모집 기간<span className={styles.required}>*</span>
-        </label>
-        <input
-          type="text"
-          className={styles.form_input}
-          value={formData.recruitmentPeriod}
-          onChange={(e) => onUpdate("recruitmentPeriod", e.target.value)}
-          placeholder="2025-09-30 ~ 2025-10-06"
-        />
-      </article>
-
-      {/* 선정 날짜 */}
-      <article className={styles.form_group}>
-        <label className={styles.form_label}>
-          선정 날짜<span className={styles.required}>*</span>
-        </label>
-        <input
-          type="text"
-          className={styles.form_input}
-          value={formData.announcementDate}
-          onChange={(e) => onUpdate("announcementDate", e.target.value)}
-          placeholder="2025-10-08"
-        />
-      </article>
-
-      {/* 등록 기간 */}
-      <article className={styles.form_group}>
-        <label className={styles.form_label}>
-          등록 기간<span className={styles.required}>*</span>
-        </label>
-        <input
-          type="text"
-          className={styles.form_input}
-          value={formData.registrationPeriod}
-          onChange={(e) => onUpdate("registrationPeriod", e.target.value)}
-          placeholder="2025-10-08 ~ 2025-10-19"
-        />
-      </article>
-
-      {/* 키워드 */}
-      <article className={styles.form_group}>
-        <label className={styles.form_label}>
-          키워드<span className={styles.required}>*</span>
-        </label>
-        <input
-          type="text"
-          className={styles.form_input}
-          value={formData.keywords}
-          onChange={(e) => onUpdate("keywords", e.target.value)}
-          placeholder="#키워드 #태그 #입력"
-        />
-      </article>
-    </>
-  );
-}
-
-/**
- * 참여/제출 옵션 컴포넌트
- */
-interface ParticipationOptionsProps {
-  formData: CampaignFormData;
-  onUpdate: (field: keyof CampaignFormData, value: any) => void;
-}
-
-export function ParticipationOptions({
-  formData,
-  onUpdate,
-}: ParticipationOptionsProps) {
-  return (
-    <article className={styles.form_group}>
-      <label className={styles.form_label}>
-        참여/제출 옵션<span className={styles.required}>*</span>
-      </label>
-
-      <div className={styles.checkbox_group}>
-        <label className={styles.checkbox_label}>
-          <input
-            type="checkbox"
-            checked={formData.adultOnly}
-            onChange={(e) => onUpdate("adultOnly", e.target.checked)}
-          />
-          <span>만 19세 이상 참여 허용 (성인인증이 필요한 제품/서비스)</span>
-        </label>
-
-        <label className={styles.checkbox_label}>
-          <input
-            type="checkbox"
-            checked={formData.allowReParticipation}
-            onChange={(e) => onUpdate("allowReParticipation", e.target.checked)}
-          />
-          <span>이전 참여자 재참여 허용</span>
-        </label>
-
-        <label className={styles.checkbox_label}>
-          <input
-            type="checkbox"
-            checked={formData.allowLateSubmission}
-            onChange={(e) => onUpdate("allowLateSubmission", e.target.checked)}
-          />
-          <span>지각 제출 허용</span>
-        </label>
-      </div>
-
-      {/* 글자 수 */}
-      <div className={styles.option_input_group}>
-        <label className={styles.option_label}>글자 수</label>
-        <div className={styles.number_input_group}>
-          <input
-            type="number"
-            className={styles.number_input}
-            value={formData.minTextLength}
-            onChange={(e) =>
-              onUpdate("minTextLength", parseInt(e.target.value) || 0)
-            }
-            min="0"
-          />
-          <span className={styles.input_unit}>자 이상</span>
-        </div>
-      </div>
-
-      {/* 이미지 장수 */}
-      <div className={styles.option_input_group}>
-        <label className={styles.option_label}>이미지 장수</label>
-        <div className={styles.number_input_group}>
-          <input
-            type="number"
-            className={styles.number_input}
-            value={formData.minImageCount}
-            onChange={(e) =>
-              onUpdate("minImageCount", parseInt(e.target.value) || 0)
-            }
-            min="0"
-          />
-          <span className={styles.input_unit}>장 이상</span>
-        </div>
-      </div>
-
-      {/* 동영상 개수, 초수 */}
-      <div className={styles.option_input_group}>
-        <label className={styles.option_label}>동영상 개수, 초수</label>
-        <div className={styles.video_input_group}>
-          <input
-            type="number"
-            className={styles.number_input}
-            value={formData.videoCount}
-            onChange={(e) =>
-              onUpdate("videoCount", parseInt(e.target.value) || 0)
-            }
-            min="0"
-          />
-          <span className={styles.input_unit}>개 이상,</span>
-          <input
-            type="number"
-            className={styles.number_input}
-            value={formData.videoDuration}
-            onChange={(e) =>
-              onUpdate("videoDuration", parseInt(e.target.value) || 0)
-            }
-            min="0"
-          />
-          <span className={styles.input_unit}>초 이상</span>
-        </div>
-      </div>
-
-      {/* 본문 링크 첨부 */}
-      <label className={styles.checkbox_label}>
-        <input
-          type="checkbox"
-          checked={formData.requireLinkAttachment}
-          onChange={(e) => onUpdate("requireLinkAttachment", e.target.checked)}
-        />
-        <span>본문 링크 첨부</span>
-      </label>
-
-      {/* 본문 키워드/태그 첨부 */}
-      <label className={styles.checkbox_label}>
-        <input
-          type="checkbox"
-          checked={formData.requireKeywordAttachment}
-          onChange={(e) =>
-            onUpdate("requireKeywordAttachment", e.target.checked)
-          }
-        />
-        <span>본문 키워드/태그 첨부</span>
-      </label>
-    </article>
-  );
-}
-
-/**
- * 안내 사항 컴포넌트
- */
-interface GuidelinesProps {
-  formData: CampaignFormData;
-  onUpdate: (field: keyof CampaignFormData, value: any) => void;
-}
-
-export function Guidelines({ formData, onUpdate }: GuidelinesProps) {
-  return (
-    <>
-      {/* 간편 안내 */}
-      <article className={styles.form_group}>
-        <label className={styles.form_label}>간편 안내</label>
-        <textarea
-          className={styles.form_textarea}
-          value={formData.guidelines}
-          onChange={(e) => onUpdate("guidelines", e.target.value)}
-          placeholder="캠페인 안내 사항을 입력하세요"
-          rows={10}
-        />
-      </article>
-
-      {/* 안내 사항 */}
-      <article className={styles.form_group}>
-        <label className={styles.form_label}>
-          안내 사항<span className={styles.required}>*</span>
-        </label>
-        <textarea
-          className={styles.form_textarea}
-          value={formData.guidelines}
-          onChange={(e) => onUpdate("guidelines", e.target.value)}
-          placeholder="상세한 안내 사항을 입력하세요"
-          rows={10}
-        />
-      </article>
-    </>
-  );
-}
-
-/**
- * 유의 사항 컴포넌트
- */
-export function NoticeSection() {
-  return (
-    <article className={styles.form_group}>
-      <label className={styles.form_label}>유의 사항</label>
-      <div className={styles.notice_content}>
-        <ul>
-          <li>
-            선정된 캠페인은 타인에게 양도 · 판매 · 교환이 불가합니다. 적발 시{" "}
-            <strong>제품/서비스 정가 및 배송비가 청구되며, 영구 차단</strong>될
-            수 있습니다.
-          </li>
-          <li>
-            허위 · 과장 · 비방 · 타사 비교 등 소비자를 오인시킬 수 있는 표현은
-            금지됩니다.
-          </li>
-          <li>선정 후 제공 내역 및 배송지/방문지 변경은 불가합니다.</li>
-          <li>당첨 후 취소 시 패널티가 발생합니다.</li>
-          <li>미션이 제대로 지켜지지 않을 시 수정 요청이 있을 수 있습니다.</li>
-          <li>
-            리뷰는 반드시 해당 제품/서비스 단독으로 촬영 · 작성해야 합니다. 타
-            제품/서비스와 함께 업로드 시 재작성 요청이 있을 수 있습니다.
-          </li>
-          <li>
-            리뷰는 반드시 지정된 기간 내 등록해야 합니다. 기간을 초과할 경우
-            제공 내역 비용이 청구되거나 패널티가 발생합니다.
-          </li>
-          <li>
-            작성된 콘텐츠는 최소 6개월간 유지해야 하며, 유지하지 않을 경우
-            패널티가 발생합니다.
-          </li>
-          <li>
-            생성형 AI로 작성된 콘텐츠 및 이미지는 수정 요청 또는 패널티가
-            발생합니다.
-          </li>
-          <li>미션 불이행, 리뷰 미제출, 기한 미준수 시 패널티가 발생합니다.</li>
-        </ul>
-      </div>
-    </article>
   );
 }

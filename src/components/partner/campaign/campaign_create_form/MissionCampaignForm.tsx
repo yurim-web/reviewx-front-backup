@@ -38,11 +38,38 @@ import {
 } from "./common/CampaignFormCommon";
 import NoticeSection from "./common/NoticeSection";
 
+interface MissionCampaignFormProps extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
+  /** 캠페인 수정 시 초기 데이터 (선택사항) */
+  initialData?: CampaignFormData | null;
+  /** 폼 동작 모드: 생성/수정 */
+  mode?: "create" | "edit";
+}
+
 export default function MissionCampaignForm({
   onSubmit,
   isSubmitting,
-}: Omit<CampaignCreateFormBaseProps, "campaignType">) {
+  initialData,
+  mode = "create",
+}: MissionCampaignFormProps) {
   const router = useRouter();
+  const isEditMode = mode === "edit";
+
+  // 수정 모드에서 편집 가능 필드 정의 (이미지, 제공 내역, 홍보 링크, 추가 지급 포인트, 참여/제출 옵션)
+  const isEditableField = (field: string): boolean => {
+    const editable = new Set([
+      "images",
+      "providedItems",
+      "promotionLink",
+      "additionalPoints",
+      // 참여/제출 옵션 필드들
+      "adultOnly",
+      "allowReParticipation",
+      "allowLateSubmission",
+      "requireContentLink",
+      "requireContentImage",
+    ]);
+    return editable.has(field);
+  };
 
   // 이미지 업로드 관련 상태
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
@@ -55,28 +82,29 @@ export default function MissionCampaignForm({
     videoCount: false,
   });
 
-  const [formData, setFormData] = useState<CampaignFormData>({
-    campaignType: "미션형",
-    title: "",
-    category: "",
-    brandName: "",
-    providedItems: "",
-    promotionLink: "",
-    currentPoints: "58,000",
-    additionalPoints: "",
-    recruitmentCount: "",
-    recruitmentPeriod: "",
-    announcementDate: "",
-    registrationPeriod: "",
-    keywords: "",
-    adultOnly: false,
-    allowReParticipation: false,
-    allowLateSubmission: false,
-    minTextLength: "",
-    minImageCount: "",
-    videoCount: "",
-    videoDuration: "",
-    requireLinkAttachment: false,
+  const [formData, setFormData] = useState<CampaignFormData>(
+    initialData || {
+      campaignType: "미션형",
+      title: "",
+      category: "",
+      brandName: "",
+      providedItems: "",
+      promotionLink: "",
+      currentPoints: "58,000",
+      additionalPoints: "",
+      recruitmentCount: "",
+      recruitmentPeriod: "",
+      announcementDate: "",
+      registrationPeriod: "",
+      keywords: "",
+      adultOnly: false,
+      allowReParticipation: false,
+      allowLateSubmission: false,
+      minTextLength: "",
+      minImageCount: "",
+      videoCount: "",
+      videoDuration: "",
+      requireLinkAttachment: false,
     requireKeywordAttachment: false,
     requireContentLink: false,
     requireContentImage: false,
@@ -308,6 +336,7 @@ export default function MissionCampaignForm({
    * - 논리 연산자(&&): 모든 조건이 true여야 true 반환
    */
   const isFormValid = useMemo(() => {
+    if (isEditMode) return true;
     // 이미지가 최소 1개 이상 업로드되었는지 확인
     const hasImages = uploadedImages.length > 0;
 
@@ -358,10 +387,31 @@ export default function MissionCampaignForm({
 
   /**
    * 폼 제출 처리
+   *
+   * 설명:
+   * - 폼 데이터와 업로드된 이미지를 함께 onSubmit으로 전달합니다.
+   * - thumbnailImageUrl은 첫 번째 이미지의 미리보기 URL(Data URL)을 전달합니다.
+   *   이는 캠페인 카드에서 썸네일을 표시하는 데 사용됩니다.
+   *
+   * 학습 포인트:
+   * - File 객체와 Data URL(이미지 미리보기)을 함께 전달하여
+   *   서버 업로드와 클라이언트 표시를 모두 지원합니다.
    */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+
+    // 업로드된 이미지 파일을 폼 데이터에 추가
+    const formDataWithImages = {
+      ...formData,
+      // 첫 번째 이미지를 썸네일로 사용 (File 객체)
+      thumbnailImage: uploadedImages[0],
+      // 첫 번째 이미지의 미리보기 URL (Data URL) - 캠페인 카드 표시용
+      thumbnailImageUrl: imagePreviews[0] || undefined,
+      // 나머지 이미지를 상세 이미지로 사용
+      detailImages: uploadedImages.slice(1),
+    };
+
+    onSubmit(formDataWithImages);
   };
 
   return (
@@ -374,6 +424,7 @@ export default function MissionCampaignForm({
         <CampaignTypeSelector
           currentType="미션형"
           onTypeChange={handleCampaignTypeChange}
+          disabled={isEditMode}
         />
 
         {/* 이미지 업로드 */}
@@ -404,7 +455,8 @@ export default function MissionCampaignForm({
             {imagePreviews.length < 7 && (
               <div
                 className={infoStyles.image_upload_placeholder}
-                onClick={handleUploadClick}
+                onClick={isEditMode && !isEditableField("images") ? undefined : handleUploadClick}
+                style={isEditMode && !isEditableField("images") ? { pointerEvents: "none", opacity: 0.5 } : undefined}
               >
                 <img src="/images/icons/plus_icon.svg" alt="이미지 추가" />
               </div>
@@ -419,6 +471,7 @@ export default function MissionCampaignForm({
             multiple
             onChange={handleImageSelect}
             style={{ display: "none" }}
+            disabled={isEditMode && !isEditableField("images")}
           />
         </article>
 
@@ -433,6 +486,7 @@ export default function MissionCampaignForm({
             value={formData.title}
             onChange={(e) => updateFormData("title", e.target.value)}
             placeholder="캠페인 제목"
+            readOnly={isEditMode && !isEditableField("title")}
           />
         </article>
 
@@ -445,6 +499,7 @@ export default function MissionCampaignForm({
             value={formData.category}
             options={categories}
             onChange={(value) => updateFormData("category", value)}
+            disabled={isEditMode && !isEditableField("category")}
             placeholder="카테고리 선택"
           />
         </article>
@@ -473,6 +528,7 @@ export default function MissionCampaignForm({
             value={formData.providedItems}
             onChange={(e) => updateFormData("providedItems", e.target.value)}
             placeholder="제공 내역을 입력하세요"
+            readOnly={isEditMode && !isEditableField("providedItems")}
           />
         </article>
 
@@ -485,6 +541,7 @@ export default function MissionCampaignForm({
             value={formData.promotionLink}
             onChange={(e) => updateFormData("promotionLink", e.target.value)}
             placeholder="링크를 입력하세요"
+            readOnly={isEditMode && !isEditableField("promotionLink")}
           />
         </article>
 
@@ -519,6 +576,7 @@ export default function MissionCampaignForm({
                 onChange={(e) => handleNumericChange(e, "additionalPoints")}
                 onKeyDown={(e) => handleNumericInput(e, "additionalPoints")}
                 placeholder="캠페인 수행에 대한 추가 지급 포인트"
+                readOnly={isEditMode && !isEditableField("additionalPoints")}
               />
               <span className={infoStyles.points_unit}>P</span>
             </div>
@@ -541,6 +599,7 @@ export default function MissionCampaignForm({
                 }
                 placeholder="0"
                 min="0"
+                readOnly={isEditMode && !isEditableField("recruitmentCount")}
               />
               <span className={infoStyles.count_unit}>명</span>
             </div>
@@ -560,6 +619,7 @@ export default function MissionCampaignForm({
               updateFormData("recruitmentPeriod", e.target.value)
             }
             placeholder=""
+            readOnly={isEditMode && !isEditableField("recruitmentPeriod")}
           />
         </article>
 
@@ -574,6 +634,7 @@ export default function MissionCampaignForm({
             value={formData.announcementDate}
             onChange={(e) => updateFormData("announcementDate", e.target.value)}
             placeholder=""
+            readOnly={isEditMode && !isEditableField("announcementDate")}
           />
         </article>
 
@@ -590,6 +651,7 @@ export default function MissionCampaignForm({
               updateFormData("registrationPeriod", e.target.value)
             }
             placeholder=""
+            readOnly={isEditMode && !isEditableField("registrationPeriod")}
           />
         </article>
       </section>
@@ -609,13 +671,14 @@ export default function MissionCampaignForm({
             value={formData.keywords}
             onChange={(e) => updateFormData("keywords", e.target.value)}
             placeholder="최대 10개 입력 가능"
+            readOnly={isEditMode && !isEditableField("keywords")}
           />
         </article>
 
         {/* 간편 안내 */}
         <article className={infoStyles.form_group}>
           <label className={infoStyles.form_label}>간편 안내</label>
-
+          <div className={isEditMode ? guideStyles.locked_section : undefined}>
           {/* 글자 수 */}
           <div className={guideStyles.option_input_box}>
             <input
@@ -755,6 +818,7 @@ export default function MissionCampaignForm({
             </label>
             <span className={guideStyles.option_value}></span>
           </div>
+          </div>
         </article>
 
         {/* 참여/제출 옵션 */}
@@ -772,6 +836,7 @@ export default function MissionCampaignForm({
               onChange={(e) =>
                 updateFormData("requireContentLink", e.target.checked)
               }
+              disabled={isEditMode && !isEditableField("requireContentLink")}
             />
             <label
               htmlFor="requireContentLink"
@@ -791,6 +856,7 @@ export default function MissionCampaignForm({
               onChange={(e) =>
                 updateFormData("requireContentImage", e.target.checked)
               }
+              disabled={isEditMode && !isEditableField("requireContentImage")}
             />
             <label
               htmlFor="requireContentImage"
@@ -808,6 +874,7 @@ export default function MissionCampaignForm({
               id="adultOnly"
               checked={formData.adultOnly}
               onChange={(e) => updateFormData("adultOnly", e.target.checked)}
+              disabled={isEditMode && !isEditableField("adultOnly")}
             />
             <label htmlFor="adultOnly" className={guideStyles.option_label}>
               만 19세 이상 참여 허용 (성인인증이 필요한 제품/서비스)
@@ -824,6 +891,7 @@ export default function MissionCampaignForm({
               onChange={(e) =>
                 updateFormData("allowReParticipation", e.target.checked)
               }
+              disabled={isEditMode && !isEditableField("allowReParticipation")}
             />
             <label
               htmlFor="allowReParticipation"
@@ -843,6 +911,7 @@ export default function MissionCampaignForm({
               onChange={(e) =>
                 updateFormData("allowLateSubmission", e.target.checked)
               }
+              disabled={isEditMode && !isEditableField("allowLateSubmission")}
             />
             <label
               htmlFor="allowLateSubmission"
@@ -864,6 +933,7 @@ export default function MissionCampaignForm({
             value={formData.guidelines}
             onChange={(e) => updateFormData("guidelines", e.target.value)}
             placeholder="캠페인 전체 안내 사항, 미션, 기타 참고 사항 등"
+            readOnly={isEditMode && !isEditableField("guidelines")}
           />
         </article>
 
@@ -878,7 +948,7 @@ export default function MissionCampaignForm({
           className={guideStyles.submit_button}
           disabled={isSubmitting || !isFormValid}
         >
-          {isSubmitting ? "등록 중..." : "등록하기"}
+          {isSubmitting ? (isEditMode ? "저장 중..." : "등록 중...") : (isEditMode ? "저장하기" : "등록하기")}
         </button>
       </div>
     </form>

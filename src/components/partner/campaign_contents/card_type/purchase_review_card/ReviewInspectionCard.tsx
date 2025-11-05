@@ -39,7 +39,7 @@ function getPrimaryButton(
     };
   }
   return {
-    label: "구매 영수증 확인",
+    label: "구매영수증 확인하기",
     onClick: () => {
       console.log("구매 영수증 확인 클릭", id);
       onCheckReceipt?.(id);

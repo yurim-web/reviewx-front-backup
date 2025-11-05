@@ -54,7 +54,7 @@ export default function ReviewRejectedReceiptCard({
           onCheckReceipt?.(applicant.id);
         }}
       >
-        구매 영수증 확인
+        구매영수증 확인하기
       </button>
 
       {/* 등록/수정/지각 등록 */}
@@ -83,3 +83,4 @@ export default function ReviewRejectedReceiptCard({
     </article>
   );
 }
+

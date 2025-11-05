@@ -39,41 +39,69 @@ import {
 } from "./common/CampaignFormCommon";
 import NoticeSection from "./common/NoticeSection";
 
+interface VisitCampaignFormProps
+  extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
+  /** 캠페인 수정 시 초기 데이터 (선택사항) */
+  initialData?: CampaignFormData | null;
+  /** 폼 동작 모드: 생성/수정 */
+  mode?: "create" | "edit";
+}
+
 export default function VisitCampaignForm({
   onSubmit,
   isSubmitting,
-}: Omit<CampaignCreateFormBaseProps, "campaignType">) {
+  initialData,
+  mode = "create",
+}: VisitCampaignFormProps) {
   const router = useRouter();
-  const [formData, setFormData] = useState<CampaignFormData>({
-    campaignType: "방문형",
-    platform: "네이버 블로그",
-    title: "",
-    category: "",
-    region: "",
-    brandName: "",
-    providedItems: "",
-    visitLink: "",
-    visitAddress: "",
-    addressDetail: "",
-    currentPoints: "",
-    additionalPoints: "",
-    recruitmentCount: "",
-    recruitmentPeriod: "",
-    announcementDate: "",
-    registrationPeriod: "",
-    keywords: "",
-    adultOnly: false,
-    allowReParticipation: false,
-    allowLateSubmission: false,
-    minTextLength: "",
-    minImageCount: "",
-    videoCount: "",
-    videoDuration: "",
-    requireLinkAttachment: false,
-    requireKeywordAttachment: false,
-    guidelines: "",
-    isUrgent: false,
-  });
+  const isEditMode = mode === "edit";
+
+  // 수정 모드에서 편집 가능 필드 정의 (이미지, 제공 내역, 방문 링크, 추가 지급 포인트, 참여/제출 옵션)
+  const isEditableField = (field: string): boolean => {
+    const editable = new Set([
+      "images",
+      "providedItems",
+      "visitLink",
+      "additionalPoints",
+      // 참여/제출 옵션 필드들
+      "adultOnly",
+      "allowReParticipation",
+      "allowLateSubmission",
+    ]);
+    return editable.has(field);
+  };
+  const [formData, setFormData] = useState<CampaignFormData>(
+    initialData || {
+      campaignType: "방문형",
+      platform: "네이버 블로그",
+      title: "",
+      category: "",
+      region: "",
+      brandName: "",
+      providedItems: "",
+      visitLink: "",
+      visitAddress: "",
+      addressDetail: "",
+      currentPoints: "",
+      additionalPoints: "",
+      recruitmentCount: "",
+      recruitmentPeriod: "",
+      announcementDate: "",
+      registrationPeriod: "",
+      keywords: "",
+      adultOnly: false,
+      allowReParticipation: false,
+      allowLateSubmission: false,
+      minTextLength: "",
+      minImageCount: "",
+      videoCount: "",
+      videoDuration: "",
+      requireLinkAttachment: false,
+      requireKeywordAttachment: false,
+      guidelines: "",
+      isUrgent: false,
+    }
+  );
 
   // 이미지 업로드 관련 state
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
@@ -313,6 +341,7 @@ export default function VisitCampaignForm({
    * - 논리 연산자(&&): 모든 조건이 true여야 true 반환
    */
   const isFormValid = useMemo(() => {
+    if (isEditMode) return true;
     // 이미지가 최소 1개 이상 업로드되었는지 확인
     const hasImages = uploadedImages.length > 0;
 
@@ -371,10 +400,31 @@ export default function VisitCampaignForm({
 
   /**
    * 폼 제출 처리
+   *
+   * 설명:
+   * - 폼 데이터와 업로드된 이미지를 함께 onSubmit으로 전달합니다.
+   * - thumbnailImageUrl은 첫 번째 이미지의 미리보기 URL(Data URL)을 전달합니다.
+   *   이는 캠페인 카드에서 썸네일을 표시하는 데 사용됩니다.
+   *
+   * 학습 포인트:
+   * - File 객체와 Data URL(이미지 미리보기)을 함께 전달하여
+   *   서버 업로드와 클라이언트 표시를 모두 지원합니다.
    */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+
+    // 업로드된 이미지 파일을 폼 데이터에 추가
+    const formDataWithImages = {
+      ...formData,
+      // 첫 번째 이미지를 썸네일로 사용 (File 객체)
+      thumbnailImage: uploadedImages[0],
+      // 첫 번째 이미지의 미리보기 URL (Data URL) - 캠페인 카드 표시용
+      thumbnailImageUrl: imagePreviews[0] || undefined,
+      // 나머지 이미지를 상세 이미지로 사용
+      detailImages: uploadedImages.slice(1),
+    };
+
+    onSubmit(formDataWithImages);
   };
 
   return (
@@ -387,6 +437,7 @@ export default function VisitCampaignForm({
         <CampaignTypeSelector
           currentType="방문형"
           onTypeChange={handleCampaignTypeChange}
+          disabled={isEditMode}
         />
 
         {/* 플랫폼 선택 */}
@@ -398,6 +449,7 @@ export default function VisitCampaignForm({
             value={formData.platform || ""}
             options={platforms}
             onChange={(value) => updateFormData("platform", value)}
+            disabled={isEditMode && !isEditableField("platform")}
             placeholder="플랫폼 선택"
           />
         </article>
@@ -431,7 +483,8 @@ export default function VisitCampaignForm({
             {uploadedImages.length < 7 && (
               <div
                 className={infoStyles.image_upload_placeholder}
-                onClick={handleUploadClick}
+                onClick={isEditMode && !isEditableField("images") ? undefined : handleUploadClick}
+                style={isEditMode && !isEditableField("images") ? { pointerEvents: "none", opacity: 0.5 } : undefined}
               >
                 <img
                   src="/images/icons/plus_icon.svg"
@@ -451,6 +504,7 @@ export default function VisitCampaignForm({
             multiple
             onChange={handleImageSelect}
             style={{ display: "none" }}
+            disabled={isEditMode && !isEditableField("images")}
           />
         </article>
 
@@ -465,6 +519,7 @@ export default function VisitCampaignForm({
             value={formData.title}
             onChange={(e) => updateFormData("title", e.target.value)}
             placeholder="지역, 브랜드, 제공하는 서비스/제품 등"
+            readOnly={isEditMode && !isEditableField("title")}
           />
         </article>
 
@@ -477,6 +532,7 @@ export default function VisitCampaignForm({
             value={formData.category}
             options={categories}
             onChange={(value) => updateFormData("category", value)}
+            disabled={isEditMode && !isEditableField("category")}
             placeholder="카테고리 선택"
           />
         </article>
@@ -490,6 +546,7 @@ export default function VisitCampaignForm({
             value={formData.region || ""}
             options={regions}
             onChange={(value) => updateFormData("region", value)}
+            disabled={isEditMode && !isEditableField("region")}
             placeholder="지역 선택"
           />
         </article>
@@ -504,6 +561,7 @@ export default function VisitCampaignForm({
             className={infoStyles.form_input}
             value={formData.brandName}
             readOnly
+            placeholder="{상호명}"
           />
         </article>
 
@@ -518,6 +576,7 @@ export default function VisitCampaignForm({
             value={formData.providedItems}
             onChange={(e) => updateFormData("providedItems", e.target.value)}
             placeholder="제공하는 서비스/제품/포인트 등 한줄 설명"
+            readOnly={isEditMode && !isEditableField("providedItems")}
           />
         </article>
 
@@ -533,6 +592,7 @@ export default function VisitCampaignForm({
               value={formData.visitAddress}
               onChange={(e) => updateFormData("visitAddress", e.target.value)}
               placeholder="캠페인 방문 주소"
+              readOnly={isEditMode && !isEditableField("visitAddress")}
             />
             <button type="button" className={infoStyles.charge_button}>
               우편번호 찾기
@@ -549,6 +609,7 @@ export default function VisitCampaignForm({
             value={formData.addressDetail}
             onChange={(e) => updateFormData("addressDetail", e.target.value)}
             placeholder="캠페인 방문 상세 주소 안내"
+            readOnly={isEditMode && !isEditableField("addressDetail")}
           />
         </article>
 
@@ -561,6 +622,7 @@ export default function VisitCampaignForm({
             value={formData.visitLink}
             onChange={(e) => updateFormData("visitLink", e.target.value)}
             placeholder="캠페인 방문 링크"
+            readOnly={isEditMode && !isEditableField("visitLink")}
           />
         </article>
 
@@ -595,6 +657,7 @@ export default function VisitCampaignForm({
                 onChange={(e) => handleNumericChange(e, "additionalPoints")}
                 onKeyDown={(e) => handleNumericInput(e, "additionalPoints")}
                 placeholder="캠페인 수행에 대한 추가 지급 포인트"
+                readOnly={isEditMode && !isEditableField("additionalPoints")}
               />
               <span className={infoStyles.points_unit}>P</span>
             </div>
@@ -617,6 +680,7 @@ export default function VisitCampaignForm({
                 }
                 placeholder="0"
                 min="0"
+                readOnly={isEditMode && !isEditableField("recruitmentCount")}
               />
               <span className={infoStyles.count_unit}>명</span>
             </div>
@@ -636,6 +700,7 @@ export default function VisitCampaignForm({
               updateFormData("recruitmentPeriod", e.target.value)
             }
             placeholder=""
+            readOnly={isEditMode && !isEditableField("recruitmentPeriod")}
           />
         </article>
 
@@ -650,6 +715,7 @@ export default function VisitCampaignForm({
             value={formData.announcementDate}
             onChange={(e) => updateFormData("announcementDate", e.target.value)}
             placeholder=""
+            readOnly={isEditMode && !isEditableField("announcementDate")}
           />
         </article>
 
@@ -666,6 +732,7 @@ export default function VisitCampaignForm({
               updateFormData("registrationPeriod", e.target.value)
             }
             placeholder=""
+            readOnly={isEditMode && !isEditableField("registrationPeriod")}
           />
         </article>
       </section>
@@ -685,13 +752,14 @@ export default function VisitCampaignForm({
             value={formData.keywords}
             onChange={(e) => updateFormData("keywords", e.target.value)}
             placeholder="본문 내 첨부 키워드/해시태그/계정 태그 등"
+            readOnly={isEditMode && !isEditableField("keywords")}
           />
         </article>
 
         {/* 간편 안내 */}
         <article className={infoStyles.form_group}>
           <label className={infoStyles.form_label}>간편 안내</label>
-
+          <div className={isEditMode ? guideStyles.locked_section : undefined}>
           {/* 글자 수 */}
           <div className={guideStyles.option_input_box}>
             <input
@@ -831,6 +899,7 @@ export default function VisitCampaignForm({
             </label>
             <span className={guideStyles.option_value}></span>
           </div>
+          </div>
         </article>
 
         {/* 참여/제출 옵션 */}
@@ -846,6 +915,7 @@ export default function VisitCampaignForm({
               id="adultOnly"
               checked={formData.adultOnly}
               onChange={(e) => updateFormData("adultOnly", e.target.checked)}
+              disabled={isEditMode && !isEditableField("adultOnly")}
             />
             <label htmlFor="adultOnly" className={guideStyles.option_label}>
               만 19세 이상 참여 허용 (성인인증이 필요한 제품/서비스)
@@ -862,6 +932,7 @@ export default function VisitCampaignForm({
               onChange={(e) =>
                 updateFormData("allowReParticipation", e.target.checked)
               }
+              disabled={isEditMode && !isEditableField("allowReParticipation")}
             />
             <label
               htmlFor="allowReParticipation"
@@ -881,6 +952,7 @@ export default function VisitCampaignForm({
               onChange={(e) =>
                 updateFormData("allowLateSubmission", e.target.checked)
               }
+              disabled={isEditMode && !isEditableField("allowLateSubmission")}
             />
             <label
               htmlFor="allowLateSubmission"
@@ -902,6 +974,7 @@ export default function VisitCampaignForm({
             value={formData.guidelines}
             onChange={(e) => updateFormData("guidelines", e.target.value)}
             placeholder="캠페인 전체 안내 사항, 미션, 기타 참고 사항 등"
+            readOnly={isEditMode && !isEditableField("guidelines")}
           />
         </article>
 
@@ -916,7 +989,7 @@ export default function VisitCampaignForm({
           className={guideStyles.submit_button}
           disabled={isSubmitting || !isFormValid}
         >
-          {isSubmitting ? "등록 중..." : "등록하기"}
+          {isSubmitting ? (isEditMode ? "저장 중..." : "등록 중...") : (isEditMode ? "저장하기" : "등록하기")}
         </button>
       </div>
     </form>

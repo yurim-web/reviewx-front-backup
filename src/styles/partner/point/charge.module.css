@@ -1,0 +1,479 @@
+/* ========================================
+   💰 파트너 포인트 충전 페이지 스타일
+   ======================================== */
+
+/* ✅ 전체 페이지 레이아웃 - 최상위 div 요소 */
+.charge_page {
+  background-color: #f2f2f2;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* ✅ 메인 컨텐츠 영역 - page.tsx의 <main> 요소 (흰색 배경) */
+.main_content {
+  background-color: white;
+  max-width: 1000px;
+  margin: 0 auto;
+  min-height: calc(100vh - 80px);
+  padding-bottom: 80px;
+}
+
+/* ✅ 컨테이너 - page.tsx의 최상위 div */
+.container {
+  margin: 0 auto;
+  padding-top: 148px;
+}
+
+/* ============================================
+   페이지 제목 영역
+   ============================================ */
+
+/* ✅ 페이지 제목 "포인트 충전" - 고정 헤더 (page.tsx 107번째 줄 <h1>) */
+.page_title {
+  position: fixed;
+  top: 80px;
+  left: 0;
+  right: 0;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px 40px;
+  background-color: white;
+  color: #444;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 20px;
+  letter-spacing: -0.4px;
+  z-index: 99;
+  border-bottom: 0.5px solid #d9d9d9;
+}
+
+/* ✅ 컨텐츠 컨테이너 - 입금계좌정보, 입금확인 등 각 섹션을 감싸는 박스 */
+.content_container{
+display: flex;
+flex-direction: column;
+gap: 20px;
+}
+
+/* ✅ 섹션 제목 - "입금 계좌 정보", "입금 확인", "사업자 정보" 등 (page.tsx 141, 160, 250번째 줄) */
+.content_title{
+  color: #444444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  padding-bottom: 4px;
+}
+
+/* ============================================
+   결제 방식 탭 영역
+   ============================================ */
+
+/* ✅ 탭 섹션 - 무통장 입금/신용카드 결제 탭 전체 (page.tsx 114번째 줄 <article>) */
+.tab_section {
+  display: flex;
+  gap: 16px;
+  padding: 40px;
+}
+
+/* ✅ 개별 탭 버튼 - "무통장 입금", "신용카드 결제" 버튼 (page.tsx 115, 123번째 줄) */
+.tab_button {
+  flex: 1;
+  border-radius: 8px;
+  border: 1px solid #D9D9D9;
+  padding: 20px;
+  cursor: pointer;
+
+  /* 버튼 속 글자 css */
+color: #848484;
+font-size: 16px;
+font-weight: 500;
+line-height: 20px;
+letter-spacing: -0.32px;
+}
+
+/* ✅ 활성화된 탭 버튼 스타일 (page.tsx 118, 126번째 줄에서 tab_button에 추가) */
+.tab_active {
+  border-color: #444444;
+  color: #444444;
+}
+
+/* ✅ 무통장 입금 전체 섹션 (page.tsx 135번째 줄 <section>) */
+.bank_section{
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 0 40px ;
+}
+
+/* ✅ 폼 라벨 - "신청 금액", "입금자명", "상호명" 등의 라벨 텍스트 */
+.section_label {
+  color: #444;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* ✅ 입력 박스 - 입금자명 같은 텍스트 입력 필드 (page.tsx 216번째 줄 <input>) */
+.input_box {
+  width: 100%;
+  height: 56px;
+  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+  background-color: #ffffff;
+  padding: 0 20px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  color: #444444;
+  box-sizing: border-box;
+}
+
+/* ✅ 읽기 전용 박스 - 신청 후 포인트, 상호명, 대표자명 등 (page.tsx 208, 253, 257번째 줄) */
+.read_only_box {
+  width: 100%;
+  height: 56px;
+  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+  background-color: #f6f6f6;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  color: #999999;
+  font-size: 16px;
+}
+
+/* ✅ 폼 섹션 - 각 입력 필드(label + input)를 감싸는 영역 */
+.form_section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ✅ 섹션 헤딩 - 신용카드 결제 섹션의 "결제 진행" 제목 (page.tsx 310번째 줄) */
+.section_heading {
+  color: #444444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  padding: 0 40px 12px 40px;
+}
+
+/* ✅ 서브 섹션 헤딩 - "입금 안내 사항" 제목 (page.tsx 291번째 줄) */
+.sub_section_heading {
+  color: #444444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  padding: 24px 40px 12px 40px;
+}
+
+/* ✅ 계좌 정보 영역 - 중복 선언 (위에서 이미 선언됨) */
+.bank_section { display: flex;
+  flex-direction: column;
+  gap: 40px;
+ }
+
+/* ============================================
+   입금계좌정보 영역
+   ============================================ */
+
+/* ✅ 입금계좌 안내사항 리스트 - "아래 계좌로 신청할 금액을 입금..." (page.tsx 152번째 줄 <ul>) */
+.account_notice_list {
+margin-top: -4px;
+color: #848484;
+font-size: 14px;
+font-weight: 500;
+line-height: 22px;
+letter-spacing: -0.28px;
+
+border-bottom: 1px solid #D9D9D9;
+padding-bottom: 24px;
+}
+
+/* ✅ 계좌 정보 박스 - 회색 배경의 계좌번호 표시 영역 (page.tsx 143번째 줄) */
+.account_info_box {
+  padding: 20px;
+  border-radius: 8px;
+  background: #F9F9F9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ✅ 계좌 정보 텍스트 - "국민은행 659401..." 계좌번호 (page.tsx 144번째 줄 <span>) */
+.account_text {
+  color: #444444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* ✅ 복사 버튼 - 계좌번호 옆 "복사" 버튼 (page.tsx 145번째 줄) */
+.copy_button {
+  border-radius: 4px;
+  background: #D9D9D9;
+  padding: 4px 8px;
+  cursor: pointer;
+
+  /* 버튼 속 글자 */
+  color: #848484;
+font-size: 14px;
+font-weight: 500;
+line-height: 14px;
+letter-spacing: -0.28px;
+
+}
+
+/* ✅ 일반 안내 리스트 - "입금 안내 사항" 아래 불릿 리스트 (page.tsx 292번째 줄 <ul>) */
+.notice_list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: #848484;
+  padding-left: 10px;
+}
+
+/* ✅ 안내 리스트 아이템 - 각 안내 사항 (page.tsx 293-295번째 줄 <li>) */
+.notice_list li {
+  color: #848484;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 25px;
+  letter-spacing: -0.26px;
+  padding-left: 13px;
+  position: relative;
+}
+
+/* ✅ 안내 리스트 불릿(•) - li::before 가상 요소로 만든 불릿 */
+.notice_list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #848484;
+}
+
+/* ============================================
+   충전 신청 버튼 영역
+   ============================================ */
+
+/* ✅ 신청 버튼 섹션 - 하단 "입금 확인 요청하기"/"결제하기" 버튼 영역 (page.tsx 389번째 줄) */
+.submit_button_section {
+  padding: 40px 40px 0px 40px;
+}
+
+/* ✅ 신청 버튼 - "입금 확인 요청하기" 또는 "결제하기" 버튼 (page.tsx 390번째 줄) */
+.submit_button {
+  width: 100%;
+  height: 56px;
+  background-color: #555555;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  color: white;
+}
+
+/* ✅ 비활성화된 신청 버튼 - 금액 미입력 또는 약관 미동의 시 */
+.submit_button.disabled,
+.submit_button:disabled {
+  background-color: #d9d9d9;
+  color: #848484;
+cursor: default;
+}
+
+/* ============================================
+   약관 동의 영역
+   ============================================ */
+
+/* ✅ 약관 섹션 - "결제 · 환불 및 이용약관 동의" 전체 영역 (page.tsx 272번째 줄) */
+.terms_section {
+  padding: 24px 40px 0 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ✅ 약관 로우 - 체크박스 + 약관보기 버튼이 함께 있는 행 (page.tsx 274번째 줄) */
+.terms_row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ✅ 체크박스 로우 - 세금계산서 발행, 약관 동의 체크박스 박스 (page.tsx 232, 275번째 줄) */
+.checkbox_row {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #D9D9D9;
+  padding: 18px 20px;
+
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  
+}
+
+/* ✅ 체크박스 라벨 - 체크박스 옆 텍스트 */
+.checkbox_row label{
+  cursor: pointer;
+}
+.checkbox_container{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ✅ 체크박스 자체 - 약관 동의, 세금계산서 발행 체크박스 (page.tsx 233-240, 276-283번째 줄) */
+.checkbox_row input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  appearance: none;
+  position: relative;
+}
+
+/* ✅ 체크된 체크박스 - border 변경 */
+.checkbox_row input[type="checkbox"]:checked {
+  border-color: #444444;
+  background: #fff;
+}
+
+/* ✅ 체크된 체크박스 체크마크(✓) - 가상 요소로 만든 체크 아이콘 */
+.checkbox_row input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #444444;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.checkbox_row_agree{
+  border: none;
+background: #F9F9F9;
+}
+
+
+
+/* ✅ 약관 보기 버튼 - "약관 보기" 버튼 (page.tsx 286, 382번째 줄) */
+.terms_button {
+  display: inline-flex;
+  padding: 4px 8px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+background: #D9D9D9;
+border: none;
+cursor: pointer;
+  /* 버튼 속 글자 스타일 */
+  color: #848484;
+font-size: 14px;
+font-weight: 500;
+line-height: 14px; 
+letter-spacing: -0.28px;
+
+}
+
+.notice_section{
+  padding-top: 20px;
+}
+
+/* ============================================
+   토스트 메시지 (복사 완료 알림)
+   ============================================ */
+
+/* ✅ 토스트 - "복사되었습니다" 메시지 박스 */
+.copy_toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  
+  /* 토스트 박스 스타일 */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  border-radius: 100px;
+  background-color: #333333;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  
+  /* 페이드 인 애니메이션 */
+  animation: toastFadeIn 0.3s ease-out forwards;
+}
+
+/* ✅ 토스트 체크마크 아이콘 - 초록색 원과 체크 */
+.copy_toast_icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #4CAF50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.copy_toast_icon::after {
+  content: "✓";
+  color: #4CAF50;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* ✅ 토스트 텍스트 - "복사되었습니다" */
+.copy_toast_text {
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  white-space: nowrap;
+}
+
+/* ✅ 토스트 페이드 인 애니메이션 */
+@keyframes toastFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ✅ 토스트 페이드 아웃 애니메이션 */
+@keyframes toastFadeOut {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+}
+
+/* ✅ 토스트 숨김 상태 */
+.copy_toast.hidden {
+  animation: toastFadeOut 0.3s ease-out forwards;
+}
+

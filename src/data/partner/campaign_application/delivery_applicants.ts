@@ -18,7 +18,7 @@
  */
 
 import { CampaignInfo } from "@/components/partner/campaign_application/CampaignInfoBox";
-import type { ContentByTab } from "../campaign_contents/types";
+import type { ContentByTab } from "../sharedCampaigns";
 
 // 기본 신청자 데이터 타입 정의
 export interface Applicant {

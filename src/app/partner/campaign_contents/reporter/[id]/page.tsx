@@ -10,7 +10,7 @@ import Campaignbanner from "@/components/partner/campaign_application/CampaignIn
 import PageHeader from "@/components/partner/campaign_application/PageHeader";
 import ExcelDownloadBtn from "@/components/partner/campaign_application/ExcelDownloadBtn";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
-import { getReporterContentsById } from "@/data/partner/campaign_contents/reporter";
+import { getReporterContentsById } from "@/data/partner/reporter";
 import { getClosedContentsById } from "@/data/partner/sharedCampaigns";
 import ExperienceInspectionCard from "@/components/partner/campaign_contents/card_type/experience_card/ExperienceInspectionCard";
 import ExperienceCompletedCard from "@/components/partner/campaign_contents/card_type/experience_card/ExperienceCompletedCard";

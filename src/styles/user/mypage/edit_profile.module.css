@@ -157,6 +157,19 @@
   border-color: #444;
 }
 
+/* 숫자 입력 필드 스피너 화살표 숨기기 */
+/* Chrome, Safari, Edge 등의 WebKit 기반 브라우저에서 스피너 숨김 */
+.input_field[type="number"]::-webkit-inner-spin-button,
+.input_field[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox에서 스피너 숨김 */
+.input_field[type="number"] {
+  -moz-appearance: textfield;
+}
+
 /* 프로필 사진 섹션 */
 .profile_photo_section {
   margin-bottom: 40px;

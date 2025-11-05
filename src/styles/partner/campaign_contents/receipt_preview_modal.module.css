@@ -1,0 +1,145 @@
+/* ========================================
+   🧾 구매 영수증 미리보기 모달 (파트너)
+   - 피그마 디자인 기준으로 구현
+   - 모달 크기: 1000px 너비, 가운데 정렬
+   - 네비게이션 버튼: 64px 크기
+   - 인디케이터: 하단 중앙 배치
+   ======================================== */
+
+.modal_overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal_container {
+  position: relative;
+  width: 1000px;
+  max-width: 92vw;
+border-radius: 0;
+  overflow: visible;
+}
+
+/* 닫기 버튼 - 우측 상단 절대 위치 */
+.close_button {
+  position: fixed;
+  top: 32px;
+  right: 32px;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  z-index: 1010;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close_button:hover {
+  opacity: 0.7;
+}
+
+.modal_content {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 600px;
+  position: relative;
+}
+
+.empty_state {
+   width: 369px;
+   background-color: #FFFFFF;
+  height: 800px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #848484;
+  font-size: 14px;
+}
+
+.image_viewer {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav_button {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 64px;
+  height: 64px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  z-index: 1010;
+}
+
+.nav_left { left: 40px; }
+.nav_right { right: 40px; }
+
+.nav_button:hover {
+  opacity: 0.7;
+}
+
+.nav_button svg {
+  display: block;
+}
+
+.image_wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.receipt_image {
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* 하단 인디케이터 */
+.indicator_container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 20px 0;
+  width: 100%;
+  background-color:transparent;
+}
+
+.indicator_dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: none;
+  background: #d9d9d9;
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.2s;
+}
+
+.indicator_dot_active {
+  background: #444444;
+}
+

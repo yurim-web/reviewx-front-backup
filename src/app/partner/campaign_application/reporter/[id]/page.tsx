@@ -34,6 +34,7 @@ import layoutStyles from "@/styles/partner/layout.module.css";
 import Campaignbanner from "@/components/partner/campaign_application/CampaignInfoBox";
 import ExcelDownloadBtn from "@/components/partner/campaign_application/ExcelDownloadBtn";
 import PartnerSortModalFilter from "@/components/partner/campaign_application/PartnerSortModalFilter";
+import EmptyApplicantsList from "@/components/partner/campaign_application/EmptyApplicantsList";
 
 // 기자단 카드 컴포넌트들 import (채널별)
 import NaverBlogCard from "@/components/partner/campaign_application/card_type/naverblog/NaverBlogCard";
@@ -460,11 +461,15 @@ export default function ReporterCampaignApplicationPage() {
 
         {/* 기자단 신청자 목록 그리드 */}
         <article className={styles.applicants_grid}>
-          {currentApplicants.map((applicant, index) => (
-            <div key={`${activeTab}-${applicant.id}-${index}`}>
-              {renderCardComponent(applicant, activeTab === "selected")}
-            </div>
-          ))}
+          {currentApplicants.length === 0 ? (
+            <EmptyApplicantsList />
+          ) : (
+            currentApplicants.map((applicant, index) => (
+              <div key={`${activeTab}-${applicant.id}-${index}`}>
+                {renderCardComponent(applicant, activeTab === "selected")}
+              </div>
+            ))
+          )}
         </article>
       </section>
 

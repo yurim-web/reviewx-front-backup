@@ -14,6 +14,8 @@
   background-color: rgba(0, 0, 0, 0.3);
   /* backdrop-filter: blur(2px); */
   z-index: 9999;
+  /* Next.js 자동 스크롤 경고 방지: position fixed 요소는 스크롤과 무관하므로 scroll-margin-top 설정 */
+  scroll-margin-top: 0;
 }
 
 .loading_content {

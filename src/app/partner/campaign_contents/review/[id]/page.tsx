@@ -14,14 +14,15 @@ import PageHeader from "@/components/partner/campaign_application/PageHeader";
 import ExcelDownloadBtn from "@/components/partner/campaign_application/ExcelDownloadBtn";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import { getClosedContentsById } from "@/data/partner/sharedCampaigns";
-import { getPurchaseReviewContentsById } from "@/data/partner/campaign_contents/review";
+import { getPurchaseReviewContentsById } from "@/data/partner/review";
 import ReviewInspectionCard from "@/components/partner/campaign_contents/card_type/purchase_review_card/ReviewInspectionCard";
 import ReviewCompletedCard from "@/components/partner/campaign_contents/card_type/purchase_review_card/ReviewCompletedCard";
 import ReviewRejectedReviewCard from "@/components/partner/campaign_contents/card_type/purchase_review_card/ReviewRejectedReviewCard";
 import ReviewRejectedReceiptCard from "@/components/partner/campaign_contents/card_type/purchase_review_card/ReviewRejectedReceiptCard";
 import ReviewPendingCard from "@/components/partner/campaign_contents/card_type/purchase_review_card/ReviewPendingCard";
+import ReceiptPreviewModal from "@/components/partner/campaign_contents/ReceiptPreviewModal";
 import type { ExperienceApplicant as ReviewApplicant } from "@/components/partner/campaign_contents/card_type/purchase_review_card/ReviewTypes";
-import type { ContentItem } from "@/data/partner/campaign_contents/types";
+import type { ContentItem } from "@/data/partner/sharedCampaigns";
 
 type TabKey = "검수" | "완료";
 
@@ -34,6 +35,8 @@ export default function PurchaseReviewContentsDetailPage() {
   const [sortOrder, setSortOrder] = useState<
     "latest" | "popular" | "deadline" | "point"
   >("latest");
+  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+  const [receiptImages, setReceiptImages] = useState<string[]>([]);
 
   const sortOptions = [
     { value: "latest", label: "최신순" },
@@ -75,6 +78,16 @@ export default function PurchaseReviewContentsDetailPage() {
   const completedCount = contents.completed.length;
 
   const formatDateTime = (iso: string) => iso.slice(0, 16).replace("T", " ");
+
+  const openReceiptModal = (images: string[] | undefined) => {
+    setReceiptImages(images && images.length > 0 ? images : []);
+    setIsReceiptModalOpen(true);
+  };
+
+  const closeReceiptModal = () => {
+    setIsReceiptModalOpen(false);
+    setReceiptImages([]);
+  };
 
   return (
     <>
@@ -142,10 +155,10 @@ export default function PurchaseReviewContentsDetailPage() {
                 if (item.isRejected) {
                   if (isReceiptFlow) {
                     return (
-                      <ReviewRejectedReceiptCard
+                    <ReviewRejectedReceiptCard
                         key={item.id}
                         applicant={{ ...applicant, reviewType: 6 }}
-                        onCheckReceipt={() => {}}
+                      onCheckReceipt={() => openReceiptModal(item.receiptImages)}
                         onHandleReject={() => {}}
                         dateLabel={dateLabel}
                       />
@@ -155,7 +168,11 @@ export default function PurchaseReviewContentsDetailPage() {
                     <ReviewRejectedReviewCard
                       key={item.id}
                       applicant={{ ...applicant, reviewType: 5 }}
-                      onCheckReview={() => {}}
+                      onCheckReview={() =>
+                        openReceiptModal(
+                          item.thumbnailSrc ? [item.thumbnailSrc] : []
+                        )
+                      }
                       onHandleReject={() => {}}
                       dateLabel={dateLabel}
                     />
@@ -168,7 +185,7 @@ export default function PurchaseReviewContentsDetailPage() {
                     <ReviewPendingCard
                       key={item.id}
                       applicant={{ ...applicant, reviewType: 4 }}
-                      onCheckReceipt={() => {}}
+                      onCheckReceipt={() => openReceiptModal(item.receiptImages)}
                       dateLabel={dateLabel}
                     />
                   );
@@ -180,18 +197,22 @@ export default function PurchaseReviewContentsDetailPage() {
                     <ReviewInspectionCard
                       key={item.id}
                       applicant={{ ...applicant, reviewType: 2 }}
-                      onCheckReceipt={() => {}}
+                      onCheckReceipt={() => openReceiptModal(item.receiptImages)}
                       onApprove={() => {}}
                       onReject={() => {}}
                       dateLabel={dateLabel}
                     />
                   );
                 }
-                return (
+                  return (
                   <ReviewInspectionCard
                     key={item.id}
                     applicant={{ ...applicant, reviewType: 1 }}
-                    onCheckReview={() => {}}
+                      onCheckReview={() =>
+                        openReceiptModal(
+                          item.thumbnailSrc ? [item.thumbnailSrc] : []
+                        )
+                      }
                     onApprove={() => {}}
                     onReject={() => {}}
                     dateLabel={dateLabel}
@@ -199,18 +220,31 @@ export default function PurchaseReviewContentsDetailPage() {
                 );
               }
 
-              // 완료 탭: 항상 리뷰 확인 완료 카드
+              // 완료 탭: 영수증 흐름이면 영수증 확인 라벨/핸들러, 아니면 리뷰 확인
               return (
                 <ReviewCompletedCard
                   key={item.id}
-                  applicant={{ ...applicant, reviewType: 3 }}
-                  onCheckReview={() => {}}
+                  applicant={{
+                    ...applicant,
+                    reviewType: isReceiptFlow ? 2 : 3,
+                  }}
+                  onCheckReceipt={isReceiptFlow ? () => openReceiptModal(item.receiptImages) : undefined}
+                  onCheckReview={!isReceiptFlow
+                    ? () => openReceiptModal(
+                        item.thumbnailSrc ? [item.thumbnailSrc] : []
+                      )
+                    : undefined}
                   dateLabel={dateLabel}
                 />
               );
             }
           )}
         </article>
+        <ReceiptPreviewModal
+          isOpen={isReceiptModalOpen}
+          images={receiptImages}
+          onClose={closeReceiptModal}
+        />
       </section>
     </>
   );

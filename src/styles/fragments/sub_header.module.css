@@ -31,6 +31,8 @@
   padding: 28px 40px;
   z-index: 100; /* 다른 요소 위에 표시 */
   height: 80px;
+  /* Next.js 자동 스크롤 경고 방지: position fixed 요소는 스크롤과 무관하므로 scroll-margin-top 설정 */
+  scroll-margin-top: 0;
 }
 
 .header_controls {

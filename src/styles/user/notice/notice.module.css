@@ -113,6 +113,9 @@
 
 .notice_content {
   padding: 24px 0px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .notice_title {
@@ -121,10 +124,10 @@
   line-height: 24px;
   letter-spacing: -0.32px;
   color: #444;
-  margin-bottom: 8px;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  width: 920px;
   -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -135,6 +138,28 @@
   line-height: 14px;
   letter-spacing: -0.28px;
   color: #848484;
+}
+
+/* 빈 상태 */
+.empty_state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+  width: 100%;
+}
+
+.empty_text {
+  overflow: hidden;
+  color: #A8A8A8;
+  text-align: center;
+  text-overflow: ellipsis;
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
 }
 
 /* 반응형 스타일 */

@@ -22,20 +22,12 @@
 
 import styles from "@/styles/partner/campaign_application/campaign_infocard.module.css";
 import CampaignSchedule from "./CampaignSchedule";
-import { getStatusMessage } from "@/data/partner/utils/campaignHelpers";
+import {
+  getStatusMessage,
+  getBrandLogo,
+} from "@/data/partner/utils/campaignHelpers";
 
-// 브랜드 로고 매핑 객체
-// 브랜드 이름을 입력하면 해당하는 로고 이미지 경로를 반환
-// KEY는 공백 제거한 정규화 문자열을 사용 (예: "네이버 클립" → "네이버클립")
-const brandLogoMap: Record<string, string> = {
-  네이버블로그: "/images/brand_logo/naverblog.svg",
-  네이버클립: "/images/brand_logo/naverclip.svg",
-  인스타그램: "/images/brand_logo/insta.svg",
-  유튜브: "/images/brand_logo/youtube.svg",
-  릴스: "/images/brand_logo/reels.svg",
-  숏츠: "/images/brand_logo/shots.svg",
-  기본: "/images/icons/phone_verified.svg",
-};
+// 목록 카드와 동일한 로고 매핑을 사용하기 위해 유틸의 getBrandLogo를 그대로 사용합니다.
 
 // 캠페인 정보 타입 정의
 export interface CampaignInfo {
@@ -53,6 +45,9 @@ export interface CampaignInfo {
     | "진행 중"
     | "종료"
     | "취소";
+  /** 캠페인 유형 - 배송형, 방문형, 구매평, 기자단, 미션형 */
+  campaignType: "배송형" | "방문형" | "구매평" | "기자단" | "미션형";
+  /** 카테고리 - 식품, 뷰티, 가전, 유아동, 여가, 서비스, 생활, 패션, 가구, 디지털, 문화, 반려동물, 기타 */
   category: string;
   /** 브랜드 이름 (선택적) - 배송형 등에서만 사용 */
   brandName?: string;
@@ -87,26 +82,6 @@ interface CampaignbannerProps {
 }
 
 export default function Campaignbanner({ campaignInfo }: CampaignbannerProps) {
-  /**
-   * 브랜드 로고 이미지 경로 결정 함수
-   * 1. brandName이 있으면 매핑 객체에서 로고 경로 가져오기
-   * 2. 없으면 기본 아이콘 사용
-   */
-  const getBrandLogo = () => {
-    // 1) 카테고리 우선: 구매평/미션형은 전용 아이콘
-    if (campaignInfo.category === "구매평") {
-      return "/images/brand_logo/review.svg";
-    }
-    if (campaignInfo.category === "미션형") {
-      return "/images/brand_logo/misssion.svg";
-    }
-
-    // 2) 브랜드명 매핑 (기존 동작)
-    if (!campaignInfo.brandName) return "/images/icons/phone_verified.svg";
-    const normalized = campaignInfo.brandName.replace(/\s+/g, "");
-    return brandLogoMap[normalized] ?? "/images/icons/phone_verified.svg";
-  };
-
   return (
     <article className={styles.campaign_info_card_container}>
       {/* 캠페인 정보 카드 */}
@@ -123,10 +98,13 @@ export default function Campaignbanner({ campaignInfo }: CampaignbannerProps) {
               {/* 캠페인 카테고리 - 브랜드 로고 표시 */}
               <div className={styles.campaign_category}>
                 <img
-                  src={getBrandLogo()}
-                  alt={`${campaignInfo.category} 브랜드 로고`}
+                  src={getBrandLogo(
+                    campaignInfo.brandName || "기본",
+                    campaignInfo.campaignType
+                  )}
+                  alt={`${campaignInfo.campaignType} 브랜드 로고`}
                 />
-                <span>{campaignInfo.category}</span>
+                <span>{campaignInfo.campaignType}</span>
               </div>
 
               <div className={styles.campaign_status}>

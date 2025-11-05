@@ -23,13 +23,13 @@ import type { PartnerStatTab } from "@/types/partner";
 import type { PartnerCampaign } from "@/types/partner";
 import cardStyles from "../../../styles/partner/campaign_card.module.css";
 import buttonStyles from "../../../styles/partner/buttons.module.css";
-import ReceiptRegistrationModal from "../campaign/ReceiptRegistrationModal";
-import { getClosedContentsById } from "@/data/partner/sharedCampaigns";
-import { getVisitContentsById } from "@/data/partner/campaign_contents/visit";
-import { getDeliveryContentsById } from "@/data/partner/campaign_contents/delivery";
-import { getReporterContentsById } from "@/data/partner/campaign_contents/reporter";
-import { getPurchaseReviewContentsById } from "@/data/partner/campaign_contents/review";
-import { getMissionContentsById } from "@/data/partner/campaign_contents/mission";
+import ReceiptRegistrationModal from "../campaign_contents/ReceiptRegistrationModal";
+import { getClosedContentsById, getCampaignById } from "@/data/partner/sharedCampaigns";
+import { getVisitContentsById } from "@/data/partner/visit";
+import { getDeliveryContentsById } from "@/data/partner/delivery";
+import { getReporterContentsById } from "@/data/partner/reporter";
+import { getPurchaseReviewContentsById } from "@/data/partner/review";
+import { getMissionContentsById } from "@/data/partner/mission";
 
 interface CampaignCardProps {
   campaign: PartnerCampaign;
@@ -67,15 +67,44 @@ export default function CampaignCard({
       }
     };
 
-    const contents =
-      campaign.status === "종료" || campaign.status === "취소"
-        ? getClosedContentsById(id) || { reviewing: [], completed: [] }
-        : getByType();
+    // 종료/취소 상태인 경우: closedCampaigns에서 먼저 찾고, 없으면 getCampaignById에서 contents 확인
+    if (campaign.status === "종료" || campaign.status === "취소") {
+      const closedContents = getClosedContentsById(id);
+      if (closedContents) {
+        return {
+          reviewingCount: closedContents.reviewing?.length ?? 0,
+          completedCount: closedContents.completed?.length ?? 0,
+        };
+      }
+      // closedCampaigns에 없으면 getCampaignById에서 contents 확인
+      const campaignData = getCampaignById(id);
+      if (campaignData && (campaignData as any).contents) {
+        const contents = (campaignData as any).contents;
+        return {
+          reviewingCount: contents.reviewing?.length ?? 0,
+          completedCount: contents.completed?.length ?? 0,
+        };
+      }
+      return { reviewingCount: 0, completedCount: 0 };
+    }
+
+    // 진행 중/진행 상태인 경우: getCampaignById에서 contents 확인, 없으면 타입별 함수 호출
+    const campaignData = getCampaignById(id);
+    if (campaignData && (campaignData as any).contents) {
+      const contents = (campaignData as any).contents;
+      return {
+        reviewingCount: contents.reviewing?.length ?? 0,
+        completedCount: contents.completed?.length ?? 0,
+      };
+    }
+
+    // getCampaignById에 contents가 없으면 타입별 함수로 조회
+    const contents = getByType();
     return {
       reviewingCount: contents?.reviewing?.length ?? 0,
       completedCount: contents?.completed?.length ?? 0,
     };
-  }, [campaign.id]);
+  }, [campaign.id, campaign.type, campaign.status]);
 
   // 콘텐츠 검수/확인 버튼 표시 여부 판별
   const isContentStage = useMemo(() => {
@@ -111,6 +140,27 @@ export default function CampaignCard({
   const handleButtonClick = (buttonText: string) => {
     if (buttonText === "구매 영수증 등록하기") {
       setIsReceiptModalOpen(true);
+    } else if (buttonText === "캠페인 수정하기") {
+      // 캠페인 타입에 따라 다른 수정 페이지로 이동
+      const getCampaignTypePath = (type: string) => {
+        switch (type) {
+          case "배송형":
+            return "delivery";
+          case "방문형":
+            return "visit";
+          case "구매평":
+            return "review";
+          case "기자단":
+            return "reporter";
+          case "미션형":
+            return "mission";
+          default:
+            return "delivery"; // 기본값
+        }
+      };
+
+      const campaignTypePath = getCampaignTypePath(campaign.type);
+      window.location.href = `/partner/campaign/edit/${campaignTypePath}/${campaign.id}`;
     } else if (buttonText === "패널티 내역보기") {
       // 패널티 내역 페이지로 이동
       window.location.href = "/partner/campaign_management/penalty";
@@ -136,7 +186,7 @@ export default function CampaignCard({
       const campaignTypePath = getCampaignTypePath(campaign.type);
       window.location.href = `/partner/campaign_application/${campaignTypePath}/${campaign.id}`;
     } else if (buttonText === "당첨자 선정하기") {
-      // 캠페인 타입에 따라 다른 신청내역 페이지로 이동 (선정 탭)
+      // 캠페인 타입에 따라 다른 신청내역 페이지로 이동 (신청 탭)
       const getCampaignTypePath = (type: string) => {
         switch (type) {
           case "배송형":
@@ -155,7 +205,7 @@ export default function CampaignCard({
       };
 
       const campaignTypePath = getCampaignTypePath(campaign.type);
-      window.location.href = `/partner/campaign_application/${campaignTypePath}/${campaign.id}?tab=selected`;
+      window.location.href = `/partner/campaign_application/${campaignTypePath}/${campaign.id}`;
     } else {
       // 다른 버튼들의 로직 처리
       console.log(`${buttonText} 버튼 클릭됨`);
@@ -172,7 +222,7 @@ export default function CampaignCard({
     } else if (campaign.subStatus === "winner_selection") {
       return "당첨자 선정하기";
     } else if (campaign.subStatus === "content_review") {
-      return `콘텐츠 확인하기 (${campaign.submissions || 0})`;
+      return `콘텐츠 확인하기 (${completedCount})`;
     } else if (campaign.subStatus === "penalty") {
       return "패널티 내역보기";
     }
@@ -186,7 +236,7 @@ export default function CampaignCard({
       case "진행":
         return "당첨자 선정하기";
       case "종료":
-        return `콘텐츠 확인하기 (${campaign.submissions || 0})`;
+        return `콘텐츠 확인하기 (${completedCount})`;
       case "취소":
         return "패널티 내역보기";
       default:
@@ -362,8 +412,40 @@ export default function CampaignCard({
 
       {/* 액션 버튼 영역 */}
       <div className={cardStyles.campaign_actions}>
-        {/* 콘텐츠 검수 및 승인 단계: 2개 버튼 표시 (진행 탭 내 공존 가능) */}
-        {isContentStage ? (
+        {/* 예정 탭: 캠페인 삭제하기 + 캠페인 수정하기 */}
+        {campaign.subStatus === "campaign_edit,campaign_delete" ? (
+          <>
+            <button
+              className={`${buttonStyles.action_button} ${buttonStyles.danger_button}`}
+              onClick={() => handleButtonClick("캠페인 삭제하기")}
+            >
+              캠페인 삭제하기
+            </button>
+            <button
+              className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
+              onClick={() => handleButtonClick("캠페인 수정하기")}
+            >
+              캠페인 수정하기
+            </button>
+          </>
+        ) : campaign.subStatus === "campaign_edit,applicant_management" ? (
+          /* 신청 탭: 캠페인 관리하기 + 신청 내역 확인하기 */
+          <>
+            <button
+              className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
+              onClick={() => handleButtonClick("캠페인 관리하기")}
+            >
+              캠페인 관리하기
+            </button>
+            <button
+              className={`${buttonStyles.action_button} ${buttonStyles.secondary_button}`}
+              onClick={() => handleButtonClick("신청내역 확인하기")}
+            >
+              신청내역 확인하기
+            </button>
+          </>
+        ) : isContentStage ? (
+          /* 종료 탭 또는 콘텐츠 단계: 콘텐츠 검수하기 + 콘텐츠 확인하기 */
           <>
             <button
               className={`${buttonStyles.action_button} ${buttonStyles.secondary_button}`}
@@ -416,24 +498,8 @@ export default function CampaignCard({
               콘텐츠 확인하기 ({completedCount})
             </button>
           </>
-        ) : campaign.subStatus === "campaign_edit,applicant_management" ? (
-          /* 캠페인 수정 및 신청 관리 단계: 2개 버튼 표시 */
-          <>
-            <button
-              className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
-              onClick={() => handleButtonClick("캠페인 관리하기")}
-            >
-              캠페인 관리하기
-            </button>
-            <button
-              className={`${buttonStyles.action_button} ${buttonStyles.secondary_button}`}
-              onClick={() => handleButtonClick("신청내역 확인하기")}
-            >
-              신청내역 확인하기
-            </button>
-          </>
         ) : (
-          /* 그 외의 경우: 상태에 맞는 1개 버튼 표시 */
+          /* 그 외의 경우: 상태에 맞는 1개 버튼 표시 (당첨자 선정하기, 패널티 내역보기 등) */
           <button
             className={getButtonStyle()}
             onClick={() => handleButtonClick(getButtonText())}
