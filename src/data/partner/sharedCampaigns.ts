@@ -699,31 +699,31 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
       id: campaign.campaignInfo.id,
       title: campaign.campaignInfo.title,
       image: campaign.campaignInfo.image,
-      type: campaign.campaignInfo.campaignType as
+      campaignType: campaign.campaignInfo.campaignType as
         | "배송형"
         | "방문형"
         | "구매평"
         | "기자단"
         | "미션형",
       status: calculatedTab,
-      deadline: campaign.campaignInfo.announcementDate,
-      remainingDays: campaign.campaignInfo.daysLeft,
-      statusMessage:
+      category: campaign.campaignInfo.category || "",
+      brandName: campaign.campaignInfo.brandName || "",
+      recruitmentPeriod: campaign.campaignInfo.recruitmentPeriod,
+      announcementDate: campaign.campaignInfo.announcementDate,
+      registrationPeriod: campaign.campaignInfo.registrationPeriod,
+      recruitedCount: campaign.applicantData.applicants.length,
+      totalCount: campaign.campaignInfo.totalCount,
+      daysLeft: campaign.campaignInfo.daysLeft,
+      statusText:
         campaign.campaignInfo.statusText ||
         getStatusMessage(
           campaign.campaignInfo.status,
           campaign.campaignInfo.daysLeft
         ),
-      applicants: campaign.applicantData.applicants.length,
-      recruits: campaign.campaignInfo.totalCount,
-      submissions: 0, // 필요시 추가
-      selected: campaign.applicantData.selectedApplicants.length,
-      brand: campaign.campaignInfo.brandName,
       brandLogo: getBrandLogo(
         campaign.campaignInfo.brandName || "기본",
         campaign.campaignInfo.campaignType
       ),
-      // 계산된 탭(상태)을 기반으로 서브 상태 결정
       subStatus: getSubStatus(
         calculatedTab,
         campaign.applicantData.applicants.length,

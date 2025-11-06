@@ -74,12 +74,22 @@ export function CamCateIcon({
 }: {
   category: string;
   icon: string;
-  type: "배송형" | "방문형";
+  type: "배송형" | "방문형" | "구매평" | "기자단" | "미션형";
 }) {
+  // CamType은 "배송형" | "방문형"만 지원하므로, 해당 타입일 때만 표시
+  if (type === "배송형" || type === "방문형") {
+    return (
+      <div className={cardStyles.cam_cate_icon}>
+        <CamIcon icon={icon} />
+        <CamType type={type} />
+      </div>
+    );
+  }
+  
+  // 다른 타입의 경우 아이콘만 표시
   return (
     <div className={cardStyles.cam_cate_icon}>
       <CamIcon icon={icon} />
-      <CamType type={type} />
     </div>
   );
 }

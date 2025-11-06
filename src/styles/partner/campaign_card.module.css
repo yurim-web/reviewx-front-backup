@@ -111,6 +111,21 @@
   background-color: #2196f3;
 }
 
+/* 구매평 아이콘 (주황색) */
+.type_review {
+  background-color: #ff9800;
+}
+
+/* 기자단 아이콘 (보라색) */
+.type_reporter {
+  background-color: #9c27b0;
+}
+
+/* 미션형 아이콘 (빨간색) */
+.type_mission {
+  background-color: #f44336;
+}
+
 /* 타입 텍스트 */
 .type_text {
   color: #444;

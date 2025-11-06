@@ -209,7 +209,7 @@ export type MainTab = "campaign" | "point" | "account";
  * - /user/campaign_management (캠페인 관리 페이지)
  * - StatisticsTab (통계 탭 컴포넌트)
  */
-export type StatTab = "신청" | "선정" | "완료" | "취소/반려" | "패널티";
+export type StatTab = "신청" | "예정" | "선정" | "완료" | "취소/반려" | "패널티";
 
 /* ========================================
    💰 포인트 관련 타입 정의

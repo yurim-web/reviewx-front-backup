@@ -55,7 +55,7 @@ export default function CampaignCard({
     const id = String(campaign.id);
 
     const getByType = () => {
-      switch (campaign.type) {
+      switch (campaign.campaignType) {
         case "방문형":
           return getVisitContentsById(id);
         case "배송형":
@@ -108,7 +108,7 @@ export default function CampaignCard({
       reviewingCount: contents?.reviewing?.length ?? 0,
       completedCount: contents?.completed?.length ?? 0,
     };
-  }, [campaign.id, campaign.type, campaign.status]);
+  }, [campaign.id, campaign.campaignType, campaign.status]);
 
   // 콘텐츠 검수/확인 버튼 표시 여부 판별
   const isContentStage = useMemo(() => {
@@ -165,7 +165,7 @@ export default function CampaignCard({
         }
       };
 
-      const campaignTypePath = getCampaignTypePath(campaign.type);
+      const campaignTypePath = getCampaignTypePath(campaign.campaignType);
       window.location.href = `/partner/campaign/edit/${campaignTypePath}/${campaign.id}`;
     } else if (buttonText === "캠페인 삭제") {
       // 삭제 확인 모달 열기
@@ -192,7 +192,7 @@ export default function CampaignCard({
         }
       };
 
-      const campaignTypePath = getCampaignTypePath(campaign.type);
+      const campaignTypePath = getCampaignTypePath(campaign.campaignType);
       window.location.href = `/partner/campaign_application/${campaignTypePath}/${campaign.id}`;
     } else if (buttonText === "당첨자 선정") {
       // 캠페인 타입에 따라 다른 신청내역 페이지로 이동 (신청 탭)
@@ -213,7 +213,7 @@ export default function CampaignCard({
         }
       };
 
-      const campaignTypePath = getCampaignTypePath(campaign.type);
+      const campaignTypePath = getCampaignTypePath(campaign.campaignType);
       window.location.href = `/partner/campaign_application/${campaignTypePath}/${campaign.id}`;
     } else {
       // 다른 버튼들의 로직 처리
@@ -291,27 +291,259 @@ export default function CampaignCard({
   };
 
   /**
-   * 현재 탭에 따른 상태 텍스트 표시 (데이터 기반)
+   * 모집 기간에서 시작일까지 남은 일수 계산
+   * 
+   * 설명:
+   * - "예정" 탭에서는 모집 기간 시작일까지의 남은 일수를 계산합니다.
+   * - recruitmentPeriod 형식: "2025-11-10 ~ 2025-11-20"
+   * 
+   * 🎓 학습 포인트:
+   * - Date 객체를 사용한 날짜 계산
+   * - setHours(0, 0, 0, 0): 시간을 00:00:00으로 설정하여 날짜만 비교
+   * - Math.ceil(): 올림 처리하여 하루 단위로 계산
    */
-  const getStatusText = () => {
-    // 데이터에서 제공되는 statusMessage를 직접 사용 (우선순위 1)
-    if (campaign.statusMessage) {
-      return campaign.statusMessage;
+  const calculateDaysUntilOpen = (recruitmentPeriod?: string): number => {
+    if (!recruitmentPeriod) {
+      console.log("[calculateDaysUntilOpen] recruitmentPeriod가 없습니다.");
+      return 0;
     }
 
-    // fallback: 데이터에 statusMessage가 없는 경우 기본 메시지
+    console.log("[calculateDaysUntilOpen] recruitmentPeriod:", recruitmentPeriod);
+
+    try {
+      // "2025-11-10 ~ 2025-11-20" 또는 "2025-11-10~2025-11-20" 형식에서 시작일 추출
+      const separator = recruitmentPeriod.includes(" ~ ") ? " ~ " : "~";
+      const startDateStr = recruitmentPeriod.split(separator)[0]?.trim();
+
+      console.log("[calculateDaysUntilOpen] startDateStr:", startDateStr);
+
+      if (!startDateStr) {
+        console.log("[calculateDaysUntilOpen] startDateStr가 없습니다.");
+        return 0;
+      }
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const startDate = new Date(startDateStr);
+      if (isNaN(startDate.getTime())) {
+        console.log("[calculateDaysUntilOpen] 유효하지 않은 날짜:", startDateStr);
+        return 0;
+      }
+      startDate.setHours(0, 0, 0, 0);
+
+      const diffTime = startDate.getTime() - today.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      console.log("[calculateDaysUntilOpen] 오늘:", today.toISOString().split("T")[0]);
+      console.log("[calculateDaysUntilOpen] 시작일:", startDate.toISOString().split("T")[0]);
+      console.log("[calculateDaysUntilOpen] 차이 (밀리초):", diffTime);
+      console.log("[calculateDaysUntilOpen] 계산된 일수:", diffDays);
+
+      return diffDays > 0 ? diffDays : 0;
+    } catch (error) {
+      console.error("[calculateDaysUntilOpen] 모집 기간 파싱 실패:", error, recruitmentPeriod);
+      return 0;
+    }
+  };
+
+  /**
+   * 선정 발표일까지 남은 일수 계산
+   * 
+   * 설명:
+   * - "모집 중" 상태의 캠페인에서 선정 발표일까지 남은 일수를 계산합니다.
+   * - announcementDate 형식: "2025-11-30" 또는 "2025-11-30 00:00:00"
+   * 
+   * 🎓 학습 포인트:
+   * - Date 객체를 사용한 날짜 계산
+   * - split(" ")[0]: 날짜 문자열에서 시간 부분 제거 (공백 기준으로 첫 번째 부분만 사용)
+   * - setHours(0, 0, 0, 0): 시간을 00:00:00으로 설정하여 날짜만 비교
+   * - Math.ceil(): 올림 처리하여 하루 단위로 계산
+   * - 음수 값 처리: 선정 발표일이 지났으면 0 반환
+   */
+  const calculateDaysUntilAnnouncement = (announcementDate?: string): number => {
+    if (!announcementDate) {
+      console.log("[calculateDaysUntilAnnouncement] announcementDate가 없습니다.");
+      return 0;
+    }
+
+    console.log("[calculateDaysUntilAnnouncement] announcementDate:", announcementDate);
+
+    try {
+      // "2025-11-30" 또는 "2025-11-30 00:00:00" 형식에서 날짜 부분만 추출
+      const dateStr = announcementDate.split(" ")[0]?.trim();
+
+      console.log("[calculateDaysUntilAnnouncement] dateStr:", dateStr);
+
+      if (!dateStr) {
+        console.log("[calculateDaysUntilAnnouncement] dateStr가 없습니다.");
+        return 0;
+      }
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const announcementDateObj = new Date(dateStr);
+      if (isNaN(announcementDateObj.getTime())) {
+        console.log("[calculateDaysUntilAnnouncement] 유효하지 않은 날짜:", dateStr);
+        return 0;
+      }
+      announcementDateObj.setHours(0, 0, 0, 0);
+
+      const diffTime = announcementDateObj.getTime() - today.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      console.log("[calculateDaysUntilAnnouncement] 오늘:", today.toISOString().split("T")[0]);
+      console.log("[calculateDaysUntilAnnouncement] 선정 발표일:", announcementDateObj.toISOString().split("T")[0]);
+      console.log("[calculateDaysUntilAnnouncement] 차이 (밀리초):", diffTime);
+      console.log("[calculateDaysUntilAnnouncement] 계산된 일수:", diffDays);
+
+      // 선정 발표일이 지났으면 0 반환, 아니면 남은 일수 반환
+      return diffDays > 0 ? diffDays : 0;
+    } catch (error) {
+      console.error("[calculateDaysUntilAnnouncement] 선정 발표일 파싱 실패:", error, announcementDate);
+      return 0;
+    }
+  };
+
+  /**
+   * 등록 기간 종료일까지 남은 일수 계산 (캠페인 마감일)
+   * 
+   * 설명:
+   * - "진행" 탭에서 등록 기간 종료일까지 남은 일수를 계산합니다.
+   * - registrationPeriod 형식: "2025-11-18 ~ 2025-11-26"
+   * 
+   * 🎓 학습 포인트:
+   * - Date 객체를 사용한 날짜 계산
+   * - split("~"): 등록 기간 문자열에서 종료일 추출
+   * - setHours(0, 0, 0, 0): 시간을 00:00:00으로 설정하여 날짜만 비교
+   * - Math.ceil(): 올림 처리하여 하루 단위로 계산
+   * - 음수 값 처리: 마감일이 지났으면 0 반환
+   */
+  const calculateDaysUntilDeadline = (registrationPeriod?: string): number => {
+    if (!registrationPeriod) {
+      console.log("[calculateDaysUntilDeadline] registrationPeriod가 없습니다.");
+      return 0;
+    }
+
+    console.log("[calculateDaysUntilDeadline] registrationPeriod:", registrationPeriod);
+
+    try {
+      // "2025-11-18 ~ 2025-11-26" 또는 "2025-11-18~2025-11-26" 형식에서 종료일 추출
+      const separator = registrationPeriod.includes(" ~ ") ? " ~ " : "~";
+      const endDateStr = registrationPeriod.split(separator)[1]?.trim();
+
+      console.log("[calculateDaysUntilDeadline] endDateStr:", endDateStr);
+
+      if (!endDateStr) {
+        console.log("[calculateDaysUntilDeadline] endDateStr가 없습니다.");
+        return 0;
+      }
+
+      // 날짜 부분만 추출 (시간 부분 제거)
+      const dateStr = endDateStr.split(" ")[0]?.trim();
+
+      if (!dateStr) {
+        console.log("[calculateDaysUntilDeadline] dateStr가 없습니다.");
+        return 0;
+      }
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const endDate = new Date(dateStr);
+      if (isNaN(endDate.getTime())) {
+        console.log("[calculateDaysUntilDeadline] 유효하지 않은 날짜:", dateStr);
+        return 0;
+      }
+      endDate.setHours(0, 0, 0, 0);
+
+      const diffTime = endDate.getTime() - today.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      console.log("[calculateDaysUntilDeadline] 오늘:", today.toISOString().split("T")[0]);
+      console.log("[calculateDaysUntilDeadline] 마감일:", endDate.toISOString().split("T")[0]);
+      console.log("[calculateDaysUntilDeadline] 차이 (밀리초):", diffTime);
+      console.log("[calculateDaysUntilDeadline] 계산된 일수:", diffDays);
+
+      // 마감일이 지났으면 0 반환, 아니면 남은 일수 반환
+      return diffDays > 0 ? diffDays : 0;
+    } catch (error) {
+      console.error("[calculateDaysUntilDeadline] 등록 기간 파싱 실패:", error, registrationPeriod);
+      return 0;
+    }
+  };
+
+  /**
+   * 현재 탭에 따른 상태 텍스트 표시 (데이터 기반)
+   * 
+   * 🎓 학습 포인트: 실시간 날짜 계산
+   * - 캠페인 데이터에 저장된 daysLeft는 데이터를 불러올 때 한 번만 계산됩니다.
+   * - 시간이 지나면 실제 남은 일수와 차이가 발생할 수 있습니다.
+   * - 따라서 "모집 중" 상태일 때는 항상 선정 발표일 기준으로 실시간 계산합니다.
+   * - 진행 탭에서는 버튼 개수에 따라 다른 메시지를 표시합니다.
+   * - 종료 탭에서는 항상 "캠페인이 마감되었습니다." 메시지를 표시합니다.
+   */
+  const getStatusText = () => {
+    // activeTab이 "종료"인 경우 우선 처리
+    // 종료 탭에서는 항상 "캠페인이 마감되었습니다." 메시지 표시
+    if (activeTab === "종료") {
+      return "캠페인이 마감되었습니다.";
+    }
+
+    // activeTab이 "예정"인 경우 우선 처리
+    // 모집 기간 시작일까지의 남은 일수 계산
+    if (activeTab === "예정") {
+      const daysUntilOpen = calculateDaysUntilOpen(campaign.recruitmentPeriod);
+      return `캠페인 오픈까지 ${daysUntilOpen}일 남았습니다.`;
+    }
+
+    // "모집 중" 상태이거나 "신청" 탭인 경우: 선정 발표일 기준으로 실시간 계산
+    // statusText를 무시하고 항상 최신 날짜 기준으로 계산합니다.
+    if (campaign.status === "모집 중" || activeTab === "신청") {
+      const daysUntilAnnouncement = calculateDaysUntilAnnouncement(campaign.announcementDate);
+      return `캠페인 선정 발표까지 ${daysUntilAnnouncement}일 남았습니다.`;
+    }
+
+    // "대기 중" 상태인 경우: 모집 기간 시작일 기준으로 실시간 계산
+    if (campaign.status === "대기 중") {
+      const daysUntilOpen = calculateDaysUntilOpen(campaign.recruitmentPeriod);
+      return `캠페인 오픈까지 ${daysUntilOpen}일 남았습니다.`;
+    }
+
+    // "진행" 탭인 경우: 버튼 개수에 따라 다른 메시지 표시
+    if (activeTab === "진행" || campaign.status === "진행") {
+      // 버튼이 2개일 때 (콘텐츠 확인 단계)
+      if (isContentStage) {
+        const daysUntilDeadline = calculateDaysUntilDeadline(campaign.registrationPeriod);
+        // 콘텐츠 확인 요청이 0건일 경우: "콘텐츠 확인 요청이 없습니다. 캠페인 마감까지 X일 남았습니다."
+        if (reviewingCount === 0) {
+          return `콘텐츠 확인 요청이 없습니다. 캠페인 마감까지 ${daysUntilDeadline}일 남았습니다.`;
+        }
+        // 콘텐츠 확인 요청이 1건 이상일 경우: "콘텐츠 확인 요청이 X건 있습니다. 캠페인 마감까지 X일 남았습니다."
+        return `콘텐츠 확인 요청이 ${reviewingCount}건 있습니다. 캠페인 마감까지 ${daysUntilDeadline}일 남았습니다.`;
+      }
+      // 버튼이 1개일 때 (당첨자 선정): "캠페인 당첨자를 선정해 주세요."
+      return "캠페인 당첨자를 선정해 주세요.";
+    }
+
+    // "종료" 상태인 경우: "캠페인이 마감되었습니다." 메시지 표시
+    if (campaign.status === "종료") {
+      return "캠페인이 마감되었습니다.";
+    }
+
+    // 데이터에서 제공되는 statusText를 직접 사용 (다른 상태의 경우)
+    if (campaign.statusText) {
+      return campaign.statusText;
+    }
+
+    // fallback: 데이터에 statusText가 없는 경우 기본 메시지
     const fallbackMessages: Record<string, string> = {
-      신청: `캠페인 선정 발표까지 ${campaign.remainingDays}일 남았습니다.`,
-      선정: "캠페인에 선정되었습니다. 진행해주세요.",
-      완료: "캠페인이 완료되었습니다.",
-      "취소/반려": "캠페인 신청이 취소되었습니다.",
-      예정: "캠페인이 예정되어 있습니다.",
-      진행: "캠페인 당첨자를 선정해 주세요.",
-      종료: "캠페인 콘텐츠를 검수해 주세요.",
+      "진행 중": "캠페인 당첨자를 선정해 주세요.",
       취소: "캠페인이 취소되었습니다.",
     };
 
-    return fallbackMessages[campaign.status] || fallbackMessages["신청"];
+    return fallbackMessages[campaign.status] || "캠페인을 확인해 주세요.";
   };
 
   return (
@@ -332,21 +564,34 @@ export default function CampaignCard({
               {campaign.brandLogo ? (
                 <img
                   src={campaign.brandLogo}
-                  alt={campaign.brand || campaign.type}
+                  alt={campaign.brandName || campaign.campaignType}
                   className={cardStyles.brand_logo}
                 />
               ) : (
                 <div
                   className={`${cardStyles.type_icon} ${
                     cardStyles[
-                      `type_${
-                        campaign.type === "배송형" ? "delivery" : "visit"
-                      }`
+                      (() => {
+                        switch (campaign.campaignType) {
+                          case "배송형":
+                            return "type_delivery";
+                          case "방문형":
+                            return "type_visit";
+                          case "구매평":
+                            return "type_review";
+                          case "기자단":
+                            return "type_reporter";
+                          case "미션형":
+                            return "type_mission";
+                          default:
+                            return "type_delivery";
+                        }
+                      })()
                     ]
                   }`}
                 />
               )}
-              <span className={cardStyles.type_text}>{campaign.type}</span>
+              <span className={cardStyles.type_text}>{campaign.campaignType}</span>
             </div>
 
             {/* 신청자 수 표시 */}
@@ -475,7 +720,7 @@ export default function CampaignCard({
                       return "delivery";
                   }
                 };
-                const campaignTypePath = getCampaignTypePath(campaign.type);
+                const campaignTypePath = getCampaignTypePath(campaign.campaignType);
                 window.location.href = `/partner/campaign_contents/${campaignTypePath}/${campaign.id}?tab=검수`;
               }}
             >
@@ -500,7 +745,7 @@ export default function CampaignCard({
                       return "delivery";
                   }
                 };
-                const campaignTypePath = getCampaignTypePath(campaign.type);
+                const campaignTypePath = getCampaignTypePath(campaign.campaignType);
                 window.location.href = `/partner/campaign_contents/${campaignTypePath}/${campaign.id}?tab=완료`;
               }}
             >
@@ -530,7 +775,7 @@ export default function CampaignCard({
         isOpen={isManagementModalOpen}
         onClose={() => setIsManagementModalOpen(false)}
         campaignTitle={campaign.title}
-        campaignType={campaign.type}
+        campaignType={campaign.campaignType}
         campaignId={campaign.id}
       />
 
@@ -550,7 +795,7 @@ export default function CampaignCard({
            * - 삭제 후 페이지를 새로고침하여 목록을 업데이트합니다
            */
           const campaignIdString = String(campaign.id);
-          const campaignType = campaign.type as
+          const campaignType = campaign.campaignType as
             | "배송형"
             | "방문형"
             | "구매평"

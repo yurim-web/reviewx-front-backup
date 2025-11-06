@@ -77,7 +77,13 @@ export default function DeliveryContentsDetailPage() {
 
       {/* 메인 콘텐츠 */}
       <section className={appStyles.campaign_application_section}>
-        {campaignInfo ? <Campaignbanner campaignInfo={campaignInfo} /> : null}
+        {campaignInfo ? (
+          <Campaignbanner
+            campaignInfo={campaignInfo}
+            reviewingCount={reviewCount}
+            completedCount={completedCount}
+          />
+        ) : null}
 
         {/* 다운로드 버튼 */}
         <article className={appStyles.download_section}>

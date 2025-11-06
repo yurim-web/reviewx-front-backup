@@ -57,36 +57,6 @@ export default function PartnerCampaignManagementPage() {
   const campaigns = getCampaignsByTab(activeStatTab);
 
   /**
-   * 통계 탭 변경 핸들러
-   * 각 탭 클릭 시 해당 페이지로 이동
-   */
-  const handleStatTabChange = (tab: PartnerStatTab) => {
-    switch (tab) {
-      case "전체":
-        // 현재 페이지이므로 아무것도 하지 않음
-        break;
-      case "예정":
-        window.location.href = "/partner/campaign_management/scheduled";
-        break;
-      case "신청":
-        window.location.href = "/partner/campaign_management/applied";
-        break;
-      case "진행":
-        window.location.href = "/partner/campaign_management/progress";
-        break;
-      case "종료":
-        window.location.href = "/partner/campaign_management/completed";
-        break;
-      case "취소":
-        window.location.href = "/partner/campaign_management/cancelled";
-        break;
-      case "패널티":
-        window.location.href = "/partner/campaign_management/penalty";
-        break;
-    }
-  };
-
-  /**
    * 필터링된 캠페인 목록 변경 핸들러
    *
    * 설명:
@@ -118,7 +88,6 @@ export default function PartnerCampaignManagementPage() {
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           activeStatTab={activeStatTab}
-          setActiveStatTab={handleStatTabChange}
         />
 
         {/* 필터 바: 유형, 채널 필터 및 검색 */}

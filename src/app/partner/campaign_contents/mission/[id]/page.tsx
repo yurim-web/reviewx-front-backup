@@ -80,7 +80,13 @@ export default function MissionContentsDetailPage() {
     <>
       <PageHeader title="캠페인 콘텐츠 내역" />
       <section className={appStyles.campaign_application_section}>
-        {campaignInfo ? <Campaignbanner campaignInfo={campaignInfo} /> : null}
+        {campaignInfo ? (
+          <Campaignbanner
+            campaignInfo={campaignInfo}
+            reviewingCount={reviewCount}
+            completedCount={completedCount}
+          />
+        ) : null}
 
         <article className={appStyles.download_section}>
           <ExcelDownloadBtn

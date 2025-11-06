@@ -174,6 +174,8 @@ export default function CampaignCard({
     switch (activeTab) {
       case "신청":
         return `캠페인 선정 발표까지 ${campaign.remainingDays}일 남았습니다.`;
+      case "예정":
+        return `캠페인 오픈까지 ${campaign.remainingDays}일 남았습니다.`;
       case "선정":
         return "캠페인에 선정되었습니다. 진행해주세요.";
       case "완료":

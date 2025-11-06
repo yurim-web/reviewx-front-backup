@@ -38,8 +38,8 @@ interface CampaignManagementHeaderProps {
   setActiveTab: (tab: MainTab) => void;
   /** 현재 활성 통계 탭 (신청/선정/완료/취소반려/패널티) */
   activeStatTab: "신청" | "선정" | "완료" | "취소/반려" | "패널티";
-  /** 통계 탭 변경 핸들러 */
-  setActiveStatTab: (
+  /** 통계 탭 변경 핸들러 (선택적: 제공되지 않으면 StatisticsTab 내부에서 라우팅 처리) */
+  setActiveStatTab?: (
     tab: "신청" | "선정" | "완료" | "취소/반려" | "패널티"
   ) => void;
 }

@@ -18,14 +18,16 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CampaignManagementHeader from "@/components/user/campaign_management/CampaignManagementHeader";
 import CampaignList from "@/components/user/campaign_management/CampaignList";
+import CampaignFilterBar from "@/components/partner/campaign_management/CampaignFilterBar";
 import type { MainTab } from "@/types/user/user";
+import type { CampaignApplication } from "@/types/user/user";
 import layoutStyles from "../../../../styles/user/campaign_management/layout.module.css";
 
 // 임시 데이터 import
-import { campaignManagementData } from "@/data/user/campaign_management/campaignManagementData";
+import { getCampaignsByTab } from "@/data/user/campaign_management/campaignManagementData";
 
 /**
  * 선정 탭 전용 페이지 컴포넌트
@@ -39,31 +41,34 @@ export default function SelectedPage() {
     "신청" | "선정" | "완료" | "취소/반려" | "패널티"
   >("선정");
 
+  // 필터링된 캠페인 목록 상태
+  const [filteredCampaigns, setFilteredCampaigns] = useState<CampaignApplication[]>([]);
+
+  // 탭별 캠페인 목록 가져오기
+  const campaigns = getCampaignsByTab(activeStatTab);
+
   /**
-   * 통계 탭 변경 핸들러
-   * 각 탭 클릭 시 해당 페이지로 이동
+   * 필터링된 캠페인 목록 변경 핸들러
+   *
+   * 설명:
+   * - CampaignFilterBar 컴포넌트에서 필터링된 결과를 받아서 상태를 업데이트합니다.
+   * - 이제 필터링 로직은 CampaignFilterBar 내부에서 처리됩니다.
    */
-  const handleStatTabChange = (
-    tab: "신청" | "선정" | "완료" | "취소/반려" | "패널티"
-  ) => {
-    switch (tab) {
-      case "신청":
-        window.location.href = "/user/campaign_management/applied";
-        break;
-      case "선정":
-        // 현재 페이지이므로 아무것도 하지 않음
-        break;
-      case "완료":
-        window.location.href = "/user/campaign_management/completed";
-        break;
-      case "취소/반려":
-        window.location.href = "/user/campaign_management/cancelled";
-        break;
-      case "패널티":
-        window.location.href = "/user/campaign_management/penalty";
-        break;
-    }
+  const handleFilteredCampaignsChange = (filtered: CampaignApplication[]) => {
+    setFilteredCampaigns(filtered);
   };
+
+  /**
+   * 탭 변경 시 캠페인 목록 초기화
+   *
+   * 설명:
+   * - 탭이 변경되면 새로운 캠페인 목록을 가져옵니다.
+   * - 필터 바에 새로운 캠페인 목록을 전달합니다.
+   */
+  useEffect(() => {
+    const newCampaigns = getCampaignsByTab(activeStatTab);
+    // 필터 바가 자동으로 필터링하여 결과를 반환합니다.
+  }, [activeStatTab]);
 
   return (
     <div className={layoutStyles.container}>
@@ -74,11 +79,16 @@ export default function SelectedPage() {
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           activeStatTab={activeStatTab}
-          setActiveStatTab={handleStatTabChange}
         />
 
-        {/* 선정 상태 캠페인 목록 */}
-        <CampaignList campaigns={campaignManagementData} activeStatTab="선정" />
+        {/* 필터 바: 유형, 채널 필터 및 검색 */}
+        <CampaignFilterBar<CampaignApplication>
+          campaigns={campaigns}
+          onFilteredCampaignsChange={handleFilteredCampaignsChange}
+        />
+
+        {/* 필터링된 캠페인 목록 */}
+        <CampaignList campaigns={filteredCampaigns} activeStatTab="선정" />
       </div>
     </div>
   );

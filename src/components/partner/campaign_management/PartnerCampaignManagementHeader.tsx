@@ -41,8 +41,8 @@ interface PartnerCampaignManagementHeaderProps {
   setActiveTab: (tab: PartnerMainTab) => void;
   /** 현재 활성 통계 탭 (전체/예정/신청/진행/종료/취소) */
   activeStatTab: PartnerStatTab;
-  /** 통계 탭 변경 핸들러 */
-  setActiveStatTab: (tab: PartnerStatTab) => void;
+  /** 통계 탭 변경 핸들러 (선택적 - 없으면 내부에서 페이지 이동 처리) */
+  setActiveStatTab?: (tab: PartnerStatTab) => void;
 }
 
 /**
@@ -116,6 +116,56 @@ export default function PartnerCampaignManagementHeader({
     setStats(calculatedStats);
   }, []);
 
+  /* ========================================
+     통계 탭 변경 핸들러 (Statistics Tab Change Handler)
+     ======================================== */
+
+  /**
+   * 통계 탭 변경 핸들러
+   *
+   * 설명:
+   * - 통계 탭을 클릭하면 해당 페이지로 이동합니다.
+   * - 현재 페이지와 같은 탭이면 이동하지 않습니다.
+   * - setActiveStatTab prop이 제공되면 그것을 사용하고, 없으면 내부에서 페이지 이동을 처리합니다.
+   *
+   * 학습 포인트:
+   * - switch 문: 여러 조건에 따라 다른 동작을 수행
+   * - window.location.href: 브라우저의 현재 URL을 변경하여 페이지 이동
+   * - 조건부 실행: 현재 페이지와 같은 탭이면 아무것도 하지 않음
+   */
+  const handleStatTabChange = (tab: PartnerStatTab) => {
+    // setActiveStatTab prop이 제공되면 그것을 사용
+    if (setActiveStatTab) {
+      setActiveStatTab(tab);
+      return;
+    }
+
+    // prop이 없으면 내부에서 페이지 이동 처리
+    switch (tab) {
+      case "전체":
+        window.location.href = "/partner/campaign_management";
+        break;
+      case "예정":
+        window.location.href = "/partner/campaign_management/scheduled";
+        break;
+      case "신청":
+        window.location.href = "/partner/campaign_management/applied";
+        break;
+      case "진행":
+        window.location.href = "/partner/campaign_management/progress";
+        break;
+      case "종료":
+        window.location.href = "/partner/campaign_management/completed";
+        break;
+      case "취소":
+        window.location.href = "/partner/campaign_management/cancelled";
+        break;
+      case "패널티":
+        window.location.href = "/partner/campaign_management/penalty";
+        break;
+    }
+  };
+
   return (
     <>
       {/* 상단 탭 네비게이션: 캠페인/포인트/계정 */}
@@ -124,7 +174,7 @@ export default function PartnerCampaignManagementHeader({
       {/* 통계 탭: 전체/예정/신청/진행/종료/취소 */}
       <StatisticsTab
         activeStatTab={activeStatTab}
-        setActiveStatTab={setActiveStatTab}
+        setActiveStatTab={handleStatTabChange}
         stats={stats}
       />
     </>

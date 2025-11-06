@@ -27,10 +27,11 @@
 
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import styles from "../../../styles/partner/campaign_management/campaign_filter.module.css";
 import ModalFilter from "../../user/filter/ModalFilter";
 import type { PartnerCampaign } from "@/types/partner/partner";
+import type { CampaignApplication } from "@/types/user/user";
 
 /* ========================================
    타입 정의 (Type Definitions)
@@ -53,10 +54,35 @@ interface FilterChangeParams {
 }
 
 /**
+ * 공통 캠페인 인터페이스 (필터링에 필요한 최소 필드)
+ *
+ * 설명:
+ * - PartnerCampaign과 CampaignApplication 모두에서 필터링에 필요한 공통 필드
+ * - title: 캠페인 제목 (검색용)
+ * - type 또는 campaignType: 캠페인 유형 (유형 필터링용)
+ * - brandName, brand, 또는 category: 채널 정보 (채널 필터링용)
+ */
+type FilterableCampaign = 
+  | PartnerCampaign 
+  | CampaignApplication
+  | {
+      title: string;
+      type?: string;
+      campaignType?: string;
+      brandName?: string;
+      brand?: string;
+      category?: string;
+      recruitmentPeriod?: string;
+      recruitedCount?: number;
+      daysLeft?: number;
+      remainingDays?: number;
+    };
+
+/**
  * CampaignFilterBar 컴포넌트의 props 타입 정의
  *
  * 설명:
- * - campaigns: 필터링할 캠페인 목록
+ * - campaigns: 필터링할 캠페인 목록 (PartnerCampaign 또는 CampaignApplication)
  * - onFilterChange: 필터가 변경될 때 호출되는 콜백 함수 (선택적)
  * - onFilteredCampaignsChange: 필터링된 캠페인 목록이 변경될 때 호출되는 콜백 함수
  * - activeFilters: 현재 활성화된 필터들 (부모 컴포넌트에서 관리, 선택적)
@@ -65,10 +91,10 @@ interface FilterChangeParams {
  * - sortOptions: 정렬 옵션 (최신순, 인기순 등)
  * - defaultSort: 기본 정렬값
  */
-interface CampaignFilterBarProps {
-  campaigns: PartnerCampaign[]; // 필터링할 캠페인 목록
+interface CampaignFilterBarProps<T extends FilterableCampaign = FilterableCampaign> {
+  campaigns: T[]; // 필터링할 캠페인 목록
   onFilterChange?: (filters: FilterChangeParams) => void; // 필터 변경 콜백 (선택적)
-  onFilteredCampaignsChange: (filteredCampaigns: PartnerCampaign[]) => void; // 필터링된 결과 콜백
+  onFilteredCampaignsChange: (filteredCampaigns: T[]) => void; // 필터링된 결과 콜백
   activeFilters?: {
     types?: string[];
     channels?: string[];
@@ -102,7 +128,7 @@ interface CampaignFilterBarProps {
  * - selectedSort: 현재 선택된 정렬 옵션
  * - searchQuery: 검색 입력창의 값
  */
-export default function CampaignFilterBar({
+export default function CampaignFilterBar<T extends FilterableCampaign = FilterableCampaign>({
   campaigns,
   onFilterChange,
   onFilteredCampaignsChange,
@@ -125,7 +151,7 @@ export default function CampaignFilterBar({
   ],
   sortOptions = ["최신순", "인기순", "마감임박순"],
   defaultSort = "최신순",
-}: CampaignFilterBarProps) {
+}: CampaignFilterBarProps<T>) {
   /* ========================================
      상태 관리 (State Management)
      ======================================== */
@@ -173,12 +199,71 @@ export default function CampaignFilterBar({
 
   // 실제 사용할 필터 상태 (activeFilters가 있으면 사용, 없으면 내부 상태 사용)
   // sortBy는 별도로 관리하므로 currentFilters에 병합
-  const currentFilters = {
+  // useMemo로 메모이제이션하여 불필요한 재생성 방지
+  /**
+   * useMemo 훅: 필터 상태를 메모이제이션
+   *
+   * 설명:
+   * - currentFilters 객체를 메모이제이션하여 매 렌더링마다 새 객체가 생성되는 것을 방지합니다.
+   * - 의존성이 변경될 때만 새 객체를 생성합니다.
+   * - 이를 통해 useMemo의 의존성 배열이 올바르게 작동합니다.
+   *
+   * 학습 포인트:
+   * - useMemo: 의존성이 변경될 때만 재계산하는 React 훅
+   * - 객체 메모이제이션: 참조 동일성을 유지하여 불필요한 재렌더링 방지
+   * - 의존성 배열: activeFilters, internalFilters, selectedSort, defaultSort가 변경될 때만 재계산
+   */
+  const currentFilters = useMemo(() => ({
     types: activeFilters.types ?? internalFilters.types,
     channels: activeFilters.channels ?? internalFilters.channels,
     searchQuery: activeFilters.searchQuery ?? internalFilters.searchQuery,
     sortBy: internalFilters.sortBy ?? selectedSort ?? defaultSort,
-  };
+  }), [
+    activeFilters.types,
+    activeFilters.channels,
+    activeFilters.searchQuery,
+    internalFilters.types,
+    internalFilters.channels,
+    internalFilters.searchQuery,
+    internalFilters.sortBy,
+    selectedSort,
+    defaultSort,
+  ]);
+
+  // 콜백 함수를 ref로 저장하여 무한 루프 방지
+  /**
+   * useRef 훅: 콜백 함수의 최신 참조를 유지
+   *
+   * 설명:
+   * - onFilteredCampaignsChange 콜백 함수를 ref에 저장합니다.
+   * - useEffect의 의존성 배열에 함수를 포함하지 않아도 최신 함수를 호출할 수 있습니다.
+   * - 이를 통해 무한 루프를 방지합니다.
+   *
+   * 학습 포인트:
+   * - useRef: 컴포넌트 리렌더링과 관계없이 값을 유지하는 React 훅
+   * - ref.current: ref에 저장된 현재 값에 접근
+   * - useEffect와 함께 사용: 콜백 함수가 변경되어도 무한 루프를 방지
+   */
+  const onFilteredCampaignsChangeRef = useRef(onFilteredCampaignsChange);
+  
+  // 콜백 함수가 변경될 때마다 ref 업데이트
+  useEffect(() => {
+    onFilteredCampaignsChangeRef.current = onFilteredCampaignsChange;
+  }, [onFilteredCampaignsChange]);
+
+  // 이전 필터링된 캠페인 목록을 저장하여 실제 변경 여부 확인
+  /**
+   * useRef 훅: 이전 필터링 결과를 저장
+   *
+   * 설명:
+   * - 이전 필터링된 캠페인 목록을 저장하여 실제로 변경되었는지 확인합니다.
+   * - 배열의 참조가 같으면 콜백을 호출하지 않아 무한 루프를 방지합니다.
+   *
+   * 학습 포인트:
+   * - useRef: 컴포넌트 리렌더링과 관계없이 값을 유지
+   * - 참조 비교: 배열의 참조가 같으면 같은 배열로 간주
+   */
+  const prevFilteredCampaignsRef = useRef<T[]>([]);
 
   /* ========================================
      필터링 헬퍼 함수 (Filtering Helper Functions)
@@ -255,15 +340,19 @@ export default function CampaignFilterBar({
     // 1단계: 유형 필터링
     if (currentFilters.types && currentFilters.types.length > 0) {
       filtered = filtered.filter((campaign) => {
-        const campaignType = (campaign as any).type || campaign.campaignType;
-        return currentFilters.types!.includes(campaignType);
+        // PartnerCampaign: campaignType 또는 type
+        // CampaignApplication: type
+        const campaignType = (campaign as any).type || (campaign as any).campaignType;
+        return campaignType && currentFilters.types!.includes(campaignType);
       });
     }
 
     // 2단계: 채널 필터링
     if (currentFilters.channels && currentFilters.channels.length > 0) {
       filtered = filtered.filter((campaign) => {
-        const brandName = (campaign as any).brand || campaign.brandName;
+        // PartnerCampaign: brandName 또는 brand
+        // CampaignApplication: category
+        const brandName = (campaign as any).brand || (campaign as any).brandName || (campaign as any).category;
         
         if (!brandName) return false;
 
@@ -288,22 +377,30 @@ export default function CampaignFilterBar({
     filtered = [...filtered].sort((a, b) => {
       switch (sortBy) {
         case "최신순":
-          if (!a.recruitmentPeriod && !b.recruitmentPeriod) return 0;
-          if (!a.recruitmentPeriod) return 1;
-          if (!b.recruitmentPeriod) return -1;
+          // PartnerCampaign: recruitmentPeriod
+          // CampaignApplication: recruitmentPeriod가 없을 수 있으므로 기본값 처리
+          const periodA = (a as any).recruitmentPeriod;
+          const periodB = (b as any).recruitmentPeriod;
+          if (!periodA && !periodB) return 0;
+          if (!periodA) return 1;
+          if (!periodB) return -1;
           
-          const dateA = parseDate(a.recruitmentPeriod);
-          const dateB = parseDate(b.recruitmentPeriod);
+          const dateA = parseDate(periodA);
+          const dateB = parseDate(periodB);
           return dateB.getTime() - dateA.getTime();
 
         case "인기순":
-          const countA = a.recruitedCount ?? 0;
-          const countB = b.recruitedCount ?? 0;
+          // PartnerCampaign: recruitedCount
+          // CampaignApplication: recruitedCount가 없을 수 있으므로 기본값 처리
+          const countA = (a as any).recruitedCount ?? 0;
+          const countB = (b as any).recruitedCount ?? 0;
           return countB - countA;
 
         case "마감임박순":
-          const leftA = a.daysLeft ?? Infinity;
-          const leftB = b.daysLeft ?? Infinity;
+          // PartnerCampaign: daysLeft
+          // CampaignApplication: remainingDays
+          const leftA = (a as any).daysLeft ?? (a as any).remainingDays ?? Infinity;
+          const leftB = (b as any).daysLeft ?? (b as any).remainingDays ?? Infinity;
           
           if (leftA < 0 && leftB >= 0) return 1;
           if (leftA >= 0 && leftB < 0) return -1;
@@ -317,10 +414,7 @@ export default function CampaignFilterBar({
     return filtered;
   }, [
     campaigns,
-    currentFilters.types,
-    currentFilters.channels,
-    currentFilters.searchQuery,
-    currentFilters.sortBy,
+    currentFilters, // currentFilters가 useMemo로 메모이제이션되어 있으므로 객체 자체를 의존성으로 사용
     selectedSort,
     defaultSort,
   ]);
@@ -333,16 +427,57 @@ export default function CampaignFilterBar({
    * useEffect 훅: 필터링된 캠페인 목록이 변경될 때 부모 컴포넌트에 알림
    *
    * 설명:
-   * - 필터링된 캠페인 목록이 변경될 때마다 부모 컴포넌트에 알립니다.
-   * - 부모 컴포넌트는 이 콜백을 통해 필터링된 결과를 받을 수 있습니다.
+   * - 필터링된 캠페인 목록이 실제로 변경되었을 때만 부모 컴포넌트에 알립니다.
+   * - 이전 필터링 결과와 비교하여 실제로 변경되었는지 확인합니다.
+   * - 배열의 길이나 내용이 변경되었을 때만 콜백을 호출하여 무한 루프를 방지합니다.
    *
    * 학습 포인트:
    * - useEffect: 컴포넌트의 부수 효과를 처리합니다.
    * - 의존성 배열: filteredCampaigns가 변경될 때마다 실행됩니다.
+   * - useRef: 이전 값을 저장하여 실제 변경 여부를 확인
+   * - 배열 비교: 길이와 각 요소를 비교하여 실제 변경 여부 확인
    */
   useEffect(() => {
-    onFilteredCampaignsChange(filteredCampaigns);
-  }, [filteredCampaigns, onFilteredCampaignsChange]);
+    // 이전 필터링 결과와 비교하여 실제로 변경되었는지 확인
+    const prevFiltered = prevFilteredCampaignsRef.current;
+    
+    // 초기 렌더링이거나 이전 결과가 없으면 항상 콜백 호출
+    if (prevFiltered.length === 0 && filteredCampaigns.length > 0) {
+      prevFilteredCampaignsRef.current = filteredCampaigns;
+      onFilteredCampaignsChangeRef.current(filteredCampaigns);
+      return;
+    }
+    
+    // 길이가 다르면 변경된 것으로 간주
+    if (prevFiltered.length !== filteredCampaigns.length) {
+      prevFilteredCampaignsRef.current = filteredCampaigns;
+      onFilteredCampaignsChangeRef.current(filteredCampaigns);
+      return;
+    }
+    
+    // 길이가 같으면 각 요소의 ID를 비교하여 실제 내용이 변경되었는지 확인
+    // id가 있는 경우 ID로 비교, 없으면 title로 비교
+    const getItemKey = (item: T): string => {
+      if ('id' in item && typeof item.id === 'string') {
+        return item.id;
+      }
+      return item.title;
+    };
+    
+    const prevKeys = prevFiltered.map(getItemKey).sort().join(',');
+    const currentKeys = filteredCampaigns.map(getItemKey).sort().join(',');
+    
+    // 키 목록이 다르면 변경된 것으로 간주
+    if (prevKeys !== currentKeys) {
+      prevFilteredCampaignsRef.current = filteredCampaigns;
+      onFilteredCampaignsChangeRef.current(filteredCampaigns);
+      return;
+    }
+    
+    // 키 목록이 같아도 배열 참조가 다를 수 있으므로, 참조만 업데이트하고 콜백은 호출하지 않음
+    // (내용이 동일하면 콜백을 호출할 필요가 없음)
+    prevFilteredCampaignsRef.current = filteredCampaigns;
+  }, [filteredCampaigns]);
 
   /**
    * useEffect 훅: 모달이 열릴 때 body 스크롤 방지
