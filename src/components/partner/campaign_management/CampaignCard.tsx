@@ -167,7 +167,7 @@ export default function CampaignCard({
 
       const campaignTypePath = getCampaignTypePath(campaign.type);
       window.location.href = `/partner/campaign/edit/${campaignTypePath}/${campaign.id}`;
-    } else if (buttonText === "캠페인 삭제하기") {
+    } else if (buttonText === "캠페인 삭제") {
       // 삭제 확인 모달 열기
       setIsDeleteModalOpen(true);
     } else if (buttonText === "패널티 내역보기") {
@@ -421,14 +421,14 @@ export default function CampaignCard({
 
       {/* 액션 버튼 영역 */}
       <div className={cardStyles.campaign_actions}>
-        {/* 예정 탭: 캠페인 삭제하기 + 캠페인 수정하기 */}
+        {/* 예정 탭: 캠페인 삭제 + 캠페인 수정하기 */}
         {campaign.subStatus === "campaign_edit,campaign_delete" ? (
           <>
             <button
               className={`${buttonStyles.action_button} ${buttonStyles.danger_button}`}
-              onClick={() => handleButtonClick("캠페인 삭제하기")}
+              onClick={() => handleButtonClick("캠페인 삭제")}
             >
-              캠페인 삭제하기
+              캠페인 삭제
             </button>
             <button
               className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}

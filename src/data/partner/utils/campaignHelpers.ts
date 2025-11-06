@@ -61,7 +61,7 @@ export const getBrandLogo = (brandName: string, campaignType?: string): string =
  * - 관리 카드의 버튼/액션 표시에 사용될 간단 키워드
  *
  * 탭별 버튼 규칙:
- * 1. 예정 탭: "campaign_edit,campaign_delete" (캠페인 수정하기 + 캠페인 삭제하기)
+ * 1. 예정 탭: "campaign_edit,campaign_delete" (캠페인 수정하기 + 캠페인 삭제)
  * 2. 신청 탭: "campaign_edit,applicant_management" (캠페인 관리하기 + 신청 내역 확인하기)
  * 3. 진행 탭: "winner_selection" 또는 "content_review,content_approval" (당첨자 선정하기 or 콘텐츠 검수하기 + 콘텐츠 확인하기)
  * 4. 종료 탭: "content_review,content_approval" (콘텐츠 검수하기 + 콘텐츠 확인하기)
@@ -78,7 +78,7 @@ export const getSubStatus = (
 ): string => {
   switch (tabStatus) {
     case "예정":
-      // 예정 탭: 캠페인 삭제하기 + 캠페인 수정하기
+      // 예정 탭: 캠페인 삭제 + 캠페인 수정
       return "campaign_edit,campaign_delete";
     case "신청":
       // 신청 탭: 캠페인 관리하기 + 신청 내역 확인하기 (신청자 수와 관계없이 항상 2개 버튼)

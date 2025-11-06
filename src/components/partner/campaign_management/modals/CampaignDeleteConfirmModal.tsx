@@ -5,11 +5,11 @@
 /**
  * 캠페인 삭제 확인 모달 컴포넌트
  *
- * 목적: 캠페인 카드에서 "캠페인 삭제하기" 버튼을 클릭했을 때 표시되는 확인 모달입니다.
+ * 목적: 캠페인 카드에서 "캠페인 삭제" 버튼을 클릭했을 때 표시되는 확인 모달입니다.
  *       사용자에게 삭제 작업의 확실성을 확인받기 위해 사용됩니다.
  *
  * 사용 위치:
- * - CampaignCard 컴포넌트에서 "캠페인 삭제하기" 버튼 클릭 시
+ * - CampaignCard 컴포넌트에서 "캠페인 삭제" 버튼 클릭 시
  *
  * 주요 기능:
  * - 삭제 확인 메시지 표시
@@ -93,7 +93,7 @@ export default function CampaignDeleteConfirmModal({
     } else {
       // 기본 삭제 로직 (개발/테스트용)
       // TODO: 실제 캠페인 삭제 API 호출 로직 추가
-      console.log("캠페인 삭제하기:", campaignTitle, campaignId);
+      console.log("캠페인 삭제:", campaignTitle, campaignId);
       alert("캠페인이 삭제되었습니다.");
     }
     onClose(); // 삭제 처리 후 모달 닫기
@@ -169,7 +169,7 @@ export default function CampaignDeleteConfirmModal({
             className={`${styles.action_button} ${styles.confirm_button}`}
             onClick={handleConfirmClick}
           >
-            삭제하기
+            삭제
           </button>
         </div>
 
