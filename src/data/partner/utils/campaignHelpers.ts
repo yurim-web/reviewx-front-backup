@@ -63,8 +63,8 @@ export const getBrandLogo = (brandName: string, campaignType?: string): string =
  * 탭별 버튼 규칙:
  * 1. 예정 탭: "campaign_edit,campaign_delete" (캠페인 수정하기 + 캠페인 삭제)
  * 2. 신청 탭: "campaign_edit,applicant_management" (캠페인 관리하기 + 신청 내역 확인하기)
- * 3. 진행 탭: "winner_selection" 또는 "content_review,content_approval" (당첨자 선정하기 or 콘텐츠 검수하기 + 콘텐츠 확인하기)
- * 4. 종료 탭: "content_review,content_approval" (콘텐츠 검수하기 + 콘텐츠 확인하기)
+ * 3. 진행 탭: "winner_selection" 또는 "content_review,content_approval" (당첨자 선정 or 콘텐츠 확인 + 콘텐츠 확인 완료)
+ * 4. 종료 탭: "content_review,content_approval" (콘텐츠 확인 + 콘텐츠 확인 완료)
  * 5. 취소 탭: "penalty" (패널티 내역보기)
  *
  * 📌 학습 포인트:
@@ -85,13 +85,13 @@ export const getSubStatus = (
       return "campaign_edit,applicant_management";
     case "진행":
       // 진행 탭: 선정자 수에 따라 버튼 결정
-      // 선정자가 0명이면 → "당첨자 선정하기" 버튼만
-      // 선정자가 1명 이상이면 → "콘텐츠 검수하기" + "콘텐츠 확인하기" 버튼 2개
+      // 선정자가 0명이면 → "당첨자 선정" 버튼만
+      // 선정자가 1명 이상이면 → "콘텐츠 확인" + "콘텐츠 확인 완료" 버튼 2개
       return selectedCount > 0
         ? "content_review,content_approval"
         : "winner_selection";
     case "종료":
-      // 종료 탭: 콘텐츠 검수하기 + 콘텐츠 확인하기
+      // 종료 탭: 콘텐츠 확인 + 콘텐츠 확인 완료
       return "content_review,content_approval";
     case "취소":
       // 취소 탭: 패널티 내역보기

@@ -144,9 +144,9 @@ export default function CampaignCard({
   const handleButtonClick = (buttonText: string) => {
     if (buttonText === "구매 영수증 등록하기") {
       setIsReceiptModalOpen(true);
-    } else if (buttonText === "캠페인 관리하기") {
+    } else if (buttonText === "캠페인 관리") {
       setIsManagementModalOpen(true);
-    } else if (buttonText === "캠페인 수정하기") {
+    } else if (buttonText === "캠페인 수정") {
       // 캠페인 타입에 따라 다른 수정 페이지로 이동
       const getCampaignTypePath = (type: string) => {
         switch (type) {
@@ -173,7 +173,7 @@ export default function CampaignCard({
     } else if (buttonText === "패널티 내역보기") {
       // 패널티 내역 페이지로 이동
       window.location.href = "/partner/campaign_management/penalty";
-    } else if (buttonText === "신청내역 확인하기") {
+    } else if (buttonText === "신청내역 확인") {
       // 캠페인 타입에 따라 다른 신청내역 페이지로 이동 (신청 탭)
       const getCampaignTypePath = (type: string) => {
         switch (type) {
@@ -194,7 +194,7 @@ export default function CampaignCard({
 
       const campaignTypePath = getCampaignTypePath(campaign.type);
       window.location.href = `/partner/campaign_application/${campaignTypePath}/${campaign.id}`;
-    } else if (buttonText === "당첨자 선정하기") {
+    } else if (buttonText === "당첨자 선정") {
       // 캠페인 타입에 따라 다른 신청내역 페이지로 이동 (신청 탭)
       const getCampaignTypePath = (type: string) => {
         switch (type) {
@@ -227,11 +227,11 @@ export default function CampaignCard({
   const getButtonText = () => {
     // subStatus 기반으로 버튼 결정 (USER와 동일한 방식)
     if (campaign.subStatus === "applicant_management") {
-      return "신청내역 확인하기";
+      return "신청내역 확인";
     } else if (campaign.subStatus === "winner_selection") {
-      return "당첨자 선정하기";
+      return "당첨자 선정";
     } else if (campaign.subStatus === "content_review") {
-      return `콘텐츠 확인하기 (${completedCount})`;
+      return `콘텐츠 확인 완료 (${completedCount})`;
     } else if (campaign.subStatus === "penalty") {
       return "패널티 내역보기";
     }
@@ -241,15 +241,15 @@ export default function CampaignCard({
       case "예정":
         return "캠페인 수정하기";
       case "신청":
-        return "신청내역 확인하기";
+        return "신청내역 확인";
       case "진행":
-        return "당첨자 선정하기";
+        return "당첨자 선정";
       case "종료":
-        return `콘텐츠 확인하기 (${completedCount})`;
+        return `콘텐츠 확인 완료 (${completedCount})`;
       case "취소":
         return "패널티 내역보기";
       default:
-        return "캠페인 관리하기";
+        return "캠페인 관리";
     }
   };
 
@@ -267,7 +267,7 @@ export default function CampaignCard({
       buttonText === "구매 영수증 수정하기" ||
       buttonText === "구매 영수증 재등록하기" ||
       buttonText === "패널티 해제하기" ||
-      buttonText === "당첨자 선정하기" ||
+      buttonText === "당첨자 선정" ||
       buttonText === "캠페인 수정하기"
     ) {
       return `${buttonStyles.action_button} ${buttonStyles.primary_button}`;
@@ -355,7 +355,7 @@ export default function CampaignCard({
                 // 진행 중인 캠페인: 검수/제출/선정 수 표시
                 <>
                   <span className={cardStyles.applicant_current}>
-                    검수 {reviewingCount}명
+                    확인 {reviewingCount}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
                   <span className={cardStyles.applicant_current}>
@@ -370,7 +370,7 @@ export default function CampaignCard({
                 // 종료 캠페인: 검수/제출/선정 수 표시
                 <>
                   <span className={cardStyles.applicant_current}>
-                    검수 {reviewingCount}명
+                    확인 {reviewingCount}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
                   <span className={cardStyles.applicant_current}>
@@ -421,7 +421,7 @@ export default function CampaignCard({
 
       {/* 액션 버튼 영역 */}
       <div className={cardStyles.campaign_actions}>
-        {/* 예정 탭: 캠페인 삭제 + 캠페인 수정하기 */}
+        {/* 예정 탭: 캠페인 삭제 + 캠페인 수정 */}
         {campaign.subStatus === "campaign_edit,campaign_delete" ? (
           <>
             <button
@@ -432,29 +432,29 @@ export default function CampaignCard({
             </button>
             <button
               className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
-              onClick={() => handleButtonClick("캠페인 수정하기")}
+              onClick={() => handleButtonClick("캠페인 수정")}
             >
-              캠페인 수정하기
+              캠페인 수정
             </button>
           </>
         ) : campaign.subStatus === "campaign_edit,applicant_management" ? (
-          /* 신청 탭: 캠페인 관리하기 + 신청 내역 확인하기 */
+          /* 신청 탭: 캠페인 관리 + 신청 내역 확인하기 */
           <>
             <button
               className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
-              onClick={() => handleButtonClick("캠페인 관리하기")}
+              onClick={() => handleButtonClick("캠페인 관리")}
             >
-              캠페인 관리하기
+              캠페인 관리
             </button>
             <button
               className={`${buttonStyles.action_button} ${buttonStyles.secondary_button}`}
-              onClick={() => handleButtonClick("신청내역 확인하기")}
+              onClick={() => handleButtonClick("신청내역 확인")}
             >
-              신청내역 확인하기
+              신청내역 확인
             </button>
           </>
         ) : isContentStage ? (
-          /* 종료 탭 또는 콘텐츠 단계: 콘텐츠 검수하기 + 콘텐츠 확인하기 */
+          /* 종료 탭 또는 콘텐츠 단계: 콘텐츠 확인 + 콘텐츠 확인 완료 */
           <>
             <button
               className={`${buttonStyles.action_button} ${buttonStyles.secondary_button}`}
@@ -479,7 +479,7 @@ export default function CampaignCard({
                 window.location.href = `/partner/campaign_contents/${campaignTypePath}/${campaign.id}?tab=검수`;
               }}
             >
-              콘텐츠 검수하기 ({reviewingCount})
+              콘텐츠 확인 ({reviewingCount})
             </button>
             <button
               className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
@@ -504,11 +504,11 @@ export default function CampaignCard({
                 window.location.href = `/partner/campaign_contents/${campaignTypePath}/${campaign.id}?tab=완료`;
               }}
             >
-              콘텐츠 확인하기 ({completedCount})
+              콘텐츠 확인 완료 ({completedCount})
             </button>
           </>
         ) : (
-          /* 그 외의 경우: 상태에 맞는 1개 버튼 표시 (당첨자 선정하기, 패널티 내역보기 등) */
+          /* 그 외의 경우: 상태에 맞는 1개 버튼 표시 (당첨자 선정, 패널티 내역보기 등) */
           <button
             className={getButtonStyle()}
             onClick={() => handleButtonClick(getButtonText())}

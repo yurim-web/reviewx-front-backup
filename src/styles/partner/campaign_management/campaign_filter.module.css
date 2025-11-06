@@ -1,0 +1,500 @@
+/* ========================================
+   🔍 파트너 캠페인 관리 필터 바 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - CampaignFilterBar.tsx (파트너 캠페인 관리 필터 바)
+ * 
+ * 사용 페이지:
+ * - /partner/campaign_management (캠페인 관리 메인 페이지)
+ * 
+ * CSS 학습 포인트:
+ * - CSS 모듈: 파일명.module.css 형식으로 스코프를 제한하여 스타일 충돌 방지
+ * - 클래스 선택자: .클래스명으로 스타일 적용
+ * - Flexbox: display: flex로 레이아웃 구성
+ * - Grid: display: grid로 그리드 레이아웃 구성
+ * - 미디어 쿼리: 반응형 디자인을 위한 화면 크기별 스타일
+ */
+
+/* ========================================
+   필터 바 컨테이너
+   ======================================== */
+
+/**
+ * 필터 바 최상위 컨테이너
+ *
+ * 설명:
+ * - 필터 바 전체를 감싸는 컨테이너입니다.
+ * - 배경색, 패딩, 테두리 등을 설정합니다.
+ */
+.filter_bar {
+  background: white;
+  padding: 0;
+  width: 100%;
+}
+
+/**
+ * 필터 컨테이너 (필터 버튼 + 검색/정렬 영역)
+ *
+ * 설명:
+ * - 필터 버튼들과 검색/정렬 영역을 가로로 배치합니다.
+ * - justify-content: space-between으로 좌우 정렬합니다.
+ */
+.filter_container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  padding: 24px 40px;
+  border-bottom: 1px solid #D9D9D9;
+
+}
+
+
+.filter_buttons_container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+/* ========================================
+   필터 버튼 영역
+   ======================================== */
+
+/**
+ * 필터 버튼 그룹 컨테이너
+ *
+ * 설명:
+ * - 유형, 채널 필터 버튼들을 가로로 배치합니다.
+ * - gap으로 버튼 간 간격을 설정합니다.
+ */
+.filter_buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/**
+ * 필터 버튼 기본 스타일
+ *
+ * 설명:
+ * - 유형, 채널 필터 버튼의 공통 스타일입니다.
+ * - flexbox로 내부 요소들을 가로로 배치합니다.
+ * - border, padding, cursor 등을 설정합니다.
+ *
+ * CSS 학습 포인트:
+ * - display: flex: Flexbox 레이아웃 사용
+ * - align-items: center: 세로 가운데 정렬
+ * - gap: 요소 간 간격 설정
+ * - transition: 부드러운 애니메이션 효과
+ * - cursor: pointer: 마우스 오버 시 포인터 커서 표시
+ */
+.filter_button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  /* 글자 스타일 */
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/**
+ * 필터 버튼 호버 효과
+ *
+ * 설명:
+ * - 마우스를 올리면 테두리 색상이 변경됩니다.
+ */
+.filter_button:hover {
+  border: 1px solid #444;
+}
+
+/**
+ * 활성화된 필터 버튼 스타일
+ *
+ * 설명:
+ * - 필터가 선택되어 있을 때 적용되는 스타일입니다.
+ * - 테두리와 글자 색상이 더 진하게 표시됩니다.
+ */
+.filter_button_active {
+  border: 1px solid #444 !important;
+  color: #444 !important;
+}
+
+/**
+ * 체크박스 아이콘 컨테이너
+ *
+ * 설명:
+ * - 필터 버튼 내부의 체크박스 아이콘을 감싸는 컨테이너입니다.
+ * - 크기를 고정하여 일관된 UI를 제공합니다.
+ */
+.checkbox_icon {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/**
+ * 체크박스 체크됨 상태
+ *
+ * 설명:
+ * - 필터가 선택되어 있을 때 표시되는 체크박스입니다.
+ * - 배경색과 체크 표시를 설정합니다.
+ */
+.checkbox_checked {
+  width: 16px;
+  height: 16px;
+  border: 1px solid #444;
+  border-radius: 4px;
+
+  position: relative;
+}
+
+/**
+ * 체크박스 체크 표시 (체크마크)
+ *
+ * 설명:
+ * - 체크박스가 체크되어 있을 때 표시되는 체크마크입니다.
+ * - ::after 가상 요소를 사용하여 체크마크를 생성합니다.
+ */
+.checkbox_checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color:#444444;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/**
+ * 체크박스 체크 안 됨 상태
+ *
+ * 설명:
+ * - 필터가 선택되어 있지 않을 때 표시되는 체크박스입니다.
+ * - 흰색 배경과 회색 테두리만 표시됩니다.
+ */
+.checkbox_unchecked {
+  width: 16px;
+  height: 16px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: white;
+}
+
+/**
+ * 필터 버튼 라벨
+ *
+ * 설명:
+ * - 필터 버튼의 텍스트 (유형, 채널)를 표시합니다.
+ */
+.filter_label {
+  color: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/**
+ * 드롭다운 아이콘
+ *
+ * 설명:
+ * - 필터 버튼과 정렬 버튼에 표시되는 드롭다운 화살표 아이콘입니다.
+ * - 크기와 transition을 설정합니다.
+ */
+.dropdown_icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+/* ========================================
+   검색 및 정렬 영역
+   ======================================== */
+
+/**
+ * 검색 및 정렬 컨테이너
+ *
+ * 설명:
+ * - 검색창과 정렬 드롭다운을 가로로 배치합니다.
+ * - gap으로 요소 간 간격을 설정합니다.
+ */
+.search_sort_container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+/**
+ * 검색 컨테이너
+ *
+ * 설명:
+ * - 검색 아이콘과 입력창을 포함하는 컨테이너입니다.
+ * - 상대 위치 지정으로 아이콘을 입력창 내부에 배치합니다.
+ */
+.search_container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 240px;
+  height: 40px;
+}
+
+/**
+ * 검색 아이콘
+ *
+ * 설명:
+ * - 검색 입력창 왼쪽에 표시되는 검색 아이콘입니다.
+ * - 절대 위치로 입력창 내부에 배치합니다.
+ */
+.search_icon {
+  position: absolute;
+  left: 12px;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  z-index: 1;
+  pointer-events: none; /* 아이콘이 클릭을 방해하지 않도록 */
+}
+
+/**
+ * 검색 입력창
+ *
+ * 설명:
+ * - 사용자가 검색어를 입력하는 입력창입니다.
+ * - 패딩을 설정하여 아이콘과 텍스트가 겹치지 않도록 합니다.
+ * - border, border-radius 등을 설정합니다.
+ *
+ * CSS 학습 포인트:
+ * - width: 100%: 부모 요소의 전체 너비 사용
+ * - padding-left: 아이콘 공간 확보
+ * - placeholder: 입력창에 힌트 텍스트 표시
+ * - outline: none: 포커스 시 기본 테두리 제거
+ */
+.search_input {
+  width: 100%;
+  height: 100%;
+  padding: 0 12px 0 40px; /* 왼쪽 패딩을 40px로 설정하여 아이콘 공간 확보 */
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: white;
+  font-size: 16px;
+  font-weight: 500;
+  color: #444;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+/**
+ * 검색 입력창 포커스 효과
+ *
+ * 설명:
+ * - 입력창에 포커스가 맞춰지면 테두리 색상이 변경됩니다.
+ */
+.search_input:focus {
+  border-color: #444;
+}
+
+/**
+ * 검색 입력창 placeholder 스타일
+ *
+ * 설명:
+ * - placeholder 텍스트의 색상을 설정합니다.
+ */
+.search_input::placeholder {
+  color: #848484;
+}
+
+/**
+ * 정렬 버튼
+ *
+ * 설명:
+ * - 정렬 옵션을 선택하는 드롭다운 버튼입니다.
+ * - 필터 버튼과 유사한 스타일을 적용합니다.
+ */
+.sort_button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 89px;
+
+  /* 글자 스타일 */
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/**
+ * 정렬 버튼 호버 효과
+ *
+ * 설명:
+ * - 마우스를 올리면 테두리 색상이 변경됩니다.
+ */
+.sort_button:hover {
+  border: 1px solid #444;
+}
+
+/**
+ * 정렬 라벨
+ *
+ * 설명:
+ * - 정렬 버튼의 텍스트 (예: "최신순")를 표시합니다.
+ */
+.sort_label {
+  color: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* ========================================
+   활성 필터 태그 영역
+   ======================================== */
+
+/**
+ * 활성 필터 태그 컨테이너
+ *
+ * 설명:
+ * - 선택된 필터들을 태그 형태로 표시하는 영역입니다.
+ * - 회색 배경에 필터 태그들을 가로로 배치합니다.
+ * - 필터가 선택되어 있을 때만 표시됩니다.
+ *
+ * CSS 학습 포인트:
+ * - flex-wrap: wrap: 요소들이 넘칠 때 다음 줄로 넘어감
+ * - gap: 요소 간 간격 설정
+ * - padding: 내부 여백 설정
+ */
+.active_filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px ;
+  min-height: 40px;
+
+  border-radius: 4px;
+background: #F9F9F9;
+}
+
+/**
+ * 필터 태그
+ *
+ * 설명:
+ * - 각 필터 옵션을 표시하는 태그입니다.
+ * - 필터 이름과 제거 버튼(X)을 포함합니다.
+ */
+.filter_tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  /* 글자 스타일 */
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px; 
+  letter-spacing: -0.28px;
+}
+
+/**
+ * 필터 태그 제거 버튼
+ *
+ * 설명:
+ * - 필터 태그의 X 버튼입니다.
+ * - 클릭하면 해당 필터를 제거합니다.
+ *
+ * CSS 학습 포인트:
+ * - background: none: 배경 제거
+ * - border: none: 테두리 제거
+ * - cursor: pointer: 마우스 오버 시 포인터 커서 표시
+ */
+.remove_tag {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+/**
+ * 제거 버튼 호버 효과
+ *
+ * 설명:
+ * - 마우스를 올리면 약간의 투명도 변화를 줍니다.
+ */
+.remove_tag:hover {
+  opacity: 0.7;
+}
+
+/**
+ * X 아이콘 스타일
+ *
+ * 설명:
+ * - 필터 태그 제거 버튼의 X 아이콘입니다.
+ */
+.remove_icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* ========================================
+   반응형 디자인 (선택사항)
+   ======================================== */
+
+/**
+ * 모바일 화면에서의 스타일 조정
+ *
+ * 설명:
+ * - 화면 크기가 작을 때 필터 바의 레이아웃을 조정합니다.
+ * - 미디어 쿼리를 사용하여 특정 화면 크기에서만 적용됩니다.
+ *
+ * CSS 학습 포인트:
+ * - @media: 미디어 쿼리로 화면 크기별 스타일 적용
+ * - max-width: 최대 너비 제한
+ * - flex-direction: column: 세로 방향 배치
+ */
+@media (max-width: 768px) {
+  .filter_container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search_sort_container {
+    margin-left: 0;
+  }
+
+  .search_container {
+    width: 100%;
+  }
+}
+
