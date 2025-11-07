@@ -55,6 +55,11 @@ export interface PartnerCampaign {
   totalCount: number; // 전체 모집 인원 수
   daysLeft: number; // 선정 날짜까지 남은 일수 (동적 계산된 값)
 
+  // 파생 인원 정보 (선택적)
+  applicants?: number; // 신청자 수 (applicantData.applicants 길이)
+  recruits?: number; // 모집 정원 수 (totalCount와 동일하게 사용)
+  selected?: number; // 선정자 수 (applicantData.selectedApplicants 길이)
+
   // 추가 정보 (선택적)
   statusText?: string; // 캠페인 상태 설명 텍스트 - 예: "캠페인 콘텐츠를 검수해 주세요."
   brandLogo?: string; // 브랜드 로고 URL - UI에서 자동 계산되거나 별도 제공

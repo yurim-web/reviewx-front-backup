@@ -3,6 +3,21 @@
    ======================================== */
 
 /**
+ * 사용 위치 요약
+ *
+ * - `src/data/partner/sharedCampaigns.ts`: 공용 캠페인 데이터를 조립할 때 상태 문구/로고/서브상태 계산에 활용
+ * - `src/components/partner/campaign_application/utils/campaign_info_helpers.ts`: 캠페인 정보 박스에서 상태 문구를 생성할 때 사용
+ * - `src/components/partner/campaign_management/CampaignCard.tsx` 간접 사용: 위 두 모듈을 통해 계산된 값이 카드에 전달됨
+ * - 그 외 파생 데이터 샘플/가이드(`src/data/docs/DATA_GUIDE.md`)에서도 동일 헬퍼를 참조
+ */
+
+/* ----------------------------------------
+   🗨️ 상태 안내 문구 생성 (getStatusMessage)
+   ----------------------------------------
+   - 사용 위치: `sharedCampaigns.ts`, `campaign_info_helpers.ts`
+   - 역할: 상태/남은 일수 기반으로 카드·툴팁 메시지 생성
+*/
+/**
  * 상태별 안내 문구 생성
  * - 카드 하단/툴팁 등에 사용할 간단 메시지
  */
@@ -25,6 +40,12 @@ export const getStatusMessage = (status: string, daysLeft: number): string => {
   }
 };
 
+/* ----------------------------------------
+   🏷️ 브랜드 로고 매핑 (getBrandLogo)
+   ----------------------------------------
+   - 사용 위치: `sharedCampaigns.ts`, `CampaignInfoBox.tsx`
+   - 역할: 캠페인 유형/브랜드명을 로고 파일 경로로 변환
+*/
 /**
  * 브랜드 로고 경로 반환
  * - 캠페인 유형(구매평/미션형) 우선, 그 외는 브랜드명 매핑
@@ -56,6 +77,12 @@ export const getBrandLogo = (brandName: string, campaignType?: string): string =
   }
 };
 
+/* ----------------------------------------
+   🎚️ 서브 상태 계산 (getSubStatus)
+   ----------------------------------------
+   - 사용 위치: `sharedCampaigns.ts`
+   - 역할: 캠페인 상태별로 카드 버튼 조합(서브 상태 키) 결정
+*/
 /**
  * 캠페인 탭(상태) → 서브 상태 키 반환
  * - 관리 카드의 버튼/액션 표시에 사용될 간단 키워드
@@ -94,7 +121,7 @@ export const getSubStatus = (
       // 종료 탭: 콘텐츠 확인 + 콘텐츠 확인 완료
       return "content_review,content_approval";
     case "취소":
-      // 취소 탭: 패널티 내역보기
+      // 취소 탭: 패널티 내역 확인
       return "penalty";
     default:
       // 기본값: 캠페인 수정하기
@@ -106,6 +133,12 @@ export const getSubStatus = (
    🧭 파트너 탭 분류 헬퍼
    ======================================== */
 
+/* ----------------------------------------
+   🧭 탭 분류 로직 (getPartnerTabByDates)
+   ----------------------------------------
+   - 사용 위치: `sharedCampaigns.ts`
+   - 역할: 모집/등록 기간 비교로 파트너 관리 탭(예정/신청/진행/종료) 결정
+*/
 /**
  * 캠페인 탭 판별 (파트너 관리 탭: 전체/예정/신청/진행/종료)
  *
