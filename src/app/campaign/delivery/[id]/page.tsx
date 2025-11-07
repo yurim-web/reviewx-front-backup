@@ -171,10 +171,6 @@ export default function DeliveryDetailPage({
             announcement={campaign.detailedSchedule.announcement}
             additionalSchedules={[
               {
-                label: "구매 기간",
-                value: campaign.detailedSchedule.purchasePeriod,
-              },
-              {
                 label: "등록 기간",
                 value: campaign.detailedSchedule.registrationPeriod,
               },
