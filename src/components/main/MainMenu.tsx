@@ -9,6 +9,9 @@ import styles from "../../styles/home/home.module.css";
 export default function MainMenu() {
   const pathname = usePathname();
 
+  // 파트너 페이지에서는 홈 버튼이 /partner로 이동, 그 외에는 /로 이동
+  const homeHref = pathname.startsWith('/partner') ? '/partner' : '/';
+
   return (
     <section className={styles.main_menu_container}>
       <Link
@@ -17,7 +20,7 @@ export default function MainMenu() {
             ? styles.main_menu_item_active
             : ""
         }`}
-        href="/"
+        href={homeHref}
       >
         홈
       </Link>

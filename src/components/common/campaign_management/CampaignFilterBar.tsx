@@ -1,31 +1,43 @@
 /* ========================================
-   🔍 파트너 캠페인 관리 필터 바 컴포넌트
+   🔍 캠페인 관리 필터 바 컴포넌트 (공통)
    ======================================== */
 
-"use client";
+/**
+ * 모듈 목적
+ *
+ * - 캠페인 관리 페이지에서 사용하는 필터 바 UI
+ * - 유형, 채널, 검색, 정렬 기능 제공
+ *
+ * 📍 사용 페이지/컴포넌트:
+ * - src/app/user/campaign_management/* (사용자 캠페인 관리 페이지들)
+ * - src/app/partner/campaign_management/* (파트너 캠페인 관리 페이지들)
+ *
+ * 📌 공통 컴포넌트 위치:
+ * - src/components/common/campaign_management/CampaignFilterBar.tsx
+ *   (user와 partner 캠페인 관리 페이지에서 공통으로 사용하는 컴포넌트)
+ */
 
-import styles from "../../../styles/partner/campaign_management/campaign_filter.module.css";
-import ModalFilter from "../../user/filter/ModalFilter";
-import {
-  CampaignFilterBarProps,
-  FilterableCampaign,
-} from "./types";
-import { useCampaignFilterBar } from "./hooks/useCampaignFilterBar";
+'use client';
 
-const DEFAULT_TYPE_OPTIONS = ["배송형", "방문형", "구매평", "기자단", "미션형"];
+import styles from '../../../styles/partner/campaign_management/campaign_filter.module.css';
+import ModalFilter from '../../user/filter/ModalFilter';
+import { CampaignFilterBarProps, FilterableCampaign } from './types';
+import { useCampaignFilterBar } from './hooks/useCampaignFilterBar';
+
+const DEFAULT_TYPE_OPTIONS = ['배송형', '방문형', '구매평', '기자단', '미션형'];
 const DEFAULT_CHANNEL_OPTIONS = [
-  "네이버 블로그",
-  "클립",
-  "인스타그램",
-  "릴스",
-  "유튜브",
-  "쇼츠",
+  '네이버 블로그',
+  '클립',
+  '인스타그램',
+  '릴스',
+  '유튜브',
+  '쇼츠',
 ];
-const DEFAULT_SORT_OPTIONS = ["최신순", "인기순", "마감임박순"];
-const DEFAULT_SORT = "최신순";
+const DEFAULT_SORT_OPTIONS = ['최신순', '인기순', '마감임박순'];
+const DEFAULT_SORT = '최신순';
 
 export default function CampaignFilterBar<
-  T extends FilterableCampaign = FilterableCampaign
+  T extends FilterableCampaign = FilterableCampaign,
 >({
   campaigns,
   onFilterChange,
@@ -84,7 +96,7 @@ export default function CampaignFilterBar<
               className={`${styles.filter_button} ${
                 currentFilters.types && currentFilters.types.length > 0
                   ? styles.filter_button_active
-                  : ""
+                  : ''
               }`}
               onClick={openTypeModal}
             >
@@ -107,12 +119,13 @@ export default function CampaignFilterBar<
               className={`${styles.filter_button} ${
                 currentFilters.channels && currentFilters.channels.length > 0
                   ? styles.filter_button_active
-                  : ""
+                  : ''
               }`}
               onClick={openChannelModal}
             >
               <div className={styles.checkbox_icon}>
-                {currentFilters.channels && currentFilters.channels.length > 0 ? (
+                {currentFilters.channels &&
+                currentFilters.channels.length > 0 ? (
                   <div className={styles.checkbox_checked}></div>
                 ) : (
                   <div className={styles.checkbox_unchecked}></div>
@@ -240,5 +253,3 @@ export default function CampaignFilterBar<
     </div>
   );
 }
-
-

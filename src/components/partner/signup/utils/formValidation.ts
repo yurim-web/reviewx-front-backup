@@ -22,8 +22,8 @@ import {
   validateEmail,
   validatePassword,
   validatePasswordMatch,
-  validateBusinessNumber,
-} from './validation';
+} from '@/utils/signup/validation';
+import { validateBusinessNumber } from './validation';
 
 export interface PartnerSignupFormErrors {
   email?: string;

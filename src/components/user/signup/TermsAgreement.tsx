@@ -7,6 +7,10 @@
  *
  * - 이용약관 및 개인정보 동의 체크박스 UI
  * - 전체 동의 및 개별 동의 관리
+ *
+ * 📍 사용 페이지/컴포넌트:
+ * - src/app/user/signup/page.tsx
+ *   (사용자 회원가입 페이지에서 약관 동의에 사용)
  */
 
 'use client';
@@ -104,10 +108,7 @@ export default function TermsAgreement({
             checked={marketingAgreed}
             onChange={(e) => onMarketingAgreedChange(e.target.checked)}
           />
-          <label
-            htmlFor="marketing-agree"
-            className={styles.checkbox_label}
-          >
+          <label htmlFor="marketing-agree" className={styles.checkbox_label}>
             [선택] 마케팅 목적의 개인정보 수집 및 이용 동의
           </label>
           <Link href="/marketing" className={styles.terms_view_link}>
@@ -124,4 +125,3 @@ export default function TermsAgreement({
     </>
   );
 }
-

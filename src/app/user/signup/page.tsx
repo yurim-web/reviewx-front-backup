@@ -24,15 +24,15 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/fragments/Header';
-import PhoneVerification from '@/components/user/signup/PhoneVerification';
+import PhoneVerification from '@/components/common/signup/PhoneVerification';
 import TermsAgreement from '@/components/user/signup/TermsAgreement';
 import ExistingAccountModal, {
   type SocialLoginType,
 } from '@/components/user/signup/ExistingAccountModal';
-import PasswordInput from '@/components/user/signup/PasswordInput';
-import PasswordConfirmInput from '@/components/user/signup/PasswordConfirmInput';
+import PasswordInput from '@/components/common/signup/PasswordInput';
+import PasswordConfirmInput from '@/components/common/signup/PasswordConfirmInput';
 import { useTermsAgreement } from '@/components/user/signup/hooks/useTermsAgreement';
-import { usePhoneVerification } from '@/components/user/signup/hooks/usePhoneVerification';
+import { usePhoneVerification } from '@/components/common/signup/hooks/usePhoneVerification';
 import {
   validateSignupForm,
   type SignupFormErrors,

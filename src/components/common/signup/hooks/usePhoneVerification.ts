@@ -1,5 +1,5 @@
 /* ========================================
-   🎣 휴대폰 인증 관리 커스텀 훅
+   🎣 휴대폰 인증 관리 커스텀 훅 (공통)
    ======================================== */
 
 /**
@@ -7,6 +7,16 @@
  *
  * - 휴대폰 인증 상태 및 로직 관리
  * - 인증번호 요청, 인증 확인, 상태 초기화
+ *
+ * 📍 사용 페이지/컴포넌트:
+ * - src/app/user/signup/page.tsx
+ *   (사용자 회원가입 페이지에서 휴대폰 인증 로직 관리)
+ * - src/app/partner/signup/page.tsx
+ *   (파트너 회원가입 페이지에서 휴대폰 인증 로직 관리)
+ *
+ * 📌 공통 훅 위치:
+ * - src/components/common/signup/hooks/usePhoneVerification.ts
+ *   (user와 partner 회원가입 페이지에서 공통으로 사용하는 훅)
  */
 
 import { useState, useEffect, useRef } from 'react';

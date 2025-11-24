@@ -1,9 +1,20 @@
 /* ========================================
-   🧾 캠페인 필터 관련 타입 모음
+   🧾 캠페인 필터 관련 타입 모음 (공통)
    ======================================== */
 
-import type { PartnerCampaign } from "@/types/partner/partner";
-import type { CampaignApplication } from "@/types/user/user";
+/**
+ * 모듈 목적
+ *
+ * - 캠페인 필터 바에서 사용하는 타입 정의
+ * - user와 partner 캠페인 타입을 모두 지원
+ *
+ * 📌 공통 타입 위치:
+ * - src/components/common/campaign_management/types.ts
+ *   (user와 partner 캠페인 관리 페이지에서 공통으로 사용하는 타입)
+ */
+
+import type { PartnerCampaign } from '@/types/partner/partner';
+import type { CampaignApplication } from '@/types/user/user';
 
 /**
  * 필터 변경 시 부모에 전달되는 파라미터 타입
@@ -39,7 +50,7 @@ export type FilterableCampaign =
  * CampaignFilterBar 컴포넌트 Props 타입
  */
 export interface CampaignFilterBarProps<
-  T extends FilterableCampaign = FilterableCampaign
+  T extends FilterableCampaign = FilterableCampaign,
 > {
   campaigns: T[];
   onFilterChange?: (filters: FilterChangeParams) => void;
@@ -54,5 +65,3 @@ export interface CampaignFilterBarProps<
   sortOptions?: string[] | { value: string; label: string }[];
   defaultSort?: string;
 }
-
-

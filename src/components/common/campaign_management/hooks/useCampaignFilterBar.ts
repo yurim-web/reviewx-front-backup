@@ -1,25 +1,37 @@
 /* ========================================
-   🪝 useCampaignFilterBar 커스텀 훅
+   🪝 useCampaignFilterBar 커스텀 훅 (공통)
    ======================================== */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  filterCampaigns,
-  getItemKey,
-} from "../utils/campaign_filter_helpers";
+/**
+ * 모듈 목적
+ *
+ * - 캠페인 필터 바의 상태 및 로직 관리
+ * - 필터링, 정렬, 검색 기능 제공
+ *
+ * 📍 사용 컴포넌트:
+ * - src/components/common/campaign_management/CampaignFilterBar.tsx
+ *   (캠페인 필터 바 컴포넌트에서 필터링 로직 관리)
+ *
+ * 📌 공통 훅 위치:
+ * - src/components/common/campaign_management/hooks/useCampaignFilterBar.ts
+ *   (user와 partner 캠페인 관리 페이지에서 공통으로 사용하는 훅)
+ */
+
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { filterCampaigns, getItemKey } from '../utils/campaign_filter_helpers';
 import type {
   CampaignFilterBarProps,
   FilterableCampaign,
   FilterChangeParams,
-} from "../types";
+} from '../types';
 
 interface UseCampaignFilterBarParams<
-  T extends FilterableCampaign = FilterableCampaign
+  T extends FilterableCampaign = FilterableCampaign,
 > {
   campaigns: T[];
   onFilterChange?: (filters: FilterChangeParams) => void;
   onFilteredCampaignsChange: (filteredCampaigns: T[]) => void;
-  activeFilters?: CampaignFilterBarProps<T>["activeFilters"];
+  activeFilters?: CampaignFilterBarProps<T>['activeFilters'];
   defaultSort: string;
 }
 
@@ -47,15 +59,19 @@ export interface UseCampaignFilterBarReturn {
     closeTypeModal: () => void;
     closeChannelModal: () => void;
     closeSortModal: () => void;
-    handleTypeToggle: (option: string | { value: string; label: string }) => void;
+    handleTypeToggle: (
+      option: string | { value: string; label: string },
+    ) => void;
     handleChannelToggle: (
-      option: string | { value: string; label: string }
+      option: string | { value: string; label: string },
     ) => void;
     handleTypeApply: () => void;
     handleChannelApply: () => void;
     handleTypeReset: () => void;
     handleChannelReset: () => void;
-    handleSortToggle: (option: string | { value: string; label: string }) => void;
+    handleSortToggle: (
+      option: string | { value: string; label: string },
+    ) => void;
     handleSortReset: () => void;
     handleSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     handleTypeRemove: (type: string) => void;
@@ -64,7 +80,7 @@ export interface UseCampaignFilterBarReturn {
 }
 
 export function useCampaignFilterBar<
-  T extends FilterableCampaign = FilterableCampaign
+  T extends FilterableCampaign = FilterableCampaign,
 >({
   campaigns,
   onFilterChange,
@@ -82,34 +98,37 @@ export function useCampaignFilterBar<
 
   const [selectedSort, setSelectedSort] = useState<string>(defaultSort);
   const [searchQuery, setSearchQuery] = useState<string>(
-    activeFilters.searchQuery || ""
+    activeFilters.searchQuery || '',
   );
 
   const [internalFilters, setInternalFilters] = useState<FilterChangeParams>({
     sortBy: defaultSort,
   });
 
-  const currentFilters = useMemo(() => ({
-    types: activeFilters.types ?? internalFilters.types,
-    channels: activeFilters.channels ?? internalFilters.channels,
-    searchQuery: activeFilters.searchQuery ?? internalFilters.searchQuery,
-    sortBy: internalFilters.sortBy ?? selectedSort ?? defaultSort,
-  }), [
-    activeFilters.types,
-    activeFilters.channels,
-    activeFilters.searchQuery,
-    internalFilters.types,
-    internalFilters.channels,
-    internalFilters.searchQuery,
-    internalFilters.sortBy,
-    selectedSort,
-    defaultSort,
-  ]);
+  const currentFilters = useMemo(
+    () => ({
+      types: activeFilters.types ?? internalFilters.types,
+      channels: activeFilters.channels ?? internalFilters.channels,
+      searchQuery: activeFilters.searchQuery ?? internalFilters.searchQuery,
+      sortBy: internalFilters.sortBy ?? selectedSort ?? defaultSort,
+    }),
+    [
+      activeFilters.types,
+      activeFilters.channels,
+      activeFilters.searchQuery,
+      internalFilters.types,
+      internalFilters.channels,
+      internalFilters.searchQuery,
+      internalFilters.sortBy,
+      selectedSort,
+      defaultSort,
+    ],
+  );
 
   const filteredCampaigns = useMemo(
     () =>
       filterCampaigns<T>(campaigns, currentFilters, selectedSort, defaultSort),
-    [campaigns, currentFilters, selectedSort, defaultSort]
+    [campaigns, currentFilters, selectedSort, defaultSort],
   );
 
   const onFilteredCampaignsChangeRef = useRef(onFilteredCampaignsChange);
@@ -134,8 +153,8 @@ export function useCampaignFilterBar<
       return;
     }
 
-    const prevKeys = prevFiltered.map(getItemKey).sort().join(",");
-    const currentKeys = filteredCampaigns.map(getItemKey).sort().join(",");
+    const prevKeys = prevFiltered.map(getItemKey).sort().join(',');
+    const currentKeys = filteredCampaigns.map(getItemKey).sort().join(',');
 
     if (prevKeys !== currentKeys) {
       prevFilteredCampaignsRef.current = filteredCampaigns;
@@ -147,10 +166,11 @@ export function useCampaignFilterBar<
   }, [filteredCampaigns]);
 
   useEffect(() => {
-    const hasOpenModal = isTypeModalOpen || isChannelModalOpen || isSortModalOpen;
-    document.body.style.overflow = hasOpenModal ? "hidden" : "unset";
+    const hasOpenModal =
+      isTypeModalOpen || isChannelModalOpen || isSortModalOpen;
+    document.body.style.overflow = hasOpenModal ? 'hidden' : 'unset';
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = 'unset';
     };
   }, [isTypeModalOpen, isChannelModalOpen, isSortModalOpen]);
 
@@ -175,26 +195,26 @@ export function useCampaignFilterBar<
 
   const handleTypeToggle = useCallback(
     (option: string | { value: string; label: string }) => {
-      const typeValue = typeof option === "string" ? option : option.value;
+      const typeValue = typeof option === 'string' ? option : option.value;
       setTempTypes((prev) =>
         prev.includes(typeValue)
           ? prev.filter((item) => item !== typeValue)
-          : [...prev, typeValue]
+          : [...prev, typeValue],
       );
     },
-    []
+    [],
   );
 
   const handleChannelToggle = useCallback(
     (option: string | { value: string; label: string }) => {
-      const channelValue = typeof option === "string" ? option : option.value;
+      const channelValue = typeof option === 'string' ? option : option.value;
       setTempChannels((prev) =>
         prev.includes(channelValue)
           ? prev.filter((item) => item !== channelValue)
-          : [...prev, channelValue]
+          : [...prev, channelValue],
       );
     },
-    []
+    [],
   );
 
   const applyFilters = useCallback(
@@ -202,7 +222,7 @@ export function useCampaignFilterBar<
       setInternalFilters(filters);
       onFilterChange?.(filters);
     },
-    [onFilterChange]
+    [onFilterChange],
   );
 
   const handleTypeApply = useCallback(() => {
@@ -241,7 +261,7 @@ export function useCampaignFilterBar<
 
   const handleSortToggle = useCallback(
     (option: string | { value: string; label: string }) => {
-      const sortValue = typeof option === "string" ? option : option.value;
+      const sortValue = typeof option === 'string' ? option : option.value;
       setTempSort(sortValue);
       setSelectedSort(sortValue);
       closeSortModal();
@@ -258,7 +278,7 @@ export function useCampaignFilterBar<
       currentFilters.types,
       currentFilters.channels,
       searchQuery,
-    ]
+    ],
   );
 
   const handleSortReset = useCallback(() => {
@@ -270,7 +290,13 @@ export function useCampaignFilterBar<
       searchQuery,
       sortBy: defaultSort,
     });
-  }, [applyFilters, currentFilters.types, currentFilters.channels, searchQuery, defaultSort]);
+  }, [
+    applyFilters,
+    currentFilters.types,
+    currentFilters.channels,
+    searchQuery,
+    defaultSort,
+  ]);
 
   const handleTypeReset = useCallback(() => setTempTypes([]), []);
   const handleChannelReset = useCallback(() => setTempChannels([]), []);
@@ -286,12 +312,13 @@ export function useCampaignFilterBar<
         sortBy: selectedSort,
       });
     },
-    [applyFilters, currentFilters.types, currentFilters.channels, selectedSort]
+    [applyFilters, currentFilters.types, currentFilters.channels, selectedSort],
   );
 
   const handleTypeRemove = useCallback(
     (type: string) => {
-      const newTypes = currentFilters.types?.filter((item) => item !== type) || [];
+      const newTypes =
+        currentFilters.types?.filter((item) => item !== type) || [];
       applyFilters({
         types: newTypes.length > 0 ? newTypes : undefined,
         channels: currentFilters.channels,
@@ -299,7 +326,13 @@ export function useCampaignFilterBar<
         sortBy: selectedSort,
       });
     },
-    [applyFilters, currentFilters.types, currentFilters.channels, searchQuery, selectedSort]
+    [
+      applyFilters,
+      currentFilters.types,
+      currentFilters.channels,
+      searchQuery,
+      selectedSort,
+    ],
   );
 
   const handleChannelRemove = useCallback(
@@ -313,7 +346,13 @@ export function useCampaignFilterBar<
         sortBy: selectedSort,
       });
     },
-    [applyFilters, currentFilters.types, currentFilters.channels, searchQuery, selectedSort]
+    [
+      applyFilters,
+      currentFilters.types,
+      currentFilters.channels,
+      searchQuery,
+      selectedSort,
+    ],
   );
 
   return {
@@ -349,5 +388,3 @@ export function useCampaignFilterBar<
     },
   };
 }
-
-

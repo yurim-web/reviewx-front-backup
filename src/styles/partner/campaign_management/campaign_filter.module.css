@@ -200,13 +200,24 @@
  *
  * 설명:
  * - 필터 버튼의 텍스트 (유형, 채널)를 표시합니다.
+ * - color를 명시적으로 설정하여 텍스트가 확실히 보이도록 합니다.
  */
 .filter_label {
-  color: inherit;
+  color: #848484;
   font-size: 16px;
   font-weight: 500;
   line-height: 16px;
   letter-spacing: -0.32px;
+}
+
+/**
+ * 활성화된 필터 버튼 내의 라벨 색상
+ *
+ * 설명:
+ * - 필터가 선택되어 있을 때 라벨 색상을 더 진하게 표시합니다.
+ */
+.filter_button_active .filter_label {
+  color: #444 !important;
 }
 
 /**

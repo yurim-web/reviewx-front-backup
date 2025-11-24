@@ -8,6 +8,10 @@
  * - 파트너 회원가입용 약관 동의 체크박스 UI
  * - 전체 동의 및 개별 동의 관리
  * - 파트너 전용 약관 항목 포함
+ *
+ * 📍 사용 페이지/컴포넌트:
+ * - src/app/partner/signup/page.tsx
+ *   (파트너 회원가입 페이지에서 약관 동의에 사용)
  */
 
 'use client';
@@ -167,7 +171,10 @@ export default function PartnerTermsAgreement({
           >
             [선택] 제3자 정보 제공(마케팅/프로모션 목적) 동의
           </label>
-          <Link href="/third-party-marketing" className={styles.terms_view_link}>
+          <Link
+            href="/third-party-marketing"
+            className={styles.terms_view_link}
+          >
             보기
           </Link>
         </div>
@@ -181,4 +188,3 @@ export default function PartnerTermsAgreement({
     </>
   );
 }
-

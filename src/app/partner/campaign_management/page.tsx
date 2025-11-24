@@ -28,7 +28,7 @@
 import { useState, useEffect } from "react";
 import PartnerCampaignManagementHeader from "@/components/partner/campaign_management/PartnerCampaignManagementHeader";
 import CampaignList from "@/components/partner/campaign_management/CampaignList";
-import CampaignFilterBar from "@/components/partner/campaign_management/CampaignFilterBar";
+import CampaignFilterBar from "@/components/common/campaign_management/CampaignFilterBar";
 import type { PartnerMainTab } from "@/types/partner/partner";
 import type { PartnerStatTab } from "@/types/partner/partner";
 import type { PartnerCampaign } from "@/types/partner/partner";

@@ -8,6 +8,10 @@
  * - 사업자등록증 파일 업로드 시 에러 메시지 표시
  * - 파일 크기 제한 (10mb 이하)
  * - 파일 확장자 제한 (PDF, JPG, PNG만)
+ *
+ * 📍 사용 페이지/컴포넌트:
+ * - src/app/partner/signup/page.tsx
+ *   (파트너 회원가입 페이지에서 파일 업로드 에러 알림에 사용)
  */
 
 'use client';
@@ -47,4 +51,3 @@ export default function FileUploadAlert({
     </div>
   );
 }
-

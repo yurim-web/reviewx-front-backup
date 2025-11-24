@@ -27,15 +27,15 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/fragments/Header';
-import PhoneVerification from '@/components/user/signup/PhoneVerification';
+import PhoneVerification from '@/components/common/signup/PhoneVerification';
 import PartnerTermsAgreement from '@/components/partner/signup/PartnerTermsAgreement';
 import BusinessRegistrationUpload from '@/components/partner/signup/BusinessRegistrationUpload';
 import AddressInput from '@/components/partner/signup/AddressInput';
 import FileUploadAlert from '@/components/partner/signup/FileUploadAlert';
-import PasswordInput from '@/components/user/signup/PasswordInput';
-import PasswordConfirmInput from '@/components/user/signup/PasswordConfirmInput';
+import PasswordInput from '@/components/common/signup/PasswordInput';
+import PasswordConfirmInput from '@/components/common/signup/PasswordConfirmInput';
 import { usePartnerTermsAgreement } from '@/components/partner/signup/hooks/usePartnerTermsAgreement';
-import { usePhoneVerification } from '@/components/user/signup/hooks/usePhoneVerification';
+import { usePhoneVerification } from '@/components/common/signup/hooks/usePhoneVerification';
 import {
   validatePartnerSignupForm,
   type PartnerSignupFormErrors,

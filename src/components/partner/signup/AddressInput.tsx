@@ -7,6 +7,10 @@
  *
  * - 우편번호 찾기 및 주소 입력 UI
  * - 우편번호, 기본 주소, 상세 주소 입력
+ *
+ * 📍 사용 페이지/컴포넌트:
+ * - src/app/partner/signup/page.tsx
+ *   (파트너 회원가입 페이지에서 주소 입력에 사용)
  */
 
 'use client';
@@ -100,4 +104,3 @@ export default function AddressInput({
     </div>
   );
 }
-
