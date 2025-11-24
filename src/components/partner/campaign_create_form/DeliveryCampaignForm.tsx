@@ -30,12 +30,9 @@ import guideStyles from "@/styles/partner/campaign_create/campaign_guide.module.
 import styles from "@/styles/partner/campaign_create/campaign_create.module.css";
 
 // 공통 컴포넌트들 import
-import {
-  CampaignTypeSelector,
-  CustomDropdown,
-  platforms,
-  categories,
-} from "./common/CampaignFormCommon";
+import { CampaignTypeSelector } from "./common/CampaignTypeSelector";
+import { CustomDropdown } from "./common/CustomDropdown";
+import { platforms, categories } from "./common/constants";
 import NoticeSection from "./common/NoticeSection";
 
 interface DeliveryCampaignFormProps extends Omit<CampaignCreateFormBaseProps, "campaignType"> {

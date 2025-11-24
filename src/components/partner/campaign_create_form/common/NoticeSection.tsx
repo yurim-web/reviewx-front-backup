@@ -7,13 +7,24 @@
  *
  * 목적: 모든 캠페인 폼에서 공통으로 사용되는 유의 사항 섹션
  *
+ * 사용 컴포넌트:
+ * - DeliveryCampaignForm.tsx (배송형 캠페인 폼)
+ * - VisitCampaignForm.tsx (방문형 캠페인 폼)
+ * - ReviewCampaignForm.tsx (구매평 캠페인 폼)
+ * - ReporterCampaignForm.tsx (기자단 캠페인 폼)
+ * - MissionCampaignForm.tsx (미션형 캠페인 폼)
+ *
+ * 사용 페이지:
+ * - /partner/campaign_application/create (캠페인 생성 페이지)
+ * - /partner/campaign_application/edit (캠페인 수정 페이지)
+ *
  * 주요 기능:
  * - 캠페인 참여 시 유의사항 표시
  * - 10개 항목의 규칙 및 정책 안내
  * - 일관된 스타일링 적용
  */
 
-import styles from "@/styles/partner/campaign_create/notice_section.module.css";
+import styles from '@/styles/partner/campaign_create/notice_section.module.css';
 
 export default function NoticeSection() {
   return (
@@ -23,8 +34,10 @@ export default function NoticeSection() {
         <ul>
           <li>
             선정된 캠페인은 타인에게 양도 · 판매 · 교환이 불가합니다. 적발 시
-            <span className={styles.highlight}>제품/서비스 정가 및 배송비가 청구되며, 영구 차단</span>될 수
-            있습니다.
+            <span className={styles.highlight}>
+              제품/서비스 정가 및 배송비가 청구되며, 영구 차단
+            </span>
+            될 수 있습니다.
           </li>
           <li>
             허위 · 과장 · 비방 · 타사 비교 등 소비자를 오인시킬 수 있는 표현은
