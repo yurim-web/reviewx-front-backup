@@ -39,13 +39,14 @@
 
 .filter_bar {
   background: white;
-  padding: 40px 40px 0 40px;
+  padding: 24px 40px 24px 40px;
   margin: 0 auto;
   width: 100%;
 
   display: flex;
   flex-direction: column;
   gap: 12px;
+  border-bottom: 1px solid #d9d9d9;
 }
 
 .filter_buttons_container {
@@ -370,7 +371,7 @@
 }
 
 .option_checkbox:checked::after {
-  content: "✓";
+  content: '✓';
   position: absolute;
   top: 50%;
   left: 50%;
@@ -398,7 +399,7 @@
 }
 
 .option_radio:checked::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 50%;
   left: 50%;
@@ -550,7 +551,7 @@
 }
 
 .region_tab_active::after {
-  content: "";
+  content: '';
   position: absolute;
   bottom: -1px;
   left: 0;

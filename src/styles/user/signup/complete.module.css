@@ -1,0 +1,201 @@
+/* ========================================
+   ✅ 유저 회원가입 완료 페이지 스타일
+   ======================================== */
+
+/**
+ * 유저 회원가입 완료 페이지 전용 CSS 모듈
+ *
+ * 사용 컴포넌트:
+ * - user/signup/complete/page.tsx (유저 회원가입 완료 페이지)
+ *
+ * 주요 스타일:
+ * - 회원가입 완료 페이지 전체 레이아웃
+ * - 완료 메시지 스타일
+ * - 버튼 스타일
+ */
+
+/* ========================================
+   1. 페이지 전체 컨테이너
+   ======================================== */
+
+/* 회원가입 완료 페이지 전체 컨테이너 */
+.complete_page_container {
+  min-height: 100vh;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding-top: 80px; /* 헤더(80px) + 서브 헤더(68px) 높이만큼 상단 여백 */
+}
+
+/* ========================================
+   2. 메인 콘텐츠 영역
+   ======================================== */
+
+/* 회원가입 완료 메인 영역 */
+.complete_main {
+  background-color: #ffffff;
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+  padding: 0 40px;
+  gap: 24px;
+}
+
+/* 로고 섹션 */
+.logo_section {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 로고 텍스트 */
+.logo_text {
+  color: #333;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: -0.4px;
+}
+
+/* ========================================
+   3. 완료 메시지 영역
+   ======================================== */
+
+/* 메시지 섹션 */
+.message_section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* 환영 제목 */
+.welcome_title {
+  color: #444;
+  text-align: center;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 40px; /* 142.857% */
+  letter-spacing: -0.56px;
+  padding-bottom: 28px;
+}
+
+/* 환영 메시지 */
+.welcome_message {
+  color: #333;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+  margin: 0;
+  text-align: center;
+}
+
+/* ========================================
+   4. 버튼 영역
+   ======================================== */
+
+/* 버튼 섹션 */
+.button_section {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 24px;
+  width: 100%;
+  max-width: 800px;
+  justify-content: center;
+}
+
+/* 캠페인 보러 가기 버튼 */
+.campaign_button {
+  width: 388px;
+  height: 58px;
+  background-color: #444444;
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  font-style: normal;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  font-family: 'Pretendard', sans-serif;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.campaign_button:hover {
+  background-color: #333333;
+}
+
+/* 로그인하기 버튼 */
+.login_button {
+  width: 388px;
+  height: 58px;
+  background-color: #ffffff;
+  border: 1px solid #444444;
+  border-radius: 8px;
+  color: #444444;
+  font-size: 18px;
+  font-weight: 600;
+  font-style: normal;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  font-family: 'Pretendard', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.login_button:hover {
+  background-color: #f6f6f6;
+}
+
+/* ========================================
+   5. 반응형 디자인
+   ======================================== */
+
+/* 모바일 (0~739px) */
+@media (max-width: 739px) {
+  .complete_page_container {
+    padding-top: 148px;
+  }
+
+  .complete_main {
+    padding: 20px;
+  }
+
+  .welcome_title {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  .welcome_message {
+    font-size: 14px;
+  }
+
+  .button_section {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .campaign_button,
+  .login_button {
+    width: 100%;
+    max-width: 400px;
+  }
+}
