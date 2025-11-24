@@ -12,12 +12,12 @@
 'use client';
 
 import Image from 'next/image';
-import { formatPhoneNumber } from '@/utils/user/signup/phoneUtils';
-import { formatTimer } from '@/utils/user/signup/timerUtils';
+import { formatPhoneNumber } from '@/utils/signup/phoneUtils';
+import { formatTimer } from '@/utils/signup/timerUtils';
 import {
   validatePhone,
   validateVerificationCode,
-} from '@/utils/user/signup/validation';
+} from '@/utils/signup/validation';
 import styles from '@/styles/user/signup/signup.module.css';
 
 interface PhoneVerificationProps {

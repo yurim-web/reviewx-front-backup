@@ -8,6 +8,14 @@
  * - 파트너 회원가입 폼의 유효성 검증 로직
  * - 사업자등록번호 형식 검증
  * - 기존 유저 검증 함수 재사용
+ *
+ * 📌 위치 설명:
+ * - 이 파일은 파트너 회원가입 페이지에서만 사용되는 유틸리티입니다.
+ * - 컴포넌트 폴더 내부에 위치하여 해당 기능과 밀접하게 연관되어 있음을 나타냅니다.
+ *
+ * 📍 사용 페이지/컴포넌트:
+ * - src/components/partner/signup/utils/formValidation.ts
+ *   (파트너 회원가입 폼 전체 검증에서 사업자등록번호 검증 및 공통 검증 함수 재사용)
  */
 
 import {
@@ -15,7 +23,7 @@ import {
   validatePassword,
   validatePasswordMatch,
   validatePhone,
-} from '@/utils/user/signup/validation';
+} from '@/utils/signup/validation';
 
 /**
  * 사업자등록번호 형식 검증
@@ -33,4 +41,4 @@ export {
   validatePassword,
   validatePasswordMatch,
   validatePhone,
-} from '@/utils/user/signup/validation';
+} from '@/utils/signup/validation';

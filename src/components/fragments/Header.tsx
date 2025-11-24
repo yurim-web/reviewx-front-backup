@@ -1,6 +1,6 @@
 // 헤더
-import Link from "next/link";
-import styles from "./header.module.css";
+import Link from 'next/link';
+import styles from '@/styles/fragments/header.module.css';
 
 export default function Header() {
   return (

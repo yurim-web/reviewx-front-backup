@@ -1,5 +1,5 @@
 /* ========================================
-   🛠️ 회원가입 유효성 검증 함수 모음
+   🛠️ 회원가입 유효성 검증 함수 모음 (공통)
    ======================================== */
 
 /**
@@ -7,6 +7,26 @@
  *
  * - 회원가입 폼의 유효성 검증 로직을 재사용 가능한 순수 함수로 분리
  * - 컴포넌트 코드를 간결하게 유지하고 테스트 가능한 구조 제공
+ *
+ * 📌 위치 설명:
+ * - 이 파일은 사용자와 파트너 회원가입 모두에서 공통으로 사용되는 유틸리티입니다.
+ * - /utils/signup/ 폴더에 위치하여 user와 partner 모두에서 접근 가능합니다.
+ *
+ * 📍 사용 페이지/컴포넌트:
+ * - src/components/user/signup/utils/formValidation.ts
+ *   (사용자 회원가입 폼 전체 검증)
+ * - src/components/user/signup/PhoneVerification.tsx
+ *   (휴대폰 번호 및 인증번호 검증)
+ * - src/components/user/signup/PasswordInput.tsx
+ *   (비밀번호 실시간 검증)
+ * - src/components/user/signup/PasswordConfirmInput.tsx
+ *   (비밀번호 일치 검증)
+ * - src/components/user/signup/hooks/usePhoneVerification.ts
+ *   (휴대폰 인증 훅에서 검증 로직 사용)
+ * - src/components/partner/signup/utils/validation.ts
+ *   (파트너 회원가입 검증 함수 재사용)
+ * - src/components/partner/signup/utils/formValidation.ts
+ *   (파트너 회원가입 폼 전체 검증)
  */
 
 /* ========================================
@@ -86,4 +106,3 @@ export function validatePhone(phone: string): boolean {
 export function validateVerificationCode(code: string): boolean {
   return /^\d{6}$/.test(code);
 }
-

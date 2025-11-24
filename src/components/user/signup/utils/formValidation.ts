@@ -7,6 +7,14 @@
  *
  * - 회원가입 폼 전체 유효성 검증 로직
  * - 모든 필드 검증 후 에러 객체 반환
+ *
+ * 📌 위치 설명:
+ * - 이 파일은 사용자 회원가입 페이지에서만 사용되는 유틸리티입니다.
+ * - 컴포넌트 폴더 내부에 위치하여 해당 기능과 밀접하게 연관되어 있음을 나타냅니다.
+ *
+ * 📍 사용 페이지/컴포넌트:
+ * - src/app/user/signup/page.tsx
+ *   (사용자 회원가입 페이지에서 폼 제출 시 전체 검증에 사용)
  */
 
 import {
@@ -14,7 +22,7 @@ import {
   validatePassword,
   validatePasswordMatch,
   validatePhone,
-} from './validation';
+} from '@/utils/signup/validation';
 
 export interface SignupFormErrors {
   email?: string;
@@ -43,9 +51,7 @@ export interface SignupFormData {
  * @param formData - 회원가입 폼 데이터
  * @returns 검증 에러 객체
  */
-export function validateSignupForm(
-  formData: SignupFormData,
-): SignupFormErrors {
+export function validateSignupForm(formData: SignupFormData): SignupFormErrors {
   const errors: SignupFormErrors = {};
 
   // 이메일 검증
@@ -94,4 +100,3 @@ export function validateSignupForm(
 
   return errors;
 }
-

@@ -26,7 +26,9 @@ import { useRouter } from 'next/navigation';
 import Header from '@/components/fragments/Header';
 import PhoneVerification from '@/components/user/signup/PhoneVerification';
 import TermsAgreement from '@/components/user/signup/TermsAgreement';
-import ExistingAccountModal from '@/components/user/signup/ExistingAccountModal';
+import ExistingAccountModal, {
+  type SocialLoginType,
+} from '@/components/user/signup/ExistingAccountModal';
 import PasswordInput from '@/components/user/signup/PasswordInput';
 import PasswordConfirmInput from '@/components/user/signup/PasswordConfirmInput';
 import { useTermsAgreement } from '@/components/user/signup/hooks/useTermsAgreement';
@@ -34,7 +36,7 @@ import { usePhoneVerification } from '@/components/user/signup/hooks/usePhoneVer
 import {
   validateSignupForm,
   type SignupFormErrors,
-} from '@/utils/user/signup/formValidation';
+} from '@/components/user/signup/utils/formValidation';
 import styles from '@/styles/user/signup/signup.module.css';
 
 /**
@@ -61,6 +63,9 @@ export default function UserSignupPage() {
   // 모달 상태
   const [showExistingAccountModal, setShowExistingAccountModal] =
     useState<boolean>(false);
+  // 기존 계정의 소셜 로그인 타입 (카카오 또는 네이버)
+  const [existingAccountSocialType, setExistingAccountSocialType] =
+    useState<SocialLoginType>('kakao');
 
   // 커스텀 훅 사용
   const {
@@ -146,13 +151,21 @@ export default function UserSignupPage() {
       // TODO: 실제 API 호출
       // const response = await checkExistingAccount(phone);
       // if (response.hasExistingAccount) {
+      //   setExistingAccountSocialType(response.socialLoginType); // 'kakao' 또는 'naver'
       //   setShowExistingAccountModal(true);
       //   return;
       // }
 
       // 테스트용: 특정 휴대폰 번호로 이미 가입된 계정이 있다고 가정
-      const testExistingPhones = ['010-1234-5678', '010-0000-0000'];
-      if (testExistingPhones.includes(phone)) {
+      // 010-1234-5678 → 카카오, 010-0000-0000 → 네이버
+      const testKakaoPhone = '010-1234-5678';
+      const testNaverPhone = '010-0000-0000';
+
+      if (phone === testKakaoPhone) {
+        setExistingAccountSocialType('kakao');
+        setShowExistingAccountModal(true);
+      } else if (phone === testNaverPhone) {
+        setExistingAccountSocialType('naver');
         setShowExistingAccountModal(true);
       }
     }
@@ -420,9 +433,18 @@ export default function UserSignupPage() {
       {showExistingAccountModal && (
         <ExistingAccountModal
           onClose={() => setShowExistingAccountModal(false)}
+          socialLoginType={existingAccountSocialType}
           onKakaoLogin={() => {
             // TODO: 카카오 로그인 처리
             console.log('카카오 로그인');
+            setShowExistingAccountModal(false);
+            // router.push('/user/sns_login?provider=kakao');
+          }}
+          onNaverLogin={() => {
+            // TODO: 네이버 로그인 처리
+            console.log('네이버 로그인');
+            setShowExistingAccountModal(false);
+            // router.push('/user/sns_login?provider=naver');
           }}
         />
       )}

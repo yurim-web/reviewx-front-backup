@@ -13,7 +13,7 @@
 'use client';
 
 import { useState } from 'react';
-import { validatePassword } from '@/utils/user/signup/validation';
+import { validatePassword } from '@/utils/signup/validation';
 import styles from '@/styles/user/signup/signup.module.css';
 
 interface PasswordInputProps {
@@ -87,33 +87,24 @@ export default function PasswordInput({
           onClick={() => setShowPassword(!showPassword)}
           aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
         >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            {showPassword ? (
-              <path
-                d="M8 3C4.667 3 2.073 5.073 1 8c1.073 2.927 3.667 5 7 5s5.927-2.073 7-5c-1.073-2.927-3.667-5-7-5zm0 8.333c-1.84 0-3.333-1.493-3.333-3.333S6.16 4.667 8 4.667 11.333 6.16 11.333 8 9.84 11.333 8 11.333zm0-5.333c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
-                fill="#848484"
-              />
-            ) : (
-              <>
-                <path
-                  d="M8 3C4.667 3 2.073 5.073 1 8c1.073 2.927 3.667 5 7 5s5.927-2.073 7-5c-1.073-2.927-3.667-5-7-5zm0 8.333c-1.84 0-3.333-1.493-3.333-3.333S6.16 4.667 8 4.667 11.333 6.16 11.333 8 9.84 11.333 8 11.333zm0-5.333c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
-                  fill="#848484"
-                />
-                <path
-                  d="M1.293 1.293l13.414 13.414"
-                  stroke="#848484"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
-              </>
-            )}
-          </svg>
+          {/* 
+            📌 이미지 아이콘 사용
+            - showPassword가 true일 때: sign_show.svg (비밀번호가 보이는 상태 → 숨기기 버튼)
+            - showPassword가 false일 때: sign_none.svg (비밀번호가 숨겨진 상태 → 보이게 하는 버튼)
+            
+            Next.js의 public 폴더는 루트 경로(/)에서 접근 가능합니다.
+            예: /images/icons/signup/sign_show.svg
+          */}
+          <img
+            src={
+              showPassword
+                ? '/images/icons/signup/sign_show.svg'
+                : '/images/icons/signup/sign_none.svg'
+            }
+            alt={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
+            width={16}
+            height={16}
+          />
         </button>
       </div>
       {error && value.length > 0 && (

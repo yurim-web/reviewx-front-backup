@@ -39,8 +39,8 @@ import { usePhoneVerification } from '@/components/user/signup/hooks/usePhoneVer
 import {
   validatePartnerSignupForm,
   type PartnerSignupFormErrors,
-} from '@/utils/partner/signup/formValidation';
-import { formatBusinessNumber } from '@/utils/partner/signup/businessNumberUtils';
+} from '@/components/partner/signup/utils/formValidation';
+import { formatBusinessNumber } from '@/components/partner/signup/utils/businessNumberUtils';
 import styles from '@/styles/partner/signup/signup.module.css';
 
 /**

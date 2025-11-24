@@ -8,6 +8,10 @@
  * - 파트너 약관 동의 체크박스 상태 관리
  * - 전체 동의와 개별 동의 간 동기화 로직
  * - 전체 동의 직접 변경과 개별 변경 구분
+ *
+ * 📍 사용 페이지/컴포넌트:
+ * - src/app/partner/signup/page.tsx
+ *   (파트너 회원가입 페이지에서 약관 동의 체크박스 상태 관리에 사용)
  */
 
 import { useState, useEffect, useRef } from 'react';
@@ -97,4 +101,3 @@ export function usePartnerTermsAgreement() {
     handleAllAgreedChange,
   };
 }
-
