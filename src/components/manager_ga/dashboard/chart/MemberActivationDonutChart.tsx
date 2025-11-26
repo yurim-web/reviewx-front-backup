@@ -23,17 +23,7 @@ import { useEffect, useRef } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Label } from 'recharts';
 import styles from '@/styles/manager_ga/member_stats.module.css';
 
-// 차트 데이터 타입 정의
-interface DonutData {
-  name: string; // 섹션 이름 (활성화, 비활성화)
-  value: number; // 비율 값
-}
-
-// 차트 데이터 (Figma 디자인 기반)
-const donut_data: DonutData[] = [
-  { name: '활성화', value: 68 }, // 활성화 비율 68%
-  { name: '비활성화', value: 32 }, // 비활성화 비율 32%
-];
+import { memberActivationDonutData, DonutData } from '@/data/manager_ga/dashboard/dashboardData';
 
 // 색상 정의 (Figma 디자인 기반)
 // 이미지에서 활성화는 어두운 회색, 비활성화는 밝은 회색으로 표시됨
@@ -166,7 +156,7 @@ export default function MemberActivationDonutChart() {
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
-            data={donut_data as any}
+            data={memberActivationDonutData as any}
             cx="50%"
             cy="50%"
             innerRadius={45} // 내부 반지름 (도넛 차트의 구멍 크기 - 더 크게)
@@ -181,7 +171,7 @@ export default function MemberActivationDonutChart() {
             activeShape={false} // 호버 시 모양 변경 비활성화
           >
             {/* 각 섹션에 색상 적용 */}
-            {donut_data.map((entry, index) => {
+            {memberActivationDonutData.map((entry, index) => {
               const fillColor =
                 entry.name === '활성화' ? colors.active : colors.inactive;
               return (

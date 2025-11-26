@@ -31,47 +31,13 @@ import DateFilterSection, {
 import CampaignSummarySection from '@/components/manager_ga/dashboard/section/CampaignSummarySection';
 import ChartsSection from '@/components/manager_ga/dashboard/ChartsSection';
 import MemberStatsSection from '@/components/manager_ga/dashboard/MemberStatsSection';
-import { StatCardData } from '@/components/manager_ga/dashboard/StatCard';
+import { campaignStats } from '@/data/manager_ga/dashboard/dashboardData';
 
 export default function ManagerGAPage() {
   // 날짜 필터 상태 관리
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
   // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
   const [dateFilter, setDateFilter] = useState<DateFilter>('month');
-
-  // 캠페인 관리 요약 통계 데이터
-  // 배열로 여러 통계 카드 데이터를 정의합니다
-  const campaignStats: StatCardData[] = [
-    {
-      title: '캠페인 모집률',
-      value: '97%',
-      change: '- 0%',
-      changeType: 'neutral',
-      progress: 97,
-    },
-    {
-      title: '캠페인 달성률',
-      value: '92%',
-      change: '↑ 50%',
-      changeType: 'positive',
-      progress: 92,
-    },
-    {
-      title: '캠페인 반려율',
-      value: '10%',
-      change: '↑ 50%',
-      changeType: 'negative',
-      progress: 10,
-    },
-    {
-      title: '캠페인 신고율',
-      value: '5%',
-      change: '↓ 50%',
-      changeType: 'negative',
-      progress: 5,
-      progressColor: 'red',
-    },
-  ];
 
   // 날짜 필터 변경 핸들러
   // 화살표 함수로 이벤트 핸들러를 정의합니다

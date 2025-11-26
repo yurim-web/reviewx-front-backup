@@ -36,80 +36,11 @@ import deviceStyles from '@/styles/manager_ga/device_stats.module.css';
  * - 조건부 클래스: 색상 스타일을 객체로 매핑해 유지보수성을 높입니다.
  */
 
-type DeviceColorKey = 'pc' | 'tablet' | 'mobile' | 'app';
-
-// 진행 바 세그먼트 타입 (All 막대에서 사용)
-interface DeviceSegment {
-  id: string;
-  percentage: number;
-  colorKey: DeviceColorKey;
-  description: string;
-}
-
-// 진행 바에 사용할 데이터 타입
-interface DeviceProgress {
-  label: string; // 화면에 보여줄 디바이스명
-  percentage?: number; // 진행률 (0~100) - 단일 막대용
-  colorKey?: DeviceColorKey; // 색상 구분용 키
-  description: string; // 접근성 설명 (스크린리더용)
-  segments?: DeviceSegment[]; // All 막대처럼 여러 세그먼트를 표시할 때 사용
-}
-
-/* =====================
-   📦 디바이스 데이터
-   ===================== */
-const base_device_progress_data: DeviceProgress[] = [
-  {
-    label: 'PC',
-    percentage: 70,
-    colorKey: 'pc',
-    description: 'PC 접속 비율 70%',
-  },
-  {
-    label: 'Tablet',
-    percentage: 25,
-    colorKey: 'tablet',
-    description: '태블릿 접속 비율 25%',
-  },
-  {
-    label: 'Mobile',
-    percentage: 55,
-    colorKey: 'mobile',
-    description: '모바일 접속 비율 55%',
-  },
-  {
-    label: 'App',
-    percentage: 60,
-    colorKey: 'app',
-    description: '앱 접속 비율 60%',
-  },
-];
-
-// All 막대용 세그먼트 계산 (각 디바이스 비율을 전체 합계 대비 백분율로 환산)
-const total_percentage = base_device_progress_data.reduce(
-  (sum, device) => sum + (device.percentage || 0),
-  0,
-);
-
-const all_device_segments: DeviceSegment[] = base_device_progress_data.map(
-  (device) => ({
-    id: device.label,
-    percentage: Number(
-      (((device.percentage || 0) / total_percentage) * 100).toFixed(2),
-    ),
-    colorKey: device.colorKey || 'pc',
-    description: `${device.label} 비중 ${(device.percentage || 0).toFixed(0)}%`,
-  }),
-);
-
-const device_progress_data: DeviceProgress[] = [
-  {
-    label: 'All',
-    description: '전체 디바이스 비율 (PC + Tablet + Mobile + App)',
-    segments: all_device_segments,
-  },
-  ...base_device_progress_data,
-];
+import {
+  deviceProgressData,
+  DeviceProgress,
+  DeviceColorKey,
+} from '@/data/manager_ga/dashboard/dashboardData';
 
 // 색상 모듈 클래스 매핑 (JS 객체 -> CSS 모듈 연결)
 const progress_bar_color_map: Record<DeviceColorKey, string> = {
@@ -134,7 +65,7 @@ export default function DeviceStatsChart() {
       <div className={deviceStyles.device_stats_chart_wrapper}>
         {/* 리스트 렌더링(map)을 사용해 반복 UI 구성 */}
         <ul className={deviceStyles.device_progress_list}>
-          {device_progress_data.map((device) => (
+          {deviceProgressData.map((device) => (
             <li key={device.label} className={deviceStyles.device_progress_row}>
               {/* 디바이스명 + 값 */}
               <div className={deviceStyles.device_progress_label_group}>

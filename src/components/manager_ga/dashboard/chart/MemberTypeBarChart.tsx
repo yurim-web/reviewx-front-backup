@@ -30,31 +30,7 @@ import {
 } from 'recharts';
 import styles from '@/styles/manager_ga/device_stats.module.css';
 
-// 차트 데이터 타입 정의
-interface MemberTypeData {
-  category: string; // 카테고리명 (막대 이름)
-  partner: number; // 파트너 비율
-  reviewer: number; // 리뷰어 비율
-  dormant: number; // 휴면 회원 비율
-}
-
-// 차트 데이터 (이미지 설명 기반)
-// 전체 회원: 10,155명
-// 파트너: 566명 (5.6%), 리뷰어: 9,589명 (94.4%), 휴면: 10명 (0.1%)
-const bar_data: MemberTypeData[] = [
-  {
-    category: '전체',
-    partner: 5.6, // 파트너 비율 (566/10155)
-    reviewer: 94.4, // 리뷰어 비율 (9589/10155)
-    dormant: 0.1, // 휴면 회원 비율 (10/10155)
-  },
-  {
-    category: '활성',
-    partner: 2.6, // 활성 파트너 비율 (267/10155)
-    reviewer: 74.7, // 활성 리뷰어 비율 (7589/10155)
-    dormant: 22.7, // 나머지
-  },
-];
+import { memberTypeBarData, MemberTypeBarData } from '@/data/manager_ga/dashboard/dashboardData';
 
 // 색상 정의 (이미지 설명 기반)
 const colors = {
@@ -161,7 +137,7 @@ export default function MemberTypeBarChart() {
       <div className={styles.member_type_chart_wrapper}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
-            data={bar_data}
+            data={memberTypeBarData}
             margin={{ top: 12, right: 0, left: 0, bottom: 0 }}
             barCategoryGap="30%"
           >
@@ -180,7 +156,7 @@ export default function MemberTypeBarChart() {
 
             {/* 휴면 회원 막대 (매우 밝은 회색) - 맨 아래, 하단만 둥글게 */}
             <Bar dataKey="dormant" stackId="a" radius={[8, 8, 0, 0]}>
-              {bar_data.map((entry, index) => (
+              {memberTypeBarData.map((entry, index) => (
                 <Cell
                   key={`dormant-${index}`}
                   fill={colors.dormant}
@@ -191,7 +167,7 @@ export default function MemberTypeBarChart() {
 
             {/* 리뷰어 막대 (밝은 회색) - 중간, 둥글지 않음 */}
             <Bar dataKey="reviewer" stackId="a" radius={[8, 8, 0, 0]}>
-              {bar_data.map((entry, index) => (
+              {memberTypeBarData.map((entry, index) => (
                 <Cell
                   key={`reviewer-${index}`}
                   fill={colors.reviewer}
@@ -202,7 +178,7 @@ export default function MemberTypeBarChart() {
 
             {/* 파트너 막대 (어두운 회색) - 맨 위, 상단만 둥글게 */}
             <Bar dataKey="partner" stackId="a" radius={[8, 8, 0, 0]}>
-              {bar_data.map((entry, index) => (
+              {memberTypeBarData.map((entry, index) => (
                 <Cell
                   key={`partner-${index}`}
                   fill={colors.partner}

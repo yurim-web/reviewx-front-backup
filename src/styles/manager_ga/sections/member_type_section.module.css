@@ -111,59 +111,27 @@
   letter-spacing: -0.28px;
 }
 
-/* 회원 유형 통계 섹션 정보 변화율 - 증가 (녹색) */
-.member_type_section_info_change_positive {
-  color: #2dc469;
-  text-align: right;
+/* 회원 유형 통계 섹션 정보 변화율 - 공용 스타일 */
+.member_type_section_info_change_positive,
+.member_type_section_info_change_negative,
+.member_type_section_info_change_neutral {
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
 }
 
-/* 막대 차트 클릭 효과 제거 */
-.member_type_section_bar_chart_container :global(.recharts-bar),
-.member_type_section_bar_chart_container :global(.recharts-bar-rectangle),
-.member_type_section_bar_chart_container :global(.recharts-bar:active),
-.member_type_section_bar_chart_container :global(.recharts-bar:focus),
-.member_type_section_bar_chart_container :global(.recharts-bar-rectangle:active),
-.member_type_section_bar_chart_container :global(.recharts-bar-rectangle:focus),
-.member_type_section_bar_chart_container :global(.recharts-bar:hover),
-.member_type_section_bar_chart_container :global(.recharts-bar-rectangle:hover),
-.member_type_section_bar_chart_container :global(.recharts-bar[class*='active']),
-.member_type_section_bar_chart_container :global(.recharts-bar-rectangle[class*='active']) {
-  opacity: 1 !important;
-  filter: none !important;
-  outline: none !important;
-  box-shadow: none !important;
-  background: none !important;
-  background-color: transparent !important;
+/* 회원 유형 통계 섹션 정보 변화율 - 증가 (녹색) */
+.member_type_section_info_change_positive {
+  color: #2dc469;
 }
 
-/* 막대 차트 호버 시 색상 변경 방지 */
-.member_type_section_bar_chart_container :global(rect.recharts-bar),
-.member_type_section_bar_chart_container :global(rect.recharts-bar-rectangle) {
-  transition: none !important;
+/* 회원 유형 통계 섹션 정보 변화율 - 감소 (빨간색) */
+.member_type_section_info_change_negative {
+  color: #ff2626;
 }
 
-.member_type_section_bar_chart_container :global(rect.recharts-bar:hover),
-.member_type_section_bar_chart_container :global(rect.recharts-bar-rectangle:hover) {
-  fill-opacity: 1 !important;
-  opacity: 1 !important;
-  filter: none !important;
+/* 회원 유형 통계 섹션 정보 변화율 - 변화 없음 (회색) */
+.member_type_section_info_change_neutral {
+  color: #ababab;
 }
-
-.member_type_section_bar_chart_container :global(.recharts-bar:hover),
-.member_type_section_bar_chart_container :global(.recharts-bar-rectangle:hover) {
-  opacity: 1 !important;
-}
-
-.member_type_section_bar_chart_container :global(.recharts-active-shape),
-.member_type_section_bar_chart_container :global(.recharts-active-shape *),
-.member_type_section_bar_chart_container :global([class*='active-shape']),
-.member_type_section_bar_chart_container :global([class*='activeShape']) {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-}
-

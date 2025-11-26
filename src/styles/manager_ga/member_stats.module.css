@@ -236,32 +236,28 @@
   fill: #444444;
 }
 
-/* 회원 통계 변화율 - 증가 (녹색) */
-.member_info_change_positive {
-  color: #2dc469;
+/* 회원 통계 변화율 - 공용 스타일 */
+.member_info_change_positive,
+.member_info_change_negative,
+.member_info_change_neutral {
   text-align: right;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
+}
+
+/* 회원 통계 변화율 - 증가 (녹색) */
+.member_info_change_positive {
+  color: #2dc469;
 }
 
 /* 회원 통계 변화율 - 감소 (빨간색) */
 .member_info_change_negative {
   color: #ff2626;
-  text-align: right;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: -0.28px;
 }
 
 /* 회원 통계 변화율 - 변화 없음 (회색) */
 .member_info_change_neutral {
   color: #ababab;
-  text-align: right;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: -0.28px;
 }

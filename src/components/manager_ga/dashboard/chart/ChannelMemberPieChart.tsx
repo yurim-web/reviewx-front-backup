@@ -30,21 +30,14 @@ import {
   Tooltip,
 } from 'recharts';
 import styles from '@/styles/manager_ga/member_stats.module.css';
+import {
+  channelData,
+  ChannelData,
+} from '@/data/manager_ga/dashboard/dashboardData';
 
-// 차트 데이터 타입 정의
-interface ChannelData {
-  name: string; // 채널명
-  value: number; // 비율 값
-  count: number; // 회원 수
-}
-
-// 차트 데이터 (이미지 설명 기반)
-const channel_data: ChannelData[] = [
-  { name: '블로그', value: 50, count: 12589 }, // 블로그 등록 50%
-  { name: '인스타그램', value: 25, count: 10124 }, // 인스타그램 등록 25%
-  { name: '클립', value: 20, count: 8869 }, // 클립 등록 20%
-  { name: '유튜브', value: 5, count: 569 }, // 유튜브 등록 5%
-];
+/* ========================================
+   🎨 색상 관련 함수
+   ======================================== */
 
 // 색상 정의 (이미지 설명 기반 - 회색 계열)
 const colors = {
@@ -54,106 +47,181 @@ const colors = {
   youtube: '#f1f1f1', // 가장 밝은 회색 (유튜브 5%)
 };
 
-// 채널별 색상 매핑
+// ──────────────────────────────────────
+// 채널별 색상 매핑 함수
+// ──────────────────────────────────────
+// 입력: 채널 이름 (예: "블로그", "인스타그램")
+// 출력: 해당 채널의 색상 코드 (예: "#666666")
 const getChannelColor = (channel: string): string => {
   switch (channel) {
     case '블로그':
-      return colors.blog;
+      return colors.blog; // 어두운 회색
     case '인스타그램':
-      return colors.instagram;
+      return colors.instagram; // 중간 회색
     case '클립':
-      return colors.clip;
+      return colors.clip; // 밝은 회색
     case '유튜브':
-      return colors.youtube;
+      return colors.youtube; // 가장 밝은 회색
     default:
-      return colors.blog;
+      return colors.blog; // 기본값 (블로그 색상)
   }
 };
 
-// 각 섹션에 퍼센트를 표시하는 커스텀 라벨 컴포넌트
-const CustomLabel = (props: any) => {
-  const { cx, cy, midAngle, innerRadius, outerRadius, percent } = props;
+/* ========================================
+   🏷️ 커스텀 라벨 컴포넌트
+   ======================================== */
 
-  // 섹션의 중앙 위치 계산
-  const RADIAN = Math.PI / 180;
+// 각 섹션에 퍼센트를 표시하는 커스텀 라벨 컴포넌트
+// 파이 차트의 각 조각 안에 "50%", "25%" 같은 텍스트를 표시
+const CustomLabel = (props: any) => {
+  // props에서 필요한 값들 가져오기
+  const { cx, cy, midAngle, innerRadius, outerRadius, percent } = props;
+  // cx, cy: 차트의 중심 좌표
+  // midAngle: 섹션의 중앙 각도
+  // innerRadius: 내부 반지름
+  // outerRadius: 외부 반지름
+  // percent: 비율 (0.5 = 50%)
+
+  // ──────────────────────────────────────
+  // 섹션의 중앙 위치 계산 (삼각함수 사용)
+  // ──────────────────────────────────────
+  const RADIAN = Math.PI / 180; // 각도를 라디안으로 변환
   // 섹션의 중앙 지점 계산 (반지름의 중간 지점)
   const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-  const x = cx + radius * Math.cos(-midAngle * RADIAN);
-  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+  const x = cx + radius * Math.cos(-midAngle * RADIAN); // X 좌표 계산
+  const y = cy + radius * Math.sin(-midAngle * RADIAN); // Y 좌표 계산
 
   // 퍼센트가 너무 작으면 표시하지 않음 (5% 미만)
   if (percent < 0.05) {
     return null;
   }
 
+  // 텍스트 요소 반환 (SVG의 <text> 태그)
   return (
     <text
-      x={x}
-      y={y}
-      fill="white"
-      textAnchor="middle"
-      dominantBaseline="middle"
-      fontSize={14}
-      fontWeight={600}
+      x={x} // 텍스트 X 위치
+      y={y} // 텍스트 Y 위치
+      fill="#FFF" // 텍스트 색상 (흰색)
+      textAnchor="middle" // 텍스트 정렬 (가운데)
+      dominantBaseline="middle" // 세로 정렬 (가운데)
+      fontSize={14} // 폰트 크기
+      fontWeight={600} // 폰트 굵기
+      letterSpacing="-0.28px" // 글자 간격
     >
-      {`${(percent * 100).toFixed(0)}%`}
+      {`${(percent * 100).toFixed(0)}%`}{' '}
+      {/* 비율을 퍼센트로 변환 (예: 0.5 → "50%") */}
     </text>
   );
 };
 
+/* ========================================
+   💬 커스텀 툴팁 컴포넌트
+   ======================================== */
+
 // 호버 시 표시할 커스텀 툴팁
+// 마우스를 파이 차트 위에 올리면 채널 이름을 보여주는 툴팁 표시
 const CustomTooltip = ({ active, payload }: any) => {
+  // active: 툴팁이 활성화되었는지 여부
+  // payload: 차트 데이터 정보
+
   if (active && payload && payload.length) {
-    const data = payload[0].payload;
+    const data = payload[0].payload; // 차트 데이터 (채널 이름, 값 등)
+    const { cx, cy, midAngle, innerRadius, outerRadius } = payload[0];
+    // cx, cy: 차트의 중심 좌표
+    // midAngle: 섹션의 중앙 각도
+    // innerRadius, outerRadius: 반지름 정보
+
+    // ──────────────────────────────────────
+    // 툴팁 위치 계산 (퍼센트 텍스트 오른쪽에 배치)
+    // ──────────────────────────────────────
+    const RADIAN = Math.PI / 180; // 각도를 라디안으로 변환
+    // 섹션의 중앙 지점 계산 (반지름의 중간 지점)
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const labelX = cx + radius * Math.cos(-midAngle * RADIAN); // 퍼센트 텍스트 X 위치
+    const labelY = cy + radius * Math.sin(-midAngle * RADIAN); // 퍼센트 텍스트 Y 위치
+
+    // 퍼센트 텍스트의 오른쪽에 툴팁 배치
+    const offsetX = 35; // 기본 오른쪽 이동 거리
+    const tooltipX = labelX + offsetX; // 툴팁 X 위치 (퍼센트 텍스트 오른쪽)
+    const tooltipY = labelY - 12; // 툴팁 Y 위치 (세로 중앙 정렬)
+
+    // ──────────────────────────────────────
+    // 툴팁 UI 렌더링
+    // ──────────────────────────────────────
     return (
-      <div
-        style={{
-          backgroundColor: '#333333',
-          color: 'white',
-          padding: '8px 12px',
-          borderRadius: '4px',
-          fontSize: '14px',
-          fontWeight: 500,
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
-          transition: 'none', // 애니메이션 제거
-          animation: 'none', // 애니메이션 제거
-        }}
-      >
-        <p style={{ margin: 0 }}>{data.name}</p>
-      </div>
+      <g>
+        {/* foreignObject: SVG 안에 HTML 요소를 넣을 수 있게 해주는 태그 */}
+        <foreignObject
+          x={tooltipX} // 툴팁 X 위치
+          y={tooltipY} // 툴팁 Y 위치
+          width={120} // 툴팁 너비
+          height={30} // 툴팁 높이
+          style={{ overflow: 'visible' }} // 내용이 넘치면 보이게
+        >
+          {/* 실제 툴팁 내용 (HTML div) */}
+          <div
+            style={{
+              backgroundColor: '#444444', // 배경색 (어두운 회색)
+              color: 'white', // 텍스트 색상
+              padding: '8px 8px', // 내부 여백
+              borderRadius: '4px', // 모서리 둥글게
+              fontSize: '13px', // 폰트 크기
+              fontWeight: 500, // 폰트 굵기
+              transition: 'none', // 애니메이션 없음
+              animation: 'none', // 애니메이션 없음
+            }}
+          >
+            {data.name} {/* 채널 이름 표시 (예: "블로그", "인스타그램") */}
+          </div>
+        </foreignObject>
+      </g>
     );
   }
-  return null;
+  return null; // 툴팁이 비활성화되면 아무것도 표시하지 않음
 };
 
+/* ========================================
+   🎯 메인 컴포넌트
+   ======================================== */
+
+// 파이 차트를 렌더링하는 메인 컴포넌트
 export default function ChannelMemberPieChart() {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // 클릭 시 검정색 선 제거
+  /* ========================================
+     🔧 부가 기능 처리 (useEffect)
+     ======================================== */
+
+  // 흰색 선 유지 및 클릭 이벤트 처리
+  // 파이 차트의 경계선을 흰색으로 유지하고, 바깥으로 튀어나오는 선 제거
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    // 클릭 이벤트 막기
+    // ──────────────────────────────────────
+    // 클릭 이벤트 처리 함수
+    // ──────────────────────────────────────
     const handleClick = (e: MouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      // 클릭 시 나타나는 검정색 선 제거
+      // 클릭 시 검정색 선이 나타나지 않도록 흰색 선 유지
       const paths = container.querySelectorAll<SVGPathElement>(
         'path.recharts-pie-sector, path.recharts-sector',
       );
       paths.forEach((path) => {
-        // stroke 제거
-        path.setAttribute('stroke', 'none');
-        path.style.setProperty('stroke', 'none', 'important');
-        path.style.setProperty('stroke-width', '0', 'important');
+        // 흰색 선 유지
+        path.setAttribute('stroke', 'white');
+        path.style.setProperty('stroke', 'white', 'important');
+        path.style.setProperty('stroke-width', '2', 'important');
         // outline 제거
         path.style.setProperty('outline', 'none', 'important');
       });
       return false;
     };
 
-    // 마우스 다운 이벤트도 막기
+    // ──────────────────────────────────────
+    // 마우스 다운 이벤트 처리 함수
+    // ──────────────────────────────────────
     const handleMouseDown = (e: MouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
@@ -163,26 +231,133 @@ export default function ChannelMemberPieChart() {
     container.addEventListener('click', handleClick, true);
     container.addEventListener('mousedown', handleMouseDown, true);
 
-    // 주기적으로 stroke 제거 (클릭 후에도 유지)
+    // ──────────────────────────────────────
+    // 주기적 체크 함수 (100ms마다 실행)
+    // 흰색 선 유지 및 바깥으로 튀어나오는 선 제거
+    // ──────────────────────────────────────
     const checkInterval = setInterval(() => {
+      // 파이 차트의 각 조각(path)을 찾아서 처리
       const paths = container.querySelectorAll<SVGPathElement>(
         'path.recharts-pie-sector, path.recharts-sector',
       );
       paths.forEach((path) => {
         const stroke = path.getAttribute('stroke');
         const strokeWidth = path.getAttribute('stroke-width');
-        if (stroke && stroke !== 'none') {
-          path.setAttribute('stroke', 'none');
+
+        // 검정색이나 다른 색상이면 흰색으로 변경
+        if (stroke && stroke !== 'white' && stroke !== 'none') {
+          path.setAttribute('stroke', 'white');
         }
-        if (strokeWidth && strokeWidth !== '0') {
-          path.setAttribute('stroke-width', '0');
+        // stroke-width가 0이거나 없으면 2로 설정
+        if (!strokeWidth || strokeWidth === '0') {
+          path.setAttribute('stroke-width', '2');
         }
-        path.style.setProperty('stroke', 'none', 'important');
-        path.style.setProperty('stroke-width', '0', 'important');
+
+        // CSS로 강제로 흰색 선 적용
+        path.style.setProperty('stroke', 'white', 'important');
+        path.style.setProperty('stroke-width', '2', 'important');
+        path.style.setProperty('stroke-linecap', 'butt', 'important'); // 선 끝을 둥글게 하지 않음
+        path.style.setProperty('stroke-linejoin', 'miter', 'important'); // 선 연결을 뾰족하게
         path.style.setProperty('outline', 'none', 'important');
+
+        // ──────────────────────────────────────
+        // clipPath 적용: 바깥으로 튀어나오는 선 제거
+        // ──────────────────────────────────────
+        const svg = path.closest('svg');
+        if (svg) {
+          // SVG에 clipPath 추가 (원 모양으로 잘라내기)
+          const clipPathId = 'pie-clip-path';
+          let clipPath = svg.querySelector(`#${clipPathId}`);
+          if (!clipPath) {
+            let defs = svg.querySelector('defs');
+            if (!defs) {
+              defs = document.createElementNS(
+                'http://www.w3.org/2000/svg',
+                'defs',
+              );
+              svg.insertBefore(defs, svg.firstChild);
+            }
+            clipPath = document.createElementNS(
+              'http://www.w3.org/2000/svg',
+              'clipPath',
+            );
+            clipPath.setAttribute('id', clipPathId);
+            const circle = document.createElementNS(
+              'http://www.w3.org/2000/svg',
+              'circle',
+            );
+            // viewBox를 기반으로 중심점 계산
+            const viewBox = svg.getAttribute('viewBox');
+            if (viewBox) {
+              const [x, y, width, height] = viewBox.split(' ').map(Number);
+              const centerX = x + width / 2;
+              const centerY = y + height / 2;
+              circle.setAttribute('cx', centerX.toString());
+              circle.setAttribute('cy', centerY.toString());
+            } else {
+              // viewBox가 없으면 SVG의 실제 크기 사용
+              const svgRect = svg.getBoundingClientRect();
+              const centerX = svgRect.width / 2;
+              const centerY = svgRect.height / 2;
+              circle.setAttribute('cx', centerX.toString());
+              circle.setAttribute('cy', centerY.toString());
+            }
+            circle.setAttribute('r', '90');
+            clipPath.appendChild(circle);
+            defs.appendChild(clipPath);
+          }
+          // path에 clipPath 적용
+          path.setAttribute('clip-path', `url(#${clipPathId})`);
+          path.style.setProperty(
+            'clip-path',
+            `url(#${clipPathId})`,
+            'important',
+          );
+        }
+      });
+
+      // ──────────────────────────────────────
+      // 불필요한 선(line) 제거
+      // ──────────────────────────────────────
+
+      // Recharts가 자동으로 만드는 선들 제거
+      const lines = container.querySelectorAll<SVGLineElement>(
+        'line.recharts-tooltip-cursor, line.recharts-active-shape',
+      );
+      lines.forEach((line) => {
+        line.style.setProperty('display', 'none', 'important');
+        line.setAttribute('display', 'none');
+      });
+
+      // 모든 line 요소 중 바깥으로 나가는 선 제거
+      const allLines = container.querySelectorAll<SVGLineElement>('line');
+      allLines.forEach((line) => {
+        // 선의 시작점과 끝점 좌표 가져오기
+        const x1 = parseFloat(line.getAttribute('x1') || '0');
+        const y1 = parseFloat(line.getAttribute('y1') || '0');
+        const x2 = parseFloat(line.getAttribute('x2') || '0');
+        const y2 = parseFloat(line.getAttribute('y2') || '0');
+
+        // ──────────────────────────────────────
+        // 중심점에서 멀리 떨어진 선 제거 (바깥으로 나가는 선)
+        // ──────────────────────────────────────
+        const centerX = 200; // 차트 중심 X (대략적인 값)
+        const centerY = 200; // 차트 중심 Y (대략적인 값)
+        // 선의 끝점과 중심점 사이의 거리 계산 (피타고라스 정리)
+        const distance = Math.sqrt(
+          Math.pow(x2 - centerX, 2) + Math.pow(y2 - centerY, 2),
+        );
+        // 외부 반지름(90)보다 멀리 나가는 선은 제거
+        if (distance > 100) {
+          line.style.setProperty('display', 'none', 'important');
+          line.setAttribute('display', 'none');
+        }
       });
     }, 100);
 
+    // ──────────────────────────────────────
+    // 정리 함수 (컴포넌트가 사라질 때 실행)
+    // ──────────────────────────────────────
     return () => {
       container.removeEventListener('click', handleClick, true);
       container.removeEventListener('mousedown', handleMouseDown, true);
@@ -190,12 +365,16 @@ export default function ChannelMemberPieChart() {
     };
   }, []);
 
+  /* ========================================
+     🎨 렌더링 부분 (화면에 그려지는 부분)
+     ======================================== */
+
   return (
     <div
       ref={containerRef}
       style={{
-        width: '100%',
-        height: '100%',
+        width: '180px',
+        height: '180px',
         position: 'relative',
         backgroundColor: 'transparent',
         display: 'flex',
@@ -203,38 +382,51 @@ export default function ChannelMemberPieChart() {
         justifyContent: 'center',
       }}
     >
-      <ResponsiveContainer width="100%" height="100%">
+      {/* 반응형 컨테이너: 180px × 180px 크기로 고정 */}
+      <ResponsiveContainer width={180} height={180}>
         <PieChart>
+          {/* clipPath 정의: 원 모양으로 잘라내기 */}
+          <defs>
+            <clipPath id="pie-clip">
+              <circle cx="50%" cy="50%" r="90" />
+            </clipPath>
+          </defs>
+
+          {/* 툴팁 설정: 마우스 호버 시 채널 이름 표시 */}
           <Tooltip
             content={<CustomTooltip />}
             cursor={false}
             animationDuration={0}
             animationEasing="linear"
           />
+
+          {/* 파이 차트 메인 설정 */}
           <Pie
-            data={channel_data as any}
-            cx="50%"
-            cy="50%"
-            innerRadius={0} // 0으로 설정하면 파이 차트 (도넛 차트가 아님)
-            outerRadius={80} // 외부 반지름 (더 크게)
-            dataKey="value"
+            data={channelData as any} // 차트 데이터
+            cx="50%" // 중심 X 좌표
+            cy="50%" // 중심 Y 좌표
+            innerRadius={0} // 내부 반지름 (0이면 파이 차트, 0보다 크면 도넛 차트)
+            outerRadius={90} // 외부 반지름 (180px 크기에 맞춤)
+            dataKey="value" // 사용할 데이터 키
             startAngle={90} // 시작 각도 (12시 방향부터 시작)
             endAngle={-270} // 끝 각도 (한 바퀴 돌아서 12시 방향으로)
             paddingAngle={0} // 섹션 간 간격 (0이면 붙어있음)
             label={<CustomLabel />} // 각 섹션에 퍼센트 표시
-            stroke="none" // 경계선 제거
-            strokeWidth={0} // 경계선 두께 0
+            stroke="white" // 섹션 사이 흰색 선
+            strokeWidth={2} // 경계선 두께
+            strokeLinecap="butt" // 선 끝을 둥글게 하지 않음
+            clipPath="url(#pie-clip)" // 외부로 튀어나오는 선 제거
             isAnimationActive={false} // 애니메이션 비활성화
           >
             {/* 각 섹션에 색상 적용 */}
-            {channel_data.map((entry, index) => {
-              const fillColor = getChannelColor(entry.name);
+            {channelData.map((entry, index) => {
+              const fillColor = getChannelColor(entry.name); // 채널별 색상 가져오기
               return (
                 <Cell
-                  key={`cell-${index}`}
-                  fill={fillColor}
-                  stroke="none" // 경계선 완전히 제거
-                  strokeWidth={0} // 경계선 두께 0
+                  key={`cell-${index}`} // React key (고유 식별자)
+                  fill={fillColor} // 섹션 색상
+                  stroke="white" // 섹션 사이 흰색 선
+                  strokeWidth={2} // 경계선 두께
                   style={{ fill: fillColor }} // 호버 시에도 색상 유지
                 />
               );

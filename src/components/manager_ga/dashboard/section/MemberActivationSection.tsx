@@ -16,6 +16,7 @@
 
 import styles from '@/styles/manager_ga/sections/member_activation_section.module.css';
 import MemberActivationDonutChart from '../chart/MemberActivationDonutChart';
+import { memberActivationStats } from '@/data/manager_ga/dashboard/dashboardData';
 
 export default function MemberActivationSection() {
   return (
@@ -37,20 +38,22 @@ export default function MemberActivationSection() {
             {/* 라벨과 변화율을 같은 선상에 배치 */}
             <div className={styles.member_activation_section_info_label_row}>
               <p className={styles.member_activation_section_info_label}>
-                전체 회원 수
+                {memberActivationStats.totalMembers.label}
               </p>
-              {/* 변화율 표시 - positive 클래스로 증가 표시 */}
+              {/* 변화율 표시 */}
               <p
                 className={
-                  styles.member_activation_section_info_change_positive
+                  styles[
+                    `member_activation_section_info_change_${memberActivationStats.totalMembers.changeType}`
+                  ]
                 }
               >
-                ↑ 50%
+                {memberActivationStats.totalMembers.change}
               </p>
             </div>
             {/* 값 표시 */}
             <p className={styles.member_activation_section_info_value}>
-              12,589명
+              {memberActivationStats.totalMembers.value}
             </p>
           </div>
 
@@ -59,28 +62,28 @@ export default function MemberActivationSection() {
             {/* 활성 회원 수 */}
             <div className={styles.member_activation_section_info_card}>
               <p className={styles.member_activation_section_info_label}>
-                활성 회원 수
+                {memberActivationStats.activeMembers.label}
               </p>
               <p className={styles.member_activation_section_info_value}>
-                8,869명
+                {memberActivationStats.activeMembers.value}
               </p>
               {/* 비율 표시 */}
               <p className={styles.member_activation_section_info_percentage}>
-                (68%)
+                {memberActivationStats.activeMembers.percentage}
               </p>
             </div>
 
             {/* 비활성 회원 수 */}
             <div className={styles.member_activation_section_info_card}>
               <p className={styles.member_activation_section_info_label}>
-                비활성 회원 수
+                {memberActivationStats.inactiveMembers.label}
               </p>
               <p className={styles.member_activation_section_info_value}>
-                3,720명
+                {memberActivationStats.inactiveMembers.value}
               </p>
               {/* 비율 표시 */}
               <p className={styles.member_activation_section_info_percentage}>
-                (32%)
+                {memberActivationStats.inactiveMembers.percentage}
               </p>
             </div>
           </div>

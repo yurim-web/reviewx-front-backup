@@ -14,6 +14,7 @@
 
 import styles from '@/styles/manager_ga/sections/member_type_section.module.css';
 import MemberTypeBarChart from '../chart/MemberTypeBarChart';
+import { memberTypeStats } from '@/data/manager_ga/dashboard/dashboardData';
 
 export default function MemberTypeSection() {
   return (
@@ -35,39 +36,69 @@ export default function MemberTypeSection() {
             {/* 전체 회원 수 (상단, 전체 너비) */}
             <div className={styles.member_type_section_info_card_full}>
               <p className={styles.member_type_section_info_label}>
-                전체 회원 수
+                {memberTypeStats.totalMembers.label}
               </p>
-              <p className={styles.member_type_section_info_value}>10,155명</p>
-              {/* 변화율 표시 - positive 클래스로 증가 표시 */}
-              <p className={styles.member_type_section_info_change_positive}>
-                ↑ 50%
+              <p className={styles.member_type_section_info_value}>
+                {memberTypeStats.totalMembers.value}
+              </p>
+              {/* 변화율 표시 */}
+              <p
+                className={
+                  styles[
+                    `member_type_section_info_change_${memberTypeStats.totalMembers.changeType}`
+                  ]
+                }
+              >
+                {memberTypeStats.totalMembers.change}
               </p>
             </div>
 
             {/* 파트너 수 */}
             <div className={styles.member_type_section_info_card}>
-              <p className={styles.member_type_section_info_label}>파트너</p>
-              <p className={styles.member_type_section_info_value}>566명</p>
+              <p className={styles.member_type_section_info_label}>
+                {memberTypeStats.activePartners.label}
+              </p>
+              <p className={styles.member_type_section_info_value}>
+                {memberTypeStats.activePartners.value}
+              </p>
               {/* 비율 표시 */}
-              <p className={styles.member_type_section_info_percentage}>(5%)</p>
+              <p className={styles.member_type_section_info_percentage}>
+                {memberTypeStats.activePartners.percentage}
+              </p>
             </div>
 
             {/* 리뷰어 수 */}
             <div className={styles.member_type_section_info_card}>
-              <p className={styles.member_type_section_info_label}>리뷰어</p>
-              <p className={styles.member_type_section_info_value}>9,589명</p>
-              {/* 비율 표시 */}
-              <p className={styles.member_type_section_info_percentage}>
-                (94%)
+              <p className={styles.member_type_section_info_label}>
+                {memberTypeStats.totalReviewers.label}
+              </p>
+              <p className={styles.member_type_section_info_value}>
+                {memberTypeStats.totalReviewers.value}
+              </p>
+              {/* 변화율 표시 */}
+              <p
+                className={
+                  styles[
+                    `member_type_section_info_change_${memberTypeStats.totalReviewers.changeType}`
+                  ]
+                }
+              >
+                {memberTypeStats.totalReviewers.change}
               </p>
             </div>
 
             {/* 휴면 회원 수 */}
             <div className={styles.member_type_section_info_card}>
-              <p className={styles.member_type_section_info_label}>휴면 회원</p>
-              <p className={styles.member_type_section_info_value}>10명</p>
+              <p className={styles.member_type_section_info_label}>
+                {memberTypeStats.activeReviewers.label}
+              </p>
+              <p className={styles.member_type_section_info_value}>
+                {memberTypeStats.activeReviewers.value}
+              </p>
               {/* 비율 표시 */}
-              <p className={styles.member_type_section_info_percentage}>(0%)</p>
+              <p className={styles.member_type_section_info_percentage}>
+                {memberTypeStats.activeReviewers.percentage}
+              </p>
             </div>
           </div>
         </div>

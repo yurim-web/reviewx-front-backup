@@ -79,22 +79,23 @@
   letter-spacing: -0.36px;
 }
 
-/* 접속 통계 섹션 통계 카드 변화율 - 증가 (녹색) */
-.access_stats_section_stat_card_change_positive {
-  color: #2dc469;
+/* 접속 통계 섹션 통계 카드 변화율 - 공용 스타일 */
+.access_stats_section_stat_card_change_positive,
+.access_stats_section_stat_card_change_negative {
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
 }
 
+/* 접속 통계 섹션 통계 카드 변화율 - 증가 (녹색) */
+.access_stats_section_stat_card_change_positive {
+  color: #2dc469;
+}
+
 /* 접속 통계 섹션 통계 카드 변화율 - 감소 (빨간색) */
 .access_stats_section_stat_card_change_negative {
   color: #ff2626;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: -0.28px;
 }
 
 /* 접속 통계 섹션 디바이스 통계 섹션 */
@@ -111,4 +112,3 @@
   letter-spacing: -0.36px;
   padding-bottom: 24px;
 }
-

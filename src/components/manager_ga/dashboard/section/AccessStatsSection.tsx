@@ -15,6 +15,7 @@
 
 import styles from '@/styles/manager_ga/sections/access_stats_section.module.css';
 import DeviceStatsChart from '../chart/DeviceStatsChart';
+import { accessStats } from '@/data/manager_ga/dashboard/dashboardData';
 
 export default function AccessStatsSection() {
   return (
@@ -31,18 +32,22 @@ export default function AccessStatsSection() {
           {/* 라벨과 변화율을 같은 줄에 배치 (space-between) */}
           <div className={styles.access_stats_section_stat_card_label_row}>
             <p className={styles.access_stats_section_stat_card_label}>
-              방문 수
+              {accessStats.visits.label}
             </p>
-            {/* 변화율 표시 - positive 클래스로 증가 표시 */}
+            {/* 변화율 표시 */}
             <p
-              className={styles.access_stats_section_stat_card_change_positive}
+              className={
+                styles[
+                  `access_stats_section_stat_card_change_${accessStats.visits.changeType}`
+                ]
+              }
             >
-              ↑ 50%
+              {accessStats.visits.change}
             </p>
           </div>
           {/* 값 표시 */}
           <p className={styles.access_stats_section_stat_card_value}>
-            11,150회
+            {accessStats.visits.value}
           </p>
         </div>
 
@@ -51,17 +56,23 @@ export default function AccessStatsSection() {
           {/* 라벨과 변화율을 같은 줄에 배치 (space-between) */}
           <div className={styles.access_stats_section_stat_card_label_row}>
             <p className={styles.access_stats_section_stat_card_label}>
-              유입 수
+              {accessStats.referrals.label}
             </p>
-            {/* 변화율 표시 - negative 클래스로 감소 표시 */}
+            {/* 변화율 표시 */}
             <p
-              className={styles.access_stats_section_stat_card_change_negative}
+              className={
+                styles[
+                  `access_stats_section_stat_card_change_${accessStats.referrals.changeType}`
+                ]
+              }
             >
-              ↓ 50%
+              {accessStats.referrals.change}
             </p>
           </div>
           {/* 값 표시 */}
-          <p className={styles.access_stats_section_stat_card_value}>150회</p>
+          <p className={styles.access_stats_section_stat_card_value}>
+            {accessStats.referrals.value}
+          </p>
         </div>
       </div>
 
