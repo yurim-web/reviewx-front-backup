@@ -44,12 +44,43 @@
   padding-bottom: 24px;
 }
 
+/* 회원 유형 막대 차트 컨테이너 */
+.member_type_bar_chart_container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+
+  /* 막대 그래프랑 범례 사이의 간격 */
+  gap: 16px;
+}
+
+/* 회원 유형 막대 차트 래퍼 (차트 크기 고정) */
+.member_type_chart_wrapper {
+  width: 200px;
+  height: 168px;
+  flex-shrink: 0;
+  overflow: visible;
+  padding: 4px 0; /* 상하 여백 추가로 차트가 잘리지 않도록 */
+}
+
+/* ResponsiveContainer 내부 여백 제거 */
+.member_type_chart_wrapper :global(.recharts-wrapper) {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.member_type_chart_wrapper :global(.recharts-surface) {
+  overflow: visible;
+}
+
 /* 회원 유형 범례 */
 .member_type_legend {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-top: 8px;
   justify-content: center;
 }
 
@@ -57,7 +88,7 @@
 .legend_item {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 /* 범례 색상 원 */
@@ -70,11 +101,11 @@
 
 /* 범례 텍스트 */
 .legend_text {
+  color: #444;
   font-size: 12px;
   font-weight: 500;
   line-height: 12px;
   letter-spacing: -0.24px;
-  color: #444444;
 }
 
 /* ========================================

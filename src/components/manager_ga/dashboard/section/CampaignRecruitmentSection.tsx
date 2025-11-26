@@ -17,39 +17,39 @@
  * - 컴포넌트 조합: 차트 컴포넌트를 섹션 컴포넌트 내부에서 사용
  */
 
-import styles from '@/styles/manager_ga/charts.module.css';
+import styles from '@/styles/manager_ga/sections/campaign_recruitment_section.module.css';
 import CampaignRecruitmentChart from '../chart/CampaignRecruitmentChart';
 
 export default function CampaignRecruitmentSection() {
   return (
-    <div className={styles.chart_card}>
+    <div className={styles.campaign_recruitment_section_card}>
       {/* 제목과 범례를 같은 줄에 배치 (제목: 왼쪽, 범례: 오른쪽) */}
-      <div className={styles.chart_header}>
+      <div className={styles.campaign_recruitment_section_header}>
         {/* 섹션 제목 */}
-        <h2 className={styles.chart_card_title}>캠페인 모집 통계</h2>
+        <h2 className={styles.campaign_recruitment_section_title}>캠페인 모집 통계</h2>
 
         {/* 커스텀 범례 */}
-        <div className={styles.chart_legend}>
+        <div className={styles.campaign_recruitment_section_legend}>
           {/* 달성률 */}
-          <div className={styles.chart_legend_item}>
+          <div className={styles.campaign_recruitment_section_legend_item}>
             <div
-              className={`${styles.chart_legend_icon} ${styles.chart_legend_icon_achievement}`}
+              className={`${styles.campaign_recruitment_section_legend_icon} ${styles.campaign_recruitment_section_legend_icon_achievement}`}
             ></div>
             <span>달성률</span>
           </div>
 
           {/* 모집률 */}
-          <div className={styles.chart_legend_item}>
+          <div className={styles.campaign_recruitment_section_legend_item}>
             <div
-              className={`${styles.chart_legend_icon} ${styles.chart_legend_icon_dark}`}
+              className={`${styles.campaign_recruitment_section_legend_icon} ${styles.campaign_recruitment_section_legend_icon_dark}`}
             ></div>
             <span>모집률</span>
           </div>
 
           {/* 평균 진행 기간 */}
-          <div className={styles.chart_legend_item}>
+          <div className={styles.campaign_recruitment_section_legend_item}>
             <div
-              className={`${styles.chart_legend_icon} ${styles.chart_legend_icon_light}`}
+              className={`${styles.campaign_recruitment_section_legend_icon} ${styles.campaign_recruitment_section_legend_icon_light}`}
             ></div>
             <span>평균 진행 기간</span>
           </div>

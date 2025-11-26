@@ -20,7 +20,7 @@
 
 'use client';
 
-import styles from '@/styles/manager_ga/filter.module.css';
+import styles from '@/styles/manager_ga/sections/date_filter_section.module.css';
 
 // 날짜 필터 타입 정의
 export type DateFilter = 'today' | 'week' | 'month';
@@ -38,28 +38,28 @@ export default function DateFilterSection({
   onFilterChange,
 }: DateFilterSectionProps) {
   return (
-    <div className={styles.filter_section}>
+    <div className={styles.date_filter_section}>
       {/* 날짜 필터 버튼 그룹 */}
-      <div className={styles.date_filter_group}>
+      <div className={styles.date_filter_section_button_group}>
         <button
-          className={`${styles.date_filter_button} ${
-            dateFilter === 'today' ? styles.date_filter_button_active : ''
+          className={`${styles.date_filter_section_button} ${
+            dateFilter === 'today' ? styles.date_filter_section_button_active : ''
           }`}
           onClick={() => onFilterChange('today')}
         >
           오늘
         </button>
         <button
-          className={`${styles.date_filter_button} ${
-            dateFilter === 'week' ? styles.date_filter_button_active : ''
+          className={`${styles.date_filter_section_button} ${
+            dateFilter === 'week' ? styles.date_filter_section_button_active : ''
           }`}
           onClick={() => onFilterChange('week')}
         >
           이번 주
         </button>
         <button
-          className={`${styles.date_filter_button} ${
-            dateFilter === 'month' ? styles.date_filter_button_active : ''
+          className={`${styles.date_filter_section_button} ${
+            dateFilter === 'month' ? styles.date_filter_section_button_active : ''
           }`}
           onClick={() => onFilterChange('month')}
         >
@@ -68,8 +68,8 @@ export default function DateFilterSection({
       </div>
 
       {/* 날짜 선택기 */}
-      <div className={styles.date_picker}>
-        <div className={styles.date_picker_icon}></div>
+      <div className={styles.date_filter_section_picker}>
+        <div className={styles.date_filter_section_picker_icon}></div>
         <span>2025-11-01 ~ 2025-11-11</span>
       </div>
     </div>

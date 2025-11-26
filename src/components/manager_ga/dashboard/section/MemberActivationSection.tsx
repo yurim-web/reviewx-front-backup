@@ -11,68 +11,77 @@
  * - 회원 활성화 도넛 차트 표시
  * - 전체 파트너 수, 활성 파트너 수 표시
  * - 전체 리뷰어 수, 활성 리뷰어 수 표시
- *
- * 학습 포인트:
- * - 컴포넌트 분리: 각 섹션을 독립적인 컴포넌트로 분리하여 재사용성 향상
- * - CSS 모듈: styles.member_stat_card를 사용하여 일관된 스타일 적용
- * - 그리드 레이아웃: styles.member_info_grid로 통계 정보를 2x2 그리드로 배치
- * - 조건부 스타일: 변화율에 따라 positive/neutral 스타일 적용
+ 
  */
 
-import memberStatsStyles from '@/styles/manager_ga/member_stats.module.css';
-import campaignSummaryStyles from '@/styles/manager_ga/campaign_summary.module.css';
+import styles from '@/styles/manager_ga/sections/member_activation_section.module.css';
 import MemberActivationDonutChart from '../chart/MemberActivationDonutChart';
 
 export default function MemberActivationSection() {
   return (
-    <div className={memberStatsStyles.member_stat_card}>
+    <div className={styles.member_activation_section_card}>
       {/* 섹션 제목 */}
-      <h2 className={memberStatsStyles.member_stat_card_title}>전체 회원 통계</h2>
-      
+      <h2 className={styles.member_activation_section_title}>전체 회원 통계</h2>
+
       {/* 도넛 차트와 통계 정보를 나란히 배치 */}
-      <div className={memberStatsStyles.member_stats_content}>
+      <div className={styles.member_activation_section_content}>
         {/* 왼쪽: 도넛 차트 */}
-        <div className={memberStatsStyles.donut_chart_container}>
+        <div className={styles.member_activation_section_donut_chart_container}>
           <MemberActivationDonutChart />
         </div>
-        
-        {/* 오른쪽: 통계 정보 - 2x2 그리드 */}
-        <div className={memberStatsStyles.member_stats_info_first}>
-          <div className={memberStatsStyles.member_info_grid}>
-            {/* 상단 왼쪽: 전체 파트너 수 */}
-            <div className={memberStatsStyles.member_info_card}>
-              <p className={memberStatsStyles.member_info_label}>전체 파트너 수</p>
-              <div className={memberStatsStyles.member_info_value_row}>
-                <p className={memberStatsStyles.member_info_value}>566명</p>
-                {/* 변화율 표시 - positive 클래스로 증가 표시 */}
-                <p className={campaignSummaryStyles.stat_card_change_positive}>↑ 50%</p>
-              </div>
+
+        {/* 오른쪽: 통계 정보 - 상단 전체 너비 + 하단 2개 나란히 */}
+        <div className={styles.member_activation_section_stats_info}>
+          {/* 상단: 전체 회원 수 (전체 너비) */}
+          <div className={styles.member_activation_section_info_card_full}>
+            {/* 라벨과 변화율을 같은 선상에 배치 */}
+            <div className={styles.member_activation_section_info_label_row}>
+              <p className={styles.member_activation_section_info_label}>
+                전체 회원 수
+              </p>
+              {/* 변화율 표시 - positive 클래스로 증가 표시 */}
+              <p
+                className={
+                  styles.member_activation_section_info_change_positive
+                }
+              >
+                ↑ 50%
+              </p>
             </div>
-            
-            {/* 상단 오른쪽: 활성 파트너 수 */}
-            <div className={memberStatsStyles.member_info_card}>
-              <p className={memberStatsStyles.member_info_label}>활성 파트너 수</p>
-              <p className={memberStatsStyles.member_info_value}>267명</p>
+            {/* 값 표시 */}
+            <p className={styles.member_activation_section_info_value}>
+              12,589명
+            </p>
+          </div>
+
+          {/* 하단: 활성/비활성 회원 수 (2개 나란히) */}
+          <div className={styles.member_activation_section_info_grid}>
+            {/* 활성 회원 수 */}
+            <div className={styles.member_activation_section_info_card}>
+              <p className={styles.member_activation_section_info_label}>
+                활성 회원 수
+              </p>
+              <p className={styles.member_activation_section_info_value}>
+                8,869명
+              </p>
               {/* 비율 표시 */}
-              <p className={memberStatsStyles.member_info_percentage}>(49%)</p>
+              <p className={styles.member_activation_section_info_percentage}>
+                (68%)
+              </p>
             </div>
-            
-            {/* 하단 왼쪽: 전체 리뷰어 수 */}
-            <div className={memberStatsStyles.member_info_card}>
-              <p className={memberStatsStyles.member_info_label}>전체 리뷰어 수</p>
-              <div className={memberStatsStyles.member_info_value_row}>
-                <p className={memberStatsStyles.member_info_value}>9,589명</p>
-                {/* 변화율 표시 - neutral 클래스로 변화 없음 표시 */}
-                <p className={campaignSummaryStyles.stat_card_change_neutral}>- 0%</p>
-              </div>
-            </div>
-            
-            {/* 하단 오른쪽: 활성 리뷰어 수 */}
-            <div className={memberStatsStyles.member_info_card}>
-              <p className={memberStatsStyles.member_info_label}>활성 리뷰어 수</p>
-              <p className={memberStatsStyles.member_info_value}>7,589명</p>
+
+            {/* 비활성 회원 수 */}
+            <div className={styles.member_activation_section_info_card}>
+              <p className={styles.member_activation_section_info_label}>
+                비활성 회원 수
+              </p>
+              <p className={styles.member_activation_section_info_value}>
+                3,720명
+              </p>
               {/* 비율 표시 */}
-              <p className={memberStatsStyles.member_info_percentage}>(82%)</p>
+              <p className={styles.member_activation_section_info_percentage}>
+                (32%)
+              </p>
             </div>
           </div>
         </div>
@@ -80,4 +89,3 @@ export default function MemberActivationSection() {
     </div>
   );
 }
-

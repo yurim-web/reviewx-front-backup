@@ -1,0 +1,114 @@
+/* ========================================
+   📊 접속 통계 섹션 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - AccessStatsSection (접속 통계 섹션)
+ * 
+ * 사용 페이지:
+ * - /manager_ga (GA 관리자 대시보드)
+ */
+
+/* 접속 통계 섹션 카드 */
+.access_stats_section_card {
+  background-color: white;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 20px;
+  max-height: 356px;
+}
+
+/* 접속 통계 섹션 헤더 */
+.access_stats_section_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 24px;
+}
+
+/* 접속 통계 섹션 제목 */
+.access_stats_section_title {
+  color: #444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px; /* 100% */
+  letter-spacing: -0.36px;
+}
+
+/* 접속 통계 섹션 그리드 */
+.access_stats_section_grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+/* 접속 통계 섹션 통계 카드 */
+.access_stats_section_stat_card {
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 접속 통계 섹션 통계 카드 라벨 행 */
+.access_stats_section_stat_card_label_row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 접속 통계 섹션 통계 카드 라벨 */
+.access_stats_section_stat_card_label {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 접속 통계 섹션 통계 카드 값 */
+.access_stats_section_stat_card_value {
+  color: #444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+}
+
+/* 접속 통계 섹션 통계 카드 변화율 - 증가 (녹색) */
+.access_stats_section_stat_card_change_positive {
+  color: #2dc469;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 접속 통계 섹션 통계 카드 변화율 - 감소 (빨간색) */
+.access_stats_section_stat_card_change_negative {
+  color: #ff2626;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 접속 통계 섹션 디바이스 통계 섹션 */
+.access_stats_section_device_stats_section {
+  margin-top: 24px;
+}
+
+/* 접속 통계 섹션 디바이스 통계 제목 */
+.access_stats_section_device_stats_title {
+  color: #444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px; /* 100% */
+  letter-spacing: -0.36px;
+  padding-bottom: 24px;
+}
+

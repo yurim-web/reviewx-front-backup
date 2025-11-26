@@ -235,8 +235,6 @@ const CustomTooltip = ({ active, payload, coordinate }: any) => {
       // 실제로는 Recharts가 내부적으로 Y 좌표를 계산하지만,
       // 여기서는 value의 차이를 사용하여 가장 가까운 항목을 찾습니다
 
-      // 마우스 Y 좌표를 0-100 범위로 변환 (추정)
-      // 차트 높이를 300px로 추정 (실제로는 동적)
       const estimatedChartHeight = 300;
       const yAxisRange = 100; // 0-100
 

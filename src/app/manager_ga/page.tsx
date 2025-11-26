@@ -24,7 +24,7 @@
 'use client';
 
 import { useState } from 'react';
-import layoutStyles from '@/styles/manager_ga/layout.module.css';
+import layoutStyles from '@/styles/manager_ga/layout/layout.module.css';
 import DateFilterSection, {
   DateFilter,
 } from '@/components/manager_ga/dashboard/section/DateFilterSection';

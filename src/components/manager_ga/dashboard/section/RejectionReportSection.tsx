@@ -17,32 +17,32 @@
  * - 컴포넌트 조합: 차트 컴포넌트를 섹션 컴포넌트 내부에서 사용
  */
 
-import styles from '@/styles/manager_ga/charts.module.css';
+import styles from '@/styles/manager_ga/sections/rejection_report_section.module.css';
 import RejectionReportChart from '../chart/RejectionReportChart';
 
 export default function RejectionReportSection() {
   return (
-    <div className={styles.chart_card}>
+    <div className={styles.rejection_report_section_card}>
       {/* 제목과 범례를 같은 줄에 배치 (제목: 왼쪽, 범례: 오른쪽) */}
-      <div className={styles.chart_header}>
+      <div className={styles.rejection_report_section_header}>
         {/* 섹션 제목 */}
-        <h2 className={styles.chart_card_title}>반려/신고 통계</h2>
+        <h2 className={styles.rejection_report_section_title}>반려/신고 통계</h2>
 
         {/* 커스텀 범례 */}
-        <div className={styles.chart_legend}>
+        <div className={styles.rejection_report_section_legend}>
           {/* 반려 */}
-          <div className={styles.chart_legend_item}>
+          <div className={styles.rejection_report_section_legend_item}>
             <div
-              className={styles.chart_legend_icon}
+              className={styles.rejection_report_section_legend_icon}
               style={{ backgroundColor: '#FF6600' }}
             ></div>
             <span>반려</span>
           </div>
 
           {/* 신고 */}
-          <div className={styles.chart_legend_item}>
+          <div className={styles.rejection_report_section_legend_item}>
             <div
-              className={styles.chart_legend_icon}
+              className={styles.rejection_report_section_legend_icon}
               style={{ backgroundColor: '#FF2626' }}
             ></div>
             <span>신고</span>

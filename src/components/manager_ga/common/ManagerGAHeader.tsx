@@ -23,7 +23,7 @@
  */
 
 import Link from 'next/link';
-import styles from '@/styles/manager_ga/header.module.css';
+import styles from '@/styles/manager_ga/layout/header.module.css';
 
 export default function ManagerGAHeader() {
   return (

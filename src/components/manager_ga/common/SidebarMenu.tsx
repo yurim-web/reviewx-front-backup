@@ -28,7 +28,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import styles from '@/styles/manager_ga/sidebar.module.css';
+import styles from '@/styles/manager_ga/layout/sidebar.module.css';
 
 // 메뉴 아이템 타입 정의
 interface MenuItem {

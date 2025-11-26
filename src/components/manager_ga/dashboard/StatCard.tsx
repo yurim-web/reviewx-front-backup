@@ -18,7 +18,7 @@
  * - 인라인 스타일: style prop으로 동적 너비 설정
  */
 
-import styles from '@/styles/manager_ga/campaign_summary.module.css';
+import styles from '@/styles/manager_ga/sections/campaign_summary_section.module.css';
 
 // 통계 카드 데이터 타입 정의
 export interface StatCardData {
@@ -39,7 +39,7 @@ interface StatCardProps {
 export default function StatCard({ stat }: StatCardProps) {
   return (
     // 통계 카드 전체 컨테이너
-    <div className={styles.stat_card}>
+    <div className={styles.campaign_summary_section_stat_card}>
       {/* 제목과 변화율을 같은 줄에 배치 (space-between) */}
       <div
         style={{
@@ -49,16 +49,16 @@ export default function StatCard({ stat }: StatCardProps) {
         }}
       >
         {/* 통계 카드 제목 (예: "캠페인 모집률") */}
-        <p className={styles.stat_card_title}>{stat.title}</p>
+        <p className={styles.campaign_summary_section_stat_card_title}>{stat.title}</p>
         {/* 변화율 텍스트 (예: "↑ 50%", "↓ 50%", "- 0%") */}
         {/* 조건부 클래스명: 변화율 타입에 따라 색상이 달라짐 (녹색/빨간색/회색) */}
         <p
-          className={`${styles.stat_card_change} ${
+          className={`${styles.campaign_summary_section_stat_card_change} ${
             stat.changeType === 'positive'
-              ? styles.stat_card_change_positive
+              ? styles.campaign_summary_section_stat_card_change_positive
               : stat.changeType === 'negative'
-              ? styles.stat_card_change_negative
-              : styles.stat_card_change_neutral
+              ? styles.campaign_summary_section_stat_card_change_negative
+              : styles.campaign_summary_section_stat_card_change_neutral
           }`}
         >
           {stat.change}
@@ -68,21 +68,21 @@ export default function StatCard({ stat }: StatCardProps) {
       {/* 통계 카드 값 (예: "97%") */}
       {/* 조건부 클래스명: progressColor가 'red'이면 값도 빨간색으로 표시 */}
       <p
-        className={`${styles.stat_card_value} ${
-          stat.progressColor === 'red' ? styles.stat_card_value_red : ''
+        className={`${styles.campaign_summary_section_stat_card_value} ${
+          stat.progressColor === 'red' ? styles.campaign_summary_section_stat_card_value_red : ''
         }`}
       >
         {stat.value}
       </p>
 
       {/* 진행 바 컨테이너 (회색 배경) */}
-      <div className={styles.progress_bar_container}>
+      <div className={styles.campaign_summary_section_progress_bar_container}>
         {/* 진행 바 (진행률에 따라 너비가 달라짐) */}
         {/* 조건부 클래스명: progressColor가 'red'이면 빨간색, 아니면 기본 회색 */}
         {/* 인라인 스타일: stat.progress 값에 따라 동적으로 너비 설정 (0-100%) */}
         <div
-          className={`${styles.progress_bar} ${
-            stat.progressColor === 'red' ? styles.progress_bar_red : ''
+          className={`${styles.campaign_summary_section_progress_bar} ${
+            stat.progressColor === 'red' ? styles.campaign_summary_section_progress_bar_red : ''
           }`}
           style={{ width: `${stat.progress}%` }}
         ></div>

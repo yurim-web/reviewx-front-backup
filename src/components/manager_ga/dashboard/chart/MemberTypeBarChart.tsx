@@ -18,6 +18,7 @@
 
 'use client';
 
+import { useEffect, useRef } from 'react';
 import {
   BarChart,
   Bar,
@@ -92,84 +93,126 @@ const CustomLegend = () => {
 };
 
 export default function MemberTypeBarChart() {
-  // 클릭 이벤트 완전히 막기
-  const handleClick = (data?: any, index?: number, e?: any) => {
-    if (e && typeof e.preventDefault === 'function') {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // 클릭 시 검정색 선 제거
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    // 클릭 이벤트 막기
+    const handleClick = (e: MouseEvent) => {
       e.preventDefault();
-    }
-    if (e && typeof e.stopPropagation === 'function') {
       e.stopPropagation();
-    }
-    return false;
-  };
+      // 클릭 시 나타나는 검정색 선 제거
+      const rects = container.querySelectorAll<SVGRectElement>(
+        'rect.recharts-bar-rectangle, rect.recharts-bar',
+      );
+      rects.forEach((rect) => {
+        // stroke 제거
+        rect.setAttribute('stroke', 'none');
+        rect.style.setProperty('stroke', 'none', 'important');
+        rect.style.setProperty('stroke-width', '0', 'important');
+        // outline 제거
+        rect.style.setProperty('outline', 'none', 'important');
+      });
+      return false;
+    };
+
+    // 마우스 다운 이벤트도 막기
+    const handleMouseDown = (e: MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    };
+
+    container.addEventListener('click', handleClick, true);
+    container.addEventListener('mousedown', handleMouseDown, true);
+
+    // 주기적으로 stroke 제거 (클릭 후에도 유지)
+    const checkInterval = setInterval(() => {
+      const rects = container.querySelectorAll<SVGRectElement>(
+        'rect.recharts-bar-rectangle, rect.recharts-bar',
+      );
+      rects.forEach((rect) => {
+        const stroke = rect.getAttribute('stroke');
+        const strokeWidth = rect.getAttribute('stroke-width');
+        if (stroke && stroke !== 'none') {
+          rect.setAttribute('stroke', 'none');
+        }
+        if (strokeWidth && strokeWidth !== '0') {
+          rect.setAttribute('stroke-width', '0');
+        }
+        rect.style.setProperty('stroke', 'none', 'important');
+        rect.style.setProperty('stroke-width', '0', 'important');
+        rect.style.setProperty('outline', 'none', 'important');
+      });
+    }, 100);
+
+    return () => {
+      container.removeEventListener('click', handleClick, true);
+      container.removeEventListener('mousedown', handleMouseDown, true);
+      clearInterval(checkInterval);
+    };
+  }, []);
 
   return (
-    <div
-      style={{
-        width: '100%',
-        height: '100%',
-        position: 'relative',
-        backgroundColor: 'transparent',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '8px',
-      }}
-      onClick={handleClick}
-      onMouseDown={handleClick}
-    >
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart
-          data={bar_data}
-          margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
-          barCategoryGap="30%"
-          onClick={handleClick} // 클릭 이벤트 완전히 막기
-          onMouseDown={handleClick} // 마우스 다운 이벤트도 막기
-        >
-          {/* X축 숨김 (세로 막대 차트에서는 카테고리 축) */}
-          <XAxis
-            dataKey="category"
-            axisLine={false}
-            tickLine={false}
-            tick={false}
-            hide={true}
-          />
-          {/* Y축 숨김 (세로 막대 차트에서는 숫자 축) */}
-          <YAxis type="number" domain={[0, 100]} hide={true} />
+    <div ref={containerRef} className={styles.member_type_bar_chart_container}>
+      <div className={styles.member_type_chart_wrapper}>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={bar_data}
+            margin={{ top: 12, right: 0, left: 0, bottom: 0 }}
+            barCategoryGap="30%"
+          >
+            {/* X축 - 하단 선만 표시 */}
+            <XAxis
+              dataKey="category"
+              axisLine={{ stroke: '#F2F2F2' }}
+              tickLine={false}
+              tick={false}
+              hide={false}
+              height={1}
+              padding={{ left: 0, right: 0 }}
+            />
+            {/* Y축 숨김 (세로 막대 차트에서는 숫자 축) */}
+            <YAxis type="number" domain={[0, 100]} hide={true} />
 
-          {/* 파트너 막대 (어두운 회색) */}
-          <Bar dataKey="partner" stackId="a" radius={[0, 0, 0, 0]}>
-            {bar_data.map((entry, index) => (
-              <Cell
-                key={`partner-${index}`}
-                fill={colors.partner}
-                style={{ fill: colors.partner }} // 호버 시에도 색상 유지
-              />
-            ))}
-          </Bar>
+            {/* 휴면 회원 막대 (매우 밝은 회색) - 맨 아래, 하단만 둥글게 */}
+            <Bar dataKey="dormant" stackId="a" radius={[8, 8, 0, 0]}>
+              {bar_data.map((entry, index) => (
+                <Cell
+                  key={`dormant-${index}`}
+                  fill={colors.dormant}
+                  style={{ fill: colors.dormant }} // 호버 시에도 색상 유지
+                />
+              ))}
+            </Bar>
 
-          {/* 리뷰어 막대 (밝은 회색) */}
-          <Bar dataKey="reviewer" stackId="a" radius={[0, 0, 0, 0]}>
-            {bar_data.map((entry, index) => (
-              <Cell
-                key={`reviewer-${index}`}
-                fill={colors.reviewer}
-                style={{ fill: colors.reviewer }} // 호버 시에도 색상 유지
-              />
-            ))}
-          </Bar>
+            {/* 리뷰어 막대 (밝은 회색) - 중간, 둥글지 않음 */}
+            <Bar dataKey="reviewer" stackId="a" radius={[8, 8, 0, 0]}>
+              {bar_data.map((entry, index) => (
+                <Cell
+                  key={`reviewer-${index}`}
+                  fill={colors.reviewer}
+                  style={{ fill: colors.reviewer }} // 호버 시에도 색상 유지
+                />
+              ))}
+            </Bar>
 
-          {/* 휴면 회원 막대 (매우 밝은 회색) */}
-          <Bar dataKey="dormant" stackId="a" radius={[0, 0, 0, 0]}>
-            {bar_data.map((entry, index) => (
-              <Cell
-                key={`dormant-${index}`}
-                fill={colors.dormant}
-                style={{ fill: colors.dormant }} // 호버 시에도 색상 유지
-              />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
+            {/* 파트너 막대 (어두운 회색) - 맨 위, 상단만 둥글게 */}
+            <Bar dataKey="partner" stackId="a" radius={[8, 8, 0, 0]}>
+              {bar_data.map((entry, index) => (
+                <Cell
+                  key={`partner-${index}`}
+                  fill={colors.partner}
+                  style={{ fill: colors.partner }} // 호버 시에도 색상 유지
+                />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
       {/* 범례 */}
       <CustomLegend />
     </div>
