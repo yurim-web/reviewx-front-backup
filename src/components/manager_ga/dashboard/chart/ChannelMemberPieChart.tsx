@@ -20,7 +20,7 @@
 
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import {
   PieChart,
   Pie,
@@ -121,59 +121,137 @@ const CustomLabel = (props: any) => {
 
 // 호버 시 표시할 커스텀 툴팁
 // 마우스를 파이 차트 위에 올리면 채널 이름을 보여주는 툴팁 표시
-const CustomTooltip = ({ active, payload }: any) => {
+// containerRef를 사용하여 정확한 위치 계산
+const CustomTooltip = ({
+  active,
+  payload,
+  containerRef,
+  setTooltipState,
+}: any) => {
   // active: 툴팁이 활성화되었는지 여부
   // payload: 차트 데이터 정보
+  // containerRef: 차트 컨테이너의 ref
+  // setTooltipState: 툴팁 상태를 설정하는 함수
 
-  if (active && payload && payload.length) {
+  // 이전 계산된 값을 추적하여 불필요한 업데이트 방지
+  const prev_calculated_ref = useRef<{
+    midAngle: number;
+    name: string;
+    x: number;
+    y: number;
+  } | null>(null);
+
+  useEffect(() => {
+    // active가 false이거나 payload가 없으면 툴팁 숨김
+    if (!active || !payload || !payload.length || !containerRef?.current) {
+      if (prev_calculated_ref.current !== null) {
+        // setTimeout으로 지연하여 무한 루프 방지
+        const timeout_id = setTimeout(() => {
+          setTooltipState({ visible: false, x: 0, y: 0, name: '' });
+        }, 0);
+        prev_calculated_ref.current = null;
+        return () => clearTimeout(timeout_id);
+      }
+      return;
+    }
+
     const data = payload[0].payload; // 차트 데이터 (채널 이름, 값 등)
-    const { cx, cy, midAngle, innerRadius, outerRadius } = payload[0];
-    // cx, cy: 차트의 중심 좌표
-    // midAngle: 섹션의 중앙 각도
-    // innerRadius, outerRadius: 반지름 정보
+    const { midAngle } = payload[0];
 
-    // ──────────────────────────────────────
-    // 툴팁 위치 계산 (퍼센트 텍스트 오른쪽에 배치)
-    // ──────────────────────────────────────
-    const RADIAN = Math.PI / 180; // 각도를 라디안으로 변환
-    // 섹션의 중앙 지점 계산 (반지름의 중간 지점)
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const labelX = cx + radius * Math.cos(-midAngle * RADIAN); // 퍼센트 텍스트 X 위치
-    const labelY = cy + radius * Math.sin(-midAngle * RADIAN); // 퍼센트 텍스트 Y 위치
+    // 이전 계산값과 비교하여 실제로 변경되었을 때만 업데이트
+    const prev = prev_calculated_ref.current;
+    const angle_changed = !prev || Math.abs(prev.midAngle - midAngle) >= 1;
+    const name_changed = !prev || prev.name !== data.name;
 
-    // 퍼센트 텍스트의 오른쪽에 툴팁 배치
-    const offsetX = 40; // 기본 오른쪽 이동 거리
-    const tooltipX = labelX + offsetX; // 툴팁 X 위치 (퍼센트 텍스트 오른쪽)
-    const tooltipY = labelY - 12; // 툴팁 Y 위치 (세로 중앙 정렬)
+    // midAngle이나 name이 변경되지 않았으면 업데이트하지 않음 (무한 루프 방지)
+    if (!angle_changed && !name_changed) {
+      return;
+    }
 
-    // ──────────────────────────────────────
-    // 툴팁 UI 렌더링 (HTML 요소로 SVG 밖에 배치)
-    // ──────────────────────────────────────
-    return (
-      <div
-        style={{
-          position: 'absolute',
-          left: `${tooltipX}px`,
-          top: `${tooltipY}px`,
-          transform: 'translateY(-50%)',
-          backgroundColor: '#444444', // 배경색 (어두운 회색)
-          color: 'white', // 텍스트 색상
-          padding: '8px 8px', // 내부 여백
-          borderRadius: '4px', // 모서리 둥글게
-          fontSize: '13px', // 폰트 크기
-          fontWeight: 500, // 폰트 굵기
-          transition: 'none', // 애니메이션 없음
-          animation: 'none', // 애니메이션 없음
-          pointerEvents: 'none', // 클릭 이벤트 방지
-          whiteSpace: 'nowrap', // 텍스트 줄바꿈 방지
-          zIndex: 1000, // 다른 요소 위에 표시
-        }}
-      >
-        {data.name} {/* 채널 이름 표시 (예: "블로그", "인스타그램") */}
-      </div>
-    );
-  }
-  return null; // 툴팁이 비활성화되면 아무것도 표시하지 않음
+    const container = containerRef.current;
+    const svgElement = container.querySelector('svg');
+
+    if (svgElement) {
+      // ──────────────────────────────────────
+      // 실제 텍스트 요소의 위치를 직접 가져오기
+      // ──────────────────────────────────────
+      // SVG 내부의 모든 text 요소 찾기
+      const text_elements = svgElement.querySelectorAll(
+        'text',
+      ) as NodeListOf<SVGTextElement>;
+
+      // 해당 섹션의 퍼센트 값 계산
+      const percent_value = data.value;
+      const percent_text = `${Math.round(percent_value)}%`;
+
+      // 퍼센트 텍스트와 일치하는 text 요소 찾기
+      let target_text_element: SVGTextElement | null = null;
+      for (const text_el of text_elements) {
+        if (text_el.textContent?.trim() === percent_text) {
+          target_text_element = text_el;
+          break;
+        }
+      }
+
+      if (target_text_element) {
+        // 텍스트 요소의 실제 SVG 좌표 가져오기
+        const text_x = parseFloat(target_text_element.getAttribute('x') || '0');
+        const text_y = parseFloat(target_text_element.getAttribute('y') || '0');
+
+        const svgRect = svgElement.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        const viewBox = svgElement.getAttribute('viewBox');
+
+        if (viewBox) {
+          const [x, y, width, height] = viewBox.split(' ').map(Number);
+          // SVG 좌표를 픽셀 좌표로 변환
+          const scaleX = svgRect.width / width;
+          const scaleY = svgRect.height / height;
+
+          // SVG 내부 픽셀 좌표 계산
+          // text_x, text_y는 SVG 좌표계 (viewBox 기준)이므로 픽셀 좌표로 변환
+          const pixelX = (text_x - x) * scaleX;
+          const pixelY = (text_y - y) * scaleY;
+
+          // 컨테이너 기준 상대 좌표로 변환
+          // SVG 요소의 화면상 위치에서 컨테이너의 화면상 위치를 빼서 상대 좌표 계산
+          const finalX = pixelX + (svgRect.left - containerRect.left);
+          const finalY = pixelY + (svgRect.top - containerRect.top);
+
+          // 텍스트 요소의 실제 크기 가져오기 (오른쪽 끝 위치 계산용)
+          const text_bbox = target_text_element.getBBox();
+          const text_width_px = text_bbox.width * scaleX;
+
+          // 퍼센트 텍스트의 오른쪽에 툴팁 배치
+          const offsetX = 8; // 텍스트와 툴팁 사이 간격
+          const tooltipX = finalX + text_width_px / 2 + offsetX; // 텍스트 중앙에서 오른쪽으로
+          const tooltipY = finalY;
+
+          // setTimeout으로 지연하여 무한 루프 방지
+          const timeout_id = setTimeout(() => {
+            setTooltipState({
+              visible: true,
+              x: tooltipX,
+              y: tooltipY,
+              name: data.name,
+            });
+
+            // 이전 계산값 저장 (각 섹션마다 다른 midAngle을 추적)
+            prev_calculated_ref.current = {
+              midAngle,
+              name: data.name,
+              x: tooltipX,
+              y: tooltipY,
+            };
+          }, 0);
+
+          return () => clearTimeout(timeout_id);
+        }
+      }
+    }
+  }, [active, payload, containerRef]);
+
+  return null; // 툴팁은 컨테이너 밖에 렌더링
 };
 
 /* ========================================
@@ -183,6 +261,13 @@ const CustomTooltip = ({ active, payload }: any) => {
 // 파이 차트를 렌더링하는 메인 컴포넌트
 export default function ChannelMemberPieChart() {
   const containerRef = useRef<HTMLDivElement>(null);
+  // 툴팁 상태 관리
+  const [tooltip_state, set_tooltip_state] = useState<{
+    visible: boolean;
+    x: number;
+    y: number;
+    name: string;
+  }>({ visible: false, x: 0, y: 0, name: '' });
 
   /* ========================================
      🔧 부가 기능 처리 (공용 유틸리티 사용)
@@ -333,7 +418,12 @@ export default function ChannelMemberPieChart() {
 
           {/* 툴팁 설정: 마우스 호버 시 채널 이름 표시 */}
           <Tooltip
-            content={<CustomTooltip />}
+            content={
+              <CustomTooltip
+                containerRef={containerRef}
+                setTooltipState={set_tooltip_state}
+              />
+            }
             cursor={false}
             animationDuration={0}
             animationEasing="linear"
@@ -373,6 +463,29 @@ export default function ChannelMemberPieChart() {
           </Pie>
         </PieChart>
       </ResponsiveContainer>
+
+      {/* 컨테이너 밖에 렌더링되는 툴팁 */}
+      {tooltip_state.visible && (
+        <div
+          style={{
+            position: 'absolute',
+            left: `${tooltip_state.x}px`,
+            top: `${tooltip_state.y}px`,
+            transform: 'translateY(-50%)',
+            backgroundColor: '#444444', // 배경색 (어두운 회색)
+            color: 'white', // 텍스트 색상
+            padding: '8px 8px', // 내부 여백
+            borderRadius: '4px', // 모서리 둥글게
+            fontSize: '13px', // 폰트 크기
+            fontWeight: 500, // 폰트 굵기
+            pointerEvents: 'none', // 클릭 이벤트 방지
+            whiteSpace: 'nowrap', // 텍스트 줄바꿈 방지
+            zIndex: 1000, // 다른 요소 위에 표시
+          }}
+        >
+          {tooltip_state.name}
+        </div>
+      )}
     </div>
   );
 }
