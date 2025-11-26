@@ -1,0 +1,225 @@
+/* ========================================
+   👥 회원 통계 관련 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - MemberStatsSection (회원 통계 섹션)
+ * - MemberActivationSection (회원 활성화 통계 섹션)
+ * - MemberTypeSection (회원 유형 통계 섹션)
+ * - ChannelMemberSection (채널별 회원 통계 섹션)
+ * - 각종 차트 컴포넌트들
+ * 
+ * 사용 페이지:
+ * - /manager_ga (GA 관리자 대시보드)
+ */
+
+/* 회원 통계 섹션 그리드 */
+.member_stats_grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+/* 회원 통계 카드 */
+.member_stat_card {
+  background-color: white;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+/* 회원 통계 카드 제목 */
+.member_stat_card_title {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  color: #444444;
+  margin: 0 0 24px 0;
+}
+
+/* 회원 통계 콘텐츠 (도넛 차트 + 통계 정보) */
+.member_stats_content {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+/* 도넛 차트 컨테이너 */
+.donut_chart_container {
+  flex-shrink: 0;
+  width: 180px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 막대 차트 컨테이너 */
+.bar_chart_container {
+  flex-shrink: 0;
+  width: 200px;
+  height: 168px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 막대 차트 클릭 효과 제거 */
+.bar_chart_container :global(.recharts-bar),
+.bar_chart_container :global(.recharts-bar-rectangle),
+.bar_chart_container :global(.recharts-bar:active),
+.bar_chart_container :global(.recharts-bar:focus),
+.bar_chart_container :global(.recharts-bar-rectangle:active),
+.bar_chart_container :global(.recharts-bar-rectangle:focus),
+.bar_chart_container :global(.recharts-bar:hover),
+.bar_chart_container :global(.recharts-bar-rectangle:hover),
+.bar_chart_container :global(.recharts-bar[class*='active']),
+.bar_chart_container :global(.recharts-bar-rectangle[class*='active']) {
+  opacity: 1 !important;
+  filter: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: none !important;
+  background-color: transparent !important;
+}
+
+/* 막대 차트 호버 시 색상 변경 방지 - 원래 fill 색상 유지 */
+.bar_chart_container :global(rect.recharts-bar),
+.bar_chart_container :global(rect.recharts-bar-rectangle) {
+  transition: none !important;
+}
+
+/* 호버 시에도 원래 fill 색상 유지 (Recharts의 동적 변경 방지) */
+.bar_chart_container :global(rect.recharts-bar:hover),
+.bar_chart_container :global(rect.recharts-bar-rectangle:hover) {
+  fill-opacity: 1 !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* Recharts의 호버 시 opacity 변경 방지 */
+.bar_chart_container :global(.recharts-bar:hover),
+.bar_chart_container :global(.recharts-bar-rectangle:hover) {
+  opacity: 1 !important;
+}
+
+.bar_chart_container :global(.recharts-active-shape),
+.bar_chart_container :global(.recharts-active-shape *),
+.bar_chart_container :global([class*='active-shape']),
+.bar_chart_container :global([class*='activeShape']) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* 파이 차트 컨테이너 */
+.pie_chart_container {
+  flex-shrink: 0;
+  width: 220px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 회원 통계 정보 영역 */
+.member_stats_info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 회원 통계 정보 영역 (첫 번째 카드용 - 그리드만) */
+.member_stats_info_first {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+}
+
+/* 회원 통계 정보 그리드 */
+.member_info_grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+/* 회원 통계 정보 그리드 (3열) */
+.member_info_grid_three {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+/* 전체 너비 회원 정보 카드 (전체 회원 수) */
+.member_info_card_full {
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  padding: 16px;
+  width: 100%;
+}
+
+/* 회원 정보 값 행 (값과 변화율을 가로로 배치) */
+.member_info_value_row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+/* 회원 통계 정보 카드 */
+.member_info_card {
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  padding: 16px;
+}
+
+/* 회원 통계 정보 라벨 */
+.member_info_label {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
+}
+
+/* 회원 통계 정보 값 */
+.member_info_value {
+  color: #444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px; /* 100% */
+  letter-spacing: -0.36px;
+}
+
+/* 회원 통계 정보 비율 */
+.member_info_percentage {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  color: #444444;
+  margin: 4px 0 0 0;
+}
+
+/* 도넛 차트 라벨 (활성화 텍스트) */
+.donut_chart_label {
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.36px;
+  fill: #848484;
+}
+
+/* 도넛 차트 값 (68% 텍스트) */
+.donut_chart_value {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.36px;
+  fill: #444444;
+}

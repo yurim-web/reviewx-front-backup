@@ -16,10 +16,10 @@
  * - /user/mypage/edit (유저 내 정보 수정 페이지)
  */
 
-"use client";
+'use client';
 
-import styles from "@/styles/user/mypage/edit_profile.module.css";
-import { CustomDropdown } from "@/components/partner/campaign_create_form/common/CampaignFormCommon";
+import styles from '@/styles/user/mypage/edit_profile.module.css';
+import { CustomDropdown } from '@/components/partner/campaign_create_form/common/CustomDropdown';
 
 interface AccountInfoInputProps {
   /** 예금주 */
@@ -99,4 +99,3 @@ export default function AccountInfoInput({
     </>
   );
 }
-

@@ -1,0 +1,45 @@
+/* ========================================
+   🔧 GA 관리자 레이아웃 전용 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - layout.tsx (GA 관리자 레이아웃)
+ * 
+ * 사용 페이지:
+ * - /manager_ga (GA 관리자 페이지 전체)
+ * 
+ * 목적:
+ * - 관리자 페이지는 파트너/유저 페이지와 달리 max-width 제한 없이 전체 너비 사용
+ * - 전역 .antialiased 클래스와 main 태그의 max-width: 1000px 제한을 override
+ */
+
+/* 관리자 페이지에서 body의 .antialiased 클래스 max-width 제한 제거 */
+/* 일반 CSS 파일이므로 전역 스타일을 직접 적용할 수 있습니다 */
+body.antialiased {
+  max-width: none !important;
+  margin: 0 !important;
+  width: 100% !important;
+  background: white !important; /* 관리자 페이지는 흰색 배경 */
+  overflow-x: visible !important; /* 사이드바가 보이도록 overflow 제거 */
+  position: relative !important; /* stacking context 설정 */
+}
+
+/* 관리자 페이지에서 main 태그의 max-width 제한 제거 */
+body main {
+  max-width: none !important;
+  margin: 0 !important;
+  width: 100% !important;
+  background: white !important;
+}
+
+/* 관리자 페이지에서 header 태그의 max-width 제한 제거 */
+/* fragments/header.module.css의 :global(header) 스타일을 override */
+header {
+  max-width: none !important;
+  margin: 0 !important;
+  width: 100% !important;
+  left: 0 !important;
+  right: 0 !important;
+}
+
