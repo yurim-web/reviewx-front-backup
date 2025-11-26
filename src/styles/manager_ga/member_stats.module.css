@@ -57,6 +57,42 @@
   justify-content: center;
 }
 
+/* 원형 프로그래스 바 컨테이너 */
+.donut_progress_container {
+  width: 180px;
+  height: 180px;
+  position: relative;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 원형 프로그래스 바 SVG */
+.donut_progress_svg {
+  transform: rotate(-180deg);
+}
+
+/* 원형 프로그래스 바 배경 원 */
+.donut_progress_background {
+  fill: none;
+  stroke: #e5e5e5;
+  stroke-width: 25;
+  stroke-linecap: round;
+}
+
+/* 원형 프로그래스 바 활성화 원 */
+.donut_progress_active {
+  fill: none;
+  stroke: #444444;
+  stroke-width: 25;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.3s ease;
+}
+
+/* 원형 프로그래스 바 텍스트 그룹 */
+/* SVG transform으로 회전 처리 (컴포넌트에서 직접 적용) */
+
 /* 막대 차트 컨테이너 */
 .bar_chart_container {
   flex-shrink: 0;
@@ -219,21 +255,40 @@
   line-height: 14px;
   letter-spacing: -0.28px;
 }
+/* 원형 프로그래스 바 텍스트 래퍼 (HTML 요소) */
+.donut_progress_text_wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  pointer-events: none; /* 클릭 이벤트 방지 */
+}
 
 /* 도넛 차트 라벨 (활성화 텍스트) */
 .donut_chart_label {
+  color: #848484;
   font-size: 18px;
   font-weight: 500;
   letter-spacing: -0.36px;
-  fill: #848484;
+  line-height: 1;
+  margin: 0;
+  padding: 0;
 }
 
 /* 도넛 차트 값 (68% 텍스트) */
 .donut_chart_value {
+  color: #444444;
   font-size: 18px;
   font-weight: 600;
   letter-spacing: -0.36px;
-  fill: #444444;
+  line-height: 1;
+  margin: 0;
+  padding: 0;
 }
 
 /* 회원 통계 변화율 - 공용 스타일 */

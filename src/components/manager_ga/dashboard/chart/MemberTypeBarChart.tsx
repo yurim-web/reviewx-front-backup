@@ -18,7 +18,7 @@
 
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import {
   BarChart,
   Bar,
@@ -31,6 +31,7 @@ import {
 import styles from '@/styles/manager_ga/device_stats.module.css';
 
 import { memberTypeBarData, MemberTypeBarData } from '@/data/manager_ga/dashboard/dashboardData';
+import { use_bar_chart_click_handler } from './chart_event_handlers';
 
 // 색상 정의 (이미지 설명 기반)
 const colors = {
@@ -71,66 +72,13 @@ const CustomLegend = () => {
 export default function MemberTypeBarChart() {
   const containerRef = useRef<HTMLDivElement>(null);
 
+  /* ========================================
+     🔧 부가 기능 처리 (공용 유틸리티 사용)
+     ======================================== */
+
   // 클릭 시 검정색 선 제거
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    // 클릭 이벤트 막기
-    const handleClick = (e: MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      // 클릭 시 나타나는 검정색 선 제거
-      const rects = container.querySelectorAll<SVGRectElement>(
-        'rect.recharts-bar-rectangle, rect.recharts-bar',
-      );
-      rects.forEach((rect) => {
-        // stroke 제거
-        rect.setAttribute('stroke', 'none');
-        rect.style.setProperty('stroke', 'none', 'important');
-        rect.style.setProperty('stroke-width', '0', 'important');
-        // outline 제거
-        rect.style.setProperty('outline', 'none', 'important');
-      });
-      return false;
-    };
-
-    // 마우스 다운 이벤트도 막기
-    const handleMouseDown = (e: MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      return false;
-    };
-
-    container.addEventListener('click', handleClick, true);
-    container.addEventListener('mousedown', handleMouseDown, true);
-
-    // 주기적으로 stroke 제거 (클릭 후에도 유지)
-    const checkInterval = setInterval(() => {
-      const rects = container.querySelectorAll<SVGRectElement>(
-        'rect.recharts-bar-rectangle, rect.recharts-bar',
-      );
-      rects.forEach((rect) => {
-        const stroke = rect.getAttribute('stroke');
-        const strokeWidth = rect.getAttribute('stroke-width');
-        if (stroke && stroke !== 'none') {
-          rect.setAttribute('stroke', 'none');
-        }
-        if (strokeWidth && strokeWidth !== '0') {
-          rect.setAttribute('stroke-width', '0');
-        }
-        rect.style.setProperty('stroke', 'none', 'important');
-        rect.style.setProperty('stroke-width', '0', 'important');
-        rect.style.setProperty('outline', 'none', 'important');
-      });
-    }, 100);
-
-    return () => {
-      container.removeEventListener('click', handleClick, true);
-      container.removeEventListener('mousedown', handleMouseDown, true);
-      clearInterval(checkInterval);
-    };
-  }, []);
+  // 공용 유틸리티 함수를 사용하여 코드 중복 제거
+  use_bar_chart_click_handler(containerRef);
 
   return (
     <div ref={containerRef} className={styles.member_type_bar_chart_container}>

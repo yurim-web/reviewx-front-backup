@@ -20,7 +20,7 @@
 
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import {
   PieChart,
   Pie,
@@ -34,6 +34,7 @@ import {
   channelData,
   ChannelData,
 } from '@/data/manager_ga/dashboard/dashboardData';
+import { use_pie_chart_click_handler } from './chart_event_handlers';
 
 /* ========================================
    🎨 색상 관련 함수
@@ -141,40 +142,35 @@ const CustomTooltip = ({ active, payload }: any) => {
     const labelY = cy + radius * Math.sin(-midAngle * RADIAN); // 퍼센트 텍스트 Y 위치
 
     // 퍼센트 텍스트의 오른쪽에 툴팁 배치
-    const offsetX = 35; // 기본 오른쪽 이동 거리
+    const offsetX = 40; // 기본 오른쪽 이동 거리
     const tooltipX = labelX + offsetX; // 툴팁 X 위치 (퍼센트 텍스트 오른쪽)
     const tooltipY = labelY - 12; // 툴팁 Y 위치 (세로 중앙 정렬)
 
     // ──────────────────────────────────────
-    // 툴팁 UI 렌더링
+    // 툴팁 UI 렌더링 (HTML 요소로 SVG 밖에 배치)
     // ──────────────────────────────────────
     return (
-      <g>
-        {/* foreignObject: SVG 안에 HTML 요소를 넣을 수 있게 해주는 태그 */}
-        <foreignObject
-          x={tooltipX} // 툴팁 X 위치
-          y={tooltipY} // 툴팁 Y 위치
-          width={120} // 툴팁 너비
-          height={30} // 툴팁 높이
-          style={{ overflow: 'visible' }} // 내용이 넘치면 보이게
-        >
-          {/* 실제 툴팁 내용 (HTML div) */}
-          <div
-            style={{
-              backgroundColor: '#444444', // 배경색 (어두운 회색)
-              color: 'white', // 텍스트 색상
-              padding: '8px 8px', // 내부 여백
-              borderRadius: '4px', // 모서리 둥글게
-              fontSize: '13px', // 폰트 크기
-              fontWeight: 500, // 폰트 굵기
-              transition: 'none', // 애니메이션 없음
-              animation: 'none', // 애니메이션 없음
-            }}
-          >
-            {data.name} {/* 채널 이름 표시 (예: "블로그", "인스타그램") */}
-          </div>
-        </foreignObject>
-      </g>
+      <div
+        style={{
+          position: 'absolute',
+          left: `${tooltipX}px`,
+          top: `${tooltipY}px`,
+          transform: 'translateY(-50%)',
+          backgroundColor: '#444444', // 배경색 (어두운 회색)
+          color: 'white', // 텍스트 색상
+          padding: '8px 8px', // 내부 여백
+          borderRadius: '4px', // 모서리 둥글게
+          fontSize: '13px', // 폰트 크기
+          fontWeight: 500, // 폰트 굵기
+          transition: 'none', // 애니메이션 없음
+          animation: 'none', // 애니메이션 없음
+          pointerEvents: 'none', // 클릭 이벤트 방지
+          whiteSpace: 'nowrap', // 텍스트 줄바꿈 방지
+          zIndex: 1000, // 다른 요소 위에 표시
+        }}
+      >
+        {data.name} {/* 채널 이름 표시 (예: "블로그", "인스타그램") */}
+      </div>
     );
   }
   return null; // 툴팁이 비활성화되면 아무것도 표시하지 않음
@@ -189,77 +185,25 @@ export default function ChannelMemberPieChart() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   /* ========================================
-     🔧 부가 기능 처리 (useEffect)
+     🔧 부가 기능 처리 (공용 유틸리티 사용)
      ======================================== */
 
   // 흰색 선 유지 및 클릭 이벤트 처리
   // 파이 차트의 경계선을 흰색으로 유지하고, 바깥으로 튀어나오는 선 제거
+  // 공용 유틸리티 함수를 사용하여 코드 중복 제거
+  use_pie_chart_click_handler(containerRef);
+
+  // 파이 차트 전용 추가 처리 (clipPath, 불필요한 선 제거)
+  // 이 부분은 파이 차트에만 특화된 기능이므로 여기에 유지
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    // ──────────────────────────────────────
-    // 클릭 이벤트 처리 함수
-    // ──────────────────────────────────────
-    const handleClick = (e: MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      // 클릭 시 검정색 선이 나타나지 않도록 흰색 선 유지
+    const check_interval = setInterval(() => {
       const paths = container.querySelectorAll<SVGPathElement>(
         'path.recharts-pie-sector, path.recharts-sector',
       );
       paths.forEach((path) => {
-        // 흰색 선 유지
-        path.setAttribute('stroke', 'white');
-        path.style.setProperty('stroke', 'white', 'important');
-        path.style.setProperty('stroke-width', '2', 'important');
-        // outline 제거
-        path.style.setProperty('outline', 'none', 'important');
-      });
-      return false;
-    };
-
-    // ──────────────────────────────────────
-    // 마우스 다운 이벤트 처리 함수
-    // ──────────────────────────────────────
-    const handleMouseDown = (e: MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      return false;
-    };
-
-    container.addEventListener('click', handleClick, true);
-    container.addEventListener('mousedown', handleMouseDown, true);
-
-    // ──────────────────────────────────────
-    // 주기적 체크 함수 (100ms마다 실행)
-    // 흰색 선 유지 및 바깥으로 튀어나오는 선 제거
-    // ──────────────────────────────────────
-    const checkInterval = setInterval(() => {
-      // 파이 차트의 각 조각(path)을 찾아서 처리
-      const paths = container.querySelectorAll<SVGPathElement>(
-        'path.recharts-pie-sector, path.recharts-sector',
-      );
-      paths.forEach((path) => {
-        const stroke = path.getAttribute('stroke');
-        const strokeWidth = path.getAttribute('stroke-width');
-
-        // 검정색이나 다른 색상이면 흰색으로 변경
-        if (stroke && stroke !== 'white' && stroke !== 'none') {
-          path.setAttribute('stroke', 'white');
-        }
-        // stroke-width가 0이거나 없으면 2로 설정
-        if (!strokeWidth || strokeWidth === '0') {
-          path.setAttribute('stroke-width', '2');
-        }
-
-        // CSS로 강제로 흰색 선 적용
-        path.style.setProperty('stroke', 'white', 'important');
-        path.style.setProperty('stroke-width', '2', 'important');
-        path.style.setProperty('stroke-linecap', 'butt', 'important'); // 선 끝을 둥글게 하지 않음
-        path.style.setProperty('stroke-linejoin', 'miter', 'important'); // 선 연결을 뾰족하게
-        path.style.setProperty('outline', 'none', 'important');
-
         // ──────────────────────────────────────
         // clipPath 적용: 바깥으로 튀어나오는 선 제거
         // ──────────────────────────────────────
@@ -355,13 +299,8 @@ export default function ChannelMemberPieChart() {
       });
     }, 100);
 
-    // ──────────────────────────────────────
-    // 정리 함수 (컴포넌트가 사라질 때 실행)
-    // ──────────────────────────────────────
     return () => {
-      container.removeEventListener('click', handleClick, true);
-      container.removeEventListener('mousedown', handleMouseDown, true);
-      clearInterval(checkInterval);
+      clearInterval(check_interval);
     };
   }, []);
 

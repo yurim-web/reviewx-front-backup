@@ -33,7 +33,7 @@
 .member_activation_section_content {
   display: flex;
   align-items: flex-start;
-  gap: 20px;
+  gap: 24px;
 }
 
 /* 회원 활성화 통계 섹션 도넛 차트 컨테이너 */
