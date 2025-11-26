@@ -12,7 +12,7 @@
  * - 전체 회원 수, 파트너 수, 리뷰어 수, 휴면 회원 수 표시
  */
 
-import styles from '@/styles/manager_ga/sections/member_type_section.module.css';
+import styles from '@/styles/manager_ga/dashboard/sections/member_type_section.module.css';
 import MemberTypeBarChart from '../chart/MemberTypeBarChart';
 import { memberTypeStats } from '@/data/manager_ga/dashboard/dashboardData';
 

@@ -17,7 +17,7 @@
  * - 컴포넌트 조합: 차트 컴포넌트를 섹션 컴포넌트 내부에서 사용
  */
 
-import styles from '@/styles/manager_ga/sections/rejection_report_section.module.css';
+import styles from '@/styles/manager_ga/dashboard/sections/rejection_report_section.module.css';
 import RejectionReportChart from '../chart/RejectionReportChart';
 
 export default function RejectionReportSection() {

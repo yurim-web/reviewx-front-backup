@@ -20,7 +20,7 @@
 
 'use client';
 
-import styles from '@/styles/manager_ga/sections/date_filter_section.module.css';
+import styles from '@/styles/manager_ga/dashboard/sections/date_filter_section.module.css';
 
 // 날짜 필터 타입 정의
 export type DateFilter = 'today' | 'week' | 'month';

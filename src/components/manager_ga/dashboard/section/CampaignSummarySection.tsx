@@ -17,7 +17,7 @@
  * - key prop: React에서 리스트 렌더링 시 각 항목을 구분하기 위한 고유 키
  */
 
-import styles from '@/styles/manager_ga/sections/campaign_summary_section.module.css';
+import styles from '@/styles/manager_ga/dashboard/sections/campaign_summary_section.module.css';
 import StatCard, { StatCardData } from '../StatCard';
 
 // CampaignSummarySection 컴포넌트의 props 타입 정의

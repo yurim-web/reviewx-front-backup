@@ -23,7 +23,7 @@
  * - CSS Modules: className으로 스타일을 적용합니다
  */
 
-import styles from '@/styles/manager_ga/progress.module.css';
+import styles from '@/styles/manager_ga/campaign/progress/tags.module.css';
 
 // 캠페인 상태 타입 정의
 export type CampaignStatus = '예정' | '신청' | '진행' | '종료' | '긴급';

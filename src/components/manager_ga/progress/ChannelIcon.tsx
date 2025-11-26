@@ -20,7 +20,7 @@
  * - alt 속성: 접근성을 위한 대체 텍스트를 제공합니다
  */
 
-import styles from '@/styles/manager_ga/progress.module.css';
+import styles from '@/styles/manager_ga/campaign/progress/channel_icon.module.css';
 
 // 채널 타입 정의
 export type Channel =

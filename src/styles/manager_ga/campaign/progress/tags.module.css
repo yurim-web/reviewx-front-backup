@@ -1,0 +1,71 @@
+/* ========================================
+   🏷️ 태그 스타일
+   ======================================== */
+
+/**
+ * 태그 관련 스타일 (상태 태그, 유형 태그)
+ * 
+ * 사용 컴포넌트:
+ * - CampaignStatusTag.tsx (상태 태그 컴포넌트)
+ * - CampaignTypeTag.tsx (유형 태그 컴포넌트)
+ * 
+ * 사용 페이지:
+ * - /manager_ga/progress (GA 관리자 진행 현황)
+ */
+
+/* 상태 태그 */
+.status_tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 상태 태그 - 예정 (노란색) */
+.status_tag_scheduled {
+  background-color: rgba(255, 225, 0, 0.1);
+  color: #c4a300;
+}
+
+/* 상태 태그 - 신청 (분홍색) */
+.status_tag_applied {
+  background-color: rgba(255, 86, 148, 0.1);
+  color: #ff5694;
+}
+
+/* 상태 태그 - 진행 (파란색) */
+.status_tag_progress {
+  background-color: rgba(43, 127, 255, 0.1);
+  color: #2b7fff;
+}
+
+/* 상태 태그 - 종료 (회색) */
+.status_tag_ended {
+  background-color: #666666;
+  color: white;
+}
+
+/* 상태 태그 - 긴급 (빨간색) */
+.status_tag_urgent {
+  background-color: #ff2626;
+  color: white;
+}
+
+/* 유형 태그 */
+.type_tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background-color: #f1f1f1;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  color: #666666;
+}
+

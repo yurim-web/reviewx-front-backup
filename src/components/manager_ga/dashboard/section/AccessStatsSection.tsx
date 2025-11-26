@@ -13,7 +13,7 @@
  
  */
 
-import styles from '@/styles/manager_ga/sections/access_stats_section.module.css';
+import styles from '@/styles/manager_ga/dashboard/sections/access_stats_section.module.css';
 import DeviceStatsChart from '../chart/DeviceStatsChart';
 import { accessStats } from '@/data/manager_ga/dashboard/dashboardData';
 

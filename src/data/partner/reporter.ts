@@ -36,6 +36,7 @@ export interface ReporterCampaignDataItem {
     totalCount: number; // 총 모집 인원 수
     daysLeft: number; // 남은 일수 (양수면 남은 일수, 음수면 지난 일수)
     statusText?: string; // 상태 텍스트 (예: "캠페인 콘텐츠를 검수해 주세요.", 선택사항)
+    partnerName?: string; // 파트너명 (예: "(주)기자단커뮤니케이션")
   };
   // 신청자 데이터 (선택사항 - 진행/예정/신청 캠페인에만 있음)
   applicantData?: {
@@ -119,6 +120,7 @@ export const reporterCampaigns: ReporterCampaignDataItem[] = [
       campaignType: "기자단",
       category: "생활",
       brandName: "인스타그램",
+      partnerName: "(주)기자단커뮤니케이션",
       recruitmentPeriod: "2025-10-20 ~ 2025-11-02",
       announcementDate: "2025-11-03",
       registrationPeriod: "2025-11-04 ~ 2025-11-12",
@@ -202,6 +204,7 @@ export const reporterCampaigns: ReporterCampaignDataItem[] = [
       campaignType: "기자단",
       category: "생활",
       brandName: "릴스",
+      partnerName: "(주)기자단커뮤니케이션",
       recruitmentPeriod: "2025-11-01 ~ 2025-11-10",
       announcementDate: "2025-11-11",
       registrationPeriod: "2025-11-12 ~ 2025-11-20",
@@ -222,6 +225,7 @@ export const reporterCampaigns: ReporterCampaignDataItem[] = [
       campaignType: "기자단",
       category: "생활",
       brandName: "인스타그램",
+      partnerName: "(주)기자단커뮤니케이션",
       recruitmentPeriod: "2025-10-18 ~ 2025-10-28",
       announcementDate: "2025-10-28",
       registrationPeriod: "2025-10-30 ~ 2025-11-06",
@@ -428,6 +432,7 @@ export const reporterCampaigns: ReporterCampaignDataItem[] = [
       campaignType: "기자단",
       category: "생활",
       brandName: "인스타그램",
+      partnerName: "(주)기자단커뮤니케이션",
       recruitmentPeriod: "2025-11-04 ~ 2025-11-14",
       announcementDate: "2025-11-14",
       registrationPeriod: "2025-11-16 ~ 2025-11-24",

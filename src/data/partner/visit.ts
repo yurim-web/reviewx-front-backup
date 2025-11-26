@@ -38,6 +38,7 @@ export interface VisitCampaignDataItem {
     totalCount: number; // 총 모집 인원 수
     daysLeft: number; // 남은 일수 (양수면 남은 일수, 음수면 지난 일수)
     statusText?: string; // 상태 텍스트 (예: "캠페인 콘텐츠를 검수해 주세요.", 선택사항)
+    partnerName?: string; // 파트너명 (예: "(주)방문체험기획")
   };
   // 신청자 데이터 (선택사항 - 진행/예정/신청 캠페인에만 있음)
   applicantData?: {
@@ -128,6 +129,7 @@ export const visitClosedCampaigns: VisitCampaignDataItem[] = [
       campaignType: '방문형',
       category: '여가',
       brandName: '네이버블로그',
+      partnerName: '(주)방문체험기획',
       recruitmentPeriod: '2024-01-05 ~ 2024-01-10',
       announcementDate: '2024-01-10',
       registrationPeriod: '2024-01-12 ~ 2024-01-18',
@@ -221,6 +223,7 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
       campaignType: '방문형',
       category: '여가',
       brandName: '인스타그램',
+      partnerName: '(주)방문체험기획',
       recruitmentPeriod: '2025-11-26 ~ 2025-12-06',
       announcementDate: '2025-12-06',
       registrationPeriod: '2025-12-08 ~ 2025-12-16',
@@ -317,6 +320,7 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
       campaignType: '방문형',
       category: '여가',
       brandName: '릴스',
+      partnerName: '(주)방문체험기획',
       recruitmentPeriod: '2025-11-28 ~ 2025-12-08',
       announcementDate: '2025-12-08',
       registrationPeriod: '2025-12-10 ~ 2025-12-18',
@@ -365,6 +369,7 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
       campaignType: '방문형',
       category: '여가',
       brandName: '네이버클립',
+      partnerName: '(주)방문체험기획',
       recruitmentPeriod: '2025-11-20 ~ 2025-12-03',
       announcementDate: '2025-12-05',
       registrationPeriod: '2025-12-07 ~ 2025-12-15',
@@ -425,6 +430,7 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
       campaignType: '방문형',
       category: '여가',
       brandName: '쇼츠',
+      partnerName: '(주)방문체험기획',
       recruitmentPeriod: '2025-01-05 ~ 2025-01-15',
       announcementDate: '2025-01-15',
       registrationPeriod: '2025-01-17 ~ 2025-01-25',
@@ -474,6 +480,7 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
       campaignType: '방문형',
       category: '여가',
       brandName: '네이버클립',
+      partnerName: '(주)방문체험기획',
       recruitmentPeriod: '2025-12-01 ~ 2025-12-11',
       announcementDate: '2025-12-11',
       registrationPeriod: '2025-12-13 ~ 2025-12-21',
@@ -493,6 +500,7 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
       campaignType: '방문형',
       category: '여가',
       brandName: '인스타그램',
+      partnerName: '(주)방문체험기획',
       recruitmentPeriod: '2025-10-25 ~ 2025-11-05',
       announcementDate: '2025-11-05',
       registrationPeriod: '2025-11-07 ~ 2025-11-14',
@@ -513,6 +521,7 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
       campaignType: '방문형',
       category: '여가',
       brandName: '인스타그램',
+      partnerName: '(주)방문체험기획',
       recruitmentPeriod: '2025-11-22 ~ 2025-12-02',
       announcementDate: '2025-12-04',
       registrationPeriod: '2025-12-06 ~ 2025-12-14',

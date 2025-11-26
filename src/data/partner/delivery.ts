@@ -37,6 +37,7 @@ export interface DeliveryCampaignDataItem {
     totalCount: number; // 총 모집 인원 수
     daysLeft: number; // 남은 일수 (양수면 남은 일수, 음수면 지난 일수)
     statusText?: string; // 상태 텍스트 (예: "캠페인 콘텐츠를 검수해 주세요.", 선택사항)
+    partnerName?: string; // 파트너명 (예: "(주)배송마케팅")
   };
   // 신청자 데이터 (선택사항 - 진행/예정/신청 캠페인에만 있음)
   applicantData?: {
@@ -132,6 +133,7 @@ export const deliveryCampaigns: DeliveryCampaignDataItem[] = [
       campaignType: '배송형',
       category: '뷰티',
       brandName: '네이버블로그',
+      partnerName: '(주)배송마케팅',
       recruitmentPeriod: '2024-12-20 ~ 2024-12-30',
       announcementDate: '2024-12-30',
       registrationPeriod: '2025-01-01 ~ 2025-01-08',
@@ -217,6 +219,7 @@ export const deliveryCampaigns: DeliveryCampaignDataItem[] = [
       campaignType: '배송형',
       category: '식품',
       brandName: '네이버블로그',
+      partnerName: '(주)배송마케팅',
       recruitmentPeriod: '2025-11-20 ~ 2025-12-05',
       announcementDate: '2025-12-10',
       registrationPeriod: '2025-12-12 ~ 2025-12-25',
@@ -298,6 +301,7 @@ export const deliveryCampaigns: DeliveryCampaignDataItem[] = [
       campaignType: '배송형',
       category: '뷰티',
       brandName: '네이버블로그',
+      partnerName: '(주)배송마케팅',
       recruitmentPeriod: '2025-12-20 ~ 2025-12-28',
       announcementDate: '2025-12-28',
       registrationPeriod: '2026-01-01 ~ 2026-01-10',
@@ -318,6 +322,7 @@ export const deliveryCampaigns: DeliveryCampaignDataItem[] = [
       campaignType: '배송형',
       category: '뷰티',
       brandName: '네이버블로그',
+      partnerName: '(주)배송마케팅',
       recruitmentPeriod: '2025-11-25 ~ 2025-12-10',
       announcementDate: '2025-12-15',
       registrationPeriod: '2025-12-17 ~ 2025-12-30',
@@ -427,6 +432,7 @@ export const deliveryClosedCampaigns: DeliveryCampaignDataItem[] = [
       campaignType: '배송형',
       category: '가전',
       brandName: '인스타그램',
+      partnerName: '(주)배송마케팅',
       recruitmentPeriod: '2024-02-01 ~ 2024-02-07',
       announcementDate: '2024-02-07',
       registrationPeriod: '2024-02-09 ~ 2024-02-15',

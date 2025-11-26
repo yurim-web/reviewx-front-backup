@@ -14,14 +14,9 @@
  * - 통계 제목과 값을 표시합니다
  * - 특정 통계는 빨간색으로 강조 표시할 수 있습니다
  *
- * 학습 포인트:
- * - props: 부모 컴포넌트에서 데이터를 받아옵니다
- * - 구조분해할당: props 객체에서 필요한 속성만 추출합니다
- * - 조건부 스타일: color prop이 있으면 해당 색상을 적용합니다
- * - CSS Modules: className으로 스타일을 적용합니다
  */
 
-import styles from '@/styles/manager_ga/progress.module.css';
+import styles from '@/styles/manager_ga/campaign/progress/stat_card.module.css';
 
 // 통계 카드 props 타입 정의
 interface StatCardProps {
@@ -52,4 +47,3 @@ export default function StatCard({ title, value, color }: StatCardProps) {
     </div>
   );
 }
-

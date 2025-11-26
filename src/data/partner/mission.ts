@@ -38,6 +38,7 @@ export interface MissionCampaignDataItem {
     totalCount: number; // 총 모집 인원 수
     daysLeft: number; // 남은 일수 (양수면 남은 일수, 음수면 지난 일수)
     statusText?: string; // 상태 텍스트 (예: "캠페인 콘텐츠를 검수해 주세요.", 선택사항)
+    partnerName?: string; // 파트너명 (예: "(주)미션프로모션")
   };
   // 신청자 데이터 (선택사항 - 진행/예정/신청 캠페인에만 있음)
   applicantData?: {
@@ -129,6 +130,7 @@ export const missionCampaigns: MissionCampaignDataItem[] = [
       campaignType: "미션형",
       category: "뷰티",
       brandName: "",
+      partnerName: "(주)미션프로모션",
       recruitmentPeriod: "2024-01-12 ~ 2024-01-20",
       announcementDate: "2024-01-20",
       registrationPeriod: "2024-01-22 ~ 2024-01-30",
@@ -350,6 +352,7 @@ export const missionCampaigns: MissionCampaignDataItem[] = [
       campaignType: "미션형",
       category: "뷰티",
       brandName: "",
+      partnerName: "(주)미션프로모션",
       recruitmentPeriod: "2025-10-25 ~ 2025-11-05",
       announcementDate: "2025-11-05",
       registrationPeriod: "2025-11-06 ~ 2025-11-14",
@@ -473,6 +476,7 @@ export const missionCampaigns: MissionCampaignDataItem[] = [
       campaignType: "미션형",
       category: "뷰티",
       brandName: "",
+      partnerName: "(주)미션프로모션",
       recruitmentPeriod: "2025-11-05 ~ 2025-11-15",
       announcementDate: "2025-11-15",
       registrationPeriod: "2025-11-17 ~ 2025-11-25",
@@ -493,6 +497,7 @@ export const missionCampaigns: MissionCampaignDataItem[] = [
       campaignType: "미션형",
       category: "뷰티",
       brandName: "",
+      partnerName: "(주)미션프로모션",
       recruitmentPeriod: "2025-11-06 ~ 2025-11-16",
       announcementDate: "2025-11-16",
       registrationPeriod: "2025-11-18 ~ 2025-11-26",
@@ -541,6 +546,7 @@ export const missionClosedCampaigns: MissionCampaignDataItem[] = [
       campaignType: "미션형",
       category: "뷰티",
       brandName: "",
+      partnerName: "(주)미션프로모션",
       recruitmentPeriod: "2024-04-10 ~ 2024-04-16",
       announcementDate: "2024-04-16",
       registrationPeriod: "2024-04-18 ~ 2024-04-24",

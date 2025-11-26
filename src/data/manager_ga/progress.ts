@@ -12,13 +12,26 @@
  *
  * 주요 기능:
  * - 캠페인 통계 데이터
- * - 캠페인 목록 데이터
+ * - 캠페인 목록 데이터 (각 캠페인 타입별 데이터에서 자동 생성)
  *
  * 학습 포인트:
  * - TypeScript 인터페이스: 데이터 구조를 타입으로 정의합니다
  * - 배열 타입: 여러 개의 데이터를 배열로 관리합니다
  * - export: 다른 파일에서 이 데이터를 import하여 사용할 수 있습니다
+ * - 데이터 변환: 각 캠페인 타입별 데이터를 통일된 형태로 변환합니다
  */
+
+// 각 캠페인 타입별 데이터 import
+import { deliveryCampaigns } from '@/data/partner/delivery';
+import { missionCampaigns } from '@/data/partner/mission';
+import { reporterCampaigns } from '@/data/partner/reporter';
+import { reviewCampaigns } from '@/data/partner/review';
+import { visitCampaigns } from '@/data/partner/visit';
+import type { DeliveryCampaignDataItem } from '@/data/partner/delivery';
+import type { MissionCampaignDataItem } from '@/data/partner/mission';
+import type { ReporterCampaignDataItem } from '@/data/partner/reporter';
+import type { ReviewCampaignDataItem } from '@/data/partner/review';
+import type { VisitCampaignDataItem } from '@/data/partner/visit';
 
 // 캠페인 상태 타입 정의
 export type CampaignStatus = '예정' | '신청' | '진행' | '종료' | '긴급';
@@ -59,255 +72,317 @@ export interface CampaignProgressItem {
   detail_campaign_id?: string; // 상세 페이지에서 사용할 공용 캠페인 ID (옵션)
 }
 
-// 통계 카드 데이터
-export const stat_cards: StatCard[] = [
-  {
-    title: '오픈 예정 캠페인',
-    value: '859건',
-  },
-  {
-    title: '진행 중인 캠페인',
-    value: '1,853건',
-  },
-  {
-    title: '신청 중인 캠페인',
-    value: '5,203건',
-  },
-  {
-    title: '전체 캠페인',
-    value: '12,589건',
-  },
-  {
-    title: '종료된 캠페인',
-    value: '23,547건',
-  },
-  {
-    title: '취소된 캠페인',
-    value: '189건',
-    color: '#ff2626', // 빨간색
-  },
-];
+/* ========================================
+   📊 통계 카드 데이터 계산 함수
+   ======================================== */
 
-// 캠페인 목록 데이터
+/**
+ * 통계 카드 값들을 계산하는 함수
+ *
+ * 설명:
+ * - campaign_list를 기반으로 각 상태별 캠페인 개수를 계산합니다
+ * - 취소된 캠페인은 원본 데이터에서 직접 확인합니다
+ * - 숫자를 천 단위로 포맷팅하여 반환합니다
+ *
+ * 학습 포인트:
+ * - filter 함수: 배열에서 조건에 맞는 요소만 추출합니다
+ * - length 속성: 배열의 길이를 반환합니다
+ * - toLocaleString: 숫자를 천 단위 구분자로 포맷팅합니다
+ * - reduce 함수: 배열의 모든 요소를 순회하며 하나의 값을 계산합니다
+ */
+export function calculate_stat_card_values() {
+  // 오픈 예정 캠페인 (status가 '예정'인 것)
+  const open_scheduled_count = campaign_list.filter(
+    (campaign) => campaign.status === '예정',
+  ).length;
+
+  // 진행 중인 캠페인 (status가 '진행'인 것)
+  const in_progress_count = campaign_list.filter(
+    (campaign) => campaign.status === '진행',
+  ).length;
+
+  // 신청 중인 캠페인 (status가 '신청'인 것)
+  const applying_count = campaign_list.filter(
+    (campaign) => campaign.status === '신청',
+  ).length;
+
+  // 전체 캠페인
+  const total_count = campaign_list.length;
+
+  // 종료된 캠페인 (status가 '종료'인 것, 취소 제외)
+  // 취소는 원본 데이터에서 확인해야 하므로, 종료에서 취소를 제외합니다
+  const ended_count = campaign_list.filter(
+    (campaign) => campaign.status === '종료',
+  ).length;
+
+  // 취소된 캠페인 (원본 데이터에서 '취소' 상태인 것)
+  // 모든 원본 데이터를 합쳐서 취소 상태를 확인합니다
+  const all_original_campaigns = [
+    ...deliveryCampaigns,
+    ...missionCampaigns,
+    ...reporterCampaigns,
+    ...reviewCampaigns,
+    ...visitCampaigns,
+  ];
+  const cancelled_count = all_original_campaigns.filter(
+    (campaign) => campaign.campaignInfo.status === '취소',
+  ).length;
+
+  // 숫자를 천 단위로 포맷팅하는 함수
+  // toLocaleString: 숫자를 지역화된 문자열로 변환합니다 (예: 1000 -> "1,000")
+  const format_count = (count: number): string => {
+    return `${count.toLocaleString('ko-KR')}건`;
+  };
+
+  return {
+    open_scheduled: format_count(open_scheduled_count),
+    in_progress: format_count(in_progress_count),
+    applying: format_count(applying_count),
+    total: format_count(total_count),
+    ended: format_count(ended_count - cancelled_count), // 종료에서 취소 제외
+    cancelled: format_count(cancelled_count),
+  };
+}
+
+// 취소된 캠페인은 빨간색으로 표시
+export const stat_card_colors = {
+  cancelled: '#ff2626', // 취소된 캠페인 색상
+};
+
+/* ========================================
+   🔄 데이터 변환 함수
+   ======================================== */
+
+/**
+ * 브랜드명을 Channel 타입으로 변환
+ *
+ * 설명:
+ * - 각 캠페인 데이터의 brandName을 progress.ts의 Channel 타입으로 변환합니다.
+ * - 미션형은 brandName이 빈 문자열이므로 'Mission'으로 변환합니다.
+ *
+ * @param brandName - 브랜드명 (예: "네이버블로그", "인스타그램", "")
+ * @param campaignType - 캠페인 타입 (미션형의 경우 빈 문자열을 'Mission'으로 변환)
+ * @returns Channel 타입
+ */
+function map_brand_name_to_channel(
+  brandName: string,
+  campaignType: CampaignType,
+): Channel {
+  // 미션형은 brandName이 빈 문자열이므로 'Mission'으로 변환
+  if (campaignType === '미션형' && !brandName) {
+    return 'Mission';
+  }
+
+  // 브랜드명 매핑
+  const brand_map: Record<string, Channel> = {
+    네이버블로그: 'Blog',
+    인스타그램: 'Instagram',
+    네이버클립: 'Clip',
+    유튜브: 'Youtube',
+    릴스: 'Reels',
+    쇼츠: 'Shorts',
+    스토어: 'Store',
+    기본: 'Store', // 기본값은 Store로 설정
+  };
+
+  return brand_map[brandName] || 'Store';
+}
+
+/**
+ * 캠페인 상태를 progress.ts의 CampaignStatus로 변환
+ *
+ * 설명:
+ * - 각 캠페인 데이터의 status ('진행 중' | '대기 중' | '모집 중' | '종료' | '취소')
+ *   를 progress.ts의 CampaignStatus ('예정' | '신청' | '진행' | '종료' | '긴급')로 변환합니다.
+ *
+ * @param status - 캠페인 상태
+ * @returns CampaignStatus 타입
+ */
+function map_status_to_progress_status(
+  status: '진행 중' | '대기 중' | '모집 중' | '종료' | '취소',
+): CampaignStatus {
+  const status_map: Record<
+    '진행 중' | '대기 중' | '모집 중' | '종료' | '취소',
+    CampaignStatus
+  > = {
+    '대기 중': '예정',
+    '모집 중': '신청',
+    '진행 중': '진행',
+    종료: '종료',
+    취소: '종료', // 취소도 종료로 표시
+  };
+
+  return status_map[status] || '진행';
+}
+
+/**
+ * 캠페인 ID를 캠페인 번호 형식으로 변환
+ *
+ * 설명:
+ * - 캠페인 ID를 "000001" 형식의 6자리 문자열로 변환합니다.
+ *
+ * @param id - 캠페인 ID (예: "961", "16")
+ * @returns 캠페인 번호 (예: "000961", "000016")
+ */
+function format_campaign_number(id: string): string {
+  const num_id = parseInt(id, 10);
+  if (isNaN(num_id)) {
+    return '000000';
+  }
+  return String(num_id).padStart(6, '0');
+}
+
+/**
+ * 배송형 캠페인 데이터를 CampaignProgressItem으로 변환
+ *
+ * @param campaign - 배송형 캠페인 데이터
+ * @returns CampaignProgressItem
+ */
+function convert_delivery_to_progress_item(
+  campaign: DeliveryCampaignDataItem,
+): CampaignProgressItem {
+  const { campaignInfo, applicantData } = campaign;
+
+  return {
+    id: campaignInfo.id,
+    campaign_number: format_campaign_number(campaignInfo.id),
+    partner_name: campaignInfo.partnerName ?? '(주)청명종합광고기획', // 파트너명 (데이터에서 가져오거나 기본값 사용)
+    campaign_name: campaignInfo.title,
+    type: '배송형',
+    channel: map_brand_name_to_channel(campaignInfo.brandName, '배송형'),
+    status: map_status_to_progress_status(campaignInfo.status),
+    recruit_count: campaignInfo.totalCount,
+    apply_count: applicantData?.applicants?.length ?? 0,
+    point: 0, // 기본값 (실제 데이터에는 없음)
+    detail_campaign_id: campaignInfo.id,
+  };
+}
+
+/**
+ * 미션형 캠페인 데이터를 CampaignProgressItem으로 변환
+ *
+ * @param campaign - 미션형 캠페인 데이터
+ * @returns CampaignProgressItem
+ */
+function convert_mission_to_progress_item(
+  campaign: MissionCampaignDataItem,
+): CampaignProgressItem {
+  const { campaignInfo, applicantData } = campaign;
+
+  return {
+    id: campaignInfo.id,
+    campaign_number: format_campaign_number(campaignInfo.id),
+    partner_name: campaignInfo.partnerName ?? '(주)청명종합광고기획', // 파트너명 (데이터에서 가져오거나 기본값 사용)
+    campaign_name: campaignInfo.title,
+    type: '미션형',
+    channel: map_brand_name_to_channel(campaignInfo.brandName, '미션형'),
+    status: map_status_to_progress_status(campaignInfo.status),
+    recruit_count: campaignInfo.totalCount,
+    apply_count: applicantData?.applicants?.length ?? 0,
+    point: 0, // 기본값
+    detail_campaign_id: campaignInfo.id,
+  };
+}
+
+/**
+ * 기자단 캠페인 데이터를 CampaignProgressItem으로 변환
+ *
+ * @param campaign - 기자단 캠페인 데이터
+ * @returns CampaignProgressItem
+ */
+function convert_reporter_to_progress_item(
+  campaign: ReporterCampaignDataItem,
+): CampaignProgressItem {
+  const { campaignInfo, applicantData } = campaign;
+
+  return {
+    id: campaignInfo.id,
+    campaign_number: format_campaign_number(campaignInfo.id),
+    partner_name: campaignInfo.partnerName ?? '(주)청명종합광고기획', // 파트너명 (데이터에서 가져오거나 기본값 사용)
+    campaign_name: campaignInfo.title,
+    type: '기자단',
+    channel: map_brand_name_to_channel(campaignInfo.brandName, '기자단'),
+    status: map_status_to_progress_status(campaignInfo.status),
+    recruit_count: campaignInfo.totalCount,
+    apply_count: applicantData?.applicants?.length ?? 0,
+    point: 0, // 기본값
+    detail_campaign_id: campaignInfo.id,
+  };
+}
+
+/**
+ * 구매평 캠페인 데이터를 CampaignProgressItem으로 변환
+ *
+ * @param campaign - 구매평 캠페인 데이터
+ * @returns CampaignProgressItem
+ */
+function convert_review_to_progress_item(
+  campaign: ReviewCampaignDataItem,
+): CampaignProgressItem {
+  const { campaignInfo, applicantData } = campaign;
+
+  return {
+    id: campaignInfo.id,
+    campaign_number: format_campaign_number(campaignInfo.id),
+    partner_name: campaignInfo.partnerName ?? '(주)청명종합광고기획', // 파트너명 (데이터에서 가져오거나 기본값 사용)
+    campaign_name: campaignInfo.title,
+    type: '구매평',
+    channel: map_brand_name_to_channel(campaignInfo.brandName, '구매평'),
+    status: map_status_to_progress_status(campaignInfo.status),
+    recruit_count: campaignInfo.totalCount,
+    apply_count: applicantData?.applicants?.length ?? 0,
+    point: 0, // 기본값
+    detail_campaign_id: campaignInfo.id,
+  };
+}
+
+/**
+ * 방문형 캠페인 데이터를 CampaignProgressItem으로 변환
+ *
+ * @param campaign - 방문형 캠페인 데이터
+ * @returns CampaignProgressItem
+ */
+function convert_visit_to_progress_item(
+  campaign: VisitCampaignDataItem,
+): CampaignProgressItem {
+  const { campaignInfo, applicantData } = campaign;
+
+  return {
+    id: campaignInfo.id,
+    campaign_number: format_campaign_number(campaignInfo.id),
+    partner_name: campaignInfo.partnerName ?? '(주)청명종합광고기획', // 파트너명 (데이터에서 가져오거나 기본값 사용)
+    campaign_name: campaignInfo.title,
+    type: '방문형',
+    channel: map_brand_name_to_channel(campaignInfo.brandName, '방문형'),
+    status: map_status_to_progress_status(campaignInfo.status),
+    recruit_count: campaignInfo.totalCount,
+    apply_count: applicantData?.applicants?.length ?? 0,
+    point: 0, // 기본값
+    detail_campaign_id: campaignInfo.id,
+  };
+}
+
+/* ========================================
+   📋 캠페인 목록 데이터 (자동 생성)
+   ======================================== */
+
+/**
+ * 각 캠페인 타입별 데이터를 CampaignProgressItem으로 변환하여 통합
+ *
+ * 설명:
+ * - 배송형, 미션형, 기자단, 구매평, 방문형 캠페인 데이터를 모두 가져와서
+ *   CampaignProgressItem 형태로 변환하여 하나의 배열로 통합합니다.
+ * - 이렇게 하면 각 캠페인 타입별 데이터를 수정하면 자동으로 진행 현황 목록이 업데이트됩니다.
+ */
 export const campaign_list: CampaignProgressItem[] = [
-  {
-    id: '1',
-    campaign_number: '000001',
-    partner_name: '주식회사 재밌는걸참좋아하고하고싶은거하는노신사',
-    campaign_name:
-      '푸러블 고농축 캡슐세제 플라워향, 1개, 110개입, 푸러블 고농축 캡슐세제 플라워향, 1개, 110개입, 푸러블 고농축 캡슐세제 플라워향, 1개, 110개입,',
-    type: '배송형',
-    channel: 'Blog',
-    status: '예정',
-    recruit_count: 12,
-    apply_count: 5,
-    point: 115000,
-  },
-  {
-    id: '2',
-    campaign_number: '000001',
-    partner_name: '그리디센트',
-    campaign_name: '나만의 향수만들기 체험 [그리디센트]',
-    type: '구매평',
-    channel: 'Store',
-    status: '예정',
-    recruit_count: 50,
-    apply_count: 1023,
-    point: 0,
-  },
-  {
-    id: '3',
-    campaign_number: '000001',
-    partner_name: '주식회사 프리즘앤씨',
-    campaign_name:
-      '테라랩 제노스퍼 남성용 임신준비 영양제 아르기닌/아연/코큐텐 등 8중기능성 체험단 모집',
-    type: '배송형',
-    channel: 'Clip',
-    status: '신청',
-    recruit_count: 6,
-    apply_count: 658,
-    point: 12000,
-  },
-  {
-    id: '4',
-    campaign_number: '000001',
-    partner_name: '에이바헤어 모래내시장역점',
-    campaign_name:
-      '[삼전동]하엔크헤어에서 원하는 시술 무료로 시술 후 리뷰 예쁘게 써주실 블로거 / 인플루언서 모십니다',
-    type: '구매평',
-    channel: 'Store',
-    status: '진행',
-    recruit_count: 300,
-    apply_count: 1,
-    point: 0,
-  },
-  {
-    id: '5',
-    campaign_number: '000001',
-    partner_name: '(주)청명종합광고기획',
-    campaign_name: '200만원 울써마지 시술 지원! 인플루언서 체험단 모집✨',
-    type: '배송형',
-    channel: 'Instagram',
-    status: '진행',
-    recruit_count: 1000,
-    apply_count: 27,
-    point: 0,
-  },
-  {
-    id: '6',
-    campaign_number: '000001',
-    partner_name: '라움태닝 송파점',
-    campaign_name: '라움태닝 송파점 체험단모집',
-    type: '방문형',
-    channel: 'Reels',
-    status: '종료',
-    recruit_count: 2,
-    apply_count: 363,
-    point: 0,
-  },
-  {
-    id: '7',
-    campaign_number: '000001',
-    partner_name: '탄츠스튜디오',
-    campaign_name: '[클래스 참여] 현대무용 탄츠 스튜디오 - 탄츠림 TANZREEM',
-    type: '방문형',
-    channel: 'Shorts',
-    status: '긴급',
-    recruit_count: 5,
-    apply_count: 28,
-    point: 0,
-  },
-  {
-    id: '8',
-    campaign_number: '000001',
-    partner_name: '캠프빌리지 김천지례점',
-    campaign_name: '[김천] 캠프빌리지 김천지례점',
-    type: '미션형',
-    channel: 'Mission',
-    status: '진행',
-    recruit_count: 10,
-    apply_count: 56,
-    point: 10000,
-  },
-  {
-    id: '9',
-    campaign_number: '000001',
-    partner_name: '노원조개창고',
-    campaign_name: '노원조개창고 체험단 모집',
-    type: '미션형',
-    channel: 'Mission',
-    status: '진행',
-    recruit_count: 10,
-    apply_count: 56,
-    point: 10000,
-  },
-  {
-    id: '10',
-    campaign_number: '000001',
-    partner_name: '(주)청명종합광고기획',
-    campaign_name: '푸러블 고농축 캡슐세제 플라워향, 1개, 110개입',
-    type: '미션형',
-    channel: 'Mission',
-    status: '진행',
-    recruit_count: 10,
-    apply_count: 56,
-    point: 10000,
-  },
-  {
-    id: '11',
-    campaign_number: '000001',
-    partner_name: '(주)청명종합광고기획',
-    campaign_name: '푸러블 고농축 캡슐세제 플라워향, 1개, 110개입',
-    type: '기자단',
-    channel: 'Youtube',
-    status: '종료',
-    recruit_count: 10,
-    apply_count: 56,
-    point: 10000,
-  },
-  {
-    id: '12',
-    campaign_number: '000001',
-    partner_name: '(주)청명종합광고기획',
-    campaign_name: '푸러블 고농축 캡슐세제 플라워향, 1개, 110개입',
-    type: '기자단',
-    channel: 'Shorts',
-    status: '종료',
-    recruit_count: 10,
-    apply_count: 56,
-    point: 10000,
-  },
-  {
-    id: '13',
-    campaign_number: '000001',
-    partner_name: '(주)청명종합광고기획',
-    campaign_name: '푸러블 고농축 캡슐세제 플라워향, 1개, 110개입',
-    type: '미션형',
-    channel: 'Mission',
-    status: '종료',
-    recruit_count: 10,
-    apply_count: 56,
-    point: 10000,
-  },
-  {
-    id: '14',
-    campaign_number: '000001',
-    partner_name: '(주)청명종합광고기획',
-    campaign_name: '푸러블 고농축 캡슐세제 플라워향, 1개, 110개입',
-    type: '미션형',
-    channel: 'Mission',
-    status: '종료',
-    recruit_count: 10,
-    apply_count: 56,
-    point: 10000,
-  },
-  {
-    id: '15',
-    campaign_number: '000001',
-    partner_name: '(주)청명종합광고기획',
-    campaign_name: '푸러블 고농축 캡슐세제 플라워향, 1개, 110개입',
-    type: '미션형',
-    channel: 'Mission',
-    status: '종료',
-    recruit_count: 10,
-    apply_count: 56,
-    point: 10000,
-  },
-  {
-    id: '16',
-    campaign_number: '000001',
-    partner_name: '(주)청명종합광고기획',
-    campaign_name: '푸러블 고농축 캡슐세제 플라워향, 1개, 110개입',
-    type: '미션형',
-    channel: 'Mission',
-    status: '종료',
-    recruit_count: 10,
-    apply_count: 56,
-    point: 10000,
-  },
-  {
-    id: '17',
-    campaign_number: '000001',
-    partner_name: '(주)청명종합광고기획',
-    campaign_name: '푸러블 고농축 캡슐세제 플라워향, 1개, 110개입',
-    type: '미션형',
-    channel: 'Mission',
-    status: '종료',
-    recruit_count: 10,
-    apply_count: 56,
-    point: 10000,
-  },
-  {
-    id: '18',
-    campaign_number: '000001',
-    partner_name: '(주)청명종합광고기획',
-    campaign_name: '푸러블 고농축 캡슐세제 플라워향, 1개, 110개입',
-    type: '미션형',
-    channel: 'Mission',
-    status: '종료',
-    recruit_count: 10,
-    apply_count: 56,
-    point: 10000,
-  },
+  // 배송형 캠페인 변환
+  ...deliveryCampaigns.map(convert_delivery_to_progress_item),
+  // 미션형 캠페인 변환
+  ...missionCampaigns.map(convert_mission_to_progress_item),
+  // 기자단 캠페인 변환
+  ...reporterCampaigns.map(convert_reporter_to_progress_item),
+  // 구매평 캠페인 변환
+  ...reviewCampaigns.map(convert_review_to_progress_item),
+  // 방문형 캠페인 변환
+  ...visitCampaigns.map(convert_visit_to_progress_item),
 ];
-

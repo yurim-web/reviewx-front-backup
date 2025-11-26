@@ -18,7 +18,7 @@
  * - 인라인 스타일: style prop으로 동적 너비 설정
  */
 
-import styles from '@/styles/manager_ga/sections/campaign_summary_section.module.css';
+import styles from '@/styles/manager_ga/dashboard/sections/campaign_summary_section.module.css';
 
 // 통계 카드 데이터 타입 정의
 export interface StatCardData {

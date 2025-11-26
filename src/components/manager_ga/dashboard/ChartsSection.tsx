@@ -18,7 +18,7 @@
  * - 컴포넌트 조합: 여러 섹션 컴포넌트를 하나의 그리드로 배치
  */
 
-import styles from '@/styles/manager_ga/charts.module.css';
+import styles from '@/styles/manager_ga/dashboard/charts.module.css';
 import CampaignRecruitmentSection from './section/CampaignRecruitmentSection';
 import RejectionReportSection from './section/RejectionReportSection';
 import AccessStatsSection from './section/AccessStatsSection';

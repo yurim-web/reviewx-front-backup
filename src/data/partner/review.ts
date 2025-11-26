@@ -39,6 +39,7 @@ export interface ReviewCampaignDataItem {
     totalCount: number; // 총 모집 인원 수
     daysLeft: number; // 남은 일수 (양수면 남은 일수, 음수면 지난 일수)
     statusText?: string; // 상태 텍스트 (예: "캠페인 콘텐츠를 검수해 주세요.", 선택사항)
+    partnerName?: string; // 파트너명 (예: "(주)구매평마케팅")
   };
   // 신청자 데이터 (선택사항 - 진행/예정/신청 캠페인에만 있음)
   applicantData?: {
@@ -130,6 +131,7 @@ export const reviewClosedCampaigns: ReviewCampaignDataItem[] = [
       campaignType: "구매평",
       category: "식품",
       brandName: "",
+      partnerName: "(주)구매평마케팅",
       recruitmentPeriod: "2024-03-01 ~ 2024-03-07",
       announcementDate: "2024-03-07",
       registrationPeriod: "2024-03-09 ~ 2024-03-15",
@@ -279,6 +281,7 @@ export const reviewCampaigns: ReviewCampaignDataItem[] = [
       campaignType: "구매평",
       category: "식품",
       brandName: "",
+      partnerName: "(주)구매평마케팅",
       recruitmentPeriod: "2024-01-15 ~ 2024-01-22",
       announcementDate: "2024-01-22",
       purchasePeriod: "2024-01-23 ~ 2024-01-25",
@@ -486,6 +489,7 @@ export const reviewCampaigns: ReviewCampaignDataItem[] = [
       campaignType: "구매평",
       category: "식품",
       brandName: "",
+      partnerName: "(주)구매평마케팅",
       recruitmentPeriod: "2025-10-22 ~ 2025-11-02",
       announcementDate: "2025-11-02",
       purchasePeriod: "2025-11-03 ~ 2025-11-05",
@@ -507,6 +511,7 @@ export const reviewCampaigns: ReviewCampaignDataItem[] = [
       campaignType: "구매평",
       category: "식품",
       brandName: "",
+      partnerName: "(주)구매평마케팅",
       recruitmentPeriod: "2025-11-05 ~ 2025-11-12",
       announcementDate: "2025-11-12",
       purchasePeriod: "2025-11-13 ~ 2025-11-15",
@@ -527,6 +532,7 @@ export const reviewCampaigns: ReviewCampaignDataItem[] = [
       campaignType: "구매평",
       category: "식품",
       brandName: "기본",
+      partnerName: "(주)구매평마케팅",
       recruitmentPeriod: "2025-11-03 ~ 2025-11-13",
       announcementDate: "2025-11-13",
       purchasePeriod: "2025-11-14 ~ 2025-11-16",

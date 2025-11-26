@@ -28,7 +28,7 @@ import {
   CartesianGrid,
   Legend,
 } from 'recharts';
-import styles from '@/styles/manager_ga/charts.module.css';
+import styles from '@/styles/manager_ga/dashboard/charts.module.css';
 
 // 차트 데이터 타입 정의
 interface ChartData {

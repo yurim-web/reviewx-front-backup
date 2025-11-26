@@ -14,7 +14,7 @@
  
  */
 
-import styles from '@/styles/manager_ga/sections/member_activation_section.module.css';
+import styles from '@/styles/manager_ga/dashboard/sections/member_activation_section.module.css';
 import MemberActivationDonutChart from '../chart/MemberActivationDonutChart';
 import { memberActivationStats } from '@/data/manager_ga/dashboard/dashboardData';
 

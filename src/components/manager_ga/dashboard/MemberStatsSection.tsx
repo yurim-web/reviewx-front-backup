@@ -14,7 +14,7 @@
  *
  */
 
-import styles from '@/styles/manager_ga/member_stats.module.css';
+import styles from '@/styles/manager_ga/dashboard/member_stats.module.css';
 import MemberActivationSection from './section/MemberActivationSection';
 import MemberTypeSection from './section/MemberTypeSection';
 import ChannelMemberSection from './section/ChannelMemberSection';

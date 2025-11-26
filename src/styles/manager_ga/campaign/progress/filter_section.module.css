@@ -1,0 +1,93 @@
+/* ========================================
+   🔍 필터 섹션 스타일
+   ======================================== */
+
+/**
+ * 필터 섹션 관련 스타일
+ * 
+ * 사용 컴포넌트:
+ * - FilterSection.tsx (필터 섹션 컴포넌트)
+ * 
+ * 사용 페이지:
+ * - /manager_ga/progress (GA 관리자 진행 현황)
+ */
+
+/* 필터 섹션 */
+.filter_section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+/* 필터 아이템 */
+.filter_item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  height: 40px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+  position: relative;
+}
+
+/* 필터 아이콘 (작은 회색 사각형) */
+.filter_icon {
+  width: 16px;
+  height: 16px;
+  background-color: #d9d9d9;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* 검색 아이콘 */
+.search_icon {
+  width: 16px;
+  height: 16px;
+  background-color: transparent;
+  flex-shrink: 0;
+  /* TODO: 실제 검색 아이콘 이미지로 교체 */
+}
+
+/* 체크박스 아이콘 */
+.checkbox_icon {
+  width: 16px;
+  height: 16px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background-color: white;
+  flex-shrink: 0;
+}
+
+/* 드롭다운 화살표 */
+.dropdown_arrow {
+  width: 16px;
+  height: 16px;
+  background-color: transparent;
+  flex-shrink: 0;
+  /* TODO: 실제 드롭다운 화살표 아이콘으로 교체 */
+}
+
+/* 신고 아이콘 */
+.report_icon {
+  width: 16px;
+  height: 16px;
+  background-color: transparent;
+  flex-shrink: 0;
+  /* TODO: 실제 신고 아이콘으로 교체 */
+}
+
+/* 필터 텍스트 */
+.filter_text {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  color: #444444;
+  white-space: nowrap;
+}
+

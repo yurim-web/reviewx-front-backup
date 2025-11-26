@@ -1,0 +1,146 @@
+/* ========================================
+   📋 캠페인 테이블 스타일
+   ======================================== */
+
+/**
+ * 캠페인 테이블 관련 스타일
+ * 
+ * 사용 컴포넌트:
+ * - CampaignTable.tsx (캠페인 테이블 컴포넌트)
+ * 
+ * 사용 페이지:
+ * - /manager_ga/progress (GA 관리자 진행 현황)
+ */
+
+/* 테이블 섹션 */
+.table_section {
+  width: 100%;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: white;
+  /* 큰 화면에서도 좌우 여백을 제거해 표가 가득 차 보이도록 함 */
+  margin-top: 8px;
+}
+
+/* 테이블 헤더 */
+.table_header {
+  display: grid;
+  /* 고정 픽셀 대신 fr 단위를 사용해 가로 폭을 유연하게 채움 */
+  grid-template-columns:
+    60px
+    0.14fr
+    0.2fr
+    minmax(360px, 1.2fr)
+    0.16fr
+    0.14fr
+    0.16fr
+    0.16fr
+    0.16fr
+    0.2fr;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #d9d9d9;
+  padding: 0;
+  align-items: center;
+}
+
+/* 테이블 헤더 셀 */
+.table_header_cell {
+  padding: 16px 12px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  color: #848484;
+  text-align: left;
+}
+
+/* 테이블 헤더 체크박스 셀 */
+.table_header_cell_checkbox {
+  padding: 16px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 테이블 행 */
+.table_row {
+  display: grid;
+  /* 헤더와 동일한 컬럼 정의를 공유해 정렬 유지 */
+  grid-template-columns:
+    60px
+    0.14fr
+    0.2fr
+    minmax(360px, 1.2fr)
+    0.16fr
+    0.14fr
+    0.16fr
+    0.16fr
+    0.16fr
+    0.2fr;
+  border-bottom: 1px solid #d9d9d9;
+  align-items: center;
+  min-height: 72px;
+  transition: background-color 0.2s;
+}
+
+/* 테이블 행 호버 */
+.table_row:hover {
+  background-color: #f9f9f9;
+}
+
+/* 테이블 셀 */
+.table_cell {
+  padding: 16px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  color: #444444;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 테이블 셀 - 캠페인명 (긴 텍스트 처리) */
+.table_cell_campaign_name {
+  padding: 16px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  color: #444444;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 캠페인명 링크 스타일 */
+.table_cell_link {
+  color: #444444;
+  text-decoration: none;
+}
+
+.table_cell_link:hover,
+.table_cell_link:focus {
+  text-decoration: underline;
+}
+
+/* 테이블 체크박스 셀 */
+.table_cell_checkbox {
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 체크박스 */
+.checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #444444;
+}
+

@@ -19,7 +19,7 @@
  * - CSS Modules: className으로 스타일을 적용합니다
  */
 
-import styles from '@/styles/manager_ga/progress.module.css';
+import styles from '@/styles/manager_ga/campaign/progress/tags.module.css';
 
 // 캠페인 유형 타입 정의
 export type CampaignType = '배송형' | '방문형' | '구매평' | '기자단' | '미션형';

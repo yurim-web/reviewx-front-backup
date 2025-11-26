@@ -16,8 +16,8 @@
 
 'use client';
 
-import chartStyles from '@/styles/manager_ga/charts.module.css';
-import deviceStyles from '@/styles/manager_ga/device_stats.module.css';
+import chartStyles from '@/styles/manager_ga/dashboard/charts.module.css';
+import deviceStyles from '@/styles/manager_ga/dashboard/device_stats.module.css';
 
 /* ========================================
    📊 디바이스 통계 차트 (Progress Bar 버전)

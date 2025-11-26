@@ -18,7 +18,7 @@
  * - 비율 표시: 각 채널별 등록 수와 비율을 함께 표시
  */
 
-import styles from '@/styles/manager_ga/sections/channel_member_section.module.css';
+import styles from '@/styles/manager_ga/dashboard/sections/channel_member_section.module.css';
 import ChannelMemberPieChart from '../chart/ChannelMemberPieChart';
 import { channelMemberStats } from '@/data/manager_ga/dashboard/dashboardData';
 

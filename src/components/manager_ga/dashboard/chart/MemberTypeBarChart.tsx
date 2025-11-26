@@ -28,7 +28,7 @@ import {
   Cell,
   Legend,
 } from 'recharts';
-import styles from '@/styles/manager_ga/device_stats.module.css';
+import styles from '@/styles/manager_ga/dashboard/device_stats.module.css';
 
 import { memberTypeBarData, MemberTypeBarData } from '@/data/manager_ga/dashboard/dashboardData';
 import { use_bar_chart_click_handler } from './chart_event_handlers';
