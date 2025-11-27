@@ -1,0 +1,76 @@
+/* ========================================
+   📋 반려 코드 안내 섹션 스타일
+   ======================================== */
+
+/**
+ * 반려 코드 안내 섹션 관련 스타일
+ * 
+ * 사용 컴포넌트:
+ * - RejectCodeInfoSection.tsx (반려 코드 안내 섹션 컴포넌트)
+ * 
+ * 사용 페이지:
+ * - /manager_ga/campaign/rejected (GA 관리자 반려내역)
+ */
+
+/* 섹션 제목 - 박스 바깥에 배치 */
+.section_title {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  color: #444444;
+}
+.reject_code_info_section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* 반려 코드 안내 섹션 - 제목을 제외한 박스 영역 */
+.reject_code_section {
+  background-color: #f9f9f9;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+/* 반려 코드 그리드 */
+.reject_code_grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 20px;
+}
+
+/* 반려 코드 아이템 */
+.reject_code_item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 반려 코드 */
+.reject_code {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  color: #444444;
+}
+
+/* 반려 코드 카테고리 */
+.reject_code_category {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  color: #444444;
+}
+
+/* 반려 코드 사유 */
+.reject_code_reason {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  color: #444444;
+}
