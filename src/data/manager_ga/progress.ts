@@ -54,7 +54,6 @@ export type Channel =
 export interface StatCard {
   title: string; // 카드 제목
   value: string; // 통계 값
-  color?: string; // 값 색상 (기본: #444444, 빨간색: #ff2626)
 }
 
 // 캠페인 목록 아이템 타입
@@ -143,11 +142,6 @@ export function calculate_stat_card_values() {
     cancelled: format_count(cancelled_count),
   };
 }
-
-// 취소된 캠페인은 빨간색으로 표시
-export const stat_card_colors = {
-  cancelled: '#ff2626', // 취소된 캠페인 색상
-};
 
 /* ========================================
    🔄 데이터 변환 함수
@@ -246,14 +240,14 @@ function convert_delivery_to_progress_item(
   return {
     id: campaignInfo.id,
     campaign_number: format_campaign_number(campaignInfo.id),
-    partner_name: campaignInfo.partnerName ?? '(주)청명종합광고기획', // 파트너명 (데이터에서 가져오거나 기본값 사용)
+    partner_name: campaignInfo.partnerName ?? '', // 파트너명 (데이터가 없으면 빈 문자열)
     campaign_name: campaignInfo.title,
     type: '배송형',
     channel: map_brand_name_to_channel(campaignInfo.brandName, '배송형'),
     status: map_status_to_progress_status(campaignInfo.status),
     recruit_count: campaignInfo.totalCount,
     apply_count: applicantData?.applicants?.length ?? 0,
-    point: 0, // 기본값 (실제 데이터에는 없음)
+    point: campaignInfo.point ?? 0, // 지급 포인트 (데이터에 없으면 0)
     detail_campaign_id: campaignInfo.id,
   };
 }
@@ -272,14 +266,14 @@ function convert_mission_to_progress_item(
   return {
     id: campaignInfo.id,
     campaign_number: format_campaign_number(campaignInfo.id),
-    partner_name: campaignInfo.partnerName ?? '(주)청명종합광고기획', // 파트너명 (데이터에서 가져오거나 기본값 사용)
+    partner_name: campaignInfo.partnerName ?? '', // 파트너명 (데이터가 없으면 빈 문자열)
     campaign_name: campaignInfo.title,
     type: '미션형',
     channel: map_brand_name_to_channel(campaignInfo.brandName, '미션형'),
     status: map_status_to_progress_status(campaignInfo.status),
     recruit_count: campaignInfo.totalCount,
     apply_count: applicantData?.applicants?.length ?? 0,
-    point: 0, // 기본값
+    point: campaignInfo.point ?? 0, // 지급 포인트 (데이터에 없으면 0)
     detail_campaign_id: campaignInfo.id,
   };
 }
@@ -298,14 +292,14 @@ function convert_reporter_to_progress_item(
   return {
     id: campaignInfo.id,
     campaign_number: format_campaign_number(campaignInfo.id),
-    partner_name: campaignInfo.partnerName ?? '(주)청명종합광고기획', // 파트너명 (데이터에서 가져오거나 기본값 사용)
+    partner_name: campaignInfo.partnerName ?? '', // 파트너명 (데이터가 없으면 빈 문자열)
     campaign_name: campaignInfo.title,
     type: '기자단',
     channel: map_brand_name_to_channel(campaignInfo.brandName, '기자단'),
     status: map_status_to_progress_status(campaignInfo.status),
     recruit_count: campaignInfo.totalCount,
     apply_count: applicantData?.applicants?.length ?? 0,
-    point: 0, // 기본값
+    point: campaignInfo.point ?? 0, // 지급 포인트 (데이터에 없으면 0)
     detail_campaign_id: campaignInfo.id,
   };
 }
@@ -324,14 +318,14 @@ function convert_review_to_progress_item(
   return {
     id: campaignInfo.id,
     campaign_number: format_campaign_number(campaignInfo.id),
-    partner_name: campaignInfo.partnerName ?? '(주)청명종합광고기획', // 파트너명 (데이터에서 가져오거나 기본값 사용)
+    partner_name: campaignInfo.partnerName ?? '', // 파트너명 (데이터가 없으면 빈 문자열)
     campaign_name: campaignInfo.title,
     type: '구매평',
     channel: map_brand_name_to_channel(campaignInfo.brandName, '구매평'),
     status: map_status_to_progress_status(campaignInfo.status),
     recruit_count: campaignInfo.totalCount,
     apply_count: applicantData?.applicants?.length ?? 0,
-    point: 0, // 기본값
+    point: campaignInfo.point ?? 0, // 지급 포인트 (데이터에 없으면 0)
     detail_campaign_id: campaignInfo.id,
   };
 }
@@ -350,14 +344,14 @@ function convert_visit_to_progress_item(
   return {
     id: campaignInfo.id,
     campaign_number: format_campaign_number(campaignInfo.id),
-    partner_name: campaignInfo.partnerName ?? '(주)청명종합광고기획', // 파트너명 (데이터에서 가져오거나 기본값 사용)
+    partner_name: campaignInfo.partnerName ?? '', // 파트너명 (데이터가 없으면 빈 문자열)
     campaign_name: campaignInfo.title,
     type: '방문형',
     channel: map_brand_name_to_channel(campaignInfo.brandName, '방문형'),
     status: map_status_to_progress_status(campaignInfo.status),
     recruit_count: campaignInfo.totalCount,
     apply_count: applicantData?.applicants?.length ?? 0,
-    point: 0, // 기본값
+    point: campaignInfo.point ?? 0, // 지급 포인트 (데이터에 없으면 0)
     detail_campaign_id: campaignInfo.id,
   };
 }

@@ -3,23 +3,91 @@
    ======================================== */
 
 /* ========== 페이지 헤더 ========== */
-/* 페이지 상단 제목 영역 (상단 고정) */
+/* 
+ * 페이지 상단 제목 영역 (상단 고정)
+ * 
+ * 학습 포인트:
+ * - position: sticky; 스크롤 시 상단에 고정되는 레이아웃을 만듭니다
+ * - display: flex; Flexbox 레이아웃을 사용하여 요소들을 가로로 배치합니다
+ * - justify-content: space-between; 좌우 끝에 요소를 배치합니다
+ */
 .page_header {
-  position: sticky;
-  top: 80px;
-  z-index: 10;
-  padding: 24px 40px;
-  border-bottom: 1px solid #d9d9d9;
-  background-color: white;
+  position: sticky; /* 스크롤 시 상단에 고정 */
+  top: 80px; /* 헤더 높이(80px) 아래에 고정 */
+  z-index: 10; /* 다른 요소 위에 표시되도록 설정 */
+  padding: 24px 40px; /* 상하 24px, 좌우 40px 여백 */
+  border-bottom: 1px solid #d9d9d9; /* 하단 테두리 */
+  background-color: white; /* 배경색 */
+  display: flex; /* Flexbox 레이아웃 사용 */
+  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: space-between; /* 좌우 끝에 요소 배치 */
 }
 
-/* 페이지 제목 */
+/* 
+ * 페이지 제목 스타일
+ * 
+ * 학습 포인트:
+ * - margin: 0; 기본 마진 제거 (브라우저 기본 스타일 초기화)
+ * - font-weight: 700; 굵은 글씨 (bold)
+ */
 .page_title {
-  color: #444;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 20px; /* 100% */
-  letter-spacing: -0.4px;
+  color: #444; /* 텍스트 색상 */
+  font-size: 20px; /* 폰트 크기 */
+  font-weight: 700; /* 굵은 글씨 */
+  line-height: 20px; /* 줄 높이 (100%) */
+  letter-spacing: -0.4px; /* 자간 조정 */
+  margin: 0; /* 기본 마진 제거 */
+}
+
+/* 
+ * 캠페인 보기 버튼 스타일
+ * 
+ * 학습 포인트:
+ * - display: flex; 버튼 내부 요소들을 가로로 배치
+ * - gap: 4px; 요소 사이 간격
+ * - cursor: pointer; 마우스 오버 시 손가락 커서 표시
+ * - transition: opacity 0.2s; 호버 효과를 위한 전환 애니메이션
+ */
+.view_campaign_button {
+  display: flex; /* Flexbox 레이아웃 */
+  align-items: center; /* 세로 중앙 정렬 */
+  gap: 4px; /* 요소 사이 간격 */
+  background: none; /* 배경 없음 */
+  border: none; /* 테두리 없음 */
+  cursor: pointer; /* 포인터 커서 */
+  color: #444; /* 텍스트 색상 */
+  font-size: 16px; /* 폰트 크기 */
+  font-weight: 500; /* 중간 굵기 */
+  line-height: 16px; /* 줄 높이 */
+  letter-spacing: -0.32px; /* 자간 조정 */
+  padding: 0; /* 내부 여백 없음 */
+  transition: opacity 0.2s; /* 투명도 전환 효과 (0.2초) */
+}
+
+/* 
+ * 버튼 호버 효과
+ * 
+ * 학습 포인트:
+ * - :hover 가상 클래스: 마우스를 올렸을 때의 스타일
+ * - opacity: 0.7; 투명도를 70%로 설정하여 시각적 피드백 제공
+ */
+.view_campaign_button:hover {
+  opacity: 0.7; /* 호버 시 투명도 70% */
+}
+
+/* 
+ * 버튼 내부 아이콘 컨테이너
+ * 
+ * 학습 포인트:
+ * - display: flex; 아이콘을 중앙 정렬하기 위해 사용
+ * - width, height: 아이콘 크기 지정
+ */
+.view_campaign_button_icon {
+  width: 16px; /* 너비 */
+  height: 16px; /* 높이 */
+  display: flex; /* Flexbox 레이아웃 */
+  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: center; /* 가로 중앙 정렬 */
 }
 
 /* ========== 전체 컨텐츠 영역 ========== */
@@ -37,6 +105,34 @@
   align-items: center;
   justify-content: space-between;
   padding: 24px 40px;
+}
+
+/* 신고 버튼 스타일 */
+.report_button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: white;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.report_button_icon {
+  width: 16px;
+  height: 16px;
+  display: block;
+  object-fit: contain;
+}
+
+.report_button_text {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
 }
 
 /* ========== 탭 네비게이션 ========== */
@@ -88,7 +184,7 @@
 
 /* 활성화된 탭 밑줄 */
 .tab_button.active::after {
-  content: "";
+  content: '';
   position: absolute;
   bottom: 0;
   left: 0;

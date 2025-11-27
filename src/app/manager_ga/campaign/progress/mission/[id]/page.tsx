@@ -1,8 +1,16 @@
 /* ========================================
-   🛒 GA 관리자 구매평 캠페인 상세 페이지 (동적)
+   🎯 GA 관리자 미션형 캠페인 상세 페이지 (동적)
    ======================================== */
 
 'use client';
+
+/**
+ * 미션형 캠페인 진행 현황 상세 페이지 (GA 관리자 버전)
+ *
+ * - 경로: /manager_ga/campaign/progress/mission/[id]
+ * - 파트너 신청내역 페이지 로직을 재사용해 GA 관리자도 동일한 학습 경험 제공
+ * - BasicCard/BasicSelectedCard만 사용 (채널 구분 없음)
+ */
 
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
@@ -24,7 +32,7 @@ import {
 import { type BasicApplicant } from '@/data/partner/campaign_application/delivery_applicants';
 import detailStyles from '@/styles/manager_ga/campaign_detail.module.css';
 
-export default function ManagerReviewProgressDetailPage() {
+export default function ManagerMissionProgressDetailPage() {
   const params = useParams();
   const search_params = useSearchParams();
   const campaign_id = params.id as string;
@@ -69,7 +77,7 @@ export default function ManagerReviewProgressDetailPage() {
         set_applicants_state(data.applicantData.applicants);
         set_selected_state(data.applicantData.selectedApplicants);
       } catch (error) {
-        console.error('GA 구매평 상세 데이터 로딩 실패:', error);
+        console.error('GA 미션형 상세 데이터 로딩 실패:', error);
         set_error_message('데이터를 불러오는 중 오류가 발생했습니다.');
       } finally {
         set_is_loading(false);
@@ -170,11 +178,11 @@ export default function ManagerReviewProgressDetailPage() {
   };
 
   const handle_download_applicants = () => {
-    console.log('[GA 구매평] 신청자 목록 다운로드');
+    console.log('[GA 미션형] 신청자 목록 다운로드');
   };
 
   const handle_download_selected = () => {
-    console.log('[GA 구매평] 선정자 목록 다운로드');
+    console.log('[GA 미션형] 선정자 목록 다운로드');
   };
 
   return (
@@ -263,3 +271,4 @@ export default function ManagerReviewProgressDetailPage() {
     </div>
   );
 }
+

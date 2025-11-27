@@ -16,8 +16,25 @@
 .filter_section {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
   margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* 왼쪽 필터 그룹 */
+.filter_group_left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* 오른쪽 필터 그룹 */
+.filter_group_right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
@@ -44,13 +61,46 @@
   flex-shrink: 0;
 }
 
+/* 검색 필터 아이템 - 실제 입력창을 위한 스타일 */
+.search_filter_item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  height: 40px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background-color: white;
+  position: relative;
+}
+
 /* 검색 아이콘 */
 .search_icon {
   width: 16px;
   height: 16px;
-  background-color: transparent;
   flex-shrink: 0;
-  /* TODO: 실제 검색 아이콘 이미지로 교체 */
+  display: block;
+  object-fit: contain;
+}
+
+/* 검색 입력창 */
+.search_input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  color: #444444;
+  min-width: 0; /* flex 아이템이 축소될 수 있도록 */
+}
+
+/* 검색 입력창 placeholder 스타일 */
+.search_input::placeholder {
+  color: #999999;
+  font-weight: 400;
 }
 
 /* 체크박스 아이콘 */
@@ -67,18 +117,18 @@
 .dropdown_arrow {
   width: 16px;
   height: 16px;
-  background-color: transparent;
   flex-shrink: 0;
-  /* TODO: 실제 드롭다운 화살표 아이콘으로 교체 */
+  display: block;
+  object-fit: contain;
 }
 
 /* 신고 아이콘 */
 .report_icon {
   width: 16px;
   height: 16px;
-  background-color: transparent;
   flex-shrink: 0;
-  /* TODO: 실제 신고 아이콘으로 교체 */
+  display: block;
+  object-fit: contain;
 }
 
 /* 필터 텍스트 */

@@ -17,15 +17,12 @@
  *
  * 학습 포인트:
  * - JSX에서 컴포넌트를 여러 개 직접 작성하는 방법
- * - props 전달: 각 StatCard 컴포넌트에 title, value, color를 전달합니다
- * - 조건부 prop 전달: color는 취소된 캠페인에만 전달합니다
+ * - props 전달: 각 StatCard 컴포넌트에 title, value를 전달합니다
+ * - 조건부 prop 전달: isCancelled는 취소된 캠페인에만 전달합니다
  */
 
 import StatCard from '../StatCard';
-import {
-  calculate_stat_card_values,
-  stat_card_colors,
-} from '@/data/manager_ga/progress';
+import { calculate_stat_card_values } from '@/data/manager_ga/progress';
 import styles from '@/styles/manager_ga/campaign/progress/stat_card.module.css';
 
 export default function StatCardsSection() {
@@ -60,7 +57,7 @@ export default function StatCardsSection() {
       <StatCard
         title="취소된 캠페인"
         value={stat_card_values.cancelled}
-        color={stat_card_colors.cancelled}
+        isCancelled={true}
       />
     </div>
   );

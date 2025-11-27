@@ -112,7 +112,7 @@ export default function ManagerVisitProgressDetailPage() {
   if (error_message || !campaign_data) {
     return (
       <section className={styles.campaign_application_section}>
-        <PageHeader title="캠페인 진행 현황 · 방문형" />
+        <PageHeader title="캠페인 진행 현황" />
         <div style={{ padding: '40px', textAlign: 'center', color: 'red' }}>
           {error_message}
         </div>
@@ -276,7 +276,7 @@ export default function ManagerVisitProgressDetailPage() {
     <div className={detailStyles.detail_page_wrapper}>
       <div className={detailStyles.content_container}>
         <div className={detailStyles.content_inner}>
-          <PageHeader title="캠페인 진행 현황 · 방문형" />
+          <PageHeader title="캠페인 진행 현황" />
 
           <section className={styles.campaign_application_section}>
             <Campaignbanner campaignInfo={campaign_data.campaignInfo} />
@@ -286,14 +286,36 @@ export default function ManagerVisitProgressDetailPage() {
                 onDownloadApplicants={handle_download_applicants}
                 onDownloadSelected={handle_download_selected}
               />
-              <SortFilterControl
-                options={sort_options}
-                value={sort_order}
-                onChange={(option) =>
-                  set_sort_order(option.value as SortOption)
-                }
-                defaultSort="latest"
-              />
+              <div
+                style={{ display: 'flex', gap: '12px', alignItems: 'center' }}
+              >
+                {/* 신고 버튼 */}
+                <button
+                  type="button"
+                  className={styles.report_button}
+                  onClick={() => {
+                    // TODO: 신고 기능 구현
+                    console.log('신고 버튼 클릭됨');
+                  }}
+                  aria-label="신고"
+                >
+                  <img
+                    src="/images/icons/rerport_icon.svg"
+                    alt="신고"
+                    className={styles.report_button_icon}
+                  />
+                  <span className={styles.report_button_text}>신고</span>
+                </button>
+                {/* 정렬 필터 컨트롤 */}
+                <SortFilterControl
+                  options={sort_options}
+                  value={sort_order}
+                  onChange={(option) =>
+                    set_sort_order(option.value as SortOption)
+                  }
+                  defaultSort="latest"
+                />
+              </div>
             </article>
 
             <article className={styles.tab_navigation}>

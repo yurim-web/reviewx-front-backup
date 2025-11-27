@@ -9,11 +9,11 @@
  * 공통 타입은 sharedCampaigns.ts에서 import하여 사용합니다.
  */
 
-import type { CampaignWithApplicants } from "./campaign_application/delivery_applicants";
-import type { CampaignWithContents } from "./sharedCampaigns";
-import type { ContentByTab, ContentItem } from "./sharedCampaigns";
-import { CampaignFormData } from "@/types/user/user";
-import { calculateCampaignStatus, calculateDaysLeft } from "./delivery";
+import type { CampaignWithApplicants } from './campaign_application/delivery_applicants';
+import type { CampaignWithContents } from './sharedCampaigns';
+import type { ContentByTab, ContentItem } from './sharedCampaigns';
+import { CampaignFormData } from '@/types/user/user';
+import { calculateCampaignStatus, calculateDaysLeft } from './delivery';
 
 /**
  * 미션형 캠페인 통합 데이터 구조
@@ -27,8 +27,8 @@ export interface MissionCampaignDataItem {
     id: string; // 캠페인 고유 식별자
     title: string; // 캠페인 제목
     image: string; // 메인 캠페인 이미지 경로
-    status: "진행 중" | "대기 중" | "모집 중" | "종료" | "취소"; // 캠페인 상태 (모든 상태 포함)
-    campaignType: "미션형"; // 캠페인 타입 (미션형 고정)
+    status: '진행 중' | '대기 중' | '모집 중' | '종료' | '취소'; // 캠페인 상태 (모든 상태 포함)
+    campaignType: '미션형'; // 캠페인 타입 (미션형 고정)
     category: string; // 캠페인 카테고리 (뷰티, 식품, 생활 등)
     brandName: string; // 브랜드명 (플랫폼명, 미션형은 보통 빈 문자열)
     recruitmentPeriod: string; // 모집 기간 (예: "2024-01-12 ~ 2024-01-20")
@@ -39,6 +39,7 @@ export interface MissionCampaignDataItem {
     daysLeft: number; // 남은 일수 (양수면 남은 일수, 음수면 지난 일수)
     statusText?: string; // 상태 텍스트 (예: "캠페인 콘텐츠를 검수해 주세요.", 선택사항)
     partnerName?: string; // 파트너명 (예: "(주)미션프로모션")
+    point?: number; // 지급 포인트 (선택사항)
   };
   // 신청자 데이터 (선택사항 - 진행/예정/신청 캠페인에만 있음)
   applicantData?: {
@@ -46,22 +47,22 @@ export interface MissionCampaignDataItem {
       id: string; // 신청자 고유 식별자
       Id: string; // 신청자 내부 ID
       nickname: string; // 신청자 닉네임
-      userType: "리뷰어" | "인플루언서"; // 사용자 타입
+      userType: '리뷰어' | '인플루언서'; // 사용자 타입
       profileImage: string; // 프로필 이미지 경로
-      memberType: "모범 회원" | "주의 회원" | "경고 회원" | "이용 제한"; // 회원 타입
+      memberType: '모범 회원' | '주의 회원' | '경고 회원' | '이용 제한'; // 회원 타입
       memo: string; // 메모
-      selectionStatus: "미선택" | "선정하기" | "이용제한 계정"; // 선정 상태
+      selectionStatus: '미선택' | '선정하기' | '이용제한 계정'; // 선정 상태
       channel: string; // 채널 정보 (기본)
     }>;
     selectedApplicants: Array<{
       id: string; // 선정된 신청자 고유 식별자
       Id: string; // 선정된 신청자 내부 ID
       nickname: string; // 신청자 닉네임
-      userType: "리뷰어" | "인플루언서"; // 사용자 타입
+      userType: '리뷰어' | '인플루언서'; // 사용자 타입
       profileImage: string; // 프로필 이미지 경로
-      memberType: "모범 회원" | "주의 회원" | "경고 회원" | "이용 제한"; // 회원 타입
+      memberType: '모범 회원' | '주의 회원' | '경고 회원' | '이용 제한'; // 회원 타입
       memo: string; // 메모
-      selectionStatus: "선정하기"; // 선정 상태 (선정된 신청자는 "선정하기" 고정)
+      selectionStatus: '선정하기'; // 선정 상태 (선정된 신청자는 "선정하기" 고정)
       channel: string; // 채널 정보 (기본)
     }>;
   };
@@ -70,8 +71,8 @@ export interface MissionCampaignDataItem {
     reviewing: Array<{
       id: string; // 콘텐츠 고유 식별자
       createdAt: string; // 생성일시 (ISO 8601 형식)
-      status: "검수"; // 콘텐츠 상태
-      userType: "리뷰어" | "인플루언서"; // 사용자 타입
+      status: '검수'; // 콘텐츠 상태
+      userType: '리뷰어' | '인플루언서'; // 사용자 타입
       nickname: string; // 작성자 닉네임
       channelId: string; // 채널 식별자
       channel: string; // 채널명
@@ -84,8 +85,8 @@ export interface MissionCampaignDataItem {
     completed: Array<{
       id: string; // 콘텐츠 고유 식별자
       createdAt: string; // 생성일시 (ISO 8601 형식)
-      status: "완료"; // 콘텐츠 상태
-      userType: "리뷰어" | "인플루언서"; // 사용자 타입
+      status: '완료'; // 콘텐츠 상태
+      userType: '리뷰어' | '인플루언서'; // 사용자 타입
       nickname: string; // 작성자 닉네임
       channelId: string; // 채널 식별자
       channel: string; // 채널명
@@ -123,102 +124,103 @@ export const missionCampaigns: MissionCampaignDataItem[] = [
   // 진행 탭(진행 중) - 기존 미션형 캠페인 (콘텐츠 있음)
   {
     campaignInfo: {
-      id: "16",
-      title: "화장품 브랜드 미션형 모집",
-      image: "/images/main/campaign_img/eximg_4.png",
-      status: "진행 중",
-      campaignType: "미션형",
-      category: "뷰티",
-      brandName: "",
-      partnerName: "(주)미션프로모션",
-      recruitmentPeriod: "2024-01-12 ~ 2024-01-20",
-      announcementDate: "2024-01-20",
-      registrationPeriod: "2024-01-22 ~ 2024-01-30",
+      id: '16',
+      title: '화장품 브랜드 미션형 모집',
+      image: '/images/main/campaign_img/eximg_4.png',
+      status: '진행 중',
+      campaignType: '미션형',
+      category: '뷰티',
+      brandName: '',
+      partnerName: '(주)미션프로모션',
+      recruitmentPeriod: '2024-01-12 ~ 2024-01-20',
+      announcementDate: '2024-01-20',
+      registrationPeriod: '2024-01-22 ~ 2024-01-30',
       recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 10,
       daysLeft: 5,
-      statusText: "캠페인 콘텐츠를 검수해 주세요.",
+      statusText: '캠페인 콘텐츠를 검수해 주세요.',
+      point: 12000, // 지급 포인트
     },
     applicantData: {
       applicants: [
         {
-          id: "app_16_1",
-          Id: "reviewer_16_001",
-          nickname: "미션리뷰어1",
-          userType: "리뷰어",
-          profileImage: "",
-          memberType: "모범 회원",
-          memo: "화장품 미션에 관심이 많습니다.",
-          selectionStatus: "미선택",
-          channel: "기본",
+          id: 'app_16_1',
+          Id: 'reviewer_16_001',
+          nickname: '미션리뷰어1',
+          userType: '리뷰어',
+          profileImage: '',
+          memberType: '모범 회원',
+          memo: '화장품 미션에 관심이 많습니다.',
+          selectionStatus: '미선택',
+          channel: '기본',
         },
         {
-          id: "app_16_2",
-          Id: "reviewer_16_002",
-          nickname: "뷰티미션러",
-          userType: "리뷰어",
-          profileImage: "",
-          memberType: "모범 회원",
-          memo: "뷰티 제품 미션을 자주 참여합니다.",
-          selectionStatus: "미선택",
-          channel: "기본",
+          id: 'app_16_2',
+          Id: 'reviewer_16_002',
+          nickname: '뷰티미션러',
+          userType: '리뷰어',
+          profileImage: '',
+          memberType: '모범 회원',
+          memo: '뷰티 제품 미션을 자주 참여합니다.',
+          selectionStatus: '미선택',
+          channel: '기본',
         },
         {
-          id: "app_16_3",
-          Id: "reviewer_16_003",
-          nickname: "스킨케어전문가",
-          userType: "리뷰어",
-          profileImage: "",
-          memberType: "모범 회원",
-          memo: "스킨케어 제품 미션 전문가입니다.",
-          selectionStatus: "미선택",
-          channel: "기본",
+          id: 'app_16_3',
+          Id: 'reviewer_16_003',
+          nickname: '스킨케어전문가',
+          userType: '리뷰어',
+          profileImage: '',
+          memberType: '모범 회원',
+          memo: '스킨케어 제품 미션 전문가입니다.',
+          selectionStatus: '미선택',
+          channel: '기본',
         },
         {
-          id: "app_16_4",
-          Id: "reviewer_16_004",
-          nickname: "미션마스터",
-          userType: "인플루언서",
-          profileImage: "",
-          memberType: "모범 회원",
-          memo: "다양한 미션에 참여한 경험이 풍부합니다.",
-          selectionStatus: "미선택",
-          channel: "기본",
+          id: 'app_16_4',
+          Id: 'reviewer_16_004',
+          nickname: '미션마스터',
+          userType: '인플루언서',
+          profileImage: '',
+          memberType: '모범 회원',
+          memo: '다양한 미션에 참여한 경험이 풍부합니다.',
+          selectionStatus: '미선택',
+          channel: '기본',
         },
         {
-          id: "app_16_5",
-          Id: "reviewer_16_005",
-          nickname: "제한된계정",
-          userType: "리뷰어",
-          profileImage: "",
-          memberType: "이용 제한",
-          memo: "이용 제한 계정입니다.",
-          selectionStatus: "이용제한 계정",
-          channel: "기본",
+          id: 'app_16_5',
+          Id: 'reviewer_16_005',
+          nickname: '제한된계정',
+          userType: '리뷰어',
+          profileImage: '',
+          memberType: '이용 제한',
+          memo: '이용 제한 계정입니다.',
+          selectionStatus: '이용제한 계정',
+          channel: '기본',
         },
       ],
       selectedApplicants: [
         {
-          id: "sel_16_1",
-          Id: "selected_16_001",
-          nickname: "선정된미션러1",
-          userType: "리뷰어",
-          profileImage: "",
-          memberType: "모범 회원",
-          memo: "이미 선정된 우수 미션 참여자입니다.",
-          selectionStatus: "선정하기",
-          channel: "기본",
+          id: 'sel_16_1',
+          Id: 'selected_16_001',
+          nickname: '선정된미션러1',
+          userType: '리뷰어',
+          profileImage: '',
+          memberType: '모범 회원',
+          memo: '이미 선정된 우수 미션 참여자입니다.',
+          selectionStatus: '선정하기',
+          channel: '기본',
         },
         {
-          id: "sel_16_2",
-          Id: "selected_16_002",
-          nickname: "프로미션러",
-          userType: "인플루언서",
-          profileImage: "",
-          memberType: "모범 회원",
-          memo: "미션 수행 경험이 풍부한 전문가입니다.",
-          selectionStatus: "선정하기",
-          channel: "기본",
+          id: 'sel_16_2',
+          Id: 'selected_16_002',
+          nickname: '프로미션러',
+          userType: '인플루언서',
+          profileImage: '',
+          memberType: '모범 회원',
+          memo: '미션 수행 경험이 풍부한 전문가입니다.',
+          selectionStatus: '선정하기',
+          channel: '기본',
         },
       ],
     },
@@ -231,111 +233,111 @@ export const missionCampaigns: MissionCampaignDataItem[] = [
     contents: {
       reviewing: [
         {
-          id: "m-r-1",
-          createdAt: "2025-01-15T16:00:00.000Z",
-          status: "검수",
-          userType: "리뷰어",
-          nickname: "미션리뷰어1",
-          channelId: "mission_user_001",
-          channel: "",
-          actionType: "2",
-          missionType: "1",
+          id: 'm-r-1',
+          createdAt: '2025-01-15T16:00:00.000Z',
+          status: '검수',
+          userType: '리뷰어',
+          nickname: '미션리뷰어1',
+          channelId: 'mission_user_001',
+          channel: '',
+          actionType: '2',
+          missionType: '1',
         },
         {
-          id: "m-r-2",
-          createdAt: "2025-01-15T16:30:00.000Z",
-          status: "검수",
-          userType: "인플루언서",
-          nickname: "미션인플루언서1",
-          channelId: "mission_user_002",
-          channel: "",
-          actionType: "2",
-          missionType: "1",
-          updatedAt: "2025-01-15T17:00:00.000Z",
+          id: 'm-r-2',
+          createdAt: '2025-01-15T16:30:00.000Z',
+          status: '검수',
+          userType: '인플루언서',
+          nickname: '미션인플루언서1',
+          channelId: 'mission_user_002',
+          channel: '',
+          actionType: '2',
+          missionType: '1',
+          updatedAt: '2025-01-15T17:00:00.000Z',
         },
         {
-          id: "m-r-3",
-          createdAt: "2025-01-15T17:15:00.000Z",
-          status: "검수",
-          userType: "리뷰어",
-          nickname: "미션리뷰어2",
-          channelId: "mission_user_003",
-          channel: "",
-          actionType: "2",
-          missionType: "4",
+          id: 'm-r-3',
+          createdAt: '2025-01-15T17:15:00.000Z',
+          status: '검수',
+          userType: '리뷰어',
+          nickname: '미션리뷰어2',
+          channelId: 'mission_user_003',
+          channel: '',
+          actionType: '2',
+          missionType: '4',
           isRejected: true,
         },
         {
-          id: "m-r-4",
-          createdAt: "2025-01-15T17:45:00.000Z",
-          status: "검수",
-          userType: "인플루언서",
-          nickname: "미션인플루언서2",
-          channelId: "mission_user_004",
-          channel: "",
-          actionType: "2",
-          missionType: "1",
+          id: 'm-r-4',
+          createdAt: '2025-01-15T17:45:00.000Z',
+          status: '검수',
+          userType: '인플루언서',
+          nickname: '미션인플루언서2',
+          channelId: 'mission_user_004',
+          channel: '',
+          actionType: '2',
+          missionType: '1',
           isLate: true,
         },
         {
-          id: "m-r-5",
-          createdAt: "2025-01-15T18:10:00.000Z",
-          status: "검수",
-          userType: "리뷰어",
-          nickname: "미션리뷰어3",
-          channelId: "mission_user_005",
-          channel: "",
-          actionType: "2",
-          missionType: "4",
+          id: 'm-r-5',
+          createdAt: '2025-01-15T18:10:00.000Z',
+          status: '검수',
+          userType: '리뷰어',
+          nickname: '미션리뷰어3',
+          channelId: 'mission_user_005',
+          channel: '',
+          actionType: '2',
+          missionType: '4',
           isRejected: true,
         },
         {
-          id: "m-r-6",
-          createdAt: "2025-01-15T18:30:00.000Z",
-          status: "검수",
-          userType: "인플루언서",
-          nickname: "미션인플루언서3",
-          channelId: "mission_user_006",
-          channel: "",
-          actionType: "2",
-          missionType: "4",
+          id: 'm-r-6',
+          createdAt: '2025-01-15T18:30:00.000Z',
+          status: '검수',
+          userType: '인플루언서',
+          nickname: '미션인플루언서3',
+          channelId: 'mission_user_006',
+          channel: '',
+          actionType: '2',
+          missionType: '4',
           isRejected: true,
         },
       ],
       completed: [
         {
-          id: "m-c-1",
-          createdAt: "2025-01-13T09:00:00.000Z",
-          status: "완료",
-          userType: "리뷰어",
-          nickname: "미션완료리뷰어1",
-          channelId: "mission_user_005",
-          channel: "",
-          actionType: "2",
-          missionType: "7",
+          id: 'm-c-1',
+          createdAt: '2025-01-13T09:00:00.000Z',
+          status: '완료',
+          userType: '리뷰어',
+          nickname: '미션완료리뷰어1',
+          channelId: 'mission_user_005',
+          channel: '',
+          actionType: '2',
+          missionType: '7',
         },
         {
-          id: "m-c-2",
-          createdAt: "2025-01-13T10:00:00.000Z",
-          status: "완료",
-          userType: "인플루언서",
-          nickname: "미션완료인플루언서1",
-          channelId: "mission_user_006",
-          channel: "",
-          actionType: "2",
-          missionType: "7",
-          updatedAt: "2025-01-13T11:00:00.000Z",
+          id: 'm-c-2',
+          createdAt: '2025-01-13T10:00:00.000Z',
+          status: '완료',
+          userType: '인플루언서',
+          nickname: '미션완료인플루언서1',
+          channelId: 'mission_user_006',
+          channel: '',
+          actionType: '2',
+          missionType: '7',
+          updatedAt: '2025-01-13T11:00:00.000Z',
         },
         {
-          id: "m-c-3",
-          createdAt: "2025-01-13T11:30:00.000Z",
-          status: "완료",
-          userType: "리뷰어",
-          nickname: "미션완료리뷰어2",
-          channelId: "mission_user_007",
-          channel: "",
-          actionType: "2",
-          missionType: "7",
+          id: 'm-c-3',
+          createdAt: '2025-01-13T11:30:00.000Z',
+          status: '완료',
+          userType: '리뷰어',
+          nickname: '미션완료리뷰어2',
+          channelId: 'mission_user_007',
+          channel: '',
+          actionType: '2',
+          missionType: '7',
           isLate: true,
         },
       ],
@@ -345,21 +347,22 @@ export const missionCampaigns: MissionCampaignDataItem[] = [
   // 진행 탭(진행 중) - 콘텐츠 있음 (2버튼 표시)
   {
     campaignInfo: {
-      id: "965",
-      title: "[진행] 미션형 새 테스트 캠페인",
-      image: "/images/main/campaign_img/eximg_4.png",
-      status: "진행 중" as const,
-      campaignType: "미션형",
-      category: "뷰티",
-      brandName: "",
-      partnerName: "(주)미션프로모션",
-      recruitmentPeriod: "2025-10-25 ~ 2025-11-05",
-      announcementDate: "2025-11-05",
-      registrationPeriod: "2025-11-06 ~ 2025-11-14",
+      id: '965',
+      title: '[진행] 미션형 새 테스트 캠페인',
+      image: '/images/main/campaign_img/eximg_4.png',
+      status: '진행 중' as const,
+      campaignType: '미션형',
+      category: '뷰티',
+      brandName: '',
+      partnerName: '(주)미션프로모션',
+      recruitmentPeriod: '2025-10-25 ~ 2025-11-05',
+      announcementDate: '2025-11-05',
+      registrationPeriod: '2025-11-06 ~ 2025-11-14',
       recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 12,
       daysLeft: 5,
-      statusText: "캠페인 콘텐츠를 검수해 주세요.",
+      statusText: '캠페인 콘텐츠를 검수해 주세요.',
+      point: 15000, // 지급 포인트
     },
     applicantData: { applicants: [], selectedApplicants: [] },
     // 콘텐츠 데이터: 각 캠페인 정보 아래에 콘텐츠 목록 포함
@@ -368,98 +371,98 @@ export const missionCampaigns: MissionCampaignDataItem[] = [
     contents: {
       reviewing: [
         {
-          id: "965-r-1",
-          createdAt: "2025-11-03T10:00:00.000Z",
-          status: "검수",
-          userType: "리뷰어",
-          nickname: "965-검수-이미지+링크",
-          channelId: "ms_965_r_1",
-          channel: "",
-          actionType: "2",
-          missionType: "1",
+          id: '965-r-1',
+          createdAt: '2025-11-03T10:00:00.000Z',
+          status: '검수',
+          userType: '리뷰어',
+          nickname: '965-검수-이미지+링크',
+          channelId: 'ms_965_r_1',
+          channel: '',
+          actionType: '2',
+          missionType: '1',
         },
         {
-          id: "965-r-2",
-          createdAt: "2025-11-03T10:20:00.000Z",
-          status: "검수",
-          userType: "리뷰어",
-          nickname: "965-검수-이미지+링크",
-          channelId: "ms_965_r_2",
-          channel: "",
-          actionType: "2",
-          missionType: "1",
-          updatedAt: "2025-11-03T10:40:00.000Z",
+          id: '965-r-2',
+          createdAt: '2025-11-03T10:20:00.000Z',
+          status: '검수',
+          userType: '리뷰어',
+          nickname: '965-검수-이미지+링크',
+          channelId: 'ms_965_r_2',
+          channel: '',
+          actionType: '2',
+          missionType: '1',
+          updatedAt: '2025-11-03T10:40:00.000Z',
         },
         {
-          id: "965-r-3",
-          createdAt: "2025-11-03T10:35:00.000Z",
-          status: "검수",
-          userType: "인플루언서",
-          nickname: "965-검수-이미지+링크",
-          channelId: "ms_965_r_3",
-          channel: "",
-          actionType: "2",
-          missionType: "1",
+          id: '965-r-3',
+          createdAt: '2025-11-03T10:35:00.000Z',
+          status: '검수',
+          userType: '인플루언서',
+          nickname: '965-검수-이미지+링크',
+          channelId: 'ms_965_r_3',
+          channel: '',
+          actionType: '2',
+          missionType: '1',
         },
         {
-          id: "965-r-4",
-          createdAt: "2025-11-03T11:00:00.000Z",
-          status: "검수",
-          userType: "리뷰어",
-          nickname: "965-반려처리-이미지+링크",
-          channelId: "ms_965_r_4",
-          channel: "",
-          actionType: "2",
-          missionType: "4",
+          id: '965-r-4',
+          createdAt: '2025-11-03T11:00:00.000Z',
+          status: '검수',
+          userType: '리뷰어',
+          nickname: '965-반려처리-이미지+링크',
+          channelId: 'ms_965_r_4',
+          channel: '',
+          actionType: '2',
+          missionType: '4',
           isRejected: true,
         },
         {
-          id: "965-r-5",
-          createdAt: "2025-11-03T11:15:00.000Z",
-          status: "검수",
-          userType: "인플루언서",
-          nickname: "965-반려처리-이미지+링크",
-          channelId: "ms_965_r_5",
-          channel: "",
-          actionType: "2",
-          missionType: "4",
+          id: '965-r-5',
+          createdAt: '2025-11-03T11:15:00.000Z',
+          status: '검수',
+          userType: '인플루언서',
+          nickname: '965-반려처리-이미지+링크',
+          channelId: 'ms_965_r_5',
+          channel: '',
+          actionType: '2',
+          missionType: '4',
           isRejected: true,
         },
       ],
       completed: [
         {
-          id: "965-c-1",
-          createdAt: "2025-11-02T18:40:00.000Z",
-          status: "완료",
-          userType: "리뷰어",
-          nickname: "965-완료-이미지+링크",
-          channelId: "ms_965_c_1",
-          channel: "",
-          actionType: "2",
-          missionType: "7",
+          id: '965-c-1',
+          createdAt: '2025-11-02T18:40:00.000Z',
+          status: '완료',
+          userType: '리뷰어',
+          nickname: '965-완료-이미지+링크',
+          channelId: 'ms_965_c_1',
+          channel: '',
+          actionType: '2',
+          missionType: '7',
         },
         {
-          id: "965-c-2",
-          createdAt: "2025-11-02T19:00:00.000Z",
-          status: "완료",
-          userType: "리뷰어",
-          nickname: "965-완료-이미지+링크",
-          channelId: "ms_965_c_2",
-          channel: "",
-          actionType: "2",
-          missionType: "7",
-          updatedAt: "2025-11-02T19:20:00.000Z",
+          id: '965-c-2',
+          createdAt: '2025-11-02T19:00:00.000Z',
+          status: '완료',
+          userType: '리뷰어',
+          nickname: '965-완료-이미지+링크',
+          channelId: 'ms_965_c_2',
+          channel: '',
+          actionType: '2',
+          missionType: '7',
+          updatedAt: '2025-11-02T19:20:00.000Z',
         },
         {
-          id: "965-c-3",
-          createdAt: "2025-11-02T19:30:00.000Z",
-          status: "완료",
-          userType: "인플루언서",
-          nickname: "965-완료-이미지+링크",
-          channelId: "ms_965_c_3",
-          channel: "",
-          actionType: "2",
-          missionType: "7",
+          id: '965-c-3',
+          createdAt: '2025-11-02T19:30:00.000Z',
+          status: '완료',
+          userType: '인플루언서',
+          nickname: '965-완료-이미지+링크',
+          channelId: 'ms_965_c_3',
+          channel: '',
+          actionType: '2',
+          missionType: '7',
           isLate: true,
         },
       ],
@@ -469,20 +472,21 @@ export const missionCampaigns: MissionCampaignDataItem[] = [
   // 신청 탭(모집 중)
   {
     campaignInfo: {
-      id: "975",
-      title: "[신청] 미션형 샘플 캠페인",
-      image: "/images/main/campaign_img/eximg_4.png",
-      status: "모집 중" as const,
-      campaignType: "미션형",
-      category: "뷰티",
-      brandName: "",
-      partnerName: "(주)미션프로모션",
-      recruitmentPeriod: "2025-11-05 ~ 2025-11-15",
-      announcementDate: "2025-11-15",
-      registrationPeriod: "2025-11-17 ~ 2025-11-25",
+      id: '975',
+      title: '[신청] 미션형 샘플 캠페인',
+      image: '/images/main/campaign_img/eximg_4.png',
+      status: '모집 중' as const,
+      campaignType: '미션형',
+      category: '뷰티',
+      brandName: '',
+      partnerName: '(주)미션프로모션',
+      recruitmentPeriod: '2025-11-05 ~ 2025-11-15',
+      announcementDate: '2025-11-15',
+      registrationPeriod: '2025-11-17 ~ 2025-11-25',
       recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 10,
       daysLeft: 13,
+      point: 10000, // 지급 포인트
     },
     applicantData: { applicants: [], selectedApplicants: [] },
   },
@@ -490,20 +494,21 @@ export const missionCampaigns: MissionCampaignDataItem[] = [
   // 예정 탭(대기 중)
   {
     campaignInfo: {
-      id: "954",
-      title: "[예정] 미션형 샘플 캠페인",
-      image: "/images/main/campaign_img/eximg_4.png",
-      status: "대기 중" as const,
-      campaignType: "미션형",
-      category: "뷰티",
-      brandName: "",
-      partnerName: "(주)미션프로모션",
-      recruitmentPeriod: "2025-11-06 ~ 2025-11-16",
-      announcementDate: "2025-11-16",
-      registrationPeriod: "2025-11-18 ~ 2025-11-26",
+      id: '954',
+      title: '[예정] 미션형 샘플 캠페인',
+      image: '/images/main/campaign_img/eximg_4.png',
+      status: '대기 중' as const,
+      campaignType: '미션형',
+      category: '뷰티',
+      brandName: '',
+      partnerName: '(주)미션프로모션',
+      recruitmentPeriod: '2025-11-06 ~ 2025-11-16',
+      announcementDate: '2025-11-16',
+      registrationPeriod: '2025-11-18 ~ 2025-11-26',
       recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 10,
       daysLeft: 8,
+      point: 11000, // 지급 포인트
     },
     applicantData: { applicants: [], selectedApplicants: [] },
   },
@@ -539,129 +544,130 @@ missionCampaigns.forEach((campaign) => {
 export const missionClosedCampaigns: MissionCampaignDataItem[] = [
   {
     campaignInfo: {
-      id: "904",
-      title: "[취소] 미션형 캠페인 - 이미지/링크",
-      image: "/images/main/campaign_img/eximg_4.png",
-      status: "취소",
-      campaignType: "미션형",
-      category: "뷰티",
-      brandName: "",
-      partnerName: "(주)미션프로모션",
-      recruitmentPeriod: "2024-04-10 ~ 2024-04-16",
-      announcementDate: "2024-04-16",
-      registrationPeriod: "2024-04-18 ~ 2024-04-24",
+      id: '904',
+      title: '[취소] 미션형 캠페인 - 이미지/링크',
+      image: '/images/main/campaign_img/eximg_4.png',
+      status: '취소',
+      campaignType: '미션형',
+      category: '뷰티',
+      brandName: '',
+      partnerName: '(주)미션프로모션',
+      recruitmentPeriod: '2024-04-10 ~ 2024-04-16',
+      announcementDate: '2024-04-16',
+      registrationPeriod: '2024-04-18 ~ 2024-04-24',
       recruitedCount: 0,
       totalCount: 10,
       daysLeft: -5,
-      statusText: "캠페인을 취소하였습니다.",
+      statusText: '캠페인을 취소하였습니다.',
+      point: 0, // 취소된 캠페인은 포인트 0
     },
     contents: {
       reviewing: [
         {
-          id: "904-r-1",
-          createdAt: "2025-10-28T09:05:00.000Z",
-          status: "검수",
-          userType: "리뷰어",
-          nickname: "미션-1",
-          channelId: "ms_904_r_1",
-          channel: "",
-          actionType: "2",
-          missionType: "1",
-          updatedAt: "2025-10-28T09:20:00.000Z",
+          id: '904-r-1',
+          createdAt: '2025-10-28T09:05:00.000Z',
+          status: '검수',
+          userType: '리뷰어',
+          nickname: '미션-1',
+          channelId: 'ms_904_r_1',
+          channel: '',
+          actionType: '2',
+          missionType: '1',
+          updatedAt: '2025-10-28T09:20:00.000Z',
         },
         {
-          id: "904-r-2",
-          createdAt: "2025-10-28T09:15:00.000Z",
-          status: "검수",
-          userType: "리뷰어",
-          nickname: "미션-2",
-          channelId: "ms_904_r_2",
-          channel: "",
-          actionType: "2",
-          missionType: "4",
+          id: '904-r-2',
+          createdAt: '2025-10-28T09:15:00.000Z',
+          status: '검수',
+          userType: '리뷰어',
+          nickname: '미션-2',
+          channelId: 'ms_904_r_2',
+          channel: '',
+          actionType: '2',
+          missionType: '4',
           isRejected: true,
         },
         {
-          id: "904-r-3",
-          createdAt: "2025-10-28T09:25:00.000Z",
-          status: "검수",
-          userType: "리뷰어",
-          nickname: "미션-3",
-          channelId: "ms_904_r_3",
-          channel: "",
-          actionType: "2",
-          missionType: "1",
+          id: '904-r-3',
+          createdAt: '2025-10-28T09:25:00.000Z',
+          status: '검수',
+          userType: '리뷰어',
+          nickname: '미션-3',
+          channelId: 'ms_904_r_3',
+          channel: '',
+          actionType: '2',
+          missionType: '1',
         },
         {
-          id: "904-r-4",
-          createdAt: "2025-10-28T09:35:00.000Z",
-          status: "검수",
-          userType: "리뷰어",
-          nickname: "미션-4",
-          channelId: "ms_904_r_4",
-          channel: "",
-          actionType: "2",
-          missionType: "1",
+          id: '904-r-4',
+          createdAt: '2025-10-28T09:35:00.000Z',
+          status: '검수',
+          userType: '리뷰어',
+          nickname: '미션-4',
+          channelId: 'ms_904_r_4',
+          channel: '',
+          actionType: '2',
+          missionType: '1',
           isLate: true,
         },
       ],
       completed: [
         {
-          id: "904-c-1",
-          createdAt: "2025-10-27T17:30:00.000Z",
-          status: "완료",
-          userType: "리뷰어",
-          nickname: "미션-4",
-          channelId: "ms_904_c_1",
-          channel: "",
-          actionType: "2",
-          missionType: "7",
-          updatedAt: "2025-10-27T17:50:00.000Z",
+          id: '904-c-1',
+          createdAt: '2025-10-27T17:30:00.000Z',
+          status: '완료',
+          userType: '리뷰어',
+          nickname: '미션-4',
+          channelId: 'ms_904_c_1',
+          channel: '',
+          actionType: '2',
+          missionType: '7',
+          updatedAt: '2025-10-27T17:50:00.000Z',
         },
         {
-          id: "904-c-2",
-          createdAt: "2025-10-27T17:45:00.000Z",
-          status: "완료",
-          userType: "리뷰어",
-          nickname: "미션-5",
-          channelId: "ms_904_c_2",
-          channel: "",
-          actionType: "2",
-          missionType: "7",
+          id: '904-c-2',
+          createdAt: '2025-10-27T17:45:00.000Z',
+          status: '완료',
+          userType: '리뷰어',
+          nickname: '미션-5',
+          channelId: 'ms_904_c_2',
+          channel: '',
+          actionType: '2',
+          missionType: '7',
         },
         {
-          id: "904-c-3",
-          createdAt: "2025-10-27T18:00:00.000Z",
-          status: "완료",
-          userType: "리뷰어",
-          nickname: "미션-6",
-          channelId: "ms_904_c_3",
-          channel: "",
-          actionType: "2",
-          missionType: "7",
+          id: '904-c-3',
+          createdAt: '2025-10-27T18:00:00.000Z',
+          status: '완료',
+          userType: '리뷰어',
+          nickname: '미션-6',
+          channelId: 'ms_904_c_3',
+          channel: '',
+          actionType: '2',
+          missionType: '7',
           isLate: true,
         },
         {
-          id: "904-c-4",
-          createdAt: "2025-10-27T18:15:00.000Z",
-          status: "완료",
-          userType: "리뷰어",
-          nickname: "미션-7",
-          channelId: "ms_904_c_4",
-          channel: "",
-          actionType: "2",
-          missionType: "7",
+          id: '904-c-4',
+          createdAt: '2025-10-27T18:15:00.000Z',
+          status: '완료',
+          userType: '리뷰어',
+          nickname: '미션-7',
+          channelId: 'ms_904_c_4',
+          channel: '',
+          actionType: '2',
+          missionType: '7',
         },
         {
-          id: "904-c-5",
-          createdAt: "2025-10-27T18:30:00.000Z",
-          status: "완료",
-          userType: "리뷰어",
-          nickname: "미션-8",
-          channelId: "ms_904_c_5",
-          channel: "",
-          actionType: "2",
-          missionType: "7",
+          id: '904-c-5',
+          createdAt: '2025-10-27T18:30:00.000Z',
+          status: '완료',
+          userType: '리뷰어',
+          nickname: '미션-8',
+          channelId: 'ms_904_c_5',
+          channel: '',
+          actionType: '2',
+          missionType: '7',
         },
       ],
     },
@@ -699,9 +705,9 @@ export const missionClosedCampaigns: MissionCampaignDataItem[] = [
 export function getMissionContentsById(campaignId: string): ContentByTab {
   // 종료/취소 탭 데이터(미션형): 904 매핑
   // 설명: 종료/취소된 캠페인은 missionClosedCampaigns를 직접 참조 (순환 참조 방지)
-  if (campaignId === "904") {
+  if (campaignId === '904') {
     const closedCampaign = missionClosedCampaigns.find(
-      (c) => c.campaignInfo.id === campaignId
+      (c) => c.campaignInfo.id === campaignId,
     );
     if (closedCampaign?.contents) {
       return closedCampaign.contents;
@@ -713,7 +719,7 @@ export function getMissionContentsById(campaignId: string): ContentByTab {
   // 설명: missionCampaigns 배열에서 해당 ID의 캠페인을 찾아서 contents를 반환합니다.
   // find() 메서드: 배열에서 조건에 맞는 첫 번째 요소를 반환합니다.
   const campaign = missionCampaigns.find(
-    (c) => c.campaignInfo.id === campaignId
+    (c) => c.campaignInfo.id === campaignId,
   );
 
   // 캠페인을 찾았고 contents가 있으면 반환
@@ -761,14 +767,14 @@ function generateNewMissionCampaignId(): string {
  */
 export function createMissionCampaign(
   formData: CampaignFormData,
-  imageUrl: string = "/images/main/campaign_img/eximg_4.png"
+  imageUrl: string = '/images/main/campaign_img/eximg_4.png',
 ): MissionCampaignDataItem {
   // 새 캠페인 ID 생성
   const newId = generateNewMissionCampaignId();
 
   // 선정 날짜까지 남은 일수 계산
   const daysLeft = formData.announcementDate
-    ? calculateDaysLeft(formData.announcementDate.split(" ")[0])
+    ? calculateDaysLeft(formData.announcementDate.split(' ')[0])
     : 0;
 
   // 모집 인원을 숫자로 변환
@@ -777,11 +783,11 @@ export function createMissionCampaign(
   // 캠페인 상태 결정 함수 호출
   const campaignStatus = calculateCampaignStatus(
     formData.recruitmentPeriod,
-    formData.announcementDate
+    formData.announcementDate,
   );
 
   // 미션형은 플랫폼이 없으므로 빈 문자열 사용
-  const normalizedBrandName = "";
+  const normalizedBrandName = '';
 
   return {
     campaignInfo: {
@@ -789,8 +795,8 @@ export function createMissionCampaign(
       title: formData.title,
       image: imageUrl,
       status: campaignStatus,
-      campaignType: "미션형",
-      category: formData.category || "기타",
+      campaignType: '미션형',
+      category: formData.category || '기타',
       brandName: normalizedBrandName,
       recruitmentPeriod: formData.recruitmentPeriod,
       announcementDate: formData.announcementDate,
@@ -823,11 +829,11 @@ export function createMissionCampaign(
 export function updateMissionCampaign(
   campaignId: string,
   formData: CampaignFormData,
-  imageUrl: string = "/images/main/campaign_img/eximg_4.png"
+  imageUrl: string = '/images/main/campaign_img/eximg_4.png',
 ): MissionCampaignDataItem {
   // 기존 캠페인 데이터 찾기
   const existingCampaign = missionCampaigns.find(
-    (c) => c.campaignInfo.id === campaignId
+    (c) => c.campaignInfo.id === campaignId,
   );
 
   // 기존 신청자 데이터 유지
@@ -838,7 +844,7 @@ export function updateMissionCampaign(
 
   // 선정 날짜까지 남은 일수 계산
   const daysLeft = formData.announcementDate
-    ? calculateDaysLeft(formData.announcementDate.split(" ")[0])
+    ? calculateDaysLeft(formData.announcementDate.split(' ')[0])
     : 0;
 
   // 모집 인원을 숫자로 변환
@@ -847,11 +853,11 @@ export function updateMissionCampaign(
   // 캠페인 상태 결정 함수 호출
   const campaignStatus = calculateCampaignStatus(
     formData.recruitmentPeriod,
-    formData.announcementDate
+    formData.announcementDate,
   );
 
   // 미션형은 플랫폼이 없으므로 빈 문자열 사용
-  const normalizedBrandName = "";
+  const normalizedBrandName = '';
 
   return {
     campaignInfo: {
@@ -859,8 +865,8 @@ export function updateMissionCampaign(
       title: formData.title,
       image: imageUrl,
       status: campaignStatus,
-      campaignType: "미션형",
-      category: formData.category || "기타",
+      campaignType: '미션형',
+      category: formData.category || '기타',
       brandName: normalizedBrandName,
       recruitmentPeriod: formData.recruitmentPeriod,
       announcementDate: formData.announcementDate,
@@ -885,7 +891,7 @@ export function updateMissionCampaign(
  */
 export function addMissionCampaign(
   formData: CampaignFormData,
-  imageUrl: string = "/images/main/campaign_img/eximg_4.png"
+  imageUrl: string = '/images/main/campaign_img/eximg_4.png',
 ): MissionCampaignDataItem {
   return createMissionCampaign(formData, imageUrl);
 }

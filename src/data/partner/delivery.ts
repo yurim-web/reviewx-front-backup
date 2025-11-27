@@ -38,6 +38,7 @@ export interface DeliveryCampaignDataItem {
     daysLeft: number; // 남은 일수 (양수면 남은 일수, 음수면 지난 일수)
     statusText?: string; // 상태 텍스트 (예: "캠페인 콘텐츠를 검수해 주세요.", 선택사항)
     partnerName?: string; // 파트너명 (예: "(주)배송마케팅")
+    point?: number; // 지급 포인트 (선택사항)
   };
   // 신청자 데이터 (선택사항 - 진행/예정/신청 캠페인에만 있음)
   applicantData?: {
@@ -141,6 +142,7 @@ export const deliveryCampaigns: DeliveryCampaignDataItem[] = [
       totalCount: 10,
       daysLeft: 3,
       statusText: '캠페인 콘텐츠를 검수해 주세요.',
+      point: 15000, // 지급 포인트
     },
     applicantData: {
       applicants: [
@@ -226,6 +228,7 @@ export const deliveryCampaigns: DeliveryCampaignDataItem[] = [
       recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 12,
       daysLeft: 9,
+      point: 20000, // 지급 포인트
     },
     applicantData: {
       applicants: [
@@ -308,6 +311,7 @@ export const deliveryCampaigns: DeliveryCampaignDataItem[] = [
       recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 10,
       daysLeft: 12,
+      point: 18000, // 지급 포인트
     },
     applicantData: { applicants: [], selectedApplicants: [] },
   },
@@ -329,6 +333,7 @@ export const deliveryCampaigns: DeliveryCampaignDataItem[] = [
       recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 60,
       daysLeft: 15,
+      point: 25000, // 지급 포인트
     },
     applicantData: {
       applicants: [
@@ -440,6 +445,7 @@ export const deliveryClosedCampaigns: DeliveryCampaignDataItem[] = [
       totalCount: 12,
       daysLeft: -1,
       statusText: '캠페인을 취소하였습니다.',
+      point: 0, // 취소된 캠페인은 포인트 0
     },
     contents: {
       reviewing: [

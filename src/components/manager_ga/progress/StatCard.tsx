@@ -22,7 +22,7 @@ import styles from '@/styles/manager_ga/campaign/progress/stat_card.module.css';
 interface StatCardProps {
   title: string; // 카드 제목
   value: string; // 통계 값
-  color?: string; // 값 색상 (선택적)
+  isCancelled?: boolean; // 취소된 캠페인 여부 (선택적)
 }
 
 /**
@@ -30,20 +30,22 @@ interface StatCardProps {
  *
  * @param title - 카드 제목
  * @param value - 통계 값
- * @param color - 값 색상 (선택적, 기본값: #444444)
+ * @param isCancelled - 취소된 캠페인 여부 (선택적, true일 경우 빨간색으로 표시)
  */
-export default function StatCard({ title, value, color }: StatCardProps) {
+export default function StatCard({ title, value, isCancelled }: StatCardProps) {
+  // 취소된 캠페인인 경우 빨간색 클래스를 추가합니다
+  // className을 여러 개 적용할 때는 배열로 만들고 join(' ')으로 합치거나,
+  // 템플릿 리터럴을 사용할 수 있습니다
+  const valueClassName = isCancelled
+    ? `${styles.stat_card_value} ${styles.stat_card_value_cancelled}`
+    : styles.stat_card_value;
+
   return (
     <div className={styles.stat_card}>
       {/* 카드 제목 */}
       <p className={styles.stat_card_title}>{title}</p>
-      {/* 통계 값 - color prop이 있으면 인라인 스타일로 색상 적용 */}
-      <p
-        className={styles.stat_card_value}
-        style={color ? { color } : undefined}
-      >
-        {value}
-      </p>
+      {/* 통계 값 - 취소된 캠페인인 경우 빨간색 클래스 적용 */}
+      <p className={valueClassName}>{value}</p>
     </div>
   );
 }

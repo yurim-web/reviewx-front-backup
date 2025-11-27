@@ -39,6 +39,7 @@ export interface VisitCampaignDataItem {
     daysLeft: number; // 남은 일수 (양수면 남은 일수, 음수면 지난 일수)
     statusText?: string; // 상태 텍스트 (예: "캠페인 콘텐츠를 검수해 주세요.", 선택사항)
     partnerName?: string; // 파트너명 (예: "(주)방문체험기획")
+    point?: number; // 지급 포인트 (선택사항)
   };
   // 신청자 데이터 (선택사항 - 진행/예정/신청 캠페인에만 있음)
   applicantData?: {
@@ -137,6 +138,7 @@ export const visitClosedCampaigns: VisitCampaignDataItem[] = [
       totalCount: 10,
       daysLeft: -10,
       statusText: '캠페인 콘텐츠를 검수해 주세요.',
+      point: 30000, // 지급 포인트
     },
     contents: {
       reviewing: [
@@ -230,6 +232,7 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
       recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 10,
       daysLeft: 12,
+      point: 40000, // 지급 포인트
     },
     applicantData: {
       applicants: [
@@ -327,6 +330,7 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
       recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 10,
       daysLeft: 14,
+      point: 35000, // 지급 포인트
     },
     applicantData: {
       applicants: [
@@ -376,6 +380,7 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
       recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 12,
       daysLeft: 11,
+      point: 45000, // 지급 포인트
     },
     applicantData: {
       applicants: [
@@ -438,6 +443,7 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
       totalCount: 15,
       daysLeft: 2,
       statusText: '캠페인 콘텐츠를 검수해 주세요~~~~~',
+      point: 50000, // 지급 포인트
     },
     applicantData: {
       applicants: [
@@ -487,6 +493,7 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
       recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 8,
       daysLeft: 17,
+      point: 38000, // 지급 포인트
     },
     applicantData: { applicants: [], selectedApplicants: [] },
   },
@@ -508,6 +515,7 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
       totalCount: 8,
       daysLeft: 1,
       statusText: '캠페인 당첨자를 선정해 주세요.',
+      point: 42000, // 지급 포인트
     },
     applicantData: { applicants: [], selectedApplicants: [] },
   },
@@ -528,6 +536,7 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
       recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 10,
       daysLeft: 10,
+      point: 48000, // 지급 포인트
     },
     applicantData: {
       applicants: [

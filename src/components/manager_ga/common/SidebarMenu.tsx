@@ -57,7 +57,7 @@ export default function SidebarMenu() {
     {
       title: '캠페인',
       items: [
-        { label: '진행 현황', path: '/manager_ga/progress' },
+        { label: '진행 현황', path: '/manager_ga/campaign/progress' },
         { label: '반려 내역', path: '/manager_ga/campaign/rejected' },
         { label: '신고 내역', path: '/manager_ga/campaign/reported' },
         { label: '템플릿 관리', path: '/manager_ga/campaign/templates' },
