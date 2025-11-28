@@ -37,6 +37,8 @@ import {
   type RejectCode,
 } from '@/data/manager_ga/rejected';
 import RejectReasonModal from '../modal/RejectReasonModal';
+import CampaignReportModal from '@/components/manager_ga/campaign/progress/modal/CampaignReportModal';
+import type { ReportCode } from '@/data/manager_ga/reported';
 
 interface RejectedCampaignTableProps {
   // 검색어 상태와 변경 함수를 props로 받습니다
@@ -59,7 +61,7 @@ export default function RejectedCampaignTable({
     string | null
   >(null);
 
-  // 모달 상태 관리
+  // 반려 사유 모달 상태 관리
   // 모달이 열려있는지, 어떤 항목의 모달인지 관리합니다
   const [modal_state, set_modal_state] = useState<{
     is_open: boolean;
@@ -67,6 +69,16 @@ export default function RejectedCampaignTable({
   }>({
     is_open: false,
     item: null,
+  });
+
+  // 신고 모달 상태 관리
+  // 신고 모달이 열려있는지, 어떤 항목의 신고 모달인지 관리합니다
+  const [report_modal_state, set_report_modal_state] = useState<{
+    is_open: boolean;
+    campaign_id: string | null;
+  }>({
+    is_open: false,
+    campaign_id: null,
   });
 
   // 툴팁 위치 정보를 관리하는 상태
@@ -131,6 +143,30 @@ export default function RejectedCampaignTable({
   const handle_campaign_name_mouse_leave = () => {
     set_hovered_row_id(null);
     set_tooltip_position(null);
+  };
+
+  // 신고 아이콘 클릭 핸들러
+  // 신고 아이콘을 클릭했을 때 신고 모달을 엽니다
+  const handle_report_click = (campaign_id: string) => {
+    set_report_modal_state({
+      is_open: true,
+      campaign_id,
+    });
+  };
+
+  // 신고 모달 닫기 핸들러
+  // 신고 모달을 닫을 때 호출됩니다
+  const handle_report_modal_close = () => {
+    set_report_modal_state({
+      is_open: false,
+      campaign_id: null,
+    });
+  };
+
+  // 신고 완료 핸들러
+  // 신고 모달에서 신고 버튼을 클릭했을 때 호출됩니다
+  const handle_report_submit = (report_code: ReportCode) => {
+    // TODO: 실제 신고 로직 구현
   };
 
   // 필터링된 반려 내역 목록
@@ -299,11 +335,17 @@ export default function RejectedCampaignTable({
                 {/* 신고 아이콘 칸 - 호버 시에만 표시 */}
                 <div className={styles.table_cell_report}>
                   {is_report_hovered && (
-                    <img
-                      src="/images/icons/table_report.svg"
-                      alt="신고"
-                      className={styles.report_icon}
-                    />
+                    <button
+                      onClick={() => handle_report_click(item.id)}
+                      className={styles.report_button}
+                      aria-label={`${item.campaign_name} 신고`}
+                    >
+                      <img
+                        src="/images/icons/table_report.svg"
+                        alt="신고"
+                        className={styles.report_icon}
+                      />
+                    </button>
                   )}
                 </div>
               </div>
@@ -343,6 +385,14 @@ export default function RejectedCampaignTable({
           reject_code={modal_state.item.reject_code}
         />
       )}
+
+      {/* 신고 모달 */}
+      <CampaignReportModal
+        is_open={report_modal_state.is_open}
+        on_close={handle_report_modal_close}
+        campaign_id={report_modal_state.campaign_id || undefined}
+        on_report={handle_report_submit}
+      />
     </div>
   );
 }

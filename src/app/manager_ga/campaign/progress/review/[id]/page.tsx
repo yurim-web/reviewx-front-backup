@@ -261,11 +261,11 @@ export default function ManagerReviewProgressDetailPage() {
    * 11) 엑셀 다운로드 (목업)
    */
   const handle_download_applicants = () => {
-    console.log('[GA 구매평] 신청자 목록 다운로드');
+    // TODO: 신청자 목록 다운로드 기능 구현
   };
 
   const handle_download_selected = () => {
-    console.log('[GA 구매평] 선정자 목록 다운로드');
+    // TODO: 선정자 목록 다운로드 기능 구현
   };
 
   /**
@@ -298,7 +298,6 @@ export default function ManagerReviewProgressDetailPage() {
               onClick={() => {
                 // TODO: 캠페인 상세 페이지로 이동하는 로직 구현
                 // 예: router.push(`/manager_ga/campaign/${campaign_id}`);
-                console.log('캠페인 보기 버튼 클릭됨');
               }}
               aria-label="캠페인 보기"
             >
@@ -339,7 +338,6 @@ export default function ManagerReviewProgressDetailPage() {
                   className={styles.report_button}
                   onClick={() => {
                     // TODO: 신고 기능 구현
-                    console.log('신고 버튼 클릭됨');
                   }}
                   aria-label="신고"
                 >

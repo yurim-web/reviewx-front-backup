@@ -97,11 +97,6 @@ export default function ReportReasonModal({
   // 확인 버튼 클릭 핸들러
   const handle_confirm = () => {
     // TODO: 신고 사유 확인 로직 구현
-    console.log('신고 사유 확인:', {
-      report_reason: reason_text,
-      report_code,
-      selected_classification,
-    });
     on_close();
   };
 

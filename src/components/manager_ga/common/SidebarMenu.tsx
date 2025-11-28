@@ -25,7 +25,6 @@
 
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from '@/styles/manager_ga/layout/sidebar.module.css';
@@ -34,7 +33,6 @@ import styles from '@/styles/manager_ga/layout/sidebar.module.css';
 interface MenuItem {
   label: string;
   path: string;
-  icon?: boolean; // 아이콘 표시 여부
 }
 
 // 메뉴 카테고리 타입 정의

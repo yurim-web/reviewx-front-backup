@@ -17,16 +17,16 @@
  * - 모달 오버레이 클릭으로 닫기
  *
  * 학습 포인트:
- * - useState: 컴포넌트의 상태를 관리하는 React Hook입니다
- * - useEffect: 컴포넌트가 렌더링된 후에 실행되는 Hook입니다
- * - 이벤트 핸들러: 사용자 상호작용에 반응하는 함수입니다
- * - 배열 메서드: includes, filter 등을 사용하여 선택된 값들을 관리합니다
+ * - 컴포넌트 재사용: BaseFilterModal 공통 컴포넌트를 사용하여 중복 코드를 제거합니다
+ * - 데이터 변환: reject_code_info를 FilterOption 형태로 변환하여 공통 컴포넌트에 전달합니다
+ * - 컴포지션(Composition): 작은 컴포넌트들을 조합하여 더 큰 컴포넌트를 만드는 패턴입니다
  */
 
 'use client';
 
-import { useState, useEffect } from 'react';
-import styles from '@/styles/manager_ga/campaign/progress/status_filter_modal.module.css';
+import BaseFilterModal, {
+  type FilterOption,
+} from '@/components/manager_ga/common/filter/BaseFilterModal';
 import { reject_code_info, type RejectCode } from '@/data/manager_ga/rejected';
 
 interface RejectCodeFilterModalProps {
@@ -48,110 +48,38 @@ const reject_code_options: RejectCode[] = [
   'R008',
 ];
 
+// 반려 코드 정보를 FilterOption 형태로 변환하는 함수
+// map 함수: 배열을 순회하며 새로운 형태의 배열을 만듭니다
+const get_reject_code_options = (): FilterOption<RejectCode>[] => {
+  return reject_code_options.map((code) => {
+    // find 함수: 배열에서 조건에 맞는 첫 번째 요소를 찾습니다
+    const code_info = reject_code_info.find((info) => info.code === code);
+    return {
+      value: code,
+      // 삼항 연산자: 조건 ? 참일 때 값 : 거짓일 때 값
+      label: code_info ? `${code} (${code_info.reason})` : code,
+    };
+  });
+};
+
 export default function RejectCodeFilterModal({
   is_open,
   on_close,
   selected_codes,
   on_apply,
 }: RejectCodeFilterModalProps) {
-  // 모달 내부에서 관리하는 임시 선택 상태
-  const [temp_selected, set_temp_selected] =
-    useState<RejectCode[]>(selected_codes);
+  // 반려 코드 옵션을 FilterOption 형태로 변환
+  const options = get_reject_code_options();
 
-  // 모달이 열릴 때마다 임시 선택 상태를 초기화
-  useEffect(() => {
-    if (is_open) {
-      set_temp_selected(selected_codes);
-    }
-  }, [is_open, selected_codes]);
-
-  // 옵션 선택/해제 핸들러
-  const handle_option_change = (code: RejectCode) => {
-    if (temp_selected.includes(code)) {
-      set_temp_selected(temp_selected.filter((c) => c !== code));
-    } else {
-      set_temp_selected([...temp_selected, code]);
-    }
-  };
-
-  // 필터 적용 핸들러
-  const handle_apply = () => {
-    on_apply(temp_selected);
-    on_close();
-  };
-
-  // 선택 초기화 핸들러
-  const handle_reset = () => {
-    set_temp_selected([]);
-  };
-
-  // 모달 오버레이 클릭 핸들러
-  const handle_backdrop_click = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      on_close();
-    }
-  };
-
-  // 반려 코드 정보 가져오기
-  const get_code_info = (code: RejectCode) => {
-    return reject_code_info.find((info) => info.code === code);
-  };
-
-  if (!is_open) return null;
-
+  // BaseFilterModal 공통 컴포넌트를 사용하여 중복 코드 제거
   return (
-    <div className={styles.modal_overlay} onClick={handle_backdrop_click}>
-      <div
-        className={styles.modal_content}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* 모달 헤더 */}
-        <div className={styles.modal_header}>
-          <h3 className={styles.modal_title}>필터</h3>
-          <button className={styles.modal_close_button} onClick={on_close}>
-            <img src="/images/filter/x_icon.svg" alt="닫기" />
-          </button>
-        </div>
-
-        {/* 모달 바디 */}
-        <div className={styles.modal_body}>
-          {/* 섹션 제목 */}
-          <h4 className={styles.section_title}>반려 코드</h4>
-
-          {/* 옵션 그리드 (2단 레이아웃) */}
-          <div className={styles.options_grid}>
-            {reject_code_options.map((code) => {
-              const code_info = get_code_info(code);
-              return (
-                <label key={code} className={styles.option_item}>
-                  <input
-                    type="checkbox"
-                    value={code}
-                    checked={temp_selected.includes(code)}
-                    onChange={() => handle_option_change(code)}
-                    className={styles.option_checkbox}
-                  />
-                  <span className={styles.option_label}>
-                    {code} {code_info ? `(${code_info.reason})` : ''}
-                  </span>
-                </label>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* 모달 푸터 */}
-        <div className={styles.modal_footer}>
-          <button className={styles.apply_button} onClick={handle_apply}>
-            필터 적용하기
-          </button>
-          <button className={styles.reset_button} onClick={handle_reset}>
-            <div className={styles.reset_icon}></div>
-            선택 초기화
-          </button>
-        </div>
-      </div>
-    </div>
+    <BaseFilterModal<RejectCode>
+      is_open={is_open}
+      on_close={on_close}
+      selected_values={selected_codes}
+      on_apply={on_apply}
+      options={options}
+      section_title="반려 코드"
+    />
   );
 }
-

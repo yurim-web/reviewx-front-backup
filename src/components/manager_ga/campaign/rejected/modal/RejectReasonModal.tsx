@@ -97,11 +97,6 @@ export default function RejectReasonModal({
   // 확인 버튼 클릭 핸들러
   const handle_confirm = () => {
     // TODO: 반려 사유 확인 로직 구현
-    console.log('반려 사유 확인:', {
-      reject_reason: reason_text,
-      reject_code,
-      selected_classification,
-    });
     on_close();
   };
 

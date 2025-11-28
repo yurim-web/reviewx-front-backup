@@ -157,10 +157,6 @@ export default function ReportedCampaignTable({
   // 차단 완료 핸들러
   const handle_block_submit = (block_reason: string) => {
     // TODO: 실제 차단 로직 구현
-    console.log('캠페인 차단:', {
-      campaign_id: block_modal_state.campaign_id,
-      block_reason,
-    });
   };
 
   // 필터링된 신고 내역 목록

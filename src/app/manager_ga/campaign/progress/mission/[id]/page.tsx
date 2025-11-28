@@ -178,11 +178,11 @@ export default function ManagerMissionProgressDetailPage() {
   };
 
   const handle_download_applicants = () => {
-    console.log('[GA 미션형] 신청자 목록 다운로드');
+    // TODO: 신청자 목록 다운로드 기능 구현
   };
 
   const handle_download_selected = () => {
-    console.log('[GA 미션형] 선정자 목록 다운로드');
+    // TODO: 선정자 목록 다운로드 기능 구현
   };
 
   return (
@@ -208,7 +208,6 @@ export default function ManagerMissionProgressDetailPage() {
                   className={styles.report_button}
                   onClick={() => {
                     // TODO: 신고 기능 구현
-                    console.log('신고 버튼 클릭됨');
                   }}
                   aria-label="신고"
                 >

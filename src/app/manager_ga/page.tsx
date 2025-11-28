@@ -48,7 +48,6 @@ export default function ManagerGAPage() {
   return (
     <div className={layoutStyles.container}>
       <div className={layoutStyles.main_content}>
-        {/* 페이지 헤더 - 제목과 필터를 같은 줄에 배치 */}
         <div className={layoutStyles.page_header}>
           {/* 페이지 제목 */}
           <h1 className={layoutStyles.page_title}>대시보드</h1>

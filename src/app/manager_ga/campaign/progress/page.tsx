@@ -28,9 +28,9 @@
 'use client';
 
 import styles from '@/styles/manager_ga/campaign/progress/page.module.css';
-import StatCardsSection from '@/components/manager_ga/progress/section/StatCardsSection';
-import FilterSection from '@/components/manager_ga/progress/section/FilterSection';
-import CampaignTable from '@/components/manager_ga/progress/section/CampaignTable';
+import StatCardsSection from '@/components/manager_ga/campaign/progress/section/StatCardsSection';
+import FilterSection from '@/components/manager_ga/campaign/progress/section/FilterSection';
+import CampaignTable from '@/components/manager_ga/campaign/progress/section/CampaignTable';
 
 export default function ProgressPage() {
   return (
@@ -51,4 +51,3 @@ export default function ProgressPage() {
     </div>
   );
 }
-
