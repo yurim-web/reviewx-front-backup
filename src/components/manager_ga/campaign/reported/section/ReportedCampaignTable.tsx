@@ -28,30 +28,41 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import styles from '@/styles/manager_ga/campaign/reported/table.module.css';
+import styles from '@/styles/manager_ga/campaign/reported_table.module.css';
 import {
   reported_campaign_list,
   report_code_info,
   type ReportedCampaignItem,
   type ReportCodeInfo,
+  type ReportCode,
 } from '@/data/manager_ga/reported';
 import ReportReasonModal from '../modal/ReportReasonModal';
+import CampaignBlockModal from '../modal/CampaignBlockModal';
 
 interface ReportedCampaignTableProps {
   // 검색어 상태와 변경 함수를 props로 받습니다
   search_query: string;
-  // 신고 코드 필터 상태를 props로 받습니다
-  selected_report_code: string | null;
+  // 신고 코드 필터 상태를 props로 받습니다 (배열로 변경)
+  selected_report_codes: ReportCode[];
 }
 
 export default function ReportedCampaignTable({
   search_query,
-  selected_report_code,
+  selected_report_codes,
 }: ReportedCampaignTableProps) {
   // 호버된 행의 ID를 관리하는 상태
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
   // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
   const [hovered_row_id, set_hovered_row_id] = useState<string | null>(null);
+
+  // 차단 모달 상태 관리
+  const [block_modal_state, set_block_modal_state] = useState<{
+    is_open: boolean;
+    campaign_id: string | null;
+  }>({
+    is_open: false,
+    campaign_id: null,
+  });
 
   // 모달 상태 관리
   // 모달이 열려있는지, 어떤 항목의 모달인지 관리합니다
@@ -127,6 +138,31 @@ export default function ReportedCampaignTable({
     set_tooltip_position(null);
   };
 
+  // 차단 아이콘 클릭 핸들러
+  const handle_block_click = (campaign_id: string) => {
+    set_block_modal_state({
+      is_open: true,
+      campaign_id,
+    });
+  };
+
+  // 차단 모달 닫기 핸들러
+  const handle_block_modal_close = () => {
+    set_block_modal_state({
+      is_open: false,
+      campaign_id: null,
+    });
+  };
+
+  // 차단 완료 핸들러
+  const handle_block_submit = (block_reason: string) => {
+    // TODO: 실제 차단 로직 구현
+    console.log('캠페인 차단:', {
+      campaign_id: block_modal_state.campaign_id,
+      block_reason,
+    });
+  };
+
   // 필터링된 신고 내역 목록
   // filter 함수는 배열에서 조건에 맞는 요소만 추출합니다
   const filtered_list = reported_campaign_list.filter((item) => {
@@ -139,8 +175,11 @@ export default function ReportedCampaignTable({
       return false;
     }
 
-    // 신고 코드 필터: 선택된 신고 코드가 있으면 해당 코드만 표시
-    if (selected_report_code && item.report_code !== selected_report_code) {
+    // 신고 코드 필터: 선택된 신고 코드가 있으면 해당 코드들만 표시
+    if (
+      selected_report_codes.length > 0 &&
+      !selected_report_codes.includes(item.report_code)
+    ) {
       return false;
     }
 
@@ -198,6 +237,8 @@ export default function ReportedCampaignTable({
             className={styles.table_header_arrow}
           />
         </div>
+        {/* 차단 아이콘 칸 - 헤더는 빈 칸으로 표시 */}
+        <div className={styles.table_header_cell_block}></div>
       </div>
 
       {/* 테이블 바디 - 신고 내역 목록을 map 함수로 순회하며 렌더링 */}
@@ -218,7 +259,12 @@ export default function ReportedCampaignTable({
           const code_info = get_report_code_info(item.report_code);
           const is_hovered = hovered_row_id === item.id;
           return (
-            <div key={item.id} className={styles.table_row_wrapper}>
+            <div
+              key={item.id}
+              className={styles.table_row_wrapper}
+              onMouseEnter={() => set_hovered_row_id(item.id)}
+              onMouseLeave={() => set_hovered_row_id(null)}
+            >
               {/* 테이블 행 */}
               <div className={styles.table_row}>
                 {/* 캠페인 번호 */}
@@ -278,6 +324,23 @@ export default function ReportedCampaignTable({
 
                 {/* 처리일 */}
                 <div className={styles.table_cell}>{item.processed_date}</div>
+
+                {/* 차단 아이콘 칸 - 호버 시에만 표시 */}
+                <div className={styles.table_cell_block}>
+                  {is_hovered && (
+                    <button
+                      onClick={() => handle_block_click(item.id)}
+                      className={styles.block_button}
+                      aria-label={`${item.campaign_name} 차단`}
+                    >
+                      <img
+                        src="/images/icons/declaration_icon.svg"
+                        alt="차단"
+                        className={styles.block_icon}
+                      />
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* 호버 시 나타나는 툴팁 박스 - 캠페인명 셀 바로 아래에 표시 */}
@@ -287,7 +350,6 @@ export default function ReportedCampaignTable({
                   style={{
                     left: `${tooltip_position.left}px`,
                     top: `${tooltip_position.top}px`,
-                    width: `${tooltip_position.width}px`,
                   }}
                 >
                   {item.campaign_name}
@@ -316,6 +378,14 @@ export default function ReportedCampaignTable({
           report_code={modal_state.item.report_code}
         />
       )}
+
+      {/* 차단 모달 */}
+      <CampaignBlockModal
+        is_open={block_modal_state.is_open}
+        on_close={handle_block_modal_close}
+        campaign_id={block_modal_state.campaign_id || undefined}
+        on_block={handle_block_submit}
+      />
     </div>
   );
 }

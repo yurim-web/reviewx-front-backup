@@ -32,9 +32,13 @@
 }
 
 /* 신고 내역 통계 그리드 */
+/* CSS Grid를 사용하여 2줄로 배치하고 가로 스크롤을 가능하게 합니다 */
 .report_stats_grid {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, auto));
+  grid-auto-flow: column;
+  grid-template-rows: repeat(2, 1fr);
+  gap: 24px;
 }
 
 /* 신고 내역 통계 아이템 */
@@ -53,4 +57,3 @@
 .report_stats_separator {
   color: #444444;
 }
-

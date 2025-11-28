@@ -35,6 +35,7 @@ export default function ReportStatsSection() {
     <div className={styles.report_stats_section}>
       <div className={styles.report_stats_grid}>
         {/* 신고 코드 W001 통계 */}
+        {/* report_stats[0]: { code: 'W001', count: 3 } */}
         <div className={styles.report_stats_item}>
           <span>W001</span>
           <span className={styles.report_stats_separator}>·</span>
@@ -42,6 +43,7 @@ export default function ReportStatsSection() {
         </div>
 
         {/* 신고 코드 W002 통계 */}
+        {/* report_stats[1]: { code: 'W002', count: 3 } */}
         <div className={styles.report_stats_item}>
           <span>W002</span>
           <span className={styles.report_stats_separator}>·</span>
@@ -49,6 +51,7 @@ export default function ReportStatsSection() {
         </div>
 
         {/* 신고 코드 W003 통계 */}
+        {/* report_stats[2]: { code: 'W003', count: 10 } */}
         <div className={styles.report_stats_item}>
           <span>W003</span>
           <span className={styles.report_stats_separator}>·</span>
@@ -56,6 +59,7 @@ export default function ReportStatsSection() {
         </div>
 
         {/* 신고 코드 W004 통계 */}
+        {/* report_stats[3]: { code: 'W004', count: 1020 } */}
         <div className={styles.report_stats_item}>
           <span>W004</span>
           <span className={styles.report_stats_separator}>·</span>
@@ -63,6 +67,7 @@ export default function ReportStatsSection() {
         </div>
 
         {/* 신고 코드 W005 통계 */}
+        {/* report_stats[4]: { code: 'W005', count: 0 } */}
         <div className={styles.report_stats_item}>
           <span>W005</span>
           <span className={styles.report_stats_separator}>·</span>
@@ -70,6 +75,7 @@ export default function ReportStatsSection() {
         </div>
 
         {/* 신고 코드 W006 통계 */}
+        {/* report_stats[5]: { code: 'W006', count: 18 } */}
         <div className={styles.report_stats_item}>
           <span>W006</span>
           <span className={styles.report_stats_separator}>·</span>
@@ -77,6 +83,7 @@ export default function ReportStatsSection() {
         </div>
 
         {/* 신고 코드 W007 통계 */}
+        {/* report_stats[6]: { code: 'W007', count: 8 } */}
         <div className={styles.report_stats_item}>
           <span>W007</span>
           <span className={styles.report_stats_separator}>·</span>
@@ -84,6 +91,7 @@ export default function ReportStatsSection() {
         </div>
 
         {/* 신고 코드 W008 통계 */}
+        {/* report_stats[7]: { code: 'W008', count: 3 } */}
         <div className={styles.report_stats_item}>
           <span>W008</span>
           <span className={styles.report_stats_separator}>·</span>
@@ -91,6 +99,7 @@ export default function ReportStatsSection() {
         </div>
 
         {/* 신고 코드 W009 통계 */}
+        {/* report_stats[8]: { code: 'W009', count: 0 } */}
         <div className={styles.report_stats_item}>
           <span>W009</span>
           <span className={styles.report_stats_separator}>·</span>
@@ -98,6 +107,7 @@ export default function ReportStatsSection() {
         </div>
 
         {/* 신고 코드 W010 통계 */}
+        {/* report_stats[9]: { code: 'W010', count: 0 } */}
         <div className={styles.report_stats_item}>
           <span>W010</span>
           <span className={styles.report_stats_separator}>·</span>
@@ -105,6 +115,7 @@ export default function ReportStatsSection() {
         </div>
 
         {/* 신고 코드 W011 통계 */}
+        {/* report_stats[10]: { code: 'W011', count: 10 } */}
         <div className={styles.report_stats_item}>
           <span>W011</span>
           <span className={styles.report_stats_separator}>·</span>
@@ -112,6 +123,7 @@ export default function ReportStatsSection() {
         </div>
 
         {/* 신고 코드 W012 통계 */}
+        {/* report_stats[11]: { code: 'W012', count: 5369 } */}
         <div className={styles.report_stats_item}>
           <span>W012</span>
           <span className={styles.report_stats_separator}>·</span>
@@ -119,6 +131,7 @@ export default function ReportStatsSection() {
         </div>
 
         {/* 신고 코드 W013 통계 */}
+        {/* report_stats[12]: { code: 'W013', count: 333 } */}
         <div className={styles.report_stats_item}>
           <span>W013</span>
           <span className={styles.report_stats_separator}>·</span>
@@ -128,4 +141,3 @@ export default function ReportStatsSection() {
     </div>
   );
 }
-

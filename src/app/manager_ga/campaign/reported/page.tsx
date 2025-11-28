@@ -26,6 +26,7 @@ import ReportCodeInfoSection from '@/components/manager_ga/campaign/reported/sec
 import ReportStatsSection from '@/components/manager_ga/campaign/reported/section/ReportStatsSection';
 import FilterSection from '@/components/manager_ga/campaign/reported/section/FilterSection';
 import ReportedCampaignTable from '@/components/manager_ga/campaign/reported/section/ReportedCampaignTable';
+import type { ReportCode } from '@/data/manager_ga/reported';
 
 /**
  * 신고내역 페이지 컴포넌트
@@ -60,10 +61,10 @@ export default function ReportedPage() {
   // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
   const [search_query, set_search_query] = useState<string>('');
 
-  // 신고 코드 필터 상태 관리
-  const [selected_report_code, set_selected_report_code] = useState<
-    string | null
-  >(null);
+  // 신고 코드 필터 상태 관리 (배열로 변경)
+  const [selected_report_codes, set_selected_report_codes] = useState<
+    ReportCode[]
+  >([]);
 
   return (
     <div className={styles.container}>
@@ -81,6 +82,8 @@ export default function ReportedPage() {
         <FilterSection
           search_query={search_query}
           on_search_change={set_search_query}
+          selected_report_codes={selected_report_codes}
+          on_report_codes_change={set_selected_report_codes}
         />
 
         {/* 신고 내역 통계 섹션 */}
@@ -89,10 +92,9 @@ export default function ReportedPage() {
         {/* 신고내역 테이블 */}
         <ReportedCampaignTable
           search_query={search_query}
-          selected_report_code={selected_report_code}
+          selected_report_codes={selected_report_codes}
         />
       </div>
     </div>
   );
 }
-
