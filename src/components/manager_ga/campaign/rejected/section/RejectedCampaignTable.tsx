@@ -28,30 +28,36 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import styles from '@/styles/manager_ga/campaign/rejected/table.module.css';
+import styles from '@/styles/manager_ga/campaign/rejected_table.module.css';
 import {
   rejected_campaign_list,
   reject_code_info,
   type RejectedCampaignItem,
   type RejectCodeInfo,
+  type RejectCode,
 } from '@/data/manager_ga/rejected';
 import RejectReasonModal from '../modal/RejectReasonModal';
 
 interface RejectedCampaignTableProps {
   // 검색어 상태와 변경 함수를 props로 받습니다
   search_query: string;
-  // 반려 코드 필터 상태를 props로 받습니다
-  selected_reject_code: string | null;
+  // 반려 코드 필터 상태를 props로 받습니다 (배열로 변경)
+  selected_reject_codes: RejectCode[];
 }
 
 export default function RejectedCampaignTable({
   search_query,
-  selected_reject_code,
+  selected_reject_codes,
 }: RejectedCampaignTableProps) {
-  // 호버된 행의 ID를 관리하는 상태
+  // 호버된 행의 ID를 관리하는 상태 (툴팁용)
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
   // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
   const [hovered_row_id, set_hovered_row_id] = useState<string | null>(null);
+
+  // 호버된 행의 ID를 관리하는 상태 (신고 아이콘용)
+  const [hovered_report_row_id, set_hovered_report_row_id] = useState<
+    string | null
+  >(null);
 
   // 모달 상태 관리
   // 모달이 열려있는지, 어떤 항목의 모달인지 관리합니다
@@ -139,8 +145,11 @@ export default function RejectedCampaignTable({
       return false;
     }
 
-    // 반려 코드 필터: 선택된 반려 코드가 있으면 해당 코드만 표시
-    if (selected_reject_code && item.reject_code !== selected_reject_code) {
+    // 반려 코드 필터: 선택된 반려 코드가 있으면 해당 코드들만 표시
+    if (
+      selected_reject_codes.length > 0 &&
+      !selected_reject_codes.includes(item.reject_code)
+    ) {
       return false;
     }
 
@@ -198,6 +207,8 @@ export default function RejectedCampaignTable({
             className={styles.table_header_arrow}
           />
         </div>
+        {/* 신고 아이콘 칸 - 헤더는 빈 칸으로 표시 */}
+        <div className={styles.table_header_cell_report}></div>
       </div>
 
       {/* 테이블 바디 - 반려 내역 목록을 map 함수로 순회하며 렌더링 */}
@@ -217,8 +228,14 @@ export default function RejectedCampaignTable({
         filtered_list.map((item: RejectedCampaignItem) => {
           const code_info = get_reject_code_info(item.reject_code);
           const is_hovered = hovered_row_id === item.id;
+          const is_report_hovered = hovered_report_row_id === item.id;
           return (
-            <div key={item.id} className={styles.table_row_wrapper}>
+            <div
+              key={item.id}
+              className={styles.table_row_wrapper}
+              onMouseEnter={() => set_hovered_report_row_id(item.id)}
+              onMouseLeave={() => set_hovered_report_row_id(null)}
+            >
               {/* 테이블 행 */}
               <div className={styles.table_row}>
                 {/* 캠페인 번호 */}
@@ -278,6 +295,17 @@ export default function RejectedCampaignTable({
 
                 {/* 처리일 */}
                 <div className={styles.table_cell}>{item.processed_date}</div>
+
+                {/* 신고 아이콘 칸 - 호버 시에만 표시 */}
+                <div className={styles.table_cell_report}>
+                  {is_report_hovered && (
+                    <img
+                      src="/images/icons/table_report.svg"
+                      alt="신고"
+                      className={styles.report_icon}
+                    />
+                  )}
+                </div>
               </div>
 
               {/* 호버 시 나타나는 툴팁 박스 - 캠페인명 셀 바로 아래에 표시 */}
@@ -287,7 +315,6 @@ export default function RejectedCampaignTable({
                   style={{
                     left: `${tooltip_position.left}px`,
                     top: `${tooltip_position.top}px`,
-                    width: `${tooltip_position.width}px`,
                   }}
                 >
                   {item.campaign_name}

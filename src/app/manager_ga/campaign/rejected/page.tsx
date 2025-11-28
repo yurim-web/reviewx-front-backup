@@ -26,6 +26,7 @@ import RejectCodeInfoSection from '@/components/manager_ga/campaign/rejected/sec
 import RejectStatsSection from '@/components/manager_ga/campaign/rejected/section/RejectStatsSection';
 import FilterSection from '@/components/manager_ga/campaign/rejected/section/FilterSection';
 import RejectedCampaignTable from '@/components/manager_ga/campaign/rejected/section/RejectedCampaignTable';
+import type { RejectCode } from '@/data/manager_ga/rejected';
 
 /**
  * 반려내역 페이지 컴포넌트
@@ -60,10 +61,10 @@ export default function RejectedPage() {
   // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
   const [search_query, set_search_query] = useState<string>('');
 
-  // 반려 코드 필터 상태 관리
-  const [selected_reject_code, set_selected_reject_code] = useState<
-    string | null
-  >(null);
+  // 반려 코드 필터 상태 관리 (배열로 변경)
+  const [selected_reject_codes, set_selected_reject_codes] = useState<
+    RejectCode[]
+  >([]);
 
   return (
     <div className={styles.container}>
@@ -81,6 +82,8 @@ export default function RejectedPage() {
         <FilterSection
           search_query={search_query}
           on_search_change={set_search_query}
+          selected_reject_codes={selected_reject_codes}
+          on_reject_codes_change={set_selected_reject_codes}
         />
 
         {/* 반려 내역 통계 섹션 */}
@@ -89,7 +92,7 @@ export default function RejectedPage() {
         {/* 반려내역 테이블 */}
         <RejectedCampaignTable
           search_query={search_query}
-          selected_reject_code={selected_reject_code}
+          selected_reject_codes={selected_reject_codes}
         />
       </div>
     </div>

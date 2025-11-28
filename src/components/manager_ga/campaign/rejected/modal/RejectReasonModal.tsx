@@ -25,9 +25,12 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from '@/styles/manager_ga/campaign/rejected/modal/reject_reason_modal.module.css';
-import { reject_code_info, type RejectCodeInfo } from '@/data/manager_ga/rejected';
+import {
+  reject_code_info,
+  type RejectCodeInfo,
+} from '@/data/manager_ga/rejected';
 
 interface RejectReasonModalProps {
   // 모달 열림/닫힘 상태
@@ -46,16 +49,34 @@ export default function RejectReasonModal({
   reject_reason,
   reject_code,
 }: RejectReasonModalProps) {
-  // 선택된 AI 추천 분류 태그 상태
+  // 선택된 AI 추천 분류 (라디오 버튼이므로 단일 값)
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
-  const [selected_tags, set_selected_tags] = useState<string[]>([]);
+  const [selected_classification, set_selected_classification] = useState<
+    string | null
+  >(null);
+
+  // 반려 코드 정보 가져오기
+  const code_info = reject_code_info.find((info) => info.code === reject_code);
+
+  // 반려 사유 텍스트 상태 관리
+  // 초기값은 props로 받은 reject_reason 또는 code_info의 reason을 사용
+  const [reason_text, set_reason_text] = useState<string>(
+    reject_reason || code_info?.reason || '반려 사유가 없습니다.',
+  );
+
+  // 모달이 열릴 때마다 반려 사유 텍스트 초기화
+  // useEffect는 컴포넌트가 렌더링된 후에 실행되는 Hook입니다
+  useEffect(() => {
+    if (is_open) {
+      set_reason_text(
+        reject_reason || code_info?.reason || '반려 사유가 없습니다.',
+      );
+    }
+  }, [is_open, reject_reason, code_info?.reason]);
 
   // 모달이 닫혀있으면 아무것도 렌더링하지 않음
   // 조건부 렌더링: is_open이 false이면 null을 반환
   if (!is_open) return null;
-
-  // 반려 코드 정보 가져오기
-  const code_info = reject_code_info.find((info) => info.code === reject_code);
 
   // AI 추천 분류 태그 목록 (반려 코드 정보에서 가져오기)
   // 같은 카테고리의 반려 코드들을 태그로 표시
@@ -63,27 +84,23 @@ export default function RejectReasonModal({
     .filter((info) => info.category === code_info?.category)
     .map((info) => info.reason);
 
-  // 태그 선택/해제 핸들러
-  // 클릭한 태그가 이미 선택되어 있으면 제거, 없으면 추가
-  const handle_tag_click = (tag: string) => {
-    set_selected_tags((prev) => {
-      if (prev.includes(tag)) {
-        // 이미 선택된 태그면 제거
-        return prev.filter((t) => t !== tag);
-      } else {
-        // 선택되지 않은 태그면 추가
-        return [...prev, tag];
-      }
-    });
+  // AI 추천 분류 선택 핸들러 (라디오 버튼 방식)
+  const handle_classification_change = (classification: string) => {
+    set_selected_classification(classification);
   };
 
-  // 저장 버튼 클릭 핸들러
-  const handle_save = () => {
-    // TODO: 반려 사유 저장 로직 구현
-    console.log('반려 사유 저장:', {
-      reject_reason,
+  // 반려 사유 텍스트 변경 핸들러
+  const handle_reason_change = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    set_reason_text(e.target.value);
+  };
+
+  // 확인 버튼 클릭 핸들러
+  const handle_confirm = () => {
+    // TODO: 반려 사유 확인 로직 구현
+    console.log('반려 사유 확인:', {
+      reject_reason: reason_text,
       reject_code,
-      selected_tags,
+      selected_classification,
     });
     on_close();
   };
@@ -99,36 +116,56 @@ export default function RejectReasonModal({
 
   return (
     <div className={styles.modal_overlay} onClick={handle_overlay_click}>
-      <div className={styles.modal_container} onClick={(e) => e.stopPropagation()}>
+      <div
+        className={styles.modal_container}
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* 모달 제목 */}
         <h2 className={styles.modal_title}>콘텐츠 반려 사유</h2>
 
-        {/* 반려 사유 텍스트 영역 */}
+        {/* 반려 사유 텍스트 영역 (input 스타일) */}
         <div className={styles.reject_reason_box}>
-          <p className={styles.reject_reason_text}>{reject_reason || code_info?.reason || '반려 사유가 없습니다.'}</p>
+          <textarea
+            className={styles.reject_reason_text}
+            value={reason_text}
+            onChange={handle_reason_change}
+            onClick={(e) => e.stopPropagation()}
+            onFocus={(e) => e.stopPropagation()}
+            rows={6}
+            placeholder="반려 사유를 입력하세요"
+          />
         </div>
 
         {/* AI 추천 분류 섹션 */}
         <div className={styles.ai_recommended_section}>
           <p className={styles.ai_recommended_label}>AI 추천 분류</p>
-          <div className={styles.tag_container}>
+          <div className={styles.classification_container}>
             {ai_recommended_tags.map((tag) => {
-              const is_selected = selected_tags.includes(tag);
+              const is_selected = selected_classification === tag;
               return (
-                <button
+                <label
                   key={tag}
-                  className={`${styles.tag} ${is_selected ? styles.tag_selected : styles.tag_unselected}`}
-                  onClick={() => handle_tag_click(tag)}
+                  className={`${styles.classification_item} ${
+                    is_selected ? styles.classification_item_selected : ''
+                  }`}
                 >
+                  <input
+                    type="radio"
+                    name="ai-classification"
+                    value={tag}
+                    checked={is_selected}
+                    onChange={() => handle_classification_change(tag)}
+                    className={styles.classification_radio}
+                  />
                   {is_selected && (
                     <img
-                      src="/images/icons/sign_ok.svg"
+                      src="/images/icons/red_check_icon.svg"
                       alt="선택됨"
-                      className={styles.tag_check_icon}
+                      className={styles.classification_check_icon}
                     />
                   )}
-                  <span>{tag}</span>
-                </button>
+                  <span className={styles.classification_label}>{tag}</span>
+                </label>
               );
             })}
           </div>
@@ -139,12 +176,11 @@ export default function RejectReasonModal({
           <button className={styles.close_button} onClick={on_close}>
             닫기
           </button>
-          <button className={styles.save_button} onClick={handle_save}>
-            저장
+          <button className={styles.confirm_button} onClick={handle_confirm}>
+            확인
           </button>
         </div>
       </div>
     </div>
   );
 }
-
