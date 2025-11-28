@@ -71,11 +71,39 @@
   letter-spacing: -0.32px;
 }
 
-/* 날짜 선택기 아이콘 */
+/* 날짜 선택기 아이콘 (달력 모양) */
 .date_filter_section_picker_icon {
   width: 16px;
   height: 16px;
-  background-color: #d9d9d9;
+  position: relative;
+  /* 달력 아이콘 만들기 */
+  border: 1.5px solid #666;
   border-radius: 2px;
+  background-color: white;
+}
+
+/* 달력 상단 고리 부분 */
+.date_filter_section_picker_icon::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 2px;
+  background-color: #666;
+  border-radius: 1px 1px 0 0;
+}
+
+/* 달력 내부 줄 (날짜 구분선) */
+.date_filter_section_picker_icon::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 1px;
+  right: 1px;
+  height: 1px;
+  background-color: #666;
+  opacity: 0.3;
 }
 
