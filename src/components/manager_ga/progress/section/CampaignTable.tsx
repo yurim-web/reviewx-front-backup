@@ -29,15 +29,17 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import styles from '@/styles/manager_ga/campaign/progress/table.module.css';
+import styles from '@/styles/manager_ga/campaign/progress_table.module.css';
 import CampaignStatusTag from '../CampaignStatusTag';
 import CampaignTypeTag from '../CampaignTypeTag';
 import ChannelIcon from '../ChannelIcon';
+import CampaignReportModal from '../modal/CampaignReportModal';
 import {
   campaign_list,
   type CampaignProgressItem,
   type CampaignType,
 } from '@/data/manager_ga/progress';
+import type { ReportCode } from '@/data/manager_ga/reported';
 
 // 캠페인 타입별 상세 페이지 경로 매핑
 // Record 타입: 키-값 쌍의 객체 타입을 정의합니다
@@ -62,72 +64,48 @@ export default function CampaignTable({}: CampaignTableProps) {
      📌 상태 관리 (State Management)
      ======================================== */
 
-  // 체크박스 선택 상태 관리
+  // 호버된 행의 ID를 관리하는 상태
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
   // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
-  const [selected_campaigns, set_selected_campaigns] = useState<string[]>([]);
+  const [hovered_row_id, set_hovered_row_id] = useState<string | null>(null);
 
-  /* ========================================
-     🎯 이벤트 핸들러 (Event Handlers)
-     ======================================== */
-
-  /**
-   * 개별 체크박스 선택/해제 핸들러
-   *
-   * 설명:
-   * - 사용자가 특정 캠페인의 체크박스를 클릭했을 때 호출됩니다.
-   * - 이미 선택된 캠페인이면 목록에서 제거하고, 선택되지 않은 캠페인이면 목록에 추가합니다.
-   *
-   * 학습 포인트:
-   * - includes(): 배열에 특정 요소가 있는지 확인합니다
-   * - filter(): 조건에 맞는 요소만 남긴 새로운 배열을 반환합니다
-   * - 스프레드 연산자(...): 배열이나 객체를 펼쳐서 새로운 배열/객체를 만듭니다
-   *
-   * @param campaign_id - 선택/해제할 캠페인 ID
-   */
-  const handle_checkbox_change = (campaign_id: string) => {
-    // 현재 선택된 캠페인 목록에 해당 ID가 있는지 확인
-    if (selected_campaigns.includes(campaign_id)) {
-      // 있으면 제거 (해제)
-      // filter 함수: 조건에 맞는 요소만 남긴 새로운 배열을 반환합니다
-      set_selected_campaigns(
-        selected_campaigns.filter((id) => id !== campaign_id),
-      );
-    } else {
-      // 없으면 추가 (선택)
-      // 스프레드 연산자(...): 배열이나 객체를 펼쳐서 새로운 배열/객체를 만듭니다
-      set_selected_campaigns([...selected_campaigns, campaign_id]);
-    }
-  };
-
-  /**
-   * 전체 선택/해제 핸들러
-   *
-   * 설명:
-   * - 테이블 헤더의 체크박스를 클릭했을 때 호출됩니다.
-   * - 현재 모든 캠페인이 선택되어 있으면 모두 해제하고,
-   *   그렇지 않으면 모든 캠페인을 선택합니다.
-   *
-   * 학습 포인트:
-   * - length 속성: 배열의 길이를 반환합니다
-   * - map 함수: 배열의 각 요소를 변환하여 새로운 배열을 반환합니다
-   *
-   * 사용 위치:
-   * - 테이블 헤더의 전체 선택 체크박스 (line 123)
-   */
-  const handle_select_all = () => {
-    // 현재 모든 캠페인이 선택되어 있으면 모두 해제, 아니면 모두 선택
-    if (selected_campaigns.length === campaign_list.length) {
-      set_selected_campaigns([]);
-    } else {
-      // map 함수: 배열의 각 요소를 변환하여 새로운 배열을 반환합니다
-      set_selected_campaigns(campaign_list.map((campaign) => campaign.id));
-    }
-  };
+  // 신고 모달 상태 관리
+  const [report_modal_state, set_report_modal_state] = useState<{
+    is_open: boolean;
+    campaign_id: string | null;
+  }>({
+    is_open: false,
+    campaign_id: null,
+  });
 
   /* ========================================
      🛠️ 유틸리티 함수 (Utility Functions)
      ======================================== */
+
+  // 신고 아이콘 클릭 핸들러
+  const handle_report_click = (campaign_id: string) => {
+    set_report_modal_state({
+      is_open: true,
+      campaign_id,
+    });
+  };
+
+  // 신고 모달 닫기 핸들러
+  const handle_report_modal_close = () => {
+    set_report_modal_state({
+      is_open: false,
+      campaign_id: null,
+    });
+  };
+
+  // 신고 완료 핸들러
+  const handle_report_submit = (report_code: ReportCode) => {
+    // TODO: 실제 신고 로직 구현
+    console.log('캠페인 신고:', {
+      campaign_id: report_modal_state.campaign_id,
+      report_code,
+    });
+  };
 
   /**
    * 숫자를 천 단위로 포맷팅하는 함수
@@ -194,14 +172,6 @@ export default function CampaignTable({}: CampaignTableProps) {
           📋 테이블 헤더
           ======================================== */}
       <div className={styles.table_header}>
-        <div className={styles.table_header_cell_checkbox}>
-          <input
-            type="checkbox"
-            checked={selected_campaigns.length === campaign_list.length}
-            onChange={handle_select_all}
-            className={styles.checkbox}
-          />
-        </div>
         {/* 캠페인 번호 - 화살표 아이콘 포함 */}
         <div className={styles.table_header_cell}>
           <span>캠페인 번호</span>
@@ -258,6 +228,8 @@ export default function CampaignTable({}: CampaignTableProps) {
             className={styles.table_header_arrow}
           />
         </div>
+        {/* 신고 아이콘 칸 - 헤더는 빈 칸으로 표시 */}
+        <div className={styles.table_header_cell_report}></div>
       </div>
 
       {/* ========================================
@@ -265,18 +237,14 @@ export default function CampaignTable({}: CampaignTableProps) {
           ======================================== */}
       {campaign_list.map((campaign) => {
         const detail_href = get_detail_href(campaign);
+        const is_hovered = hovered_row_id === campaign.id;
         return (
-          <div key={campaign.id} className={styles.table_row}>
-            {/* 체크박스 */}
-            <div className={styles.table_cell_checkbox}>
-              <input
-                type="checkbox"
-                checked={selected_campaigns.includes(campaign.id)}
-                onChange={() => handle_checkbox_change(campaign.id)}
-                className={styles.checkbox}
-              />
-            </div>
-
+          <div
+            key={campaign.id}
+            className={styles.table_row}
+            onMouseEnter={() => set_hovered_row_id(campaign.id)}
+            onMouseLeave={() => set_hovered_row_id(null)}
+          >
             {/* 캠페인 번호 */}
             <div className={styles.table_cell}>{campaign.campaign_number}</div>
 
@@ -328,9 +296,34 @@ export default function CampaignTable({}: CampaignTableProps) {
             <div className={styles.table_cell}>
               {format_number(campaign.point)}
             </div>
+
+            {/* 신고 아이콘 칸 - 호버 시에만 표시 */}
+            <div className={styles.table_cell_report}>
+              {is_hovered && (
+                <button
+                  onClick={() => handle_report_click(campaign.id)}
+                  className={styles.report_button}
+                  aria-label={`${campaign.campaign_name} 신고`}
+                >
+                  <img
+                    src="/images/icons/table_report.svg"
+                    alt="신고"
+                    className={styles.report_icon}
+                  />
+                </button>
+              )}
+            </div>
           </div>
         );
       })}
+
+      {/* 신고 모달 */}
+      <CampaignReportModal
+        is_open={report_modal_state.is_open}
+        on_close={handle_report_modal_close}
+        campaign_id={report_modal_state.campaign_id || undefined}
+        on_report={handle_report_submit}
+      />
     </div>
   );
 }

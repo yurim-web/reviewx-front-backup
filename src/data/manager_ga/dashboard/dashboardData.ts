@@ -18,6 +18,9 @@
 import { StatCardData } from '@/components/manager_ga/dashboard/StatCard';
 
 // 캠페인 관리 요약 통계 데이터
+// 사용 위치:
+// - src/app/manager_ga/page.tsx (GA 관리자 대시보드 메인 페이지)
+// - CampaignSummarySection 컴포넌트에 전달되어 캠페인 통계 카드로 표시됨
 export const campaignStats: StatCardData[] = [
   {
     title: '캠페인 모집률',
@@ -59,22 +62,22 @@ export interface MemberTypeBarData {
   category: string; // 카테고리명 (막대 이름)
   partner: number; // 파트너 비율
   reviewer: number; // 리뷰어 비율
-  dormant: number; // 휴면 회원 비율
 }
 
 // 회원 유형 막대 차트 데이터
+// 사용 위치:
+// - src/components/manager_ga/dashboard/chart/MemberTypeBarChart.tsx
+// - MemberStatsSection 컴포넌트 내부에서 사용되어 파트너/리뷰어 비율을 프로그레스 바로 표시
 export const memberTypeBarData: MemberTypeBarData[] = [
   {
     category: '전체',
-    partner: 5.6, // 파트너 비율 (566/10155)
-    reviewer: 94.4, // 리뷰어 비율 (9589/10155)
-    dormant: 0.1, // 휴면 회원 비율 (10/10155)
+    partner: 12.5, // 파트너 비율 (566/10155) - 비율 상향 조정
+    reviewer: 87.5, // 리뷰어 비율 (9589/10155) - 파트너 증가에 따라 조정
   },
   {
     category: '활성',
-    partner: 2.6, // 활성 파트너 비율 (267/10155)
-    reviewer: 74.7, // 활성 리뷰어 비율 (7589/10155)
-    dormant: 22.7, // 나머지
+    partner: 8.3, // 활성 파트너 비율 (267/10155) - 비율 상향 조정
+    reviewer: 91.7, // 활성 리뷰어 비율 (7589/10155) - 파트너 증가에 따라 조정
   },
 ];
 
@@ -104,6 +107,10 @@ export interface MemberTypeStats {
   };
 }
 
+// 회원 유형 섹션 통계 데이터
+// 사용 위치:
+// - src/components/manager_ga/dashboard/section/MemberTypeSection.tsx
+// - 전체 회원 수, 활성 파트너 수, 전체 리뷰어 수, 활성 리뷰어 수를 표시
 export const memberTypeStats: MemberTypeStats = {
   totalMembers: {
     label: '전체 회원 수',
@@ -141,6 +148,9 @@ export interface ChannelData {
 }
 
 // 채널별 회원 파이 차트 데이터
+// 사용 위치:
+// - src/components/manager_ga/dashboard/chart/ChannelMemberPieChart.tsx
+// - ChannelMemberSection 컴포넌트 내부에서 사용되어 채널별 회원 비율을 파이 차트로 표시
 export const channelData: ChannelData[] = [
   { name: '블로그', value: 50, count: 12589 }, // 블로그 등록 50%
   { name: '인스타그램', value: 25, count: 10124 }, // 인스타그램 등록 25%
@@ -172,6 +182,10 @@ export interface ChannelMemberStats {
   };
 }
 
+// 채널별 회원 섹션 통계 데이터
+// 사용 위치:
+// - src/components/manager_ga/dashboard/section/ChannelMemberSection.tsx
+// - 블로그, 인스타그램, 클립, 유튜브 등록 회원 수와 비율을 표시
 export const channelMemberStats: ChannelMemberStats = {
   blog: {
     label: '블로그 등록',
@@ -215,6 +229,10 @@ export interface AccessStats {
   };
 }
 
+// 접속 통계 데이터
+// 사용 위치:
+// - src/components/manager_ga/dashboard/section/AccessStatsSection.tsx
+// - 방문 수와 유입 수를 통계 카드 형태로 표시
 export const accessStats: AccessStats = {
   visits: {
     label: '방문 수',
@@ -300,6 +318,9 @@ const allDeviceSegments: DeviceSegment[] = baseDeviceProgressData.map(
 );
 
 // All 막대를 포함한 최종 디바이스 진행률 데이터
+// 사용 위치:
+// - src/components/manager_ga/dashboard/chart/DeviceStatsChart.tsx
+// - AccessStatsSection 컴포넌트 내부에서 사용되어 PC, Tablet, Mobile, App 접속 비율을 프로그레스 바로 표시
 export const deviceProgressData: DeviceProgress[] = [
   {
     label: 'All',
@@ -320,6 +341,9 @@ export interface DonutData {
 }
 
 // 회원 활성화 도넛 차트 데이터
+// 사용 위치:
+// - src/components/manager_ga/dashboard/chart/MemberActivationDonutChart.tsx
+// - MemberActivationSection 컴포넌트 내부에서 사용되어 활성화/비활성화 비율을 도넛 차트로 표시
 export const memberActivationDonutData: DonutData[] = [
   { name: '활성화', value: 70 }, // 활성화 비율 68%
   { name: '비활성화', value: 30 }, // 비활성화 비율 32%
@@ -345,6 +369,10 @@ export interface MemberActivationStats {
   };
 }
 
+// 회원 활성화 섹션 통계 데이터
+// 사용 위치:
+// - src/components/manager_ga/dashboard/section/MemberActivationSection.tsx
+// - 전체 회원 수, 활성 회원 수, 비활성 회원 수를 표시
 export const memberActivationStats: MemberActivationStats = {
   totalMembers: {
     label: '전체 회원 수',

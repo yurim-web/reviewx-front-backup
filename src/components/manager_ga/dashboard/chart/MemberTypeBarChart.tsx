@@ -5,39 +5,37 @@
 /**
  * 회원 유형 막대 차트 컴포넌트
  *
- * 목적: 파트너, 리뷰어, 휴면 회원의 비율을 세로 스택 막대 차트로 표시합니다.
+ * 목적: 파트너, 리뷰어의 비율을 세로 프로그레스 바로 표시합니다.
  *
  * 사용 위치:
  * - MemberStatsSection 컴포넌트 (전체 회원 통계 카드 2)
  *
  * 주요 기능:
- * - 두 개의 세로 막대 차트
- * - 각 막대는 파트너, 리뷰어, 휴면 회원으로 구성
- * - 범례: 파트너(어두운 회색), 리뷰어(밝은 회색), 휴면 회원(매우 밝은 회색)
+ * - 두 개의 세로 프로그레스 바 (왼쪽: 파트너, 오른쪽: 리뷰어)
+ * - 각 바는 회색 배경에 아래에서 위로 채워지는 형태
+ * - 애니메이션 효과로 부드럽게 채워짐
+ * - 범례: 파트너(어두운 회색), 리뷰어(밝은 회색)
+ *
+ * 학습 포인트:
+ * - CSS 모듈: 스타일을 모듈화하여 컴포넌트별로 격리
+ * - 인라인 스타일: 동적 값(percentage)을 style prop으로 전달
+ * - 구조분해할당: 배열에서 필요한 값만 추출
+ * - map 함수: 데이터 배열을 순회하며 컴포넌트 생성
  */
 
 'use client';
 
-import { useRef } from 'react';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  ResponsiveContainer,
-  Cell,
-  Legend,
-} from 'recharts';
 import styles from '@/styles/manager_ga/dashboard/device_stats.module.css';
+import {
+  memberTypeBarData,
+  MemberTypeBarData,
+} from '@/data/manager_ga/dashboard/dashboardData';
 
-import { memberTypeBarData, MemberTypeBarData } from '@/data/manager_ga/dashboard/dashboardData';
-import { use_bar_chart_click_handler } from './chart_event_handlers';
-
-// 색상 정의 (이미지 설명 기반)
+// 색상 정의
 const colors = {
   partner: '#666666', // 어두운 회색 (파트너)
   reviewer: '#d9d9d9', // 밝은 회색 (리뷰어)
-  dormant: '#f1f1f1', // 매우 밝은 회색 (휴면 회원)
+  background: '#ededed', // 프로그레스 바 배경 회색
 };
 
 // 범례 컴포넌트
@@ -58,84 +56,61 @@ const CustomLegend = () => {
         ></div>
         <span className={styles.legend_text}>리뷰어</span>
       </div>
-      <div className={styles.legend_item}>
-        <div
-          className={styles.legend_color}
-          style={{ backgroundColor: colors.dormant }}
-        ></div>
-        <span className={styles.legend_text}>휴면 회원</span>
-      </div>
     </div>
   );
 };
 
 export default function MemberTypeBarChart() {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  /* ========================================
-     🔧 부가 기능 처리 (공용 유틸리티 사용)
-     ======================================== */
-
-  // 클릭 시 검정색 선 제거
-  // 공용 유틸리티 함수를 사용하여 코드 중복 제거
-  use_bar_chart_click_handler(containerRef);
+  // "전체" 데이터만 사용 (첫 번째 항목)
+  const totalData = memberTypeBarData[0];
 
   return (
-    <div ref={containerRef} className={styles.member_type_bar_chart_container}>
-      <div className={styles.member_type_chart_wrapper}>
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={memberTypeBarData}
-            margin={{ top: 12, right: 0, left: 0, bottom: 0 }}
-            barCategoryGap="30%"
-          >
-            {/* X축 - 하단 선만 표시 */}
-            <XAxis
-              dataKey="category"
-              axisLine={{ stroke: '#F2F2F2' }}
-              tickLine={false}
-              tick={false}
-              hide={false}
-              height={1}
-              padding={{ left: 0, right: 0 }}
-            />
-            {/* Y축 숨김 (세로 막대 차트에서는 숫자 축) */}
-            <YAxis type="number" domain={[0, 100]} hide={true} />
+    <div className={styles.member_type_bar_chart_container}>
+      {/* 프로그레스 바 그리드 - 두 개의 차트를 나란히 배치 */}
+      <div className={styles.member_type_progress_grid_wrapper}>
+        <div className={styles.member_type_progress_grid}>
+          {/* 왼쪽 바: 파트너 */}
+          <div className={styles.member_type_progress_chart_wrapper}>
+            <div
+              className={styles.member_type_progress_bar_container}
+              role="img"
+              aria-label={`파트너 비율 ${totalData.partner}%`}
+            >
+              {/* 배경 (회색) */}
+              <div className={styles.member_type_progress_bar_background}></div>
+              {/* 채워지는 부분 (파트너) */}
+              <div
+                className={styles.member_type_progress_bar_fill}
+                style={{
+                  height: `${totalData.partner}%`,
+                  backgroundColor: colors.partner,
+                }}
+              ></div>
+            </div>
+          </div>
 
-            {/* 휴면 회원 막대 (매우 밝은 회색) - 맨 아래, 하단만 둥글게 */}
-            <Bar dataKey="dormant" stackId="a" radius={[8, 8, 0, 0]}>
-              {memberTypeBarData.map((entry, index) => (
-                <Cell
-                  key={`dormant-${index}`}
-                  fill={colors.dormant}
-                  style={{ fill: colors.dormant }} // 호버 시에도 색상 유지
-                />
-              ))}
-            </Bar>
-
-            {/* 리뷰어 막대 (밝은 회색) - 중간, 둥글지 않음 */}
-            <Bar dataKey="reviewer" stackId="a" radius={[8, 8, 0, 0]}>
-              {memberTypeBarData.map((entry, index) => (
-                <Cell
-                  key={`reviewer-${index}`}
-                  fill={colors.reviewer}
-                  style={{ fill: colors.reviewer }} // 호버 시에도 색상 유지
-                />
-              ))}
-            </Bar>
-
-            {/* 파트너 막대 (어두운 회색) - 맨 위, 상단만 둥글게 */}
-            <Bar dataKey="partner" stackId="a" radius={[8, 8, 0, 0]}>
-              {memberTypeBarData.map((entry, index) => (
-                <Cell
-                  key={`partner-${index}`}
-                  fill={colors.partner}
-                  style={{ fill: colors.partner }} // 호버 시에도 색상 유지
-                />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+          {/* 오른쪽 바: 리뷰어 */}
+          <div className={styles.member_type_progress_chart_wrapper}>
+            <div
+              className={styles.member_type_progress_bar_container}
+              role="img"
+              aria-label={`리뷰어 비율 ${totalData.reviewer}%`}
+            >
+              {/* 배경 (회색) */}
+              <div className={styles.member_type_progress_bar_background}></div>
+              {/* 채워지는 부분 (리뷰어) */}
+              <div
+                className={styles.member_type_progress_bar_fill}
+                style={{
+                  height: `${totalData.reviewer}%`,
+                  backgroundColor: colors.reviewer,
+                }}
+              ></div>
+            </div>
+          </div>
+        </div>
+        {/* 바닥 선 */}
+        <div className={styles.member_type_progress_bottom_line}></div>
       </div>
       {/* 범례 */}
       <CustomLegend />
