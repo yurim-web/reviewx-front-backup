@@ -120,7 +120,7 @@ export default function RejectReasonModal({
             onChange={handle_reason_change}
             onClick={(e) => e.stopPropagation()}
             onFocus={(e) => e.stopPropagation()}
-            rows={6}
+            rows={5}
             placeholder="반려 사유를 입력하세요"
           />
         </div>
