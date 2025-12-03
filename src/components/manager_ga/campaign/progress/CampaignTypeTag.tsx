@@ -19,9 +19,10 @@
  * - CSS Modules: className으로 스타일을 적용합니다
  */
 
+import CampaignTypeTagCommon from '@/components/manager_common/campaign/progress/CampaignTypeTag';
 import styles from '@/styles/manager_ga/campaign/progress/tags.module.css';
 
-// 캠페인 유형 타입 정의
+// 캠페인 유형 타입 정의 (공통 컴포넌트에서 export한 타입 재사용)
 export type CampaignType = '배송형' | '방문형' | '구매평' | '기자단' | '미션형';
 
 // 캠페인 유형 태그 props 타입 정의
@@ -32,13 +33,14 @@ interface CampaignTypeTagProps {
 /**
  * 캠페인 유형 태그 컴포넌트
  *
+ * 목적: 공통 컴포넌트를 사용하여 중복 코드를 제거합니다.
+ *
  * @param type - 캠페인 유형
  */
 export default function CampaignTypeTag({ type }: CampaignTypeTagProps) {
-  return (
-    <div className={styles.type_tag}>
-      <span>{type}</span>
-    </div>
-  );
+  return <CampaignTypeTagCommon type={type} styles={styles} />;
 }
+
+
+
 

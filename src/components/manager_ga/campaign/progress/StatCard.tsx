@@ -16,6 +16,7 @@
  *
  */
 
+import StatCardCommon from '@/components/manager_common/campaign/progress/StatCard';
 import styles from '@/styles/manager_ga/campaign/progress/stat_card.module.css';
 
 // 통계 카드 props 타입 정의
@@ -28,25 +29,23 @@ interface StatCardProps {
 /**
  * 통계 카드 컴포넌트
  *
+ * 목적: 공통 컴포넌트를 사용하여 중복 코드를 제거합니다.
+ *
  * @param title - 카드 제목
  * @param value - 통계 값
  * @param isCancelled - 취소된 캠페인 여부 (선택적, true일 경우 빨간색으로 표시)
  */
 export default function StatCard({ title, value, isCancelled }: StatCardProps) {
-  // 취소된 캠페인인 경우 빨간색 클래스를 추가합니다
-  // className을 여러 개 적용할 때는 배열로 만들고 join(' ')으로 합치거나,
-  // 템플릿 리터럴을 사용할 수 있습니다
-  const valueClassName = isCancelled
-    ? `${styles.stat_card_value} ${styles.stat_card_value_cancelled}`
-    : styles.stat_card_value;
-
   return (
-    <div className={styles.stat_card}>
-      {/* 카드 제목 */}
-      <p className={styles.stat_card_title}>{title}</p>
-      {/* 통계 값 - 취소된 캠페인인 경우 빨간색 클래스 적용 */}
-      <p className={valueClassName}>{value}</p>
-    </div>
+    <StatCardCommon
+      title={title}
+      value={value}
+      isCancelled={isCancelled}
+      styles={styles}
+    />
   );
 }
+
+
+
 

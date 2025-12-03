@@ -58,6 +58,8 @@ interface BaseFilterSectionProps<T extends string | number> {
   on_filter_tag_remove?: (value: T) => void;
   // 날짜 필터 (선택적)
   date_filter?: React.ReactNode;
+  // 검색 필터 뒤에 올 버튼들 (선택적)
+  search_after_buttons?: React.ReactNode;
   // 오른쪽 액션 버튼들 (선택적)
   right_action_buttons?: React.ReactNode[];
 }
@@ -72,6 +74,7 @@ export default function BaseFilterSection<T extends string | number>({
   active_filter_tags = [],
   on_filter_tag_remove,
   date_filter,
+  search_after_buttons,
   right_action_buttons = [],
 }: BaseFilterSectionProps<T>) {
   return (
@@ -100,6 +103,9 @@ export default function BaseFilterSection<T extends string | number>({
               className={styles.search_input}
             />
           </div>
+
+          {/* 검색 필터 뒤에 올 버튼들 (선택적) */}
+          {search_after_buttons && search_after_buttons}
         </div>
 
         {/* 오른쪽 그룹: 액션 버튼들, 정렬 */}
@@ -109,12 +115,14 @@ export default function BaseFilterSection<T extends string | number>({
             <div key={index}>{button}</div>
           ))}
 
-          {/* 정렬 드롭다운 */}
-          <SortDropdown
-            selected_sort={selected_sort}
-            on_sort_change={on_sort_change}
-            sort_options={sort_options}
-          />
+          {/* 정렬 드롭다운 (sort_options가 있을 때만 표시) */}
+          {sort_options && sort_options.length > 0 && (
+            <SortDropdown
+              selected_sort={selected_sort}
+              on_sort_change={on_sort_change}
+              sort_options={sort_options}
+            />
+          )}
         </div>
       </div>
 

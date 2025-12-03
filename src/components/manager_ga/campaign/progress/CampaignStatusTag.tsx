@@ -23,9 +23,10 @@
  * - CSS Modules: className으로 스타일을 적용합니다
  */
 
+import CampaignStatusTagCommon from '@/components/manager_common/campaign/progress/CampaignStatusTag';
 import styles from '@/styles/manager_ga/campaign/progress/tags.module.css';
 
-// 캠페인 상태 타입 정의
+// 캠페인 상태 타입 정의 (공통 컴포넌트에서 export한 타입 재사용)
 export type CampaignStatus = '예정' | '신청' | '진행' | '종료' | '긴급';
 
 // 캠페인 상태 태그 props 타입 정의
@@ -36,30 +37,10 @@ interface CampaignStatusTagProps {
 /**
  * 캠페인 상태 태그 컴포넌트
  *
+ * 목적: 공통 컴포넌트를 사용하여 중복 코드를 제거합니다.
+ *
  * @param status - 캠페인 상태
  */
 export default function CampaignStatusTag({ status }: CampaignStatusTagProps) {
-  // 상태에 따라 다른 className을 반환하는 함수
-  const getStatusClassName = () => {
-    switch (status) {
-      case '예정':
-        return styles.status_tag_scheduled;
-      case '신청':
-        return styles.status_tag_applied;
-      case '진행':
-        return styles.status_tag_progress;
-      case '종료':
-        return styles.status_tag_ended;
-      case '긴급':
-        return styles.status_tag_urgent;
-      default:
-        return styles.status_tag_scheduled;
-    }
-  };
-
-  return (
-    <div className={`${styles.status_tag} ${getStatusClassName()}`}>
-      <span>{status}</span>
-    </div>
-  );
+  return <CampaignStatusTagCommon status={status} styles={styles} />;
 }
