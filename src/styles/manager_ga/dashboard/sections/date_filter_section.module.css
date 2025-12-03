@@ -53,6 +53,13 @@
   border-color: #444;
 }
 
+/* 활성화된 날짜 필터 버튼 호버 효과 제거 */
+.date_filter_section_button_active:hover {
+  background-color: #444;
+  color: white;
+  border-color: #444;
+}
+
 /* 날짜 선택기 */
 .date_filter_section_picker {
   display: flex;
@@ -106,4 +113,3 @@
   background-color: #666;
   opacity: 0.3;
 }
-
