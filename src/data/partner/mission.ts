@@ -27,7 +27,7 @@ export interface MissionCampaignDataItem {
     id: string; // 캠페인 고유 식별자
     title: string; // 캠페인 제목
     image: string; // 메인 캠페인 이미지 경로
-    status: '진행 중' | '대기 중' | '모집 중' | '종료' | '취소'; // 캠페인 상태 (모든 상태 포함)
+    status: '진행 중' | '대기 중' | '모집 중' | '종료' | '취소' | '긴급'; // 캠페인 상태 (모든 상태 포함)
     campaignType: '미션형'; // 캠페인 타입 (미션형 고정)
     category: string; // 캠페인 카테고리 (뷰티, 식품, 생활 등)
     brandName: string; // 브랜드명 (플랫폼명, 미션형은 보통 빈 문자열)
@@ -512,6 +512,74 @@ export const missionCampaigns: MissionCampaignDataItem[] = [
     },
     applicantData: { applicants: [], selectedApplicants: [] },
   },
+
+  // 긴급 상태 캠페인
+  {
+    campaignInfo: {
+      id: 'urgent-mission-001',
+      title: '[긴급] 긴급 미션 캠페인',
+      image: '/images/main/campaign_img/eximg_4.png',
+      status: '긴급' as const,
+      campaignType: '미션형',
+      category: '생활',
+      brandName: '',
+      partnerName: '(주)긴급마케팅',
+      recruitmentPeriod: '2025-11-01 ~ 2025-11-05',
+      announcementDate: '2025-11-05',
+      registrationPeriod: '2025-11-06 ~ 2025-11-10',
+      recruitedCount: 0,
+      totalCount: 30,
+      daysLeft: 1,
+      statusText: '긴급 캠페인입니다. 빠른 처리 부탁드립니다.',
+      point: 30000,
+    },
+    applicantData: {
+      applicants: [
+        {
+          id: 'app_urgent_mission_001',
+          Id: 'reviewer_urgent_mission_001',
+          nickname: '긴급미션리뷰어A',
+          userType: '리뷰어',
+          profileImage: '',
+          memberType: '모범 회원',
+          dailyVisits: 150,
+          totalVisits: 500000,
+          neighbors: 1200,
+          memo: '긴급 미션 캠페인 전문 리뷰어',
+          selectionStatus: '미선택',
+          channel: '',
+          registrationDate: '2025-11-01',
+        },
+      ],
+      selectedApplicants: [],
+    },
+  },
+
+  // 취소 상태 캠페인
+  {
+    campaignInfo: {
+      id: 'cancelled-mission-001',
+      title: '[취소] 미션형 생활용품 캠페인',
+      image: '/images/main/campaign_img/eximg_4.png',
+      status: '취소' as const,
+      campaignType: '미션형',
+      category: '생활',
+      brandName: '',
+      partnerName: '(주)미션프로모션',
+      recruitmentPeriod: '2025-10-10 ~ 2025-10-20',
+      announcementDate: '2025-10-20',
+      registrationPeriod: '2025-10-22 ~ 2025-10-30',
+      recruitedCount: 0,
+      totalCount: 25,
+      daysLeft: -8,
+      statusText: '캠페인을 취소하였습니다.',
+      point: 0,
+    },
+    contents: {
+      reviewing: [],
+      completed: [],
+    },
+  },
 ];
 
 /* ========================================
@@ -692,12 +760,6 @@ export const missionClosedCampaigns: MissionCampaignDataItem[] = [
  * - reviewing: 검수 중인 콘텐츠 배열
  * - completed: 완료된 콘텐츠 배열
  *
- * 학습 포인트:
- * - 함수 매개변수: campaignId (캠페인 ID)
- * - 조건부 반환: if 문으로 특정 ID에 대한 처리
- * - 배열 메서드: find() 메서드로 배열에서 특정 조건의 요소를 찾습니다.
- * - 옵셔널 체이닝: ?. 연산자로 안전하게 속성에 접근합니다.
- * - 널 병합 연산자: ?? 연산자로 기본값을 제공합니다.
  *
  * @param campaignId - 조회할 캠페인의 ID
  * @returns 검수 중/완료된 콘텐츠를 담은 객체

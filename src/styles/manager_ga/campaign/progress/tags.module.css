@@ -49,6 +49,12 @@
   color: white;
 }
 
+/* 상태 태그 - 취소 (연한 빨간색) */
+.status_tag_cancelled {
+  background-color: rgba(255, 38, 38, 0.05);
+  color: #ff2626;
+}
+
 /* 상태 태그 - 긴급 (빨간색) */
 .status_tag_urgent {
   background-color: #ff2626;

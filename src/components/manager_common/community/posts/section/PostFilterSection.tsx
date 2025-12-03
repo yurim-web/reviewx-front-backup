@@ -8,7 +8,8 @@
  * 목적: 게시글 목록을 필터링하기 위한 필터 버튼들을 표시하는 섹션입니다.
  *
  * 사용 페이지:
- * - /manager_ga/community/posts (게시글 목록 페이지)
+ * - /manager_ga/community/posts (GA 관리자 게시글 목록 페이지)
+ * - /manager_sa/community/posts (SA 관리자 게시글 목록 페이지)
  *
  * 주요 기능:
  * - 선택 기간 조회 필터
@@ -21,11 +22,6 @@
  * - 삭제 버튼
  * - 정렬 필터 (최신순)
  *
- * 학습 포인트:
- * - 이벤트 핸들러: onClick으로 버튼 클릭 이벤트를 처리합니다
- * - 상태 관리: useState를 사용하여 필터 상태를 관리합니다
- * - 조건부 렌더링: 선택된 필터에 따라 UI를 변경합니다
- * - Props: 부모 컴포넌트에서 자식 컴포넌트로 데이터와 함수를 전달합니다
  */
 
 'use client';
@@ -279,3 +275,4 @@ export default function PostFilterSection({
     </div>
   );
 }
+

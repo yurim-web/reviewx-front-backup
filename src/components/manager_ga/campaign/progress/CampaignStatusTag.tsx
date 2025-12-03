@@ -17,22 +17,20 @@
  * - 종료: 회색 배경
  * - 긴급: 빨간색 배경
  *
- * 학습 포인트:
- * - 조건부 렌더링: 상태에 따라 다른 스타일을 적용합니다
- * - 삼항 연산자: 조건에 따라 다른 className을 적용합니다
- * - CSS Modules: className으로 스타일을 적용합니다
  */
 
-import CampaignStatusTagCommon from '@/components/manager_common/campaign/progress/CampaignStatusTag';
+import CampaignStatusTagCommon, {
+  type CampaignStatus,
+} from '@/components/manager_common/campaign/progress/tags/CampaignStatusTag';
 import styles from '@/styles/manager_ga/campaign/progress/tags.module.css';
-
-// 캠페인 상태 타입 정의 (공통 컴포넌트에서 export한 타입 재사용)
-export type CampaignStatus = '예정' | '신청' | '진행' | '종료' | '긴급';
 
 // 캠페인 상태 태그 props 타입 정의
 interface CampaignStatusTagProps {
   status: CampaignStatus; // 캠페인 상태
 }
+
+// 타입 재export (하위 호환성을 위해)
+export type { CampaignStatus };
 
 /**
  * 캠페인 상태 태그 컴포넌트

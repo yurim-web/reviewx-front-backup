@@ -15,11 +15,6 @@
  * - Blog, Clip, Instagram, Mission, Reels, Shorts, Store, Youtube 채널 아이콘 표시
  * - 채널 이름에 따라 적절한 아이콘을 표시합니다
  *
- * 학습 포인트:
- * - Record 타입: 키-값 쌍의 객체 타입을 정의합니다
- * - 이미지 경로: public 폴더의 이미지를 사용합니다
- * - alt 속성: 접근성을 위한 대체 텍스트를 제공합니다
- * - 컴포넌트 재사용: 여러 페이지에서 동일한 컴포넌트를 사용하여 중복 코드를 줄입니다
  */
 
 // 채널 타입 정의
@@ -64,7 +59,8 @@ export default function ChannelIcon({
   channel,
   styles: cssStyles,
 }: ChannelIconProps) {
-  const icon_path = channel_icon_map[channel] || '/images/icons/phone_verified.svg';
+  const icon_path =
+    channel_icon_map[channel] || '/images/icons/phone_verified.svg';
 
   return (
     <div className={cssStyles.channel_icon}>
@@ -76,4 +72,3 @@ export default function ChannelIcon({
     </div>
   );
 }
-

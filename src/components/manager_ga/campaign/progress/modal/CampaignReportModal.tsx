@@ -1,43 +1,40 @@
 /* ========================================
-   📋 캠페인 신고 모달 컴포넌트
+   📋 캠페인 신고 모달 컴포넌트 (래퍼)
    ======================================== */
 
 /**
- * 캠페인 신고 모달 컴포넌트
+ * 캠페인 신고 모달 컴포넌트 (래퍼)
  *
- * 목적: GA 관리자 진행 현황 페이지에서 캠페인을 신고하는 모달입니다.
+ * 목적: GA 관리자 진행 현황 페이지에서 공통 CampaignReportModal을 사용합니다.
+ *       스타일과 데이터를 전달하여 manager_ga에 맞게 렌더링합니다.
  *
  * 사용 위치:
  * - CampaignTable 컴포넌트의 신고 아이콘 클릭 시
+ * - /manager_ga/campaign/progress (GA 관리자 진행 현황 페이지)
  *
- * 주요 기능:
- * - 라디오 버튼 방식의 단일 선택 신고 사유 선택
- * - 신고 코드 옵션: W001 ~ W013
- * - 신고/닫기 기능
- * - 모달 오버레이 클릭으로 닫기
- *
- * 학습 포인트:
- * - useState: 컴포넌트의 상태를 관리하는 React Hook입니다
- * - useEffect: 컴포넌트가 렌더링된 후에 실행되는 Hook입니다
- * - 이벤트 핸들러: 사용자 상호작용에 반응하는 함수입니다
- * - 라디오 버튼: 단일 선택만 가능한 입력 요소입니다
  */
 
-'use client';
-
-import { useState, useEffect } from 'react';
+import CampaignReportModalCommon, {
+  type ReportCode,
+} from '@/components/manager_common/campaign/progress/modal/CampaignReportModal';
 import styles from '@/styles/manager_ga/campaign/progress/campaign_report_modal.module.css';
-import { report_code_info, type ReportCode } from '@/data/manager_ga/reported';
+import {
+  report_code_info,
+  type ReportCode as ReportCodeType,
+} from '@/data/manager_ga/reported';
+
+// 타입 재내보내기 (하위 호환성)
+export type { ReportCode };
 
 interface CampaignReportModalProps {
-  is_open: boolean; // 모달 열림/닫힘 상태
-  on_close: () => void; // 모달 닫기 함수
-  campaign_id?: string; // 신고할 캠페인 ID (옵션)
-  on_report?: (report_code: ReportCode) => void; // 신고 완료 함수
+  is_open: boolean;
+  on_close: () => void;
+  campaign_id?: string;
+  on_report?: (report_code: ReportCodeType) => void;
 }
 
 // 신고 코드 필터 옵션 (이미지에 표시된 옵션만)
-const report_code_options: ReportCode[] = [
+const report_code_options: ReportCodeType[] = [
   'W001', // 선정 후 취소
   'W002', // 지각 제출
   'W003', // 무단 이탈 · 노쇼
@@ -57,94 +54,28 @@ export default function CampaignReportModal({
   campaign_id,
   on_report,
 }: CampaignReportModalProps) {
-  // 선택된 신고 코드 (라디오 버튼이므로 단일 값)
-  const [selected_code, set_selected_code] = useState<ReportCode | null>(null);
-
-  // 모달이 열릴 때마다 선택 상태를 초기화
-  useEffect(() => {
-    if (is_open) {
-      // 기본값으로 첫 번째 옵션 선택
-      set_selected_code('W001');
-    }
-  }, [is_open]);
-
-  // 옵션 선택 핸들러
-  const handle_option_change = (code: ReportCode) => {
-    set_selected_code(code);
-  };
-
-  // 신고 핸들러
-  const handle_report = () => {
-    if (selected_code) {
-      on_report?.(selected_code);
-      on_close();
-      // TODO: 실제 신고 로직 구현
-    }
-  };
-
-  // 모달 오버레이 클릭 핸들러
-  const handle_backdrop_click = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      on_close();
-    }
-  };
-
-  // 신고 코드 정보 가져오기
-  const get_code_info = (code: ReportCode) => {
-    return report_code_info.find((info) => info.code === code);
-  };
-
-  if (!is_open) return null;
-
   return (
-    <div className={styles.modal_overlay} onClick={handle_backdrop_click}>
-      <div
-        className={styles.modal_content}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* 모달 제목 */}
-        <h3 className={styles.modal_title}>콘텐츠 신고</h3>
-
-        {/* 옵션 리스트 (세로 레이아웃) */}
-        <div className={styles.options_list}>
-          {report_code_options.map((code) => {
-            const code_info = get_code_info(code);
-            return (
-              <label key={code} className={styles.option_item}>
-                <input
-                  type="radio"
-                  name="report-reason"
-                  value={code}
-                  checked={selected_code === code}
-                  onChange={() => handle_option_change(code)}
-                  className={styles.option_radio}
-                />
-                <span className={styles.option_label}>
-                  {code_info?.reason || code}
-                </span>
-              </label>
-            );
-          })}
-        </div>
-
-        {/* 모달 푸터 */}
-        <div className={styles.modal_footer}>
-          <button className={styles.close_button} onClick={on_close}>
-            닫기
-          </button>
-          <button
-            className={styles.report_button}
-            onClick={handle_report}
-            disabled={!selected_code}
-          >
-            신고
-          </button>
-        </div>
-      </div>
-    </div>
+    <CampaignReportModalCommon
+      is_open={is_open}
+      on_close={on_close}
+      campaign_id={campaign_id}
+      on_report={on_report}
+      styles={
+        styles as {
+          modal_overlay: string;
+          modal_content: string;
+          modal_title: string;
+          options_list: string;
+          option_item: string;
+          option_radio: string;
+          option_label: string;
+          modal_footer: string;
+          close_button: string;
+          report_button: string;
+        }
+      }
+      report_code_info={report_code_info}
+      report_code_options={report_code_options}
+    />
   );
 }
-
-
-
-

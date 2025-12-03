@@ -5,10 +5,13 @@
 /**
  * 채널 필터 모달 컴포넌트
  *
- * 목적: GA 관리자 진행 현황 페이지에서 캠페인 채널을 필터링하는 모달입니다.
+ * 목적: GA/SA 관리자 진행 현황 페이지에서 캠페인 채널을 필터링하는 모달입니다.
  *
- * 사용 위치:
- * - FilterSection 컴포넌트의 채널 필터에서 사용
+ * 📍 사용 위치:
+ * - src/components/manager_ga/campaign/progress/section/FilterSection.tsx
+ *   (GA 관리자 진행 현황 페이지의 필터 섹션)
+ * - src/components/manager_sa/campaign/progress/section/FilterSection.tsx
+ *   (SA 관리자 진행 현황 페이지의 필터 섹션)
  *
  * 주요 기능:
  * - 체크박스 방식의 다중 선택 필터링
@@ -16,17 +19,11 @@
  * - 필터 적용/초기화 기능
  * - 모달 오버레이 클릭으로 닫기
  *
- * 학습 포인트:
- * - 컴포넌트 재사용: BaseFilterModal 공통 컴포넌트를 사용하여 중복 코드를 제거합니다
- * - 데이터 변환: channel_options를 FilterOption 형태로 변환하여 공통 컴포넌트에 전달합니다
- * - 컴포지션(Composition): 작은 컴포넌트들을 조합하여 더 큰 컴포넌트를 만드는 패턴입니다
  */
 
 'use client';
 
-import BaseFilterModal, {
-  type FilterOption,
-} from '@/components/manager_ga/common/filter/BaseFilterModal';
+import { createFilterModal } from './createFilterModal';
 
 // 채널 타입 정의 (영문)
 export type Channel =
@@ -68,33 +65,28 @@ const channel_options: Channel[] = [
   'Shorts',
 ];
 
-// 채널 옵션을 FilterOption 형태로 변환하는 함수
-// map 함수: 배열을 순회하며 새로운 형태의 배열을 만듭니다
-const get_channel_options = (): FilterOption<Channel>[] => {
-  return channel_options.map((channel) => ({
-    value: channel,
-    label: channel_label_map[channel],
-  }));
-};
+// 팩토리 함수를 사용하여 필터 모달 생성
+// - createFilterModal: 공통 패턴을 추출한 팩토리 함수입니다
+// - label_map: 영문 채널명을 한글명으로 변환하기 위한 매핑 객체입니다
+const ChannelFilterModalComponent = createFilterModal<Channel>({
+  options: channel_options,
+  section_title: '채널',
+  label_map: channel_label_map,
+});
 
+// Props 이름을 ChannelFilterModalProps에 맞게 변환하는 래퍼 컴포넌트
 export default function ChannelFilterModal({
   is_open,
   on_close,
   selected_channels,
   on_apply,
 }: ChannelFilterModalProps) {
-  // 채널 옵션을 FilterOption 형태로 변환
-  const options = get_channel_options();
-
-  // BaseFilterModal 공통 컴포넌트를 사용하여 중복 코드 제거
   return (
-    <BaseFilterModal<Channel>
+    <ChannelFilterModalComponent
       is_open={is_open}
       on_close={on_close}
       selected_values={selected_channels}
       on_apply={on_apply}
-      options={options}
-      section_title="채널"
     />
   );
 }

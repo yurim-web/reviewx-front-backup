@@ -26,7 +26,7 @@ export interface DeliveryCampaignDataItem {
     id: string; // 캠페인 고유 식별자
     title: string; // 캠페인 제목
     image: string; // 메인 캠페인 이미지 경로
-    status: '진행 중' | '대기 중' | '모집 중' | '종료' | '취소'; // 캠페인 상태 (모든 상태 포함)
+    status: '진행 중' | '대기 중' | '모집 중' | '종료' | '취소' | '긴급'; // 캠페인 상태 (모든 상태 포함)
     campaignType: '배송형'; // 캠페인 타입 (배송형 고정)
     category: string; // 캠페인 카테고리 (뷰티, 식품, 생활 등)
     brandName: string; // 브랜드명 (플랫폼명)
@@ -398,6 +398,89 @@ export const deliveryCampaigns: DeliveryCampaignDataItem[] = [
       ],
     },
   },
+
+  // 긴급 상태 캠페인
+  {
+    campaignInfo: {
+      id: 'urgent-delivery-001',
+      title: '[긴급] 긴급 배송 캠페인',
+      image: '/images/main/campaign_img/eximg_1.png',
+      status: '긴급' as const,
+      campaignType: '배송형',
+      category: '생활',
+      brandName: '인스타그램',
+      partnerName: '(주)긴급마케팅',
+      recruitmentPeriod: '2025-11-01 ~ 2025-11-05',
+      announcementDate: '2025-11-05',
+      registrationPeriod: '2025-11-06 ~ 2025-11-10',
+      recruitedCount: 0,
+      totalCount: 20,
+      daysLeft: 2,
+      statusText: '긴급 캠페인입니다. 빠른 처리 부탁드립니다.',
+      point: 50000,
+    },
+    applicantData: {
+      applicants: [
+        {
+          id: 'app_urgent_delivery_001',
+          Id: 'reviewer_urgent_001',
+          nickname: '긴급리뷰어A',
+          userType: '리뷰어',
+          profileImage: '',
+          memberType: '모범 회원',
+          dailyVisits: 200,
+          totalVisits: 600000,
+          neighbors: 1500,
+          memo: '긴급 캠페인 전문 리뷰어',
+          selectionStatus: '미선택',
+          channel: '인스타그램',
+          registrationDate: '2025-11-01',
+        },
+        {
+          id: 'app_urgent_delivery_002',
+          Id: 'reviewer_urgent_002',
+          nickname: '긴급리뷰어B',
+          userType: '인플루언서',
+          profileImage: '',
+          memberType: '모범 회원',
+          dailyVisits: 250,
+          totalVisits: 700000,
+          neighbors: 1800,
+          memo: '긴급 처리 가능한 인플루언서',
+          selectionStatus: '미선택',
+          channel: '인스타그램',
+          registrationDate: '2025-11-01',
+        },
+      ],
+      selectedApplicants: [],
+    },
+  },
+
+  // 취소 상태 캠페인
+  {
+    campaignInfo: {
+      id: 'cancelled-delivery-001',
+      title: '[취소] 배송형 뷰티 제품 체험단',
+      image: '/images/main/campaign_img/eximg_1.png',
+      status: '취소' as const,
+      campaignType: '배송형',
+      category: '뷰티',
+      brandName: '네이버블로그',
+      partnerName: '(주)배송마케팅',
+      recruitmentPeriod: '2025-10-15 ~ 2025-10-25',
+      announcementDate: '2025-10-25',
+      registrationPeriod: '2025-10-27 ~ 2025-11-05',
+      recruitedCount: 0,
+      totalCount: 15,
+      daysLeft: -5,
+      statusText: '캠페인을 취소하였습니다.',
+      point: 0,
+    },
+    contents: {
+      reviewing: [],
+      completed: [],
+    },
+  },
 ];
 
 /* ========================================
@@ -517,9 +600,6 @@ export const deliveryClosedCampaigns: DeliveryCampaignDataItem[] = [
  * - 선정 날짜까지 남은 일수를 계산합니다.
  * - 오늘 날짜를 기준으로 타겟 날짜까지의 일수를 반환합니다.
  *
- * 학습 포인트:
- * - getTime(): 날짜를 밀리초로 변환하여 계산
- * - Math.ceil(): 올림 처리하여 하루 단위로 계산
  *
  * @param dateString - 날짜 문자열 (예: "2025-11-30")
  * @returns 오늘로부터 해당 날짜까지 남은 일수
@@ -545,10 +625,6 @@ export function calculateDaysLeft(dateString: string): number {
  * - 신청 탭: 캠페인 오픈 후, 선정 전 (모집 시작일이 과거, 선정 날짜가 미래) → "모집 중"
  * - 진행 탭: 모집 시작일이 오늘이거나 선정 날짜가 지남 → "진행 중"
  *
- * 학습 포인트:
- * - Date 객체: 날짜 비교를 위해 사용
- * - setHours(0, 0, 0, 0): 시간을 00:00:00으로 설정하여 날짜만 비교
- * - 조건문 순서: 선정 날짜와 모집 시작일을 모두 체크하여 우선순위 결정
  *
  * @param recruitmentPeriod - 모집 기간 ("2025-11-01 ~ 2025-11-15" 형식)
  * @param announcementDate - 선정 날짜 ("2025-11-30" 형식)
@@ -831,12 +907,6 @@ export function addDeliveryCampaign(
  * - reviewing: 검수 중인 콘텐츠 배열
  * - completed: 완료된 콘텐츠 배열
  *
- * 학습 포인트:
- * - 함수 매개변수: campaignId (캠페인 ID)
- * - 조건부 반환: if 문으로 특정 ID에 대한 처리
- * - 배열 메서드: find() 메서드로 배열에서 특정 조건의 요소를 찾습니다.
- * - 옵셔널 체이닝: ?. 연산자로 안전하게 속성에 접근합니다.
- * - 널 병합 연산자: ?? 연산자로 기본값을 제공합니다.
  *
  * @param campaignId - 조회할 캠페인의 ID
  * @returns 검수 중/완료된 콘텐츠를 담은 객체

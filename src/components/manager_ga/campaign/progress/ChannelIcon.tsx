@@ -14,30 +14,20 @@
  * - Blog, Clip, Instagram, Mission, Reels, Shorts, Store, Youtube 채널 아이콘 표시
  * - 채널 이름에 따라 적절한 아이콘을 표시합니다
  *
- * 학습 포인트:
- * - 조건부 렌더링: 채널에 따라 다른 아이콘을 표시합니다
- * - 이미지 경로: public 폴더의 이미지를 사용합니다
- * - alt 속성: 접근성을 위한 대체 텍스트를 제공합니다
  */
 
-import ChannelIconCommon from '@/components/manager_common/campaign/progress/ChannelIcon';
+import ChannelIconCommon, {
+  type Channel,
+} from '@/components/manager_common/campaign/progress/icons/ChannelIcon';
 import styles from '@/styles/manager_ga/campaign/progress/channel_icon.module.css';
-
-// 채널 타입 정의 (공통 컴포넌트에서 export한 타입 재사용)
-export type Channel =
-  | 'Blog'
-  | 'Clip'
-  | 'Instagram'
-  | 'Mission'
-  | 'Reels'
-  | 'Shorts'
-  | 'Store'
-  | 'Youtube';
 
 // 채널 아이콘 props 타입 정의
 interface ChannelIconProps {
   channel: Channel; // 채널 타입
 }
+
+// 타입 재export (하위 호환성을 위해)
+export type { Channel };
 
 /**
  * 채널 아이콘 컴포넌트

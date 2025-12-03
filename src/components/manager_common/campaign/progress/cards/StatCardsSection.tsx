@@ -16,12 +16,6 @@
  * - 각 카드는 StatCard 컴포넌트를 사용합니다
  * - title은 하드코딩으로 작성하고, value만 데이터에서 가져옵니다
  *
- * 학습 포인트:
- * - JSX에서 컴포넌트를 여러 개 직접 작성하는 방법
- * - props 전달: 각 StatCard 컴포넌트에 title, value를 전달합니다
- * - 조건부 prop 전달: isCancelled는 취소된 캠페인에만 전달합니다
- * - 컴포넌트 재사용: 여러 페이지에서 동일한 컴포넌트를 사용하여 중복 코드를 줄입니다
- * - 함수를 props로 전달: calculate_stat_card_values 함수를 props로 받아서 데이터 소스를 유연하게 처리합니다
  */
 
 import StatCard from './StatCard';

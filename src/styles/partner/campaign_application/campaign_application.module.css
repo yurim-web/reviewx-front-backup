@@ -5,11 +5,7 @@
 /* ========== 페이지 헤더 ========== */
 /* 
  * 페이지 상단 제목 영역 (상단 고정)
- * 
- * 학습 포인트:
- * - position: sticky; 스크롤 시 상단에 고정되는 레이아웃을 만듭니다
- * - display: flex; Flexbox 레이아웃을 사용하여 요소들을 가로로 배치합니다
- * - justify-content: space-between; 좌우 끝에 요소를 배치합니다
+ 
  */
 .page_header {
   position: sticky; /* 스크롤 시 상단에 고정 */
@@ -25,10 +21,6 @@
 
 /* 
  * 페이지 제목 스타일
- * 
- * 학습 포인트:
- * - margin: 0; 기본 마진 제거 (브라우저 기본 스타일 초기화)
- * - font-weight: 700; 굵은 글씨 (bold)
  */
 .page_title {
   color: #444; /* 텍스트 색상 */

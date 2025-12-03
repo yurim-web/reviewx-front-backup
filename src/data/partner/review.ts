@@ -27,7 +27,7 @@ export interface ReviewCampaignDataItem {
     id: string; // 캠페인 고유 식별자
     title: string; // 캠페인 제목
     image: string; // 메인 캠페인 이미지 경로
-    status: '진행 중' | '대기 중' | '모집 중' | '종료' | '취소'; // 캠페인 상태 (모든 상태 포함)
+    status: '진행 중' | '대기 중' | '모집 중' | '종료' | '취소' | '긴급'; // 캠페인 상태 (모든 상태 포함)
     campaignType: '구매평'; // 캠페인 타입 (구매평 고정)
     category: string; // 캠페인 카테고리 (식품, 뷰티, 생활 등)
     brandName: string; // 브랜드명 (플랫폼명)
@@ -582,6 +582,33 @@ export const reviewCampaigns: ReviewCampaignDataItem[] = [
           channel: '기본',
         },
       ],
+    },
+  },
+
+  // 취소 상태 캠페인
+  {
+    campaignInfo: {
+      id: 'cancelled-review-001',
+      title: '[취소] 구매평 화장품 캠페인',
+      image: '/images/main/campaign_img/eximg_5.png',
+      status: '취소' as const,
+      campaignType: '구매평',
+      category: '뷰티',
+      brandName: '',
+      partnerName: '(주)구매평마케팅',
+      recruitmentPeriod: '2025-10-08 ~ 2025-10-18',
+      announcementDate: '2025-10-18',
+      purchasePeriod: '2025-10-20 ~ 2025-10-22',
+      registrationPeriod: '2025-10-23 ~ 2025-10-31',
+      recruitedCount: 0,
+      totalCount: 20,
+      daysLeft: -12,
+      statusText: '캠페인을 취소하였습니다.',
+      point: 0,
+    },
+    contents: {
+      reviewing: [],
+      completed: [],
     },
   },
 ];

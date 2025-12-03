@@ -25,7 +25,7 @@ export interface ReporterCampaignDataItem {
     id: string; // 캠페인 고유 식별자
     title: string; // 캠페인 제목
     image: string; // 메인 캠페인 이미지 경로
-    status: '진행 중' | '대기 중' | '모집 중' | '종료' | '취소'; // 캠페인 상태 (모든 상태 포함)
+    status: '진행 중' | '대기 중' | '모집 중' | '종료' | '취소' | '긴급'; // 캠페인 상태 (모든 상태 포함)
     campaignType: '기자단'; // 캠페인 타입 (기자단 고정)
     category: string; // 캠페인 카테고리 (생활, 뷰티 등)
     brandName: string; // 브랜드명 (플랫폼명)
@@ -447,6 +447,32 @@ export const reporterCampaigns: ReporterCampaignDataItem[] = [
     },
     applicantData: { applicants: [], selectedApplicants: [] },
   },
+
+  // 취소 상태 캠페인
+  {
+    campaignInfo: {
+      id: 'cancelled-reporter-001',
+      title: '[취소] 기자단 브랜드 스토리 취재',
+      image: '/images/main/campaign_img/eximg_8.png',
+      status: '취소' as const,
+      campaignType: '기자단',
+      category: '생활',
+      brandName: '인스타그램',
+      partnerName: '(주)기자단커뮤니케이션',
+      recruitmentPeriod: '2025-10-05 ~ 2025-10-15',
+      announcementDate: '2025-10-15',
+      registrationPeriod: '2025-10-17 ~ 2025-10-25',
+      recruitedCount: 0,
+      totalCount: 12,
+      daysLeft: -10,
+      statusText: '캠페인을 취소하였습니다.',
+      point: 0,
+    },
+    contents: {
+      reviewing: [],
+      completed: [],
+    },
+  },
 ];
 
 /* ========================================
@@ -488,10 +514,6 @@ reporterCampaigns.forEach((campaign) => {
  * - reviewing: 검수 중인 콘텐츠 배열
  * - completed: 완료된 콘텐츠 배열
  *
- * 학습 포인트:
- * - 함수 매개변수: campaignId (캠페인 ID)
- * - 배열 메서드: find() 메서드로 배열에서 특정 조건의 요소를 찾습니다.
- * - 옵셔널 체이닝: ?. 연산자로 안전하게 속성에 접근합니다.
  *
  * @param campaignId - 조회할 캠페인의 ID
  * @returns 검수 중/완료된 콘텐츠를 담은 객체

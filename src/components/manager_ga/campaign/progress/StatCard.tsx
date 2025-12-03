@@ -16,7 +16,7 @@
  *
  */
 
-import StatCardCommon from '@/components/manager_common/campaign/progress/StatCard';
+import StatCardCommon from '@/components/manager_common/campaign/progress/cards/StatCard';
 import styles from '@/styles/manager_ga/campaign/progress/stat_card.module.css';
 
 // 통계 카드 props 타입 정의
@@ -41,11 +41,14 @@ export default function StatCard({ title, value, isCancelled }: StatCardProps) {
       title={title}
       value={value}
       isCancelled={isCancelled}
-      styles={styles}
+      styles={
+        styles as {
+          stat_card: string;
+          stat_card_title: string;
+          stat_card_value: string;
+          stat_card_value_cancelled: string;
+        }
+      }
     />
   );
 }
-
-
-
-

@@ -16,26 +16,18 @@
  * - 캠페인 정보 표시 (번호, 파트너명, 캠페인명, 유형, 채널, 상태, 모집 수, 신청 수, 지급 포인트)
  * - 신고 기능
  *
- * 학습 포인트:
- * - useState: 컴포넌트의 상태를 관리하는 React Hook입니다
- * - 이벤트 핸들러: 사용자 상호작용에 반응하는 함수입니다
- * - 조건부 렌더링: 조건에 따라 다른 내용을 렌더링합니다
- * - Link 컴포넌트: Next.js의 클라이언트 사이드 네비게이션 컴포넌트입니다
- * - map 함수: 배열을 순회하며 컴포넌트를 렌더링합니다
- * - 컴포넌트 재사용: 여러 페이지에서 동일한 컴포넌트를 사용하여 중복 코드를 줄입니다
- * - Props로 데이터 소스와 경로를 받아서 유연하게 처리합니다
  */
 
 'use client';
 
 import Link from 'next/link';
 import { useState } from 'react';
-import CampaignStatusTag from './CampaignStatusTag';
-import CampaignTypeTag from './CampaignTypeTag';
-import ChannelIcon from './ChannelIcon';
-import type { CampaignStatus } from './CampaignStatusTag';
-import type { CampaignType } from './CampaignTypeTag';
-import type { Channel } from './ChannelIcon';
+import CampaignStatusTag from '../tags/CampaignStatusTag';
+import CampaignTypeTag from '../tags/CampaignTypeTag';
+import ChannelIcon from '../icons/ChannelIcon';
+import type { CampaignStatus } from '../tags/CampaignStatusTag';
+import type { CampaignType } from '../tags/CampaignTypeTag';
+import type { Channel } from '../icons/ChannelIcon';
 
 // 캠페인 진행 아이템 타입 정의
 export interface CampaignProgressItem {
@@ -65,8 +57,11 @@ interface CampaignTableProps {
   base_path: string; // 상세 페이지 기본 경로 (예: '/manager_ga/campaign/progress' 또는 '/manager_sa/campaign/progress')
   ReportModal: React.ComponentType<ReportModalComponent>; // 신고 모달 컴포넌트
   styles: Record<string, string>; // CSS 모듈 스타일 객체 (유연한 타입)
-  tagStyles: Record<string, string>; // 태그 스타일 객체 (유연한 타입)
-  channelIconStyles: Record<string, string>; // 채널 아이콘 스타일 객체 (유연한 타입)
+  tagStyles: Record<string, string> & { type_tag: string }; // 태그 스타일 객체 (type_tag 포함)
+  channelIconStyles: Record<string, string> & {
+    channel_icon: string;
+    channel_icon_image: string;
+  }; // 채널 아이콘 스타일 객체 (channel_icon, channel_icon_image 포함)
 }
 
 // 캠페인 타입별 상세 페이지 경로 매핑
@@ -244,7 +239,9 @@ export default function CampaignTable({
             onMouseLeave={() => set_hovered_row_id(null)}
           >
             {/* 캠페인 번호 */}
-            <div className={cssStyles.table_cell}>{campaign.campaign_number}</div>
+            <div className={cssStyles.table_cell}>
+              {campaign.campaign_number}
+            </div>
 
             {/* 파트너명 */}
             <div className={cssStyles.table_cell}>{campaign.partner_name}</div>
@@ -277,7 +274,10 @@ export default function CampaignTable({
 
             {/* 채널 */}
             <div className={cssStyles.table_cell}>
-              <ChannelIcon channel={campaign.channel} styles={channelIconStyles} />
+              <ChannelIcon
+                channel={campaign.channel}
+                styles={channelIconStyles}
+              />
             </div>
 
             {/* 신청 수 */}
@@ -325,4 +325,3 @@ export default function CampaignTable({
     </div>
   );
 }
-

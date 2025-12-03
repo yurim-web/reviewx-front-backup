@@ -27,7 +27,7 @@ export interface VisitCampaignDataItem {
     id: string; // 캠페인 고유 식별자
     title: string; // 캠페인 제목
     image: string; // 메인 캠페인 이미지 경로
-    status: '진행 중' | '대기 중' | '모집 중' | '종료' | '취소'; // 캠페인 상태 (모든 상태 포함)
+    status: '진행 중' | '대기 중' | '모집 중' | '종료' | '취소' | '긴급'; // 캠페인 상태 (모든 상태 포함)
     campaignType: '방문형'; // 캠페인 타입 (방문형 고정)
     category: string; // 캠페인 카테고리 (여가, 생활 등)
     brandName: string; // 브랜드명 (플랫폼명)
@@ -591,6 +591,32 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
           channel: '인스타그램',
         },
       ],
+    },
+  },
+
+  // 취소 상태 캠페인
+  {
+    campaignInfo: {
+      id: 'cancelled-visit-001',
+      title: '[취소] 방문형 카페 체험 캠페인',
+      image: '/images/main/campaign_img/eximg_2.png',
+      status: '취소' as const,
+      campaignType: '방문형',
+      category: '여가',
+      brandName: '인스타그램',
+      partnerName: '(주)방문체험기획',
+      recruitmentPeriod: '2025-10-12 ~ 2025-10-22',
+      announcementDate: '2025-10-22',
+      registrationPeriod: '2025-10-24 ~ 2025-11-02',
+      recruitedCount: 0,
+      totalCount: 18,
+      daysLeft: -15,
+      statusText: '캠페인을 취소하였습니다.',
+      point: 0,
+    },
+    contents: {
+      reviewing: [],
+      completed: [],
     },
   },
 ];
