@@ -14,10 +14,6 @@
  * - 반려 코드 안내 정보를 그리드 형태로 표시합니다
  * - 각 반려 코드의 코드, 카테고리, 사유를 표시합니다
  *
- * 학습 포인트:
- * - CSS 모듈: styles 객체를 통해 클래스명을 참조합니다
- * - JSX: HTML과 유사하지만 JavaScript 표현식을 사용할 수 있습니다
- * - 반복되는 요소를 하나씩 직접 작성하여 이해하기 쉽게 표현합니다
  */
 
 import styles from '@/styles/manager_ga/campaign/rejected/reject_code_info_section.module.css';

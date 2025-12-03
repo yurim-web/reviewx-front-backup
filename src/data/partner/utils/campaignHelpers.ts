@@ -94,7 +94,6 @@ export const getBrandLogo = (brandName: string, campaignType?: string): string =
  * 4. 종료 탭: "content_review,content_approval" (콘텐츠 확인 + 콘텐츠 확인 완료)
  * 5. 취소 탭: "penalty" (패널티 내역보기)
  *
- * 📌 학습 포인트:
  * - 탭(상태)에 따라 다른 버튼 조합을 반환
  * - 콘텐츠가 있는 경우 진행 탭에서도 콘텐츠 버튼 표시 (CampaignCard에서 처리)
  */

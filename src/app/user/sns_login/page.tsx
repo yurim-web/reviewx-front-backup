@@ -17,7 +17,6 @@
  * - 파트너 회원 로그인 링크
  * - 최근 로그인 배지 표시
  *
- * 🎓 학습 포인트:
  * - React의 useState 훅: 컴포넌트 내부 상태 관리
  * - 조건부 렌더링: showRecentLogin 상태에 따라 배지 표시/숨김
  * - 이벤트 핸들러: onClick으로 버튼 클릭 이벤트 처리
@@ -62,7 +61,6 @@ export default function SnsLoginPage() {
    *
    * 실제로는 네이버 OAuth API를 호출해야 함
    *
-   * 🎓 학습 포인트:
    * - 화살표 함수: const 함수명 = () => { } 형태
    * - console.log: 개발자 도구에서 확인할 수 있는 디버깅 메서드
    */

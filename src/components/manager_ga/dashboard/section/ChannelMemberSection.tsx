@@ -11,11 +11,6 @@
  * - 채널별 회원 파이 차트 표시
  * - 블로그, 인스타그램, 클립, 유튜브 등록 수 표시
  *
- * 학습 포인트:
- * - 컴포넌트 분리: 각 섹션을 독립적인 컴포넌트로 분리하여 재사용성 향상
- * - CSS 모듈: styles.member_stat_card를 사용하여 일관된 스타일 적용
- * - 그리드 레이아웃: styles.member_info_grid로 통계 정보를 2x2 그리드로 배치
- * - 비율 표시: 각 채널별 등록 수와 비율을 함께 표시
  */
 
 import styles from '@/styles/manager_ga/dashboard/sections/channel_member_section.module.css';

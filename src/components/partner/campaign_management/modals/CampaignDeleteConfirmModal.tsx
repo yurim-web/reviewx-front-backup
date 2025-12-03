@@ -20,7 +20,6 @@
  * - 삭제하기 버튼 (실제 삭제 처리)
  * - 모달 닫기 기능 (오버레이 클릭, X 버튼)
  *
- * 🎓 학습 포인트:
  * - 조건부 렌더링: isOpen prop에 따라 모달 표시/숨김
  * - 이벤트 핸들러: 버튼 클릭 및 오버레이 클릭 처리
  * - Props 타입 정의: TypeScript 인터페이스를 통한 타입 안정성
@@ -63,7 +62,6 @@ interface CampaignDeleteConfirmModalProps {
  * - 이벤트 핸들러: 삭제 확인/취소 버튼 클릭 및 오버레이 클릭 처리
  * - JSX: 모달 오버레이, 모달 컨테이너, 메시지, 버튼들로 구성
  * 
- * 🎓 학습 포인트: 조건부 렌더링
  * - 조건부 렌더링은 특정 조건에 따라 다른 내용을 렌더링하는 React의 기능입니다
  * - 여기서는 isOpen이 false일 때 null을 반환하여 모달을 완전히 숨깁니다
  * - 이를 통해 DOM에 불필요한 요소가 추가되지 않습니다
@@ -76,15 +74,11 @@ export default function CampaignDeleteConfirmModal({
   onConfirm,
 }: CampaignDeleteConfirmModalProps) {
   // 조건부 렌더링: 모달이 열려있지 않으면 아무것도 렌더링하지 않음
-  // 🎓 학습 포인트: early return 패턴
-  // - 함수의 시작 부분에서 조건을 확인하고 조건이 맞지 않으면 즉시 반환
-  // - 이를 통해 나머지 코드의 들여쓰기를 줄이고 가독성을 높임
   if (!isOpen) return null;
 
   /**
    * 삭제 확인 버튼 클릭 핸들러
    * 
-   * 🎓 학습 포인트: 이벤트 핸들러와 콜백 함수
    * - onConfirm prop이 제공되면 해당 함수를 호출
    * - prop이 없으면 기본 삭제 로직을 실행 (콘솔 로그 및 alert)
    * - 실제 프로덕션에서는 API 호출을 통해 서버에서 캠페인을 삭제함
@@ -105,7 +99,6 @@ export default function CampaignDeleteConfirmModal({
   /**
    * 취소 버튼 클릭 핸들러
    * 
-   * 🎓 학습 포인트: 단순 이벤트 핸들러
    * - 사용자가 취소를 선택하면 모달만 닫고 삭제 작업은 수행하지 않음
    */
   const handleCancelClick = () => {
@@ -115,7 +108,6 @@ export default function CampaignDeleteConfirmModal({
   /**
    * 모달 오버레이 클릭 핸들러
    * 
-   * 🎓 학습 포인트: 이벤트 위임과 이벤트 타겟 확인
    * - e.target: 실제로 클릭된 요소 (자식 요소일 수 있음)
    * - e.currentTarget: 이벤트 핸들러가 등록된 요소 (항상 오버레이)
    * - e.target === e.currentTarget을 확인하여 실제로 오버레이를 클릭했는지 확인
@@ -131,9 +123,6 @@ export default function CampaignDeleteConfirmModal({
 
   return (
     // 모달 오버레이 - 배경 어두운 레이어
-    // 🎓 학습 포인트: JSX와 className
-    // - className prop을 사용하여 CSS 모듈의 클래스를 적용
-    // - onClick 이벤트 핸들러를 등록하여 오버레이 클릭 시 모달 닫기
     <div className={styles.modal_overlay} onClick={handleOverlayClick}>
       {/* 모달 컨테이너 - 실제 모달 내용 */}
       <div className={styles.modal_container}>
@@ -146,10 +135,6 @@ export default function CampaignDeleteConfirmModal({
             정말로 이 캠페인을 삭제하시겠습니까?
           </p>
           {campaignTitle && (
-            // 🎓 학습 포인트: 조건부 렌더링과 JSX
-            // - campaignTitle이 존재할 때만 캠페인 제목을 표시
-            // - && 연산자를 사용한 단축 평가 (short-circuit evaluation)
-            // - campaignTitle이 truthy면 뒤의 요소를 렌더링하고, falsy면 아무것도 렌더링하지 않음
             <p className={styles.campaign_title_text}>{campaignTitle}</p>
           )}
           <p className={styles.warning_text}>
@@ -178,7 +163,6 @@ export default function CampaignDeleteConfirmModal({
 
         {/* 모달 닫기 버튼 - 우측 상단 X 아이콘 */}
         <button className={styles.close_button} onClick={onClose}>
-          {/* 🎓 학습 포인트: Next.js Image 컴포넌트
               - Next.js의 Image 컴포넌트는 이미지 최적화 기능을 제공
               - width와 height를 명시적으로 지정하여 레이아웃 시프트 방지
               - alt 속성은 접근성을 위해 필수 */}

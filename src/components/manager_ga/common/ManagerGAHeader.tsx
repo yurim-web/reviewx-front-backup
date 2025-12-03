@@ -15,11 +15,6 @@
  * - 가이드 버튼 (외부 링크)
  * - 마이페이지 버튼
  *
- * 학습 포인트:
- * - React 컴포넌트는 함수로 정의하며, JSX를 반환합니다
- * - className은 CSS Modules의 스타일을 적용하기 위해 사용됩니다
- * - Link 컴포넌트는 Next.js에서 페이지 간 이동을 위해 사용됩니다
- * - a 태그의 target="_blank"와 rel="noopener noreferrer"는 보안을 위한 속성입니다
  */
 
 import Link from 'next/link';

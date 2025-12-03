@@ -52,7 +52,6 @@ export default function ProfilePhotoUpload({
    * 4. 검증이 통과하면 FileReader API를 사용하여 이미지를 미리보기용 URL로 변환합니다.
    * 5. 검증 실패 시 모달을 표시합니다.
    *
-   * 🎓 학습 포인트: 파일 검증 로직
    * - 파일 확장자를 확인하여 허용된 형식인지 검증합니다
    * - 파일 크기를 확인하여 제한을 초과하지 않는지 검증합니다
    * - 검증 실패 시 사용자에게 명확한 오류 메시지를 표시합니다
@@ -104,10 +103,6 @@ export default function ProfilePhotoUpload({
 
         // FileReader API를 사용하여 파일을 데이터 URL로 변환
         // 이렇게 하면 이미지를 서버에 업로드하기 전에 미리보기를 할 수 있습니다.
-        // 🎓 학습 포인트: FileReader API
-        // - FileReader는 브라우저에서 파일을 읽는 API입니다
-        // - readAsDataURL은 파일을 Base64 인코딩된 데이터 URL로 변환합니다
-        // - 이 데이터 URL은 img 태그의 src 속성에 바로 사용할 수 있습니다
         const reader = new FileReader();
         reader.onload = (e) => {
           // reader.result는 파일을 읽은 결과입니다 (Base64 인코딩된 데이터 URL)
@@ -128,7 +123,6 @@ export default function ProfilePhotoUpload({
    * 모달 닫기 핸들러
    * 모달 메시지를 null로 설정하여 모달을 닫습니다.
    *
-   * 🎓 학습 포인트: 상태 관리
    * - modalMessage가 null이 아니면 모달이 열려있고, null이면 닫혀있습니다
    * - 조건부 렌더링을 통해 모달의 표시/숨김을 제어합니다
    */
@@ -140,7 +134,6 @@ export default function ProfilePhotoUpload({
    * 모달 오버레이 클릭 핸들러
    * 사용자가 모달 배경을 클릭하면 모달을 닫습니다.
    *
-   * 🎓 학습 포인트: 이벤트 위임과 이벤트 객체
    * - e.target: 실제로 클릭된 요소
    * - e.currentTarget: 이벤트 핸들러가 등록된 요소 (오버레이)
    * - 두 값이 같으면 오버레이를 직접 클릭한 것이므로 모달을 닫습니다

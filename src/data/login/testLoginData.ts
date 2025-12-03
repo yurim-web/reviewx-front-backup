@@ -100,7 +100,6 @@ export function checkTestLogin(email: string, password: string): string | null {
  * @param password - 입력된 비밀번호
  * @returns 에러 메시지 (성공이면 null)
  *
- * 🎓 학습 포인트:
  * - 함수 오버로딩: 같은 이름의 함수를 다른 매개변수로 여러 개 정의
  * - 여기서는 별도 함수로 분리하여 유저와 파트너 로그인을 구분
  */

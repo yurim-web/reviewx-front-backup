@@ -77,10 +77,6 @@ export default function PartnerCampaignManagementHeader({
    * - 초기값은 서버와 클라이언트가 동일하게 렌더링되도록 모든 값이 0인 객체입니다.
    * - setStats 함수를 사용하여 상태를 업데이트할 수 있습니다.
    * 
-   * 학습 포인트:
-   * - useState: React의 상태 관리 훅입니다.
-   * - 배열 구조분해할당: [상태값, 상태변경함수] = useState(초기값)
-   * - 객체 타입: PartnerCampaignStats 타입의 객체를 상태로 관리합니다.
    */
   const [stats, setStats] = useState<PartnerCampaignStats>({
     전체: 0,
@@ -105,10 +101,6 @@ export default function PartnerCampaignManagementHeader({
    * - 클라이언트 마운트 후: useEffect가 실행되어 실제 통계를 계산하고 상태를 업데이트합니다.
    * - 이렇게 하면 서버와 클라이언트의 초기 렌더링 결과가 일치하여 hydration 에러가 발생하지 않습니다.
    * 
-   * 학습 포인트:
-   * - useEffect: 컴포넌트의 생명주기와 관련된 작업을 처리합니다.
-   * - 의존성 배열([]): 빈 배열이면 컴포넌트 마운트 시 한 번만 실행됩니다.
-   * - setState: 상태를 업데이트하면 컴포넌트가 리렌더링됩니다.
    */
   useEffect(() => {
     // 클라이언트에서만 실행되므로 localStorage 접근 가능
@@ -128,10 +120,6 @@ export default function PartnerCampaignManagementHeader({
    * - 현재 페이지와 같은 탭이면 이동하지 않습니다.
    * - setActiveStatTab prop이 제공되면 그것을 사용하고, 없으면 내부에서 페이지 이동을 처리합니다.
    *
-   * 학습 포인트:
-   * - switch 문: 여러 조건에 따라 다른 동작을 수행
-   * - window.location.href: 브라우저의 현재 URL을 변경하여 페이지 이동
-   * - 조건부 실행: 현재 페이지와 같은 탭이면 아무것도 하지 않음
    */
   const handleStatTabChange = (tab: PartnerStatTab) => {
     // setActiveStatTab prop이 제공되면 그것을 사용

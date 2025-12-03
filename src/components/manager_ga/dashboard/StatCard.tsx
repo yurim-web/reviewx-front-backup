@@ -12,10 +12,6 @@
  * - 진행 바 표시
  * - 변화율에 따른 색상 구분 (증가/감소/변화없음)
  *
- * 학습 포인트:
- * - props: 부모 컴포넌트에서 전달받은 데이터
- * - 조건부 클래스명: 삼항 연산자로 동적 스타일 적용
- * - 인라인 스타일: style prop으로 동적 너비 설정
  */
 
 import styles from '@/styles/manager_ga/dashboard/sections/campaign_summary_section.module.css';

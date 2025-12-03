@@ -14,10 +14,6 @@
  * - /partner/campaign_application/reporter (기자단형 캠페인 신청내역)
  * - /partner/campaign_application/mission (미션형 캠페인 신청내역)
  *
- * 학습 포인트:
- * - 컴포넌트 재사용성: 여러 페이지에서 동일한 UI를 공통으로 사용
- * - 조건부 렌더링: 신청자 목록이 비어있을 때만 표시
- * - CSS 모듈 사용: 인라인 스타일 대신 CSS 모듈로 스타일 관리
  */
 
 "use client";

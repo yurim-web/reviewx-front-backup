@@ -11,7 +11,6 @@
  * - 기본 헤더 숨김 처리
  * - 소셜 로그인 페이지 전용 스타일 적용
  *
- * 🎓 학습 포인트:
  * - Next.js App Router의 layout.tsx
  * - 페이지별 레이아웃 커스터마이징
  * - children prop으로 하위 페이지 렌더링
@@ -31,7 +30,6 @@ export const metadata: Metadata = {
  *
  * @param children - 소셜 로그인 페이지 컴포넌트
  *
- * 🎓 학습 포인트:
  * - Readonly: 객체를 읽기 전용으로 만들어 불변성 보장
  * - React.ReactNode: React 컴포넌트가 렌더링할 수 있는 모든 타입
  */

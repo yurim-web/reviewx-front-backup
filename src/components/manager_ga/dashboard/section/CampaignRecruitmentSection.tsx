@@ -11,10 +11,6 @@
  * - 캠페인 모집 통계 차트 표시
  * - 카테고리별 모집률, 달성률, 평균 진행 기간 시각화
  *
- * 학습 포인트:
- * - 컴포넌트 분리: 각 섹션을 독립적인 컴포넌트로 분리하여 재사용성 향상
- * - CSS 모듈: styles.chart_card를 사용하여 일관된 스타일 적용
- * - 컴포넌트 조합: 차트 컴포넌트를 섹션 컴포넌트 내부에서 사용
  */
 
 import styles from '@/styles/manager_ga/dashboard/sections/campaign_recruitment_section.module.css';

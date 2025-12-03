@@ -14,13 +14,9 @@
  * - 통계 카드 6개를 직접 렌더링합니다
  * - 공통 StatCardsSection 컴포넌트를 사용하여 중복 코드를 제거합니다
  *
- * 학습 포인트:
- * - 컴포넌트 재사용: 공통 컴포넌트를 사용하여 중복 코드를 줄입니다
- * - 데이터 계산: calculate_stat_card_values 함수로 통계 값을 계산합니다
- * - Props 전달: 계산된 통계 값과 스타일을 공통 컴포넌트에 전달합니다
  */
 
-import StatCardsSectionCommon from '@/components/manager_common/campaign/progress/StatCardsSection';
+import StatCardsSectionCommon from '@/components/manager_common/campaign/progress/cards/StatCardsSection';
 import { calculate_stat_card_values } from '@/data/manager_ga/progress';
 import styles from '@/styles/manager_ga/campaign/progress/stat_card.module.css';
 

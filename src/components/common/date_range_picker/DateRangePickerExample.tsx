@@ -13,13 +13,6 @@
  * - 여러 달 동시 표시 (2개월)
  * - 한국어 로케일 지원
  *
- * 학습 포인트:
- * - react-day-picker 라이브러리 사용법
- * - showOutsideDays: 이전/다음 달 날짜 표시 옵션
- * - numberOfMonths: 동시에 표시할 달의 개수
- * - mode="range": 날짜 범위 선택 모드
- * - useState: 선택된 날짜 범위 상태 관리
- * - TypeScript 타입 정의: 선택된 날짜의 타입 (from, to)
  *
  * 사용 라이브러리:
  * - react-day-picker: 달력 UI 라이브러리

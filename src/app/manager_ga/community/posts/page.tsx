@@ -18,10 +18,6 @@
  * - PostFilterSection: 필터 섹션
  * - PostTable: 게시글 테이블
  *
- * 학습 포인트:
- * - 컴포넌트 분리: 큰 컴포넌트를 작은 컴포넌트로 나누어 재사용성과 유지보수성을 높입니다
- * - 컴포넌트 조합: 여러 컴포넌트를 조합하여 복잡한 UI를 구성합니다
- * - 상태 관리: useState를 사용하여 검색어와 필터 상태를 관리합니다
  *
  * @returns 게시글 목록 페이지 JSX
  */
@@ -30,8 +26,8 @@
 
 import { useState } from 'react';
 import styles from '@/styles/manager_ga/community/posts/page.module.css';
-import PostFilterSection from '@/components/manager_ga/community/posts/section/PostFilterSection';
-import PostTable from '@/components/manager_ga/community/posts/section/PostTable';
+import PostFilterSection from '@/components/manager_common/community/posts/section/PostFilterSection';
+import PostTable from '@/components/manager_common/community/posts/section/PostTable';
 
 export default function PostsPage() {
   // 검색어 상태 관리

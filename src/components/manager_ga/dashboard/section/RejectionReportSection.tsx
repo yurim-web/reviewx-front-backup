@@ -11,10 +11,6 @@
  * - 반려/신고 통계 차트 표시
  * - 날짜별 반려 건수와 신고 건수 시각화
  *
- * 학습 포인트:
- * - 컴포넌트 분리: 각 섹션을 독립적인 컴포넌트로 분리하여 재사용성 향상
- * - CSS 모듈: styles.chart_card를 사용하여 일관된 스타일 적용
- * - 컴포넌트 조합: 차트 컴포넌트를 섹션 컴포넌트 내부에서 사용
  */
 
 import styles from '@/styles/manager_ga/dashboard/sections/rejection_report_section.module.css';

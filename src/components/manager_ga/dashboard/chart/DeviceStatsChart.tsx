@@ -29,8 +29,7 @@ import deviceStyles from '@/styles/manager_ga/dashboard/device_stats.module.css'
  * 목적: 복잡한 차트 대신 학습하기 쉬운 진행 바(progress bar) 형태로
  *       PC · Tablet · Mobile · App 비율을 보여줍니다.
  *
- * React 학습 포인트:
- * - JSX: HTML처럼 보이지만 실제로는 JavaScript 객체이며, map() 결과를 그대로 렌더링할 수 있습니다.
+  * - JSX: HTML처럼 보이지만 실제로는 JavaScript 객체이며, map() 결과를 그대로 렌더링할 수 있습니다.
  * - props/state: 현재 컴포넌트는 자체 상태(state)를 사용하지 않고 정적 데이터 배열을 렌더링합니다.
  * - 리스트 렌더링: Array.prototype.map()을 사용하여 반복되는 UI를 생성할 때 key prop이 필요합니다.
  * - 조건부 클래스: 색상 스타일을 객체로 매핑해 유지보수성을 높입니다.

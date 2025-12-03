@@ -66,7 +66,6 @@ export default function CampaignCard({
   /**
    * 버튼 클릭 핸들러
    *
-   * 🎓 학습 포인트: 조건부 네비게이션과 동적 라우팅
    *
    * 📌 네비게이션 패턴:
    * 1. 캠페인 타입에 따라 다른 신청내역 페이지로 이동
@@ -316,7 +315,6 @@ export default function CampaignCard({
           /**
            * 캠페인 삭제 확인 핸들러
            * 
-           * 🎓 학습 포인트: localStorage 기반 데이터 삭제
            * - 실제 프로덕션에서는 API를 통해 서버에서 캠페인을 삭제해야 합니다
            * - 현재는 프론트엔드 개발을 위해 localStorage에서 삭제합니다
            * - 삭제 후 페이지를 새로고침하여 목록을 업데이트합니다
@@ -340,10 +338,6 @@ export default function CampaignCard({
             // 삭제 성공 시 알림 표시
             alert("캠페인이 삭제되었습니다.");
             // 페이지 새로고침하여 업데이트된 캠페인 목록 표시
-            // 🎓 학습 포인트: window.location.reload()
-            // - 페이지를 새로고침하여 최신 데이터를 불러옵니다
-            // - getCampaignsByTab() 함수가 매번 최신 localStorage 데이터를 읽어오므로
-            //   새로고침하면 삭제된 캠페인이 목록에서 사라집니다
             window.location.reload();
           } else {
             // 삭제 실패 시 에러 메시지 표시

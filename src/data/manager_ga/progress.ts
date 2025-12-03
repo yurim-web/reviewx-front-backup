@@ -14,11 +14,6 @@
  * - 캠페인 통계 데이터
  * - 캠페인 목록 데이터 (각 캠페인 타입별 데이터에서 자동 생성)
  *
- * 학습 포인트:
- * - TypeScript 인터페이스: 데이터 구조를 타입으로 정의합니다
- * - 배열 타입: 여러 개의 데이터를 배열로 관리합니다
- * - export: 다른 파일에서 이 데이터를 import하여 사용할 수 있습니다
- * - 데이터 변환: 각 캠페인 타입별 데이터를 통일된 형태로 변환합니다
  */
 
 // 각 캠페인 타입별 데이터 import
@@ -34,7 +29,13 @@ import type { ReviewCampaignDataItem } from '@/data/partner/review';
 import type { VisitCampaignDataItem } from '@/data/partner/visit';
 
 // 캠페인 상태 타입 정의
-export type CampaignStatus = '예정' | '신청' | '진행' | '종료' | '긴급';
+export type CampaignStatus =
+  | '예정'
+  | '신청'
+  | '진행'
+  | '종료'
+  | '취소'
+  | '긴급';
 
 // 캠페인 유형 타입 정의
 export type CampaignType = '배송형' | '방문형' | '구매평' | '기자단' | '미션형';
@@ -83,11 +84,6 @@ export interface CampaignProgressItem {
  * - 취소된 캠페인은 원본 데이터에서 직접 확인합니다
  * - 숫자를 천 단위로 포맷팅하여 반환합니다
  *
- * 학습 포인트:
- * - filter 함수: 배열에서 조건에 맞는 요소만 추출합니다
- * - length 속성: 배열의 길이를 반환합니다
- * - toLocaleString: 숫자를 천 단위 구분자로 포맷팅합니다
- * - reduce 함수: 배열의 모든 요소를 순회하며 하나의 값을 계산합니다
  */
 export function calculate_stat_card_values() {
   // 오픈 예정 캠페인 (status가 '예정'인 것)
@@ -108,23 +104,14 @@ export function calculate_stat_card_values() {
   // 전체 캠페인
   const total_count = campaign_list.length;
 
-  // 종료된 캠페인 (status가 '종료'인 것, 취소 제외)
-  // 취소는 원본 데이터에서 확인해야 하므로, 종료에서 취소를 제외합니다
+  // 종료된 캠페인 (status가 '종료'인 것)
   const ended_count = campaign_list.filter(
     (campaign) => campaign.status === '종료',
   ).length;
 
-  // 취소된 캠페인 (원본 데이터에서 '취소' 상태인 것)
-  // 모든 원본 데이터를 합쳐서 취소 상태를 확인합니다
-  const all_original_campaigns = [
-    ...deliveryCampaigns,
-    ...missionCampaigns,
-    ...reporterCampaigns,
-    ...reviewCampaigns,
-    ...visitCampaigns,
-  ];
-  const cancelled_count = all_original_campaigns.filter(
-    (campaign) => campaign.campaignInfo.status === '취소',
+  // 취소된 캠페인 (status가 '취소'인 것)
+  const cancelled_count = campaign_list.filter(
+    (campaign) => campaign.status === '취소',
   ).length;
 
   // 숫자를 천 단위로 포맷팅하는 함수
@@ -138,7 +125,7 @@ export function calculate_stat_card_values() {
     in_progress: format_count(in_progress_count),
     applying: format_count(applying_count),
     total: format_count(total_count),
-    ended: format_count(ended_count - cancelled_count), // 종료에서 취소 제외
+    ended: format_count(ended_count),
     cancelled: format_count(cancelled_count),
   };
 }
@@ -186,24 +173,25 @@ function map_brand_name_to_channel(
  * 캠페인 상태를 progress.ts의 CampaignStatus로 변환
  *
  * 설명:
- * - 각 캠페인 데이터의 status ('진행 중' | '대기 중' | '모집 중' | '종료' | '취소')
- *   를 progress.ts의 CampaignStatus ('예정' | '신청' | '진행' | '종료' | '긴급')로 변환합니다.
+ * - 각 캠페인 데이터의 status ('진행 중' | '대기 중' | '모집 중' | '종료' | '취소' | '긴급')
+ *   를 progress.ts의 CampaignStatus ('예정' | '신청' | '진행' | '종료' | '취소' | '긴급')로 변환합니다.
  *
  * @param status - 캠페인 상태
  * @returns CampaignStatus 타입
  */
 function map_status_to_progress_status(
-  status: '진행 중' | '대기 중' | '모집 중' | '종료' | '취소',
+  status: '진행 중' | '대기 중' | '모집 중' | '종료' | '취소' | '긴급',
 ): CampaignStatus {
   const status_map: Record<
-    '진행 중' | '대기 중' | '모집 중' | '종료' | '취소',
+    '진행 중' | '대기 중' | '모집 중' | '종료' | '취소' | '긴급',
     CampaignStatus
   > = {
     '대기 중': '예정',
     '모집 중': '신청',
     '진행 중': '진행',
     종료: '종료',
-    취소: '종료', // 취소도 종료로 표시
+    취소: '취소', // 취소 상태를 별도로 표시
+    긴급: '긴급', // 긴급 상태를 별도로 표시
   };
 
   return status_map[status] || '진행';
@@ -367,6 +355,7 @@ function convert_visit_to_progress_item(
  * - 배송형, 미션형, 기자단, 구매평, 방문형 캠페인 데이터를 모두 가져와서
  *   CampaignProgressItem 형태로 변환하여 하나의 배열로 통합합니다.
  * - 이렇게 하면 각 캠페인 타입별 데이터를 수정하면 자동으로 진행 현황 목록이 업데이트됩니다.
+ * - '긴급' 상태는 원본 데이터에 없으므로 직접 추가합니다.
  */
 export const campaign_list: CampaignProgressItem[] = [
   // 배송형 캠페인 변환

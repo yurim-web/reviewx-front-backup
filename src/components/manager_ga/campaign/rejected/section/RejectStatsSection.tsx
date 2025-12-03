@@ -14,11 +14,6 @@
  * - 반려 코드별 반려 횟수를 표시합니다
  * - 숫자를 천 단위로 포맷팅하여 표시합니다
  *
- * 학습 포인트:
- * - CSS 모듈: styles 객체를 통해 클래스명을 참조합니다
- * - JSX: HTML과 유사하지만 JavaScript 표현식을 사용할 수 있습니다
- * - 반복되는 요소를 하나씩 직접 작성하여 이해하기 쉽게 표현합니다
- * - 숫자 포맷팅: toLocaleString을 사용하여 천 단위 구분자를 추가합니다
  */
 
 import styles from '@/styles/manager_ga/campaign/rejected/reject_stats_section.module.css';

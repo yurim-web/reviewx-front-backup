@@ -11,10 +11,6 @@
  * - 캠페인 모집률, 달성률, 반려율, 신고율 통계 표시
  * - 4개의 통계 카드를 그리드로 배치
  *
- * 학습 포인트:
- * - props: 부모 컴포넌트에서 통계 데이터를 전달받음
- * - 배열의 map 함수: 통계 데이터 배열을 순회하며 StatCard 컴포넌트 렌더링
- * - key prop: React에서 리스트 렌더링 시 각 항목을 구분하기 위한 고유 키
  */
 
 import styles from '@/styles/manager_ga/dashboard/sections/campaign_summary_section.module.css';

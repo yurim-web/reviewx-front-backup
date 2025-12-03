@@ -53,10 +53,6 @@ export type { CampaignWithApplicants, AllApplicant };
  * - 각 캠페인에 등록된 콘텐츠(리뷰)의 정보를 담는 타입입니다.
  * - 검수 중/완료된 콘텐츠 모두 이 타입을 사용합니다.
  *
- * 학습 포인트:
- * - TypeScript 인터페이스: 객체의 구조를 정의하는 방법
- * - 선택적 속성(?): 있어도 되고 없어도 되는 속성
- * - 문자열 리터럴 타입: 특정 값만 허용하는 타입 ("검수" | "완료")
  */
 export interface ContentItem {
   /** 콘텐츠 고유 식별자 */
@@ -96,10 +92,6 @@ export interface ContentItem {
  * - 캠페인 콘텐츠를 탭별로 분류한 구조입니다.
  * - "검수" 탭과 "완료" 탭으로 나뉩니다.
  *
- * 학습 포인트:
- * - 객체 타입: 중괄호로 객체의 구조를 정의합니다.
- * - 배열 타입: ContentItem[]는 ContentItem 객체들의 배열을 의미합니다.
- * - 타입 별칭(type alias): interface 대신 type으로 간단히 정의할 수 있습니다.
  */
 export type ContentByTab = {
   /** 검수 중인 콘텐츠 목록 */
@@ -139,8 +131,6 @@ export interface CampaignWithContents {
    역할 요약
    - 각 타입(`delivery`, `mission`, `visit`, `review`)의 종료 캠페인 데이터를 동적 import로 모음
    - 순환 참조를 피하기 위해 `require`를 활용한 런타임 로딩과 try/catch 보호 로직을 적용
-
-   학습 포인트
    - 동적 import/require 패턴으로 대형 데이터 파일 사이의 의존을 안전하게 해소하기
    - 일부 모듈 로드 실패 시에도 빈 배열을 반환해 UI가 깨지지 않도록 방어 코드 작성하기
 */
@@ -209,8 +199,6 @@ export function getClosedContentsById(
    역할 요약
    - 각 타입(배송/방문/구매평/기자단/미션형)별로 저장된 캠페인을 불러오고, 공통 로직으로 병합합니다.
    - 불러온 캠페인의 상태(`status`, `daysLeft`)를 현재 날짜 기준으로 다시 계산해 최신 정보로 유지합니다.
-
-   학습 포인트
    - localStorage CRUD 흐름 이해: 문자열 직렬화/역직렬화(JSON.parse/stringify)
    - 함수 분해 전략: 타입별 세부 처리는 `getStoredDeliveryCampaigns` 등 하위 함수에 위임하여 중복 제거
 */
@@ -249,8 +237,6 @@ function getStoredCampaigns(): CampaignWithApplicants[] {
    역할 요약
    - 각 타입별 localStorage 키에서 캠페인을 꺼낸 뒤 상태를 재계산합니다.
    - 동적 import로 `calculateCampaignStatus`, `calculateDaysLeft`를 불러와 순환 참조 없이 로직을 공유합니다.
-
-   학습 포인트
    - 재사용 가능한 로직 패턴: try/catch + JSON 파싱 + map으로 안전하게 데이터 변환하기
    - 서버가 아닌 로컬 저장소를 사용하는 개발용·학습용 환경에서 데이터 일관성을 유지하는 방법
 */
@@ -567,8 +553,6 @@ function getStoredMissionCampaigns(): CampaignWithApplicants[] {
    역할 요약
    - 타입별 정적 데이터 + 종료/취소 데이터 + localStorage 데이터를 모두 합쳐 단일 소스로 제공합니다.
    - 삭제된 캠페인 ID를 필터링하고, 순환 참조를 피하기 위해 필요한 데이터는 동적으로 import합니다.
-
-   학습 포인트
    - 대용량 데이터 병합 패턴: spread 연산자와 map/filter를 활용해 일관된 구조 유지하기
    - 상태 추적: 삭제 ID 로그 남기기, 실패 시 콘솔 경고로 디버깅 돕기
 */
@@ -627,10 +611,6 @@ export function getSharedCampaigns(): CampaignWithApplicants[] {
   ];
 
   // 삭제된 캠페인 ID 목록에 있는 캠페인을 필터링하여 제외
-  // 🎓 학습 포인트: 배열 filter와 includes 메서드
-  // - filter는 조건에 맞는 요소만 남기고 나머지는 제거
-  // - includes는 배열에 특정 값이 포함되어 있는지 확인
-  // - !deletedCampaignIds.includes(...): 삭제 목록에 없는 캠페인만 남김
   // 
   // 중요: ID 타입 불일치 방지를 위해 문자열로 변환하여 비교
   const filteredCampaigns = allCampaigns.filter((campaign) => {
@@ -667,8 +647,6 @@ export const sharedCampaigns: CampaignWithApplicants[] = getSharedCampaigns();
    역할 요약
    - `getSharedCampaigns`에서 만든 원시 데이터를 파트너 관리 UI에 맞는 `PartnerCampaign` 구조로 변환합니다.
    - 날짜 기반으로 탭 상태를 재계산하고, 신청/선정/모집 인원 수, 서브 상태, 브랜드 로고 등을 채웁니다.
-
-   학습 포인트
    - 중복 제거(Map) 패턴: 같은 ID가 여러 소스에 있을 때 최신 데이터만 남기기
    - 도메인 규칙 반영: 날짜 계산 + 상태 매핑을 통해 UI 탭과 데이터를 동기화하는 단계 이해
 */
@@ -791,8 +769,6 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
    역할 요약
    - localStorage에 저장된 최신 캠페인을 우선 탐색한 뒤, 정적 데이터에서 동일 ID를 찾습니다.
    - 디버깅을 위해 로그를 남겨 어떤 소스에서 데이터를 가져왔는지 확인할 수 있도록 설계했습니다.
-
-   학습 포인트
    - 검색 우선순위 전략: 사용자 생성 데이터(localStorage)를 공식 데이터보다 우선시하기
    - 배열 `find`와 조건 로그를 활용해 디버깅 친화적인 데이터 탐색 구현하기
 */
@@ -830,7 +806,7 @@ export const getCampaignById = (id: string): CampaignWithApplicants | null => {
         title: campaign.campaignInfo.title,
         category: campaign.campaignInfo.category,
         brandName: campaign.campaignInfo.brandName,
-        applicantsCount: campaign.applicantData.applicants.length,
+        applicantsCount: campaign.applicantData?.applicants?.length ?? 0,
       });
     }
     return matches;
@@ -852,8 +828,6 @@ export const getCampaignById = (id: string): CampaignWithApplicants | null => {
    역할 요약
    - `convertToPartnerCampaigns` 결과에서 탭 조건에 맞는 캠페인만 필터링합니다.
    - `switch` 문으로 상태별 분기를 명시해 가독성을 높였습니다.
-
-   학습 포인트
    - 필터링 체인 구성: 가공된 데이터를 뷰 요구사항에 맞춰 재사용하는 방법
 */
 export const getCampaignsByTab = (tab: string): PartnerCampaign[] => {
@@ -885,8 +859,6 @@ export const getCampaignsByTab = (tab: string): PartnerCampaign[] => {
 
    역할 요약
    - `convertToPartnerCampaigns` 결과를 기반으로 상태별 개수를 계산해 간단한 통계 객체를 반환합니다.
-
-   학습 포인트
    - 파생 데이터 만들기: 이미 가공된 배열을 활용해 통계 값을 산출하는 방법
 */
 export const getCampaignStats = () => {
@@ -913,8 +885,6 @@ export const getCampaignStats = () => {
    역할 요약
    - localStorage에 저장된 삭제 ID 배열을 가져오고, 필요 시 문자열로 정규화합니다.
    - 중복 없이 ID를 추가해 정적 데이터에 있는 캠페인도 숨길 수 있도록 지원합니다.
-
-   학습 포인트
    - 상태 추적을 위한 별도 저장소 설계: 실제 데이터 삭제 + 숨김 처리를 분리하는 이유 이해하기
 */
 function getDeletedCampaignIds(): string[] {
@@ -971,8 +941,6 @@ function addDeletedCampaignId(campaignId: string): void {
    역할 요약
    - 캠페인 타입에 따라 올바른 localStorage 키를 찾아 해당 캠페인을 제거합니다.
    - 정적 더미 데이터에 포함된 캠페인까지 숨길 수 있도록 삭제 ID 목록을 별도로 관리합니다.
-
-   학습 포인트
    - 브라우저 전용 로직 보호: SSR/빌드 환경에서 `window`가 없는 경우 early return 처리
    - 데이터 일관성 유지: localStorage 실제 삭제 + 삭제 ID 기록을 함께 수행하는 이유 이해하기
 */
@@ -1017,10 +985,6 @@ export function deleteCampaign(
       const campaigns: CampaignWithApplicants[] = JSON.parse(stored);
       if (Array.isArray(campaigns)) {
         // 삭제할 캠페인을 제외한 나머지 캠페인만 필터링
-        // 🎓 학습 포인트: 배열 filter 메서드
-        // - filter는 조건에 맞는 요소만 남기고 나머지는 제거한 새로운 배열을 반환
-        // - campaign.campaignInfo.id !== campaignId: ID가 다른 캠페인만 남김
-        // - 즉, ID가 일치하는 캠페인은 제거됨
         const filteredCampaigns = campaigns.filter(
           (campaign) => campaign.campaignInfo.id !== campaignId
         );
@@ -1028,9 +992,6 @@ export function deleteCampaign(
         // 삭제 전후 개수 비교하여 실제로 삭제되었는지 확인
         if (filteredCampaigns.length < campaigns.length) {
           // 필터링된 배열을 다시 localStorage에 저장
-          // 🎓 학습 포인트: JSON.stringify
-          // - JavaScript 객체를 JSON 문자열로 변환하여 localStorage에 저장
-          // - localStorage는 문자열만 저장할 수 있기 때문
           localStorage.setItem(storageKey, JSON.stringify(filteredCampaigns));
           deletedFromLocalStorage = true;
           console.log(

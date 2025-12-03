@@ -19,7 +19,6 @@ import layoutStyles from "@/styles/partner/layout.module.css";
 /**
  * 미션형 캠페인 신청내역 페이지 레이아웃 컴포넌트
  *
- * 🎓 학습 포인트: Next.js Layout 시스템
  *
  * 📌 Layout의 역할:
  * 1. 공통 UI 요소 (헤더, 네비게이션 등) 제공

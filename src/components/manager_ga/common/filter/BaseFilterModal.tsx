@@ -11,9 +11,9 @@
  * 📍 사용 위치 (현재):
  * - src/components/manager_ga/campaign/rejected/filter/RejectCodeFilterModal.tsx
  * - src/components/manager_ga/campaign/reported/filter/ReportCodeFilterModal.tsx
- * - src/components/manager_ga/campaign/progress/filter/ChannelFilterModal.tsx
- * - src/components/manager_ga/campaign/progress/filter/StatusFilterModal.tsx
- * - src/components/manager_ga/campaign/progress/filter/TypeFilterModal.tsx
+ * - src/components/manager_common/campaign/progress/filter/ChannelFilterModal.tsx
+ * - src/components/manager_common/campaign/progress/filter/StatusFilterModal.tsx
+ * - src/components/manager_common/campaign/progress/filter/TypeFilterModal.tsx
  * - src/components/manager_ga/member/partners/filter/ChannelFilterModal.tsx
  * - src/components/manager_ga/member/partners/filter/StatusFilterModal.tsx
  * - src/components/manager_ga/member/partners/filter/TypeFilterModal.tsx
@@ -31,14 +31,6 @@
  * - 모달 오버레이 클릭으로 닫기
  * - 제네릭 타입으로 다양한 타입의 옵션 지원
  *
- * 학습 포인트:
- * - 제네릭(Generic): TypeScript에서 타입을 매개변수로 받아 다양한 타입에 재사용 가능하게 만듭니다
- *   예: BaseFilterModal<string> → 문자열 옵션, BaseFilterModal<Channel> → 채널 타입 옵션
- * - useState: 컴포넌트의 상태를 관리하는 React Hook입니다
- * - useEffect: 컴포넌트가 렌더링된 후에 실행되는 Hook입니다
- * - 이벤트 핸들러: 사용자 상호작용에 반응하는 함수입니다
- * - 배열 메서드: includes, filter 등을 사용하여 선택된 값들을 관리합니다
- * - 조건부 렌더링: 조건에 따라 다른 내용을 렌더링합니다
  */
 
 'use client';
