@@ -32,7 +32,7 @@ import '@/styles/manager_ga/layout.css';
 // 페이지 메타데이터 설정
 // Next.js의 Metadata API를 사용하여 SEO와 브라우저 탭 제목을 설정합니다
 export const metadata: Metadata = {
-  title: 'ReviewX | GA 관리자',
+  title: 'ReviewX | GA 관리자 대시보드',
   description: 'GA 관리자 페이지입니다',
 };
 
