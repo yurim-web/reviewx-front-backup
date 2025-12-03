@@ -84,8 +84,27 @@
   width: 4px; /* 스크롤바 너비 */
 }
 
+/* 위아래 화살표 버튼 완전히 제거 */
 .reject_reason_text::-webkit-scrollbar-button {
-  display: none; /* 위아래 화살표 버튼 제거 */
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+/* 시작/끝 화살표 버튼 제거 */
+.reject_reason_text::-webkit-scrollbar-button:start:decrement,
+.reject_reason_text::-webkit-scrollbar-button:end:increment {
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+/* 수직 스크롤바 버튼 제거 */
+.reject_reason_text::-webkit-scrollbar-button:vertical:start:decrement,
+.reject_reason_text::-webkit-scrollbar-button:vertical:end:increment {
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
 }
 
 .reject_reason_text::-webkit-scrollbar-track {
@@ -219,4 +238,3 @@
   cursor: pointer;
   text-align: center;
 }
-

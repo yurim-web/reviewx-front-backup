@@ -101,8 +101,23 @@
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  min-width: 0; /* flex 아이템이 축소될 수 있도록 */
-  overflow: hidden; /* 넘치는 내용 숨김 */
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* 테이블 셀 내부 텍스트에 ellipsis 적용 */
+.table_row > div > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* 테이블 셀 내부 직접 텍스트에도 적용 */
+.table_row > div:not(:has(> *)) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* 체크박스 셀 */
@@ -118,9 +133,9 @@
   border-radius: 4px;
   background: #ffffff;
   cursor: pointer;
-  appearance: none; /* 기본 브라우저 스타일 제거 */
-  position: relative; /* 체크마크 위치 지정을 위해 */
-  flex-shrink: 0; /* 크기 고정 */
+  appearance: none;
+  position: relative;
+  flex-shrink: 0;
 }
 
 /* 체크박스 체크된 상태 */

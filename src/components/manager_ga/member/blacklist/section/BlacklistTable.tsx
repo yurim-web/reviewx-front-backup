@@ -194,10 +194,14 @@ export default function BlacklistTable({ search_query }: BlacklistTableProps) {
                 </div>
 
                 {/* 이름/상호명 */}
-                <div className={styles.table_cell_name}>{item.name}</div>
+                <div className={styles.table_cell_name}>
+                  <span>{item.name}</span>
+                </div>
 
                 {/* 아이디 */}
-                <div className={styles.table_cell_user_id}>{item.user_id}</div>
+                <div className={styles.table_cell_user_id}>
+                  <span>{item.user_id}</span>
+                </div>
 
                 {/* 구분 (파트너/리뷰어/관리자) */}
                 <div className={styles.table_cell_division}>
@@ -212,30 +216,32 @@ export default function BlacklistTable({ search_query }: BlacklistTableProps) {
 
                 {/* 보유 포인트 */}
                 <div className={styles.table_cell_points}>
-                  {format_number(item.current_points)}
+                  <span>{format_number(item.current_points)}</span>
                 </div>
 
                 {/* 아이피 */}
-                <div className={styles.table_cell_ip}>{item.ip_address}</div>
+                <div className={styles.table_cell_ip}>
+                  <span>{item.ip_address}</span>
+                </div>
 
                 {/* 차단 코드 */}
                 <div className={styles.table_cell_block_code}>
-                  {item.block_code}
+                  <span>{item.block_code}</span>
                 </div>
 
                 {/* 차단 사유 */}
                 <div className={styles.table_cell_block_reason}>
-                  {item.block_reason}
+                  <span>{item.block_reason}</span>
                 </div>
 
                 {/* 등록일 */}
                 <div className={styles.table_cell_registered_date}>
-                  {item.registered_date}
+                  <span>{item.registered_date}</span>
                 </div>
 
                 {/* 등록자 */}
                 <div className={styles.table_cell_registered_by}>
-                  {item.registered_by}
+                  <span>{item.registered_by}</span>
                 </div>
               </div>
             );

@@ -75,7 +75,7 @@ export const block_code_reason_map: Record<BlockCode, BlockReason> = {
 export const blacklist_data: BlacklistItem[] = [
   {
     id: '1',
-    name: '주식회사 재밌는걸참좋아하고하고싶은거하는노신사',
+    name: '주식회사 재밌는걸참좋아하고하고싶은거하는노신사456455ㄴㅇㄹㄴㄹㅇㄴㄹㅇㅇ',
     user_id: 'nodjfj12',
     division: '파트너',
     current_points: 115000,
