@@ -22,6 +22,7 @@
  * - useParams: URL 파라미터에서 id 값을 추출합니다
  * - 조건부 렌더링: 데이터가 없을 때 에러 메시지를 표시합니다
  * - 컴포넌트 분리: 큰 컴포넌트를 작은 섹션으로 나누어 관리합니다
+ * - 재사용 컴포넌트: 공통 컴포넌트를 사용하여 코드 중복을 줄입니다
  *
  * @returns 리뷰어 디테일 페이지 JSX
  */
@@ -29,10 +30,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Image from 'next/image';
-import Loading from '@/app/loading';
-import styles from '@/styles/manager_ga/member/reviewers/detail_page.module.css';
 import {
   get_reviewer_detail_by_id,
   type ReviewerDetail,
@@ -40,6 +39,15 @@ import {
 } from '@/data/manager_ga/member/reviewers';
 import CampaignHistoryModal from '@/components/manager_ga/member/reviewers/modal/CampaignHistoryModal';
 import PenaltyHistoryModal from '@/components/manager_ga/member/reviewers/modal/PenaltyHistoryModal';
+import MemberDetailLayout from '@/components/manager_ga/member/member_detail/MemberDetailLayout';
+import ProfileSection from '@/components/manager_ga/member/member_detail/ProfileSection';
+import ActivityInfoSection, {
+  type ActivityInfoItem,
+} from '@/components/manager_ga/member/member_detail/ActivityInfoSection';
+import ChannelInfoSection from '@/components/manager_ga/member/reviewers/section/ChannelInfoSection';
+import AccountInfoSection from '@/components/manager_ga/member/reviewers/section/AccountInfoSection';
+import styles from '@/styles/manager_ga/member/member_detail/detail_page.module.css';
+import infoCardStyles from '@/styles/manager_ga/member/member_detail/info_card.module.css';
 
 // 채널 아이콘 경로 매핑
 const channel_icon_map: Record<Channel, string> = {
@@ -54,7 +62,6 @@ export default function ReviewerDetailPage() {
   // useParams: Next.js에서 제공하는 훅으로, URL 파라미터를 가져옵니다
   // [id] 폴더 구조에서 id 값을 추출합니다
   const params = useParams();
-  const router = useRouter();
   const reviewer_id = params.id as string;
 
   // 리뷰어 디테일 정보 상태 관리
@@ -86,312 +93,156 @@ export default function ReviewerDetailPage() {
     fetch_reviewer_detail();
   }, [reviewer_id]);
 
-  // 로딩 중일 때 로딩 컴포넌트를 표시합니다
-  if (is_loading) {
-    return <Loading />;
-  }
-
-  // 리뷰어 정보가 없을 때 에러 메시지를 표시합니다
-  if (!reviewer_detail) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.error_message}>
-          <p>리뷰어를 찾을 수 없습니다.</p>
-          <button
-            onClick={() => router.push('/manager_ga/member/reviewers')}
-            className={styles.back_button}
-          >
-            목록으로 돌아가기
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   // 숫자를 천 단위로 포맷팅하는 함수
   const format_number = (num: number): string => {
     return num.toLocaleString();
   };
 
+  // 활동 정보 아이템 배열 생성
+  // ActivityInfoSection 컴포넌트에 전달할 데이터를 준비합니다
+  const activity_info_items: ActivityInfoItem[] = [
+    // 채널 정보
+    {
+      label: '채널 정보',
+      value: (
+        <div className={infoCardStyles.channel_icons}>
+          {reviewer_detail?.channels.map((channel, index) => (
+            <div key={index} className={infoCardStyles.channel_icon_wrapper}>
+              <Image
+                src={channel_icon_map[channel]}
+                alt={channel}
+                width={16}
+                height={16}
+                className={infoCardStyles.channel_icon}
+              />
+            </div>
+          ))}
+        </div>
+      ),
+    },
+    // 캠페인 진행
+    {
+      label: '캠페인 진행',
+      value: reviewer_detail
+        ? `${format_number(reviewer_detail.campaign_participated)}회`
+        : '0회',
+      on_button_click: () => set_is_campaign_history_modal_open(true),
+      button_aria_label: '캠페인 진행 내역 보기',
+    },
+    // 캠페인 완료
+    {
+      label: '캠페인 완료',
+      value: reviewer_detail
+        ? `${format_number(reviewer_detail.campaign_completed)}회`
+        : '0회',
+    },
+    // 패널티
+    {
+      label: '패널티',
+      value: reviewer_detail
+        ? `${format_number(reviewer_detail.penalty_count)}회`
+        : '0회',
+      on_button_click: () => set_is_penalty_history_modal_open(true),
+      button_aria_label: '패널티 내역 보기',
+      additional_content:
+        reviewer_detail?.status_type === '모범 회원' ? (
+          <div className={styles.status_type_badge}>모범 회원</div>
+        ) : undefined,
+    },
+    // 접속일
+    {
+      label: '접속일',
+      value: reviewer_detail?.last_access_date || '-',
+    },
+    // 가입일
+    {
+      label: '가입일',
+      value: reviewer_detail?.join_date || '-',
+    },
+    // 보유 포인트
+    {
+      label: '보유 포인트',
+      value: reviewer_detail
+        ? format_number(reviewer_detail.current_points)
+        : '0',
+    },
+    // 출금 포인트
+    {
+      label: '출금 포인트',
+      value: reviewer_detail
+        ? format_number(reviewer_detail.withdrawn_points)
+        : '0',
+    },
+  ];
+
   return (
-    <div className={styles.container}>
+    <MemberDetailLayout
+      is_loading={is_loading}
+      is_error={!reviewer_detail}
+      error_message="리뷰어를 찾을 수 없습니다."
+      back_path="/manager_ga/member/reviewers"
+    >
       <div className={styles.main_content}>
         {/* 프로필 섹션 */}
-        <div className={styles.profile_section}>
-          {/* 프로필 이미지 */}
-          <div className={styles.profile_image_wrapper}>
-            <div className={styles.profile_image_placeholder} />
-          </div>
-
-          {/* 프로필 정보 */}
-          <div className={styles.profile_info}>
-            {/* 닉네임 */}
-            <h1 className={styles.nickname}>{reviewer_detail.nickname}</h1>
-
-            {/* 상태 유형 태그 */}
-            <div className={styles.status_type_tag}>
-              {reviewer_detail.status_type}
-            </div>
-
-            {/* 기본 정보 */}
-            <div className={styles.basic_info}>
-              <span>리뷰어</span>
-              <span>·</span>
-              <span>{reviewer_detail.name}</span>
-              <span>·</span>
-              <span>{reviewer_detail.gender}</span>
-              <span>·</span>
-              <span>만 {reviewer_detail.age}세</span>
-              <span>·</span>
-              <span>{reviewer_detail.email}</span>
-              <span>·</span>
-              <span>{reviewer_detail.phone}</span>
-              <span>·</span>
-              <span>{reviewer_detail.address}</span>
-            </div>
-          </div>
-        </div>
+        {reviewer_detail && (
+          <ProfileSection
+            name={reviewer_detail.name}
+            status_type={reviewer_detail.status_type}
+            basic_info_items={[
+              '리뷰어',
+              reviewer_detail.name,
+              reviewer_detail.gender,
+              `만 ${reviewer_detail.age}세`,
+              reviewer_detail.email,
+              reviewer_detail.phone,
+              reviewer_detail.address,
+            ]}
+          />
+        )}
 
         {/* 활동 정보 섹션 */}
-        <div className={styles.section}>
-          <h2 className={styles.section_title}>활동 정보</h2>
-          <div className={styles.info_grid}>
-            {/* 채널 정보 */}
-            <div className={styles.info_card}>
-              <div className={styles.info_label}>채널 정보</div>
-              <div className={styles.channel_icons}>
-                {reviewer_detail.channels.map((channel, index) => (
-                  <div key={index} className={styles.channel_icon_wrapper}>
-                    <Image
-                      src={channel_icon_map[channel]}
-                      alt={channel}
-                      width={16}
-                      height={16}
-                      className={styles.channel_icon}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* 캠페인 진행 */}
-            <div className={styles.info_card}>
-              <div className={styles.info_label}>캠페인 진행</div>
-              <div className={styles.info_value_with_button}>
-                <span>
-                  {format_number(reviewer_detail.campaign_participated)}회
-                </span>
-                {/* 화살표 버튼: 캠페인 진행 내역 모달을 엽니다 */}
-                <button
-                  className={styles.arrow_button}
-                  onClick={() => {
-                    // 모달 열기: set_is_campaign_history_modal_open(true)로 모달 상태를 변경합니다
-                    set_is_campaign_history_modal_open(true);
-                  }}
-                  aria-label="캠페인 진행 내역 보기"
-                >
-                  <img
-                    src="/images/icons/arronw_btn.svg"
-                    alt="화살표"
-                    className={styles.arrow_icon}
-                  />
-                </button>
-              </div>
-            </div>
-
-            {/* 캠페인 완료 */}
-            <div className={styles.info_card}>
-              <div className={styles.info_label}>캠페인 완료</div>
-              <div className={styles.info_value}>
-                {format_number(reviewer_detail.campaign_completed)}회
-              </div>
-            </div>
-
-            {/* 패널티 */}
-            <div className={styles.info_card}>
-              <div className={styles.info_label}>패널티</div>
-              <div className={styles.info_value_with_button}>
-                <span>{format_number(reviewer_detail.penalty_count)}회</span>
-                {/* 화살표 버튼: 패널티 내역 모달을 엽니다 */}
-                <button
-                  className={styles.arrow_button}
-                  onClick={() => {
-                    // 패널티 내역 모달 열기
-                    set_is_penalty_history_modal_open(true);
-                  }}
-                  aria-label="패널티 내역 보기"
-                >
-                  <img
-                    src="/images/icons/arronw_btn.svg"
-                    alt="화살표"
-                    className={styles.arrow_icon}
-                  />
-                </button>
-              </div>
-              {/* 모범 회원 배지: status_type이 '모범 회원'일 때만 표시 */}
-              {reviewer_detail.status_type === '모범 회원' && (
-                <div className={styles.status_type_badge}>모범 회원</div>
-              )}
-            </div>
-
-            {/* 접속일 */}
-            <div className={styles.info_card}>
-              <div className={styles.info_label}>접속일</div>
-              <div className={styles.info_value}>
-                {reviewer_detail.last_access_date}
-              </div>
-            </div>
-
-            {/* 가입일 */}
-            <div className={styles.info_card}>
-              <div className={styles.info_label}>가입일</div>
-              <div className={styles.info_value}>
-                {reviewer_detail.join_date}
-              </div>
-            </div>
-
-            {/* 보유 포인트 */}
-            <div className={styles.info_card}>
-              <div className={styles.info_label}>보유 포인트</div>
-              <div className={styles.info_value}>
-                {format_number(reviewer_detail.current_points)}
-              </div>
-            </div>
-
-            {/* 출금 포인트 */}
-            <div className={styles.info_card}>
-              <div className={styles.info_label}>출금 포인트</div>
-              <div className={styles.info_value}>
-                {format_number(reviewer_detail.withdrawn_points)}
-              </div>
-            </div>
-          </div>
-        </div>
+        <ActivityInfoSection items={activity_info_items} />
 
         {/* 채널 정보 섹션 */}
-        <div className={styles.section}>
-          <h2 className={styles.section_title}>채널 정보</h2>
-          <div className={styles.channel_grid}>
-            {reviewer_detail.channel_details.map((channel_detail, index) => (
-              <div key={index} className={styles.channel_card}>
-                <div className={styles.channel_name}>
-                  {channel_detail.channel === 'Blog' && '네이버 블로그'}
-                  {channel_detail.channel === 'Clip' && '네이버 클립'}
-                  {channel_detail.channel === 'Instagram' && '인스타그램'}
-                  {channel_detail.channel === 'Youtube' && '유튜브'}
-                </div>
-                {channel_detail.is_connected ? (
-                  <div className={styles.channel_stats}>
-                    {channel_detail.channel === 'Blog' && (
-                      <>
-                        <div className={styles.channel_stat_row}>
-                          <span>일방문</span>
-                          <span>
-                            {format_number(channel_detail.daily_visits || 0)}
-                          </span>
-                        </div>
-                        <div className={styles.channel_stat_row}>
-                          <span>총방문</span>
-                          <span>
-                            {format_number(channel_detail.total_visits || 0)}
-                          </span>
-                        </div>
-                        <div className={styles.channel_stat_row}>
-                          <span>이웃수</span>
-                          <span>
-                            {format_number(channel_detail.neighbors || 0)}
-                          </span>
-                        </div>
-                      </>
-                    )}
-                    {channel_detail.channel === 'Clip' && (
-                      <div className={styles.channel_stat_row}>
-                        <span>팔로워</span>
-                        <span>
-                          {format_number(channel_detail.followers || 0)}
-                        </span>
-                      </div>
-                    )}
-                    {channel_detail.channel === 'Instagram' && (
-                      <div className={styles.channel_stat_row}>
-                        <span>팔로워</span>
-                        <span>
-                          {format_number(channel_detail.followers || 0)}
-                        </span>
-                      </div>
-                    )}
-                    {channel_detail.channel === 'Youtube' && (
-                      <>
-                        <div className={styles.channel_stat_row}>
-                          <span>구독자</span>
-                          <span>
-                            {format_number(channel_detail.subscribers || 0)}
-                          </span>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                ) : (
-                  <div className={styles.channel_not_connected}>연결 필요</div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+        {reviewer_detail && (
+          <ChannelInfoSection
+            channel_details={reviewer_detail.channel_details}
+          />
+        )}
 
         {/* 계좌 정보 섹션 */}
-        <div className={styles.section}>
-          <h2 className={styles.section_title}>계좌 정보</h2>
-          <div className={styles.account_grid}>
-            <div className={styles.info_card}>
-              <div className={styles.info_label}>예금주</div>
-              <div className={styles.info_value}>
-                {reviewer_detail.account_info.account_holder}
-              </div>
-            </div>
-            <div className={styles.info_card}>
-              <div className={styles.info_label}>은행</div>
-              <div className={styles.info_value}>
-                {reviewer_detail.account_info.bank}
-              </div>
-            </div>
-            <div className={styles.info_card}>
-              <div className={styles.info_label}>계좌번호</div>
-              <div className={styles.info_value}>
-                {reviewer_detail.account_info.account_number}
-              </div>
-            </div>
-            <div className={styles.info_card}>
-              <div className={styles.info_label}>주민등록번호</div>
-              <div className={styles.info_value}>
-                {reviewer_detail.account_info.resident_number}
-              </div>
-            </div>
-          </div>
-        </div>
+        {reviewer_detail && (
+          <AccountInfoSection account_info={reviewer_detail.account_info} />
+        )}
       </div>
 
       {/* 캠페인 진행 내역 모달 */}
-      {/* 조건부 렌더링: 모달이 열려있을 때만 표시됩니다 */}
+      {/* 
+        모달은 항상 렌더링되지만, is_open이 false이면 모달 컴포넌트 내부에서 null을 반환하여 화면에 표시되지 않습니다.
+        데이터가 없을 경우 빈 배열을 전달하며, 모달 컴포넌트 내부에서 "데이터가 없습니다" 메시지를 표시합니다.
+      */}
       <CampaignHistoryModal
         is_open={is_campaign_history_modal_open}
         on_close={() => {
           // 모달 닫기: set_is_campaign_history_modal_open(false)로 모달 상태를 변경합니다
           set_is_campaign_history_modal_open(false);
         }}
-        campaigns={reviewer_detail.recent_campaigns}
+        campaigns={reviewer_detail?.recent_campaigns || []}
       />
 
       {/* 패널티 내역 모달 */}
-      {/* 조건부 렌더링: 모달이 열려있을 때만 표시됩니다 */}
+      {/* 
+        모달은 항상 렌더링되지만, is_open이 false이면 모달 컴포넌트 내부에서 null을 반환하여 화면에 표시되지 않습니다.
+        데이터가 없을 경우 빈 배열을 전달하며, 모달 컴포넌트 내부에서 "데이터가 없습니다" 메시지를 표시합니다.
+      */}
       <PenaltyHistoryModal
         is_open={is_penalty_history_modal_open}
         on_close={() => {
           // 모달 닫기: set_is_penalty_history_modal_open(false)로 모달 상태를 변경합니다
           set_is_penalty_history_modal_open(false);
         }}
-        penalty_history={reviewer_detail.penalty_history}
+        penalty_history={reviewer_detail?.penalty_history || []}
       />
-    </div>
+    </MemberDetailLayout>
   );
 }

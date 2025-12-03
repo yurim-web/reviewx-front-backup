@@ -355,6 +355,21 @@ export const reviewer_list: ReviewerItem[] = [
     last_access_date: '2025-08-01 18:56',
     join_date: '2025-08-01 18:56',
   },
+  {
+    id: '16',
+    number: '000016',
+    name: '데이터없음테스트',
+    channels: ['Blog'],
+    type: '일반',
+    campaign_participated: 0,
+    campaign_completed: 0,
+    current_points: 0,
+    withdrawn_points: 0,
+    status_type: '모범 회원',
+    status: '정상',
+    last_access_date: '2025-08-01 18:56',
+    join_date: '2025-08-01 18:56',
+  },
 ];
 
 // 리뷰어 ID로 디테일 정보를 가져오는 함수
@@ -386,13 +401,19 @@ export function get_reviewer_detail_by_id(
     '13': 0,
     '14': 0,
     '15': 0,
+    '16': 0, // 데이터 없음 테스트용
   };
   const penalty_count = penalty_count_map[reviewer.id] || 0;
 
   // 패널티 내역 생성: penalty_count에 맞춰서 생성
+  // 패널티 내역 생성: penalty_count에 맞춰서 생성
+  // 유형은 항상 "경고"로 표시되므로, 상태 값은 실제 상태(일시정지 또는 정상)만 저장합니다
   const penalty_history: PenaltyHistoryItem[] = [];
   if (penalty_count > 0) {
     for (let i = 0; i < penalty_count; i++) {
+      // 첫 번째 항목이고 패널티가 5개 이상이면 일시정지, 그 외는 정상
+      const actualStatus = i === 0 && penalty_count >= 5 ? '일시정지' : '정상';
+
       penalty_history.push({
         type:
           i === penalty_count - 1 && penalty_count > 1
@@ -403,7 +424,7 @@ export function get_reviewer_detail_by_id(
             ? '선정 후 취소'
             : '지각 제출',
         processed_date: `2025-08-${String(i + 1).padStart(2, '0')} 18:56`,
-        status: i === 0 && penalty_count === 5 ? '일시정지' : '경고',
+        status: actualStatus,
       });
     }
   }
@@ -411,85 +432,89 @@ export function get_reviewer_detail_by_id(
   // 캠페인 진행 내역 생성: campaign_participated에 맞춰서 생성
   // 각 리뷰어마다 다른 캠페인 데이터를 가지도록 다양하게 설정
   const recent_campaigns: RecentCampaign[] = [];
-  const campaign_count = reviewer.campaign_participated;
 
-  // 캠페인 데이터 템플릿 (리뷰어마다 다른 데이터를 생성하기 위한 배열)
-  const campaign_templates: Omit<RecentCampaign, 'campaign_number'>[] = [
-    {
-      partner_name: '주식회사 재밌는걸참좋아하고하고싶은거하는노신사',
-      campaign_name: '푸러블 고농축 캡슐세제 플라워향, 1개, 110개입',
-      status: '진행',
-      type: '배송형',
-      channel: 'Blog',
-      points: 115000,
-    },
-    {
-      partner_name: '그리디센트',
-      campaign_name: '나만의 향수만들기 체험 [그리디센트]',
-      status: '진행',
-      type: '구매평',
-      channel: 'Store',
-      points: 50000,
-    },
-    {
-      partner_name: '스타벅스',
-      campaign_name: '스타벅스 리저브 원두 체험',
-      status: '종료',
-      type: '배송형',
-      channel: 'Blog',
-      points: 80000,
-    },
-    {
-      partner_name: '나이키',
-      campaign_name: '나이키 에어맥스 운동화 리뷰',
-      status: '종료',
-      type: '구매평',
-      channel: 'Instagram',
-      points: 120000,
-    },
-    {
-      partner_name: '삼성전자',
-      campaign_name: '갤럭시 버즈 프로 체험',
-      status: '종료',
-      type: '배송형',
-      channel: 'Youtube',
-      points: 150000,
-    },
-    {
-      partner_name: '아이폰',
-      campaign_name: '아이폰 15 프로 맥스 리뷰',
-      status: '진행',
-      type: '구매평',
-      channel: 'Blog',
-      points: 200000,
-    },
-    {
-      partner_name: '코카콜라',
-      campaign_name: '코카콜라 제로 슈가 체험',
-      status: '종료',
-      type: '배송형',
-      channel: 'Clip',
-      points: 30000,
-    },
-  ];
+  // 데이터 없음 테스트용: ID가 '16'인 경우 빈 배열로 유지
+  if (reviewer.id !== '16') {
+    const campaign_count = reviewer.campaign_participated;
 
-  // campaign_participated 값에 맞춰서 캠페인 내역 생성
-  // 최대 100개까지만 표시 (성능을 위해 제한)
-  const max_campaigns_to_show = Math.min(campaign_count, 100);
+    // 캠페인 데이터 템플릿 (리뷰어마다 다른 데이터를 생성하기 위한 배열)
+    const campaign_templates: Omit<RecentCampaign, 'campaign_number'>[] = [
+      {
+        partner_name: '주식회사 재밌는걸참좋아하고하고싶은거하는노신사',
+        campaign_name: '푸러블 고농축 캡슐세제 플라워향, 1개, 110개입',
+        status: '진행',
+        type: '배송형',
+        channel: 'Blog',
+        points: 115000,
+      },
+      {
+        partner_name: '그리디센트',
+        campaign_name: '나만의 향수만들기 체험 [그리디센트]',
+        status: '진행',
+        type: '구매평',
+        channel: 'Store',
+        points: 50000,
+      },
+      {
+        partner_name: '스타벅스',
+        campaign_name: '스타벅스 리저브 원두 체험',
+        status: '종료',
+        type: '배송형',
+        channel: 'Blog',
+        points: 80000,
+      },
+      {
+        partner_name: '나이키',
+        campaign_name: '나이키 에어맥스 운동화 리뷰',
+        status: '종료',
+        type: '구매평',
+        channel: 'Instagram',
+        points: 120000,
+      },
+      {
+        partner_name: '삼성전자',
+        campaign_name: '갤럭시 버즈 프로 체험',
+        status: '종료',
+        type: '배송형',
+        channel: 'Youtube',
+        points: 150000,
+      },
+      {
+        partner_name: '아이폰',
+        campaign_name: '아이폰 15 프로 맥스 리뷰',
+        status: '진행',
+        type: '구매평',
+        channel: 'Blog',
+        points: 200000,
+      },
+      {
+        partner_name: '코카콜라',
+        campaign_name: '코카콜라 제로 슈가 체험',
+        status: '종료',
+        type: '배송형',
+        channel: 'Clip',
+        points: 30000,
+      },
+    ];
 
-  for (let i = 0; i < max_campaigns_to_show; i++) {
-    // 템플릿을 순환하면서 사용 (i % campaign_templates.length로 인덱스 계산)
-    const template_index = i % campaign_templates.length;
-    const template = campaign_templates[template_index];
+    // campaign_participated 값에 맞춰서 캠페인 내역 생성
+    // 최대 100개까지만 표시 (성능을 위해 제한)
+    const max_campaigns_to_show = Math.min(campaign_count, 100);
 
-    recent_campaigns.push({
-      campaign_number: String(i + 1).padStart(6, '0'),
-      ...template,
-      // 진행/종료 상태를 다양하게 설정
-      status: i % 3 === 0 ? '진행' : '종료',
-      // 포인트도 다양하게 설정
-      points: template.points + (i % 5) * 10000,
-    });
+    for (let i = 0; i < max_campaigns_to_show; i++) {
+      // 템플릿을 순환하면서 사용 (i % campaign_templates.length로 인덱스 계산)
+      const template_index = i % campaign_templates.length;
+      const template = campaign_templates[template_index];
+
+      recent_campaigns.push({
+        campaign_number: String(i + 1).padStart(6, '0'),
+        ...template,
+        // 진행/종료 상태를 다양하게 설정
+        status: i % 3 === 0 ? '진행' : '종료',
+        // 포인트도 다양하게 설정
+        points: template.points + (i % 5) * 10000,
+      });
+    }
   }
 
   // 각 리뷰어마다 다른 개인 정보 생성
@@ -623,6 +648,14 @@ export function get_reviewer_detail_by_id(
       email: 'jorois@naver.com',
       phone: '010-6060-6060',
       address: '경기도 화성시 동탄대로 357',
+    },
+    '16': {
+      nickname: '데이터없음테스트',
+      gender: '남성',
+      age: 30,
+      email: 'nodata@test.com',
+      phone: '010-9999-9999',
+      address: '서울시 강남구 테헤란로 999',
     },
   };
 

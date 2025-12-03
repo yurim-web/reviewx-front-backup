@@ -110,20 +110,20 @@ export default function CampaignHistoryModal({
               <div className={styles.table_cell}>지급 포인트</div>
             </div>
 
-            {/* 캠페인 내역이 없을 때: 빈 상태 메시지 표시 */}
-            {campaigns.length === 0 ? (
-              <div className={styles.empty_state}>
-                <p className={styles.empty_message}>
-                  캠페인 진행 내역이 없습니다.
-                </p>
-              </div>
-            ) : (
-              /* 테이블 바디: 캠페인 내역이 있을 때만 표시 */
-              <div className={styles.table_body}>
-                {/* map 함수를 사용하여 campaigns 배열을 순회하며 테이블 행을 렌더링합니다 */}
-                {/* map 함수: 배열의 각 요소를 순회하며 새로운 배열을 만듭니다 */}
-                {/* key prop: React에서 리스트를 렌더링할 때 각 요소를 구분하기 위해 필요합니다 */}
-                {campaigns.map((campaign, index) => (
+            {/* 테이블 바디: 항상 렌더링되며, 데이터가 없을 때는 빈 상태 메시지를 표시합니다 */}
+            <div className={styles.table_body}>
+              {/* 조건부 렌더링: 데이터가 없을 때 빈 상태 메시지 표시 */}
+              {campaigns.length === 0 ? (
+                <div className={styles.empty_state}>
+                  <p className={styles.empty_message}>
+                    캠페인 진행 내역이 없습니다.
+                  </p>
+                </div>
+              ) : (
+                /* map 함수를 사용하여 campaigns 배열을 순회하며 테이블 행을 렌더링합니다 */
+                /* map 함수: 배열의 각 요소를 순회하며 새로운 배열을 만듭니다 */
+                /* key prop: React에서 리스트를 렌더링할 때 각 요소를 구분하기 위해 필요합니다 */
+                campaigns.map((campaign, index) => (
                   <div key={index} className={styles.table_row}>
                     {/* 캠페인 번호 */}
                     <div className={styles.table_cell}>
@@ -173,9 +173,9 @@ export default function CampaignHistoryModal({
                       {format_number(campaign.points)}
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
+                ))
+              )}
+            </div>
           </div>
         </div>
       </div>
