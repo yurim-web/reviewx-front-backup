@@ -61,7 +61,7 @@ export default function FilterSection({
   const [selected_sort, set_selected_sort] = useState<string>('최신순');
 
   // 정렬 옵션 목록
-  const sort_options = ['최신순', '인기순', '마감임박순', '포인트높은순'];
+  const sort_options = ['최신순', '오래된순'];
 
   // 신고 코드 필터 모달 열기
   const handle_report_code_filter_click = () => {
