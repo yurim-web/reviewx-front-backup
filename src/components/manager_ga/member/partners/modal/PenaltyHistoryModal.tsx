@@ -102,37 +102,46 @@ export default function PenaltyHistoryModal({
                 {/* map 함수를 사용하여 테이블 행을 렌더링합니다 */}
                 {/* map 함수: 배열의 각 요소를 순회하며 새로운 배열을 만듭니다 */}
                 {/* key prop: React에서 리스트를 렌더링할 때 각 요소를 구분하기 위해 필요합니다 */}
-                {penalty_history.map((penalty, index) => (
-                  <div key={index} className={styles.table_row}>
-                    {/* 유형 */}
-                    <div className={styles.table_cell}>{penalty.type}</div>
+                {penalty_history.map((penalty, index) => {
+                  // 상태 값에 따라 표시할 값을 결정합니다
+                  // '일시정지'를 '일시 정지'로 변환하여 표시합니다
+                  const displayStatus =
+                    penalty.status === '일시정지'
+                      ? '일시 정지'
+                      : penalty.status;
 
-                    {/* 사유 */}
-                    <div className={styles.table_cell}>{penalty.reason}</div>
+                  return (
+                    <div key={index} className={styles.table_row}>
+                      {/* 유형: 항상 "경고"를 오렌지색 태그로 표시 */}
+                      <div className={styles.table_cell}>
+                        <span className={styles.type_tag_penalty}>경고</span>
+                      </div>
 
-                    {/* 처리일 */}
-                    <div className={styles.table_cell}>
-                      {penalty.processed_date}
+                      {/* 사유: type 값(지각 제출, 선정 후 취소 등)을 텍스트로 표시 */}
+                      <div className={styles.table_cell}>{penalty.type}</div>
+
+                      {/* 처리일 */}
+                      <div className={styles.table_cell}>
+                        {penalty.processed_date}
+                      </div>
+
+                      {/* 상태: 일시 정지(빨간색) 또는 정상(파란색) 태그로 표시 */}
+                      <div className={styles.table_cell}>
+                        {/* 상태에 따라 다른 스타일의 태그를 표시합니다 */}
+                        {/* 삼항 연산자: 조건에 따라 다른 값을 반환합니다 */}
+                        <span
+                          className={`${styles.status_tag} ${
+                            displayStatus === '일시 정지'
+                              ? styles.status_tag_suspended
+                              : styles.status_tag_normal
+                          }`}
+                        >
+                          {displayStatus}
+                        </span>
+                      </div>
                     </div>
-
-                    {/* 상태 */}
-                    <div className={styles.table_cell}>
-                      {/* 상태에 따라 다른 스타일의 태그를 표시합니다 */}
-                      {/* 삼항 연산자: 조건에 따라 다른 값을 반환합니다 */}
-                      <span
-                        className={`${styles.status_tag} ${
-                          penalty.status === '경고'
-                            ? styles.status_tag_warning
-                            : penalty.status === '일시정지'
-                            ? styles.status_tag_suspended
-                            : styles.status_tag_normal
-                        }`}
-                      >
-                        {penalty.status}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -141,4 +150,3 @@ export default function PenaltyHistoryModal({
     </div>
   );
 }
-

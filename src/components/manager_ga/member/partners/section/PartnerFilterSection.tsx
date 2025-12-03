@@ -108,8 +108,7 @@ export default function PartnerFilterSection({
   };
 
   // 정렬 옵션
-  const sort_options = ['최신순', '이름순', '캠페인 참여순', '포인트순'];
-
+  const sort_options = ['최신순', '오래된순'];
   // 정렬 옵션 선택 핸들러
   const handle_sort_change = (sort: string) => {
     set_selected_sort(sort);

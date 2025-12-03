@@ -21,6 +21,7 @@
  * - useParams: URL 파라미터에서 id 값을 추출합니다
  * - 조건부 렌더링: 데이터가 없을 때 에러 메시지를 표시합니다
  * - 컴포넌트 분리: 큰 컴포넌트를 작은 섹션으로 나누어 관리합니다
+ * - 재사용 컴포넌트: 공통 컴포넌트를 사용하여 코드 중복을 줄입니다
  *
  * @returns 파트너 디테일 페이지 JSX
  */
@@ -28,22 +29,25 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import Image from 'next/image';
-import Loading from '@/app/loading';
-import styles from '@/styles/manager_ga/member/partners/detail_page.module.css';
+import { useParams } from 'next/navigation';
 import {
   get_partner_detail_by_id,
   type PartnerDetail,
 } from '@/data/manager_ga/member/partners';
 import CampaignHistoryModal from '@/components/manager_ga/member/partners/modal/CampaignHistoryModal';
 import PenaltyHistoryModal from '@/components/manager_ga/member/partners/modal/PenaltyHistoryModal';
+import MemberDetailLayout from '@/components/manager_ga/member/member_detail/MemberDetailLayout';
+import ProfileSection from '@/components/manager_ga/member/member_detail/ProfileSection';
+import ActivityInfoSection, {
+  type ActivityInfoItem,
+} from '@/components/manager_ga/member/member_detail/ActivityInfoSection';
+import BusinessInfoSection from '@/components/manager_ga/member/partners/section/BusinessInfoSection';
+import styles from '@/styles/manager_ga/member/member_detail/detail_page.module.css';
 
 export default function PartnerDetailPage() {
   // useParams: Next.js에서 제공하는 훅으로, URL 파라미터를 가져옵니다
   // [id] 폴더 구조에서 id 값을 추출합니다
   const params = useParams();
-  const router = useRouter();
   const partner_id = params.id as string;
 
   // 파트너 디테일 정보 상태 관리
@@ -76,28 +80,6 @@ export default function PartnerDetailPage() {
     fetch_partner_detail();
   }, [partner_id]);
 
-  // 로딩 중일 때 로딩 컴포넌트를 표시합니다
-  if (is_loading) {
-    return <Loading />;
-  }
-
-  // 파트너 정보가 없을 때 에러 메시지를 표시합니다
-  if (!partner_detail) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.error_message}>
-          <p>파트너를 찾을 수 없습니다.</p>
-          <button
-            onClick={() => router.push('/manager_ga/member/partners')}
-            className={styles.back_button}
-          >
-            목록으로 돌아가기
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   // 숫자를 천 단위로 포맷팅하는 함수
   const format_number = (num: number): string => {
     return num.toLocaleString();
@@ -108,205 +90,126 @@ export default function PartnerDetailPage() {
     // TODO: 실제 다운로드 기능 구현
   };
 
+  // 활동 정보 아이템 배열 생성
+  // ActivityInfoSection 컴포넌트에 전달할 데이터를 준비합니다
+  const activity_info_items: ActivityInfoItem[] = [
+    // 캠페인 진행
+    {
+      label: '캠페인 진행',
+      value: partner_detail
+        ? `${format_number(partner_detail.campaign_in_progress)}회`
+        : '0회',
+      on_button_click: () => set_is_campaign_history_modal_open(true),
+      button_aria_label: '캠페인 진행 내역 보기',
+    },
+    // 캠페인 완료
+    {
+      label: '캠페인 완료',
+      value: partner_detail
+        ? `${format_number(partner_detail.campaign_completed)}회`
+        : '0회',
+    },
+    // 패널티
+    {
+      label: '패널티',
+      value: partner_detail
+        ? `${format_number(partner_detail.penalty_count)}회`
+        : '0회',
+      on_button_click: () => set_is_penalty_history_modal_open(true),
+      button_aria_label: '패널티 내역 보기',
+      additional_content:
+        partner_detail?.status_type === '모범 회원' ? (
+          <div className={styles.status_type_badge}>모범 회원</div>
+        ) : undefined,
+    },
+    // 접속일
+    {
+      label: '접속일',
+      value: partner_detail?.last_access_date || '-',
+    },
+    // 가입일
+    {
+      label: '가입일',
+      value: partner_detail?.join_date || '-',
+    },
+    // 보유 포인트
+    {
+      label: '보유 포인트',
+      value: partner_detail
+        ? format_number(partner_detail.current_points)
+        : '0',
+    },
+    // 결제 포인트
+    {
+      label: '결제 포인트',
+      value: partner_detail
+        ? format_number(partner_detail.payment_points)
+        : '0',
+    },
+  ];
+
   return (
-    <div className={styles.container}>
+    <MemberDetailLayout
+      is_loading={is_loading}
+      is_error={!partner_detail}
+      error_message="파트너를 찾을 수 없습니다."
+      back_path="/manager_ga/member/partners"
+    >
       <div className={styles.main_content}>
         {/* 프로필 섹션 */}
-        <div className={styles.profile_section}>
-          {/* 프로필 이미지 */}
-          <div className={styles.profile_image_wrapper}>
-            <div className={styles.profile_image_placeholder} />
-          </div>
-
-          {/* 프로필 정보 */}
-          <div className={styles.profile_info}>
-            {/* 상호명 */}
-            <h1 className={styles.business_name}>
-              {partner_detail.business_name}
-            </h1>
-
-            {/* 상태 유형 태그 */}
-            <div className={styles.status_type_tag}>
-              {partner_detail.status_type}
-            </div>
-
-            {/* 기본 정보 */}
-            <div className={styles.basic_info}>
-              <span>파트너</span>
-              <span>·</span>
-              <span>{partner_detail.division}</span>
-              <span>·</span>
-              <span>{partner_detail.email}</span>
-              <span>·</span>
-              <span>{partner_detail.phone}</span>
-              <span>·</span>
-              <span>{partner_detail.address}</span>
-            </div>
-          </div>
-        </div>
+        {partner_detail && (
+          <ProfileSection
+            name={partner_detail.business_name}
+            status_type={partner_detail.status_type}
+            basic_info_items={[
+              '파트너',
+              partner_detail.division,
+              partner_detail.email,
+              partner_detail.phone,
+              partner_detail.address,
+            ]}
+          />
+        )}
 
         {/* 활동 정보 섹션 */}
-        <div className={styles.section}>
-          <h2 className={styles.section_title}>활동 정보</h2>
-          <div className={styles.info_grid}>
-            {/* 캠페인 진행 */}
-            <div className={styles.info_card}>
-              <div className={styles.info_label}>캠페인 진행</div>
-              <div className={styles.info_value_with_button}>
-                <span>
-                  {format_number(partner_detail.campaign_in_progress)}회
-                </span>
-                {/* 화살표 버튼: 캠페인 진행 내역 모달을 엽니다 */}
-                <button
-                  className={styles.arrow_button}
-                  onClick={() => {
-                    // 모달 열기: set_is_campaign_history_modal_open(true)로 모달 상태를 변경합니다
-                    set_is_campaign_history_modal_open(true);
-                  }}
-                  aria-label="캠페인 진행 내역 보기"
-                >
-                  <img
-                    src="/images/icons/arronw_btn.svg"
-                    alt="화살표"
-                    className={styles.arrow_icon}
-                  />
-                </button>
-              </div>
-            </div>
-
-            {/* 캠페인 완료 */}
-            <div className={styles.info_card}>
-              <div className={styles.info_label}>캠페인 완료</div>
-              <div className={styles.info_value}>
-                {format_number(partner_detail.campaign_completed)}회
-              </div>
-            </div>
-
-            {/* 패널티 */}
-            <div className={styles.info_card}>
-              <div className={styles.info_label}>패널티</div>
-              <div className={styles.info_value_with_button}>
-                <span>{format_number(partner_detail.penalty_count)}회</span>
-                {/* 화살표 버튼: 패널티 내역 모달을 엽니다 */}
-                <button
-                  className={styles.arrow_button}
-                  onClick={() => {
-                    // 패널티 내역 모달 열기
-                    set_is_penalty_history_modal_open(true);
-                  }}
-                  aria-label="패널티 내역 보기"
-                >
-                  <img
-                    src="/images/icons/arronw_btn.svg"
-                    alt="화살표"
-                    className={styles.arrow_icon}
-                  />
-                </button>
-              </div>
-              {/* 모범 회원 배지: status_type이 '모범 회원'일 때만 표시 */}
-              {partner_detail.status_type === '모범 회원' && (
-                <div className={styles.status_type_badge}>모범 회원</div>
-              )}
-            </div>
-
-            {/* 접속일 */}
-            <div className={styles.info_card}>
-              <div className={styles.info_label}>접속일</div>
-              <div className={styles.info_value}>
-                {partner_detail.last_access_date}
-              </div>
-            </div>
-
-            {/* 가입일 */}
-            <div className={styles.info_card}>
-              <div className={styles.info_label}>가입일</div>
-              <div className={styles.info_value}>
-                {partner_detail.join_date}
-              </div>
-            </div>
-
-            {/* 보유 포인트 */}
-            <div className={styles.info_card}>
-              <div className={styles.info_label}>보유 포인트</div>
-              <div className={styles.info_value}>
-                {format_number(partner_detail.current_points)}
-              </div>
-            </div>
-
-            {/* 결제 포인트 */}
-            <div className={styles.info_card}>
-              <div className={styles.info_label}>결제 포인트</div>
-              <div className={styles.info_value}>
-                {format_number(partner_detail.payment_points)}
-              </div>
-            </div>
-          </div>
-        </div>
+        <ActivityInfoSection items={activity_info_items} />
 
         {/* 사업자 정보 섹션 */}
-        <div className={styles.section}>
-          <h2 className={styles.section_title}>사업자 정보</h2>
-          <div className={styles.business_grid}>
-            <div className={styles.info_card}>
-              <div className={styles.info_label}>상호명</div>
-              <div className={styles.info_value}>
-                {partner_detail.business_name}
-              </div>
-            </div>
-            <div className={styles.info_card}>
-              <div className={styles.info_label}>대표자명</div>
-              <div className={styles.info_value}>
-                {partner_detail.representative_name}
-              </div>
-            </div>
-            <div className={styles.info_card}>
-              <div className={styles.info_label}>사업자등록번호</div>
-              <div className={styles.info_value}>
-                {partner_detail.business_number}
-              </div>
-            </div>
-            <div className={styles.info_card}>
-              <div className={styles.info_label}>사업자등록증</div>
-              <button
-                onClick={handle_download_business_certificate}
-                className={styles.download_button}
-                aria-label="사업자등록증 다운로드"
-              >
-                <span>다운로드</span>
-                <Image
-                  src="/images/icons/table_download.svg"
-                  alt="다운로드"
-                  width={14}
-                  height={14}
-                  className={styles.download_icon}
-                />
-              </button>
-            </div>
-          </div>
-        </div>
+        {partner_detail && (
+          <BusinessInfoSection
+            business_name={partner_detail.business_name}
+            representative_name={partner_detail.representative_name}
+            business_number={partner_detail.business_number}
+            on_download={handle_download_business_certificate}
+          />
+        )}
       </div>
 
       {/* 캠페인 진행 내역 모달 */}
       {/* 조건부 렌더링: 모달이 열려있을 때만 표시됩니다 */}
-      <CampaignHistoryModal
-        is_open={is_campaign_history_modal_open}
-        on_close={() => {
-          // 모달 닫기: set_is_campaign_history_modal_open(false)로 모달 상태를 변경합니다
-          set_is_campaign_history_modal_open(false);
-        }}
-        campaigns={partner_detail.recent_campaigns}
-      />
+      {partner_detail && (
+        <CampaignHistoryModal
+          is_open={is_campaign_history_modal_open}
+          on_close={() => {
+            // 모달 닫기: set_is_campaign_history_modal_open(false)로 모달 상태를 변경합니다
+            set_is_campaign_history_modal_open(false);
+          }}
+          campaigns={partner_detail.recent_campaigns}
+        />
+      )}
 
       {/* 패널티 내역 모달 */}
       {/* 조건부 렌더링: 모달이 열려있을 때만 표시됩니다 */}
-      <PenaltyHistoryModal
-        is_open={is_penalty_history_modal_open}
-        on_close={() => {
-          // 모달 닫기: set_is_penalty_history_modal_open(false)로 모달 상태를 변경합니다
-          set_is_penalty_history_modal_open(false);
-        }}
-        penalty_history={partner_detail.penalty_history}
-      />
-    </div>
+      {partner_detail && (
+        <PenaltyHistoryModal
+          is_open={is_penalty_history_modal_open}
+          on_close={() => {
+            // 모달 닫기: set_is_penalty_history_modal_open(false)로 모달 상태를 변경합니다
+            set_is_penalty_history_modal_open(false);
+          }}
+          penalty_history={partner_detail.penalty_history}
+        />
+      )}
+    </MemberDetailLayout>
   );
 }

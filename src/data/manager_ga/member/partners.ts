@@ -331,6 +331,22 @@ export const partner_list: PartnerItem[] = [
     last_access_date: '2025-08-01 18:56',
     join_date: '2025-08-01 18:56',
   },
+  {
+    id: '15',
+    number: '000015',
+    business_name: '데이터없음테스트',
+    business_number: '999-99-99999',
+    representative_name: '테스트',
+    division: '개인',
+    campaign_in_progress: 0,
+    campaign_completed: 0,
+    current_points: 0,
+    used_points: 0,
+    status_type: '모범 회원',
+    status: '정상',
+    last_access_date: '2025-08-01 18:56',
+    join_date: '2025-08-01 18:56',
+  },
 ];
 
 // 파트너 ID로 디테일 정보를 가져오는 함수
@@ -361,13 +377,18 @@ export function get_partner_detail_by_id(
     '12': 0,
     '13': 0,
     '14': 0,
+    '15': 0, // 데이터 없음 테스트용
   };
   const penalty_count = penalty_count_map[partner.id] || 0;
 
   // 패널티 내역 생성: penalty_count에 맞춰서 생성
+  // 유형은 항상 "경고"로 표시되므로, 상태 값은 실제 상태(일시정지 또는 정상)만 저장합니다
   const penalty_history: PenaltyHistoryItem[] = [];
   if (penalty_count > 0) {
     for (let i = 0; i < penalty_count; i++) {
+      // 첫 번째 항목이고 패널티가 3개 이상이면 일시정지, 그 외는 정상
+      const actualStatus = i === 0 && penalty_count >= 3 ? '일시정지' : '정상';
+
       penalty_history.push({
         type:
           i === penalty_count - 1 && penalty_count > 1
@@ -378,66 +399,162 @@ export function get_partner_detail_by_id(
             ? '선정 후 취소'
             : '지각 제출',
         processed_date: `2025-08-${String(i + 1).padStart(2, '0')} 18:56`,
-        status: i === 0 && penalty_count === 3 ? '일시정지' : '경고',
+        status: actualStatus,
       });
     }
   }
+
+  // 각 파트너마다 다른 연락처 정보 매핑
+  const contact_info_map: Record<
+    string,
+    {
+      email: string;
+      phone: string;
+      address: string;
+    }
+  > = {
+    '1': {
+      email: 'contact@cmcm.co.kr',
+      phone: '02-1234-5678',
+      address: '서울시 강남구 테헤란로 123',
+    },
+    '2': {
+      email: 'cheongbul@example.com',
+      phone: '010-2345-6789',
+      address: '서울시 송파구 올림픽로 456',
+    },
+    '3': {
+      email: 'myeongryunjinsa@example.com',
+      phone: '031-3456-7890',
+      address: '경기도 수원시 영통구 광교로 789',
+    },
+    '4': {
+      email: 'rainbow8@example.com',
+      phone: '02-4567-8901',
+      address: '서울시 서초구 서초대로 321',
+    },
+    '5': {
+      email: 'playtier@example.com',
+      phone: '010-5678-9012',
+      address: '서울시 마포구 홍대로 654',
+    },
+    '6': {
+      email: 'flower@example.com',
+      phone: '010-6789-0123',
+      address: '서울시 강동구 천호대로 987',
+    },
+    '7': {
+      email: 'ydcompany@example.com',
+      phone: '02-7890-1234',
+      address: '서울시 종로구 종로 147',
+    },
+    '8': {
+      email: 'ims@example.com',
+      phone: '010-8901-2345',
+      address: '서울시 용산구 한강대로 258',
+    },
+    '9': {
+      email: 'cheongmyeong@example.com',
+      phone: '032-9012-3456',
+      address: '인천시 연수구 송도과학로 369',
+    },
+    '10': {
+      email: 'ims2@example.com',
+      phone: '010-0123-4567',
+      address: '서울시 노원구 상계로 741',
+    },
+    '11': {
+      email: 'ims3@example.com',
+      phone: '010-1234-5678',
+      address: '서울시 양천구 목동로 852',
+    },
+    '12': {
+      email: 'ims4@example.com',
+      phone: '010-2345-6789',
+      address: '서울시 강서구 공항대로 963',
+    },
+    '13': {
+      email: 'ims5@example.com',
+      phone: '010-3456-7890',
+      address: '서울시 은평구 은평로 159',
+    },
+    '14': {
+      email: 'nohongchul@example.com',
+      phone: '010-4567-8901',
+      address: '서울시 성동구 왕십리로 357',
+    },
+    '15': {
+      email: 'test@example.com',
+      phone: '010-0000-0000',
+      address: '인천 남동구 장자로 6번길 2',
+    },
+  };
+
+  // 파트너 ID에 해당하는 연락처 정보 가져오기 (없으면 기본값 사용)
+  const contact_info = contact_info_map[partner.id] || {
+    email: 'contact@example.com',
+    phone: '010-0000-0000',
+    address: '서울시 중구 세종대로 123',
+  };
 
   // 디테일 정보 생성 (목업 데이터)
   // 실제 프로젝트에서는 API에서 받아온 데이터를 사용합니다
   const detail: PartnerDetail = {
     ...partner,
-    email: 'contact@cmcm.co.kr',
-    phone: '010-0000-0000',
-    address: '인천 남동구 장자로 6번길 2',
+    email: contact_info.email,
+    phone: contact_info.phone,
+    address: contact_info.address,
     penalty_count: penalty_count,
     payment_points: 12580000,
     penalty_history: penalty_history,
-    recent_campaigns: [
-      {
-        campaign_number: '000001',
-        campaign_name:
-          '푸러블 고농축 캡슐세제 플라워향, 1개, 110개입, 푸러블 고농축 캡슐세제 플라워향, 1개, 110개입, 푸러블 고농축 캡슐세제 플라워향, 1개, 110개입',
-        status: '진행',
-        type: '배송형',
-        channel: 'Blog',
-        points: 115000,
-      },
-      {
-        campaign_number: '000001',
-        campaign_name: '나만의 향수만들기 체험 [그리디센트]',
-        status: '진행',
-        type: '구매평',
-        channel: 'Store',
-        points: 0,
-      },
-      {
-        campaign_number: '000001',
-        campaign_name: '나만의 향수만들기 체험 [그리디센트]',
-        status: '종료',
-        type: '구매평',
-        channel: 'Store',
-        points: 0,
-      },
-      {
-        campaign_number: '000001',
-        campaign_name: '나만의 향수만들기 체험 [그리디센트]',
-        status: '종료',
-        type: '구매평',
-        channel: 'Store',
-        points: 0,
-      },
-      {
-        campaign_number: '000001',
-        campaign_name: '나만의 향수만들기 체험 [그리디센트]',
-        status: '종료',
-        type: '구매평',
-        channel: 'Store',
-        points: 0,
-      },
-    ],
+    // 데이터 없음 테스트용: ID가 '15'인 경우 빈 배열 반환
+    recent_campaigns:
+      partner.id === '15'
+        ? []
+        : [
+            {
+              campaign_number: '000001',
+              campaign_name:
+                '푸러블 고농축 캡슐세제 플라워향, 1개, 110개입, 푸러블 고농축 캡슐세제 플라워향, 1개, 110개입, 푸러블 고농축 캡슐세제 플라워향, 1개, 110개입',
+              status: '진행',
+              type: '배송형',
+              channel: 'Blog',
+              points: 115000,
+            },
+            {
+              campaign_number: '000001',
+              campaign_name: '나만의 향수만들기 체험 [그리디센트]',
+              status: '진행',
+              type: '구매평',
+              channel: 'Store',
+              points: 0,
+            },
+            {
+              campaign_number: '000001',
+              campaign_name: '나만의 향수만들기 체험 [그리디센트]',
+              status: '종료',
+              type: '구매평',
+              channel: 'Store',
+              points: 0,
+            },
+            {
+              campaign_number: '000001',
+              campaign_name: '나만의 향수만들기 체험 [그리디센트]',
+              status: '종료',
+              type: '구매평',
+              channel: 'Store',
+              points: 0,
+            },
+            {
+              campaign_number: '000001',
+              campaign_name: '나만의 향수만들기 체험 [그리디센트]',
+              status: '종료',
+              type: '구매평',
+              channel: 'Store',
+              points: 0,
+            },
+          ],
   };
 
   return detail;
 }
-
