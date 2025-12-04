@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import PartnerTabNavigation from "@/components/partner/campaign_management/TabNavigation";
-import PartnerSubTabNavigation from "@/components/partner/SubTabNavigation";
-import layoutStyles from "../../../styles/partner/layout.module.css";
-import profileStyles from "../../../styles/user/mypage/profile.module.css";
-import type { PartnerMainTab } from "@/types/partner/partner";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import PartnerTabNavigation from '@/components/partner/campaign_management/TabNavigation';
+import SubTabNavigation from '@/components/common/mypage/SubTabNavigation';
+import layoutStyles from '../../../styles/partner/layout.module.css';
+import profileStyles from '../../../styles/user/mypage/profile.module.css';
+import type { PartnerMainTab } from '@/types/partner/partner';
 
 export default function PartnerMypagePage() {
   const router = useRouter();
-  const [activeTopTab, setActiveTopTab] = useState<PartnerMainTab>("account");
-  const [activeSubTab, setActiveSubTab] = useState<"profile">("profile");
+  const [activeTopTab, setActiveTopTab] = useState<PartnerMainTab>('account');
+  const [activeSubTab, setActiveSubTab] = useState<'profile'>('profile');
 
   return (
     <div className={layoutStyles.partner_dashboard_container}>
@@ -21,9 +21,11 @@ export default function PartnerMypagePage() {
           activeTab={activeTopTab}
           setActiveTab={setActiveTopTab}
         />
-        <PartnerSubTabNavigation
+        <SubTabNavigation
           activeSubTab={activeSubTab}
           setActiveSubTab={setActiveSubTab}
+          basePath="/partner/mypage"
+          availableTabs={['profile']}
         />
         <section className={layoutStyles.mypage_container}>
           {/* 프로필 섹션 */}
@@ -42,7 +44,7 @@ export default function PartnerMypagePage() {
                     alt="프로필 편집 이동"
                     width={16}
                     height={16}
-                    onClick={() => router.push("/partner/mypage/edit")}
+                    onClick={() => router.push('/partner/mypage/edit')}
                   />
                 </div>
               </div>
@@ -54,7 +56,7 @@ export default function PartnerMypagePage() {
             <button
               className={profileStyles.menu_item}
               onClick={() =>
-                window.open("https://markx.dev/guide_book", "_blank")
+                window.open('https://markx.dev/guide_book', '_blank')
               }
             >
               <div className={profileStyles.menu_icon} />
@@ -62,14 +64,14 @@ export default function PartnerMypagePage() {
             </button>
             <button
               className={profileStyles.menu_item}
-              onClick={() => router.push("/notice")}
+              onClick={() => router.push('/notice')}
             >
               <div className={profileStyles.menu_icon} />
               <div className={profileStyles.menu_text}>공지사항</div>
             </button>
             <button
               className={profileStyles.menu_item}
-              onClick={() => router.push("/faq")}
+              onClick={() => router.push('/faq')}
             >
               <div className={profileStyles.menu_icon} />
               <div className={profileStyles.menu_text}>자주 묻는 질문</div>
@@ -77,7 +79,7 @@ export default function PartnerMypagePage() {
             <button
               className={profileStyles.menu_item}
               onClick={() =>
-                window.open("https://pf.kakao.com/_xjxdxoxG/chat", "_blank")
+                window.open('https://pf.kakao.com/_xjxdxoxG/chat', '_blank')
               }
             >
               <div className={profileStyles.menu_icon} />

@@ -19,16 +19,16 @@
  * - 배송형 캠페인 등록 처리
  */
 
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import DeliveryCampaignForm from "@/components/partner/campaign_create_form/DeliveryCampaignForm";
-import { CampaignFormData } from "@/types/user/user";
-import { addDeliveryCampaign } from "@/data/partner/delivery";
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import DeliveryCampaignForm from '@/components/partner/campaign_create_form/DeliveryCampaignForm';
+import { CampaignFormData } from '@/types/user/user';
+import { addDeliveryCampaign } from '@/data/partner/delivery';
 // 분리된 CSS 모듈들 import
-import layoutStyles from "../../../../../styles/partner/layout.module.css";
-import PageHeader from "@/components/partner/campaign_create_form/common/PageHeader";
+import layoutStyles from '@/styles/partner/layout.module.css';
+import PageHeader from '@/components/partner/campaign_create_form/common/PageHeader';
 
 export default function DeliveryCampaignCreatePage() {
   const router = useRouter();
@@ -53,7 +53,8 @@ export default function DeliveryCampaignCreatePage() {
       // 이미지 URL 처리
       // 폼에서 전달받은 thumbnailImageUrl을 사용 (Data URL 형식)
       // 실제 프로덕션에서는 이미지를 서버에 업로드하고 URL을 받아와야 합니다
-      let imageUrl = formData.thumbnailImageUrl || "/images/main/campaign_img/eximg_1.png"; // 업로드된 이미지 또는 기본 이미지
+      let imageUrl =
+        formData.thumbnailImageUrl || '/images/main/campaign_img/eximg_1.png'; // 업로드된 이미지 또는 기본 이미지
 
       // TODO: 실제 프로덕션에서는 이미지 업로드 API 호출
       // const imageUploadResponse = await uploadImages(formData.thumbnailImage, formData.detailImages);
@@ -69,12 +70,12 @@ export default function DeliveryCampaignCreatePage() {
       // });
 
       // 현재는 localStorage에 임시 저장 (실제 프로덕션에서는 API 사용)
-      const storedCampaigns = localStorage.getItem("deliveryCampaigns");
+      const storedCampaigns = localStorage.getItem('deliveryCampaigns');
       const campaigns = storedCampaigns ? JSON.parse(storedCampaigns) : [];
       campaigns.push(newCampaign);
-      localStorage.setItem("deliveryCampaigns", JSON.stringify(campaigns));
+      localStorage.setItem('deliveryCampaigns', JSON.stringify(campaigns));
 
-      console.log("배송형 캠페인 등록 완료:", newCampaign);
+      console.log('배송형 캠페인 등록 완료:', newCampaign);
 
       // 등록 성공 시 캠페인 상태에 맞는 탭으로 이동
       // - "대기 중" → "예정" 탭
@@ -82,27 +83,27 @@ export default function DeliveryCampaignCreatePage() {
       // - "진행 중" → "진행" 탭
       // replace를 사용하여 히스토리에 등록 페이지를 남기지 않음
       const campaignStatus = newCampaign.campaignInfo.status;
-      let redirectPath = "/partner/campaign_management"; // 기본: 전체 탭
+      let redirectPath = '/partner/campaign_management'; // 기본: 전체 탭
 
       switch (campaignStatus) {
-        case "대기 중":
-          redirectPath = "/partner/campaign_management/scheduled"; // 예정 탭
+        case '대기 중':
+          redirectPath = '/partner/campaign_management/scheduled'; // 예정 탭
           break;
-        case "모집 중":
-          redirectPath = "/partner/campaign_management/applied"; // 신청 탭
+        case '모집 중':
+          redirectPath = '/partner/campaign_management/applied'; // 신청 탭
           break;
-        case "진행 중":
-          redirectPath = "/partner/campaign_management/progress"; // 진행 탭
+        case '진행 중':
+          redirectPath = '/partner/campaign_management/progress'; // 진행 탭
           break;
         default:
-          redirectPath = "/partner/campaign_management"; // 전체 탭
+          redirectPath = '/partner/campaign_management'; // 전체 탭
           break;
       }
 
       router.replace(redirectPath);
     } catch (error) {
-      console.error("배송형 캠페인 등록 실패:", error);
-      alert("캠페인 등록에 실패했습니다. 다시 시도해주세요.");
+      console.error('배송형 캠페인 등록 실패:', error);
+      alert('캠페인 등록에 실패했습니다. 다시 시도해주세요.');
     } finally {
       setIsSubmitting(false);
     }

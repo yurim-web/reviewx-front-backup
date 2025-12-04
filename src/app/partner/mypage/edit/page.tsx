@@ -15,10 +15,10 @@ import SubHeader from "@/components/fragments/SubHeader";
 // 유저단 이랑 스타일 똑같아서 공통으로 쓰는중
 import styles from "../../../../styles/user/mypage/edit_profile.module.css";
 // 분리된 컴포넌트들 import
-import ProfilePhotoUpload from "@/components/mypage/ProfilePhotoUpload";
-import PhoneVerificationInput from "@/components/mypage/PhoneVerificationInput";
+import ProfilePhotoUpload from "@/components/common/mypage/ProfilePhotoUpload";
+import PhoneVerificationInput from "@/components/common/mypage/PhoneVerificationInput";
 import BusinessDocumentUpload from "@/components/partner/mypage/BusinessDocumentUpload";
-import AddressInput from "@/components/mypage/AddressInput";
+import AddressInput from "@/components/common/mypage/AddressInput";
 
 /**
  * 파트너 내 정보 수정 페이지 컴포넌트

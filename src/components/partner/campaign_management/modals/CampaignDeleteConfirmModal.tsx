@@ -26,14 +26,14 @@
  * - 모달 패턴: 오버레이와 컨텐츠 영역으로 구성된 모달 UI
  */
 
-"use client";
+'use client';
 
-import Image from "next/image";
-import styles from "../../../../styles/partner/campaign_management/campaign_delete_confirm_modal.module.css";
+import Image from 'next/image';
+import styles from '../../../../styles/partner/campaign_management/campaign_delete_confirm_modal.module.css';
 
 /**
  * CampaignDeleteConfirmModal 컴포넌트의 Props 타입 정의
- * 
+ *
  * @interface CampaignDeleteConfirmModalProps
  * @property {boolean} isOpen - 모달이 열려있는지 여부를 나타내는 boolean 값
  *                              true일 때 모달이 표시되고, false일 때는 아무것도 렌더링하지 않음
@@ -56,12 +56,12 @@ interface CampaignDeleteConfirmModalProps {
 
 /**
  * 캠페인 삭제 확인 모달 컴포넌트
- * 
+ *
  * React 컴포넌트 구조:
  * - 조건부 렌더링: isOpen이 false이면 null 반환하여 아무것도 렌더링하지 않음
  * - 이벤트 핸들러: 삭제 확인/취소 버튼 클릭 및 오버레이 클릭 처리
  * - JSX: 모달 오버레이, 모달 컨테이너, 메시지, 버튼들로 구성
- * 
+ *
  * - 조건부 렌더링은 특정 조건에 따라 다른 내용을 렌더링하는 React의 기능입니다
  * - 여기서는 isOpen이 false일 때 null을 반환하여 모달을 완전히 숨깁니다
  * - 이를 통해 DOM에 불필요한 요소가 추가되지 않습니다
@@ -78,7 +78,7 @@ export default function CampaignDeleteConfirmModal({
 
   /**
    * 삭제 확인 버튼 클릭 핸들러
-   * 
+   *
    * - onConfirm prop이 제공되면 해당 함수를 호출
    * - prop이 없으면 기본 삭제 로직을 실행 (콘솔 로그 및 alert)
    * - 실제 프로덕션에서는 API 호출을 통해 서버에서 캠페인을 삭제함
@@ -90,15 +90,15 @@ export default function CampaignDeleteConfirmModal({
     } else {
       // 기본 삭제 로직 (개발/테스트용)
       // TODO: 실제 캠페인 삭제 API 호출 로직 추가
-      console.log("캠페인 삭제:", campaignTitle, campaignId);
-      alert("캠페인이 삭제되었습니다.");
+      console.log('캠페인 삭제:', campaignTitle, campaignId);
+      alert('캠페인이 삭제되었습니다.');
     }
     onClose(); // 삭제 처리 후 모달 닫기
   };
 
   /**
    * 취소 버튼 클릭 핸들러
-   * 
+   *
    * - 사용자가 취소를 선택하면 모달만 닫고 삭제 작업은 수행하지 않음
    */
   const handleCancelClick = () => {
@@ -107,7 +107,7 @@ export default function CampaignDeleteConfirmModal({
 
   /**
    * 모달 오버레이 클릭 핸들러
-   * 
+   *
    * - e.target: 실제로 클릭된 요소 (자식 요소일 수 있음)
    * - e.currentTarget: 이벤트 핸들러가 등록된 요소 (항상 오버레이)
    * - e.target === e.currentTarget을 확인하여 실제로 오버레이를 클릭했는지 확인
@@ -163,9 +163,6 @@ export default function CampaignDeleteConfirmModal({
 
         {/* 모달 닫기 버튼 - 우측 상단 X 아이콘 */}
         <button className={styles.close_button} onClick={onClose}>
-              - Next.js의 Image 컴포넌트는 이미지 최적화 기능을 제공
-              - width와 height를 명시적으로 지정하여 레이아웃 시프트 방지
-              - alt 속성은 접근성을 위해 필수 */}
           <Image
             src="/images/filter/x_icon.svg"
             alt="닫기"
@@ -177,4 +174,3 @@ export default function CampaignDeleteConfirmModal({
     </div>
   );
 }
-

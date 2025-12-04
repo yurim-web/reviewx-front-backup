@@ -17,20 +17,20 @@
  * - 중복 데이터 제거
  */
 
-import type { PartnerCampaign } from "@/types/partner/partner";
+import type { PartnerCampaign } from '@/types/partner/partner';
 import {
   getStatusMessage,
   getBrandLogo,
   getSubStatus,
   getPartnerTabByDates,
-} from "./utils/campaignHelpers";
+} from './utils/campaignHelpers';
 import type {
   CampaignWithApplicants,
   AllApplicant,
-} from "./campaign_application/delivery_applicants";
+} from './campaign_application/delivery_applicants';
 // 타입별 분리 데이터(배송형/기자단/미션형)
-import { deliveryCampaigns } from "./delivery";
-import { reporterCampaigns } from "./reporter";
+import { deliveryCampaigns } from './delivery';
+import { reporterCampaigns } from './reporter';
 // 리뷰형은 순환 참조 가능성이 있어 동적 로딩으로 처리
 // 종료/취소 데이터(콘텐츠 구조) 소스
 // 리뷰형 종료/취소 데이터도 동적 로딩으로 처리
@@ -60,9 +60,9 @@ export interface ContentItem {
   /** 콘텐츠 생성일시 (ISO 8601 형식, 예: "2025-01-15T10:00:00.000Z") */
   createdAt: string;
   /** 콘텐츠 상태 ("검수" | "완료") */
-  status: "검수" | "완료";
+  status: '검수' | '완료';
   /** 사용자 타입 ("리뷰어" | "인플루언서") */
-  userType: "리뷰어" | "인플루언서";
+  userType: '리뷰어' | '인플루언서';
   /** 작성자 닉네임 */
   nickname: string;
   /** 채널 식별자 (블로그 ID, 인스타그램 ID 등) */
@@ -107,7 +107,7 @@ export interface CampaignWithContents {
     title: string;
     image: string;
     status: string;
-    campaignType: "배송형" | "방문형" | "구매평" | "기자단" | "미션형";
+    campaignType: '배송형' | '방문형' | '구매평' | '기자단' | '미션형';
     category: string;
     brandName: string;
     recruitmentPeriod: string;
@@ -143,48 +143,43 @@ export function getClosedCampaigns(): CampaignWithContents[] {
 
   try {
     // require를 사용하여 런타임에 모듈 로드
-    const deliveryModule = require("./delivery");
+    const deliveryModule = require('./delivery');
     deliveryClosed = deliveryModule.deliveryClosedCampaigns || [];
   } catch (error) {
-    console.error("deliveryClosedCampaigns 로드 실패:", error);
+    console.error('deliveryClosedCampaigns 로드 실패:', error);
   }
 
   try {
     // missionClosedCampaigns도 동적 로딩으로 처리
-    const missionModule = require("./mission");
+    const missionModule = require('./mission');
     missionClosed = missionModule.missionClosedCampaigns || [];
   } catch (error) {
-    console.error("missionClosedCampaigns 로드 실패:", error);
+    console.error('missionClosedCampaigns 로드 실패:', error);
   }
 
   try {
     // visitClosedCampaigns도 동적 로딩으로 처리 (순환 참조 방지)
-    const visitModule = require("./visit");
+    const visitModule = require('./visit');
     visitClosed = visitModule.visitClosedCampaigns || [];
   } catch (error) {
-    console.error("visitClosedCampaigns 로드 실패:", error);
+    console.error('visitClosedCampaigns 로드 실패:', error);
   }
 
   try {
-    const reviewModule = require("./review");
+    const reviewModule = require('./review');
     reviewClosed = reviewModule.reviewClosedCampaigns || [];
   } catch (error) {
-    console.error("reviewClosedCampaigns 로드 실패:", error);
+    console.error('reviewClosedCampaigns 로드 실패:', error);
   }
 
-  return [
-    ...visitClosed,
-    ...missionClosed,
-    ...deliveryClosed,
-    ...reviewClosed,
-  ];
+  return [...visitClosed, ...missionClosed, ...deliveryClosed, ...reviewClosed];
 }
 
 // 하위 호환성을 위해 상수로도 export (내부적으로 함수 호출)
 export const closedCampaigns: CampaignWithContents[] = getClosedCampaigns();
 
 export function getClosedContentsById(
-  campaignId: string
+  campaignId: string,
 ): ContentByTab | undefined {
   const found = closedCampaigns.find((c) => c.campaignInfo.id === campaignId);
   return found?.contents;
@@ -241,10 +236,10 @@ function getStoredCampaigns(): CampaignWithApplicants[] {
    - 서버가 아닌 로컬 저장소를 사용하는 개발용·학습용 환경에서 데이터 일관성을 유지하는 방법
 */
 function getStoredDeliveryCampaigns(): CampaignWithApplicants[] {
-  if (typeof window === "undefined") return [];
+  if (typeof window === 'undefined') return [];
 
   try {
-    const stored = localStorage.getItem("deliveryCampaigns");
+    const stored = localStorage.getItem('deliveryCampaigns');
     if (!stored) return [];
 
     const campaigns: CampaignWithApplicants[] = JSON.parse(stored);
@@ -254,34 +249,34 @@ function getStoredDeliveryCampaigns(): CampaignWithApplicants[] {
     // 동적 import를 사용하여 순환 참조 방지
     let calculateCampaignStatus: (
       recruitmentPeriod?: string,
-      announcementDate?: string
-    ) => "대기 중" | "모집 중" | "진행 중" = () => "대기 중";
+      announcementDate?: string,
+    ) => '대기 중' | '모집 중' | '진행 중' = () => '대기 중';
 
     try {
-      const deliveryModule = require("./delivery");
+      const deliveryModule = require('./delivery');
       calculateCampaignStatus = deliveryModule.calculateCampaignStatus;
     } catch (error) {
-      console.error("calculateCampaignStatus 함수 로드 실패:", error);
+      console.error('calculateCampaignStatus 함수 로드 실패:', error);
     }
 
     return campaigns.map((campaign) => {
       // 현재 날짜 기준으로 상태 재계산
       const updatedStatus = calculateCampaignStatus(
         campaign.campaignInfo.recruitmentPeriod,
-        campaign.campaignInfo.announcementDate
+        campaign.campaignInfo.announcementDate,
       );
 
       // daysLeft도 재계산
       let daysLeft = 0;
       if (campaign.campaignInfo.announcementDate) {
         try {
-          const deliveryModule = require("./delivery");
+          const deliveryModule = require('./delivery');
           daysLeft =
             deliveryModule.calculateDaysLeft(
-              campaign.campaignInfo.announcementDate.split(" ")[0]
+              campaign.campaignInfo.announcementDate.split(' ')[0],
             ) || 0;
         } catch (error) {
-          console.error("calculateDaysLeft 함수 로드 실패:", error);
+          console.error('calculateDaysLeft 함수 로드 실패:', error);
         }
       }
 
@@ -295,7 +290,7 @@ function getStoredDeliveryCampaigns(): CampaignWithApplicants[] {
       };
     });
   } catch (error) {
-    console.error("localStorage에서 배송형 캠페인 불러오기 실패:", error);
+    console.error('localStorage에서 배송형 캠페인 불러오기 실패:', error);
     return [];
   }
 }
@@ -306,10 +301,10 @@ function getStoredDeliveryCampaigns(): CampaignWithApplicants[] {
  * @returns localStorage에 저장된 방문형 CampaignWithApplicants 배열 (상태 재계산됨)
  */
 function getStoredVisitCampaigns(): CampaignWithApplicants[] {
-  if (typeof window === "undefined") return [];
+  if (typeof window === 'undefined') return [];
 
   try {
-    const stored = localStorage.getItem("visitCampaigns");
+    const stored = localStorage.getItem('visitCampaigns');
     if (!stored) return [];
 
     const campaigns: CampaignWithApplicants[] = JSON.parse(stored);
@@ -317,32 +312,32 @@ function getStoredVisitCampaigns(): CampaignWithApplicants[] {
 
     let calculateCampaignStatus: (
       recruitmentPeriod?: string,
-      announcementDate?: string
-    ) => "대기 중" | "모집 중" | "진행 중" = () => "대기 중";
+      announcementDate?: string,
+    ) => '대기 중' | '모집 중' | '진행 중' = () => '대기 중';
 
     try {
-      const deliveryModule = require("./delivery");
+      const deliveryModule = require('./delivery');
       calculateCampaignStatus = deliveryModule.calculateCampaignStatus;
     } catch (error) {
-      console.error("calculateCampaignStatus 함수 로드 실패:", error);
+      console.error('calculateCampaignStatus 함수 로드 실패:', error);
     }
 
     return campaigns.map((campaign) => {
       const updatedStatus = calculateCampaignStatus(
         campaign.campaignInfo.recruitmentPeriod,
-        campaign.campaignInfo.announcementDate
+        campaign.campaignInfo.announcementDate,
       );
 
       let daysLeft = 0;
       if (campaign.campaignInfo.announcementDate) {
         try {
-          const deliveryModule = require("./delivery");
+          const deliveryModule = require('./delivery');
           daysLeft =
             deliveryModule.calculateDaysLeft(
-              campaign.campaignInfo.announcementDate.split(" ")[0]
+              campaign.campaignInfo.announcementDate.split(' ')[0],
             ) || 0;
         } catch (error) {
-          console.error("calculateDaysLeft 함수 로드 실패:", error);
+          console.error('calculateDaysLeft 함수 로드 실패:', error);
         }
       }
 
@@ -356,7 +351,7 @@ function getStoredVisitCampaigns(): CampaignWithApplicants[] {
       };
     });
   } catch (error) {
-    console.error("localStorage에서 방문형 캠페인 불러오기 실패:", error);
+    console.error('localStorage에서 방문형 캠페인 불러오기 실패:', error);
     return [];
   }
 }
@@ -367,10 +362,10 @@ function getStoredVisitCampaigns(): CampaignWithApplicants[] {
  * @returns localStorage에 저장된 구매평 CampaignWithApplicants 배열 (상태 재계산됨)
  */
 function getStoredReviewCampaigns(): CampaignWithApplicants[] {
-  if (typeof window === "undefined") return [];
+  if (typeof window === 'undefined') return [];
 
   try {
-    const stored = localStorage.getItem("reviewCampaigns");
+    const stored = localStorage.getItem('reviewCampaigns');
     if (!stored) return [];
 
     const campaigns: CampaignWithApplicants[] = JSON.parse(stored);
@@ -378,32 +373,32 @@ function getStoredReviewCampaigns(): CampaignWithApplicants[] {
 
     let calculateCampaignStatus: (
       recruitmentPeriod?: string,
-      announcementDate?: string
-    ) => "대기 중" | "모집 중" | "진행 중" = () => "대기 중";
+      announcementDate?: string,
+    ) => '대기 중' | '모집 중' | '진행 중' = () => '대기 중';
 
     try {
-      const deliveryModule = require("./delivery");
+      const deliveryModule = require('./delivery');
       calculateCampaignStatus = deliveryModule.calculateCampaignStatus;
     } catch (error) {
-      console.error("calculateCampaignStatus 함수 로드 실패:", error);
+      console.error('calculateCampaignStatus 함수 로드 실패:', error);
     }
 
     return campaigns.map((campaign) => {
       const updatedStatus = calculateCampaignStatus(
         campaign.campaignInfo.recruitmentPeriod,
-        campaign.campaignInfo.announcementDate
+        campaign.campaignInfo.announcementDate,
       );
 
       let daysLeft = 0;
       if (campaign.campaignInfo.announcementDate) {
         try {
-          const deliveryModule = require("./delivery");
+          const deliveryModule = require('./delivery');
           daysLeft =
             deliveryModule.calculateDaysLeft(
-              campaign.campaignInfo.announcementDate.split(" ")[0]
+              campaign.campaignInfo.announcementDate.split(' ')[0],
             ) || 0;
         } catch (error) {
-          console.error("calculateDaysLeft 함수 로드 실패:", error);
+          console.error('calculateDaysLeft 함수 로드 실패:', error);
         }
       }
 
@@ -417,7 +412,7 @@ function getStoredReviewCampaigns(): CampaignWithApplicants[] {
       };
     });
   } catch (error) {
-    console.error("localStorage에서 구매평 캠페인 불러오기 실패:", error);
+    console.error('localStorage에서 구매평 캠페인 불러오기 실패:', error);
     return [];
   }
 }
@@ -428,10 +423,10 @@ function getStoredReviewCampaigns(): CampaignWithApplicants[] {
  * @returns localStorage에 저장된 기자단 CampaignWithApplicants 배열 (상태 재계산됨)
  */
 function getStoredReporterCampaigns(): CampaignWithApplicants[] {
-  if (typeof window === "undefined") return [];
+  if (typeof window === 'undefined') return [];
 
   try {
-    const stored = localStorage.getItem("reporterCampaigns");
+    const stored = localStorage.getItem('reporterCampaigns');
     if (!stored) return [];
 
     const campaigns: CampaignWithApplicants[] = JSON.parse(stored);
@@ -439,32 +434,32 @@ function getStoredReporterCampaigns(): CampaignWithApplicants[] {
 
     let calculateCampaignStatus: (
       recruitmentPeriod?: string,
-      announcementDate?: string
-    ) => "대기 중" | "모집 중" | "진행 중" = () => "대기 중";
+      announcementDate?: string,
+    ) => '대기 중' | '모집 중' | '진행 중' = () => '대기 중';
 
     try {
-      const deliveryModule = require("./delivery");
+      const deliveryModule = require('./delivery');
       calculateCampaignStatus = deliveryModule.calculateCampaignStatus;
     } catch (error) {
-      console.error("calculateCampaignStatus 함수 로드 실패:", error);
+      console.error('calculateCampaignStatus 함수 로드 실패:', error);
     }
 
     return campaigns.map((campaign) => {
       const updatedStatus = calculateCampaignStatus(
         campaign.campaignInfo.recruitmentPeriod,
-        campaign.campaignInfo.announcementDate
+        campaign.campaignInfo.announcementDate,
       );
 
       let daysLeft = 0;
       if (campaign.campaignInfo.announcementDate) {
         try {
-          const deliveryModule = require("./delivery");
+          const deliveryModule = require('./delivery');
           daysLeft =
             deliveryModule.calculateDaysLeft(
-              campaign.campaignInfo.announcementDate.split(" ")[0]
+              campaign.campaignInfo.announcementDate.split(' ')[0],
             ) || 0;
         } catch (error) {
-          console.error("calculateDaysLeft 함수 로드 실패:", error);
+          console.error('calculateDaysLeft 함수 로드 실패:', error);
         }
       }
 
@@ -478,7 +473,7 @@ function getStoredReporterCampaigns(): CampaignWithApplicants[] {
       };
     });
   } catch (error) {
-    console.error("localStorage에서 기자단 캠페인 불러오기 실패:", error);
+    console.error('localStorage에서 기자단 캠페인 불러오기 실패:', error);
     return [];
   }
 }
@@ -489,10 +484,10 @@ function getStoredReporterCampaigns(): CampaignWithApplicants[] {
  * @returns localStorage에 저장된 미션형 CampaignWithApplicants 배열 (상태 재계산됨)
  */
 function getStoredMissionCampaigns(): CampaignWithApplicants[] {
-  if (typeof window === "undefined") return [];
+  if (typeof window === 'undefined') return [];
 
   try {
-    const stored = localStorage.getItem("missionCampaigns");
+    const stored = localStorage.getItem('missionCampaigns');
     if (!stored) return [];
 
     const campaigns: CampaignWithApplicants[] = JSON.parse(stored);
@@ -500,32 +495,32 @@ function getStoredMissionCampaigns(): CampaignWithApplicants[] {
 
     let calculateCampaignStatus: (
       recruitmentPeriod?: string,
-      announcementDate?: string
-    ) => "대기 중" | "모집 중" | "진행 중" = () => "대기 중";
+      announcementDate?: string,
+    ) => '대기 중' | '모집 중' | '진행 중' = () => '대기 중';
 
     try {
-      const deliveryModule = require("./delivery");
+      const deliveryModule = require('./delivery');
       calculateCampaignStatus = deliveryModule.calculateCampaignStatus;
     } catch (error) {
-      console.error("calculateCampaignStatus 함수 로드 실패:", error);
+      console.error('calculateCampaignStatus 함수 로드 실패:', error);
     }
 
     return campaigns.map((campaign) => {
       const updatedStatus = calculateCampaignStatus(
         campaign.campaignInfo.recruitmentPeriod,
-        campaign.campaignInfo.announcementDate
+        campaign.campaignInfo.announcementDate,
       );
 
       let daysLeft = 0;
       if (campaign.campaignInfo.announcementDate) {
         try {
-          const deliveryModule = require("./delivery");
+          const deliveryModule = require('./delivery');
           daysLeft =
             deliveryModule.calculateDaysLeft(
-              campaign.campaignInfo.announcementDate.split(" ")[0]
+              campaign.campaignInfo.announcementDate.split(' ')[0],
             ) || 0;
         } catch (error) {
-          console.error("calculateDaysLeft 함수 로드 실패:", error);
+          console.error('calculateDaysLeft 함수 로드 실패:', error);
         }
       }
 
@@ -539,7 +534,7 @@ function getStoredMissionCampaigns(): CampaignWithApplicants[] {
       };
     });
   } catch (error) {
-    console.error("localStorage에서 미션형 캠페인 불러오기 실패:", error);
+    console.error('localStorage에서 미션형 캠페인 불러오기 실패:', error);
     return [];
   }
 }
@@ -562,24 +557,24 @@ export function getSharedCampaigns(): CampaignWithApplicants[] {
   let missionList: CampaignWithApplicants[] = [];
   let reviewList: CampaignWithApplicants[] = [];
   try {
-    const visitModule = require("./visit");
+    const visitModule = require('./visit');
     visitList = visitModule.visitCampaigns || [];
   } catch (error) {
-    console.error("visitCampaigns 로드 실패:", error);
+    console.error('visitCampaigns 로드 실패:', error);
   }
 
   try {
-    const missionModule = require("./mission");
+    const missionModule = require('./mission');
     missionList = missionModule.missionCampaigns || [];
   } catch (error) {
-    console.error("missionCampaigns 로드 실패:", error);
+    console.error('missionCampaigns 로드 실패:', error);
   }
 
   try {
-    const reviewModule = require("./review");
+    const reviewModule = require('./review');
     reviewList = reviewModule.reviewCampaigns || [];
   } catch (error) {
-    console.error("reviewCampaigns 로드 실패:", error);
+    console.error('reviewCampaigns 로드 실패:', error);
   }
 
   // 삭제된 캠페인 ID 목록 가져오기
@@ -600,31 +595,38 @@ export function getSharedCampaigns(): CampaignWithApplicants[] {
       campaignInfo: {
         ...c.campaignInfo,
         status: c.campaignInfo.status as
-          | "진행 중"
-          | "모집 중"
-          | "대기 중"
-          | "종료"
-          | "취소",
+          | '진행 중'
+          | '모집 중'
+          | '대기 중'
+          | '종료'
+          | '취소',
       },
       applicantData: { applicants: [], selectedApplicants: [] },
     })),
   ];
 
   // 삭제된 캠페인 ID 목록에 있는 캠페인을 필터링하여 제외
-  // 
+  //
   // 중요: ID 타입 불일치 방지를 위해 문자열로 변환하여 비교
   const filteredCampaigns = allCampaigns.filter((campaign) => {
     const campaignId = String(campaign.campaignInfo.id);
     const isDeleted = deletedCampaignIds.includes(campaignId);
     if (isDeleted) {
-      console.log(`[getSharedCampaigns] 삭제된 캠페인 필터링: ID=${campaignId}, 제목=${campaign.campaignInfo.title}`);
+      console.log(
+        `[getSharedCampaigns] 삭제된 캠페인 필터링: ID=${campaignId}, 제목=${campaign.campaignInfo.title}`,
+      );
     }
     return !isDeleted;
   });
 
   if (deletedCampaignIds.length > 0) {
-    console.log(`[getSharedCampaigns] 삭제된 캠페인 ID 목록:`, deletedCampaignIds);
-    console.log(`[getSharedCampaigns] 필터링 전 캠페인 수: ${allCampaigns.length}, 필터링 후: ${filteredCampaigns.length}`);
+    console.log(
+      `[getSharedCampaigns] 삭제된 캠페인 ID 목록:`,
+      deletedCampaignIds,
+    );
+    console.log(
+      `[getSharedCampaigns] 필터링 전 캠페인 수: ${allCampaigns.length}, 필터링 후: ${filteredCampaigns.length}`,
+    );
   }
 
   return filteredCampaigns;
@@ -652,53 +654,54 @@ export const sharedCampaigns: CampaignWithApplicants[] = getSharedCampaigns();
 */
 export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
   const sharedCampaigns = getSharedCampaigns();
-  
+
   // 중복 제거: 같은 id를 가진 캠페인 중 마지막 것만 유지
   // (localStorage의 캠페인이 나중에 오므로 우선순위를 가짐)
-  const uniqueCampaignsMap = new Map<string, typeof sharedCampaigns[0]>();
+  const uniqueCampaignsMap = new Map<string, (typeof sharedCampaigns)[0]>();
   for (const campaign of sharedCampaigns) {
     uniqueCampaignsMap.set(campaign.campaignInfo.id, campaign);
   }
   const uniqueCampaigns = Array.from(uniqueCampaignsMap.values());
-  
+
   return uniqueCampaigns.map((campaign) => {
     // 날짜 기반으로 탭(상태) 계산
     // 우선 순위: 명시적으로 취소된 캠페인은 그대로 "취소"
-    let calculatedTab: "예정" | "신청" | "진행" | "종료" | "취소" = "예정";
+    let calculatedTab: '예정' | '신청' | '진행' | '종료' | '취소' = '예정';
 
     if (
-      campaign.campaignInfo.status === "취소" ||
-      campaign.campaignInfo.status === "마감"
+      campaign.campaignInfo.status === '취소' ||
+      campaign.campaignInfo.status === '마감'
     ) {
-      calculatedTab = "취소";
+      calculatedTab = '취소';
     } else {
       // 날짜 기반 탭 분류 규칙 적용 (예정/신청/진행/종료)
       const tab = getPartnerTabByDates(
         campaign.campaignInfo.recruitmentPeriod,
-        campaign.campaignInfo.registrationPeriod
+        campaign.campaignInfo.registrationPeriod,
       );
 
-      if (tab !== "전체") {
+      if (tab !== '전체') {
         calculatedTab = tab;
       } else {
         // 탭 판단이 어렵다면 기존 상태를 보수적으로 매핑
         calculatedTab =
-          campaign.campaignInfo.status === "진행 중"
-            ? "진행"
-            : campaign.campaignInfo.status === "모집 중"
-            ? "신청"
-            : campaign.campaignInfo.status === "대기 중"
-            ? "예정"
+          campaign.campaignInfo.status === '진행 중'
+            ? '진행'
+            : campaign.campaignInfo.status === '모집 중'
+            ? '신청'
+            : campaign.campaignInfo.status === '대기 중'
+            ? '예정'
             : (campaign.campaignInfo.status as
-                | "예정"
-                | "진행"
-                | "종료"
-                | "취소");
+                | '예정'
+                | '진행'
+                | '종료'
+                | '취소');
       }
     }
 
-    const applicantsCount = campaign.applicantData.applicants.length;
-    const selectedCount = campaign.applicantData.selectedApplicants.length;
+    const applicantsCount = campaign.applicantData?.applicants?.length ?? 0;
+    const selectedCount =
+      campaign.applicantData?.selectedApplicants?.length ?? 0;
     const recruitsCount = campaign.campaignInfo.totalCount ?? 0;
 
     return {
@@ -706,14 +709,14 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
       title: campaign.campaignInfo.title,
       image: campaign.campaignInfo.image,
       campaignType: campaign.campaignInfo.campaignType as
-        | "배송형"
-        | "방문형"
-        | "구매평"
-        | "기자단"
-        | "미션형",
+        | '배송형'
+        | '방문형'
+        | '구매평'
+        | '기자단'
+        | '미션형',
       status: calculatedTab,
-      category: campaign.campaignInfo.category || "",
-      brandName: campaign.campaignInfo.brandName || "",
+      category: campaign.campaignInfo.category || '',
+      brandName: campaign.campaignInfo.brandName || '',
       recruitmentPeriod: campaign.campaignInfo.recruitmentPeriod,
       announcementDate: campaign.campaignInfo.announcementDate,
       registrationPeriod: campaign.campaignInfo.registrationPeriod,
@@ -727,17 +730,13 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
         campaign.campaignInfo.statusText ||
         getStatusMessage(
           campaign.campaignInfo.status,
-          campaign.campaignInfo.daysLeft
+          campaign.campaignInfo.daysLeft,
         ),
       brandLogo: getBrandLogo(
-        campaign.campaignInfo.brandName || "기본",
-        campaign.campaignInfo.campaignType
+        campaign.campaignInfo.brandName || '기본',
+        campaign.campaignInfo.campaignType,
       ),
-      subStatus: getSubStatus(
-        calculatedTab,
-        campaign.applicantData.applicants.length,
-        campaign.applicantData.selectedApplicants.length
-      ),
+      subStatus: getSubStatus(calculatedTab, applicantsCount, selectedCount),
     };
   });
 };
@@ -780,7 +779,7 @@ export const getCampaignById = (id: string): CampaignWithApplicants | null => {
   // 이렇게 하면 새로 등록한 캠페인이 ID 중복이 있어도 우선적으로 반환됩니다
   const storedCampaigns = getStoredCampaigns();
   const storedFound = storedCampaigns.find(
-    (campaign) => campaign.campaignInfo.id === id
+    (campaign) => campaign.campaignInfo.id === id,
   );
 
   if (storedFound) {
@@ -834,18 +833,18 @@ export const getCampaignsByTab = (tab: string): PartnerCampaign[] => {
   const partnerCampaigns = convertToPartnerCampaigns();
 
   switch (tab) {
-    case "전체":
+    case '전체':
       return partnerCampaigns;
-    case "예정":
-      return partnerCampaigns.filter((campaign) => campaign.status === "예정");
-    case "신청":
-      return partnerCampaigns.filter((campaign) => campaign.status === "신청");
-    case "진행":
-      return partnerCampaigns.filter((campaign) => campaign.status === "진행");
-    case "종료":
-      return partnerCampaigns.filter((campaign) => campaign.status === "종료");
-    case "취소":
-      return partnerCampaigns.filter((campaign) => campaign.status === "취소");
+    case '예정':
+      return partnerCampaigns.filter((campaign) => campaign.status === '예정');
+    case '신청':
+      return partnerCampaigns.filter((campaign) => campaign.status === '신청');
+    case '진행':
+      return partnerCampaigns.filter((campaign) => campaign.status === '진행');
+    case '종료':
+      return partnerCampaigns.filter((campaign) => campaign.status === '종료');
+    case '취소':
+      return partnerCampaigns.filter((campaign) => campaign.status === '취소');
     default:
       return partnerCampaigns;
   }
@@ -866,11 +865,11 @@ export const getCampaignStats = () => {
 
   return {
     전체: partnerCampaigns.length,
-    예정: partnerCampaigns.filter((c) => c.status === "예정").length,
-    신청: partnerCampaigns.filter((c) => c.status === "신청").length,
-    진행: partnerCampaigns.filter((c) => c.status === "진행").length,
-    종료: partnerCampaigns.filter((c) => c.status === "종료").length,
-    취소: partnerCampaigns.filter((c) => c.status === "취소").length,
+    예정: partnerCampaigns.filter((c) => c.status === '예정').length,
+    신청: partnerCampaigns.filter((c) => c.status === '신청').length,
+    진행: partnerCampaigns.filter((c) => c.status === '진행').length,
+    종료: partnerCampaigns.filter((c) => c.status === '종료').length,
+    취소: partnerCampaigns.filter((c) => c.status === '취소').length,
     패널티: 0,
   };
 };
@@ -888,21 +887,23 @@ export const getCampaignStats = () => {
    - 상태 추적을 위한 별도 저장소 설계: 실제 데이터 삭제 + 숨김 처리를 분리하는 이유 이해하기
 */
 function getDeletedCampaignIds(): string[] {
-  if (typeof window === "undefined") return [];
+  if (typeof window === 'undefined') return [];
 
   try {
-    const stored = localStorage.getItem("deletedCampaignIds");
+    const stored = localStorage.getItem('deletedCampaignIds');
     if (!stored) {
-      console.log("[getDeletedCampaignIds] 삭제 목록이 없음");
+      console.log('[getDeletedCampaignIds] 삭제 목록이 없음');
       return [];
     }
 
     const deletedIds: string[] = JSON.parse(stored);
-    const result = Array.isArray(deletedIds) ? deletedIds.map(id => String(id)) : [];
+    const result = Array.isArray(deletedIds)
+      ? deletedIds.map((id) => String(id))
+      : [];
     console.log(`[getDeletedCampaignIds] 삭제된 캠페인 ID 목록:`, result);
     return result;
   } catch (error) {
-    console.error("삭제된 캠페인 ID 목록 불러오기 실패:", error);
+    console.error('삭제된 캠페인 ID 목록 불러오기 실패:', error);
     return [];
   }
 }
@@ -913,22 +914,27 @@ function getDeletedCampaignIds(): string[] {
  * @param campaignId - 삭제할 캠페인 ID (문자열로 변환됨)
  */
 function addDeletedCampaignId(campaignId: string): void {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return;
 
   try {
     const deletedIds = getDeletedCampaignIds();
     // ID를 문자열로 확실히 변환하여 비교
     const campaignIdStr = String(campaignId);
-    
+
     if (!deletedIds.includes(campaignIdStr)) {
       deletedIds.push(campaignIdStr);
-      localStorage.setItem("deletedCampaignIds", JSON.stringify(deletedIds));
-      console.log(`[addDeletedCampaignId] 삭제 목록에 추가됨: ID=${campaignIdStr}, 현재 삭제 목록:`, deletedIds);
+      localStorage.setItem('deletedCampaignIds', JSON.stringify(deletedIds));
+      console.log(
+        `[addDeletedCampaignId] 삭제 목록에 추가됨: ID=${campaignIdStr}, 현재 삭제 목록:`,
+        deletedIds,
+      );
     } else {
-      console.log(`[addDeletedCampaignId] 이미 삭제 목록에 있음: ID=${campaignIdStr}`);
+      console.log(
+        `[addDeletedCampaignId] 이미 삭제 목록에 있음: ID=${campaignIdStr}`,
+      );
     }
   } catch (error) {
-    console.error("삭제된 캠페인 ID 추가 실패:", error);
+    console.error('삭제된 캠페인 ID 추가 실패:', error);
   }
 }
 
@@ -946,10 +952,10 @@ function addDeletedCampaignId(campaignId: string): void {
 */
 export function deleteCampaign(
   campaignId: string,
-  campaignType: "배송형" | "방문형" | "구매평" | "기자단" | "미션형"
+  campaignType: '배송형' | '방문형' | '구매평' | '기자단' | '미션형',
 ): boolean {
-  if (typeof window === "undefined") {
-    console.error("localStorage는 브라우저 환경에서만 사용할 수 있습니다.");
+  if (typeof window === 'undefined') {
+    console.error('localStorage는 브라우저 환경에서만 사용할 수 있습니다.');
     return false;
   }
 
@@ -957,20 +963,20 @@ export function deleteCampaign(
     // 캠페인 타입에 따라 localStorage 키 결정
     let storageKey: string;
     switch (campaignType) {
-      case "배송형":
-        storageKey = "deliveryCampaigns";
+      case '배송형':
+        storageKey = 'deliveryCampaigns';
         break;
-      case "방문형":
-        storageKey = "visitCampaigns";
+      case '방문형':
+        storageKey = 'visitCampaigns';
         break;
-      case "구매평":
-        storageKey = "reviewCampaigns";
+      case '구매평':
+        storageKey = 'reviewCampaigns';
         break;
-      case "기자단":
-        storageKey = "reporterCampaigns";
+      case '기자단':
+        storageKey = 'reporterCampaigns';
         break;
-      case "미션형":
-        storageKey = "missionCampaigns";
+      case '미션형':
+        storageKey = 'missionCampaigns';
         break;
       default:
         console.error(`알 수 없는 캠페인 타입: ${campaignType}`);
@@ -986,7 +992,7 @@ export function deleteCampaign(
       if (Array.isArray(campaigns)) {
         // 삭제할 캠페인을 제외한 나머지 캠페인만 필터링
         const filteredCampaigns = campaigns.filter(
-          (campaign) => campaign.campaignInfo.id !== campaignId
+          (campaign) => campaign.campaignInfo.id !== campaignId,
         );
 
         // 삭제 전후 개수 비교하여 실제로 삭제되었는지 확인
@@ -995,7 +1001,7 @@ export function deleteCampaign(
           localStorage.setItem(storageKey, JSON.stringify(filteredCampaigns));
           deletedFromLocalStorage = true;
           console.log(
-            `localStorage에서 캠페인 삭제 완료: ID=${campaignId}, 타입=${campaignType}, 남은 캠페인 수=${filteredCampaigns.length}`
+            `localStorage에서 캠페인 삭제 완료: ID=${campaignId}, 타입=${campaignType}, 남은 캠페인 수=${filteredCampaigns.length}`,
           );
         }
       }
@@ -1006,11 +1012,11 @@ export function deleteCampaign(
     addDeletedCampaignId(campaignId);
 
     console.log(
-      `캠페인 삭제 처리 완료: ID=${campaignId}, 타입=${campaignType}, localStorage에서 삭제=${deletedFromLocalStorage}, 삭제 목록에 추가됨`
+      `캠페인 삭제 처리 완료: ID=${campaignId}, 타입=${campaignType}, localStorage에서 삭제=${deletedFromLocalStorage}, 삭제 목록에 추가됨`,
     );
     return true;
   } catch (error) {
-    console.error("캠페인 삭제 중 오류 발생:", error);
+    console.error('캠페인 삭제 중 오류 발생:', error);
     return false;
   }
 }

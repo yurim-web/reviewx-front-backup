@@ -34,8 +34,8 @@ import AddressInput from '@/components/partner/signup/AddressInput';
 import FileUploadAlert from '@/components/partner/signup/FileUploadAlert';
 import PasswordInput from '@/components/common/signup/PasswordInput';
 import PasswordConfirmInput from '@/components/common/signup/PasswordConfirmInput';
-import { usePartnerTermsAgreement } from '@/components/partner/signup/hooks/usePartnerTermsAgreement';
-import { usePhoneVerification } from '@/components/common/signup/hooks/usePhoneVerification';
+import { usePartnerTermsAgreement } from '@/hooks/partner/signup/usePartnerTermsAgreement';
+import { usePhoneVerification } from '@/hooks/common/signup/usePhoneVerification';
 import {
   validatePartnerSignupForm,
   type PartnerSignupFormErrors,

@@ -27,7 +27,8 @@ import CampaignManagementModal from "./modals/CampaignManagementModal";
 import CampaignDeleteConfirmModal from "./modals/CampaignDeleteConfirmModal";
 import { deleteCampaign } from "@/data/partner/sharedCampaigns";
 import { getCampaignTypePath } from "./utils/campaign_card_helpers";
-import { useCampaignCard } from "./hooks/useCampaignCard";
+import { useCampaignCard } from "@/hooks/partner/campaign_management/useCampaignCard";
+import { getButtonClassName } from "@/components/common/campaign_management/utils/button_style_utils";
 
 interface CampaignCardProps {
   campaign: PartnerCampaign;
@@ -74,34 +75,13 @@ export default function CampaignCard({
    */
   /**
    * 버튼 텍스트에 따른 스타일 클래스 결정
+   *
+   * 설명:
+   * - 공통 유틸리티 함수를 사용하여 버튼 스타일을 결정합니다.
+   * - User와 Partner의 CampaignCard에서 동일한 로직을 공유합니다.
    */
   const getButtonStyle = () => {
-    const buttonText = primaryButtonText;
-
-    // 주요 액션 버튼 - 검은색 배경 (중요 단계 전환)
-    if (
-      buttonText === "캠페인 수정하기" ||
-      buttonText === "당첨자 선정" ||
-      buttonText.startsWith("콘텐츠 확인 완료")
-    ) {
-      return `${buttonStyles.action_button} ${buttonStyles.primary_button}`;
-    }
-
-    // 경고 버튼 - 빨간색 테두리 (패널티 관련)
-    if (
-      buttonText === "패널티 내역 확인" ||
-      buttonText === "콘텐츠 반려 사유보기"
-    ) {
-      return `${buttonStyles.action_button} ${buttonStyles.danger_button}`;
-    }
-
-    // 보조 버튼 - 회색 테두리 (확인하기)
-    if (buttonText.includes("확인하기")) {
-      return `${buttonStyles.action_button} ${buttonStyles.secondary_button}`;
-    }
-
-    // 일반 버튼 - 기본 검은색 테두리
-    return `${buttonStyles.action_button} ${buttonStyles.default_button}`;
+    return getButtonClassName(primaryButtonText, buttonStyles);
   };
 
   return (
@@ -149,7 +129,9 @@ export default function CampaignCard({
                   }`}
                 />
               )}
-              <span className={cardStyles.type_text}>{campaign.campaignType}</span>
+              <span className={cardStyles.type_text}>
+                {campaign.campaignType}
+              </span>
             </div>
 
             {/* 신청자 수 표시 */}
@@ -262,7 +244,9 @@ export default function CampaignCard({
             <button
               className={`${buttonStyles.action_button} ${buttonStyles.secondary_button}`}
               onClick={() => {
-                const campaignTypePath = getCampaignTypePath(campaign.campaignType);
+                const campaignTypePath = getCampaignTypePath(
+                  campaign.campaignType
+                );
                 window.location.href = `/partner/campaign_contents/${campaignTypePath}/${campaign.id}?tab=검수`;
               }}
             >
@@ -271,7 +255,9 @@ export default function CampaignCard({
             <button
               className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
               onClick={() => {
-                const campaignTypePath = getCampaignTypePath(campaign.campaignType);
+                const campaignTypePath = getCampaignTypePath(
+                  campaign.campaignType
+                );
                 window.location.href = `/partner/campaign_contents/${campaignTypePath}/${campaign.id}?tab=완료`;
               }}
             >
@@ -314,7 +300,7 @@ export default function CampaignCard({
         onConfirm={() => {
           /**
            * 캠페인 삭제 확인 핸들러
-           * 
+           *
            * - 실제 프로덕션에서는 API를 통해 서버에서 캠페인을 삭제해야 합니다
            * - 현재는 프론트엔드 개발을 위해 localStorage에서 삭제합니다
            * - 삭제 후 페이지를 새로고침하여 목록을 업데이트합니다
@@ -327,12 +313,16 @@ export default function CampaignCard({
             | "기자단"
             | "미션형";
 
-          console.log(`[CampaignCard] 캠페인 삭제 시도: ID=${campaignIdString}, 타입=${campaignType}, 제목=${campaign.title}`);
+          console.log(
+            `[CampaignCard] 캠페인 삭제 시도: ID=${campaignIdString}, 타입=${campaignType}, 제목=${campaign.title}`
+          );
 
           // localStorage에서 캠페인 삭제
           const deleteSuccess = deleteCampaign(campaignIdString, campaignType);
 
-          console.log(`[CampaignCard] 삭제 결과: ${deleteSuccess ? "성공" : "실패"}`);
+          console.log(
+            `[CampaignCard] 삭제 결과: ${deleteSuccess ? "성공" : "실패"}`
+          );
 
           if (deleteSuccess) {
             // 삭제 성공 시 알림 표시

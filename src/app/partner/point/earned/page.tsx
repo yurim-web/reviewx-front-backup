@@ -16,24 +16,28 @@
  * - 포인트 충전 기능
  */
 
-"use client";
+'use client';
 
-import { useState, useRef } from "react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import TabNavigation from "@/components/partner/campaign_management/TabNavigation";
-import PartnerPointTabNavigation from "@/components/partner/point/PointTabNavigation";
-import { PartnerMainTab, PartnerPointTab } from "@/types/partner/partner";
-import { partnerPointHistoryData, partnerPointSummary } from "@/data/partner/point/pointData";
-import styles from "@/styles/user/point/point.module.css";
+import { useState, useRef } from 'react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import TabNavigation from '@/components/partner/campaign_management/TabNavigation';
+import PointTabNavigation from '@/components/common/point/PointTabNavigation';
+import { PartnerMainTab, PartnerPointTab } from '@/types/partner/partner';
+import {
+  partnerPointHistoryData,
+  partnerPointSummary,
+} from '@/data/partner/point/pointData';
+import styles from '@/styles/user/point/point.module.css';
 
 /**
  * 파트너 포인트 충전 내역 페이지 컴포넌트
  */
 export default function PartnerEarnedPointPage() {
   const router = useRouter();
-  const [activeMainTab, setActiveMainTab] = useState<PartnerMainTab>("point");
-  const [activePointTab, setActivePointTab] = useState<PartnerPointTab>("earned");
+  const [activeMainTab, setActiveMainTab] = useState<PartnerMainTab>('point');
+  const [activePointTab, setActivePointTab] =
+    useState<PartnerPointTab>('earned');
   const tooltipRef = useRef<HTMLSpanElement>(null);
 
   /**
@@ -42,14 +46,14 @@ export default function PartnerEarnedPointPage() {
    */
   const handlePointTabChange = (tab: PartnerPointTab) => {
     switch (tab) {
-      case "all":
-        window.location.href = "/partner/point/all";
+      case 'all':
+        window.location.href = '/partner/point/all';
         break;
-      case "earned":
+      case 'earned':
         // 현재 페이지이므로 아무것도 하지 않음
         break;
-      case "withdrawn":
-        window.location.href = "/partner/point/withdrawn";
+      case 'withdrawn':
+        window.location.href = '/partner/point/withdrawn';
         break;
     }
   };
@@ -59,12 +63,12 @@ export default function PartnerEarnedPointPage() {
    * 포인트 충전 페이지로 이동
    */
   const handleChargeClick = () => {
-    router.push("/partner/point/charge");
+    router.push('/partner/point/charge');
   };
 
   // 충전 내역만 필터링 (type: "earned")
   const filteredHistoryData = partnerPointHistoryData.filter(
-    (history) => history.type === "earned"
+    (history) => history.type === 'earned',
   );
 
   return (
@@ -78,9 +82,11 @@ export default function PartnerEarnedPointPage() {
           />
 
           {/* 포인트 세부 탭 네비게이션 */}
-          <PartnerPointTabNavigation
+          <PointTabNavigation
             activePointTab={activePointTab}
             setActivePointTab={handlePointTabChange}
+            basePath="/partner/point"
+            tabLabels={{ earned: '충전', withdrawn: '사용' }}
           />
 
           {/* 포인트 요약 정보 */}
@@ -88,7 +94,9 @@ export default function PartnerEarnedPointPage() {
             <div className={styles.point_summary_info}>
               <span className={styles.point_label}>보유 포인트</span>
               <div className={styles.point_amount}>
-                <span className={styles.amount_number}>{partnerPointSummary.total_points.toLocaleString()}</span>
+                <span className={styles.amount_number}>
+                  {partnerPointSummary.total_points.toLocaleString()}
+                </span>
                 <span className={styles.amount_unit}>P</span>
               </div>
             </div>
@@ -109,28 +117,29 @@ export default function PartnerEarnedPointPage() {
                 <div className={styles.status_badge_container}>
                   <div
                     className={`${styles.status_badge} ${
-                      history.type === "earned"
+                      history.type === 'earned'
                         ? styles.charged
-                        : history.type === "withdrawn" && history.status === "completed"
+                        : history.type === 'withdrawn' &&
+                          history.status === 'completed'
                         ? styles.used
-                        : history.status === "earned"
+                        : history.status === 'earned'
                         ? styles.earned
-                        : history.status === "completed"
+                        : history.status === 'completed'
                         ? styles.completed
-                        : history.status === "pending"
+                        : history.status === 'pending'
                         ? styles.pending
                         : styles.cancelled
                     }`}
                   >
-                    {history.type === "earned"
-                      ? "충전"
-                      : history.type === "withdrawn"
-                      ? "사용"
-                      : history.status === "completed"
-                      ? "완료"
-                      : history.status === "pending"
-                      ? "신청"
-                      : "취소"}
+                    {history.type === 'earned'
+                      ? '충전'
+                      : history.type === 'withdrawn'
+                      ? '사용'
+                      : history.status === 'completed'
+                      ? '완료'
+                      : history.status === 'pending'
+                      ? '신청'
+                      : '취소'}
                   </div>
                 </div>
 
@@ -146,7 +155,7 @@ export default function PartnerEarnedPointPage() {
                 <div className={styles.point_info}>
                   <div
                     className={`${styles.point_change} ${
-                      history.status === "failed"
+                      history.status === 'failed'
                         ? styles.cancelled_amount
                         : history.amount > 0
                         ? styles.positive
@@ -155,7 +164,7 @@ export default function PartnerEarnedPointPage() {
                   >
                     {history.amount > 0
                       ? `+ ${history.amount.toLocaleString()}`
-                      : `${history.amount.toLocaleString()}`}{" "}
+                      : `${history.amount.toLocaleString()}`}{' '}
                     P
                   </div>
                   <div className={styles.point_balance}>
@@ -170,4 +179,3 @@ export default function PartnerEarnedPointPage() {
     </div>
   );
 }
-
