@@ -23,21 +23,21 @@
  * - 하단 고정 신청 버튼
  */
 
-'use client';
+"use client";
 
-import { notFound } from 'next/navigation';
-import { useEffect, useState, useRef, use } from 'react';
-import SubHeader from '@/components/fragments/SubHeader';
-import ApplicationModal from '@/components/user/campaign_detail/modal/ApplicationModal';
-import styles from '@/styles/user/campaign/campaign_detail.module.css';
-import { visitCampaigns } from '@/data/user/visit/visitCampaigns';
-import ApplicationModalType3 from '@/components/user/campaign_detail/modal/ApplicationModalType3';
-import MainMenu from '@/components/main/MainMenu';
-import DetailHeader from '@/components/user/campaign_detail/DetailHeader';
-import DetailProductInfo from '@/components/user/campaign_detail/DetailProductInfo';
-import DetailScheduleInfo from '@/components/user/campaign_detail/DetailScheduleInfo';
-import DetailImage from '@/components/user/campaign_detail/DetailImage';
-import DetailGuidelinesSectionVisit from '@/components/user/campaign_detail/guidelines/DetailGuidelinesSectionVisit';
+import { notFound } from "next/navigation";
+import { useEffect, useState, useRef, use } from "react";
+import SubHeader from "@/components/fragments/SubHeader";
+import ApplicationModal from "@/components/user/campaign_detail/modal/ApplicationModal";
+import styles from "@/styles/user/campaign/campaign_detail.module.css";
+import { visitCampaigns } from "@/data/user/visit/visitCampaigns";
+import ApplicationModalType3 from "@/components/user/campaign_detail/modal/ApplicationModalType3";
+import MainMenu from "@/components/main/MainMenu";
+import DetailHeader from "@/components/user/campaign_detail/DetailHeader";
+import DetailProductInfo from "@/components/user/campaign_detail/DetailProductInfo";
+import DetailScheduleInfo from "@/components/user/campaign_detail/DetailScheduleInfo";
+import DetailImage from "@/components/user/campaign_detail/DetailImage";
+import DetailGuidelinesSectionVisit from "@/components/user/campaign_detail/guidelines/DetailGuidelinesSectionVisit";
 
 interface VisitDetailPageProps {
   params: Promise<{ id: string }>;
@@ -103,14 +103,14 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
     };
 
     // 스크롤 이벤트 리스너 등록
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
 
     // 초기 로드 시에도 한 번 실행 (새로고침 시 스크롤 위치 복원 대응)
     handleScroll();
 
     // 컴포넌트 언마운트 시 이벤트 리스너 제거 (메모리 누수 방지)
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
@@ -126,14 +126,14 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
       {!isCampaignInfoFixed && (
         <div
           style={{
-            position: 'fixed',
-            top: '80px',
+            position: "fixed",
+            top: "80px",
             left: 0,
             right: 0,
-            width: '100%',
-            maxWidth: '1000px',
-            margin: '0 auto',
-            backgroundColor: 'white',
+            width: "100%",
+            maxWidth: "1000px",
+            margin: "0 auto",
+            backgroundColor: "white",
             zIndex: 99,
           }}
         >
@@ -146,7 +146,7 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
         - 캠페인 정보 라벨이 고정되지 않았을 때: SubHeader(80px) + MainMenu(약 69px) = 149px
         - 캠페인 정보 라벨이 고정되었을 때: SubHeader(80px)만 = 80px
       */}
-      <div style={{ height: isCampaignInfoFixed ? '80px' : '149px' }}></div>
+      <div style={{ height: isCampaignInfoFixed ? "80px" : "149px" }}></div>
 
       <section className={styles.campaign_detail_container}>
         {/* 태그 및 포인트 */}
@@ -174,7 +174,7 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
             announcement={campaign.detailedSchedule.announcement}
             additionalSchedules={[
               {
-                label: '등록 기간',
+                label: "등록 기간",
                 value: campaign.detailedSchedule.purchasePeriod,
               },
             ]}
@@ -186,13 +186,13 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
         <div
           ref={campaignInfoLabelRef}
           className={`${styles.campaign_info_text_line} ${
-            isCampaignInfoFixed ? styles.fixed : ''
+            isCampaignInfoFixed ? styles.fixed : ""
           }`}
         >
           캠페인 정보
         </div>
         {/* 캠페인 정보가 fixed될 때 레이아웃 시프트 방지용 placeholder */}
-        {isCampaignInfoFixed && <div style={{ height: '101px' }}></div>}
+        {isCampaignInfoFixed && <div style={{ height: "101px" }}></div>}
 
         {/* 상세 이미지 */}
         <DetailImage image={campaign.campaign_detail_image} />
@@ -207,18 +207,18 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
           onCopyVisitAddress={() => {
             if (campaign.visitAddress) {
               navigator.clipboard.writeText(campaign.visitAddress);
-              alert('방문 주소가 복사되었습니다!');
+              alert("방문 주소가 복사되었습니다!");
             }
           }}
           onCopyVisitLink={() => {
             if (campaign.visitLink) {
               navigator.clipboard.writeText(campaign.visitLink);
-              alert('방문 링크가 복사되었습니다!');
+              alert("방문 링크가 복사되었습니다!");
             }
           }}
           onCopyKeyword={() => {
             navigator.clipboard.writeText(campaign.keyword);
-            alert('키워드가 복사되었습니다!');
+            alert("키워드가 복사되었습니다!");
           }}
           requirements={campaign.requirements}
           guidelineTexts={campaign.guidelineTexts}
