@@ -13,7 +13,7 @@
  * - 포인트 정보 표시
  */
 
-import styles from "../../../styles/user/campaign/campaign_detail/detail_header.module.css";
+import styles from '@/styles/user/campaign/campaign_detail/detail_header.module.css';
 
 /**
  * Props 인터페이스
@@ -40,7 +40,7 @@ export default function CampaignHeader({
   subcategory,
   region,
   points,
-  altText = "category_tag",
+  altText = 'category_tag',
 }: CampaignHeaderProps) {
   return (
     // ========================================

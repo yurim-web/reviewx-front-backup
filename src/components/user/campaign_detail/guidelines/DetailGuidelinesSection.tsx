@@ -15,7 +15,7 @@
  */
 
 import AdditionalGuidelines from "../AdditionalGuidelines";
-import styles from "../../../../styles/user/campaign/campaign_detail/detail_guidelines_section.module.css";
+import styles from "@/styles/user/campaign/campaign_detail/detail_guidelines_section.module.css";
 
 /**
  * 요구사항 항목 인터페이스

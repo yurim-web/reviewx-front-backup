@@ -16,45 +16,45 @@
  * - URL 기반 라우팅으로 새로고침 시에도 페이지 유지
  */
 
-"use client";
+'use client';
 
-import { useState } from "react";
-import TabNavigation from "@/components/user/campaign_management/TabNavigation";
-import SubTabNavigation from "@/components/user/mypage/SubTabNavigation";
-import ChannelSection from "@/components/user/mypage/ChannelSection";
-import type { MainTab } from "@/types/user/user";
-import layoutStyles from "../../../../styles/user/mypage/layout.module.css";
+import { useState } from 'react';
+import TabNavigation from '@/components/user/campaign_management/TabNavigation';
+import SubTabNavigation from '@/components/common/mypage/SubTabNavigation';
+import ChannelSection from '@/components/user/mypage/ChannelSection';
+import type { MainTab } from '@/types/user/user';
+import layoutStyles from '../../../../styles/user/mypage/layout.module.css';
 
 /**
  * 채널 탭 전용 페이지 컴포넌트
  */
 export default function ChannelPage() {
-  const [activeTopTab, setActiveTopTab] = useState<MainTab>("account");
-  const [activeSubTab, setActiveSubTab] = useState<"profile" | "channel">(
-    "channel"
+  const [activeTopTab, setActiveTopTab] = useState<MainTab>('account');
+  const [activeSubTab, setActiveSubTab] = useState<'profile' | 'channel'>(
+    'channel',
   );
 
   // 채널 데이터 상태 - 사용자가 연결할 수 있는 소셜 미디어 채널 목록
   const [channels, setChannels] = useState([
     {
-      name: "네이버 블로그",
-      url: "https://blog.naver.com/catcat12344",
-      status: "connected" as const,
+      name: '네이버 블로그',
+      url: 'https://blog.naver.com/catcat12344',
+      status: 'connected' as const,
     },
-    { name: "인스타그램", status: "disconnected" as const },
-    { name: "유튜브", status: "disconnected" as const },
+    { name: '인스타그램', status: 'disconnected' as const },
+    { name: '유튜브', status: 'disconnected' as const },
   ]);
 
   /**
    * 서브 탭 변경 핸들러
    * 각 탭 클릭 시 해당 페이지로 이동
    */
-  const handleSubTabChange = (tab: "profile" | "channel") => {
+  const handleSubTabChange = (tab: 'profile' | 'channel') => {
     switch (tab) {
-      case "profile":
-        window.location.href = "/user/mypage/profile";
+      case 'profile':
+        window.location.href = '/user/mypage/profile';
         break;
-      case "channel":
+      case 'channel':
         // 현재 페이지이므로 아무것도 하지 않음
         break;
     }
@@ -63,14 +63,14 @@ export default function ChannelPage() {
   // 채널 연결 핸들러
   const handleChannelUpdate = (
     channelName: string,
-    channelInfo: { url: string }
+    channelInfo: { url: string },
   ) => {
     setChannels((prev) =>
       prev.map((channel) =>
         channel.name === channelName
-          ? { ...channel, url: channelInfo.url, status: "connected" as const }
-          : channel
-      )
+          ? { ...channel, url: channelInfo.url, status: 'connected' as const }
+          : channel,
+      ),
     );
   };
 
@@ -88,6 +88,8 @@ export default function ChannelPage() {
         <SubTabNavigation
           activeSubTab={activeSubTab}
           setActiveSubTab={handleSubTabChange}
+          basePath="/user/mypage"
+          availableTabs={['profile', 'channel']}
         />
 
         {/* 채널 섹션 */}

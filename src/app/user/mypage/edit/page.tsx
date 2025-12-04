@@ -27,9 +27,9 @@ import { useRouter } from "next/navigation";
 import styles from "../../../../styles/user/mypage/edit_profile.module.css";
 import SubHeader from "@/components/fragments/SubHeader";
 // 공용 컴포넌트
-import ProfilePhotoUpload from "@/components/mypage/ProfilePhotoUpload";
-import PhoneVerificationInput from "@/components/mypage/PhoneVerificationInput";
-import AddressInput from "@/components/mypage/AddressInput";
+import ProfilePhotoUpload from "@/components/common/mypage/ProfilePhotoUpload";
+import PhoneVerificationInput from "@/components/common/mypage/PhoneVerificationInput";
+import AddressInput from "@/components/common/mypage/AddressInput";
 // 유저 전용 컴포넌트
 import AccountInfoInput from "@/components/user/mypage/AccountInfoInput";
 import SocialSecurityNumberInput from "@/components/user/mypage/SocialSecurityNumberInput";

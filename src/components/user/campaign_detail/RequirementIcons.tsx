@@ -13,7 +13,7 @@
  * - 기본 요구사항 제공
  */
 
-import styles from "../../../styles/user/campaign/campaign_detail/requirement_icons.module.css";
+import styles from "@/styles/user/campaign/campaign_detail/requirement_icons.module.css";
 
 /**
  * 요구사항 항목 인터페이스

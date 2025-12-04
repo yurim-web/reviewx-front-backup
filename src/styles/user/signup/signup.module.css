@@ -59,13 +59,11 @@
 
 /* 서브 헤더 제목 */
 .sub_header_title {
-  color: #444444;
+  color: #444;
   font-size: 20px;
-  font-weight: 600;
-  font-style: normal;
-  line-height: 24px;
+  font-weight: 700;
+  line-height: 20px; /* 100% */
   letter-spacing: -0.4px;
-  margin: 0;
 }
 
 /* ========================================

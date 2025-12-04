@@ -16,7 +16,7 @@
 "use client";
 
 import { useState } from "react";
-import styles from "../../../styles/user/campaign/campaign_detail/detail_image.module.css";
+import styles from "@/styles/user/campaign/campaign_detail/detail_image.module.css";
 
 /**
  * Props 인터페이스

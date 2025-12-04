@@ -31,8 +31,8 @@ import ExistingAccountModal, {
 } from '@/components/user/signup/ExistingAccountModal';
 import PasswordInput from '@/components/common/signup/PasswordInput';
 import PasswordConfirmInput from '@/components/common/signup/PasswordConfirmInput';
-import { useTermsAgreement } from '@/components/user/signup/hooks/useTermsAgreement';
-import { usePhoneVerification } from '@/components/common/signup/hooks/usePhoneVerification';
+import { useTermsAgreement } from '@/hooks/user/signup/useTermsAgreement';
+import { usePhoneVerification } from '@/hooks/common/signup/usePhoneVerification';
 import {
   validateSignupForm,
   type SignupFormErrors,

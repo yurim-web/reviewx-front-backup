@@ -13,7 +13,7 @@
  * - 유의사항 (가이드라인 텍스트)
  */
 
-import styles from "../../../../styles/user/campaign/campaign_detail/detail_guidelines_section.module.css";
+import styles from "@/styles/user/campaign/campaign_detail/detail_guidelines_section.module.css";
 import AdditionalGuidelines from "../AdditionalGuidelines";
 import RequirementIcons from "../RequirementIcons";
 

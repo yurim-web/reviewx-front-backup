@@ -16,7 +16,7 @@
  * - 미션 불이행 시 패널티 안내
  */
 
-import styles from "../../../styles/user/campaign/campaign_detail/detail_guidelines_section.module.css";
+import styles from "@/styles/user/campaign/campaign_detail/detail_guidelines_section.module.css";
 
 /**
  * 유의사항 컴포넌트
