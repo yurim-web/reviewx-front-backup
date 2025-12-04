@@ -3,32 +3,23 @@
    ======================================== */
 
 /**
- * 모듈 목적
+ * 휴대폰 인증 컴포넌트
  *
- * - 휴대폰 번호 입력 및 SMS 인증 UI
- * - 인증번호 받기, 인증번호 입력, 타이머 표시
+ * 휴대폰 번호 입력 및 SMS 인증 UI, 인증번호 받기, 인증번호 입력, 타이머 표시
  *
- * 📍 사용 페이지/컴포넌트:
+ * 사용 페이지:
  * - src/app/user/signup/page.tsx
- *   (사용자 회원가입 페이지에서 휴대폰 인증에 사용)
  * - src/app/partner/signup/page.tsx
- *   (파트너 회원가입 페이지에서 휴대폰 인증에 사용)
- *
- * 📌 공통 컴포넌트 위치:
- * - src/components/common/signup/PhoneVerification.tsx
- *   (user와 partner 회원가입 페이지에서 공통으로 사용하는 컴포넌트)
+ * - src/app/find-account/page.tsx
+ * - src/app/partner/find-account/page.tsx
  */
 
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { formatPhoneNumber } from '@/utils/signup/phoneUtils';
-import { formatTimer } from '@/utils/signup/timerUtils';
-import {
-  validatePhone,
-  validateVerificationCode,
-} from '@/utils/signup/validation';
-import styles from '@/styles/user/signup/signup.module.css';
+import Image from "next/image";
+import { formatPhoneNumber } from "@/utils/signup/phoneUtils";
+import { formatTimer } from "@/utils/signup/timerUtils";
+import styles from "@/styles/user/signup/signup.module.css";
 
 interface PhoneVerificationProps {
   phone: string;
@@ -45,6 +36,9 @@ interface PhoneVerificationProps {
   onVerificationCodeChange: (code: string) => void;
 }
 
+/**
+ * 휴대폰 인증 컴포넌트
+ */
 export default function PhoneVerification({
   phone,
   verificationCode,
@@ -59,16 +53,28 @@ export default function PhoneVerification({
   onVerify,
   onVerificationCodeChange,
 }: PhoneVerificationProps) {
+  /** 휴대폰 번호 입력 핸들러 - 자동 포맷팅 후 부모에 전달 */
   const handlePhoneInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatPhoneNumber(e.target.value);
     onPhoneChange(formatted);
   };
 
+  /** 인증번호 입력 핸들러 - 숫자만 입력, 최대 6자리 */
   const handleVerificationCodeInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 6);
+    const value = e.target.value.replace(/[^0-9]/g, "").slice(0, 6);
     onVerificationCodeChange(value);
+  };
+
+  /** 에러 메시지 렌더링 */
+  const renderErrorMessage = (errorMessage?: string) => {
+    if (!errorMessage) return null;
+    return (
+      <div className={styles.error_message}>
+        <span className={styles.error_text}>{errorMessage}</span>
+      </div>
+    );
   };
 
   return (
@@ -82,8 +88,8 @@ export default function PhoneVerification({
             id="phone"
             type="text"
             className={`${styles.input_field} ${styles.phone_input} ${
-              error !== undefined ? styles.input_error : ''
-            } ${isPhoneVerified ? styles.phone_input_verified : ''}`}
+              error !== undefined ? styles.input_error : ""
+            } ${isPhoneVerified ? styles.phone_input_verified : ""}`}
             placeholder="- 제외 입력"
             value={phone}
             onChange={handlePhoneInputChange}
@@ -114,12 +120,12 @@ export default function PhoneVerification({
           <button
             type="button"
             className={`${styles.verification_button} ${
-              isPhoneVerified ? styles.verification_button_completed : ''
+              isPhoneVerified ? styles.verification_button_completed : ""
             }`}
             onClick={onVerificationRequest}
             disabled={isPhoneVerified}
           >
-            {isPhoneVerified ? '인증 완료' : '인증번호 받기'}
+            {isPhoneVerified ? "인증 완료" : "인증번호 받기"}
           </button>
         )}
       </div>
@@ -134,7 +140,7 @@ export default function PhoneVerification({
                 className={`${styles.input_field} ${
                   styles.verification_code_input
                 } ${
-                  verificationCodeError !== undefined ? styles.input_error : ''
+                  verificationCodeError !== undefined ? styles.input_error : ""
                 }`}
                 placeholder="인증번호 6자리 입력"
                 value={verificationCode}
@@ -153,12 +159,7 @@ export default function PhoneVerification({
               인증
             </button>
           </div>
-          {verificationCodeError && (
-            <div className={styles.error_message}>
-              <span className={styles.error_text}>{verificationCodeError}</span>
-            </div>
-          )}
-          {/* 인증번호를 받지 못하셨나요? */}
+          {renderErrorMessage(verificationCodeError)}
           <div className={styles.verification_help_text}>
             인증번호를 받지 못하셨나요?
           </div>
