@@ -24,6 +24,12 @@
 "use client";
 
 import { useState } from "react";
+import { useTableSort } from "@/hooks/table/useTableSort";
+import {
+  get_sort_arrow_transform,
+  get_sort_arrow_alt,
+  type SortColumnConfig,
+} from "@/utils/table/sort";
 import styles from "@/styles/manager_ga/community/posts/post_table.module.css";
 import {
   posts_data,
@@ -51,7 +57,12 @@ const division_style_map: Record<PostDivision, string> = {
 
 // 컬럼 정의
 const columns: TableColumn[] = [
-  { key: "number", label: "번호", className: styles.table_cell_number },
+  {
+    key: "number",
+    label: "번호",
+    sortable: true,
+    className: styles.table_cell_number,
+  },
   {
     key: "division",
     label: "구분",
@@ -82,7 +93,6 @@ const columns: TableColumn[] = [
   {
     key: "registered_by",
     label: "등록자",
-    sortable: true,
     className: styles.table_cell_registered_by,
   },
 ];
@@ -99,10 +109,107 @@ export default function PostTable({ search_query }: PostTableProps) {
     return num.toLocaleString();
   };
 
+  // 컬럼별 타입 설정
+  const column_config: SortColumnConfig = {
+    number: "numeric_string",
+    view_count: "number",
+    registered_date: "date",
+  };
+
+  // 정렬 훅 사용
+  const {
+    sort_state,
+    handle_sort,
+    sorted_data: sorted_posts,
+  } = useTableSort<PostTableRowData>({
+    data: filtered_posts,
+    initial_column_key: "number",
+    initial_direction: "asc",
+    column_config,
+  });
+
+  // 커스텀 헤더 렌더링 (번호, 조회수, 등록일만 정렬 버튼 표시)
+  const render_table_header = () => {
+    const is_all_selected =
+      sorted_posts.length > 0 &&
+      selected_post_ids.length === sorted_posts.length;
+
+    const handle_select_all = () => {
+      if (is_all_selected) {
+        set_selected_post_ids([]);
+      } else {
+        const all_ids = sorted_posts.map((post) => post.id);
+        set_selected_post_ids(all_ids);
+      }
+    };
+
+    return (
+      <div className={styles.table_header}>
+        {/* 체크박스 헤더 */}
+        <div className={styles.table_cell_checkbox}>
+          <input
+            type="checkbox"
+            checked={is_all_selected}
+            onChange={handle_select_all}
+            className={styles.checkbox}
+            aria-label="전체 선택"
+          />
+        </div>
+
+        {/* 데이터 컬럼 헤더 */}
+        {columns.map((column) => {
+          const is_sortable =
+            column.key === "number" ||
+            column.key === "view_count" ||
+            column.key === "registered_date";
+
+          return (
+            <div
+              key={column.key}
+              className={`${styles.table_header_cell} ${
+                column.className || ""
+              }`}
+            >
+              <span>{column.label}</span>
+              {is_sortable && (
+                <button
+                  type="button"
+                  onClick={() => handle_sort(column.key)}
+                  aria-label={`${column.label} 정렬`}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    padding: 0,
+                    display: "inline-flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <img
+                    src="/images/icons/table_arrow.svg"
+                    alt={get_sort_arrow_alt(sort_state, column.key)}
+                    className={styles.table_header_arrow}
+                    style={{
+                      transform: get_sort_arrow_transform(
+                        sort_state,
+                        column.key
+                      ),
+                      transition: "transform 0.2s",
+                    }}
+                  />
+                </button>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
   return (
     <CommonTable<PostTableRowData>
       columns={columns}
-      data={filtered_posts}
+      data={sorted_posts}
       render_cell={(row, column) => {
         switch (column.key) {
           case "number":
@@ -131,6 +238,7 @@ export default function PostTable({ search_query }: PostTableProps) {
             return null;
         }
       }}
+      render_header={render_table_header}
       styles={styles}
       enable_checkbox={true}
       selected_ids={selected_post_ids}
