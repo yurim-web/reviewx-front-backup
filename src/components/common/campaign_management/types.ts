@@ -1,23 +1,22 @@
-/* ========================================
-   🧾 캠페인 필터 관련 타입 모음 (공통)
-   ======================================== */
-
 /**
- * 모듈 목적
+ * 캠페인 필터 관련 타입 정의
  *
- * - 캠페인 필터 바에서 사용하는 타입 정의
- * - user와 partner 캠페인 타입을 모두 지원
+ * user와 partner 캠페인 관리 페이지에서 공통으로 사용하는 타입
  *
- * 📌 공통 타입 위치:
- * - src/components/common/campaign_management/types.ts
- *   (user와 partner 캠페인 관리 페이지에서 공통으로 사용하는 타입)
+ * 사용처:
+ * - src/hooks/common/campaign_management/useCampaignFilterBar.ts
+ * - src/components/common/campaign_management/CampaignFilterBar.tsx
+ * - src/components/common/campaign_management/utils/campaign_filter_helpers.ts
  */
 
-import type { PartnerCampaign } from '@/types/partner/partner';
-import type { CampaignApplication } from '@/types/user/user';
+import type { PartnerCampaign } from "@/types/partner/partner";
+import type { CampaignApplication } from "@/types/user/user";
 
 /**
- * 필터 변경 시 부모에 전달되는 파라미터 타입
+ * 필터 변경 시 전달되는 파라미터
+ *
+ * 사용처:
+ * - src/hooks/common/campaign_management/useCampaignFilterBar.ts
  */
 export interface FilterChangeParams {
   types?: string[];
@@ -27,7 +26,34 @@ export interface FilterChangeParams {
 }
 
 /**
- * 필터링 대상이 되는 캠페인 공통 타입
+ * 활성화된 필터 상태
+ *
+ * 사용처:
+ * - src/hooks/common/campaign_management/useCampaignFilterBar.ts
+ * - src/components/common/campaign_management/CampaignFilterBar.tsx
+ */
+export interface ActiveFilters {
+  types?: string[];
+  channels?: string[];
+  searchQuery?: string;
+}
+
+/**
+ * 정렬 옵션 타입
+ *
+ * 사용처:
+ * - src/components/common/campaign_management/CampaignFilterBar.tsx
+ */
+export type SortOption = string | { value: string; label: string };
+
+/**
+ * 필터링 가능한 캠페인 타입
+ * PartnerCampaign, CampaignApplication 또는 최소 필수 필드를 가진 객체
+ *
+ * 사용처:
+ * - src/hooks/common/campaign_management/useCampaignFilterBar.ts
+ * - src/components/common/campaign_management/CampaignFilterBar.tsx
+ * - src/components/common/campaign_management/utils/campaign_filter_helpers.ts
  */
 export type FilterableCampaign =
   | PartnerCampaign
@@ -47,21 +73,21 @@ export type FilterableCampaign =
     };
 
 /**
- * CampaignFilterBar 컴포넌트 Props 타입
+ * CampaignFilterBar 컴포넌트 Props
+ *
+ * 사용처:
+ * - src/hooks/common/campaign_management/useCampaignFilterBar.ts
+ * - src/components/common/campaign_management/CampaignFilterBar.tsx
  */
 export interface CampaignFilterBarProps<
-  T extends FilterableCampaign = FilterableCampaign,
+  T extends FilterableCampaign = FilterableCampaign
 > {
   campaigns: T[];
   onFilterChange?: (filters: FilterChangeParams) => void;
   onFilteredCampaignsChange: (filteredCampaigns: T[]) => void;
-  activeFilters?: {
-    types?: string[];
-    channels?: string[];
-    searchQuery?: string;
-  };
+  activeFilters?: ActiveFilters;
   typeOptions?: string[];
   channelOptions?: string[];
-  sortOptions?: string[] | { value: string; label: string }[];
+  sortOptions?: SortOption[];
   defaultSort?: string;
 }

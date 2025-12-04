@@ -1,43 +1,35 @@
-/* ========================================
-   🔍 캠페인 관리 필터 바 컴포넌트 (공통)
-   ======================================== */
-
 /**
- * 모듈 목적
+ * 캠페인 관리 필터 바 컴포넌트
  *
- * - 캠페인 관리 페이지에서 사용하는 필터 바 UI
- * - 유형, 채널, 검색, 정렬 기능 제공
+ * 캠페인 관리 페이지에서 사용하는 필터 바 UI
+ * 유형, 채널, 검색, 정렬 기능 제공
  *
- * 📍 사용 페이지/컴포넌트:
+ * 사용처:
  * - src/app/user/campaign_management/* (사용자 캠페인 관리 페이지들)
  * - src/app/partner/campaign_management/* (파트너 캠페인 관리 페이지들)
- *
- * 📌 공통 컴포넌트 위치:
- * - src/components/common/campaign_management/CampaignFilterBar.tsx
- *   (user와 partner 캠페인 관리 페이지에서 공통으로 사용하는 컴포넌트)
  */
 
-'use client';
+"use client";
 
-import styles from '../../../styles/partner/campaign_management/campaign_filter.module.css';
-import ModalFilter from '../../user/filter/ModalFilter';
-import { CampaignFilterBarProps, FilterableCampaign } from './types';
-import { useCampaignFilterBar } from './hooks/useCampaignFilterBar';
+import styles from "@/styles/partner/campaign_management/campaign_filter.module.css";
+import ModalFilter from "@/components/user/filter/ModalFilter";
+import { CampaignFilterBarProps, FilterableCampaign } from "./types";
+import { useCampaignFilterBar } from "@/hooks/common/campaign_management/useCampaignFilterBar";
 
-const DEFAULT_TYPE_OPTIONS = ['배송형', '방문형', '구매평', '기자단', '미션형'];
+const DEFAULT_TYPE_OPTIONS = ["배송형", "방문형", "구매평", "기자단", "미션형"];
 const DEFAULT_CHANNEL_OPTIONS = [
-  '네이버 블로그',
-  '클립',
-  '인스타그램',
-  '릴스',
-  '유튜브',
-  '쇼츠',
+  "네이버 블로그",
+  "클립",
+  "인스타그램",
+  "릴스",
+  "유튜브",
+  "쇼츠",
 ];
-const DEFAULT_SORT_OPTIONS = ['최신순', '인기순', '마감임박순'];
-const DEFAULT_SORT = '최신순';
+const DEFAULT_SORT_OPTIONS = ["최신순", "인기순", "마감임박순"];
+const DEFAULT_SORT = "최신순";
 
 export default function CampaignFilterBar<
-  T extends FilterableCampaign = FilterableCampaign,
+  T extends FilterableCampaign = FilterableCampaign
 >({
   campaigns,
   onFilterChange,
@@ -87,57 +79,69 @@ export default function CampaignFilterBar<
     defaultSort,
   });
 
+  const hasActiveFilters =
+    (currentFilters.types?.length ?? 0) > 0 ||
+    (currentFilters.channels?.length ?? 0) > 0;
+
+  const renderFilterButton = (
+    label: string,
+    isActive: boolean,
+    onClick: () => void
+  ) => (
+    <button
+      className={`${styles.filter_button} ${
+        isActive ? styles.filter_button_active : ""
+      }`}
+      onClick={onClick}
+    >
+      <div className={styles.checkbox_icon}>
+        {isActive ? (
+          <div className={styles.checkbox_checked} />
+        ) : (
+          <div className={styles.checkbox_unchecked} />
+        )}
+      </div>
+      <span className={styles.filter_label}>{label}</span>
+      <img
+        src="/images/filter/dropdown_icon.svg"
+        alt="드롭다운"
+        className={styles.dropdown_icon}
+      />
+    </button>
+  );
+
+  const renderFilterTag = (label: string, onRemove: () => void) => (
+    <div key={label} className={styles.filter_tag}>
+      <span>{label}</span>
+      <button
+        className={styles.remove_tag}
+        onClick={onRemove}
+        aria-label={`${label} 필터 제거`}
+      >
+        <img
+          src="/images/filter/x_small.svg"
+          alt="제거"
+          className={styles.remove_icon}
+        />
+      </button>
+    </div>
+  );
+
   return (
     <div className={styles.filter_bar}>
       <div className={styles.filter_container}>
         <div className={styles.filter_buttons_container}>
           <div className={styles.filter_buttons}>
-            <button
-              className={`${styles.filter_button} ${
-                currentFilters.types && currentFilters.types.length > 0
-                  ? styles.filter_button_active
-                  : ''
-              }`}
-              onClick={openTypeModal}
-            >
-              <div className={styles.checkbox_icon}>
-                {currentFilters.types && currentFilters.types.length > 0 ? (
-                  <div className={styles.checkbox_checked}></div>
-                ) : (
-                  <div className={styles.checkbox_unchecked}></div>
-                )}
-              </div>
-              <span className={styles.filter_label}>유형</span>
-              <img
-                src="/images/filter/dropdown_icon.svg"
-                alt="드롭다운"
-                className={styles.dropdown_icon}
-              />
-            </button>
-
-            <button
-              className={`${styles.filter_button} ${
-                currentFilters.channels && currentFilters.channels.length > 0
-                  ? styles.filter_button_active
-                  : ''
-              }`}
-              onClick={openChannelModal}
-            >
-              <div className={styles.checkbox_icon}>
-                {currentFilters.channels &&
-                currentFilters.channels.length > 0 ? (
-                  <div className={styles.checkbox_checked}></div>
-                ) : (
-                  <div className={styles.checkbox_unchecked}></div>
-                )}
-              </div>
-              <span className={styles.filter_label}>채널</span>
-              <img
-                src="/images/filter/dropdown_icon.svg"
-                alt="드롭다운"
-                className={styles.dropdown_icon}
-              />
-            </button>
+            {renderFilterButton(
+              "유형",
+              (currentFilters.types?.length ?? 0) > 0,
+              openTypeModal
+            )}
+            {renderFilterButton(
+              "채널",
+              (currentFilters.channels?.length ?? 0) > 0,
+              openChannelModal
+            )}
           </div>
 
           <div className={styles.search_sort_container}>
@@ -167,46 +171,18 @@ export default function CampaignFilterBar<
           </div>
         </div>
 
-        <div className={styles.filter_tags_container}>
-          {(currentFilters.types && currentFilters.types.length > 0) ||
-          (currentFilters.channels && currentFilters.channels.length > 0) ? (
+        {hasActiveFilters && (
+          <div className={styles.filter_tags_container}>
             <div className={styles.active_filters}>
-              {currentFilters.types?.map((type) => (
-                <div key={type} className={styles.filter_tag}>
-                  <span>{type}</span>
-                  <button
-                    className={styles.remove_tag}
-                    onClick={() => handleTypeRemove(type)}
-                    aria-label={`${type} 필터 제거`}
-                  >
-                    <img
-                      src="/images/filter/x_small.svg"
-                      alt="제거"
-                      className={styles.remove_icon}
-                    />
-                  </button>
-                </div>
-              ))}
-
-              {currentFilters.channels?.map((channel) => (
-                <div key={channel} className={styles.filter_tag}>
-                  <span>{channel}</span>
-                  <button
-                    className={styles.remove_tag}
-                    onClick={() => handleChannelRemove(channel)}
-                    aria-label={`${channel} 필터 제거`}
-                  >
-                    <img
-                      src="/images/filter/x_small.svg"
-                      alt="제거"
-                      className={styles.remove_icon}
-                    />
-                  </button>
-                </div>
-              ))}
+              {currentFilters.types?.map((type) =>
+                renderFilterTag(type, () => handleTypeRemove(type))
+              )}
+              {currentFilters.channels?.map((channel) =>
+                renderFilterTag(channel, () => handleChannelRemove(channel))
+              )}
             </div>
-          ) : null}
-        </div>
+          </div>
+        )}
       </div>
 
       <ModalFilter
@@ -239,7 +215,7 @@ export default function CampaignFilterBar<
         isOpen={isSortModalOpen}
         onClose={closeSortModal}
         title="정렬"
-        options={sortOptions}
+        options={sortOptions as string[] | { value: string; label: string }[]}
         selectedValues={tempSort}
         onOptionChange={handleSortToggle}
         onApply={closeSortModal}
