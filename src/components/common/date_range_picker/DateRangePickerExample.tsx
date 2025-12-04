@@ -22,30 +22,20 @@
  * pnpm add react-day-picker date-fns
  */
 
-'use client';
+"use client";
 
-import { DayPicker } from 'react-day-picker';
-import { useState } from 'react';
-import { ko } from 'date-fns/locale';
-import 'react-day-picker/dist/style.css';
+import { DayPicker, type DateRange } from "react-day-picker";
+import { useState } from "react";
+import { ko } from "date-fns/locale";
 // CSS 모듈 파일은 별도로 만들어서 사용할 수 있습니다
 // import styles from './date_range_picker.module.css';
-
-// 선택된 날짜 범위의 타입 정의
-interface DateRange {
-  // 시작일 (undefined일 수 있음 - 아직 선택 안 했을 때)
-  from: Date | undefined;
-  // 종료일 (undefined일 수 있음 - 아직 선택 안 했을 때)
-  to: Date | undefined;
-}
 
 export default function DateRangePickerExample() {
   // useState: React의 상태 관리 훅
   // [상태값, 상태를 변경하는 함수] = useState(초기값)
-  const [selectedRange, setSelectedRange] = useState<DateRange>({
-    from: undefined,  // 초기값: 아직 시작일이 선택되지 않음
-    to: undefined,    // 초기값: 아직 종료일이 선택되지 않음
-  });
+  const [selectedRange, setSelectedRange] = useState<DateRange | undefined>(
+    undefined // 초기값: 아직 날짜 범위가 선택되지 않음
+  );
 
   return (
     <div>
@@ -66,19 +56,31 @@ export default function DateRangePickerExample() {
         selected={selectedRange}
         onSelect={setSelectedRange}
         locale={ko}
-        showOutsideDays={true}  // ← 이전/다음 달 날짜 표시하는 핵심 옵션!
+        showOutsideDays={true} // ← 이전/다음 달 날짜 표시하는 핵심 옵션!
         numberOfMonths={2}
         className="custom_date_range_picker"
       />
 
       {/* 선택된 날짜 범위 표시 영역 */}
-      <div style={{ marginTop: '20px', padding: '16px', backgroundColor: '#f5f5f5' }}>
+      <div
+        style={{
+          marginTop: "20px",
+          padding: "16px",
+          backgroundColor: "#f5f5f5",
+        }}
+      >
         <h3>선택된 날짜 범위:</h3>
         <p>
-          시작일: {selectedRange.from ? selectedRange.from.toLocaleDateString('ko-KR') : '미선택'}
+          시작일:{" "}
+          {selectedRange?.from
+            ? selectedRange.from.toLocaleDateString("ko-KR")
+            : "미선택"}
         </p>
         <p>
-          종료일: {selectedRange.to ? selectedRange.to.toLocaleDateString('ko-KR') : '미선택'}
+          종료일:{" "}
+          {selectedRange?.to
+            ? selectedRange.to.toLocaleDateString("ko-KR")
+            : "미선택"}
         </p>
       </div>
     </div>

@@ -28,6 +28,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import styles from "../../styles/user/faq/faq.module.css";
 import SubHeader from "@/components/fragments/SubHeader";
+import PageTitle from "@/components/fragments/PageTitle";
 import {
   faqData,
   faqCategories,
@@ -63,7 +64,7 @@ export default function FAQPage() {
 
       <main className={styles.main_content}>
         {/* 페이지 제목 */}
-        <h1 className={styles.page_title}>자주 묻는 질문</h1>
+        <PageTitle title="자주 묻는 질문" />
         <section className={styles.section_container}>
           {/* 카테고리 필터 */}
           <div className={styles.category_container}>

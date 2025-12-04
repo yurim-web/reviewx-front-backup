@@ -29,6 +29,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import SubHeader from "@/components/fragments/SubHeader";
+import PageTitle from "@/components/fragments/PageTitle";
 import styles from "../../../../styles/user/point/withdrawal_request.module.css";
 
 /**
@@ -106,8 +107,6 @@ export default function WithdrawalRequestPage() {
     }
   };
 
-
-
   return (
     <div className={styles.request_page}>
       {/* SubHeader */}
@@ -117,7 +116,7 @@ export default function WithdrawalRequestPage() {
       <main className={styles.main_content}>
         <div className={styles.container}>
           {/* 제목 */}
-          <h1 className={styles.page_title}>포인트 출금 신청</h1>
+          <PageTitle title="포인트 출금 신청" />
 
           {/* 보유 포인트 */}
           <div className={styles.available_points_section}>

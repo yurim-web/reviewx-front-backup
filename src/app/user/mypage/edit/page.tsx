@@ -26,6 +26,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "../../../../styles/user/mypage/edit_profile.module.css";
 import SubHeader from "@/components/fragments/SubHeader";
+import PageTitle from "@/components/fragments/PageTitle";
 // 공용 컴포넌트
 import ProfilePhotoUpload from "@/components/common/mypage/ProfilePhotoUpload";
 import PhoneVerificationInput from "@/components/common/mypage/PhoneVerificationInput";
@@ -164,7 +165,7 @@ export default function EditProfilePage() {
       <SubHeader />
       {/* 메인 컨텐츠 */}
       <main className={styles.main_content}>
-        <h1 className={styles.page_title}>내 정보 수정</h1>
+        <PageTitle title="내 정보 수정" />
 
         <section className={styles.section_container}>
           {/* 기본 정보 섹션 */}

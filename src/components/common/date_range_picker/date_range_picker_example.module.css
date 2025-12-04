@@ -118,3 +118,4 @@
 .custom_date_range_picker :global(.rdp-day_outside[aria-label*="토요일"]) {
   color: #ff9999;  /* 연한 빨간색 */
 }
+
