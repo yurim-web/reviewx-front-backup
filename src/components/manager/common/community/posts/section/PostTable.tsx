@@ -21,193 +21,121 @@
  *
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import styles from '@/styles/manager_ga/community/posts/post_table.module.css';
+import { useState } from "react";
+import styles from "@/styles/manager_ga/community/posts/post_table.module.css";
 import {
   posts_data,
   type PostItem,
   type PostDivision,
-} from '@/data/manager_ga/community/postsData';
+} from "@/data/manager_ga/community/postsData";
+import CommonTable, {
+  type TableColumn,
+  type TableRowData,
+} from "@/components/manager/common/table/CommonTable";
 
 interface PostTableProps {
-  // 검색어 상태를 props로 받습니다
   search_query: string;
 }
+
+// PostItem이 TableRowData를 확장하도록 확장
+interface PostTableRowData extends PostItem, TableRowData {}
 
 // 구분 태그 스타일 매핑
 const division_style_map: Record<PostDivision, string> = {
   공지사항: styles.division_tag_notice,
-  '자주 묻는 질문': styles.division_tag_faq,
+  "자주 묻는 질문": styles.division_tag_faq,
   이벤트: styles.division_tag_event,
 };
 
+// 컬럼 정의
+const columns: TableColumn[] = [
+  { key: "number", label: "번호", className: styles.table_cell_number },
+  {
+    key: "division",
+    label: "구분",
+    className: styles.table_cell_division,
+  },
+  {
+    key: "category",
+    label: "카테고리",
+    className: styles.table_cell_category,
+  },
+  {
+    key: "title",
+    label: "제목",
+    className: styles.table_cell_title,
+  },
+  {
+    key: "view_count",
+    label: "조회수",
+    sortable: true,
+    className: styles.table_cell_view_count,
+  },
+  {
+    key: "registered_date",
+    label: "등록일",
+    sortable: true,
+    className: styles.table_cell_registered_date,
+  },
+  {
+    key: "registered_by",
+    label: "등록자",
+    sortable: true,
+    className: styles.table_cell_registered_by,
+  },
+];
+
 export default function PostTable({ search_query }: PostTableProps) {
-  // 선택된 게시글 ID 목록 상태 관리
   const [selected_post_ids, set_selected_post_ids] = useState<string[]>([]);
 
-  // 전체 선택/해제 상태 관리
-  const [is_all_selected, set_is_all_selected] = useState(false);
-
-  // 검색어로 필터링된 게시글 목록
   const filtered_posts = posts_data.filter((item) => {
     if (!search_query) return true;
-    // 제목으로 검색
     return item.title.toLowerCase().includes(search_query.toLowerCase());
   });
 
-  // 개별 체크박스 토글 핸들러
-  const handle_checkbox_toggle = (post_id: string) => {
-    set_selected_post_ids((prev) => {
-      if (prev.includes(post_id)) {
-        // 이미 선택된 경우 제거
-        return prev.filter((id) => id !== post_id);
-      } else {
-        // 선택되지 않은 경우 추가
-        return [...prev, post_id];
-      }
-    });
-  };
-
-  // 전체 선택/해제 핸들러
-  const handle_select_all = () => {
-    if (is_all_selected) {
-      // 전체 해제
-      set_selected_post_ids([]);
-      set_is_all_selected(false);
-    } else {
-      // 전체 선택
-      set_selected_post_ids(filtered_posts.map((item) => item.id));
-      set_is_all_selected(true);
-    }
-  };
-
-  // 숫자를 천 단위로 포맷팅하는 함수
   const format_number = (num: number): string => {
     return num.toLocaleString();
   };
 
   return (
-    <div className={styles.table_container}>
-      {/* 테이블 헤더 */}
-      <div className={styles.table_header}>
-        <div className={styles.table_cell_checkbox}>
-          <input
-            type="checkbox"
-            checked={is_all_selected}
-            onChange={handle_select_all}
-            className={styles.checkbox}
-          />
-        </div>
-        <div className={styles.table_cell_number}>
-          <span>번호</span>
-        </div>
-        <div className={styles.table_cell_division}>
-          <span>구분</span>
-        </div>
-        <div className={styles.table_cell_category}>
-          <span>카테고리</span>
-        </div>
-        <div className={styles.table_cell_title}>
-          <span>제목</span>
-        </div>
-        <div className={styles.table_cell_view_count}>
-          <span>조회수</span>
-          <img
-            src="/images/icons/table_arrow.svg"
-            alt="정렬"
-            className={styles.sort_icon}
-          />
-        </div>
-        <div className={styles.table_cell_registered_date}>
-          <span>등록일</span>
-          <img
-            src="/images/icons/table_arrow.svg"
-            alt="정렬"
-            className={styles.sort_icon}
-          />
-        </div>
-        <div className={styles.table_cell_registered_by}>
-          <span>등록자</span>
-          <img
-            src="/images/icons/table_arrow.svg"
-            alt="정렬"
-            className={styles.sort_icon}
-          />
-        </div>
-      </div>
-
-      {/* 테이블 바디 */}
-      <div className={styles.table_body}>
-        {filtered_posts.length === 0 ? (
-          <div className={styles.empty_message}>게시글이 없습니다.</div>
-        ) : (
-          filtered_posts.map((item) => {
-            const is_selected = selected_post_ids.includes(item.id);
+    <CommonTable<PostTableRowData>
+      columns={columns}
+      data={filtered_posts}
+      render_cell={(row, column) => {
+        switch (column.key) {
+          case "number":
+            return <span>{row.number}</span>;
+          case "division":
             return (
-              <div key={item.id} className={styles.table_row}>
-                {/* 체크박스 */}
-                <div
-                  className={styles.table_cell_checkbox}
-                  onClick={(e) => {
-                    // 체크박스 클릭 시 행 클릭 이벤트가 발생하지 않도록 이벤트 전파를 막습니다
-                    // stopPropagation: 이벤트 버블링을 방지하는 메서드입니다
-                    e.stopPropagation();
-                  }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={is_selected}
-                    onChange={() => handle_checkbox_toggle(item.id)}
-                    className={styles.checkbox}
-                  />
-                </div>
-
-                {/* 번호 */}
-                <div className={styles.table_cell_number}>{item.number}</div>
-
-                {/* 구분 (공지사항/자주 묻는 질문/이벤트) */}
-                <div className={styles.table_cell_division}>
-                  <span
-                    className={`${styles.division_tag} ${
-                      division_style_map[item.division]
-                    }`}
-                  >
-                    {item.division}
-                  </span>
-                </div>
-
-                {/* 카테고리 */}
-                <div className={styles.table_cell_category}>
-                  <span className={styles.category_tag}>{item.category}</span>
-                </div>
-
-                {/* 제목 */}
-                <div className={styles.table_cell_title}>
-                  <span className={styles.title_text}>{item.title}</span>
-                </div>
-
-                {/* 조회수 */}
-                <div className={styles.table_cell_view_count}>
-                  {format_number(item.view_count)}
-                </div>
-
-                {/* 등록일 */}
-                <div className={styles.table_cell_registered_date}>
-                  {item.registered_date}
-                </div>
-
-                {/* 등록자 */}
-                <div className={styles.table_cell_registered_by}>
-                  {item.registered_by}
-                </div>
-              </div>
+              <span
+                className={`${styles.division_tag} ${
+                  division_style_map[row.division]
+                }`}
+              >
+                {row.division}
+              </span>
             );
-          })
-        )}
-      </div>
-    </div>
+          case "category":
+            return <span className={styles.category_tag}>{row.category}</span>;
+          case "title":
+            return <span className={styles.title_text}>{row.title}</span>;
+          case "view_count":
+            return <span>{format_number(row.view_count)}</span>;
+          case "registered_date":
+            return <span>{row.registered_date}</span>;
+          case "registered_by":
+            return <span>{row.registered_by}</span>;
+          default:
+            return null;
+        }
+      }}
+      styles={styles}
+      enable_checkbox={true}
+      selected_ids={selected_post_ids}
+      on_select_change={set_selected_post_ids}
+      empty_message="게시글이 없습니다."
+    />
   );
 }
-

@@ -18,15 +18,16 @@
  *
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import styles from '@/styles/manager_ga/campaign/reported/page.module.css';
-import ReportCodeInfoSection from '@/components/manager/ga/campaign/reported/section/ReportCodeInfoSection';
-import ReportStatsSection from '@/components/manager/ga/campaign/reported/section/ReportStatsSection';
-import FilterSection from '@/components/manager/ga/campaign/reported/section/FilterSection';
-import ReportedCampaignTable from '@/components/manager/ga/campaign/reported/section/ReportedCampaignTable';
-import type { ReportCode } from '@/data/manager_ga/reported';
+import { useState } from "react";
+import styles from "@/styles/manager_ga/campaign/reported/page.module.css";
+import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
+import ReportCodeInfoSection from "@/components/manager/ga/campaign/reported/section/ReportCodeInfoSection";
+import ReportStatsSection from "@/components/manager/ga/campaign/reported/section/ReportStatsSection";
+import FilterSection from "@/components/manager/ga/campaign/reported/section/FilterSection";
+import ReportedCampaignTable from "@/components/manager/ga/campaign/reported/section/ReportedCampaignTable";
+import type { ReportCode } from "@/data/manager_ga/reported";
 
 /**
  * 신고 이력 페이지 컴포넌트
@@ -55,7 +56,7 @@ export default function ReportedPage() {
   // 검색어 상태 관리
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
   // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
-  const [search_query, set_search_query] = useState<string>('');
+  const [search_query, set_search_query] = useState<string>("");
 
   // 신고 코드 필터 상태 관리 (배열로 변경)
   const [selected_report_codes, set_selected_report_codes] = useState<
@@ -66,7 +67,7 @@ export default function ReportedPage() {
     <div className={styles.container}>
       <div className={styles.main_content}>
         {/* 페이지 제목 */}
-        <h1 className={styles.page_title}>캠페인 신고 이력</h1>
+        <ManagerPageTitle title="캠페인 신고 이력" />
 
         {/* 신고 코드 안내 섹션 */}
         <ReportCodeInfoSection />

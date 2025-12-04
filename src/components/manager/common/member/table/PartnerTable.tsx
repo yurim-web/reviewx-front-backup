@@ -21,16 +21,22 @@
  *
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useTableSort } from "@/hooks/table/useTableSort";
+import {
+  get_sort_arrow_transform,
+  get_sort_arrow_alt,
+  type SortColumnConfig,
+} from "@/utils/table/sort";
 import {
   partner_list,
   type PartnerItem,
   type PartnerDivision,
   type PartnerStatus,
-} from '@/data/manager_ga/member/partners';
+} from "@/data/manager_ga/member/partners";
 
 interface PartnerTableProps {
   // 검색어 상태를 props로 받습니다
@@ -85,7 +91,7 @@ export default function PartnerTable({
 
   // 선택된 파트너 ID 목록 상태 관리
   const [selected_partner_ids, set_selected_partner_ids] = useState<string[]>(
-    [],
+    []
   );
 
   // 전체 선택/해제 상태 관리
@@ -98,6 +104,31 @@ export default function PartnerTable({
     return partner.business_name
       .toLowerCase()
       .includes(search_query.toLowerCase());
+  });
+
+  // 컬럼별 타입 설정
+  const column_config: SortColumnConfig = {
+    number: "numeric_string",
+    business_name: "string",
+    last_access_date: "date",
+    join_date: "date",
+    campaign_in_progress: "number",
+    campaign_completed: "number",
+    current_points: "number",
+    used_points: "number",
+    status: "string",
+  };
+
+  // 정렬 훅 사용
+  const {
+    sort_state,
+    handle_sort,
+    sorted_data: sorted_partners,
+  } = useTableSort({
+    data: filtered_partners,
+    initial_column_key: "number",
+    initial_direction: "asc",
+    column_config,
   });
 
   // 개별 체크박스 토글 핸들러
@@ -140,8 +171,8 @@ export default function PartnerTable({
   // 파트너 상태 태그 스타일 매핑
   const partner_status_style_map: Record<PartnerStatus, string> = {
     정상: cssStyles.status_tag_normal,
-    '일시 정지': cssStyles.status_tag_suspended,
-    '영구 정지': cssStyles.status_tag_permanent,
+    "일시 정지": cssStyles.status_tag_suspended,
+    "영구 정지": cssStyles.status_tag_permanent,
   };
 
   // 파트너 행 클릭 핸들러
@@ -165,81 +196,285 @@ export default function PartnerTable({
         </div>
         <div className={cssStyles.table_cell_number}>
           <span>번호</span>
-          <img
-            src="/images/icons/table_arrow.svg"
-            alt="정렬"
-            className={cssStyles.sort_icon}
-          />
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handle_sort("number");
+            }}
+            aria-label="번호 정렬"
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: 0,
+              display: "inline-flex",
+              alignItems: "center",
+            }}
+          >
+            <img
+              src="/images/icons/table_arrow.svg"
+              alt={get_sort_arrow_alt(sort_state, "number")}
+              className={cssStyles.sort_icon}
+              style={{
+                transform: get_sort_arrow_transform(sort_state, "number"),
+                transition: "transform 0.2s",
+              }}
+            />
+          </button>
         </div>
         <div className={cssStyles.table_cell_business_name}>
           <span>상호명</span>
-          <img
-            src="/images/icons/table_arrow.svg"
-            alt="정렬"
-            className={cssStyles.sort_icon}
-          />
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handle_sort("business_name");
+            }}
+            aria-label="상호명 정렬"
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: 0,
+              display: "inline-flex",
+              alignItems: "center",
+            }}
+          >
+            <img
+              src="/images/icons/table_arrow.svg"
+              alt={get_sort_arrow_alt(sort_state, "business_name")}
+              className={cssStyles.sort_icon}
+              style={{
+                transform: get_sort_arrow_transform(
+                  sort_state,
+                  "business_name"
+                ),
+                transition: "transform 0.2s",
+              }}
+            />
+          </button>
         </div>
         <div className={cssStyles.table_cell_division}>
           <span>구분</span>
         </div>
         <div className={cssStyles.table_cell_last_access}>
           <span>접속일</span>
-          <img
-            src="/images/icons/table_arrow.svg"
-            alt="정렬"
-            className={cssStyles.sort_icon}
-          />
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handle_sort("last_access_date");
+            }}
+            aria-label="접속일 정렬"
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: 0,
+              display: "inline-flex",
+              alignItems: "center",
+            }}
+          >
+            <img
+              src="/images/icons/table_arrow.svg"
+              alt={get_sort_arrow_alt(sort_state, "last_access_date")}
+              className={cssStyles.sort_icon}
+              style={{
+                transform: get_sort_arrow_transform(
+                  sort_state,
+                  "last_access_date"
+                ),
+                transition: "transform 0.2s",
+              }}
+            />
+          </button>
         </div>
         <div className={cssStyles.table_cell_join_date}>
           <span>가입일</span>
-          <img
-            src="/images/icons/table_arrow.svg"
-            alt="정렬"
-            className={cssStyles.sort_icon}
-          />
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handle_sort("join_date");
+            }}
+            aria-label="가입일 정렬"
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: 0,
+              display: "inline-flex",
+              alignItems: "center",
+            }}
+          >
+            <img
+              src="/images/icons/table_arrow.svg"
+              alt={get_sort_arrow_alt(sort_state, "join_date")}
+              className={cssStyles.sort_icon}
+              style={{
+                transform: get_sort_arrow_transform(sort_state, "join_date"),
+                transition: "transform 0.2s",
+              }}
+            />
+          </button>
         </div>
         <div className={cssStyles.table_cell_campaign_in_progress}>
           <span>캠페인 진행</span>
-          <img
-            src="/images/icons/table_arrow.svg"
-            alt="정렬"
-            className={cssStyles.sort_icon}
-          />
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handle_sort("campaign_in_progress");
+            }}
+            aria-label="캠페인 진행 정렬"
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: 0,
+              display: "inline-flex",
+              alignItems: "center",
+            }}
+          >
+            <img
+              src="/images/icons/table_arrow.svg"
+              alt={get_sort_arrow_alt(sort_state, "campaign_in_progress")}
+              className={cssStyles.sort_icon}
+              style={{
+                transform: get_sort_arrow_transform(
+                  sort_state,
+                  "campaign_in_progress"
+                ),
+                transition: "transform 0.2s",
+              }}
+            />
+          </button>
         </div>
         <div className={cssStyles.table_cell_campaign_completed}>
           <span>캠페인 완료</span>
-          <img
-            src="/images/icons/table_arrow.svg"
-            alt="정렬"
-            className={cssStyles.sort_icon}
-          />
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handle_sort("campaign_completed");
+            }}
+            aria-label="캠페인 완료 정렬"
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: 0,
+              display: "inline-flex",
+              alignItems: "center",
+            }}
+          >
+            <img
+              src="/images/icons/table_arrow.svg"
+              alt={get_sort_arrow_alt(sort_state, "campaign_completed")}
+              className={cssStyles.sort_icon}
+              style={{
+                transform: get_sort_arrow_transform(
+                  sort_state,
+                  "campaign_completed"
+                ),
+                transition: "transform 0.2s",
+              }}
+            />
+          </button>
         </div>
         <div className={cssStyles.table_cell_current_points}>
           <span>보유 포인트</span>
-          <img
-            src="/images/icons/table_arrow.svg"
-            alt="정렬"
-            className={cssStyles.sort_icon}
-          />
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handle_sort("current_points");
+            }}
+            aria-label="보유 포인트 정렬"
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: 0,
+              display: "inline-flex",
+              alignItems: "center",
+            }}
+          >
+            <img
+              src="/images/icons/table_arrow.svg"
+              alt={get_sort_arrow_alt(sort_state, "current_points")}
+              className={cssStyles.sort_icon}
+              style={{
+                transform: get_sort_arrow_transform(
+                  sort_state,
+                  "current_points"
+                ),
+                transition: "transform 0.2s",
+              }}
+            />
+          </button>
         </div>
         <div className={cssStyles.table_cell_used_points}>
           <span>사용 포인트</span>
-          <img
-            src="/images/icons/table_arrow.svg"
-            alt="정렬"
-            className={cssStyles.sort_icon}
-          />
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handle_sort("used_points");
+            }}
+            aria-label="사용 포인트 정렬"
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: 0,
+              display: "inline-flex",
+              alignItems: "center",
+            }}
+          >
+            <img
+              src="/images/icons/table_arrow.svg"
+              alt={get_sort_arrow_alt(sort_state, "used_points")}
+              className={cssStyles.sort_icon}
+              style={{
+                transform: get_sort_arrow_transform(sort_state, "used_points"),
+                transition: "transform 0.2s",
+              }}
+            />
+          </button>
         </div>
         <div className={cssStyles.table_cell_status_type}>
           <span>유형</span>
         </div>
         <div className={cssStyles.table_cell_status}>
           <span>상태</span>
-          <img
-            src="/images/icons/table_arrow.svg"
-            alt="정렬"
-            className={cssStyles.sort_icon}
-          />
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handle_sort("status");
+            }}
+            aria-label="상태 정렬"
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: 0,
+              display: "inline-flex",
+              alignItems: "center",
+            }}
+          >
+            <img
+              src="/images/icons/table_arrow.svg"
+              alt={get_sort_arrow_alt(sort_state, "status")}
+              className={cssStyles.sort_icon}
+              style={{
+                transform: get_sort_arrow_transform(sort_state, "status"),
+                transition: "transform 0.2s",
+              }}
+            />
+          </button>
         </div>
       </div>
 
@@ -248,7 +483,7 @@ export default function PartnerTable({
         {filtered_partners.length === 0 ? (
           <div className={cssStyles.empty_message}>파트너가 없습니다.</div>
         ) : (
-          filtered_partners.map((partner) => {
+          sorted_partners.map((partner) => {
             const is_selected = selected_partner_ids.includes(partner.id);
             return (
               <div
@@ -259,7 +494,7 @@ export default function PartnerTable({
                 tabIndex={0}
                 onKeyDown={(e) => {
                   // 키보드 접근성: Enter 키나 Space 키를 누르면 클릭과 동일하게 동작합니다
-                  if (e.key === 'Enter' || e.key === ' ') {
+                  if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
                     handle_row_click(partner.id);
                   }

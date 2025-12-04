@@ -21,35 +21,35 @@
  * @returns 리뷰어 디테일 페이지 JSX
  */
 
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import Image from 'next/image';
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import Image from "next/image";
 import {
   get_reviewer_detail_by_id,
   type ReviewerDetail,
   type Channel,
-} from '@/data/manager_ga/member/reviewers';
-import CampaignHistoryModal from '@/components/manager/ga/member/reviewers/modal/CampaignHistoryModal';
-import PenaltyHistoryModal from '@/components/manager/ga/member/reviewers/modal/PenaltyHistoryModal';
-import MemberDetailLayout from '@/components/manager/ga/member/member_detail/MemberDetailLayout';
-import ProfileSection from '@/components/manager/ga/member/member_detail/ProfileSection';
+} from "@/data/manager_ga/member/reviewers";
+import CampaignHistoryModal from "@/components/manager/common/member/reviewers/CampaignHistoryModal";
+import PenaltyHistoryModal from "@/components/manager/common/member/reviewers/PenaltyHistoryModal";
+import MemberDetailLayout from "@/components/manager/common/member/member_detail/MemberDetailLayout";
+import ProfileSection from "@/components/manager/common/member/member_detail/ProfileSection";
 import ActivityInfoSection, {
   type ActivityInfoItem,
-} from '@/components/manager/ga/member/member_detail/ActivityInfoSection';
-import ChannelInfoSection from '@/components/manager/ga/member/reviewers/section/ChannelInfoSection';
-import AccountInfoSection from '@/components/manager/ga/member/reviewers/section/AccountInfoSection';
-import styles from '@/styles/manager_ga/member/member_detail/detail_page.module.css';
-import infoCardStyles from '@/styles/manager_ga/member/member_detail/info_card.module.css';
+} from "@/components/manager/common/member/member_detail/ActivityInfoSection";
+import ChannelInfoSection from "@/components/manager/common/member/reviewers/section/ChannelInfoSection";
+import AccountInfoSection from "@/components/manager/common/member/reviewers/section/AccountInfoSection";
+import styles from "@/styles/manager_ga/member/member_detail/detail_page.module.css";
+import infoCardStyles from "@/styles/manager_ga/member/member_detail/info_card.module.css";
 
 // 채널 아이콘 경로 매핑
 const channel_icon_map: Record<Channel, string> = {
-  Blog: '/images/brand_logo/naverblog.svg',
-  Clip: '/images/brand_logo/naverclip.svg',
-  Instagram: '/images/brand_logo/insta.svg',
-  Youtube: '/images/brand_logo/youtube.svg',
-  Store: '/images/brand_logo/navershop.svg',
+  Blog: "/images/brand_logo/naverblog.svg",
+  Clip: "/images/brand_logo/naverclip.svg",
+  Instagram: "/images/brand_logo/insta.svg",
+  Youtube: "/images/brand_logo/youtube.svg",
+  Store: "/images/brand_logo/navershop.svg",
 };
 
 export default function ReviewerDetailPage() {
@@ -97,7 +97,7 @@ export default function ReviewerDetailPage() {
   const activity_info_items: ActivityInfoItem[] = [
     // 채널 정보
     {
-      label: '채널 정보',
+      label: "채널 정보",
       value: (
         <div className={infoCardStyles.channel_icons}>
           {reviewer_detail?.channels.map((channel, index) => (
@@ -116,56 +116,56 @@ export default function ReviewerDetailPage() {
     },
     // 캠페인 진행
     {
-      label: '캠페인 진행',
+      label: "캠페인 진행",
       value: reviewer_detail
         ? `${format_number(reviewer_detail.campaign_participated)}회`
-        : '0회',
+        : "0회",
       on_button_click: () => set_is_campaign_history_modal_open(true),
-      button_aria_label: '캠페인 진행 내역 보기',
+      button_aria_label: "캠페인 진행 내역 보기",
     },
     // 캠페인 완료
     {
-      label: '캠페인 완료',
+      label: "캠페인 완료",
       value: reviewer_detail
         ? `${format_number(reviewer_detail.campaign_completed)}회`
-        : '0회',
+        : "0회",
     },
     // 패널티
     {
-      label: '패널티',
+      label: "패널티",
       value: reviewer_detail
         ? `${format_number(reviewer_detail.penalty_count)}회`
-        : '0회',
+        : "0회",
       on_button_click: () => set_is_penalty_history_modal_open(true),
-      button_aria_label: '패널티 내역 보기',
+      button_aria_label: "패널티 내역 보기",
       additional_content:
-        reviewer_detail?.status_type === '모범 회원' ? (
+        reviewer_detail?.status_type === "모범 회원" ? (
           <div className={styles.status_type_badge}>모범 회원</div>
         ) : undefined,
     },
     // 접속일
     {
-      label: '접속일',
-      value: reviewer_detail?.last_access_date || '-',
+      label: "접속일",
+      value: reviewer_detail?.last_access_date || "-",
     },
     // 가입일
     {
-      label: '가입일',
-      value: reviewer_detail?.join_date || '-',
+      label: "가입일",
+      value: reviewer_detail?.join_date || "-",
     },
     // 보유 포인트
     {
-      label: '보유 포인트',
+      label: "보유 포인트",
       value: reviewer_detail
         ? format_number(reviewer_detail.current_points)
-        : '0',
+        : "0",
     },
     // 출금 포인트
     {
-      label: '출금 포인트',
+      label: "출금 포인트",
       value: reviewer_detail
         ? format_number(reviewer_detail.withdrawn_points)
-        : '0',
+        : "0",
     },
   ];
 
@@ -183,7 +183,7 @@ export default function ReviewerDetailPage() {
             name={reviewer_detail.name}
             status_type={reviewer_detail.status_type}
             basic_info_items={[
-              '리뷰어',
+              "리뷰어",
               reviewer_detail.name,
               reviewer_detail.gender,
               `만 ${reviewer_detail.age}세`,

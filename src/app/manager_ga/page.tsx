@@ -25,6 +25,7 @@
 
 import { useState } from 'react';
 import layoutStyles from '@/styles/manager_ga/layout/layout.module.css';
+import ManagerPageTitle from '@/components/manager/common/fragments/ManagerPageTitle';
 import DateFilterSection, {
   DateFilter,
 } from '@/components/manager/ga/dashboard/section/DateFilterSection';
@@ -50,7 +51,8 @@ export default function ManagerGAPage() {
       <div className={layoutStyles.main_content}>
         <div className={layoutStyles.page_header}>
           {/* 페이지 제목 */}
-          <h1 className={layoutStyles.page_title}>대시보드</h1>
+          {/* no_padding prop을 true로 설정하여 page_header의 padding-bottom 사용 */}
+          <ManagerPageTitle title="대시보드" no_padding={true} />
 
           {/* 날짜 필터 섹션 컴포넌트 */}
           <DateFilterSection

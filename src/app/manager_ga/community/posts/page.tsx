@@ -26,6 +26,7 @@
 
 import { useState } from 'react';
 import styles from '@/styles/manager_ga/community/posts/page.module.css';
+import ManagerPageTitle from '@/components/manager/common/fragments/ManagerPageTitle';
 import PostFilterSection from '@/components/manager/common/community/posts/section/PostFilterSection';
 import PostTable from '@/components/manager/common/community/posts/section/PostTable';
 
@@ -45,7 +46,7 @@ export default function PostsPage() {
     <div className={styles.container}>
       <div className={styles.main_content}>
         {/* 페이지 제목 */}
-        <h1 className={styles.page_title}>게시글 목록</h1>
+        <ManagerPageTitle title="게시글 목록" />
 
         {/* 필터 섹션 컴포넌트 */}
         <PostFilterSection

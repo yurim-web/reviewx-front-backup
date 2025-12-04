@@ -17,37 +17,99 @@
  *
  */
 
-'use client';
+"use client";
 
-import { useState, useRef } from 'react';
-import styles from '@/styles/manager_ga/campaign/reported_table.module.css';
+import { useState } from "react";
+import { useTableSort } from "@/hooks/table/useTableSort";
+import {
+  get_sort_arrow_transform,
+  get_sort_arrow_alt,
+  type SortColumnConfig,
+} from "@/utils/table/sort";
+import styles from "@/styles/manager_ga/campaign/reported_table.module.css";
 import {
   reported_campaign_list,
   report_code_info,
   type ReportedCampaignItem,
   type ReportCodeInfo,
   type ReportCode,
-} from '@/data/manager_ga/reported';
-import ReportReasonModal from '../modal/ReportReasonModal';
-import CampaignBlockModal from '../modal/CampaignBlockModal';
+} from "@/data/manager_ga/reported";
+import ReportReasonModal from "../modal/ReportReasonModal";
+import CampaignBlockModal from "../modal/CampaignBlockModal";
+import CommonTableWithTooltip, {
+  type TooltipConfig,
+} from "@/components/manager/common/table/CommonTableWithTooltip";
+import {
+  type TableColumn,
+  type TableRowData,
+} from "@/components/manager/common/table/CommonTable";
 
 interface ReportedCampaignTableProps {
-  // 검색어 상태와 변경 함수를 props로 받습니다
   search_query: string;
-  // 신고 코드 필터 상태를 props로 받습니다 (배열로 변경)
   selected_report_codes: ReportCode[];
 }
+
+// ReportedCampaignItem이 TableRowData를 확장하도록 확장
+interface ReportedCampaignTableRowData
+  extends ReportedCampaignItem,
+    TableRowData {}
+
+// 신고 코드 정보를 코드로 찾는 함수
+const get_report_code_info = (code: string): ReportCodeInfo | undefined => {
+  return report_code_info.find((info) => info.code === code);
+};
+
+// 컬럼 정의
+const get_columns = (styles: Record<string, string>): TableColumn[] => [
+  {
+    key: "campaign_number",
+    label: "캠페인 번호",
+    sortable: true,
+  },
+  {
+    key: "campaign_name",
+    label: "캠페인명",
+    className: styles.table_cell_campaign_name,
+  },
+  {
+    key: "target",
+    label: "대상자",
+  },
+  {
+    key: "inspector",
+    label: "검수자",
+  },
+  {
+    key: "report_code",
+    label: "신고 코드",
+  },
+  {
+    key: "report_reason",
+    label: "신고 사유",
+  },
+  {
+    key: "report_count",
+    label: "신고 횟수",
+    sortable: true,
+  },
+  {
+    key: "processed_date",
+    label: "처리일",
+    sortable: true,
+  },
+  {
+    key: "block",
+    label: "",
+    className: styles.table_cell_block,
+  },
+];
 
 export default function ReportedCampaignTable({
   search_query,
   selected_report_codes,
 }: ReportedCampaignTableProps) {
-  // 호버된 행의 ID를 관리하는 상태
-  // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
-  // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
   const [hovered_row_id, set_hovered_row_id] = useState<string | null>(null);
 
-  // 차단 모달 상태 관리
   const [block_modal_state, set_block_modal_state] = useState<{
     is_open: boolean;
     campaign_id: string | null;
@@ -56,8 +118,6 @@ export default function ReportedCampaignTable({
     campaign_id: null,
   });
 
-  // 모달 상태 관리
-  // 모달이 열려있는지, 어떤 항목의 모달인지 관리합니다
   const [modal_state, set_modal_state] = useState<{
     is_open: boolean;
     item: ReportedCampaignItem | null;
@@ -66,71 +126,6 @@ export default function ReportedCampaignTable({
     item: null,
   });
 
-  // 툴팁 위치 정보를 관리하는 상태
-  // 캠페인명 셀의 위치, 너비, 높이를 저장하여 툴팁을 정확한 위치에 표시합니다
-  const [tooltip_position, set_tooltip_position] = useState<{
-    left: number;
-    top: number;
-    width: number;
-  } | null>(null);
-
-  // 각 행의 캠페인명 텍스트 ref를 저장하는 객체
-  // useRef는 DOM 요소에 직접 접근할 수 있게 해주는 React Hook입니다
-  const campaign_name_refs = useRef<{ [key: string]: HTMLSpanElement | null }>(
-    {},
-  );
-
-  // 신고 코드 정보를 코드로 찾는 함수
-  const get_report_code_info = (code: string): ReportCodeInfo | undefined => {
-    return report_code_info.find((info) => info.code === code);
-  };
-
-  // 텍스트가 잘렸는지 확인하는 함수
-  // scrollWidth: 요소의 실제 내용 너비 (스크롤 포함)
-  // clientWidth: 요소의 보이는 너비 (스크롤 제외)
-  // scrollWidth > clientWidth이면 텍스트가 잘린 것입니다
-  // 약간의 여유(1px)를 두어 더 안정적으로 체크합니다
-  const is_text_overflow = (element: HTMLSpanElement | null): boolean => {
-    if (!element) return false;
-    return element.scrollWidth > element.clientWidth + 1;
-  };
-
-  // 캠페인명 텍스트 호버 이벤트 핸들러
-  // 마우스가 캠페인명 텍스트 위에 올라갔을 때 호출됩니다
-  const handle_campaign_name_mouse_enter = (
-    item_id: string,
-    event: React.MouseEvent<HTMLSpanElement>,
-  ) => {
-    const campaign_name_element = event.currentTarget;
-
-    // 텍스트가 잘린 경우에만 툴팁 표시
-    if (is_text_overflow(campaign_name_element)) {
-      set_hovered_row_id(item_id);
-
-      // 캠페인명 셀의 위치와 너비를 계산하여 툴팁 위치 설정
-      const rect = campaign_name_element.getBoundingClientRect();
-      // 테이블 행 래퍼의 위치를 기준으로 상대 위치 계산
-      const row_wrapper = campaign_name_element.closest(
-        `.${styles.table_row_wrapper}`,
-      );
-      if (row_wrapper) {
-        const wrapper_rect = row_wrapper.getBoundingClientRect();
-        set_tooltip_position({
-          left: rect.left - wrapper_rect.left,
-          top: rect.bottom - wrapper_rect.top + 4, // 캠페인명 셀의 아래쪽 위치에서 4px 위로
-          width: rect.width,
-        });
-      }
-    }
-  };
-
-  // 캠페인명 셀에서 마우스가 벗어났을 때 호출됩니다
-  const handle_campaign_name_mouse_leave = () => {
-    set_hovered_row_id(null);
-    set_tooltip_position(null);
-  };
-
-  // 차단 아이콘 클릭 핸들러
   const handle_block_click = (campaign_id: string) => {
     set_block_modal_state({
       is_open: true,
@@ -138,7 +133,6 @@ export default function ReportedCampaignTable({
     });
   };
 
-  // 차단 모달 닫기 핸들러
   const handle_block_modal_close = () => {
     set_block_modal_state({
       is_open: false,
@@ -146,15 +140,11 @@ export default function ReportedCampaignTable({
     });
   };
 
-  // 차단 완료 핸들러
   const handle_block_submit = (block_reason: string) => {
     // TODO: 실제 차단 로직 구현
   };
 
-  // 필터링된 신고 내역 목록
-  // filter 함수는 배열에서 조건에 맞는 요소만 추출합니다
   const filtered_list = reported_campaign_list.filter((item) => {
-    // 검색어 필터: 캠페인명이나 캠페인 번호에 검색어가 포함되어 있는지 확인
     if (
       search_query &&
       !item.campaign_name.includes(search_query) &&
@@ -163,7 +153,6 @@ export default function ReportedCampaignTable({
       return false;
     }
 
-    // 신고 코드 필터: 선택된 신고 코드가 있으면 해당 코드들만 표시
     if (
       selected_report_codes.length > 0 &&
       !selected_report_codes.includes(item.report_code)
@@ -174,181 +163,157 @@ export default function ReportedCampaignTable({
     return true;
   });
 
-  return (
-    <div className={styles.table_section}>
-      {/* 테이블 헤더 */}
+  // 컬럼별 타입 설정
+  const column_config: SortColumnConfig = {
+    campaign_number: "numeric_string",
+    report_count: "number",
+    processed_date: "date",
+  };
+
+  // 정렬 훅 사용
+  const {
+    sort_state,
+    handle_sort,
+    sorted_data: sorted_filtered_list,
+  } = useTableSort({
+    data: filtered_list,
+    initial_column_key: "campaign_number",
+    initial_direction: "asc",
+    column_config,
+  });
+
+  const columns = get_columns(styles);
+
+  // 툴팁 설정
+  const tooltip_config: TooltipConfig = {
+    column_key: "campaign_name",
+    tooltip_content: (row: ReportedCampaignItem) => row.campaign_name,
+    tooltip_class_name: styles.tooltip_box,
+    text_class_name: styles.campaign_name_text,
+  };
+
+  // 커스텀 헤더 렌더링
+  const render_custom_header = () => {
+    return (
       <div className={styles.table_header}>
-        {/* 캠페인 번호 - 화살표 아이콘 포함 */}
-        <div className={styles.table_header_cell}>
-          <span>캠페인 번호</span>
-          <img
-            src="/images/icons/table_arrow.svg"
-            alt="정렬"
-            className={styles.table_header_arrow}
-          />
-        </div>
-        {/* 캠페인명 - 텍스트 정렬을 위해 span으로 감싸기 */}
-        <div className={styles.table_header_cell}>
-          <span>캠페인명</span>
-        </div>
-        {/* 대상자 - 텍스트 정렬을 위해 span으로 감싸기 */}
-        <div className={styles.table_header_cell}>
-          <span>대상자</span>
-        </div>
-        {/* 검수자 - 텍스트 정렬을 위해 span으로 감싸기 */}
-        <div className={styles.table_header_cell}>
-          <span>검수자</span>
-        </div>
-        {/* 신고 코드 - 텍스트 정렬을 위해 span으로 감싸기 */}
-        <div className={styles.table_header_cell}>
-          <span>신고 코드</span>
-        </div>
-        {/* 신고 사유 - 텍스트 정렬을 위해 span으로 감싸기 */}
-        <div className={styles.table_header_cell}>
-          <span>신고 사유</span>
-        </div>
-        {/* 신고 횟수 - 화살표 아이콘 포함 */}
-        <div className={styles.table_header_cell}>
-          <span>신고 횟수</span>
-          <img
-            src="/images/icons/table_arrow.svg"
-            alt="정렬"
-            className={styles.table_header_arrow}
-          />
-        </div>
-        {/* 처리일 - 화살표 아이콘 포함 */}
-        <div className={styles.table_header_cell}>
-          <span>처리일</span>
-          <img
-            src="/images/icons/table_arrow.svg"
-            alt="정렬"
-            className={styles.table_header_arrow}
-          />
-        </div>
-        {/* 차단 아이콘 칸 - 헤더는 빈 칸으로 표시 */}
-        <div className={styles.table_header_cell_block}></div>
-      </div>
-
-      {/* 테이블 바디 - 신고 내역 목록을 map 함수로 순회하며 렌더링 */}
-      {filtered_list.length === 0 ? (
-        // 필터링 결과가 없는 경우 빈 상태 메시지 표시
-        <div
-          style={{
-            padding: '40px',
-            textAlign: 'center',
-            color: '#848484',
-            fontSize: '14px',
-          }}
-        >
-          신고 내역이 없습니다.
-        </div>
-      ) : (
-        filtered_list.map((item: ReportedCampaignItem) => {
-          const code_info = get_report_code_info(item.report_code);
-          const is_hovered = hovered_row_id === item.id;
+        {columns.map((column) => {
+          if (column.key === "block") {
+            return (
+              <div
+                key={column.key}
+                className={styles.table_header_cell_block}
+              ></div>
+            );
+          }
           return (
-            <div
-              key={item.id}
-              className={styles.table_row_wrapper}
-              onMouseEnter={() => set_hovered_row_id(item.id)}
-              onMouseLeave={() => set_hovered_row_id(null)}
-            >
-              {/* 테이블 행 */}
-              <div className={styles.table_row}>
-                {/* 캠페인 번호 */}
-                <div className={styles.table_cell}>{item.campaign_number}</div>
-
-                {/* 캠페인명 - 텍스트가 잘리는 경우를 대비 */}
-                <div className={styles.table_cell_campaign_name}>
-                  <span
-                    ref={(el) => {
-                      campaign_name_refs.current[item.id] = el;
-                    }}
-                    className={styles.campaign_name_text}
-                    onMouseEnter={(e) =>
-                      handle_campaign_name_mouse_enter(item.id, e)
-                    }
-                    onMouseLeave={handle_campaign_name_mouse_leave}
-                  >
-                    {item.campaign_name}
-                  </span>
-                </div>
-
-                {/* 대상자 */}
-                <div className={styles.table_cell}>{item.target}</div>
-
-                {/* 검수자 */}
-                <div className={styles.table_cell}>{item.inspector}</div>
-
-                {/* 신고 코드 */}
-                <div className={styles.table_cell}>{item.report_code}</div>
-
-                {/* 신고 사유 - 사유 확인하기 버튼만 표시 */}
-                <div
-                  className={`${styles.table_cell} ${styles.table_cell_report_reason}`}
-                >
-                  <button
-                    className={styles.report_reason_button}
-                    onClick={() => {
-                      // 모달 열기
-                      set_modal_state({
-                        is_open: true,
-                        item: item,
-                      });
-                    }}
-                    aria-label={`${item.campaign_number} 신고 사유 확인`}
-                  >
-                    <img
-                      src="/images/management_page/cancel_info.svg"
-                      alt="신고 사유 정보"
-                      className={styles.report_reason_icon}
-                    />
-                    사유 확인
-                  </button>
-                </div>
-
-                {/* 신고 횟수 */}
-                <div className={styles.table_cell}>{item.report_count}회</div>
-
-                {/* 처리일 */}
-                <div className={styles.table_cell}>{item.processed_date}</div>
-
-                {/* 차단 아이콘 칸 - 호버 시에만 표시 */}
-                <div className={styles.table_cell_block}>
-                  {is_hovered && (
-                    <button
-                      onClick={() => handle_block_click(item.id)}
-                      className={styles.block_button}
-                      aria-label={`${item.campaign_name} 차단`}
-                    >
-                      <img
-                        src="/images/icons/declaration_icon.svg"
-                        alt="차단"
-                        className={styles.block_icon}
-                      />
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {/* 호버 시 나타나는 툴팁 박스 - 캠페인명 셀 바로 아래에 표시 */}
-              {is_hovered && tooltip_position && (
-                <div
-                  className={styles.tooltip_box}
+            <div key={column.key} className={styles.table_header_cell}>
+              <span>{column.label}</span>
+              {column.sortable && (
+                <button
+                  type="button"
+                  onClick={() => handle_sort(column.key)}
+                  className={styles.table_header_sort_button}
+                  aria-label={`${column.label} 정렬`}
                   style={{
-                    left: `${tooltip_position.left}px`,
-                    top: `${tooltip_position.top}px`,
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    padding: 0,
+                    display: "inline-flex",
+                    alignItems: "center",
                   }}
                 >
-                  {item.campaign_name}
-                </div>
+                  <img
+                    src="/images/icons/table_arrow.svg"
+                    alt={get_sort_arrow_alt(sort_state, column.key)}
+                    className={styles.table_header_arrow}
+                    style={{
+                      transform: get_sort_arrow_transform(
+                        sort_state,
+                        column.key
+                      ),
+                      transition: "transform 0.2s",
+                    }}
+                  />
+                </button>
               )}
             </div>
           );
-        })
-      )}
+        })}
+      </div>
+    );
+  };
 
-      {/* 신고 사유 모달 */}
+  return (
+    <>
+      <CommonTableWithTooltip<ReportedCampaignTableRowData>
+        columns={columns}
+        data={sorted_filtered_list}
+        render_cell={(row, column) => {
+          switch (column.key) {
+            case "campaign_number":
+              return <span>{row.campaign_number}</span>;
+            case "campaign_name":
+              return <span>{row.campaign_name}</span>;
+            case "target":
+              return <span>{row.target}</span>;
+            case "inspector":
+              return <span>{row.inspector}</span>;
+            case "report_code":
+              return <span>{row.report_code}</span>;
+            case "report_reason": {
+              return (
+                <button
+                  className={styles.report_reason_button}
+                  onClick={() => {
+                    set_modal_state({
+                      is_open: true,
+                      item: row,
+                    });
+                  }}
+                  aria-label={`${row.campaign_number} 신고 사유 확인`}
+                >
+                  <img
+                    src="/images/management_page/cancel_info.svg"
+                    alt="신고 사유 정보"
+                    className={styles.report_reason_icon}
+                  />
+                  사유 확인
+                </button>
+              );
+            }
+            case "report_count":
+              return <span>{row.report_count}회</span>;
+            case "processed_date":
+              return <span>{row.processed_date}</span>;
+            case "block": {
+              const is_hovered = hovered_row_id === row.id;
+              return is_hovered ? (
+                <button
+                  onClick={() => handle_block_click(row.id)}
+                  className={styles.block_button}
+                  aria-label={`${row.campaign_name} 차단`}
+                >
+                  <img
+                    src="/images/icons/declaration_icon.svg"
+                    alt="차단"
+                    className={styles.block_icon}
+                  />
+                </button>
+              ) : null;
+            }
+            default:
+              return null;
+          }
+        }}
+        styles={styles}
+        tooltip_config={tooltip_config}
+        render_header={render_custom_header}
+        on_row_wrapper_hover={(row_id) => {
+          set_hovered_row_id(row_id);
+        }}
+        empty_message="신고 내역이 없습니다."
+      />
       {modal_state.item && (
         <ReportReasonModal
           is_open={modal_state.is_open}
@@ -361,19 +326,17 @@ export default function ReportedCampaignTable({
           report_reason={
             modal_state.item.report_reason ||
             get_report_code_info(modal_state.item.report_code)?.reason ||
-            '신고 사유가 없습니다.'
+            "신고 사유가 없습니다."
           }
           report_code={modal_state.item.report_code}
         />
       )}
-
-      {/* 차단 모달 */}
       <CampaignBlockModal
         is_open={block_modal_state.is_open}
         on_close={handle_block_modal_close}
         campaign_id={block_modal_state.campaign_id || undefined}
         on_block={handle_block_submit}
       />
-    </div>
+    </>
   );
 }

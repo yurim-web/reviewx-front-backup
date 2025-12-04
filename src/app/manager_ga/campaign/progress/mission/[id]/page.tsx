@@ -11,22 +11,22 @@
  * - 공통 로직은 useCampaignProgressDetail 훅과 CampaignProgressDetailLayout 컴포넌트로 추출했습니다.
  */
 
-'use client';
+"use client";
 
-import { useParams } from 'next/navigation';
-import Loading from '@/app/loading';
-import styles from '@/styles/partner/campaign_application/campaign_application.module.css';
-import { useCampaignProgressDetail } from '@/hooks/manager/common/campaign/useCampaignProgressDetail';
+import { useParams } from "next/navigation";
+import Loading from "@/app/loading";
+import styles from "@/styles/partner/campaign_application/campaign_application.module.css";
+import { useCampaignProgressDetail } from "@/hooks/manager/common/campaign/useCampaignProgressDetail";
 import CampaignProgressDetailLayout, {
   type RenderCardFunction,
-} from '@/components/manager/ga/campaign/progress/CampaignProgressDetailLayout';
-import BasicCard from '@/components/partner/campaign_application/card_type/basic/BasicCard';
-import BasicSelectedCard from '@/components/partner/campaign_application/card_type/basic/BasicSelectedCard';
+} from "@/components/manager/common/campaign/progress/CampaignProgressDetailLayout";
+import BasicCard from "@/components/partner/campaign_application/card_type/basic/BasicCard";
+import BasicSelectedCard from "@/components/partner/campaign_application/card_type/basic/BasicSelectedCard";
 import type {
   AllApplicant,
   CampaignWithApplicants,
-} from '@/data/partner/sharedCampaigns';
-import { type BasicApplicant } from '@/data/partner/campaign_application/delivery_applicants';
+} from "@/data/partner/sharedCampaigns";
+import { type BasicApplicant } from "@/data/partner/campaign_application/delivery_applicants";
 
 export default function ManagerMissionProgressDetailPage() {
   /**
@@ -54,7 +54,7 @@ export default function ManagerMissionProgressDetailPage() {
     handle_cancel_applicant,
     handle_download_applicants,
     handle_download_selected,
-  } = useCampaignProgressDetail(campaign_id, 'GA 미션형');
+  } = useCampaignProgressDetail(campaign_id, "GA 미션형");
 
   /**
    * 로딩 상태 처리
@@ -72,7 +72,7 @@ export default function ManagerMissionProgressDetailPage() {
         <div className={styles.page_header}>
           <h1 className={styles.page_title}>캠페인 상세 보기</h1>
         </div>
-        <div style={{ padding: '40px', textAlign: 'center', color: 'red' }}>
+        <div style={{ padding: "40px", textAlign: "center", color: "red" }}>
           {error_message}
         </div>
       </section>
@@ -88,7 +88,7 @@ export default function ManagerMissionProgressDetailPage() {
     is_selected: boolean,
     campaign_data: CampaignWithApplicants | null,
     handle_select: (id: string) => void,
-    handle_cancel: (id: string) => void,
+    handle_cancel: (id: string) => void
   ) => {
     const basic_applicant = applicant as BasicApplicant;
     return is_selected ? (
@@ -118,6 +118,7 @@ export default function ManagerMissionProgressDetailPage() {
       handle_download_selected={handle_download_selected}
       render_card={render_card}
       campaign_id={campaign_id}
+      manager_type="ga"
     />
   );
 }

@@ -42,11 +42,3 @@
   padding-bottom: 24px;
 }
 
-/* 페이지 제목 */
-.page_title {
-  color: #444;
-  font-size: 24px;
-  font-weight: 600;
-  line-height: 24px; /* 100% */
-  letter-spacing: -0.48px;
-}

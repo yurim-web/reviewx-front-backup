@@ -24,14 +24,14 @@
  *
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import styles from '@/styles/manager_ga/community/posts/post_filter_section.module.css';
+import { useState } from "react";
+import styles from "@/styles/manager_ga/community/posts/post_filter_section.module.css";
 import BaseFilterSection, {
   type FilterTag,
-} from '@/components/manager/ga/common/filter/BaseFilterSection';
-import type { PostDivision } from '@/data/manager_ga/community/postsData';
+} from "@/components/manager/ga/common/filter/BaseFilterSection";
+import type { PostDivision } from "@/data/manager_ga/community/postsData";
 
 interface PostFilterSectionProps {
   // 검색어 상태를 props로 받습니다
@@ -51,9 +51,9 @@ export default function PostFilterSection({
 
   // 선택된 필터 상태 관리
   const [selected_divisions, set_selected_divisions] = useState<PostDivision[]>(
-    [],
+    []
   );
-  const [selected_sort, set_selected_sort] = useState('최신순');
+  const [selected_sort, set_selected_sort] = useState("최신순");
 
   // 구분 필터 핸들러
   const handle_division_apply = (divisions: PostDivision[]) => {
@@ -90,7 +90,7 @@ export default function PostFilterSection({
   };
 
   // 정렬 옵션
-  const sort_options = ['최신순', '오래된순'];
+  const sort_options = ["최신순", "오래된순"];
 
   // 정렬 옵션 선택 핸들러
   const handle_sort_change = (sort: string) => {
@@ -103,7 +103,7 @@ export default function PostFilterSection({
     (division) => ({
       value: division,
       label: `구분: ${division}`,
-    }),
+    })
   );
 
   // 필터 태그 제거 핸들러
@@ -142,7 +142,7 @@ export default function PostFilterSection({
               className={`${styles.checkbox_icon} ${
                 selected_divisions.length > 0
                   ? styles.checkbox_icon_checked
-                  : ''
+                  : ""
               }`}
             ></div>
             <span className={styles.filter_text}>구분</span>
@@ -232,7 +232,7 @@ export default function PostFilterSection({
           >
             <h3>구분 선택</h3>
             <div className={styles.modal_options}>
-              {(['공지사항', '자주 묻는 질문', '이벤트'] as PostDivision[]).map(
+              {(["공지사항", "자주 묻는 질문", "이벤트"] as PostDivision[]).map(
                 (division) => (
                   <label key={division} className={styles.modal_option}>
                     <input
@@ -246,14 +246,14 @@ export default function PostFilterSection({
                           ]);
                         } else {
                           set_selected_divisions(
-                            selected_divisions.filter((d) => d !== division),
+                            selected_divisions.filter((d) => d !== division)
                           );
                         }
                       }}
                     />
                     <span>{division}</span>
                   </label>
-                ),
+                )
               )}
             </div>
             <div className={styles.modal_actions}>
@@ -275,4 +275,3 @@ export default function PostFilterSection({
     </div>
   );
 }
-

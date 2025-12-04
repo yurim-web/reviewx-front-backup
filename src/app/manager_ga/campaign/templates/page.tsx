@@ -18,13 +18,14 @@
 'use client';
 
 import styles from '@/styles/manager_ga/campaign/templates/page.module.css';
+import ManagerPageTitle from '@/components/manager/common/fragments/ManagerPageTitle';
 
 export default function TemplatesPage() {
   return (
     <div className={styles.container}>
       <div className={styles.main_content}>
         {/* 페이지 제목 */}
-        <h1 className={styles.page_title}>템플릿 관리</h1>
+        <ManagerPageTitle title="템플릿 관리" />
 
         {/* 준비중 메시지 섹션 */}
         <div className={styles.coming_soon_section}>

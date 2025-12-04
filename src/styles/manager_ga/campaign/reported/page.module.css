@@ -37,16 +37,6 @@
   /* max-width 제한 없음 - 관리자 페이지는 전체 너비 사용 */
 }
 
-/* 페이지 제목 */
-.page_title {
-  font-size: 24px;
-  font-weight: 600;
-  line-height: 24px;
-  letter-spacing: -0.48px;
-  color: #444444;
-  padding-bottom: 24px;
-}
-
 /* 섹션 제목 - 신고 내역 */
 .section_title {
   font-size: 18px;

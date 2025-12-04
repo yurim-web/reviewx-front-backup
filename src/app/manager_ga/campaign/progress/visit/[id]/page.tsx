@@ -15,40 +15,40 @@
  * - 방문형 캠페인은 릴스/숏츠 카드도 지원합니다.
  */
 
-'use client';
+"use client";
 
-import { useParams } from 'next/navigation';
-import Loading from '@/app/loading';
-import styles from '@/styles/partner/campaign_application/campaign_application.module.css';
-import { useCampaignProgressDetail } from '@/hooks/manager/common/campaign/useCampaignProgressDetail';
+import { useParams } from "next/navigation";
+import Loading from "@/app/loading";
+import styles from "@/styles/partner/campaign_application/campaign_application.module.css";
+import { useCampaignProgressDetail } from "@/hooks/manager/common/campaign/useCampaignProgressDetail";
 import CampaignProgressDetailLayout, {
   type RenderCardFunction,
-} from '@/components/manager/ga/campaign/progress/CampaignProgressDetailLayout';
+} from "@/components/manager/common/campaign/progress/CampaignProgressDetailLayout";
 
 // 방문형 카드 컴포넌트 (채널별 렌더링 + 릴스/숏츠 지원)
-import NaverBlogCard from '@/components/partner/campaign_application/card_type/naverblog/NaverBlogCard';
-import NaverClipCard from '@/components/partner/campaign_application/card_type/naverclip/NaverClipCard';
-import NaverClipSelectedCard from '@/components/partner/campaign_application/card_type/naverclip/NaverClipSelectedCard';
-import InstagramCard from '@/components/partner/campaign_application/card_type/instagram/InstagramCard';
-import InstagramSelectedCard from '@/components/partner/campaign_application/card_type/instagram/InstagramSelectedCard';
-import YoutubeCard from '@/components/partner/campaign_application/card_type/youtube/YoutubeCard';
-import YoutubeSelectedCard from '@/components/partner/campaign_application/card_type/youtube/YoutubeSelectedCard';
-import ReelsCard from '@/components/partner/campaign_application/card_type/reels/ReelsCard';
-import ReelsSelectedCard from '@/components/partner/campaign_application/card_type/reels/ReelsSelectedCard';
-import ShortsCard from '@/components/partner/campaign_application/card_type/shorts/ShortsCard';
-import ShortsSelectedCard from '@/components/partner/campaign_application/card_type/shorts/ShortsSelectedCard';
+import NaverBlogCard from "@/components/partner/campaign_application/card_type/naverblog/NaverBlogCard";
+import NaverClipCard from "@/components/partner/campaign_application/card_type/naverclip/NaverClipCard";
+import NaverClipSelectedCard from "@/components/partner/campaign_application/card_type/naverclip/NaverClipSelectedCard";
+import InstagramCard from "@/components/partner/campaign_application/card_type/instagram/InstagramCard";
+import InstagramSelectedCard from "@/components/partner/campaign_application/card_type/instagram/InstagramSelectedCard";
+import YoutubeCard from "@/components/partner/campaign_application/card_type/youtube/YoutubeCard";
+import YoutubeSelectedCard from "@/components/partner/campaign_application/card_type/youtube/YoutubeSelectedCard";
+import ReelsCard from "@/components/partner/campaign_application/card_type/reels/ReelsCard";
+import ReelsSelectedCard from "@/components/partner/campaign_application/card_type/reels/ReelsSelectedCard";
+import ShortsCard from "@/components/partner/campaign_application/card_type/shorts/ShortsCard";
+import ShortsSelectedCard from "@/components/partner/campaign_application/card_type/shorts/ShortsSelectedCard";
 
 // 타입 정의
 import type {
   AllApplicant,
   CampaignWithApplicants,
-} from '@/data/partner/sharedCampaigns';
+} from "@/data/partner/sharedCampaigns";
 import {
   type Applicant,
   type NaverClipApplicant,
   type InstagramApplicant,
   type YoutubeApplicant,
-} from '@/data/partner/campaign_application/delivery_applicants';
+} from "@/data/partner/campaign_application/delivery_applicants";
 
 /**
  * 방문형 캠페인 상세 컴포넌트
@@ -83,7 +83,7 @@ export default function ManagerVisitProgressDetailPage() {
     handle_cancel_applicant,
     handle_download_applicants,
     handle_download_selected,
-  } = useCampaignProgressDetail(campaign_id, 'GA 방문형');
+  } = useCampaignProgressDetail(campaign_id, "GA 방문형");
 
   /**
    * 로딩 상태 처리
@@ -101,7 +101,7 @@ export default function ManagerVisitProgressDetailPage() {
         <div className={styles.page_header}>
           <h1 className={styles.page_title}>캠페인 상세 보기</h1>
         </div>
-        <div style={{ padding: '40px', textAlign: 'center', color: 'red' }}>
+        <div style={{ padding: "40px", textAlign: "center", color: "red" }}>
           {error_message}
         </div>
       </section>
@@ -118,19 +118,19 @@ export default function ManagerVisitProgressDetailPage() {
     is_selected: boolean,
     campaign_data: CampaignWithApplicants | null,
     handle_select: (id: string) => void,
-    handle_cancel: (id: string) => void,
+    handle_cancel: (id: string) => void
   ) => {
     switch (applicant.channel) {
-      case '네이버블로그':
+      case "네이버블로그":
         return (
           <NaverBlogCard
             applicant={applicant as Applicant}
-            variant={is_selected ? 'selected' : 'applicant'}
+            variant={is_selected ? "selected" : "applicant"}
             onSelect={handle_select}
             onCancel={handle_cancel}
           />
         );
-      case '네이버클립':
+      case "네이버클립":
         return is_selected ? (
           <NaverClipSelectedCard
             applicant={applicant as NaverClipApplicant}
@@ -142,9 +142,9 @@ export default function ManagerVisitProgressDetailPage() {
             onSelect={handle_select}
           />
         );
-      case '인스타그램':
+      case "인스타그램":
         // 브랜드명이 '릴스'인 경우 ReelsCard 사용
-        if (campaign_data?.campaignInfo.brandName === '릴스') {
+        if (campaign_data?.campaignInfo.brandName === "릴스") {
           return is_selected ? (
             <ReelsSelectedCard
               applicant={applicant as InstagramApplicant}
@@ -169,9 +169,9 @@ export default function ManagerVisitProgressDetailPage() {
             onSelect={handle_select}
           />
         );
-      case '유튜브':
+      case "유튜브":
         // 브랜드명이 '숏츠'인 경우 ShortsCard 사용
-        if (campaign_data?.campaignInfo.brandName === '숏츠') {
+        if (campaign_data?.campaignInfo.brandName === "숏츠") {
           return is_selected ? (
             <ShortsSelectedCard
               applicant={applicant as YoutubeApplicant}
@@ -201,7 +201,7 @@ export default function ManagerVisitProgressDetailPage() {
         return (
           <NaverBlogCard
             applicant={applicant as unknown as Applicant}
-            variant={is_selected ? 'selected' : 'applicant'}
+            variant={is_selected ? "selected" : "applicant"}
             onSelect={handle_select}
             onCancel={handle_cancel}
           />
@@ -229,6 +229,7 @@ export default function ManagerVisitProgressDetailPage() {
       handle_download_selected={handle_download_selected}
       render_card={render_card}
       campaign_id={campaign_id}
+      manager_type="ga"
     />
   );
 }

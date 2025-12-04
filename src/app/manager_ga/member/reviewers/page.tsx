@@ -24,25 +24,26 @@
  * @returns 리뷰어 목록 페이지 JSX
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import styles from '@/styles/manager_ga/member/reviewers/page.module.css';
-import ReviewerStatsSection from '@/components/manager/ga/member/reviewers/section/ReviewerStatsSection';
-import ReviewerFilterSection from '@/components/manager/ga/member/reviewers/section/ReviewerFilterSection';
-import ReviewerTable from '@/components/manager/ga/member/reviewers/section/ReviewerTable';
+import { useState } from "react";
+import styles from "@/styles/manager_ga/member/reviewers/page.module.css";
+import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
+import ReviewerStatsSection from "@/components/manager/common/member/reviewers/ReviewerStatsSection";
+import ReviewerFilterSection from "@/components/manager/common/member/reviewers/ReviewerFilterSection";
+import ReviewerTable from "@/components/manager/common/member/reviewers/ReviewerTable";
 
 export default function ReviewersPage() {
   // 검색어 상태 관리
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
   // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
-  const [search_query, set_search_query] = useState<string>('');
+  const [search_query, set_search_query] = useState<string>("");
 
   return (
     <div className={styles.container}>
       <div className={styles.main_content}>
         {/* 페이지 제목 */}
-        <h1 className={styles.page_title}>리뷰어 목록</h1>
+        <ManagerPageTitle title="리뷰어 목록" />
 
         {/* 리뷰어 통계 섹션 */}
         <ReviewerStatsSection />
@@ -54,7 +55,10 @@ export default function ReviewersPage() {
         />
 
         {/* 리뷰어 목록 테이블 */}
-        <ReviewerTable search_query={search_query} />
+        <ReviewerTable 
+          search_query={search_query} 
+          detail_path="/manager_ga/member/reviewers"
+        />
       </div>
     </div>
   );

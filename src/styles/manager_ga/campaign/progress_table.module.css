@@ -113,6 +113,7 @@
 /* 테이블 호버시 배경색 변경 */
 .table_row:hover {
   background-color: #f9f9f9;
+  max-height: 61px;
 }
 
 /* 테이블 셀 */

@@ -15,15 +15,15 @@ import {
   get_partner_detail_by_id,
   type PartnerDetail,
 } from "@/data/manager_ga/member/partners";
-import CampaignHistoryModal from "@/components/manager/ga/member/partners/modal/CampaignHistoryModal";
-import PenaltyHistoryModal from "@/components/manager/ga/member/partners/modal/PenaltyHistoryModal";
-import MemberDetailLayout from "@/components/manager/ga/member/member_detail/MemberDetailLayout";
-import ProfileSection from "@/components/manager/ga/member/member_detail/ProfileSection";
+import CampaignHistoryModal from "@/components/manager/common/member/partners/CampaignHistoryModal";
+import PenaltyHistoryModal from "@/components/manager/common/member/partners/PenaltyHistoryModal";
+import MemberDetailLayout from "@/components/manager/common/member/member_detail/MemberDetailLayout";
+import ProfileSection from "@/components/manager/common/member/member_detail/ProfileSection";
 import ActivityInfoSection, {
   type ActivityInfoItem,
-} from "@/components/manager/ga/member/member_detail/ActivityInfoSection";
-import BusinessInfoSection from "@/components/manager/ga/member/partners/section/BusinessInfoSection";
-import ContactPersonSection from "@/components/manager/ga/member/partners/section/ContactPersonSection";
+} from "@/components/manager/common/member/member_detail/ActivityInfoSection";
+import BusinessInfoSection from "@/components/manager/common/member/partners/section/BusinessInfoSection";
+import ContactPersonSection from "@/components/manager/common/member/partners/section/ContactPersonSection";
 import styles from "@/styles/manager_ga/member/member_detail/detail_page.module.css";
 
 export default function PartnerDetailPage() {
