@@ -20,10 +20,10 @@
 import { useParams } from 'next/navigation';
 import Loading from '@/app/loading';
 import styles from '@/styles/partner/campaign_application/campaign_application.module.css';
-import { useCampaignProgressDetail } from '@/components/manager_common/campaign/progress/hooks/useCampaignProgressDetail';
+import { useCampaignProgressDetail } from '@/hooks/manager/common/campaign/useCampaignProgressDetail';
 import CampaignProgressDetailLayout, {
   type RenderCardFunction,
-} from '@/components/manager_ga/campaign/progress/CampaignProgressDetailLayout';
+} from '@/components/manager/ga/campaign/progress/CampaignProgressDetailLayout';
 
 // 방문형 카드 컴포넌트 (채널별 렌더링 + 릴스/숏츠 지원)
 import NaverBlogCard from '@/components/partner/campaign_application/card_type/naverblog/NaverBlogCard';

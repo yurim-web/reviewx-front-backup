@@ -18,7 +18,7 @@
  * - 접속 통계 및 디바이스 통계
  * - 전체 회원 통계 (활성화 비율, 파트너/리뷰어 통계)
  * - 채널별 회원 통계
-
+ *
  */
 
 'use client';
@@ -27,10 +27,10 @@ import { useState } from 'react';
 import layoutStyles from '@/styles/manager_ga/layout/layout.module.css';
 import DateFilterSection, {
   DateFilter,
-} from '@/components/manager_ga/dashboard/section/DateFilterSection';
-import CampaignSummarySection from '@/components/manager_ga/dashboard/section/CampaignSummarySection';
-import ChartsSection from '@/components/manager_ga/dashboard/ChartsSection';
-import MemberStatsSection from '@/components/manager_ga/dashboard/MemberStatsSection';
+} from '@/components/manager/ga/dashboard/section/DateFilterSection';
+import CampaignSummarySection from '@/components/manager/ga/dashboard/section/CampaignSummarySection';
+import ChartsSection from '@/components/manager/ga/dashboard/ChartsSection';
+import MemberStatsSection from '@/components/manager/ga/dashboard/MemberStatsSection';
 import { campaignStats } from '@/data/manager_ga/dashboard/dashboardData';
 
 export default function ManagerGAPage() {
@@ -40,7 +40,7 @@ export default function ManagerGAPage() {
   const [dateFilter, setDateFilter] = useState<DateFilter>('month');
 
   // 날짜 필터 변경 핸들러
-  // 화살표 함수로 이벤트 핸들러를 정의합니다
+  // 이벤트 핸들러 함수로, 사용자가 필터를 변경할 때 호출됩니다
   const handleDateFilterChange = (filter: DateFilter) => {
     setDateFilter(filter);
   };

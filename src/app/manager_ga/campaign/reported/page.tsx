@@ -1,20 +1,20 @@
 /* ========================================
-   📋 GA 관리자 신고내역 페이지
+   ⚠️ GA 관리자 신고 이력 페이지
    ======================================== */
 
 /**
- * GA 관리자 신고내역 페이지
+ * GA 관리자 신고 이력 페이지
  *
- * 목적: GA 관리자가 캠페인 신고 내역을 확인하고 관리할 수 있는 페이지입니다.
+ * 목적: GA 관리자가 캠페인 신고 이력을 확인하고 관리할 수 있는 페이지입니다.
  *
  * 페이지 경로:
  * - /manager_ga/campaign/reported
  *
  * 주요 기능:
- * - 신고 코드 안내 섹션 (각 신고 코드의 카테고리와 사유 표시)
- * - 신고 내역 통계 섹션 (신고 코드별 신고 횟수 집계)
- * - 필터 섹션 (날짜, 신고 코드, 검색, 정렬, 차단)
- * - 신고 내역 목록 테이블 (캠페인 번호, 캠페인명, 신고 코드, 신고 사유, 검수자, 대상자, 처리일, 신고 횟수, 사유 확인하기)
+ * - 신고 코드 안내 섹션 (각 신고 코드와 카테고리의 의미 표시)
+ * - 신고 이력 통계 섹션 (신고 코드별 신고 횟수 집계)
+ * - 필터 섹션 (날짜, 신고 코드, 검색어, 정렬, 차단)
+ * - 신고 이력 목록 테이블 (캠페인 번호, 캠페인명, 신고 코드, 신고 사유, 검토자, 등록자, 처리일, 신고 횟수, 사유 확인하기)
  *
  */
 
@@ -22,34 +22,34 @@
 
 import { useState } from 'react';
 import styles from '@/styles/manager_ga/campaign/reported/page.module.css';
-import ReportCodeInfoSection from '@/components/manager_ga/campaign/reported/section/ReportCodeInfoSection';
-import ReportStatsSection from '@/components/manager_ga/campaign/reported/section/ReportStatsSection';
-import FilterSection from '@/components/manager_ga/campaign/reported/section/FilterSection';
-import ReportedCampaignTable from '@/components/manager_ga/campaign/reported/section/ReportedCampaignTable';
+import ReportCodeInfoSection from '@/components/manager/ga/campaign/reported/section/ReportCodeInfoSection';
+import ReportStatsSection from '@/components/manager/ga/campaign/reported/section/ReportStatsSection';
+import FilterSection from '@/components/manager/ga/campaign/reported/section/FilterSection';
+import ReportedCampaignTable from '@/components/manager/ga/campaign/reported/section/ReportedCampaignTable';
 import type { ReportCode } from '@/data/manager_ga/reported';
 
 /**
- * 신고내역 페이지 컴포넌트
+ * 신고 이력 페이지 컴포넌트
  *
- * 목적: GA 관리자가 캠페인 신고 내역을 확인하고 관리할 수 있는 페이지입니다.
+ * 목적: GA 관리자가 캠페인 신고 이력을 확인하고 관리할 수 있는 페이지입니다.
  *
  * 페이지 경로:
  * - /manager_ga/campaign/reported
  *
  * 주요 기능:
- * - 신고 코드 안내 섹션 (각 신고 코드의 카테고리와 사유 표시)
- * - 신고 내역 통계 섹션 (신고 코드별 신고 횟수 집계)
- * - 필터 섹션 (날짜, 신고 코드, 검색, 정렬, 차단)
- * - 신고 내역 목록 테이블 (캠페인 번호, 캠페인명, 신고 코드, 신고 사유, 검수자, 대상자, 처리일, 신고 횟수, 사유 확인하기)
+ * - 신고 코드 안내 섹션 (각 신고 코드와 카테고리의 의미 표시)
+ * - 신고 이력 통계 섹션 (신고 코드별 신고 횟수 집계)
+ * - 필터 섹션 (날짜, 신고 코드, 검색어, 정렬, 차단)
+ * - 신고 이력 목록 테이블 (캠페인 번호, 캠페인명, 신고 코드, 신고 사유, 검토자, 등록자, 처리일, 신고 횟수, 사유 확인하기)
  *
  * 컴포넌트 구조:
  * - ReportCodeInfoSection: 신고 코드 안내 섹션
- * - ReportStatsSection: 신고 내역 통계 섹션
+ * - ReportStatsSection: 신고 이력 통계 섹션
  * - FilterSection: 필터 섹션
- * - ReportedCampaignTable: 신고내역 테이블
+ * - ReportedCampaignTable: 신고 이력 테이블
  *
  *
- * @returns 신고내역 페이지 JSX
+ * @returns 신고 이력 페이지 JSX
  */
 export default function ReportedPage() {
   // 검색어 상태 관리
@@ -66,13 +66,13 @@ export default function ReportedPage() {
     <div className={styles.container}>
       <div className={styles.main_content}>
         {/* 페이지 제목 */}
-        <h1 className={styles.page_title}>캠페인 신고 내역</h1>
+        <h1 className={styles.page_title}>캠페인 신고 이력</h1>
 
         {/* 신고 코드 안내 섹션 */}
         <ReportCodeInfoSection />
 
-        {/* 신고 내역 섹션 제목 */}
-        <h2 className={styles.section_title}>신고 내역</h2>
+        {/* 신고 이력 섹션 제목 */}
+        <h2 className={styles.section_title}>신고 이력</h2>
 
         {/* 필터 섹션 */}
         <FilterSection
@@ -82,10 +82,10 @@ export default function ReportedPage() {
           on_report_codes_change={set_selected_report_codes}
         />
 
-        {/* 신고 내역 통계 섹션 */}
+        {/* 신고 이력 통계 섹션 */}
         <ReportStatsSection />
 
-        {/* 신고내역 테이블 */}
+        {/* 신고 이력 테이블 */}
         <ReportedCampaignTable
           search_query={search_query}
           selected_report_codes={selected_report_codes}

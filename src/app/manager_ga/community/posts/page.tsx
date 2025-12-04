@@ -11,7 +11,7 @@
  * - /manager_ga/community/posts
  *
  * 주요 기능:
- * - 필터 섹션 (선택 기간 조회, 구분, 검색, 고정, 해제, 수정, 등록, 삭제, 정렬)
+ * - 필터 섹션 (선택 기간 조회, 구분, 검색어, 고정, 삭제, 수정, 등록, 답변, 정렬)
  * - 게시글 목록 테이블 (체크박스, 번호, 구분, 카테고리, 제목, 조회수, 등록일, 등록자)
  *
  * 컴포넌트 구조:
@@ -26,8 +26,8 @@
 
 import { useState } from 'react';
 import styles from '@/styles/manager_ga/community/posts/page.module.css';
-import PostFilterSection from '@/components/manager_common/community/posts/section/PostFilterSection';
-import PostTable from '@/components/manager_common/community/posts/section/PostTable';
+import PostFilterSection from '@/components/manager/common/community/posts/section/PostFilterSection';
+import PostTable from '@/components/manager/common/community/posts/section/PostTable';
 
 export default function PostsPage() {
   // 검색어 상태 관리
@@ -59,4 +59,3 @@ export default function PostsPage() {
     </div>
   );
 }
-

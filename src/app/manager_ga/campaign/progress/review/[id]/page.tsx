@@ -20,17 +20,20 @@
 import { useParams } from 'next/navigation';
 import Loading from '@/app/loading';
 import styles from '@/styles/partner/campaign_application/campaign_application.module.css';
-import { useCampaignProgressDetail } from '@/components/manager_common/campaign/progress/hooks/useCampaignProgressDetail';
+import { useCampaignProgressDetail } from '@/hooks/manager/common/campaign/useCampaignProgressDetail';
 import CampaignProgressDetailLayout, {
   type RenderCardFunction,
-} from '@/components/manager_ga/campaign/progress/CampaignProgressDetailLayout';
+} from '@/components/manager/ga/campaign/progress/CampaignProgressDetailLayout';
 
 // 구매평 전용 카드 컴포넌트들 (basic 타입만 사용)
 import BasicCard from '@/components/partner/campaign_application/card_type/basic/BasicCard';
 import BasicSelectedCard from '@/components/partner/campaign_application/card_type/basic/BasicSelectedCard';
 
 // 타입 정의
-import type { AllApplicant, CampaignWithApplicants } from '@/data/partner/sharedCampaigns';
+import type {
+  AllApplicant,
+  CampaignWithApplicants,
+} from '@/data/partner/sharedCampaigns';
 import { type BasicApplicant } from '@/data/partner/campaign_application/delivery_applicants';
 
 /**
@@ -115,9 +118,7 @@ export default function ManagerReviewProgressDetailPage() {
         />
       );
     } else {
-      return (
-        <BasicCard applicant={basic_applicant} onSelect={handle_select} />
-      );
+      return <BasicCard applicant={basic_applicant} onSelect={handle_select} />;
     }
   };
 

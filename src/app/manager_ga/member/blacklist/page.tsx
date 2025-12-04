@@ -1,9 +1,9 @@
 /* ========================================
-   🚫 GA 관리자 차단 내역 페이지
+   🚫 GA 관리자 차단 이력 페이지
    ======================================== */
 
 /**
- * GA 관리자 차단 내역 페이지
+ * GA 관리자 차단 이력 페이지
  *
  * 목적: GA 관리자가 차단된 회원 목록을 확인하고 관리할 수 있는 페이지입니다.
  *
@@ -11,23 +11,22 @@
  * - /manager_ga/member/blacklist
  *
  * 주요 기능:
- * - 필터 섹션 (선택 기간 조회, 구분, 차단 코드, 검색, 정렬, 해제)
- * - 차단 내역 테이블 (체크박스, 이름/상호명, 아이디, 구분, 보유 포인트, 아이피, 차단 코드, 차단 사유, 등록일, 등록자)
+ * - 필터 섹션 (선택 기간 조회, 구분, 차단 코드, 검색어, 정렬, 삭제)
+ * - 차단 이력 테이블 (체크박스, 이름/상호명, 구분, 보유 포인트, 등급, 차단 코드, 차단 사유, 등록일, 등록자)
  *
  * 컴포넌트 구조:
  * - BlacklistFilterSection: 필터 섹션
- * - BlacklistTable: 차단 내역 테이블
+ * - BlacklistTable: 차단 이력 테이블
  *
- *
- * @returns 차단 내역 페이지 JSX
+ * @returns 차단 이력 페이지 JSX
  */
 
 'use client';
 
 import { useState } from 'react';
 import styles from '@/styles/manager_ga/member/blacklist/page.module.css';
-import BlacklistFilterSection from '@/components/manager_ga/member/blacklist/section/BlacklistFilterSection';
-import BlacklistTable from '@/components/manager_ga/member/blacklist/section/BlacklistTable';
+import BlacklistFilterSection from '@/components/manager/ga/member/blacklist/section/BlacklistFilterSection';
+import BlacklistTable from '@/components/manager/ga/member/blacklist/section/BlacklistTable';
 
 export default function BlacklistPage() {
   // 검색어 상태 관리
@@ -39,7 +38,7 @@ export default function BlacklistPage() {
     <div className={styles.container}>
       <div className={styles.main_content}>
         {/* 페이지 제목 */}
-        <h1 className={styles.page_title}>차단 내역</h1>
+        <h1 className={styles.page_title}>차단 이력</h1>
 
         {/* 필터 섹션 */}
         <BlacklistFilterSection
@@ -47,7 +46,7 @@ export default function BlacklistPage() {
           on_search_change={set_search_query}
         />
 
-        {/* 차단 내역 테이블 */}
+        {/* 차단 이력 테이블 */}
         <BlacklistTable search_query={search_query} />
       </div>
     </div>

@@ -20,10 +20,10 @@
 import { useParams } from 'next/navigation';
 import Loading from '@/app/loading';
 import styles from '@/styles/partner/campaign_application/campaign_application.module.css';
-import { useCampaignProgressDetail } from '@/components/manager_common/campaign/progress/hooks/useCampaignProgressDetail';
+import { useCampaignProgressDetail } from '@/hooks/manager/common/campaign/useCampaignProgressDetail';
 import CampaignProgressDetailLayout, {
   type RenderCardFunction,
-} from '@/components/manager_ga/campaign/progress/CampaignProgressDetailLayout';
+} from '@/components/manager/ga/campaign/progress/CampaignProgressDetailLayout';
 
 // 배송형 카드 컴포넌트 (채널별 렌더링)
 import NaverBlogCard from '@/components/partner/campaign_application/card_type/naverblog/NaverBlogCard';
@@ -35,7 +35,10 @@ import YoutubeCard from '@/components/partner/campaign_application/card_type/you
 import YoutubeSelectedCard from '@/components/partner/campaign_application/card_type/youtube/YoutubeSelectedCard';
 
 // 타입 정의
-import type { AllApplicant, CampaignWithApplicants } from '@/data/partner/sharedCampaigns';
+import type {
+  AllApplicant,
+  CampaignWithApplicants,
+} from '@/data/partner/sharedCampaigns';
 import {
   type Applicant,
   type NaverClipApplicant,
@@ -204,4 +207,3 @@ export default function ManagerDeliveryProgressDetailPage() {
     />
   );
 }
-

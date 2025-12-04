@@ -31,15 +31,15 @@ import {
   type ReviewerDetail,
   type Channel,
 } from '@/data/manager_ga/member/reviewers';
-import CampaignHistoryModal from '@/components/manager_ga/member/reviewers/modal/CampaignHistoryModal';
-import PenaltyHistoryModal from '@/components/manager_ga/member/reviewers/modal/PenaltyHistoryModal';
-import MemberDetailLayout from '@/components/manager_ga/member/member_detail/MemberDetailLayout';
-import ProfileSection from '@/components/manager_ga/member/member_detail/ProfileSection';
+import CampaignHistoryModal from '@/components/manager/ga/member/reviewers/modal/CampaignHistoryModal';
+import PenaltyHistoryModal from '@/components/manager/ga/member/reviewers/modal/PenaltyHistoryModal';
+import MemberDetailLayout from '@/components/manager/ga/member/member_detail/MemberDetailLayout';
+import ProfileSection from '@/components/manager/ga/member/member_detail/ProfileSection';
 import ActivityInfoSection, {
   type ActivityInfoItem,
-} from '@/components/manager_ga/member/member_detail/ActivityInfoSection';
-import ChannelInfoSection from '@/components/manager_ga/member/reviewers/section/ChannelInfoSection';
-import AccountInfoSection from '@/components/manager_ga/member/reviewers/section/AccountInfoSection';
+} from '@/components/manager/ga/member/member_detail/ActivityInfoSection';
+import ChannelInfoSection from '@/components/manager/ga/member/reviewers/section/ChannelInfoSection';
+import AccountInfoSection from '@/components/manager/ga/member/reviewers/section/AccountInfoSection';
 import styles from '@/styles/manager_ga/member/member_detail/detail_page.module.css';
 import infoCardStyles from '@/styles/manager_ga/member/member_detail/info_card.module.css';
 

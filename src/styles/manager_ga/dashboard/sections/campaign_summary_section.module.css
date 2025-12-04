@@ -111,9 +111,11 @@
 /* 캠페인 관리 요약 섹션 진행 바 */
 .campaign_summary_section_progress_bar {
   height: 100%;
+  min-height: 8px;
   background-color: #444444;
   border-radius: 8px;
   transition: width 0.3s;
+  display: block;
 }
 
 /* 캠페인 관리 요약 섹션 진행 바 - 빨간색 */

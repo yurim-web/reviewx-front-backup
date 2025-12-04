@@ -1,5 +1,5 @@
 /* ========================================
-   🏢 GA 관리자 파트너 목록 페이지
+   👥 GA 관리자 파트너 목록 페이지
    ======================================== */
 
 /**
@@ -11,9 +11,9 @@
  * - /manager_ga/member/partners
  *
  * 주요 기능:
- * - 파트너 통계 섹션 (전체 가입자 수, 월간 활동 회원, 월간 신규 가입자 수, 휴면 회원)
- * - 필터 섹션 (채널, 구분, 유형, 상태, 검색, 정렬, 차단, 다운로드)
- * - 파트너 목록 테이블 (번호, 상호명, 사업자등록번호·대표자명, 구분, 접속일, 가입일, 캠페인 진행, 캠페인 완료, 보유 포인트, 사용 포인트, 유형, 상태)
+ * - 파트너 통계 섹션 (전체 가입자 수, 간단 활동 회원, 간단 정규 가입자 수, 면제 회원)
+ * - 필터 섹션 (채널, 구분, 유형, 상태, 검색어, 정렬, 차단, 다운로드)
+ * - 파트너 목록 테이블 (번호, 상호명, 사업자등록번호·대표자, 구분, 가입일, 캠페인 진행, 캠페인 완료, 보유 포인트, 사용 포인트, 유형, 상태)
  *
  * 컴포넌트 구조:
  * - PartnerStatsSection: 파트너 통계 섹션
@@ -28,9 +28,9 @@
 
 import { useState } from 'react';
 import styles from '@/styles/manager_ga/member/partners/page.module.css';
-import PartnerStatsSection from '@/components/manager_ga/member/partners/section/PartnerStatsSection';
-import PartnerFilterSection from '@/components/manager_ga/member/partners/section/PartnerFilterSection';
-import PartnerTable from '@/components/manager_ga/member/partners/section/PartnerTable';
+import PartnerStatsSection from '@/components/manager/ga/member/partners/section/PartnerStatsSection';
+import PartnerFilterSection from '@/components/manager/ga/member/partners/section/PartnerFilterSection';
+import PartnerTable from '@/components/manager/ga/member/partners/section/PartnerTable';
 
 export default function PartnersPage() {
   // 검색어 상태 관리
@@ -59,5 +59,3 @@ export default function PartnersPage() {
     </div>
   );
 }
-
-

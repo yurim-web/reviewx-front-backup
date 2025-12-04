@@ -16,13 +16,16 @@
 import { useParams } from 'next/navigation';
 import Loading from '@/app/loading';
 import styles from '@/styles/partner/campaign_application/campaign_application.module.css';
-import { useCampaignProgressDetail } from '@/components/manager_common/campaign/progress/hooks/useCampaignProgressDetail';
+import { useCampaignProgressDetail } from '@/hooks/manager/common/campaign/useCampaignProgressDetail';
 import CampaignProgressDetailLayout, {
   type RenderCardFunction,
-} from '@/components/manager_ga/campaign/progress/CampaignProgressDetailLayout';
+} from '@/components/manager/ga/campaign/progress/CampaignProgressDetailLayout';
 import BasicCard from '@/components/partner/campaign_application/card_type/basic/BasicCard';
 import BasicSelectedCard from '@/components/partner/campaign_application/card_type/basic/BasicSelectedCard';
-import type { AllApplicant, CampaignWithApplicants } from '@/data/partner/sharedCampaigns';
+import type {
+  AllApplicant,
+  CampaignWithApplicants,
+} from '@/data/partner/sharedCampaigns';
 import { type BasicApplicant } from '@/data/partner/campaign_application/delivery_applicants';
 
 export default function ManagerMissionProgressDetailPage() {
@@ -89,10 +92,7 @@ export default function ManagerMissionProgressDetailPage() {
   ) => {
     const basic_applicant = applicant as BasicApplicant;
     return is_selected ? (
-      <BasicSelectedCard
-        applicant={basic_applicant}
-        onCancel={handle_cancel}
-      />
+      <BasicSelectedCard applicant={basic_applicant} onCancel={handle_cancel} />
     ) : (
       <BasicCard applicant={basic_applicant} onSelect={handle_select} />
     );

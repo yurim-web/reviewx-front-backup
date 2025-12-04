@@ -91,11 +91,156 @@
   /* 이전/다음 달의 날짜 스타일 (회색으로 표시) */
   --rdp-day_outside: #999; /* 이전/다음 달 날짜 텍스트 색상 */
   --rdp-day_outside_opacity: 0.5; /* 이전/다음 달 날짜 투명도 */
-  
+
   /* 선택된 날짜 범위 스타일 */
   --rdp-range_start: #2196f3; /* 범위 시작일 배경색 */
   --rdp-range_end: #2196f3; /* 범위 종료일 배경색 */
   --rdp-range_middle: #e3f2fd; /* 범위 중간 날짜 배경색 */
+}
+
+/* react-day-picker 기본 스타일 */
+.date_picker :global(.rdp) {
+  --rdp-cell-size: 40px;
+  --rdp-accent-color: #2196f3;
+  --rdp-background-color: #e3f2fd;
+  --rdp-accent-color-dark: #1976d2;
+  --rdp-background-color-dark: #bbdefb;
+  --rdp-outline: 2px solid var(--rdp-accent-color);
+  --rdp-outline-selected: 3px solid var(--rdp-accent-color);
+  margin: 0;
+}
+
+.date_picker :global(.rdp-button_reset) {
+  appearance: none;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  cursor: default;
+  color: inherit;
+  border: 0;
+  background-color: transparent;
+  font: inherit;
+}
+
+.date_picker :global(.rdp-button) {
+  border: 2px solid transparent;
+}
+
+.date_picker :global(.rdp-button[disabled]) {
+  opacity: 0.25;
+}
+
+.date_picker :global(.rdp-button:not([disabled])) {
+  cursor: pointer;
+}
+
+.date_picker :global(.rdp-months) {
+  display: flex;
+}
+
+.date_picker :global(.rdp-month) {
+  margin: 0 1em;
+}
+
+.date_picker :global(.rdp-month:first-child) {
+  margin-left: 0;
+}
+
+.date_picker :global(.rdp-month:last-child) {
+  margin-right: 0;
+}
+
+.date_picker :global(.rdp-table) {
+  width: 100%;
+  max-width: calc(var(--rdp-cell-size) * 7);
+  border-collapse: collapse;
+}
+
+.date_picker :global(.rdp-with_weeknumber .rdp-table) {
+  max-width: calc(var(--rdp-cell-size) * 8);
+}
+
+.date_picker :global(.rdp-caption) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0;
+  text-align: left;
+}
+
+.date_picker :global(.rdp-multiple_months .rdp-caption) {
+  position: relative;
+  display: block;
+  text-align: center;
+}
+
+.date_picker :global(.rdp-caption_label) {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 0 0.25rem;
+  white-space: nowrap;
+  color: currentColor;
+  border: 0;
+  border: 2px solid transparent;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.date_picker :global(.rdp-nav) {
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.date_picker :global(.rdp-multiple_months .rdp-caption_start .rdp-nav) {
+  position: absolute;
+  right: 0;
+}
+
+.date_picker :global(.rdp-multiple_months .rdp-caption_end .rdp-nav) {
+  position: absolute;
+  left: 0;
+}
+
+.date_picker :global(.rdp-button_previous),
+.date_picker :global(.rdp-button_next) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--rdp-cell-size);
+  height: var(--rdp-cell-size);
+  padding: 0.25rem;
+  border-radius: 100%;
+}
+
+.date_picker :global(.rdp-button_previous:not([disabled])),
+.date_picker :global(.rdp-button_next:not([disabled])) {
+  cursor: pointer;
+}
+
+.date_picker :global(.rdp-weeknumber),
+.date_picker :global(.rdp-day) {
+  width: var(--rdp-cell-size);
+  height: var(--rdp-cell-size);
+  text-align: center;
+}
+
+.date_picker :global(.rdp-day_today:not(.rdp-day_outside)) {
+  font-weight: bold;
+}
+
+.date_picker :global(.rdp-day_selected),
+.date_picker :global(.rdp-day_selected:focus-visible),
+.date_picker :global(.rdp-day_selected:active) {
+  color: white;
+  opacity: 1;
+  background-color: var(--rdp-accent-color);
+  font-weight: bold;
 }
 
 /* 이전/다음 달의 날짜 스타일 (회색으로 표시) - 스카이스캐너 스타일 */
@@ -121,7 +266,8 @@
 }
 
 /* 달력의 날짜 셀에 호버 효과 */
-.date_picker :global(.rdp-day:not(.rdp-day_disabled):not(.rdp-day_outside)):hover {
+.date_picker
+  :global(.rdp-day:not(.rdp-day_disabled):not(.rdp-day_outside)):hover {
   background-color: #f0f0f0;
   border-radius: 50%;
   cursor: pointer;
@@ -175,14 +321,14 @@
 }
 
 /* 주말 날짜 색상 (선택사항) */
-.date_picker :global(.rdp-day[aria-label*="일요일"]),
-.date_picker :global(.rdp-day[aria-label*="토요일"]) {
+.date_picker :global(.rdp-day[aria-label*='일요일']),
+.date_picker :global(.rdp-day[aria-label*='토요일']) {
   color: #e53935; /* 빨간색 (한국 달력 스타일) */
 }
 
 /* 이전/다음 달 날짜도 주말이면 빨간색으로 */
-.date_picker :global(.rdp-day_outside[aria-label*="일요일"]),
-.date_picker :global(.rdp-day_outside[aria-label*="토요일"]) {
+.date_picker :global(.rdp-day_outside[aria-label*='일요일']),
+.date_picker :global(.rdp-day_outside[aria-label*='토요일']) {
   color: #ff9999; /* 연한 빨간색 */
 }
 
@@ -293,6 +439,3 @@
 .modal_body::-webkit-scrollbar-thumb:hover {
   background: #b0b0b0;
 }
-
-
-

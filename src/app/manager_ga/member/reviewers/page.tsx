@@ -11,9 +11,9 @@
  * - /manager_ga/member/reviewers
  *
  * 주요 기능:
- * - 리뷰어 통계 섹션 (전체 가입자 수, 월간 활동 회원, 월간 신규 가입자 수, 휴면 회원)
- * - 필터 섹션 (채널, 등급, 유형, 상태, 검색, 정렬, 차단, 다운로드)
- * - 리뷰어 목록 테이블 (번호, 이름, 채널, 구분, 캠페인 참여, 캠페인 완료, 보유 포인트, 출금 포인트, 유형, 상태, 접속일, 가입일)
+ * - 리뷰어 통계 섹션 (전체 가입자 수, 간단 활동 회원, 간단 정규 가입자 수, 면제 회원)
+ * - 필터 섹션 (채널, 등급, 유형, 상태, 검색어, 정렬, 차단, 다운로드)
+ * - 리뷰어 목록 테이블 (번호, 이름, 채널, 구분, 캠페인 참여, 캠페인 완료, 보유 포인트, 출금 포인트, 유형, 상태, 가입일, 가입일)
  *
  * 컴포넌트 구조:
  * - ReviewerStatsSection: 리뷰어 통계 섹션
@@ -28,9 +28,9 @@
 
 import { useState } from 'react';
 import styles from '@/styles/manager_ga/member/reviewers/page.module.css';
-import ReviewerStatsSection from '@/components/manager_ga/member/reviewers/section/ReviewerStatsSection';
-import ReviewerFilterSection from '@/components/manager_ga/member/reviewers/section/ReviewerFilterSection';
-import ReviewerTable from '@/components/manager_ga/member/reviewers/section/ReviewerTable';
+import ReviewerStatsSection from '@/components/manager/ga/member/reviewers/section/ReviewerStatsSection';
+import ReviewerFilterSection from '@/components/manager/ga/member/reviewers/section/ReviewerFilterSection';
+import ReviewerTable from '@/components/manager/ga/member/reviewers/section/ReviewerTable';
 
 export default function ReviewersPage() {
   // 검색어 상태 관리
@@ -59,5 +59,3 @@ export default function ReviewersPage() {
     </div>
   );
 }
-
-
