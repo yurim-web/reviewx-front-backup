@@ -7,20 +7,54 @@
  *
  * 목적: 여러 테이블 컴포넌트에서 공통으로 사용되는 테이블 구조를 제공하는 범용 컴포넌트입니다.
  *
- * 주요 기능:
- * - 테이블 헤더와 바디 구조 제공
- * - 커스텀 셀 렌더링 지원 (render prop 패턴)
- * - 체크박스 선택 기능 (선택사항)
- * - 호버 기능 (선택사항)
- * - 빈 상태 메시지 표시
- * - 정렬 아이콘 표시 (선택사항)
+ * 📍 사용 위치:
+ * - 직접 사용 컴포넌트:
+ *   - CampaignTable 컴포넌트 (캠페인 진행 상황 테이블)
+ *   - PostTable 컴포넌트 (게시글 목록 테이블)
+ *   - BlacklistTable 컴포넌트 (차단 내역 테이블)
+ *   - CommonTableWithTooltip 컴포넌트 (툴팁 기능이 포함된 범용 테이블)
  *
- * 사용 위치:
- * - src/components/manager/common/community/posts/section/PostTable.tsx (게시글 테이블)
- * - src/components/manager/common/campaign/progress/table/CampaignTable.tsx (캠페인 진행 상황 테이블)
- * - src/components/manager/common/member/blacklist/BlacklistTable.tsx (블랙리스트 테이블)
- * - src/components/manager/common/table/CommonTableWithTooltip.tsx (툴팁 기능이 포함된 범용 테이블 컴포넌트)
+ * - 최종 사용 페이지:
+ *   캠페인 진행 상황:
+ *   - /manager_ga/campaign/progress (GA 관리자 진행 현황 페이지)
+ *   - /manager_sa/campaign/progress (SA 관리자 진행 현황 페이지)
  *
+ *   게시글 목록:
+ *   - /manager_ga/community/posts (GA 관리자 게시글 목록 페이지)
+ *   - /manager_sa/community/posts (SA 관리자 게시글 목록 페이지)
+ *
+ *   차단 내역:
+ *   - /manager_ga/member/blacklist (GA 관리자 차단 내역 페이지)
+ *   - /manager_sa/member/blacklist (SA 관리자 차단 내역 페이지)
+ *
+ *   반려/신고 내역 (CommonTableWithTooltip을 통해):
+ *   - /manager_ga/campaign/rejected (GA 관리자 반려 내역 페이지)
+ *   - /manager_ga/campaign/reported (GA 관리자 신고 내역 페이지)
+ *
+ * 참고:
+ * - 툴팁 기능이 필요한 경우 CommonTableWithTooltip 컴포넌트를 사용하세요
+ * - CommonTableWithTooltip은 CommonTable을 래핑하여 툴팁 기능을 추가합니다
+ *
+ * 사용 흐름:
+ * 캠페인 진행 상황 페이지
+ *   └─> ProgressPageCommon 컴포넌트
+ *       └─> CampaignTable 컴포넌트
+ *           └─> CommonTable 컴포넌트
+ *
+ * 게시글 목록 페이지
+ *   └─> PostTable 컴포넌트
+ *       └─> CommonTable 컴포넌트
+ *
+ * 차단 내역 페이지
+ *   └─> BlacklistTable 컴포넌트
+ *       └─> CommonTable 컴포넌트
+ *
+ * 반려/신고 내역 페이지
+ *   └─> RejectedCampaignTable / ReportedCampaignTable 컴포넌트
+ *       └─> CommonTableWithTooltip 컴포넌트
+ *           └─> CommonTable 컴포넌트
+ *
+
  */
 
 "use client";
@@ -83,7 +117,8 @@ export interface CommonTableProps<T extends TableRowData> {
   // 커스텀 헤더 렌더링 (기본 헤더 대신 사용)
   render_header?: () => ReactNode;
 
-  // 커스텀 행 래퍼 (각 행을 감쌀 요소, 툴팁 등 추가 기능용)
+  // 커스텀 행 래퍼 (각 행을 감쌀 요소, 추가 기능용)
+  // 주의: 툴팁 기능이 필요한 경우 CommonTableWithTooltip 컴포넌트를 사용하세요
   render_row_wrapper?: (
     row: T,
     row_content: ReactNode,
@@ -287,7 +322,7 @@ export default function CommonTable<T extends TableRowData>({
       </div>
     );
 
-    // 커스텀 행 래퍼가 있으면 그것으로 감싸기 (툴팁 등 추가 기능용)
+    // 커스텀 행 래퍼가 있으면 그것으로 감싸기 (추가 기능용)
     if (render_row_wrapper) {
       return render_row_wrapper(row, row_content, index);
     }

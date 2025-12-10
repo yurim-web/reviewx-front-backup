@@ -7,15 +7,23 @@
  *
  * 목적: manager_ga와 manager_sa에서 공통으로 사용하는 캠페인 테이블 컴포넌트입니다.
  *
- * 사용 위치:
- * - /manager_ga/campaign/progress (GA 관리자 진행 현황 페이지)
- * - /manager_sa/campaign/progress (SA 관리자 진행 현황 페이지)
+ * 📍 사용 위치:
+ * - 직접 사용 컴포넌트:
+ *   - ProgressPageCommon 컴포넌트 (캠페인 진행 상황 페이지 공통 컴포넌트)
  *
- * 주요 기능:
- * - 캠페인 상세 페이지로 이동하는 링크
- * - 캠페인 정보 표시 (번호, 파트너명, 캠페인명, 유형, 채널, 상태, 모집 수, 신청 수, 지급 포인트)
- * - 신고 기능
+ * - 최종 사용 페이지:
+ *   - /manager_ga/campaign/progress (GA 관리자 진행 현황 페이지)
+ *   - /manager_sa/campaign/progress (SA 관리자 진행 현황 페이지)
  *
+ * 사용 흐름:
+ * GA 관리자 진행 현황 페이지 (/manager_ga/campaign/progress)
+ *   └─> ProgressPageCommon 컴포넌트 (manager_type="ga")
+ *       └─> CampaignTable 컴포넌트
+ *
+ * SA 관리자 진행 현황 페이지 (/manager_sa/campaign/progress)
+ *   └─> ProgressPageCommon 컴포넌트 (manager_type="sa")
+ *       └─> CampaignTable 컴포넌트
+
  */
 
 "use client";

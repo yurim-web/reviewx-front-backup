@@ -183,7 +183,10 @@ export default function BaseFilterModal<T extends string | number>({
             필터 적용하기
           </button>
           <button className={styles.reset_button} onClick={handle_reset}>
-            <div className={styles.reset_icon}></div>
+            <div 
+              className={styles.reset_icon}
+              style={{ backgroundImage: "url('/images/filter/x_small.svg')" }}
+            ></div>
             선택 초기화
           </button>
         </div>

@@ -19,7 +19,10 @@
 ### 기본 사용법
 
 ```tsx
-import CommonTable, { type TableColumn, type TableRowData } from '@/components/manager/common/table/CommonTable';
+import CommonTable, {
+  type TableColumn,
+  type TableRowData,
+} from "@/components/manager/common/table/CommonTable";
 
 // 1. 테이블 행 데이터 타입 정의
 interface MyTableData extends TableRowData {
@@ -31,15 +34,15 @@ interface MyTableData extends TableRowData {
 
 // 2. 컬럼 정의
 const columns: TableColumn[] = [
-  { key: 'name', label: '이름', sortable: true },
-  { key: 'age', label: '나이', sortable: true },
-  { key: 'email', label: '이메일' },
+  { key: "name", label: "이름", sortable: true },
+  { key: "age", label: "나이", sortable: true },
+  { key: "email", label: "이메일" },
 ];
 
 // 3. 테이블 데이터
 const table_data: MyTableData[] = [
-  { id: '1', name: '홍길동', age: 25, email: 'hong@example.com' },
-  { id: '2', name: '김철수', age: 30, email: 'kim@example.com' },
+  { id: "1", name: "홍길동", age: 25, email: "hong@example.com" },
+  { id: "2", name: "김철수", age: 30, email: "kim@example.com" },
 ];
 
 // 4. 컴포넌트 사용
@@ -52,7 +55,7 @@ const table_data: MyTableData[] = [
   }}
   styles={my_table_styles}
   empty_message="데이터가 없습니다."
-/>
+/>;
 ```
 
 ### 체크박스 기능 사용
@@ -69,9 +72,9 @@ const [selected_ids, set_selected_ids] = useState<string[]>([]);
   selected_ids={selected_ids}
   on_select_change={set_selected_ids}
   on_select_all={(is_all_selected) => {
-    console.log('전체 선택:', is_all_selected);
+    console.log("전체 선택:", is_all_selected);
   }}
-/>
+/>;
 ```
 
 ### 호버 기능 사용
@@ -84,7 +87,7 @@ const [selected_ids, set_selected_ids] = useState<string[]>([]);
   styles={my_table_styles}
   enable_hover={true}
   on_row_hover={(row_id) => {
-    console.log('호버된 행:', row_id);
+    console.log("호버된 행:", row_id);
   }}
 />
 ```
@@ -96,7 +99,7 @@ const [selected_ids, set_selected_ids] = useState<string[]>([]);
   columns={columns}
   data={table_data}
   render_cell={(row, column) => {
-    if (column.key === 'status') {
+    if (column.key === "status") {
       // 상태 태그 렌더링
       return (
         <span className={`${styles.tag} ${styles[`tag_${row.status}`]}`}>
@@ -104,16 +107,12 @@ const [selected_ids, set_selected_ids] = useState<string[]>([]);
         </span>
       );
     }
-    
-    if (column.key === 'action') {
+
+    if (column.key === "action") {
       // 액션 버튼 렌더링
-      return (
-        <button onClick={() => handle_action(row.id)}>
-          액션
-        </button>
-      );
+      return <button onClick={() => handle_action(row.id)}>액션</button>;
     }
-    
+
     // 기본 텍스트 렌더링
     return <span>{row[column.key]}</span>;
   }}
@@ -130,14 +129,12 @@ const [selected_ids, set_selected_ids] = useState<string[]>([]);
   render_cell={(row, column) => <span>{row[column.key]}</span>}
   styles={my_table_styles}
   render_header={() => (
-    <div className={styles.custom_header}>
-      {/* 커스텀 헤더 내용 */}
-    </div>
+    <div className={styles.custom_header}>{/* 커스텀 헤더 내용 */}</div>
   )}
 />
 ```
 
-### 툴팁 기능과 함께 사용
+### 커스텀 행 래퍼 사용
 
 ```tsx
 <CommonTable
@@ -148,15 +145,35 @@ const [selected_ids, set_selected_ids] = useState<string[]>([]);
   render_row_wrapper={(row, row_content, index) => (
     <div className={styles.row_wrapper}>
       {row_content}
-      {/* 툴팁 등 추가 요소 */}
-      {hovered_row_id === row.id && (
-        <div className={styles.tooltip}>
-          {row.tooltip_text}
-        </div>
-      )}
+      {/* 추가 요소 (툴팁이 필요한 경우 CommonTableWithTooltip 사용 권장) */}
     </div>
   )}
 />
+```
+
+### 툴팁 기능이 필요한 경우
+
+툴팁 기능이 필요한 경우 `CommonTableWithTooltip` 컴포넌트를 사용하세요. 이 컴포넌트는 `CommonTable`을 래핑하여 자동으로 텍스트 오버플로우를 감지하고 툴팁을 표시합니다.
+
+```tsx
+import CommonTableWithTooltip, {
+  type TooltipConfig,
+} from "@/components/manager/common/table/CommonTableWithTooltip";
+
+const tooltip_config: TooltipConfig = {
+  column_key: "campaign_name", // 툴팁을 표시할 컬럼 키
+  tooltip_content: (row) => row.campaign_name, // 커스텀 툴팁 내용 (선택사항)
+  tooltip_class_name: styles.tooltip_box, // 툴팁 CSS 클래스명 (선택사항)
+  text_class_name: styles.campaign_name_text, // 텍스트 span CSS 클래스명 (선택사항)
+};
+
+<CommonTableWithTooltip
+  columns={columns}
+  data={table_data}
+  render_cell={(row, column) => <span>{row[column.key]}</span>}
+  styles={my_table_styles}
+  tooltip_config={tooltip_config}
+/>;
 ```
 
 ## Props 상세 설명
@@ -192,6 +209,7 @@ const [selected_ids, set_selected_ids] = useState<string[]>([]);
 
 - `render_header`: 커스텀 헤더 렌더링 함수 `() => ReactNode`
 - `render_row_wrapper`: 커스텀 행 래퍼 렌더링 함수 `(row, row_content, index) => ReactNode`
+  - 주의: 툴팁 기능이 필요한 경우 `CommonTableWithTooltip` 컴포넌트를 사용하세요
 
 ## CSS 클래스 요구사항
 
@@ -213,10 +231,22 @@ const [selected_ids, set_selected_ids] = useState<string[]>([]);
 - `table_header_arrow` 또는 `sort_icon`: 정렬 아이콘 (정렬 사용 시)
 - `empty_message`: 빈 상태 메시지
 
+## 관련 컴포넌트
+
+### CommonTableWithTooltip
+
+툴팁 기능이 필요한 경우 `CommonTableWithTooltip` 컴포넌트를 사용하세요. 이 컴포넌트는 `CommonTable`을 래핑하여 자동으로 텍스트 오버플로우를 감지하고 툴팁을 표시합니다.
+
+- 자동 텍스트 오버플로우 감지
+- 툴팁 위치 자동 계산
+- `CommonTable`의 모든 기능 포함
+
+자세한 내용은 `CommonTableWithTooltip.tsx` 파일을 참고하세요.
+
 ## 학습 포인트
 
 1. **Render Props 패턴**: 컴포넌트가 렌더링 로직을 함수로 받아서 재사용성을 높이는 패턴
 2. **제네릭 타입**: `<T>`를 사용하여 다양한 데이터 타입을 지원
 3. **조건부 렌더링**: 옵션 기능들을 props로 제어
 4. **컴포지션**: 여러 작은 기능들을 조합하여 복잡한 컴포넌트 만들기
-
+5. **컴포넌트 분리**: 기본 기능과 확장 기능을 분리하여 유지보수성 향상 (CommonTable vs CommonTableWithTooltip)

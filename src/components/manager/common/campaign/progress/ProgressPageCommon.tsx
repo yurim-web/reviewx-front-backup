@@ -39,7 +39,7 @@ import CampaignTableCommon from "./table/CampaignTable";
 // 신고 모달 공통 컴포넌트와 데이터 import
 import CampaignReportModalCommon, {
   type ReportCode,
-} from "./modal/CampaignReportModal";
+} from "@/components/manager/common/campaign/modal/CampaignReportModal";
 import { report_code_info } from "@/data/manager_ga/reported";
 
 // 데이터와 스타일을 import
@@ -61,7 +61,7 @@ import tagStylesGA from "@/styles/manager_ga/campaign/progress/tags.module.css";
 import tagStylesSA from "@/styles/manager_sa/campaign/progress/tags.module.css";
 import channelIconStylesGA from "@/styles/manager_ga/campaign/progress/channel_icon.module.css";
 import channelIconStylesSA from "@/styles/manager_sa/campaign/progress/channel_icon.module.css";
-import campaignReportModalStylesGA from "@/styles/manager_ga/campaign/progress/campaign_report_modal.module.css";
+import campaignReportModalStylesGA from "@/styles/manager_ga/campaign/common/modal/campaign_report_modal.module.css";
 import campaignReportModalStylesSA from "@/styles/manager_sa/campaign/progress/campaign_report_modal.module.css";
 
 // 관리자 타입 정의
@@ -160,6 +160,7 @@ export default function ProgressPageCommon({
   }) => {
     return (
       <CampaignReportModalCommon
+        mode="report"
         is_open={is_open}
         on_close={on_close}
         campaign_id={campaign_id}
@@ -176,6 +177,7 @@ export default function ProgressPageCommon({
             modal_footer: string;
             close_button: string;
             report_button: string;
+            block_button: string;
           }
         }
         report_code_info={report_code_info}

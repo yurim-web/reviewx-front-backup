@@ -6,7 +6,7 @@
  * 공통 필터 섹션 컴포넌트
  *
  * 목적: 여러 필터 섹션에서 공통으로 사용하는 기본 컴포넌트입니다.
- *       검색, 정렬, 필터 모달 버튼 등을 제공합니다.
+ *       검색, 필터 모달 버튼 등을 제공합니다.
  *
  * 📍 사용 위치 (현재):
  * - src/components/manager_ga/campaign/rejected/section/FilterSection.tsx
@@ -17,21 +17,16 @@
  * - src/components/manager_ga/member/blacklist/section/BlacklistFilterSection.tsx
  * - src/components/manager_ga/community/posts/section/PostFilterSection.tsx
  *
- * 📦 내부 사용 컴포넌트:
- * - src/components/manager_ga/common/filter/SortDropdown.tsx
- *
  * 주요 기능:
  * - 검색 필터
- * - 정렬 드롭다운
  * - 필터 모달 버튼
  * - 활성 필터 태그 표시
  *
  */
 
-'use client';
+"use client";
 
-import SortDropdown from './SortDropdown';
-import styles from '@/styles/manager_ga/campaign/progress/filter_section.module.css';
+import styles from "@/styles/manager_ga/campaign/progress/filter_section.module.css";
 
 // 필터 태그 타입 정의
 export interface FilterTag<T> {
@@ -43,10 +38,6 @@ interface BaseFilterSectionProps<T extends string | number> {
   // 검색어 상태와 변경 함수
   search_query: string;
   on_search_change: (query: string) => void;
-  // 정렬 옵션
-  selected_sort: string;
-  on_sort_change: (sort: string) => void;
-  sort_options?: string[];
   // 필터 모달 버튼 (선택적)
   filter_modal_button?: React.ReactNode;
   // 활성 필터 태그들
@@ -56,22 +47,16 @@ interface BaseFilterSectionProps<T extends string | number> {
   date_filter?: React.ReactNode;
   // 검색 필터 뒤에 올 버튼들 (선택적)
   search_after_buttons?: React.ReactNode;
-  // 오른쪽 액션 버튼들 (선택적)
-  right_action_buttons?: React.ReactNode[];
 }
 
 export default function BaseFilterSection<T extends string | number>({
   search_query,
   on_search_change,
-  selected_sort,
-  on_sort_change,
-  sort_options,
   filter_modal_button,
   active_filter_tags = [],
   on_filter_tag_remove,
   date_filter,
   search_after_buttons,
-  right_action_buttons = [],
 }: BaseFilterSectionProps<T>) {
   return (
     <div>
@@ -102,23 +87,6 @@ export default function BaseFilterSection<T extends string | number>({
 
           {/* 검색 필터 뒤에 올 버튼들 (선택적) */}
           {search_after_buttons && search_after_buttons}
-        </div>
-
-        {/* 오른쪽 그룹: 액션 버튼들, 정렬 */}
-        <div className={styles.filter_group_right}>
-          {/* 오른쪽 액션 버튼들 */}
-          {right_action_buttons.map((button, index) => (
-            <div key={index}>{button}</div>
-          ))}
-
-          {/* 정렬 드롭다운 (sort_options가 있을 때만 표시) */}
-          {sort_options && sort_options.length > 0 && (
-            <SortDropdown
-              selected_sort={selected_sort}
-              on_sort_change={on_sort_change}
-              sort_options={sort_options}
-            />
-          )}
         </div>
       </div>
 

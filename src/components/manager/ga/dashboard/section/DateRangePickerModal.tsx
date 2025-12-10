@@ -19,16 +19,16 @@
  * - date-fns: 날짜 포맷팅 유틸리티
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   DayPicker,
   type DateRange as DayPickerDateRange,
-} from 'react-day-picker';
-import { ko } from 'date-fns/locale';
-import { format } from 'date-fns';
-import styles from '@/styles/manager_ga/dashboard/sections/date_range_picker_modal.module.css';
+} from "react-day-picker";
+import { ko } from "date-fns/locale";
+import { format } from "date-fns";
+import styles from "@/styles/manager_ga/dashboard/sections/date_range_picker_modal.module.css";
 
 // 선택된 날짜 범위의 타입 정의
 // react-day-picker의 DateRange 타입을 사용하되, 우리 프로젝트에서 사용하기 편하게 export합니다
@@ -63,7 +63,7 @@ export default function DateRangePickerModal({
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
   // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
   const [temp_range, set_temp_range] = useState<DateRange | undefined>(
-    selected_range,
+    selected_range
   );
 
   // 모달이 열릴 때마다 임시 선택 상태를 초기화
@@ -158,11 +158,11 @@ export default function DateRangePickerModal({
           <div className={styles.date_preview}>
             {temp_range?.from && temp_range?.to ? (
               <span>
-                {format(temp_range.from, 'yyyy-MM-dd')} ~{' '}
-                {format(temp_range.to, 'yyyy-MM-dd')}
+                {format(temp_range.from, "yyyy-MM-dd")} ~{" "}
+                {format(temp_range.to, "yyyy-MM-dd")}
               </span>
             ) : temp_range?.from ? (
-              <span>{format(temp_range.from, 'yyyy-MM-dd')} ~</span>
+              <span>{format(temp_range.from, "yyyy-MM-dd")} ~</span>
             ) : (
               <span className={styles.date_preview_empty}>
                 날짜를 선택해주세요
@@ -173,7 +173,10 @@ export default function DateRangePickerModal({
           {/* 버튼 그룹 */}
           <div className={styles.button_group}>
             <button className={styles.reset_button} onClick={handle_reset}>
-              <div className={styles.reset_icon}></div>
+              <div
+                className={styles.reset_icon}
+                style={{ backgroundImage: "url('/images/filter/x_small.svg')" }}
+              ></div>
               초기화
             </button>
             <button

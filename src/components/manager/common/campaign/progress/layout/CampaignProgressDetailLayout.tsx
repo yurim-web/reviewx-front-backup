@@ -22,23 +22,23 @@
  *
  */
 
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import styles from '@/styles/partner/campaign_application/campaign_application.module.css';
-import SortFilterControl from '@/components/partner/campaign_application/SortFilterControl';
-import Campaignbanner from '@/components/partner/campaign_application/CampaignInfoBox';
-import ExcelDownloadBtn from '@/components/partner/campaign_application/ExcelDownloadBtn';
-import EmptyApplicantsList from '@/components/partner/campaign_application/EmptyApplicantsList';
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import styles from "@/styles/partner/campaign_application/campaign_application.module.css";
+import SortFilterControl from "@/components/partner/campaign_application/SortFilterControl";
+import Campaignbanner from "@/components/partner/campaign_application/CampaignInfoBox";
+import ExcelDownloadBtn from "@/components/partner/campaign_application/ExcelDownloadBtn";
+import EmptyApplicantsList from "@/components/partner/campaign_application/EmptyApplicantsList";
 import type {
   CampaignWithApplicants,
   AllApplicant,
-} from '@/data/partner/sharedCampaigns';
+} from "@/data/partner/sharedCampaigns";
 import type {
   SortOption,
   TabType,
-} from '@/hooks/manager/common/campaign/useCampaignProgressDetail';
+} from "@/hooks/manager/common/campaign/useCampaignProgressDetail";
 
 /**
  * 카드 렌더링 함수 타입 정의
@@ -53,7 +53,7 @@ export type RenderCardFunction = (
   is_selected: boolean,
   campaign_data: CampaignWithApplicants | null,
   handle_select: (id: string) => void,
-  handle_cancel: (id: string) => void,
+  handle_cancel: (id: string) => void
 ) => React.ReactNode;
 
 /**
@@ -193,35 +193,15 @@ export default function CampaignProgressDetailLayout({
                 onDownloadApplicants={handle_download_applicants}
                 onDownloadSelected={handle_download_selected}
               />
-              <div
-                style={{ display: 'flex', gap: '12px', alignItems: 'center' }}
-              >
-                {/* 신고 버튼 */}
-                <button
-                  type="button"
-                  className={styles.report_button}
-                  onClick={() => {
-                    // TODO: 신고 기능 구현
-                  }}
-                  aria-label="신고"
-                >
-                  <img
-                    src="/images/icons/rerport_icon.svg"
-                    alt="신고"
-                    className={styles.report_button_icon}
-                  />
-                  <span className={styles.report_button_text}>신고</span>
-                </button>
-                {/* 정렬 필터 컨트롤 */}
-                <SortFilterControl
-                  options={sort_options}
-                  value={sort_order}
-                  onChange={(option) =>
-                    set_sort_order(option.value as SortOption)
-                  }
-                  defaultSort="latest"
-                />
-              </div>
+              {/* 정렬 필터 컨트롤 */}
+              <SortFilterControl
+                options={sort_options}
+                value={sort_order}
+                onChange={(option) =>
+                  set_sort_order(option.value as SortOption)
+                }
+                defaultSort="latest"
+              />
             </article>
 
             {/* 
@@ -232,19 +212,19 @@ export default function CampaignProgressDetailLayout({
               {/* 신청 탭 버튼 */}
               <button
                 className={`${styles.tab_button} ${
-                  active_tab === 'applicants' ? styles.active : ''
+                  active_tab === "applicants" ? styles.active : ""
                 }`}
-                onClick={() => set_active_tab('applicants')}
+                onClick={() => set_active_tab("applicants")}
               >
-                신청{' '}
+                신청{" "}
                 <span className={styles.tab_count}>{applicants_count}</span>
               </button>
               {/* 선정 탭 버튼 */}
               <button
                 className={`${styles.tab_button} ${
-                  active_tab === 'selected' ? styles.active : ''
+                  active_tab === "selected" ? styles.active : ""
                 }`}
-                onClick={() => set_active_tab('selected')}
+                onClick={() => set_active_tab("selected")}
               >
                 선정 <span className={styles.tab_count}>{selected_count}</span>
               </button>
@@ -270,10 +250,10 @@ export default function CampaignProgressDetailLayout({
                     */}
                     {render_card(
                       applicant,
-                      active_tab === 'selected',
+                      active_tab === "selected",
                       campaign_data,
                       handle_select_applicant,
-                      handle_cancel_applicant,
+                      handle_cancel_applicant
                     )}
                   </div>
                 ))

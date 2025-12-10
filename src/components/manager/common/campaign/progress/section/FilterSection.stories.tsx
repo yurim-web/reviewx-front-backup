@@ -1,0 +1,64 @@
+/**
+ * FilterSection 컴포넌트 스토리북
+ *
+ * 필터 섹션 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ */
+
+import type { Meta, StoryObj } from "@storybook/react";
+import React, { useMemo } from "react";
+import FilterSection from "./FilterSection";
+
+// CSS 모듈 import
+import filterSectionStylesModule from "@/styles/manager_ga/campaign/progress/filter_section.module.css";
+
+// CSS 모듈 객체를 타입 단언하여 사용
+const filterSectionStyles = (filterSectionStylesModule || {
+  filter_item: "filter_item",
+  filter_icon: "filter_icon",
+  filter_text: "filter_text",
+  checkbox_icon: "checkbox_icon",
+  dropdown_arrow: "dropdown_arrow",
+  report_icon: "report_icon",
+}) as Record<string, string> & {
+  filter_item: string;
+  filter_icon: string;
+  filter_text: string;
+  checkbox_icon: string;
+  dropdown_arrow: string;
+  report_icon: string;
+};
+
+const meta: Meta<typeof FilterSection> = {
+  title: "Manager/Common/Campaign/Progress/Section/FilterSection",
+  component: FilterSection,
+  tags: ["autodocs"],
+  parameters: {
+    layout: "padded",
+  },
+  argTypes: {
+    styles: {
+      description: "CSS 모듈 스타일 객체",
+      control: false,
+    },
+  },
+};
+
+export default meta;
+
+type Story = StoryObj<typeof FilterSection>;
+
+// 기본 필터 섹션
+export const Default: Story = {
+  render: () => {
+    const props = useMemo(
+      () => ({
+        styles: filterSectionStyles,
+      }),
+      []
+    );
+
+    return React.createElement(FilterSection, props);
+  },
+};
+
+

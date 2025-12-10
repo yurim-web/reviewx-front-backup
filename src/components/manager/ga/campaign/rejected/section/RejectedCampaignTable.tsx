@@ -34,12 +34,13 @@ import {
   type RejectCodeInfo,
   type RejectCode,
 } from "@/data/manager_ga/rejected";
-import RejectReasonModal from "../modal/RejectReasonModal";
+import CampaignReasonModal from "@/components/manager/common/campaign/modal/CampaignReasonModal";
 import CampaignReportModalCommon, {
   type ReportCode,
-} from "@/components/manager/common/campaign/progress/modal/CampaignReportModal";
+} from "@/components/manager/common/campaign/modal/CampaignReportModal";
 import { report_code_info } from "@/data/manager_ga/reported";
-import campaignReportModalStyles from "@/styles/manager_ga/campaign/progress/campaign_report_modal.module.css";
+import campaignReportModalStyles from "@/styles/manager_ga/campaign/common/modal/campaign_report_modal.module.css";
+import campaignReasonModalStyles from "@/styles/manager_ga/campaign/common/modal/campaign_reason_modal.module.css";
 import CommonTableWithTooltip, {
   type TooltipConfig,
 } from "@/components/manager/common/table/CommonTableWithTooltip";
@@ -321,7 +322,8 @@ export default function RejectedCampaignTable({
         empty_message="반려 이력이 없습니다."
       />
       {modal_state.item && (
-        <RejectReasonModal
+        <CampaignReasonModal
+          mode="reject"
           is_open={modal_state.is_open}
           on_close={() => {
             set_modal_state({
@@ -329,15 +331,41 @@ export default function RejectedCampaignTable({
               item: null,
             });
           }}
-          reject_reason={
+          reason_text={
             modal_state.item.reject_reason ||
             get_reject_code_info(modal_state.item.reject_code)?.reason ||
             "반려 사유가 없습니다."
           }
-          reject_code={modal_state.item.reject_code}
+          code={modal_state.item.reject_code}
+          code_info_list={reject_code_info.map((info) => ({
+            code: info.code,
+            category: info.category,
+            reason: info.reason,
+          }))}
+          styles={
+            campaignReasonModalStyles as Record<string, string> & {
+              modal_overlay: string;
+              modal_container: string;
+              modal_title: string;
+              reason_box: string;
+              reason_text: string;
+              ai_recommended_section: string;
+              ai_recommended_label: string;
+              classification_container: string;
+              classification_item: string;
+              classification_item_selected: string;
+              classification_radio: string;
+              classification_check_icon: string;
+              classification_label: string;
+              modal_footer: string;
+              close_button: string;
+              confirm_button: string;
+            }
+          }
         />
       )}
       <CampaignReportModalCommon
+        mode="report"
         is_open={report_modal_state.is_open}
         on_close={handle_report_modal_close}
         campaign_id={report_modal_state.campaign_id || undefined}
@@ -354,6 +382,7 @@ export default function RejectedCampaignTable({
             modal_footer: string;
             close_button: string;
             report_button: string;
+            block_button: string;
           }
         }
         report_code_info={report_code_info}

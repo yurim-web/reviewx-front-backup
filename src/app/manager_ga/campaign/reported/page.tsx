@@ -73,7 +73,7 @@ export default function ReportedPage() {
         <ReportCodeInfoSection />
 
         {/* 신고 이력 섹션 제목 */}
-        <h2 className={styles.section_title}>신고 이력</h2>
+        <h2 className={styles.section_title}>신고 내역</h2>
 
         {/* 필터 섹션 */}
         <FilterSection

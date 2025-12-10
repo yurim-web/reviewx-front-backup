@@ -218,10 +218,11 @@
 .reset_icon {
   width: 16px;
   height: 16px;
-  background-image: url('/images/filter/x_small.svg');
+  /* background-image는 컴포넌트에서 인라인으로 처리 */
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+  /* Storybook 호환을 위해 url() 제거 */
 }
 
 /* 스크롤바 스타일 */
