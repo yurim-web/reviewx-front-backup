@@ -1,0 +1,145 @@
+/* ========================================
+   👥 회원 활성화 통계 섹션 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - MemberActivationSection (회원 활성화 통계 섹션)
+ * 
+ * 사용 페이지:
+ * - /manager_sa (SA 관리자 대시보드)
+ */
+
+/* 회원 활성화 통계 섹션 카드 */
+.member_activation_section_card {
+  background-color: white;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 20px;
+  max-height: 282px;
+}
+
+/* 회원 활성화 통계 섹션 제목 */
+.member_activation_section_title {
+  color: #444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px; /* 100% */
+  letter-spacing: -0.36px;
+  padding-bottom: 24px;
+}
+
+/* 회원 활성화 통계 섹션 콘텐츠 (도넛 차트 + 통계 정보) */
+.member_activation_section_content {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+/* 회원 활성화 통계 섹션 도넛 차트 컨테이너 */
+.member_activation_section_donut_chart_container {
+  flex-shrink: 0;
+  width: 180px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 회원 활성화 통계 섹션 통계 정보 영역 */
+.member_activation_section_stats_info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 회원 활성화 통계 섹션 전체 너비 정보 카드 */
+.member_activation_section_info_card_full {
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  padding: 16px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 회원 활성화 통계 섹션 정보 라벨 행 (라벨과 변화율을 같은 선상에 배치) */
+.member_activation_section_info_label_row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 회원 활성화 통계 섹션 정보 그리드 */
+.member_activation_section_info_grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+/* 회원 활성화 통계 섹션 정보 카드 */
+.member_activation_section_info_card {
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 회원 활성화 통계 섹션 정보 라벨 */
+.member_activation_section_info_label {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 회원 활성화 통계 섹션 정보 값 */
+.member_activation_section_info_value {
+  color: #444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+}
+
+/* 회원 활성화 통계 섹션 정보 비율 */
+.member_activation_section_info_percentage {
+  color: #444;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 회원 활성화 통계 섹션 정보 변화율 - 공용 스타일 */
+.member_activation_section_info_change_positive,
+.member_activation_section_info_change_negative,
+.member_activation_section_info_change_neutral {
+  text-align: right;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 회원 활성화 통계 섹션 정보 변화율 - 증가 (녹색) */
+.member_activation_section_info_change_positive {
+  color: #2dc469;
+}
+
+/* 회원 활성화 통계 섹션 정보 변화율 - 감소 (빨간색) */
+.member_activation_section_info_change_negative {
+  color: #ff2626;
+}
+
+/* 회원 활성화 통계 섹션 정보 변화율 - 변화 없음 (회색) */
+.member_activation_section_info_change_neutral {
+  color: #ababab;
+}
+
