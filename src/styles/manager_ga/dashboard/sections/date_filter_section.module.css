@@ -60,6 +60,11 @@
   border-color: #444;
 }
 
+/* 날짜 선택기 래퍼 - relative positioning을 위해 추가 */
+.date_filter_section_picker_wrapper {
+  position: relative; /* 드롭다운을 absolute로 배치하기 위한 기준점 */
+}
+
 /* 날짜 선택기 */
 .date_filter_section_picker {
   display: flex;
