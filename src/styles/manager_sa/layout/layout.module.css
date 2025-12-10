@@ -1,0 +1,64 @@
+/* ========================================
+   📐 SA 관리자 대시보드 레이아웃 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - page.tsx (SA 관리자 대시보드 메인 페이지)
+ * 
+ * 사용 페이지:
+ * - /manager_sa (SA 관리자 대시보드)
+ */
+
+/* CSS 변수 정의 - 폰트 패밀리를 한 곳에서 관리 */
+.container {
+  --font-family: "Pretendard", sans-serif;
+}
+
+/* 전체 페이지 컨테이너 */
+.container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-color: white;
+  padding-top: 80px; /* 헤더 높이만큼 상단 여백 */
+  padding-left: 240px; /* 사이드바 너비만큼 왼쪽 여백 */
+  box-sizing: border-box;
+  /* 폰트를 컨테이너에 설정하여 모든 자식 요소가 상속받도록 함 */
+  font-family: var(--font-family);
+}
+
+/* 메인 콘텐츠 영역 */
+.main_content {
+  padding: 40px 40px 40px 40px; /* 상단: 헤더 아래 여백, 좌우: 40px */
+  width: 100%;
+}
+
+/* 페이지 헤더 - 제목과 필터를 같은 줄에 배치 */
+.page_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 24px;
+}
+.page_title {
+  color: #444;
+  letter-spacing: -0.48px;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 24px;
+}
+/* 정산 요약과 결제 요약을 나란히 배치 */
+.summary_row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+/* 회원 통계 행 (3개 카드를 나란히 배치) */
+.member_stats_row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
