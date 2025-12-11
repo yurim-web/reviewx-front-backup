@@ -3,7 +3,7 @@
    ======================================== */
 
 /**
- * 반려 이력 필터 섹션 컴포넌트
+ * 캠페인 반려 이력 필터 섹션 컴포넌트
  *
  * 목적: GA 관리자 반려 이력 페이지에서 필터 섹션을 표시합니다.
  *
@@ -14,8 +14,6 @@
  * - 날짜 필터
  * - 반려 코드 필터
  * - 검색어 필터
- * - 정렬 필터
- * - 고고 필터
  *
  */
 
@@ -27,11 +25,12 @@ import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
 import DateFilterButton from "@/components/manager/ga/common/filter/DateFilterButton";
+import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 import RejectCodeFilterModal from "../filter/RejectCodeFilterModal";
 import type { RejectCode } from "@/data/manager_ga/rejected";
 
-interface FilterSectionProps {
+interface CampaignRejectedFilterSectionProps {
   // 검색어 상태와 변경 함수를 props로 받습니다
   search_query: string;
   on_search_change: (query: string) => void;
@@ -40,7 +39,7 @@ interface FilterSectionProps {
   on_reject_codes_change?: (codes: RejectCode[]) => void;
 }
 
-export default function FilterSection({
+export default function CampaignRejectedFilterSection({
   search_query,
   on_search_change,
   selected_reject_codes = [],
@@ -113,18 +112,12 @@ export default function FilterSection({
         }
         // 반려 코드 필터 모달 버튼
         filter_modal_button={
-          <div
-            className={styles.filter_item}
+          <FilterButton
+            label="반려 코드"
             onClick={handle_reject_code_filter_click}
-          >
-            <div className={styles.checkbox_icon}></div>
-            <span className={styles.filter_text}>반려 코드</span>
-            <img
-              src="/images/icons/dropdown_arrow.svg"
-              alt="드롭다운"
-              className={styles.dropdown_arrow}
-            />
-          </div>
+            isActive={selected_codes.length > 0}
+            styles={styles}
+          />
         }
         // 활성 필터 태그들
         active_filter_tags={active_filter_tags}

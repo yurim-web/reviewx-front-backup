@@ -3,7 +3,7 @@
    ======================================== */
 
 /**
- * 신고 이력 필터 섹션 컴포넌트
+ * 캠페인 신고 이력 필터 섹션 컴포넌트
  *
  * 목적: GA 관리자 신고 이력 페이지에서 필터 섹션을 표시합니다.
  *
@@ -14,7 +14,6 @@
  * - 날짜 필터
  * - 신고 코드 필터
  * - 검색어 필터
- * - 정렬 필터
  * - 차단 필터
  *
  */
@@ -27,11 +26,12 @@ import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
 import DateFilterButton from "@/components/manager/ga/common/filter/DateFilterButton";
+import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 import ReportCodeFilterModal from "../filter/ReportCodeFilterModal";
 import type { ReportCode } from "@/data/manager_ga/reported";
 
-interface FilterSectionProps {
+interface CampaignReportedFilterSectionProps {
   // 검색어 상태와 변경 함수를 props로 받습니다
   search_query: string;
   on_search_change: (query: string) => void;
@@ -40,7 +40,7 @@ interface FilterSectionProps {
   on_report_codes_change?: (codes: ReportCode[]) => void;
 }
 
-export default function FilterSection({
+export default function CampaignReportedFilterSection({
   search_query,
   on_search_change,
   selected_report_codes = [],
@@ -130,18 +130,12 @@ export default function FilterSection({
         }
         // 신고 코드 필터 모달 버튼
         filter_modal_button={
-          <div
-            className={styles.filter_item}
+          <FilterButton
+            label="신고 코드"
             onClick={handle_report_code_filter_click}
-          >
-            <div className={styles.checkbox_icon}></div>
-            <span className={styles.filter_text}>신고 코드</span>
-            <img
-              src="/images/icons/dropdown_arrow.svg"
-              alt="드롭다운"
-              className={styles.dropdown_arrow}
-            />
-          </div>
+            isActive={selected_codes.length > 0}
+            styles={styles}
+          />
         }
         // 검색 필터 뒤에 올 버튼 (차단 필터)
         search_after_buttons={

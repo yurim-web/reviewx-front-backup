@@ -3,7 +3,7 @@
    ======================================== */
 
 /**
- * 필터 섹션 컴포넌트 (공통)
+ * 캠페인 진행 상황 필터 섹션 컴포넌트
  *
  * 목적: GA/SA 관리자 진행 상황 페이지에서 필터 섹션을 표시합니다.
  *
@@ -18,7 +18,6 @@
  * - 유형 필터
  * - 채널 필터
  * - 정렬 필터
- * - 저장 필터
  *
  */
 
@@ -29,6 +28,7 @@ import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
 import DateFilterButton from "@/components/manager/ga/common/filter/DateFilterButton";
+import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 import StatusFilterModal from "../filter/StatusFilterModal";
 import TypeFilterModal from "../filter/TypeFilterModal";
@@ -39,7 +39,7 @@ import type { CampaignStatus } from "../filter/StatusFilterModal";
 import type { CampaignType } from "../filter/TypeFilterModal";
 import type { Channel } from "../filter/ChannelFilterModal";
 
-interface FilterSectionProps {
+interface CampaignProgressFilterSectionProps {
   // CSS 모듈 스타일 객체
   styles: Record<string, string> & {
     filter_item: string;
@@ -51,7 +51,9 @@ interface FilterSectionProps {
   };
 }
 
-export default function FilterSection({ styles }: FilterSectionProps) {
+export default function CampaignProgressFilterSection({
+  styles,
+}: CampaignProgressFilterSectionProps) {
   /* ========================================
      📌 상태 관리 (State Management)
      ======================================== */
@@ -217,61 +219,33 @@ export default function FilterSection({ styles }: FilterSectionProps) {
           />
         }
         // 필터 모달 버튼들 (여러 개를 Fragment로 묶어서 전달)
+        // FilterButton 공통 컴포넌트 사용으로 코드 중복 제거
         filter_modal_button={
           <>
             {/* 상태 필터 */}
-            <div
-              className={styles.filter_item}
+            <FilterButton
+              label="상태"
               onClick={handle_status_filter_click}
-            >
-              <div className={styles.checkbox_icon}></div>
-              <span className={styles.filter_text}>상태</span>
-              <img
-                src="/images/icons/dropdown_arrow.svg"
-                alt="드롭다운"
-                className={styles.dropdown_arrow}
-              />
-            </div>
+              isActive={selected_statuses.length > 0}
+              styles={styles}
+            />
 
             {/* 유형 필터 */}
-            <div
-              className={styles.filter_item}
+            <FilterButton
+              label="유형"
               onClick={handle_type_filter_click}
-            >
-              <div className={styles.checkbox_icon}></div>
-              <span className={styles.filter_text}>유형</span>
-              <img
-                src="/images/icons/dropdown_arrow.svg"
-                alt="드롭다운"
-                className={styles.dropdown_arrow}
-              />
-            </div>
+              isActive={selected_types.length > 0}
+              styles={styles}
+            />
 
             {/* 채널 필터 */}
-            <div
-              className={styles.filter_item}
+            <FilterButton
+              label="채널"
               onClick={handle_channel_filter_click}
-            >
-              <div className={styles.checkbox_icon}></div>
-              <span className={styles.filter_text}>채널</span>
-              <img
-                src="/images/icons/dropdown_arrow.svg"
-                alt="드롭다운"
-                className={styles.dropdown_arrow}
-              />
-            </div>
-          </>
-        }
-        // 검색 필터 뒤에 올 버튼 (저장 필터)
-        search_after_buttons={
-          <div className={styles.filter_item}>
-            <img
-              src="/images/icons/rerport_icon.svg"
-              alt="저장"
-              className={styles.report_icon}
+              isActive={selected_channels.length > 0}
+              styles={styles}
             />
-            <span className={styles.filter_text}>저장</span>
-          </div>
+          </>
         }
         // 활성 필터 태그들
         active_filter_tags={active_filter_tags}

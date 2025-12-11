@@ -1,12 +1,12 @@
 /**
- * FilterSection 컴포넌트 스토리북
+ * CampaignProgressFilterSection 컴포넌트 스토리북
  *
- * 필터 섹션 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 캠페인 진행 상황 필터 섹션 컴포넌트의 다양한 사용 예시를 보여줍니다.
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { useMemo } from "react";
-import FilterSection from "./FilterSection";
+import CampaignProgressFilterSection from "./CampaignProgressFilterSection";
 
 // CSS 모듈 import
 import filterSectionStylesModule from "@/styles/manager_ga/campaign/progress/filter_section.module.css";
@@ -28,9 +28,9 @@ const filterSectionStyles = (filterSectionStylesModule || {
   report_icon: string;
 };
 
-const meta: Meta<typeof FilterSection> = {
-  title: "Manager/Common/Campaign/Progress/Section/FilterSection",
-  component: FilterSection,
+const meta: Meta<typeof CampaignProgressFilterSection> = {
+  title: "Manager/Common/Campaign/Progress/Section/CampaignProgressFilterSection",
+  component: CampaignProgressFilterSection,
   tags: ["autodocs"],
   parameters: {
     layout: "padded",
@@ -45,7 +45,7 @@ const meta: Meta<typeof FilterSection> = {
 
 export default meta;
 
-type Story = StoryObj<typeof FilterSection>;
+type Story = StoryObj<typeof CampaignProgressFilterSection>;
 
 // 기본 필터 섹션
 export const Default: Story = {
@@ -57,7 +57,7 @@ export const Default: Story = {
       []
     );
 
-    return React.createElement(FilterSection, props);
+    return React.createElement(CampaignProgressFilterSection, props);
   },
 };
 
