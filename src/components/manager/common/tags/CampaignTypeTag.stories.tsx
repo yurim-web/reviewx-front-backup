@@ -1,7 +1,7 @@
 /**
  * CampaignTypeTag 컴포넌트 스토리북
  *
- * 캠페인 유형 태그 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 캠페인 타입 태그 컴포넌트의 다양한 사용 예시를 보여줍니다.
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
@@ -11,7 +11,7 @@ import CampaignTypeTag, {
 } from "@/components/manager/common/tags/CampaignTypeTag";
 
 // CSS 모듈 import
-import tagsStylesModule from "@/styles/manager_ga/campaign/progress/tags.module.css";
+import tagsStylesModule from "@/styles/common/tags.module.css";
 
 // CSS 모듈 객체를 타입 단언하여 사용
 const tagsStyles = (tagsStylesModule || {
@@ -21,7 +21,7 @@ const tagsStyles = (tagsStylesModule || {
 };
 
 const meta: Meta<typeof CampaignTypeTag> = {
-  title: "Manager/Common/Campaign/Progress/Tags/CampaignTypeTag",
+  title: "Manager/Common/Tags/CampaignTypeTag",
   component: CampaignTypeTag,
   tags: ["autodocs"],
   parameters: {
@@ -29,7 +29,7 @@ const meta: Meta<typeof CampaignTypeTag> = {
   },
   argTypes: {
     type: {
-      description: "캠페인 유형",
+      description: "캠페인 타입",
       control: "select",
       options: ["배송형", "방문형", "구매평", "기자단", "미션형"],
     },
@@ -84,7 +84,7 @@ export const Mission: Story = {
   },
 };
 
-// 모든 유형 태그 비교
+// 모든 타입 태그 비교
 export const AllTypes: Story = {
   render: () => {
     const types: CampaignType[] = [
@@ -115,3 +115,4 @@ export const AllTypes: Story = {
     );
   },
 };
+
