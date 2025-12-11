@@ -2,20 +2,8 @@
    ReviewX Storybook 첫 화면 스타일
    ======================================== */
 
-/* 프리텐다드 폰트 적용 */
-.sb-container,
-.sb-section,
-.sb-section-item,
-.sb-grid-item,
-.sb-section-title,
-.sb-section-item-heading,
-.sb-section-item-paragraph,
-.sb-addon,
-.sb-addon-text,
-.sb-tech-list,
-.sb-tech-badge,
-.sb-internal-link,
-.sb-external-link {
+/* 프리텐다드 폰트 적용 - 모든 텍스트 요소에 적용 */
+* {
   font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui,
     Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR",
     "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
@@ -48,10 +36,7 @@
   font-size: 32px;
   font-weight: 700;
   word-wrap: break-word;
-  background: linear-gradient(90deg, #ffacae 0%, #d90074 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #333333;
 }
 
 .sb-section-item,
@@ -82,7 +67,7 @@
   margin: 0 !important;
   font-size: 18px;
   font-weight: 600;
-  color: #d90074;
+  color: #333333;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
@@ -91,7 +76,7 @@
   margin: 0;
   padding-bottom: 16px;
   line-height: 1.7;
-  color: #495057;
+  color: #333333;
   font-size: 14px;
   word-wrap: break-word;
   overflow-wrap: break-word;
@@ -147,14 +132,17 @@
   );
   border: 1px solid rgba(217, 0, 116, 0.2);
   border-radius: 4px;
-  font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui,
+    Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR",
+    "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    sans-serif;
   overflow-x: auto;
   width: 100%;
   box-sizing: border-box;
 }
 
 .sb-code-example code {
-  color: #d90074;
+  color: #333333;
   font-size: 12px;
   white-space: pre-wrap;
   word-break: break-all;
@@ -163,7 +151,7 @@
 
 .sb-section a:not(h1 a, h2 a, h3 a) {
   font-size: 14px;
-  color: #d90074;
+  color: #333333;
   text-decoration: none;
   font-weight: 500;
   display: inline-flex;
@@ -173,7 +161,7 @@
 }
 
 .sb-section a:hover {
-  color: #ffacae;
+  color: #333333;
   text-decoration: underline;
 }
 
@@ -190,7 +178,7 @@
   background: #ffe0e6;
   border-radius: 4px;
   font-size: 13px;
-  color: #d90074;
+  color: #333333;
   text-decoration: none;
   transition: all 0.2s ease;
   display: block;
@@ -201,7 +189,7 @@
 
 .sb-internal-link:hover {
   background: linear-gradient(90deg, #ffacae 0%, #d90074 100%);
-  color: white;
+  color: #333333;
   text-decoration: none;
 }
 
@@ -215,14 +203,22 @@
   display: flex;
   align-items: center;
   position: relative;
-  background: linear-gradient(90deg, #ffacae 0%, #d90074 100%);
   border-radius: 12px;
   min-height: 220px;
   margin-bottom: 48px !important;
   overflow: visible;
   padding: 40px 48px;
-  color: white;
+  color: #333333;
   box-sizing: border-box;
+  border: 1px solid #ffe0e6;
+  background: #fff5f7;
+  transition: all 0.2s ease;
+}
+
+.sb-addon:hover {
+  box-shadow: 0 4px 12px rgba(217, 0, 116, 0.15);
+  transform: translateY(-2px);
+  border-color: #ffacae;
 }
 
 .sb-addon-text {
@@ -235,15 +231,17 @@
 .sb-addon-text h4 {
   padding-top: 0px;
   margin-bottom: 12px;
-  color: white;
+  color: #333333;
   font-size: 24px;
+  font-weight: 600;
   word-wrap: break-word;
 }
 
 .sb-addon-text p {
-  color: rgba(255, 255, 255, 0.9);
+  color: #333333;
   margin-bottom: 16px;
   word-wrap: break-word;
+  font-weight: 500;
 }
 
 .sb-tech-list {
@@ -254,7 +252,7 @@
 
 .sb-tech-list li {
   padding: 8px 0;
-  color: rgba(255, 255, 255, 0.95);
+  color: #333333;
   font-size: 13px;
   word-wrap: break-word;
   line-height: 1.6;
@@ -262,7 +260,7 @@
 }
 
 .sb-tech-list strong {
-  color: white;
+  color: #333333;
   margin-right: 8px;
 }
 
@@ -284,7 +282,7 @@
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   border-radius: 8px;
-  color: white;
+  color: #333333;
   font-weight: 600;
   font-size: 14px;
   border: 1px solid rgba(255, 255, 255, 0.3);
