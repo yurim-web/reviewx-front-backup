@@ -38,6 +38,8 @@ import {
   type ReviewerType,
   type ReviewerStatus,
 } from "@/data/manager_ga/member/reviewers";
+import MemberStatusTag from "@/components/manager/common/tags/MemberStatusTag";
+import ReviewerTypeTag from "@/components/manager/common/tags/ReviewerTypeTag";
 
 interface ReviewerTableProps {
   // 검색어 상태를 props로 받습니다
@@ -167,20 +169,6 @@ export default function ReviewerTable({
   // 숫자를 천 단위로 포맷팅하는 함수
   const format_number = (num: number): string => {
     return num.toLocaleString();
-  };
-
-  // 리뷰어 유형 태그 스타일 매핑
-  const reviewer_type_style_map: Record<ReviewerType, string> = {
-    서포터즈: cssStyles.type_tag_supporter,
-    일반: cssStyles.type_tag_normal,
-    인플루언서: cssStyles.type_tag_influencer,
-  };
-
-  // 리뷰어 상태 태그 스타일 매핑
-  const reviewer_status_style_map: Record<ReviewerStatus, string> = {
-    정상: cssStyles.status_tag_normal,
-    "일시 정지": cssStyles.status_tag_suspended,
-    "영구 정지": cssStyles.status_tag_permanent,
   };
 
   // 리뷰어 행 클릭 핸들러
@@ -562,13 +550,7 @@ export default function ReviewerTable({
 
                 {/* 구분 (유형) */}
                 <div className={cssStyles.table_cell_type}>
-                  <span
-                    className={`${cssStyles.type_tag} ${
-                      reviewer_type_style_map[reviewer.type]
-                    }`}
-                  >
-                    {reviewer.type}
-                  </span>
+                  <ReviewerTypeTag type={reviewer.type} styles={cssStyles} />
                 </div>
 
                 {/* 접속일 */}
@@ -608,13 +590,12 @@ export default function ReviewerTable({
 
                 {/* 상태 */}
                 <div className={cssStyles.table_cell_status}>
-                  <span
-                    className={`${cssStyles.status_tag} ${
-                      reviewer_status_style_map[reviewer.status]
-                    }`}
-                  >
-                    {reviewer.status}
-                  </span>
+                  <MemberStatusTag
+                    status={
+                      reviewer.status as "정상" | "일시 정지" | "영구 정지"
+                    }
+                    styles={cssStyles}
+                  />
                 </div>
               </div>
             );

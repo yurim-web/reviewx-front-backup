@@ -24,7 +24,7 @@
  *
  * 컴포넌트 구조:
  * - StatCardsSectionCommon: 통계 카드 섹션 (공통)
- * - FilterSectionCommon: 필터 섹션 (공통)
+ * - CampaignProgressFilterSection: 필터 섹션 (공통)
  * - CampaignTableCommon: 캠페인 테이블 (공통)
  *
  */
@@ -33,7 +33,7 @@
 
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import StatCardsSectionCommon from "./cards/StatCardsSection";
-import FilterSectionCommon from "./section/FilterSection";
+import CampaignProgressFilterSection from "./section/CampaignProgressFilterSection";
 import CampaignTableCommon from "./table/CampaignTable";
 
 // 신고 모달 공통 컴포넌트와 데이터 import
@@ -217,8 +217,8 @@ export default function ProgressPageCommon({
         />
 
         {/* 필터 섹션 */}
-        {/* FilterSectionCommon은 공통 컴포넌트로, 스타일을 props로 받습니다 */}
-        <FilterSectionCommon
+        {/* CampaignProgressFilterSection은 공통 컴포넌트로, 스타일을 props로 받습니다 */}
+        <CampaignProgressFilterSection
           styles={
             filterSectionStyles as {
               filter_item: string;

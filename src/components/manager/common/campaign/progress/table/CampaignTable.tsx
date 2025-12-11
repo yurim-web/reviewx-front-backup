@@ -36,11 +36,11 @@ import {
   get_sort_arrow_alt,
   type SortColumnConfig,
 } from "@/utils/table/sort";
-import CampaignStatusTag from "../tags/CampaignStatusTag";
-import CampaignTypeTag from "../tags/CampaignTypeTag";
+import CampaignStatusTag from "@/components/manager/common/tags/CampaignStatusTag";
+import CampaignTypeTag from "@/components/manager/common/tags/CampaignTypeTag";
 import ChannelIcon from "../icons/ChannelIcon";
-import type { CampaignStatus } from "../tags/CampaignStatusTag";
-import type { CampaignType } from "../tags/CampaignTypeTag";
+import type { CampaignStatus } from "@/components/manager/common/tags/CampaignStatusTag";
+import type { CampaignType } from "@/components/manager/common/tags/CampaignTypeTag";
 import type { Channel } from "../icons/ChannelIcon";
 import CommonTable, {
   type TableColumn,

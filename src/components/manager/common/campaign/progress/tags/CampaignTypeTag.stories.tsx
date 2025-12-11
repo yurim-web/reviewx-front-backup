@@ -6,7 +6,9 @@
 
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
-import CampaignTypeTag, { type CampaignType } from "./CampaignTypeTag";
+import CampaignTypeTag, {
+  type CampaignType,
+} from "@/components/manager/common/tags/CampaignTypeTag";
 
 // CSS 모듈 import
 import tagsStylesModule from "@/styles/manager_ga/campaign/progress/tags.module.css";
@@ -85,7 +87,13 @@ export const Mission: Story = {
 // 모든 유형 태그 비교
 export const AllTypes: Story = {
   render: () => {
-    const types: CampaignType[] = ["배송형", "방문형", "구매평", "기자단", "미션형"];
+    const types: CampaignType[] = [
+      "배송형",
+      "방문형",
+      "구매평",
+      "기자단",
+      "미션형",
+    ];
 
     return React.createElement(
       "div",
@@ -107,4 +115,3 @@ export const AllTypes: Story = {
     );
   },
 };
-

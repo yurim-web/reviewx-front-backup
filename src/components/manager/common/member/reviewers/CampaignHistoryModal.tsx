@@ -15,9 +15,9 @@
 
 import CampaignHistoryModalCommon, {
   type CampaignHistoryItem,
-} from '@/components/manager/common/member/modal/CampaignHistoryModal';
-import styles from '@/styles/manager_ga/member/reviewers/modal/campaign_history_modal.module.css';
-import { type RecentCampaign } from '@/data/manager_ga/member/reviewers';
+} from "@/components/manager/common/member/modal/CampaignHistoryModal";
+import styles from "@/styles/manager_ga/member/reviewers/modal/campaign_history_modal.module.css";
+import { type RecentCampaign } from "@/data/manager_ga/member/reviewers";
 
 interface CampaignHistoryModalProps {
   // 모달 열림/닫힘 상태
@@ -30,7 +30,7 @@ interface CampaignHistoryModalProps {
 
 // RecentCampaign을 CampaignHistoryItem으로 변환하는 함수
 const convert_to_campaign_history_item = (
-  campaign: RecentCampaign,
+  campaign: RecentCampaign
 ): CampaignHistoryItem => {
   return {
     campaign_number: campaign.campaign_number,
@@ -48,7 +48,7 @@ export default function CampaignHistoryModal({
   campaigns,
 }: CampaignHistoryModalProps) {
   const campaign_items: CampaignHistoryItem[] = campaigns.map(
-    convert_to_campaign_history_item,
+    convert_to_campaign_history_item
   );
 
   return (
@@ -72,9 +72,13 @@ export default function CampaignHistoryModal({
           table_cell: string;
           table_cell_campaign_name: string;
           status_tag: string;
+          status_tag_scheduled: string;
+          status_tag_applied: string;
           status_tag_progress: string;
-          status_tag_completed: string;
+          status_tag_ended: string;
+          status_tag_completed: string; // 기존 호환성을 위해 유지
           status_tag_cancelled: string;
+          status_tag_urgent: string;
           type_tag: string;
           channel_icon_wrapper: string;
           channel_icon: string;
@@ -85,4 +89,3 @@ export default function CampaignHistoryModal({
     />
   );
 }
-

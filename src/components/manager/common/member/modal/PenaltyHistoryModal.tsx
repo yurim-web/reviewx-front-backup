@@ -19,7 +19,12 @@
  * - 유형, 사유, 처리일, 상태 정보를 보여줍니다
  */
 
-'use client';
+"use client";
+
+import MemberStatusTag from "@/components/manager/common/tags/MemberStatusTag";
+import type { MemberStatus } from "@/components/manager/common/tags/MemberStatusTag";
+import PenaltyTypeTag from "@/components/manager/common/tags/PenaltyTypeTag";
+import type { PenaltyType } from "@/components/manager/common/tags/PenaltyTypeTag";
 
 // 패널티 내역 아이템 타입 정의 (리뷰어와 파트너 모두에서 사용)
 export interface PenaltyHistoryItem {
@@ -51,6 +56,9 @@ interface PenaltyHistoryModalProps {
     table_row: string;
     table_cell: string;
     type_tag_penalty: string;
+    type_tag_penalty_warning: string;
+    type_tag_penalty_caution: string;
+    type_tag_penalty_suspension: string;
     status_tag: string;
     status_tag_suspended: string;
     status_tag_normal: string;
@@ -130,8 +138,8 @@ export default function PenaltyHistoryModal({
                   // 상태 값에 따라 표시할 값을 결정합니다
                   // '일시정지'를 '일시 정지'로 변환하여 표시합니다
                   const display_status =
-                    penalty.status === '일시정지'
-                      ? '일시 정지'
+                    penalty.status === "일시정지"
+                      ? "일시 정지"
                       : penalty.status;
 
                   // 사유: reason이 있으면 reason을, 없으면 type을 사유로 사용
@@ -139,9 +147,9 @@ export default function PenaltyHistoryModal({
 
                   return (
                     <div key={index} className={cssStyles.table_row}>
-                      {/* 유형: 항상 "경고"를 오렌지색 태그로 표시 */}
+                      {/* 유형: 패널티 유형 태그 표시 */}
                       <div className={cssStyles.table_cell}>
-                        <span className={cssStyles.type_tag_penalty}>경고</span>
+                        <PenaltyTypeTag type="경고" styles={cssStyles} />
                       </div>
 
                       {/* 사유: type 값(지각 제출, 선정 후 취소 등)을 텍스트로 표시 */}
@@ -156,17 +164,10 @@ export default function PenaltyHistoryModal({
 
                       {/* 상태: 일시 정지(빨간색) 또는 정상(파란색) 태그로 표시 */}
                       <div className={cssStyles.table_cell}>
-                        {/* 상태에 따라 다른 스타일의 태그를 표시합니다 */}
-                        {/* 삼항 연산자: 조건에 따라 다른 값을 반환합니다 */}
-                        <span
-                          className={`${cssStyles.status_tag} ${
-                            display_status === '일시 정지'
-                              ? cssStyles.status_tag_suspended
-                              : cssStyles.status_tag_normal
-                          }`}
-                        >
-                          {display_status}
-                        </span>
+                        <MemberStatusTag
+                          status={display_status as MemberStatus}
+                          styles={cssStyles}
+                        />
                       </div>
                     </div>
                   );

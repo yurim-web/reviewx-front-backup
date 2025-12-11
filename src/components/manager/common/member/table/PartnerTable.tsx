@@ -37,6 +37,9 @@ import {
   type PartnerDivision,
   type PartnerStatus,
 } from "@/data/manager_ga/member/partners";
+import MemberStatusTag from "@/components/manager/common/tags/MemberStatusTag";
+import BusinessTypeTag from "@/components/manager/common/tags/BusinessTypeTag";
+import type { BusinessType } from "@/components/manager/common/tags/BusinessTypeTag";
 
 interface PartnerTableProps {
   // 검색어 상태를 props로 받습니다
@@ -160,19 +163,6 @@ export default function PartnerTable({
   // 숫자를 천 단위로 포맷팅하는 함수
   const format_number = (num: number): string => {
     return num.toLocaleString();
-  };
-
-  // 파트너 구분 태그 스타일 매핑
-  const partner_division_style_map: Record<PartnerDivision, string> = {
-    법인: cssStyles.division_tag_corporate,
-    개인: cssStyles.division_tag_individual,
-  };
-
-  // 파트너 상태 태그 스타일 매핑
-  const partner_status_style_map: Record<PartnerStatus, string> = {
-    정상: cssStyles.status_tag_normal,
-    "일시 정지": cssStyles.status_tag_suspended,
-    "영구 정지": cssStyles.status_tag_permanent,
   };
 
   // 파트너 행 클릭 핸들러
@@ -553,13 +543,10 @@ export default function PartnerTable({
 
                 {/* 구분 (법인/개인) */}
                 <div className={cssStyles.table_cell_division}>
-                  <span
-                    className={`${cssStyles.division_tag} ${
-                      partner_division_style_map[partner.division]
-                    }`}
-                  >
-                    {partner.division}
-                  </span>
+                  <BusinessTypeTag
+                    type={partner.division as BusinessType}
+                    styles={cssStyles}
+                  />
                 </div>
 
                 {/* 접속일 */}
@@ -599,13 +586,12 @@ export default function PartnerTable({
 
                 {/* 상태 */}
                 <div className={cssStyles.table_cell_status}>
-                  <span
-                    className={`${cssStyles.status_tag} ${
-                      partner_status_style_map[partner.status]
-                    }`}
-                  >
-                    {partner.status}
-                  </span>
+                  <MemberStatusTag
+                    status={
+                      partner.status as "정상" | "일시 정지" | "영구 정지"
+                    }
+                    styles={cssStyles}
+                  />
                 </div>
               </div>
             );

@@ -141,7 +141,7 @@
 
 /* 체크박스 체크마크 (✓) */
 .checkbox:checked::after {
-  content: '✓';
+  content: "✓";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -231,7 +231,19 @@
   width: 100%;
 }
 
-/* 구분 태그 */
+/* ========================================
+   태그 스타일 (공통 태그 컴포넌트용)
+   ======================================== */
+
+/**
+ * 참고: 공통 태그 스타일은 @/styles/common/tags.module.css를 참조하세요.
+ * 
+ * 사용 컴포넌트:
+ * - BusinessTypeTag (사업자 구분 태그)
+ * - MemberStatusTag (회원 상태 태그)
+ */
+
+/* 사업자 구분 태그 기본 스타일 */
 .division_tag {
   display: inline-flex;
   align-items: center;
@@ -245,13 +257,13 @@
   white-space: nowrap;
 }
 
-/* 법인 태그 */
+/* 법인 태그 (BusinessTypeTag용) */
 .division_tag_corporate {
   background-color: #666666;
   color: white;
 }
 
-/* 개인 태그 */
+/* 개인 태그 (BusinessTypeTag용) */
 .division_tag_individual {
   background-color: #f1f1f1;
   color: #666666;

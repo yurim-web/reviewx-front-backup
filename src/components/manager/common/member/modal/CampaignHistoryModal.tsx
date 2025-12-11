@@ -19,22 +19,26 @@
  *
  */
 
-'use client';
+"use client";
 
-import Image from 'next/image';
+import Image from "next/image";
+import CampaignStatusTag from "@/components/manager/common/tags/CampaignStatusTag";
+import type { CampaignStatus } from "@/components/manager/common/tags/CampaignStatusTag";
+import CampaignTypeTag from "@/components/manager/common/tags/CampaignTypeTag";
+import type { CampaignType } from "@/components/manager/common/tags/CampaignTypeTag";
 
 // 캠페인 내역 아이템 타입 정의 (리뷰어와 파트너 모두에서 사용)
 export interface CampaignHistoryItem {
   campaign_number: string; // 캠페인 번호
   campaign_name: string; // 캠페인명
-  status: '진행' | '종료' | '취소'; // 상태
+  status: CampaignStatus; // 상태 (진행, 종료, 취소 등)
   type: string; // 유형 (예: '배송형', '구매평')
   channel: string; // 채널 (예: 'Blog', 'Clip', 'Instagram', 'Youtube', 'Store')
   points: number; // 지급 포인트
 }
 
 // 채널 타입 정의
-export type Channel = 'Blog' | 'Clip' | 'Instagram' | 'Youtube' | 'Store';
+export type Channel = "Blog" | "Clip" | "Instagram" | "Youtube" | "Store";
 
 interface CampaignHistoryModalProps {
   // 모달 열림/닫힘 상태
@@ -59,9 +63,13 @@ interface CampaignHistoryModalProps {
     table_cell: string;
     table_cell_campaign_name: string;
     status_tag: string;
+    status_tag_scheduled: string;
+    status_tag_applied: string;
     status_tag_progress: string;
-    status_tag_completed: string;
+    status_tag_ended: string;
+    status_tag_completed: string; // 기존 호환성을 위해 유지
     status_tag_cancelled: string;
+    status_tag_urgent: string;
     type_tag: string;
     channel_icon_wrapper: string;
     channel_icon: string;
@@ -72,11 +80,11 @@ interface CampaignHistoryModalProps {
 
 // 채널 아이콘 경로 매핑
 const channel_icon_map: Record<Channel, string> = {
-  Blog: '/images/brand_logo/naverblog.svg',
-  Clip: '/images/brand_logo/naverclip.svg',
-  Instagram: '/images/brand_logo/insta.svg',
-  Youtube: '/images/brand_logo/youtube.svg',
-  Store: '/images/brand_logo/navershop.svg',
+  Blog: "/images/brand_logo/naverblog.svg",
+  Clip: "/images/brand_logo/naverclip.svg",
+  Instagram: "/images/brand_logo/insta.svg",
+  Youtube: "/images/brand_logo/youtube.svg",
+  Store: "/images/brand_logo/navershop.svg",
 };
 
 export default function CampaignHistoryModal({
@@ -92,7 +100,7 @@ export default function CampaignHistoryModal({
   // 숫자를 천 단위로 포맷팅하는 함수
   // 예: 19999 -> "19,999"
   const format_number = (num: number): string => {
-    return num.toLocaleString('ko-KR');
+    return num.toLocaleString("ko-KR");
   };
 
   // 오버레이 클릭 핸들러
@@ -168,24 +176,18 @@ export default function CampaignHistoryModal({
 
                     {/* 상태 */}
                     <div className={cssStyles.table_cell}>
-                      <span
-                        className={`${cssStyles.status_tag} ${
-                          campaign.status === '진행'
-                            ? cssStyles.status_tag_progress
-                            : campaign.status === '종료'
-                            ? cssStyles.status_tag_completed
-                            : cssStyles.status_tag_cancelled
-                        }`}
-                      >
-                        {campaign.status}
-                      </span>
+                      <CampaignStatusTag
+                        status={campaign.status}
+                        styles={cssStyles}
+                      />
                     </div>
 
                     {/* 유형 */}
                     <div className={cssStyles.table_cell}>
-                      <span className={cssStyles.type_tag}>
-                        {campaign.type}
-                      </span>
+                      <CampaignTypeTag
+                        type={campaign.type as CampaignType}
+                        styles={cssStyles}
+                      />
                     </div>
 
                     {/* 채널 */}

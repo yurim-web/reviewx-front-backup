@@ -12,6 +12,7 @@
  *   - CampaignTable 컴포넌트 (캠페인 진행 상황 테이블)
  *   - PostTable 컴포넌트 (게시글 목록 테이블)
  *   - BlacklistTable 컴포넌트 (차단 내역 테이블)
+ *   - WithdrawalTable 컴포넌트 (출금 현황 테이블)
  *   - CommonTableWithTooltip 컴포넌트 (툴팁 기능이 포함된 범용 테이블)
  *
  * - 최종 사용 페이지:
@@ -26,6 +27,9 @@
  *   차단 내역:
  *   - /manager_ga/member/blacklist (GA 관리자 차단 내역 페이지)
  *   - /manager_sa/member/blacklist (SA 관리자 차단 내역 페이지)
+ *
+ *   출금 현황:
+ *   - /manager_sa/settlement/withdrawal (SA 관리자 출금 현황 페이지)
  *
  *   반려/신고 내역 (CommonTableWithTooltip을 통해):
  *   - /manager_ga/campaign/rejected (GA 관리자 반려 내역 페이지)
@@ -47,6 +51,10 @@
  *
  * 차단 내역 페이지
  *   └─> BlacklistTable 컴포넌트
+ *       └─> CommonTable 컴포넌트
+ *
+ * 출금 현황 페이지
+ *   └─> WithdrawalTable 컴포넌트
  *       └─> CommonTable 컴포넌트
  *
  * 반려/신고 내역 페이지

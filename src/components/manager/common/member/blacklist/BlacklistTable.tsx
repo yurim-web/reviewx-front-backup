@@ -39,6 +39,8 @@ import {
   get_sort_arrow_alt,
   type SortColumnConfig,
 } from "@/utils/table/sort";
+import UserTypeTag from "@/components/manager/common/tags/UserTypeTag";
+import type { UserType } from "@/components/manager/common/tags/UserTypeTag";
 
 interface BlacklistTableProps {
   search_query: string;
@@ -46,13 +48,6 @@ interface BlacklistTableProps {
 
 // BlacklistItem이 TableRowData를 확장하도록 확장
 interface BlacklistTableRowData extends BlacklistItem, TableRowData {}
-
-// 구분 태그 스타일 매핑
-const division_style_map: Record<BlacklistDivision, string> = {
-  파트너: styles.division_tag_partner,
-  리뷰어: styles.division_tag_reviewer,
-  관리자: styles.division_tag_admin,
-};
 
 // 컬럼 정의
 const columns: TableColumn[] = [
@@ -313,13 +308,7 @@ export default function BlacklistTable({ search_query }: BlacklistTableProps) {
             return <span>{row.user_id}</span>;
           case "division":
             return (
-              <span
-                className={`${styles.division_tag} ${
-                  division_style_map[row.division]
-                }`}
-              >
-                {row.division}
-              </span>
+              <UserTypeTag type={row.division as UserType} styles={styles} />
             );
           case "current_points":
             return <span>{format_number(row.current_points)}</span>;

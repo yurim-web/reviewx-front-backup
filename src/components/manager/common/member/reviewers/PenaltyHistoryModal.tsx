@@ -15,9 +15,9 @@
 
 import PenaltyHistoryModalCommon, {
   type PenaltyHistoryItem as CommonPenaltyHistoryItem,
-} from '@/components/manager/common/member/modal/PenaltyHistoryModal';
-import styles from '@/styles/manager_ga/member/reviewers/modal/penalty_history_modal.module.css';
-import type { PenaltyHistoryItem } from '@/data/manager_ga/member/reviewers';
+} from "@/components/manager/common/member/modal/PenaltyHistoryModal";
+import styles from "@/styles/manager_ga/member/reviewers/modal/penalty_history_modal.module.css";
+import type { PenaltyHistoryItem } from "@/data/manager_ga/member/reviewers";
 
 interface PenaltyHistoryModalProps {
   // 모달 열림/닫힘 상태
@@ -30,7 +30,7 @@ interface PenaltyHistoryModalProps {
 
 // PenaltyHistoryItem을 CommonPenaltyHistoryItem으로 변환하는 함수
 const convert_to_common_penalty_item = (
-  penalty: PenaltyHistoryItem,
+  penalty: PenaltyHistoryItem
 ): CommonPenaltyHistoryItem => {
   return {
     type: penalty.type,
@@ -47,7 +47,7 @@ export default function PenaltyHistoryModal({
 }: PenaltyHistoryModalProps) {
   // PenaltyHistoryItem 배열을 CommonPenaltyHistoryItem 배열로 변환
   const penalty_items: CommonPenaltyHistoryItem[] = penalty_history.map(
-    convert_to_common_penalty_item,
+    convert_to_common_penalty_item
   );
 
   return (
@@ -70,6 +70,9 @@ export default function PenaltyHistoryModal({
           table_row: string;
           table_cell: string;
           type_tag_penalty: string;
+          type_tag_penalty_warning: string;
+          type_tag_penalty_caution: string;
+          type_tag_penalty_suspension: string;
           status_tag: string;
           status_tag_suspended: string;
           status_tag_normal: string;
@@ -80,4 +83,3 @@ export default function PenaltyHistoryModal({
     />
   );
 }
-

@@ -187,7 +187,19 @@
   text-overflow: ellipsis;
 }
 
-/* 상태 태그 */
+/* ========================================
+   태그 스타일 (공통 태그 컴포넌트용)
+   ======================================== */
+
+/**
+ * 참고: 공통 태그 스타일은 @/styles/common/tags.module.css를 참조하세요.
+ * 
+ * 사용 컴포넌트:
+ * - CampaignStatusTag (캠페인 상태 태그)
+ * - CampaignTypeTag (캠페인 타입 태그)
+ */
+
+/* 상태 태그 기본 스타일 */
 .status_tag {
   display: inline-flex;
   align-items: center;
@@ -198,28 +210,54 @@
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
+  min-width: 40px;
+  height: 22px;
   white-space: nowrap;
 }
 
-/* 진행 상태 태그 */
+/* 예정 상태 태그 (CampaignStatusTag용) */
+.status_tag_scheduled {
+  background-color: rgba(255, 225, 0, 0.1);
+  color: #c4a300;
+}
+
+/* 신청 상태 태그 (CampaignStatusTag용) */
+.status_tag_applied {
+  background-color: rgba(255, 86, 148, 0.1);
+  color: #ff5694;
+}
+
+/* 진행 상태 태그 (CampaignStatusTag용) */
 .status_tag_progress {
   background-color: rgba(43, 127, 255, 0.1);
   color: #2b7fff;
 }
 
-/* 종료 상태 태그 */
+/* 종료 상태 태그 (CampaignStatusTag용) */
+.status_tag_ended {
+  background-color: #666666;
+  color: white;
+}
+
+/* 기존 호환성을 위한 별칭 (종료 = 완료) */
 .status_tag_completed {
   background-color: #666666;
   color: white;
 }
 
-/* 취소 상태 태그 */
+/* 취소 상태 태그 (CampaignStatusTag용) */
 .status_tag_cancelled {
   background-color: rgba(255, 38, 38, 0.05);
   color: #ff2626;
 }
 
-/* 유형 태그 */
+/* 긴급 상태 태그 (CampaignStatusTag용) */
+.status_tag_urgent {
+  background-color: #ff2626;
+  color: white;
+}
+
+/* 타입 태그 기본 스타일 (CampaignTypeTag용) */
 .type_tag {
   display: inline-flex;
   align-items: center;

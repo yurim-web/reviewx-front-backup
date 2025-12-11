@@ -55,9 +55,12 @@ export function compare_values(
       return direction === "asc" ? a_parsed - b_parsed : b_parsed - a_parsed;
 
     case "numeric_string":
-      // 문자열 형식이지만 숫자 의미 (예: "000001")
-      a_parsed = Number(a_value) || 0;
-      b_parsed = Number(b_value) || 0;
+      // 문자열 형식이지만 숫자 의미 (예: "000001", "1,500,000")
+      // 쉼표를 제거한 후 숫자로 변환
+      const a_cleaned = String(a_value || "").replace(/,/g, "");
+      const b_cleaned = String(b_value || "").replace(/,/g, "");
+      a_parsed = Number(a_cleaned) || 0;
+      b_parsed = Number(b_cleaned) || 0;
       return direction === "asc" ? a_parsed - b_parsed : b_parsed - a_parsed;
 
     case "date":

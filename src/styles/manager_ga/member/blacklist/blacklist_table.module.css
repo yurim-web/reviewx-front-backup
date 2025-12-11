@@ -180,6 +180,18 @@
 }
 
 /* 구분 태그 */
+/* ========================================
+   태그 스타일 (공통 태그 컴포넌트용)
+   ======================================== */
+
+/**
+ * 참고: 공통 태그 스타일은 @/styles/common/tags.module.css를 참조하세요.
+ * 
+ * 사용 컴포넌트:
+ * - UserTypeTag (유저 타입 태그)
+ */
+
+/* 유저 타입 태그 기본 스타일 */
 .division_tag {
   display: inline-flex;
   align-items: center;
@@ -193,19 +205,19 @@
   white-space: nowrap;
 }
 
-/* 파트너 태그 */
-.division_tag_partner {
-  background-color: rgba(43, 127, 255, 0.1);
-  color: #2b7fff;
-}
-
-/* 리뷰어 태그 */
+/* 리뷰어 태그 (UserTypeTag용) */
 .division_tag_reviewer {
   background-color: rgba(255, 86, 148, 0.1);
   color: #ff5694;
 }
 
-/* 관리자 태그 */
+/* 파트너 태그 (UserTypeTag용) */
+.division_tag_partner {
+  background-color: rgba(43, 127, 255, 0.1);
+  color: #2b7fff;
+}
+
+/* 관리자 태그 (UserTypeTag용) */
 .division_tag_admin {
   background-color: #f1f1f1;
   color: #666666;

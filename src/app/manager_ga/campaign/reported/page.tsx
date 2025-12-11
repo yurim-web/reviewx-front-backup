@@ -25,7 +25,7 @@ import styles from "@/styles/manager_ga/campaign/reported/page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import ReportCodeInfoSection from "@/components/manager/ga/campaign/reported/section/ReportCodeInfoSection";
 import ReportStatsSection from "@/components/manager/ga/campaign/reported/section/ReportStatsSection";
-import FilterSection from "@/components/manager/ga/campaign/reported/section/FilterSection";
+import CampaignReportedFilterSection from "@/components/manager/ga/campaign/reported/section/CampaignReportedFilterSection";
 import ReportedCampaignTable from "@/components/manager/ga/campaign/reported/section/ReportedCampaignTable";
 import type { ReportCode } from "@/data/manager_ga/reported";
 
@@ -46,7 +46,7 @@ import type { ReportCode } from "@/data/manager_ga/reported";
  * 컴포넌트 구조:
  * - ReportCodeInfoSection: 신고 코드 안내 섹션
  * - ReportStatsSection: 신고 이력 통계 섹션
- * - FilterSection: 필터 섹션
+ * - CampaignReportedFilterSection: 필터 섹션
  * - ReportedCampaignTable: 신고 이력 테이블
  *
  *
@@ -76,7 +76,7 @@ export default function ReportedPage() {
         <h2 className={styles.section_title}>신고 내역</h2>
 
         {/* 필터 섹션 */}
-        <FilterSection
+        <CampaignReportedFilterSection
           search_query={search_query}
           on_search_change={set_search_query}
           selected_report_codes={selected_report_codes}

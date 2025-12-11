@@ -17,8 +17,8 @@
  *
  */
 
-import Link from 'next/link';
-import styles from '@/styles/manager_ga/layout/header.module.css';
+import Link from "next/link";
+import styles from "@/styles/manager_ga/layout/header.module.css";
 
 export default function ManagerGAHeader() {
   return (
@@ -31,6 +31,11 @@ export default function ManagerGAHeader() {
 
         {/* 우측 버튼 영역 - 가이드와 마이페이지 버튼 */}
         <div className={styles.menu_icon_box}>
+          {/* 알림페이지로 연결 - 내부 링크  */}
+          <Link href="/notification">
+            <img src="/images/icons/bell.svg" alt="bell" />
+          </Link>
+
           {/* 가이드로 연결 - 외부 링크 */}
           <a
             href="https://markx.dev/guide_book"

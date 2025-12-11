@@ -6,7 +6,9 @@
 
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
-import CampaignStatusTag, { type CampaignStatus } from "./CampaignStatusTag";
+import CampaignStatusTag, {
+  type CampaignStatus,
+} from "@/components/manager/common/tags/CampaignStatusTag";
 
 // CSS 모듈 import
 import tagsStylesModule from "@/styles/manager_ga/campaign/progress/tags.module.css";
@@ -105,7 +107,14 @@ export const Urgent: Story = {
 // 모든 상태 태그 비교
 export const AllStatuses: Story = {
   render: () => {
-    const statuses: CampaignStatus[] = ["예정", "신청", "진행", "종료", "취소", "긴급"];
+    const statuses: CampaignStatus[] = [
+      "예정",
+      "신청",
+      "진행",
+      "종료",
+      "취소",
+      "긴급",
+    ];
 
     return React.createElement(
       "div",
@@ -127,4 +136,3 @@ export const AllStatuses: Story = {
     );
   },
 };
-

@@ -25,7 +25,7 @@ import styles from "@/styles/manager_ga/campaign/rejected/page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import RejectCodeInfoSection from "@/components/manager/ga/campaign/rejected/section/RejectCodeInfoSection";
 import RejectStatsSection from "@/components/manager/ga/campaign/rejected/section/RejectStatsSection";
-import FilterSection from "@/components/manager/ga/campaign/rejected/section/FilterSection";
+import CampaignRejectedFilterSection from "@/components/manager/ga/campaign/rejected/section/CampaignRejectedFilterSection";
 import RejectedCampaignTable from "@/components/manager/ga/campaign/rejected/section/RejectedCampaignTable";
 import type { RejectCode } from "@/data/manager_ga/rejected";
 
@@ -46,7 +46,7 @@ import type { RejectCode } from "@/data/manager_ga/rejected";
  * 컴포넌트 구조:
  * - RejectCodeInfoSection: 반려 코드 안내 섹션
  * - RejectStatsSection: 반려 이력 통계 섹션
- * - FilterSection: 필터 섹션
+ * - CampaignRejectedFilterSection: 필터 섹션
  * - RejectedCampaignTable: 반려 이력 테이블
  *
  *
@@ -76,7 +76,7 @@ export default function RejectedPage() {
         <h2 className={styles.section_title}>반려 이력</h2>
 
         {/* 필터 섹션 */}
-        <FilterSection
+        <CampaignRejectedFilterSection
           search_query={search_query}
           on_search_change={set_search_query}
           selected_reject_codes={selected_reject_codes}
