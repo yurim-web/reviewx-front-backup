@@ -29,7 +29,8 @@ const filterSectionStyles = (filterSectionStylesModule || {
 };
 
 const meta: Meta<typeof CampaignProgressFilterSection> = {
-  title: "Manager/Common/Campaign/Progress/Section/CampaignProgressFilterSection",
+  title:
+    "Manager/Common/Campaign/Progress/Section/CampaignProgressFilterSection",
   component: CampaignProgressFilterSection,
   tags: ["autodocs"],
   parameters: {
@@ -60,5 +61,3 @@ export const Default: Story = {
     return React.createElement(CampaignProgressFilterSection, props);
   },
 };
-
-

@@ -34,11 +34,8 @@ import CommonTable, {
   type TableRowData,
 } from "@/components/manager/common/table/CommonTable";
 import { useTableSort } from "@/hooks/table/useTableSort";
-import {
-  get_sort_arrow_transform,
-  get_sort_arrow_alt,
-  type SortColumnConfig,
-} from "@/utils/table/sort";
+import type { SortColumnConfig } from "@/utils/table/sort";
+import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
 import UserTypeTag from "@/components/manager/common/tags/UserTypeTag";
 import type { UserType } from "@/components/manager/common/tags/UserTypeTag";
 
@@ -137,161 +134,30 @@ export default function BlacklistTable({ search_query }: BlacklistTableProps) {
     return num.toLocaleString();
   };
 
-  // 커스텀 헤더 렌더링 함수
+  // 커스텀 헤더 렌더링 함수 (SortableTableHeader 공통 컴포넌트 사용)
   const render_custom_header = () => {
+    const is_all_selected =
+      sorted_blacklist.length > 0 &&
+      selected_blacklist_ids.length === sorted_blacklist.length;
+
+    const handle_select_all = () => {
+      if (is_all_selected) {
+        set_selected_blacklist_ids([]);
+      } else {
+        set_selected_blacklist_ids(sorted_blacklist.map((item) => item.id));
+      }
+    };
+
     return (
-      <div className={styles.table_header}>
-        {/* 체크박스 컬럼 */}
-        <div className={styles.table_cell_checkbox}>
-          <input
-            type="checkbox"
-            checked={
-              sorted_blacklist.length > 0 &&
-              selected_blacklist_ids.length === sorted_blacklist.length
-            }
-            onChange={(e) => {
-              if (e.target.checked) {
-                set_selected_blacklist_ids(
-                  sorted_blacklist.map((item) => item.id)
-                );
-              } else {
-                set_selected_blacklist_ids([]);
-              }
-            }}
-            className={styles.checkbox}
-            aria-label="전체 선택"
-          />
-        </div>
-
-        {/* 이름/상호명 */}
-        <div className={styles.table_cell_name}>
-          <span>이름/상호명</span>
-        </div>
-
-        {/* 구분 */}
-        <div className={styles.table_cell_division}>
-          <span>구분</span>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handle_sort("division");
-            }}
-            aria-label="구분 정렬"
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: 0,
-              display: "inline-flex",
-              alignItems: "center",
-            }}
-          >
-            <img
-              src="/images/icons/table_arrow.svg"
-              alt={get_sort_arrow_alt(sort_state, "division")}
-              className={styles.sort_icon}
-              style={{
-                transform: get_sort_arrow_transform(sort_state, "division"),
-                transition: "transform 0.2s",
-              }}
-            />
-          </button>
-        </div>
-
-        {/* 아이디 */}
-        <div className={styles.table_cell_user_id}>
-          <span>아이디</span>
-        </div>
-
-        {/* 아이피 */}
-        <div className={styles.table_cell_ip}>
-          <span>아이피</span>
-        </div>
-
-        {/* 보유 포인트 */}
-        <div className={styles.table_cell_points}>
-          <span>보유 포인트</span>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handle_sort("current_points");
-            }}
-            aria-label="보유 포인트 정렬"
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: 0,
-              display: "inline-flex",
-              alignItems: "center",
-            }}
-          >
-            <img
-              src="/images/icons/table_arrow.svg"
-              alt={get_sort_arrow_alt(sort_state, "current_points")}
-              className={styles.sort_icon}
-              style={{
-                transform: get_sort_arrow_transform(
-                  sort_state,
-                  "current_points"
-                ),
-                transition: "transform 0.2s",
-              }}
-            />
-          </button>
-        </div>
-
-        {/* 차단 코드 */}
-        <div className={styles.table_cell_block_code}>
-          <span>차단 코드</span>
-        </div>
-
-        {/* 차단 사유 */}
-        <div className={styles.table_cell_block_reason}>
-          <span>차단 사유</span>
-        </div>
-
-        {/* 등록일 */}
-        <div className={styles.table_cell_registered_date}>
-          <span>등록일</span>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handle_sort("registered_date");
-            }}
-            aria-label="등록일 정렬"
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: 0,
-              display: "inline-flex",
-              alignItems: "center",
-            }}
-          >
-            <img
-              src="/images/icons/table_arrow.svg"
-              alt={get_sort_arrow_alt(sort_state, "registered_date")}
-              className={styles.sort_icon}
-              style={{
-                transform: get_sort_arrow_transform(
-                  sort_state,
-                  "registered_date"
-                ),
-                transition: "transform 0.2s",
-              }}
-            />
-          </button>
-        </div>
-
-        {/* 등록자 */}
-        <div className={styles.table_cell_registered_by}>
-          <span>등록자</span>
-        </div>
-      </div>
+      <SortableTableHeader
+        columns={columns}
+        sort_state={sort_state}
+        handle_sort={handle_sort}
+        handle_select_all={handle_select_all}
+        is_all_selected={is_all_selected}
+        styles={styles}
+        use_header_row={false}
+      />
     );
   };
 

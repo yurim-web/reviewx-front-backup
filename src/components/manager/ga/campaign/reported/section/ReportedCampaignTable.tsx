@@ -21,11 +21,8 @@
 
 import { useState } from "react";
 import { useTableSort } from "@/hooks/table/useTableSort";
-import {
-  get_sort_arrow_transform,
-  get_sort_arrow_alt,
-  type SortColumnConfig,
-} from "@/utils/table/sort";
+import type { SortColumnConfig } from "@/utils/table/sort";
+import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
 import styles from "@/styles/manager_ga/campaign/reported_table.module.css";
 import {
   reported_campaign_list,
@@ -186,14 +183,15 @@ export default function ReportedCampaignTable({
   };
 
   // 정렬 훅 사용
+  // 페이지 로드 시 "campaign_number" 컬럼 기준 오름차순으로 기본 정렬
   const {
     sort_state,
     handle_sort,
     sorted_data: sorted_filtered_list,
   } = useTableSort({
     data: filtered_list,
-    initial_column_key: "campaign_number",
-    initial_direction: "asc",
+    initial_column_key: "campaign_number", // 기본 정렬: 캠페인 번호 컬럼
+    initial_direction: "asc", // 오름차순
     column_config,
   });
 
@@ -207,55 +205,38 @@ export default function ReportedCampaignTable({
     text_class_name: styles.campaign_name_text,
   };
 
-  // 커스텀 헤더 렌더링
+  // 커스텀 헤더 렌더링 (SortableTableHeader 공통 컴포넌트 사용)
+  // "block" 컬럼은 빈 셀로 처리
   const render_custom_header = () => {
+    const handle_select_all = () => {
+      // ReportedCampaignTable은 체크박스가 없으므로 빈 함수
+    };
+
+    // "block" 컬럼을 빈 셀로 렌더링
+    const render_custom_cell = (column: TableColumn) => {
+      if (column.key === "block") {
+        return (
+          <div
+            key={column.key}
+            className={styles.table_header_cell_block}
+          ></div>
+        );
+      }
+      return null;
+    };
+
     return (
-      <div className={styles.table_header}>
-        {columns.map((column) => {
-          if (column.key === "block") {
-            return (
-              <div
-                key={column.key}
-                className={styles.table_header_cell_block}
-              ></div>
-            );
-          }
-          return (
-            <div key={column.key} className={styles.table_header_cell}>
-              <span>{column.label}</span>
-              {column.sortable && (
-                <button
-                  type="button"
-                  onClick={() => handle_sort(column.key)}
-                  className={styles.table_header_sort_button}
-                  aria-label={`${column.label} 정렬`}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    padding: 0,
-                    display: "inline-flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <img
-                    src="/images/icons/table_arrow.svg"
-                    alt={get_sort_arrow_alt(sort_state, column.key)}
-                    className={styles.table_header_arrow}
-                    style={{
-                      transform: get_sort_arrow_transform(
-                        sort_state,
-                        column.key
-                      ),
-                      transition: "transform 0.2s",
-                    }}
-                  />
-                </button>
-              )}
-            </div>
-          );
-        })}
-      </div>
+      <SortableTableHeader
+        columns={columns}
+        sort_state={sort_state}
+        handle_sort={handle_sort}
+        handle_select_all={handle_select_all}
+        is_all_selected={false}
+        styles={styles}
+        enable_checkbox={false}
+        render_custom_cell={render_custom_cell}
+        use_header_row={false}
+      />
     );
   };
 

@@ -439,32 +439,6 @@ export default function PartnerTable({
         </div>
         <div className={cssStyles.table_cell_status}>
           <span>상태</span>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handle_sort("status");
-            }}
-            aria-label="상태 정렬"
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: 0,
-              display: "inline-flex",
-              alignItems: "center",
-            }}
-          >
-            <img
-              src="/images/icons/table_arrow.svg"
-              alt={get_sort_arrow_alt(sort_state, "status")}
-              className={cssStyles.sort_icon}
-              style={{
-                transform: get_sort_arrow_transform(sort_state, "status"),
-                transition: "transform 0.2s",
-              }}
-            />
-          </button>
         </div>
       </div>
 

@@ -175,15 +175,15 @@ export default function BlacklistFilterSection({
             </div>
           </>
         }
-        // 검색 필터 뒤에 올 버튼 (삭제)
-        search_after_buttons={
+        // 오른쪽에 위치할 버튼 (해제)
+        right_buttons={
           <div className={styles.filter_item} onClick={handle_unblock}>
             <img
               src="/images/icons/clear_icon.svg"
-              alt="삭제"
+              alt="해제"
               className={styles.unblock_icon}
             />
-            <span className={styles.filter_text}>삭제</span>
+            <span className={styles.filter_text}>해제</span>
           </div>
         }
         active_filter_tags={active_filter_tags}

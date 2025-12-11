@@ -25,11 +25,8 @@
 
 import { useState } from "react";
 import { useTableSort } from "@/hooks/table/useTableSort";
-import {
-  get_sort_arrow_transform,
-  get_sort_arrow_alt,
-  type SortColumnConfig,
-} from "@/utils/table/sort";
+import type { SortColumnConfig } from "@/utils/table/sort";
+import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
 import styles from "@/styles/manager_ga/community/posts/post_table.module.css";
 import {
   posts_data,
@@ -128,7 +125,7 @@ export default function PostTable({ search_query }: PostTableProps) {
     column_config,
   });
 
-  // 커스텀 헤더 렌더링 (번호, 조회수, 등록일만 정렬 버튼 표시)
+  // 커스텀 헤더 렌더링 (SortableTableHeader 공통 컴포넌트 사용)
   const render_table_header = () => {
     const is_all_selected =
       sorted_posts.length > 0 &&
@@ -144,65 +141,15 @@ export default function PostTable({ search_query }: PostTableProps) {
     };
 
     return (
-      <div className={styles.table_header}>
-        {/* 체크박스 헤더 */}
-        <div className={styles.table_cell_checkbox}>
-          <input
-            type="checkbox"
-            checked={is_all_selected}
-            onChange={handle_select_all}
-            className={styles.checkbox}
-            aria-label="전체 선택"
-          />
-        </div>
-
-        {/* 데이터 컬럼 헤더 */}
-        {columns.map((column) => {
-          const is_sortable =
-            column.key === "number" ||
-            column.key === "view_count" ||
-            column.key === "registered_date";
-
-          return (
-            <div
-              key={column.key}
-              className={`${styles.table_header_cell} ${
-                column.className || ""
-              }`}
-            >
-              <span>{column.label}</span>
-              {is_sortable && (
-                <button
-                  type="button"
-                  onClick={() => handle_sort(column.key)}
-                  aria-label={`${column.label} 정렬`}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    padding: 0,
-                    display: "inline-flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <img
-                    src="/images/icons/table_arrow.svg"
-                    alt={get_sort_arrow_alt(sort_state, column.key)}
-                    className={styles.table_header_arrow}
-                    style={{
-                      transform: get_sort_arrow_transform(
-                        sort_state,
-                        column.key
-                      ),
-                      transition: "transform 0.2s",
-                    }}
-                  />
-                </button>
-              )}
-            </div>
-          );
-        })}
-      </div>
+      <SortableTableHeader
+        columns={columns}
+        sort_state={sort_state}
+        handle_sort={handle_sort}
+        handle_select_all={handle_select_all}
+        is_all_selected={is_all_selected}
+        styles={styles}
+        use_header_row={false}
+      />
     );
   };
 

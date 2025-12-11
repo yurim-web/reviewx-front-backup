@@ -25,13 +25,13 @@
  *
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import React from 'react';
+import { useState } from "react";
+import React from "react";
 import BaseFilterSection, {
   type FilterTag,
-} from '@/components/manager/ga/common/filter/BaseFilterSection';
+} from "@/components/manager/ga/common/filter/BaseFilterSection";
 
 // 필터 모달 컴포넌트 타입 정의 (유연하게 받기 위해 any 사용)
 // 실제 필터 모달들은 selected_channels, selected_grades 등 다양한 prop 이름을 사용합니다
@@ -50,9 +50,10 @@ interface MemberFilterSectionProps<TChannel, TGradeOrDivision, TType, TStatus> {
     dropdown_arrow: string;
     download_icon: string;
     report_icon: string;
+    block_icon: string;
   };
   // 채널 필터 관련
-  channel_name_map: Record<TChannel, string>;
+  channel_name_map: Record<string, string>;
   ChannelFilterModal: React.ComponentType<FilterModalComponent<TChannel>>;
   // 등급/구분 필터 관련 (리뷰어는 등급, 파트너는 구분)
   grade_or_division_label: string; // "등급" 또는 "구분"
@@ -71,7 +72,7 @@ export default function MemberFilterSection<
   TChannel extends string,
   TGradeOrDivision extends string,
   TType extends string,
-  TStatus extends string,
+  TStatus extends string
 >({
   search_query,
   on_search_change,
@@ -97,7 +98,7 @@ export default function MemberFilterSection<
     useState<TGradeOrDivision[]>([]);
   const [selected_types, set_selected_types] = useState<TType[]>([]);
   const [selected_statuses, set_selected_statuses] = useState<TStatus[]>([]);
-  const [selected_sort, set_selected_sort] = useState('최신순');
+  const [selected_sort, set_selected_sort] = useState("최신순");
 
   // 채널 필터 핸들러
   const handle_channel_apply = (channels: TChannel[]) => {
@@ -115,7 +116,7 @@ export default function MemberFilterSection<
 
   const handle_remove_grade_or_division = (value: TGradeOrDivision) => {
     set_selected_grades_or_divisions(
-      selected_grades_or_divisions.filter((v) => v !== value),
+      selected_grades_or_divisions.filter((v) => v !== value)
     );
   };
 
@@ -138,7 +139,7 @@ export default function MemberFilterSection<
   };
 
   // 정렬 옵션
-  const sort_options = ['최신순', '오래된순'];
+  const sort_options = ["최신순", "오래된순"];
 
   // 정렬 옵션 선택 핸들러
   const handle_sort_change = (sort: string) => {
@@ -192,9 +193,6 @@ export default function MemberFilterSection<
       <BaseFilterSection<string>
         search_query={search_query}
         on_search_change={on_search_change}
-        selected_sort={selected_sort}
-        on_sort_change={handle_sort_change}
-        sort_options={sort_options}
         // 필터 모달 버튼들
         filter_modal_button={
           <>
@@ -207,7 +205,7 @@ export default function MemberFilterSection<
                 className={`${cssStyles.checkbox_icon} ${
                   selected_channels.length > 0
                     ? cssStyles.checkbox_icon_checked
-                    : ''
+                    : ""
                 }`}
               ></div>
               <span className={cssStyles.filter_text}>채널</span>
@@ -227,7 +225,7 @@ export default function MemberFilterSection<
                 className={`${cssStyles.checkbox_icon} ${
                   selected_grades_or_divisions.length > 0
                     ? cssStyles.checkbox_icon_checked
-                    : ''
+                    : ""
                 }`}
               ></div>
               <span className={cssStyles.filter_text}>
@@ -249,7 +247,7 @@ export default function MemberFilterSection<
                 className={`${cssStyles.checkbox_icon} ${
                   selected_types.length > 0
                     ? cssStyles.checkbox_icon_checked
-                    : ''
+                    : ""
                 }`}
               ></div>
               <span className={cssStyles.filter_text}>유형</span>
@@ -269,7 +267,7 @@ export default function MemberFilterSection<
                 className={`${cssStyles.checkbox_icon} ${
                   selected_statuses.length > 0
                     ? cssStyles.checkbox_icon_checked
-                    : ''
+                    : ""
                 }`}
               ></div>
               <span className={cssStyles.filter_text}>상태</span>
@@ -279,31 +277,32 @@ export default function MemberFilterSection<
                 className={cssStyles.dropdown_arrow}
               />
             </div>
-
-            {/* 목록 다운로드 버튼 */}
-            <div className={cssStyles.filter_item}>
-              <img
-                src="/images/excel_icon.png"
-                alt="다운로드"
-                className={cssStyles.download_icon}
-              />
-              <span className={cssStyles.filter_text}>
-                {download_button_text}
-              </span>
-            </div>
           </>
         }
-        // 오른쪽 액션 버튼 (차단)
-        right_action_buttons={[
-          <div key="block" className={cssStyles.filter_item}>
+        // 검색 필터 뒤에 올 버튼 (목록 다운로드)
+        search_after_buttons={
+          <div className={cssStyles.filter_item}>
             <img
-              src="/images/icons/rerport_icon.svg"
+              src="/images/excel_icon.png"
+              alt="다운로드"
+              className={cssStyles.download_icon}
+            />
+            <span className={cssStyles.filter_text}>
+              {download_button_text}
+            </span>
+          </div>
+        }
+        // 오른쪽에 위치할 버튼 (차단)
+        right_buttons={
+          <div className={cssStyles.filter_item}>
+            <img
+              src="/images/icons/block_btn_icon.svg"
               alt="차단"
-              className={cssStyles.report_icon}
+              className={cssStyles.block_icon}
             />
             <span className={cssStyles.filter_text}>차단</span>
-          </div>,
-        ]}
+          </div>
+        }
         // 활성 필터 태그들
         active_filter_tags={active_filter_tags}
         on_filter_tag_remove={handle_filter_tag_remove}
@@ -321,9 +320,9 @@ export default function MemberFilterSection<
       {React.createElement(GradeOrDivisionFilterModal, {
         is_open: is_grade_or_division_modal_open,
         on_close: () => set_is_grade_or_division_modal_open(false),
-        [grade_or_division_label === '등급'
-          ? 'selected_grades'
-          : 'selected_divisions']: selected_grades_or_divisions,
+        [grade_or_division_label === "등급"
+          ? "selected_grades"
+          : "selected_divisions"]: selected_grades_or_divisions,
         on_apply: handle_grade_or_division_apply,
       } as any)}
 

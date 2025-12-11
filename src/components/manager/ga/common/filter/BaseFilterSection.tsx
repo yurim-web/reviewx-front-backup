@@ -47,6 +47,10 @@ interface BaseFilterSectionProps<T extends string | number> {
   date_filter?: React.ReactNode;
   // 검색 필터 뒤에 올 버튼들 (선택적)
   search_after_buttons?: React.ReactNode;
+  // 왼쪽에 위치할 버튼들 (선택적)
+  left_buttons?: React.ReactNode;
+  // 오른쪽에 위치할 버튼들 (선택적)
+  right_buttons?: React.ReactNode;
 }
 
 export default function BaseFilterSection<T extends string | number>({
@@ -57,12 +61,17 @@ export default function BaseFilterSection<T extends string | number>({
   on_filter_tag_remove,
   date_filter,
   search_after_buttons,
+  left_buttons,
+  right_buttons,
 }: BaseFilterSectionProps<T>) {
   return (
     <div>
       <div className={styles.filter_section}>
-        {/* 왼쪽 그룹: 날짜, 필터 모달, 검색 */}
+        {/* 왼쪽 그룹: 왼쪽 버튼, 날짜, 필터 모달, 검색 */}
         <div className={styles.filter_group_left}>
+          {/* 왼쪽에 위치할 버튼들 (선택적) */}
+          {left_buttons && left_buttons}
+
           {/* 날짜 필터 (선택적) */}
           {date_filter && date_filter}
 
@@ -88,6 +97,11 @@ export default function BaseFilterSection<T extends string | number>({
           {/* 검색 필터 뒤에 올 버튼들 (선택적) */}
           {search_after_buttons && search_after_buttons}
         </div>
+
+        {/* 오른쪽 그룹: 오른쪽에 위치할 버튼들 (선택적) */}
+        {right_buttons && (
+          <div className={styles.filter_group_right}>{right_buttons}</div>
+        )}
       </div>
 
       {/* 활성 필터 태그 영역 */}
