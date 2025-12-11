@@ -19,15 +19,17 @@
  *
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import styles from '@/styles/manager_ga/campaign/progress/filter_section.module.css';
+import { useState } from "react";
+import styles from "@/styles/manager_ga/campaign/progress/filter_section.module.css";
 import BaseFilterSection, {
   type FilterTag,
-} from '@/components/manager/ga/common/filter/BaseFilterSection';
-import RejectCodeFilterModal from '../filter/RejectCodeFilterModal';
-import type { RejectCode } from '@/data/manager_ga/rejected';
+} from "@/components/manager/ga/common/filter/BaseFilterSection";
+import DateFilterButton from "@/components/manager/ga/common/filter/DateFilterButton";
+import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
+import RejectCodeFilterModal from "../filter/RejectCodeFilterModal";
+import type { RejectCode } from "@/data/manager_ga/rejected";
 
 interface FilterSectionProps {
   // 검색어 상태와 변경 함수를 props로 받습니다
@@ -50,14 +52,19 @@ export default function FilterSection({
 
   // 내부에서 관리하는 선택된 반려 코드들
   const [selected_codes, set_selected_codes] = useState<RejectCode[]>(
-    selected_reject_codes,
+    selected_reject_codes
   );
 
-  // 선택된 정렬 옵션
-  const [selected_sort, set_selected_sort] = useState<string>('최신순');
+  // 선택된 날짜 범위 상태
+  const [selected_date_range, set_selected_date_range] = useState<
+    DateRange | undefined
+  >(undefined);
 
-  // 정렬 옵션 목록
-  const sort_options = ['최신순', '오래된순'];
+  // 날짜 범위 변경 핸들러
+  const handle_date_range_change = (range: DateRange | undefined) => {
+    set_selected_date_range(range);
+    // TODO: 날짜 범위 변경 시 필터링 로직 구현
+  };
 
   // 반려 코드 필터 모달 열기
   const handle_reject_code_filter_click = () => {
@@ -82,19 +89,13 @@ export default function FilterSection({
     on_reject_codes_change?.(new_codes);
   };
 
-  // 정렬 옵션 선택 핸들러
-  const handle_sort_select = (sort: string) => {
-    set_selected_sort(sort);
-    // TODO: 정렬 로직 구현
-  };
-
   // 활성 필터 태그 목록 생성
   // map 함수: 배열을 순회하며 각 요소를 변환한 새로운 배열을 만듭니다
   const active_filter_tags: FilterTag<RejectCode>[] = selected_codes.map(
     (code) => ({
       value: code,
       label: code,
-    }),
+    })
   );
 
   return (
@@ -103,15 +104,12 @@ export default function FilterSection({
       <BaseFilterSection<RejectCode>
         search_query={search_query}
         on_search_change={on_search_change}
-        selected_sort={selected_sort}
-        on_sort_change={handle_sort_select}
-        sort_options={sort_options}
-        // 날짜 필터
+        // 날짜 필터 - DateFilterButton 컴포넌트 사용
         date_filter={
-          <div className={styles.filter_item}>
-            <div className={styles.filter_icon}></div>
-            <span className={styles.filter_text}>2025-10-01 ~ 2025-10-31</span>
-          </div>
+          <DateFilterButton
+            selected_range={selected_date_range}
+            on_range_change={handle_date_range_change}
+          />
         }
         // 반려 코드 필터 모달 버튼
         filter_modal_button={
@@ -128,17 +126,6 @@ export default function FilterSection({
             />
           </div>
         }
-        // 오른쪽 액션 버튼 (고고 필터)
-        right_action_buttons={[
-          <div key="report" className={styles.filter_item}>
-            <img
-              src="/images/icons/rerport_icon.svg"
-              alt="고고"
-              className={styles.report_icon}
-            />
-            <span className={styles.filter_text}>고고</span>
-          </div>,
-        ]}
         // 활성 필터 태그들
         active_filter_tags={active_filter_tags}
         on_filter_tag_remove={handle_remove_reject_code}

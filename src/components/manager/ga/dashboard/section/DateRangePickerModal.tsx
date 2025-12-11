@@ -39,6 +39,8 @@ interface DateRangePickerModalProps {
   selected_range: DateRange | undefined;
   // 날짜 범위 적용 함수 (선택된 날짜 범위를 부모 컴포넌트로 전달)
   on_apply: (range: DateRange | undefined) => void;
+  // 드롭다운 위치 정렬 (기본값: 'right')
+  align?: "left" | "right";
 }
 
 /**
@@ -53,6 +55,7 @@ export default function DateRangePickerModal({
   on_close,
   selected_range,
   on_apply,
+  align = "right",
 }: DateRangePickerModalProps) {
   // 드롭다운 내부에서 관리하는 임시 선택 상태
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
@@ -97,8 +100,16 @@ export default function DateRangePickerModal({
   // 조건부 렌더링: 조건에 따라 컴포넌트를 렌더링하거나 렌더링하지 않습니다
   if (!is_open) return null;
 
+  // 드롭다운 위치 스타일 - align prop에 따라 left 또는 right로 정렬
+  // CSS 모듈의 right: 0을 오버라이드하기 위해 인라인 스타일 사용
+  const dropdown_style: React.CSSProperties = {
+    ...(align === "left"
+      ? { left: "0", right: "auto" }
+      : { right: "0", left: "auto" }),
+  };
+
   return (
-    <div className={styles.dropdown_content}>
+    <div className={styles.dropdown_content} style={dropdown_style}>
       {/* 드롭다운 바디 - 캘린더만 표시 (헤더/푸터 없음) */}
       <div className={styles.dropdown_body}>
         {/* 

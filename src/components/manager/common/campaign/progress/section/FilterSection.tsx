@@ -22,20 +22,22 @@
  *
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 import BaseFilterSection, {
   type FilterTag,
-} from '@/components/manager/ga/common/filter/BaseFilterSection';
-import StatusFilterModal from '../filter/StatusFilterModal';
-import TypeFilterModal from '../filter/TypeFilterModal';
+} from "@/components/manager/ga/common/filter/BaseFilterSection";
+import DateFilterButton from "@/components/manager/ga/common/filter/DateFilterButton";
+import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
+import StatusFilterModal from "../filter/StatusFilterModal";
+import TypeFilterModal from "../filter/TypeFilterModal";
 import ChannelFilterModal, {
   channel_label_map,
-} from '../filter/ChannelFilterModal';
-import type { CampaignStatus } from '../filter/StatusFilterModal';
-import type { CampaignType } from '../filter/TypeFilterModal';
-import type { Channel } from '../filter/ChannelFilterModal';
+} from "../filter/ChannelFilterModal";
+import type { CampaignStatus } from "../filter/StatusFilterModal";
+import type { CampaignType } from "../filter/TypeFilterModal";
+import type { Channel } from "../filter/ChannelFilterModal";
 
 interface FilterSectionProps {
   // CSS 모듈 스타일 객체
@@ -55,14 +57,22 @@ export default function FilterSection({ styles }: FilterSectionProps) {
      ======================================== */
 
   // 검색어 상태
-  const [search_query, set_search_query] = useState('');
+  const [search_query, set_search_query] = useState("");
+
+  // 날짜 범위 상태
+  // useState: React Hook으로 컴포넌트의 날짜 범위 상태를 관리합니다
+  // [현재 값, 값을 변경하는 함수] = useState(초기값)
+  // DateRange | undefined: 날짜 범위가 선택되지 않았을 수도 있으므로 undefined 허용
+  const [selected_date_range, set_selected_date_range] = useState<
+    DateRange | undefined
+  >(undefined);
 
   // 상태 필터 모달 열림/닫힘 상태
   const [is_status_modal_open, set_is_status_modal_open] = useState(false);
 
   // 선택된 상태들
   const [selected_statuses, set_selected_statuses] = useState<CampaignStatus[]>(
-    [],
+    []
   );
 
   // 유형 필터 모달 열림/닫힘 상태
@@ -78,10 +88,10 @@ export default function FilterSection({ styles }: FilterSectionProps) {
   const [selected_channels, set_selected_channels] = useState<Channel[]>([]);
 
   // 선택된 정렬 옵션
-  const [selected_sort, set_selected_sort] = useState<string>('최신순');
+  const [selected_sort, set_selected_sort] = useState<string>("최신순");
 
   // 정렬 옵션 목록
-  const sort_options = ['최신순', '오래된순'];
+  const sort_options = ["최신순", "오래된순"];
 
   /* ========================================
      🎯 이벤트 핸들러 (Event Handlers)
@@ -159,6 +169,13 @@ export default function FilterSection({ styles }: FilterSectionProps) {
     // TODO: 정렬 로직 구현
   };
 
+  // 날짜 범위 변경 핸들러
+  // DateFilterButton에서 날짜 범위가 변경될 때 호출됩니다
+  const handle_date_range_change = (range: DateRange | undefined) => {
+    set_selected_date_range(range);
+    // TODO: 날짜 범위에 따른 필터링 로직 구현
+  };
+
   // 활성 필터 태그 목록 생성
   const active_filter_tags: FilterTag<string>[] = [
     ...selected_statuses.map((status) => ({ value: status, label: status })),
@@ -191,15 +208,13 @@ export default function FilterSection({ styles }: FilterSectionProps) {
       <BaseFilterSection<string>
         search_query={search_query}
         on_search_change={set_search_query}
-        selected_sort={selected_sort}
-        on_sort_change={handle_sort_select}
-        sort_options={sort_options}
-        // 날짜 필터
+        // 날짜 필터 - DateFilterButton 컴포넌트 사용
+        // DateFilterButton은 BaseFilterSection의 date_filter prop으로 전달됩니다
         date_filter={
-          <div className={styles.filter_item}>
-            <div className={styles.filter_icon}></div>
-            <span className={styles.filter_text}>2025-10-01 ~ 2025-10-31</span>
-          </div>
+          <DateFilterButton
+            selected_range={selected_date_range}
+            on_range_change={handle_date_range_change}
+          />
         }
         // 필터 모달 버튼들 (여러 개를 Fragment로 묶어서 전달)
         filter_modal_button={
@@ -247,17 +262,17 @@ export default function FilterSection({ styles }: FilterSectionProps) {
             </div>
           </>
         }
-        // 오른쪽 액션 버튼 (저장 필터)
-        right_action_buttons={[
-          <div key="report" className={styles.filter_item}>
+        // 검색 필터 뒤에 올 버튼 (저장 필터)
+        search_after_buttons={
+          <div className={styles.filter_item}>
             <img
               src="/images/icons/rerport_icon.svg"
               alt="저장"
               className={styles.report_icon}
             />
             <span className={styles.filter_text}>저장</span>
-          </div>,
-        ]}
+          </div>
+        }
         // 활성 필터 태그들
         active_filter_tags={active_filter_tags}
         on_filter_tag_remove={handle_filter_tag_remove}

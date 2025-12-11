@@ -28,6 +28,8 @@ import styles from "@/styles/manager_ga/member/blacklist/blacklist_filter_sectio
 import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
+import DateFilterButton from "@/components/manager/ga/common/filter/DateFilterButton";
+import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 import DivisionFilterModal from "@/components/manager/common/member/blacklist/filter/DivisionFilterModal";
 import BlockCodeFilterModal from "@/components/manager/common/member/blacklist/filter/BlockCodeFilterModal";
 import type {
@@ -47,8 +49,14 @@ export default function BlacklistFilterSection({
   const [is_division_modal_open, set_is_division_modal_open] = useState(false);
   const [is_block_code_modal_open, set_is_block_code_modal_open] =
     useState(false);
-  const [is_period_checkbox_checked, set_is_period_checkbox_checked] =
-    useState(false);
+
+  // 날짜 범위 상태
+  // useState: React Hook으로 컴포넌트의 날짜 범위 상태를 관리합니다
+  // [현재 값, 값을 변경하는 함수] = useState(초기값)
+  // DateRange | undefined: 날짜 범위가 선택되지 않았을 수도 있으므로 undefined 허용
+  const [selected_date_range, set_selected_date_range] = useState<
+    DateRange | undefined
+  >(undefined);
 
   const [selected_divisions, set_selected_divisions] = useState<
     BlacklistDivision[]
@@ -87,6 +95,13 @@ export default function BlacklistFilterSection({
     // TODO: 정렬 로직 구현
   };
 
+  // 날짜 범위 변경 핸들러
+  // DateFilterButton에서 날짜 범위가 변경될 때 호출됩니다
+  const handle_date_range_change = (range: DateRange | undefined) => {
+    set_selected_date_range(range);
+    // TODO: 날짜 범위에 따른 필터링 로직 구현
+  };
+
   const active_filter_tags: FilterTag<string>[] = [
     ...selected_divisions.map((division) => ({
       value: division,
@@ -111,19 +126,13 @@ export default function BlacklistFilterSection({
       <BaseFilterSection<string>
         search_query={search_query}
         on_search_change={on_search_change}
-        selected_sort={selected_sort}
-        on_sort_change={handle_sort_change}
-        sort_options={sort_options}
+        // 날짜 필터 - DateFilterButton 컴포넌트 사용
+        // DateFilterButton은 BaseFilterSection의 date_filter prop으로 전달됩니다
         date_filter={
-          <div className={styles.period_filter_item}>
-            <input
-              type="checkbox"
-              checked={is_period_checkbox_checked}
-              onChange={(e) => set_is_period_checkbox_checked(e.target.checked)}
-              className={styles.period_checkbox}
-            />
-            <span className={styles.filter_text}>선택 기간 조회</span>
-          </div>
+          <DateFilterButton
+            selected_range={selected_date_range}
+            on_range_change={handle_date_range_change}
+          />
         }
         filter_modal_button={
           <>
@@ -166,20 +175,17 @@ export default function BlacklistFilterSection({
             </div>
           </>
         }
-        right_action_buttons={[
-          <div
-            key="unblock"
-            className={styles.filter_item}
-            onClick={handle_unblock}
-          >
+        // 검색 필터 뒤에 올 버튼 (삭제)
+        search_after_buttons={
+          <div className={styles.filter_item} onClick={handle_unblock}>
             <img
               src="/images/icons/clear_icon.svg"
               alt="삭제"
               className={styles.unblock_icon}
             />
             <span className={styles.filter_text}>삭제</span>
-          </div>,
-        ]}
+          </div>
+        }
         active_filter_tags={active_filter_tags}
         on_filter_tag_remove={handle_filter_tag_remove}
       />

@@ -22,28 +22,28 @@
  *
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import layoutStyles from '@/styles/manager_sa/layout/layout.module.css';
+import { useState } from "react";
+import layoutStyles from "@/styles/manager_sa/layout/layout.module.css";
 import DateFilterSection, {
   DateFilter,
-} from '@/components/manager/ga/dashboard/section/DateFilterSection';
-import SettlementSummarySection from '@/components/manager/sa/dashboard/section/SettlementSummarySection';
-import PaymentSummarySection from '@/components/manager/sa/dashboard/section/PaymentSummarySection';
-import MemberActivationSection from '@/components/manager/sa/dashboard/section/MemberActivationSection';
-import MemberTypeSection from '@/components/manager/sa/dashboard/section/MemberTypeSection';
-import ChannelMemberSection from '@/components/manager/sa/dashboard/section/ChannelMemberSection';
+} from "@/components/manager/ga/dashboard/section/DateFilterSection";
+import SettlementSummarySection from "@/components/manager/sa/dashboard/section/SettlementSummarySection";
+import PaymentSummarySection from "@/components/manager/sa/dashboard/section/PaymentSummarySection";
+import MemberActivationSection from "@/components/manager/sa/dashboard/section/MemberActivationSection";
+import MemberTypeSection from "@/components/manager/sa/dashboard/section/MemberTypeSection";
+import ChannelMemberSection from "@/components/manager/sa/dashboard/section/ChannelMemberSection";
 import {
   settlementStats,
   paymentStats,
-} from '@/data/manager_sa/dashboard/dashboardData';
+} from "@/data/manager_sa/dashboard/dashboardData";
 
 export default function ManagerSAPage() {
   // 날짜 필터 상태 관리
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
   // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
-  const [dateFilter, setDateFilter] = useState<DateFilter>('month');
+  const [dateFilter, setDateFilter] = useState<DateFilter>("month");
 
   // 날짜 필터 변경 핸들러
   // 이벤트 핸들러 함수로, 사용자가 필터를 변경할 때 호출됩니다

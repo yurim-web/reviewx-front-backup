@@ -31,6 +31,8 @@ import styles from "@/styles/manager_ga/community/posts/post_filter_section.modu
 import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
+import DateFilterButton from "@/components/manager/ga/common/filter/DateFilterButton";
+import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 import type { PostDivision } from "@/data/manager_ga/community/postsData";
 
 interface PostFilterSectionProps {
@@ -46,8 +48,14 @@ export default function PostFilterSection({
 }: PostFilterSectionProps) {
   // 모달 열림/닫힘 상태 관리
   const [is_division_modal_open, set_is_division_modal_open] = useState(false);
-  const [is_period_checkbox_checked, set_is_period_checkbox_checked] =
-    useState(false);
+
+  // 날짜 범위 상태
+  // useState: React Hook으로 컴포넌트의 날짜 범위 상태를 관리합니다
+  // [현재 값, 값을 변경하는 함수] = useState(초기값)
+  // DateRange | undefined: 날짜 범위가 선택되지 않았을 수도 있으므로 undefined 허용
+  const [selected_date_range, set_selected_date_range] = useState<
+    DateRange | undefined
+  >(undefined);
 
   // 선택된 필터 상태 관리
   const [selected_divisions, set_selected_divisions] = useState<PostDivision[]>(
@@ -98,6 +106,13 @@ export default function PostFilterSection({
     // TODO: 정렬 로직 구현
   };
 
+  // 날짜 범위 변경 핸들러
+  // DateFilterButton에서 날짜 범위가 변경될 때 호출됩니다
+  const handle_date_range_change = (range: DateRange | undefined) => {
+    set_selected_date_range(range);
+    // TODO: 날짜 범위에 따른 필터링 로직 구현
+  };
+
   // 활성 필터 태그 목록 생성
   const active_filter_tags: FilterTag<string>[] = selected_divisions.map(
     (division) => ({
@@ -117,20 +132,13 @@ export default function PostFilterSection({
       <BaseFilterSection<string>
         search_query={search_query}
         on_search_change={on_search_change}
-        selected_sort={selected_sort}
-        on_sort_change={handle_sort_change}
-        sort_options={sort_options}
-        // 선택 기간 조회 필터 (date_filter로 전달)
+        // 날짜 필터 - DateFilterButton 컴포넌트 사용
+        // DateFilterButton은 BaseFilterSection의 date_filter prop으로 전달됩니다
         date_filter={
-          <div className={styles.period_filter_item}>
-            <input
-              type="checkbox"
-              checked={is_period_checkbox_checked}
-              onChange={(e) => set_is_period_checkbox_checked(e.target.checked)}
-              className={styles.period_checkbox}
-            />
-            <span className={styles.filter_text}>선택 기간 조회</span>
-          </div>
+          <DateFilterButton
+            selected_range={selected_date_range}
+            on_range_change={handle_date_range_change}
+          />
         }
         // 필터 모달 버튼 (구분 필터만)
         filter_modal_button={
@@ -180,41 +188,6 @@ export default function PostFilterSection({
             </div>
           </>
         }
-        // 오른쪽 액션 버튼들 (등록 -> 수정 -> 삭제 순서)
-        right_action_buttons={[
-          <div
-            key="create"
-            className={styles.filter_item}
-            onClick={handle_create}
-          >
-            <img
-              src="/images/icons/regostration_icon.svg"
-              alt="등록"
-              className={styles.action_icon}
-            />
-            <span className={styles.filter_text}>등록</span>
-          </div>,
-          <div key="edit" className={styles.filter_item} onClick={handle_edit}>
-            <img
-              src="/images/icons/correction_icon.svg"
-              alt="수정"
-              className={styles.action_icon}
-            />
-            <span className={styles.filter_text}>수정</span>
-          </div>,
-          <div
-            key="delete"
-            className={styles.filter_item}
-            onClick={handle_delete}
-          >
-            <img
-              src="/images/icons/delete_icon.svg"
-              alt="삭제"
-              className={styles.action_icon}
-            />
-            <span className={styles.filter_text}>삭제</span>
-          </div>,
-        ]}
         // 활성 필터 태그들
         active_filter_tags={active_filter_tags}
         on_filter_tag_remove={handle_filter_tag_remove}

@@ -19,15 +19,17 @@
  *
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import styles from '@/styles/manager_ga/campaign/progress/filter_section.module.css';
+import { useState } from "react";
+import styles from "@/styles/manager_ga/campaign/progress/filter_section.module.css";
 import BaseFilterSection, {
   type FilterTag,
-} from '@/components/manager/ga/common/filter/BaseFilterSection';
-import ReportCodeFilterModal from '../filter/ReportCodeFilterModal';
-import type { ReportCode } from '@/data/manager_ga/reported';
+} from "@/components/manager/ga/common/filter/BaseFilterSection";
+import DateFilterButton from "@/components/manager/ga/common/filter/DateFilterButton";
+import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
+import ReportCodeFilterModal from "../filter/ReportCodeFilterModal";
+import type { ReportCode } from "@/data/manager_ga/reported";
 
 interface FilterSectionProps {
   // 검색어 상태와 변경 함수를 props로 받습니다
@@ -44,20 +46,28 @@ export default function FilterSection({
   selected_report_codes = [],
   on_report_codes_change,
 }: FilterSectionProps) {
+  // 날짜 범위 상태
+  // useState: React Hook으로 컴포넌트의 날짜 범위 상태를 관리합니다
+  // [현재 값, 값을 변경하는 함수] = useState(초기값)
+  // DateRange | undefined: 날짜 범위가 선택되지 않았을 수도 있으므로 undefined 허용
+  const [selected_date_range, set_selected_date_range] = useState<
+    DateRange | undefined
+  >(undefined);
+
   // 신고 코드 필터 모달 열림/닫힘 상태
   const [is_report_code_modal_open, set_is_report_code_modal_open] =
     useState(false);
 
   // 내부에서 관리하는 선택된 신고 코드들
   const [selected_codes, set_selected_codes] = useState<ReportCode[]>(
-    selected_report_codes,
+    selected_report_codes
   );
 
   // 선택된 정렬 옵션
-  const [selected_sort, set_selected_sort] = useState<string>('최신순');
+  const [selected_sort, set_selected_sort] = useState<string>("최신순");
 
   // 정렬 옵션 목록
-  const sort_options = ['최신순', '오래된순'];
+  const sort_options = ["최신순", "오래된순"];
 
   // 신고 코드 필터 모달 열기
   const handle_report_code_filter_click = () => {
@@ -88,13 +98,20 @@ export default function FilterSection({
     // TODO: 정렬 로직 구현
   };
 
+  // 날짜 범위 변경 핸들러
+  // DateFilterButton에서 날짜 범위가 변경될 때 호출됩니다
+  const handle_date_range_change = (range: DateRange | undefined) => {
+    set_selected_date_range(range);
+    // TODO: 날짜 범위에 따른 필터링 로직 구현
+  };
+
   // 활성 필터 태그 목록 생성
   // map 함수: 배열을 순회하며 각 요소를 변환한 새로운 배열을 만듭니다
   const active_filter_tags: FilterTag<ReportCode>[] = selected_codes.map(
     (code) => ({
       value: code,
       label: code,
-    }),
+    })
   );
 
   return (
@@ -103,15 +120,13 @@ export default function FilterSection({
       <BaseFilterSection<ReportCode>
         search_query={search_query}
         on_search_change={on_search_change}
-        selected_sort={selected_sort}
-        on_sort_change={handle_sort_select}
-        sort_options={sort_options}
-        // 날짜 필터
+        // 날짜 필터 - DateFilterButton 컴포넌트 사용
+        // DateFilterButton은 BaseFilterSection의 date_filter prop으로 전달됩니다
         date_filter={
-          <div className={styles.filter_item}>
-            <div className={styles.filter_icon}></div>
-            <span className={styles.filter_text}>2025-10-01 ~ 2025-10-31</span>
-          </div>
+          <DateFilterButton
+            selected_range={selected_date_range}
+            on_range_change={handle_date_range_change}
+          />
         }
         // 신고 코드 필터 모달 버튼
         filter_modal_button={
@@ -128,17 +143,17 @@ export default function FilterSection({
             />
           </div>
         }
-        // 오른쪽 액션 버튼 (차단 필터)
-        right_action_buttons={[
-          <div key="block" className={styles.filter_item}>
+        // 검색 필터 뒤에 올 버튼 (차단 필터)
+        search_after_buttons={
+          <div className={styles.filter_item}>
             <img
               src="/images/icons/rerport_icon.svg"
               alt="차단"
               className={styles.report_icon}
             />
             <span className={styles.filter_text}>차단</span>
-          </div>,
-        ]}
+          </div>
+        }
         // 활성 필터 태그들
         active_filter_tags={active_filter_tags}
         on_filter_tag_remove={handle_remove_report_code}

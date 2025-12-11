@@ -102,7 +102,7 @@ export default function DateFilterSection({
   const format_date_range = (range: DateRange | undefined): string => {
     if (!range) {
       // 날짜 범위가 없으면 기본 텍스트 표시
-      return "날짜를 선택해주세요";
+      return "선택 기간 조회";
     }
 
     if (range.from && range.to) {
