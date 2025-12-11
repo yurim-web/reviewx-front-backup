@@ -1,0 +1,22 @@
+/* ========================================
+   🔔 알림 페이지 전역 스타일 오버라이드
+   ======================================== */
+
+/**
+ * 알림 페이지에서만 적용되는 전역 스타일
+ * 
+ * 목적: globals.css의 전역 main 태그 스타일을 override
+ * - globals.css: main { max-width: 1000px; margin: 0 auto; }
+ * - 알림 페이지는 전체 너비를 사용하되, 내부 콘텐츠만 max-width: 1000px로 제한
+ * 
+ * 사용 페이지:
+ * - /notification (알림 페이지)
+ */
+
+/* 알림 페이지에서만 전역 main 태그 스타일 override */
+body > main {
+  max-width: none !important;
+  margin: 0 !important;
+  width: 100% !important;
+  background: transparent !important;
+}
