@@ -19,12 +19,12 @@
  *
  */
 
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 // GA/SA 사이드바는 동일한 스타일을 사용하므로 GA 사이드바 스타일 재사용
-import styles from '@/styles/manager_ga/layout/sidebar.module.css';
+import styles from "@/styles/manager_ga/layout/sidebar.module.css";
 
 // 메뉴 아이템 타입 정의
 interface MenuItem {
@@ -46,36 +46,39 @@ export default function SidebarMenu() {
   // 배열로 메뉴 카테고리를 정의합니다
   const menuCategories: MenuCategory[] = [
     {
-      title: '홈',
-      items: [{ label: '대시보드', path: '/manager_sa' }],
+      title: "홈",
+      items: [{ label: "대시보드", path: "/manager_sa" }],
     },
     {
-      title: '캠페인',
-      items: [{ label: '진행 현황', path: '/manager_sa/campaign/progress' }],
+      title: "캠페인",
+      items: [{ label: "진행 현황", path: "/manager_sa/campaign/progress" }],
     },
     {
-      title: '정산',
+      title: "정산",
       items: [
-        { label: '출금 현황', path: '/manager_sa/settlement/withdrawal' },
+        { label: "출금 현황", path: "/manager_sa/settlement/withdrawal" },
         {
-          label: '출금 요청',
-          path: '/manager_sa/settlement/withdrawal_request',
+          label: "출금 요청",
+          path: "/manager_sa/settlement/withdrawal_request",
         },
-        { label: '결제 내역', path: '/manager_sa/settlement/payment_history' },
+        { label: "결제 내역", path: "/manager_sa/settlement/payment_history" },
       ],
     },
     {
-      title: '회원',
+      title: "회원",
       items: [
-        { label: '리뷰어 목록', path: '/manager_sa/member/reviewers' },
-        { label: '파트너 목록', path: '/manager_sa/member/partners' },
-        { label: '관리자 목록', path: '/manager_sa/member/admins' },
-        { label: '차단 내역', path: '/manager_sa/member/blacklist' },
+        { label: "리뷰어 목록", path: "/manager_sa/member/reviewers" },
+        { label: "파트너 목록", path: "/manager_sa/member/partners" },
+        { label: "관리자 목록", path: "/manager_sa/member/admins" },
+        { label: "차단 내역", path: "/manager_sa/member/blacklist" },
       ],
     },
     {
-      title: '커뮤니티',
-      items: [{ label: '게시글 목록', path: '/manager_sa/community/posts' }],
+      title: "커뮤니티",
+      items: [
+        { label: "게시글 목록", path: "/manager_sa/community/posts" },
+        { label: "카테고리 관리", path: "/manager_sa/community/categories" },
+      ],
     },
   ];
 
@@ -87,12 +90,12 @@ export default function SidebarMenu() {
     }
 
     // /manager_sa는 정확히 일치할 때만 활성화 (하위 경로 제외)
-    if (path === '/manager_sa') {
+    if (path === "/manager_sa") {
       return false;
     }
 
     // 다른 경로는 정확히 일치하거나 하위 경로인 경우 활성화
-    return pathname?.startsWith(path + '/');
+    return pathname?.startsWith(path + "/");
   };
 
   return (
@@ -111,7 +114,7 @@ export default function SidebarMenu() {
                 key={itemIndex}
                 href={item.path}
                 className={`${styles.menu_item} ${
-                  active ? styles.menu_item_active : ''
+                  active ? styles.menu_item_active : ""
                 }`}
               >
                 {/* 메뉴 아이템 아이콘 (작은 회색 사각형) */}
@@ -119,7 +122,7 @@ export default function SidebarMenu() {
                 {/* 메뉴 아이템 라벨 */}
                 <span
                   className={`${styles.menu_label} ${
-                    active ? styles.menu_label_active : ''
+                    active ? styles.menu_label_active : ""
                   }`}
                 >
                   {item.label}
@@ -132,5 +135,3 @@ export default function SidebarMenu() {
     </aside>
   );
 }
-
-

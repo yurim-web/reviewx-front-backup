@@ -29,12 +29,20 @@ import styles from '@/styles/manager_ga/community/posts/page.module.css';
 import ManagerPageTitle from '@/components/manager/common/fragments/ManagerPageTitle';
 import PostFilterSection from '@/components/manager/common/community/posts/section/PostFilterSection';
 import PostTable from '@/components/manager/common/community/posts/section/PostTable';
+import type { PostDivision } from '@/data/manager_ga/community/postsData';
+import type { DateRange } from '@/components/manager/ga/dashboard/section/DateRangePickerModal';
 
 export default function PostsPage() {
   // 검색어 상태 관리
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
   // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
   const [search_query, set_search_query] = useState<string>('');
+
+  // 구분 필터 상태 관리
+  const [selected_divisions, set_selected_divisions] = useState<PostDivision[]>([]);
+
+  // 날짜 범위 필터 상태 관리
+  const [selected_date_range, set_selected_date_range] = useState<DateRange | undefined>(undefined);
 
   // 검색어 변경 핸들러
   // 화살표 함수로 이벤트 핸들러를 정의합니다
@@ -52,10 +60,18 @@ export default function PostsPage() {
         <PostFilterSection
           search_query={search_query}
           on_search_change={handle_search_change}
+          selected_divisions={selected_divisions}
+          on_divisions_change={set_selected_divisions}
+          selected_date_range={selected_date_range}
+          on_date_range_change={set_selected_date_range}
         />
 
         {/* 게시글 테이블 컴포넌트 */}
-        <PostTable search_query={search_query} />
+        <PostTable
+          search_query={search_query}
+          selected_divisions={selected_divisions}
+          selected_date_range={selected_date_range}
+        />
       </div>
     </div>
   );

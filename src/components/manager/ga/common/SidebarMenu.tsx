@@ -18,11 +18,11 @@
  *
  */
 
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import styles from '@/styles/manager_ga/layout/sidebar.module.css';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import styles from "@/styles/manager_ga/layout/sidebar.module.css";
 
 // 메뉴 아이템 타입 정의
 interface MenuItem {
@@ -44,29 +44,32 @@ export default function SidebarMenu() {
   // 배열로 메뉴 카테고리를 정의합니다
   const menuCategories: MenuCategory[] = [
     {
-      title: '홈',
-      items: [{ label: '대시보드', path: '/manager_ga' }],
+      title: "홈",
+      items: [{ label: "대시보드", path: "/manager_ga" }],
     },
     {
-      title: '캠페인',
+      title: "캠페인",
       items: [
-        { label: '진행 현황', path: '/manager_ga/campaign/progress' },
-        { label: '반려 내역', path: '/manager_ga/campaign/rejected' },
-        { label: '신고 내역', path: '/manager_ga/campaign/reported' },
-        { label: '템플릿 관리', path: '/manager_ga/campaign/templates' },
+        { label: "진행 현황", path: "/manager_ga/campaign/progress" },
+        { label: "반려 내역", path: "/manager_ga/campaign/rejected" },
+        { label: "신고 내역", path: "/manager_ga/campaign/reported" },
+        { label: "템플릿 관리", path: "/manager_ga/campaign/templates" },
       ],
     },
     {
-      title: '회원',
+      title: "회원",
       items: [
-        { label: '리뷰어 목록', path: '/manager_ga/member/reviewers' },
-        { label: '파트너 목록', path: '/manager_ga/member/partners' },
-        { label: '차단 내역', path: '/manager_ga/member/blacklist' },
+        { label: "리뷰어 목록", path: "/manager_ga/member/reviewers" },
+        { label: "파트너 목록", path: "/manager_ga/member/partners" },
+        { label: "차단 내역", path: "/manager_ga/member/blacklist" },
       ],
     },
     {
-      title: '커뮤니티',
-      items: [{ label: '게시글 목록', path: '/manager_ga/community/posts' }],
+      title: "커뮤니티",
+      items: [
+        { label: "게시글 목록", path: "/manager_ga/community/posts" },
+        { label: "카테고리 관리", path: "/manager_ga/community/categories" },
+      ],
     },
   ];
 
@@ -78,12 +81,12 @@ export default function SidebarMenu() {
     }
 
     // /manager_ga는 정확히 일치할 때만 활성화 (하위 경로 제외)
-    if (path === '/manager_ga') {
+    if (path === "/manager_ga") {
       return false;
     }
 
     // 다른 경로는 정확히 일치하거나 하위 경로인 경우 활성화
-    return pathname?.startsWith(path + '/');
+    return pathname?.startsWith(path + "/");
   };
 
   return (
@@ -102,7 +105,7 @@ export default function SidebarMenu() {
                 key={itemIndex}
                 href={item.path}
                 className={`${styles.menu_item} ${
-                  active ? styles.menu_item_active : ''
+                  active ? styles.menu_item_active : ""
                 }`}
               >
                 {/* 메뉴 아이템 아이콘 (작은 회색 사각형) */}
@@ -110,7 +113,7 @@ export default function SidebarMenu() {
                 {/* 메뉴 아이템 라벨 */}
                 <span
                   className={`${styles.menu_label} ${
-                    active ? styles.menu_label_active : ''
+                    active ? styles.menu_label_active : ""
                   }`}
                 >
                   {item.label}
