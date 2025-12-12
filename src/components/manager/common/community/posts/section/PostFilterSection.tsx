@@ -27,6 +27,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import styles from "@/styles/manager_ga/community/posts/post_filter_section.module.css";
 import BaseFilterSection, {
   type FilterTag,
@@ -34,42 +35,46 @@ import BaseFilterSection, {
 import DateFilterButton from "@/components/manager/ga/common/filter/DateFilterButton";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 import type { PostDivision } from "@/data/manager_ga/community/postsData";
+import DivisionFilterModal from "@/components/manager/common/community/posts/filter/DivisionFilterModal";
 
 interface PostFilterSectionProps {
   // 검색어 상태를 props로 받습니다
   search_query: string;
   // 검색어 변경 핸들러를 props로 받습니다
   on_search_change: (query: string) => void;
+  // 구분 필터 상태와 변경 함수
+  selected_divisions: PostDivision[];
+  on_divisions_change: (divisions: PostDivision[]) => void;
+  // 날짜 범위 필터 상태와 변경 함수
+  selected_date_range: DateRange | undefined;
+  on_date_range_change: (range: DateRange | undefined) => void;
 }
 
 export default function PostFilterSection({
   search_query,
   on_search_change,
+  selected_divisions,
+  on_divisions_change,
+  selected_date_range,
+  on_date_range_change,
 }: PostFilterSectionProps) {
+  // Next.js 라우터 사용
+  const router = useRouter();
+
   // 모달 열림/닫힘 상태 관리
   const [is_division_modal_open, set_is_division_modal_open] = useState(false);
-
-  // 날짜 범위 상태
-  // useState: React Hook으로 컴포넌트의 날짜 범위 상태를 관리합니다
-  // [현재 값, 값을 변경하는 함수] = useState(초기값)
-  // DateRange | undefined: 날짜 범위가 선택되지 않았을 수도 있으므로 undefined 허용
-  const [selected_date_range, set_selected_date_range] = useState<
-    DateRange | undefined
-  >(undefined);
-
-  // 선택된 필터 상태 관리
-  const [selected_divisions, set_selected_divisions] = useState<PostDivision[]>(
-    []
-  );
   const [selected_sort, set_selected_sort] = useState("최신순");
 
   // 구분 필터 핸들러
+  // 화살표 함수로 이벤트 핸들러를 정의합니다
+  // 선택된 구분들을 상태에 저장하고 모달을 닫습니다
   const handle_division_apply = (divisions: PostDivision[]) => {
-    set_selected_divisions(divisions);
+    on_divisions_change(divisions);
+    set_is_division_modal_open(false);
   };
 
   const handle_remove_division = (division: PostDivision) => {
-    set_selected_divisions(selected_divisions.filter((d) => d !== division));
+    on_divisions_change(selected_divisions.filter((d) => d !== division));
   };
 
   // 고정 버튼 핸들러
@@ -89,7 +94,8 @@ export default function PostFilterSection({
 
   // 등록 버튼 핸들러
   const handle_create = () => {
-    // TODO: 새 게시글 등록 기능 구현
+    // 게시글 작성 페이지로 이동
+    router.push("/manager_ga/community/posts/create");
   };
 
   // 삭제 버튼 핸들러
@@ -109,15 +115,16 @@ export default function PostFilterSection({
   // 날짜 범위 변경 핸들러
   // DateFilterButton에서 날짜 범위가 변경될 때 호출됩니다
   const handle_date_range_change = (range: DateRange | undefined) => {
-    set_selected_date_range(range);
-    // TODO: 날짜 범위에 따른 필터링 로직 구현
+    on_date_range_change(range);
   };
 
   // 활성 필터 태그 목록 생성
+  // 배열 map 메서드를 사용하여 필터 태그를 생성합니다
+  // selected_divisions 배열의 각 구분에 대해 필터 태그를 생성합니다
   const active_filter_tags: FilterTag<string>[] = selected_divisions.map(
     (division) => ({
       value: division,
-      label: `구분: ${division}`,
+      label: division, // "구분: " 접두사 제거
     })
   );
 
@@ -188,63 +195,48 @@ export default function PostFilterSection({
             </div>
           </>
         }
+        // 오른쪽 액션 버튼들 (등록, 삭제)
+        right_buttons={
+          <>
+            <div
+              key="create"
+              className={styles.filter_item}
+              onClick={handle_create}
+            >
+              <img
+                src="/images/icons/sign_plus.svg"
+                alt="등록"
+                className={styles.action_icon}
+              />
+              <span className={styles.filter_text}>등록</span>
+            </div>
+            <div
+              key="delete"
+              className={styles.filter_item}
+              onClick={handle_delete}
+            >
+              <img
+                src="/images/icons/sign_x.svg"
+                alt="삭제"
+                className={styles.action_icon}
+              />
+              <span className={styles.filter_text}>삭제</span>
+            </div>
+          </>
+        }
         // 활성 필터 태그들
         active_filter_tags={active_filter_tags}
         on_filter_tag_remove={handle_filter_tag_remove}
       />
 
-      {/* 구분 필터 모달 - TODO: BaseFilterModal로 리팩토링 필요 */}
-      {is_division_modal_open && (
-        <div
-          className={styles.modal_overlay}
-          onClick={() => set_is_division_modal_open(false)}
-        >
-          <div
-            className={styles.modal_content}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3>구분 선택</h3>
-            <div className={styles.modal_options}>
-              {(["공지사항", "자주 묻는 질문", "이벤트"] as PostDivision[]).map(
-                (division) => (
-                  <label key={division} className={styles.modal_option}>
-                    <input
-                      type="checkbox"
-                      checked={selected_divisions.includes(division)}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          set_selected_divisions([
-                            ...selected_divisions,
-                            division,
-                          ]);
-                        } else {
-                          set_selected_divisions(
-                            selected_divisions.filter((d) => d !== division)
-                          );
-                        }
-                      }}
-                    />
-                    <span>{division}</span>
-                  </label>
-                )
-              )}
-            </div>
-            <div className={styles.modal_actions}>
-              <button
-                onClick={() => {
-                  handle_division_apply(selected_divisions);
-                  set_is_division_modal_open(false);
-                }}
-              >
-                적용
-              </button>
-              <button onClick={() => set_is_division_modal_open(false)}>
-                취소
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* 구분 필터 모달 */}
+      {/* DivisionFilterModal: 구분을 선택할 수 있는 모달 컴포넌트 */}
+      <DivisionFilterModal
+        is_open={is_division_modal_open}
+        on_close={() => set_is_division_modal_open(false)}
+        selected_divisions={selected_divisions}
+        on_apply={handle_division_apply}
+      />
     </div>
   );
 }
