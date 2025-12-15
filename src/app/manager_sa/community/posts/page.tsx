@@ -22,27 +22,31 @@
  * @returns 게시글 목록 페이지 JSX
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import styles from '@/styles/manager_ga/community/posts/page.module.css';
-import ManagerPageTitle from '@/components/manager/common/fragments/ManagerPageTitle';
-import PostFilterSection from '@/components/manager/common/community/posts/section/PostFilterSection';
-import PostTable from '@/components/manager/common/community/posts/section/PostTable';
-import type { PostDivision } from '@/data/manager_ga/community/postsData';
-import type { DateRange } from '@/components/manager/ga/dashboard/section/DateRangePickerModal';
+import { useState } from "react";
+import styles from "@/styles/manager_ga/community/posts/page.module.css";
+import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
+import PostFilterSection from "@/components/manager/common/community/posts/section/PostFilterSection";
+import PostTable from "@/components/manager/common/community/posts/section/PostTable";
+import type { PostDivision } from "@/data/manager_ga/community/postsData";
+import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 
 export default function PostsPage() {
   // 검색어 상태 관리
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다.
   // [현재 값, 값을 변경하는 함수] 상태를 반환합니다.
-  const [search_query, set_search_query] = useState<string>('');
+  const [search_query, set_search_query] = useState<string>("");
 
   // 구분 필터 상태 관리
-  const [selected_divisions, set_selected_divisions] = useState<PostDivision[]>([]);
+  const [selected_divisions, set_selected_divisions] = useState<PostDivision[]>(
+    []
+  );
 
   // 날짜 범위 필터 상태 관리
-  const [selected_date_range, set_selected_date_range] = useState<DateRange | undefined>(undefined);
+  const [selected_date_range, set_selected_date_range] = useState<
+    DateRange | undefined
+  >(undefined);
 
   // 검색어 변경 핸들러
   // 이벤트 핸들러 함수로, 검색어 변경 시 호출됩니다.
