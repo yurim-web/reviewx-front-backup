@@ -12,13 +12,13 @@
  * - /notification
  *
  * 사용 파일:
- * - 컴포넌트: SubHeader
+ * - 컴포넌트: Header, ManagerGAHeader
  * - CSS: notification.module.css
  *
  * 주요 기능:
  * - 알림 목록 표시 (라벨, 내용, 시간)
  * - 알림 타입별 색상 구분 (신고/반려: 빨강, 문의: 파랑)
- * - 메인 헤더 숨김 처리 (SubHeader 사용)
+ * - 경로에 따라 적절한 헤더 표시 (manager_ga/manager_sa: ManagerGAHeader, 그 외: Header)
 
  */
 
@@ -27,61 +27,25 @@
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import styles from "@/styles/user/notification/notification.module.css";
-import SubHeader from "@/components/fragments/SubHeader";
+import Header from "@/components/fragments/Header";
+import ManagerGAHeader from "@/components/manager/ga/common/ManagerGAHeader";
+import SidebarMenuGA from "@/components/manager/ga/common/SidebarMenu";
+import SidebarMenuSA from "@/components/manager/sa/common/SidebarMenu";
 import PageTitle from "@/components/fragments/PageTitle";
-
-/**
- * 알림 타입 정의
- * - type: 알림의 종류를 구분하는 필드
- *   - "report": 신고 발생 (빨간색 라벨)
- *   - "reject": 반려 발생 (빨간색 라벨)
- *   - "inquiry": 카카오톡 문의 (파란색 라벨)
- * - label: 알림 라벨 텍스트 (화면에 표시되는 라벨)
- * - message: 알림 내용 텍스트
- * - time: 알림 발생 시간 (YYYY-MM-DD HH:mm 형식)
- */
-interface NotificationItem {
-  id: number;
-  type: "report" | "reject" | "inquiry";
-  label: string;
-  message: string;
-  time: string;
-}
-
-/**
- * 임시 목업 데이터
- * 실제 프로젝트에서는 API를 통해 서버에서 알림 데이터를 가져옵니다.
- * 현재는 개발 및 디자인 확인을 위한 샘플 데이터입니다.
- */
-const mockNotifications: NotificationItem[] = [
-  {
-    id: 1,
-    type: "report",
-    label: "신고 발생",
-    message: "캠페인 · 콘텐츠 신고가 발생했습니다. 신고 내역을 확인해 주세요.",
-    time: "2025-09-01 18:35",
-  },
-  {
-    id: 2,
-    type: "reject",
-    label: "반려 발생",
-    message: "캠페인 · 콘텐츠 반려가 발생했습니다. 반려 상태를 분류해 주세요.",
-    time: "2025-09-01 18:35",
-  },
-  {
-    id: 3,
-    type: "inquiry",
-    label: "카카오톡 문의",
-    message: "신규 채팅 문의가 2건 있습니다.",
-    time: "2025-09-01 18:35",
-  },
-];
+// 관리자 페이지 레이아웃 스타일 (사이드바가 있을 때 사용)
+import "@/styles/manager_ga/layout.css";
+// 알림 목업 데이터
+import {
+  mockNotifications,
+  NotificationItem,
+} from "@/data/notification/notificationData";
+import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 
 /**
  * 알림 페이지 메인 컴포넌트
  *
  * 컴포넌트 구조:
- * 1. SubHeader: 상단 고정 헤더 (뒤로가기, 가이드북, 마이페이지 링크)
+ * 1. Header/ManagerGAHeader: 상단 고정 헤더 (경로에 따라 다름)
  * 2. page_header: "알림" 제목이 있는 헤더 섹션
  * 3. notification_list: 알림 목록 영역
  *    - 각 알림 아이템은 notification_item으로 렌더링
@@ -91,36 +55,80 @@ export default function NotificationPage() {
   /**
    * 현재 경로 확인
    * usePathname Hook: Next.js에서 현재 경로를 가져오는 Hook
-   * - manager_ga나 manager_sa에서 접근한 경우 SubHeader를 숨김
+   * - manager_ga나 manager_sa에서 접근한 경우 해당 헤더 사용
    */
   const pathname = usePathname();
 
   /**
-   * SubHeader 표시 여부 결정
-   * - manager_ga나 manager_sa에서 접근한 경우: SubHeader 숨김 (이미 헤더가 있음)
-   * - 그 외의 경우: SubHeader 표시
+   * 헤더 타입 결정
+   * - manager_ga에서 접근한 경우: ManagerGAHeader 사용
+   * - manager_sa에서 접근한 경우: ManagerGAHeader 사용 (현재는 ManagerSAHeader가 없어서 재사용)
+   * - 그 외의 경우: 일반 Header 사용
    *
    * useState Hook: 컴포넌트의 상태를 관리하는 Hook
-   * - showSubHeader: SubHeader를 표시할지 여부를 저장하는 상태
-   * - 초기값: true (기본적으로 SubHeader 표시)
+   * - headerType: 사용할 헤더 타입을 저장하는 상태
+   * - 초기값: "default" (서버와 클라이언트에서 동일하게 유지하여 Hydration 오류 방지)
+   * - mounted: 클라이언트에서 마운트되었는지 여부 (Hydration 오류 방지)
    */
-  const [showSubHeader, setShowSubHeader] = useState(true);
+  const [headerType, setHeaderType] = useState<
+    "default" | "manager_ga" | "manager_sa"
+  >("default");
+
+  // 클라이언트에서만 실행되도록 mounted 상태 추가
+  const [mounted, setMounted] = useState(false);
 
   /**
    * useEffect Hook: 컴포넌트가 마운트되거나 의존성이 변경될 때 실행
-   * - 의존성 배열 [pathname]: pathname이 변경될 때마다 실행
-   * - 이전 경로를 확인하여 manager_ga나 manager_sa에서 접근했는지 판단
+   * - 첫 번째 useEffect: 클라이언트에서 마운트되었음을 표시 (Hydration 오류 방지)
+   * - 두 번째 useEffect: URL 쿼리 파라미터, sessionStorage, 또는 referrer를 확인하여 manager_ga나 manager_sa에서 접근했는지 판단
    */
   useEffect(() => {
-    // 이전 경로 확인 (document.referrer 또는 sessionStorage 사용)
-    const referrer = document.referrer;
-    // manager_ga나 manager_sa에서 접근한 경우 SubHeader 숨김
-    if (referrer.includes("/manager_ga") || referrer.includes("/manager_sa")) {
-      setShowSubHeader(false);
-    } else {
-      setShowSubHeader(true);
+    // 클라이언트에서 마운트되었음을 표시
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    // mounted가 true일 때만 실행 (Hydration 오류 방지)
+    if (!mounted) return;
+
+    // 1. URL 쿼리 파라미터 확인 (가장 우선순위)
+    const urlParams = new URLSearchParams(window.location.search);
+    const managerType = urlParams.get("manager");
+
+    if (managerType === "ga") {
+      setHeaderType("manager_ga");
+      sessionStorage.setItem("notification_manager_type", "manager_ga");
+      return;
+    } else if (managerType === "sa") {
+      setHeaderType("manager_sa");
+      sessionStorage.setItem("notification_manager_type", "manager_sa");
+      return;
     }
-  }, [pathname]);
+
+    // 2. sessionStorage 확인
+    const storedManagerType = sessionStorage.getItem(
+      "notification_manager_type"
+    );
+    if (storedManagerType === "manager_ga") {
+      setHeaderType("manager_ga");
+      return;
+    } else if (storedManagerType === "manager_sa") {
+      setHeaderType("manager_sa");
+      return;
+    }
+
+    // 3. document.referrer 확인 (마지막 fallback)
+    const referrer = document.referrer;
+    if (referrer.includes("/manager_ga")) {
+      setHeaderType("manager_ga");
+      sessionStorage.setItem("notification_manager_type", "manager_ga");
+    } else if (referrer.includes("/manager_sa")) {
+      setHeaderType("manager_sa");
+      sessionStorage.setItem("notification_manager_type", "manager_sa");
+    } else {
+      setHeaderType("default");
+    }
+  }, [pathname, mounted]);
 
   /**
    * 알림 목록 상태
@@ -139,49 +147,102 @@ export default function NotificationPage() {
   /**
    * 알림 라벨 색상 클래스 결정 함수
    *
-   * 삼항 연산자 사용:
-   * - 조건 ? 값1 : 값2 형태
-   * - type이 "inquiry"이면 "inquiry" 클래스, 아니면 "report" 클래스 반환
-   *
    * CSS 모듈 주의사항:
    * - CSS 모듈은 클래스명을 해시화하므로 .class1.class2 같은 결합 선택자는 작동하지 않음
-   * - 따라서 별도의 클래스명을 사용해야 함 (notification_label_report, notification_label_inquiry)
+   * - 따라서 별도의 클래스명을 사용해야 함
    *
-   * @param type - 알림 타입 ("report" | "reject" | "inquiry")
+   * @param type - 알림 타입 ("withdrawal" | "urgent_withdrawal" | "block")
    * @returns CSS 클래스명
    */
   const getLabelClassName = (type: NotificationItem["type"]): string => {
-    return type === "inquiry"
-      ? styles.notification_label_inquiry
-      : styles.notification_label_report;
+    switch (type) {
+      case "withdrawal":
+        return styles.notification_label_withdrawal;
+      case "urgent_withdrawal":
+        return styles.notification_label_urgent_withdrawal;
+      case "block":
+        return styles.notification_label_block;
+      default:
+        return styles.notification_label_block;
+    }
   };
+
+  // Hydration 오류 방지: 서버와 클라이언트에서 동일한 초기 렌더링
+  // mounted가 false일 때는 기본 Header만 표시
+  if (!mounted) {
+    return (
+      <div className={styles.notification_container}>
+        <Header />
+        <main className={styles.main_content}>
+          <ManagerPageTitle title="알림" />
+          <section className={styles.notification_list}>
+            {notifications.length > 0 ? (
+              notifications.map((notification) => (
+                <div key={notification.id} className={styles.notification_item}>
+                  <div className={styles.notification_content}>
+                    <div className={styles.notification_left}>
+                      <p
+                        className={`${
+                          styles.notification_label
+                        } ${getLabelClassName(notification.type)}`.trim()}
+                      >
+                        {notification.label}
+                      </p>
+                      <p className={styles.notification_message}>
+                        {notification.message}
+                      </p>
+                    </div>
+                    <p className={styles.notification_time}>
+                      {notification.time}
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className={styles.empty_state}>
+                <p className={styles.empty_text}>알림이 없습니다.</p>
+              </div>
+            )}
+          </section>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div
       className={`${styles.notification_container} ${
-        !showSubHeader ? styles.no_subheader : ""
+        headerType === "manager_ga" || headerType === "manager_sa"
+          ? styles.has_sidebar
+          : ""
       }`.trim()}
     >
       {/* 
-        서브헤더: 조건부 렌더링
-        - manager_ga나 manager_sa에서 접근한 경우: SubHeader 숨김 (이미 헤더가 있음)
-        - 그 외의 경우: SubHeader 표시
-        - 뒤로가기 버튼
-        - 가이드북 링크
-        - 마이페이지 링크
-        - 메인 헤더를 자동으로 숨김 처리
+        헤더: 조건부 렌더링
+        - manager_ga에서 접근한 경우: ManagerGAHeader 사용
+        - manager_sa에서 접근한 경우: ManagerGAHeader 사용 (현재는 ManagerSAHeader가 없어서 재사용)
+        - 그 외의 경우: 일반 Header 사용
       */}
-      {showSubHeader && <SubHeader />}
+      {headerType === "manager_ga" ? (
+        <ManagerGAHeader managerType="ga" />
+      ) : headerType === "manager_sa" ? (
+        <ManagerGAHeader managerType="sa" />
+      ) : (
+        <Header />
+      )}
+
+      {/* 
+        사이드 메뉴: 조건부 렌더링
+        - manager_ga에서 접근한 경우: GA 사이드바 메뉴 사용
+        - manager_sa에서 접근한 경우: SA 사이드바 메뉴 사용
+        - 그 외의 경우: 사이드바 없음
+      */}
+      {headerType === "manager_ga" && <SidebarMenuGA />}
+      {headerType === "manager_sa" && <SidebarMenuSA />}
 
       {/* 메인 콘텐츠 영역 */}
       <main className={styles.main_content}>
-        {/* 
-          페이지 제목
-          - PageTitle 컴포넌트 사용: 공지사항 페이지와 동일한 패턴
-          - sticky 포지션: 스크롤 시 SubHeader 아래에 고정
-          - 배경색: white (PageTitle 컴포넌트에서 처리)
-        */}
-        <PageTitle title="알림" />
+        <ManagerPageTitle title="알림" />
 
         {/* 알림 목록 섹션 */}
         <section className={styles.notification_list}>
