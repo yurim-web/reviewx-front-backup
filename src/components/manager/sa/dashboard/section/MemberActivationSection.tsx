@@ -13,9 +13,9 @@
  *
  */
 
-import styles from '@/styles/manager_sa/dashboard/sections/member_activation_section.module.css';
-import MemberActivationDonutChart from '../chart/MemberActivationDonutChart';
-import { memberActivationStats } from '@/data/manager_sa/dashboard/dashboardData';
+import styles from "@/styles/manager_sa/dashboard/sections/member_activation_section.module.css";
+import MemberActivationDonutChart from "../chart/MemberActivationDonutChart";
+import { memberActivationStats } from "@/data/manager_sa/dashboard/dashboardData";
 
 export default function MemberActivationSection() {
   return (
@@ -91,4 +91,3 @@ export default function MemberActivationSection() {
     </div>
   );
 }
-

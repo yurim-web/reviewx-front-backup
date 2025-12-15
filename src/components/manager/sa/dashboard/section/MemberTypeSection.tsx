@@ -15,9 +15,9 @@
  *
  */
 
-import styles from '@/styles/manager_sa/dashboard/sections/member_type_section.module.css';
-import MemberTypeBarChart from '../chart/MemberTypeBarChart';
-import { memberTypeStats } from '@/data/manager_sa/dashboard/dashboardData';
+import styles from "@/styles/manager_sa/dashboard/sections/member_type_section.module.css";
+import MemberTypeBarChart from "../chart/MemberTypeBarChart";
+import { memberTypeStats } from "@/data/manager_sa/dashboard/dashboardData";
 
 export default function MemberTypeSection() {
   return (
