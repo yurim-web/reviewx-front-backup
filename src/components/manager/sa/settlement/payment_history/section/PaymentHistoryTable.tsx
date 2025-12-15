@@ -1,0 +1,382 @@
+/* ========================================
+   📋 결제 내역 테이블 컴포넌트
+   ======================================== */
+
+/**
+ * 결제 내역 테이블 컴포넌트
+ *
+ * 목적: 결제 내역 페이지의 결제 목록을 테이블 형태로 표시합니다.
+ *
+ * 사용 위치:
+ * - /manager_sa/settlement/payment_history (결제 내역 페이지)
+ *
+ * 주요 기능:
+ * - 체크박스로 결제 항목 선택/해제
+ * - 전체 선택/해제 기능
+ * - 결제 정보 표시 (번호, 상호명, 입금자명, 구분, 결제 수단, 세금계산서, 충전 포인트, 결제, 신청일, 승인일, 유형, 상태)
+ *
+ * 기술 스택:
+ * - CommonTable: 범용 테이블 컴포넌트를 사용하여 테이블 구조 제공
+ * - Render Props 패턴: render_cell 함수를 통해 각 셀을 커스텀 렌더링
+ */
+
+"use client";
+
+import { useState } from "react";
+import CommonTable, {
+  type TableColumn,
+  type TableRowData,
+} from "@/components/manager/common/table/CommonTable";
+import { useTableSort } from "@/hooks/table/useTableSort";
+import type { SortColumnConfig } from "@/utils/table/sort";
+import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
+import styles from "@/styles/manager_sa/settlement/payment_history/payment_history_table.module.css";
+import {
+  paymentHistoryList,
+  type PaymentHistoryItem,
+} from "@/data/manager_sa/settlement/paymentHistoryData";
+import PaymentMethodTag from "@/components/manager/common/tags/PaymentMethodTag";
+import type { PaymentMethod } from "@/components/manager/common/tags/PaymentMethodTag";
+import BusinessTypeTag from "@/components/manager/common/tags/BusinessTypeTag";
+import type { BusinessType } from "@/components/manager/common/tags/BusinessTypeTag";
+import MemberStatusTag from "@/components/manager/common/tags/MemberStatusTag";
+import type { MemberStatus } from "@/components/manager/common/tags/MemberStatusTag";
+import PaymentStatusTag from "@/components/manager/common/tags/PaymentStatusTag";
+import type { PaymentStatus } from "@/components/manager/common/tags/PaymentStatusTag";
+
+// PaymentHistoryItem을 TableRowData로 확장
+interface PaymentHistoryTableRowData extends TableRowData, PaymentHistoryItem {}
+
+import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
+import type { BusinessType } from "@/components/manager/sa/settlement/payment_history/filter/BusinessTypeFilterModal";
+import type { PaymentMethod } from "@/data/manager_sa/common/filterOptions";
+import type { PaymentStatus } from "@/components/manager/sa/settlement/payment_history/filter/PaymentStatusFilterModal";
+import type { AccountStatus } from "@/components/manager/sa/settlement/payment_history/filter/AccountStatusFilterModal";
+
+interface PaymentHistoryTableProps {
+  search_query?: string;
+  selected_date_range?: DateRange | undefined;
+  selected_business_types?: BusinessType[];
+  selected_payment_methods?: PaymentMethod[];
+  tax_invoice_only?: boolean;
+  selected_payment_statuses?: PaymentStatus[];
+  selected_account_statuses?: AccountStatus[];
+}
+
+export default function PaymentHistoryTable({
+  search_query = "",
+  selected_date_range,
+  selected_business_types = [],
+  selected_payment_methods = [],
+  tax_invoice_only = false,
+  selected_payment_statuses = [],
+  selected_account_statuses = [],
+}: PaymentHistoryTableProps) {
+  // 선택된 항목 ID 배열 관리
+  // useState: React의 상태 관리 훅입니다. 컴포넌트의 상태를 관리하고 상태가 변경되면 컴포넌트를 다시 렌더링합니다.
+  // string[]: 문자열 배열 타입입니다. 선택된 항목의 ID들을 배열로 저장합니다.
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  // 컬럼별 타입 설정 (정렬을 위한 컬럼 타입 정의)
+  // numeric_string: 숫자처럼 보이는 문자열 (예: "1,500,000", "999999")
+  // date: 날짜 형식의 문자열 (예: "2025-08-01 18:56")
+  // string: 일반 문자열
+  const column_config: SortColumnConfig = {
+    number: "numeric_string",
+    companyName: "string",
+    businessType: "string",
+    chargedPoints: "numeric_string",
+    paymentStatus: "string",
+    requestDate: "date",
+    approvalDate: "date",
+  };
+
+  // 검색어 및 필터로 필터링된 결제 내역 목록
+  const filtered_payment_history_list = paymentHistoryList.filter((item) => {
+    // 검색어 필터
+    if (search_query) {
+      const matches_search =
+        item.companyName.toLowerCase().includes(search_query.toLowerCase()) ||
+        item.depositorName.name
+          .toLowerCase()
+          .includes(search_query.toLowerCase()) ||
+        item.depositorName.registrationNumber
+          .toLowerCase()
+          .includes(search_query.toLowerCase());
+      if (!matches_search) return false;
+    }
+
+    // 날짜 범위 필터 (신청일 기준)
+    if (selected_date_range?.from && selected_date_range?.to) {
+      const item_date_str = item.requestDate.split(" ")[0]; // "2025-08-05"
+      const item_date = new Date(item_date_str);
+      const start_date = new Date(selected_date_range.from);
+      const end_date = new Date(selected_date_range.to);
+      start_date.setHours(0, 0, 0, 0);
+      end_date.setHours(23, 59, 59, 999);
+      item_date.setHours(0, 0, 0, 0);
+      if (item_date < start_date || item_date > end_date) return false;
+    }
+
+    // 구분 필터
+    if (selected_business_types.length > 0) {
+      if (!selected_business_types.includes(item.businessType)) return false;
+    }
+
+    // 결제 수단 필터
+    if (selected_payment_methods.length > 0) {
+      if (!selected_payment_methods.includes(item.paymentMethod)) return false;
+    }
+
+    // 세금계산서 발행 필터
+    if (tax_invoice_only && item.taxInvoice !== "O") return false;
+
+    // 결제 상태 필터
+    if (selected_payment_statuses.length > 0) {
+      if (!selected_payment_statuses.includes(item.paymentStatus)) return false;
+    }
+
+    // 계정 상태 필터
+    if (selected_account_statuses.length > 0) {
+      if (!selected_account_statuses.includes(item.accountStatus)) return false;
+    }
+
+    return true;
+  });
+
+  // 정렬 훅 사용 (정렬 상태와 정렬된 데이터 관리)
+  // useTableSort: 테이블 정렬 기능을 제공하는 커스텀 훅입니다.
+  // sort_state: 현재 정렬 상태 (어떤 컬럼이 정렬되었는지, 오름차순/내림차순)
+  // handle_sort: 정렬을 처리하는 함수
+  // sorted_data: 정렬된 데이터 배열
+  // 페이지 로드 시 "번호" 컬럼 기준 오름차순으로 기본 정렬
+  const {
+    sort_state,
+    handle_sort,
+    sorted_data: sorted_payment_history_list,
+  } = useTableSort({
+    data: filtered_payment_history_list,
+    initial_column_key: "number", // 기본 정렬: 번호 컬럼
+    initial_direction: "asc", // 오름차순
+    column_config,
+  });
+
+  // 테이블 컬럼 정의
+  // key: 데이터 필드명, label: 헤더에 표시될 텍스트, sortable: 정렬 가능 여부, className: CSS 클래스명
+  const columns: TableColumn[] = [
+    {
+      key: "number",
+      label: "번호",
+      sortable: true,
+      className: styles.table_cell_number,
+    },
+    {
+      key: "companyName",
+      label: "상호명",
+      sortable: true,
+      className: styles.table_cell_company_name,
+    },
+    {
+      key: "depositorName",
+      label: "입금자명",
+      className: styles.table_cell_depositor,
+    },
+    {
+      key: "businessType",
+      label: "구분",
+      sortable: false,
+      className: styles.table_cell_business_type,
+    },
+    {
+      key: "paymentMethod",
+      label: "결제 수단",
+      className: styles.table_cell_payment_method,
+    },
+    {
+      key: "taxInvoice",
+      label: "세금계산서",
+      className: styles.table_cell_tax_invoice,
+    },
+    {
+      key: "chargedPoints",
+      label: "충전 포인트",
+      sortable: true,
+      className: styles.table_cell_charged_points,
+    },
+    {
+      key: "paymentStatus",
+      label: "결제",
+      sortable: true,
+      className: styles.table_cell_payment_status,
+    },
+    {
+      key: "requestDate",
+      label: "신청일",
+      sortable: true,
+      className: styles.table_cell_request_date,
+    },
+    {
+      key: "approvalDate",
+      label: "승인일",
+      sortable: true,
+      className: styles.table_cell_approval_date,
+    },
+    {
+      key: "memberType",
+      label: "유형",
+      className: styles.table_cell_member_type,
+    },
+    {
+      key: "accountStatus",
+      label: "상태",
+      className: styles.table_cell_account_status,
+    },
+  ];
+
+  // 커스텀 헤더 렌더링 (정렬 기능 포함)
+  // SortableTableHeader 공통 컴포넌트를 사용하여 헤더 렌더링
+  // 헤더에서 "충전 포인트" 텍스트와 화살표 아이콘이 가로 한 줄로 배치되도록 커스텀 클래스 적용
+  const render_table_header = () => {
+    // 전체 선택 상태 확인
+    // sorted_payment_history_list.length: 정렬된 데이터의 길이
+    // selectedIds.length === sorted_payment_history_list.length: 선택된 항목 수가 전체 항목 수와 같으면 전체 선택 상태
+    const is_all_selected =
+      sorted_payment_history_list.length > 0 &&
+      selectedIds.length === sorted_payment_history_list.length;
+
+    // 전체 선택/해제 핸들러
+    const handle_select_all = () => {
+      if (is_all_selected) {
+        // 전체 해제: 빈 배열로 설정
+        setSelectedIds([]);
+      } else {
+        // 전체 선택: 모든 항목의 ID를 배열로 설정
+        // map: 배열의 각 요소를 변환하여 새로운 배열을 만드는 메서드입니다.
+        setSelectedIds(sorted_payment_history_list.map((item) => item.id));
+      }
+    };
+
+    // 특정 컬럼에 커스텀 헤더 클래스를 추가하는 함수
+    // "충전 포인트" 컬럼에 가로 정렬 클래스 적용
+    const get_custom_header_class = (column_key: string) => {
+      if (column_key === "chargedPoints") {
+        return styles.table_header_cell_charged_points;
+      }
+      return "";
+    };
+
+    return (
+      <SortableTableHeader
+        columns={columns}
+        sort_state={sort_state}
+        handle_sort={handle_sort}
+        handle_select_all={handle_select_all}
+        is_all_selected={is_all_selected}
+        styles={styles}
+        get_custom_header_class={get_custom_header_class}
+      />
+    );
+  };
+
+  // 각 셀 렌더링 함수 (Render Props 패턴)
+  // row: 현재 행의 데이터, column: 현재 컬럼 정보, index: 행 인덱스
+  // Render Props 패턴: 함수를 props로 전달하여 컴포넌트의 렌더링 로직을 커스터마이징하는 패턴입니다.
+  const render_cell = (
+    row: PaymentHistoryTableRowData,
+    column: TableColumn
+  ) => {
+    // switch 문: 여러 조건에 따라 다른 코드를 실행하는 제어문입니다.
+    switch (column.key) {
+      case "number":
+        return <span className={styles.cell_text}>{row.number}</span>;
+      case "companyName":
+        return <span className={styles.cell_text}>{row.companyName}</span>;
+      case "depositorName":
+        // 템플릿 리터럴: 백틱(`)을 사용하여 문자열과 변수를 함께 사용할 수 있는 문법입니다.
+        return (
+          <span className={styles.cell_text}>
+            {row.depositorName.registrationNumber} · {row.depositorName.name}
+          </span>
+        );
+      case "businessType":
+        // BusinessTypeTag 컴포넌트를 사용하여 사업자 구분 태그 표시
+        return (
+          <BusinessTypeTag
+            type={row.businessType as BusinessType}
+            styles={styles}
+          />
+        );
+      case "paymentMethod":
+        // PaymentMethodTag 컴포넌트를 사용하여 결제 수단 태그 표시
+        return (
+          <PaymentMethodTag
+            method={row.paymentMethod as PaymentMethod}
+            styles={styles}
+          />
+        );
+      case "taxInvoice":
+        return <span className={styles.cell_text}>{row.taxInvoice}</span>;
+      case "chargedPoints":
+        // 충전 포인트 열: 충전 포인트와 보유 포인트를 세로로 표시
+        return (
+          <div className={styles.charged_points_container}>
+            <span className={styles.cell_text}>{row.chargedPoints}</span>
+            <span className={styles.cell_text_secondary}>
+              보유 {row.heldPoints}
+            </span>
+          </div>
+        );
+      case "paymentStatus":
+        // 결제 상태 열: 결제 상태 태그 표시
+        return (
+          <PaymentStatusTag
+            status={row.paymentStatus as PaymentStatus}
+            styles={styles}
+          />
+        );
+      case "requestDate":
+        return <span className={styles.cell_text}>{row.requestDate}</span>;
+      case "approvalDate":
+        return <span className={styles.cell_text}>{row.approvalDate}</span>;
+      case "memberType":
+        return <span className={styles.cell_text}>{row.memberType}</span>;
+      case "accountStatus":
+        // 계정 상태 열: 회원 상태 태그 표시
+        return (
+          <MemberStatusTag
+            status={row.accountStatus as MemberStatus}
+            styles={styles}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
+  // 전체 선택/해제 핸들러
+  const handle_select_all = (is_all_selected: boolean) => {
+    if (is_all_selected) {
+      // 전체 선택: 모든 항목의 ID를 배열로 설정
+      // sorted_payment_history_list: 정렬된 데이터를 사용
+      setSelectedIds(sorted_payment_history_list.map((item) => item.id));
+    } else {
+      // 전체 해제: 빈 배열로 설정
+      setSelectedIds([]);
+    }
+  };
+
+  return (
+    <CommonTable<PaymentHistoryTableRowData>
+      columns={columns}
+      data={sorted_payment_history_list as PaymentHistoryTableRowData[]}
+      render_cell={render_cell}
+      styles={styles}
+      enable_checkbox={true}
+      selected_ids={selectedIds}
+      on_select_change={setSelectedIds}
+      on_select_all={handle_select_all}
+      render_header={render_table_header}
+      empty_message="결제 내역이 없습니다."
+    />
+  );
+}
