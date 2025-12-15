@@ -51,11 +51,56 @@
 .menu_icon_box {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 16px;
 }
 
 .menu_icon_box > img {
   cursor: pointer;
 }
 
+/* 사용자 메뉴 컨테이너 - 호버 시 로그아웃 버튼 표시 */
+.user_menu_container {
+  position: relative;
+  display: inline-block;
+}
 
+/* 로그아웃 버튼 - 기본적으로 숨김 */
+.logout_button {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #444444;
+  border-radius: 4px;
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  cursor: pointer;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  z-index: 1001;
+  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+}
+
+/* 로그아웃 버튼 위쪽 호버 영역 확장을 위한 가상 요소 */
+.logout_button::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+/* 호버 시 로그아웃 버튼 표시 - 컨테이너 호버 또는 버튼 호버 시 */
+.user_menu_container:hover .logout_button,
+.logout_button:hover {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}

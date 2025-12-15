@@ -44,6 +44,12 @@
   color: #444;
 }
 
+/* 추가 콘텐츠 (배지 등) */
+.additional_content {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
 /* 화살표 버튼 */
 .arrow_button {
   display: flex;

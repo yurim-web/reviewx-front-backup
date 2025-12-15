@@ -86,6 +86,16 @@
   object-fit: contain;
 }
 
+/* 테이블 컬럼 너비 정의 (헤더와 바디가 동일하게 사용) */
+:root {
+  --campaign-history-col-1: 1fr; /* 캠페인 번호 */
+  --campaign-history-col-2: 3fr; /* 캠페인명 */
+  --campaign-history-col-3: 1fr; /* 상태 */
+  --campaign-history-col-4: 1fr; /* 유형 */
+  --campaign-history-col-5: 1fr; /* 채널 */
+  --campaign-history-col-6: 1fr; /* 지급 포인트 */
+}
+
 /* 테이블 래퍼 */
 .table_wrapper {
   display: flex;
@@ -99,12 +109,12 @@
 .table_header {
   display: grid;
   grid-template-columns:
-    1fr /* 캠페인 번호 */
-    3fr /* 캠페인명 */
-    1fr /* 상태 */
-    1fr /* 유형 */
-    1fr /* 채널 */
-    1fr; /* 지급 포인트 */
+    var(--campaign-history-col-1) /* 캠페인 번호 */
+    var(--campaign-history-col-2) /* 캠페인명 */
+    var(--campaign-history-col-3) /* 상태 */
+    var(--campaign-history-col-4) /* 유형 */
+    var(--campaign-history-col-5) /* 채널 */
+    var(--campaign-history-col-6); /* 지급 포인트 */
   background-color: #f5f5f5;
   align-items: center;
   min-height: 56px;
@@ -137,21 +147,16 @@
 .table_row {
   display: grid;
   grid-template-columns:
-    1fr /* 캠페인 번호 */
-    3fr /* 캠페인명 */
-    1fr /* 상태 */
-    1fr /* 유형 */
-    1fr /* 채널 */
-    1fr; /* 지급 포인트 */
+    var(--campaign-history-col-1) /* 캠페인 번호 */
+    var(--campaign-history-col-2) /* 캠페인명 */
+    var(--campaign-history-col-3) /* 상태 */
+    var(--campaign-history-col-4) /* 유형 */
+    var(--campaign-history-col-5) /* 채널 */
+    var(--campaign-history-col-6); /* 지급 포인트 */
   border-bottom: 1px solid #f2f2f2;
   align-items: center;
   min-height: 62px;
   background-color: white;
-}
-
-/* 테이블 행: 마지막 행은 하단 테두리 제거 */
-.table_row:last-child {
-  border-bottom: none;
 }
 
 /* 테이블 셀 */
@@ -185,92 +190,6 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-}
-
-/* ========================================
-   태그 스타일 (공통 태그 컴포넌트용)
-   ======================================== */
-
-/**
- * 참고: 공통 태그 스타일은 @/styles/common/tags.module.css를 참조하세요.
- * 
- * 사용 컴포넌트:
- * - CampaignStatusTag (캠페인 상태 태그)
- * - CampaignTypeTag (캠페인 타입 태그)
- */
-
-/* 상태 태그 기본 스타일 */
-.status_tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: -0.28px;
-  min-width: 40px;
-  height: 22px;
-  white-space: nowrap;
-}
-
-/* 예정 상태 태그 (CampaignStatusTag용) */
-.status_tag_scheduled {
-  background-color: rgba(255, 225, 0, 0.1);
-  color: #c4a300;
-}
-
-/* 신청 상태 태그 (CampaignStatusTag용) */
-.status_tag_applied {
-  background-color: rgba(255, 86, 148, 0.1);
-  color: #ff5694;
-}
-
-/* 진행 상태 태그 (CampaignStatusTag용) */
-.status_tag_progress {
-  background-color: rgba(43, 127, 255, 0.1);
-  color: #2b7fff;
-}
-
-/* 종료 상태 태그 (CampaignStatusTag용) */
-.status_tag_ended {
-  background-color: #666666;
-  color: white;
-}
-
-/* 기존 호환성을 위한 별칭 (종료 = 완료) */
-.status_tag_completed {
-  background-color: #666666;
-  color: white;
-}
-
-/* 취소 상태 태그 (CampaignStatusTag용) */
-.status_tag_cancelled {
-  background-color: rgba(255, 38, 38, 0.05);
-  color: #ff2626;
-}
-
-/* 긴급 상태 태그 (CampaignStatusTag용) */
-.status_tag_urgent {
-  background-color: #ff2626;
-  color: white;
-}
-
-/* 타입 태그 기본 스타일 (CampaignTypeTag용) */
-.type_tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 8px;
-  border-radius: 8px;
-  background-color: #f1f1f1;
-  color: #666666;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: -0.28px;
-  white-space: nowrap;
 }
 
 /* 채널 아이콘 래퍼 */

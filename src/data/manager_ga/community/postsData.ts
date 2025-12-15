@@ -16,7 +16,7 @@
  */
 
 // 공통 필터 옵션에서 import
-import type { PostDivision } from '@/data/manager_ga/common/filterOptions';
+import type { PostDivision } from "@/data/manager_ga/common/filterOptions";
 
 // 타입 재export (기존 코드와의 호환성을 위해)
 export type { PostDivision };
@@ -60,7 +60,7 @@ export interface PostDetail extends PostItem {
 export const posts_data: PostItem[] = [
   {
     id: "1",
-    number: "000001",
+    number: "0000123",
     division: "공지사항",
     category: "전체",
     target: "파트너",
@@ -84,14 +84,14 @@ export const posts_data: PostItem[] = [
   },
   {
     id: "3",
-    number: "000001",
+    number: "0000222",
     division: "공지사항",
     category: "공지사항",
     target: "파트너",
     title:
       "내 브랜드에 참여한 인플루언서의 중복 당첨 이력을 확인 할 수 있습니다.",
     view_count: 0,
-    registered_date: "2025-08-01 18:56",
+    registered_date: "2025-08-01 18:60",
     registered_by: "관리자 C",
     is_pinned: false,
   },
@@ -103,7 +103,7 @@ export const posts_data: PostItem[] = [
     target: "파트너",
     title: `스타일씨 무제한 체험단 (추천할인코드) 를 사용해서 '할인'을 받아보세요`,
     view_count: 1100000,
-    registered_date: "2025-08-01 18:56",
+    registered_date: "2025-08-22 18:56",
     registered_by: "관리자 A",
     is_pinned: false,
   },
@@ -115,7 +115,7 @@ export const posts_data: PostItem[] = [
     target: "파트너",
     title: "구매평 체험단 메뉴 가 신설되었습니다.",
     view_count: 12000,
-    registered_date: "2025-08-01 18:56",
+    registered_date: "2025-12-01 18:56",
     registered_by: "관리자 C",
     is_pinned: false,
   },

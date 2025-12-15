@@ -139,14 +139,9 @@
   display: grid;
   grid-template-columns: 1fr 2fr 1.5fr 1fr;
   gap: 0;
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom: 1px solid #f2f2f2;
   padding: 0;
   min-height: 62px;
-}
-
-/* 마지막 행: 하단 테두리 제거 */
-.table_row:last-child {
-  border-bottom: none;
 }
 
 /* 테이블 셀 */
@@ -181,74 +176,4 @@
   font-weight: 500;
   line-height: 16px; /* 100% */
   letter-spacing: -0.32px;
-}
-
-/* ========================================
-   태그 스타일 (공통 태그 컴포넌트용)
-   ======================================== */
-
-/**
- * 참고: 공통 태그 스타일은 @/styles/common/tags.module.css를 참조하세요.
- * 
- * 사용 컴포넌트:
- * - MemberStatusTag (회원 상태 태그)
- * - PenaltyTypeTag (패널티 유형 태그)
- */
-
-/* 상태 태그 기본 스타일 */
-.status_tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: -0.28px;
-  min-width: 40px;
-  height: 22px;
-  white-space: nowrap;
-}
-
-/* 정상 상태 태그 (MemberStatusTag용) */
-.status_tag_normal {
-  background-color: rgba(43, 127, 255, 0.1);
-  color: #2b7fff;
-}
-
-/* 일시 정지 상태 태그 (MemberStatusTag용) */
-.status_tag_suspended {
-  background-color: rgba(255, 38, 38, 0.05);
-  color: #ff2626;
-}
-
-/* 패널티 태그 기본 스타일 (PenaltyTypeTag용) */
-.type_tag_penalty {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: -0.28px;
-}
-
-/* 경고 태그 (PenaltyTypeTag용) */
-.type_tag_penalty_warning {
-  background-color: rgba(255, 102, 0, 0.1);
-  color: #ff6600;
-}
-
-/* 주의 태그 (PenaltyTypeTag용) */
-.type_tag_penalty_caution {
-  background-color: rgba(255, 38, 38, 0.05);
-  color: #ff2626;
-}
-
-/* 정지 태그 (PenaltyTypeTag용) */
-.type_tag_penalty_suspension {
-  background-color: #f1f1f1;
-  color: #666666;
 }

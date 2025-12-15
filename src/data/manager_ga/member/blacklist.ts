@@ -15,21 +15,11 @@
  *
  */
 
-// 차단 구분 타입 정의 (파트너, 리뷰어, 관리자)
-export type BlacklistDivision = '파트너' | '리뷰어' | '관리자';
+// 공통 필터 옵션에서 import
+import type { BlacklistDivision, BlockCode } from '@/data/manager_ga/common/filterOptions';
 
-// 차단 코드 타입 정의
-export type BlockCode =
-  | 'B001'
-  | 'B002'
-  | 'B003'
-  | 'B004'
-  | 'B005'
-  | 'B006'
-  | 'B007'
-  | 'B008'
-  | 'B009'
-  | 'B010';
+// 타입 재export (기존 코드와의 호환성을 위해)
+export type { BlacklistDivision, BlockCode };
 
 // 차단 사유 타입 정의
 export type BlockReason =

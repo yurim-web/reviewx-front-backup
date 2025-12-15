@@ -211,6 +211,7 @@
   /* background: #ffffff; */
   min-height: 340px;
   overflow: hidden;
+  position: relative;
 }
 
 /* ToastUI Editor 기본 스타일 오버라이드 */
@@ -251,7 +252,8 @@
 .editor_container :global(.toastui-editor-contents p:first-child),
 .editor_container :global(.toastui-editor-contents p:nth-child(2)),
 .editor_container :global(.toastui-editor-contents p:nth-child(3)),
-.editor_container :global(.toastui-editor-contents p:nth-child(4)) {
+.editor_container :global(.toastui-editor-contents p:nth-child(4)),
+.editor_container :global(.toastui-editor-contents p:nth-child(5)) {
   opacity: 0;
   height: 0;
   margin: 0;
@@ -340,6 +342,48 @@
   justify-content: center;
   color: #777777;
   font-size: 14px;
+}
+
+/* 에디터 클릭 가드: 클릭 시 활성화 */
+.editor_click_guard {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  cursor: text;
+  z-index: 2;
+}
+
+/* 에디터 비활성화 상태: 클릭 전에는 입력 불가 */
+.editor_disabled :global(.toastui-editor-defaultUI),
+.editor_disabled :global(.toastui-editor-contents),
+.editor_disabled :global(.toastui-editor-ww-container),
+.editor_disabled :global(.toastui-editor-defaultUI-toolbar),
+.editor_disabled :global(.toastui-editor-toolbar),
+.editor_disabled :global(.toastui-editor-toolbar-button),
+.editor_disabled :global(.toastui-editor-mode-switch),
+.editor_disabled :global(.toastui-editor-defaultUI-toolbar *),
+.editor_disabled :global(.toastui-editor-contents *),
+.editor_disabled :global(.toastui-editor-ww-container *),
+.editor_disabled :global(input),
+.editor_disabled :global(textarea),
+.editor_disabled :global(button),
+.editor_disabled :global([contenteditable]),
+.editor_disabled :global(iframe) {
+  pointer-events: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
+/* 에디터 컨테이너 자체도 포커스 방지 */
+.editor_disabled {
+  outline: none !important;
+}
+
+.editor_disabled:focus,
+.editor_disabled:focus-within {
+  outline: none !important;
 }
 
 /* 스켈레톤 로딩 애니메이션 */
