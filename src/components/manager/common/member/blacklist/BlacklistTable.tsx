@@ -39,8 +39,18 @@ import SortableTableHeader from "@/components/manager/common/table/SortableTable
 import UserTypeTag from "@/components/manager/common/tags/UserTypeTag";
 import type { UserType } from "@/components/manager/common/tags/UserTypeTag";
 
+import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
+import type {
+  BlacklistDivision,
+  BlockCode,
+} from "@/data/manager_ga/common/filterOptions";
+
 interface BlacklistTableProps {
   search_query: string;
+  // 필터 상태
+  selected_date_range?: DateRange | undefined;
+  selected_divisions?: BlacklistDivision[];
+  selected_block_codes?: BlockCode[];
 }
 
 // BlacklistItem이 TableRowData를 확장하도록 확장
@@ -98,17 +108,55 @@ const columns: TableColumn[] = [
   },
 ];
 
-export default function BlacklistTable({ search_query }: BlacklistTableProps) {
+export default function BlacklistTable({
+  search_query,
+  selected_date_range,
+  selected_divisions = [],
+  selected_block_codes = [],
+}: BlacklistTableProps) {
   const [selected_blacklist_ids, set_selected_blacklist_ids] = useState<
     string[]
   >([]);
 
+  // 검색어 및 필터로 필터링된 차단 내역 목록
   const filtered_blacklist = blacklist_data.filter((item) => {
-    if (!search_query) return true;
-    return (
-      item.name.toLowerCase().includes(search_query.toLowerCase()) ||
-      item.user_id.toLowerCase().includes(search_query.toLowerCase())
-    );
+    // 검색어 필터
+    if (search_query) {
+      const matches_search =
+        item.name.toLowerCase().includes(search_query.toLowerCase()) ||
+        item.user_id.toLowerCase().includes(search_query.toLowerCase());
+      if (!matches_search) return false;
+    }
+
+    // 날짜 범위 필터
+    if (selected_date_range?.from && selected_date_range?.to) {
+      // item.registered_date는 "2025-08-01 18:56" 형식
+      // 날짜 부분만 추출하여 비교
+      const item_date_str = item.registered_date.split(" ")[0]; // "2025-08-01"
+      const item_date = new Date(item_date_str);
+      
+      const start_date = new Date(selected_date_range.from);
+      const end_date = new Date(selected_date_range.to);
+      
+      // 시간 부분을 제거하고 날짜만 비교
+      start_date.setHours(0, 0, 0, 0);
+      end_date.setHours(23, 59, 59, 999);
+      item_date.setHours(0, 0, 0, 0);
+
+      if (item_date < start_date || item_date > end_date) return false;
+    }
+
+    // 구분 필터
+    if (selected_divisions.length > 0) {
+      if (!selected_divisions.includes(item.division)) return false;
+    }
+
+    // 차단 코드 필터
+    if (selected_block_codes.length > 0) {
+      if (!selected_block_codes.includes(item.block_code)) return false;
+    }
+
+    return true;
   });
 
   // 컬럼별 타입 설정

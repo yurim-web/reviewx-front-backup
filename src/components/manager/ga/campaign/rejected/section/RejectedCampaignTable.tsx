@@ -45,10 +45,12 @@ import {
   type TableColumn,
   type TableRowData,
 } from "@/components/manager/common/table/CommonTable";
+import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 
 interface RejectedCampaignTableProps {
   search_query: string;
   selected_reject_codes: RejectCode[];
+  selected_date_range?: DateRange | undefined;
 }
 
 // RejectedCampaignItem이 TableRowData를 확장하도록 확장
@@ -109,6 +111,7 @@ const get_columns = (styles: Record<string, string>): TableColumn[] => [
 export default function RejectedCampaignTable({
   search_query,
   selected_reject_codes,
+  selected_date_range,
 }: RejectedCampaignTableProps) {
   const [hovered_report_row_id, set_hovered_report_row_id] = useState<
     string | null
@@ -149,6 +152,7 @@ export default function RejectedCampaignTable({
   };
 
   const filtered_list = rejected_campaign_list.filter((item) => {
+    // 검색어 필터
     if (
       search_query &&
       !item.campaign_name.includes(search_query) &&
@@ -157,11 +161,30 @@ export default function RejectedCampaignTable({
       return false;
     }
 
+    // 반려 코드 필터
     if (
       selected_reject_codes.length > 0 &&
       !selected_reject_codes.includes(item.reject_code)
     ) {
       return false;
+    }
+
+    // 날짜 범위 필터
+    if (selected_date_range?.from && selected_date_range?.to) {
+      // processed_date 형식: "2025-08-01 18:56"
+      const processed_date_str = item.processed_date.split(" ")[0]; // 날짜 부분만 추출
+      const processed_date = new Date(processed_date_str);
+      const from_date = new Date(selected_date_range.from);
+      const to_date = new Date(selected_date_range.to);
+      to_date.setHours(23, 59, 59, 999); // 종료일의 끝 시간까지 포함
+
+      // 날짜 비교 시 시간 부분을 제거하여 날짜만 비교
+      processed_date.setHours(0, 0, 0, 0);
+      from_date.setHours(0, 0, 0, 0);
+
+      if (processed_date < from_date || processed_date > to_date) {
+        return false;
+      }
     }
 
     return true;

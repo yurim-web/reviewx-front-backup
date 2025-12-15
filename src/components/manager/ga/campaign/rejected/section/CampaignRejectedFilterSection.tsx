@@ -37,6 +37,9 @@ interface CampaignRejectedFilterSectionProps {
   // 선택된 반려 코드 필터 상태와 변경 함수
   selected_reject_codes?: RejectCode[];
   on_reject_codes_change?: (codes: RejectCode[]) => void;
+  // 날짜 범위 필터 상태와 변경 함수
+  selected_date_range?: DateRange | undefined;
+  on_date_range_change?: (range: DateRange | undefined) => void;
 }
 
 export default function CampaignRejectedFilterSection({
@@ -44,7 +47,9 @@ export default function CampaignRejectedFilterSection({
   on_search_change,
   selected_reject_codes = [],
   on_reject_codes_change,
-}: FilterSectionProps) {
+  selected_date_range,
+  on_date_range_change,
+}: CampaignRejectedFilterSectionProps) {
   // 반려 코드 필터 모달 열림/닫힘 상태
   const [is_reject_code_modal_open, set_is_reject_code_modal_open] =
     useState(false);
@@ -54,15 +59,9 @@ export default function CampaignRejectedFilterSection({
     selected_reject_codes
   );
 
-  // 선택된 날짜 범위 상태
-  const [selected_date_range, set_selected_date_range] = useState<
-    DateRange | undefined
-  >(undefined);
-
   // 날짜 범위 변경 핸들러
   const handle_date_range_change = (range: DateRange | undefined) => {
-    set_selected_date_range(range);
-    // TODO: 날짜 범위 변경 시 필터링 로직 구현
+    on_date_range_change?.(range);
   };
 
   // 반려 코드 필터 모달 열기

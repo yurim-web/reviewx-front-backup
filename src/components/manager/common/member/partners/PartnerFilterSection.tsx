@@ -21,13 +21,26 @@ import TypeFilterModal, {
   type PartnerType,
 } from "@/components/manager/common/member/partners/filter/TypeFilterModal";
 import StatusFilterModal from "@/components/manager/common/member/partners/filter/StatusFilterModal";
-import type { Channel } from "@/data/manager_ga/member/partners";
+import type { Channel } from "@/data/manager/common/filterOptions";
+import type {
+  PartnerDivision,
+  PartnerStatus,
+} from "@/data/manager_ga/common/filterOptions";
 
 interface PartnerFilterSectionProps {
   // 검색어 상태
   search_query: string;
   // 검색어 변경 핸들러 함수
   on_search_change: (query: string) => void;
+  // 필터 상태
+  selected_channels: Channel[];
+  on_channels_change: (channels: Channel[]) => void;
+  selected_divisions: PartnerDivision[];
+  on_divisions_change: (divisions: PartnerDivision[]) => void;
+  selected_types: PartnerType[];
+  on_types_change: (types: PartnerType[]) => void;
+  selected_statuses: PartnerStatus[];
+  on_statuses_change: (statuses: PartnerStatus[]) => void;
 }
 
 // 채널 이름 매핑 객체
@@ -42,16 +55,32 @@ const channel_name_map: Record<Channel, string> = {
 export default function PartnerFilterSection({
   search_query,
   on_search_change,
+  selected_channels,
+  on_channels_change,
+  selected_divisions,
+  on_divisions_change,
+  selected_types,
+  on_types_change,
+  selected_statuses,
+  on_statuses_change,
 }: PartnerFilterSectionProps) {
   return (
     <MemberFilterSectionCommon<
       Channel,
-      import("@/data/manager_ga/member/partners").PartnerDivision,
+      PartnerDivision,
       PartnerType,
-      import("@/data/manager_ga/member/partners").PartnerStatus
+      PartnerStatus
     >
       search_query={search_query}
       on_search_change={on_search_change}
+      selected_channels={selected_channels}
+      on_channels_change={on_channels_change}
+      selected_divisions={selected_divisions}
+      on_divisions_change={on_divisions_change}
+      selected_types={selected_types}
+      on_types_change={on_types_change}
+      selected_statuses={selected_statuses}
+      on_statuses_change={on_statuses_change}
       styles={
         styles as {
           filter_item: string;

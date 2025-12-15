@@ -26,11 +26,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTableSort } from "@/hooks/table/useTableSort";
-import {
-  get_sort_arrow_transform,
-  get_sort_arrow_alt,
-  type SortColumnConfig,
-} from "@/utils/table/sort";
+import type { SortColumnConfig } from "@/utils/table/sort";
+import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
+import type { TableColumn } from "@/components/manager/common/table/CommonTable";
 import {
   reviewer_list,
   type ReviewerItem,
@@ -38,12 +36,19 @@ import {
   type ReviewerType,
   type ReviewerStatus,
 } from "@/data/manager_ga/member/reviewers";
+import type { ReviewerStatusType } from "@/data/manager_ga/common/filterOptions";
+import type { ReviewerGrade } from "@/components/manager/common/member/reviewers/filter/GradeFilterModal";
 import MemberStatusTag from "@/components/manager/common/tags/MemberStatusTag";
 import ReviewerTypeTag from "@/components/manager/common/tags/ReviewerTypeTag";
 
 interface ReviewerTableProps {
   // 검색어 상태를 props로 받습니다
   search_query: string;
+  // 필터 상태
+  selected_channels?: Channel[];
+  selected_grades?: ReviewerGrade[];
+  selected_types?: ReviewerStatusType[];
+  selected_statuses?: ReviewerStatus[];
   // CSS 모듈 스타일 객체
   styles: Record<string, string> & {
     table_container: string;
@@ -82,8 +87,8 @@ interface ReviewerTableProps {
   detail_path: string;
 }
 
-// 채널 아이콘 경로 매핑
-const channel_icon_map: Record<Channel, string> = {
+// 채널 아이콘 경로 매핑 (리뷰어에서 사용하는 채널만 포함)
+const channel_icon_map: Partial<Record<Channel, string>> = {
   Blog: "/images/brand_logo/naverblog.svg",
   Clip: "/images/brand_logo/naverclip.svg",
   Instagram: "/images/brand_logo/insta.svg",
@@ -93,6 +98,10 @@ const channel_icon_map: Record<Channel, string> = {
 
 export default function ReviewerTable({
   search_query,
+  selected_channels = [],
+  selected_grades = [],
+  selected_types = [],
+  selected_statuses = [],
   styles: cssStyles,
   detail_path,
 }: ReviewerTableProps) {
@@ -108,11 +117,40 @@ export default function ReviewerTable({
   // 전체 선택/해제 상태 관리
   const [is_all_selected, set_is_all_selected] = useState(false);
 
-  // 검색어로 필터링된 리뷰어 목록
+  // 검색어 및 필터로 필터링된 리뷰어 목록
   const filtered_reviewers = reviewer_list.filter((reviewer) => {
-    if (!search_query) return true;
-    // 이름으로 검색
-    return reviewer.name.toLowerCase().includes(search_query.toLowerCase());
+    // 검색어 필터
+    if (search_query) {
+      const matches_search = reviewer.name
+        .toLowerCase()
+        .includes(search_query.toLowerCase());
+      if (!matches_search) return false;
+    }
+
+    // 채널 필터
+    if (selected_channels.length > 0) {
+      const has_matching_channel = reviewer.channels.some((channel) =>
+        selected_channels.includes(channel)
+      );
+      if (!has_matching_channel) return false;
+    }
+
+    // 등급 필터 (type 필드 사용)
+    if (selected_grades.length > 0) {
+      if (!selected_grades.includes(reviewer.type)) return false;
+    }
+
+    // 유형 필터 (status_type 필드 사용)
+    if (selected_types.length > 0) {
+      if (!selected_types.includes(reviewer.status_type)) return false;
+    }
+
+    // 상태 필터
+    if (selected_statuses.length > 0) {
+      if (!selected_statuses.includes(reviewer.status)) return false;
+    }
+
+    return true;
   });
 
   // 컬럼별 타입 설정
@@ -178,310 +216,98 @@ export default function ReviewerTable({
     router.push(`${detail_path}/${reviewer_id}`);
   };
 
+  // 테이블 컬럼 정의
+  const columns: TableColumn[] = [
+    {
+      key: "number",
+      label: "번호",
+      sortable: true,
+      className: cssStyles.table_cell_number,
+    },
+    {
+      key: "name",
+      label: "이름",
+      sortable: true,
+      className: cssStyles.table_cell_name,
+    },
+    {
+      key: "channel",
+      label: "채널",
+      className: cssStyles.table_cell_channel,
+    },
+    {
+      key: "type",
+      label: "구분",
+      className: cssStyles.table_cell_type,
+    },
+    {
+      key: "last_access_date",
+      label: "접속일",
+      sortable: true,
+      className: cssStyles.table_cell_last_access,
+    },
+    {
+      key: "join_date",
+      label: "가입일",
+      sortable: true,
+      className: cssStyles.table_cell_join_date,
+    },
+    {
+      key: "campaign_participated",
+      label: "캠페인 참여",
+      sortable: true,
+      className: cssStyles.table_cell_campaign_participated,
+    },
+    {
+      key: "campaign_completed",
+      label: "캠페인 완료",
+      sortable: true,
+      className: cssStyles.table_cell_campaign_completed,
+    },
+    {
+      key: "current_points",
+      label: "보유 포인트",
+      sortable: true,
+      className: cssStyles.table_cell_current_points,
+    },
+    {
+      key: "withdrawn_points",
+      label: "출금 포인트",
+      sortable: true,
+      className: cssStyles.table_cell_withdrawn_points,
+    },
+    {
+      key: "status_type",
+      label: "유형",
+      className: cssStyles.table_cell_status_type,
+    },
+    {
+      key: "status",
+      label: "상태",
+      sortable: false,
+      className: cssStyles.table_cell_status,
+    },
+  ];
+
+  // 커스텀 헤더 렌더링 (SortableTableHeader 공통 컴포넌트 사용)
+  const render_custom_header = () => {
+    return (
+      <SortableTableHeader
+        columns={columns}
+        sort_state={sort_state}
+        handle_sort={handle_sort}
+        handle_select_all={handle_select_all}
+        is_all_selected={is_all_selected}
+        styles={cssStyles}
+        use_header_row={false}
+      />
+    );
+  };
+
   return (
     <div className={cssStyles.table_container}>
       {/* 테이블 헤더 */}
-      <div className={cssStyles.table_header}>
-        <div className={cssStyles.table_cell_checkbox}>
-          <input
-            type="checkbox"
-            checked={is_all_selected}
-            onChange={handle_select_all}
-            className={cssStyles.checkbox}
-          />
-        </div>
-        <div className={cssStyles.table_cell_number}>
-          <span>번호</span>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handle_sort("number");
-            }}
-            aria-label="번호 정렬"
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: 0,
-              display: "inline-flex",
-              alignItems: "center",
-            }}
-          >
-            <img
-              src="/images/icons/table_arrow.svg"
-              alt={get_sort_arrow_alt(sort_state, "number")}
-              className={cssStyles.sort_icon}
-              style={{
-                transform: get_sort_arrow_transform(sort_state, "number"),
-                transition: "transform 0.2s",
-              }}
-            />
-          </button>
-        </div>
-        <div className={cssStyles.table_cell_name}>
-          <span>이름</span>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handle_sort("name");
-            }}
-            aria-label="이름 정렬"
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: 0,
-              display: "inline-flex",
-              alignItems: "center",
-            }}
-          >
-            <img
-              src="/images/icons/table_arrow.svg"
-              alt={get_sort_arrow_alt(sort_state, "name")}
-              className={cssStyles.sort_icon}
-              style={{
-                transform: get_sort_arrow_transform(sort_state, "name"),
-                transition: "transform 0.2s",
-              }}
-            />
-          </button>
-        </div>
-        <div className={cssStyles.table_cell_channel}>
-          <span>채널</span>
-          <img
-            src="/images/icons/table_arrow.svg"
-            alt="정렬"
-            className={cssStyles.sort_icon}
-          />
-        </div>
-        <div className={cssStyles.table_cell_type}>
-          <span>구분</span>
-        </div>
-        <div className={cssStyles.table_cell_last_access}>
-          <span>접속일</span>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handle_sort("last_access_date");
-            }}
-            aria-label="접속일 정렬"
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: 0,
-              display: "inline-flex",
-              alignItems: "center",
-            }}
-          >
-            <img
-              src="/images/icons/table_arrow.svg"
-              alt={get_sort_arrow_alt(sort_state, "last_access_date")}
-              className={cssStyles.sort_icon}
-              style={{
-                transform: get_sort_arrow_transform(
-                  sort_state,
-                  "last_access_date"
-                ),
-                transition: "transform 0.2s",
-              }}
-            />
-          </button>
-        </div>
-        <div className={cssStyles.table_cell_join_date}>
-          <span>가입일</span>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handle_sort("join_date");
-            }}
-            aria-label="가입일 정렬"
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: 0,
-              display: "inline-flex",
-              alignItems: "center",
-            }}
-          >
-            <img
-              src="/images/icons/table_arrow.svg"
-              alt={get_sort_arrow_alt(sort_state, "join_date")}
-              className={cssStyles.sort_icon}
-              style={{
-                transform: get_sort_arrow_transform(sort_state, "join_date"),
-                transition: "transform 0.2s",
-              }}
-            />
-          </button>
-        </div>
-        <div className={cssStyles.table_cell_campaign_participated}>
-          <span>캠페인 참여</span>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handle_sort("campaign_participated");
-            }}
-            aria-label="캠페인 참여 정렬"
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: 0,
-              display: "inline-flex",
-              alignItems: "center",
-            }}
-          >
-            <img
-              src="/images/icons/table_arrow.svg"
-              alt={get_sort_arrow_alt(sort_state, "campaign_participated")}
-              className={cssStyles.sort_icon}
-              style={{
-                transform: get_sort_arrow_transform(
-                  sort_state,
-                  "campaign_participated"
-                ),
-                transition: "transform 0.2s",
-              }}
-            />
-          </button>
-        </div>
-        <div className={cssStyles.table_cell_campaign_completed}>
-          <span>캠페인 완료</span>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handle_sort("campaign_completed");
-            }}
-            aria-label="캠페인 완료 정렬"
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: 0,
-              display: "inline-flex",
-              alignItems: "center",
-            }}
-          >
-            <img
-              src="/images/icons/table_arrow.svg"
-              alt={get_sort_arrow_alt(sort_state, "campaign_completed")}
-              className={cssStyles.sort_icon}
-              style={{
-                transform: get_sort_arrow_transform(
-                  sort_state,
-                  "campaign_completed"
-                ),
-                transition: "transform 0.2s",
-              }}
-            />
-          </button>
-        </div>
-        <div className={cssStyles.table_cell_current_points}>
-          <span>보유 포인트</span>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handle_sort("current_points");
-            }}
-            aria-label="보유 포인트 정렬"
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: 0,
-              display: "inline-flex",
-              alignItems: "center",
-            }}
-          >
-            <img
-              src="/images/icons/table_arrow.svg"
-              alt={get_sort_arrow_alt(sort_state, "current_points")}
-              className={cssStyles.sort_icon}
-              style={{
-                transform: get_sort_arrow_transform(
-                  sort_state,
-                  "current_points"
-                ),
-                transition: "transform 0.2s",
-              }}
-            />
-          </button>
-        </div>
-        <div className={cssStyles.table_cell_withdrawn_points}>
-          <span>출금 포인트</span>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handle_sort("withdrawn_points");
-            }}
-            aria-label="출금 포인트 정렬"
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: 0,
-              display: "inline-flex",
-              alignItems: "center",
-            }}
-          >
-            <img
-              src="/images/icons/table_arrow.svg"
-              alt={get_sort_arrow_alt(sort_state, "withdrawn_points")}
-              className={cssStyles.sort_icon}
-              style={{
-                transform: get_sort_arrow_transform(
-                  sort_state,
-                  "withdrawn_points"
-                ),
-                transition: "transform 0.2s",
-              }}
-            />
-          </button>
-        </div>
-        <div className={cssStyles.table_cell_status_type}>
-          <span>유형</span>
-        </div>
-        <div className={cssStyles.table_cell_status}>
-          <span>상태</span>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handle_sort("status");
-            }}
-            aria-label="상태 정렬"
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: 0,
-              display: "inline-flex",
-              alignItems: "center",
-            }}
-          >
-            <img
-              src="/images/icons/table_arrow.svg"
-              alt={get_sort_arrow_alt(sort_state, "status")}
-              className={cssStyles.sort_icon}
-              style={{
-                transform: get_sort_arrow_transform(sort_state, "status"),
-                transition: "transform 0.2s",
-              }}
-            />
-          </button>
-        </div>
-      </div>
-
+      {render_custom_header()}
       {/* 테이블 바디 */}
       <div className={cssStyles.table_body}>
         {sorted_reviewers.length === 0 ? (

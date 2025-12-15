@@ -32,12 +32,29 @@ import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageT
 import PartnerStatsSection from "@/components/manager/common/member/partners/PartnerStatsSection";
 import PartnerFilterSection from "@/components/manager/common/member/partners/PartnerFilterSection";
 import PartnerTable from "@/components/manager/common/member/partners/PartnerTable";
+import type { Channel } from "@/data/manager/common/filterOptions";
+import type {
+  PartnerDivision,
+  PartnerStatus,
+} from "@/data/manager_ga/common/filterOptions";
+import type { PartnerType } from "@/components/manager/common/member/partners/filter/TypeFilterModal";
 
 export default function PartnersPage() {
   // 검색어 상태 관리
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
   // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
   const [search_query, set_search_query] = useState<string>("");
+
+  // 필터 상태 관리
+  // 각 필터의 선택된 값들을 배열로 관리합니다
+  const [selected_channels, set_selected_channels] = useState<Channel[]>([]);
+  const [selected_divisions, set_selected_divisions] = useState<
+    PartnerDivision[]
+  >([]);
+  const [selected_types, set_selected_types] = useState<PartnerType[]>([]);
+  const [selected_statuses, set_selected_statuses] = useState<PartnerStatus[]>(
+    []
+  );
 
   return (
     <div className={styles.container}>
@@ -52,11 +69,23 @@ export default function PartnersPage() {
         <PartnerFilterSection
           search_query={search_query}
           on_search_change={set_search_query}
+          selected_channels={selected_channels}
+          on_channels_change={set_selected_channels}
+          selected_divisions={selected_divisions}
+          on_divisions_change={set_selected_divisions}
+          selected_types={selected_types}
+          on_types_change={set_selected_types}
+          selected_statuses={selected_statuses}
+          on_statuses_change={set_selected_statuses}
         />
 
         {/* 파트너 목록 테이블 */}
-        <PartnerTable 
-          search_query={search_query} 
+        <PartnerTable
+          search_query={search_query}
+          selected_channels={selected_channels}
+          selected_divisions={selected_divisions}
+          selected_types={selected_types}
+          selected_statuses={selected_statuses}
           detail_path="/manager_ga/member/partners"
         />
       </div>

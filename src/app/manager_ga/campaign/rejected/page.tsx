@@ -28,6 +28,7 @@ import RejectStatsSection from "@/components/manager/ga/campaign/rejected/sectio
 import CampaignRejectedFilterSection from "@/components/manager/ga/campaign/rejected/section/CampaignRejectedFilterSection";
 import RejectedCampaignTable from "@/components/manager/ga/campaign/rejected/section/RejectedCampaignTable";
 import type { RejectCode } from "@/data/manager_ga/rejected";
+import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 
 /**
  * 반려 이력 페이지 컴포넌트
@@ -63,6 +64,11 @@ export default function RejectedPage() {
     RejectCode[]
   >([]);
 
+  // 날짜 범위 필터 상태 관리
+  const [selected_date_range, set_selected_date_range] = useState<
+    DateRange | undefined
+  >(undefined);
+
   return (
     <div className={styles.container}>
       <div className={styles.main_content}>
@@ -81,6 +87,8 @@ export default function RejectedPage() {
           on_search_change={set_search_query}
           selected_reject_codes={selected_reject_codes}
           on_reject_codes_change={set_selected_reject_codes}
+          selected_date_range={selected_date_range}
+          on_date_range_change={set_selected_date_range}
         />
 
         {/* 반려 이력 통계 섹션 */}
@@ -90,6 +98,7 @@ export default function RejectedPage() {
         <RejectedCampaignTable
           search_query={search_query}
           selected_reject_codes={selected_reject_codes}
+          selected_date_range={selected_date_range}
         />
       </div>
     </div>

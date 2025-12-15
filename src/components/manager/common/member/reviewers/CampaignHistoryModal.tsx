@@ -71,15 +71,6 @@ export default function CampaignHistoryModal({
           table_row: string;
           table_cell: string;
           table_cell_campaign_name: string;
-          status_tag: string;
-          status_tag_scheduled: string;
-          status_tag_applied: string;
-          status_tag_progress: string;
-          status_tag_ended: string;
-          status_tag_completed: string; // 기존 호환성을 위해 유지
-          status_tag_cancelled: string;
-          status_tag_urgent: string;
-          type_tag: string;
           channel_icon_wrapper: string;
           channel_icon: string;
           empty_state: string;

@@ -16,11 +16,11 @@
  * - /manager_sa/community/posts/[id]/edit (SA 관리자 게시글 수정 페이지)
  */
 
-import { useEffect, useState, type ComponentType } from "react";
-import dynamic from "next/dynamic";
+import { useEffect, useRef, useState } from "react";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import styles from "@/styles/manager_ga/community/posts/post_edit_page.module.css";
 import { CustomDropdown } from "@/components/partner/campaign_create_form/common/CustomDropdown";
+import { PostEditorField } from "@/components/manager/common/community/posts/form/PostEditorField";
 
 // 컴포넌트 Props 타입 정의
 interface PostFormPageClientProps {
@@ -37,18 +37,6 @@ interface PostFormPageClientProps {
     body: string;
   };
 }
-
-// ToastUI Editor Props 타입 정의
-type ToastEditorProps = {
-  initialValue?: string;
-  initialEditType?: "markdown" | "wysiwyg";
-  previewStyle?: "tab" | "vertical";
-  height?: string;
-  usageStatistics?: boolean;
-  placeholder?: string;
-  autofocus?: boolean;
-  ref?: any;
-};
 
 // 사이드바 메뉴 데이터 (리스트 렌더링 학습용)
 const side_menu_items = [
@@ -74,28 +62,15 @@ const side_menu_items = [
 const category_type_options = ["공지사항", "자주 묻는 질문"];
 const category_options = [
   "전체",
-  "중요",
   "공지사항",
-  "자주 묻는 질문",
-  "취소/환불",
-  "이벤트",
   "교환/반품",
+  "이벤트",
+  "자주 묻는 질문",
+  "중요",
+  "취소/환불",
   "회원가입/로그인",
 ];
-const target_options = ["전체", "파트너", "리뷰어"];
-
-// SSR 환경에서는 window 객체 접근 이슈가 있으므로 dynamic + ssr:false 사용
-// React 전용 래퍼(@toast-ui/react-editor)의 Editor 컴포넌트를 불러옵니다.
-const ToastEditor = dynamic<ToastEditorProps>(
-  () =>
-    import("@toast-ui/react-editor").then(
-      (mod) => mod.Editor as unknown as ComponentType<ToastEditorProps>
-    ),
-  {
-    ssr: false,
-    loading: () => <div className={styles.editor_skeleton}>에디터 로딩중…</div>,
-  }
-);
+const target_options = ["전체", "리뷰어", "파트너", "관리자"];
 
 export default function PostFormPageClient({
   mode,
@@ -105,8 +80,10 @@ export default function PostFormPageClient({
   // 🧭 클라이언트에서만 에디터를 그리기 위해 마운트 여부를 체크합니다.
   const [is_mounted, setIsMounted] = useState(false);
   const [is_editor_ready, setIsEditorReady] = useState(false);
+  const [is_editor_unlocked, setIsEditorUnlocked] = useState(false);
   const editor_ref = useState<any>(null)[0];
-  const editor_instance_ref = useState<any>(null)[0];
+  const editor_instance_ref = useRef<any>(null);
+  const title_input_ref = useRef<HTMLInputElement>(null);
 
   // 폼 상태 관리
   // mode가 "create"이면 빈 값, "edit"이면 initial_data 사용
@@ -120,6 +97,19 @@ export default function PostFormPageClient({
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // 에디터가 언락되면 포커스를 설정
+  useEffect(() => {
+    if (is_editor_unlocked && editor_instance_ref.current) {
+      try {
+        setTimeout(() => {
+          editor_instance_ref.current?.focus?.();
+        }, 100);
+      } catch (e) {
+        // ignore
+      }
+    }
+  }, [is_editor_unlocked]);
 
   // ToastEditor 툴바 버튼 마진 조정 및 기본 콘텐츠 제거를 위한 스타일 주입
   useEffect(() => {
@@ -254,87 +244,24 @@ export default function PostFormPageClient({
               className={styles.input_box}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              autoComplete="off"
+              ref={title_input_ref}
               aria-label="게시글 제목"
               placeholder="제목을 입력하세요"
             />
           </div>
 
-          <div className={styles.form_field}>
-            <label className={styles.input_label} htmlFor="body">
-              내용
-            </label>
-            <div className={styles.editor_container}>
-              {is_mounted ? (
-                <>
-                  {/* 작성 모드일 때는 에디터가 준비될 때까지 숨김 */}
-                  <div
-                    style={{
-                      display:
-                        mode === "create" && !is_editor_ready
-                          ? "none"
-                          : "block",
-                    }}
-                  >
-                    <ToastEditor
-                      ref={(editor: any) => {
-                        if (editor && mode === "create") {
-                          // 작성 모드일 때 에디터가 로드된 후 빈 상태로 초기화
-                          setTimeout(() => {
-                            try {
-                              if (editor.getInstance) {
-                                const instance = editor.getInstance();
-                                if (instance) {
-                                  instance.setMarkdown("");
-                                  instance.setHTML("");
-                                  // 약간의 지연 후 표시하여 깜빡임 방지
-                                  setTimeout(() => {
-                                    setIsEditorReady(true);
-                                  }, 100);
-                                }
-                              } else if (editor.getRootElement) {
-                                const rootElement = editor.getRootElement();
-                                if (rootElement) {
-                                  const editorInstance = (rootElement as any)
-                                    .__editor__;
-                                  if (editorInstance) {
-                                    editorInstance.setMarkdown("");
-                                    editorInstance.setHTML("");
-                                    setTimeout(() => {
-                                      setIsEditorReady(true);
-                                    }, 100);
-                                  }
-                                }
-                              }
-                            } catch (e) {
-                              // 에러 무시
-                            }
-                          }, 50);
-                        } else if (editor && mode === "edit") {
-                          // 수정 모드일 때는 즉시 준비 완료
-                          setIsEditorReady(true);
-                        }
-                      }}
-                      initialValue={
-                        mode === "create" ? "" : initial_data?.body || ""
-                      }
-                      initialEditType="wysiwyg"
-                      previewStyle="vertical"
-                      height="340px"
-                      usageStatistics={false}
-                      placeholder=""
-                      autofocus={false}
-                    />
-                  </div>
-                  {/* 작성 모드이고 에디터가 준비되지 않았을 때 스켈레톤 표시 */}
-                  {mode === "create" && !is_editor_ready && (
-                    <div className={styles.editor_skeleton}>에디터 로딩중…</div>
-                  )}
-                </>
-              ) : (
-                <div className={styles.editor_skeleton}>에디터 로딩중…</div>
-              )}
-            </div>
-          </div>
+          <PostEditorField
+            is_mounted={is_mounted}
+            is_editor_ready={is_editor_ready}
+            setIsEditorReady={setIsEditorReady}
+            is_editor_unlocked={is_editor_unlocked}
+            setIsEditorUnlocked={setIsEditorUnlocked}
+            mode={mode}
+            initial_data={initial_data}
+            editor_instance_ref={editor_instance_ref}
+            title_input_ref={title_input_ref}
+          />
 
           <button
             className={styles.save_button}

@@ -40,46 +40,45 @@ import type {
 interface BlacklistFilterSectionProps {
   search_query: string;
   on_search_change: (query: string) => void;
+  // 필터 상태
+  selected_date_range?: DateRange | undefined;
+  on_date_range_change?: (range: DateRange | undefined) => void;
+  selected_divisions: BlacklistDivision[];
+  on_divisions_change: (divisions: BlacklistDivision[]) => void;
+  selected_block_codes: BlockCode[];
+  on_block_codes_change: (block_codes: BlockCode[]) => void;
 }
 
 export default function BlacklistFilterSection({
   search_query,
   on_search_change,
+  selected_date_range,
+  on_date_range_change,
+  selected_divisions,
+  on_divisions_change,
+  selected_block_codes,
+  on_block_codes_change,
 }: BlacklistFilterSectionProps) {
   const [is_division_modal_open, set_is_division_modal_open] = useState(false);
   const [is_block_code_modal_open, set_is_block_code_modal_open] =
     useState(false);
 
-  // 날짜 범위 상태
-  // useState: React Hook으로 컴포넌트의 날짜 범위 상태를 관리합니다
-  // [현재 값, 값을 변경하는 함수] = useState(초기값)
-  // DateRange | undefined: 날짜 범위가 선택되지 않았을 수도 있으므로 undefined 허용
-  const [selected_date_range, set_selected_date_range] = useState<
-    DateRange | undefined
-  >(undefined);
-
-  const [selected_divisions, set_selected_divisions] = useState<
-    BlacklistDivision[]
-  >([]);
-  const [selected_block_codes, set_selected_block_codes] = useState<
-    BlockCode[]
-  >([]);
   const [selected_sort, set_selected_sort] = useState("최신순");
 
   const handle_division_apply = (divisions: BlacklistDivision[]) => {
-    set_selected_divisions(divisions);
+    on_divisions_change(divisions);
   };
 
   const handle_remove_division = (division: BlacklistDivision) => {
-    set_selected_divisions(selected_divisions.filter((d) => d !== division));
+    on_divisions_change(selected_divisions.filter((d) => d !== division));
   };
 
   const handle_block_code_apply = (block_codes: BlockCode[]) => {
-    set_selected_block_codes(block_codes);
+    on_block_codes_change(block_codes);
   };
 
   const handle_remove_block_code = (block_code: BlockCode) => {
-    set_selected_block_codes(
+    on_block_codes_change(
       selected_block_codes.filter((c) => c !== block_code)
     );
   };
@@ -98,14 +97,13 @@ export default function BlacklistFilterSection({
   // 날짜 범위 변경 핸들러
   // DateFilterButton에서 날짜 범위가 변경될 때 호출됩니다
   const handle_date_range_change = (range: DateRange | undefined) => {
-    set_selected_date_range(range);
-    // TODO: 날짜 범위에 따른 필터링 로직 구현
+    on_date_range_change?.(range);
   };
 
   const active_filter_tags: FilterTag<string>[] = [
     ...selected_divisions.map((division) => ({
       value: division,
-      label: `구분: ${division}`,
+      label: division,
     })),
     ...selected_block_codes.map((block_code) => ({
       value: block_code,

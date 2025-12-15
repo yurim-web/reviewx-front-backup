@@ -26,6 +26,7 @@ import CampaignStatusTag from "@/components/manager/common/tags/CampaignStatusTa
 import type { CampaignStatus } from "@/components/manager/common/tags/CampaignStatusTag";
 import CampaignTypeTag from "@/components/manager/common/tags/CampaignTypeTag";
 import type { CampaignType } from "@/components/manager/common/tags/CampaignTypeTag";
+import tagStyles from "@/styles/common/tags.module.css";
 
 // 캠페인 내역 아이템 타입 정의 (리뷰어와 파트너 모두에서 사용)
 export interface CampaignHistoryItem {
@@ -62,15 +63,6 @@ interface CampaignHistoryModalProps {
     table_row: string;
     table_cell: string;
     table_cell_campaign_name: string;
-    status_tag: string;
-    status_tag_scheduled: string;
-    status_tag_applied: string;
-    status_tag_progress: string;
-    status_tag_ended: string;
-    status_tag_completed: string; // 기존 호환성을 위해 유지
-    status_tag_cancelled: string;
-    status_tag_urgent: string;
-    type_tag: string;
     channel_icon_wrapper: string;
     channel_icon: string;
     empty_state: string;
@@ -178,7 +170,7 @@ export default function CampaignHistoryModal({
                     <div className={cssStyles.table_cell}>
                       <CampaignStatusTag
                         status={campaign.status}
-                        styles={cssStyles}
+                        styles={tagStyles}
                       />
                     </div>
 
@@ -186,7 +178,7 @@ export default function CampaignHistoryModal({
                     <div className={cssStyles.table_cell}>
                       <CampaignTypeTag
                         type={campaign.type as CampaignType}
-                        styles={cssStyles}
+                        styles={tagStyles}
                       />
                     </div>
 

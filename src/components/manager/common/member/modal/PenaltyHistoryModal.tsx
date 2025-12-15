@@ -25,6 +25,7 @@ import MemberStatusTag from "@/components/manager/common/tags/MemberStatusTag";
 import type { MemberStatus } from "@/components/manager/common/tags/MemberStatusTag";
 import PenaltyTypeTag from "@/components/manager/common/tags/PenaltyTypeTag";
 import type { PenaltyType } from "@/components/manager/common/tags/PenaltyTypeTag";
+import tagStyles from "@/styles/common/tags.module.css";
 
 // 패널티 내역 아이템 타입 정의 (리뷰어와 파트너 모두에서 사용)
 export interface PenaltyHistoryItem {
@@ -55,13 +56,6 @@ interface PenaltyHistoryModalProps {
     table_body: string;
     table_row: string;
     table_cell: string;
-    type_tag_penalty: string;
-    type_tag_penalty_warning: string;
-    type_tag_penalty_caution: string;
-    type_tag_penalty_suspension: string;
-    status_tag: string;
-    status_tag_suspended: string;
-    status_tag_normal: string;
     empty_state: string;
     empty_message: string;
   };
@@ -149,7 +143,7 @@ export default function PenaltyHistoryModal({
                     <div key={index} className={cssStyles.table_row}>
                       {/* 유형: 패널티 유형 태그 표시 */}
                       <div className={cssStyles.table_cell}>
-                        <PenaltyTypeTag type="경고" styles={cssStyles} />
+                        <PenaltyTypeTag type="경고" styles={tagStyles} />
                       </div>
 
                       {/* 사유: type 값(지각 제출, 선정 후 취소 등)을 텍스트로 표시 */}
@@ -166,7 +160,7 @@ export default function PenaltyHistoryModal({
                       <div className={cssStyles.table_cell}>
                         <MemberStatusTag
                           status={display_status as MemberStatus}
-                          styles={cssStyles}
+                          styles={tagStyles}
                         />
                       </div>
                     </div>

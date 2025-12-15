@@ -14,9 +14,13 @@
  *
  * 주요 기능:
  * - 체크박스 방식의 다중 선택 필터링
- * - 유형 옵션: 프로모즈, 일반, 인플루언서
+ * - 유형 옵션: 모범 회원, 이용 제한 회원, 주의 회원, 경고 회원
  * - 필터 적용/초기화 기능
  * - 모달 외부 클릭으로 닫기
+ * 
+ * ⚠️ 참고:
+ * - 유형 옵션은 src/data/manager_ga/common/filterOptions.ts의
+ *   partner_status_type_filter_options를 사용합니다.
  */
 
 "use client";
@@ -24,9 +28,11 @@
 import BaseFilterModal, {
   type FilterOption,
 } from "@/components/manager/ga/common/filter/BaseFilterModal";
+import type { PartnerStatusType } from "@/data/manager_ga/common/filterOptions";
+import { partner_status_type_filter_options } from "@/data/manager_ga/common/filterOptions";
 
-// 파트너 유형 타입 정의
-export type PartnerType = "프로모즈" | "일반" | "인플루언서";
+// 파트너 유형 타입 정의 (PartnerStatusType을 재export)
+export type PartnerType = PartnerStatusType;
 
 interface TypeFilterModalProps {
   // 모달 열림/닫힘 상태
@@ -39,12 +45,10 @@ interface TypeFilterModalProps {
   on_apply: (types: PartnerType[]) => void;
 }
 
-// 유형 필터 옵션 배열
-const type_options: PartnerType[] = ["프로모즈", "일반", "인플루언서"];
-
 // 유형 옵션을 FilterOption 형태로 변환하는 함수
+// partner_status_type_filter_options를 사용하여 필터 옵션을 가져옵니다
 const get_type_options = (): FilterOption<PartnerType>[] => {
-  return type_options.map((type) => ({
+  return partner_status_type_filter_options.map((type) => ({
     value: type,
     label: type,
   }));

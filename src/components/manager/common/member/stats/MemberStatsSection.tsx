@@ -83,19 +83,19 @@ export default function MemberStatsSection({
   // 통계 데이터를 배열로 변환하여 map 함수로 렌더링
   const stats_items = [
     {
-      title: '전체 가입자 수',
-      value: `${stats.total_members.toLocaleString()}명`,
-    },
-    {
-      title: '월간 활동 회원',
-      value: `${stats.monthly_active.toLocaleString()}명`,
-    },
-    {
-      title: '월간 신규 가입자 수',
+      title: "월간 신규 가입자 수",
       value: `${stats.monthly_new.toLocaleString()}명`,
     },
     {
-      title: '휴면 회원',
+      title: "전체 가입자 수",
+      value: `${stats.total_members.toLocaleString()}명`,
+    },
+    {
+      title: "월간 활동 회원",
+      value: `${stats.monthly_active.toLocaleString()}명`,
+    },
+    {
+      title: "휴면 회원",
       value: `${stats.dormant.toLocaleString()}명`,
     },
   ];

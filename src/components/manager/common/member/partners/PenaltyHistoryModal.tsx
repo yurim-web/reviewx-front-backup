@@ -70,13 +70,6 @@ export default function PenaltyHistoryModal({
           table_body: string;
           table_row: string;
           table_cell: string;
-          type_tag_penalty: string;
-          type_tag_penalty_warning: string;
-          type_tag_penalty_caution: string;
-          type_tag_penalty_suspension: string;
-          status_tag: string;
-          status_tag_suspended: string;
-          status_tag_normal: string;
           empty_state: string;
           empty_message: string;
         }

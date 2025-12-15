@@ -16,12 +16,13 @@
  * - 리뷰어: 분홍색 배경, 분홍색 텍스트
  * - 파트너: 파란색 배경, 파란색 텍스트
  * - 관리자: 회색 배경, 회색 텍스트
+ * - 전체(게시글 목록 전용): 연한 회색 배경, 짙은 회색 텍스트
  */
 
 /**
  * 유저 타입 정의
  */
-export type UserType = "리뷰어" | "파트너" | "관리자";
+export type UserType = "리뷰어" | "파트너" | "관리자" | "전체";
 
 /**
  * UserTypeTag 컴포넌트 Props 인터페이스
@@ -59,6 +60,9 @@ export default function UserTypeTag({
       case "관리자":
         // 관리자: 회색 배경, 회색 텍스트
         return css_styles.division_tag_admin;
+      case "전체":
+        // 게시글 목록 전용: 연한 회색 배경, 짙은 회색 텍스트
+        return css_styles.division_tag_all;
       default:
         // 기본값으로 리뷰어 스타일 반환
         return css_styles.division_tag_reviewer;

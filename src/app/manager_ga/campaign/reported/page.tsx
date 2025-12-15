@@ -28,6 +28,7 @@ import ReportStatsSection from "@/components/manager/ga/campaign/reported/sectio
 import CampaignReportedFilterSection from "@/components/manager/ga/campaign/reported/section/CampaignReportedFilterSection";
 import ReportedCampaignTable from "@/components/manager/ga/campaign/reported/section/ReportedCampaignTable";
 import type { ReportCode } from "@/data/manager_ga/reported";
+import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 
 /**
  * 신고 이력 페이지 컴포넌트
@@ -63,6 +64,11 @@ export default function ReportedPage() {
     ReportCode[]
   >([]);
 
+  // 날짜 범위 필터 상태 관리
+  const [selected_date_range, set_selected_date_range] = useState<
+    DateRange | undefined
+  >(undefined);
+
   return (
     <div className={styles.container}>
       <div className={styles.main_content}>
@@ -81,6 +87,8 @@ export default function ReportedPage() {
           on_search_change={set_search_query}
           selected_report_codes={selected_report_codes}
           on_report_codes_change={set_selected_report_codes}
+          selected_date_range={selected_date_range}
+          on_date_range_change={set_selected_date_range}
         />
 
         {/* 신고 이력 통계 섹션 */}
@@ -90,6 +98,7 @@ export default function ReportedPage() {
         <ReportedCampaignTable
           search_query={search_query}
           selected_report_codes={selected_report_codes}
+          selected_date_range={selected_date_range}
         />
       </div>
     </div>
