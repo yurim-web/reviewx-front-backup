@@ -1,0 +1,108 @@
+/* ========================================
+   🔍 출금 요청 필터 섹션 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - FilterSection (출금 요청 필터 섹션)
+ * 
+ * 사용 페이지:
+ * - /manager_sa/settlement/withdrawal_request
+ */
+
+/* 필터 섹션 컨테이너 */
+.filter_section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 필터 버튼 공통 스타일 */
+.filter_button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background-color: white;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+/* 필터 버튼 호버 효과 */
+.filter_button:hover {
+  border-color: #444;
+}
+
+/* 선택된 필터 버튼 스타일 */
+.filter_button_selected {
+  border-color: #444;
+  background-color: #f9f9f9;
+}
+
+/* 필터 아이콘 */
+.filter_icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* 필터 닫기 아이콘 */
+.filter_close_icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  margin-left: auto;
+  cursor: pointer;
+}
+
+/* 필터 텍스트 */
+.filter_text {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  white-space: nowrap;
+}
+
+/* 다운로드 버튼 */
+.download_button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background-color: white;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: auto;
+  height: 40px;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+/* 다운로드 버튼 호버 효과 */
+.download_button:hover {
+  border-color: #444;
+}
+
+/* 다운로드 아이콘 */
+.download_icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* 다운로드 텍스트 */
+.download_text {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  white-space: nowrap;
+}
