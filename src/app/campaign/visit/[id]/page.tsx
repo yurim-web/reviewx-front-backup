@@ -29,7 +29,6 @@ interface VisitDetailPageProps {
 }
 
 export default function VisitDetailPage({ params }: VisitDetailPageProps) {
-  // Next.js 15에서 params는 Promise이므로 React.use()로 unwrap
   const { id } = use(params);
   const campaign = visitCampaigns.find((c) => String(c.id) === String(id));
 

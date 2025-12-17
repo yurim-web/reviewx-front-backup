@@ -29,7 +29,6 @@ interface MissionDetailPageProps {
 }
 
 export default function MissionDetailPage({ params }: MissionDetailPageProps) {
-  // Next.js 15에서 params는 Promise이므로 React.use()로 unwrap
   const { id } = use(params);
   const campaign = missionCampaigns.find((c) => String(c.id) === id);
 

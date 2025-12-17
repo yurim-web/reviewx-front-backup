@@ -31,7 +31,6 @@ interface ReporterDetailPageProps {
 export default function ReporterDetailPage({
   params,
 }: ReporterDetailPageProps) {
-  // Next.js 15에서 params는 Promise이므로 React.use()로 unwrap
   const { id } = use(params);
   const campaign = reporterCampaigns.find((c) => String(c.id) === id);
 

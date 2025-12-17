@@ -31,7 +31,6 @@ interface DeliveryDetailPageProps {
 export default function DeliveryDetailPage({
   params,
 }: DeliveryDetailPageProps) {
-  // Next.js 15에서 params는 Promise이므로 React.use()로 unwrap
   const { id } = use(params);
   const campaign = deliveryCampaigns.find((c) => String(c.id) === id);
 

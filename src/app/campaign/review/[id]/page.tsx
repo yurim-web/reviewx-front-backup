@@ -29,7 +29,6 @@ interface ReviewDetailPageProps {
 }
 
 export default function ReviewDetailPage({ params }: ReviewDetailPageProps) {
-  // Next.js 15에서 params는 Promise이므로 React.use()로 unwrap
   const { id } = use(params);
   const campaign = reviewCampaigns.find((c) => String(c.id) === id);
 
