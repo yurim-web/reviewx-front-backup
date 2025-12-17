@@ -17,8 +17,8 @@
  * - 사용자 아이콘 (마이페이지로 이동)
  */
 
-import Link from 'next/link';
-import styles from '@/styles/fragments/header.module.css';
+import Link from "next/link";
+import styles from "@/styles/fragments/header.module.css";
 
 export default function PartnerHeader() {
   return (
@@ -34,6 +34,14 @@ export default function PartnerHeader() {
             className={styles.new_campaign_button}
           >
             새로운 캠페인 등록
+          </Link>
+
+          {/* 알림페이지로 연결 */}
+          <Link href="/partner/notification">
+            <img
+              src="/images/header/notification_icon.svg"
+              alt="notification"
+            />
           </Link>
 
           {/* 가이드로 연결 */}

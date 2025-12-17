@@ -32,14 +32,13 @@
   padding-left: 240px;
 }
 
-/* 메인 콘텐츠 영역 */
+/* 메인 콘텐츠 영역-- 유저,파트너 전용용 */
 .main_content {
   max-width: 1000px !important;
   margin: 0 auto !important;
   background-color: white;
   width: 100%;
   height: 100vh;
-  padding: 40px;
 }
 
 /* 관리자 페이지에서 접근한 경우 (사이드바가 있을 때) */
@@ -49,18 +48,34 @@
   width: 100% !important;
 }
 
+/* 알림 페이지 제목 (관리자 전용) */
+.notification_title {
+  color: #444;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: -0.48px;
+  padding: 40px 0 24px 40px;
+}
+
 /* 알림 목록 컨테이너 */
 .notification_list {
-  padding: 0;
+  /* padding: 0 40px; */
   background-color: white;
 }
 
 /* 알림 아이템 */
 .notification_item {
-  padding: 16px 0px;
-
+  padding: 24px 40px;
   width: 100%;
   box-sizing: border-box;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+/* 관리자 페이지에서 접근한 경우 border-bottom 제거 */
+.notification_container.has_sidebar .notification_item {
+  border-bottom: none;
+  padding: 16px 40px;
 }
 
 /* 알림 아이템 내부 레이아웃 */
@@ -89,19 +104,24 @@
   letter-spacing: -0.28px;
 }
 
-/* 라벨 색상 - 출금 요청 */
-.notification_label_withdrawal {
+/* 라벨 색상 - 파랑 (blue) */
+.notification_label_blue {
   color: #2b7fff;
 }
 
-/* 라벨 색상 - 긴급 출금 요청 */
-.notification_label_urgent_withdrawal {
-  color: #ff6600;
+/* 라벨 색상 - 빨강 (red) */
+.notification_label_red {
+  color: #ff2626;
 }
 
-/* 라벨 색상 - 차단 발생 */
-.notification_label_block {
-  color: #ff2626;
+/* 라벨 색상 - 초록 (green) */
+.notification_label_green {
+  color: #4caf50;
+}
+
+/* 라벨 색상 - 주황 (orange) */
+.notification_label_orange {
+  color: #ff6600;
 }
 
 /* 알림 내용 */
@@ -111,6 +131,15 @@
   font-weight: 500;
   line-height: 16px;
   letter-spacing: -0.32px;
+}
+
+/* 하단 캠페인 안내 (일반 텍스트) */
+.notification_campaign_name {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
 }
 
 /* 오른쪽 영역 (시간) */

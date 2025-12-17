@@ -20,7 +20,7 @@ import { Metadata } from "next";
 
 // 알림 페이지 메타데이터
 export const metadata: Metadata = {
-  title: "ReviewX | 알림",
+  title: "ReviewX | SA 관리자 알림",
   description: "알림을 확인하세요",
 };
 

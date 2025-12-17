@@ -28,6 +28,7 @@ import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import styles from "@/styles/user/notification/notification.module.css";
 import Header from "@/components/fragments/Header";
+import PartnerHeader from "@/components/fragments/PartnerHeader";
 import ManagerGAHeader from "@/components/manager/ga/common/ManagerGAHeader";
 import SidebarMenuGA from "@/components/manager/ga/common/SidebarMenu";
 import SidebarMenuSA from "@/components/manager/sa/common/SidebarMenu";
@@ -61,18 +62,28 @@ export default function NotificationPage() {
 
   /**
    * 헤더 타입 결정
-   * - manager_ga에서 접근한 경우: ManagerGAHeader 사용
-   * - manager_sa에서 접근한 경우: ManagerGAHeader 사용 (현재는 ManagerSAHeader가 없어서 재사용)
-   * - 그 외의 경우: 일반 Header 사용
+   *
+   * 알림 페이지는 유저/파트너/관리자 단에서 모두 접근 가능하며, 각각 다른 헤더를 표시해야 합니다.
+   *
+   * 헤더 타입 결정 우선순위:
+   * 1. URL 쿼리 파라미터 (예: /notification?user=partner)
+   *    - user=partner → PartnerHeader
+   *    - user=manager_ga → ManagerGAHeader (managerType="ga")
+   *    - user=manager_sa → ManagerGAHeader (managerType="sa")
+   * 2. document.referrer 확인 (어느 페이지에서 왔는지)
+   *    - /partner로 시작 → PartnerHeader
+   *    - /manager_ga로 시작 → ManagerGAHeader (managerType="ga")
+   *    - /manager_sa로 시작 → ManagerGAHeader (managerType="sa")
+   * 3. 기본값: Header (유저 헤더)
    *
    * useState Hook: 컴포넌트의 상태를 관리하는 Hook
    * - headerType: 사용할 헤더 타입을 저장하는 상태
-   * - 초기값: "default" (서버와 클라이언트에서 동일하게 유지하여 Hydration 오류 방지)
+   * - 초기값: "user" (서버와 클라이언트에서 동일하게 유지하여 Hydration 오류 방지)
    * - mounted: 클라이언트에서 마운트되었는지 여부 (Hydration 오류 방지)
    */
   const [headerType, setHeaderType] = useState<
-    "default" | "manager_ga" | "manager_sa"
-  >("default");
+    "user" | "partner" | "manager_ga" | "manager_sa"
+  >("user");
 
   // 클라이언트에서만 실행되도록 mounted 상태 추가
   const [mounted, setMounted] = useState(false);
@@ -80,7 +91,7 @@ export default function NotificationPage() {
   /**
    * useEffect Hook: 컴포넌트가 마운트되거나 의존성이 변경될 때 실행
    * - 첫 번째 useEffect: 클라이언트에서 마운트되었음을 표시 (Hydration 오류 방지)
-   * - 두 번째 useEffect: URL 쿼리 파라미터, sessionStorage, 또는 referrer를 확인하여 manager_ga나 manager_sa에서 접근했는지 판단
+   * - 두 번째 useEffect: pathname을 확인하여 적절한 헤더 타입 결정
    */
   useEffect(() => {
     // 클라이언트에서 마운트되었음을 표시
@@ -93,41 +104,36 @@ export default function NotificationPage() {
 
     // 1. URL 쿼리 파라미터 확인 (가장 우선순위)
     const urlParams = new URLSearchParams(window.location.search);
-    const managerType = urlParams.get("manager");
+    const userType = urlParams.get("user");
 
-    if (managerType === "ga") {
-      setHeaderType("manager_ga");
-      sessionStorage.setItem("notification_manager_type", "manager_ga");
+    if (userType === "partner") {
+      setHeaderType("partner");
       return;
-    } else if (managerType === "sa") {
-      setHeaderType("manager_sa");
-      sessionStorage.setItem("notification_manager_type", "manager_sa");
-      return;
-    }
-
-    // 2. sessionStorage 확인
-    const storedManagerType = sessionStorage.getItem(
-      "notification_manager_type"
-    );
-    if (storedManagerType === "manager_ga") {
+    } else if (userType === "manager_ga") {
       setHeaderType("manager_ga");
       return;
-    } else if (storedManagerType === "manager_sa") {
+    } else if (userType === "manager_sa") {
       setHeaderType("manager_sa");
       return;
     }
 
-    // 3. document.referrer 확인 (마지막 fallback)
+    // 2. document.referrer 확인 (referrer가 있는 경우)
     const referrer = document.referrer;
-    if (referrer.includes("/manager_ga")) {
-      setHeaderType("manager_ga");
-      sessionStorage.setItem("notification_manager_type", "manager_ga");
-    } else if (referrer.includes("/manager_sa")) {
-      setHeaderType("manager_sa");
-      sessionStorage.setItem("notification_manager_type", "manager_sa");
-    } else {
-      setHeaderType("default");
+    if (referrer) {
+      if (referrer.includes("/manager_ga")) {
+        setHeaderType("manager_ga");
+        return;
+      } else if (referrer.includes("/manager_sa")) {
+        setHeaderType("manager_sa");
+        return;
+      } else if (referrer.includes("/partner")) {
+        setHeaderType("partner");
+        return;
+      }
     }
+
+    // 3. 기본값: 유저 헤더
+    setHeaderType("user");
   }, [pathname, mounted]);
 
   /**
@@ -168,7 +174,7 @@ export default function NotificationPage() {
   };
 
   // Hydration 오류 방지: 서버와 클라이언트에서 동일한 초기 렌더링
-  // mounted가 false일 때는 기본 Header만 표시
+  // mounted가 false일 때는 기본 Header만 표시 (유저 헤더)
   if (!mounted) {
     return (
       <div className={styles.notification_container}>
@@ -219,14 +225,17 @@ export default function NotificationPage() {
     >
       {/* 
         헤더: 조건부 렌더링
-        - manager_ga에서 접근한 경우: ManagerGAHeader 사용
-        - manager_sa에서 접근한 경우: ManagerGAHeader 사용 (현재는 ManagerSAHeader가 없어서 재사용)
-        - 그 외의 경우: 일반 Header 사용
+        - /manager_ga로 시작하는 경우: ManagerGAHeader 사용 (managerType="ga")
+        - /manager_sa로 시작하는 경우: ManagerGAHeader 사용 (managerType="sa")
+        - /partner로 시작하는 경우: PartnerHeader 사용
+        - 그 외의 경우: 일반 Header 사용 (유저 헤더)
       */}
       {headerType === "manager_ga" ? (
         <ManagerGAHeader managerType="ga" />
       ) : headerType === "manager_sa" ? (
         <ManagerGAHeader managerType="sa" />
+      ) : headerType === "partner" ? (
+        <PartnerHeader />
       ) : (
         <Header />
       )}
@@ -316,39 +325,3 @@ export default function NotificationPage() {
     </div>
   );
 }
-
-/**
- * 학습 포인트 정리:
- *
- * 1. React 컴포넌트 구조
- *    - 함수형 컴포넌트: export default function 컴포넌트명()
- *    - JSX 반환: return 문에서 HTML과 유사한 JSX 문법 사용
- *
- * 2. CSS 모듈 사용법
- *    - import styles from "경로"
- *    - className={styles.클래스명} 형태로 사용
- *    - 클래스명은 스네이크 케이스로 작성 (notification_item)
- *
- * 3. 조건부 렌더링
- *    - 삼항 연산자: 조건 ? true일 때 : false일 때
- *    - && 연산자: 조건 && 렌더링할 내용
- *
- * 4. 리스트 렌더링
- *    - map 함수: 배열.map((item) => <컴포넌트 key={item.id} />)
- *    - key prop: 반드시 고유한 값 사용 (id 권장)
- *
- * 5. 동적 클래스명
- *    - 템플릿 리터럴: `${styles.class1} ${styles.class2}`
- *    - 조건에 따라 다른 클래스 적용
- *
- * 6. TypeScript 인터페이스
- *    - interface로 데이터 구조 정의
- *    - 타입 안정성 제공
- *
- * 추천 학습 순서:
- * 1. JSX 기본 문법 (태그, 속성, 중괄호)
- * 2. 컴포넌트와 props
- * 3. 조건부 렌더링과 리스트 렌더링
- * 4. CSS 모듈 사용법
- * 5. TypeScript 기본 타입과 인터페이스
- */

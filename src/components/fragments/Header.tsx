@@ -1,6 +1,6 @@
 // 헤더
-import Link from 'next/link';
-import styles from '@/styles/fragments/header.module.css';
+import Link from "next/link";
+import styles from "@/styles/fragments/header.module.css";
 
 export default function Header() {
   return (
@@ -10,6 +10,10 @@ export default function Header() {
           <h1 className={styles.header_logo}>RX.</h1>
         </Link>
         <div className={styles.menu_icon_box}>
+          {/* 알림페이지로 연결 */}
+          <Link href="/user/notification">
+            <img src="/images/header/notification_icon.svg" alt="bell_icon" />
+          </Link>
           {/* 가이드로 연결 */}
           <a
             href="https://markx.dev/guide_book"
