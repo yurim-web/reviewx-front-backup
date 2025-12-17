@@ -30,40 +30,7 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  padding-top: 148px; /* 헤더(80px) + 서브 헤더(68px) 높이만큼 상단 여백 */
-}
-
-/* ========================================
-   2. 서브 헤더
-   ======================================== */
-
-/* 서브 헤더 */
-.sub_header {
-  position: fixed;
-  top: 80px; /* 메인 헤더 높이만큼 아래에 위치 */
-  left: 0;
-  right: 0;
-  width: 100%;
-  max-width: 1000px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #d9d9d9;
-  padding: 24px 40px;
-  margin-left: auto;
-  margin-right: auto;
-  box-sizing: border-box;
-  height: 68px;
-  display: flex;
-  align-items: center;
-  z-index: 999; /* 메인 헤더(1000) 아래, 다른 콘텐츠 위 */
-}
-
-/* 서브 헤더 제목 */
-.sub_header_title {
-  color: #444;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 20px; /* 100% */
-  letter-spacing: -0.4px;
+  padding-top: 80px; /* 헤더(80px) + 서브 헤더(68px) 높이만큼 상단 여백 */
 }
 
 /* ========================================
@@ -78,30 +45,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   position: relative;
   box-sizing: border-box;
   max-width: 400px;
   margin: 0 auto;
-}
-
-/* 로고 섹션 */
-.logo_section {
-  padding-bottom: 40px;
-  width: 100%;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-/* 로고 텍스트 */
-.logo_text {
-  color: #333;
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 24px; /* 120% */
-  letter-spacing: -0.4px;
+  padding-top: 80px;
 }
 
 /* ========================================
@@ -180,6 +129,13 @@
   color: #999999;
 }
 
+/* 읽기 전용 입력 필드 */
+.input_field:read-only {
+  background-color: #f6f6f6;
+  color: #444444;
+  cursor: default;
+}
+
 /* 비밀번호 입력 래퍼 */
 .password_input_wrapper {
   position: relative;
@@ -246,17 +202,12 @@
   font-style: normal;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
   flex-shrink: 0;
   box-sizing: border-box;
   padding: 0;
-}
-
-/* 인증번호 받기 버튼 호버 */
-.verification_button:hover:not(:disabled) {
-  background-color: #f6f6f6;
 }
 
 /* 인증 완료 버튼 */
@@ -317,7 +268,7 @@
   font-style: normal;
   line-height: 14px;
   letter-spacing: -0.28px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
 }
 
 /* 인증 버튼 */
@@ -333,17 +284,12 @@
   font-style: normal;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
   box-sizing: border-box;
   padding: 0;
   flex-shrink: 0;
-}
-
-/* 인증 버튼 호버 */
-.verify_button:hover {
-  background-color: #f6f6f6;
 }
 
 /* 재전송 버튼 */
@@ -359,7 +305,7 @@
   font-style: normal;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
   box-sizing: border-box;
@@ -442,7 +388,7 @@
   font-style: normal;
   line-height: 22px;
   letter-spacing: -0.26px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
 }
 
 .terms_sub_items p {
@@ -471,7 +417,7 @@
 
 /* 체크박스 체크마크 */
 .checkbox:checked::after {
-  content: '✓';
+  content: "✓";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -490,7 +436,7 @@
   font-style: normal;
   line-height: 14px;
   letter-spacing: -0.28px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   user-select: none;
 }
@@ -503,7 +449,7 @@
   font-style: normal;
   line-height: 12px;
   letter-spacing: -0.24px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   text-decoration: underline;
   text-underline-position: from-font;
   margin-left: auto;
@@ -520,6 +466,7 @@
 
 /* 에러 메시지 */
 .error_message {
+  margin-top: 8px;
   width: 100%;
 }
 
@@ -531,7 +478,7 @@
   font-style: normal;
   line-height: 14px;
   letter-spacing: -0.28px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
 }
 
 /* ========================================
@@ -551,21 +498,26 @@
   font-style: normal;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: background-color 0.2s ease, opacity 0.2s ease;
-  margin-top: 20px;
+  margin-top: 113px;
 }
 
-/* 회원가입 버튼 호버 */
-.submit_button:hover {
-  background-color: #444444;
-  opacity: 0.9;
+/* 회원가입 버튼 비활성화 */
+.submit_button:disabled,
+.submit_button_disabled {
+  background-color: #d9d9d9;
+  color: #848484;
+  cursor: default;
+  opacity: 1;
 }
 
-/* 회원가입 버튼 활성화 */
-.submit_button:active {
-  opacity: 0.8;
+/* 회원가입 버튼 비활성화 호버 (호버 효과 제거) */
+.submit_button:disabled:hover,
+.submit_button_disabled:hover {
+  background-color: #d9d9d9;
+  opacity: 1;
 }
 
 /* ========================================
@@ -629,7 +581,7 @@
   font-style: normal;
   line-height: 18px;
   letter-spacing: -0.36px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -647,7 +599,7 @@
   font-style: normal;
   line-height: 18px;
   letter-spacing: -0.36px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -665,7 +617,7 @@
   font-style: normal;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }

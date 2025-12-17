@@ -94,14 +94,13 @@
 
 /* 환영 메시지 */
 .welcome_message {
-  color: #333;
+  color: #444;
   text-align: center;
   font-size: 16px;
+  font-style: normal;
   font-weight: 500;
   line-height: 16px; /* 100% */
   letter-spacing: -0.32px;
-  margin: 0;
-  text-align: center;
 }
 
 /* ========================================
@@ -134,13 +133,9 @@
   font-style: normal;
   line-height: 18px;
   letter-spacing: -0.36px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: background-color 0.2s ease;
-}
-
-.campaign_button:hover {
-  background-color: #333333;
 }
 
 /* 로그인하기 버튼 */
@@ -156,13 +151,9 @@
   font-style: normal;
   line-height: 18px;
   letter-spacing: -0.36px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
-}
-
-.login_button:hover {
-  background-color: #f6f6f6;
 }
 
 /* ========================================

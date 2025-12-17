@@ -12,32 +12,36 @@
  *
  * 주요 기능:
  * - 아이디(이메일) 입력
- * - 비밀번호 입력 및 확인
  * - 이름 입력
  * - 휴대폰 번호 인증
  * - 약관 동의
- * - 회원가입
+ * - 회원가입 (소셜 로그인 기반)
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Header from '@/components/fragments/Header';
-import PhoneVerification from '@/components/common/signup/PhoneVerification';
-import TermsAgreement from '@/components/user/signup/TermsAgreement';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Header from "@/components/fragments/Header";
+import PhoneVerification from "@/components/common/signup/PhoneVerification";
+import TermsAgreement from "@/components/user/signup/TermsAgreement";
 import ExistingAccountModal, {
   type SocialLoginType,
-} from '@/components/user/signup/ExistingAccountModal';
-import PasswordInput from '@/components/common/signup/PasswordInput';
-import PasswordConfirmInput from '@/components/common/signup/PasswordConfirmInput';
-import { useTermsAgreement } from '@/hooks/user/signup/useTermsAgreement';
-import { usePhoneVerification } from '@/hooks/common/signup/usePhoneVerification';
+} from "@/components/user/signup/ExistingAccountModal";
+import { useTermsAgreement } from "@/hooks/user/signup/useTermsAgreement";
+import { usePhoneVerification } from "@/hooks/common/signup/usePhoneVerification";
 import {
   validateSignupForm,
   type SignupFormErrors,
-} from '@/components/user/signup/utils/formValidation';
-import styles from '@/styles/user/signup/signup.module.css';
+} from "@/components/user/signup/utils/formValidation";
+import PageTitle from "@/components/fragments/PageTitle";
+import {
+  TEST_VERIFICATION_CODES,
+  TEST_PHONE_NUMBERS,
+  checkTestVerificationCode,
+  checkTestPhoneNumber,
+} from "@/data/signup/testVerificationData";
+import styles from "@/styles/user/signup/signup.module.css";
 
 /**
  * 유저 회원가입 페이지 컴포넌트
@@ -52,10 +56,8 @@ export default function UserSignupPage() {
   // ========================================
 
   // 폼 데이터
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [passwordConfirm, setPasswordConfirm] = useState<string>('');
-  const [name, setName] = useState<string>('');
+  const [email, setEmail] = useState<string>("");
+  const [name, setName] = useState<string>("");
 
   // 에러 메시지
   const [errors, setErrors] = useState<SignupFormErrors>({});
@@ -65,7 +67,7 @@ export default function UserSignupPage() {
     useState<boolean>(false);
   // 기존 계정의 소셜 로그인 타입 (카카오 또는 네이버)
   const [existingAccountSocialType, setExistingAccountSocialType] =
-    useState<SocialLoginType>('kakao');
+    useState<SocialLoginType>("kakao");
 
   // 커스텀 훅 사용
   const {
@@ -106,7 +108,7 @@ export default function UserSignupPage() {
     setPhone(newPhone);
 
     // 휴대폰 번호 변경 시 인증 상태 초기화
-    if (newPhone === '' || isPhoneVerified || isVerificationRequested) {
+    if (newPhone === "" || isPhoneVerified || isVerificationRequested) {
       resetVerification();
       setErrors((prev) => ({
         ...prev,
@@ -156,16 +158,18 @@ export default function UserSignupPage() {
       //   return;
       // }
 
-      // 테스트용: 특정 휴대폰 번호로 이미 가입된 계정이 있다고 가정
-      // 010-1234-5678 → 카카오, 010-0000-0000 → 네이버
-      const testKakaoPhone = '010-1234-5678';
-      const testNaverPhone = '010-0000-0000';
+      // 테스트용: 특정 휴대폰 번호로 이미 가입된 계정이 있는지 확인
+      const testPhoneInfo = checkTestPhoneNumber(phone);
 
-      if (phone === testKakaoPhone) {
-        setExistingAccountSocialType('kakao');
+      if (testPhoneInfo?.type === "existing_kakao") {
+        // 기존 계정이 있으면 인증 상태 초기화 후 모달 표시
+        resetVerification();
+        setExistingAccountSocialType("kakao");
         setShowExistingAccountModal(true);
-      } else if (phone === testNaverPhone) {
-        setExistingAccountSocialType('naver');
+      } else if (testPhoneInfo?.type === "existing_naver") {
+        // 기존 계정이 있으면 인증 상태 초기화 후 모달 표시
+        resetVerification();
+        setExistingAccountSocialType("naver");
         setShowExistingAccountModal(true);
       }
     }
@@ -183,8 +187,6 @@ export default function UserSignupPage() {
     // 폼 유효성 검증
     const newErrors = validateSignupForm({
       email,
-      password,
-      passwordConfirm,
       name,
       phone,
       isPhoneVerified,
@@ -200,9 +202,8 @@ export default function UserSignupPage() {
     }
 
     // 회원가입 처리
-    console.log('회원가입 시도:', {
+    console.log("회원가입 시도:", {
       email,
-      password,
       name,
       phone,
       marketingAgreed,
@@ -232,9 +233,7 @@ export default function UserSignupPage() {
       <Header />
 
       {/* 서브 헤더 */}
-      <div className={styles.sub_header}>
-        <h1 className={styles.sub_header_title}>리뷰어 회원가입</h1>
-      </div>
+      <PageTitle title="리뷰어 회원가입" />
 
       {/* ========================================
           메인 콘텐츠 영역
@@ -243,19 +242,10 @@ export default function UserSignupPage() {
       */}
       <main className={styles.signup_main}>
         {/* ========================================
-            로고 섹션
-            ========================================
-            기능: VX. 로고 표시 (왼쪽 정렬)
-        */}
-        <div className={styles.logo_section}>
-          <h2 className={styles.logo_text}>VX.</h2>
-        </div>
-
-        {/* ========================================
             회원가입 폼
             ========================================
             기능: 회원가입 입력 폼
-            - 아이디(이메일), 비밀번호, 이름, 휴대폰 번호 입력
+            - 아이디(이메일), 이름, 휴대폰 번호 입력
             - 약관 동의 체크박스
             - 회원가입 제출 버튼
         */}
@@ -275,69 +265,16 @@ export default function UserSignupPage() {
               id="email"
               type="email"
               className={`${styles.input_field} ${
-                errors.email ? styles.input_error : ''
+                errors.email ? styles.input_error : ""
               }`}
               placeholder="{SNS에 등록한 이메일}"
               value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setErrors((prev) => ({ ...prev, email: undefined }));
-              }}
+              readOnly
               onInvalid={(e) => {
                 e.preventDefault();
               }}
             />
           </div>
-
-          {/* ========================================
-              비밀번호 입력 필드
-              ========================================
-              기능: 비밀번호 입력 및 실시간 검증
-          */}
-          <PasswordInput
-            value={password}
-            error={errors.password}
-            onValueChange={(value) => {
-              setPassword(value);
-            }}
-            onErrorChange={(error) => {
-              setErrors((prev) => ({ ...prev, password: error }));
-            }}
-            onPasswordConfirmValidate={(newPassword) => {
-              if (passwordConfirm && passwordConfirm !== newPassword) {
-                setErrors((prev) => ({
-                  ...prev,
-                  passwordConfirm: '비밀번호가 일치하지 않습니다.',
-                }));
-              } else if (passwordConfirm && passwordConfirm === newPassword) {
-                setErrors((prev) => ({
-                  ...prev,
-                  passwordConfirm: undefined,
-                }));
-              }
-            }}
-            passwordConfirm={passwordConfirm}
-          />
-
-          {/* ========================================
-              비밀번호 확인 입력 필드
-              ========================================
-              기능: 비밀번호 일치 확인
-          */}
-          <PasswordConfirmInput
-            value={passwordConfirm}
-            password={password}
-            error={errors.passwordConfirm}
-            onValueChange={(value) => {
-              setPasswordConfirm(value);
-            }}
-            onErrorChange={(error) => {
-              setErrors((prev) => ({
-                ...prev,
-                passwordConfirm: error,
-              }));
-            }}
-          />
 
           {/* ========================================
               이름 입력 필드
@@ -354,7 +291,7 @@ export default function UserSignupPage() {
               id="name"
               type="text"
               className={`${styles.input_field} ${
-                errors.name ? styles.input_error : ''
+                errors.name ? styles.input_error : ""
               }`}
               value={name}
               onChange={(e) => {
@@ -416,8 +353,19 @@ export default function UserSignupPage() {
               기능: 회원가입 폼 제출
               - 모든 유효성 검증 통과 시 제출
               - 성공 시 로그인 페이지로 이동
+              - 활성화 조건: 이름 입력 + 휴대폰 인증 완료 + 필수 동의 완료
           */}
-          <button type="submit" className={styles.submit_button}>
+          <button
+            type="submit"
+            className={`${styles.submit_button} ${
+              name.trim() && isPhoneVerified && termsAgreed && privacyAgreed
+                ? ""
+                : styles.submit_button_disabled
+            }`}
+            disabled={
+              !name.trim() || !isPhoneVerified || !termsAgreed || !privacyAgreed
+            }
+          >
             회원가입
           </button>
         </form>
@@ -436,13 +384,13 @@ export default function UserSignupPage() {
           socialLoginType={existingAccountSocialType}
           onKakaoLogin={() => {
             // TODO: 카카오 로그인 처리
-            console.log('카카오 로그인');
+            console.log("카카오 로그인");
             setShowExistingAccountModal(false);
             // router.push('/user/sns_login?provider=kakao');
           }}
           onNaverLogin={() => {
             // TODO: 네이버 로그인 처리
-            console.log('네이버 로그인');
+            console.log("네이버 로그인");
             setShowExistingAccountModal(false);
             // router.push('/user/sns_login?provider=naver');
           }}
