@@ -63,7 +63,25 @@ main {
   margin: 0 auto;
   box-sizing: border-box;
   background: #ffffff;
+  min-height: 100vh;
   /* padding-top: 80px; */
+}
+
+/* ========================================
+   브라우저 기본 validation 메시지 숨기기
+   ======================================== */
+
+/* 모든 input, textarea, select에서 브라우저 기본 validation 메시지 숨기기 */
+input:invalid,
+textarea:invalid,
+select:invalid {
+  box-shadow: none;
+}
+
+input:invalid:focus,
+textarea:invalid:focus,
+select:invalid:focus {
+  box-shadow: none;
 }
 
 /* ========================================

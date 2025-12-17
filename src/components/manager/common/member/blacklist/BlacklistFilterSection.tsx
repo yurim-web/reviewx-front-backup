@@ -17,7 +17,6 @@
  * - 차단 코드 필터
  * - 검색어 필터
  * - 정렬 필터 (최신순)
- * - 삭제 버튼
  *
  */
 
@@ -79,10 +78,6 @@ export default function BlacklistFilterSection({
 
   const handle_remove_block_code = (block_code: BlockCode) => {
     on_block_codes_change(selected_block_codes.filter((c) => c !== block_code));
-  };
-
-  const handle_unblock = () => {
-    // TODO: 선택된 차단 이력 삭제 기능 구현
   };
 
   const sort_options = ["최신순", "오래된순"];
@@ -170,17 +165,6 @@ export default function BlacklistFilterSection({
               />
             </div>
           </>
-        }
-        // 오른쪽에 위치할 버튼 (해제)
-        right_buttons={
-          <div className={styles.filter_item} onClick={handle_unblock}>
-            <img
-              src="/images/icons/clear_icon.svg"
-              alt="해제"
-              className={styles.unblock_icon}
-            />
-            <span className={styles.filter_text}>해제</span>
-          </div>
         }
         active_filter_tags={active_filter_tags}
         on_filter_tag_remove={handle_filter_tag_remove}

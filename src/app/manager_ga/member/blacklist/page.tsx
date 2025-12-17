@@ -56,7 +56,7 @@ export default function BlacklistPage() {
     <div className={styles.container}>
       <div className={styles.main_content}>
         {/* 페이지 제목 */}
-        <ManagerPageTitle title="차단 내역" />
+        <ManagerPageTitle title="이용 제한 내역" />
 
         {/* 필터 섹션 */}
         <BlacklistFilterSection

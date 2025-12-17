@@ -14,7 +14,7 @@
  * 주요 기능:
  * - 차단 내역 목록을 테이블로 표시합니다
  * - 검색어 필터를 적용합니다
- * - 체크박스로 차단 내역을 선택할 수 있습니다
+ * - 행 호버 시 삭제 버튼이 표시됩니다
  * - 구분 태그를 표시합니다 (파트너/리뷰어/관리자)
  * - 차단 코드와 차단 사유를 표시합니다
  *
@@ -22,8 +22,9 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import styles from "@/styles/manager_ga/member/blacklist/blacklist_table.module.css";
+import tag_styles from "@/styles/common/tags.module.css";
 import {
   blacklist_data,
   type BlacklistItem,
@@ -38,6 +39,7 @@ import SortableTableHeader from "@/components/manager/common/table/SortableTable
 import UserTypeTag from "@/components/manager/common/tags/UserTypeTag";
 import type { UserType } from "@/components/manager/common/tags/UserTypeTag";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
+import UnblockConfirmModal from "./UnblockConfirmModal";
 import type {
   BlacklistDivision,
   BlockCode,
@@ -112,9 +114,14 @@ export default function BlacklistTable({
   selected_divisions = [],
   selected_block_codes = [],
 }: BlacklistTableProps) {
-  const [selected_blacklist_ids, set_selected_blacklist_ids] = useState<
-    string[]
-  >([]);
+  const [hovered_row_id, set_hovered_row_id] = useState<string | null>(null);
+  const [unblock_modal_state, set_unblock_modal_state] = useState<{
+    is_open: boolean;
+    row_id: string | null;
+  }>({
+    is_open: false,
+    row_id: null,
+  });
 
   // 검색어 및 필터로 필터링된 차단 내역 목록
   const filtered_blacklist = blacklist_data.filter((item) => {
@@ -182,67 +189,127 @@ export default function BlacklistTable({
 
   // 커스텀 헤더 렌더링 함수 (SortableTableHeader 공통 컴포넌트 사용)
   const render_custom_header = () => {
-    const is_all_selected =
-      sorted_blacklist.length > 0 &&
-      selected_blacklist_ids.length === sorted_blacklist.length;
-
-    const handle_select_all = () => {
-      if (is_all_selected) {
-        set_selected_blacklist_ids([]);
-      } else {
-        set_selected_blacklist_ids(sorted_blacklist.map((item) => item.id));
-      }
-    };
-
     return (
       <SortableTableHeader
         columns={columns}
         sort_state={sort_state}
         handle_sort={handle_sort}
-        handle_select_all={handle_select_all}
-        is_all_selected={is_all_selected}
+        handle_select_all={() => {}} // 체크박스 없으므로 빈 함수
+        is_all_selected={false} // 체크박스 없으므로 항상 false
         styles={styles}
+        enable_checkbox={false}
         use_header_row={false}
       />
     );
   };
 
+  // 해제 모달 열기 핸들러
+  const handle_unblock_click = (row_id: string) => {
+    set_unblock_modal_state({
+      is_open: true,
+      row_id,
+    });
+  };
+
+  // 차단 해제 확인 핸들러
+  const handle_unblock_confirm = () => {
+    if (unblock_modal_state.row_id) {
+      // TODO: 차단 해제 API 호출
+      console.log("차단 해제:", unblock_modal_state.row_id);
+    }
+  };
+
+  // 모달 닫기 핸들러
+  const handle_unblock_modal_close = () => {
+    set_unblock_modal_state({
+      is_open: false,
+      row_id: null,
+    });
+  };
+
+  // 커스텀 행 래퍼 (호버 시 삭제 버튼 표시)
+  const render_row_wrapper = (
+    row: BlacklistTableRowData,
+    row_content: React.ReactNode,
+    index: number
+  ) => {
+    const is_hovered = hovered_row_id === row.id;
+
+    return (
+      <div
+        className={styles.table_row_wrapper}
+        onMouseEnter={() => set_hovered_row_id(row.id)}
+        onMouseLeave={() => set_hovered_row_id(null)}
+      >
+        {row_content}
+        {/* 호버 시 삭제 버튼 표시 */}
+        {is_hovered && (
+          <button
+            className={styles.delete_button}
+            onClick={(e) => {
+              e.stopPropagation();
+              handle_unblock_click(row.id);
+            }}
+            aria-label="해제"
+          >
+            <img
+              src="/images/icons/clear_icon.svg"
+              alt="해제"
+              className={styles.delete_icon}
+            />
+          </button>
+        )}
+      </div>
+    );
+  };
+
   return (
-    <CommonTable<BlacklistTableRowData>
-      columns={columns}
-      data={sorted_blacklist}
-      render_header={render_custom_header}
-      render_cell={(row, column) => {
-        switch (column.key) {
-          case "name":
-            return <span>{row.name}</span>;
-          case "user_id":
-            return <span>{row.user_id}</span>;
-          case "division":
-            return (
-              <UserTypeTag type={row.division as UserType} styles={styles} />
-            );
-          case "current_points":
-            return <span>{format_number(row.current_points)}</span>;
-          case "ip_address":
-            return <span>{row.ip_address}</span>;
-          case "block_code":
-            return <span>{row.block_code}</span>;
-          case "block_reason":
-            return <span>{row.block_reason}</span>;
-          case "registered_date":
-            return <span>{row.registered_date}</span>;
-          case "registered_by":
-            return <span>{row.registered_by}</span>;
-          default:
-            return null;
-        }
-      }}
-      styles={styles}
-      enable_checkbox={true}
-      selected_ids={selected_blacklist_ids}
-      on_select_change={set_selected_blacklist_ids}
-      empty_message="차단 내역이 없습니다."
-    />
+    <Fragment>
+      <CommonTable<BlacklistTableRowData>
+        columns={columns}
+        data={sorted_blacklist}
+        render_header={render_custom_header}
+        render_cell={(row, column) => {
+          switch (column.key) {
+            case "name":
+              return <span>{row.name}</span>;
+            case "user_id":
+              return <span>{row.user_id}</span>;
+            case "division":
+              return (
+                <UserTypeTag
+                  type={row.division as UserType}
+                  styles={tag_styles}
+                />
+              );
+            case "current_points":
+              return <span>{format_number(row.current_points)}</span>;
+            case "ip_address":
+              return <span>{row.ip_address}</span>;
+            case "block_code":
+              return <span>{row.block_code}</span>;
+            case "block_reason":
+              return <span>{row.block_reason}</span>;
+            case "registered_date":
+              return <span>{row.registered_date}</span>;
+            case "registered_by":
+              return <span>{row.registered_by}</span>;
+            default:
+              return null;
+          }
+        }}
+        styles={styles}
+        enable_checkbox={false}
+        render_row_wrapper={render_row_wrapper}
+        empty_message="차단 내역이 없습니다."
+      />
+
+      {/* 차단 해제 확인 모달 */}
+      <UnblockConfirmModal
+        is_open={unblock_modal_state.is_open}
+        on_close={handle_unblock_modal_close}
+        on_confirm={handle_unblock_confirm}
+      />
+    </Fragment>
   );
 }
