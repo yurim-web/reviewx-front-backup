@@ -22,26 +22,27 @@
  * - 회원가입
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Header from '@/components/fragments/Header';
-import PhoneVerification from '@/components/common/signup/PhoneVerification';
-import PartnerTermsAgreement from '@/components/partner/signup/PartnerTermsAgreement';
-import BusinessRegistrationUpload from '@/components/partner/signup/BusinessRegistrationUpload';
-import AddressInput from '@/components/partner/signup/AddressInput';
-import FileUploadAlert from '@/components/partner/signup/FileUploadAlert';
-import PasswordInput from '@/components/common/signup/PasswordInput';
-import PasswordConfirmInput from '@/components/common/signup/PasswordConfirmInput';
-import { usePartnerTermsAgreement } from '@/hooks/partner/signup/usePartnerTermsAgreement';
-import { usePhoneVerification } from '@/hooks/common/signup/usePhoneVerification';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Header from "@/components/fragments/Header";
+import PhoneVerification from "@/components/common/signup/PhoneVerification";
+import PartnerTermsAgreement from "@/components/partner/signup/PartnerTermsAgreement";
+import BusinessRegistrationUpload from "@/components/partner/signup/BusinessRegistrationUpload";
+import AddressInput from "@/components/partner/signup/AddressInput";
+import FileUploadAlert from "@/components/partner/signup/FileUploadAlert";
+import PasswordInput from "@/components/common/signup/PasswordInput";
+import PasswordConfirmInput from "@/components/common/signup/PasswordConfirmInput";
+import { usePartnerTermsAgreement } from "@/hooks/partner/signup/usePartnerTermsAgreement";
+import { usePhoneVerification } from "@/hooks/common/signup/usePhoneVerification";
 import {
   validatePartnerSignupForm,
   type PartnerSignupFormErrors,
-} from '@/components/partner/signup/utils/formValidation';
-import { formatBusinessNumber } from '@/components/partner/signup/utils/businessNumberUtils';
-import styles from '@/styles/partner/signup/signup.module.css';
+} from "@/components/partner/signup/utils/formValidation";
+import { formatBusinessNumber } from "@/components/partner/signup/utils/businessNumberUtils";
+import PageTitle from "@/components/fragments/PageTitle";
+import styles from "@/styles/partner/signup/signup.module.css";
 
 /**
  * 파트너 회원가입 페이지 컴포넌트
@@ -56,20 +57,20 @@ export default function PartnerSignupPage() {
   // ========================================
 
   // 폼 데이터
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [passwordConfirm, setPasswordConfirm] = useState<string>('');
-  const [name, setName] = useState<string>('');
-  const [companyName, setCompanyName] = useState<string>('');
-  const [representativeName, setRepresentativeName] = useState<string>('');
-  const [businessNumber, setBusinessNumber] = useState<string>('');
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [passwordConfirm, setPasswordConfirm] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const [companyName, setCompanyName] = useState<string>("");
+  const [representativeName, setRepresentativeName] = useState<string>("");
+  const [businessNumber, setBusinessNumber] = useState<string>("");
   const [businessRegistrationFile, setBusinessRegistrationFile] =
     useState<File | null>(null);
   const [businessRegistrationFileName, setBusinessRegistrationFileName] =
     useState<string | null>(null);
-  const [postalCode, setPostalCode] = useState<string>('');
-  const [address, setAddress] = useState<string>('');
-  const [detailAddress, setDetailAddress] = useState<string>('');
+  const [postalCode, setPostalCode] = useState<string>("");
+  const [address, setAddress] = useState<string>("");
+  const [detailAddress, setDetailAddress] = useState<string>("");
 
   // 에러 메시지
   const [errors, setErrors] = useState<PartnerSignupFormErrors>({});
@@ -78,7 +79,7 @@ export default function PartnerSignupPage() {
   const [fileUploadAlert, setFileUploadAlert] = useState<{
     show: boolean;
     message: string;
-  }>({ show: false, message: '' });
+  }>({ show: false, message: "" });
 
   // 커스텀 훅 사용
   const {
@@ -123,7 +124,7 @@ export default function PartnerSignupPage() {
   const handlePhoneChange = (newPhone: string) => {
     setPhone(newPhone);
 
-    if (newPhone === '' || isPhoneVerified || isVerificationRequested) {
+    if (newPhone === "" || isPhoneVerified || isVerificationRequested) {
       resetVerification();
       setErrors((prev) => ({
         ...prev,
@@ -170,7 +171,7 @@ export default function PartnerSignupPage() {
    * ========================================
    */
   const handleBusinessNumberChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const formatted = formatBusinessNumber(e.target.value);
     setBusinessNumber(formatted);
@@ -204,7 +205,7 @@ export default function PartnerSignupPage() {
       setFileUploadAlert({ show: true, message: error });
     } else {
       // 에러가 없으면 모달 닫기
-      setFileUploadAlert({ show: false, message: '' });
+      setFileUploadAlert({ show: false, message: "" });
     }
   };
 
@@ -216,7 +217,7 @@ export default function PartnerSignupPage() {
   const handlePostalCodeSearch = () => {
     // TODO: 실제 우편번호 찾기 API 연동
     // 현재는 임시로 alert 표시
-    alert('우편번호 찾기 기능은 준비 중입니다.');
+    alert("우편번호 찾기 기능은 준비 중입니다.");
   };
 
   /**
@@ -252,14 +253,14 @@ export default function PartnerSignupPage() {
 
     // 에러가 있으면 제출 중단 (빈 문자열도 에러로 간주)
     const hasErrors = Object.keys(newErrors).some(
-      (key) => newErrors[key as keyof typeof newErrors] !== undefined,
+      (key) => newErrors[key as keyof typeof newErrors] !== undefined
     );
     if (hasErrors) {
       return;
     }
 
     // 회원가입 처리
-    console.log('파트너 회원가입 시도:', {
+    console.log("파트너 회원가입 시도:", {
       email,
       password,
       name,
@@ -295,17 +296,11 @@ export default function PartnerSignupPage() {
       <Header />
 
       {/* 서브 헤더 */}
-      <div className={styles.sub_header}>
-        <h1 className={styles.sub_header_title}>파트너 회원가입</h1>
-      </div>
+
+      <PageTitle title="파트너 회원가입" />
 
       {/* 메인 콘텐츠 영역 */}
       <main className={styles.signup_main}>
-        {/* 로고 섹션 */}
-        <div className={styles.logo_section}>
-          <h2 className={styles.logo_text}>VX.</h2>
-        </div>
-
         {/* 회원가입 폼 */}
         <form className={styles.signup_form} onSubmit={handleSubmit}>
           {/* 아이디(이메일) 입력 */}
@@ -317,7 +312,7 @@ export default function PartnerSignupPage() {
               id="email"
               type="email"
               className={`${styles.input_field} ${
-                errors.email !== undefined ? styles.input_error : ''
+                errors.email !== undefined ? styles.input_error : ""
               }`}
               placeholder="이메일 입력"
               value={email}
@@ -345,7 +340,7 @@ export default function PartnerSignupPage() {
               if (passwordConfirm && passwordConfirm !== newPassword) {
                 setErrors((prev) => ({
                   ...prev,
-                  passwordConfirm: '비밀번호가 일치하지 않습니다.',
+                  passwordConfirm: "비밀번호가 일치하지 않습니다.",
                 }));
               } else if (passwordConfirm && passwordConfirm === newPassword) {
                 setErrors((prev) => ({
@@ -382,7 +377,7 @@ export default function PartnerSignupPage() {
               id="name"
               type="text"
               className={`${styles.input_field} ${
-                errors.name !== undefined ? styles.input_error : ''
+                errors.name !== undefined ? styles.input_error : ""
               }`}
               value={name}
               onChange={(e) => {
@@ -426,7 +421,7 @@ export default function PartnerSignupPage() {
               id="company-name"
               type="text"
               className={`${styles.input_field} ${
-                errors.companyName !== undefined ? styles.input_error : ''
+                errors.companyName !== undefined ? styles.input_error : ""
               }`}
               value={companyName}
               onChange={(e) => {
@@ -450,7 +445,7 @@ export default function PartnerSignupPage() {
               className={`${styles.input_field} ${
                 errors.representativeName !== undefined
                   ? styles.input_error
-                  : ''
+                  : ""
               }`}
               value={representativeName}
               onChange={(e) => {
@@ -475,7 +470,7 @@ export default function PartnerSignupPage() {
               id="business-number"
               type="text"
               className={`${styles.input_field} ${
-                errors.businessNumber !== undefined ? styles.input_error : ''
+                errors.businessNumber !== undefined ? styles.input_error : ""
               }`}
               placeholder="- 제외 입력"
               value={businessNumber}
@@ -537,7 +532,47 @@ export default function PartnerSignupPage() {
           />
 
           {/* 회원가입 제출 버튼 */}
-          <button type="submit" className={styles.submit_button}>
+          <button
+            type="submit"
+            className={`${styles.submit_button} ${
+              email.trim() &&
+              password.trim() &&
+              passwordConfirm.trim() &&
+              name.trim() &&
+              isPhoneVerified &&
+              companyName.trim() &&
+              representativeName.trim() &&
+              businessNumber.trim() &&
+              businessRegistrationFile &&
+              postalCode.trim() &&
+              address.trim() &&
+              detailAddress.trim() &&
+              serviceTermsAgreed &&
+              privacyAgreed &&
+              thirdPartyAgreed &&
+              advertisingAgreed
+                ? ""
+                : styles.submit_button_disabled
+            }`}
+            disabled={
+              !email.trim() ||
+              !password.trim() ||
+              !passwordConfirm.trim() ||
+              !name.trim() ||
+              !isPhoneVerified ||
+              !companyName.trim() ||
+              !representativeName.trim() ||
+              !businessNumber.trim() ||
+              !businessRegistrationFile ||
+              !postalCode.trim() ||
+              !address.trim() ||
+              !detailAddress.trim() ||
+              !serviceTermsAgreed ||
+              !privacyAgreed ||
+              !thirdPartyAgreed ||
+              !advertisingAgreed
+            }
+          >
             회원가입
           </button>
         </form>
@@ -547,7 +582,7 @@ export default function PartnerSignupPage() {
       {fileUploadAlert.show && (
         <FileUploadAlert
           message={fileUploadAlert.message}
-          onClose={() => setFileUploadAlert({ show: false, message: '' })}
+          onClose={() => setFileUploadAlert({ show: false, message: "" })}
         />
       )}
     </div>

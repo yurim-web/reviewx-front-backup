@@ -34,7 +34,7 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  padding-top: 148px; /* 헤더(80px) + 서브 헤더(68px) 높이만큼 상단 여백 */
+  padding-top: 80px; /* 헤더(80px) + 서브 헤더(68px) 높이만큼 상단 여백 */
 }
 
 /* ========================================
@@ -51,32 +51,9 @@
   align-items: center;
   position: relative;
   box-sizing: border-box;
-  padding-top: 40px;
-  padding-bottom: 80px;
-  padding-left: 240px;
-  padding-right: 240px;
+  padding: 80px 240px;
   max-width: 1000px;
   margin: 0 auto;
-}
-
-/* 로고 섹션 */
-.logo_section {
-  padding-bottom: 40px;
-  width: 100%;
-  max-width: 400px;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-/* 로고 텍스트 */
-.logo_text {
-  color: #333;
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 24px;
-  letter-spacing: -0.4px;
 }
 
 /* 서브 헤더 */
@@ -87,27 +64,10 @@
   right: 0;
   width: 100%;
   max-width: 1000px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #d9d9d9;
-  padding: 24px 40px;
   margin-left: auto;
   margin-right: auto;
   box-sizing: border-box;
-  height: 68px;
-  display: flex;
-  align-items: center;
   z-index: 999; /* 메인 헤더(1000) 아래, 다른 콘텐츠 위 */
-}
-
-/* 서브 헤더 제목 */
-.sub_header_title {
-  color: #444444;
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 20px;
-  letter-spacing: -0.4px;
-  margin: 0;
 }
 
 /* ========================================
@@ -250,7 +210,7 @@
   font-style: normal;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
   flex-shrink: 0;
@@ -321,7 +281,7 @@
   font-style: normal;
   line-height: 14px;
   letter-spacing: -0.28px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
 }
 
 /* 인증 버튼 */
@@ -337,7 +297,7 @@
   font-style: normal;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
   box-sizing: border-box;
@@ -390,7 +350,7 @@
   font-style: normal;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
   flex-shrink: 0;
@@ -433,7 +393,7 @@
   font-style: normal;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
   flex-shrink: 0;
@@ -502,7 +462,7 @@
 
 /* 체크박스 체크마크 */
 .checkbox:checked::after {
-  content: '✓';
+  content: "✓";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -521,7 +481,7 @@
   font-style: normal;
   line-height: 14px;
   letter-spacing: -0.28px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   user-select: none;
 }
@@ -534,7 +494,7 @@
   font-style: normal;
   line-height: 12px;
   letter-spacing: -0.24px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   text-decoration: underline;
   text-underline-position: from-font;
   margin-left: auto;
@@ -562,7 +522,7 @@
   font-style: normal;
   line-height: 14px;
   letter-spacing: -0.28px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
 }
 
 /* ========================================
@@ -570,6 +530,22 @@
    ======================================== */
 
 /* 회원가입 버튼 */
+/* 회원가입 버튼 비활성화 */
+.submit_button:disabled,
+.submit_button_disabled {
+  background-color: #d9d9d9;
+  color: #848484;
+  cursor: default;
+  opacity: 1;
+}
+
+/* 회원가입 버튼 비활성화 호버 (호버 효과 제거) */
+.submit_button:disabled:hover,
+.submit_button_disabled:hover {
+  background-color: #d9d9d9;
+  opacity: 1;
+}
+
 .submit_button {
   width: 100%;
   height: 56px;
@@ -582,7 +558,7 @@
   font-style: normal;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: background-color 0.2s ease, opacity 0.2s ease;
   margin-top: 20px;

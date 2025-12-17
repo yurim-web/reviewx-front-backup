@@ -24,6 +24,7 @@ import {
   validatePhone,
   validateVerificationCode,
 } from '@/utils/signup/validation';
+import { checkTestVerificationCode } from '@/data/signup/testVerificationData';
 
 /**
  * 📌 커스텀 훅의 반환 타입 정의
@@ -135,9 +136,9 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
       return '인증번호 6자리를 입력해주세요.';
     }
 
-    // 📌 테스트용: 인증번호가 '000000'이면 인증 성공
+    // 📌 테스트용: 테스트 인증번호 확인
     // 실제 서비스에서는 서버 API를 호출해서 인증번호를 확인합니다
-    if (verificationCode === '000000') {
+    if (checkTestVerificationCode(verificationCode)) {
       setIsPhoneVerified(true); // 인증 완료 상태로 변경
       setVerificationCode(''); // 인증번호 입력 필드 초기화
       setTimer(0); // 타이머 정지
