@@ -405,15 +405,15 @@ export default function ManagerReporterProgressDetailPage() {
                 onDownloadApplicants={handle_download_applicants}
                 onDownloadSelected={handle_download_selected}
               />
-              {/* 정렬 필터 컨트롤 */}
-              <SortFilterControl
-                options={sort_options}
-                value={sort_order}
-                onChange={(option) =>
-                  set_sort_order(option.value as SortOption)
-                }
-                defaultSort="latest"
-              />
+                {/* 정렬 필터 컨트롤 */}
+                <SortFilterControl
+                  options={sort_options}
+                  value={sort_order}
+                  onChange={(option) =>
+                    set_sort_order(option.value as SortOption)
+                  }
+                  defaultSort="latest"
+                />
             </article>
 
             <article className={styles.tab_navigation}>

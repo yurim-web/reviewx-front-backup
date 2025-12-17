@@ -27,7 +27,6 @@ import styles from "@/styles/manager_ga/member/blacklist/blacklist_table.module.
 import {
   blacklist_data,
   type BlacklistItem,
-  type BlacklistDivision,
 } from "@/data/manager_ga/member/blacklist";
 import CommonTable, {
   type TableColumn,
@@ -38,7 +37,6 @@ import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
 import UserTypeTag from "@/components/manager/common/tags/UserTypeTag";
 import type { UserType } from "@/components/manager/common/tags/UserTypeTag";
-
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 import type {
   BlacklistDivision,
@@ -134,10 +132,10 @@ export default function BlacklistTable({
       // 날짜 부분만 추출하여 비교
       const item_date_str = item.registered_date.split(" ")[0]; // "2025-08-01"
       const item_date = new Date(item_date_str);
-      
+
       const start_date = new Date(selected_date_range.from);
       const end_date = new Date(selected_date_range.to);
-      
+
       // 시간 부분을 제거하고 날짜만 비교
       start_date.setHours(0, 0, 0, 0);
       end_date.setHours(23, 59, 59, 999);

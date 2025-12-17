@@ -36,7 +36,10 @@ export default function ManagerGAHeader({
   const detectedType =
     managerType || (pathname?.includes("/manager_sa") ? "sa" : "ga");
   const homePath = detectedType === "sa" ? "/manager_sa" : "/manager_ga";
-  const notificationPath = `/notification?manager=${detectedType}`;
+  const notificationPath =
+    detectedType === "sa"
+      ? "/manager_sa/notification"
+      : "/manager_ga/notification";
 
   return (
     <header className={styles.header}>
@@ -50,7 +53,7 @@ export default function ManagerGAHeader({
         <div className={styles.menu_icon_box}>
           {/* 알림페이지로 연결 - 내부 링크 (manager 타입에 따라 파라미터 설정) */}
           <Link href={notificationPath}>
-            <img src="/images/icons/bell.svg" alt="bell" />
+            <img src="/images/header/notification_icon.svg" alt="bell_icon" />
           </Link>
 
           {/* 마이페이지로 연결 - 호버 시 로그아웃 버튼 표시 */}

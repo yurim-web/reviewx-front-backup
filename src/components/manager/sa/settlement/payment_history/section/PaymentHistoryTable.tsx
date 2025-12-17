@@ -48,9 +48,6 @@ import type { PaymentStatus } from "@/components/manager/common/tags/PaymentStat
 interface PaymentHistoryTableRowData extends TableRowData, PaymentHistoryItem {}
 
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
-import type { BusinessType } from "@/components/manager/sa/settlement/payment_history/filter/BusinessTypeFilterModal";
-import type { PaymentMethod } from "@/data/manager_sa/common/filterOptions";
-import type { PaymentStatus } from "@/components/manager/sa/settlement/payment_history/filter/PaymentStatusFilterModal";
 import type { AccountStatus } from "@/components/manager/sa/settlement/payment_history/filter/AccountStatusFilterModal";
 
 interface PaymentHistoryTableProps {

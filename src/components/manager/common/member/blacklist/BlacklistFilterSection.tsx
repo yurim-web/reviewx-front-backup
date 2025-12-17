@@ -35,7 +35,7 @@ import BlockCodeFilterModal from "@/components/manager/common/member/blacklist/f
 import type {
   BlacklistDivision,
   BlockCode,
-} from "@/data/manager_ga/member/blacklist";
+} from "@/data/manager_ga/common/filterOptions";
 
 interface BlacklistFilterSectionProps {
   search_query: string;
@@ -78,9 +78,7 @@ export default function BlacklistFilterSection({
   };
 
   const handle_remove_block_code = (block_code: BlockCode) => {
-    on_block_codes_change(
-      selected_block_codes.filter((c) => c !== block_code)
-    );
+    on_block_codes_change(selected_block_codes.filter((c) => c !== block_code));
   };
 
   const handle_unblock = () => {

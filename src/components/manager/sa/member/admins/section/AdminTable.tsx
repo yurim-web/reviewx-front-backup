@@ -38,8 +38,6 @@ import {
 } from "@/data/manager_sa/member/admins";
 import MemberStatusTag from "@/components/manager/common/tags/MemberStatusTag";
 
-import type { AdminStatus } from "@/data/manager_sa/member/admins";
-
 interface AdminTableProps {
   // 검색어 상태를 props로 받습니다
   search_query: string;
