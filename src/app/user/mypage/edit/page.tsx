@@ -26,10 +26,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "../../../../styles/user/mypage/edit_profile.module.css";
 import SubHeader from "@/components/fragments/SubHeader";
+import PageTitle from "@/components/fragments/PageTitle";
 // 공용 컴포넌트
-import ProfilePhotoUpload from "@/components/mypage/ProfilePhotoUpload";
-import PhoneVerificationInput from "@/components/mypage/PhoneVerificationInput";
-import AddressInput from "@/components/mypage/AddressInput";
+import ProfilePhotoUpload from "@/components/common/mypage/ProfilePhotoUpload";
+import PhoneVerificationInput from "@/components/common/mypage/PhoneVerificationInput";
+import AddressInput from "@/components/common/mypage/AddressInput";
 // 유저 전용 컴포넌트
 import AccountInfoInput from "@/components/user/mypage/AccountInfoInput";
 import SocialSecurityNumberInput from "@/components/user/mypage/SocialSecurityNumberInput";
@@ -156,19 +157,7 @@ export default function EditProfilePage() {
   };
 
 
-  // 메인 헤더 숨기기 (캠페인 상세와 동일 동작)
-  useEffect(() => {
-    const header = document.querySelector("header");
-    if (header) header.style.display = "none";
 
-    // 부드러운 스크롤 동작 설정
-    document.documentElement.style.scrollBehavior = "smooth";
-
-    return () => {
-      if (header) header.style.display = "block";
-      document.documentElement.style.scrollBehavior = "auto";
-    };
-  }, []);
 
   return (
     <div className={styles.edit_profile_container}>
@@ -176,7 +165,7 @@ export default function EditProfilePage() {
       <SubHeader />
       {/* 메인 컨텐츠 */}
       <main className={styles.main_content}>
-        <h1 className={styles.page_title}>내 정보 수정</h1>
+        <PageTitle title="내 정보 수정" />
 
         <section className={styles.section_container}>
           {/* 기본 정보 섹션 */}

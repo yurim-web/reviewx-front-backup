@@ -1,0 +1,705 @@
+/* ========================================
+   📝 유저 회원가입 페이지 스타일
+   ======================================== */
+
+/**
+ * 유저 회원가입 페이지 전용 CSS 모듈
+ *
+ * 사용 컴포넌트:
+ * - user/signup/page.tsx (유저 회원가입 페이지)
+ *
+ * 주요 스타일:
+ * - 회원가입 페이지 전체 레이아웃
+ * - 입력 필드 스타일
+ * - 휴대폰 인증 스타일
+ * - 약관 동의 스타일
+ * - 에러 메시지 스타일
+ */
+
+/* ========================================
+   1. 페이지 전체 컨테이너
+   ======================================== */
+
+/* 회원가입 페이지 전체 컨테이너 */
+.signup_page_container {
+  min-height: 100vh;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding-top: 148px; /* 헤더(80px) + 서브 헤더(68px) 높이만큼 상단 여백 */
+}
+
+/* ========================================
+   2. 서브 헤더
+   ======================================== */
+
+/* 서브 헤더 */
+.sub_header {
+  position: fixed;
+  top: 80px; /* 메인 헤더 높이만큼 아래에 위치 */
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-width: 1000px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #d9d9d9;
+  padding: 24px 40px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  z-index: 999; /* 메인 헤더(1000) 아래, 다른 콘텐츠 위 */
+}
+
+/* 서브 헤더 제목 */
+.sub_header_title {
+  color: #444;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 20px; /* 100% */
+  letter-spacing: -0.4px;
+}
+
+/* ========================================
+   3. 메인 콘텐츠 영역
+   ======================================== */
+
+/* 회원가입 메인 영역 */
+.signup_main {
+  background-color: #ffffff;
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* 로고 섹션 */
+.logo_section {
+  padding-bottom: 40px;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* 로고 텍스트 */
+.logo_text {
+  color: #333;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 24px; /* 120% */
+  letter-spacing: -0.4px;
+}
+
+/* ========================================
+   4. 회원가입 폼 영역
+   ======================================== */
+
+/* 회원가입 폼 */
+.signup_form {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 폼 필드 */
+.form_field {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+}
+
+/* 필드 라벨 */
+.field_label {
+  color: #444;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
+}
+
+/* 입력 필드 */
+.input_field {
+  width: 100%;
+  height: 56px;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+
+  box-sizing: border-box;
+  overflow: hidden;
+  color: #444;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+
+  transition: border-color 0.2s ease;
+}
+
+/* 입력 필드 포커스 */
+.input_field:focus {
+  outline: none;
+}
+
+/* 입력 필드 플레이스홀더 */
+.input_field::placeholder {
+  color: #848484;
+}
+
+/* 입력 필드 에러 상태 */
+.input_field.input_error {
+  border-color: #ff2626;
+  border-width: 1px;
+  border-style: solid;
+}
+
+/* 비활성화된 입력 필드 */
+.input_field:disabled {
+  background-color: #f6f6f6;
+  color: #999999;
+}
+
+/* 비밀번호 입력 래퍼 */
+.password_input_wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* 눈 아이콘 토글 버튼 */
+.eye_toggle_button {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+}
+
+/* ========================================
+   5. 휴대폰 인증 영역
+   ======================================== */
+
+/* 휴대폰 인증 래퍼 */
+.phone_verification_wrapper {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+/* 휴대폰 번호 입력 필드 래퍼 */
+.phone_input_wrapper {
+  position: relative;
+  flex: 1;
+}
+
+/* 휴대폰 번호 입력 필드 */
+.phone_input {
+  width: 100%;
+}
+
+/* 인증 완료된 휴대폰 번호 입력 필드 */
+.phone_input_verified {
+  background-color: #ffffff !important;
+  -webkit-autofill: none !important;
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  box-shadow: 0 0 0 1000px #ffffff inset !important;
+}
+
+/* 인증번호 받기 버튼 */
+.verification_button {
+  width: 125px;
+  height: 56px;
+  background-color: #ffffff;
+  border: 1px solid #444444;
+  border-radius: 8px;
+  color: #444444;
+  font-size: 16px;
+  font-weight: 600;
+  font-style: normal;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  font-family: 'Pretendard', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+/* 인증번호 받기 버튼 호버 */
+.verification_button:hover:not(:disabled) {
+  background-color: #f6f6f6;
+}
+
+/* 인증 완료 버튼 */
+.verification_button_completed {
+  background-color: #d9d9d9;
+  border-color: #d9d9d9;
+  color: #848484;
+  cursor: default;
+}
+
+/* 인증 완료 아이콘 */
+.verification_complete_icon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+
+/* 인증번호 입력 섹션 */
+.verification_code_section {
+  margin-top: 12px;
+}
+
+/* 인증번호 입력 및 인증 버튼 래퍼 */
+.verification_code_wrapper {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+/* 인증번호 입력 래퍼 */
+.verification_code_input_wrapper {
+  position: relative;
+  flex: 1;
+}
+
+/* 인증번호 입력 필드 */
+.verification_code_input {
+  width: 100%;
+  padding-right: 80px;
+}
+
+/* 타이머 텍스트 */
+.timer_text {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ff2626;
+  font-size: 14px;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  font-family: 'Pretendard', sans-serif;
+}
+
+/* 인증 버튼 */
+.verify_button {
+  width: 125px;
+  height: 56px;
+  background-color: #ffffff;
+  border: 1px solid #444444;
+  border-radius: 8px;
+  color: #444444;
+  font-size: 16px;
+  font-weight: 600;
+  font-style: normal;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  font-family: 'Pretendard', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+/* 인증 버튼 호버 */
+.verify_button:hover {
+  background-color: #f6f6f6;
+}
+
+/* 재전송 버튼 */
+.resend_button {
+  width: 125px;
+  height: 56px;
+  background-color: #ffffff;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  font-family: 'Pretendard', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+/* 재전송 버튼 호버 */
+.resend_button:hover {
+  background-color: #f6f6f6;
+  border-color: #444444;
+  color: #444444;
+}
+
+/* 인증번호 도움말 텍스트 */
+.verification_help_text {
+  margin-top: 12px;
+  color: #848484;
+
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
+  cursor: pointer;
+}
+
+.verification_help_text:hover {
+  color: #444444;
+  text-decoration: underline;
+}
+
+/* ========================================
+   6. 약관 동의 영역
+   ======================================== */
+
+/* 약관 동의 섹션 */
+.terms_section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 20px;
+}
+
+/* 전체 동의 */
+.terms_all_agree {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 약관 구분선 */
+.terms_divider {
+  height: 1px;
+  background-color: #f2f2f2;
+  width: 100%;
+}
+
+/* 약관 그룹 (체크박스 + 하위 항목) */
+.terms_group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 약관 항목 */
+.terms_item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+/* 약관 하위 항목 */
+.terms_sub_items {
+  margin-left: 24px;
+  color: #848484;
+  font-size: 13px;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 22px;
+  letter-spacing: -0.26px;
+  font-family: 'Pretendard', sans-serif;
+}
+
+.terms_sub_items p {
+  margin: 0;
+}
+
+/* 체크박스 */
+.checkbox {
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid #d9d9d9;
+  border-radius: 4px;
+  background: #ffffff;
+  cursor: pointer;
+  appearance: none;
+  position: relative;
+  flex-shrink: 0;
+  margin: 0;
+}
+
+/* 체크박스 체크된 상태 */
+.checkbox:checked {
+  border-color: #444444;
+  background: #ffffff;
+}
+
+/* 체크박스 체크마크 */
+.checkbox:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #444444;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* 체크박스 라벨 */
+.checkbox_label {
+  color: #444444;
+  font-size: 14px;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  font-family: 'Pretendard', sans-serif;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* 약관 보기 링크 */
+.terms_view_link {
+  color: #848484;
+  font-size: 12px;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 12px;
+  letter-spacing: -0.24px;
+  font-family: 'Pretendard', sans-serif;
+  text-decoration: underline;
+  text-underline-position: from-font;
+  margin-left: auto;
+}
+
+/* 약관 보기 링크 호버 */
+.terms_view_link:hover {
+  color: #444444;
+}
+
+/* ========================================
+   7. 에러 메시지
+   ======================================== */
+
+/* 에러 메시지 */
+.error_message {
+  width: 100%;
+}
+
+/* 에러 텍스트 */
+.error_text {
+  color: #ff2626;
+  font-size: 14px;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  font-family: 'Pretendard', sans-serif;
+}
+
+/* ========================================
+   8. 회원가입 버튼
+   ======================================== */
+
+/* 회원가입 버튼 */
+.submit_button {
+  width: 100%;
+  height: 56px;
+  background-color: #555555;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  font-style: normal;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  font-family: 'Pretendard', sans-serif;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+  margin-top: 20px;
+}
+
+/* 회원가입 버튼 호버 */
+.submit_button:hover {
+  background-color: #444444;
+  opacity: 0.9;
+}
+
+/* 회원가입 버튼 활성화 */
+.submit_button:active {
+  opacity: 0.8;
+}
+
+/* ========================================
+   9. 기존 계정 모달
+   ======================================== */
+
+/* 모달 오버레이 */
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* 모달 컨테이너 */
+.modal_container {
+  background-color: #ffffff;
+  border-radius: 12px;
+  width: 400px;
+  padding: 0;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* 모달 콘텐츠 */
+.modal_content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 32px;
+  gap: 24px;
+}
+
+/* 모달 메시지 */
+.modal_message {
+  color: #444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 28px; /* 155.556% */
+  letter-spacing: -0.36px;
+  text-align: center;
+  margin: 0;
+}
+
+/* 카카오 로그인 버튼 */
+.kakao_login_button {
+  width: 336px;
+  height: 58px;
+  background-color: #fee500;
+  border: none;
+  border-radius: 8px;
+  color: #444444;
+  font-size: 18px;
+  font-weight: 600;
+  font-style: normal;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  font-family: 'Pretendard', sans-serif;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* 네이버 로그인 버튼 */
+.naver_login_button {
+  width: 336px;
+  height: 58px;
+  background-color: #03c75a;
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  font-style: normal;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  font-family: 'Pretendard', sans-serif;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* 모달 닫기 버튼 */
+.modal_close_button {
+  width: 336px;
+  height: 48px;
+  background-color: #f6f6f6;
+  border: none;
+  border-radius: 8px;
+  color: #444444;
+  font-size: 16px;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  font-family: 'Pretendard', sans-serif;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* ========================================
+   10. 반응형 디자인
+   ======================================== */
+
+/* 모바일 (0~739px) */
+@media (max-width: 739px) {
+  .signup_main {
+    padding-top: 40px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .signup_form {
+    max-width: 100%;
+  }
+
+  .phone_verification_wrapper {
+    flex-direction: column;
+  }
+
+  .verification_button {
+    width: 100%;
+  }
+
+  .verification_buttons {
+    flex-direction: column;
+  }
+
+  .resend_button,
+  .verify_button {
+    width: 100%;
+  }
+}

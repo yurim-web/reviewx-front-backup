@@ -1,0 +1,25 @@
+/**
+ * PartnerTable 컴포넌트 스토리북
+ */
+
+import type { Meta, StoryObj } from "@storybook/react";
+import PartnerTable from "./PartnerTable";
+import styles from "@/styles/manager_ga/member/partners/partner_table.module.css";
+
+const meta: Meta<typeof PartnerTable> = {
+  title: "Manager/Common/Member/Table/PartnerTable",
+  component: PartnerTable,
+  tags: ["autodocs"],
+};
+
+export default meta;
+
+type Story = StoryObj<typeof PartnerTable>;
+
+export const Default: Story = {
+  args: {
+    search_query: "",
+    styles: styles,
+    detail_path: "/manager_ga/member/partners",
+  },
+};

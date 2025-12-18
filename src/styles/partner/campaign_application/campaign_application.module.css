@@ -3,7 +3,10 @@
    ======================================== */
 
 /* ========== 페이지 헤더 ========== */
-/* 페이지 상단 제목 영역 (상단 고정) */
+/* 
+ * 페이지 상단 제목 영역 (상단 고정)
+ 
+ */
 .page_header {
   position: sticky;
   top: 80px;
@@ -11,22 +14,66 @@
   padding: 24px 40px;
   border-bottom: 1px solid #d9d9d9;
   background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-/* 페이지 제목 */
+/* 
+ * 페이지 제목 스타일
+ */
 .page_title {
   color: #444;
   font-size: 20px;
   font-weight: 700;
-  line-height: 20px; /* 100% */
+  line-height: 20px;
   letter-spacing: -0.4px;
+  margin: 0;
+}
+
+/* 
+ * 캠페인 보기 버튼 스타일
+ */
+.view_campaign_button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  padding: 0;
+  transition: opacity 0.2s;
+}
+
+/* 
+ * 버튼 호버 효과
+ */
+.view_campaign_button:hover {
+  opacity: 0.7;
+}
+
+/* 
+ * 버튼 내부 아이콘 컨테이너
+ */
+
+.view_campaign_button_icon {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ========== 전체 컨텐츠 영역 ========== */
 .campaign_application_section {
   padding: 40px 0px;
   background: white;
-  min-height: calc(100vh - 80px); /* 헤더 높이 제외한 전체 높이 */
+  min-height: calc(100vh - 80px);
 }
 
 /* ========== 다운로드 버튼 영역 ========== */
@@ -37,6 +84,34 @@
   align-items: center;
   justify-content: space-between;
   padding: 24px 40px;
+}
+
+/* 신고 버튼 스타일 */
+.report_button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: white;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.report_button_icon {
+  width: 16px;
+  height: 16px;
+  display: block;
+  object-fit: contain;
+}
+
+.report_button_text {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
 }
 
 /* ========== 탭 네비게이션 ========== */
@@ -88,7 +163,7 @@
 
 /* 활성화된 탭 밑줄 */
 .tab_button.active::after {
-  content: "";
+  content: '';
   position: absolute;
   bottom: 0;
   left: 0;

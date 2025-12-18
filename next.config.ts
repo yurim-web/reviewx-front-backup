@@ -1,10 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // React 18의 Concurrent Features 안정화
+  // React Strict Mode 활성화 (experimental 밖에 있어야 함)
+  reactStrictMode: true,
   experimental: {
-    // React 18의 새로운 렌더링 모드 안정화
-    reactStrictMode: true,
+    // 실험적 기능은 여기에 추가
   },
   // 개발 환경에서 더 안정적인 렌더링을 위한 설정
   swcMinify: true,

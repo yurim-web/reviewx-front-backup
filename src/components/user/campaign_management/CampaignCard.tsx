@@ -28,6 +28,7 @@ import ReceiptRegistrationModal from "./ReceiptRegistrationModal";
 import ContentRegistrationModal from "./modals/ContentRegistrationModal";
 import ImageUploadModal from "./modals/ImageUploadModal";
 import CombinedContentModal from "./modals/CombinedContentModal";
+import { getButtonClassName } from "@/components/common/campaign_management/utils/button_style_utils";
 
 interface CampaignCardProps {
   campaign: CampaignApplication;
@@ -134,37 +135,14 @@ export default function CampaignCard({
 
   /**
    * 버튼 텍스트에 따른 스타일 클래스 결정
+   *
+   * 설명:
+   * - 공통 유틸리티 함수를 사용하여 버튼 스타일을 결정합니다.
+   * - User와 Partner의 CampaignCard에서 동일한 로직을 공유합니다.
    */
   const getButtonStyle = () => {
     const buttonText = getButtonText();
-
-    // 주요 액션 버튼 - 검은색 배경 (콘텐츠 등록, 재등록, 구매 영수증 등록 등)
-    if (
-      buttonText === "콘텐츠 등록하기" ||
-      buttonText === "콘텐츠 재등록하기" ||
-      buttonText === "구매 영수증 등록하기" ||
-      buttonText === "구매 영수증 수정하기" ||
-      buttonText === "구매 영수증 재등록하기" ||
-      buttonText === "패널티 해제하기"
-    ) {
-      return `${buttonStyles.action_button} ${buttonStyles.primary_button}`;
-    }
-
-    // 경고 버튼 - 빨간색 테두리 (패널티 관련)
-    if (
-      buttonText === "패널티 내역보기" ||
-      buttonText === "콘텐츠 반려 사유보기"
-    ) {
-      return `${buttonStyles.action_button} ${buttonStyles.danger_button}`;
-    }
-
-    // 보조 버튼 - 회색 테두리 (확인하기)
-    if (buttonText === "콘텐츠 확인하기") {
-      return `${buttonStyles.action_button} ${buttonStyles.secondary_button}`;
-    }
-
-    // 일반 버튼 - 기본 검은색 테두리
-    return `${buttonStyles.action_button} ${buttonStyles.default_button}`;
+    return getButtonClassName(buttonText, buttonStyles);
   };
 
   /**
@@ -174,6 +152,8 @@ export default function CampaignCard({
     switch (activeTab) {
       case "신청":
         return `캠페인 선정 발표까지 ${campaign.remainingDays}일 남았습니다.`;
+      case "예정":
+        return `캠페인 오픈까지 ${campaign.remainingDays}일 남았습니다.`;
       case "선정":
         return "캠페인에 선정되었습니다. 진행해주세요.";
       case "완료":

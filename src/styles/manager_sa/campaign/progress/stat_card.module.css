@@ -1,0 +1,57 @@
+/* ========================================
+   📊 통계 카드 스타일
+   ======================================== */
+
+/**
+ * 통계 카드 관련 스타일
+ * 
+ * 사용 컴포넌트:
+ * - StatCard.tsx (통계 카드 컴포넌트)
+ * - StatCardsSection.tsx (통계 카드 섹션 컴포넌트)
+ * 
+ * 사용 페이지:
+ * - /manager_ga/progress (GA 관리자 진행 현황)
+ */
+
+/* 통계 카드 섹션 */
+.stat_cards_section {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+  padding-bottom: 32px;
+}
+
+/* 통계 카드 */
+.stat_card {
+  background-color: white;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  padding: 20px;
+  max-height: 84px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 통계 카드 제목 */
+.stat_card_title {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
+}
+
+/* 통계 카드 값 */
+.stat_card_value {
+  color: #444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px; /* 100% */
+  letter-spacing: -0.36px;
+}
+
+/* 취소된 캠페인 값 색상 */
+.stat_card_value_cancelled {
+  color: #ff2626;
+}

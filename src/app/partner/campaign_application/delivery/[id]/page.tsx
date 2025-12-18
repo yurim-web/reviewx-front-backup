@@ -33,7 +33,6 @@ import SortFilterControl from "@/components/partner/campaign_application/SortFil
 import layoutStyles from "@/styles/partner/layout.module.css";
 import Campaignbanner from "@/components/partner/campaign_application/CampaignInfoBox";
 import ExcelDownloadBtn from "@/components/partner/campaign_application/ExcelDownloadBtn";
-import PartnerSortModalFilter from "@/components/partner/campaign_application/PartnerSortModalFilter";
 import EmptyApplicantsList from "@/components/partner/campaign_application/EmptyApplicantsList";
 // 동적 카드 컴포넌트 로딩을 위한 import (제거)
 // import { getCardTypeFromBrandName } from "@/utils/cardTypeMapper";
@@ -64,7 +63,6 @@ import {
 /**
  * 배송형 캠페인 신청내역 페이지 컴포넌트 (동적)
  *
- * 🎓 학습 포인트: 동적 라우팅과 데이터 로딩
  *
  * 📌 Next.js 동적 라우팅:
  * 1. [id] 폴더명으로 동적 라우팅 설정
@@ -95,11 +93,7 @@ export default function DeliveryCampaignApplicationPage() {
   type SortOption = "latest" | "popular" | "deadline" | "point";
   const [sortOrder, setSortOrder] = useState<SortOption>("latest");
 
-  // 정렬 모달 상태 관리
-  const [isSortModalOpen, setIsSortModalOpen] = useState(false);
-
   // 화면 내 로컬 상태: 신청/선정 리스트를 상태로 관리하여 카드 이동 처리
-  // 🎓 학습 포인트: Hook은 항상 컴포넌트 최상단에 위치해야 함
   const [applicantsState, setApplicantsState] = useState<AllApplicant[]>([]);
   const [selectedState, setSelectedState] = useState<AllApplicant[]>([]);
 
@@ -112,7 +106,6 @@ export default function DeliveryCampaignApplicationPage() {
   ];
 
   /**
-   * 🎓 학습 포인트: useEffect를 통한 데이터 로딩
    *
    * 📌 데이터 로딩 패턴:
    * 1. 컴포넌트 마운트 시 캠페인 ID로 데이터 조회
@@ -416,21 +409,6 @@ export default function DeliveryCampaignApplicationPage() {
   const handleDownloadSelected = () => {
     console.log("선정자 목록 다운로드");
     // 실제로는 API 호출로 엑셀 파일 다운로드
-  };
-
-  // 정렬 모달 핸들러들
-  const handleSortModalOpen = () => {
-    setIsSortModalOpen(true);
-  };
-
-  const handleSortModalClose = () => {
-    setIsSortModalOpen(false);
-  };
-
-  const handleSortOptionChange = (option: { value: string; label: string }) => {
-    setSortOrder(option.value as SortOption);
-    setIsSortModalOpen(false);
-    console.log("정렬 변경:", option.label);
   };
 
   return (

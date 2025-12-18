@@ -1,0 +1,79 @@
+/* ========================================
+   📊 캠페인 모집 통계 섹션 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - CampaignRecruitmentSection (캠페인 모집 통계 섹션)
+ * 
+ * 사용 페이지:
+ * - /manager_ga (GA 관리자 대시보드)
+ */
+
+/* 캠페인 모집 통계 섹션 카드 */
+.campaign_recruitment_section_card {
+  background-color: white;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 20px;
+  max-height: 356px;
+}
+
+/* 캠페인 모집 통계 섹션 헤더 (제목과 범례를 같은 줄에 배치) */
+.campaign_recruitment_section_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 24px;
+}
+
+/* 캠페인 모집 통계 섹션 제목 */
+.campaign_recruitment_section_title {
+  color: #444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px; /* 100% */
+  letter-spacing: -0.36px;
+}
+
+/* 캠페인 모집 통계 섹션 범례 컨테이너 */
+.campaign_recruitment_section_legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #444;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 12px; /* 100% */
+  letter-spacing: -0.24px;
+}
+
+/* 캠페인 모집 통계 섹션 범례 아이템 */
+.campaign_recruitment_section_legend_item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 캠페인 모집 통계 섹션 범례 아이콘 */
+.campaign_recruitment_section_legend_icon {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* 캠페인 모집 통계 섹션 범례 아이콘 - 달성률 */
+.campaign_recruitment_section_legend_icon_achievement {
+  background-color: #ababab;
+}
+
+/* 캠페인 모집 통계 섹션 범례 아이콘 - 평균 진행 기간 */
+.campaign_recruitment_section_legend_icon_light {
+  background-color: #e5e5e5;
+}
+
+/* 캠페인 모집 통계 섹션 범례 아이콘 - 어두운 회색 (모집률) */
+.campaign_recruitment_section_legend_icon_dark {
+  background-color: #444444;
+}
+

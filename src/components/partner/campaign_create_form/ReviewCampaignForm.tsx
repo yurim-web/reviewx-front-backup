@@ -30,12 +30,9 @@ import guideStyles from "@/styles/partner/campaign_create/campaign_guide.module.
 import styles from "@/styles/partner/campaign_create/campaign_create.module.css";
 
 // 공통 컴포넌트들 import
-import {
-  CampaignTypeSelector,
-  CustomDropdown,
-  platforms,
-  categories,
-} from "./common/CampaignFormCommon";
+import { CampaignTypeSelector } from "./common/CampaignTypeSelector";
+import { CustomDropdown } from "./common/CustomDropdown";
+import { platforms, categories } from "./common/constants";
 import NoticeSection from "./common/NoticeSection";
 
 interface ReviewCampaignFormProps extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
@@ -149,11 +146,6 @@ export default function ReviewCampaignForm({
 
   /**
    * 숫자에 쉼표 추가하는 포맷팅 함수
-   * 학습 포인트:
-   * - replace(/,/g, ''): 기존 쉼표를 모두 제거 (입력 중에 쉼표가 포함된 경우 처리)
-   * - /,/g: 정규식에서 g 플래그는 전역 검색을 의미 (모든 쉼표를 찾아서 제거)
-   * - Number.isNaN(): 입력값이 숫자가 아닌지 확인
-   * - String(): 숫자나 undefined를 문자열로 변환
    */
   const formatNumberWithComma = (
     value: string | number | undefined
@@ -179,10 +171,6 @@ export default function ReviewCampaignForm({
 
   /**
    * 숫자 입력 핸들러 (숫자만 입력 가능 + 쉼표 자동 추가)
-   * 학습 포인트:
-   * - 이 함수는 키 입력 전에 실행되어 특정 키만 허용
-   * - 숫자(0-9), 백스페이스, Delete, Tab, 화살표 등 특수키만 허용
-   * - Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X 등의 단축키도 허용
    */
   const handleNumericInput = (
     e: React.KeyboardEvent<HTMLInputElement>,
@@ -222,10 +210,6 @@ export default function ReviewCampaignForm({
 
   /**
    * 숫자 입력 변경 핸들러 (쉼표 자동 추가)
-   * 학습 포인트:
-   * - 사용자가 입력한 값을 포맷팅된 형태로 화면에 표시
-   * - 실제 데이터는 쉼표 없이 저장
-   * - 커서 위치를 보정하여 자연스러운 입력 경험 제공
    */
   const handleNumericChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -329,10 +313,6 @@ export default function ReviewCampaignForm({
    * 필수 요소 유효성 검사
    * 라벨에 *가 있는 모든 필드를 체크합니다.
    *
-   * 학습 포인트:
-   * - useMemo: 의존성 배열(formData, uploadedImages)이 변경될 때만 재계산
-   * - trim(): 문자열의 앞뒤 공백 제거 (사용자가 스페이스만 입력한 경우 방지)
-   * - 논리 연산자(&&): 모든 조건이 true여야 true 반환
    */
   const isFormValid = useMemo(() => {
     if (isEditMode) return true;
@@ -410,9 +390,6 @@ export default function ReviewCampaignForm({
    * - thumbnailImageUrl은 첫 번째 이미지의 미리보기 URL(Data URL)을 전달합니다.
    *   이는 캠페인 카드에서 썸네일을 표시하는 데 사용됩니다.
    *
-   * 학습 포인트:
-   * - File 객체와 Data URL(이미지 미리보기)을 함께 전달하여
-   *   서버 업로드와 클라이언트 표시를 모두 지원합니다.
    */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

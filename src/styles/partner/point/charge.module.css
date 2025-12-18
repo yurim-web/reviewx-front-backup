@@ -14,48 +14,25 @@
   background-color: white;
   max-width: 1000px;
   margin: 0 auto;
-  min-height: calc(100vh - 80px);
+  min-height: 100vh;
   padding-bottom: 80px;
 }
 
 /* ✅ 컨테이너 - page.tsx의 최상위 div */
 .container {
   margin: 0 auto;
-  padding-top: 148px;
-}
-
-/* ============================================
-   페이지 제목 영역
-   ============================================ */
-
-/* ✅ 페이지 제목 "포인트 충전" - 고정 헤더 (page.tsx 107번째 줄 <h1>) */
-.page_title {
-  position: fixed;
-  top: 80px;
-  left: 0;
-  right: 0;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 24px 40px;
-  background-color: white;
-  color: #444;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 20px;
-  letter-spacing: -0.4px;
-  z-index: 99;
-  border-bottom: 0.5px solid #d9d9d9;
+  padding-top: 80px;
 }
 
 /* ✅ 컨텐츠 컨테이너 - 입금계좌정보, 입금확인 등 각 섹션을 감싸는 박스 */
-.content_container{
-display: flex;
-flex-direction: column;
-gap: 20px;
+.content_container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 /* ✅ 섹션 제목 - "입금 계좌 정보", "입금 확인", "사업자 정보" 등 (page.tsx 141, 160, 250번째 줄) */
-.content_title{
+.content_title {
   color: #444444;
   font-size: 18px;
   font-weight: 600;
@@ -79,16 +56,16 @@ gap: 20px;
 .tab_button {
   flex: 1;
   border-radius: 8px;
-  border: 1px solid #D9D9D9;
+  border: 1px solid #d9d9d9;
   padding: 20px;
   cursor: pointer;
 
   /* 버튼 속 글자 css */
-color: #848484;
-font-size: 16px;
-font-weight: 500;
-line-height: 20px;
-letter-spacing: -0.32px;
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.32px;
 }
 
 /* ✅ 활성화된 탭 버튼 스타일 (page.tsx 118, 126번째 줄에서 tab_button에 추가) */
@@ -98,11 +75,11 @@ letter-spacing: -0.32px;
 }
 
 /* ✅ 무통장 입금 전체 섹션 (page.tsx 135번째 줄 <section>) */
-.bank_section{
+.bank_section {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding: 0 40px ;
+  padding: 0 40px;
 }
 
 /* ✅ 폼 라벨 - "신청 금액", "입금자명", "상호명" 등의 라벨 텍스트 */
@@ -172,10 +149,11 @@ letter-spacing: -0.32px;
 }
 
 /* ✅ 계좌 정보 영역 - 중복 선언 (위에서 이미 선언됨) */
-.bank_section { display: flex;
+.bank_section {
+  display: flex;
   flex-direction: column;
   gap: 40px;
- }
+}
 
 /* ============================================
    입금계좌정보 영역
@@ -183,22 +161,22 @@ letter-spacing: -0.32px;
 
 /* ✅ 입금계좌 안내사항 리스트 - "아래 계좌로 신청할 금액을 입금..." (page.tsx 152번째 줄 <ul>) */
 .account_notice_list {
-margin-top: -4px;
-color: #848484;
-font-size: 14px;
-font-weight: 500;
-line-height: 22px;
-letter-spacing: -0.28px;
+  margin-top: -4px;
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+  letter-spacing: -0.28px;
 
-border-bottom: 1px solid #D9D9D9;
-padding-bottom: 24px;
+  border-bottom: 1px solid #d9d9d9;
+  padding-bottom: 24px;
 }
 
 /* ✅ 계좌 정보 박스 - 회색 배경의 계좌번호 표시 영역 (page.tsx 143번째 줄) */
 .account_info_box {
   padding: 20px;
   border-radius: 8px;
-  background: #F9F9F9;
+  background: #f9f9f9;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -216,17 +194,16 @@ padding-bottom: 24px;
 /* ✅ 복사 버튼 - 계좌번호 옆 "복사" 버튼 (page.tsx 145번째 줄) */
 .copy_button {
   border-radius: 4px;
-  background: #D9D9D9;
+  background: #d9d9d9;
   padding: 4px 8px;
   cursor: pointer;
 
   /* 버튼 속 글자 */
   color: #848484;
-font-size: 14px;
-font-weight: 500;
-line-height: 14px;
-letter-spacing: -0.28px;
-
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
 }
 
 /* ✅ 일반 안내 리스트 - "입금 안내 사항" 아래 불릿 리스트 (page.tsx 292번째 줄 <ul>) */
@@ -286,7 +263,7 @@ letter-spacing: -0.28px;
 .submit_button:disabled {
   background-color: #d9d9d9;
   color: #848484;
-cursor: default;
+  cursor: default;
 }
 
 /* ============================================
@@ -312,7 +289,7 @@ cursor: default;
 .checkbox_row {
   width: 100%;
   border-radius: 8px;
-  border: 1px solid #D9D9D9;
+  border: 1px solid #d9d9d9;
   padding: 18px 20px;
 
   display: inline-flex;
@@ -320,14 +297,13 @@ cursor: default;
   align-items: center;
   gap: 12px;
   cursor: pointer;
-  
 }
 
 /* ✅ 체크박스 라벨 - 체크박스 옆 텍스트 */
-.checkbox_row label{
+.checkbox_row label {
   cursor: pointer;
 }
-.checkbox_container{
+.checkbox_container {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -363,12 +339,10 @@ cursor: default;
   font-weight: 600;
 }
 
-.checkbox_row_agree{
+.checkbox_row_agree {
   border: none;
-background: #F9F9F9;
+  background: #f9f9f9;
 }
-
-
 
 /* ✅ 약관 보기 버튼 - "약관 보기" 버튼 (page.tsx 286, 382번째 줄) */
 .terms_button {
@@ -377,19 +351,18 @@ background: #F9F9F9;
   justify-content: center;
   align-items: center;
   border-radius: 4px;
-background: #D9D9D9;
-border: none;
-cursor: pointer;
+  background: #d9d9d9;
+  border: none;
+  cursor: pointer;
   /* 버튼 속 글자 스타일 */
   color: #848484;
-font-size: 14px;
-font-weight: 500;
-line-height: 14px; 
-letter-spacing: -0.28px;
-
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
 }
 
-.notice_section{
+.notice_section {
   padding-top: 20px;
 }
 
@@ -404,7 +377,7 @@ letter-spacing: -0.28px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 9999;
-  
+
   /* 토스트 박스 스타일 */
   display: flex;
   align-items: center;
@@ -413,7 +386,7 @@ letter-spacing: -0.28px;
   border-radius: 100px;
   background-color: #333333;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  
+
   /* 페이드 인 애니메이션 */
   animation: toastFadeIn 0.3s ease-out forwards;
 }
@@ -423,7 +396,7 @@ letter-spacing: -0.28px;
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  border: 2px solid #4CAF50;
+  border: 2px solid #4caf50;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -432,7 +405,7 @@ letter-spacing: -0.28px;
 
 .copy_toast_icon::after {
   content: "✓";
-  color: #4CAF50;
+  color: #4caf50;
   font-size: 16px;
   font-weight: 600;
   line-height: 1;
@@ -440,7 +413,7 @@ letter-spacing: -0.28px;
 
 /* ✅ 토스트 텍스트 - "복사되었습니다" */
 .copy_toast_text {
-  color: #FFFFFF;
+  color: #ffffff;
   font-size: 16px;
   font-weight: 500;
   line-height: 16px;
@@ -476,4 +449,3 @@ letter-spacing: -0.28px;
 .copy_toast.hidden {
   animation: toastFadeOut 0.3s ease-out forwards;
 }
-

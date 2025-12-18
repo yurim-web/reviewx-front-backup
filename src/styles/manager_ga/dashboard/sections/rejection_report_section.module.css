@@ -1,0 +1,63 @@
+/* ========================================
+   📊 반려/신고 통계 섹션 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - RejectionReportSection (반려/신고 통계 섹션)
+ * 
+ * 사용 페이지:
+ * - /manager_ga (GA 관리자 대시보드)
+ */
+
+/* 반려/신고 통계 섹션 카드 */
+.rejection_report_section_card {
+  background-color: white;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 20px;
+  max-height: 356px;
+}
+
+/* 반려/신고 통계 섹션 헤더 (제목과 범례를 같은 줄에 배치) */
+.rejection_report_section_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 24px;
+}
+
+/* 반려/신고 통계 섹션 제목 */
+.rejection_report_section_title {
+  color: #444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px; /* 100% */
+  letter-spacing: -0.36px;
+}
+
+/* 반려/신고 통계 섹션 범례 컨테이너 */
+.rejection_report_section_legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #444;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 12px; /* 100% */
+  letter-spacing: -0.24px;
+}
+
+/* 반려/신고 통계 섹션 범례 아이템 */
+.rejection_report_section_legend_item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 반려/신고 통계 섹션 범례 아이콘 */
+.rejection_report_section_legend_icon {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}

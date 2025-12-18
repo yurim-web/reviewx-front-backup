@@ -19,7 +19,7 @@
 
 import AdditionalGuidelines from "../AdditionalGuidelines";
 import RequirementIcons from "../RequirementIcons";
-import styles from "../../../../styles/user/campaign/campaign_detail/detail_guidelines_section.module.css";
+import styles from "@/styles/user/campaign/campaign_detail/detail_guidelines_section.module.css";
 
 /**
  * Props 인터페이스

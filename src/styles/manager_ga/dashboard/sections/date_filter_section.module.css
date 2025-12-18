@@ -1,0 +1,120 @@
+/* ========================================
+   📅 날짜 필터 섹션 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - DateFilterSection (날짜 필터 섹션)
+ * 
+ * 사용 페이지:
+ * - /manager_ga (GA 관리자 대시보드)
+ */
+
+/* 날짜 필터 섹션 */
+.date_filter_section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* 날짜 필터 버튼 그룹 */
+.date_filter_section_button_group {
+  display: flex;
+  gap: 8px;
+}
+
+/* 날짜 필터 버튼 */
+.date_filter_section_button {
+  padding: 12px;
+  height: 40px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #444;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+}
+
+/* 날짜 필터 버튼 호버 */
+.date_filter_section_button:hover {
+  background-color: #f9f9f9;
+}
+
+/* 활성화된 날짜 필터 버튼 */
+.date_filter_section_button_active {
+  background-color: #444;
+  color: white;
+  border-color: #444;
+}
+
+/* 활성화된 날짜 필터 버튼 호버 효과 제거 */
+.date_filter_section_button_active:hover {
+  background-color: #444;
+  color: white;
+  border-color: #444;
+}
+
+/* 날짜 선택기 래퍼 - relative positioning을 위해 추가 */
+.date_filter_section_picker_wrapper {
+  position: relative; /* 드롭다운을 absolute로 배치하기 위한 기준점 */
+}
+
+/* 날짜 선택기 */
+.date_filter_section_picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  height: 40px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+}
+
+/* 날짜 선택기 아이콘 (달력 모양) */
+.date_filter_section_picker_icon {
+  width: 16px;
+  height: 16px;
+  position: relative;
+  /* 달력 아이콘 만들기 */
+  border: 1.5px solid #666;
+  border-radius: 2px;
+  background-color: white;
+}
+
+/* 달력 상단 고리 부분 */
+.date_filter_section_picker_icon::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 2px;
+  background-color: #666;
+  border-radius: 1px 1px 0 0;
+}
+
+/* 달력 내부 줄 (날짜 구분선) */
+.date_filter_section_picker_icon::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 1px;
+  right: 1px;
+  height: 1px;
+  background-color: #666;
+  opacity: 0.3;
+}

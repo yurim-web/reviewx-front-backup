@@ -38,36 +38,6 @@ export default function PenaltyPage() {
   // 통계 탭 상태 - 패널티 탭이 활성화된 상태로 설정
   const [activeStatTab, setActiveStatTab] = useState<PartnerStatTab>("패널티");
 
-  /**
-   * 통계 탭 변경 핸들러
-   * 각 탭 클릭 시 해당 페이지로 이동
-   */
-  const handleStatTabChange = (tab: PartnerStatTab) => {
-    switch (tab) {
-      case "전체":
-        window.location.href = "/partner/campaign_management";
-        break;
-      case "예정":
-        window.location.href = "/partner/campaign_management/scheduled";
-        break;
-      case "신청":
-        window.location.href = "/partner/campaign_management/applied";
-        break;
-      case "진행":
-        window.location.href = "/partner/campaign_management/progress";
-        break;
-      case "종료":
-        window.location.href = "/partner/campaign_management/completed";
-        break;
-      case "취소":
-        window.location.href = "/partner/campaign_management/cancelled";
-        break;
-      case "패널티":
-        // 현재 페이지이므로 아무것도 하지 않음
-        break;
-    }
-  };
-
   return (
     <div className={layoutStyles.container}>
       {/* 메인 컨텐츠 영역 */}
@@ -77,7 +47,6 @@ export default function PenaltyPage() {
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           activeStatTab={activeStatTab}
-          setActiveStatTab={handleStatTabChange}
         />
 
         {/* 패널티 컨텐츠 영역 */}

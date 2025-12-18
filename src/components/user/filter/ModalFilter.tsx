@@ -35,7 +35,9 @@ interface ModalFilterProps {
   onReset: () => void;
   type?: "checkbox" | "radio";
   showReset?: boolean;
+  showApply?: boolean; // "필터 적용하기" 버튼 표시 여부 (기본값: true)
   layout?: "grid" | "vertical";
+  noScroll?: boolean; // 스크롤바 숨김 여부 (기본값: false, 정렬 모달 등에 사용)
 }
 
 export default function ModalFilter({
@@ -50,7 +52,9 @@ export default function ModalFilter({
   onReset,
   type = "checkbox",
   showReset = true,
+  showApply = true, // 기본값: true (필터 적용하기 버튼 표시)
   layout = "grid",
+  noScroll = false, // 기본값: false (스크롤 표시)
 }: ModalFilterProps) {
   if (!isOpen) return null;
 
@@ -99,11 +103,11 @@ export default function ModalFilter({
           )}
 
           <div
-            className={
+            className={`${
               layout === "vertical"
                 ? styles.options_vertical
                 : styles.options_grid
-            }
+            } ${noScroll && layout === "vertical" ? styles.no_scroll : ""}`}
           >
             {options.map((option, index) => (
               <label
@@ -130,12 +134,17 @@ export default function ModalFilter({
 
         {/* 모달 푸터 */}
         <div className={styles.modal_footer}>
-          <button className={styles.apply_button} onClick={onApply}>
-            필터 적용하기
-          </button>
+          {showApply && (
+            <button className={styles.apply_button} onClick={onApply}>
+              필터 적용하기
+            </button>
+          )}
           {showReset && (
             <button className={styles.reset_button} onClick={onReset}>
-              <div className={styles.reset_icon}></div>
+              <div 
+                className={styles.reset_icon}
+                style={{ backgroundImage: "url('/images/filter/x_small.svg')" }}
+              ></div>
               선택 초기화
             </button>
           )}

@@ -1,0 +1,35 @@
+/* ========================================
+   📅 날짜 범위 선택 드롭다운 스타일 (Figma 디자인 기반)
+   ======================================== */
+
+/**
+ * 날짜 범위 선택 드롭다운 관련 스타일
+ * 
+ * Figma 디자인에 맞춘 스타일:
+ * - 드롭다운 크기: 632px × 296px
+ * - 패딩: 16px
+ * - 위치: 버튼 바로 아래 (absolute positioning)
+ * - 테두리: 1px solid #e5e7eb
+ * - 그림자: 0px 0px 20px 0px rgba(68, 68, 68, 0.1)
+ * 
+ * 사용 컴포넌트:
+ * - DateRangePickerModal.tsx (날짜 범위 선택 드롭다운)
+ * 
+ * 사용 페이지:
+ * - /manager_ga (GA 관리자 대시보드)
+ */
+
+/* 드롭다운 콘텐츠 - 버튼 바로 아래에 위치, 오른쪽 정렬 */
+.dropdown_content {
+  position: absolute; /* 부모 요소(relative)를 기준으로 배치 */
+  top: calc(100% + 8px); /* 버튼 아래 8px 간격 */
+  right: 0; /* 버튼의 오른쪽에 맞춤 */
+  background: white;
+  border-radius: 5px; /* Figma 디자인: 5px */
+  padding: 16px; /* Figma 디자인: 16px */
+  border: 1px solid #e5e7eb; /* Figma 디자인: border-neutral-200 */
+  box-shadow: 0px 0px 20px 0px rgba(68, 68, 68, 0.1); /* Figma 디자인: shadow */
+  z-index: 1000; /* 다른 요소 위에 표시 */
+
+  gap: 16px; /* Figma 디자인: gap-16px */
+}

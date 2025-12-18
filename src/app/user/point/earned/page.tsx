@@ -17,24 +17,24 @@
  * - URL 기반 라우팅으로 새로고침 시에도 페이지 유지
  */
 
-"use client";
+'use client';
 
-import { useState, useRef } from "react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import TabNavigation from "@/components/user/campaign_management/TabNavigation";
-import PointTabNavigation from "@/components/user/point/PointTabNavigation";
-import { MainTab, PointTab } from "@/types/user/user";
-import { pointHistoryData } from "@/data/user/point/pointData";
-import styles from "../../../../styles/user/point/point.module.css";
+import { useState, useRef } from 'react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import TabNavigation from '@/components/user/campaign_management/TabNavigation';
+import PointTabNavigation from '@/components/common/point/PointTabNavigation';
+import { MainTab, PointTab } from '@/types/user/user';
+import { pointHistoryData } from '@/data/user/point/pointData';
+import styles from '../../../../styles/user/point/point.module.css';
 
 /**
  * 적립 포인트 내역 페이지 컴포넌트
  */
 export default function EarnedPointPage() {
   const router = useRouter();
-  const [activeMainTab, setActiveMainTab] = useState<MainTab>("point");
-  const [activePointTab, setActivePointTab] = useState<PointTab>("earned");
+  const [activeMainTab, setActiveMainTab] = useState<MainTab>('point');
+  const [activePointTab, setActivePointTab] = useState<PointTab>('earned');
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [showTooltip, setShowTooltip] = useState(false);
   const tooltipRef = useRef<HTMLSpanElement>(null);
@@ -45,20 +45,20 @@ export default function EarnedPointPage() {
    */
   const handlePointTabChange = (tab: PointTab) => {
     switch (tab) {
-      case "all":
-        window.location.href = "/user/point/all";
+      case 'all':
+        window.location.href = '/user/point/all';
         break;
-      case "earned":
+      case 'earned':
         // 현재 페이지이므로 아무것도 하지 않음
         break;
-      case "withdrawn":
-        window.location.href = "/user/point/withdrawn";
+      case 'withdrawn':
+        window.location.href = '/user/point/withdrawn';
         break;
     }
   };
 
   const handleWithdrawalClick = () => {
-    router.push("/user/point/withdrawal_request");
+    router.push('/user/point/withdrawal_request');
   };
 
   const handleMouseEnter = (e: React.MouseEvent) => {
@@ -76,7 +76,7 @@ export default function EarnedPointPage() {
 
   // 적립 상태의 데이터만 필터링
   const filteredHistoryData = pointHistoryData.filter(
-    (history) => history.status === "earned"
+    (history) => history.status === 'earned',
   );
 
   return (
@@ -93,6 +93,8 @@ export default function EarnedPointPage() {
           <PointTabNavigation
             activePointTab={activePointTab}
             setActivePointTab={handlePointTabChange}
+            basePath="/user/point"
+            tabLabels={{ earned: '적립', withdrawn: '출금' }}
           />
 
           {/* 포인트 요약 정보 */}
@@ -121,29 +123,29 @@ export default function EarnedPointPage() {
                 <div className={styles.status_badge_container}>
                   <div
                     className={`${styles.status_badge} ${
-                      history.status === "earned"
+                      history.status === 'earned'
                         ? styles.earned
-                        : history.status === "completed"
+                        : history.status === 'completed'
                         ? styles.completed
-                        : history.status === "pending"
+                        : history.status === 'pending'
                         ? styles.pending
                         : styles.cancelled
                     }`}
                   >
-                    {history.status === "earned"
-                      ? "적립"
-                      : history.status === "completed"
-                      ? "완료"
-                      : history.status === "pending"
-                      ? "신청"
-                      : "취소"}
+                    {history.status === 'earned'
+                      ? '적립'
+                      : history.status === 'completed'
+                      ? '완료'
+                      : history.status === 'pending'
+                      ? '신청'
+                      : '취소'}
                   </div>
                 </div>
 
                 {/* 내역 정보 */}
                 <div className={styles.history_info}>
                   <div className={styles.history_description}>
-                    {history.status === "failed" ? (
+                    {history.status === 'failed' ? (
                       <div className={styles.cancelled_description}>
                         <span className={styles.main_text}>
                           {history.description}
@@ -168,9 +170,9 @@ export default function EarnedPointPage() {
                             style={{
                               left: tooltipPosition.x,
                               top: tooltipPosition.y,
-                              transform: "translateY(-50%)",
+                              transform: 'translateY(-50%)',
                               opacity: showTooltip ? 1 : 0,
-                              visibility: showTooltip ? "visible" : "hidden",
+                              visibility: showTooltip ? 'visible' : 'hidden',
                             }}
                           >
                             예금주와 본인 명의 불일치
@@ -188,7 +190,7 @@ export default function EarnedPointPage() {
                 <div className={styles.point_info}>
                   <div
                     className={`${styles.point_change} ${
-                      history.status === "failed"
+                      history.status === 'failed'
                         ? styles.cancelled_amount
                         : history.amount > 0
                         ? styles.positive
@@ -197,7 +199,7 @@ export default function EarnedPointPage() {
                   >
                     {history.amount > 0
                       ? `+ ${history.amount.toLocaleString()}`
-                      : `${history.amount.toLocaleString()}`}{" "}
+                      : `${history.amount.toLocaleString()}`}{' '}
                     P
                   </div>
                   <div className={styles.point_balance}>

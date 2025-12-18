@@ -65,3 +65,138 @@ main {
   background: #ffffff;
   /* padding-top: 80px; */
 }
+
+/* ========================================
+   react-day-picker 날짜 범위 선택 스타일
+   ======================================== */
+
+/* react-day-picker CSS 변수 정의 */
+.rdp-root {
+  --rdp-range_middle-background-color: #f5f5f5 !important;
+  --rdp-range_middle-color: #444444 !important;
+  --rdp-range_start-background: #444444 !important;
+  --rdp-range_start-color: white !important;
+  --rdp-range_end-background: #444444 !important;
+  --rdp-range_end-color: white !important;
+}
+
+/* 중간 날짜 스타일 - td 요소 포함, 모든 가능한 선택자 */
+td.rdp-day.rdp-day_range_middle,
+td.rdp-day.rdp-day_selected.rdp-day_range_middle,
+.rdp-day.rdp-day_range_middle,
+.rdp-day.rdp-day_selected.rdp-day_range_middle {
+  background-color: #f5f5f5 !important;
+  color: #444444 !important;
+  border-radius: 0 !important;
+}
+
+td.rdp-day.rdp-day_range_middle button,
+td.rdp-day.rdp-day_range_middle .rdp-button,
+td.rdp-day.rdp-day_range_middle .rdp-button_reset,
+td.rdp-day.rdp-day_range_middle .rdp-day_button,
+td.rdp-day.rdp-day_selected.rdp-day_range_middle button,
+td.rdp-day.rdp-day_selected.rdp-day_range_middle .rdp-button,
+td.rdp-day.rdp-day_selected.rdp-day_range_middle .rdp-button_reset,
+td.rdp-day.rdp-day_selected.rdp-day_range_middle .rdp-day_button,
+.rdp-day.rdp-day_range_middle button,
+.rdp-day.rdp-day_range_middle .rdp-button,
+.rdp-day.rdp-day_range_middle .rdp-button_reset,
+.rdp-day.rdp-day_range_middle .rdp-day_button,
+.rdp-day.rdp-day_selected.rdp-day_range_middle button,
+.rdp-day.rdp-day_selected.rdp-day_range_middle .rdp-button,
+.rdp-day.rdp-day_selected.rdp-day_range_middle .rdp-button_reset,
+.rdp-day.rdp-day_selected.rdp-day_range_middle .rdp-day_button {
+  background-color: #f5f5f5 !important;
+  color: #444444 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* 시작일 스타일 - td 요소 포함, 모든 가능한 선택자 */
+td.rdp-day.rdp-day_range_start,
+td.rdp-day.rdp-day_selected.rdp-day_range_start,
+.rdp-day.rdp-day_range_start,
+.rdp-day.rdp-day_selected.rdp-day_range_start {
+  background-color: #444444 !important;
+  color: white !important;
+  border-radius: 50% !important;
+  font-weight: 500 !important;
+}
+
+td.rdp-day.rdp-day_range_start button,
+td.rdp-day.rdp-day_range_start .rdp-button,
+td.rdp-day.rdp-day_range_start .rdp-button_reset,
+td.rdp-day.rdp-day_range_start .rdp-day_button,
+td.rdp-day.rdp-day_selected.rdp-day_range_start button,
+td.rdp-day.rdp-day_selected.rdp-day_range_start .rdp-button,
+td.rdp-day.rdp-day_selected.rdp-day_range_start .rdp-button_reset,
+td.rdp-day.rdp-day_selected.rdp-day_range_start .rdp-day_button,
+.rdp-day.rdp-day_range_start button,
+.rdp-day.rdp-day_range_start .rdp-button,
+.rdp-day.rdp-day_range_start .rdp-button_reset,
+.rdp-day.rdp-day_range_start .rdp-day_button,
+.rdp-day.rdp-day_selected.rdp-day_range_start button,
+.rdp-day.rdp-day_selected.rdp-day_range_start .rdp-button,
+.rdp-day.rdp-day_selected.rdp-day_range_start .rdp-button_reset,
+.rdp-day.rdp-day_selected.rdp-day_range_start .rdp-day_button {
+  background-color: #444444 !important;
+  color: white !important;
+  border-radius: 50% !important;
+  width: 32px !important;
+  height: 32px !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-weight: 500 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  outline: none !important;
+}
+
+/* 종료일 스타일 - td 요소 포함, 모든 가능한 선택자 */
+td.rdp-day.rdp-day_range_end,
+td.rdp-day.rdp-day_selected.rdp-day_range_end,
+.rdp-day.rdp-day_range_end,
+.rdp-day.rdp-day_selected.rdp-day_range_end {
+  background-color: #444444 !important;
+  color: white !important;
+  border-radius: 50% !important;
+  font-weight: 500 !important;
+}
+
+td.rdp-day.rdp-day_range_end button,
+td.rdp-day.rdp-day_range_end .rdp-button,
+td.rdp-day.rdp-day_range_end .rdp-button_reset,
+td.rdp-day.rdp-day_range_end .rdp-day_button,
+td.rdp-day.rdp-day_selected.rdp-day_range_end button,
+td.rdp-day.rdp-day_selected.rdp-day_range_end .rdp-button,
+td.rdp-day.rdp-day_selected.rdp-day_range_end .rdp-button_reset,
+td.rdp-day.rdp-day_selected.rdp-day_range_end .rdp-day_button,
+.rdp-day.rdp-day_range_end button,
+.rdp-day.rdp-day_range_end .rdp-button,
+.rdp-day.rdp-day_range_end .rdp-button_reset,
+.rdp-day.rdp-day_range_end .rdp-day_button,
+.rdp-day.rdp-day_selected.rdp-day_range_end button,
+.rdp-day.rdp-day_selected.rdp-day_range_end .rdp-button,
+.rdp-day.rdp-day_selected.rdp-day_range_end .rdp-button_reset,
+.rdp-day.rdp-day_selected.rdp-day_range_end .rdp-day_button {
+  background-color: #444444 !important;
+  color: white !important;
+  border-radius: 50% !important;
+  width: 32px !important;
+  height: 32px !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-weight: 500 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  outline: none !important;
+}

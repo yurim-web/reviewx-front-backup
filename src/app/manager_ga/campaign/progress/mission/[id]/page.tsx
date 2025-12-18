@@ -1,0 +1,124 @@
+/* ========================================
+   🎯 GA 관리자 미션형 캠페인 상세 페이지 (동적)
+   ======================================== */
+
+/**
+ * 미션형 캠페인 진행 현황 상세 페이지 (GA 관리자 버전)
+ *
+ * - 경로: /manager_ga/campaign/progress/mission/[id]
+ * - 파트너 신청내역 페이지 로직을 재사용해 GA 관리자도 동일한 학습 경험 제공
+ * - BasicCard/BasicSelectedCard만 사용 (채널 구분 없음)
+ * - 공통 로직은 useCampaignProgressDetail 훅과 CampaignProgressDetailLayout 컴포넌트로 추출했습니다.
+ */
+
+"use client";
+
+import { useParams } from "next/navigation";
+import Loading from "@/app/loading";
+import styles from "@/styles/partner/campaign_application/campaign_application.module.css";
+import { useCampaignProgressDetail } from "@/hooks/manager/common/campaign/useCampaignProgressDetail";
+import CampaignProgressDetailLayout, {
+  type RenderCardFunction,
+} from "@/components/manager/common/campaign/progress/CampaignProgressDetailLayout";
+import BasicCard from "@/components/partner/campaign_application/card_type/basic/BasicCard";
+import BasicSelectedCard from "@/components/partner/campaign_application/card_type/basic/BasicSelectedCard";
+import type {
+  AllApplicant,
+  CampaignWithApplicants,
+} from "@/data/partner/sharedCampaigns";
+import { type BasicApplicant } from "@/data/partner/campaign_application/delivery_applicants";
+
+export default function ManagerMissionProgressDetailPage() {
+  /**
+   * URL 파라미터에서 캠페인 ID 추출
+   */
+  const params = useParams();
+  const campaign_id = params.id as string;
+
+  /**
+   * 공통 로직 훅 사용
+   */
+  const {
+    campaign_data,
+    is_loading,
+    error_message,
+    active_tab,
+    set_active_tab,
+    sort_order,
+    set_sort_order,
+    sort_options,
+    applicants_count,
+    selected_count,
+    current_applicants,
+    handle_select_applicant,
+    handle_cancel_applicant,
+    handle_download_applicants,
+    handle_download_selected,
+  } = useCampaignProgressDetail(campaign_id, "GA 미션형");
+
+  /**
+   * 로딩 상태 처리
+   */
+  if (is_loading) {
+    return <Loading />;
+  }
+
+  /**
+   * 에러 상태 처리
+   */
+  if (error_message || !campaign_data) {
+    return (
+      <section className={styles.campaign_application_section}>
+        <div className={styles.page_header}>
+          <h1 className={styles.page_title}>캠페인 상세 보기</h1>
+        </div>
+        <div style={{ padding: "40px", textAlign: "center", color: "red" }}>
+          {error_message}
+        </div>
+      </section>
+    );
+  }
+
+  /**
+   * 미션형 캠페인 카드 렌더링 함수
+   * - BasicCard/BasicSelectedCard만 사용 (채널 구분 없음)
+   */
+  const render_card: RenderCardFunction = (
+    applicant: AllApplicant,
+    is_selected: boolean,
+    campaign_data: CampaignWithApplicants | null,
+    handle_select: (id: string) => void,
+    handle_cancel: (id: string) => void
+  ) => {
+    const basic_applicant = applicant as BasicApplicant;
+    return is_selected ? (
+      <BasicSelectedCard applicant={basic_applicant} onCancel={handle_cancel} />
+    ) : (
+      <BasicCard applicant={basic_applicant} onSelect={handle_select} />
+    );
+  };
+
+  /**
+   * 공통 레이아웃 컴포넌트 사용
+   */
+  return (
+    <CampaignProgressDetailLayout
+      campaign_data={campaign_data}
+      active_tab={active_tab}
+      set_active_tab={set_active_tab}
+      sort_order={sort_order}
+      set_sort_order={set_sort_order}
+      sort_options={sort_options}
+      applicants_count={applicants_count}
+      selected_count={selected_count}
+      current_applicants={current_applicants}
+      handle_select_applicant={handle_select_applicant}
+      handle_cancel_applicant={handle_cancel_applicant}
+      handle_download_applicants={handle_download_applicants}
+      handle_download_selected={handle_download_selected}
+      render_card={render_card}
+      campaign_id={campaign_id}
+      manager_type="ga"
+    />
+  );
+}

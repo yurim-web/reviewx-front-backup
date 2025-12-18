@@ -33,30 +33,6 @@
 }
 
 /* ============================================
-   페이지 제목 영역
-   ============================================ */
-
-/* 페이지 제목 "포인트 출금 신청" - 고정 헤더 */
-.page_title {
-  position: fixed;
-  top: 80px; /* SubHeader 아래에 위치 */
-  left: 0;
-  right: 0;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 24px 40px;
-  background-color: white;
-  color: #444;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 20px; /* 100% */
-  letter-spacing: -0.4px;
-  z-index: 99; /* SubHeader 아래, 다른 요소 위에 표시 */
-  border-bottom: 0.5px solid #d9d9d9;
-}
-
-
-/* ============================================
    보유 포인트 표시 영역
    ============================================ */
 
@@ -284,11 +260,6 @@
 
 /* ✅ 모바일 공통 — 0~739px */
 @media (max-width: 739px) {
-  /* 고정 제목 모바일 스타일 */
-  .page_title {
-    padding: 24px 32px; /* 모바일 패딩 */
-  }
-
   /* 컨테이너 모바일 패딩 */
   .container {
     padding-top: 160px; /* 모바일에서도 동일한 높이 */

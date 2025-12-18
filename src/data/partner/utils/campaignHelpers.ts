@@ -3,6 +3,21 @@
    ======================================== */
 
 /**
+ * 사용 위치 요약
+ *
+ * - `src/data/partner/sharedCampaigns.ts`: 공용 캠페인 데이터를 조립할 때 상태 문구/로고/서브상태 계산에 활용
+ * - `src/components/partner/campaign_application/utils/campaign_info_helpers.ts`: 캠페인 정보 박스에서 상태 문구를 생성할 때 사용
+ * - `src/components/partner/campaign_management/CampaignCard.tsx` 간접 사용: 위 두 모듈을 통해 계산된 값이 카드에 전달됨
+ * - 그 외 파생 데이터 샘플/가이드(`src/data/docs/DATA_GUIDE.md`)에서도 동일 헬퍼를 참조
+ */
+
+/* ----------------------------------------
+   🗨️ 상태 안내 문구 생성 (getStatusMessage)
+   ----------------------------------------
+   - 사용 위치: `sharedCampaigns.ts`, `campaign_info_helpers.ts`
+   - 역할: 상태/남은 일수 기반으로 카드·툴팁 메시지 생성
+*/
+/**
  * 상태별 안내 문구 생성
  * - 카드 하단/툴팁 등에 사용할 간단 메시지
  */
@@ -25,6 +40,12 @@ export const getStatusMessage = (status: string, daysLeft: number): string => {
   }
 };
 
+/* ----------------------------------------
+   🏷️ 브랜드 로고 매핑 (getBrandLogo)
+   ----------------------------------------
+   - 사용 위치: `sharedCampaigns.ts`, `CampaignInfoBox.tsx`
+   - 역할: 캠페인 유형/브랜드명을 로고 파일 경로로 변환
+*/
 /**
  * 브랜드 로고 경로 반환
  * - 캠페인 유형(구매평/미션형) 우선, 그 외는 브랜드명 매핑
@@ -56,18 +77,23 @@ export const getBrandLogo = (brandName: string, campaignType?: string): string =
   }
 };
 
+/* ----------------------------------------
+   🎚️ 서브 상태 계산 (getSubStatus)
+   ----------------------------------------
+   - 사용 위치: `sharedCampaigns.ts`
+   - 역할: 캠페인 상태별로 카드 버튼 조합(서브 상태 키) 결정
+*/
 /**
  * 캠페인 탭(상태) → 서브 상태 키 반환
  * - 관리 카드의 버튼/액션 표시에 사용될 간단 키워드
  *
  * 탭별 버튼 규칙:
- * 1. 예정 탭: "campaign_edit,campaign_delete" (캠페인 수정하기 + 캠페인 삭제하기)
+ * 1. 예정 탭: "campaign_edit,campaign_delete" (캠페인 수정하기 + 캠페인 삭제)
  * 2. 신청 탭: "campaign_edit,applicant_management" (캠페인 관리하기 + 신청 내역 확인하기)
- * 3. 진행 탭: "winner_selection" 또는 "content_review,content_approval" (당첨자 선정하기 or 콘텐츠 검수하기 + 콘텐츠 확인하기)
- * 4. 종료 탭: "content_review,content_approval" (콘텐츠 검수하기 + 콘텐츠 확인하기)
+ * 3. 진행 탭: "winner_selection" 또는 "content_review,content_approval" (당첨자 선정 or 콘텐츠 확인 + 콘텐츠 확인 완료)
+ * 4. 종료 탭: "content_review,content_approval" (콘텐츠 확인 + 콘텐츠 확인 완료)
  * 5. 취소 탭: "penalty" (패널티 내역보기)
  *
- * 📌 학습 포인트:
  * - 탭(상태)에 따라 다른 버튼 조합을 반환
  * - 콘텐츠가 있는 경우 진행 탭에서도 콘텐츠 버튼 표시 (CampaignCard에서 처리)
  */
@@ -78,23 +104,23 @@ export const getSubStatus = (
 ): string => {
   switch (tabStatus) {
     case "예정":
-      // 예정 탭: 캠페인 삭제하기 + 캠페인 수정하기
+      // 예정 탭: 캠페인 삭제 + 캠페인 수정
       return "campaign_edit,campaign_delete";
     case "신청":
       // 신청 탭: 캠페인 관리하기 + 신청 내역 확인하기 (신청자 수와 관계없이 항상 2개 버튼)
       return "campaign_edit,applicant_management";
     case "진행":
       // 진행 탭: 선정자 수에 따라 버튼 결정
-      // 선정자가 0명이면 → "당첨자 선정하기" 버튼만
-      // 선정자가 1명 이상이면 → "콘텐츠 검수하기" + "콘텐츠 확인하기" 버튼 2개
+      // 선정자가 0명이면 → "당첨자 선정" 버튼만
+      // 선정자가 1명 이상이면 → "콘텐츠 확인" + "콘텐츠 확인 완료" 버튼 2개
       return selectedCount > 0
         ? "content_review,content_approval"
         : "winner_selection";
     case "종료":
-      // 종료 탭: 콘텐츠 검수하기 + 콘텐츠 확인하기
+      // 종료 탭: 콘텐츠 확인 + 콘텐츠 확인 완료
       return "content_review,content_approval";
     case "취소":
-      // 취소 탭: 패널티 내역보기
+      // 취소 탭: 패널티 내역 확인
       return "penalty";
     default:
       // 기본값: 캠페인 수정하기
@@ -106,6 +132,12 @@ export const getSubStatus = (
    🧭 파트너 탭 분류 헬퍼
    ======================================== */
 
+/* ----------------------------------------
+   🧭 탭 분류 로직 (getPartnerTabByDates)
+   ----------------------------------------
+   - 사용 위치: `sharedCampaigns.ts`
+   - 역할: 모집/등록 기간 비교로 파트너 관리 탭(예정/신청/진행/종료) 결정
+*/
 /**
  * 캠페인 탭 판별 (파트너 관리 탭: 전체/예정/신청/진행/종료)
  *

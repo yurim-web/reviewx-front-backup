@@ -23,7 +23,7 @@ import styles from "../../../styles/user/campaign_management/statistics.module.c
 
 interface StatisticsTabProps {
   activeStatTab: StatTab;
-  setActiveStatTab: (tab: StatTab) => void;
+  setActiveStatTab?: (tab: StatTab) => void; // 선택적: 제공되지 않으면 내부에서 라우팅 처리
   stats: CampaignStats;
 }
 
@@ -43,10 +43,21 @@ export default function StatisticsTab({
   /**
    * 통계 탭 클릭 핸들러
    * 각 탭 클릭 시 해당 페이지로 이동
+   * 
+   * 설명:
+   * - setActiveStatTab이 제공되면 부모 컴포넌트에서 처리하도록 위임
+   * - 제공되지 않으면 내부에서 라우팅 처리
    */
   const handleStatTabClick = (
     tab: "신청" | "선정" | "완료" | "취소/반려" | "패널티"
   ) => {
+    // 부모 컴포넌트에서 핸들러를 제공한 경우 위임
+    if (setActiveStatTab) {
+      setActiveStatTab(tab);
+      return;
+    }
+
+    // 부모 컴포넌트에서 핸들러를 제공하지 않은 경우 내부에서 라우팅 처리
     switch (tab) {
       case "신청":
         router.push("/user/campaign_management/applied");

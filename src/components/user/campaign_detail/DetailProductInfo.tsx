@@ -15,7 +15,7 @@
  */
 
 import { ReactNode } from "react";
-import styles from "../../../styles/user/campaign/campaign_detail/detail_product_info.module.css";
+import styles from "@/styles/user/campaign/campaign_detail/detail_product_info.module.css";
 
 /**
  * Props 인터페이스

@@ -1,6 +1,14 @@
 /* ========================================
-   🔍 검수/완료 데이터 (배송형)
+   🔍 검수/완료 타입 (배송형)
    ======================================== */
+
+/**
+ * 사용 위치 요약
+ *
+ * - `NaverBlogReviewCard.tsx`: 배송형 검수 카드에서 `ReviewApplicant` 타입으로 신청자 정보를 타입 안전하게 관리
+ * - `NaverBlogCompletedCard.tsx`: 배송형 완료 카드에서 `CompletedApplicant` 타입으로 완료된 신청자 정보를 처리
+ * - 두 카드 모두 같은 타입 정의를 공유하므로, 중복을 피하기 위해 공용 타입 파일로 분리해 둡니다.
+ */
 
 // 검수 전용 타입
 export interface ReviewApplicant {
@@ -26,74 +34,4 @@ export interface CompletedApplicant {
   completionDate: string;
 }
 
-/* ========================================
-   🔍 검수 탭 데이터 (검수 중인 신청자들)
-   ======================================== */
-export const mockReviewApplicants: ReviewApplicant[] = [
-  {
-    id: "7",
-    Id: "review001",
-    nickname: "배송검수자1",
-    userType: "리뷰어",
-    profileImage: "",
-    selectionStatus: "검수중",
-    channel: "네이버블로그",
-    registrationDate: "2025-11-02 17:37",
-  },
-  {
-    id: "8",
-    Id: "review002",
-    nickname: "배송검수자2",
-    userType: "인플루언서",
-    profileImage: "",
-    selectionStatus: "검수중",
-    channel: "기본",
-    registrationDate: "2025-11-01 14:22",
-  },
-  {
-    id: "9",
-    Id: "review003",
-    nickname: "배송검수자3",
-    userType: "리뷰어",
-    profileImage: "",
-    selectionStatus: "검수중",
-    channel: "기본",
-    registrationDate: "2025-10-31 09:15",
-  },
-];
 
-/* ========================================
-   ✅ 완료 탭 데이터 (완료된 신청자들)
-   ======================================== */
-export const mockCompletedApplicants: CompletedApplicant[] = [
-  {
-    id: "10",
-    Id: "completed001",
-    nickname: "배송완료자1",
-    userType: "리뷰어",
-    profileImage: "",
-    selectionStatus: "완료",
-    channel: "기본",
-    completionDate: "2025-11-06 22:24",
-  },
-  {
-    id: "11",
-    Id: "completed002",
-    nickname: "배송완료자2",
-    userType: "인플루언서",
-    profileImage: "",
-    selectionStatus: "완료",
-    channel: "인스타그램",
-    completionDate: "2025-11-05 18:30",
-  },
-  {
-    id: "12",
-    Id: "completed003",
-    nickname: "배송완료자3",
-    userType: "리뷰어",
-    profileImage: "",
-    selectionStatus: "완료",
-    channel: "기본",
-    completionDate: "2025-11-04 15:45",
-  },
-];

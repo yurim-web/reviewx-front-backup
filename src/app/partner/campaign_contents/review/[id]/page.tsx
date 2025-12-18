@@ -24,13 +24,13 @@ import ReceiptPreviewModal from "@/components/partner/campaign_contents/ReceiptP
 import type { ExperienceApplicant as ReviewApplicant } from "@/components/partner/campaign_contents/card_type/purchase_review_card/ReviewTypes";
 import type { ContentItem } from "@/data/partner/sharedCampaigns";
 
-type TabKey = "검수" | "완료";
+type TabKey = "확인" | "완료";
 
 export default function PurchaseReviewContentsDetailPage() {
   const { id } = useParams<{ id: string }>();
   const searchParams = useSearchParams();
   const initialTab: TabKey =
-    searchParams?.get("tab") === "완료" ? "완료" : "검수";
+    searchParams?.get("tab") === "완료" ? "완료" : "확인";
   const [activeTab, setActiveTab] = useState<TabKey>(initialTab);
   const [sortOrder, setSortOrder] = useState<
     "latest" | "popular" | "deadline" | "point"
@@ -93,7 +93,13 @@ export default function PurchaseReviewContentsDetailPage() {
     <>
       <PageHeader title="캠페인 콘텐츠 내역" />
       <section className={appStyles.campaign_application_section}>
-        {campaignInfo ? <Campaignbanner campaignInfo={campaignInfo} /> : null}
+        {campaignInfo ? (
+          <Campaignbanner
+            campaignInfo={campaignInfo}
+            reviewingCount={reviewCount}
+            completedCount={completedCount}
+          />
+        ) : null}
 
         <article className={appStyles.download_section}>
           <ExcelDownloadBtn
@@ -112,11 +118,11 @@ export default function PurchaseReviewContentsDetailPage() {
         <article className={appStyles.tab_navigation}>
           <button
             className={`${appStyles.tab_button} ${
-              activeTab === "검수" ? appStyles.active : ""
+              activeTab === "확인" ? appStyles.active : ""
             }`}
-            onClick={() => setActiveTab("검수")}
+            onClick={() => setActiveTab("확인")}
           >
-            검수 <span className={appStyles.tab_count}>{reviewCount}</span>
+            확인 <span className={appStyles.tab_count}>{reviewCount}</span>
           </button>
           <button
             className={`${appStyles.tab_button} ${
@@ -129,7 +135,7 @@ export default function PurchaseReviewContentsDetailPage() {
         </article>
 
         <article className={appStyles.applicants_grid}>
-          {(activeTab === "검수" ? contents.reviewing : contents.completed).map(
+          {(activeTab === "확인" ? contents.reviewing : contents.completed).map(
             (item: ContentItem) => {
               const brandChannel = campaignInfo?.brandName ?? item.channel;
               const isReceiptFlow = item.actionType === 1; // actionType 1 = 영수증 흐름
@@ -150,7 +156,7 @@ export default function PurchaseReviewContentsDetailPage() {
                 ? "수정"
                 : "등록";
 
-              if (activeTab === "검수") {
+              if (activeTab === "확인") {
                 // 반려 케이스
                 if (item.isRejected) {
                   if (isReceiptFlow) {

@@ -39,7 +39,6 @@ import PageHeader from "@/components/partner/campaign_create_form/common/PageHea
  * - CampaignWithApplicants를 CampaignFormData로 변환합니다.
  * - 일부 필드는 현재 데이터 구조에 없으므로 기본값으로 설정합니다.
  * 
- * 📌 학습 포인트:
  * - 데이터 변환: 서버 데이터 구조를 폼 데이터 구조로 변환
  * - 기본값 처리: 없는 데이터는 빈 문자열이나 기본값으로 설정
  */

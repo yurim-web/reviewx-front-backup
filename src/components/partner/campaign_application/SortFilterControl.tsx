@@ -20,9 +20,8 @@
 
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import sort_dropdown_styles from "@/styles/partner/campaign_application/sort_dropdown.module.css";
-import PartnerSortModalFilter from "./PartnerSortModalFilter";
 
 export interface SortOptionItem {
   value: string;
@@ -35,6 +34,7 @@ interface SortFilterControlProps {
   onChange: (option: SortOptionItem) => void;
   defaultSort?: string;
   triggerAriaLabel?: string;
+  modalTitle?: string;
 }
 
 export default function SortFilterControl({
@@ -43,13 +43,31 @@ export default function SortFilterControl({
   onChange,
   defaultSort = "latest",
   triggerAriaLabel = "정렬 선택",
+  modalTitle = "정렬",
 }: SortFilterControlProps) {
   const [isOpen, setIsOpen] = useState(false);
 
+  const defaultOptionLabel = useMemo(() => {
+    return options.find((opt) => opt.value === defaultSort)?.label;
+  }, [options, defaultSort]);
+
   const currentLabel =
     options.find((opt) => opt.value === value)?.label ||
-    options.find((opt) => opt.value === defaultSort)?.label ||
+    defaultOptionLabel ||
     "최신순";
+
+  const modalAriaLabel = `${modalTitle} 옵션 선택`;
+
+  const handleOptionChange = (option: SortOptionItem) => {
+    onChange(option);
+    setIsOpen(false);
+  };
+
+  const handleOverlayClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (event.target === event.currentTarget) {
+      setIsOpen(false);
+    }
+  };
 
   return (
     <>
@@ -72,20 +90,58 @@ export default function SortFilterControl({
         />
       </button>
 
-      {/* 모달 */}
-      <PartnerSortModalFilter
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        title="정렬"
-        options={options}
-        selectedValue={value}
-        onOptionChange={(opt) => {
-          onChange(opt);
-          setIsOpen(false);
-        }}
-        showReset={false}
-        defaultSort={defaultSort}
-      />
+      {/* 모달: 라디오 버튼 기반 정렬 선택 UI */}
+      {isOpen && (
+        <div
+          className={sort_dropdown_styles.sort_modal_overlay}
+          role="dialog"
+          aria-modal="true"
+          aria-label={modalAriaLabel}
+          onClick={handleOverlayClick}
+        >
+          <div
+            className={sort_dropdown_styles.sort_modal_content}
+            onClick={(event) => event.stopPropagation()}
+          >
+            {/* 모달 헤더 */}
+            <div className={sort_dropdown_styles.sort_modal_header}>
+              <h3 className={sort_dropdown_styles.sort_modal_title}>{modalTitle}</h3>
+              <button
+                type="button"
+                className={sort_dropdown_styles.sort_modal_close_button}
+                onClick={() => setIsOpen(false)}
+                aria-label="모달 닫기"
+              >
+                <img src="/images/filter/x_icon.svg" alt="닫기" />
+              </button>
+            </div>
+
+            {/* 모달 본문: 정렬 옵션 목록 */}
+            <div className={sort_dropdown_styles.sort_modal_body}>
+              <div className={sort_dropdown_styles.sort_options_vertical}>
+                {options.map((option) => (
+                  <label
+                    key={option.value}
+                    className={sort_dropdown_styles.sort_option_item}
+                  >
+                    <input
+                      type="radio"
+                      name="sort-option"
+                      value={option.value}
+                      checked={value === option.value}
+                      onChange={() => handleOptionChange(option)}
+                      className={sort_dropdown_styles.sort_option_radio}
+                    />
+                    <span className={sort_dropdown_styles.sort_option_label}>
+                      {option.label}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

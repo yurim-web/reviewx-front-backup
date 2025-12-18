@@ -1,0 +1,19 @@
+/* ========================================
+   📅 필터 섹션용 날짜 필터 버튼 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - DateFilterButton (필터 섹션용 날짜 필터 버튼)
+ * 
+ * 사용 위치:
+ * - BaseFilterSection의 date_filter prop
+ * - FilterSection 컴포넌트들
+ */
+
+/* 날짜 필터 버튼 래퍼 - relative positioning을 위해 추가 */
+/* 이 래퍼를 통해 드롭다운의 위치를 조정할 수 있습니다 */
+.date_filter_button_wrapper {
+  position: relative; /* 드롭다운을 absolute로 배치하기 위한 기준점 */
+}
+

@@ -1,0 +1,178 @@
+/* ========================================
+   📋 캠페인 신고/차단 모달 스타일
+   ======================================== */
+
+/**
+ * 캠페인 신고/차단 모달 관련 스타일
+ * 
+ * 사용 컴포넌트:
+ * - CampaignReportModal.tsx (캠페인 신고/차단 모달 컴포넌트)
+ *   - mode="report": 신고 모드 (진행 현황, 반려 내역 페이지)
+ *   - mode="block": 차단 모드 (신고 내역 페이지)
+ * 
+ * 사용 페이지:
+ * - /manager_ga/progress (GA 관리자 진행 현황)
+ * - /manager_sa/progress (SA 관리자 진행 현황)
+ * - /manager_ga/campaign/rejected (GA 관리자 반려 내역)
+ * - /manager_ga/campaign/reported (GA 관리자 신고 이력)
+ */
+
+/* 모달 오버레이 (배경) - 가운데 정렬 */
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 모달 콘텐츠 - 가운데 정렬 */
+.modal_content {
+  background: white;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 12px;
+  padding: 40px 32px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-height: 706px;
+  overflow: hidden;
+}
+
+/* 모달 제목 */
+.modal_title {
+  color: #444;
+  font-family: Pretendard;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 18px; /* 100% */
+  letter-spacing: -0.36px;
+  padding-bottom: 32px;
+}
+
+/* 옵션 리스트 (세로 레이아웃) */
+.options_list {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  flex: 1;
+  /* overflow-y: auto; */
+}
+
+/* 옵션 아이템 */
+.option_item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* 옵션 라디오 버튼 */
+.option_radio {
+  width: 16px;
+  height: 16px;
+  border: 1px solid #d9d9d9;
+  border-radius: 50%;
+  cursor: pointer;
+  appearance: none; /* 기본 브라우저 스타일 제거 */
+  background: white;
+  position: relative;
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.option_radio:checked {
+  background: white;
+  border-color: #444;
+}
+
+.option_radio:checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #444;
+}
+
+/* 옵션 라벨 */
+.option_label {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+}
+
+/* 모달 푸터 */
+.modal_footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 32px;
+}
+
+/* 닫기 버튼 */
+.close_button {
+  flex: 1;
+  padding: 16px 24px;
+  background-color: #f6f6f6;
+  border: none;
+  border-radius: 8px;
+
+  /* 버튼속 글자 css */
+  color: #444;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+  cursor: pointer;
+}
+
+/* 신고 버튼 */
+.report_button {
+  flex: 1;
+  padding: 16px 24px;
+  background-color: #ff2626;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+
+  color: #fff;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+}
+
+/* 차단 버튼 */
+.block_button {
+  flex: 1;
+  padding: 16px 24px;
+  background-color: #d9d9d9;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+
+  color: #848484;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+}

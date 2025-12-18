@@ -1,0 +1,245 @@
+/* ========================================
+   🔍 상태 필터 모달 스타일
+   ======================================== */
+
+/**
+ * 상태 필터 모달 관련 스타일
+ * 
+ * 사용 컴포넌트:
+ * - StatusFilterModal.tsx (상태 필터 모달 컴포넌트)
+ * 
+ * 사용 페이지:
+ * - /manager_ga/progress (GA 관리자 진행 현황)
+ */
+
+/* 모달 오버레이 (배경) - 가운데 정렬 */
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: center; /* 세로 가운데 정렬 */
+  justify-content: center; /* 가로 가운데 정렬 */
+}
+
+/* 모달 콘텐츠 - 가운데 정렬 */
+.modal_content {
+  background: white;
+  width: 90%;
+  max-width: 600px;
+  border-radius: 8px;
+  padding: 40px;
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-height: 80vh;
+  overflow: hidden;
+}
+
+/* 페이드인 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 모달 헤더 */
+.modal_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 모달 제목 */
+.modal_title {
+  color: #444;
+  text-overflow: ellipsis;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 20px; /* 100% */
+  letter-spacing: -0.4px;
+}
+
+/* 모달 닫기 버튼 */
+.modal_close_button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal_close_button img {
+  width: 20px;
+  height: 20px;
+}
+
+/* 모달 바디 */
+.modal_body {
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* 섹션 제목 (상태, 유형, 채널 등) */
+.section_title {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
+  padding-bottom: 24px;
+  margin: 0;
+}
+
+/* 옵션 그리드 (2단 레이아웃) */
+.options_grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px 24px;
+  padding-bottom: 8px;
+}
+
+/* 옵션 아이템 */
+.option_item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* 옵션 체크박스 */
+.option_checkbox {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  cursor: pointer;
+  appearance: none; /* 기본 브라우저 스타일 제거 */
+  background: white;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.option_checkbox:checked {
+  background: #555;
+  border-color: #555;
+}
+
+.option_checkbox:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* 옵션 라벨 */
+.option_label {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 모달 푸터 */
+.modal_footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid #f2f2f2;
+}
+
+/* 적용 버튼 */
+.apply_button {
+  flex: 1;
+  padding: 14px 24px;
+  background-color: #444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.apply_button:hover {
+  background-color: #333;
+}
+
+/* 초기화 버튼 */
+.reset_button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 24px;
+  background-color: white;
+  color: #444;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reset_button:hover {
+  border-color: #444;
+  background-color: #f9f9f9;
+}
+
+/* 초기화 아이콘 */
+.reset_icon {
+  width: 16px;
+  height: 16px;
+  /* background-image는 컴포넌트에서 인라인으로 처리 */
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  /* Storybook 호환을 위해 url() 제거 */
+}
+
+/* 스크롤바 스타일 */
+.modal_body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal_body::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.modal_body::-webkit-scrollbar-thumb {
+  background: #d0d0d0;
+  border-radius: 4px;
+}
+
+.modal_body::-webkit-scrollbar-thumb:hover {
+  background: #b0b0b0;
+}

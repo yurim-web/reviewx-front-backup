@@ -17,8 +17,8 @@
  * - 사용자 아이콘 (마이페이지로 이동)
  */
 
-import Link from "next/link";
-import styles from "./header.module.css";
+import Link from 'next/link';
+import styles from '@/styles/fragments/header.module.css';
 
 export default function PartnerHeader() {
   return (

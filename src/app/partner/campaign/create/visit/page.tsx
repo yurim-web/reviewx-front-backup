@@ -27,7 +27,7 @@ import VisitCampaignForm from "@/components/partner/campaign_create_form/VisitCa
 import { CampaignFormData } from "@/types/user/user";
 import { addVisitCampaign } from "@/data/partner/visit";
 // 분리된 CSS 모듈들 import
-import layoutStyles from "../../../../../styles/partner/layout.module.css";
+import layoutStyles from "@/styles/partner/layout.module.css";
 import PageHeader from "@/components/partner/campaign_create_form/common/PageHeader";
 
 export default function VisitCampaignCreatePage() {
@@ -53,7 +53,8 @@ export default function VisitCampaignCreatePage() {
       // 이미지 URL 처리
       // 폼에서 전달받은 thumbnailImageUrl을 사용 (Data URL 형식)
       // 실제 프로덕션에서는 이미지를 서버에 업로드하고 URL을 받아와야 합니다
-      let imageUrl = formData.thumbnailImageUrl || "/images/main/campaign_img/eximg_2.png"; // 업로드된 이미지 또는 기본 이미지
+      let imageUrl =
+        formData.thumbnailImageUrl || "/images/main/campaign_img/eximg_2.png"; // 업로드된 이미지 또는 기본 이미지
 
       // TODO: 실제 프로덕션에서는 이미지 업로드 API 호출
       // const imageUploadResponse = await uploadImages(formData.thumbnailImage, formData.detailImages);

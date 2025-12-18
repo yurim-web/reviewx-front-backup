@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import PartnerTabNavigation from "@/components/partner/campaign_management/TabNavigation";
-import PartnerSubTabNavigation from "@/components/partner/SubTabNavigation";
-import layoutStyles from "../../../../styles/partner/layout.module.css";
-import styles from "../../../../styles/user/mypage/profile.module.css";
-import type { PartnerMainTab } from "@/types/partner/partner";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import PartnerTabNavigation from '@/components/partner/campaign_management/TabNavigation';
+import SubTabNavigation from '@/components/common/mypage/SubTabNavigation';
+import layoutStyles from '../../../../styles/partner/layout.module.css';
+import styles from '../../../../styles/user/mypage/profile.module.css';
+import type { PartnerMainTab } from '@/types/partner/partner';
 
 export default function PartnerProfilePage() {
   const router = useRouter();
-  const [activeTopTab, setActiveTopTab] = useState<PartnerMainTab>("account");
-  const [activeSubTab, setActiveSubTab] = useState<"profile">("profile");
+  const [activeTopTab, setActiveTopTab] = useState<PartnerMainTab>('account');
+  const [activeSubTab, setActiveSubTab] = useState<'profile'>('profile');
 
   return (
     <div className={layoutStyles.partner_dashboard_container}>
@@ -21,9 +21,11 @@ export default function PartnerProfilePage() {
           activeTab={activeTopTab}
           setActiveTab={setActiveTopTab}
         />
-        <PartnerSubTabNavigation
+        <SubTabNavigation
           activeSubTab={activeSubTab}
           setActiveSubTab={setActiveSubTab}
+          basePath="/partner/mypage"
+          availableTabs={['profile']}
         />
         <div className={styles.profile_section}>
           <div className={styles.profile_info}>
@@ -38,7 +40,7 @@ export default function PartnerProfilePage() {
                   alt="프로필 편집 이동"
                   width={16}
                   height={16}
-                  onClick={() => router.push("/partner/mypage/edit")}
+                  onClick={() => router.push('/partner/mypage/edit')}
                 />
               </div>
             </div>
@@ -49,7 +51,7 @@ export default function PartnerProfilePage() {
           <button
             className={styles.menu_item}
             onClick={() =>
-              window.open("https://markx.dev/guide_book", "_blank")
+              window.open('https://markx.dev/guide_book', '_blank')
             }
           >
             <div className={styles.menu_icon} />
@@ -57,14 +59,14 @@ export default function PartnerProfilePage() {
           </button>
           <button
             className={styles.menu_item}
-            onClick={() => router.push("/partner/campaign_management")}
+            onClick={() => router.push('/partner/campaign_management')}
           >
             <div className={styles.menu_icon} />
             <div className={styles.menu_text}>캠페인 관리</div>
           </button>
           <button
             className={styles.menu_item}
-            onClick={() => router.push("/partner/campaign_application")}
+            onClick={() => router.push('/partner/campaign_application')}
           >
             <div className={styles.menu_icon} />
             <div className={styles.menu_text}>캠페인 신청 현황</div>

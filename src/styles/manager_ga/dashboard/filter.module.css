@@ -1,0 +1,83 @@
+/* ========================================
+   🔍 GA 관리자 대시보드 필터 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - DateFilterSection (날짜 필터 섹션)
+ * 
+ * 사용 페이지:
+ * - /manager_ga (GA 관리자 대시보드)
+ */
+
+/* 필터 섹션 */
+.filter_section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* 날짜 필터 버튼 그룹 */
+.date_filter_group {
+  display: flex;
+  gap: 8px;
+}
+
+/* 날짜 필터 버튼 */
+.date_filter_button {
+  padding: 12px;
+  height: 40px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  /* 버튼 속 글자  */
+  color: #444;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+}
+
+/* 날짜 필터 버튼 호버 */
+.date_filter_button:hover {
+  background-color: #f9f9f9;
+}
+
+/* 활성화된 날짜 필터 버튼 */
+.date_filter_button_active {
+  background-color: #444;
+  color: white;
+  border-color: #444;
+}
+
+/* 날짜 선택기 */
+.date_picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  height: 40px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+
+  /* 폰트 스타일 */
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+}
+
+/* 날짜 선택기 아이콘 */
+.date_picker_icon {
+  width: 16px;
+  height: 16px;
+  background-color: #d9d9d9;
+  border-radius: 2px;
+}

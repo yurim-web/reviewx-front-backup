@@ -1,0 +1,891 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+// 일반 CSS 파일로 import (CSS Modules가 아닌 전역 스타일)
+// @ts-ignore - MDX에서 CSS import 타입 체크 무시
+import "./configure.css";
+
+<Meta title="ReviewX 컴포넌트 라이브러리" />
+
+<div className="sb-container">
+  <div className="sb-section-title">
+    # ReviewX 컴포넌트 라이브러리에 오신 것을 환영합니다! 🎉
+
+    ReviewX는 리뷰 캠페인 플랫폼으로, 사용자(리뷰어), 파트너(광고주), 관리자(GA/SA) 세 가지 역할을 지원하는 Next.js 기반 웹 애플리케이션입니다.
+    이 Storybook에서는 프로젝트의 모든 컴포넌트를 확인하고 테스트할 수 있습니다.
+
+  </div>
+
+  <div className="sb-section">
+    <div className="sb-section-item">
+      <div className="sb-icon-box">📦</div>
+      <h4 className="sb-section-item-heading">컴포넌트 탐색</h4>
+      <p className="sb-section-item-paragraph">
+        왼쪽 사이드바에서 프로젝트의 모든 컴포넌트를 탐색할 수 있습니다. 
+        Common, User, Partner, Manager 등 카테고리별로 정리되어 있습니다.
+      </p>
+    </div>
+    <div className="sb-section-item">
+      <div className="sb-icon-box">🎨</div>
+      <h4 className="sb-section-item-heading">인터랙티브 테스트</h4>
+      <p className="sb-section-item-paragraph">
+        각 컴포넌트의 다양한 상태와 props를 변경하며 실시간으로 결과를 확인할 수 있습니다. 
+        Controls 패널을 사용하여 컴포넌트를 직접 조작해보세요.
+      </p>
+    </div>
+    <div className="sb-section-item">
+      <div className="sb-icon-box">📚</div>
+      <h4 className="sb-section-item-heading">자동 문서화</h4>
+      <p className="sb-section-item-paragraph">
+        각 컴포넌트는 자동으로 생성된 문서를 포함하고 있습니다. 
+        Props, 사용 예시, 코드를 한눈에 확인할 수 있습니다.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div className="sb-container">
+  <div className="sb-section-title">
+    # 프로젝트 구조
+
+    ReviewX 프로젝트는 역할별로 컴포넌트가 분리되어 있습니다. 각 컴포넌트의 용도와 사용 위치를 확인하세요.
+
+  </div>
+
+  <div className="sb-section">
+    <div className="sb-features-grid">
+      <div className="sb-grid-item">
+        <div className="sb-icon-box-large">👤</div>
+        <h4 className="sb-section-item-heading">Common 컴포넌트</h4>
+        <p className="sb-section-item-paragraph">
+          모든 역할에서 공통으로 사용되는 컴포넌트입니다. 
+          회원가입, 계정 찾기, 마이페이지 등 공통 기능을 포함합니다.
+        </p>
+        <div className="sb-code-example">
+          <code>src/components/common/</code>
+        </div>
+      </div>
+      <div className="sb-grid-item">
+        <div className="sb-icon-box-large">🎯</div>
+        <h4 className="sb-section-item-heading">User 컴포넌트</h4>
+        <p className="sb-section-item-paragraph">
+          리뷰어(사용자) 전용 컴포넌트입니다. 
+          캠페인 상세, 필터, 캠페인 관리 등 사용자 기능을 포함합니다.
+        </p>
+        <div className="sb-code-example">
+          <code>src/components/user/</code>
+        </div>
+      </div>
+      <div className="sb-grid-item">
+        <div className="sb-icon-box-large">🤝</div>
+        <h4 className="sb-section-item-heading">Partner 컴포넌트</h4>
+        <p className="sb-section-item-paragraph">
+          파트너(광고주) 전용 컴포넌트입니다. 
+          캠페인 생성, 관리, 포인트 관리 등 파트너 기능을 포함합니다.
+        </p>
+        <div className="sb-code-example">
+          <code>src/components/partner/</code>
+        </div>
+      </div>
+      <div className="sb-grid-item">
+        <div className="sb-icon-box-large">⚙️</div>
+        <h4 className="sb-section-item-heading">Manager 컴포넌트</h4>
+        <p className="sb-section-item-paragraph">
+          관리자 전용 컴포넌트입니다. 
+          GA(일반 관리자)와 SA(슈퍼 관리자) 컴포넌트로 구분됩니다.
+        </p>
+        <div className="sb-code-example">
+          <code>src/components/manager/</code>
+        </div>
+      </div>
+      <div className="sb-grid-item">
+        <div className="sb-icon-box-large">🏠</div>
+        <h4 className="sb-section-item-heading">Main 컴포넌트</h4>
+        <p className="sb-section-item-paragraph">
+          메인 페이지에서 사용되는 컴포넌트입니다. 
+          메뉴, 캠페인 카드, 제목 텍스트 등을 포함합니다.
+        </p>
+        <div className="sb-code-example">
+          <code>src/components/main/</code>
+        </div>
+      </div>
+      <div className="sb-grid-item">
+        <div className="sb-icon-box-large">🧩</div>
+        <h4 className="sb-section-item-heading">Fragments 컴포넌트</h4>
+        <p className="sb-section-item-paragraph">
+          재사용 가능한 작은 UI 조각들입니다. 
+          버튼, 입력 필드, 모달 등 기본 UI 요소를 포함합니다.
+        </p>
+        <div className="sb-code-example">
+          <code>src/components/fragments/</code>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div className="sb-addon">
+  <div className="sb-addon-text">
+    <h4>기술 스택</h4>
+    <p className="sb-section-item-paragraph">
+      ReviewX는 최신 웹 기술 스택으로 구축되었습니다.
+    </p>
+    <ul className="sb-tech-list">
+      <li>
+        <strong>Framework:</strong> Next.js 15.5.4
+      </li>
+      <li>
+        <strong>Language:</strong> TypeScript 5
+      </li>
+      <li>
+        <strong>UI Library:</strong> React 19.1.0
+      </li>
+      <li>
+        <strong>Styling:</strong> CSS Modules, Tailwind CSS 4
+      </li>
+      <li>
+        <strong>Charts:</strong> Recharts 3.5.0
+      </li>
+      <li>
+        <strong>Date:</strong> date-fns, react-day-picker
+      </li>
+    </ul>
+  </div>
+  <div className="sb-addon-img">
+    <div className="sb-tech-badge">⚡ Next.js</div>
+    <div className="sb-tech-badge">⚛️ React</div>
+    <div className="sb-tech-badge">📘 TypeScript</div>
+  </div>
+</div>
+
+<div className="sb-container">
+  <div className="sb-section-title">
+    # 프로젝트 폴더 구조
+
+    ReviewX 프로젝트의 전체 폴더 구조를 확인하세요. 각 폴더의 역할과 용도를 이해하면 개발이 더 쉬워집니다.
+
+  </div>
+
+  <div className="sb-section">
+    <div className="sb-folder-structure">
+      <pre style={{
+        backgroundColor: '#fff5f7',
+        padding: '20px',
+        borderRadius: '8px',
+        overflow: 'auto',
+        fontSize: '11px',
+        lineHeight: '1.4',
+        fontFamily: 'Monaco, "Courier New", monospace',
+        maxHeight: '700px',
+        border: '1px solid #ffe0e6'
+      }}>
+{`src/
+├── app/                                    # Next.js App Router 페이지
+│   ├── blocked/page.tsx                    # 차단된 사용자 페이지
+│   ├── campaign/                           # 캠페인 상세 페이지
+│   │   ├── delivery/                       # 배송형 캠페인
+│   │   │   ├── [id]/layout.tsx, page.tsx
+│   │   │   ├── layout.tsx, page.tsx
+│   │   ├── mission/                       # 미션형 캠페인
+│   │   ├── reporter/                      # 기자단 캠페인
+│   │   ├── review/                        # 구매평 캠페인
+│   │   └── visit/                         # 방문형 캠페인
+│   ├── error.tsx                          # 에러 페이지
+│   ├── faq/layout.tsx, page.tsx           # FAQ 페이지
+│   ├── find-account/                      # 계정 찾기
+│   │   ├── page.tsx
+│   │   └── reset-password/page.tsx
+│   ├── layout.tsx                         # 루트 레이아웃
+│   ├── loading.tsx                        # 로딩 페이지
+│   ├── manager_ga/                        # GA 관리자 페이지
+│   │   ├── campaign/
+│   │   │   ├── progress/                  # 캠페인 진행 현황
+│   │   │   │   ├── delivery/[id]/page.tsx
+│   │   │   │   ├── mission/[id]/page.tsx
+│   │   │   │   ├── reporter/[id]/page.tsx
+│   │   │   │   ├── review/[id]/page.tsx
+│   │   │   │   ├── visit/[id]/page.tsx
+│   │   │   │   ├── layout.tsx, page.tsx
+│   │   │   ├── rejected/                  # 반려된 캠페인
+│   │   │   │   ├── layout.tsx, page.tsx
+│   │   │   ├── reported/                  # 신고된 캠페인
+│   │   │   │   ├── layout.tsx, page.tsx
+│   │   │   └── templates/                 # 캠페인 템플릿
+│   │   │       ├── layout.tsx, page.tsx
+│   │   ├── community/posts/              # 커뮤니티 관리
+│   │   │   ├── layout.tsx, page.tsx
+│   │   ├── layout.tsx
+│   │   ├── member/                        # 회원 관리
+│   │   │   ├── blacklist/                 # 블랙리스트
+│   │   │   │   ├── layout.tsx, page.tsx
+│   │   │   ├── partners/                  # 파트너 관리
+│   │   │   │   ├── [id]/layout.tsx, page.tsx
+│   │   │   │   ├── layout.tsx, page.tsx
+│   │   │   └── reviewers/                 # 리뷰어 관리
+│   │   │       ├── [id]/layout.tsx, page.tsx
+│   │   │       ├── layout.tsx, page.tsx
+│   │   └── page.tsx
+│   ├── manager_sa/                        # SA 관리자 페이지
+│   │   ├── campaign/progress/             # 캠페인 진행 현황
+│   │   │   ├── delivery/[id]/page.tsx
+│   │   │   ├── mission/[id]/page.tsx
+│   │   │   ├── reporter/[id]/page.tsx
+│   │   │   ├── review/[id]/page.tsx
+│   │   │   ├── visit/[id]/page.tsx
+│   │   │   ├── layout.tsx, page.tsx
+│   │   ├── community/posts/page.tsx
+│   │   ├── layout.tsx
+│   │   ├── member/                        # 회원 관리
+│   │   │   ├── admins/page.tsx            # 관리자 관리
+│   │   │   ├── blacklist/page.tsx
+│   │   │   ├── partners/[id]/page.tsx
+│   │   │   └── reviewers/[id]/page.tsx
+│   │   ├── page.tsx
+│   │   └── settlement/                    # 정산 관리
+│   │       ├── payment_history/page.tsx   # 결제 내역
+│   │       ├── withdrawal/page.tsx        # 출금 내역
+│   │       └── withdrawal_request/page.tsx # 출금 요청
+│   ├── not-found.tsx                      # 404 페이지
+│   ├── notice/layout.tsx, page.tsx        # 공지사항
+│   ├── page.tsx                           # 홈 페이지
+│   ├── partner/                           # 파트너(광고주) 페이지
+│   │   ├── blocked/page.tsx
+│   │   ├── campaign/
+│   │   │   ├── create/                    # 캠페인 생성
+│   │   │   │   ├── delivery/layout.tsx, page.tsx
+│   │   │   │   ├── mission/layout.tsx, page.tsx
+│   │   │   │   ├── reporter/layout.tsx, page.tsx
+│   │   │   │   ├── review/layout.tsx, page.tsx
+│   │   │   │   ├── visit/layout.tsx, page.tsx
+│   │   │   │   ├── layout.tsx, page.tsx
+│   │   │   └── edit/                      # 캠페인 수정
+│   │   │       ├── delivery/[id]/
+│   │   │       ├── mission/[id]/
+│   │   │       ├── reporter/[id]/
+│   │   │       ├── review/[id]/
+│   │   │       └── visit/[id]/
+│   │   ├── campaign_application/          # 캠페인 신청 내역
+│   │   │   ├── delivery/[id]/layout.tsx, page.tsx
+│   │   │   ├── mission/[id]/layout.tsx, page.tsx
+│   │   │   ├── reporter/[id]/layout.tsx, page.tsx
+│   │   │   ├── review/[id]/layout.tsx, page.tsx
+│   │   │   └── visit/[id]/layout.tsx, page.tsx
+│   │   ├── campaign_contents/            # 콘텐츠 관리
+│   │   │   ├── delivery/[id]/layout.tsx, page.tsx
+│   │   │   ├── mission/[id]/layout.tsx, page.tsx
+│   │   │   ├── reporter/[id]/layout.tsx, page.tsx
+│   │   │   ├── review/[id]/layout.tsx, page.tsx
+│   │   │   └── visit/[id]/layout.tsx, page.tsx
+│   │   ├── campaign_management/           # 캠페인 관리
+│   │   │   ├── applied/page.tsx           # 신청된 캠페인
+│   │   │   ├── cancelled/page.tsx        # 취소된 캠페인
+│   │   │   ├── completed/page.tsx        # 완료된 캠페인
+│   │   │   ├── penalty/page.tsx          # 패널티
+│   │   │   ├── progress/page.tsx         # 진행 중인 캠페인
+│   │   │   ├── scheduled/page.tsx        # 예정된 캠페인
+│   │   │   ├── layout.tsx, page.tsx
+│   │   ├── find-account/page.tsx
+│   │   ├── layout.tsx
+│   │   ├── login/layout.tsx, page.tsx
+│   │   ├── mypage/                        # 마이페이지
+│   │   │   ├── edit/layout.tsx, page.tsx
+│   │   │   ├── profile/page.tsx
+│   │   │   ├── layout.tsx, page.tsx
+│   │   ├── page.tsx
+│   │   ├── point/                         # 포인트 관리
+│   │   │   ├── all/page.tsx              # 전체 내역
+│   │   │   ├── charge/layout.tsx, page.tsx # 충전
+│   │   │   ├── earned/page.tsx           # 적립 내역
+│   │   │   ├── withdrawn/page.tsx        # 출금 내역
+│   │   │   ├── layout.tsx, page.tsx
+│   │   └── signup/                        # 회원가입
+│   │       ├── complete/page.tsx
+│   │       ├── layout.tsx, page.tsx
+│   └── user/                              # 사용자(리뷰어) 페이지
+│       ├── blocked/
+│       ├── campaign_management/           # 캠페인 관리
+│       │   ├── applied/page.tsx          # 신청한 캠페인
+│       │   ├── cancelled/page.tsx       # 취소된 캠페인
+│       │   ├── completed/page.tsx       # 완료된 캠페인
+│       │   ├── penalty/page.tsx         # 패널티
+│       │   ├── selected/page.tsx        # 선정된 캠페인
+│       │   ├── layout.tsx, page.tsx
+│       ├── login/layout.tsx, page.tsx
+│       ├── mypage/                       # 마이페이지
+│       │   ├── channel/page.tsx         # 채널 관리
+│       │   ├── edit/layout.tsx, page.tsx
+│       │   ├── profile/page.tsx
+│       │   ├── layout.tsx, page.tsx
+│       ├── page.tsx
+│       ├── point/                         # 포인트 관리
+│       │   ├── all/page.tsx
+│       │   ├── earned/page.tsx
+│       │   ├── withdrawal_request/layout.tsx, page.tsx # 출금 요청
+│       │   ├── withdrawn/page.tsx
+│       │   ├── layout.tsx, page.tsx
+│       ├── signup/                        # 회원가입
+│       │   ├── complete/page.tsx
+│       │   ├── layout.tsx, page.tsx
+│       └── sns_login/layout.tsx, page.tsx # SNS 로그인
+│
+├── components/                            # React 컴포넌트
+│   ├── common/                           # 공통 컴포넌트
+│   │   ├── BlockedUserPage.tsx          # 차단된 사용자 페이지
+│   │   ├── FindAccountPage.tsx          # 계정 찾기 페이지
+│   │   ├── campaign_management/         # 캠페인 관리 공통
+│   │   │   ├── CampaignFilterBar.tsx
+│   │   │   ├── types.ts
+│   │   │   └── utils/
+│   │   ├── date_range_picker/           # 날짜 범위 선택기
+│   │   │   ├── DateRangePickerExample.tsx
+│   │   │   └── date_range_picker_example.module.css
+│   │   ├── find_account/                # 계정 찾기
+│   │   │   ├── EmailInput.tsx
+│   │   │   ├── FindAccountModals.tsx
+│   │   │   ├── NextButton.tsx
+│   │   │   ├── TabNavigation.tsx
+│   │   │   ├── hooks/
+│   │   │   ├── modal/
+│   │   │   └── types.ts
+│   │   ├── mypage/                      # 마이페이지 공통
+│   │   │   ├── AddressInput.tsx
+│   │   │   ├── ErrorModal.tsx
+│   │   │   ├── FormField.tsx
+│   │   │   ├── InputWithButton.tsx
+│   │   │   ├── PhoneVerificationInput.tsx
+│   │   │   ├── ProfilePhotoUpload.tsx
+│   │   │   └── SubTabNavigation.tsx
+│   │   ├── point/                       # 포인트 공통
+│   │   │   └── PointTabNavigation.tsx
+│   │   └── signup/                      # 회원가입 공통
+│   │       ├── PasswordConfirmInput.tsx
+│   │       ├── PasswordInput.tsx
+│   │       └── PhoneVerification.tsx
+│   ├── dev/                              # 개발용 컴포넌트
+│   │   └── ConsoleFilter.tsx            # 콘솔 로그 필터
+│   ├── fragments/                        # 재사용 가능한 UI 조각
+│   │   ├── Header.tsx                    # 헤더
+│   │   ├── PageTitle.tsx                # 페이지 제목
+│   │   ├── PartnerHeader.tsx             # 파트너 헤더
+│   │   └── SubHeader.tsx                # 서브 헤더
+│   ├── main/                             # 메인 페이지 컴포넌트
+│   │   ├── CampaignBox.tsx              # 캠페인 박스
+│   │   ├── MainMenu.tsx                 # 메인 메뉴
+│   │   └── Titletext.tsx                # 제목 텍스트
+│   ├── manager/                          # 관리자 전용 컴포넌트
+│   │   ├── common/                      # 공통 관리자 컴포넌트
+│   │   │   ├── campaign/                # 캠페인 관리 공통
+│   │   │   │   ├── modal/               # 모달
+│   │   │   │   │   ├── CampaignReasonModal.tsx
+│   │   │   │   │   └── CampaignReportModal.tsx
+│   │   │   │   ├── progress/            # 진행 현황
+│   │   │   │   │   ├── cards/           # 통계 카드
+│   │   │   │   │   │   ├── StatCard.tsx
+│   │   │   │   │   │   └── StatCardsSection.tsx
+│   │   │   │   │   ├── filter/          # 필터 모달
+│   │   │   │   │   │   ├── ChannelFilterModal.tsx
+│   │   │   │   │   │   ├── createFilterModal.tsx
+│   │   │   │   │   │   ├── StatusFilterModal.tsx
+│   │   │   │   │   │   └── TypeFilterModal.tsx
+│   │   │   │   │   ├── icons/           # 아이콘
+│   │   │   │   │   │   └── ChannelIcon.tsx
+│   │   │   │   │   ├── layout/          # 레이아웃
+│   │   │   │   │   │   └── CampaignProgressDetailLayout.tsx
+│   │   │   │   │   ├── section/         # 섹션
+│   │   │   │   │   │   └── FilterSection.tsx
+│   │   │   │   │   ├── table/           # 테이블
+│   │   │   │   │   │   └── CampaignTable.tsx
+│   │   │   │   │   ├── tags/            # 태그
+│   │   │   │   │   │   ├── CampaignStatusTag.tsx
+│   │   │   │   │   │   └── CampaignTypeTag.tsx
+│   │   │   │   │   └── ProgressPageCommon.tsx
+│   │   │   ├── community/               # 커뮤니티 관리
+│   │   │   │   └── posts/section/
+│   │   │   │       ├── PostFilterSection.tsx
+│   │   │   │       └── PostTable.tsx
+│   │   │   ├── fragments/               # 관리자 프래그먼트
+│   │   │   │   └── ManagerPageTitle.tsx
+│   │   │   ├── member/                  # 회원 관리
+│   │   │   │   ├── blacklist/           # 블랙리스트
+│   │   │   │   │   ├── BlacklistFilterSection.tsx
+│   │   │   │   │   ├── BlacklistTable.tsx
+│   │   │   │   │   └── filter/
+│   │   │   │   ├── filter/              # 회원 필터
+│   │   │   │   │   └── MemberFilterSection.tsx
+│   │   │   │   ├── member_detail/       # 회원 상세
+│   │   │   │   │   ├── ActivityInfoSection.tsx
+│   │   │   │   │   ├── InfoCard.tsx
+│   │   │   │   │   ├── MemberDetailLayout.tsx
+│   │   │   │   │   ├── ProfileSection.tsx
+│   │   │   │   │   └── Section.tsx
+│   │   │   │   ├── modal/               # 회원 모달
+│   │   │   │   │   ├── CampaignHistoryModal.tsx
+│   │   │   │   │   └── PenaltyHistoryModal.tsx
+│   │   │   │   ├── partners/            # 파트너 관리
+│   │   │   │   │   ├── CampaignHistoryModal.tsx
+│   │   │   │   │   ├── filter/          # 파트너 필터
+│   │   │   │   │   │   ├── ChannelFilterModal.tsx
+│   │   │   │   │   │   ├── DivisionFilterModal.tsx
+│   │   │   │   │   │   ├── StatusFilterModal.tsx
+│   │   │   │   │   │   └── TypeFilterModal.tsx
+│   │   │   │   │   ├── PartnerFilterSection.tsx
+│   │   │   │   │   ├── PartnerStatsSection.tsx
+│   │   │   │   │   ├── PartnerTable.tsx
+│   │   │   │   │   ├── PenaltyHistoryModal.tsx
+│   │   │   │   │   └── section/
+│   │   │   │   ├── reviewers/           # 리뷰어 관리
+│   │   │   │   │   ├── CampaignHistoryModal.tsx
+│   │   │   │   │   ├── filter/          # 리뷰어 필터
+│   │   │   │   │   │   ├── ChannelFilterModal.tsx
+│   │   │   │   │   │   ├── GradeFilterModal.tsx
+│   │   │   │   │   │   ├── StatusFilterModal.tsx
+│   │   │   │   │   │   └── TypeFilterModal.tsx
+│   │   │   │   │   ├── PenaltyHistoryModal.tsx
+│   │   │   │   │   ├── ReviewerFilterSection.tsx
+│   │   │   │   │   ├── ReviewerStatsSection.tsx
+│   │   │   │   │   ├── ReviewerTable.tsx
+│   │   │   │   │   └── section/
+│   │   │   │   ├── stats/                # 회원 통계
+│   │   │   │   │   └── MemberStatsSection.tsx
+│   │   │   │   └── table/                # 회원 테이블
+│   │   │   │       ├── PartnerTable.tsx
+│   │   │   │       └── ReviewerTable.tsx
+│   │   │   └── table/                    # 공통 테이블
+│   │   │       ├── CommonTable.tsx
+│   │   │       └── CommonTableWithTooltip.tsx
+│   │   ├── ga/                           # GA 관리자 컴포넌트
+│   │   │   ├── campaign/                 # GA 캠페인 관리
+│   │   │   │   ├── rejected/            # 반려된 캠페인
+│   │   │   │   │   ├── filter/RejectCodeFilterModal.tsx
+│   │   │   │   │   └── section/
+│   │   │   │   │       ├── FilterSection.tsx
+│   │   │   │   │       ├── RejectCodeInfoSection.tsx
+│   │   │   │   │       ├── RejectedCampaignTable.tsx
+│   │   │   │   │       └── RejectStatsSection.tsx
+│   │   │   │   └── reported/            # 신고된 캠페인
+│   │   │   │       ├── filter/ReportCodeFilterModal.tsx
+│   │   │   │       └── section/
+│   │   │   │           ├── FilterSection.tsx
+│   │   │   │           ├── ReportCodeInfoSection.tsx
+│   │   │   │           ├── ReportedCampaignTable.tsx
+│   │   │   │           └── ReportStatsSection.tsx
+│   │   │   ├── common/                   # GA 공통 컴포넌트
+│   │   │   │   ├── filter/               # 필터 컴포넌트
+│   │   │   │   │   ├── BaseFilterModal.tsx
+│   │   │   │   │   ├── BaseFilterSection.tsx
+│   │   │   │   │   └── SortDropdown.tsx
+│   │   │   │   ├── ManagerGAHeader.tsx
+│   │   │   │   └── SidebarMenu.tsx
+│   │   │   └── dashboard/                # GA 대시보드
+│   │   │       ├── chart/                # 차트 컴포넌트
+│   │   │       │   ├── CampaignRecruitmentChart.tsx
+│   │   │       │   ├── ChannelMemberPieChart.tsx
+│   │   │       │   ├── DeviceStatsChart.tsx
+│   │   │       │   ├── MemberActivationDonutChart.tsx
+│   │   │       │   ├── MemberTypeBarChart.tsx
+│   │   │       │   ├── RejectionReportChart.tsx
+│   │   │       │   └── chart_event_handlers.ts
+│   │   │       ├── section/              # 대시보드 섹션
+│   │   │       │   ├── AccessStatsSection.tsx
+│   │   │       │   ├── CampaignRecruitmentSection.tsx
+│   │   │       │   ├── CampaignSummarySection.tsx
+│   │   │       │   ├── ChannelMemberSection.tsx
+│   │   │       │   ├── DateFilterSection.tsx
+│   │   │       │   ├── DateRangePickerModal.tsx
+│   │   │       │   ├── MemberActivationSection.tsx
+│   │   │       │   ├── MemberTypeSection.tsx
+│   │   │       │   └── RejectionReportSection.tsx
+│   │   │       ├── ChartsSection.tsx
+│   │   │       ├── MemberStatsSection.tsx
+│   │   │       └── StatCard.tsx
+│   │   └── sa/                           # SA 관리자 컴포넌트
+│   │       ├── common/SidebarMenu.tsx
+│   │       ├── dashboard/                # SA 대시보드
+│   │       │   ├── chart/
+│   │       │   │   ├── AmountChart.tsx
+│   │       │   │   ├── ChannelMemberPieChart.tsx
+│   │       │   │   ├── MemberActivationDonutChart.tsx
+│   │       │   │   └── MemberTypeBarChart.tsx
+│   │       │   ├── section/
+│   │       │   │   ├── ChannelMemberSection.tsx
+│   │       │   │   ├── MemberActivationSection.tsx
+│   │       │   │   ├── MemberTypeSection.tsx
+│   │       │   │   ├── PaymentChartSection.tsx
+│   │       │   │   ├── PaymentSummarySection.tsx
+│   │       │   │   ├── SettlementChartSection.tsx
+│   │       │   │   └── SettlementSummarySection.tsx
+│   │       │   └── StatCard.tsx
+│   │       ├── member/                   # SA 회원 관리
+│   │       │   └── admins/section/
+│   │       │       ├── AdminFilterSection.tsx
+│   │       │       └── AdminTable.tsx
+│   │       └── settlement/               # SA 정산 관리
+│   │           ├── payment_history/section/  # 결제 내역
+│   │           │   ├── FilterSection.tsx
+│   │           │   ├── PaymentHistoryTable.tsx
+│   │           │   └── StatCardsSection.tsx
+│   │           ├── withdrawal/section/       # 출금 내역
+│   │           │   ├── FilterSection.tsx
+│   │           │   ├── StatCardsSection.tsx
+│   │           │   └── WithdrawalTable.tsx
+│   │           └── withdrawal_request/section/ # 출금 요청
+│   │               ├── FilterSection.tsx
+│   │               └── RequestTable.tsx
+│   ├── partner/                           # 파트너 전용 컴포넌트
+│   │   ├── campaign_application/         # 캠페인 신청 내역
+│   │   │   ├── ApplicantCard.tsx
+│   │   │   ├── CampaignInfoBox.tsx
+│   │   │   ├── CampaignSchedule.tsx
+│   │   │   ├── card_type/                 # 채널별 카드 타입
+│   │   │   │   ├── basic/                 # 기본 카드
+│   │   │   │   │   ├── BasicCard.tsx
+│   │   │   │   │   └── BasicSelectedCard.tsx
+│   │   │   │   ├── instagram/             # 인스타그램 카드
+│   │   │   │   │   ├── InstagramCard.tsx
+│   │   │   │   │   └── InstagramSelectedCard.tsx
+│   │   │   │   ├── naverblog/             # 네이버블로그 카드
+│   │   │   │   │   ├── NaverBlogCard.tsx
+│   │   │   │   │   ├── NaverBlogCompletedCard.tsx
+│   │   │   │   │   ├── NaverBlogRestrictedCard.tsx
+│   │   │   │   │   └── NaverBlogReviewCard.tsx
+│   │   │   │   ├── naverclip/             # 네이버클립 카드
+│   │   │   │   │   ├── NaverClipCard.tsx
+│   │   │   │   │   └── NaverClipSelectedCard.tsx
+│   │   │   │   ├── reels/                 # 릴스 카드
+│   │   │   │   ├── shorts/                # 숏츠 카드
+│   │   │   │   └── youtube/               # 유튜브 카드
+│   │   │   ├── ContentExcelDownloadBtn.tsx
+│   │   │   ├── EmptyApplicantsList.tsx
+│   │   │   ├── ExcelDownloadBtn.tsx
+│   │   │   ├── PageHeader.tsx
+│   │   │   ├── SortFilterControl.tsx
+│   │   │   └── utils/campaign_info_helpers.ts
+│   │   ├── campaign_contents/             # 콘텐츠 관리
+│   │   │   ├── card_type/
+│   │   │   │   ├── experience_card/       # 체험형 카드
+│   │   │   │   ├── mission_card/          # 미션형 카드
+│   │   │   │   └── purchase_review_card/  # 구매평 카드
+│   │   │   ├── ReceiptPreviewModal.tsx
+│   │   │   └── ReceiptRegistrationModal.tsx
+│   │   ├── campaign_create_form/          # 캠페인 생성 폼
+│   │   │   ├── common/                    # 공통 컴포넌트
+│   │   │   │   ├── CampaignTypeSelector.tsx
+│   │   │   │   ├── constants.ts
+│   │   │   │   ├── CustomDropdown.tsx
+│   │   │   │   ├── NoticeSection.tsx
+│   │   │   │   └── PageHeader.tsx
+│   │   │   ├── DeliveryCampaignForm.tsx   # 배송형 폼
+│   │   │   ├── MissionCampaignForm.tsx     # 미션형 폼
+│   │   │   ├── ReporterCampaignForm.tsx   # 기자단 폼
+│   │   │   ├── ReviewCampaignForm.tsx     # 구매평 폼
+│   │   │   └── VisitCampaignForm.tsx      # 방문형 폼
+│   │   ├── campaign_management/           # 캠페인 관리
+│   │   │   ├── CampaignCard.tsx
+│   │   │   ├── CampaignList.tsx
+│   │   │   ├── modals/
+│   │   │   │   ├── CampaignDeleteConfirmModal.tsx
+│   │   │   │   └── CampaignManagementModal.tsx
+│   │   │   ├── PartnerCampaignManagementHeader.tsx
+│   │   │   ├── PenaltyContent.tsx
+│   │   │   ├── StatisticsTab.tsx
+│   │   │   ├── TabNavigation.tsx
+│   │   │   └── utils/campaign_card_helpers.ts
+│   │   ├── mypage/BusinessDocumentUpload.tsx
+│   │   └── signup/                        # 파트너 회원가입
+│   │       ├── AddressInput.tsx
+│   │       ├── BusinessRegistrationUpload.tsx
+│   │       ├── FileUploadAlert.tsx
+│   │       ├── PartnerTermsAgreement.tsx
+│   │       └── utils/
+│   │           ├── businessNumberUtils.ts
+│   │           ├── formValidation.ts
+│   │           └── validation.ts
+│   └── user/                              # 사용자 전용 컴포넌트
+│       ├── campaign_detail/                # 캠페인 상세
+│       │   ├── AdditionalGuidelines.tsx
+│       │   ├── DetailHeader.tsx
+│       │   ├── DetailImage.tsx
+│       │   ├── DetailProductInfo.tsx
+│       │   ├── DetailScheduleInfo.tsx
+│       │   ├── guidelines/                 # 가이드라인 섹션
+│       │   │   ├── DetailGuidelinesSection.tsx
+│       │   │   ├── DetailGuidelinesSectionDelivery.tsx
+│       │   │   ├── DetailGuidelinesSectionMission.tsx
+│       │   │   ├── DetailGuidelinesSectionReporter.tsx
+│       │   │   ├── DetailGuidelinesSectionReview.tsx
+│       │   │   └── DetailGuidelinesSectionVisit.tsx
+│       │   ├── modal/                     # 신청 모달
+│       │   │   ├── ApplicationModal.tsx
+│       │   │   ├── ApplicationModalType2.tsx
+│       │   │   └── ApplicationModalType3.tsx
+│       │   └── RequirementIcons.tsx
+│       ├── campaign_management/            # 캠페인 관리
+│       │   ├── CampaignCard.tsx
+│       │   ├── CampaignList.tsx
+│       │   ├── CampaignManagementHeader.tsx
+│       │   ├── CampaignTag.tsx
+│       │   ├── modals/
+│       │   │   ├── CombinedContentModal.tsx
+│       │   │   ├── ContentRegistrationModal.tsx
+│       │   │   └── ImageUploadModal.tsx
+│       │   ├── PenaltyContent.tsx
+│       │   ├── ReceiptRegistrationModal.tsx
+│       │   ├── StatisticsTab.tsx
+│       │   └── TabNavigation.tsx
+│       ├── filter/                        # 필터 컴포넌트
+│       │   ├── FilterBar.tsx
+│       │   ├── ModalFilter.tsx
+│       │   ├── RegionFilter.tsx
+│       │   └── SortModalFilter.tsx
+│       ├── mypage/                        # 마이페이지
+│       │   ├── AccountInfoInput.tsx
+│       │   ├── ChannelConnectModal.tsx
+│       │   ├── ChannelSection.tsx
+│       │   └── SocialSecurityNumberInput.tsx
+│       └── signup/                        # 사용자 회원가입
+│           ├── ExistingAccountModal.tsx
+│           ├── TermsAgreement.tsx
+│           └── utils/formValidation.ts
+│
+├── data/                                   # 데이터 파일 (Mock 데이터, 타입 정의)
+│   ├── docs/DATA_GUIDE.md                  # 데이터 가이드 문서
+│   ├── faq/faqData.ts                      # FAQ 데이터
+│   ├── login/testLoginData.ts              # 테스트 로그인 데이터
+│   ├── manager_ga/                         # GA 관리자 데이터
+│   │   ├── community/postsData.ts
+│   │   ├── dashboard/dashboardData.ts
+│   │   ├── member/
+│   │   │   ├── blacklist.ts                # 블랙리스트 데이터
+│   │   │   ├── partners.ts                 # 파트너 데이터
+│   │   │   └── reviewers.ts                # 리뷰어 데이터
+│   │   ├── progress.ts                     # 진행 현황 데이터
+│   │   ├── rejected.ts                     # 반려 데이터
+│   │   └── reported.ts                     # 신고 데이터
+│   ├── manager_sa/                         # SA 관리자 데이터
+│   │   ├── dashboard/dashboardData.ts
+│   │   ├── member/admins.ts                # 관리자 데이터
+│   │   ├── progress.ts
+│   │   └── settlement/                     # 정산 데이터
+│   │       ├── paymentHistoryData.ts        # 결제 내역 데이터
+│   │       ├── withdrawalData.ts           # 출금 내역 데이터
+│   │       └── withdrawalRequestData.ts    # 출금 요청 데이터
+│   ├── partner/                             # 파트너 데이터
+│   │   ├── campaign_application/
+│   │   │   ├── delivery_applicants.ts      # 배송형 신청자 데이터
+│   │   │   └── delivery_review_completed.ts
+│   │   ├── delivery.ts                     # 배송형 캠페인 데이터
+│   │   ├── mission.ts                      # 미션형 캠페인 데이터
+│   │   ├── point/pointData.ts              # 포인트 데이터
+│   │   ├── reporter.ts                      # 기자단 캠페인 데이터
+│   │   ├── review.ts                        # 구매평 캠페인 데이터
+│   │   ├── sharedCampaigns.ts              # 공통 캠페인 데이터
+│   │   ├── utils/campaignHelpers.ts        # 캠페인 헬퍼 함수
+│   │   └── visit.ts                         # 방문형 캠페인 데이터
+│   └── user/                                # 사용자 데이터
+│       ├── campaign_management/campaignManagementData.ts
+│       ├── delivery/
+│       │   ├── deliveryCampaigns.ts
+│       │   └── deliveryFilterOptions.ts
+│       ├── mission/
+│       │   ├── missionCampaigns.ts
+│       │   └── missionFilterOptions.ts
+│       ├── point/pointData.ts
+│       ├── reporter/
+│       │   ├── reporterCampaigns.ts
+│       │   └── reporterFilterOptions.ts
+│       ├── review/
+│       │   ├── reviewCampaigns.ts
+│       │   └── reviewFilterOptions.ts
+│       └── visit/
+│           ├── visitCampaigns.ts
+│           └── visitFilterOptions.ts
+│
+├── styles/                                  # CSS 모듈 스타일
+│   ├── common/                             # 공통 스타일
+│   │   ├── blocked_user.module.css
+│   │   ├── find_account.module.css
+│   │   ├── manager_page_title.module.css
+│   │   ├── page_title.module.css
+│   │   └── reset_password.module.css
+│   ├── error_page/                         # 에러 페이지 스타일
+│   │   ├── error.module.css
+│   │   ├── loading.module.css
+│   │   └── not_found.module.css
+│   ├── filter/filter_bar.module.css
+│   ├── fragments/                          # 프래그먼트 스타일
+│   │   ├── header.module.css
+│   │   └── sub_header.module.css
+│   ├── globals.css                         # 전역 스타일
+│   ├── home/                               # 홈 스타일
+│   │   ├── home.module.css
+│   │   └── text.module.css
+│   ├── login/                              # 로그인 스타일
+│   │   ├── login.module.css
+│   │   └── partner_login.module.css
+│   ├── manager_ga/                         # GA 관리자 스타일
+│   │   ├── campaign/                       # 캠페인 스타일
+│   │   │   ├── common/modal/
+│   │   │   ├── progress/                   # 진행 현황 스타일
+│   │   │   ├── progress_table.module.css
+│   │   │   ├── rejected/                   # 반려 스타일
+│   │   │   ├── rejected_table.module.css
+│   │   │   ├── reported/                    # 신고 스타일
+│   │   │   ├── reported_table.module.css
+│   │   │   └── templates/                   # 템플릿 스타일
+│   │   ├── campaign_detail.module.css
+│   │   ├── common/                          # GA 공통 스타일
+│   │   ├── community/posts/                 # 커뮤니티 스타일
+│   │   ├── dashboard/                       # 대시보드 스타일
+│   │   │   ├── campaign_summary.module.css
+│   │   │   ├── charts.module.css
+│   │   │   ├── device_stats.module.css
+│   │   │   ├── filter.module.css
+│   │   │   ├── member_stats.module.css
+│   │   │   └── sections/                    # 섹션 스타일
+│   │   ├── layout/                          # 레이아웃 스타일
+│   │   │   ├── header.module.css
+│   │   │   ├── layout.module.css
+│   │   │   └── sidebar.module.css
+│   │   ├── layout.css
+│   │   └── member/                          # 회원 관리 스타일
+│   │       ├── blacklist/
+│   │       ├── member_detail/
+│   │       ├── partners/
+│   │       └── reviewers/
+│   ├── manager_sa/                         # SA 관리자 스타일
+│   │   ├── campaign/progress/
+│   │   ├── campaign/progress_table.module.css
+│   │   ├── dashboard/
+│   │   │   ├── charts.module.css
+│   │   │   ├── member_stats.module.css
+│   │   │   └── sections/
+│   │   ├── layout/
+│   │   ├── member/admins/
+│   │   └── settlement/                      # 정산 스타일
+│   │       ├── payment_history/
+│   │       ├── withdrawal/
+│   │       └── withdrawal_request/
+│   ├── partner/                             # 파트너 스타일
+│   │   ├── buttons.module.css
+│   │   ├── campaign_application/           # 캠페인 신청 스타일
+│   │   │   ├── campaign_application.module.css
+│   │   │   ├── campaign_infocard.module.css
+│   │   │   ├── campaign_list.module.css
+│   │   │   ├── card/
+│   │   │   ├── empty_applicants.module.css
+│   │   │   ├── excel_download_btn.module.css
+│   │   │   └── sort_dropdown.module.css
+│   │   ├── campaign_card.module.css
+│   │   ├── campaign_contents/               # 콘텐츠 스타일
+│   │   │   └── receipt_preview_modal.module.css
+│   │   ├── campaign_contents.module.css
+│   │   ├── campaign_create/                 # 캠페인 생성 스타일
+│   │   │   ├── campaign_create.module.css
+│   │   │   ├── campaign_guide.module.css
+│   │   │   ├── campaign_header.module.css
+│   │   │   ├── campaign_info.module.css
+│   │   │   ├── custom_dropdown.module.css
+│   │   │   └── notice_section.module.css
+│   │   ├── campaign_management/             # 캠페인 관리 스타일
+│   │   │   ├── campaign_delete_confirm_modal.module.css
+│   │   │   ├── campaign_filter.module.css
+│   │   │   └── campaign_management_modal.module.css
+│   │   ├── dashboard.module.css
+│   │   ├── layout.module.css
+│   │   ├── penalty.module.css
+│   │   ├── point/charge.module.css
+│   │   ├── receipt_registration.module.css
+│   │   ├── signup/signup.module.css
+│   │   ├── statistics.module.css
+│   │   └── tab_navigation.module.css
+│   └── user/                                # 사용자 스타일
+│       ├── campaign/                        # 캠페인 스타일
+│       │   ├── application_modal.module.css
+│       │   ├── campaign_box.module.css
+│       │   ├── campaign_detail/             # 캠페인 상세 스타일
+│       │   └── campaign_detail.module.css
+│       ├── campaign_management/             # 캠페인 관리 스타일
+│       │   ├── buttons.module.css
+│       │   ├── campaign_card.module.css
+│       │   ├── campaign_management.module.css
+│       │   ├── layout.module.css
+│       │   ├── modals/
+│       │   ├── penalty.module.css
+│       │   ├── receipt_modal.module.css
+│       │   ├── receipt_registration.module.css
+│       │   ├── responsive.module.css
+│       │   ├── statistics.module.css
+│       │   └── tab_navigation.module.css
+│       ├── delivery/delivery.module.css
+│       ├── faq/faq.module.css
+│       ├── login/
+│       │   ├── login.module.css
+│       │   └── sns_login.module.css
+│       ├── mypage/                          # 마이페이지 스타일
+│       │   ├── channel_connect_modal.module.css
+│       │   ├── channel.module.css
+│       │   ├── edit_profile.module.css
+│       │   ├── layout.module.css
+│       │   ├── navigation.module.css
+│       │   ├── profile.module.css
+│       │   ├── responsive.module.css
+│       │   └── store_connect_modal.module.css
+│       ├── notice/notice.module.css
+│       ├── point/                           # 포인트 스타일
+│       │   ├── point.module.css
+│       │   └── withdrawal_request.module.css
+│       └── signup/                          # 회원가입 스타일
+│           ├── complete.module.css
+│           └── signup.module.css
+│
+├── hooks/                                   # 커스텀 React 훅
+│   ├── common/                              # 공통 훅
+│   │   ├── campaign_management/useCampaignFilterBar.ts
+│   │   ├── signup/usePhoneVerification.ts
+│   │   └── useTimer.ts
+│   ├── manager/common/campaign/useCampaignProgressDetail.ts
+│   ├── partner/
+│   │   ├── campaign_management/useCampaignCard.ts
+│   │   └── signup/usePartnerTermsAgreement.ts
+│   ├── table/useTableSort.ts
+│   └── user/signup/useTermsAgreement.ts
+│
+├── types/                                    # TypeScript 타입 정의
+│   ├── partner/partner.ts                   # 파트너 타입 정의
+│   └── user/user.ts                         # 사용자 타입 정의
+│
+├── utils/                                    # 유틸리티 함수
+│   ├── cardTypeMapper.ts                     # 카드 타입 매퍼
+│   ├── channelLogoMap.ts                    # 채널 로고 매핑
+│   ├── manager_ga/                           # GA 관리자 유틸
+│   ├── partner/                              # 파트너 유틸
+│   ├── signup/                               # 회원가입 유틸
+│   │   ├── phoneUtils.ts                    # 전화번호 유틸
+│   │   ├── timerUtils.ts                    # 타이머 유틸
+│   │   └── validation.ts                    # 검증 유틸
+│   ├── table/sort.ts                         # 정렬 유틸
+│   └── user/                                 # 사용자 유틸
+│
+└── stories/                                  # Storybook 관련 파일
+    ├── assets/                               # Storybook 에셋
+    ├── button.css
+    ├── configure.css
+    ├── Configure.mdx                         # Storybook 설정 문서
+    ├── header.css
+    └── page.css`}
+      </pre>
+    </div>
+
+    <div className="sb-section-item" style={{ marginTop: '24px' }}>
+      <h4 className="sb-section-item-heading">📌 주요 폴더 설명</h4>
+      <ul style={{ paddingLeft: '20px', lineHeight: '1.8' }}>
+        <li><strong>app/</strong>: Next.js App Router 기반 페이지 라우팅. 각 폴더가 URL 경로가 됩니다.</li>
+        <li><strong>components/</strong>: 재사용 가능한 React 컴포넌트. 역할별로 분리되어 있습니다.</li>
+        <li><strong>data/</strong>: Mock 데이터와 타입 정의. 개발 및 Storybook에서 사용됩니다.</li>
+        <li><strong>styles/</strong>: CSS Modules 스타일 파일. 컴포넌트별로 독립적인 스타일을 관리합니다.</li>
+        <li><strong>hooks/</strong>: 커스텀 React 훅. 상태 관리 및 로직 재사용을 위해 사용됩니다.</li>
+        <li><strong>types/</strong>: TypeScript 타입 정의. 타입 안정성을 보장합니다.</li>
+        <li><strong>utils/</strong>: 유틸리티 함수. 공통으로 사용되는 헬퍼 함수들입니다.</li>
+      </ul>
+    </div>
+
+  </div>
+</div>

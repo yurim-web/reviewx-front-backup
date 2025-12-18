@@ -16,38 +16,38 @@
  * - URL 기반 라우팅으로 새로고침 시에도 페이지 유지
  */
 
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import TabNavigation from "@/components/user/campaign_management/TabNavigation";
-import SubTabNavigation from "@/components/user/mypage/SubTabNavigation";
-import type { MainTab } from "@/types/user/user";
-import layoutStyles from "../../../../styles/user/mypage/layout.module.css";
-import profileStyles from "../../../../styles/user/mypage/profile.module.css";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import TabNavigation from '@/components/user/campaign_management/TabNavigation';
+import SubTabNavigation from '@/components/common/mypage/SubTabNavigation';
+import type { MainTab } from '@/types/user/user';
+import layoutStyles from '../../../../styles/user/mypage/layout.module.css';
+import profileStyles from '../../../../styles/user/mypage/profile.module.css';
 
 /**
  * 프로필 탭 전용 페이지 컴포넌트
  */
 export default function ProfilePage() {
   const router = useRouter();
-  const [activeTopTab, setActiveTopTab] = useState<MainTab>("account");
-  const [activeSubTab, setActiveSubTab] = useState<"profile" | "channel">(
-    "profile"
+  const [activeTopTab, setActiveTopTab] = useState<MainTab>('account');
+  const [activeSubTab, setActiveSubTab] = useState<'profile' | 'channel'>(
+    'profile',
   );
 
   /**
    * 서브 탭 변경 핸들러
    * 각 탭 클릭 시 해당 페이지로 이동
    */
-  const handleSubTabChange = (tab: "profile" | "channel") => {
+  const handleSubTabChange = (tab: 'profile' | 'channel') => {
     switch (tab) {
-      case "profile":
+      case 'profile':
         // 현재 페이지이므로 아무것도 하지 않음
         break;
-      case "channel":
-        window.location.href = "/user/mypage/channel";
+      case 'channel':
+        window.location.href = '/user/mypage/channel';
         break;
     }
   };
@@ -66,6 +66,8 @@ export default function ProfilePage() {
         <SubTabNavigation
           activeSubTab={activeSubTab}
           setActiveSubTab={handleSubTabChange}
+          basePath="/user/mypage"
+          availableTabs={['profile', 'channel']}
         />
 
         {/* 프로필 섹션 */}
@@ -85,7 +87,7 @@ export default function ProfilePage() {
                   alt="프로필 편집 이동"
                   width={16}
                   height={16}
-                  onClick={() => router.push("/user/mypage/edit")}
+                  onClick={() => router.push('/user/mypage/edit')}
                 />
               </div>
             </div>
@@ -97,7 +99,7 @@ export default function ProfilePage() {
           <button
             className={profileStyles.menu_item}
             onClick={() =>
-              window.open("https://markx.dev/guide_book", "_blank")
+              window.open('https://markx.dev/guide_book', '_blank')
             }
           >
             <div className={profileStyles.menu_icon} />
@@ -105,14 +107,14 @@ export default function ProfilePage() {
           </button>
           <button
             className={profileStyles.menu_item}
-            onClick={() => router.push("/notice")}
+            onClick={() => router.push('/notice')}
           >
             <div className={profileStyles.menu_icon} />
             <div className={profileStyles.menu_text}>공지사항</div>
           </button>
           <button
             className={profileStyles.menu_item}
-            onClick={() => router.push("/faq")}
+            onClick={() => router.push('/faq')}
           >
             <div className={profileStyles.menu_icon} />
             <div className={profileStyles.menu_text}>자주 묻는 질문</div>
@@ -120,7 +122,7 @@ export default function ProfilePage() {
           <button
             className={profileStyles.menu_item}
             onClick={() =>
-              window.open("https://pf.kakao.com/_xjxdxoxG/chat", "_blank")
+              window.open('https://pf.kakao.com/_xjxdxoxG/chat', '_blank')
             }
           >
             <div className={profileStyles.menu_icon} />

@@ -1,0 +1,304 @@
+/* ========================================
+   🔐 사용자 로그인 페이지 스타일
+   ======================================== */
+
+/**
+ * 사용자 로그인 페이지 전용 CSS 모듈
+ *
+ * 사용 컴포넌트:
+ * - user/login/page.tsx (사용자 로그인 페이지)
+ *
+ * 주요 스타일:
+ * - 로그인 페이지 전체 레이아웃
+ * - 헤더 스타일
+ * - 입력 필드 스타일
+ * - 로그인 버튼 스타일
+ * - 링크 및 텍스트 스타일
+ */
+
+/* ========================================
+   1. 페이지 전체 컨테이너
+   ======================================== */
+
+/* 로그인 페이지 전체 컨테이너 */
+.login_page_container {
+  background-color: #f2f2f2;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* ========================================
+   2. 헤더 영역
+   ======================================== */
+
+/* 로그인 헤더 */
+.login_header {
+  background-color: #d9d9d9;
+  height: 80px;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* 헤더 콘텐츠 */
+.header_content {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  padding: 0 40px;
+  box-sizing: border-box;
+}
+
+/* 헤더 로고 */
+.header_logo {
+  color: #333333;
+  font-size: 20px;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 24px;
+  letter-spacing: -0.4px;
+  font-family: 'Pretendard', sans-serif;
+  margin: 0;
+}
+
+/* ========================================
+   3. 메인 콘텐츠 영역
+   ======================================== */
+
+/* 로그인 메인 영역 */
+.login_main {
+  background-color: #ffffff;
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  box-sizing: border-box;
+  padding-top: 80px;
+  padding-bottom: 40px;
+}
+
+/* 로그인 메시지 섹션 */
+.login_message_section {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+/* 로그인 제목 */
+.login_title {
+  color: #444444;
+  text-align: center;
+  font-size: 28px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 40px;
+  letter-spacing: -0.56px;
+  font-family: 'Pretendard', sans-serif;
+  margin: 0;
+}
+
+/* ========================================
+   4. 로그인 폼 영역
+   ======================================== */
+
+/* 로그인 폼 */
+.login_form {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 폼 섹션 (입력 필드, 옵션, 버튼 그룹) */
+.form_section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 입력 필드 래퍼 */
+.input_wrapper {
+  width: 100%;
+  position: relative;
+}
+
+/* 입력 필드 */
+.input_field {
+  width: 100%;
+  height: 56px;
+  padding: 0 20px;
+  background-color: #ffffff;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 16px;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  font-family: 'Pretendard', sans-serif;
+  color: #444444;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+/* 입력 필드 포커스 상태 */
+.input_field:focus {
+  border-color: #444444;
+}
+
+/* 입력 필드 플레이스홀더 스타일 */
+.input_field::placeholder {
+  color: #848484;
+}
+
+/* ========================================
+   5. 로그인 옵션 영역
+   ======================================== */
+
+/* 로그인 옵션 섹션 */
+.login_options_section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* 자동 로그인 래퍼 */
+.auto_login_wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 체크박스 */
+.checkbox {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: #444444;
+}
+
+/* 체크박스 라벨 */
+.checkbox_label {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  font-family: 'Pretendard', sans-serif;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* 아이디 · 비밀번호 찾기 링크 */
+.find_account_link {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  font-family: 'Pretendard', sans-serif;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+/* 아이디 · 비밀번호 찾기 링크 호버 */
+.find_account_link:hover {
+  color: #444444;
+  text-decoration: underline;
+  text-underline-position: from-font;
+}
+
+/* ========================================
+   6. 로그인 버튼
+   ======================================== */
+
+/* 로그인 버튼 */
+.login_button {
+  width: 100%;
+  height: 56px;
+  background-color: #444444;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  font-family: 'Pretendard', sans-serif;
+  transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+
+/* 로그인 버튼 호버 */
+.login_button:hover {
+  opacity: 0.9;
+}
+
+/* 로그인 버튼 활성화 */
+.login_button:active {
+  opacity: 0.8;
+}
+
+/* ========================================
+   7. 에러 메시지
+   ======================================== */
+
+/* 에러 메시지 섹션 */
+.error_message_section {
+  margin-top: 8px;
+  width: 100%;
+}
+
+/* 에러 텍스트 */
+.error_text {
+  color: #ff2626;
+  font-size: 14px;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  font-family: 'Pretendard', sans-serif;
+}
+
+/* ========================================
+   8. 반응형 디자인
+   ======================================== */
+
+/* 모바일 (0~739px) */
+@media (max-width: 739px) {
+  .login_main {
+    padding-top: 40px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .login_title {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  .login_form {
+    max-width: 100%;
+  }
+
+  .header_content {
+    padding: 0 20px;
+  }
+}

@@ -10,15 +10,16 @@
  * 주요 기능: 프로필 사진, 기본 정보, 사업자 정보, 주소 정보 수정
  */
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import SubHeader from "@/components/fragments/SubHeader";
+import PageTitle from "@/components/fragments/PageTitle";
 // 유저단 이랑 스타일 똑같아서 공통으로 쓰는중
 import styles from "../../../../styles/user/mypage/edit_profile.module.css";
 // 분리된 컴포넌트들 import
-import ProfilePhotoUpload from "@/components/mypage/ProfilePhotoUpload";
-import PhoneVerificationInput from "@/components/mypage/PhoneVerificationInput";
+import ProfilePhotoUpload from "@/components/common/mypage/ProfilePhotoUpload";
+import PhoneVerificationInput from "@/components/common/mypage/PhoneVerificationInput";
 import BusinessDocumentUpload from "@/components/partner/mypage/BusinessDocumentUpload";
-import AddressInput from "@/components/mypage/AddressInput";
+import AddressInput from "@/components/common/mypage/AddressInput";
 
 /**
  * 파트너 내 정보 수정 페이지 컴포넌트
@@ -39,8 +40,10 @@ export default function PartnerEditProfilePage() {
   });
 
   const [isPhoneVerified, setIsPhoneVerified] = useState(true); // 휴대폰 인증 완료 여부
-  const [isBusinessDocumentUploaded, setIsBusinessDocumentUploaded] = useState(true); // 사업자등록증 업로드 여부
-  const [selectedBusinessDocument, setSelectedBusinessDocument] = useState<File | null>(null); // 선택한 사업자등록증 파일
+  const [isBusinessDocumentUploaded, setIsBusinessDocumentUploaded] =
+    useState(true); // 사업자등록증 업로드 여부
+  const [selectedBusinessDocument, setSelectedBusinessDocument] =
+    useState<File | null>(null); // 선택한 사업자등록증 파일
   const [profileImage, setProfileImage] = useState<string | null>(null); // 프로필 사진 미리보기 URL
 
   /**
@@ -51,7 +54,6 @@ export default function PartnerEditProfilePage() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
 
   /**
    * 휴대폰 번호 유효성 검사 함수
@@ -93,7 +95,6 @@ export default function PartnerEditProfilePage() {
     setIsBusinessDocumentUploaded(true);
   };
 
-
   /**
    * 저장 버튼 활성화 조건
    * 모든 필수 필드가 채워져 있는지 확인
@@ -101,12 +102,13 @@ export default function PartnerEditProfilePage() {
   const isSaveEnabled = formData.phone.trim().length > 0;
 
   /**
-   * 메인 헤더 숨기기
-   * useEffect 훅으로 컴포넌트 마운트 시 header 숨김
+   * 파트너 헤더 숨기기
+   * SubHeader가 표시될 때는 PartnerHeader를 숨김
    */
   useEffect(() => {
     const header = document.querySelector("header");
     if (header) header.style.display = "none";
+
     return () => {
       if (header) header.style.display = "block";
     };
@@ -116,7 +118,7 @@ export default function PartnerEditProfilePage() {
     <div className={styles.edit_profile_container}>
       <SubHeader />
       <main className={styles.main_content}>
-        <h1 className={styles.page_title}>내 정보 수정</h1>
+        <PageTitle title="내 정보 수정" />
 
         <section className={styles.section_container}>
           {/* 기본 정보 섹션 */}
@@ -235,10 +237,6 @@ export default function PartnerEditProfilePage() {
             }
             onPostalCodeSearch={handlePostalCodeSearch}
           />
-
-           
-
-
         </section>
 
         {/* 저장 버튼 */}

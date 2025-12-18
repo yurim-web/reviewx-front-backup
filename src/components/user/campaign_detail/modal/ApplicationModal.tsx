@@ -18,7 +18,7 @@
 "use client";
 
 import { useState } from "react";
-import styles from "../../../../styles/user/campaign/application_modal.module.css";
+import styles from "@/styles/user/campaign/application_modal.module.css";
 
 interface ApplicationModalProps {
   isOpen: boolean;

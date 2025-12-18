@@ -1,0 +1,23 @@
+/* ========================================
+   🧭 GA 진행 현황 상세 페이지 레이아웃
+   ======================================== */
+
+.detail_page_wrapper {
+  width: 100%;
+  padding: 80px 24px 80px;
+  background-color: #f9fafc;
+  box-sizing: border-box;
+}
+
+.content_container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  background-color: #fff;
+  height: 100%;
+}
+
+.content_inner {
+  width: 100%;
+  height: calc(100vh - 80px); /* header 높이(80px)를 제외한 높이 */
+}

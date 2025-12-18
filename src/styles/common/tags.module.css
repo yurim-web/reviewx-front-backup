@@ -1,0 +1,372 @@
+/* ========================================
+   🏷️ 공통 태그 스타일
+   ======================================== */
+
+/**
+ * 공통 태그 스타일
+ *
+ * 목적: manager_ga와 manager_sa에서 공통으로 사용하는 태그 컴포넌트의 스타일입니다.
+ *
+ * 사용 컴포넌트:
+ * - MemberStatusTag.tsx (회원 상태 태그)
+ * - CampaignStatusTag.tsx (캠페인 상태 태그)
+ * - ReviewerTypeTag.tsx (리뷰어 타입 태그)
+ * - PenaltyTypeTag.tsx (패널티 유형 태그)
+ * - CampaignTypeTag.tsx (캠페인 타입 태그)
+ *
+ * 사용 방법:
+ * 각 컴포넌트에서 필요한 스타일만 import하여 사용합니다.
+ * 예: import tagStyles from '@/styles/common/tags.module.css';
+ */
+
+/* ========================================
+   상태 태그 기본 스타일
+   ======================================== */
+
+/* 상태 태그 기본 스타일 (공통) */
+.status_tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  min-width: 40px;
+  height: 22px;
+  white-space: nowrap;
+}
+
+/* ========================================
+   회원 상태 태그 스타일 (MemberStatusTag)
+   ======================================== */
+
+/* 정상 상태 태그 */
+.status_tag_normal {
+  background-color: rgba(43, 127, 255, 0.1);
+  color: #2b7fff;
+}
+
+/* 일시 정지 상태 태그 */
+.status_tag_suspended {
+  background-color: rgba(255, 38, 38, 0.05);
+  color: #ff2626;
+}
+
+/* 영구 정지 상태 태그 */
+.status_tag_permanent {
+  background-color: #f1f1f1;
+  color: #666666;
+}
+
+/* 탈퇴 상태 태그 */
+.status_tag_withdrawn {
+  background-color: #f1f1f1;
+  color: #666666;
+}
+
+/* ========================================
+   캠페인 상태 태그 스타일 (CampaignStatusTag)
+   ======================================== */
+
+/* 예정 상태 태그 */
+.status_tag_scheduled {
+  background-color: rgba(255, 225, 0, 0.1);
+  color: #c4a300;
+}
+
+/* 신청 상태 태그 */
+.status_tag_applied {
+  background-color: rgba(255, 86, 148, 0.1);
+  color: #ff5694;
+}
+
+/* 진행 상태 태그 */
+.status_tag_progress {
+  background-color: rgba(43, 127, 255, 0.1);
+  color: #2b7fff;
+}
+
+/* 종료 상태 태그 */
+.status_tag_ended {
+  background-color: #666666;
+  color: white;
+}
+
+/* 취소 상태 태그 */
+.status_tag_cancelled {
+  background-color: rgba(255, 38, 38, 0.05);
+  color: #ff2626;
+}
+
+/* 긴급 상태 태그 */
+.status_tag_urgent {
+  background-color: #ff2626;
+  color: white;
+}
+
+/* 기존 호환성을 위한 별칭 (종료 = 완료) */
+.status_tag_completed {
+  background-color: #666666;
+  color: white;
+}
+
+/* ========================================
+   타입 태그 기본 스타일
+   ======================================== */
+
+/* 타입 태그 기본 스타일 (공통) */
+.type_tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  white-space: nowrap;
+}
+
+/* ========================================
+   리뷰어 타입 태그 스타일 (ReviewerTypeTag)
+   ======================================== */
+
+/* 서포터즈 태그 */
+.type_tag_supporter {
+  background-color: rgba(255, 86, 148, 0.1);
+  color: #ff5694;
+}
+
+/* 일반 태그 */
+.type_tag_normal {
+  background-color: #f1f1f1;
+  color: #666666;
+}
+
+/* 인플루언서 태그 */
+.type_tag_influencer {
+  background-color: rgba(45, 196, 105, 0.1);
+  color: #2dc469;
+}
+
+/* ========================================
+   패널티 유형 태그 스타일 (PenaltyTypeTag)
+   ======================================== */
+
+/* 패널티 태그 기본 스타일 */
+.type_tag_penalty {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 경고 태그 */
+.type_tag_penalty_warning {
+  background-color: rgba(255, 102, 0, 0.1);
+  color: #ff6600;
+}
+
+/* 주의 태그 */
+.type_tag_penalty_caution {
+  background-color: rgba(255, 38, 38, 0.05);
+  color: #ff2626;
+}
+
+/* 정지 태그 */
+.type_tag_penalty_suspension {
+  background-color: #f1f1f1;
+  color: #666666;
+}
+
+/* ========================================
+   캠페인 타입 태그 스타일 (CampaignTypeTag)
+   ======================================== */
+
+/* 캠페인 타입 태그는 type_tag 기본 스타일 사용 */
+/* 모든 캠페인 타입(배송형, 방문형, 구매평, 기자단, 미션형)은 동일한 스타일 */
+
+/* ========================================
+   결제 수단 태그 스타일 (PaymentMethodTag)
+   ======================================== */
+
+/* 결제 수단 태그 기본 스타일 */
+.payment_method_tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  min-width: 80px;
+  height: 22px;
+}
+
+/* 카드 결제 태그 */
+.payment_method_card {
+  background-color: rgba(255, 86, 148, 0.1);
+  color: #ff5694;
+}
+
+/* 무통장 입금 태그 */
+.payment_method_bank {
+  background-color: #f1f1f1;
+  color: #666666;
+}
+
+/* ========================================
+   사업자 구분 태그 스타일 (BusinessTypeTag)
+   ======================================== */
+
+/* 사업자 구분 태그 기본 스타일 */
+.division_tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  white-space: nowrap;
+}
+
+/* 법인 태그 */
+.division_tag_corporate {
+  background-color: #666666;
+  color: white;
+}
+
+/* 개인 태그 */
+.division_tag_individual {
+  background-color: #f1f1f1;
+  color: #666666;
+}
+
+/* ========================================
+   유저 타입 태그 스타일 (UserTypeTag)
+   ======================================== */
+
+/* 유저 타입 태그 기본 스타일 */
+.division_tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  white-space: nowrap;
+}
+
+/* 리뷰어 태그 */
+.division_tag_reviewer {
+  background-color: rgba(255, 86, 148, 0.1);
+  color: #ff5694;
+}
+
+/* 파트너 태그 */
+.division_tag_partner {
+  background-color: rgba(43, 127, 255, 0.1);
+  color: #2b7fff;
+}
+
+/* 관리자 태그 */
+.division_tag_admin {
+  background-color: #f1f1f1;
+  color: #666666;
+}
+
+/* ========================================
+   결제 상태 태그 스타일 (PaymentStatusTag)
+   ======================================== */
+
+/* 결제 상태 태그 기본 스타일 */
+.payment_status_tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  min-width: 40px;
+  height: 22px;
+}
+
+/* 대기 태그 */
+.payment_status_pending {
+  background-color: #f1f1f1;
+  color: #666666;
+}
+
+/* 완료 태그 */
+.payment_status_completed {
+  background-color: rgba(45, 196, 105, 0.1);
+  color: #2dc469;
+}
+
+/* 취소 태그 */
+.payment_status_cancelled {
+  background-color: rgba(255, 38, 38, 0.05);
+  color: #ff2626;
+}
+
+/* ========================================
+   출금 처리 상태 태그 스타일 (PayoutStatusTag)
+   ======================================== */
+
+/* 출금 처리 상태 태그 기본 스타일 */
+.payout_status_tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  min-width: 40px;
+  height: 22px;
+}
+
+/* 신청 태그 */
+.payout_status_request {
+  background-color: #f1f1f1;
+  color: #666666;
+}
+
+/* 긴급 태그 */
+.payout_status_urgent {
+  background-color: #ff2626;
+  color: white;
+}
+
+/* 완료 태그 */
+.payout_status_completed {
+  background-color: rgba(45, 196, 105, 0.1);
+  color: #2dc469;
+}
+
+/* 반려 태그 */
+.payout_status_rejected {
+  background-color: rgba(255, 38, 38, 0.05);
+  color: #ff2626;
+}

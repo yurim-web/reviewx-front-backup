@@ -61,21 +61,6 @@
   margin: 0 auto;
 }
 
-/* 페이지 제목 */
-.page_title {
-  color: #333;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 20px; /* 100% */
-  letter-spacing: -0.4px;
-  padding: 24px 40px;
-  position: sticky;
-  top: 80px; /* SubHeader 높이만큼 아래로 */
-  background: white;
-  z-index: 10;
-  border-bottom: 1px solid #e0e0e0;
-}
-
 /* 카테고리 필터 */
 .category_container {
   display: flex;

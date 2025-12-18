@@ -1,0 +1,453 @@
+/* ========================================
+   📝 유저 회원가입 페이지
+   ======================================== */
+
+/**
+ * 유저 회원가입 페이지
+ *
+ * 목적: 새로운 유저가 회원가입을 할 수 있는 페이지입니다.
+ *
+ * 페이지 경로:
+ * - /user/signup
+ *
+ * 주요 기능:
+ * - 아이디(이메일) 입력
+ * - 비밀번호 입력 및 확인
+ * - 이름 입력
+ * - 휴대폰 번호 인증
+ * - 약관 동의
+ * - 회원가입
+ */
+
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Header from '@/components/fragments/Header';
+import PhoneVerification from '@/components/common/signup/PhoneVerification';
+import TermsAgreement from '@/components/user/signup/TermsAgreement';
+import ExistingAccountModal, {
+  type SocialLoginType,
+} from '@/components/user/signup/ExistingAccountModal';
+import PasswordInput from '@/components/common/signup/PasswordInput';
+import PasswordConfirmInput from '@/components/common/signup/PasswordConfirmInput';
+import { useTermsAgreement } from '@/hooks/user/signup/useTermsAgreement';
+import { usePhoneVerification } from '@/hooks/common/signup/usePhoneVerification';
+import {
+  validateSignupForm,
+  type SignupFormErrors,
+} from '@/components/user/signup/utils/formValidation';
+import styles from '@/styles/user/signup/signup.module.css';
+
+/**
+ * 유저 회원가입 페이지 컴포넌트
+ *
+ * @returns JSX.Element - 유저 회원가입 페이지 UI
+ */
+export default function UserSignupPage() {
+  const router = useRouter();
+
+  // ========================================
+  // 상태 관리 (State Management)
+  // ========================================
+
+  // 폼 데이터
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [passwordConfirm, setPasswordConfirm] = useState<string>('');
+  const [name, setName] = useState<string>('');
+
+  // 에러 메시지
+  const [errors, setErrors] = useState<SignupFormErrors>({});
+
+  // 모달 상태
+  const [showExistingAccountModal, setShowExistingAccountModal] =
+    useState<boolean>(false);
+  // 기존 계정의 소셜 로그인 타입 (카카오 또는 네이버)
+  const [existingAccountSocialType, setExistingAccountSocialType] =
+    useState<SocialLoginType>('kakao');
+
+  // 커스텀 훅 사용
+  const {
+    allAgreed,
+    termsAgreed,
+    privacyAgreed,
+    marketingAgreed,
+    setTermsAgreed,
+    setPrivacyAgreed,
+    setMarketingAgreed,
+    handleAllAgreedChange,
+  } = useTermsAgreement();
+
+  const {
+    phone,
+    verificationCode,
+    isVerificationRequested,
+    isPhoneVerified,
+    timer,
+    setPhone,
+    setVerificationCode,
+    handleVerificationRequest,
+    handleVerify,
+    resetVerification,
+  } = usePhoneVerification();
+
+  // ========================================
+  // 이벤트 핸들러 (Event Handlers)
+  // ========================================
+
+  /**
+   * ========================================
+   * 휴대폰 번호 변경 핸들러
+   * ========================================
+   * 기능: 휴대폰 번호 변경 시 인증 상태 초기화
+   */
+  const handlePhoneChange = (newPhone: string) => {
+    setPhone(newPhone);
+
+    // 휴대폰 번호 변경 시 인증 상태 초기화
+    if (newPhone === '' || isPhoneVerified || isVerificationRequested) {
+      resetVerification();
+      setErrors((prev) => ({
+        ...prev,
+        phone: undefined,
+        verificationCode: undefined,
+      }));
+    }
+  };
+
+  /**
+   * ========================================
+   * 인증번호 받기 핸들러
+   * ========================================
+   * 기능: 휴대폰 번호 인증번호 요청
+   */
+  const handleVerificationRequestClick = () => {
+    const error = handleVerificationRequest();
+    if (error) {
+      setErrors((prev) => ({ ...prev, phone: error }));
+    } else {
+      setErrors((prev) => ({ ...prev, phone: undefined }));
+    }
+  };
+
+  /**
+   * ========================================
+   * 인증 확인 핸들러
+   * ========================================
+   * 기능: 인증번호 확인 및 인증 완료 처리
+   */
+  const handleVerifyClick = () => {
+    const error = handleVerify();
+    if (error) {
+      setErrors((prev) => ({
+        ...prev,
+        verificationCode: error,
+      }));
+    } else {
+      setErrors((prev) => ({ ...prev, verificationCode: undefined }));
+
+      // 인증 완료 후 해당 휴대폰 번호로 가입된 계정이 있는지 확인
+      // TODO: 실제 API 호출
+      // const response = await checkExistingAccount(phone);
+      // if (response.hasExistingAccount) {
+      //   setExistingAccountSocialType(response.socialLoginType); // 'kakao' 또는 'naver'
+      //   setShowExistingAccountModal(true);
+      //   return;
+      // }
+
+      // 테스트용: 특정 휴대폰 번호로 이미 가입된 계정이 있다고 가정
+      // 010-1234-5678 → 카카오, 010-0000-0000 → 네이버
+      const testKakaoPhone = '010-1234-5678';
+      const testNaverPhone = '010-0000-0000';
+
+      if (phone === testKakaoPhone) {
+        setExistingAccountSocialType('kakao');
+        setShowExistingAccountModal(true);
+      } else if (phone === testNaverPhone) {
+        setExistingAccountSocialType('naver');
+        setShowExistingAccountModal(true);
+      }
+    }
+  };
+
+  /**
+   * ========================================
+   * 회원가입 폼 제출 핸들러
+   * ========================================
+   * 기능: 회원가입 폼 유효성 검증 및 제출 처리
+   */
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // 폼 유효성 검증
+    const newErrors = validateSignupForm({
+      email,
+      password,
+      passwordConfirm,
+      name,
+      phone,
+      isPhoneVerified,
+      termsAgreed,
+      privacyAgreed,
+    });
+
+    setErrors(newErrors);
+
+    // 에러가 있으면 제출 중단
+    if (Object.keys(newErrors).length > 0) {
+      return;
+    }
+
+    // 회원가입 처리
+    console.log('회원가입 시도:', {
+      email,
+      password,
+      name,
+      phone,
+      marketingAgreed,
+    });
+
+    // TODO: 실제 API 호출
+    // const response = await signupAPI({ email, password, name, phone, marketingAgreed });
+    // if (response.success) {
+    //   router.push('/user/login');
+    // }
+
+    // 테스트용: 성공 시 회원가입 완료 페이지로 이동
+    router.push(`/user/signup/complete?nickname=${encodeURIComponent(name)}`);
+  };
+
+  // ========================================
+  // 렌더링 (JSX)
+  // ========================================
+
+  return (
+    <div className={styles.signup_page_container}>
+      {/* ========================================
+          메인 헤더
+          ========================================
+          기능: 상단 네비게이션 헤더 표시
+      */}
+      <Header />
+
+      {/* 서브 헤더 */}
+      <div className={styles.sub_header}>
+        <h1 className={styles.sub_header_title}>리뷰어 회원가입</h1>
+      </div>
+
+      {/* ========================================
+          메인 콘텐츠 영역
+          ========================================
+          기능: 회원가입 폼이 표시되는 메인 영역
+      */}
+      <main className={styles.signup_main}>
+        {/* ========================================
+            로고 섹션
+            ========================================
+            기능: VX. 로고 표시 (왼쪽 정렬)
+        */}
+        <div className={styles.logo_section}>
+          <h2 className={styles.logo_text}>VX.</h2>
+        </div>
+
+        {/* ========================================
+            회원가입 폼
+            ========================================
+            기능: 회원가입 입력 폼
+            - 아이디(이메일), 비밀번호, 이름, 휴대폰 번호 입력
+            - 약관 동의 체크박스
+            - 회원가입 제출 버튼
+        */}
+        <form className={styles.signup_form} onSubmit={handleSubmit}>
+          {/* ========================================
+              아이디(이메일) 입력 필드
+              ========================================
+              기능: 이메일 형식의 아이디 입력
+              - 이메일 형식 검증
+              - 에러 시 빨간색 테두리 표시
+          */}
+          <div className={styles.form_field}>
+            <label className={styles.field_label} htmlFor="email">
+              아이디(이메일)
+            </label>
+            <input
+              id="email"
+              type="email"
+              className={`${styles.input_field} ${
+                errors.email ? styles.input_error : ''
+              }`}
+              placeholder="{SNS에 등록한 이메일}"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setErrors((prev) => ({ ...prev, email: undefined }));
+              }}
+              onInvalid={(e) => {
+                e.preventDefault();
+              }}
+            />
+          </div>
+
+          {/* ========================================
+              비밀번호 입력 필드
+              ========================================
+              기능: 비밀번호 입력 및 실시간 검증
+          */}
+          <PasswordInput
+            value={password}
+            error={errors.password}
+            onValueChange={(value) => {
+              setPassword(value);
+            }}
+            onErrorChange={(error) => {
+              setErrors((prev) => ({ ...prev, password: error }));
+            }}
+            onPasswordConfirmValidate={(newPassword) => {
+              if (passwordConfirm && passwordConfirm !== newPassword) {
+                setErrors((prev) => ({
+                  ...prev,
+                  passwordConfirm: '비밀번호가 일치하지 않습니다.',
+                }));
+              } else if (passwordConfirm && passwordConfirm === newPassword) {
+                setErrors((prev) => ({
+                  ...prev,
+                  passwordConfirm: undefined,
+                }));
+              }
+            }}
+            passwordConfirm={passwordConfirm}
+          />
+
+          {/* ========================================
+              비밀번호 확인 입력 필드
+              ========================================
+              기능: 비밀번호 일치 확인
+          */}
+          <PasswordConfirmInput
+            value={passwordConfirm}
+            password={password}
+            error={errors.passwordConfirm}
+            onValueChange={(value) => {
+              setPasswordConfirm(value);
+            }}
+            onErrorChange={(error) => {
+              setErrors((prev) => ({
+                ...prev,
+                passwordConfirm: error,
+              }));
+            }}
+          />
+
+          {/* ========================================
+              이름 입력 필드
+              ========================================
+              기능: 사용자 이름 입력
+              - 필수 입력 필드
+              - 에러 시 빨간색 테두리 표시
+          */}
+          <div className={styles.form_field}>
+            <label className={styles.field_label} htmlFor="name">
+              이름
+            </label>
+            <input
+              id="name"
+              type="text"
+              className={`${styles.input_field} ${
+                errors.name ? styles.input_error : ''
+              }`}
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value);
+                setErrors((prev) => ({ ...prev, name: undefined }));
+              }}
+              onInvalid={(e) => {
+                e.preventDefault();
+              }}
+            />
+          </div>
+
+          {/* ========================================
+              휴대폰 번호 입력 및 인증
+              ========================================
+              기능: 휴대폰 번호 입력 및 SMS 인증
+          */}
+          <PhoneVerification
+            phone={phone}
+            verificationCode={verificationCode}
+            isVerificationRequested={isVerificationRequested}
+            isPhoneVerified={isPhoneVerified}
+            timer={timer}
+            error={errors.phone}
+            verificationCodeError={errors.verificationCode}
+            onPhoneChange={handlePhoneChange}
+            onVerificationRequest={handleVerificationRequestClick}
+            onResend={handleVerificationRequestClick}
+            onVerify={handleVerifyClick}
+            onVerificationCodeChange={(code) => {
+              setVerificationCode(code);
+              setErrors((prev) => ({
+                ...prev,
+                verificationCode: undefined,
+              }));
+            }}
+          />
+
+          {/* ========================================
+              약관 동의 섹션
+              ========================================
+              기능: 이용약관 및 개인정보 동의
+          */}
+          <TermsAgreement
+            allAgreed={allAgreed}
+            termsAgreed={termsAgreed}
+            privacyAgreed={privacyAgreed}
+            marketingAgreed={marketingAgreed}
+            error={errors.terms}
+            onAllAgreedChange={handleAllAgreedChange}
+            onTermsAgreedChange={setTermsAgreed}
+            onPrivacyAgreedChange={setPrivacyAgreed}
+            onMarketingAgreedChange={setMarketingAgreed}
+          />
+
+          {/* ========================================
+              회원가입 제출 버튼
+              ========================================
+              기능: 회원가입 폼 제출
+              - 모든 유효성 검증 통과 시 제출
+              - 성공 시 로그인 페이지로 이동
+          */}
+          <button type="submit" className={styles.submit_button}>
+            회원가입
+          </button>
+        </form>
+      </main>
+
+      {/* ========================================
+          기존 계정 모달
+          ========================================
+          기능: 해당 휴대폰 번호로 가입된 계정이 있을 때 표시
+          - 카카오 로그인하기 버튼
+          - 닫기 버튼
+      */}
+      {showExistingAccountModal && (
+        <ExistingAccountModal
+          onClose={() => setShowExistingAccountModal(false)}
+          socialLoginType={existingAccountSocialType}
+          onKakaoLogin={() => {
+            // TODO: 카카오 로그인 처리
+            console.log('카카오 로그인');
+            setShowExistingAccountModal(false);
+            // router.push('/user/sns_login?provider=kakao');
+          }}
+          onNaverLogin={() => {
+            // TODO: 네이버 로그인 처리
+            console.log('네이버 로그인');
+            setShowExistingAccountModal(false);
+            // router.push('/user/sns_login?provider=naver');
+          }}
+        />
+      )}
+    </div>
+  );
+}

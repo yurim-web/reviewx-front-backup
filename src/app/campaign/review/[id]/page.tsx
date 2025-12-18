@@ -29,7 +29,7 @@ import { notFound } from "next/navigation";
 import { useEffect, useState, useRef, use } from "react";
 import SubHeader from "@/components/fragments/SubHeader";
 import ApplicationModal from "@/components/user/campaign_detail/modal/ApplicationModal";
-import styles from "../../../../styles/user/campaign/campaign_detail.module.css";
+import styles from "@/styles/user/campaign/campaign_detail.module.css";
 import { reviewCampaigns } from "@/data/user/review/reviewCampaigns";
 import ApplicationModalType2 from "@/components/user/campaign_detail/modal/ApplicationModalType2";
 import MainMenu from "@/components/main/MainMenu";

@@ -26,6 +26,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "../../styles/user/notice/notice.module.css";
 import SubHeader from "@/components/fragments/SubHeader";
+import PageTitle from "@/components/fragments/PageTitle";
 
 interface NoticeItem {
   id: number;
@@ -97,7 +98,7 @@ export default function NoticePage() {
 
       <main className={styles.main_content}>
         {/* 페이지 제목 */}
-        <h1 className={styles.page_title}>공지사항</h1>
+        <PageTitle title="공지사항" />
 
         <section className={styles.section_container}>
           {/* 카테고리 필터 */}

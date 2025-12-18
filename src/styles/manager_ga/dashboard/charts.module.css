@@ -1,0 +1,227 @@
+/* ========================================
+   📈 차트 관련 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - ChartsSection (차트 섹션)
+ * - CampaignRecruitmentSection (캠페인 모집 통계 섹션)
+ * - RejectionReportSection (반려/신고 통계 섹션)
+ * - AccessStatsSection (접속 통계 섹션)
+ * - 각종 차트 컴포넌트들
+ * 
+ * 사용 페이지:
+ * - /manager_ga (GA 관리자 대시보드)
+ */
+
+/* 차트 섹션 그리드 (2열) */
+.charts_grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+/* 차트 섹션 그리드 (3열) - 캠페인 모집 통계, 반려/신고 통계, 접속 통계 */
+.charts_grid_three {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr; /* 캠페인 모집 통계가 더 넓게 */
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+/* 차트 카드 */
+.chart_card {
+  background-color: white;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 20px;
+  max-height: 356px;
+}
+
+/* 차트 카드 제목 */
+.chart_card_title {
+  color: #444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px; /* 100% */
+  letter-spacing: -0.36px;
+}
+
+/* 차트 헤더 (제목과 범례를 같은 줄에 배치) */
+.chart_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 24px;
+}
+
+/* 차트 범례 컨테이너 */
+.chart_legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #444;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 12px; /* 100% */
+  letter-spacing: -0.24px;
+}
+
+/* 차트 범례 아이템 */
+.chart_legend_item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 차트 범례 아이콘 */
+.chart_legend_icon {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* 차트 범례 아이콘 - 달성률 */
+.chart_legend_icon_achievement {
+  background-color: #ababab;
+}
+
+/* 차트 범례 아이콘 - 평균 진행 기간 */
+.chart_legend_icon_light {
+  background-color: #e5e5e5;
+}
+
+/* 차트 범례 아이콘 - 어두운 회색 (모집률) */
+.chart_legend_icon_dark {
+  background-color: #444444;
+}
+
+/* 차트 영역 */
+.chart_area {
+  width: 100%;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #848484;
+  font-size: 14px;
+  overflow: visible; /* 날짜 레이블이 잘리지 않도록 */
+}
+
+/* 차트 영역 포커스 아웃라인 제거 */
+.chart_area:focus,
+.chart_area:focus-visible,
+.chart_area:focus-within {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* 차트 내부 SVG 요소 포커스 아웃라인 제거 */
+.chart_area svg:focus,
+.chart_area svg:focus-visible,
+.chart_area svg *:focus,
+.chart_area svg *:focus-visible {
+  outline: none !important;
+  border: none !important;
+}
+
+/* 캠페인 모집 통계 차트 영역 */
+.chart_area_campaign_recruitment {
+  height: 350px;
+  width: 100%;
+  position: relative;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  box-shadow: none;
+  overflow: visible;
+  padding-bottom: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+/* 반려/신고 차트 영역  */
+.chart_area_rejection_report {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  box-shadow: none;
+  overflow: visible;
+  padding-bottom: 20px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+/* 차트 툴팁 컨테이너 */
+.chart_tooltip {
+  background-color: #444444;
+  padding: 8px;
+  border-radius: 4px;
+  color: white;
+  font-size: 13px;
+  width: fit-content; /* 내용에 맞게 너비 자동 조정 */
+  min-width: 50px; /* 최소 너비 50px */
+  transition: none !important; /* 애니메이션 제거 */
+  animation: none !important; /* 애니메이션 제거 */
+}
+
+/* 차트 툴팁 날짜 텍스트 */
+.chart_tooltip_date {
+  color: #d9d9d9;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 13px; /* 100% */
+  letter-spacing: -0.26px;
+}
+
+/* 차트 툴팁 항목 텍스트 */
+.chart_tooltip_item {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 13px; /* 100% */
+  letter-spacing: -0.26px;
+  margin: 4px 0 0 0;
+}
+
+/* 차트 툴팁 마지막 항목 텍스트 */
+.chart_tooltip_item_last {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 13px; /* 100% */
+  letter-spacing: -0.26px;
+  margin: 4px 0 0 0;
+}
+
+/* 차트 툴팁 이름 (예: "달성률", "모집률") */
+.chart_tooltip_name {
+  color: #d9d9d9;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 13px; /* 100% */
+  letter-spacing: -0.26px;
+  margin: 0;
+  padding: 0;
+}
+
+/* 차트 툴팁 값 (예: "60%") */
+.chart_tooltip_value {
+  color: #fff;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 13px; /* 100% */
+  letter-spacing: -0.26px;
+  margin: 4px 0 0 0;
+  padding: 0;
+}

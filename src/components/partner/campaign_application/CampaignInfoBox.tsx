@@ -22,10 +22,34 @@
 
 import styles from "@/styles/partner/campaign_application/campaign_infocard.module.css";
 import CampaignSchedule from "./CampaignSchedule";
+import { getBrandLogo } from "@/data/partner/utils/campaignHelpers";
 import {
-  getStatusMessage,
-  getBrandLogo,
-} from "@/data/partner/utils/campaignHelpers";
+  deriveCampaignStatus,
+  getStatusText,
+} from "./utils/campaign_info_helpers";
+
+/* ========================================
+   🧭 파일 구조 한눈에 보기
+   ========================================
+
+   1️⃣ 날짜 기반 상태 계산 기초 함수
+       - 모집/등록/선정 단계별 남은 일수와 마감 여부를 계산합니다.
+
+   2️⃣ 날짜 파싱 유틸리티 모음
+       - 문자열을 Date 객체로 변환하고 범위를 다룰 때 사용하는 공통 함수입니다.
+
+   3️⃣ 상태 판별 & 메시지 생성 로직
+       - deriveCampaignStatus: 실시간 상태를 구합니다.
+       - getStatusText: 파생 상태에 맞는 안내 문구를 만듭니다.
+
+   👉 세부 구현은 utils/campaign_info_helpers.ts에 분리되어 있으니 함께 확인하세요.
+
+   4️⃣ 타입 정의와 메인 컴포넌트
+       - CampaignInfo 인터페이스와 Campaignbanner 컴포넌트를 정의합니다.
+
+   📌 학습 순서 추천
+       ① 날짜 계산 함수 이해 → ② 유틸 모듈 구조 파악 → ③ 상태 판별 흐름 읽기 → ④ 컴포넌트에서 어떻게 사용하는지 확인
+*/
 
 // 목록 카드와 동일한 로고 매핑을 사용하기 위해 유틸의 getBrandLogo를 그대로 사용합니다.
 
@@ -41,10 +65,7 @@ export interface CampaignInfo {
     | "선정 중"
     | "구매 중"
     | "등록 중"
-    | "마감"
-    | "진행 중"
-    | "종료"
-    | "취소";
+    | "마감";
   /** 캠페인 유형 - 배송형, 방문형, 구매평, 기자단, 미션형 */
   campaignType: "배송형" | "방문형" | "구매평" | "기자단" | "미션형";
   /** 카테고리 - 식품, 뷰티, 가전, 유아동, 여가, 서비스, 생활, 패션, 가구, 디지털, 문화, 반려동물, 기타 */
@@ -64,7 +85,7 @@ export interface CampaignInfo {
 }
 
 /**
- * 🎓 학습 포인트
+ * 🎓
  *
  * 📌 타입 확장 전략:
  * 1. 유니온 타입: 여러 값을 |로 묶어 다양한 값 허용
@@ -77,11 +98,37 @@ export interface CampaignInfo {
  * - 불필요한 중복 코드 제거
  */
 
+/* ========================================
+   📦 컴포넌트 Props 타입 정의
+   ======================================== */
 interface CampaignbannerProps {
   campaignInfo: CampaignInfo;
+  /** 콘텐츠 확인 요청 건수 (진행 중 상태일 때 사용) */
+  reviewingCount?: number;
+  /** 콘텐츠 확인 완료 건수 (진행 중 상태일 때 사용) */
+  completedCount?: number;
 }
 
-export default function Campaignbanner({ campaignInfo }: CampaignbannerProps) {
+/* ========================================
+   🏷️ 캠페인 신청 정보 배너 컴포넌트
+   ======================================== */
+export default function Campaignbanner({
+  campaignInfo,
+  reviewingCount,
+  completedCount,
+}: CampaignbannerProps) {
+  /**
+   * ✅ 실시간 상태 계산
+   *
+   * 설명:
+   * - 전달된 캠페인 정보(campaignInfo)의 날짜 데이터를 바탕으로 화면에 표시할 상태를 다시 계산합니다.
+   * - useMemo 대신 함수 호출을 그대로 사용해도 되는 이유는 컴포넌트가 가볍고, 파생 값이 간단하기 때문입니다.
+   *
+   * - 파생 상태(derivedStatus)를 변수로 분리하면 JSX가 간결해지고 의도가 명확해집니다.
+   * - 상태 계산 로직을 별도 함수로 추출하여 테스트/재사용이 쉬워집니다.
+   */
+  const derivedStatus = deriveCampaignStatus(campaignInfo);
+
   return (
     <article className={styles.campaign_info_card_container}>
       {/* 캠페인 정보 카드 */}
@@ -108,14 +155,18 @@ export default function Campaignbanner({ campaignInfo }: CampaignbannerProps) {
               </div>
 
               <div className={styles.campaign_status}>
-                {campaignInfo.status}
+                {derivedStatus}
               </div>
             </div>
 
             <h2 className={styles.campaign_title}>{campaignInfo.title}</h2>
             <p className={styles.campaign_notice}>
-              {campaignInfo.statusText ||
-                getStatusMessage(campaignInfo.status, campaignInfo.daysLeft)}
+              {getStatusText(
+                campaignInfo,
+                reviewingCount,
+                completedCount,
+                derivedStatus
+              )}
             </p>
           </div>
         </div>

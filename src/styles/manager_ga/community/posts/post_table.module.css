@@ -1,0 +1,332 @@
+/* ========================================
+   📋 게시글 목록 테이블 스타일
+   ======================================== */
+
+/**
+ * 게시글 목록 테이블 관련 스타일
+ * 
+ * 사용 컴포넌트:
+ * - PostTable.tsx (게시글 목록 테이블 컴포넌트)
+ * 
+ * 사용 페이지:
+ * - /manager_ga/community/posts (GA 관리자 게시글 목록)
+ */
+
+/* 테이블 컨테이너 */
+.table_container {
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: white;
+}
+
+/* 테이블 헤더 */
+.table_header {
+  display: grid;
+  /* 게시글 목록 테이블 컬럼 정의 - 화면 가득 차게 fr 단위 사용 */
+  grid-template-columns:
+    0.5fr /* 체크박스 */
+    1fr /* 구분 */
+    1.2fr /* 카테고리 */
+    1.2fr /* 대상 */
+    3.6fr /* 제목 */
+    1.2fr /* 조회수 */
+    1.5fr /* 등록일 */
+    1.2fr /* 등록자 */
+    60px; /* 수정 버튼 */
+  background-color: #f5f5f5;
+  padding: 0;
+  align-items: center;
+  width: 100%;
+}
+
+/* 테이블 헤더 셀 */
+.table_header > div {
+  padding: 20px;
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+/* 테이블 바디 */
+.table_body {
+  width: 100%;
+}
+
+/* 테이블 행 */
+.table_row {
+  display: grid;
+  /* 헤더와 동일한 컬럼 정의를 공유해 정렬 유지 - 화면 가득 차게 fr 단위 사용 */
+  grid-template-columns:
+    0.5fr /* 체크박스 */
+    1fr /* 구분 */
+    1.2fr /* 카테고리 */
+    1.2fr /* 대상 */
+    3.6fr /* 제목 */
+    1.2fr /* 조회수 */
+    1.5fr /* 등록일 */
+    1.2fr /* 등록자 */
+    60px; /* 수정 버튼 */
+  border-bottom: 1px solid #f2f2f2;
+  align-items: center;
+  min-height: 62px;
+  width: 100%;
+  transition: background-color 0.2s ease;
+}
+
+/* 테이블 행 호버 효과 */
+.table_row:hover {
+  background-color: #f9f9f9;
+}
+
+/* 테이블 셀 */
+.table_row > div {
+  padding: 20px;
+  color: #444444;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  text-align: left;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  min-width: 0; /* flex 아이템이 축소될 수 있도록 */
+  overflow: hidden; /* 넘치는 내용 숨김 */
+}
+
+/* 테이블 셀 내부 텍스트에 말줄임표 적용 */
+.table_row > div > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0; /* flex 아이템이 축소될 수 있도록 */
+}
+
+/* 태그 요소는 말줄임표 적용 제외 (고정 크기 요소) */
+.table_row > div .division_tag,
+.table_row > div .category_tag {
+  overflow: visible;
+  text-overflow: clip;
+  flex-shrink: 0; /* 태그는 축소되지 않도록 */
+}
+
+/* 체크박스 셀 */
+.table_cell_checkbox {
+  justify-content: center;
+}
+
+/* 체크박스 */
+.checkbox {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid #d9d9d9;
+  border-radius: 4px;
+  background: #ffffff;
+  cursor: pointer;
+  appearance: none; /* 기본 브라우저 스타일 제거 */
+  position: relative; /* 체크마크 위치 지정을 위해 */
+  flex-shrink: 0; /* 크기 고정 */
+}
+
+/* 체크박스 체크된 상태 */
+.checkbox:checked {
+  border-color: #444444; /* 어두운 회색 테두리 */
+  background: #ffffff; /* 흰색 배경 유지 */
+}
+
+/* 체크박스 체크마크 (✓) */
+.checkbox:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #444444; /* 어두운 회색 체크마크 */
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* 정렬 아이콘 */
+.sort_icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+/* 번호 셀 */
+.table_cell_number {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 구분과 카테고리는 일반 텍스트로 표시되므로 태그 스타일 제거 */
+/* (구분 태그 스타일은 더 이상 사용하지 않음) */
+
+/* 제목 셀 */
+.table_cell_title {
+  min-width: 0; /* flex 아이템이 축소될 수 있도록 */
+  flex: 1; /* 가능한 공간을 차지하도록 */
+}
+
+/* 제목 래퍼 (제목 텍스트 + 고정 아이콘) */
+.title_wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* 제목 버튼 (클릭 가능하도록) */
+.title_button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* 제목 텍스트에 말줄임표 적용 */
+.title_text {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+  color: #444444;
+  transition: color 0.2s ease;
+}
+
+/* 제목 버튼 호버 효과 */
+.title_button:hover .title_text {
+  text-decoration: underline;
+}
+
+/* 고정 아이콘 */
+.pin_icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* 대상 셀 */
+.table_cell_target {
+  overflow: visible;
+  gap: 8px;
+}
+
+/* 유저 타입(대상) 태그 공통 스타일 */
+.division_tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  white-space: nowrap;
+}
+
+.division_tag_reviewer {
+  background-color: rgba(255, 86, 148, 0.1);
+  color: #ff5694;
+}
+
+.division_tag_partner {
+  background-color: rgba(43, 127, 255, 0.1);
+  color: #2b7fff;
+}
+
+.division_tag_admin {
+  background-color: #f1f1f1;
+  color: #666666;
+}
+
+.division_tag_all {
+  background-color: #f9f9f9;
+  color: #444444;
+}
+
+/* 조회수 셀 */
+.table_cell_view_count {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 등록일 셀 */
+.table_cell_registered_date {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 등록자 셀 */
+.table_cell_registered_by {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 수정 컬럼 */
+.table_cell_edit {
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 수정 버튼 */
+.edit_button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+/* 수정 아이콘 */
+.edit_icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* 테이블 행 호버 시 수정 버튼 표시 */
+.table_row:hover .edit_button {
+  opacity: 1;
+}
+
+/* 빈 메시지 */
+.empty_message {
+  padding: 60px 20px;
+  text-align: center;
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}

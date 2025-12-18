@@ -39,13 +39,14 @@
 
 .filter_bar {
   background: white;
-  padding: 40px 40px 0 40px;
+  padding: 24px 40px 24px 40px;
   margin: 0 auto;
   width: 100%;
 
   display: flex;
   flex-direction: column;
   gap: 12px;
+  border-bottom: 1px solid #d9d9d9;
 }
 
 .filter_buttons_container {
@@ -370,7 +371,7 @@
 }
 
 .option_checkbox:checked::after {
-  content: "✓";
+  content: '✓';
   position: absolute;
   top: 50%;
   left: 50%;
@@ -398,7 +399,7 @@
 }
 
 .option_radio:checked::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 50%;
   left: 50%;
@@ -495,6 +496,12 @@
   overflow-y: auto; /* 세로 레이아웃에서도 스크롤 적용 */
 }
 
+/* 정렬 모달용 스타일 - 스크롤 없이 자동 높이 */
+.options_vertical.no_scroll {
+  max-height: none;
+  overflow-y: visible;
+}
+
 /* 기본 세로 레이아웃 스타일 (지역 필터 포함) */
 .options_vertical {
   display: flex;
@@ -544,7 +551,7 @@
 }
 
 .region_tab_active::after {
-  content: "";
+  content: '';
   position: absolute;
   bottom: -1px;
   left: 0;
