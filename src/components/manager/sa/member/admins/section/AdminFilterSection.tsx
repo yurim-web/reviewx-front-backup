@@ -128,7 +128,7 @@ export default function AdminFilterSection({
             <span className={styles.filter_text}>관리자 목록 다운로드</span>
           </div>
         }
-        // 오른쪽에 위치할 버튼들 (등록, 삭제, 차단)
+        // 오른쪽에 위치할 버튼들 (등록, 삭제, 이용제한)
         right_buttons={
           <>
             {/* 등록 버튼 */}
@@ -149,14 +149,14 @@ export default function AdminFilterSection({
               />
               <span className={styles.filter_text}>삭제</span>
             </div>
-            {/* 차단 버튼 */}
+            {/* 이용제한 버튼 */}
             <div className={styles.filter_item} onClick={handle_block}>
               <img
                 src="/images/icons/block_btn_icon.svg"
-                alt="차단"
+                alt="이용제한"
                 className={styles.block_icon}
               />
-              <span className={styles.filter_text}>차단</span>
+              <span className={styles.filter_text}>이용 제한</span>
             </div>
           </>
         }

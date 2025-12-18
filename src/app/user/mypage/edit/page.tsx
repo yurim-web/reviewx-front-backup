@@ -126,7 +126,6 @@ export default function EditProfilePage() {
     }));
   };
 
-
   // 휴대폰 번호 형식 검증
   const isValidPhoneNumber = (phone: string) => {
     const phoneRegex = /^010-\d{4}-\d{4}$/;
@@ -156,8 +155,10 @@ export default function EditProfilePage() {
     }
   };
 
-
-
+  const handleWithdraw = () => {
+    // 회원 탈퇴 페이지로 이동 (추후 실제 로직 연동 예정)
+    router.push("/user/mypage/withdraw");
+  };
 
   return (
     <div className={styles.edit_profile_container}>
@@ -285,6 +286,17 @@ export default function EditProfilePage() {
               setFormData((prev) => ({ ...prev, ssnBack: value }))
             }
           />
+
+          {/* 회원탈퇴 버튼 */}
+          <div className={styles.withdraw_button_container}>
+            <button
+              type="button"
+              className={styles.withdraw_button}
+              onClick={handleWithdraw}
+            >
+              회원 탈퇴
+            </button>
+          </div>
         </section>
         <div className={styles.save_button_container}>
           {/* 저장하기 버튼 */}

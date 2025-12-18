@@ -27,14 +27,14 @@
   /* 신고내역 테이블 컬럼 정의 */
   grid-template-columns:
     0.12fr
-    0.4fr /* 캠페인명 - 너비 더 증가 */
-    0.2fr
-    0.2fr
+    0.44fr /* 캠페인명 - 조금만 넓게 */
+    0.16fr /* 대상자 - 조금 좁게 */
+    0.14fr /* 검수자 - 조금 좁게 */
     0.1fr /* 신고 코드 - 너비 감소 */
     0.12fr /* 신고 사유 - 너비 더 감소 */
-    0.12fr
-    0.2fr
-    60px; /* 차단 아이콘 칸 */
+    0.12fr /* 신고 횟수 */
+    0.14fr /* 처리일 - 버튼 영역과 간격 확보 */
+    100px; /* 차단/해제 아이콘 칸 */
   background-color: #f5f5f5;
   padding: 0;
   align-items: center;
@@ -52,19 +52,17 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  white-space: nowrap; /* 텍스트가 한 줄로 표시되도록 설정 */
-  box-sizing: border-box; /* padding이 width에 포함되도록 설정 */
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
-/* 테이블 헤더 셀 내부 span - 바디 셀과 정렬을 맞추기 위해 */
+/* 테이블 헤더 셀 내부 span */
 .table_header_cell > span {
-  display: block; /* flex 아이템이 아닌 일반 블록으로 처리하여 바디와 동일한 정렬 */
-  margin: 0; /* 기본 마진 제거 */
-  padding: 0; /* 기본 패딩 제거 */
-  /* 바디 셀과 동일한 텍스트 정렬을 위해 line-height와 letter-spacing 상속 */
+  display: block;
+  margin: 0;
+  padding: 0;
   line-height: inherit;
   letter-spacing: inherit;
-  /* flex 컨테이너 내부에서도 바디 셀과 동일한 위치에서 시작하도록 보장 */
   flex-shrink: 0;
   min-width: 0;
 }
@@ -90,14 +88,14 @@
   /* 헤더와 동일한 컬럼 정의를 공유해 정렬 유지 */
   grid-template-columns:
     0.12fr
-    0.4fr /* 캠페인명 - 너비 더 증가 */
-    0.2fr
-    0.2fr
+    0.44fr /* 캠페인명 - 조금만 넓게 */
+    0.16fr /* 대상자 - 조금 좁게 */
+    0.14fr /* 검수자 - 조금 좁게 */
     0.1fr /* 신고 코드 - 너비 감소 */
     0.12fr /* 신고 사유 - 너비 더 감소 */
-    0.12fr
-    0.2fr
-    60px; /* 차단 아이콘 칸 */
+    0.12fr /* 신고 횟수 */
+    0.14fr /* 처리일 - 버튼 영역과 간격 확보 */
+    100px; /* 차단/해제 아이콘 칸 */
   border-bottom: 1px solid #f2f2f2;
   align-items: center;
   height: 61px;
@@ -112,7 +110,7 @@
 
 /* 테이블 셀 */
 .table_cell {
-  padding: 20px 20px; /* 헤더와 동일한 좌우 padding으로 정렬 맞춤 */
+  padding: 20px 20px;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
@@ -122,12 +120,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  box-sizing: border-box; /* padding이 width에 포함되도록 설정 */
+  box-sizing: border-box;
 }
 
 /* 테이블 셀 - 캠페인명 (긴 텍스트 처리) */
 .table_cell_campaign_name {
-  padding: 20px 20px; /* 헤더와 동일한 좌우 padding으로 정렬 맞춤 */
+  padding: 20px 20px;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
@@ -137,7 +135,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  box-sizing: border-box; /* padding이 width에 포함되도록 설정 */
+  box-sizing: border-box;
 }
 
 /* 캠페인명 텍스트 - 호버 이벤트를 위한 인라인 요소 */
@@ -217,6 +215,35 @@
 
 /* 차단 아이콘 */
 .block_icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: block;
+  object-fit: contain;
+}
+
+/* 차단/해제 버튼 그룹 */
+.block_button_group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* 해제 버튼 */
+.clear_button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+/* 해제 아이콘 */
+.clear_icon {
   width: 20px;
   height: 20px;
   flex-shrink: 0;

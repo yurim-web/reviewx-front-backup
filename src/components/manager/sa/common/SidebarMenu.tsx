@@ -70,7 +70,7 @@ export default function SidebarMenu() {
         { label: "리뷰어 목록", path: "/manager_sa/member/reviewers" },
         { label: "파트너 목록", path: "/manager_sa/member/partners" },
         { label: "관리자 목록", path: "/manager_sa/member/admins" },
-        { label: "차단 내역", path: "/manager_sa/member/blacklist" },
+        { label: "이용 제한 내역", path: "/manager_sa/member/blacklist" },
       ],
     },
     {

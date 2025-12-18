@@ -31,6 +31,7 @@ import CommonTable, {
   type TableRowData,
 } from "@/components/manager/common/table/CommonTable";
 import styles from "@/styles/manager_sa/member/admins/admin_table.module.css";
+import tag_styles from "@/styles/common/tags.module.css";
 import {
   admin_list,
   type AdminItem,
@@ -215,7 +216,7 @@ export default function AdminTable({
             return (
               <MemberStatusTag
                 status={row.status as "정상" | "일시 정지" | "영구 정지"}
-                styles={styles}
+                styles={tag_styles}
               />
             );
           case "edit":

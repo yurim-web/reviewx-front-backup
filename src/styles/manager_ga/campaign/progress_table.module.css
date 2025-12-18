@@ -161,6 +161,24 @@
   text-decoration: underline;
 }
 
+/* 테이블 행 전체 링크 스타일 */
+.table_row_link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  position: relative;
+}
+
+.table_row_link:hover {
+  text-decoration: none;
+}
+
+/* report 셀을 포함한 Link에서 report 셀 클릭 차단 */
+.table_row_link .table_cell_report {
+  pointer-events: auto; /* report 셀은 Link 클릭 차단 */
+}
+
 /* 테이블 신고 아이콘 칸 */
 .table_cell_report {
   padding: 20px;
@@ -168,6 +186,15 @@
   align-items: center;
   justify-content: center;
   min-width: 60px;
+  position: relative;
+  z-index: 10; /* Link 위에 표시 */
+}
+
+/* report 셀 내부 div - Link 클릭 차단 */
+.table_cell_report > div[data-report-cell="true"] {
+  pointer-events: auto; /* report 셀은 클릭 가능 */
+  position: relative;
+  z-index: 11;
 }
 
 /* 신고 버튼 */

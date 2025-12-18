@@ -218,12 +218,12 @@ export default function MemberFilterSection<
               className={cssStyles.filter_item}
               onClick={() => set_is_channel_modal_open(true)}
             >
-            <div
-              className={`${cssStyles.checkbox_icon} ${
-                selected_channels.length > 0
-                  ? cssStyles.checkbox_icon_checked
-                  : ""
-              }`}
+              <div
+                className={`${cssStyles.checkbox_icon} ${
+                  selected_channels.length > 0
+                    ? cssStyles.checkbox_icon_checked
+                    : ""
+                }`}
               ></div>
               <span className={cssStyles.filter_text}>채널</span>
               <img
@@ -309,7 +309,7 @@ export default function MemberFilterSection<
             </span>
           </div>
         }
-        // 오른쪽에 위치할 버튼 (차단)
+        // 오른쪽에 위치할 버튼 (차단--> 이용제한)
         right_buttons={
           <div className={cssStyles.filter_item}>
             <img
@@ -317,7 +317,7 @@ export default function MemberFilterSection<
               alt="차단"
               className={cssStyles.block_icon}
             />
-            <span className={cssStyles.filter_text}>차단</span>
+            <span className={cssStyles.filter_text}>이용 제한</span>
           </div>
         }
         // 활성 필터 태그들

@@ -51,7 +51,6 @@ export default function CampaignReportedFilterSection({
   selected_date_range,
   on_date_range_change,
 }: CampaignReportedFilterSectionProps) {
-
   // 신고 코드 필터 모달 열림/닫힘 상태
   const [is_report_code_modal_open, set_is_report_code_modal_open] =
     useState(false);
@@ -133,17 +132,6 @@ export default function CampaignReportedFilterSection({
             isActive={selected_codes.length > 0}
             styles={styles}
           />
-        }
-        // 검색 필터 뒤에 올 버튼 (차단 필터)
-        search_after_buttons={
-          <div className={styles.filter_item}>
-            <img
-              src="/images/icons/rerport_icon.svg"
-              alt="차단"
-              className={styles.report_icon}
-            />
-            <span className={styles.filter_text}>차단</span>
-          </div>
         }
         // 활성 필터 태그들
         active_filter_tags={active_filter_tags}

@@ -49,6 +49,9 @@ interface PostTableProps {
   search_query: string;
   selected_divisions?: PostDivision[];
   selected_date_range?: DateRange | undefined;
+  posts: PostItem[];
+  selected_post_ids: string[];
+  on_selected_post_ids_change: (ids: string[]) => void;
 }
 
 // PostItem이 TableRowData를 확장하도록 확장
@@ -110,13 +113,15 @@ export default function PostTable({
   search_query,
   selected_divisions = [],
   selected_date_range,
+  posts,
+  selected_post_ids,
+  on_selected_post_ids_change,
 }: PostTableProps) {
   // Next.js 라우터: 수정 페이지로 이동에 사용
   const router = useRouter();
-  const [selected_post_ids, set_selected_post_ids] = useState<string[]>([]);
   const [hovered_row_id, set_hovered_row_id] = useState<string | null>(null);
 
-  const filtered_posts = posts_data.filter((item) => {
+  const filtered_posts = posts.filter((item) => {
     // 검색어 필터
     if (search_query) {
       const query = search_query.toLowerCase();
@@ -246,15 +251,15 @@ export default function PostTable({
                   aria-label={`${row.title} 게시글 상세 보기`}
                 >
                   <span className={styles.title_text}>{row.title}</span>
+                  {/* 고정된 게시글인 경우 제목 바로 옆에 고정 아이콘 표시 */}
+                  {row.is_pinned && (
+                    <img
+                      src="/images/icons/pin_table_icon.svg"
+                      alt="고정"
+                      className={styles.pin_icon}
+                    />
+                  )}
                 </button>
-                {/* 고정된 게시글인 경우 고정 아이콘 표시 */}
-                {row.is_pinned && (
-                  <img
-                    src="/images/icons/pin_table_icon.svg"
-                    alt="고정"
-                    className={styles.pin_icon}
-                  />
-                )}
               </div>
             );
           case "view_count":
@@ -266,33 +271,69 @@ export default function PostTable({
           case "edit":
             // 호버된 행에만 수정 버튼 표시
             const is_hovered = hovered_row_id === row.id;
-            return is_hovered ? (
-              <button
-                className={styles.edit_button}
-                onClick={(e) => {
-                  // 이벤트 전파를 막아서 행 클릭 이벤트가 발생하지 않도록 함
-                  e.stopPropagation();
-                  // 게시글 수정 페이지로 이동
-                  router.push(`/manager_ga/community/posts/${row.id}/edit`);
-                }}
-                aria-label="수정"
+            return (
+              <div
+                data-edit-cell="true"
+                style={{ width: "100%", height: "100%" }}
               >
-                <img
-                  src="/images/icons/pencil_icon.svg"
-                  alt="수정"
-                  className={styles.edit_icon}
-                />
-              </button>
-            ) : null;
+                {is_hovered ? (
+                  <button
+                    className={styles.edit_button}
+                    onClick={(e) => {
+                      // 이벤트 전파를 막아서 행 클릭 이벤트가 발생하지 않도록 함
+                      e.stopPropagation();
+                      // 게시글 수정 페이지로 이동
+                      router.push(`/manager_ga/community/posts/${row.id}/edit`);
+                    }}
+                    aria-label="수정"
+                  >
+                    <img
+                      src="/images/icons/pencil_icon.svg"
+                      alt="수정"
+                      className={styles.edit_icon}
+                    />
+                  </button>
+                ) : null}
+              </div>
+            );
           default:
             return null;
         }
       }}
       render_header={render_table_header}
+      render_row_wrapper={(row, row_content) => (
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={(event) => {
+            const target = event.target as HTMLElement;
+
+            // 수정 컬럼 영역(data-edit-cell 또는 table_cell_edit) 클릭 시 상세 페이지로 이동하지 않음
+            const is_click_in_edit_cell =
+              target.closest('[data-edit-cell="true"]') ||
+              target.closest(`.${styles.table_cell_edit}`);
+
+            if (is_click_in_edit_cell) {
+              event.stopPropagation();
+              return;
+            }
+
+            router.push(`/manager_ga/community/posts/${row.id}`);
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              router.push(`/manager_ga/community/posts/${row.id}`);
+            }
+          }}
+        >
+          {row_content}
+        </div>
+      )}
       styles={styles}
       enable_checkbox={true}
       selected_ids={selected_post_ids}
-      on_select_change={set_selected_post_ids}
+      on_select_change={on_selected_post_ids_change}
       empty_message="게시글이 없습니다."
     />
   );

@@ -19,8 +19,15 @@
 
 import Link from "next/link";
 import styles from "@/styles/fragments/header.module.css";
+import { mockPartnerNotifications } from "@/data/notification/notificationData";
+import HeaderSearch from "@/components/fragments/HeaderSearch";
 
 export default function PartnerHeader() {
+  const has_notifications = mockPartnerNotifications.length > 0;
+  const notification_icon_src = has_notifications
+    ? "/images/header/notification_ok.svg"
+    : "/images/header/notification_icon.svg";
+
   return (
     <header>
       <nav className={styles.header_container}>
@@ -36,12 +43,12 @@ export default function PartnerHeader() {
             새로운 캠페인 등록
           </Link>
 
+          {/* 검색창 - 파트너 전용 검색 결과 페이지로 이동 */}
+          <HeaderSearch search_path="/partner/search" />
+
           {/* 알림페이지로 연결 */}
           <Link href="/partner/notification">
-            <img
-              src="/images/header/notification_icon.svg"
-              alt="notification"
-            />
+            <img src={notification_icon_src} alt="notification" />
           </Link>
 
           {/* 가이드로 연결 */}

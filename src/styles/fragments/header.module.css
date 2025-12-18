@@ -54,6 +54,55 @@
   cursor: pointer;
 }
 
+/* 검색 아이콘 버튼 */
+.search_toggle_button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 검색 입력 박스 */
+.search_box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 20px;
+  height: 48px;
+  border-radius: 999px;
+  background-color: #ffffff;
+  max-width: 240px;
+}
+
+.search_input {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  max-width: 168px;
+}
+
+.search_input::placeholder {
+  color: #999;
+}
+
+.search_icon_button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* 새로운 캠페인 등록 버튼 */
 .new_campaign_button {
   background: #fff;

@@ -1,11 +1,12 @@
 /* ========================================
-   📋 캠페인 테이블 컴포넌트 (공통)
+   📋 캠페인 진행 현황 테이블 컴포넌트 (공통)
    ======================================== */
 
 /**
- * 캠페인 테이블 컴포넌트 (공통)
+ * 캠페인 진행 현황 테이블 컴포넌트 (공통)
  *
- * 목적: manager_ga와 manager_sa에서 공통으로 사용하는 캠페인 테이블 컴포넌트입니다.
+ * 목적: manager_ga와 manager_sa에서 공통으로 사용하는
+ *       캠페인 진행 현황 테이블 컴포넌트입니다.
  *
  * 📍 사용 위치:
  * - 직접 사용 컴포넌트:
@@ -18,18 +19,18 @@
  * 사용 흐름:
  * GA 관리자 진행 현황 페이지 (/manager_ga/campaign/progress)
  *   └─> ProgressPageCommon 컴포넌트 (manager_type="ga")
- *       └─> CampaignTable 컴포넌트
+ *       └─> CampaignProgressTable 컴포넌트
  *
  * SA 관리자 진행 현황 페이지 (/manager_sa/campaign/progress)
  *   └─> ProgressPageCommon 컴포넌트 (manager_type="sa")
- *       └─> CampaignTable 컴포넌트
+ *       └─> CampaignProgressTable 컴포넌트
 
  */
 
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
@@ -144,7 +145,7 @@ const get_columns = (styles: Record<string, string>): TableColumn[] => [
   },
 ];
 
-export default function CampaignTable({
+export default function CampaignProgressTable({
   campaign_list,
   base_path,
   ReportModal,
@@ -225,6 +226,72 @@ export default function CampaignTable({
       column.key === "report" ? cssStyles.table_header_cell_report : undefined,
   }));
 
+  // 커스텀 행 래퍼 (행 전체를 클릭 가능하게 만들되, report 버튼은 제외)
+  const render_row_wrapper = (
+    row: CampaignTableRowData,
+    row_content: React.ReactNode,
+    index: number
+  ) => {
+    const detail_href = get_detail_href(row);
+
+    // 상세 페이지 링크가 없으면 그대로 반환
+    if (!detail_href) {
+      return row_content;
+    }
+
+    return (
+      <Link
+        href={detail_href}
+        className={cssStyles.table_row_link}
+        aria-label={`캠페인 상세로 이동: ${row.campaign_name}`}
+        onClick={(e) => {
+          // report 셀 또는 report 버튼을 클릭한 경우 링크 이동 방지
+          const target = e.target as HTMLElement;
+          const currentTarget = e.currentTarget as HTMLElement;
+
+          // data 속성으로 report 셀 확인
+          const report_cell = target.closest('[data-report-cell="true"]');
+          const report_button = target.closest('[data-report-button="true"]');
+
+          // report 셀의 클래스명으로도 확인 (CSS 모듈 클래스명)
+          const is_report_cell = target.closest(
+            `.${cssStyles.table_cell_report}`
+          );
+          const is_report_button = target.closest(
+            `.${cssStyles.report_button}`
+          );
+
+          if (
+            report_cell ||
+            report_button ||
+            is_report_cell ||
+            is_report_button
+          ) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.nativeEvent.stopImmediatePropagation();
+            return false;
+          }
+        }}
+        onMouseDown={(e) => {
+          // report 셀 클릭 시 Link의 클릭 이벤트 차단
+          const target = e.target as HTMLElement;
+          const report_cell = target.closest('[data-report-cell="true"]');
+          const is_report_cell = target.closest(
+            `.${cssStyles.table_cell_report}`
+          );
+
+          if (report_cell || is_report_cell) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }}
+      >
+        {row_content}
+      </Link>
+    );
+  };
+
   // 커스텀 헤더 렌더링 (SortableTableHeader 공통 컴포넌트 사용)
   // "report" 컬럼은 빈 셀로 처리
   const render_custom_header = () => {
@@ -272,18 +339,7 @@ export default function CampaignTable({
             case "partner_name":
               return <span>{row.partner_name}</span>;
             case "campaign_name": {
-              const detail_href = get_detail_href(row);
-              return detail_href ? (
-                <Link
-                  href={detail_href}
-                  className={cssStyles.table_cell_link}
-                  aria-label={`캠페인 상세로 이동: ${row.campaign_name}`}
-                >
-                  {row.campaign_name}
-                </Link>
-              ) : (
-                row.campaign_name
-              );
+              return <span>{row.campaign_name}</span>;
             }
             case "status":
               return (
@@ -303,19 +359,44 @@ export default function CampaignTable({
               return <span>{format_number(row.point)}</span>;
             case "report": {
               const is_hovered = hovered_row_id === row.id;
-              return is_hovered ? (
-                <button
-                  onClick={() => handle_report_click(row.id)}
-                  className={cssStyles.report_button}
-                  aria-label={`${row.campaign_name} 신고`}
+              return (
+                <div
+                  data-report-cell="true"
+                  onMouseDown={(e) => {
+                    // Link의 클릭 이벤트를 완전히 차단
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation(); // 행 클릭 이벤트 전파 방지
+                  }}
+                  style={{ width: "100%", height: "100%" }}
                 >
-                  <img
-                    src="/images/icons/table_report.svg"
-                    alt="신고"
-                    className={cssStyles.report_icon}
-                  />
-                </button>
-              ) : null;
+                  {is_hovered ? (
+                    <button
+                      data-report-button="true"
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation(); // 행 클릭 이벤트 전파 방지
+                        handle_report_click(row.id);
+                      }}
+                      className={cssStyles.report_button}
+                      aria-label={`${row.campaign_name} 신고`}
+                    >
+                      <img
+                        src="/images/icons/table_report.svg"
+                        alt="신고"
+                        className={cssStyles.report_icon}
+                      />
+                    </button>
+                  ) : null}
+                </div>
+              );
             }
             default:
               return null;
@@ -325,6 +406,7 @@ export default function CampaignTable({
         enable_hover={true}
         on_row_hover={set_hovered_row_id}
         render_header={render_custom_header}
+        render_row_wrapper={render_row_wrapper}
         container_class_name=""
         empty_message="캠페인이 없습니다."
       />

@@ -80,7 +80,7 @@ export const posts_data: PostItem[] = [
     view_count: 0,
     registered_date: "2025-08-01 18:56",
     registered_by: "관리자 A",
-    is_pinned: false,
+    is_pinned: true,
   },
   {
     id: "3",
@@ -113,11 +113,11 @@ export const posts_data: PostItem[] = [
     division: "공지사항",
     category: "공지사항",
     target: "파트너",
-    title: "구매평 체험단 메뉴 가 신설되었습니다.",
+    title: "구매평 체험단 메뉴 가 신설되었습니니다.",
     view_count: 12000,
     registered_date: "2025-12-01 18:56",
     registered_by: "관리자 C",
-    is_pinned: false,
+    is_pinned: true,
   },
   {
     id: "6",
@@ -130,7 +130,7 @@ export const posts_data: PostItem[] = [
     view_count: 999999999,
     registered_date: "2025-08-01 18:56",
     registered_by: "관리자 C",
-    is_pinned: false,
+    is_pinned: true,
   },
   {
     id: "7",
@@ -150,7 +150,8 @@ export const posts_data: PostItem[] = [
     division: "자주 묻는 질문",
     category: "취소/환불",
     target: "리뷰어",
-    title: "*체험단 구독 중지 시 모든 서비스 활용이 불가합니다.*",
+    title:
+      "*체험단 구독 중지 시 모든 서비스 활용이 불가합니다.일이삼사오육칠팔구십일이삼사오육칠팔구십",
     view_count: 0,
     registered_date: "2025-08-01 18:56",
     registered_by: "관리자 C",

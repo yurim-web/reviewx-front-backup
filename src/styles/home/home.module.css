@@ -81,16 +81,55 @@
   gap: 24px;
 }
 
+/* 검색 페이지 상단: 제목 + 정렬 버튼 정렬용 */
+.search_header_row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 /* 캠페인 그리드 */
 .campaign_grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(212px, 1fr));
+  width: 100%;
+  max-width: 1000px; /* 카드 영역 최대 너비 고정 */
+  margin: 0 auto; /* 가운데 정렬 */
+  grid-template-columns: repeat(
+    4,
+    minmax(212px, 1fr)
+  ); /* 데스크톱에서는 항상 4열 */
   grid-auto-rows: 1fr; /* 각 행의 높이를 동일하게 맞춤 */
   align-items: stretch; /* 그리드 아이템들이 행 높이에 맞춰 늘어남 */
   gap: 24px;
 }
 
 /* 캠페인 제목 부분 */
+
+/* 검색 페이지 전용: campaign_container의 padding-top 제거 */
+.search_campaign_container {
+  padding-top: 0 !important;
+}
+
+/* 검색 결과 없음 상태 */
+.empty_state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 40px;
+  text-align: center;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.empty_text {
+  font-size: 16px;
+  color: #848484;
+  margin: 0;
+  font-weight: 500;
+  line-height: 24px;
+}
 
 /* 캠페인 컨테이너 끝 */
 

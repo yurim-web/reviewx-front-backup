@@ -87,6 +87,7 @@
 /* 테이블 행 호버 효과 */
 .table_row:hover {
   background-color: #f9f9f9;
+  cursor: pointer;
 }
 
 /* 테이블 셀 */
@@ -178,17 +179,16 @@
 
 /* 제목 셀 */
 .table_cell_title {
-  min-width: 0; /* flex 아이템이 축소될 수 있도록 */
-  flex: 1; /* 가능한 공간을 차지하도록 */
+  min-width: 0;
+  flex: 1;
 }
 
 /* 제목 래퍼 (제목 텍스트 + 고정 아이콘) */
 .title_wrapper {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  width: 100%;
-  min-width: 0;
+  max-width: 100%;
+  overflow: visible;
 }
 
 /* 제목 버튼 (클릭 가능하도록) */
@@ -197,28 +197,23 @@
   border: none;
   padding: 0;
   cursor: pointer;
-  text-align: left;
-  flex: 1;
-  min-width: 0;
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  gap: 8px;
+  text-align: left;
+  max-width: 100%;
+  overflow: visible;
 }
 
 /* 제목 텍스트에 말줄임표 적용 */
 .title_text {
-  display: block;
+  display: inline-block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  flex: 1;
-  min-width: 0;
+  max-width: 100%;
   color: #444444;
   transition: color 0.2s ease;
-}
-
-/* 제목 버튼 호버 효과 */
-.title_button:hover .title_text {
-  text-decoration: underline;
 }
 
 /* 고정 아이콘 */

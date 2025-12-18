@@ -23,7 +23,7 @@ import { useState } from "react";
 import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
-import styles from "@/styles/manager_ga/campaign/reported_table.module.css";
+import styles from "@/styles/manager_ga/campaign/reported/reported_table.module.css";
 import {
   reported_campaign_list,
   report_code_info,
@@ -309,17 +309,32 @@ export default function ReportedCampaignTable({
             case "block": {
               const is_hovered = hovered_row_id === row.id;
               return is_hovered ? (
-                <button
-                  onClick={() => handle_block_click(row.id)}
-                  className={styles.block_button}
-                  aria-label={`${row.campaign_name} 차단`}
-                >
-                  <img
-                    src="/images/icons/declaration_icon.svg"
-                    alt="차단"
-                    className={styles.block_icon}
-                  />
-                </button>
+                <div className={styles.block_button_group}>
+                  <button
+                    onClick={() => {
+                      // TODO: 해제 로직 구현
+                    }}
+                    className={styles.clear_button}
+                    aria-label={`${row.campaign_name} 해제`}
+                  >
+                    <img
+                      src="/images/icons/clear_icon.svg"
+                      alt="해제"
+                      className={styles.clear_icon}
+                    />
+                  </button>
+                  <button
+                    onClick={() => handle_block_click(row.id)}
+                    className={styles.block_button}
+                    aria-label={`${row.campaign_name} 차단`}
+                  >
+                    <img
+                      src="/images/icons/declaration_icon.svg"
+                      alt="차단"
+                      className={styles.block_icon}
+                    />
+                  </button>
+                </div>
               ) : null;
             }
             default:

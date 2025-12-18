@@ -16,10 +16,10 @@
  * - /user/mypage/edit (유저 내 정보 수정 페이지)
  */
 
-'use client';
+"use client";
 
-import styles from '@/styles/user/mypage/edit_profile.module.css';
-import { CustomDropdown } from '@/components/partner/campaign_create_form/common/CustomDropdown';
+import styles from "@/styles/user/mypage/edit_profile.module.css";
+import { CustomDropdown } from "@/components/partner/campaign_create_form/common/CustomDropdown";
 
 interface AccountInfoInputProps {
   /** 예금주 */
@@ -66,6 +66,9 @@ export default function AccountInfoInput({
           onChange={(e) => onAccountHolderChange(e.target.value)}
           placeholder="회원 이름과 동일한 예금주 입력"
         />
+        <p className={styles.field_helper_text}>
+          입력하신 정보와 예금주 정보가 반드시 일치해야 출금이 가능합니다.
+        </p>
       </article>
 
       {/* 은행 */}

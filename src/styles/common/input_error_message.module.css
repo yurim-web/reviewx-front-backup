@@ -1,0 +1,13 @@
+.input_error_message {
+  color: #ff2626;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+.input_error_text {
+  color: inherit;
+}
+
+

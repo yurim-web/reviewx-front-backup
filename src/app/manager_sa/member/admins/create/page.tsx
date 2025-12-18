@@ -23,7 +23,7 @@
 
 "use client";
 
-import styles from "@/styles/manager_sa/member/admins/create_page.module.css";
+import styles from "@/styles/manager_sa/member/admins/admin_create_page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import AdminForm from "@/components/manager/sa/member/admins/section/AdminForm";
 

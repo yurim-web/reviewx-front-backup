@@ -40,6 +40,8 @@ export default function SocialSecurityNumberInput({
   onSsnFrontChange,
   onSsnBackChange,
 }: SocialSecurityNumberInputProps) {
+  const ssnBackGenderDigit = ssnBack.charAt(0);
+
   return (
     <article className={styles.field_article}>
       <label className={styles.field_label} htmlFor="ssnFront">
@@ -47,28 +49,39 @@ export default function SocialSecurityNumberInput({
       </label>
       <div className={styles.ssn_container}>
         <input
-          type="number"
+          type="text"
           id="ssnFront"
           name="ssnFront"
           className={styles.input_field}
           value={ssnFront}
-          onChange={(e) => onSsnFrontChange(e.target.value)}
+          inputMode="numeric"
+          onChange={(e) => {
+            onSsnFrontChange(e.target.value);
+          }}
           maxLength={6}
           placeholder="생년월일 6자리"
         />
         <span className={styles.ssn_separator}>-</span>
-        <input
-          type="password"
-          id="ssnBack"
-          name="ssnBack"
-          className={styles.input_field}
-          value={ssnBack}
-          onChange={(e) => onSsnBackChange(e.target.value)}
-          maxLength={7}
-          placeholder="뒤 7자리"
-        />
+        <div className={styles.ssn_back_wrapper}>
+          <input
+            type="password"
+            id="ssnBack"
+            name="ssnBack"
+            className={styles.input_field}
+            value={ssnBack}
+            onChange={(e) => {
+              onSsnBackChange(e.target.value);
+            }}
+            maxLength={7}
+            placeholder="뒤 7자리"
+          />
+          {ssnBackGenderDigit && (
+            <span className={styles.ssn_back_gender_digit}>
+              {ssnBackGenderDigit}
+            </span>
+          )}
+        </div>
       </div>
     </article>
   );
 }
-

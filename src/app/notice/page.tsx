@@ -22,59 +22,12 @@
 
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "../../styles/user/notice/notice.module.css";
 import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
-
-interface NoticeItem {
-  id: number;
-  title: string;
-  date: string;
-  category: string;
-}
-
-// 임시 목업  데이터
-const mockNotices: NoticeItem[] = [
-  {
-    id: 1,
-    title: "리뷰X 서비스 리뉴얼 안내",
-    date: "2025-09-12",
-    category: "전체",
-  },
-  {
-    id: 2,
-    title: "리뷰X 사용자 기능 추가 안내",
-    date: "2025-09-12",
-    category: "소식",
-  },
-  {
-    id: 3,
-    title:
-      "판매하기 버튼, 월급 이외 수익 창출한 방법 제시! 박재범 대표 \"물건을 쇼핑하기만 하는 것이 아니라 판매를 통해 수익을 얻는 '놀이터'입니다\" 브릿지 총 60억 투자 비결은? 남들과 다른 차별성을 제시한다!",
-    date: "2025-09-12",
-    category: "중요",
-  },
-  {
-    id: 4,
-    title: "리뷰X 홍보 캐시 서비스 지급 정책 변경 안내문",
-    date: "2025-09-12",
-    category: "이벤트",
-  },
-  {
-    id: 5,
-    title: "리뷰X 보유 캐시 변동 안내문",
-    date: "2025-09-12",
-    category: "미션형",
-  },
-  {
-    id: 6,
-    title: "리뷰X 알림톡 다중 발송 오류 사과문",
-    date: "2025-09-12",
-    category: "소식",
-  },
-];
+import { notices, type NoticeDetail } from "@/data/user/notice/noticesData";
 
 const categories = ["전체", "중요", "소식", "미션형", "이벤트"];
 
@@ -86,10 +39,14 @@ export default function NoticePage() {
     router.back();
   };
 
+  const handleNoticeClick = (notice: NoticeDetail) => {
+    router.push(`/notice/${notice.id}`);
+  };
+
   const filteredNotices =
     selectedCategory === "전체"
-      ? mockNotices
-      : mockNotices.filter((notice) => notice.category === selectedCategory);
+      ? notices
+      : notices.filter((notice) => notice.category === selectedCategory);
 
   return (
     <div className={styles.notice_container}>
@@ -120,12 +77,17 @@ export default function NoticePage() {
           {filteredNotices.length > 0 ? (
             <div className={styles.notice_list}>
               {filteredNotices.map((notice) => (
-                <div key={notice.id} className={styles.notice_item}>
+                <button
+                  key={notice.id}
+                  type="button"
+                  className={styles.notice_item}
+                  onClick={() => handleNoticeClick(notice)}
+                >
                   <div className={styles.notice_content}>
                     <div className={styles.notice_title}>{notice.title}</div>
                     <div className={styles.notice_date}>{notice.date}</div>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           ) : (

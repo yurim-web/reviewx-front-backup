@@ -22,6 +22,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "@/styles/manager_ga/layout/header.module.css";
+import { mockManagerGANotifications } from "@/data/notification/notificationData";
 
 interface ManagerGAHeaderProps {
   managerType?: "ga" | "sa";
@@ -41,6 +42,11 @@ export default function ManagerGAHeader({
       ? "/manager_sa/notification"
       : "/manager_ga/notification";
 
+  const has_notifications = mockManagerGANotifications.length > 0;
+  const notification_icon_src = has_notifications
+    ? "/images/header/notification_ok.svg"
+    : "/images/header/notification_icon.svg";
+
   return (
     <header className={styles.header}>
       <div className={styles.header_container}>
@@ -53,7 +59,7 @@ export default function ManagerGAHeader({
         <div className={styles.menu_icon_box}>
           {/* 알림페이지로 연결 - 내부 링크 (manager 타입에 따라 파라미터 설정) */}
           <Link href={notificationPath}>
-            <img src="/images/header/notification_icon.svg" alt="bell_icon" />
+            <img src={notification_icon_src} alt="bell_icon" />
           </Link>
 
           {/* 마이페이지로 연결 - 호버 시 로그아웃 버튼 표시 */}

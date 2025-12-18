@@ -5,11 +5,12 @@
 /**
  * 새 비밀번호 설정 페이지
  *
- * 목적: 아이디/비밀번호 찾기 플로우 이후,
- *       사용자가 새 비밀번호를 설정할 수 있도록 하는 페이지입니다.
+ * 목적: 아이디/비밀번호 찾기 플로우 이후 또는
+ *       기타 비밀번호 재설정 진입점에서
+ *       사용자가 새 비밀번호를 설정할 수 있도록 하는 독립 페이지입니다.
  *
  * 페이지 경로:
- * - /find-account/reset-password
+ * - /reset-password
  *
  * 주요 기능:
  * - 새 비밀번호 입력 (비밀번호 표시/숨김 토글 포함)
@@ -51,6 +52,33 @@ export default function ResetPasswordPage() {
   >();
 
   /**
+   * 비밀번호 유효성 검사 함수
+   *
+   * 규칙:
+   * - 8~16자
+   * - 영문 + 숫자 + 특수문자(!@#$%^&*()-_=+) 조합
+   *
+   * 정규식 설명:
+   * - (?=.*[A-Za-z])  : 최소 1개의 영문 포함
+   * - (?=.*\\d)       : 최소 1개의 숫자 포함
+   * - (?=.*[!@#$%^&*()\\-_=+]) : 최소 1개의 지정 특수문자 포함
+   * - [A-Za-z\\d!@#$%^&*()\\-_=+]{8,16} : 전체 길이 8~16자, 허용된 문자만 사용
+   */
+  const PASSWORD_PATTERN =
+    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+])[A-Za-z\d!@#$%^&*()\-_=+]{8,16}$/;
+
+  const validatePassword = (value: string): string | undefined => {
+    // 값이 비어 있으면 여기서는 에러를 표시하지 않고, 제출 시에만 "입력해주세요" 에러 처리
+    if (!value) return undefined;
+
+    if (!PASSWORD_PATTERN.test(value)) {
+      return "8~16자 영문, 숫자, 특수문자(!@#$%^&*()-_=+) 조합으로 입력해 주세요.";
+    }
+
+    return undefined;
+  };
+
+  /**
    * 폼 제출 핸들러
    * e.preventDefault(): 기본 폼 제출 동작(페이지 새로고침) 방지
    */
@@ -61,14 +89,16 @@ export default function ResetPasswordPage() {
     setPasswordError(undefined);
     setPasswordConfirmError(undefined);
 
-    // 비밀번호 길이 검증 (최대 20자)
+    // 비밀번호 공백 검증
     if (password.length === 0) {
       setPasswordError("비밀번호를 입력해 주세요.");
       return;
     }
 
-    if (password.length > 20) {
-      setPasswordError("비밀번호는 최대 20자 이내로 입력해 주세요.");
+    // 비밀번호 패턴 검증 (8~16자, 영문 + 숫자 + 특수문자 조합)
+    const passwordValidationError = validatePassword(password);
+    if (passwordValidationError) {
+      setPasswordError(passwordValidationError);
       return;
     }
 
@@ -83,6 +113,21 @@ export default function ResetPasswordPage() {
     alert("비밀번호가 변경되었습니다. 변경된 비밀번호로 로그인해 주세요.");
   };
 
+  /**
+   * 폼 유효성 여부
+   *
+   * - 비밀번호가 패턴에 맞는지 (8~16자, 영문 + 숫자 + 특수문자 조합)
+   * - 비밀번호 확인이 비밀번호와 일치하는지
+   * - 에러 메시지가 없는지
+   */
+  const isPasswordValid =
+    password.length > 0 && !validatePassword(password) && !passwordError;
+  const isPasswordConfirmValid =
+    passwordConfirm.length > 0 &&
+    passwordConfirm === password &&
+    !passwordConfirmError;
+  const isFormValid = isPasswordValid && isPasswordConfirmValid;
+
   return (
     <div className={styles.reset_password_page_container}>
       {/* 서브헤더 */}
@@ -96,7 +141,11 @@ export default function ResetPasswordPage() {
         {/* 폼 섹션 */}
         <section className={styles.reset_password_section}>
           {/* 폼 영역 */}
-          <form className={styles.reset_password_form} onSubmit={handleSubmit}>
+          <form
+            id="reset-password-form"
+            className={styles.reset_password_form}
+            onSubmit={handleSubmit}
+          >
             {/* 새 비밀번호 입력 필드 */}
             <div className={styles.form_field}>
               <label className={styles.field_label} htmlFor="new-password">
@@ -112,9 +161,23 @@ export default function ResetPasswordPage() {
                   value={password}
                   onChange={(e) => {
                     // onChange 이벤트: 입력값이 변경될 때마다 실행
-                    setPassword(e.target.value);
-                    // 입력 중이면 에러 메시지 제거
-                    if (passwordError) setPasswordError(undefined);
+                    const newPassword = e.target.value;
+                    setPassword(newPassword);
+
+                    // 입력 중 실시간 유효성 검사 (패턴 체크)
+                    const validationError = validatePassword(newPassword);
+                    setPasswordError(validationError);
+
+                    // 두 번째 비밀번호 입력값이 이미 있는 경우, 일치 여부도 함께 검사
+                    if (passwordConfirm) {
+                      if (newPassword !== passwordConfirm) {
+                        setPasswordConfirmError(
+                          "비밀번호가 일치하지 않습니다."
+                        );
+                      } else {
+                        setPasswordConfirmError(undefined);
+                      }
+                    }
                   }}
                 />
                 {/* 비밀번호 표시/숨김 토글 버튼 */}
@@ -163,10 +226,15 @@ export default function ResetPasswordPage() {
                   placeholder="비밀번호 재입력"
                   value={passwordConfirm}
                   onChange={(e) => {
-                    setPasswordConfirm(e.target.value);
-                    // 입력 중이면 에러 메시지 제거
-                    if (passwordConfirmError)
+                    const newConfirm = e.target.value;
+                    setPasswordConfirm(newConfirm);
+
+                    // 첫 번째 비밀번호와 일치 여부 실시간 검사
+                    if (newConfirm && newConfirm !== password) {
+                      setPasswordConfirmError("비밀번호가 일치하지 않습니다.");
+                    } else {
                       setPasswordConfirmError(undefined);
+                    }
                   }}
                 />
                 {/* 비밀번호 확인 필드의 표시/숨김 토글 버튼 */}
@@ -201,16 +269,18 @@ export default function ResetPasswordPage() {
                 </div>
               )}
             </div>
-
-            {/* 비밀번호 변경 버튼 */}
-            <button
-              type="submit"
-              className={styles.submit_button}
-              aria-label="비밀번호 변경"
-            >
-              변경
-            </button>
           </form>
+
+          {/* 비밀번호 변경 버튼 */}
+          <button
+            type="submit"
+            form="reset-password-form"
+            className={styles.submit_button}
+            disabled={!isFormValid}
+            aria-label="비밀번호 변경"
+          >
+            변경
+          </button>
         </section>
       </main>
     </div>

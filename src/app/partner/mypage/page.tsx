@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import PartnerTabNavigation from '@/components/partner/campaign_management/TabNavigation';
-import SubTabNavigation from '@/components/common/mypage/SubTabNavigation';
-import layoutStyles from '../../../styles/partner/layout.module.css';
-import profileStyles from '../../../styles/user/mypage/profile.module.css';
-import type { PartnerMainTab } from '@/types/partner/partner';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import PartnerTabNavigation from "@/components/partner/campaign_management/TabNavigation";
+import SubTabNavigation from "@/components/common/mypage/SubTabNavigation";
+import layoutStyles from "../../../styles/partner/layout.module.css";
+import profileStyles from "../../../styles/user/mypage/profile.module.css";
+import type { PartnerMainTab } from "@/types/partner/partner";
 
 export default function PartnerMypagePage() {
   const router = useRouter();
-  const [activeTopTab, setActiveTopTab] = useState<PartnerMainTab>('account');
-  const [activeSubTab, setActiveSubTab] = useState<'profile'>('profile');
+  const [activeTopTab, setActiveTopTab] = useState<PartnerMainTab>("account");
+  const [activeSubTab, setActiveSubTab] = useState<"profile">("profile");
 
   return (
     <div className={layoutStyles.partner_dashboard_container}>
@@ -25,7 +25,7 @@ export default function PartnerMypagePage() {
           activeSubTab={activeSubTab}
           setActiveSubTab={setActiveSubTab}
           basePath="/partner/mypage"
-          availableTabs={['profile']}
+          availableTabs={["profile"]}
         />
         <section className={layoutStyles.mypage_container}>
           {/* 프로필 섹션 */}
@@ -38,17 +38,19 @@ export default function PartnerMypagePage() {
                   <div className={profileStyles.profile_nickname}>
                     주식회사 청명종합광고기획
                   </div>
-                  <Image
-                    className={profileStyles.edit_icon}
-                    src="/images/icons/chevron_right.svg"
-                    alt="프로필 편집 이동"
-                    width={16}
-                    height={16}
-                    onClick={() => router.push('/partner/mypage/edit')}
-                  />
                 </div>
               </div>
             </div>
+          </div>
+
+          <div className={profileStyles.menu_list}>
+            <button
+              className={profileStyles.menu_item}
+              onClick={() => router.push("/partner/mypage/edit")}
+            >
+              <div className={profileStyles.menu_icon} />
+              <div className={profileStyles.menu_text}>내 정보 수정</div>
+            </button>
           </div>
 
           {/* 메뉴 리스트 */}
@@ -56,7 +58,7 @@ export default function PartnerMypagePage() {
             <button
               className={profileStyles.menu_item}
               onClick={() =>
-                window.open('https://markx.dev/guide_book', '_blank')
+                window.open("https://markx.dev/guide_book", "_blank")
               }
             >
               <div className={profileStyles.menu_icon} />
@@ -64,14 +66,14 @@ export default function PartnerMypagePage() {
             </button>
             <button
               className={profileStyles.menu_item}
-              onClick={() => router.push('/notice')}
+              onClick={() => router.push("/notice")}
             >
               <div className={profileStyles.menu_icon} />
               <div className={profileStyles.menu_text}>공지사항</div>
             </button>
             <button
               className={profileStyles.menu_item}
-              onClick={() => router.push('/faq')}
+              onClick={() => router.push("/faq")}
             >
               <div className={profileStyles.menu_icon} />
               <div className={profileStyles.menu_text}>자주 묻는 질문</div>
@@ -79,11 +81,18 @@ export default function PartnerMypagePage() {
             <button
               className={profileStyles.menu_item}
               onClick={() =>
-                window.open('https://pf.kakao.com/_xjxdxoxG/chat', '_blank')
+                window.open("https://pf.kakao.com/_xjxdxoxG/chat", "_blank")
               }
             >
               <div className={profileStyles.menu_icon} />
               <div className={profileStyles.menu_text}>카카오톡 상담</div>
+            </button>
+          </div>
+
+          <div className={profileStyles.menu_list}>
+            <button className={profileStyles.menu_item}>
+              <div className={profileStyles.menu_icon} />
+              <div className={profileStyles.menu_text}>로그아웃</div>
             </button>
           </div>
         </section>

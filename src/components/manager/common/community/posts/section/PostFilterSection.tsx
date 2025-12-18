@@ -48,6 +48,9 @@ interface PostFilterSectionProps {
   // 날짜 범위 필터 상태와 변경 함수
   selected_date_range: DateRange | undefined;
   on_date_range_change: (range: DateRange | undefined) => void;
+  // 선택된 게시글들에 대해 고정/해제를 수행하는 핸들러
+  on_pin_selected: () => void;
+  on_unpin_selected: () => void;
 }
 
 export default function PostFilterSection({
@@ -57,17 +60,20 @@ export default function PostFilterSection({
   on_divisions_change,
   selected_date_range,
   on_date_range_change,
+  on_pin_selected,
+  on_unpin_selected,
 }: PostFilterSectionProps) {
-  // Next.js 라우터 사용
   const router = useRouter();
 
   // 모달 열림/닫힘 상태 관리
   const [is_division_modal_open, set_is_division_modal_open] = useState(false);
   const [selected_sort, set_selected_sort] = useState("최신순");
 
-  // 구분 필터 핸들러
-  // 화살표 함수로 이벤트 핸들러를 정의합니다
-  // 선택된 구분들을 상태에 저장하고 모달을 닫습니다
+  /* ========================================
+     🔧 구분(division) 필터 관련 핸들러
+     - 구분 모달 열기/적용/제거
+     ======================================== */
+
   const handle_division_apply = (divisions: PostDivision[]) => {
     on_divisions_change(divisions);
     set_is_division_modal_open(false);
@@ -77,15 +83,28 @@ export default function PostFilterSection({
     on_divisions_change(selected_divisions.filter((d) => d !== division));
   };
 
+  /* ========================================
+     📌 게시글 고정 / 고정 해제 액션 핸들러
+     - 상단 '고정', '해제' 버튼 클릭 시
+     - 부모 컴포넌트(페이지)에서 실제 is_pinned 업데이트
+     ======================================== */
+
   // 고정 버튼 핸들러
   const handle_pin = () => {
-    // TODO: 선택된 게시글 고정 기능 구현
+    on_pin_selected();
   };
 
   // 해제 버튼 핸들러
   const handle_unpin = () => {
-    // TODO: 선택된 게시글 고정 해제 기능 구현
+    on_unpin_selected();
   };
+
+  /* ========================================
+     ✏️ 수정 / 등록 / 삭제 액션 핸들러
+     - 선택된 게시글 수정 (미구현)
+     - 새 게시글 등록 페이지로 이동
+     - 선택된 게시글 삭제 (미구현)
+     ======================================== */
 
   // 수정 버튼 핸들러
   const handle_edit = () => {
@@ -103,6 +122,12 @@ export default function PostFilterSection({
     // TODO: 선택된 게시글 삭제 기능 구현
   };
 
+  /* ========================================
+     🔽 정렬 / 날짜 범위 필터 관련 핸들러
+     - 정렬 옵션 변경 (최신순 / 오래된순)
+     - DateRangePicker로부터 날짜 범위 전달
+     ======================================== */
+
   // 정렬 옵션
   const sort_options = ["최신순", "오래된순"];
 
@@ -118,13 +143,16 @@ export default function PostFilterSection({
     on_date_range_change(range);
   };
 
-  // 활성 필터 태그 목록 생성
-  // 배열 map 메서드를 사용하여 필터 태그를 생성합니다
-  // selected_divisions 배열의 각 구분에 대해 필터 태그를 생성합니다
+  /* ========================================
+     🏷️ 활성 필터 태그(구분) 관리
+     - 선택된 구분들을 상단 태그로 표시
+     - 태그 X 버튼 클릭 시 해당 구분 필터 제거
+     ======================================== */
+
   const active_filter_tags: FilterTag<string>[] = selected_divisions.map(
     (division) => ({
       value: division,
-      label: division, // "구분: " 접두사 제거
+      label: division,
     })
   );
 
@@ -132,6 +160,12 @@ export default function PostFilterSection({
   const handle_filter_tag_remove = (value: string) => {
     handle_remove_division(value as PostDivision);
   };
+
+  /* ========================================
+     🎨 렌더링
+     - BaseFilterSection 공통 컴포넌트에 필터/액션 버튼 주입
+     - 구분 필터 모달(DivisionFilterModal) 렌더링
+     ======================================== */
 
   return (
     <div>
@@ -230,7 +264,6 @@ export default function PostFilterSection({
       />
 
       {/* 구분 필터 모달 */}
-      {/* DivisionFilterModal: 구분을 선택할 수 있는 모달 컴포넌트 */}
       <DivisionFilterModal
         is_open={is_division_modal_open}
         on_close={() => set_is_division_modal_open(false)}

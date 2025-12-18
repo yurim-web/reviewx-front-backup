@@ -31,8 +31,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import styles from "@/styles/manager_sa/member/admins/admin_register_form.module.css";
+import styles from "@/styles/manager_sa/member/admins/admin_create_page.module.css";
 import type { AdminItem } from "@/data/manager_sa/member/admins";
+import type { InputErrorCode } from "@/utils/messages";
+import InputErrorMessage from "@/components/common/form/InputErrorMessage";
 
 interface AdminFormProps {
   // mode: "create" | "edit" - 등록 모드 또는 수정 모드
@@ -52,16 +54,34 @@ export default function AdminForm({
   // useRouter: Next.js에서 제공하는 클라이언트 사이드 라우팅 훅입니다
   const router = useRouter();
 
+  // 폼 입력값 타입
+  type AdminFormData = {
+    id: string;
+    password: string;
+    password_confirm: string;
+    name: string;
+    phone: string;
+  };
+
   // 폼 입력값 상태 관리
   // useState: React Hook으로 컴포넌트의 상태를 관리합니다
   // [현재 값, 값을 변경하는 함수] = useState(초기값)
-  const [form_data, set_form_data] = useState({
+  const [form_data, set_form_data] = useState<AdminFormData>({
     id: "",
     password: "",
     password_confirm: "",
     name: "",
     phone: "",
   });
+
+  // 에러 코드 상태 관리 (각 필드별 에러 코드, 없으면 undefined)
+  const [error_codes, set_error_codes] = useState<
+    Record<string, InputErrorCode | undefined>
+  >({});
+
+  // 필수값 에러(빈 값)에 대한 테두리 표시 여부
+  const [show_required_errors, set_show_required_errors] =
+    useState<boolean>(false);
 
   // 수정 모드일 때 기존 데이터를 폼에 로드
   // useEffect: 컴포넌트가 렌더링된 후 실행되는 훅입니다
@@ -79,16 +99,134 @@ export default function AdminForm({
     }
   }, [mode, initial_data]);
 
+  // 비밀번호 관련 필드 실시간 validation
+  const validate_password_fields = (data: AdminFormData) => {
+    const trimmed_password = data.password.trim();
+    const trimmed_password_confirm = data.password_confirm.trim();
+
+    const has_password = trimmed_password.length > 0;
+    const has_password_confirm = trimmed_password_confirm.length > 0;
+
+    // 비밀번호 input은 형식 오류(I_E3)만 사용하고,
+    // "비밀번호가 일치하지 않습니다.(I_E4)"는 비밀번호 확인 input에만 표시합니다.
+    let password_error_code: InputErrorCode | undefined;
+    let password_confirm_error_code: InputErrorCode | undefined;
+
+    // 비밀번호 형식(I_E3) - 값이 있을 때만 검사
+    if (has_password && !is_valid_password(trimmed_password)) {
+      password_error_code = "I_E3";
+    }
+
+    // 비밀번호 확인(I_E4) - 둘 중 하나라도 입력된 경우
+    if (has_password || has_password_confirm) {
+      if (!trimmed_password || !trimmed_password_confirm) {
+        // 하나만 입력된 경우도 "불일치" 에러 처리 (비밀번호 확인 필드에만 표시)
+        password_confirm_error_code = "I_E4";
+      } else if (trimmed_password !== trimmed_password_confirm) {
+        // 값은 둘 다 있지만 서로 다른 경우도 비밀번호 확인 필드에만 표시
+        password_confirm_error_code = "I_E4";
+      }
+    }
+
+    set_error_codes((prev) => ({
+      ...prev,
+      password: password_error_code,
+      password_confirm: password_confirm_error_code,
+    }));
+  };
+
   // 입력값 변경 핸들러
   // 이벤트 핸들러 함수로, 사용자가 입력 필드를 변경할 때 호출됩니다
   // e.target.name: 입력 필드의 name 속성 (예: "id", "password")
   // e.target.value: 입력 필드의 현재 값
   const handle_input_change = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    set_form_data((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    set_form_data((prev) => {
+      const updated: AdminFormData = {
+        ...prev,
+        [name]: value,
+      };
+
+      // 비밀번호 / 비밀번호 확인 필드는 입력 즉시 검증
+      if (name === "password" || name === "password_confirm") {
+        validate_password_fields(updated);
+      } else if (error_codes[name]) {
+        // 그 외 필드는 입력 시 해당 필드 에러만 제거
+        set_error_codes((prev_errors) => ({
+          ...prev_errors,
+          [name]: undefined,
+        }));
+      }
+
+      return updated;
+    });
+  };
+
+  // 비밀번호 형식 검증 함수
+  const is_valid_password = (password: string): boolean => {
+    // 8~16자, 영문 + 숫자 + 특수문자(!@#$%^&*()-_=+) 조합
+    const password_regex =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+])[A-Za-z\d!@#$%^&*()\-_=+]{8,16}$/;
+    return password_regex.test(password);
+  };
+
+  // 폼 validation 함수
+  const validate_form = (): boolean => {
+    const trimmed_id = form_data.id.trim();
+    const trimmed_password = form_data.password.trim();
+    const trimmed_password_confirm = form_data.password_confirm.trim();
+    const trimmed_name = form_data.name.trim();
+    const trimmed_phone = form_data.phone.trim();
+
+    const has_password = trimmed_password.length > 0;
+    const has_password_confirm = trimmed_password_confirm.length > 0;
+
+    let has_error = false;
+
+    // 등록 모드일 때만 아이디 필수
+    if (!is_edit_mode && !trimmed_id) {
+      has_error = true;
+    }
+
+    // 등록 모드일 때만 비밀번호/비밀번호 확인 필수
+    if (!is_edit_mode) {
+      if (!trimmed_password) {
+        has_error = true;
+      }
+      if (!trimmed_password_confirm) {
+        has_error = true;
+      }
+    }
+
+    // 비밀번호 형식 검증 (등록/수정 공통, 값이 있을 때만)
+    if (has_password && !is_valid_password(trimmed_password)) {
+      has_error = true;
+    }
+
+    // 비밀번호 확인: 둘 중 하나라도 입력되어 있으면 일치 여부 확인
+    if (has_password || has_password_confirm) {
+      if (!trimmed_password || !trimmed_password_confirm) {
+        // 하나만 입력된 경우도 에러 처리
+        has_error = true;
+      } else if (trimmed_password !== trimmed_password_confirm) {
+        has_error = true;
+      }
+    }
+
+    // 이름은 항상 필수
+    if (!trimmed_name) {
+      has_error = true;
+    }
+
+    // 휴대폰 번호는 항상 필수
+    if (!trimmed_phone) {
+      has_error = true;
+    }
+
+    // 비밀번호 관련 에러 메시지는 helper로 항상 최신 상태로 맞춰줌
+    validate_password_fields(form_data);
+
+    return !has_error;
   };
 
   // 폼 제출 핸들러
@@ -96,6 +234,14 @@ export default function AdminForm({
   // e.preventDefault(): 기본 폼 제출 동작을 막아서 페이지 새로고침을 방지합니다
   const handle_submit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // 필수값 에러 테두리 표시 시작
+    set_show_required_errors(true);
+
+    // validation 체크
+    if (!validate_form()) {
+      return;
+    }
 
     if (mode === "create") {
       // 등록 모드: 관리자 등록 API 호출
@@ -130,7 +276,7 @@ export default function AdminForm({
     : styles.register_form;
 
   return (
-    <form className={form_class_name} onSubmit={handle_submit}>
+    <form className={form_class_name} onSubmit={handle_submit} noValidate>
       {/* 아이디 입력 필드 */}
       <div className={styles.form_field}>
         <label htmlFor="id" className={styles.form_label}>
@@ -146,9 +292,12 @@ export default function AdminForm({
           readOnly={is_edit_mode} // 수정 모드일 때 읽기 전용
           className={`${styles.form_input} ${
             is_edit_mode ? styles.form_input_disabled || "" : ""
+          } ${
+            show_required_errors && !is_edit_mode && !form_data.id.trim()
+              ? styles.form_input_error
+              : ""
           }`}
           placeholder={is_edit_mode ? "" : "8~16자 영문, 숫자 조합 입력"}
-          required={!is_edit_mode} // 등록 모드일 때만 필수
         />
       </div>
 
@@ -163,13 +312,20 @@ export default function AdminForm({
           name="password"
           value={form_data.password}
           onChange={handle_input_change}
-          className={styles.form_input}
+          className={`${styles.form_input} ${
+            show_required_errors && !is_edit_mode && !form_data.password.trim()
+              ? styles.form_input_error
+              : ""
+          }`}
           placeholder={
             is_edit_mode
               ? "변경 시 8~16자 영문, 숫자, 특수문자 조합 입력"
               : "변경 시 8~16자 영문, 숫자, 특수문자 조합 입력"
           }
-          required={!is_edit_mode} // 등록 모드일 때만 필수
+        />
+        <InputErrorMessage
+          code={error_codes.password}
+          show={form_data.password.trim().length > 0}
         />
       </div>
 
@@ -184,11 +340,20 @@ export default function AdminForm({
           name="password_confirm"
           value={form_data.password_confirm}
           onChange={handle_input_change}
-          className={styles.form_input}
+          className={`${styles.form_input} ${
+            show_required_errors &&
+            !is_edit_mode &&
+            !form_data.password_confirm.trim()
+              ? styles.form_input_error
+              : ""
+          }`}
           placeholder={
             is_edit_mode ? "변경 시 비밀번호 재입력" : "비밀번호 재입력"
           }
-          required={!is_edit_mode} // 등록 모드일 때만 필수
+        />
+        <InputErrorMessage
+          code={error_codes.password_confirm}
+          show={form_data.password_confirm.trim().length > 0}
         />
       </div>
 
@@ -203,9 +368,12 @@ export default function AdminForm({
           name="name"
           value={form_data.name}
           onChange={handle_input_change}
-          className={styles.form_input}
+          className={`${styles.form_input} ${
+            show_required_errors && !form_data.name.trim()
+              ? styles.form_input_error
+              : ""
+          }`}
           placeholder="이름 입력"
-          required
         />
       </div>
 
@@ -220,10 +388,12 @@ export default function AdminForm({
           name="phone"
           value={form_data.phone}
           onChange={handle_input_change}
-          className={styles.form_input}
+          className={`${styles.form_input} ${
+            show_required_errors && !form_data.phone.trim()
+              ? styles.form_input_error
+              : ""
+          }`}
           placeholder="- 제외 입력"
-          pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}"
-          required
         />
       </div>
 

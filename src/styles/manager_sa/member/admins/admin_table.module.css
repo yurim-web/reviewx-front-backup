@@ -149,38 +149,6 @@
   flex-shrink: 0;
 }
 
-/* 상태 태그 공통 스타일 */
-.status_tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: -0.28px;
-  white-space: nowrap;
-}
-
-/* 정상 상태 태그 */
-.status_tag_normal {
-  background-color: rgba(43, 127, 255, 0.1);
-  color: #2b7fff;
-}
-
-/* 일시 정지 상태 태그 */
-.status_tag_suspended {
-  background-color: rgba(255, 38, 38, 0.05);
-  color: #ff2626;
-}
-
-/* 영구 정지 상태 태그 */
-.status_tag_permanent {
-  background-color: #f1f1f1;
-  color: #666666;
-}
-
 /* 빈 메시지 */
 .empty_message {
   padding: 40px;
@@ -207,7 +175,6 @@
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.2s ease;
 }
 
 /* 수정 아이콘 */
@@ -215,9 +182,4 @@
   width: 20px;
   height: 20px;
   flex-shrink: 0;
-}
-
-/* 테이블 행 호버 시 수정 버튼 표시 */
-.table_row:hover .edit_button {
-  opacity: 1;
 }

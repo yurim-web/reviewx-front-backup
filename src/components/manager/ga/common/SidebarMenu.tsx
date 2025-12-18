@@ -61,7 +61,7 @@ export default function SidebarMenu() {
       items: [
         { label: "리뷰어 목록", path: "/manager_ga/member/reviewers" },
         { label: "파트너 목록", path: "/manager_ga/member/partners" },
-        { label: "차단 내역", path: "/manager_ga/member/blacklist" },
+        { label: "이용 제한 내역", path: "/manager_ga/member/blacklist" },
       ],
     },
     {

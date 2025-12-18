@@ -24,7 +24,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import styles from "@/styles/manager_sa/member/admins/edit_page.module.css";
+import styles from "@/styles/manager_sa/member/admins/admin_create_page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import AdminForm from "@/components/manager/sa/member/admins/section/AdminForm";
 import { admin_list, type AdminItem } from "@/data/manager_sa/member/admins";

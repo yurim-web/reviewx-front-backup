@@ -20,7 +20,6 @@
 
 import React from "react";
 import styles from "@/styles/user/notification/notification.module.css";
-import Header from "@/components/fragments/Header";
 import NotificationList from "@/components/notification/NotificationList";
 import PageTitle from "@/components/fragments/PageTitle";
 // 알림 목업 데이터 (향후 API로 대체)
@@ -56,9 +55,6 @@ export default function UserNotificationPage() {
 
   return (
     <div className={styles.notification_container}>
-      {/* 유저 헤더 */}
-      <Header />
-
       {/* 메인 콘텐츠 영역 */}
       <main className={styles.main_content}>
         <PageTitle title="알림" />
