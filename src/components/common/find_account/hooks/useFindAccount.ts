@@ -7,26 +7,49 @@
 
 import { useState } from "react";
 import type { AccountInfo, AccountStatus } from "../types";
+import { TEST_PHONE_NUMBERS } from "@/data/signup/testVerificationData";
 
-/** 테스트용 임시 계정 데이터 - 실제 구현 시 API 응답으로 교체 */
+/** 내부에서 사용할 공통 키: 전화번호 문자열에서 하이픈(-)을 제거한 값 */
+const normalizePhone = (phone: string) => phone.replace(/-/g, "");
+
+/** 테스트용 임시 계정 데이터 - 실제 구현 시 API 응답으로 교체
+ *
+ *  - 키 값은 테스트 휴대폰 번호 상수(TEST_PHONE_NUMBERS)를 normalizePhone으로
+ *    가공한 값입니다. (숫자만 있는 문자열)
+ *  - 이렇게 하면 화면에서는 하이픈 포함 번호(예: 010-1111-1111)를 사용하더라도,
+ *    로직에서는 항상 동일한 키로 비교할 수 있습니다.
+ */
 const TEMP_ACCOUNT_DATA: Record<string, AccountInfo> = {
-  "01000000000": {
+  [normalizePhone(TEST_PHONE_NUMBERS.EXISTING_NAVER)]: {
     email: "gdhong@naver.com",
     signupDate: "2025. 06. 01",
   },
-  "01012345678": {
+  [normalizePhone(TEST_PHONE_NUMBERS.NORMAL)]: {
     email: "test@example.com",
     signupDate: "2024. 12. 15",
   },
 };
 
-/** 테스트용 휴대폰 번호별 계정 상태 데이터 - 실제 구현 시 API 응답으로 교체 */
+/** 테스트용 휴대폰 번호별 계정 상태 데이터 - 실제 구현 시 API 응답으로 교체
+ *
+ *  - 값은 AccountStatus 타입으로, 계정 상태별로 어떤 모달을 띄울지 결정합니다.
+ *  - 키 값은 TEST_PHONE_NUMBERS 상수를 normalizePhone으로 가공한 값입니다.
+ */
 const TEMP_PHONE_STATUS_DATA: Record<string, AccountStatus> = {
-  "01000000000": "found",
-  "01012345678": "found",
-  "01011111111": "not_found",
-  "01022222222": "blocked",
-  "01033333333": "sns_only",
+  [normalizePhone(TEST_PHONE_NUMBERS.EXISTING_NAVER)]: "sns_only", // 네이버로만 가입된 계정 (SNS 로그인 모달 표시)
+  [normalizePhone(TEST_PHONE_NUMBERS.NORMAL)]: "found", // 일반 테스트 계정
+  [normalizePhone(TEST_PHONE_NUMBERS.EXISTING_KAKAO)]: "sns_only", // 카카오로만 가입된 계정
+  [normalizePhone(TEST_PHONE_NUMBERS.DUPLICATE)]: "blocked", // 예시: 정지/탈퇴 혹은 중복 계정 처리
+};
+
+/** 테스트용 휴대폰 번호별 소셜 로그인 타입 데이터 - 실제 구현 시 API 응답으로 교체
+ *
+ *  - SNS로만 가입된 계정의 경우, 어떤 소셜 로그인 버튼을 표시할지 결정합니다.
+ *  - 키 값은 TEST_PHONE_NUMBERS 상수를 normalizePhone으로 가공한 값입니다.
+ */
+const TEMP_SOCIAL_TYPE_DATA: Record<string, "kakao" | "naver"> = {
+  [normalizePhone(TEST_PHONE_NUMBERS.EXISTING_NAVER)]: "naver", // 네이버 로그인 버튼 표시
+  [normalizePhone(TEST_PHONE_NUMBERS.EXISTING_KAKAO)]: "kakao", // 카카오 로그인 버튼 표시
 };
 
 interface UseFindAccountReturn {
@@ -37,6 +60,7 @@ interface UseFindAccountReturn {
   isPhoneAccountModalOpen: boolean;
   isAccountNotFoundModalOpen: boolean;
   isBlockedAccountModalOpen: boolean;
+  socialType: "kakao" | "naver"; // SNS 로그인 모달에 표시할 소셜 타입
   setEmail: (value: string) => void;
   setEmailError: (value: string | undefined) => void;
   setIsResultModalOpen: (value: boolean) => void;
@@ -69,6 +93,8 @@ export function useFindAccount(): UseFindAccountReturn {
     useState<boolean>(false);
   const [isBlockedAccountModalOpen, setIsBlockedAccountModalOpen] =
     useState<boolean>(false);
+  // SNS 로그인 모달에 표시할 소셜 타입 (카카오 또는 네이버)
+  const [socialType, setSocialType] = useState<"kakao" | "naver">("kakao");
 
   /** 계정 상태에 따라 모달을 표시하는 헬퍼 함수 */
   const processAccountStatus = (
@@ -85,7 +111,7 @@ export function useFindAccount(): UseFindAccountReturn {
         }
       } else {
         console.log("비밀번호 찾기 다음 단계로 진행");
-        // TODO: router.push("/find-account/reset-password");
+        // TODO: router.push("/reset-password");
       }
       return;
     }
@@ -101,6 +127,10 @@ export function useFindAccount(): UseFindAccountReturn {
     }
 
     if (status === "sns_only") {
+      // SNS로만 가입된 계정인 경우, 소셜 타입을 설정하고 모달 표시
+      const socialTypeForPhone =
+        TEMP_SOCIAL_TYPE_DATA[normalizedPhone] || "kakao";
+      setSocialType(socialTypeForPhone);
       setIsPhoneAccountModalOpen(true);
       return;
     }
@@ -115,7 +145,7 @@ export function useFindAccount(): UseFindAccountReturn {
       setIsResultModalOpen(true);
     } else {
       console.log("비밀번호 찾기 다음 단계로 진행");
-      // TODO: router.push("/find-account/reset-password");
+      // TODO: router.push("/reset-password");
     }
   };
 
@@ -151,7 +181,7 @@ export function useFindAccount(): UseFindAccountReturn {
     // }
 
     // 🧪 테스트용 코드 - 실제 API 연결 시 전체 삭제 필요
-    const normalizedPhone = phone.replace(/-/g, "");
+    const normalizedPhone = normalizePhone(phone);
     const accountStatus = TEMP_PHONE_STATUS_DATA[normalizedPhone];
     processAccountStatus(
       accountStatus || "not_found",
@@ -169,6 +199,7 @@ export function useFindAccount(): UseFindAccountReturn {
     setIsPhoneAccountModalOpen(false);
     setIsAccountNotFoundModalOpen(false);
     setIsBlockedAccountModalOpen(false);
+    setSocialType("kakao"); // 기본값으로 초기화
   };
 
   return {
@@ -179,6 +210,7 @@ export function useFindAccount(): UseFindAccountReturn {
     isPhoneAccountModalOpen,
     isAccountNotFoundModalOpen,
     isBlockedAccountModalOpen,
+    socialType,
     setEmail,
     setEmailError,
     setIsResultModalOpen,

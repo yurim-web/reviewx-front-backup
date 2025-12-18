@@ -28,14 +28,14 @@
  *
  */
 
-import styles from '@/styles/manager_ga/dashboard/sections/campaign_summary_section.module.css';
+import styles from "@/styles/manager_ga/dashboard/sections/campaign_summary_section.module.css";
 
 // 통계 카드 데이터 타입 정의
 export interface StatCardData {
   title: string;
   value: string;
   change: string;
-  changeType: 'positive' | 'negative' | 'neutral';
+  changeType: "positive" | "negative" | "neutral";
 }
 
 // StatCard 컴포넌트의 props 타입 정의
@@ -51,9 +51,9 @@ export default function StatCard({ stat }: StatCardProps) {
       {/* 제목과 변화율을 같은 줄에 배치 (space-between) */}
       <div
         style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
         {/* 통계 카드 제목 (예: "예상 수수료") */}
@@ -64,9 +64,9 @@ export default function StatCard({ stat }: StatCardProps) {
         {/* 조건부 클래스명: 변화율 타입에 따라 색상이 달라짐 (녹색/빨간색/회색) */}
         <p
           className={`${styles.campaign_summary_section_stat_card_change} ${
-            stat.changeType === 'positive'
+            stat.changeType === "positive"
               ? styles.campaign_summary_section_stat_card_change_positive
-              : stat.changeType === 'negative'
+              : stat.changeType === "negative"
               ? styles.campaign_summary_section_stat_card_change_negative
               : styles.campaign_summary_section_stat_card_change_neutral
           }`}

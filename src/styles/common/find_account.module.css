@@ -66,7 +66,7 @@
   background-color: #ffffff;
   border: none;
   color: #848484;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   font-size: 18px;
   font-weight: 500;
   line-height: 18px;
@@ -85,7 +85,7 @@
 
 /* 활성화된 탭 하단 밑줄 */
 .tab_button_active::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
@@ -279,7 +279,7 @@
   border: none;
   border-radius: 8px;
   color: #ffffff;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   font-size: 16px;
   font-weight: 600;
   line-height: 16px;
@@ -377,6 +377,7 @@
   gap: 12px;
 }
 
+/* 카카오 로그인 버튼 (노란색) */
 .sns_modal_primary_button {
   width: 100%;
   height: 60px;
@@ -384,14 +385,33 @@
   border: none;
   border-radius: 12px;
   color: #3c1e1e;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   font-size: 18px;
   font-weight: 600;
   line-height: 18px;
   letter-spacing: -0.36px;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
+/* 네이버 로그인 버튼 (초록색) */
+.sns_modal_naver_button {
+  width: 100%;
+  height: 60px;
+  background-color: #03c75a; /* 네이버 초록색 */
+  border: none;
+  border-radius: 12px;
+  color: #ffffff; /* 흰색 텍스트 */
+  font-family: "Pretendard", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* 닫기 버튼 (회색) */
 .sns_modal_secondary_button {
   width: 100%;
   height: 60px;
@@ -399,12 +419,13 @@
   border: none;
   border-radius: 12px;
   color: #444;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   font-size: 18px;
   font-weight: 600;
   line-height: 18px;
   letter-spacing: -0.36px;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 /* ========================================
@@ -455,7 +476,7 @@
   border-radius: 8px;
   color: #444;
   text-align: center;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   font-size: 16px;
   font-weight: 500;
   line-height: 16px;

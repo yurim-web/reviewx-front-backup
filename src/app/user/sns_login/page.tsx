@@ -24,11 +24,11 @@
  * - CSS 모듈: 스타일을 컴포넌트별로 격리하여 관리
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import styles from '@/styles/user/login/sns_login.module.css';
+import { useState } from "react";
+import Link from "next/link";
+import styles from "@/styles/user/login/sns_login.module.css";
 
 /**
  * 소셜 로그인 페이지 컴포넌트
@@ -65,7 +65,7 @@ export default function SnsLoginPage() {
    * - console.log: 개발자 도구에서 확인할 수 있는 디버깅 메서드
    */
   const handleNaverLogin = () => {
-    console.log('네이버 로그인 클릭');
+    console.log("네이버 로그인 클릭");
     // TODO: 네이버 OAuth 로그인 구현
     // window.location.href = "네이버 OAuth URL";
   };
@@ -76,7 +76,7 @@ export default function SnsLoginPage() {
    * 실제로는 카카오 OAuth API를 호출해야 함
    */
   const handleKakaoLogin = () => {
-    console.log('카카오 로그인 클릭');
+    console.log("카카오 로그인 클릭");
     // TODO: 카카오 OAuth 로그인 구현
     // window.location.href = "카카오 OAuth URL";
   };
@@ -143,8 +143,11 @@ export default function SnsLoginPage() {
 
         {/* 하단 링크 섹션 */}
         <section className={styles.login_links_section}>
-          <Link href="/find-account" className={styles.login_link}>
-            아이디 · 비밀번호 찾기
+          {/* 사용자 전용 계정찾기 페이지로 이동 링크
+              - href="/user/find-account": 사용자 전용 계정찾기 페이지
+              - 클릭 시 클라이언트 사이드 네비게이션으로 이동 */}
+          <Link href="/user/find-account" className={styles.login_link}>
+            계정찾기
           </Link>
           <Link href="/inquiry" className={styles.login_link}>
             문의가 필요한가요?

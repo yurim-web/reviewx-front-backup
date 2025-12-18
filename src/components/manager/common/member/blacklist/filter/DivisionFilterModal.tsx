@@ -24,7 +24,7 @@
 import BaseFilterModal, {
   type FilterOption,
 } from "@/components/manager/ga/common/filter/BaseFilterModal";
-import type { BlacklistDivision } from "@/data/manager_ga/member/blacklist";
+import type { BlacklistDivision } from "@/data/manager_ga/common/filterOptions";
 
 interface DivisionFilterModalProps {
   is_open: boolean;

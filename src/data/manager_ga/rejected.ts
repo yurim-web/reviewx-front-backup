@@ -17,16 +17,11 @@
  *
  */
 
-// 반려 코드 타입 정의
-export type RejectCode =
-  | 'R001'
-  | 'R002'
-  | 'R003'
-  | 'R004'
-  | 'R005'
-  | 'R006'
-  | 'R007'
-  | 'R008';
+// 공통 필터 옵션에서 import
+import type { RejectCode } from '@/data/manager_ga/common/filterOptions';
+
+// 타입 재export (기존 코드와의 호환성을 위해)
+export type { RejectCode };
 
 // 반려 코드 카테고리 타입 정의
 export type RejectCategory = '콘텐츠' | '리뷰어/파트너' | '캠페인' | '정산' | '기타';

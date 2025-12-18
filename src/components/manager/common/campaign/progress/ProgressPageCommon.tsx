@@ -31,6 +31,7 @@
 
 "use client";
 
+import { useState, useMemo } from "react";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import StatCardsSectionCommon from "./cards/StatCardsSection";
 import CampaignProgressFilterSection from "./section/CampaignProgressFilterSection";
@@ -45,8 +46,18 @@ import { report_code_info } from "@/data/manager_ga/reported";
 // 데이터와 스타일을 import
 import { calculate_stat_card_values as calculateGAStats } from "@/data/manager_ga/progress";
 import { calculate_stat_card_values as calculateSAStats } from "@/data/manager_sa/progress";
-import { campaign_list as gaCampaignList } from "@/data/manager_ga/progress";
-import { campaign_list as saCampaignList } from "@/data/manager_sa/progress";
+import {
+  campaign_list as gaCampaignList,
+  type CampaignProgressItem,
+} from "@/data/manager_ga/progress";
+import {
+  campaign_list as saCampaignList,
+  type CampaignProgressItem as SACampaignProgressItem,
+} from "@/data/manager_sa/progress";
+import type { CampaignStatus } from "./filter/StatusFilterModal";
+import type { CampaignType } from "./filter/TypeFilterModal";
+import type { Channel } from "./filter/ChannelFilterModal";
+import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 
 // 스타일 import
 import pageStylesGA from "@/styles/manager_ga/campaign/progress/page.module.css";
@@ -92,6 +103,23 @@ interface ProgressPageCommonProps {
 export default function ProgressPageCommon({
   manager_type,
 }: ProgressPageCommonProps) {
+  /* ========================================
+     📌 필터 상태 관리
+     ======================================== */
+
+  // 검색어 상태
+  const [search_query, set_search_query] = useState("");
+
+  // 필터 상태
+  const [selected_statuses, set_selected_statuses] = useState<CampaignStatus[]>(
+    []
+  );
+  const [selected_types, set_selected_types] = useState<CampaignType[]>([]);
+  const [selected_channels, set_selected_channels] = useState<Channel[]>([]);
+  const [selected_date_range, set_selected_date_range] = useState<
+    DateRange | undefined
+  >(undefined);
+
   // manager_type에 따라 데이터와 스타일을 선택합니다
   // 삼항 연산자를 사용하여 조건부로 값을 선택합니다
   // 형식: 조건 ? 참일 때 값 : 거짓일 때 값
@@ -112,7 +140,90 @@ export default function ProgressPageCommon({
     manager_type === "ga" ? filterSectionStylesGA : filterSectionStylesSA;
 
   // 캠페인 리스트 선택
-  const campaignList = manager_type === "ga" ? gaCampaignList : saCampaignList;
+  const allCampaignList =
+    manager_type === "ga" ? gaCampaignList : saCampaignList;
+
+  /* ========================================
+     🔍 필터링 로직
+     ======================================== */
+
+  // 필터 초기화 함수
+  const handle_filter_reset = () => {
+    set_search_query("");
+    set_selected_statuses([]);
+    set_selected_types([]);
+    set_selected_channels([]);
+    set_selected_date_range(undefined);
+  };
+
+  // 필터링된 캠페인 리스트 계산
+  // useMemo: 필터 조건이 변경될 때만 재계산하여 성능 최적화
+  const filtered_campaign_list = useMemo(() => {
+    return allCampaignList.filter((campaign) => {
+      // 상태 필터: 선택된 상태가 없으면 모든 상태 통과, 있으면 선택된 상태만 통과
+      if (
+        selected_statuses.length > 0 &&
+        !selected_statuses.includes(campaign.status)
+      ) {
+        return false;
+      }
+
+      // 유형 필터: 선택된 유형이 없으면 모든 유형 통과, 있으면 선택된 유형만 통과
+      if (
+        selected_types.length > 0 &&
+        !selected_types.includes(campaign.type)
+      ) {
+        return false;
+      }
+
+      // 채널 필터: 선택된 채널이 없으면 모든 채널 통과, 있으면 선택된 채널만 통과
+      if (
+        selected_channels.length > 0 &&
+        !selected_channels.includes(campaign.channel)
+      ) {
+        return false;
+      }
+
+      // 검색어 필터: 검색어가 없으면 통과, 있으면 캠페인명 또는 파트너명에 포함되는지 확인
+      if (search_query.trim()) {
+        const query = search_query.toLowerCase();
+        const campaign_name = campaign.campaign_name.toLowerCase();
+        const partner_name = campaign.partner_name.toLowerCase();
+        if (!campaign_name.includes(query) && !partner_name.includes(query)) {
+          return false;
+        }
+      }
+
+      // 날짜 범위 필터: 선택된 날짜 범위가 있으면 해당 범위 내의 캠페인만 통과
+      if (
+        selected_date_range?.from &&
+        selected_date_range?.to &&
+        campaign.created_at
+      ) {
+        const campaign_date = new Date(campaign.created_at);
+        const from_date = new Date(selected_date_range.from);
+        const to_date = new Date(selected_date_range.to);
+        to_date.setHours(23, 59, 59, 999); // 종료일의 끝 시간까지 포함
+
+        // 날짜 비교 시 시간 부분을 제거하여 날짜만 비교
+        campaign_date.setHours(0, 0, 0, 0);
+        from_date.setHours(0, 0, 0, 0);
+
+        if (campaign_date < from_date || campaign_date > to_date) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [
+    allCampaignList,
+    selected_statuses,
+    selected_types,
+    selected_channels,
+    selected_date_range,
+    search_query,
+  ]);
 
   // 테이블 스타일 선택
   const tableStyles = manager_type === "ga" ? tableStylesGA : tableStylesSA;
@@ -229,12 +340,23 @@ export default function ProgressPageCommon({
               report_icon: string;
             }
           }
+          search_query={search_query}
+          on_search_change={set_search_query}
+          selected_statuses={selected_statuses}
+          on_statuses_change={set_selected_statuses}
+          selected_types={selected_types}
+          on_types_change={set_selected_types}
+          selected_channels={selected_channels}
+          on_channels_change={set_selected_channels}
+          selected_date_range={selected_date_range}
+          on_date_range_change={set_selected_date_range}
+          on_filter_reset={handle_filter_reset}
         />
 
         {/* 캠페인 테이블 */}
         {/* CampaignTableCommon은 공통 컴포넌트로, 데이터와 스타일을 props로 받습니다 */}
         <CampaignTableCommon
-          campaign_list={campaignList}
+          campaign_list={filtered_campaign_list}
           base_path={basePath}
           ReportModal={ReportModal}
           styles={tableStyles}

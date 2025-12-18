@@ -16,21 +16,18 @@
  *
  */
 
-// 채널 타입 정의
-export type Channel = 'Blog' | 'Clip' | 'Instagram' | 'Youtube' | 'Store';
+// GA 관리자 전용 필터 옵션에서 import
+import type {
+  ReviewerType,
+  ReviewerStatus,
+  ReviewerStatusType,
+} from "@/data/manager_ga/common/filterOptions";
 
-// 리뷰어 유형 타입 정의
-export type ReviewerType = '서포터즈' | '일반' | '인플루언서';
+// 공통 필터 옵션에서 import (manager_ga와 manager_sa 공통)
+import type { Channel } from "@/data/manager/common/filterOptions";
 
-// 리뷰어 상태 타입 정의
-export type ReviewerStatus = '정상' | '일시 정지' | '영구 정지';
-
-// 리뷰어 상태 유형 타입 정의
-export type ReviewerStatusType =
-  | '모범 회원'
-  | '주의 회원'
-  | '경고 회원'
-  | '이용 제한 회원';
+// 타입 재export (기존 코드와의 호환성을 위해)
+export type { Channel, ReviewerType, ReviewerStatus, ReviewerStatusType };
 
 // 리뷰어 통계 타입 정의
 export interface ReviewerStats {
@@ -81,17 +78,17 @@ export interface RecentCampaign {
   campaign_number: string; // 캠페인 번호
   partner_name: string; // 파트너명
   campaign_name: string; // 캠페인명
-  status: '진행' | '종료'; // 상태
-  type: '배송형' | '구매평'; // 유형
+  status: "진행" | "종료"; // 상태
+  type: "배송형" | "구매평"; // 유형
   channel: Channel; // 채널
   points: number; // 지급 포인트
 }
 
 // 패널티 유형 타입 정의
-export type PenaltyType = '지각 제출' | '선정 후 취소' | '기타';
+export type PenaltyType = "지각 제출" | "선정 후 취소" | "기타";
 
 // 패널티 상태 타입 정의
-export type PenaltyStatus = '경고' | '정상' | '일시정지';
+export type PenaltyStatus = "경고" | "정상" | "일시정지";
 
 // 패널티 내역 아이템 타입 정의
 export interface PenaltyHistoryItem {
@@ -104,7 +101,7 @@ export interface PenaltyHistoryItem {
 // 리뷰어 디테일 정보 타입 정의
 export interface ReviewerDetail extends ReviewerItem {
   nickname: string; // 닉네임
-  gender: '남성' | '여성'; // 성별
+  gender: "남성" | "여성"; // 성별
   age: number; // 나이
   email: string; // 이메일
   phone: string; // 전화번호
@@ -127,251 +124,251 @@ export const reviewer_stats: ReviewerStats = {
 // 리뷰어 목록 데이터
 export const reviewer_list: ReviewerItem[] = [
   {
-    id: '1',
-    number: '000001',
-    name: '오은영',
-    channels: ['Blog', 'Clip', 'Instagram', 'Youtube'],
-    type: '일반',
+    id: "1",
+    number: "000001",
+    name: "오은영",
+    channels: ["Blog", "Clip", "Instagram", "Youtube"],
+    type: "일반",
     campaign_participated: 85,
     campaign_completed: 80,
     current_points: 1500000,
     withdrawn_points: 11500000,
-    status_type: '이용 제한 회원',
-    status: '일시 정지',
-    last_access_date: '2025-08-01 18:56',
-    join_date: '2025-08-01 18:56',
+    status_type: "이용 제한 회원",
+    status: "일시 정지",
+    last_access_date: "2025-08-01 18:56",
+    join_date: "2025-08-01 18:56",
   },
   {
-    id: '2',
-    number: '000001',
-    name: '김은지',
-    channels: ['Blog', 'Clip'],
-    type: '일반',
+    id: "2",
+    number: "000001",
+    name: "김은지",
+    channels: ["Blog", "Clip"],
+    type: "일반",
     campaign_participated: 1,
     campaign_completed: 1,
     current_points: 1500000,
     withdrawn_points: 132500000,
-    status_type: '이용 제한 회원',
-    status: '일시 정지',
-    last_access_date: '2025-08-01 18:56',
-    join_date: '2025-08-01 18:56',
+    status_type: "이용 제한 회원",
+    status: "일시 정지",
+    last_access_date: "2025-08-01 18:56",
+    join_date: "2025-08-01 18:56",
   },
   {
-    id: '3',
-    number: '000001',
-    name: '홍길동',
-    channels: ['Blog', 'Instagram'],
-    type: '서포터즈',
+    id: "3",
+    number: "000001",
+    name: "홍길동",
+    channels: ["Blog", "Instagram"],
+    type: "서포터즈",
     campaign_participated: 569,
     campaign_completed: 560,
     current_points: 999999999,
     withdrawn_points: 999999999,
-    status_type: '이용 제한 회원',
-    status: '일시 정지',
-    last_access_date: '2025-08-01 18:56',
-    join_date: '2025-08-01 18:56',
+    status_type: "이용 제한 회원",
+    status: "일시 정지",
+    last_access_date: "2025-08-01 18:56",
+    join_date: "2025-08-01 18:56",
   },
   {
-    id: '4',
-    number: '000001',
-    name: '유연희',
-    channels: ['Blog'],
-    type: '인플루언서',
+    id: "4",
+    number: "000001",
+    name: "유연희",
+    channels: ["Blog"],
+    type: "인플루언서",
     campaign_participated: 1,
     campaign_completed: 1,
     current_points: 1500000,
     withdrawn_points: 900000000,
-    status_type: '이용 제한 회원',
-    status: '영구 정지',
-    last_access_date: '2025-08-01 18:56',
-    join_date: '2025-08-01 18:56',
+    status_type: "이용 제한 회원",
+    status: "영구 정지",
+    last_access_date: "2025-08-01 18:56",
+    join_date: "2025-08-01 18:56",
   },
   {
-    id: '5',
-    number: '000001',
-    name: '김히어라',
-    channels: ['Blog', 'Instagram'],
-    type: '일반',
+    id: "5",
+    number: "000001",
+    name: "김히어라",
+    channels: ["Blog", "Instagram"],
+    type: "일반",
     campaign_participated: 5,
     campaign_completed: 5,
     current_points: 1500000,
     withdrawn_points: 500000,
-    status_type: '주의 회원',
-    status: '정상',
-    last_access_date: '2025-08-01 18:56',
-    join_date: '2025-08-01 18:56',
+    status_type: "주의 회원",
+    status: "정상",
+    last_access_date: "2025-08-01 18:56",
+    join_date: "2025-08-01 18:56",
   },
   {
-    id: '6',
-    number: '000001',
-    name: '일이삼사오육칠팔구십',
-    channels: ['Blog'],
-    type: '일반',
+    id: "6",
+    number: "000001",
+    name: "일이삼사오육칠팔구십",
+    channels: ["Blog"],
+    type: "일반",
     campaign_participated: 1,
     campaign_completed: 1,
     current_points: 1500000,
     withdrawn_points: 1500000,
-    status_type: '모범 회원',
-    status: '정상',
-    last_access_date: '2025-08-01 18:56',
-    join_date: '2025-08-01 18:56',
+    status_type: "모범 회원",
+    status: "정상",
+    last_access_date: "2025-08-01 18:56",
+    join_date: "2025-08-01 18:56",
   },
   {
-    id: '7',
-    number: '000001',
-    name: '이은',
-    channels: ['Blog'],
-    type: '일반',
+    id: "7",
+    number: "000001",
+    name: "이은",
+    channels: ["Blog"],
+    type: "일반",
     campaign_participated: 1,
     campaign_completed: 1,
     current_points: 1500000,
     withdrawn_points: 1500000,
-    status_type: '모범 회원',
-    status: '정상',
-    last_access_date: '2025-08-01 18:56',
-    join_date: '2025-08-01 18:56',
+    status_type: "모범 회원",
+    status: "정상",
+    last_access_date: "2025-08-01 18:56",
+    join_date: "2025-08-01 18:56",
   },
   {
-    id: '8',
-    number: '000001',
-    name: '김휘수',
-    channels: ['Blog'],
-    type: '일반',
+    id: "8",
+    number: "000001",
+    name: "김휘수",
+    channels: ["Blog"],
+    type: "일반",
     campaign_participated: 1,
     campaign_completed: 1,
     current_points: 1500000,
     withdrawn_points: 1500000,
-    status_type: '모범 회원',
-    status: '정상',
-    last_access_date: '2025-08-01 18:56',
-    join_date: '2025-08-01 18:56',
+    status_type: "모범 회원",
+    status: "정상",
+    last_access_date: "2025-08-01 18:56",
+    join_date: "2025-08-01 18:56",
   },
   {
-    id: '9',
-    number: '000001',
-    name: '황보선혜',
-    channels: ['Blog'],
-    type: '일반',
+    id: "9",
+    number: "000001",
+    name: "황보선혜",
+    channels: ["Blog"],
+    type: "일반",
     campaign_participated: 1,
     campaign_completed: 1,
     current_points: 1500000,
     withdrawn_points: 1500000,
-    status_type: '모범 회원',
-    status: '정상',
-    last_access_date: '2025-08-01 18:56',
-    join_date: '2025-08-01 18:56',
+    status_type: "모범 회원",
+    status: "정상",
+    last_access_date: "2025-08-01 18:56",
+    join_date: "2025-08-01 18:56",
   },
   {
-    id: '10',
-    number: '000001',
-    name: '장세희',
-    channels: ['Blog', 'Instagram'],
-    type: '일반',
+    id: "10",
+    number: "000001",
+    name: "장세희",
+    channels: ["Blog", "Instagram"],
+    type: "일반",
     campaign_participated: 1,
     campaign_completed: 1,
     current_points: 1500000,
     withdrawn_points: 1500000,
-    status_type: '모범 회원',
-    status: '정상',
-    last_access_date: '2025-08-01 18:56',
-    join_date: '2025-08-01 18:56',
+    status_type: "모범 회원",
+    status: "정상",
+    last_access_date: "2025-08-01 18:56",
+    join_date: "2025-08-01 18:56",
   },
   {
-    id: '11',
-    number: '000001',
-    name: '김은빛',
-    channels: ['Blog', 'Instagram'],
-    type: '일반',
+    id: "11",
+    number: "000001",
+    name: "김은빛",
+    channels: ["Blog", "Instagram"],
+    type: "일반",
     campaign_participated: 1,
     campaign_completed: 1,
     current_points: 1500000,
     withdrawn_points: 1500000,
-    status_type: '모범 회원',
-    status: '정상',
-    last_access_date: '2025-08-01 18:56',
-    join_date: '2025-08-01 18:56',
+    status_type: "모범 회원",
+    status: "정상",
+    last_access_date: "2025-08-01 18:56",
+    join_date: "2025-08-01 18:56",
   },
   {
-    id: '12',
-    number: '000001',
-    name: '김도토리',
-    channels: ['Blog', 'Instagram'],
-    type: '일반',
+    id: "12",
+    number: "000001",
+    name: "김도토리",
+    channels: ["Blog", "Instagram"],
+    type: "일반",
     campaign_participated: 1,
     campaign_completed: 1,
     current_points: 1500000,
     withdrawn_points: 1500000,
-    status_type: '모범 회원',
-    status: '정상',
-    last_access_date: '2025-08-01 18:56',
-    join_date: '2025-08-01 18:56',
+    status_type: "모범 회원",
+    status: "정상",
+    last_access_date: "2025-08-01 18:56",
+    join_date: "2025-08-01 18:56",
   },
   {
-    id: '13',
-    number: '000001',
-    name: '박요셉',
-    channels: ['Blog', 'Instagram'],
-    type: '일반',
+    id: "13",
+    number: "000001",
+    name: "박요셉",
+    channels: ["Blog", "Instagram"],
+    type: "일반",
     campaign_participated: 1,
     campaign_completed: 1,
     current_points: 1500000,
     withdrawn_points: 1500000,
-    status_type: '모범 회원',
-    status: '정상',
-    last_access_date: '2025-08-01 18:56',
-    join_date: '2025-08-01 18:56',
+    status_type: "모범 회원",
+    status: "정상",
+    last_access_date: "2025-08-01 18:56",
+    join_date: "2025-08-01 18:56",
   },
   {
-    id: '14',
-    number: '000001',
-    name: '황에스더',
-    channels: ['Blog', 'Instagram'],
-    type: '일반',
+    id: "14",
+    number: "000001",
+    name: "황에스더",
+    channels: ["Blog", "Instagram"],
+    type: "일반",
     campaign_participated: 1,
     campaign_completed: 1,
     current_points: 1500000,
     withdrawn_points: 1500000,
-    status_type: '모범 회원',
-    status: '정상',
-    last_access_date: '2025-08-01 18:56',
-    join_date: '2025-08-01 18:56',
+    status_type: "모범 회원",
+    status: "정상",
+    last_access_date: "2025-08-01 18:56",
+    join_date: "2025-08-01 18:56",
   },
   {
-    id: '15',
-    number: '000001',
-    name: '조로이스',
-    channels: ['Blog', 'Instagram'],
-    type: '일반',
+    id: "15",
+    number: "000001",
+    name: "조로이스",
+    channels: ["Blog", "Instagram"],
+    type: "일반",
     campaign_participated: 1,
     campaign_completed: 1,
     current_points: 1500000,
     withdrawn_points: 1500000,
-    status_type: '모범 회원',
-    status: '정상',
-    last_access_date: '2025-08-01 18:56',
-    join_date: '2025-08-01 18:56',
+    status_type: "모범 회원",
+    status: "정상",
+    last_access_date: "2025-08-01 18:56",
+    join_date: "2025-08-01 18:56",
   },
   {
-    id: '16',
-    number: '000016',
-    name: '데이터없음테스트',
-    channels: ['Blog'],
-    type: '일반',
+    id: "16",
+    number: "000016",
+    name: "데이터없음테스트",
+    channels: ["Blog"],
+    type: "일반",
     campaign_participated: 0,
     campaign_completed: 0,
     current_points: 0,
     withdrawn_points: 0,
-    status_type: '모범 회원',
-    status: '정상',
-    last_access_date: '2025-08-01 18:56',
-    join_date: '2025-08-01 18:56',
+    status_type: "모범 회원",
+    status: "정상",
+    last_access_date: "2025-08-01 18:56",
+    join_date: "2025-08-01 18:56",
   },
 ];
 
 // 리뷰어 ID로 디테일 정보를 가져오는 함수
 // 실제 프로젝트에서는 API 호출로 대체됩니다
 export function get_reviewer_detail_by_id(
-  reviewer_id: string,
+  reviewer_id: string
 ): ReviewerDetail | null {
   // 목록에서 해당 리뷰어 찾기
   const reviewer = reviewer_list.find((r) => r.id === reviewer_id);
@@ -382,22 +379,22 @@ export function get_reviewer_detail_by_id(
   // 패널티 횟수 계산: ID에 따라 다르게 설정
   // 실제 프로젝트에서는 API에서 받아온 데이터를 사용합니다
   const penalty_count_map: Record<string, number> = {
-    '1': 5,
-    '2': 0,
-    '3': 0,
-    '4': 1,
-    '5': 2,
-    '6': 0,
-    '7': 0,
-    '8': 0,
-    '9': 0,
-    '10': 0,
-    '11': 0,
-    '12': 0,
-    '13': 0,
-    '14': 0,
-    '15': 0,
-    '16': 0, // 데이터 없음 테스트용
+    "1": 5,
+    "2": 0,
+    "3": 0,
+    "4": 1,
+    "5": 2,
+    "6": 0,
+    "7": 0,
+    "8": 0,
+    "9": 0,
+    "10": 0,
+    "11": 0,
+    "12": 0,
+    "13": 0,
+    "14": 0,
+    "15": 0,
+    "16": 0, // 데이터 없음 테스트용
   };
   const penalty_count = penalty_count_map[reviewer.id] || 0;
 
@@ -408,18 +405,18 @@ export function get_reviewer_detail_by_id(
   if (penalty_count > 0) {
     for (let i = 0; i < penalty_count; i++) {
       // 첫 번째 항목이고 패널티가 5개 이상이면 일시정지, 그 외는 정상
-      const actualStatus = i === 0 && penalty_count >= 5 ? '일시정지' : '정상';
+      const actualStatus = i === 0 && penalty_count >= 5 ? "일시정지" : "정상";
 
       penalty_history.push({
         type:
           i === penalty_count - 1 && penalty_count > 1
-            ? '선정 후 취소'
-            : '지각 제출',
+            ? "선정 후 취소"
+            : "지각 제출",
         reason:
           i === penalty_count - 1 && penalty_count > 1
-            ? '선정 후 취소'
-            : '지각 제출',
-        processed_date: `2025-08-${String(i + 1).padStart(2, '0')} 18:56`,
+            ? "선정 후 취소"
+            : "지각 제출",
+        processed_date: `2025-08-${String(i + 1).padStart(2, "0")} 18:56`,
         status: actualStatus,
       });
     }
@@ -430,65 +427,65 @@ export function get_reviewer_detail_by_id(
   const recent_campaigns: RecentCampaign[] = [];
 
   // 데이터 없음 테스트용: ID가 '16'인 경우 빈 배열로 유지
-  if (reviewer.id !== '16') {
+  if (reviewer.id !== "16") {
     const campaign_count = reviewer.campaign_participated;
 
     // 캠페인 데이터 템플릿 (리뷰어마다 다른 데이터를 생성하기 위한 배열)
-    const campaign_templates: Omit<RecentCampaign, 'campaign_number'>[] = [
+    const campaign_templates: Omit<RecentCampaign, "campaign_number">[] = [
       {
-        partner_name: '주식회사 재밌는걸참좋아하고하고싶은거하는노신사',
-        campaign_name: '푸러블 고농축 캡슐세제 플라워향, 1개, 110개입',
-        status: '진행',
-        type: '배송형',
-        channel: 'Blog',
+        partner_name: "주식회사 재밌는걸참좋아하고하고싶은거하는노신사",
+        campaign_name: "푸러블 고농축 캡슐세제 플라워향, 1개, 110개입",
+        status: "진행",
+        type: "배송형",
+        channel: "Blog",
         points: 115000,
       },
       {
-        partner_name: '그리디센트',
-        campaign_name: '나만의 향수만들기 체험 [그리디센트]',
-        status: '진행',
-        type: '구매평',
-        channel: 'Store',
+        partner_name: "그리디센트",
+        campaign_name: "나만의 향수만들기 체험 [그리디센트]",
+        status: "진행",
+        type: "구매평",
+        channel: "Store",
         points: 50000,
       },
       {
-        partner_name: '스타벅스',
-        campaign_name: '스타벅스 리저브 원두 체험',
-        status: '종료',
-        type: '배송형',
-        channel: 'Blog',
+        partner_name: "스타벅스",
+        campaign_name: "스타벅스 리저브 원두 체험",
+        status: "종료",
+        type: "배송형",
+        channel: "Blog",
         points: 80000,
       },
       {
-        partner_name: '나이키',
-        campaign_name: '나이키 에어맥스 운동화 리뷰',
-        status: '종료',
-        type: '구매평',
-        channel: 'Instagram',
+        partner_name: "나이키",
+        campaign_name: "나이키 에어맥스 운동화 리뷰",
+        status: "종료",
+        type: "구매평",
+        channel: "Instagram",
         points: 120000,
       },
       {
-        partner_name: '삼성전자',
-        campaign_name: '갤럭시 버즈 프로 체험',
-        status: '종료',
-        type: '배송형',
-        channel: 'Youtube',
+        partner_name: "삼성전자",
+        campaign_name: "갤럭시 버즈 프로 체험",
+        status: "종료",
+        type: "배송형",
+        channel: "Youtube",
         points: 150000,
       },
       {
-        partner_name: '아이폰',
-        campaign_name: '아이폰 15 프로 맥스 리뷰',
-        status: '진행',
-        type: '구매평',
-        channel: 'Blog',
+        partner_name: "아이폰",
+        campaign_name: "아이폰 15 프로 맥스 리뷰",
+        status: "진행",
+        type: "구매평",
+        channel: "Blog",
         points: 200000,
       },
       {
-        partner_name: '코카콜라',
-        campaign_name: '코카콜라 제로 슈가 체험',
-        status: '종료',
-        type: '배송형',
-        channel: 'Clip',
+        partner_name: "코카콜라",
+        campaign_name: "코카콜라 제로 슈가 체험",
+        status: "종료",
+        type: "배송형",
+        channel: "Clip",
         points: 30000,
       },
     ];
@@ -503,10 +500,10 @@ export function get_reviewer_detail_by_id(
       const template = campaign_templates[template_index];
 
       recent_campaigns.push({
-        campaign_number: String(i + 1).padStart(6, '0'),
+        campaign_number: String(i + 1).padStart(6, "0"),
         ...template,
         // 진행/종료 상태를 다양하게 설정
-        status: i % 3 === 0 ? '진행' : '종료',
+        status: i % 3 === 0 ? "진행" : "종료",
         // 포인트도 다양하게 설정
         points: template.points + (i % 5) * 10000,
       });
@@ -518,149 +515,149 @@ export function get_reviewer_detail_by_id(
     string,
     {
       nickname: string;
-      gender: '남성' | '여성';
+      gender: "남성" | "여성";
       age: number;
       email: string;
       phone: string;
       address: string;
     }
   > = {
-    '1': {
-      nickname: '양치하는고양이',
-      gender: '남성',
+    "1": {
+      nickname: "양치하는고양이",
+      gender: "남성",
       age: 37,
-      email: 'oheunyoung@naver.com',
-      phone: '010-1111-1111',
-      address: '서울시 강남구 테헤란로 123',
+      email: "oheunyoung@naver.com",
+      phone: "010-1111-1111",
+      address: "서울시 강남구 테헤란로 123",
     },
-    '2': {
-      nickname: '은지블로그',
-      gender: '여성',
+    "2": {
+      nickname: "은지블로그",
+      gender: "여성",
       age: 28,
-      email: 'kimeunji@gmail.com',
-      phone: '010-2222-2222',
-      address: '서울시 서초구 서초대로 456',
+      email: "kimeunji@gmail.com",
+      phone: "010-2222-2222",
+      address: "서울시 서초구 서초대로 456",
     },
-    '3': {
-      nickname: '홍길동의리뷰',
-      gender: '남성',
+    "3": {
+      nickname: "홍길동의리뷰",
+      gender: "남성",
       age: 45,
-      email: 'honggildong@daum.net',
-      phone: '010-3333-3333',
-      address: '부산시 해운대구 해운대해변로 789',
+      email: "honggildong@daum.net",
+      phone: "010-3333-3333",
+      address: "부산시 해운대구 해운대해변로 789",
     },
-    '4': {
-      nickname: '연희의일상',
-      gender: '여성',
+    "4": {
+      nickname: "연희의일상",
+      gender: "여성",
       age: 32,
-      email: 'yuyeonhee@naver.com',
-      phone: '010-4444-4444',
-      address: '인천시 남동구 장자로 14',
+      email: "yuyeonhee@naver.com",
+      phone: "010-4444-4444",
+      address: "인천시 남동구 장자로 14",
     },
-    '5': {
-      nickname: '히어라리뷰',
-      gender: '여성',
+    "5": {
+      nickname: "히어라리뷰",
+      gender: "여성",
       age: 26,
-      email: 'kimheera@naver.com',
-      phone: '010-5555-5555',
-      address: '대전시 유성구 대학로 321',
+      email: "kimheera@naver.com",
+      phone: "010-5555-5555",
+      address: "대전시 유성구 대학로 321",
     },
-    '6': {
-      nickname: '일이삼사오',
-      gender: '남성',
+    "6": {
+      nickname: "일이삼사오",
+      gender: "남성",
       age: 35,
-      email: 'ilsamsa@naver.com',
-      phone: '010-6666-6666',
-      address: '광주시 북구 첨단과기로 654',
+      email: "ilsamsa@naver.com",
+      phone: "010-6666-6666",
+      address: "광주시 북구 첨단과기로 654",
     },
-    '7': {
-      nickname: '이은의블로그',
-      gender: '여성',
+    "7": {
+      nickname: "이은의블로그",
+      gender: "여성",
       age: 29,
-      email: 'leeun@naver.com',
-      phone: '010-7777-7777',
-      address: '대구시 수성구 범어천로 987',
+      email: "leeun@naver.com",
+      phone: "010-7777-7777",
+      address: "대구시 수성구 범어천로 987",
     },
-    '8': {
-      nickname: '휘수의리뷰',
-      gender: '남성',
+    "8": {
+      nickname: "휘수의리뷰",
+      gender: "남성",
       age: 41,
-      email: 'kimhwisu@naver.com',
-      phone: '010-8888-8888',
-      address: '울산시 남구 삼산로 147',
+      email: "kimhwisu@naver.com",
+      phone: "010-8888-8888",
+      address: "울산시 남구 삼산로 147",
     },
-    '9': {
-      nickname: '황보선혜',
-      gender: '여성',
+    "9": {
+      nickname: "황보선혜",
+      gender: "여성",
       age: 33,
-      email: 'hwangboseonhye@naver.com',
-      phone: '010-9999-9999',
-      address: '경기도 성남시 분당구 정자로 258',
+      email: "hwangboseonhye@naver.com",
+      phone: "010-9999-9999",
+      address: "경기도 성남시 분당구 정자로 258",
     },
-    '10': {
-      nickname: '장세희블로그',
-      gender: '여성',
+    "10": {
+      nickname: "장세희블로그",
+      gender: "여성",
       age: 27,
-      email: 'jangsehee@naver.com',
-      phone: '010-1010-1010',
-      address: '경기도 수원시 영통구 광교로 369',
+      email: "jangsehee@naver.com",
+      phone: "010-1010-1010",
+      address: "경기도 수원시 영통구 광교로 369",
     },
-    '11': {
-      nickname: '은빛의일상',
-      gender: '여성',
+    "11": {
+      nickname: "은빛의일상",
+      gender: "여성",
       age: 30,
-      email: 'kimeunbit@naver.com',
-      phone: '010-2020-2020',
-      address: '경기도 고양시 일산동구 정발산로 741',
+      email: "kimeunbit@naver.com",
+      phone: "010-2020-2020",
+      address: "경기도 고양시 일산동구 정발산로 741",
     },
-    '12': {
-      nickname: '도토리리뷰',
-      gender: '남성',
+    "12": {
+      nickname: "도토리리뷰",
+      gender: "남성",
       age: 38,
-      email: 'kimdotori@naver.com',
-      phone: '010-3030-3030',
-      address: '경기도 부천시 원미구 상동로 852',
+      email: "kimdotori@naver.com",
+      phone: "010-3030-3030",
+      address: "경기도 부천시 원미구 상동로 852",
     },
-    '13': {
-      nickname: '요셉의블로그',
-      gender: '남성',
+    "13": {
+      nickname: "요셉의블로그",
+      gender: "남성",
       age: 36,
-      email: 'parkyoseb@naver.com',
-      phone: '010-4040-4040',
-      address: '경기도 안양시 만안구 안양로 963',
+      email: "parkyoseb@naver.com",
+      phone: "010-4040-4040",
+      address: "경기도 안양시 만안구 안양로 963",
     },
-    '14': {
-      nickname: '에스더리뷰',
-      gender: '여성',
+    "14": {
+      nickname: "에스더리뷰",
+      gender: "여성",
       age: 31,
-      email: 'hwangesder@naver.com',
-      phone: '010-5050-5050',
-      address: '경기도 용인시 기흥구 신갈로 159',
+      email: "hwangesder@naver.com",
+      phone: "010-5050-5050",
+      address: "경기도 용인시 기흥구 신갈로 159",
     },
-    '15': {
-      nickname: '로이스의일상',
-      gender: '여성',
+    "15": {
+      nickname: "로이스의일상",
+      gender: "여성",
       age: 34,
-      email: 'jorois@naver.com',
-      phone: '010-6060-6060',
-      address: '경기도 화성시 동탄대로 357',
+      email: "jorois@naver.com",
+      phone: "010-6060-6060",
+      address: "경기도 화성시 동탄대로 357",
     },
-    '16': {
-      nickname: '데이터없음테스트',
-      gender: '남성',
+    "16": {
+      nickname: "데이터없음테스트",
+      gender: "남성",
       age: 30,
-      email: 'nodata@test.com',
-      phone: '010-9999-9999',
-      address: '서울시 강남구 테헤란로 999',
+      email: "nodata@test.com",
+      phone: "010-9999-9999",
+      address: "서울시 강남구 테헤란로 999",
     },
   };
 
   const personal_info =
-    personal_info_map[reviewer.id] || personal_info_map['1'];
+    personal_info_map[reviewer.id] || personal_info_map["1"];
 
   // 채널 정보 4개 칸은 무조건 모두 표시 (Blog, Clip, Instagram, Youtube)
   // 리뷰어가 보유한 채널인지 여부에 따라 연결 상태를 결정
-  const all_channels: Channel[] = ['Blog', 'Clip', 'Instagram', 'Youtube'];
+  const all_channels: Channel[] = ["Blog", "Clip", "Instagram", "Youtube"];
   const channel_details: ChannelDetail[] = [];
 
   // 각 채널마다 데이터 생성 (리뷰어 ID 기반으로 일관된 랜덤 값 생성)
@@ -670,22 +667,22 @@ export function get_reviewer_detail_by_id(
       daily_visits: ((seed * 123) % 1000) + 100,
       total_visits: ((seed * 456) % 1000000) + 10000,
       neighbors: ((seed * 789) % 2000) + 100,
-      is_connected: reviewer.channels.includes('Blog'),
+      is_connected: reviewer.channels.includes("Blog"),
     },
     Clip: {
       followers: ((seed * 234) % 5000) + 500,
-      is_connected: reviewer.channels.includes('Clip'),
+      is_connected: reviewer.channels.includes("Clip"),
     },
     Instagram: {
       followers: ((seed * 567) % 10000) + 1000,
-      is_connected: reviewer.channels.includes('Instagram'),
+      is_connected: reviewer.channels.includes("Instagram"),
     },
     Youtube: {
       subscribers: ((seed * 890) % 100000) + 5000,
-      is_connected: reviewer.channels.includes('Youtube'),
+      is_connected: reviewer.channels.includes("Youtube"),
     },
     Store: {
-      is_connected: reviewer.channels.includes('Store'),
+      is_connected: reviewer.channels.includes("Store"),
     },
   };
 
@@ -701,26 +698,26 @@ export function get_reviewer_detail_by_id(
 
   // 각 리뷰어마다 다른 계좌 정보 생성
   const bank_list = [
-    '우리은행',
-    'KB국민은행',
-    '신한은행',
-    '하나은행',
-    'NH농협은행',
-    '카카오뱅크',
-    '토스뱅크',
+    "우리은행",
+    "KB국민은행",
+    "신한은행",
+    "하나은행",
+    "NH농협은행",
+    "카카오뱅크",
+    "토스뱅크",
   ];
   const bank_index = parseInt(reviewer.id) % bank_list.length;
   const selected_bank = bank_list[bank_index];
 
   // 계좌번호 생성 (각 리뷰어마다 다르게)
   const account_number_base = String(parseInt(reviewer.id) * 1234567);
-  const account_number = account_number_base.padStart(14, '0').slice(0, 14);
+  const account_number = account_number_base.padStart(14, "0").slice(0, 14);
 
   // 주민등록번호 생성 (각 리뷰어마다 다르게)
   const birth_year = 1980 + (parseInt(reviewer.id) % 30);
-  const birth_month = String((parseInt(reviewer.id) % 12) + 1).padStart(2, '0');
-  const birth_day = String((parseInt(reviewer.id) % 28) + 1).padStart(2, '0');
-  const gender_code = personal_info.gender === '남성' ? '1' : '2';
+  const birth_month = String((parseInt(reviewer.id) % 12) + 1).padStart(2, "0");
+  const birth_day = String((parseInt(reviewer.id) % 28) + 1).padStart(2, "0");
+  const gender_code = personal_info.gender === "남성" ? "1" : "2";
   const resident_number = `${birth_year
     .toString()
     .slice(2)}${birth_month}${birth_day}-${gender_code}******`;

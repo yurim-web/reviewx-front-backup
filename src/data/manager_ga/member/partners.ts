@@ -16,18 +16,18 @@
  *
  */
 
-// 파트너 구분 타입 정의
-export type PartnerDivision = "법인" | "개인";
+// GA 관리자 전용 필터 옵션에서 import
+import type {
+  PartnerDivision,
+  PartnerStatus,
+  PartnerStatusType,
+} from "@/data/manager_ga/common/filterOptions";
 
-// 파트너 상태 타입 정의
-export type PartnerStatus = "정상" | "일시 정지" | "영구 정지";
+// 공통 필터 옵션에서 import (manager_ga와 manager_sa 공통)
+import type { Channel } from "@/data/manager/common/filterOptions";
 
-// 파트너 상태 유형 타입 정의
-export type PartnerStatusType =
-  | "모범 회원"
-  | "주의 회원"
-  | "경고 회원"
-  | "이용 제한 회원";
+// 타입 재export (기존 코드와의 호환성을 위해)
+export type { PartnerDivision, PartnerStatus, PartnerStatusType, Channel };
 
 // 파트너 통계 타입 정의
 export interface PartnerStats {
@@ -55,8 +55,7 @@ export interface PartnerItem {
   join_date: string; // 가입일 (예: 2025-08-01 18:56)
 }
 
-// 채널 타입 정의 (최근 캠페인에서 사용)
-export type Channel = "Blog" | "Clip" | "Instagram" | "Youtube" | "Store";
+// Channel 타입은 위에서 공통 필터 옵션에서 import됨
 
 // 최근 캠페인 정보 타입 정의
 export interface RecentCampaign {

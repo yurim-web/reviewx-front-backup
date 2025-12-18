@@ -1,0 +1,279 @@
+/* ========================================
+   📋 출금 현황 테이블 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - WithdrawalTable (출금 현황 테이블)
+ * 
+ * 사용 페이지:
+ * - /manager_sa/settlement/withdrawal
+ */
+
+/* 테이블 컨테이너 */
+.table_container {
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: white;
+}
+
+/* 테이블 헤더 */
+.table_header {
+  display: grid;
+  /* 리뷰어 테이블처럼 fr 단위를 사용해 가로 폭을 가득 채우도록 설정 */
+  grid-template-columns:
+    0.5fr /* 체크박스 */
+    0.8fr /* 번호 */
+    0.8fr /* 회차 */
+    1.2fr /* 이름 */
+    2.2fr /* 계좌번호 */
+    1.5fr /* 주민등록번호 */
+    1.2fr /* 출금 포인트 */
+    1fr /* 지급 (상태 태그) */
+    1.4fr /* 신청일 */
+    1.4fr /* 지급일 */
+    1fr /* 유형 */
+    1fr; /* 상태 */
+  background-color: #f5f5f5;
+  padding: 0;
+  align-items: center;
+}
+
+/* 테이블 헤더 행 */
+.table_header_row {
+  display: contents;
+}
+
+/* 테이블 행 */
+.table_row {
+  display: grid;
+  /* 헤더와 동일한 컬럼 정의를 공유해 정렬 유지 */
+  grid-template-columns:
+    0.5fr /* 체크박스 */
+    0.8fr /* 번호 */
+    0.8fr /* 회차 */
+    1.2fr /* 이름 */
+    2.2fr /* 계좌번호 */
+    1.5fr /* 주민등록번호 */
+    1.2fr /* 출금 포인트 */
+    1fr /* 지급 (상태 태그) */
+    1.4fr /* 신청일 */
+    1.4fr /* 지급일 */
+    1fr /* 유형 */
+    1fr; /* 상태 */
+  gap: 0;
+  min-height: 76px;
+  align-items: center;
+  padding: 0;
+  border-bottom: 1px solid #f2f2f2;
+  transition: background-color 0.2s ease;
+}
+
+/* 테이블 행 호버 효과 */
+.table_row:hover {
+  background-color: #f9f9f9;
+}
+
+.table_row:last-child {
+}
+
+/* 테이블 셀 공통 스타일 (CommonTable에서 사용) */
+.table_cell {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* 테이블 헤더 셀 공통 스타일 (CommonTable에서 사용) */
+.table_header_cell {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* 테이블 셀 개별 스타일 */
+.table_cell_checkbox,
+.table_cell_number,
+.table_cell_round,
+.table_cell_name,
+.table_cell_account,
+.table_cell_ssn,
+.table_cell_amount,
+.table_cell_payment,
+.table_cell_request_date,
+.table_cell_payment_date,
+.table_cell_type,
+.table_cell_status {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* 체크박스 */
+.checkbox {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid #d9d9d9;
+  border-radius: 4px;
+  background: #ffffff;
+  cursor: pointer;
+  appearance: none;
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* 체크박스 체크된 상태 */
+.checkbox:checked {
+  border-color: #444444;
+  background: #ffffff;
+}
+
+/* 체크박스 체크마크 */
+.checkbox:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #444444;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* 헤더 텍스트 */
+.header_text {
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 정렬 아이콘 */
+.sort_icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+/* 셀 텍스트 */
+.cell_text {
+  color: #444;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 셀 텍스트 - 보조 (회색) */
+.cell_text_secondary {
+  color: #ababab;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 출금 포인트 컨테이너 (금액과 잔여 금액을 세로로 배치) */
+.amount_container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+/* 상태 태그 */
+.status_tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  min-width: 40px;
+  height: 22px;
+}
+
+/* ========================================
+   출금 처리 상태 태그 스타일 (PayoutStatusTag용)
+   ======================================== */
+
+/**
+ * 참고: 공통 태그 스타일은 @/styles/common/tags.module.css를 참조하세요.
+ * 
+ * 사용 컴포넌트:
+ * - PayoutStatusTag (출금 처리 상태 태그)
+ */
+
+/* 신청 태그 (PayoutStatusTag용) */
+.status_tag_request {
+  background-color: #f1f1f1;
+  color: #666666;
+}
+
+/* 긴급 태그 (PayoutStatusTag용) */
+.status_tag_urgent {
+  background-color: #ff2626;
+  color: white;
+}
+
+/* 완료 태그 (PayoutStatusTag용) */
+.status_tag_completed {
+  background-color: rgba(45, 196, 105, 0.1);
+  color: #2dc469;
+}
+
+/* 반려 태그 (PayoutStatusTag용) */
+.status_tag_rejected {
+  background-color: rgba(255, 38, 38, 0.05);
+  color: #ff2626;
+}
+
+/* ========================================
+   태그 스타일 (공통 태그 컴포넌트용)
+   ======================================== */
+
+/**
+ * 참고: 공통 태그 스타일은 @/styles/common/tags.module.css를 참조하세요.
+ * 
+ * 사용 컴포넌트:
+ * - MemberStatusTag (회원 상태 태그)
+ */
+
+/* 정상 상태 태그 (MemberStatusTag용) */
+.status_tag_normal {
+  background-color: rgba(43, 127, 255, 0.1);
+  color: #2b7fff;
+}
+
+/* 기존 호환성을 위한 별칭 (더 이상 사용하지 않음) */
+.normal_tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background-color: rgba(43, 127, 255, 0.1);
+  color: #2b7fff;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  min-width: 40px;
+  height: 22px;
+}
+
+/* 테이블 바디 */
+.table_body {
+  background-color: white;
+}

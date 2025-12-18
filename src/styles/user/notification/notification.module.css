@@ -3,11 +3,6 @@
    ======================================== */
 
 /**
- * CSS 모듈 사용법:
- * - 각 클래스는 고유한 이름으로 변환되어 스타일 충돌 방지
- * - className={styles.클래스명} 형태로 사용
- * - 이 파일의 모든 클래스는 notification_ 접두사로 시작
- * 
  * 사용 컴포넌트:
  * - page.tsx (알림 페이지)
  * 
@@ -15,43 +10,72 @@
  * - /notification (알림 페이지)
  */
 
+/* 전역 main 태그 스타일 override */
+:global(body > main) {
+  max-width: none !important;
+  margin: 0 !important;
+  width: 100% !important;
+  background: transparent !important;
+}
+
 /* 메인 컨테이너 */
 .notification_container {
   width: 100%;
   min-height: 100vh;
   position: relative;
-  padding-top: 80px; /* SubHeader 높이만큼 상단 여백 (manager_ga에서는 헤더 높이) */
-  background-color: #f2f2f2; /* 배경색 */
+  padding-top: 80px;
+  background-color: #f2f2f2;
 }
 
-/* manager_ga/manager_sa에서 접근한 경우 (SubHeader 없음) */
-.notification_container.no_subheader {
-  padding-top: 80px; /* ManagerGAHeader 높이만큼 상단 여백 */
+/* 관리자 페이지에서 접근한 경우 (사이드바가 있을 때) */
+.notification_container.has_sidebar {
+  padding-left: 240px;
 }
 
-/* 메인 콘텐츠 영역 */
-/* 전역 main 태그의 max-width 제한을 override */
+/* 메인 콘텐츠 영역-- 유저,파트너 전용용 */
 .main_content {
   max-width: 1000px !important;
   margin: 0 auto !important;
   background-color: white;
   width: 100%;
   height: 100vh;
-  /* 전역 main 태그의 스타일을 override하여 notification 페이지만 제한 적용 */
+}
+
+/* 관리자 페이지에서 접근한 경우 (사이드바가 있을 때) */
+.notification_container.has_sidebar .main_content {
+  max-width: none !important;
+  margin: 0 !important;
+  width: 100% !important;
+}
+
+/* 알림 페이지 제목 (관리자 전용) */
+.notification_title {
+  color: #444;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: -0.48px;
+  padding: 40px 0 24px 40px;
 }
 
 /* 알림 목록 컨테이너 */
 .notification_list {
-  padding: 0;
+  /* padding: 0 40px; */
   background-color: white;
 }
 
 /* 알림 아이템 */
 .notification_item {
   padding: 24px 40px;
-  border-bottom: 1px solid #e0e0e0;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+/* 관리자 페이지에서 접근한 경우 border-bottom 제거 */
+.notification_container.has_sidebar .notification_item {
+  border-bottom: none;
+  padding: 16px 40px;
 }
 
 /* 알림 아이템 내부 레이아웃 */
@@ -59,7 +83,8 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 20px;
+  gap: 24px;
+  width: 100%;
 }
 
 /* 왼쪽 영역 (라벨 + 내용) */
@@ -68,6 +93,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-width: 0;
 }
 
 /* 알림 라벨 */
@@ -78,14 +104,24 @@
   letter-spacing: -0.28px;
 }
 
-/* 라벨 색상 변형 */
-
-.notification_label_report {
-  color: #ff2626; /* 신고 발생, 반려 발생 */
+/* 라벨 색상 - 파랑 (blue) */
+.notification_label_blue {
+  color: #2b7fff;
 }
 
-.notification_label_inquiry {
-  color: #2b7fff; /* 카카오톡 문의 */
+/* 라벨 색상 - 빨강 (red) */
+.notification_label_red {
+  color: #ff2626;
+}
+
+/* 라벨 색상 - 초록 (green) */
+.notification_label_green {
+  color: #4caf50;
+}
+
+/* 라벨 색상 - 주황 (orange) */
+.notification_label_orange {
+  color: #ff6600;
 }
 
 /* 알림 내용 */
@@ -97,13 +133,20 @@
   letter-spacing: -0.32px;
 }
 
-/* 오른쪽 영역 (시간) */
-.notification_time {
+/* 하단 캠페인 안내 (일반 텍스트) */
+.notification_campaign_name {
   color: #848484;
-  text-align: right;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
+}
+
+/* 오른쪽 영역 (시간) */
+.notification_time {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500; /* 100% */
   letter-spacing: -0.28px;
 }
 
@@ -118,5 +161,3 @@
   color: #848484;
   margin: 0;
 }
-
-/* 반응형 스타일 */

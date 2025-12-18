@@ -17,21 +17,11 @@
  *
  */
 
-// 신고 코드 타입 정의
-export type ReportCode =
-  | "W001"
-  | "W002"
-  | "W003"
-  | "W004"
-  | "W005"
-  | "W006"
-  | "W007"
-  | "W008"
-  | "W009"
-  | "W010"
-  | "W011"
-  | "W012"
-  | "W013";
+// 공통 필터 옵션에서 import
+import type { ReportCode } from '@/data/manager_ga/common/filterOptions';
+
+// 타입 재export (기존 코드와의 호환성을 위해)
+export type { ReportCode };
 
 // 신고 코드 카테고리 타입 정의
 export type ReportCategory = "리뷰어" | "파트너" | "시스템" | "기타";

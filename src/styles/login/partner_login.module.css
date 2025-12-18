@@ -112,7 +112,7 @@
   font-weight: 500;
   line-height: 20px;
   letter-spacing: -0.28px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
 }
 
 /* 폼 섹션 (각 박스 구분) */
@@ -142,19 +142,19 @@
   font-weight: 500;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
 }
 
 /* 입력 필드 */
 .input_field {
   width: 100%;
   height: 56px;
-  padding: 0 16px;
+  padding: 20px;
   background-color: #ffffff;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
   font-size: 16px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   color: #444444;
   box-sizing: border-box;
 }
@@ -166,7 +166,11 @@
 
 /* 입력 필드 플레이스홀더 스타일 */
 .input_field::placeholder {
-  color: #d9d9d9;
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
 }
 
 /* ========================================
@@ -209,7 +213,7 @@
 
 /* 체크박스 체크마크 (✓) */
 .checkbox:checked::after {
-  content: '✓';
+  content: "✓";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -245,7 +249,7 @@
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   text-decoration: none;
   transition: color 0.2s ease;
 }
@@ -281,7 +285,7 @@
   font-weight: 500;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: background-color 0.2s ease, opacity 0.2s ease;
 }

@@ -129,7 +129,10 @@ export default function PartnerDetailPage() {
           />
         )}
 
-        <ActivityInfoSection items={activity_info_items} />
+        <ActivityInfoSection
+          items={activity_info_items}
+          layout_type="partner"
+        />
 
         {partner_detail && (
           <BusinessInfoSection

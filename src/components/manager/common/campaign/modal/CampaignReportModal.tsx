@@ -193,7 +193,7 @@ export default function CampaignReportModal({
 
   // 모드에 따른 UI 텍스트 및 스타일 결정
   const modal_title =
-    modeProps.mode === "report" ? "콘텐츠 신고" : "콘텐츠 차단";
+    modeProps.mode === "report" ? "캠페인 신고" : "콘텐츠 차단";
   const submit_button_text = modeProps.mode === "report" ? "신고" : "차단";
   const submit_button_class =
     modeProps.mode === "report"

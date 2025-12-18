@@ -9,58 +9,63 @@
  *
  * 📍 사용 위치:
  * - 직접 사용 컴포넌트:
- *   - CampaignTable 컴포넌트 (캠페인 진행 상황 테이블)
- *   - PostTable 컴포넌트 (게시글 목록 테이블)
- *   - BlacklistTable 컴포넌트 (차단 내역 테이블)
- *   - WithdrawalTable 컴포넌트 (출금 현황 테이블)
- *   - CommonTableWithTooltip 컴포넌트 (툴팁 기능이 포함된 범용 테이블)
+ *   - CampaignTable (캠페인 진행 상황 테이블)
+ *     - src/components/manager/common/campaign/progress/table/CampaignTable.tsx
+ *     - 사용 페이지: /manager_ga/campaign/progress, /manager_sa/campaign/progress
  *
- * - 최종 사용 페이지:
- *   캠페인 진행 상황:
- *   - /manager_ga/campaign/progress (GA 관리자 진행 현황 페이지)
- *   - /manager_sa/campaign/progress (SA 관리자 진행 현황 페이지)
+ *   - PostTable (게시글 목록 테이블)
+ *     - src/components/manager/common/community/posts/section/PostTable.tsx
+ *     - 사용 페이지: /manager_ga/community/posts, /manager_sa/community/posts
  *
- *   게시글 목록:
- *   - /manager_ga/community/posts (GA 관리자 게시글 목록 페이지)
- *   - /manager_sa/community/posts (SA 관리자 게시글 목록 페이지)
+ *   - BlacklistTable (차단 내역 테이블)
+ *     - src/components/manager/common/member/blacklist/BlacklistTable.tsx
+ *     - 사용 페이지: /manager_ga/member/blacklist, /manager_sa/member/blacklist
  *
- *   차단 내역:
- *   - /manager_ga/member/blacklist (GA 관리자 차단 내역 페이지)
- *   - /manager_sa/member/blacklist (SA 관리자 차단 내역 페이지)
+ *   - CategoryTable (카테고리 테이블)
+ *     - src/components/manager/common/community/categories/section/CategoryTable.tsx
+ *     - 사용 페이지: /manager_ga/community/categories, /manager_sa/community/categories
  *
- *   출금 현황:
- *   - /manager_sa/settlement/withdrawal (SA 관리자 출금 현황 페이지)
+ *   - PaymentHistoryTable (결제 내역 테이블)
+ *     - src/components/manager/sa/settlement/payment_history/section/PaymentHistoryTable.tsx
+ *     - 사용 페이지: /manager_sa/settlement/payment_history
  *
- *   반려/신고 내역 (CommonTableWithTooltip을 통해):
- *   - /manager_ga/campaign/rejected (GA 관리자 반려 내역 페이지)
- *   - /manager_ga/campaign/reported (GA 관리자 신고 내역 페이지)
+ *   - WithdrawalTable (출금 현황 테이블)
+ *     - src/components/manager/sa/settlement/withdrawal/section/WithdrawalTable.tsx
+ *     - 사용 페이지: /manager_sa/settlement/withdrawal
+ *
+ *   - RequestTable (출금 요청 테이블)
+ *     - src/components/manager/sa/settlement/withdrawal_request/section/RequestTable.tsx
+ *     - 사용 페이지: /manager_sa/settlement/withdrawal_request
+ *
+ *   - AdminTable (관리자 테이블)
+ *     - src/components/manager/sa/member/admins/section/AdminTable.tsx
+ *     - 사용 페이지: /manager_sa/member/admins
+ *
+ * - CommonTableWithTooltip을 통해 간접 사용:
+ *   - RejectedCampaignTable (반려 내역 캠페인 테이블)
+ *     - src/components/manager/ga/campaign/rejected/section/RejectedCampaignTable.tsx
+ *     - 사용 페이지: /manager_ga/campaign/rejected
+ *
+ *   - ReportedCampaignTable (신고 내역 캠페인 테이블)
+ *     - src/components/manager/ga/campaign/reported/section/ReportedCampaignTable.tsx
+ *     - 사용 페이지: /manager_ga/campaign/reported
+ *
+ * - 타입만 사용 (TableColumn, TableRowData):
+ *   - ReviewerTable (리뷰어 목록 테이블)
+ *     - src/components/manager/common/member/table/ReviewerTable.tsx
+ *     - CommonTable 직접 사용하지 않음, 독립적인 테이블 구조 사용
+ *
+ *   - PartnerTable (파트너 목록 테이블)
+ *     - src/components/manager/common/member/table/PartnerTable.tsx
+ *     - CommonTable 직접 사용하지 않음, 독립적인 테이블 구조 사용
+ *
+ *   - SortableTableHeader (정렬 가능한 테이블 헤더)
+ *     - src/components/manager/common/table/SortableTableHeader.tsx
+ *     - TableColumn 타입만 사용
  *
  * 참고:
  * - 툴팁 기능이 필요한 경우 CommonTableWithTooltip 컴포넌트를 사용하세요
  * - CommonTableWithTooltip은 CommonTable을 래핑하여 툴팁 기능을 추가합니다
- *
- * 사용 흐름:
- * 캠페인 진행 상황 페이지
- *   └─> ProgressPageCommon 컴포넌트
- *       └─> CampaignTable 컴포넌트
- *           └─> CommonTable 컴포넌트
- *
- * 게시글 목록 페이지
- *   └─> PostTable 컴포넌트
- *       └─> CommonTable 컴포넌트
- *
- * 차단 내역 페이지
- *   └─> BlacklistTable 컴포넌트
- *       └─> CommonTable 컴포넌트
- *
- * 출금 현황 페이지
- *   └─> WithdrawalTable 컴포넌트
- *       └─> CommonTable 컴포넌트
- *
- * 반려/신고 내역 페이지
- *   └─> RejectedCampaignTable / ReportedCampaignTable 컴포넌트
- *       └─> CommonTableWithTooltip 컴포넌트
- *           └─> CommonTable 컴포넌트
  *
 
  */
@@ -68,6 +73,7 @@
 "use client";
 
 import { useState, ReactNode } from "react";
+import EmptyTableState from "./EmptyTableState";
 
 /* ========================================
    📌 타입 정의
@@ -343,8 +349,8 @@ export default function CommonTable<T extends TableRowData>({
     // 데이터가 없으면 빈 상태 메시지 표시
     if (data.length === 0) {
       return (
-        <div className={styles.empty_message || styles.table_body}>
-          {empty_message}
+        <div className={styles.table_body || ""}>
+          <EmptyTableState message={empty_message} />
         </div>
       );
     }

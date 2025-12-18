@@ -8,14 +8,41 @@
  * 목적: 여러 테이블에서 공통으로 사용되는 정렬 기능이 포함된 헤더 렌더링을 제공합니다.
  *
  * 사용 위치:
- * - PaymentHistoryTable (결제 내역 테이블)
- * - WithdrawalTable (출금 현황 테이블)
- * - RequestTable (출금 요청 테이블)
  * - CampaignTable (캠페인 진행 현황 테이블)
+ *   - src/components/manager/common/campaign/progress/table/CampaignTable.tsx
+ *
  * - PostTable (게시글 목록 테이블)
+ *   - src/components/manager/common/community/posts/section/PostTable.tsx
+ *
  * - BlacklistTable (차단 내역 테이블)
+ *   - src/components/manager/common/member/blacklist/BlacklistTable.tsx
+ *
+ * - CategoryTable (카테고리 테이블)
+ *   - src/components/manager/common/community/categories/section/CategoryTable.tsx
+ *
+ * - ReviewerTable (리뷰어 목록 테이블)
+ *   - src/components/manager/common/member/table/ReviewerTable.tsx
+ *
+ * - PartnerTable (파트너 목록 테이블)
+ *   - src/components/manager/common/member/table/PartnerTable.tsx
+ *
+ * - PaymentHistoryTable (결제 내역 테이블)
+ *   - src/components/manager/sa/settlement/payment_history/section/PaymentHistoryTable.tsx
+ *
+ * - WithdrawalTable (출금 현황 테이블)
+ *   - src/components/manager/sa/settlement/withdrawal/section/WithdrawalTable.tsx
+ *
+ * - RequestTable (출금 요청 테이블)
+ *   - src/components/manager/sa/settlement/withdrawal_request/section/RequestTable.tsx
+ *
+ * - RejectedCampaignTable (반려 내역 캠페인 테이블)
+ *   - src/components/manager/ga/campaign/rejected/section/RejectedCampaignTable.tsx
+ *
  * - ReportedCampaignTable (신고 내역 캠페인 테이블)
- * - RejectedCampaignTable (거절 내역 캠페인 테이블)
+ *   - src/components/manager/ga/campaign/reported/section/ReportedCampaignTable.tsx
+ *
+ * - AdminTable (관리자 테이블)
+ *   - src/components/manager/sa/member/admins/section/AdminTable.tsx
  *
  * 주요 기능:
  * - 정렬 가능한 컬럼에 정렬 버튼 표시

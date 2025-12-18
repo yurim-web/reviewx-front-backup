@@ -32,12 +32,29 @@ import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageT
 import ReviewerStatsSection from "@/components/manager/common/member/reviewers/ReviewerStatsSection";
 import ReviewerFilterSection from "@/components/manager/common/member/reviewers/ReviewerFilterSection";
 import ReviewerTable from "@/components/manager/common/member/reviewers/ReviewerTable";
+import type { Channel } from "@/data/manager/common/filterOptions";
+import type {
+  ReviewerStatus,
+  ReviewerStatusType,
+} from "@/data/manager_ga/common/filterOptions";
+import type { ReviewerGrade } from "@/components/manager/common/member/reviewers/filter/GradeFilterModal";
 
 export default function ReviewersPage() {
   // 검색어 상태 관리
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
   // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
   const [search_query, set_search_query] = useState<string>("");
+
+  // 필터 상태 관리
+  // 각 필터의 선택된 값들을 배열로 관리합니다
+  const [selected_channels, set_selected_channels] = useState<Channel[]>([]);
+  const [selected_grades, set_selected_grades] = useState<ReviewerGrade[]>([]);
+  const [selected_types, set_selected_types] = useState<ReviewerStatusType[]>(
+    []
+  );
+  const [selected_statuses, set_selected_statuses] = useState<
+    ReviewerStatus[]
+  >([]);
 
   return (
     <div className={styles.container}>
@@ -52,11 +69,23 @@ export default function ReviewersPage() {
         <ReviewerFilterSection
           search_query={search_query}
           on_search_change={set_search_query}
+          selected_channels={selected_channels}
+          on_channels_change={set_selected_channels}
+          selected_grades={selected_grades}
+          on_grades_change={set_selected_grades}
+          selected_types={selected_types}
+          on_types_change={set_selected_types}
+          selected_statuses={selected_statuses}
+          on_statuses_change={set_selected_statuses}
         />
 
         {/* 리뷰어 목록 테이블 */}
-        <ReviewerTable 
-          search_query={search_query} 
+        <ReviewerTable
+          search_query={search_query}
+          selected_channels={selected_channels}
+          selected_grades={selected_grades}
+          selected_types={selected_types}
+          selected_statuses={selected_statuses}
           detail_path="/manager_ga/member/reviewers"
         />
       </div>

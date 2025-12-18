@@ -1,0 +1,30 @@
+/* ========================================
+   💰 SA 관리자 출금 현황 페이지 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - page.tsx (출금 현황 페이지)
+ * 
+ * 사용 페이지:
+ * - /manager_sa/settlement/withdrawal
+ */
+
+/* 전체 페이지 컨테이너 */
+.container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-color: white;
+  padding-top: 80px; /* 헤더 높이만큼 상단 여백 */
+  padding-left: 240px; /* 사이드바 너비만큼 왼쪽 여백 */
+  box-sizing: border-box;
+  font-family: 'Pretendard', sans-serif;
+}
+
+/* 메인 콘텐츠 영역 */
+.main_content {
+  padding: 40px;
+  width: 100%;
+}
+

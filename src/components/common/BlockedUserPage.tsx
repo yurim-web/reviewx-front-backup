@@ -52,9 +52,7 @@ export default function BlockedUserPage() {
           <div className={styles.logo_container}>
             <h1 className={styles.logo_text}>VX.</h1>
           </div>
-          <p className={styles.message_text}>
-            차단된 회원은 서비스 이용이 제한됩니다.
-          </p>
+          <p className={styles.message_text}>서비스 이용이 제한되었습니다.</p>
           <button
             type="button"
             className={styles.withdrawal_button}

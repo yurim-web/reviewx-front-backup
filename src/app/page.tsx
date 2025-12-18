@@ -67,6 +67,15 @@ export default function Home() {
     ...reporterCampaigns.slice(1, 2),
   ];
 
+  // 진행 중인 캠페인 - 전체 캠페인 중 최대 32개 노출
+  const ongoingCampaigns = [
+    ...deliveryCampaigns,
+    ...reviewCampaigns,
+    ...visitCampaigns,
+    ...missionCampaigns,
+    ...reporterCampaigns,
+  ].slice(0, 32);
+
   return (
     // React Fragment (<>...</>) 사용
     // 불필요한 div 래퍼 없이 여러 요소를 그룹화할 수 있습니다
@@ -120,6 +129,23 @@ export default function Home() {
             {/* JavaScript의 map 함수를 사용한 리스트 렌더링 */}
             {/* 각 캠페인 타입에서 가져온 데이터를 CampaignBox 컴포넌트로 변환 */}
             {popularCampaigns.map((campaign) => (
+              // key prop은 React에서 리스트 렌더링 시 필수입니다
+              // 각 요소를 고유하게 식별하기 위해 사용됩니다
+              <CampaignBox key={campaign.id} campaign={campaign} />
+            ))}
+          </div>
+        </section>
+
+        {/* ⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️ == 진행 중인 캠페인 영역 == ⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️ */}
+        <section className={styles.campaign_container}>
+          {/* 제목 컴포넌트 */}
+          <Titletext main_title="진행 중인 캠페인" />
+
+          {/* ⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️ == 캠페인 그리드 == ⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️ */}
+          <div className={styles.campaign_grid}>
+            {/* JavaScript의 map 함수를 사용한 리스트 렌더링 */}
+            {/* 전체 캠페인 중 최대 32개까지 진행 중인 캠페인 노출 */}
+            {ongoingCampaigns.map((campaign) => (
               // key prop은 React에서 리스트 렌더링 시 필수입니다
               // 각 요소를 고유하게 식별하기 위해 사용됩니다
               <CampaignBox key={campaign.id} campaign={campaign} />

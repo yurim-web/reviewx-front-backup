@@ -7,7 +7,7 @@
  * SubHeader 아래에 표시되는 페이지 제목을 일관되게 표시하기 위한 공통 컴포넌트
  *
  * 사용 페이지:
- * - /find-account/reset-password (새 비밀번호 설정)
+ * - /reset-password (새 비밀번호 설정)
  * - /user/mypage/edit (내 정보 수정)
  * - /partner/mypage/edit (내 정보 수정)
  * - /faq (자주 묻는 질문)

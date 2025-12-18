@@ -14,30 +14,30 @@
  * - 구매평은 basic 카드 타입만 사용합니다.
  */
 
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useParams, useSearchParams, useRouter } from 'next/navigation';
-import Image from 'next/image';
-import Loading from '@/app/loading';
-import styles from '@/styles/partner/campaign_application/campaign_application.module.css';
-import detailStyles from '@/styles/manager_ga/campaign_detail.module.css';
-import SortFilterControl from '@/components/partner/campaign_application/SortFilterControl';
-import Campaignbanner from '@/components/partner/campaign_application/CampaignInfoBox';
-import ExcelDownloadBtn from '@/components/partner/campaign_application/ExcelDownloadBtn';
-import EmptyApplicantsList from '@/components/partner/campaign_application/EmptyApplicantsList';
+import { useEffect, useState } from "react";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
+import Image from "next/image";
+import Loading from "@/app/loading";
+import styles from "@/styles/partner/campaign_application/campaign_application.module.css";
+import detailStyles from "@/styles/manager_ga/campaign_detail.module.css";
+import SortFilterControl from "@/components/partner/campaign_application/SortFilterControl";
+import Campaignbanner from "@/components/partner/campaign_application/CampaignInfoBox";
+import ExcelDownloadBtn from "@/components/partner/campaign_application/ExcelDownloadBtn";
+import EmptyApplicantsList from "@/components/partner/campaign_application/EmptyApplicantsList";
 
 // 구매평 전용 카드 컴포넌트들 (basic 타입만 사용)
-import BasicCard from '@/components/partner/campaign_application/card_type/basic/BasicCard';
-import BasicSelectedCard from '@/components/partner/campaign_application/card_type/basic/BasicSelectedCard';
+import BasicCard from "@/components/partner/campaign_application/card_type/basic/BasicCard";
+import BasicSelectedCard from "@/components/partner/campaign_application/card_type/basic/BasicSelectedCard";
 
 // 공용 캠페인 데이터/타입
 import {
   getCampaignById,
   type CampaignWithApplicants,
   type AllApplicant,
-} from '@/data/partner/sharedCampaigns';
-import { type BasicApplicant } from '@/data/partner/campaign_application/delivery_applicants';
+} from "@/data/partner/sharedCampaigns";
+import { type BasicApplicant } from "@/data/partner/campaign_application/delivery_applicants";
 
 /**
  * 구매평 캠페인 상세 컴포넌트
@@ -73,24 +73,24 @@ export default function ManagerReviewProgressDetailPage() {
    * - 기본값: 신청 탭
    * - 쿼리에 tab=selected가 오면 선정 탭으로 진입 (북마크/공유 시 편리)
    */
-  const [active_tab, set_active_tab] = useState<'applicants' | 'selected'>(
+  const [active_tab, set_active_tab] = useState<"applicants" | "selected">(
     () => {
-      const tab_param = search_params.get('tab');
-      return tab_param === 'selected' ? 'selected' : 'applicants';
-    },
+      const tab_param = search_params.get("tab");
+      return tab_param === "selected" ? "selected" : "applicants";
+    }
   );
 
   /**
    * 4) 정렬 상태 및 옵션 타입
    * - SortFilterControl 컴포넌트와 연동
    */
-  type SortOption = 'latest' | 'popular' | 'deadline' | 'point';
-  const [sort_order, set_sort_order] = useState<SortOption>('latest');
+  type SortOption = "latest" | "popular" | "deadline" | "point";
+  const [sort_order, set_sort_order] = useState<SortOption>("latest");
   const sort_options = [
-    { value: 'latest', label: '최신순' },
-    { value: 'popular', label: '인기순' },
-    { value: 'deadline', label: '마감임박순' },
-    { value: 'point', label: '포인트순' },
+    { value: "latest", label: "최신순" },
+    { value: "popular", label: "인기순" },
+    { value: "deadline", label: "마감임박순" },
+    { value: "point", label: "포인트순" },
   ];
 
   /**
@@ -120,11 +120,11 @@ export default function ManagerReviewProgressDetailPage() {
         }
 
         set_campaign_data(data);
-        set_applicants_state(data.applicantData.applicants);
-        set_selected_state(data.applicantData.selectedApplicants);
+        set_applicants_state(data.applicantData?.applicants ?? []);
+        set_selected_state(data.applicantData?.selectedApplicants ?? []);
       } catch (error) {
-        console.error('GA 구매평 진행현황 데이터 로딩 실패:', error);
-        set_error_message('데이터를 불러오는 중 오류가 발생했습니다.');
+        console.error("GA 구매평 진행현황 데이터 로딩 실패:", error);
+        set_error_message("데이터를 불러오는 중 오류가 발생했습니다.");
       } finally {
         set_is_loading(false);
       }
@@ -148,7 +148,7 @@ export default function ManagerReviewProgressDetailPage() {
         <div className={styles.page_header}>
           <h1 className={styles.page_title}>캠페인 상세 보기</h1>
         </div>
-        <div style={{ padding: '40px', textAlign: 'center', color: 'red' }}>
+        <div style={{ padding: "40px", textAlign: "center", color: "red" }}>
           {error_message}
         </div>
       </section>
@@ -163,9 +163,9 @@ export default function ManagerReviewProgressDetailPage() {
 
   const get_current_applicants = () => {
     switch (active_tab) {
-      case 'applicants':
+      case "applicants":
         return applicants_state;
-      case 'selected':
+      case "selected":
         return selected_state;
       default:
         return applicants_state;
@@ -182,7 +182,7 @@ export default function ManagerReviewProgressDetailPage() {
    */
   const render_card_component = (
     applicant: AllApplicant,
-    is_selected: boolean = false,
+    is_selected: boolean = false
   ) => {
     // 구매평은 항상 BasicApplicant 타입으로 처리
     const basic_applicant = applicant as BasicApplicant;
@@ -213,16 +213,16 @@ export default function ManagerReviewProgressDetailPage() {
       if (!target) return prev;
 
       const next_applicants = prev.filter(
-        (applicant) => applicant.id !== applicant_id,
+        (applicant) => applicant.id !== applicant_id
       );
       const moved: AllApplicant = {
         ...target,
-        selectionStatus: '선정하기',
+        selectionStatus: "선정하기",
       } as AllApplicant;
 
       set_selected_state((prev_selected) => {
         const already = prev_selected.some(
-          (applicant) => applicant.id === applicant_id,
+          (applicant) => applicant.id === applicant_id
         );
         if (already) return prev_selected;
         return [moved, ...prev_selected];
@@ -235,16 +235,16 @@ export default function ManagerReviewProgressDetailPage() {
   const handle_cancel_applicant = (applicant_id: string) => {
     set_selected_state((prev_selected) => {
       const target = prev_selected.find(
-        (applicant) => applicant.id === applicant_id,
+        (applicant) => applicant.id === applicant_id
       );
       if (!target) return prev_selected;
 
       const next_selected = prev_selected.filter(
-        (applicant) => applicant.id !== applicant_id,
+        (applicant) => applicant.id !== applicant_id
       );
       const moved: AllApplicant = {
         ...target,
-        selectionStatus: '미선택',
+        selectionStatus: "미선택",
       } as AllApplicant;
 
       set_applicants_state((prev) => {
@@ -329,25 +329,6 @@ export default function ManagerReviewProgressDetailPage() {
                 onDownloadApplicants={handle_download_applicants}
                 onDownloadSelected={handle_download_selected}
               />
-              <div
-                style={{ display: 'flex', gap: '12px', alignItems: 'center' }}
-              >
-                {/* 신고 버튼 */}
-                <button
-                  type="button"
-                  className={styles.report_button}
-                  onClick={() => {
-                    // TODO: 신고 기능 구현
-                  }}
-                  aria-label="신고"
-                >
-                  <img
-                    src="/images/icons/rerport_icon.svg"
-                    alt="신고"
-                    className={styles.report_button_icon}
-                  />
-                  <span className={styles.report_button_text}>신고</span>
-                </button>
                 {/* 정렬 필터 컨트롤 */}
                 <SortFilterControl
                   options={sort_options}
@@ -357,24 +338,23 @@ export default function ManagerReviewProgressDetailPage() {
                   }
                   defaultSort="latest"
                 />
-              </div>
             </article>
 
             <article className={styles.tab_navigation}>
               <button
                 className={`${styles.tab_button} ${
-                  active_tab === 'applicants' ? styles.active : ''
+                  active_tab === "applicants" ? styles.active : ""
                 }`}
-                onClick={() => set_active_tab('applicants')}
+                onClick={() => set_active_tab("applicants")}
               >
-                신청{' '}
+                신청{" "}
                 <span className={styles.tab_count}>{applicants_count}</span>
               </button>
               <button
                 className={`${styles.tab_button} ${
-                  active_tab === 'selected' ? styles.active : ''
+                  active_tab === "selected" ? styles.active : ""
                 }`}
-                onClick={() => set_active_tab('selected')}
+                onClick={() => set_active_tab("selected")}
               >
                 선정 <span className={styles.tab_count}>{selected_count}</span>
               </button>
@@ -388,7 +368,7 @@ export default function ManagerReviewProgressDetailPage() {
                   <div key={`${active_tab}-${applicant.id}-${index}`}>
                     {render_card_component(
                       applicant,
-                      active_tab === 'selected',
+                      active_tab === "selected"
                     )}
                   </div>
                 ))
@@ -400,4 +380,3 @@ export default function ManagerReviewProgressDetailPage() {
     </div>
   );
 }
-

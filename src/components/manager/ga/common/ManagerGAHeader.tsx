@@ -17,37 +17,53 @@
  *
  */
 
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import styles from "@/styles/manager_ga/layout/header.module.css";
 
-export default function ManagerGAHeader() {
+interface ManagerGAHeaderProps {
+  managerType?: "ga" | "sa";
+}
+
+export default function ManagerGAHeader({
+  managerType,
+}: ManagerGAHeaderProps = {}) {
+  const pathname = usePathname();
+
+  // managerType이 prop으로 전달되지 않으면 경로에서 자동 감지
+  const detectedType =
+    managerType || (pathname?.includes("/manager_sa") ? "sa" : "ga");
+  const homePath = detectedType === "sa" ? "/manager_sa" : "/manager_ga";
+  const notificationPath =
+    detectedType === "sa"
+      ? "/manager_sa/notification"
+      : "/manager_ga/notification";
+
   return (
     <header className={styles.header}>
       <div className={styles.header_container}>
         {/* 로고 - 일반 헤더와 동일한 "RX." 로고 */}
-        <Link href="/manager_ga">
+        <Link href={homePath}>
           <h1 className={styles.header_logo}>RX.</h1>
         </Link>
 
         {/* 우측 버튼 영역 - 가이드와 마이페이지 버튼 */}
         <div className={styles.menu_icon_box}>
-          {/* 알림페이지로 연결 - 내부 링크  */}
-          <Link href="/notification">
-            <img src="/images/icons/bell.svg" alt="bell" />
+          {/* 알림페이지로 연결 - 내부 링크 (manager 타입에 따라 파라미터 설정) */}
+          <Link href={notificationPath}>
+            <img src="/images/header/notification_icon.svg" alt="bell_icon" />
           </Link>
 
-          {/* 가이드로 연결 - 외부 링크 */}
-          <a
-            href="https://markx.dev/guide_book"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img src="/images/header/header_book.svg" alt="book" />
-          </a>
-          {/* 마이페이지로 연결 */}
-          <Link href="">
-            <img src="/images/header/header_user.svg" alt="user" />
-          </Link>
+          {/* 마이페이지로 연결 - 호버 시 로그아웃 버튼 표시 */}
+          <div className={styles.user_menu_container}>
+            <Link href="">
+              <img src="/images/header/header_user.svg" alt="user" />
+            </Link>
+            {/* 호버 시 표시되는 로그아웃 버튼 */}
+            <button className={styles.logout_button}>로그아웃</button>
+          </div>
         </div>
       </div>
     </header>

@@ -16,13 +16,13 @@
  *
  */
 
-import { Metadata } from 'next';
+import { Metadata } from "next";
 
 // 페이지 메타데이터 설정
 
 export const metadata: Metadata = {
-  title: 'ReviewX | 차단 내역',
-  description: 'GA 관리자 차단내역 페이지입니다',
+  title: "ReviewX | 이용 제한 내역",
+  description: "GA 관리자 이용 제한 내역 페이지입니다",
 };
 
 /**

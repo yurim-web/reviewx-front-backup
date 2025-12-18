@@ -15,16 +15,31 @@
  *
  */
 
-import styles from '@/styles/manager_sa/dashboard/sections/summary_section.module.css';
-import StatCard, { StatCardData } from '../StatCard';
-import AmountChart from '../chart/AmountChart';
-import { paymentChartData } from '@/data/manager_sa/dashboard/dashboardData';
+import styles from "@/styles/manager_sa/dashboard/sections/summary_section.module.css";
+import StatCard, { StatCardData } from "../StatCard";
+import AmountChart from "../chart/AmountChart";
+import { paymentChartData } from "@/data/manager_sa/dashboard/dashboardData";
+
+// title 없는 통계 데이터 타입 (dashboardData에서 사용)
+interface PaymentStatData {
+  value: string;
+  change: string;
+  changeType: "positive" | "negative" | "neutral";
+}
 
 // PaymentSummarySection 컴포넌트의 props 타입 정의
 interface PaymentSummarySectionProps {
-  // 결제 통계 데이터 배열
-  stats: StatCardData[];
+  // 결제 통계 데이터 배열 (title 제외)
+  stats: PaymentStatData[];
 }
+
+// 통계 카드 title 고정값 (순서 중요: stats 배열의 인덱스와 일치해야 함)
+const PAYMENT_STAT_TITLES: readonly string[] = [
+  "총결제 금액",
+  "입금 증액",
+  "카드 결제 금액",
+  "예상 수수료",
+] as const;
 
 export default function PaymentSummarySection({
   stats,
@@ -39,9 +54,17 @@ export default function PaymentSummarySection({
         className={`${styles.summary_section_stats_grid} ${styles.summary_section_stats_grid_payment}`}
       >
         {/* map 함수를 사용하여 통계 카드 배열을 순회하며 렌더링 */}
-        {stats.map((stat, index) => (
-          <StatCard key={index} stat={stat} />
-        ))}
+        {/* title은 컴포넌트 내부에서 고정값으로 추가 */}
+        {stats.map((stat, index) => {
+          // 고정된 title과 stats 데이터를 결합하여 StatCardData 객체 생성
+          const statCardData: StatCardData = {
+            title: PAYMENT_STAT_TITLES[index],
+            value: stat.value,
+            change: stat.change,
+            changeType: stat.changeType,
+          };
+          return <StatCard key={index} stat={statCardData} />;
+        })}
       </div>
 
       {/* 결제 금액 통계 차트 제목 */}

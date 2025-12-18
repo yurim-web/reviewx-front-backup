@@ -1,0 +1,469 @@
+/* ========================================
+   📋 출금 요청 테이블 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - RequestTable (출금 요청 테이블)
+ * 
+ * 사용 페이지:
+ * - /manager_sa/settlement/withdrawal_request
+ */
+
+/* 테이블 섹션 컨테이너 */
+.table_section {
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* 상단 액션 버튼 컨테이너 */
+.table_actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 왼쪽 액션 버튼 그룹 (승인/반려) */
+.table_action_left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 상단 액션 버튼 공통 */
+.table_action_button_approve,
+.table_action_button_reject {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+  background-color: #ffffff;
+  cursor: pointer;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+.table_action_icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* 버튼속 글자 css */
+.table_action_text {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 테이블 다운로드 버튼 */
+.table_download_button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+  background-color: #ffffff;
+  cursor: pointer;
+  height: 40px;
+  box-sizing: border-box;
+  margin-left: auto;
+}
+/* 엑셀아이콘 */
+.table_download_icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.table_download_text {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 섹션 제목 */
+.section_title {
+  color: #444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+}
+
+/* 테이블 컨테이너 */
+.table_container {
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: white;
+}
+
+/* 테이블 헤더 */
+.table_header {
+  display: grid;
+  background-color: #f5f5f5;
+  padding: 0;
+  align-items: center;
+  min-height: 56px;
+}
+
+/* 테이블 헤더 행 */
+.table_header_row {
+  display: contents;
+}
+
+/* 테이블 바디 */
+.table_body {
+  background-color: white;
+  /* 스크롤 가능하도록 설정 */
+  overflow-y: auto !important; /* 강제 적용 */ /* 스크롤바 스타일링 (웹킷 브라우저) */
+
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #d9d9d9 transparent; /* Firefox */
+  /* 화살표 제거를 위한 추가 설정 */
+  scrollbar-gutter: stable;
+}
+
+/* CommonTable이 각 행을 감싸는 div를 grid 구조에 포함시키기 위해 */
+.table_body > div {
+  display: contents;
+}
+
+/* 긴급 테이블 바디 높이 제한 */
+.table_body_emergency {
+  max-height: 380px;
+}
+
+/* 회차 정산 테이블 바디 높이 제한 */
+.table_body_round {
+  max-height: 760px;
+}
+
+/* 드롭다운 스크롤바 스타일링 (custom_dropdown.module.css 참고) */
+.table_body::-webkit-scrollbar,
+.table_body_emergency::-webkit-scrollbar,
+.table_body_round::-webkit-scrollbar {
+  width: 24px; /* 스크롤바 전체 너비 증가 (border 10px * 2 + thumb 너비 고려) */
+}
+
+/* 화살표 버튼 완전히 제거 - 드롭다운과 동일하게 */
+.table_body::-webkit-scrollbar-button,
+.table_body_emergency::-webkit-scrollbar-button,
+.table_body_round::-webkit-scrollbar-button {
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+.table_body::-webkit-scrollbar-button:start:decrement,
+.table_body::-webkit-scrollbar-button:end:increment,
+.table_body_emergency::-webkit-scrollbar-button:start:decrement,
+.table_body_emergency::-webkit-scrollbar-button:end:increment,
+.table_body_round::-webkit-scrollbar-button:start:decrement,
+.table_body_round::-webkit-scrollbar-button:end:increment {
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+.table_body::-webkit-scrollbar-button:vertical:start:decrement,
+.table_body::-webkit-scrollbar-button:vertical:end:increment,
+.table_body_emergency::-webkit-scrollbar-button:vertical:start:decrement,
+.table_body_emergency::-webkit-scrollbar-button:vertical:end:increment,
+.table_body_round::-webkit-scrollbar-button:vertical:start:decrement,
+.table_body_round::-webkit-scrollbar-button:vertical:end:increment {
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+.table_body::-webkit-scrollbar-track,
+.table_body_emergency::-webkit-scrollbar-track,
+.table_body_round::-webkit-scrollbar-track {
+  background: transparent; /* 트랙을 투명하게 */
+  margin: 4px 0; /* 위아래 여백 */
+}
+
+.table_body::-webkit-scrollbar-thumb,
+.table_body_emergency::-webkit-scrollbar-thumb,
+.table_body_round::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 100px;
+  /* 스크롤바가 오른쪽 끝에서 떨어지도록 좌우에 여백 - 10px로 증가 */
+  border: 10px solid transparent;
+  background-clip: padding-box;
+}
+
+.table_body::-webkit-scrollbar-thumb:hover,
+.table_body_emergency::-webkit-scrollbar-thumb:hover,
+.table_body_round::-webkit-scrollbar-thumb:hover {
+  background: #999999;
+  background-clip: padding-box;
+}
+
+/* Firefox 스크롤바 스타일 (화살표 없이) */
+.table_body,
+.table_body_emergency,
+.table_body_round {
+  scrollbar-width: thin; /* 얇은 스크롤바 */
+  scrollbar-color: #d9d9d9 transparent; /* 썸 색상, 트랙 색상 */
+}
+
+/* 테이블 행 */
+.table_row {
+  display: grid;
+  gap: 0;
+  align-items: center;
+  padding: 0;
+  border-bottom: 1px solid #f2f2f2;
+  min-height: 76px;
+}
+
+/* 긴급 테이블 행: 체크 | 번호 | 이름 | 계좌번호 | 주민등록번호 | 출금 포인트 | 신청일 | 유형 | 상태 | 출금 */
+.table_row.table_row_emergency {
+  grid-template-columns: 0.5fr 0.8fr 1.2fr 2.4fr 1.6fr 1.6fr 1.4fr 1fr 1fr 1.1fr;
+}
+
+/* 회차 정산 테이블 행: 체크 | 번호 | 회차 | 이름 | 계좌번호 | 주민등록번호 | 출금 포인트 | 신청일 | 유형 | 상태 | 출금 */
+.table_row.table_row_round {
+  grid-template-columns: 0.5fr 0.8fr 0.8fr 1.2fr 2.2fr 1.5fr 1.5fr 1.4fr 1fr 1fr 1.1fr;
+}
+
+/* 테이블 행 호버 효과 */
+.table_row:hover {
+  background-color: #f9f9f9;
+}
+
+/* 테이블 셀 공통 스타일 */
+.table_cell_checkbox,
+.table_cell_number,
+.table_cell_round,
+.table_cell_name,
+.table_cell_amount,
+.table_cell_account,
+.table_cell_ssn,
+.table_cell_request_date,
+.table_cell_type,
+.table_cell_status {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+/* 출금 포인트 셀 - 세로 정렬 (데이터 행에서만) */
+.table_cell_amount {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  display: flex;
+}
+
+/* 출금 포인트 헤더 셀 - 가로 정렬 */
+.table_header .table_cell_amount {
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 체크박스 */
+.checkbox {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid #d9d9d9;
+  border-radius: 4px;
+  background: #ffffff;
+  cursor: pointer;
+  appearance: none;
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* 체크박스 체크된 상태 */
+.checkbox:checked {
+  border-color: #444444;
+  background: #ffffff;
+}
+
+/* 체크박스 체크마크 */
+.checkbox:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #444444;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* 헤더 텍스트 */
+.header_text {
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 정렬 아이콘 */
+.sort_icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+/* 셀 텍스트 */
+.cell_text {
+  color: #444;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 셀 텍스트 - 보조 (회색) */
+.cell_text_secondary {
+  color: #ababab;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 상태 태그 기본 스타일 */
+.status_tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  min-width: 40px;
+  height: 22px;
+}
+
+/* 상태 태그 - 정상 (파란색) */
+.status_tag_normal {
+  background-color: rgba(43, 127, 255, 0.1);
+  color: #2b7fff;
+}
+
+/* 상태 태그 - 일시정지 (연한 빨간색) */
+.status_tag_suspended {
+  background-color: rgba(255, 38, 38, 0.05);
+  color: #ff2626;
+}
+
+/* 상태 태그 - 영구정지 (회색) */
+.status_tag_permanent {
+  background-color: #f1f1f1;
+  color: #666666;
+}
+
+/* 상태 태그 - 탈퇴 (회색) */
+.status_tag_withdrawn {
+  background-color: #f1f1f1;
+  color: #666666;
+}
+
+/* 출금 액션 버튼 컨테이너 */
+.table_cell_action {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 액션 버튼 */
+.action_button_approve,
+.action_button_reject {
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+/* 액션 버튼 호버 효과 */
+.action_button_approve:hover,
+.action_button_reject:hover {
+  opacity: 0.7;
+}
+
+/* 액션 아이콘 */
+.action_icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* 테이블 푸터 (합계 행) */
+.table_footer {
+  background-color: white;
+  border-top: 1px solid #d9d9d9;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+/* 테이블 푸터 행 */
+.table_footer_row {
+  display: grid;
+  min-height: 56px;
+  align-items: center;
+  padding: 0;
+  gap: 0;
+}
+
+/* 합계 라벨 셀 */
+.table_cell_total_label {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* 합계 금액 셀 */
+.table_cell_total_amount {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* 합계 라벨 텍스트 */
+.total_label {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 합계 금액 텍스트 */
+.total_amount {
+  color: #ff2626;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+}

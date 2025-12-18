@@ -28,6 +28,11 @@ import styles from "@/styles/manager_ga/member/blacklist/page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import BlacklistFilterSection from "@/components/manager/common/member/blacklist/BlacklistFilterSection";
 import BlacklistTable from "@/components/manager/common/member/blacklist/BlacklistTable";
+import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
+import type {
+  BlacklistDivision,
+  BlockCode,
+} from "@/data/manager_ga/common/filterOptions";
 
 export default function BlacklistPage() {
   // 검색어 상태 관리
@@ -35,20 +40,43 @@ export default function BlacklistPage() {
   // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
   const [search_query, set_search_query] = useState<string>("");
 
+  // 필터 상태 관리
+  // 각 필터의 선택된 값들을 관리합니다
+  const [selected_date_range, set_selected_date_range] = useState<
+    DateRange | undefined
+  >(undefined);
+  const [selected_divisions, set_selected_divisions] = useState<
+    BlacklistDivision[]
+  >([]);
+  const [selected_block_codes, set_selected_block_codes] = useState<
+    BlockCode[]
+  >([]);
+
   return (
     <div className={styles.container}>
       <div className={styles.main_content}>
         {/* 페이지 제목 */}
-        <ManagerPageTitle title="차단 내역" />
+        <ManagerPageTitle title="이용 제한 내역" />
 
         {/* 필터 섹션 */}
         <BlacklistFilterSection
           search_query={search_query}
           on_search_change={set_search_query}
+          selected_date_range={selected_date_range}
+          on_date_range_change={set_selected_date_range}
+          selected_divisions={selected_divisions}
+          on_divisions_change={set_selected_divisions}
+          selected_block_codes={selected_block_codes}
+          on_block_codes_change={set_selected_block_codes}
         />
 
         {/* 차단 이력 테이블 */}
-        <BlacklistTable search_query={search_query} />
+        <BlacklistTable
+          search_query={search_query}
+          selected_date_range={selected_date_range}
+          selected_divisions={selected_divisions}
+          selected_block_codes={selected_block_codes}
+        />
       </div>
     </div>
   );

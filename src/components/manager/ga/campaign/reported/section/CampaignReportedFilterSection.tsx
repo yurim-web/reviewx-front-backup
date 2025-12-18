@@ -38,6 +38,9 @@ interface CampaignReportedFilterSectionProps {
   // 선택된 신고 코드 필터 상태와 변경 함수
   selected_report_codes?: ReportCode[];
   on_report_codes_change?: (codes: ReportCode[]) => void;
+  // 날짜 범위 필터 상태와 변경 함수
+  selected_date_range?: DateRange | undefined;
+  on_date_range_change?: (range: DateRange | undefined) => void;
 }
 
 export default function CampaignReportedFilterSection({
@@ -45,14 +48,9 @@ export default function CampaignReportedFilterSection({
   on_search_change,
   selected_report_codes = [],
   on_report_codes_change,
-}: FilterSectionProps) {
-  // 날짜 범위 상태
-  // useState: React Hook으로 컴포넌트의 날짜 범위 상태를 관리합니다
-  // [현재 값, 값을 변경하는 함수] = useState(초기값)
-  // DateRange | undefined: 날짜 범위가 선택되지 않았을 수도 있으므로 undefined 허용
-  const [selected_date_range, set_selected_date_range] = useState<
-    DateRange | undefined
-  >(undefined);
+  selected_date_range,
+  on_date_range_change,
+}: CampaignReportedFilterSectionProps) {
 
   // 신고 코드 필터 모달 열림/닫힘 상태
   const [is_report_code_modal_open, set_is_report_code_modal_open] =
@@ -101,8 +99,7 @@ export default function CampaignReportedFilterSection({
   // 날짜 범위 변경 핸들러
   // DateFilterButton에서 날짜 범위가 변경될 때 호출됩니다
   const handle_date_range_change = (range: DateRange | undefined) => {
-    set_selected_date_range(range);
-    // TODO: 날짜 범위에 따른 필터링 로직 구현
+    on_date_range_change?.(range);
   };
 
   // 활성 필터 태그 목록 생성

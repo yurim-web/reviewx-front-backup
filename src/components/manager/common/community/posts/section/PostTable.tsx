@@ -57,6 +57,12 @@ interface PostTableRowData extends PostItem, TableRowData {}
 // 컬럼 정의 (기획 순서: 체크박스 | 구분 | 카테고리 | 대상 | 제목 | 조회수 | 등록일 | 등록자 | 수정)
 const columns: TableColumn[] = [
   {
+    key: "number",
+    label: "번호",
+    sortable: true,
+    className: styles.table_cell_number,
+  },
+  {
     key: "division",
     label: "구분",
     className: styles.table_cell_division,
@@ -154,6 +160,7 @@ export default function PostTable({
 
   // 컬럼별 타입 설정
   const column_config: SortColumnConfig = {
+    number: "string",
     view_count: "number",
     registered_date: "date",
   };
@@ -208,6 +215,8 @@ export default function PostTable({
       }}
       render_cell={(row, column) => {
         switch (column.key) {
+          case "number":
+            return <span>{row.number}</span>;
           case "division":
             // 구분은 일반 텍스트로 표시 (태그 스타일 제거)
             return <span>{row.division}</span>;

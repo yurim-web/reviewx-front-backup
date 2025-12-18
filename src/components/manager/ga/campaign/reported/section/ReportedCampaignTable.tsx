@@ -43,9 +43,12 @@ import {
 import campaignReportModalStyles from "@/styles/manager_ga/campaign/common/modal/campaign_report_modal.module.css";
 import campaignReasonModalStyles from "@/styles/manager_ga/campaign/common/modal/campaign_reason_modal.module.css";
 
+import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
+
 interface ReportedCampaignTableProps {
   search_query: string;
   selected_report_codes: ReportCode[];
+  selected_date_range?: DateRange | undefined;
 }
 
 // 차단 사유 옵션 (차단 모달에서 사용)
@@ -119,6 +122,7 @@ const get_columns = (styles: Record<string, string>): TableColumn[] => [
 export default function ReportedCampaignTable({
   search_query,
   selected_report_codes,
+  selected_date_range,
 }: ReportedCampaignTableProps) {
   const [hovered_row_id, set_hovered_row_id] = useState<string | null>(null);
 
@@ -157,6 +161,7 @@ export default function ReportedCampaignTable({
   };
 
   const filtered_list = reported_campaign_list.filter((item) => {
+    // 검색어 필터
     if (
       search_query &&
       !item.campaign_name.includes(search_query) &&
@@ -165,11 +170,30 @@ export default function ReportedCampaignTable({
       return false;
     }
 
+    // 신고 코드 필터
     if (
       selected_report_codes.length > 0 &&
       !selected_report_codes.includes(item.report_code)
     ) {
       return false;
+    }
+
+    // 날짜 범위 필터
+    if (selected_date_range?.from && selected_date_range?.to) {
+      // processed_date 형식: "2025-08-01 18:56"
+      const processed_date_str = item.processed_date.split(" ")[0]; // 날짜 부분만 추출
+      const processed_date = new Date(processed_date_str);
+      const from_date = new Date(selected_date_range.from);
+      const to_date = new Date(selected_date_range.to);
+      to_date.setHours(23, 59, 59, 999); // 종료일의 끝 시간까지 포함
+
+      // 날짜 비교 시 시간 부분을 제거하여 날짜만 비교
+      processed_date.setHours(0, 0, 0, 0);
+      from_date.setHours(0, 0, 0, 0);
+
+      if (processed_date < from_date || processed_date > to_date) {
+        return false;
+      }
     }
 
     return true;

@@ -16,20 +16,41 @@
 import ReviewerTableCommon from '@/components/manager/common/member/table/ReviewerTable';
 import styles from '@/styles/manager_ga/member/reviewers/reviewer_table.module.css';
 
+import type { Channel } from "@/data/manager/common/filterOptions";
+import type {
+  ReviewerStatus,
+  ReviewerStatusType,
+} from "@/data/manager_ga/common/filterOptions";
+
+import type { ReviewerGrade } from "@/components/manager/common/member/reviewers/filter/GradeFilterModal";
+
 interface ReviewerTableProps {
   // 검색어
   search_query: string;
+  // 필터 상태
+  selected_channels?: Channel[];
+  selected_grades?: ReviewerGrade[];
+  selected_types?: ReviewerStatusType[];
+  selected_statuses?: ReviewerStatus[];
   // 상세 페이지 경로 (GA 또는 SA에 따라 다름)
   detail_path: string;
 }
 
-export default function ReviewerTable({ 
+export default function ReviewerTable({
   search_query,
-  detail_path 
+  selected_channels,
+  selected_grades,
+  selected_types,
+  selected_statuses,
+  detail_path,
 }: ReviewerTableProps) {
   return (
     <ReviewerTableCommon
       search_query={search_query}
+      selected_channels={selected_channels}
+      selected_grades={selected_grades}
+      selected_types={selected_types}
+      selected_statuses={selected_statuses}
       styles={
         styles as {
           table_container: string;

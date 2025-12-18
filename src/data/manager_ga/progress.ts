@@ -17,39 +17,26 @@
  */
 
 // 각 캠페인 타입별 데이터 import
-import { deliveryCampaigns } from '@/data/partner/delivery';
-import { missionCampaigns } from '@/data/partner/mission';
-import { reporterCampaigns } from '@/data/partner/reporter';
-import { reviewCampaigns } from '@/data/partner/review';
-import { visitCampaigns } from '@/data/partner/visit';
-import type { DeliveryCampaignDataItem } from '@/data/partner/delivery';
-import type { MissionCampaignDataItem } from '@/data/partner/mission';
-import type { ReporterCampaignDataItem } from '@/data/partner/reporter';
-import type { ReviewCampaignDataItem } from '@/data/partner/review';
-import type { VisitCampaignDataItem } from '@/data/partner/visit';
+import { deliveryCampaigns } from "@/data/partner/delivery";
+import { missionCampaigns } from "@/data/partner/mission";
+import { reporterCampaigns } from "@/data/partner/reporter";
+import { reviewCampaigns } from "@/data/partner/review";
+import { visitCampaigns } from "@/data/partner/visit";
+import type { DeliveryCampaignDataItem } from "@/data/partner/delivery";
+import type { MissionCampaignDataItem } from "@/data/partner/mission";
+import type { ReporterCampaignDataItem } from "@/data/partner/reporter";
+import type { ReviewCampaignDataItem } from "@/data/partner/review";
+import type { VisitCampaignDataItem } from "@/data/partner/visit";
 
-// 캠페인 상태 타입 정의
-export type CampaignStatus =
-  | '예정'
-  | '신청'
-  | '진행'
-  | '종료'
-  | '취소'
-  | '긴급';
+// 공통 필터 옵션에서 import (manager_ga와 manager_sa 공통)
+import type {
+  CampaignStatus,
+  CampaignType,
+  Channel,
+} from "@/data/manager/common/filterOptions";
 
-// 캠페인 유형 타입 정의
-export type CampaignType = '배송형' | '방문형' | '구매평' | '기자단' | '미션형';
-
-// 채널 타입 정의
-export type Channel =
-  | 'Blog'
-  | 'Clip'
-  | 'Instagram'
-  | 'Mission'
-  | 'Reels'
-  | 'Shorts'
-  | 'Store'
-  | 'Youtube';
+// 타입 재export (기존 코드와의 호환성을 위해)
+export type { CampaignStatus, CampaignType, Channel };
 
 // 통계 카드 데이터 타입
 export interface StatCard {
@@ -70,6 +57,7 @@ export interface CampaignProgressItem {
   apply_count: number; // 신청 수
   point: number; // 지급 포인트
   detail_campaign_id?: string; // 상세 페이지에서 사용할 공용 캠페인 ID (옵션)
+  created_at?: Date; // 캠페인 생성일 (날짜 필터링용)
 }
 
 /* ========================================
@@ -88,17 +76,17 @@ export interface CampaignProgressItem {
 export function calculate_stat_card_values() {
   // 오픈 예정 캠페인 (status가 '예정'인 것)
   const open_scheduled_count = campaign_list.filter(
-    (campaign) => campaign.status === '예정',
+    (campaign) => campaign.status === "예정"
   ).length;
 
   // 진행 중인 캠페인 (status가 '진행'인 것)
   const in_progress_count = campaign_list.filter(
-    (campaign) => campaign.status === '진행',
+    (campaign) => campaign.status === "진행"
   ).length;
 
   // 신청 중인 캠페인 (status가 '신청'인 것)
   const applying_count = campaign_list.filter(
-    (campaign) => campaign.status === '신청',
+    (campaign) => campaign.status === "신청"
   ).length;
 
   // 전체 캠페인
@@ -106,18 +94,18 @@ export function calculate_stat_card_values() {
 
   // 종료된 캠페인 (status가 '종료'인 것)
   const ended_count = campaign_list.filter(
-    (campaign) => campaign.status === '종료',
+    (campaign) => campaign.status === "종료"
   ).length;
 
   // 취소된 캠페인 (status가 '취소'인 것)
   const cancelled_count = campaign_list.filter(
-    (campaign) => campaign.status === '취소',
+    (campaign) => campaign.status === "취소"
   ).length;
 
   // 숫자를 천 단위로 포맷팅하는 함수
   // toLocaleString: 숫자를 지역화된 문자열로 변환합니다 (예: 1000 -> "1,000")
   const format_count = (count: number): string => {
-    return `${count.toLocaleString('ko-KR')}건`;
+    return `${count.toLocaleString("ko-KR")}건`;
   };
 
   return {
@@ -147,26 +135,26 @@ export function calculate_stat_card_values() {
  */
 function map_brand_name_to_channel(
   brandName: string,
-  campaignType: CampaignType,
+  campaignType: CampaignType
 ): Channel {
   // 미션형은 brandName이 빈 문자열이므로 'Mission'으로 변환
-  if (campaignType === '미션형' && !brandName) {
-    return 'Mission';
+  if (campaignType === "미션형" && !brandName) {
+    return "Mission";
   }
 
   // 브랜드명 매핑
   const brand_map: Record<string, Channel> = {
-    네이버블로그: 'Blog',
-    인스타그램: 'Instagram',
-    네이버클립: 'Clip',
-    유튜브: 'Youtube',
-    릴스: 'Reels',
-    쇼츠: 'Shorts',
-    스토어: 'Store',
-    기본: 'Store', // 기본값은 Store로 설정
+    네이버블로그: "Blog",
+    인스타그램: "Instagram",
+    네이버클립: "Clip",
+    유튜브: "Youtube",
+    릴스: "Reels",
+    쇼츠: "Shorts",
+    스토어: "Store",
+    기본: "Store", // 기본값은 Store로 설정
   };
 
-  return brand_map[brandName] || 'Store';
+  return brand_map[brandName] || "Store";
 }
 
 /**
@@ -180,21 +168,21 @@ function map_brand_name_to_channel(
  * @returns CampaignStatus 타입
  */
 function map_status_to_progress_status(
-  status: '진행 중' | '대기 중' | '모집 중' | '종료' | '취소' | '긴급',
+  status: "진행 중" | "대기 중" | "모집 중" | "종료" | "취소" | "긴급"
 ): CampaignStatus {
   const status_map: Record<
-    '진행 중' | '대기 중' | '모집 중' | '종료' | '취소' | '긴급',
+    "진행 중" | "대기 중" | "모집 중" | "종료" | "취소" | "긴급",
     CampaignStatus
   > = {
-    '대기 중': '예정',
-    '모집 중': '신청',
-    '진행 중': '진행',
-    종료: '종료',
-    취소: '취소', // 취소 상태를 별도로 표시
-    긴급: '긴급', // 긴급 상태를 별도로 표시
+    "대기 중": "예정",
+    "모집 중": "신청",
+    "진행 중": "진행",
+    종료: "종료",
+    취소: "취소", // 취소 상태를 별도로 표시
+    긴급: "긴급", // 긴급 상태를 별도로 표시
   };
 
-  return status_map[status] || '진행';
+  return status_map[status] || "진행";
 }
 
 /**
@@ -209,9 +197,31 @@ function map_status_to_progress_status(
 function format_campaign_number(id: string): string {
   const num_id = parseInt(id, 10);
   if (isNaN(num_id)) {
-    return '000000';
+    return "000000";
   }
-  return String(num_id).padStart(6, '0');
+  return String(num_id).padStart(6, "0");
+}
+
+/**
+ * 모집 기간 문자열에서 시작일을 Date로 파싱
+ *
+ * @param recruitmentPeriod - 모집 기간 문자열 (예: "2025-10-20 ~ 2025-10-30")
+ * @returns Date 객체 또는 undefined
+ */
+function parse_recruitment_start_date(
+  recruitmentPeriod: string | undefined
+): Date | undefined {
+  if (!recruitmentPeriod || recruitmentPeriod.trim() === "") {
+    return undefined;
+  }
+
+  const startDateStr = recruitmentPeriod.split("~")[0]?.trim();
+  if (!startDateStr) {
+    return undefined;
+  }
+
+  const date = new Date(startDateStr);
+  return isNaN(date.getTime()) ? undefined : date;
 }
 
 /**
@@ -221,22 +231,23 @@ function format_campaign_number(id: string): string {
  * @returns CampaignProgressItem
  */
 function convert_delivery_to_progress_item(
-  campaign: DeliveryCampaignDataItem,
+  campaign: DeliveryCampaignDataItem
 ): CampaignProgressItem {
   const { campaignInfo, applicantData } = campaign;
 
   return {
     id: campaignInfo.id,
     campaign_number: format_campaign_number(campaignInfo.id),
-    partner_name: campaignInfo.partnerName ?? '', // 파트너명 (데이터가 없으면 빈 문자열)
+    partner_name: campaignInfo.partnerName ?? "", // 파트너명 (데이터가 없으면 빈 문자열)
     campaign_name: campaignInfo.title,
-    type: '배송형',
-    channel: map_brand_name_to_channel(campaignInfo.brandName, '배송형'),
+    type: "배송형",
+    channel: map_brand_name_to_channel(campaignInfo.brandName, "배송형"),
     status: map_status_to_progress_status(campaignInfo.status),
     recruit_count: campaignInfo.totalCount,
     apply_count: applicantData?.applicants?.length ?? 0,
     point: campaignInfo.point ?? 0, // 지급 포인트 (데이터에 없으면 0)
     detail_campaign_id: campaignInfo.id,
+    created_at: parse_recruitment_start_date(campaignInfo.recruitmentPeriod),
   };
 }
 
@@ -247,22 +258,23 @@ function convert_delivery_to_progress_item(
  * @returns CampaignProgressItem
  */
 function convert_mission_to_progress_item(
-  campaign: MissionCampaignDataItem,
+  campaign: MissionCampaignDataItem
 ): CampaignProgressItem {
   const { campaignInfo, applicantData } = campaign;
 
   return {
     id: campaignInfo.id,
     campaign_number: format_campaign_number(campaignInfo.id),
-    partner_name: campaignInfo.partnerName ?? '', // 파트너명 (데이터가 없으면 빈 문자열)
+    partner_name: campaignInfo.partnerName ?? "", // 파트너명 (데이터가 없으면 빈 문자열)
     campaign_name: campaignInfo.title,
-    type: '미션형',
-    channel: map_brand_name_to_channel(campaignInfo.brandName, '미션형'),
+    type: "미션형",
+    channel: map_brand_name_to_channel(campaignInfo.brandName, "미션형"),
     status: map_status_to_progress_status(campaignInfo.status),
     recruit_count: campaignInfo.totalCount,
     apply_count: applicantData?.applicants?.length ?? 0,
     point: campaignInfo.point ?? 0, // 지급 포인트 (데이터에 없으면 0)
     detail_campaign_id: campaignInfo.id,
+    created_at: parse_recruitment_start_date(campaignInfo.recruitmentPeriod),
   };
 }
 
@@ -273,22 +285,23 @@ function convert_mission_to_progress_item(
  * @returns CampaignProgressItem
  */
 function convert_reporter_to_progress_item(
-  campaign: ReporterCampaignDataItem,
+  campaign: ReporterCampaignDataItem
 ): CampaignProgressItem {
   const { campaignInfo, applicantData } = campaign;
 
   return {
     id: campaignInfo.id,
     campaign_number: format_campaign_number(campaignInfo.id),
-    partner_name: campaignInfo.partnerName ?? '', // 파트너명 (데이터가 없으면 빈 문자열)
+    partner_name: campaignInfo.partnerName ?? "", // 파트너명 (데이터가 없으면 빈 문자열)
     campaign_name: campaignInfo.title,
-    type: '기자단',
-    channel: map_brand_name_to_channel(campaignInfo.brandName, '기자단'),
+    type: "기자단",
+    channel: map_brand_name_to_channel(campaignInfo.brandName, "기자단"),
     status: map_status_to_progress_status(campaignInfo.status),
     recruit_count: campaignInfo.totalCount,
     apply_count: applicantData?.applicants?.length ?? 0,
     point: campaignInfo.point ?? 0, // 지급 포인트 (데이터에 없으면 0)
     detail_campaign_id: campaignInfo.id,
+    created_at: parse_recruitment_start_date(campaignInfo.recruitmentPeriod),
   };
 }
 
@@ -299,22 +312,23 @@ function convert_reporter_to_progress_item(
  * @returns CampaignProgressItem
  */
 function convert_review_to_progress_item(
-  campaign: ReviewCampaignDataItem,
+  campaign: ReviewCampaignDataItem
 ): CampaignProgressItem {
   const { campaignInfo, applicantData } = campaign;
 
   return {
     id: campaignInfo.id,
     campaign_number: format_campaign_number(campaignInfo.id),
-    partner_name: campaignInfo.partnerName ?? '', // 파트너명 (데이터가 없으면 빈 문자열)
+    partner_name: campaignInfo.partnerName ?? "", // 파트너명 (데이터가 없으면 빈 문자열)
     campaign_name: campaignInfo.title,
-    type: '구매평',
-    channel: map_brand_name_to_channel(campaignInfo.brandName, '구매평'),
+    type: "구매평",
+    channel: map_brand_name_to_channel(campaignInfo.brandName, "구매평"),
     status: map_status_to_progress_status(campaignInfo.status),
     recruit_count: campaignInfo.totalCount,
     apply_count: applicantData?.applicants?.length ?? 0,
     point: campaignInfo.point ?? 0, // 지급 포인트 (데이터에 없으면 0)
     detail_campaign_id: campaignInfo.id,
+    created_at: parse_recruitment_start_date(campaignInfo.recruitmentPeriod),
   };
 }
 
@@ -325,22 +339,23 @@ function convert_review_to_progress_item(
  * @returns CampaignProgressItem
  */
 function convert_visit_to_progress_item(
-  campaign: VisitCampaignDataItem,
+  campaign: VisitCampaignDataItem
 ): CampaignProgressItem {
   const { campaignInfo, applicantData } = campaign;
 
   return {
     id: campaignInfo.id,
     campaign_number: format_campaign_number(campaignInfo.id),
-    partner_name: campaignInfo.partnerName ?? '', // 파트너명 (데이터가 없으면 빈 문자열)
+    partner_name: campaignInfo.partnerName ?? "", // 파트너명 (데이터가 없으면 빈 문자열)
     campaign_name: campaignInfo.title,
-    type: '방문형',
-    channel: map_brand_name_to_channel(campaignInfo.brandName, '방문형'),
+    type: "방문형",
+    channel: map_brand_name_to_channel(campaignInfo.brandName, "방문형"),
     status: map_status_to_progress_status(campaignInfo.status),
     recruit_count: campaignInfo.totalCount,
     apply_count: applicantData?.applicants?.length ?? 0,
     point: campaignInfo.point ?? 0, // 지급 포인트 (데이터에 없으면 0)
     detail_campaign_id: campaignInfo.id,
+    created_at: parse_recruitment_start_date(campaignInfo.recruitmentPeriod),
   };
 }
 

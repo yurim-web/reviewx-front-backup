@@ -49,45 +49,47 @@ interface CampaignProgressFilterSectionProps {
     dropdown_arrow: string;
     report_icon: string;
   };
+  // 필터 상태 (부모 컴포넌트에서 관리)
+  search_query: string;
+  on_search_change: (query: string) => void;
+  selected_statuses: CampaignStatus[];
+  on_statuses_change: (statuses: CampaignStatus[]) => void;
+  selected_types: CampaignType[];
+  on_types_change: (types: CampaignType[]) => void;
+  selected_channels: Channel[];
+  on_channels_change: (channels: Channel[]) => void;
+  selected_date_range: DateRange | undefined;
+  on_date_range_change: (range: DateRange | undefined) => void;
+  // 필터 초기화 함수 (선택적)
+  on_filter_reset?: () => void;
 }
 
 export default function CampaignProgressFilterSection({
   styles,
+  search_query,
+  on_search_change,
+  selected_statuses,
+  on_statuses_change,
+  selected_types,
+  on_types_change,
+  selected_channels,
+  on_channels_change,
+  selected_date_range,
+  on_date_range_change,
+  on_filter_reset,
 }: CampaignProgressFilterSectionProps) {
   /* ========================================
      📌 상태 관리 (State Management)
      ======================================== */
 
-  // 검색어 상태
-  const [search_query, set_search_query] = useState("");
-
-  // 날짜 범위 상태
-  // useState: React Hook으로 컴포넌트의 날짜 범위 상태를 관리합니다
-  // [현재 값, 값을 변경하는 함수] = useState(초기값)
-  // DateRange | undefined: 날짜 범위가 선택되지 않았을 수도 있으므로 undefined 허용
-  const [selected_date_range, set_selected_date_range] = useState<
-    DateRange | undefined
-  >(undefined);
-
   // 상태 필터 모달 열림/닫힘 상태
   const [is_status_modal_open, set_is_status_modal_open] = useState(false);
-
-  // 선택된 상태들
-  const [selected_statuses, set_selected_statuses] = useState<CampaignStatus[]>(
-    []
-  );
 
   // 유형 필터 모달 열림/닫힘 상태
   const [is_type_modal_open, set_is_type_modal_open] = useState(false);
 
-  // 선택된 유형들
-  const [selected_types, set_selected_types] = useState<CampaignType[]>([]);
-
   // 채널 필터 모달 열림/닫힘 상태
   const [is_channel_modal_open, set_is_channel_modal_open] = useState(false);
-
-  // 선택된 채널들
-  const [selected_channels, set_selected_channels] = useState<Channel[]>([]);
 
   // 선택된 정렬 옵션
   const [selected_sort, set_selected_sort] = useState<string>("최신순");
@@ -111,14 +113,12 @@ export default function CampaignProgressFilterSection({
 
   // 상태 필터 적용
   const handle_status_apply = (statuses: CampaignStatus[]) => {
-    set_selected_statuses(statuses);
-    // TODO: 실제 필터링 로직 구현
+    on_statuses_change(statuses);
   };
 
   // 상태 태그 제거 핸들러
   const handle_remove_status = (status: CampaignStatus) => {
-    set_selected_statuses(selected_statuses.filter((s) => s !== status));
-    // TODO: 필터링 로직 업데이트
+    on_statuses_change(selected_statuses.filter((s) => s !== status));
   };
 
   // 유형 필터 모달 열기
@@ -133,14 +133,12 @@ export default function CampaignProgressFilterSection({
 
   // 유형 필터 적용
   const handle_type_apply = (types: CampaignType[]) => {
-    set_selected_types(types);
-    // TODO: 실제 필터링 로직 구현
+    on_types_change(types);
   };
 
   // 유형 태그 제거 핸들러
   const handle_remove_type = (type: CampaignType) => {
-    set_selected_types(selected_types.filter((t) => t !== type));
-    // TODO: 필터링 로직 업데이트
+    on_types_change(selected_types.filter((t) => t !== type));
   };
 
   // 채널 필터 모달 열기
@@ -155,14 +153,12 @@ export default function CampaignProgressFilterSection({
 
   // 채널 필터 적용
   const handle_channel_apply = (channels: Channel[]) => {
-    set_selected_channels(channels);
-    // TODO: 실제 필터링 로직 구현
+    on_channels_change(channels);
   };
 
   // 채널 태그 제거 핸들러
   const handle_remove_channel = (channel: Channel) => {
-    set_selected_channels(selected_channels.filter((c) => c !== channel));
-    // TODO: 필터링 로직 업데이트
+    on_channels_change(selected_channels.filter((c) => c !== channel));
   };
 
   // 정렬 옵션 선택 핸들러
@@ -174,8 +170,7 @@ export default function CampaignProgressFilterSection({
   // 날짜 범위 변경 핸들러
   // DateFilterButton에서 날짜 범위가 변경될 때 호출됩니다
   const handle_date_range_change = (range: DateRange | undefined) => {
-    set_selected_date_range(range);
-    // TODO: 날짜 범위에 따른 필터링 로직 구현
+    on_date_range_change(range);
   };
 
   // 활성 필터 태그 목록 생성
@@ -209,7 +204,7 @@ export default function CampaignProgressFilterSection({
       {/* BaseFilterSection 공통 컴포넌트 사용 */}
       <BaseFilterSection<string>
         search_query={search_query}
-        on_search_change={set_search_query}
+        on_search_change={on_search_change}
         // 날짜 필터 - DateFilterButton 컴포넌트 사용
         // DateFilterButton은 BaseFilterSection의 date_filter prop으로 전달됩니다
         date_filter={
@@ -250,6 +245,8 @@ export default function CampaignProgressFilterSection({
         // 활성 필터 태그들
         active_filter_tags={active_filter_tags}
         on_filter_tag_remove={handle_filter_tag_remove}
+        // 필터 초기화 함수
+        on_filter_reset={on_filter_reset}
       />
 
       {/* 필터 모달들 */}

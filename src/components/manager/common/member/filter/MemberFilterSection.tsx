@@ -41,6 +41,15 @@ interface MemberFilterSectionProps<TChannel, TGradeOrDivision, TType, TStatus> {
   // 검색어 상태와 변경 함수
   search_query: string;
   on_search_change: (query: string) => void;
+  // 필터 상태와 변경 함수 (외부에서 관리, 선택적)
+  selected_channels?: TChannel[];
+  on_channels_change?: (channels: TChannel[]) => void;
+  selected_divisions?: TGradeOrDivision[];
+  on_divisions_change?: (divisions: TGradeOrDivision[]) => void;
+  selected_types?: TType[];
+  on_types_change?: (types: TType[]) => void;
+  selected_statuses?: TStatus[];
+  on_statuses_change?: (statuses: TStatus[]) => void;
   // CSS 모듈 스타일 객체
   styles: Record<string, string> & {
     filter_item: string;
@@ -76,6 +85,14 @@ export default function MemberFilterSection<
 >({
   search_query,
   on_search_change,
+  selected_channels = [],
+  on_channels_change,
+  selected_divisions = [],
+  on_divisions_change,
+  selected_types = [],
+  on_types_change,
+  selected_statuses = [],
+  on_statuses_change,
   styles: cssStyles,
   channel_name_map,
   ChannelFilterModal,
@@ -92,50 +109,50 @@ export default function MemberFilterSection<
   const [is_type_modal_open, set_is_type_modal_open] = useState(false);
   const [is_status_modal_open, set_is_status_modal_open] = useState(false);
 
-  // 선택된 필터 상태 관리
-  const [selected_channels, set_selected_channels] = useState<TChannel[]>([]);
-  const [selected_grades_or_divisions, set_selected_grades_or_divisions] =
-    useState<TGradeOrDivision[]>([]);
-  const [selected_types, set_selected_types] = useState<TType[]>([]);
-  const [selected_statuses, set_selected_statuses] = useState<TStatus[]>([]);
   const [selected_sort, set_selected_sort] = useState("최신순");
 
   // 채널 필터 핸들러
   const handle_channel_apply = (channels: TChannel[]) => {
-    set_selected_channels(channels);
+    on_channels_change?.(channels);
   };
 
   const handle_remove_channel = (channel: TChannel) => {
-    set_selected_channels(selected_channels.filter((c) => c !== channel));
+    if (on_channels_change) {
+      on_channels_change(selected_channels.filter((c) => c !== channel));
+    }
   };
 
   // 등급/구분 필터 핸들러
   const handle_grade_or_division_apply = (values: TGradeOrDivision[]) => {
-    set_selected_grades_or_divisions(values);
+    on_divisions_change?.(values);
   };
 
   const handle_remove_grade_or_division = (value: TGradeOrDivision) => {
-    set_selected_grades_or_divisions(
-      selected_grades_or_divisions.filter((v) => v !== value)
-    );
+    if (on_divisions_change) {
+      on_divisions_change(selected_divisions.filter((v) => v !== value));
+    }
   };
 
   // 유형 필터 핸들러
   const handle_type_apply = (types: TType[]) => {
-    set_selected_types(types);
+    on_types_change?.(types);
   };
 
   const handle_remove_type = (type: TType) => {
-    set_selected_types(selected_types.filter((t) => t !== type));
+    if (on_types_change) {
+      on_types_change(selected_types.filter((t) => t !== type));
+    }
   };
 
   // 상태 필터 핸들러
   const handle_status_apply = (statuses: TStatus[]) => {
-    set_selected_statuses(statuses);
+    on_statuses_change?.(statuses);
   };
 
   const handle_remove_status = (status: TStatus) => {
-    set_selected_statuses(selected_statuses.filter((s) => s !== status));
+    if (on_statuses_change) {
+      on_statuses_change(selected_statuses.filter((s) => s !== status));
+    }
   };
 
   // 정렬 옵션
@@ -153,7 +170,7 @@ export default function MemberFilterSection<
       value: channel as string,
       label: channel_name_map[channel],
     })),
-    ...selected_grades_or_divisions.map((value) => ({
+    ...selected_divisions.map((value) => ({
       value: value as string,
       label: value as string,
     })),
@@ -174,7 +191,7 @@ export default function MemberFilterSection<
       handle_remove_channel(value as TChannel);
     }
     // 등급/구분인지 확인
-    else if (selected_grades_or_divisions.includes(value as TGradeOrDivision)) {
+    else if (selected_divisions.includes(value as TGradeOrDivision)) {
       handle_remove_grade_or_division(value as TGradeOrDivision);
     }
     // 유형인지 확인
@@ -201,12 +218,12 @@ export default function MemberFilterSection<
               className={cssStyles.filter_item}
               onClick={() => set_is_channel_modal_open(true)}
             >
-              <div
-                className={`${cssStyles.checkbox_icon} ${
-                  selected_channels.length > 0
-                    ? cssStyles.checkbox_icon_checked
-                    : ""
-                }`}
+            <div
+              className={`${cssStyles.checkbox_icon} ${
+                selected_channels.length > 0
+                  ? cssStyles.checkbox_icon_checked
+                  : ""
+              }`}
               ></div>
               <span className={cssStyles.filter_text}>채널</span>
               <img
@@ -223,7 +240,7 @@ export default function MemberFilterSection<
             >
               <div
                 className={`${cssStyles.checkbox_icon} ${
-                  selected_grades_or_divisions.length > 0
+                  selected_divisions.length > 0
                     ? cssStyles.checkbox_icon_checked
                     : ""
                 }`}
@@ -322,7 +339,7 @@ export default function MemberFilterSection<
         on_close: () => set_is_grade_or_division_modal_open(false),
         [grade_or_division_label === "등급"
           ? "selected_grades"
-          : "selected_divisions"]: selected_grades_or_divisions,
+          : "selected_divisions"]: selected_divisions,
         on_apply: handle_grade_or_division_apply,
       } as any)}
 

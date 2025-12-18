@@ -17,12 +17,10 @@
  */
 
 import { Metadata } from "next";
-// 알림 페이지 전용 전역 스타일 (전역 main 태그 스타일 override)
-import "@/styles/user/notification/notification_global.css";
 
 // 알림 페이지 메타데이터
 export const metadata: Metadata = {
-  title: "ReviewX | 알림",
+  title: "ReviewX | SA 관리자 알림",
   description: "알림을 확인하세요",
 };
 

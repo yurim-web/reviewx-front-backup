@@ -14,9 +14,13 @@
  *
  * 주요 기능:
  * - 체크박스 방식의 다중 선택 필터링
- * - 상태 옵션: 정상, 일시 정지, 영구 정지
+ * - 상태 옵션: 정상, 일시 정지, 영구 정지, 탈퇴
  * - 필터 적용/초기화 기능
  * - 모달 외부 클릭으로 닫기
+ * 
+ * ⚠️ 참고:
+ * - 상태 옵션은 src/data/manager_ga/common/filterOptions.ts의
+ *   reviewer_status_filter_options를 사용합니다.
  */
 
 "use client";
@@ -25,6 +29,7 @@ import BaseFilterModal, {
   type FilterOption,
 } from "@/components/manager/ga/common/filter/BaseFilterModal";
 import type { ReviewerStatus } from "@/data/manager_ga/member/reviewers";
+import { reviewer_status_filter_options } from "@/data/manager_ga/common/filterOptions";
 
 interface StatusFilterModalProps {
   // 모달 열림/닫힘 상태
@@ -37,12 +42,10 @@ interface StatusFilterModalProps {
   on_apply: (statuses: ReviewerStatus[]) => void;
 }
 
-// 상태 필터 옵션 배열
-const status_options: ReviewerStatus[] = ["정상", "일시 정지", "영구 정지"];
-
 // 상태 옵션을 FilterOption 형태로 변환하는 함수
+// reviewer_status_filter_options를 사용하여 필터 옵션을 가져옵니다
 const get_status_options = (): FilterOption<ReviewerStatus>[] => {
-  return status_options.map((status) => ({
+  return reviewer_status_filter_options.map((status) => ({
     value: status,
     label: status,
   }));

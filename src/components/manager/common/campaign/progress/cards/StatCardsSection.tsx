@@ -39,13 +39,13 @@ export default function StatCardsSection({
   return (
     <div className={cssStyles.stat_cards_section}>
       <StatCard
-        title="오픈 예정 캠페인"
-        value={stat_card_values.open_scheduled}
+        title="전체 캠페인"
+        value={stat_card_values.total}
         styles={cssStyles}
       />
       <StatCard
-        title="진행 중인 캠페인"
-        value={stat_card_values.in_progress}
+        title="오픈 예정 캠페인"
+        value={stat_card_values.open_scheduled}
         styles={cssStyles}
       />
       <StatCard
@@ -54,8 +54,8 @@ export default function StatCardsSection({
         styles={cssStyles}
       />
       <StatCard
-        title="전체 캠페인"
-        value={stat_card_values.total}
+        title="진행 중인 캠페인"
+        value={stat_card_values.in_progress}
         styles={cssStyles}
       />
       <StatCard

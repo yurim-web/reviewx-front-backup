@@ -29,7 +29,7 @@ import Link from 'next/link';
 import Header from '@/components/fragments/Header';
 import styles from '@/styles/login/partner_login.module.css';
 // 🧪 테스트용 - 실제 API 연결 시 이 import 삭제
-import { checkTestLogin } from '@/data/login/testLoginData';
+import { checkTestLogin, isBlockedAccount } from '@/data/login/testLoginData';
 
 /**
  * 파트너 로그인 페이지 컴포넌트
@@ -124,6 +124,13 @@ export default function PartnerLoginPage() {
       // 🧪 테스트용 코드 - 실제 API 연결 시 전체 삭제 필요
       // ========================================
       console.log('로그인 시도:', { email, password, autoLogin });
+
+      // 차단된 계정인지 먼저 확인 (비밀번호가 맞는 경우)
+      if (isBlockedAccount(email, password)) {
+        // 차단된 계정인 경우 차단 페이지로 이동
+        router.push('/blocked');
+        return;
+      }
 
       // 테스트 데이터 확인 (testLoginData.ts 파일 참고)
       const testError = checkTestLogin(email, password);

@@ -16,20 +16,40 @@
 import PartnerTableCommon from '@/components/manager/common/member/table/PartnerTable';
 import styles from '@/styles/manager_ga/member/partners/partner_table.module.css';
 
+import type { Channel } from "@/data/manager/common/filterOptions";
+import type {
+  PartnerDivision,
+  PartnerStatus,
+} from "@/data/manager_ga/common/filterOptions";
+import type { PartnerType } from "@/components/manager/common/member/partners/filter/TypeFilterModal";
+
 interface PartnerTableProps {
   // 검색어
   search_query: string;
+  // 필터 상태
+  selected_channels?: Channel[];
+  selected_divisions?: PartnerDivision[];
+  selected_types?: PartnerType[];
+  selected_statuses?: PartnerStatus[];
   // 상세 페이지 경로 (GA 또는 SA에 따라 다름)
   detail_path: string;
 }
 
-export default function PartnerTable({ 
+export default function PartnerTable({
   search_query,
-  detail_path 
+  selected_channels,
+  selected_divisions,
+  selected_types,
+  selected_statuses,
+  detail_path,
 }: PartnerTableProps) {
   return (
     <PartnerTableCommon
       search_query={search_query}
+      selected_channels={selected_channels}
+      selected_divisions={selected_divisions}
+      selected_types={selected_types}
+      selected_statuses={selected_statuses}
       styles={
         styles as {
           table_container: string;
