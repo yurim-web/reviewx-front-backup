@@ -1,19 +1,22 @@
 /* ========================================
-   🚫 파트너 차단 페이지
+   🚫 이용 제한 안내 페이지
    ======================================== */
 
 /**
- * 파트너 차단 페이지
- *
- * 목적: 차단된 파트너 회원이 로그인했을 때 서비스 이용 제한 안내를 표시하는 페이지입니다.
+ * 이용 제한 안내 페이지
  *
  * 페이지 경로:
- * - /partner/blocked
+ * - /blacklist_info
  */
 
+import type { Metadata } from "next";
 import BlockedBasePage from "@/components/common/blocked/BlockedBasePage";
 
-export default function PartnerBlockedPage() {
+export const metadata: Metadata = {
+  title: "ReviewX | 이용 제한 안내",
+};
+
+export default function BlacklistInfoPage() {
   return (
     <BlockedBasePage
       message="서비스 이용이 제한되었습니다."

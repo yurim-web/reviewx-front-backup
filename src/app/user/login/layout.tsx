@@ -17,12 +17,12 @@
  * - Metadata API: SEO를 위한 메타데이터 설정
  */
 
-import type { Metadata } from 'next';
+import type { Metadata } from "next";
 
 // 사용자 로그인 페이지 메타데이터
 export const metadata: Metadata = {
-  title: 'ReviewX | 로그인',
-  description: 'ReviewX 사용자 로그인 페이지 - 아이디/비밀번호 로그인',
+  title: "ReviewX | 사용자 로그인",
+  description: "ReviewX 사용자 로그인 페이지 - 네이버, 카카오 로그인",
 };
 
 /**
@@ -30,6 +30,8 @@ export const metadata: Metadata = {
  *
  * @param children - 사용자 로그인 페이지 컴포넌트
  *
+ * - Readonly: 객체를 읽기 전용으로 만들어 불변성 보장
+ * - React.ReactNode: React 컴포넌트가 렌더링할 수 있는 모든 타입
  */
 export default function UserLoginLayout({
   children,

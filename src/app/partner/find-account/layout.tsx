@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "ReviewX | 배송형 캠페인",
+  title: "ReviewX | 파트너 아이디/비밀번호 찾기",
 };
 
-export default function DeliveryLayout({
+export default function PartnerFindAccountLayout({
   children,
 }: {
   children: React.ReactNode;

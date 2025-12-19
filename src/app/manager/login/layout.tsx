@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "ReviewX | 배송형 캠페인",
+  title: "ReviewX | 관리자 로그인",
 };
 
-export default function DeliveryLayout({
+export default function ManagerLoginLayout({
   children,
 }: {
   children: React.ReactNode;
