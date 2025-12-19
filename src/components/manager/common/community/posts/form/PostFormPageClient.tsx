@@ -167,6 +167,9 @@ export default function PostFormPageClient({
   const form_aria_label =
     mode === "create" ? "게시글 작성 폼" : "게시글 수정 폼";
 
+  // 카테고리 타입이 "자주 묻는 질문"인지 여부에 따라 라벨 텍스트 변경
+  const is_faq_type = category_type === "자주 묻는 질문";
+
   return (
     <main className={styles.container}>
       <header className={styles.header_bar} aria-label="상단 헤더">
@@ -237,7 +240,7 @@ export default function PostFormPageClient({
 
           <div className={styles.form_field}>
             <label className={styles.input_label} htmlFor="title">
-              제목
+              {is_faq_type ? "질문" : "제목"}
             </label>
             <input
               id="title"
@@ -261,6 +264,7 @@ export default function PostFormPageClient({
             initial_data={initial_data}
             editor_instance_ref={editor_instance_ref}
             title_input_ref={title_input_ref}
+            body_label={is_faq_type ? "답변" : "내용"}
           />
 
           <button

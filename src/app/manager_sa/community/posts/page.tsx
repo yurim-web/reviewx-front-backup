@@ -29,7 +29,10 @@ import styles from "@/styles/manager_ga/community/posts/page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import PostFilterSection from "@/components/manager/common/community/posts/section/PostFilterSection";
 import PostTable from "@/components/manager/common/community/posts/section/PostTable";
-import type { PostDivision } from "@/data/manager_ga/community/postsData";
+import {
+  posts_data,
+  type PostDivision,
+} from "@/data/manager_ga/community/postsData";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 
 export default function PostsPage() {
@@ -47,6 +50,12 @@ export default function PostsPage() {
   const [selected_date_range, set_selected_date_range] = useState<
     DateRange | undefined
   >(undefined);
+
+  // 게시글 목록 상태 (고정 여부 등 변경을 위해 목업 데이터를 상태로 관리)
+  const [posts, set_posts] = useState(posts_data);
+
+  // 테이블에서 선택된 게시글 ID 목록 상태
+  const [selected_post_ids, set_selected_post_ids] = useState<string[]>([]);
 
   // 검색어 변경 핸들러
   // 이벤트 핸들러 함수로, 검색어 변경 시 호출됩니다.
@@ -72,9 +81,12 @@ export default function PostsPage() {
 
         {/* 게시글 테이블 컴포넌트 */}
         <PostTable
+          posts={posts}
           search_query={search_query}
           selected_divisions={selected_divisions}
           selected_date_range={selected_date_range}
+          selected_post_ids={selected_post_ids}
+          on_selected_post_ids_change={set_selected_post_ids}
         />
       </div>
     </div>

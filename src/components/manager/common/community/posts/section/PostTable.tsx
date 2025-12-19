@@ -113,11 +113,10 @@ export default function PostTable({
   search_query,
   selected_divisions = [],
   selected_date_range,
-  posts,
-  selected_post_ids,
+  posts = [],
+  selected_post_ids = [],
   on_selected_post_ids_change,
 }: PostTableProps) {
-  // Next.js 라우터: 수정 페이지로 이동에 사용
   const router = useRouter();
   const [hovered_row_id, set_hovered_row_id] = useState<string | null>(null);
 
@@ -190,10 +189,10 @@ export default function PostTable({
 
     const handle_select_all = () => {
       if (is_all_selected) {
-        set_selected_post_ids([]);
+        on_selected_post_ids_change([]);
       } else {
         const all_ids = sorted_posts.map((post) => post.id);
-        set_selected_post_ids(all_ids);
+        on_selected_post_ids_change(all_ids);
       }
     };
 

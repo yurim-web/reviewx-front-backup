@@ -46,6 +46,7 @@ interface PostEditorFieldProps {
   } | null;
   editor_instance_ref: MutableRefObject<any>;
   title_input_ref: RefObject<HTMLInputElement | null>;
+  body_label: string;
 }
 
 export function PostEditorField({
@@ -58,6 +59,7 @@ export function PostEditorField({
   initial_data,
   editor_instance_ref,
   title_input_ref,
+  body_label,
 }: PostEditorFieldProps) {
   // ----------------------------------------
   // 에디터 영역 렌더링
@@ -67,7 +69,7 @@ export function PostEditorField({
   return (
     <div className={styles.form_field}>
       <label className={styles.input_label} htmlFor="body">
-        내용
+        {body_label}
       </label>
       <div
         className={`${styles.editor_container} ${
