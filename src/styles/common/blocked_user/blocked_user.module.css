@@ -1,0 +1,150 @@
+/* ========================================
+   🚫 차단된 회원 페이지 스타일
+   ======================================== */
+
+/**
+ * CSS 모듈 위치
+ * - src/styles/common/blocked_user/blocked_user.module.css
+ *
+ * 사용 컴포넌트
+ * - src/components/common/blocked/BlockedBasePage.tsx
+ *
+ * 적용 페이지
+ * - /blocked
+ * - /blacklist_info
+ * - /pause_info
+ * - /blocked/account
+ * - /partner/blocked
+ */
+
+/* ========================================
+   1. 페이지 전체 컨테이너
+   ======================================== */
+
+/* 차단된 회원 페이지 전체 컨테이너 */
+.blocked_user_page_container {
+  background-color: #f2f2f2;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* ========================================
+   2. 메인 콘텐츠 영역
+   ======================================== */
+
+/* 차단된 회원 메인 영역 */
+.blocked_user_main {
+  background-color: #ffffff;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* 콘텐츠 섹션 */
+.content_section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  text-align: center;
+}
+
+/* ========================================
+   3. 브랜드 로고
+   ======================================== */
+
+/* 로고 컨테이너 */
+.logo_container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 로고 텍스트 (VX.) */
+.logo_text {
+  color: #444;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 24px; /* 120% */
+  letter-spacing: -0.4px;
+}
+
+/* ========================================
+   4. 안내 메시지
+   ======================================== */
+
+/* 안내 메시지 텍스트 */
+.message_text {
+  color: #444;
+  text-align: center;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 40px; /* 142.857% */
+  letter-spacing: -0.56px;
+}
+
+/* ========================================
+   5. 회원 탈퇴 버튼
+   ======================================== */
+
+/* 회원 탈퇴 버튼 */
+.withdrawal_button {
+  margin-top: 24px;
+  width: 388px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  border: 1px solid #555555;
+  border-radius: 8px;
+  cursor: pointer;
+  /* 버튼 속 글자 css */
+  color: #444;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.32px;
+}
+
+/* ========================================
+   6. 반응형 디자인
+   ======================================== */
+
+/* 모바일 (0~739px) */
+@media (max-width: 739px) {
+  /* 콘텐츠 섹션 간격 조정 */
+  .content_section {
+    gap: 32px;
+    padding: 0 20px;
+  }
+
+  /* 로고 텍스트 크기 조정 */
+  .logo_text {
+    font-size: 18px;
+    line-height: 22px;
+  }
+
+  /* 안내 메시지 텍스트 크기 조정 */
+  .message_text {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  /* 회원 탈퇴 버튼 너비 조정 */
+  .withdrawal_button {
+    width: 100%;
+    max-width: 388px;
+  }
+}
