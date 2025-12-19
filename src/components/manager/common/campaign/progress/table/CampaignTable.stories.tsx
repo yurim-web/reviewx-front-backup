@@ -13,8 +13,8 @@ import type { ReportCode } from "@/components/manager/common/campaign/modal/Camp
 
 // 실제 CSS 모듈 import
 // Storybook에서는 CSS 모듈을 직접 import하여 사용합니다
-import tableStylesModule from "@/styles/manager_ga/campaign/progress_table.module.css";
-import tagStylesModule from "@/styles/manager_ga/campaign/progress/tags.module.css";
+import tableStylesModule from "@/styles/manager_ga/campaign/progress/progress_table.module.css";
+import tagStylesModule from "@/styles/common/tags.module.css";
 import channelIconStylesModule from "@/styles/manager_ga/campaign/progress/channel_icon.module.css";
 import reportModalStylesModule from "@/styles/manager_ga/campaign/common/modal/campaign_report_modal.module.css";
 

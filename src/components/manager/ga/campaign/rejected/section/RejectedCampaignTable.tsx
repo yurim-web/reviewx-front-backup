@@ -23,7 +23,7 @@ import { useState } from "react";
 import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
-import styles from "@/styles/manager_ga/campaign/rejected_table.module.css";
+import styles from "@/styles/manager_ga/campaign/rejected/rejected_table.module.css";
 import {
   rejected_campaign_list,
   reject_code_info,

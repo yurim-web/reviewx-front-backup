@@ -66,10 +66,9 @@ import statCardStylesGA from "@/styles/manager_ga/campaign/progress/stat_card.mo
 import statCardStylesSA from "@/styles/manager_sa/campaign/progress/stat_card.module.css";
 import filterSectionStylesGA from "@/styles/manager_ga/campaign/progress/filter_section.module.css";
 import filterSectionStylesSA from "@/styles/manager_sa/campaign/progress/filter_section.module.css";
-import tableStylesGA from "@/styles/manager_ga/campaign/progress_table.module.css";
+import tableStylesGA from "@/styles/manager_ga/campaign/progress/progress_table.module.css";
 import tableStylesSA from "@/styles/manager_sa/campaign/progress_table.module.css";
-import tagStylesGA from "@/styles/manager_ga/campaign/progress/tags.module.css";
-import tagStylesSA from "@/styles/manager_sa/campaign/progress/tags.module.css";
+import commonTagStyles from "@/styles/common/tags.module.css";
 import channelIconStylesGA from "@/styles/manager_ga/campaign/progress/channel_icon.module.css";
 import channelIconStylesSA from "@/styles/manager_sa/campaign/progress/channel_icon.module.css";
 import campaignReportModalStylesGA from "@/styles/manager_ga/campaign/common/modal/campaign_report_modal.module.css";
@@ -228,9 +227,6 @@ export default function ProgressPageCommon({
   // 테이블 스타일 선택
   const tableStyles = manager_type === "ga" ? tableStylesGA : tableStylesSA;
 
-  // 태그 스타일 선택
-  const tagStyles = manager_type === "ga" ? tagStylesGA : tagStylesSA;
-
   // 채널 아이콘 스타일 선택
   const channelIconStyles =
     manager_type === "ga" ? channelIconStylesGA : channelIconStylesSA;
@@ -360,7 +356,9 @@ export default function ProgressPageCommon({
           base_path={basePath}
           ReportModal={ReportModal}
           styles={tableStyles}
-          tagStyles={tagStyles as Record<string, string> & { type_tag: string }}
+          tagStyles={
+            commonTagStyles as Record<string, string> & { type_tag: string }
+          }
           channelIconStyles={
             channelIconStyles as Record<string, string> & {
               channel_icon: string;
