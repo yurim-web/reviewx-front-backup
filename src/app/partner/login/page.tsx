@@ -15,147 +15,102 @@
  * - 비밀번호 입력
  * - 자동 로그인 체크박스
  * - 로그인 버튼
- * - 파트너 회원가입 링크
- * - 아이디 · 비밀번호 찾기 링크
- * - 문의하기 링크
- * - 리뷰어 회원 로그인 링크
+ * - 파트너 회원가입 / 계정찾기 / 문의 / 리뷰어 로그인 링크
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import Header from '@/components/fragments/Header';
-import styles from '@/styles/login/partner_login.module.css';
-// 🧪 테스트용 - 실제 API 연결 시 이 import 삭제
-import { checkTestLogin, isBlockedAccount } from '@/data/login/testLoginData';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Header from "@/components/fragments/Header";
+import styles from "@/styles/login/login.module.css";
+// 🧪 테스트용 - 실제 API 연동 시 삭제 예정
+import {
+  checkTestLogin,
+  isBlockedAccount,
+  BANNED_ACCOUNTS,
+} from "@/data/login/testLoginData";
 
-/**
- * 파트너 로그인 페이지 컴포넌트
- */
 export default function PartnerLoginPage() {
   const router = useRouter();
 
   // ========================================
-  // 상태 관리 (State Management)
+  // 상태 관리
   // ========================================
-
-  /**
-   * 아이디(이메일) 상태
-   */
-  const [email, setEmail] = useState<string>('');
-
-  /**
-   * 비밀번호 상태
-   */
-  const [password, setPassword] = useState<string>('');
-
-  /**
-   * 자동 로그인 체크박스 상태
-   */
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [autoLogin, setAutoLogin] = useState<boolean>(false);
-
-  /**
-   * 로그인 에러 메시지 상태
-   */
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   // ========================================
-  // 이벤트 핸들러 (Event Handlers)
+  // 이벤트 핸들러
   // ========================================
-
-  /**
-   * 아이디(이메일) 입력 변경 핸들러
-   *
-   * @param e - React의 ChangeEvent 타입 (input 요소의 변경 이벤트)
-   */
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
-    // 입력 시 에러 메시지 초기화
-    if (errorMessage) {
-      setErrorMessage('');
-    }
+    if (errorMessage) setErrorMessage("");
   };
 
-  /**
-   * 비밀번호 입력 변경 핸들러
-   */
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
-    // 입력 시 에러 메시지 초기화
-    if (errorMessage) {
-      setErrorMessage('');
-    }
+    if (errorMessage) setErrorMessage("");
   };
 
-  /**
-   * 자동 로그인 체크박스 변경 핸들러
-   */
   const handleAutoLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAutoLogin(e.target.checked);
   };
 
-  /**
-   * 로그인 폼 제출 핸들러
-   *
-   * @param e - React의 FormEvent 타입 (폼 제출 이벤트)
-   */
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    // 에러 메시지 초기화
-    setErrorMessage('');
+    setErrorMessage("");
 
     try {
       // ========================================
-      // ⚠️ 실제 API 연결 시 사용할 코드 (아래 주석 해제)
+      // ⚠️ 실제 API 연결 시 사용할 코드 (예시)
       // ========================================
       // const response = await loginAPI({ email, password, autoLogin });
       // if (!response.success) {
       //   setErrorMessage(response.errorMessage);
       //   return;
       // }
-      // // 로그인 성공 시 처리
-      // router.push('/partner/dashboard');
-      // ========================================
+      // router.push("/partner/dashboard");
 
       // ========================================
-      // 🧪 테스트용 코드 - 실제 API 연결 시 전체 삭제 필요
+      // 🧪 테스트용 코드 (실제 연동 시 전체 삭제)
       // ========================================
-      console.log('로그인 시도:', { email, password, autoLogin });
+      console.log("로그인 시도:", { email, password, autoLogin });
 
-      // 차단된 계정인지 먼저 확인 (비밀번호가 맞는 경우)
+      // 이용 제한(차단) 계정인지 먼저 확인 (이메일 + 비밀번호 일치)
       if (isBlockedAccount(email, password)) {
-        // 차단된 계정인 경우 차단 페이지로 이동
-        router.push('/blocked');
+        router.push("/blacklist_info");
         return;
       }
 
-      // 테스트 데이터 확인 (testLoginData.ts 파일 참고)
+      // 정지/탈퇴 계정인지 확인 (이메일 기준)
+      if (BANNED_ACCOUNTS.includes(email)) {
+        router.push("/pause_info");
+        return;
+      }
+
+      // 테스트 데이터 확인 (일반 에러 메시지 노출용)
       const testError = checkTestLogin(email, password);
       if (testError) {
         setErrorMessage(testError);
         return;
       }
 
-      // 성공 케이스 (테스트 데이터에 없는 경우)
-      console.log('로그인 성공 (테스트 모드)');
-      // 로그인 성공 시 페이지 이동
-      router.push('/partner/campaign_management');
-      // ========================================
-      // 🧪 테스트용 코드 끝 - 실제 API 연결 시 위 전체 블록 삭제
+      // 성공 케이스
+      console.log("로그인 성공 (테스트 모드)");
+      router.push("/partner/campaign_management");
       // ========================================
     } catch (error) {
-      // API 호출 실패 시 기본 에러 메시지
-      setErrorMessage('아이디 또는 비밀번호가 일치하지 않습니다.');
+      setErrorMessage("아이디 또는 비밀번호가 일치하지 않습니다.");
     }
   };
 
   // ========================================
-  // 렌더링 (JSX)
+  // 렌더링
   // ========================================
-
   return (
     <div className={styles.partner_login_page_container}>
       {/* 메인 헤더 */}
@@ -202,7 +157,7 @@ export default function PartnerLoginPage() {
                 required
                 aria-label="비밀번호 입력"
               />
-              {/* 에러 메시지 - 비밀번호 입력 필드 바로 아래 */}
+              {/* 에러 메시지 */}
               {errorMessage && (
                 <div className={styles.error_message_section}>
                   <span className={styles.error_text}>{errorMessage}</span>
@@ -229,7 +184,7 @@ export default function PartnerLoginPage() {
                 </label>
               </div>
 
-              {/* 링크 그룹 */}
+              {/* 파트너 회원가입 / 계정찾기 링크 */}
               <div className={styles.links_group}>
                 <Link href="/partner/signup" className={styles.link_text}>
                   파트너 회원가입
@@ -246,7 +201,7 @@ export default function PartnerLoginPage() {
           <div className={styles.form_section}>
             <button
               type="submit"
-              className={styles.login_button}
+              className={styles.partner_login_button}
               aria-label="로그인"
             >
               로그인
@@ -254,11 +209,16 @@ export default function PartnerLoginPage() {
           </div>
         </form>
 
-        {/* 문의하기 링크 */}
+        {/* 문의하기 링크 (카카오톡 외부 링크) */}
         <div className={styles.inquiry_section}>
-          <Link href="/inquiry" className={styles.inquiry_link}>
+          <a
+            href="https://pf.kakao.com" // TODO: 실제 카카오톡 문의 URL로 교체
+            className={styles.inquiry_link}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             문의가 필요한가요?
-          </Link>
+          </a>
         </div>
       </main>
 

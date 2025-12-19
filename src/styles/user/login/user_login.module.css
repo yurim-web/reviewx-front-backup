@@ -12,7 +12,7 @@
  * - 소셜 로그인 페이지 전체 레이아웃
  * - 소셜 로그인 버튼 스타일
  * - 링크 및 텍스트 스타일
-
+ *
  */
 
 /* ========================================
@@ -83,27 +83,83 @@
   width: 400px;
 }
 
-/* 최근 로그인 배지 */
+/* 최근 로그인 배지 - 공통 말풍선 스타일 (사각 말풍선) */
 .recent_login_badge {
   position: absolute;
-  top: -37px;
-  right: 0;
-  width: 96px;
-  height: 37px;
-  background: transparent;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 12px;
+  background-color: #ffffff;
+  border: 1px solid #ff2626;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: none;
+}
+
+/* 네이버 버튼 위에 붙는 배지 (위쪽) */
+.recent_login_badge_top {
+  top: -29px;
+}
+
+.recent_login_badge_top::before {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px 4px 0 4px;
+  border-style: solid;
+  border-color: #ff2626 transparent transparent transparent;
+}
+
+.recent_login_badge_top::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px 3px 0 3px;
+  border-style: solid;
+  border-color: #ffffff transparent transparent transparent;
+}
+
+/* 카카오 버튼 아래에 붙는 배지 (아래쪽) */
+.recent_login_badge_bottom {
+  bottom: -32px;
+}
+
+.recent_login_badge_bottom::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 0 4px 6px 4px;
+  border-style: solid;
+  border-color: transparent transparent #ff2626 transparent;
+}
+
+.recent_login_badge_bottom::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 0 3px 5px 3px;
+  border-style: solid;
+  border-color: transparent transparent #ffffff transparent;
 }
 
 /* 배지 텍스트 */
 .badge_text {
   color: #ff2626;
+  text-align: center;
   font-size: 16px;
   font-weight: 500;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: 'Pretendard', sans-serif;
 }
 
 /* 로그인 버튼 공통 스타일 */
@@ -117,7 +173,7 @@
   font-weight: 600;
   line-height: 18px;
   letter-spacing: -0.36px;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   transition: opacity 0.2s ease;
 }
 

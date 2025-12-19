@@ -235,6 +235,9 @@
 /* 인증번호 입력 섹션 */
 .verification_code_section {
   margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 /* 인증번호 입력 및 인증 버튼 래퍼 */
@@ -322,7 +325,6 @@
 
 /* 인증번호 도움말 텍스트 */
 .verification_help_text {
-  margin-top: 12px;
   color: #848484;
 
   font-size: 14px;
@@ -466,7 +468,6 @@
 
 /* 에러 메시지 */
 .error_message {
-  margin-top: 8px;
   width: 100%;
 }
 

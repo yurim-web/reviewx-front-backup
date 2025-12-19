@@ -1,21 +1,24 @@
 /* ========================================
-   🔐 로그인 페이지 스타일
+   🔐 로그인 페이지 공용 스타일
    ======================================== */
 
 /**
- * 로그인 페이지 전용 CSS 모듈
+ * 로그인 페이지 공용 CSS 모듈
  *
  * 사용 컴포넌트:
- * - login/page.tsx (로그인 페이지)
+ * - user/login/page.tsx (사용자 소셜 로그인 페이지)
+ * - partner/login/page.tsx (파트너 로그인 페이지)
+ * - manager/login/page.tsx (관리자 로그인 페이지)
  *
  * 주요 스타일:
- * - 로그인 페이지 전체 레이아웃
- * - 소셜 로그인 버튼 스타일
+ * - 로그인 페이지 전체 레이아웃 (공통)
+ * - 소셜 로그인 버튼 스타일 (사용자 로그인 전용)
+ * - 폼 입력 필드 스타일 (파트너/관리자 로그인 전용)
  * - 링크 및 텍스트 스타일
  */
 
 /* ========================================
-   1. 페이지 전체 컨테이너
+   1. 페이지 전체 컨테이너 (공통)
    ======================================== */
 
 /* 로그인 페이지 전체 컨테이너 */
@@ -29,11 +32,22 @@
   box-sizing: border-box;
 }
 
+/* 파트너/관리자 로그인 페이지 전체 컨테이너 (동일한 스타일) */
+.partner_login_page_container {
+  background-color: #ffffff;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  position: relative;
+  box-sizing: border-box;
+}
+
 /* ========================================
-   2. 메인 콘텐츠 영역
+   2. 메인 콘텐츠 영역 (공통)
    ======================================== */
 
-/* 로그인 메인 영역 */
+/* 로그인 메인 영역 (사용자 소셜 로그인) */
 .login_main {
   background-color: #ffffff;
   width: 100%;
@@ -47,24 +61,43 @@
   padding-bottom: 100px;
 }
 
-/* 로그인 메시지 섹션 */
+/* 파트너/관리자 로그인 메인 영역 */
+.partner_login_main {
+  background-color: #ffffff;
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+  padding-top: 80px; /* 헤더 높이만큼 상단 여백 */
+  padding-bottom: 100px; /* 하단 링크를 위한 여백 */
+}
+
+/* 로그인 메시지 섹션 (공통) */
 .login_message_section {
   text-align: center;
 }
 
-/* 로그인 제목 */
+/* 파트너/관리자 로그인 메시지 섹션 (하단 여백 추가) */
+.partner_login_main .login_message_section {
+  padding-bottom: 40px;
+}
+
+/* 로그인 제목 (공통) */
 .login_title {
   color: #444;
   text-align: center;
   font-size: 28px;
-  font-style: normal;
   font-weight: 600;
   line-height: 40px; /* 142.857% */
   letter-spacing: -0.56px;
 }
 
 /* ========================================
-   3. 소셜 로그인 버튼 영역
+   3. 소셜 로그인 버튼 영역 (사용자 로그인 전용)
    ======================================== */
 
 /* 소셜 로그인 섹션 */
@@ -102,10 +135,9 @@
   font-weight: 500;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: 'Pretendard', sans-serif;
 }
 
-/* 로그인 버튼 공통 스타일 */
+/* 로그인 버튼 공통 스타일 (소셜 로그인용) */
 .login_button {
   width: 100%;
   height: 58px;
@@ -116,7 +148,6 @@
   font-weight: 600;
   line-height: 18px;
   letter-spacing: -0.36px;
-  font-family: 'Pretendard', sans-serif;
   transition: opacity 0.2s ease;
 }
 
@@ -133,10 +164,227 @@
 }
 
 /* ========================================
-   4. 하단 링크 영역
+   4. 로그인 폼 영역 (파트너/관리자 로그인 전용)
    ======================================== */
 
-/* 로그인 링크 섹션 */
+/* 로그인 폼 */
+.login_form {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 에러 메시지 섹션 */
+.error_message_section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 0;
+}
+
+/* 에러 아이콘 (빨간 원 안에 느낌표) */
+.error_icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #ff2626;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+/* 에러 텍스트 */
+.error_text {
+  color: #ff2626;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.28px;
+}
+
+/* 폼 섹션 (각 박스 구분) */
+.form_section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 입력 필드 래퍼 */
+.input_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 입력 필드 라벨 */
+.input_label {
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 입력 필드 */
+.input_field {
+  width: 100%;
+  height: 56px;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #444444;
+  box-sizing: border-box;
+}
+
+/* 입력 필드 포커스 상태 - 효과 제거 */
+.input_field:focus {
+  outline: none;
+}
+
+/* 입력 필드 플레이스홀더 스타일 */
+.input_field::placeholder {
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* ========================================
+   5. 로그인 옵션 섹션 (파트너/관리자 로그인 전용)
+   ======================================== */
+
+/* 로그인 옵션 섹션 (자동 로그인 + 링크) */
+.login_options_section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+}
+
+/* 자동 로그인 래퍼 */
+.auto_login_wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 체크박스 */
+.checkbox {
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid #d9d9d9;
+  border-radius: 4px;
+  background: #ffffff;
+  cursor: pointer;
+  appearance: none; /* 기본 브라우저 스타일 제거 */
+  position: relative; /* 체크마크 위치 지정을 위해 */
+  flex-shrink: 0; /* 크기 고정 */
+}
+
+/* 체크박스 체크된 상태 */
+.checkbox:checked {
+  border-color: #444444; /* 어두운 회색 테두리 */
+  background: #ffffff; /* 흰색 배경 유지 */
+}
+
+/* 체크박스 체크마크 (✓) */
+.checkbox:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #444444; /* 어두운 회색 체크마크 */
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* 체크박스 라벨 */
+.checkbox_label {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  word-wrap: break-word;
+  cursor: pointer;
+}
+
+/* 링크 그룹 */
+.links_group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 링크 텍스트 */
+.link_text {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+/* 링크 호버 효과 */
+.link_text:hover {
+  color: #444444;
+  text-decoration: underline;
+  text-underline-position: from-font;
+}
+
+/* 링크 구분선 */
+.link_divider {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* 파트너/관리자 로그인 버튼 */
+.partner_login_button {
+  width: 100%;
+  height: 56px;
+  background-color: #444444;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+/* 파트너/관리자 로그인 버튼 호버 효과 */
+.partner_login_button:hover {
+  background-color: #333333;
+  opacity: 0.9;
+}
+
+/* 파트너/관리자 로그인 버튼 활성화 상태 */
+.partner_login_button:active {
+  opacity: 0.8;
+}
+
+/* ========================================
+   6. 하단 링크 영역 (공통)
+   ======================================== */
+
+/* 로그인 링크 섹션 (사용자 로그인용) */
 .login_links_section {
   display: flex;
   align-items: center;
@@ -150,7 +398,6 @@
   color: #848484;
   text-align: center;
   font-size: 14px;
-  font-style: normal;
   font-weight: 500;
   line-height: 14px; /* 100% */
   letter-spacing: -0.28px;
@@ -164,10 +411,35 @@
 }
 
 /* ========================================
-   5. 파트너 회원 로그인 링크
+   7. 문의하기 섹션 (파트너/관리자 로그인 전용)
    ======================================== */
 
-/* 파트너 회원 로그인 섹션 */
+/* 문의하기 섹션 */
+.inquiry_section {
+  padding-top: 32px;
+  text-align: center;
+}
+
+/* 문의하기 링크 */
+.inquiry_link {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+}
+
+/* 문의하기 링크 호버 효과 */
+.inquiry_link:hover {
+  color: #444444;
+  text-decoration: underline;
+  text-underline-position: from-font;
+}
+
+/* ========================================
+   8. 하단 고정 링크 (공통)
+   ======================================== */
+
+/* 파트너 회원 로그인 섹션 (사용자 로그인 페이지 하단) */
 .partner_login_section {
   position: absolute;
   bottom: 40px;
@@ -184,16 +456,37 @@
 .partner_login_link {
   color: #444;
   text-align: center;
-  font-family: Pretendard;
   font-size: 16px;
-  font-style: normal;
+  font-weight: 500;
+  line-height: 18px; /* 112.5% */
+  letter-spacing: -0.32px;
+}
+
+/* 리뷰어 회원 로그인 섹션 (파트너 로그인 페이지 하단) */
+.user_login_section {
+  position: absolute;
+  bottom: 40px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 100%;
+}
+
+/* 리뷰어 회원 로그인 링크 */
+.user_login_link {
+  color: #444;
+  text-align: center;
+  font-size: 16px;
   font-weight: 500;
   line-height: 18px; /* 112.5% */
   letter-spacing: -0.32px;
 }
 
 /* ========================================
-   6. 반응형 디자인
+   9. 반응형 디자인 (공통)
    ======================================== */
 
 /* 모바일 (0~739px) */
@@ -201,6 +494,11 @@
   .login_main {
     min-height: calc(100vh - 80px);
     padding-bottom: 100px;
+  }
+
+  .partner_login_main {
+    min-height: calc(100vh - 80px);
+    padding: 80px 20px 100px;
   }
 
   .login_title {
@@ -214,6 +512,27 @@
   }
 
   .login_button {
+    height: 52px;
+    font-size: 16px;
+  }
+
+  .login_form {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .login_options_section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .links_group {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .partner_login_button {
     height: 52px;
     font-size: 16px;
   }
