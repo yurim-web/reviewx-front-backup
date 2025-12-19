@@ -33,7 +33,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "@/styles/manager_sa/member/admins/admin_create_page.module.css";
 import type { AdminItem } from "@/data/manager_sa/member/admins";
-import type { InputErrorCode } from "@/utils/messages";
 import InputErrorMessage from "@/components/common/form/InputErrorMessage";
 
 interface AdminFormProps {
@@ -74,9 +73,9 @@ export default function AdminForm({
     phone: "",
   });
 
-  // 에러 코드 상태 관리 (각 필드별 에러 코드, 없으면 undefined)
-  const [error_codes, set_error_codes] = useState<
-    Record<string, InputErrorCode | undefined>
+  // 에러 메시지 상태 관리 (각 필드별 에러 메시지, 없으면 undefined)
+  const [error_messages, set_error_messages] = useState<
+    Record<string, string | undefined>
   >({});
 
   // 필수값 에러(빈 값)에 대한 테두리 표시 여부
@@ -107,31 +106,30 @@ export default function AdminForm({
     const has_password = trimmed_password.length > 0;
     const has_password_confirm = trimmed_password_confirm.length > 0;
 
-    // 비밀번호 input은 형식 오류(I_E3)만 사용하고,
-    // "비밀번호가 일치하지 않습니다.(I_E4)"는 비밀번호 확인 input에만 표시합니다.
-    let password_error_code: InputErrorCode | undefined;
-    let password_confirm_error_code: InputErrorCode | undefined;
+    let password_error_message: string | undefined;
+    let password_confirm_error_message: string | undefined;
 
-    // 비밀번호 형식(I_E3) - 값이 있을 때만 검사
+    // 비밀번호 형식 - 값이 있을 때만 검사
     if (has_password && !is_valid_password(trimmed_password)) {
-      password_error_code = "I_E3";
+      password_error_message =
+        "8~16자 영문, 숫자, 특수문자(!@#$%^&*()-_=+) 조합으로 입력해 주세요.";
     }
 
-    // 비밀번호 확인(I_E4) - 둘 중 하나라도 입력된 경우
+    // 비밀번호 확인 - 둘 중 하나라도 입력된 경우
     if (has_password || has_password_confirm) {
       if (!trimmed_password || !trimmed_password_confirm) {
         // 하나만 입력된 경우도 "불일치" 에러 처리 (비밀번호 확인 필드에만 표시)
-        password_confirm_error_code = "I_E4";
+        password_confirm_error_message = "비밀번호가 일치하지 않습니다.";
       } else if (trimmed_password !== trimmed_password_confirm) {
         // 값은 둘 다 있지만 서로 다른 경우도 비밀번호 확인 필드에만 표시
-        password_confirm_error_code = "I_E4";
+        password_confirm_error_message = "비밀번호가 일치하지 않습니다.";
       }
     }
 
-    set_error_codes((prev) => ({
+    set_error_messages((prev) => ({
       ...prev,
-      password: password_error_code,
-      password_confirm: password_confirm_error_code,
+      password: password_error_message,
+      password_confirm: password_confirm_error_message,
     }));
   };
 
@@ -150,9 +148,9 @@ export default function AdminForm({
       // 비밀번호 / 비밀번호 확인 필드는 입력 즉시 검증
       if (name === "password" || name === "password_confirm") {
         validate_password_fields(updated);
-      } else if (error_codes[name]) {
+      } else if (error_messages[name]) {
         // 그 외 필드는 입력 시 해당 필드 에러만 제거
-        set_error_codes((prev_errors) => ({
+        set_error_messages((prev_errors) => ({
           ...prev_errors,
           [name]: undefined,
         }));
@@ -324,7 +322,7 @@ export default function AdminForm({
           }
         />
         <InputErrorMessage
-          code={error_codes.password}
+          message={error_messages.password}
           show={form_data.password.trim().length > 0}
         />
       </div>
@@ -352,7 +350,7 @@ export default function AdminForm({
           }
         />
         <InputErrorMessage
-          code={error_codes.password_confirm}
+          message={error_messages.password_confirm}
           show={form_data.password_confirm.trim().length > 0}
         />
       </div>

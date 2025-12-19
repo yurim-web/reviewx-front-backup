@@ -12,7 +12,7 @@
 
 "use client";
 
-import styles from "@/styles/common/find_account.module.css";
+import styles from "@/styles/common/find_account/find_account.module.css";
 
 /**
  * ModalButton Props 타입
@@ -27,7 +27,13 @@ interface ModalButtonProps {
   /** 버튼 텍스트 */
   children: React.ReactNode;
   /** 버튼 variant 타입 */
-  variant?: "primary" | "secondary" | "close" | "kakao" | "naver" | "sns-secondary";
+  variant?:
+    | "primary"
+    | "secondary"
+    | "close"
+    | "kakao"
+    | "naver"
+    | "sns-secondary";
   /** 클릭 핸들러 */
   onClick?: () => void;
   /** 추가 클래스명 */

@@ -18,7 +18,7 @@ import NextButton from "@/components/common/find_account/NextButton";
 import FindAccountModals from "@/components/common/find_account/FindAccountModals";
 import { usePhoneVerification } from "@/components/common/find_account/hooks/usePhoneVerification";
 import { useFindAccount } from "@/components/common/find_account/hooks/useFindAccount";
-import styles from "@/styles/common/find_account.module.css";
+import styles from "@/styles/common/find_account/find_account.module.css";
 
 export default function FindAccountPage() {
   const [activeTab, setActiveTab] = useState<"id" | "password">("id");
@@ -47,8 +47,12 @@ export default function FindAccountPage() {
                 if (findAccount.emailError) {
                   findAccount.setEmailError(undefined);
                 }
+                // 이메일 변경 시 계정 없음 에러 초기화
+                if (findAccount.accountNotFoundError) {
+                  findAccount.setAccountNotFoundError(undefined);
+                }
               }}
-              error={findAccount.emailError}
+              error={findAccount.emailError || findAccount.accountNotFoundError}
             />
           )}
           <PhoneVerification
@@ -59,7 +63,16 @@ export default function FindAccountPage() {
             timer={phoneVerification.timer}
             error={phoneVerification.phoneError}
             verificationCodeError={phoneVerification.verificationCodeError}
-            onPhoneChange={phoneVerification.handlePhoneChange}
+            accountNotFoundError={
+              activeTab === "id" ? findAccount.accountNotFoundError : undefined
+            }
+            onPhoneChange={(phone) => {
+              phoneVerification.handlePhoneChange(phone);
+              // 전화번호 변경 시 계정 없음 에러 초기화
+              if (findAccount.accountNotFoundError) {
+                findAccount.setAccountNotFoundError(undefined);
+              }
+            }}
             onVerificationRequest={phoneVerification.handleVerificationRequest}
             onResend={phoneVerification.handleVerificationRequest}
             onVerify={phoneVerification.handleVerifyCode}
@@ -71,7 +84,9 @@ export default function FindAccountPage() {
         </section>
 
         <NextButton
-          disabled={!phoneVerification.isVerified}
+          disabled={
+            !phoneVerification.isVerified || !!findAccount.accountNotFoundError
+          }
           onClick={() =>
             findAccount.handleNext(
               phoneVerification.isVerified,

@@ -19,12 +19,12 @@
  *   (user와 partner 회원가입 페이지에서 공통으로 사용하는 훅)
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 import {
   validatePhone,
   validateVerificationCode,
-} from '@/utils/signup/validation';
-import { checkTestVerificationCode } from '@/data/signup/testVerificationData';
+} from "@/utils/signup/validation";
+import { checkTestVerificationCode } from "@/data/signup/testVerificationData";
 
 /**
  * 📌 커스텀 훅의 반환 타입 정의
@@ -53,12 +53,14 @@ interface UsePhoneVerificationReturn {
  */
 export function usePhoneVerification(): UsePhoneVerificationReturn {
   // 📌 상태 관리: useState로 컴포넌트의 상태를 관리합니다
-  const [phone, setPhone] = useState<string>(''); // 휴대폰 번호
-  const [verificationCode, setVerificationCode] = useState<string>(''); // 인증번호
+  const [phone, setPhone] = useState<string>(""); // 휴대폰 번호
+  const [verificationCode, setVerificationCode] = useState<string>(""); // 인증번호
   const [isVerificationRequested, setIsVerificationRequested] =
     useState<boolean>(false); // 인증번호 요청 여부
   const [isPhoneVerified, setIsPhoneVerified] = useState<boolean>(false); // 인증 완료 여부
   const [timer, setTimer] = useState<number>(0); // 타이머(초 단위)
+  const [requestCount, setRequestCount] = useState<number>(0); // 인증번호 요청 횟수
+  const MAX_REQUEST_COUNT = 5; // 최대 요청 가능 횟수
 
   // 📌 useRef: 컴포넌트가 리렌더링되어도 값이 유지되는 변수
   // setInterval의 ID를 저장해서 나중에 clearInterval로 정리할 수 있게 합니다
@@ -112,15 +114,21 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
    * @returns 에러가 있으면 에러 메시지(string), 성공하면 null
    */
   const handleVerificationRequest = (): string | null => {
+    // 인증번호 요청 횟수 제한 체크
+    if (requestCount >= MAX_REQUEST_COUNT) {
+      return "MAX_VERIFICATION_REQUEST_EXCEEDED";
+    }
+
     // 휴대폰 번호 형식 검증
     if (!validatePhone(phone)) {
-      return '올바른 휴대폰 번호 형식을 입력해주세요.';
+      return "올바른 휴대폰 번호 형식을 입력해주세요.";
     }
 
     // 인증번호 요청 상태로 변경
     setIsVerificationRequested(true);
+    setRequestCount((prev) => prev + 1);
     setTimer(240); // 4분 = 240초 타이머 시작
-    console.log('인증번호 요청:', phone);
+    console.log("인증번호 요청:", phone);
     return null; // 성공
   };
 
@@ -133,19 +141,21 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
   const handleVerify = (): string | null => {
     // 인증번호 형식 검증 (6자리 숫자)
     if (!verificationCode || !validateVerificationCode(verificationCode)) {
-      return '인증번호 6자리를 입력해주세요.';
+      return "인증번호 6자리를 입력해주세요.";
     }
 
     // 📌 테스트용: 테스트 인증번호 확인
     // 실제 서비스에서는 서버 API를 호출해서 인증번호를 확인합니다
     if (checkTestVerificationCode(verificationCode)) {
       setIsPhoneVerified(true); // 인증 완료 상태로 변경
-      setVerificationCode(''); // 인증번호 입력 필드 초기화
+      setVerificationCode(""); // 인증번호 입력 필드 초기화
       setTimer(0); // 타이머 정지
-      console.log('인증 완료');
+      console.log("인증 완료");
       return null; // 성공
     } else {
-      return '인증번호가 일치하지 않습니다.';
+      // 실제 에러 문구는 UI 컴포넌트(PhoneVerification)에서 관리하므로
+      // 여기서는 "에러가 있다"는 신호만 전달합니다.
+      return "INVALID_VERIFICATION_CODE";
     }
   };
 
@@ -158,7 +168,7 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
   const resetVerification = () => {
     setIsPhoneVerified(false); // 인증 완료 상태 초기화
     setIsVerificationRequested(false); // 인증번호 요청 상태 초기화
-    setVerificationCode(''); // 인증번호 초기화
+    setVerificationCode(""); // 인증번호 초기화
     setTimer(0); // 타이머 초기화
     // 실행 중인 타이머가 있으면 정리
     if (timerIntervalRef.current) {

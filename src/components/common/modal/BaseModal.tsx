@@ -19,7 +19,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { getModalProps, parseMessageWithHTML } from "@/utils/messages";
 import styles from "@/styles/common/modal/base_modal.module.css";
 
 export type ModalType = "center" | "bottom";
@@ -29,8 +28,10 @@ export interface BaseModalProps {
   is_open: boolean;
   /** 모달 닫기 함수 */
   on_close: () => void;
-  /** 메시지 코드 (예: "A_M4") */
-  message_code: string;
+  /** 모달에 표시할 메시지 (하드코딩 텍스트) */
+  message: string;
+  /** 버튼 라벨 배열 (1개 또는 2개) */
+  buttons?: string[];
   /** 확인 버튼 클릭 핸들러 (버튼이 두 개일 때 두 번째 버튼) */
   on_confirm?: () => void;
   /** 모달 형태 (기본값: "center") */
@@ -39,8 +40,6 @@ export interface BaseModalProps {
   close_on_overlay_click?: boolean;
   /** ESC 키로 닫기 여부 (기본값: true) */
   close_on_escape?: boolean;
-  /** 메시지 변수 치환 값 */
-  replace_values?: Record<string, string>;
 }
 
 /**
@@ -49,16 +48,15 @@ export interface BaseModalProps {
 export default function BaseModal({
   is_open,
   on_close,
-  message_code,
+  message,
+  buttons: prop_buttons,
   on_confirm,
   type = "center",
   close_on_overlay_click = true,
   close_on_escape = true,
-  replace_values,
 }: BaseModalProps) {
-  // 메시지 코드로 모달 props 가져오기
-  const modal_props = getModalProps(message_code, replace_values);
-  const buttons = modal_props.buttons || ["닫기"];
+  const buttons =
+    prop_buttons && prop_buttons.length > 0 ? prop_buttons : ["닫기"];
   const has_two_buttons = buttons.length === 2;
 
   // ESC 키로 모달 닫기
@@ -139,9 +137,7 @@ export default function BaseModal({
         {/* 모달 메시지 */}
         <div className={styles.modal_content}>
           <div className={styles.modal_message_wrapper}>
-            <p className={styles.modal_message_text}>
-              {parseMessageWithHTML(modal_props.message)}
-            </p>
+            <p className={styles.modal_message_text}>{message}</p>
           </div>
 
           {/* 모달 푸터 버튼 */}

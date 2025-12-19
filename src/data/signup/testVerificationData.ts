@@ -3,6 +3,14 @@
    ======================================== */
 
 /**
+ * 사용처 (어디에서 이 데이터를 쓰는지)
+ *
+ * - 사용자 회원가입 페이지: src/app/user/signup/page.tsx
+ * - 휴대폰 인증 공통 훅: src/hooks/common/signup/usePhoneVerification.ts
+ * - 계정 찾기 로직 훅: src/components/common/find_account/hooks/useFindAccount.ts
+ */
+
+/**
  * 회원가입 및 계정찾기에서 공통으로 사용하는
  * 휴대폰 인증 테스트용 임시 데이터입니다.
  *

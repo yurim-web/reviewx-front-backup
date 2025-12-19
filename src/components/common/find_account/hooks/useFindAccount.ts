@@ -60,6 +60,7 @@ interface UseFindAccountReturn {
   isPhoneAccountModalOpen: boolean;
   isAccountNotFoundModalOpen: boolean;
   isBlockedAccountModalOpen: boolean;
+  accountNotFoundError: string | undefined; // 계정 없음 인라인 에러 메시지
   socialType: "kakao" | "naver"; // SNS 로그인 모달에 표시할 소셜 타입
   setEmail: (value: string) => void;
   setEmailError: (value: string | undefined) => void;
@@ -67,6 +68,7 @@ interface UseFindAccountReturn {
   setIsPhoneAccountModalOpen: (value: boolean) => void;
   setIsAccountNotFoundModalOpen: (value: boolean) => void;
   setIsBlockedAccountModalOpen: (value: boolean) => void;
+  setAccountNotFoundError: (value: string | undefined) => void;
   processAccountStatus: (
     status: AccountStatus,
     normalizedPhone: string,
@@ -93,6 +95,10 @@ export function useFindAccount(): UseFindAccountReturn {
     useState<boolean>(false);
   const [isBlockedAccountModalOpen, setIsBlockedAccountModalOpen] =
     useState<boolean>(false);
+  // 계정 없음 인라인 에러 메시지 (인증 완료 후 바로 표시)
+  const [accountNotFoundError, setAccountNotFoundError] = useState<
+    string | undefined
+  >(undefined);
   // SNS 로그인 모달에 표시할 소셜 타입 (카카오 또는 네이버)
   const [socialType, setSocialType] = useState<"kakao" | "naver">("kakao");
 
@@ -102,6 +108,7 @@ export function useFindAccount(): UseFindAccountReturn {
     normalizedPhone: string,
     activeTab: "id" | "password"
   ) => {
+    // ✅ 계정을 찾았을 때
     if (status === "found") {
       if (activeTab === "id") {
         const accountInfo = TEMP_ACCOUNT_DATA[normalizedPhone];
@@ -116,16 +123,21 @@ export function useFindAccount(): UseFindAccountReturn {
       return;
     }
 
+    // ❌ 계정을 찾지 못했을 때 (인라인 에러 메시지 표시)
     if (status === "not_found") {
-      setIsAccountNotFoundModalOpen(true);
+      setAccountNotFoundError(
+        "입력하신 정보와 일치하는 계정을 찾을 수 없습니다."
+      );
       return;
     }
 
+    // 🚫 정지/탈퇴된 계정일 때
     if (status === "blocked") {
       setIsBlockedAccountModalOpen(true);
       return;
     }
 
+    // 🔐 SNS로만 가입된 계정일 때
     if (status === "sns_only") {
       // SNS로만 가입된 계정인 경우, 소셜 타입을 설정하고 모달 표시
       const socialTypeForPhone =
@@ -183,11 +195,18 @@ export function useFindAccount(): UseFindAccountReturn {
     // 🧪 테스트용 코드 - 실제 API 연결 시 전체 삭제 필요
     const normalizedPhone = normalizePhone(phone);
     const accountStatus = TEMP_PHONE_STATUS_DATA[normalizedPhone];
-    processAccountStatus(
-      accountStatus || "not_found",
-      normalizedPhone,
-      activeTab
-    );
+
+    // 계정이 없으면 인라인 에러 표시
+    if (!accountStatus || accountStatus === "not_found") {
+      setAccountNotFoundError(
+        "입력하신 정보와 일치하는 계정을 찾을 수 없습니다."
+      );
+      return;
+    }
+
+    // 계정이 있으면 에러 초기화하고 계정 상태 처리
+    setAccountNotFoundError(undefined);
+    processAccountStatus(accountStatus, normalizedPhone, activeTab);
   };
 
   /** 계정 관련 상태 초기화 */
@@ -199,6 +218,7 @@ export function useFindAccount(): UseFindAccountReturn {
     setIsPhoneAccountModalOpen(false);
     setIsAccountNotFoundModalOpen(false);
     setIsBlockedAccountModalOpen(false);
+    setAccountNotFoundError(undefined);
     setSocialType("kakao"); // 기본값으로 초기화
   };
 
@@ -210,6 +230,7 @@ export function useFindAccount(): UseFindAccountReturn {
     isPhoneAccountModalOpen,
     isAccountNotFoundModalOpen,
     isBlockedAccountModalOpen,
+    accountNotFoundError,
     socialType,
     setEmail,
     setEmailError,
@@ -217,6 +238,7 @@ export function useFindAccount(): UseFindAccountReturn {
     setIsPhoneAccountModalOpen,
     setIsAccountNotFoundModalOpen,
     setIsBlockedAccountModalOpen,
+    setAccountNotFoundError,
     processAccountStatus,
     handleNext,
     resetAccountState,

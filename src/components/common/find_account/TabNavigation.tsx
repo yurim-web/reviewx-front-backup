@@ -9,7 +9,7 @@
 
 "use client";
 
-import styles from "@/styles/common/find_account.module.css";
+import styles from "@/styles/common/find_account/find_account.module.css";
 
 interface TabNavigationProps {
   /** 현재 활성화된 탭 */

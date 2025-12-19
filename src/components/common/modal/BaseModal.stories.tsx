@@ -20,8 +20,8 @@ const meta: Meta<typeof BaseModal> = {
       description: "모달 열림/닫힘 상태",
       control: "boolean",
     },
-    message_code: {
-      description: "메시지 코드 (예: 'A_M4', 'E_M1')",
+    message: {
+      description: "모달에 표시할 메시지 텍스트",
       control: "text",
     },
     type: {
@@ -52,7 +52,8 @@ export const TwoButtons: Story = {
       <BaseModal
         is_open={is_open}
         on_close={() => setIsOpen(false)}
-        message_code="A_M4"
+        message="차단을 해제하시겠습니까?"
+        buttons={["취소", "확인"]}
         on_confirm={() => {
           console.log("확인 버튼 클릭");
           setIsOpen(false);
@@ -71,7 +72,7 @@ export const SingleButton: Story = {
       <BaseModal
         is_open={is_open}
         on_close={() => setIsOpen(false)}
-        message_code="E_M1"
+        message="접근 권한이 없습니다."
         type="center"
       />
     );
@@ -86,10 +87,7 @@ export const WithReplaceValues: Story = {
       <BaseModal
         is_open={is_open}
         on_close={() => setIsOpen(false)}
-        message_code="A_R4"
-        replace_values={{
-          남은기간: "3",
-        }}
+        message="콘텐츠 등록 기간이 3일 남았습니다. 콘텐츠를 등록해 주세요."
         type="center"
       />
     );
@@ -104,7 +102,7 @@ export const WithHTMLMessage: Story = {
       <BaseModal
         is_open={is_open}
         on_close={() => setIsOpen(false)}
-        message_code="A_M3"
+        message="캠페인을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
         on_confirm={() => {
           console.log("확인 버튼 클릭");
           setIsOpen(false);
@@ -123,7 +121,8 @@ export const DisableOverlayClick: Story = {
       <BaseModal
         is_open={is_open}
         on_close={() => setIsOpen(false)}
-        message_code="A_M4"
+        message="차단을 해제하시겠습니까?"
+        buttons={["취소", "확인"]}
         on_confirm={() => {
           console.log("확인 버튼 클릭");
           setIsOpen(false);
@@ -143,7 +142,8 @@ export const DisableEscapeKey: Story = {
       <BaseModal
         is_open={is_open}
         on_close={() => setIsOpen(false)}
-        message_code="A_M4"
+        message="차단을 해제하시겠습니까?"
+        buttons={["취소", "확인"]}
         on_confirm={() => {
           console.log("확인 버튼 클릭");
           setIsOpen(false);

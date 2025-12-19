@@ -35,6 +35,8 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
   const [isVerificationRequested, setIsVerificationRequested] =
     useState<boolean>(false);
   const [timer, setTimer] = useState<number>(0);
+  const [requestCount, setRequestCount] = useState<number>(0); // 인증번호 요청 횟수
+  const MAX_REQUEST_COUNT = 5; // 최대 요청 가능 횟수
   const [phoneError, setPhoneError] = useState<string | undefined>();
   const [verificationCodeError, setVerificationCodeError] = useState<
     string | undefined
@@ -63,6 +65,10 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
   const handlePhoneChange = (value: string) => {
     setPhone(value);
     setPhoneError(undefined);
+    // 전화번호가 변경되면 요청 횟수 초기화
+    if (value !== phone) {
+      setRequestCount(0);
+    }
     if (isVerified) {
       setIsVerified(false);
     }
@@ -76,6 +82,12 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
 
   /** 인증 요청 핸들러 - 실제 구현 시 API를 호출하여 인증번호를 전송해야 함 */
   const handleVerificationRequest = async () => {
+    // 인증번호 요청 횟수 제한 체크
+    if (requestCount >= MAX_REQUEST_COUNT) {
+      setPhoneError("MAX_VERIFICATION_REQUEST_EXCEEDED");
+      return;
+    }
+
     // ⚠️ 실제 API 연결 시 사용할 코드
     // try {
     //   const response = await requestVerificationAPI({ phone });
@@ -99,6 +111,7 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
     setIsVerificationRequested(true);
     setIsVerified(false);
     setVerificationCode("");
+    setRequestCount((prev) => prev + 1); // 요청 횟수 증가
     setTimer(180); // 3분
   };
 
@@ -122,6 +135,7 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
     setIsVerificationRequested(false);
     setVerificationCode("");
     setTimer(0);
+    setRequestCount(0); // 요청 횟수도 초기화
     setPhoneError(undefined);
     setVerificationCodeError(undefined);
   };

@@ -30,7 +30,7 @@
 import { useState } from "react";
 import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
-import styles from "@/styles/common/reset_password.module.css";
+import styles from "@/styles/common/reset_password/reset_password.module.css";
 
 export default function ResetPasswordPage() {
   // useState: React의 상태 관리 훅

@@ -32,7 +32,7 @@ import PhoneVerification from "@/components/common/signup/PhoneVerification";
 import FindAccountModals from "@/components/common/find_account/FindAccountModals";
 import { usePhoneVerification } from "@/hooks/common/signup/usePhoneVerification";
 import { useFindAccount } from "@/components/common/find_account/hooks/useFindAccount";
-import styles from "@/styles/user/find_account.module.css";
+import styles from "@/styles/common/find_account/find_account.module.css";
 
 /**
  * 사용자 계정찾기 페이지 컴포넌트
@@ -203,12 +203,14 @@ export default function UserFindAccountPage() {
   // ========================================
 
   return (
-    <div className={styles.find_account_page_container}>
+    <div
+      className={`${styles.find_account_page_container} ${styles.user_page}`}
+    >
       {/* 헤더 컴포넌트 */}
       <Header />
 
       {/* 메인 콘텐츠 영역 */}
-      <main className={styles.find_account_main}>
+      <main className={`${styles.find_account_main} ${styles.user_page}`}>
         {/* 타이틀 섹션 */}
         <section className={styles.title_section}>
           <h1 className={styles.page_title}>계정 찾기</h1>

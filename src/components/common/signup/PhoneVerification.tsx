@@ -29,6 +29,7 @@ interface PhoneVerificationProps {
   timer: number;
   error?: string;
   verificationCodeError?: string;
+  accountNotFoundError?: string; // 계정 없음 에러 (input 테두리 변경 없이 메시지만 표시)
   onPhoneChange: (phone: string) => void;
   onVerificationRequest: () => void;
   onResend?: () => void;
@@ -47,6 +48,7 @@ export default function PhoneVerification({
   timer,
   error,
   verificationCodeError,
+  accountNotFoundError,
   onPhoneChange,
   onVerificationRequest,
   onResend,
@@ -67,7 +69,7 @@ export default function PhoneVerification({
     onVerificationCodeChange(value);
   };
 
-  /** 에러 메시지 렌더링 */
+  /** 에러 메시지 공통 렌더링 */
   const renderErrorMessage = (errorMessage?: string) => {
     if (!errorMessage) return null;
     return (
@@ -76,6 +78,21 @@ export default function PhoneVerification({
       </div>
     );
   };
+
+  /** 휴대폰 번호 에러 텍스트 매핑
+   *
+   * - MAX_VERIFICATION_REQUEST_EXCEEDED 는
+   *   인증번호 영역에서만 보여줘야 하므로 여기서는 숨김
+   */
+  const phoneErrorText =
+    error === "MAX_VERIFICATION_REQUEST_EXCEEDED" ? undefined : error;
+
+  /** 인증번호 에러 텍스트 매핑 */
+  const verificationCodeErrorText = verificationCodeError
+    ? verificationCodeError === "인증번호 6자리를 입력해주세요."
+      ? "인증번호 6자리를 입력해주세요."
+      : "인증번호가 일치하지 않습니다."
+    : undefined;
 
   return (
     <div className={styles.form_field}>
@@ -130,6 +147,17 @@ export default function PhoneVerification({
         )}
       </div>
 
+      {/* 휴대폰 번호 에러 메시지 */}
+      {renderErrorMessage(phoneErrorText)}
+
+      {/* 계정 없음 에러 메시지 (input 테두리 변경 없이 메시지만 표시) */}
+      {/* 인증 완료 후에도 표시되어야 하므로 인증번호 입력 필드 밖에 위치 */}
+      {accountNotFoundError && (
+        <div className={styles.error_message}>
+          <span className={styles.error_text}>{accountNotFoundError}</span>
+        </div>
+      )}
+
       {/* 인증번호 입력 필드 */}
       {isVerificationRequested && !isPhoneVerified && (
         <div className={styles.verification_code_section}>
@@ -159,7 +187,24 @@ export default function PhoneVerification({
               인증
             </button>
           </div>
-          {renderErrorMessage(verificationCodeError)}
+          {/* 인증번호 에러 (길이 부족 / 일치하지 않음 등) */}
+          {renderErrorMessage(verificationCodeErrorText)}
+          {/* 인증번호 5회 초과 에러 */}
+          {error === "MAX_VERIFICATION_REQUEST_EXCEEDED" && (
+            <div className={styles.error_message}>
+              <span className={styles.error_text}>
+                인증번호 요청 횟수를 모두 사용했습니다. 24시간 후 다시 시도해
+                주세요.
+              </span>
+            </div>
+          )}
+          {timer <= 0 && !isPhoneVerified && (
+            <div className={styles.error_message}>
+              <span className={styles.error_text}>
+                인증번호 입력 시간을 초과했습니다.
+              </span>
+            </div>
+          )}
           <div className={styles.verification_help_text}>
             인증번호를 받지 못하셨나요?
           </div>
