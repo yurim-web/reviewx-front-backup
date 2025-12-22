@@ -9,7 +9,7 @@ import React, { useState } from "react";
 import ModalFilter from "./ModalFilter";
 
 const meta: Meta<typeof ModalFilter> = {
-  title: "User/Filter/ModalFilter",
+  title: "Campaign/Filter/ModalFilter",
   component: ModalFilter,
   tags: ["autodocs"],
   parameters: {

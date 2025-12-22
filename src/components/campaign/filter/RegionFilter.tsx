@@ -9,6 +9,10 @@
  *
  * 사용 페이지:
  * - FilterBar 컴포넌트에서 지역 필터로 사용 (useRegionFilter=true일 때)
+ * - /campaign/visit (방문형 캠페인 목록)
+ *
+ * 참고: RegionFilter는 FilterBar 컴포넌트 내부에서 사용되며,
+ * 방문형 캠페인 목록 페이지에서만 지역 필터가 활성화됩니다.
  *
  * 주요 기능:
  * - 계층적 지역 구조 (시/도 > 세부 지역)
@@ -423,9 +427,12 @@ export default function RegionFilter({
   // 현재 선택된 메인 지역의 세부 지역들
   const currentSubRegions =
     selectedMainRegion === "전체"
-      ? Object.keys(regionData.subRegions).map(
-          (mainRegion) => `${mainRegion} > ${mainRegion} 전체`
-        )
+      ? [
+          "지역 전체", // 맨 첫 번째에 "지역 전체" 옵션 추가
+          ...Object.keys(regionData.subRegions).map(
+            (mainRegion) => `${mainRegion} > ${mainRegion} 전체`
+          ),
+        ]
       : [
           `${selectedMainRegion} > ${selectedMainRegion} 전체`, // 각 지역 탭의 첫 번째에 "전체" 옵션 추가
           ...(regionData.subRegions[
@@ -494,8 +501,11 @@ export default function RegionFilter({
             <div className={styles.sub_regions_container}>
               <div className={styles.options_grid}>
                 {currentSubRegions.map((fullRegionName) => {
+                  // "지역 전체" 옵션의 선택 상태: "지역 전체"가 선택되어 있는지 확인
                   const isSelected =
-                    tempSelectedRegions.includes(fullRegionName);
+                    fullRegionName === "지역 전체"
+                      ? tempSelectedRegions.includes("지역 전체")
+                      : tempSelectedRegions.includes(fullRegionName);
 
                   return (
                     <label key={fullRegionName} className={styles.option_item}>
@@ -503,46 +513,84 @@ export default function RegionFilter({
                         type="checkbox"
                         checked={isSelected}
                         onChange={() => {
-                          // 전체 탭에서는 이미 fullRegionName이 완성된 형태
-                          if (selectedMainRegion === "전체") {
+                          // "지역 전체" 옵션 클릭 시 "지역 전체"만 선택/해제
+                          if (fullRegionName === "지역 전체") {
+                            if (tempSelectedRegions.includes("지역 전체")) {
+                              // "지역 전체"가 선택되어 있으면 해제
+                              setTempSelectedRegions(
+                                tempSelectedRegions.filter(
+                                  (region) => region !== "지역 전체"
+                                )
+                              );
+                            } else {
+                              // "지역 전체"만 선택 (다른 모든 지역 해제)
+                              setTempSelectedRegions(["지역 전체"]);
+                            }
+                          } else if (selectedMainRegion === "전체") {
+                            // 전체 탭에서는 이미 fullRegionName이 완성된 형태
                             setTempSelectedRegions((prev) => {
-                              if (prev.includes(fullRegionName)) {
-                                return prev.filter(
+                              // "지역 전체"가 선택되어 있으면 해제
+                              const filtered = prev.filter(
+                                (region) => region !== "지역 전체"
+                              );
+
+                              if (filtered.includes(fullRegionName)) {
+                                return filtered.filter(
                                   (region) => region !== fullRegionName
                                 );
                               } else {
-                                return [...prev, fullRegionName];
+                                return [...filtered, fullRegionName];
                               }
                             });
                           } else {
                             // 개별 지역 탭에서는 subRegion만 전달
                             const subRegion = fullRegionName.split(" > ")[1];
-                            handleSubRegionToggle(subRegion);
+                            const fullRegionNameForToggle = `${selectedMainRegion} > ${subRegion}`;
+
+                            setTempSelectedRegions((prev) => {
+                              // "지역 전체"가 선택되어 있으면 해제
+                              const filtered = prev.filter(
+                                (region) => region !== "지역 전체"
+                              );
+
+                              // 세부 지역 선택/해제
+                              if (filtered.includes(fullRegionNameForToggle)) {
+                                return filtered.filter(
+                                  (region) => region !== fullRegionNameForToggle
+                                );
+                              } else {
+                                return [...filtered, fullRegionNameForToggle];
+                              }
+                            });
                           }
                         }}
                         className={styles.option_checkbox}
                       />
                       <span className={styles.option_label}>
-                        {fullRegionName.split(" > ").map((part, index) => (
-                          <span
-                            key={index}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "4px",
-                            }}
-                          >
-                            {part}
+                        {/* "지역 전체"는 화살표 없이 그냥 표시 */}
+                        {fullRegionName === "지역 전체"
+                          ? fullRegionName
+                          : fullRegionName.split(" > ").map((part, index) => (
+                              <span
+                                key={index}
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "4px",
+                                }}
+                              >
+                                {part}
 
-                            {index < fullRegionName.split(" > ").length - 1 && (
-                              <img
-                                src="/images/filter/region_arrow.svg"
-                                alt=">"
-                                className={styles.region_arrow}
-                              />
-                            )}
-                          </span>
-                        ))}
+                                {index <
+                                  fullRegionName.split(" > ").length - 1 && (
+                                  <img
+                                    src="/images/filter/region_arrow.svg"
+                                    alt=">"
+                                    className={styles.region_arrow}
+                                  />
+                                )}
+                              </span>
+                            ))}
                       </span>
                     </label>
                   );
@@ -558,10 +606,7 @@ export default function RegionFilter({
             필터 적용하기
           </button>
           <button className={styles.reset_button} onClick={handleReset}>
-            <div 
-              className={styles.reset_icon}
-              style={{ backgroundImage: "url('/images/filter/x_small.svg')" }}
-            ></div>
+            <div className={styles.reset_icon}></div>
             선택 초기화
           </button>
         </div>

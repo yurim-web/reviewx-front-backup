@@ -16,7 +16,7 @@
 "use client";
 
 import MainMenu from "@/components/main/MainMenu";
-import FilterBar from "@/components/user/filter/FilterBar";
+import FilterBar from "@/components/campaign/filter/FilterBar";
 import CampaignBox from "@/components/main/CampaignBox";
 import Titletext from "@/components/main/Titletext";
 import styles from "@/styles/user/delivery/delivery.module.css";
@@ -122,4 +122,3 @@ export default function CampaignListPage({
     </>
   );
 }
-

@@ -14,15 +14,15 @@ import SearchResultsSection from "@/components/search/SearchResultsSection";
 
 import styles from "@/styles/home/home.module.css";
 
-import { deliveryCampaigns } from "@/data/user/delivery/deliveryCampaigns";
+import { deliveryCampaigns } from "@/data/campaign/delivery/deliveryCampaigns";
 
-import { visitCampaigns } from "@/data/user/visit/visitCampaigns";
+import { visitCampaigns } from "@/data/campaign/visit/visitCampaigns";
 
-import { reviewCampaigns } from "@/data/user/review/reviewCampaigns";
+import { reviewCampaigns } from "@/data/campaign/review/reviewCampaigns";
 
-import { missionCampaigns } from "@/data/user/mission/missionCampaigns";
+import { missionCampaigns } from "@/data/campaign/mission/missionCampaigns";
 
-import { reporterCampaigns } from "@/data/user/reporter/reporterCampaigns";
+import { reporterCampaigns } from "@/data/campaign/reporter/reporterCampaigns";
 
 type PartnerSearchPageProps = {
   searchParams?: {
@@ -87,4 +87,5 @@ export default function PartnerSearchPage({
     </>
   );
 }
+
 

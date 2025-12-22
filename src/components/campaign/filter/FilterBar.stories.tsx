@@ -36,7 +36,7 @@ const channelOptions = [
 ];
 
 const meta: Meta<typeof FilterBar> = {
-  title: "User/Filter/FilterBar",
+  title: "Campaign/Filter/FilterBar",
   component: FilterBar,
   tags: ["autodocs"],
   parameters: {

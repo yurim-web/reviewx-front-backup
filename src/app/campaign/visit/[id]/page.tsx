@@ -22,7 +22,7 @@ import { use } from "react";
 import CampaignDetailPage from "@/components/campaign/CampaignDetailPage";
 import ApplicationModalType3 from "@/components/user/campaign_detail/modal/ApplicationModalType3";
 import DetailGuidelinesSectionVisit from "@/components/user/campaign_detail/guidelines/DetailGuidelinesSectionVisit";
-import { visitCampaigns } from "@/data/user/visit/visitCampaigns";
+import { visitCampaigns } from "@/data/campaign/visit/visitCampaigns";
 
 interface VisitDetailPageProps {
   params: Promise<{ id: string }>;

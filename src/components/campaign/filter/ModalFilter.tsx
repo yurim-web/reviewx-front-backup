@@ -8,7 +8,15 @@
  * 목적: FilterBar에서 사용되는 범용 모달 필터 컴포넌트로, 체크박스/라디오 버튼 방식의 필터링을 제공합니다.
  *
  * 사용 페이지:
- * - FilterBar 컴포넌트에서 카테고리/채널/정렬 필터로 사용
+ * - FilterBar 컴포넌트에서 카테고리/채널 필터로 사용
+ * - /campaign/delivery (배송형 캠페인 목록)
+ * - /campaign/visit (방문형 캠페인 목록)
+ * - /campaign/review (구매평 캠페인 목록)
+ * - /campaign/mission (미션형 캠페인 목록)
+ * - /campaign/reporter (기자단 캠페인 목록)
+ *
+ * 참고: ModalFilter는 FilterBar 컴포넌트 내부에서 사용되며,
+ * 위 페이지들은 CampaignListPage를 통해 FilterBar를 간접적으로 사용합니다.
  *
  * 주요 기능:
  * - 체크박스/라디오 버튼 방식 필터링
@@ -141,10 +149,7 @@ export default function ModalFilter({
           )}
           {showReset && (
             <button className={styles.reset_button} onClick={onReset}>
-              <div 
-                className={styles.reset_icon}
-                style={{ backgroundImage: "url('/images/filter/x_small.svg')" }}
-              ></div>
+              <div className={styles.reset_icon}></div>
               선택 초기화
             </button>
           )}

@@ -22,7 +22,7 @@ export default function Header({ has_notifications }: HeaderProps) {
   return (
     <header>
       <nav className={styles.header_container}>
-        <Link href="/">
+        <Link href="/user">
           <h1 className={styles.header_logo}>RX.</h1>
         </Link>
         <div className={styles.menu_icon_box}>

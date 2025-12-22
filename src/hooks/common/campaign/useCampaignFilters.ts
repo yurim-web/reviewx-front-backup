@@ -242,6 +242,7 @@ export function useCampaignFilters<T extends BaseCampaign>({
 
     // 5단계: 지역 필터 적용 (방문형만)
     // 선택된 지역에 해당하는 캠페인만 필터링
+    // - "지역 전체"가 선택되면 모든 지역 포함 (필터링 건너뛰기)
     // - 정확한 매칭: "서울 > 강남구" === "서울 > 강남구"
     // - 전체 지역 매칭: "서울 > 서울 전체"와 "서울 > 강남구" 매칭
     if (
@@ -249,23 +250,28 @@ export function useCampaignFilters<T extends BaseCampaign>({
       activeFilters.regions &&
       activeFilters.regions.length > 0
     ) {
-      filtered = filtered.filter((campaign) => {
-        if (!campaign.region) return false;
+      // "지역 전체"가 선택되어 있으면 모든 지역 포함 (필터링 건너뛰기)
+      if (activeFilters.regions.includes("지역 전체")) {
+        // 필터링하지 않음 (모든 지역 포함)
+      } else {
+        filtered = filtered.filter((campaign) => {
+          if (!campaign.region) return false;
 
-        // 지역 필터와 캠페인 지역 매칭 로직
-        return activeFilters.regions!.some((filterRegion) => {
-          // 1. 정확한 매칭
-          if (filterRegion === campaign.region) {
-            return true;
-          }
-          // 2. 전체 지역 매칭 (예: "서울 > 서울 전체"와 "서울 > 강남구" 매칭)
-          if (filterRegion.endsWith(" 전체")) {
-            const mainRegion = filterRegion.split(" > ")[0];
-            return campaign.region!.startsWith(`${mainRegion} >`);
-          }
-          return false;
+          // 지역 필터와 캠페인 지역 매칭 로직
+          return activeFilters.regions!.some((filterRegion) => {
+            // 1. 정확한 매칭
+            if (filterRegion === campaign.region) {
+              return true;
+            }
+            // 2. 전체 지역 매칭 (예: "서울 > 서울 전체"와 "서울 > 강남구" 매칭)
+            if (filterRegion.endsWith(" 전체")) {
+              const mainRegion = filterRegion.split(" > ")[0];
+              return campaign.region!.startsWith(`${mainRegion} >`);
+            }
+            return false;
+          });
         });
-      });
+      }
     }
 
     // 6단계: 정렬 적용
@@ -286,7 +292,17 @@ export function useCampaignFilters<T extends BaseCampaign>({
       case "포인트순":
       case "포인트높은순":
         // 포인트 기준으로 내림차순 정렬
-        filtered.sort((a, b) => b.points - a.points);
+        // 포인트가 없거나 같은 경우 2차 정렬 기준으로 최신순(ID 기준 내림차순) 사용
+        filtered.sort((a, b) => {
+          const pointsA = a.points ?? 0;
+          const pointsB = b.points ?? 0;
+          // 포인트가 다르면 포인트 기준으로 정렬
+          if (pointsA !== pointsB) {
+            return pointsB - pointsA;
+          }
+          // 포인트가 같거나 둘 다 없는 경우 최신순(ID 기준 내림차순)으로 정렬
+          return b.id.localeCompare(a.id);
+        });
         break;
       case "최신순":
       default:
@@ -318,4 +334,3 @@ export function useCampaignFilters<T extends BaseCampaign>({
     filteredAndSortedCampaigns: filteredAndSortedCampaigns as BaseCampaign[],
   };
 }
-

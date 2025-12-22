@@ -6,7 +6,7 @@ import CampaignBox from "@/components/main/CampaignBox";
 import Titletext from "@/components/main/Titletext";
 import home_styles from "@/styles/home/home.module.css";
 import filter_styles from "@/styles/filter/filter_bar.module.css";
-import SortModalFilter from "@/components/user/filter/SortModalFilter";
+import SortModalFilter from "@/components/campaign/filter/SortModalFilter";
 
 interface SearchResultsSectionProps {
   campaigns: any[];

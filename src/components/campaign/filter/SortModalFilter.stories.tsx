@@ -9,7 +9,7 @@ import React, { useState } from "react";
 import SortModalFilter from "./SortModalFilter";
 
 const meta: Meta<typeof SortModalFilter> = {
-  title: "User/Filter/SortModalFilter",
+  title: "Campaign/Filter/SortModalFilter",
   component: SortModalFilter,
   tags: ["autodocs"],
   parameters: {

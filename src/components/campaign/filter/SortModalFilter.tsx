@@ -9,6 +9,14 @@
  *
  * 사용 페이지:
  * - FilterBar 컴포넌트에서 정렬 필터로 사용
+ * - /campaign/delivery (배송형 캠페인 목록)
+ * - /campaign/visit (방문형 캠페인 목록)
+ * - /campaign/review (구매평 캠페인 목록)
+ * - /campaign/mission (미션형 캠페인 목록)
+ * - /campaign/reporter (기자단 캠페인 목록)
+ *
+ * 참고: SortModalFilter는 FilterBar 컴포넌트 내부에서 사용되며,
+ * 위 페이지들은 CampaignListPage를 통해 FilterBar를 간접적으로 사용합니다.
  *
  * 주요 기능:
  * - 라디오 버튼 방식 정렬 선택 (단일 선택)
@@ -61,7 +69,6 @@ export default function SortModalFilter({
     <div className={styles.modal_overlay} onClick={handleBackdropClick}>
       <div
         className={styles.modal_content}
-        style={{ gap: "32px" }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* 모달 헤더 */}

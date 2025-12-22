@@ -23,10 +23,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import CampaignManagementHeader from "@/components/user/campaign_management/CampaignManagementHeader";
-import PenaltyContent from "@/components/user/campaign_management/PenaltyContent";
+import PenaltyContent from "@/components/common/campaign_management/penalty/PenaltyContent";
 import type { MainTab } from "@/types/user/user";
 import layoutStyles from "../../../../styles/user/campaign_management/layout.module.css";
 import cardStyles from "../../../../styles/user/campaign_management/campaign_card.module.css";
+import {
+  userPenaltyData,
+  userPenaltyStatus,
+} from "@/data/user/penaltyData";
 
 /**
  * 패널티 전용 페이지 컴포넌트
@@ -77,7 +81,10 @@ export default function PenaltyPage() {
 
         {/* 패널티 컨텐츠 영역 */}
         <div className={cardStyles.campaign_list}>
-          <PenaltyContent />
+          <PenaltyContent
+            penaltyData={userPenaltyData}
+            userStatus={userPenaltyStatus}
+          />
         </div>
       </div>
     </div>

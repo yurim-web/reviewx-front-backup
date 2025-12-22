@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { reporterCampaigns } from "@/data/user/reporter/reporterCampaigns";
+import { reporterCampaigns } from "@/data/campaign/reporter/reporterCampaigns";
 
 // 동적 메타데이터 생성
 export async function generateMetadata({

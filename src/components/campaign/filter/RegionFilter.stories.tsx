@@ -9,7 +9,7 @@ import React, { useState } from "react";
 import RegionFilter from "./RegionFilter";
 
 const meta: Meta<typeof RegionFilter> = {
-  title: "User/Filter/RegionFilter",
+  title: "Campaign/Filter/RegionFilter",
   component: RegionFilter,
   tags: ["autodocs"],
   parameters: {
@@ -129,7 +129,7 @@ export const WithSelectedRegions: Story = {
     isOpen: true,
     onClose: () => console.log("Modal closed"),
     title: "지역",
-    selectedRegions: ["서울 강북구", "서울 서초구", "경기 수원시"],
+    selectedRegions: ["서울 > 강북구", "서울 > 서초구", "경기 > 수원시"],
   },
 };
 

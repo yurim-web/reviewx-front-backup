@@ -8,11 +8,14 @@
  * 목적: 캠페인 목록 페이지에서 필터링 및 정렬 기능을 제공하는 상단 바 컴포넌트입니다.
  *
  * 사용 페이지:
- * - /user/delivery (배송형 캠페인 목록)
- * - /user/visit (방문형 캠페인 목록)
- * - /user/review (구매평 캠페인 목록)
- * - /user/mission (미션형 캠페인 목록)
- * - /user/reporter (기자단 캠페인 목록)
+ * - /campaign/delivery (배송형 캠페인 목록)
+ * - /campaign/visit (방문형 캠페인 목록)
+ * - /campaign/review (구매평 캠페인 목록)
+ * - /campaign/mission (미션형 캠페인 목록)
+ * - /campaign/reporter (기자단 캠페인 목록)
+ *
+ * 참고: FilterBar는 CampaignListPage 컴포넌트 내부에서 사용되며,
+ * 위 페이지들은 CampaignListPage를 통해 FilterBar를 간접적으로 사용합니다.
  *
  * 주요 기능:
  * - 카테고리/채널/지역 필터링 (모달 방식)
@@ -307,22 +310,24 @@ export default function FilterBar({
             </button>
 
             {/* 채널 필터 버튼 */}
-            <button
-              className={`${styles.filter_button} ${
-                activeFilters.channels && activeFilters.channels.length > 0
-                  ? styles.filter_button_active
-                  : ""
-              }`}
-              onClick={handleChannelButtonClick}
-            >
-              <div className={styles.filter_icon}></div>
-              <span>채널</span>
-              <img
-                src="/images/filter/dropdown_icon.svg"
-                alt="드롭다운"
-                className={styles.dropdown_icon}
-              />
-            </button>
+            {channelOptions.length > 0 && (
+              <button
+                className={`${styles.filter_button} ${
+                  activeFilters.channels && activeFilters.channels.length > 0
+                    ? styles.filter_button_active
+                    : ""
+                }`}
+                onClick={handleChannelButtonClick}
+              >
+                <div className={styles.filter_icon}></div>
+                <span>채널</span>
+                <img
+                  src="/images/filter/dropdown_icon.svg"
+                  alt="드롭다운"
+                  className={styles.dropdown_icon}
+                />
+              </button>
+            )}
 
             {/* 지역 필터 버튼 */}
             {useRegionFilter && (

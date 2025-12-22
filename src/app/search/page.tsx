@@ -10,11 +10,11 @@ import MainMenu from "@/components/main/MainMenu";
 import styles from "@/styles/home/home.module.css";
 import SearchResultsSection from "@/components/search/SearchResultsSection";
 
-import { deliveryCampaigns } from "@/data/user/delivery/deliveryCampaigns";
-import { visitCampaigns } from "@/data/user/visit/visitCampaigns";
-import { reviewCampaigns } from "@/data/user/review/reviewCampaigns";
-import { missionCampaigns } from "@/data/user/mission/missionCampaigns";
-import { reporterCampaigns } from "@/data/user/reporter/reporterCampaigns";
+import { deliveryCampaigns } from "@/data/campaign/delivery/deliveryCampaigns";
+import { visitCampaigns } from "@/data/campaign/visit/visitCampaigns";
+import { reviewCampaigns } from "@/data/campaign/review/reviewCampaigns";
+import { missionCampaigns } from "@/data/campaign/mission/missionCampaigns";
+import { reporterCampaigns } from "@/data/campaign/reporter/reporterCampaigns";
 
 export const metadata: Metadata = {
   title: "ReviewX | 캠페인 검색 결과",

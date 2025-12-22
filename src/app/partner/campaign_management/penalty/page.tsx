@@ -22,11 +22,15 @@
 
 import { useState } from "react";
 import PartnerCampaignManagementHeader from "@/components/partner/campaign_management/PartnerCampaignManagementHeader";
-import PenaltyContent from "@/components/partner/campaign_management/PenaltyContent";
+import PenaltyContent from "@/components/common/campaign_management/penalty/PenaltyContent";
 import type { PartnerMainTab } from "@/types/partner/partner";
 import type { PartnerStatTab } from "@/types/partner/partner";
 import layoutStyles from "../../../../styles/partner/layout.module.css";
 import cardStyles from "../../../../styles/partner/campaign_card.module.css";
+import {
+  partnerPenaltyData,
+  partnerPenaltyStatus,
+} from "@/data/partner/penaltyData";
 
 /**
  * 패널티 탭 페이지 컴포넌트
@@ -51,7 +55,10 @@ export default function PenaltyPage() {
 
         {/* 패널티 컨텐츠 영역 */}
         <div className={cardStyles.campaign_list}>
-          <PenaltyContent />
+          <PenaltyContent
+            penaltyData={partnerPenaltyData}
+            userStatus={partnerPenaltyStatus}
+          />
         </div>
       </div>
     </div>

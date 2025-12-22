@@ -173,7 +173,7 @@ export default function CampaignCard({
       <div className={cardStyles.campaign_content}>
         {/* 캠페인 이미지 */}
         <div className={cardStyles.campaign_image}>
-          {/* TODO: 실제 이미지 추가 시 여기에 img 태그 추가 */}
+          {campaign.image && <img src={campaign.image} alt={campaign.title} />}
         </div>
 
         {/* 캠페인 상세 정보 */}

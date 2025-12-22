@@ -22,7 +22,7 @@ import { use } from "react";
 import CampaignDetailPage from "@/components/campaign/CampaignDetailPage";
 import ApplicationModalType3 from "@/components/user/campaign_detail/modal/ApplicationModalType3";
 import DetailGuidelinesSectionReporter from "@/components/user/campaign_detail/guidelines/DetailGuidelinesSectionReporter";
-import { reporterCampaigns } from "@/data/user/reporter/reporterCampaigns";
+import { reporterCampaigns } from "@/data/campaign/reporter/reporterCampaigns";
 
 interface ReporterDetailPageProps {
   params: Promise<{ id: string }>;
