@@ -1,0 +1,402 @@
+## 캠페인 관리 흐름 튜토리얼 (필터바 + 카드 + 진행현황)
+
+> 이 문서는 **캠페인 관리 관련 화면**에서
+>
+> - 필터/검색/정렬 바 (`CampaignFilterBar` + `useCampaignFilterBar`)
+> - 파트너 캠페인 카드 (`CampaignCard` + `useCampaignCard`)
+> - GA/SA 관리자 진행현황 상세 (`useCampaignProgressDetail`)
+>
+> 이 서로 어떻게 연결되는지, 데이터/이벤트 흐름 기준으로 설명하는 튜토리얼입니다.
+>
+> 대상 주요 파일:
+>
+> - `src/components/common/campaign_management/CampaignFilterBar.tsx`
+> - `src/hooks/common/campaign_management/useCampaignFilterBar.ts`
+> - `src/components/partner/campaign_management/CampaignCard.tsx`
+> - `src/hooks/partner/campaign_management/useCampaignCard.ts`
+> - `src/hooks/manager/common/campaign/useCampaignProgressDetail.ts`
+
+---
+
+## 1. 캠페인 필터 바: `CampaignFilterBar` + `useCampaignFilterBar`
+
+### 1-1. 어디서 쓰이는지
+
+**파일**: `src/components/common/campaign_management/CampaignFilterBar.tsx`
+
+```tsx
+"use client";
+
+import styles from "@/styles/partner/campaign_management/campaign_filter.module.css";
+import ModalFilter from "@/components/user/filter/ModalFilter";
+import { CampaignFilterBarProps, FilterableCampaign } from "./types";
+import { useCampaignFilterBar } from "@/hooks/common/campaign_management/useCampaignFilterBar";
+```
+
+- 이 컴포넌트는 **User/Partner 캠페인 관리 페이지**에 공통으로 올라가는 필터바입니다.
+- 외부에서 **캠페인 목록**과 **필터 변경 콜백**을 받아서,
+  `useCampaignFilterBar` 훅을 통해 **유형/채널/검색어/정렬 상태를 관리 + 필터링된 결과를 상위로 알려줍니다.**
+
+### 1-2. 상위에서 어떻게 사용하나? (개념)
+
+상위 페이지/섹션에서 대략 이런 식으로 쓴다고 상상하면 됩니다 (실제 코드 구조 요약):
+
+```tsx
+const [campaigns, setCampaigns] = useState<SomeCampaignType[]>(initialData);
+const [filteredCampaigns, setFilteredCampaigns] =
+  useState<SomeCampaignType[]>(initialData);
+
+<CampaignFilterBar
+  campaigns={campaigns}
+  activeFilters={/* 초기 필터 (옵션) */}
+  onFilterChange={(filters) => {
+    // 필요하면 URL 쿼리 또는 상태에 반영
+  }}
+  onFilteredCampaignsChange={(next) => {
+    setFilteredCampaigns(next); // 화면에 뿌릴 리스트 업데이트
+  }}
+/>;
+
+{
+  /* 아래에는 filteredCampaigns 기반으로 카드/테이블 렌더링 */
+}
+```
+
+- **실제 필터링/정렬 로직**은 `useCampaignFilterBar` 안에서 `filterCampaigns` 유틸을 써서 처리합니다.
+- 상위는 "원본 캠페인 목록"과 "필터링된 캠페인 목록"을 구분해서 관리하게 됩니다.
+
+### 1-3. `useCampaignFilterBar` 내부 구조
+
+**파일**: `src/hooks/common/campaign_management/useCampaignFilterBar.ts`
+
+핵심 역할:
+
+- 모달 열림/닫힘 상태: `isTypeModalOpen`, `isChannelModalOpen`, `isSortModalOpen`
+- 모달 안에서 임시로 선택한 값: `tempTypes`, `tempChannels`, `tempSort`
+- 실제 적용된 필터 상태: `internalFilters` + `activeFilters`를 합쳐서 `currentFilters`로 제공
+- 검색어: `searchQuery`
+- 정렬 옵션: `selectedSort`
+- 필터링된 캠페인 목록: `filteredCampaigns`
+- 필터/정렬 변경 시 상위 콜백(`onFilterChange`, `onFilteredCampaignsChange`) 호출
+
+간단히 의사코드로 보면:
+
+```ts
+const [internalFilters, setInternalFilters] = useState({ sortBy: defaultSort });
+
+const currentFilters = useMemo(
+  () => ({
+    types: activeFilters.types ?? internalFilters.types,
+    channels: activeFilters.channels ?? internalFilters.channels,
+    searchQuery: activeFilters.searchQuery ?? internalFilters.searchQuery,
+    sortBy: internalFilters.sortBy ?? selectedSort ?? defaultSort,
+  }),
+  [...deps]
+);
+
+const filteredCampaigns = useMemo(
+  () => filterCampaigns(campaigns, currentFilters, selectedSort, defaultSort),
+  [campaigns, currentFilters, selectedSort, defaultSort]
+);
+```
+
+그리고 `useEffect`로 `filteredCampaigns`가 바뀔 때마다 상위에 알려줍니다:
+
+```ts
+useEffect(() => {
+  // 이전 값과 비교해서 변경이 있으면 onFilteredCampaignsChange(filteredCampaigns) 호출
+}, [filteredCampaigns]);
+```
+
+### 1-4. `CampaignFilterBar` 컴포넌트에서의 역할 분리
+
+`CampaignFilterBar`는 **UI 조립**에만 집중합니다.
+
+- 왼쪽: "유형", "채널" 필터 버튼 + 모달
+- 가운데: 검색창 (search input)
+- 오른쪽: 정렬 버튼 (클릭하면 정렬 모달)
+- 아래: 선택된 필터들을 태그 형태로 나열 (X 버튼 클릭 시 제거)
+
+상태/로직은 모두 `useCampaignFilterBar`에서 가져옵니다:
+
+```tsx
+const {
+  state: {
+    isTypeModalOpen,
+    isChannelModalOpen,
+    isSortModalOpen,
+    tempTypes,
+    tempChannels,
+    tempSort,
+    selectedSort,
+    searchQuery,
+    currentFilters,
+  },
+  actions: {
+    openTypeModal,
+    openChannelModal,
+    openSortModal,
+    closeTypeModal,
+    closeChannelModal,
+    closeSortModal,
+    handleTypeToggle,
+    handleChannelToggle,
+    handleTypeApply,
+    handleChannelApply,
+    handleTypeReset,
+    handleChannelReset,
+    handleSortToggle,
+    handleSortReset,
+    handleSearchChange,
+    handleTypeRemove,
+    handleChannelRemove,
+  },
+} = useCampaignFilterBar({ ... });
+```
+
+> 정리하면: **필터바 UI는 이 훅의 state/actions를 그대로 소비하는, 매우 얇은 View 레이어**입니다.
+
+---
+
+## 2. 파트너 캠페인 카드: `CampaignCard` + `useCampaignCard`
+
+### 2-1. 어디서 쓰이는지
+
+**파일**: `src/components/partner/campaign_management/CampaignCard.tsx`
+
+이 컴포넌트는 파트너 캠페인 관리 화면에서 **각 캠페인을 카드 한 장**으로 보여줍니다.
+
+- 캠페인 정보 (이미지, 타입, 신청/모집/선정 인원 등)
+- 캠페인 상태/탭에 따라 버튼 조합과 텍스트가 달라짐
+- 영수증 등록 / 캠페인 관리 / 삭제 / 수정 / 신청내역 / 콘텐츠 확인 등 액션 제공
+
+### 2-2. `useCampaignCard` 사용부
+
+```tsx
+const {
+  state: {
+    campaignStatus,
+    campaignSubStatus,
+    reviewingCount,
+    completedCount,
+    isContentStage,
+    primaryButtonText,
+    statusDescription,
+    isReceiptModalOpen,
+    isManagementModalOpen,
+    isDeleteModalOpen,
+  },
+  actions: {
+    closeReceiptModal,
+    closeManagementModal,
+    closeDeleteModal,
+    handleButtonClick,
+  },
+} = useCampaignCard({ campaign, activeTab });
+```
+
+- `CampaignCard`는 **상태/로직을 전부 훅에게 맡기고**, 단순히 UI를 그리는 역할을 합니다.
+- 어떤 버튼을 보여줄지, 버튼 텍스트가 무엇일지, 상태 설명 텍스트는 무엇일지는 모두 `useCampaignCard`가 결정합니다.
+
+### 2-3. `useCampaignCard` 내부 파생값
+
+**파일**: `src/hooks/partner/campaign_management/useCampaignCard.ts`
+
+핵심 파생값들:
+
+- `campaignStatus`: 캠페인 메인 상태 (예정/신청/진행/종료/취소 등)
+- `campaignSubStatus`: 서브 상태 (예: "campaign_edit,campaign_delete" 같은 문자열)
+- `reviewingCount`, `completedCount`: 콘텐츠 검수/완료 개수 (헬퍼 `calculateContentCounts` 사용)
+- `isContentStage`: 현재 탭/상태가 "콘텐츠 검수/완료 단계"인지 여부 (`checkIsContentStage` 사용)
+- `primaryButtonText`: 메인 액션 버튼에 들어갈 텍스트 (`getPrimaryButtonText` 사용)
+- `statusDescription`: 카드 본문에 표시되는 상태 설명 (`getStatusTextForCampaign` 사용)
+
+그리고 모달 상태도 같이 관리합니다:
+
+- `isReceiptModalOpen`, `isManagementModalOpen`, `isDeleteModalOpen`
+
+### 2-4. 버튼 클릭 핸들러
+
+```ts
+const handleButtonClick = useCallback(
+  (buttonText: string) => {
+    if (buttonText === "구매 영수증 등록하기") {
+      openReceiptModal();
+      return;
+    }
+    if (buttonText === "캠페인 관리") {
+      openManagementModal();
+      return;
+    }
+    if (buttonText === "캠페인 삭제") {
+      openDeleteModal();
+      return;
+    }
+    if (buttonText === "캠페인 수정") {
+      const campaignTypePath = getCampaignTypePath(campaign.campaignType);
+      window.location.href = `/partner/campaign/edit/${campaignTypePath}/${campaign.id}`;
+      return;
+    }
+    if (buttonText === "패널티 내역 확인") {
+      window.location.href = "/partner/campaign_management/penalty";
+      return;
+    }
+    if (buttonText === "신청내역 확인" || buttonText === "당첨자 선정") {
+      const campaignTypePath = getCampaignTypePath(campaign.campaignType);
+      window.location.href = `/partner/campaign_application/${campaignTypePath}/${campaign.id}`;
+      return;
+    }
+    console.log(`[useCampaignCard] 알 수 없는 버튼 클릭: ${buttonText}`);
+  },
+  [...deps]
+);
+```
+
+- 버튼의 **텍스트**만 넘겨주면, 훅 내부에서 적절한 네비게이션/모달 열기/삭제 동작을 수행합니다.
+- 이렇게 하면 카드 컴포넌트는 버튼 UI/스타일에만 신경 쓰고, **비즈니스 분기 로직은 훅/헬퍼에 모아둘 수 있습니다.**
+
+### 2-5. 카드에서의 UI 분기
+
+```tsx
+{campaignSubStatus === "campaign_edit,campaign_delete" ? (
+  // 예정 탭: 삭제 + 수정 버튼
+) : campaignSubStatus === "campaign_edit,applicant_management" ? (
+  // 신청 탭: 캠페인 관리 + 신청내역 확인
+) : isContentStage ? (
+  // 콘텐츠 단계: 검수/완료 2개 버튼
+) : (
+  // 그 외: primaryButtonText 1개 버튼
+)}
+```
+
+- `campaignSubStatus`와 `isContentStage`를 기반으로, 어떤 버튼 조합을 보여줄지 결정합니다.
+- 하지만 **이 값들을 어떻게 계산하는지**는 전부 `useCampaignCard` + `campaign_card_helpers`에 캡슐화되어 있습니다.
+
+---
+
+## 3. 진행현황 상세: `useCampaignProgressDetail`
+
+**파일**: `src/hooks/manager/common/campaign/useCampaignProgressDetail.ts`
+
+이 훅은 GA/SA 관리자 진행현황 상세 페이지들에서 공통으로 사용됩니다.
+
+### 3-1. 어디서 쓰이는지 (개략)
+
+- `src/app/manager_ga/campaign/progress/*/[id]/page.tsx`
+- `src/app/manager_sa/campaign/progress/*/[id]/page.tsx`
+
+각 페이지에서 대략 다음과 같이 사용합니다 (개념 예시):
+
+```tsx
+const campaignId = params.id as string;
+const {
+  campaign_data,
+  is_loading,
+  error_message,
+  active_tab,
+  set_active_tab,
+  sort_order,
+  set_sort_order,
+  sort_options,
+  applicants_state,
+  selected_state,
+  applicants_count,
+  selected_count,
+  current_applicants,
+  handle_select_applicant,
+  handle_cancel_applicant,
+} = useCampaignProgressDetail(campaignId, "GA 배송형");
+```
+
+### 3-2. 이 훅이 관리하는 것들
+
+1. **캠페인 기본 정보 + 신청/선정자 데이터 로딩**
+   - `getCampaignById(campaign_id)`로 데이터 조회
+   - `campaign_data`에 저장, 동시에
+     - `applicants_state` ← `applicantData.applicants`
+     - `selected_state` ← `applicantData.selectedApplicants`
+2. **탭 상태** (`active_tab`)
+   - URL 쿼리 `?tab=selected`가 있으면 선정 탭으로 시작, 없으면 신청 탭
+3. **정렬 상태** (`sort_order`, `sort_options`)
+   - `latest`, `popular`, `deadline`, `point` 네 가지 옵션 제공
+   - 실제 정렬 로직은 이 훅 안에서 아직 구현 전(또는 외부에서 사용할 수 있음)
+4. **카운트/뷰 데이터**
+   - `applicants_count`, `selected_count`
+   - `current_applicants` (현재 탭에 맞는 배열 반환)
+5. **카드 이동 핸들러**
+   - `handle_select_applicant(id)`
+     - 신청 → 선정으로 이동
+   - `handle_cancel_applicant(id)`
+     - 선정 → 신청으로 되돌리기
+
+### 3-3. 신청 → 선정 이동 로직 (요약)
+
+```ts
+const handle_select_applicant = (applicant_id: string) => {
+  set_applicants_state((prev) => {
+    const target = prev.find((a) => a.id === applicant_id);
+    if (!target) return prev;
+
+    const next_applicants = prev.filter((a) => a.id !== applicant_id);
+
+    const moved: AllApplicant = {
+      ...target,
+      selectionStatus: "선정하기",
+    };
+
+    set_selected_state((prev_selected) => {
+      const already = prev_selected.some((a) => a.id === applicant_id);
+      if (already) return prev_selected;
+      return [moved, ...prev_selected];
+    });
+
+    return next_applicants;
+  });
+};
+```
+
+- 신청 리스트에서 해당 ID를 찾아 제거하고,
+- `selectionStatus`를 바꾼 뒤 **선정 리스트 앞쪽에 추가**합니다.
+- 중복 추가를 방지하기 위해 `some(...)`으로 한 번 더 검사합니다.
+
+취소 로직도 거의 대칭 구조입니다 (`handle_cancel_applicant`).
+
+---
+
+## 4. 세 흐름을 함께 보는 관점
+
+이제까지 본 세 축을 하나로 묶으면, 캠페인 관리 쪽 패턴은 이렇게 정리할 수 있습니다.
+
+1. **리스트 상단 필터바 (`CampaignFilterBar` + `useCampaignFilterBar`)**
+
+   - 원본 캠페인 배열을 입력으로 받고
+   - 내부에서 필터/검색/정렬 상태를 관리하고
+   - 필터링된 결과 배열을 상위에 돌려줌
+
+2. **파트너 캠페인 카드 (`CampaignCard` + `useCampaignCard`)**
+
+   - 개별 캠페인 단위를 하나의 카드로 그리고
+   - 캠페인 상태/탭에 따른 파생값과 버튼 텍스트/모달 상태는 전부 훅에 맡김
+
+3. **관리자 진행현황 상세 (`useCampaignProgressDetail`)**
+   - 특정 캠페인 하나에 대해 신청/선정자 목록과 탭/정렬 상태를 관리
+   - 카드 간 이동/카운트 계산을 공통 로직으로 묶어서, 캠페인 타입(배송/방문/구매평 등)에 관계없이 재사용
+
+> 요약하면, **리스트 화면은 "필터바 + 카드 그리기" 패턴**,
+> **상세/진행현황 화면은 "상세 훅 + 테이블/카드 리스트" 패턴**으로 구성되어 있습니다.
+
+---
+
+## 5. 연습 아이디어
+
+1. `CampaignFilterBar`에 **새로운 정렬 옵션**을 하나 추가해 보기 (예: "포인트순")
+   - 상단 `DEFAULT_SORT_OPTIONS`에 옵션 추가
+   - `filterCampaigns` 유틸에서 해당 옵션에 따른 정렬 케이스를 추가
+2. `CampaignCard`에 **상태 뱃지**를 하나 더 추가해 보기 (예: "오늘 마감" 뱃지)
+   - `campaign` 데이터에 있는 정보(마감일, dayCount 등)를 기반으로 `useCampaignCard`에서 파생값을 만들고
+   - 카드 상단에 조건부 렌더링으로 뱃지 표시
+3. `useCampaignProgressDetail`에서 **정렬 로직**을 구현해 보기
+   - `sort_order` 값에 따라 `current_applicants`를 정렬된 배열로 가공해서 반환하도록 변경
+
+이 튜토리얼까지 이해하면, 캠페인 관리 영역에서 쓰이는 **"필터/리스트/카드/상세" 패턴 전체를 한 눈에** 볼 수 있고,
+새로운 캠페인 타입을 추가하거나, 필터 옵션/카드 액션을 확장하는 작업도 훨씬 수월해집니다.

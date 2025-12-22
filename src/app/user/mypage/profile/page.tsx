@@ -13,26 +13,38 @@
  * 주요 기능:
  * - 프로필 정보 표시 및 편집
  * - 이용 가이드, 공지사항, FAQ, 카카오톡 상담 메뉴
+ * - 로그아웃 기능
  * - URL 기반 라우팅으로 새로고침 시에도 페이지 유지
+ *
+ * React 학습 포인트:
+ * - 컴포넌트 재사용: ProfileContent 공통 컴포넌트 사용
+ * - Props 전달: 자식 컴포넌트에 필요한 데이터 전달
+ * - 이벤트 핸들러: 로그아웃 버튼 클릭 처리
+ * - 조건부 렌더링: 서브 탭 변경 시 페이지 이동
  */
 
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 import SubTabNavigation from "@/components/common/mypage/SubTabNavigation";
+import ProfileContent from "@/components/common/mypage/ProfileContent";
 import type { MainTab } from "@/types/user/user";
 import layoutStyles from "../../../../styles/user/mypage/layout.module.css";
-import profileStyles from "../../../../styles/user/mypage/profile.module.css";
 
 /**
  * 프로필 탭 전용 페이지 컴포넌트
  */
 export default function ProfilePage() {
+  // Next.js의 useRouter 훅: 페이지 이동을 위한 라우터 객체
   const router = useRouter();
+
+  // useState 훅: 컴포넌트의 상태(state)를 관리합니다.
+  // activeTopTab: 현재 활성화된 상단 탭 (캠페인/포인트/계정/커뮤니티)
   const [activeTopTab, setActiveTopTab] = useState<MainTab>("account");
+
+  // activeSubTab: 현재 활성화된 서브 탭 (프로필/채널)
   const [activeSubTab, setActiveSubTab] = useState<"profile" | "channel">(
     "profile"
   );
@@ -40,6 +52,8 @@ export default function ProfilePage() {
   /**
    * 서브 탭 변경 핸들러
    * 각 탭 클릭 시 해당 페이지로 이동
+   *
+   * switch 문: 여러 조건을 비교할 때 사용하는 JavaScript 문법입니다.
    */
   const handleSubTabChange = (tab: "profile" | "channel") => {
     switch (tab) {
@@ -47,9 +61,24 @@ export default function ProfilePage() {
         // 현재 페이지이므로 아무것도 하지 않음
         break;
       case "channel":
+        // window.location.href: 브라우저의 현재 URL을 변경하여 페이지 이동
         window.location.href = "/user/mypage/channel";
         break;
     }
+  };
+
+  /**
+   * 로그아웃 핸들러
+   *
+   * 로그아웃 버튼 클릭 시 실행되는 함수입니다.
+   * TODO: 실제 로그아웃 로직 구현 필요 (세션 삭제, 쿠키 삭제 등)
+   */
+  const handleLogout = () => {
+    // TODO: 실제 로그아웃 API 호출
+    // 예: await logoutAPI();
+    // 예: localStorage.removeItem('token');
+    // 예: router.push('/user/login');
+    console.log("로그아웃 처리");
   };
 
   return (
@@ -70,66 +99,20 @@ export default function ProfilePage() {
           availableTabs={["profile", "channel"]}
         />
 
-        {/* 프로필 섹션 */}
-        <div className={profileStyles.profile_section}>
-          <div className={profileStyles.profile_info}>
-            <div className={profileStyles.profile_image} />
-            <div className={profileStyles.profile_details}>
-              <div className={profileStyles.profile_role}>리뷰어</div>
-              <div className={profileStyles.profile_nickname_container}>
-                <div className={profileStyles.profile_nickname}>
-                  양치하는고양이123456
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className={profileStyles.menu_list}>
-          <button
-            className={profileStyles.menu_item}
-            onClick={() => router.push("/user/mypage/edit")}
-          >
-            <div className={profileStyles.menu_icon} />
-            <div className={profileStyles.menu_text}>내 정보 수정</div>
-          </button>
-        </div>
-
-        {/* 메뉴 리스트 */}
-        <div className={profileStyles.menu_list}>
-          <button
-            className={profileStyles.menu_item}
-            onClick={() =>
-              window.open("https://markx.dev/guide_book", "_blank")
-            }
-          >
-            <div className={profileStyles.menu_icon} />
-            <div className={profileStyles.menu_text}>이용 가이드</div>
-          </button>
-          <button
-            className={profileStyles.menu_item}
-            onClick={() => router.push("/notice")}
-          >
-            <div className={profileStyles.menu_icon} />
-            <div className={profileStyles.menu_text}>공지사항</div>
-          </button>
-          <button
-            className={profileStyles.menu_item}
-            onClick={() => router.push("/faq")}
-          >
-            <div className={profileStyles.menu_icon} />
-            <div className={profileStyles.menu_text}>자주 묻는 질문</div>
-          </button>
-          <button
-            className={profileStyles.menu_item}
-            onClick={() =>
-              window.open("https://pf.kakao.com/_xjxdxoxG/chat", "_blank")
-            }
-          >
-            <div className={profileStyles.menu_icon} />
-            <div className={profileStyles.menu_text}>카카오톡 상담</div>
-          </button>
-        </div>
+        {/* 
+          ProfileContent 공통 컴포넌트 사용
+          Props로 필요한 데이터를 전달합니다:
+          - role: 사용자 역할 ("리뷰어")
+          - nickname: 사용자 닉네임
+          - editPath: 내 정보 수정 페이지 경로
+          - onLogout: 로그아웃 버튼 클릭 시 실행할 함수
+        */}
+        <ProfileContent
+          role="리뷰어"
+          nickname="양치하는고양이123456"
+          editPath="/user/mypage/edit"
+          onLogout={handleLogout}
+        />
       </main>
     </div>
   );

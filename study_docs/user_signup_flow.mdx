@@ -1,0 +1,315 @@
+## 유저 회원가입 흐름 튜토리얼
+
+> 이 문서는 `/user/signup` 페이지에서 **컴포넌트 / 훅 / 유틸 / 테스트 데이터**가 어떻게 연결되어 있는지, 실제 데이터 흐름 기준으로 설명하는 튜토리얼입니다.
+>
+> 대상 파일:
+>
+> - `src/app/user/signup/page.tsx` (`UserSignupPage`)
+> - `src/components/common/signup/PhoneVerification.tsx`
+> - `src/hooks/common/signup/usePhoneVerification.ts`
+> - `src/hooks/user/signup/useTermsAgreement.ts`
+> - `src/data/signup/testVerificationData.ts`
+
+---
+
+## 1. 최상위: `UserSignupPage`가 하는 일
+
+**파일**: `src/app/user/signup/page.tsx`
+
+이 컴포넌트는 회원가입 페이지의 "뇌" 역할을 합니다.
+
+- **화면 구성**
+  - 상단 헤더: `Header`
+  - 서브 타이틀: `PageTitle`
+  - 메인 폼: 이메일, 이름, 휴대폰 인증, 약관 동의, 제출 버튼
+  - 기존 계정 안내 모달: `ExistingAccountModal`
+- **중요 상태**
+  - `email`, `name` → 기본 폼 필드
+  - `errors` → 각 필드에 대한 에러 메시지 모음
+  - `showExistingAccountModal`, `existingAccountSocialType` → 기존 계정 안내 모달 상태
+  - `useTermsAgreement()`에서 온 약관 동의 관련 상태
+  - `usePhoneVerification()`에서 온 휴대폰 인증 관련 상태
+
+핵심은 **자기 안에 로직을 다 들고 있지 않고**, 필요한 로직을 각각의 **커스텀 훅 / 컴포넌트**에게 위임한다는 점입니다.
+
+---
+
+## 2. 약관 동의 흐름: `useTermsAgreement`
+
+**파일**: `src/hooks/user/signup/useTermsAgreement.ts`
+
+`UserSignupPage` 상단에서 이렇게 사용합니다:
+
+```tsx
+const {
+  allAgreed,
+  termsAgreed,
+  privacyAgreed,
+  marketingAgreed,
+  setTermsAgreed,
+  setPrivacyAgreed,
+  setMarketingAgreed,
+  handleAllAgreedChange,
+} = useTermsAgreement();
+```
+
+### 2-1. 이 훅이 관리하는 상태
+
+- `allAgreed`: 전체 동의 체크박스
+- `termsAgreed`: 이용약관 동의
+- `privacyAgreed`: 개인정보 처리방침 동의
+- `marketingAgreed`: 마케팅 수신 동의 (선택)
+
+### 2-2. 동작 규칙
+
+- **전체 동의 클릭** (`handleAllAgreedChange(true/false)`)
+  - 내부에서 `isAllAgreedDirectChange`라는 `ref`를 `true`로 세팅
+  - `allAgreed`가 바뀌면 `useEffect`가 동작해서 하위 3개 체크박스를 **한 번에 true/false**로 맞춰줍니다.
+- **개별 체크박스 변경** (`setTermsAgreed`, `setPrivacyAgreed`, `setMarketingAgreed`)
+  - 또 다른 `useEffect`에서 세 값이 모두 `true`면 `allAgreed = true`, 아니면 `false`로 맞춥니다.
+
+### 2-3. 페이지에서의 연결 방식
+
+`UserSignupPage`는 이 상태들을 그대로 `TermsAgreement` 컴포넌트에 내려줍니다:
+
+```tsx
+<TermsAgreement
+  allAgreed={allAgreed}
+  termsAgreed={termsAgreed}
+  privacyAgreed={privacyAgreed}
+  marketingAgreed={marketingAgreed}
+  error={errors.terms}
+  onAllAgreedChange={handleAllAgreedChange}
+  onTermsAgreedChange={setTermsAgreed}
+  onPrivacyAgreedChange={setPrivacyAgreed}
+  onMarketingAgreedChange={setMarketingAgreed}
+/>
+```
+
+- **뷰(UI)**: 어떤 체크박스가 체크되어 있는지, 에러 메시지가 있는지 렌더링
+- **상태/로직**: `useTermsAgreement` 훅이 전부 관리
+
+---
+
+## 3. 휴대폰 인증 흐름: `usePhoneVerification` + `PhoneVerification`
+
+### 3-1. 훅 사용부 (`UserSignupPage`)
+
+```tsx
+const {
+  phone,
+  verificationCode,
+  isVerificationRequested,
+  isPhoneVerified,
+  timer,
+  setPhone,
+  setVerificationCode,
+  handleVerificationRequest,
+  handleVerify,
+  resetVerification,
+} = usePhoneVerification();
+```
+
+이 훅 하나가 **휴대폰 번호 / 인증번호 / 타이머 / 요청 횟수 제한**을 모두 관리합니다.
+
+### 3-2. 입력값 흐름
+
+1. **사용자가 휴대폰 번호 입력**
+
+   - `PhoneVerification` 컴포넌트의 `<input id="phone" ... />`에 타이핑
+   - 내부 핸들러에서 `formatPhoneNumber`로 `010-1234-5678` 같은 형식으로 바꾼 뒤 `onPhoneChange(formatted)` 호출
+   - `UserSignupPage`의 `handlePhoneChange(newPhone)` 실행 → 여기서 `setPhone(newPhone)` 호출
+   - `usePhoneVerification` 내부의 `phone` 상태가 업데이트됨
+
+2. **휴대폰 변경 시 인증 상태 초기화**
+
+```tsx
+const handlePhoneChange = (newPhone: string) => {
+  setPhone(newPhone);
+
+  if (newPhone === "" || isPhoneVerified || isVerificationRequested) {
+    resetVerification();
+    setErrors((prev) => ({
+      ...prev,
+      phone: undefined,
+      verificationCode: undefined,
+    }));
+  }
+};
+```
+
+- 새 번호가 입력되면 **기존 인증은 더 이상 유효하지 않음** → `resetVerification()`으로 초기화
+- 동시에 휴대폰/인증번호 관련 에러도 지웁니다.
+
+### 3-3. 인증번호 요청 버튼 클릭 흐름
+
+1. 화면에서 사용자가 **"인증번호 받기"** 버튼 클릭
+
+   - `PhoneVerification`에서 `onVerificationRequest()` 호출
+   - 이 prop은 `UserSignupPage`의 `handleVerificationRequestClick`으로 연결되어 있음
+
+2. `UserSignupPage` → `usePhoneVerification` 흐름
+
+```tsx
+const handleVerificationRequestClick = () => {
+  const error = handleVerificationRequest();
+  if (error) {
+    setErrors((prev) => ({ ...prev, phone: error }));
+  } else {
+    setErrors((prev) => ({ ...prev, phone: undefined }));
+  }
+};
+```
+
+3. `usePhoneVerification` 내부 동작
+
+```ts
+const error = handleVerificationRequest();
+```
+
+- 요청 횟수 제한 검사 (`requestCount >= MAX_REQUEST_COUNT` → 에러 문자열 반환)
+- `validatePhone(phone)`으로 번호 형식 검사 → 실패 시 에러 문자열 반환
+- 둘 다 통과하면:
+  - `setIsVerificationRequested(true)`
+  - `setRequestCount(prev + 1)`
+  - `setTimer(240)` → 4분 카운트다운 시작
+
+4. 에러/성공에 따라 `UserSignupPage`에서 `errors.phone`을 세팅 → `PhoneVerification`에게 내려가서 **붉은 에러 메시지**로 보입니다.
+
+### 3-4. 타이머 흐름
+
+`usePhoneVerification` 안의 `useEffect`가 `timer`가 0보다 클 때마다 `setInterval`로 1초마다 감소시키고, 0이 되면 자동으로 정지/정리합니다.
+
+- 뷰에서는 `PhoneVerification`이 `timer`를 받아 `formatTimer(timer)`로 `MM:SS` 형식으로 보여줍니다.
+- `timer <= 0 && !isPhoneVerified`이면, "인증번호 입력 시간을 초과했습니다." 메시지가 노출됩니다.
+
+### 3-5. 인증번호 입력 + 인증 버튼 클릭 흐름
+
+1. 사용자가 인증번호 입력
+
+   - `PhoneVerification`에서 숫자만 추출하고 최대 6자리로 잘라 `onVerificationCodeChange(value)` 호출
+   - `UserSignupPage`에서 `setVerificationCode(code)`로 `usePhoneVerification` 내부 `verificationCode` 상태 업데이트
+   - 동시에 `errors.verificationCode`를 초기화
+
+2. 사용자가 **"인증"** 버튼 클릭
+   - `PhoneVerification`이 `onVerify()` 호출 → `UserSignupPage`의 `handleVerifyClick` 호출
+
+```tsx
+const handleVerifyClick = () => {
+  const error = handleVerify();
+  if (error) {
+    setErrors((prev) => ({
+      ...prev,
+      verificationCode: error,
+    }));
+  } else {
+    setErrors((prev) => ({ ...prev, verificationCode: undefined }));
+
+    // (이후 기존 계정 체크 로직)
+  }
+};
+```
+
+3. `usePhoneVerification` 내부 `handleVerify()` 동작
+
+- `validateVerificationCode(verificationCode)`로 6자리 숫자인지 확인
+  - 아니면 `"인증번호 6자리를 입력해주세요."` 문자열 반환
+- `checkTestVerificationCode(verificationCode)`로 **테스트용 인증번호가 맞는지** 확인
+  - 성공(`true`)이면:
+    - `setIsPhoneVerified(true)`
+    - `setVerificationCode("")`
+    - `setTimer(0)`
+  - 실패(`false`)이면:
+    - `"INVALID_VERIFICATION_CODE"` 문자열 반환
+
+4. 반환된 에러 문자열에 따라 `UserSignupPage`가 `errors.verificationCode`를 업데이트 → 다시 `PhoneVerification`으로 내려감 → 에러 UI 렌더링
+
+---
+
+## 4. 테스트 데이터: `testVerificationData.ts`가 하는 일
+
+**파일**: `src/data/signup/testVerificationData.ts`
+
+이 파일은 **백엔드 없이도 시나리오를 테스트할 수 있게** 미리 정의된 번호/코드를 제공합니다.
+
+- `TEST_VERIFICATION_CODES`
+  - `SUCCESS: "000000"` → 이 코드를 입력하면 인증 성공
+  - `FAIL: "123456"` → 실패 시나리오용
+  - `INVALID_FORMAT: "12345"` → 형식 오류(6자리가 아님)
+- `TEST_PHONE_NUMBERS`
+  - `NORMAL: "010-1234-5678"` → 일반 성공 케이스
+  - `EXISTING_KAKAO: "010-1111-1111"` → 카카오 기존 계정으로 처리
+  - `EXISTING_NAVER: "010-0000-0000"` → 네이버 기존 계정으로 처리
+  - `DUPLICATE: "010-9999-9999"` → 중복 번호 케이스
+
+### 4-1. 휴대폰 번호 → 기존 계정 여부 체크
+
+`UserSignupPage`의 인증 완료 이후 로직:
+
+```tsx
+const testPhoneInfo = checkTestPhoneNumber(phone);
+
+if (testPhoneInfo?.type === "existing_kakao") {
+  resetVerification();
+  setExistingAccountSocialType("kakao");
+  setShowExistingAccountModal(true);
+} else if (testPhoneInfo?.type === "existing_naver") {
+  resetVerification();
+  setExistingAccountSocialType("naver");
+  setShowExistingAccountModal(true);
+}
+```
+
+- 테스트 번호가 카카오/네이버 기존 계정으로 매핑되어 있으면:
+  - `resetVerification()`으로 인증 상태 초기화
+  - `ExistingAccountModal`을 띄워서 "카카오/네이버로 로그인 하세요" UI를 보여줌
+
+### 4-2. 인증번호 성공 여부 체크
+
+`usePhoneVerification`에서:
+
+```ts
+if (checkTestVerificationCode(verificationCode)) {
+  setIsPhoneVerified(true);
+  // ...
+}
+```
+
+- 테스트 코드 `000000`을 입력하면 **실제 API 없이도 인증 성공 플로우를 흉내낼 수 있음**
+
+---
+
+## 5. 최종 제출 흐름: `handleSubmit`
+
+마지막으로, 회원가입 버튼 클릭 시 전체 흐름 정리입니다.
+
+1. `<form onSubmit={handleSubmit}>` 이벤트 발생
+2. `handleSubmit`에서 기본 제출 막기 (`e.preventDefault()`)
+3. `validateSignupForm` 호출
+   - `email`, `name`, `phone`, `isPhoneVerified`, `termsAgreed`, `privacyAgreed` 등을 검사
+   - 문제가 있으면 `errors` 객체에 메시지를 채워서 반환
+4. 에러가 있으면 → `setErrors(newErrors)` 후 **바로 return** (진행 중단)
+5. 에러가 없으면 → `console.log`로 폼 데이터 출력 후, 테스트용으로 회원가입 완료 페이지로 이동
+
+```tsx
+router.push(`/user/signup/complete?nickname=${encodeURIComponent(name)}`);
+```
+
+버튼 비활성화 조건도 동일한 기준을 따릅니다:
+
+```tsx
+name.trim() && isPhoneVerified && termsAgreed && privacyAgreed;
+```
+
+즉, **이름 + 휴대폰 인증 완료 + 필수 약관 2개 동의**가 모두 만족되어야 활성화됩니다.
+
+---
+
+## 6. 이 흐름을 익히는 순서 추천
+
+1. `UserSignupPage`만 보면서, 어떤 **props/훅**을 어디로 넘기는지 화살표로 적어보기
+2. `useTermsAgreement` 코드만 읽으면서, 체크박스 상태가 어떻게 동기화되는지 머릿속으로 시뮬레이션
+3. `usePhoneVerification` 내부를 집중해서, 타이머와 에러 문자열이 어떻게 이동하는지 따라가기
+4. 마지막으로 `PhoneVerification`을 열어서, 어떤 에러 문자열이 어떤 UI로 표시되는지 확인
+
+이 4단계만 한 번 차분히 따라가면, 이 프로젝트의 **"입력 폼 + 훅 + 유틸 + 테스트 데이터" 패턴**을 그대로 다른 화면에도 복붙해서 응용할 수 있게 됩니다.
