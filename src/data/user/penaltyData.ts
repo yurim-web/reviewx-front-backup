@@ -58,15 +58,14 @@ export const userPenaltyData: PenaltyItem[] = [
   {
     id: "6",
     type: "주의",
-    title: "캠페인 반복 반려",
-    campaignTitle: "멜킨 엘프리 마사지 멜킨 엘프리 마사지멜킨 엘프리 마사지",
+    title: "테스트~ 캠페인관련 x 패널티 발생",
     date: "2025-09-10",
   },
   {
     id: "7",
     type: "제재",
     title: "이용 정지 3일",
-    campaignTitle: "멜킨 엘프리 마사지 멜킨 엘프리 마사지멜킨 엘프리 마사지",
+
     date: "2025-09-10",
   },
   {

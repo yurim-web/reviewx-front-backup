@@ -144,6 +144,7 @@ export default function PenaltyContent({
           <ul className={penaltyStyles.penalty_list}>
             {penaltyData.map((penalty) => (
               <li key={penalty.id} className={penaltyStyles.penalty_item}>
+                {/* 패널티 태그 배지 */}
                 <div
                   className={`${penaltyStyles.penalty_point_badge} ${
                     typeBadgeClasses[penalty.type]
@@ -153,13 +154,19 @@ export default function PenaltyContent({
                   {penalty.type}
                 </div>
 
+                {/* 패널티 상세 정보 */}
                 <div className={penaltyStyles.penalty_details}>
+                  {/* 패널티 제목 */}
                   <h3 className={penaltyStyles.penalty_title_text}>
                     {penalty.title}
                   </h3>
-                  <p className={penaltyStyles.penalty_campaign_title}>
-                    {penalty.campaignTitle}
-                  </p>
+                  {/* 캠페인 제목 - 캠페인으로 인한 패널티 발생 시에만 표시 */}
+                  {penalty.campaignTitle && (
+                    <p className={penaltyStyles.penalty_campaign_title}>
+                      {penalty.campaignTitle}
+                    </p>
+                  )}
+                  {/* 패널티 날짜 */}
                   <time
                     className={penaltyStyles.penalty_date}
                     dateTime={penalty.date}

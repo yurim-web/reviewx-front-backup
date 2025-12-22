@@ -32,7 +32,7 @@ export interface PenaltyItem {
   id: string; // 고유 식별자 (React key로도 사용)
   type: PenaltyType; // 패널티 분류
   title: string; // 패널티 제목/사유
-  campaignTitle: string; // 캠페인 제목
+  campaignTitle?: string; // 캠페인 제목 (캠페인으로 인한 패널티 발생 시에만 존재)
   date: string; // 발생 날짜 (YYYY-MM-DD 형식)
 }
 
