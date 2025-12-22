@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 
 export default function CreatePostPage() {
   // 서버 컴포넌트에서 클라이언트 전용 페이지를 전달만 수행
-  return <PostFormPageClient mode="create" />;
+  return <PostFormPageClient mode="create" manager_type="ga" />;
 }

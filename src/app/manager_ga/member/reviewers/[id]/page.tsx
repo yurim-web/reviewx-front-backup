@@ -40,8 +40,8 @@ import ActivityInfoSection, {
 } from "@/components/manager/common/member/member_detail/ActivityInfoSection";
 import ChannelInfoSection from "@/components/manager/common/member/reviewers/section/ChannelInfoSection";
 import AccountInfoSection from "@/components/manager/common/member/reviewers/section/AccountInfoSection";
-import styles from "@/styles/manager_ga/member/member_detail/detail_page.module.css";
-import infoCardStyles from "@/styles/manager_ga/member/member_detail/info_card.module.css";
+import styles from "@/styles/manager/common/member/member_detail/detail_page.module.css";
+import infoCardStyles from "@/styles/manager/common/member/member_detail/info_card.module.css";
 
 // 채널 아이콘 경로 매핑
 const channel_icon_map: Record<Channel, string> = {

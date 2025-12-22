@@ -20,7 +20,7 @@
 "use client";
 
 import { useState } from "react";
-import styles from "@/styles/manager_ga/campaign/progress/filter_section.module.css";
+import styles from "@/styles/manager/common/campaign/progress/filter_section.module.css";
 import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";

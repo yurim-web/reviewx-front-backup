@@ -9,7 +9,7 @@ import React, { useMemo } from "react";
 import CampaignProgressFilterSection from "./CampaignProgressFilterSection";
 
 // CSS 모듈 import
-import filterSectionStylesModule from "@/styles/manager_ga/campaign/progress/filter_section.module.css";
+import filterSectionStylesModule from "@/styles/manager/common/campaign/progress/filter_section.module.css";
 
 // CSS 모듈 객체를 타입 단언하여 사용
 const filterSectionStyles = (filterSectionStylesModule || {

@@ -28,7 +28,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import styles from "@/styles/manager_ga/community/posts/post_filter_section.module.css";
+import styles from "@/styles/manager/common/community/posts/post_filter_section.module.css";
 import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
@@ -48,9 +48,11 @@ interface PostFilterSectionProps {
   // 날짜 범위 필터 상태와 변경 함수
   selected_date_range: DateRange | undefined;
   on_date_range_change: (range: DateRange | undefined) => void;
-  // 선택된 게시글들에 대해 고정/해제를 수행하는 핸들러
-  on_pin_selected: () => void;
-  on_unpin_selected: () => void;
+  // 선택된 게시글들에 대해 고정/해제를 수행하는 핸들러 (GA만 사용)
+  on_pin_selected?: () => void;
+  on_unpin_selected?: () => void;
+  // 관리자 타입 ('ga' | 'sa')
+  manager_type: "ga" | "sa";
 }
 
 export default function PostFilterSection({
@@ -62,8 +64,15 @@ export default function PostFilterSection({
   on_date_range_change,
   on_pin_selected,
   on_unpin_selected,
+  manager_type,
 }: PostFilterSectionProps) {
   const router = useRouter();
+
+  // manager_type에 따른 base path 설정
+  const base_path =
+    manager_type === "ga"
+      ? "/manager_ga/community/posts"
+      : "/manager_sa/community/posts";
 
   // 모달 열림/닫힘 상태 관리
   const [is_division_modal_open, set_is_division_modal_open] = useState(false);
@@ -91,12 +100,12 @@ export default function PostFilterSection({
 
   // 고정 버튼 핸들러
   const handle_pin = () => {
-    on_pin_selected();
+    on_pin_selected?.();
   };
 
   // 해제 버튼 핸들러
   const handle_unpin = () => {
-    on_unpin_selected();
+    on_unpin_selected?.();
   };
 
   /* ========================================
@@ -114,7 +123,7 @@ export default function PostFilterSection({
   // 등록 버튼 핸들러
   const handle_create = () => {
     // 게시글 작성 페이지로 이동
-    router.push("/manager_ga/community/posts/create");
+    router.push(`${base_path}/create`);
   };
 
   // 삭제 버튼 핸들러
@@ -202,32 +211,38 @@ export default function PostFilterSection({
             />
           </div>
         }
-        // 검색어 필터 뒤에 오는 버튼들 (고정, 해제)
+        // 검색어 필터 뒤에 오는 버튼들 (고정, 해제) - GA만 사용
         search_after_buttons={
-          <>
-            {/* 고정 버튼 */}
-            <div key="pin" className={styles.filter_item} onClick={handle_pin}>
-              <img
-                src="/images/icons/pin_icon_black.svg"
-                alt="고정"
-                className={styles.action_icon}
-              />
-              <span className={styles.filter_text}>고정</span>
-            </div>
-            {/* 해제 버튼 */}
-            <div
-              key="unpin"
-              className={styles.filter_item}
-              onClick={handle_unpin}
-            >
-              <img
-                src="/images/icons/pin_icon_grey.svg"
-                alt="해제"
-                className={styles.action_icon}
-              />
-              <span className={styles.filter_text}>해제</span>
-            </div>
-          </>
+          manager_type === "ga" && on_pin_selected && on_unpin_selected ? (
+            <>
+              {/* 고정 버튼 */}
+              <div
+                key="pin"
+                className={styles.filter_item}
+                onClick={handle_pin}
+              >
+                <img
+                  src="/images/icons/pin_icon_black.svg"
+                  alt="고정"
+                  className={styles.action_icon}
+                />
+                <span className={styles.filter_text}>고정</span>
+              </div>
+              {/* 해제 버튼 */}
+              <div
+                key="unpin"
+                className={styles.filter_item}
+                onClick={handle_unpin}
+              >
+                <img
+                  src="/images/icons/pin_icon_grey.svg"
+                  alt="해제"
+                  className={styles.action_icon}
+                />
+                <span className={styles.filter_text}>해제</span>
+              </div>
+            </>
+          ) : undefined
         }
         // 오른쪽 액션 버튼들 (등록, 삭제)
         right_buttons={

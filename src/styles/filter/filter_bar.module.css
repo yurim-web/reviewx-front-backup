@@ -124,9 +124,7 @@
   background: white;
   border: 1px solid #d9d9d9;
   border-radius: 4px;
-  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
   z-index: 1000;
-  /* margin-top: 4px; */
 }
 
 /* 드롭다운 아이템 */
@@ -313,8 +311,6 @@
 }
 
 /* 모달 바디 */
-.modal_body {
-}
 
 /* 모달 라벨 */
 .modal_label {
@@ -332,8 +328,8 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 32px 24px;
-  max-height: 400px; /* 그리드 최대 높이 설정 */
-  overflow-y: auto; /* 그리드 내에서만 스크롤 */
+  max-height: 400px;
+  overflow-y: auto;
   padding-bottom: 8px;
 }
 
@@ -371,7 +367,7 @@
 }
 
 .option_checkbox:checked::after {
-  content: '✓';
+  content: "✓";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -399,7 +395,7 @@
 }
 
 .option_radio:checked::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -492,8 +488,8 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
-  max-height: 400px; /* 세로 레이아웃도 최대 높이 설정 */
-  overflow-y: auto; /* 세로 레이아웃에서도 스크롤 적용 */
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 /* 정렬 모달용 스타일 - 스크롤 없이 자동 높이 */
@@ -524,7 +520,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 24px;
-  /* padding-bottom: 16px; */
   border-bottom: 1px solid #e0e0e0;
   position: relative;
 }
@@ -551,7 +546,7 @@
 }
 
 .region_tab_active::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -1px;
   left: 0;

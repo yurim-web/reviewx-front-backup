@@ -33,7 +33,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import styles from "@/styles/manager_ga/campaign/progress/filter_section.module.css";
+import styles from "@/styles/manager/common/campaign/progress/filter_section.module.css";
 
 // 필터 태그 타입 정의
 export interface FilterTag<T> {

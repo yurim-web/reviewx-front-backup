@@ -27,7 +27,7 @@
 "use client";
 
 import { useState } from "react";
-import styles from "@/styles/manager_ga/member/partners/page.module.css";
+import styles from "@/styles/manager/common/member/partners/page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import PartnerStatsSection from "@/components/manager/common/member/partners/PartnerStatsSection";
 import PartnerFilterSection from "@/components/manager/common/member/partners/PartnerFilterSection";

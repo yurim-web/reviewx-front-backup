@@ -32,10 +32,10 @@
  *
  */
 
-'use client';
+"use client";
 
-import { useState, useRef, useEffect } from 'react';
-import styles from '@/styles/manager_ga/campaign/progress/filter_section.module.css';
+import { useState, useRef, useEffect } from "react";
+import styles from "@/styles/manager/common/campaign/progress/filter_section.module.css";
 
 interface SortDropdownProps {
   // 선택된 정렬 옵션
@@ -52,7 +52,7 @@ export default function SortDropdown({
   selected_sort,
   on_sort_change,
   sort_options,
-  default_sort_options = ['최신순', '인기순', '마감임박순', '포인트높은순'],
+  default_sort_options = ["최신순", "인기순", "마감임박순", "포인트높은순"],
 }: SortDropdownProps) {
   // 드롭다운 열림/닫힘 상태
   const [is_open, set_is_open] = useState(false);
@@ -77,12 +77,12 @@ export default function SortDropdown({
 
     // 드롭다운이 열려있을 때만 이벤트 리스너 등록
     if (is_open) {
-      document.addEventListener('mousedown', handle_click_outside);
+      document.addEventListener("mousedown", handle_click_outside);
     }
 
     // cleanup 함수: 컴포넌트가 언마운트되거나 의존성이 변경될 때 실행됩니다
     return () => {
-      document.removeEventListener('mousedown', handle_click_outside);
+      document.removeEventListener("mousedown", handle_click_outside);
     };
   }, [is_open]);
 
@@ -109,7 +109,7 @@ export default function SortDropdown({
           src="/images/icons/dropdown_arrow.svg"
           alt="드롭다운"
           className={`${styles.dropdown_arrow} ${
-            is_open ? styles.dropdown_arrow_rotated : ''
+            is_open ? styles.dropdown_arrow_rotated : ""
           }`}
         />
       </div>
@@ -123,7 +123,7 @@ export default function SortDropdown({
               className={`${styles.sort_dropdown_item} ${
                 selected_sort === option
                   ? styles.sort_dropdown_item_selected
-                  : ''
+                  : ""
               }`}
               onClick={() => handle_select(option)}
             >

@@ -29,7 +29,7 @@
 "use client";
 
 import Image from "next/image";
-import styles from "@/styles/manager_ga/member/member_detail/info_card.module.css";
+import styles from "@/styles/manager/common/member/member_detail/info_card.module.css";
 
 interface InfoCardProps {
   // 라벨 텍스트

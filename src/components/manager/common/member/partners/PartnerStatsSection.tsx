@@ -14,7 +14,7 @@
  */
 
 import MemberStatsSectionCommon from "@/components/manager/common/member/stats/MemberStatsSection";
-import styles from "@/styles/manager_ga/member/partners/partner_stats_section.module.css";
+import styles from "@/styles/manager/common/member/partners/partner_stats_section.module.css";
 import { partner_stats } from "@/data/manager_ga/member/partners";
 
 export default function PartnerStatsSection() {

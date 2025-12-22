@@ -18,12 +18,12 @@
  * - 주민등록번호 정보
  */
 
-'use client';
+"use client";
 
-import InfoCard from '@/components/manager/common/member/member_detail/InfoCard';
-import Section from '@/components/manager/common/member/member_detail/Section';
-import type { AccountInfo } from '@/data/manager_ga/member/reviewers';
-import styles from '@/styles/manager_ga/member/member_detail/reviewers/account_info_section.module.css';
+import InfoCard from "@/components/manager/common/member/member_detail/InfoCard";
+import Section from "@/components/manager/common/member/member_detail/Section";
+import type { AccountInfo } from "@/data/manager_ga/member/reviewers";
+import styles from "@/styles/manager/common/member/member_detail/reviewers/account_info_section.module.css";
 
 interface AccountInfoSectionProps {
   // 계좌 정보 객체
@@ -52,4 +52,3 @@ export default function AccountInfoSection({
     </Section>
   );
 }
-

@@ -23,7 +23,7 @@
 "use client";
 
 import { useState } from "react";
-import styles from "@/styles/manager_ga/member/blacklist/blacklist_filter_section.module.css";
+import styles from "@/styles/manager/common/member/blacklist/blacklist_filter_section.module.css";
 import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";

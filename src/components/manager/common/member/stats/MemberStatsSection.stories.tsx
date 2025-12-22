@@ -5,10 +5,8 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
-import MemberStatsSection, {
-  type MemberStats,
-} from "./MemberStatsSection";
-import styles from "@/styles/manager_ga/member/partners/partner_stats_section.module.css";
+import MemberStatsSection, { type MemberStats } from "./MemberStatsSection";
+import styles from "@/styles/manager/common/member/partners/partner_stats_section.module.css";
 
 // Mock 통계 데이터
 const mockStats: MemberStats = {
@@ -115,7 +113,3 @@ export const SmallNumbers: Story = {
  *    - 리뷰어와 파트너 목록 페이지에서 공통으로 사용됩니다
  *    - 스타일만 다르게 전달하여 사용합니다
  */
-
-
-
-

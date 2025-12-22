@@ -17,7 +17,7 @@
  */
 
 import Header from "@/components/fragments/Header";
-import FindAccountPage from "@/components/common/FindAccountPage";
+import FindAccountPage from "@/components/common/find_account/page/FindAccountPage";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

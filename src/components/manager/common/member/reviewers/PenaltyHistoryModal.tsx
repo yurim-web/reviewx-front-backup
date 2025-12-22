@@ -16,7 +16,7 @@
 import PenaltyHistoryModalCommon, {
   type PenaltyHistoryItem as CommonPenaltyHistoryItem,
 } from "@/components/manager/common/member/modal/PenaltyHistoryModal";
-import styles from "@/styles/manager_ga/member/reviewers/modal/penalty_history_modal.module.css";
+import styles from "@/styles/manager/common/member/reviewers/modal/penalty_history_modal.module.css";
 import type { PenaltyHistoryItem } from "@/data/manager_ga/member/reviewers";
 
 interface PenaltyHistoryModalProps {

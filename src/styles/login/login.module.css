@@ -72,8 +72,8 @@
   justify-content: center;
   position: relative;
   box-sizing: border-box;
-  padding-top: 80px; /* 헤더 높이만큼 상단 여백 */
-  padding-bottom: 100px; /* 하단 링크를 위한 여백 */
+  padding-top: 80px;
+  padding-bottom: 100px;
 }
 
 /* 로그인 메시지 섹션 (공통) */
@@ -92,7 +92,7 @@
   text-align: center;
   font-size: 28px;
   font-weight: 600;
-  line-height: 40px; /* 142.857% */
+  line-height: 40px;
   letter-spacing: -0.56px;
 }
 
@@ -287,15 +287,15 @@
   border-radius: 4px;
   background: #ffffff;
   cursor: pointer;
-  appearance: none; /* 기본 브라우저 스타일 제거 */
-  position: relative; /* 체크마크 위치 지정을 위해 */
-  flex-shrink: 0; /* 크기 고정 */
+  appearance: none;
+  position: relative;
+  flex-shrink: 0;
 }
 
 /* 체크박스 체크된 상태 */
 .checkbox:checked {
-  border-color: #444444; /* 어두운 회색 테두리 */
-  background: #ffffff; /* 흰색 배경 유지 */
+  border-color: #444444;
+  background: #ffffff;
 }
 
 /* 체크박스 체크마크 (✓) */
@@ -305,7 +305,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #444444; /* 어두운 회색 체크마크 */
+  color: #444444;
   font-size: 12px;
   font-weight: 600;
   line-height: 1;
@@ -399,7 +399,7 @@
   text-align: center;
   font-size: 14px;
   font-weight: 500;
-  line-height: 14px; /* 100% */
+  line-height: 14px;
   letter-spacing: -0.28px;
 }
 
@@ -458,7 +458,7 @@
   text-align: center;
   font-size: 16px;
   font-weight: 500;
-  line-height: 18px; /* 112.5% */
+  line-height: 18px;
   letter-spacing: -0.32px;
 }
 
@@ -481,7 +481,7 @@
   text-align: center;
   font-size: 16px;
   font-weight: 500;
-  line-height: 18px; /* 112.5% */
+  line-height: 18px;
   letter-spacing: -0.32px;
 }
 

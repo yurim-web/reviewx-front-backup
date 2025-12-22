@@ -7,7 +7,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 import StatCardsSection from "./StatCardsSection";
-import styles from "@/styles/manager_ga/campaign/progress/stat_card.module.css";
+import styles from "@/styles/manager/common/campaign/progress/stat_card.module.css";
 
 const mockStatCardValues = {
   open_scheduled: "10",
@@ -49,4 +49,3 @@ export const Default: Story = {
     styles: styles,
   },
 };
-

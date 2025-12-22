@@ -79,7 +79,6 @@
 .field_label {
   color: #444;
   font-size: 14px;
-  font-style: normal;
   font-weight: 500;
   line-height: 14px; /* 100% */
   letter-spacing: -0.28px;
@@ -98,7 +97,6 @@
   overflow: hidden;
   color: #444;
   font-size: 16px;
-  font-style: normal;
   font-weight: 500;
   line-height: 16px; /* 100% */
   letter-spacing: -0.32px;
@@ -199,10 +197,8 @@
   color: #444444;
   font-size: 16px;
   font-weight: 600;
-  font-style: normal;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
   flex-shrink: 0;
@@ -268,10 +264,8 @@
   color: #ff2626;
   font-size: 14px;
   font-weight: 500;
-  font-style: normal;
   line-height: 14px;
   letter-spacing: -0.28px;
-  font-family: "Pretendard", sans-serif;
 }
 
 /* 인증 버튼 */
@@ -284,10 +278,8 @@
   color: #444444;
   font-size: 16px;
   font-weight: 600;
-  font-style: normal;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
   box-sizing: border-box;
@@ -300,27 +292,15 @@
   width: 125px;
   height: 56px;
   background-color: #ffffff;
-  border: 1px solid #d9d9d9;
+  border: 1px solid #848484;
+  cursor: pointer;
   border-radius: 8px;
+  overflow: hidden;
   color: #848484;
   font-size: 16px;
-  font-weight: 500;
-  font-style: normal;
+  font-weight: 600;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: "Pretendard", sans-serif;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
-  padding: 0;
-  flex-shrink: 0;
-}
-
-/* 재전송 버튼 호버 */
-.resend_button:hover {
-  background-color: #f6f6f6;
-  border-color: #444444;
-  color: #444444;
 }
 
 /* 인증번호 도움말 텍스트 */
@@ -328,7 +308,6 @@
   color: #848484;
 
   font-size: 14px;
-  font-style: normal;
   font-weight: 500;
   line-height: 14px; /* 100% */
   letter-spacing: -0.28px;
@@ -387,10 +366,8 @@
   color: #848484;
   font-size: 13px;
   font-weight: 500;
-  font-style: normal;
   line-height: 22px;
   letter-spacing: -0.26px;
-  font-family: "Pretendard", sans-serif;
 }
 
 .terms_sub_items p {
@@ -435,10 +412,8 @@
   color: #444444;
   font-size: 14px;
   font-weight: 500;
-  font-style: normal;
   line-height: 14px;
   letter-spacing: -0.28px;
-  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   user-select: none;
 }
@@ -448,10 +423,8 @@
   color: #848484;
   font-size: 12px;
   font-weight: 500;
-  font-style: normal;
   line-height: 12px;
   letter-spacing: -0.24px;
-  font-family: "Pretendard", sans-serif;
   text-decoration: underline;
   text-underline-position: from-font;
   margin-left: auto;
@@ -476,10 +449,8 @@
   color: #ff2626;
   font-size: 14px;
   font-weight: 500;
-  font-style: normal;
   line-height: 14px;
   letter-spacing: -0.28px;
-  font-family: "Pretendard", sans-serif;
 }
 
 /* ========================================
@@ -496,10 +467,8 @@
   border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
-  font-style: normal;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: background-color 0.2s ease, opacity 0.2s ease;
   margin-top: 113px;
@@ -579,10 +548,8 @@
   color: #444444;
   font-size: 18px;
   font-weight: 600;
-  font-style: normal;
   line-height: 18px;
   letter-spacing: -0.36px;
-  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -597,10 +564,8 @@
   color: #ffffff;
   font-size: 18px;
   font-weight: 600;
-  font-style: normal;
   line-height: 18px;
   letter-spacing: -0.36px;
-  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -615,10 +580,8 @@
   color: #444444;
   font-size: 16px;
   font-weight: 500;
-  font-style: normal;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }

@@ -89,6 +89,8 @@ export const TEST_PHONE_NUMBERS = {
   EXISTING_NAVER: "010-0000-0000",
   /** 중복된 휴대폰 번호 */
   DUPLICATE: "010-9999-9999",
+  /** 정지/탈퇴된 계정 */
+  BLOCKED: "010-8888-8888",
 } as const;
 
 /**
@@ -123,7 +125,12 @@ export function checkTestVerificationCode(code: string): boolean {
  * @returns 테스트 번호 정보 (없으면 null)
  */
 export function checkTestPhoneNumber(phone: string): {
-  type: "existing_kakao" | "existing_naver" | "duplicate" | "normal";
+  type:
+    | "existing_kakao"
+    | "existing_naver"
+    | "duplicate"
+    | "normal"
+    | "blocked";
   phone: string;
 } | null {
   if (phone === TEST_PHONE_NUMBERS.EXISTING_KAKAO) {
@@ -134,6 +141,9 @@ export function checkTestPhoneNumber(phone: string): {
   }
   if (phone === TEST_PHONE_NUMBERS.DUPLICATE) {
     return { type: "duplicate", phone };
+  }
+  if (phone === TEST_PHONE_NUMBERS.BLOCKED) {
+    return { type: "blocked", phone };
   }
   if (phone === TEST_PHONE_NUMBERS.NORMAL) {
     return { type: "normal", phone };

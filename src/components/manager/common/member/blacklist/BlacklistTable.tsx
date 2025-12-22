@@ -23,7 +23,7 @@
 "use client";
 
 import { useState, Fragment } from "react";
-import styles from "@/styles/manager_ga/member/blacklist/blacklist_table.module.css";
+import styles from "@/styles/manager/common/member/blacklist/blacklist_table.module.css";
 import tag_styles from "@/styles/common/tags.module.css";
 import {
   blacklist_data,

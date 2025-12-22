@@ -16,7 +16,7 @@
 import CampaignHistoryModalCommon, {
   type CampaignHistoryItem,
 } from "@/components/manager/common/member/modal/CampaignHistoryModal";
-import styles from "@/styles/manager_ga/member/reviewers/modal/campaign_history_modal.module.css";
+import styles from "@/styles/manager/common/member/reviewers/modal/campaign_history_modal.module.css";
 import { type RecentCampaign } from "@/data/manager_ga/member/partners";
 
 interface CampaignHistoryModalProps {

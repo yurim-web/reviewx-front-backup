@@ -40,7 +40,7 @@ import type { BusinessType } from "@/components/manager/sa/settlement/payment_hi
 import type { PaymentMethod } from "@/data/manager_sa/common/filterOptions";
 import type { PaymentStatus } from "@/components/manager/sa/settlement/payment_history/filter/PaymentStatusFilterModal";
 import type { AccountStatus } from "@/components/manager/sa/settlement/payment_history/filter/AccountStatusFilterModal";
-import baseFilterStyles from "@/styles/manager_ga/campaign/progress/filter_section.module.css";
+import baseFilterStyles from "@/styles/manager/common/campaign/progress/filter_section.module.css";
 import styles from "@/styles/manager_sa/settlement/payment_history/filter_section.module.css";
 
 interface PaymentHistoryFilterSectionProps {

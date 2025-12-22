@@ -27,10 +27,9 @@ import Header from "@/components/fragments/Header";
 import styles from "@/styles/login/login.module.css";
 // 🧪 테스트용 - 실제 API 연결 시 이 import 삭제
 import {
-  checkUserTestLogin,
-  isBlockedUserAccount,
-  BANNED_USER_ACCOUNTS,
-} from "@/data/login/testLoginData";
+  findAccountByCredentials,
+  findAccountByEmail,
+} from "@/data/login/unifiedAccountData";
 
 /**
  * 관리자 로그인 페이지 컴포넌트
@@ -131,42 +130,42 @@ export default function AdminLoginPage() {
       // ========================================
       console.log("로그인 시도:", { username, password, autoLogin });
 
-      // 이용 제한(차단) 계정인지 먼저 확인 (비밀번호가 맞는 경우)
-      if (isBlockedUserAccount(username, password)) {
+      // 먼저 이메일로 계정 존재 여부 확인
+      const accountByEmail = findAccountByEmail(username);
+
+      // 계정이 아예 존재하지 않는 경우
+      if (!accountByEmail) {
+        setErrorMessage("입력하신 정보와 일치하는 계정을 찾을 수 없습니다.");
+        return;
+      }
+
+      // 이메일과 비밀번호로 계정 찾기 (비밀번호 확인)
+      const foundAccount = findAccountByCredentials(username, password);
+
+      // 비밀번호가 틀린 경우 (계정은 있지만 비밀번호가 맞지 않음)
+      if (!foundAccount) {
+        setErrorMessage("아이디 또는 비밀번호가 일치하지 않습니다.");
+        return;
+      }
+
+      // 이용 제한(차단) 계정인지 먼저 확인
+      if (foundAccount.isBlocked) {
         // 이용 제한 안내 페이지로 이동
         router.push("/blacklist_info");
         return;
       }
 
       // 정지/탈퇴된 계정인 경우
-      if (BANNED_USER_ACCOUNTS.includes(username)) {
-        router.push("/pause_info");
-        return;
-      }
-
-      // 테스트 데이터 확인 (testLoginData.ts 파일 참고)
-      const testError = checkUserTestLogin(username, password);
-      if (testError) {
-        setErrorMessage(testError);
+      if (foundAccount.isBanned) {
+        setErrorMessage("정지되었거나 탈퇴된 계정입니다.");
         return;
       }
 
       // 성공 케이스 (테스트 데이터에 있는 경우)
       console.log("로그인 성공 (테스트 모드)");
 
-      // 관리자 타입별로 다른 페이지로 이동
-      if (username === "manager_sa@test.com") {
-        router.push("/manager_sa");
-        return;
-      }
-
-      if (username === "manager_ga@test.com") {
-        router.push("/manager_ga");
-        return;
-      }
-
-      // 기본 fallback (혹시 다른 관리자 계정이 추가될 경우)
-      router.push("/manager_sa");
+      // 통합 계정 데이터의 redirectUrl 사용
+      router.push(foundAccount.redirectUrl);
       // ========================================
       // 🧪 테스트용 코드 끝 - 실제 API 연결 시 위 전체 블록 삭제
       // ========================================

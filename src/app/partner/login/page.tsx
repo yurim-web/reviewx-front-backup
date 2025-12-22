@@ -27,10 +27,9 @@ import Header from "@/components/fragments/Header";
 import styles from "@/styles/login/login.module.css";
 // 🧪 테스트용 - 실제 API 연동 시 삭제 예정
 import {
-  checkTestLogin,
-  isBlockedAccount,
-  BANNED_ACCOUNTS,
-} from "@/data/login/testLoginData";
+  findAccountByCredentials,
+  findAccountByEmail,
+} from "@/data/login/unifiedAccountData";
 
 export default function PartnerLoginPage() {
   const router = useRouter();
@@ -80,28 +79,42 @@ export default function PartnerLoginPage() {
       // ========================================
       console.log("로그인 시도:", { email, password, autoLogin });
 
-      // 이용 제한(차단) 계정인지 먼저 확인 (이메일 + 비밀번호 일치)
-      if (isBlockedAccount(email, password)) {
+      // 먼저 이메일로 계정 존재 여부 확인
+      const accountByEmail = findAccountByEmail(email);
+
+      // 계정이 아예 존재하지 않는 경우
+      if (!accountByEmail) {
+        setErrorMessage("입력하신 정보와 일치하는 계정을 찾을 수 없습니다.");
+        return;
+      }
+
+      // 이메일과 비밀번호로 계정 찾기 (비밀번호 확인)
+      const foundAccount = findAccountByCredentials(email, password);
+
+      // 비밀번호가 틀린 경우 (계정은 있지만 비밀번호가 맞지 않음)
+      if (!foundAccount) {
+        setErrorMessage("아이디 또는 비밀번호가 일치하지 않습니다.");
+        return;
+      }
+
+      // 이용 제한(차단) 계정인지 먼저 확인
+      if (foundAccount.isBlocked) {
+        // 이용 제한 안내 페이지로 이동
         router.push("/blacklist_info");
         return;
       }
 
-      // 정지/탈퇴 계정인지 확인 (이메일 기준)
-      if (BANNED_ACCOUNTS.includes(email)) {
-        router.push("/pause_info");
-        return;
-      }
-
-      // 테스트 데이터 확인 (일반 에러 메시지 노출용)
-      const testError = checkTestLogin(email, password);
-      if (testError) {
-        setErrorMessage(testError);
+      // 정지/탈퇴된 계정인 경우
+      if (foundAccount.isBanned) {
+        setErrorMessage("정지되었거나 탈퇴된 계정입니다.");
         return;
       }
 
       // 성공 케이스
       console.log("로그인 성공 (테스트 모드)");
-      router.push("/partner/campaign_management");
+
+      // 통합 계정 데이터의 redirectUrl 사용
+      router.push(foundAccount.redirectUrl);
       // ========================================
     } catch (error) {
       setErrorMessage("아이디 또는 비밀번호가 일치하지 않습니다.");

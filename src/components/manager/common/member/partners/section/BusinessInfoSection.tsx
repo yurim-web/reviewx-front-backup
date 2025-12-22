@@ -18,12 +18,12 @@
  * - 사업자등록증 다운로드 버튼
  */
 
-'use client';
+"use client";
 
-import Image from 'next/image';
-import InfoCard from '@/components/manager/common/member/member_detail/InfoCard';
-import Section from '@/components/manager/common/member/member_detail/Section';
-import styles from '@/styles/manager_ga/member/member_detail/partners/business_info_section.module.css';
+import Image from "next/image";
+import InfoCard from "@/components/manager/common/member/member_detail/InfoCard";
+import Section from "@/components/manager/common/member/member_detail/Section";
+import styles from "@/styles/manager/common/member/member_detail/partners/business_info_section.module.css";
 
 interface BusinessInfoSectionProps {
   // 상호명
@@ -79,4 +79,3 @@ export default function BusinessInfoSection({
     </Section>
   );
 }
-

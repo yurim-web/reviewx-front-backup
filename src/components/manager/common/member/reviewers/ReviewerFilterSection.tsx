@@ -14,7 +14,7 @@
  */
 
 import MemberFilterSectionCommon from "@/components/manager/common/member/filter/MemberFilterSection";
-import styles from "@/styles/manager_ga/member/reviewers/reviewer_filter_section.module.css";
+import styles from "@/styles/manager/common/member/reviewers/reviewer_filter_section.module.css";
 import ChannelFilterModal from "@/components/manager/common/member/reviewers/filter/ChannelFilterModal";
 import GradeFilterModal from "@/components/manager/common/member/reviewers/filter/GradeFilterModal";
 import TypeFilterModal from "@/components/manager/common/member/reviewers/filter/TypeFilterModal";
@@ -101,4 +101,3 @@ export default function ReviewerFilterSection({
     />
   );
 }
-

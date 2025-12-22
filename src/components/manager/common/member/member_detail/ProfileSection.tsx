@@ -19,9 +19,9 @@
  *
  */
 
-'use client';
+"use client";
 
-import styles from '@/styles/manager_ga/member/member_detail/profile_section.module.css';
+import styles from "@/styles/manager/common/member/member_detail/profile_section.module.css";
 
 interface ProfileSectionProps {
   // 이름 또는 상호명
@@ -62,4 +62,3 @@ export default function ProfileSection({
     </div>
   );
 }
-

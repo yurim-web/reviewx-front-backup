@@ -27,7 +27,7 @@
 "use client";
 
 import { useState } from "react";
-import styles from "@/styles/manager_ga/member/reviewers/page.module.css";
+import styles from "@/styles/manager/common/member/reviewers/page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import ReviewerStatsSection from "@/components/manager/common/member/reviewers/ReviewerStatsSection";
 import ReviewerFilterSection from "@/components/manager/common/member/reviewers/ReviewerFilterSection";
@@ -52,9 +52,9 @@ export default function ReviewersPage() {
   const [selected_types, set_selected_types] = useState<ReviewerStatusType[]>(
     []
   );
-  const [selected_statuses, set_selected_statuses] = useState<
-    ReviewerStatus[]
-  >([]);
+  const [selected_statuses, set_selected_statuses] = useState<ReviewerStatus[]>(
+    []
+  );
 
   return (
     <div className={styles.container}>

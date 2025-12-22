@@ -13,8 +13,8 @@
  * - /manager_sa/member/partners (SA 관리자 파트너 목록 페이지)
  */
 
-import PartnerTableCommon from '@/components/manager/common/member/table/PartnerTable';
-import styles from '@/styles/manager_ga/member/partners/partner_table.module.css';
+import PartnerTableCommon from "@/components/manager/common/member/table/PartnerTable";
+import styles from "@/styles/manager/common/member/partners/partner_table.module.css";
 
 import type { Channel } from "@/data/manager/common/filterOptions";
 import type {
@@ -90,4 +90,3 @@ export default function PartnerTable({
     />
   );
 }
-

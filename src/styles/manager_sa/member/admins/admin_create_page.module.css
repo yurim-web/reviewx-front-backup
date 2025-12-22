@@ -14,7 +14,6 @@
  * - /manager_sa/member/admins/[id]/edit (SA 관리자 관리자 수정)
  */
 
-/* CSS 변수 정의 - 폰트 패밀리를 한 곳에서 관리 */
 .container {
   --font-family: "Pretendard", sans-serif;
 }
@@ -25,22 +24,21 @@
   width: 100%;
   min-height: 100vh;
   background-color: white;
-  padding-top: 80px; /* 헤더 높이만큼 상단 여백 */
-  padding-left: 240px; /* 사이드바 너비만큼 왼쪽 여백 */
+  padding-top: 80px;
+  padding-left: 240px;
   box-sizing: border-box;
-  /* 폰트를 컨테이너에 설정하여 모든 자식 요소가 상속받도록 함 */
+
   font-family: var(--font-family);
 }
 
 /* 메인 콘텐츠 영역 */
 .main_content {
-  padding: 40px 0px 40px 40px; /* 상단: 헤더 아래 여백, 좌우: 40px */
+  padding: 40px 0px 40px 40px;
   width: 100%;
   min-height: calc(100vh - 80px);
   max-width: 960px;
   display: flex;
   flex-direction: column;
-  /* max-width 제한 없음 - 관리자 페이지는 전체 너비 사용 */
 }
 
 /* ========================================
@@ -53,7 +51,7 @@
   flex-direction: column;
   gap: 24px;
   max-width: 920px;
-  flex: 1; /* flex 컨테이너에서 남은 공간을 모두 차지 */
+  flex: 1;
   padding-top: 16px;
 }
 
@@ -63,7 +61,7 @@
   flex-direction: column;
   gap: 20px;
   max-width: 920px;
-  flex: 1; /* flex 컨테이너에서 남은 공간을 모두 차지 */
+  flex: 1;
 }
 
 /* 폼 필드 컨테이너 */
@@ -133,7 +131,7 @@
   width: 100%;
   max-width: 920px;
   height: 56px;
-  margin-top: auto; /* flex 컨테이너에서 남은 공간을 모두 차지하여 버튼을 맨 밑에 위치시킴 */
+  margin-top: auto;
   background-color: #555555;
   border: none;
   border-radius: 8px;

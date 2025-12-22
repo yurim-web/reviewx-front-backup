@@ -16,8 +16,8 @@
   width: 100%;
   min-height: 100vh;
   background-color: white;
-  padding-top: 80px; /* 헤더 높이만큼 상단 여백 */
-  padding-left: 240px; /* 사이드바 너비만큼 왼쪽 여백 */
+  padding-top: 80px; 
+  padding-left: 240px;
   box-sizing: border-box;
   font-family: 'Pretendard', sans-serif;
 }

@@ -23,17 +23,16 @@
 /* 테이블 헤더 */
 .table_header {
   display: grid;
-  /* 관리자 목록 테이블 컬럼 정의 */
   grid-template-columns:
     40px /* 체크박스 */
     100px /* 번호 */
-    1fr /* 이름 (남은 공간 차지) */
-    140px /* 신고 횟수 (더 늘림) */
-    140px /* 차단 횟수 (더 늘림) */
+    1fr /* 이름  */
+    140px /* 신고 횟수  */
+    140px /* 차단 횟수  */
     180px /* 접속일 */
     180px /* 가입일 */
-    100px /* 상태 */
-    50px; /* 수정 아이콘 (맨 끝, 고정) */
+    100px /* 상태  */
+    50px; /* 수정 아이콘  */
   background-color: #f5f5f5;
   padding: 0;
   align-items: center;
@@ -65,17 +64,16 @@
 /* 테이블 행 */
 .table_row {
   display: grid;
-  /* 헤더와 동일한 컬럼 정의를 공유해 정렬 유지 */
   grid-template-columns:
     40px /* 체크박스 */
     100px /* 번호 */
-    1fr /* 이름 (남은 공간 차지) */
-    140px /* 신고 횟수 (더 늘림) */
-    140px /* 차단 횟수 (더 늘림) */
+    1fr /* 이름  */
+    140px /* 신고 횟수  */
+    140px /* 차단 횟수  */
     180px /* 접속일 */
     180px /* 가입일 */
     100px /* 상태 */
-    50px; /* 수정 아이콘 (맨 끝, 고정) */
+    50px; /* 수정 아이콘  */
   border-bottom: 1px solid #f2f2f2;
   align-items: center;
   min-height: 62px;

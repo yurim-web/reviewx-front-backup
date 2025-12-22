@@ -84,7 +84,6 @@
 }
 
 /* 테이블 셀 공통 스타일 (CommonTable에서 사용) */
-/* CommonTable은 .table_cell 클래스를 사용하여 각 셀을 렌더링합니다 */
 .table_cell {
   display: flex;
   align-items: center;
@@ -93,8 +92,6 @@
 }
 
 /* 테이블 헤더 셀 공통 스타일 (CommonTable에서 사용) */
-/* CommonTable은 .table_header_cell 클래스를 사용하여 각 헤더 셀을 렌더링합니다 */
-/* 헤더 셀은 항상 가로 정렬(텍스트와 아이콘이 한 줄)이어야 합니다 */
 .table_header_cell {
   display: flex;
   flex-direction: row;
@@ -113,10 +110,6 @@
 }
 
 /* 개별 셀 스타일 (컬럼별 특별한 스타일이 필요한 경우에만 정의) */
-/* 대부분의 셀은 .table_cell 기본 스타일을 사용하므로 별도 정의 불필요 */
-/* 단, 특별한 스타일이 필요한 셀만 아래에 정의합니다 */
-
-/* 충전 포인트 셀 - 세로 정렬 (데이터 행용) */
 .table_cell_charged_points {
   flex-direction: column;
   align-items: flex-start;
@@ -124,7 +117,6 @@
 }
 
 /* 충전 포인트 헤더 셀 - 가로 정렬 (헤더 행용) */
-/* 헤더에서는 텍스트와 화살표 아이콘이 가로 한 줄로 배치되어야 합니다 */
 .table_header_cell_charged_points {
   flex-direction: row !important;
   align-items: center !important;
@@ -205,192 +197,4 @@
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
-}
-
-/* ========================================
-   태그 스타일 (공통 태그 컴포넌트용)
-   ======================================== */
-
-/**
- * 참고: 공통 태그 스타일은 @/styles/common/tags.module.css를 참조하세요.
- * 
- * 사용 컴포넌트:
- * - BusinessTypeTag (사업자 구분 태그)
- */
-
-/* 사업자 구분 태그 기본 스타일 */
-/* BusinessTypeTag 컴포넌트는 division_tag 클래스를 사용합니다 */
-.division_tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: -0.28px;
-  min-width: 40px;
-  height: 22px;
-  white-space: nowrap;
-}
-
-/* 법인 태그 (BusinessTypeTag용) */
-/* BusinessTypeTag 컴포넌트는 division_tag_corporate 클래스를 사용합니다 */
-.division_tag_corporate {
-  background-color: #666666;
-  color: white;
-}
-
-/* 개인 태그 (BusinessTypeTag용) */
-/* BusinessTypeTag 컴포넌트는 division_tag_individual 클래스를 사용합니다 */
-.division_tag_individual {
-  background-color: #f1f1f1;
-  color: #666666;
-}
-
-/* ========================================
-   태그 스타일 (공통 태그 컴포넌트용)
-   ======================================== */
-
-/**
- * 참고: 공통 태그 스타일은 @/styles/common/tags.module.css를 참조하세요.
- * 
- * 사용 컴포넌트:
- * - PaymentMethodTag (결제 수단 태그)
- */
-
-/* 결제 수단 태그 기본 스타일 */
-.payment_method_tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: -0.28px;
-  min-width: 80px;
-  height: 22px;
-}
-
-/* 카드 결제 태그 (PaymentMethodTag용) */
-.payment_method_card {
-  background-color: rgba(255, 86, 148, 0.1);
-  color: #ff5694;
-}
-
-/* 무통장 입금 태그 (PaymentMethodTag용) */
-.payment_method_bank {
-  background-color: #f1f1f1;
-  color: #666666;
-}
-
-/* 결제 상태 태그 */
-/* ========================================
-   결제 상태 태그 스타일 (PaymentStatusTag용)
-   ======================================== */
-
-/**
- * 참고: 공통 태그 스타일은 @/styles/common/tags.module.css를 참조하세요.
- * 
- * 사용 컴포넌트:
- * - PaymentStatusTag (결제 상태 태그)
- */
-
-/* 결제 상태 태그 기본 스타일 */
-.payment_status_tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: -0.28px;
-  min-width: 40px;
-  height: 22px;
-}
-
-/* 완료 태그 (PaymentStatusTag용) */
-.payment_status_completed {
-  background-color: rgba(45, 196, 105, 0.1);
-  color: #2dc469;
-}
-
-/* 대기 태그 (PaymentStatusTag용) */
-.payment_status_pending {
-  background-color: #f1f1f1;
-  color: #666666;
-}
-
-/* 취소 태그 (PaymentStatusTag용) */
-.payment_status_cancelled {
-  background-color: rgba(255, 38, 38, 0.05);
-  color: #ff2626;
-}
-
-/* ========================================
-   회원 상태 태그 스타일 (MemberStatusTag용)
-   ======================================== */
-
-/**
- * 참고: 공통 태그 스타일은 @/styles/common/tags.module.css를 참조하세요.
- * 
- * 사용 컴포넌트:
- * - MemberStatusTag (회원 상태 태그)
- */
-
-/* 상태 태그 기본 스타일 (MemberStatusTag용) */
-.status_tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: -0.28px;
-  min-width: 50px;
-  height: 22px;
-}
-
-/* 정상 상태 태그 (MemberStatusTag용) */
-.status_tag_normal {
-  background-color: rgba(43, 127, 255, 0.1);
-  color: #2b7fff;
-}
-
-/* 일시 정지 상태 태그 (MemberStatusTag용) */
-.status_tag_suspended {
-  background-color: rgba(255, 38, 38, 0.05);
-  color: #ff2626;
-}
-
-/* 기존 호환성을 위한 별칭 (더 이상 사용하지 않음) */
-.account_status_tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: -0.28px;
-  min-width: 50px;
-  height: 22px;
-}
-
-.account_status_normal {
-  background-color: rgba(43, 127, 255, 0.1);
-  color: #2b7fff;
-}
-
-.account_status_suspended {
-  background-color: rgba(255, 38, 38, 0.05);
-  color: #ff2626;
 }

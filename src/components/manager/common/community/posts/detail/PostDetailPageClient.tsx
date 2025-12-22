@@ -17,7 +17,7 @@
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import styles from "@/styles/manager_ga/community/posts/post_detail_page.module.css";
+import styles from "@/styles/manager/common/community/posts/post_detail_page.module.css";
 import {
   get_post_detail,
   type PostDetail,
@@ -43,7 +43,13 @@ const sideMenuItems = [
   { label: "카테고리 관리", isActive: false },
 ];
 
-export default function PostDetailPageClient() {
+interface PostDetailPageClientProps {
+  manager_type: "ga" | "sa";
+}
+
+export default function PostDetailPageClient({
+  manager_type,
+}: PostDetailPageClientProps) {
   // Next.js 라우터: 페이지 이동에 사용
   // useRouter는 Next.js의 클라이언트 사이드 라우팅을 위한 Hook입니다.
   const router = useRouter();
@@ -52,6 +58,12 @@ export default function PostDetailPageClient() {
   // 클라이언트 컴포넌트에서는 useParams를 사용하여 [id]와 같은 동적 라우트 값을 가져옵니다.
   const params = useParams();
   const post_id = params?.id as string;
+
+  // manager_type에 따른 base path 설정
+  const base_path =
+    manager_type === "ga"
+      ? "/manager_ga/community/posts"
+      : "/manager_sa/community/posts";
 
   // 게시글 상세 정보 상태 관리
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다.
@@ -73,7 +85,7 @@ export default function PostDetailPageClient() {
   // 화살표 함수로 이벤트 핸들러를 정의합니다.
   const handle_back_click = () => {
     // router.push: Next.js에서 페이지를 이동하는 메서드입니다.
-    router.push("/manager_ga/community/posts");
+    router.push(base_path);
   };
 
   // 게시글이 없을 경우 로딩 또는 에러 메시지 표시

@@ -9,7 +9,7 @@ import { useState, useCallback } from "react";
 import PenaltyHistoryModal, {
   type PenaltyHistoryItem,
 } from "./PenaltyHistoryModal";
-import styles from "@/styles/manager_ga/member/reviewers/modal/penalty_history_modal.module.css";
+import styles from "@/styles/manager/common/member/reviewers/modal/penalty_history_modal.module.css";
 
 // Storybook에서 타입 요구사항을 만족하도록 CSS 모듈을 명시적으로 캐스팅
 const modal_styles = styles as Record<string, string> & {

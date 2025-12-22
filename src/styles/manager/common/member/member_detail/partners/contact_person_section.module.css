@@ -1,0 +1,21 @@
+/* ========================================
+   👤 담당자 정보 섹션 컴포넌트 스타일
+   ======================================== */
+
+/**
+ * 담당자 정보 섹션 컴포넌트 스타일
+ * 
+ * 사용 컴포넌트:
+ * - ContactPersonSection.tsx (담당자 정보 섹션 컴포넌트)
+ * 
+ * 사용 페이지:
+ * - /manager_ga/member/partners/[id] (GA 관리자 파트너 디테일)
+ * - /manager_sa/member/partners/[id] (SA 관리자 파트너 디테일)
+ */
+
+/* 담당자 정보 그리드 컨테이너 */
+.contact_person_grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}

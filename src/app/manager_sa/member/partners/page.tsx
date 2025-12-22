@@ -24,26 +24,26 @@
  * @returns 파트너 목록 페이지 JSX
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import styles from '@/styles/manager_ga/member/partners/page.module.css';
-import ManagerPageTitle from '@/components/manager/common/fragments/ManagerPageTitle';
-import PartnerStatsSection from '@/components/manager/common/member/partners/PartnerStatsSection';
-import PartnerFilterSection from '@/components/manager/common/member/partners/PartnerFilterSection';
-import PartnerTable from '@/components/manager/common/member/partners/PartnerTable';
-import type { Channel } from '@/data/manager/common/filterOptions';
+import { useState } from "react";
+import styles from "@/styles/manager/common/member/partners/page.module.css";
+import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
+import PartnerStatsSection from "@/components/manager/common/member/partners/PartnerStatsSection";
+import PartnerFilterSection from "@/components/manager/common/member/partners/PartnerFilterSection";
+import PartnerTable from "@/components/manager/common/member/partners/PartnerTable";
+import type { Channel } from "@/data/manager/common/filterOptions";
 import type {
   PartnerDivision,
   PartnerStatus,
-} from '@/data/manager_ga/common/filterOptions';
-import type { PartnerType } from '@/components/manager/common/member/partners/filter/TypeFilterModal';
+} from "@/data/manager_ga/common/filterOptions";
+import type { PartnerType } from "@/components/manager/common/member/partners/filter/TypeFilterModal";
 
 export default function PartnersPage() {
   // 검색어 상태 관리
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
   // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
-  const [search_query, set_search_query] = useState<string>('');
+  const [search_query, set_search_query] = useState<string>("");
 
   // 필터 상태 관리
   // 각 필터의 선택된 값들을 배열로 관리합니다
@@ -52,9 +52,9 @@ export default function PartnersPage() {
     PartnerDivision[]
   >([]);
   const [selected_types, set_selected_types] = useState<PartnerType[]>([]);
-  const [selected_statuses, set_selected_statuses] = useState<
-    PartnerStatus[]
-  >([]);
+  const [selected_statuses, set_selected_statuses] = useState<PartnerStatus[]>(
+    []
+  );
 
   return (
     <div className={styles.container}>

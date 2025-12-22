@@ -26,7 +26,7 @@
 
 import InfoCard from "./InfoCard";
 import Section from "./Section";
-import styles from "@/styles/manager_ga/member/member_detail/section.module.css";
+import styles from "@/styles/manager/common/member/member_detail/section.module.css";
 
 // 활동 정보 아이템 타입 정의
 export interface ActivityInfoItem {

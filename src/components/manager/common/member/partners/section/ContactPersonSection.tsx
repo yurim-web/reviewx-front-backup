@@ -19,7 +19,7 @@
 
 import InfoCard from "@/components/manager/common/member/member_detail/InfoCard";
 import Section from "@/components/manager/common/member/member_detail/Section";
-import styles from "@/styles/manager_ga/member/member_detail/partners/contact_person_section.module.css";
+import styles from "@/styles/manager/common/member/member_detail/partners/contact_person_section.module.css";
 
 interface ContactPersonSectionProps {
   // 문의 담당자 휴대폰 번호
@@ -42,4 +42,3 @@ export default function ContactPersonSection({
     </Section>
   );
 }
-

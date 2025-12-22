@@ -10,7 +10,7 @@ import {
 } from "react";
 import dynamic from "next/dynamic";
 import "@toast-ui/editor/dist/toastui-editor.css";
-import styles from "@/styles/manager_ga/community/posts/post_edit_page.module.css";
+import styles from "@/styles/manager/common/community/posts/post_edit_page.module.css";
 
 type ToastEditorProps = {
   initialValue?: string;

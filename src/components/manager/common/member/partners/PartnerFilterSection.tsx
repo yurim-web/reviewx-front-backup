@@ -14,7 +14,7 @@
  */
 
 import MemberFilterSectionCommon from "@/components/manager/common/member/filter/MemberFilterSection";
-import styles from "@/styles/manager_ga/member/partners/partner_filter_section.module.css";
+import styles from "@/styles/manager/common/member/partners/partner_filter_section.module.css";
 import ChannelFilterModal from "@/components/manager/common/member/partners/filter/ChannelFilterModal";
 import DivisionFilterModal from "@/components/manager/common/member/partners/filter/DivisionFilterModal";
 import TypeFilterModal, {
@@ -102,4 +102,3 @@ export default function PartnerFilterSection({
     />
   );
 }
-

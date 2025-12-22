@@ -26,7 +26,7 @@ import { useState } from "react";
 import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
-import styles from "@/styles/manager_ga/community/categories/category_table.module.css";
+import styles from "@/styles/manager/common/community/categories/category_table.module.css";
 import {
   categories_data,
   type CategoryItem,

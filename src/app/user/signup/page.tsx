@@ -23,13 +23,13 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/fragments/Header";
-import PhoneVerification from "@/components/common/signup/PhoneVerification";
+import PhoneVerification from "@/components/common/phone_verification/PhoneVerification";
 import TermsAgreement from "@/components/user/signup/TermsAgreement";
 import ExistingAccountModal, {
   type SocialLoginType,
 } from "@/components/user/signup/ExistingAccountModal";
 import { useTermsAgreement } from "@/hooks/user/signup/useTermsAgreement";
-import { usePhoneVerification } from "@/hooks/common/signup/usePhoneVerification";
+import { usePhoneVerification } from "@/hooks/usePhoneVerification/usePhoneVerification";
 import {
   validateSignupForm,
   type SignupFormErrors,
@@ -87,10 +87,14 @@ export default function UserSignupPage() {
     isVerificationRequested,
     isPhoneVerified,
     timer,
+    phoneError,
+    verificationCodeError,
     setPhone,
     setVerificationCode,
+    handlePhoneChange: handlePhoneChangeHook,
     handleVerificationRequest,
-    handleVerify,
+    handleVerificationCodeChange,
+    handleVerifyCode,
     resetVerification,
   } = usePhoneVerification();
 
@@ -105,7 +109,8 @@ export default function UserSignupPage() {
    * 기능: 휴대폰 번호 변경 시 인증 상태 초기화
    */
   const handlePhoneChange = (newPhone: string) => {
-    setPhone(newPhone);
+    // 훅의 handlePhoneChange를 사용하여 phoneError 자동 초기화
+    handlePhoneChangeHook(newPhone);
 
     // 휴대폰 번호 변경 시 인증 상태 초기화
     if (newPhone === "" || isPhoneVerified || isVerificationRequested) {
@@ -124,10 +129,11 @@ export default function UserSignupPage() {
    * ========================================
    * 기능: 휴대폰 번호 인증번호 요청
    */
-  const handleVerificationRequestClick = () => {
-    const error = handleVerificationRequest();
-    if (error) {
-      setErrors((prev) => ({ ...prev, phone: error }));
+  const handleVerificationRequestClick = async () => {
+    await handleVerificationRequest();
+    // 에러는 훅 내부에서 phoneError로 관리됨
+    if (phoneError) {
+      setErrors((prev) => ({ ...prev, phone: phoneError }));
     } else {
       setErrors((prev) => ({ ...prev, phone: undefined }));
     }
@@ -140,11 +146,12 @@ export default function UserSignupPage() {
    * 기능: 인증번호 확인 및 인증 완료 처리
    */
   const handleVerifyClick = () => {
-    const error = handleVerify();
-    if (error) {
+    handleVerifyCode();
+    // 에러는 훅 내부에서 verificationCodeError로 관리됨
+    if (verificationCodeError) {
       setErrors((prev) => ({
         ...prev,
-        verificationCode: error,
+        verificationCode: verificationCodeError,
       }));
     } else {
       setErrors((prev) => ({ ...prev, verificationCode: undefined }));
@@ -315,14 +322,17 @@ export default function UserSignupPage() {
             isVerificationRequested={isVerificationRequested}
             isPhoneVerified={isPhoneVerified}
             timer={timer}
-            error={errors.phone}
-            verificationCodeError={errors.verificationCode}
+            error={phoneError || errors.phone}
+            verificationCodeError={
+              verificationCodeError || errors.verificationCode
+            }
             onPhoneChange={handlePhoneChange}
             onVerificationRequest={handleVerificationRequestClick}
             onResend={handleVerificationRequestClick}
             onVerify={handleVerifyClick}
             onVerificationCodeChange={(code) => {
-              setVerificationCode(code);
+              handleVerificationCodeChange(code);
+              // 로컬 에러 상태도 초기화
               setErrors((prev) => ({
                 ...prev,
                 verificationCode: undefined,

@@ -17,9 +17,9 @@
  *
  */
 
-'use client';
+"use client";
 
-import styles from '@/styles/manager_ga/member/member_detail/section.module.css';
+import styles from "@/styles/manager/common/member/member_detail/section.module.css";
 
 interface SectionProps {
   // 섹션 제목
@@ -36,4 +36,3 @@ export default function Section({ title, children }: SectionProps) {
     </div>
   );
 }
-

@@ -29,7 +29,7 @@ import { useState } from "react";
 import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
-import styles from "@/styles/manager_ga/community/posts/post_table.module.css";
+import styles from "@/styles/manager/common/community/posts/post_table.module.css";
 import {
   posts_data,
   type PostItem,
@@ -52,6 +52,8 @@ interface PostTableProps {
   posts: PostItem[];
   selected_post_ids: string[];
   on_selected_post_ids_change: (ids: string[]) => void;
+  // 관리자 타입 ('ga' | 'sa')
+  manager_type: "ga" | "sa";
 }
 
 // PostItem이 TableRowData를 확장하도록 확장
@@ -116,8 +118,15 @@ export default function PostTable({
   posts = [],
   selected_post_ids = [],
   on_selected_post_ids_change,
+  manager_type,
 }: PostTableProps) {
   const router = useRouter();
+
+  // manager_type에 따른 base path 설정
+  const base_path =
+    manager_type === "ga"
+      ? "/manager_ga/community/posts"
+      : "/manager_sa/community/posts";
   const [hovered_row_id, set_hovered_row_id] = useState<string | null>(null);
 
   const filtered_posts = posts.filter((item) => {
@@ -244,8 +253,8 @@ export default function PostTable({
                   onClick={(e) => {
                     // 이벤트 전파를 막아서 행 클릭 이벤트가 발생하지 않도록 함
                     e.stopPropagation();
-                    // 게시글 상세 페이지로 이동
-                    router.push(`/manager_ga/community/posts/${row.id}`);
+                    // 게시글 수정 페이지로 이동
+                    router.push(`${base_path}/${row.id}/edit`);
                   }}
                   aria-label={`${row.title} 게시글 상세 보기`}
                 >
@@ -282,7 +291,7 @@ export default function PostTable({
                       // 이벤트 전파를 막아서 행 클릭 이벤트가 발생하지 않도록 함
                       e.stopPropagation();
                       // 게시글 수정 페이지로 이동
-                      router.push(`/manager_ga/community/posts/${row.id}/edit`);
+                      router.push(`${base_path}/${row.id}/edit`);
                     }}
                     aria-label="수정"
                   >
@@ -317,12 +326,12 @@ export default function PostTable({
               return;
             }
 
-            router.push(`/manager_ga/community/posts/${row.id}`);
+            router.push(`${base_path}/${row.id}`);
           }}
           onKeyDown={(event) => {
             if (event.key === "Enter" || event.key === " ") {
               event.preventDefault();
-              router.push(`/manager_ga/community/posts/${row.id}`);
+              router.push(`${base_path}/${row.id}`);
             }
           }}
         >

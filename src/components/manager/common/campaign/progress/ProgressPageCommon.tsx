@@ -59,20 +59,14 @@ import type { CampaignType } from "./filter/TypeFilterModal";
 import type { Channel } from "./filter/ChannelFilterModal";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 
-// 스타일 import
-import pageStylesGA from "@/styles/manager_ga/campaign/progress/page.module.css";
-import pageStylesSA from "@/styles/manager_sa/campaign/progress/page.module.css";
-import statCardStylesGA from "@/styles/manager_ga/campaign/progress/stat_card.module.css";
-import statCardStylesSA from "@/styles/manager_sa/campaign/progress/stat_card.module.css";
-import filterSectionStylesGA from "@/styles/manager_ga/campaign/progress/filter_section.module.css";
-import filterSectionStylesSA from "@/styles/manager_sa/campaign/progress/filter_section.module.css";
-import tableStylesGA from "@/styles/manager_ga/campaign/progress/progress_table.module.css";
-import tableStylesSA from "@/styles/manager_sa/campaign/progress_table.module.css";
+// 스타일 import - 공통 스타일 사용
+import pageStyles from "@/styles/manager/common/campaign/progress/page.module.css";
+import statCardStyles from "@/styles/manager/common/campaign/progress/stat_card.module.css";
+import filterSectionStyles from "@/styles/manager/common/campaign/progress/filter_section.module.css";
+import tableStyles from "@/styles/manager/common/campaign/progress/progress_table.module.css";
 import commonTagStyles from "@/styles/common/tags.module.css";
-import channelIconStylesGA from "@/styles/manager_ga/campaign/progress/channel_icon.module.css";
-import channelIconStylesSA from "@/styles/manager_sa/campaign/progress/channel_icon.module.css";
-import campaignReportModalStylesGA from "@/styles/manager_ga/campaign/common/modal/campaign_report_modal.module.css";
-import campaignReportModalStylesSA from "@/styles/manager_sa/campaign/progress/campaign_report_modal.module.css";
+import channelIconStyles from "@/styles/manager/common/campaign/progress/channel_icon.module.css";
+import campaignReportModalStyles from "@/styles/manager/common/campaign/progress/campaign_report_modal.module.css";
 
 // 관리자 타입 정의
 export type ManagerType = "ga" | "sa";
@@ -119,24 +113,12 @@ export default function ProgressPageCommon({
     DateRange | undefined
   >(undefined);
 
-  // manager_type에 따라 데이터와 스타일을 선택합니다
-  // 삼항 연산자를 사용하여 조건부로 값을 선택합니다
-  // 형식: 조건 ? 참일 때 값 : 거짓일 때 값
-
-  // 페이지 스타일 선택
-  const pageStyles = manager_type === "ga" ? pageStylesGA : pageStylesSA;
+  // manager_type에 따라 데이터를 선택합니다
+  // 스타일은 공통 스타일을 사용하므로 선택하지 않습니다
 
   // 통계 카드 값 계산 함수 선택
   const calculateStats =
     manager_type === "ga" ? calculateGAStats : calculateSAStats;
-
-  // 통계 카드 스타일 선택
-  const statCardStyles =
-    manager_type === "ga" ? statCardStylesGA : statCardStylesSA;
-
-  // 필터 섹션 스타일 선택
-  const filterSectionStyles =
-    manager_type === "ga" ? filterSectionStylesGA : filterSectionStylesSA;
 
   // 캠페인 리스트 선택
   const allCampaignList =
@@ -224,18 +206,7 @@ export default function ProgressPageCommon({
     search_query,
   ]);
 
-  // 테이블 스타일 선택
-  const tableStyles = manager_type === "ga" ? tableStylesGA : tableStylesSA;
-
-  // 채널 아이콘 스타일 선택
-  const channelIconStyles =
-    manager_type === "ga" ? channelIconStylesGA : channelIconStylesSA;
-
-  // 신고 모달 스타일 선택
-  const campaignReportModalStyles =
-    manager_type === "ga"
-      ? campaignReportModalStylesGA
-      : campaignReportModalStylesSA;
+  // 스타일은 모두 공통 스타일을 사용합니다
 
   // 신고 코드 옵션 (GA와 SA 모두 동일)
   const report_code_options: ReportCode[] = [

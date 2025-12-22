@@ -19,11 +19,11 @@
  *
  */
 
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import Loading from '@/app/loading';
-import styles from '@/styles/manager_ga/member/member_detail/member_detail_layout.module.css';
+import { useRouter } from "next/navigation";
+import Loading from "@/app/loading";
+import styles from "@/styles/manager/common/member/member_detail/member_detail_layout.module.css";
 
 interface MemberDetailLayoutProps {
   // 로딩 상태
@@ -69,4 +69,3 @@ export default function MemberDetailLayout({
 
   return <div className={styles.container}>{children}</div>;
 }
-

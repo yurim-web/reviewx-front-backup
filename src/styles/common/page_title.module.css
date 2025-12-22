@@ -17,26 +17,17 @@
 
 /* 페이지 제목 스타일 */
 .page_title {
-  /* 폰트 스타일 */
   font-size: 20px;
   font-weight: 700;
   line-height: 20px;
   letter-spacing: -0.4px;
   color: #444;
-  
-  /* 레이아웃 */
   padding: 24px 40px;
   margin: 0;
-  
-  /* sticky 포지션: 스크롤 시 상단에 고정 */
   position: sticky;
-  top: 80px; /* SubHeader 높이만큼 아래로 */
-  
-  /* 배경 및 레이어 */
+  top: 80px;
   background: white;
   z-index: 10;
-  
-  /* 하단 테두리: 섹션 구분 */
   border-bottom: 1px solid #e0e0e0;
 }
 
@@ -49,4 +40,3 @@
     padding: 20px 24px;
   }
 }
-

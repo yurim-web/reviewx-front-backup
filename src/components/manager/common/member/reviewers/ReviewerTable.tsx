@@ -13,8 +13,8 @@
  * - /manager_sa/member/reviewers (SA 관리자 리뷰어 목록 페이지)
  */
 
-import ReviewerTableCommon from '@/components/manager/common/member/table/ReviewerTable';
-import styles from '@/styles/manager_ga/member/reviewers/reviewer_table.module.css';
+import ReviewerTableCommon from "@/components/manager/common/member/table/ReviewerTable";
+import styles from "@/styles/manager/common/member/reviewers/reviewer_table.module.css";
 
 import type { Channel } from "@/data/manager/common/filterOptions";
 import type {
@@ -90,4 +90,3 @@ export default function ReviewerTable({
     />
   );
 }
-

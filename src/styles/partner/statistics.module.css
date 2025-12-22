@@ -2,11 +2,11 @@
 
 /* 통계 섹션 - 캠페인 수량 표시 탭들 */
 .statistics {
-  padding: 0px 40px; 
-  position: sticky; 
+  padding: 0px 40px;
+  position: sticky;
   top: 148.5px; /* TabNavigation(65px) + 서브헤더(80px) = 145px 아래에 고정 */
   background: white;
-  z-index: 85; 
+  z-index: 85;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -28,8 +28,8 @@
   display: flex;
   gap: 24px;
   align-items: center;
-  width: 100%; 
-  background: white; 
+  width: 100%;
+  background: white;
 }
 
 /* 좌측 통계 탭들 (전체, 진행중, 완료, 반려 등) */
@@ -41,13 +41,12 @@
 
 /* 개별 통계 탭 버튼 */
 .stat_tab {
-color: #848484;
- font-size: 18px;
- font-family: Pretendard;
- font-weight: 500;
- line-height: 18px;
- word-wrap: break-word;
- 
+  color: #848484;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 18px;
+  word-wrap: break-word;
+
   background: none;
   border: none;
   cursor: pointer;

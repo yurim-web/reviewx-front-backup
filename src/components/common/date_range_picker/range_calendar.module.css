@@ -1,5 +1,5 @@
 /* ========================================
-   📅 날짜 범위 선택 캘린더 스타일 (Figma 디자인 기반)
+   📅 날짜 범위 선택 캘린더 스타일 
    ======================================== */
 
 /* 캘린더 래퍼 */
@@ -69,7 +69,6 @@
 
   margin: 0 !important;
   padding: 0 !important;
-  font-family: "Pretendard", sans-serif !important;
 }
 
 /* react-day-picker 모든 요소 기본 스타일 리셋 */
@@ -283,9 +282,7 @@
   text-align: center !important;
   vertical-align: middle !important;
   font-feature-settings: "liga" off, "clig" off !important;
-  font-family: "Pretendard", sans-serif !important;
   font-size: 16px !important;
-  font-style: normal !important;
   font-weight: 500 !important;
   line-height: 150% !important; /* 24px */
   letter-spacing: -0.32px !important;
@@ -334,9 +331,7 @@
   color: #444 !important;
   text-align: center !important;
   font-feature-settings: "liga" off, "clig" off !important;
-  font-family: "Pretendard", sans-serif !important;
   font-size: 16px !important;
-  font-style: normal !important;
   font-weight: 600 !important;
   line-height: 150% !important; /* 24px */
   border: 2px solid transparent !important;
@@ -408,9 +403,7 @@
   color: #848484 !important;
   text-align: center !important;
   font-feature-settings: "liga" off, "clig" off !important;
-  font-family: "Pretendard", sans-serif !important;
   font-size: 16px !important;
-  font-style: normal !important;
   font-weight: 500 !important;
   line-height: 150% !important; /* 24px */
   letter-spacing: -0.32px !important;
@@ -570,7 +563,6 @@
 
 /* 날짜 입력 라벨 */
 .date_input_label {
-  font-family: "Pretendard", sans-serif;
   font-size: 14px;
   font-weight: 500;
   color: #444444;
@@ -581,7 +573,6 @@
 .date_input {
   width: 100%;
   padding: 10px 12px;
-  font-family: "Pretendard", sans-serif;
   font-size: 14px;
   font-weight: 400;
   color: #444444;
@@ -599,7 +590,6 @@
 
 /* 날짜 입력 필드 구분자 */
 .date_separator {
-  font-family: "Pretendard", sans-serif;
   font-size: 16px;
   font-weight: 500;
   color: #848484;
@@ -621,7 +611,6 @@
 
 /* 선택된 날짜 범위 라벨 */
 .selected_range_label {
-  font-family: "Pretendard", sans-serif;
   font-size: 14px;
   font-weight: 500;
   color: #848484;
@@ -629,7 +618,6 @@
 
 /* 선택된 날짜 범위 값 */
 .selected_range_value {
-  font-family: "Pretendard", sans-serif;
   font-size: 14px;
   font-weight: 600;
   color: #444444;

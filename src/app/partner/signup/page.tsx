@@ -27,15 +27,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/fragments/Header";
-import PhoneVerification from "@/components/common/signup/PhoneVerification";
+import PhoneVerification from "@/components/common/phone_verification/PhoneVerification";
 import PartnerTermsAgreement from "@/components/partner/signup/PartnerTermsAgreement";
 import BusinessRegistrationUpload from "@/components/partner/signup/BusinessRegistrationUpload";
 import AddressInput from "@/components/partner/signup/AddressInput";
 import FileUploadAlert from "@/components/partner/signup/FileUploadAlert";
-import PasswordInput from "@/components/common/signup/PasswordInput";
-import PasswordConfirmInput from "@/components/common/signup/PasswordConfirmInput";
+import PasswordField from "@/components/common/signup/PasswordField";
 import { usePartnerTermsAgreement } from "@/hooks/partner/signup/usePartnerTermsAgreement";
-import { usePhoneVerification } from "@/hooks/common/signup/usePhoneVerification";
+import { usePhoneVerification } from "@/hooks/usePhoneVerification/usePhoneVerification";
 import {
   validatePartnerSignupForm,
   type PartnerSignupFormErrors,
@@ -105,10 +104,14 @@ export default function PartnerSignupPage() {
     isVerificationRequested,
     isPhoneVerified,
     timer,
+    phoneError,
+    verificationCodeError,
     setPhone,
     setVerificationCode,
+    handlePhoneChange: handlePhoneChangeHook,
     handleVerificationRequest,
-    handleVerify,
+    handleVerificationCodeChange,
+    handleVerifyCode,
     resetVerification,
   } = usePhoneVerification();
 
@@ -122,7 +125,8 @@ export default function PartnerSignupPage() {
    * ========================================
    */
   const handlePhoneChange = (newPhone: string) => {
-    setPhone(newPhone);
+    // 훅의 handlePhoneChange를 사용하여 phoneError 자동 초기화
+    handlePhoneChangeHook(newPhone);
 
     if (newPhone === "" || isPhoneVerified || isVerificationRequested) {
       resetVerification();
@@ -139,10 +143,11 @@ export default function PartnerSignupPage() {
    * 인증번호 받기 핸들러
    * ========================================
    */
-  const handleVerificationRequestClick = () => {
-    const error = handleVerificationRequest();
-    if (error) {
-      setErrors((prev) => ({ ...prev, phone: error }));
+  const handleVerificationRequestClick = async () => {
+    await handleVerificationRequest();
+    // 에러는 훅 내부에서 phoneError로 관리됨
+    if (phoneError) {
+      setErrors((prev) => ({ ...prev, phone: phoneError }));
     } else {
       setErrors((prev) => ({ ...prev, phone: undefined }));
     }
@@ -154,11 +159,12 @@ export default function PartnerSignupPage() {
    * ========================================
    */
   const handleVerifyClick = () => {
-    const error = handleVerify();
-    if (error) {
+    handleVerifyCode();
+    // 에러는 훅 내부에서 verificationCodeError로 관리됨
+    if (verificationCodeError) {
       setErrors((prev) => ({
         ...prev,
-        verificationCode: error,
+        verificationCode: verificationCodeError,
       }));
     } else {
       setErrors((prev) => ({ ...prev, verificationCode: undefined }));
@@ -327,33 +333,35 @@ export default function PartnerSignupPage() {
           </div>
 
           {/* 비밀번호 입력 */}
-          <PasswordInput
+          <PasswordField
+            type="password"
             value={password}
             error={errors.password}
             onValueChange={(value) => {
               setPassword(value);
+              // 비밀번호가 변경되면 비밀번호 확인도 재검증
+              if (passwordConfirm) {
+                if (passwordConfirm !== value) {
+                  setErrors((prev) => ({
+                    ...prev,
+                    passwordConfirm: "비밀번호가 일치하지 않습니다.",
+                  }));
+                } else {
+                  setErrors((prev) => ({
+                    ...prev,
+                    passwordConfirm: undefined,
+                  }));
+                }
+              }
             }}
             onErrorChange={(error) => {
               setErrors((prev) => ({ ...prev, password: error }));
             }}
-            onPasswordConfirmValidate={(newPassword) => {
-              if (passwordConfirm && passwordConfirm !== newPassword) {
-                setErrors((prev) => ({
-                  ...prev,
-                  passwordConfirm: "비밀번호가 일치하지 않습니다.",
-                }));
-              } else if (passwordConfirm && passwordConfirm === newPassword) {
-                setErrors((prev) => ({
-                  ...prev,
-                  passwordConfirm: undefined,
-                }));
-              }
-            }}
-            passwordConfirm={passwordConfirm}
           />
 
           {/* 비밀번호 확인 입력 */}
-          <PasswordConfirmInput
+          <PasswordField
+            type="confirm"
             value={passwordConfirm}
             password={password}
             error={errors.passwordConfirm}
@@ -397,14 +405,17 @@ export default function PartnerSignupPage() {
             isVerificationRequested={isVerificationRequested}
             isPhoneVerified={isPhoneVerified}
             timer={timer}
-            error={errors.phone}
-            verificationCodeError={errors.verificationCode}
+            error={phoneError || errors.phone}
+            verificationCodeError={
+              verificationCodeError || errors.verificationCode
+            }
             onPhoneChange={handlePhoneChange}
             onVerificationRequest={handleVerificationRequestClick}
             onResend={handleVerificationRequestClick}
             onVerify={handleVerifyClick}
             onVerificationCodeChange={(code) => {
-              setVerificationCode(code);
+              handleVerificationCodeChange(code);
+              // 로컬 에러 상태도 초기화
               setErrors((prev) => ({
                 ...prev,
                 verificationCode: undefined,

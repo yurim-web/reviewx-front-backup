@@ -27,7 +27,6 @@
 
 /* 페이지 제목 - "새 캠페인 등록" */
 .page_title {
-  font-family: 'Pretendard', sans-serif;
   font-weight: 600;
   font-size: 20px;
   line-height: 1.2;
@@ -56,17 +55,17 @@
 }
 
 /* 긴급 체크박스 - 체크된 상태 - 더 구체적인 선택자 */
-.header_urgent_checkbox .checkbox_label input[type='checkbox']:checked,
-div.header_urgent_checkbox label.checkbox_label input[type='checkbox']:checked {
+.header_urgent_checkbox .checkbox_label input[type="checkbox"]:checked,
+div.header_urgent_checkbox label.checkbox_label input[type="checkbox"]:checked {
   border: 2px solid #ff2626 !important;
   background: white !important;
 }
 
-.header_urgent_checkbox .checkbox_label input[type='checkbox']:checked::after,
+.header_urgent_checkbox .checkbox_label input[type="checkbox"]:checked::after,
 div.header_urgent_checkbox
   label.checkbox_label
-  input[type='checkbox']:checked::after {
-  content: '✓' !important;
+  input[type="checkbox"]:checked::after {
+  content: "✓" !important;
   position: absolute !important;
   top: 50% !important;
   left: 50% !important;
@@ -104,7 +103,7 @@ div.header_urgent_checkbox
 }
 
 .urgent_checkbox:checked::after {
-  content: '✓';
+  content: "✓";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -131,7 +130,6 @@ div.header_urgent_checkbox
   border-radius: 8px;
   background: #fff;
   color: #848484;
-  font-family: 'Pretendard', sans-serif;
   font-weight: 500;
   font-size: 16px;
   line-height: 1.2;

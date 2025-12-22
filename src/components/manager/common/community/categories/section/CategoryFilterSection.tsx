@@ -23,7 +23,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import styles from "@/styles/manager_ga/community/categories/category_filter_section.module.css";
+import styles from "@/styles/manager/common/community/categories/category_filter_section.module.css";
 import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";

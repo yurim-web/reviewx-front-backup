@@ -29,9 +29,7 @@
   gap: 8px;
   cursor: pointer;
   color: #444;
-  font-family: Pretendard;
   font-size: 16px;
-  font-style: normal;
   font-weight: 500;
   line-height: 16px;
   letter-spacing: -0.32px;
@@ -78,7 +76,6 @@
 }
 
 .option_label {
-  font-family: "Pretendard", sans-serif;
   font-weight: 500;
   font-size: 16px;
   color: #444444;
@@ -100,7 +97,6 @@
   border-radius: 4px;
   background: #fff;
   color: #444444;
-  font-family: "Pretendard", sans-serif;
   font-weight: 500;
   font-size: 16px;
   text-align: center;
@@ -113,7 +109,6 @@
 }
 
 .input_unit {
-  font-family: "Pretendard", sans-serif;
   font-weight: 500;
   font-size: 16px;
   color: #444444;
@@ -209,7 +204,6 @@
   color: #444;
   text-align: center;
   font-size: 16px;
-  font-style: normal;
   font-weight: 500;
   line-height: 16px;
   letter-spacing: -0.32px;
@@ -230,7 +224,6 @@
 }
 
 .unit_text {
-  font-family: "Pretendard", sans-serif;
   font-weight: 500;
   font-size: 16px;
   color: #444444;
@@ -363,7 +356,6 @@
   border: 1px solid #d9d9d9;
   border-radius: 8px;
   padding: 20px;
-  font-family: "Pretendard", sans-serif;
   font-weight: 500;
   font-size: 13px;
   line-height: 1.77;
@@ -402,7 +394,6 @@
 /* 환불방법 안내 */
 .refund_guide {
   margin-top: 16px;
-  font-family: "Pretendard", sans-serif;
   font-weight: 500;
   font-size: 13px;
   line-height: 1.77;
@@ -422,7 +413,6 @@
 /* 개발자 노트 */
 .developer_note {
   margin-top: 16px;
-  font-family: "Pretendard", sans-serif;
   font-weight: 500;
   font-size: 13px;
   line-height: 1.77;

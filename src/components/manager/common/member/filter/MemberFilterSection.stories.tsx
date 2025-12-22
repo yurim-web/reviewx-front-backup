@@ -13,9 +13,12 @@ import DivisionFilterModal from "@/components/manager/common/member/partners/fil
 import TypeFilterModal from "@/components/manager/common/member/partners/filter/TypeFilterModal";
 import StatusFilterModal from "@/components/manager/common/member/partners/filter/StatusFilterModal";
 import type { Channel } from "@/data/manager_ga/member/partners";
-import type { PartnerDivision, PartnerStatus } from "@/data/manager_ga/member/partners";
+import type {
+  PartnerDivision,
+  PartnerStatus,
+} from "@/data/manager_ga/member/partners";
 import type { PartnerType } from "@/components/manager/common/member/partners/filter/TypeFilterModal";
-import styles from "@/styles/manager_ga/member/partners/partner_filter_section.module.css";
+import styles from "@/styles/manager/common/member/partners/partner_filter_section.module.css";
 
 // 채널 이름 매핑 객체
 const channel_name_map: Record<Channel, string> = {
@@ -56,12 +59,7 @@ type Story = StoryObj<typeof MemberFilterSection>;
 // args를 받아서 컴포넌트에 전달해야 합니다
 const renderMemberFilterSection = (args: any) => {
   return (
-    <MemberFilterSection<
-      Channel,
-      PartnerDivision,
-      PartnerType,
-      PartnerStatus
-    >
+    <MemberFilterSection<Channel, PartnerDivision, PartnerType, PartnerStatus>
       {...args}
     />
   );
@@ -76,12 +74,7 @@ export const Default: Story = {
   render: (args) => {
     const [searchQuery, setSearchQuery] = useState(args.search_query || "");
     return (
-      <MemberFilterSection<
-        Channel,
-        PartnerDivision,
-        PartnerType,
-        PartnerStatus
-      >
+      <MemberFilterSection<Channel, PartnerDivision, PartnerType, PartnerStatus>
         search_query={searchQuery}
         on_search_change={(query) => {
           setSearchQuery(query);
@@ -113,12 +106,7 @@ export const WithSearchQuery: Story = {
   render: (args) => {
     const [searchQuery, setSearchQuery] = useState("프로모즈");
     return (
-      <MemberFilterSection<
-        Channel,
-        PartnerDivision,
-        PartnerType,
-        PartnerStatus
-      >
+      <MemberFilterSection<Channel, PartnerDivision, PartnerType, PartnerStatus>
         search_query={searchQuery}
         on_search_change={(query) => {
           setSearchQuery(query);
@@ -168,5 +156,3 @@ export const WithSearchQuery: Story = {
  *    - 공통 BaseFilterSection 컴포넌트를 사용합니다
  *    - 검색, 필터 모달 버튼, 활성 필터 태그 등을 제공합니다
  */
-
-

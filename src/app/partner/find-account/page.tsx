@@ -17,7 +17,7 @@
  */
 
 import Header from "@/components/fragments/Header";
-import FindAccountPage from "@/components/common/FindAccountPage";
+import FindAccountPage from "@/components/common/find_account/page/FindAccountPage";
 
 /**
  * 파트너 아이디/비밀번호 찾기 페이지 컴포넌트

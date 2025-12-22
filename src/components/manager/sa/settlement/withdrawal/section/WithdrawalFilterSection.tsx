@@ -33,7 +33,7 @@ import NormalStatusFilterModal from "@/components/manager/sa/settlement/withdraw
 import type { WithdrawalPaymentStatus } from "@/data/manager_sa/common/filterOptions";
 import { withdrawal_payment_status_label_map } from "@/data/manager_sa/common/filterOptions";
 import type { NormalStatus } from "@/components/manager/sa/settlement/withdrawal/filter/NormalStatusFilterModal";
-import baseFilterStyles from "@/styles/manager_ga/campaign/progress/filter_section.module.css";
+import baseFilterStyles from "@/styles/manager/common/campaign/progress/filter_section.module.css";
 import styles from "@/styles/manager_sa/settlement/withdrawal/filter_section.module.css";
 
 interface WithdrawalFilterSectionProps {

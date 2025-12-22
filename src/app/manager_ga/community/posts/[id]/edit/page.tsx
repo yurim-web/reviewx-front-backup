@@ -25,6 +25,7 @@ export default function EditPostPage({ params }: PageProps) {
     <PostFormPageClient
       mode="edit"
       post_id={params.id}
+      manager_type="ga"
       initial_data={{
         category_type: post_detail.division || "",
         category: post_detail.category || "",

@@ -344,45 +344,6 @@
   letter-spacing: -0.28px;
 }
 
-/* 상태 태그 기본 스타일 */
-.status_tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: -0.28px;
-  min-width: 40px;
-  height: 22px;
-}
-
-/* 상태 태그 - 정상 (파란색) */
-.status_tag_normal {
-  background-color: rgba(43, 127, 255, 0.1);
-  color: #2b7fff;
-}
-
-/* 상태 태그 - 일시정지 (연한 빨간색) */
-.status_tag_suspended {
-  background-color: rgba(255, 38, 38, 0.05);
-  color: #ff2626;
-}
-
-/* 상태 태그 - 영구정지 (회색) */
-.status_tag_permanent {
-  background-color: #f1f1f1;
-  color: #666666;
-}
-
-/* 상태 태그 - 탈퇴 (회색) */
-.status_tag_withdrawn {
-  background-color: #f1f1f1;
-  color: #666666;
-}
-
 /* 출금 액션 버튼 컨테이너 */
 .table_cell_action {
   display: flex;

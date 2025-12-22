@@ -96,7 +96,6 @@
 .field_label {
   color: #444;
   font-size: 14px;
-  font-style: normal;
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
@@ -114,7 +113,6 @@
   overflow: hidden;
   color: #444;
   font-size: 16px;
-  font-style: normal;
   font-weight: 500;
   line-height: 16px;
   letter-spacing: -0.32px;
@@ -207,10 +205,8 @@
   color: #444444;
   font-size: 16px;
   font-weight: 600;
-  font-style: normal;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
   flex-shrink: 0;
@@ -278,10 +274,8 @@
   color: #ff2626;
   font-size: 14px;
   font-weight: 500;
-  font-style: normal;
   line-height: 14px;
   letter-spacing: -0.28px;
-  font-family: "Pretendard", sans-serif;
 }
 
 /* 인증 버튼 */
@@ -294,10 +288,8 @@
   color: #444444;
   font-size: 16px;
   font-weight: 600;
-  font-style: normal;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
   box-sizing: border-box;
@@ -347,10 +339,8 @@
   color: #444444;
   font-size: 16px;
   font-weight: 600;
-  font-style: normal;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
   flex-shrink: 0;
@@ -390,10 +380,8 @@
   color: #444444;
   font-size: 16px;
   font-weight: 600;
-  font-style: normal;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
   flex-shrink: 0;
@@ -478,10 +466,8 @@
   color: #444444;
   font-size: 14px;
   font-weight: 500;
-  font-style: normal;
   line-height: 14px;
   letter-spacing: -0.28px;
-  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   user-select: none;
 }
@@ -491,10 +477,8 @@
   color: #848484;
   font-size: 12px;
   font-weight: 500;
-  font-style: normal;
   line-height: 12px;
   letter-spacing: -0.24px;
-  font-family: "Pretendard", sans-serif;
   text-decoration: underline;
   text-underline-position: from-font;
   margin-left: auto;
@@ -519,10 +503,8 @@
   color: #ff2626;
   font-size: 14px;
   font-weight: 500;
-  font-style: normal;
   line-height: 14px;
   letter-spacing: -0.28px;
-  font-family: "Pretendard", sans-serif;
 }
 
 /* ========================================
@@ -555,10 +537,8 @@
   border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
-  font-style: normal;
   line-height: 16px;
   letter-spacing: -0.32px;
-  font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: background-color 0.2s ease, opacity 0.2s ease;
   margin-top: 20px;
@@ -615,9 +595,7 @@
 .alert_message {
   color: #444;
   text-align: center;
-  font-family: Pretendard;
   font-size: 18px;
-  font-style: normal;
   font-weight: 600;
   line-height: 28px; /* 155.556% */
   letter-spacing: -0.36px;
@@ -633,9 +611,7 @@
   border-radius: 8px;
   color: #444;
   text-align: center;
-  font-family: Pretendard;
   font-size: 16px;
-  font-style: normal;
   font-weight: 500;
   line-height: 16px; /* 100% */
   letter-spacing: -0.32px;

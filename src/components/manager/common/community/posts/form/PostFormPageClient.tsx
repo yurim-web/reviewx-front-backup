@@ -18,7 +18,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import "@toast-ui/editor/dist/toastui-editor.css";
-import styles from "@/styles/manager_ga/community/posts/post_edit_page.module.css";
+import styles from "@/styles/manager/common/community/posts/post_edit_page.module.css";
 import { CustomDropdown } from "@/components/partner/campaign_create_form/common/CustomDropdown";
 import { PostEditorField } from "@/components/manager/common/community/posts/form/PostEditorField";
 
@@ -36,6 +36,8 @@ interface PostFormPageClientProps {
     title: string;
     body: string;
   };
+  // 관리자 타입 ('ga' | 'sa')
+  manager_type: "ga" | "sa";
 }
 
 // 사이드바 메뉴 데이터 (리스트 렌더링 학습용)
@@ -76,7 +78,13 @@ export default function PostFormPageClient({
   mode,
   post_id,
   initial_data,
+  manager_type,
 }: PostFormPageClientProps) {
+  // manager_type에 따른 base path 설정
+  const base_path =
+    manager_type === "ga"
+      ? "/manager_ga/community/posts"
+      : "/manager_sa/community/posts";
   // 🧭 클라이언트에서만 에디터를 그리기 위해 마운트 여부를 체크합니다.
   const [is_mounted, setIsMounted] = useState(false);
   const [is_editor_ready, setIsEditorReady] = useState(false);

@@ -5,8 +5,6 @@
  *
  * 사용처:
  * - src/components/common/find_account/modal/AccountFoundModal.tsx
- * - src/components/common/find_account/modal/AccountNotFoundModal.tsx
- * - src/components/common/find_account/modal/BlockedAccountModal.tsx
  * - src/components/common/find_account/modal/SNSLoginModal.tsx
  */
 

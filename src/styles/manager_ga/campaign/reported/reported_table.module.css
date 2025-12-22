@@ -27,13 +27,13 @@
   /* 신고내역 테이블 컬럼 정의 */
   grid-template-columns:
     0.12fr
-    0.44fr /* 캠페인명 - 조금만 넓게 */
-    0.16fr /* 대상자 - 조금 좁게 */
-    0.14fr /* 검수자 - 조금 좁게 */
-    0.1fr /* 신고 코드 - 너비 감소 */
-    0.12fr /* 신고 사유 - 너비 더 감소 */
+    0.44fr /* 캠페인명  */
+    0.16fr /* 대상자 */
+    0.14fr /* 검수자  */
+    0.1fr /* 신고 코드  */
+    0.12fr /* 신고 사유  */
     0.12fr /* 신고 횟수 */
-    0.14fr /* 처리일 - 버튼 영역과 간격 확보 */
+    0.14fr /* 처리일  */
     100px; /* 차단/해제 아이콘 칸 */
   background-color: #f5f5f5;
   padding: 0;
@@ -79,7 +79,7 @@
 /* 테이블 행을 감싸는 컨테이너 - 툴팁과 함께 배치 */
 .table_row_wrapper {
   width: 100%;
-  position: relative; /* 툴팁의 기준점 */
+  position: relative;
 }
 
 /* 테이블 행 */
@@ -88,13 +88,13 @@
   /* 헤더와 동일한 컬럼 정의를 공유해 정렬 유지 */
   grid-template-columns:
     0.12fr
-    0.44fr /* 캠페인명 - 조금만 넓게 */
-    0.16fr /* 대상자 - 조금 좁게 */
-    0.14fr /* 검수자 - 조금 좁게 */
-    0.1fr /* 신고 코드 - 너비 감소 */
-    0.12fr /* 신고 사유 - 너비 더 감소 */
+    0.44fr /* 캠페인명  */
+    0.16fr /* 대상자  */
+    0.14fr /* 검수자  */
+    0.1fr /* 신고 코드  */
+    0.12fr /* 신고 사유  */
     0.12fr /* 신고 횟수 */
-    0.14fr /* 처리일 - 버튼 영역과 간격 확보 */
+    0.14fr /* 처리일  */
     100px; /* 차단/해제 아이콘 칸 */
   border-bottom: 1px solid #f2f2f2;
   align-items: center;
@@ -254,19 +254,18 @@
 /* 호버 시 나타나는 툴팁 박스 - 캠페인명 셀 바로 아래에 표시 (공간 차지하지 않음) */
 .tooltip_box {
   position: absolute;
-  /* left, top는 인라인 스타일로 동적으로 설정됩니다 */
   background-color: #f5f5f5;
   border: 1px solid #d9d9d9;
   border-radius: 4px;
   padding: 8px;
   box-sizing: border-box;
-  z-index: 10; /* 다른 요소 위에 표시 */
+  z-index: 10;
   color: #444;
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
-  line-height: 14px; /* 100% */
+  line-height: 14px;
   letter-spacing: -0.28px;
-  white-space: nowrap; /* 한 줄로 표시 */
-  width: max-content; /* 텍스트 길이만큼 자동으로 늘어남 */
+  white-space: nowrap;
+  width: max-content;
 }

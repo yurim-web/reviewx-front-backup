@@ -1,0 +1,37 @@
+/* ========================================
+   📝 관리자 카테고리 관리 페이지 레이아웃 스타일
+   ======================================== */
+
+/**
+ * 페이지 레이아웃 관련 스타일
+ * 
+ * 사용 컴포넌트:
+ * - page.tsx (관리자 카테고리 관리 페이지)
+ * 
+ * 사용 페이지:
+ * - /manager_ga/community/categories (GA 관리자 카테고리 관리)
+ * - /manager_sa/community/categories (SA 관리자 카테고리 관리)
+ */
+
+/* CSS 변수 정의 - 폰트 패밀리를 한 곳에서 관리 */
+.container {
+  --font-family: "Pretendard", sans-serif;
+}
+
+/* 전체 페이지 컨테이너 */
+.container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-color: white;
+  padding-top: 80px;
+  padding-left: 240px;
+  box-sizing: border-box;
+  font-family: var(--font-family);
+}
+
+/* 메인 콘텐츠 영역 */
+.main_content {
+  padding: 52px 40px 40px 40px;
+  width: 100%;
+}

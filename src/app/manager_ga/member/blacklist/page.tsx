@@ -24,7 +24,7 @@
 "use client";
 
 import { useState } from "react";
-import styles from "@/styles/manager_ga/member/blacklist/page.module.css";
+import styles from "@/styles/manager/common/member/blacklist/page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import BlacklistFilterSection from "@/components/manager/common/member/blacklist/BlacklistFilterSection";
 import BlacklistTable from "@/components/manager/common/member/blacklist/BlacklistTable";
