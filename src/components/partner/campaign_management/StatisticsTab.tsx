@@ -17,7 +17,10 @@
  * - 상단 고정으로 스크롤 시에도 접근 가능
  */
 
-import type { PartnerCampaignStats, PartnerStatTab } from "@/types/partner/partner";
+import type {
+  PartnerCampaignStats,
+  PartnerStatTab,
+} from "@/types/partner/partner";
 import styles from "../../../styles/partner/statistics.module.css";
 
 interface StatisticsTabProps {

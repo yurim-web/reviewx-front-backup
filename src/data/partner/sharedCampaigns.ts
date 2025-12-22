@@ -17,7 +17,10 @@
  * - 중복 데이터 제거
  */
 
-import type { PartnerCampaign } from "@/types/partner/partner";
+import type {
+  PartnerCampaign,
+  PartnerCampaignStats,
+} from "@/types/partner/partner";
 import {
   getStatusMessage,
   getBrandLogo,
@@ -862,6 +865,119 @@ export const getCampaignsByTab = (tab: string): PartnerCampaign[] => {
 */
 export const getCampaignStats = () => {
   const partnerCampaigns = convertToPartnerCampaigns();
+
+  return {
+    전체: partnerCampaigns.length,
+    예정: partnerCampaigns.filter((c) => c.status === "예정").length,
+    신청: partnerCampaigns.filter((c) => c.status === "신청").length,
+    진행: partnerCampaigns.filter((c) => c.status === "진행").length,
+    종료: partnerCampaigns.filter((c) => c.status === "종료").length,
+    취소: partnerCampaigns.filter((c) => c.status === "취소").length,
+    패널티: 0,
+  };
+};
+
+/**
+ * 정적 데이터만으로 초기 통계 계산 (빠른 렌더링용)
+ * 
+ * 설명:
+ * - localStorage를 제외한 정적 데이터만으로 통계를 계산합니다.
+ * - 초기 렌더링 시 깜빡임을 방지하기 위해 사용됩니다.
+ * - localStorage 데이터는 나중에 업데이트됩니다.
+ */
+export const getInitialCampaignStats = (): PartnerCampaignStats => {
+  // 정적 데이터만 사용 (localStorage 제외)
+  let visitList: CampaignWithApplicants[] = [];
+  let missionList: CampaignWithApplicants[] = [];
+  let reviewList: CampaignWithApplicants[] = [];
+  
+  try {
+    const visitModule = require("./visit");
+    visitList = visitModule.visitCampaigns || [];
+  } catch (error) {
+    // 무시
+  }
+
+  try {
+    const missionModule = require("./mission");
+    missionList = missionModule.missionCampaigns || [];
+  } catch (error) {
+    // 무시
+  }
+
+  try {
+    const reviewModule = require("./review");
+    reviewList = reviewModule.reviewCampaigns || [];
+  } catch (error) {
+    // 무시
+  }
+
+  // 정적 데이터만 병합 (localStorage 제외)
+  const staticCampaigns = [
+    ...reporterCampaigns,
+    ...deliveryCampaigns,
+    ...missionList,
+    ...visitList,
+    ...reviewList,
+    // 종료/취소 데이터
+    ...closedCampaigns.map((c) => ({
+      campaignInfo: {
+        ...c.campaignInfo,
+        status: c.campaignInfo.status as
+          | "진행 중"
+          | "모집 중"
+          | "대기 중"
+          | "종료"
+          | "취소",
+      },
+      applicantData: { applicants: [], selectedApplicants: [] },
+    })),
+  ];
+
+  // convertToPartnerCampaigns와 동일한 로직으로 변환
+  const uniqueCampaignsMap = new Map<string, (typeof staticCampaigns)[0]>();
+  for (const campaign of staticCampaigns) {
+    uniqueCampaignsMap.set(campaign.campaignInfo.id, campaign);
+  }
+  const uniqueCampaigns = Array.from(uniqueCampaignsMap.values());
+
+  const partnerCampaigns = uniqueCampaigns.map((campaign) => {
+    let calculatedTab: "예정" | "신청" | "진행" | "종료" | "취소" = "예정";
+
+    if (
+      campaign.campaignInfo.status === "취소" ||
+      campaign.campaignInfo.status === "마감"
+    ) {
+      calculatedTab = "취소";
+    } else {
+      const tab = getPartnerTabByDates(
+        campaign.campaignInfo.recruitmentPeriod,
+        campaign.campaignInfo.registrationPeriod
+      );
+
+      if (tab !== "전체") {
+        calculatedTab = tab;
+      } else {
+        calculatedTab =
+          campaign.campaignInfo.status === "진행 중"
+            ? "진행"
+            : campaign.campaignInfo.status === "모집 중"
+            ? "신청"
+            : campaign.campaignInfo.status === "대기 중"
+            ? "예정"
+            : (campaign.campaignInfo.status as
+                | "예정"
+                | "진행"
+                | "종료"
+                | "취소");
+      }
+    }
+
+    return {
+      id: campaign.campaignInfo.id,
+      status: calculatedTab,
+    };
+  });
 
   return {
     전체: partnerCampaigns.length,

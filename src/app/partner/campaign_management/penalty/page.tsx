@@ -21,6 +21,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import PartnerCampaignManagementHeader from "@/components/partner/campaign_management/PartnerCampaignManagementHeader";
 import PenaltyContent from "@/components/common/campaign_management/penalty/PenaltyContent";
 import type { PartnerMainTab } from "@/types/partner/partner";
@@ -36,11 +37,26 @@ import {
  * 패널티 탭 페이지 컴포넌트
  */
 export default function PenaltyPage() {
+  const router = useRouter();
+
   // 상단 메인 탭 상태 (캠페인 / 포인트)
   const [activeTab, setActiveTab] = useState<PartnerMainTab>("campaign");
 
   // 통계 탭 상태 - 패널티 탭이 활성화된 상태로 설정
   const [activeStatTab, setActiveStatTab] = useState<PartnerStatTab>("패널티");
+
+  /**
+   * 통계 탭 변경 핸들러
+   * 패널티가 아닌 다른 탭을 클릭하면 캠페인 관리 페이지로 이동
+   */
+  const handleStatTabChange = (tab: PartnerStatTab) => {
+    if (tab === "패널티") {
+      setActiveStatTab(tab);
+    } else {
+      // 패널티가 아닌 탭을 클릭하면 캠페인 관리 페이지로 이동
+      router.push("/partner/campaign_management");
+    }
+  };
 
   return (
     <div className={layoutStyles.container}>
@@ -51,6 +67,7 @@ export default function PenaltyPage() {
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           activeStatTab={activeStatTab}
+          setActiveStatTab={handleStatTabChange}
         />
 
         {/* 패널티 컨텐츠 영역 */}

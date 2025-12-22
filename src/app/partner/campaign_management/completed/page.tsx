@@ -43,7 +43,9 @@ export default function CompletedPage() {
   const [activeStatTab, setActiveStatTab] = useState<PartnerStatTab>("종료");
 
   // 필터링된 캠페인 목록 상태
-  const [filteredCampaigns, setFilteredCampaigns] = useState<PartnerCampaign[]>([]);
+  const [filteredCampaigns, setFilteredCampaigns] = useState<PartnerCampaign[]>(
+    []
+  );
 
   // 탭별 캠페인 목록 가져오기
   const campaigns = getCampaignsByTab(activeStatTab);

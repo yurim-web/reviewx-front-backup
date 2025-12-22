@@ -29,10 +29,16 @@ import { useState, useEffect } from "react";
 import TabNavigation from "./TabNavigation";
 import StatisticsTab from "./StatisticsTab";
 import type { PartnerMainTab } from "@/types/partner/partner";
-import type { PartnerStatTab, PartnerCampaignStats } from "@/types/partner/partner";
+import type {
+  PartnerStatTab,
+  PartnerCampaignStats,
+} from "@/types/partner/partner";
 
 // 공용 데이터 import
-import { getCampaignStats } from "@/data/partner/sharedCampaigns";
+import {
+  getCampaignStats,
+  getInitialCampaignStats,
+} from "@/data/partner/sharedCampaigns";
 
 interface PartnerCampaignManagementHeaderProps {
   /** 현재 활성 메인 탭 (캠페인/포인트/계정) */
@@ -70,13 +76,12 @@ export default function PartnerCampaignManagementHeader({
      ======================================== */
 
   /**
-   * useState 훅: 컴포넌트의 상태를 관리하는 React 훅
-   * 
+   * useState로 통계 상태 관리
+   *
    * 설명:
-   * - 통계 데이터를 컴포넌트 상태로 저장합니다.
-   * - 초기값은 서버와 클라이언트가 동일하게 렌더링되도록 모든 값이 0인 객체입니다.
-   * - setStats 함수를 사용하여 상태를 업데이트할 수 있습니다.
-   * 
+   * - 초기값을 0으로 설정하여 서버와 클라이언트에서 동일하게 렌더링됩니다.
+   * - useEffect에서 즉시 통계를 계산하여 업데이트합니다.
+   * - 이렇게 하면 hydration 에러를 방지하면서도 빠르게 숫자를 표시할 수 있습니다.
    */
   const [stats, setStats] = useState<PartnerCampaignStats>({
     전체: 0,
@@ -89,24 +94,36 @@ export default function PartnerCampaignManagementHeader({
   });
 
   /**
-   * useEffect 훅: 컴포넌트의 부수 효과(side effects)를 처리하는 React 훅
-   * 
+   * useEffect로 통계 계산
+   *
    * 설명:
-   * - 컴포넌트가 클라이언트에서 마운트된 후에만 실행됩니다.
-   * - localStorage를 사용하는 getCampaignStats()를 호출하여 실제 통계를 계산합니다.
-   * - 의존성 배열이 비어있으므로 컴포넌트 마운트 시 한 번만 실행됩니다.
-   * 
-   * Hydration 에러 해결 원리:
-   * - 서버 사이드 렌더링(SSR) 시: 초기값(모두 0)으로 렌더링됩니다.
-   * - 클라이언트 마운트 후: useEffect가 실행되어 실제 통계를 계산하고 상태를 업데이트합니다.
-   * - 이렇게 하면 서버와 클라이언트의 초기 렌더링 결과가 일치하여 hydration 에러가 발생하지 않습니다.
-   * 
+   * - 컴포넌트 마운트 시 즉시 통계를 계산합니다.
+   * - 정적 데이터로 먼저 계산하여 빠르게 표시하고,
+   * - 그 다음 localStorage를 포함한 전체 통계로 업데이트합니다.
    */
   useEffect(() => {
-    // 클라이언트에서만 실행되므로 localStorage 접근 가능
-    const calculatedStats = getCampaignStats();
-    setStats(calculatedStats);
-  }, []);
+    // 클라이언트에서만 실행
+    if (typeof window === "undefined") return;
+
+    // 먼저 정적 데이터로 빠르게 표시
+    try {
+      const initialStats = getInitialCampaignStats();
+      setStats(initialStats);
+    } catch (error) {
+      console.error("초기 통계 계산 실패:", error);
+    }
+
+    // 그 다음 localStorage를 포함한 전체 통계로 업데이트
+    // requestAnimationFrame을 사용하여 브라우저 렌더링 사이클에 맞춰 실행
+    requestAnimationFrame(() => {
+      try {
+        const calculatedStats = getCampaignStats();
+        setStats(calculatedStats);
+      } catch (error) {
+        console.error("전체 통계 계산 실패:", error);
+      }
+    });
+  }, []); // dependency 배열을 비워서 마운트 시 한 번만 실행
 
   /* ========================================
      통계 탭 변경 핸들러 (Statistics Tab Change Handler)
