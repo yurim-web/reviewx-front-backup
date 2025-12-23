@@ -1,41 +1,55 @@
 /* ========================================
-   📋 통합 모달 컴포넌트
+   📋 텍스트 입력 모달 컴포넌트
    ======================================== */
 
 /**
- * 통합 모달 컴포넌트
+ * 텍스트 입력 모달 컴포넌트
  *
- * 목적: 프로젝트 전반에서 사용할 수 있는 통합 모달 컴포넌트입니다.
- *       메시지 코드를 사용하여 메시지와 버튼을 자동으로 구성합니다.
+ * 목적: 프로젝트 전반에서 사용할 수 있는 텍스트 입력 모달 컴포넌트입니다.
+ *       textarea를 사용하여 사용자 입력을 받을 수 있습니다.
  *
  * 주요 기능:
- * - 메시지 코드 기반 모달 (A_M 코드 사용)
+ * - 제목과 textarea 입력 필드 제공
  * - 버튼이 하나일 때와 두 개일 때 자동 처리
  * - 스크롤바 너비 고려한 레이아웃 유지
  * - ESC 키, 오버레이 클릭으로 닫기
+ * - 입력값 제어 (value, onChange)
  *
+ * 사용 예시:
+ * - 등록 기한 연장 요청 모달
+ * - 사유 입력이 필요한 모든 모달
  */
 
 "use client";
 
 import { useEffect } from "react";
-import styles from "@/styles/common/modal/base_modal.module.css";
+import styles from "@/styles/common/modal/textarea_modal.module.css";
 
-export type ModalType = "center" | "bottom";
+export type TextareaModalType = "center" | "bottom";
 
-export interface BaseModalProps {
+export interface TextareaModalProps {
   /** 모달 열림/닫힘 상태 */
   is_open: boolean;
   /** 모달 닫기 함수 */
   on_close: () => void;
-  /** 모달에 표시할 메시지 (HTML 태그 지원, 예: <br> 태그 사용 가능) */
-  message: string;
+  /** 모달 제목 */
+  title: string;
+  /** textarea의 현재 값 */
+  value: string;
+  /** textarea 값 변경 핸들러 (readOnly일 때는 선택적) */
+  onChange?: (value: string) => void;
+  /** textarea placeholder 텍스트 */
+  placeholder?: string;
+  /** 읽기 전용 모드 (기본값: false) */
+  readOnly?: boolean;
+  /** 제목 색상 (기본값: #444, readOnly일 때는 #ff2626) */
+  titleColor?: string;
   /** 버튼 라벨 배열 (1개 또는 2개) */
   buttons?: string[];
   /** 확인 버튼 클릭 핸들러 (버튼이 두 개일 때 두 번째 버튼) */
   on_confirm?: () => void;
   /** 모달 형태 (기본값: "center") */
-  type?: ModalType;
+  type?: TextareaModalType;
   /** 오버레이 클릭으로 닫기 여부 (기본값: true) */
   close_on_overlay_click?: boolean;
   /** ESC 키로 닫기 여부 (기본값: true) */
@@ -43,18 +57,23 @@ export interface BaseModalProps {
 }
 
 /**
- * 통합 모달 컴포넌트
+ * 텍스트 입력 모달 컴포넌트
  */
-export default function BaseModal({
+export default function TextareaModal({
   is_open,
   on_close,
-  message,
+  title,
+  value,
+  onChange,
+  placeholder = "사유 입력",
+  readOnly = false,
+  titleColor,
   buttons: prop_buttons,
   on_confirm,
   type = "center",
   close_on_overlay_click = true,
   close_on_escape = true,
-}: BaseModalProps) {
+}: TextareaModalProps) {
   const buttons =
     prop_buttons && prop_buttons.length > 0 ? prop_buttons : ["닫기"];
   const has_two_buttons = buttons.length === 2;
@@ -116,6 +135,15 @@ export default function BaseModal({
     }
   };
 
+  // textarea 값 변경 핸들러
+  const handle_textarea_change = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    if (onChange && !readOnly) {
+      onChange(e.target.value);
+    }
+  };
+
   // 모달 타입에 따른 클래스명 결정
   const overlay_class =
     type === "center"
@@ -134,12 +162,34 @@ export default function BaseModal({
       aria-modal="true"
     >
       <div className={container_class} onClick={(e) => e.stopPropagation()}>
-        {/* 모달 메시지 */}
+        {/* 모달 콘텐츠 */}
         <div className={styles.modal_content}>
-          <div className={styles.modal_message_wrapper}>
-            <p
-              className={styles.modal_message_text}
-              dangerouslySetInnerHTML={{ __html: message }}
+          {/* 모달 제목 */}
+          <h2
+            className={styles.modal_title}
+            style={
+              titleColor
+                ? { color: titleColor }
+                : readOnly
+                ? { color: "#ff2626" }
+                : undefined
+            }
+          >
+            {title}
+          </h2>
+
+          {/* 텍스트 입력 영역 */}
+          <div className={styles.textarea_wrapper}>
+            <textarea
+              className={`${styles.modal_textarea} ${
+                readOnly ? styles.modal_textarea_readonly : ""
+              }`}
+              value={value}
+              onChange={handle_textarea_change}
+              placeholder={placeholder}
+              rows={5}
+              readOnly={readOnly}
+              disabled={readOnly}
             />
           </div>
 

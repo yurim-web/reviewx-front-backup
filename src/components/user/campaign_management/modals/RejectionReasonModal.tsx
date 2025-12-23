@@ -13,20 +13,20 @@
  *   - RejectedTabCard 컴포넌트에서 사용
  *
  * 모달 구성:
- * 1. 모달 제목: "콘텐츠 반려 사유"
+ * 1. 모달 제목: "반려 사유"
  * 2. 반려 사유 텍스트 영역 (읽기 전용)
  * 3. 닫기 버튼
  *
  * 학습 포인트:
- * - 읽기 전용 텍스트 영역: textarea에 readOnly 속성 사용
- * - 모달 오버레이 클릭으로 닫기
- * - 조건부 렌더링: 반려 사유가 없을 때 기본 메시지 표시
+ * - TextareaModal 컴포넌트 재사용: 공통 모달 컴포넌트를 활용하여 코드 중복을 줄입니다.
+ * - readOnly 모드: 읽기 전용 모달로 사용하여 사용자가 내용을 확인만 할 수 있도록 합니다.
+ * - 상태 관리: useEffect를 사용하여 모달이 열릴 때 반려 사유 텍스트를 설정합니다.
  */
 
 "use client";
 
 import { useEffect, useState } from "react";
-import styles from "../../../../styles/user/campaign_management/modals/rejection_reason_modal.module.css";
+import { TextareaModal } from "@/components/common/modal";
 
 interface RejectionReasonModalProps {
   /** 모달 열림/닫힘 상태 */
@@ -62,50 +62,16 @@ export default function RejectionReasonModal({
     }
   }, [isOpen, rejectionReason]);
 
-  // 모달이 닫혀있으면 렌더링하지 않음
-  if (!isOpen) return null;
-
-  /**
-   * 오버레이 클릭 핸들러
-   *
-   * 설명:
-   * - 모달 배경(오버레이)을 클릭하면 모달을 닫습니다.
-   * - e.target === e.currentTarget: 클릭한 요소가 오버레이 자체일 때만 닫기
-   *   (모달 내부를 클릭했을 때는 닫히지 않음)
-   */
-  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
   return (
-    <div className={styles.modal_overlay} onClick={handleOverlayClick}>
-      <div
-        className={styles.modal_container}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* 모달 제목 */}
-        <h2 className={styles.modal_title}>반려 사유</h2>
-
-        {/* 반려 사유 텍스트 영역 */}
-        <div className={styles.reason_box}>
-          <textarea
-            className={styles.reason_text}
-            value={reasonText}
-            readOnly
-            rows={10}
-            placeholder="반려 사유가 없습니다."
-          />
-        </div>
-
-        {/* 닫기 버튼 (하단) */}
-        <div className={styles.modal_footer}>
-          <button className={styles.close_button_bottom} onClick={onClose}>
-            닫기
-          </button>
-        </div>
-      </div>
-    </div>
+    <TextareaModal
+      is_open={isOpen}
+      on_close={onClose}
+      title="반려 사유"
+      value={reasonText || "반려 사유가 없습니다."}
+      onChange={() => {}} // 읽기 전용이므로 빈 함수
+      readOnly={true}
+      titleColor="#ff2626" // 반려 사유 모달은 빨간색 제목
+      buttons={["닫기"]}
+    />
   );
 }

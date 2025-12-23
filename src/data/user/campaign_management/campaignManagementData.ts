@@ -604,6 +604,8 @@ export const campaignManagementData: CampaignApplication[] = [
     subStatus: "content_rejected,re_register",
     hasContent: true,
     isPenalty: false,
+    rejectionReason:
+      "제품 사진이 명확하지 않습니다. 제품의 특징이 잘 보이도록 재촬영하여 등록해 주세요.\n\n또한 제품 사용 후기를 더 자세히 작성해 주시기 바랍니다.ㅇㄹㄹㄹㄹㄹㄹㄹㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹ",
   },
   // 실제 캠페인 데이터와 매칭: visit_3
   {
@@ -620,6 +622,8 @@ export const campaignManagementData: CampaignApplication[] = [
     subStatus: "content_rejected,re_register",
     hasContent: true,
     isPenalty: false,
+    rejectionReason:
+      "매장 방문 사진이 부족합니다. 매장 내부 사진과 체험 과정을 더 자세히 담아주세요.\n\n매장 주소와 영업시간 정보도 함께 기재해 주시기 바랍니다.",
   },
   // 실제 캠페인 데이터와 매칭: review_7
   {
@@ -666,6 +670,8 @@ export const campaignManagementData: CampaignApplication[] = [
     subStatus: "content_rejected,re_register",
     hasContent: true,
     isPenalty: false,
+    rejectionReason:
+      "기자단 리포팅이 너무 간단합니다. 여행지에 대한 더 상세한 정보와 체험 내용을 포함하여 재작성해 주세요.\n\n사진도 더 다양하게 추가해 주시기 바랍니다.",
   },
 ];
 

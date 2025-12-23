@@ -37,6 +37,7 @@ import ContentRegistrationModal from "../modals/ContentRegistrationModal";
 import ImageUploadModal from "../modals/ImageUploadModal";
 import CombinedContentModal from "../modals/CombinedContentModal";
 import RejectionReasonModal from "../modals/RejectionReasonModal";
+import BaseModal from "@/components/common/modal/BaseModal";
 
 interface RejectedTabCardProps {
   campaign: CampaignApplication;
@@ -56,6 +57,10 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
   const [isRejectionReasonModalOpen, setIsRejectionReasonModalOpen] =
     useState(false);
+  const [
+    isRegistrationPeriodEndedModalOpen,
+    setIsRegistrationPeriodEndedModalOpen,
+  ] = useState(false);
 
   // 콘텐츠 수정 모달 모드 관리 (등록/수정)
   const [contentModalMode, setContentModalMode] = useState<"register" | "edit">(
@@ -79,13 +84,38 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
   };
 
   /**
+   * 등록 기간이 마감되었는지 확인하는 함수
+   *
+   * 설명:
+   * - 반려된 캠페인의 경우 수정 기간이 지났는지 확인합니다.
+   * - TODO: 실제 데이터 구조에 맞게 수정 기간 체크 로직 구현 필요
+   *   (예: campaign.registrationPeriod 또는 campaign.editDeadline 필드 사용)
+   *
+   * @returns 수정 기간이 지났으면 true, 아니면 false
+   */
+  const isEditPeriodEnded = (): boolean => {
+    // TODO: 실제 데이터 구조에 맞게 수정 기간 체크 로직 구현
+
+    // }
+    return false; // 임시: 항상 수정 가능
+  };
+
+  /**
    * 콘텐츠 수정 버튼 클릭 핸들러
    *
    * 설명:
-   * - 콘텐츠 수정 모달을 엽니다.
-   * - 수정 모드로 설정합니다.
+   * - 반려된 캠페인인 경우 수정 기간이 지났는지 확인합니다.
+   * - 수정 기간이 지났으면 "등록 기간이 마감되었습니다." 모달을 표시합니다.
+   * - 수정 기간이 남았으면 콘텐츠 수정 모달을 엽니다.
    */
   const handleContentEditClick = () => {
+    // 반려된 캠페인이고 수정 기간이 지났을 경우
+    if (isContentRejected && isEditPeriodEnded()) {
+      setIsRegistrationPeriodEndedModalOpen(true);
+      return;
+    }
+
+    // 수정 기간이 남았거나 반려되지 않은 경우 콘텐츠 수정 모달 열기
     setContentModalMode("edit");
     setIsContentModalOpen(true);
   };
@@ -208,7 +238,7 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
       <RejectionReasonModal
         isOpen={isRejectionReasonModalOpen}
         onClose={handleCloseRejectionReasonModal}
-        rejectionReason={(campaign as any).rejectionReason}
+        rejectionReason={campaign.rejectionReason}
         campaignTitle={campaign.title}
       />
 
@@ -269,6 +299,14 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
         isOpen={isReceiptModalOpen}
         onClose={handleCloseReceiptModal}
         campaignTitle={campaign.title}
+      />
+
+      {/* 등록 기간 마감 모달 */}
+      <BaseModal
+        is_open={isRegistrationPeriodEndedModalOpen}
+        on_close={() => setIsRegistrationPeriodEndedModalOpen(false)}
+        message="등록 기간이 마감되었습니다."
+        buttons={["닫기"]}
       />
     </>
   );

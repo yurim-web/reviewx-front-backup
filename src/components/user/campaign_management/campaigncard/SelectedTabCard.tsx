@@ -44,6 +44,7 @@
 import { useState } from "react";
 import type { CampaignApplication } from "@/types/user/user";
 import BaseModal from "@/components/common/modal/BaseModal";
+import { TextareaModal } from "@/components/common/modal";
 import buttonStyles from "../../../../styles/user/campaign_management/buttons.module.css";
 import { getButtonClassName } from "@/components/common/campaign_management/utils/button_style_utils";
 import CampaignCardBase from "./CampaignCardBase";
@@ -82,6 +83,8 @@ export default function SelectedTabCard({ campaign }: SelectedTabCardProps) {
   const [isExtensionModalOpen, setIsExtensionModalOpen] = useState(false);
   const [isExtensionLimitModalOpen, setIsExtensionLimitModalOpen] =
     useState(false);
+  // 등록 기한 연장 요청 사유 입력 상태
+  const [extensionReason, setExtensionReason] = useState<string>("");
 
   // 상태 텍스트
   const statusText = "캠페인에 선정되었습니다. 진행해주세요.";
@@ -127,8 +130,8 @@ export default function SelectedTabCard({ campaign }: SelectedTabCardProps) {
    * - 모든 캠페인에 공통으로 표시되는 버튼입니다.
    * - 등록 기한 연장을 요청할 수 있습니다.
    * - 최대 2번까지 신청 가능합니다.
-   *   - 1번째 신청: 바로 요청
-   *   - 2번째 신청: 확인 모달 표시
+   *   - 1번째 신청: 사유 입력 모달 표시
+   *   - 2번째 신청: 사유 입력 모달 표시 (확인 모달은 제거)
    *   - 3번째 이상: 제한 안내 모달 표시
    */
   const handleExtensionRequest = () => {
@@ -139,12 +142,10 @@ export default function SelectedTabCard({ campaign }: SelectedTabCardProps) {
     if (extensionCount >= 2) {
       // 세 번째 이상 신청 시: 제한 안내 모달
       setIsExtensionLimitModalOpen(true);
-    } else if (extensionCount === 1) {
-      // 두 번째 신청 시: 확인 모달
-      setIsExtensionModalOpen(true);
     } else {
-      // 첫 번째 신청 시: 바로 요청
-      handleConfirmExtension();
+      // 첫 번째 또는 두 번째 신청 시: 사유 입력 모달 표시
+      setExtensionReason(""); // 사유 초기화
+      setIsExtensionModalOpen(true);
     }
   };
 
@@ -153,15 +154,20 @@ export default function SelectedTabCard({ campaign }: SelectedTabCardProps) {
    *
    * 설명:
    * - 실제 API 호출로 등록 기한 연장을 요청합니다.
+   * - 입력된 사유와 함께 요청합니다.
    */
   const handleConfirmExtension = async () => {
     try {
       // TODO: 실제 API 호출로 등록 기한 연장 요청
-      // const response = await requestDeadlineExtension(campaign.id);
-      console.log("등록 기한 연장 요청:", campaign.id);
+      // const response = await requestDeadlineExtension(campaign.id, extensionReason);
+      console.log("등록 기한 연장 요청:", {
+        campaignId: campaign.id,
+        reason: extensionReason,
+      });
 
-      // 성공 시 모달 닫기
+      // 성공 시 모달 닫기 및 사유 초기화
       setIsExtensionModalOpen(false);
+      setExtensionReason("");
       // TODO: 성공 모달 표시 또는 토스트 메시지
     } catch (error) {
       console.error("등록 기한 연장 요청 실패:", error);
@@ -375,13 +381,18 @@ export default function SelectedTabCard({ campaign }: SelectedTabCardProps) {
 
   return (
     <>
-      {/* 등록 기한 연장 요청 모달들 */}
-      {/* 두 번째 신청 시 확인 모달 */}
-      <BaseModal
+      {/* 등록 기한 연장 요청 모달 */}
+      <TextareaModal
         is_open={isExtensionModalOpen}
-        on_close={() => setIsExtensionModalOpen(false)}
-        message="이미 연장한 내역이 있습니다.<br>추가 연장은 이번 요청이 마지막입니다.<br>계속하시겠습니까?"
-        buttons={["취소", "확인"]}
+        on_close={() => {
+          setIsExtensionModalOpen(false);
+          setExtensionReason(""); // 모달 닫을 때 사유 초기화
+        }}
+        title="등록 기한 연장 요청"
+        value={extensionReason}
+        onChange={setExtensionReason}
+        placeholder="사유 입력"
+        buttons={["닫기", "확인"]}
         on_confirm={handleConfirmExtension}
         type="center"
       />
