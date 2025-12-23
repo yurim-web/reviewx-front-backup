@@ -173,6 +173,8 @@ export interface CampaignApplication {
     text: string; // 미션 항목 텍스트
     isCompleted: boolean; // 충족 여부 (true: 충족, false: 미충족)
   }>;
+  /** 반려 사유 (취소/반려 상태일 때 사용) */
+  rejectionReason?: string; // 콘텐츠 반려 사유 텍스트
 }
 
 /**

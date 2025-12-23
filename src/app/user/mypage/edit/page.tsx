@@ -34,6 +34,8 @@ import AddressInput from "@/components/common/mypage/AddressInput";
 // 유저 전용 컴포넌트
 import AccountInfoInput from "@/components/user/mypage/AccountInfoInput";
 import SocialSecurityNumberInput from "@/components/user/mypage/SocialSecurityNumberInput";
+// 모달 컴포넌트
+import BaseModal from "@/components/common/modal/BaseModal";
 
 export default function EditProfilePage() {
   const router = useRouter();
@@ -93,6 +95,17 @@ export default function EditProfilePage() {
 
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
+
+  // 회원 탈퇴 모달 상태 관리
+  // 첫 번째 모달: 탈퇴 확인 모달
+  const [isWithdrawConfirmModalOpen, setIsWithdrawConfirmModalOpen] =
+    useState(false);
+  // 두 번째 모달: 탈퇴 완료 모달
+  const [isWithdrawCompleteModalOpen, setIsWithdrawCompleteModalOpen] =
+    useState(false);
+  // 탈퇴 불가 안내 모달 (진행 중인 캠페인이 있을 때)
+  const [isWithdrawBlockedModalOpen, setIsWithdrawBlockedModalOpen] =
+    useState(false);
 
   // 필수 입력 필드 검증 함수
   const validateRequiredFields = () => {
@@ -155,9 +168,100 @@ export default function EditProfilePage() {
     }
   };
 
-  const handleWithdraw = () => {
-    // 회원 탈퇴 페이지로 이동 (추후 실제 로직 연동 예정)
-    router.push("/user/mypage/withdraw");
+  /**
+   * 진행 중인 캠페인 확인 함수
+   *
+   * 기능: 사용자가 진행 중인 캠페인이 있는지 확인합니다.
+   *
+   * 반환값:
+   * - true: 진행 중인 캠페인이 있음
+   * - false: 진행 중인 캠페인이 없음
+   *
+   * 학습 포인트:
+   * - 비동기 함수: async/await를 사용하여 API 호출
+   * - 조건부 반환: 조건에 따라 다른 값을 반환
+   * - 실제 구현 시: API를 호출하여 "신청" 또는 "선정" 상태의 캠페인이 있는지 확인
+   *
+   * TODO: 실제 API 연동 필요
+   * 예: const response = await fetch('/api/user/campaigns?status=신청,선정');
+   *     const campaigns = await response.json();
+   *     return campaigns.length > 0;
+   */
+  const checkOngoingCampaigns = async (): Promise<boolean> => {
+    // TODO: 실제 API 호출로 진행 중인 캠페인 확인
+    // 현재는 임시로 false 반환 (진행 중인 캠페인 없음)
+    // 실제 구현 시 아래와 같이 API 호출:
+    // try {
+    //   const response = await fetch('/api/user/campaigns?status=신청,선정');
+    //   const campaigns = await response.json();
+    //   return campaigns.length > 0;
+    // } catch (error) {
+    //   console.error('진행 중인 캠페인 확인 실패:', error);
+    //   return false;
+    // }
+    return false; // 임시: 진행 중인 캠페인 없음
+  };
+
+  /**
+   * 회원 탈퇴 버튼 클릭 핸들러
+   *
+   * 기능:
+   * 1. 진행 중인 캠페인이 있는지 확인합니다.
+   * 2. 진행 중인 캠페인이 있으면 탈퇴 불가 안내 모달을 표시합니다.
+   * 3. 진행 중인 캠페인이 없으면 탈퇴 확인 모달을 표시합니다.
+   *
+   * 학습 포인트:
+   * - 비동기 함수: async/await를 사용하여 비동기 작업 처리
+   * - 조건부 분기: if-else를 사용하여 상황에 따라 다른 동작 수행
+   * - 상태 업데이트: useState로 관리하는 상태를 변경하여 모달 표시/숨김 제어
+   * - 이벤트 핸들러: 버튼 클릭 시 실행되는 함수
+   */
+  const handleWithdraw = async () => {
+    // 진행 중인 캠페인 확인
+    const hasOngoingCampaigns = await checkOngoingCampaigns();
+
+    if (hasOngoingCampaigns) {
+      // 진행 중인 캠페인이 있으면 탈퇴 불가 안내 모달 표시
+      setIsWithdrawBlockedModalOpen(true);
+    } else {
+      // 진행 중인 캠페인이 없으면 탈퇴 확인 모달 표시
+      setIsWithdrawConfirmModalOpen(true);
+    }
+  };
+
+  /**
+   * 탈퇴 확인 모달에서 "탈퇴" 버튼 클릭 핸들러
+   *
+   * 기능:
+   * 1. 첫 번째 확인 모달을 닫습니다.
+   * 2. 두 번째 완료 모달을 엽니다.
+   * 3. 실제 탈퇴 API 호출 로직이 필요하면 여기에 추가합니다.
+   *
+   * 학습 포인트:
+   * - 모달 상태 관리: 여러 모달을 순차적으로 제어하는 방법
+   * - 비동기 처리: 실제 API 호출 시 async/await 사용 가능
+   */
+  const handleWithdrawConfirm = () => {
+    setIsWithdrawConfirmModalOpen(false);
+    // 실제 탈퇴 API 호출 로직이 필요하면 여기에 추가
+    // 예: await withdrawUser();
+    setIsWithdrawCompleteModalOpen(true);
+  };
+
+  /**
+   * 탈퇴 완료 모달에서 "닫기" 버튼 클릭 핸들러
+   *
+   * 기능:
+   * 1. 완료 모달을 닫습니다.
+   * 2. 메인 페이지로 이동합니다.
+   *
+   * 학습 포인트:
+   * - 라우팅: Next.js의 useRouter를 사용하여 페이지 이동
+   * - 상태 초기화: 모달 상태를 false로 설정하여 닫기
+   */
+  const handleWithdrawComplete = () => {
+    setIsWithdrawCompleteModalOpen(false);
+    router.push("/");
   };
 
   return (
@@ -311,6 +415,35 @@ export default function EditProfilePage() {
           </button>
         </div>
       </main>
+
+      {/* 탈퇴 불가 안내 모달 (진행 중인 캠페인이 있을 때) */}
+      <BaseModal
+        is_open={isWithdrawBlockedModalOpen}
+        on_close={() => setIsWithdrawBlockedModalOpen(false)}
+        message="진행 중인 캠페인이 있을 경우<br>탈퇴가 불가합니다.<br>먼저 캠페인을 완료해 주세요."
+        buttons={["닫기"]}
+        type="center"
+      />
+
+      {/* 회원 탈퇴 확인 모달 (첫 번째 모달) */}
+      <BaseModal
+        is_open={isWithdrawConfirmModalOpen}
+        on_close={() => setIsWithdrawConfirmModalOpen(false)}
+        message="탈퇴 시 진행한 캠페인 기록과<br>포인트가 모두 삭제되며, 재가입이 불가합니다.<br>정말 탈퇴하시겠습니까?"
+        buttons={["취소", "탈퇴"]}
+        on_confirm={handleWithdrawConfirm}
+        type="center"
+      />
+
+      {/* 회원 탈퇴 완료 모달 (두 번째 모달) */}
+      <BaseModal
+        is_open={isWithdrawCompleteModalOpen}
+        on_close={handleWithdrawComplete}
+        message="탈퇴가 완료되었습니다.<br>그동안 리뷰엑스를 이용해 주셔서 감사합니다."
+        buttons={["닫기"]}
+        on_confirm={handleWithdrawComplete}
+        type="center"
+      />
     </div>
   );
 }
