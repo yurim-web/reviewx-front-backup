@@ -62,6 +62,7 @@
   font-weight: 600;
   line-height: 28px;
   letter-spacing: -0.36px;
+  white-space: pre-line; /* \n을 줄바꿈으로 표시 */
 }
 
 /* ========================================

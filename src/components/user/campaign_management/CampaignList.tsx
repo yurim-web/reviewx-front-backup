@@ -28,6 +28,10 @@ interface CampaignListProps {
   onTabChange?: (
     tab: "신청" | "선정" | "완료" | "취소/반려" | "패널티"
   ) => void;
+  /** 신청 취소 성공 시 호출되는 콜백 함수 */
+  onCancelSuccess?: (campaignId: string) => void;
+  /** 필터 적용 전 원본 캠페인 목록 (필터 적용 여부 확인용) */
+  originalCampaigns?: CampaignApplication[];
 }
 
 /**
@@ -39,6 +43,8 @@ export default function CampaignList({
   campaigns,
   activeStatTab,
   onTabChange,
+  onCancelSuccess,
+  originalCampaigns,
 }: CampaignListProps) {
   /* ========================================
      패널티 탭은 메인 페이지에서 별도 처리
@@ -64,9 +70,33 @@ export default function CampaignList({
 
   // 필터링 결과가 없는 경우 빈 상태 메시지 표시
   if (filteredCampaigns.length === 0) {
+    // 필터 적용 여부 확인
+    // 원본 캠페인 목록이 있고, 필터링 후 결과가 없으면 필터가 적용된 것으로 판단
+    const hasOriginalCampaigns =
+      originalCampaigns && originalCampaigns.length > 0;
+
+    // 원본 데이터는 있지만 필터링 후 결과가 없으면 필터가 적용된 것
+    if (hasOriginalCampaigns) {
+      return (
+        <div className={cardStyles.empty_state}>
+          <p>일치하는 결과가 없습니다.</p>
+        </div>
+      );
+    }
+
+    // 필터가 적용되지 않은 경우: 탭별 메시지 표시
+    const emptyMessages: Record<StatTab, string> = {
+      신청: "신청 내역이 없습니다.",
+      선정: "선정 내역이 없습니다.",
+      완료: "완료 내역이 없습니다.",
+      "취소/반려": "취소/반려 내역이 없습니다.",
+      패널티: "패널티 내역이 없습니다.",
+      예정: "예정 내역이 없습니다.",
+    };
+
     return (
       <div className={cardStyles.empty_state}>
-        <p>{activeStatTab} 상태의 캠페인이 없습니다.</p>
+        <p>{emptyMessages[activeStatTab] || "내역이 없습니다."}</p>
       </div>
     );
   }
@@ -80,6 +110,7 @@ export default function CampaignList({
           campaign={campaign}
           activeTab={activeStatTab}
           onTabChange={onTabChange}
+          onCancelSuccess={onCancelSuccess}
         />
       ))}
     </div>

@@ -18,10 +18,11 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import { use } from "react";
+import { use, useState } from "react";
 import CampaignDetailPage from "@/components/campaign/CampaignDetailPage";
-import ApplicationModalType3 from "@/components/user/campaign_detail/modal/ApplicationModalType3";
+import ApplicationModal from "@/components/user/campaign_detail/modal/ApplicationModal";
 import DetailGuidelinesSectionReporter from "@/components/user/campaign_detail/guidelines/DetailGuidelinesSectionReporter";
+import Toast from "@/components/common/toast/Toast";
 import { reporterCampaigns } from "@/data/campaign/reporter/reporterCampaigns";
 
 interface ReporterDetailPageProps {
@@ -33,41 +34,59 @@ export default function ReporterDetailPage({
 }: ReporterDetailPageProps) {
   const { id } = use(params);
   const campaign = reporterCampaigns.find((c) => String(c.id) === id);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   if (!campaign) return notFound();
 
   return (
-    <CampaignDetailPage
-      campaign={campaign}
-      altText="reporter_tag"
-      additionalSchedules={[
-        {
-          label: "등록 기간",
-          value: campaign.detailedSchedule.registrationPeriod,
-        },
-      ]}
-      guidelinesComponent={
-        <DetailGuidelinesSectionReporter
-          description={campaign.description}
-          productLink={campaign.productLink}
-          onCopyProductLink={() => {
-            if (campaign.productLink) {
-              navigator.clipboard.writeText(campaign.productLink);
-              alert("홍보링크가 복사되었습니다!");
-            }
-          }}
-          keyword={campaign.keyword}
-          onCopyKeyword={() => {
-            navigator.clipboard.writeText(campaign.keyword);
-            alert("키워드가 복사되었습니다!");
-          }}
-          requirements={campaign.requirements}
-          guidelineTexts={campaign.guidelineTexts}
-        />
-      }
-      renderApplicationModal={(isOpen, onClose) => (
-        <ApplicationModalType3 isOpen={isOpen} onClose={onClose} />
-      )}
-    />
+    <>
+      <CampaignDetailPage
+        campaign={campaign}
+        altText="reporter_tag"
+        additionalSchedules={[
+          {
+            label: "등록 기간",
+            value: campaign.detailedSchedule.registrationPeriod,
+          },
+        ]}
+        guidelinesComponent={
+          <DetailGuidelinesSectionReporter
+            description={campaign.description}
+            productLink={campaign.productLink}
+            onCopyProductLink={async () => {
+              if (campaign.productLink) {
+                await navigator.clipboard.writeText(campaign.productLink);
+                setToastMessage("복사되었습니다.");
+                setShowToast(true);
+              }
+            }}
+            keyword={campaign.keyword}
+            onCopyKeyword={async () => {
+              await navigator.clipboard.writeText(campaign.keyword);
+              setToastMessage("복사되었습니다.");
+              setShowToast(true);
+            }}
+            requirements={campaign.requirements}
+            guidelineTexts={campaign.guidelineTexts}
+          />
+        }
+        renderApplicationModal={(isOpen, onClose, campaign) => (
+          <ApplicationModal
+            isOpen={isOpen}
+            onClose={onClose}
+            type="reporter"
+            dayCount={campaign.dayCount}
+          />
+        )}
+      />
+      {/* 토스트 메시지 */}
+      <Toast
+        message={toastMessage}
+        isOpen={showToast}
+        onClose={() => setShowToast(false)}
+        duration={2000}
+      />
+    </>
   );
 }

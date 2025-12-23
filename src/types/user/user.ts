@@ -143,8 +143,8 @@ export interface CampaignCreateFormBaseProps {
 export interface CampaignApplication {
   id: string; // 고유 ID
   title: string; // 캠페인 제목
-  category: string; // 카테고리 (네이버블로그, 쿠팡 등)
-  categoryIcon: string; // 카테고리 아이콘 경로
+  category: string; // 카테고리 (네이버블로그, 클립, 유튜브, 쇼츠, 릴스, 인스타그램) - 구매평/미션형은 빈 문자열
+  categoryIcon?: string; // 카테고리 아이콘 경로 (선택적, 자동으로 결정됨)
   image: string; // 캠페인 대표 이미지
   status: "신청" | "선정" | "완료" | "취소/반려"; // 캠페인 진행 상태
   remainingDays: number; // 남은 일수
@@ -165,6 +165,14 @@ export interface CampaignApplication {
 
   hasContent?: boolean; // 콘텐츠 보유 여부
   isPenalty?: boolean; // 패널티 여부
+  extensionCount?: number; // 등록 기한 연장 신청 횟수
+  contentType?: "link" | "image" | "both"; // 미션형 콘텐츠 타입 (링크만, 이미지만, 둘 다)
+  /** 기본 미션 항목 목록 (콘텐츠 확인 모달에서 사용) */
+  missionItems?: Array<{
+    id: string; // 미션 항목 고유 식별자
+    text: string; // 미션 항목 텍스트
+    isCompleted: boolean; // 충족 여부 (true: 충족, false: 미충족)
+  }>;
 }
 
 /**
@@ -209,7 +217,13 @@ export type MainTab = "campaign" | "point" | "account";
  * - /user/campaign_management (캠페인 관리 페이지)
  * - StatisticsTab (통계 탭 컴포넌트)
  */
-export type StatTab = "신청" | "예정" | "선정" | "완료" | "취소/반려" | "패널티";
+export type StatTab =
+  | "신청"
+  | "예정"
+  | "선정"
+  | "완료"
+  | "취소/반려"
+  | "패널티";
 
 /* ========================================
    💰 포인트 관련 타입 정의

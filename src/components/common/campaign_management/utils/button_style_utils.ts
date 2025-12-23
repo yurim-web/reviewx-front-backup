@@ -121,11 +121,12 @@ export function getButtonStyleType(buttonText: string): ButtonStyleType {
 export function getButtonClassName(
   buttonText: string,
   buttonStyles: {
-    action_button: string;
-    primary_button: string;
-    danger_button: string;
-    secondary_button: string;
-    default_button: string;
+    action_button?: string;
+    primary_button?: string;
+    danger_button?: string;
+    secondary_button?: string;
+    default_button?: string;
+    [key: string]: string | undefined;
   }
 ): string {
   const styleType = getButtonStyleType(buttonText);

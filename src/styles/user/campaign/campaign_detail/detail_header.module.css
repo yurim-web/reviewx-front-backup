@@ -71,6 +71,30 @@
   letter-spacing: -0.28px;
 }
 
+/* 긴급 태그 - 빨간색 배경에 흰색 텍스트 */
+.urgent_tag {
+  padding: 8px;
+  border-radius: 4px;
+  background: #ff2626;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 마감 태그 - 회색 배경에 흰색 텍스트 */
+.closed_tag {
+  padding: 8px;
+  border-radius: 4px;
+  background: #848484;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
 /* 포인트 표시 */
 .points {
   padding: 8px;
@@ -129,6 +153,24 @@
     padding: 8px 6px;
     font-size: 13px;
     font-weight: 500;
+    line-height: 13px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 긴급 태그 - 모바일 */
+  .urgent_tag {
+    padding: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 13px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 마감 태그 - 모바일 */
+  .closed_tag {
+    padding: 6px;
+    font-size: 13px;
+    font-weight: 600;
     line-height: 13px;
     letter-spacing: -0.28px;
   }

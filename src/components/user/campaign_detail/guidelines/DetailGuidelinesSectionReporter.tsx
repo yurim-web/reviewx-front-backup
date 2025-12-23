@@ -12,9 +12,13 @@
  * - 유의사항 (가이드라인 텍스트)
  */
 
+"use client";
+
+import { useSearchParams } from "next/navigation";
 import styles from "@/styles/user/campaign/campaign_detail/detail_guidelines_section.module.css";
 import AdditionalGuidelines from "../AdditionalGuidelines";
 import RequirementIcons from "../RequirementIcons";
+import SelectedCampaignInfo from "../SelectedCampaignInfo";
 
 interface DetailGuidelinesSectionReporterProps {
   description?: string; // 제공내역 설명
@@ -44,6 +48,12 @@ export default function DetailGuidelinesSectionReporter({
   requirements,
   guidelineTexts,
 }: DetailGuidelinesSectionReporterProps) {
+  // URL 쿼리 파라미터 확인
+  // useSearchParams: Next.js에서 URL 쿼리 파라미터를 읽는 Hook입니다.
+  // ?selected=true 같은 쿼리 파라미터를 확인하여 선정된 캠페인인지 판단합니다.
+  const searchParams = useSearchParams();
+  const isSelected = searchParams.get("selected") === "true";
+
   const activeGuidelineTexts = guidelineTexts || defaultGuidelineTexts;
 
   return (
@@ -122,6 +132,14 @@ export default function DetailGuidelinesSectionReporter({
 
       {/* 추가 안내사항 컴포넌트 */}
       <AdditionalGuidelines />
+
+      {/* 선정 후 추가 안내 섹션 (조건부 렌더링) */}
+      {isSelected && (
+        <SelectedCampaignInfo
+          onCopyFtcImage={onCopyProductLink}
+          onCopyContact={onCopyKeyword}
+        />
+      )}
     </article>
   );
 }

@@ -46,8 +46,12 @@
 .campaign_content {
   display: flex;
   gap: 24px; /* 이미지와 정보 간격 */
-
   align-items: center;
+
+  /* 링크 스타일 제거 (Next.js Link는 기본적으로 <a> 태그로 렌더링됨) */
+  text-decoration: none; /* 밑줄 제거 */
+  color: inherit; /* 부모 요소의 색상 상속 */
+  cursor: pointer; /* 마우스 오버 시 포인터 커서 표시 */
 }
 
 /* 캠페인 이미지 영역 */
@@ -137,8 +141,6 @@
   line-height: 16px; /* 100% */
   letter-spacing: -0.32px;
 }
-
-
 
 /* 마감임박 태그 (빨간색) */
 .cam_tag.urgent {

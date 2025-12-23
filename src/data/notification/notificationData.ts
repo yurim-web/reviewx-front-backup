@@ -211,15 +211,15 @@ export const reviewer_notification_templates: Record<
   },
   A_R15: {
     category: "A_R15",
-    label: "계정 정지",
+    label: "계정 일시 정지",
     message_template:
       "운영 정책 위반으로 인해 {정지기간}일 동안 캠페인에 참여할 수 없습니다.",
     color: "orange",
   },
   A_R16: {
     category: "A_R16",
-    label: "계정 차단",
-    message_template: "운영 정책 위반으로 인해 영구 차단되었습니다.",
+    label: "계정 이용 제한",
+    message_template: "운영 정책 위반으로 인해 이용 제한되었습니다.",
     color: "orange",
   },
   A_R17: {
@@ -269,15 +269,15 @@ export const partner_notification_templates: Record<
   },
   A_P6: {
     category: "A_P6",
-    label: "계정 정지",
+    label: "계정 일시 정지",
     message_template:
       "운영 정책 위반으로 인해 {정지기간}일 동안 캠페인을 등록할 수 없습니다.",
     color: "orange",
   },
   A_P7: {
     category: "A_P7",
-    label: "계정 차단",
-    message_template: "운영 정책 위반으로 인해 영구 차단되었습니다.",
+    label: "계정 이용 제한",
+    message_template: "운영 정책 위반으로 인해 이용 제한되었습니다.",
     color: "orange",
   },
 };

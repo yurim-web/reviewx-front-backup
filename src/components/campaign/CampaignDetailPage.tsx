@@ -16,15 +16,18 @@
 
 "use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import SubHeader from "@/components/fragments/SubHeader";
 import MainMenu from "@/components/main/MainMenu";
 import DetailHeader from "@/components/user/campaign_detail/DetailHeader";
 import DetailProductInfo from "@/components/user/campaign_detail/DetailProductInfo";
 import DetailScheduleInfo from "@/components/user/campaign_detail/DetailScheduleInfo";
 import DetailImage from "@/components/user/campaign_detail/DetailImage";
+import CampaignApplyButton from "@/components/user/campaign_detail/CampaignApplyButton";
 import styles from "@/styles/user/campaign/campaign_detail.module.css";
 import { useCampaignDetailScroll } from "@/hooks/common/campaign/useCampaignDetailScroll";
+import { calculateDayCount } from "@/utils/campaignDayCount";
 
 // 캠페인 기본 타입
 interface BaseCampaign {
@@ -48,6 +51,7 @@ interface BaseCampaign {
   };
   campaign_detail_image: string;
   region?: string; // 방문형만
+  dayCount?: string; // 남은 일수 또는 긴급 상태 (예: "D-5", "긴급", "마감임박")
   [key: string]: any;
 }
 
@@ -61,8 +65,15 @@ interface CampaignDetailPageProps {
   additionalSchedules?: Array<{ label: string; value: string }>;
   // Guidelines 컴포넌트 (각 타입별로 다름)
   guidelinesComponent: ReactNode;
-  // ApplicationModal 컴포넌트 렌더 함수 (isOpen, onClose를 받아서 모달 컴포넌트 반환)
-  renderApplicationModal: (isOpen: boolean, onClose: () => void) => ReactNode;
+  // ApplicationModal 컴포넌트 렌더 함수 (isOpen, onClose, campaign을 받아서 모달 컴포넌트 반환)
+  // campaign 객체에서 dayCount, channel 등의 정보를 추출하여 모달에 전달
+  renderApplicationModal: (
+    isOpen: boolean,
+    onClose: () => void,
+    campaign: BaseCampaign
+  ) => ReactNode;
+  // 이미 참여한 캠페인인지 여부 (기본값: false)
+  isParticipated?: boolean;
 }
 
 /**
@@ -80,13 +91,45 @@ export default function CampaignDetailPage({
   additionalSchedules = [],
   guidelinesComponent,
   renderApplicationModal,
+  isParticipated = false,
 }: CampaignDetailPageProps) {
   // 스크롤 이벨 고정 훅 사용
   const { isCampaignInfoFixed, campaignInfoLabelRef } =
     useCampaignDetailScroll();
 
+  // 현재 경로 확인 (뒤로가기 감지용)
+  const pathname = usePathname();
+
   // 모달 상태 관리
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // 오늘 날짜와 신청 기간(applicationStart, applicationEnd)을 기준으로
+  // 남은 일수/상태 텍스트(dayCount)를 계산합니다.
+  const computedDayCount = calculateDayCount(
+    campaign.detailedSchedule.applicationStart,
+    campaign.detailedSchedule.applicationEnd,
+    campaign.dayCount
+  );
+
+  // 계산된 dayCount 를 포함한 캠페인 객체 (긴급/마감/오픈 예정 계산 반영)
+  const campaignWithDayCount: BaseCampaign = {
+    ...campaign,
+    dayCount: computedDayCount,
+  };
+
+  // 뒤로가기 시 모달 상태 복원 (sessionStorage 확인)
+  // pathname이 변경될 때마다 확인하여 뒤로가기 감지
+  useEffect(() => {
+    // sessionStorage에서 모달 열기 플래그 확인
+    const shouldOpen = sessionStorage.getItem("shouldOpenApplicationModal");
+    if (shouldOpen === "true") {
+      // 약간의 지연을 두어 페이지 렌더링 후 모달 열기
+      setTimeout(() => {
+        setIsModalOpen(true);
+        // sessionStorage에서 플래그 제거 (한 번만 실행되도록)
+        sessionStorage.removeItem("shouldOpenApplicationModal");
+      }, 100);
+    }
+  }, [pathname]); // pathname이 변경될 때마다 실행 (뒤로가기 감지)
 
   return (
     <>
@@ -125,27 +168,34 @@ export default function CampaignDetailPage({
       <section className={styles.campaign_detail_container}>
         {/* 태그 및 포인트 */}
         <DetailHeader
-          categoryIcon={campaign.categoryIcon || ""}
-          category={campaign.category}
-          subcategory={campaign.subcategory}
-          {...(campaign.region ? { region: campaign.region } : {})}
-          points={campaign.points}
+          channel={campaignWithDayCount.channel}
+          category={campaignWithDayCount.category}
+          subcategory={campaignWithDayCount.subcategory}
+          {...(campaignWithDayCount.region
+            ? { region: campaignWithDayCount.region }
+            : {})}
+          points={campaignWithDayCount.points}
           altText={altText}
+          dayCount={campaignWithDayCount.dayCount}
         />
 
         {/* 제품 정보 */}
         <DetailProductInfo
-          title={campaign.title}
-          description={campaign.description}
-          image={campaign.image}
+          title={campaignWithDayCount.title}
+          description={campaignWithDayCount.description}
+          image={campaignWithDayCount.image}
         >
           {/* 캠페인 일정 정보 */}
           <DetailScheduleInfo
-            currentRecruitment={campaign.recruitment.current}
-            totalRecruitment={campaign.recruitment.total}
-            applicationStart={campaign.detailedSchedule.applicationStart}
-            applicationEnd={campaign.detailedSchedule.applicationEnd}
-            announcement={campaign.detailedSchedule.announcement}
+            currentRecruitment={campaignWithDayCount.recruitment.current}
+            totalRecruitment={campaignWithDayCount.recruitment.total}
+            applicationStart={
+              campaignWithDayCount.detailedSchedule.applicationStart
+            }
+            applicationEnd={
+              campaignWithDayCount.detailedSchedule.applicationEnd
+            }
+            announcement={campaignWithDayCount.detailedSchedule.announcement}
             additionalSchedules={additionalSchedules}
           />
         </DetailProductInfo>
@@ -172,19 +222,26 @@ export default function CampaignDetailPage({
       </section>
 
       {/* 하단 고정 영역: 그라데이션 + 신청 버튼 */}
-      <div className={styles.bottom_gradient}></div>
-      <div className={styles.bottom_fixed_container}>
-        <button
-          className={styles.apply_button}
-          onClick={() => setIsModalOpen(true)}
-        >
-          캠페인 신청하기
-        </button>
-      </div>
+      <CampaignApplyButton
+        applicationStart={
+          campaignWithDayCount.detailedSchedule.applicationStart
+        }
+        applicationEnd={campaignWithDayCount.detailedSchedule.applicationEnd}
+        dayCount={campaignWithDayCount.dayCount}
+        isParticipated={isParticipated}
+        onApply={() => setIsModalOpen(true)}
+      />
 
       {/* 신청 모달 */}
-      {renderApplicationModal(isModalOpen, () => setIsModalOpen(false))}
+      {renderApplicationModal(
+        isModalOpen,
+        () => {
+          setIsModalOpen(false);
+          // 모달이 닫힐 때 sessionStorage 정리
+          sessionStorage.removeItem("shouldOpenApplicationModal");
+        },
+        campaignWithDayCount
+      )}
     </>
   );
 }
-

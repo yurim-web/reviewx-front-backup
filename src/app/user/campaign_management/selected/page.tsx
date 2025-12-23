@@ -42,7 +42,9 @@ export default function SelectedPage() {
   >("선정");
 
   // 필터링된 캠페인 목록 상태
-  const [filteredCampaigns, setFilteredCampaigns] = useState<CampaignApplication[]>([]);
+  const [filteredCampaigns, setFilteredCampaigns] = useState<
+    CampaignApplication[]
+  >([]);
 
   // 탭별 캠페인 목록 가져오기
   const campaigns = getCampaignsByTab(activeStatTab);
@@ -88,7 +90,11 @@ export default function SelectedPage() {
         />
 
         {/* 필터링된 캠페인 목록 */}
-        <CampaignList campaigns={filteredCampaigns} activeStatTab="선정" />
+        <CampaignList
+          campaigns={filteredCampaigns}
+          activeStatTab="선정"
+          originalCampaigns={campaigns}
+        />
       </div>
     </div>
   );

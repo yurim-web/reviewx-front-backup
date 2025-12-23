@@ -17,8 +17,12 @@
  * - 추가 안내사항 컴포넌트
  */
 
+"use client";
+
+import { useSearchParams } from "next/navigation";
 import AdditionalGuidelines from "../AdditionalGuidelines";
 import RequirementIcons from "../RequirementIcons";
+import SelectedCampaignInfo from "../SelectedCampaignInfo";
 import styles from "@/styles/user/campaign/campaign_detail/detail_guidelines_section.module.css";
 
 /**
@@ -55,6 +59,12 @@ export default function DetailGuidelinesSectionVisit({
   requirements,
   guidelineTexts,
 }: DetailGuidelinesSectionVisitProps) {
+  // URL 쿼리 파라미터 확인
+  // useSearchParams: Next.js에서 URL 쿼리 파라미터를 읽는 Hook입니다.
+  // ?selected=true 같은 쿼리 파라미터를 확인하여 선정된 캠페인인지 판단합니다.
+  const searchParams = useSearchParams();
+  const isSelected = searchParams.get("selected") === "true";
+
   // ========================================
   // 기본 가이드 문구 (props 미전달 시 사용)
   // ========================================
@@ -184,6 +194,14 @@ export default function DetailGuidelinesSectionVisit({
 
       {/* 추가 안내사항 컴포넌트 */}
       <AdditionalGuidelines />
+
+      {/* 선정 후 추가 안내 섹션 (조건부 렌더링) */}
+      {isSelected && (
+        <SelectedCampaignInfo
+          onCopyFtcImage={onCopyVisitLink}
+          onCopyContact={onCopyKeyword}
+        />
+      )}
     </article>
   );
 }

@@ -21,12 +21,12 @@ import type { CampaignApplication } from "@/types/user/user";
 // 임시 유저 캠페인 관리 데이터 (신청 > 선정 > 완료 > 취소/반려 순서)
 export const campaignManagementData: CampaignApplication[] = [
   // 신청 상태 캠페인들 (id: 1-5) - 다양한 타입 추가
+  // 실제 캠페인 데이터와 매칭: delivery_1
   {
-    id: "1",
-    title: "프리미엄 헤드폰 리뷰 캠페인",
-    category: "쿠팡",
-    categoryIcon: "/images/brand_logo/coupang.svg",
-    image: "/images/main/campaign_img/eximg_1.png",
+    id: "delivery_1",
+    title: "세르프 (박신혜리프팅)",
+    category: "네이버블로그",
+    image: "/images/main/campaign_img/eximg_9.png",
     status: "신청",
     remainingDays: 5,
     statusMessage: "캠페인 선정 발표까지 1일 남았습니다.",
@@ -36,12 +36,12 @@ export const campaignManagementData: CampaignApplication[] = [
     hasContent: false,
     isPenalty: false,
   },
+  // 실제 캠페인 데이터와 매칭: mission_2
   {
-    id: "2",
-    title: "유튜브 쇼츠 제작",
-    category: "유튜브",
-    categoryIcon: "/images/brand_logo/youtube.svg",
-    image: "/images/main/campaign_img/eximg_9.png",
+    id: "mission_2",
+    title: "헬스케어 미션형",
+    category: "", // 미션형은 카테고리 없음 (고정 아이콘 사용)
+    image: "/images/main/campaign_img/eximg_2.png",
     status: "신청",
     remainingDays: 2,
     statusMessage: "캠페인 선정 발표까지 2일 남았습니다.",
@@ -51,12 +51,12 @@ export const campaignManagementData: CampaignApplication[] = [
     hasContent: false,
     isPenalty: false,
   },
+  // 실제 캠페인 데이터와 매칭: reporter_1
   {
-    id: "13",
-    title: "맛집 탐방 기자단 모집",
-    category: "네이버블로그",
-    categoryIcon: "/images/brand_logo/naverblog.svg",
-    image: "/images/main/campaign_img/eximg_3.png",
+    id: "reporter_1",
+    title: "테크 기자단",
+    category: "유튜브",
+    image: "/images/main/campaign_img/eximg_1.png",
     status: "신청",
     remainingDays: 3,
     statusMessage: "캠페인 선정 발표까지 3일 남았습니다.",
@@ -66,11 +66,11 @@ export const campaignManagementData: CampaignApplication[] = [
     hasContent: false,
     isPenalty: false,
   },
+  // 실제 캠페인 데이터와 매칭: review_2
   {
-    id: "14",
-    title: "화장품 구매평 작성 이벤트",
-    category: "올리브영",
-    categoryIcon: "/images/brand_logo/oliveyoung.svg",
+    id: "review_2",
+    title: "화장품 구매평 리뷰",
+    category: "", // 구매평은 카테고리 없음 (고정 아이콘 사용)
     image: "/images/main/campaign_img/eximg_2.png",
     status: "신청",
     remainingDays: 1,
@@ -81,12 +81,12 @@ export const campaignManagementData: CampaignApplication[] = [
     hasContent: false,
     isPenalty: false,
   },
+  // 실제 캠페인 데이터와 매칭: visit_15
   {
-    id: "15",
-    title: "카페 방문 후기 작성",
-    category: "인스타그램",
-    categoryIcon: "/images/brand_logo/insta.svg",
-    image: "/images/main/campaign_img/eximg_5.png",
+    id: "visit_15",
+    title: "노래방 방문 체험",
+    category: "유튜브",
+    image: "/images/main/campaign_img/eximg_9.png",
     status: "신청",
     remainingDays: 4,
     statusMessage: "캠페인 선정 발표까지 4일 남았습니다.",
@@ -97,29 +97,170 @@ export const campaignManagementData: CampaignApplication[] = [
     isPenalty: false,
   },
 
-  // 선정 상태 캠페인들 (id: 3-8) - 다양한 타입 추가
+  // 선정 상태 캠페인들 (id: 3-8, 16-17, 21-30) - 각 유형별 Type 1, Type 2 추가
+
+  // ========== 미션형 ==========
+  // Type 1: 콘텐츠 등록하기 (링크만)
+  // 실제 캠페인 데이터와 매칭: mission_3
   {
-    id: "3",
-    title: "스킨케어 세트 미션형",
-    category: "올리브영",
-    categoryIcon: "/images/brand_logo/oliveyoung.svg",
-    image: "/images/main/campaign_img/eximg_2.png",
+    id: "mission_3",
+    title: "홈데코 미션형",
+    category: "", // 미션형은 카테고리 없음 (고정 아이콘 사용)
+    image: "/images/main/campaign_img/eximg_3.png",
     status: "선정",
     remainingDays: 12,
-    statusMessage:
-      "캠페인 마감까지 7일 남았습니다. 미션을 완료하고 콘텐츠를 등록해 주세요. ",
+    statusMessage: "콘텐츠를 등록해주세요.",
     type: "미션형",
     isUrgent: false,
     subStatus: "content_not_registered",
     hasContent: false,
     isPenalty: false,
+    contentType: "link", // 링크만 입력하는 ContentRegistrationModal 사용
   },
+  // Type 2: 콘텐츠 수정하기 (링크만)
+  // 실제 캠페인 데이터와 매칭: mission_1
   {
-    id: "4",
-    title: "맛집 탐방 블로그 포스팅",
+    id: "mission_1",
+    title: "스킨케어 미션형",
+    category: "", // 미션형은 카테고리 없음 (고정 아이콘 사용)
+    image: "/images/main/campaign_img/eximg_1.png",
+    status: "선정",
+    remainingDays: 9,
+    statusMessage: "콘텐츠가 등록되었습니다.",
+    type: "미션형",
+    isUrgent: false,
+    subStatus: "content_registered",
+    hasContent: true,
+    isPenalty: false,
+    contentType: "link", // 링크만 입력하는 ContentRegistrationModal 사용
+  },
+  // Type 1: 콘텐츠 등록하기 (이미지만)
+  // 실제 캠페인 데이터와 매칭: mission_6
+  {
+    id: "mission_6",
+    title: "디지털 미션형",
+    category: "", // 미션형은 카테고리 없음 (고정 아이콘 사용)
+    image: "/images/main/campaign_img/eximg_6.png",
+    status: "선정",
+    remainingDays: 10,
+    statusMessage: "이미지 콘텐츠를 등록해주세요.",
+    type: "미션형",
+    isUrgent: false,
+    subStatus: "content_not_registered",
+    hasContent: false,
+    isPenalty: false,
+    contentType: "image", // 이미지만 업로드하는 ImageUploadModal 사용
+  },
+  // Type 2: 콘텐츠 수정하기 (이미지만)
+  // 실제 캠페인 데이터와 매칭: mission_7
+  {
+    id: "mission_7",
+    title: "반려동물 미션형",
+    category: "", // 미션형은 카테고리 없음 (고정 아이콘 사용)
+    image: "/images/main/campaign_img/eximg_7.png",
+    status: "선정",
+    remainingDays: 8,
+    statusMessage: "이미지 콘텐츠가 등록되었습니다.",
+    type: "미션형",
+    isUrgent: false,
+    subStatus: "content_registered",
+    hasContent: true,
+    isPenalty: false,
+    contentType: "image", // 이미지만 업로드하는 ImageUploadModal 사용
+  },
+  // Type 1: 콘텐츠 등록하기 (링크 + 이미지)
+  // 실제 캠페인 데이터와 매칭: mission_8
+  {
+    id: "mission_8",
+    title: "스포츠 미션형",
+    category: "", // 미션형은 카테고리 없음 (고정 아이콘 사용)
+    image: "/images/main/campaign_img/eximg_8.png",
+    status: "선정",
+    remainingDays: 11,
+    statusMessage: "콘텐츠를 등록해주세요.",
+    type: "미션형",
+    isUrgent: false,
+    subStatus: "content_not_registered",
+    hasContent: false,
+    isPenalty: false,
+    contentType: "both", // 링크 + 이미지 모두 업로드하는 CombinedContentModal 사용
+  },
+  // Type 2: 콘텐츠 수정하기 (링크 + 이미지)
+  // 실제 캠페인 데이터와 매칭: mission_9
+  {
+    id: "mission_9",
+    title: "뷰티 미션형",
+    category: "", // 미션형은 카테고리 없음 (고정 아이콘 사용)
+    image: "/images/main/campaign_img/eximg_9.png",
+    status: "선정",
+    remainingDays: 7,
+    statusMessage: "콘텐츠가 등록되었습니다.",
+    type: "미션형",
+    isUrgent: false,
+    subStatus: "content_registered",
+    hasContent: true,
+    isPenalty: false,
+    contentType: "both", // 링크 + 이미지 모두 업로드하는 CombinedContentModal 사용
+  },
+
+  // ========== 배송형 ==========
+  // Type 1: 콘텐츠 등록하기
+  // 실제 캠페인 데이터와 매칭: delivery_3
+  {
+    id: "delivery_3",
+    title: "가죽 여권 케이스+네임택 실미션형 모집",
+    category: "인스타그램",
+    image: "/images/main/campaign_img/eximg_13.png",
+    status: "선정",
+    remainingDays: 10,
+    statusMessage: "콘텐츠를 등록해주세요.",
+    type: "배송형",
+    isUrgent: false,
+    subStatus: "content_not_registered",
+    hasContent: false,
+    isPenalty: false,
+  },
+  // Type 2: 콘텐츠 수정하기
+  // 실제 캠페인 데이터와 매칭: delivery_7
+  {
+    id: "delivery_7",
+    title: "유튜브 크리에이터 키트",
+    category: "유튜브",
+    image: "/images/main/campaign_img/eximg_6.png",
+    status: "선정",
+    remainingDays: 15,
+    statusMessage: "콘텐츠가 등록되었습니다.",
+    type: "배송형",
+    isUrgent: false,
+    subStatus: "content_registered",
+    hasContent: true,
+    isPenalty: false,
+  },
+
+  // ========== 방문형 ==========
+  // Type 1: 콘텐츠 등록하기
+  // 실제 캠페인 데이터와 매칭: visit_2
+  {
+    id: "visit_2",
+    title: "카페 방문 체험",
+    category: "인스타그램",
+    image: "/images/main/campaign_img/eximg_9.png",
+    status: "선정",
+    remainingDays: 7,
+    statusMessage: "방문 후 콘텐츠를 등록해주세요.",
+    type: "방문형",
+    isUrgent: false,
+    subStatus: "content_not_registered",
+    hasContent: false,
+    isPenalty: false,
+  },
+  // Type 2: 콘텐츠 수정하기
+  // 실제 캠페인 데이터와 매칭: visit_1
+  {
+    id: "visit_1",
+    title: "식당 방문 리뷰",
     category: "네이버블로그",
-    categoryIcon: "/images/brand_logo/naverblog.svg",
-    image: "/images/main/campaign_img/eximg_3.png",
+    image: "/images/main/campaign_img/eximg_8.png",
     status: "선정",
     remainingDays: 8,
     statusMessage: "콘텐츠를 검수 중입니다.",
@@ -129,42 +270,15 @@ export const campaignManagementData: CampaignApplication[] = [
     hasContent: true,
     isPenalty: false,
   },
+
+  // ========== 기자단 ==========
+  // Type 1: 콘텐츠 등록하기
+  // 실제 캠페인 데이터와 매칭: reporter_2
   {
-    id: "5",
-    title: "스포츠 용품 리뷰",
-    category: "쿠팡",
-    categoryIcon: "/images/brand_logo/coupang.svg",
-    image: "/images/main/campaign_img/eximg_7.png",
-    status: "선정",
-    remainingDays: 15,
-    statusMessage: "제품 구매 기간입니다.",
-    type: "배송형",
-    isUrgent: false,
-    subStatus: "receipt_registered",
-    hasContent: false,
-    isPenalty: false,
-  },
-  {
-    id: "6",
-    title: "게이밍 의자 리뷰",
-    category: "쿠팡",
-    categoryIcon: "/images/brand_logo/coupang.svg",
-    image: "/images/main/campaign_img/eximg_4.png",
-    status: "선정",
-    remainingDays: 10,
-    statusMessage: "구매 영수증을 검수 중입니다.",
-    type: "배송형",
-    isUrgent: false,
-    subStatus: "content_not_registered",
-    hasContent: false,
-    isPenalty: false,
-  },
-  {
-    id: "16",
-    title: "기자단 활동 - 신제품 체험",
+    id: "reporter_2",
+    title: "뷰티 기자단",
     category: "네이버블로그",
-    categoryIcon: "/images/brand_logo/naverblog.svg",
-    image: "/images/main/campaign_img/eximg_6.png",
+    image: "/images/main/campaign_img/eximg_2.png",
     status: "선정",
     remainingDays: 14,
     statusMessage: "기자단 활동을 시작해주세요.",
@@ -174,12 +288,63 @@ export const campaignManagementData: CampaignApplication[] = [
     hasContent: false,
     isPenalty: false,
   },
+  // Type 2: 콘텐츠 수정하기
+  // 실제 캠페인 데이터와 매칭: reporter_3
   {
-    id: "17",
-    title: "화장품 구매평 작성",
-    category: "올리브영",
-    categoryIcon: "/images/brand_logo/oliveyoung.svg",
-    image: "/images/main/campaign_img/eximg_8.png",
+    id: "reporter_3",
+    title: "패션 기자단",
+    category: "네이버블로그",
+    image: "/images/main/campaign_img/eximg_3.png",
+    status: "선정",
+    remainingDays: 11,
+    statusMessage: "기자단 활동 콘텐츠가 등록되었습니다.",
+    type: "기자단",
+    isUrgent: false,
+    subStatus: "content_registered",
+    hasContent: true,
+    isPenalty: false,
+  },
+
+  // ========== 구매평 ==========
+  // Type 1: 구매 영수증 등록하기
+  // 실제 캠페인 데이터와 매칭: review_3
+  {
+    id: "review_3",
+    title: "가전제품 구매평 리뷰",
+    category: "", // 구매평은 카테고리 없음 (고정 아이콘 사용)
+    image: "/images/main/campaign_img/eximg_3.png",
+    status: "선정",
+    remainingDays: 5,
+    statusMessage: "구매 영수증을 등록해주세요.",
+    type: "구매평",
+    isUrgent: true,
+    subStatus: "receipt_not_registered",
+    hasContent: false,
+    isPenalty: false,
+  },
+  // Type 2: 구매 영수증 수정하기
+  // 실제 캠페인 데이터와 매칭: review_4
+  {
+    id: "review_4",
+    title: "의류 구매평 리뷰",
+    category: "", // 구매평은 카테고리 없음 (고정 아이콘 사용)
+    image: "/images/main/campaign_img/eximg_4.png",
+    status: "선정",
+    remainingDays: 4,
+    statusMessage: "구매 영수증이 등록되었습니다.",
+    type: "구매평",
+    isUrgent: false,
+    subStatus: "receipt_registered",
+    hasContent: false,
+    isPenalty: false,
+  },
+  // Type 1: 콘텐츠 등록하기
+  // 실제 캠페인 데이터와 매칭: review_5
+  {
+    id: "review_5",
+    title: "식품 구매평 리뷰",
+    category: "", // 구매평은 카테고리 없음 (고정 아이콘 사용)
+    image: "/images/main/campaign_img/eximg_5.png",
     status: "선정",
     remainingDays: 6,
     statusMessage: "구매평 작성을 완료해주세요.",
@@ -189,13 +354,29 @@ export const campaignManagementData: CampaignApplication[] = [
     hasContent: false,
     isPenalty: false,
   },
+  // Type 2: 콘텐츠 수정하기
+  // 실제 캠페인 데이터와 매칭: review_6
+  {
+    id: "review_6",
+    title: "책 구매평 리뷰",
+    category: "", // 구매평은 카테고리 없음 (고정 아이콘 사용)
+    image: "/images/main/campaign_img/eximg_6.png",
+    status: "선정",
+    remainingDays: 3,
+    statusMessage: "구매평 콘텐츠가 등록되었습니다.",
+    type: "구매평",
+    isUrgent: false,
+    subStatus: "content_registered",
+    hasContent: true,
+    isPenalty: false,
+  },
 
   // 완료 상태 캠페인들 (id: 7-10) - 다양한 타입 추가
+  // 실제 캠페인 데이터와 매칭: delivery_2
   {
-    id: "7",
-    title: "카카오프렌즈 굿즈 리뷰",
-    category: "카카오프렌즈",
-    categoryIcon: "/images/brand_logo/kakaopre.svg",
+    id: "delivery_2",
+    title: "닥터뮬 뮬차 붓기차",
+    category: "네이버블로그",
     image: "/images/main/campaign_img/eximg_10.png",
     status: "완료",
     remainingDays: -7,
@@ -205,13 +386,41 @@ export const campaignManagementData: CampaignApplication[] = [
     subStatus: "content_registered",
     hasContent: true,
     isPenalty: false,
+    // 모든 기준 충족 (모두 초록색)
+    missionItems: [
+      {
+        id: "1",
+        text: "글자 수 1,500자 이상",
+        isCompleted: true,
+      },
+      {
+        id: "2",
+        text: "사진 10장 이상",
+        isCompleted: true,
+      },
+      {
+        id: "3",
+        text: "동영상 1개 이상, 120초 이상",
+        isCompleted: true,
+      },
+      {
+        id: "4",
+        text: "본문 내 링크 첨부",
+        isCompleted: true,
+      },
+      {
+        id: "5",
+        text: "본문 내 키워드/태그 첨부",
+        isCompleted: true,
+      },
+    ],
   },
+  // 실제 캠페인 데이터와 매칭: delivery_10
   {
-    id: "8",
-    title: "홈카페 원두 추천",
-    category: "네이버쇼핑",
-    categoryIcon: "/images/brand_logo/navershop.svg",
-    image: "/images/main/campaign_img/eximg_5.png",
+    id: "delivery_10",
+    title: "유기농 과일 주스 세트",
+    category: "유튜브",
+    image: "/images/main/campaign_img/eximg_3.png",
     status: "완료",
     remainingDays: -3,
     statusMessage: "캠페인이 완료되었습니다.",
@@ -220,13 +429,41 @@ export const campaignManagementData: CampaignApplication[] = [
     subStatus: "content_registered",
     hasContent: true,
     isPenalty: false,
+    // 일부만 충족 (일부 초록색/일부 빨간색)
+    missionItems: [
+      {
+        id: "1",
+        text: "글자 수 1,500자 이상",
+        isCompleted: true,
+      },
+      {
+        id: "2",
+        text: "사진 10장 이상",
+        isCompleted: true,
+      },
+      {
+        id: "3",
+        text: "동영상 1개 이상, 120초 이상",
+        isCompleted: false,
+      },
+      {
+        id: "4",
+        text: "본문 내 링크 첨부",
+        isCompleted: false,
+      },
+      {
+        id: "5",
+        text: "본문 내 키워드/태그 첨부",
+        isCompleted: true,
+      },
+    ],
   },
+  // 실제 캠페인 데이터와 매칭: mission_4
   {
-    id: "18",
-    title: "미션형 캠페인 - 브랜드 체험",
-    category: "인스타그램",
-    categoryIcon: "/images/brand_logo/insta.svg",
-    image: "/images/main/campaign_img/eximg_1.png",
+    id: "mission_4",
+    title: "패션 미션형",
+    category: "", // 미션형은 카테고리 없음 (고정 아이콘 사용)
+    image: "/images/main/campaign_img/eximg_4.png",
     status: "완료",
     remainingDays: -5,
     statusMessage: "캠페인이 완료되었습니다.",
@@ -235,13 +472,41 @@ export const campaignManagementData: CampaignApplication[] = [
     subStatus: "content_registered",
     hasContent: true,
     isPenalty: false,
+    // 모두 미충족 (모두 빨간색)
+    missionItems: [
+      {
+        id: "1",
+        text: "글자 수 1,500자 이상",
+        isCompleted: false,
+      },
+      {
+        id: "2",
+        text: "사진 10장 이상",
+        isCompleted: false,
+      },
+      {
+        id: "3",
+        text: "동영상 1개 이상, 120초 이상",
+        isCompleted: false,
+      },
+      {
+        id: "4",
+        text: "본문 내 링크 첨부",
+        isCompleted: false,
+      },
+      {
+        id: "5",
+        text: "본문 내 키워드/태그 첨부",
+        isCompleted: false,
+      },
+    ],
   },
+  // 실제 캠페인 데이터와 매칭: reporter_4
   {
-    id: "19",
-    title: "기자단 활동 완료",
+    id: "reporter_4",
+    title: "푸드 기자단",
     category: "네이버블로그",
-    categoryIcon: "/images/brand_logo/naverblog.svg",
-    image: "/images/main/campaign_img/eximg_9.png",
+    image: "/images/main/campaign_img/eximg_4.png",
     status: "완료",
     remainingDays: -2,
     statusMessage: "캠페인이 완료되었습니다.",
@@ -250,16 +515,86 @@ export const campaignManagementData: CampaignApplication[] = [
     subStatus: "content_registered",
     hasContent: true,
     isPenalty: false,
+    // 일부만 충족 (다른 조합)
+    missionItems: [
+      {
+        id: "1",
+        text: "글자 수 1,500자 이상",
+        isCompleted: false,
+      },
+      {
+        id: "2",
+        text: "사진 10장 이상",
+        isCompleted: true,
+      },
+      {
+        id: "3",
+        text: "동영상 1개 이상, 120초 이상",
+        isCompleted: true,
+      },
+      {
+        id: "4",
+        text: "본문 내 링크 첨부",
+        isCompleted: true,
+      },
+      {
+        id: "5",
+        text: "본문 내 키워드/태그 첨부",
+        isCompleted: false,
+      },
+    ],
+  },
+  // 실제 캠페인 데이터와 매칭: delivery_11
+  {
+    id: "delivery_11",
+    title: "스마트 워치 프로",
+    category: "네이버블로그",
+    image: "/images/main/campaign_img/eximg_8.png",
+    status: "완료",
+    remainingDays: -10,
+    statusMessage: "캠페인이 완료되었습니다.",
+    type: "배송형",
+    isUrgent: false,
+    subStatus: "content_registered",
+    hasContent: true,
+    isPenalty: false,
+    // 모든 기준 충족 (모두 초록색) - 두 번째 케이스
+    missionItems: [
+      {
+        id: "1",
+        text: "글자 수 1,500자 이상",
+        isCompleted: true,
+      },
+      {
+        id: "2",
+        text: "사진 10장 이상",
+        isCompleted: true,
+      },
+      {
+        id: "3",
+        text: "동영상 1개 이상, 120초 이상",
+        isCompleted: true,
+      },
+      {
+        id: "4",
+        text: "본문 내 링크 첨부",
+        isCompleted: true,
+      },
+      {
+        id: "5",
+        text: "본문 내 키워드/태그 첨부",
+        isCompleted: true,
+      },
+    ],
   },
 
   // 취소/반려 상태 캠페인들 (id: 9-12) - 다양한 타입 추가
+  // 실제 캠페인 데이터와 매칭: delivery_5
   {
-    id: "9",
-    title:
-      "[정가 26,900원] 분아메티 강아지 모유 구강 유산균 영양제 프로바이오틱스템스",
-    category: "쿠팡",
-    categoryIcon: "/images/brand_logo/coupang.svg",
-    image: "/images/main/campaign_img/eximg_6.png",
+    id: "delivery_5",
+    title: "유기농 아기용 세제",
+    category: "인스타그램",
+    image: "/images/main/campaign_img/eximg_4.png",
     status: "취소/반려",
     remainingDays: -1,
     statusMessage:
@@ -270,13 +605,12 @@ export const campaignManagementData: CampaignApplication[] = [
     hasContent: true,
     isPenalty: false,
   },
+  // 실제 캠페인 데이터와 매칭: visit_3
   {
-    id: "10",
-    title:
-      "[구매량10자] (워크온비디오프) 베르노 세미 오버핏 카라 니트 [블랙] 25FW",
+    id: "visit_3",
+    title: "뷰티샵 방문 체험",
     category: "네이버블로그",
-    categoryIcon: "/images/brand_logo/naverblog.svg",
-    image: "/images/main/campaign_img/eximg_7.png",
+    image: "/images/main/campaign_img/eximg_2.png",
     status: "취소/반려",
     remainingDays: -2,
     statusMessage:
@@ -287,13 +621,12 @@ export const campaignManagementData: CampaignApplication[] = [
     hasContent: true,
     isPenalty: false,
   },
+  // 실제 캠페인 데이터와 매칭: review_7
   {
-    id: "11",
-    title:
-      "[쿠팡 와우회원만, 별정구매평 09월 27일 구매 필수] 조조모모 브라이트닝 레디 톤업",
-    category: "올리브영",
-    categoryIcon: "/images/brand_logo/oliveyoung.svg",
-    image: "/images/main/campaign_img/eximg_8.png",
+    id: "review_7",
+    title: "운동화 구매평 리뷰",
+    category: "", // 구매평은 카테고리 없음 (고정 아이콘 사용)
+    image: "/images/main/campaign_img/eximg_7.png",
     status: "취소/반려",
     remainingDays: -3,
     statusMessage: "콘텐츠 등록 기간이 지났습니다.",
@@ -303,12 +636,12 @@ export const campaignManagementData: CampaignApplication[] = [
     hasContent: false,
     isPenalty: true,
   },
+  // 실제 캠페인 데이터와 매칭: mission_5
   {
-    id: "12",
-    title: "[이야온] 진동클렌지",
-    category: "네이버블로그",
-    categoryIcon: "/images/brand_logo/naverblog.svg",
-    image: "/images/main/campaign_img/eximg_9.png",
+    id: "mission_5",
+    title: "식품 미션형",
+    category: "", // 미션형은 카테고리 없음 (고정 아이콘 사용)
+    image: "/images/main/campaign_img/eximg_5.png",
     status: "취소/반려",
     remainingDays: -4,
     statusMessage:
@@ -319,12 +652,12 @@ export const campaignManagementData: CampaignApplication[] = [
     hasContent: false,
     isPenalty: true,
   },
+  // 실제 캠페인 데이터와 매칭: reporter_5
   {
-    id: "20",
-    title: "기자단 활동 반려",
+    id: "reporter_5",
+    title: "여행 기자단",
     category: "네이버블로그",
-    categoryIcon: "/images/brand_logo/naverblog.svg",
-    image: "/images/main/campaign_img/eximg_10.png",
+    image: "/images/main/campaign_img/eximg_5.png",
     status: "취소/반려",
     remainingDays: -6,
     statusMessage: "기자단 활동이 반려되었습니다.",

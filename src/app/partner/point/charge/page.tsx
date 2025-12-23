@@ -14,6 +14,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
+import Toast from "@/components/common/toast/Toast";
 import styles from "@/styles/partner/point/charge.module.css";
 import customDropdownStyles from "@/styles/partner/campaign_create/custom_dropdown.module.css";
 
@@ -587,12 +588,12 @@ export default function PartnerPointChargePage() {
       </main>
 
       {/* 복사 완료 토스트 메시지 */}
-      {showCopyToast && (
-        <div className={styles.copy_toast}>
-          <div className={styles.copy_toast_icon}></div>
-          <span className={styles.copy_toast_text}>복사되었습니다.</span>
-        </div>
-      )}
+      <Toast
+        message="복사되었습니다."
+        isOpen={showCopyToast}
+        onClose={() => setShowCopyToast(false)}
+        duration={2000}
+      />
     </div>
   );
 }

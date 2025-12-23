@@ -100,3 +100,5 @@ export const get_notice_detail = (id: string): NoticeDetail | null => {
 };
 
 
+
+

@@ -25,10 +25,12 @@
 export const channel_logo_map: Record<string, string> = {
   네이버블로그: "/images/brand_logo/naverblog.svg",
   네이버클립: "/images/brand_logo/naverclip.svg",
+  클립: "/images/brand_logo/naverclip.svg", // "클립" 별도 지원
   인스타그램: "/images/brand_logo/insta.svg",
   유튜브: "/images/brand_logo/youtube.svg",
   릴스: "/images/brand_logo/reels.svg",
-  숏츠: "/images/brand_logo/shots.svg",
+  쇼츠: "/images/brand_logo/shots.svg",
+  숏츠: "/images/brand_logo/shots.svg", // "숏츠"도 지원 (기존 호환성)
   기본: "/images/icons/phone_verified.svg",
 };
 
@@ -48,4 +50,58 @@ export function getChannelLogo(channelName: string): string {
   // 공백 제거하여 정규화
   const normalized = channelName.replace(/\s+/g, "");
   return channel_logo_map[normalized] ?? "/images/icons/phone_verified.svg";
+}
+
+/**
+ * 카테고리 아이콘 매핑 객체
+ * 
+ * 설명:
+ * - 캠페인 카테고리에 따라 아이콘 경로를 반환합니다.
+ * - 지원 카테고리: 네이버블로그, 클립, 유튜브, 쇼츠, 릴스, 인스타그램
+ */
+export const category_icon_map: Record<string, string> = {
+  네이버블로그: "/images/brand_logo/naverblog.svg",
+  네이버클립: "/images/brand_logo/naverclip.svg",
+  클립: "/images/brand_logo/naverclip.svg",
+  유튜브: "/images/brand_logo/youtube.svg",
+  쇼츠: "/images/brand_logo/shots.svg",
+  릴스: "/images/brand_logo/reels.svg",
+  인스타그램: "/images/brand_logo/insta.svg",
+};
+
+/**
+ * 캠페인 타입과 카테고리에 따라 아이콘 경로를 가져오는 함수
+ *
+ * 설명:
+ * - 구매평, 미션형은 타입에 따라 고정 아이콘을 사용합니다.
+ * - 그 외 타입은 카테고리에 따라 동적으로 아이콘을 가져옵니다.
+ *
+ * 학습 포인트:
+ * - 조건부 로직: 타입에 따라 다른 처리를 합니다.
+ * - 함수 오버로딩 개념: 같은 함수가 다른 입력에 따라 다른 결과를 반환합니다.
+ *
+ * @param type - 캠페인 타입 (배송형, 방문형, 구매평, 기자단, 미션형)
+ * @param category - 카테고리 (네이버블로그, 클립, 유튜브, 쇼츠, 릴스, 인스타그램)
+ * @returns 아이콘 경로
+ */
+export function getCategoryIcon(
+  type: "배송형" | "방문형" | "구매평" | "기자단" | "미션형",
+  category?: string
+): string {
+  // 구매평과 미션형은 타입에 따라 고정 아이콘 사용
+  if (type === "구매평") {
+    return "/images/brand_logo/review.svg";
+  }
+  if (type === "미션형") {
+    return "/images/brand_logo/misssion.svg";
+  }
+
+  // 그 외 타입은 카테고리에 따라 동적 아이콘 사용
+  if (!category) {
+    return "/images/icons/phone_verified.svg";
+  }
+
+  // 공백 제거하여 정규화
+  const normalized = category.replace(/\s+/g, "");
+  return category_icon_map[normalized] ?? "/images/icons/phone_verified.svg";
 }

@@ -1,0 +1,152 @@
+/* ========================================
+   ✅ 콘텐츠 확인 모달 스타일
+   ======================================== */
+
+/**
+ * 콘텐츠 확인 모달 스타일
+ *
+ * 목적: 콘텐츠 확인 모달의 모든 스타일을 정의합니다.
+ *
+ * 주요 스타일:
+ * - 모달 오버레이: 반투명 배경
+ * - 모달 컨테이너: 흰색 배경, 둥근 모서리, 그림자
+ * - 미션 항목: 충족 시 초록색 테두리, 미충족 시 빨간색 테두리
+ * - 제출 버튼: 활성화/비활성화 상태에 따라 다른 스타일
+ */
+
+/* 모달 오버레이: 배경 반투명 레이어 */
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* 모달 컨테이너 - 하단에서 올라오는 형태 */
+.modal_container {
+  background: white;
+  border-radius: 40px 40px 0 0;
+  width: 100%;
+  max-width: 1000px;
+  padding: 40px;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* 모달 제목 */
+.modal_title {
+  color: #444;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 20px;
+  letter-spacing: -0.4px;
+}
+
+/* 닫기 버튼 */
+.close_button {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* 서브타이틀: "기본 미션" */
+.subtitle {
+  color: #444;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 미션 항목 목록 */
+.mission_list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 미션 항목 */
+.mission_item {
+  padding: 16px 20px;
+  border-radius: 8px;
+  border: 1px solid;
+  background-color: #ffffff;
+}
+
+/* 충족된 미션 항목: 초록색 테두리 */
+.mission_item.completed {
+  border-color: #2dc469;
+}
+
+/* 미충족된 미션 항목: 빨간색 테두리 */
+.mission_item.incomplete {
+  border-color: #ff2626;
+}
+
+/* 미션 항목 텍스트 */
+.mission_text {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 충족된 미션 항목 텍스트: 초록색 */
+.mission_item.completed .mission_text {
+  color: #2dc469;
+}
+
+/* 미충족된 미션 항목 텍스트: 빨간색 */
+.mission_item.incomplete .mission_text {
+  color: #ff2626;
+}
+
+/* 안내 메시지 */
+.warning_message {
+  color: #444;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 제출 버튼 */
+.submit_button {
+  width: 100%;
+  max-width: 920px;
+  padding: 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin: 0 auto;
+}
+
+/* 활성화된 제출 버튼 */
+.submit_button.active {
+  background-color: #555555;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+/* 비활성화된 제출 버튼 */
+.submit_button.disabled {
+  background-color: #d9d9d9;
+  color: #848484;
+  cursor: default;
+}

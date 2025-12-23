@@ -11,6 +11,10 @@ import Link from "next/link";
 // 파일명.module.css 형태로 작성하면 됩니다
 import styles from "../../styles/user/campaign/campaign_box.module.css";
 
+// 채널 로고 매핑 유틸리티 함수 import
+// 채널 이름에 따라 동적으로 아이콘 경로를 반환하는 함수입니다
+import { getChannelLogo } from "../../utils/channelLogoMap";
+
 // TypeScript 인터페이스 정의
 // 컴포넌트가 받을 props의 타입을 정의합니다
 // 이렇게 하면 타입 안정성을 보장할 수 있습니다
@@ -19,7 +23,7 @@ interface CampaignBoxProps {
     id: string; // 캠페인 고유 ID (라우팅에 사용됨)
     title: string; // 캠페인 제목
     category: string; // 캠페인 카테고리 (기자단, 구매평 등)
-    categoryIcon?: string; // 카테고리 아이콘 이미지 경로 (선택적)
+    channel?: string; // 채널 정보 (네이버 블로그, 인스타그램, 유튜브 등) - 아이콘 표시에 사용
     image: string; // 제품 이미지 경로
     dayCount?: string; // D-숫자 (선택적, 기본값: 6)
     recruitment: {
@@ -87,13 +91,27 @@ export default function CampaignBox({
         {/* 제품 정보 영역 */}
         <div className={styles.product_info}>
           <div className={styles.category}>
-            {campaign.categoryIcon && (
+            {/* 아이콘 표시 로직 */}
+            {/* 구매평과 미션형은 고정 아이콘 사용, 나머지는 채널 정보에 따라 동적 아이콘 표시 */}
+            {campaign.category === "구매평" ? (
               <img
-                src={campaign.categoryIcon}
-                alt="카테고리 아이콘"
+                src="/images/brand_logo/review.svg"
+                alt="구매평"
                 className={styles.category_icon}
               />
-            )}
+            ) : campaign.category === "미션형" ? (
+              <img
+                src="/images/brand_logo/misssion.svg"
+                alt="미션형"
+                className={styles.category_icon}
+              />
+            ) : campaign.channel ? (
+              <img
+                src={getChannelLogo(campaign.channel)}
+                alt={campaign.channel}
+                className={styles.category_icon}
+              />
+            ) : null}
             <span>{campaign.category}</span>
           </div>
           <h3 className={styles.product_title}>{campaign.title}</h3>

@@ -32,13 +32,15 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 
 import SubTabNavigation from "@/components/common/mypage/SubTabNavigation";
 
 import ChannelSection from "@/components/user/mypage/ChannelSection";
+
+import SubHeader from "@/components/fragments/SubHeader";
 
 import type { MainTab } from "@/types/user/user";
 
@@ -56,6 +58,19 @@ export default function ChannelPage() {
   const [activeSubTab, setActiveSubTab] = useState<"profile" | "channel">(
     "channel"
   );
+
+  // SubHeader 표시 여부 (모달에서 들어온 경우에만 표시)
+  const [showSubHeader, setShowSubHeader] = useState(false);
+
+  // sessionStorage에서 SubHeader 표시 플래그 확인
+  useEffect(() => {
+    const shouldShow = sessionStorage.getItem("showSubHeader");
+    if (shouldShow === "true") {
+      setShowSubHeader(true);
+      // 플래그 제거 (한 번만 표시)
+      sessionStorage.removeItem("showSubHeader");
+    }
+  }, []);
 
   // 채널 데이터 상태 - 사용자가 연결할 수 있는 소셜 미디어 채널 목록
 
@@ -114,9 +129,14 @@ export default function ChannelPage() {
   };
 
   return (
-    <div className={layoutStyles.mypage_container}>
-      {/* 메인 컨텐츠 */}
+    <div
+      className={layoutStyles.mypage_container}
+      style={showSubHeader ? { paddingTop: "80px" } : {}}
+    >
+      {/* SubHeader - 모달에서 들어온 경우에만 표시 */}
+      {showSubHeader && <SubHeader />}
 
+      {/* 메인 컨텐츠 */}
       <main className={layoutStyles.main_content}>
         {/* 상단 탭 네비게이션: 캠페인/포인트/계정/커뮤니티 */}
 

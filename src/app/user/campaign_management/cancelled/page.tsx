@@ -42,7 +42,9 @@ export default function CancelledPage() {
   >("취소/반려");
 
   // 필터링된 캠페인 목록 상태
-  const [filteredCampaigns, setFilteredCampaigns] = useState<CampaignApplication[]>([]);
+  const [filteredCampaigns, setFilteredCampaigns] = useState<
+    CampaignApplication[]
+  >([]);
 
   // 탭별 캠페인 목록 가져오기
   const campaigns = getCampaignsByTab(activeStatTab);
@@ -88,7 +90,11 @@ export default function CancelledPage() {
         />
 
         {/* 필터링된 캠페인 목록 */}
-        <CampaignList campaigns={filteredCampaigns} activeStatTab="취소/반려" />
+        <CampaignList
+          campaigns={filteredCampaigns}
+          activeStatTab="취소/반려"
+          originalCampaigns={campaigns}
+        />
       </div>
     </div>
   );

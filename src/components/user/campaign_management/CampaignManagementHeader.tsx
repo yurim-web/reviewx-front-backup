@@ -42,6 +42,14 @@ interface CampaignManagementHeaderProps {
   setActiveStatTab?: (
     tab: "신청" | "선정" | "완료" | "취소/반려" | "패널티"
   ) => void;
+  /** 통계 데이터 (선택적: 제공되지 않으면 기본 데이터 사용) */
+  stats?: {
+    신청: number;
+    선정: number;
+    완료: number;
+    "취소/반려": number;
+    패널티: number;
+  };
 }
 
 /**
@@ -57,9 +65,10 @@ export default function CampaignManagementHeader({
   setActiveTab,
   activeStatTab,
   setActiveStatTab,
+  stats: propStats,
 }: CampaignManagementHeaderProps) {
-  // 임시 데이터에서 통계 정보 사용
-  const stats = campaignManagementStats;
+  // 통계 정보: prop으로 전달된 것이 있으면 사용, 없으면 기본 데이터 사용
+  const stats = propStats ?? campaignManagementStats;
 
   return (
     <>

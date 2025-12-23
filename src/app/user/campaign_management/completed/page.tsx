@@ -42,7 +42,9 @@ export default function CompletedPage() {
   >("완료");
 
   // 필터링된 캠페인 목록 상태
-  const [filteredCampaigns, setFilteredCampaigns] = useState<CampaignApplication[]>([]);
+  const [filteredCampaigns, setFilteredCampaigns] = useState<
+    CampaignApplication[]
+  >([]);
 
   // 탭별 캠페인 목록 가져오기
   const campaigns = getCampaignsByTab(activeStatTab);
@@ -88,7 +90,11 @@ export default function CompletedPage() {
         />
 
         {/* 필터링된 캠페인 목록 */}
-        <CampaignList campaigns={filteredCampaigns} activeStatTab="완료" />
+        <CampaignList
+          campaigns={filteredCampaigns}
+          activeStatTab="완료"
+          originalCampaigns={campaigns}
+        />
       </div>
     </div>
   );

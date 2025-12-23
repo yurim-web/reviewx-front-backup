@@ -5,7 +5,6 @@ interface DeliveryCampaignData {
   id: string; // 캠페인 고유 식별자
   title: string; // 캠페인 제목
   category: string; // 캠페인 카테고리 (배송형)
-  categoryIcon: string; // 카테고리 아이콘
   image: string; // 메인 제품 이미지 경로
   subcategory: string; // 세부 카테고리 (생활, 뷰티, 식품 등)
   points: number; // 지급 포인트 (숫자)
@@ -14,8 +13,34 @@ interface DeliveryCampaignData {
     current: number; // 현재 지원자 수
     total: number; // 총 모집 인원
   };
-  schedule: string; // 날짜/시간 형식 일정 (예: "1/25 (화) 10:00\n모집 오픈")
-  dayCount: string; // 남은 일수 형식 (예: "D-6")
+  /**
+   * 캠페인 오픈 예정일 안내 텍스트
+   *
+   * - 아직 신청 시작일(applicationStart) 전일 때만 사용
+   * - 예시: "12/25 (목) 10:00\n모집 오픈"
+   * - 실제 화면에서는:
+   *   - 오늘 < applicationStart 인 경우: 이 필드를 사용해 "모집 오픈 예정"을 노출
+   *   - 오늘 >= applicationStart 인 경우: 이 필드는 무시되고, dayCount 기준으로 상태를 표시
+   */
+  schedule: string;
+  /**
+   * 남은 일수 / 상태 텍스트
+   *
+   * - 오늘 날짜와 신청 마감일(applicationEnd)을 기준으로 계산한 결과를 표현
+   * - 예시 값:
+   *   - "D-5"   : 신청 마감일까지 5일 남은 경우
+   *   - "마감임박": 마감 직전 등, 임박 상태를 표시하고 싶을 때
+   *   - "긴급"   : 긴급 캠페인인 경우
+   *
+   * - 동작 개념 정리:
+   *   1) 오늘 < applicationStart
+   *      - 아직 오픈 전 상태 → 상단에는 dayCount 대신 schedule(모집 오픈 예정 텍스트) 사용
+   *   2) applicationStart <= 오늘 <= applicationEnd
+   *      - 모집 진행 중 상태 → 남은 일수 계산해서 "D-?" 형태로 dayCount에 반영
+   *   3) 오늘 > applicationEnd
+   *      - 모집 종료 상태 → "마감임박" 또는 "마감" 등의 텍스트를 dayCount에 설정
+   */
+  dayCount: string;
   detailedSchedule: {
     applicationStart: string; // 신청 시작일시
     applicationEnd: string; // 신청 마감일
@@ -40,7 +65,6 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     id: "delivery_1",
     title: "세르프 (박신혜리프팅)",
     category: "배송형",
-    categoryIcon: "/images/brand_logo/navershop.svg",
     image: "/images/main/campaign_img/eximg_9.png",
     subcategory: "뷰티",
     points: 30000,
@@ -50,18 +74,18 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       total: 2,
     },
     schedule: "",
-    dayCount: "마감임박",
+    dayCount: "테스트",
     detailedSchedule: {
       // 모집기간 시작일일
-      applicationStart: "2025-01-18",
+      applicationStart: "2025-12-15",
       // 모집기간 마감일
-      applicationEnd: "2025-02-08",
+      applicationEnd: "2025-12-30",
       // 선정 발표일
-      announcement: "2025-02-10",
+      announcement: "2026-01-01",
       // 구매 기간
-      purchasePeriod: "2025-02-10 ~ 2025-02-13",
+      purchasePeriod: "2026-01-01 ~ 2026-01-04",
       // 등록 기간
-      registrationPeriod: "2025-02-13 ~ 2025-02-20",
+      registrationPeriod: "2026-01-04 ~ 2026-01-11",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버 블로그",
@@ -87,7 +111,6 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     id: "delivery_2",
     title: "닥터뮬 뮬차 붓기차",
     category: "배송형",
-    categoryIcon: "/images/brand_logo/navershop.svg",
     image: "/images/main/campaign_img/eximg_10.png",
     subcategory: "생활",
     points: 25000,
@@ -99,11 +122,11 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     schedule: "",
     dayCount: "긴급",
     detailedSchedule: {
-      applicationStart: "2025-01-16",
-      applicationEnd: "2025-02-06",
-      announcement: "2025-02-08",
-      purchasePeriod: "2025-02-08 ~ 2025-02-11",
-      registrationPeriod: "2025-02-11 ~ 2025-02-18",
+      applicationStart: "2025-12-18",
+      applicationEnd: "2025-12-28",
+      announcement: "2025-12-30",
+      purchasePeriod: "2025-12-30 ~ 2026-01-02",
+      registrationPeriod: "2026-01-02 ~ 2026-01-09",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버 블로그",
@@ -128,7 +151,6 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     id: "delivery_3",
     title: "가죽 여권 케이스+네임택 실미션형 모집",
     category: "배송형",
-    categoryIcon: "/images/brand_logo/insta.svg",
     image: "/images/main/campaign_img/eximg_13.png",
     subcategory: "패션",
     points: 20000,
@@ -140,11 +162,11 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     schedule: "",
     dayCount: "마감임박",
     detailedSchedule: {
-      applicationStart: "2025-01-19",
-      applicationEnd: "2025-02-09",
-      announcement: "2025-02-11",
-      purchasePeriod: "2025-02-11 ~ 2025-02-14",
-      registrationPeriod: "2025-02-14 ~ 2025-02-21",
+      applicationStart: "2025-12-20",
+      applicationEnd: "2025-12-29",
+      announcement: "2025-12-31",
+      purchasePeriod: "2025-12-31 ~ 2026-01-03",
+      registrationPeriod: "2026-01-03 ~ 2026-01-10",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
@@ -169,7 +191,6 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     id: "delivery_4",
     title: "프리미엄 비타민C 세럼",
     category: "배송형",
-    categoryIcon: "/images/brand_logo/naverblog.svg",
     image: "/images/main/campaign_img/eximg_2.png",
     subcategory: "뷰티",
     points: 35000,
@@ -178,14 +199,14 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       current: 234,
       total: 8,
     },
-    schedule: "1/25 (화) 10:00\n모집 오픈",
+    schedule: "12/25 (화) 10:00\n모집 오픈",
     dayCount: "",
     detailedSchedule: {
-      applicationStart: "2025-01-25",
-      applicationEnd: "2025-02-15",
-      announcement: "2025-02-17",
-      purchasePeriod: "2025-02-17 ~ 2025-02-20",
-      registrationPeriod: "2025-02-20 ~ 2025-02-27",
+      applicationStart: "2025-12-25",
+      applicationEnd: "2026-01-15",
+      announcement: "2026-01-17",
+      purchasePeriod: "2026-01-17 ~ 2026-01-20",
+      registrationPeriod: "2026-01-20 ~ 2026-01-27",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버 블로그",
@@ -210,7 +231,6 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     id: "delivery_5",
     title: "유기농 아기용 세제",
     category: "배송형",
-    categoryIcon: "/images/brand_logo/oliveyoung.svg",
     image: "/images/main/campaign_img/eximg_4.png",
     subcategory: "생활",
     points: 18000,
@@ -222,11 +242,11 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     schedule: "",
     dayCount: "마감임박",
     detailedSchedule: {
-      applicationStart: "2025-01-20",
-      applicationEnd: "2025-02-10",
-      announcement: "2025-02-12",
-      purchasePeriod: "2025-02-12 ~ 2025-02-15",
-      registrationPeriod: "2025-02-15 ~ 2025-02-22",
+      applicationStart: "2025-12-10",
+      applicationEnd: "2025-12-20",
+      announcement: "2025-12-22",
+      purchasePeriod: "2025-12-22 ~ 2025-12-25",
+      registrationPeriod: "2025-12-25 ~ 2026-01-01",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
@@ -251,7 +271,6 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     id: "delivery_6",
     title: "프리미엄 강아지 사료",
     category: "배송형",
-    categoryIcon: "/images/brand_logo/coupang.svg",
     image: "/images/main/campaign_img/eximg_5.png",
     subcategory: "반려동물",
     points: 28000,
@@ -263,11 +282,11 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     schedule: "",
     dayCount: "D-5",
     detailedSchedule: {
-      applicationStart: "2025-01-22",
-      applicationEnd: "2025-02-12",
-      announcement: "2025-02-14",
-      purchasePeriod: "2025-02-14 ~ 2025-02-17",
-      registrationPeriod: "2025-02-17 ~ 2025-02-24",
+      applicationStart: "2025-12-19",
+      applicationEnd: "2025-12-27",
+      announcement: "2025-12-29",
+      purchasePeriod: "2025-12-29 ~ 2026-01-01",
+      registrationPeriod: "2026-01-01 ~ 2026-01-08",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
@@ -292,7 +311,6 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     id: "delivery_7",
     title: "유튜브 크리에이터 키트",
     category: "배송형",
-    categoryIcon: "/images/brand_logo/youtube.svg",
     image: "/images/main/campaign_img/eximg_6.png",
     subcategory: "기타",
     points: 40000,
@@ -304,11 +322,11 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     schedule: "",
     dayCount: "D-2",
     detailedSchedule: {
-      applicationStart: "2025-01-23",
-      applicationEnd: "2025-02-13",
-      announcement: "2025-02-15",
-      purchasePeriod: "2025-02-15 ~ 2025-02-18",
-      registrationPeriod: "2025-02-18 ~ 2025-02-25",
+      applicationStart: "2025-12-28",
+      applicationEnd: "2026-01-18",
+      announcement: "2026-01-20",
+      purchasePeriod: "2026-01-20 ~ 2026-01-23",
+      registrationPeriod: "2026-01-23 ~ 2026-01-30",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
@@ -333,7 +351,6 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     id: "delivery_8",
     title: "프리미엄 홈트레이닝 용품 세트",
     category: "배송형",
-    categoryIcon: "/images/brand_logo/naverblog.svg",
     image: "/images/main/campaign_img/eximg_7.png",
     subcategory: "생활",
     points: 32000,
@@ -345,11 +362,11 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     schedule: "",
     dayCount: "마감임박",
     detailedSchedule: {
-      applicationStart: "2025-01-21",
-      applicationEnd: "2025-02-11",
-      announcement: "2025-02-13",
-      purchasePeriod: "2025-02-13 ~ 2025-02-16",
-      registrationPeriod: "2025-02-16 ~ 2025-02-23",
+      applicationStart: "2025-12-12",
+      applicationEnd: "2025-12-21",
+      announcement: "2025-12-23",
+      purchasePeriod: "2025-12-23 ~ 2025-12-26",
+      registrationPeriod: "2025-12-26 ~ 2026-01-02",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버 블로그",
@@ -374,7 +391,6 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     id: "delivery_9",
     title: "프리미엄 스킨케어 세트",
     category: "배송형",
-    categoryIcon: "/images/brand_logo/oliveyoung.svg",
     image: "/images/main/campaign_img/eximg_1.png",
     subcategory: "뷰티",
     points: 45000,
@@ -386,11 +402,11 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     schedule: "",
     dayCount: "D-1",
     detailedSchedule: {
-      applicationStart: "2025-01-24",
-      applicationEnd: "2025-02-14",
-      announcement: "2025-02-16",
-      purchasePeriod: "2025-02-16 ~ 2025-02-19",
-      registrationPeriod: "2025-02-19 ~ 2025-02-26",
+      applicationStart: "2025-12-30",
+      applicationEnd: "2026-01-20",
+      announcement: "2026-01-22",
+      purchasePeriod: "2026-01-22 ~ 2026-01-25",
+      registrationPeriod: "2026-01-25 ~ 2026-02-01",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
@@ -415,7 +431,6 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     id: "delivery_10",
     title: "유기농 과일 주스 세트",
     category: "배송형",
-    categoryIcon: "/images/brand_logo/coupang.svg",
     image: "/images/main/campaign_img/eximg_3.png",
     subcategory: "식품",
     points: 22000,
@@ -427,11 +442,11 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     schedule: "",
     dayCount: "D-8",
     detailedSchedule: {
-      applicationStart: "2025-01-17",
-      applicationEnd: "2025-02-07",
-      announcement: "2025-02-09",
-      purchasePeriod: "2025-02-09 ~ 2025-02-12",
-      registrationPeriod: "2025-02-12 ~ 2025-02-19",
+      applicationStart: "2025-12-08",
+      applicationEnd: "2025-12-18",
+      announcement: "2025-12-20",
+      purchasePeriod: "2025-12-20 ~ 2025-12-23",
+      registrationPeriod: "2025-12-23 ~ 2025-12-30",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
@@ -456,7 +471,6 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     id: "delivery_11",
     title: "스마트 워치 프로",
     category: "배송형",
-    categoryIcon: "/images/brand_logo/navershop.svg",
     image: "/images/main/campaign_img/eximg_8.png",
     subcategory: "디지털",
     points: 55000,
@@ -468,11 +482,11 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     schedule: "",
     dayCount: "긴급",
     detailedSchedule: {
-      applicationStart: "2025-01-15",
-      applicationEnd: "2025-02-05",
-      announcement: "2025-02-07",
-      purchasePeriod: "2025-02-07 ~ 2025-02-10",
-      registrationPeriod: "2025-02-10 ~ 2025-02-17",
+      applicationStart: "2025-12-17",
+      applicationEnd: "2025-12-25",
+      announcement: "2025-12-27",
+      purchasePeriod: "2025-12-27 ~ 2025-12-30",
+      registrationPeriod: "2025-12-30 ~ 2026-01-06",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버 블로그",
@@ -497,7 +511,6 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     id: "delivery_12",
     title: "프리미엄 향수 컬렉션",
     category: "배송형",
-    categoryIcon: "/images/brand_logo/insta.svg",
     image: "/images/main/campaign_img/eximg_11.png",
     subcategory: "뷰티",
     points: 38000,
@@ -509,11 +522,11 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     schedule: "",
     dayCount: "D-6",
     detailedSchedule: {
-      applicationStart: "2025-01-18",
-      applicationEnd: "2025-02-08",
-      announcement: "2025-02-10",
-      purchasePeriod: "2025-02-10 ~ 2025-02-13",
-      registrationPeriod: "2025-02-13 ~ 2025-02-20",
+      applicationStart: "2025-12-26",
+      applicationEnd: "2026-01-16",
+      announcement: "2026-01-18",
+      purchasePeriod: "2026-01-18 ~ 2026-01-21",
+      registrationPeriod: "2026-01-21 ~ 2026-01-28",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
@@ -539,7 +552,6 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     id: "delivery_13",
     title: "홈카페 원두 세트",
     category: "배송형",
-    categoryIcon: "/images/brand_logo/naverblog.svg",
     image: "/images/main/campaign_img/eximg_12.png",
     subcategory: "식품",
     points: 26000,
@@ -551,11 +563,11 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     schedule: "",
     dayCount: "D-9",
     detailedSchedule: {
-      applicationStart: "2025-01-16",
-      applicationEnd: "2025-02-06",
-      announcement: "2025-02-08",
-      purchasePeriod: "2025-02-08 ~ 2025-02-11",
-      registrationPeriod: "2025-02-11 ~ 2025-02-18",
+      applicationStart: "2025-12-24",
+      applicationEnd: "2026-01-14",
+      announcement: "2026-01-16",
+      purchasePeriod: "2026-01-16 ~ 2026-01-19",
+      registrationPeriod: "2026-01-19 ~ 2026-01-26",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버 블로그",
@@ -580,7 +592,6 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     id: "delivery_14",
     title: "프리미엄 베개 세트",
     category: "배송형",
-    categoryIcon: "/images/brand_logo/youtube.svg",
     image: "/images/main/campaign_img/eximg_4.png",
     subcategory: "생활",
     points: 42000,
@@ -592,11 +603,11 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     schedule: "",
     dayCount: "D-3",
     detailedSchedule: {
-      applicationStart: "2025-01-22",
-      applicationEnd: "2025-02-12",
-      announcement: "2025-02-14",
-      purchasePeriod: "2025-02-14 ~ 2025-02-17",
-      registrationPeriod: "2025-02-17 ~ 2025-02-24",
+      applicationStart: "2025-12-15",
+      applicationEnd: "2025-12-21",
+      announcement: "2025-12-23",
+      purchasePeriod: "2025-12-23 ~ 2025-12-26",
+      registrationPeriod: "2025-12-26 ~ 2026-01-02",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
@@ -621,7 +632,6 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     id: "delivery_15",
     title: "고양이 사료 전문 브랜드",
     category: "배송형",
-    categoryIcon: "/images/brand_logo/coupang.svg",
     image: "/images/main/campaign_img/eximg_5.png",
     subcategory: "반려동물",
     points: 31000,
@@ -633,11 +643,11 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     schedule: "",
     dayCount: "D-7",
     detailedSchedule: {
-      applicationStart: "2025-01-19",
-      applicationEnd: "2025-02-09",
-      announcement: "2025-02-11",
-      purchasePeriod: "2025-02-11 ~ 2025-02-14",
-      registrationPeriod: "2025-02-14 ~ 2025-02-21",
+      applicationStart: "2025-12-11",
+      applicationEnd: "2025-12-19",
+      announcement: "2025-12-21",
+      purchasePeriod: "2025-12-21 ~ 2025-12-24",
+      registrationPeriod: "2025-12-24 ~ 2025-12-31",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
@@ -662,7 +672,6 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     id: "delivery_16",
     title: "프리미엄 운동화 컬렉션",
     category: "배송형",
-    categoryIcon: "/images/brand_logo/navershop.svg",
     image: "/images/main/campaign_img/eximg_7.png",
     subcategory: "패션",
     points: 48000,
@@ -674,11 +683,11 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     schedule: "",
     dayCount: "D-5",
     detailedSchedule: {
-      applicationStart: "2025-01-20",
-      applicationEnd: "2025-02-10",
-      announcement: "2025-02-12",
-      purchasePeriod: "2025-02-12 ~ 2025-02-15",
-      registrationPeriod: "2025-02-15 ~ 2025-02-22",
+      applicationStart: "2025-12-13",
+      applicationEnd: "2025-12-21",
+      announcement: "2025-12-23",
+      purchasePeriod: "2025-12-23 ~ 2025-12-26",
+      registrationPeriod: "2025-12-26 ~ 2026-01-02",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버 블로그",
