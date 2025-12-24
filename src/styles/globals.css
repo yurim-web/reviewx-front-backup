@@ -63,7 +63,7 @@ main {
   margin: 0 auto;
   box-sizing: border-box;
   background: #ffffff;
-  min-height: 100vh;
+  /* min-height: 100vh; */
   /* padding-top: 80px; */
 }
 
