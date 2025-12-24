@@ -1,0 +1,51 @@
+/* ========================================
+   🔘 플로팅 액션 버튼 스타일
+   ======================================== */
+
+.container {
+  position: fixed;
+  right: calc(50% - 500px + 20px); /* 중앙 정렬된 컨텐츠 기준 우측 여백 */
+  bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 1000;
+}
+
+.save_button {
+  padding: 12px 16px;
+  border-radius: 28px;
+  border: 1px solid #2b7fff;
+  background-color: #ffffff;
+  color: #2b7fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  opacity: 1;
+  white-space: nowrap;
+}
+
+.save_button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.load_button {
+  padding: 12px 16px;
+  border-radius: 28px;
+  border: 1px solid #2b7fff;
+  background-color: #ffffff;
+  color: #2b7fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.load_button:disabled {
+  border: 1px solid #d9d9d9;
+  background-color: #d9d9d9;
+  color: #848484;
+  cursor: default;
+}
+

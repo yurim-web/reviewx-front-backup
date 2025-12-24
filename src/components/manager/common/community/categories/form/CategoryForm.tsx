@@ -19,7 +19,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "@/styles/manager/common/community/categories/category_create_page.module.css";
-import { CustomDropdown } from "@/components/partner/campaign_create_form/common/CustomDropdown";
+import { CustomDropdown } from "@/components/partner/campaign_create_form/common/selectors/CustomDropdown";
 import {
   categories_data,
   type CategoryDivision,

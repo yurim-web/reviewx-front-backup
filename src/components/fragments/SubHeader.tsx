@@ -38,6 +38,7 @@ export default function SubHeader() {
     if (pathname?.startsWith("/partner/campaign/create")) {
       router.push("/partner");
     } else {
+      // 포인트 충전 페이지 포함 모든 경우 이전 페이지로 이동
       router.back();
     }
   };
@@ -58,7 +59,10 @@ export default function SubHeader() {
           >
             <img src="/images/header/header_book.svg" alt="book" />
           </a>
-          <Link href="/user/mypage" className={styles.user_icon}>
+          <Link 
+            href={pathname?.startsWith("/partner") ? "/partner/campaign_management" : "/user/mypage"} 
+            className={styles.user_icon}
+          >
             <img src="/images/header/header_user.svg" alt="user" />
           </Link>
         </div>

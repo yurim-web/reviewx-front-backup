@@ -9,11 +9,11 @@
  * 공통 타입은 sharedCampaigns.ts에서 import하여 사용합니다.
  */
 
-import type { CampaignWithContents } from './sharedCampaigns';
-import type { CampaignWithApplicants } from './campaign_application/delivery_applicants';
-import type { ContentByTab } from './sharedCampaigns';
-import { CampaignFormData } from '@/types/user/user';
-import { calculateCampaignStatus, calculateDaysLeft } from './delivery';
+import type { CampaignWithContents } from "./sharedCampaigns";
+import type { CampaignWithApplicants } from "./campaign_application/delivery_applicants";
+import type { ContentByTab } from "./sharedCampaigns";
+import { CampaignFormData } from "@/types/user/user";
+import { calculateCampaignStatus, calculateDaysLeft } from "./delivery";
 
 /**
  * 방문형 캠페인 통합 데이터 구조
@@ -27,8 +27,8 @@ export interface VisitCampaignDataItem {
     id: string; // 캠페인 고유 식별자
     title: string; // 캠페인 제목
     image: string; // 메인 캠페인 이미지 경로
-    status: '진행 중' | '대기 중' | '모집 중' | '종료' | '취소' | '긴급'; // 캠페인 상태 (모든 상태 포함)
-    campaignType: '방문형'; // 캠페인 타입 (방문형 고정)
+    status: "진행 중" | "대기 중" | "모집 중" | "종료" | "취소" | "긴급"; // 캠페인 상태 (모든 상태 포함)
+    campaignType: "방문형"; // 캠페인 타입 (방문형 고정)
     category: string; // 캠페인 카테고리 (여가, 생활 등)
     brandName: string; // 브랜드명 (플랫폼명)
     recruitmentPeriod: string; // 모집 기간 (예: "2024-01-05 ~ 2024-01-10")
@@ -47,26 +47,26 @@ export interface VisitCampaignDataItem {
       id: string; // 신청자 고유 식별자
       Id: string; // 신청자 내부 ID
       nickname: string; // 신청자 닉네임
-      userType: '리뷰어' | '인플루언서'; // 사용자 타입
+      userType: "리뷰어" | "인플루언서"; // 사용자 타입
       profileImage: string; // 프로필 이미지 경로
-      memberType: '모범 회원' | '주의 회원' | '경고 회원' | '이용 제한'; // 회원 타입
+      memberType: "모범 회원" | "주의 회원" | "경고 회원" | "이용 제한"; // 회원 타입
       followers?: number; // 팔로워 수 (인스타그램, 네이버클립 등)
       subscribers?: number; // 구독자 수 (유튜브)
       memo: string; // 메모
-      selectionStatus: '미선택' | '선정하기' | '이용제한 계정'; // 선정 상태
+      selectionStatus: "미선택" | "선정하기" | "이용제한 계정"; // 선정 상태
       channel: string; // 채널 정보 (인스타그램, 네이버블로그, 유튜브 등)
     }>;
     selectedApplicants: Array<{
       id: string; // 선정된 신청자 고유 식별자
       Id: string; // 선정된 신청자 내부 ID
       nickname: string; // 신청자 닉네임
-      userType: '리뷰어' | '인플루언서'; // 사용자 타입
+      userType: "리뷰어" | "인플루언서"; // 사용자 타입
       profileImage: string; // 프로필 이미지 경로
-      memberType: '모범 회원' | '주의 회원' | '경고 회원' | '이용 제한'; // 회원 타입
+      memberType: "모범 회원" | "주의 회원" | "경고 회원" | "이용 제한"; // 회원 타입
       followers?: number; // 팔로워 수 (인스타그램, 네이버클립 등)
       subscribers?: number; // 구독자 수 (유튜브)
       memo: string; // 메모
-      selectionStatus: '선정하기'; // 선정 상태 (선정된 신청자는 "선정하기" 고정)
+      selectionStatus: "선정하기"; // 선정 상태 (선정된 신청자는 "선정하기" 고정)
       channel: string; // 채널 정보 (인스타그램, 네이버블로그, 유튜브 등)
     }>;
   };
@@ -75,8 +75,8 @@ export interface VisitCampaignDataItem {
     reviewing: Array<{
       id: string; // 콘텐츠 고유 식별자
       createdAt: string; // 생성일시 (ISO 8601 형식)
-      status: '검수'; // 콘텐츠 상태
-      userType: '리뷰어' | '인플루언서'; // 사용자 타입
+      status: "검수"; // 콘텐츠 상태
+      userType: "리뷰어" | "인플루언서"; // 사용자 타입
       nickname: string; // 작성자 닉네임
       channelId: string; // 채널 식별자
       channel: string; // 채널명
@@ -87,8 +87,8 @@ export interface VisitCampaignDataItem {
     completed: Array<{
       id: string; // 콘텐츠 고유 식별자
       createdAt: string; // 생성일시 (ISO 8601 형식)
-      status: '완료'; // 콘텐츠 상태
-      userType: '리뷰어' | '인플루언서'; // 사용자 타입
+      status: "완료"; // 콘텐츠 상태
+      userType: "리뷰어" | "인플루언서"; // 사용자 타입
       nickname: string; // 작성자 닉네임
       channelId: string; // 채널 식별자
       channel: string; // 채널명
@@ -123,85 +123,85 @@ export type VisitCampaignData = VisitCampaignDataItem[];
 export const visitClosedCampaigns: VisitCampaignDataItem[] = [
   {
     campaignInfo: {
-      id: '901',
-      title: '[종료] 카페 체험 방문 캠페인',
-      image: '/images/main/campaign_img/eximg_2.png',
-      status: '종료',
-      campaignType: '방문형',
-      category: '여가',
-      brandName: '네이버블로그',
-      partnerName: '(주)방문체험기획',
-      recruitmentPeriod: '2024-01-05 ~ 2024-01-10',
-      announcementDate: '2024-01-10',
-      registrationPeriod: '2024-01-12 ~ 2024-01-18',
+      id: "901",
+      title: "[종료] 카페 체험 방문 캠페인",
+      image: "/images/main/campaign_img/eximg_2.png",
+      status: "종료",
+      campaignType: "방문형",
+      category: "여가",
+      brandName: "네이버블로그",
+      partnerName: "(주)방문체험기획",
+      recruitmentPeriod: "2024-01-05 ~ 2024-01-10",
+      announcementDate: "2024-01-10",
+      registrationPeriod: "2024-01-12 ~ 2024-01-18",
       recruitedCount: 10,
       totalCount: 10,
       daysLeft: -10,
-      statusText: '캠페인 콘텐츠를 검수해 주세요.',
+      statusText: "캠페인 콘텐츠를 검수해 주세요.",
       point: 30000, // 지급 포인트
     },
     contents: {
       reviewing: [
         {
-          id: '901-r-1',
-          createdAt: '2025-11-02T12:30:00.000Z',
-          status: '검수',
-          channel: '네이버블로그',
-          userType: '리뷰어',
-          nickname: '참여자-1',
-          channelId: '901-r-1',
-          updatedAt: '2025-11-02T13:00:00.000Z',
+          id: "901-r-1",
+          createdAt: "2025-11-02T12:30:00.000Z",
+          status: "검수",
+          channel: "네이버블로그",
+          userType: "리뷰어",
+          nickname: "참여자-1",
+          channelId: "901-r-1",
+          updatedAt: "2025-11-02T13:00:00.000Z",
         },
         {
-          id: '901-r-2',
-          createdAt: '2025-11-02T13:10:00.000Z',
-          status: '검수',
-          channel: '네이버블로그',
-          userType: '리뷰어',
-          nickname: '참여자-2',
-          channelId: '901-r-2',
+          id: "901-r-2",
+          createdAt: "2025-11-02T13:10:00.000Z",
+          status: "검수",
+          channel: "네이버블로그",
+          userType: "리뷰어",
+          nickname: "참여자-2",
+          channelId: "901-r-2",
           isLate: true,
         },
         {
-          id: '901-r-3',
-          createdAt: '2025-11-02T14:05:00.000Z',
-          status: '검수',
-          channel: '네이버블로그',
-          userType: '리뷰어',
-          nickname: '참여자-3',
-          channelId: 'visit_user_003',
+          id: "901-r-3",
+          createdAt: "2025-11-02T14:05:00.000Z",
+          status: "검수",
+          channel: "네이버블로그",
+          userType: "리뷰어",
+          nickname: "참여자-3",
+          channelId: "visit_user_003",
           isRejected: true,
         },
         {
-          id: '901-r-4',
-          createdAt: '2025-11-02T15:20:00.000Z',
-          status: '검수',
-          channel: '네이버블로그',
-          userType: '리뷰어',
-          nickname: '참여자-4',
-          channelId: 'visit_user_004',
+          id: "901-r-4",
+          createdAt: "2025-11-02T15:20:00.000Z",
+          status: "검수",
+          channel: "네이버블로그",
+          userType: "리뷰어",
+          nickname: "참여자-4",
+          channelId: "visit_user_004",
           isRejected: true,
         },
       ],
       completed: [
         {
-          id: '901-c-1',
-          createdAt: '2025-11-02T09:00:00.000Z',
-          status: '완료',
-          channel: '네이버블로그',
-          userType: '리뷰어',
-          nickname: '참여자-3',
-          channelId: '901-c-1',
-          updatedAt: '2025-11-02T10:00:00.000Z',
+          id: "901-c-1",
+          createdAt: "2025-11-02T09:00:00.000Z",
+          status: "완료",
+          channel: "네이버블로그",
+          userType: "리뷰어",
+          nickname: "참여자-3",
+          channelId: "901-c-1",
+          updatedAt: "2025-11-02T10:00:00.000Z",
         },
         {
-          id: '901-c-2',
-          createdAt: '2025-11-01T20:40:00.000Z',
-          status: '완료',
-          channel: '네이버블로그',
-          userType: '리뷰어',
-          nickname: '참여자-5',
-          channelId: 'visit_user_005',
+          id: "901-c-2",
+          createdAt: "2025-11-01T20:40:00.000Z",
+          status: "완료",
+          channel: "네이버블로그",
+          userType: "리뷰어",
+          nickname: "참여자-5",
+          channelId: "visit_user_005",
           isLate: true,
         },
       ],
@@ -218,17 +218,17 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
   // 예정(대기 중) - 예정 탭에 표시
   {
     campaignInfo: {
-      id: '1',
-      title: '카페 체험 방문 캠페인 [스타벅스]',
-      image: '/images/main/campaign_img/eximg_2.png',
-      status: '대기 중',
-      campaignType: '방문형',
-      category: '여가',
-      brandName: '인스타그램',
-      partnerName: '(주)방문체험기획',
-      recruitmentPeriod: '2025-11-26 ~ 2025-12-06',
-      announcementDate: '2025-12-06',
-      registrationPeriod: '2025-12-08 ~ 2025-12-16',
+      id: "1",
+      title: "카페 체험 방문 캠페인 [스타벅스]",
+      image: "/images/main/campaign_img/eximg_2.png",
+      status: "대기 중",
+      campaignType: "방문형",
+      category: "여가",
+      brandName: "인스타그램",
+      partnerName: "(주)방문체험기획",
+      recruitmentPeriod: "2025-12-23 ~ 2025-12-27",
+      announcementDate: "2025-12-27",
+      registrationPeriod: "2025-12-29 ~ 2025-01-04",
       recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 10,
       daysLeft: 12,
@@ -237,78 +237,78 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
     applicantData: {
       applicants: [
         {
-          id: 'visit_blog_001',
-          Id: 'visit_blog_user_001',
-          nickname: '김블로거',
-          userType: '리뷰어',
-          profileImage: '',
-          memberType: '모범 회원',
+          id: "visit_blog_001",
+          Id: "visit_blog_user_001",
+          nickname: "김블로거",
+          userType: "리뷰어",
+          profileImage: "",
+          memberType: "모범 회원",
           followers: 1500,
-          memo: '블로그 포스팅 경험 풍부',
-          selectionStatus: '미선택',
-          channel: '인스타그램',
+          memo: "블로그 포스팅 경험 풍부",
+          selectionStatus: "미선택",
+          channel: "인스타그램",
         },
         {
-          id: 'visit_clip_001',
-          Id: 'visit_clip_user_001',
-          nickname: '박클리퍼',
-          userType: '리뷰어',
-          profileImage: '',
-          memberType: '모범 회원',
+          id: "visit_clip_001",
+          Id: "visit_clip_user_001",
+          nickname: "박클리퍼",
+          userType: "리뷰어",
+          profileImage: "",
+          memberType: "모범 회원",
           followers: 15600,
-          memo: '클립 제작 전문가',
-          selectionStatus: '미선택',
-          channel: '인스타그램',
+          memo: "클립 제작 전문가",
+          selectionStatus: "미선택",
+          channel: "인스타그램",
         },
         {
-          id: 'visit_insta_001',
-          Id: 'visit_insta_user_001',
-          nickname: '정인플루언서',
-          userType: '인플루언서',
-          profileImage: '',
-          memberType: '모범 회원',
+          id: "visit_insta_001",
+          Id: "visit_insta_user_001",
+          nickname: "정인플루언서",
+          userType: "인플루언서",
+          profileImage: "",
+          memberType: "모범 회원",
           followers: 45200,
-          memo: '인스타그램 협찬 경험 다수',
-          selectionStatus: '미선택',
-          channel: '인스타그램',
+          memo: "인스타그램 협찬 경험 다수",
+          selectionStatus: "미선택",
+          channel: "인스타그램",
         },
         {
-          id: 'visit_youtube_001',
-          Id: 'visit_youtube_user_001',
-          nickname: '송유튜버',
-          userType: '인플루언서',
-          profileImage: '',
-          memberType: '모범 회원',
+          id: "visit_youtube_001",
+          Id: "visit_youtube_user_001",
+          nickname: "송유튜버",
+          userType: "인플루언서",
+          profileImage: "",
+          memberType: "모범 회원",
           followers: 67800,
-          memo: '유튜브 리뷰 콘텐츠 제작',
-          selectionStatus: '미선택',
-          channel: '인스타그램',
+          memo: "유튜브 리뷰 콘텐츠 제작",
+          selectionStatus: "미선택",
+          channel: "인스타그램",
         },
       ],
       selectedApplicants: [
         {
-          id: 'visit_blog_sel_001',
-          Id: 'visit_blog_user_002',
-          nickname: '선정된블로거',
-          userType: '리뷰어',
-          profileImage: '',
-          memberType: '모범 회원',
+          id: "visit_blog_sel_001",
+          Id: "visit_blog_user_002",
+          nickname: "선정된블로거",
+          userType: "리뷰어",
+          profileImage: "",
+          memberType: "모범 회원",
           followers: 2200,
-          memo: '콘텐츠 퀄리티 우수',
-          selectionStatus: '선정하기',
-          channel: '인스타그램',
+          memo: "콘텐츠 퀄리티 우수",
+          selectionStatus: "선정하기",
+          channel: "인스타그램",
         },
         {
-          id: 'visit_insta_sel_001',
-          Id: 'visit_insta_user_002',
-          nickname: '인스타선정자',
-          userType: '인플루언서',
-          profileImage: '',
-          memberType: '모범 회원',
+          id: "visit_insta_sel_001",
+          Id: "visit_insta_user_002",
+          nickname: "인스타선정자",
+          userType: "인플루언서",
+          profileImage: "",
+          memberType: "모범 회원",
           followers: 30000,
-          memo: '브랜드 톤 앤 매너 적합',
-          selectionStatus: '선정하기',
-          channel: '인스타그램',
+          memo: "브랜드 톤 앤 매너 적합",
+          selectionStatus: "선정하기",
+          channel: "인스타그램",
         },
       ],
     },
@@ -316,49 +316,49 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
   // 예정(대기 중) - 예정 탭에 표시
   {
     campaignInfo: {
-      id: '104',
-      title: '릴스 협찬 방문 캠페인',
-      image: '/images/main/campaign_img/eximg_5.png',
-      status: '대기 중',
-      campaignType: '방문형',
-      category: '여가',
-      brandName: '릴스',
-      partnerName: '(주)방문체험기획',
-      recruitmentPeriod: '2025-11-28 ~ 2025-12-08',
-      announcementDate: '2025-12-08',
-      registrationPeriod: '2025-12-10 ~ 2025-12-18',
+      id: "104",
+      title: "릴스 협찬 방문 캠페인",
+      image: "/images/main/campaign_img/eximg_5.png",
+      status: "대기 중",
+      campaignType: "방문형",
+      category: "여가",
+      brandName: "릴스",
+      partnerName: "(주)방문체험기획",
+      recruitmentPeriod: "2025-12-28 ~ 2025-12-30",
+      announcementDate: "2025-12-28",
+      registrationPeriod: "2025-12-30 ~ 2026-01-06",
       recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 10,
-      daysLeft: 14,
+      daysLeft: 0,
       point: 35000, // 지급 포인트
     },
     applicantData: {
       applicants: [
         {
-          id: 'r_app_001',
-          Id: 'reels_user_001',
-          nickname: '릴스인플루언서',
-          userType: '인플루언서',
-          profileImage: '',
-          memberType: '모범 회원',
+          id: "r_app_001",
+          Id: "reels_user_001",
+          nickname: "릴스인플루언서",
+          userType: "인플루언서",
+          profileImage: "",
+          memberType: "모범 회원",
           followers: 28000,
-          memo: '릴스 숏폼 제작 경험 풍부',
-          selectionStatus: '미선택',
-          channel: '인스타그램',
+          memo: "릴스 숏폼 제작 경험 풍부",
+          selectionStatus: "미선택",
+          channel: "인스타그램",
         },
       ],
       selectedApplicants: [
         {
-          id: 'r_sel_001',
-          Id: 'reels_user_sel_001',
-          nickname: '릴스선정자',
-          userType: '인플루언서',
-          profileImage: '',
-          memberType: '모범 회원',
+          id: "r_sel_001",
+          Id: "reels_user_sel_001",
+          nickname: "릴스선정자",
+          userType: "인플루언서",
+          profileImage: "",
+          memberType: "모범 회원",
           followers: 35000,
-          memo: '브랜드 톤 적합',
-          selectionStatus: '선정하기',
-          channel: '인스타그램',
+          memo: "브랜드 톤 적합",
+          selectionStatus: "선정하기",
+          channel: "인스타그램",
         },
       ],
     },
@@ -366,17 +366,17 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
   // 신청(모집 중) - 신청 탭에 표시
   {
     campaignInfo: {
-      id: '105',
-      title: '네이버클립 숏폼 체험단',
-      image: '/images/main/campaign_img/eximg_6.png',
-      status: '모집 중',
-      campaignType: '방문형',
-      category: '여가',
-      brandName: '네이버클립',
-      partnerName: '(주)방문체험기획',
-      recruitmentPeriod: '2025-11-20 ~ 2025-12-03',
-      announcementDate: '2025-12-05',
-      registrationPeriod: '2025-12-07 ~ 2025-12-15',
+      id: "105",
+      title: "네이버클립 숏폼 체험단",
+      image: "/images/main/campaign_img/eximg_6.png",
+      status: "모집 중",
+      campaignType: "방문형",
+      category: "여가",
+      brandName: "네이버클립",
+      partnerName: "(주)방문체험기획",
+      recruitmentPeriod: "2025-11-20 ~ 2025-12-03",
+      announcementDate: "2025-12-05",
+      registrationPeriod: "2025-12-07 ~ 2025-12-15",
       recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 12,
       daysLeft: 11,
@@ -385,42 +385,42 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
     applicantData: {
       applicants: [
         {
-          id: 'nc_app_001',
-          Id: 'naverclip_user_001',
-          nickname: '클립마스터',
-          userType: '인플루언서',
-          profileImage: '',
-          memberType: '모범 회원',
+          id: "nc_app_001",
+          Id: "naverclip_user_001",
+          nickname: "클립마스터",
+          userType: "인플루언서",
+          profileImage: "",
+          memberType: "모범 회원",
           followers: 21000,
-          memo: '네이버클립 숏폼 제작 고수',
-          selectionStatus: '미선택',
-          channel: '네이버클립',
+          memo: "네이버클립 숏폼 제작 고수",
+          selectionStatus: "미선택",
+          channel: "네이버클립",
         },
         {
-          id: 'nc_app_002',
-          Id: 'naverclip_user_002',
-          nickname: '패션클립',
-          userType: '리뷰어',
-          profileImage: '',
-          memberType: '모범 회원',
+          id: "nc_app_002",
+          Id: "naverclip_user_002",
+          nickname: "패션클립",
+          userType: "리뷰어",
+          profileImage: "",
+          memberType: "모범 회원",
           followers: 14500,
-          memo: '패션/잡화 숏폼 전문',
-          selectionStatus: '미선택',
-          channel: '네이버클립',
+          memo: "패션/잡화 숏폼 전문",
+          selectionStatus: "미선택",
+          channel: "네이버클립",
         },
       ],
       selectedApplicants: [
         {
-          id: 'nc_sel_001',
-          Id: 'naverclip_sel_001',
-          nickname: '선정된클리퍼',
-          userType: '인플루언서',
-          profileImage: '',
-          memberType: '모범 회원',
+          id: "nc_sel_001",
+          Id: "naverclip_sel_001",
+          nickname: "선정된클리퍼",
+          userType: "인플루언서",
+          profileImage: "",
+          memberType: "모범 회원",
           followers: 32000,
-          memo: '브랜드 톤 적합',
-          selectionStatus: '선정하기',
-          channel: '네이버클립',
+          memo: "브랜드 톤 적합",
+          selectionStatus: "선정하기",
+          channel: "네이버클립",
         },
       ],
     },
@@ -428,50 +428,50 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
   // 진행 중 (콘텐츠 별도, 여기서는 info/applicants만)
   {
     campaignInfo: {
-      id: '106',
-      title: '쇼츠 영상 체험 캠페인',
-      image: '/images/main/campaign_img/eximg_7.png',
-      status: '진행 중',
-      campaignType: '방문형',
-      category: '여가',
-      brandName: '쇼츠',
-      partnerName: '(주)방문체험기획',
-      recruitmentPeriod: '2025-01-05 ~ 2025-01-15',
-      announcementDate: '2025-01-15',
-      registrationPeriod: '2025-01-17 ~ 2025-01-25',
+      id: "106",
+      title: "쇼츠 영상 체험 캠페인",
+      image: "/images/main/campaign_img/eximg_7.png",
+      status: "진행 중",
+      campaignType: "방문형",
+      category: "여가",
+      brandName: "쇼츠",
+      partnerName: "(주)방문체험기획",
+      recruitmentPeriod: "2025-01-05 ~ 2025-01-15",
+      announcementDate: "2025-01-15",
+      registrationPeriod: "2025-01-17 ~ 2025-01-25",
       recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 15,
       daysLeft: 2,
-      statusText: '캠페인 콘텐츠를 검수해 주세요~~~~~',
+      statusText: "캠페인 콘텐츠를 검수해 주세요~~~~~",
       point: 50000, // 지급 포인트
     },
     applicantData: {
       applicants: [
         {
-          id: 's_app_001',
-          Id: 'shorts_user_001',
-          nickname: '숏츠크리에이터',
-          userType: '인플루언서',
-          profileImage: '',
-          memberType: '모범 회원',
+          id: "s_app_001",
+          Id: "shorts_user_001",
+          nickname: "숏츠크리에이터",
+          userType: "인플루언서",
+          profileImage: "",
+          memberType: "모범 회원",
           subscribers: 62000,
-          memo: '숏츠 영상 리뷰 다수',
-          selectionStatus: '미선택',
-          channel: '유튜브',
+          memo: "숏츠 영상 리뷰 다수",
+          selectionStatus: "미선택",
+          channel: "유튜브",
         },
       ],
       selectedApplicants: [
         {
-          id: 's_sel_001',
-          Id: 'shorts_user_sel_001',
-          nickname: '숏츠선정자',
-          userType: '인플루언서',
-          profileImage: '',
-          memberType: '모범 회원',
+          id: "s_sel_001",
+          Id: "shorts_user_sel_001",
+          nickname: "숏츠선정자",
+          userType: "인플루언서",
+          profileImage: "",
+          memberType: "모범 회원",
           subscribers: 80000,
-          memo: '브랜드 톤 적합',
-          selectionStatus: '선정하기',
-          channel: '유튜브',
+          memo: "브랜드 톤 적합",
+          selectionStatus: "선정하기",
+          channel: "유튜브",
         },
       ],
     },
@@ -479,17 +479,17 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
   // 예정(대기 중) - 예정 탭에 표시
   {
     campaignInfo: {
-      id: '952',
-      title: '[예정] 방문형 샘플 캠페인',
-      image: '/images/main/campaign_img/eximg_2.png',
-      status: '대기 중' as const,
-      campaignType: '방문형',
-      category: '여가',
-      brandName: '네이버클립',
-      partnerName: '(주)방문체험기획',
-      recruitmentPeriod: '2025-12-01 ~ 2025-12-11',
-      announcementDate: '2025-12-11',
-      registrationPeriod: '2025-12-13 ~ 2025-12-21',
+      id: "952",
+      title: "[예정] 방문형 샘플 캠페인",
+      image: "/images/main/campaign_img/eximg_2.png",
+      status: "대기 중" as const,
+      campaignType: "방문형",
+      category: "여가",
+      brandName: "네이버클립",
+      partnerName: "(주)방문체험기획",
+      recruitmentPeriod: "2025-12-01 ~ 2025-12-11",
+      announcementDate: "2025-12-11",
+      registrationPeriod: "2025-12-13 ~ 2025-12-21",
       recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 8,
       daysLeft: 17,
@@ -500,21 +500,21 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
   // 진행(콘텐츠 없음 표시용)
   {
     campaignInfo: {
-      id: '963',
-      title: '[진행] 방문형 체험단 진행',
-      image: '/images/main/campaign_img/eximg_2.png',
-      status: '진행 중' as const,
-      campaignType: '방문형',
-      category: '여가',
-      brandName: '인스타그램',
-      partnerName: '(주)방문체험기획',
-      recruitmentPeriod: '2025-10-25 ~ 2025-11-05',
-      announcementDate: '2025-11-05',
-      registrationPeriod: '2025-11-07 ~ 2025-11-14',
+      id: "963",
+      title: "[진행] 방문형 체험단 진행",
+      image: "/images/main/campaign_img/eximg_2.png",
+      status: "진행 중" as const,
+      campaignType: "방문형",
+      category: "여가",
+      brandName: "인스타그램",
+      partnerName: "(주)방문체험기획",
+      recruitmentPeriod: "2025-10-25 ~ 2025-11-05",
+      announcementDate: "2025-11-05",
+      registrationPeriod: "2025-11-07 ~ 2025-11-14",
       recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 8,
       daysLeft: 1,
-      statusText: '캠페인 당첨자를 선정해 주세요.',
+      statusText: "캠페인 당첨자를 선정해 주세요.",
       point: 42000, // 지급 포인트
     },
     applicantData: { applicants: [], selectedApplicants: [] },
@@ -522,17 +522,17 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
   // 신청(모집 중) - 신청 탭에 표시
   {
     campaignInfo: {
-      id: '972',
-      title: '[신청] 방문형 샘플 캠페인',
-      image: '/images/main/campaign_img/eximg_2.png',
-      status: '모집 중' as const,
-      campaignType: '방문형',
-      category: '여가',
-      brandName: '인스타그램',
-      partnerName: '(주)방문체험기획',
-      recruitmentPeriod: '2025-11-22 ~ 2025-12-02',
-      announcementDate: '2025-12-04',
-      registrationPeriod: '2025-12-06 ~ 2025-12-14',
+      id: "972",
+      title: "[신청] 방문형 샘플 캠페인",
+      image: "/images/main/campaign_img/eximg_2.png",
+      status: "모집 중" as const,
+      campaignType: "방문형",
+      category: "여가",
+      brandName: "인스타그램",
+      partnerName: "(주)방문체험기획",
+      recruitmentPeriod: "2025-11-22 ~ 2025-12-02",
+      announcementDate: "2025-12-04",
+      registrationPeriod: "2025-12-06 ~ 2025-12-14",
       recruitedCount: 0, // 자동 계산됨 (applicantData.applicants.length)
       totalCount: 10,
       daysLeft: 10,
@@ -541,54 +541,54 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
     applicantData: {
       applicants: [
         {
-          id: 'app_972_insta_001',
-          Id: 'insta_972_001',
-          nickname: '인스타크리에이터A',
-          userType: '인플루언서',
-          profileImage: '',
-          memberType: '모범 회원',
+          id: "app_972_insta_001",
+          Id: "insta_972_001",
+          nickname: "인스타크리에이터A",
+          userType: "인플루언서",
+          profileImage: "",
+          memberType: "모범 회원",
           followers: 28500,
-          memo: '브랜디드 컨텐츠 경험 다수',
-          selectionStatus: '미선택',
-          channel: '인스타그램',
+          memo: "브랜디드 컨텐츠 경험 다수",
+          selectionStatus: "미선택",
+          channel: "인스타그램",
         },
         {
-          id: 'app_972_insta_002',
-          Id: 'insta_972_002',
-          nickname: '리뷰그램B',
-          userType: '인플루언서',
-          profileImage: '',
-          memberType: '모범 회원',
+          id: "app_972_insta_002",
+          Id: "insta_972_002",
+          nickname: "리뷰그램B",
+          userType: "인플루언서",
+          profileImage: "",
+          memberType: "모범 회원",
           followers: 15800,
-          memo: '사진/릴스 균형형',
-          selectionStatus: '미선택',
-          channel: '인스타그램',
+          memo: "사진/릴스 균형형",
+          selectionStatus: "미선택",
+          channel: "인스타그램",
         },
         {
-          id: 'app_972_insta_003',
-          Id: 'insta_972_003',
-          nickname: '무드샷C',
-          userType: '인플루언서',
-          profileImage: '',
-          memberType: '모범 회원',
+          id: "app_972_insta_003",
+          Id: "insta_972_003",
+          nickname: "무드샷C",
+          userType: "인플루언서",
+          profileImage: "",
+          memberType: "모범 회원",
           followers: 40300,
-          memo: '무드 촬영 강점',
-          selectionStatus: '미선택',
-          channel: '인스타그램',
+          memo: "무드 촬영 강점",
+          selectionStatus: "미선택",
+          channel: "인스타그램",
         },
       ],
       selectedApplicants: [
         {
-          id: 'sel_972_insta_001',
-          Id: 'insta_sel_972_001',
-          nickname: '선정그램D',
-          userType: '인플루언서',
-          profileImage: '',
-          memberType: '모범 회원',
+          id: "sel_972_insta_001",
+          Id: "insta_sel_972_001",
+          nickname: "선정그램D",
+          userType: "인플루언서",
+          profileImage: "",
+          memberType: "모범 회원",
           followers: 32000,
-          memo: '브랜드 톤 적합',
-          selectionStatus: '선정하기',
-          channel: '인스타그램',
+          memo: "브랜드 톤 적합",
+          selectionStatus: "선정하기",
+          channel: "인스타그램",
         },
       ],
     },
@@ -597,21 +597,21 @@ export const visitCampaigns: VisitCampaignDataItem[] = [
   // 취소 상태 캠페인
   {
     campaignInfo: {
-      id: 'cancelled-visit-001',
-      title: '[취소] 방문형 카페 체험 캠페인',
-      image: '/images/main/campaign_img/eximg_2.png',
-      status: '취소' as const,
-      campaignType: '방문형',
-      category: '여가',
-      brandName: '인스타그램',
-      partnerName: '(주)방문체험기획',
-      recruitmentPeriod: '2025-10-12 ~ 2025-10-22',
-      announcementDate: '2025-10-22',
-      registrationPeriod: '2025-10-24 ~ 2025-11-02',
+      id: "cancelled-visit-001",
+      title: "[취소] 방문형 카페 체험 캠페인",
+      image: "/images/main/campaign_img/eximg_2.png",
+      status: "취소" as const,
+      campaignType: "방문형",
+      category: "여가",
+      brandName: "인스타그램",
+      partnerName: "(주)방문체험기획",
+      recruitmentPeriod: "2025-10-12 ~ 2025-10-22",
+      announcementDate: "2025-10-22",
+      registrationPeriod: "2025-10-24 ~ 2025-11-02",
       recruitedCount: 0,
       totalCount: 18,
       daysLeft: -15,
-      statusText: '캠페인을 취소하였습니다.',
+      statusText: "캠페인을 취소하였습니다.",
       point: 0,
     },
     contents: {
@@ -656,9 +656,9 @@ visitCampaigns.forEach((campaign) => {
 export function getVisitContentsById(campaignId: string): ContentByTab {
   // 종료/취소 탭 데이터(방문형): 901 매핑
   // 순환 참조를 피하기 위해 visitClosedCampaigns를 직접 참조
-  if (campaignId === '901') {
+  if (campaignId === "901") {
     const closedCampaign = visitClosedCampaigns.find(
-      (c) => c.campaignInfo.id === campaignId,
+      (c) => c.campaignInfo.id === campaignId
     );
     if (closedCampaign?.contents) {
       return closedCampaign.contents;
@@ -933,14 +933,14 @@ function generateNewVisitCampaignId(): string {
  */
 export function createVisitCampaign(
   formData: CampaignFormData,
-  imageUrl: string = '/images/main/campaign_img/eximg_2.png',
+  imageUrl: string = "/images/main/campaign_img/eximg_2.png"
 ): VisitCampaignDataItem {
   // 새 캠페인 ID 생성
   const newId = generateNewVisitCampaignId();
 
   // 선정 날짜까지 남은 일수 계산
   const daysLeft = formData.announcementDate
-    ? calculateDaysLeft(formData.announcementDate.split(' ')[0])
+    ? calculateDaysLeft(formData.announcementDate.split(" ")[0])
     : 0;
 
   // 모집 인원을 숫자로 변환
@@ -949,13 +949,13 @@ export function createVisitCampaign(
   // 캠페인 상태 결정 함수 호출
   const campaignStatus = calculateCampaignStatus(
     formData.recruitmentPeriod,
-    formData.announcementDate,
+    formData.announcementDate
   );
 
   // 플랫폼명 정규화 (공백 제거하여 로고 매핑 일치시키기)
   const normalizedBrandName = formData.platform
-    ? formData.platform.replace(/\s+/g, '')
-    : '기본';
+    ? formData.platform.replace(/\s+/g, "")
+    : "기본";
 
   return {
     campaignInfo: {
@@ -963,8 +963,8 @@ export function createVisitCampaign(
       title: formData.title,
       image: imageUrl,
       status: campaignStatus,
-      campaignType: '방문형',
-      category: formData.category || '기타',
+      campaignType: "방문형",
+      category: formData.category || "기타",
       brandName: normalizedBrandName,
       recruitmentPeriod: formData.recruitmentPeriod,
       announcementDate: formData.announcementDate,
@@ -997,11 +997,11 @@ export function createVisitCampaign(
 export function updateVisitCampaign(
   campaignId: string,
   formData: CampaignFormData,
-  imageUrl: string = '/images/main/campaign_img/eximg_2.png',
+  imageUrl: string = "/images/main/campaign_img/eximg_2.png"
 ): VisitCampaignDataItem {
   // 기존 캠페인 데이터 찾기
   const existingCampaign = visitCampaigns.find(
-    (c) => c.campaignInfo.id === campaignId,
+    (c) => c.campaignInfo.id === campaignId
   );
 
   // 기존 신청자 데이터 유지
@@ -1012,7 +1012,7 @@ export function updateVisitCampaign(
 
   // 선정 날짜까지 남은 일수 계산
   const daysLeft = formData.announcementDate
-    ? calculateDaysLeft(formData.announcementDate.split(' ')[0])
+    ? calculateDaysLeft(formData.announcementDate.split(" ")[0])
     : 0;
 
   // 모집 인원을 숫자로 변환
@@ -1021,13 +1021,13 @@ export function updateVisitCampaign(
   // 캠페인 상태 결정 함수 호출
   const campaignStatus = calculateCampaignStatus(
     formData.recruitmentPeriod,
-    formData.announcementDate,
+    formData.announcementDate
   );
 
   // 플랫폼명 정규화 (공백 제거하여 로고 매핑 일치시키기)
   const normalizedBrandName = formData.platform
-    ? formData.platform.replace(/\s+/g, '')
-    : '기본';
+    ? formData.platform.replace(/\s+/g, "")
+    : "기본";
 
   return {
     campaignInfo: {
@@ -1035,8 +1035,8 @@ export function updateVisitCampaign(
       title: formData.title,
       image: imageUrl,
       status: campaignStatus,
-      campaignType: '방문형',
-      category: formData.category || '기타',
+      campaignType: "방문형",
+      category: formData.category || "기타",
       brandName: normalizedBrandName,
       recruitmentPeriod: formData.recruitmentPeriod,
       announcementDate: formData.announcementDate,
@@ -1061,7 +1061,7 @@ export function updateVisitCampaign(
  */
 export function addVisitCampaign(
   formData: CampaignFormData,
-  imageUrl: string = '/images/main/campaign_img/eximg_2.png',
+  imageUrl: string = "/images/main/campaign_img/eximg_2.png"
 ): VisitCampaignDataItem {
   return createVisitCampaign(formData, imageUrl);
 }

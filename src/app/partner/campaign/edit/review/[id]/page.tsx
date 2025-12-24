@@ -21,7 +21,8 @@ import { updateReviewCampaign } from "@/data/partner/review";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import layoutStyles from "../../../../../../styles/partner/layout.module.css";
-import PageHeader from "@/components/partner/campaign_create_form/common/PageHeader";
+import PageHeader from "@/components/partner/campaign_create_form/common/layout/PageHeader";
+import Toast from "@/components/common/toast/Toast";
 
 function campaignToFormData(campaign: CampaignWithApplicants): CampaignFormData {
   const info = campaign.campaignInfo;
@@ -80,6 +81,12 @@ export default function ReviewCampaignEditPage() {
   const [initialData, setInitialData] = useState<CampaignFormData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // 토스트 메시지 상태
+  const [toast, setToast] = useState({
+    is_open: false,
+    message: "",
+  });
 
   useEffect(() => {
     try {
@@ -144,7 +151,12 @@ export default function ReviewCampaignEditPage() {
       }
 
       console.log("구매평 캠페인 수정 완료:", updatedCampaign);
-      router.replace("/partner/campaign_management");
+      
+      // 토스트 메시지 표시
+      setToast({ is_open: true, message: "저장되었습니다." });
+      
+      // 페이지 새로고침
+      router.refresh();
     } catch (error) {
       console.error("구매평 캠페인 수정 실패:", error);
       alert("캠페인 수정에 실패했습니다. 다시 시도해주세요.");
@@ -189,6 +201,13 @@ export default function ReviewCampaignEditPage() {
           mode="edit"
         />
       </div>
+      
+      {/* 토스트 메시지 */}
+      <Toast
+        message={toast.message}
+        isOpen={toast.is_open}
+        onClose={() => setToast({ is_open: false, message: "" })}
+      />
     </div>
   );
 }

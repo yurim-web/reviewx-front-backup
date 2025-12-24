@@ -292,8 +292,9 @@
 
 /* 비활성화? */
 .submit_button:disabled {
-  background: #999999;
-  cursor: not-allowed;
+  background: #d9d9d9;
+  color: #848484;
+  cursor: default;
 }
 
 /* 간편 안내 섹션 기본 레이아웃 */
@@ -454,4 +455,57 @@
   .video_input_group {
     flex-wrap: wrap;
   }
+}
+
+/* 공정위 문구 동의 */
+.fair_trade_agreement {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.fair_trade_checkbox {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border: 1.5px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  appearance: none;
+  position: relative;
+}
+
+.fair_trade_checkbox:checked {
+  border-color: #444444;
+  background: #fff;
+}
+
+.fair_trade_checkbox:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #444444;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.fair_trade_checkbox:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.fair_trade_label {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #444;
+  cursor: pointer;
+}
+
+.fair_trade_label.disabled {
+  cursor: default;
 }

@@ -19,7 +19,7 @@
 "use client";
 
 import styles from "@/styles/user/mypage/edit_profile.module.css";
-import { CustomDropdown } from "@/components/partner/campaign_create_form/common/CustomDropdown";
+import { CustomDropdown } from "@/components/partner/campaign_create_form/common/selectors/CustomDropdown";
 
 interface AccountInfoInputProps {
   /** 예금주 */

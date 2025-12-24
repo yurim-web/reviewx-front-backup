@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import Toast from "@/components/common/toast/Toast";
+import BaseModal from "@/components/common/modal/BaseModal";
 import {
   parseFormattedAmount,
   validateAmount,
@@ -36,6 +37,21 @@ export default function PartnerPointChargePage() {
   const [isBankAmountOpen, setIsBankAmountOpen] = useState<boolean>(false);
   const [isCardAmountOpen, setIsCardAmountOpen] = useState<boolean>(false);
   const [showCopyToast, setShowCopyToast] = useState<boolean>(false);
+
+  // 카드 결제 실패 모달 상태
+  const [cardPaymentFailModal, setCardPaymentFailModal] = useState({
+    is_open: false,
+  });
+
+  // 카드 결제 성공 모달 상태
+  const [cardPaymentSuccessModal, setCardPaymentSuccessModal] = useState({
+    is_open: false,
+  });
+
+  // 무통장 입금 신청 모달 상태
+  const [bankDepositModal, setBankDepositModal] = useState({
+    is_open: false,
+  });
 
   // 드롭다운 ref - 외부 클릭 감지용
   const bankDropdownRef = useRef<HTMLDivElement>(null);
@@ -65,7 +81,14 @@ export default function PartnerPointChargePage() {
       : 0;
 
   // 신청 후 포인트 계산: 현재 보유 포인트 + 충전 예정 포인트
-  const postPoints = partnerInfo.availablePoints + chargePoints;
+  const availablePoints =
+    typeof partnerInfo.availablePoints === "number"
+      ? partnerInfo.availablePoints
+      : Number(partnerInfo.availablePoints) || 0;
+  const postPoints = availablePoints + chargePoints;
+
+  // 카드 결제 성공 후 보유 포인트 (충전 완료된 포인트)
+  const successPostPoints = availablePoints + chargePoints;
 
   const isValidAmount = () => {
     const validation = validateAmount(chargePoints, MIN_AMOUNT, MAX_AMOUNT);
@@ -90,12 +113,47 @@ export default function PartnerPointChargePage() {
   const isButtonEnabled =
     activeTab === "bank" ? isBankButtonEnabled() : isCardButtonEnabled();
 
-  // 충전 처리: 실제 결제 연동 시 결제 API를 호출한 뒤 성공/실패에 맞춰 흐름 제어가 필요합니다.
-  const handleSubmit = () => {
-    if (!isButtonEnabled) return;
+  /**
+   * 카드 결제 처리 (실제 결제 API 호출 시뮬레이션)
+   *
+   * 설명:
+   * - 실제로는 결제 API를 호출하고 성공/실패에 따라 모달을 표시합니다.
+   * - 현재는 시뮬레이션으로 성공/실패를 랜덤하게 처리합니다.
+   */
+  const handleCardPayment = () => {
+    // TODO: 실제 결제 API 호출
+    // 예시: const result = await paymentAPI.charge(chargePoints);
 
-    // TODO: 실제 결제/입금 확인 요청 API 호출
-    const actionLabel = activeTab === "bank" ? "입금 확인 요청" : "결제";
+    // 시뮬레이션: 랜덤하게 성공/실패 결정 (실제로는 API 응답에 따라)
+    const isSuccess = Math.random() > 0.3; // 70% 성공률
+
+    if (isSuccess) {
+      // 결제 성공: 성공 모달 표시
+      setCardPaymentSuccessModal({ is_open: true });
+    } else {
+      // 결제 실패: 실패 모달 표시
+      setCardPaymentFailModal({ is_open: true });
+    }
+  };
+
+  /**
+   * 카드 결제 실패 모달에서 다시 시도 클릭
+   */
+  const handleCardPaymentRetry = () => {
+    setCardPaymentFailModal({ is_open: false });
+    // 다시 결제 시도
+    handleCardPayment();
+  };
+
+  /**
+   * 카드 결제 성공 모달에서 닫기 클릭
+   *
+   * 설명:
+   * - 이전 페이지(캠페인 등록 페이지)로 돌아갑니다.
+   * - localStorage에 저장된 이전 페이지 경로를 사용합니다.
+   */
+  const handleCardPaymentSuccessClose = () => {
+    setCardPaymentSuccessModal({ is_open: false });
 
     // 현재 날짜를 YYYY-MM-DD 형식으로 생성
     const today = new Date();
@@ -105,25 +163,79 @@ export default function PartnerPointChargePage() {
 
     // 새로운 충전 내역 생성
     const newHistory = {
-      id: `charge_${Date.now()}`, // 고유 ID 생성 (타임스탬프 사용)
-      type: "earned" as const, // 충전 타입
-      amount: chargePoints, // 충전 금액
-      description: "포인트 충전", // 내역 설명
-      date: formattedDate, // 오늘 날짜
-      status: activeTab === "bank" ? ("pending" as const) : ("earned" as const), // 무통장 입금은 "신청", 카드 결제는 "충전"
-      balance: 0, // 잔액은 all 페이지에서 계산됨
+      id: `charge_${Date.now()}`,
+      type: "earned" as const,
+      amount: chargePoints,
+      description: "포인트 충전",
+      date: formattedDate,
+      status: "earned" as const,
+      balance: 0,
     };
 
-    // localStorage에 새 충전 내역 저장 (all 페이지에서 불러와서 표시)
+    // localStorage에 새 충전 내역 저장
     localStorage.setItem(
       "partner_new_point_history",
       JSON.stringify(newHistory)
     );
 
-    alert(
-      `${actionLabel}이 완료되었습니다. (${chargePoints.toLocaleString()}원)`
+    // 보유 포인트 업데이트 (실제로는 API에서 처리)
+    localStorage.setItem("partner_available_points", String(successPostPoints));
+
+    // 이전 페이지로 돌아가기
+    router.back();
+  };
+
+  /**
+   * 무통장 입금 신청 처리
+   */
+  const handleBankDepositSubmit = () => {
+    // 현재 날짜를 YYYY-MM-DD 형식으로 생성
+    const today = new Date();
+    const formattedDate = `${today.getFullYear()}-${String(
+      today.getMonth() + 1
+    ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
+    // 새로운 충전 내역 생성
+    const newHistory = {
+      id: `charge_${Date.now()}`,
+      type: "earned" as const,
+      amount: chargePoints,
+      description: "포인트 충전",
+      date: formattedDate,
+      status: "pending" as const,
+      balance: 0,
+    };
+
+    // localStorage에 새 충전 내역 저장
+    localStorage.setItem(
+      "partner_new_point_history",
+      JSON.stringify(newHistory)
     );
-    router.push("/partner/point/all");
+
+    // 무통장 입금 신청 모달 표시
+    setBankDepositModal({ is_open: true });
+  };
+
+  /**
+   * 무통장 입금 신청 모달에서 닫기 클릭
+   */
+  const handleBankDepositModalClose = () => {
+    setBankDepositModal({ is_open: false });
+    // 이전 페이지로 돌아가기
+    router.back();
+  };
+
+  // 충전 처리: 실제 결제 연동 시 결제 API를 호출한 뒤 성공/실패에 맞춰 흐름 제어가 필요합니다.
+  const handleSubmit = () => {
+    if (!isButtonEnabled) return;
+
+    if (activeTab === "bank") {
+      // 무통장 입금 처리
+      handleBankDepositSubmit();
+    } else {
+      // 카드 결제 처리
+      handleCardPayment();
+    }
   };
 
   // 충전 금액 옵션 선택
@@ -136,19 +248,7 @@ export default function PartnerPointChargePage() {
     }
   };
 
-  // 메인 헤더 숨기기
-  useEffect(() => {
-    const header = document.querySelector("header");
-    if (header) {
-      header.style.display = "none";
-    }
-
-    return () => {
-      if (header) {
-        header.style.display = "block";
-      }
-    };
-  }, []);
+  // 메인 헤더 숨기기는 SubHeader 컴포넌트에서 처리
 
   // 드롭다운 외부 클릭 감지 - 드롭다운 닫기
   useEffect(() => {
@@ -594,6 +694,31 @@ export default function PartnerPointChargePage() {
         isOpen={showCopyToast}
         onClose={() => setShowCopyToast(false)}
         duration={2000}
+      />
+
+      {/* 카드 결제 실패 모달 */}
+      <BaseModal
+        is_open={cardPaymentFailModal.is_open}
+        on_close={() => setCardPaymentFailModal({ is_open: false })}
+        message="결제가 실패했습니다.<br>다시 시도하시겠습니까?"
+        buttons={["취소", "확인"]}
+        on_confirm={handleCardPaymentRetry}
+      />
+
+      {/* 카드 결제 성공 모달 */}
+      <BaseModal
+        is_open={cardPaymentSuccessModal.is_open}
+        on_close={handleCardPaymentSuccessClose}
+        message={`결제가 완료되었습니다.<br>(보유 포인트: ${successPostPoints.toLocaleString()} P)<br>닫기를 누르면 이전 페이지로 돌아갑니다.`}
+        buttons={["닫기"]}
+      />
+
+      {/* 무통장 입금 신청 모달 */}
+      <BaseModal
+        is_open={bankDepositModal.is_open}
+        on_close={handleBankDepositModalClose}
+        message="입금 확인 요청이 등록되었습니다."
+        buttons={["닫기"]}
       />
     </div>
   );

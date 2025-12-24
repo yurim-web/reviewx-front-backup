@@ -1,0 +1,22 @@
+/* ========================================
+   📅 날짜 범위 입력 필드 스타일
+   ======================================== */
+
+/* 날짜 범위 입력 필드 컨테이너 */
+.date_range_field_container {
+  position: relative;
+  width: 100%;
+}
+
+/* 캘린더 드롭다운 */
+.calendar_dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 1000;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+}

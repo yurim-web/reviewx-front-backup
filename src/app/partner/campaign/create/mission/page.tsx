@@ -28,7 +28,7 @@ import { CampaignFormData } from "@/types/user/user";
 import { addMissionCampaign } from "@/data/partner/mission";
 // 분리된 CSS 모듈들 import
 import layoutStyles from "@/styles/partner/layout.module.css";
-import PageHeader from "@/components/partner/campaign_create_form/common/PageHeader";
+import PageHeader from "@/components/partner/campaign_create_form/common/layout/PageHeader";
 
 export default function MissionCampaignCreatePage() {
   const router = useRouter();

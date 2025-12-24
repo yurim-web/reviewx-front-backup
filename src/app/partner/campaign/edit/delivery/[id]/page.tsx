@@ -30,7 +30,8 @@ import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 // 분리된 CSS 모듈들 import
 import layoutStyles from "../../../../../../styles/partner/layout.module.css";
-import PageHeader from "@/components/partner/campaign_create_form/common/PageHeader";
+import PageHeader from "@/components/partner/campaign_create_form/common/layout/PageHeader";
+import Toast from "@/components/common/toast/Toast";
 
 /**
  * 캠페인 데이터를 폼 데이터로 변환
@@ -99,6 +100,12 @@ export default function DeliveryCampaignEditPage() {
   const [initialData, setInitialData] = useState<CampaignFormData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // 토스트 메시지 상태
+  const [toast, setToast] = useState({
+    is_open: false,
+    message: "",
+  });
 
   // 캠페인 데이터 로드
   useEffect(() => {
@@ -194,8 +201,11 @@ export default function DeliveryCampaignEditPage() {
 
       console.log("배송형 캠페인 수정 완료:", updatedCampaign);
 
-      // 수정 성공 시 캠페인 관리 페이지로 이동
-      router.replace("/partner/campaign_management");
+      // 토스트 메시지 표시
+      setToast({ is_open: true, message: "저장되었습니다." });
+      
+      // 페이지 새로고침
+      router.refresh();
     } catch (error) {
       console.error("배송형 캠페인 수정 실패:", error);
       alert("캠페인 수정에 실패했습니다. 다시 시도해주세요.");
@@ -244,6 +254,13 @@ export default function DeliveryCampaignEditPage() {
           mode="edit"
         />
       </div>
+      
+      {/* 토스트 메시지 */}
+      <Toast
+        message={toast.message}
+        isOpen={toast.is_open}
+        onClose={() => setToast({ is_open: false, message: "" })}
+      />
     </div>
   );
 }

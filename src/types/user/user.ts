@@ -104,6 +104,12 @@ export interface CampaignFormData {
   // 안내 사항
   guidelines: string; // 캠페인 안내 사항
 
+  // 문의 담당자 정보
+  contactPhone?: string; // 문의 담당자 휴대폰 번호
+
+  // 공정위 문구 동의
+  fairTradeAgreement?: boolean; // 공정위 문구 동의 여부
+
   // 긴급 여부
   isUrgent: boolean; // 긴급 캠페인 여부
 }

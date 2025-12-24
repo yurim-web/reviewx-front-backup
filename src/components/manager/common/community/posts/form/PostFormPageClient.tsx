@@ -19,7 +19,7 @@
 import { useEffect, useRef, useState } from "react";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import styles from "@/styles/manager/common/community/posts/post_edit_page.module.css";
-import { CustomDropdown } from "@/components/partner/campaign_create_form/common/CustomDropdown";
+import { CustomDropdown } from "@/components/partner/campaign_create_form/common/selectors/CustomDropdown";
 import { PostEditorField } from "@/components/manager/common/community/posts/form/PostEditorField";
 
 // 컴포넌트 Props 타입 정의
