@@ -41,7 +41,8 @@ import {
   checkTestVerificationCode,
   checkTestPhoneNumber,
 } from "@/data/signup/testVerificationData";
-import styles from "@/styles/user/signup/signup.module.css";
+import commonStyles from "@/styles/common/signup/signup.module.css";
+import styles from "@/styles/user/signup/user_signup.module.css";
 
 /**
  * 유저 회원가입 페이지 컴포넌트
@@ -264,15 +265,15 @@ export default function UserSignupPage() {
               - 이메일 형식 검증
               - 에러 시 빨간색 테두리 표시
           */}
-          <div className={styles.form_field}>
-            <label className={styles.field_label} htmlFor="email">
+          <div className={commonStyles.form_field}>
+            <label className={commonStyles.field_label} htmlFor="email">
               아이디(이메일)
             </label>
             <input
               id="email"
               type="email"
-              className={`${styles.input_field} ${
-                errors.email ? styles.input_error : ""
+              className={`${commonStyles.input_field} ${
+                errors.email ? commonStyles.input_error : ""
               }`}
               placeholder="{SNS에 등록한 이메일}"
               value={email}
@@ -290,15 +291,15 @@ export default function UserSignupPage() {
               - 필수 입력 필드
               - 에러 시 빨간색 테두리 표시
           */}
-          <div className={styles.form_field}>
-            <label className={styles.field_label} htmlFor="name">
+          <div className={commonStyles.form_field}>
+            <label className={commonStyles.field_label} htmlFor="name">
               이름
             </label>
             <input
               id="name"
               type="text"
-              className={`${styles.input_field} ${
-                errors.name ? styles.input_error : ""
+              className={`${commonStyles.input_field} ${
+                errors.name ? commonStyles.input_error : ""
               }`}
               value={name}
               onChange={(e) => {
@@ -367,10 +368,10 @@ export default function UserSignupPage() {
           */}
           <button
             type="submit"
-            className={`${styles.submit_button} ${
+            className={`${commonStyles.submit_button} ${styles.submit_button} ${
               name.trim() && isPhoneVerified && termsAgreed && privacyAgreed
                 ? ""
-                : styles.submit_button_disabled
+                : commonStyles.submit_button_disabled
             }`}
             disabled={
               !name.trim() || !isPhoneVerified || !termsAgreed || !privacyAgreed

@@ -14,10 +14,10 @@
  *   (파트너 회원가입 페이지에서 약관 동의에 사용)
  */
 
-'use client';
+"use client";
 
-import Link from 'next/link';
-import styles from '@/styles/partner/signup/signup.module.css';
+import commonStyles from "@/styles/common/signup/signup.module.css";
+import styles from "@/styles/partner/signup/partner_signup.module.css";
 
 interface PartnerTermsAgreementProps {
   allAgreed: boolean;
@@ -54,112 +54,165 @@ export default function PartnerTermsAgreement({
   onMarketingAgreedChange,
   onThirdPartyMarketingAgreedChange,
 }: PartnerTermsAgreementProps) {
+  /**
+   * 약관 보기 클릭 핸들러
+   *
+   * 현재는 alert를 띄우지만, 추후 모달로 교체 예정입니다.
+   *
+   * @param termsType - 약관 타입 (서비스 이용, 개인정보 수집 등)
+   */
+  const handle_terms_view_click = (termsType: string) => {
+    // 기본 동작 방지 (링크 이동 방지)
+    // TODO: 추후 모달 컴포넌트로 교체 예정
+    alert(`${termsType} 약관을 확인합니다.\n\n(추후 모달로 교체 예정)`);
+  };
   return (
     <>
-      <div className={styles.terms_section}>
-        <div className={styles.terms_all_agree}>
+      <div className={commonStyles.terms_section}>
+        <div className={commonStyles.terms_all_agree}>
           <input
             id="all-agree"
             type="checkbox"
-            className={styles.checkbox}
+            className={commonStyles.checkbox}
             checked={allAgreed}
             onChange={(e) => onAllAgreedChange(e.target.checked)}
           />
-          <label htmlFor="all-agree" className={styles.checkbox_label}>
+          <label htmlFor="all-agree" className={commonStyles.checkbox_label}>
             전체 동의
           </label>
         </div>
 
-        <div className={styles.terms_divider}></div>
+        <div className={commonStyles.terms_divider}></div>
 
-        <div className={styles.terms_item}>
+        <div className={commonStyles.terms_item}>
           <input
             id="service-terms-agree"
             type="checkbox"
-            className={styles.checkbox}
+            className={commonStyles.checkbox}
             checked={serviceTermsAgreed}
             onChange={(e) => onServiceTermsAgreedChange(e.target.checked)}
           />
           <label
             htmlFor="service-terms-agree"
-            className={styles.checkbox_label}
+            className={commonStyles.checkbox_label}
           >
             [필수] 서비스 이용 약관 동의
           </label>
-          <Link href="/terms" className={styles.terms_view_link}>
+          <button
+            type="button"
+            onClick={() => handle_terms_view_click("서비스 이용")}
+            className={commonStyles.terms_view_link}
+            aria-label="서비스 이용 약관 보기"
+          >
             보기
-          </Link>
+          </button>
         </div>
 
-        <div className={styles.terms_item}>
+        <div className={commonStyles.terms_item}>
           <input
             id="privacy-agree"
             type="checkbox"
-            className={styles.checkbox}
+            className={commonStyles.checkbox}
             checked={privacyAgreed}
             onChange={(e) => onPrivacyAgreedChange(e.target.checked)}
           />
-          <label htmlFor="privacy-agree" className={styles.checkbox_label}>
+          <label
+            htmlFor="privacy-agree"
+            className={commonStyles.checkbox_label}
+          >
             [필수] 개인정보 수집 및 이용 동의
           </label>
-          <Link href="/privacy" className={styles.terms_view_link}>
+          <button
+            type="button"
+            onClick={() => handle_terms_view_click("개인정보 수집 및 이용")}
+            className={commonStyles.terms_view_link}
+            aria-label="개인정보 수집 및 이용 약관 보기"
+          >
             보기
-          </Link>
+          </button>
         </div>
 
-        <div className={styles.terms_item}>
+        <div className={commonStyles.terms_item}>
           <input
             id="third-party-agree"
             type="checkbox"
-            className={styles.checkbox}
+            className={commonStyles.checkbox}
             checked={thirdPartyAgreed}
             onChange={(e) => onThirdPartyAgreedChange(e.target.checked)}
           />
-          <label htmlFor="third-party-agree" className={styles.checkbox_label}>
+          <label
+            htmlFor="third-party-agree"
+            className={commonStyles.checkbox_label}
+          >
             [필수] 개인정보 제3자 제공 동의
           </label>
-          <Link href="/third-party" className={styles.terms_view_link}>
+          <button
+            type="button"
+            onClick={() => handle_terms_view_click("개인정보 제3자 제공")}
+            className={commonStyles.terms_view_link}
+            aria-label="개인정보 제3자 제공 약관 보기"
+          >
             보기
-          </Link>
+          </button>
         </div>
 
-        <div className={styles.terms_item}>
+        <div className={commonStyles.terms_item}>
           <input
             id="advertising-agree"
             type="checkbox"
-            className={styles.checkbox}
+            className={commonStyles.checkbox}
             checked={advertisingAgreed}
             onChange={(e) => onAdvertisingAgreedChange(e.target.checked)}
           />
-          <label htmlFor="advertising-agree" className={styles.checkbox_label}>
+          <label
+            htmlFor="advertising-agree"
+            className={commonStyles.checkbox_label}
+          >
             [필수] 광고 · 홍보 관련 준수 사항 동의
           </label>
-          <Link href="/advertising" className={styles.terms_view_link}>
+          <button
+            type="button"
+            onClick={() =>
+              handle_terms_view_click("광고 · 홍보 관련 준수 사항")
+            }
+            className={commonStyles.terms_view_link}
+            aria-label="광고 · 홍보 관련 준수 사항 약관 보기"
+          >
             보기
-          </Link>
+          </button>
         </div>
 
-        <div className={styles.terms_item}>
+        <div className={commonStyles.terms_item}>
           <input
             id="marketing-agree"
             type="checkbox"
-            className={styles.checkbox}
+            className={commonStyles.checkbox}
             checked={marketingAgreed}
             onChange={(e) => onMarketingAgreedChange(e.target.checked)}
           />
-          <label htmlFor="marketing-agree" className={styles.checkbox_label}>
+          <label
+            htmlFor="marketing-agree"
+            className={commonStyles.checkbox_label}
+          >
             [선택] 마케팅 목적의 개인정보 수집 및 이용 동의
           </label>
-          <Link href="/marketing" className={styles.terms_view_link}>
+          <button
+            type="button"
+            onClick={() =>
+              handle_terms_view_click("마케팅 목적의 개인정보 수집 및 이용")
+            }
+            className={commonStyles.terms_view_link}
+            aria-label="마케팅 목적의 개인정보 수집 및 이용 약관 보기"
+          >
             보기
-          </Link>
+          </button>
         </div>
 
-        <div className={styles.terms_item}>
+        <div className={commonStyles.terms_item}>
           <input
             id="third-party-marketing-agree"
             type="checkbox"
-            className={styles.checkbox}
+            className={commonStyles.checkbox}
             checked={thirdPartyMarketingAgreed}
             onChange={(e) =>
               onThirdPartyMarketingAgreedChange(e.target.checked)
@@ -167,22 +220,26 @@ export default function PartnerTermsAgreement({
           />
           <label
             htmlFor="third-party-marketing-agree"
-            className={styles.checkbox_label}
+            className={commonStyles.checkbox_label}
           >
             [선택] 제3자 정보 제공(마케팅/프로모션 목적) 동의
           </label>
-          <Link
-            href="/third-party-marketing"
-            className={styles.terms_view_link}
+          <button
+            type="button"
+            onClick={() =>
+              handle_terms_view_click("제3자 정보 제공(마케팅/프로모션 목적)")
+            }
+            className={commonStyles.terms_view_link}
+            aria-label="제3자 정보 제공(마케팅/프로모션 목적) 약관 보기"
           >
             보기
-          </Link>
+          </button>
         </div>
       </div>
 
       {error && (
-        <div className={styles.error_message}>
-          <span className={styles.error_text}>{error}</span>
+        <div className={commonStyles.error_message}>
+          <span className={commonStyles.error_text}>{error}</span>
         </div>
       )}
     </>

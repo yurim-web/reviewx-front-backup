@@ -20,7 +20,7 @@ import {
   validatePassword,
   validatePasswordMatch,
 } from "@/utils/signup/validation";
-import styles from "@/styles/user/signup/signup.module.css";
+import styles from "@/styles/common/signup/signup.module.css";
 
 interface PasswordFieldProps {
   type: "password" | "confirm";

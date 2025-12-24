@@ -10,8 +10,11 @@
  * 사용 페이지:
  * - src/app/user/signup/page.tsx
  * - src/app/partner/signup/page.tsx
- * - src/app/find-account/page.tsx
- * - src/app/partner/find-account/page.tsx
+ * - src/app/user/find-account/page.tsx
+ * - src/app/user/mypage/edit/page.tsx
+ * - src/app/partner/mypage/edit/page.tsx
+ * - src/components/common/find_account/page/FindAccountPage.tsx
+ *   (공용 컴포넌트로 /find-account와 /partner/find-account에서 사용)
  *
  * ================================================================================================
  * 📋 에러 메시지 표시 경우의 수 정리 (Error Message Display Cases)
@@ -72,32 +75,46 @@
  * ⚠️ 주의사항:
  *    - 모든 에러 메시지는 사용자가 입력 필드를 변경하면 자동으로 사라집니다.
  *    - 모든 에러 메시지는 input 테두리 색상 변경 없이 메시지만 표시됩니다.
- *    - phoneError와 verificationCodeError는 usePhoneVerification 훅에서 자동 관리됩니다.
+ *    - 휴대폰 번호 및 인증번호 검증은 이 컴포넌트 내부에서 수행되며, 에러 메시지도 내부에서 관리됩니다.
+ *    - 외부에서 전달되는 error, verificationCodeError props는 하위 호환성을 위해 유지되지만, 내부 에러가 우선적으로 표시됩니다.
  *    - accountNotFoundError와 blockedAccountError는 useFindAccount 훅에서 관리됩니다.
  */
 
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { formatPhoneNumber } from "@/utils/signup/phoneUtils";
 import { formatTimer } from "@/utils/signup/timerUtils";
-import styles from "@/styles/user/signup/signup.module.css";
+import {
+  validatePhone,
+  validateVerificationCode,
+} from "@/utils/signup/validation";
+import signupStyles from "@/styles/common/signup/signup.module.css";
+import editProfileStyles from "@/styles/user/mypage/edit_profile.module.css";
+import FormField from "@/components/common/mypage/FormField";
+import InputWithButton from "@/components/common/mypage/InputWithButton";
+import ErrorText from "@/components/common/error_text/ErrorText";
 
 interface PhoneVerificationProps {
   phone: string;
-  verificationCode: string;
-  isVerificationRequested: boolean;
+  verificationCode?: string; // 마이페이지에서는 선택적
+  isVerificationRequested?: boolean; // 마이페이지에서는 선택적
   isPhoneVerified: boolean;
-  timer: number;
-  error?: string;
-  verificationCodeError?: string;
+  timer?: number; // 마이페이지에서는 선택적
+  error?: string; // 외부에서 전달되는 에러 (하위 호환성 유지)
+  verificationCodeError?: string; // 외부에서 전달되는 에러 (하위 호환성 유지)
   accountNotFoundError?: string; // 계정 없음 에러 (input 테두리 변경 없이 메시지만 표시)
   blockedAccountError?: string; // 정지/탈퇴 계정 에러 (input 테두리 변경 없이 메시지만 표시)
   onPhoneChange: (phone: string) => void;
-  onVerificationRequest: () => void;
+  onVerificationRequest: () => void | Promise<void>;
   onResend?: () => void;
-  onVerify: () => void;
-  onVerificationCodeChange: (code: string) => void;
+  onVerify?: () => void; // 마이페이지에서는 선택적
+  onVerificationCodeChange?: (code: string) => void; // 마이페이지에서는 선택적
+  /** 마이페이지 스타일 사용 여부 (기본값: false) */
+  useMyPageStyle?: boolean;
+  /** 인증번호 입력 필드 표시 여부 (기본값: true) */
+  showVerificationCode?: boolean;
 }
 
 /**
@@ -105,10 +122,10 @@ interface PhoneVerificationProps {
  */
 export default function PhoneVerification({
   phone,
-  verificationCode,
-  isVerificationRequested,
+  verificationCode = "",
+  isVerificationRequested = false,
   isPhoneVerified,
-  timer,
+  timer = 0,
   error,
   verificationCodeError,
   accountNotFoundError,
@@ -118,10 +135,24 @@ export default function PhoneVerification({
   onResend,
   onVerify,
   onVerificationCodeChange,
+  useMyPageStyle = false,
+  showVerificationCode = true,
 }: PhoneVerificationProps) {
+  // 스타일 선택
+  const styles = useMyPageStyle ? editProfileStyles : signupStyles;
+
+  // 컴포넌트 내부 에러 상태 관리
+  const [internalPhoneError, setInternalPhoneError] = useState<
+    string | undefined
+  >(undefined);
+  const [internalVerificationCodeError, setInternalVerificationCodeError] =
+    useState<string | undefined>(undefined);
+
   /** 휴대폰 번호 입력 핸들러 - 자동 포맷팅 후 부모에 전달 */
   const handlePhoneInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatPhoneNumber(e.target.value);
+    // 휴대폰 번호 변경 시 내부 에러 초기화
+    setInternalPhoneError(undefined);
     onPhoneChange(formatted);
   };
 
@@ -130,7 +161,39 @@ export default function PhoneVerification({
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = e.target.value.replace(/[^0-9]/g, "").slice(0, 6);
-    onVerificationCodeChange(value);
+    // 인증번호 변경 시 내부 에러 초기화
+    setInternalVerificationCodeError(undefined);
+    onVerificationCodeChange?.(value);
+  };
+
+  /** 인증번호 요청 핸들러 - 내부에서 검증 수행 */
+  const handleVerificationRequestInternal = async () => {
+    // 휴대폰 번호 형식 검증
+    if (!validatePhone(phone)) {
+      setInternalPhoneError("올바른 휴대폰 번호 형식을 입력해주세요.");
+      return;
+    }
+
+    // 검증 통과 시 내부 에러 초기화
+    setInternalPhoneError(undefined);
+
+    // 부모의 onVerificationRequest 호출
+    await onVerificationRequest();
+  };
+
+  /** 인증번호 확인 핸들러 - 내부에서 검증 수행 */
+  const handleVerifyInternal = () => {
+    // 인증번호 형식 검증
+    if (!verificationCode || !validateVerificationCode(verificationCode)) {
+      setInternalVerificationCodeError("인증번호 6자리를 입력해주세요.");
+      return;
+    }
+
+    // 검증 통과 시 내부 에러 초기화
+    setInternalVerificationCodeError(undefined);
+
+    // 부모의 onVerify 호출
+    onVerify?.();
   };
 
   /** 에러 메시지 공통 렌더링 */
@@ -181,12 +244,12 @@ export default function PhoneVerification({
     return undefined;
   };
 
-  /** 휴대폰 번호 에러 텍스트 */
-  const phoneErrorText = mapErrorMessage(error, "phone");
+  /** 휴대폰 번호 에러 텍스트 - 내부 에러 우선, 외부 에러는 하위 호환성 유지 */
+  const phoneErrorText = mapErrorMessage(internalPhoneError || error, "phone");
 
-  /** 인증번호 에러 텍스트 */
+  /** 인증번호 에러 텍스트 - 내부 에러 우선, 외부 에러는 하위 호환성 유지 */
   const verificationCodeErrorText = mapErrorMessage(
-    verificationCodeError,
+    internalVerificationCodeError || verificationCodeError,
     "verificationCode"
   );
 
@@ -197,6 +260,139 @@ export default function PhoneVerification({
    */
   const shouldShowPhoneInputError = false;
 
+  // 마이페이지 스타일인 경우 FormField 사용하되, 회원가입과 동일한 구조 사용
+  if (useMyPageStyle) {
+    // 회원가입 스타일 사용 (signupStyles는 항상 사용 가능)
+    // CSS 모듈이 제대로 로드되었는지 확인
+    const phoneVerificationWrapperClass =
+      signupStyles?.phone_verification_wrapper || "";
+    const phoneInputWrapperClass = signupStyles?.phone_input_wrapper || "";
+    const inputFieldClass = signupStyles?.input_field || "";
+    const phoneInputClass = signupStyles?.phone_input || "";
+    const phoneInputVerifiedClass = signupStyles?.phone_input_verified || "";
+    const verificationCompleteIconClass =
+      signupStyles?.verification_complete_icon || "";
+    const verificationButtonClass = signupStyles?.verification_button || "";
+    const verificationButtonCompletedClass =
+      signupStyles?.verification_button_completed || "";
+    const resendButtonClass = signupStyles?.resend_button || "";
+    const verificationCodeSectionClass =
+      signupStyles?.verification_code_section || "";
+    const verificationCodeWrapperClass =
+      signupStyles?.verification_code_wrapper || "";
+    const verificationCodeInputWrapperClass =
+      signupStyles?.verification_code_input_wrapper || "";
+    const verificationCodeInputClass =
+      signupStyles?.verification_code_input || "";
+    const timerTextClass = signupStyles?.timer_text || "";
+    const verifyButtonClass = signupStyles?.verify_button || "";
+    const verificationHelpTextClass =
+      signupStyles?.verification_help_text || "";
+
+    return (
+      <>
+        <FormField label="휴대폰 번호" htmlFor="phone" required>
+          <div className={phoneVerificationWrapperClass}>
+            <div className={phoneInputWrapperClass}>
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                className={`${inputFieldClass} ${phoneInputClass} ${
+                  isPhoneVerified && phone.trim() !== ""
+                    ? phoneInputVerifiedClass
+                    : ""
+                }`}
+                value={phone}
+                onChange={handlePhoneInputChange}
+                placeholder="- 제외 입력"
+                maxLength={13}
+                onInvalid={(e) => {
+                  e.preventDefault();
+                }}
+              />
+              {isPhoneVerified && phone.trim() !== "" && (
+                <div className={verificationCompleteIconClass}>
+                  <Image
+                    src="/images/icons/sign_ok.svg"
+                    alt="인증 완료"
+                    width={16}
+                    height={16}
+                  />
+                </div>
+              )}
+            </div>
+            {isVerificationRequested && !isPhoneVerified ? (
+              <button
+                type="button"
+                className={resendButtonClass}
+                onClick={onResend || handleVerificationRequestInternal}
+              >
+                재전송
+              </button>
+            ) : (
+              <button
+                type="button"
+                className={`${verificationButtonClass} ${
+                  isPhoneVerified && phone.trim() !== ""
+                    ? verificationButtonCompletedClass
+                    : ""
+                }`}
+                onClick={handleVerificationRequestInternal}
+                disabled={isPhoneVerified && phone.trim() !== ""}
+              >
+                {isPhoneVerified && phone.trim() !== ""
+                  ? "인증 완료"
+                  : "인증번호 받기"}
+              </button>
+            )}
+          </div>
+        </FormField>
+        {/* 휴대폰 번호 에러 메시지 */}
+        <ErrorText message={phoneErrorText} />
+        {/* 인증번호 입력 필드 */}
+        {showVerificationCode &&
+          isVerificationRequested &&
+          !isPhoneVerified && (
+            <div className={verificationCodeSectionClass}>
+              <div className={verificationCodeWrapperClass}>
+                <div className={verificationCodeInputWrapperClass}>
+                  <input
+                    type="text"
+                    className={`${inputFieldClass} ${verificationCodeInputClass}`}
+                    placeholder="인증번호 6자리 입력"
+                    value={verificationCode}
+                    onChange={handleVerificationCodeInputChange}
+                    maxLength={6}
+                  />
+                  {timer > 0 && (
+                    <span className={timerTextClass}>{formatTimer(timer)}</span>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  className={verifyButtonClass}
+                  onClick={handleVerifyInternal}
+                >
+                  인증
+                </button>
+              </div>
+              {/* 인증번호 에러 (길이 부족 / 일치하지 않음 / 시간 초과 등) */}
+              <ErrorText message={verificationCodeErrorText} />
+              {/* 인증번호 5회 초과 에러 */}
+              {error === "MAX_VERIFICATION_REQUEST_EXCEEDED" && (
+                <ErrorText message="인증번호 요청 횟수를 모두 사용했습니다. 24시간 후 다시 시도해 주세요." />
+              )}
+              <div className={verificationHelpTextClass}>
+                인증번호를 받지 못하셨나요?
+              </div>
+            </div>
+          )}
+      </>
+    );
+  }
+
+  // 회원가입/계정찾기 스타일 (기존 코드)
   return (
     <div className={styles.form_field}>
       <label className={styles.field_label} htmlFor="phone">
@@ -232,7 +428,7 @@ export default function PhoneVerification({
           <button
             type="button"
             className={styles.resend_button}
-            onClick={onResend || onVerificationRequest}
+            onClick={onResend || handleVerificationRequestInternal}
           >
             재전송
           </button>
@@ -242,7 +438,7 @@ export default function PhoneVerification({
             className={`${styles.verification_button} ${
               isPhoneVerified ? styles.verification_button_completed : ""
             }`}
-            onClick={onVerificationRequest}
+            onClick={handleVerificationRequestInternal}
             disabled={isPhoneVerified}
           >
             {isPhoneVerified ? "인증 완료" : "인증번호 받기"}
@@ -270,7 +466,7 @@ export default function PhoneVerification({
       )}
 
       {/* 인증번호 입력 필드 */}
-      {isVerificationRequested && !isPhoneVerified && (
+      {showVerificationCode && isVerificationRequested && !isPhoneVerified && (
         <div className={styles.verification_code_section}>
           <div className={styles.verification_code_wrapper}>
             <div className={styles.verification_code_input_wrapper}>
@@ -289,7 +485,7 @@ export default function PhoneVerification({
             <button
               type="button"
               className={styles.verify_button}
-              onClick={onVerify}
+              onClick={handleVerifyInternal}
             >
               인증
             </button>

@@ -15,6 +15,10 @@ import { useRouter } from "next/navigation";
 import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import Toast from "@/components/common/toast/Toast";
+import {
+  parseFormattedAmount,
+  validateAmount,
+} from "@/utils/point/amountFormatter";
 import styles from "@/styles/partner/point/charge.module.css";
 import customDropdownStyles from "@/styles/partner/campaign_create/custom_dropdown.module.css";
 
@@ -63,12 +67,9 @@ export default function PartnerPointChargePage() {
   // 신청 후 포인트 계산: 현재 보유 포인트 + 충전 예정 포인트
   const postPoints = partnerInfo.availablePoints + chargePoints;
 
-  // 유효성 검사 및 버튼 활성화 조건
   const isValidAmount = () => {
-    if (chargePoints === 0) return false;
-    if (chargePoints < MIN_AMOUNT) return false;
-    if (chargePoints > MAX_AMOUNT) return false;
-    return true;
+    const validation = validateAmount(chargePoints, MIN_AMOUNT, MAX_AMOUNT);
+    return validation.isValid;
   };
 
   // 무통장 입금 버튼 활성화 조건: 금액 + 입금자명 + 약관 동의

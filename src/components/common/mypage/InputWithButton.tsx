@@ -5,7 +5,7 @@
  *
  * 사용처:
  * - src/components/common/mypage/AddressInput.tsx
- * - src/components/common/mypage/PhoneVerificationInput.tsx
+ * - src/components/common/phone_verification/PhoneVerification.tsx (마이페이지 스타일)
  */
 
 "use client";

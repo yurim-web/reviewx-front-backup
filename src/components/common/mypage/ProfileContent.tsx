@@ -17,11 +17,6 @@
  * - 이용 가이드, 공지사항, FAQ, 카카오톡 상담 메뉴
  * - 로그아웃 버튼
  *
- * React 학습 포인트:
- * - Props: 부모 컴포넌트로부터 데이터를 받아오는 방법
- * - 구조분해할당: props 객체에서 필요한 값만 추출
- * - 조건부 렌더링: onLogout이 있을 때만 로그아웃 버튼 표시
- * - 이벤트 핸들러: onClick으로 버튼 클릭 이벤트 처리
  */
 
 "use client";
@@ -108,6 +103,21 @@ export default function ProfileContent({
           <div className={profileStyles.menu_icon} />
           <div className={profileStyles.menu_text}>내 정보 수정</div>
         </button>
+
+        {/* 
+          조건부 렌더링: 파트너일 때만 비밀번호 변경 버튼 표시
+          editPath가 "/partner"로 시작하면 파트너 사용자로 판단합니다.
+          startsWith(): 문자열이 특정 문자열로 시작하는지 확인하는 메서드입니다.
+        */}
+        {editPath.startsWith("/partner") && (
+          <button
+            className={profileStyles.menu_item}
+            onClick={() => router.push("/partner/reset-password")}
+          >
+            <div className={profileStyles.menu_icon} />
+            <div className={profileStyles.menu_text}>비밀번호 변경</div>
+          </button>
+        )}
       </div>
 
       {/* ========================================

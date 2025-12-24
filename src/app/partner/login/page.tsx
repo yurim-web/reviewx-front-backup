@@ -113,6 +113,11 @@ export default function PartnerLoginPage() {
       // 성공 케이스
       console.log("로그인 성공 (테스트 모드)");
 
+      // 테스트용: localStorage에 이메일 저장 (비밀번호 변경 페이지에서 사용)
+      if (typeof window !== "undefined") {
+        localStorage.setItem("partner_email", foundAccount.email);
+      }
+
       // 통합 계정 데이터의 redirectUrl 사용
       router.push(foundAccount.redirectUrl);
       // ========================================

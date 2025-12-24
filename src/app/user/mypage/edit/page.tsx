@@ -13,7 +13,7 @@
  * 주요 기능:
  * - 프로필 사진 업로드/삭제
  * - 닉네임 수정
- * - 휴대폰 번호 인증
+ * - 휴대폰 번호 인증 (usePhoneVerification 훅 사용)
  * - 주소 정보 수정 (우편번호 검색)
  * - 본인 명의 계좌 정보 수정
  * - 주민등록번호 입력
@@ -22,20 +22,23 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "../../../../styles/user/mypage/edit_profile.module.css";
 import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 // 공용 컴포넌트
 import ProfilePhotoUpload from "@/components/common/mypage/ProfilePhotoUpload";
-import PhoneVerificationInput from "@/components/common/mypage/PhoneVerificationInput";
+import PhoneVerification from "@/components/common/phone_verification/PhoneVerification";
 import AddressInput from "@/components/common/mypage/AddressInput";
 // 유저 전용 컴포넌트
 import AccountInfoInput from "@/components/user/mypage/AccountInfoInput";
 import SocialSecurityNumberInput from "@/components/user/mypage/SocialSecurityNumberInput";
 // 모달 컴포넌트
 import BaseModal from "@/components/common/modal/BaseModal";
+import ErrorText from "@/components/common/error_text/ErrorText";
+// 휴대폰 인증 훅
+import { usePhoneVerification } from "@/hooks/usePhoneVerification/usePhoneVerification";
 
 export default function EditProfilePage() {
   const router = useRouter();
@@ -81,7 +84,6 @@ export default function EditProfilePage() {
     nickname: "",
     name: "",
     email: "",
-    phone: "",
     postalCode: "",
     address: "",
     detailAddress: "",
@@ -93,7 +95,23 @@ export default function EditProfilePage() {
     ssnBack: "",
   });
 
-  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+  // 휴대폰 인증 훅 사용
+  const {
+    phone,
+    verificationCode,
+    isPhoneVerified,
+    isVerificationRequested,
+    timer,
+    phoneError,
+    verificationCodeError,
+    handlePhoneChange: handlePhoneChangeHook,
+    handleVerificationRequest: handleVerificationRequestHook,
+    handleVerificationCodeChange,
+    handleVerifyCode,
+    resetVerification,
+    setTimer,
+  } = usePhoneVerification();
+
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
   // 회원 탈퇴 모달 상태 관리
@@ -110,7 +128,7 @@ export default function EditProfilePage() {
   // 필수 입력 필드 검증 함수
   const validateRequiredFields = () => {
     const requiredFields = {
-      phone: formData.phone.trim(),
+      phone: phone.trim(), // usePhoneVerification 훅에서 관리하는 phone 사용
       postalCode: formData.postalCode.trim(),
       address: formData.address.trim(),
       accountHolder: formData.accountHolder.trim(),
@@ -139,21 +157,40 @@ export default function EditProfilePage() {
     }));
   };
 
-  // 휴대폰 번호 형식 검증
-  const isValidPhoneNumber = (phone: string) => {
-    const phoneRegex = /^010-\d{4}-\d{4}$/;
-    return phoneRegex.test(phone);
+  /**
+   * 휴대폰 번호 변경 핸들러
+   *
+   * 기능: 휴대폰 번호 변경 시 인증 상태 초기화
+   */
+  const handlePhoneChange = (newPhone: string) => {
+    // 훅의 handlePhoneChange를 사용하여 phoneError 자동 초기화
+    handlePhoneChangeHook(newPhone);
+
+    // 휴대폰 번호 변경 시 인증 상태 초기화
+    if (newPhone === "" || isPhoneVerified || isVerificationRequested) {
+      resetVerification();
+    }
   };
 
-  const handleVerificationRequest = () => {
-    // 휴대폰 번호 형식 검증
-    if (!isValidPhoneNumber(formData.phone)) {
-      alert("올바른 휴대폰 번호 형식을 입력해주세요. (예: 010-0000-0000)");
-      return;
-    }
+  /**
+   * 인증번호 받기 핸들러
+   *
+   * 기능: 휴대폰 번호 인증번호 요청
+   */
+  const handleVerificationRequest = async () => {
+    // 훅의 handleVerificationRequest 호출 (검증 로직 포함)
+    await handleVerificationRequestHook();
+    // 마이페이지는 3분(180초) 타이머 사용
+    setTimer(180);
+  };
 
-    // 인증번호 요청 로직
-    console.log("인증번호 요청");
+  /**
+   * 인증번호 확인 핸들러
+   *
+   * 기능: 인증번호 확인 및 인증 완료 처리
+   */
+  const handleVerify = () => {
+    handleVerifyCode();
   };
 
   const handlePostalSearch = () => {
@@ -164,7 +201,7 @@ export default function EditProfilePage() {
   const handleSave = () => {
     if (isSaveButtonEnabled) {
       // 저장 로직
-      console.log("저장", formData);
+      console.log("저장", { ...formData, phone });
     }
   };
 
@@ -176,11 +213,6 @@ export default function EditProfilePage() {
    * 반환값:
    * - true: 진행 중인 캠페인이 있음
    * - false: 진행 중인 캠페인이 없음
-   *
-   * 학습 포인트:
-   * - 비동기 함수: async/await를 사용하여 API 호출
-   * - 조건부 반환: 조건에 따라 다른 값을 반환
-   * - 실제 구현 시: API를 호출하여 "신청" 또는 "선정" 상태의 캠페인이 있는지 확인
    *
    * TODO: 실제 API 연동 필요
    * 예: const response = await fetch('/api/user/campaigns?status=신청,선정');
@@ -209,12 +241,6 @@ export default function EditProfilePage() {
    * 1. 진행 중인 캠페인이 있는지 확인합니다.
    * 2. 진행 중인 캠페인이 있으면 탈퇴 불가 안내 모달을 표시합니다.
    * 3. 진행 중인 캠페인이 없으면 탈퇴 확인 모달을 표시합니다.
-   *
-   * 학습 포인트:
-   * - 비동기 함수: async/await를 사용하여 비동기 작업 처리
-   * - 조건부 분기: if-else를 사용하여 상황에 따라 다른 동작 수행
-   * - 상태 업데이트: useState로 관리하는 상태를 변경하여 모달 표시/숨김 제어
-   * - 이벤트 핸들러: 버튼 클릭 시 실행되는 함수
    */
   const handleWithdraw = async () => {
     // 진행 중인 캠페인 확인
@@ -236,10 +262,6 @@ export default function EditProfilePage() {
    * 1. 첫 번째 확인 모달을 닫습니다.
    * 2. 두 번째 완료 모달을 엽니다.
    * 3. 실제 탈퇴 API 호출 로직이 필요하면 여기에 추가합니다.
-   *
-   * 학습 포인트:
-   * - 모달 상태 관리: 여러 모달을 순차적으로 제어하는 방법
-   * - 비동기 처리: 실제 API 호출 시 async/await 사용 가능
    */
   const handleWithdrawConfirm = () => {
     setIsWithdrawConfirmModalOpen(false);
@@ -254,10 +276,6 @@ export default function EditProfilePage() {
    * 기능:
    * 1. 완료 모달을 닫습니다.
    * 2. 메인 페이지로 이동합니다.
-   *
-   * 학습 포인트:
-   * - 라우팅: Next.js의 useRouter를 사용하여 페이지 이동
-   * - 상태 초기화: 모달 상태를 false로 설정하여 닫기
    */
   const handleWithdrawComplete = () => {
     setIsWithdrawCompleteModalOpen(false);
@@ -331,13 +349,20 @@ export default function EditProfilePage() {
           </article>
 
           {/* 휴대폰 번호 */}
-          <PhoneVerificationInput
-            phone={formData.phone}
-            onPhoneChange={(phone) =>
-              setFormData((prev) => ({ ...prev, phone }))
-            }
-            isVerified={isPhoneVerified}
+          <PhoneVerification
+            phone={phone}
+            isPhoneVerified={isPhoneVerified}
+            error={phoneError}
+            onPhoneChange={handlePhoneChange}
+            verificationCode={verificationCode}
+            isVerificationRequested={isVerificationRequested}
+            timer={timer}
+            verificationCodeError={verificationCodeError}
             onVerificationRequest={handleVerificationRequest}
+            onVerify={handleVerify}
+            onVerificationCodeChange={handleVerificationCodeChange}
+            useMyPageStyle={true}
+            showVerificationCode={true}
           />
 
           {/* 주소 */}

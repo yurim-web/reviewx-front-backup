@@ -10,7 +10,7 @@
 "use client";
 
 import styles from "@/styles/common/find_account/find_account.module.css";
-import signupStyles from "@/styles/user/signup/signup.module.css";
+import signupStyles from "@/styles/common/signup/signup.module.css";
 
 interface EmailInputProps {
   /** 이메일 값 */

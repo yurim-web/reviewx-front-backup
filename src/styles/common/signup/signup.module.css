@@ -1,87 +1,24 @@
 /* ========================================
-   📝 파트너 회원가입 페이지 스타일
+   📝 회원가입 공통 스타일
    ======================================== */
 
 /**
- * 파트너 회원가입 페이지 전용 CSS 모듈
+ * 유저/파트너 회원가입 페이지 공통 CSS 모듈
  *
- * 사용 컴포넌트:
- * - partner/signup/page.tsx (파트너 회원가입 페이지)
+ * 📍 사용 위치:
+ * - src/styles/user/signup/user_signup.module.css (유저 회원가입)
+ * - src/styles/partner/signup/partner_signup.module.css (파트너 회원가입)
  *
  * 주요 스타일:
- * - 회원가입 페이지 전체 레이아웃
  * - 입력 필드 스타일
  * - 휴대폰 인증 스타일
- * - 사업자등록증 파일 업로드 스타일
- * - 주소 입력 스타일
  * - 약관 동의 스타일
  * - 에러 메시지 스타일
- * - 얼럿 모달 스타일
  */
 
 /* ========================================
-   1. 페이지 전체 컨테이너
+   1. 회원가입 폼 영역
    ======================================== */
-
-/* 회원가입 페이지 전체 컨테이너 */
-.signup_page_container {
-  background-color: #f2f2f2;
-  min-height: 100vh;
-  width: 100%;
-  max-width: 1000px;
-  margin: 0 auto;
-  position: relative;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  padding-top: 80px; /* 헤더(80px) + 서브 헤더(68px) 높이만큼 상단 여백 */
-}
-
-/* ========================================
-   2. 메인 콘텐츠 영역
-   ======================================== */
-
-/* 회원가입 메인 영역 */
-.signup_main {
-  background-color: #ffffff;
-  width: 100%;
-  min-height: calc(100vh - 80px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  box-sizing: border-box;
-  padding: 80px 240px;
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-/* 서브 헤더 */
-.sub_header {
-  position: fixed;
-  top: 80px; /* 메인 헤더 높이만큼 아래에 위치 */
-  left: 0;
-  right: 0;
-  width: 100%;
-  max-width: 1000px;
-  margin-left: auto;
-  margin-right: auto;
-  box-sizing: border-box;
-  z-index: 999; /* 메인 헤더(1000) 아래, 다른 콘텐츠 위 */
-}
-
-/* ========================================
-   4. 회원가입 폼 영역
-   ======================================== */
-
-/* 회원가입 폼 */
-.signup_form {
-  width: 100%;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
 
 /* 폼 필드 */
 .form_field {
@@ -97,7 +34,7 @@
   color: #444;
   font-size: 14px;
   font-weight: 500;
-  line-height: 14px;
+  line-height: 14px; /* 100% */
   letter-spacing: -0.28px;
 }
 
@@ -114,7 +51,7 @@
   color: #444;
   font-size: 16px;
   font-weight: 500;
-  line-height: 16px;
+  line-height: 16px; /* 100% */
   letter-spacing: -0.32px;
   transition: border-color 0.2s ease;
 }
@@ -142,6 +79,13 @@
   color: #999999;
 }
 
+/* 읽기 전용 입력 필드 */
+.input_field:read-only {
+  background-color: #f6f6f6;
+  color: #444444;
+  cursor: default;
+}
+
 /* 비밀번호 입력 래퍼 */
 .password_input_wrapper {
   position: relative;
@@ -166,7 +110,7 @@
 }
 
 /* ========================================
-   5. 휴대폰 인증 영역
+   2. 휴대폰 인증 영역
    ======================================== */
 
 /* 휴대폰 인증 래퍼 */
@@ -243,7 +187,9 @@
 
 /* 인증번호 입력 섹션 */
 .verification_code_section {
-  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 /* 인증번호 입력 및 인증 버튼 래퍼 */
@@ -302,100 +248,39 @@
   background-color: #f6f6f6;
 }
 
-/* ========================================
-   6. 파일 업로드 영역
-   ======================================== */
-
-/* 파일 업로드 래퍼 */
-.file_upload_wrapper {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-}
-
-/* 파일 업로드 입력 래퍼 */
-.file_upload_input_wrapper {
-  position: relative;
-  flex: 1;
-}
-
-/* 파일명 입력 필드 */
-.file_name_input {
-  width: 100%;
-}
-
-/* 파일 입력 (숨김) */
-.file_input {
-  display: none;
-}
-
-/* 파일 선택 버튼 */
-.file_select_button {
+/* 재전송 버튼 */
+.resend_button {
   width: 125px;
   height: 56px;
   background-color: #ffffff;
-  border: 1px solid #444444;
+  border: 1px solid #848484;
+  cursor: pointer;
   border-radius: 8px;
-  color: #444444;
+  overflow: hidden;
+  color: #848484;
   font-size: 16px;
   font-weight: 600;
   line-height: 16px;
   letter-spacing: -0.32px;
+}
+
+/* 인증번호 도움말 텍스트 */
+.verification_help_text {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-  box-sizing: border-box;
-  padding: 0;
 }
 
-/* 파일 선택 버튼 호버 */
-.file_select_button:hover {
-  background-color: #f6f6f6;
-}
-
-/* ========================================
-   7. 주소 입력 영역
-   ======================================== */
-
-/* 우편번호 래퍼 */
-.address_postal_code_wrapper {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-}
-
-/* 우편번호 입력 필드 */
-.postal_code_input {
-  width: 263px;
-  flex-shrink: 0;
-}
-
-/* 우편번호 찾기 버튼 */
-.postal_code_search_button {
-  width: 125px;
-  height: 56px;
-  background-color: #ffffff;
-  border: 1px solid #444444;
-  border-radius: 8px;
+.verification_help_text:hover {
   color: #444444;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 16px;
-  letter-spacing: -0.32px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-  box-sizing: border-box;
-  padding: 0;
-}
-
-/* 우편번호 찾기 버튼 호버 */
-.postal_code_search_button:hover {
-  background-color: #f6f6f6;
+  text-decoration: underline;
 }
 
 /* ========================================
-   8. 약관 동의 영역
+   3. 약관 동의 영역
    ======================================== */
 
 /* 약관 동의 섹션 */
@@ -420,12 +305,33 @@
   width: 100%;
 }
 
+/* 약관 그룹 (체크박스 + 하위 항목) */
+.terms_group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 /* 약관 항목 */
 .terms_item {
   display: flex;
   align-items: center;
   gap: 8px;
   position: relative;
+}
+
+/* 약관 하위 항목 */
+.terms_sub_items {
+  margin-left: 24px;
+  color: #848484;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 22px;
+  letter-spacing: -0.26px;
+}
+
+.terms_sub_items p {
+  margin: 0;
 }
 
 /* 체크박스 */
@@ -482,6 +388,11 @@
   text-decoration: underline;
   text-underline-position: from-font;
   margin-left: auto;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 /* 약관 보기 링크 호버 */
@@ -490,7 +401,7 @@
 }
 
 /* ========================================
-   9. 에러 메시지
+   4. 에러 메시지
    ======================================== */
 
 /* 에러 메시지 */
@@ -508,10 +419,36 @@
 }
 
 /* ========================================
-   10. 회원가입 버튼
+   5. 회원가입 버튼
    ======================================== */
 
 /* 회원가입 버튼 */
+.submit_button {
+  width: 100%;
+  height: 56px;
+  background-color: #555555;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+/* 회원가입 버튼 호버 */
+.submit_button:hover {
+  background-color: #444444;
+  opacity: 0.9;
+}
+
+/* 회원가입 버튼 활성화 */
+.submit_button:active {
+  opacity: 0.8;
+}
+
 /* 회원가입 버튼 비활성화 */
 .submit_button:disabled,
 .submit_button_disabled {
@@ -528,112 +465,12 @@
   opacity: 1;
 }
 
-.submit_button {
-  width: 100%;
-  height: 56px;
-  background-color: #555555;
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 16px;
-  letter-spacing: -0.32px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, opacity 0.2s ease;
-  margin-top: 20px;
-}
-
-/* 회원가입 버튼 호버 */
-.submit_button:hover {
-  background-color: #444444;
-  opacity: 0.9;
-}
-
-/* 회원가입 버튼 활성화 */
-.submit_button:active {
-  opacity: 0.8;
-}
-
 /* ========================================
-   11. 얼럿 모달
-   ======================================== */
-
-/* 얼럿 오버레이 */
-.alert_overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-/* 얼럿 컨테이너 */
-.alert_container {
-  background-color: #ffffff;
-  border-radius: 8px;
-  width: 400px;
-  padding: 0;
-  position: relative;
-}
-
-/* 얼럿 콘텐츠 */
-.alert_content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 40px 32px;
-  gap: 24px;
-}
-
-/* 얼럿 메시지 */
-.alert_message {
-  color: #444;
-  text-align: center;
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 28px; /* 155.556% */
-  letter-spacing: -0.36px;
-  white-space: pre-line;
-}
-
-/* 얼럿 닫기 버튼 */
-.alert_close_button {
-  width: 336px;
-  height: 48px;
-  background-color: #f6f6f6;
-  border: none;
-  border-radius: 8px;
-  color: #444;
-  text-align: center;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 16px; /* 100% */
-  letter-spacing: -0.32px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-/* ========================================
-   12. 반응형 디자인
+   6. 반응형 디자인
    ======================================== */
 
 /* 모바일 (0~739px) */
 @media (max-width: 739px) {
-  .signup_main {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-
-  .signup_form {
-    max-width: 100%;
-  }
-
   .phone_verification_wrapper {
     flex-direction: column;
   }
@@ -642,23 +479,12 @@
     width: 100%;
   }
 
-  .file_upload_wrapper {
+  .verification_buttons {
     flex-direction: column;
   }
 
-  .file_select_button {
-    width: 100%;
-  }
-
-  .address_postal_code_wrapper {
-    flex-direction: column;
-  }
-
-  .postal_code_input {
-    width: 100%;
-  }
-
-  .postal_code_search_button {
+  .resend_button,
+  .verify_button {
     width: 100%;
   }
 }

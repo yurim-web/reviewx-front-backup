@@ -1,0 +1,187 @@
+/* ========================================
+   📝 유저 회원가입 페이지 스타일
+   ======================================== */
+
+/**
+ * 유저 회원가입 페이지 전용 CSS 모듈
+ *
+ * 📍 사용 위치 (사용 파일 목록):
+ * 
+ * 1️⃣ 페이지 컴포넌트:
+ *    - src/app/user/signup/page.tsx
+ *      → 사용 클래스: signup_page_container, signup_main, signup_form, submit_button
+ *
+ * 3️⃣ 유저 회원가입 전용 컴포넌트:
+ *    - src/components/user/signup/ExistingAccountModal.tsx
+ *      → 사용 클래스: modal_overlay, modal_container, modal_content, modal_message,
+ *                     kakao_login_button, naver_login_button, modal_close_button
+ *
+ * 주요 스타일:
+ * - 회원가입 페이지 전체 레이아웃 (유저 전용)
+ * - 모달 스타일 (유저 전용)
+ *
+ * 💡 공통 스타일은 src/styles/common/signup/signup.module.css에 정의되어 있습니다.
+ *    이 파일은 유저 전용 스타일만 포함합니다.
+ */
+
+/* ========================================
+   1. 페이지 전체 컨테이너 (유저 전용)
+   ======================================== */
+
+.signup_page_container {
+  /* min-height: 100vh; */
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding-top: 80px;
+}
+
+/* ========================================
+   2. 메인 콘텐츠 영역 (유저 전용)
+   ======================================== */
+
+.signup_main {
+  background-color: #ffffff;
+  width: 100%;
+  min-height: calc(100vh - 150px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  box-sizing: border-box;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 80px 0 40px;
+  flex: 1;
+}
+
+/* ========================================
+   3. 회원가입 폼 영역 (유저 전용)
+   ======================================== */
+
+.signup_form {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+}
+
+/* ========================================
+   4. 회원가입 버튼 (유저 전용 스타일 오버라이드)
+   ======================================== */
+
+.submit_button {
+  margin-top: auto; /* 유저 전용: 남는 세로 공간을 모두 차지해 하단 정렬 */
+}
+
+/* ========================================
+   5. 기존 계정 모달 (유저 전용)
+   ======================================== */
+
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal_container {
+  background-color: #ffffff;
+  border-radius: 12px;
+  width: 400px;
+  padding: 0;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal_content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 32px;
+  gap: 24px;
+}
+
+.modal_message {
+  color: #444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.36px;
+  text-align: center;
+  margin: 0;
+}
+
+.kakao_login_button {
+  width: 336px;
+  height: 58px;
+  background-color: #fee500;
+  border: none;
+  border-radius: 8px;
+  color: #444444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.naver_login_button {
+  width: 336px;
+  height: 58px;
+  background-color: #03c75a;
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.modal_close_button {
+  width: 336px;
+  height: 48px;
+  background-color: #f6f6f6;
+  border: none;
+  border-radius: 8px;
+  color: #444444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* ========================================
+   6. 반응형 디자인 (유저 전용)
+   ======================================== */
+
+@media (max-width: 739px) {
+  .signup_main {
+    padding-top: 40px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .signup_form {
+    max-width: 100%;
+  }
+}

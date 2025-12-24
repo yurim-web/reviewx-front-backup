@@ -15,7 +15,8 @@
 
 'use client';
 
-import styles from '@/styles/partner/signup/signup.module.css';
+import commonStyles from '@/styles/common/signup/signup.module.css';
+import styles from '@/styles/partner/signup/partner_signup.module.css';
 
 interface AddressInputProps {
   postalCode: string;
@@ -43,8 +44,8 @@ export default function AddressInput({
   onPostalCodeSearch,
 }: AddressInputProps) {
   return (
-    <div className={styles.form_field}>
-      <label className={styles.field_label} htmlFor="address">
+    <div className={commonStyles.form_field}>
+      <label className={commonStyles.field_label} htmlFor="address">
         주소
       </label>
 
@@ -53,8 +54,8 @@ export default function AddressInput({
         <input
           id="postal-code"
           type="text"
-          className={`${styles.input_field} ${styles.postal_code_input} ${
-            postalCodeError !== undefined ? styles.input_error : ''
+          className={`${commonStyles.input_field} ${styles.postal_code_input} ${
+            postalCodeError !== undefined ? commonStyles.input_error : ''
           }`}
           placeholder="우편번호"
           value={postalCode}
@@ -76,8 +77,8 @@ export default function AddressInput({
       <input
         id="address"
         type="text"
-        className={`${styles.input_field} ${
-          addressError !== undefined ? styles.input_error : ''
+        className={`${commonStyles.input_field} ${
+          addressError !== undefined ? commonStyles.input_error : ''
         }`}
         placeholder="기본 주소"
         value={address}
@@ -91,8 +92,8 @@ export default function AddressInput({
       <input
         id="detail-address"
         type="text"
-        className={`${styles.input_field} ${
-          detailAddressError !== undefined ? styles.input_error : ''
+        className={`${commonStyles.input_field} ${
+          detailAddressError !== undefined ? commonStyles.input_error : ''
         }`}
         placeholder="상세 주소 입력"
         value={detailAddress}

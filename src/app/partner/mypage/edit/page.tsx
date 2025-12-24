@@ -8,26 +8,21 @@
  * 목적: 파트너가 자신의 계정 정보를 수정하는 페이지입니다.
  * 경로: /partner/mypage/edit
  * 주요 기능: 프로필 사진, 기본 정보, 사업자 정보, 담당자 정보, 주소 정보 수정 + 회원 탈퇴
- *
- * 학습 포인트:
- * - useState, useEffect 훅 사용법
- * - 입력 폼 상태 관리와 이벤트 핸들러
- * - 공통 컴포넌트 재사용 (프로필, 주소, 휴대폰 인증 등)
- * - 모달 컴포넌트를 활용한 회원 탈퇴 플로우 구현
+
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
-// 유저단 이랑 스타일 똑같아서 공통으로 쓰는중
 import styles from "../../../../styles/user/mypage/edit_profile.module.css";
-// 분리된 컴포넌트들 import
 import ProfilePhotoUpload from "@/components/common/mypage/ProfilePhotoUpload";
-import PhoneVerificationInput from "@/components/common/mypage/PhoneVerificationInput";
+import PhoneVerification from "@/components/common/phone_verification/PhoneVerification";
 import BusinessDocumentUpload from "@/components/partner/mypage/BusinessDocumentUpload";
 import AddressInput from "@/components/common/mypage/AddressInput";
 import BaseModal from "@/components/common/modal/BaseModal";
+import ErrorText from "@/components/common/error_text/ErrorText";
+import { formatPhoneNumber } from "@/utils/signup/phoneUtils";
 
 /**
  * 파트너 내 정보 수정 페이지 컴포넌트
@@ -36,35 +31,38 @@ export default function PartnerEditProfilePage() {
   // Next.js 라우터 훅
   const router = useRouter();
 
-  // 폼 데이터 state - 사용자가 입력한 모든 정보를 저장
+  // 폼 데이터 state
   const [formData, setFormData] = useState({
-    name: "아무개", // 이름
-    email: "contact@cmcm.co.kr", // 이메일
-    phone: "010-1234-5678", // 휴대폰 번호
-    contactPhone: "010-1234-5678", // 문의 담당자 휴대폰 번호
-    companyName: "주식회사 청명종합광고기획", // 상호명
-    ownerName: "김민회", // 대표자명
-    businessNumber: "122-86-125", // 사업자등록번호
-    businessDocument: "등록 완료", // 사업자등록증 상태
-    postalCode: "13561", // 우편번호
-    address: "경기 성남시 분당구 정자일로 95", // 주소
-    detailAddress: "NAVER", // 상세 주소
+    name: "아무개",
+    email: "contact@cmcm.co.kr",
+    phone: "010-1234-5678",
+    contactPhone: "010-1234-5678",
+    companyName: "주식회사 청명종합광고기획",
+    ownerName: "김민회",
+    businessNumber: "122-86-125",
+    businessDocument: "등록 완료",
+    postalCode: "13561",
+    address: "경기 성남시 분당구 정자일로 95",
+    detailAddress: "NAVER",
   });
 
   const [isPhoneVerified, setIsPhoneVerified] = useState(true); // 휴대폰 인증 완료 여부
+  const [isVerificationRequested, setIsVerificationRequested] = useState(false); // 인증번호 요청 여부
+  const [verificationCode, setVerificationCode] = useState(""); // 인증번호
+  const [timer, setTimer] = useState(0); // 타이머
+  const timerIntervalRef = useRef<NodeJS.Timeout | null>(null); // 타이머 ID 저장
+  const [verificationCodeError, setVerificationCodeError] = useState<
+    string | undefined
+  >(undefined); // 인증번호 에러 메시지
   const [isBusinessDocumentUploaded, setIsBusinessDocumentUploaded] =
     useState(true); // 사업자등록증 업로드 여부
-  const [selectedBusinessDocument, setSelectedBusinessDocument] =
-    useState<File | null>(null); // 선택한 사업자등록증 파일
   const [profileImage, setProfileImage] = useState<string | null>(null); // 프로필 사진 미리보기 URL
+  const [phoneError, setPhoneError] = useState<string | undefined>(undefined); // 휴대폰 번호 에러 메시지
+  const [contactPhoneError, setContactPhoneError] = useState<
+    string | undefined
+  >(undefined); // 문의 담당자 휴대폰 번호 에러 메시지
 
-  /**
-   * 회원 탈퇴 관련 모달 상태
-   *
-   * - isWithdrawConfirmModalOpen: 탈퇴 확인 모달 표시 여부
-   * - isWithdrawCompleteModalOpen: 탈퇴 완료 모달 표시 여부
-   * - isWithdrawBlockedModalOpen: 진행 중인 캠페인으로 인한 탈퇴 불가 안내 모달 표시 여부
-   */
+  // 회원 탈퇴 관련 모달 상태
   const [isWithdrawConfirmModalOpen, setIsWithdrawConfirmModalOpen] =
     useState(false);
   const [isWithdrawCompleteModalOpen, setIsWithdrawCompleteModalOpen] =
@@ -72,19 +70,11 @@ export default function PartnerEditProfilePage() {
   const [isWithdrawBlockedModalOpen, setIsWithdrawBlockedModalOpen] =
     useState(false);
 
-  /**
-   * 일반 입력 필드 변경 핸들러
-   * 구조분해할당으로 input의 name과 value를 가져옴
-   */
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  /**
-   * 휴대폰 번호 유효성 검사 함수
-   * 정규식을 사용하여 010-XXXX-XXXX 형식인지 확인
-   */
   const isValidPhoneNumber = (phone: string) => /^010-\d{4}-\d{4}$/.test(phone);
 
   /**
@@ -93,18 +83,49 @@ export default function PartnerEditProfilePage() {
    */
   const handleVerificationRequest = () => {
     if (!isValidPhoneNumber(formData.phone)) {
-      alert("올바른 휴대폰 번호 형식을 입력해주세요. (예: 010-0000-0000)");
+      setPhoneError("올바른 휴대폰 번호 형식을 입력해주세요.");
       return;
     }
-    console.log("인증번호 요청");
+    // 에러 초기화
+    setPhoneError(undefined);
+    // 인증번호 요청 상태 설정
+    setIsVerificationRequested(true);
+    setIsPhoneVerified(false);
+    setVerificationCode("");
+    setVerificationCodeError(undefined);
+    // 타이머 시작 (3분 = 180초)
+    setTimer(180);
+    // TODO: 인증번호 전송 API 호출
+  };
+
+  /**
+   * 인증번호 확인 핸들러
+   */
+  const handleVerify = () => {
+    if (!verificationCode || verificationCode.length !== 6) {
+      setVerificationCodeError("인증번호 6자리를 입력해주세요.");
+      return;
+    }
+    // TODO: 인증번호 확인 API 호출
+    // 임시로 인증 완료 처리
+    setIsPhoneVerified(true);
+    setIsVerificationRequested(false);
+    setTimer(0);
+    setVerificationCodeError(undefined);
+  };
+
+  /**
+   * 인증번호 변경 핸들러
+   */
+  const handleVerificationCodeChange = (code: string) => {
+    setVerificationCode(code);
+    setVerificationCodeError(undefined);
   };
 
   /**
    * 우편번호 찾기 핸들러
-   * 실제로는 다음/카카오 주소 API를 연동해야 함
    */
   const handlePostalCodeSearch = () => {
-    console.log("우편번호 찾기");
     // TODO: 다음/카카오 주소 API 연동
   };
 
@@ -112,60 +133,29 @@ export default function PartnerEditProfilePage() {
    * 사업자등록증 파일 선택 핸들러
    * BusinessDocumentUpload 컴포넌트에서 호출됨
    */
-  const handleBusinessDocumentSelect = (file: File) => {
-    setSelectedBusinessDocument(file);
+  const handleBusinessDocumentSelect = (file: File | null) => {
+    if (!file) {
+      setIsBusinessDocumentUploaded(false);
+      return;
+    }
     setFormData((prev) => ({
       ...prev,
-      businessDocument: file.name, // 선택한 파일명으로 업데이트
+      businessDocument: file.name,
     }));
     setIsBusinessDocumentUploaded(true);
   };
 
-  /**
-   * 저장 버튼 활성화 조건
-   * 모든 필수 필드가 채워져 있는지 확인
-   */
   const isSaveEnabled = formData.phone.trim().length > 0;
 
   /**
-   * 진행 중인 캠페인 확인 함수 (파트너 전용)
-   *
-   * 기능: 파트너가 운영 중인 캠페인이 있는지 확인합니다.
-   *
-   * 반환값:
-   * - true: 진행 중인 캠페인이 있음
-   * - false: 진행 중인 캠페인이 없음
-   *
-   * 학습 포인트:
-   * - 비동기 함수: async/await를 사용하여 API 호출
-   * - 조건부 반환: 조건에 따라 다른 값을 반환
-   * - 실제 구현 시: API를 호출하여 "진행 중" 상태의 캠페인이 있는지 확인
-   *
+   * 진행 중인 캠페인 확인 함수
    * TODO: 실제 API 연동 필요
-   * 예: const response = await fetch('/api/partner/campaigns?status=진행중');
-   *     const campaigns = await response.json();
-   *     return campaigns.length > 0;
    */
   const checkOngoingCampaigns = async (): Promise<boolean> => {
-    // TODO: 실제 API 호출로 진행 중인 캠페인 확인
-    // 현재는 임시로 false 반환 (진행 중인 캠페인 없음)
+    // TODO: API 호출로 진행 중인 캠페인 확인
     return false;
   };
 
-  /**
-   * 회원 탈퇴 버튼 클릭 핸들러
-   *
-   * 기능:
-   * 1. 진행 중인 캠페인이 있는지 확인합니다.
-   * 2. 진행 중인 캠페인이 있으면 탈퇴 불가 안내 모달을 표시합니다.
-   * 3. 진행 중인 캠페인이 없으면 탈퇴 확인 모달을 표시합니다.
-   *
-   * 학습 포인트:
-   * - 비동기 함수: async/await를 사용하여 비동기 작업 처리
-   * - 조건부 분기: if-else를 사용하여 상황에 따라 다른 동작 수행
-   * - 상태 업데이트: useState로 관리하는 상태를 변경하여 모달 표시/숨김 제어
-   * - 이벤트 핸들러: 버튼 클릭 시 실행되는 함수
-   */
   const handleWithdraw = async () => {
     const hasOngoingCampaigns = await checkOngoingCampaigns();
 
@@ -176,36 +166,50 @@ export default function PartnerEditProfilePage() {
     }
   };
 
-  /**
-   * 탈퇴 확인 모달에서 "탈퇴" 버튼 클릭 핸들러
-   *
-   * 기능:
-   * 1. 첫 번째 확인 모달을 닫습니다.
-   * 2. 두 번째 완료 모달을 엽니다.
-   * 3. 실제 탈퇴 API 호출 로직이 필요하면 여기에 추가합니다.
-   */
   const handleWithdrawConfirm = () => {
     setIsWithdrawConfirmModalOpen(false);
-    // TODO: 파트너 탈퇴 API 호출 추가
+    // TODO: 파트너 탈퇴 API 호출
     setIsWithdrawCompleteModalOpen(true);
   };
 
-  /**
-   * 탈퇴 완료 모달에서 "닫기" 버튼 클릭 핸들러
-   *
-   * 기능:
-   * 1. 완료 모달을 닫습니다.
-   * 2. 파트너 메인 페이지로 이동합니다.
-   */
   const handleWithdrawComplete = () => {
     setIsWithdrawCompleteModalOpen(false);
     router.push("/partner");
   };
 
-  /**
-   * 파트너 헤더 숨기기
-   * SubHeader가 표시될 때는 PartnerHeader를 숨김
-   */
+  // 타이머 효과: timer가 0보다 크면 1초마다 감소
+  useEffect(() => {
+    if (timer > 0) {
+      timerIntervalRef.current = setInterval(() => {
+        setTimer((prev) => {
+          if (prev <= 1) {
+            if (timerIntervalRef.current) {
+              clearInterval(timerIntervalRef.current);
+            }
+            setIsVerificationRequested(false);
+            // 타이머가 0이 되고 인증이 완료되지 않았으면 에러 메시지 설정
+            if (!isPhoneVerified) {
+              setVerificationCodeError("인증번호 입력 시간을 초과했습니다.");
+            }
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+        timerIntervalRef.current = null;
+      }
+    }
+
+    return () => {
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+      }
+    };
+  }, [timer, isPhoneVerified]);
+
   useEffect(() => {
     const header = document.querySelector("header");
     if (header) header.style.display = "none";
@@ -261,13 +265,33 @@ export default function PartnerEditProfilePage() {
           </article>
 
           {/* 휴대폰 번호 (수정 가능) */}
-          <PhoneVerificationInput
+          <PhoneVerification
             phone={formData.phone}
-            onPhoneChange={(phone) =>
-              setFormData((prev) => ({ ...prev, phone }))
-            }
-            isVerified={isPhoneVerified}
+            isPhoneVerified={isPhoneVerified}
+            error={phoneError}
+            onPhoneChange={(phone) => {
+              const prevPhone = formData.phone;
+              setFormData((prev) => ({ ...prev, phone }));
+              // 휴대폰 번호 변경 시 에러 초기화 및 인증 상태 초기화
+              setPhoneError(undefined);
+              // 휴대폰 번호가 비어지거나 변경되면 인증 상태 초기화 (회원가입과 동일)
+              if (phone === "" || phone !== prevPhone) {
+                setIsPhoneVerified(false);
+                setIsVerificationRequested(false);
+                setVerificationCode("");
+                setTimer(0);
+                setVerificationCodeError(undefined);
+              }
+            }}
+            verificationCode={verificationCode}
+            isVerificationRequested={isVerificationRequested}
+            timer={timer}
+            verificationCodeError={verificationCodeError}
             onVerificationRequest={handleVerificationRequest}
+            onVerify={handleVerify}
+            onVerificationCodeChange={handleVerificationCodeChange}
+            useMyPageStyle={true}
+            showVerificationCode={true}
           />
 
           {/* 사업자 정보 섹션 */}
@@ -350,11 +374,39 @@ export default function PartnerEditProfilePage() {
             <input
               id="contactPhone"
               name="contactPhone"
+              type="tel"
               className={styles.input_field}
               value={formData.contactPhone}
-              onChange={handleInputChange}
+              onChange={(e) => {
+                // 휴대폰 번호 포맷팅 유틸리티 사용
+                const formatted = formatPhoneNumber(e.target.value);
+                setFormData((prev) => ({ ...prev, contactPhone: formatted }));
+
+                // 실시간 휴대폰 번호 형식 검증
+                if (formatted.trim() === "") {
+                  // 빈 필드: 에러 초기화
+                  setContactPhoneError(undefined);
+                } else {
+                  // 휴대폰 번호 형식 검증 (010-1234-5678 형식)
+                  const phoneRegex = /^010-\d{4}-\d{4}$/;
+                  if (!phoneRegex.test(formatted)) {
+                    // 형식 오류: 실시간으로 에러 메시지 표시
+                    setContactPhoneError(
+                      "올바른 휴대폰 번호 형식을 입력해주세요."
+                    );
+                  } else {
+                    // 형식이 유효한 경우: 에러 초기화
+                    setContactPhoneError(undefined);
+                  }
+                }
+              }}
               placeholder="010-0000-0000"
+              maxLength={13}
+              onInvalid={(e) => {
+                e.preventDefault();
+              }}
             />
+            <ErrorText message={contactPhoneError} />
           </article>
 
           {/* 회원탈퇴 버튼 */}

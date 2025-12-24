@@ -13,7 +13,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import FormField from "./FormField";
-import ErrorModal from "./ErrorModal";
+import BaseModal from "@/components/common/modal/BaseModal";
 import styles from "@/styles/user/mypage/edit_profile.module.css";
 
 interface ProfilePhotoUploadProps {
@@ -23,8 +23,8 @@ interface ProfilePhotoUploadProps {
   onImageChange: (imageUrl: string | null) => void;
 }
 
-const ALLOWED_EXTENSIONS = ["pdf", "jpg", "jpeg", "png"];
-const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "application/pdf"];
+const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "gif"];
+const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/gif"];
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 /** 파일 형식 검증 헬퍼 함수 */
@@ -50,11 +50,25 @@ export default function ProfilePhotoUpload({
   const [isUploading, setIsUploading] = useState(false);
   const [modalMessage, setModalMessage] = useState<string | null>(null);
 
-  /** 프로필 사진 업로드 핸들러 */
+  /**
+   * 프로필 사진 업로드 핸들러
+   *
+   * 에러 모달이 표시되는 경우:
+   * 1. 파일 형식 오류: 지정된 확장자(JPG, PNG, GIF)가 아닌 경우
+   *    - 메시지: "지정된 확장자(JPG, PNG, GIF)만<br>업로드할 수 있습니다."
+   * 2. 파일 크기 오류: 10MB를 초과하는 경우
+   *    - 메시지: "10mb 이하의 파일만 업로드할 수 있습니다."
+   *
+   * 검증 순서:
+   * 1. 파일 선택 여부 확인
+   * 2. 파일 형식 검증 (확장자 또는 MIME 타입)
+   * 3. 파일 크기 검증 (10MB 이하)
+   * 4. 모든 검증 통과 시 업로드 진행
+   */
   const handleProfilePhotoUpload = () => {
     const input = document.createElement("input");
     input.type = "file";
-    input.accept = ".pdf,.jpg,.jpeg,.png,image/jpeg,image/png,application/pdf";
+    input.accept = ".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif";
 
     input.onchange = (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
@@ -63,7 +77,7 @@ export default function ProfilePhotoUpload({
 
       if (!validateFileType(file)) {
         setModalMessage(
-          "지정된 확장자(PDF, JPG, PNG)만\n업로드할 수 있습니다."
+          "지정된 확장자(JPG, PNG, GIF)만<br>업로드할 수 있습니다."
         );
         return;
       }
@@ -149,7 +163,13 @@ export default function ProfilePhotoUpload({
         </div>
       </FormField>
 
-      <ErrorModal message={modalMessage} onClose={handleCloseModal} />
+      <BaseModal
+        is_open={modalMessage !== null}
+        on_close={handleCloseModal}
+        message={modalMessage || ""}
+        buttons={["닫기"]}
+        type="center"
+      />
     </>
   );
 }

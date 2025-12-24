@@ -16,7 +16,7 @@
 
 'use client';
 
-import styles from '@/styles/user/signup/signup.module.css';
+import styles from '@/styles/user/signup/user_signup.module.css';
 
 /**
  * 소셜 로그인 타입

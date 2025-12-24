@@ -1,0 +1,226 @@
+/* ========================================
+   📝 파트너 회원가입 페이지 스타일
+   ======================================== */
+
+/**
+ * 파트너 회원가입 페이지 전용 CSS 모듈
+ *
+ * 📍 사용 위치 (사용 파일 목록):
+ * 
+ * 1️⃣ 페이지 컴포넌트:
+ *    - src/app/partner/signup/page.tsx
+ *      → 사용 클래스: signup_page_container, signup_main, signup_form, sub_header,
+ *                     file_upload_wrapper, file_select_button, address_postal_code_wrapper,
+ *                     postal_code_input, postal_code_search_button, submit_button
+ *
+ * 2️⃣ 파트너 회원가입 전용 컴포넌트:
+ *    - src/components/partner/signup/AddressInput.tsx
+ *      → 사용 클래스: address_postal_code_wrapper, postal_code_input, postal_code_search_button
+ *
+ * 주요 스타일:
+ * - 회원가입 페이지 전체 레이아웃 (파트너 전용)
+ * - 사업자등록증 파일 업로드 스타일 (파트너 전용)
+ * - 주소 입력 스타일 (파트너 전용)
+ *
+ * 💡 공통 스타일은 src/styles/common/signup/signup.module.css에 정의되어 있습니다.
+ *    이 파일은 파트너 전용 스타일만 포함합니다.
+ */
+
+/* ========================================
+   1. 페이지 전체 컨테이너 (파트너 전용)
+   ======================================== */
+
+.signup_page_container {
+  background-color: #f2f2f2;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding-top: 80px;
+}
+
+/* ========================================
+   2. 메인 콘텐츠 영역 (파트너 전용)
+   ======================================== */
+
+.signup_main {
+  background-color: #ffffff;
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  box-sizing: border-box;
+  padding: 80px 240px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.sub_header {
+  position: fixed;
+  top: 80px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+  z-index: 999;
+}
+
+/* ========================================
+   3. 회원가입 폼 영역 (파트너 전용)
+   ======================================== */
+
+.signup_form {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ========================================
+   4. 회원가입 버튼 (파트너 전용 스타일 오버라이드)
+   ======================================== */
+
+.submit_button {
+  margin-top: 20px; /* 파트너 전용 */
+}
+
+/* ========================================
+   5. 인증번호 입력 섹션 (파트너 전용 스타일 오버라이드)
+   ======================================== */
+
+.verification_code_section {
+  margin-top: 12px; /* 파트너 전용: margin-top만 설정 */
+}
+
+/* ========================================
+   6. 파일 업로드 영역 (파트너 전용)
+   ======================================== */
+
+.file_upload_wrapper {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.file_upload_input_wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.file_name_input {
+  width: 100%;
+  /* 텍스트 오버플로우 처리: 긴 파일명은 말줄임표로 표시 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  /* readonly 상태에서 배경색을 흰색으로 유지 */
+  background-color: #ffffff !important;
+}
+
+.file_input {
+  display: none;
+}
+
+.file_select_button {
+  width: 125px;
+  height: 56px;
+  background-color: #ffffff;
+  border: 1px solid #444444;
+  border-radius: 8px;
+  color: #444444;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.file_select_button:hover {
+  background-color: #f6f6f6;
+}
+
+/* ========================================
+   7. 주소 입력 영역 (파트너 전용)
+   ======================================== */
+
+.address_postal_code_wrapper {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.postal_code_input {
+  width: 263px;
+  flex-shrink: 0;
+}
+
+.postal_code_search_button {
+  width: 125px;
+  height: 56px;
+  background-color: #ffffff;
+  border: 1px solid #444444;
+  border-radius: 8px;
+  color: #444444;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.postal_code_search_button:hover {
+  background-color: #f6f6f6;
+}
+
+/* ========================================
+   8. 반응형 디자인 (파트너 전용)
+   ======================================== */
+
+@media (max-width: 739px) {
+  .signup_main {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .signup_form {
+    max-width: 100%;
+  }
+
+  .file_upload_wrapper {
+    flex-direction: column;
+  }
+
+  .file_select_button {
+    width: 100%;
+  }
+
+  .address_postal_code_wrapper {
+    flex-direction: column;
+  }
+
+  .postal_code_input {
+    width: 100%;
+  }
+
+  .postal_code_search_button {
+    width: 100%;
+  }
+}
