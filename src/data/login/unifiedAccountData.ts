@@ -282,7 +282,7 @@ export const UNIFIED_ACCOUNTS: UnifiedAccount[] = [
     isBanned: false,
     redirectUrl: "/user/campaign_management",
   },
-  // 유저 - 정지/탈퇴 계정
+  // 유저 - 정지/탈퇴 계정 (네이버)
   {
     userType: "user",
     email: "",
@@ -290,8 +290,10 @@ export const UNIFIED_ACCOUNTS: UnifiedAccount[] = [
     signupDate: "2024. 01. 01",
     isBlocked: false,
     isBanned: true,
+    snsType: "naver",
     redirectUrl: "/user/campaign_management",
   },
+  // 유저 - 정지/탈퇴 계정 (카카오)
   {
     userType: "user",
     email: "",
@@ -299,6 +301,29 @@ export const UNIFIED_ACCOUNTS: UnifiedAccount[] = [
     signupDate: "2024. 01. 05",
     isBlocked: false,
     isBanned: true,
+    snsType: "kakao",
+    redirectUrl: "/user/campaign_management",
+  },
+  // 유저 - 이용 제한 계정 (네이버) - 로그인은 되지만 제한 화면 표시
+  {
+    userType: "user",
+    email: "",
+    phone: "010-7777-7777",
+    signupDate: "2024. 01. 10",
+    isBlocked: true,
+    isBanned: false,
+    snsType: "naver",
+    redirectUrl: "/user/campaign_management",
+  },
+  // 유저 - 이용 제한 계정 (카카오) - 로그인은 되지만 제한 화면 표시
+  {
+    userType: "user",
+    email: "",
+    phone: "010-6666-6666",
+    signupDate: "2024. 01. 15",
+    isBlocked: true,
+    isBanned: false,
+    snsType: "kakao",
     redirectUrl: "/user/campaign_management",
   },
 ];
