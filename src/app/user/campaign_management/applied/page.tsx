@@ -32,6 +32,13 @@ import {
   campaignManagementData,
 } from "@/data/user/campaign_management/campaignManagementData";
 
+// 실제 캠페인 데이터 import (applicationEnd 날짜 가져오기 위해)
+import { deliveryCampaigns } from "@/data/campaign/delivery/deliveryCampaigns";
+import { visitCampaigns } from "@/data/campaign/visit/visitCampaigns";
+import { reviewCampaigns } from "@/data/campaign/review/reviewCampaigns";
+import { reporterCampaigns } from "@/data/campaign/reporter/reporterCampaigns";
+import { missionCampaigns } from "@/data/campaign/mission/missionCampaigns";
+
 /**
  * 신청 탭 전용 페이지 컴포넌트
  */
@@ -49,10 +56,93 @@ export default function AppliedPage() {
     CampaignApplication[]
   >([]);
 
+  /**
+   * 실제 캠페인 데이터에서 applicationEnd 날짜를 가져와서
+   * 신청일 기준으로 남은 일수를 계산하는 함수
+   *
+   * 설명:
+   * - 신청 탭의 캠페인 태그는 신청일 기준으로 모집기간의 남은 일수를 표시합니다.
+   * - 3일 이하일 때는 "마감임박"으로 표시합니다.
+   *
+   * 학습 포인트:
+   * - Date 객체: JavaScript의 날짜 처리 방법
+   * - 날짜 차이 계산: 두 날짜 사이의 일수를 계산하는 방법
+   * - Math.ceil: 올림 함수로 날짜 차이를 정확히 계산합니다.
+   */
+  const calculateRemainingDays = (
+    campaignId: string,
+    campaignType: CampaignApplication["type"]
+  ): { remainingDays: number; isUrgent: boolean } => {
+    // 모든 캠페인 데이터를 하나의 배열로 합치기
+    const allCampaigns = [
+      ...deliveryCampaigns,
+      ...visitCampaigns,
+      ...reviewCampaigns,
+      ...reporterCampaigns,
+      ...missionCampaigns,
+    ];
+
+    // 캠페인 ID로 실제 캠페인 데이터 찾기
+    const actualCampaign = allCampaigns.find((c) => c.id === campaignId);
+
+    if (!actualCampaign || !actualCampaign.detailedSchedule?.applicationEnd) {
+      // 실제 데이터를 찾을 수 없으면 기본값 반환
+      return { remainingDays: 0, isUrgent: false };
+    }
+
+    // applicationEnd 날짜 가져오기 (예: "2026-01-01")
+    const applicationEndDate = new Date(
+      actualCampaign.detailedSchedule.applicationEnd
+    );
+    applicationEndDate.setHours(0, 0, 0, 0); // 시간을 00:00:00으로 설정
+
+    // 오늘 날짜 (시간을 00:00:00으로 설정)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // 남은 일수 계산 (밀리초를 일수로 변환)
+    const diffTime = applicationEndDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    // 3일 이하이면 마감임박
+    const isUrgent = diffDays <= 3;
+
+    return { remainingDays: diffDays, isUrgent };
+  };
+
+  /**
+   * 캠페인 목록에 remainingDays와 isUrgent를 계산하여 추가하는 함수
+   *
+   * 설명:
+   * - 신청 탭의 캠페인만 신청일 기준으로 계산합니다.
+   * - 다른 탭의 캠페인은 기존 데이터를 그대로 사용합니다.
+   */
+  const enrichCampaignsWithRemainingDays = (
+    campaigns: CampaignApplication[]
+  ): CampaignApplication[] => {
+    // 신청 탭인 경우에만 신청일 기준으로 계산
+    if (activeStatTab === "신청") {
+      return campaigns.map((campaign) => {
+        const { remainingDays, isUrgent } = calculateRemainingDays(
+          campaign.id,
+          campaign.type
+        );
+        return {
+          ...campaign,
+          remainingDays,
+          isUrgent,
+        };
+      });
+    }
+    // 다른 탭은 기존 데이터 그대로 사용
+    return campaigns;
+  };
+
   // 캠페인 목록 상태 (취소 시 제거하기 위해 상태로 관리)
-  const [campaigns, setCampaigns] = useState<CampaignApplication[]>(() =>
-    getCampaignsByTab(activeStatTab)
-  );
+  const [campaigns, setCampaigns] = useState<CampaignApplication[]>(() => {
+    const baseCampaigns = getCampaignsByTab(activeStatTab);
+    return enrichCampaignsWithRemainingDays(baseCampaigns);
+  });
 
   // 통계 상태 (카운트 갱신을 위해 상태로 관리)
   // 모든 캠페인 데이터를 기반으로 통계를 계산합니다.
@@ -86,10 +176,12 @@ export default function AppliedPage() {
    * 설명:
    * - 탭이 변경되면 새로운 캠페인 목록을 가져옵니다.
    * - 필터 바에 새로운 캠페인 목록을 전달합니다.
+   * - 신청 탭인 경우 신청일 기준으로 remainingDays와 isUrgent를 계산합니다.
    */
   useEffect(() => {
-    const newCampaigns = getCampaignsByTab(activeStatTab);
-    setCampaigns(newCampaigns);
+    const baseCampaigns = getCampaignsByTab(activeStatTab);
+    const enrichedCampaigns = enrichCampaignsWithRemainingDays(baseCampaigns);
+    setCampaigns(enrichedCampaigns);
   }, [activeStatTab]);
 
   /**

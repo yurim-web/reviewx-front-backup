@@ -42,6 +42,12 @@ export const categories_data: CategoryItem[] = [
     category_name: "공지사항",
   },
   {
+    id: "10",
+    number: "000001",
+    division: "공지사항",
+    category_name: "중요",
+  },
+  {
     id: "3",
     number: "000001",
     division: "자주 묻는 질문",

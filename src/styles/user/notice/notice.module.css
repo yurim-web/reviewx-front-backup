@@ -18,6 +18,9 @@
 }
 .section_container {
   padding: 24px 40px;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 /* 헤더 */
@@ -63,7 +66,7 @@
 .category_container {
   display: flex;
   gap: 12px;
-  padding-bottom: 32px;
+  padding-bottom: 16px;
 }
 
 .category_item {
@@ -89,12 +92,22 @@
 .notice_list {
   background: white;
   border-radius: 8px;
+  width: 100%;
+  overflow: hidden;
 }
 
 .notice_item {
+  width: 100%;
   border-bottom: 1px solid #e0e0e0;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  text-align: left;
+  padding: 0;
+  display: block;
 }
 
 .notice_content {
@@ -102,6 +115,20 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: 100%;
+}
+
+.notice_title_wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.pin_icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
 }
 
 .notice_title {
@@ -111,14 +138,16 @@
   letter-spacing: -0.32px;
   color: #444;
   display: -webkit-box;
-  width: 920px;
+  flex: 1;
+  min-width: 0;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
+  line-clamp: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: left;
+  word-break: break-word;
 }
-
 .notice_date {
   font-size: 14px;
   font-weight: 500;
@@ -133,7 +162,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 0;
+  padding: 40px 0;
   width: 100%;
 }
 
@@ -142,6 +171,6 @@
   text-align: center;
   font-size: 16px;
   font-weight: 500;
-  line-height: 16px; /* 100% */
+  line-height: 16px;
   letter-spacing: -0.32px;
 }

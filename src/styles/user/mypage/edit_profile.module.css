@@ -389,10 +389,6 @@
   flex-shrink: 0;
 }
 
-.postal_button:hover {
-  background: #f6f6f6;
-}
-
 /* 주민등록번호 필드 */
 .ssn_container {
   display: flex;
@@ -435,6 +431,27 @@
   display: flex;
   justify-content: center;
   padding: 0 40px;
+}
+
+/* 주소 등록 페이지 전용: 저장 버튼 하단 고정 */
+.address_page_main {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 80px); /* SubHeader 높이 제외 */
+  position: relative;
+  padding-bottom: 0;
+}
+
+.save_button_container_fixed {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1000px;
+  background: white;
+  padding: 40px 40px;
+  z-index: 10;
 }
 
 /* 회원탈퇴 버튼 */

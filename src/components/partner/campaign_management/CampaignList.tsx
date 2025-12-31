@@ -18,14 +18,18 @@
  * - 조건부 렌더링으로 다른 UI 표시
  */
 
+import { useState, useEffect } from "react";
 import type { PartnerStatTab } from "@/types/partner/partner";
 import type { PartnerCampaign } from "@/types/partner/partner";
 import CampaignCard from "./CampaignCard";
+import BaseModal from "@/components/common/modal/BaseModal";
 import cardStyles from "../../../styles/partner/campaign_card.module.css";
 
 interface CampaignListProps {
   campaigns: PartnerCampaign[];
   activeStatTab: PartnerStatTab;
+  /** 서버 오류 또는 네트워크 오류 발생 여부 */
+  error?: boolean;
 }
 
 /**
@@ -35,24 +39,46 @@ interface CampaignListProps {
 export default function CampaignList({
   campaigns,
   activeStatTab,
+  error = false,
 }: CampaignListProps) {
+  // 에러 모달 열림 상태
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState<boolean>(false);
+
+  // 에러가 발생하면 모달 표시
+  useEffect(() => {
+    if (error) {
+      setIsErrorModalOpen(true);
+    }
+  }, [error]);
   /**
    * 현재 선택된 탭에 맞는 캠페인만 필터링
+   *
+   * 설명:
+   * - PartnerCampaign의 status 값("대기 중", "모집 중", "진행 중", "종료", "취소")을 사용합니다.
+   * - 탭 이름과 status 값의 매핑:
+   *   - "예정" → "대기 중"
+   *   - "신청" → "모집 중"
+   *   - "진행" → "진행 중"
+   *   - "종료" → "종료"
+   *   - "취소" → "취소"
    */
   const filteredCampaigns = campaigns.filter((campaign) => {
     switch (activeStatTab) {
       case "전체":
         return true; // 모든 캠페인 표시
       case "예정":
-        return campaign.status === "예정";
+        return campaign.status === "대기 중";
       case "신청":
-        return campaign.status === "신청";
+        return campaign.status === "모집 중";
       case "진행":
-        return campaign.status === "진행";
+        return campaign.status === "진행 중";
       case "종료":
         return campaign.status === "종료";
       case "취소":
         return campaign.status === "취소";
+      case "연장 요청":
+        // 연장 요청은 subStatus로 구분
+        return campaign.subStatus?.includes("extension_request") || false;
       default:
         return true;
     }
@@ -69,14 +95,24 @@ export default function CampaignList({
 
   // 캠페인 카드 목록 렌더링
   return (
-    <div className={cardStyles.campaign_list}>
-      {filteredCampaigns.map((campaign) => (
-        <CampaignCard
-          key={campaign.id}
-          campaign={campaign}
-          activeTab={activeStatTab}
-        />
-      ))}
-    </div>
+    <>
+      <div className={cardStyles.campaign_list}>
+        {filteredCampaigns.map((campaign) => (
+          <CampaignCard
+            key={campaign.id}
+            campaign={campaign}
+            activeTab={activeStatTab}
+          />
+        ))}
+      </div>
+
+      {/* 에러 모달 */}
+      <BaseModal
+        is_open={isErrorModalOpen}
+        on_close={() => setIsErrorModalOpen(false)}
+        message="오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."
+        buttons={["확인"]}
+      />
+    </>
   );
 }

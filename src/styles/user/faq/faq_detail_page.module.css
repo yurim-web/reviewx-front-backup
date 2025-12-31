@@ -1,0 +1,212 @@
+/* ========================================
+   📄 FAQ 상세 페이지 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - FAQDetailPageClient.tsx (FAQ 상세 페이지 컴포넌트)
+ *
+ * 사용 페이지:
+ * - /user/faq/[id] (유저 FAQ 상세)
+ * - /partner/faq/[id] (파트너 FAQ 상세)
+ */
+
+/* 전체 페이지 컨테이너 */
+.container {
+  position: relative;
+  min-height: 100vh;
+  background: #ffffff;
+  font-family: "Pretendard", sans-serif;
+  color: #444444;
+}
+
+/* 메인 콘텐츠 영역 */
+.main_content {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-top: 80px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* 상단 헤더 영역 (구분 제목 + 뒤로가기 버튼) */
+.page_header_wrapper {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px 40px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #d9d9d9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  /* 상단 고정 (SubHeader 아래에 고정) */
+  position: sticky;
+  top: 80px;
+  z-index: 10;
+}
+
+/* 구분 제목 (자주 묻는 질문) */
+.division_title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #333333;
+  line-height: 20px;
+  letter-spacing: -0.4px;
+}
+
+/* 뒤로가기 버튼 */
+.back_button {
+  color: #444444;
+  text-align: right;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.48px;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+/* FAQ 상세 카드 */
+.faq_card {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+/* FAQ 헤더 박스 (메타 정보 + 질문) */
+.faq_header_box {
+  padding: 24px 40px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* FAQ 메타 정보 (카테고리 + 날짜) */
+.faq_meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 카테고리 라벨 */
+.category_label {
+  color: #444;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+}
+
+/* FAQ 날짜 */
+.faq_date {
+  color: #848484;
+  text-align: right;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 질문 영역 */
+.question_section {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* 질문 라벨 (Q.) */
+.question_label {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.36px;
+  color: #2b7fff;
+  flex-shrink: 0;
+}
+
+/* 질문 텍스트 */
+.question_text {
+  color: #444444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.36px;
+  margin: 0;
+}
+
+/* 구분선 */
+.divider {
+  width: 100%;
+  height: 1px;
+  background-color: #d9d9d9;
+  margin: 0;
+}
+
+/* 답변 영역 */
+.answer_section {
+  padding: 24px 40px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-height: 200px;
+}
+
+/* 답변 라벨 (A.) */
+.answer_label {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 26px;
+  letter-spacing: -0.32px;
+  color: #444444;
+  flex-shrink: 0;
+}
+
+/* 답변 텍스트 */
+.answer_text {
+  font-size: 16px;
+  font-weight: 500;
+  color: #444444;
+  line-height: 26px;
+  letter-spacing: -0.32px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  flex: 1;
+}
+
+/* 답변 텍스트 내부 요소 스타일 */
+.answer_text p {
+  margin: 0;
+  padding: 0;
+}
+
+.answer_text p:not(:last-child) {
+  margin-bottom: 8px;
+}
+
+/* 답변 텍스트 내부 강조 텍스트 */
+.answer_text strong {
+  font-weight: 600;
+  color: #333333;
+}
+
+/* 로딩 메시지 */
+.loading_message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-size: 16px;
+  color: #848484;
+}
+

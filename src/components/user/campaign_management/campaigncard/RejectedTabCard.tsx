@@ -7,17 +7,26 @@
  *
  * 목적: "취소/반려" 탭에 표시되는 캠페인 카드를 렌더링합니다.
  *
- * 경우의 수: 2가지
+ * 경우의 수: 4가지
  * 1. 반려일 때 (content_rejected,re_register 또는 penalty,content_rejected):
  *    - 2개 버튼: "콘텐츠 반려 사유 확인" + "콘텐츠 수정"
  *    - 사유 확인 클릭 시 반려 사유 모달 표시
  *    - 콘텐츠 수정 클릭 시 콘텐츠 수정 모달 노출
- * 2. 패널티일 때 (penalty):
+ *    - 단, 수정 기간이 지난 경우 "등록 기간이 마감되었습니다." 모달 표시
+ * 2. 패널티일 때 (penalty 또는 penalty,content_rejected):
+ *    - 패널티 부과 사유:
+ *      - 마감 기간이 지날 때까지 등록하지 않은 경우
+ *      - 선정 후 신청 취소 시
+ *      - 지각 제출 허용 시 7일 유예기간 내 미등록 (자동 신고)
  *    - 1개 버튼: "패널티 내역 확인"
- *    - 클릭하면 패널티 페이지로 이동
+ *    - 클릭하면 패널티 페이지(/user/campaign_management/penalty)로 이동
  * 3. 구매 영수증 반려일 때 (receipt_rejected):
  *    - 1개 버튼: "구매 영수증 재등록하기"
  *    - 클릭하면 구매 영수증 등록 모달 노출
+ *
+ * 참고사항:
+ * - 지각 제출 허용 시 7일의 유예기간이 주어지며, 그 기간 안에 등록하지 않을 경우 회원 자동 신고
+ * - 지각 제출 시 7일 안에 '완료' 상태가 되어야만 포인트 지급 (수정 기간 포함)
  *
  * 학습 포인트:
  * - 복잡한 조건부 렌더링: 여러 조건을 조합하여 다른 UI를 표시합니다.
@@ -88,16 +97,17 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
    *
    * 설명:
    * - 반려된 캠페인의 경우 수정 기간이 지났는지 확인합니다.
+   * - 현재는 반려된 캠페인들은 모두 수정 가능한 것으로 간주합니다.
    * - TODO: 실제 데이터 구조에 맞게 수정 기간 체크 로직 구현 필요
-   *   (예: campaign.registrationPeriod 또는 campaign.editDeadline 필드 사용)
+   *   (예: campaign.editDeadline 또는 campaign.editPeriodEndDate 필드 사용)
    *
    * @returns 수정 기간이 지났으면 true, 아니면 false
    */
   const isEditPeriodEnded = (): boolean => {
-    // TODO: 실제 데이터 구조에 맞게 수정 기간 체크 로직 구현
-
-    // }
-    return false; // 임시: 항상 수정 가능
+    // TODO: 실제 수정 기간 필드를 사용하여 체크
+    // 현재는 반려된 캠페인들은 모두 수정 가능한 것으로 간주
+    // remainingDays가 음수여도 반려 후 수정 기간은 별도일 수 있으므로 false 반환
+    return false;
   };
 
   /**
@@ -158,10 +168,15 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
    *
    * 설명:
    * - 패널티가 부과된 경우인지 확인합니다.
+   * - 패널티 부과 사유:
+   *   1. 마감 기간이 지날 때까지 등록하지 않은 경우
+   *   2. 선정 후 신청 취소 시
+   *   3. 지각 제출 허용 시 7일 유예기간 내 미등록 (자동 신고)
    */
   const isPenalty =
     campaign.subStatus === "penalty" ||
-    campaign.subStatus === "penalty,content_rejected";
+    campaign.subStatus === "penalty,content_rejected" ||
+    campaign.isPenalty === true;
 
   /**
    * 버튼 영역 렌더링
@@ -169,8 +184,13 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
    * 설명:
    * - 기능 명세서에 따라 버튼 조합을 표시합니다.
    * - 반려일 때: "콘텐츠 반려 사유 확인" + "콘텐츠 수정"
-   * - 패널티일 때: "패널티 내역 확인"
+   * - 패널티일 때: "패널티 내역 확인" (패널티 페이지로 이동)
    * - 구매 영수증 반려일 때: "구매 영수증 재등록하기"
+   *
+   * 패널티 케이스:
+   * - 마감 기간이 지날 때까지 등록하지 않은 경우
+   * - 선정 후 신청 취소 시
+   * - 지각 제출 허용 시 7일 유예기간 내 미등록
    */
   const renderButtons = () => {
     // 경우 1: 반려일 때 → 2개 버튼
@@ -194,6 +214,7 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
     }
 
     // 경우 2: 패널티일 때 → 1개 버튼
+    // 패널티 부과 사유: 마감 기간 지나서 등록 안함, 선정 후 신청 취소, 지각 제출 허용 시 7일 유예기간 내 미등록
     if (isPenalty) {
       return (
         <button

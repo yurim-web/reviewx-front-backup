@@ -20,21 +20,35 @@
 /**
  * 상태별 안내 문구 생성
  * - 카드 하단/툴팁 등에 사용할 간단 메시지
+ * - 탭 이름("예정", "신청", "진행", "종료", "취소") 또는 상태 값("대기 중", "모집 중", "진행 중" 등)을 받아 처리
  */
 export const getStatusMessage = (status: string, daysLeft: number): string => {
   switch (status) {
+    // 탭 이름으로 전달된 경우
     case "예정":
       return `캠페인 오픈까지 ${daysLeft}일 남았습니다.`;
-    case "모집 중":
     case "신청":
       return `캠페인 선정 발표까지 ${daysLeft}일 남았습니다.`;
-    case "진행 중":
     case "진행":
       return "캠페인 당첨자를 선정해 주세요.";
     case "종료":
       return "캠페인이 마감되었습니다.";
     case "취소":
       return "캠페인을 취소하였습니다.";
+    
+    // 상태 값으로 전달된 경우 (하위 호환성)
+    case "대기 중":
+      return `캠페인 오픈까지 ${daysLeft}일 남았습니다.`;
+    case "모집 중":
+    case "선정 중":
+      return `캠페인 선정 발표까지 ${daysLeft}일 남았습니다.`;
+    case "진행 중":
+    case "등록 중":
+    case "구매 중":
+      return "캠페인 당첨자를 선정해 주세요.";
+    case "마감":
+      return "캠페인이 마감되었습니다.";
+    
     default:
       return `캠페인 선정 발표까지 ${daysLeft}일 남았습니다.`;
   }
@@ -162,10 +176,10 @@ export function getPartnerTabByDates(
   const [recruitStart, recruitEnd] = parseDateRange(recruitmentPeriod);
   const [regStart, regEnd] = parseDateRange(registrationPeriod);
 
-  // 예정: 모집 시작 전
+  // 예정: 모집 시작 전 (모집기간이 오늘 날짜 전일 때)
   if (recruitStart && isBefore(today, recruitStart)) return "예정";
 
-  // 신청: 모집기간 내
+  // 신청: 모집기간 내 (모집기간에 오늘 날짜가 존재할 때)
   if (
     recruitStart &&
     recruitEnd &&
@@ -174,18 +188,45 @@ export function getPartnerTabByDates(
     return "신청";
   }
 
-  // 진행: 등록기간 내
+  // 진행: 등록기간 내 (등록기간에 오늘 날짜가 존재할 때)
   if (regStart && regEnd && isWithinInclusive(today, regStart, regEnd)) {
     return "진행";
   }
 
-  // 종료: 등록 종료 후
+  // 종료: 등록 종료 후 (등록기간까지 다 지났을 때)
   if (regEnd && isAfter(today, regEnd)) return "종료";
 
-  // 등록기간 정보가 없고, 모집도 지나간 경우 → 종료로 간주
-  if (!regEnd && recruitEnd && isAfter(today, recruitEnd)) return "종료";
+  // 모집기간이 지났지만 등록기간이 아직 시작되지 않은 경우
+  // (모집 종료 후 ~ 등록 시작 전): 등록기간이 있으면 진행으로 간주, 없으면 종료로 간주
+  if (recruitEnd && isAfter(today, recruitEnd)) {
+    if (regStart && isBefore(today, regStart)) {
+      // 등록기간이 시작되기 전이면 진행으로 간주 (선정 발표 후 등록 대기 중)
+      return "진행";
+    }
+    // 등록기간 정보가 없고 모집도 지나간 경우 → 종료로 간주
+    if (!regEnd) return "종료";
+  }
 
-  // 기본: 전체 (정의 불가 시)
+  // 모집 기간 정보가 있는 경우 추가 체크
+  // 모집 시작일이 있지만 위 조건에 맞지 않는 경우
+  if (recruitStart) {
+    // 모집 시작일이 오늘보다 미래면 예정
+    if (isBefore(today, recruitStart)) return "예정";
+    // 모집 시작일이 지났지만 종료일 정보가 없는 경우
+    // 모집 시작일이 지났다면 신청 또는 진행으로 간주
+    if (!recruitEnd || isAfter(today, recruitEnd)) {
+      // 등록기간이 있으면 진행, 없으면 종료
+      if (regStart && regEnd) {
+        if (isBefore(today, regStart)) return "진행"; // 등록 시작 전
+        if (isWithinInclusive(today, regStart, regEnd)) return "진행"; // 등록 기간 내
+        if (isAfter(today, regEnd)) return "종료"; // 등록 종료 후
+      }
+      // 등록기간이 없으면 종료로 간주
+      return "종료";
+    }
+  }
+
+  // 기본: 전체 (정의 불가 시 - 날짜 정보가 전혀 없는 경우)
   return "전체";
 }
 

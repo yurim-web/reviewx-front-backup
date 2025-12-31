@@ -71,11 +71,11 @@ export default function CampaignList({
   // 필터링 결과가 없는 경우 빈 상태 메시지 표시
   if (filteredCampaigns.length === 0) {
     // 필터 적용 여부 확인
-    // 원본 캠페인 목록이 있고, 필터링 후 결과가 없으면 필터가 적용된 것으로 판단
+    // originalCampaigns가 있고, 그 길이가 0보다 크면 필터가 적용된 것으로 판단
     const hasOriginalCampaigns =
       originalCampaigns && originalCampaigns.length > 0;
 
-    // 원본 데이터는 있지만 필터링 후 결과가 없으면 필터가 적용된 것
+    // 필터가 적용된 경우: "일치하는 결과가 없습니다."
     if (hasOriginalCampaigns) {
       return (
         <div className={cardStyles.empty_state}>

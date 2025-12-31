@@ -90,6 +90,7 @@ export default function PartnerCampaignManagementPage() {
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           activeStatTab={activeStatTab}
+          setActiveStatTab={setActiveStatTab}
         />
 
         {/* 필터 바: 유형, 채널 필터 및 검색 */}

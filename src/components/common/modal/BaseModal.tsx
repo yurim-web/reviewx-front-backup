@@ -73,31 +73,6 @@ export default function BaseModal({
     return () => window.removeEventListener("keydown", handle_escape);
   }, [is_open, close_on_escape, on_close]);
 
-  // 모달이 열릴 때 body 스크롤 잠금 (스크롤바 너비 고려)
-  useEffect(() => {
-    if (is_open) {
-      // 현재 스크롤바 너비 계산
-      const scrollbar_width =
-        window.innerWidth - document.documentElement.clientWidth;
-
-      // 원래 스타일 저장
-      const original_overflow = document.body.style.overflow;
-      const original_padding_right = document.body.style.paddingRight;
-
-      // 스크롤 잠금 및 스크롤바 너비만큼 padding 추가
-      document.body.style.overflow = "hidden";
-      if (scrollbar_width > 0) {
-        document.body.style.paddingRight = `${scrollbar_width}px`;
-      }
-
-      // 정리 함수: 원래 상태로 복원
-      return () => {
-        document.body.style.overflow = original_overflow;
-        document.body.style.paddingRight = original_padding_right;
-      };
-    }
-  }, [is_open]);
-
   // 모달이 닫혀있으면 렌더링하지 않음
   if (!is_open) return null;
 

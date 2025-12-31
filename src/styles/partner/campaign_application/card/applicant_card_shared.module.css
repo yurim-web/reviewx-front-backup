@@ -4,18 +4,36 @@
 
 /* 공통 카드 컨테이너 */
 
+/* 카드 래퍼 (카드 + footer) */
+.card_wrapper {
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  overflow: hidden;
+  background: white;
+}
+
 /* 카드 스타일 */
 .applicant_card {
-  border-radius: 8px;
+  border-radius: 0;
   border: 1px solid #d9d9d9;
+  border-bottom: 1px solid #d9d9d9;
+  border-radius: 8px;
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  background: white;
 
   /* 카드 최소 높이! */
   /* max-height: 396px; */
   height: fit-content;
+}
+
+/* 푸터가 있는 카드인 경우: 하단 선 제거, 하단 border-radius 0 */
+.card_wrapper:has(.extension_report_footer) .applicant_card {
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
 }
 /* 선정탭 카드 스타일 -- 선정탭에만 있음 */
 .selected_card {
@@ -204,6 +222,7 @@
 .action_button_section {
   display: flex;
   justify-content: center;
+  gap: 12px;
   padding-top: 4px;
 }
 
@@ -285,6 +304,13 @@
 }
 
 /* 콘텐츠 확인하기  버튼 -- 검수, 완료 탭에만 있음*/
+/* 콘텐츠 확인 버튼 컨테이너 (두 개의 버튼을 세로로 배치) */
+.content_check_buttons_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .content_check_button {
   border-radius: 4px;
   background: #444;
@@ -313,7 +339,7 @@
 
 /* 지각 제출 라벨 전용 색상 */
 .late_label {
-  color: #FF2626;
+  color: #ff2626;
 }
 
 /* 검수 완료 버튼 */
@@ -335,12 +361,21 @@
 .approve_button {
   border: 1px solid #444;
   color: #444444;
+  background: #fff;
+}
+
+/* 승인 버튼 (완료 탭 지각 제출용) */
+.approval_button {
+  border: 1px solid #444;
+  color: #444444;
+  background: #fff;
 }
 
 /* 반려처리 버튼 */
 .reject_button {
   border: 1px solid #444;
   color: #444444;
+  background: #fff;
 }
 
 .reject_process_button {
@@ -354,4 +389,77 @@
   border: 1px solid #d9d9d9;
   color: #848484;
   background: #d9d9d9;
+  cursor: default;
+}
+
+/* 등록 기한 연장 요청 버튼 (흰색 배경, 회색 테두리) */
+.extension_request_button {
+  border: 1px solid #444;
+  color: #444;
+  background: #fff;
+}
+
+/* 연장/신고 버튼 footer */
+.extension_report_footer {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  background: white;
+  padding: 0;
+  border-radius: 0 0 8px 8px;
+  border: 1px solid #d9d9d9;
+}
+
+/* 연장/신고 버튼 공통 스타일 */
+.extension_button,
+.report_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: 1 1 50%;
+  width: 50%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 12px 0;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 연장 버튼 색상 */
+.extension_button {
+  color: #848484;
+}
+
+/* 연장/신고 아이콘 공통 스타일 */
+.extension_icon,
+.report_icon {
+  flex-shrink: 0;
+}
+
+.extension_icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* 수직 구분선 */
+.vertical_divider {
+  width: 1px;
+  background: #d9d9d9;
+  flex-shrink: 0;
+  align-self: stretch;
+}
+
+/* 신고 버튼 색상 */
+.report_button {
+  color: #ff2626;
+}
+
+.report_icon {
+  width: 14px;
+  height: 14px;
 }

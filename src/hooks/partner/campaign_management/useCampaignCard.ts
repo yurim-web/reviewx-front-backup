@@ -46,6 +46,7 @@ export interface UseCampaignCardReturn {
   state: {
     campaignStatus: string; // 현재 캠페인 카드의 메인 상태 (예정/신청/진행/종료/취소)
     campaignSubStatus: string; // 서브 상태: 버튼 조합을 결정하거나 콘텐츠 단계 여부 판단
+    waitingCount: number; // 대기 중 콘텐츠 수
     reviewingCount: number; // 검수 중 콘텐츠 수
     completedCount: number; // 완료된 콘텐츠 수
     isContentStage: boolean; // 콘텐츠 관련 버튼 2개(검수/완료)를 노출할지 여부
@@ -84,9 +85,9 @@ export function useCampaignCard({
   const campaignSubStatus = (campaign.subStatus ?? '') as string;
 
   /* ----------------------------------------
-     📊 콘텐츠 검수/완료 건수 및 단계 판별
+     📊 콘텐츠 대기/검수/완료 건수 및 단계 판별
      ---------------------------------------- */
-  const { reviewingCount, completedCount } = useMemo(
+  const { waitingCount, reviewingCount, completedCount } = useMemo(
     () => calculateContentCounts(campaign),
     [campaign],
   );
@@ -96,9 +97,19 @@ export function useCampaignCard({
     [campaign, reviewingCount, completedCount],
   );
 
+  // 연장 요청 건수 계산
+  const extensionRequestCount = useMemo(() => {
+    if (activeTab === "연장 요청" || campaign.subStatus?.includes("extension_request")) {
+      // TODO: 실제 연장 요청 데이터에서 계산
+      // 현재는 임시로 선정된 신청자 수를 사용
+      return campaign.selected || 0;
+    }
+    return 0;
+  }, [campaign, activeTab]);
+
   const primaryButtonText = useMemo(
-    () => getPrimaryButtonText(campaign, completedCount),
-    [campaign, completedCount],
+    () => getPrimaryButtonText(campaign, completedCount, activeTab, extensionRequestCount),
+    [campaign, completedCount, activeTab, extensionRequestCount],
   );
 
   const statusDescription = useMemo(
@@ -166,6 +177,13 @@ export function useCampaignCard({
         return;
       }
 
+      // 등록 기한 연장 요청 버튼 클릭 시 콘텐츠 내역 페이지로 이동
+      if (buttonText.startsWith('등록 기한 연장 요청')) {
+        const campaignTypePath = getCampaignTypePath(campaign.campaignType);
+        window.location.href = `/partner/campaign_contents/${campaignTypePath}/${campaign.id}`;
+        return;
+      }
+
       console.log(`[useCampaignCard] 알 수 없는 버튼 클릭: ${buttonText}`);
     },
     [
@@ -181,6 +199,7 @@ export function useCampaignCard({
     state: {
       campaignStatus,
       campaignSubStatus,
+      waitingCount,
       reviewingCount,
       completedCount,
       isContentStage,

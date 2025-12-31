@@ -469,6 +469,20 @@ export default function SelectedTabCard({ campaign }: SelectedTabCardProps) {
               isOpen={isContentModalOpen}
               onClose={handleCloseContentModal}
               campaignTitle={campaign.title}
+              mode={contentModalMode}
+              existingLink={
+                contentModalMode === "edit"
+                  ? "https://chatgpt.com/g/g-p-6807041b2c64819192e7b94698e6ddc2-jeongmin/c/691ebb1d-f07c-8320-a9bf-ebcf16aa46111" // TODO: 실제 등록된 링크를 campaign 데이터에서 가져오기
+                  : ""
+              }
+              existingImages={
+                contentModalMode === "edit"
+                  ? [
+                      "/images/main/campaign_img/eximg_1.png",
+                      "/images/main/campaign_img/eximg_2.png",
+                    ] // TODO: 실제 등록된 이미지 URL을 campaign 데이터에서 가져오기
+                  : []
+              }
             />
           )}
         </>

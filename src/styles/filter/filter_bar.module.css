@@ -88,12 +88,34 @@
   border: 1px solid #444;
 }
 
-/* 추후에 아이콘으로 변경 예정정 */
+/* 필터 아이콘 - 체크박스 스타일 */
 .filter_icon {
   width: 16px;
   height: 16px;
-  background: #999;
-  border-radius: 2px;
+  border: 1.5px solid #d9d9d9;
+  border-radius: 4px;
+  background: #ffffff;
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* 활성화된 필터 버튼의 체크박스 스타일 */
+.filter_button_active .filter_icon {
+  border-color: #444444;
+  background: #ffffff;
+}
+
+/* 활성화된 필터 버튼의 체크박스에 체크마크 표시 */
+.filter_button_active .filter_icon::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #444444;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
 }
 
 .dropdown_icon {
@@ -101,57 +123,6 @@
   height: 16px;
   aspect-ratio: 1/1;
   transition: transform 0.2s ease;
-
-  /* margin-left: 4px; */
-}
-
-.dropdown_icon_rotated {
-  transform: rotate(180deg);
-}
-
-/* 드롭다운 컨테이너 */
-.dropdown_container {
-  position: relative;
-  display: inline-block;
-}
-
-/* 드롭다운 메뉴 */
-.dropdown_menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: white;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  z-index: 1000;
-}
-
-/* 드롭다운 아이템 */
-.dropdown_item {
-  width: 100%;
-  padding: 5px 16px;
-  border: none;
-  background: white;
-  color: #333;
-  font-size: 14px;
-  font-weight: 400;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  /* border-bottom: 1px solid #f0f0f0; */
-}
-
-.dropdown_item:last-child {
-  border-bottom: none;
-}
-
-.dropdown_item:hover {
-  background: #f8f8f8;
-}
-
-.dropdown_item_selected:hover {
-  background: #d6e7ff;
 }
 
 /* 최신순 드롭다운 버튼 */
@@ -202,7 +173,7 @@
   color: #848484;
   font-size: 14px;
   font-weight: 500;
-  line-height: 14px; /* 100% */
+  line-height: 14px;
   letter-spacing: -0.28px;
 }
 
@@ -312,6 +283,10 @@
 }
 
 /* 모달 바디 */
+.modal_body {
+  flex: 1;
+  overflow-y: auto;
+}
 
 /* 모달 라벨 */
 .modal_label {

@@ -63,6 +63,7 @@ export const pointHistoryData: PointHistory[] = [
     date: "2025-09-01",
     status: "failed",
     balance: 7311885,
+    rejection_reason: "예금주와 본인 명의 불일치",
   },
   {
     id: "6",
@@ -72,5 +73,17 @@ export const pointHistoryData: PointHistory[] = [
     date: "2025-08-28",
     status: "pending",
     balance: 9311885,
+  },
+  {
+    id: "7",
+    type: "earned",
+    amount: -50000,
+    description: "적립 취소",
+    campaign_id: "camp_003",
+    date: "2025-08-25",
+    status: "failed",
+    balance: 9411885,
+    rejection_reason:
+      "콘텐츠 내 키워드에 대한 정보를 넣어 달라고 말씀드렸음에도 불구하고 키워드가 없습니다.",
   },
 ];

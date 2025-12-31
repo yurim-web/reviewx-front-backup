@@ -80,6 +80,8 @@ export default function CompletedTabCard({ campaign }: CompletedTabCardProps) {
         isOpen={isVerificationModalOpen}
         onClose={handleCloseModal}
         campaignTitle={campaign.title}
+        campaignId={campaign.id}
+        campaignType={campaign.type}
         missionItems={campaign.missionItems}
       />
     </>

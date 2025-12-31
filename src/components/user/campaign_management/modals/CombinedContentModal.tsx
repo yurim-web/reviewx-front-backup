@@ -98,8 +98,11 @@ export default function CombinedContentModal({
    *
    * 설명:
    * - useEffect: 컴포넌트가 렌더링된 후 실행되는 React 훅입니다.
-   * - 의존성 배열 [isOpen, mode, existingLink, existingImages]: 이 값들이 변경될 때마다 실행됩니다.
+   * - 의존성 배열 [isOpen, mode]: 모달이 열릴 때와 모드가 변경될 때만 실행됩니다.
+   * - existingLink와 existingImages는 의존성 배열에서 제외하여 무한 루프를 방지합니다.
    * - 수정 모드일 때 기존 링크와 이미지를 미리 채워넣습니다.
+   *
+
    */
   useEffect(() => {
     if (isOpen) {
@@ -113,8 +116,14 @@ export default function CombinedContentModal({
         setExistingImageUrls([]);
       }
       setUploadedImages([]);
+    } else {
+      // 모달이 닫힐 때도 초기화 (선택사항)
+      setLinkUrl("");
+      setExistingImageUrls([]);
+      setUploadedImages([]);
     }
-  }, [isOpen, mode, existingLink, existingImages]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, mode]);
 
   if (!isOpen) return null;
 
@@ -137,10 +146,14 @@ export default function CombinedContentModal({
     const totalImages =
       existingImageUrls.length + uploadedImages.length + files.length;
     if (totalImages > 7) {
-      alert("최대 7장까지만 업로드 가능합니다.");
+      // 파일 입력 초기화
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
+      setErrorModal({
+        isOpen: true,
+        message: "이미지는 최대 7장까지 등록할 수 있습니다.",
+      });
       return;
     }
 
@@ -149,20 +162,40 @@ export default function CombinedContentModal({
     for (const file of files) {
       // 파일 형식 검증
       if (!file.type.match(/^image\/(jpeg|jpg|png|gif)$/)) {
-        alert(`${file.name}: JPG, PNG, GIF 파일만 업로드 가능합니다.`);
-        continue;
+        // 파일 입력 초기화
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+        setErrorModal({
+          isOpen: true,
+          message: "지정된 확장자(JPG, PNG, GIF)만<br>업로드할 수 있습니다.",
+        });
+        return;
       }
 
       // 파일 크기 검증 (10MB)
       if (file.size > 10 * 1024 * 1024) {
-        alert(`${file.name}: 파일 크기는 10MB 이하여야 합니다.`);
-        continue;
+        // 파일 입력 초기화
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+        setErrorModal({
+          isOpen: true,
+          message: "10mb 이하의 파일만 업로드할 수 있습니다.",
+        });
+        return;
       }
 
       validFiles.push(file);
     }
 
-    if (validFiles.length === 0) return;
+    if (validFiles.length === 0) {
+      // 파일 입력 초기화
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      return;
+    }
 
     setIsUploading(true);
 
@@ -184,6 +217,10 @@ export default function CombinedContentModal({
         if (processedCount === validFiles.length) {
           setUploadedImages((prev) => [...prev, ...newImages]);
           setIsUploading(false);
+          // 성공적으로 업로드된 경우 파일 입력 초기화
+          if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+          }
         }
       };
       reader.readAsDataURL(file);

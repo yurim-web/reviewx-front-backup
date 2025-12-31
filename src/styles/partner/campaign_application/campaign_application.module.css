@@ -86,6 +86,30 @@
   padding: 24px 40px;
 }
 
+/* 일괄 기한 연장 버튼 */
+.batch_extension_button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: white;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  transition: all 0.2s;
+}
+
+.batch_extension_button img {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
 /* 신고 버튼 스타일 */
 .report_button {
   display: flex;
@@ -163,7 +187,7 @@
 
 /* 활성화된 탭 밑줄 */
 .tab_button.active::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;

@@ -81,21 +81,6 @@ export const campaignManagementData: CampaignApplication[] = [
     hasContent: false,
     isPenalty: false,
   },
-  // 실제 캠페인 데이터와 매칭: visit_15
-  {
-    id: "visit_15",
-    title: "노래방 방문 체험",
-    category: "유튜브",
-    image: "/images/main/campaign_img/eximg_9.png",
-    status: "신청",
-    remainingDays: 4,
-    statusMessage: "캠페인 선정 발표까지 4일 남았습니다.",
-    type: "방문형",
-    isUrgent: false,
-    subStatus: undefined,
-    hasContent: false,
-    isPenalty: false,
-  },
 
   // 선정 상태 캠페인들 (id: 3-8, 16-17, 21-30) - 각 유형별 Type 1, Type 2 추가
 
@@ -135,14 +120,14 @@ export const campaignManagementData: CampaignApplication[] = [
     contentType: "link", // 링크만 입력하는 ContentRegistrationModal 사용
   },
   // Type 1: 콘텐츠 등록하기 (이미지만)
-  // 실제 캠페인 데이터와 매칭: mission_6
+  // 실제 캠페인 데이터와 매칭: mission_12
   {
-    id: "mission_6",
-    title: "디지털 미션형",
+    id: "mission_12",
+    title: "이미지 전용 미션형",
     category: "", // 미션형은 카테고리 없음 (고정 아이콘 사용)
-    image: "/images/main/campaign_img/eximg_6.png",
+    image: "/images/main/campaign_img/eximg_7.png",
     status: "선정",
-    remainingDays: 10,
+    remainingDays: 8,
     statusMessage: "이미지 콘텐츠를 등록해주세요.",
     type: "미션형",
     isUrgent: false,
@@ -150,57 +135,6 @@ export const campaignManagementData: CampaignApplication[] = [
     hasContent: false,
     isPenalty: false,
     contentType: "image", // 이미지만 업로드하는 ImageUploadModal 사용
-  },
-  // Type 2: 콘텐츠 수정하기 (이미지만)
-  // 실제 캠페인 데이터와 매칭: mission_7
-  {
-    id: "mission_7",
-    title: "반려동물 미션형",
-    category: "", // 미션형은 카테고리 없음 (고정 아이콘 사용)
-    image: "/images/main/campaign_img/eximg_7.png",
-    status: "선정",
-    remainingDays: 8,
-    statusMessage: "이미지 콘텐츠가 등록되었습니다.",
-    type: "미션형",
-    isUrgent: false,
-    subStatus: "content_registered",
-    hasContent: true,
-    isPenalty: false,
-    contentType: "image", // 이미지만 업로드하는 ImageUploadModal 사용
-  },
-  // Type 1: 콘텐츠 등록하기 (링크 + 이미지)
-  // 실제 캠페인 데이터와 매칭: mission_8
-  {
-    id: "mission_8",
-    title: "스포츠 미션형",
-    category: "", // 미션형은 카테고리 없음 (고정 아이콘 사용)
-    image: "/images/main/campaign_img/eximg_8.png",
-    status: "선정",
-    remainingDays: 11,
-    statusMessage: "콘텐츠를 등록해주세요.",
-    type: "미션형",
-    isUrgent: false,
-    subStatus: "content_not_registered",
-    hasContent: false,
-    isPenalty: false,
-    contentType: "both", // 링크 + 이미지 모두 업로드하는 CombinedContentModal 사용
-  },
-  // Type 2: 콘텐츠 수정하기 (링크 + 이미지)
-  // 실제 캠페인 데이터와 매칭: mission_9
-  {
-    id: "mission_9",
-    title: "뷰티 미션형",
-    category: "", // 미션형은 카테고리 없음 (고정 아이콘 사용)
-    image: "/images/main/campaign_img/eximg_9.png",
-    status: "선정",
-    remainingDays: 7,
-    statusMessage: "콘텐츠가 등록되었습니다.",
-    type: "미션형",
-    isUrgent: false,
-    subStatus: "content_registered",
-    hasContent: true,
-    isPenalty: false,
-    contentType: "both", // 링크 + 이미지 모두 업로드하는 CombinedContentModal 사용
   },
 
   // ========== 배송형 ==========
@@ -339,21 +273,7 @@ export const campaignManagementData: CampaignApplication[] = [
     isPenalty: false,
   },
   // Type 1: 콘텐츠 등록하기
-  // 실제 캠페인 데이터와 매칭: review_5
-  {
-    id: "review_5",
-    title: "식품 구매평 리뷰",
-    category: "", // 구매평은 카테고리 없음 (고정 아이콘 사용)
-    image: "/images/main/campaign_img/eximg_5.png",
-    status: "선정",
-    remainingDays: 6,
-    statusMessage: "구매평 작성을 완료해주세요.",
-    type: "구매평",
-    isUrgent: true,
-    subStatus: "content_not_registered",
-    hasContent: false,
-    isPenalty: false,
-  },
+
   // Type 2: 콘텐츠 수정하기
   // 실제 캠페인 데이터와 매칭: review_6
   {
@@ -544,49 +464,6 @@ export const campaignManagementData: CampaignApplication[] = [
       },
     ],
   },
-  // 실제 캠페인 데이터와 매칭: delivery_11
-  {
-    id: "delivery_11",
-    title: "스마트 워치 프로",
-    category: "네이버블로그",
-    image: "/images/main/campaign_img/eximg_8.png",
-    status: "완료",
-    remainingDays: -10,
-    statusMessage: "캠페인이 완료되었습니다.",
-    type: "배송형",
-    isUrgent: false,
-    subStatus: "content_registered",
-    hasContent: true,
-    isPenalty: false,
-    // 모든 기준 충족 (모두 초록색) - 두 번째 케이스
-    missionItems: [
-      {
-        id: "1",
-        text: "글자 수 1,500자 이상",
-        isCompleted: true,
-      },
-      {
-        id: "2",
-        text: "사진 10장 이상",
-        isCompleted: true,
-      },
-      {
-        id: "3",
-        text: "동영상 1개 이상, 120초 이상",
-        isCompleted: true,
-      },
-      {
-        id: "4",
-        text: "본문 내 링크 첨부",
-        isCompleted: true,
-      },
-      {
-        id: "5",
-        text: "본문 내 키워드/태그 첨부",
-        isCompleted: true,
-      },
-    ],
-  },
 
   // 취소/반려 상태 캠페인들 (id: 9-12) - 다양한 타입 추가
   // 실제 캠페인 데이터와 매칭: delivery_5
@@ -605,7 +482,7 @@ export const campaignManagementData: CampaignApplication[] = [
     hasContent: true,
     isPenalty: false,
     rejectionReason:
-      "제품 사진이 명확하지 않습니다. 제품의 특징이 잘 보이도록 재촬영하여 등록해 주세요.\n\n또한 제품 사용 후기를 더 자세히 작성해 주시기 바랍니다.ㅇㄹㄹㄹㄹㄹㄹㄹㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹ",
+      "제품 사진이 명확하지 않습니다. 제품의 특징이 잘 보이도록 재촬영하여 등록해 주세요.\n\n또한 제품 사용 후기를 더 자세히 작성해 주시기 바랍니다.ㅇㄹㄹㄹㄹㄹㄹㄹㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹㅇㄹ",
   },
   // 실제 캠페인 데이터와 매칭: visit_3
   {

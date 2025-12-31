@@ -92,8 +92,8 @@ export default function ReporterCampaignApplicationPage() {
     return tabParam === "selected" ? "selected" : "applicants";
   });
 
-  // 정렬 상태 관리 (최신순, 인기순, 마감임박순, 포인트순)
-  type SortOption = "latest" | "popular" | "deadline" | "point";
+  // 정렬 상태 관리 (최신순, 등록순, 추천순)
+  type SortOption = "latest" | "registered" | "recommended";
   const [sortOrder, setSortOrder] = useState<SortOption>("latest");
 
   // 화면 내 로컬 상태: 신청/선정 리스트를 상태로 관리하여 카드 이동 처리
@@ -103,9 +103,8 @@ export default function ReporterCampaignApplicationPage() {
   // 정렬 옵션 정의
   const sortOptions = [
     { value: "latest", label: "최신순" },
-    { value: "popular", label: "인기순" },
-    { value: "deadline", label: "마감임박순" },
-    { value: "point", label: "포인트순" },
+    { value: "registered", label: "등록순" },
+    { value: "recommended", label: "추천순" },
   ];
 
   /**
@@ -385,10 +384,6 @@ export default function ReporterCampaignApplicationPage() {
     console.log("신청자 목록 다운로드");
   };
 
-  const handleDownloadSelected = () => {
-    console.log("선정자 목록 다운로드");
-  };
-
   return (
     <>
       {/* 페이지 제목 */}
@@ -403,10 +398,7 @@ export default function ReporterCampaignApplicationPage() {
 
         <article className={styles.download_section}>
           {/* 다운로드 버튼 */}
-          <ExcelDownloadBtn
-            onDownloadApplicants={handleDownloadApplicants}
-            onDownloadSelected={handleDownloadSelected}
-          />
+          <ExcelDownloadBtn onDownloadApplicants={handleDownloadApplicants} />
 
           {/* 정렬 트리거 + 모달 통합 */}
           <SortFilterControl

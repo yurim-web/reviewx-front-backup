@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import MissionCampaignForm from "@/components/partner/campaign_create_form/MissionCampaignForm";
 import { CampaignFormData } from "@/types/user/user";
-import { updateMissionCampaign } from "@/data/partner/mission";
+import { updateMissionCampaign } from "@/data/campaign/mission/missionCampaigns";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import layoutStyles from "../../../../../../styles/partner/layout.module.css";

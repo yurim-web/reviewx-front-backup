@@ -274,11 +274,8 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  position: relative;
-  /* cursor: pointer; */
+  cursor: pointer;
 }
-
-/* JavaScript로 제어하므로 호버 효과 제거 */
 
 /* 취소 사유 아이콘 */
 .reason_icon {
@@ -298,38 +295,6 @@
   font-weight: 500;
   line-height: 14px; /* 100% */
   letter-spacing: -0.28px;
-}
-
-/* 취소 사유 내용 (말풍선 스타일) - 기본적으로 숨김 */
-.reason_content {
-  position: fixed;
-  z-index: 9999;
-  padding: 4px;
-  border-radius: 4px;
-  background: rgba(255, 0, 0, 0.1);
-  color: #f00;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px; /* 100% */
-  letter-spacing: -0.28px;
-  white-space: nowrap;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-/* 취소 사유 말풍선 화살표 */
-.reason_content::before {
-  content: "";
-  position: absolute;
-  left: -6px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 0;
-  height: 0;
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;
-  border-right: 6px solid rgba(255, 0, 0, 0.1);
 }
 
 /* 내역 날짜 */

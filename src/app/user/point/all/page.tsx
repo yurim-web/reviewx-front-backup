@@ -15,200 +15,43 @@
  * - 보유 포인트 현황 표시
  * - 출금 신청 기능
  * - URL 기반 라우팅으로 새로고침 시에도 페이지 유지
+ *
+ * 리팩토링 설명:
+ * - 공통 컴포넌트(PointHistoryPage)를 사용하여 코드 중복을 제거했습니다.
+ * - 필터링 로직만 props로 전달하여 각 페이지의 특성을 유지합니다.
  */
 
-'use client';
+"use client";
 
-import { useState, useRef } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import TabNavigation from '@/components/user/campaign_management/TabNavigation';
-import PointTabNavigation from '@/components/common/point/PointTabNavigation';
-import { MainTab, PointTab } from '@/types/user/user';
-import { pointHistoryData } from '@/data/user/point/pointData';
-import styles from '../../../../styles/user/point/point.module.css';
+import PointHistoryPage from "@/components/user/point/PointHistoryPage";
+import { PointHistory } from "@/types/user/user";
 
 /**
  * 전체 포인트 내역 페이지 컴포넌트
+ *
+ * 설명:
+ * - 공통 컴포넌트를 사용하여 간단하게 구현했습니다.
+ * - 필터 함수를 전달하여 모든 내역을 표시합니다.
+ *
+ * React 학습 포인트:
+ * - 컴포넌트 재사용성: 공통 컴포넌트를 여러 곳에서 사용
+ * - Props 전달: 부모 컴포넌트에서 자식 컴포넌트로 데이터/함수 전달
  */
 export default function AllPointPage() {
-  const router = useRouter();
-  const [activeMainTab, setActiveMainTab] = useState<MainTab>('point');
-  const [activePointTab, setActivePointTab] = useState<PointTab>('all');
-  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
-  const [showTooltip, setShowTooltip] = useState(false);
-  const tooltipRef = useRef<HTMLSpanElement>(null);
-
   /**
-   * 포인트 탭 변경 핸들러
-   * 각 탭 클릭 시 해당 페이지로 이동
+   * 전체 내역 필터 함수
+   *
+   * 설명:
+   * - 모든 포인트 내역을 표시하기 위해 항상 true를 반환합니다.
+   * - 필터링 없이 모든 데이터를 보여줍니다.
+   *
+   * JavaScript 학습 포인트:
+   * - 화살표 함수: () => true 형태로 항상 true 반환
+   * - 함수를 변수에 저장하여 props로 전달
    */
-  const handlePointTabChange = (tab: PointTab) => {
-    switch (tab) {
-      case 'all':
-        // 현재 페이지이므로 아무것도 하지 않음
-        break;
-      case 'earned':
-        window.location.href = '/user/point/earned';
-        break;
-      case 'withdrawn':
-        window.location.href = '/user/point/withdrawn';
-        break;
-    }
-  };
-
-  const handleWithdrawalClick = () => {
-    router.push('/user/point/withdrawal_request');
-  };
-
-  const handleMouseEnter = (e: React.MouseEvent) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    setTooltipPosition({
-      x: rect.right + 8,
-      y: rect.top + rect.height / 2,
-    });
-    setShowTooltip(true);
-  };
-
-  const handleMouseLeave = () => {
-    setShowTooltip(false);
-  };
-
-  // 전체 데이터 표시 (필터링 없음)
-  const filteredHistoryData = pointHistoryData;
+  const filterAllHistory = (_history: PointHistory) => true;
 
   return (
-    <div className={styles.point_page}>
-      <main className={styles.main_content}>
-        <div className={styles.container}>
-          {/* 메인 탭 네비게이션 */}
-          <TabNavigation
-            activeTab={activeMainTab}
-            setActiveTab={setActiveMainTab}
-          />
-
-          {/* 포인트 세부 탭 네비게이션 */}
-          <PointTabNavigation
-            activePointTab={activePointTab}
-            setActivePointTab={handlePointTabChange}
-            basePath="/user/point"
-            tabLabels={{ earned: '적립', withdrawn: '출금' }}
-          />
-
-          {/* 포인트 요약 정보 */}
-          <article className={styles.point_summary_section}>
-            <div className={styles.point_summary_info}>
-              <span className={styles.point_label}>보유 포인트</span>
-              <div className={styles.point_amount}>
-                <span className={styles.amount_number}>511,200</span>
-                <span className={styles.amount_unit}>P</span>
-              </div>
-            </div>
-
-            <button
-              className={styles.withdrawal_button}
-              onClick={handleWithdrawalClick}
-            >
-              출금 신청하기
-            </button>
-          </article>
-
-          {/* 포인트 내역 리스트 */}
-          <article className={styles.history_list}>
-            {filteredHistoryData.map((history) => (
-              <div key={history.id} className={styles.history_item}>
-                {/* 상태 배지 */}
-                <div className={styles.status_badge_container}>
-                  <div
-                    className={`${styles.status_badge} ${
-                      history.status === 'earned'
-                        ? styles.earned
-                        : history.status === 'completed'
-                        ? styles.completed
-                        : history.status === 'pending'
-                        ? styles.pending
-                        : styles.cancelled
-                    }`}
-                  >
-                    {history.status === 'earned'
-                      ? '적립'
-                      : history.status === 'completed'
-                      ? '완료'
-                      : history.status === 'pending'
-                      ? '신청'
-                      : '취소'}
-                  </div>
-                </div>
-
-                {/* 내역 정보 */}
-                <div className={styles.history_info}>
-                  <div className={styles.history_description}>
-                    {history.status === 'failed' ? (
-                      <div className={styles.cancelled_description}>
-                        <span className={styles.main_text}>
-                          {history.description}
-                        </span>
-                        <div
-                          className={styles.reason_section}
-                          onMouseEnter={handleMouseEnter}
-                          onMouseLeave={handleMouseLeave}
-                        >
-                          <div className={styles.reason_icon}>
-                            <Image
-                              src="/images/management_page/cancel_info.svg"
-                              alt="정보 아이콘"
-                              width={16}
-                              height={16}
-                            />
-                          </div>
-                          <span className={styles.reason_text}>사유보기</span>
-                          <span
-                            ref={tooltipRef}
-                            className={styles.reason_content}
-                            style={{
-                              left: tooltipPosition.x,
-                              top: tooltipPosition.y,
-                              transform: 'translateY(-50%)',
-                              opacity: showTooltip ? 1 : 0,
-                              visibility: showTooltip ? 'visible' : 'hidden',
-                            }}
-                          >
-                            예금주와 본인 명의 불일치
-                          </span>
-                        </div>
-                      </div>
-                    ) : (
-                      history.description
-                    )}
-                  </div>
-                  <div className={styles.history_date}>{history.date}</div>
-                </div>
-
-                {/* 포인트 정보 */}
-                <div className={styles.point_info}>
-                  <div
-                    className={`${styles.point_change} ${
-                      history.status === 'failed'
-                        ? styles.cancelled_amount
-                        : history.amount > 0
-                        ? styles.positive
-                        : styles.negative
-                    }`}
-                  >
-                    {history.amount > 0
-                      ? `+ ${history.amount.toLocaleString()}`
-                      : `${history.amount.toLocaleString()}`}{' '}
-                    P
-                  </div>
-                  <div className={styles.point_balance}>
-                    {history.balance.toLocaleString()} P
-                  </div>
-                </div>
-              </div>
-            ))}
-          </article>
-        </div>
-      </main>
-    </div>
+    <PointHistoryPage activePointTab="all" filterFunction={filterAllHistory} />
   );
 }

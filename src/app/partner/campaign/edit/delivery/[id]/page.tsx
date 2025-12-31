@@ -25,7 +25,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import DeliveryCampaignForm from "@/components/partner/campaign_create_form/DeliveryCampaignForm";
 import { CampaignFormData } from "@/types/user/user";
-import { updateDeliveryCampaign } from "@/data/partner/delivery";
+import { updateDeliveryCampaign } from "@/data/campaign/delivery/deliveryCampaigns";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 // 분리된 CSS 모듈들 import
@@ -35,26 +35,28 @@ import Toast from "@/components/common/toast/Toast";
 
 /**
  * 캠페인 데이터를 폼 데이터로 변환
- * 
+ *
  * 설명:
  * - CampaignWithApplicants를 CampaignFormData로 변환합니다.
  * - 일부 필드는 현재 데이터 구조에 없으므로 기본값으로 설정합니다.
- * 
+ *
  * - 데이터 변환: 서버 데이터 구조를 폼 데이터 구조로 변환
  * - 기본값 처리: 없는 데이터는 빈 문자열이나 기본값으로 설정
  */
-function campaignToFormData(campaign: CampaignWithApplicants): CampaignFormData {
+function campaignToFormData(
+  campaign: CampaignWithApplicants
+): CampaignFormData {
   const info = campaign.campaignInfo;
 
   // 브랜드명을 플랫폼 이름으로 매핑
   // brandName이 실제 플랫폼 이름과 다를 수 있으므로 매핑 테이블 사용
   const brandNameToPlatform: Record<string, string> = {
-    "네이버블로그": "네이버 블로그",
-    "네이버클립": "네이버 클립",
-    "인스타그램": "인스타그램",
-    "릴스": "릴스",
-    "유튜브": "유튜브",
-    "쇼츠": "쇼츠",
+    네이버블로그: "네이버 블로그",
+    네이버클립: "네이버 클립",
+    인스타그램: "인스타그램",
+    릴스: "릴스",
+    유튜브: "유튜브",
+    쇼츠: "쇼츠",
   };
 
   const platformName = info.brandName
@@ -100,7 +102,7 @@ export default function DeliveryCampaignEditPage() {
   const [initialData, setInitialData] = useState<CampaignFormData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // 토스트 메시지 상태
   const [toast, setToast] = useState({
     is_open: false,
@@ -173,7 +175,11 @@ export default function DeliveryCampaignEditPage() {
       // }
 
       // 폼 데이터를 CampaignWithApplicants 형태로 변환하여 수정
-      const updatedCampaign = updateDeliveryCampaign(campaignId, finalFormData, imageUrl);
+      const updatedCampaign = updateDeliveryCampaign(
+        campaignId,
+        finalFormData,
+        imageUrl
+      );
 
       // TODO: 실제 프로덕션에서는 API 호출
       // await fetch(`/api/campaigns/${campaignId}`, {
@@ -185,7 +191,9 @@ export default function DeliveryCampaignEditPage() {
       const storedCampaigns = localStorage.getItem("deliveryCampaigns");
       if (storedCampaigns) {
         const campaigns: CampaignWithApplicants[] = JSON.parse(storedCampaigns);
-        const index = campaigns.findIndex((c) => c.campaignInfo.id === campaignId);
+        const index = campaigns.findIndex(
+          (c) => c.campaignInfo.id === campaignId
+        );
         if (index !== -1) {
           campaigns[index] = updatedCampaign;
           localStorage.setItem("deliveryCampaigns", JSON.stringify(campaigns));
@@ -196,14 +204,17 @@ export default function DeliveryCampaignEditPage() {
         }
       } else {
         // localStorage에 없으면 새로 생성
-        localStorage.setItem("deliveryCampaigns", JSON.stringify([updatedCampaign]));
+        localStorage.setItem(
+          "deliveryCampaigns",
+          JSON.stringify([updatedCampaign])
+        );
       }
 
       console.log("배송형 캠페인 수정 완료:", updatedCampaign);
 
       // 토스트 메시지 표시
       setToast({ is_open: true, message: "저장되었습니다." });
-      
+
       // 페이지 새로고침
       router.refresh();
     } catch (error) {
@@ -254,7 +265,7 @@ export default function DeliveryCampaignEditPage() {
           mode="edit"
         />
       </div>
-      
+
       {/* 토스트 메시지 */}
       <Toast
         message={toast.message}
@@ -264,4 +275,3 @@ export default function DeliveryCampaignEditPage() {
     </div>
   );
 }
-

@@ -25,7 +25,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import MissionCampaignForm from "@/components/partner/campaign_create_form/MissionCampaignForm";
 import { CampaignFormData } from "@/types/user/user";
-import { addMissionCampaign } from "@/data/partner/mission";
+import { addMissionCampaign } from "@/data/campaign/mission/missionCampaigns";
 // 분리된 CSS 모듈들 import
 import layoutStyles from "@/styles/partner/layout.module.css";
 import PageHeader from "@/components/partner/campaign_create_form/common/layout/PageHeader";

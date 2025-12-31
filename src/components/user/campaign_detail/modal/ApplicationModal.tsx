@@ -23,9 +23,10 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getChannelLogo } from "@/utils/channelLogoMap";
+import BaseModal from "@/components/common/modal/BaseModal";
 import styles from "@/styles/user/campaign/application_modal.module.css";
 
 export type ApplicationModalType =
@@ -42,6 +43,9 @@ interface ApplicationModalProps {
   dayCount?: string; // 남은 일수 또는 긴급 상태 (예: "D-5", "긴급", "마감임박")
   channelName?: string; // 캠페인에서 요구하는 채널 이름 (예: "인스타그램", "네이버 블로그")
   channelUrl?: string; // 사용자가 연결한 채널 URL (없을 수 있음)
+  isParticipated?: boolean; // 이미 참여한 캠페인인지 여부 (기본값: false)
+  isSuspended?: boolean; // 일시 정지된 회원인지 여부 (기본값: false)
+  isClosed?: boolean; // 등록 기간이 마감되었는지 여부 (기본값: false)
 }
 
 export default function ApplicationModal({
@@ -51,15 +55,62 @@ export default function ApplicationModal({
   dayCount,
   channelName: campaignChannelName,
   channelUrl: userChannelUrl,
+  isParticipated = false,
+  isSuspended = false,
+  isClosed = false,
 }: ApplicationModalProps) {
   const router = useRouter();
+
+  // sessionStorage에서 이전 입력값 복원
+  const getStoredFormData = () => {
+    if (typeof window === "undefined") return null;
+    const stored = sessionStorage.getItem("applicationModalFormData");
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  };
+
+  // sessionStorage에 입력값 저장
+  const saveFormData = (
+    memo: string,
+    isAgreed: boolean,
+    isUrgentAgreed: boolean
+  ) => {
+    if (typeof window === "undefined") return;
+    sessionStorage.setItem(
+      "applicationModalFormData",
+      JSON.stringify({ memo, isAgreed, isUrgentAgreed })
+    );
+  };
+
+  // sessionStorage에서 입력값 삭제
+  const clearFormData = () => {
+    if (typeof window === "undefined") return;
+    sessionStorage.removeItem("applicationModalFormData");
+  };
+
+  // 기본값으로 초기화 (수정 버튼을 통해 돌아온 경우에만 복원)
   const [isAgreed, setIsAgreed] = useState(false);
   const [isUrgentAgreed, setIsUrgentAgreed] = useState(false);
   const [memo, setMemo] = useState("");
   const [userName, setUserName] = useState("홍길동");
-  const [userAddress, setUserAddress] = useState(
-    "인천 남동구 장자로 6번길 2, 1층"
-  );
+  // 주소 정보 (등록되어 있지 않으면 빈 문자열)
+  const [userAddress, setUserAddress] = useState("");
+
+  // 신청 완료 모달 상태
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+
+  // 에러 모달 상태들
+  const [isParticipatedModalOpen, setIsParticipatedModalOpen] = useState(false);
+  const [isClosedModalOpen, setIsClosedModalOpen] = useState(false);
+  const [isSuspendedModalOpen, setIsSuspendedModalOpen] = useState(false);
+  const [isInvalidRequestModalOpen, setIsInvalidRequestModalOpen] =
+    useState(false);
 
   // 채널 정보: 캠페인에서 요구하는 채널 이름을 사용 (없으면 기본값)
   const channelName = campaignChannelName || "네이버 블로그";
@@ -77,28 +128,85 @@ export default function ApplicationModal({
     type === "reporter";
   const showChannel = type === "delivery" || type === "visit";
 
+  // 모달이 열릴 때 수정 버튼을 통해 돌아온 경우에만 입력값 복원
+  useEffect(() => {
+    if (isOpen) {
+      // 수정 버튼을 통해 돌아온 경우인지 확인
+      const shouldRestore = sessionStorage.getItem("shouldRestoreFormData");
+
+      if (shouldRestore === "true") {
+        // 저장된 데이터 복원
+        const stored = getStoredFormData();
+        if (stored) {
+          setMemo(stored.memo || "");
+          setIsAgreed(stored.isAgreed || false);
+          setIsUrgentAgreed(stored.isUrgentAgreed || false);
+        }
+        // 복원 플래그 제거
+        sessionStorage.removeItem("shouldRestoreFormData");
+      } else {
+        // 다른 경로로 모달을 열었을 때는 저장된 데이터 삭제
+        clearFormData();
+        // 입력값 초기화
+        setMemo("");
+        setIsAgreed(false);
+        setIsUrgentAgreed(false);
+      }
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
-  // 연필 버튼 클릭 시 사용자 정보 수정 페이지로 이동
+  // 주소 수정 버튼 클릭 시 주소 등록 페이지로 이동
   // 모달 상태를 sessionStorage에 저장하여 뒤로가기 시 모달이 열린 상태로 복원
+  // 현재 입력값도 함께 저장하여 뒤로가기 시 복원
   const handleEditUserInfo = () => {
+    // 현재 입력값을 sessionStorage에 저장
+    saveFormData(memo, isAgreed, isUrgentAgreed);
+    // 수정 버튼을 통해 이동했음을 표시하는 플래그 설정
+    sessionStorage.setItem("shouldRestoreFormData", "true");
     // sessionStorage에 모달 상태 저장
     sessionStorage.setItem("shouldOpenApplicationModal", "true");
-    router.push("/user/mypage/edit");
+    // 주소만 등록하는 페이지로 이동
+    router.push("/user/mypage/address");
   };
 
-  // 채널 연필 버튼 클릭 시 채널 설정 페이지로 이동
+  // 채널 연필 버튼 클릭 시 채널 연결 페이지로 이동
   // 모달 상태를 sessionStorage에 저장하여 뒤로가기 시 모달이 열린 상태로 복원
   // SubHeader 표시 플래그도 함께 저장
+  // 현재 입력값도 함께 저장하여 뒤로가기 시 복원
   const handleEditChannel = () => {
+    // 현재 입력값을 sessionStorage에 저장
+    saveFormData(memo, isAgreed, isUrgentAgreed);
+    // 수정 버튼을 통해 이동했음을 표시하는 플래그 설정
+    sessionStorage.setItem("shouldRestoreFormData", "true");
     // sessionStorage에 모달 상태 저장
     sessionStorage.setItem("shouldOpenApplicationModal", "true");
     // SubHeader 표시 플래그 저장
     sessionStorage.setItem("showSubHeader", "true");
-    router.push("/user/mypage/channel");
+    // 채널 연결 페이지로 이동
+    router.push("/user/mypage/channel/connect");
   };
 
   const handleSubmit = () => {
+    // 1. 이미 참여한 캠페인인지 확인
+    if (isParticipated) {
+      setIsParticipatedModalOpen(true);
+      return;
+    }
+
+    // 2. 일시 정지된 회원인지 확인
+    if (isSuspended) {
+      setIsSuspendedModalOpen(true);
+      return;
+    }
+
+    // 3. 등록 기간이 마감되었는지 확인
+    if (isClosed) {
+      setIsClosedModalOpen(true);
+      return;
+    }
+
     // 신청 처리 로직
     console.log("캠페인 신청:", {
       type,
@@ -106,11 +214,27 @@ export default function ApplicationModal({
       isAgreed,
       isUrgentAgreed: isUrgent ? isUrgentAgreed : undefined,
     });
+    // 신청 완료 모달 열기
+    setIsSuccessModalOpen(true);
+  };
+
+  // 신청 완료 모달 닫기 핸들러
+  const handleSuccessModalClose = () => {
+    setIsSuccessModalOpen(false);
+    // 신청 완료 후 저장된 입력값 및 플래그 삭제
+    clearFormData();
+    sessionStorage.removeItem("shouldRestoreFormData");
+    // 기존 모달도 닫기
     onClose();
   };
 
   // 타입별 버튼 활성화 조건
   const getSubmitDisabled = () => {
+    // 일시 정지된 회원은 항상 비활성화
+    if (isSuspended) {
+      return true;
+    }
+
     // delivery: 채널 연결 + 동의 체크
     if (type === "delivery") {
       // 채널이 연결되지 않았으면 비활성화
@@ -148,8 +272,20 @@ export default function ApplicationModal({
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
+      // 모달을 닫을 때는 입력값을 유지 (뒤로가기 시 복원을 위해)
       onClose();
     }
+  };
+
+  // 모달이 닫힐 때 (X 버튼 클릭 등)
+  // 수정 버튼을 통해 이동한 게 아닌 경우 저장된 데이터 삭제
+  const handleClose = () => {
+    // 수정 버튼을 통해 돌아온 게 아닌 경우에만 데이터 삭제
+    const shouldRestore = sessionStorage.getItem("shouldRestoreFormData");
+    if (shouldRestore !== "true") {
+      clearFormData();
+    }
+    onClose();
   };
 
   return (
@@ -158,7 +294,7 @@ export default function ApplicationModal({
         {/* 모달 헤더 */}
         <div className={styles.modal_header}>
           <h2 className={styles.modal_title}>캠페인 신청</h2>
-          <button className={styles.close_button} onClick={onClose}>
+          <button className={styles.close_button} onClick={handleClose}>
             <img src="/images/filter/x_icon.svg" alt="닫기" />
           </button>
         </div>
@@ -186,9 +322,15 @@ export default function ApplicationModal({
                 {showAddress && (
                   <div className={styles.address_container}>
                     <div className={styles.address_info}>
-                      <div className={styles.address_text}>{userAddress}</div>
+                      {userAddress.trim() ? (
+                        <div className={styles.address_text}>{userAddress}</div>
+                      ) : (
+                        <div className={styles.address_text_empty}>
+                          주소지를 등록해 주세요.
+                        </div>
+                      )}
                     </div>
-                    {/* 수정 버튼 - 클릭 시 사용자 정보 수정 페이지로 이동 */}
+                    {/* 수정 버튼 - 클릭 시 주소 등록 페이지로 이동 */}
                     <button
                       className={styles.edit_button}
                       onClick={handleEditUserInfo}
@@ -304,6 +446,46 @@ export default function ApplicationModal({
           </button>
         </div>
       </div>
+
+      {/* 신청 완료 모달 */}
+      <BaseModal
+        is_open={isSuccessModalOpen}
+        on_close={handleSuccessModalClose}
+        message="캠페인 신청이 완료되었습니다."
+        buttons={["닫기"]}
+      />
+
+      {/* 이미 참여했는데 신청 버튼이 활성화 되어있는 상태에서 다시 신청 눌렀을 때 모달 */}
+      <BaseModal
+        is_open={isParticipatedModalOpen}
+        on_close={() => setIsParticipatedModalOpen(false)}
+        message="이미 참여한 캠페인입니다."
+        buttons={["확인"]}
+      />
+
+      {/* 신청 버튼이 활성화 되어있는 상태에서 마감되었을 경우 모달 */}
+      <BaseModal
+        is_open={isClosedModalOpen}
+        on_close={() => setIsClosedModalOpen(false)}
+        message="등록 기간이 마감되었습니다."
+        buttons={["닫기"]}
+      />
+
+      {/* 일시 정지된 회원이 캠페인 신청 시 모달 */}
+      <BaseModal
+        is_open={isSuspendedModalOpen}
+        on_close={() => setIsSuspendedModalOpen(false)}
+        message="정지 회원은 캠페인 신청이 불가합니다."
+        buttons={["닫기"]}
+      />
+
+      {/* 일시 정지 상태에서 버튼이 활성화되어 있을 때 모달 */}
+      <BaseModal
+        is_open={isInvalidRequestModalOpen}
+        on_close={() => setIsInvalidRequestModalOpen(false)}
+        message="유효하지 않은 요청입니다."
+        buttons={["확인"]}
+      />
     </div>
   );
 }

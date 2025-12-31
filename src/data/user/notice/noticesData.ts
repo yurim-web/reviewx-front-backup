@@ -1,3 +1,10 @@
+/**
+ * 공지사항 대상 타입
+ * - "user": 리뷰어(유저) 대상 공지사항
+ * - "partner": 파트너 대상 공지사항
+ */
+export type NoticeTarget = "user" | "partner";
+
 export interface NoticeDetail {
   id: number;
 
@@ -8,6 +15,10 @@ export interface NoticeDetail {
   category: string;
 
   content: string;
+
+  is_pinned?: boolean; // 핀 설정 여부 (관리자가 설정)
+
+  target?: NoticeTarget; // 대상 (user: 리뷰어, partner: 파트너)
 }
 
 export const notices: NoticeDetail[] = [
@@ -22,6 +33,10 @@ export const notices: NoticeDetail[] = [
 
     content:
       "리뷰X 서비스가 새롭게 리뉴얼되었습니다.\n주요 기능과 UI가 개선되었으며, 자세한 내용은 추후 공지를 통해 안내드리겠습니다.",
+
+    is_pinned: true, // 핀 설정된 공지사항 예시
+
+    target: "user", // 리뷰어 대상
   },
 
   {
@@ -35,6 +50,8 @@ export const notices: NoticeDetail[] = [
 
     content:
       "사용자 편의를 위한 새로운 기능이 추가되었습니다.\n마이페이지에서 채널 연결과 내 정보 수정 기능을 확인해 주세요.",
+
+    target: "user", // 리뷰어 대상
   },
 
   {
@@ -49,6 +66,8 @@ export const notices: NoticeDetail[] = [
 
     content:
       "판매하기 버튼과 관련된 주요 소식을 안내드립니다.\n해당 기능을 통해 다양한 수익 창출 사례가 이어지고 있습니다.",
+
+    target: "user", // 리뷰어 대상
   },
 
   {
@@ -62,6 +81,8 @@ export const notices: NoticeDetail[] = [
 
     content:
       "홍보 캐시 서비스 지급 정책이 변경되었습니다.\n상세 내용은 이벤트 페이지 및 공지사항을 통해 확인해 주세요.",
+
+    target: "user", // 리뷰어 대상
   },
 
   {
@@ -75,6 +96,8 @@ export const notices: NoticeDetail[] = [
 
     content:
       "보유 캐시 변동 정책에 대한 안내입니다.\n미션형 캠페인 참여 시 지급되는 캐시 정책이 일부 변경되었습니다.",
+
+    target: "user", // 리뷰어 대상
   },
 
   {
@@ -88,6 +111,43 @@ export const notices: NoticeDetail[] = [
 
     content:
       "일부 사용자에게 알림톡이 중복 발송된 오류가 발생하였습니다.\n이용에 불편을 드린 점 진심으로 사과드리며, 재발 방지를 위해 시스템을 점검 중입니다.",
+
+    target: "user", // 리뷰어 대상
+  },
+
+  // 파트너 대상 공지사항 예시
+  {
+    id: 7,
+
+    title: "[건강기능식품] 체험단 등록 유의 사항",
+
+    date: "2025-08-01",
+
+    category: "중요",
+
+    content:
+      "건강기능식품 체험단 등록 시 유의사항을 안내드립니다.\n관련 법규를 준수하여 등록해 주시기 바랍니다.",
+
+    target: "partner", // 파트너 대상
+
+    is_pinned: true, // 핀 설정
+  },
+
+  {
+    id: 8,
+
+    title: "[의료기기] 체험단 진행 불가 공지",
+
+    date: "2025-08-01",
+
+    category: "중요",
+
+    content:
+      "의료기기 체험단은 관련 법규로 인해 진행이 불가능합니다.\n참고 부탁드립니다.",
+
+    target: "partner", // 파트너 대상
+
+    is_pinned: false,
   },
 ];
 
@@ -98,7 +158,3 @@ export const get_notice_detail = (id: string): NoticeDetail | null => {
 
   return notices.find((notice) => notice.id === numericId) ?? null;
 };
-
-
-
-

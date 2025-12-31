@@ -26,6 +26,7 @@ import { useEffect } from "react";
 import styles from "@/styles/common/modal/textarea_modal.module.css";
 
 export type TextareaModalType = "center" | "bottom";
+export type TextareaModalVariant = "default" | "reject" | "extend";
 
 export interface TextareaModalProps {
   /** 모달 열림/닫힘 상태 */
@@ -46,10 +47,14 @@ export interface TextareaModalProps {
   titleColor?: string;
   /** 버튼 라벨 배열 (1개 또는 2개) */
   buttons?: string[];
+  /** 취소 버튼 클릭 핸들러 (버튼이 두 개일 때 첫 번째 버튼, 기본값: on_close) */
+  on_cancel?: () => void;
   /** 확인 버튼 클릭 핸들러 (버튼이 두 개일 때 두 번째 버튼) */
   on_confirm?: () => void;
   /** 모달 형태 (기본값: "center") */
   type?: TextareaModalType;
+  /** 모달 변형 (기본값: "default", "reject"일 때 반려 모달 스타일 적용) */
+  variant?: TextareaModalVariant;
   /** 오버레이 클릭으로 닫기 여부 (기본값: true) */
   close_on_overlay_click?: boolean;
   /** ESC 키로 닫기 여부 (기본값: true) */
@@ -69,14 +74,18 @@ export default function TextareaModal({
   readOnly = false,
   titleColor,
   buttons: prop_buttons,
+  on_cancel,
   on_confirm,
   type = "center",
+  variant = "default",
   close_on_overlay_click = true,
   close_on_escape = true,
 }: TextareaModalProps) {
   const buttons =
     prop_buttons && prop_buttons.length > 0 ? prop_buttons : ["닫기"];
   const has_two_buttons = buttons.length === 2;
+  const is_reject_variant = variant === "reject";
+  const is_extend_variant = variant === "extend";
 
   // ESC 키로 모달 닫기
   useEffect(() => {
@@ -92,33 +101,17 @@ export default function TextareaModal({
     return () => window.removeEventListener("keydown", handle_escape);
   }, [is_open, close_on_escape, on_close]);
 
-  // 모달이 열릴 때 body 스크롤 잠금 (스크롤바 너비 고려)
-  useEffect(() => {
-    if (is_open) {
-      // 현재 스크롤바 너비 계산
-      const scrollbar_width =
-        window.innerWidth - document.documentElement.clientWidth;
-
-      // 원래 스타일 저장
-      const original_overflow = document.body.style.overflow;
-      const original_padding_right = document.body.style.paddingRight;
-
-      // 스크롤 잠금 및 스크롤바 너비만큼 padding 추가
-      document.body.style.overflow = "hidden";
-      if (scrollbar_width > 0) {
-        document.body.style.paddingRight = `${scrollbar_width}px`;
-      }
-
-      // 정리 함수: 원래 상태로 복원
-      return () => {
-        document.body.style.overflow = original_overflow;
-        document.body.style.paddingRight = original_padding_right;
-      };
-    }
-  }, [is_open]);
-
   // 모달이 닫혀있으면 렌더링하지 않음
   if (!is_open) return null;
+
+  // 취소 버튼 클릭 핸들러
+  const handle_cancel = () => {
+    if (on_cancel) {
+      on_cancel();
+    } else {
+      on_close();
+    }
+  };
 
   // 확인 버튼 클릭 핸들러
   const handle_confirm = () => {
@@ -183,7 +176,7 @@ export default function TextareaModal({
             <textarea
               className={`${styles.modal_textarea} ${
                 readOnly ? styles.modal_textarea_readonly : ""
-              }`}
+              } ${is_reject_variant ? styles.modal_textarea_reject : ""}`}
               value={value}
               onChange={handle_textarea_change}
               placeholder={placeholder}
@@ -197,19 +190,44 @@ export default function TextareaModal({
           <div className={styles.modal_footer}>
             {has_two_buttons ? (
               <>
-                {/* 두 개 버튼: 취소, 확인 */}
-                <button
-                  onClick={on_close}
-                  className={styles.modal_footer_button_cancel}
-                >
-                  {buttons[0]}
-                </button>
-                <button
-                  onClick={handle_confirm}
-                  className={styles.modal_footer_button_confirm}
-                >
-                  {buttons[1]}
-                </button>
+                {/* 두 개 버튼: 취소/거절, 확인/승인 */}
+                {is_extend_variant ? (
+                  <>
+                    {/* 연장 모달: 거절(빨간색), 승인(회색) */}
+                    <button
+                      onClick={handle_cancel}
+                      className={styles.modal_footer_button_reject}
+                    >
+                      {buttons[0]}
+                    </button>
+                    <button
+                      onClick={handle_confirm}
+                      className={styles.modal_footer_button_confirm}
+                    >
+                      {buttons[1]}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    {/* 일반 모달: 취소(회색), 확인(회색/빨간색) */}
+                    <button
+                      onClick={handle_cancel}
+                      className={styles.modal_footer_button_cancel}
+                    >
+                      {buttons[0]}
+                    </button>
+                    <button
+                      onClick={handle_confirm}
+                      className={`${styles.modal_footer_button_confirm} ${
+                        is_reject_variant
+                          ? styles.modal_footer_button_reject
+                          : ""
+                      }`}
+                    >
+                      {buttons[1]}
+                    </button>
+                  </>
+                )}
               </>
             ) : (
               <>

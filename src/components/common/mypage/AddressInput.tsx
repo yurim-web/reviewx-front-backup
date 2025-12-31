@@ -33,6 +33,8 @@ interface AddressInputProps {
   postalCodeReadOnly?: boolean;
   /** 라벨에 필수 표시(*) 여부 (기본값: false) */
   showRequiredAsterisk?: boolean;
+  /** 라벨 표시 여부 (기본값: true) */
+  showLabel?: boolean;
 }
 
 export default function AddressInput({
@@ -45,6 +47,7 @@ export default function AddressInput({
   onPostalCodeSearch,
   postalCodeReadOnly = false,
   showRequiredAsterisk = false,
+  showLabel = true,
 }: AddressInputProps) {
   /** 주소 입력 필드 렌더링 헬퍼 함수 */
   const renderAddressField = (
@@ -66,6 +69,54 @@ export default function AddressInput({
       />
     </div>
   );
+
+  // 라벨을 표시하지 않는 경우 직접 렌더링
+  if (!showLabel) {
+    return (
+      <div className={styles.field_article}>
+        <InputWithButton
+          input={
+            <input
+              type="text"
+              id="postalCode"
+              name="postalCode"
+              className={styles.input_field}
+              value={postalCode}
+              onChange={(e) => onPostalCodeChange(e.target.value)}
+              readOnly={postalCodeReadOnly}
+              placeholder="우편번호"
+            />
+          }
+          button={
+            onPostalCodeSearch ? (
+              <button
+                type="button"
+                className={styles.postal_button}
+                onClick={onPostalCodeSearch}
+              >
+                우편번호 찾기
+              </button>
+            ) : undefined
+          }
+        />
+
+        {renderAddressField(
+          "address",
+          "address",
+          address,
+          onAddressChange,
+          "기본 주소"
+        )}
+        {renderAddressField(
+          "detailAddress",
+          "detailAddress",
+          detailAddress,
+          onDetailAddressChange,
+          "상세 주소 입력"
+        )}
+      </div>
+    );
+  }
 
   return (
     <FormField

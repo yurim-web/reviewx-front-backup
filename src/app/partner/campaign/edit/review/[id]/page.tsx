@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import ReviewCampaignForm from "@/components/partner/campaign_create_form/ReviewCampaignForm";
 import { CampaignFormData } from "@/types/user/user";
-import { updateReviewCampaign } from "@/data/partner/review";
+import { updateReviewCampaign } from "@/data/campaign/review/reviewCampaigns";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import layoutStyles from "../../../../../../styles/partner/layout.module.css";

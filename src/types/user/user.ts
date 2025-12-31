@@ -257,6 +257,7 @@ export interface PointHistory {
   date: string; // 날짜 (YYYY-MM-DD)
   status: "earned" | "completed" | "pending" | "failed"; // 상태: 적립/완료/신청/취소
   balance: number; // 거래 후 잔액
+  rejection_reason?: string; // 반려 사유 (status가 "failed"일 때 사용)
 }
 
 /**

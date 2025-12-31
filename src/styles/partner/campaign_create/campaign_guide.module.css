@@ -435,7 +435,6 @@
 .fixed_height_textarea::-webkit-scrollbar-thumb {
   background: #d9d9d9;
   border-radius: 100px;
-  /* 스크롤바가 오른쪽 끝에서 떨어지도록 좌우에 여백 - 10px로 증가 */
   border: 10px solid transparent;
   background-clip: padding-box;
 }
@@ -463,7 +462,6 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-bottom: 16px;
 }
 
 .fair_trade_checkbox {

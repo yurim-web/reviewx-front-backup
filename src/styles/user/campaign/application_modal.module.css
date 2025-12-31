@@ -195,6 +195,13 @@
   color: #444444;
 }
 
+/* 주소가 없을 때 메시지 */
+.address_text_empty {
+  font-weight: 500;
+  font-size: 16px;
+  color: #848484;
+}
+
 /* 입력칸 플레이스홀더 */
 .user_input::placeholder {
   color: #999999;

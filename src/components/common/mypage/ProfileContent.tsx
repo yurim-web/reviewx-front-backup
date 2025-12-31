@@ -138,18 +138,38 @@ export default function ProfileContent({
         </button>
 
         {/* 공지사항 버튼 */}
+        {/* 
+          조건부 경로: 파트너일 때는 /partner/notice, 유저일 때는 /user/notice로 이동
+          editPath가 "/partner"로 시작하면 파트너 사용자로 판단합니다.
+          삼항 연산자: 조건 ? 참일때값 : 거짓일때값
+        */}
         <button
           className={profileStyles.menu_item}
-          onClick={() => router.push("/notice")}
+          onClick={() =>
+            router.push(
+              editPath.startsWith("/partner")
+                ? "/partner/notice"
+                : "/user/notice"
+            )
+          }
         >
           <div className={profileStyles.menu_icon} />
           <div className={profileStyles.menu_text}>공지사항</div>
         </button>
 
         {/* 자주 묻는 질문 버튼 */}
+        {/* 
+          조건부 경로: 파트너일 때는 /partner/faq, 유저일 때는 /user/faq로 이동
+          editPath가 "/partner"로 시작하면 파트너 사용자로 판단합니다.
+          삼항 연산자: 조건 ? 참일때값 : 거짓일때값
+        */}
         <button
           className={profileStyles.menu_item}
-          onClick={() => router.push("/faq")}
+          onClick={() =>
+            router.push(
+              editPath.startsWith("/partner") ? "/partner/faq" : "/user/faq"
+            )
+          }
         >
           <div className={profileStyles.menu_icon} />
           <div className={profileStyles.menu_text}>자주 묻는 질문</div>

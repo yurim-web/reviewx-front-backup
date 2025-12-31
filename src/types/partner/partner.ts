@@ -84,6 +84,7 @@ export interface PartnerCampaignStats {
   진행: number; // 진행 중인 캠페인 수
   종료: number; // 종료된 캠페인 수
   취소: number; // 취소된 캠페인 수
+  "연장 요청": number; // 연장 요청한 캠페인 수
   패널티: number; // 패널티가 부과된 캠페인 수
 }
 
@@ -105,6 +106,7 @@ export type PartnerStatTab =
   | "진행" // 진행 중인 캠페인
   | "종료" // 종료된 캠페인
   | "취소" // 취소된 캠페인
+  | "연장 요청" // 연장 요청한 캠페인
   | "패널티"; // 패널티 캠페인
 
 /**
@@ -322,6 +324,7 @@ export interface ContentItem {
   nickname: string; // 작성자 닉네임
   channelId: string; // 채널 식별자 (블로그 ID, 인스타그램 ID 등)
   channel: string; // 채널명 (예: "네이버블로그", "인스타그램")
+  profileImage?: string; // 프로필 이미지 URL (선택적)
   thumbnailSrc?: string; // 썸네일 이미지 URL (선택적)
   updatedAt?: string; // 수정일시 (선택적)
   isRejected?: boolean; // 거절 여부

@@ -36,7 +36,7 @@ interface BaseCampaign {
     current: number;
     total: number;
   };
-  points: number;
+  points?: number; // 포인트는 선택적 필드 (없을 수 있음)
   schedule?: string;
   region?: string; // 방문형 캠페인에만 있음
   [key: string]: any; // 추가 필드 허용
@@ -292,15 +292,30 @@ export function useCampaignFilters<T extends BaseCampaign>({
       case "포인트순":
       case "포인트높은순":
         // 포인트 기준으로 내림차순 정렬
-        // 포인트가 없거나 같은 경우 2차 정렬 기준으로 최신순(ID 기준 내림차순) 사용
+        // 포인트가 없는 캠페인은 2차 정렬 기준으로 최신순(ID 기준 내림차순) 사용
         filtered.sort((a, b) => {
-          const pointsA = a.points ?? 0;
-          const pointsB = b.points ?? 0;
-          // 포인트가 다르면 포인트 기준으로 정렬
-          if (pointsA !== pointsB) {
-            return pointsB - pointsA;
+          const pointsA = a.points;
+          const pointsB = b.points;
+
+          // 포인트가 없는 경우를 구분하기 위해 undefined/null 체크
+          const hasPointsA = pointsA !== undefined && pointsA !== null;
+          const hasPointsB = pointsB !== undefined && pointsB !== null;
+
+          // 둘 다 포인트가 있는 경우: 포인트 기준으로 정렬
+          if (hasPointsA && hasPointsB) {
+            // 포인트가 다르면 포인트 기준으로 내림차순 정렬
+            if (pointsA !== pointsB) {
+              return pointsB - pointsA;
+            }
+            // 포인트가 같으면 최신순(ID 기준 내림차순)으로 정렬
+            return b.id.localeCompare(a.id);
           }
-          // 포인트가 같거나 둘 다 없는 경우 최신순(ID 기준 내림차순)으로 정렬
+
+          // 하나만 포인트가 있는 경우: 포인트가 있는 캠페인이 먼저
+          if (hasPointsA && !hasPointsB) return -1;
+          if (!hasPointsA && hasPointsB) return 1;
+
+          // 둘 다 포인트가 없는 경우: 최신순(ID 기준 내림차순)으로 정렬
           return b.id.localeCompare(a.id);
         });
         break;

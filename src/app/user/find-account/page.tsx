@@ -275,14 +275,10 @@ export default function UserFindAccountPage() {
           router.push("/find-account");
         }}
         onKakaoLogin={() => {
-          // TODO: 실제 카카오 로그인으로 이동
-          console.log("카카오 로그인");
-          router.push("/user/sns_login");
+          router.push("/user/login");
         }}
         onNaverLogin={() => {
-          // TODO: 실제 네이버 로그인으로 이동
-          console.log("네이버 로그인");
-          router.push("/user/sns_login");
+          router.push("/user/login");
         }}
         socialType={findAccount.socialType}
       />

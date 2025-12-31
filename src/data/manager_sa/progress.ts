@@ -17,16 +17,47 @@
  */
 
 // 각 캠페인 타입별 데이터 import
-import { deliveryCampaigns } from "@/data/partner/delivery";
-import { missionCampaigns } from "@/data/partner/mission";
-import { reporterCampaigns } from "@/data/partner/reporter";
-import { reviewCampaigns } from "@/data/partner/review";
-import { visitCampaigns } from "@/data/partner/visit";
-import type { DeliveryCampaignDataItem } from "@/data/partner/delivery";
-import type { MissionCampaignDataItem } from "@/data/partner/mission";
-import type { ReporterCampaignDataItem } from "@/data/partner/reporter";
-import type { ReviewCampaignDataItem } from "@/data/partner/review";
-import type { VisitCampaignDataItem } from "@/data/partner/visit";
+import { deliveryCampaignsExtended, type DeliveryCampaignDataExtended } from "@/data/campaign/delivery/deliveryCampaigns";
+import { missionCampaignsExtended as missionCampaigns } from "@/data/campaign/mission/missionCampaigns";
+import { reporterCampaignsExtended as reporterCampaigns } from "@/data/campaign/reporter/reporterCampaigns";
+import { reviewCampaignsExtended as reviewCampaigns } from "@/data/campaign/review/reviewCampaigns";
+import { visitCampaignsExtended as visitCampaigns } from "@/data/campaign/visit/visitCampaigns";
+import type { DeliveryCampaignDataItem } from "@/data/campaign/delivery/deliveryCampaigns";
+
+/**
+ * DeliveryCampaignDataExtended를 DeliveryCampaignDataItem으로 변환
+ */
+function convertExtendedToItem(extended: DeliveryCampaignDataExtended): DeliveryCampaignDataItem {
+  return {
+    campaignInfo: {
+      id: extended.id,
+      title: extended.title,
+      image: extended.image,
+      status: extended.status || "대기 중",
+      campaignType: "배송형",
+      category: extended.subcategory || "",
+      brandName: extended.brandName || extended.channel || "",
+      recruitmentPeriod: `${extended.detailedSchedule.applicationStart} ~ ${extended.detailedSchedule.applicationEnd}`,
+      announcementDate: extended.detailedSchedule.announcement,
+      registrationPeriod: extended.detailedSchedule.registrationPeriod,
+      recruitedCount: extended.recruitment.current || 0,
+      totalCount: extended.recruitment.total || 0,
+      daysLeft: 0,
+      statusText: extended.statusText,
+      partnerName: extended.partnerName,
+      point: extended.points,
+    },
+    applicantData: extended.applicantData,
+    contents: extended.contents,
+  };
+}
+
+// deliveryCampaignsExtended를 DeliveryCampaignDataItem 형식으로 변환
+const deliveryCampaigns: DeliveryCampaignDataItem[] = deliveryCampaignsExtended.map(convertExtendedToItem);
+import type { MissionCampaignDataExtended as MissionCampaignDataItem } from "@/data/campaign/mission/missionCampaigns";
+import type { ReporterCampaignDataExtended as ReporterCampaignDataItem } from "@/data/campaign/reporter/reporterCampaigns";
+import type { ReviewCampaignDataExtended as ReviewCampaignDataItem } from "@/data/campaign/review/reviewCampaigns";
+import type { VisitCampaignDataExtended as VisitCampaignDataItem } from "@/data/campaign/visit/visitCampaigns";
 
 // 공통 필터 옵션에서 import (manager_ga와 manager_sa 공통)
 import type {

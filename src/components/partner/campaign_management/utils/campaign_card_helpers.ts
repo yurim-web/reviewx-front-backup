@@ -18,16 +18,17 @@ import {
   getClosedContentsById,
   getCampaignById,
 } from "@/data/partner/sharedCampaigns";
-import { getVisitContentsById } from "@/data/partner/visit";
-import { getDeliveryContentsById } from "@/data/partner/delivery";
-import { getReporterContentsById } from "@/data/partner/reporter";
-import { getPurchaseReviewContentsById } from "@/data/partner/review";
-import { getMissionContentsById } from "@/data/partner/mission";
+import { getVisitContentsById } from "@/data/campaign/visit/visitCampaigns";
+import { getDeliveryContentsById } from "@/data/campaign/delivery/deliveryCampaigns";
+import { getReporterContentsById } from "@/data/campaign/reporter/reporterCampaigns";
+import { getPurchaseReviewContentsById } from "@/data/campaign/review/reviewCampaigns";
+import { getMissionContentsById } from "@/data/campaign/mission/missionCampaigns";
 
 /**
- * 콘텐츠 검수/완료 건수를 표현하는 타입
+ * 콘텐츠 대기/검수/완료 건수를 표현하는 타입
  */
 export interface CampaignContentCounts {
+  waitingCount: number;
   reviewingCount: number;
   completedCount: number;
 }
@@ -58,7 +59,7 @@ function getContentsByCampaignType(
     case "미션형":
       return getMissionContentsById(id);
     default:
-      return { reviewing: [], completed: [] };
+      return { waiting: [], reviewing: [], completed: [] };
   }
 }
 
@@ -76,6 +77,7 @@ export function calculateContentCounts(
     const closedContents = getClosedContentsById(id);
     if (closedContents) {
       return {
+        waitingCount: closedContents.waiting?.length ?? 0,
         reviewingCount: closedContents.reviewing?.length ?? 0,
         completedCount: closedContents.completed?.length ?? 0,
       };
@@ -85,12 +87,13 @@ export function calculateContentCounts(
     if (campaignData && (campaignData as any).contents) {
       const contents = (campaignData as any).contents;
       return {
+        waitingCount: contents.waiting?.length ?? 0,
         reviewingCount: contents.reviewing?.length ?? 0,
         completedCount: contents.completed?.length ?? 0,
       };
     }
 
-    return { reviewingCount: 0, completedCount: 0 };
+    return { waitingCount: 0, reviewingCount: 0, completedCount: 0 };
   }
 
   // 진행/신청 캠페인: 우선 원본 데이터 contents 확인
@@ -98,6 +101,7 @@ export function calculateContentCounts(
   if (campaignData && (campaignData as any).contents) {
     const contents = (campaignData as any).contents;
     return {
+      waitingCount: contents.waiting?.length ?? 0,
       reviewingCount: contents.reviewing?.length ?? 0,
       completedCount: contents.completed?.length ?? 0,
     };
@@ -106,6 +110,7 @@ export function calculateContentCounts(
   // 원본 데이터에 없으면 캠페인 타입별 데이터 조회
   const typeContents = getContentsByCampaignType(campaign.campaignType, id);
   return {
+    waitingCount: typeContents?.waiting?.length ?? 0,
     reviewingCount: typeContents?.reviewing?.length ?? 0,
     completedCount: typeContents?.completed?.length ?? 0,
   };
@@ -216,7 +221,9 @@ export function calculateDaysUntilOpen(recruitmentPeriod?: string): number {
 /**
  * 선정 발표일까지 남은 일수 계산
  */
-export function calculateDaysUntilAnnouncement(announcementDate?: string): number {
+export function calculateDaysUntilAnnouncement(
+  announcementDate?: string
+): number {
   if (!announcementDate) {
     return 0;
   }
@@ -253,7 +260,9 @@ export function calculateDaysUntilAnnouncement(announcementDate?: string): numbe
 /**
  * 등록 마감일까지 남은 일수 계산
  */
-export function calculateDaysUntilDeadline(registrationPeriod?: string): number {
+export function calculateDaysUntilDeadline(
+  registrationPeriod?: string
+): number {
   if (!registrationPeriod) {
     return 0;
   }
@@ -309,6 +318,10 @@ interface StatusTextParams {
 
 /**
  * 카드에 표시할 상태 문구 계산
+ *
+ * 설명:
+ * - "전체" 탭일 때는 각 캠페인의 실제 상태(status)에 따라 메시지를 생성합니다.
+ * - 특정 탭일 때는 탭에 맞는 메시지를 우선 표시합니다.
  */
 export function getStatusTextForCampaign({
   campaign,
@@ -319,6 +332,58 @@ export function getStatusTextForCampaign({
 }: StatusTextParams): string {
   const status = campaign.status as string;
 
+  // "전체" 탭일 때는 각 캠페인의 실제 상태에 따라 메시지 생성
+  if (activeTab === "전체") {
+    if (status === "대기 중") {
+      const daysUntilOpen = calculateDaysUntilOpen(campaign.recruitmentPeriod);
+      return `캠페인 오픈까지 ${daysUntilOpen}일 남았습니다.`;
+    }
+
+    if (status === "모집 중") {
+      const daysUntilAnnouncement = calculateDaysUntilAnnouncement(
+        campaign.announcementDate
+      );
+      return `캠페인 선정 발표까지 ${daysUntilAnnouncement}일 남았습니다.`;
+    }
+
+    if (status === "진행 중") {
+      if (isContentStage) {
+        const daysUntilDeadline = calculateDaysUntilDeadline(
+          campaign.registrationPeriod
+        );
+        if (reviewingCount === 0) {
+          return `콘텐츠 확인 요청이 없습니다. 캠페인 마감까지 ${daysUntilDeadline}일 남았습니다.`;
+        }
+        return `콘텐츠 확인 요청이 ${reviewingCount}건 있습니다. 캠페인 마감까지 ${daysUntilDeadline}일 남았습니다.`;
+      }
+      return "캠페인 당첨자를 선정해 주세요.";
+    }
+
+    if (status === "종료") {
+      return "캠페인이 마감되었습니다.";
+    }
+
+    if (status === "취소") {
+      return "캠페인을 취소하였습니다.";
+    }
+
+    // fallback: statusText 사용
+    if (campaign.statusText) {
+      return campaign.statusText;
+    }
+
+    return "캠페인을 확인해 주세요.";
+  }
+
+  // 특정 탭일 때는 탭에 맞는 메시지 우선 표시
+  if (activeTab === "연장 요청") {
+    // 연장 요청 건수 계산
+    // 연장 요청 탭에서는 "대기" 수를 연장 요청 건수로 사용
+    // (대기 = 연장 요청을 한 사람 수)
+    const extensionCount = campaign.selected || 0;
+    return `등록 기한 연장 요청이 ${extensionCount}건 있습니다.`;
+  }
+
   if (activeTab === "종료") {
     return "캠페인이 마감되었습니다.";
   }
@@ -328,7 +393,7 @@ export function getStatusTextForCampaign({
     return `캠페인 오픈까지 ${daysUntilOpen}일 남았습니다.`;
   }
 
-  if (status === "모집 중" || activeTab === "신청") {
+  if (activeTab === "신청" || status === "모집 중") {
     const daysUntilAnnouncement = calculateDaysUntilAnnouncement(
       campaign.announcementDate
     );
@@ -340,7 +405,7 @@ export function getStatusTextForCampaign({
     return `캠페인 오픈까지 ${daysUntilOpen}일 남았습니다.`;
   }
 
-  if (activeTab === "진행" || status === "진행") {
+  if (activeTab === "진행" || status === "진행 중") {
     if (isContentStage) {
       const daysUntilDeadline = calculateDaysUntilDeadline(
         campaign.registrationPeriod
@@ -355,6 +420,10 @@ export function getStatusTextForCampaign({
 
   if (status === "종료") {
     return "캠페인이 마감되었습니다.";
+  }
+
+  if (status === "취소") {
+    return "캠페인을 취소하였습니다.";
   }
 
   if (campaign.statusText) {
@@ -372,12 +441,37 @@ export function getStatusTextForCampaign({
 /**
  * 상태/서브상태에 따라 기본 버튼 텍스트 결정
  */
+/**
+ * 연장 요청 건수 계산
+ *
+ * 설명:
+ * - 연장 요청한 신청자 수를 계산합니다.
+ * - 현재는 임시로 선정된 신청자 수를 사용하거나, 추후 실제 연장 요청 데이터로 대체해야 합니다.
+ */
+export function calculateExtensionRequestCount(
+  campaign: PartnerCampaign
+): number {
+  // TODO: 실제 연장 요청 데이터에서 계산
+  // 현재는 임시로 선정된 신청자 수를 사용 (실제로는 연장 요청한 신청자만 카운트해야 함)
+  // 추후 연장 요청 플래그가 있는 신청자만 필터링하여 카운트
+  return campaign.selected || 0;
+}
+
 export function getPrimaryButtonText(
   campaign: PartnerCampaign,
-  completedCount: number
+  completedCount: number,
+  activeTab?: string,
+  extensionRequestCount?: number
 ): string {
   const subStatus = (campaign.subStatus ?? "") as string;
   const status = campaign.status as string;
+
+  // 연장 요청 탭일 때는 "등록 기한 연장 요청 (n)" 버튼만 표시
+  if (activeTab === "연장 요청" || subStatus.includes("extension_request")) {
+    const count =
+      extensionRequestCount ?? calculateExtensionRequestCount(campaign);
+    return `등록 기한 연장 요청 (${count})`;
+  }
 
   if (subStatus === "applicant_management") {
     return "신청내역 확인";
@@ -410,5 +504,3 @@ export function getPrimaryButtonText(
       return "캠페인 관리";
   }
 }
-
-

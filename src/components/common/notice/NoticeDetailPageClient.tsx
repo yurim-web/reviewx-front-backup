@@ -8,23 +8,32 @@
    - 공지사항 상세 페이지 클라이언트 컴포넌트
 
    사용 페이지:
-   - /notice/[id] (사용자 공지사항 상세)
-   - (향후) 파트너/관리자 공지 상세 페이지
+   - /user/notice/[id] (유저 공지사항 상세)
+   - /partner/notice/[id] (파트너 공지사항 상세)
 
    ======================================== */
 
 import { useRouter, useParams } from "next/navigation";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 import styles from "@/styles/user/notice/notice_detail_page.module.css";
 
 import {
-  get_notice_detail,
   type NoticeDetail,
+  type NoticeTarget,
 } from "@/data/user/notice/noticesData";
+import { posts_data } from "@/data/manager_ga/community/postsData";
+import { convertPostsToNotices } from "@/utils/notice/convertPostToNotice";
+import { get_post_detail } from "@/data/manager_ga/community/postsData";
 
-export default function NoticeDetailPageClient() {
+interface NoticeDetailPageClientProps {
+  target?: NoticeTarget; // "user" | "partner" (기본값: "user")
+}
+
+export default function NoticeDetailPageClient({
+  target = "user",
+}: NoticeDetailPageClientProps) {
   const router = useRouter();
 
   const params = useParams();
@@ -35,16 +44,45 @@ export default function NoticeDetailPageClient() {
     null
   );
 
+  /**
+   * 관리자 게시글 데이터를 공지사항으로 변환하여 조회
+   * - division이 "공지사항"인 게시글만 변환
+   * - PostDetail의 content도 포함하여 변환
+   */
+  const allNotices = useMemo(() => {
+    const notices = convertPostsToNotices(posts_data);
+
+    // content 추가 (PostDetail에서 가져오기)
+    return notices.map((notice) => {
+      const postDetail = get_post_detail(notice.id.toString());
+      return {
+        ...notice,
+        content: postDetail?.content || notice.content || "",
+      };
+    });
+  }, []);
+
   useEffect(() => {
     if (!notice_id) return;
 
-    const detail = get_notice_detail(notice_id);
+    // 관리자 게시글 데이터에서 공지사항 찾기
+    const numericId = Number(notice_id);
+    if (Number.isNaN(numericId)) {
+      set_notice_detail(null);
+      return;
+    }
 
+    const detail = allNotices.find((notice) => notice.id === numericId) || null;
     set_notice_detail(detail);
-  }, [notice_id]);
+  }, [notice_id, allNotices]);
 
   const handle_back_click = () => {
-    router.push("/notice");
+    // target에 따라 뒤로가기 경로 결정
+    if (target === "partner") {
+      router.push("/partner/notice");
+    } else {
+      router.push("/user/notice");
+    }
   };
 
   if (!notice_detail) {
@@ -94,8 +132,12 @@ export default function NoticeDetailPageClient() {
           </div>
 
           {/* 본문 내용 */}
-
-          <div className={styles.post_content}>{notice_detail.content}</div>
+          {/* dangerouslySetInnerHTML: HTML 태그를 실제로 렌더링하기 위해 사용 */}
+          {/* 관리자가 작성한 HTML 콘텐츠가 올바르게 표시됩니다 */}
+          <div
+            className={styles.post_content}
+            dangerouslySetInnerHTML={{ __html: notice_detail.content }}
+          />
         </div>
       </section>
     </main>

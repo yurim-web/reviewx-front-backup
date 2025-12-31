@@ -157,12 +157,16 @@ export default function CampaignCardBase({
         {/* 캠페인 상세 정보 */}
         <div className={cardStyles.campaign_info}>
           {/* 헤더: 카테고리 아이콘 + 마감 태그 */}
+          {/* 취소/반려 탭과 완료 탭에서는 태그를 표시하지 않습니다 */}
           <div className={cardStyles.campaign_header}>
             <CamCateIcon category={campaign.category} type={campaign.type} />
-            <CamTag
-              isUrgent={campaign.isUrgent}
-              remainingDays={campaign.remainingDays}
-            />
+            {/* 취소/반려 또는 완료 상태가 아닐 때만 태그 표시 */}
+            {campaign.status !== "취소/반려" && campaign.status !== "완료" && (
+              <CamTag
+                isUrgent={campaign.isUrgent}
+                remainingDays={campaign.remainingDays}
+              />
+            )}
           </div>
 
           {/* 캠페인 제목 */}

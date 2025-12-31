@@ -35,13 +35,13 @@ const meta: Meta<typeof ExperienceInspectionCard> = {
       description: "링크 확인 버튼 클릭 핸들러",
       action: "content checked",
     },
-    onApprove: {
-      description: "승인 버튼 클릭 핸들러",
-      action: "approved",
+    onExtend: {
+      description: "연장 버튼 클릭 핸들러",
+      action: "extended",
     },
-    onReject: {
-      description: "반려 버튼 클릭 핸들러",
-      action: "rejected",
+    onReport: {
+      description: "신고 버튼 클릭 핸들러",
+      action: "reported",
     },
     dateLabel: {
       description: "등록/수정/지각 등록 라벨",
@@ -64,15 +64,15 @@ const renderExperienceInspectionCard = (args: any) => {
  * 기본 검수 카드
  *
  * 검수탭에서 사용되는 경험형 검수 카드입니다.
- * 승인/반려 버튼이 표시됩니다.
+ * 연장/신고 버튼이 표시됩니다.
  */
 export const Default: Story = {
   render: renderExperienceInspectionCard,
   args: {
     applicant: mockApplicant,
     onContentCheck: (id) => console.log("Content checked:", id),
-    onApprove: (id) => console.log("Approved:", id),
-    onReject: (id) => console.log("Rejected:", id),
+    onExtend: (id) => console.log("Extended:", id),
+    onReport: (id) => console.log("Reported:", id),
     dateLabel: "등록",
   },
 };
@@ -82,10 +82,10 @@ export const Default: Story = {
  *
  * 1. 검수 카드 컴포넌트
  *    - 검수탭에서 사용되는 카드입니다
- *    - 하단에 승인/반려 버튼이 함께 노출됩니다
+ *    - 하단에 연장/신고 버튼이 함께 노출됩니다
  *
- * 2. 승인/반려 기능
- *    - onApprove: 콘텐츠를 승인하는 핸들러
- *    - onReject: 콘텐츠를 반려하는 핸들러
+ * 2. 연장/신고 기능
+ *    - onExtend: 연장 요청 핸들러
+ *    - onReport: 신고 핸들러
  */
 

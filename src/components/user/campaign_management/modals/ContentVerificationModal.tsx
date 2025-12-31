@@ -38,8 +38,17 @@
 
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import styles from "../../../../styles/user/campaign_management/modals/content_verification.module.css";
+import type { CampaignType } from "@/types/user/user";
+
+// 실제 캠페인 데이터 import
+import { deliveryCampaigns } from "@/data/campaign/delivery/deliveryCampaigns";
+import { visitCampaigns } from "@/data/campaign/visit/visitCampaigns";
+import { reviewCampaigns } from "@/data/campaign/review/reviewCampaigns";
+import { reporterCampaigns } from "@/data/campaign/reporter/reporterCampaigns";
+import { missionCampaigns } from "@/data/campaign/mission/missionCampaigns";
 
 /**
  * 미션 항목 인터페이스
@@ -60,47 +69,172 @@ interface ContentVerificationModalProps {
   isOpen: boolean;
   onClose: () => void;
   campaignTitle?: string;
-  /** 미션 항목 목록 (기본값: 일반적인 미션 항목들) */
+  /** 캠페인 ID (실제 캠페인 데이터에서 requirements를 가져오기 위해 필요) */
+  campaignId?: string;
+  /** 캠페인 타입 (실제 캠페인 데이터에서 requirements를 가져오기 위해 필요) */
+  campaignType?: CampaignType;
+  /** 미션 항목 목록 (기본값: 일반적인 미션 항목들, campaignId와 campaignType이 제공되면 무시됨) */
   missionItems?: MissionItem[];
 }
+
+/**
+ * requirements 코드를 한국어 텍스트로 변환하는 함수
+ *
+ * 설명:
+ * - 캠페인 데이터의 requirements 배열에 있는 코드를 읽기 쉬운 한국어로 변환합니다.
+ * - 예: "text_800" → "800자 이상"
+ * - 예: "photo_8" → "8장 이상"
+ * - 예: "video_1_60" → "1개 이상, 60초 이상"
+ * - 예: "product_link" → "본문 내 링크 첨부"
+ * - 예: "keyword" → "본문 내 키워드/태그 첨부"
+ *
+ * @param requirement - requirements 코드 (예: "text_800", "photo_8", "video_1_60", "product_link", "keyword")
+ * @returns 한국어로 변환된 미션 항목 텍스트
+ */
+const parseRequirement = (requirement: string): string => {
+  // 텍스트 요구사항: "text_800" → "800자 이상"
+  if (requirement.startsWith("text_")) {
+    const charCount = requirement.replace("text_", "");
+    return `${charCount}자 이상`;
+  }
+
+  // 사진 요구사항: "photo_8" → "8장 이상"
+  if (requirement.startsWith("photo_")) {
+    const photoCount = requirement.replace("photo_", "");
+    return `${photoCount}장 이상`;
+  }
+
+  // 동영상 요구사항: "video_1_60" → "1개 이상, 60초 이상"
+  // 또는 "video_report" → "동영상 필수"
+  if (requirement.startsWith("video_")) {
+    if (requirement === "video_report") {
+      return "동영상 필수";
+    }
+    const parts = requirement.replace("video_", "").split("_");
+    if (parts.length === 2) {
+      const [count, seconds] = parts;
+      return `${count}개 이상, ${seconds}초 이상`;
+    }
+    // "video_visit" 같은 경우
+    return "동영상 필수";
+  }
+
+  // 제품 링크 요구사항: "product_link" → "본문 내 링크 첨부"
+  if (requirement === "product_link") {
+    return "본문 내 링크 첨부";
+  }
+
+  // 키워드 요구사항: "keyword" → "본문 내 키워드/태그 첨부"
+  if (requirement === "keyword") {
+    return "본문 내 키워드/태그 첨부";
+  }
+
+  // 알 수 없는 요구사항은 그대로 반환
+  return requirement;
+};
+
+/**
+ * 실제 캠페인 데이터에서 requirements를 가져와서 MissionItem[]로 변환하는 함수
+ *
+ * 설명:
+ * - campaignId와 campaignType을 사용하여 실제 캠페인 데이터를 찾습니다.
+ * - 해당 캠페인의 requirements 배열을 가져와서 MissionItem[] 형식으로 변환합니다.
+ * - isCompleted는 현재 임시로 false로 설정 (나중에 실제 콘텐츠 데이터에서 확인)
+ *
+ * @param campaignId - 캠페인 ID (예: "delivery_1", "visit_2")
+ * @param campaignType - 캠페인 타입 (예: "배송형", "방문형")
+ * @returns MissionItem[] 형식의 미션 항목 목록
+ */
+const getMissionItemsFromCampaign = (
+  campaignId: string,
+  campaignType: CampaignType
+): MissionItem[] => {
+  // 모든 캠페인 데이터를 하나의 배열로 합치기
+  const allCampaigns = [
+    ...deliveryCampaigns,
+    ...visitCampaigns,
+    ...reviewCampaigns,
+    ...reporterCampaigns,
+    ...missionCampaigns,
+  ];
+
+  // 캠페인 ID로 실제 캠페인 데이터 찾기
+  const actualCampaign = allCampaigns.find((c) => c.id === campaignId);
+
+  if (!actualCampaign || !actualCampaign.requirements) {
+    // 캠페인을 찾을 수 없거나 requirements가 없으면 빈 배열 반환
+    return [];
+  }
+
+  // requirements를 MissionItem[]로 변환
+  return actualCampaign.requirements.map((requirement, index) => ({
+    id: `${index + 1}`,
+    text: parseRequirement(requirement),
+    isCompleted: false, // TODO: 실제 콘텐츠 데이터에서 충족 여부 확인
+  }));
+};
 
 export default function ContentVerificationModal({
   isOpen,
   onClose,
   campaignTitle,
+  campaignId,
+  campaignType,
   missionItems,
 }: ContentVerificationModalProps) {
-  // 기본 미션 항목 목록 (missionItems가 제공되지 않을 때 사용)
-  const defaultMissionItems: MissionItem[] = [
-    {
-      id: "1",
-      text: "글자 수 1,500자 이상",
-      isCompleted: true, // TODO: 실제 콘텐츠 데이터에서 가져오기
-    },
-    {
-      id: "2",
-      text: "사진 10장 이상",
-      isCompleted: true, // TODO: 실제 콘텐츠 데이터에서 가져오기
-    },
-    {
-      id: "3",
-      text: "동영상 1개 이상, 120초 이상",
-      isCompleted: false, // TODO: 실제 콘텐츠 데이터에서 가져오기
-    },
-    {
-      id: "4",
-      text: "본문 내 링크 첨부",
-      isCompleted: false, // TODO: 실제 콘텐츠 데이터에서 가져오기
-    },
-    {
-      id: "5",
-      text: "본문 내 키워드/태그 첨부",
-      isCompleted: true, // TODO: 실제 콘텐츠 데이터에서 가져오기
-    },
-  ];
+  // 미션 항목 목록 상태
+  const [items, setItems] = useState<MissionItem[]>([]);
 
-  // 미션 항목 목록 (prop이 제공되면 사용, 없으면 기본값 사용)
-  const items = missionItems || defaultMissionItems;
+  /**
+   * 미션 항목 목록 초기화
+   *
+   * 설명:
+   * - campaignId와 campaignType이 제공되면 실제 캠페인 데이터에서 requirements를 가져옵니다.
+   * - missionItems가 제공되면 그것을 사용합니다.
+   * - 둘 다 없으면 기본값을 사용합니다.
+   */
+  useEffect(() => {
+    if (campaignId && campaignType) {
+      // 실제 캠페인 데이터에서 requirements를 가져와서 변환
+      const missionItemsFromCampaign = getMissionItemsFromCampaign(
+        campaignId,
+        campaignType
+      );
+      setItems(missionItemsFromCampaign);
+    } else if (missionItems) {
+      // missionItems prop이 제공되면 사용
+      setItems(missionItems);
+    } else {
+      // 기본값 사용
+      setItems([
+        {
+          id: "1",
+          text: "글자 수 1,500자 이상",
+          isCompleted: true, // TODO: 실제 콘텐츠 데이터에서 가져오기
+        },
+        {
+          id: "2",
+          text: "사진 10장 이상",
+          isCompleted: true, // TODO: 실제 콘텐츠 데이터에서 가져오기
+        },
+        {
+          id: "3",
+          text: "동영상 1개 이상, 120초 이상",
+          isCompleted: false, // TODO: 실제 콘텐츠 데이터에서 가져오기
+        },
+        {
+          id: "4",
+          text: "본문 내 링크 첨부",
+          isCompleted: false, // TODO: 실제 콘텐츠 데이터에서 가져오기
+        },
+        {
+          id: "5",
+          text: "본문 내 키워드/태그 첨부",
+          isCompleted: true, // TODO: 실제 콘텐츠 데이터에서 가져오기
+        },
+      ]);
+    }
+  }, [campaignId, campaignType, missionItems]);
 
   // 모든 미션 항목이 충족되었는지 확인
   const allCompleted = items.every((item) => item.isCompleted);

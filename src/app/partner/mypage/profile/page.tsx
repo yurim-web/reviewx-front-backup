@@ -1,77 +1,110 @@
-'use client';
+/* ========================================
+   👤 파트너 프로필 탭 전용 페이지
+   ======================================== */
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import PartnerTabNavigation from '@/components/partner/campaign_management/TabNavigation';
-import SubTabNavigation from '@/components/common/mypage/SubTabNavigation';
-import layoutStyles from '../../../../styles/partner/layout.module.css';
-import styles from '../../../../styles/user/mypage/profile.module.css';
-import type { PartnerMainTab } from '@/types/partner/partner';
+/**
+ * 파트너 프로필 탭 전용 페이지
+ *
+ * 목적: 파트너(광고주)의 프로필 정보와 메뉴를 보여주는 독립적인 페이지입니다.
+ *
+ * 페이지 경로:
+ * - /partner/mypage/profile
+ *
+ * 주요 기능:
+ * - 프로필 정보 표시 및 편집
+ * - 이용 가이드, 공지사항, FAQ, 카카오톡 상담 메뉴
+ * - 로그아웃 기능
+ * - URL 기반 라우팅으로 새로고침 시에도 페이지 유지
+ *
+ * React 학습 포인트:
+ * - 컴포넌트 재사용: ProfileContent 공통 컴포넌트 사용
+ * - Props 전달: 자식 컴포넌트에 필요한 데이터 전달
+ * - 이벤트 핸들러: 로그아웃 버튼 클릭 처리
+ */
 
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import PartnerTabNavigation from "@/components/partner/campaign_management/TabNavigation";
+import SubTabNavigation from "@/components/common/mypage/SubTabNavigation";
+import ProfileContent from "@/components/common/mypage/ProfileContent";
+import layoutStyles from "../../../../styles/partner/layout.module.css";
+import type { PartnerMainTab } from "@/types/partner/partner";
+
+/**
+ * 파트너 프로필 탭 전용 페이지 컴포넌트
+ */
 export default function PartnerProfilePage() {
+  // Next.js의 useRouter 훅: 페이지 이동을 위한 라우터 객체
   const router = useRouter();
-  const [activeTopTab, setActiveTopTab] = useState<PartnerMainTab>('account');
-  const [activeSubTab, setActiveSubTab] = useState<'profile'>('profile');
+
+  // useState 훅: 컴포넌트의 상태(state)를 관리합니다.
+  // activeTopTab: 현재 활성화된 상단 탭 (캠페인/포인트/계정)
+  const [activeTopTab, setActiveTopTab] = useState<PartnerMainTab>("account");
+
+  // activeSubTab: 현재 활성화된 서브 탭 (프로필)
+  const [activeSubTab, setActiveSubTab] = useState<"profile">("profile");
+
+  /**
+   * 서브 탭 변경 핸들러
+   * 파트너는 프로필 탭만 있으므로 실제로는 사용되지 않지만, 타입 호환성을 위해 필요합니다.
+   */
+  const handleSubTabChange = (tab: "profile" | "channel") => {
+    // 파트너는 프로필만 있으므로 상태만 업데이트
+    if (tab === "profile") {
+      setActiveSubTab(tab);
+    }
+  };
+
+  /**
+   * 로그아웃 핸들러
+   *
+   * 로그아웃 버튼 클릭 시 실행되는 함수입니다.
+   * TODO: 실제 로그아웃 로직 구현 필요 (세션 삭제, 쿠키 삭제 등)
+   */
+  const handleLogout = () => {
+    // TODO: 실제 로그아웃 API 호출
+    // 예: await logoutAPI();
+    // 예: localStorage.removeItem('token');
+    // 예: router.push('/partner/login');
+    console.log("로그아웃 처리");
+  };
 
   return (
     <div className={layoutStyles.partner_dashboard_container}>
       <main className={layoutStyles.partner_main_content}>
+        {/* 상단 탭 네비게이션: 캠페인/포인트/계정 등 */}
         <PartnerTabNavigation
           activeTab={activeTopTab}
           setActiveTab={setActiveTopTab}
         />
+
+        {/* 서브 탭 네비게이션: 프로필 */}
         <SubTabNavigation
           activeSubTab={activeSubTab}
-          setActiveSubTab={setActiveSubTab}
+          setActiveSubTab={handleSubTabChange}
           basePath="/partner/mypage"
-          availableTabs={['profile']}
+          availableTabs={["profile"]}
         />
-        <div className={styles.profile_section}>
-          <div className={styles.profile_info}>
-            <div className={styles.profile_image} />
-            <div className={styles.profile_details}>
-              <div className={styles.profile_role}>파트너</div>
-              <div className={styles.profile_nickname_container}>
-                <div className={styles.profile_nickname}>브랜드_파트너</div>
-                <Image
-                  className={styles.edit_icon}
-                  src="/images/icons/chevron_right.svg"
-                  alt="프로필 편집 이동"
-                  width={16}
-                  height={16}
-                  onClick={() => router.push('/partner/mypage/edit')}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <div className={styles.menu_list}>
-          <button
-            className={styles.menu_item}
-            onClick={() =>
-              window.open('https://markx.dev/guide_book', '_blank')
-            }
-          >
-            <div className={styles.menu_icon} />
-            <div className={styles.menu_text}>이용 가이드</div>
-          </button>
-          <button
-            className={styles.menu_item}
-            onClick={() => router.push('/partner/campaign_management')}
-          >
-            <div className={styles.menu_icon} />
-            <div className={styles.menu_text}>캠페인 관리</div>
-          </button>
-          <button
-            className={styles.menu_item}
-            onClick={() => router.push('/partner/campaign_application')}
-          >
-            <div className={styles.menu_icon} />
-            <div className={styles.menu_text}>캠페인 신청 현황</div>
-          </button>
-        </div>
+        {/* 마이페이지 컨테이너 */}
+        <section className={layoutStyles.mypage_container}>
+          {/* 
+            ProfileContent 공통 컴포넌트 사용
+            Props로 필요한 데이터를 전달합니다:
+            - role: 사용자 역할 ("광고주")
+            - nickname: 회사명 또는 닉네임
+            - editPath: 내 정보 수정 페이지 경로
+            - onLogout: 로그아웃 버튼 클릭 시 실행할 함수
+          */}
+          <ProfileContent
+            role="광고주"
+            nickname="주식회사 청명종합광고기획"
+            editPath="/partner/mypage/edit"
+            onLogout={handleLogout}
+          />
+        </section>
       </main>
     </div>
   );

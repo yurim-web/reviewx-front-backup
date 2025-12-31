@@ -15,6 +15,7 @@
  * - /partner/campaign_management/progress (진행 탭)
  * - /partner/campaign_management/completed (종료 탭)
  * - /partner/campaign_management/cancelled (취소 탭)
+ * - /partner/campaign_management/extension-request (연장 요청 탭)
  *
  * 주요 기능:
  * - 상단 메인 탭 네비게이션 (캠페인/포인트/계정)
@@ -26,6 +27,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import TabNavigation from "./TabNavigation";
 import StatisticsTab from "./StatisticsTab";
 import type { PartnerMainTab } from "@/types/partner/partner";
@@ -83,6 +85,9 @@ export default function PartnerCampaignManagementHeader({
    * - useEffect에서 즉시 통계를 계산하여 업데이트합니다.
    * - 이렇게 하면 hydration 에러를 방지하면서도 빠르게 숫자를 표시할 수 있습니다.
    */
+  // 현재 경로 확인 (페이지 이동 여부 판단용)
+  const pathname = usePathname();
+
   const [stats, setStats] = useState<PartnerCampaignStats>({
     전체: 0,
     예정: 0,
@@ -90,6 +95,7 @@ export default function PartnerCampaignManagementHeader({
     진행: 0,
     종료: 0,
     취소: 0,
+    "연장 요청": 0,
     패널티: 0,
   });
 
@@ -133,41 +139,28 @@ export default function PartnerCampaignManagementHeader({
    * 통계 탭 변경 핸들러
    *
    * 설명:
-   * - 통계 탭을 클릭하면 해당 페이지로 이동합니다.
-   * - 현재 페이지와 같은 탭이면 이동하지 않습니다.
-   * - setActiveStatTab prop이 제공되면 그것을 사용하고, 없으면 내부에서 페이지 이동을 처리합니다.
-   *
+   * - 탭을 클릭하면 항상 해당 탭의 페이지로 이동합니다.
+   * - 현재 경로와 클릭한 탭의 경로가 같으면 이동하지 않습니다.
+   * - URL 기반 라우팅으로 새로고침 시에도 현재 탭이 유지됩니다.
    */
   const handleStatTabChange = (tab: PartnerStatTab) => {
-    // setActiveStatTab prop이 제공되면 그것을 사용
-    if (setActiveStatTab) {
-      setActiveStatTab(tab);
-      return;
-    }
+    // 각 탭에 해당하는 경로 매핑
+    const tabPaths: Record<PartnerStatTab, string> = {
+      전체: "/partner/campaign_management",
+      예정: "/partner/campaign_management/scheduled",
+      신청: "/partner/campaign_management/applied",
+      진행: "/partner/campaign_management/progress",
+      종료: "/partner/campaign_management/completed",
+      취소: "/partner/campaign_management/cancelled",
+      "연장 요청": "/partner/campaign_management/extension-request",
+      패널티: "/partner/campaign_management/penalty",
+    };
 
-    // prop이 없으면 내부에서 페이지 이동 처리
-    switch (tab) {
-      case "전체":
-        window.location.href = "/partner/campaign_management";
-        break;
-      case "예정":
-        window.location.href = "/partner/campaign_management/scheduled";
-        break;
-      case "신청":
-        window.location.href = "/partner/campaign_management/applied";
-        break;
-      case "진행":
-        window.location.href = "/partner/campaign_management/progress";
-        break;
-      case "종료":
-        window.location.href = "/partner/campaign_management/completed";
-        break;
-      case "취소":
-        window.location.href = "/partner/campaign_management/cancelled";
-        break;
-      case "패널티":
-        window.location.href = "/partner/campaign_management/penalty";
-        break;
+    const targetPath = tabPaths[tab];
+
+    // 현재 경로와 목표 경로가 다르면 페이지 이동
+    if (pathname !== targetPath) {
+      window.location.href = targetPath;
     }
   };
 

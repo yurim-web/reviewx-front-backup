@@ -142,6 +142,33 @@
   min-height: 68px;
 }
 
+/* ===== 메인 메뉴 고정 컨테이너 ===== */
+.main_menu_fixed_container {
+  position: fixed;
+  top: 80px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  background-color: white;
+  z-index: 99;
+}
+
+/* ===== 레이아웃 시프트 방지용 placeholder ===== */
+.layout_placeholder {
+  height: 149px; /* SubHeader(80px) + MainMenu(약 69px) */
+}
+
+.layout_placeholder_fixed {
+  height: 80px; /* SubHeader(80px)만 */
+}
+
+/* ===== 캠페인 정보 고정 시 placeholder ===== */
+.campaign_info_placeholder {
+  height: 101px;
+}
+
 /* ===== 반응형 스타일 ===== */
 
 /* ✅ 모바일 공통 — 0~739px */

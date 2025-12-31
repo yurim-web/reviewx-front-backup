@@ -8,44 +8,64 @@
  * 목적: 사용자들이 자주 묻는 질문과 답변을 카테고리별로 정리하여 보여주는 FAQ 페이지입니다.
  *
  * 페이지 경로:
- * - /user/faq
+ * - /faq
  *
  * 사용 파일:
  * - 컴포넌트: SubHeader
  * - CSS: faq.module.css
  *
  * 주요 기능:
- * - 카테고리별 FAQ 필터링 (전체, 미션형, 주문/배송, 교환/반품, 회원가입/로그인, 취소/환불, 포인트, 기타)
+ * - 카테고리별 FAQ 필터링 (관리자에서 등록한 카테고리 사용)
  * - 아코디언 형태의 Q&A 표시
  * - 질문 클릭 시 답변 펼치기/접기
- * - 메인 헤더 숨김 처리
+ * - 관리자 게시글 데이터 연동
  */
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import styles from "../../styles/user/faq/faq.module.css";
 import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
+import { posts_data } from "@/data/manager_ga/community/postsData";
+import { get_post_detail } from "@/data/manager_ga/community/postsData";
+import { convertPostsToFAQs, type FAQItem } from "@/utils/faq/convertPostToFAQ";
 import {
-  faqData,
-  faqCategories,
-  getFAQsByCategory,
-  type FAQItem,
-} from "@/data/faq/faqData";
-
-// 카테고리는 faqData.ts에서 import
+  categories_data,
+  type CategoryItem,
+} from "@/data/manager_ga/community/categoriesData";
 
 export default function FAQPage() {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const [expandedItems, setExpandedItems] = useState<number[]>([]);
 
-  const handleBackClick = () => {
-    router.back();
-  };
+  /**
+   * 관리자에서 등록한 카테고리 목록을 동적으로 가져오기
+   * - division이 "자주 묻는 질문"인 카테고리만 필터링
+   * - "전체" 카테고리를 맨 앞에 추가
+   */
+  const categories = useMemo(() => {
+    const faq_categories = categories_data
+      .filter(
+        (category: CategoryItem) => category.division === "자주 묻는 질문"
+      )
+      .map((category: CategoryItem) => category.category_name);
+
+    const unique_categories = Array.from(new Set(faq_categories));
+    return ["전체", ...unique_categories];
+  }, []);
+
+  /**
+   * 관리자 게시글 데이터를 FAQ로 변환
+   * - division이 "자주 묻는 질문"인 게시글만 변환
+   * - PostDetail의 content도 포함하여 변환
+   */
+  const converted_faqs = useMemo(() => {
+    return convertPostsToFAQs(posts_data, get_post_detail);
+  }, []);
 
   const handleToggleExpand = (id: number) => {
     setExpandedItems((prev) =>
@@ -53,9 +73,27 @@ export default function FAQPage() {
     );
   };
 
-  // 🔍 빈 상태 테스트: 아래 주석을 해제하면 빈 상태를 확인할 수 있습니다
-  // const filteredFAQs: FAQItem[] = [];
-  const filteredFAQs = getFAQsByCategory(selectedCategory);
+  /**
+   * FAQ 필터링
+   * - 카테고리별 필터링
+   * - 정렬 규칙:
+   *   1. 고정글(핀된 항목)은 상단 배치, 고정글끼리는 최신순
+   *   2. 일반 글은 최신순 정렬
+   */
+  const filteredFAQs = (
+    selectedCategory === "전체"
+      ? converted_faqs
+      : converted_faqs.filter((faq) => faq.category === selectedCategory)
+  ).sort((a, b) => {
+    // 1. 핀된 FAQ를 맨 위로 정렬
+    if (a.is_pinned && !b.is_pinned) return -1;
+    if (!a.is_pinned && b.is_pinned) return 1;
+
+    // 2. 둘 다 핀되어 있거나 둘 다 핀 안 되어 있으면 날짜 내림차순 (최신순)
+    const date_a = new Date(a.date).getTime();
+    const date_b = new Date(b.date).getTime();
+    return date_b - date_a;
+  });
 
   return (
     <div className={styles.faq_container}>
@@ -68,7 +106,7 @@ export default function FAQPage() {
         <section className={styles.section_container}>
           {/* 카테고리 필터 */}
           <div className={styles.category_container}>
-            {faqCategories.map((category) => (
+            {categories.map((category) => (
               <button
                 key={category}
                 className={`${styles.category_item} ${
@@ -93,14 +131,18 @@ export default function FAQPage() {
                     <div className={styles.question_content}>
                       <span
                         className={`${styles.question_number} ${
-                          expandedItems.includes(faq.id) ? styles.expanded_question : ""
+                          expandedItems.includes(faq.id)
+                            ? styles.expanded_question
+                            : ""
                         }`}
                       >
                         Q.
                       </span>
                       <span
                         className={`${styles.question_text} ${
-                          expandedItems.includes(faq.id) ? styles.expanded_question : ""
+                          expandedItems.includes(faq.id)
+                            ? styles.expanded_question
+                            : ""
                         }`}
                       >
                         {faq.question}

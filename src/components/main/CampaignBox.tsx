@@ -30,7 +30,14 @@ interface CampaignBoxProps {
       current: number; // 현재 신청자 수
       total: number; // 총 모집 인원
     };
-    schedule?: string; // 스케줄 정보 (선택적)
+    schedule?: string; // 스케줄 정보 (선택적) - 오픈 예정일 안내 텍스트 (예: "12/25 (목) 10:00\n모집 오픈")
+    detailedSchedule?: {
+      applicationStart: string; // 신청 시작일 (예: "2025-12-20")
+      applicationEnd: string; // 신청 마감일 (예: "2026-01-05")
+      announcement?: string; // 선정 발표일 (선택적)
+      purchasePeriod?: string; // 구매 기간 (구매평 캠페인용, 선택적)
+      registrationPeriod?: string; // 등록 기간 (선택적)
+    };
   };
   basePath?: string; // 링크 기본 경로 (기본값: /campaign/delivery)
 }
@@ -42,6 +49,69 @@ export default function CampaignBox({
   campaign,
   basePath = "/campaign/delivery",
 }: CampaignBoxProps) {
+  /**
+   * 캠페인 상태 태그 계산 함수
+   *
+   * 모집기간을 기준으로 캠페인 상태를 계산하여 태그 텍스트를 반환합니다.
+   *
+   * 로직:
+   * 1. 오늘 < applicationStart → 오픈 예정 → null 반환 (태그 없음, schedule 오버레이만 표시)
+   * 2. applicationStart <= 오늘 <= applicationEnd → 모집 중 → 남은 일수 계산
+   *    - 남은 일수가 1일 이하 → "마감임박"
+   *    - 남은 일수가 2일 이상 → "n일 전" 형태
+   * 3. 오늘 > applicationEnd → "마감"
+   * 4. dayCount에 "긴급"이 있으면 → "긴급" 우선 표시
+   *
+   * @returns 상태 태그 텍스트 또는 null (태그 없음)
+   */
+  const getCampaignStatusTag = (): string | null => {
+    // 긴급 상태 우선 체크 (dayCount에 "긴급"이 있으면 우선 표시)
+    if (campaign.dayCount === "긴급") {
+      return "긴급";
+    }
+
+    // detailedSchedule이 없으면 기존 dayCount 사용 (하위 호환성)
+    if (!campaign.detailedSchedule) {
+      return campaign.dayCount || null;
+    }
+
+    const { applicationStart, applicationEnd } = campaign.detailedSchedule;
+
+    // 오늘 날짜 (시간 정보 제거)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // 신청 시작일과 마감일 파싱
+    const startDate = new Date(applicationStart);
+    startDate.setHours(0, 0, 0, 0);
+
+    const endDate = new Date(applicationEnd);
+    endDate.setHours(0, 0, 0, 0);
+
+    // 오늘 < applicationStart → 오픈 예정 (태그 없음)
+    if (today < startDate) {
+      return null;
+    }
+
+    // 오늘 > applicationEnd → 마감
+    if (today > endDate) {
+      return "마감";
+    }
+
+    // applicationStart <= 오늘 <= applicationEnd → 모집 중
+    // 남은 일수 계산 (마감일까지 남은 일수)
+    const diffTime = endDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    // 남은 일수가 3일 이하 → "마감임박"
+    if (diffDays <= 3) {
+      return "마감임박";
+    }
+
+    // 남은 일수가 4일 이상 → "n일 전" 형태
+    return `${diffDays}일 전`;
+  };
+
   // 캠페인 타입에 따른 올바른 경로 결정
   const getCampaignPath = (campaign: any) => {
     switch (campaign.category) {
@@ -60,14 +130,34 @@ export default function CampaignBox({
     }
   };
 
+  // 캠페인 상태 태그 계산
+  const statusTag = getCampaignStatusTag();
+
+  // 오픈 예정 여부 확인 (오늘 < applicationStart)
+  // 오픈 예정인 경우 태그를 표시하지 않고 schedule 오버레이만 표시합니다
+  const isUpcoming = (): boolean => {
+    if (!campaign.detailedSchedule) {
+      return false;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const startDate = new Date(campaign.detailedSchedule.applicationStart);
+    startDate.setHours(0, 0, 0, 0);
+
+    return today < startDate;
+  };
+
   return (
     // Next.js Link 컴포넌트 사용
     // href에 동적 경로를 설정: 캠페인 타입에 따라 올바른 경로로 이동
     <Link href={getCampaignPath(campaign)} className={styles.campaign_link}>
       <div className={styles.campaign_box}>
-        {/* 상단 라벨 - D-숫자 동적 표시 (dayCount가 있을 때만) */}
-        {campaign.dayCount && (
-          <div className={styles.campaign_label}>{campaign.dayCount}</div>
+        {/* 상단 라벨 - 캠페인 상태 태그 표시 */}
+        {/* 오픈 예정이 아닌 경우에만 상태 태그 표시 (오픈 예정은 태그 없음) */}
+        {statusTag && !isUpcoming() && (
+          <div className={styles.campaign_label}>{statusTag}</div>
         )}
 
         {/* 제품 이미지 영역 */}
@@ -78,8 +168,9 @@ export default function CampaignBox({
             className={styles.product_image}
           />
 
-          {/* 조건부 렌더링: campaign.schedule이 있을 때만 표시 (이미지 위에만) */}
-          {campaign.schedule && (
+          {/* 조건부 렌더링: 오픈 예정일 때만 스케줄 오버레이 표시 */}
+          {/* 오픈 예정인 경우 (오늘 < applicationStart) schedule 오버레이 표시 */}
+          {isUpcoming() && campaign.schedule && (
             <div className={styles.schedule_overlay}>
               <span className={styles.schedule_overlay_text}>
                 {campaign.schedule}

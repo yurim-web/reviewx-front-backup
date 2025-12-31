@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import ReporterCampaignForm from "@/components/partner/campaign_create_form/ReporterCampaignForm";
 import { CampaignFormData } from "@/types/user/user";
-import { updateReporterCampaign } from "@/data/partner/reporter";
+import { updateReporterCampaign } from "@/data/campaign/reporter/reporterCampaigns";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import layoutStyles from "../../../../../../styles/partner/layout.module.css";

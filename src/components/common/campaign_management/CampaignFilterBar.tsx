@@ -25,7 +25,7 @@ const DEFAULT_CHANNEL_OPTIONS = [
   "유튜브",
   "쇼츠",
 ];
-const DEFAULT_SORT_OPTIONS = ["최신순", "인기순", "마감임박순"];
+const DEFAULT_SORT_OPTIONS = ["최신순", "오래된순", "마감임박순"];
 const DEFAULT_SORT = "최신순";
 
 export default function CampaignFilterBar<

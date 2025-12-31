@@ -30,6 +30,8 @@
 import { useState } from "react";
 import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
+import BaseModal from "@/components/common/modal/BaseModal";
+import ErrorText from "@/components/common/error_text/ErrorText";
 import styles from "@/styles/common/reset_password/reset_password.module.css";
 
 export default function ResetPasswordPage() {
@@ -50,6 +52,11 @@ export default function ResetPasswordPage() {
   const [passwordConfirmError, setPasswordConfirmError] = useState<
     string | undefined
   >();
+  // isSuccessModalOpen: 비밀번호 변경 완료 모달 열림 상태
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState<boolean>(false);
+  // TODO: 현재 비밀번호는 API에서 가져오거나 세션/쿠키에서 가져와야 함
+  // 현재는 테스트용으로 빈 문자열로 설정 (실제 구현 시 API 연동 필요)
+  const [currentPassword] = useState<string>("");
 
   /**
    * 비밀번호 유효성 검사 함수
@@ -108,9 +115,17 @@ export default function ResetPasswordPage() {
       return;
     }
 
+    // 현재 비밀번호와 동일한지 검증
+    // TODO: currentPassword는 실제로는 API에서 가져오거나 세션/쿠키에서 가져와야 함
+    if (currentPassword && password === currentPassword) {
+      setPasswordError("기존 비밀번호는 사용할 수 없습니다.");
+      return;
+    }
+
     // TODO: 실제 비밀번호 변경 API 연동
     console.log("새 비밀번호 설정:", { password });
-    alert("비밀번호가 변경되었습니다. 변경된 비밀번호로 로그인해 주세요.");
+    // 비밀번호 변경 완료 모달 표시
+    setIsSuccessModalOpen(true);
   };
 
   /**
@@ -202,11 +217,7 @@ export default function ResetPasswordPage() {
                 </button>
               </div>
               {/* 조건부 렌더링: passwordError가 있을 때만 에러 메시지 표시 */}
-              {passwordError && (
-                <div className={styles.error_message}>
-                  <span className={styles.error_text}>{passwordError}</span>
-                </div>
-              )}
+              <ErrorText message={passwordError} />
             </div>
 
             {/* 새 비밀번호 확인 입력 필드 */}
@@ -261,13 +272,7 @@ export default function ResetPasswordPage() {
                 </button>
               </div>
               {/* 조건부 렌더링: passwordConfirmError가 있을 때만 에러 메시지 표시 */}
-              {passwordConfirmError && (
-                <div className={styles.error_message}>
-                  <span className={styles.error_text}>
-                    {passwordConfirmError}
-                  </span>
-                </div>
-              )}
+              <ErrorText message={passwordConfirmError} />
             </div>
           </form>
 
@@ -283,6 +288,14 @@ export default function ResetPasswordPage() {
           </button>
         </section>
       </main>
+
+      {/* 비밀번호 변경 완료 모달 */}
+      <BaseModal
+        is_open={isSuccessModalOpen}
+        on_close={() => setIsSuccessModalOpen(false)}
+        message="비밀번호 변경이 완료되었습니다."
+        buttons={["닫기"]}
+      />
     </div>
   );
 }

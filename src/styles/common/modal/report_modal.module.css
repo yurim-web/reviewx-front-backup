@@ -1,0 +1,289 @@
+/* ========================================
+   🚨 신고 모달 스타일
+   ======================================== */
+
+/**
+ * 신고 모달 스타일
+ * 
+ * 사용 컴포넌트:
+ * - ReportModal.tsx (신고 모달 컴포넌트)
+ */
+
+/* ========================================
+   중앙 정렬 모달 (Center Modal)
+   ======================================== */
+
+/* 중앙 정렬 모달 오버레이 */
+.modal_overlay_center {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* 중앙 정렬 모달 컨테이너 */
+.modal_container_center {
+  background: #ffffff;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 12px;
+  padding: 40px 32px;
+  display: flex;
+  box-sizing: border-box;
+  position: relative;
+  max-height: 90vh;
+  overflow: hidden;
+}
+
+/* ========================================
+   하단 정렬 모달 (Bottom Modal)
+   ======================================== */
+
+/* 하단 정렬 모달 오버레이 */
+.modal_overlay_bottom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 9999;
+}
+
+/* 하단 정렬 모달 컨테이너 */
+.modal_container_bottom {
+  background: #ffffff;
+  width: 100%;
+  border-radius: 12px 12px 0 0;
+  padding: 40px 32px;
+  display: flex;
+  box-sizing: border-box;
+  position: relative;
+  max-height: 90vh;
+  overflow: hidden;
+}
+
+/* ========================================
+    모달 콘텐츠 영역
+   ======================================== */
+
+/* 모달 콘텐츠 영역 */
+.modal_content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* 모달 제목 */
+.modal_title {
+  color: #444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  padding-bottom: 32px;
+}
+
+/* ========================================
+   옵션 리스트
+   ======================================== */
+
+/* 옵션 리스트 */
+.options_list {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* 옵션 아이템 */
+.option_item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* 옵션 라디오 버튼 */
+.option_radio {
+  width: 16px;
+  height: 16px;
+  border: 1px solid #d9d9d9;
+  border-radius: 50%;
+  cursor: pointer;
+  appearance: none;
+  background: white;
+  position: relative;
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.option_radio:checked {
+  background: white;
+  border-color: #444;
+}
+
+.option_radio:checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #444;
+}
+
+/* 옵션 라벨 */
+.option_label {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* ========================================
+   기타 사유 입력 영역
+   ======================================== */
+
+/* 기타 사유 입력 영역 래퍼 */
+.other_reason_wrapper {
+  width: 100%;
+  margin-top: 16px;
+  margin-bottom: 0;
+}
+
+/* 기타 사유 textarea */
+.other_reason_textarea {
+  width: 100%;
+  height: 144px;
+  min-height: 144px;
+  max-height: 144px;
+  padding: 16px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #444;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: -0.32px;
+  font-family: inherit;
+  box-sizing: border-box;
+  resize: none;
+  outline: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  /* Firefox 스크롤바 스타일 */
+  scrollbar-width: thin;
+  scrollbar-color: #d9d9d9 transparent;
+}
+
+.other_reason_textarea:focus {
+  border-color: #555555;
+}
+
+.other_reason_textarea::placeholder {
+  color: #999999;
+  opacity: 0.8;
+}
+
+/* 기타 사유 textarea 스크롤바 스타일링 */
+.other_reason_textarea::-webkit-scrollbar {
+  width: 16px;
+}
+
+.other_reason_textarea::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 8px 0;
+}
+
+.other_reason_textarea::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 100px;
+  border: 12px solid transparent;
+  background-clip: padding-box;
+}
+
+.other_reason_textarea::-webkit-scrollbar-thumb:hover {
+  background: #999999;
+  background-clip: padding-box;
+}
+
+/* ========================================
+   모달 푸터 스타일
+   ======================================== */
+
+/* 모달 푸터 컨테이너 */
+.modal_footer {
+  display: flex;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 32px;
+}
+
+/* 버튼이 하나일 때 스타일 */
+.modal_footer > *:only-child {
+  width: 100%;
+}
+
+/* 버튼이 두 개일 때 스타일 */
+.modal_footer > *:not(:only-child) {
+  flex: 1;
+}
+
+/* 모달 푸터 버튼 공통 스타일 */
+.modal_footer_button_cancel,
+.modal_footer_button_confirm,
+.modal_footer_button_single {
+  width: 162px;
+  height: 48px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+/* 모달 푸터 취소 버튼(왼쪽 버튼) */
+.modal_footer_button_cancel {
+  background-color: #f6f6f6;
+  color: #444;
+}
+
+/* 모달 푸터 확인 버튼 (신고 버튼 - 빨간색 배경) */
+.modal_footer_button_confirm {
+  background-color: #ff2626;
+  color: #ffffff;
+}
+
+/* 하나 버튼 스타일 (전체 너비) */
+.modal_footer_button_single {
+  width: 100%;
+  background-color: #f6f6f6;
+  color: #444444;
+}

@@ -39,6 +39,3 @@ export default function ResetPasswordLayout({
   // 필요 시 여기에서 배경색, 공통 래퍼 등을 추가할 수 있습니다.
   return <>{children}</>;
 }
-
-
-

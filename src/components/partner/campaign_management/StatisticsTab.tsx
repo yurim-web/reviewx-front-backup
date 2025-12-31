@@ -11,7 +11,7 @@
  * - /partner (파트너 캠페인 관리 페이지 - 상단 고정)
  *
  * 주요 기능:
- * - 전체/예정/신청/진행/종료/취소/패널티 상태별 개수 표시
+ * - 전체/예정/신청/진행/종료/취소/연장 요청/패널티 상태별 개수 표시
  * - 각 탭 클릭 시 상태 변경으로 캠페인 목록 필터링
  * - 활성화된 탭 스타일 표시 (노란색 밑줄)
  * - 상단 고정으로 스크롤 시에도 접근 가능
@@ -32,7 +32,7 @@ interface StatisticsTabProps {
 /**
  * 캠페인 상태별 통계를 보여주는 탭
  * - 각 탭을 클릭하면 해당 상태의 캠페인 목록을 필터링
- * - 7개 탭: 전체, 예정, 신청, 진행, 종료, 취소, 패널티
+ * - 8개 탭: 전체, 예정, 신청, 진행, 종료, 취소, 연장 요청, 패널티
  */
 export default function StatisticsTab({
   activeStatTab,
@@ -116,6 +116,17 @@ export default function StatisticsTab({
           >
             <span>취소</span>
             <span className={styles.stat_number}>{stats.취소}</span>
+          </button>
+
+          {/* 연장 요청 탭 */}
+          <button
+            className={`${styles.stat_tab} ${
+              activeStatTab === "연장 요청" ? styles.active : ""
+            }`}
+            onClick={() => setActiveStatTab("연장 요청")}
+          >
+            <span>연장 요청</span>
+            <span className={styles.stat_number}>{stats["연장 요청"]}</span>
           </button>
         </div>
       </div>

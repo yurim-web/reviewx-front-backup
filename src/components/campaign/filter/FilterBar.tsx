@@ -27,7 +27,7 @@
 
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import styles from "../../../styles/filter/filter_bar.module.css";
 import ModalFilter from "./ModalFilter";
 import RegionFilter from "./RegionFilter";
@@ -61,8 +61,6 @@ interface FilterBarProps {
   closingSoon?: boolean;
   // 마감임박 필터 변경 핸들러
   onClosingSoonChange?: (closingSoon: boolean) => void;
-  // 기본 정렬값
-  defaultSort?: string;
 }
 
 export default function FilterBar({
@@ -74,11 +72,7 @@ export default function FilterBar({
   sortOptions = ["최신순", "인기순", "마감임박순", "포인트높은순"],
   closingSoon = false,
   onClosingSoonChange,
-  defaultSort = "최신순",
 }: FilterBarProps) {
-  // 컴포넌트 외부 클릭 감지를 위한 루트 ref
-  const containerRef = useRef<HTMLDivElement>(null);
-
   // 필터 상태 관리
   const [selectedSort, setSelectedSort] = useState("최신순"); // 실제 선택된 정렬 옵션
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false); // 카테고리 모달 열림 상태
@@ -115,6 +109,10 @@ export default function FilterBar({
     isSortModalOpen,
   ]);
 
+  /* ========================================
+     모달 열기 함수
+     ======================================== */
+
   // 카테고리 버튼 클릭 핸들러
   const handleCategoryButtonClick = () => {
     setTempCategories(activeFilters.categories || []);
@@ -132,6 +130,10 @@ export default function FilterBar({
     setTempRegions(activeFilters.regions || []);
     setIsRegionModalOpen(true);
   };
+
+  /* ========================================
+     정렬 함수
+     ======================================== */
 
   // 정렬 버튼 클릭 핸들러
   const handleSortButtonClick = () => {
@@ -154,6 +156,10 @@ export default function FilterBar({
     onFilterChange?.({ sortBy: sort });
     setIsSortModalOpen(false); // 선택 후 모달 닫기
   };
+
+  /* ========================================
+     모달 내부 선택/해제 함수
+     ======================================== */
 
   // 모달 내에서 카테고리 선택/해제 핸들러
   const handleCategoryToggle = (
@@ -203,9 +209,12 @@ export default function FilterBar({
 
   // 지역 선택 변경 핸들러 (RegionFilter에서 사용)
   const handleRegionChange = (regions: string[]) => {
-    console.log("🔧 FilterBar - 지역 변경:", regions);
     setTempRegions(regions);
   };
+
+  /* ========================================
+     필터 적용 함수
+     ======================================== */
 
   // 카테고리 필터 적용하기
   const handleCategoryApply = () => {
@@ -222,14 +231,13 @@ export default function FilterBar({
   // 지역 필터 적용하기
   const handleRegionApply = (regions?: string[]) => {
     const regionsToApply = regions || tempRegions;
-    console.log("🔧 FilterBar - 지역 필터 적용:", regionsToApply);
-    console.log(
-      "🔧 FilterBar - 전달할 region 문자열:",
-      regionsToApply.join(",")
-    );
     onFilterChange?.({ region: regionsToApply.join(",") });
     setIsRegionModalOpen(false);
   };
+
+  /* ========================================
+     초기화 함수
+     ======================================== */
 
   // 카테고리 선택 초기화
   const handleCategoryReset = () => {
@@ -245,6 +253,10 @@ export default function FilterBar({
   const handleRegionReset = () => {
     setTempRegions([]);
   };
+
+  /* ========================================
+     필터 제거 함수
+     ======================================== */
 
   // 활성 필터 태그에서 채널 제거하는 함수
   const handleChannelRemove = (channel: string) => {
@@ -278,17 +290,9 @@ export default function FilterBar({
     });
   };
 
-  // 정렬 옵션 선택 핸들러 (드롭다운용 - 현재 사용하지 않음)
-  const handleSortSelect = (sort: string) => {
-    // 선택된 정렬 옵션 저장
-    setSelectedSort(sort);
-    // 부모 컴포넌트에 정렬 기준 전달
-    onFilterChange?.({ sortBy: sort });
-  };
-
   return (
     <>
-      <div ref={containerRef} className={styles.filter_bar}>
+      <div className={styles.filter_bar}>
         <div className={styles.filter_buttons_container}>
           <div className={styles.filter_buttons}>
             {/* 카테고리 필터 버튼 */}
@@ -300,6 +304,11 @@ export default function FilterBar({
               }`}
               onClick={handleCategoryButtonClick}
             >
+              {/* 
+                체크박스 아이콘
+                - 필터가 활성화되어 있으면 체크마크가 표시됨
+                - filter_button_active 클래스가 적용되면 CSS의 ::after 가상 요소로 체크마크가 표시됨
+              */}
               <div className={styles.filter_icon}></div>
               <span>카테고리</span>
               <img
@@ -319,6 +328,11 @@ export default function FilterBar({
                 }`}
                 onClick={handleChannelButtonClick}
               >
+                {/* 
+                  체크박스 아이콘
+                  - 필터가 활성화되어 있으면 체크마크가 표시됨
+                  - filter_button_active 클래스가 적용되면 CSS의 ::after 가상 요소로 체크마크가 표시됨
+                */}
                 <div className={styles.filter_icon}></div>
                 <span>채널</span>
                 <img
@@ -339,6 +353,11 @@ export default function FilterBar({
                 }`}
                 onClick={handleRegionButtonClick}
               >
+                {/* 
+                  체크박스 아이콘
+                  - 필터가 활성화되어 있으면 체크마크가 표시됨
+                  - filter_button_active 클래스가 적용되면 CSS의 ::after 가상 요소로 체크마크가 표시됨
+                */}
                 <div className={styles.filter_icon}></div>
                 <span>지역</span>
                 <img
@@ -358,6 +377,11 @@ export default function FilterBar({
                 onClosingSoonChange?.(!closingSoon);
               }}
             >
+              {/* 
+                체크박스 아이콘
+                - 마감임박 필터가 활성화되어 있으면 체크마크가 표시됨
+                - filter_button_active 클래스가 적용되면 CSS의 ::after 가상 요소로 체크마크가 표시됨
+              */}
               <div className={styles.filter_icon}></div>
               <span>긴급</span>
             </button>
@@ -486,7 +510,6 @@ export default function FilterBar({
         options={sortOptions}
         selectedValue={tempSort}
         onOptionChange={handleSortToggle}
-        defaultSort={defaultSort}
       />
     </>
   );

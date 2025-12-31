@@ -25,7 +25,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import VisitCampaignForm from "@/components/partner/campaign_create_form/VisitCampaignForm";
 import { CampaignFormData } from "@/types/user/user";
-import { updateVisitCampaign } from "@/data/partner/visit";
+import { updateVisitCampaign } from "@/data/campaign/visit/visitCampaigns";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 // 분리된 CSS 모듈들 import
