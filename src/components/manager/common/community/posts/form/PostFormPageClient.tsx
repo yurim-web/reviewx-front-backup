@@ -16,11 +16,16 @@
  * - /manager_sa/community/posts/[id]/edit (SA 관리자 게시글 수정 페이지)
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import styles from "@/styles/manager/common/community/posts/post_edit_page.module.css";
 import { CustomDropdown } from "@/components/partner/campaign_create_form/common/selectors/CustomDropdown";
 import { PostEditorField } from "@/components/manager/common/community/posts/form/PostEditorField";
+// 카테고리 데이터를 가져와서 구분에 따라 필터링된 카테고리 목록을 표시하기 위해 import
+import {
+  categories_data,
+  type CategoryDivision,
+} from "@/data/manager_ga/community/categoriesData";
 
 // 컴포넌트 Props 타입 정의
 interface PostFormPageClientProps {
@@ -40,7 +45,7 @@ interface PostFormPageClientProps {
   manager_type: "ga" | "sa";
 }
 
-// 사이드바 메뉴 데이터 (리스트 렌더링 학습용)
+// 사이드바 메뉴 데이터
 const side_menu_items = [
   { label: "홈", isActive: false },
   { label: "캠페인", isActive: false },
@@ -61,18 +66,16 @@ const side_menu_items = [
 ];
 
 // 드롭다운 옵션 데이터
+// 구분 옵션: 공지사항, 자주 묻는 질문
 const category_type_options = ["공지사항", "자주 묻는 질문"];
-const category_options = [
-  "전체",
-  "공지사항",
-  "교환/반품",
-  "이벤트",
-  "자주 묻는 질문",
-  "중요",
-  "취소/환불",
-  "회원가입/로그인",
-];
+// 대상 옵션
 const target_options = ["전체", "리뷰어", "파트너", "관리자"];
+
+/**
+ * 카테고리 목록은 구분(category_type)에 따라 동적으로 필터링됩니다.
+ * 카테고리 관리 페이지(/manager_sa/community/categories)에서 등록한 카테고리 중
+ * 선택된 구분과 일치하는 카테고리만 표시됩니다.
+ */
 
 export default function PostFormPageClient({
   mode,
@@ -101,6 +104,43 @@ export default function PostFormPageClient({
   const [category, setCategory] = useState(initial_data?.category || "");
   const [target, setTarget] = useState(initial_data?.target || "");
   const [title, setTitle] = useState(initial_data?.title || "");
+
+  /**
+   * 구분(category_type)이 변경되면 카테고리도 초기화
+   * useEffect: 컴포넌트의 상태가 변경될 때 실행되는 React Hook입니다.
+   * category_type이 변경되면 category를 빈 문자열로 초기화합니다.
+   */
+  useEffect(() => {
+    // 구분이 변경되면 카테고리 선택을 초기화
+    setCategory("");
+  }, [category_type]);
+
+  /**
+   * 선택된 구분에 따라 카테고리 목록을 필터링
+   * useMemo: 계산 비용이 큰 값을 메모이제이션하여 성능을 최적화합니다.
+   * category_type이 변경될 때만 다시 계산됩니다.
+   *
+   * 필터링 로직:
+   * 1. category_type이 선택되지 않았으면 빈 배열 반환
+   * 2. categories_data에서 division이 category_type과 일치하는 항목만 필터링
+   * 3. category_name만 추출하여 배열로 반환
+   */
+  const category_options = useMemo(() => {
+    // 구분이 선택되지 않았으면 빈 배열 반환
+    if (!category_type) {
+      return [];
+    }
+
+    // 카테고리 데이터에서 선택된 구분과 일치하는 카테고리만 필터링
+    // filter: 배열에서 조건에 맞는 요소만 추출하는 JavaScript 배열 메서드입니다.
+    const filtered_categories = categories_data.filter(
+      (item) => item.division === (category_type as CategoryDivision)
+    );
+
+    // map: 배열의 각 요소를 변환하여 새로운 배열을 만드는 JavaScript 배열 메서드입니다.
+    // category_name만 추출하여 카테고리 옵션 배열 생성
+    return filtered_categories.map((item) => item.category_name);
+  }, [category_type]);
 
   useEffect(() => {
     setIsMounted(true);

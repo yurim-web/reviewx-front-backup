@@ -14,168 +14,41 @@
  * - 포인트 충전 내역만 표시 (type: "earned")
  * - 보유 포인트 현황 표시
  * - 포인트 충전 기능
+ *
+ * 📌 리팩토링:
+ * - 공통 UI는 PartnerPointPageLayout 컴포넌트로 추출
+ * - 이 페이지는 충전 내역만 필터링하여 표시
  */
 
-'use client';
+"use client";
 
-import { useState, useRef } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import TabNavigation from '@/components/partner/campaign_management/TabNavigation';
-import PointTabNavigation from '@/components/common/point/PointTabNavigation';
-import { PartnerMainTab, PartnerPointTab } from '@/types/partner/partner';
+import PartnerPointPageLayout from "@/components/partner/point/PartnerPointPageLayout";
+import { PartnerPointHistory } from "@/types/partner/partner";
 import {
   partnerPointHistoryData,
   partnerPointSummary,
-} from '@/data/partner/point/pointData';
-import styles from '@/styles/user/point/point.module.css';
+} from "@/data/partner/point/pointData";
 
 /**
  * 파트너 포인트 충전 내역 페이지 컴포넌트
+ *
+ * 📌 학습 포인트:
+ * - 공통 컴포넌트를 사용하여 코드 중복 제거
+ * - 필터 함수를 전달하여 충전 내역만 표시
  */
 export default function PartnerEarnedPointPage() {
-  const router = useRouter();
-  const [activeMainTab, setActiveMainTab] = useState<PartnerMainTab>('point');
-  const [activePointTab, setActivePointTab] =
-    useState<PartnerPointTab>('earned');
-  const tooltipRef = useRef<HTMLSpanElement>(null);
-
-  /**
-   * 포인트 탭 변경 핸들러
-   * 각 탭 클릭 시 해당 페이지로 이동
-   */
-  const handlePointTabChange = (tab: PartnerPointTab) => {
-    switch (tab) {
-      case 'all':
-        window.location.href = '/partner/point/all';
-        break;
-      case 'earned':
-        // 현재 페이지이므로 아무것도 하지 않음
-        break;
-      case 'withdrawn':
-        window.location.href = '/partner/point/withdrawn';
-        break;
-    }
-  };
-
-  /**
-   * 충전 버튼 클릭 핸들러
-   * 포인트 충전 페이지로 이동
-   */
-  const handleChargeClick = () => {
-    router.push('/partner/point/charge');
-  };
-
-  // 충전 내역만 필터링 (type: "earned")
-  const filteredHistoryData = partnerPointHistoryData.filter(
-    (history) => history.type === 'earned',
-  );
+  // 충전 내역만 필터링하는 함수
+  // 📌 필터 함수:
+  // - type이 "earned"인 내역만 반환
+  const filterEarnedHistory = (history: PartnerPointHistory) =>
+    history.type === "earned";
 
   return (
-    <div className={styles.point_page}>
-      <main className={styles.main_content}>
-        <div className={styles.container}>
-          {/* 메인 탭 네비게이션 */}
-          <TabNavigation
-            activeTab={activeMainTab}
-            setActiveTab={setActiveMainTab}
-          />
-
-          {/* 포인트 세부 탭 네비게이션 */}
-          <PointTabNavigation
-            activePointTab={activePointTab}
-            setActivePointTab={handlePointTabChange}
-            basePath="/partner/point"
-            tabLabels={{ earned: '충전', withdrawn: '사용' }}
-          />
-
-          {/* 포인트 요약 정보 */}
-          <article className={styles.point_summary_section}>
-            <div className={styles.point_summary_info}>
-              <span className={styles.point_label}>보유 포인트</span>
-              <div className={styles.point_amount}>
-                <span className={styles.amount_number}>
-                  {partnerPointSummary.total_points.toLocaleString()}
-                </span>
-                <span className={styles.amount_unit}>P</span>
-              </div>
-            </div>
-
-            <button
-              className={styles.withdrawal_button}
-              onClick={handleChargeClick}
-            >
-              포인트 충전하기
-            </button>
-          </article>
-
-          {/* 포인트 충전 내역 리스트 */}
-          <article className={styles.history_list}>
-            {filteredHistoryData.map((history) => (
-              <div key={history.id} className={styles.history_item}>
-                {/* 상태 배지 */}
-                <div className={styles.status_badge_container}>
-                  <div
-                    className={`${styles.status_badge} ${
-                      history.type === 'earned'
-                        ? styles.charged
-                        : history.type === 'withdrawn' &&
-                          history.status === 'completed'
-                        ? styles.used
-                        : history.status === 'earned'
-                        ? styles.earned
-                        : history.status === 'completed'
-                        ? styles.completed
-                        : history.status === 'pending'
-                        ? styles.pending
-                        : styles.cancelled
-                    }`}
-                  >
-                    {history.type === 'earned'
-                      ? '충전'
-                      : history.type === 'withdrawn'
-                      ? '사용'
-                      : history.status === 'completed'
-                      ? '완료'
-                      : history.status === 'pending'
-                      ? '신청'
-                      : '취소'}
-                  </div>
-                </div>
-
-                {/* 내역 정보 */}
-                <div className={styles.history_info}>
-                  <div className={styles.history_description}>
-                    {history.description}
-                  </div>
-                  <div className={styles.history_date}>{history.date}</div>
-                </div>
-
-                {/* 포인트 정보 */}
-                <div className={styles.point_info}>
-                  <div
-                    className={`${styles.point_change} ${
-                      history.status === 'failed'
-                        ? styles.cancelled_amount
-                        : history.amount > 0
-                        ? styles.positive
-                        : styles.negative
-                    }`}
-                  >
-                    {history.amount > 0
-                      ? `+ ${history.amount.toLocaleString()}`
-                      : `${history.amount.toLocaleString()}`}{' '}
-                    P
-                  </div>
-                  <div className={styles.point_balance}>
-                    {history.balance.toLocaleString()} P
-                  </div>
-                </div>
-              </div>
-            ))}
-          </article>
-        </div>
-      </main>
-    </div>
+    <PartnerPointPageLayout
+      activePointTab="earned"
+      historyData={partnerPointHistoryData}
+      summary={partnerPointSummary}
+      filterHistory={filterEarnedHistory}
+    />
   );
 }

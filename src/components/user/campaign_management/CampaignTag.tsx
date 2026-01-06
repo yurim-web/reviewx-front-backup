@@ -17,7 +17,7 @@
  * - 카테고리 아이콘 + 타입 조합 (CamCateIcon)
  */
 
-import cardStyles from '../../../styles/user/campaign_management/campaign_card.module.css';
+import cardStyles from "../../../styles/user/campaign_management/campaign_card.module.css";
 import { getCategoryIcon } from "@/utils/channelLogoMap";
 
 /**
@@ -38,7 +38,7 @@ export function CamTag({
         isUrgent ? cardStyles.urgent : cardStyles.normal
       }`}
     >
-      <span>{isUrgent ? '마감임박' : `${remainingDays}일 전`}</span>
+      <span>{isUrgent ? "마감임박" : `${remainingDays}일 전`}</span>
     </div>
   );
 }
@@ -53,7 +53,7 @@ export function CamTag({
 export function CamType({
   type,
 }: {
-  type: '배송형' | '방문형' | '구매평' | '기자단' | '미션형';
+  type: "배송형" | "방문형" | "구매평" | "기자단" | "미션형";
 }) {
   return (
     <div className={cardStyles.cam_type}>
@@ -81,16 +81,14 @@ export function CamIcon({ icon }: { icon: string }) {
  * - 구매평, 미션형은 타입에 따라 고정 아이콘을 사용합니다.
  * - 그 외 타입은 카테고리에 따라 동적으로 아이콘을 가져옵니다.
  *
- * 학습 포인트:
- * - 유틸리티 함수 활용: getCategoryIcon 함수를 사용하여 아이콘 경로를 자동으로 결정합니다.
- * - 조건부 로직: 타입과 카테고리에 따라 다른 아이콘을 표시합니다.
+
  */
 export function CamCateIcon({
   category,
   type,
 }: {
   category?: string; // 카테고리 (구매평, 미션형은 필요 없음)
-  type: '배송형' | '방문형' | '구매평' | '기자단' | '미션형';
+  type: "배송형" | "방문형" | "구매평" | "기자단" | "미션형";
 }) {
   // 타입과 카테고리에 따라 아이콘 경로 자동 결정
   const icon_path = getCategoryIcon(type, category);

@@ -29,7 +29,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  height: 100%; /* 그리드 셀의 전체 높이 사용 */
+  height: 100%;
 }
 
 /* 상단 라벨 - D-n */
@@ -38,7 +38,7 @@
   top: 12px;
   left: 12px;
   border-radius: 4px;
-  background: #d90074;
+  background: #ff5694;
   padding: 4px 8px;
   z-index: 2;
 
@@ -47,7 +47,7 @@
   text-align: center;
   font-size: 16px;
   font-weight: 500;
-  line-height: 16px; /* 100% */
+  line-height: 16px;
   letter-spacing: -0.32px;
 }
 
@@ -57,8 +57,8 @@
   border-radius: 4px;
   position: relative;
   width: 100%;
-  aspect-ratio: 1; /* 정사각형 비율 유지 */
-  flex-shrink: 0; /* 이미지 크기 고정 */
+  aspect-ratio: 1;
+  flex-shrink: 0;
 }
 
 .product_image {
@@ -91,13 +91,12 @@
 
 /* 스케줄 오버레이 내부 글자 */
 .schedule_overlay_text {
-  /* 글자 스타일 */
   color: #fff;
   font-size: 20px;
   font-weight: 600;
-  line-height: 28px; /* 140% */
+  line-height: 28px;
   letter-spacing: -0.4px;
-  white-space: pre-line; /* 줄바꿈 허용 */
+  white-space: pre-line;
 }
 
 /* 제품 정보 */
@@ -118,7 +117,7 @@
 
   font-size: 16px;
   font-weight: 500;
-  line-height: 16px; /* 100% */
+  line-height: 16px;
   letter-spacing: -0.32px;
 }
 
@@ -139,7 +138,7 @@
   text-overflow: ellipsis;
   font-size: 16px;
   font-weight: 500;
-  line-height: 22px; /* 137.5% */
+  line-height: 22px;
   letter-spacing: -0.32px;
 }
 
@@ -151,7 +150,7 @@
   color: #444;
   font-size: 14px;
   font-weight: 500;
-  line-height: 14px; /* 100% */
+  line-height: 14px;
   letter-spacing: -0.28px;
 }
 /* 모집수 */
@@ -168,9 +167,8 @@
 
 /* 모바일 대응 */
 @media (max-width: 739px) {
-  /* 제품 이미지 크기 조정 - 정사각형 유지 */
   .product_image_container {
-    aspect-ratio: 1; /* 모바일에서도 정사각형 비율 유지 */
+    aspect-ratio: 1;
   }
 
   /* 제품 제목 폰트 크기 조정 */

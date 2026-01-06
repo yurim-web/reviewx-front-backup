@@ -23,6 +23,7 @@
 import { useState } from "react";
 import styles from "@/styles/partner/campaign_application/card/applicant_card_shared.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
+import { getChannelUrl } from "@/utils/channelUrlHelper";
 import type { ExperienceApplicant } from "./ExperienceTypes";
 import TextareaModal from "@/components/common/modal/TextareaModal";
 import ReportModal, {
@@ -187,13 +188,34 @@ export default function ExperiencePendingCard({
         </div>
 
         {/* 채널 정보 */}
+        {/* 📌 클릭 가능한 링크:
+            - channelId를 클릭하면 해당 채널로 이동합니다
+            - getChannelUrl 유틸리티 함수를 사용하여 올바른 URL을 생성합니다
+            - 새 창에서 링크를 엽니다 (target="_blank")
+        */}
         <div className={styles.channel_section}>
           <img
             src={channel_icon_src}
             alt={`${applicant.channel} 채널`}
             className={styles.channel_icon}
           />
-          <span className={styles.applicant_id}>{applicant.channelId}</span>
+          <a
+            href={getChannelUrl(applicant.channel, applicant.channelId)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.applicant_id}
+            onClick={(e) => {
+              // 📌 링크 클릭 핸들러:
+              // - URL이 유효하지 않은 경우 클릭 방지
+              // - getChannelUrl이 "#"을 반환하면 기본 동작을 막습니다
+              const url = getChannelUrl(applicant.channel, applicant.channelId);
+              if (url === "#") {
+                e.preventDefault();
+              }
+            }}
+          >
+            {applicant.channelId}
+          </a>
         </div>
 
         {/* 링크 확인 버튼은 대기 탭에서 제거됨 */}

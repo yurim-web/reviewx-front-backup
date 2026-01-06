@@ -29,7 +29,6 @@ import { useRouter } from "next/navigation";
 import styles from "@/styles/partner/campaign_application/campaign_application.module.css";
 import SortFilterControl from "@/components/partner/campaign_application/SortFilterControl";
 import Campaignbanner from "@/components/partner/campaign_application/CampaignInfoBox";
-import ExcelDownloadBtn from "@/components/partner/campaign_application/ExcelDownloadBtn";
 import EmptyApplicantsList from "@/components/partner/campaign_application/EmptyApplicantsList";
 import type {
   CampaignWithApplicants,
@@ -184,15 +183,10 @@ export default function CampaignProgressDetailLayout({
             <Campaignbanner campaignInfo={campaign_data.campaignInfo} />
 
             {/* 
-              다운로드 및 필터 섹션
+              정렬 섹션
               - article 태그: 독립적인 콘텐츠 영역을 나타내는 시맨틱 태그입니다
             */}
-            <article className={styles.download_section}>
-              {/* 엑셀 다운로드 버튼 */}
-              <ExcelDownloadBtn
-                onDownloadApplicants={handle_download_applicants}
-                onDownloadSelected={handle_download_selected}
-              />
+            <article className={styles.download_section_right}>
               {/* 정렬 필터 컨트롤 */}
               <SortFilterControl
                 options={sort_options}

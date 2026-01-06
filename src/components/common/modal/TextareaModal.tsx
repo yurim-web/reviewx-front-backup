@@ -163,6 +163,8 @@ export default function TextareaModal({
             style={
               titleColor
                 ? { color: titleColor }
+                : is_extend_variant
+                ? { color: "#444444" }
                 : readOnly
                 ? { color: "#ff2626" }
                 : undefined

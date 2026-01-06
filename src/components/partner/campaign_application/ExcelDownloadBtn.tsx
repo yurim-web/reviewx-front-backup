@@ -39,6 +39,8 @@ interface ExcelDownloadBtnProps {
   hasSelected?: boolean;
   // 선택적: 결과보고서 데이터 존재 여부 (기본값: true, false일 때 다운로드 불가 모달 표시)
   hasReport?: boolean;
+  // 선택적: 신청자 목록 다운로드 버튼 표시 여부 (기본값: true)
+  showApplicantsButton?: boolean;
 }
 
 export default function ExcelDownloadBtn({
@@ -48,6 +50,7 @@ export default function ExcelDownloadBtn({
   hasApplicants = true,
   hasSelected = true,
   hasReport = true,
+  showApplicantsButton = true,
 }: ExcelDownloadBtnProps) {
   const [isNoDataModalOpen, setIsNoDataModalOpen] = useState(false);
 
@@ -88,14 +91,16 @@ export default function ExcelDownloadBtn({
   return (
     <>
       <div className={styles.download_btn_group}>
-        {/* 신청자 목록 다운로드 버튼 */}
-        <button
-          className={styles.download_button}
-          onClick={handleDownloadApplicants}
-        >
-          <img src="/images/excel_icon.png" alt="다운로드" />
-          신청자 목록 다운로드
-        </button>
+        {/* 신청자 목록 다운로드 버튼 (옵션) */}
+        {showApplicantsButton && (
+          <button
+            className={styles.download_button}
+            onClick={handleDownloadApplicants}
+          >
+            <img src="/images/excel_icon.png" alt="다운로드" />
+            신청자 목록 다운로드
+          </button>
+        )}
 
         {/* 선정자 목록 다운로드 버튼 (옵션) */}
         {onDownloadSelected ? (

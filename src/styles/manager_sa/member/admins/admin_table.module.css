@@ -175,6 +175,11 @@
   opacity: 0;
 }
 
+/* 테이블 행에 호버할 때 수정 버튼 표시 */
+.table_row:hover .edit_button {
+  opacity: 1;
+}
+
 /* 수정 아이콘 */
 .edit_icon {
   width: 20px;

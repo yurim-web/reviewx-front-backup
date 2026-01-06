@@ -15,7 +15,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import guideStyles from "@/styles/partner/campaign_create/campaign_guide.module.css";
 
@@ -31,6 +31,17 @@ export default function PageHeader({
   initialUrgent = false,
 }: PageHeaderProps) {
   const [isUrgent, setIsUrgent] = useState(initialUrgent);
+
+  /**
+   * initialUrgent prop이 변경될 때 state 업데이트
+   *
+   * 설명:
+   * - 데이터를 불러왔을 때 initialUrgent 값이 변경되면 state를 업데이트합니다.
+   * - useEffect를 사용하여 prop 변경을 감지하고 state를 동기화합니다.
+   */
+  useEffect(() => {
+    setIsUrgent(initialUrgent);
+  }, [initialUrgent]);
 
   /**
    * 긴급 체크박스 변경 처리

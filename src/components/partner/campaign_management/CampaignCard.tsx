@@ -124,7 +124,16 @@ export default function CampaignCard({
       campaign.campaignType,
       String(campaign.id)
     );
-    return `/campaign/${campaignTypePath}/${campaignDataId}`;
+    const detailPath = `/campaign/${campaignTypePath}/${campaignDataId}`;
+    // 디버깅: 생성된 경로 로그
+    console.log("[CampaignCard] 상세 페이지 경로 생성:", {
+      originalId: campaign.id,
+      campaignType: campaign.campaignType,
+      campaignTypePath,
+      convertedId: campaignDataId,
+      detailPath,
+    });
+    return detailPath;
   };
 
   const detailPath = getCampaignDetailPath();
@@ -222,7 +231,7 @@ export default function CampaignCard({
                   </span>
                 </>
               ) : campaignStatus === "종료" ? (
-                // 종료 캠페인: 검수/제출/선정 수 표시
+                // 종료 캠페인: 확인/제출/완료 수 표시
                 <>
                   <span className={cardStyles.applicant_current}>
                     확인 {reviewingCount}명
@@ -233,7 +242,7 @@ export default function CampaignCard({
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
                   <span className={cardStyles.applicant_total}>
-                    선정 {campaign.selected || 0}명
+                    완료 {completedCount}명
                   </span>
                 </>
               ) : campaignStatus === "취소" ? (
@@ -327,7 +336,7 @@ export default function CampaignCard({
                 const campaignTypePath = getCampaignTypePath(
                   campaign.campaignType
                 );
-                window.location.href = `/partner/campaign_contents/${campaignTypePath}/${campaign.id}?tab=검수`;
+                window.location.href = `/partner/campaign_contents/${campaignTypePath}/${campaign.id}?tab=확인`;
               }}
             >
               콘텐츠 확인 ({reviewingCount})

@@ -17,43 +17,173 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import MissionCampaignForm from "@/components/partner/campaign_create_form/MissionCampaignForm";
 import { CampaignFormData } from "@/types/user/user";
-import { updateMissionCampaign } from "@/data/campaign/mission/missionCampaigns";
+import {
+  updateMissionCampaign,
+  missionCampaignsExtended,
+} from "@/data/campaign/mission/missionCampaigns";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
+import type { MissionCampaignDataExtended } from "@/data/campaign/mission/missionCampaigns";
 import layoutStyles from "../../../../../../styles/partner/layout.module.css";
 import PageHeader from "@/components/partner/campaign_create_form/common/layout/PageHeader";
 import Toast from "@/components/common/toast/Toast";
 
-function campaignToFormData(campaign: CampaignWithApplicants): CampaignFormData {
+/**
+ * requirements 배열을 파싱하여 폼 데이터로 변환하는 함수
+ *
+ * 설명:
+ * - requirements 배열의 코드를 파싱하여 각 필드에 매핑합니다.
+ * - 예: "text_2500" → minTextLength: "2500"
+ * - 예: "photo_25" → minImageCount: "25"
+ * - 예: "video_2_300" → videoCount: "2", videoDuration: "300"
+ * - 예: "product_link" → requireLinkAttachment: true
+ * - 예: "keyword" → requireKeywordAttachment: true
+ */
+function parseRequirements(requirements: string[]): {
+  minTextLength: string;
+  minImageCount: string;
+  videoCount: string;
+  videoDuration: string;
+  requireLinkAttachment: boolean;
+  requireKeywordAttachment: boolean;
+} {
+  let minTextLength = "";
+  let minImageCount = "";
+  let videoCount = "";
+  let videoDuration = "";
+  let requireLinkAttachment = false;
+  let requireKeywordAttachment = false;
+
+  requirements.forEach((req) => {
+    // 텍스트 요구사항: "text_2500" → minTextLength: "2500"
+    if (req.startsWith("text_")) {
+      const charCount = req.replace("text_", "");
+      minTextLength = charCount;
+    }
+    // 사진 요구사항: "photo_25" → minImageCount: "25"
+    else if (req.startsWith("photo_")) {
+      const photoCount = req.replace("photo_", "");
+      minImageCount = photoCount;
+    }
+    // 동영상 요구사항: "video_2_300" → videoCount: "2", videoDuration: "300"
+    else if (req.startsWith("video_")) {
+      const parts = req.replace("video_", "").split("_");
+      if (parts.length === 2) {
+        videoCount = parts[0];
+        videoDuration = parts[1];
+      } else if (parts.length === 1) {
+        // "video_60" 같은 경우 (개수는 1개로 기본값)
+        videoCount = "1";
+        videoDuration = parts[0];
+      }
+    }
+    // 제품 링크 요구사항: "product_link" → requireLinkAttachment: true
+    else if (req === "product_link") {
+      requireLinkAttachment = true;
+    }
+    // 키워드 요구사항: "keyword" → requireKeywordAttachment: true
+    else if (req === "keyword") {
+      requireKeywordAttachment = true;
+    }
+  });
+
+  return {
+    minTextLength,
+    minImageCount,
+    videoCount,
+    videoDuration,
+    requireLinkAttachment,
+    requireKeywordAttachment,
+  };
+}
+
+/**
+ * CampaignWithApplicants를 CampaignFormData로 변환하는 함수
+ *
+ * 설명:
+ * - 캠페인 수정 페이지에서 기존 캠페인 데이터를 폼 데이터로 변환합니다.
+ * - 원본 확장 데이터(missionCampaignsExtended)에서 상세 정보를 가져옵니다.
+ * - 모든 필드를 올바르게 매핑하여 폼에 채워집니다.
+ */
+function campaignToFormData(
+  campaign: CampaignWithApplicants,
+  originalData?: MissionCampaignDataExtended
+): CampaignFormData {
   const info = campaign.campaignInfo;
+
+  // 원본 확장 데이터가 있으면 사용, 없으면 campaignInfo에서 추출
+  const extended = originalData;
+
+  // requirements 파싱
+  const requirements = extended?.requirements || [];
+  const parsedRequirements = parseRequirements(requirements);
+
+  // contentType에 따른 참여/제출 옵션 설정
+  const contentType = extended?.contentType;
+  let requireContentLink = false;
+  let requireContentImage = false;
+
+  if (contentType === "link") {
+    requireContentLink = true;
+    requireContentImage = false;
+  } else if (contentType === "image") {
+    requireContentLink = false;
+    requireContentImage = true;
+  } else if (contentType === "both") {
+    requireContentLink = true;
+    requireContentImage = true;
+  }
+
+  // guidelineTexts 배열을 하나의 문자열로 합치기
+  const guidelines = extended?.guidelineTexts?.join("\n\n") || "";
+
+  // 모집기간 형식 변환: "2026-01-15 ~ 2026-02-05" 형식으로
+  const recruitmentPeriod = extended?.detailedSchedule
+    ? `${extended.detailedSchedule.applicationStart} ~ ${extended.detailedSchedule.applicationEnd}`
+    : info.recruitmentPeriod || "";
+
+  // 포인트를 콤마 형식으로 변환
+  const additionalPoints = extended?.points
+    ? extended.points.toLocaleString("ko-KR")
+    : "";
 
   return {
     campaignType: info.campaignType as "미션형",
     platform: "",
     title: info.title || "",
-    category: info.category || "기타",
-    brandName: info.brandName || "",
-    providedItems: "",
-    currentPoints: "",
-    additionalPoints: "",
-    recruitmentCount: info.totalCount || "",
-    recruitmentPeriod: info.recruitmentPeriod || "",
-    announcementDate: info.announcementDate || "",
-    registrationPeriod: info.registrationPeriod || "",
-    keywords: "",
-    adultOnly: false,
-    allowReParticipation: false,
-    allowLateSubmission: false,
-    minTextLength: "",
-    minImageCount: "",
-    videoCount: "",
-    videoDuration: "",
-    requireLinkAttachment: false,
-    requireKeywordAttachment: false,
-    requireContentLink: false,
-    requireContentImage: false,
-    guidelines: "",
-    isUrgent: false,
+    category: extended?.subcategory || info.category || "기타", // subcategory 사용
+    brandName: extended?.brandName || info.brandName || "",
+    providedItems: extended?.description || "",
+    currentPoints: "58,000", // 기본값 (실제로는 사용자 정보에서 가져와야 함)
+    additionalPoints: additionalPoints,
+    recruitmentCount: String(info.totalCount || ""),
+    recruitmentPeriod: recruitmentPeriod,
+    announcementDate:
+      extended?.detailedSchedule?.announcement || info.announcementDate || "",
+    registrationPeriod:
+      extended?.detailedSchedule?.registrationPeriod ||
+      info.registrationPeriod ||
+      "",
+    keywords: extended?.keyword || "",
+    adultOnly: extended?.adultOnly || false,
+    allowReParticipation: extended?.allowReParticipation || false,
+    allowLateSubmission: extended?.allowLateSubmission || false,
+    minTextLength: parsedRequirements.minTextLength,
+    minImageCount: parsedRequirements.minImageCount,
+    videoCount: parsedRequirements.videoCount,
+    videoDuration: parsedRequirements.videoDuration,
+    requireLinkAttachment: parsedRequirements.requireLinkAttachment,
+    requireKeywordAttachment: parsedRequirements.requireKeywordAttachment,
+    requireContentLink: requireContentLink,
+    requireContentImage: requireContentImage,
+    guidelines: guidelines,
+    contactPhone: extended?.contactPhone || "",
+    fairTradeAgreement: true, // 수정 모드에서는 기본적으로 체크
+    isUrgent: extended?.isUrgent || false,
+    // 이미지 URL 설정 (썸네일)
+    thumbnailImageUrl: extended?.image || info.image || "",
+    // 홍보 링크 (미션형은 productLink 사용)
+    promotionLink: extended?.productLink || "",
   };
 }
 
@@ -67,12 +197,38 @@ export default function MissionCampaignEditPage() {
   const [initialData, setInitialData] = useState<CampaignFormData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // 토스트 메시지 상태
   const [toast, setToast] = useState({
     is_open: false,
     message: "",
   });
+
+  /**
+   * 캠페인 오픈 여부 확인
+   */
+  const isCampaignOpen = (recruitmentPeriod: string): boolean => {
+    if (!recruitmentPeriod) return false;
+
+    try {
+      const parts = recruitmentPeriod.split("~").map((s) => s.trim());
+      if (parts.length < 1) return false;
+
+      const startDateStr = parts[0].split(" ")[0];
+      const startDate = new Date(startDateStr);
+      startDate.setHours(0, 0, 0, 0);
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      return startDate <= today;
+    } catch (error) {
+      console.error("캠페인 오픈 여부 확인 실패:", error);
+      return false;
+    }
+  };
+
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -89,8 +245,51 @@ export default function MissionCampaignEditPage() {
         return;
       }
 
-      const formData = campaignToFormData(campaign);
+      // 원본 확장 데이터 찾기
+      const originalData = missionCampaignsExtended.find(
+        (c) => c.id === campaignId
+      );
+
+      // localStorage에서 저장된 캠페인 확인 (최신 데이터 우선)
+      let storedOriginalData: MissionCampaignDataExtended | undefined;
+      if (typeof window !== "undefined") {
+        const storedCampaigns = localStorage.getItem("missionCampaigns");
+        if (storedCampaigns) {
+          const campaigns: CampaignWithApplicants[] =
+            JSON.parse(storedCampaigns);
+          const storedCampaign = campaigns.find(
+            (c) => c.campaignInfo.id === campaignId
+          );
+          if (storedCampaign) {
+            // localStorage에 저장된 캠페인에서 원본 데이터 재구성
+            // (실제로는 localStorage에 원본 확장 데이터를 저장해야 하지만,
+            // 현재 구조에서는 campaignInfo에서 필요한 정보를 추출)
+            storedOriginalData = originalData; // 일단 원본 데이터 사용
+          }
+        }
+      }
+
+      // 원본 확장 데이터 우선 사용 (localStorage에 저장된 것이 있으면 그것 사용)
+      const dataToUse = storedOriginalData || originalData;
+
+      const formData = campaignToFormData(campaign, dataToUse);
       setInitialData(formData);
+
+      // isUrgent 상태 설정
+      setIsUrgent(dataToUse?.isUrgent || false);
+
+      // 상세 이미지 URL을 formData에 추가 (MissionCampaignForm에서 사용)
+      if (dataToUse?.campaign_detail_image) {
+        // formData에 detailImageUrl 추가 (임시로 thumbnailImageUrl에 저장하거나 별도 처리)
+        // 실제로는 MissionCampaignForm에서 원본 데이터를 직접 가져와야 함
+      }
+
+      // 캠페인 오픈 여부 확인
+      const openStatus = isCampaignOpen(
+        campaign.campaignInfo.recruitmentPeriod
+      );
+      setIsOpen(openStatus);
+
       setIsLoading(false);
     } catch (err) {
       console.error("캠페인 로드 실패:", err);
@@ -119,12 +318,18 @@ export default function MissionCampaignEditPage() {
         }
       }
 
-      const updatedCampaign = updateMissionCampaign(campaignId, finalFormData, imageUrl);
+      const updatedCampaign = updateMissionCampaign(
+        campaignId,
+        finalFormData,
+        imageUrl
+      );
 
       const storedCampaigns = localStorage.getItem("missionCampaigns");
       if (storedCampaigns) {
         const campaigns: CampaignWithApplicants[] = JSON.parse(storedCampaigns);
-        const index = campaigns.findIndex((c) => c.campaignInfo.id === campaignId);
+        const index = campaigns.findIndex(
+          (c) => c.campaignInfo.id === campaignId
+        );
         if (index !== -1) {
           campaigns[index] = updatedCampaign;
           localStorage.setItem("missionCampaigns", JSON.stringify(campaigns));
@@ -133,14 +338,17 @@ export default function MissionCampaignEditPage() {
           localStorage.setItem("missionCampaigns", JSON.stringify(campaigns));
         }
       } else {
-        localStorage.setItem("missionCampaigns", JSON.stringify([updatedCampaign]));
+        localStorage.setItem(
+          "missionCampaigns",
+          JSON.stringify([updatedCampaign])
+        );
       }
 
       console.log("미션형 캠페인 수정 완료:", updatedCampaign);
-      
+
       // 토스트 메시지 표시
       setToast({ is_open: true, message: "저장되었습니다." });
-      
+
       // 페이지 새로고침
       router.refresh();
     } catch (error) {
@@ -185,9 +393,10 @@ export default function MissionCampaignEditPage() {
           isSubmitting={isSubmitting}
           initialData={initialData}
           mode="edit"
+          isOpen={isOpen}
         />
       </div>
-      
+
       {/* 토스트 메시지 */}
       <Toast
         message={toast.message}
@@ -197,4 +406,3 @@ export default function MissionCampaignEditPage() {
     </div>
   );
 }
-

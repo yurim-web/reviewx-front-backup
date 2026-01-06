@@ -9,7 +9,7 @@ import type {
 } from "@/data/partner/sharedCampaigns";
 import { calculateDaysLeft, calculateCampaignStatus } from "../delivery/utils";
 
-interface MissionCampaignData {
+export interface MissionCampaignData {
   id: string; // 캠페인 고유 식별자
   title: string; // 캠페인 제목
   category: string; // 캠페인 카테고리 (미션형)
@@ -24,18 +24,28 @@ interface MissionCampaignData {
   };
   schedule: string; // 날짜/시간 형식 일정 (예: "1/25 (화) 10:00\n모집 오픈")
   dayCount: string; // 남은 일수 형식 (예: "D-6")
+  isUrgent?: boolean; // 긴급 캠페인 여부 (기본값: false)
+  registeredAt?: string; // 캠페인 등록 시간 (ISO 8601 형식: "2025-01-15T10:30:00")
   detailedSchedule: {
     applicationStart: string; // 신청 시작일시
     applicationEnd: string; // 신청 마감일
     announcement: string; // 선정 발표일
     registrationPeriod: string; // 등록 기간
   };
-  campaign_detail_image: string; // 캠페인 상세 이미지 경로
+  campaign_detail_image: string; // 캠페인 상세 이미지 경로 (첫 번째 이미지, 하위 호환성)
+  campaign_detail_images?: string[]; // 캠페인 상세 이미지 경로 배열 (여러 이미지)
   keyword: string; // 캠페인 키워드
   productLink?: string; // 홍보링크 (선택적)
   requirements: string[]; // 캠페인별 요구사항 코드 목록
   guidelineTexts: string[]; // 유의사항 텍스트 목록
   contentType?: "link" | "image" | "both"; // 콘텐츠 타입 (링크만, 이미지만, 링크+이미지)
+  brandName?: string; // 브랜드명 (선택적)
+  // 참여/제출 옵션
+  adultOnly?: boolean; // 만 19세 이상 참여 허용
+  allowReParticipation?: boolean; // 이전 참여자 재참여 허용
+  allowLateSubmission?: boolean; // 지각 제출 허용
+  // 문의 담당자 정보
+  contactPhone?: string; // 문의 담당자 휴대폰 번호
 }
 
 /**
@@ -59,6 +69,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-5",
+    registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-20 ~ 2026-01-06)
       applicationStart: "2025-12-20",
@@ -98,7 +109,9 @@ export const missionCampaigns: MissionCampaignData[] = [
       total: 8,
     },
     schedule: "",
-    dayCount: "긴급",
+    dayCount: "",
+    isUrgent: true, // 긴급 캠페인
+    registeredAt: "2025-12-17T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-19 ~ 2026-01-05)
       applicationStart: "2025-12-19",
@@ -140,6 +153,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-3",
+    registeredAt: "2025-12-19T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-21 ~ 2026-01-08)
       applicationStart: "2025-12-21",
@@ -177,6 +191,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-7",
+    registeredAt: "2025-12-20T13:30:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-22 ~ 2026-01-10)
       applicationStart: "2025-12-22",
@@ -214,6 +229,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-6",
+    registeredAt: "2025-10-28T10:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 종료 탭 - registrationPeriod가 과거
       applicationStart: "2025-11-01",
@@ -251,6 +267,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-4",
+    registeredAt: "2025-12-22T13:30:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-24 ~ 2026-01-11)
       applicationStart: "2025-12-24",
@@ -289,6 +306,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-5",
+    registeredAt: "2025-12-18T10:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-20 ~ 2026-01-06)
       applicationStart: "2025-12-20",
@@ -320,6 +338,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-2",
+    registeredAt: "2025-11-10T09:15:00.000Z", // 등록 시간
     detailedSchedule: {
       // 진행 탭 - applicationEnd가 과거, registrationPeriod가 미래 (announcement <= 오늘 <= registrationPeriod 끝)
       applicationStart: "2025-11-15",
@@ -357,6 +376,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-8",
+    registeredAt: "2025-11-05T14:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 종료 탭 - registrationPeriod가 과거
       applicationStart: "2025-11-10",
@@ -394,6 +414,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-1",
+    registeredAt: "2025-11-15T10:50:00.000Z", // 등록 시간
     detailedSchedule: {
       // 진행 탭 - applicationEnd가 과거, registrationPeriod가 미래 (announcement <= 오늘 <= registrationPeriod 끝)
       applicationStart: "2025-11-20",
@@ -431,6 +452,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-9",
+    registeredAt: "2025-11-01T08:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 취소 탭 - status가 "취소"로 설정됨
       applicationStart: "2025-11-05",
@@ -470,6 +492,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     schedule: "1/15 (목) 10:00\n모집 오픈",
     dayCount: "",
+    registeredAt: "2026-01-10T12:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 오픈 예정 - 현재 날짜보다 미래 (2026-01-15 ~ 2026-02-05)
       applicationStart: "2026-01-15",
@@ -495,6 +518,13 @@ export const missionCampaigns: MissionCampaignData[] = [
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 제품 미수령 및 체험 불가할 경우 : 다음 캠페인 참여 제한 <br /> - 미션형 리뷰 작성 불가할 경우 : 다음 캠페인 참여 제한 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 다음 캠페인 참여가 제한됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 미션형의 경우 체험 과정과 결과를 상세히 기록해주세요 - 사용 전후 비교 사진은 필수입니다",
     ],
     contentType: "both" as const, // 링크 + 이미지
+    brandName: "프리미엄 스킨케어", // 브랜드명 추가
+    // 참여/제출 옵션
+    adultOnly: false, // 만 19세 이상 참여 허용
+    allowReParticipation: false, // 이전 참여자 재참여 허용
+    allowLateSubmission: false, // 지각 제출 허용
+    // 문의 담당자 정보
+    contactPhone: "010-1234-5678", // 문의 담당자 휴대폰 번호
   },
 ];
 
@@ -516,6 +546,8 @@ export interface MissionCampaignDataExtended {
   };
   schedule: string;
   dayCount: string;
+  isUrgent?: boolean; // 긴급 캠페인 여부 (기본값: false)
+  registeredAt?: string; // 캠페인 등록 시간 (ISO 8601 형식: "2025-01-15T10:30:00")
   detailedSchedule: {
     applicationStart: string;
     applicationEnd: string;
@@ -534,6 +566,13 @@ export interface MissionCampaignDataExtended {
   brandName?: string;
   partnerName?: string;
   statusText?: string;
+
+  // 참여/제출 옵션
+  adultOnly?: boolean; // 만 19세 이상 참여 허용
+  allowReParticipation?: boolean; // 이전 참여자 재참여 허용
+  allowLateSubmission?: boolean; // 지각 제출 허용
+  // 문의 담당자 정보
+  contactPhone?: string; // 문의 담당자 휴대폰 번호
 
   // 신청자 데이터 (선택사항 - 진행/예정/신청 캠페인에만 있음)
   applicantData?: {
@@ -606,20 +645,9 @@ export interface MissionCampaignDataExtended {
  * - 각 캠페인마다 직접 예시 신청자 데이터를 포함합니다.
  */
 export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
-  // mission_1: 스킨케어 미션형 - 신청 탭으로 변경
+  // mission_1: 스킨케어 미션형
   {
     ...missionCampaigns[0],
-    status: "모집 중" as const,
-    detailedSchedule: {
-      ...missionCampaigns[0].detailedSchedule,
-      // 모집 중 - 현재 날짜 기준 (2025-12-20 ~ 2026-01-06)
-      applicationStart: "2025-12-20",
-      applicationEnd: "2026-01-06",
-      announcement: "2026-01-08",
-      registrationPeriod: "2026-01-10 ~ 2026-01-17",
-    },
-    brandName: "네이버블로그",
-    partnerName: "(주)미션마케팅",
     applicantData: {
       applicants: [
         {
@@ -701,12 +729,10 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
       selectedApplicants: [],
     },
   },
-  // mission_2: 헬스케어 미션형 - 연장요청 탭
+  // mission_2: 헬스케어 미션형
   {
     ...missionCampaigns[1],
-    status: "진행 중" as const,
-    brandName: "유튜브",
-    partnerName: "(주)미션마케팅",
+    isUrgent: true, // 긴급 캠페인
     applicantData: {
       applicants: [
         {
@@ -831,12 +857,9 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
       ],
     },
   },
-  // mission_3: 홈데코 미션형 - 신청 탭
+  // mission_3: 홈데코 미션형
   {
     ...missionCampaigns[2],
-    status: "모집 중" as const,
-    brandName: "네이버블로그",
-    partnerName: "(주)미션마케팅",
     applicantData: {
       applicants: [
         {
@@ -961,20 +984,9 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
       ],
     },
   },
-  // mission_4: 패션 미션형 - 예정 탭
+  // mission_4: 패션 미션형
   {
     ...missionCampaigns[3],
-    status: "모집 중" as const,
-    detailedSchedule: {
-      ...missionCampaigns[3].detailedSchedule,
-      // 신청 탭 - 현재 날짜가 모집 기간 내
-      applicationStart: "2025-12-22",
-      applicationEnd: "2026-01-12",
-      announcement: "2026-01-14",
-      registrationPeriod: "2026-01-16 ~ 2026-01-23",
-    },
-    brandName: "인스타그램",
-    partnerName: "(주)미션마케팅",
     applicantData: {
       applicants: [
         {
@@ -1011,12 +1023,9 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
       selectedApplicants: [],
     },
   },
-  // mission_5: 식품 미션형 - 종료 탭
+  // mission_5: 식품 미션형
   {
     ...missionCampaigns[4],
-    status: "종료" as const,
-    brandName: "쿠팡",
-    partnerName: "(주)미션마케팅",
     applicantData: {
       applicants: [
         {
@@ -1038,12 +1047,9 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
       selectedApplicants: [],
     },
   },
-  // mission_6: 디지털 미션형 - 진행 탭
+  // mission_6: 디지털 미션형
   {
     ...missionCampaigns[5],
-    status: "진행 중" as const,
-    brandName: "네이버쇼핑",
-    partnerName: "(주)미션마케팅",
     applicantData: {
       applicants: [
         {
@@ -1181,12 +1187,9 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
       ],
     },
   },
-  // mission_7: 반려동물 미션형 - 진행 탭
+  // mission_7: 반려동물 미션형
   {
     ...missionCampaigns[6],
-    status: "진행 중" as const,
-    brandName: "네이버블로그",
-    partnerName: "(주)미션마케팅",
     applicantData: {
       applicants: [
         {
@@ -1269,12 +1272,9 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
       ],
     },
   },
-  // mission_8: 스포츠 미션형 - 종료 탭
+  // mission_8: 스포츠 미션형
   {
     ...missionCampaigns[7],
-    status: "종료" as const,
-    brandName: "유튜브",
-    partnerName: "(주)미션마케팅",
     applicantData: {
       applicants: [
         {
@@ -1296,12 +1296,9 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
       selectedApplicants: [],
     },
   },
-  // mission_9: 뷰티 미션형 - 진행 탭
+  // mission_9: 뷰티 미션형
   {
     ...missionCampaigns[8],
-    status: "진행 중" as const,
-    brandName: "올리브영",
-    partnerName: "(주)미션마케팅",
     applicantData: {
       applicants: [
         {
@@ -1395,13 +1392,9 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
       ],
     },
   },
-  // mission_10: 여행 미션형 - 취소 탭
+  // mission_10: 여행 미션형
   {
     ...missionCampaigns[9],
-    status: "취소" as const,
-    statusText: "캠페인을 취소하였습니다.",
-    brandName: "인스타그램",
-    partnerName: "(주)미션마케팅",
     applicantData: {
       applicants: [
         {
@@ -1420,6 +1413,14 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           registrationDate: "2025-12-08",
         },
       ],
+      selectedApplicants: [],
+    },
+  },
+  // mission_11: 프리미엄 스킨케어 세트 미션형
+  {
+    ...missionCampaigns[11],
+    applicantData: {
+      applicants: [],
       selectedApplicants: [],
     },
   },
@@ -1457,7 +1458,31 @@ export function getMissionContentsById(campaignId: string): ContentByTab {
  */
 function generateNewMissionCampaignId(): string {
   // 기존 캠페인 ID 중 최대값 찾기
-  const existingIds = missionCampaignsExtended
+  const allCampaigns = [...missionCampaignsExtended];
+
+  // localStorage에 저장된 캠페인도 확인
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("missionCampaigns");
+      if (stored) {
+        const storedCampaigns: Array<{ campaignInfo: { id: string } }> =
+          JSON.parse(stored);
+        if (Array.isArray(storedCampaigns)) {
+          storedCampaigns.forEach((campaign) => {
+            if (campaign.campaignInfo && campaign.campaignInfo.id) {
+              allCampaigns.push({
+                id: campaign.campaignInfo.id,
+              } as any);
+            }
+          });
+        }
+      }
+    } catch (error) {
+      console.error("localStorage에서 미션형 캠페인 ID 확인 실패:", error);
+    }
+  }
+
+  const existingIds = allCampaigns
     .map((c) => {
       const match = c.id.match(/mission_(\d+)/);
       return match ? parseInt(match[1]) : 0;
@@ -1491,10 +1516,22 @@ export function createMissionCampaign(
   const totalCount = Number(formData.recruitmentCount) || 0;
 
   // 캠페인 상태 결정 함수 호출
-  const campaignStatus = calculateCampaignStatus(
+  // registrationPeriod를 전달하여 등록 기간 종료일 체크가 정확하게 이루어지도록 함
+  const calculatedStatus = calculateCampaignStatus(
     formData.recruitmentPeriod,
-    formData.announcementDate
+    formData.announcementDate,
+    formData.registrationPeriod
   );
+
+  // calculateCampaignStatus는 "대기 중" | "모집 중" | "진행 중" | "종료"를 반환
+  // "종료" 상태를 "마감"으로 변환 (UI 표시용)
+  let finalStatus: string = calculatedStatus;
+  if (calculatedStatus === "종료") {
+    finalStatus = "마감";
+  } else if (calculatedStatus === "진행 중") {
+    // 미션형 캠페인의 경우 "진행 중" 상태를 "등록 중"으로 표시
+    finalStatus = "등록 중";
+  }
 
   // 플랫폼명 정규화
   const normalizedBrandName = formData.platform
@@ -1513,10 +1550,12 @@ export function createMissionCampaign(
       title: formData.title,
       image: imageUrl,
       status:
-        campaignStatus === "대기 중"
+        finalStatus === "대기 중"
           ? "대기 중"
-          : campaignStatus === "모집 중"
+          : finalStatus === "모집 중"
           ? "모집 중"
+          : finalStatus === "마감"
+          ? "마감"
           : "등록 중",
       campaignType: "미션형",
       category: formData.category || "기타",
@@ -1567,10 +1606,22 @@ export function updateMissionCampaign(
   const totalCount = Number(formData.recruitmentCount) || 0;
 
   // 캠페인 상태 결정 함수 호출
-  const campaignStatus = calculateCampaignStatus(
+  // registrationPeriod를 전달하여 등록 기간 종료일 체크가 정확하게 이루어지도록 함
+  const calculatedStatus = calculateCampaignStatus(
     formData.recruitmentPeriod,
-    formData.announcementDate
+    formData.announcementDate,
+    formData.registrationPeriod
   );
+
+  // calculateCampaignStatus는 "대기 중" | "모집 중" | "진행 중" | "종료"를 반환
+  // "종료" 상태를 "마감"으로 변환 (UI 표시용)
+  let finalStatus: string = calculatedStatus;
+  if (calculatedStatus === "종료") {
+    finalStatus = "마감";
+  } else if (calculatedStatus === "진행 중") {
+    // 미션형 캠페인의 경우 "진행 중" 상태를 "등록 중"으로 표시
+    finalStatus = "등록 중";
+  }
 
   // 플랫폼명 정규화
   const normalizedBrandName = formData.platform
@@ -1583,10 +1634,12 @@ export function updateMissionCampaign(
       title: formData.title,
       image: imageUrl,
       status:
-        campaignStatus === "대기 중"
+        finalStatus === "대기 중"
           ? "대기 중"
-          : campaignStatus === "모집 중"
+          : finalStatus === "모집 중"
           ? "모집 중"
+          : finalStatus === "마감"
+          ? "마감"
           : "등록 중",
       campaignType: "미션형",
       category: formData.category || "기타",

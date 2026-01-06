@@ -84,26 +84,30 @@ export default function CampaignList({
     }
   });
 
-  // 필터링 결과가 없는 경우 빈 상태 메시지 표시
+  // 필터링 결과가 없는 경우 빈 상태로 처리 (메시지 없이 빈칸 유지)
   if (filteredCampaigns.length === 0) {
-    return (
-      <div className={cardStyles.empty_state}>
-        <p>{activeStatTab} 상태의 캠페인이 없습니다.</p>
-      </div>
-    );
+    return null;
   }
 
   // 캠페인 카드 목록 렌더링
   return (
     <>
       <div className={cardStyles.campaign_list}>
-        {filteredCampaigns.map((campaign) => (
-          <CampaignCard
-            key={campaign.id}
-            campaign={campaign}
-            activeTab={activeStatTab}
-          />
-        ))}
+        {filteredCampaigns.map((campaign, index) => {
+          // 고유한 key 생성: campaign.id가 있으면 사용하고, 없거나 중복되면 인덱스와 조합
+          // campaign.id가 문자열이 아닌 경우도 대비하여 String()으로 변환
+          const uniqueKey = campaign.id 
+            ? `${String(campaign.id)}-${campaign.campaignType || 'unknown'}` 
+            : `campaign-${index}-${campaign.campaignType || 'unknown'}`;
+          
+          return (
+            <CampaignCard
+              key={uniqueKey}
+              campaign={campaign}
+              activeTab={activeStatTab}
+            />
+          );
+        })}
       </div>
 
       {/* 에러 모달 */}

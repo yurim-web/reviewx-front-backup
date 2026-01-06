@@ -21,20 +21,40 @@
  * - 메인 메뉴 상단 고정
  */
 
+"use client";
+
 // 컴포넌트들을 import
 // @/는 src/를 가리키는 별칭입니다 (tsconfig.json에서 설정됨)
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
 import MainMenu from "@/components/main/MainMenu";
 import CampaignBox from "@/components/main/CampaignBox";
 import styles from "@/styles/home/home.module.css";
 import Titletext from "@/components/main/Titletext";
 
 // 각 캠페인 타입별 실제 데이터를 import
-import { deliveryCampaigns } from "@/data/campaign/delivery/deliveryCampaigns";
-import { visitCampaigns } from "@/data/campaign/visit/visitCampaigns";
-import { reviewCampaigns } from "@/data/campaign/review/reviewCampaigns";
-import { missionCampaigns } from "@/data/campaign/mission/missionCampaigns";
-import { reporterCampaigns } from "@/data/campaign/reporter/reporterCampaigns";
+import {
+  deliveryCampaigns,
+  type DeliveryCampaignData,
+} from "@/data/campaign/delivery/deliveryCampaigns";
+import {
+  visitCampaigns,
+  type VisitCampaignData,
+} from "@/data/campaign/visit/visitCampaigns";
+import {
+  reviewCampaigns,
+  type ReviewCampaignData,
+} from "@/data/campaign/review/reviewCampaigns";
+import {
+  missionCampaigns,
+  type MissionCampaignData,
+} from "@/data/campaign/mission/missionCampaigns";
+import {
+  reporterCampaigns,
+  type ReporterCampaignData,
+} from "@/data/campaign/reporter/reporterCampaigns";
+import type { CampaignWithApplicants } from "@/types/partner/partner";
 
 /**
  * 시드 기반 난수 생성기 (선형 합동 생성기)
@@ -136,7 +156,512 @@ function isNotClosed(
  *
  * @returns 메인 홈 페이지 JSX 요소
  */
+/**
+ * schedule 필드 생성 함수
+ *
+ * 설명:
+ * - 모집 시작일(applicationStart)을 "1/15 (목) 10:00\n모집 오픈" 형식으로 포맷팅합니다.
+ * - 오픈 예정일 때만 사용되며, 오픈 예정이 아닌 경우 빈 문자열을 반환합니다.
+ *
+ */
+function generateSchedule(applicationStart: string): string {
+  if (!applicationStart) {
+    return "";
+  }
+
+  try {
+    // 모집 시작일 파싱
+    const startDate = new Date(applicationStart);
+
+    // 오늘 날짜 (시간 정보 제거)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    startDate.setHours(0, 0, 0, 0);
+
+    // 오늘 < applicationStart → 오픈 예정일 때만 schedule 생성
+    if (today < startDate) {
+      // 모집 시작일 파싱
+      const startDateTime = new Date(applicationStart);
+
+      // 날짜를 "M/d (E)" 형식으로 포맷팅
+      // M: 월 (1-12)
+      // d: 일 (1-31)
+      // E: 요일 약어 (월, 화, 수 등)
+      const formattedDate = format(startDateTime, "M/d (E)", {
+        locale: ko,
+      });
+
+      // "모집 오픈" 텍스트와 함께 반환
+      return `${formattedDate}\n모집 오픈`;
+    }
+  } catch (error) {
+    console.error("[generateSchedule] 날짜 포맷팅 실패:", error);
+  }
+
+  return "";
+}
+
+/**
+ * localStorage에서 모든 캠페인 타입의 데이터를 가져와서 정적 데이터와 합치는 함수
+ * 각 목록 페이지의 변환 함수와 동일한 로직을 사용합니다
+ */
+/**
+ * 정적 캠페인 데이터의 schedule과 dayCount를 자동으로 계산하는 함수
+ *
+ * 설명:
+ * - 정적 데이터의 schedule과 dayCount를 detailedSchedule을 기반으로 자동 계산합니다.
+ * - 오픈 예정일 때는 schedule을 생성하고, dayCount는 빈 문자열로 설정합니다.
+ * - 진행 중일 때는 dayCount를 계산하고, schedule은 빈 문자열로 설정합니다.
+ *
+ */
+function enrichStaticCampaigns<
+  T extends {
+    id?: string;
+    schedule?: string;
+    dayCount?: string;
+    detailedSchedule?: { applicationStart: string; applicationEnd: string };
+  }
+>(campaigns: T[]): T[] {
+  return campaigns.map((campaign) => {
+    if (!campaign.detailedSchedule) {
+      return campaign;
+    }
+
+    const { applicationStart, applicationEnd } = campaign.detailedSchedule;
+    if (!applicationStart || !applicationEnd) {
+      return campaign;
+    }
+
+    // schedule 자동 계산
+    const schedule = generateSchedule(applicationStart);
+
+    // 디버깅: schedule이 제대로 계산되는지 확인
+    if (schedule && campaign.id === "visit_11") {
+      console.log("[enrichStaticCampaigns] visit_11 schedule:", schedule);
+    }
+
+    // dayCount 자동 계산
+    const calculateDayCount = (): string => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const startDate = new Date(applicationStart);
+      startDate.setHours(0, 0, 0, 0);
+      const endDate = new Date(applicationEnd);
+      endDate.setHours(0, 0, 0, 0);
+
+      // 오픈 예정: dayCount는 빈 문자열
+      if (today < startDate) {
+        return "";
+      }
+
+      // 마감 이후: "마감"
+      if (today > endDate) {
+        return "마감";
+      }
+
+      // 진행 중: 남은 일수 계산
+      const diffTime = endDate.getTime() - today.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      // 남은 일수가 1일 이하 → "마감임박"
+      if (diffDays <= 1) {
+        return "마감임박";
+      }
+
+      // 남은 일수가 2일 이상 → "D-n" 형태
+      return `D-${diffDays}`;
+    };
+
+    const dayCount = calculateDayCount();
+
+    return {
+      ...campaign,
+      schedule,
+      dayCount,
+    };
+  });
+}
+
+function getAllMergedCampaigns() {
+  // 정적 데이터를 기본값으로 사용하고 schedule과 dayCount를 자동 계산
+  let allDelivery: DeliveryCampaignData[] = enrichStaticCampaigns([
+    ...deliveryCampaigns,
+  ]);
+  let allVisit: VisitCampaignData[] = enrichStaticCampaigns([
+    ...visitCampaigns,
+  ]);
+  let allReview: ReviewCampaignData[] = enrichStaticCampaigns([
+    ...reviewCampaigns,
+  ]);
+  let allMission: MissionCampaignData[] = enrichStaticCampaigns([
+    ...missionCampaigns,
+  ]);
+  let allReporter: ReporterCampaignData[] = enrichStaticCampaigns([
+    ...reporterCampaigns,
+  ]);
+
+  if (typeof window === "undefined") {
+    return {
+      allDelivery,
+      allVisit,
+      allReview,
+      allMission,
+      allReporter,
+    };
+  }
+
+  // 각 타입별로 localStorage에서 데이터를 가져와서 변환
+  // 배송형
+  try {
+    const stored = localStorage.getItem("deliveryCampaigns");
+    if (stored) {
+      const storedCampaigns: CampaignWithApplicants[] = JSON.parse(stored);
+      if (Array.isArray(storedCampaigns)) {
+        // 간단한 변환 (상세 변환은 목록 페이지에서 처리)
+        const converted = storedCampaigns.map((c) => {
+          const info = c.campaignInfo;
+          const recruitmentPeriod = info.recruitmentPeriod || "";
+          const separator = recruitmentPeriod.includes(" ~ ") ? " ~ " : "~";
+          const [applicationStart = "", applicationEnd = ""] = recruitmentPeriod
+            .split(separator)
+            .map((s) => s.trim());
+
+          return {
+            id: info.id,
+            title: info.title,
+            category: "배송형" as const,
+            image: info.image,
+            subcategory: info.category || "기타",
+            points: 0,
+            description: (c as any).description || "",
+            recruitment: {
+              current: info.recruitedCount || 0,
+              total: info.totalCount || 0,
+            },
+            schedule: generateSchedule(applicationStart), // 오픈 예정일 때만 schedule 생성
+            dayCount: info.daysLeft ? `D-${info.daysLeft}` : "",
+            detailedSchedule: {
+              applicationStart,
+              applicationEnd,
+              announcement: info.announcementDate || "",
+              purchasePeriod: "",
+              registrationPeriod: info.registrationPeriod || "",
+            },
+            campaign_detail_image: info.image,
+            channel: info.brandName || "",
+            keyword: (c as any).keywords || "",
+            promotionLink: (c as any).promotionLink || "",
+            requirements: [],
+            guidelineTexts: [],
+            isUrgent: (c as any).isUrgent === true, // 긴급 캠페인 여부
+            registeredAt: (c as any).registeredAt || undefined, // 등록 시간
+          } as DeliveryCampaignData;
+        });
+        const staticIds = new Set(deliveryCampaigns.map((c) => c.id));
+        const newCampaigns = converted.filter((c) => !staticIds.has(c.id));
+        allDelivery = [...deliveryCampaigns, ...newCampaigns];
+      }
+    }
+  } catch (error) {
+    console.error("localStorage에서 배송형 캠페인 불러오기 실패:", error);
+  }
+
+  // 방문형
+  try {
+    const stored = localStorage.getItem("visitCampaigns");
+    if (stored) {
+      const storedCampaigns: CampaignWithApplicants[] = JSON.parse(stored);
+      if (Array.isArray(storedCampaigns)) {
+        const converted = storedCampaigns.map((c) => {
+          const info = c.campaignInfo;
+          const recruitmentPeriod = info.recruitmentPeriod || "";
+          const separator = recruitmentPeriod.includes(" ~ ") ? " ~ " : "~";
+          const [applicationStart = "", applicationEnd = ""] = recruitmentPeriod
+            .split(separator)
+            .map((s) => s.trim());
+
+          return {
+            id: info.id,
+            title: info.title,
+            category: "방문형" as const,
+            image: info.image,
+            subcategory: info.category || "기타",
+            region: "",
+            points: 0,
+            description: (c as any).description || "",
+            recruitment: {
+              current: info.recruitedCount || 0,
+              total: info.totalCount || 0,
+            },
+            schedule: generateSchedule(applicationStart), // 오픈 예정일 때만 schedule 생성
+            dayCount: info.daysLeft ? `D-${info.daysLeft}` : "",
+            detailedSchedule: {
+              applicationStart,
+              applicationEnd,
+              announcement: info.announcementDate || "",
+              purchasePeriod: info.registrationPeriod || "",
+            },
+            campaign_detail_image: info.image,
+            channel: info.brandName || "",
+            keyword: (c as any).keywords || "",
+            guidelineTexts: [],
+            requirements: [],
+            visitAddress: (c as any).visitAddress || "",
+            addressGuide: (c as any).addressGuide || "",
+            visitLink: (c as any).visitLink || "",
+            isUrgent: (c as any).isUrgent === true, // 긴급 캠페인 여부
+            registeredAt: (c as any).registeredAt || undefined, // 등록 시간
+          } as VisitCampaignData;
+        });
+        const staticIds = new Set(allVisit.map((c) => c.id));
+        const newCampaigns = converted.filter((c) => !staticIds.has(c.id));
+        allVisit = [...allVisit, ...newCampaigns];
+      }
+    }
+  } catch (error) {
+    console.error("localStorage에서 방문형 캠페인 불러오기 실패:", error);
+  }
+
+  // 구매평
+  try {
+    const stored = localStorage.getItem("reviewCampaigns");
+    if (stored) {
+      const storedCampaigns: CampaignWithApplicants[] = JSON.parse(stored);
+      if (Array.isArray(storedCampaigns)) {
+        const converted = storedCampaigns.map((c) => {
+          const info = c.campaignInfo;
+          const recruitmentPeriod = info.recruitmentPeriod || "";
+          const separator = recruitmentPeriod.includes(" ~ ") ? " ~ " : "~";
+          const [applicationStart = "", applicationEnd = ""] = recruitmentPeriod
+            .split(separator)
+            .map((s) => s.trim());
+
+          const isUrgentValue = (c as any).isUrgent === true;
+
+          // 디버깅: 모든 긴급 캠페인 확인
+          if (
+            (c as any).isUrgent === true ||
+            info.id === "review_13" ||
+            info.title?.includes("긴급")
+          ) {
+            console.log("[HomePageClient] 구매평 캠페인 변환:", {
+              id: info.id,
+              title: info.title,
+              originalIsUrgent: (c as any).isUrgent,
+              originalIsUrgentType: typeof (c as any).isUrgent,
+              convertedIsUrgent: isUrgentValue,
+              fullCampaign: c,
+            });
+          }
+
+          return {
+            id: info.id,
+            title: info.title,
+            category: "구매평" as const,
+            image: info.image,
+            subcategory: info.category || "기타",
+            channel: info.brandName || "",
+            points: 0,
+            description: (c as any).description || "",
+            recruitment: {
+              current: info.recruitedCount || 0,
+              total: info.totalCount || 0,
+            },
+            schedule: generateSchedule(applicationStart), // 오픈 예정일 때만 schedule 생성
+            dayCount: info.daysLeft ? `D-${info.daysLeft}` : "",
+            detailedSchedule: {
+              applicationStart,
+              applicationEnd,
+              announcement: info.announcementDate || "",
+              purchasePeriod: (c as any).purchasePeriod || "",
+              registrationPeriod: info.registrationPeriod || "",
+            },
+            campaign_detail_image: info.image,
+            keyword: (c as any).keywords || "",
+            purchaseLink: (c as any).purchaseLink || "",
+            requirements: [],
+            guidelineTexts: [],
+            isUrgent: isUrgentValue, // 긴급 캠페인 여부
+            registeredAt: (c as any).registeredAt || undefined, // 등록 시간
+          } as ReviewCampaignData;
+        });
+        const staticIds = new Set(reviewCampaigns.map((c) => c.id));
+        // localStorage에 있는 캠페인 중 정적 데이터에 없는 것만 추가
+        const newCampaigns = converted.filter((c) => !staticIds.has(c.id));
+        // localStorage에 있는 캠페인 중 정적 데이터에도 있는 것은 localStorage 버전으로 교체 (최신 데이터 우선)
+        const updatedStaticCampaigns = reviewCampaigns.map((staticCampaign) => {
+          const localStorageCampaign = converted.find(
+            (c) => c.id === staticCampaign.id
+          );
+          return localStorageCampaign || staticCampaign;
+        });
+        allReview = [...updatedStaticCampaigns, ...newCampaigns];
+      }
+    }
+  } catch (error) {
+    console.error("localStorage에서 구매평 캠페인 불러오기 실패:", error);
+  }
+
+  // 기자단
+  try {
+    const stored = localStorage.getItem("reporterCampaigns");
+    if (stored) {
+      const storedCampaigns: CampaignWithApplicants[] = JSON.parse(stored);
+      if (Array.isArray(storedCampaigns)) {
+        const converted = storedCampaigns.map((c) => {
+          const info = c.campaignInfo;
+          const recruitmentPeriod = info.recruitmentPeriod || "";
+          const separator = recruitmentPeriod.includes(" ~ ") ? " ~ " : "~";
+          const [applicationStart = "", applicationEnd = ""] = recruitmentPeriod
+            .split(separator)
+            .map((s) => s.trim());
+
+          return {
+            id: info.id,
+            title: info.title,
+            category: "기자단" as const,
+            image: info.image,
+            subcategory: info.category || "기타",
+            points: 0,
+            description: (c as any).description || "",
+            recruitment: {
+              current: info.recruitedCount || 0,
+              total: info.totalCount || 0,
+            },
+            schedule: generateSchedule(applicationStart), // 오픈 예정일 때만 schedule 생성
+            dayCount: info.daysLeft ? `D-${info.daysLeft}` : "",
+            detailedSchedule: {
+              applicationStart,
+              applicationEnd,
+              announcement: info.announcementDate || "",
+              registrationPeriod: info.registrationPeriod || "",
+            },
+            campaign_detail_image: info.image,
+            channel: info.brandName || "",
+            keyword: (c as any).keywords || "",
+            productLink: (c as any).productLink || "",
+            requirements: [],
+            guidelineTexts: [],
+            isUrgent: (c as any).isUrgent === true, // 긴급 캠페인 여부
+            registeredAt: (c as any).registeredAt || undefined, // 등록 시간
+          } as ReporterCampaignData;
+        });
+        const staticIds = new Set(reporterCampaigns.map((c) => c.id));
+        const newCampaigns = converted.filter((c) => !staticIds.has(c.id));
+        allReporter = [...reporterCampaigns, ...newCampaigns];
+      }
+    }
+  } catch (error) {
+    console.error("localStorage에서 기자단 캠페인 불러오기 실패:", error);
+  }
+
+  // 미션형
+  try {
+    const stored = localStorage.getItem("missionCampaigns");
+    if (stored) {
+      const storedCampaigns: CampaignWithApplicants[] = JSON.parse(stored);
+      if (Array.isArray(storedCampaigns)) {
+        const converted = storedCampaigns.map((c) => {
+          const info = c.campaignInfo;
+          const recruitmentPeriod = info.recruitmentPeriod || "";
+          const separator = recruitmentPeriod.includes(" ~ ") ? " ~ " : "~";
+          const [applicationStart = "", applicationEnd = ""] = recruitmentPeriod
+            .split(separator)
+            .map((s) => s.trim());
+
+          return {
+            id: info.id,
+            title: info.title,
+            category: "미션형" as const,
+            image: info.image,
+            subcategory: info.category || "기타",
+            channel: info.brandName || "",
+            points: 0,
+            description: (c as any).description || "",
+            recruitment: {
+              current: info.recruitedCount || 0,
+              total: info.totalCount || 0,
+            },
+            schedule: generateSchedule(applicationStart), // 오픈 예정일 때만 schedule 생성
+            dayCount: info.daysLeft ? `D-${info.daysLeft}` : "",
+            detailedSchedule: {
+              applicationStart,
+              applicationEnd,
+              announcement: info.announcementDate || "",
+              registrationPeriod: info.registrationPeriod || "",
+            },
+            campaign_detail_image: info.image,
+            keyword: (c as any).keywords || "",
+            productLink: (c as any).productLink || "",
+            requirements: [],
+            guidelineTexts: [],
+            isUrgent: (c as any).isUrgent === true, // 긴급 캠페인 여부
+            registeredAt: (c as any).registeredAt || undefined, // 등록 시간
+          } as MissionCampaignData;
+        });
+        const staticIds = new Set(missionCampaigns.map((c) => c.id));
+        const newCampaigns = converted.filter((c) => !staticIds.has(c.id));
+        allMission = [...missionCampaigns, ...newCampaigns];
+      }
+    }
+  } catch (error) {
+    console.error("localStorage에서 미션형 캠페인 불러오기 실패:", error);
+  }
+
+  return {
+    allDelivery,
+    allVisit,
+    allReview,
+    allMission,
+    allReporter,
+  };
+}
+
+/**
+ * 정적 캠페인 데이터만 반환하는 함수 (서버와 클라이언트 동일)
+ *
+ * 설명:
+ * - hydration mismatch를 방지하기 위해 서버와 클라이언트에서 동일한 정적 데이터만 반환합니다.
+ * - localStorage 데이터는 useEffect에서 별도로 추가합니다.
+ */
+function getStaticCampaigns() {
+  return {
+    allDelivery: enrichStaticCampaigns([...deliveryCampaigns]),
+    allVisit: enrichStaticCampaigns([...visitCampaigns]),
+    allReview: enrichStaticCampaigns([...reviewCampaigns]),
+    allMission: enrichStaticCampaigns([...missionCampaigns]),
+    allReporter: enrichStaticCampaigns([...reporterCampaigns]),
+  };
+}
+
 export default function HomePageClient() {
+  /**
+   * 캠페인 데이터 상태 관리
+   *
+   * 설명:
+   * - 서버와 클라이언트 간 hydration mismatch를 방지하기 위해
+   *   초기값은 정적 데이터만 사용하고, 클라이언트에서만 localStorage 데이터를 추가합니다.
+   * - useState의 초기값으로는 서버에서도 동일하게 렌더링되는 정적 데이터만 사용합니다.
+   */
+  const [mergedCampaigns, setMergedCampaigns] = useState(() =>
+    getStaticCampaigns()
+  );
+
+  /**
+   * 클라이언트에서만 localStorage 데이터를 불러와서 상태 업데이트
+   *
+   * 설명:
+   * - useEffect는 클라이언트에서만 실행되므로 hydration mismatch를 방지할 수 있습니다.
+   * - 컴포넌트가 마운트된 후에 localStorage 데이터를 불러와서 상태를 업데이트합니다.
+   */
+  useEffect(() => {
+    // 클라이언트에서만 실행
+    if (typeof window === "undefined") return;
+
+    // localStorage 데이터를 포함한 전체 캠페인 데이터로 업데이트
+    setMergedCampaigns(getAllMergedCampaigns());
+  }, []);
+
   // 오늘 날짜 (시간 정보 제거) - 모든 필터링에서 공통으로 사용
   const today = useMemo(() => {
     const date = new Date();
@@ -161,11 +686,11 @@ export default function HomePageClient() {
     // 모든 캠페인을 하나의 배열로 합칩니다
     // 스프레드 연산자(...): 배열을 펼쳐서 새 배열에 추가합니다
     const all_campaigns = [
-      ...deliveryCampaigns,
-      ...reviewCampaigns,
-      ...visitCampaigns,
-      ...missionCampaigns,
-      ...reporterCampaigns,
+      ...mergedCampaigns.allDelivery,
+      ...mergedCampaigns.allReview,
+      ...mergedCampaigns.allVisit,
+      ...mergedCampaigns.allMission,
+      ...mergedCampaigns.allReporter,
     ];
 
     // 마감되지 않은 캠페인만 필터링
@@ -220,7 +745,7 @@ export default function HomePageClient() {
 
     // 최종적으로 무작위로 섞어서 반환 (8개)
     return shuffle_array(selected).slice(0, 8);
-  }, [today]);
+  }, [today, mergedCampaigns]);
 
   /**
    * 지금 인기 많은 캠페인 - 참여자가 많은 캠페인을 무작위로 선택
@@ -236,11 +761,11 @@ export default function HomePageClient() {
   const popular_campaigns = useMemo(() => {
     // 모든 캠페인을 하나의 배열로 합칩니다
     const all_campaigns = [
-      ...deliveryCampaigns,
-      ...reviewCampaigns,
-      ...visitCampaigns,
-      ...missionCampaigns,
-      ...reporterCampaigns,
+      ...mergedCampaigns.allDelivery,
+      ...mergedCampaigns.allReview,
+      ...mergedCampaigns.allVisit,
+      ...mergedCampaigns.allMission,
+      ...mergedCampaigns.allReporter,
     ];
 
     // 마감되지 않은 캠페인만 필터링
@@ -294,7 +819,7 @@ export default function HomePageClient() {
 
     // 최대 8개까지 선택
     return selected.slice(0, 8);
-  }, [today]);
+  }, [today, mergedCampaigns]);
 
   /**
    * 진행 중인 캠페인 - 현재 진행 중인 캠페인 32개를 무작위로 선택
@@ -309,11 +834,11 @@ export default function HomePageClient() {
   const ongoing_campaigns = useMemo(() => {
     // 모든 캠페인을 하나의 배열로 합칩니다
     const all_campaigns = [
-      ...deliveryCampaigns,
-      ...reviewCampaigns,
-      ...visitCampaigns,
-      ...missionCampaigns,
-      ...reporterCampaigns,
+      ...mergedCampaigns.allDelivery,
+      ...mergedCampaigns.allReview,
+      ...mergedCampaigns.allVisit,
+      ...mergedCampaigns.allMission,
+      ...mergedCampaigns.allReporter,
     ];
 
     // 마감되지 않은 캠페인만 필터링
@@ -326,7 +851,7 @@ export default function HomePageClient() {
 
     // 최대 32개만 선택
     return shuffled.slice(0, 32);
-  }, [today]);
+  }, [today, mergedCampaigns]);
 
   return (
     // React Fragment (<>...</>) 사용

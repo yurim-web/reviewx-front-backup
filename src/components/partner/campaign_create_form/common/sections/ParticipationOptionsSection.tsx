@@ -151,11 +151,10 @@ export function ParticipationOptionsSection({
           htmlFor="allowLateSubmission"
           className={guideStyles.option_label}
         >
-          지각 제출 허용
+          지각 제출 허용 (7일)
         </label>
         <div className={guideStyles.option_input_value}></div>
       </div>
     </article>
   );
 }
-

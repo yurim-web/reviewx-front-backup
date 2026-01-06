@@ -19,7 +19,6 @@ export const partnerPointSummary: PartnerPointSummary = {
 /**
  * * 파트너 포인트 내역 (샘플 데이터) */
 
-
 export const partnerPointHistoryData: PartnerPointHistory[] = [
   {
     id: "1", // 거래 고유 ID
@@ -97,5 +96,34 @@ export const partnerPointHistoryData: PartnerPointHistory[] = [
     status: "completed",
     balance: 435000,
   },
+  {
+    id: "9",
+    type: "returned", // 반환 유형
+    amount: 50000, // 양수=포인트 증가 (반환받음)
+    description: "리뷰어 포인트 반환", // 리뷰어 포인트 반환
+    date: "2025-09-15",
+    status: "completed", // 완료된 반환
+    balance: 485000,
+    return_reason: "리뷰어가 캠페인을 완료하지 못하여 포인트가 반환되었습니다.",
+  },
+  {
+    id: "10",
+    type: "returned",
+    amount: 100000,
+    description: "캠페인 포인트 반환", // 캠페인 포인트 반환
+    date: "2025-09-20",
+    status: "completed",
+    balance: 585000,
+    return_reason: "캠페인이 취소되어 포인트가 반환되었습니다.",
+  },
+  {
+    id: "11",
+    type: "returned",
+    amount: 30000,
+    description: "리뷰어 포인트 반환",
+    date: "2025-09-25",
+    status: "failed", // 반려된 반환
+    balance: 555000,
+    rejection_reason: "반환 신청 정보가 일치하지 않습니다.",
+  },
 ];
-

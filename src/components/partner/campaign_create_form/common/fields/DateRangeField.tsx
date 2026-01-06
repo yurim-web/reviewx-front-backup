@@ -210,12 +210,8 @@ export function DateRangeField({
         onChange={() => {}} // 입력 필드는 직접 수정 불가 (캘린더로만 선택)
         onClick={handle_input_click}
         placeholder={placeholder}
-        readOnly
+        readOnly={!can_edit} // 수정 가능할 때는 readOnly 해제하여 원래 스타일 유지
         disabled={!can_edit}
-        style={{
-          backgroundColor: "#fff", // 흰색 배경 강제 설정
-          color: "#444", // 텍스트 색상
-        }}
       />
 
       {/* 날짜 범위 선택 캘린더 - 입력 필드 아래에 표시 */}

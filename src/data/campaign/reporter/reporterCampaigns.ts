@@ -9,7 +9,7 @@ import type {
 } from "@/data/partner/sharedCampaigns";
 import { calculateDaysLeft, calculateCampaignStatus } from "../delivery/utils";
 
-interface ReporterCampaignData {
+export interface ReporterCampaignData {
   id: string; // 캠페인 고유 식별자
   title: string; // 캠페인 제목
   category: string; // 캠페인 카테고리 (기자단)
@@ -23,18 +23,27 @@ interface ReporterCampaignData {
   };
   schedule: string; // 날짜/시간 형식 일정 (예: "1/25 (월) 10:00\n모집 오픈")
   dayCount: string; // 남은 일수 형식 (예: "D-6")
+  isUrgent?: boolean; // 긴급 캠페인 여부 (기본값: false)
+  registeredAt?: string; // 캠페인 등록 시간 (ISO 8601 형식: "2025-01-15T10:30:00")
   detailedSchedule: {
     applicationStart: string; // 신청 시작일시
     applicationEnd: string; // 신청 마감일시
     announcement: string; // 선정 발표일시
     registrationPeriod: string; // 등록 기간
   };
-  campaign_detail_image: string; // 캠페인 상세 이미지 경로
+  campaign_detail_image: string; // 캠페인 상세 이미지 경로 (첫 번째 이미지, 하위 호환성)
+  campaign_detail_images?: string[]; // 캠페인 상세 이미지 경로 배열 (여러 이미지)
   channel: string; // 채널 정보 (블로그, 인스타그램, 유튜브 등)
   keyword: string; // 캠페인 키워드
   productLink?: string; // 제품링크 (선택)
   requirements: string[]; // 캠페인별 필수사항 코드 목록
   guidelineTexts: string[]; // 유의사항 텍스트 목록
+  // 참여/제출 옵션
+  adultOnly?: boolean; // 만 19세 이상 참여 허용
+  allowReParticipation?: boolean; // 이전 참여자 재참여 허용
+  allowLateSubmission?: boolean; // 지각 제출 허용
+  // 문의 담당자 정보
+  contactPhone?: string; // 문의 담당자 휴대폰 번호
 }
 
 /**
@@ -57,6 +66,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-5",
+    registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-20 ~ 2026-01-06)
       applicationStart: "2025-12-20",
@@ -98,6 +108,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-3",
+    registeredAt: "2025-12-17T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-19 ~ 2026-01-05)
       applicationStart: "2025-12-19",
@@ -138,7 +149,9 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       total: 4,
     },
     schedule: "",
-    dayCount: "긴급",
+    dayCount: "",
+    isUrgent: true, // 긴급 캠페인
+    registeredAt: "2025-12-16T13:45:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-21 ~ 2026-01-08)
       applicationStart: "2025-12-21",
@@ -179,6 +192,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-7",
+    registeredAt: "2025-12-20T13:30:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-22 ~ 2026-01-10)
       applicationStart: "2025-12-22",
@@ -219,6 +233,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-6",
+    registeredAt: "2025-10-28T10:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 종료 탭 - registrationPeriod가 과거
       applicationStart: "2025-11-01",
@@ -259,6 +274,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-4",
+    registeredAt: "2025-12-21T15:20:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-23 ~ 2026-01-10)
       applicationStart: "2025-12-23",
@@ -300,6 +316,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-2",
+    registeredAt: "2025-11-10T09:15:00.000Z", // 등록 시간
     detailedSchedule: {
       // 진행 탭 - applicationEnd가 과거, registrationPeriod가 미래
       applicationStart: "2025-11-15",
@@ -340,6 +357,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-8",
+    registeredAt: "2025-11-05T14:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 종료 탭 - registrationPeriod가 과거
       applicationStart: "2025-11-10",
@@ -380,6 +398,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-1",
+    registeredAt: "2025-11-15T10:50:00.000Z", // 등록 시간
     detailedSchedule: {
       // 진행 탭 - applicationEnd가 과거, registrationPeriod가 미래
       applicationStart: "2025-11-20",
@@ -420,6 +439,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-9",
+    registeredAt: "2025-11-01T08:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 취소 탭 - status가 "취소"로 설정됨
       applicationStart: "2025-11-05",
@@ -459,6 +479,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     },
     schedule: "1/15 (목) 10:00\n모집 오픈",
     dayCount: "",
+    registeredAt: "2026-01-10T12:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 오픈 예정 - 현재 날짜보다 미래 (2026-01-15 ~ 2026-02-05)
       applicationStart: "2026-01-15",
@@ -467,7 +488,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       registrationPeriod: "2026-02-10 ~ 2026-02-24",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버 블로그",
+    channel: "네이버블로그",
     keyword: "#뷰티트렌드 #뷰티기자단 #2026뷰티 #뷰티리포팅 #전문리뷰",
     productLink: "https://blog.naver.com/example-beauty-trend",
     requirements: [
@@ -485,9 +506,9 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       "- 미준수 시 처리 방향에 대한 책임은 기자단에게 있는 점 주의 부탁드립니다 <br /> - 활동 불가 및 활동 착오의 경우 : 페이백 미지급 및 선정취소 <br /> - 리포팅 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 전문적인 장비로 촬영해주세요 (4K 화상 권장) - 성의없는 리포팅은 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 기자단 활동 정보를 정확하게 기재해주세요 (트렌드 정보, 제품 분석, 시장 동향 등<br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리포팅 등록기간 내 리포팅 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리포팅 등록기간 필수로 지켜주시기 바랍니다. <br />- 기자단의 경우 뷰티 트렌드 분석과 함께 관련 정보, 참고 자료, 비교 분석 등을 기재해주세요. <br />- 기자단 캠페인의 경우 전문적인 뷰티 리포팅을 작성해주세요",
     ],
   },
-  // reporter_11: 마감임박 - 네이버 클립 채널
+  // reporter_12: 마감임박 - 네이버 클립 채널
   {
-    id: "reporter_11",
+    id: "reporter_12",
     title: "[마감임박] 디지털 기자단",
     category: "기자단",
     image: "/images/main/campaign_img/eximg_1.png",
@@ -500,6 +521,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     },
     schedule: "",
     dayCount: "마감임박",
+    registeredAt: "2025-12-26T11:30:00.000Z", // 등록 시간
     detailedSchedule: {
       // 마감임박 - 현재 날짜(2025-12-30) 기준으로 2일 후 마감 (2025-12-28 ~ 2026-01-01)
       applicationStart: "2025-12-28",
@@ -508,7 +530,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       registrationPeriod: "2026-01-03 ~ 2026-01-10",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버 클립",
+    channel: "클립",
     keyword: "#디지털기자단 #IT리뷰 #기술리포팅 #네이버클립 #전문리뷰",
     productLink: "https://example.com/digital-product",
     requirements: [
@@ -555,6 +577,8 @@ export interface ReporterCampaignDataExtended {
   };
   schedule: string;
   dayCount: string;
+  isUrgent?: boolean; // 긴급 캠페인 여부 (기본값: false)
+  registeredAt?: string; // 캠페인 등록 시간 (ISO 8601 형식: "2025-01-15T10:30:00")
   detailedSchedule: {
     applicationStart: string;
     applicationEnd: string;
@@ -573,6 +597,13 @@ export interface ReporterCampaignDataExtended {
   brandName?: string;
   partnerName?: string;
   statusText?: string;
+
+  // 참여/제출 옵션
+  adultOnly?: boolean; // 만 19세 이상 참여 허용
+  allowReParticipation?: boolean; // 이전 참여자 재참여 허용
+  allowLateSubmission?: boolean; // 지각 제출 허용
+  // 문의 담당자 정보
+  contactPhone?: string; // 문의 담당자 휴대폰 번호
 
   // 신청자 데이터 (선택사항 - 진행/예정/신청 캠페인에만 있음)
   applicantData?: {
@@ -645,20 +676,9 @@ export interface ReporterCampaignDataExtended {
  * - 각 캠페인마다 직접 예시 신청자 데이터를 포함합니다.
  */
 export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
-  // reporter_1: 테크 기자단 - 예정 탭
+  // reporter_1: 테크 기자단
   {
     ...reporterCampaigns[0],
-    status: "모집 중" as const,
-    detailedSchedule: {
-      ...reporterCampaigns[0].detailedSchedule,
-      // 신청 탭 - 현재 날짜가 모집 기간 내
-      applicationStart: "2025-12-13",
-      applicationEnd: "2026-01-03",
-      announcement: "2026-01-05",
-      registrationPeriod: "2026-01-07 ~ 2026-01-14",
-    },
-    brandName: "유튜브",
-    partnerName: "(주)기자단마케팅",
     applicantData: {
       applicants: [
         {
@@ -740,12 +760,9 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
       selectedApplicants: [],
     },
   },
-  // reporter_2: 뷰티 기자단 - 연장요청 탭
+  // reporter_2: 뷰티 기자단
   {
     ...reporterCampaigns[1],
-    status: "진행 중" as const,
-    brandName: "인스타그램",
-    partnerName: "(주)기자단마케팅",
     applicantData: {
       applicants: [
         {
@@ -866,12 +883,10 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
       ],
     },
   },
-  // reporter_3: 패션 기자단 - 신청 탭
+  // reporter_3: 패션 기자단
   {
     ...reporterCampaigns[2],
-    status: "모집 중" as const,
-    brandName: "네이버블로그",
-    partnerName: "(주)기자단마케팅",
+    isUrgent: true, // 긴급 캠페인
     applicantData: {
       applicants: [
         {
@@ -939,20 +954,9 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
       ],
     },
   },
-  // reporter_4: 푸드 기자단 - 예정 탭 (모집 시작일이 미래이므로 예정 탭에 표시)
+  // reporter_4: 푸드 기자단
   {
     ...reporterCampaigns[3],
-    status: "대기 중" as const,
-    detailedSchedule: {
-      ...reporterCampaigns[3].detailedSchedule,
-      // 모집 중 - 현재 날짜 기준 (2025-12-22 ~ 2026-01-10)
-      applicationStart: "2025-12-22",
-      applicationEnd: "2026-01-10",
-      announcement: "2026-01-12",
-      registrationPeriod: "2026-01-15 ~ 2026-01-22",
-    },
-    brandName: "네이버블로그",
-    partnerName: "(주)기자단마케팅",
     applicantData: {
       applicants: [
         {
@@ -989,12 +993,9 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
       selectedApplicants: [],
     },
   },
-  // reporter_5: 여행 기자단 - 종료 탭
+  // reporter_5: 여행 기자단
   {
     ...reporterCampaigns[4],
-    status: "종료" as const,
-    brandName: "유튜브",
-    partnerName: "(주)기자단마케팅",
     applicantData: {
       applicants: [
         {
@@ -1016,6 +1017,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
       selectedApplicants: [],
     },
     contents: {
+      waiting: [],
       reviewing: [
         {
           id: "content_reporter_5_001",
@@ -1068,12 +1070,9 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
       ],
     },
   },
-  // reporter_6: 라이프스타일 기자단 - 신청 탭
+  // reporter_6: 라이프스타일 기자단
   {
     ...reporterCampaigns[5],
-    status: "모집 중" as const,
-    brandName: "인스타그램",
-    partnerName: "(주)기자단마케팅",
     applicantData: {
       applicants: [
         {
@@ -1141,12 +1140,9 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
       ],
     },
   },
-  // reporter_7: 게임 기자단 - 진행 탭
+  // reporter_7: 게임 기자단
   {
     ...reporterCampaigns[6],
-    status: "진행 중" as const,
-    brandName: "유튜브",
-    partnerName: "(주)기자단마케팅",
     applicantData: {
       applicants: [
         {
@@ -1226,12 +1222,9 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
       ],
     },
   },
-  // reporter_8: 건강 기자단 - 종료 탭
+  // reporter_8: 건강 기자단
   {
     ...reporterCampaigns[7],
-    status: "종료" as const,
-    brandName: "네이버블로그",
-    partnerName: "(주)기자단마케팅",
     applicantData: {
       applicants: [
         {
@@ -1297,12 +1290,9 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
       ],
     },
   },
-  // reporter_9: 문화 기자단 - 진행 탭
+  // reporter_9: 문화 기자단
   {
     ...reporterCampaigns[8],
-    status: "진행 중" as const,
-    brandName: "인스타그램",
-    partnerName: "(주)기자단마케팅",
     applicantData: {
       applicants: [
         {
@@ -1392,13 +1382,9 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
       ],
     },
   },
-  // reporter_10: 스포츠 기자단 - 취소 탭
+  // reporter_10: 스포츠 기자단
   {
     ...reporterCampaigns[9],
-    status: "취소" as const,
-    statusText: "캠페인을 취소하였습니다.",
-    brandName: "유튜브",
-    partnerName: "(주)기자단마케팅",
     applicantData: {
       applicants: [
         {
@@ -1420,13 +1406,68 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
       selectedApplicants: [],
     },
   },
-  // reporter_11: 디지털 기자단 - 마감임박 (네이버 클립)
+  // reporter_11: 뷰티 트렌드 기자단
   {
     ...reporterCampaigns[10],
-    status: "모집 중" as const,
-    statusText: "모집 중인 캠페인입니다.",
-    brandName: "네이버 클립",
-    partnerName: "(주)기자단마케팅",
+    applicantData: {
+      applicants: [],
+      selectedApplicants: [],
+    },
+  },
+  // reporter_12: 디지털 기자단
+  {
+    ...reporterCampaigns[11],
+    applicantData: {
+      applicants: [
+        {
+          id: "app_reporter_12_네이버블로그_001",
+          Id: "reviewer_reporter_12_001",
+          nickname: "디지털기자단리뷰어A",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 200,
+          totalVisits: 600000,
+          neighbors: 1800,
+          memo: "디지털 트렌드 및 IT 제품 리포팅 전문 기자단 리뷰어입니다.",
+          selectionStatus: "미선택" as const,
+          channel: "네이버블로그",
+          registrationDate: "2025-12-28",
+        },
+        {
+          id: "app_reporter_12_유튜브_001",
+          Id: "reviewer_reporter_12_002",
+          nickname: "디지털인플루언서B",
+          userType: "인플루언서" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 320,
+          totalVisits: 960000,
+          neighbors: 2800,
+          memo: "디지털 제품 리뷰 전문 인플루언서입니다.",
+          selectionStatus: "미선택" as const,
+          channel: "유튜브",
+          registrationDate: "2025-12-29",
+        },
+      ],
+      selectedApplicants: [
+        {
+          id: "app_reporter_12_네이버블로그_001",
+          Id: "reviewer_reporter_12_001",
+          nickname: "디지털기자단리뷰어A",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 200,
+          totalVisits: 600000,
+          neighbors: 1800,
+          memo: "디지털 트렌드 및 IT 제품 리포팅 전문 기자단 리뷰어입니다.",
+          selectionStatus: "선정하기" as const,
+          channel: "네이버블로그",
+          registrationDate: "2025-12-28",
+        },
+      ],
+    },
   },
 ];
 
@@ -1462,7 +1503,31 @@ export function getReporterContentsById(campaignId: string): ContentByTab {
  */
 function generateNewReporterCampaignId(): string {
   // 기존 캠페인 ID 중 최대값 찾기
-  const existingIds = reporterCampaignsExtended
+  const allCampaigns = [...reporterCampaignsExtended];
+
+  // localStorage에 저장된 캠페인도 확인
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("reporterCampaigns");
+      if (stored) {
+        const storedCampaigns: Array<{ campaignInfo: { id: string } }> =
+          JSON.parse(stored);
+        if (Array.isArray(storedCampaigns)) {
+          storedCampaigns.forEach((campaign) => {
+            if (campaign.campaignInfo && campaign.campaignInfo.id) {
+              allCampaigns.push({
+                id: campaign.campaignInfo.id,
+              } as any);
+            }
+          });
+        }
+      }
+    } catch (error) {
+      console.error("localStorage에서 기자단 캠페인 ID 확인 실패:", error);
+    }
+  }
+
+  const existingIds = allCampaigns
     .map((c) => {
       const match = c.id.match(/reporter_(\d+)/);
       return match ? parseInt(match[1]) : 0;
@@ -1496,10 +1561,22 @@ export function createReporterCampaign(
   const totalCount = Number(formData.recruitmentCount) || 0;
 
   // 캠페인 상태 결정 함수 호출
-  const campaignStatus = calculateCampaignStatus(
+  // registrationPeriod를 전달하여 등록 기간 종료일 체크가 정확하게 이루어지도록 함
+  const calculatedStatus = calculateCampaignStatus(
     formData.recruitmentPeriod,
-    formData.announcementDate
+    formData.announcementDate,
+    formData.registrationPeriod
   );
+
+  // calculateCampaignStatus는 "대기 중" | "모집 중" | "진행 중" | "종료"를 반환
+  // "종료" 상태를 "마감"으로 변환 (UI 표시용)
+  let finalStatus: string = calculatedStatus;
+  if (calculatedStatus === "종료") {
+    finalStatus = "마감";
+  } else if (calculatedStatus === "진행 중") {
+    // 기자단 캠페인의 경우 "진행 중" 상태를 "등록 중"으로 표시
+    finalStatus = "등록 중";
+  }
 
   // 플랫폼명 정규화
   const normalizedBrandName = formData.platform
@@ -1512,10 +1589,12 @@ export function createReporterCampaign(
       title: formData.title,
       image: imageUrl,
       status:
-        campaignStatus === "대기 중"
+        finalStatus === "대기 중"
           ? "대기 중"
-          : campaignStatus === "모집 중"
+          : finalStatus === "모집 중"
           ? "모집 중"
+          : finalStatus === "마감"
+          ? "마감"
           : "등록 중",
       campaignType: "기자단",
       category: formData.category || "기타",
@@ -1566,10 +1645,22 @@ export function updateReporterCampaign(
   const totalCount = Number(formData.recruitmentCount) || 0;
 
   // 캠페인 상태 결정 함수 호출
-  const campaignStatus = calculateCampaignStatus(
+  // registrationPeriod를 전달하여 등록 기간 종료일 체크가 정확하게 이루어지도록 함
+  const calculatedStatus = calculateCampaignStatus(
     formData.recruitmentPeriod,
-    formData.announcementDate
+    formData.announcementDate,
+    formData.registrationPeriod
   );
+
+  // calculateCampaignStatus는 "대기 중" | "모집 중" | "진행 중" | "종료"를 반환
+  // "종료" 상태를 "마감"으로 변환 (UI 표시용)
+  let finalStatus: string = calculatedStatus;
+  if (calculatedStatus === "종료") {
+    finalStatus = "마감";
+  } else if (calculatedStatus === "진행 중") {
+    // 기자단 캠페인의 경우 "진행 중" 상태를 "등록 중"으로 표시
+    finalStatus = "등록 중";
+  }
 
   // 플랫폼명 정규화
   const normalizedBrandName = formData.platform
@@ -1582,10 +1673,12 @@ export function updateReporterCampaign(
       title: formData.title,
       image: imageUrl,
       status:
-        campaignStatus === "대기 중"
+        finalStatus === "대기 중"
           ? "대기 중"
-          : campaignStatus === "모집 중"
+          : finalStatus === "모집 중"
           ? "모집 중"
+          : finalStatus === "마감"
+          ? "마감"
           : "등록 중",
       campaignType: "기자단",
       category: formData.category || "기타",

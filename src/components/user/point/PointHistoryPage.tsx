@@ -131,9 +131,7 @@ export default function PointHistoryPage({
    * - 각 탭에 해당하는 페이지로 이동합니다.
    * - 현재 페이지인 경우 아무 동작도 하지 않습니다.
    *
-   * JavaScript 학습 포인트:
-   * - switch 문: 여러 조건을 비교할 때 사용
-   * - window.location.href: 브라우저의 현재 URL을 변경하여 페이지 이동
+
    */
   const handlePointTabChange = (tab: PointTab) => {
     switch (tab) {

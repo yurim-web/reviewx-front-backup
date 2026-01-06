@@ -12,7 +12,15 @@
  * - 체크박스
  * - 제출 버튼
  * - 유의사항
+ * 
+ * 파일 구조:
+ * 이 파일은 논리적으로 분리된 섹션으로 구성되어 있습니다.
+ * 각 섹션은 주석으로 명확히 구분되어 있습니다.
  */
+
+/* ========================================
+   ☑️ 체크박스 관련 스타일
+   ======================================== */
 
 /* 체크박스 그룹 - 동의/선택 항목들 */
 .checkbox_group {
@@ -66,6 +74,10 @@
   font-size: 12px;
   font-weight: bold;
 }
+
+/* ========================================
+   📝 입력 필드 관련 스타일
+   ======================================== */
 
 /* 옵션 입력 그룹 */
 .option_input_group {
@@ -122,6 +134,44 @@
   align-items: center;
   gap: 8px;
 }
+
+.underline_input {
+  border: none;
+  border-bottom: 1px solid #d9d9d9;
+  background: transparent;
+  color: #444;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+
+  width: 45px;
+  padding: 4px 0;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.underline_input::-webkit-outer-spin-button,
+.underline_input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+.unit_text {
+  font-weight: 500;
+  font-size: 16px;
+  color: #444444;
+  letter-spacing: -0.32px;
+  white-space: nowrap;
+}
+
+/* ========================================
+   📦 옵션 입력 박스 스타일
+   ======================================== */
 
 /* 간편 안내 옵션 박스 */
 .option_input_box {
@@ -197,39 +247,9 @@
   flex-shrink: 0;
 }
 
-.underline_input {
-  border: none;
-  border-bottom: 1px solid #d9d9d9;
-  background: transparent;
-  color: #444;
-  text-align: center;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 16px;
-  letter-spacing: -0.32px;
-
-  width: 40px;
-  padding: 4px 0;
-  outline: none;
-  -webkit-appearance: none;
-  -moz-appearance: textfield;
-  appearance: textfield;
-}
-
-.underline_input::-webkit-outer-spin-button,
-.underline_input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  appearance: none;
-  margin: 0;
-}
-
-.unit_text {
-  font-weight: 500;
-  font-size: 16px;
-  color: #444444;
-  letter-spacing: -0.32px;
-  white-space: nowrap;
-}
+/* ========================================
+   📄 Textarea 관련 스타일
+   ======================================== */
 
 /* 고정 높이 textarea */
 .fixed_height_textarea {
@@ -269,19 +289,45 @@
   letter-spacing: -0.28px;
 }
 
+/* 스크롤바 스타일링 */
+.fixed_height_textarea::-webkit-scrollbar {
+  width: 24px;
+}
+
+.fixed_height_textarea::-webkit-scrollbar-track {
+  background: transparent; /* 트랙을 투명하게 */
+  margin: 4px 0; /* 위아래 여백 */
+}
+
+.fixed_height_textarea::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 100px;
+  border: 10px solid transparent;
+  background-clip: padding-box;
+}
+
+.fixed_height_textarea::-webkit-scrollbar-thumb:hover {
+  background: #999999;
+  background-clip: padding-box;
+}
+
+/* ========================================
+   🔘 제출 버튼 스타일
+   ======================================== */
+
 /* 제출 버튼 컨테이너 */
 .submit_button_container {
   display: flex;
   justify-content: center;
 }
 
-/* 제출 버튼 - "캠페인 등록하기" */
+/* 제출 버튼 - "등록" */
 .submit_button {
   width: 100%;
   height: 56px;
   border: none;
   border-radius: 8px;
-  background: #555555;
+  background: #ff5694;
   color: #fff;
   font-weight: 600;
   font-size: 16px;
@@ -296,6 +342,10 @@
   color: #848484;
   cursor: default;
 }
+
+/* ========================================
+   📑 섹션 레이아웃 스타일
+   ======================================== */
 
 /* 간편 안내 섹션 기본 레이아웃 */
 .guide_section {
@@ -350,6 +400,10 @@
 .locked_section .unit_text {
   color: #999;
 }
+
+/* ========================================
+   ⚠️ 유의사항 및 안내 스타일
+   ======================================== */
 
 /* 유의사항 */
 .notice_content {
@@ -422,39 +476,9 @@
   word-break: break-all;
 }
 
-/* 스크롤바 스타일링 */
-.fixed_height_textarea::-webkit-scrollbar {
-  width: 24px; /* 스크롤바 전체 너비 증가 (border 10px * 2 + thumb 너비 고려) */
-}
-
-.fixed_height_textarea::-webkit-scrollbar-track {
-  background: transparent; /* 트랙을 투명하게 */
-  margin: 4px 0; /* 위아래 여백 */
-}
-
-.fixed_height_textarea::-webkit-scrollbar-thumb {
-  background: #d9d9d9;
-  border-radius: 100px;
-  border: 10px solid transparent;
-  background-clip: padding-box;
-}
-
-.fixed_height_textarea::-webkit-scrollbar-thumb:hover {
-  background: #999999;
-  background-clip: padding-box;
-}
-
-/* 반응형 디자인 */
-@media (max-width: 768px) {
-  .option_input_group {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .video_input_group {
-    flex-wrap: wrap;
-  }
-}
+/* ========================================
+   ⚖️ 공정위 문구 동의 스타일
+   ======================================== */
 
 /* 공정위 문구 동의 */
 .fair_trade_agreement {
@@ -493,17 +517,33 @@
 }
 
 .fair_trade_checkbox:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
+  cursor: default;
 }
 
 .fair_trade_label {
-  font-size: 16px;
-  line-height: 1.5;
   color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
   cursor: pointer;
 }
 
 .fair_trade_label.disabled {
   cursor: default;
+}
+
+/* ========================================
+   📱 반응형 디자인
+   ======================================== */
+
+@media (max-width: 768px) {
+  .option_input_group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .video_input_group {
+    flex-wrap: wrap;
+  }
 }

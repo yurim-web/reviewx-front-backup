@@ -17,15 +17,72 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import ReviewCampaignForm from "@/components/partner/campaign_create_form/ReviewCampaignForm";
 import { CampaignFormData } from "@/types/user/user";
-import { updateReviewCampaign } from "@/data/campaign/review/reviewCampaigns";
+import { updateReviewCampaign, reviewCampaignsExtended } from "@/data/campaign/review/reviewCampaigns";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
+import type { ReviewCampaignDataExtended } from "@/data/campaign/review/reviewCampaigns";
 import layoutStyles from "../../../../../../styles/partner/layout.module.css";
 import PageHeader from "@/components/partner/campaign_create_form/common/layout/PageHeader";
 import Toast from "@/components/common/toast/Toast";
 
-function campaignToFormData(campaign: CampaignWithApplicants): CampaignFormData {
+/**
+ * requirements 배열을 파싱하여 폼 데이터로 변환하는 함수
+ */
+function parseRequirements(requirements: string[]): {
+  minTextLength: string;
+  minImageCount: string;
+  videoCount: string;
+  videoDuration: string;
+  requireLinkAttachment: boolean;
+  requireKeywordAttachment: boolean;
+} {
+  let minTextLength = "";
+  let minImageCount = "";
+  let videoCount = "";
+  let videoDuration = "";
+  let requireLinkAttachment = false;
+  let requireKeywordAttachment = false;
+
+  requirements.forEach((req) => {
+    if (req.startsWith("text_")) {
+      const charCount = req.replace("text_", "");
+      minTextLength = charCount;
+    } else if (req.startsWith("photo_")) {
+      const photoCount = req.replace("photo_", "");
+      minImageCount = photoCount;
+    } else if (req.startsWith("video_")) {
+      const parts = req.replace("video_", "").split("_");
+      if (parts.length === 2) {
+        videoCount = parts[0];
+        videoDuration = parts[1];
+      } else if (parts.length === 1) {
+        videoCount = "1";
+        videoDuration = parts[0];
+      }
+    } else if (req === "product_link") {
+      requireLinkAttachment = true;
+    } else if (req === "keyword") {
+      requireKeywordAttachment = true;
+    }
+  });
+
+  return {
+    minTextLength,
+    minImageCount,
+    videoCount,
+    videoDuration,
+    requireLinkAttachment,
+    requireKeywordAttachment,
+  };
+}
+
+function campaignToFormData(
+  campaign: CampaignWithApplicants,
+  originalData?: ReviewCampaignDataExtended
+): CampaignFormData {
   const info = campaign.campaignInfo;
+  const extended = originalData;
+
   // 브랜드명을 플랫폼 이름으로 매핑
   const brandNameToPlatform: Record<string, string> = {
     "네이버블로그": "네이버 블로그",
@@ -36,38 +93,76 @@ function campaignToFormData(campaign: CampaignWithApplicants): CampaignFormData 
     "쇼츠": "쇼츠",
   };
 
-  const platformName = info.brandName
-    ? brandNameToPlatform[info.brandName] || "네이버 블로그"
+  const platformName = extended?.channel || info.brandName
+    ? brandNameToPlatform[extended?.channel || info.brandName || ""] || "네이버 블로그"
     : "네이버 블로그";
+
+  // requirements 파싱
+  const requirements = extended?.requirements || [];
+  const parsedRequirements = parseRequirements(requirements);
+
+  // contentType에 따른 참여/제출 옵션 설정 (구매평도 contentType 있음)
+  const contentType = extended?.contentType;
+  let requireContentLink = false;
+  let requireContentImage = false;
+  
+  if (contentType === "link") {
+    requireContentLink = true;
+    requireContentImage = false;
+  } else if (contentType === "image") {
+    requireContentLink = false;
+    requireContentImage = true;
+  } else if (contentType === "both") {
+    requireContentLink = true;
+    requireContentImage = true;
+  }
+
+  // guidelineTexts 배열을 하나의 문자열로 합치기
+  const guidelines = extended?.guidelineTexts?.join("\n\n") || "";
+
+  // 모집기간 형식 변환
+  const recruitmentPeriod = extended?.detailedSchedule
+    ? `${extended.detailedSchedule.applicationStart} ~ ${extended.detailedSchedule.applicationEnd}`
+    : info.recruitmentPeriod || "";
+
+  // 포인트를 콤마 형식으로 변환
+  const additionalPoints = extended?.points
+    ? extended.points.toLocaleString("ko-KR")
+    : "";
 
   return {
     campaignType: info.campaignType as "구매평",
     platform: (platformName as any) || "네이버 블로그",
     title: info.title || "",
-    category: info.category || "기타",
-    brandName: info.brandName || "",
-    providedItems: "",
-    promotionLink: "",
-    currentPoints: "",
-    purchasePoints: "",
-    additionalPoints: "",
-    recruitmentCount: info.totalCount || "",
-    recruitmentPeriod: info.recruitmentPeriod || "",
-    purchasePeriod: info.purchasePeriod || "",
-    announcementDate: info.announcementDate || "",
-    registrationPeriod: info.registrationPeriod || "",
-    keywords: "",
-    adultOnly: false,
-    allowReParticipation: false,
-    allowLateSubmission: false,
-    minTextLength: "",
-    minImageCount: "",
-    videoCount: "",
-    videoDuration: "",
-    requireLinkAttachment: false,
-    requireKeywordAttachment: false,
-    guidelines: "",
-    isUrgent: false,
+    category: extended?.subcategory || info.category || "기타",
+    brandName: extended?.brandName || extended?.channel || info.brandName || "",
+    providedItems: extended?.description || "",
+    promotionLink: extended?.purchaseLink || "",
+    currentPoints: "58,000",
+    purchasePoints: additionalPoints, // 구매평은 purchasePoints 사용
+    additionalPoints: additionalPoints,
+    recruitmentCount: String(info.totalCount || ""),
+    recruitmentPeriod: recruitmentPeriod,
+    purchasePeriod: extended?.detailedSchedule?.purchasePeriod || info.purchasePeriod || "",
+    announcementDate: extended?.detailedSchedule?.announcement || info.announcementDate || "",
+    registrationPeriod: extended?.detailedSchedule?.registrationPeriod || info.registrationPeriod || "",
+    keywords: extended?.keyword || "",
+    adultOnly: extended?.adultOnly || false,
+    allowReParticipation: extended?.allowReParticipation || false,
+    allowLateSubmission: extended?.allowLateSubmission || false,
+    minTextLength: parsedRequirements.minTextLength,
+    minImageCount: parsedRequirements.minImageCount,
+    videoCount: parsedRequirements.videoCount,
+    videoDuration: parsedRequirements.videoDuration,
+    requireLinkAttachment: parsedRequirements.requireLinkAttachment,
+    requireKeywordAttachment: parsedRequirements.requireKeywordAttachment,
+    requireContentLink: requireContentLink,
+    requireContentImage: requireContentImage,
+    guidelines: guidelines,
+    contactPhone: extended?.contactPhone || "",
+    fairTradeAgreement: true,
+    isUrgent: extended?.isUrgent || false,
+    thumbnailImageUrl: extended?.image || info.image || "",
   };
 }
 
@@ -88,6 +183,32 @@ export default function ReviewCampaignEditPage() {
     message: "",
   });
 
+  /**
+   * 캠페인 오픈 여부 확인
+   */
+  const isCampaignOpen = (recruitmentPeriod: string): boolean => {
+    if (!recruitmentPeriod) return false;
+
+    try {
+      const parts = recruitmentPeriod.split("~").map((s) => s.trim());
+      if (parts.length < 1) return false;
+
+      const startDateStr = parts[0].split(" ")[0];
+      const startDate = new Date(startDateStr);
+      startDate.setHours(0, 0, 0, 0);
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      return startDate <= today;
+    } catch (error) {
+      console.error("캠페인 오픈 여부 확인 실패:", error);
+      return false;
+    }
+  };
+
+  const [isOpen, setIsOpen] = useState(false);
+
   useEffect(() => {
     try {
       const campaign = getCampaignById(campaignId);
@@ -103,8 +224,38 @@ export default function ReviewCampaignEditPage() {
         return;
       }
 
-      const formData = campaignToFormData(campaign);
+      // 원본 확장 데이터 찾기
+      const originalData = reviewCampaignsExtended.find(
+        (c) => c.id === campaignId
+      );
+
+      // localStorage에서 저장된 캠페인 확인
+      let storedOriginalData: ReviewCampaignDataExtended | undefined;
+      if (typeof window !== "undefined") {
+        const storedCampaigns = localStorage.getItem("reviewCampaigns");
+        if (storedCampaigns) {
+          const campaigns: CampaignWithApplicants[] = JSON.parse(storedCampaigns);
+          const storedCampaign = campaigns.find(
+            (c) => c.campaignInfo.id === campaignId
+          );
+          if (storedCampaign) {
+            storedOriginalData = originalData;
+          }
+        }
+      }
+
+      const dataToUse = storedOriginalData || originalData;
+
+      const formData = campaignToFormData(campaign, dataToUse);
       setInitialData(formData);
+      
+      // isUrgent 상태 설정
+      setIsUrgent(dataToUse?.isUrgent || false);
+      
+      // 캠페인 오픈 여부 확인
+      const openStatus = isCampaignOpen(campaign.campaignInfo.recruitmentPeriod);
+      setIsOpen(openStatus);
+      
       setIsLoading(false);
     } catch (err) {
       console.error("캠페인 로드 실패:", err);
@@ -199,6 +350,7 @@ export default function ReviewCampaignEditPage() {
           isSubmitting={isSubmitting}
           initialData={initialData}
           mode="edit"
+          isOpen={isOpen}
         />
       </div>
       

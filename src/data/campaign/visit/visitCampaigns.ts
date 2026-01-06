@@ -7,7 +7,7 @@ import type {
 } from "@/data/partner/sharedCampaigns";
 import { calculateDaysLeft, calculateCampaignStatus } from "../delivery/utils";
 
-interface VisitCampaignData {
+export interface VisitCampaignData {
   id: string; // 캠페인 고유 식별자
   title: string; // 캠페인 제목
   category: string; // 캠페인 카테고리 (방문형)
@@ -18,14 +18,17 @@ interface VisitCampaignData {
   description: string; // 캠페인 설명 및 제공 내역
   recruitment: { current: number; total: number }; // 모집 정보 (현재 지원자 수 / 총 모집 인원)
   schedule: string; // 일정 정보 (현재 사용하지 않음)
-  dayCount: string; // 남은 일수 (예: D-5, 긴급 등)
+  dayCount: string; // 남은 일수 (예: D-5 등)
+  isUrgent?: boolean; // 긴급 캠페인 여부 (기본값: false)
+  registeredAt?: string; // 캠페인 등록 시간 (ISO 8601 형식: "2025-01-15T10:30:00")
   detailedSchedule: {
     applicationStart: string; // 신청 시작일
     applicationEnd: string; // 신청 마감일
     announcement: string; // 선정 발표일
     purchasePeriod: string; // 등록 기간
   };
-  campaign_detail_image: string; // 캠페인 상세 이미지 경로
+  campaign_detail_image: string; // 캠페인 상세 이미지 경로 (첫 번째 이미지, 하위 호환성)
+  campaign_detail_images?: string[]; // 캠페인 상세 이미지 경로 배열 (여러 이미지)
   channel: string; // 채널 정보 (블로그, 인스타그램, 유튜브 등)
   keyword: string; // 캠페인 키워드
   guidelineTexts: string[]; // 페이지별 상세 가이드 문구 목록
@@ -35,6 +38,12 @@ interface VisitCampaignData {
   visitAddress?: string; // 방문 주소 (선택사항)
   addressGuide?: string; // 주소 상세 안내 (선택사항)
   visitLink?: string; // 방문 링크 (선택사항)
+  // 참여/제출 옵션
+  adultOnly?: boolean; // 만 19세 이상 참여 허용
+  allowReParticipation?: boolean; // 이전 참여자 재참여 허용
+  allowLateSubmission?: boolean; // 지각 제출 허용
+  // 문의 담당자 정보
+  contactPhone?: string; // 문의 담당자 휴대폰 번호
 }
 
 export const visitCampaigns: VisitCampaignData[] = [
@@ -51,6 +60,7 @@ export const visitCampaigns: VisitCampaignData[] = [
     recruitment: { current: 67, total: 6 },
     schedule: "",
     dayCount: "D-5",
+    registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-20 ~ 2026-01-06)
       applicationStart: "2025-12-20",
@@ -59,7 +69,7 @@ export const visitCampaigns: VisitCampaignData[] = [
       purchasePeriod: "2026-01-10 ~ 2026-01-17",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버 블로그",
+    channel: "네이버블로그",
     keyword: "#맛집추천 #강남식당 #방문후기 #솔직리뷰",
     guidelineTexts: [
       "식당 방문형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
@@ -91,7 +101,9 @@ export const visitCampaigns: VisitCampaignData[] = [
     description: "신규 오픈 카페 방문 후 인스타그램 리뷰",
     recruitment: { current: 89, total: 8 },
     schedule: "",
-    dayCount: "긴급",
+    dayCount: "",
+    isUrgent: true, // 긴급 캠페인
+    registeredAt: "2025-12-17T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-19 ~ 2026-01-05)
       applicationStart: "2025-12-19",
@@ -134,6 +146,7 @@ export const visitCampaigns: VisitCampaignData[] = [
     recruitment: { current: 45, total: 4 },
     schedule: "",
     dayCount: "D-3",
+    registeredAt: "2025-12-19T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-21 ~ 2026-01-08)
       applicationStart: "2025-12-21",
@@ -175,6 +188,7 @@ export const visitCampaigns: VisitCampaignData[] = [
     recruitment: { current: 123, total: 10 },
     schedule: "",
     dayCount: "D-7",
+    registeredAt: "2025-12-20T13:30:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-22 ~ 2026-01-10)
       applicationStart: "2025-12-22",
@@ -216,6 +230,7 @@ export const visitCampaigns: VisitCampaignData[] = [
     recruitment: { current: 156, total: 12 },
     schedule: "",
     dayCount: "D-6",
+    registeredAt: "2025-10-28T10:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 종료 탭 - purchasePeriod가 과거
       applicationStart: "2025-11-01",
@@ -224,7 +239,7 @@ export const visitCampaigns: VisitCampaignData[] = [
       purchasePeriod: "2025-11-20 ~ 2025-11-27",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버 블로그",
+    channel: "네이버블로그",
     keyword: "#명동쇼핑몰 #쇼핑투어 #명동쇼핑추천 #패션쇼핑",
     guidelineTexts: [
       "헬스장 방문형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
@@ -257,6 +272,7 @@ export const visitCampaigns: VisitCampaignData[] = [
     recruitment: { current: 78, total: 15 },
     schedule: "",
     dayCount: "D-4",
+    registeredAt: "2025-12-21T15:20:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-23 ~ 2026-01-10)
       applicationStart: "2025-12-23",
@@ -265,7 +281,7 @@ export const visitCampaigns: VisitCampaignData[] = [
       purchasePeriod: "2026-01-15 ~ 2026-01-22",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버 블로그",
+    channel: "네이버블로그",
     keyword: "#미술관추천 #전시후기 #예술체험 #문화생활",
     guidelineTexts: [
       "헬스장 방문형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
@@ -298,6 +314,7 @@ export const visitCampaigns: VisitCampaignData[] = [
     recruitment: { current: 34, total: 3 },
     schedule: "",
     dayCount: "D-2",
+    registeredAt: "2025-11-10T09:15:00.000Z", // 등록 시간
     detailedSchedule: {
       // 진행 탭 - applicationEnd가 과거, purchasePeriod가 미래 (announcement <= 오늘 <= purchasePeriod 끝)
       applicationStart: "2025-11-15",
@@ -339,6 +356,7 @@ export const visitCampaigns: VisitCampaignData[] = [
     recruitment: { current: 112, total: 9 },
     schedule: "",
     dayCount: "D-8",
+    registeredAt: "2025-11-05T14:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 종료 탭 - purchasePeriod가 과거
       applicationStart: "2025-11-10",
@@ -380,6 +398,7 @@ export const visitCampaigns: VisitCampaignData[] = [
     recruitment: { current: 67, total: 5 },
     schedule: "",
     dayCount: "D-1",
+    registeredAt: "2025-11-15T10:50:00.000Z", // 등록 시간
     detailedSchedule: {
       // 진행 탭 - applicationEnd가 과거, purchasePeriod가 미래 (announcement <= 오늘 <= purchasePeriod 끝)
       applicationStart: "2025-11-20",
@@ -421,6 +440,7 @@ export const visitCampaigns: VisitCampaignData[] = [
     recruitment: { current: 89, total: 20 },
     schedule: "",
     dayCount: "D-9",
+    registeredAt: "2025-11-01T08:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 취소 탭 - status가 "취소"로 설정됨
       applicationStart: "2025-11-05",
@@ -429,7 +449,7 @@ export const visitCampaigns: VisitCampaignData[] = [
       purchasePeriod: "2025-11-25 ~ 2025-12-02",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버 블로그",
+    channel: "네이버블로그",
     keyword: "#도서관추천 #독서공간 #공공도서관 #문화시설후기",
     guidelineTexts: [
       "헬스장 방문형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
@@ -459,8 +479,9 @@ export const visitCampaigns: VisitCampaignData[] = [
     points: 40000,
     description: "프리미엄 한우 돼지갈비 전문점 방문 체험단 모집 예정",
     recruitment: { current: 0, total: 4 },
-    schedule: "1/15 (목) 10:00\n모집 오픈",
+    schedule: "",
     dayCount: "",
+    registeredAt: "2026-01-10T12:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 오픈 예정 - 현재 날짜보다 미래 (2026-01-15 ~ 2026-02-05)
       applicationStart: "2026-01-15",
@@ -469,7 +490,7 @@ export const visitCampaigns: VisitCampaignData[] = [
       purchasePeriod: "2026-02-07 ~ 2026-02-20",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버 블로그",
+    channel: "네이버블로그",
     keyword: "#한우돼지갈비 #강남맛집 #서초맛집 #식당체험 #맛집리뷰",
     guidelineTexts: [
       "방문형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
@@ -502,6 +523,7 @@ export const visitCampaigns: VisitCampaignData[] = [
     recruitment: { current: 3, total: 5 }, // 신청자 수 적게 설정
     schedule: "",
     dayCount: "마감임박",
+    registeredAt: "2025-12-26T11:30:00.000Z", // 등록 시간
     detailedSchedule: {
       // 마감임박 - 현재 날짜(2025-12-30) 기준으로 2일 후 마감 (2025-12-28 ~ 2026-01-01)
       applicationStart: "2025-12-28",
@@ -510,7 +532,7 @@ export const visitCampaigns: VisitCampaignData[] = [
       purchasePeriod: "2026-01-03 ~ 2026-01-10",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버 블로그",
+    channel: "네이버블로그",
     keyword: "#스테이크하우스 #강남맛집 #프리미엄식당 #고급레스토랑 #맛집리뷰",
     guidelineTexts: [
       "프리미엄 스테이크하우스 방문형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
@@ -543,6 +565,7 @@ export const visitCampaigns: VisitCampaignData[] = [
     recruitment: { current: 2, total: 5 }, // 신청자 수 적게 설정
     schedule: "",
     dayCount: "마감임박",
+    registeredAt: "2025-12-27T08:45:00.000Z", // 등록 시간
     detailedSchedule: {
       // 마감임박 - 현재 날짜(2025-12-30) 기준으로 2일 후 마감 (2025-12-28 ~ 2026-01-01)
       applicationStart: "2025-12-28",
@@ -551,7 +574,7 @@ export const visitCampaigns: VisitCampaignData[] = [
       purchasePeriod: "2026-01-03 ~ 2026-01-10",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버 클립",
+    channel: "클립",
     keyword: "#프리미엄카페 #강남카페 #네이버클립 #카페리뷰 #맛집추천",
     guidelineTexts: [
       "프리미엄 카페 방문형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
@@ -589,6 +612,8 @@ export interface VisitCampaignDataExtended {
   recruitment: { current: number; total: number };
   schedule: string;
   dayCount: string;
+  isUrgent?: boolean; // 긴급 캠페인 여부 (기본값: false)
+  registeredAt?: string; // 캠페인 등록 시간 (ISO 8601 형식: "2025-01-15T10:30:00")
   detailedSchedule: {
     applicationStart: string;
     applicationEnd: string;
@@ -609,6 +634,13 @@ export interface VisitCampaignDataExtended {
   brandName?: string;
   partnerName?: string;
   statusText?: string;
+
+  // 참여/제출 옵션
+  adultOnly?: boolean; // 만 19세 이상 참여 허용
+  allowReParticipation?: boolean; // 이전 참여자 재참여 허용
+  allowLateSubmission?: boolean; // 지각 제출 허용
+  // 문의 담당자 정보
+  contactPhone?: string; // 문의 담당자 휴대폰 번호
 
   // 신청자 데이터 (선택사항 - 진행/예정/신청 캠페인에만 있음)
   applicantData?: {
@@ -681,20 +713,9 @@ export interface VisitCampaignDataExtended {
  * - 각 캠페인마다 직접 예시 신청자 데이터를 포함합니다.
  */
 export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
-  // visit_1: 식당 방문 리뷰 - 예정 탭
+  // visit_1: 식당 방문 리뷰
   {
     ...visitCampaigns[0],
-    status: "모집 중" as const,
-    detailedSchedule: {
-      ...visitCampaigns[0].detailedSchedule,
-      // 신청 탭 - 현재 날짜가 모집 기간 내
-      applicationStart: "2025-12-14",
-      applicationEnd: "2026-01-04",
-      announcement: "2026-01-06",
-      purchasePeriod: "2026-01-08 ~ 2026-01-15",
-    },
-    brandName: "네이버 블로그",
-    partnerName: "(주)방문마케팅",
     applicantData: {
       applicants: [
         {
@@ -709,7 +730,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           neighbors: 1100,
           memo: "식당 방문 리뷰 전문 리뷰어입니다.",
           selectionStatus: "미선택" as const,
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           registrationDate: "2025-12-15",
         },
         {
@@ -724,7 +745,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           neighbors: 1500,
           memo: "상세한 맛집 후기 작성 능력이 뛰어납니다.",
           selectionStatus: "미선택" as const,
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           registrationDate: "2025-12-16",
         },
         {
@@ -739,7 +760,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           neighbors: 2000,
           memo: "사진 퀄리티가 우수하고 팔로워 수가 많습니다.",
           selectionStatus: "미선택" as const,
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           registrationDate: "2025-12-17",
         },
         {
@@ -754,7 +775,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           neighbors: 700,
           memo: "가독성 좋은 후기를 작성합니다.",
           selectionStatus: "미선택" as const,
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           registrationDate: "2025-12-18",
         },
         {
@@ -769,20 +790,17 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           neighbors: 1800,
           memo: "고품질 방문 리뷰 전문가입니다.",
           selectionStatus: "미선택" as const,
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           registrationDate: "2025-12-19",
         },
       ],
       selectedApplicants: [],
     },
   },
-  // visit_2: 카페 방문 체험 - 연장요청 탭
+  // visit_2: 카페 방문 체험
   {
     ...visitCampaigns[1],
-    status: "진행 중" as const,
-    statusText: "연장 요청",
-    brandName: "인스타그램",
-    partnerName: "(주)방문마케팅",
+    isUrgent: true, // 긴급 캠페인
     applicantData: {
       applicants: [
         {
@@ -1010,12 +1028,9 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
       ],
     },
   },
-  // visit_3: 뷰티샵 방문 체험 - 신청 탭
+  // visit_3: 뷰티샵 방문 체험
   {
     ...visitCampaigns[2],
-    status: "모집 중" as const,
-    brandName: "인스타그램",
-    partnerName: "(주)방문마케팅",
     applicantData: {
       applicants: [
         {
@@ -1083,20 +1098,9 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
       ],
     },
   },
-  // visit_4: 헬스장 방문 체험 - 예정 탭
+  // visit_4: 헬스장 방문 체험
   {
     ...visitCampaigns[3],
-    status: "대기 중" as const,
-    detailedSchedule: {
-      ...visitCampaigns[3].detailedSchedule,
-      // 모집 중 - 현재 날짜 기준 (2025-12-22 ~ 2026-01-10)
-      applicationStart: "2025-12-22",
-      applicationEnd: "2026-01-10",
-      announcement: "2026-01-12",
-      purchasePeriod: "2026-01-15 ~ 2026-01-22",
-    },
-    brandName: "유튜브",
-    partnerName: "(주)방문마케팅",
     applicantData: {
       applicants: [
         {
@@ -1133,12 +1137,9 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
       selectedApplicants: [],
     },
   },
-  // visit_5: 쇼핑몰 방문 리뷰 - 종료 탭
+  // visit_5: 쇼핑몰 방문 리뷰
   {
     ...visitCampaigns[4],
-    status: "종료" as const,
-    brandName: "네이버 블로그",
-    partnerName: "(주)방문마케팅",
     applicantData: {
       applicants: [
         {
@@ -1153,7 +1154,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           neighbors: 750,
           memo: "쇼핑몰 방문 리뷰 전문 리뷰어입니다.",
           selectionStatus: "미선택" as const,
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           registrationDate: "2025-12-10",
         },
       ],
@@ -1168,7 +1169,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           userType: "리뷰어" as const,
           nickname: "쇼핑몰대기리뷰어A",
           channelId: "blog_005",
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           profileImage: "/images/test_img/eximg.png",
         },
       ],
@@ -1180,7 +1181,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           userType: "리뷰어" as const,
           nickname: "쇼핑몰방문리뷰어A",
           channelId: "blog_001",
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           updatedAt: "2025-11-25T10:00:00.000Z",
           isRejected: false,
           isLate: false,
@@ -1193,7 +1194,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           userType: "인플루언서" as const,
           nickname: "쇼핑몰인플루언서B",
           channelId: "blog_002",
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           updatedAt: "2025-11-26T11:00:00.000Z",
           isRejected: false,
           isLate: false,
@@ -1208,7 +1209,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           userType: "리뷰어" as const,
           nickname: "쇼핑몰리뷰어C",
           channelId: "blog_003",
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           updatedAt: "2025-11-27T12:00:00.000Z",
           isLate: false,
           profileImage: "/images/test_img/eximg3.png",
@@ -1220,7 +1221,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           userType: "인플루언서" as const,
           nickname: "쇼핑몰인플루언서D",
           channelId: "blog_004",
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           updatedAt: "2025-11-28T13:00:00.000Z",
           isLate: false,
           profileImage: "/images/test_img/eximg.png",
@@ -1228,12 +1229,9 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
       ],
     },
   },
-  // visit_6: 미술관 방문 체험 - 진행 탭
+  // visit_6: 미술관 방문 체험
   {
     ...visitCampaigns[5],
-    status: "진행 중" as const,
-    brandName: "네이버 블로그",
-    partnerName: "(주)방문마케팅",
     applicantData: {
       applicants: [
         {
@@ -1248,7 +1246,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           neighbors: 1100,
           memo: "미술관 방문 리뷰 전문 리뷰어입니다.",
           selectionStatus: "미선택" as const,
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           registrationDate: "2025-12-19",
         },
         {
@@ -1263,7 +1261,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           neighbors: 1900,
           memo: "문화 전문 인플루언서입니다.",
           selectionStatus: "미선택" as const,
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           registrationDate: "2025-12-20",
         },
         {
@@ -1278,7 +1276,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           neighbors: 1400,
           memo: "미술관 리뷰를 자주 작성합니다.",
           selectionStatus: "미선택" as const,
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           registrationDate: "2025-12-21",
         },
       ],
@@ -1295,7 +1293,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           neighbors: 2600,
           memo: "이미 선정된 우수 리뷰어입니다.",
           selectionStatus: "선정하기" as const,
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           registrationDate: "2025-12-19",
         },
       ],
@@ -1309,7 +1307,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           userType: "리뷰어" as const,
           nickname: "미술관방문리뷰어A",
           channelId: "blog_036",
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           profileImage: "/images/test_img/eximg.png",
         },
         {
@@ -1319,7 +1317,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           userType: "인플루언서" as const,
           nickname: "문화인플루언서B",
           channelId: "blog_037",
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           profileImage: "/images/test_img/eximg3.png",
         },
       ],
@@ -1331,7 +1329,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           userType: "리뷰어" as const,
           nickname: "미술관전문가C",
           channelId: "blog_038",
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           updatedAt: "2025-12-20T10:00:00.000Z",
           isRejected: false,
           isLate: false,
@@ -1346,7 +1344,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           userType: "리뷰어" as const,
           nickname: "선정된미술관방문리뷰어1",
           channelId: "blog_039",
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           updatedAt: "2025-12-19T09:00:00.000Z",
           isLate: false,
           profileImage: "/images/test_img/eximg3.png",
@@ -1358,7 +1356,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           userType: "리뷰어" as const,
           nickname: "지각제출리뷰어",
           channelId: "blog_040",
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           updatedAt: "2025-12-22T17:37:00.000Z",
           isLate: true,
           profileImage: "/images/test_img/eximg.png",
@@ -1366,12 +1364,9 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
       ],
     },
   },
-  // visit_7: 스파 방문 체험 - 진행 탭
+  // visit_7: 스파 방문 체험
   {
     ...visitCampaigns[6],
-    status: "진행 중" as const,
-    brandName: "인스타그램",
-    partnerName: "(주)방문마케팅",
     applicantData: {
       applicants: [
         {
@@ -1473,12 +1468,9 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
       ],
     },
   },
-  // visit_8: 반려동물 카페 방문 - 종료 탭
+  // visit_8: 반려동물 카페 방문
   {
     ...visitCampaigns[7],
-    status: "종료" as const,
-    brandName: "유튜브",
-    partnerName: "(주)방문마케팅",
     applicantData: {
       applicants: [
         {
@@ -1544,12 +1536,9 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
       ],
     },
   },
-  // visit_9: 놀이공원 방문 체험 - 진행 탭
+  // visit_9: 놀이공원 방문 체험
   {
     ...visitCampaigns[8],
-    status: "진행 중" as const,
-    brandName: "유튜브",
-    partnerName: "(주)방문마케팅",
     applicantData: {
       applicants: [
         {
@@ -1641,13 +1630,9 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
       ],
     },
   },
-  // visit_10: 도서관 방문 체험 - 취소 탭
+  // visit_10: 도서관 방문 체험
   {
     ...visitCampaigns[9],
-    status: "취소" as const,
-    statusText: "캠페인을 취소하였습니다.",
-    brandName: "네이버 블로그",
-    partnerName: "(주)방문마케팅",
     applicantData: {
       applicants: [
         {
@@ -1662,19 +1647,24 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           neighbors: 1000,
           memo: "도서관 방문 리뷰 전문 리뷰어입니다.",
           selectionStatus: "미선택" as const,
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           registrationDate: "2025-12-08",
         },
       ],
       selectedApplicants: [],
     },
   },
-  // visit_12: 프리미엄 스테이크하우스 방문 체험 - 마감임박 (신청 탭)
+  // visit_11: 통큰 한우 돼지갈비 체험단
+  {
+    ...visitCampaigns[10],
+    applicantData: {
+      applicants: [],
+      selectedApplicants: [],
+    },
+  },
+  // visit_12: 프리미엄 스테이크하우스 방문 체험
   {
     ...visitCampaigns[11],
-    status: "모집 중" as const,
-    brandName: "네이버 블로그",
-    partnerName: "(주)방문마케팅",
     applicantData: {
       applicants: [
         {
@@ -1689,7 +1679,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           neighbors: 1800,
           memo: "프리미엄 식당 방문 리뷰 전문 리뷰어입니다.",
           selectionStatus: "미선택" as const,
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           registrationDate: "2025-12-20",
         },
         {
@@ -1704,7 +1694,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           neighbors: 3000,
           memo: "프리미엄 레스토랑 전문 인플루언서입니다.",
           selectionStatus: "미선택" as const,
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           registrationDate: "2025-12-21",
         },
         {
@@ -1719,19 +1709,20 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           neighbors: 1200,
           memo: "스테이크 전문 리뷰어입니다.",
           selectionStatus: "미선택" as const,
-          channel: "네이버 블로그",
+          channel: "네이버블로그",
           registrationDate: "2025-12-21",
         },
       ],
       selectedApplicants: [],
     },
   },
-  // visit_13: 프리미엄 카페 방문 체험 - 마감임박 (네이버 클립)
+  // visit_13: 프리미엄 카페 방문 체험
   {
     ...visitCampaigns[12],
-    status: "모집 중" as const,
-    brandName: "네이버 클립",
-    partnerName: "(주)방문마케팅",
+    applicantData: {
+      applicants: [],
+      selectedApplicants: [],
+    },
   },
 ];
 
@@ -1767,7 +1758,31 @@ export function getVisitContentsById(campaignId: string): ContentByTab {
  */
 function generateNewVisitCampaignId(): string {
   // 기존 캠페인 ID 중 최대값 찾기
-  const existingIds = visitCampaignsExtended
+  const allCampaigns = [...visitCampaignsExtended];
+
+  // localStorage에 저장된 캠페인도 확인
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("visitCampaigns");
+      if (stored) {
+        const storedCampaigns: Array<{ campaignInfo: { id: string } }> =
+          JSON.parse(stored);
+        if (Array.isArray(storedCampaigns)) {
+          storedCampaigns.forEach((campaign) => {
+            if (campaign.campaignInfo && campaign.campaignInfo.id) {
+              allCampaigns.push({
+                id: campaign.campaignInfo.id,
+              } as any);
+            }
+          });
+        }
+      }
+    } catch (error) {
+      console.error("localStorage에서 방문형 캠페인 ID 확인 실패:", error);
+    }
+  }
+
+  const existingIds = allCampaigns
     .map((c) => {
       const match = c.id.match(/visit_(\d+)/);
       return match ? parseInt(match[1]) : 0;
@@ -1801,10 +1816,23 @@ export function createVisitCampaign(
   const totalCount = Number(formData.recruitmentCount) || 0;
 
   // 캠페인 상태 결정 함수 호출
-  const campaignStatus = calculateCampaignStatus(
+  // 캠페인 상태 결정 함수 호출
+  // registrationPeriod를 전달하여 등록 기간 종료일 체크가 정확하게 이루어지도록 함
+  const calculatedStatus = calculateCampaignStatus(
     formData.recruitmentPeriod,
-    formData.announcementDate
+    formData.announcementDate,
+    formData.registrationPeriod
   );
+
+  // calculateCampaignStatus는 "대기 중" | "모집 중" | "진행 중" | "종료"를 반환
+  // "종료" 상태를 "마감"으로 변환 (UI 표시용)
+  let finalStatus: string = calculatedStatus;
+  if (calculatedStatus === "종료") {
+    finalStatus = "마감";
+  } else if (calculatedStatus === "진행 중") {
+    // 방문형 캠페인의 경우 "진행 중" 상태를 "등록 중"으로 표시
+    finalStatus = "등록 중";
+  }
 
   // 플랫폼명 정규화
   const normalizedBrandName = formData.platform
@@ -1817,10 +1845,12 @@ export function createVisitCampaign(
       title: formData.title,
       image: imageUrl,
       status:
-        campaignStatus === "대기 중"
+        finalStatus === "대기 중"
           ? "대기 중"
-          : campaignStatus === "모집 중"
+          : finalStatus === "모집 중"
           ? "모집 중"
+          : finalStatus === "마감"
+          ? "마감"
           : "등록 중",
       campaignType: "방문형",
       category: formData.category || "기타",
@@ -1831,6 +1861,9 @@ export function createVisitCampaign(
       recruitedCount: 0,
       totalCount: totalCount,
       daysLeft: daysLeft,
+      // 방문형 캠페인 지역 정보 추가
+      region: formData.region || "",
+      subRegion: formData.subRegion || "",
     },
     applicantData: {
       applicants: [],
@@ -1871,10 +1904,22 @@ export function updateVisitCampaign(
   const totalCount = Number(formData.recruitmentCount) || 0;
 
   // 캠페인 상태 결정 함수 호출
-  const campaignStatus = calculateCampaignStatus(
+  // registrationPeriod를 전달하여 등록 기간 종료일 체크가 정확하게 이루어지도록 함
+  const calculatedStatus = calculateCampaignStatus(
     formData.recruitmentPeriod,
-    formData.announcementDate
+    formData.announcementDate,
+    formData.registrationPeriod
   );
+
+  // calculateCampaignStatus는 "대기 중" | "모집 중" | "진행 중" | "종료"를 반환
+  // "종료" 상태를 "마감"으로 변환 (UI 표시용)
+  let finalStatus: string = calculatedStatus;
+  if (calculatedStatus === "종료") {
+    finalStatus = "마감";
+  } else if (calculatedStatus === "진행 중") {
+    // 방문형 캠페인의 경우 "진행 중" 상태를 "등록 중"으로 표시
+    finalStatus = "등록 중";
+  }
 
   // 플랫폼명 정규화
   const normalizedBrandName = formData.platform
@@ -1887,10 +1932,12 @@ export function updateVisitCampaign(
       title: formData.title,
       image: imageUrl,
       status:
-        campaignStatus === "대기 중"
+        finalStatus === "대기 중"
           ? "대기 중"
-          : campaignStatus === "모집 중"
+          : finalStatus === "모집 중"
           ? "모집 중"
+          : finalStatus === "마감"
+          ? "마감"
           : "등록 중",
       campaignType: "방문형",
       category: formData.category || "기타",
@@ -1901,6 +1948,9 @@ export function updateVisitCampaign(
       recruitedCount: existingApplicantData?.applicants?.length ?? 0,
       totalCount: totalCount,
       daysLeft: daysLeft,
+      // 방문형 캠페인 지역 정보 추가
+      region: formData.region || "",
+      subRegion: formData.subRegion || "",
     },
     applicantData: existingApplicantData,
   };

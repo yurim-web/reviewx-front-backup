@@ -35,18 +35,51 @@ export function calculateDaysLeft(dateString: string): number {
  * 설명:
  * - 예정 탭: 캠페인 오픈 예정 (모집 시작일이 미래) → "대기 중"
  * - 신청 탭: 캠페인 오픈 후, 선정 전 (모집 시작일이 과거, 선정 날짜가 미래) → "모집 중"
- * - 진행 탭: 모집 시작일이 오늘이거나 선정 날짜가 지남 → "진행 중"
+ * - 진행 탭: 모집 시작일이 오늘이거나 선정 날짜가 지났지만 등록 기간이 아직 안 끝남 → "진행 중"
+ * - 종료: 등록 기간이 끝났을 때 → "종료"
  * 
  * @param recruitmentPeriod - 모집 기간 (예: "2025-11-01 ~ 2025-11-15")
  * @param announcementDate - 선정 날짜 (예: "2025-11-30")
- * @returns "대기 중" | "모집 중" | "진행 중"
+ * @param registrationPeriod - 등록 기간 (예: "2025-11-23 ~ 2025-11-30")
+ * @returns "대기 중" | "모집 중" | "진행 중" | "종료"
  */
 export function calculateCampaignStatus(
   recruitmentPeriod?: string,
   announcementDate?: string,
-): '대기 중' | '모집 중' | '진행 중' {
+  registrationPeriod?: string,
+): '대기 중' | '모집 중' | '진행 중' | '종료' {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
+
+  // 등록 기간 체크 (가장 우선순위)
+  if (registrationPeriod) {
+    // "2025-11-23 ~ 2025-11-30" 또는 "2025-11-23~2025-11-30" 형식에서 시작일과 종료일 추출
+    const separator = registrationPeriod.includes(' ~ ') ? ' ~ ' : '~';
+    const parts = registrationPeriod.split(separator);
+    const startDateStr = parts[0]?.trim();
+    const endDateStr = parts[1]?.trim();
+
+    if (startDateStr && endDateStr) {
+      const startDate = new Date(startDateStr);
+      const endDate = new Date(endDateStr);
+
+      // 유효한 날짜인지 확인
+      if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(0, 0, 0, 0);
+
+        // 등록 기간이 시작하지 않았으면 무조건 "대기 중" 반환 (예정 탭)
+        if (startDate > today) {
+          return '대기 중';
+        }
+
+        // 등록 기간이 시작되었고 종료일이 지났으면 "종료"
+        if (startDate <= today && endDate < today) {
+          return '종료';
+        }
+      }
+    }
+  }
 
   let campaignStatus: '대기 중' | '모집 중' | '진행 중' = '대기 중';
 

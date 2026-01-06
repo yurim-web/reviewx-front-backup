@@ -77,12 +77,21 @@
 }
 
 /* ========== 다운로드 버튼 영역 ========== */
-/* 다운로드 버튼 섹션 (ExcelDownloadBtn 컴포넌트 포함) */
+/* 다운로드 버튼 섹션 (기본 - space-between) */
 .download_section {
   display: flex;
   gap: 12px;
   align-items: center;
   justify-content: space-between;
+  padding: 24px 40px;
+}
+
+/* 정렬 섹션 (신청내역용 - flex-end) */
+.download_section_right {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-end;
   padding: 24px 40px;
 }
 
@@ -175,7 +184,7 @@
 
 /* 활성화된 탭 */
 .tab_button.active {
-  color: #444444;
+  color: #ff5694;
   font-weight: 600;
 }
 
@@ -193,12 +202,35 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: #444444;
+  background: #ff5694;
 }
 
 /* 탭 카운트 숫자 */
 .tab_count {
   font-weight: inherit;
+}
+
+/* ========== 신청 내역 열람 불가 메시지 ========== */
+.access_denied_message {
+  text-align: center;
+  padding: 80px 40px;
+  background: white;
+  border-radius: 8px;
+  margin: 24px 40px;
+}
+
+.access_denied_message > p {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 12px 0;
+}
+
+.access_denied_subtext {
+  font-size: 16px;
+  font-weight: 400;
+  color: #666;
+  margin: 0;
 }
 
 /* ========== 신청자 목록 ========== */

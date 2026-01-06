@@ -66,10 +66,12 @@ export interface CampaignFormData {
   platform?: PlatformType | ""; // 플랫폼 (미션형에는 없음)
   title: string; // 캠페인 제목
   category: string; // 카테고리
-  region?: string; // 방문 지역 (방문형에만 필요)
+  region?: string; // 방문 지역 시/도 (방문형에만 필요)
+  subRegion?: string; // 방문 지역 시/구/군 (방문형에만 필요)
   thumbnailImage?: File; // 썸네일 이미지 파일
   thumbnailImageUrl?: string; // 업로드된 이미지의 미리보기 URL (Data URL)
   detailImages?: File[]; // 상세 이미지 파일 목록
+  detailImagePreviews?: string[]; // 상세 이미지 미리보기 URL 배열 (Data URL) - localStorage 저장용
 
   // 상세 정보
   brandName: string; // 브랜드명

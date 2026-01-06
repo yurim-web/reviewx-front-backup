@@ -78,7 +78,7 @@
 
 /* 개별 FAQ 항목 (질문 + 답변을 감싸는 하나의 아이템) */
 .faq_item {
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid #d9d9d9;
 }
 
 /* 질문 영역 버튼 (클릭 가능한 질문 부분) */
@@ -150,7 +150,8 @@
 .expand_icon.expanded {
   transform: rotate(180deg);
   /* SVG 아이콘 색상을 파란색으로 변경 */
-  filter: brightness(0) saturate(100%) invert(40%) sepia(100%) saturate(2000%) hue-rotate(210deg) brightness(1) contrast(1);
+  filter: brightness(0) saturate(100%) invert(40%) sepia(100%) saturate(2000%)
+    hue-rotate(210deg) brightness(1) contrast(1);
 }
 
 /* ========================================
@@ -170,6 +171,7 @@
   align-items: flex-start;
   gap: 8px;
   padding: 24px 12px;
+  background: #f9f9f9;
 }
 
 /* 답변 번호 (A. 부분) */
@@ -218,7 +220,7 @@
   align-items: center;
   justify-content: center;
   padding: 8px 0px 24px 0px;
-  border-bottom: 1px solid #D9D9D9;
+  border-bottom: 1px solid #d9d9d9;
   width: 100%;
 }
 

@@ -29,6 +29,7 @@ import { useState, useEffect } from "react";
 import PartnerCampaignManagementHeader from "@/components/partner/campaign_management/PartnerCampaignManagementHeader";
 import CampaignList from "@/components/partner/campaign_management/CampaignList";
 import CampaignFilterBar from "@/components/common/campaign_management/CampaignFilterBar";
+import BaseModal from "@/components/common/modal/BaseModal";
 import type { PartnerMainTab } from "@/types/partner/partner";
 import type { PartnerStatTab } from "@/types/partner/partner";
 import type { PartnerCampaign } from "@/types/partner/partner";
@@ -55,6 +56,9 @@ export default function PartnerCampaignManagementPage() {
     []
   );
 
+  // 네트워크 오류 상태 (네트워크 지연이나 오류 발생 시 true)
+  const [isNetworkError, setIsNetworkError] = useState<boolean>(false);
+
   // 탭별 캠페인 목록 가져오기
   const campaigns = getCampaignsByTab(activeStatTab);
 
@@ -74,37 +78,72 @@ export default function PartnerCampaignManagementPage() {
    *
    * 설명:
    * - 탭이 변경되면 새로운 캠페인 목록을 가져옵니다.
-   * - 필터 바에 새로운 캠페인 목록을 전달합니다.
+   * - 필터 바가 자동으로 필터링하여 결과를 반환합니다.
+   *
+   * 참고: 실제 API 호출 시에는 try-catch로 네트워크 오류를 처리하고
+   *       setIsNetworkError(true)를 호출하여 오류 모달을 표시합니다.
    */
   useEffect(() => {
+    // TODO: 실제 API 호출 시 네트워크 오류 처리
+    // 예시:
+    // try {
+    //   const newCampaigns = await fetchCampaignsByTab(activeStatTab);
+    //   setFilteredCampaigns(newCampaigns);
+    // } catch (error) {
+    //   console.error("네트워크 오류:", error);
+    //   setIsNetworkError(true);
+    // }
+
     const newCampaigns = getCampaignsByTab(activeStatTab);
     // 필터 바가 자동으로 필터링하여 결과를 반환합니다.
   }, [activeStatTab]);
 
+  /**
+   * 네트워크 오류 모달 닫기 핸들러
+   *
+   * 설명:
+   * - 확인 버튼 클릭 시 모달을 닫습니다.
+   * - 사용자가 다시 시도할 수 있도록 페이지를 유지합니다.
+   */
+  const handleNetworkErrorModalClose = () => {
+    setIsNetworkError(false);
+    // 필요시 페이지 새로고침 또는 재시도 로직 추가 가능
+  };
+
   return (
-    <div className={layoutStyles.container}>
-      {/* 메인 컨텐츠 영역 */}
-      <div className={layoutStyles.main_content}>
-        {/* 공통 헤더: 상단 탭 네비게이션 + 통계 탭 */}
-        <PartnerCampaignManagementHeader
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          activeStatTab={activeStatTab}
-          setActiveStatTab={setActiveStatTab}
-        />
+    <>
+      <div className={layoutStyles.container}>
+        {/* 메인 컨텐츠 영역 */}
+        <div className={layoutStyles.main_content}>
+          {/* 공통 헤더: 상단 탭 네비게이션 + 통계 탭 */}
+          <PartnerCampaignManagementHeader
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            activeStatTab={activeStatTab}
+            setActiveStatTab={setActiveStatTab}
+          />
 
-        {/* 필터 바: 유형, 채널 필터 및 검색 */}
-        <CampaignFilterBar
-          campaigns={campaigns}
-          onFilteredCampaignsChange={handleFilteredCampaignsChange}
-        />
+          {/* 필터 바: 유형, 채널 필터 및 검색 */}
+          <CampaignFilterBar
+            campaigns={campaigns}
+            onFilteredCampaignsChange={handleFilteredCampaignsChange}
+          />
 
-        {/* 필터링된 캠페인 목록 */}
-        <CampaignList
-          campaigns={filteredCampaigns}
-          activeStatTab={activeStatTab}
-        />
+          {/* 필터링된 캠페인 목록 */}
+          <CampaignList
+            campaigns={filteredCampaigns}
+            activeStatTab={activeStatTab}
+          />
+        </div>
       </div>
-    </div>
+
+      {/* 네트워크 오류 모달 */}
+      <BaseModal
+        is_open={isNetworkError}
+        on_close={handleNetworkErrorModalClose}
+        message="오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."
+        buttons={["확인"]}
+      />
+    </>
   );
 }

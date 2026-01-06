@@ -9,7 +9,7 @@ import type {
 } from "@/data/partner/sharedCampaigns";
 import { calculateDaysLeft, calculateCampaignStatus } from "../delivery/utils";
 
-interface ReviewCampaignData {
+export interface ReviewCampaignData {
   id: string; // 캠페인 고유 식별자
   title: string; // 캠페인 제목
   category: string; // 캠페인 카테고리 (구매평)
@@ -24,6 +24,8 @@ interface ReviewCampaignData {
   };
   schedule: string; // 날짜/시간 형식 일정 (예: "1/25 (화) 10:00\n모집 오픈")
   dayCount: string; // 남은 일수 형식 (예: "D-6")
+  isUrgent?: boolean; // 긴급 캠페인 여부 (기본값: false)
+  registeredAt?: string; // 캠페인 등록 시간 (ISO 8601 형식: "2025-01-15T10:30:00")
   detailedSchedule: {
     applicationStart: string; // 신청 시작일시
     applicationEnd: string; // 신청 마감일
@@ -31,12 +33,19 @@ interface ReviewCampaignData {
     purchasePeriod: string; // 구매 기간
     registrationPeriod: string; // 등록 기간
   };
-  campaign_detail_image: string; // 캠페인 상세 이미지 경로
+  campaign_detail_image: string; // 캠페인 상세 이미지 경로 (첫 번째 이미지, 하위 호환성)
+  campaign_detail_images?: string[]; // 캠페인 상세 이미지 경로 배열 (여러 이미지)
   keyword: string; // 캠페인 키워드
   purchaseLink?: string; // 구매 링크 (선택사항)
   requirements: string[]; // 캠페인별 요구사항 코드 목록
   guidelineTexts: string[]; // 유의사항 텍스트 목록
   contentType?: "link" | "image" | "both"; // 콘텐츠 타입 (링크만, 이미지만, 링크+이미지)
+  // 참여/제출 옵션
+  adultOnly?: boolean; // 만 19세 이상 참여 허용
+  allowReParticipation?: boolean; // 이전 참여자 재참여 허용
+  allowLateSubmission?: boolean; // 지각 제출 허용
+  // 문의 담당자 정보
+  contactPhone?: string; // 문의 담당자 휴대폰 번호
 }
 
 /**
@@ -60,6 +69,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-5",
+    registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-20 ~ 2026-01-06)
       applicationStart: "2025-12-20",
@@ -103,7 +113,9 @@ export const reviewCampaigns: ReviewCampaignData[] = [
       total: 12,
     },
     schedule: "",
-    dayCount: "긴급",
+    dayCount: "",
+    isUrgent: true, // 긴급 캠페인
+    registeredAt: "2025-12-17T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-19 ~ 2026-01-05)
       applicationStart: "2025-12-19",
@@ -148,6 +160,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-3",
+    registeredAt: "2025-12-19T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-21 ~ 2026-01-08)
       applicationStart: "2025-12-21",
@@ -191,6 +204,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-7",
+    registeredAt: "2025-12-22T13:30:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-24 ~ 2026-01-12)
       applicationStart: "2025-12-24",
@@ -234,6 +248,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-6",
+    registeredAt: "2025-10-28T10:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 종료 탭 - registrationPeriod가 과거
       applicationStart: "2025-11-01",
@@ -277,6 +292,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-4",
+    registeredAt: "2025-12-21T15:20:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-23 ~ 2026-01-10)
       applicationStart: "2025-12-23",
@@ -320,6 +336,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-2",
+    registeredAt: "2025-11-10T09:15:00.000Z", // 등록 시간
     detailedSchedule: {
       // 진행 탭 - applicationEnd가 과거, registrationPeriod가 미래 (announcement <= 오늘 <= registrationPeriod 끝)
       applicationStart: "2025-11-15",
@@ -363,6 +380,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-8",
+    registeredAt: "2025-11-05T14:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 종료 탭 - registrationPeriod가 과거
       applicationStart: "2025-11-10",
@@ -406,13 +424,14 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-1",
+    registeredAt: "2025-11-15T10:50:00.000Z", // 등록 시간
     detailedSchedule: {
       // 진행 탭 - applicationEnd가 과거, registrationPeriod가 미래 (announcement <= 오늘 <= registrationPeriod 끝)
       applicationStart: "2025-11-20",
       applicationEnd: "2025-12-05",
       announcement: "2025-12-07",
       purchasePeriod: "2025-12-07 ~ 2025-12-10",
-      registrationPeriod: "2025-12-08 ~ 2025-12-25",
+      registrationPeriod: "2025-12-08 ~ 2026-01-25",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#자동차용품 #액세서리 #구매후기 #솔직리뷰 #자동차",
@@ -449,6 +468,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-9",
+    registeredAt: "2025-11-01T08:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 취소 탭 - status가 "취소"로 설정됨
       applicationStart: "2025-11-05",
@@ -491,6 +511,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     },
     schedule: "1/15 (목) 10:00\n모집 오픈",
     dayCount: "",
+    registeredAt: "2026-01-10T12:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 오픈 예정 - 현재 날짜보다 미래 (2026-01-15 ~ 2026-02-05)
       applicationStart: "2026-01-15",
@@ -534,6 +555,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-2",
+    registeredAt: "2025-12-26T11:30:00.000Z", // 등록 시간
     detailedSchedule: {
       // 마감임박 - 현재 날짜 기준 (2025-12-28 ~ 2026-01-01)
       applicationStart: "2025-12-28",
@@ -591,6 +613,8 @@ export interface ReviewCampaignDataExtended {
   };
   schedule: string;
   dayCount: string;
+  isUrgent?: boolean; // 긴급 캠페인 여부 (기본값: false)
+  registeredAt?: string; // 캠페인 등록 시간 (ISO 8601 형식: "2025-01-15T10:30:00")
   detailedSchedule: {
     applicationStart: string;
     applicationEnd: string;
@@ -610,6 +634,13 @@ export interface ReviewCampaignDataExtended {
   brandName?: string;
   partnerName?: string;
   statusText?: string;
+
+  // 참여/제출 옵션
+  adultOnly?: boolean; // 만 19세 이상 참여 허용
+  allowReParticipation?: boolean; // 이전 참여자 재참여 허용
+  allowLateSubmission?: boolean; // 지각 제출 허용
+  // 문의 담당자 정보
+  contactPhone?: string; // 문의 담당자 휴대폰 번호
 
   // 신청자 데이터 (선택사항 - 진행/예정/신청 캠페인에만 있음)
   applicantData?: {
@@ -690,21 +721,9 @@ export interface ReviewCampaignDataExtended {
  * - 각 캠페인마다 직접 예시 신청자 데이터를 포함합니다.
  */
 export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
-  // review_1: 스마트폰 구매평 리뷰 - 예정 탭
+  // review_1: 스마트폰 구매평 리뷰
   {
     ...reviewCampaigns[0],
-    status: "모집 중" as const,
-    detailedSchedule: {
-      ...reviewCampaigns[0].detailedSchedule,
-      // 신청 탭 - 현재 날짜가 모집 기간 내
-      applicationStart: "2025-12-17",
-      applicationEnd: "2026-01-07",
-      announcement: "2026-01-09",
-      purchasePeriod: "2026-01-09 ~ 2026-01-12",
-      registrationPeriod: "2026-01-12 ~ 2026-01-19",
-    },
-    brandName: "네이버블로그",
-    partnerName: "(주)구매평마케팅",
     applicantData: {
       applicants: [
         {
@@ -786,13 +805,10 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       selectedApplicants: [],
     },
   },
-  // review_2: 화장품 구매평 리뷰 - 연장요청 탭
+  // review_2: 화장품 구매평 리뷰
   {
     ...reviewCampaigns[1],
-    status: "진행 중" as const,
-    statusText: "연장 요청",
-    brandName: "네이버블로그",
-    partnerName: "(주)구매평마케팅",
+    isUrgent: true, // 긴급 캠페인
     applicantData: {
       applicants: [
         {
@@ -921,12 +937,9 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       ],
     },
   },
-  // review_3: 가전제품 구매평 리뷰 - 신청 탭
+  // review_3: 가전제품 구매평 리뷰
   {
     ...reviewCampaigns[2],
-    status: "모집 중" as const,
-    brandName: "네이버블로그",
-    partnerName: "(주)구매평마케팅",
     applicantData: {
       applicants: [
         {
@@ -1055,21 +1068,9 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       ],
     },
   },
-  // review_4: 의류 구매평 리뷰 - 예정 탭
+  // review_4: 의류 구매평 리뷰
   {
     ...reviewCampaigns[3],
-    status: "모집 중" as const,
-    detailedSchedule: {
-      ...reviewCampaigns[3].detailedSchedule,
-      // 신청 탭 - 현재 날짜가 모집 기간 내
-      applicationStart: "2025-12-23",
-      applicationEnd: "2026-01-13",
-      announcement: "2026-01-15",
-      purchasePeriod: "2026-01-15 ~ 2026-01-18",
-      registrationPeriod: "2026-01-18 ~ 2026-01-25",
-    },
-    brandName: "네이버블로그",
-    partnerName: "(주)구매평마케팅",
     applicantData: {
       applicants: [
         {
@@ -1106,12 +1107,9 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       selectedApplicants: [],
     },
   },
-  // review_5: 식품 구매평 리뷰 - 종료 탭
+  // review_5: 식품 구매평 리뷰
   {
     ...reviewCampaigns[4],
-    status: "종료" as const,
-    brandName: "네이버블로그",
-    partnerName: "(주)구매평마케팅",
     applicantData: {
       applicants: [
         {
@@ -1185,12 +1183,9 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       ],
     },
   },
-  // review_6: 책 구매평 리뷰 - 진행 탭
+  // review_6: 책 구매평 리뷰
   {
     ...reviewCampaigns[5],
-    status: "진행 중" as const,
-    brandName: "네이버블로그",
-    partnerName: "(주)구매평마케팅",
     applicantData: {
       applicants: [
         {
@@ -1319,12 +1314,9 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       ],
     },
   },
-  // review_7: 운동화 구매평 리뷰 - 진행 탭
+  // review_7: 운동화 구매평 리뷰
   {
     ...reviewCampaigns[6],
-    status: "진행 중" as const,
-    brandName: "네이버블로그",
-    partnerName: "(주)구매평마케팅",
     applicantData: {
       applicants: [
         {
@@ -1410,12 +1402,9 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       ],
     },
   },
-  // review_8: 반려동물 용품 구매평 리뷰 - 종료 탭
+  // review_8: 반려동물 용품 구매평 리뷰
   {
     ...reviewCampaigns[7],
-    status: "종료" as const,
-    brandName: "네이버블로그",
-    partnerName: "(주)구매평마케팅",
     applicantData: {
       applicants: [
         {
@@ -1487,12 +1476,9 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       ],
     },
   },
-  // review_9: 자동차 용품 구매평 리뷰 - 진행 탭
+  // review_9: 자동차 용품 구매평 리뷰
   {
     ...reviewCampaigns[8],
-    status: "진행 중" as const,
-    brandName: "네이버블로그",
-    partnerName: "(주)구매평마케팅",
     applicantData: {
       applicants: [
         {
@@ -1526,7 +1512,23 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           registrationDate: "2025-12-31",
         },
       ],
-      selectedApplicants: [],
+      selectedApplicants: [
+        {
+          id: "app_review_9_네이버블로그_001",
+          Id: "reviewer_review_9_001",
+          nickname: "자동차용품구매평리뷰어A",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 180,
+          totalVisits: 540000,
+          neighbors: 1500,
+          memo: "자동차 용품 구매평 전문 리뷰어입니다.",
+          selectionStatus: "선정하기" as const,
+          channel: "네이버블로그",
+          registrationDate: "2025-12-30",
+        },
+      ],
     },
     contents: {
       waiting: [
@@ -1590,13 +1592,9 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       ],
     },
   },
-  // review_10: 홈데코 구매평 리뷰 - 취소 탭
+  // review_10: 홈데코 구매평 리뷰
   {
     ...reviewCampaigns[9],
-    status: "취소" as const,
-    statusText: "캠페인을 취소하였습니다.",
-    brandName: "네이버블로그",
-    partnerName: "(주)구매평마케팅",
     applicantData: {
       applicants: [
         {
@@ -1618,13 +1616,21 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       selectedApplicants: [],
     },
   },
-  // review_12: 프리미엄 무선 이어폰 구매평 - 마감임박
+  // review_11: 프리미엄 비타민C 세럼 구매평
+  {
+    ...reviewCampaigns[10],
+    applicantData: {
+      applicants: [],
+      selectedApplicants: [],
+    },
+  },
+  // review_12: 프리미엄 무선 이어폰 구매평
   {
     ...reviewCampaigns[11],
-    status: "모집 중" as const,
-    statusText: "모집 중인 캠페인입니다.",
-    brandName: "",
-    partnerName: "(주)구매평마케팅",
+    applicantData: {
+      applicants: [],
+      selectedApplicants: [],
+    },
   },
 ];
 
@@ -1662,7 +1668,31 @@ export function getPurchaseReviewContentsById(
  */
 function generateNewReviewCampaignId(): string {
   // 기존 캠페인 ID 중 최대값 찾기
-  const existingIds = reviewCampaignsExtended
+  const allCampaigns = [...reviewCampaignsExtended];
+
+  // localStorage에 저장된 캠페인도 확인
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("reviewCampaigns");
+      if (stored) {
+        const storedCampaigns: Array<{ campaignInfo: { id: string } }> =
+          JSON.parse(stored);
+        if (Array.isArray(storedCampaigns)) {
+          storedCampaigns.forEach((campaign) => {
+            if (campaign.campaignInfo && campaign.campaignInfo.id) {
+              allCampaigns.push({
+                id: campaign.campaignInfo.id,
+              } as any);
+            }
+          });
+        }
+      }
+    } catch (error) {
+      console.error("localStorage에서 구매평 캠페인 ID 확인 실패:", error);
+    }
+  }
+
+  const existingIds = allCampaigns
     .map((c) => {
       const match = c.id.match(/review_(\d+)/);
       return match ? parseInt(match[1]) : 0;
@@ -1696,9 +1726,11 @@ export function createReviewCampaign(
   const totalCount = Number(formData.recruitmentCount) || 0;
 
   // 캠페인 상태 결정 함수 호출
+  // registrationPeriod를 전달하여 등록 기간 종료일 체크가 정확하게 이루어지도록 함
   const campaignStatus = calculateCampaignStatus(
     formData.recruitmentPeriod,
-    formData.announcementDate
+    formData.announcementDate,
+    formData.registrationPeriod
   );
 
   // 플랫폼명 정규화
@@ -1706,17 +1738,23 @@ export function createReviewCampaign(
     ? formData.platform.replace(/\s+/g, "")
     : "네이버블로그";
 
+  // calculateCampaignStatus는 "대기 중" | "모집 중" | "진행 중" | "종료"를 반환
+  // "종료" 상태를 "마감"으로 변환 (UI 표시용)
+  let finalStatus: string = campaignStatus;
+  if (campaignStatus === "종료") {
+    finalStatus = "마감";
+  } else if (campaignStatus === "진행 중") {
+    // 구매평 캠페인의 경우 "등록 중" 상태일 수 있음
+    // 더 정확한 상태 계산을 위해 deriveCampaignStatus 사용 고려
+    finalStatus = "진행 중";
+  }
+
   return {
     campaignInfo: {
       id: newId,
       title: formData.title,
       image: imageUrl,
-      status:
-        campaignStatus === "대기 중"
-          ? "대기 중"
-          : campaignStatus === "모집 중"
-          ? "모집 중"
-          : "등록 중",
+      status: finalStatus,
       campaignType: "구매평",
       category: formData.category || "기타",
       brandName: normalizedBrandName,
@@ -1766,9 +1804,11 @@ export function updateReviewCampaign(
   const totalCount = Number(formData.recruitmentCount) || 0;
 
   // 캠페인 상태 결정 함수 호출
+  // registrationPeriod를 전달하여 등록 기간 종료일 체크가 정확하게 이루어지도록 함
   const campaignStatus = calculateCampaignStatus(
     formData.recruitmentPeriod,
-    formData.announcementDate
+    formData.announcementDate,
+    formData.registrationPeriod
   );
 
   // 플랫폼명 정규화
@@ -1776,17 +1816,23 @@ export function updateReviewCampaign(
     ? formData.platform.replace(/\s+/g, "")
     : "네이버블로그";
 
+  // calculateCampaignStatus는 "대기 중" | "모집 중" | "진행 중" | "종료"를 반환
+  // "종료" 상태를 "마감"으로 변환 (UI 표시용)
+  let finalStatus: string = campaignStatus;
+  if (campaignStatus === "종료") {
+    finalStatus = "마감";
+  } else if (campaignStatus === "진행 중") {
+    // 구매평 캠페인의 경우 "등록 중" 상태일 수 있음
+    // 더 정확한 상태 계산을 위해 deriveCampaignStatus 사용 고려
+    finalStatus = "진행 중";
+  }
+
   return {
     campaignInfo: {
       id: campaignId,
       title: formData.title,
       image: imageUrl,
-      status:
-        campaignStatus === "대기 중"
-          ? "대기 중"
-          : campaignStatus === "모집 중"
-          ? "모집 중"
-          : "등록 중",
+      status: finalStatus,
       campaignType: "구매평",
       category: formData.category || "기타",
       brandName: normalizedBrandName,

@@ -6,7 +6,7 @@ import type { CampaignFormData } from "@/types/user/user";
 import type { ContentByTab } from "@/data/partner/sharedCampaigns";
 import { calculateDaysLeft, calculateCampaignStatus } from "./utils";
 
-interface DeliveryCampaignData {
+export interface DeliveryCampaignData {
   id: string; // 캠페인 고유 식별자
   title: string; // 캠페인 제목
   category: string; // 캠페인 카테고리 (배송형)
@@ -46,6 +46,8 @@ interface DeliveryCampaignData {
    *      - 모집 종료 상태 → "마감임박" 또는 "마감" 등의 텍스트를 dayCount에 설정
    */
   dayCount: string;
+  isUrgent?: boolean; // 긴급 캠페인 여부 (기본값: false)
+  registeredAt?: string; // 캠페인 등록 시간 (ISO 8601 형식: "2025-01-15T10:30:00")
   detailedSchedule: {
     applicationStart: string; // 신청 시작일시
     applicationEnd: string; // 신청 마감일
@@ -53,12 +55,19 @@ interface DeliveryCampaignData {
     purchasePeriod: string; // 구매 기간
     registrationPeriod: string; // 등록 기간
   };
-  campaign_detail_image: string; // 캠페인 상세 이미지 경로
+  campaign_detail_image: string; // 캠페인 상세 이미지 경로 (첫 번째 이미지, 하위 호환성)
+  campaign_detail_images?: string[]; // 캠페인 상세 이미지 경로 배열 (여러 이미지)
   channel: string; // 채널 정보 (블로그, 인스타그램, 유튜브 등)
   keyword: string; // 캠페인 키워드
   promotionLink?: string; // 홍보링크 (선택사항)
   requirements: string[]; // 캠페인별 요구사항 코드 목록
   guidelineTexts: string[]; // 페이지별 상세 가이드 문구 목록
+  // 참여/제출 옵션
+  adultOnly?: boolean; // 만 19세 이상 참여 허용
+  allowReParticipation?: boolean; // 이전 참여자 재참여 허용
+  allowLateSubmission?: boolean; // 지각 제출 허용
+  // 문의 담당자 정보
+  contactPhone?: string; // 문의 담당자 휴대폰 번호
 }
 
 /**
@@ -80,6 +89,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     },
     schedule: "",
     dayCount: "테스트",
+    registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-20 ~ 2026-01-05)
       applicationStart: "2025-12-20",
@@ -93,7 +103,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       registrationPeriod: "2026-01-10 ~ 2026-01-17",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버 블로그",
+    channel: "네이버블로그",
     keyword: "#세르프 #박신혜리프팅 #뷰티 #스킨케어 #리프팅크림",
     promotionLink:
       "https://smartstore.naver.com/example-store/products/1234564565656565656565656565656565664545454545454545456456",
@@ -111,6 +121,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "★구매평 작성 / 페이백 캠페인 입니다 (블로그 리뷰 작성 x)★ -페이백은 클라우드리뷰 캐쉬로 지급되며 캐쉬환급시 3.3% 공제 후 지급됩니다 <br /> 1. 본 캠페인은 [선구매]로 진행되며, 포스팅은 업체 홍보목적으로 이용될 수 있습니다<br /> 2. 선정당일 선구매 해주세요<br /> 3. 기간 내 리뷰 작성 및 등록 불가할 경우 페이백 미지급 및 선정취소<br /> 4. 안내된 사항 필수로 숙지하시어 진행해 주셔야 합니다<br /> ★구매평 작성 시에는 너무 인위적이지 않게 자연스럽게 작성해주세요<br /> ★ [본인이 직접 경험한 제품 특장점에 대하여 작성해주세요]",
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 구매처 착오 및 제품 잘못 구매할 경우 : 페이백 미지급 및 선정취소 <br /> - 구매평 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험형의 경우 지도와 함께 매장 주소,영업시간,주차유무등을 기재해주세요. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
+    contactPhone: "010-1234-5678",
   },
   {
     id: "delivery_2",
@@ -125,17 +136,19 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       total: 10,
     },
     schedule: "",
-    dayCount: "긴급",
+    dayCount: "",
+    isUrgent: true, // 긴급 캠페인
+    registeredAt: "2025-12-18T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-18 ~ 2026-01-03)
-      applicationStart: "2025-12-18",
-      applicationEnd: "2026-01-03",
-      announcement: "2026-01-05",
-      purchasePeriod: "2026-01-05 ~ 2026-01-08",
-      registrationPeriod: "2026-01-08 ~ 2026-01-15",
+      // 모집 중 - 현재 날짜 기준 (2025-12-20 ~ 2026-01-10)
+      applicationStart: "2025-12-20",
+      applicationEnd: "2026-01-10",
+      announcement: "2026-01-12",
+      purchasePeriod: "2026-01-12 ~ 2026-01-15",
+      registrationPeriod: "2026-01-15 ~ 2026-01-22",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버 블로그",
+    channel: "네이버블로그",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
     requirements: [
@@ -152,6 +165,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "★구매평 작성 / 페이백 캠페인 입니다 (블로그 리뷰 작성 x)★ -페이백은 클라우드리뷰 캐쉬로 지급되며 캐쉬환급시 3.3% 공제 후 지급됩니다 <br /> 1. 본 캠페인은 [선구매]로 진행되며, 포스팅은 업체 홍보목적으로 이용될 수 있습니다<br /> 2. 선정당일 선구매 해주세요<br /> 3. 기간 내 리뷰 작성 및 등록 불가할 경우 페이백 미지급 및 선정취소<br /> 4. 안내된 사항 필수로 숙지하시어 진행해 주셔야 합니다<br /> ★구매평 작성 시에는 너무 인위적이지 않게 자연스럽게 작성해주세요<br /> ★ [본인이 직접 경험한 제품 특장점에 대하여 작성해주세요]",
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 구매처 착오 및 제품 잘못 구매할 경우 : 페이백 미지급 및 선정취소 <br /> - 구매평 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험형의 경우 지도와 함께 매장 주소,영업시간,주차유무등을 기재해주세요. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
+    contactPhone: "010-2345-6789",
   },
   {
     id: "delivery_3",
@@ -167,6 +181,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     },
     schedule: "",
     dayCount: "마감임박",
+    registeredAt: "2025-12-20T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-22 ~ 2026-01-08)
       applicationStart: "2025-12-22",
@@ -193,6 +208,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "★구매평 작성 / 페이백 캠페인 입니다 (블로그 리뷰 작성 x)★ -페이백은 클라우드리뷰 캐쉬로 지급되며 캐쉬환급시 3.3% 공제 후 지급됩니다 <br /> 1. 본 캠페인은 [선구매]로 진행되며, 포스팅은 업체 홍보목적으로 이용될 수 있습니다<br /> 2. 선정당일 선구매 해주세요<br /> 3. 기간 내 리뷰 작성 및 등록 불가할 경우 페이백 미지급 및 선정취소<br /> 4. 안내된 사항 필수로 숙지하시어 진행해 주셔야 합니다<br /> ★구매평 작성 시에는 너무 인위적이지 않게 자연스럽게 작성해주세요<br /> ★ [본인이 직접 경험한 제품 특장점에 대하여 작성해주세요]",
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 구매처 착오 및 제품 잘못 구매할 경우 : 페이백 미지급 및 선정취소 <br /> - 구매평 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험형의 경우 지도와 함께 매장 주소,영업시간,주차유무등을 기재해주세요. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
+    contactPhone: "010-3456-7890",
   },
   {
     id: "delivery_4",
@@ -208,6 +224,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     },
     schedule: "12/25 (화) 10:00\n모집 오픈",
     dayCount: "",
+    registeredAt: "2025-12-21T16:45:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-23 ~ 2026-01-10)
       applicationStart: "2025-12-23",
@@ -217,7 +234,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       registrationPeriod: "2026-01-15 ~ 2026-01-22",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버 블로그",
+    channel: "네이버블로그",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
     requirements: [
@@ -234,6 +251,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "★구매평 작성 / 페이백 캠페인 입니다 (블로그 리뷰 작성 x)★ -페이백은 클라우드리뷰 캐쉬로 지급되며 캐쉬환급시 3.3% 공제 후 지급됩니다 <br /> 1. 본 캠페인은 [선구매]로 진행되며, 포스팅은 업체 홍보목적으로 이용될 수 있습니다<br /> 2. 선정당일 선구매 해주세요<br /> 3. 기간 내 리뷰 작성 및 등록 불가할 경우 페이백 미지급 및 선정취소<br /> 4. 안내된 사항 필수로 숙지하시어 진행해 주셔야 합니다<br /> ★구매평 작성 시에는 너무 인위적이지 않게 자연스럽게 작성해주세요<br /> ★ [본인이 직접 경험한 제품 특장점에 대하여 작성해주세요]",
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 구매처 착오 및 제품 잘못 구매할 경우 : 페이백 미지급 및 선정취소 <br /> - 구매평 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험형의 경우 지도와 함께 매장 주소,영업시간,주차유무등을 기재해주세요. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
+    contactPhone: "010-4567-8901",
   },
   {
     id: "delivery_5",
@@ -249,6 +267,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     },
     schedule: "",
     dayCount: "마감임박",
+    registeredAt: "2025-11-05T10:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 종료 탭 - 등록 기간이 지난 날짜
       applicationStart: "2025-11-10",
@@ -275,6 +294,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "★구매평 작성 / 페이백 캠페인 입니다 (블로그 리뷰 작성 x)★ -페이백은 클라우드리뷰 캐쉬로 지급되며 캐쉬환급시 3.3% 공제 후 지급됩니다 <br /> 1. 본 캠페인은 [선구매]로 진행되며, 포스팅은 업체 홍보목적으로 이용될 수 있습니다<br /> 2. 선정당일 선구매 해주세요<br /> 3. 기간 내 리뷰 작성 및 등록 불가할 경우 페이백 미지급 및 선정취소<br /> 4. 안내된 사항 필수로 숙지하시어 진행해 주셔야 합니다<br /> ★구매평 작성 시에는 너무 인위적이지 않게 자연스럽게 작성해주세요<br /> ★ [본인이 직접 경험한 제품 특장점에 대하여 작성해주세요]",
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 구매처 착오 및 제품 잘못 구매할 경우 : 페이백 미지급 및 선정취소 <br /> - 구매평 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험형의 경우 지도와 함께 매장 주소,영업시간,주차유무등을 기재해주세요. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
+    contactPhone: "010-5678-9012",
   },
   {
     id: "delivery_6",
@@ -290,6 +310,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-5",
+    registeredAt: "2025-12-22T13:30:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-24 ~ 2026-01-12)
       applicationStart: "2025-12-24",
@@ -316,6 +337,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "★구매평 작성 / 페이백 캠페인 입니다 (블로그 리뷰 작성 x)★ -페이백은 클라우드리뷰 캐쉬로 지급되며 캐쉬환급시 3.3% 공제 후 지급됩니다 <br /> 1. 본 캠페인은 [선구매]로 진행되며, 포스팅은 업체 홍보목적으로 이용될 수 있습니다<br /> 2. 선정당일 선구매 해주세요<br /> 3. 기간 내 리뷰 작성 및 등록 불가할 경우 페이백 미지급 및 선정취소<br /> 4. 안내된 사항 필수로 숙지하시어 진행해 주셔야 합니다<br /> ★구매평 작성 시에는 너무 인위적이지 않게 자연스럽게 작성해주세요<br /> ★ [본인이 직접 경험한 제품 특장점에 대하여 작성해주세요]",
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 구매처 착오 및 제품 잘못 구매할 경우 : 페이백 미지급 및 선정취소 <br /> - 구매평 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험형의 경우 지도와 함께 매장 주소,영업시간,주차유무등을 기재해주세요. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
+    contactPhone: "010-6789-0123",
   },
   {
     id: "delivery_7",
@@ -331,6 +353,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-2",
+    registeredAt: "2025-12-23T15:20:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-25 ~ 2026-01-13)
       applicationStart: "2025-12-25",
@@ -357,6 +380,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "★구매평 작성 / 페이백 캠페인 입니다 (블로그 리뷰 작성 x)★ -페이백은 클라우드리뷰 캐쉬로 지급되며 캐쉬환급시 3.3% 공제 후 지급됩니다 <br /> 1. 본 캠페인은 [선구매]로 진행되며, 포스팅은 업체 홍보목적으로 이용될 수 있습니다<br /> 2. 선정당일 선구매 해주세요<br /> 3. 기간 내 리뷰 작성 및 등록 불가할 경우 페이백 미지급 및 선정취소<br /> 4. 안내된 사항 필수로 숙지하시어 진행해 주셔야 합니다<br /> ★구매평 작성 시에는 너무 인위적이지 않게 자연스럽게 작성해주세요<br /> ★ [본인이 직접 경험한 제품 특장점에 대하여 작성해주세요]",
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 구매처 착오 및 제품 잘못 구매할 경우 : 페이백 미지급 및 선정취소 <br /> - 구매평 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험형의 경우 지도와 함께 매장 주소,영업시간,주차유무등을 기재해주세요. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
+    contactPhone: "010-7890-1234",
   },
   {
     id: "delivery_8",
@@ -372,6 +396,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     },
     schedule: "",
     dayCount: "마감임박",
+    registeredAt: "2025-11-08T09:15:00.000Z", // 등록 시간
     detailedSchedule: {
       // 종료 탭 - 등록 기간이 지난 날짜
       applicationStart: "2025-11-12",
@@ -381,7 +406,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       registrationPeriod: "2025-11-26 ~ 2025-12-02",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버 블로그",
+    channel: "네이버블로그",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
     requirements: [
@@ -398,6 +423,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "★구매평 작성 / 페이백 캠페인 입니다 (블로그 리뷰 작성 x)★ -페이백은 클라우드리뷰 캐쉬로 지급되며 캐쉬환급시 3.3% 공제 후 지급됩니다 <br /> 1. 본 캠페인은 [선구매]로 진행되며, 포스팅은 업체 홍보목적으로 이용될 수 있습니다<br /> 2. 선정당일 선구매 해주세요<br /> 3. 기간 내 리뷰 작성 및 등록 불가할 경우 페이백 미지급 및 선정취소<br /> 4. 안내된 사항 필수로 숙지하시어 진행해 주셔야 합니다<br /> ★구매평 작성 시에는 너무 인위적이지 않게 자연스럽게 작성해주세요<br /> ★ [본인이 직접 경험한 제품 특장점에 대하여 작성해주세요]",
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 구매처 착오 및 제품 잘못 구매할 경우 : 페이백 미지급 및 선정취소 <br /> - 구매평 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험형의 경우 지도와 함께 매장 주소,영업시간,주차유무등을 기재해주세요. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
+    contactPhone: "010-8901-2345",
   },
   {
     id: "delivery_9",
@@ -413,6 +439,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-1",
+    registeredAt: "2025-12-24T10:50:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-26 ~ 2026-01-14)
       applicationStart: "2025-12-26",
@@ -439,6 +466,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "★구매평 작성 / 페이백 캠페인 입니다 (블로그 리뷰 작성 x)★ -페이백은 클라우드리뷰 캐쉬로 지급되며 캐쉬환급시 3.3% 공제 후 지급됩니다 <br /> 1. 본 캠페인은 [선구매]로 진행되며, 포스팅은 업체 홍보목적으로 이용될 수 있습니다<br /> 2. 선정당일 선구매 해주세요<br /> 3. 기간 내 리뷰 작성 및 등록 불가할 경우 페이백 미지급 및 선정취소<br /> 4. 안내된 사항 필수로 숙지하시어 진행해 주셔야 합니다<br /> ★구매평 작성 시에는 너무 인위적이지 않게 자연스럽게 작성해주세요<br /> ★ [본인이 직접 경험한 제품 특장점에 대하여 작성해주세요]",
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 구매처 착오 및 제품 잘못 구매할 경우 : 페이백 미지급 및 선정취소 <br /> - 구매평 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험형의 경우 지도와 함께 매장 주소,영업시간,주차유무등을 기재해주세요. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
+    contactPhone: "010-9012-3456",
   },
   {
     id: "delivery_10",
@@ -454,6 +482,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-8",
+    registeredAt: "2025-11-03T14:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 취소 탭 - 취소 상태
       applicationStart: "2025-11-08",
@@ -480,6 +509,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "★구매평 작성 / 페이백 캠페인 입니다 (블로그 리뷰 작성 x)★ -페이백은 클라우드리뷰 캐쉬로 지급되며 캐쉬환급시 3.3% 공제 후 지급됩니다 <br /> 1. 본 캠페인은 [선구매]로 진행되며, 포스팅은 업체 홍보목적으로 이용될 수 있습니다<br /> 2. 선정당일 선구매 해주세요<br /> 3. 기간 내 리뷰 작성 및 등록 불가할 경우 페이백 미지급 및 선정취소<br /> 4. 안내된 사항 필수로 숙지하시어 진행해 주셔야 합니다<br /> ★구매평 작성 시에는 너무 인위적이지 않게 자연스럽게 작성해주세요<br /> ★ [본인이 직접 경험한 제품 특장점에 대하여 작성해주세요]",
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 구매처 착오 및 제품 잘못 구매할 경우 : 페이백 미지급 및 선정취소 <br /> - 구매평 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험형의 경우 지도와 함께 매장 주소,영업시간,주차유무등을 기재해주세요. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
+    contactPhone: "010-0123-4567",
   },
   {
     id: "delivery_12",
@@ -504,7 +534,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       registrationPeriod: "2026-01-06 ~ 2026-01-13",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버 블로그",
+    channel: "네이버블로그",
     keyword: "#스마트워치 #디지털 #체험단 #블로그리뷰 #테크",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
     requirements: [
@@ -521,6 +551,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "★구매평 작성 / 페이백 캠페인 입니다 (블로그 리뷰 작성 x)★ -페이백은 클라우드리뷰 캐쉬로 지급되며 캐쉬환급시 3.3% 공제 후 지급됩니다 <br /> 1. 본 캠페인은 [선구매]로 진행되며, 포스팅은 업체 홍보목적으로 이용될 수 있습니다<br /> 2. 선정당일 선구매 해주세요<br /> 3. 기간 내 리뷰 작성 및 등록 불가할 경우 페이백 미지급 및 선정취소<br /> 4. 안내된 사항 필수로 숙지하시어 진행해 주셔야 합니다<br /> ★구매평 작성 시에는 너무 인위적이지 않게 자연스럽게 작성해주세요<br /> ★ [본인이 직접 경험한 제품 특장점에 대하여 작성해주세요]",
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 구매처 착오 및 제품 잘못 구매할 경우 : 페이백 미지급 및 선정취소 <br /> - 구매평 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험형의 경우 지도와 함께 매장 주소,영업시간,주차유무등을 기재해주세요. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
+    contactPhone: "010-0123-4567",
   },
   // delivery_13: 마감임박 - 네이버 클립 채널
   {
@@ -537,6 +568,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     },
     schedule: "",
     dayCount: "마감임박",
+    registeredAt: "2025-12-27T08:45:00.000Z", // 등록 시간
     detailedSchedule: {
       // 마감임박 - 현재 날짜(2025-12-30) 기준으로 2일 후 마감 (2025-12-28 ~ 2026-01-01)
       applicationStart: "2025-12-28",
@@ -546,7 +578,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       registrationPeriod: "2026-01-06 ~ 2026-01-13",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "네이버 클립",
+    channel: "클립",
     keyword: "#무선이어버드 #디지털 #체험단 #네이버클립 #테크",
     promotionLink:
       "https://smartstore.naver.com/example-store/products/wireless-earbuds",
@@ -564,6 +596,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "★배송형 캠페인 입니다★ -페이백은 클라우드리뷰 캐쉬로 지급되며 캐쉬환급시 3.3% 공제 후 지급됩니다 <br /> 1. 본 캠페인은 [배송형]으로 진행되며, 포스팅은 업체 홍보목적으로 이용될 수 있습니다<br /> 2. 선정당일 제품 수령 후 체험 해주세요<br /> 3. 기간 내 리뷰 작성 및 등록 불가할 경우 페이백 미지급 및 선정취소<br /> 4. 안내된 사항 필수로 숙지하시어 진행해 주셔야 합니다<br /> ★리뷰 작성 시에는 너무 인위적이지 않게 자연스럽게 작성해주세요<br /> ★ [본인이 직접 경험한 제품 특장점에 대하여 작성해주세요]",
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 제품 수령 불가 및 제품 착오할 경우 : 페이백 미지급 및 선정취소 <br /> - 리뷰 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
+    contactPhone: "010-1357-2468",
   },
 ];
 
@@ -594,6 +627,8 @@ export interface DeliveryCampaignDataExtended {
   };
   schedule: string;
   dayCount: string;
+  isUrgent?: boolean; // 긴급 캠페인 여부 (기본값: false)
+  registeredAt?: string; // 캠페인 등록 시간 (ISO 8601 형식: "2025-01-15T10:30:00")
   detailedSchedule: {
     applicationStart: string;
     applicationEnd: string;
@@ -613,6 +648,13 @@ export interface DeliveryCampaignDataExtended {
   brandName?: string;
   partnerName?: string;
   statusText?: string;
+
+  // 참여/제출 옵션
+  adultOnly?: boolean; // 만 19세 이상 참여 허용
+  allowReParticipation?: boolean; // 이전 참여자 재참여 허용
+  allowLateSubmission?: boolean; // 지각 제출 허용
+  // 문의 담당자 정보
+  contactPhone?: string; // 문의 담당자 휴대폰 번호
 
   // 신청자 데이터 (선택사항 - 진행/예정/신청 캠페인에만 있음)
   applicantData?: {
@@ -685,21 +727,9 @@ export interface DeliveryCampaignDataExtended {
  * - 각 캠페인마다 직접 예시 신청자 데이터를 포함합니다.
  */
 export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
-  // delivery_1: 세르프 (박신혜리프팅) - 신청 탭으로 변경
+  // delivery_1: 세르프 (박신혜리프팅)
   {
     ...deliveryCampaigns[0],
-    status: "모집 중" as const,
-    detailedSchedule: {
-      ...deliveryCampaigns[0].detailedSchedule,
-      // 모집 중 - 현재 날짜 기준 (2025-12-20 ~ 2026-01-05)
-      applicationStart: "2025-12-20",
-      applicationEnd: "2026-01-05",
-      announcement: "2026-01-07",
-      purchasePeriod: "2026-01-07 ~ 2026-01-10",
-      registrationPeriod: "2026-01-10 ~ 2026-01-17",
-    },
-    brandName: "네이버블로그",
-    partnerName: "(주)배송마케팅",
     applicantData: {
       applicants: [
         {
@@ -781,12 +811,10 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
       selectedApplicants: [],
     },
   },
-  // delivery_2: 닥터뮬 뮬차 붓기차 - 연장요청 탭 (진행 중 상태이지만 연장요청 플래그)
+  // delivery_2: 닥터뮬 뮬차 붓기차
   {
     ...deliveryCampaigns[1],
-    status: "진행 중" as const,
-    brandName: "네이버블로그",
-    partnerName: "(주)배송마케팅",
+    isUrgent: true, // 긴급 캠페인
     applicantData: {
       applicants: [
         {
@@ -907,12 +935,9 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
       ],
     },
   },
-  // delivery_3: 가죽 여권 케이스+네임택 - 신청 탭
+  // delivery_3: 가죽 여권 케이스+네임택
   {
     ...deliveryCampaigns[2],
-    status: "모집 중" as const,
-    brandName: "인스타그램",
-    partnerName: "(주)배송마케팅",
     applicantData: {
       applicants: [
         {
@@ -922,12 +947,10 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           userType: "리뷰어" as const,
           profileImage: "",
           memberType: "모범 회원" as const,
-          dailyVisits: 140,
-          totalVisits: 420000,
-          neighbors: 1000,
+          followers: 1000,
           memo: "패션 제품 체험단 전문 리뷰어입니다.",
           selectionStatus: "미선택" as const,
-          channel: "인스타그램",
+          channel: "인스타그램" as const,
           registrationDate: "2025-12-20",
         },
         {
@@ -937,12 +960,10 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           userType: "인플루언서" as const,
           profileImage: "",
           memberType: "모범 회원" as const,
-          dailyVisits: 280,
-          totalVisits: 850000,
-          neighbors: 2500,
+          followers: 2500,
           memo: "패션 아이템 전문 인플루언서입니다.",
           selectionStatus: "미선택" as const,
-          channel: "인스타그램",
+          channel: "인스타그램" as const,
           registrationDate: "2025-12-21",
         },
         {
@@ -952,12 +973,10 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           userType: "리뷰어" as const,
           profileImage: "",
           memberType: "모범 회원" as const,
-          dailyVisits: 110,
-          totalVisits: 350000,
-          neighbors: 800,
+          followers: 800,
           memo: "패션 제품 리뷰를 자주 작성합니다.",
           selectionStatus: "미선택" as const,
-          channel: "인스타그램",
+          channel: "인스타그램" as const,
           registrationDate: "2025-12-22",
         },
       ],
@@ -969,32 +988,18 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           userType: "리뷰어" as const,
           profileImage: "",
           memberType: "모범 회원" as const,
-          dailyVisits: 350,
-          totalVisits: 1000000,
-          neighbors: 3200,
+          followers: 3200,
           memo: "이미 선정된 우수 리뷰어입니다.",
           selectionStatus: "선정하기" as const,
-          channel: "인스타그램",
+          channel: "인스타그램" as const,
           registrationDate: "2025-12-20",
         },
       ],
     },
   },
-  // delivery_4: 프리미엄 비타민C 세럼 - 신청 탭으로 변경
+  // delivery_4: 프리미엄 비타민C 세럼
   {
     ...deliveryCampaigns[3],
-    status: "모집 중" as const,
-    detailedSchedule: {
-      ...deliveryCampaigns[3].detailedSchedule,
-      // 신청 탭 - 현재 날짜가 모집 기간 내
-      applicationStart: "2025-12-18",
-      applicationEnd: "2026-01-08",
-      announcement: "2026-01-10",
-      purchasePeriod: "2026-01-10 ~ 2026-01-13",
-      registrationPeriod: "2026-01-13 ~ 2026-01-20",
-    },
-    brandName: "네이버블로그",
-    partnerName: "(주)배송마케팅",
     applicantData: {
       applicants: [
         {
@@ -1031,21 +1036,9 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
       selectedApplicants: [],
     },
   },
-  // delivery_5: 유기농 아기용 세제 - 신청 탭으로 변경
+  // delivery_5: 유기농 아기용 세제
   {
     ...deliveryCampaigns[4],
-    status: "모집 중" as const,
-    detailedSchedule: {
-      ...deliveryCampaigns[4].detailedSchedule,
-      // 신청 탭 - 현재 날짜가 모집 기간 내
-      applicationStart: "2025-12-20",
-      applicationEnd: "2026-01-10",
-      announcement: "2026-01-12",
-      purchasePeriod: "2026-01-12 ~ 2026-01-15",
-      registrationPeriod: "2026-01-15 ~ 2026-01-22",
-    },
-    brandName: "인스타그램",
-    partnerName: "(주)배송마케팅",
     applicantData: {
       applicants: [
         {
@@ -1055,24 +1048,19 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           userType: "리뷰어" as const,
           profileImage: "",
           memberType: "모범 회원" as const,
-          dailyVisits: 100,
-          totalVisits: 300000,
-          neighbors: 750,
+          followers: 750,
           memo: "육아용품 전문 리뷰어입니다.",
           selectionStatus: "미선택" as const,
-          channel: "인스타그램",
+          channel: "인스타그램" as const,
           registrationDate: "2025-12-10",
         },
       ],
       selectedApplicants: [],
     },
   },
-  // delivery_6: 프리미엄 강아지 사료 - 진행 탭
+  // delivery_6: 프리미엄 강아지 사료
   {
     ...deliveryCampaigns[5],
-    status: "진행 중" as const,
-    brandName: "유튜브",
-    partnerName: "(주)배송마케팅",
     applicantData: {
       applicants: [
         {
@@ -1193,21 +1181,9 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
       ],
     },
   },
-  // delivery_7: 유튜브 크리에이터 키트 - 신청 탭으로 변경
+  // delivery_7: 유튜브 크리에이터 키트
   {
     ...deliveryCampaigns[6],
-    status: "모집 중" as const,
-    detailedSchedule: {
-      ...deliveryCampaigns[6].detailedSchedule,
-      // 신청 탭 - 현재 날짜가 모집 기간 내
-      applicationStart: "2025-12-19",
-      applicationEnd: "2026-01-09",
-      announcement: "2026-01-11",
-      purchasePeriod: "2026-01-11 ~ 2026-01-14",
-      registrationPeriod: "2026-01-14 ~ 2026-01-21",
-    },
-    brandName: "유튜브",
-    partnerName: "(주)배송마케팅",
     applicantData: {
       applicants: [
         {
@@ -1287,21 +1263,9 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
       ],
     },
   },
-  // delivery_8: 프리미엄 홈트레이닝 용품 세트 - 신청 탭으로 변경
+  // delivery_8: 프리미엄 홈트레이닝 용품 세트
   {
     ...deliveryCampaigns[7],
-    status: "모집 중" as const,
-    detailedSchedule: {
-      ...deliveryCampaigns[7].detailedSchedule,
-      // 신청 탭 - 현재 날짜가 모집 기간 내
-      applicationStart: "2025-12-21",
-      applicationEnd: "2026-01-11",
-      announcement: "2026-01-13",
-      purchasePeriod: "2026-01-13 ~ 2026-01-16",
-      registrationPeriod: "2026-01-16 ~ 2026-01-23",
-    },
-    brandName: "네이버블로그",
-    partnerName: "(주)배송마케팅",
     applicantData: {
       applicants: [
         {
@@ -1323,12 +1287,9 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
       selectedApplicants: [],
     },
   },
-  // delivery_9: 프리미엄 스킨케어 세트 - 진행 탭
+  // delivery_9: 프리미엄 스킨케어 세트
   {
     ...deliveryCampaigns[8],
-    status: "진행 중" as const,
-    brandName: "인스타그램",
-    partnerName: "(주)배송마케팅",
     applicantData: {
       applicants: [
         {
@@ -1338,12 +1299,10 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           userType: "리뷰어" as const,
           profileImage: "",
           memberType: "모범 회원" as const,
-          dailyVisits: 180,
-          totalVisits: 540000,
-          neighbors: 1500,
+          followers: 1500,
           memo: "스킨케어 세트 전문 리뷰어입니다.",
           selectionStatus: "미선택" as const,
-          channel: "인스타그램",
+          channel: "인스타그램" as const,
           registrationDate: "2025-12-30",
         },
         {
@@ -1353,12 +1312,10 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           userType: "인플루언서" as const,
           profileImage: "",
           memberType: "모범 회원" as const,
-          dailyVisits: 260,
-          totalVisits: 780000,
-          neighbors: 2100,
+          followers: 2100,
           memo: "뷰티 제품 전문 인플루언서입니다.",
           selectionStatus: "미선택" as const,
-          channel: "인스타그램",
+          channel: "인스타그램" as const,
           registrationDate: "2025-12-31",
         },
       ],
@@ -1418,13 +1375,9 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
       ],
     },
   },
-  // delivery_10: 유기농 과일 주스 세트 - 취소 탭
+  // delivery_10: 유기농 과일 주스 세트
   {
     ...deliveryCampaigns[9],
-    status: "취소" as const,
-    statusText: "캠페인을 취소하였습니다.",
-    brandName: "유튜브",
-    partnerName: "(주)배송마케팅",
     applicantData: {
       applicants: [
         {
@@ -1446,19 +1399,13 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
       selectedApplicants: [],
     },
   },
-  // delivery_13: 프리미엄 무선 이어버드 체험단 - 마감임박 (네이버 클립)
+  // delivery_12: 프리미엄 스마트워치 체험단
+  // 📌 인덱스 수정:
+  // - delivery_12는 deliveryCampaigns 배열에서 인덱스 10에 위치합니다
+  // - 이전에 deliveryCampaigns[11]을 사용했지만, 이는 delivery_13의 데이터입니다
+  // - deliveryCampaigns[10]으로 수정하여 올바른 캠페인 데이터를 참조하도록 했습니다
   {
-    ...deliveryCampaigns[12],
-    status: "모집 중" as const,
-    brandName: "네이버 클립",
-    partnerName: "(주)배송마케팅",
-  },
-  // delivery_12: 프리미엄 스마트워치 체험단 - 마감임박 (신청 탭)
-  {
-    ...deliveryCampaigns[11],
-    status: "모집 중" as const,
-    brandName: "네이버블로그",
-    partnerName: "(주)배송마케팅",
+    ...deliveryCampaigns[10],
     applicantData: {
       applicants: [
         {
@@ -1491,6 +1438,138 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           channel: "네이버블로그",
           registrationDate: "2025-12-21",
         },
+        {
+          id: "app_12_네이버블로그_003",
+          Id: "reviewer_12_003",
+          nickname: "웨어러블리뷰어C",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 180,
+          totalVisits: 550000,
+          neighbors: 1500,
+          memo: "웨어러블 기기 전문 리뷰어입니다.",
+          selectionStatus: "미선택" as const,
+          channel: "네이버블로그",
+          registrationDate: "2025-12-22",
+        },
+        {
+          id: "app_12_네이버블로그_004",
+          Id: "reviewer_12_004",
+          nickname: "스마트기기전문가D",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "주의 회원" as const,
+          dailyVisits: 120,
+          totalVisits: 350000,
+          neighbors: 900,
+          memo: "스마트 기기 리뷰를 자주 작성합니다.",
+          selectionStatus: "미선택" as const,
+          channel: "네이버블로그",
+          registrationDate: "2025-12-23",
+        },
+        {
+          id: "app_12_네이버블로그_005",
+          Id: "reviewer_12_005",
+          nickname: "테크리뷰어E",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 250,
+          totalVisits: 750000,
+          neighbors: 2200,
+          memo: "테크 제품 전문 리뷰어입니다.",
+          selectionStatus: "미선택" as const,
+          channel: "네이버블로그",
+          registrationDate: "2025-12-24",
+        },
+      ],
+      selectedApplicants: [
+        {
+          id: "sel_12_네이버블로그_001",
+          Id: "selected_12_001",
+          nickname: "선정된스마트워치리뷰어1",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 350,
+          totalVisits: 1000000,
+          neighbors: 3200,
+          memo: "이미 선정된 우수 리뷰어입니다.",
+          selectionStatus: "선정하기" as const,
+          channel: "네이버블로그",
+          registrationDate: "2025-12-18",
+        },
+        {
+          id: "sel_12_네이버블로그_002",
+          Id: "selected_12_002",
+          nickname: "선정된테크인플루언서1",
+          userType: "인플루언서" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 400,
+          totalVisits: 1200000,
+          neighbors: 4000,
+          memo: "이미 선정된 우수 인플루언서입니다.",
+          selectionStatus: "선정하기" as const,
+          channel: "네이버블로그",
+          registrationDate: "2025-12-19",
+        },
+      ],
+    },
+  },
+  // delivery_13: 프리미엄 무선 이어버드 체험단
+  // 📌 인덱스 확인:
+  // - delivery_13은 deliveryCampaigns 배열에서 인덱스 11에 위치합니다
+  // - deliveryCampaigns[11]을 사용하는 것이 올바릅니다
+  // 📌 네이버클립 채널:
+  // - delivery_13 캠페인의 채널은 "클립"입니다
+  // - 네이버클립 신청자는 NaverClipApplicant 타입을 사용하며 followers 필드를 가집니다
+  // - dailyVisits, totalVisits, neighbors 대신 followers를 사용합니다
+  // - 타입 단언(as any)을 사용하여 DeliveryCampaignDataExtended 타입의 제약을 우회합니다
+  {
+    ...deliveryCampaigns[11],
+    applicantData: {
+      applicants: [
+        {
+          id: "app_13_네이버클립_001",
+          Id: "reviewer_13_001",
+          nickname: "스마트워치리뷰어A",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          followers: 1800,
+          memo: "스마트워치 제품 체험단 전문 리뷰어입니다.",
+          selectionStatus: "미선택" as const,
+          channel: "네이버클립" as const,
+          registrationDate: "2025-12-20",
+        } as any,
+        {
+          id: "app_13_네이버클립_002",
+          Id: "reviewer_13_002",
+          nickname: "테크인플루언서B",
+          userType: "인플루언서" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          followers: 3000,
+          memo: "디지털 제품 전문 인플루언서입니다.",
+          selectionStatus: "미선택" as const,
+          channel: "네이버클립" as const,
+          registrationDate: "2025-12-21",
+        } as any,
+        {
+          id: "app_13_네이버클립_004",
+          Id: "reviewer_13_004",
+          nickname: "이용제한리뷰어D",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "이용 제한" as const,
+          followers: 500,
+          memo: "이용 제한 계정입니다.",
+          selectionStatus: "이용제한 계정" as const,
+          channel: "네이버클립" as const,
+          registrationDate: "2025-12-23",
+        } as any,
       ],
       selectedApplicants: [],
     },
@@ -1666,6 +1745,10 @@ export interface DeliveryCampaignDataItem {
  * 새 캠페인 ID 생성
  *
  * @returns 새로운 캠페인 ID (기존 ID 중 최대값 + 1)
+ *
+ * 설명:
+ * - 정적 데이터와 localStorage에 저장된 캠페인 모두 확인하여 중복되지 않는 ID를 생성합니다.
+ * - localStorage의 캠페인도 확인하여 새로 등록한 캠페인과 ID가 겹치지 않도록 합니다.
  */
 function generateNewCampaignId(): string {
   // 기존 캠페인 ID 중 최대값 찾기
@@ -1673,6 +1756,31 @@ function generateNewCampaignId(): string {
     ...deliveryCampaignsExtended,
     ...deliveryClosedCampaignsExtended,
   ];
+
+  // localStorage에 저장된 캠페인도 확인
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("deliveryCampaigns");
+      if (stored) {
+        const storedCampaigns: Array<{ campaignInfo: { id: string } }> =
+          JSON.parse(stored);
+        if (Array.isArray(storedCampaigns)) {
+          // localStorage의 캠페인들을 allCampaigns에 추가
+          storedCampaigns.forEach((campaign) => {
+            if (campaign.campaignInfo && campaign.campaignInfo.id) {
+              // campaignInfo 구조를 맞춰서 추가
+              allCampaigns.push({
+                id: campaign.campaignInfo.id,
+              } as any);
+            }
+          });
+        }
+      }
+    } catch (error) {
+      console.error("localStorage에서 캠페인 ID 확인 실패:", error);
+    }
+  }
+
   const existingIds = allCampaigns
     .map((c) => {
       const numId = parseInt(c.id);
@@ -1712,10 +1820,19 @@ export function createDeliveryCampaign(
   const totalCount = Number(formData.recruitmentCount) || 0;
 
   // 캠페인 상태 결정 함수 호출
-  const campaignStatus = calculateCampaignStatus(
+  // registrationPeriod를 전달하여 등록 기간 종료일 체크가 정확하게 이루어지도록 함
+  const calculatedStatus = calculateCampaignStatus(
     formData.recruitmentPeriod,
-    formData.announcementDate
+    formData.announcementDate,
+    formData.registrationPeriod
   );
+
+  // calculateCampaignStatus는 "대기 중" | "모집 중" | "진행 중" | "종료"를 반환
+  // "종료" 상태를 "마감"으로 변환 (UI 표시용)
+  let finalStatus: string = calculatedStatus;
+  if (calculatedStatus === "종료") {
+    finalStatus = "마감";
+  }
 
   // 플랫폼명 정규화 (공백 제거하여 로고 매핑 일치시키기)
   const normalizedBrandName = formData.platform
@@ -1727,7 +1844,7 @@ export function createDeliveryCampaign(
       id: newId,
       title: formData.title,
       image: imageUrl,
-      status: campaignStatus,
+      status: finalStatus,
       campaignType: "배송형",
       category: formData.category || "기타",
       brandName: normalizedBrandName,
@@ -1785,10 +1902,19 @@ export function updateDeliveryCampaign(
   const totalCount = Number(formData.recruitmentCount) || 0;
 
   // 캠페인 상태 결정 함수 호출
-  const campaignStatus = calculateCampaignStatus(
+  // registrationPeriod를 전달하여 등록 기간 종료일 체크가 정확하게 이루어지도록 함
+  const calculatedStatus = calculateCampaignStatus(
     formData.recruitmentPeriod,
-    formData.announcementDate
+    formData.announcementDate,
+    formData.registrationPeriod
   );
+
+  // calculateCampaignStatus는 "대기 중" | "모집 중" | "진행 중" | "종료"를 반환
+  // "종료" 상태를 "마감"으로 변환 (UI 표시용)
+  let finalStatus: string = calculatedStatus;
+  if (calculatedStatus === "종료") {
+    finalStatus = "마감";
+  }
 
   // 플랫폼명 정규화
   const normalizedBrandName = formData.platform
@@ -1800,7 +1926,7 @@ export function updateDeliveryCampaign(
       id: campaignId,
       title: formData.title,
       image: imageUrl,
-      status: campaignStatus,
+      status: finalStatus,
       campaignType: "배송형",
       category: formData.category || "기타",
       brandName: normalizedBrandName,

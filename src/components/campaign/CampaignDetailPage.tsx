@@ -52,7 +52,8 @@ interface BaseCampaign {
   };
   campaign_detail_image: string;
   region?: string; // 방문형만
-  dayCount?: string; // 남은 일수 또는 긴급 상태 (예: "D-5", "긴급", "마감임박")
+  dayCount?: string; // 남은 일수 또는 상태 (예: "D-5", "마감임박")
+  isUrgent?: boolean; // 긴급 캠페인 여부 (기본값: false)
   adultOnly?: boolean; // 성인 전용 여부 (만 19세 이상만 참여 가능)
   [key: string]: any;
 }
@@ -164,6 +165,8 @@ export default function CampaignDetailPage({
   const campaignWithDayCount: BaseCampaign = {
     ...campaign,
     dayCount: computedDayCount,
+    // isUrgent는 원본 campaign에서 가져옴 (dayCount 계산과 무관)
+    isUrgent: campaign.isUrgent,
   };
 
   // 파트너 여부 확인 (document.referrer 확인)
@@ -262,6 +265,7 @@ export default function CampaignDetailPage({
           points={campaignWithDayCount.points}
           altText={altText}
           dayCount={campaignWithDayCount.dayCount}
+          isUrgent={campaignWithDayCount.isUrgent}
         />
 
         {/* 제품 정보 */}
@@ -302,7 +306,10 @@ export default function CampaignDetailPage({
         )}
 
         {/* 상세 이미지 */}
-        <DetailImage image={campaign.campaign_detail_image} />
+        <DetailImage 
+          image={campaign.campaign_detail_image} 
+          images={campaign.campaign_detail_images}
+        />
 
         {/* 안내 사항들 */}
         {guidelinesComponent}
@@ -315,6 +322,7 @@ export default function CampaignDetailPage({
         }
         applicationEnd={campaignWithDayCount.detailedSchedule.applicationEnd}
         dayCount={campaignWithDayCount.dayCount}
+        isUrgent={campaignWithDayCount.isUrgent}
         isParticipated={isParticipated}
         isLoggedIn={isLoggedIn}
         onApply={handleApplyClick}

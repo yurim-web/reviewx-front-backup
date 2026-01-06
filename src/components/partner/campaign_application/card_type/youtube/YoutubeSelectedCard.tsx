@@ -7,6 +7,7 @@
 import { YoutubeApplicant } from "@/data/partner/campaign_application/delivery_applicants";
 import styles from "@/styles/partner/campaign_application/card/applicant_card_shared.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
+import { getChannelUrl } from "@/utils/channelUrlHelper";
 
 interface YoutubeSelectedCardProps {
   applicant: YoutubeApplicant;
@@ -47,7 +48,20 @@ export default function YoutubeSelectedCard({
           alt="유튜브"
           className={styles.channel_icon}
         />
-        <span className={styles.applicant_id}>{applicant.Id}</span>
+        <a
+          href={getChannelUrl("유튜브", applicant.Id)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.applicant_id}
+          onClick={(e) => {
+            const url = getChannelUrl("유튜브", applicant.Id);
+            if (url === "#") {
+              e.preventDefault();
+            }
+          }}
+        >
+          {applicant.Id}
+        </a>
       </div>
 
       {/* 구독자 */}

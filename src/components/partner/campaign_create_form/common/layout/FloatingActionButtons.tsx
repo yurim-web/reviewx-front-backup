@@ -60,7 +60,7 @@ export function FloatingActionButtons({
       <button
         type="button"
         onClick={onSave}
-        disabled={isSaveDisabled}
+        disabled={!!isSaveDisabled}
         className={styles.save_button}
       >
         임시 저장
@@ -70,7 +70,7 @@ export function FloatingActionButtons({
       <button
         type="button"
         onClick={onLoad}
-        disabled={isLoadDisabled}
+        disabled={!!isLoadDisabled}
         className={styles.load_button}
       >
         불러오기

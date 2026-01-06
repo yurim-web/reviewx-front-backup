@@ -98,12 +98,16 @@
 
 /* 키워드 텍스트 박스 */
 .keyword_text_box {
-  width: 100%;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
+  overflow: hidden;
   color: #444;
+  letter-spacing: -0.32px;
+  width: 100%;
   font-size: 16px;
   font-weight: 500;
   line-height: 26px;
-  letter-spacing: -0.32px;
 }
 
 /* 홍보 링크 스타일 */

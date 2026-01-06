@@ -13,11 +13,10 @@
  *   (사용자 회원가입 페이지에서 약관 동의에 사용)
  */
 
-'use client';
+"use client";
 
-import Link from 'next/link';
-import commonStyles from '@/styles/common/signup/signup.module.css';
-import styles from '@/styles/user/signup/user_signup.module.css';
+import commonStyles from "@/styles/common/signup/signup.module.css";
+import styles from "@/styles/user/signup/user_signup.module.css";
 
 interface TermsAgreementProps {
   allAgreed: boolean;
@@ -69,12 +68,19 @@ export default function TermsAgreement({
               checked={termsAgreed}
               onChange={(e) => onTermsAgreedChange(e.target.checked)}
             />
-            <label htmlFor="terms-agree" className={commonStyles.checkbox_label}>
+            <label
+              htmlFor="terms-agree"
+              className={commonStyles.checkbox_label}
+            >
               [필수] 이용약관 및 개인정보 관련 동의
             </label>
-            <Link href="/terms" className={commonStyles.terms_view_link}>
+            <button
+              type="button"
+              className={commonStyles.terms_view_link}
+              onClick={() => alert("이용약관 및 개인정보 관련 동의 내용")}
+            >
               보기
-            </Link>
+            </button>
           </div>
 
           <div className={commonStyles.terms_sub_items}>
@@ -93,12 +99,19 @@ export default function TermsAgreement({
             checked={privacyAgreed}
             onChange={(e) => onPrivacyAgreedChange(e.target.checked)}
           />
-          <label htmlFor="privacy-agree" className={commonStyles.checkbox_label}>
+          <label
+            htmlFor="privacy-agree"
+            className={commonStyles.checkbox_label}
+          >
             [필수] 개인정보 제3자 제공 동의
           </label>
-          <Link href="/privacy" className={commonStyles.terms_view_link}>
+          <button
+            type="button"
+            className={commonStyles.terms_view_link}
+            onClick={() => alert("개인정보 제3자 제공 동의 내용")}
+          >
             보기
-          </Link>
+          </button>
         </div>
 
         <div className={commonStyles.terms_item}>
@@ -109,12 +122,21 @@ export default function TermsAgreement({
             checked={marketingAgreed}
             onChange={(e) => onMarketingAgreedChange(e.target.checked)}
           />
-          <label htmlFor="marketing-agree" className={commonStyles.checkbox_label}>
+          <label
+            htmlFor="marketing-agree"
+            className={commonStyles.checkbox_label}
+          >
             [선택] 마케팅 목적의 개인정보 수집 및 이용 동의
           </label>
-          <Link href="/marketing" className={commonStyles.terms_view_link}>
+          <button
+            type="button"
+            className={commonStyles.terms_view_link}
+            onClick={() =>
+              alert("마케팅 목적의 개인정보 수집 및 이용 동의 내용")
+            }
+          >
             보기
-          </Link>
+          </button>
         </div>
       </div>
 

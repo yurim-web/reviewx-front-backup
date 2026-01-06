@@ -20,20 +20,12 @@ import styles from "./range_calendar.module.css";
  */
 function PreviousMonthIcon() {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
+    <img
+      src="/images/calendar/calendar_left.svg"
+      alt="이전 달"
       width="24"
       height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-    >
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M15.6759 18.7071C16.0664 18.3166 16.0664 17.6834 15.6759 17.2929L10.383 12L15.6759 6.7071C16.0664 6.31658 16.0664 5.68342 15.6759 5.29289C15.2853 4.90237 14.6522 4.90237 14.2616 5.29289L8.36771 11.1868C7.91861 11.6359 7.9186 12.3641 8.36771 12.8132L14.2616 18.7071C14.6522 19.0976 15.2853 19.0976 15.6759 18.7071Z"
-        fill="#444444"
-      />
-    </svg>
+    />
   );
 }
 
@@ -45,20 +37,12 @@ function PreviousMonthIcon() {
  */
 function NextMonthIcon() {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
+    <img
+      src="/images/calendar/calendar_right.svg"
+      alt="다음 달"
       width="24"
       height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-    >
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M8.32414 18.7071C7.93362 18.3166 7.93362 17.6834 8.32414 17.2929L13.617 12L8.32414 6.7071C7.93362 6.31658 7.93362 5.68342 8.32414 5.29289C8.71467 4.90237 9.34783 4.90237 9.73836 5.29289L15.6323 11.1868C16.0814 11.6359 16.0814 12.3641 15.6323 12.8132L9.73836 18.7071C9.34783 19.0976 8.71467 19.0976 8.32414 18.7071Z"
-        fill="#444444"
-      />
-    </svg>
+    />
   );
 }
 
@@ -223,7 +207,11 @@ export default function RangeCalendar({
         element.style.setProperty("border-radius", "0", "important");
 
         if (button) {
-          button.style.setProperty("background-color", "#f5f5f5", "important");
+          button.style.setProperty(
+            "background-color",
+            "rgba(255,86,148,0.1)",
+            "important"
+          );
           button.style.setProperty("color", "#444444", "important");
           button.style.setProperty("border", "none", "important");
           button.style.setProperty("border-radius", "0", "important");
@@ -264,7 +252,11 @@ export default function RangeCalendar({
         element.style.setProperty("padding", "0", "important");
 
         if (button) {
-          button.style.setProperty("background-color", "#f5f5f5", "important");
+          button.style.setProperty(
+            "background-color",
+            "rgba(255,86,148,0.1)",
+            "important"
+          );
           button.style.setProperty("color", "white", "important");
           button.style.setProperty("border-radius", "50% 0 0 50%", "important");
           button.style.setProperty("width", "100%", "important");
@@ -305,7 +297,7 @@ export default function RangeCalendar({
             circle.style.setProperty("height", "28px", "important");
             circle.style.setProperty(
               "background-color",
-              "#444444",
+              "#ff5694",
               "important"
             );
             circle.style.setProperty("border-radius", "50%", "important");
@@ -441,7 +433,11 @@ export default function RangeCalendar({
         element.style.setProperty("padding", "0", "important");
 
         if (button) {
-          button.style.setProperty("background-color", "#f5f5f5", "important");
+          button.style.setProperty(
+            "background-color",
+            "rgba(255,86,148,0.1)",
+            "important"
+          );
           button.style.setProperty("color", "white", "important");
           button.style.setProperty("border-radius", "0 50% 50% 0", "important");
           button.style.setProperty("width", "100%", "important");
@@ -480,7 +476,7 @@ export default function RangeCalendar({
             circle.style.setProperty("height", "28px", "important");
             circle.style.setProperty(
               "background-color",
-              "#444444",
+              "#ff5694",
               "important"
             );
             circle.style.setProperty("border-radius", "50%", "important");
@@ -718,14 +714,14 @@ export default function RangeCalendar({
             return;
           }
 
-          // 해당 날짜 셀에 검정 테두리와 완만한(라운드) 테두리 적용, 배경색 없음, 글자색 진회색 (#444)
+          // 해당 날짜 셀에 핑크색 테두리와 완만한(라운드) 테두리 적용, 배경색 없음, 글자색 핑크 (#FF5694)
           element.style.setProperty("border-radius", "50%", "important");
           element.style.setProperty(
             "background-color",
             "transparent",
             "important"
           );
-          element.style.setProperty("color", "#444444", "important");
+          element.style.setProperty("color", "#FF5694", "important");
           element.style.setProperty("box-sizing", "border-box", "important");
           element.style.setProperty("width", "32px", "important");
           element.style.setProperty("height", "32px", "important");
@@ -737,14 +733,14 @@ export default function RangeCalendar({
           element.style.setProperty("margin", "0", "important");
 
           // 버튼(숫자 포함)에도 동일하게 적용
-          button.style.setProperty("border", "1px solid #444444", "important");
+          button.style.setProperty("border", "1px solid #FF5694", "important");
           button.style.setProperty("border-radius", "50%", "important");
           button.style.setProperty(
             "background-color",
             "transparent",
             "important"
           );
-          button.style.setProperty("color", "#444444", "important");
+          button.style.setProperty("color", "#FF5694", "important");
           button.style.setProperty("box-sizing", "border-box", "important");
           button.style.setProperty("width", "32px", "important");
           button.style.setProperty("height", "32px", "important");

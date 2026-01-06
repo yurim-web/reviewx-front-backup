@@ -23,7 +23,7 @@ import {
   type PostDetail,
 } from "@/data/manager_ga/community/postsData";
 
-// 사이드바 메뉴 데이터 (리스트 렌더링 학습용)
+// 사이드바 메뉴 데이터
 const sideMenuItems = [
   { label: "홈", isActive: false },
   { label: "캠페인", isActive: false },

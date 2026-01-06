@@ -27,7 +27,8 @@ interface CampaignHeaderProps {
   region?: string; // 지역 정보 (예: 서울 강남/서초) - 선택사항
   points: number; // 포인트 (숫자)
   altText?: string; // 이미지 alt 속성 (선택사항)
-  dayCount?: string; // 남은 일수 또는 상태 (예: "D-5", "긴급", "마감임박", "마감") - 선택사항
+  dayCount?: string; // 남은 일수 또는 상태 (예: "D-5", "마감임박", "마감") - 선택사항
+  isUrgent?: boolean; // 긴급 캠페인 여부 (기본값: false)
 }
 
 /**
@@ -44,10 +45,11 @@ export default function CampaignHeader({
   points,
   altText = "category_tag",
   dayCount,
+  isUrgent: isUrgentProp = false,
 }: CampaignHeaderProps) {
-  // dayCount가 "긴급"인지 확인하는 함수
-  // includes(): 문자열에 특정 문자열이 포함되어 있는지 확인
-  const isUrgent = dayCount?.includes("긴급") || false;
+  // 긴급 캠페인 여부 확인
+  // isUrgent prop이 있으면 우선 사용, 없으면 dayCount에서 "긴급" 포함 여부 확인 (하위 호환성)
+  const isUrgent = isUrgentProp || dayCount?.includes("긴급") || false;
 
   // dayCount가 "마감"인지 확인하는 함수
   // 마감된 캠페인은 "마감" 태그를 표시
@@ -100,8 +102,7 @@ export default function CampaignHeader({
       {/* 오른쪽: 포인트 정보 */}
       <div className={styles.points}>
         {/* 
-          toLocaleString(): 숫자를 천 단위 콤마로 포맷팅
-          예: 5000 → "5,000"
+          toLocaleString(): 숫자를 천 단위 콤마로 포맷
         */}
         + {points.toLocaleString()} P
       </div>

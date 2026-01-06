@@ -25,6 +25,7 @@
 import { Applicant } from "@/data/partner/campaign_application/delivery_applicants";
 import styles from "@/styles/partner/campaign_application/card/applicant_card_shared.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
+import { getChannelUrl } from "@/utils/channelUrlHelper";
 
 interface NaverBlogCardProps {
   /** 신청자 정보 객체 */
@@ -122,8 +123,22 @@ export default function NaverBlogCard({
           alt="채널"
           className={styles.channel_icon}
         />
-        {/* 신청자 아이디 표시 */}
-        <span className={styles.applicant_id}>{applicant.Id}</span>
+        {/* 신청자 아이디 표시 - 클릭 시 해당 채널로 이동 */}
+        <a
+          href={getChannelUrl(applicant.channel, applicant.Id)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.applicant_id}
+          onClick={(e) => {
+            // URL이 유효하지 않은 경우 클릭 방지
+            const url = getChannelUrl(applicant.channel, applicant.Id);
+            if (url === "#") {
+              e.preventDefault();
+            }
+          }}
+        >
+          {applicant.Id}
+        </a>
       </div>
 
       {/* 회원 타입 표시 */}

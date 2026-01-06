@@ -26,10 +26,16 @@ import styles from "@/styles/common/input_error_message.module.css";
  * ErrorText 컴포넌트 Props
  *
  * @property {string} message - 표시할 에러 메시지 텍스트
+ * @property {string} className - 추가 CSS 클래스명 (선택사항)
+ * @property {React.CSSProperties} style - 인라인 스타일 (선택사항)
  */
 interface ErrorTextProps {
   /** 표시할 에러 메시지 텍스트 */
   message?: string;
+  /** 추가 CSS 클래스명 (선택사항) */
+  className?: string;
+  /** 인라인 스타일 (선택사항) */
+  style?: React.CSSProperties;
 }
 
 /**
@@ -48,13 +54,25 @@ interface ErrorTextProps {
  * {errorMessage && <ErrorText message={errorMessage} />}
  * ```
  */
-export default function ErrorText({ message }: ErrorTextProps) {
+export default function ErrorText({
+  message,
+  className,
+  style,
+}: ErrorTextProps) {
   // 메시지가 없으면 렌더링하지 않음 (조건부 렌더링)
-  // 학습 포인트: && 연산자를 사용하여 조건에 따라 컴포넌트 표시/숨김
   if (!message) return null;
 
+  /**
+   * 스타일 병합:
+   * - 기본 스타일과 전달받은 인라인 스타일을 병합합니다.
+   * - className과 style을 props로 받아 유연하게 스타일을 적용할 수 있습니다.
+   */
+  const mergedClassName = className
+    ? `${styles.input_error_message} ${className}`
+    : styles.input_error_message;
+
   return (
-    <span className={styles.input_error_message}>
+    <span className={mergedClassName} style={style}>
       <span className={styles.input_error_text}>{message}</span>
     </span>
   );

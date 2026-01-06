@@ -25,66 +25,149 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import VisitCampaignForm from "@/components/partner/campaign_create_form/VisitCampaignForm";
 import { CampaignFormData } from "@/types/user/user";
-import { updateVisitCampaign } from "@/data/campaign/visit/visitCampaigns";
+import {
+  updateVisitCampaign,
+  visitCampaignsExtended,
+} from "@/data/campaign/visit/visitCampaigns";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
+import type { VisitCampaignDataExtended } from "@/data/campaign/visit/visitCampaigns";
 // 분리된 CSS 모듈들 import
 import layoutStyles from "../../../../../../styles/partner/layout.module.css";
 import PageHeader from "@/components/partner/campaign_create_form/common/layout/PageHeader";
 import Toast from "@/components/common/toast/Toast";
 
 /**
+ * requirements 배열을 파싱하여 폼 데이터로 변환하는 함수
+ */
+function parseRequirements(requirements: string[]): {
+  minTextLength: string;
+  minImageCount: string;
+  videoCount: string;
+  videoDuration: string;
+  requireLinkAttachment: boolean;
+  requireKeywordAttachment: boolean;
+} {
+  let minTextLength = "";
+  let minImageCount = "";
+  let videoCount = "";
+  let videoDuration = "";
+  let requireLinkAttachment = false;
+  let requireKeywordAttachment = false;
+
+  requirements.forEach((req) => {
+    if (req.startsWith("text_")) {
+      const charCount = req.replace("text_", "");
+      minTextLength = charCount;
+    } else if (req.startsWith("photo_")) {
+      const photoCount = req.replace("photo_", "");
+      minImageCount = photoCount;
+    } else if (req.startsWith("video_")) {
+      const parts = req.replace("video_", "").split("_");
+      if (parts.length === 2) {
+        videoCount = parts[0];
+        videoDuration = parts[1];
+      } else if (parts.length === 1) {
+        videoCount = "1";
+        videoDuration = parts[0];
+      }
+    } else if (req === "product_link") {
+      requireLinkAttachment = true;
+    } else if (req === "keyword") {
+      requireKeywordAttachment = true;
+    }
+  });
+
+  return {
+    minTextLength,
+    minImageCount,
+    videoCount,
+    videoDuration,
+    requireLinkAttachment,
+    requireKeywordAttachment,
+  };
+}
+
+/**
  * 캠페인 데이터를 폼 데이터로 변환
  */
 function campaignToFormData(
-  campaign: CampaignWithApplicants
+  campaign: CampaignWithApplicants,
+  originalData?: VisitCampaignDataExtended
 ): CampaignFormData {
   const info = campaign.campaignInfo;
+  const extended = originalData;
 
   // 브랜드명을 플랫폼 이름으로 매핑
   const brandNameToPlatform: Record<string, string> = {
-    "네이버블로그": "네이버 블로그",
-    "네이버클립": "네이버 클립",
-    "인스타그램": "인스타그램",
-    "릴스": "릴스",
-    "유튜브": "유튜브",
-    "쇼츠": "쇼츠",
+    네이버블로그: "네이버 블로그",
+    네이버클립: "네이버 클립",
+    인스타그램: "인스타그램",
+    릴스: "릴스",
+    유튜브: "유튜브",
+    쇼츠: "쇼츠",
   };
 
-  const platformName = info.brandName
-    ? brandNameToPlatform[info.brandName] || "네이버 블로그"
-    : "네이버 블로그";
+  const platformName =
+    extended?.channel || info.brandName
+      ? brandNameToPlatform[extended?.channel || info.brandName || ""] ||
+        "네이버 블로그"
+      : "네이버 블로그";
+
+  // requirements 파싱
+  const requirements = extended?.requirements || [];
+  const parsedRequirements = parseRequirements(requirements);
+
+  // guidelineTexts 배열을 하나의 문자열로 합치기
+  const guidelines = extended?.guidelineTexts?.join("\n\n") || "";
+
+  // 모집기간 형식 변환
+  const recruitmentPeriod = extended?.detailedSchedule
+    ? `${extended.detailedSchedule.applicationStart} ~ ${extended.detailedSchedule.applicationEnd}`
+    : info.recruitmentPeriod || "";
+
+  // 포인트를 콤마 형식으로 변환
+  const additionalPoints = extended?.points
+    ? extended.points.toLocaleString("ko-KR")
+    : "";
 
   return {
     campaignType: info.campaignType as "방문형",
     platform: (platformName as any) || "네이버 블로그",
     title: info.title || "",
-    category: info.category || "기타",
-    region: "", // 현재 데이터에 없음
-    brandName: info.brandName || "",
-    providedItems: "", // 현재 데이터에 없음
-    visitLink: "", // 현재 데이터에 없음
-    visitAddress: "", // 현재 데이터에 없음
-    addressDetail: "", // 현재 데이터에 없음
-    promotionLink: "", // 현재 데이터에 없음
-    currentPoints: "", // 현재 데이터에 없음
-    additionalPoints: "", // 현재 데이터에 없음
-    recruitmentCount: info.totalCount || "",
-    recruitmentPeriod: info.recruitmentPeriod || "",
-    announcementDate: info.announcementDate || "",
-    registrationPeriod: info.registrationPeriod || "",
-    keywords: "", // 현재 데이터에 없음
-    adultOnly: false,
-    allowReParticipation: false,
-    allowLateSubmission: false,
-    minTextLength: "",
-    minImageCount: "",
-    videoCount: "",
-    videoDuration: "",
-    requireLinkAttachment: false,
-    requireKeywordAttachment: false,
-    guidelines: "", // 현재 데이터에 없음
-    isUrgent: false,
+    category: extended?.subcategory || info.category || "기타",
+    region: extended?.region || "",
+    brandName: extended?.brandName || extended?.channel || info.brandName || "",
+    providedItems: extended?.description || "",
+    visitLink: extended?.visitLink || "",
+    visitAddress: extended?.visitAddress || "",
+    addressDetail: extended?.addressGuide || "",
+    promotionLink: "",
+    currentPoints: "58,000",
+    additionalPoints: additionalPoints,
+    recruitmentCount: String(info.totalCount || ""),
+    recruitmentPeriod: recruitmentPeriod,
+    announcementDate:
+      extended?.detailedSchedule?.announcement || info.announcementDate || "",
+    registrationPeriod:
+      extended?.detailedSchedule?.purchasePeriod ||
+      info.registrationPeriod ||
+      "",
+    keywords: extended?.keyword || "",
+    adultOnly: extended?.adultOnly || false,
+    allowReParticipation: extended?.allowReParticipation || false,
+    allowLateSubmission: extended?.allowLateSubmission || false,
+    minTextLength: parsedRequirements.minTextLength,
+    minImageCount: parsedRequirements.minImageCount,
+    videoCount: parsedRequirements.videoCount,
+    videoDuration: parsedRequirements.videoDuration,
+    requireLinkAttachment: parsedRequirements.requireLinkAttachment,
+    requireKeywordAttachment: parsedRequirements.requireKeywordAttachment,
+    guidelines: guidelines,
+    contactPhone: extended?.contactPhone || "",
+    fairTradeAgreement: true,
+    isUrgent: extended?.isUrgent || false,
+    thumbnailImageUrl: extended?.image || info.image || "",
   };
 }
 
@@ -98,12 +181,43 @@ export default function VisitCampaignEditPage() {
   const [initialData, setInitialData] = useState<CampaignFormData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // 토스트 메시지 상태
   const [toast, setToast] = useState({
     is_open: false,
     message: "",
   });
+
+  /**
+   * 캠페인 오픈 여부 확인
+   *
+   * 설명:
+   * - 모집 기간 시작일을 기준으로 캠페인 오픈 여부를 판단합니다.
+   * - 모집 기간 시작일이 오늘보다 미래면 오픈 전 (false)
+   * - 모집 기간 시작일이 오늘보다 과거거나 같으면 오픈 후 (true)
+   */
+  const isCampaignOpen = (recruitmentPeriod: string): boolean => {
+    if (!recruitmentPeriod) return false;
+
+    try {
+      const parts = recruitmentPeriod.split("~").map((s) => s.trim());
+      if (parts.length < 1) return false;
+
+      const startDateStr = parts[0].split(" ")[0];
+      const startDate = new Date(startDateStr);
+      startDate.setHours(0, 0, 0, 0);
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      return startDate <= today;
+    } catch (error) {
+      console.error("캠페인 오픈 여부 확인 실패:", error);
+      return false;
+    }
+  };
+
+  const [isOpen, setIsOpen] = useState(false);
 
   // 캠페인 데이터 로드
   useEffect(() => {
@@ -121,8 +235,41 @@ export default function VisitCampaignEditPage() {
         return;
       }
 
-      const formData = campaignToFormData(campaign);
+      // 원본 확장 데이터 찾기
+      const originalData = visitCampaignsExtended.find(
+        (c) => c.id === campaignId
+      );
+
+      // localStorage에서 저장된 캠페인 확인
+      let storedOriginalData: VisitCampaignDataExtended | undefined;
+      if (typeof window !== "undefined") {
+        const storedCampaigns = localStorage.getItem("visitCampaigns");
+        if (storedCampaigns) {
+          const campaigns: CampaignWithApplicants[] =
+            JSON.parse(storedCampaigns);
+          const storedCampaign = campaigns.find(
+            (c) => c.campaignInfo.id === campaignId
+          );
+          if (storedCampaign) {
+            storedOriginalData = originalData;
+          }
+        }
+      }
+
+      const dataToUse = storedOriginalData || originalData;
+
+      const formData = campaignToFormData(campaign, dataToUse);
       setInitialData(formData);
+
+      // isUrgent 상태 설정
+      setIsUrgent(dataToUse?.isUrgent || false);
+
+      // 캠페인 오픈 여부 확인
+      const openStatus = isCampaignOpen(
+        campaign.campaignInfo.recruitmentPeriod
+      );
+      setIsOpen(openStatus);
+
       setIsLoading(false);
     } catch (err) {
       console.error("캠페인 로드 실패:", err);
@@ -178,10 +325,10 @@ export default function VisitCampaignEditPage() {
       }
 
       console.log("방문형 캠페인 수정 완료:", updatedCampaign);
-      
+
       // 토스트 메시지 표시
       setToast({ is_open: true, message: "저장되었습니다." });
-      
+
       // 페이지 새로고침
       router.refresh();
     } catch (error) {
@@ -226,9 +373,10 @@ export default function VisitCampaignEditPage() {
           isSubmitting={isSubmitting}
           initialData={initialData}
           mode="edit"
+          isOpen={isOpen}
         />
       </div>
-      
+
       {/* 토스트 메시지 */}
       <Toast
         message={toast.message}

@@ -130,6 +130,8 @@
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 /* 회원 타입 */

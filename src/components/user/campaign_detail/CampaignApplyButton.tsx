@@ -47,8 +47,10 @@ interface CampaignApplyButtonProps {
   applicationStart: string;
   // 신청 마감일 (YYYY-MM-DD 형식)
   applicationEnd: string;
-  // 남은 일수 또는 긴급 상태 (예: "D-5", "긴급", "마감임박")
+  // 남은 일수 또는 상태 (예: "D-5", "마감임박")
   dayCount?: string;
+  // 긴급 캠페인 여부 (기본값: false)
+  isUrgent?: boolean;
   // 이미 참여한 캠페인인지 여부 (기본값: false)
   isParticipated?: boolean;
   // 로그인 상태 (기본값: false)
@@ -73,6 +75,7 @@ export default function CampaignApplyButton({
   applicationStart,
   applicationEnd,
   dayCount,
+  isUrgent: isUrgentProp = false,
   isParticipated = false,
   isLoggedIn = false,
   isSuspended = false,
@@ -123,8 +126,9 @@ export default function CampaignApplyButton({
     buttonText = "캠페인 오픈 예정";
   }
 
-  // 긴급 캠페인인지 확인 (dayCount에 "긴급"이 포함되어 있는지)
-  const isUrgent = dayCount?.includes("긴급") || false;
+  // 긴급 캠페인 여부 확인
+  // isUrgent prop이 있으면 우선 사용, 없으면 dayCount에서 "긴급" 포함 여부 확인 (하위 호환성)
+  const isUrgent = isUrgentProp || dayCount?.includes("긴급") || false;
 
   /**
    * 신청 버튼 클릭 핸들러

@@ -64,10 +64,6 @@ export default function AppliedPage() {
    * - 신청 탭의 캠페인 태그는 신청일 기준으로 모집기간의 남은 일수를 표시합니다.
    * - 3일 이하일 때는 "마감임박"으로 표시합니다.
    *
-   * 학습 포인트:
-   * - Date 객체: JavaScript의 날짜 처리 방법
-   * - 날짜 차이 계산: 두 날짜 사이의 일수를 계산하는 방법
-   * - Math.ceil: 올림 함수로 날짜 차이를 정확히 계산합니다.
    */
   const calculateRemainingDays = (
     campaignId: string,

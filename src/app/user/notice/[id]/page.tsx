@@ -25,3 +25,6 @@ export default function UserNoticeDetailPage() {
   return <NoticeDetailPageClient target="user" />;
 }
 
+
+
+

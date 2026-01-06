@@ -32,6 +32,7 @@
 import { InstagramApplicant } from "@/data/partner/campaign_application/delivery_applicants";
 import styles from "@/styles/partner/campaign_application/card/applicant_card_shared.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
+import { getChannelUrl } from "@/utils/channelUrlHelper";
 
 interface InstagramSelectedCardProps {
   /** 선정된 인스타그램 신청자 정보 객체 */
@@ -102,7 +103,20 @@ export default function InstagramSelectedCard({
           className={styles.channel_icon}
         />
 
-        <span className={styles.applicant_id}>{applicant.Id}</span>
+        <a
+          href={getChannelUrl("인스타그램", applicant.Id)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.applicant_id}
+          onClick={(e) => {
+            const url = getChannelUrl("인스타그램", applicant.Id);
+            if (url === "#") {
+              e.preventDefault();
+            }
+          }}
+        >
+          {applicant.Id}
+        </a>
       </div>
       {/* 회원 타입 표시 */}
       <div className={styles.member_type}>{applicant.memberType}</div>

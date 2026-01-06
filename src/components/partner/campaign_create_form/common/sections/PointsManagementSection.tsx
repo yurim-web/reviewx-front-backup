@@ -156,10 +156,12 @@ export function PointsManagementSection({
       {/* 포인트 부족 경고 메시지 */}
       {showInsufficientPointsWarning && (
         <article className={infoStyles.form_group}>
-          <ErrorText message="보유 포인트가 부족합니다. 포인트를 충전한 후 다시 시도해 주세요." />
+          <ErrorText
+            message="보유 포인트가 부족합니다. 포인트를 충전한 후 다시 시도해 주세요."
+            style={{ marginTop: "-8px" }}
+          />
         </article>
       )}
     </>
   );
 }
-

@@ -187,13 +187,15 @@ export interface PartnerPenaltyStatusConfig {
  */
 export interface PartnerPointHistory {
   id: string; // 포인트 내역 고유 식별자
-  type: "earned" | "withdrawn"; // 거래 유형 (earned=충전, withdrawn=사용/지급)
+  type: "earned" | "withdrawn" | "returned"; // 거래 유형 (earned=충전, withdrawn=사용/지급, returned=반환)
   amount: number; // 포인트 금액 (양수=증가, 음수=감소)
-  description: string; // 포인트 내역 설명 (예: "포인트 충전", "리뷰어 포인트 지급")
+  description: string; // 포인트 내역 설명 (예: "포인트 충전", "리뷰어 포인트 지급", "리뷰어 포인트 반환", "캠페인 포인트 반환")
   campaign_id?: string; // 관련 캠페인 ID (있는 경우)
   date: string; // 날짜 (YYYY-MM-DD)
   status: "earned" | "completed" | "pending" | "failed"; // 상태: 적립/완료/신청/취소
   balance: number; // 거래 후 잔액
+  rejection_reason?: string; // 반려 사유 (status가 "failed"일 때 사용)
+  return_reason?: string; // 반환 사유 (type이 "returned"일 때 사용, 반환 사유가 없으면 rejection_reason 사용)
 }
 
 /**
@@ -303,6 +305,8 @@ export interface CampaignInfo {
   totalCount: number; // 전체 모집 인원 수
   daysLeft: number; // 선정 날짜까지 남은 일수
   statusText?: string; // 캠페인 상태 설명 텍스트
+  region?: string; // 방문 지역 시/도 (방문형 캠페인용, 선택적)
+  subRegion?: string; // 방문 지역 시/구/군 (방문형 캠페인용, 선택적)
 }
 
 /**

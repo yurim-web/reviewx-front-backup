@@ -59,6 +59,7 @@
   font-weight: 500;
   line-height: 16px; /* 100% */
   letter-spacing: -0.32px;
+  cursor: pointer;
 }
 
 /* placeholder 스타일 */
@@ -75,6 +76,19 @@
 /* 읽기 전용 필드 - 브랜드명, 보유포인트 등 */
 .form_input[readonly]:focus,
 .form_input[readonly] {
+  outline: none;
+  border-color: #d9d9d9;
+  cursor: default;
+  background: #f6f6f6;
+  color: #999;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 비활성화 필드 - 모집기간, 등록기간 등 수정 불가능한 필드 */
+.form_input:disabled {
   outline: none;
   border-color: #d9d9d9;
   cursor: default;
@@ -276,6 +290,21 @@
   .charge_button {
     width: 100%;
   }
+}
+
+/* 지역 선택 그룹 - 시/도와 시/구/군 드롭다운을 나란히 배치 */
+.region_select_group {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+/* 지역 드롭다운 컨테이너 - 각 드롭다운을 감싸는 div */
+.region_dropdown_container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 /* 수정 모드(읽기 전용) 시각화 */

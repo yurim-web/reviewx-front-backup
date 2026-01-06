@@ -20,8 +20,12 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "@/styles/manager/common/community/categories/category_create_page.module.css";
 import { CustomDropdown } from "@/components/partner/campaign_create_form/common/selectors/CustomDropdown";
+import ErrorText from "@/components/common/error_text/ErrorText";
+import Toast from "@/components/common/toast/Toast";
 import {
   categories_data,
+  add_category,
+  update_category,
   type CategoryDivision,
   type CategoryItem,
 } from "@/data/manager_ga/community/categoriesData";
@@ -62,6 +66,16 @@ export default function CategoryForm({
   // useState: React Hook으로 컴포넌트의 카테고리명 상태를 관리합니다
   const [category_name, set_category_name] = useState<string>("");
 
+  // 에러 메시지 상태 관리
+  // useState: React Hook으로 컴포넌트의 에러 메시지 상태를 관리합니다
+  // 카테고리명 유효성 검사 실패 시 에러 메시지를 표시합니다
+  const [error_message, set_error_message] = useState<string>("");
+
+  // 토스트 메시지 표시 상태 관리
+  // useState: React Hook으로 컴포넌트의 토스트 표시 상태를 관리합니다
+  // 수정 모드에서 저장 성공 시 토스트 메시지를 표시합니다
+  const [show_toast, set_show_toast] = useState<boolean>(false);
+
   // 로딩 상태 관리 (수정 모드일 때만 사용)
   // useState: React Hook으로 컴포넌트의 로딩 상태를 관리합니다
   // 수정 모드일 때만 true로 시작하여 데이터를 불러옵니다
@@ -94,25 +108,97 @@ export default function CategoryForm({
     set_is_loading(false);
   }, [category_id, mode]);
 
+  // 카테고리명 유효성 검사 함수
+  // 학습 포인트: 함수를 컴포넌트 내부에 정의하여 상태값에 접근할 수 있습니다
+  // 이 함수는 카테고리명의 길이와 중복을 검사합니다
+  const validate_category_name = (): boolean => {
+    // 에러 메시지 초기화
+    set_error_message("");
+
+    // 카테고리명 길이 검증 (2~10자)
+    // trim(): 문자열 앞뒤 공백을 제거합니다
+    // length: 문자열의 길이를 반환합니다
+    const trimmed_name = category_name.trim();
+    if (trimmed_name.length < 2 || trimmed_name.length > 10) {
+      set_error_message("카테고리명은 2~10자 이내로 입력해주세요.");
+      return false;
+    }
+
+    // 같은 구분 내 중복 검증
+    // filter(): 배열에서 조건에 맞는 요소만 필터링합니다
+    // find(): 배열에서 조건에 맞는 첫 번째 요소를 찾습니다
+    // 수정 모드일 때는 현재 수정 중인 카테고리(category_id)는 중복 검사에서 제외합니다
+    const duplicate_category = categories_data.find(
+      (item) =>
+        item.division === division &&
+        item.category_name === trimmed_name &&
+        // 수정 모드일 때는 현재 수정 중인 카테고리는 제외
+        (mode !== "edit" || item.id !== category_id)
+    );
+
+    if (duplicate_category) {
+      set_error_message("이미 사용 중인 카테고리명입니다.");
+      return false;
+    }
+
+    // 유효성 검사 통과
+    return true;
+  };
+
   // 등록/저장 버튼 클릭 핸들러
   // 화살표 함수로 이벤트 핸들러를 정의합니다
   // mode에 따라 등록 또는 수정 로직을 실행합니다
   const handle_submit = () => {
-    if (mode === "create") {
-      // TODO: 카테고리 등록 API 호출
-      // 현재는 목록 페이지로 이동만 처리합니다
-      // 실제 구현 시에는 API를 호출하여 카테고리를 등록한 후 목록 페이지로 이동합니다
-      console.log("카테고리 등록:", { division, category_name });
-    } else {
-      // TODO: 카테고리 수정 API 호출
-      // 현재는 목록 페이지로 이동만 처리합니다
-      // 실제 구현 시에는 API를 호출하여 카테고리를 수정한 후 목록 페이지로 이동합니다
-      console.log("카테고리 수정:", { category_id, division, category_name });
+    // 유효성 검사 실행
+    // validate_category_name(): 카테고리명의 길이와 중복을 검사합니다
+    // 유효성 검사 실패 시 함수를 종료합니다 (early return)
+    if (!validate_category_name()) {
+      return;
     }
 
-    // 등록/수정 후 카테고리 목록 페이지로 이동
-    // router.push: Next.js에서 페이지를 이동하는 메서드입니다
-    router.push(`/manager_${manager_type}/community/categories`);
+    if (mode === "create") {
+      // 등록 모드일 때는 목업 데이터에 새로운 카테고리를 추가합니다
+      // TODO: 카테고리 등록 API 호출
+      // 현재는 목업 데이터를 직접 추가합니다
+      // 실제 구현 시에는 API를 호출하여 카테고리를 등록한 후 목록 페이지로 이동합니다
+      // add_category: 목업 데이터에 새로운 카테고리를 추가하는 함수입니다
+      // 학습 포인트: 이 함수를 호출하면 categories_data 배열에 새로운 카테고리가 추가됩니다
+      // CategoryTable 컴포넌트에서 categories_data를 사용하므로, 추가된 내용이 테이블에 반영됩니다
+      add_category(division, category_name.trim());
+      console.log("카테고리 등록:", { division, category_name });
+      // 등록 후 카테고리 목록 페이지로 이동
+      // router.push: Next.js에서 페이지를 이동하는 메서드입니다
+      router.push(`/manager_${manager_type}/community/categories`);
+    } else {
+      // 수정 모드일 때는 목업 데이터를 수정한 후 토스트 메시지를 표시합니다
+      // TODO: 카테고리 수정 API 호출
+      // 현재는 목업 데이터를 직접 수정합니다
+      // 실제 구현 시에는 API를 호출하여 카테고리를 수정한 후 목록 페이지로 이동합니다
+      if (category_id) {
+        // update_category: 목업 데이터에서 카테고리를 수정하는 함수입니다
+        // 학습 포인트: 이 함수를 호출하면 categories_data 배열이 직접 수정됩니다
+        // CategoryTable 컴포넌트에서 categories_data를 사용하므로, 수정된 내용이 테이블에 반영됩니다
+        update_category(category_id, division, category_name.trim());
+        console.log("카테고리 수정:", { category_id, division, category_name });
+      }
+      // 토스트 메시지 표시
+      // 학습 포인트: set_show_toast(true)로 토스트를 표시합니다
+      set_show_toast(true);
+    }
+  };
+
+  // 토스트 닫기 핸들러
+  // 토스트가 닫힐 때 호출되는 함수입니다
+  // 학습 포인트: 토스트가 자동으로 닫힌 후 페이지를 이동합니다
+  const handle_toast_close = () => {
+    // 토스트 상태를 false로 변경
+    set_show_toast(false);
+    // 토스트가 닫힌 후 약간의 딜레이를 두고 페이지 이동
+    // setTimeout: 지정된 시간 후 함수를 실행합니다
+    // 학습 포인트: 약간의 딜레이를 두어 토스트 애니메이션이 완료된 후 페이지 이동합니다
+    setTimeout(() => {
+      router.push(`/manager_${manager_type}/community/categories`);
+    }, 100);
   };
 
   // 취소 버튼 클릭 핸들러 (뒤로 가기)
@@ -146,6 +232,21 @@ export default function CategoryForm({
   return (
     <div className={styles.container}>
       <div className={styles.main_content}>
+        {/* 토스트 메시지 */}
+        {/* Toast: 저장 성공 시 표시되는 토스트 메시지 컴포넌트입니다 */}
+        {/* 조건부 렌더링: 수정 모드에서만 토스트를 표시합니다 */}
+        {/* isOpen: 토스트 표시 여부를 제어합니다 */}
+        {/* onClose: 토스트가 닫힐 때 호출되는 콜백 함수입니다 */}
+        {/* duration: 토스트가 자동으로 사라지는 시간입니다 (기본값: 2000ms) */}
+        {mode === "edit" && (
+          <Toast
+            message="저장되었습니다."
+            isOpen={show_toast}
+            onClose={handle_toast_close}
+            duration={2000}
+          />
+        )}
+
         {/* 페이지 제목 */}
         {/* 조건부 렌더링: mode에 따라 제목이 변경됩니다 */}
         <h1 className={styles.page_title}>{page_title}</h1>
@@ -162,7 +263,12 @@ export default function CategoryForm({
             <CustomDropdown
               value={division}
               options={division_options}
-              onChange={(value) => set_division(value as CategoryDivision)}
+              onChange={(value) => {
+                // 구분 변경 시 에러 메시지 초기화
+                // 학습 포인트: 구분이 변경되면 중복 검사 결과가 달라질 수 있으므로 에러를 초기화합니다
+                set_division(value as CategoryDivision);
+                set_error_message("");
+              }}
               placeholder="구분을 선택하세요"
             />
           </div>
@@ -174,15 +280,33 @@ export default function CategoryForm({
               카테고리
             </label>
             {/* input: 텍스트 입력 필드입니다 */}
+            {/* maxLength: HTML 속성으로 최대 입력 길이를 제한합니다 (10자) */}
+            {/* minLength: HTML 속성으로 최소 입력 길이를 지정합니다 (2자) - 유효성 검사에 사용됩니다 */}
             <input
               id="category_name"
               type="text"
               className={styles.input_box}
               value={category_name}
-              onChange={(e) => set_category_name(e.target.value)}
-              placeholder="카테고리명 입력"
+              maxLength={10}
+              minLength={2}
+              onChange={(e) => {
+                // 카테고리명 변경 시 에러 메시지 초기화
+                // 학습 포인트: 사용자가 입력을 시작하면 이전 에러 메시지를 숨깁니다
+                // maxLength 속성으로 이미 10자 이상 입력이 막혀있지만, 추가 안전장치로 처리합니다
+                const input_value = e.target.value;
+                // 10자를 초과하는 경우 10자까지만 잘라서 저장합니다
+                // 학습 포인트: slice(0, 10)은 문자열의 처음부터 10번째 문자까지만 가져옵니다
+                const limited_value = input_value.slice(0, 10);
+                set_category_name(limited_value);
+                set_error_message("");
+              }}
+              placeholder="카테고리명 입력 (2~10자)"
               aria-label="카테고리명"
             />
+            {/* 에러 메시지 표시 */}
+            {/* ErrorText: 입력 필드 에러 메시지를 표시하는 재사용 가능한 컴포넌트입니다 */}
+            {/* 조건부 렌더링: error_message가 있을 때만 ErrorText 컴포넌트를 렌더링합니다 */}
+            <ErrorText message={error_message} />
           </div>
         </div>
 

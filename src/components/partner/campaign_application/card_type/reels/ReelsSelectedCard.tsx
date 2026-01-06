@@ -7,6 +7,7 @@
 import { InstagramApplicant } from "@/data/partner/campaign_application/delivery_applicants";
 import styles from "@/styles/partner/campaign_application/card/applicant_card_shared.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
+import { getChannelUrl } from "@/utils/channelUrlHelper";
 
 interface ReelsSelectedCardProps {
   applicant: InstagramApplicant;
@@ -45,7 +46,20 @@ export default function ReelsSelectedCard({
           alt="릴스"
           className={styles.channel_icon}
         />
-        <span className={styles.applicant_id}>{applicant.Id}</span>
+        <a
+          href={getChannelUrl("릴스", applicant.Id)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.applicant_id}
+          onClick={(e) => {
+            const url = getChannelUrl("릴스", applicant.Id);
+            if (url === "#") {
+              e.preventDefault();
+            }
+          }}
+        >
+          {applicant.Id}
+        </a>
       </div>
 
       {/* 회원 타입 */}

@@ -47,8 +47,6 @@ import {
    4️⃣ 타입 정의와 메인 컴포넌트
        - CampaignInfo 인터페이스와 Campaignbanner 컴포넌트를 정의합니다.
 
-   📌 학습 순서 추천
-       ① 날짜 계산 함수 이해 → ② 유틸 모듈 구조 파악 → ③ 상태 판별 흐름 읽기 → ④ 컴포넌트에서 어떻게 사용하는지 확인
 */
 
 // 목록 카드와 동일한 로고 매핑을 사용하기 위해 유틸의 getBrandLogo를 그대로 사용합니다.
@@ -155,9 +153,7 @@ export default function Campaignbanner({
                 <span>{campaignInfo.campaignType}</span>
               </div>
 
-              <div className={styles.campaign_status}>
-                {derivedStatus}
-              </div>
+              <div className={styles.campaign_status}>{derivedStatus}</div>
             </div>
 
             <h2 className={styles.campaign_title}>{campaignInfo.title}</h2>

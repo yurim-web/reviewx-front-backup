@@ -74,6 +74,8 @@ interface SimpleGuideSectionProps {
   isEditMode?: boolean;
   /** 필드 편집 가능 여부를 확인하는 함수 */
   isEditableField?: (field: string) => boolean;
+  /** 캠페인 오픈 여부 (오픈 후에만 locked_section 클래스 적용) */
+  isOpen?: boolean;
 }
 
 /**
@@ -95,6 +97,7 @@ export function SimpleGuideSection({
   onAttachmentChange,
   isEditMode = false,
   isEditableField,
+  isOpen = false,
 }: SimpleGuideSectionProps) {
   // 필드 편집 가능 여부 확인 함수
   const canEdit = (field: string) => {
@@ -102,10 +105,13 @@ export function SimpleGuideSection({
     return !isEditMode || isEditableField(field);
   };
 
+  // 오픈 후에만 locked_section 클래스 적용
+  const shouldLock = isEditMode && isOpen;
+
   return (
     <div
       className={
-        isEditMode
+        shouldLock
           ? `${guideStyles.guide_section} ${guideStyles.locked_section}`
           : guideStyles.guide_section
       }

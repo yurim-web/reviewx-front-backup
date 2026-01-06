@@ -473,6 +473,33 @@ export default function PartnerPointChargePage() {
               </article>
 
               <article className={styles.content_container}>
+                {/* 약관 동의 */}
+                <div className={styles.form_section}>
+                  <span className={styles.section_label}>
+                    결제 · 환불 및 이용약관 동의
+                  </span>
+
+                  <div
+                    className={`${styles.checkbox_row} ${styles.checkbox_row_agree}`}
+                  >
+                    <div className={styles.checkbox_container}>
+                      <input
+                        type="checkbox"
+                        id="agreeTerms"
+                        checked={agreeTerms}
+                        onChange={(e) => setAgreeTerms(e.target.checked)}
+                      />
+                      <label htmlFor="agreeTerms">
+                        구매 조건 확인 및 결제 진행에 동의합니다.
+                      </label>
+                    </div>
+
+                    <button type="button" className={styles.terms_button}>
+                      약관 보기
+                    </button>
+                  </div>
+                </div>
+
                 {/* 사업자 정보 (세금계산서 발행 선택 시에만 표시) */}
                 {issueInvoice && (
                   <>
@@ -506,33 +533,6 @@ export default function PartnerPointChargePage() {
                     </div>
                   </>
                 )}
-
-                {/* 약관 동의 */}
-                <div className={styles.form_section}>
-                  <span className={styles.section_label}>
-                    결제 · 환불 및 이용약관 동의
-                  </span>
-
-                  <div
-                    className={`${styles.checkbox_row} ${styles.checkbox_row_agree}`}
-                  >
-                    <div className={styles.checkbox_container}>
-                      <input
-                        type="checkbox"
-                        id="agreeTerms"
-                        checked={agreeTerms}
-                        onChange={(e) => setAgreeTerms(e.target.checked)}
-                      />
-                      <label htmlFor="agreeTerms">
-                        구매 조건 확인 및 결제 진행에 동의합니다.
-                      </label>
-                    </div>
-
-                    <button type="button" className={styles.terms_button}>
-                      약관 보기
-                    </button>
-                  </div>
-                </div>
 
                 {/* 입금 안내 사항 */}
                 <div
@@ -709,7 +709,7 @@ export default function PartnerPointChargePage() {
       <BaseModal
         is_open={cardPaymentSuccessModal.is_open}
         on_close={handleCardPaymentSuccessClose}
-        message={`결제가 완료되었습니다.<br>(보유 포인트: ${successPostPoints.toLocaleString()} P)<br>닫기를 누르면 이전 페이지로 돌아갑니다.`}
+        message={`결제가 완료되었습니다.<br><span style="color: #2DC469;">(보유 포인트: ${successPostPoints.toLocaleString()} P)</span><br>닫기를 누르면 이전 페이지로 돌아갑니다.`}
         buttons={["닫기"]}
       />
 

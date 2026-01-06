@@ -27,7 +27,13 @@ import styles from "@/styles/manager/common/community/categories/category_filter
 import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
+import BaseModal from "@/components/common/modal/BaseModal";
 import type { CategoryDivision } from "@/data/manager_ga/community/categoriesData";
+import {
+  categories_data,
+  delete_categories,
+} from "@/data/manager_ga/community/categoriesData";
+import { posts_data } from "@/data/manager_ga/community/postsData";
 import DivisionFilterModal from "@/components/manager/common/community/categories/filter/DivisionFilterModal";
 
 interface CategoryFilterSectionProps {
@@ -37,12 +43,15 @@ interface CategoryFilterSectionProps {
   on_search_change: (query: string) => void;
   // manager_type: "ga" | "sa" - GA 또는 SA 관리자 구분
   manager_type: "ga" | "sa";
+  // selected_category_ids: 선택된 카테고리 ID 목록
+  selected_category_ids: string[];
 }
 
 export default function CategoryFilterSection({
   search_query,
   on_search_change,
   manager_type,
+  selected_category_ids,
 }: CategoryFilterSectionProps) {
   // Next.js 라우터 사용
   // useRouter: Next.js에서 페이지 이동을 위한 Hook입니다
@@ -59,6 +68,11 @@ export default function CategoryFilterSection({
   // 구분 필터 모달 열림/닫힘 상태 관리
   // useState: React Hook으로 모달의 열림/닫힘 상태를 관리합니다
   const [is_division_modal_open, set_is_division_modal_open] = useState(false);
+
+  // 게시글 존재 모달 열림/닫힘 상태 관리
+  // useState: React Hook으로 게시글 존재 모달의 열림/닫힘 상태를 관리합니다
+  const [is_post_exists_modal_open, set_is_post_exists_modal_open] =
+    useState(false);
 
   // 구분 필터 적용 핸들러
   // 화살표 함수로 이벤트 핸들러를 정의합니다
@@ -79,7 +93,43 @@ export default function CategoryFilterSection({
   // 삭제 버튼 핸들러
   // 화살표 함수로 이벤트 핸들러를 정의합니다
   const handle_delete = () => {
-    // TODO: 선택된 카테고리 삭제 기능 구현
+    // 선택된 카테고리가 없으면 삭제할 수 없습니다
+    if (selected_category_ids.length === 0) {
+      return;
+    }
+
+    // 선택된 카테고리들 중에 게시글이 있는지 확인
+    // find(): 배열에서 조건에 맞는 첫 번째 요소를 찾습니다
+    // some(): 배열의 요소 중 하나라도 조건을 만족하면 true를 반환합니다
+    // 학습 포인트: 선택된 카테고리 ID 목록을 순회하면서 각 카테고리에 해당하는 게시글이 있는지 확인합니다
+    const has_posts = selected_category_ids.some((category_id) => {
+      // 카테고리 ID로 카테고리 정보 찾기
+      const category = categories_data.find((item) => item.id === category_id);
+      if (!category) return false;
+
+      // 해당 카테고리명과 구분을 가진 게시글이 있는지 확인
+      // posts_data에서 category 필드가 카테고리명과 일치하는 게시글을 찾습니다
+      const post_exists = posts_data.some(
+        (post) =>
+          post.category === category.category_name &&
+          post.division === category.division
+      );
+
+      return post_exists;
+    });
+
+    // 게시글이 있으면 삭제 불가 모달 표시
+    if (has_posts) {
+      set_is_post_exists_modal_open(true);
+      return;
+    }
+
+    // 게시글이 없으면 삭제 진행
+    // delete_categories: 선택된 카테고리들을 삭제하는 함수입니다
+    delete_categories(selected_category_ids);
+    // 삭제 후 페이지 새로고침하여 업데이트된 목록 표시
+    // window.location.reload(): 페이지를 새로고침합니다
+    window.location.reload();
   };
 
   // 활성 필터 태그 목록 생성
@@ -174,6 +224,15 @@ export default function CategoryFilterSection({
         on_close={() => set_is_division_modal_open(false)}
         selected_divisions={selected_divisions}
         on_apply={handle_division_apply}
+      />
+
+      {/* 게시글 존재 모달 */}
+      {/* BaseModal: 게시글이 등록된 상태에서는 삭제할 수 없다는 메시지를 표시하는 모달 */}
+      <BaseModal
+        is_open={is_post_exists_modal_open}
+        on_close={() => set_is_post_exists_modal_open(false)}
+        message="게시글이 등록된 상태에서는 삭제할 수 없습니다.<br>게시글을 삭제한 후 진행해 주세요."
+        buttons={["닫기"]}
       />
     </div>
   );

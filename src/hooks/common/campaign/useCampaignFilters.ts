@@ -32,6 +32,8 @@ interface BaseCampaign {
   subcategory: string;
   channel: string;
   dayCount: string;
+  isUrgent?: boolean; // 긴급 캠페인 여부
+  registeredAt?: string; // 캠페인 등록 시간 (ISO 8601 형식: "2025-01-15T10:30:00")
   recruitment: {
     current: number;
     total: number;
@@ -69,9 +71,9 @@ interface UseCampaignFiltersParams<T extends BaseCampaign> {
 /**
  * 훅 반환 타입
  * - activeFilters: 현재 활성화된 필터 상태
- * - closingSoon: 마감임박 필터 활성화 여부
+ * - closingSoon: 긴급 필터 활성화 여부
  * - handleFilterChange: 필터 변경 핸들러 함수
- * - setClosingSoon: 마감임박 필터 변경 함수
+ * - setClosingSoon: 긴급 필터 변경 함수
  * - filteredAndSortedCampaigns: 필터링 및 정렬된 캠페인 목록
  */
 interface UseCampaignFiltersReturn {
@@ -86,7 +88,7 @@ interface UseCampaignFiltersReturn {
     closingSoon?: boolean;
     sortBy?: string;
   }) => void;
-  // 마감임박 필터 변경 핸들러
+  // 긴급 필터 변경 핸들러
   setClosingSoon: (closingSoon: boolean) => void;
   // 필터링 및 정렬된 캠페인 목록
   filteredAndSortedCampaigns: BaseCampaign[];
@@ -126,8 +128,8 @@ export function useCampaignFilters<T extends BaseCampaign>({
   });
 
   /**
-   * 마감임박 필터 상태
-   * - true: 마감임박인 캠페인만 표시
+   * 긴급 필터 상태
+   * - true: 긴급 캠페인만 표시 (isUrgent === true)
    * - false: 모든 캠페인 표시
    */
   const [closingSoon, setClosingSoon] = useState<boolean>(false);
@@ -144,7 +146,7 @@ export function useCampaignFilters<T extends BaseCampaign>({
    *   - category: 카테고리 필터 (쉼표로 구분된 문자열)
    *   - channel: 채널 필터 (쉼표로 구분된 문자열)
    *   - region: 지역 필터 (쉼표로 구분된 문자열, 방문형만)
-   *   - closingSoon: 마감임박 필터 활성화 여부
+   *   - closingSoon: 긴급 필터 활성화 여부 (isUrgent === true인 캠페인만)
    *   - sortBy: 정렬 기준
    */
   const handleFilterChange = (filters: {
@@ -154,7 +156,7 @@ export function useCampaignFilters<T extends BaseCampaign>({
     closingSoon?: boolean;
     sortBy?: string;
   }) => {
-    // 마감임박 필터 처리
+    // 긴급 필터 처리
     if (filters.closingSoon !== undefined) {
       setClosingSoon(filters.closingSoon);
     }
@@ -206,7 +208,7 @@ export function useCampaignFilters<T extends BaseCampaign>({
    * - campaigns, activeFilters, closingSoon, enableRegionFilter가 변경될 때만 재계산
    *
    * 필터링 순서:
-   * 1. 마감임박 필터 적용
+   * 1. 긴급 필터 적용 (isUrgent === true인 캠페인만)
    * 2. 카테고리 필터 적용
    * 3. 채널 필터 적용
    * 4. 지역 필터 적용 (방문형만)
@@ -216,12 +218,10 @@ export function useCampaignFilters<T extends BaseCampaign>({
     // 1단계: 캠페인 데이터 복사
     let filtered = [...campaigns];
 
-    // 2단계: 마감임박 필터 적용
-    // dayCount가 "마감임박"인 캠페인만 필터링
+    // 2단계: 긴급 필터 적용
+    // isUrgent가 true인 캠페인만 필터링
     if (closingSoon) {
-      filtered = filtered.filter(
-        (campaign) => campaign.dayCount === "마감임박"
-      );
+      filtered = filtered.filter((campaign) => campaign.isUrgent === true);
     }
 
     // 3단계: 카테고리 필터 적용
@@ -321,8 +321,27 @@ export function useCampaignFilters<T extends BaseCampaign>({
         break;
       case "최신순":
       default:
-        // ID 기준으로 내림차순 정렬 (최신이 먼저)
-        filtered.sort((a, b) => b.id.localeCompare(a.id));
+        // 등록 시간(registeredAt) 기준으로 내림차순 정렬 (최신이 먼저)
+        // registeredAt이 없으면 ID 기준으로 정렬 (하위 호환성)
+        filtered.sort((a, b) => {
+          const registeredAtA = (a as any).registeredAt;
+          const registeredAtB = (b as any).registeredAt;
+
+          // 둘 다 등록 시간이 있으면 등록 시간 기준으로 정렬
+          if (registeredAtA && registeredAtB) {
+            return (
+              new Date(registeredAtB).getTime() -
+              new Date(registeredAtA).getTime()
+            );
+          }
+
+          // 하나만 등록 시간이 있으면 등록 시간이 있는 캠페인이 먼저
+          if (registeredAtA && !registeredAtB) return -1;
+          if (!registeredAtA && registeredAtB) return 1;
+
+          // 둘 다 등록 시간이 없으면 ID 기준으로 정렬 (하위 호환성)
+          return b.id.localeCompare(a.id);
+        });
         break;
     }
 
@@ -336,9 +355,9 @@ export function useCampaignFilters<T extends BaseCampaign>({
   /**
    * 훅 반환값
    * - activeFilters: 현재 활성화된 필터 상태
-   * - closingSoon: 마감임박 필터 활성화 여부
+   * - closingSoon: 긴급 필터 활성화 여부 (isUrgent === true인 캠페인만)
    * - handleFilterChange: 필터 변경 핸들러 함수
-   * - setClosingSoon: 마감임박 필터 변경 함수
+   * - setClosingSoon: 긴급 필터 변경 함수
    * - filteredAndSortedCampaigns: 필터링 및 정렬된 캠페인 목록
    */
   return {

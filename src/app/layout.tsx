@@ -20,19 +20,20 @@
  * - 각 페이지는 이 레이아웃을 기반으로 렌더링됨
  *
  * 사용 컴포넌트:
- * - Header: 상단 네비게이션 헤더
+ * - ConditionalHeader: 경로에 따라 적절한 헤더를 표시하는 컴포넌트
  * - Loading: 페이지 로딩 중 표시되는 컴포넌트
  *
  * 참고사항:
  * - Next.js 13+ App Router 구조
  * - children prop으로 각 페이지 컴포넌트가 전달됨
+ * - 파트너 경로(/partner/*) 또는 캠페인 경로(/campaign/*)에서는 파트너 헤더가 표시됨
  * - 일부 페이지(출금신청 등)에서는 Header를 숨김 처리함
  */
 
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import "../styles/globals.css";
-import Header from "@/components/fragments/Header";
+import ConditionalHeader from "@/components/fragments/ConditionalHeader";
 import Loading from "./loading";
 import ConsoleFilter from "@/components/dev/ConsoleFilter";
 
@@ -65,8 +66,8 @@ export default function RootLayout({
 
       {/* 실제 보이는 콘텐츠 영역 */}
       <body className="antialiased">
-        {/* 공통 상단 헤더 (일부 페이지에서 숨김 처리됨) */}
-        <Header />
+        {/* 공통 상단 헤더 (경로에 따라 파트너 헤더 또는 일반 헤더 표시) */}
+        <ConditionalHeader />
         {/* 개발환경 콘솔 노이즈 필터 */}
         <ConsoleFilter />
 

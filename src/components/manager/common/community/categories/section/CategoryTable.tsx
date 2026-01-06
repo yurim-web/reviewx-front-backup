@@ -41,6 +41,10 @@ interface CategoryTableProps {
   search_query: string;
   // manager_type: "ga" | "sa" - GA 또는 SA 관리자 구분
   manager_type: "ga" | "sa";
+  // selected_category_ids: 선택된 카테고리 ID 목록
+  selected_category_ids: string[];
+  // on_selected_category_ids_change: 선택된 카테고리 ID 목록 변경 핸들러
+  on_selected_category_ids_change: (ids: string[]) => void;
 }
 
 // CategoryItem이 TableRowData를 확장하도록 확장
@@ -74,16 +78,12 @@ const columns: TableColumn[] = [
 export default function CategoryTable({
   search_query,
   manager_type,
+  selected_category_ids,
+  on_selected_category_ids_change,
 }: CategoryTableProps) {
   // Next.js 라우터: 수정 페이지로 이동에 사용
   // useRouter: Next.js에서 페이지 이동을 위한 Hook입니다
   const router = useRouter();
-
-  // 선택된 카테고리 ID 목록 상태 관리
-  // useState: React Hook으로 컴포넌트의 선택된 카테고리 ID 목록 상태를 관리합니다
-  const [selected_category_ids, set_selected_category_ids] = useState<string[]>(
-    []
-  );
 
   // 호버된 행 ID 상태 관리
   // useState: React Hook으로 컴포넌트의 호버된 행 ID 상태를 관리합니다
@@ -132,12 +132,12 @@ export default function CategoryTable({
     const handle_select_all = () => {
       if (is_all_selected) {
         // 전체 해제: 빈 배열로 설정
-        set_selected_category_ids([]);
+        on_selected_category_ids_change([]);
       } else {
         // 전체 선택: 모든 카테고리 ID를 배열로 설정
         // 배열 map 메서드를 사용하여 모든 카테고리의 ID를 추출합니다
         const all_ids = sorted_categories.map((category) => category.id);
-        set_selected_category_ids(all_ids);
+        on_selected_category_ids_change(all_ids);
       }
     };
 
@@ -208,7 +208,7 @@ export default function CategoryTable({
       styles={styles}
       enable_checkbox={true}
       selected_ids={selected_category_ids}
-      on_select_change={set_selected_category_ids}
+      on_select_change={on_selected_category_ids_change}
       empty_message="카테고리가 없습니다."
     />
   );

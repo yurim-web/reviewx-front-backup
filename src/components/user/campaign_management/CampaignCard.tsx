@@ -14,10 +14,7 @@
  * - 탭 상태에 따라 적절한 하위 컴포넌트로 라우팅
  * - 각 탭별로 분리된 컴포넌트를 사용하여 코드 가독성 향상
  *
- * 학습 포인트:
- * - 컴포넌트 분리: 큰 컴포넌트를 작은 단위로 나누어 관리하기 쉽게 만듭니다.
- * - 조건부 렌더링: switch 문을 사용하여 activeTab에 따라 다른 컴포넌트를 렌더링합니다.
- * - 코드 재사용성: 공통 부분(CampaignCardBase)을 추출하여 중복을 제거합니다.
+
  */
 
 import type { CampaignApplication, StatTab } from "@/types/user/user";

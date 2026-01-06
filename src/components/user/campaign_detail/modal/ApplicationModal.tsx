@@ -40,7 +40,8 @@ interface ApplicationModalProps {
   isOpen: boolean;
   onClose: () => void;
   type: ApplicationModalType; // 모달 타입 (delivery, review, mission, reporter, visit)
-  dayCount?: string; // 남은 일수 또는 긴급 상태 (예: "D-5", "긴급", "마감임박")
+  dayCount?: string; // 남은 일수 또는 상태 (예: "D-5", "마감임박")
+  isUrgent?: boolean; // 긴급 캠페인 여부 (기본값: false)
   channelName?: string; // 캠페인에서 요구하는 채널 이름 (예: "인스타그램", "네이버 블로그")
   channelUrl?: string; // 사용자가 연결한 채널 URL (없을 수 있음)
   isParticipated?: boolean; // 이미 참여한 캠페인인지 여부 (기본값: false)
@@ -53,6 +54,7 @@ export default function ApplicationModal({
   onClose,
   type,
   dayCount,
+  isUrgent: isUrgentProp = false,
   channelName: campaignChannelName,
   channelUrl: userChannelUrl,
   isParticipated = false,
@@ -117,8 +119,9 @@ export default function ApplicationModal({
   // 사용자가 연결한 채널 URL (없을 수 있음)
   const channelUrl = userChannelUrl;
 
-  // dayCount가 "긴급"을 포함하는지 확인
-  const isUrgent = dayCount?.includes("긴급") || false;
+  // 긴급 캠페인 여부 확인
+  // isUrgent prop이 있으면 우선 사용, 없으면 dayCount에서 "긴급" 포함 여부 확인 (하위 호환성)
+  const isUrgent = isUrgentProp || dayCount?.includes("긴급") || false;
 
   // 타입별 표시 여부 결정
   const showAddress =

@@ -387,17 +387,10 @@
   letter-spacing: -0.24px;
   text-decoration: underline;
   text-underline-position: from-font;
-  margin-left: auto;
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
-  font-family: inherit;
-}
-
-/* 약관 보기 링크 호버 */
-.terms_view_link:hover {
-  color: #444444;
 }
 
 /* ========================================

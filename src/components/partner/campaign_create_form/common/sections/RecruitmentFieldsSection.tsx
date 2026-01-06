@@ -18,6 +18,7 @@
 
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
 import { DateRangeField } from "../fields/DateRangeField";
+import { DateField } from "../fields/DateField";
 
 /**
  * 모집 관련 필드 섹션 Props
@@ -131,13 +132,12 @@ export function RecruitmentFieldsSection({
         <label className={infoStyles.form_label}>
           선정 날짜<span className={infoStyles.required}>*</span>
         </label>
-        <input
-          type="text"
-          className={infoStyles.form_input}
+        <DateField
           value={announcementDate}
-          onChange={(e) => onAnnouncementDateChange(e.target.value)}
+          onChange={onAnnouncementDateChange}
           placeholder=""
-          readOnly={!canEdit("announcementDate")}
+          isEditMode={isEditMode}
+          isEditable={canEdit("announcementDate")}
         />
       </article>
 

@@ -41,6 +41,7 @@ import { SimpleGuideSection } from "./common/sections/SimpleGuideSection";
 import { ParticipationOptionsSection } from "./common/sections/ParticipationOptionsSection";
 import { ContactPhoneField } from "./common/fields/ContactPhoneField";
 import { FairTradeAgreement } from "./common/fields/FairTradeAgreement";
+import { DateRangeField } from "./common/fields/DateRangeField";
 import { FloatingActionButtons } from "./common/layout/FloatingActionButtons";
 import {
   formatNumberWithComma,
@@ -59,6 +60,10 @@ interface ReviewCampaignFormProps
   initialData?: CampaignFormData | null;
   /** 폼 동작 모드: 생성/수정 */
   mode?: "create" | "edit";
+  /** 캠페인 오픈 여부 (수정 모드에서만 사용) */
+  isOpen?: boolean;
+  /** 불러온 데이터의 긴급 상태를 부모 컴포넌트로 전달하는 콜백 */
+  onUrgentLoad?: (isUrgent: boolean) => void;
 }
 
 export default function ReviewCampaignForm({
@@ -66,23 +71,47 @@ export default function ReviewCampaignForm({
   isSubmitting,
   initialData,
   mode = "create",
+  isOpen = false,
+  onUrgentLoad,
 }: ReviewCampaignFormProps) {
   const router = useRouter();
   const isEditMode = mode === "edit";
 
-  // 수정 모드에서 편집 가능 필드 정의 (이미지, 제공 내역, 구매 링크, 추가 지급 포인트, 참여/제출 옵션)
+  /**
+   * 수정 모드에서 편집 가능 필드 정의
+   *
+   * 설명:
+   * - 오픈 전 (isOpen = false): 상호명(brandName) 제외 모든 항목 수정 가능
+   * - 오픈 후 (isOpen = true): 홍보 링크, 추가 지급 포인트, 참여/제출 옵션, 문의 담당자 휴대폰 번호만 수정 가능
+   */
   const isEditableField = (field: string): boolean => {
-    const editable = new Set([
-      "images",
-      "providedItems",
-      "promotionLink",
-      "additionalPoints",
-      // 참여/제출 옵션 필드들
-      "adultOnly",
-      "allowReParticipation",
-      "allowLateSubmission",
-    ]);
-    return editable.has(field);
+    if (!isEditMode) {
+      // 생성 모드에서는 모든 필드 편집 가능
+      return true;
+    }
+
+    if (!isOpen) {
+      // 오픈 전: 상호명(brandName) 제외 모든 항목 수정 가능
+      return field !== "brandName";
+    } else {
+      // 오픈 후: 홍보 링크, 추가 지급 포인트, 참여/제출 옵션, 문의 담당자 휴대폰 번호만 수정 가능
+      const editable = new Set([
+        "promotionLink", // 홍보 링크
+        "additionalPoints", // 추가 지급 포인트
+        // 참여/제출 옵션 필드들
+        "adultOnly",
+        "allowReParticipation",
+        "allowLateSubmission",
+        "minTextLength",
+        "minImageCount",
+        "videoCount",
+        "videoDuration",
+        "requireLinkAttachment",
+        "requireKeywordAttachment",
+        "contactPhone", // 문의 담당자 휴대폰 번호
+      ]);
+      return editable.has(field);
+    }
   };
 
   // 이미지 업로드 관련 state (썸네일/상세 이미지 분리)
@@ -172,6 +201,42 @@ export default function ReviewCampaignForm({
       [field]: value,
     }));
   };
+
+  /**
+   * 수정 모드일 때 공정위 문구 기본 체크
+   *
+   * 설명:
+   * - 수정 페이지에서는 이미 등록된 캠페인이므로 공정위 문구 동의가 기본적으로 되어 있어야 합니다.
+   * - 수정 모드일 때 자동으로 fairTradeAgreement를 true로 설정합니다.
+   * - 오픈 전에는 사용자가 체크/해제할 수 있지만, 기본값은 체크된 상태입니다.
+   */
+  useEffect(() => {
+    if (isEditMode && !formData.fairTradeAgreement) {
+      setFormData((prev) => ({
+        ...prev,
+        fairTradeAgreement: true,
+      }));
+    }
+  }, [isEditMode, formData.fairTradeAgreement]);
+
+  /**
+   * initialData가 있을 때 이미지 미리보기 및 체크박스 상태 설정
+   */
+  useEffect(() => {
+    if (initialData && isEditMode) {
+      // 썸네일 이미지 미리보기 설정
+      if (initialData.thumbnailImageUrl) {
+        setThumbnailPreview(initialData.thumbnailImageUrl);
+      }
+
+      // 체크박스 상태 설정
+      setCheckboxStates({
+        minTextLength: !!initialData.minTextLength,
+        minImageCount: !!initialData.minImageCount,
+        videoCount: !!initialData.videoCount,
+      });
+    }
+  }, [initialData, isEditMode]);
 
   /**
    * 체크박스 상태 업데이트
@@ -350,8 +415,6 @@ export default function ReviewCampaignForm({
    *
    */
   const isFormValid = useMemo(() => {
-    if (isEditMode) return true;
-
     // 포인트 검증: 보유 포인트가 0보다 커야 합니다.
     const currentPoints =
       Number(String(formData.currentPoints).replace(/,/g, "")) || 0;
@@ -359,8 +422,41 @@ export default function ReviewCampaignForm({
       return false;
     }
 
-    // 썸네일과 상세 이미지가 최소 1개 이상 업로드되었는지 확인
-    const hasImages = thumbnailImage !== null && detailImages.length > 0;
+    // 썸네일과 상세 이미지 검증
+    // 수정 모드에서는 기존 이미지가 있으면 통과, 없으면 새로 업로드한 이미지가 있어야 함
+    // 생성 모드에서는 새로 업로드한 이미지가 있어야 함
+    const hasImages = isEditMode
+      ? (thumbnailPreview !== null || thumbnailImage !== null) &&
+        (detailPreviews.length > 0 || detailImages.length > 0)
+      : thumbnailImage !== null && detailImages.length > 0;
+
+    /**
+     * 기본 미션 설정 필수 입력 검증
+     *
+     * 설명:
+     * - 체크박스가 체크되어 있으면 해당 input 필드에 값이 필수로 입력되어야 합니다.
+     * - 글자 수 체크박스가 체크되어 있으면 minTextLength가 필수
+     * - 이미지 장수 체크박스가 체크되어 있으면 minImageCount가 필수
+     * - 동영상 개수 체크박스가 체크되어 있으면 videoCount와 videoDuration이 필수
+     */
+    const hasValidMissionSettings =
+      // 글자 수 체크박스가 체크되어 있으면 값이 필수
+      (!checkboxStates.minTextLength ||
+        (checkboxStates.minTextLength &&
+          formData.minTextLength !== "" &&
+          Number(String(formData.minTextLength).replace(/,/g, "")) > 0)) &&
+      // 이미지 장수 체크박스가 체크되어 있으면 값이 필수
+      (!checkboxStates.minImageCount ||
+        (checkboxStates.minImageCount &&
+          formData.minImageCount !== "" &&
+          Number(String(formData.minImageCount).replace(/,/g, "")) > 0)) &&
+      // 동영상 개수 체크박스가 체크되어 있으면 개수와 초수가 모두 필수
+      (!checkboxStates.videoCount ||
+        (checkboxStates.videoCount &&
+          formData.videoCount !== "" &&
+          Number(String(formData.videoCount).replace(/,/g, "")) > 0 &&
+          formData.videoDuration !== "" &&
+          Number(String(formData.videoDuration).replace(/,/g, "")) > 0));
 
     // 필수 텍스트 필드들이 모두 입력되었는지 확인
     const hasRequiredFields =
@@ -376,7 +472,9 @@ export default function ReviewCampaignForm({
       formData.announcementDate.trim() !== "" &&
       formData.registrationPeriod.trim() !== "" &&
       formData.keywords.trim() !== "" &&
-      formData.guidelines.trim() !== "";
+      formData.guidelines.trim() !== "" &&
+      formData.fairTradeAgreement === true && // 공정위 문구 동의 필수
+      hasValidMissionSettings; // 기본 미션 설정 필수 입력 검증
 
     const isValid = hasImages && hasRequiredFields;
 
@@ -427,10 +525,14 @@ export default function ReviewCampaignForm({
     );
     console.log("키워드:", formData.keywords.trim() !== "" ? "✓" : "✗");
     console.log("안내사항:", formData.guidelines.trim() !== "" ? "✓" : "✗");
+    console.log(
+      "공정위 동의:",
+      formData.fairTradeAgreement === true ? "✓" : "✗"
+    );
     console.log("버튼 활성화:", isValid ? "✓" : "✗");
 
     return isValid;
-  }, [formData, thumbnailImage, detailImages]);
+  }, [formData, thumbnailImage, detailImages, checkboxStates]);
 
   /**
    * 차감 포인트 계산
@@ -463,15 +565,57 @@ export default function ReviewCampaignForm({
   }, [formData.currentPoints, deductedPoints]);
 
   /**
+   * 보유 포인트 가져오기 함수
+   *
+   * 설명:
+   * - localStorage에서 파트너의 보유 포인트를 가져옵니다.
+   * - 포인트 충전 페이지에서 업데이트된 포인트를 반영합니다.
+   * - localStorage에 값이 없으면 기본값 0을 반환합니다.
+   *
+   * 📌 localStorage 사용:
+   * - 포인트 충전 페이지에서 "partner_available_points" 키로 저장됩니다.
+   * - 실제 API 연동 시에는 API에서 가져와야 합니다.
+   */
+  const getAvailablePoints = (): string => {
+    if (typeof window === "undefined") return "0";
+
+    try {
+      const availablePoints = localStorage.getItem("partner_available_points");
+      if (availablePoints) {
+        const points = Number(availablePoints);
+        if (!isNaN(points) && points >= 0) {
+          return String(points);
+        }
+      }
+      return "0";
+    } catch (error) {
+      console.error("보유 포인트 가져오기 실패:", error);
+      return "0";
+    }
+  };
+
+  /**
    * 포인트 충전 버튼 클릭 처리
    *
    * 설명:
-   * - 포인트 충전 페이지로 이동합니다.
+   * - 포인트 충전 페이지로 이동하기 전에 현재 폼 데이터를 자동으로 저장합니다.
    * - 캠페인 등록 페이지에서 온 것임을 표시하기 위해 sessionStorage에 플래그를 저장합니다.
+   * - 포인트 충전 후 돌아왔을 때 저장된 데이터를 자동으로 불러옵니다.
+   *
+
    */
   const handleChargeClick = () => {
     if (typeof window !== "undefined") {
+      // 포인트 충전 페이지에서 돌아왔을 때를 표시하기 위한 플래그 저장
       sessionStorage.setItem("from_campaign_create", "true");
+
+      // 현재 폼 데이터를 자동으로 저장 (이미지 파일은 제외)
+      try {
+        const dataToSave = { ...formData };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+      } catch (error) {
+        console.error("포인트 충전 전 자동 저장 실패:", error);
+      }
     }
     router.push("/partner/point/charge");
   };
@@ -480,37 +624,102 @@ export default function ReviewCampaignForm({
   const STORAGE_KEY = "temp_review_campaign";
 
   /**
-   * 컴포넌트 마운트 시 저장된 임시 데이터 확인
+   * 컴포넌트 마운트 시 보유 포인트 초기화 및 저장된 임시 데이터 확인
    *
    * 설명:
-   * - 생성 모드이고 initialData가 없을 때만 확인합니다.
-   * - 저장된 데이터가 있고 유효한 경우에만 불러오기 모달을 표시합니다.
+   * - 생성 모드이고 initialData가 없을 때만 실행합니다.
+   * - 보유 포인트를 localStorage에서 가져와서 formData에 설정합니다.
+   * - 포인트 충전 페이지에서 돌아왔는지 확인하고, 돌아왔다면 저장된 데이터를 자동으로 불러옵니다.
+   * - 포인트 충전 페이지에서 돌아오지 않았고 저장된 데이터가 있으면 불러오기 모달을 표시합니다.
+   *
+   * 📌 useEffect 훅:
+   * - 컴포넌트가 마운트될 때 한 번만 실행됩니다.
+   * - 의존성 배열에 isEditMode와 initialData를 포함하여 조건부 실행합니다.
+   *
+
    */
   useEffect(() => {
     if (isEditMode || initialData) return; // 수정 모드이거나 initialData가 있으면 실행하지 않음
 
     if (typeof window === "undefined") return;
 
+    // 보유 포인트 초기화 (localStorage에서 가져오기)
+    const availablePoints = getAvailablePoints();
+    if (availablePoints && formData.currentPoints === "") {
+      updateFormData("currentPoints", availablePoints);
+    }
+
+    // 포인트 충전 페이지에서 돌아왔는지 확인
+    const fromCampaignCreate = sessionStorage.getItem("from_campaign_create");
+
+    // 저장된 임시 데이터 확인
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (!saved) return;
+      if (!saved) {
+        // 저장된 데이터가 없으면 플래그 제거하고 종료
+        if (fromCampaignCreate) {
+          sessionStorage.removeItem("from_campaign_create");
+        }
+        return;
+      }
 
       // JSON 파싱하여 유효한 데이터인지 확인
       const savedData = JSON.parse(saved);
 
-      // 저장된 데이터가 객체이고 비어있지 않은 경우에만 모달 표시
+      // 저장된 데이터가 객체이고 비어있지 않은 경우
       if (
         savedData &&
         typeof savedData === "object" &&
         Object.keys(savedData).length > 0
       ) {
-        setLoadConfirmModal({ is_open: true });
+        // 포인트 충전 페이지에서 돌아왔다면 자동으로 불러오기
+        if (fromCampaignCreate === "true") {
+          setFormData(savedData);
+          // 불러온 데이터의 긴급 상태를 부모 컴포넌트로 전달
+          if (savedData?.isUrgent === true && onUrgentLoad) {
+            onUrgentLoad(true);
+          }
+          // 플래그 제거
+          sessionStorage.removeItem("from_campaign_create");
+        } else {
+          // 포인트 충전 페이지에서 돌아오지 않았다면 불러오기 모달 표시
+          setLoadConfirmModal({ is_open: true });
+        }
       }
     } catch (error) {
       // JSON 파싱 실패 시 무효한 데이터로 간주하고 무시
       console.error("임시 저장 데이터 확인 실패:", error);
+      // 플래그 제거
+      if (fromCampaignCreate) {
+        sessionStorage.removeItem("from_campaign_create");
+      }
     }
   }, [isEditMode, initialData]);
+
+  /**
+   * 포인트 충전 후 돌아왔을 때 보유 포인트 업데이트
+   *
+   * 설명:
+   * - 포인트 충전 페이지에서 돌아왔을 때 업데이트된 보유 포인트를 반영합니다.
+   * - localStorage의 "partner_available_points" 값을 확인하여 업데이트합니다.
+   */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const handleFocus = () => {
+      const availablePoints = getAvailablePoints();
+      if (availablePoints) {
+        updateFormData("currentPoints", availablePoints);
+      }
+    };
+
+    window.addEventListener("focus", handleFocus);
+    handleFocus();
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, []);
 
   /**
    * 임시 저장 처리
@@ -566,6 +775,13 @@ export default function ReviewCampaignForm({
       // 저장된 데이터로 formData 업데이트
       setFormData(savedData);
 
+      // 불러온 데이터의 긴급 상태를 부모 컴포넌트로 전달
+      if (savedData?.isUrgent === true && onUrgentLoad) {
+        onUrgentLoad(true);
+      } else if (savedData?.isUrgent === false && onUrgentLoad) {
+        onUrgentLoad(false);
+      }
+
       // 모달 닫기
       setLoadConfirmModal({ is_open: false });
     } catch (error) {
@@ -581,17 +797,36 @@ export default function ReviewCampaignForm({
    * 설명:
    * - localStorage에 저장된 데이터가 없으면 비활성화합니다.
    */
-  const isLoadDisabledCheck = useMemo(() => {
-    if (isSubmitting) return true;
-    if (isEditMode || initialData) return true;
+  /**
+   * 불러오기 버튼 비활성화 여부
+   *
+   * 설명:
+   * - 서버와 클라이언트 간 hydration mismatch를 방지하기 위해
+   *   useState와 useEffect를 사용하여 클라이언트에서만 값을 계산합니다.
+   * - 초기값은 true로 설정하고, 클라이언트에서 마운트된 후에 실제 값을 계산합니다.
+   */
+  const [isLoadDisabled, setIsLoadDisabled] = useState(true);
 
-    if (typeof window === "undefined") return true;
+  useEffect(() => {
+    if (isSubmitting) {
+      setIsLoadDisabled(true);
+      return;
+    }
+    if (isEditMode || initialData) {
+      setIsLoadDisabled(true);
+      return;
+    }
+
+    if (typeof window === "undefined") {
+      setIsLoadDisabled(true);
+      return;
+    }
 
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      return !saved;
+      setIsLoadDisabled(!saved);
     } catch {
-      return true;
+      setIsLoadDisabled(true);
     }
   }, [isSubmitting, isEditMode, initialData]);
 
@@ -610,6 +845,8 @@ export default function ReviewCampaignForm({
       thumbnailImageUrl: thumbnailPreview || undefined,
       // 상세 이미지
       detailImages: detailImages,
+      // 상세 이미지 미리보기 URL 배열 (Data URL) - localStorage 저장용
+      detailImagePreviews: detailPreviews,
     };
 
     onSubmit(formDataWithImages);
@@ -655,7 +892,7 @@ export default function ReviewCampaignForm({
         onSave={handleSave}
         onLoad={() => setLoadConfirmModal({ is_open: true })}
         isSaveDisabled={isSubmitting}
-        isLoadDisabled={isLoadDisabledCheck}
+        isLoadDisabled={isLoadDisabled}
       />
 
       <form onSubmit={handleSubmit} className={infoStyles.campaign_form}>
@@ -820,6 +1057,8 @@ export default function ReviewCampaignForm({
           </article>
 
           {/* 모집 관련 필드 */}
+          {/* 구매평에서는 구매 링크 밑에 모집 인원 필드가 있으므로, 
+            RecruitmentFieldsSection에서는 모집 인원 필드를 표시하지 않습니다 */}
           <RecruitmentFieldsSection
             recruitmentCount={String(formData.recruitmentCount || "")}
             recruitmentPeriod={formData.recruitmentPeriod}
@@ -839,6 +1078,7 @@ export default function ReviewCampaignForm({
             }
             isEditMode={isEditMode}
             isEditableField={isEditableField}
+            showRecruitmentCount={false}
           />
 
           {/* 구매기간 (구매평 전용) */}
@@ -846,13 +1086,12 @@ export default function ReviewCampaignForm({
             <label className={infoStyles.form_label}>
               구매기간<span className={infoStyles.required}>*</span>
             </label>
-            <input
-              type="text"
-              className={infoStyles.form_input}
-              value={formData.purchasePeriod}
-              onChange={(e) => updateFormData("purchasePeriod", e.target.value)}
-              placeholder=""
-              readOnly={isEditMode && !isEditableField("purchasePeriod")}
+            <DateRangeField
+              value={formData.purchasePeriod || ""}
+              onChange={(value) => updateFormData("purchasePeriod", value)}
+              placeholder="구매기간을 선택해주세요."
+              isEditMode={isEditMode}
+              isEditable={isEditableField("purchasePeriod")}
             />
           </article>
         </section>
@@ -913,6 +1152,7 @@ export default function ReviewCampaignForm({
               }
               isEditMode={isEditMode}
               isEditableField={isEditableField}
+              isOpen={isOpen}
             />
           </article>
 
@@ -963,6 +1203,7 @@ export default function ReviewCampaignForm({
           agreed={formData.fairTradeAgreement || false}
           onChange={(agreed) => updateFormData("fairTradeAgreement", agreed)}
           isEditMode={isEditMode}
+          isOpen={isOpen}
         />
 
         {/* 등록하기 버튼 */}
@@ -977,8 +1218,8 @@ export default function ReviewCampaignForm({
                 ? "저장 중..."
                 : "등록 중..."
               : isEditMode
-              ? "저장하기"
-              : "등록하기"}
+              ? "저장"
+              : "등록"}
           </button>
         </div>
       </form>

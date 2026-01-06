@@ -14,10 +14,10 @@
  *
  */
 
-'use client';
+"use client";
 
-import chartStyles from '@/styles/manager_ga/dashboard/charts.module.css';
-import deviceStyles from '@/styles/manager_ga/dashboard/device_stats.module.css';
+import chartStyles from "@/styles/manager_ga/dashboard/charts.module.css";
+import deviceStyles from "@/styles/manager_ga/dashboard/device_stats.module.css";
 
 /* ========================================
    📊 디바이스 통계 차트 (Progress Bar 버전)
@@ -25,21 +25,13 @@ import deviceStyles from '@/styles/manager_ga/dashboard/device_stats.module.css'
 
 /**
  * 디바이스 통계 차트
- *
- * 목적: 복잡한 차트 대신 학습하기 쉬운 진행 바(progress bar) 형태로
- *       PC · Tablet · Mobile · App 비율을 보여줍니다.
- *
-  * - JSX: HTML처럼 보이지만 실제로는 JavaScript 객체이며, map() 결과를 그대로 렌더링할 수 있습니다.
- * - props/state: 현재 컴포넌트는 자체 상태(state)를 사용하지 않고 정적 데이터 배열을 렌더링합니다.
- * - 리스트 렌더링: Array.prototype.map()을 사용하여 반복되는 UI를 생성할 때 key prop이 필요합니다.
- * - 조건부 클래스: 색상 스타일을 객체로 매핑해 유지보수성을 높입니다.
  */
 
 import {
   deviceProgressData,
   DeviceProgress,
   DeviceColorKey,
-} from '@/data/manager_ga/dashboard/dashboardData';
+} from "@/data/manager_ga/dashboard/dashboardData";
 
 // 색상 모듈 클래스 매핑 (JS 객체 -> CSS 모듈 연결)
 const progress_bar_color_map: Record<DeviceColorKey, string> = {
@@ -54,9 +46,9 @@ export default function DeviceStatsChart() {
     <div
       className={chartStyles.chart_area}
       style={{
-        width: '100%',
-        backgroundColor: 'transparent',
-        alignItems: 'flex-start',
+        width: "100%",
+        backgroundColor: "transparent",
+        alignItems: "flex-start",
         padding: 0,
       }}
     >
@@ -98,7 +90,7 @@ export default function DeviceStatsChart() {
                     className={`${deviceStyles.device_progress_bar_fill} ${
                       device.colorKey
                         ? progress_bar_color_map[device.colorKey]
-                        : ''
+                        : ""
                     }`}
                     style={{ width: `${device.percentage}%` }} // 구조분해 + 템플릿 리터럴 설명용
                   />
