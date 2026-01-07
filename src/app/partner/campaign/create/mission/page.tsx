@@ -115,6 +115,19 @@ export default function MissionCampaignCreatePage() {
       // 등록 시간 생성 (ISO 8601 형식: "2025-01-15T10:30:00")
       const registeredAt = new Date().toISOString();
 
+      // contentType 결정: requireContentLink와 requireContentImage 체크박스에 따라 결정
+      // - requireContentLink만 true → "link"
+      // - requireContentImage만 true → "image"
+      // - 둘 다 true → "both"
+      let contentType: "link" | "image" | "both" | undefined = undefined;
+      if (finalFormData.requireContentLink && finalFormData.requireContentImage) {
+        contentType = "both";
+      } else if (finalFormData.requireContentLink) {
+        contentType = "link";
+      } else if (finalFormData.requireContentImage) {
+        contentType = "image";
+      }
+
       const extendedCampaign = {
         ...newCampaign,
         // 긴급 캠페인 여부 (폼 제출 시 저장한 값 사용)
@@ -126,6 +139,8 @@ export default function MissionCampaignCreatePage() {
         productLink: finalFormData.promotionLink || "",
         keywords: finalFormData.keywords || "",
         guidelines: finalFormData.guidelines || "",
+        // contentType (미션형 캠페인 전용)
+        contentType: contentType,
         // 상세 이미지 미리보기 URL 배열 (Data URL) - localStorage 저장용
         detailImagePreviews: pendingFormData.detailImagePreviews || [],
         // requirements 생성용 필드들

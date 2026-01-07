@@ -30,6 +30,8 @@ import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import MainMenu from "@/components/main/MainMenu";
 import CampaignBox from "@/components/main/CampaignBox";
+import MainBannerSlider from "@/components/main/MainBannerSlider";
+import Footer from "@/components/main/Footer";
 import styles from "@/styles/home/home.module.css";
 import Titletext from "@/components/main/Titletext";
 
@@ -871,11 +873,23 @@ export default function HomePageClient() {
       <article className={styles.container}>
         {/* ⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️ == 상단 배너 부분 == ⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️ */}
         <section className={styles.main_banner_container}>
-          <div className={styles.main_banner}>
-            {/* public 폴더의 이미지 사용 */}
-            {/* /images/main/main_banner.png는 public/images/main/main_banner.png를 가리킵니다 */}
-            <img src="/images/main/main_banner.png" alt="main_banner" />
-          </div>
+          {/* 
+            메인 배너 슬라이드 컴포넌트
+            - 여러 배너 이미지를 슬라이드로 표시
+            - 자동 슬라이드 전환 (5초마다)
+            - 페이지네이션 도트로 현재 슬라이드 표시
+            - 도트 클릭으로 특정 슬라이드로 이동
+          */}
+          <MainBannerSlider
+            banners={[
+              "/images/main/main_banner.png",
+              "/images/main/main_banner2.png", // TODO: 실제 배너 이미지로 교체
+              "/images/main/main_banner.png", // TODO: 실제 배너 이미지로 교체
+              "/images/main/main_banner.png", // TODO: 실제 배너 이미지로 교체
+              "/images/main/main_banner.png", // TODO: 실제 배너 이미지로 교체
+            ]}
+            autoSlideInterval={5000}
+          />
         </section>
 
         {/* ⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️ == 선정 확률 높은 캠페인 영역 == ⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️ */}
@@ -930,6 +944,9 @@ export default function HomePageClient() {
           </div>
         </section>
       </article>
+
+      {/* ⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️ == 푸터 == ⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️ */}
+      <Footer />
     </>
   );
 }

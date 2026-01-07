@@ -29,10 +29,6 @@ import ProgressPageCommon from "@/components/manager/common/campaign/progress/Pr
 /**
  * GA 관리자 진행 상황 페이지 컴포넌트
  *
- * 학습 포인트:
- * - 공통 컴포넌트를 사용하여 코드 중복을 제거하는 방법
- * - Props를 통해 컴포넌트의 동작을 제어하는 방법
- * - Next.js 페이지 컴포넌트는 라우트 경로에 따라 자동으로 렌더링됩니다
  *
  * @returns GA 관리자 진행 상황 페이지 JSX 요소
  */

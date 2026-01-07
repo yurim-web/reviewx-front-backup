@@ -30,6 +30,7 @@ import date_filter_styles from "./date_filter_button.module.css";
 import DateRangePickerModal, {
   type DateRange,
 } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
+import BaseModal from "@/components/common/modal/BaseModal";
 
 // DateFilterButton 컴포넌트의 props 타입 정의
 interface DateFilterButtonProps {
@@ -58,6 +59,9 @@ export default function DateFilterButton({
   const [selected_date_range, setSelectedDateRange] = useState<
     DateRange | undefined
   >(selected_range);
+
+  // useState: 날짜 검증 오류 모달 상태
+  const [is_error_modal_open, setIsErrorModalOpen] = useState(false);
 
   // useRef: 날짜 선택기 버튼의 참조를 저장하는 React Hook
   // ref는 DOM 요소에 직접 접근할 수 있게 해줍니다
@@ -102,9 +106,41 @@ export default function DateFilterButton({
     };
   }, [is_date_modal_open]);
 
+  // 날짜 범위 검증 함수
+  // 시작일이 종료일보다 늦거나 종료일이 시작일보다 빠른지 확인합니다
+  const validate_date_range = (range: DateRange | undefined): boolean => {
+    // 날짜 범위가 없으면 통과 (초기화 시)
+    if (!range || !range.from || !range.to) {
+      return true;
+    }
+
+    // 시작일과 종료일을 Date 객체로 변환
+    const from_date = new Date(range.from);
+    const to_date = new Date(range.to);
+
+    // 시간 부분을 제거하여 날짜만 비교
+    from_date.setHours(0, 0, 0, 0);
+    to_date.setHours(0, 0, 0, 0);
+
+    // 시작일이 종료일보다 늦으면 오류
+    if (from_date > to_date) {
+      return false;
+    }
+
+    return true;
+  };
+
   // 날짜 범위 적용 핸들러
   // 모달에서 날짜 범위를 선택했을 때 호출됩니다
   const handle_date_range_apply = (range: DateRange | undefined) => {
+    // 날짜 범위 검증
+    if (!validate_date_range(range)) {
+      // 검증 실패 시 오류 모달 표시
+      setIsErrorModalOpen(true);
+      return;
+    }
+
+    // 검증 통과 시 날짜 범위 적용
     setSelectedDateRange(range);
     // 부모 컴포넌트로 날짜 범위 변경 알림
     on_range_change?.(range);
@@ -176,6 +212,15 @@ export default function DateFilterButton({
         selected_range={selected_date_range}
         on_apply={handle_date_range_apply}
         align="left"
+      />
+
+      {/* 날짜 검증 오류 모달 */}
+      <BaseModal
+        is_open={is_error_modal_open}
+        on_close={() => setIsErrorModalOpen(false)}
+        message="시작일과 종료일을 확인해 주세요."
+        buttons={["확인"]}
+        type="center"
       />
     </div>
   );

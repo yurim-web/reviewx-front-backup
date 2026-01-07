@@ -109,7 +109,6 @@ export default function CategoryForm({
   }, [category_id, mode]);
 
   // 카테고리명 유효성 검사 함수
-  // 학습 포인트: 함수를 컴포넌트 내부에 정의하여 상태값에 접근할 수 있습니다
   // 이 함수는 카테고리명의 길이와 중복을 검사합니다
   const validate_category_name = (): boolean => {
     // 에러 메시지 초기화
@@ -162,7 +161,6 @@ export default function CategoryForm({
       // 현재는 목업 데이터를 직접 추가합니다
       // 실제 구현 시에는 API를 호출하여 카테고리를 등록한 후 목록 페이지로 이동합니다
       // add_category: 목업 데이터에 새로운 카테고리를 추가하는 함수입니다
-      // 학습 포인트: 이 함수를 호출하면 categories_data 배열에 새로운 카테고리가 추가됩니다
       // CategoryTable 컴포넌트에서 categories_data를 사용하므로, 추가된 내용이 테이블에 반영됩니다
       add_category(division, category_name.trim());
       console.log("카테고리 등록:", { division, category_name });
@@ -176,26 +174,22 @@ export default function CategoryForm({
       // 실제 구현 시에는 API를 호출하여 카테고리를 수정한 후 목록 페이지로 이동합니다
       if (category_id) {
         // update_category: 목업 데이터에서 카테고리를 수정하는 함수입니다
-        // 학습 포인트: 이 함수를 호출하면 categories_data 배열이 직접 수정됩니다
         // CategoryTable 컴포넌트에서 categories_data를 사용하므로, 수정된 내용이 테이블에 반영됩니다
         update_category(category_id, division, category_name.trim());
         console.log("카테고리 수정:", { category_id, division, category_name });
       }
       // 토스트 메시지 표시
-      // 학습 포인트: set_show_toast(true)로 토스트를 표시합니다
       set_show_toast(true);
     }
   };
 
   // 토스트 닫기 핸들러
   // 토스트가 닫힐 때 호출되는 함수입니다
-  // 학습 포인트: 토스트가 자동으로 닫힌 후 페이지를 이동합니다
   const handle_toast_close = () => {
     // 토스트 상태를 false로 변경
     set_show_toast(false);
     // 토스트가 닫힌 후 약간의 딜레이를 두고 페이지 이동
     // setTimeout: 지정된 시간 후 함수를 실행합니다
-    // 학습 포인트: 약간의 딜레이를 두어 토스트 애니메이션이 완료된 후 페이지 이동합니다
     setTimeout(() => {
       router.push(`/manager_${manager_type}/community/categories`);
     }, 100);
@@ -265,7 +259,6 @@ export default function CategoryForm({
               options={division_options}
               onChange={(value) => {
                 // 구분 변경 시 에러 메시지 초기화
-                // 학습 포인트: 구분이 변경되면 중복 검사 결과가 달라질 수 있으므로 에러를 초기화합니다
                 set_division(value as CategoryDivision);
                 set_error_message("");
               }}
@@ -291,11 +284,9 @@ export default function CategoryForm({
               minLength={2}
               onChange={(e) => {
                 // 카테고리명 변경 시 에러 메시지 초기화
-                // 학습 포인트: 사용자가 입력을 시작하면 이전 에러 메시지를 숨깁니다
                 // maxLength 속성으로 이미 10자 이상 입력이 막혀있지만, 추가 안전장치로 처리합니다
                 const input_value = e.target.value;
                 // 10자를 초과하는 경우 10자까지만 잘라서 저장합니다
-                // 학습 포인트: slice(0, 10)은 문자열의 처음부터 10번째 문자까지만 가져옵니다
                 const limited_value = input_value.slice(0, 10);
                 set_category_name(limited_value);
                 set_error_message("");

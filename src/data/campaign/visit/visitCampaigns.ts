@@ -62,11 +62,14 @@ export const visitCampaigns: VisitCampaignData[] = [
     dayCount: "D-5",
     registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-20 ~ 2026-01-06)
-      applicationStart: "2025-12-20",
-      applicationEnd: "2026-01-06",
-      announcement: "2026-01-08",
-      purchasePeriod: "2026-01-10 ~ 2026-01-17",
+      // 선정 중 - 모집 기간 종료 후, 선정 발표 전
+      // 모집 기간: 2025-09-02 ~ 2025-09-14 (종료됨)
+      // 선정 발표: 2025-09-16 (아직 안 지남)
+      // 등록 기간: 2025-09-22 ~ 2025-09-30 (아직 시작 안 함)
+      applicationStart: "2025-09-02",
+      applicationEnd: "2025-09-14",
+      announcement: "2025-09-16",
+      purchasePeriod: "2025-09-16 ~ 2025-09-19",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
@@ -678,6 +681,18 @@ export interface VisitCampaignDataExtended {
 
   // 콘텐츠 데이터 (선택사항 - 종료/취소 캠페인에는 필수, 진행/예정/신청 캠페인에는 선택)
   contents?: {
+    waiting: Array<{
+      id: string;
+      createdAt: string;
+      status: "검수";
+      userType: "리뷰어" | "인플루언서";
+      nickname: string;
+      channelId: string;
+      channel: string;
+      profileImage?: string;
+      extension_request_reason?: string;
+      isRejected?: boolean;
+    }>;
     reviewing: Array<{
       id: string;
       createdAt: string;
@@ -689,6 +704,7 @@ export interface VisitCampaignDataExtended {
       updatedAt?: string;
       isRejected?: boolean;
       isLate?: boolean;
+      profileImage?: string;
     }>;
     completed: Array<{
       id: string;
@@ -700,6 +716,7 @@ export interface VisitCampaignDataExtended {
       channel: string;
       updatedAt?: string;
       isLate?: boolean;
+      profileImage?: string;
     }>;
   };
 }
@@ -1576,6 +1593,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
     },
     contents: {
       waiting: [
+        // 1️⃣ 연장 요청이 있는 대기 카드 (등록 기한 연장 요청 상태)
         {
           id: "content_visit_9_waiting_001",
           createdAt: "2025-12-30T10:00:00.000Z",
@@ -1585,11 +1603,90 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channelId: "youtube_014",
           channel: "유튜브",
           profileImage: "/images/test_img/eximg.png",
+          extension_request_reason:
+            "개인 사정으로 인해 등록 기한을 연장해주시면 감사하겠습니다.",
+        },
+        // 1-2️⃣ 연장 요청이 있는 대기 카드 (테스트용 추가 1)
+        {
+          id: "content_visit_9_waiting_001_extra_1",
+          createdAt: "2025-12-30T11:30:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "놀이공원방문리뷰어연장B",
+          channelId: "youtube_015",
+          channel: "유튜브",
+          profileImage: "/images/test_img/eximg2.png",
+          extension_request_reason:
+            "촬영 일정이 지연되어 등록 기한을 3일만 연장해주시면 감사하겠습니다.",
+        },
+        // 1-3️⃣ 연장 요청이 있는 대기 카드 (테스트용 추가 2)
+        {
+          id: "content_visit_9_waiting_001_extra_2",
+          createdAt: "2025-12-30T12:15:00.000Z",
+          status: "검수" as const,
+          userType: "인플루언서" as const,
+          nickname: "놀이공원방문인플루언서연장C",
+          channelId: "instagram_020",
+          channel: "인스타그램",
+          profileImage: "/images/test_img/eximg4.png",
+          extension_request_reason:
+            "개인 일정으로 인해 콘텐츠 등록이 어려워 등록 기한 연장을 요청드립니다.",
+        },
+        // 2️⃣ 일반 대기 카드 (콘텐츠 미등록 상태)
+        {
+          id: "content_visit_9_waiting_002",
+          createdAt: "2025-12-31T11:00:00.000Z",
+          status: "검수" as const,
+          userType: "인플루언서" as const,
+          nickname: "놀이공원방문인플루언서B",
+          channelId: "instagram_019",
+          channel: "인스타그램",
+          profileImage: "/images/test_img/eximg3.png",
+        },
+        // 3️⃣ 기한 연장 승인 후 상태 (콘텐츠 미등록 + 기한 연장 표시)
+        //    - 실제 기한/연장된 기한 날짜는 페이지 컴포넌트에서 하드코딩으로 전달합니다
+        {
+          id: "content_visit_9_waiting_003",
+          createdAt: "2025-12-29T10:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "놀이공원방문리뷰어C",
+          channelId: "blog_100",
+          channel: "네이버블로그",
+          profileImage: "/images/test_img/eximg.png",
+        },
+        // 4️⃣ 반려 처리된 상태 (콘텐츠 반려 처리 버튼 노출)
+        {
+          id: "content_visit_9_waiting_004",
+          createdAt: "2025-12-29T11:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "놀이공원방문리뷰어반려",
+          channelId: "blog_101",
+          channel: "네이버블로그",
+          isRejected: true,
+          profileImage: "/images/test_img/eximg3.png",
         },
       ],
       reviewing: [
+        // 1️⃣ 최초 등록 (등록 라벨 - 회색 텍스트)
+        //    - updatedAt이 없고 isLate가 false인 경우
         {
           id: "content_visit_9_reviewing_001",
+          createdAt: "2025-12-28T09:00:00.000Z",
+          status: "검수중" as const,
+          userType: "인플루언서" as const,
+          nickname: "테마파크인플루언서A",
+          channelId: "youtube_014",
+          channel: "유튜브",
+          isRejected: false,
+          isLate: false,
+          profileImage: "/images/test_img/eximg.png",
+        },
+        // 2️⃣ 수정 (수정 라벨 - 회색 텍스트)
+        //    - updatedAt이 있고 isLate가 false인 경우
+        {
+          id: "content_visit_9_reviewing_002",
           createdAt: "2025-12-28T09:00:00.000Z",
           status: "검수중" as const,
           userType: "인플루언서" as const,
@@ -1599,6 +1696,62 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           updatedAt: "2025-12-29T10:00:00.000Z",
           isRejected: false,
           isLate: false,
+          profileImage: "/images/test_img/eximg3.png",
+        },
+        // 3️⃣ 지각 등록 (지각 등록 라벨 - 빨간색 텍스트)
+        //    - isLate가 true인 경우
+        {
+          id: "content_visit_9_reviewing_003",
+          createdAt: "2025-12-28T09:00:00.000Z",
+          status: "검수중" as const,
+          userType: "리뷰어" as const,
+          nickname: "놀이공원방문리뷰어A",
+          channelId: "blog_102",
+          channel: "네이버블로그",
+          updatedAt: "2025-12-30T15:30:00.000Z",
+          isRejected: false,
+          isLate: true,
+          profileImage: "/images/test_img/eximg.png",
+        },
+        // 4️⃣ 최초 등록 (추가 테스트용)
+        {
+          id: "content_visit_9_reviewing_004",
+          createdAt: "2025-12-29T11:00:00.000Z",
+          status: "검수중" as const,
+          userType: "리뷰어" as const,
+          nickname: "놀이공원방문리뷰어B",
+          channelId: "instagram_020",
+          channel: "인스타그램",
+          isRejected: false,
+          isLate: false,
+          profileImage: "/images/test_img/eximg3.png",
+        },
+        // 5️⃣ 수정 (추가 테스트용)
+        {
+          id: "content_visit_9_reviewing_005",
+          createdAt: "2025-12-29T14:00:00.000Z",
+          status: "검수중" as const,
+          userType: "인플루언서" as const,
+          nickname: "테마파크인플루언서C",
+          channelId: "youtube_016",
+          channel: "유튜브",
+          updatedAt: "2025-12-30T09:20:00.000Z",
+          isRejected: false,
+          isLate: false,
+          profileImage: "/images/test_img/eximg.png",
+        },
+        // 6️⃣ 지각 등록 (추가 테스트용)
+        {
+          id: "content_visit_9_reviewing_006",
+          createdAt: "2025-12-29T16:00:00.000Z",
+          status: "검수중" as const,
+          userType: "리뷰어" as const,
+          nickname: "놀이공원방문리뷰어C",
+          channelId: "blog_103",
+          channel: "네이버블로그",
+          updatedAt: "2025-12-31T10:45:00.000Z",
+          isRejected: false,
+          isLate: true,
           profileImage: "/images/test_img/eximg3.png",
         },
       ],
@@ -1624,6 +1777,138 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channelId: "youtube_017",
           channel: "유튜브",
           updatedAt: "2025-12-28T10:00:00.000Z",
+          isLate: false,
+          profileImage: "/images/test_img/eximg3.png",
+        },
+        {
+          id: "content_visit_9_completed_003",
+          createdAt: "2025-12-25T10:00:00.000Z",
+          status: "완료" as const,
+          userType: "리뷰어" as const,
+          nickname: "테마파크리뷰어E",
+          channelId: "instagram_018",
+          channel: "인스타그램",
+          updatedAt: "2025-12-26T11:00:00.000Z",
+          isLate: false,
+          profileImage: "/images/test_img/eximg.png",
+        },
+        {
+          id: "content_visit_9_completed_004",
+          createdAt: "2025-12-24T14:00:00.000Z",
+          status: "완료" as const,
+          userType: "인플루언서" as const,
+          nickname: "놀이공원인플루언서F",
+          channelId: "naver_blog_019",
+          channel: "네이버블로그",
+          updatedAt: "2025-12-25T15:00:00.000Z",
+          isLate: true,
+          profileImage: "/images/test_img/eximg3.png",
+        },
+        {
+          id: "content_visit_9_completed_005",
+          createdAt: "2025-12-23T16:00:00.000Z",
+          status: "완료" as const,
+          userType: "리뷰어" as const,
+          nickname: "테마파크방문리뷰어G",
+          channelId: "youtube_020",
+          channel: "유튜브",
+          updatedAt: "2025-12-24T17:00:00.000Z",
+          isLate: false,
+          profileImage: "/images/test_img/eximg.png",
+        },
+        {
+          id: "content_visit_9_completed_006",
+          createdAt: "2025-12-22T18:00:00.000Z",
+          status: "완료" as const,
+          userType: "인플루언서" as const,
+          nickname: "놀이공원체험인플루언서H",
+          channelId: "instagram_021",
+          channel: "인스타그램",
+          updatedAt: "2025-12-23T19:00:00.000Z",
+          isLate: false,
+          profileImage: "/images/test_img/eximg3.png",
+        },
+        {
+          id: "content_visit_9_completed_007",
+          createdAt: "2025-12-21T20:00:00.000Z",
+          status: "완료" as const,
+          userType: "리뷰어" as const,
+          nickname: "테마파크리뷰어I",
+          channelId: "naver_blog_022",
+          channel: "네이버블로그",
+          updatedAt: "2025-12-22T21:00:00.000Z",
+          isLate: false,
+          profileImage: "/images/test_img/eximg.png",
+        },
+        {
+          id: "content_visit_9_completed_008",
+          createdAt: "2025-12-20T22:00:00.000Z",
+          status: "완료" as const,
+          userType: "인플루언서" as const,
+          nickname: "놀이공원인플루언서J",
+          channelId: "youtube_023",
+          channel: "유튜브",
+          updatedAt: "2025-12-21T23:00:00.000Z",
+          isLate: true,
+          profileImage: "/images/test_img/eximg3.png",
+        },
+        {
+          id: "content_visit_9_completed_009",
+          createdAt: "2025-12-19T09:00:00.000Z",
+          status: "완료" as const,
+          userType: "리뷰어" as const,
+          nickname: "테마파크방문리뷰어K",
+          channelId: "instagram_024",
+          channel: "인스타그램",
+          updatedAt: "2025-12-20T10:00:00.000Z",
+          isLate: false,
+          profileImage: "/images/test_img/eximg.png",
+        },
+        {
+          id: "content_visit_9_completed_010",
+          createdAt: "2025-12-18T11:00:00.000Z",
+          status: "완료" as const,
+          userType: "인플루언서" as const,
+          nickname: "놀이공원인플루언서L",
+          channelId: "naver_blog_025",
+          channel: "네이버블로그",
+          updatedAt: "2025-12-19T12:00:00.000Z",
+          isLate: false,
+          profileImage: "/images/test_img/eximg3.png",
+        },
+        {
+          id: "content_visit_9_completed_010",
+          createdAt: "2025-12-18T11:00:00.000Z",
+          status: "완료" as const,
+          userType: "인플루언서" as const,
+          nickname: "놀이공원인플루언서L",
+          channelId: "naver_blog_025",
+          channel: "네이버블로그",
+          updatedAt: "2025-12-19T12:00:00.000Z",
+          isLate: false,
+          profileImage: "/images/test_img/eximg3.png",
+        },
+        {
+          id: "content_visit_9_completed_010",
+          createdAt: "2025-12-18T11:00:00.000Z",
+          status: "완료" as const,
+          userType: "인플루언서" as const,
+          nickname: "놀이공원인플루언서L",
+          channelId: "naver_blog_025",
+          channel: "네이버블로그",
+          updatedAt: "2025-12-19T12:00:00.000Z",
+          isLate: false,
+          profileImage: "/images/test_img/eximg3.png",
+        },
+        {
+          id: "content_visit_9_completed_010",
+          createdAt: "2025-12-18T11:00:00.000Z",
+          status: "완료" as const,
+          userType: "인플루언서" as const,
+          nickname: "놀이공원인플루언서L",
+          channelId: "naver_blog_025",
+          channel: "네이버블로그",
+          updatedAt: "2025-12-19T12:00:00.000Z",
           isLate: false,
           profileImage: "/images/test_img/eximg3.png",
         },

@@ -7,6 +7,7 @@
 import type { Metadata } from "next";
 
 import MainMenu from "@/components/main/MainMenu";
+import Footer from "@/components/main/Footer";
 import styles from "@/styles/home/home.module.css";
 import SearchResultsSection from "@/components/search/SearchResultsSection";
 
@@ -69,6 +70,9 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
         {/* 상단 배너는 생략하고, 바로 검색 결과 리스트 + 정렬 필터만 노출 */}
         <SearchResultsSection campaigns={filtered_campaigns} />
       </article>
+
+      {/* 푸터 */}
+      <Footer />
     </>
   );
 }

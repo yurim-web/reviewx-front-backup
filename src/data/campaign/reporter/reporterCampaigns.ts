@@ -51,7 +51,7 @@ export interface ReporterCampaignData {
  * 기자단 페이지에서 사용되는 전용 데이터
  */
 export const reporterCampaigns: ReporterCampaignData[] = [
-  // reporter_1: 예정 탭
+  // reporter_1: 예정 탭 - 모집 기간 시작 전
   {
     id: "reporter_1",
     title: "테크 기자단",
@@ -68,11 +68,14 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     dayCount: "D-5",
     registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-20 ~ 2026-01-06)
+      // 선정 중 - 모집 기간 종료 후, 선정 발표 전 (2일 남음)
+      // 모집 기간: 2025-12-20 ~ 2026-01-05 (종료됨 - 오늘이 2026-01-06이므로)
+      // 선정 발표: 2026-01-08 (2일 후 - 오늘이 2026-01-06이므로)
+      // 등록 기간: 2026-01-10 ~ 2026-01-20 (아직 시작 안 함)
       applicationStart: "2025-12-20",
-      applicationEnd: "2026-01-06",
+      applicationEnd: "2026-01-05",
       announcement: "2026-01-08",
-      registrationPeriod: "2026-01-10 ~ 2026-01-17",
+      registrationPeriod: "2026-01-10 ~ 2026-01-20",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",

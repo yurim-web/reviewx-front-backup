@@ -297,9 +297,17 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
 
       // 선정 리스트에 추가 (별도로 처리)
       // 📌 신청 탭에서 선정하기를 누른 경우:
-      // - 이미 위에서 선정 탭 체크를 했으므로, 여기서는 중복 체크 불필요
+      // - 이미 선정 리스트에 있는지 확인하여 중복 추가 방지
       // - 신청 목록에서 제거된 신청자를 선정 리스트에 추가
       setSelectedState((prevSelected) => {
+        // 이미 선정 리스트에 있는지 확인
+        const isAlreadyInSelected = prevSelected.some(
+          (a) => a.id === applicantId
+        );
+        if (isAlreadyInSelected) {
+          console.log("이미 선정 리스트에 있는 신청자입니다:", applicantId);
+          return prevSelected;
+        }
         // 📌 배열 스프레드 연산자:
         // - [moved, ...prevSelected]: 선정된 신청자를 맨 앞에 추가하고, 기존 선정 리스트를 뒤에 붙입니다
         return [moved, ...prevSelected];

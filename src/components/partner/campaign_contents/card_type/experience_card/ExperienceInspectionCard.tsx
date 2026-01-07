@@ -8,9 +8,15 @@
      - 승인/반려 버튼 (필수)
      - footer: 연장/신고 버튼
    
+   📝 경우의 수 (3가지):
+     1. 최초 등록: "2025-11-02 17:37 등록" (회색 텍스트)
+     2. 수정: "2025-11-02 02:21 수정" (회색 텍스트)
+     3. 지각 등록: "2025-11-02 17:37 지각 등록" (빨간색 텍스트)
+   
    📝 참고:
      - 이 카드는 "확인" 탭에서만 사용됩니다
      - "대기" 탭에는 ExperiencePendingCard를 사용하세요
+     - dateLabel prop으로 경우의 수를 구분합니다
    ======================================== */
 
 "use client";
@@ -33,8 +39,8 @@ interface ExperienceInspectionCardProps {
   onContentCheck: (applicantId: string) => void;
   /** 승인 클릭 (필수) */
   onApprove: (applicantId: string) => void;
-  /** 반려 클릭 (필수) */
-  onReject: (applicantId: string) => void;
+  /** 반려 클릭 (필수) - 반려 사유와 함께 호출됨 */
+  onReject: (applicantId: string, rejectReason: string) => void;
   /** 연장 버튼 클릭 */
   onExtend?: (applicantId: string) => void;
   /** 신고 버튼 클릭 */
@@ -52,11 +58,18 @@ interface ExperienceInspectionCardProps {
  * - 캠페인 콘텐츠 내역 페이지 > "확인" 탭
  * - 배송형, 방문형, 기자단형 캠페인에서 사용
  *
+ * 경우의 수 (3가지):
+ * 1. 최초 등록: dateLabel="등록" → "2025-11-02 17:37 등록" (회색 텍스트)
+ * 2. 수정: dateLabel="수정" → "2025-11-02 02:21 수정" (회색 텍스트)
+ * 3. 지각 등록: dateLabel="지각 등록" → "2025-11-02 17:37 지각 등록" (빨간색 텍스트)
+ *
  * 주요 기능:
  * - 링크 확인 버튼
  * - 승인/반려 버튼 (필수)
  * - 하단에 연장/신고 버튼이 항상 노출
  * - 클래스/아이디는 스네이크 케이스 사용
+ *
+ * @param dateLabel - "등록", "수정", "지각 등록" 중 하나
  */
 export default function ExperienceInspectionCard({
   applicant,
@@ -74,9 +87,14 @@ export default function ExperienceInspectionCard({
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [selectedReportOption, setSelectedReportOption] = useState<string>("");
   const [otherReportReason, setOtherReportReason] = useState<string>("");
-  const [isExtendModalOpen, setIsExtendModalOpen] = useState(false);
-  const [isExtendResultModalOpen, setIsExtendResultModalOpen] = useState(false);
-  const [extendResultMessage, setExtendResultMessage] = useState<string>("");
+  // 연장 관련 상태
+  const [extensionCount, setExtensionCount] = useState(0); // 연장 횟수 추적
+  const [isExtensionConfirmModalOpen, setIsExtensionConfirmModalOpen] =
+    useState(false);
+  const [isExtensionCompleteModalOpen, setIsExtensionCompleteModalOpen] =
+    useState(false);
+  const [isExtensionLimitModalOpen, setIsExtensionLimitModalOpen] =
+    useState(false);
 
   // 신고 옵션 정의
   const reportOptions: ReportOption[] = [
@@ -99,9 +117,13 @@ export default function ExperienceInspectionCard({
   };
 
   // 반려 확인 처리
+  // 📌 반려 사유를 입력하고 "반려" 버튼을 클릭하면:
+  // 1. onReject 콜백에 반려 사유와 함께 호출
+  // 2. 부모 컴포넌트에서 반려 사유를 저장하고 대기 탭으로 이동
+  // 3. 대기 탭에서 ExperiencePendingCard의 4번째 경우로 표시
   const handleRejectConfirm = () => {
-    if (onReject) {
-      onReject(applicant.id);
+    if (onReject && rejectReason.trim()) {
+      onReject(applicant.id, rejectReason);
     }
     handleRejectModalClose();
   };
@@ -135,37 +157,25 @@ export default function ExperienceInspectionCard({
     handleReportModalClose();
   };
 
-  // 연장 모달 열기
+  // 연장 버튼 클릭 핸들러
   const handleExtendClick = () => {
-    setIsExtendModalOpen(true);
+    // 연장 횟수가 2회 이상이면 제한 모달 표시
+    if (extensionCount >= 2) {
+      setIsExtensionLimitModalOpen(true);
+      return;
+    }
+    // 연장 확인 모달 표시
+    setIsExtensionConfirmModalOpen(true);
   };
 
-  // 연장 모달 닫기
-  const handleExtendModalClose = () => {
-    setIsExtendModalOpen(false);
-  };
-
-  // 연장 거절 처리
-  const handleExtendReject = () => {
-    setIsExtendModalOpen(false);
-    setExtendResultMessage("등록 기간 연장이 거절되었습니다.");
-    setIsExtendResultModalOpen(true);
-  };
-
-  // 연장 승인 처리
-  const handleExtendApprove = () => {
+  // 연장 확인 모달에서 연장 버튼 클릭
+  const handleExtensionConfirm = () => {
     if (onExtend) {
       onExtend(applicant.id);
     }
-    setIsExtendModalOpen(false);
-    setExtendResultMessage("등록 기간 연장이 완료되었습니다.");
-    setIsExtendResultModalOpen(true);
-  };
-
-  // 연장 결과 모달 닫기
-  const handleExtendResultModalClose = () => {
-    setIsExtendResultModalOpen(false);
-    setExtendResultMessage("");
+    setExtensionCount((prev) => prev + 1);
+    setIsExtensionConfirmModalOpen(false);
+    setIsExtensionCompleteModalOpen(true);
   };
 
   return (
@@ -329,25 +339,41 @@ export default function ExperienceInspectionCard({
         type="center"
       />
 
-      {/* 등록 기한 연장 요청 사유 모달 */}
-      <TextareaModal
-        is_open={isExtendModalOpen}
-        on_close={handleExtendModalClose}
-        title="등록 기한 연장 요청 사유"
-        value={extension_request_reason}
-        readOnly={true}
-        buttons={["거절", "승인"]}
-        on_cancel={handleExtendReject}
-        on_confirm={handleExtendApprove}
+      {/* 연장 확인 모달 (푸터 연장 버튼용) */}
+      {/* 📌 연장 버튼 클릭 시 표시되는 모달:
+          - 연장 횟수에 따라 다른 메시지 표시
+          - 첫 연장: "콘텐츠 등록 기간을 3일 연장하시겠습니까?"
+          - 두 번째 연장: "이미 연장한 내역이 있습니다. 3일 더 연장하시겠습니까?"
+      */}
+      <BaseModal
+        is_open={isExtensionConfirmModalOpen}
+        on_close={() => setIsExtensionConfirmModalOpen(false)}
+        message={
+          extensionCount === 0
+            ? '콘텐츠 등록 기간을<br><span style="color: #FF2626;">3일 연장</span>하시겠습니까?'
+            : '이미 연장한 내역이 있습니다.<br><span style="color: #FF2626;">3일 더 연장</span>하시겠습니까?'
+        }
+        buttons={["취소", "연장"]}
+        on_confirm={handleExtensionConfirm}
         type="center"
-        variant="extend"
       />
 
-      {/* 연장 결과 모달 (승인/거절 후 표시) */}
+      {/* 연장 완료 모달 (푸터 연장 버튼용) */}
+      {/* 📌 연장 확인 후 표시되는 완료 메시지 모달 */}
       <BaseModal
-        is_open={isExtendResultModalOpen}
-        on_close={handleExtendResultModalClose}
-        message={extendResultMessage}
+        is_open={isExtensionCompleteModalOpen}
+        on_close={() => setIsExtensionCompleteModalOpen(false)}
+        message="등록 기간 연장이 완료되었습니다."
+        buttons={["닫기"]}
+        type="center"
+      />
+
+      {/* 연장 제한 초과 모달 (푸터 연장 버튼용) */}
+      {/* 📌 연장 횟수가 2회 이상일 때 표시되는 제한 모달 */}
+      <BaseModal
+        is_open={isExtensionLimitModalOpen}
+        on_close={() => setIsExtensionLimitModalOpen(false)}
+        message="연장은 최대 두 번까지만 가능합니다."
         buttons={["닫기"]}
         type="center"
       />

@@ -19,6 +19,7 @@
 import { ReactNode, useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import SubHeader from "@/components/fragments/SubHeader";
+import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import MainMenu from "@/components/main/MainMenu";
 import DetailHeader from "@/components/user/campaign_detail/DetailHeader";
 import DetailProductInfo from "@/components/user/campaign_detail/DetailProductInfo";
@@ -141,7 +142,11 @@ export default function CampaignDetailPage({
     return (
       <>
         {/* 서브헤더: 항상 상단에 고정 */}
-        <SubHeader />
+        {/* 📌 조건부 렌더링:
+            - 파트너인 경우 PartnerSubHeader 사용
+            - 일반 사용자인 경우 SubHeader 사용
+        */}
+        {isPartner ? <PartnerSubHeader /> : <SubHeader />}
         {/* 에러 모달 */}
         <BaseModal
           is_open={isErrorModalOpen}
@@ -228,7 +233,12 @@ export default function CampaignDetailPage({
   return (
     <>
       {/* 서브헤더: 항상 상단에 고정 */}
-      <SubHeader />
+      {/* 📌 조건부 렌더링:
+          - 파트너인 경우 PartnerSubHeader 사용
+          - 일반 사용자인 경우 SubHeader 사용
+          - isPartner는 document.referrer를 통해 파트너 페이지에서 온 경우 true로 설정됨
+      */}
+      {isPartner ? <PartnerSubHeader /> : <SubHeader />}
 
       {/* 
         메인 카테고리 메뉴: SubHeader(80px) 아래에 고정 

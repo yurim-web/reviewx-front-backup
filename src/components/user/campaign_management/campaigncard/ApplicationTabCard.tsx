@@ -10,11 +10,7 @@
  * 경우의 수: 1가지
  * - 버튼: "신청 취소하기" (1개)
  *
- * 학습 포인트:
- * - 단순한 컴포넌트 구조: 하나의 경우만 처리하므로 가장 단순한 구조입니다.
- * - 컴포넌트 분리의 장점: 각 탭별로 독립적인 컴포넌트로 분리하면 유지보수가 쉬워집니다.
- * - 모달 상태 관리: useState를 사용하여 모달의 열림/닫힘 상태를 관리합니다.
- * - 연속 모달: 확인 모달에서 성공 모달로 전환하는 패턴을 구현합니다.
+
  */
 
 import { useState } from "react";
@@ -51,8 +47,28 @@ export default function ApplicationTabCard({
   const [isAlreadyCancelledModalOpen, setIsAlreadyCancelledModalOpen] =
     useState(false);
 
-  // 상태 텍스트: 선정 발표까지 남은 일수 표시
-  const statusText = `캠페인 선정 발표까지 ${campaign.remainingDays}일 남았습니다.`;
+  /**
+   * 상태 텍스트: 선정 발표까지 남은 일수 표시
+   *
+   * 설명:
+   * - remainingDays가 음수이면 이미 선정 발표일이 지난 것입니다.
+   * - 하지만 필터링에서 이미 제거되어야 하므로, 음수 값이 나오는 경우는 예외 상황입니다.
+   * - 안전을 위해 음수일 때도 적절한 메시지를 표시합니다.
+   */
+  const getStatusText = (): string => {
+    // remainingDays가 음수이면 이미 선정 발표일이 지난 것입니다
+    if (campaign.remainingDays < 0) {
+      return `캠페인 선정 발표일이 지났습니다.`;
+    }
+    // remainingDays가 0이면 오늘이 선정 발표일입니다
+    if (campaign.remainingDays === 0) {
+      return `오늘 선정 발표일입니다.`;
+    }
+    // 양수이면 남은 일수를 표시합니다
+    return `캠페인 선정 발표까지 ${campaign.remainingDays}일 남았습니다.`;
+  };
+
+  const statusText = getStatusText();
 
   // 버튼 텍스트
   const buttonText = "신청 취소하기";

@@ -378,9 +378,7 @@ export function getStatusTextForCampaign({
   // 특정 탭일 때는 탭에 맞는 메시지 우선 표시
   if (activeTab === "연장 요청") {
     // 연장 요청 건수 계산
-    // 연장 요청 탭에서는 "대기" 수를 연장 요청 건수로 사용
-    // (대기 = 연장 요청을 한 사람 수)
-    const extensionCount = campaign.selected || 0;
+    const extensionCount = calculateExtensionRequestCount(campaign);
     return `등록 기한 연장 요청이 ${extensionCount}건 있습니다.`;
   }
 
@@ -446,15 +444,43 @@ export function getStatusTextForCampaign({
  *
  * 설명:
  * - 연장 요청한 신청자 수를 계산합니다.
- * - 현재는 임시로 선정된 신청자 수를 사용하거나, 추후 실제 연장 요청 데이터로 대체해야 합니다.
+ * - 대기 탭(waiting)에 있는 콘텐츠 중 extension_request_reason이 있는 항목만 카운트합니다.
  */
 export function calculateExtensionRequestCount(
   campaign: PartnerCampaign
 ): number {
-  // TODO: 실제 연장 요청 데이터에서 계산
-  // 현재는 임시로 선정된 신청자 수를 사용 (실제로는 연장 요청한 신청자만 카운트해야 함)
-  // 추후 연장 요청 플래그가 있는 신청자만 필터링하여 카운트
-  return campaign.selected || 0;
+  try {
+    const id = String(campaign.id);
+
+    // 1️⃣ 종료/취소 캠페인은 closed 데이터에서 먼저 확인
+    const closedContents = getClosedContentsById(id);
+    if (closedContents && closedContents.waiting) {
+      const count = closedContents.waiting.filter(
+        (item: any) => item.extension_request_reason
+      ).length;
+      if (count > 0) return count;
+    }
+
+    // 2️⃣ 그 외에는 일반 캠페인 데이터에서 contents 확인
+    const fullCampaign = getCampaignById(id);
+    if (!fullCampaign || !(fullCampaign as any).contents) {
+      return 0;
+    }
+
+    const waitingItems = (fullCampaign as any).contents.waiting || [];
+    const count = waitingItems.filter(
+      (item: any) => item.extension_request_reason
+    ).length;
+
+    return count;
+  } catch (error) {
+    console.error(
+      "[calculateExtensionRequestCount] 연장 요청 건수 계산 실패:",
+      error
+    );
+    // 문제가 생겨도 버튼 텍스트만 영향을 받으므로 0으로 안전하게 처리
+    return 0;
+  }
 }
 
 export function getPrimaryButtonText(

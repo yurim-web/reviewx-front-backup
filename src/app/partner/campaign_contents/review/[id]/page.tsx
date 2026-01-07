@@ -40,8 +40,14 @@ import type { ContentItem } from "@/data/partner/sharedCampaigns";
 import CampaignInspectionCard from "@/components/partner/campaign_contents/card_type/shared_card/CampaignInspectionCard";
 import CampaignCompletedCard from "@/components/partner/campaign_contents/card_type/shared_card/CampaignCompletedCard";
 import CampaignPendingCard from "@/components/partner/campaign_contents/card_type/shared_card/CampaignPendingCard";
-import ReviewRejectedReviewCard from "@/components/partner/campaign_contents/card_type/purchase_review_card/ReviewRejectedReviewCard";
-import ReviewRejectedReceiptCard from "@/components/partner/campaign_contents/card_type/purchase_review_card/ReviewRejectedReceiptCard";
+// 구매평 1차 카드 컴포넌트들 (구매 기간용)
+import PurchaseFirstPendingCard from "@/components/partner/campaign_contents/card_type/purchase_card/purchase_first_card/PurchaseFirstPendingCard";
+import PurchaseFirstInspectionCard from "@/components/partner/campaign_contents/card_type/purchase_card/purchase_first_card/PurchaseFirstInspectionCard";
+import PurchaseFirstCompletedCard from "@/components/partner/campaign_contents/card_type/purchase_card/purchase_first_card/PurchaseFirstCompletedCard";
+// 구매평 2차 카드 컴포넌트들 (등록 기간용)
+import PurchaseSecondPendingCard from "@/components/partner/campaign_contents/card_type/purchase_card/purchase_second_card/PurchaseSecondPendingCard";
+import PurchaseSecondInspectionCard from "@/components/partner/campaign_contents/card_type/purchase_card/purchase_second_card/PurchaseSecondInspectionCard";
+import PurchaseSecondCompletedCard from "@/components/partner/campaign_contents/card_type/purchase_card/purchase_second_card/PurchaseSecondCompletedCard";
 import ReceiptPreviewModal from "@/components/partner/campaign_contents/ReceiptPreviewModal";
 import type { CampaignApplicant } from "@/components/partner/campaign_contents/card_type/shared_card/CampaignTypes";
 import { getChannelUrl } from "@/utils/channelUrlHelper";
@@ -76,6 +82,10 @@ export default function PurchaseReviewContentsDetailPage() {
     sortOptions,
     contents,
     handleApprove,
+    handleReject,
+    rejectReasons,
+    handleReport,
+    reportedDates,
     formatDateTime,
   } = useCampaignContents(getPurchaseReviewContentsById);
 
@@ -89,24 +99,86 @@ export default function PurchaseReviewContentsDetailPage() {
   const params_url = useParams();
   const campaignId = params_url.id as string;
 
-  // 캠페인의 contentType 및 등록 기간 가져오기
+  // 캠페인의 contentType, 등록 기간, 구매 기간 가져오기
   // 📌 특화 로직:
   // - 구매평 캠페인만의 특별한 데이터 처리가 필요한 경우 여기에 작성
   const params = React.useMemo(() => {
-    if (!campaignId) return { contentType: "link", deadlineDate: undefined };
-    
-    const campaignData = reviewCampaignsExtended.find((c) => c.id === campaignId);
+    if (!campaignId)
+      return {
+        contentType: "link",
+        deadlineDate: undefined,
+        isPurchasePeriod: false,
+        isRegistrationPeriod: false,
+        purchasePeriod: undefined,
+      };
+
+    const campaignData = reviewCampaignsExtended.find(
+      (c) => c.id === campaignId
+    );
     const contentType = campaignData?.contentType || "link";
-    
-    // 등록 기간에서 기한 날짜 추출
+
+    // 구매 기간 확인 및 기한 날짜 추출
+    const purchasePeriod = campaignData?.detailedSchedule?.purchasePeriod;
+    let isPurchasePeriod = false;
     let deadlineDate: string | undefined;
-    if (campaignData?.detailedSchedule?.registrationPeriod) {
-      const period = campaignData.detailedSchedule.registrationPeriod;
-      const match = period.match(/~\s*(\d{4}-\d{2}-\d{2})/);
-      deadlineDate = match ? match[1] : undefined;
+
+    if (purchasePeriod) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const periodMatch = purchasePeriod.match(
+        /(\d{4}-\d{2}-\d{2})\s*~\s*(\d{4}-\d{2}-\d{2})/
+      );
+      if (periodMatch) {
+        const startDate = new Date(periodMatch[1]);
+        startDate.setHours(0, 0, 0, 0);
+        const endDate = new Date(periodMatch[2]);
+        endDate.setHours(0, 0, 0, 0);
+
+        // 오늘이 구매 기간 내에 있는지 확인
+        isPurchasePeriod = today >= startDate && today <= endDate;
+
+        // 구매 기간이면 구매 기간의 마지막 날짜를 기한으로 사용
+        if (isPurchasePeriod) {
+          deadlineDate = periodMatch[2];
+        }
+      }
     }
-    
-    return { contentType, deadlineDate };
+
+    // 등록 기간 확인
+    let isRegistrationPeriod = false;
+    if (
+      !isPurchasePeriod &&
+      campaignData?.detailedSchedule?.registrationPeriod
+    ) {
+      const period = campaignData.detailedSchedule.registrationPeriod;
+      const match = period.match(
+        /(\d{4}-\d{2}-\d{2})\s*~\s*(\d{4}-\d{2}-\d{2})/
+      );
+      if (match) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const startDate = new Date(match[1]);
+        startDate.setHours(0, 0, 0, 0);
+        const endDate = new Date(match[2]);
+        endDate.setHours(0, 0, 0, 0);
+
+        isRegistrationPeriod = today >= startDate && today <= endDate;
+        deadlineDate = match[2];
+      } else {
+        // 형식이 다른 경우 (예: "~ 2025-12-25")
+        const simpleMatch = period.match(/~\s*(\d{4}-\d{2}-\d{2})/);
+        deadlineDate = simpleMatch ? simpleMatch[1] : undefined;
+      }
+    }
+
+    return {
+      contentType,
+      deadlineDate,
+      isPurchasePeriod,
+      isRegistrationPeriod,
+      purchasePeriod,
+    };
   }, [campaignId]);
 
   // 영수증 모달 핸들러 (구매평 특화)
@@ -124,16 +196,28 @@ export default function PurchaseReviewContentsDetailPage() {
    * 구매평 캠페인에 특화된 카드 컴포넌트 렌더링 함수
    *
    * 📌 구매평 특화 카드 렌더링:
+   * - 구매 기간이면 구매평 1차 카드 사용
+   * - 구매 기간이 아니면 일반 카드 사용
    * - 영수증 흐름(actionType === 1)과 리뷰 흐름 구분
-   * - 반려된 경우 ReviewRejectedReviewCard 또는 ReviewRejectedReceiptCard 사용
-   * - 대기 탭: CampaignPendingCard
-   * - 확인 탭: CampaignInspectionCard 또는 CampaignPendingCard (반려)
-   * - 완료 탭: CampaignCompletedCard
+   * - 반려된 경우 PurchaseFirstInspectionCard 또는 PurchaseSecondInspectionCard에서 처리
+   * - 대기 탭: CampaignPendingCard 또는 PurchaseFirstPendingCard
+   * - 확인 탭: CampaignInspectionCard 또는 PurchaseFirstInspectionCard
+   * - 완료 탭: CampaignCompletedCard 또는 PurchaseFirstCompletedCard
    */
   const renderCardComponent = (
     item: ContentItem,
     index: number
   ): React.ReactNode => {
+    // 디버깅: 확인 탭 데이터 확인
+    if (activeTab === "확인") {
+      console.log("[renderCardComponent] 확인 탭 아이템:", {
+        id: item.id,
+        isPurchasePeriod: params.isPurchasePeriod,
+        isReceiptFlow: item.actionType === 1,
+        isRejected: item.isRejected,
+        isLate: item.isLate,
+      });
+    }
     const brandChannel = campaignInfo?.brandName ?? item.channel;
     const isReceiptFlow = item.actionType === 1; // actionType 1 = 영수증 흐름
     const applicant: CampaignApplicant = {
@@ -154,94 +238,117 @@ export default function PurchaseReviewContentsDetailPage() {
       ? "수정"
       : "등록";
 
-    // 대기 탭: 4가지 상태 유형에 따른 카드 표시
+    // 대기 탭: 구매 기간이면 구매평 1차 카드, 그 외(등록 단계/마감 포함)는 구매평 2차 카드
     if (activeTab === "대기") {
-      const hasReceipt =
-        item.receiptImages && item.receiptImages.length > 0;
-      const hasContent = item.thumbnailSrc || item.createdAt;
+      // 구매 기간인 경우 구매평 1차 카드 사용
+      if (params.isPurchasePeriod) {
+        // 구매 기간에서는 영수증 흐름만 있음
+        let pendingState: "receipt_not_registered" | "rejected" | "reported" =
+          "receipt_not_registered";
 
-      // 상태 결정 로직
-      let pendingState:
-        | "receipt_not_registered"
-        | "content_not_registered"
-        | "extension_requested"
-        | "rejected" = "content_not_registered";
-      let isExtensionApproved = false;
-      let extendedDeadline: string | undefined;
+        if (item.isReported) {
+          pendingState = "reported";
+        } else if (item.isRejected) {
+          pendingState = "rejected";
+        }
 
-      if (item.isRejected) {
-        pendingState = "rejected";
-      } else if (isReceiptFlow && !hasReceipt) {
-        pendingState = "receipt_not_registered";
-      } else {
-        pendingState = "content_not_registered";
+        return (
+          <PurchaseFirstPendingCard
+            key={item.id}
+            applicant={applicant}
+            pendingState={pendingState}
+            deadlineDate={params.deadlineDate}
+            reject_reason={rejectReasons.get(item.id) || item.reject_reason}
+            reportedDate={reportedDates.get(item.id) || item.reportedDate}
+            onCheckReceipt={() => openReceiptModal(item.receiptImages || [])}
+            onExtend={handleExtend}
+          />
+        );
       }
 
-      if (isReceiptFlow) {
+      // 구매 기간이 아닌 경우: 등록 기간이거나 등록 기간 이후(마감 포함) → 항상 구매평 2차 카드 사용
+      {
+        let pendingState:
+          | "content_not_registered"
+          | "extension_requested"
+          | "rejected"
+          | "reported" = "content_not_registered";
+        let isExtensionApproved = false;
+        let extendedDeadline: string | undefined;
+
+        if (item.isReported) {
+          pendingState = "reported";
+        } else if (item.isRejected) {
+          pendingState = "rejected";
+        } else if (item.extension_request_reason) {
+          pendingState = "extension_requested";
+        } else {
+          pendingState = "content_not_registered";
+        }
+
         return (
-          <CampaignPendingCard
+          <PurchaseSecondPendingCard
             key={item.id}
-            applicant={{ ...applicant, reviewType: 4 }}
+            applicant={applicant}
             pendingState={pendingState}
             isExtensionApproved={isExtensionApproved}
             extendedDeadline={extendedDeadline}
             deadlineDate={params.deadlineDate}
-            onCheckReceipt={() =>
-              openReceiptModal(item.receiptImages || [])
+            reject_reason={rejectReasons.get(item.id) || item.reject_reason}
+            extension_request_reason={item.extension_request_reason}
+            reportedDate={reportedDates.get(item.id) || item.reportedDate}
+            reviewImages={item.thumbnailSrc ? [item.thumbnailSrc] : []}
+            onCheckReview={() =>
+              openReceiptModal(item.thumbnailSrc ? [item.thumbnailSrc] : [])
             }
-            dateLabel={dateLabel}
+            onExtend={handleExtend}
+            onReport={handleReport}
           />
         );
       }
-      return (
-        <CampaignPendingCard
-          key={item.id}
-          applicant={{ ...applicant, reviewType: 1 }}
-          pendingState={pendingState}
-          isExtensionApproved={isExtensionApproved}
-          extendedDeadline={extendedDeadline}
-          deadlineDate={params.deadlineDate}
-          onCheckReview={() =>
-            openReceiptModal(
-              item.thumbnailSrc ? [item.thumbnailSrc] : []
-            )
-          }
-          dateLabel={dateLabel}
-        />
-      );
     }
 
-    // 확인 탭
+    // 확인 탭: 구매 기간이면 구매평 1차 카드, 등록 기간이면 구매평 2차 카드, 아니면 일반 카드
     if (activeTab === "확인") {
-      // 반려 케이스
-      if (item.isRejected) {
-        if (isReceiptFlow) {
-          return (
-            <ReviewRejectedReceiptCard
-              key={item.id}
-              applicant={{ ...applicant, reviewType: 6 }}
-              onCheckReceipt={() =>
-                openReceiptModal(item.receiptImages)
-              }
-              onHandleReject={() => {}}
-              dateLabel={dateLabel}
-            />
-          );
-        }
+      // 구매 기간인 경우 구매평 1차 카드 사용
+      if (params.isPurchasePeriod) {
         return (
-          <ReviewRejectedReviewCard
+          <PurchaseFirstInspectionCard
             key={item.id}
-            applicant={{ ...applicant, reviewType: 5 }}
-            onCheckReview={() =>
-              openReceiptModal(
-                item.thumbnailSrc ? [item.thumbnailSrc] : []
-              )
-            }
-            onHandleReject={() => {}}
+            applicant={applicant}
+            onCheckReceipt={() => openReceiptModal(item.receiptImages || [])}
+            onApprove={handleApprove}
+            onReject={handleReject}
+            onExtend={handleExtend}
+            onReport={handleReport}
             dateLabel={dateLabel}
+            registrationDate={formatDateTime(item.updatedAt || item.createdAt)}
           />
         );
       }
+
+      // 등록 기간인 경우 구매평 2차 카드 사용
+      if (params.isRegistrationPeriod) {
+        return (
+          <PurchaseSecondInspectionCard
+            key={item.id}
+            applicant={applicant}
+            onCheckReview={() =>
+              openReceiptModal(item.thumbnailSrc ? [item.thumbnailSrc] : [])
+            }
+            onApprove={handleApprove}
+            onReject={handleReject}
+            onExtend={handleExtend}
+            onReport={handleReport}
+            dateLabel={dateLabel}
+            registrationDate={formatDateTime(item.updatedAt || item.createdAt)}
+            reviewImages={item.thumbnailSrc ? [item.thumbnailSrc] : []}
+          />
+        );
+      }
+
+      // 구매 기간이 아닌 경우 기존 로직
+      // 반려 케이스는 PurchaseFirstInspectionCard 또는 PurchaseSecondInspectionCard에서 처리
 
       // 리뷰 대기 중 (영수증 완료 후 리뷰 대기)
       if (isReceiptFlow && item.isLate) {
@@ -274,16 +381,12 @@ export default function PurchaseReviewContentsDetailPage() {
           key={item.id}
           applicant={{ ...applicant, reviewType: 1 }}
           onCheckReview={() =>
-            openReceiptModal(
-              item.thumbnailSrc ? [item.thumbnailSrc] : []
-            )
+            openReceiptModal(item.thumbnailSrc ? [item.thumbnailSrc] : [])
           }
           onCheckImage={
             params.contentType === "image"
               ? () =>
-                  openReceiptModal(
-                    item.thumbnailSrc ? [item.thumbnailSrc] : []
-                  )
+                  openReceiptModal(item.thumbnailSrc ? [item.thumbnailSrc] : [])
               : undefined
           }
           onCheckLink={() => {
@@ -291,7 +394,10 @@ export default function PurchaseReviewContentsDetailPage() {
             // - getChannelUrl 유틸리티 함수를 사용하여 채널 URL을 생성합니다
             // - channelId와 channel 정보를 사용하여 올바른 URL을 만듭니다
             // - 새 창에서 링크를 엽니다 (target="_blank")
-            const linkUrl = getChannelUrl(applicant.channel, applicant.channelId);
+            const linkUrl = getChannelUrl(
+              applicant.channel,
+              applicant.channelId
+            );
             if (linkUrl && linkUrl !== "#") {
               window.open(linkUrl, "_blank", "noopener,noreferrer");
             } else {
@@ -300,8 +406,39 @@ export default function PurchaseReviewContentsDetailPage() {
           }}
           onApprove={handleApprove}
           onReject={() => {}}
+          onExtend={handleExtend}
           contentType={params.contentType}
           dateLabel={dateLabel}
+        />
+      );
+    }
+
+    // 완료 탭: 구매 기간이면 구매평 1차 카드, 등록 기간이면 구매평 2차 카드, 아니면 일반 카드
+    // 구매 기간인 경우 구매평 1차 카드 사용
+    if (params.isPurchasePeriod) {
+      return (
+        <PurchaseFirstCompletedCard
+          key={item.id}
+          applicant={applicant}
+          onCheckReceipt={() => openReceiptModal(item.receiptImages || [])}
+          onReport={handleReport}
+          registrationDate={formatDateTime(item.updatedAt || item.createdAt)}
+        />
+      );
+    }
+
+    // 등록 기간인 경우 구매평 2차 카드 사용
+    if (params.isRegistrationPeriod) {
+      return (
+        <PurchaseSecondCompletedCard
+          key={item.id}
+          applicant={applicant}
+          onCheckReview={() =>
+            openReceiptModal(item.thumbnailSrc ? [item.thumbnailSrc] : [])
+          }
+          onReport={handleReport}
+          registrationDate={formatDateTime(item.updatedAt || item.createdAt)}
+          reviewImages={item.thumbnailSrc ? [item.thumbnailSrc] : []}
         />
       );
     }
@@ -315,25 +452,18 @@ export default function PurchaseReviewContentsDetailPage() {
           reviewType: isReceiptFlow ? 2 : 3,
         }}
         onCheckReceipt={
-          isReceiptFlow
-            ? () => openReceiptModal(item.receiptImages)
-            : undefined
+          isReceiptFlow ? () => openReceiptModal(item.receiptImages) : undefined
         }
         onCheckReview={
           !isReceiptFlow
             ? () =>
-                openReceiptModal(
-                  item.thumbnailSrc ? [item.thumbnailSrc] : []
-                )
+                openReceiptModal(item.thumbnailSrc ? [item.thumbnailSrc] : [])
             : undefined
         }
         onCheckImage={
-          params.contentType === "both" ||
-          params.contentType === "image"
+          params.contentType === "both" || params.contentType === "image"
             ? () =>
-                openReceiptModal(
-                  item.thumbnailSrc ? [item.thumbnailSrc] : []
-                )
+                openReceiptModal(item.thumbnailSrc ? [item.thumbnailSrc] : [])
             : undefined
         }
         onCheckLink={
@@ -343,7 +473,10 @@ export default function PurchaseReviewContentsDetailPage() {
                 // - getChannelUrl 유틸리티 함수를 사용하여 채널 URL을 생성합니다
                 // - channelId와 channel 정보를 사용하여 올바른 URL을 만듭니다
                 // - 새 창에서 링크를 엽니다 (target="_blank")
-                const linkUrl = getChannelUrl(applicant.channel, applicant.channelId);
+                const linkUrl = getChannelUrl(
+                  applicant.channel,
+                  applicant.channelId
+                );
                 if (linkUrl && linkUrl !== "#") {
                   window.open(linkUrl, "_blank", "noopener,noreferrer");
                 } else {
@@ -356,6 +489,13 @@ export default function PurchaseReviewContentsDetailPage() {
         dateLabel={dateLabel}
       />
     );
+  };
+
+  // 연장 핸들러 (확인 탭에서 연장 완료 후 대기 탭으로 이동)
+  const handleExtend = (applicantId: string) => {
+    // TODO: 연장 기능 구현
+    // 연장 완료 후 대기 탭으로 이동하는 로직
+    console.log("연장 완료:", applicantId);
   };
 
   const handleBatchExtension = () => {

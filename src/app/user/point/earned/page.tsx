@@ -33,9 +33,6 @@ import { PointHistory } from "@/types/user/user";
  * - 공통 컴포넌트를 사용하여 간단하게 구현했습니다.
  * - 필터 함수를 전달하여 적립 상태의 내역만 표시합니다.
  *
- * React 학습 포인트:
- * - 컴포넌트 재사용성: 공통 컴포넌트를 여러 곳에서 사용
- * - Props 전달: 부모 컴포넌트에서 자식 컴포넌트로 데이터/함수 전달
  */
 export default function EarnedPointPage() {
   /**
@@ -45,10 +42,6 @@ export default function EarnedPointPage() {
    * - status가 'earned'인 내역만 필터링합니다.
    * - 화살표 함수를 사용하여 간단하게 작성했습니다.
    *
-   * JavaScript 학습 포인트:
-   * - 화살표 함수: (매개변수) => 조건식 형태
-   * - 비교 연산자: === (엄격한 동등 비교)
-   * - 객체 속성 접근: history.status
    */
   const filterEarnedHistory = (history: PointHistory) =>
     history.status === "earned";

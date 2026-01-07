@@ -5,22 +5,39 @@
      - "대기" 탭: 리뷰 확인 버튼이 있는 경우 (구매평만)
      - "확인" 탭: 영수증 확인 또는 리뷰 확인 후 승인/반려 가능한 상태
    
+   🎯 카드 구성:
+   
+   【구매평 (campaignType: "review")】
+     - 상단: 리뷰 확인 버튼 또는 구매 영수증 확인 버튼
+       * reviewType 2, 4, 6: "구매 영수증 확인" 버튼
+       * 그 외: "리뷰 확인" 버튼
+     - 중간: 등록/수정 날짜 표시
+     - 하단: "승인", "반려" 버튼 (확인 탭에서만 표시)
+     - footer: "연장", "신고" 버튼
+       → 연장 버튼 클릭 시 연장 확인 모달 → 연장 완료 모달 → 대기 탭으로 이동
+   
+   【미션형 (campaignType: "mission")】
+     - 상단: 이미지 확인/링크 확인 버튼 (contentType에 따라 다름)
+       * contentType "both": 이미지 확인 + 링크 확인 버튼
+       * contentType "image": 이미지 확인 버튼만
+       * contentType "link": 링크 확인 버튼만
+     - 중간: 등록/수정 날짜 표시
+     - 하단: "승인", "반려" 버튼 (확인 탭에서만 표시)
+     - footer: "연장", "신고" 버튼
+       → 연장 버튼 클릭 시 연장 확인 모달 → 연장 완료 모달 → 대기 탭으로 이동
+   
    🎯 주요 기능:
-     - 구매평:
-       - type1: 리뷰 확인 버튼
-       - type2: 구매 영수증 확인 버튼
-       - 하단: 승인/반려 버튼
-       - footer: 연장/신고 버튼
-     - 미션형:
-       - type1: 이미지 확인 + 링크 확인
-       - type2: 이미지 확인만
-       - type3: 링크 확인만
-       - 하단: 승인/반려 버튼
+     - 승인/반려: 콘텐츠 검수 후 승인 또는 반려 처리
+     - 연장: 등록 기한을 3일 연장 (최대 2회까지 가능)
+     - 신고: 콘텐츠 신고 모달 (선정 후 취소, 무단 이탈 등)
+     - 반려: 반려 사유 입력 모달 표시
    
    📝 참고:
      - "확인" 탭에서만 승인/반려 버튼이 표시됩니다
      - "대기" 탭에서는 승인/반려 버튼이 표시되지 않습니다 (구매평만)
      - campaignType prop으로 구매평/미션형 구분
+     - contentType prop으로 미션형의 콘텐츠 타입 구분
+     - 연장 완료 후 onExtend 콜백을 통해 대기 탭으로 이동합니다
    ======================================== */
 
 "use client";
@@ -49,7 +66,7 @@ interface CampaignInspectionCardProps {
   onApprove: (applicantId: string) => void;
   /** 반려 버튼 클릭 */
   onReject: (applicantId: string) => void;
-  /** 연장 버튼 클릭 */
+  /** 연장 버튼 클릭 (연장 완료 후 대기 탭으로 이동) */
   onExtend?: (applicantId: string) => void;
   /** 신고 버튼 클릭 */
   onReport?: (applicantId: string) => void;
@@ -85,9 +102,14 @@ export default function CampaignInspectionCard({
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [selectedReportOption, setSelectedReportOption] = useState<string>("");
   const [otherReportReason, setOtherReportReason] = useState<string>("");
-  const [isExtendModalOpen, setIsExtendModalOpen] = useState(false);
-  const [isExtendResultModalOpen, setIsExtendResultModalOpen] = useState(false);
-  const [extendResultMessage, setExtendResultMessage] = useState<string>("");
+  // 연장 관련 상태
+  const [extensionCount, setExtensionCount] = useState(0); // 연장 횟수 추적
+  const [isExtensionConfirmModalOpen, setIsExtensionConfirmModalOpen] =
+    useState(false);
+  const [isExtensionCompleteModalOpen, setIsExtensionCompleteModalOpen] =
+    useState(false);
+  const [isExtensionLimitModalOpen, setIsExtensionLimitModalOpen] =
+    useState(false);
 
   // 신고 옵션 정의
   const reportOptions: ReportOption[] = [
@@ -142,37 +164,56 @@ export default function CampaignInspectionCard({
     handleReportModalClose();
   };
 
-  // 연장 모달 열기
+  // 연장 버튼 클릭 핸들러
+  // 📌 연장 버튼 클릭 처리:
+  // - 연장 버튼을 클릭하면 이 함수가 실행됩니다
+  // - 연장 횟수가 2회 이상이면 제한 모달을 표시합니다
+  // - 그렇지 않으면 연장 확인 모달을 표시합니다
   const handleExtendClick = () => {
-    setIsExtendModalOpen(true);
+    console.log("연장 버튼 클릭, 현재 연장 횟수:", extensionCount);
+    // 연장 횟수가 2회 이상이면 제한 모달 표시
+    if (extensionCount >= 2) {
+      console.log("연장 제한 모달 표시");
+      setIsExtensionLimitModalOpen(true);
+      return;
+    }
+    // 연장 확인 모달 표시
+    console.log("연장 확인 모달 표시");
+    setIsExtensionConfirmModalOpen(true);
   };
 
-  // 연장 모달 닫기
-  const handleExtendModalClose = () => {
-    setIsExtendModalOpen(false);
+  // 연장 확인 모달에서 연장 버튼 클릭
+  // 📌 연장 확인 처리:
+  // - 연장 완료 모달을 표시합니다
+  // - 연장 완료 모달의 "닫기" 버튼을 눌렀을 때만 onExtend를 호출하여 탭 이동을 수행합니다
+  const handleExtensionConfirm = () => {
+    console.log("연장 확인 모달에서 연장 버튼 클릭");
+    setExtensionCount((prev) => prev + 1);
+    setIsExtensionConfirmModalOpen(false);
+    setIsExtensionCompleteModalOpen(true);
+    console.log("연장 완료 모달 표시");
   };
 
-  // 연장 거절 처리
-  const handleExtendReject = () => {
-    setIsExtendModalOpen(false);
-    setExtendResultMessage("등록 기간 연장이 거절되었습니다.");
-    setIsExtendResultModalOpen(true);
-  };
-
-  // 연장 승인 처리
-  const handleExtendApprove = () => {
+  // 연장 완료 모달 닫기 핸들러
+  // 📌 연장 완료 후 처리:
+  // - 연장 완료 모달의 "닫기" 버튼을 클릭하면 이 함수가 실행됩니다
+  // - onExtend 콜백을 호출하여 부모 컴포넌트에 탭 이동을 요청합니다
+  // - 부모 컴포넌트에서 대기 탭으로 이동하고 날짜를 업데이트합니다
+  const handleExtensionCompleteClose = () => {
+    console.log(
+      "연장 완료 모달 닫기, onExtend 호출:",
+      applicant.id,
+      "onExtend 존재:",
+      !!onExtend
+    );
+    setIsExtensionCompleteModalOpen(false);
+    // 연장 완료 후 대기 탭으로 이동하기 위해 onExtend를 호출
+    // 부모 컴포넌트에서 탭 이동과 날짜 업데이트를 처리합니다
     if (onExtend) {
       onExtend(applicant.id);
+    } else {
+      console.warn("onExtend가 전달되지 않았습니다!");
     }
-    setIsExtendModalOpen(false);
-    setExtendResultMessage("등록 기간 연장이 완료되었습니다.");
-    setIsExtendResultModalOpen(true);
-  };
-
-  // 연장 결과 모달 닫기
-  const handleExtendResultModalClose = () => {
-    setIsExtendResultModalOpen(false);
-    setExtendResultMessage("");
   };
 
   // 구매평 버튼 생성 함수
@@ -422,25 +463,38 @@ export default function CampaignInspectionCard({
         type="center"
       />
 
-      {/* 등록 기한 연장 요청 사유 모달 */}
-      <TextareaModal
-        is_open={isExtendModalOpen}
-        on_close={handleExtendModalClose}
-        title="등록 기한 연장 요청 사유"
-        value={extension_request_reason}
-        readOnly={true}
-        buttons={["거절", "승인"]}
-        on_cancel={handleExtendReject}
-        on_confirm={handleExtendApprove}
+      {/* 연장 확인 모달 */}
+      <BaseModal
+        is_open={isExtensionConfirmModalOpen}
+        on_close={() => setIsExtensionConfirmModalOpen(false)}
+        message={
+          extensionCount === 0
+            ? '콘텐츠 등록 기간을<br><span style="color: #FF2626;">3일 연장</span>하시겠습니까?'
+            : '이미 연장한 내역이 있습니다.<br><span style="color: #FF2626;">3일 더 연장</span>하시겠습니까?'
+        }
+        buttons={["취소", "연장"]}
+        on_confirm={handleExtensionConfirm}
         type="center"
-        variant="extend"
       />
 
-      {/* 연장 결과 모달 */}
+      {/* 연장 완료 모달 */}
+      {/* 📌 연장 완료 모달:
+          - 연장이 성공적으로 완료되었을 때 표시됩니다
+          - "닫기" 버튼을 클릭하면 대기 탭으로 이동합니다
+      */}
       <BaseModal
-        is_open={isExtendResultModalOpen}
-        on_close={handleExtendResultModalClose}
-        message={extendResultMessage}
+        is_open={isExtensionCompleteModalOpen}
+        on_close={handleExtensionCompleteClose}
+        message="등록 기간 연장이 완료되었습니다."
+        buttons={["닫기"]}
+        type="center"
+      />
+
+      {/* 연장 제한 초과 모달 */}
+      <BaseModal
+        is_open={isExtensionLimitModalOpen}
+        on_close={() => setIsExtensionLimitModalOpen(false)}
+        message="연장은 최대 두 번까지만 가능합니다."
         buttons={["닫기"]}
         type="center"
       />

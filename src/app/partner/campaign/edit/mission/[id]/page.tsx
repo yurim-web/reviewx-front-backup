@@ -255,16 +255,32 @@ export default function MissionCampaignEditPage() {
       if (typeof window !== "undefined") {
         const storedCampaigns = localStorage.getItem("missionCampaigns");
         if (storedCampaigns) {
-          const campaigns: CampaignWithApplicants[] =
-            JSON.parse(storedCampaigns);
+          const campaigns: any[] = JSON.parse(storedCampaigns);
           const storedCampaign = campaigns.find(
-            (c) => c.campaignInfo.id === campaignId
+            (c: any) => c.campaignInfo?.id === campaignId
           );
           if (storedCampaign) {
-            // localStorage에 저장된 캠페인에서 원본 데이터 재구성
-            // (실제로는 localStorage에 원본 확장 데이터를 저장해야 하지만,
-            // 현재 구조에서는 campaignInfo에서 필요한 정보를 추출)
-            storedOriginalData = originalData; // 일단 원본 데이터 사용
+            // localStorage에 저장된 캠페인에서 확장 데이터 재구성
+            // contentType 등 확장 필드를 포함하여 원본 데이터와 병합
+            storedOriginalData = {
+              ...(originalData || {}),
+              contentType: storedCampaign.contentType || originalData?.contentType,
+              isUrgent: storedCampaign.isUrgent ?? originalData?.isUrgent,
+              registeredAt: storedCampaign.registeredAt || originalData?.registeredAt,
+              description: storedCampaign.description || originalData?.description,
+              productLink: storedCampaign.productLink || originalData?.productLink,
+              keywords: storedCampaign.keywords || originalData?.keyword,
+              guidelineTexts: storedCampaign.guidelines
+                ? [storedCampaign.guidelines]
+                : originalData?.guidelineTexts,
+              minTextLength: storedCampaign.minTextLength,
+              minImageCount: storedCampaign.minImageCount,
+              videoCount: storedCampaign.videoCount,
+              videoDuration: storedCampaign.videoDuration,
+              requireLinkAttachment: storedCampaign.requireLinkAttachment,
+              requireKeywordAttachment: storedCampaign.requireKeywordAttachment,
+              contactPhone: storedCampaign.contactPhone || originalData?.contactPhone,
+            } as MissionCampaignDataExtended;
           }
         }
       }
@@ -324,6 +340,58 @@ export default function MissionCampaignEditPage() {
         imageUrl
       );
 
+      // contentType 결정: requireContentLink와 requireContentImage 체크박스에 따라 결정
+      // - requireContentLink만 true → "link"
+      // - requireContentImage만 true → "image"
+      // - 둘 다 true → "both"
+      let contentType: "link" | "image" | "both" | undefined = undefined;
+      if (finalFormData.requireContentLink && finalFormData.requireContentImage) {
+        contentType = "both";
+      } else if (finalFormData.requireContentLink) {
+        contentType = "link";
+      } else if (finalFormData.requireContentImage) {
+        contentType = "image";
+      }
+
+      // 확장 데이터에 contentType 추가
+      const extendedCampaign = {
+        ...updatedCampaign,
+        contentType: contentType,
+        // 기존 확장 데이터 유지 (localStorage에서 가져온 데이터가 있다면)
+        ...(typeof window !== "undefined" && (() => {
+          try {
+            const storedCampaigns = localStorage.getItem("missionCampaigns");
+            if (storedCampaigns) {
+              const campaigns: any[] = JSON.parse(storedCampaigns);
+              const existing = campaigns.find(
+                (c: any) => c.campaignInfo?.id === campaignId
+              );
+              if (existing) {
+                return {
+                  isUrgent: existing.isUrgent,
+                  registeredAt: existing.registeredAt,
+                  description: existing.description,
+                  productLink: existing.productLink,
+                  keywords: existing.keywords,
+                  guidelines: existing.guidelines,
+                  detailImagePreviews: existing.detailImagePreviews,
+                  minTextLength: existing.minTextLength,
+                  minImageCount: existing.minImageCount,
+                  videoCount: existing.videoCount,
+                  videoDuration: existing.videoDuration,
+                  requireLinkAttachment: existing.requireLinkAttachment,
+                  requireKeywordAttachment: existing.requireKeywordAttachment,
+                  additionalPoints: existing.additionalPoints,
+                };
+              }
+            }
+          } catch (error) {
+            console.error("기존 확장 데이터 로드 실패:", error);
+          }
+          return {};
+        })()),
+      };
+
       const storedCampaigns = localStorage.getItem("missionCampaigns");
       if (storedCampaigns) {
         const campaigns: CampaignWithApplicants[] = JSON.parse(storedCampaigns);
@@ -331,16 +399,16 @@ export default function MissionCampaignEditPage() {
           (c) => c.campaignInfo.id === campaignId
         );
         if (index !== -1) {
-          campaigns[index] = updatedCampaign;
+          campaigns[index] = extendedCampaign as any;
           localStorage.setItem("missionCampaigns", JSON.stringify(campaigns));
         } else {
-          campaigns.push(updatedCampaign);
+          campaigns.push(extendedCampaign as any);
           localStorage.setItem("missionCampaigns", JSON.stringify(campaigns));
         }
       } else {
         localStorage.setItem(
           "missionCampaigns",
-          JSON.stringify([updatedCampaign])
+          JSON.stringify([extendedCampaign])
         );
       }
 

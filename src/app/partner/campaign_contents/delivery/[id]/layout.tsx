@@ -7,7 +7,7 @@
  * 경로: /partner/campaign_contents/delivery/[id]
  */
 import { ReactNode } from "react";
-import PartnerHeader from "@/components/fragments/PartnerHeader";
+import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import layoutStyles from "@/styles/partner/layout.module.css";
 
 interface DeliveryContentsLayoutProps {
@@ -19,7 +19,7 @@ export default function DeliveryContentsLayout({
 }: DeliveryContentsLayoutProps) {
   return (
     <div className={layoutStyles.container}>
-      <PartnerHeader />
+      <PartnerSubHeader />
       {children}
     </div>
   );

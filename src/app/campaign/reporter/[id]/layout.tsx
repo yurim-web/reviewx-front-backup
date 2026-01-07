@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { reporterCampaigns } from "@/data/campaign/reporter/reporterCampaigns";
+import CampaignLayoutScript from "@/components/campaign/CampaignLayoutScript";
 
 // 동적 메타데이터 생성
 export async function generateMetadata({
@@ -28,7 +29,12 @@ export default function ReporterDetailLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <>
+      <CampaignLayoutScript />
+      {children}
+    </>
+  );
 }
 
 

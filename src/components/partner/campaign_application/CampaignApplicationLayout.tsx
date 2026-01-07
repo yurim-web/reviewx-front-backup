@@ -24,8 +24,10 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 import Loading from "@/app/loading";
-import PartnerHeader from "@/components/fragments/PartnerHeader";
+import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import styles from "@/styles/partner/campaign_application/campaign_application.module.css";
 import layoutStyles from "@/styles/partner/layout.module.css";
 import Campaignbanner from "@/components/partner/campaign_application/CampaignInfoBox";
@@ -34,6 +36,7 @@ import SortFilterControl from "@/components/partner/campaign_application/SortFil
 import EmptyApplicantsList from "@/components/partner/campaign_application/EmptyApplicantsList";
 import BaseModal from "@/components/common/modal/BaseModal";
 import { isAnnouncementDatePassed } from "@/components/partner/campaign_application/utils/campaign_info_helpers";
+import { getCampaignDetailPath } from "@/utils/getCampaignDetailPath";
 import type {
   CampaignWithApplicants,
   AllApplicant,
@@ -132,6 +135,11 @@ export default function CampaignApplicationLayout({
   handle_close_already_selected_modal,
   renderCard,
 }: CampaignApplicationLayoutProps) {
+  /**
+   * useRouter: Next.js에서 페이지 이동을 위한 Hook입니다
+   * - router.push(): 프로그래밍 방식으로 페이지를 이동시킵니다
+   */
+  const router = useRouter();
   // 로딩 중일 때 표시할 UI
   // 📌 조건부 렌더링:
   // - isLoading이 true이면 Loading 컴포넌트를 반환하여 로딩 화면을 표시합니다
@@ -145,7 +153,7 @@ export default function CampaignApplicationLayout({
   if (error || !campaignData) {
     return (
       <div className={layoutStyles.container}>
-        <PartnerHeader />
+        <PartnerSubHeader />
         <div className={styles.page_header}>
           <h1 className={styles.page_title}>캠페인 신청 내역</h1>
         </div>
@@ -156,13 +164,46 @@ export default function CampaignApplicationLayout({
     );
   }
 
+  // 캠페인 상세 페이지 경로 생성
+  // 📌 getCampaignDetailPath: 캠페인 타입과 ID를 사용하여 상세 페이지 경로를 생성합니다
+  const campaignDetailPath = campaignData
+    ? getCampaignDetailPath(
+        campaignData.campaignInfo.campaignType,
+        campaignData.campaignInfo.id
+      )
+    : "";
+
   return (
     <>
       {/* 페이지 제목 - 공용 컴포넌트 */}
       {/* 📌 컴포넌트 재사용:
           - PageHeader 컴포넌트를 사용하여 일관된 페이지 제목 스타일을 유지합니다
+          - right prop으로 "캠페인 보기" 버튼을 전달합니다
       */}
-      <PageHeader title="캠페인 신청 내역" />
+      <PageHeader
+        title="캠페인 신청 내역"
+        right={
+          campaignData ? (
+            <button
+              className={styles.view_campaign_button}
+              onClick={() => {
+                router.push(campaignDetailPath);
+              }}
+              aria-label="캠페인 보기"
+            >
+              <span>캠페인 보기</span>
+              <span className={styles.view_campaign_button_icon}>
+                <Image
+                  src="/images/icons/chevron_right.svg"
+                  alt=""
+                  width={16}
+                  height={16}
+                />
+              </span>
+            </button>
+          ) : null
+        }
+      />
 
       {/* 메인 콘텐츠 */}
       {/* 📌 시맨틱 HTML:
@@ -175,7 +216,10 @@ export default function CampaignApplicationLayout({
             - campaignInfo를 Campaignbanner 컴포넌트에 전달합니다
             - campaignData가 null이 아님을 위에서 확인했으므로 안전하게 사용 가능
         */}
-        <Campaignbanner campaignInfo={campaignData.campaignInfo} />
+        <Campaignbanner
+          campaignInfo={campaignData.campaignInfo}
+          applicantsCount={applicantsCount}
+        />
 
         {/* 📌 선정 날짜 확인:
             - 아직 선정하지 않은 경우(selectedCount === 0): 선정 날짜 체크를 무시하고 신청 내역 표시
@@ -249,8 +293,8 @@ export default function CampaignApplicationLayout({
             </article>
           </>
         ) : isAnnouncementDatePassed(
-          campaignData.campaignInfo.announcementDate
-        ) ? (
+            campaignData.campaignInfo.announcementDate
+          ) ? (
           /* 선정 날짜가 지난 경우 - 신청 내역 열람 불가 */
           <article className={styles.access_denied_message}>
             <p>신청 내역 열람 불가</p>

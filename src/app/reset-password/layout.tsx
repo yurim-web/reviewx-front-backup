@@ -11,10 +11,6 @@
  * - 기본 레이아웃에 의존하면서, 페이지 전용 SEO 메타데이터(title, description) 설정
  * - children prop으로 실제 페이지 컴포넌트(`page.tsx`)를 렌더링
  *
- * 학습 포인트:
- * - Next.js App Router의 segment 레이아웃(`layout.tsx`) 개념
- * - Metadata 타입을 사용한 정적 메타데이터 정의
- * - React.FC 대신 익명 함수 + 타입 선언 방식
  */
 
 import type { Metadata } from "next";

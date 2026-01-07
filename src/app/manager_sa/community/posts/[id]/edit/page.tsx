@@ -21,12 +21,6 @@
  *   - manager_type="sa": SA 관리자 타입
  *   - initial_data: 기존 게시글 데이터
  *
- * 학습 포인트:
- * - Next.js 동적 라우트 파라미터 사용 ([id])
- * - 서버 컴포넌트에서 데이터 조회 후 클라이언트 컴포넌트로 전달
- * - metadata를 사용한 SEO 최적화
- * - 공통 컴포넌트를 재사용하여 코드 중복 제거
- *
  * @returns 게시글 수정 페이지 JSX
  */
 
@@ -60,11 +54,6 @@ interface PageProps {
  * - 동적 라우트 파라미터([id])를 통해 게시글 ID를 받습니다
  * - 서버에서 게시글 데이터를 조회하여 클라이언트 컴포넌트로 전달합니다
  *
- * React 학습 포인트:
- * - 서버 컴포넌트와 클라이언트 컴포넌트의 차이
- * - 동적 라우트 파라미터 사용
- * - props를 통해 데이터를 전달하는 방법
- * - 조건부 렌더링 (게시글이 없을 경우)
  */
 export default function EditPostPage({ params }: PageProps) {
   // 서버 컴포넌트에서 게시글 상세 정보를 조회합니다.
@@ -103,5 +92,3 @@ export default function EditPostPage({ params }: PageProps) {
     />
   );
 }
-
-

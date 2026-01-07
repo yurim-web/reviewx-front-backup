@@ -124,7 +124,7 @@
 /* 활성화된 탭 */
 .point_tab.active {
   font-weight: 700;
-  color: #444444;
+  color: #ff5694;
 }
 
 /* 활성화된 탭 아래 밑줄 */
@@ -135,7 +135,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background-color: #333;
+  background-color: #ff5694;
   border-radius: 1px;
 }
 

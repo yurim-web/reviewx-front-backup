@@ -61,11 +61,6 @@ export default function SelectedPage() {
    * - 선정 탭의 캠페인 태그는 등록기간 기준으로 남은 일수를 표시합니다.
    * - 3일 이하일 때는 "마감임박"으로 표시합니다.
    *
-   * 학습 포인트:
-   * - Date 객체: JavaScript의 날짜 처리 방법
-   * - 날짜 차이 계산: 두 날짜 사이의 일수를 계산하는 방법
-   * - Math.ceil: 올림 함수로 날짜 차이를 정확히 계산합니다.
-   * - 문자열 파싱: "2026-01-10 ~ 2026-01-17" 형식에서 끝 날짜를 추출합니다.
    */
   const calculateRemainingDays = (
     campaignId: string,
@@ -143,11 +138,7 @@ export default function SelectedPage() {
    * 설명:
    * - 미션형 캠페인의 경우 실제 캠페인 데이터에서 contentType을 찾아서 설정합니다.
    * - contentType은 "link", "image", "both" 중 하나입니다.
-   *
-   * 학습 포인트:
-   * - 배열 find 메서드: 조건에 맞는 첫 번째 요소를 찾습니다.
-   * - 옵셔널 체이닝(?.): 객체의 속성이 없을 때 undefined를 반환합니다.
-   * - 타입 가드: TypeScript에서 타입을 좁혀서 사용할 수 있도록 합니다.
+  
    */
   const getContentTypeFromCampaign = (
     campaignId: string,

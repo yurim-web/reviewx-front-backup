@@ -6,7 +6,7 @@
  * 기자단 캠페인 진행 현황 상세 페이지 (GA 관리자 버전)
  *
  * 목적: GA 관리자가 진행 현황 테이블에서 특정 기자단 캠페인을 클릭했을 때
- *       신청자/선정자 목록, 카드 이동, 엑셀 다운로드 등 상세 관리를 학습/체험할 수 있도록 구성합니다.
+ *       신청자/선정자 목록, 카드 이동, 엑셀 다운로드 등 상세 관리를 할 수 있도록 구성합니다.
  *
  * 참고:
  * - 파트너 센터의 `/partner/campaign_application/reporter/[id]` 페이지 구조를 그대로 차용했습니다.
@@ -112,6 +112,7 @@ export default function ManagerReporterProgressDetailPage() {
    * 기자단 캠페인 카드 렌더링 함수
    * - 채널별로 다른 카드 컴포넌트를 렌더링합니다
    * - 릴스/숏츠 카드도 지원합니다 (브랜드명으로 구분)
+   * - 📌 관리자 모드: 선정하기/선택 취소 버튼 비활성화 (빈 함수 전달)
    */
   const render_card: RenderCardFunction = (
     applicant: AllApplicant,
@@ -120,26 +121,29 @@ export default function ManagerReporterProgressDetailPage() {
     handle_select: (id: string) => void,
     handle_cancel: (id: string) => void
   ) => {
+    // 관리자 모드: 버튼 비활성화를 위한 빈 함수
+    const empty_handler = () => {};
+
     switch (applicant.channel) {
       case "네이버블로그":
         return (
           <NaverBlogCard
             applicant={applicant as Applicant}
             variant={is_selected ? "selected" : "applicant"}
-            onSelect={handle_select}
-            onCancel={handle_cancel}
+            onSelect={empty_handler}
+            onCancel={empty_handler}
           />
         );
       case "네이버클립":
         return is_selected ? (
           <NaverClipSelectedCard
             applicant={applicant as NaverClipApplicant}
-            onCancel={handle_cancel}
+            onCancel={empty_handler}
           />
         ) : (
           <NaverClipCard
             applicant={applicant as NaverClipApplicant}
-            onSelect={handle_select}
+            onSelect={empty_handler}
           />
         );
       case "인스타그램":
@@ -148,12 +152,12 @@ export default function ManagerReporterProgressDetailPage() {
           return is_selected ? (
             <ReelsSelectedCard
               applicant={applicant as InstagramApplicant}
-              onCancel={handle_cancel}
+              onCancel={empty_handler}
             />
           ) : (
             <ReelsCard
               applicant={applicant as InstagramApplicant}
-              onSelect={handle_select}
+              onSelect={empty_handler}
             />
           );
         }
@@ -161,12 +165,12 @@ export default function ManagerReporterProgressDetailPage() {
         return is_selected ? (
           <InstagramSelectedCard
             applicant={applicant as InstagramApplicant}
-            onCancel={handle_cancel}
+            onCancel={empty_handler}
           />
         ) : (
           <InstagramCard
             applicant={applicant as InstagramApplicant}
-            onSelect={handle_select}
+            onSelect={empty_handler}
           />
         );
       case "유튜브":
@@ -175,12 +179,12 @@ export default function ManagerReporterProgressDetailPage() {
           return is_selected ? (
             <ShortsSelectedCard
               applicant={applicant as YoutubeApplicant}
-              onCancel={handle_cancel}
+              onCancel={empty_handler}
             />
           ) : (
             <ShortsCard
               applicant={applicant as YoutubeApplicant}
-              onSelect={handle_select}
+              onSelect={empty_handler}
             />
           );
         }
@@ -188,12 +192,12 @@ export default function ManagerReporterProgressDetailPage() {
         return is_selected ? (
           <YoutubeSelectedCard
             applicant={applicant as YoutubeApplicant}
-            onCancel={handle_cancel}
+            onCancel={empty_handler}
           />
         ) : (
           <YoutubeCard
             applicant={applicant as YoutubeApplicant}
-            onSelect={handle_select}
+            onSelect={empty_handler}
           />
         );
       default:
@@ -202,8 +206,8 @@ export default function ManagerReporterProgressDetailPage() {
           <NaverBlogCard
             applicant={applicant as unknown as Applicant}
             variant={is_selected ? "selected" : "applicant"}
-            onSelect={handle_select}
-            onCancel={handle_cancel}
+            onSelect={empty_handler}
+            onCancel={empty_handler}
           />
         );
     }

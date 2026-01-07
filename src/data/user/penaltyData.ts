@@ -6,10 +6,6 @@
  * 사용 위치:
  * - /user/campaign_management/penalty (유저 패널티 페이지)
  *
- * 학습 포인트:
- * - 데이터 분리: 컴포넌트와 데이터를 분리하여 관리
- * - 타입 import: 공통 타입을 다른 파일에서 import하여 사용
- * - export: 다른 파일에서 import하여 사용 가능
  */
 
 // 공통 타입 import

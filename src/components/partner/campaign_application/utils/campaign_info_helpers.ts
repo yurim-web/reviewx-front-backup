@@ -390,7 +390,8 @@ export type CampaignStatusValue =
   | "선정 중"
   | "구매 중"
   | "등록 중"
-  | "마감";
+  | "마감"
+  | "취소";
 
 export interface CampaignInfoForHelper {
   status: CampaignStatusValue;
@@ -417,20 +418,16 @@ export function deriveCampaignStatus(
 
   const today = normalizeToDateOnly(new Date());
 
-  if (status === "마감") {
-    return "마감";
+  // ⚠️ status가 "마감"으로 들어와도 날짜 기준으로 다시 계산합니다.
+  //    (초기 더미 데이터의 status 값이 실제 일정과 맞지 않을 수 있기 때문)
+  //    단, "취소"는 그대로 유지합니다.
+  if (status === "취소") {
+    return "취소";
   }
 
   const registrationRange = parseDateRange(registrationPeriod);
   const recruitmentRange = parseDateRange(recruitmentPeriod);
   const announcement = parseDateString(announcementDate);
-
-  // 등록 기간이 시작하지 않았으면 무조건 "대기 중" 반환 (예정 탭으로 이동)
-  // 이 체크를 가장 먼저 해서 모집 기간 내에 있어도 등록 기간이 시작하지 않으면 예정 탭에 표시
-  if (registrationRange && isBefore(today, registrationRange.start)) {
-    console.log("[deriveCampaignStatus] 등록 기간 시작 전 → 대기 중 (예정 탭)");
-    return "대기 중";
-  }
 
   // 등록 기간이 시작되었고 종료일이 지났을 때만 "마감" 반환
   if (
@@ -457,6 +454,13 @@ export function deriveCampaignStatus(
     return "등록 중";
   }
 
+  // 모집 기간 내 (등록 기간 체크보다 먼저 확인)
+  // 모집 기간 내라면 "모집 중"으로 표시해야 함
+  if (recruitmentRange && isWithinRange(today, recruitmentRange)) {
+    console.log("[deriveCampaignStatus] 모집 기간 내 → 모집 중");
+    return "모집 중";
+  }
+
   // 선정 발표 대기 (모집 기간 종료 후 ~ 선정 발표 전)
   if (
     recruitmentRange &&
@@ -468,15 +472,12 @@ export function deriveCampaignStatus(
     return "선정 중";
   }
 
-  // 모집 기간 내
-  if (recruitmentRange && isWithinRange(today, recruitmentRange)) {
-    console.log("[deriveCampaignStatus] 모집 기간 내 → 모집 중");
-    return "모집 중";
-  }
-
-  // 모집 시작 전
-  if (recruitmentRange && isBefore(today, recruitmentRange.start)) {
-    console.log("[deriveCampaignStatus] 모집 시작 전 → 대기 중");
+  // 모집 시작 전 또는 등록 기간 시작 전 → 대기 중
+  if (
+    (recruitmentRange && isBefore(today, recruitmentRange.start)) ||
+    (registrationRange && isBefore(today, registrationRange.start))
+  ) {
+    console.log("[deriveCampaignStatus] 모집/등록 시작 전 → 대기 중");
     return "대기 중";
   }
 

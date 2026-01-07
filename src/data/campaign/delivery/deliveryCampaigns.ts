@@ -91,14 +91,17 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     dayCount: "테스트",
     registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-20 ~ 2026-01-05)
-      applicationStart: "2025-12-20",
+      // 선정 중 - 모집 기간 종료 후, 선정 발표 전
+      // 모집 기간: 2025-09-02 ~ 2025-09-14 (종료됨)
+      // 선정 발표: 2025-09-16 (아직 안 지남)
+      // 등록 기간: 2025-09-22 ~ 2025-09-30 (아직 시작 안 함)
+      applicationStart: "2025-09-02",
       // 모집기간 마감일
-      applicationEnd: "2026-01-05",
+      applicationEnd: "2025-09-14",
       // 선정 발표일
-      announcement: "2026-01-07",
+      announcement: "2025-09-16",
       // 구매 기간
-      purchasePeriod: "2026-01-07 ~ 2026-01-10",
+      purchasePeriod: "2025-09-16 ~ 2025-09-19",
       // 등록 기간
       registrationPeriod: "2026-01-10 ~ 2026-01-17",
     },
@@ -140,12 +143,15 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     isUrgent: true, // 긴급 캠페인
     registeredAt: "2025-12-18T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-20 ~ 2026-01-10)
-      applicationStart: "2025-12-20",
-      applicationEnd: "2026-01-10",
-      announcement: "2026-01-12",
-      purchasePeriod: "2026-01-12 ~ 2026-01-15",
-      registrationPeriod: "2026-01-15 ~ 2026-01-22",
+      // 선정 중 - 모집 기간 종료 후, 선정 발표 전
+      // 모집 기간: 2025-09-02 ~ 2025-09-14 (종료됨)
+      // 선정 발표: 2025-09-16 (아직 안 지남)
+      // 등록 기간: 2025-09-22 ~ 2025-09-30 (아직 시작 안 함)
+      applicationStart: "2025-09-02",
+      applicationEnd: "2025-09-14",
+      announcement: "2025-09-16",
+      purchasePeriod: "2025-09-16 ~ 2025-09-19",
+      registrationPeriod: "2025-09-22 ~ 2025-09-30",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",

@@ -71,12 +71,15 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     dayCount: "D-5",
     registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-20 ~ 2026-01-06)
-      applicationStart: "2025-12-20",
-      applicationEnd: "2026-01-06",
-      announcement: "2026-01-08",
-      purchasePeriod: "2026-01-08 ~ 2026-01-11",
-      registrationPeriod: "2026-01-11 ~ 2026-01-18",
+      // 선정 중 - 모집 기간 종료 후, 선정 발표 전
+      // 모집 기간: 2025-09-02 ~ 2025-09-14 (종료됨)
+      // 선정 발표: 2025-09-16 (아직 안 지남)
+      // 등록 기간: 2025-09-22 ~ 2025-09-30 (아직 시작 안 함)
+      applicationStart: "2025-09-02",
+      applicationEnd: "2025-09-14",
+      announcement: "2025-09-16",
+      purchasePeriod: "2025-09-16 ~ 2025-09-19",
+      registrationPeriod: "2025-09-22 ~ 2025-09-30",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#스마트폰리뷰 #최신폰 #구매후기 #솔직리뷰 #디지털기기",
@@ -320,7 +323,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     ],
     contentType: "image" as const, // 이미지만
   },
-  // review_7: 진행 탭
+  // review_7: 진행 탭 (구매 중 상태 테스트)
   {
     id: "review_7",
     title: "운동화 구매평 리뷰",
@@ -335,15 +338,19 @@ export const reviewCampaigns: ReviewCampaignData[] = [
       total: 5,
     },
     schedule: "",
-    dayCount: "D-2",
-    registeredAt: "2025-11-10T09:15:00.000Z", // 등록 시간
+    dayCount: "D-1",
+    registeredAt: "2025-12-25T10:00:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 진행 탭 - applicationEnd가 과거, registrationPeriod가 미래 (announcement <= 오늘 <= registrationPeriod 끝)
-      applicationStart: "2025-11-15",
-      applicationEnd: "2025-11-30",
-      announcement: "2025-12-02",
-      purchasePeriod: "2025-12-02 ~ 2025-12-05",
-      registrationPeriod: "2025-12-05 ~ 2025-12-20",
+      // 진행 탭 - 구매 중 상태 (구매 기간 내, 등록 기간은 이후)
+      // 모집 기간: 이미 종료 (2025-12-26 ~ 2025-12-30)
+      // 선정 발표: 이미 지남 (2026-01-04)
+      // 구매 기간: 오늘 날짜(2026-01-07)를 포함하도록 설정 (2026-01-05 ~ 2026-01-09)
+      // 등록 기간: 구매 기간 이후 (2026-01-10 ~ 2026-01-20)
+      applicationStart: "2025-12-26",
+      applicationEnd: "2025-12-30",
+      announcement: "2026-01-04",
+      purchasePeriod: "2026-01-05 ~ 2026-01-09",
+      registrationPeriod: "2026-01-10 ~ 2026-01-20",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#운동화리뷰 #신발 #패션 #구매후기 #솔직리뷰",
@@ -678,6 +685,24 @@ export interface ReviewCampaignDataExtended {
 
   // 콘텐츠 데이터 (선택사항 - 종료/취소 캠페인에는 필수, 진행/예정/신청 캠페인에는 선택)
   contents?: {
+    waiting?: Array<{
+      id: string;
+      createdAt: string;
+      status: "검수" | "검수중";
+      userType: "리뷰어" | "인플루언서";
+      nickname: string;
+      channelId: string;
+      channel: string;
+      profileImage?: string;
+      actionType?: number;
+      receiptImages?: string[];
+      thumbnailSrc?: string;
+      extension_request_reason?: string;
+      isRejected?: boolean;
+      reject_reason?: string;
+      isReported?: boolean;
+      reportedDate?: string;
+    }>;
     reviewing: Array<{
       id: string;
       createdAt: string;
@@ -689,6 +714,10 @@ export interface ReviewCampaignDataExtended {
       updatedAt?: string;
       isRejected?: boolean;
       isLate?: boolean;
+      profileImage?: string;
+      actionType?: number;
+      receiptImages?: string[];
+      thumbnailSrc?: string;
     }>;
     completed: Array<{
       id: string;
@@ -700,6 +729,10 @@ export interface ReviewCampaignDataExtended {
       channel: string;
       updatedAt?: string;
       isLate?: boolean;
+      profileImage?: string;
+      actionType?: number;
+      receiptImages?: string[];
+      thumbnailSrc?: string;
     }>;
   };
 }
@@ -877,6 +910,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
     },
     contents: {
       waiting: [
+        // 1. 콘텐츠 미등록 (기본 케이스)
         {
           id: "content_review_2_waiting_001",
           createdAt: "2025-12-20T10:00:00.000Z",
@@ -886,9 +920,10 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           channelId: "blog_021",
           channel: "네이버블로그",
           profileImage: "/images/test_img/eximg.png",
-          actionType: 1,
-          receiptImages: ["/images/test_img/eximg.png"],
+          actionType: 0,
+          thumbnailSrc: undefined,
         },
+        // 2. 등록 기한 연장 요청
         {
           id: "content_review_2_waiting_002",
           createdAt: "2025-12-21T11:00:00.000Z",
@@ -899,27 +934,106 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           channel: "네이버블로그",
           profileImage: "/images/test_img/eximg3.png",
           actionType: 0,
+          thumbnailSrc: undefined,
+          extension_request_reason:
+            "개인 사정으로 인해 등록 기한을 연장해주시면 감사하겠습니다. 3일만 더 주시면 충분히 좋은 리뷰를 작성할 수 있을 것 같습니다.",
+        },
+        // 3. 연장 승인 후 아직 등록 안함 (확인용 - 실제로는 extension_request_reason이 없고 연장된 상태)
+        {
+          id: "content_review_2_waiting_003",
+          createdAt: "2025-12-19T09:00:00.000Z",
+          status: "검수" as const,
+          userType: "인플루언서" as const,
+          nickname: "연장승인리뷰어C",
+          channelId: "blog_025",
+          channel: "네이버블로그",
+          profileImage: "/images/test_img/eximg.png",
+          actionType: 0,
+          thumbnailSrc: undefined,
+        },
+        // 4. 반려 처리
+        {
+          id: "content_review_2_waiting_004",
+          createdAt: "2025-12-17T08:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "반려된리뷰어D",
+          channelId: "blog_026",
+          channel: "네이버블로그",
+          profileImage: "/images/test_img/eximg3.png",
+          actionType: 0,
           thumbnailSrc: "/images/test_img/eximg.png",
+          isRejected: true,
+          reject_reason:
+            "리뷰 내용이 요구사항에 부합하지 않습니다. 제품의 주요 기능에 대한 설명이 부족하고, 사진의 품질이 낮습니다. 수정 후 재제출 부탁드립니다.",
+        },
+        // 5. 신고 처리
+        {
+          id: "content_review_2_waiting_005",
+          createdAt: "2025-12-16T07:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "신고된리뷰어E",
+          channelId: "blog_027",
+          channel: "네이버블로그",
+          profileImage: "/images/test_img/eximg.png",
+          actionType: 0,
+          thumbnailSrc: "/images/test_img/eximg3.png",
+          isReported: true,
+          reportedDate: "2025-12-20 17:37",
         },
       ],
       reviewing: [
+        // 1. 최초 등록 (updatedAt 없음)
         {
           id: "content_review_2_reviewing_001",
           createdAt: "2025-12-18T09:00:00.000Z",
           status: "검수중" as const,
           userType: "인플루언서" as const,
-          nickname: "뷰티인플루언서C",
-          channelId: "blog_023",
+          nickname: "뷰티인플루언서F",
+          channelId: "blog_028",
+          channel: "네이버블로그",
+          isRejected: false,
+          isLate: false,
+          profileImage: "/images/test_img/eximg.png",
+          actionType: 0,
+          thumbnailSrc: "/images/test_img/eximg.png",
+        },
+        // 2. 수정 (updatedAt 있음)
+        {
+          id: "content_review_2_reviewing_002",
+          createdAt: "2025-12-15T08:00:00.000Z",
+          status: "검수중" as const,
+          userType: "리뷰어" as const,
+          nickname: "수정한리뷰어G",
+          channelId: "blog_029",
           channel: "네이버블로그",
           updatedAt: "2025-12-19T10:00:00.000Z",
           isRejected: false,
           isLate: false,
+          profileImage: "/images/test_img/eximg3.png",
+          actionType: 0,
+          thumbnailSrc: "/images/test_img/eximg3.png",
+        },
+        // 3. 지각 등록 (isLate: true)
+        {
+          id: "content_review_2_reviewing_003",
+          createdAt: "2025-12-14T07:00:00.000Z",
+          status: "검수중" as const,
+          userType: "리뷰어" as const,
+          nickname: "지각등록리뷰어H",
+          channelId: "blog_030",
+          channel: "네이버블로그",
+          updatedAt: "2025-12-20T17:37:00.000Z",
+          isRejected: false,
+          isLate: true,
           profileImage: "/images/test_img/eximg.png",
-          actionType: 1,
-          receiptImages: ["/images/test_img/eximg3.png"],
+          actionType: 0,
+          thumbnailSrc: "/images/test_img/eximg.png",
         },
       ],
       completed: [
+        // 1. 확인 완료 (최초 등록)
         {
           id: "content_review_2_completed_001",
           createdAt: "2025-12-15T08:00:00.000Z",
@@ -928,11 +1042,25 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           nickname: "선정된화장품구매평리뷰어1",
           channelId: "blog_024",
           channel: "네이버블로그",
-          updatedAt: "2025-12-16T09:00:00.000Z",
           isLate: false,
           profileImage: "/images/test_img/eximg3.png",
-          actionType: 1,
-          receiptImages: ["/images/test_img/eximg.png"],
+          actionType: 0,
+          thumbnailSrc: "/images/test_img/eximg3.png",
+        },
+        // 2. 확인 완료 (수정 후)
+        {
+          id: "content_review_2_completed_002",
+          createdAt: "2025-12-13T06:00:00.000Z",
+          status: "완료" as const,
+          userType: "인플루언서" as const,
+          nickname: "수정완료리뷰어I",
+          channelId: "blog_031",
+          channel: "네이버블로그",
+          updatedAt: "2025-12-16T09:00:00.000Z",
+          isLate: false,
+          profileImage: "/images/test_img/eximg.png",
+          actionType: 0,
+          thumbnailSrc: "/images/test_img/eximg.png",
         },
       ],
     },
@@ -1102,6 +1230,306 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-26",
+        },
+        {
+          id: "app_review_4_네이버블로그_003",
+          Id: "reviewer_review_4_003",
+          nickname: "스타일리스트C",
+          userType: "인플루언서" as const,
+          profileImage: "/images/test_img/eximg.png",
+          memberType: "모범 회원" as const,
+          dailyVisits: 210,
+          totalVisits: 650000,
+          neighbors: 1800,
+          memo: "패션 스타일링 전문 인플루언서입니다.",
+          selectionStatus: "미선택" as const,
+          channel: "네이버블로그",
+          registrationDate: "2025-12-27",
+        },
+        {
+          id: "app_review_4_인스타그램_001",
+          Id: "reviewer_review_4_004",
+          nickname: "패션인플루언서D",
+          userType: "인플루언서" as const,
+          profileImage: "/images/test_img/eximg3.png",
+          memberType: "모범 회원" as const,
+          dailyVisits: 150,
+          totalVisits: 420000,
+          neighbors: 1100,
+          memo: "인스타그램 패션 콘텐츠 제작자입니다.",
+          selectionStatus: "미선택" as const,
+          channel: "인스타그램",
+          registrationDate: "2025-12-25",
+        },
+        {
+          id: "app_review_4_네이버블로그_004",
+          Id: "reviewer_review_4_005",
+          nickname: "옷장리뷰어E",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 140,
+          totalVisits: 410000,
+          neighbors: 1050,
+          memo: "의류 구매 후 상세 리뷰 작성합니다.",
+          selectionStatus: "미선택" as const,
+          channel: "네이버블로그",
+          registrationDate: "2025-12-28",
+        },
+        {
+          id: "app_review_4_유튜브_001",
+          Id: "reviewer_review_4_006",
+          nickname: "패션유튜버F",
+          userType: "인플루언서" as const,
+          profileImage: "/images/test_img/eximg.png",
+          memberType: "모범 회원" as const,
+          dailyVisits: 280,
+          totalVisits: 850000,
+          neighbors: 2500,
+          memo: "패션 유튜브 채널 운영 중입니다.",
+          selectionStatus: "미선택" as const,
+          channel: "유튜브",
+          registrationDate: "2025-12-26",
+        },
+        {
+          id: "app_review_4_네이버블로그_005",
+          Id: "reviewer_review_4_007",
+          nickname: "의류리뷰전문가G",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 120,
+          totalVisits: 350000,
+          neighbors: 880,
+          memo: "의류 구매평 전문으로 활동 중입니다.",
+          selectionStatus: "미선택" as const,
+          channel: "네이버블로그",
+          registrationDate: "2025-12-29",
+        },
+        {
+          id: "app_review_4_인스타그램_002",
+          Id: "reviewer_review_4_008",
+          nickname: "스타일리스트H",
+          userType: "인플루언서" as const,
+          profileImage: "/images/test_img/eximg3.png",
+          memberType: "모범 회원" as const,
+          dailyVisits: 190,
+          totalVisits: 580000,
+          neighbors: 1600,
+          memo: "패션 스타일링 콘텐츠 제작합니다.",
+          selectionStatus: "미선택" as const,
+          channel: "인스타그램",
+          registrationDate: "2025-12-27",
+        },
+        {
+          id: "app_review_4_네이버블로그_006",
+          Id: "reviewer_review_4_009",
+          nickname: "패션구매평리뷰어I",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 160,
+          totalVisits: 480000,
+          neighbors: 1200,
+          memo: "패션 의류 구매평을 꾸준히 작성합니다.",
+          selectionStatus: "미선택" as const,
+          channel: "네이버블로그",
+          registrationDate: "2025-12-30",
+        },
+        {
+          id: "app_review_4_유튜브_002",
+          Id: "reviewer_review_4_010",
+          nickname: "의류리뷰유튜버J",
+          userType: "인플루언서" as const,
+          profileImage: "/images/test_img/eximg.png",
+          memberType: "모범 회원" as const,
+          dailyVisits: 220,
+          totalVisits: 680000,
+          neighbors: 2000,
+          memo: "의류 리뷰 영상 제작 전문입니다.",
+          selectionStatus: "미선택" as const,
+          channel: "유튜브",
+          registrationDate: "2025-12-28",
+        },
+        {
+          id: "app_review_4_네이버블로그_007",
+          Id: "reviewer_review_4_011",
+          nickname: "패션블로거K",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 180,
+          totalVisits: 540000,
+          neighbors: 1400,
+          memo: "패션 블로그 운영 중입니다.",
+          selectionStatus: "미선택" as const,
+          channel: "네이버블로그",
+          registrationDate: "2025-12-31",
+        },
+        {
+          id: "app_review_4_인스타그램_003",
+          Id: "reviewer_review_4_012",
+          nickname: "패션인플루언서L",
+          userType: "인플루언서" as const,
+          profileImage: "/images/test_img/eximg3.png",
+          memberType: "모범 회원" as const,
+          dailyVisits: 200,
+          totalVisits: 620000,
+          neighbors: 1700,
+          memo: "패션 인플루언서로 활동 중입니다.",
+          selectionStatus: "미선택" as const,
+          channel: "인스타그램",
+          registrationDate: "2026-01-01",
+        },
+        {
+          id: "app_review_4_네이버블로그_008",
+          Id: "reviewer_review_4_013",
+          nickname: "의류구매평전문가M",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 110,
+          totalVisits: 320000,
+          neighbors: 800,
+          memo: "의류 구매평 전문 리뷰어입니다.",
+          selectionStatus: "미선택" as const,
+          channel: "네이버블로그",
+          registrationDate: "2026-01-02",
+        },
+        {
+          id: "app_review_4_유튜브_003",
+          Id: "reviewer_review_4_014",
+          nickname: "패션리뷰유튜버N",
+          userType: "인플루언서" as const,
+          profileImage: "/images/test_img/eximg.png",
+          memberType: "모범 회원" as const,
+          dailyVisits: 250,
+          totalVisits: 750000,
+          neighbors: 2200,
+          memo: "패션 리뷰 영상 전문 유튜버입니다.",
+          selectionStatus: "미선택" as const,
+          channel: "유튜브",
+          registrationDate: "2025-12-29",
+        },
+        {
+          id: "app_review_4_네이버블로그_009",
+          Id: "reviewer_review_4_015",
+          nickname: "스타일리뷰어O",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 145,
+          totalVisits: 430000,
+          neighbors: 1100,
+          memo: "스타일링 리뷰를 작성합니다.",
+          selectionStatus: "미선택" as const,
+          channel: "네이버블로그",
+          registrationDate: "2026-01-03",
+        },
+        {
+          id: "app_review_4_인스타그램_004",
+          Id: "reviewer_review_4_016",
+          nickname: "패션스타일리스트P",
+          userType: "인플루언서" as const,
+          profileImage: "/images/test_img/eximg3.png",
+          memberType: "모범 회원" as const,
+          dailyVisits: 165,
+          totalVisits: 490000,
+          neighbors: 1300,
+          memo: "패션 스타일링 콘텐츠 제작합니다.",
+          selectionStatus: "미선택" as const,
+          channel: "인스타그램",
+          registrationDate: "2026-01-01",
+        },
+        {
+          id: "app_review_4_네이버블로그_010",
+          Id: "reviewer_review_4_017",
+          nickname: "의류구매평블로거Q",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 155,
+          totalVisits: 460000,
+          neighbors: 1150,
+          memo: "의류 구매평 블로그 운영 중입니다.",
+          selectionStatus: "미선택" as const,
+          channel: "네이버블로그",
+          registrationDate: "2026-01-04",
+        },
+        {
+          id: "app_review_4_유튜브_004",
+          Id: "reviewer_review_4_018",
+          nickname: "패션유튜버R",
+          userType: "인플루언서" as const,
+          profileImage: "/images/test_img/eximg.png",
+          memberType: "모범 회원" as const,
+          dailyVisits: 230,
+          totalVisits: 710000,
+          neighbors: 2100,
+          memo: "패션 유튜브 채널 운영 중입니다.",
+          selectionStatus: "미선택" as const,
+          channel: "유튜브",
+          registrationDate: "2025-12-30",
+        },
+        {
+          id: "app_review_4_네이버블로그_011",
+          Id: "reviewer_review_4_019",
+          nickname: "패션리뷰전문가S",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 135,
+          totalVisits: 400000,
+          neighbors: 1000,
+          memo: "패션 리뷰 전문으로 활동 중입니다.",
+          selectionStatus: "미선택" as const,
+          channel: "네이버블로그",
+          registrationDate: "2026-01-05",
+        },
+        {
+          id: "app_review_4_인스타그램_005",
+          Id: "reviewer_review_4_020",
+          nickname: "의류인플루언서T",
+          userType: "인플루언서" as const,
+          profileImage: "/images/test_img/eximg3.png",
+          memberType: "모범 회원" as const,
+          dailyVisits: 175,
+          totalVisits: 530000,
+          neighbors: 1500,
+          memo: "의류 인플루언서로 활동 중입니다.",
+          selectionStatus: "미선택" as const,
+          channel: "인스타그램",
+          registrationDate: "2026-01-02",
+        },
+        {
+          id: "app_review_4_네이버블로그_012",
+          Id: "reviewer_review_4_021",
+          nickname: "패션구매평리뷰어U",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 148,
+          totalVisits: 440000,
+          neighbors: 1120,
+          memo: "패션 구매평 리뷰를 작성합니다.",
+          selectionStatus: "미선택" as const,
+          channel: "네이버블로그",
+          registrationDate: "2026-01-06",
+        },
+        {
+          id: "app_review_4_유튜브_005",
+          Id: "reviewer_review_4_022",
+          nickname: "스타일리뷰유튜버V",
+          userType: "인플루언서" as const,
+          profileImage: "/images/test_img/eximg.png",
+          memberType: "모범 회원" as const,
+          dailyVisits: 195,
+          totalVisits: 590000,
+          neighbors: 1800,
+          memo: "스타일링 리뷰 영상 제작합니다.",
+          selectionStatus: "미선택" as const,
+          channel: "유튜브",
+          registrationDate: "2026-01-03",
         },
       ],
       selectedApplicants: [],
@@ -1532,6 +1960,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
     },
     contents: {
       waiting: [
+        // 1. 콘텐츠 미등록 (기본 케이스)
         {
           id: "content_review_9_waiting_001",
           createdAt: "2025-12-30T10:00:00.000Z",
@@ -1541,9 +1970,10 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           channelId: "blog_028",
           channel: "네이버블로그",
           profileImage: "/images/test_img/eximg.png",
-          actionType: 1,
-          receiptImages: ["/images/test_img/eximg3.png"],
+          actionType: 0,
+          thumbnailSrc: undefined,
         },
+        // 2. 등록 기한 연장 요청
         {
           id: "content_review_9_waiting_002",
           createdAt: "2025-12-31T11:00:00.000Z",
@@ -1554,40 +1984,133 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           channel: "네이버블로그",
           profileImage: "/images/test_img/eximg3.png",
           actionType: 0,
+          thumbnailSrc: undefined,
+          extension_request_reason:
+            "제품 배송이 지연되어 아직 제품을 받지 못했습니다. 배송이 완료되는 대로 바로 리뷰를 작성하겠습니다. 3일만 연장해주시면 감사하겠습니다.",
+        },
+        // 3. 연장 승인 후 아직 등록 안함
+        {
+          id: "content_review_9_waiting_003",
+          createdAt: "2025-12-29T09:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "연장승인자동차리뷰어C",
+          channelId: "blog_032",
+          channel: "네이버블로그",
+          profileImage: "/images/test_img/eximg.png",
+          actionType: 0,
+          thumbnailSrc: undefined,
+        },
+        // 4. 반려 처리
+        {
+          id: "content_review_9_waiting_004",
+          createdAt: "2025-12-27T08:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "반려된자동차리뷰어D",
+          channelId: "blog_033",
+          channel: "네이버블로그",
+          profileImage: "/images/test_img/eximg3.png",
+          actionType: 0,
           thumbnailSrc: "/images/test_img/eximg.png",
+          isRejected: true,
+          reject_reason:
+            "리뷰 내용이 너무 간단하고 제품의 핵심 기능에 대한 설명이 부족합니다. 또한 사진이 흐릿하고 제품의 특징을 잘 보여주지 못하고 있습니다. 더 상세한 리뷰와 고품질 사진으로 수정 후 재제출해주세요.",
+        },
+        // 5. 신고 처리
+        {
+          id: "content_review_9_waiting_005",
+          createdAt: "2025-12-26T07:00:00.000Z",
+          status: "검수" as const,
+          userType: "인플루언서" as const,
+          nickname: "신고된자동차인플루언서E",
+          channelId: "blog_034",
+          channel: "네이버블로그",
+          profileImage: "/images/test_img/eximg.png",
+          actionType: 0,
+          thumbnailSrc: "/images/test_img/eximg3.png",
+          isReported: true,
+          reportedDate: "2025-12-30 14:25",
         },
       ],
       reviewing: [
+        // 1. 최초 등록 (updatedAt 없음)
         {
           id: "content_review_9_reviewing_001",
           createdAt: "2025-12-28T09:00:00.000Z",
           status: "검수중" as const,
           userType: "리뷰어" as const,
-          nickname: "자동차전문가C",
+          nickname: "자동차전문가F",
           channelId: "blog_030",
+          channel: "네이버블로그",
+          isRejected: false,
+          isLate: false,
+          profileImage: "/images/test_img/eximg.png",
+          actionType: 0,
+          thumbnailSrc: "/images/test_img/eximg.png",
+        },
+        // 2. 수정 (updatedAt 있음)
+        {
+          id: "content_review_9_reviewing_002",
+          createdAt: "2025-12-25T08:00:00.000Z",
+          status: "검수중" as const,
+          userType: "인플루언서" as const,
+          nickname: "수정한자동차인플루언서G",
+          channelId: "blog_035",
           channel: "네이버블로그",
           updatedAt: "2025-12-29T10:00:00.000Z",
           isRejected: false,
           isLate: false,
+          profileImage: "/images/test_img/eximg3.png",
+          actionType: 0,
+          thumbnailSrc: "/images/test_img/eximg3.png",
+        },
+        // 3. 지각 등록 (isLate: true)
+        {
+          id: "content_review_9_reviewing_003",
+          createdAt: "2025-12-24T07:00:00.000Z",
+          status: "검수중" as const,
+          userType: "리뷰어" as const,
+          nickname: "지각등록자동차리뷰어H",
+          channelId: "blog_036",
+          channel: "네이버블로그",
+          updatedAt: "2025-12-30T14:25:00.000Z",
+          isRejected: false,
+          isLate: true,
           profileImage: "/images/test_img/eximg.png",
-          actionType: 1,
-          receiptImages: ["/images/test_img/eximg.png"],
+          actionType: 0,
+          thumbnailSrc: "/images/test_img/eximg.png",
         },
       ],
       completed: [
+        // 1. 확인 완료 (최초 등록)
         {
           id: "content_review_9_completed_001",
           createdAt: "2025-12-26T08:00:00.000Z",
           status: "완료" as const,
           userType: "리뷰어" as const,
-          nickname: "자동차리뷰어D",
+          nickname: "자동차리뷰어I",
           channelId: "blog_031",
           channel: "네이버블로그",
-          updatedAt: "2025-12-27T09:00:00.000Z",
           isLate: false,
           profileImage: "/images/test_img/eximg3.png",
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg3.png",
+        },
+        // 2. 확인 완료 (수정 후)
+        {
+          id: "content_review_9_completed_002",
+          createdAt: "2025-12-23T06:00:00.000Z",
+          status: "완료" as const,
+          userType: "인플루언서" as const,
+          nickname: "수정완료자동차인플루언서J",
+          channelId: "blog_037",
+          channel: "네이버블로그",
+          updatedAt: "2025-12-27T09:00:00.000Z",
+          isLate: false,
+          profileImage: "/images/test_img/eximg.png",
+          actionType: 0,
+          thumbnailSrc: "/images/test_img/eximg.png",
         },
       ],
     },
@@ -1646,15 +2169,42 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
  */
 export function getPurchaseReviewContentsById(
   campaignId: string
-): ContentByTab {
+): ContentByTab | undefined {
   // 진행 중인 캠페인에서 찾기
   const campaign = reviewCampaignsExtended.find((c) => c.id === campaignId);
-  if (campaign?.contents) {
-    return campaign.contents;
+
+  if (!campaign) {
+    console.warn(
+      `[getPurchaseReviewContentsById] 캠페인을 찾을 수 없습니다: ${campaignId}`
+    );
+    return undefined;
   }
 
-  // 콘텐츠가 없는 경우 빈 배열 반환
-  return { waiting: [], reviewing: [], completed: [] };
+  if (campaign.contents) {
+    // ContentByTab 형식으로 변환 (waiting이 없을 수도 있음)
+    const result: ContentByTab = {
+      waiting: campaign.contents.waiting || [],
+      reviewing: campaign.contents.reviewing || [],
+      completed: campaign.contents.completed || [],
+    };
+
+    console.log(
+      `[getPurchaseReviewContentsById] 캠페인 ${campaignId}의 콘텐츠:`,
+      {
+        waiting: result.waiting.length,
+        reviewing: result.reviewing.length,
+        completed: result.completed.length,
+      }
+    );
+
+    return result;
+  }
+
+  // 콘텐츠가 없는 경우 undefined 반환
+  console.warn(
+    `[getPurchaseReviewContentsById] 캠페인 ${campaignId}에 콘텐츠가 없습니다.`
+  );
+  return undefined;
 }
 
 /**
@@ -1740,13 +2290,24 @@ export function createReviewCampaign(
 
   // calculateCampaignStatus는 "대기 중" | "모집 중" | "진행 중" | "종료"를 반환
   // "종료" 상태를 "마감"으로 변환 (UI 표시용)
-  let finalStatus: string = campaignStatus;
+  let finalStatus:
+    | "대기 중"
+    | "모집 중"
+    | "선정 중"
+    | "구매 중"
+    | "등록 중"
+    | "마감"
+    | "취소" = "대기 중";
   if (campaignStatus === "종료") {
     finalStatus = "마감";
   } else if (campaignStatus === "진행 중") {
     // 구매평 캠페인의 경우 "등록 중" 상태일 수 있음
     // 더 정확한 상태 계산을 위해 deriveCampaignStatus 사용 고려
-    finalStatus = "진행 중";
+    finalStatus = "등록 중";
+  } else if (campaignStatus === "대기 중") {
+    finalStatus = "대기 중";
+  } else if (campaignStatus === "모집 중") {
+    finalStatus = "모집 중";
   }
 
   return {
@@ -1818,13 +2379,24 @@ export function updateReviewCampaign(
 
   // calculateCampaignStatus는 "대기 중" | "모집 중" | "진행 중" | "종료"를 반환
   // "종료" 상태를 "마감"으로 변환 (UI 표시용)
-  let finalStatus: string = campaignStatus;
+  let finalStatus:
+    | "대기 중"
+    | "모집 중"
+    | "선정 중"
+    | "구매 중"
+    | "등록 중"
+    | "마감"
+    | "취소" = "대기 중";
   if (campaignStatus === "종료") {
     finalStatus = "마감";
   } else if (campaignStatus === "진행 중") {
     // 구매평 캠페인의 경우 "등록 중" 상태일 수 있음
     // 더 정확한 상태 계산을 위해 deriveCampaignStatus 사용 고려
-    finalStatus = "진행 중";
+    finalStatus = "등록 중";
+  } else if (campaignStatus === "대기 중") {
+    finalStatus = "대기 중";
+  } else if (campaignStatus === "모집 중") {
+    finalStatus = "모집 중";
   }
 
   return {

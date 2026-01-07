@@ -40,7 +40,7 @@ export default function PartnerHeader() {
             href="/partner/campaign/create"
             className={styles.new_campaign_button}
           >
-            새로운 캠페인 등록
+            새 캠페인 등록
           </Link>
 
           {/* 검색창 - 파트너 전용 검색 결과 페이지로 이동 */}

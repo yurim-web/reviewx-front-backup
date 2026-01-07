@@ -32,9 +32,6 @@ import {
 /**
  * 파트너 포인트 충전 내역 페이지 컴포넌트
  *
- * 📌 학습 포인트:
- * - 공통 컴포넌트를 사용하여 코드 중복 제거
- * - 필터 함수를 전달하여 충전 내역만 표시
  */
 export default function PartnerEarnedPointPage() {
   // 충전 내역만 필터링하는 함수

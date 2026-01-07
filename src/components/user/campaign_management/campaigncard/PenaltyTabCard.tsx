@@ -10,8 +10,7 @@
  * 경우의 수: 1가지
  * - 버튼: "패널티 해제하기" (1개)
  *
- * 학습 포인트:
- * - 패널티 상태의 UI: 패널티가 부과된 상태를 표시합니다.
+
  */
 
 import type { CampaignApplication } from "@/types/user/user";
@@ -25,14 +24,12 @@ interface PenaltyTabCardProps {
 
 /**
  * 패널티 탭 캠페인 카드
- * 
+ *
  * 설명:
  * - 패널티가 부과된 상태를 표시합니다.
  * - "패널티 해제하기" 버튼을 통해 패널티 해제를 요청할 수 있습니다.
  */
-export default function PenaltyTabCard({
-  campaign,
-}: PenaltyTabCardProps) {
+export default function PenaltyTabCard({ campaign }: PenaltyTabCardProps) {
   // 상태 텍스트
   const statusText = "패널티가 부과되었습니다.";
 
@@ -44,7 +41,7 @@ export default function PenaltyTabCard({
 
   /**
    * 버튼 클릭 핸들러
-   * 
+   *
    * 설명:
    * - 패널티 해제 요청을 처리합니다.
    * - 현재는 콘솔에 로그만 출력하지만, 실제로는 API 호출을 통해 패널티 해제를 처리합니다.
@@ -64,4 +61,3 @@ export default function PenaltyTabCard({
     </CampaignCardBase>
   );
 }
-

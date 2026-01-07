@@ -447,7 +447,7 @@ export default function PartnerEditProfilePage() {
       <BaseModal
         is_open={isWithdrawConfirmModalOpen}
         on_close={() => setIsWithdrawConfirmModalOpen(false)}
-        message="탈퇴 시 진행한 캠페인 기록과<br>포인트가 모두 삭제되며, 재가입이 불가합니다.<br>정말 탈퇴하시겠습니까?"
+        message='탈퇴 시 진행한 캠페인 기록과<br>포인트가 모두 삭제되며, 재가입이 불가합니다.<br><span style="color: #FF2626;">정말 탈퇴하시겠습니까?</span>'
         buttons={["취소", "탈퇴"]}
         on_confirm={handleWithdrawConfirm}
         type="center"

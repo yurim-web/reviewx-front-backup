@@ -101,7 +101,6 @@ export default function CategoryFilterSection({
     // 선택된 카테고리들 중에 게시글이 있는지 확인
     // find(): 배열에서 조건에 맞는 첫 번째 요소를 찾습니다
     // some(): 배열의 요소 중 하나라도 조건을 만족하면 true를 반환합니다
-    // 학습 포인트: 선택된 카테고리 ID 목록을 순회하면서 각 카테고리에 해당하는 게시글이 있는지 확인합니다
     const has_posts = selected_category_ids.some((category_id) => {
       // 카테고리 ID로 카테고리 정보 찾기
       const category = categories_data.find((item) => item.id === category_id);

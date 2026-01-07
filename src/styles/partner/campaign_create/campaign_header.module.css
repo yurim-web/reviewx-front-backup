@@ -117,14 +117,14 @@ div.header_urgent_checkbox
 .campaign_type_buttons {
   display: flex;
   gap: 20px;
-  flex-wrap: wrap; /* 화면이 작아지면 다음 줄로 넘어가도록 */
+  flex-wrap: wrap;
 }
 
 /* 개별 캠페인 유형 버튼 */
 .campaign_type_button {
   flex: 1;
-  min-width: 100px; /* 최소 너비를 줄여서 작은 화면에서도 잘 맞도록 */
-  max-width: 200px; /* 최대 너비를 설정하여 너무 커지지 않도록 */
+  min-width: 100px;
+  max-width: 200px;
   height: 56px;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
@@ -148,13 +148,13 @@ div.header_urgent_checkbox
 
 /* 선택된 캠페인 유형 버튼 */
 .campaign_type_button.active {
-  border-color: #444444;
-  color: #444444;
+  border-color: #ff5694;
+  color: #ff5694;
   background: #fff;
 }
 
 /* 반응형 디자인 */
-/* 태블릿 및 작은 데스크톱 화면 (1024px 이하) */
+
 @media (max-width: 1024px) {
   .campaign_type_buttons {
     gap: 10px;

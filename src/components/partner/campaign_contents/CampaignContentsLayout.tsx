@@ -23,13 +23,16 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import PageHeader from "@/components/partner/campaign_application/PageHeader";
 import Campaignbanner from "@/components/partner/campaign_application/CampaignInfoBox";
 import ExcelDownloadBtn from "@/components/partner/campaign_application/ExcelDownloadBtn";
 import SortFilterControl from "@/components/partner/campaign_application/SortFilterControl";
 import BaseModal from "@/components/common/modal/BaseModal";
+import { getCampaignDetailPath } from "@/utils/getCampaignDetailPath";
+import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import appStyles from "@/styles/partner/campaign_application/campaign_application.module.css";
 import type { ContentByTab } from "@/data/partner/sharedCampaigns";
 import type {
@@ -122,11 +125,61 @@ export default function CampaignContentsLayout({
   renderCard,
   onBatchExtension,
 }: CampaignContentsLayoutProps) {
+  /**
+   * useRouter: Next.js에서 페이지 이동을 위한 Hook입니다
+   * - router.push(): 프로그래밍 방식으로 페이지를 이동시킵니다
+   */
+  const router = useRouter();
+
   // 📌 모달 상태 관리:
   // - 파일 생성 오류 시 표시할 모달의 열림/닫힘 상태를 관리합니다
   // - useState 훅을 사용하여 컴포넌트 내부 상태를 관리합니다
   const [is_download_error_modal_open, setIs_download_error_modal_open] =
     useState(false);
+
+  // 📌 일괄 기한 연장 상태 관리:
+  // - 일괄 기한 연장 확인/완료/제한 모달의 열림/닫힘 상태와 연장 횟수를 관리합니다
+  // - registrationPeriod는 UI 상에서만 일시적으로 +3일, +6일로 늘려서 보여줍니다
+  const [is_batch_extension_modal_open, setIs_batch_extension_modal_open] =
+    useState(false);
+  const [
+    is_batch_extension_complete_modal_open,
+    setIs_batch_extension_complete_modal_open,
+  ] = useState(false);
+  const [
+    is_batch_extension_limit_modal_open,
+    setIs_batch_extension_limit_modal_open,
+  ] = useState(false);
+  const [batch_extension_count, setBatch_extension_count] = useState(0);
+
+  // 📌 UI용 등록 기간 상태:
+  // - 실제 데이터는 변경하지 않고, 화면에 보여줄 등록 기간만 +3일 단위로 늘립니다
+  const [extendedRegistrationPeriod, setExtendedRegistrationPeriod] = useState<
+    string | undefined
+  >(campaignInfo?.registrationPeriod);
+
+  // 등록 기간 문자열의 종료일을 기준으로 N일 연장하는 헬퍼
+  const extendRegistrationPeriodByDays = (
+    period: string | undefined,
+    days: number
+  ): string | undefined => {
+    if (!period) return period;
+    const parts = period.split("~");
+    if (parts.length !== 2) return period;
+
+    const startStr = parts[0].trim();
+    const endStr = parts[1].trim();
+    const endDate = new Date(endStr);
+    if (Number.isNaN(endDate.getTime())) return period;
+
+    endDate.setDate(endDate.getDate() + days);
+    const yyyy = endDate.getFullYear();
+    const mm = String(endDate.getMonth() + 1).padStart(2, "0");
+    const dd = String(endDate.getDate()).padStart(2, "0");
+    const newEnd = `${yyyy}-${mm}-${dd}`;
+
+    return `${startStr} ~ ${newEnd}`;
+  };
 
   // 현재 탭에 따라 표시할 콘텐츠 목록 결정
   // 📌 조건부 데이터 선택:
@@ -159,18 +212,64 @@ export default function CampaignContentsLayout({
     return false;
   };
 
+  const effectiveRegistrationPeriod =
+    extendedRegistrationPeriod ?? campaignInfo?.registrationPeriod;
+
   const is_campaign_closed =
     campaignInfo?.status === "마감" ||
     campaignInfo?.statusText?.includes("마감") === true ||
-    checkRegistrationPeriodEnded(campaignInfo?.registrationPeriod);
+    checkRegistrationPeriodEnded(effectiveRegistrationPeriod);
+
+  // 캠페인 상세 페이지 경로 생성
+  // 📌 getCampaignDetailPath: 캠페인 타입과 ID를 사용하여 상세 페이지 경로를 생성합니다
+  const campaignDetailPath = campaignInfo
+    ? getCampaignDetailPath(campaignInfo.campaignType, campaignInfo.id)
+    : "";
+
+  // 실제 신청자 수 계산
+  // 📌 useMemo: 캠페인 데이터에서 신청자 수를 계산하여 메모이제이션합니다
+  // - campaignInfo.id를 사용하여 전체 캠페인 데이터를 가져옵니다
+  // - applicantData.applicants 배열의 길이를 계산합니다
+  const applicantsCount = useMemo(() => {
+    if (!campaignInfo?.id) return undefined;
+    const fullCampaignData = getCampaignById(campaignInfo.id);
+    if (fullCampaignData && "applicantData" in fullCampaignData) {
+      return fullCampaignData.applicantData?.applicants?.length ?? 0;
+    }
+    return undefined;
+  }, [campaignInfo?.id]);
 
   return (
     <>
       {/* 페이지 제목 - 공용 컴포넌트 */}
       {/* 📌 컴포넌트 재사용:
           - PageHeader 컴포넌트를 사용하여 일관된 페이지 제목 스타일을 유지합니다
+          - right prop으로 "캠페인 보기" 버튼을 전달합니다
       */}
-      <PageHeader title="캠페인 콘텐츠 내역" />
+      <PageHeader
+        title="캠페인 콘텐츠 내역"
+        right={
+          campaignInfo ? (
+            <button
+              className={appStyles.view_campaign_button}
+              onClick={() => {
+                router.push(campaignDetailPath);
+              }}
+              aria-label="캠페인 보기"
+            >
+              <span>캠페인 보기</span>
+              <span className={appStyles.view_campaign_button_icon}>
+                <Image
+                  src="/images/icons/chevron_right.svg"
+                  alt=""
+                  width={16}
+                  height={16}
+                />
+              </span>
+            </button>
+          ) : null
+        }
+      />
 
       {/* 메인 콘텐츠 */}
       {/* 📌 시맨틱 HTML:
@@ -185,9 +284,14 @@ export default function CampaignContentsLayout({
         */}
         {campaignInfo ? (
           <Campaignbanner
-            campaignInfo={campaignInfo}
+            campaignInfo={{
+              ...campaignInfo,
+              registrationPeriod:
+                effectiveRegistrationPeriod ?? campaignInfo.registrationPeriod,
+            }}
             reviewingCount={reviewCount}
             completedCount={completedCount}
+            applicantsCount={applicantsCount}
           />
         ) : null}
 
@@ -245,7 +349,14 @@ export default function CampaignContentsLayout({
             {onBatchExtension && (
               <button
                 className={appStyles.batch_extension_button}
-                onClick={onBatchExtension}
+                onClick={() => {
+                  // 연장 요청 2회 초과 시에는 제한 모달만 표시
+                  if (batch_extension_count >= 2) {
+                    setIs_batch_extension_limit_modal_open(true);
+                    return;
+                  }
+                  setIs_batch_extension_modal_open(true);
+                }}
               >
                 <Image
                   src="/images/management_page/clock_icon.svg"
@@ -313,10 +424,10 @@ export default function CampaignContentsLayout({
             // 동적 카드 컴포넌트 렌더링
             // 📌 key prop:
             // - React에서 리스트를 렌더링할 때 각 요소에 고유한 key를 제공해야 합니다
-            // - item.id를 key로 사용하여 각 카드를 고유하게 식별합니다
+            // - item.id와 index를 조합하여 고유한 키를 생성합니다 (중복 방지)
             // - renderCard 함수를 호출하여 각 캠페인 유형에 맞는 카드를 렌더링합니다
             return (
-              <React.Fragment key={item.id}>
+              <React.Fragment key={`${item.id}-${index}`}>
                 {renderCard(item, index)}
               </React.Fragment>
             );
@@ -333,6 +444,65 @@ export default function CampaignContentsLayout({
         is_open={is_download_error_modal_open}
         on_close={() => setIs_download_error_modal_open(false)}
         message="다운로드에 실패하였습니다."
+        buttons={["닫기"]}
+        type="center"
+      />
+
+      {/* 일괄 기한 연장 확인 모달 */}
+      {/* 📌 일괄 기한 연장 확인 모달 */}
+      <BaseModal
+        is_open={is_batch_extension_modal_open}
+        on_close={() => setIs_batch_extension_modal_open(false)}
+        message={
+          batch_extension_count === 0
+            ? '캠페인의 콘텐츠 등록 기간을<br><span style="color: #FF2626;">3일 연장</span>하시겠습니까?'
+            : '이미 연장한 내역이 있습니다.<br><span style="color: #FF2626;">3일 더 연장</span>하시겠습니까?'
+        }
+        buttons={["취소", "연장"]}
+        on_confirm={() => {
+          // 📌 연장 확인 핸들러:
+          // - 사용자가 "연장" 버튼을 클릭했을 때 실행됩니다
+          // - 등록 기간의 종료일을 기준으로 3일 연장하여 UI에 반영합니다
+          // - 연장 요청은 최대 2회까지만 허용됩니다
+          if (batch_extension_count >= 2) {
+            setIs_batch_extension_modal_open(false);
+            setIs_batch_extension_limit_modal_open(true);
+            return;
+          }
+
+          const basePeriod =
+            extendedRegistrationPeriod ?? campaignInfo?.registrationPeriod;
+          const updated = extendRegistrationPeriodByDays(basePeriod, 3);
+          if (updated) {
+            setExtendedRegistrationPeriod(updated);
+          }
+
+          setBatch_extension_count((prev) => prev + 1);
+
+          if (onBatchExtension) {
+            onBatchExtension();
+          }
+
+          setIs_batch_extension_modal_open(false);
+          setIs_batch_extension_complete_modal_open(true);
+        }}
+        type="center"
+      />
+
+      {/* 📌 일괄 기한 연장 완료 모달 */}
+      <BaseModal
+        is_open={is_batch_extension_complete_modal_open}
+        on_close={() => setIs_batch_extension_complete_modal_open(false)}
+        message="등록 기간 연장이 완료되었습니다."
+        buttons={["닫기"]}
+        type="center"
+      />
+
+      {/* 📌 일괄 기한 연장 제한 초과 모달 */}
+      <BaseModal
+        is_open={is_batch_extension_limit_modal_open}
+        on_close={() => setIs_batch_extension_limit_modal_open(false)}
+        message="연장은 최대 두 번까지만 가능합니다."
         buttons={["닫기"]}
         type="center"
       />

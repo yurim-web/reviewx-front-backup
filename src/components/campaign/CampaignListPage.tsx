@@ -19,6 +19,7 @@ import MainMenu from "@/components/main/MainMenu";
 import FilterBar from "@/components/campaign/filter/FilterBar";
 import CampaignBox from "@/components/main/CampaignBox";
 import Titletext from "@/components/main/Titletext";
+import Footer from "@/components/main/Footer";
 import styles from "@/styles/user/delivery/delivery.module.css";
 
 // FilterBar props 타입 (FilterBar 컴포넌트에서 가져온 타입과 동일)
@@ -119,6 +120,9 @@ export default function CampaignListPage({
           </div>
         </section>
       </main>
+
+      {/* 푸터 */}
+      <Footer />
     </>
   );
 }

@@ -65,20 +65,98 @@ export default function CampaignList({
   const filteredCampaigns = campaigns.filter((campaign) => {
     switch (activeStatTab) {
       case "전체":
-        return true; // 모든 캠페인 표시
+        // "등록 기한 연장 요청" 버튼이 있는 캠페인은 연장 요청 탭에서만 표시
+        return !campaign.subStatus?.includes("extension_request");
       case "예정":
-        return campaign.status === "대기 중";
+        return (
+          campaign.status === "대기 중" &&
+          !campaign.subStatus?.includes("extension_request")
+        );
       case "신청":
-        return campaign.status === "모집 중";
+        return (
+          campaign.status === "모집 중" &&
+          !campaign.subStatus?.includes("extension_request")
+        );
       case "진행":
-        return campaign.status === "진행 중";
+        /**
+         * 진행 탭 필터링
+         * 
+         * 포함되는 상태:
+         * - "선정 중": 모집 기간은 지났고, 선정 발표일은 아직 안 지난 캠페인
+         *   → 버튼 1개: "당첨자 선정"
+         * - "등록 중": 선정 발표일은 지났고, 등록 기간인 캠페인
+         *   → 버튼 2개: "콘텐츠 확인", "콘텐츠 확인 완료"
+         * - "진행 중": 기존 진행 중 상태 (하위 호환성)
+         * 
+         * 제외 조건:
+         * - 등록 기간이 끝났고 연장 요청한 리뷰어가 있는 캠페인은 연장 요청 탭으로 이동
+         */
+        // "등록 기한 연장 요청" 버튼이 있는 캠페인은 진행 탭에서 제외
+        // subStatus에 extension_request가 포함되어 있으면 연장 요청 탭으로 이동
+        if (campaign.subStatus?.includes("extension_request")) {
+          return false;
+        }
+
+        // 선정 중 상태는 항상 진행 탭에 포함
+        if (campaign.status === "선정 중") {
+          return true;
+        }
+
+        // 등록 중 또는 진행 중 상태인 경우
+        if (
+          campaign.status === "등록 중" ||
+          campaign.status === "진행 중"
+        ) {
+          // 등록 기간이 아직 끝나지 않았거나, 연장 요청한 리뷰어가 없으면 진행 탭에 포함
+          return true;
+        }
+
+        return false;
       case "종료":
-        return campaign.status === "종료";
+        return (
+          campaign.status === "종료" &&
+          !campaign.subStatus?.includes("extension_request")
+        );
       case "취소":
-        return campaign.status === "취소";
+        return (
+          campaign.status === "취소" &&
+          !campaign.subStatus?.includes("extension_request")
+        );
       case "연장 요청":
-        // 연장 요청은 subStatus로 구분
-        return campaign.subStatus?.includes("extension_request") || false;
+        /**
+         * 연장 요청 탭 필터링
+         * 
+         * 포함되는 조건:
+         * - 등록 기간이 끝났고
+         * - 연장 요청한 리뷰어가 있는 캠페인
+         * 
+         * 주의:
+         * - 등록 기간이 아직 끝나지 않았는데 연장 요청한 리뷰어가 있는 캠페인은 진행 탭에 표시됨
+         */
+        // subStatus에 extension_request가 포함되어 있어야 함
+        if (!campaign.subStatus?.includes("extension_request")) {
+          return false;
+        }
+
+        // 등록 기간이 끝났는지 확인
+        const registrationPeriod = campaign.registrationPeriod;
+        if (registrationPeriod) {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const regParts = registrationPeriod.split("~").map((s) => s.trim());
+          if (regParts.length === 2) {
+            const regEndStr = regParts[1].split(" ")[0];
+            const regEnd = new Date(regEndStr);
+            if (!isNaN(regEnd.getTime())) {
+              regEnd.setHours(0, 0, 0, 0);
+              // 등록 기간이 끝났는지 확인
+              return today > regEnd;
+            }
+          }
+        }
+
+        // 등록 기간 정보가 없으면 subStatus만 확인
+        return true;
       default:
         return true;
     }

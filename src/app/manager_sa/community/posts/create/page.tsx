@@ -20,10 +20,6 @@
  *   - mode="create": 작성 모드
  *   - manager_type="sa": SA 관리자 타입
  *
- * 학습 포인트:
- * - Next.js 서버 컴포넌트에서 클라이언트 컴포넌트를 래핑하는 패턴
- * - metadata를 사용한 SEO 최적화
- * - 공통 컴포넌트를 재사용하여 코드 중복 제거
  *
  * @returns 게시글 작성 페이지 JSX
  */
@@ -43,10 +39,6 @@ export const metadata: Metadata = {
  * 이 컴포넌트는 서버 컴포넌트입니다.
  * - 서버 컴포넌트: 서버에서 렌더링되어 클라이언트로 전송됩니다
  * - 클라이언트 컴포넌트(PostFormPageClient)를 래핑하여 사용합니다
- *
- * React 학습 포인트:
- * - 서버 컴포넌트와 클라이언트 컴포넌트의 차이
- * - props를 통해 데이터를 전달하는 방법
  */
 export default function CreatePostPage() {
   // 서버 컴포넌트에서 클라이언트 전용 페이지를 전달만 수행

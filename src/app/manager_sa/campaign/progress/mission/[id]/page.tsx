@@ -1,252 +1,119 @@
 /* ========================================
-   🎯 GA 관리자 미션형 캠페인 상세 페이지 (동적)
+   🎯 SA 관리자 미션형 캠페인 상세 페이지 (동적)
    ======================================== */
 
-"use client";
-
 /**
- * 미션형 캠페인 진행 현황 상세 페이지 (GA 관리자 버전)
+ * 미션형 캠페인 진행 현황 상세 페이지 (SA 관리자 버전)
  *
- * - 경로: /manager_ga/campaign/progress/mission/[id]
- * - 파트너 신청내역 페이지 로직을 재사용해 GA 관리자도 동일한 학습 경험 제공
+ * 목적: SA 관리자가 진행 현황 테이블에서 특정 미션형 캠페인을 클릭했을 때
+ *       신청자/선정자 목록, 카드 이동, 엑셀 다운로드 등 상세 관리를 할 수 있도록 구성합니다.
+ *
+ * 참고:
+ * - 파트너 센터의 `/partner/campaign_application/mission/[id]` 페이지 구조를 그대로 차용했습니다.
+ * - 관리자 페이지에 맞게 주석과 용어를 재정비했습니다.
  * - BasicCard/BasicSelectedCard만 사용 (채널 구분 없음)
  */
 
-import { useEffect, useState } from "react";
-import { useParams, useSearchParams } from "next/navigation";
-import Loading from "@/app/loading";
-import styles from "@/styles/partner/campaign_application/campaign_application.module.css";
-import SortFilterControl from "@/components/partner/campaign_application/SortFilterControl";
-import Campaignbanner from "@/components/partner/campaign_application/CampaignInfoBox";
-import PageHeader from "@/components/partner/campaign_application/PageHeader";
-import ExcelDownloadBtn from "@/components/partner/campaign_application/ExcelDownloadBtn";
-import EmptyApplicantsList from "@/components/partner/campaign_application/EmptyApplicantsList";
+"use client";
+
+import React from "react";
+// 공통 훅과 컴포넌트 import
+import { useCampaignApplication } from "@/hooks/partner/campaign_application/useCampaignApplication";
+import CampaignApplicationLayout from "@/components/manager/common/campaign/progress/CampaignApplicationLayout";
+import type { AllApplicant } from "@/data/partner/sharedCampaigns";
+
+// 미션형 전용 카드 컴포넌트들 (basic 타입만 사용)
 import BasicCard from "@/components/partner/campaign_application/card_type/basic/BasicCard";
 import BasicSelectedCard from "@/components/partner/campaign_application/card_type/basic/BasicSelectedCard";
 
-import {
-  getCampaignById,
-  type CampaignWithApplicants,
-  type AllApplicant,
-} from "@/data/partner/sharedCampaigns";
+// 개별 신청자 타입들 import (카드 컴포넌트에서 사용)
 import { type BasicApplicant } from "@/data/partner/campaign_application/delivery_applicants";
-import detailStyles from "@/styles/manager_ga/campaign_detail.module.css";
 
+/**
+ * 미션형 캠페인 상세 컴포넌트
+ */
 export default function ManagerMissionProgressDetailPage() {
-  const params = useParams();
-  const search_params = useSearchParams();
-  const campaign_id = params.id as string;
+  // 📌 커스텀 훅 사용:
+  // - 모든 공통 로직(상태 관리, 데이터 로딩, 핸들러 등)을 훅에서 가져옵니다
+  const {
+    campaignData,
+    isLoading,
+    error,
+    activeTab,
+    setActiveTab,
+    sortOrder,
+    setSortOrder,
+    sortOptions,
+    applicantsCount,
+    selectedCount,
+    currentApplicants,
+    is_modal_open,
+    handleSelectApplicant,
+    handleCancelApplicant,
+    handle_close_modal,
+    is_already_selected_modal_open,
+    handle_close_already_selected_modal,
+  } = useCampaignApplication();
 
-  const [campaign_data, set_campaign_data] =
-    useState<CampaignWithApplicants | null>(null);
-  const [is_loading, set_is_loading] = useState(true);
-  const [error_message, set_error_message] = useState<string | null>(null);
-
-  const [active_tab, set_active_tab] = useState<"applicants" | "selected">(
-    () => {
-      const tab_param = search_params.get("tab");
-      return tab_param === "selected" ? "selected" : "applicants";
-    }
-  );
-
-  type SortOption = "latest" | "popular" | "deadline" | "point";
-  const [sort_order, set_sort_order] = useState<SortOption>("latest");
-  const sort_options = [
-    { value: "latest", label: "최신순" },
-    { value: "popular", label: "인기순" },
-    { value: "deadline", label: "마감임박순" },
-    { value: "point", label: "포인트순" },
-  ];
-
-  const [applicants_state, set_applicants_state] = useState<AllApplicant[]>([]);
-  const [selected_state, set_selected_state] = useState<AllApplicant[]>([]);
-
-  useEffect(() => {
-    const load_campaign_data = async () => {
-      try {
-        set_is_loading(true);
-        set_error_message(null);
-
-        const data = getCampaignById(campaign_id);
-        if (!data) {
-          set_error_message(`캠페인을 찾을 수 없습니다. (ID: ${campaign_id})`);
-          return;
-        }
-
-        set_campaign_data(data);
-        set_applicants_state(data.applicantData?.applicants ?? []);
-        set_selected_state(data.applicantData?.selectedApplicants ?? []);
-      } catch (error) {
-        console.error("GA 미션형 상세 데이터 로딩 실패:", error);
-        set_error_message("데이터를 불러오는 중 오류가 발생했습니다.");
-      } finally {
-        set_is_loading(false);
-      }
-    };
-
-    if (campaign_id) {
-      load_campaign_data();
-    }
-  }, [campaign_id]);
-
-  if (is_loading) {
-    return <Loading />;
-  }
-
-  if (error_message || !campaign_data) {
-    return (
-      <section className={styles.campaign_application_section}>
-        <PageHeader title="캠페인 진행 현황" />
-        <div style={{ padding: "40px", textAlign: "center", color: "red" }}>
-          {error_message}
-        </div>
-      </section>
-    );
-  }
-
-  const applicants_count = applicants_state.length;
-  const selected_count = selected_state.length;
-  const current_applicants =
-    active_tab === "selected" ? selected_state : applicants_state;
-
-  const render_card_component = (
+  /**
+   * 미션형 캠페인용 카드 컴포넌트를 렌더링하는 함수
+   *
+   * 📌 미션형 캠페인 특징:
+   * - basic 카드 타입만 사용
+   * - 채널별 특화 정보 없음 (팔로워, 구독자 수 등)
+   * - 기본 프로필 정보와 메모만 표시
+   * - 선정/미선정 상태에 따라 다른 카드 컴포넌트 사용
+   * - 📌 관리자 모드: 선정하기/선택 취소 버튼 비활성화 (빈 함수 전달)
+   *
+   * @param applicant - 신청자 데이터 (BasicApplicant)
+   * @param isSelected - 선정 탭 여부
+   * @returns JSX 요소
+   */
+  const renderCardComponent = (
     applicant: AllApplicant,
-    is_selected: boolean = false
-  ) => {
-    const basic_applicant = applicant as BasicApplicant;
-    return is_selected ? (
-      <BasicSelectedCard
-        applicant={basic_applicant}
-        onCancel={handle_cancel_applicant}
-      />
-    ) : (
-      <BasicCard
-        applicant={basic_applicant}
-        onSelect={handle_select_applicant}
-      />
-    );
-  };
+    isSelected: boolean = false
+  ): React.ReactNode => {
+    // 관리자 모드: 버튼 비활성화를 위한 빈 함수
+    const empty_handler = () => {};
 
-  const handle_select_applicant = (applicant_id: string) => {
-    set_applicants_state((prev) => {
-      const target = prev.find((applicant) => applicant.id === applicant_id);
-      if (!target) return prev;
+    // 미션형은 항상 BasicApplicant 타입으로 처리
+    const basicApplicant = applicant as BasicApplicant;
 
-      const next_applicants = prev.filter(
-        (applicant) => applicant.id !== applicant_id
+    if (isSelected) {
+      return (
+        <BasicSelectedCard
+          applicant={basicApplicant}
+          onCancel={empty_handler}
+        />
       );
-      const moved: AllApplicant = {
-        ...target,
-        selectionStatus: "선정하기",
-      } as AllApplicant;
-
-      set_selected_state((prev_selected) => {
-        const already = prev_selected.some(
-          (applicant) => applicant.id === applicant_id
-        );
-        if (already) return prev_selected;
-        return [moved, ...prev_selected];
-      });
-
-      return next_applicants;
-    });
+    } else {
+      return <BasicCard applicant={basicApplicant} onSelect={empty_handler} />;
+    }
   };
 
-  const handle_cancel_applicant = (applicant_id: string) => {
-    set_selected_state((prev_selected) => {
-      const target = prev_selected.find(
-        (applicant) => applicant.id === applicant_id
-      );
-      if (!target) return prev_selected;
-
-      const next_selected = prev_selected.filter(
-        (applicant) => applicant.id !== applicant_id
-      );
-      const moved: AllApplicant = {
-        ...target,
-        selectionStatus: "미선택",
-      } as AllApplicant;
-
-      set_applicants_state((prev) => {
-        const already = prev.some((applicant) => applicant.id === applicant_id);
-        if (already) return prev;
-        return [moved, ...prev];
-      });
-
-      return next_selected;
-    });
-  };
-
-  const handle_download_applicants = () => {
-    // TODO: 신청자 목록 다운로드 기능 구현
-  };
-
-  const handle_download_selected = () => {
-    // TODO: 선정자 목록 다운로드 기능 구현
-  };
-
+  // 📌 공통 레이아웃 컴포넌트 사용:
+  // - 모든 공통 UI와 로직을 CampaignApplicationLayout에 위임합니다
+  // - 이 페이지는 미션형 캠페인에 특화된 renderCard 함수만 전달합니다
   return (
-    <div className={detailStyles.detail_page_wrapper}>
-      <div className={detailStyles.content_container}>
-        <div className={detailStyles.content_inner}>
-          <PageHeader title="캠페인 진행 현황" />
-
-          <section className={styles.campaign_application_section}>
-            <Campaignbanner campaignInfo={campaign_data.campaignInfo} />
-
-            <article className={styles.download_section}>
-              <ExcelDownloadBtn
-                onDownloadApplicants={handle_download_applicants}
-                onDownloadSelected={handle_download_selected}
-              />
-                {/* 정렬 필터 컨트롤 */}
-                <SortFilterControl
-                  options={sort_options}
-                  value={sort_order}
-                  onChange={(option) =>
-                    set_sort_order(option.value as SortOption)
-                  }
-                  defaultSort="latest"
-                />
-            </article>
-
-            <article className={styles.tab_navigation}>
-              <button
-                className={`${styles.tab_button} ${
-                  active_tab === "applicants" ? styles.active : ""
-                }`}
-                onClick={() => set_active_tab("applicants")}
-              >
-                신청{" "}
-                <span className={styles.tab_count}>{applicants_count}</span>
-              </button>
-              <button
-                className={`${styles.tab_button} ${
-                  active_tab === "selected" ? styles.active : ""
-                }`}
-                onClick={() => set_active_tab("selected")}
-              >
-                선정 <span className={styles.tab_count}>{selected_count}</span>
-              </button>
-            </article>
-
-            <article className={styles.applicants_grid}>
-              {current_applicants.length === 0 ? (
-                <EmptyApplicantsList />
-              ) : (
-                current_applicants.map((applicant, index) => (
-                  <div key={`${active_tab}-${applicant.id}-${index}`}>
-                    {render_card_component(
-                      applicant,
-                      active_tab === "selected"
-                    )}
-                  </div>
-                ))
-              )}
-            </article>
-          </section>
-        </div>
-      </div>
-    </div>
+    <CampaignApplicationLayout
+      campaignData={campaignData}
+      isLoading={isLoading}
+      error={error}
+      activeTab={activeTab}
+      setActiveTab={setActiveTab}
+      applicantsCount={applicantsCount}
+      selectedCount={selectedCount}
+      sortOrder={sortOrder}
+      setSortOrder={setSortOrder}
+      sortOptions={sortOptions}
+      currentApplicants={currentApplicants}
+      is_modal_open={is_modal_open}
+      handle_close_modal={handle_close_modal}
+      is_already_selected_modal_open={is_already_selected_modal_open}
+      handle_close_already_selected_modal={handle_close_already_selected_modal}
+      handleSelectApplicant={handleSelectApplicant}
+      handleCancelApplicant={handleCancelApplicant}
+      renderCard={renderCardComponent}
+    />
   );
 }

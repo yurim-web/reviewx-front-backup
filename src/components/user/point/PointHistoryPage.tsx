@@ -163,8 +163,6 @@ export default function PointHistoryPage({
    * - "출금 신청하기" 버튼을 클릭했을 때 실행되는 함수입니다.
    * - Next.js의 router를 사용하여 출금 신청 페이지로 이동합니다.
    *
-   * Next.js 학습 포인트:
-   * - router.push(): 클라이언트 사이드 네비게이션 (페이지 새로고침 없이 이동)
    */
   const handleWithdrawalClick = () => {
     router.push("/user/point/withdrawal_request");
@@ -180,10 +178,6 @@ export default function PointHistoryPage({
    *   - type이 "earned"이고 status가 "failed"면 "적립 취소 사유"
    *   - type이 "withdrawn"이고 status가 "failed"면 "출금 신청 반려 사유"
    *
-   * JavaScript 학습 포인트:
-   * - 화살표 함수: 매개변수를 받아서 함수 실행
-   * - 조건부 로직: if 문을 사용하여 상태에 따라 다른 동작 수행
-   * - 논리 연산자: && (AND), || (OR)
    */
   const handle_reason_click = (history: PointHistory) => {
     // 반려 사유가 있는 경우에만 모달 표시
@@ -232,13 +226,6 @@ export default function PointHistoryPage({
    * - 날짜 기준으로 최신순(내림차순)으로 정렬합니다.
    * - 배열의 filter와 sort 메서드를 체이닝하여 사용합니다.
    *
-   * JavaScript 학습 포인트:
-   * - Array.filter(): 조건에 맞는 요소만 필터링하여 새 배열 반환
-   * - Array.sort(): 배열을 정렬 (원본 배열을 변경함)
-   * - 화살표 함수: (item) => 조건식 형태로 간단하게 작성
-   * - 메서드 체이닝: 여러 메서드를 연속적으로 호출
-   * - 날짜 비교: 문자열 형태의 날짜를 비교하여 정렬
-   *   - b.date.localeCompare(a.date): b가 a보다 크면 양수 반환 (내림차순)
    */
   const filteredHistoryData = pointHistoryData
     .filter(filterFunction)
@@ -443,10 +430,6 @@ export default function PointHistoryPage({
        * - readOnly 모드로 설정하여 읽기 전용으로 표시합니다.
        * - variant="reject"로 설정하여 반려 모달 스타일을 적용합니다.
        *
-       * React 학습 포인트:
-       * - 조건부 렌더링: 모달이 열려있을 때만 렌더링
-       * - Props 전달: 여러 속성을 컴포넌트에 전달
-       * - 컴포넌트 재사용: 공통 컴포넌트를 여러 곳에서 사용
        */}
       <TextareaModal
         is_open={is_modal_open}

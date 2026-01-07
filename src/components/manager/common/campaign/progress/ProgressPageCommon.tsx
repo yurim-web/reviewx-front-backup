@@ -31,7 +31,7 @@
 
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import StatCardsSectionCommon from "./cards/StatCardsSection";
 import CampaignProgressFilterSection from "./section/CampaignProgressFilterSection";
@@ -44,16 +44,15 @@ import CampaignReportModalCommon, {
 import { report_code_info } from "@/data/manager_ga/reported";
 
 // 데이터와 스타일을 import
-import { calculate_stat_card_values as calculateGAStats } from "@/data/manager_ga/progress";
-import { calculate_stat_card_values as calculateSAStats } from "@/data/manager_sa/progress";
 import {
-  campaign_list as gaCampaignList,
-  type CampaignProgressItem,
+  calculate_stat_card_values as calculateGAStats,
+  get_campaign_list as getGACampaignList,
 } from "@/data/manager_ga/progress";
 import {
-  campaign_list as saCampaignList,
-  type CampaignProgressItem as SACampaignProgressItem,
+  calculate_stat_card_values as calculateSAStats,
+  get_campaign_list as getSACampaignList,
 } from "@/data/manager_sa/progress";
+import type { CampaignProgressItem } from "@/data/manager_ga/progress";
 import type { CampaignStatus } from "./filter/StatusFilterModal";
 import type { CampaignType } from "./filter/TypeFilterModal";
 import type { Channel } from "./filter/ChannelFilterModal";
@@ -88,10 +87,6 @@ interface ProgressPageCommonProps {
  * @param props.manager_type - 관리자 타입 ('ga' 또는 'sa')
  * @returns 캠페인 진행 상황 페이지 JSX 요소
  *
- * 학습 포인트:
- * - Props를 통해 컴포넌트의 동작을 제어하는 방법
- * - 조건부로 데이터와 스타일을 선택하는 방법
- * - 공통 컴포넌트를 만들어서 코드 중복을 제거하는 방법
  */
 export default function ProgressPageCommon({
   manager_type,
@@ -120,9 +115,24 @@ export default function ProgressPageCommon({
   const calculateStats =
     manager_type === "ga" ? calculateGAStats : calculateSAStats;
 
-  // 캠페인 리스트 선택
-  const allCampaignList =
-    manager_type === "ga" ? gaCampaignList : saCampaignList;
+  // 캠페인 리스트 가져오기 함수 선택
+  const getCampaignList =
+    manager_type === "ga" ? getGACampaignList : getSACampaignList;
+
+  // 캠페인 리스트 상태 (클라이언트에서만 로드하여 Hydration 오류 방지)
+  const [allCampaignList, setAllCampaignList] = useState<
+    CampaignProgressItem[]
+  >([]);
+
+  // useEffect: 클라이언트에서만 실행되어 localStorage 데이터를 포함한 캠페인 리스트 로드
+  // 📌 Hydration 오류 방지:
+  // - 서버 사이드에서는 localStorage가 없어서 다른 결과를 반환할 수 있습니다
+  // - useEffect는 클라이언트에서만 실행되므로 서버와 클라이언트의 렌더링 결과가 동일합니다
+  useEffect(() => {
+    const campaignList = getCampaignList();
+    setAllCampaignList(campaignList);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [manager_type]); // manager_type이 변경될 때만 재로드
 
   /* ========================================
      🔍 필터링 로직
@@ -165,12 +175,17 @@ export default function ProgressPageCommon({
         return false;
       }
 
-      // 검색어 필터: 검색어가 없으면 통과, 있으면 캠페인명 또는 파트너명에 포함되는지 확인
+      // 검색어 필터: 검색어가 없으면 통과, 있으면 캠페인 번호, 캠페인명, 파트너명에 포함되는지 확인
       if (search_query.trim()) {
         const query = search_query.toLowerCase();
+        const campaign_number = campaign.campaign_number.toLowerCase();
         const campaign_name = campaign.campaign_name.toLowerCase();
         const partner_name = campaign.partner_name.toLowerCase();
-        if (!campaign_name.includes(query) && !partner_name.includes(query)) {
+        if (
+          !campaign_number.includes(query) &&
+          !campaign_name.includes(query) &&
+          !partner_name.includes(query)
+        ) {
           return false;
         }
       }
@@ -270,8 +285,26 @@ export default function ProgressPageCommon({
       ? "/manager_ga/campaign/progress"
       : "/manager_sa/campaign/progress";
 
-  // 통계 카드 값들을 계산합니다
-  const statCardValues = calculateStats();
+  // 통계 카드 값들을 계산합니다 (클라이언트에서만 계산하여 Hydration 오류 방지)
+  // useState: 초기값은 빈 통계로 설정 (서버와 클라이언트가 동일한 초기값 사용)
+  const [statCardValues, setStatCardValues] = useState({
+    open_scheduled: "0건",
+    in_progress: "0건",
+    applying: "0건",
+    total: "0건",
+    ended: "0건",
+    cancelled: "0건",
+  });
+
+  // useEffect: 클라이언트에서만 실행되어 localStorage 데이터를 포함한 통계 계산
+  // 📌 Hydration 오류 방지:
+  // - 서버 사이드에서는 localStorage가 없어서 다른 결과를 반환할 수 있습니다
+  // - useEffect는 클라이언트에서만 실행되므로 서버와 클라이언트의 렌더링 결과가 동일합니다
+  useEffect(() => {
+    const calculated = calculateStats();
+    setStatCardValues(calculated);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [manager_type]); // manager_type이 변경될 때만 재계산
 
   return (
     <div className={pageStyles.container}>

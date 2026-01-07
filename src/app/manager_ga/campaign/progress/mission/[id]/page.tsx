@@ -6,7 +6,7 @@
  * 미션형 캠페인 진행 현황 상세 페이지 (GA 관리자 버전)
  *
  * - 경로: /manager_ga/campaign/progress/mission/[id]
- * - 파트너 신청내역 페이지 로직을 재사용해 GA 관리자도 동일한 학습 경험 제공
+ * - 파트너 신청내역 페이지 로직을 재사용해 GA 관리자도 동일한 경험 제공
  * - BasicCard/BasicSelectedCard만 사용 (채널 구분 없음)
  * - 공통 로직은 useCampaignProgressDetail 훅과 CampaignProgressDetailLayout 컴포넌트로 추출했습니다.
  */
@@ -82,6 +82,7 @@ export default function ManagerMissionProgressDetailPage() {
   /**
    * 미션형 캠페인 카드 렌더링 함수
    * - BasicCard/BasicSelectedCard만 사용 (채널 구분 없음)
+   * - 📌 관리자 모드: 선정하기/선택 취소 버튼 비활성화 (빈 함수 전달)
    */
   const render_card: RenderCardFunction = (
     applicant: AllApplicant,
@@ -90,11 +91,14 @@ export default function ManagerMissionProgressDetailPage() {
     handle_select: (id: string) => void,
     handle_cancel: (id: string) => void
   ) => {
+    // 관리자 모드: 버튼 비활성화를 위한 빈 함수
+    const empty_handler = () => {};
+
     const basic_applicant = applicant as BasicApplicant;
     return is_selected ? (
-      <BasicSelectedCard applicant={basic_applicant} onCancel={handle_cancel} />
+      <BasicSelectedCard applicant={basic_applicant} onCancel={empty_handler} />
     ) : (
-      <BasicCard applicant={basic_applicant} onSelect={handle_select} />
+      <BasicCard applicant={basic_applicant} onSelect={empty_handler} />
     );
   };
 

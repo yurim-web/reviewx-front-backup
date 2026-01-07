@@ -14,10 +14,6 @@
  * - 페이지 레이아웃 구조 제공
  * - 하위 페이지 컴포넌트를 감싸는 컨테이너 역할
  *
- * 학습 포인트:
- * - Next.js의 Layout 컴포넌트는 같은 경로의 모든 페이지에 공통 레이아웃을 적용합니다
- * - children prop을 통해 하위 페이지 컴포넌트를 받아 렌더링합니다
- * - 레이아웃은 페이지 전환 시에도 유지되어 성능을 향상시킵니다
  */
 
 /**
@@ -33,9 +29,3 @@ export default function WithdrawalRequestLayout({
 }) {
   return <>{children}</>;
 }
-
-
-
-
-
-

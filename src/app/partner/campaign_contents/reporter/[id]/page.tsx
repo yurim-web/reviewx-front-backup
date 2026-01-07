@@ -28,7 +28,7 @@
 
 "use client";
 
-import React from "react";
+import React, { useState, useMemo } from "react";
 // 공통 훅과 컴포넌트 import
 import { useCampaignContents } from "@/hooks/partner/campaign_contents/useCampaignContents";
 import CampaignContentsLayout from "@/components/partner/campaign_contents/CampaignContentsLayout";
@@ -38,7 +38,6 @@ import type { ContentItem } from "@/data/partner/sharedCampaigns";
 import ExperienceInspectionCard from "@/components/partner/campaign_contents/card_type/experience_card/ExperienceInspectionCard";
 import ExperiencePendingCard from "@/components/partner/campaign_contents/card_type/experience_card/ExperiencePendingCard";
 import ExperienceCompletedCard from "@/components/partner/campaign_contents/card_type/experience_card/ExperienceCompletedCard";
-import ExperienceRejectedCard from "@/components/partner/campaign_contents/card_type/experience_card/ExperienceRejectedCard";
 import type { ExperienceApplicant } from "@/components/partner/campaign_contents/card_type/experience_card/ExperienceTypes";
 import { getChannelUrl } from "@/utils/channelUrlHelper";
 
@@ -67,8 +66,104 @@ export default function ReporterContentsDetailPage() {
     sortOptions,
     contents,
     handleApprove,
+    handleReport,
+    reportedDates,
     formatDateTime,
   } = useCampaignContents(getReporterContentsById);
+
+  // 📌 등록 기간에서 기한 날짜 추출:
+  // - campaignInfo의 registrationPeriod에서 마지막 날짜를 추출합니다
+  // - 예: "2025-12-08 ~ 2025-12-25" → "2025-12-25"
+  // - 경우의 수 1 (콘텐츠 미등록)에서 기한 날짜를 표시하기 위해 사용합니다
+  const deadlineDate = useMemo(() => {
+    if (!campaignInfo?.registrationPeriod) return undefined;
+
+    // 등록 기간 문자열에서 마지막 날짜 추출
+    // 📌 정규표현식 사용:
+    // - " ~ " 또는 "~" 구분자를 사용하여 날짜를 분리합니다
+    // - 마지막 날짜 부분을 추출합니다
+    const period = campaignInfo.registrationPeriod;
+    const separator = period.includes(" ~ ") ? " ~ " : "~";
+    const parts = period.split(separator);
+    const endDateStr = parts[1]?.trim();
+
+    if (endDateStr) {
+      // 날짜 형식 검증 (YYYY-MM-DD)
+      const dateMatch = endDateStr.match(/^(\d{4}-\d{2}-\d{2})/);
+      return dateMatch ? dateMatch[1] : undefined;
+    }
+
+    return undefined;
+  }, [campaignInfo?.registrationPeriod]);
+
+  // 📌 반려 사유 저장 상태:
+  // - 확인 탭에서 반려 처리 시 입력한 반려 사유를 저장
+  // - Map 자료구조 사용: { contentId: rejectReason }
+  // - 대기 탭에서 ExperiencePendingCard에 전달하여 표시
+  const [rejectReasons, setRejectReasons] = useState<Map<string, string>>(
+    new Map()
+  );
+
+  // 📌 반려 처리 핸들러:
+  // - 확인 탭에서 반려 버튼 클릭 시 실행
+  // - 반려 사유를 저장하고 대기 탭으로 이동
+  // - 대기 탭에서 ExperiencePendingCard의 4번째 경우로 표시
+  const handleReject = (contentId: string, rejectReason: string) => {
+    // 반려 사유 저장
+    setRejectReasons((prev) => {
+      const newMap = new Map(prev);
+      newMap.set(contentId, rejectReason);
+      return newMap;
+    });
+
+    // 대기 탭으로 이동
+    setActiveTab("대기");
+
+    // URL 쿼리 파라미터도 업데이트
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("tab", "대기");
+      window.history.pushState({}, "", url.toString());
+    }
+  };
+
+  // 📌 반려된 콘텐츠 필터링:
+  // - reviewing에서 반려된 콘텐츠를 제거하고 waiting에 추가
+  // - rejectReasons에 있는 ID를 가진 콘텐츠를 reviewing에서 필터링
+  // - useMemo를 사용하여 rejectReasons나 contents가 변경될 때만 재계산
+  const filteredContents = useMemo(() => {
+    const reviewing = contents.reviewing || [];
+    const waiting = contents.waiting || [];
+
+    // 반려된 콘텐츠 ID 목록
+    const rejectedIds = Array.from(rejectReasons.keys());
+
+    // reviewing에서 반려된 콘텐츠 필터링
+    const rejectedItems = reviewing.filter((item) =>
+      rejectedIds.includes(item.id)
+    );
+    const remainingReviewing = reviewing.filter(
+      (item) => !rejectedIds.includes(item.id)
+    );
+
+    // waiting에 반려된 콘텐츠 추가 (중복 방지)
+    const existingWaitingIds = new Set(waiting.map((item) => item.id));
+    const newWaitingItems = rejectedItems.filter(
+      (item) => !existingWaitingIds.has(item.id)
+    );
+
+    return {
+      waiting: [...waiting, ...newWaitingItems],
+      reviewing: remainingReviewing,
+      completed: contents.completed || [],
+    };
+  }, [contents, rejectReasons]);
+
+  // 📌 필터링된 콘텐츠 기반으로 카운트 재계산:
+  // - 반려된 콘텐츠가 waiting으로 이동했으므로 카운트도 업데이트
+  const filteredWaitingCount = filteredContents.waiting?.length || 0;
+  const filteredReviewCount = filteredContents.reviewing?.length || 0;
+  const filteredCompletedCount = filteredContents.completed?.length || 0;
 
   /**
    * 기자단 캠페인에 특화된 카드 컴포넌트 렌더링 함수
@@ -102,14 +197,22 @@ export default function ReporterContentsDetailPage() {
       let pendingState:
         | "content_not_registered"
         | "extension_requested"
-        | "rejected" = "content_not_registered";
+        | "rejected"
+        | "reported" = "content_not_registered";
       let isExtensionApproved = false;
       let extendedDeadline: string | undefined;
-      let deadlineDate: string | undefined;
 
-      if (item.isRejected) {
+      // 📌 상태 확인:
+      // 1. 신고된 경우: reported
+      // 2. 반려된 경우: rejected (item.isRejected 또는 rejectReasons에 해당 ID가 있으면)
+      if (item.isReported) {
+        pendingState = "reported";
+      } else if (item.isRejected || rejectReasons.has(item.id)) {
         pendingState = "rejected";
       }
+
+      // 반려 사유 가져오기 (rejectReasons에서 조회)
+      const rejectReason = rejectReasons.get(item.id) || "";
 
       return (
         <ExperiencePendingCard
@@ -119,12 +222,18 @@ export default function ReporterContentsDetailPage() {
           isExtensionApproved={isExtensionApproved}
           extendedDeadline={extendedDeadline}
           deadlineDate={deadlineDate}
+          reject_reason={rejectReason}
+          reportedDate={reportedDates.get(item.id) || item.reportedDate}
+          onReport={handleReport}
           onContentCheck={() => {
             // 📌 링크 확인 핸들러:
             // - getChannelUrl 유틸리티 함수를 사용하여 채널 URL을 생성합니다
             // - channelId와 channel 정보를 사용하여 올바른 URL을 만듭니다
             // - 새 창에서 링크를 엽니다 (target="_blank")
-            const linkUrl = getChannelUrl(applicant.channel, applicant.channelId);
+            const linkUrl = getChannelUrl(
+              applicant.channel,
+              applicant.channelId
+            );
             if (linkUrl && linkUrl !== "#") {
               window.open(linkUrl, "_blank", "noopener,noreferrer");
             } else {
@@ -136,29 +245,8 @@ export default function ReporterContentsDetailPage() {
       );
     }
 
+    // 확인 탭: 검수 중 콘텐츠 (반려된 경우는 대기 탭으로 이동)
     if (activeTab === "확인") {
-      if (item.isRejected) {
-        return (
-          <ExperienceRejectedCard
-            key={item.id}
-            applicant={applicant}
-            onContentCheck={() => {
-              // 📌 링크 확인 핸들러:
-              // - getChannelUrl 유틸리티 함수를 사용하여 채널 URL을 생성합니다
-              // - channelId와 channel 정보를 사용하여 올바른 URL을 만듭니다
-              // - 새 창에서 링크를 엽니다 (target="_blank")
-              const linkUrl = getChannelUrl(applicant.channel, applicant.channelId);
-              if (linkUrl && linkUrl !== "#") {
-                window.open(linkUrl, "_blank", "noopener,noreferrer");
-              } else {
-                console.warn("유효하지 않은 링크 URL:", linkUrl);
-              }
-            }}
-            onHandleReject={() => {}}
-            dateLabel={dateLabel}
-          />
-        );
-      }
       return (
         <ExperienceInspectionCard
           key={item.id}
@@ -168,7 +256,10 @@ export default function ReporterContentsDetailPage() {
             // - getChannelUrl 유틸리티 함수를 사용하여 채널 URL을 생성합니다
             // - channelId와 channel 정보를 사용하여 올바른 URL을 만듭니다
             // - 새 창에서 링크를 엽니다 (target="_blank")
-            const linkUrl = getChannelUrl(applicant.channel, applicant.channelId);
+            const linkUrl = getChannelUrl(
+              applicant.channel,
+              applicant.channelId
+            );
             if (linkUrl && linkUrl !== "#") {
               window.open(linkUrl, "_blank", "noopener,noreferrer");
             } else {
@@ -176,7 +267,8 @@ export default function ReporterContentsDetailPage() {
             }
           }}
           onApprove={handleApprove}
-          onReject={() => {}}
+          onReject={handleReject}
+          onReport={handleReport}
           dateLabel={dateLabel}
         />
       );
@@ -198,10 +290,8 @@ export default function ReporterContentsDetailPage() {
             console.warn("유효하지 않은 링크 URL:", linkUrl);
           }
         }}
+        onReport={handleReport}
         dateLabel={dateLabel}
-        isLate={item.isLate || false}
-        onApprove={handleApprove}
-        onReject={() => {}}
       />
     );
   };
@@ -215,13 +305,13 @@ export default function ReporterContentsDetailPage() {
       campaignInfo={campaignInfo}
       activeTab={activeTab}
       setActiveTab={setActiveTab}
-      waitingCount={waitingCount}
-      reviewCount={reviewCount}
-      completedCount={completedCount}
+      waitingCount={filteredWaitingCount}
+      reviewCount={filteredReviewCount}
+      completedCount={filteredCompletedCount}
       sortOrder={sortOrder}
       setSortOrder={setSortOrder}
       sortOptions={sortOptions}
-      contents={contents}
+      contents={filteredContents}
       renderCard={renderCardComponent}
       onBatchExtension={handleBatchExtension}
     />

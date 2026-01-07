@@ -18,7 +18,7 @@
  */
 
 import { ReactNode } from "react";
-import PartnerHeader from "@/components/fragments/PartnerHeader";
+import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import layoutStyles from "@/styles/partner/layout.module.css";
 
 interface DeliveryCampaignLayoutProps {
@@ -38,9 +38,9 @@ export default function DeliveryCampaignLayout({
   children,
 }: DeliveryCampaignLayoutProps) {
   return (
-    <div className={layoutStyles.container} >
-      {/* 파트너 헤더 - 모든 파트너 페이지에서 공통으로 사용 */}
-      <PartnerHeader />
+    <div className={layoutStyles.container}>
+      {/* 파트너 서브헤더 - 뒤로가기 버튼이 있는 서브헤더 */}
+      <PartnerSubHeader />
 
       {/* 페이지 내용 - children으로 전달된 페이지 컴포넌트가 여기에 렌더링됩니다 */}
       {children}

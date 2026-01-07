@@ -8,9 +8,6 @@
  * - src/data/partner/penaltyData.ts
  * - src/components/common/campaign_management/PenaltyContent.tsx
  *
- * 학습 포인트:
- * - 타입 재사용: 공통 타입을 한 곳에서 정의하여 중복 제거
- * - 타입 export: 다른 파일에서 import하여 사용
  */
 
 // 패널티 상태 타입 - 6가지 가능한 상태를 정의

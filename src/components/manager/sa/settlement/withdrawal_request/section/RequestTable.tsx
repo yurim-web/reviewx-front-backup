@@ -82,9 +82,6 @@ export default function RequestTable({
    *
    * - is_reject_modal_open: 모달 표시 여부 (조건부 렌더링으로 제어)
    *
-   * 학습 포인트:
-   * - React의 상태(state)는 useState로 관리하며, 상태가 바뀌면 컴포넌트가 다시 렌더링됩니다.
-   * - 조건부 렌더링은 JSX에서 && 연산자를 사용하여 특정 조건일 때만 UI를 보여줄 수 있습니다.
    */
   const [is_reject_modal_open, setIsRejectModalOpen] = useState(false);
 
@@ -394,12 +391,6 @@ export default function RequestTable({
         />
 
         {/* 합계 행 */}
-        {/* 
-          학습 포인트:
-          - 긴급 테이블: 출금 포인트 컬럼 위치에 "합계" 텍스트, 그 옆에 숫자
-          - 회차 정산 테이블: 회차 컬럼 위치에 "총합" 텍스트, 출금 포인트 컬럼 위치에 숫자
-          - 그리드 구조를 사용하여 각 컬럼 위치에 맞게 배치합니다
-        */}
         {show_total && (
           <div className={styles.table_footer}>
             <div

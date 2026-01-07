@@ -88,7 +88,8 @@ export default function HeaderSearch({
             onClick={handle_submit_search}
             aria-label="검색"
           >
-            <img src="/images/header/header_search.svg" alt="검색" />
+            {/* 검색창이 열렸을 때 사용하는 내부 검색 아이콘 */}
+            <img src="/images/header/header_search_inner.svg" alt="검색" />
           </button>
         </div>
       ) : (

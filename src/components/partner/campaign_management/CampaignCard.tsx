@@ -202,9 +202,10 @@ export default function CampaignCard({
               (campaignSubStatus &&
                 campaignSubStatus.includes("extension_request")) ? (
                 // 연장 요청 탭: 대기/확인/완료 수 표시
+                // ✅ 대기 = 대기 탭(waiting)에 있는 리뷰어 수
                 <>
                   <span className={cardStyles.applicant_current}>
-                    대기 {campaign.selected || 0}명
+                    대기 {waitingCount}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
                   <span className={cardStyles.applicant_current}>
@@ -231,14 +232,14 @@ export default function CampaignCard({
                   </span>
                 </>
               ) : campaignStatus === "종료" ? (
-                // 종료 캠페인: 확인/제출/완료 수 표시
+                // 종료 캠페인: 대기/확인/완료 수 표시
                 <>
                   <span className={cardStyles.applicant_current}>
-                    확인 {reviewingCount}명
+                    대기 {waitingCount}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
                   <span className={cardStyles.applicant_current}>
-                    제출 {completedCount}명
+                    확인 {reviewingCount}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
                   <span className={cardStyles.applicant_total}>

@@ -24,15 +24,16 @@
 /* ----------------------------------------
    📦 의존성 모듈 (React 훅 & 비즈니스 헬퍼)
    ---------------------------------------- */
-import { useCallback, useMemo, useState } from 'react';
-import type { PartnerCampaign, PartnerStatTab } from '@/types/partner/partner';
+import { useCallback, useMemo, useState } from "react";
+import type { PartnerCampaign, PartnerStatTab } from "@/types/partner/partner";
 import {
   calculateContentCounts,
   getCampaignTypePath,
   getPrimaryButtonText,
   getStatusTextForCampaign,
   isContentStage as checkIsContentStage,
-} from '@/components/partner/campaign_management/utils/campaign_card_helpers';
+  calculateExtensionRequestCount,
+} from "@/components/partner/campaign_management/utils/campaign_card_helpers";
 
 interface UseCampaignCardParams {
   campaign: PartnerCampaign;
@@ -82,34 +83,42 @@ export function useCampaignCard({
      📌 캠페인 기본 상태/서브 상태 파생값
      ---------------------------------------- */
   const campaignStatus = campaign.status as string;
-  const campaignSubStatus = (campaign.subStatus ?? '') as string;
+  const campaignSubStatus = (campaign.subStatus ?? "") as string;
 
   /* ----------------------------------------
      📊 콘텐츠 대기/검수/완료 건수 및 단계 판별
      ---------------------------------------- */
   const { waitingCount, reviewingCount, completedCount } = useMemo(
     () => calculateContentCounts(campaign),
-    [campaign],
+    [campaign]
   );
 
   const isContentStage = useMemo(
     () => checkIsContentStage(campaign, reviewingCount, completedCount),
-    [campaign, reviewingCount, completedCount],
+    [campaign, reviewingCount, completedCount]
   );
 
   // 연장 요청 건수 계산
   const extensionRequestCount = useMemo(() => {
-    if (activeTab === "연장 요청" || campaign.subStatus?.includes("extension_request")) {
-      // TODO: 실제 연장 요청 데이터에서 계산
-      // 현재는 임시로 선정된 신청자 수를 사용
-      return campaign.selected || 0;
+    if (
+      activeTab === "연장 요청" ||
+      campaign.subStatus?.includes("extension_request")
+    ) {
+      // 실제 데이터 기반 연장 요청 건수 계산
+      return calculateExtensionRequestCount(campaign);
     }
     return 0;
   }, [campaign, activeTab]);
 
   const primaryButtonText = useMemo(
-    () => getPrimaryButtonText(campaign, completedCount, activeTab, extensionRequestCount),
-    [campaign, completedCount, activeTab, extensionRequestCount],
+    () =>
+      getPrimaryButtonText(
+        campaign,
+        completedCount,
+        activeTab,
+        extensionRequestCount
+      ),
+    [campaign, completedCount, activeTab, extensionRequestCount]
   );
 
   const statusDescription = useMemo(
@@ -121,7 +130,7 @@ export function useCampaignCard({
         reviewingCount,
         completedCount,
       }),
-    [campaign, activeTab, isContentStage, reviewingCount, completedCount],
+    [campaign, activeTab, isContentStage, reviewingCount, completedCount]
   );
 
   /* ----------------------------------------
@@ -131,11 +140,11 @@ export function useCampaignCard({
   const closeReceiptModal = useCallback(() => setIsReceiptModalOpen(false), []);
   const openManagementModal = useCallback(
     () => setIsManagementModalOpen(true),
-    [],
+    []
   );
   const closeManagementModal = useCallback(
     () => setIsManagementModalOpen(false),
-    [],
+    []
   );
   const openDeleteModal = useCallback(() => setIsDeleteModalOpen(true), []);
   const closeDeleteModal = useCallback(() => setIsDeleteModalOpen(false), []);
@@ -145,40 +154,40 @@ export function useCampaignCard({
      ---------------------------------------- */
   const handleButtonClick = useCallback(
     (buttonText: string) => {
-      if (buttonText === '구매 영수증 등록하기') {
+      if (buttonText === "구매 영수증 등록하기") {
         openReceiptModal();
         return;
       }
 
-      if (buttonText === '캠페인 관리') {
+      if (buttonText === "캠페인 관리") {
         openManagementModal();
         return;
       }
 
-      if (buttonText === '캠페인 삭제') {
+      if (buttonText === "캠페인 삭제") {
         openDeleteModal();
         return;
       }
 
-      if (buttonText === '캠페인 수정') {
+      if (buttonText === "캠페인 수정") {
         const campaignTypePath = getCampaignTypePath(campaign.campaignType);
         window.location.href = `/partner/campaign/edit/${campaignTypePath}/${campaign.id}`;
         return;
       }
 
-      if (buttonText === '패널티 내역 확인') {
-        window.location.href = '/partner/campaign_management/penalty';
+      if (buttonText === "패널티 내역 확인") {
+        window.location.href = "/partner/campaign_management/penalty";
         return;
       }
 
-      if (buttonText === '신청내역 확인' || buttonText === '당첨자 선정') {
+      if (buttonText === "신청내역 확인" || buttonText === "당첨자 선정") {
         const campaignTypePath = getCampaignTypePath(campaign.campaignType);
         window.location.href = `/partner/campaign_application/${campaignTypePath}/${campaign.id}`;
         return;
       }
 
       // 등록 기한 연장 요청 버튼 클릭 시 콘텐츠 내역 페이지로 이동
-      if (buttonText.startsWith('등록 기한 연장 요청')) {
+      if (buttonText.startsWith("등록 기한 연장 요청")) {
         const campaignTypePath = getCampaignTypePath(campaign.campaignType);
         window.location.href = `/partner/campaign_contents/${campaignTypePath}/${campaign.id}`;
         return;
@@ -192,7 +201,7 @@ export function useCampaignCard({
       openDeleteModal,
       openManagementModal,
       openReceiptModal,
-    ],
+    ]
   );
 
   return {

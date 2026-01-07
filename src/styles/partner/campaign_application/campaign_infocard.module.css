@@ -75,11 +75,11 @@
 
 /* 캠페인 상태 배지 */
 .campaign_status {
-  background: #f2f2f2;
+  background: #ff5694;
   padding: 8px 12px;
   border-radius: 8px;
 
-  color: #444;
+  color: #ffffff;
   font-size: 16px;
   font-weight: 500;
   line-height: 16px;
@@ -148,8 +148,27 @@
   letter-spacing: -0.28px;
 }
 
-/* 일정 값 강조 텍스트 */
-.schedule_value strong {
+/* 포인트 스타일 - 기자단 캠페인 모집 중 상태용 */
+/* 📌 조건부 스타일링:
+    - 기자단 캠페인 + 모집 중 상태일 때만 적용되는 포인트 색상
+    - 라벨과 값 모두에 포인트 색상과 굵기 적용
+*/
+.schedule_label_point {
+  color: #ff5694;
   font-weight: 600;
-  color: #444444;
+}
+
+.schedule_value_point {
+  color: #ff5694;
+  font-weight: 600;
+}
+
+/* 포인트 스타일이 적용된 값 내부의 strong 태그도 포인트 색상 적용 */
+/* 📌 CSS 우선순위:
+    - .schedule_value strong (기본 스타일)보다 더 구체적인 선택자 사용
+    - 포인트 스타일 클래스가 적용된 경우 strong 태그도 포인트 색상으로 변경
+*/
+.schedule_value_point strong {
+  color: #ff5694;
+  font-weight: 600;
 }

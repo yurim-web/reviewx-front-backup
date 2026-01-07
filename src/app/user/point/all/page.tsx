@@ -33,9 +33,6 @@ import { PointHistory } from "@/types/user/user";
  * - 공통 컴포넌트를 사용하여 간단하게 구현했습니다.
  * - 필터 함수를 전달하여 모든 내역을 표시합니다.
  *
- * React 학습 포인트:
- * - 컴포넌트 재사용성: 공통 컴포넌트를 여러 곳에서 사용
- * - Props 전달: 부모 컴포넌트에서 자식 컴포넌트로 데이터/함수 전달
  */
 export default function AllPointPage() {
   /**
@@ -45,9 +42,6 @@ export default function AllPointPage() {
    * - 모든 포인트 내역을 표시하기 위해 항상 true를 반환합니다.
    * - 필터링 없이 모든 데이터를 보여줍니다.
    *
-   * JavaScript 학습 포인트:
-   * - 화살표 함수: () => true 형태로 항상 true 반환
-   * - 함수를 변수에 저장하여 props로 전달
    */
   const filterAllHistory = (_history: PointHistory) => true;
 

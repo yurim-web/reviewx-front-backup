@@ -64,7 +64,7 @@
 /* 활성화된 통계 탭 */
 .stat_tab.active {
   font-weight: 700;
-  color: #444444;
+  color: #ff5694;
   background: white; /* 활성 탭 배경을 흰색으로 설정 */
 }
 
@@ -76,7 +76,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background-color: #444444;
+  background-color: #ff5694;
   z-index: 1;
 }
 
@@ -91,12 +91,12 @@
 
 /* 활성화된 통계 탭의 숫자 스타일 */
 .stat_tab.active .stat_number {
-  color: #444444;
+  color: #ff5694;
   font-weight: 700;
 }
 
 /* JS에서 `${styles.stat_tab} ${styles.active}` 처럼 사용할 수 있도록 보조 클래스 */
 .active {
   font-weight: 700;
-  color: #444444;
+  color: #ff5694;
 }

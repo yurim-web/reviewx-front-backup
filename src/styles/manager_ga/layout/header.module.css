@@ -18,9 +18,10 @@
   right: 0;
   width: 100%;
   height: 80px;
-  background-color: #d9d9d9;
+  background-color: #ffffff;
   z-index: 1000;
   box-sizing: border-box;
+  border-bottom: 1px solid #e5e5e5;
 }
 
 /* 헤더 내부 컨테이너 */
@@ -37,7 +38,7 @@
 
 /* 로고 스타일 - 일반 헤더와 동일한 스타일 */
 .header_logo {
-  color: #fff;
+  color: #ff5694;
   font-size: 28px;
   font-weight: 700;
   line-height: 24px;

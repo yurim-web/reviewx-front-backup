@@ -164,22 +164,25 @@ export const getSubStatus = (
  * - 전체: 모든 캠페인
  * - 예정: "모집기간"의 시작일이 아직 오늘이 되지 않은 경우
  * - 신청: 오늘이 "모집기간" 범위 안에 있는 경우
- * - 진행: 선정 단계로, 오늘이 "등록기간" 범위 안에 있는 경우
+ * - 진행: 선정 단계로, 오늘이 "등록기간" 범위 안에 있는 경우 또는 선정 발표일 이후
  * - 종료: 오늘이 "등록기간" 종료일을 지난 경우
  *
  * 입력 형식 예시:
  * - recruitmentPeriod: "2025-10-25 ~ 2025-11-05"
  * - registrationPeriod: "2025-11-07 ~ 2025-11-14"
+ * - announcementDate: "2025-11-06" (선정 발표일)
  */
 export function getPartnerTabByDates(
   recruitmentPeriod?: string,
   registrationPeriod?: string,
-  todayInput?: Date
+  todayInput?: Date,
+  announcementDate?: string
 ): "전체" | "예정" | "신청" | "진행" | "종료" {
   const today = normalizeToDateOnly(todayInput ?? new Date());
 
   const [recruitStart, recruitEnd] = parseDateRange(recruitmentPeriod);
   const [regStart, regEnd] = parseDateRange(registrationPeriod);
+  const announcement = announcementDate ? parseDateFlexible(announcementDate) : null;
 
   // 예정: 모집 시작 전 (모집기간이 오늘 날짜 전일 때)
   if (recruitStart && isBefore(today, recruitStart)) return "예정";
@@ -202,10 +205,15 @@ export function getPartnerTabByDates(
   if (regEnd && isAfter(today, regEnd)) return "종료";
 
   // 모집기간이 지났지만 등록기간이 아직 시작되지 않은 경우
-  // (모집 종료 후 ~ 등록 시작 전): 등록기간이 시작하지 않았으면 예정 탭으로 이동
   if (recruitEnd && isAfter(today, recruitEnd)) {
+    // 선정 발표일을 고려
+    // 선정 발표일이 있으면 모집 종료 후부터 진행 탭 (선정 중 또는 등록 중 상태)
+    if (announcement) {
+      return "진행";
+    }
+    
+    // 선정 발표일 정보가 없고 등록기간이 시작 전이면 예정 탭
     if (regStart && isBefore(today, regStart)) {
-      // 등록기간이 시작되기 전이면 예정 탭으로 이동
       return "예정";
     }
     // 등록기간 정보가 없고 모집도 지나간 경우 → 종료로 간주

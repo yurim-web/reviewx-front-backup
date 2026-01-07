@@ -16,6 +16,36 @@
  *   onChange={(opt) => setSortOrder(opt.value as SortOrder)}
  *   defaultSort="latest"
  * />
+ *
+ * 📍 사용처:
+ * 1. src/components/partner/campaign_application/CampaignApplicationLayout.tsx
+ *    - 파트너 신청 내역 페이지에서 정렬 기능 제공 (2곳 사용)
+ *    - 신청 내역 탭과 선정 내역 탭의 정렬 컨트롤로 사용
+ *
+ * 2. src/components/partner/campaign_contents/CampaignContentsLayout.tsx
+ *    - 파트너 캠페인 콘텐츠 관리 페이지에서 정렬 기능 제공
+ *    - 콘텐츠 내역(대기/확인/완료) 정렬 컨트롤로 사용
+ *
+ * 3. src/components/manager/common/campaign/progress/layout/CampaignProgressDetailLayout.tsx
+ *    - 매니저 캠페인 진행 상세 페이지에서 정렬 기능 제공
+ *    - 캠페인 신청 내역 정렬 컨트롤로 사용
+ *
+ * 4. src/components/manager/common/campaign/progress/CampaignApplicationLayout.tsx
+ *    - 매니저 신청 내역 레이아웃에서 정렬 기능 제공 (2곳 사용)
+ *    - 신청 내역과 선정 내역 정렬 컨트롤로 사용
+ *
+ * 📍 정렬 옵션 정의 위치:
+ * 1. src/hooks/partner/campaign_application/useCampaignApplication.ts (147줄)
+ *    - 신청 내역 페이지용 정렬 옵션
+ *    - 옵션: 최신순, 등록순, 추천순
+ *
+ * 2. src/hooks/partner/campaign_contents/useCampaignContents.ts (132줄)
+ *    - 콘텐츠 내역 페이지용 정렬 옵션
+ *    - 옵션: 최신순, 인기순, 마감임박순, 포인트순
+ *
+ * 3. src/data/campaign/campaignFilterOptions.ts
+ *    - 각 캠페인 유형별 정렬 옵션 정의 (배송형, 방문형, 미션형, 구매평, 기자단)
+ *    - 주로 메인 페이지나 검색 페이지에서 사용
  */
 
 "use client";
@@ -105,7 +135,9 @@ export default function SortFilterControl({
           >
             {/* 모달 헤더 */}
             <div className={sort_dropdown_styles.sort_modal_header}>
-              <h3 className={sort_dropdown_styles.sort_modal_title}>{modalTitle}</h3>
+              <h3 className={sort_dropdown_styles.sort_modal_title}>
+                {modalTitle}
+              </h3>
               <button
                 type="button"
                 className={sort_dropdown_styles.sort_modal_close_button}

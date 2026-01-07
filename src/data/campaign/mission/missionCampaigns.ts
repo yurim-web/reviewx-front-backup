@@ -71,11 +71,14 @@ export const missionCampaigns: MissionCampaignData[] = [
     dayCount: "D-5",
     registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-20 ~ 2026-01-06)
-      applicationStart: "2025-12-20",
-      applicationEnd: "2026-01-06",
-      announcement: "2026-01-08",
-      registrationPeriod: "2026-01-10 ~ 2026-01-17",
+      // 선정 중 - 모집 기간 종료 후, 선정 발표 전
+      // 모집 기간: 2025-09-02 ~ 2025-09-14 (종료됨)
+      // 선정 발표: 2025-09-16 (아직 안 지남)
+      // 등록 기간: 2025-09-22 ~ 2025-09-30 (아직 시작 안 함)
+      applicationStart: "2025-09-02",
+      applicationEnd: "2025-09-14",
+      announcement: "2025-09-16",
+      registrationPeriod: "2025-09-22 ~ 2025-09-30",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#스킨케어체험 #뷰티미션형 #화장품체험 #올리브영 #솔직후기",
@@ -136,7 +139,8 @@ export const missionCampaigns: MissionCampaignData[] = [
       "★미션형 작성 / 무료 체험 캠페인 입니다 (구매 없이 체험 후 리뷰 작성)★ <br /> 1. 본 캠페인은 [무료 체험]으로 진행되며, 포스팅은 업체 홍보목적으로 이용될 수 있습니다<br /> 2. 선정 후 제품 수령 후 최소 2주일 이상 체험 진행해주세요<br /> 3. 기간 내 리뷰 작성 및 등록 불가할 경우 다음 캠페인 참여 제한<br /> 4. 안내된 사항 필수로 숙지하시어 진행해 주셔야 합니다<br /> ★미션형 작성 시에는 너무 인위적이지 않게 자연스럽게 작성해주세요<br /> ★ [본인이 직접 체험한 제품 특장점과 개선점에 대하여 솔직하게 작성해주세요]",
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 제품 미수령 및 체험 불가할 경우 : 다음 캠페인 참여 제한 <br /> - 미션형 리뷰 작성 불가할 경우 : 다음 캠페인 참여 제한 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 다음 캠페인 참여가 제한됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 미션형의 경우 체험 과정과 결과를 상세히 기록해주세요 - 건강 관련 제품은 개인차가 있을 수 있으니 객관적으로 작성해주세요",
     ],
-    contentType: "both" as const, // 링크 + 이미지
+    contentType: "image" as const, // 이미지만
+    channel: "", // 미션형은 채널 없음
   },
   {
     id: "mission_3",
@@ -213,7 +217,8 @@ export const missionCampaigns: MissionCampaignData[] = [
       "★★실제 착용 모습과 스타일링 과정을 자세히 보여주세요!!★",
       "★다양한 코디 방법과 패션 아이템의 특징을 상세히 기록해주세요★",
     ],
-    contentType: "both" as const, // 링크 + 이미지
+    contentType: "link" as const, // 링크만
+    channel: "", // 미션형은 채널 없음
   },
   {
     id: "mission_5",
@@ -252,6 +257,7 @@ export const missionCampaigns: MissionCampaignData[] = [
       "★식품의 특징과 조리 과정을 자세히 보여주세요★",
     ],
     contentType: "both" as const, // 링크 + 이미지
+    channel: "", // 미션형은 채널 없음
   },
   {
     id: "mission_6",
@@ -259,6 +265,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     category: "미션형",
     image: "/images/main/campaign_img/eximg_6.png",
     subcategory: "디지털",
+    channel: "", // 미션형은 채널 없음
     points: 55000,
     description: "최신 디지털 기기 미션형",
     recruitment: {
@@ -289,7 +296,7 @@ export const missionCampaigns: MissionCampaignData[] = [
       "★★기기의 기능과 성능을 상세히 테스트하고 기록해주세요!!★",
       "★실제 사용 환경에서의 성능과 장단점을 객관적으로 평가해주세요★",
     ],
-    contentType: "both" as const, // 링크 + 이미지
+    contentType: "image" as const, // 이미지만
   },
   {
     id: "mission_12",
@@ -360,7 +367,8 @@ export const missionCampaigns: MissionCampaignData[] = [
       "★★반려동물의 실제 사용 모습과 반응을 자세히 기록해주세요!!★",
       "★제품 사용 전후 반려동물의 변화를 관찰하고 기록해주세요★",
     ],
-    contentType: "both" as const, // 링크 + 이미지
+    contentType: "link" as const, // 링크만
+    channel: "", // 미션형은 채널 없음
   },
   {
     id: "mission_8",
@@ -398,7 +406,8 @@ export const missionCampaigns: MissionCampaignData[] = [
       "★★실제 운동 시 사용 모습과 성능을 자세히 보여주세요!!★",
       "★운동 효과와 제품의 기능성을 객관적으로 평가해주세요★",
     ],
-    contentType: "both" as const, // 링크 + 이미지
+    contentType: "image" as const, // 이미지만
+    channel: "", // 미션형은 채널 없음
   },
   {
     id: "mission_9",
@@ -437,6 +446,7 @@ export const missionCampaigns: MissionCampaignData[] = [
       "★메이크업 과정과 최종 결과를 단계별로 보여주세요★",
     ],
     contentType: "both" as const, // 링크 + 이미지
+    channel: "", // 미션형은 채널 없음
   },
   {
     id: "mission_10",
@@ -474,7 +484,8 @@ export const missionCampaigns: MissionCampaignData[] = [
       "★★여행 전 과정과 서비스 경험을 자세히 기록해주세요!!★",
       "★여행지의 특색과 서비스의 장단점을 솔직하게 리뷰해주세요★",
     ],
-    contentType: "both" as const, // 링크 + 이미지
+    contentType: "link" as const, // 링크만
+    channel: "", // 미션형은 채널 없음
   },
   {
     id: "mission_11",
@@ -610,10 +621,28 @@ export interface MissionCampaignDataExtended {
 
   // 콘텐츠 데이터 (선택사항 - 종료/취소 캠페인에는 필수, 진행/예정/신청 캠페인에는 선택)
   contents?: {
-    reviewing: Array<{
+    waiting?: Array<{
       id: string;
       createdAt: string;
-      status: "검수";
+      status: "검수" | "검수중";
+      userType: "리뷰어" | "인플루언서";
+      nickname: string;
+      channelId: string;
+      channel: string;
+      profileImage?: string;
+      actionType?: number;
+      extension_request_reason?: string;
+      isExtensionApproved?: boolean;
+      extendedDeadline?: string;
+      isRejected?: boolean;
+      reject_reason?: string;
+      isReported?: boolean;
+      reportedDate?: string;
+    }>;
+    reviewing?: Array<{
+      id: string;
+      createdAt: string;
+      status: "검수" | "검수중";
       userType: "리뷰어" | "인플루언서";
       nickname: string;
       channelId: string;
@@ -621,8 +650,10 @@ export interface MissionCampaignDataExtended {
       updatedAt?: string;
       isRejected?: boolean;
       isLate?: boolean;
+      profileImage?: string;
+      actionType?: number;
     }>;
-    completed: Array<{
+    completed?: Array<{
       id: string;
       createdAt: string;
       status: "완료";
@@ -632,6 +663,8 @@ export interface MissionCampaignDataExtended {
       channel: string;
       updatedAt?: string;
       isLate?: boolean;
+      profileImage?: string;
+      actionType?: number;
     }>;
   };
 }
@@ -810,7 +843,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           channelId: "youtube_021",
           channel: "유튜브",
           profileImage: "/images/test_img/eximg.png",
-          actionType: 2,
+          actionType: 3, // 이미지만 (contentType: "image")
         },
         {
           id: "content_mission_2_waiting_002",
@@ -821,7 +854,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           channelId: "youtube_022",
           channel: "유튜브",
           profileImage: "/images/test_img/eximg3.png",
-          actionType: 3,
+          actionType: 3, // 이미지만 (contentType: "image")
         },
       ],
       reviewing: [
@@ -837,7 +870,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           isRejected: false,
           isLate: false,
           profileImage: "/images/test_img/eximg.png",
-          actionType: 2,
+          actionType: 3, // 이미지만 (contentType: "image")
         },
       ],
       completed: [
@@ -852,7 +885,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           updatedAt: "2025-12-16T09:00:00.000Z",
           isLate: false,
           profileImage: "/images/test_img/eximg3.png",
-          actionType: 2,
+          actionType: 3, // 이미지만 (contentType: "image")
         },
       ],
     },
@@ -1236,7 +1269,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           channelId: "blog_018",
           channel: "네이버블로그",
           profileImage: "/images/test_img/eximg.png",
-          actionType: 2,
+          actionType: 4, // 링크만 (contentType: "link")
         },
       ],
       reviewing: [
@@ -1252,7 +1285,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           isRejected: false,
           isLate: false,
           profileImage: "/images/test_img/eximg3.png",
-          actionType: 3,
+          actionType: 4, // 링크만 (contentType: "link")
         },
       ],
       completed: [
@@ -1267,7 +1300,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           updatedAt: "2025-12-25T09:00:00.000Z",
           isLate: false,
           profileImage: "/images/test_img/eximg.png",
-          actionType: 2,
+          actionType: 4, // 링크만 (contentType: "link")
         },
       ],
     },
@@ -1336,6 +1369,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
     },
     contents: {
       waiting: [
+        // 1. 콘텐츠 미등록 (이미지+링크)
         {
           id: "content_mission_9_waiting_001",
           createdAt: "2025-12-30T10:00:00.000Z",
@@ -1345,8 +1379,9 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           channelId: "olive_001",
           channel: "올리브영",
           profileImage: "/images/test_img/eximg.png",
-          actionType: 2,
+          actionType: 2, // 이미지+링크 (contentType: "both")
         },
+        // 2. 등록 기한 연장 요청 (이미지+링크)
         {
           id: "content_mission_9_waiting_002",
           createdAt: "2025-12-31T11:00:00.000Z",
@@ -1356,38 +1391,143 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           channelId: "olive_002",
           channel: "올리브영",
           profileImage: "/images/test_img/eximg3.png",
-          actionType: 3,
+          actionType: 2, // 이미지+링크 (contentType: "both")
+          extension_request_reason:
+            "개인 사정으로 인해 등록 기한을 연장해주시면 감사하겠습니다.",
+        },
+        // 3. 연장 승인 후 아직 등록 안함 (이미지+링크)
+        {
+          id: "content_mission_9_waiting_003",
+          createdAt: "2025-12-29T09:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "뷰티리뷰어C",
+          channelId: "olive_003",
+          channel: "올리브영",
+          profileImage: "/images/test_img/eximg.png",
+          actionType: 2, // 이미지+링크 (contentType: "both")
+          isExtensionApproved: true,
+          extendedDeadline: "2026-01-20",
+        },
+        // 4. 반려 처리 (이미지+링크)
+        {
+          id: "content_mission_9_waiting_004",
+          createdAt: "2025-12-28T08:00:00.000Z",
+          status: "검수" as const,
+          userType: "인플루언서" as const,
+          nickname: "뷰티인플루언서D",
+          channelId: "olive_004",
+          channel: "올리브영",
+          profileImage: "/images/test_img/eximg3.png",
+          actionType: 2, // 이미지+링크 (contentType: "both")
+          isRejected: true,
+          reject_reason:
+            "제품 사용 사진이 부족하고 리뷰 내용이 너무 간단합니다. 더 상세한 체험 후기를 작성해주세요.",
+        },
+        // 5. 신고 처리 (이미지+링크)
+        {
+          id: "content_mission_9_waiting_005",
+          createdAt: "2025-12-27T07:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "뷰티리뷰어E",
+          channelId: "olive_005",
+          channel: "올리브영",
+          profileImage: "/images/test_img/eximg.png",
+          actionType: 2, // 이미지+링크 (contentType: "both")
+          isReported: true,
+          reportedDate: "2025-12-27 14:30",
         },
       ],
       reviewing: [
+        // 1. 최초 등록 (이미지+링크)
         {
           id: "content_mission_9_reviewing_001",
           createdAt: "2025-12-28T09:00:00.000Z",
           status: "검수중" as const,
           userType: "리뷰어" as const,
-          nickname: "뷰티전문가C",
-          channelId: "olive_003",
+          nickname: "뷰티전문가F",
+          channelId: "olive_006",
           channel: "올리브영",
-          updatedAt: "2025-12-29T10:00:00.000Z",
+          updatedAt: undefined, // 최초 등록
           isRejected: false,
           isLate: false,
           profileImage: "/images/test_img/eximg.png",
-          actionType: 2,
+          actionType: 2, // 이미지+링크 (contentType: "both")
+        },
+        // 2. 수정 (이미지+링크)
+        {
+          id: "content_mission_9_reviewing_002",
+          createdAt: "2025-12-27T08:00:00.000Z",
+          status: "검수중" as const,
+          userType: "인플루언서" as const,
+          nickname: "뷰티인플루언서G",
+          channelId: "olive_007",
+          channel: "올리브영",
+          updatedAt: "2025-12-29T10:00:00.000Z", // 수정됨
+          isRejected: false,
+          isLate: false,
+          profileImage: "/images/test_img/eximg3.png",
+          actionType: 2, // 이미지+링크 (contentType: "both")
+        },
+        // 3. 지각 등록 (이미지+링크)
+        {
+          id: "content_mission_9_reviewing_003",
+          createdAt: "2025-12-26T07:00:00.000Z",
+          status: "검수중" as const,
+          userType: "리뷰어" as const,
+          nickname: "뷰티리뷰어H",
+          channelId: "olive_008",
+          channel: "올리브영",
+          updatedAt: "2025-12-30T11:00:00.000Z", // 지각 등록
+          isRejected: false,
+          isLate: true, // 지각 등록
+          profileImage: "/images/test_img/eximg.png",
+          actionType: 2, // 이미지+링크 (contentType: "both")
         },
       ],
       completed: [
+        // 1. 확인 완료 (이미지+링크)
         {
           id: "content_mission_9_completed_001",
           createdAt: "2025-12-26T08:00:00.000Z",
           status: "완료" as const,
           userType: "리뷰어" as const,
-          nickname: "뷰티리뷰어D",
-          channelId: "olive_004",
+          nickname: "뷰티리뷰어I",
+          channelId: "olive_009",
           channel: "올리브영",
           updatedAt: "2025-12-27T09:00:00.000Z",
           isLate: false,
           profileImage: "/images/test_img/eximg3.png",
-          actionType: 2,
+          actionType: 2, // 이미지+링크 (contentType: "both")
+        },
+        // 2. 확인 완료 (이미지+링크)
+        {
+          id: "content_mission_9_completed_002",
+          createdAt: "2025-12-25T07:00:00.000Z",
+          status: "완료" as const,
+          userType: "인플루언서" as const,
+          nickname: "뷰티인플루언서J",
+          channelId: "olive_010",
+          channel: "올리브영",
+          updatedAt: "2025-12-26T08:00:00.000Z",
+          isLate: false,
+          profileImage: "/images/test_img/eximg.png",
+          actionType: 2, // 이미지+링크 (contentType: "both")
+        },
+        // 3. 확인 완료 (이미지+링크)
+        {
+          id: "content_mission_9_completed_003",
+          createdAt: "2025-12-24T06:00:00.000Z",
+          status: "완료" as const,
+          userType: "리뷰어" as const,
+          nickname: "뷰티리뷰어K",
+          channelId: "olive_011",
+          channel: "올리브영",
+          updatedAt: "2025-12-25T07:00:00.000Z",
+          isLate: false,
+          profileImage: "/images/test_img/eximg3.png",
+          actionType: 2, // 이미지+링크 (contentType: "both")
         },
       ],
     },
@@ -1440,7 +1580,11 @@ export function getMissionContentsById(campaignId: string): ContentByTab {
   // 진행 중인 캠페인에서 찾기
   const campaign = missionCampaignsExtended.find((c) => c.id === campaignId);
   if (campaign?.contents) {
-    return campaign.contents;
+    return {
+      waiting: campaign.contents.waiting || [],
+      reviewing: campaign.contents.reviewing || [],
+      completed: campaign.contents.completed || [],
+    };
   }
 
   // 콘텐츠가 없는 경우 빈 배열 반환
