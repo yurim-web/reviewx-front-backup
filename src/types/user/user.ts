@@ -183,6 +183,12 @@ export interface CampaignApplication {
   }>;
   /** 반려 사유 (취소/반려 상태일 때 사용) */
   rejectionReason?: string; // 콘텐츠 반려 사유 텍스트
+  /** 등록된 콘텐츠 링크 (수정 모드에서 사용) */
+  registeredContentLink?: string;
+  /** 등록된 콘텐츠 이미지 URL 배열 (수정 모드에서 사용) */
+  registeredContentImages?: string[];
+  /** 등록된 구매 영수증 이미지 URL 배열 (수정 모드에서 사용) */
+  registeredReceiptImages?: string[];
 }
 
 /**

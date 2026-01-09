@@ -22,7 +22,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "../../../../styles/user/mypage/edit_profile.module.css";
 import SubHeader from "@/components/fragments/SubHeader";
@@ -37,6 +37,8 @@ import SocialSecurityNumberInput from "@/components/user/mypage/SocialSecurityNu
 // 모달 컴포넌트
 import BaseModal from "@/components/common/modal/BaseModal";
 import ErrorText from "@/components/common/error_text/ErrorText";
+// 토스트 컴포넌트
+import Toast from "@/components/common/toast/Toast";
 // 휴대폰 인증 훅
 import { usePhoneVerification } from "@/hooks/usePhoneVerification/usePhoneVerification";
 
@@ -79,7 +81,13 @@ export default function EditProfilePage() {
     "토스뱅크",
   ];
 
+  // localStorage 키 상수
+  const STORAGE_KEY = "userAccountVerification";
+
   // 폼 상태 관리
+  // TODO: 실제 운영 시 서버에서 사용자 정보를 fetch하여 초기화
+  // 서버에서 받아온 계좌 정보가 있으면 → 수정 모드 (인증 완료 상태)
+  // 서버에서 받아온 계좌 정보가 없으면 → 최초 등록 모드 (빈 상태)
   const [formData, setFormData] = useState({
     nickname: "",
     name: "",
@@ -88,12 +96,67 @@ export default function EditProfilePage() {
     address: "",
     detailAddress: "",
     serviceName: "",
-    accountHolder: "",
-    bank: "",
-    accountNumber: "",
+    // 계좌 정보: 서버에서 받아온 데이터로 초기화
+    accountHolder: "", // TODO: 서버에서 받아온 데이터로 초기화
+    bank: "", // TODO: 서버에서 받아온 데이터로 초기화
+    accountNumber: "", // TODO: 서버에서 받아온 데이터로 초기화
     ssnFront: "",
     ssnBack: "",
   });
+
+  /**
+   * useEffect: 페이지 로드 시 localStorage에서 계좌 정보 복원
+   *
+   * 목적: localStorage에 저장된 인증 완료된 계좌 정보를 복원합니다.
+   *
+   * 작동 방식:
+   * - 페이지 로드 시 한 번만 실행
+   * - localStorage에 저장된 계좌 정보가 있고, 현재 계좌 정보가 비어있으면 복원
+   */
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const verificationData = JSON.parse(stored);
+          // 계좌 정보가 비어있을 때만 localStorage에서 복원
+          if (
+            !formData.bank.trim() &&
+            !formData.accountNumber &&
+            !formData.accountHolder.trim()
+          ) {
+            console.log("localStorage에서 계좌 정보 복원:", verificationData);
+            setFormData((prev) => ({
+              ...prev,
+              bank: verificationData.bank || "",
+              accountNumber: verificationData.accountNumber || "",
+              accountHolder: verificationData.accountHolder || "",
+            }));
+          }
+        }
+      } catch (error) {
+        console.error("localStorage 읽기 실패:", error);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // 빈 배열: 페이지 로드 시 한 번만 실행
+
+  /**
+   * 서버에서 받아온 계좌 정보가 있는지 확인
+   *
+   * 목적: 계좌 정보가 모두 입력되어 있으면 서버에서 받아온 데이터로 간주
+   * - 서버에서 받아온 데이터가 있으면: 수정 모드 → 인증 완료 상태
+   * - 서버에서 받아온 데이터가 없으면: 최초 등록 모드 → 빈 상태
+   *
+   * TODO: 실제 운영 시 서버에서 받아온 데이터인지 확인하는 로직으로 변경
+   * 예: const hasAccountInfoFromServer = userData?.accountHolder && userData?.bank && userData?.accountNumber;
+   */
+  const hasAccountInfoFromServer = !!(
+    formData.accountHolder.trim() &&
+    formData.bank.trim() &&
+    formData.accountNumber &&
+    String(formData.accountNumber).trim()
+  );
 
   // 휴대폰 인증 훅 사용
   const {
@@ -114,6 +177,9 @@ export default function EditProfilePage() {
 
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
+  // 계좌 정보 인증 완료 상태 관리
+  const [isAccountHolderVerified, setIsAccountHolderVerified] = useState(false);
+
   // 회원 탈퇴 모달 상태 관리
   // 첫 번째 모달: 탈퇴 확인 모달
   const [isWithdrawConfirmModalOpen, setIsWithdrawConfirmModalOpen] =
@@ -125,21 +191,58 @@ export default function EditProfilePage() {
   const [isWithdrawBlockedModalOpen, setIsWithdrawBlockedModalOpen] =
     useState(false);
 
-  // 필수 입력 필드 검증 함수
+  // 토스트 메시지 상태 관리
+  const [showToast, setShowToast] = useState(false);
+
+  /**
+   * 필수 입력 필드 검증 함수
+   *
+   * 계좌 정보 검증 규칙:
+   * - 계좌 정보가 모두 비어있으면: 계좌 미등록 상태 (저장 가능)
+   * - 계좌 정보가 모두 입력되어 있고 인증 완료되어 있으면: 계좌 등록 완료 (저장 가능)
+   * - 그 외의 경우 (일부만 입력되어 있거나, 입력은 되어 있지만 인증이 안 된 경우): 저장 불가
+   *
+   * 다른 필수 필드:
+   * - 휴대폰 번호, 주소, 주민등록번호는 모두 입력되어 있어야 함
+   */
   const validateRequiredFields = () => {
-    const requiredFields = {
+    // 계좌 정보 필드
+    const accountHolderValue = formData.accountHolder.trim();
+    const bankValue = formData.bank.trim();
+    const accountNumberValue = formData.accountNumber.trim();
+
+    // 계좌 정보가 모두 비어있는지 확인 (계좌 미등록 상태)
+    const isAccountInfoEmpty =
+      accountHolderValue.length === 0 &&
+      bankValue.length === 0 &&
+      accountNumberValue.length === 0;
+
+    // 계좌 정보가 모두 입력되어 있는지 확인
+    const isAccountInfoFilled =
+      accountHolderValue.length > 0 &&
+      bankValue.length > 0 &&
+      accountNumberValue.length > 0;
+
+    // 계좌 정보 검증: 모두 비어있거나, 모두 입력되어 있고 인증 완료되어 있어야 함
+    const isAccountInfoValid =
+      isAccountInfoEmpty || (isAccountInfoFilled && isAccountHolderVerified);
+
+    // 다른 필수 필드 검증
+    const otherRequiredFields = {
       phone: phone.trim(), // usePhoneVerification 훅에서 관리하는 phone 사용
       postalCode: formData.postalCode.trim(),
       address: formData.address.trim(),
-      accountHolder: formData.accountHolder.trim(),
-      bank: formData.bank.trim(),
-      accountNumber: formData.accountNumber.trim(),
       ssnFront: formData.ssnFront.trim(),
       ssnBack: formData.ssnBack.trim(),
     };
 
-    // 모든 필수 필드가 입력되었는지 확인
-    return Object.values(requiredFields).every((value) => value.length > 0);
+    // 다른 필수 필드는 모두 입력되어 있어야 함
+    const areOtherFieldsValid = Object.values(otherRequiredFields).every(
+      (value) => value.length > 0
+    );
+
+    // 계좌 정보와 다른 필수 필드 모두 유효해야 저장 가능
+    return isAccountInfoValid && areOtherFieldsValid;
   };
 
   // 저장하기 버튼 활성화 상태
@@ -202,6 +305,11 @@ export default function EditProfilePage() {
     if (isSaveButtonEnabled) {
       // 저장 로직
       console.log("저장", { ...formData, phone });
+      // TODO: 실제 API 호출로 저장
+      // 예: await fetch('/api/user/profile', { method: 'PUT', body: JSON.stringify({ ...formData, phone }) });
+
+      // 저장 성공 시 토스트 메시지 표시
+      setShowToast(true);
     }
   };
 
@@ -380,8 +488,7 @@ export default function EditProfilePage() {
               setFormData((prev) => ({ ...prev, detailAddress: value }))
             }
             onPostalCodeSearch={handlePostalSearch}
-            postalCodeReadOnly={true}
-            showRequiredAsterisk={true}
+            postalCodeReadOnly={false}
           />
 
           {/* 본인 명의 계좌 정보 제목 */}
@@ -402,6 +509,8 @@ export default function EditProfilePage() {
               setFormData((prev) => ({ ...prev, accountNumber: value }))
             }
             bankOptions={bank_options}
+            onVerificationStatusChange={setIsAccountHolderVerified}
+            initialVerified={hasAccountInfoFromServer}
           />
 
           {/* 주민등록번호 */}
@@ -468,6 +577,14 @@ export default function EditProfilePage() {
         buttons={["닫기"]}
         on_confirm={handleWithdrawComplete}
         type="center"
+      />
+
+      {/* 저장 완료 토스트 메시지 */}
+      <Toast
+        message="저장되었습니다."
+        isOpen={showToast}
+        onClose={() => setShowToast(false)}
+        duration={2000}
       />
     </div>
   );

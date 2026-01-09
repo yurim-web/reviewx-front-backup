@@ -107,6 +107,7 @@ export default function AddressPage() {
    *
    * 설명:
    * - 입력한 주소 정보를 저장합니다.
+   * - sessionStorage에 주소 정보를 저장하여 캠페인 신청 모달로 돌아갔을 때 불러올 수 있도록 합니다.
    * - 저장 완료 후 이전 페이지로 돌아갑니다.
    *
    * TODO: 실제 API 연동 필요
@@ -117,7 +118,24 @@ export default function AddressPage() {
     // 주소 정보 저장 로직
     console.log("주소 저장:", addressData);
 
-    // 임시: 저장 후 뒤로가기
+    // 주소 정보를 sessionStorage에 저장
+    // 전체 주소 문자열 생성 (우편번호 + 기본 주소 + 상세 주소)
+    const fullAddress = `${addressData.postalCode} ${addressData.address} ${addressData.detailAddress}`.trim();
+    
+    // sessionStorage에 주소 정보 저장
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem(
+        "userAddress",
+        JSON.stringify({
+          postalCode: addressData.postalCode,
+          address: addressData.address,
+          detailAddress: addressData.detailAddress,
+          fullAddress: fullAddress, // 전체 주소 문자열 (모달에서 표시용)
+        })
+      );
+    }
+
+    // 저장 후 뒤로가기
     router.back();
   };
 

@@ -67,7 +67,7 @@ export default function RejectionReasonModal({
       value={reasonText || "반려 사유가 없습니다."}
       onChange={() => {}} // 읽기 전용이므로 빈 함수
       readOnly={true}
-      titleColor="#ff2626" // 반려 사유 모달은 빨간색 제목
+      titleColor="#ff2626"
       buttons={["닫기"]}
     />
   );

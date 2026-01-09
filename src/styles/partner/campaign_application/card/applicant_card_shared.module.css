@@ -17,7 +17,6 @@
 .applicant_card {
   border-radius: 0;
   border: 1px solid #d9d9d9;
-  border-bottom: 1px solid #d9d9d9;
   border-radius: 8px;
   padding: 16px;
   display: flex;
@@ -26,7 +25,7 @@
   background: white;
 
   /* 카드 최소 높이! */
-  /* max-height: 396px; */
+
   height: fit-content;
 }
 
@@ -37,7 +36,7 @@
 }
 /* 선정탭 카드 스타일 -- 선정탭에만 있음 */
 .selected_card {
-  border: 1px solid #444;
+  border: 1px solid #ff5694;
 }
 
 /* 선정탭 - 인플루언서 카드 스타일 -- 선정탭에만 있음 */
@@ -132,6 +131,14 @@
   letter-spacing: -0.28px;
   text-decoration: none;
   cursor: pointer;
+
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
 }
 
 /* 회원 타입 */
@@ -288,8 +295,8 @@
 
 /* 선택 취소 버튼 */
 .cancel_button {
-  background: #444;
-  border: 1px solid #444;
+  background: #ff5694;
+  border: 1px solid #ff5694;
   color: #fff;
 }
 

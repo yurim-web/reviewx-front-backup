@@ -291,7 +291,11 @@ export default function PhoneVerification({
 
     return (
       <>
-        <FormField label="휴대폰 번호" htmlFor="phone" required>
+        <FormField
+          label="휴대폰 번호"
+          htmlFor="phone"
+          required={!useMyPageStyle}
+        >
           <div className={phoneVerificationWrapperClass}>
             <div className={phoneInputWrapperClass}>
               <input

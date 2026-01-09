@@ -28,6 +28,7 @@ import { useRouter, usePathname } from "next/navigation";
 import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import { getChannelLogo } from "@/utils/channelLogoMap";
+import ChannelConnectModal from "@/components/user/mypage/ChannelConnectModal";
 import styles from "@/styles/user/mypage/edit_profile.module.css";
 import channelStyles from "@/styles/user/mypage/channel.module.css";
 
@@ -54,6 +55,12 @@ export default function ChannelConnectPage() {
     { name: "유튜브", status: "disconnected" },
   ]);
 
+  // 채널 연결 모달 상태
+  const [isChannelModalOpen, setIsChannelModalOpen] = useState(false);
+  const [selectedChannel, setSelectedChannel] = useState<ChannelInfo | null>(
+    null
+  );
+
   /**
    * 뒤로가기 시 모달 상태 복원
    *
@@ -77,30 +84,57 @@ export default function ChannelConnectPage() {
    *
    * 설명:
    * - 채널 연결 모달을 열거나 채널을 연결/수정합니다.
-   *
-   * TODO: 실제 채널 연결 모달 또는 API 연동 필요
    */
   const handleChannelClick = (channelName: string) => {
     const channel = channels.find((ch) => ch.name === channelName);
-
-    if (channel?.status === "connected") {
-      // 연결된 채널인 경우: 수정 모달 열기 또는 연결 해제
-      // TODO: 채널 수정 모달 또는 연결 해제 처리
-      console.log("채널 수정:", channelName);
-    } else {
-      // 연결되지 않은 채널인 경우: 연결 모달 열기
-      // TODO: 채널 연결 모달 열기
-      console.log("채널 연결:", channelName);
-
-      // 임시: 연결 처리 (실제로는 모달에서 URL 입력 후 연결)
-      // setChannels((prev) =>
-      //   prev.map((ch) =>
-      //     ch.name === channelName
-      //       ? { ...ch, url: "새로운 URL", status: "connected" }
-      //       : ch
-      //   )
-      // );
+    if (channel) {
+      setSelectedChannel(channel);
+      setIsChannelModalOpen(true);
     }
+  };
+
+  /**
+   * 채널 연결 완료 핸들러
+   *
+   * 설명:
+   * - 채널 연결 모달에서 연결이 완료되면 호출됩니다.
+   * - 채널 정보를 업데이트하고 sessionStorage에 저장합니다.
+   */
+  const handleChannelConnect = (accountInfo: { username: string; url: string }) => {
+    if (!selectedChannel) return;
+
+    // 채널 정보 업데이트
+    const updatedChannels = channels.map((ch) =>
+      ch.name === selectedChannel.name
+        ? {
+            ...ch,
+            url: accountInfo.url,
+            status: "connected" as const,
+          }
+        : ch
+    );
+    setChannels(updatedChannels);
+
+    // sessionStorage에 채널 정보 저장
+    // 캠페인 신청 모달에서 요구하는 채널 이름을 확인
+    const shouldOpenModal = sessionStorage.getItem("shouldOpenApplicationModal");
+    if (shouldOpenModal === "true") {
+      // 캠페인 신청 모달에서 온 경우에만 저장
+      // 채널 이름과 URL을 저장
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem(
+          "userChannelInfo",
+          JSON.stringify({
+            channelName: selectedChannel.name,
+            channelUrl: accountInfo.url,
+          })
+        );
+      }
+    }
+
+    // 모달 닫기
+    setIsChannelModalOpen(false);
+    setSelectedChannel(null);
   };
 
   /**
@@ -184,6 +218,21 @@ export default function ChannelConnectPage() {
           ))}
         </section>
       </main>
+
+      {/* 채널 연결 모달 */}
+      {selectedChannel && (
+        <ChannelConnectModal
+          isOpen={isChannelModalOpen}
+          onClose={() => {
+            setIsChannelModalOpen(false);
+            setSelectedChannel(null);
+          }}
+          channelName={selectedChannel.name}
+          channelIcon={getChannelIcon(selectedChannel.name)}
+          initialUrl={selectedChannel.url}
+          onConnect={handleChannelConnect}
+        />
+      )}
     </div>
   );
 }

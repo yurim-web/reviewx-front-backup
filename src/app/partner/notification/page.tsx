@@ -20,7 +20,7 @@
 
 import React from "react";
 import styles from "@/styles/user/notification/notification.module.css";
-import PartnerHeader from "@/components/fragments/PartnerHeader";
+import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import NotificationList from "@/components/notification/NotificationList";
 import PageTitle from "@/components/fragments/PageTitle";
 // 알림 목업 데이터 (향후 API로 대체)
@@ -56,8 +56,8 @@ export default function PartnerNotificationPage() {
 
   return (
     <div className={styles.notification_container}>
-      {/* 파트너 헤더 */}
-      <PartnerHeader />
+      {/* 파트너 전용 서브헤더 */}
+      <PartnerSubHeader />
 
       {/* 메인 콘텐츠 영역 */}
       <main className={styles.main_content}>

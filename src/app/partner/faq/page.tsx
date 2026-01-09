@@ -22,7 +22,7 @@
  */
 
 import FAQPageClient from "@/components/common/faq/FAQPageClient";
-import PartnerHeader from "@/components/fragments/PartnerHeader";
+import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 
 /**
  * 파트너 FAQ 페이지 컴포넌트
@@ -32,10 +32,9 @@ import PartnerHeader from "@/components/fragments/PartnerHeader";
 export default function PartnerFAQPage() {
   return (
     <FAQPageClient
-      header_component={<PartnerHeader />}
+      header_component={<PartnerSubHeader />}
       target="partner"
       detail_page_path="/partner/faq"
     />
   );
 }
-

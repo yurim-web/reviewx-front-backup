@@ -28,7 +28,7 @@
 import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import styles from "@/styles/fragments/partner_sub_header.module.css";
+import styles from "@/styles/fragments/header.module.css";
 import HeaderSearch from "@/components/fragments/HeaderSearch";
 import { mockPartnerNotifications } from "@/data/notification/notificationData";
 
@@ -122,7 +122,7 @@ export default function PartnerSubHeader() {
      * - styles.partner_sub_header: CSS 모듈에서 가져온 클래스명
      * - 고정 위치(position: fixed)로 상단에 고정
      */
-    <div className={styles.partner_sub_header}>
+    <div className={styles.gradient_bar}>
       <div className={styles.header_controls}>
         {/* 뒤로가기 버튼 */}
         {/* 📌 버튼 이벤트 핸들러:

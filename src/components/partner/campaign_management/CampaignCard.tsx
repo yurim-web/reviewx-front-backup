@@ -29,6 +29,7 @@ import BaseModal from "@/components/common/modal/BaseModal";
 import { getCampaignTypePath } from "./utils/campaign_card_helpers";
 import { useCampaignCard } from "@/hooks/partner/campaign_management/useCampaignCard";
 import { getButtonClassName } from "@/components/common/campaign_management/utils/button_style_utils";
+import { deleteCampaign, cancelCampaign } from "@/data/partner/sharedCampaigns";
 
 interface CampaignCardProps {
   campaign: PartnerCampaign;
@@ -201,74 +202,131 @@ export default function CampaignCard({
               {activeTab === "연장 요청" ||
               (campaignSubStatus &&
                 campaignSubStatus.includes("extension_request")) ? (
-                // 연장 요청 탭: 대기/확인/완료 수 표시
-                // ✅ 대기 = 대기 탭(waiting)에 있는 리뷰어 수
                 <>
-                  <span className={cardStyles.applicant_current}>
+                  {/* ======================================== */}
+                  {/* 연장 요청 탭: 대기/확인/완료 수 표시 */}
+                  {/* ✅ 대기 = 대기 탭(waiting)에 있는 리뷰어 수 */}
+                  {/* ======================================== */}
+                  <span
+                    className={cardStyles.applicant_current}
+                    style={{ color: "#848484" }}
+                  >
                     대기 {waitingCount}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
-                  <span className={cardStyles.applicant_current}>
+                  <span
+                    className={cardStyles.applicant_current}
+                    style={{ color: "#FF5694" }}
+                  >
                     확인 {reviewingCount}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
-                  <span className={cardStyles.applicant_total}>
+                  <span
+                    className={cardStyles.applicant_total}
+                    style={{ color: "#848484" }}
+                  >
                     완료 {completedCount}명
                   </span>
                 </>
-              ) : campaignStatus === "진행 중" ? (
-                // 진행 중인 캠페인: 대기/확인/완료 수 표시
+              ) : campaignStatus === "진행 중" || activeTab === "진행" ? (
                 <>
-                  <span className={cardStyles.applicant_current}>
+                  {/* ======================================== */}
+                  {/* 진행 중인 캠페인: 대기/확인/완료 수 표시 */}
+                  {/* ======================================== */}
+                  <span
+                    className={cardStyles.applicant_current}
+                    style={{ color: "#848484" }}
+                  >
                     대기 {waitingCount}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
-                  <span className={cardStyles.applicant_current}>
+                  <span
+                    className={cardStyles.applicant_current}
+                    style={{ color: "#FF5694" }}
+                  >
                     확인 {reviewingCount}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
-                  <span className={cardStyles.applicant_total}>
+                  <span
+                    className={cardStyles.applicant_total}
+                    style={{ color: "#848484" }}
+                  >
                     완료 {completedCount}명
                   </span>
                 </>
-              ) : campaignStatus === "종료" ? (
-                // 종료 캠페인: 대기/확인/완료 수 표시
+              ) : campaignStatus === "종료" || activeTab === "종료" ? (
                 <>
-                  <span className={cardStyles.applicant_current}>
+                  {/* ======================================== */}
+                  {/* 종료 캠페인: 대기/확인/완료 수 표시 */}
+                  {/* ======================================== */}
+                  <span
+                    className={cardStyles.applicant_current}
+                    style={{ color: "#848484" }}
+                  >
                     대기 {waitingCount}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
-                  <span className={cardStyles.applicant_current}>
+                  <span
+                    className={cardStyles.applicant_current}
+                    style={{ color: "#FF5694" }}
+                  >
                     확인 {reviewingCount}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
-                  <span className={cardStyles.applicant_total}>
+                  <span
+                    className={cardStyles.applicant_total}
+                    style={{ color: "#848484" }}
+                  >
                     완료 {completedCount}명
                   </span>
                 </>
-              ) : campaignStatus === "취소" ? (
-                // 취소 캠페인: 신청/모집/선정 수 표시
+              ) : campaignStatus === "취소" || activeTab === "취소" ? (
                 <>
-                  <span className={cardStyles.applicant_current}>
+                  {/* ======================================== */}
+                  {/* 취소 캠페인: 신청/모집/선정 수 표시 */}
+                  {/* ======================================== */}
+                  <span
+                    className={cardStyles.applicant_current}
+                    style={{ color: "#FF5694" }}
+                  >
                     신청 {campaign.applicants || 0}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
-                  <span className={cardStyles.applicant_current}>
+                  <span
+                    className={cardStyles.applicant_current}
+                    style={{ color: "#848484" }}
+                  >
                     모집 {campaign.recruits || 0}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
-                  <span className={cardStyles.applicant_total}>
+                  <span
+                    className={cardStyles.applicant_total}
+                    style={{ color: "#848484" }}
+                  >
                     선정 {campaign.selected || 0}명
                   </span>
                 </>
               ) : (
-                // 일반 캠페인: 신청/모집 수 표시
                 <>
-                  <span className={cardStyles.applicant_current}>
+                  {/* ======================================== */}
+                  {/* 일반 캠페인: 신청/모집 수 표시 */}
+                  {/* ======================================== */}
+                  <span
+                    className={cardStyles.applicant_current}
+                    style={{
+                      color:
+                        activeTab === "예정" || activeTab === "신청"
+                          ? "#FF5694"
+                          : "#848484",
+                    }}
+                  >
                     신청 {campaign.applicants || 0}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
-                  <span className={cardStyles.applicant_total}>
+                  <span
+                    className={cardStyles.applicant_total}
+                    style={{ color: "#848484" }}
+                  >
                     모집 {campaign.recruits || 0}명
                   </span>
                 </>
@@ -286,7 +344,9 @@ export default function CampaignCard({
 
       {/* 액션 버튼 영역 - Link 밖에 있어서 버튼 클릭 시 상세페이지로 이동하지 않음 */}
       <div className={cardStyles.campaign_actions}>
+        {/* ======================================== */}
         {/* 연장 요청 탭: 등록 기한 연장 요청 버튼만 표시 */}
+        {/* ======================================== */}
         {activeTab === "연장 요청" ||
         (campaignSubStatus &&
           campaignSubStatus.includes("extension_request")) ? (
@@ -297,23 +357,27 @@ export default function CampaignCard({
             {primaryButtonText}
           </button>
         ) : campaignSubStatus === "campaign_edit,campaign_delete" ? (
+          /* ======================================== */
           /* 예정 탭: 캠페인 삭제 + 캠페인 수정 */
+          /* ======================================== */
           <>
-            <button
-              className={`${buttonStyles.action_button} ${buttonStyles.danger_button}`}
-              onClick={() => handleButtonClick("캠페인 삭제")}
-            >
-              캠페인 삭제
-            </button>
             <button
               className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
               onClick={() => handleButtonClick("캠페인 수정")}
             >
               캠페인 수정
             </button>
+            <button
+              className={`${buttonStyles.action_button} ${buttonStyles.danger_button}`}
+              onClick={() => handleButtonClick("캠페인 삭제")}
+            >
+              캠페인 삭제
+            </button>
           </>
         ) : campaignSubStatus === "campaign_edit,applicant_management" ? (
+          /* ======================================== */
           /* 신청 탭: 캠페인 수정 + 신청 내역 확인하기 */
+          /* ======================================== */
           <>
             <button
               className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
@@ -329,10 +393,20 @@ export default function CampaignCard({
             </button>
           </>
         ) : isContentStage ? (
+          /* ======================================== */
           /* 종료 탭 또는 콘텐츠 단계: 콘텐츠 확인 + 콘텐츠 확인 완료 */
+          /* ======================================== */
           <>
+            {/* 📌 콘텐츠 확인 버튼 스타일:
+                - 진행 탭 또는 종료 탭일 때: 배경색 #ffffff, 테두리색 #FF5694, 글자색 #FF5694
+            */}
             <button
               className={`${buttonStyles.action_button} ${buttonStyles.secondary_button}`}
+              style={{
+                backgroundColor: "#ffffff",
+                borderColor: "#FF5694",
+                color: "#FF5694",
+              }}
               onClick={() => {
                 const campaignTypePath = getCampaignTypePath(
                   campaign.campaignType
@@ -358,6 +432,19 @@ export default function CampaignCard({
           /* 그 외의 경우: 상태에 맞는 1개 버튼 표시 (당첨자 선정, 패널티 내역 확인 등) */
           <button
             className={getButtonStyle()}
+            style={
+              /* 📌 당첨자 선정 버튼 스타일 (진행 탭일 때만):
+                  - 배경색 #FF5694, 글자색 #ffffff, 테두리색 #FF5694
+              */
+              primaryButtonText === "당첨자 선정" &&
+              (activeTab === "진행" || campaignStatus === "진행 중")
+                ? {
+                    backgroundColor: "#FF5694",
+                    color: "#ffffff",
+                    borderColor: "#FF5694",
+                  }
+                : undefined
+            }
             onClick={() => handleButtonClick(primaryButtonText)}
           >
             {primaryButtonText}
@@ -386,30 +473,61 @@ export default function CampaignCard({
       <BaseModal
         is_open={isDeleteModalOpen}
         on_close={closeDeleteModal}
-        message="캠페인을 삭제하시겠습니까?<br>이 작업은 되돌릴 수 없습니다."
+        message={
+          activeTab === "예정"
+            ? "정말로 이 캠페인을 취소하시겠습니까?<br>취소된 캠페인은 취소 탭으로 이동합니다."
+            : "캠페인을 삭제하시겠습니까?<br>이 작업은 되돌릴 수 없습니다."
+        }
         buttons={["취소", "확인"]}
         on_confirm={() => {
           /**
-           * 캠페인 삭제 확인 핸들러
+           * 캠페인 삭제/취소 확인 핸들러
            *
            * 설명:
-           * - 실제 프로덕션에서는 API를 통해 서버에서 캠페인을 삭제해야 합니다
-           * - 현재는 프론트엔드 개발을 위해 localStorage에서 삭제합니다
-           * - 삭제 후 페이지를 새로고침하여 목록을 업데이트합니다
+           * - 예정 탭에서 삭제할 때: 취소 탭으로 이동 (cancelCampaign 호출)
+           * - 그 외 탭에서 삭제할 때: 완전 삭제 (deleteCampaign 호출)
+           * - 실제 프로덕션에서는 API를 통해 서버에서 캠페인을 삭제/취소해야 합니다
+           * - 현재는 프론트엔드 개발을 위해 localStorage에서 처리합니다
+           * - 삭제/취소 후 페이지를 새로고침하여 목록을 업데이트합니다
            */
-          // TODO: 실제 API 연동 시 여기에 삭제 API 호출
           console.log(
-            `[CampaignCard] 캠페인 삭제 확인: ID=${campaign.id}, 제목=${campaign.title}`
+            `[CampaignCard] 캠페인 ${
+              activeTab === "예정" ? "취소" : "삭제"
+            } 확인: ID=${campaign.id}, 제목=${campaign.title}, 탭=${activeTab}`
           );
 
           // 모달 닫기
           closeDeleteModal();
 
-          // TODO: 실제 삭제 로직 구현
-          // const deleteSuccess = await deleteCampaignAPI(campaign.id);
-          // if (deleteSuccess) {
-          //   window.location.reload();
-          // }
+          // 예정 탭이면 취소 처리, 그 외는 삭제 처리
+          if (activeTab === "예정") {
+            // 예정 탭: 취소 탭으로 이동
+            const result = cancelCampaign(
+              String(campaign.id),
+              campaign.campaignType
+            );
+
+            if (result.success) {
+              window.location.reload();
+            } else if (result.error === "ALREADY_CANCELLED") {
+              alert("이미 취소된 캠페인입니다.");
+            } else {
+              alert("캠페인 취소에 실패했습니다. 다시 시도해주세요.");
+            }
+          } else {
+            // 그 외 탭: 완전 삭제
+            const deleteSuccess = deleteCampaign(
+              String(campaign.id),
+              campaign.campaignType
+            );
+
+            if (deleteSuccess) {
+              alert("캠페인이 삭제되었습니다.");
+              window.location.reload();
+            } else {
+              alert("캠페인 삭제에 실패했습니다. 다시 시도해주세요.");
+            }
+          }
         }}
       />
     </div>

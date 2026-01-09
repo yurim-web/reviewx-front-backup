@@ -20,7 +20,7 @@
 "use client";
 
 import { useRouter, useParams } from "next/navigation";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, type ReactNode } from "react";
 import styles from "@/styles/user/faq/faq_detail_page.module.css";
 import { posts_data } from "@/data/manager_ga/community/postsData";
 import { get_post_detail } from "@/data/manager_ga/community/postsData";
@@ -32,10 +32,12 @@ import {
 
 interface FAQDetailPageClientProps {
   target?: FAQTarget; // "user" | "partner" (기본값: "user")
+  header_component?: ReactNode; // 헤더 컴포넌트 (선택적, 없으면 기본 뒤로가기 버튼 사용)
 }
 
 export default function FAQDetailPageClient({
   target = "user",
+  header_component,
 }: FAQDetailPageClientProps) {
   const router = useRouter();
   const params = useParams();
@@ -86,22 +88,29 @@ export default function FAQDetailPageClient({
 
   return (
     <main className={styles.container}>
+      {/* 헤더 컴포넌트 (선택적) */}
+      {/* header_component가 있으면 사용하고, 없으면 기본 뒤로가기 버튼 사용 */}
+      {header_component}
+
       {/* 메인 콘텐츠 영역 */}
       <section className={styles.main_content}>
         {/* 상단 헤더 영역 (구분 제목 + 뒤로가기 버튼) */}
-        <div className={styles.page_header_wrapper}>
-          {/* 페이지 제목 (자주 묻는 질문 고정) */}
-          <h1 className={styles.division_title}>자주 묻는 질문</h1>
+        {/* header_component가 없을 때만 표시 */}
+        {!header_component && (
+          <div className={styles.page_header_wrapper}>
+            {/* 페이지 제목 (자주 묻는 질문 고정) */}
+            <h1 className={styles.division_title}>자주 묻는 질문</h1>
 
-          {/* 뒤로가기 버튼 */}
-          <button
-            className={styles.back_button}
-            onClick={handle_back_click}
-            aria-label="뒤로가기"
-          >
-            뒤로가기
-          </button>
-        </div>
+            {/* 뒤로가기 버튼 */}
+            <button
+              className={styles.back_button}
+              onClick={handle_back_click}
+              aria-label="뒤로가기"
+            >
+              뒤로가기
+            </button>
+          </div>
+        )}
 
         {/* FAQ 상세 카드 */}
         <div className={styles.faq_card} aria-label="FAQ 상세 정보">

@@ -174,23 +174,34 @@ export default function CampaignDetailPage({
     isUrgent: campaign.isUrgent,
   };
 
-  // 파트너 여부 확인 (document.referrer 확인)
+  // 파트너 여부 확인 (sessionStorage와 document.referrer 모두 확인)
   // 파트너 페이지(/partner)에서 온 경우 파트너로 판단
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // document.referrer 확인: 파트너 페이지에서 온 경우
-    const referrer = document.referrer;
-    if (referrer && referrer.includes("/partner")) {
+    // 1순위: sessionStorage에서 headerContext 확인 (ConditionalHeader에서 저장한 값)
+    const savedContext = sessionStorage.getItem("headerContext");
+    if (savedContext === "partner") {
       setIsPartner(true);
       return;
     }
 
-    // URL 쿼리 파라미터 확인 (추가 확인 방법)
+    // 2순위: document.referrer 확인: 파트너 페이지에서 온 경우
+    const referrer = document.referrer;
+    if (referrer && referrer.includes("/partner")) {
+      setIsPartner(true);
+      // sessionStorage에도 저장하여 다음에도 사용
+      sessionStorage.setItem("headerContext", "partner");
+      return;
+    }
+
+    // 3순위: URL 쿼리 파라미터 확인 (추가 확인 방법)
     const urlParams = new URLSearchParams(window.location.search);
     const userType = urlParams.get("user");
     if (userType === "partner") {
       setIsPartner(true);
+      // sessionStorage에도 저장하여 다음에도 사용
+      sessionStorage.setItem("headerContext", "partner");
       return;
     }
 

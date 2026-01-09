@@ -73,25 +73,35 @@ export default function InstagramSelectedCard({
   const channel_icon_src = getChannelLogo("인스타그램");
 
   return (
-    <article className={`${styles.applicant_card} ${styles.selected_card}`}>
+    <article
+      className={`${styles.applicant_card} ${styles.selected_card} ${
+        applicant.userType === "인플루언서"
+          ? styles.selected_card_influencer
+          : ""
+      }`}
+    >
       {/* 프로필 영역: 프로필 이미지, 닉네임, 사용자 타입 */}
       <div className={styles.profile_section}>
         <div className={styles.profile_image_container}>
-          {applicant.profileImage ? (
-            <img
-              src={applicant.profileImage}
-              alt="프로필"
-              className={styles.profile_image}
-            />
-          ) : (
-            <div className={styles.profile_placeholder}></div>
-          )}
+          <img
+            src={applicant.profileImage || "/images/mypage/profile.svg"}
+            alt="프로필"
+            className={styles.profile_image}
+          />
         </div>
         <div className={styles.profile_info}>
           {/* 사용자 타입 표시 (리뷰어 / 인플루언서) */}
           <span className={styles.user_type}>{applicant.userType}</span>
-          {/* 닉네임 표시 */}
-          <span className={styles.nickname}>{applicant.nickname}</span>
+          {/* 닉네임 표시 - 인플루언서일 때 특별한 스타일 적용 */}
+          <span
+            className={`${styles.nickname} ${
+              applicant.userType === "인플루언서"
+                ? styles.influencer_nickname
+                : ""
+            }`}
+          >
+            {applicant.nickname}
+          </span>
         </div>
       </div>
 
@@ -149,11 +159,15 @@ export default function InstagramSelectedCard({
         {/* 
           📌 선택 취소 버튼:
           - 선정된 상태를 해제할 수 있는 버튼
-          - 회색 배경으로 취소 액션임을 표시
+          - 인플루언서일 때는 초록색 버튼, 일반일 때는 회색 배경
           - 클릭 시 onCancel 핸들러 호출
         */}
         <button
-          className={`${styles.action_button} ${styles.cancel_button}`}
+          className={`${styles.action_button} ${
+            applicant.userType === "인플루언서"
+              ? styles.influencer_cancel_button
+              : styles.cancel_button
+          }`}
           onClick={() => onCancel(applicant.id)}
           aria-label={`${applicant.nickname} 신청자 선택 취소`}
         >

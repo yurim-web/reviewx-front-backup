@@ -70,8 +70,8 @@
 
 /* ✅ 활성화된 탭 버튼 스타일 (page.tsx 118, 126번째 줄에서 tab_button에 추가) */
 .tab_active {
-  border-color: #444444;
-  color: #444444;
+  border-color: #ff5694;
+  color: #ff5694;
 }
 
 /* ✅ 무통장 입금 전체 섹션 (page.tsx 135번째 줄 <section>) */
@@ -247,7 +247,7 @@
 .submit_button {
   width: 100%;
   height: 56px;
-  background-color: #555555;
+  background-color: #ff5694;
   border-radius: 8px;
   border: none;
   cursor: pointer;
@@ -255,7 +255,7 @@
   font-weight: 500;
   line-height: 16px;
   letter-spacing: -0.32px;
-  color: white;
+  color: #ffffff;
 }
 
 /* ✅ 비활성화된 신청 버튼 - 금액 미입력 또는 약관 미동의 시 */
@@ -365,4 +365,3 @@
 .notice_section {
   padding-top: 20px;
 }
-

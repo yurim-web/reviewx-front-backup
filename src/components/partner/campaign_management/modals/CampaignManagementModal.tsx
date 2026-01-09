@@ -170,17 +170,24 @@ export default function CampaignManagementModal({
   /**
    * 캠페인 삭제 버튼 클릭 핸들러
    *
-   * 사용자에게 삭제 확인을 받은 후 삭제를 진행합니다.
-   * confirm() 함수는 브라우저의 기본 확인 다이얼로그를 표시합니다.
+   * 설명:
+   * - 예정 탭에서 삭제할 때: 취소 탭으로 이동 (cancelCampaign 호출)
+   * - 그 외 탭에서 삭제할 때: 완전 삭제 (deleteCampaign 호출)
+   * - 사용자에게 삭제 확인을 받은 후 삭제를 진행합니다.
+   * - confirm() 함수는 브라우저의 기본 확인 다이얼로그를 표시합니다.
    */
   const handleDeleteClick = () => {
+    // 예정 탭인지 확인
+    const isScheduledTab = activeTab === "예정";
+
     // 사용자에게 삭제 확인 받기
-    const isConfirmed = confirm(
-      "정말로 이 캠페인을 삭제하시겠습니까?\n삭제된 캠페인은 복구할 수 없습니다."
-    );
+    const confirmMessage = isScheduledTab
+      ? "정말로 이 캠페인을 취소하시겠습니까?\n취소된 캠페인은 취소 탭으로 이동합니다."
+      : "정말로 이 캠페인을 삭제하시겠습니까?\n삭제된 캠페인은 복구할 수 없습니다.";
+
+    const isConfirmed = confirm(confirmMessage);
 
     if (isConfirmed && campaignId && campaignType) {
-      // 캠페인 삭제 함수 호출
       const campaignIdString = String(campaignId);
       const campaignTypeStr = campaignType as
         | "배송형"
@@ -189,25 +196,63 @@ export default function CampaignManagementModal({
         | "기자단"
         | "미션형";
 
-      console.log(
-        `[CampaignManagementModal] 캠페인 삭제 시도: ID=${campaignIdString}, 타입=${campaignTypeStr}, 제목=${campaignTitle}`
-      );
+      // 예정 탭이면 취소 처리, 그 외는 삭제 처리
+      if (isScheduledTab) {
+        // 예정 탭: 취소 탭으로 이동
+        console.log(
+          `[CampaignManagementModal] 캠페인 취소 시도 (예정 탭): ID=${campaignIdString}, 타입=${campaignTypeStr}, 제목=${campaignTitle}`
+        );
 
-      const deleteSuccess = deleteCampaign(campaignIdString, campaignTypeStr);
+        try {
+          const result = cancelCampaign(campaignIdString, campaignTypeStr);
 
-      console.log(
-        `[CampaignManagementModal] 삭제 결과: ${
-          deleteSuccess ? "성공" : "실패"
-        }`
-      );
+          console.log(
+            `[CampaignManagementModal] 취소 결과: ${
+              result.success ? "성공" : "실패"
+            }, 오류=${result.error || "없음"}`
+          );
 
-      if (deleteSuccess) {
-        alert("캠페인이 삭제되었습니다.");
-        onClose(); // 모달 닫기
-        // 페이지 새로고침하여 업데이트된 캠페인 목록 표시
-        window.location.reload();
+          if (result.success) {
+            onClose(); // 모달 닫기
+            // 페이지 새로고침하여 업데이트된 캠페인 목록 표시
+            window.location.reload();
+          } else if (result.error === "ALREADY_CANCELLED") {
+            // 이미 취소된 캠페인: 이미 취소된 상태 모달 표시
+            setIsAlreadyCancelledModalOpen(true);
+          } else {
+            // 서버 오류: 서버 오류 모달 표시
+            setIsErrorModalOpen(true);
+          }
+        } catch (error) {
+          // 예상치 못한 오류: 서버 오류 모달 표시
+          console.error(
+            "[CampaignManagementModal] 캠페인 취소 중 예외 발생:",
+            error
+          );
+          setIsErrorModalOpen(true);
+        }
       } else {
-        alert("캠페인 삭제에 실패했습니다. 다시 시도해주세요.");
+        // 그 외 탭: 완전 삭제
+        console.log(
+          `[CampaignManagementModal] 캠페인 삭제 시도: ID=${campaignIdString}, 타입=${campaignTypeStr}, 제목=${campaignTitle}`
+        );
+
+        const deleteSuccess = deleteCampaign(campaignIdString, campaignTypeStr);
+
+        console.log(
+          `[CampaignManagementModal] 삭제 결과: ${
+            deleteSuccess ? "성공" : "실패"
+          }`
+        );
+
+        if (deleteSuccess) {
+          alert("캠페인이 삭제되었습니다.");
+          onClose(); // 모달 닫기
+          // 페이지 새로고침하여 업데이트된 캠페인 목록 표시
+          window.location.reload();
+        } else {
+          alert("캠페인 삭제에 실패했습니다. 다시 시도해주세요.");
+        }
       }
     }
     // 취소를 선택한 경우에는 아무 동작도 하지 않음 (모달 유지)

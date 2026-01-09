@@ -47,7 +47,10 @@ export default function PartnerHeader() {
           <HeaderSearch search_path="/partner/search" />
 
           {/* 알림페이지로 연결 */}
-          <Link href="/partner/notification">
+          <Link
+            href="/partner/notification"
+            className={styles.notification_icon}
+          >
             <img src={notification_icon_src} alt="notification" />
           </Link>
 
@@ -56,12 +59,16 @@ export default function PartnerHeader() {
             href="https://markx.dev/guide_book"
             target="_blank"
             rel="noopener noreferrer"
+            className={styles.bookmark_icon}
           >
             <img src="/images/header/header_book.svg" alt="book" />
           </a>
 
           {/* 마이페이지로 연결 */}
-          <Link href="/partner/campaign_management">
+          <Link
+            href="/partner/campaign_management"
+            className={styles.user_icon}
+          >
             <img src="/images/header/header_user.svg" alt="user" />
           </Link>
         </div>

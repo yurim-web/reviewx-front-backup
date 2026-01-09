@@ -82,15 +82,11 @@ export default function NaverBlogReviewCard({
       {/* 프로필 영역: 프로필 이미지, 닉네임, 사용자 타입 */}
       <div className={styles.profile_section}>
         <div className={styles.profile_image_container}>
-          {applicant.profileImage ? (
-            <img
-              src={applicant.profileImage}
-              alt="프로필"
-              className={styles.profile_image}
-            />
-          ) : (
-            <div className={styles.profile_placeholder}></div>
-          )}
+          <img
+            src={applicant.profileImage || "/images/mypage/profile.svg"}
+            alt="프로필"
+            className={styles.profile_image}
+          />
         </div>
         <div className={styles.profile_info}>
           {/* 사용자 타입 표시 (리뷰어 / 인플루언서) */}

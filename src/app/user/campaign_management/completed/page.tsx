@@ -46,8 +46,10 @@ export default function CompletedPage() {
     CampaignApplication[]
   >([]);
 
-  // 탭별 캠페인 목록 가져오기
-  const campaigns = getCampaignsByTab(activeStatTab);
+  // 캠페인 목록 상태 (초기값은 정적 데이터만 사용하여 hydration 오류 방지)
+  const [campaigns, setCampaigns] = useState<CampaignApplication[]>(() => {
+    return getCampaignsByTab(activeStatTab);
+  });
 
   /**
    * 필터링된 캠페인 목록 변경 핸들러
@@ -66,10 +68,24 @@ export default function CompletedPage() {
    * 설명:
    * - 탭이 변경되면 새로운 캠페인 목록을 가져옵니다.
    * - 필터 바에 새로운 캠페인 목록을 전달합니다.
+   * - 클라이언트에서는 localStorage를 고려한 데이터를 사용합니다.
    */
   useEffect(() => {
-    const newCampaigns = getCampaignsByTab(activeStatTab);
-    // 필터 바가 자동으로 필터링하여 결과를 반환합니다.
+    // localStorage에서 완료된 캠페인 ID 가져오기 (클라이언트에서만)
+    const getCompletedCampaignIds = (): string[] => {
+      if (typeof window === "undefined") return [];
+      try {
+        const completed = localStorage.getItem("completedCampaignIds");
+        return completed ? JSON.parse(completed) : [];
+      } catch (error) {
+        console.error("Failed to get completed campaign IDs:", error);
+        return [];
+      }
+    };
+
+    const completedCampaignIds = getCompletedCampaignIds();
+    const newCampaigns = getCampaignsByTab(activeStatTab, completedCampaignIds);
+    setCampaigns(newCampaigns);
   }, [activeStatTab]);
 
   return (

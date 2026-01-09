@@ -12,9 +12,11 @@
  *
  * 사용 컴포넌트:
  * - FAQDetailPageClient (공통 컴포넌트)
+ * - PartnerSubHeader (파트너 전용 서브헤더)
  */
 
 import FAQDetailPageClient from "@/components/common/faq/FAQDetailPageClient";
+import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 
 /**
  * 파트너 FAQ 상세 페이지 컴포넌트
@@ -22,6 +24,10 @@ import FAQDetailPageClient from "@/components/common/faq/FAQDetailPageClient";
  * @returns 파트너 FAQ 상세 페이지 JSX 요소
  */
 export default function PartnerFAQDetailPage() {
-  return <FAQDetailPageClient target="partner" />;
+  return (
+    <FAQDetailPageClient
+      target="partner"
+      header_component={<PartnerSubHeader />}
+    />
+  );
 }
-

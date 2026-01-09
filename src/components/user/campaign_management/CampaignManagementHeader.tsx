@@ -24,12 +24,16 @@
 
 "use client";
 
+import { useState, useEffect } from "react";
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 import StatisticsTab from "@/components/user/campaign_management/StatisticsTab";
 import type { MainTab } from "@/types/user/user";
 
 // 임시 데이터 import
-import { campaignManagementStats } from "@/data/user/campaign_management/campaignManagementData";
+import {
+  campaignManagementStats,
+  getClientCampaignStats,
+} from "@/data/user/campaign_management/campaignManagementData";
 
 interface CampaignManagementHeaderProps {
   /** 현재 활성 메인 탭 (캠페인/포인트/계정) */
@@ -67,8 +71,22 @@ export default function CampaignManagementHeader({
   setActiveStatTab,
   stats: propStats,
 }: CampaignManagementHeaderProps) {
-  // 통계 정보: prop으로 전달된 것이 있으면 사용, 없으면 기본 데이터 사용
-  const stats = propStats ?? campaignManagementStats;
+  // 통계 상태 관리 (hydration 오류 방지를 위해 초기값은 정적 데이터 사용)
+  const [stats, setStats] = useState(
+    propStats ?? campaignManagementStats
+  );
+
+  // 클라이언트에서만 localStorage를 고려한 통계로 업데이트
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // prop으로 전달된 통계가 있으면 업데이트하지 않음
+    if (propStats) return;
+
+    // localStorage를 고려한 통계 계산
+    const clientStats = getClientCampaignStats();
+    setStats(clientStats);
+  }, [propStats]);
 
   return (
     <>

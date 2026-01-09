@@ -13,7 +13,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import SubHeader from "@/components/fragments/SubHeader";
+import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import styles from "../../../../styles/user/mypage/edit_profile.module.css";
 import ProfilePhotoUpload from "@/components/common/mypage/ProfilePhotoUpload";
@@ -221,7 +221,7 @@ export default function PartnerEditProfilePage() {
 
   return (
     <div className={styles.edit_profile_container}>
-      <SubHeader />
+      <PartnerSubHeader />
       <main className={styles.main_content}>
         <PageTitle title="내 정보 수정" />
 

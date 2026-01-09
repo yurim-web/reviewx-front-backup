@@ -8,13 +8,18 @@
  * 목적: 사용자가 콘텐츠 링크를 등록하거나 수정할 수 있는 모달입니다.
  *
  * 사용 위치:
- * 1. 선정 탭 > 배송형, 방문형, 기자단 캠페인
- *    - "콘텐츠 등록하기" 버튼 클릭 시 (등록 모드)
- *    - "콘텐츠 수정하기" 버튼 클릭 시 (수정 모드)
- *    - SelectedTabCard 컴포넌트에서 사용
+ * 1. 선정 탭
+ *    - 배송형, 방문형, 기자단 캠페인
+ *      - "콘텐츠 등록하기" 버튼 클릭 시 (등록 모드)
+ *      - "콘텐츠 수정하기" 버튼 클릭 시 (수정 모드)
+ *    - 미션형 캠페인 (contentType === "link"인 경우)
+ *      - "콘텐츠 등록" 버튼 클릭 시 (등록 모드)
+ *      - "콘텐츠 수정" 버튼 클릭 시 (수정 모드)
+ *    - SelectedTabModals 컴포넌트에서 사용
  *
- * 2. 취소/반려 탭 > 배송형, 방문형, 기자단 캠페인
- *    - "콘텐츠 재등록하기" 버튼 클릭 시 (등록 모드)
+ * 2. 취소/반려 탭
+ *    - 배송형, 방문형, 기자단 캠페인
+ *      - "콘텐츠 재등록하기" 버튼 클릭 시 (등록 모드)
  *    - RejectedTabCard 컴포넌트에서 사용
  *
  * 모달 구성:
@@ -32,9 +37,9 @@
  *   (URL 형식이 올바르지 않을 때)
  *
  * 다른 모달과의 차이점:
- * - ContentRegistrationModal: 링크만 입력 (배송형, 방문형, 기자단)
- * - ImageUploadModal: 이미지만 업로드 (구매평)
- * - CombinedContentModal: 링크 + 이미지 모두 지원 (미션형)
+ * - ContentRegistrationModal: 링크만 입력 (배송형, 방문형, 기자단, 미션형-링크만)
+ * - ImageUploadModal: 이미지만 업로드 (구매평, 미션형-이미지만)
+ * - CombinedContentModal: 링크 + 이미지 모두 지원 (미션형-링크+이미지)
  * - ReceiptRegistrationModal: 구매 영수증 이미지 업로드 (미션형, 구매평)
  */
 
@@ -43,7 +48,15 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import BaseModal from "@/components/common/modal/BaseModal";
-import styles from "../../../../styles/user/campaign_management/modals/content_registration.module.css";
+import ContentVerificationModal from "./content_verification/ContentVerificationModal";
+import styles from "../../../../styles/user/campaign_management/modals/campaign_modal_common.module.css";
+import type { CampaignType } from "@/types/user/user";
+
+/**
+ * 설명:
+ * - styles: 통합된 캠페인 모달 스타일 (모든 모달이 공통으로 사용)
+ * - 모든 모달 스타일이 campaign_modal_common.module.css에 통합되어 있습니다.
+ */
 
 interface ContentRegistrationModalProps {
   isOpen: boolean;
@@ -53,6 +66,12 @@ interface ContentRegistrationModalProps {
   mode?: "register" | "edit";
   /** 수정 모드일 때 기존에 등록된 콘텐츠 링크 */
   existingLink?: string;
+  /** 캠페인 ID (콘텐츠 확인 모달에서 requirements를 가져오기 위해 필요) */
+  campaignId?: string;
+  /** 캠페인 타입 (콘텐츠 확인 모달에서 requirements를 가져오기 위해 필요) */
+  campaignType?: CampaignType;
+  /** 콘텐츠 등록 성공 시 호출되는 콜백 (등록 모드일 때만 호출) */
+  onContentRegistered?: (campaignId?: string) => void;
 }
 
 export default function ContentRegistrationModal({
@@ -61,9 +80,24 @@ export default function ContentRegistrationModal({
   campaignTitle,
   mode = "register",
   existingLink = "",
+  campaignId,
+  campaignType,
+  onContentRegistered,
 }: ContentRegistrationModalProps) {
   const [linkUrl, setLinkUrl] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // 콘텐츠 확인 모달 상태 관리
+  const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
+
+  // 성공 모달 상태 관리
+  const [successModal, setSuccessModal] = useState<{
+    isOpen: boolean;
+    message: string;
+  }>({
+    isOpen: false,
+    message: "",
+  });
 
   // 오류 모달 상태 관리
   const [errorModal, setErrorModal] = useState<{
@@ -94,7 +128,7 @@ export default function ContentRegistrationModal({
     }
   }, [isOpen, mode, existingLink]);
 
-  if (!isOpen) return null;
+  // 메인 모달은 조건부 렌더링으로 변경 (확인 모달은 항상 렌더링 가능하도록)
 
   // 링크 입력 핸들러
   const handleLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,14 +148,14 @@ export default function ContentRegistrationModal({
   };
 
   /**
-   * 콘텐츠 등록/수정 완료
+   * 등록/수정 버튼 클릭 핸들러
    *
    * 설명:
-   * - mode에 따라 등록 또는 수정 API를 호출합니다.
-   * - 등록 모드: 새로운 콘텐츠를 등록합니다.
-   * - 수정 모드: 기존 콘텐츠를 수정합니다.
+   * - 등록/수정 버튼을 누르면 먼저 입력값을 검증합니다.
+   * - 검증이 통과하면 콘텐츠 확인 모달을 엽니다.
+   * - 실제 등록/수정 처리는 콘텐츠 확인 모달에서 제출을 눌렀을 때 이루어집니다.
    */
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!linkUrl.trim()) {
       setErrorModal({
         isOpen: true,
@@ -141,6 +175,18 @@ export default function ContentRegistrationModal({
       return;
     }
 
+    // 검증이 통과하면 콘텐츠 확인 모달 열기
+    setIsVerificationModalOpen(true);
+  };
+
+  /**
+   * 콘텐츠 확인 모달에서 제출 버튼을 눌렀을 때 실행되는 함수
+   *
+   * 설명:
+   * - 콘텐츠 확인 모달에서 제출을 누르면 실제 등록/수정 처리를 진행합니다.
+   * - 등록/수정이 완료되면 성공 모달을 표시하고 모든 모달을 닫고 입력값을 초기화합니다.
+   */
+  const handleConfirmVerification = async () => {
     setIsSubmitting(true);
 
     try {
@@ -148,18 +194,35 @@ export default function ContentRegistrationModal({
         // TODO: 실제 API 호출로 콘텐츠 수정
         // 예시: await updateContent(campaignId, linkUrl);
         console.log("콘텐츠 수정:", linkUrl);
-
-        // 성공 시 모달 닫기
+        // 콘텐츠 확인 모달 닫기
+        setIsVerificationModalOpen(false);
+        // 성공 모달 먼저 표시
+        setSuccessModal({
+          isOpen: true,
+          message: "콘텐츠가 수정되었습니다.",
+        });
+        // 메인 모달 닫기 (약간의 딜레이를 주어 성공 모달이 먼저 렌더링되도록)
+        setTimeout(() => {
+          onClose();
+        }, 0);
       } else {
         // TODO: 실제 API 호출로 콘텐츠 등록
         // 예시: await registerContent(campaignId, linkUrl);
         console.log("콘텐츠 등록:", linkUrl);
-
-        // 성공 시 모달 닫기
+        // 콘텐츠 확인 모달 닫기
+        setIsVerificationModalOpen(false);
+        // 성공 모달 먼저 표시
+        setSuccessModal({
+          isOpen: true,
+          message: "콘텐츠가 등록되었습니다.",
+        });
+        // 메인 모달 닫기 (약간의 딜레이를 주어 성공 모달이 먼저 렌더링되도록)
+        setTimeout(() => {
+          onClose();
+        }, 0);
       }
 
-      onClose();
-      setLinkUrl(""); // 입력창 초기화
+      // 입력값 초기화는 성공 모달을 닫을 때 수행
     } catch (error) {
       console.error(`콘텐츠 ${mode === "edit" ? "수정" : "등록"} 실패:`, error);
       alert(
@@ -174,60 +237,88 @@ export default function ContentRegistrationModal({
 
   return (
     <>
-      {/* 오류 모달 */}
+      {/* 성공 모달 */}
       <BaseModal
-        is_open={errorModal.isOpen}
-        on_close={handleCloseErrorModal}
-        message={errorModal.message}
-        buttons={["확인"]}
+        is_open={successModal.isOpen}
+        on_close={() => {
+          setSuccessModal({ isOpen: false, message: "" });
+          // 입력값 초기화
+          setLinkUrl("");
+          // 콘텐츠 등록 성공 콜백 호출 (등록 모드일 때만)
+          if (mode === "register" && onContentRegistered) {
+            onContentRegistered(campaignId);
+          }
+        }}
+        message={successModal.message}
+        buttons={["닫기"]}
         type="center"
       />
 
-      <div className={styles.modal_overlay} onClick={handleOverlayClick}>
-        <div className={styles.modal_container}>
-          {/* 모달 제목: mode에 따라 다르게 표시 */}
-          <h2 className={styles.modal_title}>
-            {mode === "edit" ? "콘텐츠 수정" : "콘텐츠 등록"}
-          </h2>
+      {/* 콘텐츠 확인 모달 - 항상 렌더링 (메인 모달이 닫혀있어도 확인 모달은 표시될 수 있음) */}
+      {isVerificationModalOpen && (
+        <ContentVerificationModal
+          isOpen={isVerificationModalOpen}
+          onClose={() => setIsVerificationModalOpen(false)}
+          campaignTitle={campaignTitle}
+          campaignId={campaignId}
+          campaignType={campaignType}
+          onConfirm={handleConfirmVerification}
+        />
+      )}
 
-          {/* 링크 섹션 */}
-          <div className={styles.link_section}>
-            <p className={styles.link_label}>링크</p>
-            <input
-              type="url"
-              className={styles.link_input}
-              placeholder="https://example.com"
-              value={linkUrl}
-              onChange={handleLinkChange}
-            />
+      {/* 메인 모달은 isOpen일 때만 렌더링 */}
+      {isOpen && (
+        <>
+          {/* 오류 모달 */}
+          <BaseModal
+            is_open={errorModal.isOpen}
+            on_close={handleCloseErrorModal}
+            message={errorModal.message}
+            buttons={["확인"]}
+            type="center"
+          />
+
+          <div className={styles.modal_overlay} onClick={handleOverlayClick}>
+            <div className={styles.modal_container}>
+              {/* 모달 제목: mode에 따라 다르게 표시 */}
+              <h2 className={styles.modal_title}>
+                {mode === "edit" ? "콘텐츠 수정" : "콘텐츠 등록"}
+              </h2>
+
+              {/* 링크 섹션 */}
+              <div className={styles.link_section}>
+                <p className={styles.link_label}>링크</p>
+                <input
+                  type="url"
+                  className={styles.link_input}
+                  placeholder="https://example.com"
+                  value={linkUrl}
+                  onChange={handleLinkChange}
+                />
+              </div>
+
+              {/* 등록/수정 버튼: mode에 따라 버튼 텍스트 변경 */}
+              <button
+                className={styles.submit_button}
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "등록 중..." : "등록"}
+              </button>
+
+              {/* 닫기 버튼 */}
+              <button className={styles.close_button} onClick={onClose}>
+                <Image
+                  src="/images/filter/x_icon.svg"
+                  alt="닫기"
+                  width={20}
+                  height={20}
+                />
+              </button>
+            </div>
           </div>
-
-          {/* 등록/수정 버튼: mode에 따라 버튼 텍스트 변경 */}
-          <button
-            className={styles.submit_button}
-            onClick={handleSubmit}
-            disabled={isSubmitting}
-          >
-            {isSubmitting
-              ? mode === "edit"
-                ? "수정 중..."
-                : "등록 중..."
-              : mode === "edit"
-              ? "수정"
-              : "등록"}
-          </button>
-
-          {/* 닫기 버튼 */}
-          <button className={styles.close_button} onClick={onClose}>
-            <Image
-              src="/images/filter/x_icon.svg"
-              alt="닫기"
-              width={20}
-              height={20}
-            />
-          </button>
-        </div>
-      </div>
+        </>
+      )}
     </>
   );
 }

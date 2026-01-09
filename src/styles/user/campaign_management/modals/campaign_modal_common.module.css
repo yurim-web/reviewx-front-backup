@@ -1,0 +1,450 @@
+/* ========================================
+   📦 캠페인 모달 공통 스타일 (유저용) - 통합 버전
+   ======================================== */
+
+/**
+ * 캠페인 모달 통합 스타일 모듈
+ *
+ * 목적: 캠페인 관리 페이지의 모든 모달에서 사용하는 스타일을 하나의 파일에 통합하여 관리합니다.
+ *
+ * 사용 컴포넌트:
+ * - ContentRegistrationModal: 콘텐츠 등록 모달 (링크 입력)
+ * - ImageUploadModal: 이미지 업로드 콘텐츠 등록 모달
+ * - CombinedContentModal: 통합 콘텐츠 등록 모달 (링크 + 이미지)
+ * - ReceiptRegistrationModal: 구매 영수증 등록 모달
+ *
+ * 색상 통일 기준: 구매 영수증 모달의 색상을 기준으로 합니다.
+ * - 제출 버튼 활성화: background: #ff5694, color: #ffffff
+ * - 제출 버튼 비활성화: background: #e5e5e5, color: #848484
+ * - 모달 컨테이너 border-radius: 40px 40px 0 0
+ */
+
+/* ========================================
+   공통 모달 구조 스타일
+   ======================================== */
+
+/* 모달 오버레이 */
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* 모달 컨테이너 - 하단에서 올라오는 형태 */
+.modal_container {
+  background: white;
+  border-radius: 40px 40px 0 0;
+  width: 100%;
+  max-width: 1000px;
+  padding: 40px;
+  position: relative;
+  box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* 모달 제목 */
+.modal_title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #444;
+  padding-bottom: 24px;
+  text-align: left;
+}
+
+/* 닫기 버튼 */
+.close_button {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 등록/제출 버튼 */
+.submit_button {
+  width: 100%;
+  max-width: 920px;
+  background: #ff5694;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  margin: 0 auto;
+  margin-top: 12px;
+  border-radius: 8px;
+
+  /* 버튼 속 글자 스타일 */
+  padding: 20px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 제출 버튼 비활성화일 때 */
+.submit_button:disabled {
+  background: #e5e5e5;
+  color: #848484;
+  cursor: default;
+}
+
+/* ========================================
+   링크 섹션 스타일 (ContentRegistrationModal, CombinedContentModal)
+   ======================================== */
+
+/* 링크 섹션 */
+.link_section {
+  padding-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.link_label {
+  color: #444;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  padding-bottom: 12px;
+}
+
+.link_input {
+  width: 100%;
+  background: white;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 16px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #444;
+  transition: border-color 0.2s;
+  min-height: 56px;
+  box-sizing: border-box;
+}
+
+.link_input:focus {
+  outline: none;
+  border-color: #666;
+}
+
+.link_input::placeholder {
+  color: #999;
+}
+
+/* ========================================
+   이미지 섹션 스타일 (ImageUploadModal, CombinedContentModal, ReceiptRegistrationModal)
+   ======================================== */
+
+/* 이미지 라벨 */
+.image_label {
+  color: #444;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  padding-bottom: 12px;
+}
+
+/* 이미지 섹션 */
+.image_section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 12px;
+}
+
+/* 이미지 업로드 섹션 (ReceiptRegistrationModal 전용) */
+.upload_section {
+  padding-bottom: 16px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.image_upload_area {
+  background: #f2f2f2;
+  border-radius: 8px;
+  padding: 32px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.upload_placeholder {
+  color: #999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 이미지 그리드 (flex 방식 - ImageUploadModal, CombinedContentModal) */
+.image_grid {
+  display: flex;
+  gap: 12px;
+  padding-bottom: 12px;
+}
+
+/* 이미지 그리드 (grid 방식 - ReceiptRegistrationModal) */
+.image_grid_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+/* 이미지 아이템 (ImageUploadModal, CombinedContentModal) */
+.image_item {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.uploaded_image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* 이미지 미리보기 (ReceiptRegistrationModal) */
+.image_preview {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f2f2f2;
+}
+
+.preview_image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 이미지 삭제 버튼 */
+.remove_button {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  cursor: pointer;
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.1));
+}
+
+/* 이미지 삭제 버튼 (ReceiptRegistrationModal) */
+.remove_image_button {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  cursor: pointer;
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.1));
+}
+
+/* 업로드 버튼 */
+.upload_button {
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: #f2f2f2;
+}
+
+.upload_icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 추가 버튼 (ReceiptRegistrationModal) */
+.add_more_button {
+  width: 120px;
+  height: 120px;
+  background: #f2f2f2;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* 플러스 아이콘 스타일 */
+.add_more_button img {
+  width: 56px;
+  height: 56px;
+}
+
+.plus_icon {
+  width: 56px;
+  height: 56px;
+}
+
+/* 업로드 안내 텍스트 */
+.upload_guide {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+  letter-spacing: -0.28px;
+}
+
+/* 숨겨진 파일 입력 */
+.hidden_file_input {
+  display: none;
+}
+
+/* ========================================
+   안내 문구 스타일 (ReceiptRegistrationModal)
+   ======================================== */
+
+/* 안내 문구 */
+.guidelines {
+  padding-bottom: 12px;
+}
+
+.guidelines_list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.guidelines_list li {
+  position: relative;
+  padding-left: 16px;
+
+  /* 안내 문구 글자 스타일 */
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+  letter-spacing: -0.28px;
+}
+
+.guidelines_list li:before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #848484;
+}
+
+/* ========================================
+   유틸리티 및 상태 스타일
+   ======================================== */
+
+/* 로딩 상태 */
+.upload_button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 모달 컨테이너 스크롤 스타일 (ImageUploadModal, CombinedContentModal) */
+.modal_container_scroll {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* 스크롤바 스타일링 */
+.modal_container::-webkit-scrollbar,
+.modal_container_scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal_container::-webkit-scrollbar-track,
+.modal_container_scroll::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.modal_container::-webkit-scrollbar-thumb,
+.modal_container_scroll::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.modal_container::-webkit-scrollbar-thumb:hover,
+.modal_container_scroll::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* ========================================
+   반응형 스타일
+   ======================================== */
+
+@media (max-width: 640px) {
+  .modal_container {
+    padding: 24px;
+    margin: 16px;
+    max-width: calc(100vw - 32px);
+  }
+
+  .modal_title {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+
+  .link_section,
+  .image_section {
+    margin-bottom: 24px;
+  }
+
+  .link_input {
+    height: 44px;
+    font-size: 15px;
+  }
+
+  .image_grid {
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 10px;
+  }
+
+  .image_item,
+  .upload_button,
+  .image_preview,
+  .add_more_button {
+    width: 70px;
+    height: 70px;
+  }
+
+  .upload_guide {
+    font-size: 13px;
+  }
+
+  .submit_button {
+    height: 44px;
+    font-size: 15px;
+  }
+}

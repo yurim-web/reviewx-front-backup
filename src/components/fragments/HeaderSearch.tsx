@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import {
   useState,
+  useEffect,
+  useRef,
   type ChangeEvent,
   type KeyboardEvent,
   type ReactElement,
@@ -38,6 +40,32 @@ export default function HeaderSearch({
 
   const [is_search_open, set_is_search_open] = useState(false);
   const [search_text, set_search_text] = useState("");
+  const searchBoxRef = useRef<HTMLDivElement>(null);
+
+  // 검색창 외부 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        is_search_open &&
+        searchBoxRef.current &&
+        !searchBoxRef.current.contains(event.target as Node)
+      ) {
+        set_is_search_open(false);
+        set_search_text("");
+      }
+    };
+
+    if (is_search_open) {
+      // 약간의 딜레이를 주어 현재 클릭 이벤트가 처리된 후 외부 클릭 감지
+      setTimeout(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+      }, 0);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [is_search_open]);
 
   const handle_click_search_toggle = () => {
     set_is_search_open((prev) => !prev);
@@ -61,7 +89,7 @@ export default function HeaderSearch({
     }
 
     set_search_text("");
-    set_is_search_open(false);
+    // 검색 후에도 검색창은 열린 상태로 유지
   };
 
   const handle_keydown_search = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -73,7 +101,7 @@ export default function HeaderSearch({
   return (
     <>
       {is_search_open ? (
-        <div className={styles.search_box}>
+        <div ref={searchBoxRef} className={styles.search_box}>
           <input
             type="text"
             className={styles.search_input}
@@ -81,6 +109,7 @@ export default function HeaderSearch({
             value={search_text}
             onChange={handle_change_search}
             onKeyDown={handle_keydown_search}
+            autoFocus
           />
           <button
             type="button"

@@ -23,7 +23,7 @@ import RangeCalendar, {
   type DateRange,
 } from "@/components/common/date_range_picker/RangeCalendar";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
-import styles from "./date_range_field.module.css";
+import styles from "@/styles/partner/campaign_create/date_range_field.module.css";
 
 /**
  * 날짜 범위 입력 필드 Props

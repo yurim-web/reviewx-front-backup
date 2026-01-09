@@ -131,12 +131,116 @@ function campaignToFormData(
     ? extended.points.toLocaleString("ko-KR")
     : "";
 
+  /**
+   * 지역 정보 파싱 함수
+   *
+   * 설명:
+   * - 저장된 region 값이 "서울 > 강남/서초" 형식일 경우 파싱하여 분리합니다.
+   * - "서울" → "서울특별시" (regions 배열의 전체 이름)
+   * - "강남/서초" → 첫 번째 값인 "강남"을 사용하고 "강남구"로 변환 (sub_regions 배열의 값)
+   *
+   * 반환값:
+   * - { region: "서울특별시", subRegion: "강남구" } 형식의 객체
+   */
+  const parseRegionData = (
+    regionString: string
+  ): {
+    region: string;
+    subRegion: string;
+  } => {
+    // 이미 분리된 경우 (campaign.campaignInfo에 region과 subRegion이 별도로 있는 경우)
+    // 타입 단언 사용: 실제 데이터에는 region과 subRegion이 있지만 타입 정의에 없을 수 있음
+    const campaignInfoWithRegion = info as typeof info & {
+      region?: string;
+      subRegion?: string;
+    };
+
+    if (campaignInfoWithRegion.region && campaignInfoWithRegion.subRegion) {
+      return {
+        region: campaignInfoWithRegion.region,
+        subRegion: campaignInfoWithRegion.subRegion,
+      };
+    }
+
+    // "서울 > 강남/서초" 형식 파싱
+    if (regionString && regionString.includes(" > ")) {
+      const parts = regionString.split(" > ").map((s) => s.trim());
+      if (parts.length >= 2) {
+        const regionShort = parts[0]; // "서울"
+        const subRegionPart = parts[1]; // "강남/서초" 또는 "강남구"
+
+        // 시/도 이름을 전체 이름으로 변환 (regions 배열 형식)
+        const regionMapping: Record<string, string> = {
+          서울: "서울특별시",
+          인천: "인천광역시",
+          경기: "경기도",
+          강원: "강원특별자치도",
+          대전: "대전광역시",
+          세종: "세종특별자치시",
+          충북: "충청북도",
+          충남: "충청남도",
+          전북: "전라북도",
+          전남: "전라남도",
+          광주: "광주광역시",
+          대구: "대구광역시",
+          경북: "경상북도",
+          경남: "경상남도",
+          부산: "부산광역시",
+          울산: "울산광역시",
+          제주: "제주특별자치도",
+        };
+
+        const fullRegionName = regionMapping[regionShort] || regionShort;
+
+        // 시/구/군 처리 ("강남/서초" → "강남" 추출 후 "강남구"로 변환)
+        let subRegionName = "";
+        if (subRegionPart.includes("/")) {
+          // "강남/서초" 형식인 경우 첫 번째 값 사용
+          const firstSubRegion = subRegionPart.split("/")[0].trim(); // "강남"
+          // "강남"을 "강남구"로 변환 (이미 "구"가 있으면 그대로 사용)
+          subRegionName =
+            firstSubRegion.endsWith("구") ||
+            firstSubRegion.endsWith("시") ||
+            firstSubRegion.endsWith("군")
+              ? firstSubRegion
+              : `${firstSubRegion}구`;
+        } else {
+          // 이미 완전한 이름인 경우 ("강남구", "서초구" 등)
+          subRegionName = subRegionPart;
+        }
+
+        return {
+          region: fullRegionName,
+          subRegion: subRegionName,
+        };
+      }
+    }
+
+    // 파싱 실패 시 빈 값 반환
+    return {
+      region: "",
+      subRegion: "",
+    };
+  };
+
+  // 지역 정보 파싱
+  // 타입 단언 사용: 실제 데이터에는 region이 있지만 타입 정의에 없을 수 있음
+  const campaignInfoWithRegion = info as typeof info & {
+    region?: string;
+    subRegion?: string;
+  };
+
+  const regionData = parseRegionData(
+    extended?.region || campaignInfoWithRegion.region || ""
+  );
+
   return {
     campaignType: info.campaignType as "방문형",
     platform: (platformName as any) || "네이버 블로그",
     title: info.title || "",
     category: extended?.subcategory || info.category || "기타",
-    region: extended?.region || "",
+    region: regionData.region,
+    subRegion: regionData.subRegion,
     brandName: extended?.brandName || extended?.channel || info.brandName || "",
     providedItems: extended?.description || "",
     visitLink: extended?.visitLink || "",

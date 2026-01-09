@@ -30,6 +30,10 @@ import styles from "@/styles/partner/campaign_application/campaign_application.m
 import SortFilterControl from "@/components/partner/campaign_application/SortFilterControl";
 import Campaignbanner from "@/components/partner/campaign_application/CampaignInfoBox";
 import EmptyApplicantsList from "@/components/partner/campaign_application/EmptyApplicantsList";
+import {
+  getCampaignDetailPath,
+  type CampaignType,
+} from "@/utils/getCampaignDetailPath";
 import type {
   CampaignWithApplicants,
   AllApplicant,
@@ -149,8 +153,21 @@ export default function CampaignProgressDetailLayout({
             <button
               className={styles.view_campaign_button}
               onClick={() => {
-                // TODO: 캠페인 상세 페이지로 이동하는 로직 구현
-                // 예: router.push(`/manager_ga/campaign/${campaign_id}`);
+                /**
+                 * 캠페인 상세 페이지로 이동하는 로직
+                 *
+                 * - 기존 TODO를 실제 구현으로 교체했습니다.
+                 * - 캠페인 타입(배송형/방문형/구매평/기자단/미션형)에 따라
+                 *   공통 상세 페이지 URL을 생성합니다.
+                 * - 관리자 종류(GA/SA)와 상관없이 동일한 상세 페이지로 이동합니다.
+                 */
+                const campaign_type =
+                  campaign_data.campaignInfo.campaignType as CampaignType;
+                const detail_path = getCampaignDetailPath(
+                  campaign_type,
+                  campaign_id
+                );
+                router.push(detail_path);
               }}
               aria-label="캠페인 보기"
             >

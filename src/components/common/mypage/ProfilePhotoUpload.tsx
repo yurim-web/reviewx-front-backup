@@ -118,13 +118,12 @@ export default function ProfilePhotoUpload({
               {profileImage ? (
                 <img src={profileImage} alt="프로필 사진" />
               ) : (
-                <div className={styles.default_avatar}>
-                  <div className={styles.emoji_dots}>
-                    <div className={styles.emoji_dot} />
-                    <div className={styles.emoji_dot} />
-                  </div>
-                  <div className={styles.emoji_mouth} />
-                </div>
+                // 기본 프로필 이미지 (공통 프로필 아이콘)
+                <img
+                  src="/images/mypage/profile.svg"
+                  alt="기본 프로필 이미지"
+                  className={styles.default_avatar}
+                />
               )}
               {isUploading && (
                 <div className={styles.upload_loading}>
@@ -152,10 +151,11 @@ export default function ProfilePhotoUpload({
                 title="프로필 사진 삭제"
               >
                 <Image
-                  src="/images/icons/close_x_small.svg"
+                  src="/images/mypage/profile_delete.svg"
                   alt="프로필 사진 삭제"
-                  width={12}
-                  height={12}
+                  width={24}
+                  height={24}
+                  unoptimized
                 />
               </div>
             )}

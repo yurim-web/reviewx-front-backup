@@ -28,7 +28,8 @@
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import styles from "@/styles/common/toast.module.css";
 
 interface ToastProps {
@@ -44,6 +45,14 @@ export default function Toast({
   onClose,
   duration = 2000,
 }: ToastProps) {
+  // 클라이언트 사이드에서만 Portal을 사용하기 위한 상태
+  const [isMounted, setIsMounted] = useState(false);
+
+  // 컴포넌트가 마운트된 후에만 Portal 사용 (SSR 대응)
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   // isOpen이 true가 되면 duration 시간 후 자동으로 닫기
   useEffect(() => {
     if (!isOpen) return;
@@ -58,14 +67,24 @@ export default function Toast({
     };
   }, [isOpen, duration, onClose]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !isMounted) return null;
 
-  return (
+  /**
+   * Portal을 사용하여 Toast를 body에 직접 렌더링
+   *
+   * 설명:
+   * - createPortal: React의 Portal API를 사용하여 컴포넌트를 다른 DOM 노드에 렌더링합니다.
+   * - document.body: Toast를 body 요소에 직접 렌더링하여 모달의 stacking context에 영향받지 않도록 합니다.
+   * - 이렇게 하면 Toast가 항상 최상위 레벨에 표시되어 모든 모달 위에 나타납니다.
+   * - isMounted 체크: Next.js의 SSR 환경에서 document가 없을 수 있으므로 클라이언트에서만 Portal을 사용합니다.
+   */
+  return createPortal(
     <div className={styles.toast}>
       {/* 체크마크 아이콘 */}
       <div className={styles.toast_icon}></div>
       {/* 메시지 텍스트 */}
       <span className={styles.toast_text}>{message}</span>
-    </div>
+    </div>,
+    document.body
   );
 }

@@ -191,16 +191,11 @@
   letter-spacing: -0.32px;
 
   cursor: pointer;
-  transition: background-color 0.2s ease;
 }
 
 /* 활성화된 버튼 스타일 */
 .connect_button:not(.disabled_button) {
-  background: #333333;
-}
-
-.connect_button:not(.disabled_button):hover {
-  background: #222222;
+  background: #ff5694;
 }
 
 /* 비활성화된 버튼 스타일 */

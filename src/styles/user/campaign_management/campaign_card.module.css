@@ -181,3 +181,26 @@
 
   padding-bottom: 8px;
 }
+
+/* 캠페인 카드 래퍼 (배지 위치 지정용) */
+.campaign_card_wrapper {
+  position: relative;
+}
+
+/* 우측 상단 시간 배지 */
+.time_badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+  
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: rgba(255, 86, 148, 0.10);
+  color: #FF5694;
+  
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}

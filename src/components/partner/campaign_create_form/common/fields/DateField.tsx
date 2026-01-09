@@ -25,7 +25,7 @@ import { useState, useRef, useEffect } from "react";
 import { format } from "date-fns";
 import SingleCalendar from "@/components/common/date_range_picker/SingleCalendar";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
-import styles from "./date_range_field.module.css";
+import styles from "@/styles/partner/campaign_create/date_range_field.module.css";
 
 /**
  * 단일 날짜 입력 필드 Props

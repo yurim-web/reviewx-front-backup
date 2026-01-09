@@ -323,7 +323,7 @@ export const visitCampaigns: VisitCampaignData[] = [
       applicationStart: "2025-11-15",
       applicationEnd: "2025-11-30",
       announcement: "2025-12-02",
-      purchasePeriod: "2025-12-05 ~ 2025-12-20",
+      purchasePeriod: "2025-12-05 ~ 2026-01-09",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
@@ -338,13 +338,7 @@ export const visitCampaigns: VisitCampaignData[] = [
     visitAddress: "서울특별시 용산구 이태원로 987",
     addressGuide: "이태원역 1번 출구에서 도보 8분, 한남동 힐탑빌딩 5층",
     visitLink: "https://naver.me/PQR987",
-    requirements: [
-      "text_3000",
-      "photo_10",
-      "video_120",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_3000", "photo_10", "video_120"],
   },
   // visit_8: 종료 탭
   {
@@ -407,7 +401,7 @@ export const visitCampaigns: VisitCampaignData[] = [
       applicationStart: "2025-11-20",
       applicationEnd: "2025-12-05",
       announcement: "2025-12-07",
-      purchasePeriod: "2025-12-08 ~ 2025-12-25",
+      purchasePeriod: "2025-12-08 ~ 2026-01-25",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
@@ -1589,7 +1583,23 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           registrationDate: "2025-12-31",
         },
       ],
-      selectedApplicants: [],
+      selectedApplicants: [
+        {
+          id: "sel_visit_9_유튜브_001",
+          Id: "selected_visit_9_001",
+          nickname: "놀이공원방문리뷰어A",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 180,
+          totalVisits: 540000,
+          neighbors: 1500,
+          memo: "놀이공원 방문 리뷰 전문 리뷰어입니다.",
+          selectionStatus: "선정하기" as const,
+          channel: "유튜브",
+          registrationDate: "2025-12-30",
+        },
+      ],
     },
     contents: {
       waiting: [

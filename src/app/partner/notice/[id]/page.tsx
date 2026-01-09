@@ -12,10 +12,22 @@
  *
  * 사용 컴포넌트:
  * - NoticeDetailPageClient (공통 컴포넌트)
+ * - PartnerSubHeader (파트너 전용 서브헤더)
  */
 
 import NoticeDetailPageClient from "@/components/common/notice/NoticeDetailPageClient";
+import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 
+/**
+ * 파트너 공지사항 상세 페이지 컴포넌트
+ *
+ * @returns 파트너 공지사항 상세 페이지 JSX 요소
+ */
 export default function PartnerNoticeDetailPage() {
-  return <NoticeDetailPageClient target="partner" />;
+  return (
+    <NoticeDetailPageClient
+      target="partner"
+      header_component={<PartnerSubHeader />}
+    />
+  );
 }

@@ -15,7 +15,7 @@
 
 import { useRouter, useParams } from "next/navigation";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, type ReactNode } from "react";
 
 import styles from "@/styles/user/notice/notice_detail_page.module.css";
 
@@ -29,10 +29,12 @@ import { get_post_detail } from "@/data/manager_ga/community/postsData";
 
 interface NoticeDetailPageClientProps {
   target?: NoticeTarget; // "user" | "partner" (기본값: "user")
+  header_component?: ReactNode; // 헤더 컴포넌트 (선택적, 없으면 기본 뒤로가기 버튼 사용)
 }
 
 export default function NoticeDetailPageClient({
   target = "user",
+  header_component,
 }: NoticeDetailPageClientProps) {
   const router = useRouter();
 
@@ -95,26 +97,29 @@ export default function NoticeDetailPageClient({
 
   return (
     <main className={styles.container}>
-      {/* 메인 콘텐츠 영역 */}
+      {/* 헤더 컴포넌트 (선택적) */}
+      {/* header_component가 있으면 사용하고, 없으면 기본 뒤로가기 버튼 사용 */}
+      {header_component}
 
+      {/* 메인 콘텐츠 영역 */}
       <section className={styles.main_content}>
         {/* 상단 헤더 영역 (구분 제목 + 뒤로가기 버튼) */}
+        {/* header_component가 없을 때만 표시 */}
+        {!header_component && (
+          <div className={styles.page_header_wrapper}>
+            {/* 페이지 제목 (공지사항 고정) */}
+            <h1 className={styles.division_title}>공지사항</h1>
 
-        <div className={styles.page_header_wrapper}>
-          {/* 페이지 제목 (공지사항 고정) */}
-
-          <h1 className={styles.division_title}>공지사항</h1>
-
-          {/* 뒤로가기 버튼 */}
-
-          <button
-            className={styles.back_button}
-            onClick={handle_back_click}
-            aria-label="뒤로가기"
-          >
-            뒤로가기
-          </button>
-        </div>
+            {/* 뒤로가기 버튼 */}
+            <button
+              className={styles.back_button}
+              onClick={handle_back_click}
+              aria-label="뒤로가기"
+            >
+              뒤로가기
+            </button>
+          </div>
+        )}
 
         {/* 공지사항 상세 카드 */}
 

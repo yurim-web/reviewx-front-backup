@@ -198,15 +198,11 @@ export default function PurchaseSecondInspectionCard({
         {/* 프로필 영역 */}
         <div className={styles.profile_section}>
           <div className={styles.profile_image_container}>
-            {applicant.profileImage ? (
-              <img
-                src={applicant.profileImage}
-                alt="프로필"
-                className={styles.profile_image}
-              />
-            ) : (
-              <div className={styles.profile_placeholder}></div>
-            )}
+            <img
+              src={applicant.profileImage || "/images/mypage/profile.svg"}
+              alt="프로필"
+              className={styles.profile_image}
+            />
           </div>
           <div className={styles.profile_info}>
             <span className={styles.user_type}>{applicant.userType}</span>
@@ -311,15 +307,20 @@ export default function PurchaseSecondInspectionCard({
       />
 
       {/* 연장 확인 모달 */}
+      {/* 📌 연장 버튼 클릭 시 표시되는 모달:
+          - 연장 횟수에 따라 다른 메시지 표시
+          - 첫 연장: "콘텐츠 등록 기간을 3일 연장하시겠습니까?"
+          - 두 번째 연장 (중복 연장): "이미 연장한 내역이 있습니다. 추가 연장은 이번 요청이 마지막입니다. 계속하시겠습니까?"
+      */}
       <BaseModal
         is_open={isExtensionConfirmModalOpen}
         on_close={() => setIsExtensionConfirmModalOpen(false)}
         message={
           extensionCount === 0
             ? '콘텐츠 등록 기간을<br><span style="color: #FF2626;">3일 연장</span>하시겠습니까?'
-            : '이미 연장한 내역이 있습니다.<br><span style="color: #FF2626;">3일 더 연장</span>하시겠습니까?'
+            : "이미 연장한 내역이 있습니다.<br>추가 연장은 이번 요청이 마지막입니다.<br>계속하시겠습니까?"
         }
-        buttons={["취소", "연장"]}
+        buttons={extensionCount === 0 ? ["취소", "연장"] : ["취소", "확인"]}
         on_confirm={handleExtensionConfirm}
         type="center"
       />
@@ -351,4 +352,3 @@ export default function PurchaseSecondInspectionCard({
     </div>
   );
 }
-

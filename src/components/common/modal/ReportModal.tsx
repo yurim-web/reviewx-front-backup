@@ -146,11 +146,19 @@ export default function ReportModal({
 
   // 확인 버튼 클릭 핸들러
   const handle_confirm = () => {
+    // 📌 기타 옵션 선택 시 사유 입력 필수 검증
+    if (showOtherReason && !otherReason.trim()) {
+      return; // 사유가 입력되지 않았으면 처리하지 않음
+    }
     if (on_confirm) {
       on_confirm(selectedOption, showOtherReason ? otherReason : undefined);
     }
     on_close();
   };
+
+  // 📌 신고 버튼 비활성화 조건:
+  // - 기타 옵션이 선택되었고, 사유가 입력되지 않은 경우
+  const is_confirm_disabled = showOtherReason && !otherReason.trim();
 
   // 오버레이 클릭 핸들러
   const handle_overlay_click = (e: React.MouseEvent) => {
@@ -203,7 +211,9 @@ export default function ReportModal({
           {showOtherReason && (
             <div className={styles.other_reason_wrapper}>
               <textarea
-                className={styles.other_reason_textarea}
+                className={`${styles.other_reason_textarea} ${
+                  !otherReason.trim() ? styles.other_reason_textarea_error : ""
+                }`}
                 value={otherReason}
                 onChange={handle_other_reason_change}
                 placeholder="사유 입력"
@@ -226,6 +236,7 @@ export default function ReportModal({
                 <button
                   onClick={handle_confirm}
                   className={styles.modal_footer_button_confirm}
+                  disabled={is_confirm_disabled}
                 >
                   {buttons[1]}
                 </button>

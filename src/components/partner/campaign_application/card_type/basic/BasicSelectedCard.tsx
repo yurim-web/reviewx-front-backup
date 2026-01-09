@@ -44,15 +44,11 @@ export default function BasicSelectedCard({
       {/* 프로필 영역 */}
       <div className={styles.profile_section}>
         <div className={styles.profile_image_container}>
-          {applicant.profileImage ? (
-            <img
-              src={applicant.profileImage}
-              alt="프로필"
-              className={styles.profile_image}
-            />
-          ) : (
-            <div className={styles.profile_placeholder}></div>
-          )}
+          <img
+            src={applicant.profileImage || "/images/mypage/profile.svg"}
+            alt="프로필"
+            className={styles.profile_image}
+          />
         </div>
 
         <div className={styles.profile_info}>

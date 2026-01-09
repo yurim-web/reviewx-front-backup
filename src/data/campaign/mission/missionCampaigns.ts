@@ -119,7 +119,7 @@ export const missionCampaigns: MissionCampaignData[] = [
       // 모집 중 - 현재 날짜 기준 (2025-12-19 ~ 2026-01-05)
       applicationStart: "2025-12-19",
       applicationEnd: "2026-01-05",
-      announcement: "2026-01-07",
+      announcement: "2026-01-15",
       registrationPeriod: "2026-01-08 ~ 2026-01-25",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
@@ -536,6 +536,116 @@ export const missionCampaigns: MissionCampaignData[] = [
     allowLateSubmission: false, // 지각 제출 허용
     // 문의 담당자 정보
     contactPhone: "010-1234-5678", // 문의 담당자 휴대폰 번호
+  },
+  // mission_13: 링크만 미션형 (등록기간 진행 중)
+  {
+    id: "mission_13",
+    title: "링크 전용 뷰티 미션형",
+    category: "미션형",
+    image: "/images/main/campaign_img/eximg_2.png",
+    subcategory: "뷰티",
+    channel: "", // 미션형은 채널 없음
+    points: 40000,
+    description: "링크만 등록하는 뷰티 제품 미션형",
+    recruitment: {
+      current: 234,
+      total: 10,
+    },
+    schedule: "",
+    dayCount: "D-1",
+    registeredAt: "2026-01-05T10:00:00.000Z", // 등록 시간
+    detailedSchedule: {
+      // 선정 완료 - 등록기간 진행 중 (오늘 날짜 기준 2026-01-07)
+      applicationStart: "2025-12-15",
+      applicationEnd: "2025-12-30",
+      announcement: "2026-01-05",
+      registrationPeriod: "2026-01-08 ~ 2026-02-28", // 등록기간 길게 설정
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    keyword: "#뷰티미션 #링크전용 #화장품체험 #블로그리뷰 #솔직후기",
+    productLink: "https://example.com/beauty-product",
+    requirements: ["text_1500", "product_link", "keyword"],
+    guidelineTexts: [
+      "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
+      "★★링크만 등록하는 미션형 캠페인입니다. 블로그 또는 인스타그램 링크를 등록해주세요!!★",
+      "★제공된 제품을 모두 활용하여 작성해주세요 - 뷰티 제품의 사용감과 효과를 상세히 기록 - 실제 사용 사진과 함께 솔직한 후기 작성<br />★미션형 리뷰는 인위적이기 않고 최대한 자연스럽게 작성 부탁드립니다★<br />★링크에 실제 사용 사진과 상세한 후기가 포함되어 있어야 합니다★",
+      "★미션형 작성 / 무료 체험 캠페인 입니다 (구매 없이 체험 후 리뷰 작성)★ <br /> 1. 본 캠페인은 [무료 체험]으로 진행되며, 포스팅은 업체 홍보목적으로 이용될 수 있습니다<br /> 2. 선정 후 제품 수령 후 최소 1주일 이상 체험 진행해주세요<br /> 3. 기간 내 리뷰 작성 및 등록 불가할 경우 다음 캠페인 참여 제한<br /> 4. 안내된 사항 필수로 숙지하시어 진행해 주셔야 합니다",
+      "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 제품 미수령 및 체험 불가할 경우 : 다음 캠페인 참여 제한 <br /> - 링크 등록 불가할 경우 : 다음 캠페인 참여 제한",
+    ],
+    contentType: "link" as const, // 링크만
+  },
+  // mission_14: 이미지만 미션형 (등록기간 진행 중)
+  {
+    id: "mission_14",
+    title: "이미지 전용 생활용품 미션형",
+    category: "미션형",
+    image: "/images/main/campaign_img/eximg_3.png",
+    subcategory: "생활",
+    channel: "", // 미션형은 채널 없음
+    points: 35000,
+    description: "이미지만 등록하는 생활용품 미션형",
+    recruitment: {
+      current: 156,
+      total: 8,
+    },
+    schedule: "",
+    dayCount: "D-1",
+    registeredAt: "2026-01-05T11:00:00.000Z", // 등록 시간
+    detailedSchedule: {
+      // 선정 완료 - 등록기간 진행 중 (오늘 날짜 기준 2026-01-07)
+      applicationStart: "2025-12-10",
+      applicationEnd: "2025-12-25",
+      announcement: "2026-01-03",
+      registrationPeriod: "2026-01-08 ~ 2026-03-15", // 등록기간 길게 설정
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    keyword: "#생활용품미션 #이미지전용 #실용템 #인스타그램 #제품사진",
+    requirements: ["text_1200", "photo_15", "keyword"],
+    guidelineTexts: [
+      "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
+      "★★이미지만 등록하는 미션형 캠페인입니다. 제품 사진과 함께 간단한 텍스트를 작성해주세요!!★",
+      "★제공된 제품을 모두 활용하여 작성해주세요 - 생활용품의 실용성과 디자인을 보여주는 사진 필수 - 제품 사용 장면과 결과물 사진 포함<br />★미션형 리뷰는 인위적이기 않고 최대한 자연스럽게 작성 부탁드립니다★<br />★이미지는 고해상도로 촬영해주세요 (최소 10장 이상)★",
+      "★미션형 작성 / 무료 체험 캠페인 입니다 (구매 없이 체험 후 리뷰 작성)★ <br /> 1. 본 캠페인은 [무료 체험]으로 진행되며, 포스팅은 업체 홍보목적으로 이용될 수 있습니다<br /> 2. 선정 후 제품 수령 후 최소 1주일 이상 체험 진행해주세요<br /> 3. 기간 내 이미지 등록 불가할 경우 다음 캠페인 참여 제한<br /> 4. 안내된 사항 필수로 숙지하시어 진행해 주셔야 합니다",
+      "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 제품 미수령 및 체험 불가할 경우 : 다음 캠페인 참여 제한 <br /> - 이미지 등록 불가할 경우 : 다음 캠페인 참여 제한",
+    ],
+    contentType: "image" as const, // 이미지만
+  },
+  // mission_15: 링크 + 이미지 미션형 (등록기간 진행 중)
+  {
+    id: "mission_15",
+    title: "종합 리뷰 식품 미션형",
+    category: "미션형",
+    image: "/images/main/campaign_img/eximg_4.png",
+    subcategory: "식품",
+    channel: "", // 미션형은 채널 없음
+    points: 45000,
+    description: "링크와 이미지를 모두 등록하는 식품 미션형",
+    recruitment: {
+      current: 189,
+      total: 12,
+    },
+    schedule: "",
+    dayCount: "D-1",
+    registeredAt: "2026-01-06T09:30:00.000Z", // 등록 시간
+    detailedSchedule: {
+      // 선정 완료 - 등록기간 진행 중 (오늘 날짜 기준 2026-01-07)
+      applicationStart: "2025-12-20",
+      applicationEnd: "2026-01-02",
+      announcement: "2026-01-04",
+      registrationPeriod: "2026-01-08 ~ 2026-03-10", // 등록기간 길게 설정
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    keyword: "#식품미션 #종합리뷰 #맛후기 #블로그리뷰 #인스타그램",
+    productLink: "https://example.com/food-product",
+    requirements: ["text_2000", "photo_20", "product_link", "keyword"],
+    guidelineTexts: [
+      "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
+      "★★링크와 이미지를 모두 등록하는 미션형 캠페인입니다. 블로그 링크와 함께 이미지를 업로드해주세요!!★",
+      "★제공된 제품을 모두 활용하여 작성해주세요 - 식품의 맛, 향, 포장 등을 상세히 기록 - 실제 섭취 과정과 맛 평가를 사진과 함께 기록<br />★미션형 리뷰는 인위적이기 않고 최대한 자연스럽게 작성 부탁드립니다★<br />★블로그 링크와 함께 최소 20장 이상의 고품질 이미지가 필요합니다★",
+      "★미션형 작성 / 무료 체험 캠페인 입니다 (구매 없이 체험 후 리뷰 작성)★ <br /> 1. 본 캠페인은 [무료 체험]으로 진행되며, 포스팅은 업체 홍보목적으로 이용될 수 있습니다<br /> 2. 선정 후 제품 수령 후 최소 1주일 이상 체험 진행해주세요<br /> 3. 기간 내 링크와 이미지 모두 등록 불가할 경우 다음 캠페인 참여 제한<br /> 4. 안내된 사항 필수로 숙지하시어 진행해 주셔야 합니다",
+      "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 제품 미수령 및 체험 불가할 경우 : 다음 캠페인 참여 제한 <br /> - 링크 또는 이미지 등록 불가할 경우 : 다음 캠페인 참여 제한",
+    ],
+    contentType: "both" as const, // 링크 + 이미지
   },
 ];
 
@@ -1559,6 +1669,30 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
   // mission_11: 프리미엄 스킨케어 세트 미션형
   {
     ...missionCampaigns[11],
+    applicantData: {
+      applicants: [],
+      selectedApplicants: [],
+    },
+  },
+  // mission_13: 링크만 미션형
+  {
+    ...missionCampaigns[12],
+    applicantData: {
+      applicants: [],
+      selectedApplicants: [],
+    },
+  },
+  // mission_14: 이미지만 미션형
+  {
+    ...missionCampaigns[13],
+    applicantData: {
+      applicants: [],
+      selectedApplicants: [],
+    },
+  },
+  // mission_15: 링크 + 이미지 미션형
+  {
+    ...missionCampaigns[14],
     applicantData: {
       applicants: [],
       selectedApplicants: [],

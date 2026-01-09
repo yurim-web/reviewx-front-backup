@@ -25,7 +25,7 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  z-index: 1000;
+  z-index: 10000; /* 다른 모든 모달 위에 표시되도록 매우 높은 z-index 설정 */
 }
 
 /* 모달 컨테이너 - 하단에서 올라오는 형태 */
@@ -139,7 +139,7 @@
 
 /* 활성화된 제출 버튼 */
 .submit_button.active {
-  background-color: #555555;
+  background-color: #ff5694 !important;
   color: #ffffff;
   cursor: pointer;
 }

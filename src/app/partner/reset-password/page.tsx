@@ -21,7 +21,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import SubHeader from "@/components/fragments/SubHeader";
+import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import ErrorText from "@/components/common/error_text/ErrorText";
 import { findAccountByEmail } from "@/data/login/unifiedAccountData";
@@ -169,8 +169,8 @@ export default function PartnerResetPasswordPage() {
 
   return (
     <div className={styles.reset_password_page_container}>
-      {/* 서브헤더 */}
-      <SubHeader />
+      {/* 서브헤더 - 파트너 전용 서브헤더 사용 */}
+      <PartnerSubHeader />
 
       {/* 메인 콘텐츠 영역 */}
       <main className={styles.reset_password_main}>

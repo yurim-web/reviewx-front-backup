@@ -55,11 +55,11 @@
 /* 활성화된 탭 스타일 */
 .tab.active {
   font-weight: 700; /* 굵은 글씨 */
-  color: #444; /* 진한 회색 */
+  color: #ff5694; /* 진한 회색 */
 }
 
 /* JS에서 `${styles.tab} ${styles.active}` 형태로 사용할 수 있도록 보조 클래스 제공 */
 .active {
   font-weight: 700;
-  color: #444;
+  color: #ff5694;
 }

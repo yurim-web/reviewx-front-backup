@@ -24,30 +24,34 @@
  *      - contentType에 따라 동일한 모달이 수정 모드로 열림
  *
  * 3. 구매평:
- *    - 1차: 구매 영수증 등록/수정
- *      - Type 1: 구매 영수증 등록 + 등록 기한 연장 요청 (2개 버튼)
+ *    - 구매기간: 구매 영수증 등록/수정
+ *      - Type 1: 구매 영수증 미등록 → "구매 영수증 등록" + "등록 기한 연장 요청" (2개 버튼)
  *        - 모달: ReceiptRegistrationModal.tsx(구매 영수증 이미지 업로드)
- *      - Type 2: 구매 영수증 수정 + 등록 기한 연장 요청 (2개 버튼)
- *        - 모달: ReceiptRegistrationModal.tsx(구매 영수증 이미지 업로드)
- *    - 2차: 콘텐츠 등록/수정
- *      - Type 1: 콘텐츠 등록 + 등록 기한 연장 요청 (2개 버튼)
+ *      - Type 2: 구매 영수증 등록 완료 → "구매 영수증 수정" + "등록 기한 연장 요청" (2개 버튼)
+ *        - 모달: ReceiptRegistrationModal.tsx(구매 영수증 이미지 업로드, 수정 모드)
+ *    - 등록기간: 콘텐츠 등록/수정
+ *      - Type 1: 콘텐츠 미등록 → "콘텐츠 등록" + "등록 기한 연장 요청" (2개 버튼)
  *        - 모달: ImageUploadModal.tsx(이미지 업로드)
- *      - Type 2: 콘텐츠 수정 + 등록 기한 연장 요청 (2개 버튼)
- *        - 모달: ImageUploadModal.tsx(이미지 업로드)
+ *      - Type 2: 콘텐츠 등록 완료 → "콘텐츠 수정" + "등록 기한 연장 요청" (2개 버튼)
+ *        - 모달: ImageUploadModal.tsx(이미지 업로드, 수정 모드)
  *
  */
 
-import { useState } from "react";
+import { useMemo } from "react";
+import { useRouter } from "next/navigation";
 import type { CampaignApplication } from "@/types/user/user";
-import BaseModal from "@/components/common/modal/BaseModal";
-import { TextareaModal } from "@/components/common/modal";
-import buttonStyles from "../../../../styles/user/campaign_management/buttons.module.css";
-import { getButtonClassName } from "@/components/common/campaign_management/utils/button_style_utils";
 import CampaignCardBase from "./CampaignCardBase";
-import ReceiptRegistrationModal from "../modals/ReceiptRegistrationModal";
-import ContentRegistrationModal from "../modals/ContentRegistrationModal";
-import ImageUploadModal from "../modals/ImageUploadModal";
-import CombinedContentModal from "../modals/CombinedContentModal";
+import SelectedTabButtons from "./SelectedTabButtons";
+import SelectedTabModals from "./SelectedTabModals";
+import cardStyles from "../../../../styles/user/campaign_management/campaign_card.module.css";
+import buttonStyles from "../../../../styles/user/campaign_management/buttons.module.css";
+import { useSelectedTabCampaign } from "../hooks/useSelectedTabCampaign";
+import { useSelectedTabModals } from "../hooks/useSelectedTabModals";
+import {
+  getStatusText,
+  isContentRegistered,
+} from "../utils/selectedTabHelpers";
+import { addCompletedCampaignId } from "@/data/user/campaign_management/campaignManagementData";
 
 interface SelectedTabCardProps {
   campaign: CampaignApplication;
@@ -60,460 +64,101 @@ interface SelectedTabCardProps {
  * - 캠페인에 선정된 후 진행해야 할 단계에 따라 다른 버튼을 표시합니다.
  * - 배송형, 방문형, 기자단: 콘텐츠 등록/수정 + 등록 기한 연장 요청 (2개 버튼) - 링크만
  * - 미션형: 콘텐츠 등록/수정 + 등록 기한 연장 요청 (2개 버튼) - contentType에 따라 다른 모달
- * - 구매평: 구매 영수증 또는 콘텐츠 등록/수정 + 등록 기한 연장 요청 (2개 버튼)
+ * - 구매평: 구매기간(구매 영수증) 또는 등록기간(콘텐츠) 등록/수정 + 등록 기한 연장 요청 (2개 버튼)
  */
 export default function SelectedTabCard({ campaign }: SelectedTabCardProps) {
-  // 모달 상태 관리
-  const [isContentModalOpen, setIsContentModalOpen] = useState(false);
-  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
-  // 콘텐츠 모달 모드 관리 (등록/수정)
-  const [contentModalMode, setContentModalMode] = useState<"register" | "edit">(
-    "register"
+  const router = useRouter();
+
+  // 캠페인 날짜 및 기간 계산 훅
+  const { isPurchasePeriod, daysUntilDeadline } =
+    useSelectedTabCampaign(campaign);
+
+  // 모달 상태 관리 훅
+  const {
+    isContentModalOpen,
+    contentModalMode,
+    openContentModal,
+    closeContentModal,
+    isReceiptModalOpen,
+    receiptModalMode,
+    openReceiptModal,
+    closeReceiptModal,
+    isExtensionModalOpen,
+    isExtensionLimitModalOpen,
+    isExtensionSecondRequestModalOpen,
+    extensionReason,
+    setExtensionReason,
+    handleExtensionRequest,
+    handleConfirmSecondRequest,
+    handleConfirmExtension,
+    closeExtensionModal,
+    closeExtensionLimitModal,
+    closeExtensionSecondRequestModal,
+    isRegistrationPeriodEndedModalOpen,
+    closeRegistrationPeriodEndedModal,
+  } = useSelectedTabModals(campaign);
+
+  // 상태 텍스트 계산
+  const statusText = useMemo(
+    () =>
+      getStatusText(
+        campaign,
+        isContentRegistered(campaign),
+        isPurchasePeriod,
+        daysUntilDeadline
+      ),
+    [campaign, isPurchasePeriod, daysUntilDeadline]
   );
-  // 구매 영수증 모달 모드 관리 (등록/수정)
-  const [receiptModalMode, setReceiptModalMode] = useState<"register" | "edit">(
-    "register"
-  );
-
-  // 등록 기한 연장 요청 모달 상태 관리
-  const [isExtensionModalOpen, setIsExtensionModalOpen] = useState(false);
-  const [isExtensionLimitModalOpen, setIsExtensionLimitModalOpen] =
-    useState(false);
-  // 등록 기한 연장 요청 사유 입력 상태
-  const [extensionReason, setExtensionReason] = useState<string>("");
-
-  // 상태 텍스트
-  const statusText = "캠페인에 선정되었습니다. 진행해주세요.";
-
-  /**
-   * 배송형, 방문형, 기자단인지 확인
-   *
-   * 설명:
-   * - 이 타입들은 콘텐츠 등록/수정 + 등록 기한 연장 요청 버튼을 표시합니다.
-   * - 링크만 입력하는 ContentRegistrationModal을 사용합니다.
-   */
-  const isContentTypeCampaign = ["배송형", "방문형", "기자단"].includes(
-    campaign.type
-  );
-
-  /**
-   * 미션형인지 확인
-   *
-   * 설명:
-   * - 미션형은 콘텐츠 등록/수정 + 등록 기한 연장 요청 버튼을 표시합니다.
-   * - contentType에 따라 다른 모달을 사용합니다:
-   *   - "link": ContentRegistrationModal.tsx (링크만)
-   *   - "image": ImageUploadModal.tsx (이미지만)
-   *   - "both" 또는 undefined: CombinedContentModal.tsx (링크 + 이미지)
-   */
-  const isMissionTypeCampaign = campaign.type === "미션형";
-
-  /**
-   * 콘텐츠 등록 여부 확인
-   *
-   * 설명:
-   * - content_not_registered: 콘텐츠 미등록 → "콘텐츠 등록하기"
-   * - content_registered: 콘텐츠 등록 완료 → "콘텐츠 수정하기"
-   */
-  const isContentRegistered = campaign.subStatus === "content_registered";
-  const isContentNotRegistered =
-    campaign.subStatus === "content_not_registered";
-
-  /**
-   * 등록 기한 연장 요청 버튼
-   *
-   * 설명:
-   * - 모든 캠페인에 공통으로 표시되는 버튼입니다.
-   * - 등록 기한 연장을 요청할 수 있습니다.
-   * - 최대 2번까지 신청 가능합니다.
-   *   - 1번째 신청: 사유 입력 모달 표시
-   *   - 2번째 신청: 사유 입력 모달 표시 (확인 모달은 제거)
-   *   - 3번째 이상: 제한 안내 모달 표시
-   */
-  const handleExtensionRequest = () => {
-    // TODO: 실제 API에서 연장 신청 횟수 가져오기
-    // 현재는 임시로 campaign 객체에서 extensionCount를 가져오거나 0으로 설정
-    const extensionCount = (campaign as any).extensionCount ?? 0;
-
-    if (extensionCount >= 2) {
-      // 세 번째 이상 신청 시: 제한 안내 모달
-      setIsExtensionLimitModalOpen(true);
-    } else {
-      // 첫 번째 또는 두 번째 신청 시: 사유 입력 모달 표시
-      setExtensionReason(""); // 사유 초기화
-      setIsExtensionModalOpen(true);
-    }
-  };
-
-  /**
-   * 등록 기한 연장 요청 확인
-   *
-   * 설명:
-   * - 실제 API 호출로 등록 기한 연장을 요청합니다.
-   * - 입력된 사유와 함께 요청합니다.
-   */
-  const handleConfirmExtension = async () => {
-    try {
-      // TODO: 실제 API 호출로 등록 기한 연장 요청
-      // const response = await requestDeadlineExtension(campaign.id, extensionReason);
-      console.log("등록 기한 연장 요청:", {
-        campaignId: campaign.id,
-        reason: extensionReason,
-      });
-
-      // 성공 시 모달 닫기 및 사유 초기화
-      setIsExtensionModalOpen(false);
-      setExtensionReason("");
-      // TODO: 성공 모달 표시 또는 토스트 메시지
-    } catch (error) {
-      console.error("등록 기한 연장 요청 실패:", error);
-      // TODO: 오류 모달 표시
-    }
-  };
-
-  const renderDeadlineExtensionButton = () => (
-    <button
-      className={`${buttonStyles.action_button} ${buttonStyles.secondary_button}`}
-      onClick={handleExtensionRequest}
-    >
-      등록 기한 연장 요청
-    </button>
-  );
-
-  /**
-   * 버튼 렌더링 함수
-   *
-   * 설명:
-   * - 캠페인 타입에 따라 다른 버튼 조합을 반환합니다.
-   * - 배송형, 방문형, 기자단: 콘텐츠 등록/수정 + 등록 기한 연장 요청 (2개 버튼)
-   *   - Type 1: 콘텐츠 미등록 → "콘텐츠 등록하기" + "등록 기한 연장 요청" (ContentRegistrationModal.tsx)
-   *   - Type 2: 콘텐츠 등록 완료 → "콘텐츠 수정하기" + "등록 기한 연장 요청" (ContentRegistrationModal.tsx)
-   * - 미션형: 콘텐츠 등록/수정 + 등록 기한 연장 요청 (2개 버튼)
-   *   - Type 1: 콘텐츠 미등록 → "콘텐츠 등록하기" + "등록 기한 연장 요청"
-   *     - contentType === "link": ContentRegistrationModal.tsx (링크만)
-   *     - contentType === "image": ImageUploadModal.tsx (이미지만)
-   *     - contentType === "both" 또는 undefined: CombinedContentModal.tsx (링크 + 이미지)
-   *   - Type 2: 콘텐츠 등록 완료 → "콘텐츠 수정하기" + "등록 기한 연장 요청"
-   *     - contentType에 따라 동일한 모달이 수정 모드로 열림
-   * - 구매평: 구매 영수증 또는 콘텐츠 등록/수정 + 등록 기한 연장 요청 (2개 버튼)
-   *   - 1차: 구매 영수증 등록/수정
-   *     - Type 1: 구매 영수증 미등록 → "구매 영수증 등록하기" + "등록 기한 연장 요청" (ReceiptRegistrationModal.tsx)
-   *     - Type 2: 구매 영수증 등록 완료 → "구매 영수증 수정하기" + "등록 기한 연장 요청" (ReceiptRegistrationModal.tsx)
-   *   - 2차: 콘텐츠 등록/수정
-   *     - Type 1: 콘텐츠 미등록 → "콘텐츠 등록하기" + "등록 기한 연장 요청" (ImageUploadModal.tsx)
-   *     - Type 2: 콘텐츠 등록 완료 → "콘텐츠 수정하기" + "등록 기한 연장 요청" (ImageUploadModal.tsx)
-   */
-  const renderButtons = () => {
-    // 배송형, 방문형, 기자단: 콘텐츠 등록/수정 + 등록 기한 연장 요청 (2개 버튼)
-    if (isContentTypeCampaign) {
-      // Type 2: 콘텐츠 등록 완료 → "콘텐츠 수정하기" + "등록 기한 연장 요청"
-      if (isContentRegistered) {
-        return (
-          <>
-            <button
-              className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
-              onClick={() => {
-                // 수정 모드로 모달 열기
-                setContentModalMode("edit");
-                setIsContentModalOpen(true);
-              }}
-            >
-              콘텐츠 수정하기
-            </button>
-            {renderDeadlineExtensionButton()}
-          </>
-        );
-      }
-
-      // Type 1: 콘텐츠 미등록 또는 그 외의 경우 → "콘텐츠 등록하기" + "등록 기한 연장 요청"
-      // 배송형, 방문형, 기자단은 무조건 Type 1 또는 Type 2 중 하나가 표시됨
-      return (
-        <>
-          <button
-            className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
-            onClick={() => {
-              // 등록 모드로 모달 열기
-              setContentModalMode("register");
-              setIsContentModalOpen(true);
-            }}
-          >
-            콘텐츠 등록하기
-          </button>
-          {renderDeadlineExtensionButton()}
-        </>
-      );
-    }
-
-    // 미션형: 콘텐츠 등록/수정 + 등록 기한 연장 요청 (2개 버튼)
-    // contentType에 따라 다른 모달이 표시됩니다.
-    if (isMissionTypeCampaign) {
-      // Type 2: 콘텐츠 등록 완료 → "콘텐츠 수정하기" + "등록 기한 연장 요청"
-      if (isContentRegistered) {
-        return (
-          <>
-            <button
-              className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
-              onClick={() => {
-                // 수정 모드로 모달 열기
-                setContentModalMode("edit");
-                setIsContentModalOpen(true);
-              }}
-            >
-              콘텐츠 수정하기
-            </button>
-            {renderDeadlineExtensionButton()}
-          </>
-        );
-      }
-
-      // Type 1: 콘텐츠 미등록 또는 그 외의 경우 → "콘텐츠 등록하기" + "등록 기한 연장 요청"
-      // 미션형은 무조건 Type 1 또는 Type 2 중 하나가 표시됨
-      return (
-        <>
-          <button
-            className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
-            onClick={() => {
-              // 등록 모드로 모달 열기
-              setContentModalMode("register");
-              setIsContentModalOpen(true);
-            }}
-          >
-            콘텐츠 등록하기
-          </button>
-          {renderDeadlineExtensionButton()}
-        </>
-      );
-    }
-
-    // 구매평: 구매 영수증 또는 콘텐츠 등록/수정 + 등록 기한 연장 요청 (2개 버튼)
-    if (campaign.type === "구매평") {
-      // Type 2: 구매 영수증 등록 완료 → "구매 영수증 수정하기" + "등록 기한 연장 요청"
-      if (campaign.subStatus === "receipt_registered") {
-        return (
-          <>
-            <button
-              className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
-              onClick={() => {
-                setReceiptModalMode("edit");
-                setIsReceiptModalOpen(true);
-              }}
-            >
-              구매 영수증 수정하기
-            </button>
-            {renderDeadlineExtensionButton()}
-          </>
-        );
-      }
-
-      // Type 1: 구매 영수증 미등록 → "구매 영수증 등록하기" + "등록 기한 연장 요청"
-      if (campaign.subStatus === "receipt_not_registered") {
-        return (
-          <>
-            <button
-              className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
-              onClick={() => {
-                setReceiptModalMode("register");
-                setIsReceiptModalOpen(true);
-              }}
-            >
-              구매 영수증 등록하기
-            </button>
-            {renderDeadlineExtensionButton()}
-          </>
-        );
-      }
-
-      // Type 2: 콘텐츠 등록 완료 → "콘텐츠 수정하기" + "등록 기한 연장 요청"
-      if (isContentRegistered) {
-        return (
-          <>
-            <button
-              className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
-              onClick={() => {
-                // 수정 모드로 모달 열기
-                setContentModalMode("edit");
-                setIsContentModalOpen(true);
-              }}
-            >
-              콘텐츠 수정하기
-            </button>
-            {renderDeadlineExtensionButton()}
-          </>
-        );
-      }
-
-      // Type 1: 콘텐츠 미등록 또는 그 외의 경우 → "콘텐츠 등록하기" + "등록 기한 연장 요청"
-      // 구매평은 무조건 Type 1 또는 Type 2 중 하나가 표시됨
-      return (
-        <>
-          <button
-            className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
-            onClick={() => {
-              // 등록 모드로 모달 열기
-              setContentModalMode("register");
-              setIsContentModalOpen(true);
-            }}
-          >
-            콘텐츠 등록하기
-          </button>
-          {renderDeadlineExtensionButton()}
-        </>
-      );
-    }
-
-    // 기본 버튼은 제거됨
-    // 배송형, 방문형, 기자단, 미션형, 구매평은 무조건 Type 1 또는 Type 2가 표시됨
-    return null;
-  };
-
-  // 모달 닫기 핸들러
-  const handleCloseContentModal = () => {
-    setIsContentModalOpen(false);
-  };
-
-  const handleCloseReceiptModal = () => {
-    setIsReceiptModalOpen(false);
-  };
 
   return (
     <>
-      {/* 등록 기한 연장 요청 모달 */}
-      <TextareaModal
-        is_open={isExtensionModalOpen}
-        on_close={() => {
-          setIsExtensionModalOpen(false);
-          setExtensionReason(""); // 모달 닫을 때 사유 초기화
+      {/* 메인 카드 */}
+      <div className={cardStyles.campaign_card_wrapper}>
+        <CampaignCardBase campaign={campaign} statusText={statusText}>
+          <div className={buttonStyles.campaign_actions}>
+            <SelectedTabButtons
+              campaign={campaign}
+              isPurchasePeriod={isPurchasePeriod}
+              onOpenContentModal={openContentModal}
+              onOpenReceiptModal={openReceiptModal}
+              onExtensionRequest={handleExtensionRequest}
+            />
+          </div>
+        </CampaignCardBase>
+      </div>
+
+      {/* 모든 모달 */}
+      <SelectedTabModals
+        campaign={campaign}
+        isPurchasePeriod={isPurchasePeriod}
+        isContentModalOpen={isContentModalOpen}
+        contentModalMode={contentModalMode}
+        onCloseContentModal={closeContentModal}
+        isReceiptModalOpen={isReceiptModalOpen}
+        receiptModalMode={receiptModalMode}
+        onCloseReceiptModal={closeReceiptModal}
+        isExtensionModalOpen={isExtensionModalOpen}
+        isExtensionLimitModalOpen={isExtensionLimitModalOpen}
+        isExtensionSecondRequestModalOpen={isExtensionSecondRequestModalOpen}
+        extensionReason={extensionReason}
+        onExtensionReasonChange={setExtensionReason}
+        onCloseExtensionModal={closeExtensionModal}
+        onCloseExtensionLimitModal={closeExtensionLimitModal}
+        onConfirmSecondRequest={handleConfirmSecondRequest}
+        onConfirmExtension={handleConfirmExtension}
+        onCloseExtensionSecondRequestModal={closeExtensionSecondRequestModal}
+        isRegistrationPeriodEndedModalOpen={isRegistrationPeriodEndedModalOpen}
+        onCloseRegistrationPeriodEndedModal={closeRegistrationPeriodEndedModal}
+        onContentRegistered={(campaignId) => {
+          // 콘텐츠 등록 성공 시 완료 탭으로 이동
+          // 실제 구현 시에는 API 호출 후 상태 업데이트 처리
+          if (campaignId) {
+            // localStorage에 완료된 캠페인 ID 저장
+            addCompletedCampaignId(campaignId);
+          }
+          // 완료 탭으로 이동
+          router.push("/user/campaign_management/completed");
         }}
-        title="등록 기한 연장 요청"
-        value={extensionReason}
-        onChange={setExtensionReason}
-        placeholder="사유 입력"
-        buttons={["닫기", "확인"]}
-        on_confirm={handleConfirmExtension}
-        type="center"
-      />
-
-      {/* 세 번째 이상 신청 시 제한 안내 모달 */}
-      <BaseModal
-        is_open={isExtensionLimitModalOpen}
-        on_close={() => setIsExtensionLimitModalOpen(false)}
-        message="연장은 최대 두 번까지만 가능합니다."
-        buttons={["닫기"]}
-        type="center"
-      />
-
-      <CampaignCardBase campaign={campaign} statusText={statusText}>
-        <div className={buttonStyles.campaign_actions}>{renderButtons()}</div>
-      </CampaignCardBase>
-
-      {/* 캠페인 타입별 콘텐츠 등록 모달 */}
-      {/* 조건부 렌더링: campaign.type에 따라 다른 모달을 표시합니다. */}
-      {/* 배송형, 방문형, 기자단: 링크만 입력하는 ContentRegistrationModal */}
-      {isContentTypeCampaign && (
-        <ContentRegistrationModal
-          isOpen={isContentModalOpen}
-          onClose={handleCloseContentModal}
-          campaignTitle={campaign.title}
-          mode={contentModalMode}
-          existingLink={
-            contentModalMode === "edit"
-              ? "https://chatgpt.com/g/g-p-6807041b2c64819192e7b94698e6ddc2-jeongmin/c/691ebb1d-f07c-8320-a9bf-ebcf16aa46111" // TODO: 실제 등록된 링크를 campaign 데이터에서 가져오기
-              : ""
-          }
-        />
-      )}
-
-      {/* 미션형: contentType에 따라 다른 모달 표시 */}
-      {isMissionTypeCampaign && (
-        <>
-          {/* contentType === "link": 링크만 입력하는 ContentRegistrationModal */}
-          {campaign.contentType === "link" && (
-            <ContentRegistrationModal
-              isOpen={isContentModalOpen}
-              onClose={handleCloseContentModal}
-              campaignTitle={campaign.title}
-              mode={contentModalMode}
-              existingLink={
-                contentModalMode === "edit"
-                  ? "https://chatgpt.com/g/g-p-6807041b2c64819192e7b94698e6ddc2-jeongmin/c/691ebb1d-f07c-8320-a9bf-ebcf16aa46111" // TODO: 실제 등록된 링크를 campaign 데이터에서 가져오기
-                  : ""
-              }
-            />
-          )}
-
-          {/* contentType === "image": 이미지만 업로드하는 ImageUploadModal */}
-          {campaign.contentType === "image" && (
-            <ImageUploadModal
-              isOpen={isContentModalOpen}
-              onClose={handleCloseContentModal}
-              campaignTitle={campaign.title}
-              mode={contentModalMode}
-              existingImages={
-                contentModalMode === "edit"
-                  ? [
-                      "/images/main/campaign_img/eximg_1.png",
-                      "/images/main/campaign_img/eximg_2.png",
-                    ] // TODO: 실제 등록된 이미지 URL을 campaign 데이터에서 가져오기
-                  : []
-              }
-            />
-          )}
-
-          {/* contentType === "both" 또는 undefined: 링크 + 이미지 모두 업로드하는 CombinedContentModal */}
-          {(campaign.contentType === "both" || !campaign.contentType) && (
-            <CombinedContentModal
-              isOpen={isContentModalOpen}
-              onClose={handleCloseContentModal}
-              campaignTitle={campaign.title}
-              mode={contentModalMode}
-              existingLink={
-                contentModalMode === "edit"
-                  ? "https://chatgpt.com/g/g-p-6807041b2c64819192e7b94698e6ddc2-jeongmin/c/691ebb1d-f07c-8320-a9bf-ebcf16aa46111" // TODO: 실제 등록된 링크를 campaign 데이터에서 가져오기
-                  : ""
-              }
-              existingImages={
-                contentModalMode === "edit"
-                  ? [
-                      "/images/main/campaign_img/eximg_1.png",
-                      "/images/main/campaign_img/eximg_2.png",
-                    ] // TODO: 실제 등록된 이미지 URL을 campaign 데이터에서 가져오기
-                  : []
-              }
-            />
-          )}
-        </>
-      )}
-      {campaign.type === "구매평" && (
-        <ImageUploadModal
-          isOpen={isContentModalOpen}
-          onClose={handleCloseContentModal}
-          campaignTitle={campaign.title}
-          mode={contentModalMode}
-          existingImages={
-            contentModalMode === "edit"
-              ? [
-                  "/images/main/campaign_img/eximg_1.png",
-                  "/images/main/campaign_img/eximg_2.png",
-                ] // TODO: 실제 등록된 이미지 URL을 campaign 데이터에서 가져오기
-              : []
-          }
-        />
-      )}
-
-      {/* 구매 영수증 등록 모달 (미션형, 구매평에서 사용) */}
-      <ReceiptRegistrationModal
-        isOpen={isReceiptModalOpen}
-        onClose={handleCloseReceiptModal}
-        campaignTitle={campaign.title}
-        mode={receiptModalMode}
-        existingImages={
-          receiptModalMode === "edit"
-            ? [
-                "/images/main/campaign_img/eximg_1.png",
-                "/images/main/campaign_img/eximg_2.png",
-              ] // TODO: 실제 등록된 이미지 URL을 campaign 데이터에서 가져오기
-            : []
-        }
       />
     </>
   );

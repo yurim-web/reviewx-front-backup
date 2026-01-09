@@ -1434,33 +1434,89 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
         );
 
         // 연장 요청한 리뷰어가 있는지 확인
-        // contents.waiting에 extension_request_reason이 있는 항목이 있는지 확인
+        // ✅ 조건:
+        // 1. 선정자가 있어야 함 (selectedApplicants가 있어야 함)
+        // 2. contents.waiting에 extension_request_reason이 있는 항목이 있어야 함
+        const hasSelectedApplicants =
+          (campaign.applicantData?.selectedApplicants?.length ?? 0) > 0;
         const hasExtensionRequest =
           campaign.contents?.waiting?.some(
             (item) => item.extension_request_reason
           ) || false;
 
-        // 등록 기간이 끝났는지 확인
+        // 등록 기간이 진행 중인지 확인 (등록 기간이 끝나지 않았는지)
         const registrationPeriod = campaign.campaignInfo.registrationPeriod;
-        let isRegistrationPeriodEnded = false;
+        let isRegistrationPeriodActive = false;
         if (registrationPeriod) {
           const today = new Date();
           today.setHours(0, 0, 0, 0);
-          const regParts = registrationPeriod.split("~").map((s) => s.trim());
+          // "~" 또는 " ~ "로 분리 (공백 처리)
+          const regParts = registrationPeriod
+            .split(/~\s*/)
+            .map((s) => s.trim());
           if (regParts.length === 2) {
+            const regStartStr = regParts[0].split(" ")[0];
             const regEndStr = regParts[1].split(" ")[0];
+            const regStart = new Date(regStartStr);
             const regEnd = new Date(regEndStr);
-            if (!isNaN(regEnd.getTime())) {
+            if (!isNaN(regStart.getTime()) && !isNaN(regEnd.getTime())) {
+              regStart.setHours(0, 0, 0, 0);
               regEnd.setHours(0, 0, 0, 0);
-              isRegistrationPeriodEnded = today > regEnd;
+              // 등록 기간이 진행 중인지 확인 (오늘이 등록 기간 내에 있는지)
+              isRegistrationPeriodActive = today >= regStart && today <= regEnd;
+              console.log(
+                `[convertToPartnerCampaigns] 등록 기간 체크: ${
+                  campaign.campaignInfo.id
+                } - ${
+                  campaign.campaignInfo.title
+                }, 등록 기간: ${registrationPeriod}, 시작: ${
+                  regStart.toISOString().split("T")[0]
+                }, 종료: ${regEnd.toISOString().split("T")[0]}, 오늘: ${
+                  today.toISOString().split("T")[0]
+                }, 진행 중: ${isRegistrationPeriodActive}`
+              );
+            } else {
+              console.log(
+                `[convertToPartnerCampaigns] 등록 기간 파싱 실패: ${campaign.campaignInfo.id} - ${campaign.campaignInfo.title}, 등록 기간: ${registrationPeriod}, regStartStr: ${regStartStr}, regEndStr: ${regEndStr}`
+              );
             }
+          } else {
+            console.log(
+              `[convertToPartnerCampaigns] 등록 기간 형식 오류: ${campaign.campaignInfo.id} - ${campaign.campaignInfo.title}, 등록 기간: ${registrationPeriod}, parts: ${regParts.length}`
+            );
           }
+        } else {
+          console.log(
+            `[convertToPartnerCampaigns] 등록 기간 없음: ${campaign.campaignInfo.id} - ${campaign.campaignInfo.title}`
+          );
         }
 
+        // 캠페인이 종료되지 않았는지 확인 (종료된 캠페인은 종료 탭으로 이동해야 함)
+        // calculatedTab이 "종료"가 아닐 때만 연장 요청 탭에 표시
+        const isCampaignNotEnded =
+          calculatedTab !== "종료" && calculatedTab !== "취소";
+
         // 연장 요청 탭에 표시될 캠페인들에 extension_request 추가
-        // ✅ 조건: 등록 기간이 끝났고 연장 요청한 리뷰어가 있는 경우만
-        if (isRegistrationPeriodEnded && hasExtensionRequest) {
+        // ✅ 조건:
+        // 1. 캠페인이 종료되지 않았을 때 (calculatedTab이 "종료" 또는 "취소"가 아닐 때)
+        // 2. 등록 기간이 진행 중일 때 (등록 기간이 끝나지 않았을 때)
+        // 3. 선정자가 있는 경우 (selectedApplicants가 있어야 함)
+        // 4. 연장 요청한 리뷰어가 있는 경우 (contents.waiting에 extension_request_reason이 있어야 함)
+        if (
+          isCampaignNotEnded &&
+          isRegistrationPeriodActive &&
+          hasSelectedApplicants &&
+          hasExtensionRequest
+        ) {
+          console.log(
+            `[convertToPartnerCampaigns] extension_request 추가: ${campaign.campaignInfo.id} - ${campaign.campaignInfo.title}, calculatedTab: ${calculatedTab}, 등록 기간: ${registrationPeriod}`
+          );
           return `${baseSubStatus},extension_request`;
+        } else if (hasExtensionRequest) {
+          // 연장 요청이 있지만 조건을 만족하지 않는 경우 디버깅
+          console.log(
+            `[convertToPartnerCampaigns] extension_request 조건 불만족: ${campaign.campaignInfo.id} - ${campaign.campaignInfo.title}, calculatedTab: ${calculatedTab}, isCampaignNotEnded: ${isCampaignNotEnded}, isRegistrationPeriodActive: ${isRegistrationPeriodActive}, 등록 기간: ${registrationPeriod}`
+          );
         }
         return baseSubStatus;
       })(),
@@ -1564,43 +1620,37 @@ export const getCampaignsByTab = (tab: string): PartnerCampaign[] => {
       /**
        * 전체 탭: 모든 캠페인 표시
        *
+       * 설명:
+       * - 모든 캠페인을 표시합니다 (연장 요청 탭의 캠페인도 포함).
+       * - 전체 탭은 모든 상태의 캠페인을 보여주는 탭이므로 필터링하지 않습니다.
+       *
        * 정렬: 최신순 (초기 페이지 로드 시)
        * - 모집 시작일(recruitmentPeriod의 시작일) 기준으로 정렬 (최신순: 내림차순)
        * - 모집 시작일이 같거나 없으면 id 기준으로 정렬
        */
-      /**
-       * 전체 탭: 모든 캠페인 표시 (연장 요청 탭 전용 캠페인 제외)
-       *
-       * 제외 조건:
-       * - "등록 기한 연장 요청" 버튼이 있는 캠페인은 연장 요청 탭에서만 표시
-       */
-      return [...partnerCampaigns]
-        .filter(
-          (campaign) => !campaign.subStatus?.includes("extension_request")
-        )
-        .sort((a, b) => {
-          // 모집 시작일 추출
-          const getRecruitmentStartDate = (period: string): number => {
-            if (!period) return 0;
-            const parts = period.split("~").map((s) => s.trim());
-            if (parts.length >= 1) {
-              const startStr = parts[0].split(" ")[0];
-              const date = new Date(startStr);
-              return isNaN(date.getTime()) ? 0 : date.getTime();
-            }
-            return 0;
-          };
-
-          const aDate = getRecruitmentStartDate(a.recruitmentPeriod);
-          const bDate = getRecruitmentStartDate(b.recruitmentPeriod);
-
-          if (aDate !== bDate) {
-            return bDate - aDate; // 최신순 (내림차순)
+      return [...partnerCampaigns].sort((a, b) => {
+        // 모집 시작일 추출
+        const getRecruitmentStartDate = (period: string): number => {
+          if (!period) return 0;
+          const parts = period.split("~").map((s) => s.trim());
+          if (parts.length >= 1) {
+            const startStr = parts[0].split(" ")[0];
+            const date = new Date(startStr);
+            return isNaN(date.getTime()) ? 0 : date.getTime();
           }
+          return 0;
+        };
 
-          // 모집 시작일이 같거나 없으면 id 기준으로 정렬
-          return b.id.localeCompare(a.id);
-        });
+        const aDate = getRecruitmentStartDate(a.recruitmentPeriod);
+        const bDate = getRecruitmentStartDate(b.recruitmentPeriod);
+
+        if (aDate !== bDate) {
+          return bDate - aDate; // 최신순 (내림차순)
+        }
+
+        // 모집 시작일이 같거나 없으면 id 기준으로 정렬
+        return b.id.localeCompare(a.id);
+      });
     case "예정":
       /**
        * 예정 탭: 모집 기간이 시작되지 않은 캠페인
@@ -1724,39 +1774,42 @@ export const getCampaignsByTab = (tab: string): PartnerCampaign[] => {
        * 연장 요청 탭 필터링
        *
        * 포함되는 조건:
-       * - 등록 기간이 끝났고
+       * - 캠페인이 종료되지 않았을 때 (진행 중)
+       * - 등록 기간이 진행 중일 때 (등록 기간이 끝나지 않았을 때)
        * - 연장 요청한 리뷰어가 있는 캠페인
        *   (contents.waiting에 extension_request_reason이 있는 항목이 있는 경우)
        *
        * 주의:
-       * - 등록 기간이 아직 끝나지 않았는데 연장 요청한 리뷰어가 있는 캠페인은 진행 탭에 표시됨
-       * - 등록 기간이 끝나야만 연장 요청 탭으로 이동
+       * - 캠페인이 종료되었으면 무조건 종료 탭으로 이동
+       * - 등록 기간이 끝났으면 연장 요청 탭에 표시되지 않음
+       * - 등록 기간 중일 때만 연장 요청 탭에 표시됨
        */
       return partnerCampaigns.filter((campaign) => {
-        // subStatus에 extension_request가 포함되어 있어야 함
-        if (!campaign.subStatus?.includes("extension_request")) {
+        // 캠페인이 종료되었으면 연장 요청 탭에서 제외 (종료 탭으로 이동)
+        if (campaign.status === "종료" || campaign.status === "마감") {
+          console.log(
+            `[연장 요청 탭] 종료된 캠페인 제외: ${campaign.id} - ${campaign.title}, status: ${campaign.status}`
+          );
           return false;
         }
 
-        // 등록 기간이 끝났는지 확인
-        const registrationPeriod = campaign.registrationPeriod;
-        if (registrationPeriod) {
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          const regParts = registrationPeriod.split("~").map((s) => s.trim());
-          if (regParts.length === 2) {
-            const regEndStr = regParts[1].split(" ")[0];
-            const regEnd = new Date(regEndStr);
-            if (!isNaN(regEnd.getTime())) {
-              regEnd.setHours(0, 0, 0, 0);
-              // 등록 기간이 끝났는지 확인
-              return today > regEnd;
-            }
-          }
+        // subStatus에 extension_request가 포함되어 있어야 함
+        // convertToPartnerCampaigns에서 이미 등록 기간이 진행 중이고 연장 요청이 있을 때만 추가했으므로,
+        // subStatus에 extension_request가 있으면 바로 포함
+        if (campaign.subStatus?.includes("extension_request")) {
+          console.log(
+            `[연장 요청 탭] 포함: ${campaign.id} - ${campaign.title}, subStatus: ${campaign.subStatus}`
+          );
+          return true;
         }
 
-        // 등록 기간 정보가 없으면 subStatus만 확인
-        return true;
+        // subStatus에 extension_request가 없으면 제외
+        console.log(
+          `[연장 요청 탭] extension_request 없음: ${campaign.id} - ${
+            campaign.title
+          }, subStatus: ${campaign.subStatus || "없음"}`
+        );
+        return false;
       });
     default:
       return partnerCampaigns;

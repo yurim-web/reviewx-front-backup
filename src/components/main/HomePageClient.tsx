@@ -88,12 +88,10 @@ function shuffle_array<T>(array: T[], seed?: number): T[] {
   // 배열을 복사하여 원본 배열을 변경하지 않습니다
   const shuffled = [...array];
 
-  // 시드 값이 없으면 오늘 날짜를 시드로 사용 (같은 날에는 같은 순서)
-  // Date 객체를 사용하여 오늘 날짜를 문자열로 변환하고 해시값을 생성합니다
-  const date_string = new Date().toISOString().split("T")[0]; // "2025-01-15" 형식
-  const date_seed =
-    seed ||
-    date_string.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  // 📌 Hydration 오류 방지: 시드가 제공되지 않으면 고정된 시드 사용
+  // 서버와 클라이언트에서 동일한 결과를 보장하기 위해 고정된 시드를 사용합니다
+  // Date 객체를 사용하면 서버와 클라이언트의 시간 차이로 인해 다른 결과가 나올 수 있습니다
+  const date_seed = seed || 12345; // 고정된 기본 시드 사용
 
   // 시드 기반 난수 생성기 생성
   const random = seeded_random(date_seed);
@@ -687,12 +685,13 @@ export default function HomePageClient() {
   const high_probability_campaigns = useMemo(() => {
     // 모든 캠페인을 하나의 배열로 합칩니다
     // 스프레드 연산자(...): 배열을 펼쳐서 새 배열에 추가합니다
+    // 📌 서버와 클라이언트에서 동일한 정적 데이터 사용 (hydration 오류 방지)
     const all_campaigns = [
-      ...mergedCampaigns.allDelivery,
-      ...mergedCampaigns.allReview,
-      ...mergedCampaigns.allVisit,
-      ...mergedCampaigns.allMission,
-      ...mergedCampaigns.allReporter,
+      ...staticCampaigns.allDelivery,
+      ...staticCampaigns.allReview,
+      ...staticCampaigns.allVisit,
+      ...staticCampaigns.allMission,
+      ...staticCampaigns.allReporter,
     ];
 
     // 마감되지 않은 캠페인만 필터링
@@ -746,8 +745,9 @@ export default function HomePageClient() {
     }
 
     // 최종적으로 무작위로 섞어서 반환 (8개)
-    return shuffle_array(selected).slice(0, 8);
-  }, [today, mergedCampaigns]);
+    // 📌 고정된 시드를 사용하여 서버와 클라이언트에서 동일한 순서 보장
+    return shuffle_array(selected, 12345).slice(0, 8);
+  }, [today, staticCampaigns]);
 
   /**
    * 지금 인기 많은 캠페인 - 참여자가 많은 캠페인을 무작위로 선택
@@ -762,12 +762,13 @@ export default function HomePageClient() {
    */
   const popular_campaigns = useMemo(() => {
     // 모든 캠페인을 하나의 배열로 합칩니다
+    // 📌 서버와 클라이언트에서 동일한 정적 데이터 사용 (hydration 오류 방지)
     const all_campaigns = [
-      ...mergedCampaigns.allDelivery,
-      ...mergedCampaigns.allReview,
-      ...mergedCampaigns.allVisit,
-      ...mergedCampaigns.allMission,
-      ...mergedCampaigns.allReporter,
+      ...staticCampaigns.allDelivery,
+      ...staticCampaigns.allReview,
+      ...staticCampaigns.allVisit,
+      ...staticCampaigns.allMission,
+      ...staticCampaigns.allReporter,
     ];
 
     // 마감되지 않은 캠페인만 필터링
@@ -788,7 +789,8 @@ export default function HomePageClient() {
     );
 
     // 무작위로 섞기
-    const shuffled = shuffle_array(high_participation_campaigns);
+    // 📌 고정된 시드를 사용하여 서버와 클라이언트에서 동일한 순서 보장
+    const shuffled = shuffle_array(high_participation_campaigns, 12345);
 
     // 각 타입별로 1-2개씩 선택
     const selected_by_type: Record<string, (typeof shuffled)[0][]> = {
@@ -821,7 +823,7 @@ export default function HomePageClient() {
 
     // 최대 8개까지 선택
     return selected.slice(0, 8);
-  }, [today, mergedCampaigns]);
+  }, [today, staticCampaigns]);
 
   /**
    * 진행 중인 캠페인 - 현재 진행 중인 캠페인 32개를 무작위로 선택
@@ -833,14 +835,20 @@ export default function HomePageClient() {
    *
    * useMemo: 의존성 배열에 today를 포함하여 날짜가 바뀔 때마다 재계산됩니다
    */
+  // 📌 Hydration 오류 방지: 서버와 클라이언트에서 동일한 초기 데이터 사용
+  // useState의 초기값을 사용하여 서버와 클라이언트에서 동일한 결과 보장
+  // useMemo를 사용하여 컴포넌트가 마운트될 때 한 번만 계산
+  const staticCampaigns = useMemo(() => getStaticCampaigns(), []);
+  
   const ongoing_campaigns = useMemo(() => {
     // 모든 캠페인을 하나의 배열로 합칩니다
+    // 📌 서버와 클라이언트에서 동일한 정적 데이터 사용 (hydration 오류 방지)
     const all_campaigns = [
-      ...mergedCampaigns.allDelivery,
-      ...mergedCampaigns.allReview,
-      ...mergedCampaigns.allVisit,
-      ...mergedCampaigns.allMission,
-      ...mergedCampaigns.allReporter,
+      ...staticCampaigns.allDelivery,
+      ...staticCampaigns.allReview,
+      ...staticCampaigns.allVisit,
+      ...staticCampaigns.allMission,
+      ...staticCampaigns.allReporter,
     ];
 
     // 마감되지 않은 캠페인만 필터링
@@ -848,12 +856,13 @@ export default function HomePageClient() {
       isNotClosed(campaign, today)
     );
 
-    // 무작위로 섞기
-    const shuffled = shuffle_array(active_campaigns);
+    // 무작위로 섞기 (고정된 시드 사용하여 서버와 클라이언트에서 동일한 결과)
+    // 📌 고정된 시드를 사용하여 서버와 클라이언트에서 동일한 순서 보장
+    const shuffled = shuffle_array(active_campaigns, 12345); // 고정된 시드 사용
 
     // 최대 32개만 선택
     return shuffled.slice(0, 32);
-  }, [today, mergedCampaigns]);
+  }, [today, staticCampaigns]);
 
   return (
     // React Fragment (<>...</>) 사용

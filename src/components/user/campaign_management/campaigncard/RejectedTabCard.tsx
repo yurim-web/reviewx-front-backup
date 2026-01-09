@@ -193,16 +193,16 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
       return (
         <>
           <button
+            className={`${buttonStyles.action_button} ${buttonStyles.content_edit_button}`}
+            onClick={handleContentEditClick}
+          >
+            콘텐츠 수정
+          </button>
+          <button
             className={`${buttonStyles.action_button} ${buttonStyles.danger_button}`}
             onClick={handleRejectionReasonClick}
           >
             콘텐츠 반려 사유 확인
-          </button>
-          <button
-            className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
-            onClick={handleContentEditClick}
-          >
-            콘텐츠 수정
           </button>
         </>
       );
@@ -267,7 +267,7 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
           mode={contentModalMode}
           existingLink={
             contentModalMode === "edit"
-              ? "https://chatgpt.com/g/g-p-6807041b2c64819192e7b94698e6ddc2-jeongmin/c/691ebb1d-f07c-8320-a9bf-ebcf16aa46111" // TODO: 실제 등록된 링크를 campaign 데이터에서 가져오기
+              ? "https://www.naver.com/" // TODO: 실제 등록된 링크를 campaign 데이터에서 가져오기
               : ""
           }
           existingImages={
@@ -304,7 +304,7 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
           mode={contentModalMode}
           existingLink={
             contentModalMode === "edit"
-              ? "https://chatgpt.com/g/g-p-6807041b2c64819192e7b94698e6ddc2-jeongmin/c/691ebb1d-f07c-8320-a9bf-ebcf16aa46111" // TODO: 실제 등록된 링크를 campaign 데이터에서 가져오기
+              ? "https://www.naver.com/" // TODO: 실제 등록된 링크를 campaign 데이터에서 가져오기
               : ""
           }
         />

@@ -21,23 +21,34 @@ export default function NaverClipSelectedCard({
   const channel_icon_src = getChannelLogo("네이버클립");
 
   return (
-    <article className={`${styles.applicant_card} ${styles.selected_card}`}>
+    <article
+      className={`${styles.applicant_card} ${styles.selected_card} ${
+        applicant.userType === "인플루언서"
+          ? styles.selected_card_influencer
+          : ""
+      }`}
+    >
       {/* 프로필 */}
       <div className={styles.profile_section}>
         <div className={styles.profile_image_container}>
-          {applicant.profileImage ? (
-            <img
-              src={applicant.profileImage}
-              alt="프로필"
-              className={styles.profile_image}
-            />
-          ) : (
-            <div className={styles.profile_placeholder}></div>
-          )}
+          <img
+            src={applicant.profileImage || "/images/mypage/profile.svg"}
+            alt="프로필"
+            className={styles.profile_image}
+          />
         </div>
         <div className={styles.profile_info}>
           <span className={styles.user_type}>{applicant.userType}</span>
-          <span className={styles.nickname}>{applicant.nickname}</span>
+          {/* 닉네임 표시 - 인플루언서일 때 특별한 스타일 적용 */}
+          <span
+            className={`${styles.nickname} ${
+              applicant.userType === "인플루언서"
+                ? styles.influencer_nickname
+                : ""
+            }`}
+          >
+            {applicant.nickname}
+          </span>
         </div>
       </div>
 
@@ -90,7 +101,11 @@ export default function NaverClipSelectedCard({
       {/* 선택 취소 */}
       <div className={styles.action_button_section}>
         <button
-          className={`${styles.action_button} ${styles.cancel_button}`}
+          className={`${styles.action_button} ${
+            applicant.userType === "인플루언서"
+              ? styles.influencer_cancel_button
+              : styles.cancel_button
+          }`}
           onClick={() => onCancel(applicant.id)}
           aria-label={`${applicant.nickname} 신청자 선택 취소`}
         >

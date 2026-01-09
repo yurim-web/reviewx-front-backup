@@ -199,6 +199,15 @@
   border-color: #555555;
 }
 
+/* 기타 사유 textarea 에러 상태 (사유 미입력 시) */
+.other_reason_textarea_error {
+  border-color: #ff2626;
+}
+
+.other_reason_textarea_error:focus {
+  border-color: #ff2626;
+}
+
 .other_reason_textarea::placeholder {
   color: #999999;
   opacity: 0.8;
@@ -207,6 +216,13 @@
 /* 기타 사유 textarea 스크롤바 스타일링 */
 .other_reason_textarea::-webkit-scrollbar {
   width: 16px;
+}
+
+/* 스크롤바 위아래 화살표 제거 */
+.other_reason_textarea::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .other_reason_textarea::-webkit-scrollbar-track {

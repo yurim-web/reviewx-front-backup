@@ -70,11 +70,11 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     detailedSchedule: {
       // 선정 중 - 모집 기간 종료 후, 선정 발표 전 (2일 남음)
       // 모집 기간: 2025-12-20 ~ 2026-01-05 (종료됨 - 오늘이 2026-01-06이므로)
-      // 선정 발표: 2026-01-08 (2일 후 - 오늘이 2026-01-06이므로)
+      // 선정 발표: 2026-01-15 (미래 - 신청 탭에 표시되도록)
       // 등록 기간: 2026-01-10 ~ 2026-01-20 (아직 시작 안 함)
       applicationStart: "2025-12-20",
       applicationEnd: "2026-01-05",
-      announcement: "2026-01-08",
+      announcement: "2026-01-15",
       registrationPeriod: "2026-01-10 ~ 2026-01-20",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
@@ -199,9 +199,9 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2025-12-22 ~ 2026-01-10)
       applicationStart: "2025-12-22",
-      applicationEnd: "2026-01-10",
-      announcement: "2026-01-12",
-      registrationPeriod: "2026-01-15 ~ 2026-01-22",
+      applicationEnd: "2026-01-20",
+      announcement: "2026-01-22", // 예정 탭
+      registrationPeriod: "2026-01-25 ~ 2026-02-01", // 예정 탭
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
@@ -242,7 +242,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       applicationStart: "2025-11-01",
       applicationEnd: "2025-11-15",
       announcement: "2025-11-17",
-      registrationPeriod: "2025-11-20 ~ 2025-11-27",
+      registrationPeriod: "2025-11-20 ~ 2026-02-27",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
@@ -407,7 +407,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       applicationStart: "2025-11-20",
       applicationEnd: "2025-12-05",
       announcement: "2025-12-07",
-      registrationPeriod: "2025-12-08 ~ 2025-12-25",
+      registrationPeriod: "2025-12-08 ~ 2026-01-29",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",

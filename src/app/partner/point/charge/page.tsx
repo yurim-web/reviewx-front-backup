@@ -12,7 +12,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import SubHeader from "@/components/fragments/SubHeader";
+import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import Toast from "@/components/common/toast/Toast";
 import BaseModal from "@/components/common/modal/BaseModal";
@@ -283,8 +283,8 @@ export default function PartnerPointChargePage() {
 
   return (
     <div className={styles.charge_page}>
-      {/* SubHeader */}
-      <SubHeader />
+      {/* 파트너 전용 서브헤더 */}
+      <PartnerSubHeader />
 
       {/* 메인 컨텐츠 */}
       <main className={styles.main_content}>

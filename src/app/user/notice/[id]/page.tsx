@@ -12,9 +12,11 @@
  *
  * 사용 컴포넌트:
  * - NoticeDetailPageClient (공통 컴포넌트)
+ * - SubHeader (서브 헤더 컴포넌트)
  */
 
 import NoticeDetailPageClient from "@/components/common/notice/NoticeDetailPageClient";
+import SubHeader from "@/components/fragments/SubHeader";
 
 /**
  * 유저 공지사항 상세 페이지 컴포넌트
@@ -22,10 +24,7 @@ import NoticeDetailPageClient from "@/components/common/notice/NoticeDetailPageC
  * @returns 유저 공지사항 상세 페이지 JSX 요소
  */
 export default function UserNoticeDetailPage() {
-  return <NoticeDetailPageClient target="user" />;
+  return (
+    <NoticeDetailPageClient target="user" header_component={<SubHeader />} />
+  );
 }
-
-
-
-
-

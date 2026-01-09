@@ -87,7 +87,7 @@
 }
 
 .sub_tab_item.active {
-  color: #444;
+  color: #ff5694;
   font-weight: 700;
 }
 
@@ -97,7 +97,7 @@
   left: 40px;
   width: 46px;
   height: 2px;
-  background: #444;
+  background: #ff5694;
 }
 
 .sub_tab_indicator_channel {
@@ -106,5 +106,5 @@
   left: 104px; /* "프로필" 텍스트 너비 + gap(24px) */
   width: 43px;
   height: 2px;
-  background: #444;
+  background: #ff5694;
 }

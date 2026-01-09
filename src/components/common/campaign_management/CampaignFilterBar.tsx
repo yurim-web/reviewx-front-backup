@@ -94,13 +94,12 @@ export default function CampaignFilterBar<
       }`}
       onClick={onClick}
     >
-      <div className={styles.checkbox_icon}>
-        {isActive ? (
-          <div className={styles.checkbox_checked} />
-        ) : (
-          <div className={styles.checkbox_unchecked} />
-        )}
-      </div>
+      {/* 
+        체크박스 아이콘
+        - 필터가 활성화되어 있으면 체크마크가 표시됨
+        - filter_button_active 클래스가 적용되면 CSS의 ::after 가상 요소로 체크마크가 표시됨
+      */}
+      <div className={styles.filter_icon}></div>
       <span className={styles.filter_label}>{label}</span>
       <img
         src="/images/filter/dropdown_icon.svg"

@@ -46,9 +46,10 @@ export default function ManagerGAHeader({
       : "/manager_ga/notification";
 
   const has_notifications = mockManagerGANotifications.length > 0;
+  // 📌 관리자 헤더 전용 흰색 알림 아이콘 사용
   const notification_icon_src = has_notifications
-    ? "/images/header/notification_ok.svg"
-    : "/images/header/notification_icon.svg";
+    ? "/images/header/manager/notification_ok_white.svg"
+    : "/images/header/manager/notification_icon_white.svg";
 
   // 외부 클릭 시 메뉴 닫기
   useEffect(() => {
@@ -98,7 +99,11 @@ export default function ManagerGAHeader({
               onClick={handle_user_icon_click}
               className={styles.user_icon_button}
             >
-              <img src="/images/header/header_user.svg" alt="user" />
+              {/* 📌 관리자 헤더 전용 흰색 사용자 아이콘 */}
+              <img
+                src="/images/header/manager/header_user_white.svg"
+                alt="user"
+              />
             </button>
             {/* 클릭 시 표시되는 로그아웃 버튼 */}
             {is_logout_menu_open && (

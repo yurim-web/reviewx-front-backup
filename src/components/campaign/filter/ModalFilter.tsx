@@ -149,7 +149,11 @@ export default function ModalFilter({
           )}
           {showReset && (
             <button className={styles.reset_button} onClick={onReset}>
-              <div className={styles.reset_icon}></div>
+              <img
+                src="/images/icons/reset_icon.svg"
+                alt="초기화"
+                className={styles.reset_icon}
+              />
               선택 초기화
             </button>
           )}

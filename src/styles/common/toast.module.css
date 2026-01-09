@@ -20,7 +20,7 @@
   bottom: 100px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 9999;
+  z-index: 10001; /* 모든 모달 위에 표시되도록 설정 (모달 최대 z-index: 10000) */
 
   /* 토스트 박스 스타일 */
   display: flex;

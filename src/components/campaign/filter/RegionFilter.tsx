@@ -26,6 +26,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import styles from "../../../styles/filter/filter_bar.module.css";
 
 // RegionFilter 컴포넌트의 props 타입 정의
@@ -606,7 +607,13 @@ export default function RegionFilter({
             필터 적용하기
           </button>
           <button className={styles.reset_button} onClick={handleReset}>
-            <div className={styles.reset_icon}></div>
+            <Image
+              src="/images/icons/reset_icon.svg"
+              alt="초기화"
+              width={16}
+              height={16}
+              className={styles.reset_icon}
+            />
             선택 초기화
           </button>
         </div>

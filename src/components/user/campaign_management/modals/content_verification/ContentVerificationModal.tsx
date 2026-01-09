@@ -30,15 +30,16 @@
  * 2. 일부만 충족: 일부 초록색/일부 빨간색, 메시지 표시, 제출 버튼 비활성화
  * 3. 아예 다 충족하지 못함: 모든 항목 빨간색, 메시지 표시, 제출 버튼 비활성화
  *
-
+ *
  */
 
 "use client";
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import styles from "../../../../styles/user/campaign_management/modals/content_verification.module.css";
+import styles from "../../../../../styles/user/campaign_management/modals/content_verification.module.css";
 import type { CampaignType } from "@/types/user/user";
+import Toast from "@/components/common/toast/Toast";
 
 // 실제 캠페인 데이터 import
 import { deliveryCampaigns } from "@/data/campaign/delivery/deliveryCampaigns";
@@ -72,6 +73,8 @@ interface ContentVerificationModalProps {
   campaignType?: CampaignType;
   /** 미션 항목 목록 (기본값: 일반적인 미션 항목들, campaignId와 campaignType이 제공되면 무시됨) */
   missionItems?: MissionItem[];
+  /** 제출 버튼을 눌렀을 때 실행될 콜백 함수 (모든 기준이 충족되었을 때만 호출됨) */
+  onConfirm?: () => void;
 }
 
 /**
@@ -95,13 +98,14 @@ const parseRequirement = (requirement: string): string => {
     return `${charCount}자 이상`;
   }
 
-  // 사진 요구사항: "photo_8" → "8장 이상"
+  // 사진 요구사항: "photo_8" → "사진 8장 이상"
   if (requirement.startsWith("photo_")) {
     const photoCount = requirement.replace("photo_", "");
-    return `${photoCount}장 이상`;
+    return `사진 ${photoCount}장 이상`;
   }
 
-  // 동영상 요구사항: "video_1_60" → "1개 이상, 60초 이상"
+  // 동영상 요구사항: "video_1_60" → "동영상 1개 이상, 60초 이상"
+  // 또는 "video_120" → "동영상 1개 이상, 120초 이상" (개수는 기본값 1개)
   // 또는 "video_report" → "동영상 필수"
   if (requirement.startsWith("video_")) {
     if (requirement === "video_report") {
@@ -109,8 +113,13 @@ const parseRequirement = (requirement: string): string => {
     }
     const parts = requirement.replace("video_", "").split("_");
     if (parts.length === 2) {
+      // "video_1_60" 형식: 개수와 초가 모두 명시됨
       const [count, seconds] = parts;
-      return `${count}개 이상, ${seconds}초 이상`;
+      return `동영상 ${count}개 이상, ${seconds}초 이상`;
+    } else if (parts.length === 1) {
+      // "video_120" 형식: 초만 명시됨, 개수는 기본값 1개
+      const seconds = parts[0];
+      return `동영상 1개 이상, ${seconds}초 이상`;
     }
     // "video_visit" 같은 경우
     return "동영상 필수";
@@ -164,10 +173,11 @@ const getMissionItemsFromCampaign = (
   }
 
   // requirements를 MissionItem[]로 변환
+  // ⚠️ 임시: 개발 중이므로 모든 항목을 충족 상태로 설정 (나중에 실제 콘텐츠 데이터로 교체 예정)
   return actualCampaign.requirements.map((requirement, index) => ({
     id: `${index + 1}`,
     text: parseRequirement(requirement),
-    isCompleted: false, // TODO: 실제 콘텐츠 데이터에서 충족 여부 확인
+    isCompleted: true, // TODO: 실제 콘텐츠 데이터에서 충족 여부 확인
   }));
 };
 
@@ -178,9 +188,12 @@ export default function ContentVerificationModal({
   campaignId,
   campaignType,
   missionItems,
+  onConfirm,
 }: ContentVerificationModalProps) {
   // 미션 항목 목록 상태
   const [items, setItems] = useState<MissionItem[]>([]);
+  // 토스트 메시지 표시 여부 상태
+  const [showToast, setShowToast] = useState(false);
 
   /**
    * 미션 항목 목록 초기화
@@ -203,6 +216,7 @@ export default function ContentVerificationModal({
       setItems(missionItems);
     } else {
       // 기본값 사용
+      // ⚠️ 임시: 개발 중이므로 모든 항목을 충족 상태로 설정 (나중에 실제 콘텐츠 데이터로 교체 예정)
       setItems([
         {
           id: "1",
@@ -217,12 +231,12 @@ export default function ContentVerificationModal({
         {
           id: "3",
           text: "동영상 1개 이상, 120초 이상",
-          isCompleted: false, // TODO: 실제 콘텐츠 데이터에서 가져오기
+          isCompleted: true, // TODO: 실제 콘텐츠 데이터에서 가져오기
         },
         {
           id: "4",
           text: "본문 내 링크 첨부",
-          isCompleted: false, // TODO: 실제 콘텐츠 데이터에서 가져오기
+          isCompleted: true, // TODO: 실제 콘텐츠 데이터에서 가져오기
         },
         {
           id: "5",
@@ -261,72 +275,95 @@ export default function ContentVerificationModal({
    *
    * 설명:
    * - 모든 미션 항목이 충족되었을 때만 제출이 가능합니다.
-   * - 제출 시 콘텐츠 확인 완료 처리를 합니다.
+   * - 제출 시 Toast 메시지를 표시하고, onConfirm 콜백이 있으면 실행합니다.
+   * - Toast는 2초 후 자동으로 사라집니다.
    */
   const handleSubmit = () => {
     if (allCompleted) {
       console.log("콘텐츠 확인 제출");
-      // TODO: 실제 API 호출로 콘텐츠 확인 제출
+
+      // Toast 메시지 표시
+      setShowToast(true);
+
+      // onConfirm 콜백이 있으면 실행 (실제 등록/수정 처리)
+      if (onConfirm) {
+        onConfirm();
+      } else {
+        // 기본 동작: 콘텐츠 확인 완료 처리
+        // TODO: 실제 API 호출로 콘텐츠 확인 제출
+      }
+
+      // 모달 닫기 (Toast는 자동으로 사라짐)
       onClose();
     }
   };
 
   return (
-    <div className={styles.modal_overlay} onClick={handleOverlayClick}>
-      <div className={styles.modal_container}>
-        {/* 모달 제목 */}
-        <h2 className={styles.modal_title}>콘텐츠 확인</h2>
+    <>
+      {/* Toast 메시지 컴포넌트 */}
+      <Toast
+        message="등록되었습니다."
+        isOpen={showToast}
+        onClose={() => setShowToast(false)}
+        duration={2000}
+      />
 
-        {/* 닫기 버튼 */}
-        <button className={styles.close_button} onClick={onClose}>
-          <Image
-            src="/images/filter/x_icon.svg"
-            alt="닫기"
-            width={20}
-            height={20}
-          />
-        </button>
+      <div className={styles.modal_overlay} onClick={handleOverlayClick}>
+        <div className={styles.modal_container}>
+          {/* 모달 제목 */}
+          <h2 className={styles.modal_title}>콘텐츠 확인</h2>
 
-        {/* 미션 항목 목록 */}
-        <div className={styles.mission_list}>
-          {/* 서브타이틀: "기본 미션" */}
-          <p className={styles.subtitle}>기본 미션</p>
+          {/* 닫기 버튼 */}
+          <button className={styles.close_button} onClick={onClose}>
+            <Image
+              src="/images/filter/x_icon.svg"
+              alt="닫기"
+              width={20}
+              height={20}
+            />
+          </button>
 
-          {items.map((item) => (
-            <div
-              key={item.id}
-              className={`${styles.mission_item} ${
-                item.isCompleted ? styles.completed : styles.incomplete
-              }`}
-            >
-              <span className={styles.mission_text}>{item.text}</span>
-            </div>
-          ))}
+          {/* 미션 항목 목록 */}
+          <div className={styles.mission_list}>
+            {/* 서브타이틀: "기본 미션" */}
+            <p className={styles.subtitle}>기본 미션</p>
+
+            {items.map((item) => (
+              <div
+                key={item.id}
+                className={`${styles.mission_item} ${
+                  item.isCompleted ? styles.completed : styles.incomplete
+                }`}
+              >
+                <span className={styles.mission_text}>{item.text}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* 안내 메시지 */}
+          {allCompleted ? (
+            <p className={styles.warning_message}>
+              기본 미션 기준을 충족하셨습니다.
+            </p>
+          ) : (
+            <p className={styles.warning_message}>
+              기본 미션 기준을 충족하지 못했습니다. 기준을 달성하신 후 다시
+              신청해 주세요.
+            </p>
+          )}
+
+          {/* 제출 버튼 */}
+          <button
+            className={`${styles.submit_button} ${
+              allCompleted ? styles.active : styles.disabled
+            }`}
+            onClick={handleSubmit}
+            disabled={!allCompleted}
+          >
+            제출
+          </button>
         </div>
-
-        {/* 안내 메시지 */}
-        {allCompleted ? (
-          <p className={styles.warning_message}>
-            기본 미션 기준을 충족하셨습니다.
-          </p>
-        ) : (
-          <p className={styles.warning_message}>
-            기본 미션 기준을 충족하지 못했습니다. 기준을 달성하신 후 다시 신청해
-            주세요.
-          </p>
-        )}
-
-        {/* 제출 버튼 */}
-        <button
-          className={`${styles.submit_button} ${
-            allCompleted ? styles.active : styles.disabled
-          }`}
-          onClick={handleSubmit}
-          disabled={!allCompleted}
-        >
-          제출
-        </button>
       </div>
-    </div>
+    </>
   );
 }

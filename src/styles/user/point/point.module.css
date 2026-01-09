@@ -66,17 +66,17 @@
 
 /* 포인트 단위 (P) */
 .amount_unit {
-  color: #848484;
+  color: #ff5694;
 }
 
 /* "출금신청하기" 버튼 */
 .withdrawal_button {
   border-radius: 24px;
-  background: #d9d9d9;
+  background: #ff5694;
   cursor: pointer;
   flex-shrink: 0;
   padding: 16px 24px;
-  color: #444;
+  color: #ffffff;
   font-style: normal;
   font-weight: 600;
   line-height: 18px; /* 100% */

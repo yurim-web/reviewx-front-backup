@@ -70,8 +70,14 @@ export default function ProfileContent({
       */}
       <div className={profileStyles.profile_section}>
         <div className={profileStyles.profile_info}>
-          {/* 프로필 이미지 영역 (현재는 빈 div로 스타일만 적용) */}
-          <div className={profileStyles.profile_image} />
+          {/* 프로필 이미지 영역 - 기본 프로필 이미지 사용 */}
+          <div className={profileStyles.profile_image}>
+            <img
+              src="/images/mypage/profile.svg"
+              alt="기본 프로필 이미지"
+              className={profileStyles.profile_image_icon}
+            />
+          </div>
 
           {/* 프로필 상세 정보 */}
           <div className={profileStyles.profile_details}>

@@ -45,7 +45,7 @@ export default function SocialSecurityNumberInput({
   return (
     <article className={styles.field_article}>
       <label className={styles.field_label} htmlFor="ssnFront">
-        주민등록번호<span className={styles.required_asterisk}>*</span>
+        주민등록번호
       </label>
       <div className={styles.ssn_container}>
         <input

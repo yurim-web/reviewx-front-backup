@@ -4,20 +4,31 @@ import Link from "next/link";
 import styles from "@/styles/fragments/header.module.css";
 import { mockReviewerNotifications } from "@/data/notification/notificationData";
 import HeaderSearch from "@/components/fragments/HeaderSearch";
+import { useEffect, useState } from "react";
 
 interface HeaderProps {
   has_notifications?: boolean;
 }
 
 export default function Header({ has_notifications }: HeaderProps) {
-  // 기본값: props가 주어지면 그 값을 사용, 아니면 목업 데이터 기준
-  const effective_has_notifications =
-    has_notifications ?? mockReviewerNotifications.length > 0;
+  // Hydration 에러 방지를 위한 마운트 상태
+  const [isMounted, setIsMounted] = useState(false);
+  // 알림 아이콘 상태 (마운트 전에는 기본값 사용)
+  const [notificationIconSrc, setNotificationIconSrc] = useState(
+    "/images/header/notification_icon.svg"
+  );
 
-  // TODO: 실제 알림 데이터 연동 후, has_notifications 값을 API/전역 상태에서 가져오도록 수정
-  const notification_icon_src = effective_has_notifications
-    ? "/images/header/notification_ok.svg"
-    : "/images/header/notification_icon.svg";
+  useEffect(() => {
+    setIsMounted(true);
+    // 마운트 후 실제 알림 데이터 확인
+    const effective_has_notifications =
+      has_notifications ?? mockReviewerNotifications.length > 0;
+    setNotificationIconSrc(
+      effective_has_notifications
+        ? "/images/header/notification_ok.svg"
+        : "/images/header/notification_icon.svg"
+    );
+  }, [has_notifications]);
 
   return (
     <header>
@@ -29,19 +40,11 @@ export default function Header({ has_notifications }: HeaderProps) {
           {/* 검색 */}
           <HeaderSearch />
           {/* 알림페이지로 연결 */}
-          <Link href="/user/notification">
-            <img src={notification_icon_src} alt="bell_icon" />
+          <Link href="/user/notification" className={styles.notification_icon}>
+            <img src={notificationIconSrc} alt="bell_icon" />
           </Link>
-          {/* 가이드로 연결 */}
-          <a
-            href="https://markx.dev/guide_book"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img src="/images/header/header_book.svg" alt="book" />
-          </a>
           {/* 마이페이지로 연결 */}
-          <Link href="/user/campaign_management">
+          <Link href="/user/campaign_management" className={styles.user_icon}>
             <img src="/images/header/header_user.svg" alt="user" />
           </Link>
         </div>

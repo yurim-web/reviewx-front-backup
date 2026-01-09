@@ -76,67 +76,47 @@
 }
 
 /**
- * 필터 버튼 호버 효과
- */
-.filter_button:hover {
-  border: 1px solid #444;
-}
-
-/**
  * 활성화된 필터 버튼 스타일
  */
 .filter_button_active {
-  border: 1px solid #444 !important;
-  color: #444 !important;
+  border: 1px solid #ff5694 !important;
+  color: #ff5694 !important;
 }
 
 /**
- * 체크박스 아이콘 컨테이너
+ * 필터 아이콘 - 체크박스 스타일
  */
-.checkbox_icon {
+.filter_icon {
   width: 16px;
   height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-/**
- * 체크박스 체크됨 상태
- */
-.checkbox_checked {
-  width: 16px;
-  height: 16px;
-  border: 1px solid #444;
+  border: 1.5px solid #d9d9d9;
   border-radius: 4px;
-
+  background: #ffffff;
+  flex-shrink: 0;
   position: relative;
 }
 
 /**
- * 체크박스 체크 표시 (체크마크)
+ * 활성화된 필터 버튼의 체크박스 스타일
  */
-.checkbox_checked::after {
-  content: '✓';
+.filter_button_active .filter_icon {
+  border-color: #ff5694;
+  background: #ffffff;
+}
+
+/**
+ * 활성화된 필터 버튼의 체크박스에 체크마크 표시
+ */
+.filter_button_active .filter_icon::after {
+  content: "✓";
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #444444;
+  color: #ff5694;
   font-size: 12px;
-  font-weight: bold;
-}
-
-/**
- * 체크박스 체크 안 됨 상태
- */
-.checkbox_unchecked {
-  width: 16px;
-  height: 16px;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  background: white;
+  font-weight: 600;
+  line-height: 1;
 }
 
 /**
@@ -154,7 +134,7 @@
  * 활성화된 필터 버튼 내의 라벨 색상
  */
 .filter_button_active .filter_label {
-  color: #444 !important;
+  color: #ff5694 !important;
 }
 
 /**
@@ -164,7 +144,15 @@
   width: 16px;
   height: 16px;
   flex-shrink: 0;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+/**
+ * 활성화된 필터 버튼의 드롭다운 아이콘 색상 변경
+ */
+.filter_button_active .dropdown_icon {
+  filter: brightness(0) saturate(100%) invert(39%) sepia(99%) saturate(4283%)
+    hue-rotate(315deg) brightness(101%) contrast(101%);
 }
 
 /* ========================================
@@ -223,13 +211,6 @@
 }
 
 /**
- * 검색 입력창 포커스 효과
- */
-.search_input:focus {
-  border-color: #444;
-}
-
-/**
  * 검색 입력창 placeholder 스타일
  */
 .search_input::placeholder {
@@ -257,13 +238,6 @@
   font-weight: 500;
   line-height: 16px;
   letter-spacing: -0.32px;
-}
-
-/**
- * 정렬 버튼 호버 효과
- */
-.sort_button:hover {
-  border: 1px solid #444;
 }
 
 /**

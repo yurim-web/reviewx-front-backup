@@ -110,12 +110,38 @@ export default function PurchaseReviewContentsDetailPage() {
         isPurchasePeriod: false,
         isRegistrationPeriod: false,
         purchasePeriod: undefined,
+        isCampaignClosed: false,
       };
 
     const campaignData = reviewCampaignsExtended.find(
       (c) => c.id === campaignId
     );
     const contentType = campaignData?.contentType || "link";
+
+    // 캠페인 마감 여부 확인
+    // 📌 캠페인 마감 체크:
+    // - campaignInfo의 status가 "마감"인지 확인
+    // - statusText에 "마감"이 포함되어 있는지 확인
+    // - 등록 기간이 종료되었는지 확인
+    const checkRegistrationPeriodEnded = (
+      registrationPeriod?: string
+    ): boolean => {
+      if (!registrationPeriod) return false;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const period = registrationPeriod.split(" ~ ");
+      if (period.length === 2) {
+        const endDate = new Date(period[1].trim());
+        endDate.setHours(0, 0, 0, 0);
+        return today > endDate;
+      }
+      return false;
+    };
+
+    const isCampaignClosed =
+      campaignInfo?.status === "마감" ||
+      campaignInfo?.statusText?.includes("마감") === true ||
+      checkRegistrationPeriodEnded(campaignInfo?.registrationPeriod);
 
     // 구매 기간 확인 및 기한 날짜 추출
     const purchasePeriod = campaignData?.detailedSchedule?.purchasePeriod;
@@ -136,7 +162,11 @@ export default function PurchaseReviewContentsDetailPage() {
         endDate.setHours(0, 0, 0, 0);
 
         // 오늘이 구매 기간 내에 있는지 확인
-        isPurchasePeriod = today >= startDate && today <= endDate;
+        // 📌 중요: 캠페인이 마감되었으면 구매 기간이어도 false로 처리
+        // - 구매 영수증 확인 카드는 구매 기간에만 표시되어야 하므로
+        // - 캠페인이 마감되면 더 이상 구매 기간 카드를 표시하지 않습니다
+        isPurchasePeriod =
+          !isCampaignClosed && today >= startDate && today <= endDate;
 
         // 구매 기간이면 구매 기간의 마지막 날짜를 기한으로 사용
         if (isPurchasePeriod) {
@@ -178,8 +208,9 @@ export default function PurchaseReviewContentsDetailPage() {
       isPurchasePeriod,
       isRegistrationPeriod,
       purchasePeriod,
+      isCampaignClosed,
     };
-  }, [campaignId]);
+  }, [campaignId, campaignInfo]);
 
   // 영수증 모달 핸들러 (구매평 특화)
   const openReceiptModal = (images: string[] | undefined) => {
@@ -191,6 +222,35 @@ export default function PurchaseReviewContentsDetailPage() {
     setIsReceiptModalOpen(false);
     setReceiptImages([]);
   };
+
+  /**
+   * 구매 기간인지 확인하는 함수
+   * 📌 구매 기간 체크: purchasePeriod 날짜를 직접 확인하여 구매 기간인지 판단합니다
+   * - 마감 여부와 관계없이 구매 기간 날짜만 확인합니다
+   * - 카드 렌더링 시 구매 기간이면 무조건 구매평 1차 카드를 사용하기 위해 필요합니다
+   */
+  const checkIsInPurchasePeriod = React.useCallback((): boolean => {
+    if (!campaignId) return false;
+    const campaignData = reviewCampaignsExtended.find(
+      (c) => c.id === campaignId
+    );
+    const purchasePeriod = campaignData?.detailedSchedule?.purchasePeriod;
+    if (!purchasePeriod) return false;
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const periodMatch = purchasePeriod.match(
+      /(\d{4}-\d{2}-\d{2})\s*~\s*(\d{4}-\d{2}-\d{2})/
+    );
+    if (periodMatch) {
+      const startDate = new Date(periodMatch[1]);
+      startDate.setHours(0, 0, 0, 0);
+      const endDate = new Date(periodMatch[2]);
+      endDate.setHours(0, 0, 0, 0);
+      return today >= startDate && today <= endDate;
+    }
+    return false;
+  }, [campaignId]);
 
   /**
    * 구매평 캠페인에 특화된 카드 컴포넌트 렌더링 함수
@@ -241,7 +301,7 @@ export default function PurchaseReviewContentsDetailPage() {
     // 대기 탭: 구매 기간이면 구매평 1차 카드, 그 외(등록 단계/마감 포함)는 구매평 2차 카드
     if (activeTab === "대기") {
       // 구매 기간인 경우 구매평 1차 카드 사용
-      if (params.isPurchasePeriod) {
+      if (checkIsInPurchasePeriod()) {
         // 구매 기간에서는 영수증 흐름만 있음
         let pendingState: "receipt_not_registered" | "rejected" | "reported" =
           "receipt_not_registered";
@@ -286,6 +346,15 @@ export default function PurchaseReviewContentsDetailPage() {
           pendingState = "content_not_registered";
         }
 
+        // 📌 여러 이미지 지원:
+        // - receiptImages가 있으면 우선 사용 (페이지네이션 테스트용)
+        // - 없으면 thumbnailSrc를 배열로 변환하여 사용
+        const reviewImagesForPending = item.receiptImages && item.receiptImages.length > 0
+          ? item.receiptImages
+          : item.thumbnailSrc
+          ? [item.thumbnailSrc]
+          : [];
+        
         return (
           <PurchaseSecondPendingCard
             key={item.id}
@@ -297,10 +366,8 @@ export default function PurchaseReviewContentsDetailPage() {
             reject_reason={rejectReasons.get(item.id) || item.reject_reason}
             extension_request_reason={item.extension_request_reason}
             reportedDate={reportedDates.get(item.id) || item.reportedDate}
-            reviewImages={item.thumbnailSrc ? [item.thumbnailSrc] : []}
-            onCheckReview={() =>
-              openReceiptModal(item.thumbnailSrc ? [item.thumbnailSrc] : [])
-            }
+            reviewImages={reviewImagesForPending}
+            onCheckReview={() => openReceiptModal(reviewImagesForPending)}
             onExtend={handleExtend}
             onReport={handleReport}
           />
@@ -311,7 +378,7 @@ export default function PurchaseReviewContentsDetailPage() {
     // 확인 탭: 구매 기간이면 구매평 1차 카드, 등록 기간이면 구매평 2차 카드, 아니면 일반 카드
     if (activeTab === "확인") {
       // 구매 기간인 경우 구매평 1차 카드 사용
-      if (params.isPurchasePeriod) {
+      if (checkIsInPurchasePeriod()) {
         return (
           <PurchaseFirstInspectionCard
             key={item.id}
@@ -329,20 +396,27 @@ export default function PurchaseReviewContentsDetailPage() {
 
       // 등록 기간인 경우 구매평 2차 카드 사용
       if (params.isRegistrationPeriod) {
+        // 📌 여러 이미지 지원:
+        // - receiptImages가 있으면 우선 사용 (페이지네이션 테스트용)
+        // - 없으면 thumbnailSrc를 배열로 변환하여 사용
+        const reviewImages = item.receiptImages && item.receiptImages.length > 0
+          ? item.receiptImages
+          : item.thumbnailSrc
+          ? [item.thumbnailSrc]
+          : [];
+        
         return (
           <PurchaseSecondInspectionCard
             key={item.id}
             applicant={applicant}
-            onCheckReview={() =>
-              openReceiptModal(item.thumbnailSrc ? [item.thumbnailSrc] : [])
-            }
+            onCheckReview={() => openReceiptModal(reviewImages)}
             onApprove={handleApprove}
             onReject={handleReject}
             onExtend={handleExtend}
             onReport={handleReport}
             dateLabel={dateLabel}
             registrationDate={formatDateTime(item.updatedAt || item.createdAt)}
-            reviewImages={item.thumbnailSrc ? [item.thumbnailSrc] : []}
+            reviewImages={reviewImages}
           />
         );
       }
@@ -414,8 +488,12 @@ export default function PurchaseReviewContentsDetailPage() {
     }
 
     // 완료 탭: 구매 기간이면 구매평 1차 카드, 등록 기간이면 구매평 2차 카드, 아니면 일반 카드
+    // 📌 중요: 구매 기간이면 무조건 구매평 1차 카드를 사용합니다
+    // - 구매 기간에는 "구매 영수증 확인" 버튼이 있는 PurchaseFirstCompletedCard를 사용합니다
+    // - 마감 여부와 관계없이 구매 기간이면 구매평 1차 카드를 사용합니다
+    
     // 구매 기간인 경우 구매평 1차 카드 사용
-    if (params.isPurchasePeriod) {
+    if (checkIsInPurchasePeriod()) {
       return (
         <PurchaseFirstCompletedCard
           key={item.id}
@@ -427,35 +505,47 @@ export default function PurchaseReviewContentsDetailPage() {
       );
     }
 
-    // 등록 기간인 경우 구매평 2차 카드 사용
+    // 등록 기간인 경우 구매평 2차 카드 사용 (리뷰 확인)
     if (params.isRegistrationPeriod) {
+      // 📌 여러 이미지 지원:
+      // - receiptImages가 있으면 우선 사용 (페이지네이션 테스트용)
+      // - 없으면 thumbnailSrc를 배열로 변환하여 사용
+      const reviewImagesForCompleted = item.receiptImages && item.receiptImages.length > 0
+        ? item.receiptImages
+        : item.thumbnailSrc
+        ? [item.thumbnailSrc]
+        : [];
+      
       return (
         <PurchaseSecondCompletedCard
           key={item.id}
           applicant={applicant}
-          onCheckReview={() =>
-            openReceiptModal(item.thumbnailSrc ? [item.thumbnailSrc] : [])
-          }
+          onCheckReview={() => openReceiptModal(reviewImagesForCompleted)}
           onReport={handleReport}
           registrationDate={formatDateTime(item.updatedAt || item.createdAt)}
-          reviewImages={item.thumbnailSrc ? [item.thumbnailSrc] : []}
+          reviewImages={reviewImagesForCompleted}
         />
       );
     }
 
     // 완료 탭: 영수증 흐름이면 영수증 확인 라벨/핸들러, 아니면 리뷰 확인
+    // 📌 중요: 캠페인이 마감되었으면 구매 영수증 확인 대신 리뷰 확인을 사용합니다
+    // - 구매 영수증 확인은 구매 기간에만 가능하므로, 마감 후에는 리뷰 확인을 표시합니다
+    const shouldShowReceiptCheck = isReceiptFlow && !params.isCampaignClosed;
+    
     return (
       <CampaignCompletedCard
         key={item.id}
         applicant={{
           ...applicant,
-          reviewType: isReceiptFlow ? 2 : 3,
+          // 캠페인이 마감되었으면 reviewType을 3으로 설정하여 리뷰 확인 버튼 표시
+          reviewType: shouldShowReceiptCheck ? 2 : 3,
         }}
         onCheckReceipt={
-          isReceiptFlow ? () => openReceiptModal(item.receiptImages) : undefined
+          shouldShowReceiptCheck ? () => openReceiptModal(item.receiptImages) : undefined
         }
         onCheckReview={
-          !isReceiptFlow
+          !shouldShowReceiptCheck
             ? () =>
                 openReceiptModal(item.thumbnailSrc ? [item.thumbnailSrc] : [])
             : undefined

@@ -103,6 +103,10 @@ export default function ApplicationModal({
   const [userName, setUserName] = useState("홍길동");
   // 주소 정보 (등록되어 있지 않으면 빈 문자열)
   const [userAddress, setUserAddress] = useState("");
+  // 채널 URL 정보 (props로 받은 값 또는 sessionStorage에서 불러온 값)
+  const [currentChannelUrl, setCurrentChannelUrl] = useState(
+    userChannelUrl || ""
+  );
 
   // 신청 완료 모달 상태
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
@@ -117,7 +121,8 @@ export default function ApplicationModal({
   // 채널 정보: 캠페인에서 요구하는 채널 이름을 사용 (없으면 기본값)
   const channelName = campaignChannelName || "네이버 블로그";
   // 사용자가 연결한 채널 URL (없을 수 있음)
-  const channelUrl = userChannelUrl;
+  // sessionStorage에서 불러온 값이 있으면 우선 사용, 없으면 props로 받은 값 사용
+  const channelUrl = currentChannelUrl || userChannelUrl || "";
 
   // 긴급 캠페인 여부 확인
   // isUrgent prop이 있으면 우선 사용, 없으면 dayCount에서 "긴급" 포함 여부 확인 (하위 호환성)
@@ -145,6 +150,39 @@ export default function ApplicationModal({
           setIsAgreed(stored.isAgreed || false);
           setIsUrgentAgreed(stored.isUrgentAgreed || false);
         }
+
+        // sessionStorage에서 주소 정보 불러오기
+        if (typeof window !== "undefined") {
+          const storedAddress = sessionStorage.getItem("userAddress");
+          if (storedAddress) {
+            try {
+              const addressData = JSON.parse(storedAddress);
+              // 전체 주소 문자열을 사용 (우편번호 + 기본 주소 + 상세 주소)
+              setUserAddress(addressData.fullAddress || "");
+            } catch {
+              // 파싱 실패 시 빈 문자열
+              setUserAddress("");
+            }
+          }
+        }
+
+        // sessionStorage에서 채널 정보 불러오기
+        if (typeof window !== "undefined") {
+          const storedChannelInfo = sessionStorage.getItem("userChannelInfo");
+          if (storedChannelInfo) {
+            try {
+              const channelData = JSON.parse(storedChannelInfo);
+              // 캠페인에서 요구하는 채널 이름과 일치하는 경우에만 URL 업데이트
+              if (channelData.channelName === channelName) {
+                setCurrentChannelUrl(channelData.channelUrl || "");
+              }
+            } catch {
+              // 파싱 실패 시 props로 받은 값 유지
+              setCurrentChannelUrl(userChannelUrl || "");
+            }
+          }
+        }
+
         // 복원 플래그 제거
         sessionStorage.removeItem("shouldRestoreFormData");
       } else {
@@ -154,9 +192,12 @@ export default function ApplicationModal({
         setMemo("");
         setIsAgreed(false);
         setIsUrgentAgreed(false);
+        // 주소와 채널 정보도 초기화 (props로 받은 값 사용)
+        setUserAddress("");
+        setCurrentChannelUrl(userChannelUrl || "");
       }
     }
-  }, [isOpen]);
+  }, [isOpen, channelName, userChannelUrl]);
 
   if (!isOpen) return null;
 

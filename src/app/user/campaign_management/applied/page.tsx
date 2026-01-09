@@ -29,7 +29,7 @@ import layoutStyles from "../../../../styles/user/campaign_management/layout.mod
 // 임시 데이터 import
 import {
   getCampaignsByTab,
-  campaignManagementData,
+  campaignManagementStats,
 } from "@/data/user/campaign_management/campaignManagementData";
 
 // 실제 캠페인 데이터 import (applicationEnd 날짜 가져오기 위해)
@@ -269,21 +269,17 @@ export default function AppliedPage() {
    */
   const calculateStats = () => {
     // 신청 상태 캠페인 중 선정 발표일이 지나지 않은 것만 카운트
-    const appliedCampaigns = campaignManagementData.filter(
-      (c) => c.status === "신청"
-    );
+    const appliedCampaigns = getCampaignsByTab("신청");
     const validAppliedCampaigns = appliedCampaigns.filter(
       (c) => !isAnnouncementDatePassed(c.id)
     );
 
     return {
       신청: validAppliedCampaigns.length,
-      선정: campaignManagementData.filter((c) => c.status === "선정").length,
-      완료: campaignManagementData.filter((c) => c.status === "완료").length,
-      "취소/반려": campaignManagementData.filter(
-        (c) => c.status === "취소/반려"
-      ).length,
-      패널티: campaignManagementData.filter((c) => c.isPenalty === true).length,
+      선정: getCampaignsByTab("선정").length,
+      완료: getCampaignsByTab("완료").length,
+      "취소/반려": getCampaignsByTab("취소/반려").length,
+      패널티: getCampaignsByTab("패널티").length,
     };
   };
 

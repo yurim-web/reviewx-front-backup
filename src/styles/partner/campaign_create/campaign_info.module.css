@@ -59,7 +59,7 @@
   font-weight: 500;
   line-height: 16px; /* 100% */
   letter-spacing: -0.32px;
-  cursor: pointer;
+  cursor: default;
 }
 
 /* placeholder 스타일 */
@@ -164,23 +164,8 @@
   position: absolute;
   top: 4px;
   right: 4px;
-  width: 24px;
-  height: 24px;
-  border: none;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s ease;
-}
-
-.image_remove_button:hover {
-  background: rgba(0, 0, 0, 0.8);
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.1));
 }
 
 /* 주소 입력 그룹 - 주소 + 우편번호 버튼 */
