@@ -669,6 +669,12 @@ export default function HomePageClient() {
     return date;
   }, []);
 
+  // 📌 Hydration 오류 방지: 서버와 클라이언트에서 동일한 초기 데이터 사용
+  // useState의 초기값을 사용하여 서버와 클라이언트에서 동일한 결과 보장
+  // useMemo를 사용하여 컴포넌트가 마운트될 때 한 번만 계산
+  // ⚠️ 중요: 이 변수는 high_probability_campaigns, popular_campaigns, ongoing_campaigns보다 먼저 정의되어야 합니다
+  const staticCampaigns = useMemo(() => getStaticCampaigns(), []);
+
   /**
    * 선정 확률 높은 캠페인 - 신청자가 적은 캠페인을 무작위로 선택 (무조건 8개 노출)
    *
@@ -835,11 +841,6 @@ export default function HomePageClient() {
    *
    * useMemo: 의존성 배열에 today를 포함하여 날짜가 바뀔 때마다 재계산됩니다
    */
-  // 📌 Hydration 오류 방지: 서버와 클라이언트에서 동일한 초기 데이터 사용
-  // useState의 초기값을 사용하여 서버와 클라이언트에서 동일한 결과 보장
-  // useMemo를 사용하여 컴포넌트가 마운트될 때 한 번만 계산
-  const staticCampaigns = useMemo(() => getStaticCampaigns(), []);
-  
   const ongoing_campaigns = useMemo(() => {
     // 모든 캠페인을 하나의 배열로 합칩니다
     // 📌 서버와 클라이언트에서 동일한 정적 데이터 사용 (hydration 오류 방지)

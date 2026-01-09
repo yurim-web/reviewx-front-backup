@@ -177,7 +177,11 @@ export default function DateFilterSection({
           aria-label="날짜 범위 선택"
         >
           {/* 날짜 선택 아이콘 */}
-          <div className={styles.date_filter_section_picker_icon}></div>
+          <img
+            src="/images/calendar/calendar_icon.svg"
+            alt="날짜 선택"
+            className={styles.date_filter_section_picker_icon}
+          />
           {/* 선택된 날짜 범위를 동적으로 표시 */}
           <span>{format_date_range(selected_date_range)}</span>
         </div>
