@@ -172,9 +172,12 @@ export default function PartnerDetailPage() {
           />
         )}
 
-        {/* 담당자 정보 섹션: 문의 담당자 휴대폰 번호 */}
+        {/* 담당자 정보 섹션: 담당자 이름, 문의 담당자 휴대폰 번호 */}
         {partner_detail && (
-          <ContactPersonSection contact_phone={partner_detail.contact_phone} />
+          <ContactPersonSection
+            contact_name={partner_detail.contact_name}
+            contact_phone={partner_detail.contact_phone}
+          />
         )}
       </div>
 

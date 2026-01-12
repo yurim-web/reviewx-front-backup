@@ -1,9 +1,9 @@
 /* ========================================
-   🚫 GA 관리자 반려 이력 페이지
+   🚫 GA 관리자 전체 반려 내역 페이지
    ======================================== */
 
 /**
- * GA 관리자 반려 이력 페이지
+ * GA 관리자 전체 반려 내역 페이지
  *
  * 목적: GA 관리자가 캠페인 반려 이력을 확인하고 관리할 수 있는 페이지입니다.
  *
@@ -21,7 +21,7 @@
 "use client";
 
 import { useState } from "react";
-import styles from "@/styles/manager_ga/campaign/rejected/page.module.css";
+import styles from "@/styles/manager_ga/campaign/campaign_common.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import RejectCodeInfoSection from "@/components/manager/ga/campaign/rejected/section/RejectCodeInfoSection";
 import RejectStatsSection from "@/components/manager/ga/campaign/rejected/section/RejectStatsSection";
@@ -31,7 +31,7 @@ import type { RejectCode } from "@/data/manager_ga/rejected";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 
 /**
- * 반려 이력 페이지 컴포넌트
+ * 전체 반려 내역 페이지 컴포넌트
  *
  * 목적: GA 관리자가 캠페인 반려 이력을 확인하고 관리할 수 있는 페이지입니다.
  *
@@ -51,7 +51,7 @@ import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRa
  * - RejectedCampaignTable: 반려 이력 테이블
  *
  *
- * @returns 반려 이력 페이지 JSX
+ * @returns 전체 반려 내역 페이지 JSX
  */
 export default function RejectedPage() {
   // 검색어 상태 관리
@@ -70,16 +70,16 @@ export default function RejectedPage() {
   >(undefined);
 
   return (
-    <div className={styles.container}>
-      <div className={styles.main_content}>
+    <div className={styles.page_container}>
+      <div className={styles.page_main_content}>
         {/* 페이지 제목 */}
-        <ManagerPageTitle title="캠페인 반려 이력" />
+        <ManagerPageTitle title="전체 반려 내역" />
 
         {/* 반려 코드 안내 섹션 */}
         <RejectCodeInfoSection />
 
         {/* 반려 이력 섹션 제목 */}
-        <h2 className={styles.section_title}>반려 이력</h2>
+        <h2 className={styles.page_section_title}>반려 내역</h2>
 
         {/* 필터 섹션 */}
         <CampaignRejectedFilterSection

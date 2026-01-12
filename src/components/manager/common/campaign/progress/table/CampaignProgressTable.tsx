@@ -81,6 +81,9 @@ interface CampaignTableProps {
     channel_icon: string;
     channel_icon_image: string;
   }; // 채널 아이콘 스타일 객체 (channel_icon, channel_icon_image 포함)
+  // 필터/검색 상태 (빈 메시지 결정용)
+  search_query?: string; // 검색어
+  has_active_filters?: boolean; // 활성 필터가 있는지 여부 (상태, 유형, 채널, 날짜 필터)
 }
 
 // 캠페인 타입별 상세 페이지 경로 매핑
@@ -152,6 +155,8 @@ export default function CampaignProgressTable({
   styles: cssStyles,
   tagStyles,
   channelIconStyles,
+  search_query = "",
+  has_active_filters = false,
 }: CampaignTableProps) {
   const [hovered_row_id, set_hovered_row_id] = useState<string | null>(null);
 
@@ -226,6 +231,13 @@ export default function CampaignProgressTable({
       column.key === "report" ? cssStyles.table_header_cell_report : undefined,
   }));
 
+  // 빈 메시지 결정: 필터/검색이 적용되어 있으면 "검색 결과가 없습니다.", 아니면 "캠페인이 없습니다."
+  // 검색어가 있거나 활성 필터가 있으면 검색 결과 없음 메시지 표시
+  const empty_message =
+    search_query.trim() || has_active_filters
+      ? "검색 결과가 없습니다."
+      : "캠페인이 없습니다.";
+
   // 커스텀 행 래퍼 (행 전체를 클릭 가능하게 만들되, report 버튼은 제외)
   const render_row_wrapper = (
     row: CampaignTableRowData,
@@ -248,16 +260,25 @@ export default function CampaignProgressTable({
           // report 셀 또는 report 버튼을 클릭한 경우 링크 이동 방지
           const target = e.target as HTMLElement;
           const currentTarget = e.currentTarget as HTMLElement;
-          
+
           // data 속성으로 report 셀 확인
           const report_cell = target.closest('[data-report-cell="true"]');
           const report_button = target.closest('[data-report-button="true"]');
-          
-          // report 셀의 클래스명으로도 확인 (CSS 모듈 클래스명)
-          const is_report_cell = target.closest(`.${cssStyles.table_cell_report}`);
-          const is_report_button = target.closest(`.${cssStyles.report_button}`);
 
-          if (report_cell || report_button || is_report_cell || is_report_button) {
+          // report 셀의 클래스명으로도 확인 (CSS 모듈 클래스명)
+          const is_report_cell = target.closest(
+            `.${cssStyles.table_cell_report}`
+          );
+          const is_report_button = target.closest(
+            `.${cssStyles.report_button}`
+          );
+
+          if (
+            report_cell ||
+            report_button ||
+            is_report_cell ||
+            is_report_button
+          ) {
             e.preventDefault();
             e.stopPropagation();
             e.nativeEvent.stopImmediatePropagation();
@@ -268,8 +289,10 @@ export default function CampaignProgressTable({
           // report 셀 클릭 시 Link의 클릭 이벤트 차단
           const target = e.target as HTMLElement;
           const report_cell = target.closest('[data-report-cell="true"]');
-          const is_report_cell = target.closest(`.${cssStyles.table_cell_report}`);
-          
+          const is_report_cell = target.closest(
+            `.${cssStyles.table_cell_report}`
+          );
+
           if (report_cell || is_report_cell) {
             e.preventDefault();
             e.stopPropagation();
@@ -397,7 +420,7 @@ export default function CampaignProgressTable({
         render_header={render_custom_header}
         render_row_wrapper={render_row_wrapper}
         container_class_name=""
-        empty_message="캠페인이 없습니다."
+        empty_message={empty_message}
       />
       <ReportModal
         is_open={report_modal_state.is_open}

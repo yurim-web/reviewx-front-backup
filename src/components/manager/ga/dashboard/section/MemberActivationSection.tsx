@@ -14,9 +14,9 @@
  
  */
 
-import styles from '@/styles/manager_ga/dashboard/sections/member_activation_section.module.css';
-import MemberActivationDonutChart from '../chart/MemberActivationDonutChart';
-import { memberActivationStats } from '@/data/manager_ga/dashboard/dashboardData';
+import styles from "@/styles/manager_ga/dashboard/sections/member_activation_section.module.css";
+import MemberActivationDonutChart from "../chart/MemberActivationDonutChart";
+import { memberActivationStats } from "@/data/manager_ga/dashboard/dashboardData";
 
 export default function MemberActivationSection() {
   return (
@@ -41,6 +41,7 @@ export default function MemberActivationSection() {
                 {memberActivationStats.totalMembers.label}
               </p>
               {/* 변화율 표시 */}
+              {/* changeType에 따라 화살표와 색상이 달라집니다 */}
               <p
                 className={
                   styles[
@@ -48,7 +49,39 @@ export default function MemberActivationSection() {
                   ]
                 }
               >
-                {memberActivationStats.totalMembers.change}
+                {memberActivationStats.totalMembers.changeType ===
+                  "positive" && (
+                  <>
+                    {/* 상승: 초록색 위쪽 화살표 */}
+                    <span>↑</span>{" "}
+                    {memberActivationStats.totalMembers.change.replace(
+                      /^[+-]\s*/,
+                      ""
+                    )}
+                  </>
+                )}
+                {memberActivationStats.totalMembers.changeType ===
+                  "negative" && (
+                  <>
+                    {/* 하락: 빨간색 아래쪽 화살표 */}
+                    <span>↓</span>{" "}
+                    {memberActivationStats.totalMembers.change.replace(
+                      /^[+-]\s*/,
+                      ""
+                    )}
+                  </>
+                )}
+                {memberActivationStats.totalMembers.changeType ===
+                  "neutral" && (
+                  <>
+                    {/* 변화 없음: 회색 대시 */}
+                    <span>-</span>{" "}
+                    {memberActivationStats.totalMembers.change.replace(
+                      /^[+-]\s*/,
+                      ""
+                    )}
+                  </>
+                )}
               </p>
             </div>
             {/* 값 표시 */}

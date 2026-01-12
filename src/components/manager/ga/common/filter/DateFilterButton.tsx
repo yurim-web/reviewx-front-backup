@@ -25,6 +25,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { format } from "date-fns";
+import Image from "next/image";
 import styles from "@/styles/manager/common/campaign/progress/filter_section.module.css";
 import date_filter_styles from "@/styles/manager_ga/common/filter/date_filter.module.css";
 import DateRangePickerModal, {
@@ -55,10 +56,16 @@ export default function DateFilterButton({
   const [is_date_modal_open, setIsDateModalOpen] = useState(false);
 
   // useState: 선택된 날짜 범위를 관리하는 상태
-  // 외부에서 props로 받은 값이 있으면 사용하고, 없으면 내부에서 관리
+  // 📌 Hydration 오류 방지:
+  // - 초기값을 undefined로 설정하여 서버와 클라이언트가 동일한 초기값을 사용합니다
+  // - 클라이언트에서만 실제 날짜 범위를 설정합니다
   const [selected_date_range, setSelectedDateRange] = useState<
     DateRange | undefined
-  >(selected_range);
+  >(undefined);
+
+  // useState: 클라이언트 마운트 여부 (Hydration 오류 방지용)
+  // 서버 사이드에서는 false, 클라이언트에서 마운트되면 true가 됩니다
+  const [is_mounted, setIsMounted] = useState(false);
 
   // useState: 날짜 검증 오류 모달 상태
   const [is_error_modal_open, setIsErrorModalOpen] = useState(false);
@@ -67,11 +74,23 @@ export default function DateFilterButton({
   // ref는 DOM 요소에 직접 접근할 수 있게 해줍니다
   const picker_ref = useRef<HTMLDivElement>(null);
 
-  // props로 받은 selected_range가 변경되면 내부 상태도 업데이트
-  // useEffect는 컴포넌트가 렌더링된 후에 실행됩니다
+  // useEffect: 클라이언트에서만 실행되어 마운트 상태를 true로 설정
+  // 📌 Hydration 오류 방지:
+  // - 서버 사이드에서는 실행되지 않으므로 서버와 클라이언트의 초기 렌더링 결과가 동일합니다
+  // - 클라이언트에서 마운트된 후에만 날짜 범위를 표시합니다
   useEffect(() => {
+    setIsMounted(true);
+    // props로 받은 selected_range를 내부 상태에 설정
     setSelectedDateRange(selected_range);
   }, [selected_range]);
+
+  // props로 받은 selected_range가 변경되면 내부 상태도 업데이트
+  // is_mounted가 true인 경우에만 업데이트 (Hydration 오류 방지)
+  useEffect(() => {
+    if (is_mounted) {
+      setSelectedDateRange(selected_range);
+    }
+  }, [selected_range, is_mounted]);
 
   // 외부 클릭 감지: 드롭다운 외부를 클릭하면 닫기
   useEffect(() => {
@@ -154,7 +173,15 @@ export default function DateFilterButton({
 
   // 날짜 범위 포맷팅 함수
   // 선택된 날짜 범위를 "YYYY-MM-DD ~ YYYY-MM-DD" 형식으로 변환합니다
+  // 📌 Hydration 오류 방지:
+  // - is_mounted가 false인 경우 (서버 사이드 또는 초기 렌더링) 항상 "선택 기간 조회"를 반환합니다
+  // - 클라이언트에서 마운트된 후에만 실제 날짜 범위를 표시합니다
   const format_date_range = (range: DateRange | undefined): string => {
+    // 클라이언트에서 마운트되지 않았으면 기본 텍스트 표시 (Hydration 오류 방지)
+    if (!is_mounted) {
+      return "선택 기간 조회";
+    }
+
     if (!range) {
       // 날짜 범위가 없으면 기본 텍스트 표시
       return "선택 기간 조회";
@@ -197,8 +224,15 @@ export default function DateFilterButton({
         }}
         aria-label="날짜 범위 선택"
       >
-        {/* 날짜 선택 아이콘 - 필터 아이콘 스타일 사용 */}
-        <div className={styles.filter_icon}></div>
+        {/* 날짜 선택 아이콘 - 캘린더 아이콘 SVG 사용 */}
+        <div className={styles.filter_icon}>
+          <Image
+            src="/images/calendar/calendar_icon.svg"
+            alt="날짜 선택"
+            width={16}
+            height={16}
+          />
+        </div>
         {/* 선택된 날짜 범위를 동적으로 표시 */}
         <span className={styles.filter_text}>
           {format_date_range(selected_date_range)}

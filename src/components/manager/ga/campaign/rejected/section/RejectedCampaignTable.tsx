@@ -67,17 +67,17 @@ const get_reject_code_info = (code: string): RejectCodeInfo | undefined => {
 const get_columns = (styles: Record<string, string>): TableColumn[] => [
   {
     key: "campaign_number",
-    label: "캠페인 번호",
+    label: "번호",
     sortable: true,
   },
   {
     key: "campaign_name",
-    label: "캠페인명",
+    label: "캠페인명/이름",
     className: styles.table_cell_campaign_name,
   },
   {
     key: "target",
-    label: "등록자",
+    label: "대상자",
   },
   {
     key: "inspector",

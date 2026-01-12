@@ -237,6 +237,17 @@ export function ThumbnailAndDetailImages({
             disabled={isEditMode && !isEditable}
           />
         </div>
+        {/* 이미지 업로드 안내 문구 */}
+        <ul className={infoStyles.image_upload_info}>
+          <li>
+            썸네일 및 상세 이미지는 10mb 이하의 JPG, PNG, GIF 파일만 등록할 수
+            있습니다.
+          </li>
+          <li>
+            업로드 가능 개수는 화면에 표시된 개수까지 업로드할 수 있습니다.
+            (썸네일 1개, 상세 이미지 최대 7개)
+          </li>
+        </ul>
       </article>
     </>
   );

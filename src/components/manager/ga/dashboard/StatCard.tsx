@@ -68,7 +68,29 @@ export default function StatCard({ stat }: StatCardProps) {
               : styles.campaign_summary_section_stat_card_change_neutral
           }`}
         >
-          {stat.change}
+          {/* 변화율 타입에 따라 화살표와 색상이 달라집니다 */}
+          {/* stat.change에서 "+" 또는 "-" 기호를 제거하여 중복 표시를 방지합니다 */}
+          {stat.changeType === "positive" && (
+            <>
+              {/* 상승: 초록색 위쪽 화살표 (↑) */}
+              {/* replace(/^[+-]/, ""): 문자열 앞의 + 또는 - 기호를 제거합니다 */}
+              <span>↑</span> {stat.change.replace(/^[+-]/, "")}
+            </>
+          )}
+          {stat.changeType === "negative" && (
+            <>
+              {/* 하락: 빨간색 아래쪽 화살표 (↓) */}
+              {/* replace(/^[+-]/, ""): 문자열 앞의 + 또는 - 기호를 제거합니다 */}
+              <span>↓</span> {stat.change.replace(/^[+-]/, "")}
+            </>
+          )}
+          {stat.changeType === "neutral" && (
+            <>
+              {/* 변화 없음: 회색 대시 (-) */}
+              {/* replace(/^[+-]/, ""): 문자열 앞의 + 또는 - 기호를 제거합니다 */}
+              <span>-</span> {stat.change.replace(/^[+-]/, "")}
+            </>
+          )}
         </p>
       </div>
 

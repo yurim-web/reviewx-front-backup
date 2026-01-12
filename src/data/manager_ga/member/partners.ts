@@ -86,6 +86,7 @@ export interface PartnerDetail extends PartnerItem {
   email: string; // 이메일
   phone: string; // 전화번호
   address: string; // 주소
+  contact_name: string; // 담당자 이름
   contact_phone: string; // 문의 담당자 휴대폰 번호
   penalty_count: number; // 패널티 횟수
   payment_points: number; // 결제 포인트
@@ -407,6 +408,7 @@ export function get_partner_detail_by_id(
       email: string;
       phone: string;
       address: string;
+      contact_name: string;
       contact_phone: string;
     }
   > = {
@@ -414,90 +416,105 @@ export function get_partner_detail_by_id(
       email: "contact@cmcm.co.kr",
       phone: "02-1234-5678",
       address: "서울시 강남구 테헤란로 123",
+      contact_name: "홍길동",
       contact_phone: "010-1234-5678",
     },
     "2": {
       email: "cheongbul@example.com",
       phone: "010-2345-6789",
       address: "서울시 송파구 올림픽로 456",
+      contact_name: "김철수",
       contact_phone: "010-2345-6789",
     },
     "3": {
       email: "myeongryunjinsa@example.com",
       phone: "031-3456-7890",
       address: "경기도 수원시 영통구 광교로 789",
+      contact_name: "이영희",
       contact_phone: "010-3456-7890",
     },
     "4": {
       email: "rainbow8@example.com",
       phone: "02-4567-8901",
       address: "서울시 서초구 서초대로 321",
+      contact_name: "박민수",
       contact_phone: "010-4567-8901",
     },
     "5": {
       email: "playtier@example.com",
       phone: "010-5678-9012",
       address: "서울시 마포구 홍대로 654",
+      contact_name: "최지영",
       contact_phone: "010-5678-9012",
     },
     "6": {
       email: "flower@example.com",
       phone: "010-6789-0123",
       address: "서울시 강동구 천호대로 987",
+      contact_name: "정수진",
       contact_phone: "010-6789-0123",
     },
     "7": {
       email: "ydcompany@example.com",
       phone: "02-7890-1234",
       address: "서울시 종로구 종로 147",
+      contact_name: "강동욱",
       contact_phone: "010-7890-1234",
     },
     "8": {
       email: "ims@example.com",
       phone: "010-8901-2345",
       address: "서울시 용산구 한강대로 258",
+      contact_name: "윤서연",
       contact_phone: "010-8901-2345",
     },
     "9": {
       email: "cheongmyeong@example.com",
       phone: "032-9012-3456",
       address: "인천시 연수구 송도과학로 369",
+      contact_name: "임태호",
       contact_phone: "010-9012-3456",
     },
     "10": {
       email: "ims2@example.com",
       phone: "010-0123-4567",
       address: "서울시 노원구 상계로 741",
+      contact_name: "한소희",
       contact_phone: "010-0123-4567",
     },
     "11": {
       email: "ims3@example.com",
       phone: "010-1234-5678",
       address: "서울시 양천구 목동로 852",
+      contact_name: "오현우",
       contact_phone: "010-1234-5678",
     },
     "12": {
       email: "ims4@example.com",
       phone: "010-2345-6789",
       address: "서울시 강서구 공항대로 963",
+      contact_name: "신미래",
       contact_phone: "010-2345-6789",
     },
     "13": {
       email: "ims5@example.com",
       phone: "010-3456-7890",
       address: "서울시 은평구 은평로 159",
+      contact_name: "류성민",
       contact_phone: "010-3456-7890",
     },
     "14": {
       email: "nohongchul@example.com",
       phone: "010-4567-8901",
       address: "서울시 성동구 왕십리로 357",
+      contact_name: "노홍철",
       contact_phone: "010-4567-8901",
     },
     "15": {
       email: "test@example.com",
       phone: "010-0000-0000",
       address: "인천 남동구 장자로 6번길 2",
+      contact_name: "테스트",
       contact_phone: "010-1234-5678",
     },
   };
@@ -507,6 +524,7 @@ export function get_partner_detail_by_id(
     email: "contact@example.com",
     phone: "010-0000-0000",
     address: "서울시 중구 세종대로 123",
+    contact_name: "담당자",
     contact_phone: "010-1234-5678",
   };
 
@@ -517,6 +535,7 @@ export function get_partner_detail_by_id(
     email: contact_info.email,
     phone: contact_info.phone,
     address: contact_info.address,
+    contact_name: contact_info.contact_name,
     contact_phone: contact_info.contact_phone,
     penalty_count: penalty_count,
     payment_points: 12580000,

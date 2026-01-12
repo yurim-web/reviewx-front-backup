@@ -84,21 +84,23 @@ export default function CampaignProgressFilterSection({
      ======================================== */
 
   // 상태 필터 드롭다운 열림/닫힘 상태
-  const [is_status_dropdown_open, set_is_status_dropdown_open] = useState(false);
-  
+  const [is_status_dropdown_open, set_is_status_dropdown_open] =
+    useState(false);
+
   // 상태 필터 버튼 컨테이너 ref (드롭다운 위치 계산용)
   // useRef: DOM 요소에 직접 접근하기 위한 React Hook
   const status_filter_button_ref = useRef<HTMLDivElement>(null);
 
   // 유형 필터 드롭다운 열림/닫힘 상태
   const [is_type_dropdown_open, set_is_type_dropdown_open] = useState(false);
-  
+
   // 유형 필터 버튼 컨테이너 ref (드롭다운 위치 계산용)
   const type_filter_button_ref = useRef<HTMLDivElement>(null);
 
   // 채널 필터 드롭다운 열림/닫힘 상태
-  const [is_channel_dropdown_open, set_is_channel_dropdown_open] = useState(false);
-  
+  const [is_channel_dropdown_open, set_is_channel_dropdown_open] =
+    useState(false);
+
   // 채널 필터 버튼 컨테이너 ref (드롭다운 위치 계산용)
   const channel_filter_button_ref = useRef<HTMLDivElement>(null);
 
@@ -219,6 +221,8 @@ export default function CampaignProgressFilterSection({
       <BaseFilterSection<string>
         search_query={search_query}
         on_search_change={on_search_change}
+        // 검색어 초기화 버튼 숨기기
+        show_search_clear_button={false}
         // 날짜 필터 - DateFilterButton 컴포넌트 사용
         // DateFilterButton은 BaseFilterSection의 date_filter prop으로 전달됩니다
         date_filter={
@@ -244,10 +248,12 @@ export default function CampaignProgressFilterSection({
                 isActive={selected_statuses.length > 0}
                 styles={{
                   ...styles,
-                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
+                  checkbox_icon_checked:
+                    filterButtonStyles.checkbox_icon_checked,
                   filter_item_active: filterButtonStyles.filter_item_active,
                   filter_text_active: filterButtonStyles.filter_text_active,
-                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
+                  dropdown_arrow_active:
+                    filterButtonStyles.dropdown_arrow_active,
                 }}
               />
               {/* 상태 필터 드롭다운 */}
@@ -271,10 +277,12 @@ export default function CampaignProgressFilterSection({
                 isActive={selected_types.length > 0}
                 styles={{
                   ...styles,
-                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
+                  checkbox_icon_checked:
+                    filterButtonStyles.checkbox_icon_checked,
                   filter_item_active: filterButtonStyles.filter_item_active,
                   filter_text_active: filterButtonStyles.filter_text_active,
-                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
+                  dropdown_arrow_active:
+                    filterButtonStyles.dropdown_arrow_active,
                 }}
               />
               {/* 유형 필터 드롭다운 */}
@@ -298,10 +306,12 @@ export default function CampaignProgressFilterSection({
                 isActive={selected_channels.length > 0}
                 styles={{
                   ...styles,
-                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
+                  checkbox_icon_checked:
+                    filterButtonStyles.checkbox_icon_checked,
                   filter_item_active: filterButtonStyles.filter_item_active,
                   filter_text_active: filterButtonStyles.filter_text_active,
-                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
+                  dropdown_arrow_active:
+                    filterButtonStyles.dropdown_arrow_active,
                 }}
               />
               {/* 채널 필터 드롭다운 */}

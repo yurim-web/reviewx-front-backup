@@ -12,9 +12,10 @@
  *
  * 주요 기능:
  * - 홈 메뉴 (대시보드)
- * - 캠페인 메뉴 (진행 현황, 반려 내역, 신고 내역, 템플릿 관리)
- * - 회원 메뉴 (리뷰어 목록, 파트너 목록, 차단 내역)
- * - 커뮤니티 메뉴 (게시글 목록)
+ * - 캠페인 메뉴 (진행 현황)
+ * - 운영 메뉴 (반려 내역, 신고 내역, 이용 제한 내역)
+ * - 회원 메뉴 (리뷰어 목록, 파트너 목록)
+ * - 커뮤니티 메뉴 (게시글 목록, 카테고리 관리)
  *
  */
 
@@ -22,12 +23,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import styles from "@/styles/manager_ga/layout/sidebar.module.css";
 
 // 메뉴 아이템 타입 정의
 interface MenuItem {
   label: string;
   path: string;
+  icon_name: string; // 아이콘 이름 (예: "dashboard", "progress" 등)
 }
 
 // 메뉴 카테고리 타입 정의
@@ -45,33 +48,78 @@ export default function SidebarMenu() {
   const menuCategories: MenuCategory[] = [
     {
       title: "홈",
-      items: [{ label: "대시보드", path: "/manager_ga" }],
+      items: [
+        { label: "대시보드", path: "/manager_ga", icon_name: "dashboard" },
+      ],
     },
     {
       title: "캠페인",
       items: [
-        { label: "진행 현황", path: "/manager_ga/campaign/progress" },
-        { label: "반려 내역", path: "/manager_ga/campaign/rejected" },
-        { label: "신고 내역", path: "/manager_ga/campaign/reported" },
-        { label: "템플릿 관리", path: "/manager_ga/campaign/templates" },
+        {
+          label: "진행 현황",
+          path: "/manager_ga/campaign/progress",
+          icon_name: "progress",
+        },
+      ],
+    },
+    {
+      title: "운영",
+      items: [
+        {
+          label: "반려 내역",
+          path: "/manager_ga/campaign/rejected",
+          icon_name: "rejected",
+        },
+        {
+          label: "신고 내역",
+          path: "/manager_ga/campaign/reported",
+          icon_name: "reported",
+        },
+        {
+          label: "이용 제한 내역",
+          path: "/manager_ga/member/blacklist",
+          icon_name: "blacklist",
+        },
       ],
     },
     {
       title: "회원",
       items: [
-        { label: "리뷰어 목록", path: "/manager_ga/member/reviewers" },
-        { label: "파트너 목록", path: "/manager_ga/member/partners" },
-        { label: "이용 제한 내역", path: "/manager_ga/member/blacklist" },
+        {
+          label: "리뷰어 목록",
+          path: "/manager_ga/member/reviewers",
+          icon_name: "reviewers",
+        },
+        {
+          label: "파트너 목록",
+          path: "/manager_ga/member/partners",
+          icon_name: "partners",
+        },
       ],
     },
     {
       title: "커뮤니티",
       items: [
-        { label: "게시글 목록", path: "/manager_ga/community/posts" },
-        { label: "카테고리 관리", path: "/manager_ga/community/categories" },
+        {
+          label: "게시글 목록",
+          path: "/manager_ga/community/posts",
+          icon_name: "posts",
+        },
+        {
+          label: "카테고리 관리",
+          path: "/manager_ga/community/categories",
+          icon_name: "categories",
+        },
       ],
     },
   ];
+
+  // 아이콘 경로를 반환하는 함수
+  // active 상태에 따라 일반 아이콘 또는 활성화된 아이콘을 반환합니다
+  const getIconPath = (icon_name: string, active: boolean) => {
+    const icon_suffix = active ? "_active" : "";
+    return `/images/management_page/sidemenu/${icon_name}${icon_suffix}.svg`;
+  };
 
   // 현재 경로가 메뉴 아이템의 경로와 일치하는지 확인하는 함수
   const isActive = (path: string) => {
@@ -100,6 +148,8 @@ export default function SidebarMenu() {
           {/* 카테고리 내 메뉴 아이템들 */}
           {category.items.map((item, itemIndex) => {
             const active = isActive(item.path);
+            // 활성화 상태에 따라 적절한 아이콘 경로를 가져옵니다
+            const icon_path = getIconPath(item.icon_name, active);
             return (
               <Link
                 key={itemIndex}
@@ -108,8 +158,15 @@ export default function SidebarMenu() {
                   active ? styles.menu_item_active : ""
                 }`}
               >
-                {/* 메뉴 아이템 아이콘 (작은 회색 사각형) */}
-                <div className={styles.menu_icon}></div>
+                {/* 메뉴 아이템 아이콘 */}
+                {/* Next.js의 Image 컴포넌트를 사용하여 SVG 아이콘을 표시합니다 */}
+                <Image
+                  src={icon_path}
+                  alt={`${item.label} 아이콘`}
+                  width={16}
+                  height={16}
+                  className={styles.menu_icon}
+                />
                 {/* 메뉴 아이템 라벨 */}
                 <span
                   className={`${styles.menu_label} ${

@@ -57,9 +57,6 @@
 .filter_icon {
   width: 16px;
   height: 16px;
-  background-color: #d9d9d9;
-  border-radius: 2px;
-  flex-shrink: 0;
 }
 
 /* 검색 필터 아이템 - 실제 입력창을 위한 스타일 */

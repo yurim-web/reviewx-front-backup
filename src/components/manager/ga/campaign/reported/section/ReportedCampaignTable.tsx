@@ -78,12 +78,12 @@ const get_report_code_info = (code: string): ReportCodeInfo | undefined => {
 const get_columns = (styles: Record<string, string>): TableColumn[] => [
   {
     key: "campaign_number",
-    label: "캠페인 번호",
+    label: "번호",
     sortable: true,
   },
   {
     key: "campaign_name",
-    label: "캠페인명",
+    label: "캠페인명/이름",
     className: styles.table_cell_campaign_name,
   },
   {
@@ -97,10 +97,6 @@ const get_columns = (styles: Record<string, string>): TableColumn[] => [
   {
     key: "report_code",
     label: "신고 코드",
-  },
-  {
-    key: "report_reason",
-    label: "신고 사유",
   },
   {
     key: "report_count",
@@ -281,27 +277,6 @@ export default function ReportedCampaignTable({
               return <span>{row.inspector}</span>;
             case "report_code":
               return <span>{row.report_code}</span>;
-            case "report_reason": {
-              return (
-                <button
-                  className={styles.report_reason_button}
-                  onClick={() => {
-                    set_modal_state({
-                      is_open: true,
-                      item: row,
-                    });
-                  }}
-                  aria-label={`${row.campaign_number} 신고 사유 확인`}
-                >
-                  <img
-                    src="/images/management_page/cancel_info.svg"
-                    alt="신고 사유 정보"
-                    className={styles.report_reason_icon}
-                  />
-                  사유 확인
-                </button>
-              );
-            }
             case "report_count":
               return <span>{row.report_count}회</span>;
             case "processed_date":

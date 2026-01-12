@@ -112,7 +112,7 @@
 .campaign_summary_section_progress_bar {
   height: 100%;
   min-height: 8px;
-  background-color: #444444;
+  background-color: #ff5694;
   border-radius: 8px;
   transition: width 0.3s;
   display: block;

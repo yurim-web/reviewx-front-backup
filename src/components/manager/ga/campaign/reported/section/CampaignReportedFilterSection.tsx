@@ -20,12 +20,14 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "@/styles/manager/common/campaign/progress/filter_section.module.css";
+import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.module.css";
 import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
 import DateFilterButton from "@/components/manager/ga/common/filter/DateFilterButton";
+import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
 import BaseFilterDropdown from "@/components/manager/ga/common/filter/BaseFilterDropdown";
 import type { FilterOption } from "@/components/manager/ga/common/filter/BaseFilterModal";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
@@ -64,12 +66,9 @@ const report_code_options: ReportCode[] = [
 // map 함수: 배열을 순회하며 각 요소를 변환한 새로운 배열을 만듭니다
 const get_report_code_options = (): FilterOption<ReportCode>[] => {
   return report_code_options.map((code) => {
-    // find 함수: 배열에서 조건에 맞는 첫 번째 요소를 찾습니다
-    const code_info = report_code_info.find((info) => info.code === code);
     return {
       value: code,
-      // 삼항 연산자: 조건이 참일 때 ? 참값 : 거짓값
-      label: code_info ? `${code} (${code_info.reason})` : code,
+      label: code,
     };
   });
 };
@@ -87,6 +86,13 @@ export default function CampaignReportedFilterSection({
     selected_report_codes
   );
 
+  // 드롭다운 열림/닫힘 상태 관리
+  const [is_report_code_dropdown_open, set_is_report_code_dropdown_open] =
+    useState<boolean>(false);
+
+  // 필터 버튼 컨테이너 ref (드롭다운 위치 계산용)
+  const report_code_filter_button_ref = useRef<HTMLDivElement>(null);
+
   // 선택된 정렬 옵션
   const [selected_sort, set_selected_sort] = useState<string>("최신순");
 
@@ -100,8 +106,18 @@ export default function CampaignReportedFilterSection({
     set_selected_codes(selected_report_codes);
   }, [selected_report_codes]);
 
-  // 신고 코드 필터 변경 핸들러 (드롭다운에서 직접 호출)
-  const handle_report_code_change = (codes: ReportCode[]) => {
+  // 신고 코드 필터 버튼 클릭 핸들러
+  const handle_report_code_filter_click = () => {
+    set_is_report_code_dropdown_open((prev) => !prev);
+  };
+
+  // 신고 코드 드롭다운 닫기 핸들러
+  const handle_report_code_dropdown_close = () => {
+    set_is_report_code_dropdown_open(false);
+  };
+
+  // 신고 코드 필터 적용 핸들러 (드롭다운에서 직접 호출)
+  const handle_report_code_apply = (codes: ReportCode[]) => {
     set_selected_codes(codes);
     on_report_codes_change?.(codes);
   };
@@ -153,13 +169,37 @@ export default function CampaignReportedFilterSection({
         }
         // 신고 코드 필터 드롭다운 버튼
         filter_modal_button={
-          <BaseFilterDropdown<ReportCode>
-            label="신고 코드"
-            selected_values={selected_codes}
-            on_change={handle_report_code_change}
-            options={report_code_dropdown_options}
-            button_styles={styles}
-          />
+          <div
+            ref={report_code_filter_button_ref}
+            className={filterButtonStyles.filter_button_dropdown_wrapper}
+          >
+            <FilterButton
+              label="신고 코드"
+              onClick={handle_report_code_filter_click}
+              isActive={selected_codes.length > 0}
+              styles={{
+                filter_item: styles.filter_item,
+                checkbox_icon: styles.checkbox_icon,
+                checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
+                filter_text: styles.filter_text,
+                dropdown_arrow: styles.dropdown_arrow,
+                filter_item_active: filterButtonStyles.filter_item_active,
+                filter_text_active: filterButtonStyles.filter_text_active,
+                dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
+              }}
+            />
+            {/* 신고 코드 필터 드롭다운 */}
+            <BaseFilterDropdown<ReportCode>
+              is_open={is_report_code_dropdown_open}
+              on_close={handle_report_code_dropdown_close}
+              selected_values={selected_codes}
+              on_apply={handle_report_code_apply}
+              options={report_code_dropdown_options}
+              container_ref={
+                report_code_filter_button_ref as React.RefObject<HTMLDivElement>
+              }
+            />
+          </div>
         }
         // 활성 필터 태그들
         active_filter_tags={active_filter_tags}

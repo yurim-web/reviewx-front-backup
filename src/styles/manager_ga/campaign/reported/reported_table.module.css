@@ -31,7 +31,6 @@
     0.16fr /* 대상자 */
     0.14fr /* 검수자  */
     0.1fr /* 신고 코드  */
-    0.12fr /* 신고 사유  */
     0.12fr /* 신고 횟수 */
     0.14fr /* 처리일  */
     100px; /* 차단/해제 아이콘 칸 */
@@ -92,7 +91,6 @@
     0.16fr /* 대상자  */
     0.14fr /* 검수자  */
     0.1fr /* 신고 코드  */
-    0.12fr /* 신고 사유  */
     0.12fr /* 신고 횟수 */
     0.14fr /* 처리일  */
     100px; /* 차단/해제 아이콘 칸 */
@@ -254,15 +252,16 @@
 /* 호버 시 나타나는 툴팁 박스 - 캠페인명 셀 바로 아래에 표시 (공간 차지하지 않음) */
 .tooltip_box {
   position: absolute;
-  background-color: #f5f5f5;
-  border: 1px solid #d9d9d9;
   border-radius: 4px;
+  border: 1px solid #ffc2d9;
+  background: #fff;
   padding: 8px;
   box-sizing: border-box;
   z-index: 10;
-  color: #444;
+  overflow: hidden;
+  color: #ff5694;
+  text-overflow: ellipsis;
   font-size: 14px;
-  font-style: normal;
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;

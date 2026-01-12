@@ -145,6 +145,22 @@
   box-sizing: border-box;
 }
 
+/* 테이블 헤더 셀 - 캠페인명 (헤더는 기본 헤더 스타일 유지) */
+.table_header_cell.table_cell_campaign_name {
+  padding: 20px 20px;
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
 /* 캠페인명 텍스트 - 호버 이벤트를 위한 인라인 요소 */
 .campaign_name_text {
   display: inline-block;
@@ -225,15 +241,16 @@
 /* 호버 시 나타나는 툴팁 박스 - 캠페인명 셀 바로 아래에 표시 (공간 차지하지 않음) */
 .tooltip_box {
   position: absolute;
-  background-color: #f5f5f5;
-  border: 1px solid #d9d9d9;
   border-radius: 4px;
+  border: 1px solid #ffc2d9;
+  background: #fff;
   padding: 8px;
   box-sizing: border-box;
   z-index: 10;
-  color: #444;
+  overflow: hidden;
+  color: #ff5694;
+  text-overflow: ellipsis;
   font-size: 14px;
-  font-style: normal;
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;

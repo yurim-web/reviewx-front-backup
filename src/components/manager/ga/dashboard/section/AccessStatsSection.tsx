@@ -13,9 +13,9 @@
  
  */
 
-import styles from '@/styles/manager_ga/dashboard/sections/access_stats_section.module.css';
-import DeviceStatsChart from '../chart/DeviceStatsChart';
-import { accessStats } from '@/data/manager_ga/dashboard/dashboardData';
+import styles from "@/styles/manager_ga/dashboard/sections/access_stats_section.module.css";
+import DeviceStatsChart from "../chart/DeviceStatsChart";
+import { accessStats } from "@/data/manager_ga/dashboard/dashboardData";
 
 export default function AccessStatsSection() {
   return (
@@ -35,6 +35,7 @@ export default function AccessStatsSection() {
               {accessStats.visits.label}
             </p>
             {/* 변화율 표시 */}
+            {/* changeType에 따라 화살표와 색상이 달라집니다 */}
             <p
               className={
                 styles[
@@ -42,7 +43,20 @@ export default function AccessStatsSection() {
                 ]
               }
             >
-              {accessStats.visits.change}
+              {accessStats.visits.changeType === "positive" && (
+                <>
+                  {/* 상승: 초록색 위쪽 화살표 */}
+                  <span>↑</span>{" "}
+                  {accessStats.visits.change.replace(/^[+-]\s*/, "")}
+                </>
+              )}
+              {accessStats.visits.changeType === "negative" && (
+                <>
+                  {/* 하락: 빨간색 아래쪽 화살표 */}
+                  <span>↓</span>{" "}
+                  {accessStats.visits.change.replace(/^[+-]\s*/, "")}
+                </>
+              )}
             </p>
           </div>
           {/* 값 표시 */}
@@ -59,6 +73,7 @@ export default function AccessStatsSection() {
               {accessStats.referrals.label}
             </p>
             {/* 변화율 표시 */}
+            {/* changeType에 따라 화살표와 색상이 달라집니다 */}
             <p
               className={
                 styles[
@@ -66,7 +81,20 @@ export default function AccessStatsSection() {
                 ]
               }
             >
-              {accessStats.referrals.change}
+              {accessStats.referrals.changeType === "positive" && (
+                <>
+                  {/* 상승: 초록색 위쪽 화살표 */}
+                  <span>↑</span>{" "}
+                  {accessStats.referrals.change.replace(/^[+-]\s*/, "")}
+                </>
+              )}
+              {accessStats.referrals.changeType === "negative" && (
+                <>
+                  {/* 하락: 빨간색 아래쪽 화살표 */}
+                  <span>↓</span>{" "}
+                  {accessStats.referrals.change.replace(/^[+-]\s*/, "")}
+                </>
+              )}
             </p>
           </div>
           {/* 값 표시 */}

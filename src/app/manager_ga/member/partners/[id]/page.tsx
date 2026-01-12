@@ -144,7 +144,10 @@ export default function PartnerDetailPage() {
         )}
 
         {partner_detail && (
-          <ContactPersonSection contact_phone={partner_detail.contact_phone} />
+          <ContactPersonSection
+            contact_name={partner_detail.contact_name}
+            contact_phone={partner_detail.contact_phone}
+          />
         )}
       </div>
 

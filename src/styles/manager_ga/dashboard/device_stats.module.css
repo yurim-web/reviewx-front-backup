@@ -39,7 +39,7 @@
   color: #444;
   font-size: 18px;
   font-weight: 600;
-  line-height: 18px; /* 100% */
+  line-height: 18px;
   letter-spacing: -0.36px;
   padding-bottom: 24px;
 }
@@ -74,7 +74,7 @@
   align-items: flex-start;
   position: relative;
   width: 100%;
-  padding-bottom: 1px; /* 바닥 선을 위한 공간 */
+  padding-bottom: 1px;
 }
 
 /* 프로그레스 바 바닥 선 */
@@ -120,7 +120,7 @@
   width: 32px;
   height: 168px;
   position: relative;
-  border-radius: 8px 8px 0 0; /* 위쪽만 둥글게, 바닥은 직각 */
+  border-radius: 8px 8px 0 0;
   overflow: hidden;
 }
 
@@ -132,7 +132,7 @@
   width: 100%;
   height: 100%;
   background-color: #ededed;
-  border-radius: 8px 8px 0 0; /* 위쪽만 둥글게, 바닥은 직각 */
+  border-radius: 8px 8px 0 0;
 }
 
 /* 프로그레스 바 채워지는 부분 - 아래에서 위로 채워짐 */
@@ -141,10 +141,9 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  border-radius: 8px 8px 0 0; /* 위쪽만 둥글게, 바닥은 직각 */
+  border-radius: 8px 8px 0 0;
   transition: height 0.6s ease-out;
   z-index: 1;
-  /* 아래에서 위로 채워지는 애니메이션 효과 */
   animation: fillProgress 0.8s ease-out;
 }
 
@@ -154,7 +153,6 @@
     height: 0%;
   }
   to {
-    /* height는 인라인 스타일로 동적으로 설정됨 */
   }
 }
 
@@ -224,7 +222,7 @@
   justify-content: flex-start;
   align-items: center;
   font-size: 13px;
-  width: 60px; /* 레이블 폭을 고정해 모든 진행 바 시작 위치를 정렬 */
+  width: 60px;
   flex-shrink: 0;
 }
 
@@ -234,7 +232,7 @@
   font-size: 12px;
   font-style: normal;
   font-weight: 500;
-  line-height: 12px; /* 100% */
+  line-height: 12px;
   letter-spacing: -0.24px;
 }
 
@@ -263,17 +261,17 @@
 }
 
 .device_progress_bar_fill_pc {
-  background-color: #4a90e2;
+  background-color: #ff6c9c;
 }
 
 .device_progress_bar_fill_tablet {
-  background-color: #f5a623;
+  background-color: #ffc2d9;
 }
 
 .device_progress_bar_fill_mobile {
-  background-color: #e94b8b;
+  background-color: #444444;
 }
 
 .device_progress_bar_fill_app {
-  background-color: #9013fe;
+  background-color: #848484;
 }

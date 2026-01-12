@@ -67,6 +67,11 @@ function convertExtendedToItem(
     calculatedStatus = dateBasedStatus;
   }
 
+  // 지급 포인트: extended.points를 사용
+  // extended.points는 DeliveryCampaignDataExtended의 필수 필드이므로 항상 있어야 함
+  // 하지만 안전을 위해 undefined나 null 체크를 수행
+  const point_value = typeof extended.points === "number" ? extended.points : 0;
+
   return {
     campaignInfo: {
       id: extended.id,
@@ -84,7 +89,7 @@ function convertExtendedToItem(
       daysLeft: 0,
       statusText: extended.statusText,
       partnerName: extended.partnerName,
-      point: extended.points,
+      point: point_value,
     },
     applicantData: extended.applicantData,
     contents: extended.contents,
@@ -348,7 +353,9 @@ function convert_delivery_to_progress_item(
     status: map_status_to_progress_status(calculatedStatus),
     recruit_count: campaignInfo.totalCount,
     apply_count: applicantData?.applicants?.length ?? 0,
-    point: campaignInfo.point ?? 0, // 지급 포인트 (데이터에 없으면 0)
+    // 지급 포인트: campaignInfo.point가 있으면 사용하고, 없으면 0
+    // campaignInfo.point는 convertExtendedToItem에서 extended.points로부터 설정됨
+    point: campaignInfo.point !== undefined && campaignInfo.point !== null ? campaignInfo.point : 0,
     detail_campaign_id: campaignInfo.id,
     created_at: parse_recruitment_start_date(campaignInfo.recruitmentPeriod),
   };
@@ -669,26 +676,49 @@ function convert_campaign_with_applicants_to_progress_item(
   // isUrgent 필드 확인 (campaignInfo 또는 campaign 최상위에 있을 수 있음)
   const isUrgent = campaign.isUrgent === true || campaignInfo.isUrgent === true;
 
-  // 상태 변환
-  // CampaignInfo의 status는 "대기 중" | "모집 중" | "선정 중" | "구매 중" | "등록 중" | "마감" | "취소"
+  // 상태 계산: localStorage 캠페인은 날짜 기반으로 상태를 재계산해야 함
+  // 📌 중요: localStorage에 저장된 캠페인은 날짜가 변경될 수 있으므로 항상 재계산합니다
+  let calculatedStatus:
+    | "진행 중"
+    | "대기 중"
+    | "모집 중"
+    | "종료"
+    | "취소"
+    | "긴급";
+
+  // isUrgent가 true이면 무조건 "긴급" 상태로 설정 (최우선)
+  if (isUrgent) {
+    calculatedStatus = "긴급";
+  } else if (campaignInfo.status === "취소") {
+    // 취소 상태는 그대로 유지
+    calculatedStatus = "취소";
+  } else {
+    // 날짜 기반으로 상태 계산 (등록 기간 종료일도 확인)
+    // localStorage 캠페인은 항상 날짜 기반으로 상태를 재계산합니다
+    const dateBasedStatus = calculateCampaignStatus(
+      campaignInfo.recruitmentPeriod,
+      campaignInfo.announcementDate,
+      campaignInfo.registrationPeriod
+    );
+    calculatedStatus = dateBasedStatus;
+  }
+
+  // Progress의 CampaignStatus로 변환
+  // CampaignInfo의 status는 "대기 중" | "모집 중" | "진행 중" | "종료" | "취소" | "긴급"
   // Progress의 CampaignStatus는 "예정" | "신청" | "진행" | "종료" | "취소" | "긴급"
   let progressStatus: CampaignStatus;
 
-  if (isUrgent) {
+  if (calculatedStatus === "긴급") {
     progressStatus = "긴급";
-  } else if (campaignInfo.status === "취소") {
+  } else if (calculatedStatus === "취소") {
     progressStatus = "취소";
-  } else if (campaignInfo.status === "마감") {
+  } else if (calculatedStatus === "종료") {
     progressStatus = "종료";
-  } else if (campaignInfo.status === "대기 중") {
+  } else if (calculatedStatus === "대기 중") {
     progressStatus = "예정";
-  } else if (campaignInfo.status === "모집 중") {
+  } else if (calculatedStatus === "모집 중") {
     progressStatus = "신청";
-  } else if (
-    campaignInfo.status === "선정 중" ||
-    campaignInfo.status === "구매 중" ||
-    campaignInfo.status === "등록 중"
-  ) {
+  } else if (calculatedStatus === "진행 중") {
     progressStatus = "진행";
   } else {
     // 기본값
@@ -709,7 +739,43 @@ function convert_campaign_with_applicants_to_progress_item(
     status: progressStatus,
     recruit_count: campaignInfo.totalCount || 0,
     apply_count: applicantData?.applicants?.length || 0,
-    point: (campaignInfo as any).point || (campaign as any).point || 0, // point도 campaignInfo 또는 campaign 최상위에 있을 수 있음
+    // 지급 포인트: campaignInfo.point, campaign.point, 또는 additionalPoints를 확인
+    // localStorage에 저장된 캠페인은 additionalPoints 필드를 사용할 수 있습니다
+    // additionalPoints는 문자열일 수 있으므로 숫자로 변환합니다
+    point: (() => {
+      // 1순위: campaignInfo.point
+      if (
+        (campaignInfo as any).point !== undefined &&
+        (campaignInfo as any).point !== null
+      ) {
+        const pointValue = (campaignInfo as any).point;
+        return typeof pointValue === "number" ? pointValue : Number(pointValue) || 0;
+      }
+      // 2순위: campaign.point
+      if (
+        (campaign as any).point !== undefined &&
+        (campaign as any).point !== null
+      ) {
+        const pointValue = (campaign as any).point;
+        return typeof pointValue === "number" ? pointValue : Number(pointValue) || 0;
+      }
+      // 3순위: additionalPoints (localStorage 캠페인에서 사용)
+      if (
+        (campaign as any).additionalPoints !== undefined &&
+        (campaign as any).additionalPoints !== null
+      ) {
+        const additionalPointsValue = (campaign as any).additionalPoints;
+        // 문자열인 경우 쉼표 제거 후 숫자로 변환
+        if (typeof additionalPointsValue === "string") {
+          const cleanedValue = additionalPointsValue.replace(/,/g, "");
+          return parseInt(cleanedValue, 10) || 0;
+        }
+        return typeof additionalPointsValue === "number"
+          ? additionalPointsValue
+          : Number(additionalPointsValue) || 0;
+      }
+      return 0;
+    })(),
     detail_campaign_id: campaignInfo.id,
     created_at: parse_recruitment_start_date(campaignInfo.recruitmentPeriod),
   };
@@ -883,11 +949,22 @@ export function get_campaign_list(): CampaignProgressItem[] {
   );
 
   // localStorage에 있는 캠페인 중 정적 데이터에도 있는 것은 localStorage 버전으로 교체
+  // 단, point 값이 0이거나 없는 경우 정적 데이터의 point 값을 유지
   const updated_static_campaigns = static_campaigns.map((static_campaign) => {
     const stored_campaign = stored_campaigns.find(
       (c) => c.id === static_campaign.id
     );
-    return stored_campaign || static_campaign;
+    if (stored_campaign) {
+      // localStorage 데이터가 있으면 사용하되, point가 0이거나 없으면 정적 데이터의 point 사용
+      return {
+        ...stored_campaign,
+        point:
+          stored_campaign.point && stored_campaign.point > 0
+            ? stored_campaign.point
+            : static_campaign.point,
+      };
+    }
+    return static_campaign;
   });
 
   return [...updated_static_campaigns, ...new_stored_campaigns];

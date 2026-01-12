@@ -12,9 +12,9 @@
  * - 전체 회원 수, 파트너 수, 리뷰어 수, 휴면 회원 수 표시
  */
 
-import styles from '@/styles/manager_ga/dashboard/sections/member_type_section.module.css';
-import MemberTypeBarChart from '../chart/MemberTypeBarChart';
-import { memberTypeStats } from '@/data/manager_ga/dashboard/dashboardData';
+import styles from "@/styles/manager_ga/dashboard/sections/member_type_section.module.css";
+import MemberTypeBarChart from "../chart/MemberTypeBarChart";
+import { memberTypeStats } from "@/data/manager_ga/dashboard/dashboardData";
 
 export default function MemberTypeSection() {
   return (
@@ -42,6 +42,7 @@ export default function MemberTypeSection() {
                 {memberTypeStats.totalMembers.value}
               </p>
               {/* 변화율 표시 */}
+              {/* changeType에 따라 화살표와 색상이 달라집니다 */}
               <p
                 className={
                   styles[
@@ -49,7 +50,36 @@ export default function MemberTypeSection() {
                   ]
                 }
               >
-                {memberTypeStats.totalMembers.change}
+                {memberTypeStats.totalMembers.changeType === "positive" && (
+                  <>
+                    {/* 상승: 초록색 위쪽 화살표 */}
+                    <span>↑</span>{" "}
+                    {memberTypeStats.totalMembers.change.replace(
+                      /^[+-]\s*/,
+                      ""
+                    )}
+                  </>
+                )}
+                {memberTypeStats.totalMembers.changeType === "negative" && (
+                  <>
+                    {/* 하락: 빨간색 아래쪽 화살표 */}
+                    <span>↓</span>{" "}
+                    {memberTypeStats.totalMembers.change.replace(
+                      /^[+-]\s*/,
+                      ""
+                    )}
+                  </>
+                )}
+                {memberTypeStats.totalMembers.changeType === "neutral" && (
+                  <>
+                    {/* 변화 없음: 회색 대시 */}
+                    <span>-</span>{" "}
+                    {memberTypeStats.totalMembers.change.replace(
+                      /^[+-]\s*/,
+                      ""
+                    )}
+                  </>
+                )}
               </p>
             </div>
 
@@ -76,6 +106,7 @@ export default function MemberTypeSection() {
                 {memberTypeStats.totalReviewers.value}
               </p>
               {/* 변화율 표시 */}
+              {/* changeType에 따라 화살표와 색상이 달라집니다 */}
               <p
                 className={
                   styles[
@@ -83,7 +114,36 @@ export default function MemberTypeSection() {
                   ]
                 }
               >
-                {memberTypeStats.totalReviewers.change}
+                {memberTypeStats.totalReviewers.changeType === "positive" && (
+                  <>
+                    {/* 상승: 초록색 위쪽 화살표 */}
+                    <span>↑</span>{" "}
+                    {memberTypeStats.totalReviewers.change.replace(
+                      /^[+-]\s*/,
+                      ""
+                    )}
+                  </>
+                )}
+                {memberTypeStats.totalReviewers.changeType === "negative" && (
+                  <>
+                    {/* 하락: 빨간색 아래쪽 화살표 */}
+                    <span>↓</span>{" "}
+                    {memberTypeStats.totalReviewers.change.replace(
+                      /^[+-]\s*/,
+                      ""
+                    )}
+                  </>
+                )}
+                {memberTypeStats.totalReviewers.changeType === "neutral" && (
+                  <>
+                    {/* 변화 없음: 회색 대시 */}
+                    <span>-</span>{" "}
+                    {memberTypeStats.totalReviewers.change.replace(
+                      /^[+-]\s*/,
+                      ""
+                    )}
+                  </>
+                )}
               </p>
             </div>
 

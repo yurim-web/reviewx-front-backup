@@ -76,16 +76,16 @@
 /* 원형 프로그래스 바 배경 원 */
 .donut_progress_background {
   fill: none;
-  stroke: #e5e5e5;
-  stroke-width: 25;
+  stroke: #f1f1f1;
+  stroke-width: 20;
   stroke-linecap: round;
 }
 
 /* 원형 프로그래스 바 활성화 원 */
 .donut_progress_active {
   fill: none;
-  stroke: #444444;
-  stroke-width: 25;
+  stroke: #ff5694;
+  stroke-width: 20;
   stroke-linecap: round;
   transition: stroke-dasharray 0.3s ease;
 }
@@ -113,8 +113,8 @@
 .bar_chart_container :global(.recharts-bar-rectangle:focus),
 .bar_chart_container :global(.recharts-bar:hover),
 .bar_chart_container :global(.recharts-bar-rectangle:hover),
-.bar_chart_container :global(.recharts-bar[class*='active']),
-.bar_chart_container :global(.recharts-bar-rectangle[class*='active']) {
+.bar_chart_container :global(.recharts-bar[class*="active"]),
+.bar_chart_container :global(.recharts-bar-rectangle[class*="active"]) {
   opacity: 1 !important;
   filter: none !important;
   outline: none !important;
@@ -145,8 +145,8 @@
 
 .bar_chart_container :global(.recharts-active-shape),
 .bar_chart_container :global(.recharts-active-shape *),
-.bar_chart_container :global([class*='active-shape']),
-.bar_chart_container :global([class*='activeShape']) {
+.bar_chart_container :global([class*="active-shape"]),
+.bar_chart_container :global([class*="activeShape"]) {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;

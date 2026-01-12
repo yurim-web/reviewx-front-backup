@@ -28,8 +28,8 @@ import {
 
 // 색상 정의
 const colors = {
-  partner: '#666666', // 어두운 회색 (파트너)
-  reviewer: '#d9d9d9', // 밝은 회색 (리뷰어)
+  partner: '#2B7FFF', // 파란색 (파트너)
+  reviewer: '#FF5694', // 핑크색 (리뷰어)
   background: '#ededed', // 프로그레스 바 배경 회색
 };
 

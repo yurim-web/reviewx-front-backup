@@ -44,14 +44,8 @@ import CampaignReportModalCommon, {
 import { report_code_info } from "@/data/manager_ga/reported";
 
 // 데이터와 스타일을 import
-import {
-  calculate_stat_card_values as calculateGAStats,
-  get_campaign_list as getGACampaignList,
-} from "@/data/manager_ga/progress";
-import {
-  calculate_stat_card_values as calculateSAStats,
-  get_campaign_list as getSACampaignList,
-} from "@/data/manager_sa/progress";
+import { get_campaign_list as getGACampaignList } from "@/data/manager_ga/progress";
+import { get_campaign_list as getSACampaignList } from "@/data/manager_sa/progress";
 import type { CampaignProgressItem } from "@/data/manager_ga/progress";
 import type { CampaignStatus } from "./filter/StatusFilterModal";
 import type { CampaignType } from "./filter/TypeFilterModal";
@@ -98,22 +92,69 @@ export default function ProgressPageCommon({
   // 검색어 상태
   const [search_query, set_search_query] = useState("");
 
+  /* ========================================
+     📅 현재 달의 날짜 범위 계산 함수
+     ======================================== */
+
+  /**
+   * 현재 달의 첫날과 마지막 날을 계산하는 함수
+   *
+   * 설명:
+   * - 현재 날짜를 기준으로 이번 달의 첫날(1일)과 마지막 날을 계산합니다
+   * - 예: 2026년 1월 → 2026-01-01 ~ 2026-01-31
+   * - 예: 2026년 2월 → 2026-02-01 ~ 2026-02-28 (또는 29일, 윤년인 경우)
+   *
+   * 📌 주의:
+   * - 이 함수는 클라이언트에서만 실행되어야 합니다 (서버 사이드에서는 undefined 반환)
+   * - useState의 초기값 함수로 사용하면 클라이언트에서만 실행됩니다
+   *
+   * @returns 현재 달의 첫날과 마지막 날을 포함한 DateRange 객체
+   */
+  const get_current_month_date_range = (): DateRange | undefined => {
+    // 서버 사이드에서는 undefined 반환 (Hydration 오류 방지)
+    if (typeof window === "undefined") {
+      return undefined;
+    }
+
+    // 현재 날짜 가져오기
+    const now = new Date();
+    const year = now.getFullYear(); // 현재 연도 (예: 2026)
+    const month = now.getMonth(); // 현재 월 (0부터 시작: 0 = 1월, 11 = 12월)
+
+    // 이번 달의 첫날 계산
+    // new Date(year, month, 1): 해당 연도와 월의 1일
+    const first_day = new Date(year, month, 1);
+    // 시간 부분을 00:00:00으로 설정 (날짜만 비교하기 위해)
+    first_day.setHours(0, 0, 0, 0);
+
+    // 이번 달의 마지막 날 계산
+    // new Date(year, month + 1, 0): 다음 달의 0일 = 이번 달의 마지막 날
+    // 예: new Date(2026, 1, 0) = 2026년 1월 31일 (2월의 0일)
+    const last_day = new Date(year, month + 1, 0);
+    // 시간 부분을 23:59:59로 설정 (종료일의 끝 시간까지 포함)
+    last_day.setHours(23, 59, 59, 999);
+
+    return {
+      from: first_day,
+      to: last_day,
+    };
+  };
+
   // 필터 상태
   const [selected_statuses, set_selected_statuses] = useState<CampaignStatus[]>(
     []
   );
   const [selected_types, set_selected_types] = useState<CampaignType[]>([]);
   const [selected_channels, set_selected_channels] = useState<Channel[]>([]);
+  // 날짜 범위 필터: 초기값을 현재 달의 첫날~마지막 날로 설정
+  // useState의 초기값을 함수로 설정하면 클라이언트에서만 실행됩니다
+  // 📌 페이지 로드 시 자동으로 이번 달이 선택됩니다
   const [selected_date_range, set_selected_date_range] = useState<
     DateRange | undefined
-  >(undefined);
+  >(get_current_month_date_range);
 
   // manager_type에 따라 데이터를 선택합니다
   // 스타일은 공통 스타일을 사용하므로 선택하지 않습니다
-
-  // 통계 카드 값 계산 함수 선택
-  const calculateStats =
-    manager_type === "ga" ? calculateGAStats : calculateSAStats;
 
   // 캠페인 리스트 가져오기 함수 선택
   const getCampaignList =
@@ -285,26 +326,91 @@ export default function ProgressPageCommon({
       ? "/manager_ga/campaign/progress"
       : "/manager_sa/campaign/progress";
 
-  // 통계 카드 값들을 계산합니다 (클라이언트에서만 계산하여 Hydration 오류 방지)
-  // useState: 초기값은 빈 통계로 설정 (서버와 클라이언트가 동일한 초기값 사용)
-  const [statCardValues, setStatCardValues] = useState({
-    open_scheduled: "0건",
-    in_progress: "0건",
-    applying: "0건",
-    total: "0건",
-    ended: "0건",
-    cancelled: "0건",
-  });
+  /* ========================================
+     📊 통계 카드 값 계산 (필터링된 데이터 기준)
+     ======================================== */
 
-  // useEffect: 클라이언트에서만 실행되어 localStorage 데이터를 포함한 통계 계산
-  // 📌 Hydration 오류 방지:
-  // - 서버 사이드에서는 localStorage가 없어서 다른 결과를 반환할 수 있습니다
-  // - useEffect는 클라이언트에서만 실행되므로 서버와 클라이언트의 렌더링 결과가 동일합니다
-  useEffect(() => {
-    const calculated = calculateStats();
-    setStatCardValues(calculated);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [manager_type]); // manager_type이 변경될 때만 재계산
+  /**
+   * 필터링된 캠페인 리스트를 기반으로 통계 카드 값들을 계산하는 함수
+   *
+   * 설명:
+   * - filtered_campaign_list를 기반으로 각 상태별 캠페인 개수를 계산합니다
+   * - 날짜 필터가 적용되면 해당 날짜 범위의 캠페인만 통계에 포함됩니다
+   * - 숫자를 천 단위로 포맷팅하여 반환합니다
+   *
+   * @param campaign_list - 통계를 계산할 캠페인 리스트
+   * @returns 통계 카드 값들 (오픈 예정, 진행 중, 신청 중, 전체, 종료, 취소)
+   */
+  const calculate_stat_card_values_from_list = (
+    campaign_list: CampaignProgressItem[]
+  ) => {
+    // 오픈 예정 캠페인 (status가 '예정'인 것)
+    const open_scheduled_count = campaign_list.filter(
+      (campaign) => campaign.status === "예정"
+    ).length;
+
+    // 진행 중인 캠페인 (status가 '진행'인 것)
+    const in_progress_count = campaign_list.filter(
+      (campaign) => campaign.status === "진행"
+    ).length;
+
+    // 신청 중인 캠페인 (status가 '신청'인 것)
+    const applying_count = campaign_list.filter(
+      (campaign) => campaign.status === "신청"
+    ).length;
+
+    // 전체 캠페인
+    const total_count = campaign_list.length;
+
+    // 종료된 캠페인 (status가 '종료'인 것)
+    const ended_count = campaign_list.filter(
+      (campaign) => campaign.status === "종료"
+    ).length;
+
+    // 취소된 캠페인 (status가 '취소'인 것)
+    const cancelled_count = campaign_list.filter(
+      (campaign) => campaign.status === "취소"
+    ).length;
+
+    // 숫자를 천 단위로 포맷팅하는 함수
+    // toLocaleString: 숫자를 지역화된 문자열로 변환합니다 (예: 1000 -> "1,000")
+    const format_count = (count: number): string => {
+      return `${count.toLocaleString("ko-KR")}건`;
+    };
+
+    return {
+      open_scheduled: format_count(open_scheduled_count),
+      in_progress: format_count(in_progress_count),
+      applying: format_count(applying_count),
+      total: format_count(total_count),
+      ended: format_count(ended_count),
+      cancelled: format_count(cancelled_count),
+    };
+  };
+
+  // 통계 카드 값들을 계산합니다 (필터링된 캠페인 리스트 기준)
+  // useMemo: filtered_campaign_list가 변경될 때만 재계산하여 성능 최적화
+  // 📌 날짜 필터 적용:
+  // - selected_date_range가 변경되면 filtered_campaign_list도 변경됩니다
+  // - filtered_campaign_list가 변경되면 통계 카드 값도 자동으로 재계산됩니다
+  // - 이렇게 하면 날짜 필터를 선택하면 통계 카드가 해당 날짜 범위의 데이터만 표시합니다
+  const statCardValues = useMemo(() => {
+    // 클라이언트에서만 계산 (localStorage 데이터 포함)
+    // 서버 사이드에서는 빈 통계를 반환하여 Hydration 오류 방지
+    if (typeof window === "undefined") {
+      return {
+        open_scheduled: "0건",
+        in_progress: "0건",
+        applying: "0건",
+        total: "0건",
+        ended: "0건",
+        cancelled: "0건",
+      };
+    }
+
+    // 필터링된 캠페인 리스트를 기반으로 통계 계산
+    return calculate_stat_card_values_from_list(filtered_campaign_list);
+  }, [filtered_campaign_list]); // filtered_campaign_list가 변경될 때만 재계산
 
   return (
     <div className={pageStyles.container}>
@@ -368,6 +474,13 @@ export default function ProgressPageCommon({
               channel_icon: string;
               channel_icon_image: string;
             }
+          }
+          search_query={search_query}
+          has_active_filters={
+            selected_statuses.length > 0 ||
+            selected_types.length > 0 ||
+            selected_channels.length > 0 ||
+            selected_date_range !== undefined
           }
         />
       </div>

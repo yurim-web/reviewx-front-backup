@@ -67,6 +67,8 @@ interface BaseFilterSectionProps<T extends string | number> {
     search_query: string;
     active_filters: T[];
   }) => void;
+  // 검색어 초기화 버튼 표시 여부 (기본값: true)
+  show_search_clear_button?: boolean;
 }
 
 export default function BaseFilterSection<T extends string | number>({
@@ -82,6 +84,7 @@ export default function BaseFilterSection<T extends string | number>({
   on_filter_reset,
   search_debounce_ms = 300,
   on_filter_apply,
+  show_search_clear_button = true,
 }: BaseFilterSectionProps<T>) {
   // 내부 검색어 상태 (debounce를 위한)
   // useState: React Hook으로 컴포넌트의 검색어 상태를 관리합니다
@@ -230,8 +233,8 @@ export default function BaseFilterSection<T extends string | number>({
               className={styles.search_input}
               aria-label="검색어 입력"
             />
-            {/* 검색어가 있을 때 초기화 버튼 표시 */}
-            {internal_search_query && (
+            {/* 검색어가 있을 때 초기화 버튼 표시 (show_search_clear_button가 true인 경우에만) */}
+            {show_search_clear_button && internal_search_query && (
               <button
                 type="button"
                 onClick={handle_search_clear}

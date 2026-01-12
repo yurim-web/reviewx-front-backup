@@ -310,7 +310,7 @@ export const admin_notification_templates: Record<
   },
   A_A3: {
     category: "A_A3",
-    label: "차단 발생",
+    label: "이용 제한 발생",
     message_template:
       "운영 정책 위반으로 차단된 계정이 {개수}건 발생했습니다. 차단 내역을 확인해 주세요.",
     color: "red",
