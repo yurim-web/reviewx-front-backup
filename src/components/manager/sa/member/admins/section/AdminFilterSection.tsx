@@ -115,12 +115,12 @@ export default function AdminFilterSection({
               styles={{
                 filter_item: styles.filter_item,
                 checkbox_icon: styles.checkbox_icon,
-                checkbox_icon_checked: filterButtonCommonStyles.checkbox_icon_checked,
+                checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
                 filter_text: styles.filter_text,
                 dropdown_arrow: styles.dropdown_arrow,
-                filter_item_active: filterButtonCommonStyles.filter_item_active,
-                filter_text_active: filterButtonCommonStyles.filter_text_active,
-                dropdown_arrow_active: filterButtonCommonStyles.dropdown_arrow_active,
+                filter_item_active: filterButtonStyles.filter_item_active,
+                filter_text_active: filterButtonStyles.filter_text_active,
+                dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
               }}
             />
             <StatusFilterDropdown
