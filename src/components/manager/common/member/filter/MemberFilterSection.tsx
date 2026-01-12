@@ -27,11 +27,13 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import React from "react";
 import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
+import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
+import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.module.css";
 
 // 필터 모달 컴포넌트 타입 정의 (유연하게 받기 위해 any 사용)
 // 실제 필터 모달들은 selected_channels, selected_grades 등 다양한 prop 이름을 사용합니다
@@ -63,16 +65,14 @@ interface MemberFilterSectionProps<TChannel, TGradeOrDivision, TType, TStatus> {
   };
   // 채널 필터 관련
   channel_name_map: Record<string, string>;
-  ChannelFilterModal: React.ComponentType<FilterModalComponent<TChannel>>;
+  ChannelFilterDropdown: React.ComponentType<any>;
   // 등급/구분 필터 관련 (리뷰어는 등급, 파트너는 구분)
   grade_or_division_label: string; // "등급" 또는 "구분"
-  GradeOrDivisionFilterModal: React.ComponentType<
-    FilterModalComponent<TGradeOrDivision>
-  >;
+  GradeOrDivisionFilterDropdown: React.ComponentType<any>;
   // 유형 필터 관련
-  TypeFilterModal: React.ComponentType<FilterModalComponent<TType>>;
+  TypeFilterDropdown: React.ComponentType<any>;
   // 상태 필터 관련
-  StatusFilterModal: React.ComponentType<FilterModalComponent<TStatus>>;
+  StatusFilterDropdown: React.ComponentType<any>;
   // 다운로드 버튼 텍스트
   download_button_text: string;
 }
@@ -95,19 +95,30 @@ export default function MemberFilterSection<
   on_statuses_change,
   styles: cssStyles,
   channel_name_map,
-  ChannelFilterModal,
+  ChannelFilterDropdown,
   grade_or_division_label,
-  GradeOrDivisionFilterModal,
-  TypeFilterModal,
-  StatusFilterModal,
+  GradeOrDivisionFilterDropdown,
+  TypeFilterDropdown,
+  StatusFilterDropdown,
   download_button_text,
 }: MemberFilterSectionProps<TChannel, TGradeOrDivision, TType, TStatus>) {
-  // 필터 모달 열림/닫힘 상태 관리
-  const [is_channel_modal_open, set_is_channel_modal_open] = useState(false);
-  const [is_grade_or_division_modal_open, set_is_grade_or_division_modal_open] =
+  // 필터 드롭다운 열림/닫힘 상태 관리
+  const [is_channel_dropdown_open, set_is_channel_dropdown_open] =
     useState(false);
-  const [is_type_modal_open, set_is_type_modal_open] = useState(false);
-  const [is_status_modal_open, set_is_status_modal_open] = useState(false);
+  const channel_filter_button_ref = useRef<HTMLDivElement>(null);
+
+  const [
+    is_grade_or_division_dropdown_open,
+    set_is_grade_or_division_dropdown_open,
+  ] = useState(false);
+  const grade_or_division_filter_button_ref = useRef<HTMLDivElement>(null);
+
+  const [is_type_dropdown_open, set_is_type_dropdown_open] = useState(false);
+  const type_filter_button_ref = useRef<HTMLDivElement>(null);
+
+  const [is_status_dropdown_open, set_is_status_dropdown_open] =
+    useState(false);
+  const status_filter_button_ref = useRef<HTMLDivElement>(null);
 
   const [selected_sort, set_selected_sort] = useState("최신순");
 
@@ -210,88 +221,130 @@ export default function MemberFilterSection<
       <BaseFilterSection<string>
         search_query={search_query}
         on_search_change={on_search_change}
-        // 필터 모달 버튼들
+        // 필터 드롭다운 버튼들
         filter_modal_button={
           <>
-            {/* 채널 필터 */}
+            {/* 채널 필터 (드롭다운 사용) */}
             <div
-              className={cssStyles.filter_item}
-              onClick={() => set_is_channel_modal_open(true)}
+              ref={channel_filter_button_ref}
+              className={filterButtonStyles.filter_button_dropdown_wrapper}
             >
-              <div
-                className={`${cssStyles.checkbox_icon} ${
-                  selected_channels.length > 0
-                    ? cssStyles.checkbox_icon_checked
-                    : ""
-                }`}
-              ></div>
-              <span className={cssStyles.filter_text}>채널</span>
-              <img
-                src="/images/icons/dropdown_arrow.svg"
-                alt="드롭다운"
-                className={cssStyles.dropdown_arrow}
+              <FilterButton
+                label="채널"
+                onClick={() => set_is_channel_dropdown_open((prev) => !prev)}
+                isActive={selected_channels.length > 0}
+                styles={{
+                  filter_item: cssStyles.filter_item,
+                  checkbox_icon: cssStyles.checkbox_icon,
+                  checkbox_icon_checked:
+                    filterButtonStyles.checkbox_icon_checked,
+                  filter_text: cssStyles.filter_text,
+                  dropdown_arrow: cssStyles.dropdown_arrow,
+                }}
+              />
+              <ChannelFilterDropdown
+                is_open={is_channel_dropdown_open}
+                on_close={() => set_is_channel_dropdown_open(false)}
+                selected_channels={selected_channels}
+                on_apply={handle_channel_apply}
+                container_ref={channel_filter_button_ref}
               />
             </div>
 
-            {/* 등급/구분 필터 */}
+            {/* 등급/구분 필터 (드롭다운 사용) */}
             <div
-              className={cssStyles.filter_item}
-              onClick={() => set_is_grade_or_division_modal_open(true)}
+              ref={grade_or_division_filter_button_ref}
+              className={filterButtonStyles.filter_button_dropdown_wrapper}
             >
-              <div
-                className={`${cssStyles.checkbox_icon} ${
-                  selected_divisions.length > 0
-                    ? cssStyles.checkbox_icon_checked
-                    : ""
-                }`}
-              ></div>
-              <span className={cssStyles.filter_text}>
-                {grade_or_division_label}
-              </span>
-              <img
-                src="/images/icons/dropdown_arrow.svg"
-                alt="드롭다운"
-                className={cssStyles.dropdown_arrow}
+              <FilterButton
+                label={grade_or_division_label}
+                onClick={() =>
+                  set_is_grade_or_division_dropdown_open((prev) => !prev)
+                }
+                isActive={selected_divisions.length > 0}
+                styles={{
+                  filter_item: cssStyles.filter_item,
+                  checkbox_icon: cssStyles.checkbox_icon,
+                  checkbox_icon_checked:
+                    filterButtonStyles.checkbox_icon_checked,
+                  filter_text: cssStyles.filter_text,
+                  dropdown_arrow: cssStyles.dropdown_arrow,
+                  filter_item_active: filterButtonStyles.filter_item_active,
+                  filter_text_active: filterButtonStyles.filter_text_active,
+                  dropdown_arrow_active:
+                    filterButtonStyles.dropdown_arrow_active,
+                }}
+              />
+              {React.createElement(GradeOrDivisionFilterDropdown, {
+                is_open: is_grade_or_division_dropdown_open,
+                on_close: () => set_is_grade_or_division_dropdown_open(false),
+                [grade_or_division_label === "등급"
+                  ? "selected_grades"
+                  : "selected_divisions"]: selected_divisions,
+                on_apply: handle_grade_or_division_apply,
+                container_ref: grade_or_division_filter_button_ref,
+              } as any)}
+            </div>
+
+            {/* 유형 필터 (드롭다운 사용) */}
+            <div
+              ref={type_filter_button_ref}
+              className={filterButtonStyles.filter_button_dropdown_wrapper}
+            >
+              <FilterButton
+                label="유형"
+                onClick={() => set_is_type_dropdown_open((prev) => !prev)}
+                isActive={selected_types.length > 0}
+                styles={{
+                  filter_item: cssStyles.filter_item,
+                  checkbox_icon: cssStyles.checkbox_icon,
+                  checkbox_icon_checked:
+                    filterButtonStyles.checkbox_icon_checked,
+                  filter_text: cssStyles.filter_text,
+                  dropdown_arrow: cssStyles.dropdown_arrow,
+                  filter_item_active: filterButtonStyles.filter_item_active,
+                  filter_text_active: filterButtonStyles.filter_text_active,
+                  dropdown_arrow_active:
+                    filterButtonStyles.dropdown_arrow_active,
+                }}
+              />
+              <TypeFilterDropdown
+                is_open={is_type_dropdown_open}
+                on_close={() => set_is_type_dropdown_open(false)}
+                selected_types={selected_types}
+                on_apply={handle_type_apply}
+                container_ref={type_filter_button_ref}
               />
             </div>
 
-            {/* 유형 필터 */}
+            {/* 상태 필터 (드롭다운 사용) */}
             <div
-              className={cssStyles.filter_item}
-              onClick={() => set_is_type_modal_open(true)}
+              ref={status_filter_button_ref}
+              className={filterButtonStyles.filter_button_dropdown_wrapper}
             >
-              <div
-                className={`${cssStyles.checkbox_icon} ${
-                  selected_types.length > 0
-                    ? cssStyles.checkbox_icon_checked
-                    : ""
-                }`}
-              ></div>
-              <span className={cssStyles.filter_text}>유형</span>
-              <img
-                src="/images/icons/dropdown_arrow.svg"
-                alt="드롭다운"
-                className={cssStyles.dropdown_arrow}
+              <FilterButton
+                label="상태"
+                onClick={() => set_is_status_dropdown_open((prev) => !prev)}
+                isActive={selected_statuses.length > 0}
+                styles={{
+                  filter_item: cssStyles.filter_item,
+                  checkbox_icon: cssStyles.checkbox_icon,
+                  checkbox_icon_checked:
+                    filterButtonStyles.checkbox_icon_checked,
+                  filter_text: cssStyles.filter_text,
+                  dropdown_arrow: cssStyles.dropdown_arrow,
+                  filter_item_active: filterButtonStyles.filter_item_active,
+                  filter_text_active: filterButtonStyles.filter_text_active,
+                  dropdown_arrow_active:
+                    filterButtonStyles.dropdown_arrow_active,
+                }}
               />
-            </div>
-
-            {/* 상태 필터 */}
-            <div
-              className={cssStyles.filter_item}
-              onClick={() => set_is_status_modal_open(true)}
-            >
-              <div
-                className={`${cssStyles.checkbox_icon} ${
-                  selected_statuses.length > 0
-                    ? cssStyles.checkbox_icon_checked
-                    : ""
-                }`}
-              ></div>
-              <span className={cssStyles.filter_text}>상태</span>
-              <img
-                src="/images/icons/dropdown_arrow.svg"
-                alt="드롭다운"
-                className={cssStyles.dropdown_arrow}
+              <StatusFilterDropdown
+                is_open={is_status_dropdown_open}
+                on_close={() => set_is_status_dropdown_open(false)}
+                selected_statuses={selected_statuses}
+                on_apply={handle_status_apply}
+                container_ref={status_filter_button_ref}
               />
             </div>
           </>
@@ -325,37 +378,8 @@ export default function MemberFilterSection<
         on_filter_tag_remove={handle_filter_tag_remove}
       />
 
-      {/* 필터 모달들 */}
-      {/* 필터 모달 컴포넌트들은 각각 다른 prop 이름을 사용하므로 동적으로 전달 */}
-      {React.createElement(ChannelFilterModal, {
-        is_open: is_channel_modal_open,
-        on_close: () => set_is_channel_modal_open(false),
-        selected_channels: selected_channels,
-        on_apply: handle_channel_apply,
-      } as any)}
-
-      {React.createElement(GradeOrDivisionFilterModal, {
-        is_open: is_grade_or_division_modal_open,
-        on_close: () => set_is_grade_or_division_modal_open(false),
-        [grade_or_division_label === "등급"
-          ? "selected_grades"
-          : "selected_divisions"]: selected_divisions,
-        on_apply: handle_grade_or_division_apply,
-      } as any)}
-
-      {React.createElement(TypeFilterModal, {
-        is_open: is_type_modal_open,
-        on_close: () => set_is_type_modal_open(false),
-        selected_types: selected_types,
-        on_apply: handle_type_apply,
-      } as any)}
-
-      {React.createElement(StatusFilterModal, {
-        is_open: is_status_modal_open,
-        on_close: () => set_is_status_modal_open(false),
-        selected_statuses: selected_statuses,
-        on_apply: handle_status_apply,
-      } as any)}
+      {/* 필터 모달들 (모두 드롭다운으로 대체) */}
+      {/* ChannelFilterModal, GradeOrDivisionFilterModal, TypeFilterModal, StatusFilterModal은 각각 드롭다운으로 대체되었습니다 */}
     </div>
   );
 }

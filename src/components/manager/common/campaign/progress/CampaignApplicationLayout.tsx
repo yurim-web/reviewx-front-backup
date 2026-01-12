@@ -5,6 +5,13 @@
 /**
  * 관리자 캠페인 신청내역 페이지의 공통 UI 레이아웃 컴포넌트
  *
+ * 📍 사용 위치:
+ * - src/app/manager_sa/campaign/progress/delivery/[id]/page.tsx (SA 관리자 배송형 캠페인 상세)
+ * - src/app/manager_sa/campaign/progress/visit/[id]/page.tsx (SA 관리자 방문형 캠페인 상세)
+ * - src/app/manager_sa/campaign/progress/mission/[id]/page.tsx (SA 관리자 미션형 캠페인 상세)
+ * - src/app/manager_sa/campaign/progress/review/[id]/page.tsx (SA 관리자 구매평 캠페인 상세)
+ * - src/app/manager_sa/campaign/progress/reporter/[id]/page.tsx (SA 관리자 기자단 캠페인 상세)
+ *
  * 📌 컴포넌트 재사용성:
  * - 여러 페이지에서 동일한 UI 구조를 사용할 때 중복을 제거합니다
  * - 레이아웃 변경 시 한 곳만 수정하면 모든 페이지에 반영됩니다
@@ -12,10 +19,14 @@
  * 주요 기능:
  * - 캠페인 정보 박스 표시
  * - 정렬 컨트롤
- * - 탭 네비게이션
+ * - 탭 네비게이션 (신청/선정 탭)
  * - 신청자 목록 그리드
  * - 모달 표시
  * - 캠페인 보기 버튼 (관리자 전용)
+ *
+ * 📌 관리자 권한:
+ * - 일반 사용자/파트너와 달리 관리자는 선정 날짜와 관계없이 항상 신청 내역을 볼 수 있습니다
+ * - 선정 날짜가 지난 캠페인도 신청 내역을 열람할 수 있습니다
  */
 
 "use client";
@@ -30,7 +41,6 @@ import Campaignbanner from "@/components/partner/campaign_application/CampaignIn
 import SortFilterControl from "@/components/partner/campaign_application/SortFilterControl";
 import EmptyApplicantsList from "@/components/partner/campaign_application/EmptyApplicantsList";
 import BaseModal from "@/components/common/modal/BaseModal";
-import { isAnnouncementDatePassed } from "@/components/partner/campaign_application/utils/campaign_info_helpers";
 import { getCampaignDetailPath } from "@/utils/getCampaignDetailPath";
 import type {
   CampaignWithApplicants,
@@ -171,113 +181,59 @@ export default function CampaignApplicationLayout({
             {/* 캠페인 정보 박스 */}
             <Campaignbanner campaignInfo={campaignData.campaignInfo} />
 
-            {/* 선정 날짜 확인 */}
-            {selectedCount === 0 ? (
-              /* 아직 선정하지 않은 경우 - 항상 신청 내역 표시 */
-              <>
-                {/* 정렬 섹션 */}
-                <article className={styles.download_section_right}>
-                  <SortFilterControl
-                    options={sortOptions}
-                    value={sortOrder}
-                    onChange={(opt) => setSortOrder(opt.value as SortOption)}
-                    defaultSort="latest"
-                  />
-                </article>
-
-                {/* 신청내역 탭 네비게이션 */}
-                <article className={styles.tab_navigation}>
-                  <button
-                    className={`${styles.tab_button} ${
-                      activeTab === "applicants" ? styles.active : ""
-                    }`}
-                    onClick={() => setActiveTab("applicants")}
-                  >
-                    신청{" "}
-                    <span className={styles.tab_count}>{applicantsCount}</span>
-                  </button>
-                  <button
-                    className={`${styles.tab_button} ${
-                      activeTab === "selected" ? styles.active : ""
-                    }`}
-                    onClick={() => setActiveTab("selected")}
-                  >
-                    선정{" "}
-                    <span className={styles.tab_count}>{selectedCount}</span>
-                  </button>
-                </article>
-
-                {/* 신청자 목록 그리드 */}
-                <article className={styles.applicants_grid}>
-                  {currentApplicants.length === 0 ? (
-                    <EmptyApplicantsList />
-                  ) : (
-                    currentApplicants.map((applicant, index) => (
-                      <div key={`${activeTab}-${applicant.id}-${index}`}>
-                        {renderCard(applicant, activeTab === "selected")}
-                      </div>
-                    ))
-                  )}
-                </article>
-              </>
-            ) : isAnnouncementDatePassed(
-                campaignData.campaignInfo.announcementDate
-              ) ? (
-              /* 선정 날짜가 지난 경우 - 신청 내역 열람 불가 */
-              <article className={styles.access_denied_message}>
-                <p>신청 내역 열람 불가</p>
-                <p className={styles.access_denied_subtext}>
-                  선정 날짜가 지나 신청 내역을 열람할 수 없습니다.
-                </p>
+            {/* 
+              관리자 페이지: 선정 날짜와 관계없이 항상 신청 내역 표시
+              
+              📌 관리자 권한:
+              - 일반 사용자/파트너와 달리 관리자는 모든 신청 내역을 볼 수 있습니다
+              - 선정 날짜가 지난 캠페인도 신청 내역을 열람할 수 있어야 합니다
+              - 따라서 선정 날짜 체크 로직을 제거하고 항상 신청 내역을 표시합니다
+            */}
+            <>
+              {/* 정렬 섹션 */}
+              <article className={styles.download_section_right}>
+                <SortFilterControl
+                  options={sortOptions}
+                  value={sortOrder}
+                  onChange={(opt) => setSortOrder(opt.value as SortOption)}
+                  defaultSort="latest"
+                />
               </article>
-            ) : (
-              <>
-                {/* 정렬 섹션 */}
-                <article className={styles.download_section_right}>
-                  <SortFilterControl
-                    options={sortOptions}
-                    value={sortOrder}
-                    onChange={(opt) => setSortOrder(opt.value as SortOption)}
-                    defaultSort="latest"
-                  />
-                </article>
 
-                {/* 신청내역 탭 네비게이션 */}
-                <article className={styles.tab_navigation}>
-                  <button
-                    className={`${styles.tab_button} ${
-                      activeTab === "applicants" ? styles.active : ""
-                    }`}
-                    onClick={() => setActiveTab("applicants")}
-                  >
-                    신청{" "}
-                    <span className={styles.tab_count}>{applicantsCount}</span>
-                  </button>
-                  <button
-                    className={`${styles.tab_button} ${
-                      activeTab === "selected" ? styles.active : ""
-                    }`}
-                    onClick={() => setActiveTab("selected")}
-                  >
-                    선정{" "}
-                    <span className={styles.tab_count}>{selectedCount}</span>
-                  </button>
-                </article>
+              {/* 신청내역 탭 네비게이션 */}
+              <article className={styles.tab_navigation}>
+                <button
+                  className={`${styles.tab_button} ${
+                    activeTab === "applicants" ? styles.active : ""
+                  }`}
+                  onClick={() => setActiveTab("applicants")}
+                >
+                  신청{" "}
+                  <span className={styles.tab_count}>{applicantsCount}</span>
+                </button>
+                <button
+                  className={`${styles.tab_button} ${
+                    activeTab === "selected" ? styles.active : ""
+                  }`}
+                  onClick={() => setActiveTab("selected")}
+                >
+                  선정 <span className={styles.tab_count}>{selectedCount}</span>
+                </button>
+              </article>
 
-                {/* 신청자 목록 그리드 */}
-                <article className={styles.applicants_grid}>
-                  {currentApplicants.length === 0 ? (
-                    <EmptyApplicantsList />
-                  ) : (
-                    currentApplicants.map((applicant, index) => (
-                      <div key={`${activeTab}-${applicant.id}-${index}`}>
-                        {renderCard(applicant, activeTab === "selected")}
-                      </div>
-                    ))
-                  )}
-                </article>
-              </>
-            )}
+              {/* 신청자 목록 그리드 */}
+              <article className={styles.applicants_grid}>
+                {currentApplicants.length === 0 ? (
+                  <EmptyApplicantsList />
+                ) : (
+                  currentApplicants.map((applicant, index) => (
+                    <div key={`${activeTab}-${applicant.id}-${index}`}>
+                      {renderCard(applicant, activeTab === "selected")}
+                    </div>
+                  ))
+                )}
+              </article>
+            </>
           </section>
 
           {/* 모집 인원 초과 모달 */}

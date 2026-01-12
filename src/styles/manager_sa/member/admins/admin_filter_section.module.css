@@ -37,11 +37,6 @@
   flex-shrink: 0;
 }
 
-/* 체크박스 아이콘 체크됨 상태 */
-.checkbox_icon_checked {
-  background-color: #2b7fff;
-  border-color: #2b7fff;
-}
 
 /* 필터 텍스트 */
 .filter_text {

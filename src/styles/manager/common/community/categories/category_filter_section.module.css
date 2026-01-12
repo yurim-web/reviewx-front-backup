@@ -38,15 +38,6 @@
   flex-shrink: 0;
 }
 
-/* 체크박스 아이콘 (선택됨) */
-.checkbox_icon_checked {
-  background-color: #444444;
-  border-color: #444444;
-  background-image: url("/images/icons/red_check_icon.svg");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 12px 12px;
-}
 
 /* 필터 텍스트 */
 .filter_text {

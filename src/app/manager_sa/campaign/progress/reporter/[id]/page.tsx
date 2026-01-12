@@ -9,19 +9,22 @@
  *       신청자/선정자 목록, 카드 이동, 엑셀 다운로드 등 상세 관리를 할 수 있도록 구성합니다.
  *
  * 참고:
- * - 파트너 센터의 `/partner/campaign_application/reporter/[id]` 페이지 구조를 그대로 차용했습니다.
- * - 관리자 페이지에 맞게 주석과 용어를 재정비했습니다.
+ * - 공통 로직은 useCampaignProgressDetail 훅과 CampaignProgressDetailLayout 컴포넌트로 추출했습니다.
+ * - GA 관리자와 동일한 구조를 사용하여 코드 중복을 제거했습니다.
+ * - 기자단 캠페인은 릴스/숏츠 카드도 지원합니다.
  */
 
 "use client";
 
-import React from "react";
-// 공통 훅과 컴포넌트 import
-import { useCampaignApplication } from "@/hooks/partner/campaign_application/useCampaignApplication";
-import CampaignApplicationLayout from "@/components/manager/common/campaign/progress/CampaignApplicationLayout";
-import type { AllApplicant } from "@/data/partner/sharedCampaigns";
+import { useParams } from "next/navigation";
+import Loading from "@/app/loading";
+import styles from "@/styles/partner/campaign_application/campaign_application.module.css";
+import { useCampaignProgressDetail } from "@/hooks/manager/common/campaign/useCampaignProgressDetail";
+import CampaignProgressDetailLayout, {
+  type RenderCardFunction,
+} from "@/components/manager/common/campaign/progress/CampaignProgressDetailLayout";
 
-// 기자단 카드 컴포넌트들 import (채널별)
+// 기자단 카드 컴포넌트 (채널별 렌더링 + 릴스/숏츠 지원)
 import NaverBlogCard from "@/components/partner/campaign_application/card_type/naverblog/NaverBlogCard";
 import NaverClipCard from "@/components/partner/campaign_application/card_type/naverclip/NaverClipCard";
 import NaverClipSelectedCard from "@/components/partner/campaign_application/card_type/naverclip/NaverClipSelectedCard";
@@ -34,7 +37,11 @@ import ReelsSelectedCard from "@/components/partner/campaign_application/card_ty
 import ShortsCard from "@/components/partner/campaign_application/card_type/shorts/ShortsCard";
 import ShortsSelectedCard from "@/components/partner/campaign_application/card_type/shorts/ShortsSelectedCard";
 
-// 개별 신청자 타입들 import (카드 컴포넌트에서 사용)
+// 타입 정의
+import type {
+  AllApplicant,
+  CampaignWithApplicants,
+} from "@/data/partner/sharedCampaigns";
 import {
   type Applicant,
   type NaverClipApplicant,
@@ -44,45 +51,75 @@ import {
 
 /**
  * 기자단 캠페인 상세 컴포넌트
+ *
+ * - 공통 로직은 useCampaignProgressDetail 훅을 사용합니다.
+ * - 기자단 캠페인만의 카드 렌더링 로직을 render_card 함수로 정의합니다.
+ * - 릴스/숏츠 카드도 지원합니다 (브랜드명으로 구분).
  */
 export default function ManagerReporterProgressDetailPage() {
-  // 📌 커스텀 훅 사용:
-  // - 모든 공통 로직(상태 관리, 데이터 로딩, 핸들러 등)을 훅에서 가져옵니다
-  const {
-    campaignData,
-    isLoading,
-    error,
-    activeTab,
-    setActiveTab,
-    sortOrder,
-    setSortOrder,
-    sortOptions,
-    applicantsCount,
-    selectedCount,
-    currentApplicants,
-    is_modal_open,
-    handleSelectApplicant,
-    handleCancelApplicant,
-    handle_close_modal,
-    is_already_selected_modal_open,
-    handle_close_already_selected_modal,
-  } = useCampaignApplication();
+  /**
+   * URL 파라미터에서 캠페인 ID 추출
+   */
+  const params = useParams();
+  const campaign_id = params.id as string;
 
   /**
-   * channel/brandName에 따라 적절한 카드 컴포넌트를 렌더링하는 함수
-   * - 인스타그램 + 브랜드=릴스 → ReelsCard/Selected
-   * - 유튜브 + 브랜드=숏츠 → ShortsCard/Selected
-   * - 그 외는 채널 기본 카드 사용
-   * - 📌 관리자 모드: 선정하기/선택 취소 버튼 비활성화 (빈 함수 전달)
-   *
-   * @param applicant - 신청자 데이터
-   * @param isSelected - 선정 탭 여부
-   * @returns JSX 요소
+   * 공통 로직 훅 사용
    */
-  const renderCardComponent = (
+  const {
+    campaign_data,
+    is_loading,
+    error_message,
+    active_tab,
+    set_active_tab,
+    sort_order,
+    set_sort_order,
+    sort_options,
+    applicants_count,
+    selected_count,
+    current_applicants,
+    handle_select_applicant,
+    handle_cancel_applicant,
+    handle_download_applicants,
+    handle_download_selected,
+  } = useCampaignProgressDetail(campaign_id, "SA 기자단");
+
+  /**
+   * 로딩 상태 처리
+   */
+  if (is_loading) {
+    return <Loading />;
+  }
+
+  /**
+   * 에러 상태 처리
+   */
+  if (error_message || !campaign_data) {
+    return (
+      <section className={styles.campaign_application_section}>
+        <div className={styles.page_header}>
+          <h1 className={styles.page_title}>캠페인 상세 보기</h1>
+        </div>
+        <div style={{ padding: "40px", textAlign: "center", color: "red" }}>
+          {error_message}
+        </div>
+      </section>
+    );
+  }
+
+  /**
+   * 기자단 캠페인 카드 렌더링 함수
+   * - 채널별로 다른 카드 컴포넌트를 렌더링합니다
+   * - 릴스/숏츠 카드도 지원합니다 (브랜드명으로 구분)
+   * - 📌 관리자 모드: 선정하기/선택 취소 버튼 비활성화 (빈 함수 전달)
+   */
+  const render_card: RenderCardFunction = (
     applicant: AllApplicant,
-    isSelected: boolean = false
-  ): React.ReactNode => {
+    is_selected: boolean,
+    campaign_data: CampaignWithApplicants | null,
+    handle_select: (id: string) => void,
+    handle_cancel: (id: string) => void
+  ) => {
     // 관리자 모드: 버튼 비활성화를 위한 빈 함수
     const empty_handler = () => {};
 
@@ -91,14 +128,13 @@ export default function ManagerReporterProgressDetailPage() {
         return (
           <NaverBlogCard
             applicant={applicant as Applicant}
-            variant={isSelected ? "selected" : "applicant"}
+            variant={is_selected ? "selected" : "applicant"}
             onSelect={empty_handler}
             onCancel={empty_handler}
           />
         );
-
       case "네이버클립":
-        return isSelected ? (
+        return is_selected ? (
           <NaverClipSelectedCard
             applicant={applicant as NaverClipApplicant}
             onCancel={empty_handler}
@@ -109,11 +145,10 @@ export default function ManagerReporterProgressDetailPage() {
             onSelect={empty_handler}
           />
         );
-
       case "인스타그램":
-        // 브랜드가 릴스인 경우 전용 카드 사용
-        if (campaignData?.campaignInfo.brandName === "릴스") {
-          return isSelected ? (
+        // 브랜드명이 '릴스'인 경우 ReelsCard 사용
+        if (campaign_data?.campaignInfo.brandName === "릴스") {
+          return is_selected ? (
             <ReelsSelectedCard
               applicant={applicant as InstagramApplicant}
               onCancel={empty_handler}
@@ -125,7 +160,8 @@ export default function ManagerReporterProgressDetailPage() {
             />
           );
         }
-        return isSelected ? (
+        // 일반 인스타그램 카드
+        return is_selected ? (
           <InstagramSelectedCard
             applicant={applicant as InstagramApplicant}
             onCancel={empty_handler}
@@ -136,11 +172,10 @@ export default function ManagerReporterProgressDetailPage() {
             onSelect={empty_handler}
           />
         );
-
       case "유튜브":
-        // 브랜드가 숏츠인 경우 전용 카드 사용
-        if (campaignData?.campaignInfo.brandName === "숏츠") {
-          return isSelected ? (
+        // 브랜드명이 '숏츠'인 경우 ShortsCard 사용
+        if (campaign_data?.campaignInfo.brandName === "숏츠") {
+          return is_selected ? (
             <ShortsSelectedCard
               applicant={applicant as YoutubeApplicant}
               onCancel={empty_handler}
@@ -152,7 +187,8 @@ export default function ManagerReporterProgressDetailPage() {
             />
           );
         }
-        return isSelected ? (
+        // 일반 유튜브 카드
+        return is_selected ? (
           <YoutubeSelectedCard
             applicant={applicant as YoutubeApplicant}
             onCancel={empty_handler}
@@ -163,13 +199,12 @@ export default function ManagerReporterProgressDetailPage() {
             onSelect={empty_handler}
           />
         );
-
       default:
         // 기본값: 네이버블로그 카드 사용
         return (
           <NaverBlogCard
             applicant={applicant as unknown as Applicant}
-            variant={isSelected ? "selected" : "applicant"}
+            variant={is_selected ? "selected" : "applicant"}
             onSelect={empty_handler}
             onCancel={empty_handler}
           />
@@ -177,29 +212,27 @@ export default function ManagerReporterProgressDetailPage() {
     }
   };
 
-  // 📌 공통 레이아웃 컴포넌트 사용:
-  // - 모든 공통 UI와 로직을 CampaignApplicationLayout에 위임합니다
-  // - 이 페이지는 기자단 캠페인에 특화된 renderCard 함수만 전달합니다
+  /**
+   * 공통 레이아웃 컴포넌트 사용
+   */
   return (
-    <CampaignApplicationLayout
-      campaignData={campaignData}
-      isLoading={isLoading}
-      error={error}
-      activeTab={activeTab}
-      setActiveTab={setActiveTab}
-      applicantsCount={applicantsCount}
-      selectedCount={selectedCount}
-      sortOrder={sortOrder}
-      setSortOrder={setSortOrder}
-      sortOptions={sortOptions}
-      currentApplicants={currentApplicants}
-      is_modal_open={is_modal_open}
-      handle_close_modal={handle_close_modal}
-      is_already_selected_modal_open={is_already_selected_modal_open}
-      handle_close_already_selected_modal={handle_close_already_selected_modal}
-      handleSelectApplicant={handleSelectApplicant}
-      handleCancelApplicant={handleCancelApplicant}
-      renderCard={renderCardComponent}
+    <CampaignProgressDetailLayout
+      campaign_data={campaign_data}
+      active_tab={active_tab}
+      set_active_tab={set_active_tab}
+      sort_order={sort_order}
+      set_sort_order={set_sort_order}
+      sort_options={sort_options}
+      applicants_count={applicants_count}
+      selected_count={selected_count}
+      current_applicants={current_applicants}
+      handle_select_applicant={handle_select_applicant}
+      handle_cancel_applicant={handle_cancel_applicant}
+      handle_download_applicants={handle_download_applicants}
+      handle_download_selected={handle_download_selected}
+      render_card={render_card}
+      campaign_id={campaign_id}
+      manager_type="sa"
     />
   );
 }

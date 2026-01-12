@@ -15,10 +15,10 @@
 
 import MemberFilterSectionCommon from "@/components/manager/common/member/filter/MemberFilterSection";
 import styles from "@/styles/manager/common/member/reviewers/reviewer_filter_section.module.css";
-import ChannelFilterModal from "@/components/manager/common/member/reviewers/filter/ChannelFilterModal";
-import GradeFilterModal from "@/components/manager/common/member/reviewers/filter/GradeFilterModal";
-import TypeFilterModal from "@/components/manager/common/member/reviewers/filter/TypeFilterModal";
-import StatusFilterModal from "@/components/manager/common/member/reviewers/filter/StatusFilterModal";
+import ChannelFilterDropdown from "@/components/manager/common/member/reviewers/filter/ChannelFilterDropdown";
+import GradeFilterDropdown from "@/components/manager/common/member/reviewers/filter/GradeFilterDropdown";
+import TypeFilterDropdown from "@/components/manager/common/member/reviewers/filter/TypeFilterDropdown";
+import StatusFilterDropdown from "@/components/manager/common/member/reviewers/filter/StatusFilterDropdown";
 import type { Channel } from "@/data/manager/common/filterOptions";
 import type {
   ReviewerStatus,
@@ -92,11 +92,11 @@ export default function ReviewerFilterSection({
         }
       }
       channel_name_map={channel_name_map}
-      ChannelFilterModal={ChannelFilterModal as any}
+      ChannelFilterDropdown={ChannelFilterDropdown as any}
       grade_or_division_label="등급"
-      GradeOrDivisionFilterModal={GradeFilterModal as any}
-      TypeFilterModal={TypeFilterModal as any}
-      StatusFilterModal={StatusFilterModal as any}
+      GradeOrDivisionFilterDropdown={GradeFilterDropdown as any}
+      TypeFilterDropdown={TypeFilterDropdown as any}
+      StatusFilterDropdown={StatusFilterDropdown as any}
       download_button_text="리뷰어 목록 다운로드"
     />
   );

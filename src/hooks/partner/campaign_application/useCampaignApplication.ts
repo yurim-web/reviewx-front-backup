@@ -25,6 +25,7 @@ import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import {
   getCampaignById,
+  updateCampaignApplicants,
   type CampaignWithApplicants,
   type AllApplicant,
 } from "@/data/partner/sharedCampaigns";
@@ -205,6 +206,33 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
       if (header) header.style.display = "block";
     };
   }, []);
+
+  /**
+   * 신청자 데이터 변경 시 localStorage에 저장
+   *
+   * 📌 useEffect를 사용하여 상태 변경 감지:
+   * - applicantsState나 selectedState가 변경될 때마다 실행됩니다
+   * - 파트너에서 선정/취소 시 localStorage에 저장하여 관리자 페이지에서도 볼 수 있도록 합니다
+   * - 초기 로딩 시에는 저장하지 않도록 campaignData가 있을 때만 저장합니다
+   */
+  useEffect(() => {
+    // 캠페인 데이터가 없거나 로딩 중이면 저장하지 않음
+    if (!campaignData || isLoading) return;
+
+    // localStorage에 저장
+    const success = updateCampaignApplicants(
+      campaignData.campaignInfo.id,
+      campaignData.campaignInfo.campaignType,
+      applicantsState,
+      selectedState
+    );
+
+    if (success) {
+      console.log(
+        `신청자 데이터 localStorage 저장 완료: 신청자=${applicantsState.length}명, 선정자=${selectedState.length}명`
+      );
+    }
+  }, [applicantsState, selectedState, campaignData, isLoading]);
 
   // 탭별 데이터 개수 계산
   const applicantsCount = applicantsState.length;

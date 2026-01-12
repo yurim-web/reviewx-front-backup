@@ -197,7 +197,16 @@ export default function CampaignProgressDetailLayout({
           */}
           <section className={styles.campaign_application_section}>
             {/* 캠페인 배너 - 캠페인 기본 정보를 표시합니다 */}
-            <Campaignbanner campaignInfo={campaign_data.campaignInfo} />
+            {/* 
+              📌 모집 인원 표시:
+              - applicantsCount를 전달하여 실제 신청자 수를 표시합니다
+              - 파트너 페이지와 동일하게 실제 신청자 수를 보여줍니다
+              - applicantsCount가 없으면 campaignInfo.recruitedCount를 사용합니다
+            */}
+            <Campaignbanner
+              campaignInfo={campaign_data.campaignInfo}
+              applicantsCount={applicants_count}
+            />
 
             {/* 
               정렬 섹션

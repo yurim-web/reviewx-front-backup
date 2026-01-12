@@ -25,23 +25,27 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
 import DateFilterButton from "@/components/manager/ga/common/filter/DateFilterButton";
 import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
-import BusinessTypeFilterModal from "@/components/manager/sa/settlement/payment_history/filter/BusinessTypeFilterModal";
-import PaymentMethodFilterModal from "@/components/manager/sa/settlement/payment_history/filter/PaymentMethodFilterModal";
-import PaymentStatusFilterModal from "@/components/manager/sa/settlement/payment_history/filter/PaymentStatusFilterModal";
-import AccountStatusFilterModal from "@/components/manager/sa/settlement/payment_history/filter/AccountStatusFilterModal";
-import type { BusinessType } from "@/components/manager/sa/settlement/payment_history/filter/BusinessTypeFilterModal";
+import BusinessTypeFilterDropdown, {
+  type BusinessType,
+} from "@/components/manager/sa/settlement/payment_history/filter/BusinessTypeFilterDropdown";
+import PaymentMethodFilterDropdown from "@/components/manager/sa/settlement/payment_history/filter/PaymentMethodFilterDropdown";
+import PaymentStatusFilterDropdown, {
+  type PaymentStatus,
+} from "@/components/manager/sa/settlement/payment_history/filter/PaymentStatusFilterDropdown";
+import AccountStatusFilterDropdown, {
+  type AccountStatus,
+} from "@/components/manager/sa/settlement/payment_history/filter/AccountStatusFilterDropdown";
 import type { PaymentMethod } from "@/data/manager_sa/common/filterOptions";
-import type { PaymentStatus } from "@/components/manager/sa/settlement/payment_history/filter/PaymentStatusFilterModal";
-import type { AccountStatus } from "@/components/manager/sa/settlement/payment_history/filter/AccountStatusFilterModal";
 import baseFilterStyles from "@/styles/manager/common/campaign/progress/filter_section.module.css";
 import styles from "@/styles/manager_sa/settlement/payment_history/filter_section.module.css";
+import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.module.css";
 
 interface PaymentHistoryFilterSectionProps {
   // 검색어 상태
@@ -78,14 +82,25 @@ export default function PaymentHistoryFilterSection({
   selected_account_statuses = [],
   on_account_statuses_change,
 }: PaymentHistoryFilterSectionProps) {
-  const [is_business_type_modal_open, set_is_business_type_modal_open] =
+  // 구분 필터 드롭다운 열림/닫힘 상태
+  const [is_business_type_dropdown_open, set_is_business_type_dropdown_open] =
     useState(false);
-  const [is_payment_method_modal_open, set_is_payment_method_modal_open] =
+  const business_type_filter_button_ref = useRef<HTMLDivElement>(null);
+
+  // 결제 수단 필터 드롭다운 열림/닫힘 상태
+  const [is_payment_method_dropdown_open, set_is_payment_method_dropdown_open] =
     useState(false);
-  const [is_payment_status_modal_open, set_is_payment_status_modal_open] =
+  const payment_method_filter_button_ref = useRef<HTMLDivElement>(null);
+
+  // 결제 필터 드롭다운 열림/닫힘 상태
+  const [is_payment_status_dropdown_open, set_is_payment_status_dropdown_open] =
     useState(false);
-  const [is_account_status_modal_open, set_is_account_status_modal_open] =
+  const payment_status_filter_button_ref = useRef<HTMLDivElement>(null);
+
+  // 상태 필터 드롭다운 열림/닫힘 상태
+  const [is_account_status_dropdown_open, set_is_account_status_dropdown_open] =
     useState(false);
+  const account_status_filter_button_ref = useRef<HTMLDivElement>(null);
 
   // 내부 검색어 상태 (props가 없을 때 사용)
   const [internal_search_query, set_internal_search_query] = useState("");
@@ -228,36 +243,68 @@ export default function PaymentHistoryFilterSection({
             on_range_change={handle_date_range_change}
           />
         }
-        // 필터 모달 버튼들
+        // 필터 드롭다운 버튼들
         filter_modal_button={
           <>
-            {/* 구분 필터 */}
-            <FilterButton
-              label="구분"
-              onClick={() => set_is_business_type_modal_open(true)}
-              isActive={selected_business_types.length > 0}
-              styles={{
-                filter_item: baseFilterStyles.filter_item,
-                checkbox_icon: baseFilterStyles.checkbox_icon,
-                filter_text: baseFilterStyles.filter_text,
-                dropdown_arrow: baseFilterStyles.dropdown_arrow,
-              }}
-            />
+            {/* 구분 필터 (드롭다운 사용) */}
+            <div
+              ref={business_type_filter_button_ref}
+              className={filterButtonStyles.filter_button_dropdown_wrapper}
+            >
+              <FilterButton
+                label="구분"
+                onClick={() => set_is_business_type_dropdown_open((prev) => !prev)}
+                isActive={selected_business_types.length > 0}
+                styles={{
+                  filter_item: baseFilterStyles.filter_item,
+                  checkbox_icon: baseFilterStyles.checkbox_icon,
+                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
+                  filter_text: baseFilterStyles.filter_text,
+                  dropdown_arrow: baseFilterStyles.dropdown_arrow,
+                  filter_item_active: filterButtonStyles.filter_item_active,
+                  filter_text_active: filterButtonStyles.filter_text_active,
+                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
+                }}
+              />
+              <BusinessTypeFilterDropdown
+                is_open={is_business_type_dropdown_open}
+                on_close={() => set_is_business_type_dropdown_open(false)}
+                selected_types={selected_business_types}
+                on_apply={handle_business_type_apply}
+                container_ref={business_type_filter_button_ref}
+              />
+            </div>
 
-            {/* 결제 수단 필터 */}
-            <FilterButton
-              label="결제 수단"
-              onClick={() => set_is_payment_method_modal_open(true)}
-              isActive={selected_payment_methods.length > 0}
-              styles={{
-                filter_item: baseFilterStyles.filter_item,
-                checkbox_icon: baseFilterStyles.checkbox_icon,
-                filter_text: baseFilterStyles.filter_text,
-                dropdown_arrow: baseFilterStyles.dropdown_arrow,
-              }}
-            />
+            {/* 결제 수단 필터 (드롭다운 사용) */}
+            <div
+              ref={payment_method_filter_button_ref}
+              className={filterButtonStyles.filter_button_dropdown_wrapper}
+            >
+              <FilterButton
+                label="결제 수단"
+                onClick={() => set_is_payment_method_dropdown_open((prev) => !prev)}
+                isActive={selected_payment_methods.length > 0}
+                styles={{
+                  filter_item: baseFilterStyles.filter_item,
+                  checkbox_icon: baseFilterStyles.checkbox_icon,
+                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
+                  filter_text: baseFilterStyles.filter_text,
+                  dropdown_arrow: baseFilterStyles.dropdown_arrow,
+                  filter_item_active: filterButtonStyles.filter_item_active,
+                  filter_text_active: filterButtonStyles.filter_text_active,
+                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
+                }}
+              />
+              <PaymentMethodFilterDropdown
+                is_open={is_payment_method_dropdown_open}
+                on_close={() => set_is_payment_method_dropdown_open(false)}
+                selected_methods={selected_payment_methods}
+                on_apply={handle_payment_method_apply}
+                container_ref={payment_method_filter_button_ref}
+              />
+            </div>
 
-            {/* 세금계산서 발행 필터 */}
+            {/* 세금계산서 발행 필터 (체크박스 - 그대로 유지) */}
             <div
               className={styles.filter_dropdown}
               onClick={() => handle_tax_invoice_change(!tax_invoice_only)}
@@ -272,31 +319,59 @@ export default function PaymentHistoryFilterSection({
               <span className={styles.filter_label}>세금계산서 발행</span>
             </div>
 
-            {/* 결제 필터 */}
-            <FilterButton
-              label="결제"
-              onClick={() => set_is_payment_status_modal_open(true)}
-              isActive={selected_payment_statuses.length > 0}
-              styles={{
-                filter_item: baseFilterStyles.filter_item,
-                checkbox_icon: baseFilterStyles.checkbox_icon,
-                filter_text: baseFilterStyles.filter_text,
-                dropdown_arrow: baseFilterStyles.dropdown_arrow,
-              }}
-            />
+            {/* 결제 필터 (드롭다운 사용) */}
+            <div
+              ref={payment_status_filter_button_ref}
+              className={filterButtonStyles.filter_button_dropdown_wrapper}
+            >
+              <FilterButton
+                label="결제"
+                onClick={() => set_is_payment_status_dropdown_open((prev) => !prev)}
+                isActive={selected_payment_statuses.length > 0}
+                styles={{
+                  filter_item: baseFilterStyles.filter_item,
+                  checkbox_icon: baseFilterStyles.checkbox_icon,
+                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
+                  filter_text: baseFilterStyles.filter_text,
+                  dropdown_arrow: baseFilterStyles.dropdown_arrow,
+                  filter_item_active: filterButtonStyles.filter_item_active,
+                  filter_text_active: filterButtonStyles.filter_text_active,
+                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
+                }}
+              />
+              <PaymentStatusFilterDropdown
+                is_open={is_payment_status_dropdown_open}
+                on_close={() => set_is_payment_status_dropdown_open(false)}
+                selected_statuses={selected_payment_statuses}
+                on_apply={handle_payment_status_apply}
+                container_ref={payment_status_filter_button_ref}
+              />
+            </div>
 
-            {/* 상태 필터 */}
-            <FilterButton
-              label="상태"
-              onClick={() => set_is_account_status_modal_open(true)}
-              isActive={selected_account_statuses.length > 0}
-              styles={{
-                filter_item: baseFilterStyles.filter_item,
-                checkbox_icon: baseFilterStyles.checkbox_icon,
-                filter_text: baseFilterStyles.filter_text,
-                dropdown_arrow: baseFilterStyles.dropdown_arrow,
-              }}
-            />
+            {/* 상태 필터 (드롭다운 사용) */}
+            <div
+              ref={account_status_filter_button_ref}
+              className={filterButtonStyles.filter_button_dropdown_wrapper}
+            >
+              <FilterButton
+                label="상태"
+                onClick={() => set_is_account_status_dropdown_open((prev) => !prev)}
+                isActive={selected_account_statuses.length > 0}
+                styles={{
+                  filter_item: baseFilterStyles.filter_item,
+                  checkbox_icon: baseFilterStyles.checkbox_icon,
+                  filter_text: baseFilterStyles.filter_text,
+                  dropdown_arrow: baseFilterStyles.dropdown_arrow,
+                }}
+              />
+              <AccountStatusFilterDropdown
+                is_open={is_account_status_dropdown_open}
+                on_close={() => set_is_account_status_dropdown_open(false)}
+                selected_statuses={selected_account_statuses}
+                on_apply={handle_account_status_apply}
+                container_ref={account_status_filter_button_ref}
+              />
+            </div>
           </>
         }
         // 활성 필터 태그들
@@ -320,34 +395,8 @@ export default function PaymentHistoryFilterSection({
         }
       />
 
-      {/* 필터 모달들 */}
-      <BusinessTypeFilterModal
-        is_open={is_business_type_modal_open}
-        on_close={() => set_is_business_type_modal_open(false)}
-        selected_types={selected_business_types}
-        on_apply={handle_business_type_apply}
-      />
-
-      <PaymentMethodFilterModal
-        is_open={is_payment_method_modal_open}
-        on_close={() => set_is_payment_method_modal_open(false)}
-        selected_methods={selected_payment_methods}
-        on_apply={handle_payment_method_apply}
-      />
-
-      <PaymentStatusFilterModal
-        is_open={is_payment_status_modal_open}
-        on_close={() => set_is_payment_status_modal_open(false)}
-        selected_statuses={selected_payment_statuses}
-        on_apply={handle_payment_status_apply}
-      />
-
-      <AccountStatusFilterModal
-        is_open={is_account_status_modal_open}
-        on_close={() => set_is_account_status_modal_open(false)}
-        selected_statuses={selected_account_statuses}
-        on_apply={handle_account_status_apply}
-      />
+      {/* 필터 모달들 (모두 드롭다운으로 대체) */}
+      {/* BusinessTypeFilterModal, PaymentMethodFilterModal, PaymentStatusFilterModal, AccountStatusFilterModal은 각각 드롭다운으로 대체되었습니다 */}
     </div>
   );
 }

@@ -21,20 +21,23 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import styles from "@/styles/manager/common/community/categories/category_filter_section.module.css";
 import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
 import BaseModal from "@/components/common/modal/BaseModal";
+import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
 import type { CategoryDivision } from "@/data/manager_ga/community/categoriesData";
 import {
   categories_data,
   delete_categories,
 } from "@/data/manager_ga/community/categoriesData";
 import { posts_data } from "@/data/manager_ga/community/postsData";
-import DivisionFilterModal from "@/components/manager/common/community/categories/filter/DivisionFilterModal";
+import DivisionFilterDropdown from "@/components/manager/common/community/categories/filter/DivisionFilterDropdown";
+import baseFilterStyles from "@/styles/manager/common/campaign/progress/filter_section.module.css";
+import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.module.css";
 
 interface CategoryFilterSectionProps {
   // 검색어 상태를 props로 받습니다
@@ -65,9 +68,9 @@ export default function CategoryFilterSection({
     CategoryDivision[]
   >([]);
 
-  // 구분 필터 모달 열림/닫힘 상태 관리
-  // useState: React Hook으로 모달의 열림/닫힘 상태를 관리합니다
-  const [is_division_modal_open, set_is_division_modal_open] = useState(false);
+  // 구분 필터 드롭다운 열림/닫힘 상태 관리
+  const [is_division_dropdown_open, set_is_division_dropdown_open] = useState(false);
+  const division_filter_button_ref = useRef<HTMLDivElement>(null);
 
   // 게시글 존재 모달 열림/닫힘 상태 관리
   // useState: React Hook으로 게시글 존재 모달의 열림/닫힘 상태를 관리합니다
@@ -75,11 +78,8 @@ export default function CategoryFilterSection({
     useState(false);
 
   // 구분 필터 적용 핸들러
-  // 화살표 함수로 이벤트 핸들러를 정의합니다
-  // 선택된 구분들을 상태에 저장하고 모달을 닫습니다
   const handle_division_apply = (divisions: CategoryDivision[]) => {
     set_selected_divisions(divisions);
-    set_is_division_modal_open(false);
   };
 
   // 등록 버튼 핸들러
@@ -156,22 +156,33 @@ export default function CategoryFilterSection({
       <BaseFilterSection<CategoryDivision>
         search_query={search_query}
         on_search_change={on_search_change}
-        // 필터 모달 버튼 (구분 필터)
-        // 필터 버튼을 클릭하면 모달이 열리도록 합니다
+        // 필터 드롭다운 버튼 (구분 필터)
         filter_modal_button={
           <div
-            className={styles.filter_item}
-            onClick={() => set_is_division_modal_open(true)}
+            ref={division_filter_button_ref}
+            className={filterButtonStyles.filter_button_dropdown_wrapper}
           >
-            {/* 체크박스 아이콘 */}
-            <div className={styles.checkbox_icon}></div>
-            {/* 필터 텍스트 */}
-            <span className={styles.filter_text}>구분</span>
-            {/* 드롭다운 화살표 아이콘 */}
-            <img
-              src="/images/icons/dropdown_arrow.svg"
-              alt="드롭다운"
-              className={styles.dropdown_arrow}
+            <FilterButton
+              label="구분"
+              onClick={() => set_is_division_dropdown_open((prev) => !prev)}
+              isActive={selected_divisions.length > 0}
+              styles={{
+                filter_item: styles.filter_item,
+                checkbox_icon: styles.checkbox_icon,
+                checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
+                filter_text: styles.filter_text,
+                dropdown_arrow: styles.dropdown_arrow,
+                filter_item_active: filterButtonStyles.filter_item_active,
+                filter_text_active: filterButtonStyles.filter_text_active,
+                dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
+              }}
+            />
+            <DivisionFilterDropdown
+              is_open={is_division_dropdown_open}
+              on_close={() => set_is_division_dropdown_open(false)}
+              selected_divisions={selected_divisions}
+              on_apply={handle_division_apply}
+              container_ref={division_filter_button_ref}
             />
           </div>
         }
@@ -216,14 +227,8 @@ export default function CategoryFilterSection({
         on_filter_tag_remove={handle_filter_tag_remove}
       />
 
-      {/* 구분 필터 모달 */}
-      {/* DivisionFilterModal: 구분을 선택할 수 있는 모달 컴포넌트 */}
-      <DivisionFilterModal
-        is_open={is_division_modal_open}
-        on_close={() => set_is_division_modal_open(false)}
-        selected_divisions={selected_divisions}
-        on_apply={handle_division_apply}
-      />
+      {/* 구분 필터 모달 (드롭다운으로 대체) */}
+      {/* DivisionFilterModal은 드롭다운으로 대체되었습니다 */}
 
       {/* 게시글 존재 모달 */}
       {/* BaseModal: 게시글이 등록된 상태에서는 삭제할 수 없다는 메시지를 표시하는 모달 */}

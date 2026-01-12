@@ -203,36 +203,10 @@
   height: 16px;
 }
 
-/* 체크박스 아이콘 체크 상태 */
-.checkbox_icon_checked {
-  background-color: #2b7fff;
-  border-color: #2b7fff;
-  position: relative;
-}
-
-.checkbox_icon_checked::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(45deg);
-  width: 4px;
-  height: 8px;
-  border: solid white;
-  border-width: 0 2px 2px 0;
-  border-radius: 1px;
-}
-
 /* 정렬 드롭다운 컨테이너 */
 .sort_dropdown_container {
   position: relative;
   display: inline-block;
-}
-
-/* 드롭다운 화살표 회전 */
-.dropdown_arrow_rotated {
-  transform: rotate(180deg);
-  transition: transform 0.2s ease;
 }
 
 /* 정렬 드롭다운 메뉴 */

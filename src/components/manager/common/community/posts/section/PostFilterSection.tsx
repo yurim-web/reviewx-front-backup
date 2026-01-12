@@ -26,16 +26,19 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import styles from "@/styles/manager/common/community/posts/post_filter_section.module.css";
 import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
 import DateFilterButton from "@/components/manager/ga/common/filter/DateFilterButton";
+import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 import type { PostDivision } from "@/data/manager_ga/community/postsData";
-import DivisionFilterModal from "@/components/manager/common/community/posts/filter/DivisionFilterModal";
+import DivisionFilterDropdown from "@/components/manager/common/community/posts/filter/DivisionFilterDropdown";
+import baseFilterStyles from "@/styles/manager/common/campaign/progress/filter_section.module.css";
+import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.module.css";
 
 interface PostFilterSectionProps {
   // 검색어 상태를 props로 받습니다
@@ -74,8 +77,9 @@ export default function PostFilterSection({
       ? "/manager_ga/community/posts"
       : "/manager_sa/community/posts";
 
-  // 모달 열림/닫힘 상태 관리
-  const [is_division_modal_open, set_is_division_modal_open] = useState(false);
+  // 드롭다운 열림/닫힘 상태 관리
+  const [is_division_dropdown_open, set_is_division_dropdown_open] = useState(false);
+  const division_filter_button_ref = useRef<HTMLDivElement>(null);
   const [selected_sort, set_selected_sort] = useState("최신순");
 
   /* ========================================
@@ -85,7 +89,6 @@ export default function PostFilterSection({
 
   const handle_division_apply = (divisions: PostDivision[]) => {
     on_divisions_change(divisions);
-    set_is_division_modal_open(false);
   };
 
   const handle_remove_division = (division: PostDivision) => {
@@ -190,24 +193,33 @@ export default function PostFilterSection({
             on_range_change={handle_date_range_change}
           />
         }
-        // 필터 모달 버튼 (구분 필터만)
+        // 필터 드롭다운 버튼 (구분 필터만)
         filter_modal_button={
           <div
-            className={styles.filter_item}
-            onClick={() => set_is_division_modal_open(true)}
+            ref={division_filter_button_ref}
+            className={filterButtonStyles.filter_button_dropdown_wrapper}
           >
-            <div
-              className={`${styles.checkbox_icon} ${
-                selected_divisions.length > 0
-                  ? styles.checkbox_icon_checked
-                  : ""
-              }`}
-            ></div>
-            <span className={styles.filter_text}>구분</span>
-            <img
-              src="/images/icons/dropdown_arrow.svg"
-              alt="드롭다운"
-              className={styles.dropdown_arrow}
+            <FilterButton
+              label="구분"
+              onClick={() => set_is_division_dropdown_open((prev) => !prev)}
+              isActive={selected_divisions.length > 0}
+              styles={{
+                filter_item: styles.filter_item,
+                checkbox_icon: styles.checkbox_icon,
+                checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
+                filter_text: styles.filter_text,
+                dropdown_arrow: styles.dropdown_arrow,
+                filter_item_active: filterButtonStyles.filter_item_active,
+                filter_text_active: filterButtonStyles.filter_text_active,
+                dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
+              }}
+            />
+            <DivisionFilterDropdown
+              is_open={is_division_dropdown_open}
+              on_close={() => set_is_division_dropdown_open(false)}
+              selected_divisions={selected_divisions}
+              on_apply={handle_division_apply}
+              container_ref={division_filter_button_ref}
             />
           </div>
         }
@@ -278,13 +290,8 @@ export default function PostFilterSection({
         on_filter_tag_remove={handle_filter_tag_remove}
       />
 
-      {/* 구분 필터 모달 */}
-      <DivisionFilterModal
-        is_open={is_division_modal_open}
-        on_close={() => set_is_division_modal_open(false)}
-        selected_divisions={selected_divisions}
-        on_apply={handle_division_apply}
-      />
+      {/* 구분 필터 모달 (드롭다운으로 대체) */}
+      {/* DivisionFilterModal은 드롭다운으로 대체되었습니다 */}
     </div>
   );
 }

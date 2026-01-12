@@ -32,7 +32,6 @@
   border-radius: 4px;
   background-color: white;
   cursor: pointer;
-  transition: all 0.2s;
   color: #444;
   text-align: center;
   font-size: 16px;
@@ -41,28 +40,16 @@
   letter-spacing: -0.32px;
 }
 
-/* 날짜 필터 버튼 호버 */
-.date_filter_section_button:hover {
-  background-color: #f9f9f9;
-}
-
 /* 활성화된 날짜 필터 버튼 */
 .date_filter_section_button_active {
-  background-color: #444;
+  background-color: #ff5694;
   color: white;
-  border-color: #444;
-}
-
-/* 활성화된 날짜 필터 버튼 호버 효과 제거 */
-.date_filter_section_button_active:hover {
-  background-color: #444;
-  color: white;
-  border-color: #444;
+  border-color: #ff5694;
 }
 
 /* 날짜 선택기 래퍼 - relative positioning을 위해 추가 */
 .date_filter_section_picker_wrapper {
-  position: relative; /* 드롭다운을 absolute로 배치하기 위한 기준점 */
+  position: relative;
 }
 
 /* 날짜 선택기 */

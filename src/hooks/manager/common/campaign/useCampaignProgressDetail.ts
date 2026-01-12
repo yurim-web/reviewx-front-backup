@@ -154,40 +154,72 @@ export function useCampaignProgressDetail(
    * - useEffect: 컴포넌트가 마운트되거나 campaign_id가 변경될 때 실행됩니다
    * - try/catch/finally: 에러 처리를 위한 패턴입니다
    */
-  useEffect(() => {
-    const load_campaign_data = async () => {
-      try {
-        // 로딩 시작
-        set_is_loading(true);
-        set_error_message(null);
+  /**
+   * 캠페인 데이터 로딩 함수
+   *
+   * 📌 함수 분리:
+   * - 로딩 로직을 별도 함수로 분리하여 재사용 가능하게 함
+   * - 페이지 포커스 시에도 동일한 로직을 사용할 수 있음
+   */
+  const load_campaign_data = () => {
+    try {
+      // 로딩 시작
+      set_is_loading(true);
+      set_error_message(null);
 
-        // 캠페인 데이터 가져오기
-        const data = getCampaignById(campaign_id);
-        if (!data) {
-          set_error_message(`캠페인을 찾을 수 없습니다. (ID: ${campaign_id})`);
-          return;
-        }
-
-        // 데이터 설정
-        set_campaign_data(data);
-        // 옵셔널 체이닝(?.)과 null 병합 연산자(??)를 사용하여 안전하게 데이터 설정
-        // applicantData가 없을 수 있으므로 빈 배열을 기본값으로 사용합니다
-        set_applicants_state(data.applicantData?.applicants ?? []);
-        set_selected_state(data.applicantData?.selectedApplicants ?? []);
-      } catch (error) {
-        // 에러 발생 시 콘솔에 로그 출력 및 사용자에게 메시지 표시
-        console.error(`${error_log_prefix} 진행현황 데이터 로딩 실패:`, error);
-        set_error_message('데이터를 불러오는 중 오류가 발생했습니다.');
-      } finally {
-        // 성공/실패 여부와 관계없이 로딩 상태를 false로 설정
+      // 캠페인 데이터 가져오기
+      const data = getCampaignById(campaign_id);
+      if (!data) {
+        set_error_message(`캠페인을 찾을 수 없습니다. (ID: ${campaign_id})`);
         set_is_loading(false);
+        return;
       }
-    };
 
+      // 데이터 설정
+      set_campaign_data(data);
+      // 옵셔널 체이닝(?.)과 null 병합 연산자(??)를 사용하여 안전하게 데이터 설정
+      // applicantData가 없을 수 있으므로 빈 배열을 기본값으로 사용합니다
+      set_applicants_state(data.applicantData?.applicants ?? []);
+      set_selected_state(data.applicantData?.selectedApplicants ?? []);
+      set_is_loading(false);
+    } catch (error) {
+      // 에러 발생 시 콘솔에 로그 출력 및 사용자에게 메시지 표시
+      console.error(`${error_log_prefix} 진행현황 데이터 로딩 실패:`, error);
+      set_error_message('데이터를 불러오는 중 오류가 발생했습니다.');
+      set_is_loading(false);
+    }
+  };
+
+  useEffect(() => {
     // campaign_id가 있을 때만 데이터 로딩
     if (campaign_id) {
       load_campaign_data();
     }
+  }, [campaign_id, error_log_prefix]);
+
+  /**
+   * 페이지 포커스 시 데이터 다시 로드
+   *
+   * 📌 useEffect와 window 이벤트 리스너:
+   * - 페이지가 포커스를 받을 때 데이터를 다시 로드합니다
+   * - 파트너 페이지에서 선정을 한 후 관리자 페이지로 돌아오면 최신 데이터를 볼 수 있습니다
+   * - cleanup 함수에서 이벤트 리스너를 제거하여 메모리 누수 방지
+   */
+  useEffect(() => {
+    if (typeof window === "undefined" || !campaign_id) return;
+
+    const handle_focus = () => {
+      // 포커스를 받을 때 데이터 다시 로드
+      load_campaign_data();
+    };
+
+    // 포커스 이벤트 리스너 등록
+    window.addEventListener("focus", handle_focus);
+
+    // cleanup 함수: 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener("focus", handle_focus);
+    };
   }, [campaign_id, error_log_prefix]);
 
   // ============================================================

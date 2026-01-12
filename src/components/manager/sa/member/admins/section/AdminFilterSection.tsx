@@ -24,14 +24,17 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import styles from "@/styles/manager_sa/member/admins/admin_filter_section.module.css";
 import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
-import StatusFilterModal from "../filter/StatusFilterModal";
+import StatusFilterDropdown from "../filter/StatusFilterDropdown";
 import type { AdminStatus } from "@/data/manager_sa/member/admins";
+import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
+import baseFilterStyles from "@/styles/manager/common/campaign/progress/filter_section.module.css";
+import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.module.css";
 
 interface AdminFilterSectionProps {
   search_query: string;
@@ -50,8 +53,9 @@ export default function AdminFilterSection({
   // Next.js의 useRouter 훅을 사용하여 페이지 이동 기능 가져오기
   const router = useRouter();
 
-  // 필터 모달 열림/닫힘 상태 관리
-  const [is_status_modal_open, set_is_status_modal_open] = useState(false);
+  // 상태 필터 드롭다운 열림/닫힘 상태 관리
+  const [is_status_dropdown_open, set_is_status_dropdown_open] = useState(false);
+  const status_filter_button_ref = useRef<HTMLDivElement>(null);
 
   // 상태 필터 핸들러
   const handle_status_apply = (statuses: AdminStatus[]) => {
@@ -98,22 +102,33 @@ export default function AdminFilterSection({
       <BaseFilterSection<string>
         search_query={search_query}
         on_search_change={on_search_change}
-        // 필터 모달 버튼 (상태 필터만)
+        // 필터 드롭다운 버튼 (상태 필터만)
         filter_modal_button={
           <div
-            className={styles.filter_item}
-            onClick={() => set_is_status_modal_open(true)}
+            ref={status_filter_button_ref}
+            className={filterButtonStyles.filter_button_dropdown_wrapper}
           >
-            <div
-              className={`${styles.checkbox_icon} ${
-                selected_statuses.length > 0 ? styles.checkbox_icon_checked : ""
-              }`}
-            ></div>
-            <span className={styles.filter_text}>상태</span>
-            <img
-              src="/images/icons/dropdown_arrow.svg"
-              alt="드롭다운"
-              className={styles.dropdown_arrow}
+            <FilterButton
+              label="상태"
+              onClick={() => set_is_status_dropdown_open((prev) => !prev)}
+              isActive={selected_statuses.length > 0}
+              styles={{
+                filter_item: styles.filter_item,
+                checkbox_icon: styles.checkbox_icon,
+                checkbox_icon_checked: filterButtonCommonStyles.checkbox_icon_checked,
+                filter_text: styles.filter_text,
+                dropdown_arrow: styles.dropdown_arrow,
+                filter_item_active: filterButtonCommonStyles.filter_item_active,
+                filter_text_active: filterButtonCommonStyles.filter_text_active,
+                dropdown_arrow_active: filterButtonCommonStyles.dropdown_arrow_active,
+              }}
+            />
+            <StatusFilterDropdown
+              is_open={is_status_dropdown_open}
+              on_close={() => set_is_status_dropdown_open(false)}
+              selected_statuses={selected_statuses}
+              on_apply={handle_status_apply}
+              container_ref={status_filter_button_ref}
             />
           </div>
         }
@@ -165,13 +180,8 @@ export default function AdminFilterSection({
         on_filter_tag_remove={handle_filter_tag_remove}
       />
 
-      {/* 상태 필터 모달 */}
-      <StatusFilterModal
-        is_open={is_status_modal_open}
-        on_close={() => set_is_status_modal_open(false)}
-        selected_statuses={selected_statuses}
-        on_apply={handle_status_apply}
-      />
+      {/* 상태 필터 모달 (드롭다운으로 대체) */}
+      {/* StatusFilterModal은 드롭다운으로 대체되었습니다 */}
     </div>
   );
 }

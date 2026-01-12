@@ -176,6 +176,7 @@
   flex-shrink: 0;
   display: block;
   object-fit: contain;
+  transition: transform 0.2s ease;
 }
 
 /* 신고 아이콘 */
@@ -255,12 +256,6 @@
 .sort_dropdown_container {
   position: relative;
   display: inline-block;
-}
-
-/* 드롭다운 화살표 회전 (열렸을 때 위쪽을 가리킴) */
-.dropdown_arrow_rotated {
-  transform: rotate(180deg);
-  transition: transform 0.2s ease;
 }
 
 /* 정렬 드롭다운 메뉴 */

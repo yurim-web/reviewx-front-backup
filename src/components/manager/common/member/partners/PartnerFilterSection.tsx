@@ -15,12 +15,12 @@
 
 import MemberFilterSectionCommon from "@/components/manager/common/member/filter/MemberFilterSection";
 import styles from "@/styles/manager/common/member/partners/partner_filter_section.module.css";
-import ChannelFilterModal from "@/components/manager/common/member/partners/filter/ChannelFilterModal";
-import DivisionFilterModal from "@/components/manager/common/member/partners/filter/DivisionFilterModal";
-import TypeFilterModal, {
+import ChannelFilterDropdown from "@/components/manager/common/member/partners/filter/ChannelFilterDropdown";
+import DivisionFilterDropdown from "@/components/manager/common/member/partners/filter/DivisionFilterDropdown";
+import TypeFilterDropdown, {
   type PartnerType,
-} from "@/components/manager/common/member/partners/filter/TypeFilterModal";
-import StatusFilterModal from "@/components/manager/common/member/partners/filter/StatusFilterModal";
+} from "@/components/manager/common/member/partners/filter/TypeFilterDropdown";
+import StatusFilterDropdown from "@/components/manager/common/member/partners/filter/StatusFilterDropdown";
 import type { Channel } from "@/data/manager/common/filterOptions";
 import type {
   PartnerDivision,
@@ -93,11 +93,11 @@ export default function PartnerFilterSection({
         }
       }
       channel_name_map={channel_name_map}
-      ChannelFilterModal={ChannelFilterModal as any}
+      ChannelFilterDropdown={ChannelFilterDropdown as any}
       grade_or_division_label="구분"
-      GradeOrDivisionFilterModal={DivisionFilterModal as any}
-      TypeFilterModal={TypeFilterModal as any}
-      StatusFilterModal={StatusFilterModal as any}
+      GradeOrDivisionFilterDropdown={DivisionFilterDropdown as any}
+      TypeFilterDropdown={TypeFilterDropdown as any}
+      StatusFilterDropdown={StatusFilterDropdown as any}
       download_button_text="파트너 목록 다운로드"
     />
   );

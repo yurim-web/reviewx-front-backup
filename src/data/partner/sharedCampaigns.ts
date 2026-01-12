@@ -2328,3 +2328,119 @@ export function cancelCampaign(
     return { success: false, error: "SERVER_ERROR" };
   }
 }
+
+/* ========================================
+   💾 캠페인 신청자 데이터 업데이트 (updateCampaignApplicants)
+   ----------------------------------------
+   사용 위치
+   - 파트너 신청내역 페이지: 선정/취소 시 localStorage에 저장
+   - 관리자 페이지에서도 동일한 데이터를 볼 수 있도록 함
+
+   역할 요약
+   - 캠페인의 신청자 데이터(applicants, selectedApplicants)를 localStorage에 업데이트합니다
+   - localStorage에 캠페인이 없으면 생성합니다
+   - 캠페인 타입에 따라 올바른 localStorage 키를 사용합니다
+   - 브라우저 전용 로직 보호: SSR/빌드 환경에서 `window`가 없는 경우 early return 처리
+
+   반환값:
+   - true: 업데이트 성공
+   - false: 업데이트 실패
+*/
+export function updateCampaignApplicants(
+  campaignId: string,
+  campaignType: "배송형" | "방문형" | "구매평" | "기자단" | "미션형",
+  applicants: AllApplicant[],
+  selectedApplicants: AllApplicant[]
+): boolean {
+  if (typeof window === "undefined") {
+    console.error("localStorage는 브라우저 환경에서만 사용할 수 있습니다.");
+    return false;
+  }
+
+  try {
+    // 캠페인 타입에 따라 localStorage 키 결정
+    let storageKey: string;
+    switch (campaignType) {
+      case "배송형":
+        storageKey = "deliveryCampaigns";
+        break;
+      case "방문형":
+        storageKey = "visitCampaigns";
+        break;
+      case "구매평":
+        storageKey = "reviewCampaigns";
+        break;
+      case "기자단":
+        storageKey = "reporterCampaigns";
+        break;
+      case "미션형":
+        storageKey = "missionCampaigns";
+        break;
+      default:
+        console.error(`알 수 없는 캠페인 타입: ${campaignType}`);
+        return false;
+    }
+
+    // localStorage에서 해당 타입의 캠페인 배열 불러오기
+    const stored = localStorage.getItem(storageKey);
+    let campaigns: CampaignWithApplicants[] = stored
+      ? JSON.parse(stored)
+      : [];
+
+    if (!Array.isArray(campaigns)) {
+      campaigns = [];
+    }
+
+    // 업데이트할 캠페인 찾기
+    const campaignIndex = campaigns.findIndex(
+      (campaign) => campaign.campaignInfo.id === campaignId
+    );
+
+    if (campaignIndex !== -1) {
+      // localStorage에 캠페인이 있으면 신청자 데이터만 업데이트
+      campaigns[campaignIndex] = {
+        ...campaigns[campaignIndex],
+        applicantData: {
+          applicants,
+          selectedApplicants,
+        },
+      };
+      console.log(
+        `localStorage에서 캠페인 신청자 데이터 업데이트 완료: ID=${campaignId}, 타입=${campaignType}, 신청자=${applicants.length}명, 선정자=${selectedApplicants.length}명`
+      );
+    } else {
+      // localStorage에 캠페인이 없으면 getCampaignById로 가져와서 업데이트
+      const existingCampaign = getCampaignById(campaignId);
+      if (existingCampaign) {
+        const updatedCampaign: CampaignWithApplicants = {
+          ...existingCampaign,
+          applicantData: {
+            applicants,
+            selectedApplicants,
+          },
+        };
+        campaigns.push(updatedCampaign);
+        console.log(
+          `localStorage에 캠페인 신청자 데이터 추가 완료: ID=${campaignId}, 타입=${campaignType}, 신청자=${applicants.length}명, 선정자=${selectedApplicants.length}명`
+        );
+      } else {
+        console.error(
+          `캠페인을 찾을 수 없습니다: ID=${campaignId}, 타입=${campaignType}`
+        );
+        return false;
+      }
+    }
+
+    // 업데이트된 배열을 localStorage에 저장
+    localStorage.setItem(storageKey, JSON.stringify(campaigns));
+
+    // storage 이벤트를 트리거하여 다른 탭/페이지에서 변경사항을 감지할 수 있도록 함
+    // 같은 페이지에서는 직접 업데이트되므로 필요 없지만, 다른 탭/창에서는 유용함
+    window.dispatchEvent(new Event("storage"));
+
+    return true;
+  } catch (error) {
+    console.error("캠페인 신청자 데이터 업데이트 중 오류 발생:", error);
+    return false;
+  }
+}

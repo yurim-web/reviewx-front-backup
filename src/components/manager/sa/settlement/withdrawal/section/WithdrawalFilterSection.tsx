@@ -21,20 +21,22 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
 import DateFilterButton from "@/components/manager/ga/common/filter/DateFilterButton";
 import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
-import PaymentStatusFilterModal from "@/components/manager/sa/settlement/withdrawal/filter/PaymentStatusFilterModal";
-import NormalStatusFilterModal from "@/components/manager/sa/settlement/withdrawal/filter/NormalStatusFilterModal";
+import PaymentStatusFilterDropdown from "@/components/manager/sa/settlement/withdrawal/filter/PaymentStatusFilterDropdown";
+import NormalStatusFilterDropdown, {
+  type NormalStatus,
+} from "@/components/manager/sa/settlement/withdrawal/filter/NormalStatusFilterDropdown";
 import type { WithdrawalPaymentStatus } from "@/data/manager_sa/common/filterOptions";
 import { withdrawal_payment_status_label_map } from "@/data/manager_sa/common/filterOptions";
-import type { NormalStatus } from "@/components/manager/sa/settlement/withdrawal/filter/NormalStatusFilterModal";
 import baseFilterStyles from "@/styles/manager/common/campaign/progress/filter_section.module.css";
 import styles from "@/styles/manager_sa/settlement/withdrawal/filter_section.module.css";
+import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.module.css";
 
 interface WithdrawalFilterSectionProps {
   // 검색어 상태
@@ -59,8 +61,17 @@ export default function WithdrawalFilterSection({
   selected_normal_statuses = [],
   on_normal_statuses_change,
 }: WithdrawalFilterSectionProps) {
-  const [is_payment_modal_open, set_is_payment_modal_open] = useState(false);
-  const [is_normal_modal_open, set_is_normal_modal_open] = useState(false);
+  // 지급 필터 드롭다운 열림/닫힘 상태
+  const [is_payment_dropdown_open, set_is_payment_dropdown_open] = useState(false);
+  
+  // 지급 필터 버튼 컨테이너 ref (드롭다운 위치 계산용)
+  const payment_filter_button_ref = useRef<HTMLDivElement>(null);
+
+  // 상태 필터 드롭다운 열림/닫힘 상태
+  const [is_normal_dropdown_open, set_is_normal_dropdown_open] = useState(false);
+  
+  // 상태 필터 버튼 컨테이너 ref (드롭다운 위치 계산용)
+  const normal_filter_button_ref = useRef<HTMLDivElement>(null);
 
   // 내부 검색어 상태 (props가 없을 때 사용)
   const [internal_search_query, set_internal_search_query] = useState("");
@@ -140,34 +151,68 @@ export default function WithdrawalFilterSection({
             on_range_change={handle_date_range_change}
           />
         }
-        // 필터 모달 버튼들
+        // 필터 드롭다운 버튼들
         filter_modal_button={
           <>
-            {/* 지급 필터 */}
-            <FilterButton
-              label="지급"
-              onClick={() => set_is_payment_modal_open(true)}
-              isActive={selected_payment_statuses.length > 0}
-              styles={{
-                filter_item: baseFilterStyles.filter_item,
-                checkbox_icon: baseFilterStyles.checkbox_icon,
-                filter_text: baseFilterStyles.filter_text,
-                dropdown_arrow: baseFilterStyles.dropdown_arrow,
-              }}
-            />
+            {/* 지급 필터 (드롭다운 사용) */}
+            <div
+              ref={payment_filter_button_ref}
+              className={filterButtonStyles.filter_button_dropdown_wrapper}
+            >
+              <FilterButton
+                label="지급"
+                onClick={() => set_is_payment_dropdown_open((prev) => !prev)}
+                isActive={selected_payment_statuses.length > 0}
+                styles={{
+                  filter_item: baseFilterStyles.filter_item,
+                  checkbox_icon: baseFilterStyles.checkbox_icon,
+                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
+                  filter_text: baseFilterStyles.filter_text,
+                  dropdown_arrow: baseFilterStyles.dropdown_arrow,
+                  filter_item_active: filterButtonStyles.filter_item_active,
+                  filter_text_active: filterButtonStyles.filter_text_active,
+                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
+                }}
+              />
+              {/* 지급 필터 드롭다운 */}
+              <PaymentStatusFilterDropdown
+                is_open={is_payment_dropdown_open}
+                on_close={() => set_is_payment_dropdown_open(false)}
+                selected_statuses={selected_payment_statuses}
+                on_apply={handle_payment_status_apply}
+                container_ref={payment_filter_button_ref}
+              />
+            </div>
 
-            {/* 상태 필터 */}
-            <FilterButton
-              label="상태"
-              onClick={() => set_is_normal_modal_open(true)}
-              isActive={selected_normal_statuses.length > 0}
-              styles={{
-                filter_item: baseFilterStyles.filter_item,
-                checkbox_icon: baseFilterStyles.checkbox_icon,
-                filter_text: baseFilterStyles.filter_text,
-                dropdown_arrow: baseFilterStyles.dropdown_arrow,
-              }}
-            />
+            {/* 상태 필터 (드롭다운 사용) */}
+            <div
+              ref={normal_filter_button_ref}
+              className={filterButtonStyles.filter_button_dropdown_wrapper}
+            >
+              <FilterButton
+                label="상태"
+                onClick={() => set_is_normal_dropdown_open((prev) => !prev)}
+                isActive={selected_normal_statuses.length > 0}
+                styles={{
+                  filter_item: baseFilterStyles.filter_item,
+                  checkbox_icon: baseFilterStyles.checkbox_icon,
+                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
+                  filter_text: baseFilterStyles.filter_text,
+                  dropdown_arrow: baseFilterStyles.dropdown_arrow,
+                  filter_item_active: filterButtonStyles.filter_item_active,
+                  filter_text_active: filterButtonStyles.filter_text_active,
+                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
+                }}
+              />
+              {/* 상태 필터 드롭다운 */}
+              <NormalStatusFilterDropdown
+                is_open={is_normal_dropdown_open}
+                on_close={() => set_is_normal_dropdown_open(false)}
+                selected_statuses={selected_normal_statuses}
+                on_apply={handle_normal_status_apply}
+                container_ref={normal_filter_button_ref}
+              />
+            </div>
           </>
         }
         // 활성 필터 태그들
@@ -188,20 +233,8 @@ export default function WithdrawalFilterSection({
         }
       />
 
-      {/* 필터 모달들 */}
-      <PaymentStatusFilterModal
-        is_open={is_payment_modal_open}
-        on_close={() => set_is_payment_modal_open(false)}
-        selected_statuses={selected_payment_statuses}
-        on_apply={handle_payment_status_apply}
-      />
-
-      <NormalStatusFilterModal
-        is_open={is_normal_modal_open}
-        on_close={() => set_is_normal_modal_open(false)}
-        selected_statuses={selected_normal_statuses}
-        on_apply={handle_normal_status_apply}
-      />
+      {/* 필터 모달들 (모두 드롭다운으로 대체) */}
+      {/* PaymentStatusFilterModal, NormalStatusFilterModal은 각각 드롭다운으로 대체되었습니다 */}
     </div>
   );
 }

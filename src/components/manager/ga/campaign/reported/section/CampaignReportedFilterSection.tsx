@@ -20,16 +20,16 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "@/styles/manager/common/campaign/progress/filter_section.module.css";
 import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
 import DateFilterButton from "@/components/manager/ga/common/filter/DateFilterButton";
-import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
+import BaseFilterDropdown from "@/components/manager/ga/common/filter/BaseFilterDropdown";
+import type { FilterOption } from "@/components/manager/ga/common/filter/BaseFilterModal";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
-import ReportCodeFilterModal from "../filter/ReportCodeFilterModal";
-import type { ReportCode } from "@/data/manager_ga/reported";
+import { report_code_info, type ReportCode } from "@/data/manager_ga/reported";
 
 interface CampaignReportedFilterSectionProps {
   // 검색어 상태와 변경 함수를 props로 받습니다
@@ -43,6 +43,37 @@ interface CampaignReportedFilterSectionProps {
   on_date_range_change?: (range: DateRange | undefined) => void;
 }
 
+// 신고 코드 필터 옵션
+const report_code_options: ReportCode[] = [
+  "W001",
+  "W002",
+  "W003",
+  "W004",
+  "W005",
+  "W006",
+  "W007",
+  "W008",
+  "W009",
+  "W010",
+  "W011",
+  "W012",
+  "W013",
+];
+
+// 신고 코드 정보를 FilterOption 형태로 변환하는 함수
+// map 함수: 배열을 순회하며 각 요소를 변환한 새로운 배열을 만듭니다
+const get_report_code_options = (): FilterOption<ReportCode>[] => {
+  return report_code_options.map((code) => {
+    // find 함수: 배열에서 조건에 맞는 첫 번째 요소를 찾습니다
+    const code_info = report_code_info.find((info) => info.code === code);
+    return {
+      value: code,
+      // 삼항 연산자: 조건이 참일 때 ? 참값 : 거짓값
+      label: code_info ? `${code} (${code_info.reason})` : code,
+    };
+  });
+};
+
 export default function CampaignReportedFilterSection({
   search_query,
   on_search_change,
@@ -51,10 +82,6 @@ export default function CampaignReportedFilterSection({
   selected_date_range,
   on_date_range_change,
 }: CampaignReportedFilterSectionProps) {
-  // 신고 코드 필터 모달 열림/닫힘 상태
-  const [is_report_code_modal_open, set_is_report_code_modal_open] =
-    useState(false);
-
   // 내부에서 관리하는 선택된 신고 코드들
   const [selected_codes, set_selected_codes] = useState<ReportCode[]>(
     selected_report_codes
@@ -66,18 +93,15 @@ export default function CampaignReportedFilterSection({
   // 정렬 옵션 목록
   const sort_options = ["최신순", "오래된순"];
 
-  // 신고 코드 필터 모달 열기
-  const handle_report_code_filter_click = () => {
-    set_is_report_code_modal_open(true);
-  };
+  // 외부에서 selected_report_codes가 변경되면 내부 상태도 업데이트
+  // useEffect: 컴포넌트가 렌더링된 후에 실행되는 Hook입니다
+  // 의존성 배열 [selected_report_codes]: selected_report_codes가 변경될 때마다 함수가 실행됩니다
+  useEffect(() => {
+    set_selected_codes(selected_report_codes);
+  }, [selected_report_codes]);
 
-  // 신고 코드 필터 모달 닫기
-  const handle_report_code_modal_close = () => {
-    set_is_report_code_modal_open(false);
-  };
-
-  // 신고 코드 필터 적용
-  const handle_report_code_apply = (codes: ReportCode[]) => {
+  // 신고 코드 필터 변경 핸들러 (드롭다운에서 직접 호출)
+  const handle_report_code_change = (codes: ReportCode[]) => {
     set_selected_codes(codes);
     on_report_codes_change?.(codes);
   };
@@ -100,6 +124,9 @@ export default function CampaignReportedFilterSection({
   const handle_date_range_change = (range: DateRange | undefined) => {
     on_date_range_change?.(range);
   };
+
+  // 신고 코드 옵션을 FilterOption 형태로 변환
+  const report_code_dropdown_options = get_report_code_options();
 
   // 활성 필터 태그 목록 생성
   // map 함수: 배열을 순회하며 각 요소를 변환한 새로운 배열을 만듭니다
@@ -124,26 +151,19 @@ export default function CampaignReportedFilterSection({
             on_range_change={handle_date_range_change}
           />
         }
-        // 신고 코드 필터 모달 버튼
+        // 신고 코드 필터 드롭다운 버튼
         filter_modal_button={
-          <FilterButton
+          <BaseFilterDropdown<ReportCode>
             label="신고 코드"
-            onClick={handle_report_code_filter_click}
-            isActive={selected_codes.length > 0}
-            styles={styles}
+            selected_values={selected_codes}
+            on_change={handle_report_code_change}
+            options={report_code_dropdown_options}
+            button_styles={styles}
           />
         }
         // 활성 필터 태그들
         active_filter_tags={active_filter_tags}
         on_filter_tag_remove={handle_remove_report_code}
-      />
-
-      {/* 신고 코드 필터 모달 */}
-      <ReportCodeFilterModal
-        is_open={is_report_code_modal_open}
-        on_close={handle_report_code_modal_close}
-        selected_codes={selected_codes}
-        on_apply={handle_report_code_apply}
       />
     </div>
   );
