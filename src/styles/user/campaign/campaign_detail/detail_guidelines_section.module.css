@@ -87,8 +87,8 @@
   justify-content: center;
   align-items: center;
   border-radius: 4px;
-  background: rgba(217, 0, 116, 0.1); /* 연한 핑크 배경 */
-  color: #d90074;
+  background: #ff5694;
+  color: #fff;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;

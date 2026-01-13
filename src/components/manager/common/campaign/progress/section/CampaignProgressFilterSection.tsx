@@ -222,7 +222,6 @@ export default function CampaignProgressFilterSection({
         search_query={search_query}
         on_search_change={on_search_change}
         // 검색어 초기화 버튼 숨기기
-        show_search_clear_button={false}
         // 날짜 필터 - DateFilterButton 컴포넌트 사용
         // DateFilterButton은 BaseFilterSection의 date_filter prop으로 전달됩니다
         date_filter={

@@ -54,7 +54,8 @@ export default function AdminFilterSection({
   const router = useRouter();
 
   // 상태 필터 드롭다운 열림/닫힘 상태 관리
-  const [is_status_dropdown_open, set_is_status_dropdown_open] = useState(false);
+  const [is_status_dropdown_open, set_is_status_dropdown_open] =
+    useState(false);
   const status_filter_button_ref = useRef<HTMLDivElement>(null);
 
   // 상태 필터 핸들러

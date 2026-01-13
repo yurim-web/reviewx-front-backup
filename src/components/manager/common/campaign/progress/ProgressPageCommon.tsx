@@ -35,7 +35,7 @@ import { useState, useMemo, useEffect } from "react";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import StatCardsSectionCommon from "./cards/StatCardsSection";
 import CampaignProgressFilterSection from "./section/CampaignProgressFilterSection";
-import CampaignTableCommon from "./table/CampaignTable";
+import CampaignTableCommon from "./table/CampaignProgressTable";
 
 // 신고 모달 공통 컴포넌트와 데이터 import
 import CampaignReportModalCommon, {
@@ -294,7 +294,6 @@ export default function ProgressPageCommon({
   }) => {
     return (
       <CampaignReportModalCommon
-        mode="report"
         is_open={is_open}
         on_close={on_close}
         campaign_id={campaign_id}

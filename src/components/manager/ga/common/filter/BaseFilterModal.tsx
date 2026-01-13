@@ -9,8 +9,6 @@
  *       체크박스 방식의 다중 선택 필터링을 제공합니다.
  *
  * 📍 사용 위치 (현재):
- * - src/components/manager_ga/campaign/rejected/filter/RejectCodeFilterModal.tsx
- * - src/components/manager_ga/campaign/reported/filter/ReportCodeFilterModal.tsx
  * - src/components/manager_common/campaign/progress/filter/ChannelFilterModal.tsx
  * - src/components/manager_common/campaign/progress/filter/StatusFilterModal.tsx
  * - src/components/manager_common/campaign/progress/filter/TypeFilterModal.tsx

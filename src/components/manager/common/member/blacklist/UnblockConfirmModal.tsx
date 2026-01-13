@@ -43,7 +43,7 @@ export default function UnblockConfirmModal({
     <BaseModal
       is_open={is_open}
       on_close={on_close}
-      message="차단을 해제하시겠습니까?"
+      message="이용 제한을 해제하시겠습니까?"
       buttons={["취소", "확인"]}
       on_confirm={on_confirm}
       type="center"

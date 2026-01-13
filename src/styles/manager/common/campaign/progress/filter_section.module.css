@@ -6,11 +6,39 @@
  * 필터 섹션 관련 스타일
  * 
  * 사용 컴포넌트:
- * - FilterSection.tsx (필터 섹션 컴포넌트)
+ * - BaseFilterSection.tsx (공통 필터 섹션 베이스 컴포넌트)
+ * - CampaignProgressFilterSection.tsx (캠페인 진행 상황 필터 섹션)
+ * - CampaignRejectedFilterSection.tsx (반려 내역 필터 섹션)
+ * - CampaignReportedFilterSection.tsx (신고 내역 필터 섹션)
+ * - BlacklistFilterSection.tsx (차단 내역 필터 섹션)
+ * - PostFilterSection.tsx (게시글 필터 섹션)
+ * - CategoryFilterSection.tsx (카테고리 필터 섹션)
+ * - MemberFilterSection.tsx (회원 필터 섹션 - 리뷰어/파트너)
+ * - AdminFilterSection.tsx (관리자 필터 섹션)
+ * - PaymentHistoryFilterSection.tsx (결제 내역 필터 섹션)
+ * - WithdrawalFilterSection.tsx (출금 필터 섹션)
+ * - DateFilterButton.tsx (날짜 필터 버튼)
  * 
  * 사용 페이지:
- * - /manager_ga/progress (GA 관리자 진행 현황)
- * - /manager_sa/progress (SA 관리자 진행 현황)
+ * - /manager_ga/campaign/progress (GA 관리자 캠페인 진행 상황)
+ * - /manager_sa/campaign/progress (SA 관리자 캠페인 진행 상황)
+ * - /manager_ga/campaign/rejected (GA 관리자 반려 내역)
+ * - /manager_ga/campaign/reported (GA 관리자 신고 내역)
+ * - /manager_ga/member/blacklist (GA 관리자 이용 제한 내역)
+ * - /manager_sa/member/blacklist (SA 관리자 이용 제한 내역)
+ * - /manager_ga/member/reviewers (GA 관리자 리뷰어 목록)
+ * - /manager_sa/member/reviewers (SA 관리자 리뷰어 목록)
+ * - /manager_ga/member/partners (GA 관리자 파트너 목록)
+ * - /manager_sa/member/partners (SA 관리자 파트너 목록)
+ * - /manager_ga/community/posts (GA 관리자 게시글 목록)
+ * - /manager_sa/community/posts (SA 관리자 게시글 목록)
+ * - /manager_ga/community/categories (GA 관리자 카테고리 목록)
+ * - /manager_sa/community/categories (SA 관리자 카테고리 목록)
+ * - /manager_sa/member/admins (SA 관리자 관리자 목록)
+ * - /manager_sa/settlement/payment_history (SA 관리자 결제 내역)
+ * - /manager_sa/settlement/withdrawal (SA 관리자 출금 현황)
+ * - /manager_ga (GA 관리자 대시보드 메인 페이지)
+ * - /manager_sa (SA 관리자 대시보드 메인 페이지)
  */
 
 /* 필터 섹션 */
@@ -95,25 +123,6 @@
   min-width: 0; /* flex 아이템이 축소될 수 있도록 */
 }
 
-/* 검색어 초기화 버튼 */
-.search_clear_button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  margin-left: 4px;
-}
-
-.search_clear_button:hover {
-  opacity: 0.7;
-}
-
 /* 검색어 초기화 아이콘 */
 .search_clear_icon {
   width: 16px;
@@ -152,8 +161,11 @@
 
 /* 검색 입력창 placeholder 스타일 */
 .search_input::placeholder {
-  color: #999999;
-  font-weight: 400;
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
 }
 
 /* 체크박스 아이콘 */
@@ -187,12 +199,20 @@
 
 /* 필터 텍스트 */
 .filter_text {
+  color: #848484;
   font-size: 16px;
   font-weight: 500;
   line-height: 16px;
   letter-spacing: -0.32px;
+}
+
+/* 날짜 필터 버튼 텍스트 */
+.date_filter_text {
   color: #444444;
-  white-space: nowrap;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
 }
 
 /* 활성 필터 태그 영역 */
@@ -213,12 +233,12 @@
 .filter_tag {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 /* 필터 태그 텍스트 */
 .filter_tag_text {
-  color: #848484;
+  color: #444;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
@@ -227,20 +247,9 @@
 
 /* 태그 제거 버튼 */
 .remove_tag {
-  background: none;
-  border: none;
   cursor: pointer;
-  padding: 0;
   width: 16px;
   height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.remove_tag:hover {
-  opacity: 0.7;
 }
 
 /* 제거 아이콘 */

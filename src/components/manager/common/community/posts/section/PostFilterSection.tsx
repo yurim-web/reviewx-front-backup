@@ -78,7 +78,8 @@ export default function PostFilterSection({
       : "/manager_sa/community/posts";
 
   // 드롭다운 열림/닫힘 상태 관리
-  const [is_division_dropdown_open, set_is_division_dropdown_open] = useState(false);
+  const [is_division_dropdown_open, set_is_division_dropdown_open] =
+    useState(false);
   const division_filter_button_ref = useRef<HTMLDivElement>(null);
   const [selected_sort, set_selected_sort] = useState("최신순");
 

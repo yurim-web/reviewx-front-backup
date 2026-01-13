@@ -61,9 +61,10 @@ export default function BlacklistFilterSection({
   selected_block_codes,
   on_block_codes_change,
 }: BlacklistFilterSectionProps) {
-  const [is_division_dropdown_open, set_is_division_dropdown_open] = useState(false);
+  const [is_division_dropdown_open, set_is_division_dropdown_open] =
+    useState(false);
   const division_filter_button_ref = useRef<HTMLDivElement>(null);
-  
+
   const [is_block_code_dropdown_open, set_is_block_code_dropdown_open] =
     useState(false);
   const block_code_filter_button_ref = useRef<HTMLDivElement>(null);
@@ -144,12 +145,14 @@ export default function BlacklistFilterSection({
                 styles={{
                   filter_item: styles.filter_item,
                   checkbox_icon: styles.checkbox_icon,
-                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
+                  checkbox_icon_checked:
+                    filterButtonStyles.checkbox_icon_checked,
                   filter_text: styles.filter_text,
                   dropdown_arrow: styles.dropdown_arrow,
                   filter_item_active: filterButtonStyles.filter_item_active,
                   filter_text_active: filterButtonStyles.filter_text_active,
-                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
+                  dropdown_arrow_active:
+                    filterButtonStyles.dropdown_arrow_active,
                 }}
               />
               <DivisionFilterDropdown
@@ -172,12 +175,14 @@ export default function BlacklistFilterSection({
                 styles={{
                   filter_item: styles.filter_item,
                   checkbox_icon: styles.checkbox_icon,
-                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
+                  checkbox_icon_checked:
+                    filterButtonStyles.checkbox_icon_checked,
                   filter_text: styles.filter_text,
                   dropdown_arrow: styles.dropdown_arrow,
                   filter_item_active: filterButtonStyles.filter_item_active,
                   filter_text_active: filterButtonStyles.filter_text_active,
-                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
+                  dropdown_arrow_active:
+                    filterButtonStyles.dropdown_arrow_active,
                 }}
               />
               <BlockCodeFilterDropdown

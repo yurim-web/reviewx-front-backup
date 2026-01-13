@@ -1,12 +1,12 @@
 /**
- * CampaignTable 컴포넌트 스토리북
+ * CampaignProgressTable 컴포넌트 스토리북
  *
- * 캠페인 테이블 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 캠페인 진행 현황 테이블 컴포넌트의 다양한 사용 예시를 보여줍니다.
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
-import CampaignTable, { CampaignProgressItem } from "./CampaignTable";
+import CampaignProgressTable, { CampaignProgressItem } from "./CampaignProgressTable";
 import CampaignReportModal from "../../modal/CampaignReportModal";
 import { report_code_info } from "@/data/manager_ga/reported";
 import type { ReportCode } from "@/components/manager/common/campaign/modal/CampaignReportModal";
@@ -141,9 +141,9 @@ const mockCampaigns: CampaignProgressItem[] = [
   },
 ];
 
-const meta: Meta<typeof CampaignTable> = {
-  title: "Manager/Common/Campaign/Progress/CampaignTable",
-  component: CampaignTable,
+const meta: Meta<typeof CampaignProgressTable> = {
+  title: "Manager/Common/Campaign/Progress/CampaignProgressTable",
+  component: CampaignProgressTable,
   tags: ["autodocs"],
   parameters: {
     layout: "padded",
@@ -180,12 +180,12 @@ const meta: Meta<typeof CampaignTable> = {
 
 export default meta;
 
-type Story = StoryObj<typeof CampaignTable>;
+type Story = StoryObj<typeof CampaignProgressTable>;
 
 // 기본 캠페인 테이블
 export const Default: Story = {
   render: (args) =>
-    React.createElement(CampaignTable, {
+    React.createElement(CampaignProgressTable, {
       ...args,
       ReportModal: ReportModalWrapper,
       tagStyles: tagStyles,
@@ -203,7 +203,7 @@ export const Default: Story = {
 // 빈 테이블
 export const Empty: Story = {
   render: (args) =>
-    React.createElement(CampaignTable, {
+    React.createElement(CampaignProgressTable, {
       ...args,
       ReportModal: ReportModalWrapper,
       tagStyles: tagStyles,
@@ -217,3 +217,4 @@ export const Empty: Story = {
     channelIconStyles: channelIconStyles,
   },
 };
+

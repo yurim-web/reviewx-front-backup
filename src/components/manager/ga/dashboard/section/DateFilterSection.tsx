@@ -7,17 +7,30 @@
  *
  * 목적: 대시보드 페이지의 날짜 필터 기능을 제공하는 컴포넌트입니다.
  *
+ * 📍 사용 위치:
+ * - /manager_ga (GA 관리자 대시보드 메인 페이지)
+ * - /manager_sa (SA 관리자 대시보드 메인 페이지)
+ *
  * 주요 기능:
  * - 날짜 필터 버튼 (오늘/이번 주/이번 달)
  * - 커스텀 날짜 선택기 (스카이스캐너 스타일)
  * - 날짜 범위 선택 모달
+ * - 기본값: 이번 달 (오늘 날짜 기준 이번 달의 첫날 ~ 마지막날)
  *
  */
 
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { format } from "date-fns";
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  startOfDay,
+  endOfDay,
+} from "date-fns";
 import styles from "@/styles/manager_ga/dashboard/sections/date_filter_section.module.css";
 import DateRangePickerModal, { type DateRange } from "./DateRangePickerModal";
 
@@ -41,13 +54,53 @@ export default function DateFilterSection({
   const [is_date_modal_open, setIsDateModalOpen] = useState(false);
 
   // useState: 선택된 날짜 범위를 관리하는 상태
+  // 기본값: 이번 달 (오늘 날짜 기준 이번 달의 첫날 ~ 마지막날)
+  // startOfMonth: 주어진 날짜의 월의 첫날을 반환합니다 (예: 2026-01-13 -> 2026-01-01)
+  // endOfMonth: 주어진 날짜의 월의 마지막날을 반환합니다 (예: 2026-01-13 -> 2026-01-31)
   const [selected_date_range, setSelectedDateRange] = useState<
     DateRange | undefined
-  >(undefined);
+  >(() => {
+    const today = new Date();
+    return {
+      from: startOfMonth(today),
+      to: endOfMonth(today),
+    };
+  });
 
   // useRef: 날짜 선택기 버튼의 참조를 저장하는 React Hook
   // ref는 DOM 요소에 직접 접근할 수 있게 해줍니다
   const picker_ref = useRef<HTMLDivElement>(null);
+
+  // 날짜 필터에 따라 날짜 범위를 자동으로 업데이트하는 useEffect
+  // dateFilter가 변경될 때마다 오늘 날짜 기준으로 적절한 날짜 범위를 설정합니다
+  useEffect(() => {
+    const today = new Date();
+
+    switch (dateFilter) {
+      case "today":
+        // 오늘: 오늘 날짜만 선택 (시작일과 종료일이 동일)
+        setSelectedDateRange({
+          from: startOfDay(today),
+          to: endOfDay(today),
+        });
+        break;
+      case "week":
+        // 이번 주: 이번 주의 시작일(일요일) ~ 종료일(토요일)
+        // weekStartsOn: 0은 일요일을 주의 시작으로 설정합니다
+        setSelectedDateRange({
+          from: startOfWeek(today, { weekStartsOn: 0 }),
+          to: endOfWeek(today, { weekStartsOn: 0 }),
+        });
+        break;
+      case "month":
+        // 이번 달: 이번 달의 첫날 ~ 마지막날
+        setSelectedDateRange({
+          from: startOfMonth(today),
+          to: endOfMonth(today),
+        });
+        break;
+    }
+  }, [dateFilter]);
 
   // 외부 클릭 감지: 드롭다운 외부를 클릭하면 닫기
   // useEffect는 컴포넌트가 렌더링된 후에 실행됩니다

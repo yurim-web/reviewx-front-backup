@@ -24,13 +24,13 @@
  * SA 관리자 진행 현황 페이지 (/manager_sa/campaign/progress)
  *   └─> ProgressPageCommon 컴포넌트 (manager_type="sa")
  *       └─> CampaignProgressTable 컴포넌트
-
+ *
  */
 
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
@@ -124,7 +124,7 @@ const get_columns = (styles: Record<string, string>): TableColumn[] => [
   },
   {
     key: "channel",
-    label: "채널",
+    label: "플랫폼",
   },
   {
     key: "apply_count",
@@ -159,6 +159,18 @@ export default function CampaignProgressTable({
   has_active_filters = false,
 }: CampaignTableProps) {
   const [hovered_row_id, set_hovered_row_id] = useState<string | null>(null);
+
+  // useState: 클라이언트 마운트 여부 (Hydration 오류 방지용)
+  // 서버 사이드에서는 false, 클라이언트에서 마운트되면 true가 됩니다
+  const [is_mounted, setIsMounted] = useState(false);
+
+  // useEffect: 클라이언트에서만 실행되어 마운트 상태를 true로 설정
+  // 📌 Hydration 오류 방지:
+  // - 서버 사이드에서는 실행되지 않으므로 서버와 클라이언트의 초기 렌더링 결과가 동일합니다
+  // - 클라이언트에서 마운트된 후에만 실제 필터 상태를 사용합니다
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // 컬럼별 타입 설정
   const column_config: SortColumnConfig = {
@@ -232,11 +244,20 @@ export default function CampaignProgressTable({
   }));
 
   // 빈 메시지 결정: 필터/검색이 적용되어 있으면 "검색 결과가 없습니다.", 아니면 "캠페인이 없습니다."
-  // 검색어가 있거나 활성 필터가 있으면 검색 결과 없음 메시지 표시
-  const empty_message =
-    search_query.trim() || has_active_filters
+  // 📌 Hydration 오류 방지:
+  // - 서버 사이드 또는 초기 렌더링 시에는 항상 "캠페인이 없습니다."를 반환합니다
+  // - 클라이언트에서 마운트된 후에만 실제 필터 상태를 확인하여 메시지를 결정합니다
+  const empty_message = useMemo(() => {
+    // 클라이언트에서 마운트되지 않았으면 기본 메시지 반환 (Hydration 오류 방지)
+    if (!is_mounted) {
+      return "캠페인이 없습니다.";
+    }
+
+    // 검색어가 있거나 활성 필터가 있으면 검색 결과 없음 메시지 표시
+    return search_query.trim() || has_active_filters
       ? "검색 결과가 없습니다."
       : "캠페인이 없습니다.";
+  }, [is_mounted, search_query, has_active_filters]);
 
   // 커스텀 행 래퍼 (행 전체를 클릭 가능하게 만들되, report 버튼은 제외)
   const render_row_wrapper = (

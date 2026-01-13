@@ -234,7 +234,7 @@ export default function DateFilterButton({
           />
         </div>
         {/* 선택된 날짜 범위를 동적으로 표시 */}
-        <span className={styles.filter_text}>
+        <span className={styles.date_filter_text}>
           {format_date_range(selected_date_range)}
         </span>
       </div>

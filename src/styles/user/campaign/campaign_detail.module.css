@@ -85,7 +85,7 @@
   width: 16px; /* SVG 원본 크기와 동일 */
   height: 16px; /* SVG 원본 크기와 동일 */
   flex-shrink: 0; /* 아이콘 크기 고정 */
-  display: block; /* 인라인 요소로 인한 여백 제거 */
+  display: block;
 }
 
 /* 긴급 안내 텍스트 */
@@ -116,9 +116,9 @@
   display: block;
   width: 100%;
   padding: 24px 0px 24px 0px;
-  border-bottom: 2px solid #d90074; /* 하단 핑크 라인 */
+  border-bottom: 2px solid #ff5694; /* 하단 핑크 라인 */
   text-align: center;
-  color: #d90074;
+  color: #ff5694;
   font-size: 20px;
   font-weight: 600;
   line-height: 20px;
@@ -128,15 +128,15 @@
 
 /* 스크롤 시 상단에 고정된 상태 */
 .campaign_info_text_line.fixed {
-  position: fixed; /* 화면에 고정 */
-  top: 80px; /* 서브헤더(80px) 바로 아래에 배치 */
+  position: fixed;
+  top: 80px;
   left: 0;
   right: 0;
   width: 100%;
-  padding: 20px 0px; /* 고정 시 패딩 조정 */
-  background: #ffffff; /* 흰색 배경 (아래 내용이 비치지 않도록) */
-  border-bottom: 2px solid #d90074;
-  z-index: 90; /* 서브헤더(100)보다 낮게, 다른 요소보다는 높게 */
+  padding: 20px 0px;
+  background: #ffffff;
+  border-bottom: 2px solid #ff5694;
+  z-index: 90;
   max-width: 1000px;
   margin: 0 auto;
   min-height: 68px;

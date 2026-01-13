@@ -36,9 +36,10 @@
 /* 캠페인 타입 태그 (배송형, 체험형 등) */
 .tag_box {
   border-radius: 4px;
-  border: 1px solid #d90074; /* 핑크 테두리 */
+  border: 1px solid #ff5694; /* 핑크 테두리 */
+  background: #ff5694;
   padding: 8px;
-  color: #d90074;
+  color: #ffffff;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
@@ -49,9 +50,9 @@
 .subcategory_tag {
   padding: 8px;
   border-radius: 4px;
-  border: none;
-  background: rgba(255, 174, 0, 0.2); /* 연한 오렌지 배경 */
-  color: #444;
+  border: 1px solid #ff5694;
+  background: #fff;
+  color: #ff5694;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;

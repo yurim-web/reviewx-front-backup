@@ -19,12 +19,24 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { format } from "date-fns";
+import {
+  add_blacklist_item,
+  get_blacklist_data,
+  block_code_reason_map,
+  type BlacklistItem,
+  type BlockReason,
+} from "@/data/manager_ga/member/blacklist";
+import type { BlockCode } from "@/data/manager_ga/common/filterOptions";
 import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
 import styles from "@/styles/manager_ga/campaign/reported/reported_table.module.css";
 import {
+  get_reported_campaign_list,
+  remove_reported_campaign,
   reported_campaign_list,
   report_code_info,
   type ReportedCampaignItem,
@@ -32,7 +44,9 @@ import {
   type ReportCode,
 } from "@/data/manager_ga/reported";
 import CampaignReasonModal from "@/components/manager/common/campaign/modal/CampaignReasonModal";
-import CampaignReportModal from "@/components/manager/common/campaign/modal/CampaignReportModal";
+import CampaignRestrictionModal from "@/components/manager/ga/campaign/reported/modal/CampaignRestrictionModal";
+import BaseModal from "@/components/common/modal/BaseModal";
+import TextareaModal from "@/components/common/modal/TextareaModal";
 import CommonTableWithTooltip, {
   type TooltipConfig,
 } from "@/components/manager/common/table/CommonTableWithTooltip";
@@ -121,13 +135,30 @@ export default function ReportedCampaignTable({
   selected_date_range,
 }: ReportedCampaignTableProps) {
   const [hovered_row_id, set_hovered_row_id] = useState<string | null>(null);
+  // 신고 내역 목록 업데이트를 위한 상태 (리렌더링 트리거)
+  const [reported_update_key, set_reported_update_key] = useState<number>(0);
+  // 클라이언트 마운트 여부 (Hydration 오류 방지)
+  const [is_mounted, set_is_mounted] = useState<boolean>(false);
+
+  // 클라이언트에서만 마운트 후 localStorage 데이터 로드
+  useEffect(() => {
+    set_is_mounted(true);
+    // localStorage에서 데이터를 로드하여 상태 업데이트
+    set_reported_update_key((prev) => prev + 1);
+  }, []);
+
+  // Next.js 라우터: 페이지 이동에 사용
+  // useRouter는 Next.js의 클라이언트 사이드 라우팅을 위한 Hook입니다.
+  const router = useRouter();
 
   const [block_modal_state, set_block_modal_state] = useState<{
     is_open: boolean;
     campaign_id: string | null;
+    item: ReportedCampaignItem | null;
   }>({
     is_open: false,
     campaign_id: null,
+    item: null,
   });
 
   const [modal_state, set_modal_state] = useState<{
@@ -138,62 +169,246 @@ export default function ReportedCampaignTable({
     item: null,
   });
 
-  const handle_block_click = (campaign_id: string) => {
+  // 해제 확인 모달 상태
+  const [clear_confirm_modal_state, set_clear_confirm_modal_state] = useState<{
+    is_open: boolean;
+    campaign_id: string | null;
+  }>({
+    is_open: false,
+    campaign_id: null,
+  });
+
+  // 해제 완료 모달 상태
+  const [clear_complete_modal_state, set_clear_complete_modal_state] =
+    useState<boolean>(false);
+
+  // 이미 처리된 요청 모달 상태
+  const [already_processed_modal_state, set_already_processed_modal_state] =
+    useState<boolean>(false);
+
+  // 신고 사유 확인 모달 상태 (W013 코드용)
+  const [report_reason_modal_state, set_report_reason_modal_state] = useState<{
+    is_open: boolean;
+    item: ReportedCampaignItem | null;
+  }>({
+    is_open: false,
+    item: null,
+  });
+
+  const handle_block_click = (
+    campaign_id: string,
+    item: ReportedCampaignItem
+  ) => {
     set_block_modal_state({
       is_open: true,
       campaign_id,
+      item,
     });
+  };
+
+  // 해제 버튼 클릭 핸들러
+  const handle_clear_click = (campaign_id: string) => {
+    set_clear_confirm_modal_state({
+      is_open: true,
+      campaign_id,
+    });
+  };
+
+  // 해제 확인 모달 닫기 핸들러
+  const handle_clear_confirm_modal_close = () => {
+    set_clear_confirm_modal_state({
+      is_open: false,
+      campaign_id: null,
+    });
+  };
+
+  // 해제 확인 모달에서 해제 버튼 클릭 핸들러
+  const handle_clear_confirm = () => {
+    if (clear_confirm_modal_state.campaign_id) {
+      // 신고 내역 제거 (localStorage에 저장)
+      remove_reported_campaign(clear_confirm_modal_state.campaign_id);
+
+      // 목록 업데이트를 위한 리렌더링 트리거
+      set_reported_update_key((prev) => prev + 1);
+    }
+
+    // 확인 모달 닫기
+    set_clear_confirm_modal_state({
+      is_open: false,
+      campaign_id: null,
+    });
+
+    // 해제 완료 모달 표시
+    set_clear_complete_modal_state(true);
+  };
+
+  // 해제 완료 모달 닫기 핸들러
+  const handle_clear_complete_modal_close = () => {
+    set_clear_complete_modal_state(false);
+    // 목록이 자동으로 업데이트됨 (get_reported_campaign_list()가 다시 호출됨)
   };
 
   const handle_block_modal_close = () => {
     set_block_modal_state({
       is_open: false,
       campaign_id: null,
+      item: null,
     });
   };
 
+  // 이용 제한 핸들러
+  // 이용 제한 사유 모달에서 "확인" 버튼을 클릭했을 때 실행됩니다
   const handle_block_submit = (block_reason: string) => {
-    // TODO: 실제 차단 로직 구현
+    if (!block_modal_state.item) return;
+
+    // 리뷰어 정보 추출
+    const reviewer_name = block_modal_state.item.target;
+
+    // 이미 이용 제한된 계정인지 확인
+    // 같은 이름으로 이미 블랙리스트에 등록된 내역이 있는지 체크
+    const existing_blacklist = get_blacklist_data();
+    const is_already_blocked = existing_blacklist.some(
+      (item) => item.name === reviewer_name
+    );
+
+    // 이미 이용 제한된 경우 예외 처리
+    if (is_already_blocked) {
+      // 이용 제한 모달 닫기
+      handle_block_modal_close();
+      // 이미 처리된 요청 모달 표시
+      set_already_processed_modal_state(true);
+      return;
+    }
+
+    // 차단 사유를 BlockReason 타입으로 변환
+    // 모달의 차단 사유 옵션과 BlockReason 타입을 매핑
+    const block_reason_map: Record<string, BlockReason> = {
+      "반복 반려 누적": "반복 반려 누적",
+      "반복 취소 누적": "반복 반려 누적", // 가장 유사한 것으로 매핑
+      "무단 이탈 · 노쇼 누적": "무단 이탈 · 노쇼 누적",
+      "공정위 위반 게시 요청 누적": "공정위 위반 게시 요청",
+      "부적절 캠페인 게시": "부적절 캠페인 게시",
+      "콘텐츠 도용 · 중복": "콘텐츠 중복 · 도용",
+      "비정상 요청 · 접근": "비정상 운영 행위",
+      "외부 결제 · 금전 요구": "외부 결제 · 금전 요구",
+      "비매너 행위": "커뮤니티 가이드 위반", // 가장 유사한 것으로 매핑
+    };
+
+    const mapped_block_reason: BlockReason =
+      block_reason_map[block_reason] || "커뮤니티 가이드 위반";
+
+    // 차단 코드 찾기 (역방향 매핑)
+    const block_code =
+      (Object.keys(block_code_reason_map) as BlockCode[]).find(
+        (code) => block_code_reason_map[code] === mapped_block_reason
+      ) || "B004"; // 기본값
+
+    // 새로운 블랙리스트 항목 ID 생성
+    const existing_data = get_blacklist_data();
+    const max_id = Math.max(
+      ...existing_data.map((item) => parseInt(item.id) || 0)
+    );
+    const new_id = (max_id + 1).toString();
+
+    // 현재 날짜/시간 생성 (기존 데이터 형식과 동일하게)
+    // 기존 데이터 형식: "2026-01-28 09:40"
+    const current_date = format(new Date(), "yyyy-MM-dd HH:mm");
+
+    // 디버깅: 추가되는 항목 확인
+    console.log("새 블랙리스트 항목 추가:", {
+      name: reviewer_name,
+      registered_date: current_date,
+      block_reason: mapped_block_reason,
+    });
+
+    // 블랙리스트 항목 생성
+    const new_blacklist_item: BlacklistItem = {
+      id: new_id,
+      name: reviewer_name,
+      user_id: `reviewer_${new_id}`, // 임시 user_id 생성
+      division: "리뷰어",
+      current_points: 0,
+      ip_address: "0.0.0.0", // 임시 IP 주소
+      block_code: block_code as BlockCode,
+      block_reason: mapped_block_reason,
+      registered_date: current_date,
+      registered_by: "관리자",
+    };
+
+    // 블랙리스트에 추가
+    add_blacklist_item(new_blacklist_item);
+
+    // 신고 내역에서 제거 (localStorage에 저장)
+    if (block_modal_state.item) {
+      remove_reported_campaign(block_modal_state.item.id);
+      // 목록 업데이트를 위한 리렌더링 트리거
+      set_reported_update_key((prev) => prev + 1);
+    }
+
+    // 블랙리스트 페이지로 이동
+    // router.push: Next.js에서 페이지를 이동하는 메서드입니다.
+    router.push("/manager_ga/member/blacklist");
+
+    // 모달 닫기
+    handle_block_modal_close();
   };
 
-  const filtered_list = reported_campaign_list.filter((item) => {
-    // 검색어 필터
-    if (
-      search_query &&
-      !item.campaign_name.includes(search_query) &&
-      !item.campaign_number.includes(search_query)
-    ) {
-      return false;
-    }
-
-    // 신고 코드 필터
-    if (
-      selected_report_codes.length > 0 &&
-      !selected_report_codes.includes(item.report_code)
-    ) {
-      return false;
-    }
-
-    // 날짜 범위 필터
-    if (selected_date_range?.from && selected_date_range?.to) {
-      // processed_date 형식: "2025-08-01 18:56"
-      const processed_date_str = item.processed_date.split(" ")[0]; // 날짜 부분만 추출
-      const processed_date = new Date(processed_date_str);
-      const from_date = new Date(selected_date_range.from);
-      const to_date = new Date(selected_date_range.to);
-      to_date.setHours(23, 59, 59, 999); // 종료일의 끝 시간까지 포함
-
-      // 날짜 비교 시 시간 부분을 제거하여 날짜만 비교
-      processed_date.setHours(0, 0, 0, 0);
-      from_date.setHours(0, 0, 0, 0);
-
-      if (processed_date < from_date || processed_date > to_date) {
+  // reported_update_key를 의존성으로 추가하여 리렌더링 트리거
+  const filtered_list = useMemo(() => {
+    // 필터 함수 (공통)
+    const filter_item = (item: ReportedCampaignItem): boolean => {
+      // 검색어 필터
+      if (
+        search_query &&
+        !item.campaign_name.includes(search_query) &&
+        !item.campaign_number.includes(search_query)
+      ) {
         return false;
       }
+
+      // 신고 코드 필터
+      if (
+        selected_report_codes.length > 0 &&
+        !selected_report_codes.includes(item.report_code)
+      ) {
+        return false;
+      }
+
+      // 날짜 범위 필터
+      if (selected_date_range?.from && selected_date_range?.to) {
+        // processed_date 형식: "2025-08-01 18:56"
+        const processed_date_str = item.processed_date.split(" ")[0]; // 날짜 부분만 추출
+        const processed_date = new Date(processed_date_str);
+        const from_date = new Date(selected_date_range.from);
+        const to_date = new Date(selected_date_range.to);
+        to_date.setHours(23, 59, 59, 999); // 종료일의 끝 시간까지 포함
+
+        // 날짜 비교 시 시간 부분을 제거하여 날짜만 비교
+        processed_date.setHours(0, 0, 0, 0);
+        from_date.setHours(0, 0, 0, 0);
+
+        if (processed_date < from_date || processed_date > to_date) {
+          return false;
+        }
+      }
+
+      return true;
+    };
+
+    // 서버 사이드에서는 기본 데이터만 반환 (Hydration 오류 방지)
+    if (!is_mounted) {
+      return reported_campaign_list.filter(filter_item);
     }
 
-    return true;
-  });
+    // 클라이언트에서는 localStorage 데이터 포함
+    return get_reported_campaign_list().filter(filter_item);
+  }, [
+    search_query,
+    selected_report_codes,
+    selected_date_range,
+    reported_update_key,
+    is_mounted,
+  ]);
 
   // 컬럼별 타입 설정
   const column_config: SortColumnConfig = {
@@ -275,8 +490,33 @@ export default function ReportedCampaignTable({
               return <span>{row.target}</span>;
             case "inspector":
               return <span>{row.inspector}</span>;
-            case "report_code":
-              return <span>{row.report_code}</span>;
+            case "report_code": {
+              // W013 코드일 때만 아이콘 표시
+              const is_w013 = row.report_code === "W013";
+              return (
+                <div className={styles.report_code_cell}>
+                  <span>{row.report_code}</span>
+                  {is_w013 && (
+                    <button
+                      onClick={() => {
+                        set_report_reason_modal_state({
+                          is_open: true,
+                          item: row,
+                        });
+                      }}
+                      className={styles.report_code_info_button}
+                      aria-label="신고 사유 확인"
+                    >
+                      <img
+                        src="/images/management_page/cancel_info.svg"
+                        alt="신고 사유 확인"
+                        className={styles.report_code_info_icon}
+                      />
+                    </button>
+                  )}
+                </div>
+              );
+            }
             case "report_count":
               return <span>{row.report_count}회</span>;
             case "processed_date":
@@ -286,9 +526,7 @@ export default function ReportedCampaignTable({
               return is_hovered ? (
                 <div className={styles.block_button_group}>
                   <button
-                    onClick={() => {
-                      // TODO: 해제 로직 구현
-                    }}
+                    onClick={() => handle_clear_click(row.id)}
                     className={styles.clear_button}
                     aria-label={`${row.campaign_name} 해제`}
                   >
@@ -299,7 +537,7 @@ export default function ReportedCampaignTable({
                     />
                   </button>
                   <button
-                    onClick={() => handle_block_click(row.id)}
+                    onClick={() => handle_block_click(row.id, row)}
                     className={styles.block_button}
                     aria-label={`${row.campaign_name} 차단`}
                   >
@@ -322,7 +560,7 @@ export default function ReportedCampaignTable({
         on_row_wrapper_hover={(row_id) => {
           set_hovered_row_id(row_id);
         }}
-        empty_message="신고 내역이 없습니다."
+        empty_message="검색 결과가 없습니다."
       />
       {modal_state.item && (
         <CampaignReasonModal
@@ -337,7 +575,7 @@ export default function ReportedCampaignTable({
           reason_text={
             modal_state.item.report_reason ||
             get_report_code_info(modal_state.item.report_code)?.reason ||
-            "신고 사유가 없습니다."
+            "검색 결과가 없습니다."
           }
           code={modal_state.item.report_code}
           code_info_list={report_code_info.map((info) => ({
@@ -367,8 +605,7 @@ export default function ReportedCampaignTable({
           }
         />
       )}
-      <CampaignReportModal
-        mode="block"
+      <CampaignRestrictionModal
         is_open={block_modal_state.is_open}
         on_close={handle_block_modal_close}
         campaign_id={block_modal_state.campaign_id || undefined}
@@ -385,10 +622,56 @@ export default function ReportedCampaignTable({
             option_label: string;
             modal_footer: string;
             close_button: string;
-            report_button: string;
             block_button: string;
           }
         }
+      />
+      {/* 해제 확인 모달 */}
+      <BaseModal
+        is_open={clear_confirm_modal_state.is_open}
+        on_close={handle_clear_confirm_modal_close}
+        message="신고 내역을 해제하시겠습니까?"
+        buttons={["취소", "해제"]}
+        on_confirm={handle_clear_confirm}
+        type="center"
+      />
+      {/* 해제 완료 모달 */}
+      <BaseModal
+        is_open={clear_complete_modal_state}
+        on_close={handle_clear_complete_modal_close}
+        message="해제가 완료되었습니다."
+        buttons={["닫기"]}
+        type="center"
+      />
+      {/* 신고 사유 확인 모달 (W013 코드용) */}
+      {report_reason_modal_state.item && (
+        <TextareaModal
+          is_open={report_reason_modal_state.is_open}
+          on_close={() => {
+            set_report_reason_modal_state({
+              is_open: false,
+              item: null,
+            });
+          }}
+          title="신고 사유"
+          value={
+            report_reason_modal_state.item.report_reason ||
+            get_report_code_info(report_reason_modal_state.item.report_code)
+              ?.reason ||
+            "신고 사유가 없습니다."
+          }
+          readOnly={true}
+          buttons={["닫기"]}
+          type="center"
+        />
+      )}
+      {/* 이미 처리된 요청 모달 */}
+      <BaseModal
+        is_open={already_processed_modal_state}
+        on_close={() => set_already_processed_modal_state(false)}
+        message="이미 처리된 요청입니다."
+        buttons={["확인"]}
+        type="center"
       />
     </>
   );
