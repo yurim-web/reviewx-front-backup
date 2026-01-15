@@ -21,7 +21,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import styles from "@/styles/manager/common/campaign/progress/filter_section.module.css";
+import styles from "@/styles/manager/common/section/filter_section.module.css";
 import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.module.css";
 import BaseFilterSection, {
   type FilterTag,

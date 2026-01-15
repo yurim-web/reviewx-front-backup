@@ -43,7 +43,7 @@ import AccountStatusFilterDropdown, {
   type AccountStatus,
 } from "@/components/manager/sa/settlement/payment_history/filter/AccountStatusFilterDropdown";
 import type { PaymentMethod } from "@/data/manager_sa/common/filterOptions";
-import baseFilterStyles from "@/styles/manager/common/campaign/progress/filter_section.module.css";
+import baseFilterStyles from "@/styles/manager/common/section/filter_section.module.css";
 import styles from "@/styles/manager_sa/settlement/payment_history/filter_section.module.css";
 import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.module.css";
 

@@ -16,6 +16,10 @@
  * - 무통장 입금: 회색 배경, 회색 텍스트
  */
 
+// CSS 모듈 직접 import
+// 컴포넌트 내부에서 스타일을 직접 가져와서 사용합니다
+import tag_styles from "@/styles/common/tags.module.css";
+
 /**
  * 결제 수단 타입 정의
  */
@@ -26,22 +30,18 @@ export type PaymentMethod = "카드 결제" | "무통장 입금";
  *
  * 각 속성 설명:
  * - method: 표시할 결제 수단 값 (카드 결제, 무통장 입금 중 하나)
- * - styles: CSS 모듈에서 가져온 스타일 객체
  */
 interface PaymentMethodTagProps {
   method: PaymentMethod;
-  styles: Record<string, string>;
 }
 
 /**
  * 결제 수단 태그 컴포넌트
  *
  * @param method - 표시할 결제 수단 값
- * @param styles - CSS 모듈 스타일 객체
  */
 export default function PaymentMethodTag({
   method,
-  styles: css_styles,
 }: PaymentMethodTagProps) {
   /**
    * 결제 수단에 따라 적절한 CSS 클래스명을 반환하는 함수
@@ -50,13 +50,13 @@ export default function PaymentMethodTag({
     switch (method) {
       case "카드 결제":
         // 카드 결제: 분홍색 배경, 분홍색 텍스트
-        return css_styles.payment_method_card;
+        return tag_styles.payment_method_card;
       case "무통장 입금":
         // 무통장 입금: 회색 배경, 회색 텍스트
-        return css_styles.payment_method_bank;
+        return tag_styles.payment_method_bank;
       default:
         // 기본값으로 카드 결제 스타일 반환
-        return css_styles.payment_method_card;
+        return tag_styles.payment_method_card;
     }
   };
 
@@ -72,7 +72,7 @@ export default function PaymentMethodTag({
    */
   return (
     <div
-      className={`${css_styles.payment_method_tag} ${get_method_class_name()}`}
+      className={`${tag_styles.payment_method_tag} ${get_method_class_name()}`}
       role="status"
       aria-label={`결제 수단: ${method}`}
     >

@@ -26,7 +26,7 @@
 import { useState, useRef, useEffect } from "react";
 import { format } from "date-fns";
 import Image from "next/image";
-import styles from "@/styles/manager/common/campaign/progress/filter_section.module.css";
+import styles from "@/styles/manager/common/section/filter_section.module.css";
 import date_filter_styles from "@/styles/manager_ga/common/filter/date_filter.module.css";
 import DateRangePickerModal, {
   type DateRange,

@@ -28,7 +28,6 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import styles from "@/styles/manager/common/community/posts/post_filter_section.module.css";
 import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
@@ -37,7 +36,7 @@ import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 import type { PostDivision } from "@/data/manager_ga/community/postsData";
 import DivisionFilterDropdown from "@/components/manager/common/community/posts/filter/DivisionFilterDropdown";
-import baseFilterStyles from "@/styles/manager/common/campaign/progress/filter_section.module.css";
+import filterStyles from "@/styles/manager/common/section/filter_section.module.css";
 import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.module.css";
 
 interface PostFilterSectionProps {
@@ -51,7 +50,7 @@ interface PostFilterSectionProps {
   // 날짜 범위 필터 상태와 변경 함수
   selected_date_range: DateRange | undefined;
   on_date_range_change: (range: DateRange | undefined) => void;
-  // 선택된 게시글들에 대해 고정/해제를 수행하는 핸들러 (GA만 사용)
+  // 선택된 게시글들에 대해 고정/해제를 수행하는 핸들러
   on_pin_selected?: () => void;
   on_unpin_selected?: () => void;
   // 관리자 타입 ('ga' | 'sa')
@@ -80,7 +79,7 @@ export default function PostFilterSection({
   // 드롭다운 열림/닫힘 상태 관리
   const [is_division_dropdown_open, set_is_division_dropdown_open] =
     useState(false);
-  const division_filter_button_ref = useRef<HTMLDivElement>(null);
+  const division_filter_button_ref = useRef<HTMLDivElement | null>(null);
   const [selected_sort, set_selected_sort] = useState("최신순");
 
   /* ========================================
@@ -205,11 +204,11 @@ export default function PostFilterSection({
               onClick={() => set_is_division_dropdown_open((prev) => !prev)}
               isActive={selected_divisions.length > 0}
               styles={{
-                filter_item: styles.filter_item,
-                checkbox_icon: styles.checkbox_icon,
+                filter_item: filterStyles.filter_item,
+                checkbox_icon: filterStyles.checkbox_icon,
                 checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
-                filter_text: styles.filter_text,
-                dropdown_arrow: styles.dropdown_arrow,
+                filter_text: filterStyles.filter_text,
+                dropdown_arrow: filterStyles.dropdown_arrow,
                 filter_item_active: filterButtonStyles.filter_item_active,
                 filter_text_active: filterButtonStyles.filter_text_active,
                 dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
@@ -224,35 +223,35 @@ export default function PostFilterSection({
             />
           </div>
         }
-        // 검색어 필터 뒤에 오는 버튼들 (고정, 해제) - GA만 사용
+        // 검색어 필터 뒤에 오는 버튼들 (고정, 해제)
         search_after_buttons={
-          manager_type === "ga" && on_pin_selected && on_unpin_selected ? (
+          on_pin_selected && on_unpin_selected ? (
             <>
               {/* 고정 버튼 */}
               <div
                 key="pin"
-                className={styles.filter_item}
+                className={filterStyles.filter_item}
                 onClick={handle_pin}
               >
                 <img
-                  src="/images/icons/pin_icon_black.svg"
+                  src="/images/icons/pin_table_icon.svg"
                   alt="고정"
-                  className={styles.action_icon}
+                  className={filterStyles.action_icon}
                 />
-                <span className={styles.filter_text}>고정</span>
+                <span className={filterStyles.pin_action_text}>고정</span>
               </div>
               {/* 해제 버튼 */}
               <div
                 key="unpin"
-                className={styles.filter_item}
+                className={filterStyles.filter_item}
                 onClick={handle_unpin}
               >
                 <img
                   src="/images/icons/pin_icon_grey.svg"
                   alt="해제"
-                  className={styles.action_icon}
+                  className={filterStyles.action_icon}
                 />
-                <span className={styles.filter_text}>해제</span>
+                <span className={filterStyles.pin_action_text}>해제</span>
               </div>
             </>
           ) : undefined
@@ -262,27 +261,27 @@ export default function PostFilterSection({
           <>
             <div
               key="create"
-              className={styles.filter_item}
+              className={filterStyles.filter_item}
               onClick={handle_create}
             >
               <img
                 src="/images/icons/sign_plus.svg"
                 alt="등록"
-                className={styles.action_icon}
+                className={filterStyles.action_icon}
               />
-              <span className={styles.filter_text}>등록</span>
+              <span className={filterStyles.post_action_text}>등록</span>
             </div>
             <div
               key="delete"
-              className={styles.filter_item}
+              className={filterStyles.filter_item}
               onClick={handle_delete}
             >
               <img
                 src="/images/icons/sign_x.svg"
                 alt="삭제"
-                className={styles.action_icon}
+                className={filterStyles.action_icon}
               />
-              <span className={styles.filter_text}>삭제</span>
+              <span className={filterStyles.post_action_text}>삭제</span>
             </div>
           </>
         }

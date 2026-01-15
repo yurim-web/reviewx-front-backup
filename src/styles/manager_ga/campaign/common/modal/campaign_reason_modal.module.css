@@ -127,12 +127,6 @@
   background: #b0b0b0; /* 호버 시 약간 더 진한 회색 */
 }
 
-/* Firefox 스크롤바 스타일 */
-.reason_text {
-  scrollbar-width: thin; /* 얇은 스크롤바 */
-  scrollbar-color: #d9d9d9 transparent; /* 스크롤바 색상, 트랙 색상 */
-}
-
 /* AI 추천 분류 섹션 */
 .ai_recommended_section {
   display: flex;
@@ -226,10 +220,6 @@
   text-align: center;
 }
 
-.close_button:hover {
-  background: #e8e8e8;
-}
-
 /* 확인 버튼 */
 .confirm_button {
   background: #444444;
@@ -244,8 +234,4 @@
   color: white;
   cursor: pointer;
   text-align: center;
-}
-
-.confirm_button:hover {
-  background: #333333;
 }

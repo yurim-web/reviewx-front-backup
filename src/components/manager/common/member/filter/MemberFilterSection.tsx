@@ -33,6 +33,7 @@ import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
 import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
+import filterStyles from "@/styles/manager/common/section/filter_section.module.css";
 import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.module.css";
 
 // 필터 모달 컴포넌트 타입 정의 (유연하게 받기 위해 any 사용)
@@ -52,17 +53,8 @@ interface MemberFilterSectionProps<TChannel, TGradeOrDivision, TType, TStatus> {
   on_types_change?: (types: TType[]) => void;
   selected_statuses?: TStatus[];
   on_statuses_change?: (statuses: TStatus[]) => void;
-  // CSS 모듈 스타일 객체
-  styles: Record<string, string> & {
-    filter_item: string;
-    checkbox_icon: string;
-    checkbox_icon_checked: string;
-    filter_text: string;
-    dropdown_arrow: string;
-    download_icon: string;
-    report_icon: string;
-    block_icon: string;
-  };
+  // 이용 제한 버튼 클릭 핸들러 (선택적)
+  on_restriction_click?: () => void;
   // 채널 필터 관련
   channel_name_map: Record<string, string>;
   ChannelFilterDropdown: React.ComponentType<any>;
@@ -93,7 +85,7 @@ export default function MemberFilterSection<
   on_types_change,
   selected_statuses = [],
   on_statuses_change,
-  styles: cssStyles,
+  on_restriction_click,
   channel_name_map,
   ChannelFilterDropdown,
   grade_or_division_label,
@@ -215,6 +207,19 @@ export default function MemberFilterSection<
     }
   };
 
+  // 리뷰어/파트너 구분: grade_or_division_label이 "등급"이면 리뷰어, "구분"이면 파트너입니다
+  // 이 정보를 사용하여 alert 메시지를 다르게 표시합니다
+  const member_type = grade_or_division_label === "등급" ? "리뷰어" : "파트너";
+
+  // 목록 다운로드 핸들러
+  // TODO: 엑셀 파일 다운로드 기능 구현 예정
+  // 현재는 임시로 alert를 표시합니다
+  const handle_download_click = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    // alert를 사용하여 사용자에게 알림을 표시합니다
+    alert(`${member_type} 목록 다운로드 기능은 준비 중입니다.`);
+  };
+
   return (
     <div>
       {/* BaseFilterSection 공통 컴포넌트 사용 */}
@@ -234,12 +239,16 @@ export default function MemberFilterSection<
                 onClick={() => set_is_channel_dropdown_open((prev) => !prev)}
                 isActive={selected_channels.length > 0}
                 styles={{
-                  filter_item: cssStyles.filter_item,
-                  checkbox_icon: cssStyles.checkbox_icon,
+                  filter_item: filterStyles.filter_item,
+                  checkbox_icon: filterStyles.checkbox_icon,
                   checkbox_icon_checked:
                     filterButtonStyles.checkbox_icon_checked,
-                  filter_text: cssStyles.filter_text,
-                  dropdown_arrow: cssStyles.dropdown_arrow,
+                  filter_text: filterStyles.filter_text,
+                  dropdown_arrow: filterStyles.dropdown_arrow,
+                  filter_item_active: filterButtonStyles.filter_item_active,
+                  filter_text_active: filterButtonStyles.filter_text_active,
+                  dropdown_arrow_active:
+                    filterButtonStyles.dropdown_arrow_active,
                 }}
               />
               <ChannelFilterDropdown
@@ -263,12 +272,12 @@ export default function MemberFilterSection<
                 }
                 isActive={selected_divisions.length > 0}
                 styles={{
-                  filter_item: cssStyles.filter_item,
-                  checkbox_icon: cssStyles.checkbox_icon,
+                  filter_item: filterStyles.filter_item,
+                  checkbox_icon: filterStyles.checkbox_icon,
                   checkbox_icon_checked:
                     filterButtonStyles.checkbox_icon_checked,
-                  filter_text: cssStyles.filter_text,
-                  dropdown_arrow: cssStyles.dropdown_arrow,
+                  filter_text: filterStyles.filter_text,
+                  dropdown_arrow: filterStyles.dropdown_arrow,
                   filter_item_active: filterButtonStyles.filter_item_active,
                   filter_text_active: filterButtonStyles.filter_text_active,
                   dropdown_arrow_active:
@@ -296,12 +305,12 @@ export default function MemberFilterSection<
                 onClick={() => set_is_type_dropdown_open((prev) => !prev)}
                 isActive={selected_types.length > 0}
                 styles={{
-                  filter_item: cssStyles.filter_item,
-                  checkbox_icon: cssStyles.checkbox_icon,
+                  filter_item: filterStyles.filter_item,
+                  checkbox_icon: filterStyles.checkbox_icon,
                   checkbox_icon_checked:
                     filterButtonStyles.checkbox_icon_checked,
-                  filter_text: cssStyles.filter_text,
-                  dropdown_arrow: cssStyles.dropdown_arrow,
+                  filter_text: filterStyles.filter_text,
+                  dropdown_arrow: filterStyles.dropdown_arrow,
                   filter_item_active: filterButtonStyles.filter_item_active,
                   filter_text_active: filterButtonStyles.filter_text_active,
                   dropdown_arrow_active:
@@ -327,12 +336,12 @@ export default function MemberFilterSection<
                 onClick={() => set_is_status_dropdown_open((prev) => !prev)}
                 isActive={selected_statuses.length > 0}
                 styles={{
-                  filter_item: cssStyles.filter_item,
-                  checkbox_icon: cssStyles.checkbox_icon,
+                  filter_item: filterStyles.filter_item,
+                  checkbox_icon: filterStyles.checkbox_icon,
                   checkbox_icon_checked:
                     filterButtonStyles.checkbox_icon_checked,
-                  filter_text: cssStyles.filter_text,
-                  dropdown_arrow: cssStyles.dropdown_arrow,
+                  filter_text: filterStyles.filter_text,
+                  dropdown_arrow: filterStyles.dropdown_arrow,
                   filter_item_active: filterButtonStyles.filter_item_active,
                   filter_text_active: filterButtonStyles.filter_text_active,
                   dropdown_arrow_active:
@@ -351,35 +360,67 @@ export default function MemberFilterSection<
         }
         // 검색 필터 뒤에 올 버튼 (목록 다운로드)
         search_after_buttons={
-          <div className={cssStyles.filter_item}>
+          <div
+            className={filterStyles.filter_item}
+            onClick={handle_download_click}
+            style={{
+              cursor: "pointer",
+            }}
+            aria-label={`${download_button_text} 다운로드`}
+          >
             <img
               src="/images/excel_icon.png"
               alt="다운로드"
-              className={cssStyles.download_icon}
+              className={filterStyles.download_icon}
             />
-            <span className={cssStyles.filter_text}>
+            <span className={filterStyles.download_button_text}>
               {download_button_text}
             </span>
           </div>
         }
         // 오른쪽에 위치할 버튼 (차단--> 이용제한)
         right_buttons={
-          <div className={cssStyles.filter_item}>
+          <div
+            className={filterStyles.filter_item}
+            onClick={(e) => {
+              // 이벤트 전파 방지
+              e.stopPropagation();
+              // 클릭 핸들러가 있으면 실행
+              if (on_restriction_click) {
+                on_restriction_click();
+              }
+            }}
+            style={{
+              cursor: on_restriction_click ? "pointer" : "default",
+            }}
+            role="button"
+            tabIndex={on_restriction_click ? 0 : -1}
+            onKeyDown={(e) => {
+              // 키보드 접근성: Enter 키나 Space 키를 누르면 클릭과 동일하게 동작합니다
+              if (
+                on_restriction_click &&
+                (e.key === "Enter" || e.key === " ")
+              ) {
+                e.preventDefault();
+                on_restriction_click();
+              }
+            }}
+            aria-label="이용 제한"
+          >
             <img
               src="/images/icons/block_btn_icon.svg"
               alt="차단"
-              className={cssStyles.block_icon}
+              className={filterStyles.block_icon}
             />
-            <span className={cssStyles.filter_text}>이용 제한</span>
+            <span className={filterStyles.restriction_button_text}>
+              이용 제한
+            </span>
           </div>
         }
         // 활성 필터 태그들
         active_filter_tags={active_filter_tags}
         on_filter_tag_remove={handle_filter_tag_remove}
       />
-
-      {/* 필터 모달들 (모두 드롭다운으로 대체) */}
-      {/* ChannelFilterModal, GradeOrDivisionFilterModal, TypeFilterModal, StatusFilterModal은 각각 드롭다운으로 대체되었습니다 */}
     </div>
   );
 }

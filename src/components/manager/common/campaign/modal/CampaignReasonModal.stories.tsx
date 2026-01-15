@@ -11,48 +11,6 @@ import type { CodeInfo } from "./CampaignReasonModal";
 import { reject_code_info } from "@/data/manager_ga/rejected";
 import { report_code_info } from "@/data/manager_ga/reported";
 
-// 실제 CSS 모듈 import
-// Storybook에서는 CSS 모듈을 직접 import하여 사용합니다
-import campaignReasonModalStylesModule from "@/styles/manager_ga/campaign/common/modal/campaign_reason_modal.module.css";
-
-// CSS 모듈 객체를 타입 단언하여 사용
-// readonly 속성을 제거하기 위해 Record 타입으로 캐스팅
-const campaignReasonModalStyles = (campaignReasonModalStylesModule || {
-  modal_overlay: "modal_overlay",
-  modal_container: "modal_container",
-  modal_title: "modal_title",
-  reason_box: "reason_box",
-  reason_text: "reason_text",
-  ai_recommended_section: "ai_recommended_section",
-  ai_recommended_label: "ai_recommended_label",
-  classification_container: "classification_container",
-  classification_item: "classification_item",
-  classification_item_selected: "classification_item_selected",
-  classification_radio: "classification_radio",
-  classification_check_icon: "classification_check_icon",
-  classification_label: "classification_label",
-  modal_footer: "modal_footer",
-  close_button: "close_button",
-  confirm_button: "confirm_button",
-}) as Record<string, string> & {
-  modal_overlay: string;
-  modal_container: string;
-  modal_title: string;
-  reason_box: string;
-  reason_text: string;
-  ai_recommended_section: string;
-  ai_recommended_label: string;
-  classification_container: string;
-  classification_item: string;
-  classification_item_selected: string;
-  classification_radio: string;
-  classification_check_icon: string;
-  classification_label: string;
-  modal_footer: string;
-  close_button: string;
-  confirm_button: string;
-};
-
 // 반려 코드 정보를 CodeInfo 형식으로 변환
 const mockRejectCodeInfoList: CodeInfo[] = reject_code_info.map((info) => ({
   code: info.code,
@@ -100,10 +58,6 @@ const meta: Meta<typeof CampaignReasonModal> = {
       description: "반려/신고 코드 정보 배열",
       control: false,
     },
-    styles: {
-      description: "CSS 모듈 스타일 객체",
-      control: false,
-    },
   },
 };
 
@@ -133,7 +87,6 @@ export const RejectModeOpen: Story = {
         code: args.code || "R001",
         reason_text: args.reason_text || "구매 정보 불일치",
         code_info_list: mockRejectCodeInfoList,
-        styles: campaignReasonModalStyles,
         on_close: () => {
           setIsOpen(false);
           args.on_close?.();
@@ -172,7 +125,6 @@ export const ReportModeOpen: Story = {
         code: args.code || "W001",
         reason_text: args.reason_text || "선정 후 취소",
         code_info_list: mockReportCodeInfoList,
-        styles: campaignReasonModalStyles,
         on_close: () => {
           setIsOpen(false);
           args.on_close?.();
@@ -216,7 +168,6 @@ export const RejectModeInteractive: Story = {
         code: args.code || "R001",
         reason_text: args.reason_text || "구매 정보 불일치",
         code_info_list: mockRejectCodeInfoList,
-        styles: campaignReasonModalStyles,
         on_close: () => {
           setIsOpen(false);
           args.on_close?.();
@@ -260,7 +211,6 @@ export const ReportModeInteractive: Story = {
         code: args.code || "W001",
         reason_text: args.reason_text || "선정 후 취소",
         code_info_list: mockReportCodeInfoList,
-        styles: campaignReasonModalStyles,
         on_close: () => {
           setIsOpen(false);
           args.on_close?.();

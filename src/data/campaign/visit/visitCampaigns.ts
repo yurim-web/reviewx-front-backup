@@ -60,16 +60,13 @@ export const visitCampaigns: VisitCampaignData[] = [
     recruitment: { current: 67, total: 6 },
     schedule: "",
     dayCount: "D-5",
-    registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
+    registeredAt: "2026-01-10T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 선정 중 - 모집 기간 종료 후, 선정 발표 전
-      // 모집 기간: 2025-09-02 ~ 2025-09-14 (종료됨)
-      // 선정 발표: 2025-09-16 (아직 안 지남)
-      // 등록 기간: 2025-09-22 ~ 2025-09-30 (아직 시작 안 함)
-      applicationStart: "2025-09-02",
-      applicationEnd: "2025-09-14",
-      announcement: "2025-09-16",
-      purchasePeriod: "2025-09-16 ~ 2025-09-19",
+      // 모집 중 - 오늘 날짜 기준 (2026-01-10 ~ 2026-01-20)
+      applicationStart: "2026-01-10",
+      applicationEnd: "2026-01-20",
+      announcement: "2026-01-22",
+      purchasePeriod: "2026-01-22 ~ 2026-01-26",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
@@ -106,13 +103,13 @@ export const visitCampaigns: VisitCampaignData[] = [
     schedule: "",
     dayCount: "",
     isUrgent: true, // 긴급 캠페인
-    registeredAt: "2025-12-17T14:20:00.000Z", // 등록 시간
+    registeredAt: "2026-01-08T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-19 ~ 2026-01-05)
-      applicationStart: "2025-12-19",
-      applicationEnd: "2026-01-05",
-      announcement: "2026-01-07",
-      purchasePeriod: "2026-01-08 ~ 2026-01-25",
+      // 모집 중 - 오늘 날짜 기준 (2026-01-08 ~ 2026-01-21)
+      applicationStart: "2026-01-08",
+      applicationEnd: "2026-01-21",
+      announcement: "2026-01-23",
+      purchasePeriod: "2026-01-23 ~ 2026-01-30",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
@@ -149,13 +146,13 @@ export const visitCampaigns: VisitCampaignData[] = [
     recruitment: { current: 45, total: 4 },
     schedule: "",
     dayCount: "D-3",
-    registeredAt: "2025-12-19T11:15:00.000Z", // 등록 시간
+    registeredAt: "2026-01-09T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-21 ~ 2026-01-08)
-      applicationStart: "2025-12-21",
-      applicationEnd: "2026-01-08",
-      announcement: "2026-01-10",
-      purchasePeriod: "2026-01-13 ~ 2026-01-20",
+      // 모집 중 - 오늘 날짜 기준 (2026-01-09 ~ 2026-01-22)
+      applicationStart: "2026-01-09",
+      applicationEnd: "2026-01-22",
+      announcement: "2026-01-24",
+      purchasePeriod: "2026-01-24 ~ 2026-01-30",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
@@ -191,13 +188,13 @@ export const visitCampaigns: VisitCampaignData[] = [
     recruitment: { current: 123, total: 10 },
     schedule: "",
     dayCount: "D-7",
-    registeredAt: "2025-12-20T13:30:00.000Z", // 등록 시간
+    registeredAt: "2026-01-07T13:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-22 ~ 2026-01-10)
-      applicationStart: "2025-12-22",
-      applicationEnd: "2026-01-10",
-      announcement: "2026-01-12",
-      purchasePeriod: "2026-01-15 ~ 2026-01-22",
+      // 모집 중 - 오늘 날짜 기준 (2026-01-07 ~ 2026-01-23)
+      applicationStart: "2026-01-07",
+      applicationEnd: "2026-01-23",
+      announcement: "2026-01-25",
+      purchasePeriod: "2026-01-25 ~ 2026-02-01",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
@@ -275,13 +272,13 @@ export const visitCampaigns: VisitCampaignData[] = [
     recruitment: { current: 78, total: 15 },
     schedule: "",
     dayCount: "D-4",
-    registeredAt: "2025-12-21T15:20:00.000Z", // 등록 시간
+    registeredAt: "2026-01-11T15:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-23 ~ 2026-01-10)
-      applicationStart: "2025-12-23",
-      applicationEnd: "2026-01-10",
-      announcement: "2026-01-12",
-      purchasePeriod: "2026-01-15 ~ 2026-01-22",
+      // 모집 중 - 오늘 날짜 기준 (2026-01-11 ~ 2026-01-24)
+      applicationStart: "2026-01-11",
+      applicationEnd: "2026-01-24",
+      announcement: "2026-01-26",
+      purchasePeriod: "2026-01-26 ~ 2026-02-02",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
@@ -317,13 +314,13 @@ export const visitCampaigns: VisitCampaignData[] = [
     recruitment: { current: 34, total: 3 },
     schedule: "",
     dayCount: "D-2",
-    registeredAt: "2025-11-10T09:15:00.000Z", // 등록 시간
+    registeredAt: "2025-12-28T09:15:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 진행 탭 - applicationEnd가 과거, purchasePeriod가 미래 (announcement <= 오늘 <= purchasePeriod 끝)
-      applicationStart: "2025-11-15",
-      applicationEnd: "2025-11-30",
-      announcement: "2025-12-02",
-      purchasePeriod: "2025-12-05 ~ 2026-01-09",
+      // 등록 중 - 오늘 날짜 기준 (등록 기간: 2026-01-05 ~ 2026-01-25)
+      applicationStart: "2025-12-25",
+      applicationEnd: "2026-01-02",
+      announcement: "2026-01-04",
+      purchasePeriod: "2026-01-05 ~ 2026-01-25",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
@@ -353,13 +350,13 @@ export const visitCampaigns: VisitCampaignData[] = [
     recruitment: { current: 112, total: 9 },
     schedule: "",
     dayCount: "D-8",
-    registeredAt: "2025-11-05T14:00:00.000Z", // 등록 시간
+    registeredAt: "2025-12-26T14:00:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 종료 탭 - purchasePeriod가 과거
-      applicationStart: "2025-11-10",
-      applicationEnd: "2025-11-25",
-      announcement: "2025-11-27",
-      purchasePeriod: "2025-11-30 ~ 2025-12-07",
+      // 등록 중 - 오늘 날짜 기준 (등록 기간: 2026-01-06 ~ 2026-01-26)
+      applicationStart: "2025-12-28",
+      applicationEnd: "2026-01-03",
+      announcement: "2026-01-05",
+      purchasePeriod: "2026-01-06 ~ 2026-01-26",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",

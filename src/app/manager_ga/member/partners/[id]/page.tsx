@@ -10,7 +10,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import {
   get_partner_detail_by_id,
   type PartnerDetail,
@@ -24,10 +24,12 @@ import ActivityInfoSection, {
 } from "@/components/manager/common/member/member_detail/ActivityInfoSection";
 import BusinessInfoSection from "@/components/manager/common/member/partners/section/BusinessInfoSection";
 import ContactPersonSection from "@/components/manager/common/member/partners/section/ContactPersonSection";
+import BaseModal from "@/components/common/modal/BaseModal";
 import styles from "@/styles/manager/common/member/member_detail/detail_page.module.css";
 
 export default function PartnerDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const partner_id = params.id as string;
 
   const [partner_detail, set_partner_detail] = useState<PartnerDetail | null>(
@@ -38,17 +40,34 @@ export default function PartnerDetailPage() {
     useState(false);
   const [is_penalty_history_modal_open, set_is_penalty_history_modal_open] =
     useState(false);
+  // 탈퇴 회원 조회 불가 모달 상태
+  const [is_withdrawn_modal_open, set_is_withdrawn_modal_open] =
+    useState(false);
 
   useEffect(() => {
     const fetch_partner_detail = async () => {
       set_is_loading(true);
       const detail = get_partner_detail_by_id(partner_id);
       set_partner_detail(detail);
+
+      // 일반 관리자(manager_ga)에서는 탈퇴 회원 조회 불가
+      // 탈퇴 회원이면 모달 표시
+      if (detail && detail.status === "탈퇴") {
+        set_is_withdrawn_modal_open(true);
+      }
+
       set_is_loading(false);
     };
 
     fetch_partner_detail();
   }, [partner_id]);
+
+  // 탈퇴 회원 조회 불가 모달 닫기 핸들러
+  // 모달을 닫으면 파트너 목록 페이지로 이동합니다
+  const handle_withdrawn_modal_close = () => {
+    set_is_withdrawn_modal_open(false);
+    router.push("/manager_ga/member/partners");
+  };
 
   const format_number = (num: number): string => {
     return num.toLocaleString();
@@ -57,6 +76,24 @@ export default function PartnerDetailPage() {
   const handle_download_business_certificate = () => {
     // TODO: 실제 다운로드 기능 구현
   };
+
+  // 탈퇴 회원 여부 확인
+  // 일반 관리자(manager_ga)에서는 탈퇴 회원 상세 페이지를 렌더링하지 않습니다
+  const is_withdrawn = partner_detail?.status === "탈퇴";
+
+  // 탈퇴 회원이면 상세 페이지를 렌더링하지 않고 모달만 표시
+  if (is_withdrawn) {
+    return (
+      <BaseModal
+        is_open={is_withdrawn_modal_open}
+        on_close={handle_withdrawn_modal_close}
+        message="탈퇴한 회원은 조회할 수 없습니다."
+        buttons={["닫기"]}
+        close_on_overlay_click={false}
+        close_on_escape={true}
+      />
+    );
+  }
 
   const activity_info_items: ActivityInfoItem[] = [
     {
@@ -80,10 +117,6 @@ export default function PartnerDetailPage() {
         : "0회",
       on_button_click: () => set_is_penalty_history_modal_open(true),
       button_aria_label: "패널티 내역 보기",
-      additional_content:
-        partner_detail?.status_type === "모범 회원" ? (
-          <div className={styles.status_type_badge}>모범 회원</div>
-        ) : undefined,
     },
     {
       label: "접속일",

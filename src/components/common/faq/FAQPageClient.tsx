@@ -25,12 +25,15 @@
 
 "use client";
 
-import React, { useState, useMemo, type ReactNode } from "react";
+import React, { useState, useMemo, useEffect, type ReactNode } from "react";
 import Image from "next/image";
 import styles from "@/styles/user/faq/faq.module.css";
 import PageTitle from "@/components/fragments/PageTitle";
-import { posts_data } from "@/data/manager_ga/community/postsData";
-import { get_post_detail } from "@/data/manager_ga/community/postsData";
+import {
+  posts_data,
+  get_post_detail,
+  type PostItem,
+} from "@/data/manager_ga/community/postsData";
 import {
   convertPostsToFAQs,
   type FAQItem,
@@ -40,6 +43,10 @@ import {
   categories_data,
   type CategoryItem,
 } from "@/data/manager_ga/community/categoriesData";
+import {
+  apply_pinned_state_to_posts,
+  load_pinned_posts_state,
+} from "@/utils/community/posts/pinnedPostsLocalStorage";
 
 /**
  * FAQPageClient 컴포넌트의 Props 타입 정의
@@ -73,6 +80,28 @@ export default function FAQPageClient({
 
   // 펼쳐진 FAQ 항목 ID 목록 (아코디언 상태 관리)
   const [expanded_items, set_expanded_items] = useState<number[]>([]);
+
+   // 관리자 게시글 목록 상태 (FAQ 변환용)
+   // - 초기에는 posts_data(기본 목업 데이터)를 그대로 사용합니다.
+   // - 클라이언트 마운트 후 localStorage에 저장된 고정 상태를 적용합니다.
+  const [posts_for_faq, set_posts_for_faq] = useState<PostItem[]>(posts_data);
+
+  /**
+   * 💾 localStorage에 저장된 게시글 고정 상태 적용
+   * - 컴포넌트가 클라이언트에서 마운트된 후에만 실행됩니다.
+   * - 서버 렌더링 시에는 localStorage에 접근하지 않으므로
+   *   Hydration 오류를 방지할 수 있습니다.
+   */
+  useEffect(() => {
+    const pinned_state = load_pinned_posts_state();
+    if (!pinned_state || Object.keys(pinned_state).length === 0) {
+      return;
+    }
+
+    set_posts_for_faq((previous_posts) =>
+      apply_pinned_state_to_posts(previous_posts, pinned_state)
+    );
+  }, []);
 
   /**
    * 관리자에서 등록한 카테고리 목록을 동적으로 가져오기
@@ -115,10 +144,10 @@ export default function FAQPageClient({
    */
   const converted_faqs = useMemo(() => {
     // convertPostsToFAQs: 관리자 게시글을 FAQ 형식으로 변환하는 함수
-    const faqs = convertPostsToFAQs(posts_data, get_post_detail);
+    const faqs = convertPostsToFAQs(posts_for_faq, get_post_detail);
 
     return faqs;
-  }, []);
+  }, [posts_for_faq]);
 
   /**
    * FAQ 필터링 및 정렬

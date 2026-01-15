@@ -44,7 +44,7 @@ import {
   type ReportCode,
 } from "@/data/manager_ga/reported";
 import CampaignReasonModal from "@/components/manager/common/campaign/modal/CampaignReasonModal";
-import CampaignRestrictionModal from "@/components/manager/ga/campaign/reported/modal/CampaignRestrictionModal";
+import ManagerRestrictionModal from "@/components/manager/common/campaign/modal/ManagerRestrictionModal";
 import BaseModal from "@/components/common/modal/BaseModal";
 import TextareaModal from "@/components/common/modal/TextareaModal";
 import CommonTableWithTooltip, {
@@ -54,8 +54,6 @@ import {
   type TableColumn,
   type TableRowData,
 } from "@/components/manager/common/table/CommonTable";
-import campaignReportModalStyles from "@/styles/manager_ga/campaign/common/modal/campaign_report_modal.module.css";
-import campaignReasonModalStyles from "@/styles/manager_ga/campaign/common/modal/campaign_reason_modal.module.css";
 
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 
@@ -64,19 +62,6 @@ interface ReportedCampaignTableProps {
   selected_report_codes: ReportCode[];
   selected_date_range?: DateRange | undefined;
 }
-
-// 차단 사유 옵션 (차단 모달에서 사용)
-const block_reason_options = [
-  "반복 반려 누적",
-  "반복 취소 누적",
-  "무단 이탈 · 노쇼 누적",
-  "공정위 위반 게시 요청 누적",
-  "부적절 캠페인 게시",
-  "콘텐츠 도용 · 중복",
-  "비정상 요청 · 접근",
-  "외부 결제 · 금전 요구",
-  "비매너 행위",
-];
 
 // ReportedCampaignItem이 TableRowData를 확장하도록 확장
 interface ReportedCampaignTableRowData
@@ -583,48 +568,13 @@ export default function ReportedCampaignTable({
             category: info.category,
             reason: info.reason,
           }))}
-          styles={
-            campaignReasonModalStyles as Record<string, string> & {
-              modal_overlay: string;
-              modal_container: string;
-              modal_title: string;
-              reason_box: string;
-              reason_text: string;
-              ai_recommended_section: string;
-              ai_recommended_label: string;
-              classification_container: string;
-              classification_item: string;
-              classification_item_selected: string;
-              classification_radio: string;
-              classification_check_icon: string;
-              classification_label: string;
-              modal_footer: string;
-              close_button: string;
-              confirm_button: string;
-            }
-          }
         />
       )}
-      <CampaignRestrictionModal
+      <ManagerRestrictionModal
         is_open={block_modal_state.is_open}
         on_close={handle_block_modal_close}
         campaign_id={block_modal_state.campaign_id || undefined}
         on_block={handle_block_submit}
-        block_reason_options={block_reason_options}
-        styles={
-          campaignReportModalStyles as {
-            modal_overlay: string;
-            modal_content: string;
-            modal_title: string;
-            options_list: string;
-            option_item: string;
-            option_radio: string;
-            option_label: string;
-            modal_footer: string;
-            close_button: string;
-            block_button: string;
-          }
-        }
       />
       {/* 해제 확인 모달 */}
       <BaseModal

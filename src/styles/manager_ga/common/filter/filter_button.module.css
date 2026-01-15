@@ -45,6 +45,35 @@
   flex-direction: column;
 }
 
+/* 이용 제한 코드 드롭다운 옵션 리스트 (스크롤 적용) */
+.block_code_options_list_scroll {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+/* 이용 제한 코드 드롭다운 스크롤바 스타일링 */
+.block_code_options_list_scroll::-webkit-scrollbar {
+  width: 10px; /* 스크롤바 전체 너비 (더 얇게) */
+}
+
+.block_code_options_list_scroll::-webkit-scrollbar-track {
+  background: transparent; /* 트랙을 투명하게 */
+  margin: 4px 0; /* 위아래 여백 */
+}
+
+.block_code_options_list_scroll::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 100px;
+  /* 스크롤바가 오른쪽 끝에서 떨어지도록 좌우에 여백 - 3px */
+  border: 4px solid transparent;
+  background-clip: padding-box;
+}
+
+.block_code_options_list_scroll::-webkit-scrollbar-thumb:hover {
+  background: #999999;
+  background-clip: padding-box;
+}
+
 /* 옵션 아이템 */
 .option_item {
   display: flex;
@@ -160,4 +189,3 @@
   position: relative; /* 드롭다운을 absolute로 배치하기 위한 기준점 */
   display: inline-block; /* 인라인 블록으로 설정하여 다른 요소들과 나란히 배치 */
 }
-

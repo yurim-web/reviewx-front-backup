@@ -12,6 +12,8 @@
  *
  * 주요 기능:
  * - 차단 내역 목록 데이터
+ * - 파트너와 리뷰어의 "이용 제한 회원" 항목을 차단 내역으로 표시
+ * - 구분(division)을 "파트너" 또는 "리뷰어"로 설정
  *
  */
 
@@ -153,6 +155,12 @@ export function add_blacklist_item(item: BlacklistItem): void {
 
 // 블랙리스트 항목 제거 함수
 export function remove_blacklist_item(item_id: string): void {
+  // 해제할 항목 찾기 (user_id와 division을 확인하여 이전 상태 복원)
+  const item_to_remove = [
+    ...additional_blacklist_items,
+    ...blacklist_data,
+  ].find((item) => item.id === item_id);
+
   // 추가된 항목에서 제거
   additional_blacklist_items = additional_blacklist_items.filter(
     (item) => item.id !== item_id
@@ -161,6 +169,29 @@ export function remove_blacklist_item(item_id: string): void {
   removed_blacklist_item_ids.add(item_id);
   // localStorage에 저장
   save_to_storage(additional_blacklist_items, removed_blacklist_item_ids);
+
+  // 리뷰어 또는 파트너의 status_type을 이전 상태로 복원
+  // 동적 import를 사용하여 순환 참조 방지
+  if (item_to_remove) {
+    if (item_to_remove.division === "리뷰어") {
+      // 리뷰어 상태 복원 함수 import 및 호출
+      import("@/data/manager_ga/member/reviewers").then((module) => {
+        // 타입 단언을 사용하여 함수 존재 여부 확인
+        if ("restore_reviewer_status_type" in module) {
+          (module as any).restore_reviewer_status_type(item_to_remove.user_id);
+        }
+      });
+    } else if (item_to_remove.division === "파트너") {
+      // 파트너 상태 복원 함수 import 및 호출
+      import("@/data/manager_ga/member/partners").then((module) => {
+        // 타입 단언을 사용하여 함수 존재 여부 확인
+        if ("restore_partner_status_type" in module) {
+          (module as any).restore_partner_status_type(item_to_remove.user_id);
+        }
+      });
+    }
+  }
+
   // 실제 구현 시에는 서버 API를 통해 관리해야 합니다
 }
 
@@ -193,200 +224,136 @@ export function get_blacklist_data(): BlacklistItem[] {
 }
 
 // 차단 내역 목록 데이터
+// 파트너와 리뷰어 목록에서 "이용 제한 회원"인 항목을 BlacklistItem 형식으로 변환한 데이터
 export const blacklist_data: BlacklistItem[] = [
-  // 2025년 11월 (3개)
+  // 파트너: 주식회사 청명종합광고기획 (id: "1")
   {
-    id: "1",
-    name: "주식회사 재밌는걸참좋아하고하고싶은거하는노신사456455ㄴㅇㄹㄴㄹㅇㄴㄹㅇㅇ",
-    user_id: "nodjfj12",
+    id: "partner_1",
+    name: "주식회사 청명종합광고기획",
+    user_id: "1",
     division: "파트너",
-    current_points: 115000,
+    current_points: 0,
     ip_address: "123.123.12.3",
-    block_code: "B001",
-    block_reason: "반복 반려 누적",
-    registered_date: "2026-01-01 14:23",
+    block_code: "B002",
+    block_reason: "무단 이탈 · 노쇼 누적",
+    registered_date: "2026-01-15 10:20",
     registered_by: "시스템",
   },
+  // 파트너: 청불 천막집 방이점 (id: "2")
   {
-    id: "2",
-    name: "그리디센트",
-    user_id: "gredicent_flowershop",
+    id: "partner_2",
+    name: "청불 천막집 방이점",
+    user_id: "2",
     division: "파트너",
     current_points: 0,
     ip_address: "158.176.19.2",
     block_code: "B002",
     block_reason: "무단 이탈 · 노쇼 누적",
-    registered_date: "2026-01-02 09:45",
+    registered_date: "2026-01-12 11:15",
     registered_by: "시스템",
   },
+  // 파트너: 명륜진사갈비 수원광교점 (id: "3")
   {
-    id: "3",
-    name: "홍길동",
-    user_id: "gdhong12345678910",
-    division: "리뷰어",
-    current_points: 12000,
-    ip_address: "456.456.45.6",
-    block_code: "B003",
-    block_reason: "콘텐츠 중복 · 도용",
-    registered_date: "2026-01-03 16:12",
-    registered_by: "관리자 A",
-  },
-  // 2025년 12월 (5개)
-  {
-    id: "4",
-    name: "에이바헤어 모래내시장역점",
-    user_id: "sillyfunction",
+    id: "partner_3",
+    name: "명륜진사갈비 수원광교점",
+    user_id: "3",
     division: "파트너",
-    current_points: 0,
+    current_points: 100000,
     ip_address: "789.789.78.9",
-    block_code: "B004",
-    block_reason: "커뮤니티 가이드 위반",
-    registered_date: "2026-01-04 11:30",
-    registered_by: "관리자 C",
+    block_code: "B002",
+    block_reason: "무단 이탈 · 노쇼 누적",
+    registered_date: "2026-01-10 14:30",
+    registered_by: "시스템",
   },
+  // 파트너: (주)플레티어 (id: "5")
   {
-    id: "5",
-    name: "김유성",
-    user_id: "dongoddmgo234kdfo123",
-    division: "관리자",
+    id: "partner_5",
+    name: "(주)플레티어",
+    user_id: "5",
+    division: "파트너",
     current_points: 0,
     ip_address: "345.345.34.5",
     block_code: "B005",
     block_reason: "비정상 운영 행위",
-    registered_date: "2026-01-05 15:42",
-    registered_by: "admin",
+    registered_date: "2026-01-02 09:30",
+    registered_by: "시스템",
   },
+  // 파트너: 탈퇴회원테스트1 (id: "16")
   {
-    id: "6",
-    name: "에이바헤어 모래내시장역점",
-    user_id: "sillyfunction",
-    division: "리뷰어",
-    current_points: 0,
-    ip_address: "789.789.78.9",
-    block_code: "B006",
-    block_reason: "부적절 캠페인 게시",
-    registered_date: "2026-01-06 13:55",
-    registered_by: "관리자 C",
-  },
-  {
-    id: "7",
-    name: "에이바헤어 모래내시장역점",
-    user_id: "sillyfunction@hanmail.net",
+    id: "partner_16",
+    name: "탈퇴회원테스트1",
+    user_id: "16",
     division: "파트너",
     current_points: 0,
-    ip_address: "789.789.78.9",
-    block_code: "B007",
-    block_reason: "외부 결제 · 금전 요구",
-    registered_date: "2026-01-07 10:18",
-    registered_by: "관리자 C",
+    ip_address: "456.456.45.6",
+    block_code: "B001",
+    block_reason: "반복 반려 누적",
+    registered_date: "2026-01-10 10:00",
+    registered_by: "시스템",
   },
+  // 파트너: 탈퇴회원테스트2 (id: "17")
   {
-    id: "8",
-    name: "김유성",
-    user_id: "dsfsdafasdfdasfdasfa@naver.com",
+    id: "partner_17",
+    name: "탈퇴회원테스트2",
+    user_id: "17",
+    division: "파트너",
+    current_points: 0,
+    ip_address: "567.567.56.7",
+    block_code: "B001",
+    block_reason: "반복 반려 누적",
+    registered_date: "2026-01-08 11:30",
+    registered_by: "시스템",
+  },
+  // 리뷰어: 김은지 (id: "2")
+  {
+    id: "reviewer_2",
+    name: "김은지",
+    user_id: "2",
+    division: "리뷰어",
+    current_points: 1500000,
+    ip_address: "234.234.23.4",
+    block_code: "B002",
+    block_reason: "무단 이탈 · 노쇼 누적",
+    registered_date: "2026-01-08 18:56",
+    registered_by: "시스템",
+  },
+  // 리뷰어: 홍길동 (id: "3")
+  {
+    id: "reviewer_3",
+    name: "홍길동",
+    user_id: "3",
     division: "리뷰어",
     current_points: 999999999,
     ip_address: "345.345.34.5",
-    block_code: "B008",
-    block_reason: "검수 조작",
-    registered_date: "2026-01-08 17:25",
+    block_code: "B002",
+    block_reason: "무단 이탈 · 노쇼 누적",
+    registered_date: "2026-01-08 18:56",
     registered_by: "시스템",
   },
-  // 2026년 1월 (8개 - 가장 많음)
+  // 리뷰어: 유연희 (id: "4")
   {
-    id: "9",
-    name: "에이바헤어 모래내시장역점",
-    user_id: "sillyfunction",
-    division: "파트너",
-    current_points: 800123,
-    ip_address: "789.789.78.9",
-    block_code: "B009",
-    block_reason: "공정위 위반 게시 요청",
-    registered_date: "2026-01-09 09:15",
-    registered_by: "관리자 B",
-  },
-  {
-    id: "10",
-    name: "김유성",
-    user_id: "mintdevelop0001@kakao.com",
+    id: "reviewer_4",
+    name: "유연희",
+    user_id: "4",
     division: "리뷰어",
-    current_points: 0,
-    ip_address: "345.345.34.5",
-    block_code: "B007",
-    block_reason: "외부 결제 · 금전 요구",
-    registered_date: "2026-01-10 14:32",
-    registered_by: "관리자 C",
-  },
-  {
-    id: "11",
-    name: "에이바헤어 모래내시장역점",
-    user_id: "sillyfunction",
-    division: "파트너",
-    current_points: 0,
-    ip_address: "789.789.78.9",
+    current_points: 1500000,
+    ip_address: "456.456.45.6",
     block_code: "B005",
     block_reason: "비정상 운영 행위",
-    registered_date: "2026-01-11 11:20",
-    registered_by: "관리자 C",
+    registered_date: "2026-01-08 18:56",
+    registered_by: "시스템",
   },
+  // 리뷰어: 탈퇴회원테스트 (id: "17")
   {
-    id: "12",
-    name: "에이바헤어 모래내시장역점",
-    user_id: "sillyfunction",
-    division: "파트너",
-    current_points: 0,
-    ip_address: "789.789.78.9",
-    block_code: "B003",
-    block_reason: "콘텐츠 중복 · 도용",
-    registered_date: "2026-01-12 16:45",
-    registered_by: "관리자 C",
-  },
-  {
-    id: "13",
-    name: "라움태닝 송파점",
-    user_id: "songpa_raum",
+    id: "reviewer_17",
+    name: "탈퇴회원테스트",
+    user_id: "17",
     division: "리뷰어",
     current_points: 0,
-    ip_address: "647.158.26.3",
-    block_code: "B002",
-    block_reason: "무단 이탈 · 노쇼 누적",
-    registered_date: "2026-01-12 10:30",
-    registered_by: "관리자 C",
-  },
-  {
-    id: "14",
-    name: "라움태닝 송파점",
-    user_id: "songpa_raum",
-    division: "파트너",
-    current_points: 10258312,
-    ip_address: "647.158.26.3",
-    block_code: "B002",
-    block_reason: "무단 이탈 · 노쇼 누적",
-    registered_date: "2026-01-12 13:15",
-    registered_by: "관리자 C",
-  },
-  {
-    id: "15",
-    name: "그리디센트",
-    user_id: "verificationcheck0@nate.com",
-    division: "파트너",
-    current_points: 0,
-    ip_address: "158.176.19.2",
-    block_code: "B010",
-    block_reason: "반복 반려 누적",
-    registered_date: "2026-01-12 15:50",
-    registered_by: "관리자 C",
-  },
-  {
-    id: "16",
-    name: "홍길동",
-    user_id: "dsfsdafasdfdasfdasfa@hanmail.net",
-    division: "파트너",
-    current_points: 12000,
-    ip_address: "456.456.45.6",
+    ip_address: "567.567.56.7",
     block_code: "B001",
     block_reason: "반복 반려 누적",
-    registered_date: "2026-01-13 09:40",
-    registered_by: "관리자 C",
+    registered_date: "2026-01-08 14:20",
+    registered_by: "시스템",
   },
 ];

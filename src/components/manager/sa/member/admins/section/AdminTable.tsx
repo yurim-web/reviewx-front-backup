@@ -216,7 +216,6 @@ export default function AdminTable({
             return (
               <MemberStatusTag
                 status={row.status as "정상" | "일시 정지" | "영구 정지"}
-                styles={tag_styles}
               />
             );
           case "edit":

@@ -1,12 +1,12 @@
 /* ========================================
-   📋 캠페인 신고 모달 스타일
+   📋 신고 사유 모달 스타일
    ======================================== */
 
 /**
- * 캠페인 신고 모달 관련 스타일
+ * 신고 사유 모달 관련 스타일
  * 
  * 사용 컴포넌트:
- * - CampaignReportModal.tsx (캠페인 신고 모달 컴포넌트)
+ * - ManagerReportReasonModal.tsx (신고 사유 모달 컴포넌트)
  * 
  * 사용 페이지:
  * - /manager_ga/progress (GA 관리자 진행 현황)
@@ -36,8 +36,10 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  max-height: 706px;
-  overflow: hidden;
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 /* 모달 제목 */
@@ -57,8 +59,7 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
-  flex: 1;
-  /* overflow-y: auto; */
+  flex: 0 0 auto;
 }
 
 /* 옵션 아이템 */
@@ -108,6 +109,89 @@
   font-weight: 500;
   line-height: 16px; /* 100% */
   letter-spacing: -0.32px;
+}
+
+/* textarea 래퍼 (기타 비매너 행위 선택 시 표시) */
+.textarea_wrapper {
+  width: 100%;
+  margin-top: 16px;
+  margin-bottom: 0;
+  flex: 0 0 auto;
+}
+
+/* textarea 스타일 */
+.textarea {
+  width: 100%;
+  height: 144px;
+  min-height: 144px;
+  max-height: 144px;
+  padding: 16px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #444;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: -0.32px;
+  font-family: inherit;
+  box-sizing: border-box;
+  resize: none;
+  outline: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  /* Firefox 스크롤바 스타일 */
+  scrollbar-width: thin;
+  scrollbar-color: #d9d9d9 transparent;
+}
+
+.textarea:focus {
+  border-color: #555555;
+}
+
+/* textarea 에러 상태 (사유 미입력 시) */
+.textarea_error {
+  border-color: #ff2626;
+}
+
+.textarea_error:focus {
+  border-color: #ff2626;
+}
+
+.textarea::placeholder {
+  color: #999999;
+  opacity: 0.8;
+}
+
+/* textarea 스크롤바 스타일링 */
+.textarea::-webkit-scrollbar {
+  width: 16px;
+}
+
+/* 스크롤바 위아래 화살표 제거 */
+.textarea::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.textarea::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 8px 0;
+}
+
+.textarea::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 100px;
+  border: 12px solid transparent;
+  background-clip: padding-box;
+}
+
+.textarea::-webkit-scrollbar-thumb:hover {
+  background: #999999;
+  background-clip: padding-box;
 }
 
 /* 모달 푸터 */

@@ -16,6 +16,7 @@
  * 주요 기능:
  * - 리뷰어/파트너의 캠페인 진행 내역을 테이블 형태로 표시합니다
  * - 캠페인 번호, 캠페인명, 상태, 유형, 채널, 지급 포인트 정보를 보여줍니다
+ * - 캠페인 번호 기준 내림차순 정렬 (큰 번호가 먼저 표시됩니다)
  *
  */
 
@@ -104,6 +105,16 @@ export default function CampaignHistoryModal({
     }
   };
 
+  // 캠페인 번호 기준 내림차순 정렬된 캠페인 목록
+  // sort 함수: 배열의 요소를 정렬합니다
+  // localeCompare: 문자열을 비교하여 정렬 순서를 결정합니다
+  // 내림차순 정렬: b를 먼저 비교하여 큰 번호가 앞에 오도록 합니다
+  // campaign_number는 문자열이므로 문자열 비교로 정렬됩니다
+  const sorted_campaigns = [...campaigns].sort((a, b) => {
+    // 내림차순: b가 a보다 크면 음수 반환 (b가 앞으로)
+    return b.campaign_number.localeCompare(a.campaign_number);
+  });
+
   return (
     <div className={cssStyles.modal_overlay} onClick={handle_overlay_click}>
       <div
@@ -144,7 +155,7 @@ export default function CampaignHistoryModal({
             {/* 테이블 바디: 항상 렌더링되며, 데이터가 없을 때는 빈 상태 메시지를 표시합니다 */}
             <div className={cssStyles.table_body}>
               {/* 조건부 렌더링: 데이터가 없을 때 빈 상태 메시지 표시 */}
-              {campaigns.length === 0 ? (
+              {sorted_campaigns.length === 0 ? (
                 <div className={cssStyles.empty_state}>
                   <p className={cssStyles.empty_message}>
                     캠페인 진행 내역이 없습니다.
@@ -154,7 +165,8 @@ export default function CampaignHistoryModal({
                 /* map 함수를 사용하여 campaigns 배열을 순회하며 테이블 행을 렌더링합니다 */
                 /* map 함수: 배열의 각 요소를 순회하며 새로운 배열을 만듭니다 */
                 /* key prop: React에서 리스트를 렌더링할 때 각 요소를 구분하기 위해 필요합니다 */
-                campaigns.map((campaign, index) => (
+                /* 정렬된 배열(sorted_campaigns)을 사용하여 큰 캠페인 번호가 먼저 표시됩니다 */
+                sorted_campaigns.map((campaign, index) => (
                   <div key={index} className={cssStyles.table_row}>
                     {/* 캠페인 번호 */}
                     <div className={cssStyles.table_cell}>
@@ -168,18 +180,12 @@ export default function CampaignHistoryModal({
 
                     {/* 상태 */}
                     <div className={cssStyles.table_cell}>
-                      <CampaignStatusTag
-                        status={campaign.status}
-                        styles={tagStyles}
-                      />
+                      <CampaignStatusTag status={campaign.status} />
                     </div>
 
                     {/* 유형 */}
                     <div className={cssStyles.table_cell}>
-                      <CampaignTypeTag
-                        type={campaign.type as CampaignType}
-                        styles={tagStyles}
-                      />
+                      <CampaignTypeTag type={campaign.type as CampaignType} />
                     </div>
 
                     {/* 채널 */}

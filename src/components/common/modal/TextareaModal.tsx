@@ -24,6 +24,7 @@
 
 import { useEffect } from "react";
 import styles from "@/styles/common/modal/textarea_modal.module.css";
+import CommonTextarea from "@/components/common/textarea/CommonTextarea";
 
 export type TextareaModalType = "center" | "bottom";
 export type TextareaModalVariant = "default" | "reject" | "extend";
@@ -174,19 +175,19 @@ export default function TextareaModal({
           </h2>
 
           {/* 텍스트 입력 영역 */}
-          <div className={styles.textarea_wrapper}>
-            <textarea
-              className={`${styles.modal_textarea} ${
-                readOnly ? styles.modal_textarea_readonly : ""
-              } ${is_reject_variant ? styles.modal_textarea_reject : ""}`}
-              value={value}
-              onChange={handle_textarea_change}
-              placeholder={placeholder}
-              rows={5}
-              readOnly={readOnly}
-              disabled={readOnly}
-            />
-          </div>
+          <CommonTextarea
+            value={value}
+            onChange={handle_textarea_change}
+            placeholder={placeholder}
+            rows={5}
+            readOnly={readOnly}
+            disabled={readOnly}
+            has_error={readOnly || is_reject_variant}
+            className={`${readOnly ? styles.modal_textarea_readonly : ""} ${
+              is_reject_variant ? styles.modal_textarea_reject : ""
+            }`.trim()}
+            stop_propagation={true}
+          />
 
           {/* 모달 푸터 버튼 */}
           <div className={styles.modal_footer}>

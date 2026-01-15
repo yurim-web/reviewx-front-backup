@@ -29,7 +29,7 @@ import {
   Label,
   Tooltip,
 } from 'recharts';
-import styles from '@/styles/manager_ga/dashboard/member_stats.module.css';
+import styles from '@/styles/manager/common/dashboard/chart/member_stats.module.css';
 import {
   channelData,
   ChannelData,

@@ -20,6 +20,10 @@
  * - 정지: 회색 배경, 회색 텍스트
  */
 
+// CSS 모듈 직접 import
+// 컴포넌트 내부에서 스타일을 직접 가져와서 사용합니다
+import tag_styles from "@/styles/common/tags.module.css";
+
 /**
  * 패널티 유형 타입 정의
  */
@@ -30,23 +34,17 @@ export type PenaltyType = "경고" | "주의" | "정지";
  *
  * 각 속성 설명:
  * - type: 표시할 패널티 유형 값 (경고, 주의, 정지 중 하나)
- * - styles: CSS 모듈에서 가져온 스타일 객체
  */
 interface PenaltyTypeTagProps {
   type: PenaltyType;
-  styles: Record<string, string>;
 }
 
 /**
  * 패널티 유형 태그 컴포넌트
  *
  * @param type - 표시할 패널티 유형 값
- * @param styles - CSS 모듈 스타일 객체
  */
-export default function PenaltyTypeTag({
-  type,
-  styles: css_styles,
-}: PenaltyTypeTagProps) {
+export default function PenaltyTypeTag({ type }: PenaltyTypeTagProps) {
   /**
    * 유형에 따라 적절한 CSS 클래스명을 반환하는 함수
    *
@@ -61,18 +59,18 @@ export default function PenaltyTypeTag({
         // 경고: 오렌지색 배경, 오렌지색 텍스트
         // CSS 클래스가 없으면 기본 type_tag_penalty 사용 (기존 스타일과 호환)
         return (
-          css_styles.type_tag_penalty_warning || css_styles.type_tag_penalty
+          tag_styles.type_tag_penalty_warning || tag_styles.type_tag_penalty
         );
       case "주의":
         // 주의: 연한 빨간색 배경, 빨간색 텍스트
-        return css_styles.type_tag_penalty_caution;
+        return tag_styles.type_tag_penalty_caution;
       case "정지":
         // 정지: 회색 배경, 회색 텍스트
-        return css_styles.type_tag_penalty_suspension;
+        return tag_styles.type_tag_penalty_suspension;
       default:
         // 기본값으로 경고 유형 스타일 반환
         return (
-          css_styles.type_tag_penalty_warning || css_styles.type_tag_penalty
+          tag_styles.type_tag_penalty_warning || tag_styles.type_tag_penalty
         );
     }
   };
@@ -89,7 +87,7 @@ export default function PenaltyTypeTag({
    */
   return (
     <div
-      className={`${css_styles.type_tag_penalty} ${get_type_class_name()}`}
+      className={`${tag_styles.type_tag_penalty} ${get_type_class_name()}`}
       role="status"
       aria-label={`패널티 유형: ${type}`}
     >

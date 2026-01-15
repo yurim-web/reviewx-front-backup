@@ -111,13 +111,13 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-3",
-    registeredAt: "2025-12-17T11:15:00.000Z", // 등록 시간
+    registeredAt: "2026-01-08T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-19 ~ 2026-01-05)
-      applicationStart: "2025-12-19",
-      applicationEnd: "2026-01-05",
-      announcement: "2026-01-07",
-      registrationPeriod: "2026-01-08 ~ 2026-01-25",
+      // 모집 중 - 현재 날짜 기준 (2026-01-10 ~ 2026-01-22)
+      applicationStart: "2026-01-10",
+      applicationEnd: "2026-01-22",
+      announcement: "2026-01-24",
+      registrationPeriod: "2026-01-25 ~ 2026-02-10",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
@@ -154,13 +154,13 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     schedule: "",
     dayCount: "",
     isUrgent: true, // 긴급 캠페인
-    registeredAt: "2025-12-16T13:45:00.000Z", // 등록 시간
+    registeredAt: "2026-01-06T13:45:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-21 ~ 2026-01-08)
-      applicationStart: "2025-12-21",
-      applicationEnd: "2026-01-08",
-      announcement: "2026-01-10",
-      registrationPeriod: "2026-01-13 ~ 2026-01-20",
+      // 모집 중 - 현재 날짜 기준 (2026-01-08 ~ 2026-01-23)
+      applicationStart: "2026-01-08",
+      applicationEnd: "2026-01-23",
+      announcement: "2026-01-25",
+      registrationPeriod: "2026-01-28 ~ 2026-02-05",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
@@ -195,13 +195,13 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-7",
-    registeredAt: "2025-12-20T13:30:00.000Z", // 등록 시간
+    registeredAt: "2026-01-09T13:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-22 ~ 2026-01-10)
-      applicationStart: "2025-12-22",
-      applicationEnd: "2026-01-20",
-      announcement: "2026-01-22", // 예정 탭
-      registrationPeriod: "2026-01-25 ~ 2026-02-01", // 예정 탭
+      // 모집 중 - 현재 날짜 기준 (2026-01-11 ~ 2026-01-24)
+      applicationStart: "2026-01-11",
+      applicationEnd: "2026-01-24",
+      announcement: "2026-01-26",
+      registrationPeriod: "2026-01-29 ~ 2026-02-06",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
@@ -277,13 +277,13 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-4",
-    registeredAt: "2025-12-21T15:20:00.000Z", // 등록 시간
+    registeredAt: "2026-01-07T15:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-23 ~ 2026-01-10)
-      applicationStart: "2025-12-23",
-      applicationEnd: "2026-01-10",
-      announcement: "2026-01-12",
-      registrationPeriod: "2026-01-15 ~ 2026-01-22",
+      // 모집 중 - 현재 날짜 기준 (2026-01-09 ~ 2026-01-25)
+      applicationStart: "2026-01-09",
+      applicationEnd: "2026-01-25",
+      announcement: "2026-01-27",
+      registrationPeriod: "2026-01-30 ~ 2026-02-07",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
@@ -524,13 +524,13 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     },
     schedule: "",
     dayCount: "마감임박",
-    registeredAt: "2025-12-26T11:30:00.000Z", // 등록 시간
+    registeredAt: "2026-01-11T11:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 마감임박 - 현재 날짜(2025-12-30) 기준으로 2일 후 마감 (2025-12-28 ~ 2026-01-01)
-      applicationStart: "2025-12-28",
-      applicationEnd: "2026-01-01",
-      announcement: "2026-01-03",
-      registrationPeriod: "2026-01-03 ~ 2026-01-10",
+      // 모집 중 - 현재 날짜 기준 (2026-01-13 ~ 2026-01-26)
+      applicationStart: "2026-01-13",
+      applicationEnd: "2026-01-26",
+      announcement: "2026-01-28",
+      registrationPeriod: "2026-01-31 ~ 2026-02-08",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "클립",

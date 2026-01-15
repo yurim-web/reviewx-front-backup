@@ -298,18 +298,12 @@ export default function PaymentHistoryTable({
       case "businessType":
         // BusinessTypeTag 컴포넌트를 사용하여 사업자 구분 태그 표시
         return (
-          <BusinessTypeTag
-            type={row.businessType as BusinessType}
-            styles={styles}
-          />
+          <BusinessTypeTag type={row.businessType as BusinessType} />
         );
       case "paymentMethod":
         // PaymentMethodTag 컴포넌트를 사용하여 결제 수단 태그 표시
         return (
-          <PaymentMethodTag
-            method={row.paymentMethod as PaymentMethod}
-            styles={styles}
-          />
+          <PaymentMethodTag method={row.paymentMethod as PaymentMethod} />
         );
       case "taxInvoice":
         return <span className={styles.cell_text}>{row.taxInvoice}</span>;
@@ -326,10 +320,7 @@ export default function PaymentHistoryTable({
       case "paymentStatus":
         // 결제 상태 열: 결제 상태 태그 표시
         return (
-          <PaymentStatusTag
-            status={row.paymentStatus as PaymentStatus}
-            styles={styles}
-          />
+          <PaymentStatusTag status={row.paymentStatus as PaymentStatus} />
         );
       case "requestDate":
         return <span className={styles.cell_text}>{row.requestDate}</span>;
@@ -342,7 +333,6 @@ export default function PaymentHistoryTable({
         return (
           <MemberStatusTag
             status={row.accountStatus as MemberStatus}
-            styles={styles}
           />
         );
       default:

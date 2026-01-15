@@ -18,6 +18,10 @@
  * - 반려: 연한 빨간색 배경, 빨간색 텍스트
  */
 
+// CSS 모듈 직접 import
+// 컴포넌트 내부에서 스타일을 직접 가져와서 사용합니다
+import tag_styles from "@/styles/common/tags.module.css";
+
 /**
  * 출금 처리 상태 타입 정의
  */
@@ -28,22 +32,18 @@ export type PayoutStatus = "신청" | "긴급" | "완료" | "반려";
  *
  * 각 속성 설명:
  * - status: 표시할 출금 처리 상태 값 (신청, 긴급, 완료, 반려 중 하나)
- * - styles: CSS 모듈에서 가져온 스타일 객체
  */
 interface PayoutStatusTagProps {
   status: PayoutStatus;
-  styles: Record<string, string>;
 }
 
 /**
  * 출금 처리 상태 태그 컴포넌트
  *
  * @param status - 표시할 출금 처리 상태 값
- * @param styles - CSS 모듈 스타일 객체
  */
 export default function PayoutStatusTag({
   status,
-  styles: css_styles,
 }: PayoutStatusTagProps) {
   /**
    * 상태에 따라 적절한 CSS 클래스명을 반환하는 함수
@@ -52,19 +52,19 @@ export default function PayoutStatusTag({
     switch (status) {
       case "신청":
         // 신청: 회색 배경, 회색 텍스트
-        return css_styles.status_tag_request;
+        return tag_styles.payout_status_request;
       case "긴급":
         // 긴급: 빨간색 배경, 흰색 텍스트
-        return css_styles.status_tag_urgent;
+        return tag_styles.payout_status_urgent;
       case "완료":
         // 완료: 연한 초록색 배경, 초록색 텍스트
-        return css_styles.status_tag_completed;
+        return tag_styles.payout_status_completed;
       case "반려":
         // 반려: 연한 빨간색 배경, 빨간색 텍스트
-        return css_styles.status_tag_rejected;
+        return tag_styles.payout_status_rejected;
       default:
         // 기본값으로 신청 상태 스타일 반환
-        return css_styles.status_tag_request;
+        return tag_styles.payout_status_request;
     }
   };
 
@@ -80,7 +80,7 @@ export default function PayoutStatusTag({
    */
   return (
     <div
-      className={`${css_styles.status_tag} ${get_status_class_name()}`}
+      className={`${tag_styles.payout_status_tag} ${get_status_class_name()}`}
       role="status"
       aria-label={`출금 처리 상태: ${status}`}
     >

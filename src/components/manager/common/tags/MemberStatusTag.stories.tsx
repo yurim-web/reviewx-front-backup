@@ -10,24 +10,6 @@ import MemberStatusTag, {
   type MemberStatus,
 } from "@/components/manager/common/tags/MemberStatusTag";
 
-// CSS 모듈 import
-import tagsStylesModule from "@/styles/common/tags.module.css";
-
-// CSS 모듈 객체를 타입 단언하여 사용
-const tagsStyles = (tagsStylesModule || {
-  status_tag: "status_tag",
-  status_tag_normal: "status_tag_normal",
-  status_tag_suspended: "status_tag_suspended",
-  status_tag_permanent: "status_tag_permanent",
-  status_tag_withdrawn: "status_tag_withdrawn",
-}) as Record<string, string> & {
-  status_tag: string;
-  status_tag_normal: string;
-  status_tag_suspended: string;
-  status_tag_permanent: string;
-  status_tag_withdrawn: string;
-};
-
 const meta: Meta<typeof MemberStatusTag> = {
   title: "Manager/Common/Tags/MemberStatusTag",
   component: MemberStatusTag,
@@ -41,10 +23,6 @@ const meta: Meta<typeof MemberStatusTag> = {
       control: "select",
       options: ["정상", "일시 정지", "영구 정지", "탈퇴"],
     },
-    styles: {
-      description: "CSS 모듈 스타일 객체",
-      control: false,
-    },
   },
 };
 
@@ -56,7 +34,6 @@ type Story = StoryObj<typeof MemberStatusTag>;
 export const Normal: Story = {
   args: {
     status: "정상",
-    styles: tagsStyles,
   },
 };
 
@@ -64,7 +41,6 @@ export const Normal: Story = {
 export const Suspended: Story = {
   args: {
     status: "일시 정지",
-    styles: tagsStyles,
   },
 };
 
@@ -72,7 +48,6 @@ export const Suspended: Story = {
 export const Permanent: Story = {
   args: {
     status: "영구 정지",
-    styles: tagsStyles,
   },
 };
 
@@ -80,7 +55,6 @@ export const Permanent: Story = {
 export const Withdrawn: Story = {
   args: {
     status: "탈퇴",
-    styles: tagsStyles,
   },
 };
 
@@ -103,7 +77,6 @@ export const AllStatuses: Story = {
         React.createElement(MemberStatusTag, {
           key: status,
           status,
-          styles: tagsStyles,
         })
       )
     );

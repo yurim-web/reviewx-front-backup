@@ -14,10 +14,10 @@
  *
  */
 
-import styles from '@/styles/manager_ga/dashboard/member_stats.module.css';
-import MemberActivationSection from './section/MemberActivationSection';
-import MemberTypeSection from './section/MemberTypeSection';
-import ChannelMemberSection from './section/ChannelMemberSection';
+import styles from "@/styles/manager/common/dashboard/chart/member_stats.module.css";
+import MemberActivationSection from "./section/MemberActivationSection";
+import MemberTypeSection from "./section/MemberTypeSection";
+import ChannelMemberSection from "./section/ChannelMemberSection";
 
 export default function MemberStatsSection() {
   return (

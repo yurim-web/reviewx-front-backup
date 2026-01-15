@@ -17,11 +17,10 @@
 import BaseFilterDropdown, {
   type FilterOption,
 } from "@/components/manager/ga/common/filter/BaseFilterDropdown";
-import type { ReviewerType } from "@/data/manager_ga/common/filterOptions";
-import { reviewer_type_filter_options } from "@/data/manager_ga/common/filterOptions";
+import type { ReviewerStatusType } from "@/data/manager_ga/common/filterOptions";
+import { reviewer_status_type_filter_options } from "@/data/manager_ga/common/filterOptions";
 
-// 리뷰어 등급 타입 정의 (ReviewerType을 재export)
-export type ReviewerGrade = ReviewerType;
+export type ReviewerGrade = ReviewerStatusType;
 
 interface GradeFilterDropdownProps {
   is_open: boolean;
@@ -33,7 +32,7 @@ interface GradeFilterDropdownProps {
 
 // 등급 옵션을 FilterOption 형태로 변환
 const filter_options: FilterOption<ReviewerGrade>[] =
-  reviewer_type_filter_options.map((grade) => ({
+  reviewer_status_type_filter_options.map((grade) => ({
     value: grade,
     label: grade,
   }));
@@ -56,4 +55,3 @@ export default function GradeFilterDropdown({
     />
   );
 }
-

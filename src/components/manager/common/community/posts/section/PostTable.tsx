@@ -237,34 +237,35 @@ export default function PostTable({
             // 카테고리는 일반 텍스트로 표시 (태그 스타일 제거)
             return <span>{row.category}</span>;
           case "target":
-            return (
-              <UserTypeTag
-                type={row.target as UserType | "전체"}
-                styles={styles}
-              />
-            );
+            return <UserTypeTag type={row.target as UserType | "전체"} />;
           case "title":
             // 제목과 고정 아이콘을 함께 표시
-            // 제목 클릭 시 상세 페이지로 이동
+            // 제목은 원래 스타일(title_button)을 유지하되, onClick 핸들러는 제거
+            // 행 클릭 시 상세 페이지로 이동하고, 수정 페이지로 이동하는 것은 맨 끝 수정 버튼을 클릭했을 때만 가능
             return (
               <div className={styles.title_wrapper}>
                 <button
                   className={styles.title_button}
+                  type="button"
                   onClick={(e) => {
-                    // 이벤트 전파를 막아서 행 클릭 이벤트가 발생하지 않도록 함
-                    e.stopPropagation();
-                    // 게시글 수정 페이지로 이동
-                    router.push(`${base_path}/${row.id}/edit`);
+                    // 제목 클릭 시 이벤트 전파를 막지 않아서 행 클릭 이벤트가 발생하도록 함
+                    // 이렇게 하면 제목 클릭 시 상세 페이지로 이동
                   }}
                   aria-label={`${row.title} 게시글 상세 보기`}
                 >
                   <span className={styles.title_text}>{row.title}</span>
                   {/* 고정된 게시글인 경우 제목 바로 옆에 고정 아이콘 표시 */}
+                  {/* 고정 아이콘은 단순 표시용이므로 클릭해도 아무 동작을 하지 않음 */}
                   {row.is_pinned && (
                     <img
                       src="/images/icons/pin_table_icon.svg"
                       alt="고정"
                       className={styles.pin_icon}
+                      onClick={(e) => {
+                        // 고정 아이콘 클릭 시 이벤트 전파를 막아서 행 클릭 이벤트가 발생하지 않도록 함
+                        e.stopPropagation();
+                      }}
+                      style={{ cursor: "default" }}
                     />
                   )}
                 </button>
@@ -278,11 +279,18 @@ export default function PostTable({
             return <span>{row.registered_by}</span>;
           case "edit":
             // 호버된 행에만 수정 버튼 표시
+            // 수정 컬럼 전체를 클릭해도 수정 페이지로 이동
             const is_hovered = hovered_row_id === row.id;
             return (
               <div
                 data-edit-cell="true"
-                style={{ width: "100%", height: "100%" }}
+                style={{ width: "100%", height: "100%", cursor: "pointer" }}
+                onClick={(e) => {
+                  // 이벤트 전파를 막아서 행 클릭 이벤트가 발생하지 않도록 함
+                  e.stopPropagation();
+                  // 게시글 수정 페이지로 이동
+                  router.push(`${base_path}/${row.id}/edit`);
+                }}
               >
                 {is_hovered ? (
                   <button

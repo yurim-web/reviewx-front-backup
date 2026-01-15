@@ -74,6 +74,16 @@
   background-color: #f9f9f9;
 }
 
+/* 클릭 가능한 행 스타일 (파트너/리뷰어) */
+.clickable_row {
+  cursor: pointer;
+}
+
+/* 클릭 가능한 행 호버 효과 */
+.clickable_row:hover {
+  background-color: #f0f0f0;
+}
+
 /* 테이블 행 */
 .table_row {
   display: grid;

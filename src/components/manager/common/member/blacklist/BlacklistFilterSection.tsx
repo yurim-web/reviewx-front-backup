@@ -23,7 +23,6 @@
 "use client";
 
 import { useState, useRef } from "react";
-import styles from "@/styles/manager/common/member/blacklist/blacklist_filter_section.module.css";
 import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
@@ -36,7 +35,7 @@ import type {
   BlacklistDivision,
   BlockCode,
 } from "@/data/manager_ga/common/filterOptions";
-import baseFilterStyles from "@/styles/manager/common/campaign/progress/filter_section.module.css";
+import filterStyles from "@/styles/manager/common/section/filter_section.module.css";
 import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.module.css";
 
 interface BlacklistFilterSectionProps {
@@ -107,7 +106,7 @@ export default function BlacklistFilterSection({
     })),
     ...selected_block_codes.map((block_code) => ({
       value: block_code,
-      label: `차단 코드: ${block_code}`,
+      label: block_code,
     })),
   ];
 
@@ -143,12 +142,12 @@ export default function BlacklistFilterSection({
                 onClick={() => set_is_division_dropdown_open((prev) => !prev)}
                 isActive={selected_divisions.length > 0}
                 styles={{
-                  filter_item: styles.filter_item,
-                  checkbox_icon: styles.checkbox_icon,
+                  filter_item: filterStyles.filter_item,
+                  checkbox_icon: filterStyles.checkbox_icon,
                   checkbox_icon_checked:
                     filterButtonStyles.checkbox_icon_checked,
-                  filter_text: styles.filter_text,
-                  dropdown_arrow: styles.dropdown_arrow,
+                  filter_text: filterStyles.filter_text,
+                  dropdown_arrow: filterStyles.dropdown_arrow,
                   filter_item_active: filterButtonStyles.filter_item_active,
                   filter_text_active: filterButtonStyles.filter_text_active,
                   dropdown_arrow_active:
@@ -169,16 +168,16 @@ export default function BlacklistFilterSection({
               className={filterButtonStyles.filter_button_dropdown_wrapper}
             >
               <FilterButton
-                label="차단 코드"
+                label="이용 제한 코드"
                 onClick={() => set_is_block_code_dropdown_open((prev) => !prev)}
                 isActive={selected_block_codes.length > 0}
                 styles={{
-                  filter_item: styles.filter_item,
-                  checkbox_icon: styles.checkbox_icon,
+                  filter_item: filterStyles.filter_item,
+                  checkbox_icon: filterStyles.checkbox_icon,
                   checkbox_icon_checked:
                     filterButtonStyles.checkbox_icon_checked,
-                  filter_text: styles.filter_text,
-                  dropdown_arrow: styles.dropdown_arrow,
+                  filter_text: filterStyles.filter_text,
+                  dropdown_arrow: filterStyles.dropdown_arrow,
                   filter_item_active: filterButtonStyles.filter_item_active,
                   filter_text_active: filterButtonStyles.filter_text_active,
                   dropdown_arrow_active:

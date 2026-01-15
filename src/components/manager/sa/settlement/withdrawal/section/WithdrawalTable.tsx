@@ -245,7 +245,6 @@ export default function WithdrawalTable({
         return (
           <PayoutStatusTag
             status={convert_payment_status_to_payout_status(row.paymentStatus)}
-            styles={styles}
           />
         );
       case "requestDate":
@@ -258,7 +257,7 @@ export default function WithdrawalTable({
         // 상태 열: 회원 상태 태그 표시 (isNormal이 true일 때만)
         return (
           <>
-            {row.isNormal && <MemberStatusTag status="정상" styles={styles} />}
+            {row.isNormal && <MemberStatusTag status="정상" />}
           </>
         );
       default:

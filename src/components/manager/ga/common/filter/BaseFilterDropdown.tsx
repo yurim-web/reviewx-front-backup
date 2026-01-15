@@ -53,6 +53,8 @@ export interface BaseFilterDropdownProps<T> {
   options: FilterOption<T>[];
   // 드롭다운 컨테이너 ref (위치 계산용)
   container_ref?: React.RefObject<HTMLDivElement>;
+  // 옵션 리스트에 추가할 클래스명 (스크롤 등 스타일 적용용)
+  options_list_class_name?: string;
 }
 
 /**
@@ -67,6 +69,7 @@ export default function BaseFilterDropdown<T extends string | number>({
   on_apply,
   options,
   container_ref,
+  options_list_class_name,
 }: BaseFilterDropdownProps<T>) {
   // 드롭다운 DOM 요소 참조
   // useRef: DOM 요소에 직접 접근하기 위한 React Hook
@@ -147,7 +150,11 @@ export default function BaseFilterDropdown<T extends string | number>({
   return (
     <div ref={dropdown_ref} className={styles.dropdown_container}>
       {/* 옵션 리스트 */}
-      <div className={styles.options_list}>
+      <div
+        className={`${styles.options_list} ${
+          options_list_class_name ? styles[options_list_class_name] || "" : ""
+        }`}
+      >
         {/* map 함수: 배열을 순회하며 JSX 요소를 생성합니다 */}
         {options.map((option) => {
           // 옵션이 선택되었는지 확인

@@ -131,7 +131,6 @@ export default function ReviewerDetailPage() {
         : "0회",
     },
     // 패널티
-    // todo 기준 수정 필요
     {
       label: "패널티",
       value: reviewer_detail
@@ -139,12 +138,6 @@ export default function ReviewerDetailPage() {
         : "0회",
       on_button_click: () => set_is_penalty_history_modal_open(true),
       button_aria_label: "패널티 내역 보기",
-      additional_content:
-        reviewer_detail?.status_type === "모범 회원" ? (
-          <div className={styles.status_type_badge}>모범 회원</div>
-        ) : (
-          <div className={styles.status_type_badge}>일반 회원</div>
-        ),
     },
     // 접속일
     {
@@ -176,7 +169,7 @@ export default function ReviewerDetailPage() {
     <MemberDetailLayout
       is_loading={is_loading}
       is_error={!reviewer_detail}
-      error_message="리뷰어를 찾을 수 없습니다."
+      error_message="해당 리뷰어 정보를 찾을 수 없습니다."
       back_path="/manager_sa/member/reviewers"
     >
       <div className={styles.main_content}>

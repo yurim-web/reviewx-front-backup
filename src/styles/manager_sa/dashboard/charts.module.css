@@ -69,13 +69,14 @@
 
 /* 차트 툴팁 컨테이너 */
 .chart_tooltip {
-  background-color: #444444;
-  padding: 8px;
-  border-radius: 4px;
+  background-color: #1f2937;
+  padding: 8px 12px;
+  border-radius: 6px;
   color: white;
   font-size: 13px;
   width: fit-content;
   min-width: 50px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   transition: none !important;
   animation: none !important;
 }

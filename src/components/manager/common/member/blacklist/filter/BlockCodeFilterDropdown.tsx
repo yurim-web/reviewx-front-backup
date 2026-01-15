@@ -64,6 +64,7 @@ export default function BlockCodeFilterDropdown({
       on_apply={on_apply}
       options={filter_options}
       container_ref={container_ref}
+      options_list_class_name="block_code_options_list_scroll"
     />
   );
 }

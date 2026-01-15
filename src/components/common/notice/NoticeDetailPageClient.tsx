@@ -13,11 +13,9 @@
 
    ======================================== */
 
-import { useRouter, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 
 import { useEffect, useState, useMemo, type ReactNode } from "react";
-
-import styles from "@/styles/user/notice/notice_detail_page.module.css";
 
 import {
   type NoticeDetail,
@@ -26,6 +24,9 @@ import {
 import { posts_data } from "@/data/manager_ga/community/postsData";
 import { convertPostsToNotices } from "@/utils/notice/convertPostToNotice";
 import { get_post_detail } from "@/data/manager_ga/community/postsData";
+import PostDetailPageCommon, {
+  type PostDetailData,
+} from "@/components/common/post/PostDetailPageCommon";
 
 interface NoticeDetailPageClientProps {
   target?: NoticeTarget; // "user" | "partner" (기본값: "user")
@@ -36,8 +37,6 @@ export default function NoticeDetailPageClient({
   target = "user",
   header_component,
 }: NoticeDetailPageClientProps) {
-  const router = useRouter();
-
   const params = useParams();
 
   const notice_id = params?.id as string;
@@ -78,73 +77,28 @@ export default function NoticeDetailPageClient({
     set_notice_detail(detail);
   }, [notice_id, allNotices]);
 
-  const handle_back_click = () => {
-    // target에 따라 뒤로가기 경로 결정
-    if (target === "partner") {
-      router.push("/partner/notice");
-    } else {
-      router.push("/user/notice");
-    }
-  };
+  // 뒤로가기 경로 결정
+  const back_path = target === "partner" ? "/partner/notice" : "/user/notice";
 
-  if (!notice_detail) {
-    return (
-      <main className={styles.container}>
-        <div className={styles.loading_message}>공지사항을 불러오는 중...</div>
-      </main>
-    );
-  }
+  // NoticeDetail을 PostDetailData로 변환
+  const post_detail_data: PostDetailData | null = notice_detail
+    ? {
+        title: notice_detail.title,
+        content: notice_detail.content,
+        meta_label: notice_detail.category,
+        date: notice_detail.date,
+        // header_component가 없을 때만 "공지사항" 제목 표시
+        division_title: header_component ? undefined : "공지사항",
+      }
+    : null;
 
   return (
-    <main className={styles.container}>
-      {/* 헤더 컴포넌트 (선택적) */}
-      {/* header_component가 있으면 사용하고, 없으면 기본 뒤로가기 버튼 사용 */}
-      {header_component}
-
-      {/* 메인 콘텐츠 영역 */}
-      <section className={styles.main_content}>
-        {/* 상단 헤더 영역 (구분 제목 + 뒤로가기 버튼) */}
-        {/* header_component가 없을 때만 표시 */}
-        {!header_component && (
-          <div className={styles.page_header_wrapper}>
-            {/* 페이지 제목 (공지사항 고정) */}
-            <h1 className={styles.division_title}>공지사항</h1>
-
-            {/* 뒤로가기 버튼 */}
-            <button
-              className={styles.back_button}
-              onClick={handle_back_click}
-              aria-label="뒤로가기"
-            >
-              뒤로가기
-            </button>
-          </div>
-        )}
-
-        {/* 공지사항 상세 카드 */}
-
-        <div className={styles.post_card} aria-label="공지사항 상세 정보">
-          {/* 헤더 박스 (메타 정보 + 제목) */}
-
-          <div className={styles.post_header_box}>
-            <div className={styles.post_meta}>
-              <span className={styles.update_label}>공지사항</span>
-
-              <span className={styles.post_date}>{notice_detail.date}</span>
-            </div>
-
-            <h2 className={styles.post_title}>{notice_detail.title}</h2>
-          </div>
-
-          {/* 본문 내용 */}
-          {/* dangerouslySetInnerHTML: HTML 태그를 실제로 렌더링하기 위해 사용 */}
-          {/* 관리자가 작성한 HTML 콘텐츠가 올바르게 표시됩니다 */}
-          <div
-            className={styles.post_content}
-            dangerouslySetInnerHTML={{ __html: notice_detail.content }}
-          />
-        </div>
-      </section>
-    </main>
+    <PostDetailPageCommon
+      post_detail={post_detail_data}
+      back_path={back_path}
+      loading_message="공지사항을 불러오는 중..."
+      header_component={header_component}
+      aria_label="공지사항 상세 정보"
+    />
   );
 }

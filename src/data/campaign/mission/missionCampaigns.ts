@@ -114,13 +114,13 @@ export const missionCampaigns: MissionCampaignData[] = [
     schedule: "",
     dayCount: "",
     isUrgent: true, // 긴급 캠페인
-    registeredAt: "2025-12-17T14:20:00.000Z", // 등록 시간
+    registeredAt: "2026-01-08T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-19 ~ 2026-01-05)
-      applicationStart: "2025-12-19",
-      applicationEnd: "2026-01-05",
-      announcement: "2026-01-15",
-      registrationPeriod: "2026-01-08 ~ 2026-01-25",
+      // 모집 중 - 현재 날짜 기준 (2026-01-10 ~ 2026-01-22)
+      applicationStart: "2026-01-10",
+      applicationEnd: "2026-01-22",
+      announcement: "2026-01-24",
+      registrationPeriod: "2026-01-27 ~ 2026-02-10",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#헬스케어체험 #건강관리 #미션형 #유튜브 #솔직후기",
@@ -157,13 +157,13 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-3",
-    registeredAt: "2025-12-19T11:15:00.000Z", // 등록 시간
+    registeredAt: "2026-01-06T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-21 ~ 2026-01-08)
-      applicationStart: "2025-12-21",
-      applicationEnd: "2026-01-08",
-      announcement: "2026-01-10",
-      registrationPeriod: "2026-01-13 ~ 2026-01-20",
+      // 모집 중 - 현재 날짜 기준 (2026-01-08 ~ 2026-01-23)
+      applicationStart: "2026-01-08",
+      applicationEnd: "2026-01-23",
+      announcement: "2026-01-25",
+      registrationPeriod: "2026-01-28 ~ 2026-02-05",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#홈데코체험 #인테리어 #미션형 #블로그 #홈스타일링",
@@ -195,13 +195,13 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-7",
-    registeredAt: "2025-12-20T13:30:00.000Z", // 등록 시간
+    registeredAt: "2026-01-09T13:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-22 ~ 2026-01-10)
-      applicationStart: "2025-12-22",
-      applicationEnd: "2026-01-10",
-      announcement: "2026-01-12",
-      registrationPeriod: "2026-01-15 ~ 2026-01-22",
+      // 모집 중 - 현재 날짜 기준 (2026-01-11 ~ 2026-01-24)
+      applicationStart: "2026-01-11",
+      applicationEnd: "2026-01-24",
+      announcement: "2026-01-26",
+      registrationPeriod: "2026-01-29 ~ 2026-02-06",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#패션체험 #OOTD #스타일링 #인스타그램 #패션리뷰",
@@ -274,13 +274,13 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-4",
-    registeredAt: "2025-12-22T13:30:00.000Z", // 등록 시간
+    registeredAt: "2026-01-07T13:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-24 ~ 2026-01-11)
-      applicationStart: "2025-12-24",
-      applicationEnd: "2026-01-11",
-      announcement: "2026-01-13",
-      registrationPeriod: "2026-01-16 ~ 2026-01-23",
+      // 모집 중 - 현재 날짜 기준 (2026-01-09 ~ 2026-01-25)
+      applicationStart: "2026-01-09",
+      applicationEnd: "2026-01-25",
+      announcement: "2026-01-27",
+      registrationPeriod: "2026-01-30 ~ 2026-02-07",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#디지털체험 #최신기술 #가전제품 #네이버쇼핑 #테크리뷰",
@@ -313,13 +313,13 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-5",
-    registeredAt: "2025-12-18T10:00:00.000Z", // 등록 시간
+    registeredAt: "2026-01-11T10:00:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-20 ~ 2026-01-06)
-      applicationStart: "2025-12-20",
-      applicationEnd: "2026-01-06",
-      announcement: "2026-01-08",
-      registrationPeriod: "2026-01-10 ~ 2026-01-17",
+      // 모집 중 - 현재 날짜 기준 (2026-01-13 ~ 2026-01-26)
+      applicationStart: "2026-01-13",
+      applicationEnd: "2026-01-26",
+      announcement: "2026-01-28",
+      registrationPeriod: "2026-01-31 ~ 2026-02-08",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#이미지미션 #뷰티체험 #이미지전용 #인스타그램 #솔직후기",

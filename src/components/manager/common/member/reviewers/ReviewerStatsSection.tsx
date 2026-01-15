@@ -13,14 +13,59 @@
  * - /manager_sa/member/reviewers (SA 관리자 리뷰어 목록 페이지)
  */
 
+"use client";
+
+import { useMemo } from "react";
 import MemberStatsSectionCommon from "@/components/manager/common/member/stats/MemberStatsSection";
 import styles from "@/styles/manager/common/member/reviewers/reviewer_stats_section.module.css";
-import { reviewer_stats } from "@/data/manager_ga/member/reviewers";
+import { reviewer_list } from "@/data/manager_ga/member/reviewers";
+import type { MemberStats } from "@/components/manager/common/member/stats/MemberStatsSection";
 
 export default function ReviewerStatsSection() {
+  // 실제 리뷰어 목록 데이터에서 통계 계산
+  const stats: MemberStats = useMemo(() => {
+    const now = new Date();
+    const oneMonthAgo = new Date(now);
+    oneMonthAgo.setMonth(now.getMonth() - 1);
+
+    // 전체 가입자 수
+    const total_members = reviewer_list.length;
+
+    // 월간 활동 회원 (최근 한 달 이내 접속한 회원)
+    const monthly_active = reviewer_list.filter((reviewer) => {
+      const lastAccessDate = new Date(
+        reviewer.last_access_date.replace(" ", "T")
+      );
+      return lastAccessDate >= oneMonthAgo;
+    }).length;
+
+    // 월간 신규 가입자 수 (최근 한 달 이내 가입한 회원)
+    const monthly_new = reviewer_list.filter((reviewer) => {
+      const joinDate = new Date(reviewer.join_date.replace(" ", "T"));
+      return joinDate >= oneMonthAgo;
+    }).length;
+
+    // 휴면 회원 (3개월 이상 접속하지 않은 회원)
+    const threeMonthsAgo = new Date(now);
+    threeMonthsAgo.setMonth(now.getMonth() - 3);
+    const dormant = reviewer_list.filter((reviewer) => {
+      const lastAccessDate = new Date(
+        reviewer.last_access_date.replace(" ", "T")
+      );
+      return lastAccessDate < threeMonthsAgo;
+    }).length;
+
+    return {
+      total_members,
+      monthly_active,
+      monthly_new,
+      dormant,
+    };
+  }, []);
+
   return (
     <MemberStatsSectionCommon
-      stats={reviewer_stats}
+      stats={stats}
       styles={
         styles as {
           stats_section: string;

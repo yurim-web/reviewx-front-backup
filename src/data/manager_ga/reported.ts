@@ -584,7 +584,8 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     campaign_number: "000312",
     campaign_name: "홈케어 제품 리뷰",
     report_code: "W013",
-    report_reason: "비매너 행위가 확인되었습니다",
+    report_reason:
+      "비매너 행위가 확인되었습니다가나닫런ㄹ아ㅓㄹㄴ이너라앙런ㅇ리ㅏㄴㅇ러ㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅇㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹ",
     inspector: "주식회사 아이엠에스커뮤니케이션",
     target: "배성민",
     processed_date: "2026-01-12 11:35",

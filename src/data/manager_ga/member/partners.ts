@@ -103,6 +103,7 @@ export const partner_stats: PartnerStats = {
 };
 
 // 파트너 목록 데이터
+// 날짜는 최근 날짜로 설정하여 통계 계산이 정확하게 이루어지도록 합니다
 export const partner_list: PartnerItem[] = [
   {
     id: "1",
@@ -117,12 +118,12 @@ export const partner_list: PartnerItem[] = [
     used_points: 11500000,
     status_type: "이용 제한 회원",
     status: "일시 정지",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2025-01-10 14:30",
+    join_date: "2024-06-15 10:20",
   },
   {
     id: "2",
-    number: "123456",
+    number: "000002",
     business_name: "청불 천막집 방이점",
     business_number: "211-23-55991",
     representative_name: "장민석외 2명",
@@ -132,13 +133,13 @@ export const partner_list: PartnerItem[] = [
     current_points: 0,
     used_points: 32500000,
     status_type: "이용 제한 회원",
-    status: "일시 정지",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    status: "탈퇴",
+    last_access_date: "2025-01-08 16:45",
+    join_date: "2024-08-20 11:15",
   },
   {
     id: "3",
-    number: "008156",
+    number: "000003",
     business_name: "명륜진사갈비 수원광교점",
     business_number: "211-23-55991",
     representative_name: "도선애, 이종근",
@@ -149,12 +150,12 @@ export const partner_list: PartnerItem[] = [
     used_points: 999999999,
     status_type: "이용 제한 회원",
     status: "일시 정지",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2025-01-05 09:20",
+    join_date: "2024-04-10 14:30",
   },
   {
     id: "4",
-    number: "000046",
+    number: "000004",
     business_name: "(주) 레인보우8",
     business_number: "110-86-08583",
     representative_name: "고광웅",
@@ -165,12 +166,12 @@ export const partner_list: PartnerItem[] = [
     used_points: 1580000,
     status_type: "경고 회원",
     status: "정상",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2025-01-12 18:30",
+    join_date: "2024-12-20 15:45",
   },
   {
     id: "5",
-    number: "000001",
+    number: "000005",
     business_name: "(주)플레티어",
     business_number: "000-00-00000",
     representative_name: "이상훈",
@@ -181,12 +182,12 @@ export const partner_list: PartnerItem[] = [
     used_points: 500000,
     status_type: "이용 제한 회원",
     status: "영구 정지",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2024-10-15 12:00",
+    join_date: "2024-02-25 09:30",
   },
   {
     id: "6",
-    number: "000001",
+    number: "000006",
     business_name: "꽃초롱",
     business_number: "000-00-00000",
     representative_name: "김초롱",
@@ -197,12 +198,12 @@ export const partner_list: PartnerItem[] = [
     used_points: 1500000,
     status_type: "모범 회원",
     status: "정상",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2025-01-13 10:15",
+    join_date: "2024-12-28 16:20",
   },
   {
     id: "7",
-    number: "000001",
+    number: "000007",
     business_name: "주식회사 와이디컴퍼니그룹",
     business_number: "000-00-00000",
     representative_name: "양동찬",
@@ -213,12 +214,12 @@ export const partner_list: PartnerItem[] = [
     used_points: 589000,
     status_type: "모범 회원",
     status: "정상",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2025-01-11 14:50",
+    join_date: "2024-11-15 10:30",
   },
   {
     id: "8",
-    number: "000001",
+    number: "000008",
     business_name: "(주)아이엠에스커뮤니케이션",
     business_number: "000-00-00000",
     representative_name: "정만수",
@@ -229,12 +230,12 @@ export const partner_list: PartnerItem[] = [
     used_points: 0,
     status_type: "모범 회원",
     status: "정상",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2025-01-09 11:25",
+    join_date: "2024-10-05 13:40",
   },
   {
     id: "9",
-    number: "000001",
+    number: "000009",
     business_name: "주식회사 청명미디어",
     business_number: "234-86-01377",
     representative_name: "유기수",
@@ -245,12 +246,12 @@ export const partner_list: PartnerItem[] = [
     used_points: 0,
     status_type: "모범 회원",
     status: "정상",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2025-01-07 15:10",
+    join_date: "2024-09-20 09:15",
   },
   {
     id: "10",
-    number: "000001",
+    number: "000010",
     business_name: "(주)아이엠에스커뮤니케이션",
     business_number: "000-00-00000",
     representative_name: "정만수",
@@ -261,12 +262,12 @@ export const partner_list: PartnerItem[] = [
     used_points: 0,
     status_type: "모범 회원",
     status: "정상",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2024-10-20 12:30",
+    join_date: "2024-01-10 14:20",
   },
   {
     id: "11",
-    number: "000001",
+    number: "000011",
     business_name: "(주)아이엠에스커뮤니케이션",
     business_number: "000-00-00000",
     representative_name: "정만수",
@@ -277,12 +278,12 @@ export const partner_list: PartnerItem[] = [
     used_points: 0,
     status_type: "모범 회원",
     status: "정상",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2024-09-25 10:45",
+    join_date: "2024-03-15 11:30",
   },
   {
     id: "12",
-    number: "000001",
+    number: "000012",
     business_name: "(주)아이엠에스커뮤니케이션",
     business_number: "000-00-00000",
     representative_name: "정만수",
@@ -293,12 +294,12 @@ export const partner_list: PartnerItem[] = [
     used_points: 0,
     status_type: "모범 회원",
     status: "정상",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2024-08-15 13:20",
+    join_date: "2024-02-20 16:10",
   },
   {
     id: "13",
-    number: "000001",
+    number: "000013",
     business_name: "(주)아이엠에스커뮤니케이션",
     business_number: "000-00-00000",
     representative_name: "정만수",
@@ -309,12 +310,12 @@ export const partner_list: PartnerItem[] = [
     used_points: 0,
     status_type: "모범 회원",
     status: "정상",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2024-07-10 09:30",
+    join_date: "2024-01-12 10:45",
   },
   {
     id: "14",
-    number: "000001",
+    number: "000014",
     business_name: "주식회사 재밌는걸참좋아하고하고싶은거하는노신사",
     business_number: "000-00-00000",
     representative_name: "노홍철",
@@ -325,8 +326,8 @@ export const partner_list: PartnerItem[] = [
     used_points: 0,
     status_type: "모범 회원",
     status: "정상",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2025-01-12 17:40",
+    join_date: "2024-12-15 12:00",
   },
   {
     id: "15",
@@ -341,8 +342,40 @@ export const partner_list: PartnerItem[] = [
     used_points: 0,
     status_type: "모범 회원",
     status: "정상",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2025-01-13 08:20",
+    join_date: "2025-01-05 14:15",
+  },
+  {
+    id: "16",
+    number: "000016",
+    business_name: "탈퇴회원테스트1",
+    business_number: "888-88-88888",
+    representative_name: "김탈퇴",
+    division: "법인",
+    campaign_in_progress: 15,
+    campaign_completed: 12,
+    current_points: 0,
+    used_points: 2500000,
+    status_type: "이용 제한 회원",
+    status: "탈퇴",
+    last_access_date: "2024-12-20 14:30",
+    join_date: "2023-05-10 10:00",
+  },
+  {
+    id: "17",
+    number: "000017",
+    business_name: "탈퇴회원테스트2",
+    business_number: "777-77-77777",
+    representative_name: "이탈퇴",
+    division: "개인",
+    campaign_in_progress: 8,
+    campaign_completed: 6,
+    current_points: 0,
+    used_points: 1800000,
+    status_type: "이용 제한 회원",
+    status: "탈퇴",
+    last_access_date: "2024-11-15 16:20",
+    join_date: "2023-08-20 11:30",
   },
 ];
 
@@ -375,6 +408,8 @@ export function get_partner_detail_by_id(
     "13": 0,
     "14": 0,
     "15": 0, // 데이터 없음 테스트용
+    "16": 0, // 탈퇴 회원 테스트용
+    "17": 0, // 탈퇴 회원 테스트용
   };
   const penalty_count = penalty_count_map[partner.id] || 0;
 
@@ -517,6 +552,20 @@ export function get_partner_detail_by_id(
       contact_name: "테스트",
       contact_phone: "010-1234-5678",
     },
+    "16": {
+      email: "withdrawn1@test.com",
+      phone: "02-1111-1111",
+      address: "서울시 강남구 테헤란로 111",
+      contact_name: "김탈퇴",
+      contact_phone: "010-1111-1111",
+    },
+    "17": {
+      email: "withdrawn2@test.com",
+      phone: "010-2222-2222",
+      address: "서울시 마포구 홍대입구로 222",
+      contact_name: "이탈퇴",
+      contact_phone: "010-2222-2222",
+    },
   };
 
   // 파트너 ID에 해당하는 연락처 정보 가져오기 (없으면 기본값 사용)
@@ -590,4 +639,136 @@ export function get_partner_detail_by_id(
   };
 
   return detail;
+}
+
+// localStorage 키
+const STORAGE_KEY_PARTNER_STATUS_UPDATES = "partner_status_type_updates";
+const STORAGE_KEY_PARTNER_PREVIOUS_STATUS = "partner_previous_status_type";
+
+// localStorage에서 상태 업데이트 정보 로드
+function load_status_updates_from_storage(): Record<string, PartnerStatusType> {
+  if (typeof window === "undefined") {
+    return {};
+  }
+
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY_PARTNER_STATUS_UPDATES);
+    return stored ? JSON.parse(stored) : {};
+  } catch (error) {
+    console.error("localStorage에서 파트너 상태 업데이트 로드 실패:", error);
+    return {};
+  }
+}
+
+// localStorage에서 이전 상태 정보 로드 (해제 시 복원용)
+function load_previous_status_from_storage(): Record<
+  string,
+  PartnerStatusType
+> {
+  if (typeof window === "undefined") {
+    return {};
+  }
+
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY_PARTNER_PREVIOUS_STATUS);
+    return stored ? JSON.parse(stored) : {};
+  } catch (error) {
+    console.error("localStorage에서 파트너 이전 상태 로드 실패:", error);
+    return {};
+  }
+}
+
+// 상태 업데이트 정보를 localStorage에 저장
+function save_status_updates_to_storage(
+  updates: Record<string, PartnerStatusType>
+): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    localStorage.setItem(
+      STORAGE_KEY_PARTNER_STATUS_UPDATES,
+      JSON.stringify(updates)
+    );
+  } catch (error) {
+    console.error("localStorage에 파트너 상태 업데이트 저장 실패:", error);
+  }
+}
+
+// 이전 상태 정보를 localStorage에 저장
+function save_previous_status_to_storage(
+  previous_status: Record<string, PartnerStatusType>
+): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    localStorage.setItem(
+      STORAGE_KEY_PARTNER_PREVIOUS_STATUS,
+      JSON.stringify(previous_status)
+    );
+  } catch (error) {
+    console.error("localStorage에 파트너 이전 상태 저장 실패:", error);
+  }
+}
+
+// 초기 상태 업데이트 로드
+const status_type_updates = load_status_updates_from_storage();
+const previous_status_types = load_previous_status_from_storage();
+
+// 파트너 목록 가져오기 (상태 업데이트 반영)
+export function get_partner_list(): PartnerItem[] {
+  return partner_list.map((partner) => {
+    // localStorage에 저장된 상태 업데이트가 있으면 적용
+    if (status_type_updates[partner.id]) {
+      return {
+        ...partner,
+        status_type: status_type_updates[partner.id],
+      };
+    }
+    return partner;
+  });
+}
+
+// 파트너 상태 타입 업데이트
+// 이용 제한 시 이전 상태를 저장하고, 해제 시 복원할 수 있도록 합니다
+export function update_partner_status_type(
+  partner_id: string,
+  new_status_type: PartnerStatusType
+): void {
+  // 현재 상태 가져오기 (이전 상태 저장용)
+  const current_partner = partner_list.find((p) => p.id === partner_id);
+  const current_status_type =
+    status_type_updates[partner_id] ||
+    (current_partner ? current_partner.status_type : "모범 회원");
+
+  // "이용 제한 회원"으로 변경하는 경우에만 이전 상태 저장
+  if (
+    new_status_type === "이용 제한 회원" &&
+    current_status_type !== "이용 제한 회원"
+  ) {
+    previous_status_types[partner_id] = current_status_type;
+    save_previous_status_to_storage(previous_status_types);
+  }
+
+  // localStorage에 업데이트 저장
+  status_type_updates[partner_id] = new_status_type;
+  save_status_updates_to_storage(status_type_updates);
+}
+
+// 파트너 상태 타입 복원 (해제 시 이전 상태로 복원)
+export function restore_partner_status_type(partner_id: string): void {
+  // 이전 상태가 있으면 복원
+  if (previous_status_types[partner_id]) {
+    status_type_updates[partner_id] = previous_status_types[partner_id];
+    delete previous_status_types[partner_id];
+    save_status_updates_to_storage(status_type_updates);
+    save_previous_status_to_storage(previous_status_types);
+  } else {
+    // 이전 상태가 없으면 기본값으로 복원 (localStorage에서 제거)
+    delete status_type_updates[partner_id];
+    save_status_updates_to_storage(status_type_updates);
+  }
 }

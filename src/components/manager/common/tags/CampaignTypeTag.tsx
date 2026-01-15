@@ -25,6 +25,10 @@
  * - 모든 타입은 동일한 스타일을 사용합니다
  */
 
+// CSS 모듈 직접 import
+// 컴포넌트 내부에서 스타일을 직접 가져와서 사용합니다
+import tag_styles from "@/styles/common/tags.module.css";
+
 /**
  * 캠페인 타입 정의
  */
@@ -35,23 +39,17 @@ export type CampaignType = "배송형" | "방문형" | "구매평" | "기자단"
  *
  * 각 속성 설명:
  * - type: 표시할 캠페인 타입 값 (배송형, 방문형, 구매평, 기자단, 미션형 중 하나)
- * - styles: CSS 모듈에서 가져온 스타일 객체
  */
 interface CampaignTypeTagProps {
   type: CampaignType;
-  styles: Record<string, string>;
 }
 
 /**
  * 캠페인 타입 태그 컴포넌트
  *
  * @param type - 표시할 캠페인 타입 값
- * @param styles - CSS 모듈 스타일 객체
  */
-export default function CampaignTypeTag({
-  type,
-  styles: css_styles,
-}: CampaignTypeTagProps) {
+export default function CampaignTypeTag({ type }: CampaignTypeTagProps) {
   /**
    * JSX 반환
    *
@@ -63,7 +61,7 @@ export default function CampaignTypeTag({
    */
   return (
     <div
-      className={css_styles.type_tag}
+      className={tag_styles.type_tag}
       role="status"
       aria-label={`캠페인 타입: ${type}`}
     >

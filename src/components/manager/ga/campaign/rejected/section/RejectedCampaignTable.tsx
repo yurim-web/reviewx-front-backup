@@ -44,11 +44,9 @@ import {
   type ReportedCampaignItem,
 } from "@/data/manager_ga/reported";
 import CampaignReasonModal from "@/components/manager/common/campaign/modal/CampaignReasonModal";
-import CampaignReportModalCommon, {
+import ManagerReportReasonModalCommon, {
   type ReportCode,
-} from "@/components/manager/common/campaign/modal/CampaignReportModal";
-import campaignReportModalStyles from "@/styles/manager_ga/campaign/common/modal/campaign_report_modal.module.css";
-import campaignReasonModalStyles from "@/styles/manager_ga/campaign/common/modal/campaign_reason_modal.module.css";
+} from "@/components/manager/common/campaign/modal/ManagerReportReasonModal";
 import CommonTableWithTooltip, {
   type TooltipConfig,
 } from "@/components/manager/common/table/CommonTableWithTooltip";
@@ -465,49 +463,13 @@ export default function RejectedCampaignTable({
             category: info.category,
             reason: info.reason,
           }))}
-          styles={
-            campaignReasonModalStyles as Record<string, string> & {
-              modal_overlay: string;
-              modal_container: string;
-              modal_title: string;
-              reason_box: string;
-              reason_text: string;
-              ai_recommended_section: string;
-              ai_recommended_label: string;
-              classification_container: string;
-              classification_item: string;
-              classification_item_selected: string;
-              classification_radio: string;
-              classification_check_icon: string;
-              classification_label: string;
-              modal_footer: string;
-              close_button: string;
-              confirm_button: string;
-            }
-          }
         />
       )}
-      <CampaignReportModalCommon
+      <ManagerReportReasonModalCommon
         is_open={report_modal_state.is_open}
         on_close={handle_report_modal_close}
         campaign_id={report_modal_state.campaign_id || undefined}
         on_report={handle_report_submit}
-        styles={
-          campaignReportModalStyles as {
-            modal_overlay: string;
-            modal_content: string;
-            modal_title: string;
-            options_list: string;
-            option_item: string;
-            option_radio: string;
-            option_label: string;
-            modal_footer: string;
-            close_button: string;
-            report_button: string;
-            block_button: string;
-          }
-        }
-        report_code_info={report_code_info}
         report_code_options={[
           "W001",
           "W002",

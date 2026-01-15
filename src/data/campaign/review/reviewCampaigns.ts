@@ -118,14 +118,14 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     schedule: "",
     dayCount: "",
     isUrgent: true, // 긴급 캠페인
-    registeredAt: "2025-12-17T14:20:00.000Z", // 등록 시간
+    registeredAt: "2026-01-08T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-19 ~ 2026-01-05)
-      applicationStart: "2025-12-19",
-      applicationEnd: "2026-01-05",
-      announcement: "2026-01-15",
-      purchasePeriod: "2026-01-07 ~ 2026-01-10",
-      registrationPeriod: "2026-01-10 ~ 2026-01-27",
+      // 모집 중 - 현재 날짜 기준 (2026-01-10 ~ 2026-01-22)
+      applicationStart: "2026-01-10",
+      applicationEnd: "2026-01-22",
+      announcement: "2026-01-24",
+      purchasePeriod: "2026-01-24 ~ 2026-01-27",
+      registrationPeriod: "2026-01-27 ~ 2026-02-05",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#화장품리뷰 #뷰티 #스킨케어 #구매후기 #솔직리뷰",
@@ -163,14 +163,14 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-3",
-    registeredAt: "2025-12-19T11:15:00.000Z", // 등록 시간
+    registeredAt: "2026-01-06T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-21 ~ 2026-01-08)
-      applicationStart: "2025-12-21",
-      applicationEnd: "2026-01-08",
-      announcement: "2026-01-10",
-      purchasePeriod: "2026-01-10 ~ 2026-01-13",
-      registrationPeriod: "2026-01-13 ~ 2026-01-20",
+      // 모집 중 - 현재 날짜 기준 (2026-01-08 ~ 2026-01-23)
+      applicationStart: "2026-01-08",
+      applicationEnd: "2026-01-23",
+      announcement: "2026-01-25",
+      purchasePeriod: "2026-01-25 ~ 2026-01-28",
+      registrationPeriod: "2026-01-28 ~ 2026-02-05",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#가전제품리뷰 #주방가전 #생활용품 #구매후기 #솔직리뷰",
@@ -207,14 +207,14 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-7",
-    registeredAt: "2025-12-22T13:30:00.000Z", // 등록 시간
+    registeredAt: "2026-01-09T13:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-24 ~ 2026-01-12)
-      applicationStart: "2025-12-24",
-      applicationEnd: "2026-01-12",
-      announcement: "2026-01-14",
-      purchasePeriod: "2026-01-14 ~ 2026-01-17",
-      registrationPeriod: "2026-01-17 ~ 2026-01-24",
+      // 모집 중 - 현재 날짜 기준 (2026-01-11 ~ 2026-01-24)
+      applicationStart: "2026-01-11",
+      applicationEnd: "2026-01-24",
+      announcement: "2026-01-26",
+      purchasePeriod: "2026-01-26 ~ 2026-01-29",
+      registrationPeriod: "2026-01-29 ~ 2026-02-06",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#의류리뷰 #패션 #옷 #구매후기 #솔직리뷰",
@@ -295,14 +295,14 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-4",
-    registeredAt: "2025-12-21T15:20:00.000Z", // 등록 시간
+    registeredAt: "2026-01-07T15:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-23 ~ 2026-01-10)
-      applicationStart: "2025-12-23",
-      applicationEnd: "2026-01-10",
-      announcement: "2026-01-12",
-      purchasePeriod: "2026-01-12 ~ 2026-01-15",
-      registrationPeriod: "2026-01-15 ~ 2026-01-22",
+      // 모집 중 - 현재 날짜 기준 (2026-01-09 ~ 2026-01-25)
+      applicationStart: "2026-01-09",
+      applicationEnd: "2026-01-25",
+      announcement: "2026-01-27",
+      purchasePeriod: "2026-01-27 ~ 2026-01-30",
+      registrationPeriod: "2026-01-30 ~ 2026-02-07",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#책리뷰 #독서 #문화 #구매후기 #솔직리뷰",
@@ -562,14 +562,14 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-2",
-    registeredAt: "2025-12-26T11:30:00.000Z", // 등록 시간
+    registeredAt: "2026-01-11T11:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 마감임박 - 현재 날짜 기준 (2025-12-28 ~ 2026-01-01)
-      applicationStart: "2025-12-28",
-      applicationEnd: "2026-01-01",
-      announcement: "2026-01-03",
-      purchasePeriod: "2026-01-03 ~ 2026-01-06",
-      registrationPeriod: "2026-01-06 ~ 2026-01-13",
+      // 모집 중 - 현재 날짜 기준 (2026-01-13 ~ 2026-01-26)
+      applicationStart: "2026-01-13",
+      applicationEnd: "2026-01-26",
+      announcement: "2026-01-28",
+      purchasePeriod: "2026-01-28 ~ 2026-01-31",
+      registrationPeriod: "2026-01-31 ~ 2026-02-08",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#무선이어폰 #구매평 #오디오 #디지털기기 #솔직후기",

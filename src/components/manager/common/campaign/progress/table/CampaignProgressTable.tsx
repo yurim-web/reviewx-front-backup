@@ -375,11 +375,9 @@ export default function CampaignProgressTable({
               return <span>{row.campaign_name}</span>;
             }
             case "status":
-              return (
-                <CampaignStatusTag status={row.status} styles={tagStyles} />
-              );
+              return <CampaignStatusTag status={row.status} />;
             case "type":
-              return <CampaignTypeTag type={row.type} styles={tagStyles} />;
+              return <CampaignTypeTag type={row.type} />;
             case "channel":
               return (
                 <ChannelIcon channel={row.channel} styles={channelIconStyles} />

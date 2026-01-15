@@ -31,7 +31,7 @@ src\components\main\CampaignBox.tsx
 src\components\main\MainMenu.tsx
 src\components\main\Titletext.tsx
 src\components\manager\common\campaign\modal\CampaignReasonModal.tsx
-src\components\manager\common\campaign\modal\CampaignReportModal.tsx
+src\components\manager\common\campaign\modal\ManagerReportReasonModal.tsx
 src\components\manager\common\campaign\progress\cards\StatCard.tsx
 src\components\manager\common\campaign\progress\cards\StatCardsSection.tsx
 src\components\manager\common\campaign\progress\filter\ChannelFilterModal.tsx

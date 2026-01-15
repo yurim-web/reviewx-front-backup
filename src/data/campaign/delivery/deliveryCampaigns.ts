@@ -91,10 +91,6 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     dayCount: "테스트",
     registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 선정 중 - 모집 기간 종료 후, 선정 발표 전
-      // 모집 기간: 2025-09-02 ~ 2025-09-14 (종료됨)
-      // 선정 발표: 2025-09-16 (아직 안 지남)
-      // 등록 기간: 2025-09-22 ~ 2025-09-30 (아직 시작 안 함)
       applicationStart: "2026-01-01",
       // 모집기간 마감일
       applicationEnd: "2026-01-05",
@@ -141,17 +137,14 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     schedule: "",
     dayCount: "",
     isUrgent: true, // 긴급 캠페인
-    registeredAt: "2025-12-18T14:20:00.000Z", // 등록 시간
+    registeredAt: "2026-01-11T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 선정 중 - 모집 기간 종료 후, 선정 발표 전
-      // 모집 기간: 2025-09-02 ~ 2025-09-14 (종료됨)
-      // 선정 발표: 2025-09-16 (아직 안 지남)
-      // 등록 기간: 2025-09-22 ~ 2025-09-30 (아직 시작 안 함)
-      applicationStart: "2025-09-02",
-      applicationEnd: "2025-09-14",
-      announcement: "2025-09-16",
-      purchasePeriod: "2025-09-16 ~ 2025-09-19",
-      registrationPeriod: "2025-09-22 ~ 2025-09-30",
+      // 모집 중 - 오늘 날짜 기준 (2026-01-11 ~ 2026-01-22)
+      applicationStart: "2026-01-11",
+      applicationEnd: "2026-01-22",
+      announcement: "2026-01-24",
+      purchasePeriod: "2026-01-24 ~ 2026-01-27",
+      registrationPeriod: "2026-01-27 ~ 2026-02-03",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
@@ -273,14 +266,14 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     },
     schedule: "",
     dayCount: "마감임박",
-    registeredAt: "2025-11-05T10:00:00.000Z", // 등록 시간
+    registeredAt: "2026-01-10T10:00:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 종료 탭 - 등록 기간이 지난 날짜
-      applicationStart: "2025-11-10",
-      applicationEnd: "2025-11-20",
-      announcement: "2025-11-22",
-      purchasePeriod: "2025-11-22 ~ 2025-11-25",
-      registrationPeriod: "2025-11-25 ~ 2025-12-01",
+      // 모집 중 - 오늘 날짜 기준 (2026-01-10 ~ 2026-01-20)
+      applicationStart: "2026-01-10",
+      applicationEnd: "2026-01-20",
+      announcement: "2026-01-22",
+      purchasePeriod: "2026-01-22 ~ 2026-01-25",
+      registrationPeriod: "2026-01-25 ~ 2026-02-01",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
@@ -316,14 +309,14 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-5",
-    registeredAt: "2025-12-22T13:30:00.000Z", // 등록 시간
+    registeredAt: "2026-01-08T13:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-24 ~ 2026-01-12)
-      applicationStart: "2025-12-24",
-      applicationEnd: "2026-01-12",
-      announcement: "2026-01-14",
-      purchasePeriod: "2026-01-14 ~ 2026-01-17",
-      registrationPeriod: "2026-01-17 ~ 2026-01-24",
+      // 모집 중 - 오늘 날짜 기준 (2026-01-08 ~ 2026-01-20)
+      applicationStart: "2026-01-08",
+      applicationEnd: "2026-01-20",
+      announcement: "2026-01-22",
+      purchasePeriod: "2026-01-22 ~ 2026-01-25",
+      registrationPeriod: "2026-01-25 ~ 2026-02-01",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
@@ -359,14 +352,14 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-2",
-    registeredAt: "2025-12-23T15:20:00.000Z", // 등록 시간
+    registeredAt: "2026-01-09T15:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-25 ~ 2026-01-13)
-      applicationStart: "2025-12-25",
-      applicationEnd: "2026-01-13",
-      announcement: "2026-01-15",
-      purchasePeriod: "2026-01-15 ~ 2026-01-18",
-      registrationPeriod: "2026-01-18 ~ 2026-01-28",
+      // 모집 중 - 오늘 날짜 기준 (2026-01-09 ~ 2026-01-21)
+      applicationStart: "2026-01-09",
+      applicationEnd: "2026-01-21",
+      announcement: "2026-01-23",
+      purchasePeriod: "2026-01-23 ~ 2026-01-26",
+      registrationPeriod: "2026-01-26 ~ 2026-02-02",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버클립",

@@ -19,6 +19,10 @@
  * - 탈퇴: 회색 배경, 회색 텍스트
  */
 
+// CSS 모듈 직접 import
+// 컴포넌트 내부에서 스타일을 직접 가져와서 사용합니다
+import tag_styles from "@/styles/common/tags.module.css";
+
 /**
  * 회원 상태 타입 정의
  *
@@ -32,23 +36,17 @@ export type MemberStatus = "정상" | "일시 정지" | "영구 정지" | "탈�
  *
  * 각 속성 설명:
  * - status: 표시할 상태 값 (정상, 일시 정지, 영구 정지, 탈퇴 중 하나)
- * - styles: CSS 모듈에서 가져온 스타일 객체
  */
 interface MemberStatusTagProps {
   status: MemberStatus;
-  styles: Record<string, string>;
 }
 
 /**
  * 회원 상태 태그 컴포넌트
  *
  * @param status - 표시할 상태 값
- * @param styles - CSS 모듈 스타일 객체
  */
-export default function MemberStatusTag({
-  status,
-  styles: css_styles,
-}: MemberStatusTagProps) {
+export default function MemberStatusTag({ status }: MemberStatusTagProps) {
   /**
    * 상태 값을 정규화하는 함수
    * 공백이 포함된 상태 값도 처리할 수 있도록 합니다.
@@ -68,16 +66,16 @@ export default function MemberStatusTag({
 
     switch (normalized) {
       case "정상":
-        return css_styles.status_tag_normal;
+        return tag_styles.status_tag_normal;
       case "일시정지":
-        return css_styles.status_tag_suspended;
+        return tag_styles.status_tag_suspended;
       case "영구정지":
-        return css_styles.status_tag_permanent;
+        return tag_styles.status_tag_permanent;
       case "탈퇴":
-        return css_styles.status_tag_withdrawn;
+        return tag_styles.status_tag_withdrawn;
       default:
         // 기본값으로 정상 상태 스타일 반환
-        return css_styles.status_tag_normal;
+        return tag_styles.status_tag_normal;
     }
   };
 
@@ -103,7 +101,7 @@ export default function MemberStatusTag({
 
   return (
     <div
-      className={`${css_styles.status_tag} ${get_status_class_name()}`}
+      className={`${tag_styles.status_tag} ${get_status_class_name()}`}
       role="status"
       aria-label={`상태: ${status}`}
     >

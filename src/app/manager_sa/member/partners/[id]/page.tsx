@@ -102,10 +102,6 @@ export default function PartnerDetailPage() {
         : "0회",
       on_button_click: () => set_is_penalty_history_modal_open(true),
       button_aria_label: "패널티 내역 보기",
-      additional_content:
-        partner_detail?.status_type === "모범 회원" ? (
-          <div className={styles.status_type_badge}>모범 회원</div>
-        ) : undefined,
     },
     {
       label: "접속일",

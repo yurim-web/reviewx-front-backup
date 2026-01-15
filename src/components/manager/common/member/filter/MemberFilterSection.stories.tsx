@@ -8,17 +8,16 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import MemberFilterSection from "./MemberFilterSection";
-import ChannelFilterModal from "@/components/manager/common/member/partners/filter/ChannelFilterModal";
-import DivisionFilterModal from "@/components/manager/common/member/partners/filter/DivisionFilterModal";
-import TypeFilterModal from "@/components/manager/common/member/partners/filter/TypeFilterModal";
-import StatusFilterModal from "@/components/manager/common/member/partners/filter/StatusFilterModal";
+import ChannelFilterDropdown from "@/components/manager/common/member/partners/filter/ChannelFilterDropdown";
+import DivisionFilterDropdown from "@/components/manager/common/member/partners/filter/DivisionFilterDropdown";
+import TypeFilterDropdown from "@/components/manager/common/member/partners/filter/TypeFilterDropdown";
+import StatusFilterDropdown from "@/components/manager/common/member/partners/filter/StatusFilterDropdown";
 import type { Channel } from "@/data/manager_ga/member/partners";
 import type {
   PartnerDivision,
   PartnerStatus,
 } from "@/data/manager_ga/member/partners";
-import type { PartnerType } from "@/components/manager/common/member/partners/filter/TypeFilterModal";
-import styles from "@/styles/manager/common/member/partners/partner_filter_section.module.css";
+import type { PartnerType } from "@/components/manager/common/member/partners/filter/TypeFilterDropdown";
 
 // 채널 이름 매핑 객체
 const channel_name_map: Record<Channel, string> = {
@@ -80,13 +79,12 @@ export const Default: Story = {
           setSearchQuery(query);
           args.on_search_change?.(query);
         }}
-        styles={styles}
         channel_name_map={channel_name_map}
-        ChannelFilterModal={ChannelFilterModal as any}
+        ChannelFilterDropdown={ChannelFilterDropdown as any}
         grade_or_division_label="구분"
-        GradeOrDivisionFilterModal={DivisionFilterModal as any}
-        TypeFilterModal={TypeFilterModal as any}
-        StatusFilterModal={StatusFilterModal as any}
+        GradeOrDivisionFilterDropdown={DivisionFilterDropdown as any}
+        TypeFilterDropdown={TypeFilterDropdown as any}
+        StatusFilterDropdown={StatusFilterDropdown as any}
         download_button_text="파트너 목록 다운로드"
       />
     );
@@ -112,13 +110,12 @@ export const WithSearchQuery: Story = {
           setSearchQuery(query);
           args.on_search_change?.(query);
         }}
-        styles={styles}
         channel_name_map={channel_name_map}
-        ChannelFilterModal={ChannelFilterModal as any}
+        ChannelFilterDropdown={ChannelFilterDropdown as any}
         grade_or_division_label="구분"
-        GradeOrDivisionFilterModal={DivisionFilterModal as any}
-        TypeFilterModal={TypeFilterModal as any}
-        StatusFilterModal={StatusFilterModal as any}
+        GradeOrDivisionFilterDropdown={DivisionFilterDropdown as any}
+        TypeFilterDropdown={TypeFilterDropdown as any}
+        StatusFilterDropdown={StatusFilterDropdown as any}
         download_button_text="파트너 목록 다운로드"
       />
     );

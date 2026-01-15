@@ -24,7 +24,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import {
   get_reviewer_detail_by_id,
@@ -40,6 +40,7 @@ import ActivityInfoSection, {
 } from "@/components/manager/common/member/member_detail/ActivityInfoSection";
 import ChannelInfoSection from "@/components/manager/common/member/reviewers/section/ChannelInfoSection";
 import AccountInfoSection from "@/components/manager/common/member/reviewers/section/AccountInfoSection";
+import BaseModal from "@/components/common/modal/BaseModal";
 import styles from "@/styles/manager/common/member/member_detail/detail_page.module.css";
 import infoCardStyles from "@/styles/manager/common/member/member_detail/info_card.module.css";
 
@@ -56,6 +57,7 @@ export default function ReviewerDetailPage() {
   // useParams: Next.js에서 제공하는 훅으로, URL 파라미터를 가져옵니다
   // [id] 폴더 구조에서 id 값을 추출합니다
   const params = useParams();
+  const router = useRouter();
   const reviewer_id = params.id as string;
 
   // 리뷰어 디테일 정보 상태 관리
@@ -72,6 +74,10 @@ export default function ReviewerDetailPage() {
   const [is_penalty_history_modal_open, set_is_penalty_history_modal_open] =
     useState(false);
 
+  // 탈퇴 회원 조회 불가 모달 상태
+  const [is_withdrawn_modal_open, set_is_withdrawn_modal_open] =
+    useState(false);
+
   // 컴포넌트가 마운트될 때 리뷰어 정보를 가져옵니다
   // useEffect: React의 Hook으로, 컴포넌트가 렌더링된 후에 실행됩니다
   useEffect(() => {
@@ -81,16 +87,48 @@ export default function ReviewerDetailPage() {
       // 실제 프로젝트에서는 API 호출로 대체됩니다
       const detail = get_reviewer_detail_by_id(reviewer_id);
       set_reviewer_detail(detail);
+
+      // 일반 관리자(manager_ga)에서는 탈퇴 회원 조회 불가
+      // 탈퇴 회원이면 모달 표시
+      if (detail && detail.status === "탈퇴") {
+        set_is_withdrawn_modal_open(true);
+      }
+
       set_is_loading(false);
     };
 
     fetch_reviewer_detail();
   }, [reviewer_id]);
 
+  // 탈퇴 회원 조회 불가 모달 닫기 핸들러
+  // 모달을 닫으면 리뷰어 목록 페이지로 이동합니다
+  const handle_withdrawn_modal_close = () => {
+    set_is_withdrawn_modal_open(false);
+    router.push("/manager_ga/member/reviewers");
+  };
+
   // 숫자를 천 단위로 포맷팅하는 함수
   const format_number = (num: number): string => {
     return num.toLocaleString();
   };
+
+  // 탈퇴 회원 여부 확인
+  // 일반 관리자(manager_ga)에서는 탈퇴 회원 상세 페이지를 렌더링하지 않습니다
+  const is_withdrawn = reviewer_detail?.status === "탈퇴";
+
+  // 탈퇴 회원이면 상세 페이지를 렌더링하지 않고 모달만 표시
+  if (is_withdrawn) {
+    return (
+      <BaseModal
+        is_open={is_withdrawn_modal_open}
+        on_close={handle_withdrawn_modal_close}
+        message="탈퇴한 회원은 조회할 수 없습니다."
+        buttons={["닫기"]}
+        close_on_overlay_click={false}
+        close_on_escape={true}
+      />
+    );
+  }
 
   // 활동 정보 아이템 배열 생성
   // ActivityInfoSection 컴포넌트에 전달할 데이터를 준비합니다
@@ -138,10 +176,6 @@ export default function ReviewerDetailPage() {
         : "0회",
       on_button_click: () => set_is_penalty_history_modal_open(true),
       button_aria_label: "패널티 내역 보기",
-      additional_content:
-        reviewer_detail?.status_type === "모범 회원" ? (
-          <div className={styles.status_type_badge}>모범 회원</div>
-        ) : undefined,
     },
     // 접속일
     {
@@ -173,7 +207,7 @@ export default function ReviewerDetailPage() {
     <MemberDetailLayout
       is_loading={is_loading}
       is_error={!reviewer_detail}
-      error_message="리뷰어를 찾을 수 없습니다."
+      error_message="해당 리뷰어 정보를 찾을 수 없습니다."
       back_path="/manager_ga/member/reviewers"
     >
       <div className={styles.main_content}>

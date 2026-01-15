@@ -1,5 +1,5 @@
 /* ========================================
-   👥 회원 통계 관련 스타일
+   👥 회원 통계 공통 스타일
    ======================================== */
 
 /**
@@ -12,6 +12,7 @@
  * 
  * 사용 페이지:
  * - /manager_ga (GA 관리자 대시보드)
+ * - /manager_sa (SA 관리자 대시보드)
  */
 
 /* 회원 통계 섹션 그리드 */
@@ -270,18 +271,17 @@
 
 /* 도넛 차트 라벨 (활성화 텍스트) */
 .donut_chart_label {
-  color: #848484;
+  color: #444;
+  text-align: center;
   font-size: 18px;
   font-weight: 500;
+  line-height: 18px;
   letter-spacing: -0.36px;
-  line-height: 1;
-  margin: 0;
-  padding: 0;
 }
 
 /* 도넛 차트 값 (68% 텍스트) */
 .donut_chart_value {
-  color: #444444;
+  color: #ff5694;
   font-size: 18px;
   font-weight: 600;
   letter-spacing: -0.36px;

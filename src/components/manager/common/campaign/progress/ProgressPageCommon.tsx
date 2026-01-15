@@ -37,11 +37,10 @@ import StatCardsSectionCommon from "./cards/StatCardsSection";
 import CampaignProgressFilterSection from "./section/CampaignProgressFilterSection";
 import CampaignTableCommon from "./table/CampaignProgressTable";
 
-// 신고 모달 공통 컴포넌트와 데이터 import
-import CampaignReportModalCommon, {
+// 신고 사유 모달 공통 컴포넌트와 데이터 import
+import ManagerReportReasonModalCommon, {
   type ReportCode,
-} from "@/components/manager/common/campaign/modal/CampaignReportModal";
-import { report_code_info } from "@/data/manager_ga/reported";
+} from "@/components/manager/common/campaign/modal/ManagerReportReasonModal";
 
 // 데이터와 스타일을 import
 import { get_campaign_list as getGACampaignList } from "@/data/manager_ga/progress";
@@ -55,11 +54,10 @@ import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRa
 // 스타일 import - 공통 스타일 사용
 import pageStyles from "@/styles/manager/common/campaign/progress/page.module.css";
 import statCardStyles from "@/styles/manager/common/campaign/progress/stat_card.module.css";
-import filterSectionStyles from "@/styles/manager/common/campaign/progress/filter_section.module.css";
+import filterSectionStyles from "@/styles/manager/common/section/filter_section.module.css";
 import tableStyles from "@/styles/manager/common/campaign/progress/progress_table.module.css";
 import commonTagStyles from "@/styles/common/tags.module.css";
 import channelIconStyles from "@/styles/manager/common/campaign/progress/channel_icon.module.css";
-import campaignReportModalStyles from "@/styles/manager/common/campaign/progress/campaign_report_modal.module.css";
 
 // 관리자 타입 정의
 export type ManagerType = "ga" | "sa";
@@ -293,27 +291,11 @@ export default function ProgressPageCommon({
     on_report?: (report_code: string) => void;
   }) => {
     return (
-      <CampaignReportModalCommon
+      <ManagerReportReasonModalCommon
         is_open={is_open}
         on_close={on_close}
         campaign_id={campaign_id}
         on_report={on_report as (report_code: ReportCode) => void}
-        styles={
-          campaignReportModalStyles as {
-            modal_overlay: string;
-            modal_content: string;
-            modal_title: string;
-            options_list: string;
-            option_item: string;
-            option_radio: string;
-            option_label: string;
-            modal_footer: string;
-            close_button: string;
-            report_button: string;
-            block_button: string;
-          }
-        }
-        report_code_info={report_code_info}
         report_code_options={report_code_options}
       />
     );

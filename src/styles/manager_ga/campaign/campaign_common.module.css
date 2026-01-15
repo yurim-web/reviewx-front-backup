@@ -139,7 +139,9 @@
 /* 반려 내역 통계 그리드 */
 .reject_stats_grid {
   display: flex;
-  gap: 133px;
+  flex-wrap: wrap;
+  column-gap: 133px;
+  row-gap: 16px;
 }
 
 /* 반려 내역 통계 아이템 - 레이아웃만 (텍스트 스타일은 공통) */

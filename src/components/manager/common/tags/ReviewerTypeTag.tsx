@@ -20,6 +20,10 @@
  * - 인플루언서: 연한 초록색 배경, 초록색 텍스트
  */
 
+// CSS 모듈 직접 import
+// 컴포넌트 내부에서 스타일을 직접 가져와서 사용합니다
+import tag_styles from "@/styles/common/tags.module.css";
+
 /**
  * 리뷰어 타입 정의
  */
@@ -30,23 +34,17 @@ export type ReviewerType = "서포터즈" | "일반" | "인플루언서";
  *
  * 각 속성 설명:
  * - type: 표시할 리뷰어 타입 값 (서포터즈, 일반, 인플루언서 중 하나)
- * - styles: CSS 모듈에서 가져온 스타일 객체
  */
 interface ReviewerTypeTagProps {
   type: ReviewerType;
-  styles: Record<string, string>;
 }
 
 /**
  * 리뷰어 타입 태그 컴포넌트
  *
  * @param type - 표시할 리뷰어 타입 값
- * @param styles - CSS 모듈 스타일 객체
  */
-export default function ReviewerTypeTag({
-  type,
-  styles: css_styles,
-}: ReviewerTypeTagProps) {
+export default function ReviewerTypeTag({ type }: ReviewerTypeTagProps) {
   /**
    * 타입에 따라 적절한 CSS 클래스명을 반환하는 함수
    *
@@ -58,14 +56,14 @@ export default function ReviewerTypeTag({
   const get_type_class_name = () => {
     switch (type) {
       case "서포터즈":
-        return css_styles.type_tag_supporter;
+        return tag_styles.type_tag_supporter;
       case "일반":
-        return css_styles.type_tag_normal;
+        return tag_styles.type_tag_normal;
       case "인플루언서":
-        return css_styles.type_tag_influencer;
+        return tag_styles.type_tag_influencer;
       default:
         // 기본값으로 일반 타입 스타일 반환
-        return css_styles.type_tag_normal;
+        return tag_styles.type_tag_normal;
     }
   };
 
@@ -81,7 +79,7 @@ export default function ReviewerTypeTag({
    */
   return (
     <div
-      className={`${css_styles.type_tag} ${get_type_class_name()}`}
+      className={`${tag_styles.type_tag} ${get_type_class_name()}`}
       role="status"
       aria-label={`리뷰어 타입: ${type}`}
     >

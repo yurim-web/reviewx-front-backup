@@ -17,12 +17,16 @@
  * - 행 호버 시 삭제 버튼이 표시됩니다
  * - 구분 태그를 표시합니다 (파트너/리뷰어/관리자)
  * - 차단 코드와 차단 사유를 표시합니다
+ * - 파트너/리뷰어 행 클릭 시 해당 상세 페이지로 이동합니다
+ *   - 파트너: /manager_ga/member/partners/[user_id] 또는 /manager_sa/member/partners/[user_id]
+ *   - 리뷰어: /manager_ga/member/reviewers/[user_id] 또는 /manager_sa/member/reviewers/[user_id]
  *
  */
 
 "use client";
 
 import { useState, Fragment, useMemo, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import BaseModal from "@/components/common/modal/BaseModal";
 import styles from "@/styles/manager/common/member/blacklist/blacklist_table.module.css";
 import tag_styles from "@/styles/common/tags.module.css";
@@ -90,12 +94,12 @@ const columns: TableColumn[] = [
   },
   {
     key: "block_code",
-    label: "차단 코드",
+    label: "이용 제한 코드",
     className: styles.table_cell_block_code,
   },
   {
     key: "block_reason",
-    label: "차단 사유",
+    label: "이용 제한 사유",
     className: styles.table_cell_block_reason,
   },
   {
@@ -117,6 +121,13 @@ export default function BlacklistTable({
   selected_divisions = [],
   selected_block_codes = [],
 }: BlacklistTableProps) {
+  // Next.js의 useRouter 훅: 페이지 이동을 위해 사용
+  // useRouter는 클라이언트 컴포넌트에서만 사용 가능합니다
+  const router = useRouter();
+  // Next.js의 usePathname 훅: 현재 경로를 가져옵니다
+  // manager_ga인지 manager_sa인지 판단하기 위해 사용합니다
+  const pathname = usePathname();
+
   const [hovered_row_id, set_hovered_row_id] = useState<string | null>(null);
   const [unblock_modal_state, set_unblock_modal_state] = useState<{
     is_open: boolean;
@@ -281,19 +292,67 @@ export default function BlacklistTable({
     // 목록이 자동으로 업데이트됨 (get_blacklist_data()가 다시 호출됨)
   };
 
-  // 커스텀 행 래퍼 (호버 시 삭제 버튼 표시)
+  // 행 클릭 핸들러: 파트너/리뷰어 상세 페이지로 이동
+  // division이 "파트너" 또는 "리뷰어"일 때만 상세 페이지로 이동합니다
+  // 관리자는 상세 페이지가 없으므로 이동하지 않습니다
+  const handle_row_click = (row: BlacklistTableRowData) => {
+    // division이 "파트너" 또는 "리뷰어"가 아니면 클릭해도 아무 동작하지 않음
+    if (row.division !== "파트너" && row.division !== "리뷰어") {
+      return;
+    }
+
+    // 현재 경로에서 manager_ga인지 manager_sa인지 판단
+    // pathname 예시: "/manager_ga/member/blacklist" 또는 "/manager_sa/member/blacklist"
+    const is_manager_ga = pathname?.includes("/manager_ga");
+    const manager_prefix = is_manager_ga ? "manager_ga" : "manager_sa";
+
+    // division에 따라 상세 페이지 경로 결정
+    // user_id를 사용하여 상세 페이지로 이동합니다
+    if (row.division === "파트너") {
+      // 파트너 상세 페이지로 이동
+      // 경로 예시: /manager_ga/member/partners/[user_id]
+      router.push(`/${manager_prefix}/member/partners/${row.user_id}`);
+    } else if (row.division === "리뷰어") {
+      // 리뷰어 상세 페이지로 이동
+      // 경로 예시: /manager_ga/member/reviewers/[user_id]
+      router.push(`/${manager_prefix}/member/reviewers/${row.user_id}`);
+    }
+  };
+
+  // 커스텀 행 래퍼 (호버 시 삭제 버튼 표시, 클릭 시 상세 페이지 이동)
+  // render_row_wrapper는 CommonTable에서 각 행을 감싸는 커스텀 요소를 렌더링하는 함수입니다
   const render_row_wrapper = (
     row: BlacklistTableRowData,
     row_content: React.ReactNode,
     index: number
   ) => {
     const is_hovered = hovered_row_id === row.id;
+    // 파트너나 리뷰어일 때만 클릭 가능하도록 커서 스타일 적용
+    const is_clickable = row.division === "파트너" || row.division === "리뷰어";
 
     return (
       <div
-        className={styles.table_row_wrapper}
+        className={`${styles.table_row_wrapper} ${
+          is_clickable ? styles.clickable_row : ""
+        }`}
         onMouseEnter={() => set_hovered_row_id(row.id)}
         onMouseLeave={() => set_hovered_row_id(null)}
+        onClick={() => handle_row_click(row)}
+        // 접근성: 클릭 가능한 행임을 스크린 리더에 알림
+        role={is_clickable ? "button" : undefined}
+        tabIndex={is_clickable ? 0 : undefined}
+        onKeyDown={(e) => {
+          // Enter 키나 Space 키를 눌렀을 때도 클릭과 동일하게 동작
+          if (is_clickable && (e.key === "Enter" || e.key === " ")) {
+            e.preventDefault();
+            handle_row_click(row);
+          }
+        }}
+        aria-label={
+          is_clickable
+            ? `${row.name} ${row.division} 상세 페이지로 이동`
+            : undefined
+        }
       >
         {row_content}
         {/* 호버 시 삭제 버튼 표시 */}
@@ -301,6 +360,8 @@ export default function BlacklistTable({
           <button
             className={styles.delete_button}
             onClick={(e) => {
+              // stopPropagation: 이벤트 버블링을 막아서 행 클릭 이벤트가 발생하지 않도록 함
+              // 삭제 버튼을 클릭했을 때는 상세 페이지로 이동하지 않도록 합니다
               e.stopPropagation();
               handle_unblock_click(row.id);
             }}
@@ -330,12 +391,7 @@ export default function BlacklistTable({
             case "user_id":
               return <span>{row.user_id}</span>;
             case "division":
-              return (
-                <UserTypeTag
-                  type={row.division as UserType}
-                  styles={tag_styles}
-                />
-              );
+              return <UserTypeTag type={row.division as UserType} />;
             case "current_points":
               return <span>{format_number(row.current_points)}</span>;
             case "ip_address":

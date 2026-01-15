@@ -35,7 +35,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import styles from "@/styles/manager/common/campaign/progress/filter_section.module.css";
+import styles from "@/styles/manager/common/section/filter_section.module.css";
 
 interface SortDropdownProps {
   // 선택된 정렬 옵션

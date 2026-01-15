@@ -23,7 +23,6 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import styles from "@/styles/manager/common/community/categories/category_filter_section.module.css";
 import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
@@ -36,7 +35,7 @@ import {
 } from "@/data/manager_ga/community/categoriesData";
 import { posts_data } from "@/data/manager_ga/community/postsData";
 import DivisionFilterDropdown from "@/components/manager/common/community/categories/filter/DivisionFilterDropdown";
-import baseFilterStyles from "@/styles/manager/common/campaign/progress/filter_section.module.css";
+import filterStyles from "@/styles/manager/common/section/filter_section.module.css";
 import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.module.css";
 
 interface CategoryFilterSectionProps {
@@ -167,11 +166,11 @@ export default function CategoryFilterSection({
               onClick={() => set_is_division_dropdown_open((prev) => !prev)}
               isActive={selected_divisions.length > 0}
               styles={{
-                filter_item: styles.filter_item,
-                checkbox_icon: styles.checkbox_icon,
+                filter_item: filterStyles.filter_item,
+                checkbox_icon: filterStyles.checkbox_icon,
                 checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
-                filter_text: styles.filter_text,
-                dropdown_arrow: styles.dropdown_arrow,
+                filter_text: filterStyles.filter_text,
+                dropdown_arrow: filterStyles.dropdown_arrow,
                 filter_item_active: filterButtonStyles.filter_item_active,
                 filter_text_active: filterButtonStyles.filter_text_active,
                 dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
@@ -191,33 +190,29 @@ export default function CategoryFilterSection({
           <>
             {/* 등록 버튼 */}
             <div
-              className={styles.action_button}
+              className={filterStyles.filter_item}
               onClick={handle_create}
               aria-label="카테고리 등록"
             >
-              <div className={styles.action_button_icon_wrapper}>
-                <img
-                  src="/images/icons/sign_plus.svg"
-                  alt="등록"
-                  className={styles.action_button_icon}
-                />
-              </div>
-              <span className={styles.action_button_text}>등록</span>
+              <img
+                src="/images/icons/sign_plus.svg"
+                alt="등록"
+                className={filterStyles.action_icon}
+              />
+              <span className={filterStyles.post_action_text}>등록</span>
             </div>
             {/* 삭제 버튼 */}
             <div
-              className={styles.action_button}
+              className={filterStyles.filter_item}
               onClick={handle_delete}
               aria-label="카테고리 삭제"
             >
-              <div className={styles.action_button_icon_wrapper}>
-                <img
-                  src="/images/icons/sign_x.svg"
-                  alt="삭제"
-                  className={styles.action_button_icon}
-                />
-              </div>
-              <span className={styles.action_button_text}>삭제</span>
+              <img
+                src="/images/icons/sign_x.svg"
+                alt="삭제"
+                className={filterStyles.action_icon}
+              />
+              <span className={filterStyles.post_action_text}>삭제</span>
             </div>
           </>
         }

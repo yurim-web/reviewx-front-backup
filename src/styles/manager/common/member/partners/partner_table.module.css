@@ -21,6 +21,12 @@
   background-color: white;
 }
 
+/* 테이블 헤더 래퍼 (헤더 + 이용 제한 버튼) */
+.table_header_wrapper {
+  position: relative;
+  width: 100%;
+}
+
 /* 테이블 헤더 */
 .table_header {
   display: grid;
@@ -42,6 +48,46 @@
   padding: 0;
   align-items: center;
   width: 100%;
+}
+
+/* 이용 제한 버튼 */
+.restriction_button {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.restriction_button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.restriction_button:not(:disabled):hover {
+  opacity: 0.8;
+}
+
+/* 이용 제한 버튼 아이콘 */
+.restriction_button_icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* 이용 제한 버튼 텍스트 */
+.restriction_button_text {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
 }
 
 /* 테이블 헤더 셀 */

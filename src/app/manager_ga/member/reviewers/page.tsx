@@ -26,7 +26,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import styles from "@/styles/manager/common/member/reviewers/page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import ReviewerStatsSection from "@/components/manager/common/member/reviewers/ReviewerStatsSection";
@@ -56,6 +56,21 @@ export default function ReviewersPage() {
     []
   );
 
+  // 테이블 참조 (모달 열기 함수 호출용)
+  const table_ref = useRef<{ open_restriction_modal: () => void }>(null);
+
+  // 이용 제한 버튼 클릭 핸들러
+  // 필터 섹션의 "이용 제한" 버튼 클릭 시 테이블의 모달을 엽니다
+  const handle_restriction_click = () => {
+    console.log("이용 제한 버튼 클릭됨");
+    console.log("table_ref.current:", table_ref.current);
+    if (table_ref.current) {
+      table_ref.current.open_restriction_modal();
+    } else {
+      console.error("table_ref.current가 null입니다");
+    }
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.main_content}>
@@ -77,10 +92,12 @@ export default function ReviewersPage() {
           on_types_change={set_selected_types}
           selected_statuses={selected_statuses}
           on_statuses_change={set_selected_statuses}
+          on_restriction_click={handle_restriction_click}
         />
 
         {/* 리뷰어 목록 테이블 */}
         <ReviewerTable
+          ref={table_ref}
           search_query={search_query}
           selected_channels={selected_channels}
           selected_grades={selected_grades}

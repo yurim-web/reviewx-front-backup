@@ -24,19 +24,23 @@
 
 "use client";
 
-import React, { useState, useMemo, type ReactNode } from "react";
+import React, { useState, useMemo, useEffect, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import styles from "@/styles/user/notice/notice.module.css";
 import PageTitle from "@/components/fragments/PageTitle";
 import { type NoticeDetail, type NoticeTarget } from "@/data/user/notice/noticesData";
-import { posts_data } from "@/data/manager_ga/community/postsData";
+import { posts_data, type PostItem } from "@/data/manager_ga/community/postsData";
 import { convertPostsToNotices } from "@/utils/notice/convertPostToNotice";
 import { get_post_detail } from "@/data/manager_ga/community/postsData";
 import {
   categories_data,
   type CategoryItem,
 } from "@/data/manager_ga/community/categoriesData";
+import {
+  apply_pinned_state_to_posts,
+  load_pinned_posts_state,
+} from "@/utils/community/posts/pinnedPostsLocalStorage";
 
 /**
  * NoticePageClient 컴포넌트의 Props 타입 정의
@@ -72,6 +76,29 @@ export default function NoticePageClient({
   // 선택된 카테고리 상태 관리
   // useState: React Hook으로 컴포넌트의 선택된 카테고리 상태를 관리합니다
   const [selected_category, set_selected_category] = useState("전체");
+
+  // 관리자 게시글 목록 상태 (공지사항 변환용)
+  // - 초기에는 posts_data(기본 목업 데이터)를 그대로 사용합니다.
+  // - 클라이언트 마운트 후 localStorage에 저장된 고정 상태를 적용합니다.
+  const [posts_for_notice, set_posts_for_notice] =
+    useState<PostItem[]>(posts_data);
+
+  /**
+   * 💾 localStorage에 저장된 게시글 고정 상태 적용
+   * - 컴포넌트가 클라이언트에서 마운트된 후에만 실행됩니다.
+   * - 서버 렌더링 시에는 localStorage에 접근하지 않으므로
+   *   Hydration 오류를 방지할 수 있습니다.
+   */
+  useEffect(() => {
+    const pinned_state = load_pinned_posts_state();
+    if (!pinned_state || Object.keys(pinned_state).length === 0) {
+      return;
+    }
+
+    set_posts_for_notice((previous_posts) =>
+      apply_pinned_state_to_posts(previous_posts, pinned_state)
+    );
+  }, []);
 
   /**
    * 관리자에서 등록한 카테고리 목록을 동적으로 가져오기
@@ -116,7 +143,7 @@ export default function NoticePageClient({
    */
   const converted_notices = useMemo(() => {
     // convertPostsToNotices: 관리자 게시글을 공지사항 형식으로 변환하는 함수
-    const notices = convertPostsToNotices(posts_data);
+    const notices = convertPostsToNotices(posts_for_notice);
 
     // content 추가 (PostDetail에서 가져오기)
     // map: 각 공지사항에 content를 추가합니다
@@ -131,7 +158,7 @@ export default function NoticePageClient({
         content: post_detail?.content || notice.content || "",
       };
     });
-  }, []);
+  }, [posts_for_notice]);
 
   /**
    * 공지사항 필터링 및 정렬
@@ -239,6 +266,8 @@ export default function NoticePageClient({
     </div>
   );
 }
+
+
 
 
 

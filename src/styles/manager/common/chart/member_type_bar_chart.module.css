@@ -1,90 +1,15 @@
 /* ========================================
-   👥 회원 통계 관련 스타일
+   📊 회원 유형 막대 차트 공통 스타일
    ======================================== */
 
 /**
  * 사용 컴포넌트:
- * - MemberActivationSection (회원 활성화 통계 섹션)
- * - MemberTypeSection (회원 유형 통계 섹션)
- * - ChannelMemberSection (채널별 회원 통계 섹션)
- * - 각종 차트 컴포넌트들
- * 
+ * - MemberTypeBarChart (회원 유형 막대 차트)
+ *
  * 사용 페이지:
+ * - /manager_ga (GA 관리자 대시보드)
  * - /manager_sa (SA 관리자 대시보드)
  */
-
-/* 원형 프로그래스 바 컨테이너 */
-.donut_progress_container {
-  width: 180px;
-  height: 180px;
-  position: relative;
-  background-color: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* 원형 프로그래스 바 SVG */
-.donut_progress_svg {
-  transform: rotate(-180deg);
-}
-
-/* 원형 프로그래스 바 배경 원 */
-.donut_progress_background {
-  fill: none;
-  stroke: #e5e5e5;
-  stroke-width: 25;
-  stroke-linecap: round;
-}
-
-/* 원형 프로그래스 바 활성화 원 */
-.donut_progress_active {
-  fill: none;
-  stroke: #444444;
-  stroke-width: 25;
-  stroke-linecap: round;
-  transition: stroke-dasharray 0.3s ease;
-}
-
-/* 원형 프로그래스 바 텍스트 래퍼 (HTML 요소) */
-.donut_progress_text_wrapper {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  pointer-events: none;
-}
-
-/* 도넛 차트 라벨 (활성화 텍스트) */
-.donut_chart_label {
-  color: #848484;
-  font-size: 18px;
-  font-weight: 500;
-  letter-spacing: -0.36px;
-  line-height: 1;
-  margin: 0;
-  padding: 0;
-}
-
-/* 도넛 차트 값 (68% 텍스트) */
-.donut_chart_value {
-  color: #444444;
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: -0.36px;
-  line-height: 1;
-  margin: 0;
-  padding: 0;
-}
-
-/* ========================================
-   📊 회원 유형 막대 차트 스타일
-   ======================================== */
 
 /* 회원 유형 막대 차트 컨테이너 */
 .member_type_bar_chart_container {
@@ -94,6 +19,7 @@
   background-color: transparent;
   display: flex;
   flex-direction: column;
+  /* 막대 그래프랑 범례 사이의 간격 */
   gap: 16px;
 }
 
@@ -125,6 +51,7 @@
   right: 0;
   height: 1px;
   background-color: #f2f2f2;
+  /* 두 개의 차트와 간격을 포함한 전체 너비 */
   width: 100%;
   margin: 0 auto;
 }
@@ -137,10 +64,34 @@
   gap: 12px;
 }
 
-/* 프로그레스 바 컨테이너 (세로) */
-.member_type_progress_bar_container {
+/* 프로그레스 바 래퍼 (툴팁 위치 기준) */
+.member_type_progress_bar_wrapper {
+  position: relative;
   width: 32px;
   height: 168px;
+}
+
+/* 카테고리 라벨 (전체, 활성) */
+.member_type_category_label {
+  color: #444;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  text-align: center;
+}
+
+/* 프로그레스 바들 컨테이너 - 두 개의 바를 나란히 배치 */
+.member_type_progress_bars {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+/* 프로그레스 바 컨테이너 (세로) */
+.member_type_progress_bar_container {
+  width: 100%;
+  height: 100%;
   position: relative;
   border-radius: 8px 8px 0 0;
   overflow: hidden;
@@ -166,17 +117,41 @@
   border-radius: 8px 8px 0 0;
   transition: height 0.6s ease-out;
   z-index: 1;
-  animation: fillProgress 0.8s ease-out;
+  animation: fill_progress 0.8s ease-out;
 }
 
 /* 프로그레스 바 채워지는 애니메이션 */
-@keyframes fillProgress {
+@keyframes fill_progress {
   from {
     height: 0%;
   }
   to {
-    /* height는 인라인 스타일로 동적으로 설정됨 */
   }
+}
+
+/* 툴팁 */
+.member_type_tooltip {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 30%);
+  background-color: #444444;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 13px;
+  padding: 8px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 2;
+  margin-left: 20px;
+}
+
+/* 호버 시 툴팁 표시 */
+.member_type_progress_bar_wrapper:hover .member_type_tooltip {
+  opacity: 1;
 }
 
 /* 회원 유형 범례 */
@@ -210,4 +185,3 @@
   line-height: 12px;
   letter-spacing: -0.24px;
 }
-

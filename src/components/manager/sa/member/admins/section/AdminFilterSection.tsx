@@ -33,7 +33,7 @@ import BaseFilterSection, {
 import StatusFilterDropdown from "../filter/StatusFilterDropdown";
 import type { AdminStatus } from "@/data/manager_sa/member/admins";
 import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
-import baseFilterStyles from "@/styles/manager/common/campaign/progress/filter_section.module.css";
+import baseFilterStyles from "@/styles/manager/common/section/filter_section.module.css";
 import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.module.css";
 
 interface AdminFilterSectionProps {

@@ -44,7 +44,13 @@ export default function ProfileSection({
       </div>
 
       <div className={styles.profile_info}>
-        <div className={styles.status_type_tag}>{status_type}</div>
+        <div
+          className={`${styles.status_type_tag} ${
+            status_type === "주의 회원" ? styles.status_type_tag_warning : ""
+          }`}
+        >
+          {status_type}
+        </div>
 
         <h1 className={styles.name}>{name}</h1>
 

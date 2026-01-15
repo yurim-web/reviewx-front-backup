@@ -13,7 +13,10 @@
  * - /manager_sa/member/reviewers (SA 관리자 리뷰어 목록 페이지)
  */
 
-import ReviewerTableCommon from "@/components/manager/common/member/table/ReviewerTable";
+import { forwardRef } from "react";
+import ReviewerTableCommon, {
+  type ReviewerTableRef,
+} from "@/components/manager/common/member/table/ReviewerTable";
 import styles from "@/styles/manager/common/member/reviewers/reviewer_table.module.css";
 
 import type { Channel } from "@/data/manager/common/filterOptions";
@@ -36,57 +39,70 @@ interface ReviewerTableProps {
   detail_path: string;
 }
 
-export default function ReviewerTable({
-  search_query,
-  selected_channels,
-  selected_grades,
-  selected_types,
-  selected_statuses,
-  detail_path,
-}: ReviewerTableProps) {
-  return (
-    <ReviewerTableCommon
-      search_query={search_query}
-      selected_channels={selected_channels}
-      selected_grades={selected_grades}
-      selected_types={selected_types}
-      selected_statuses={selected_statuses}
-      styles={
-        styles as {
-          table_container: string;
-          table_header: string;
-          table_body: string;
-          table_row: string;
-          table_cell_checkbox: string;
-          table_cell_number: string;
-          table_cell_name: string;
-          table_cell_channel: string;
-          table_cell_type: string;
-          table_cell_last_access: string;
-          table_cell_join_date: string;
-          table_cell_campaign_participated: string;
-          table_cell_campaign_completed: string;
-          table_cell_current_points: string;
-          table_cell_withdrawn_points: string;
-          table_cell_status_type: string;
-          table_cell_status: string;
-          checkbox: string;
-          sort_icon: string;
-          channel_icons: string;
-          channel_icon_wrapper: string;
-          channel_icon: string;
-          type_tag: string;
-          type_tag_supporter: string;
-          type_tag_normal: string;
-          type_tag_influencer: string;
-          status_tag: string;
-          status_tag_normal: string;
-          status_tag_suspended: string;
-          status_tag_permanent: string;
-          empty_message: string;
+// forwardRef를 사용하여 ref를 ReviewerTableCommon에 전달합니다
+const ReviewerTable = forwardRef<ReviewerTableRef, ReviewerTableProps>(
+  function ReviewerTable(
+    {
+      search_query,
+      selected_channels,
+      selected_grades,
+      selected_types,
+      selected_statuses,
+      detail_path,
+    },
+    ref
+  ) {
+    return (
+      <ReviewerTableCommon
+        ref={ref}
+        search_query={search_query}
+        selected_channels={selected_channels}
+        selected_grades={selected_grades}
+        selected_types={selected_types}
+        selected_statuses={selected_statuses}
+        styles={
+          styles as {
+            table_container: string;
+            table_header_wrapper: string;
+            table_header: string;
+            table_body: string;
+            table_row: string;
+            table_cell_checkbox: string;
+            table_cell_number: string;
+            table_cell_name: string;
+            table_cell_channel: string;
+            table_cell_type: string;
+            table_cell_last_access: string;
+            table_cell_join_date: string;
+            table_cell_campaign_participated: string;
+            table_cell_campaign_completed: string;
+            table_cell_current_points: string;
+            table_cell_withdrawn_points: string;
+            table_cell_status_type: string;
+            table_cell_status: string;
+            checkbox: string;
+            sort_icon: string;
+            channel_icons: string;
+            channel_icon_wrapper: string;
+            channel_icon: string;
+            type_tag: string;
+            type_tag_supporter: string;
+            type_tag_normal: string;
+            type_tag_influencer: string;
+            status_tag: string;
+            status_tag_normal: string;
+            status_tag_suspended: string;
+            status_tag_permanent: string;
+            restriction_button: string;
+            restriction_button_icon: string;
+            restriction_button_text: string;
+            empty_message: string;
+          }
         }
-      }
-      detail_path={detail_path}
-    />
-  );
-}
+        detail_path={detail_path}
+      />
+    );
+  }
+);
+
+export default ReviewerTable;

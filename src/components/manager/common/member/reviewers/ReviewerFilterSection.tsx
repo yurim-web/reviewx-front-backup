@@ -14,7 +14,6 @@
  */
 
 import MemberFilterSectionCommon from "@/components/manager/common/member/filter/MemberFilterSection";
-import styles from "@/styles/manager/common/member/reviewers/reviewer_filter_section.module.css";
 import ChannelFilterDropdown from "@/components/manager/common/member/reviewers/filter/ChannelFilterDropdown";
 import GradeFilterDropdown from "@/components/manager/common/member/reviewers/filter/GradeFilterDropdown";
 import TypeFilterDropdown from "@/components/manager/common/member/reviewers/filter/TypeFilterDropdown";
@@ -40,6 +39,8 @@ interface ReviewerFilterSectionProps {
   on_types_change: (types: ReviewerStatusType[]) => void;
   selected_statuses: ReviewerStatus[];
   on_statuses_change: (statuses: ReviewerStatus[]) => void;
+  // 이용 제한 버튼 클릭 핸들러
+  on_restriction_click?: () => void;
 }
 
 // 채널 이름 매핑 객체
@@ -49,6 +50,9 @@ const channel_name_map: Record<Channel, string> = {
   Instagram: "인스타그램",
   Youtube: "유튜브",
   Store: "네이버 스토어",
+  Mission: "미션",
+  Reels: "릴스",
+  Shorts: "쇼츠",
 };
 
 export default function ReviewerFilterSection({
@@ -62,14 +66,10 @@ export default function ReviewerFilterSection({
   on_types_change,
   selected_statuses,
   on_statuses_change,
+  on_restriction_click,
 }: ReviewerFilterSectionProps) {
   return (
-    <MemberFilterSectionCommon<
-      Channel,
-      ReviewerGrade,
-      ReviewerStatusType,
-      ReviewerStatus
-    >
+    <MemberFilterSectionCommon
       search_query={search_query}
       on_search_change={on_search_change}
       selected_channels={selected_channels}
@@ -80,17 +80,7 @@ export default function ReviewerFilterSection({
       on_types_change={on_types_change}
       selected_statuses={selected_statuses}
       on_statuses_change={on_statuses_change}
-      styles={
-        styles as {
-          filter_item: string;
-          checkbox_icon: string;
-          checkbox_icon_checked: string;
-          filter_text: string;
-          dropdown_arrow: string;
-          download_icon: string;
-          report_icon: string;
-        }
-      }
+      on_restriction_click={on_restriction_click}
       channel_name_map={channel_name_map}
       ChannelFilterDropdown={ChannelFilterDropdown as any}
       grade_or_division_label="등급"

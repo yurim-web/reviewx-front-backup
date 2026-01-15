@@ -17,6 +17,7 @@
  * - 리뷰어/파트너의 패널티 내역을 테이블 형태로 표시합니다
  * - 패널티 내역이 없을 때는 빈 상태 메시지를 표시합니다
  * - 유형, 사유, 처리일, 상태 정보를 보여줍니다
+ * - 처리일 기준 내림차순 정렬 (최신 패널티가 먼저 표시됩니다)
  */
 
 "use client";
@@ -80,6 +81,17 @@ export default function PenaltyHistoryModal({
     }
   };
 
+  // 처리일 기준 내림차순 정렬된 패널티 내역
+  // sort 함수: 배열의 요소를 정렬합니다
+  // localeCompare: 문자열을 비교하여 정렬 순서를 결정합니다
+  // 내림차순 정렬: b를 먼저 비교하여 최신 날짜가 앞에 오도록 합니다
+  // processed_date 형식: "2025-08-01 18:56" (YYYY-MM-DD HH:mm)
+  // 이 형식은 문자열 비교로도 올바르게 정렬됩니다
+  const sorted_penalty_history = [...penalty_history].sort((a, b) => {
+    // 내림차순: b가 a보다 크면 음수 반환 (b가 앞으로)
+    return b.processed_date.localeCompare(a.processed_date);
+  });
+
   return (
     <div className={cssStyles.modal_overlay} onClick={handle_overlay_click}>
       <div
@@ -118,7 +130,7 @@ export default function PenaltyHistoryModal({
             {/* 테이블 바디: 항상 렌더링되며, 데이터가 없을 때는 빈 상태 메시지를 표시합니다 */}
             <div className={cssStyles.table_body}>
               {/* 조건부 렌더링: 데이터가 없을 때 빈 상태 메시지 표시 */}
-              {penalty_history.length === 0 ? (
+              {sorted_penalty_history.length === 0 ? (
                 <div className={cssStyles.empty_state}>
                   <p className={cssStyles.empty_message}>
                     패널티 내역이 없습니다.
@@ -128,7 +140,8 @@ export default function PenaltyHistoryModal({
                 /* map 함수를 사용하여 테이블 행을 렌더링합니다 */
                 /* map 함수: 배열의 각 요소를 순회하며 새로운 배열을 만듭니다 */
                 /* key prop: React에서 리스트를 렌더링할 때 각 요소를 구분하기 위해 필요합니다 */
-                penalty_history.map((penalty, index) => {
+                /* 정렬된 배열(sorted_penalty_history)을 사용하여 최신 패널티가 먼저 표시됩니다 */
+                sorted_penalty_history.map((penalty, index) => {
                   // 상태 값에 따라 표시할 값을 결정합니다
                   // '일시정지'를 '일시 정지'로 변환하여 표시합니다
                   const display_status =
@@ -143,7 +156,7 @@ export default function PenaltyHistoryModal({
                     <div key={index} className={cssStyles.table_row}>
                       {/* 유형: 패널티 유형 태그 표시 */}
                       <div className={cssStyles.table_cell}>
-                        <PenaltyTypeTag type="경고" styles={tagStyles} />
+                        <PenaltyTypeTag type="경고" />
                       </div>
 
                       {/* 사유: type 값(지각 제출, 선정 후 취소 등)을 텍스트로 표시 */}
@@ -160,7 +173,6 @@ export default function PenaltyHistoryModal({
                       <div className={cssStyles.table_cell}>
                         <MemberStatusTag
                           status={display_status as MemberStatus}
-                          styles={tagStyles}
                         />
                       </div>
                     </div>

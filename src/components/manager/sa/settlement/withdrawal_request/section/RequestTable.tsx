@@ -322,7 +322,6 @@ export default function RequestTable({
         return (
           <MemberStatusTag
             status={row.status as any as MemberStatus}
-            styles={styles}
           />
         );
       case "action":

@@ -24,7 +24,7 @@ interface DivisionFilterDropdownProps {
   on_close: () => void;
   selected_divisions: PostDivision[];
   on_apply: (divisions: PostDivision[]) => void;
-  container_ref?: React.RefObject<HTMLDivElement>;
+  container_ref?: React.RefObject<HTMLDivElement | null>;
 }
 
 // 구분 필터 옵션 배열

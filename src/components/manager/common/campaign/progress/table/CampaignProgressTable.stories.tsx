@@ -7,16 +7,14 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 import CampaignProgressTable, { CampaignProgressItem } from "./CampaignProgressTable";
-import CampaignReportModal from "../../modal/CampaignReportModal";
-import { report_code_info } from "@/data/manager_ga/reported";
-import type { ReportCode } from "@/components/manager/common/campaign/modal/CampaignReportModal";
+import ManagerReportReasonModal from "../../modal/ManagerReportReasonModal";
+import type { ReportCode } from "@/components/manager/common/campaign/modal/ManagerReportReasonModal";
 
 // 실제 CSS 모듈 import
 // Storybook에서는 CSS 모듈을 직접 import하여 사용합니다
 import tableStylesModule from "@/styles/manager/common/campaign/progress/progress_table.module.css";
 import tagStylesModule from "@/styles/common/tags.module.css";
 import channelIconStylesModule from "@/styles/manager/common/campaign/progress/channel_icon.module.css";
-import reportModalStylesModule from "@/styles/manager/common/campaign/progress/campaign_report_modal.module.css";
 
 // CSS 모듈 객체를 타입 단언하여 사용
 // readonly 속성을 제거하기 위해 Record 타입으로 캐스팅
@@ -54,32 +52,6 @@ const channelIconStyles = (channelIconStylesModule || {
   channel_icon_image: string;
 };
 
-const reportModalStyles = (reportModalStylesModule || {
-  modal_overlay: "modal_overlay",
-  modal_content: "modal_content",
-  modal_title: "modal_title",
-  options_list: "options_list",
-  option_item: "option_item",
-  option_radio: "option_radio",
-  option_label: "option_label",
-  modal_footer: "modal_footer",
-  close_button: "close_button",
-  report_button: "report_button",
-  block_button: "block_button",
-}) as Record<string, string> & {
-  modal_overlay: string;
-  modal_content: string;
-  modal_title: string;
-  options_list: string;
-  option_item: string;
-  option_radio: string;
-  option_label: string;
-  modal_footer: string;
-  close_button: string;
-  report_button: string;
-  block_button: string;
-};
-
 // 신고 코드 옵션 (GA와 SA 모두 동일)
 const report_code_options: ReportCode[] = [
   "W001", // 예정 취소
@@ -102,13 +74,10 @@ const ReportModalWrapper = (props: {
   campaign_id?: string;
   on_report?: (report_code: string) => void;
 }) => {
-  return React.createElement(CampaignReportModal, {
+  return React.createElement(ManagerReportReasonModal, {
     ...props,
-    mode: "report" as const,
-    report_code_info: report_code_info,
     report_code_options: report_code_options,
-    styles: reportModalStyles,
-    on_report: props.on_report || (() => {}),
+    on_report: (props.on_report as (report_code: ReportCode) => void) || (() => {}),
   });
 };
 
