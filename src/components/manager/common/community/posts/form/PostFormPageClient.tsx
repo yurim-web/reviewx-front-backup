@@ -24,8 +24,19 @@ import { PostEditorField } from "@/components/manager/common/community/posts/for
 // 카테고리 데이터를 가져와서 구분에 따라 필터링된 카테고리 목록을 표시하기 위해 import
 import {
   categories_data,
+  initialize_categories_data,
   type CategoryDivision,
 } from "@/data/manager_ga/community/categoriesData";
+import {
+  posts_data,
+  add_post,
+  update_post,
+  initialize_posts_data,
+  type PostItem,
+  type PostTarget,
+  type PostDivision,
+} from "@/data/manager_ga/community/postsData";
+import { useRouter } from "next/navigation";
 
 // 컴포넌트 Props 타입 정의
 interface PostFormPageClientProps {
@@ -83,6 +94,9 @@ export default function PostFormPageClient({
   initial_data,
   manager_type,
 }: PostFormPageClientProps) {
+  // Next.js 라우터 사용
+  const router = useRouter();
+
   // manager_type에 따른 base path 설정
   const base_path =
     manager_type === "ga"
@@ -105,12 +119,22 @@ export default function PostFormPageClient({
   const [target, setTarget] = useState(initial_data?.target || "");
   const [title, setTitle] = useState(initial_data?.title || "");
 
+  // 초기 마운트 여부를 추적하는 ref
+  const is_initial_mount = useRef(true);
+
   /**
    * 구분(category_type)이 변경되면 카테고리도 초기화
    * useEffect: 컴포넌트의 상태가 변경될 때 실행되는 React Hook입니다.
    * category_type이 변경되면 category를 빈 문자열로 초기화합니다.
+   * 단, 초기 마운트 시에는 초기화하지 않습니다 (수정 모드에서 initial_data가 설정된 경우를 위해).
    */
   useEffect(() => {
+    // 초기 마운트 시에는 초기화하지 않음 (수정 모드에서 initial_data가 설정된 경우)
+    if (is_initial_mount.current) {
+      is_initial_mount.current = false;
+      return;
+    }
+
     // 구분이 변경되면 카테고리 선택을 초기화
     setCategory("");
   }, [category_type]);
@@ -218,6 +242,117 @@ export default function PostFormPageClient({
   // 카테고리 타입이 "자주 묻는 질문"인지 여부에 따라 라벨 텍스트 변경
   const is_faq_type = category_type === "자주 묻는 질문";
 
+  /**
+   * 카테고리 목록 업데이트 (localStorage에서 최신 데이터 불러오기)
+   * - 컴포넌트가 마운트될 때 카테고리 데이터를 초기화합니다
+   */
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    initialize_categories_data();
+  }, []);
+
+  /**
+   * 게시글 등록/수정 핸들러
+   * - 에디터에서 HTML 내용을 가져와서 게시글을 저장합니다
+   * - localStorage에 저장하고 게시글 목록 페이지로 이동합니다
+   */
+  const handle_submit = () => {
+    // 필수 필드 검증
+    if (!category_type || !category || !target || !title.trim()) {
+      alert("모든 필드를 입력해주세요.");
+      return;
+    }
+
+    // 에디터에서 HTML 내용 가져오기
+    let content = "";
+    try {
+      if (editor_instance_ref.current) {
+        // ToastUI Editor에서 HTML 내용 가져오기
+        content = editor_instance_ref.current.getHTML() || "";
+      }
+    } catch (error) {
+      console.error("에디터 내용 가져오기 실패:", error);
+      alert("에디터 내용을 가져오는데 실패했습니다.");
+      return;
+    }
+
+    // 게시글 데이터 생성
+    const now = new Date();
+    const date_string = `${now.getFullYear()}-${String(
+      now.getMonth() + 1
+    ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    const time_string = `${String(now.getHours()).padStart(2, "0")}:${String(
+      now.getMinutes()
+    ).padStart(2, "0")}`;
+    const registered_date = `${date_string} ${time_string}`;
+
+    if (mode === "create") {
+      // 등록 모드: 새로운 게시글 생성
+      // 새로운 ID 생성
+      const max_id = Math.max(...posts_data.map((item) => Number(item.id)), 0);
+      const new_id = String(max_id + 1);
+
+      // 새로운 번호 생성
+      const max_number = Math.max(
+        ...posts_data.map((item) => Number(item.number)),
+        0
+      );
+      const new_number = String(max_number + 1).padStart(6, "0");
+
+      // 게시글 데이터 생성
+      const new_post: PostItem = {
+        id: new_id,
+        number: new_number,
+        division: category_type as PostDivision,
+        category: category,
+        target: target as PostTarget,
+        title: title.trim(),
+        view_count: 0,
+        registered_date: registered_date,
+        registered_by: "관리자", // TODO: 실제 로그인한 관리자 정보 사용
+        is_pinned: false,
+      };
+
+      // 게시글 등록 및 localStorage 저장
+      add_post(new_post, content);
+      console.log("게시글 등록:", new_post);
+
+      // 게시글 목록 페이지로 이동
+      router.push(base_path);
+    } else {
+      // 수정 모드: 기존 게시글 수정
+      if (!post_id) {
+        alert("게시글 ID가 없습니다.");
+        return;
+      }
+
+      // 기존 게시글 찾기
+      const existing_post = posts_data.find((p) => p.id === post_id);
+      if (!existing_post) {
+        alert("수정할 게시글을 찾을 수 없습니다.");
+        return;
+      }
+
+      // 수정된 게시글 데이터 생성
+      const updated_post: PostItem = {
+        ...existing_post,
+        division: category_type as PostDivision,
+        category: category,
+        target: target as PostTarget,
+        title: title.trim(),
+      };
+
+      // 게시글 수정 및 localStorage 저장
+      update_post(post_id, updated_post, content);
+      console.log("게시글 수정:", updated_post);
+
+      // 게시글 목록 페이지로 이동
+      router.push(base_path);
+    }
+  };
+
   return (
     <main className={styles.container}>
       <header className={styles.header_bar} aria-label="상단 헤더">
@@ -316,7 +451,9 @@ export default function PostFormPageClient({
           />
 
           <button
+            type="button"
             className={styles.save_button}
+            onClick={handle_submit}
             aria-label={`${button_text} 버튼`}
           >
             {button_text}

@@ -148,6 +148,29 @@
   text-align: left;
   word-break: break-word;
 }
+
+/* 공지사항 정보 래퍼 (카테고리 태그 + 날짜) */
+.notice_info_wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+/* 카테고리 태그 */
+.notice_category_tag {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 12px;
+  letter-spacing: -0.24px;
+  color: #ff5694;
+  background: rgba(255, 86, 148, 0.1);
+  border-radius: 12px;
+  padding: 4px 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
 .notice_date {
   font-size: 14px;
   font-weight: 500;

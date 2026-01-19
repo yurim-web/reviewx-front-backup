@@ -157,8 +157,24 @@ export default function ApplicationModal({
           if (storedAddress) {
             try {
               const addressData = JSON.parse(storedAddress);
-              // 전체 주소 문자열을 사용 (우편번호 + 기본 주소 + 상세 주소)
-              setUserAddress(addressData.fullAddress || "");
+              // 전체 주소 문자열 사용 (기본 주소 + 상세 주소 | 우편번호 + 우편번호값)
+              // 예: "인천 남동구 장자로 6번길 2, 1층 | 우편번호 12345"
+              // fullAddress가 있으면 사용, 없으면 기존 형식으로 생성 (하위 호환성)
+              if (addressData.fullAddress) {
+                setUserAddress(addressData.fullAddress);
+              } else if (
+                addressData.postalCode &&
+                addressData.address &&
+                addressData.detailAddress
+              ) {
+                // 기존 형식의 데이터가 있는 경우 새 형식으로 변환
+                const addressPart =
+                  `${addressData.address} ${addressData.detailAddress}`.trim();
+                const postalCodePart = `우편번호 ${addressData.postalCode}`;
+                setUserAddress(`${addressPart} | ${postalCodePart}`);
+              } else {
+                setUserAddress("");
+              }
             } catch {
               // 파싱 실패 시 빈 문자열
               setUserAddress("");

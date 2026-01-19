@@ -31,6 +31,7 @@ import styles from "@/styles/user/faq/faq.module.css";
 import PageTitle from "@/components/fragments/PageTitle";
 import {
   posts_data,
+  initialize_posts_data,
   get_post_detail,
   type PostItem,
 } from "@/data/manager_ga/community/postsData";
@@ -41,6 +42,7 @@ import {
 } from "@/utils/faq/convertPostToFAQ";
 import {
   categories_data,
+  initialize_categories_data,
   type CategoryItem,
 } from "@/data/manager_ga/community/categoriesData";
 import {
@@ -81,47 +83,118 @@ export default function FAQPageClient({
   // 펼쳐진 FAQ 항목 ID 목록 (아코디언 상태 관리)
   const [expanded_items, set_expanded_items] = useState<number[]>([]);
 
-   // 관리자 게시글 목록 상태 (FAQ 변환용)
-   // - 초기에는 posts_data(기본 목업 데이터)를 그대로 사용합니다.
-   // - 클라이언트 마운트 후 localStorage에 저장된 고정 상태를 적용합니다.
-  const [posts_for_faq, set_posts_for_faq] = useState<PostItem[]>(posts_data);
+  // 관리자 게시글 목록 상태 (FAQ 변환용)
+  // - 초기에는 posts_data(기본 목업 데이터)를 그대로 사용합니다.
+  // - 클라이언트 마운트 후 localStorage에 저장된 고정 상태를 적용합니다.
+  const [posts_for_faq, set_posts_for_faq] = useState<PostItem[]>(() => {
+    // 서버 사이드에서는 기본 데이터 반환
+    if (typeof window === "undefined") {
+      return posts_data;
+    }
+    return posts_data;
+  });
+
+  // 카테고리 목록 상태 관리
+  // useState: React Hook으로 컴포넌트의 카테고리 목록 상태를 관리합니다
+  // 관리자에서 새로 등록한 카테고리가 즉시 반영되도록 상태로 관리합니다
+  // Hydration 오류 방지를 위해 초기값은 빈 배열로 설정하고, useEffect에서 로드합니다
+  const [categories, set_categories] = useState<string[]>([]);
 
   /**
-   * 💾 localStorage에 저장된 게시글 고정 상태 적용
+   * 💾 localStorage에 저장된 게시글 데이터 및 고정 상태 적용
    * - 컴포넌트가 클라이언트에서 마운트된 후에만 실행됩니다.
    * - 서버 렌더링 시에는 localStorage에 접근하지 않으므로
    *   Hydration 오류를 방지할 수 있습니다.
+   * - 주기적으로 최신 게시글 데이터를 가져와서 관리자에서 새로 등록한 게시글이 즉시 반영되도록 합니다
    */
   useEffect(() => {
-    const pinned_state = load_pinned_posts_state();
-    if (!pinned_state || Object.keys(pinned_state).length === 0) {
+    // 서버 사이드에서는 실행하지 않음
+    if (typeof window === "undefined") {
       return;
     }
 
-    set_posts_for_faq((previous_posts) =>
-      apply_pinned_state_to_posts(previous_posts, pinned_state)
-    );
+    // 게시글 목록 업데이트 함수
+    const update_posts = () => {
+      // 게시글 데이터 초기화 (localStorage에서 최신 데이터 불러오기)
+      initialize_posts_data();
+
+      // localStorage에서 고정 상태를 불러와서 적용
+      const pinned_state = load_pinned_posts_state();
+      if (!pinned_state || Object.keys(pinned_state).length === 0) {
+        set_posts_for_faq([...posts_data]);
+        return;
+      }
+
+      const updated_posts = apply_pinned_state_to_posts(
+        posts_data,
+        pinned_state
+      );
+      set_posts_for_faq(updated_posts);
+    };
+
+    // 초기 마운트 시 게시글 목록 업데이트
+    update_posts();
+
+    // 주기적으로 게시글 목록 업데이트 (1초마다)
+    // 관리자에서 새로 등록한 게시글이 즉시 반영되도록 합니다
+    const interval_id = setInterval(update_posts, 1000);
+
+    // 페이지가 포커스될 때도 업데이트
+    const handle_focus = () => {
+      update_posts();
+    };
+    window.addEventListener("focus", handle_focus);
+
+    // 컴포넌트가 언마운트될 때 interval과 이벤트 리스너 정리
+    return () => {
+      clearInterval(interval_id);
+      window.removeEventListener("focus", handle_focus);
+    };
   }, []);
 
   /**
-   * 관리자에서 등록한 카테고리 목록을 동적으로 가져오기
+   * 관리자에서 등록한 카테고리 목록을 동적으로 업데이트
    * - division이 "자주 묻는 질문"인 카테고리만 필터링
    * - "전체" 카테고리를 맨 앞에 추가
-   * - useMemo를 사용하여 카테고리 데이터가 변경될 때만 재계산
+   * - 컴포넌트가 클라이언트에서 마운트된 후에만 실행됩니다
+   * - Hydration 오류를 방지하기 위해 useEffect 내에서만 카테고리를 로드합니다
+   * - 주기적으로 최신 카테고리 데이터를 가져와서 관리자에서 새로 등록한 카테고리가 즉시 반영되도록 합니다
    */
-  const categories = useMemo(() => {
-    // division이 "자주 묻는 질문"인 카테고리만 필터링
-    const faq_categories = categories_data
-      .filter(
-        (category: CategoryItem) => category.division === "자주 묻는 질문"
-      )
-      .map((category: CategoryItem) => category.category_name);
+  useEffect(() => {
+    // 서버 사이드에서는 실행하지 않음 (Hydration 오류 방지)
+    if (typeof window === "undefined") {
+      return;
+    }
 
-    // 중복 제거
-    const unique_categories = Array.from(new Set(faq_categories));
+    // 카테고리 데이터 초기화 (localStorage에서 불러오기)
+    // 클라이언트에서만 실행되어 Hydration 오류를 방지합니다
+    initialize_categories_data();
 
-    // "전체"를 맨 앞에 추가
-    return ["전체", ...unique_categories];
+    // 카테고리 목록 업데이트 함수
+    const update_categories = () => {
+      // division이 "자주 묻는 질문"인 카테고리만 필터링
+      const faq_categories = categories_data
+        .filter(
+          (category: CategoryItem) => category.division === "자주 묻는 질문"
+        )
+        .map((category: CategoryItem) => category.category_name);
+
+      // 중복 제거
+      const unique_categories = Array.from(new Set(faq_categories));
+
+      // "전체"를 맨 앞에 추가
+      set_categories(["전체", ...unique_categories]);
+    };
+
+    // 초기 마운트 시 카테고리 목록 업데이트
+    update_categories();
+
+    // 주기적으로 카테고리 목록 업데이트 (1초마다)
+    // 관리자에서 새로 등록한 카테고리가 즉시 반영되도록 합니다
+    const interval_id = setInterval(update_categories, 1000);
+
+    // 컴포넌트가 언마운트될 때 interval 정리
+    return () => clearInterval(interval_id);
   }, []);
 
   /**

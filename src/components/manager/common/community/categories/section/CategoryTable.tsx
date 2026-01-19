@@ -22,13 +22,14 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
 import styles from "@/styles/manager/common/community/categories/category_table.module.css";
 import {
   categories_data,
+  initialize_categories_data,
   type CategoryItem,
 } from "@/data/manager_ga/community/categoriesData";
 import CommonTable, {
@@ -89,9 +90,61 @@ export default function CategoryTable({
   // useState: React Hook으로 컴포넌트의 호버된 행 ID 상태를 관리합니다
   const [hovered_row_id, set_hovered_row_id] = useState<string | null>(null);
 
+  // 카테고리 목록 상태 관리
+  // useState: React Hook으로 컴포넌트의 카테고리 목록 상태를 관리합니다
+  // 관리자에서 새로 등록한 카테고리가 즉시 반영되도록 상태로 관리합니다
+  const [categories_list, set_categories_list] = useState<CategoryItem[]>(() => {
+    // 초기값: categories_data를 복사하여 상태로 관리
+    return [...categories_data];
+  });
+
+  /**
+   * 카테고리 목록 업데이트
+   * - 컴포넌트가 마운트될 때와 주기적으로 최신 카테고리 데이터를 가져와서
+   *   관리자에서 새로 등록한 카테고리가 즉시 반영되도록 합니다
+   * - 페이지가 포커스될 때도 업데이트하여 다른 탭에서 등록한 카테고리도 반영됩니다
+   */
+  useEffect(() => {
+    // 서버 사이드에서는 실행하지 않음
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    // 카테고리 데이터 초기화 (localStorage에서 불러오기)
+    initialize_categories_data();
+
+    // 카테고리 목록 업데이트 함수
+    const update_categories = () => {
+      // 카테고리 데이터 초기화 (localStorage에서 최신 데이터 불러오기)
+      initialize_categories_data();
+      // categories_data의 최신 데이터를 상태에 반영
+      set_categories_list([...categories_data]);
+    };
+
+    // 초기 마운트 시 카테고리 목록 업데이트
+    update_categories();
+
+    // 주기적으로 카테고리 목록 업데이트 (1초마다)
+    // 관리자에서 새로 등록한 카테고리가 즉시 반영되도록 합니다
+    const interval_id = setInterval(update_categories, 1000);
+
+    // 페이지가 포커스될 때도 업데이트
+    // 다른 탭에서 카테고리를 등록한 경우에도 반영됩니다
+    const handle_focus = () => {
+      update_categories();
+    };
+    window.addEventListener("focus", handle_focus);
+
+    // 컴포넌트가 언마운트될 때 interval과 이벤트 리스너 정리
+    return () => {
+      clearInterval(interval_id);
+      window.removeEventListener("focus", handle_focus);
+    };
+  }, []);
+
   // 검색어로 카테고리 필터링
   // 배열 filter 메서드를 사용하여 검색어에 맞는 카테고리만 필터링합니다
-  const filtered_categories = categories_data.filter((item) => {
+  const filtered_categories = categories_list.filter((item) => {
     if (!search_query) return true;
     // 검색어가 카테고리명 또는 구분에 포함되어 있는지 확인합니다
     return (

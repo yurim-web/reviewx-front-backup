@@ -51,7 +51,7 @@ export default function AddressPage() {
 
   // 저장하기 버튼 활성화 상태
   const isSaveButtonEnabled = validateRequiredFields();
-
+  /manager_ga/cimmnotuy / categories;
   /**
    * 뒤로가기 시 모달 상태 복원
    *
@@ -119,9 +119,17 @@ export default function AddressPage() {
     console.log("주소 저장:", addressData);
 
     // 주소 정보를 sessionStorage에 저장
-    // 전체 주소 문자열 생성 (우편번호 + 기본 주소 + 상세 주소)
-    const fullAddress = `${addressData.postalCode} ${addressData.address} ${addressData.detailAddress}`.trim();
-    
+    // 전체 주소 문자열 생성 (기본 주소 + 상세 주소 | 우편번호 + 우편번호값)
+    // 예: "인천 남동구 장자로 6번길 2, 1층 | 우편번호 12345"
+    const addressPart =
+      `${addressData.address} ${addressData.detailAddress}`.trim();
+    const postalCodePart = addressData.postalCode
+      ? `우편번호 ${addressData.postalCode}`
+      : "";
+    const fullAddress = postalCodePart
+      ? `${addressPart} | ${postalCodePart}`
+      : addressPart;
+
     // sessionStorage에 주소 정보 저장
     if (typeof window !== "undefined") {
       sessionStorage.setItem(
@@ -130,7 +138,7 @@ export default function AddressPage() {
           postalCode: addressData.postalCode,
           address: addressData.address,
           detailAddress: addressData.detailAddress,
-          fullAddress: fullAddress, // 전체 주소 문자열 (모달에서 표시용)
+          fullAddress: fullAddress, // 전체 주소 문자열 (모달에서 표시용) - 구분자 포함
         })
       );
     }

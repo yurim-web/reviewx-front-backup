@@ -23,6 +23,7 @@ import PostFilterSection from "@/components/manager/common/community/posts/secti
 import PostTable from "@/components/manager/common/community/posts/section/PostTable";
 import {
   posts_data,
+  initialize_posts_data,
   type PostDivision,
   type PostItem,
 } from "@/data/manager_ga/community/postsData";
@@ -79,22 +80,59 @@ export default function PostsPageCommon({
   });
 
   // 게시글 목록 상태 (고정 여부 등 변경을 위해 목업 데이터를 상태로 관리)
-  // Hydration 오류 방지: 초기 상태는 항상 posts_data로 시작 (서버/클라이언트 동일)
-  // useState의 초기값을 함수로 전달하여 클라이언트에서만 localStorage를 읽도록 함
-  const [posts, set_posts] = useState<PostItem[]>(() => {
-    // 서버 사이드에서는 항상 기본 posts_data 반환
+  // Hydration 오류 방지: 초기 상태는 항상 빈 배열로 시작 (서버/클라이언트 동일)
+  // useEffect에서만 localStorage에서 데이터를 로드하여 클라이언트에서만 실행되도록 함
+  const [posts, set_posts] = useState<PostItem[]>([]);
+
+  /**
+   * 게시글 목록 업데이트
+   * - 컴포넌트가 마운트될 때와 주기적으로 최신 게시글 데이터를 가져와서
+   *   관리자에서 새로 등록한 게시글이 즉시 반영되도록 합니다
+   */
+  useEffect(() => {
+    // 서버 사이드에서는 실행하지 않음
     if (typeof window === "undefined") {
-      return posts_data;
+      return;
     }
 
-    // 클라이언트 사이드에서는 localStorage에서 고정 상태를 불러와서 적용
-    const pinned_state = load_pinned_posts_state();
-    if (!pinned_state || Object.keys(pinned_state).length === 0) {
-      return posts_data;
-    }
+    // 게시글 목록 업데이트 함수
+    const update_posts = () => {
+      // 게시글 데이터 초기화 (localStorage에서 최신 데이터 불러오기)
+      initialize_posts_data();
 
-    return apply_pinned_state_to_posts(posts_data, pinned_state);
-  });
+      // localStorage에서 고정 상태를 불러와서 적용
+      const pinned_state = load_pinned_posts_state();
+      if (!pinned_state || Object.keys(pinned_state).length === 0) {
+        set_posts([...posts_data]);
+        return;
+      }
+
+      const updated_posts = apply_pinned_state_to_posts(
+        posts_data,
+        pinned_state
+      );
+      set_posts(updated_posts);
+    };
+
+    // 초기 마운트 시 게시글 목록 업데이트
+    update_posts();
+
+    // 주기적으로 게시글 목록 업데이트 (1초마다)
+    // 관리자에서 새로 등록한 게시글이 즉시 반영되도록 합니다
+    const interval_id = setInterval(update_posts, 1000);
+
+    // 페이지가 포커스될 때도 업데이트
+    const handle_focus = () => {
+      update_posts();
+    };
+    window.addEventListener("focus", handle_focus);
+
+    // 컴포넌트가 언마운트될 때 interval과 이벤트 리스너 정리
+    return () => {
+      clearInterval(interval_id);
+      window.removeEventListener("focus", handle_focus);
+    };
+  }, []);
 
   // 테이블에서 선택된 게시글 ID 목록 상태
   const [selected_post_ids, set_selected_post_ids] = useState<string[]>([]);

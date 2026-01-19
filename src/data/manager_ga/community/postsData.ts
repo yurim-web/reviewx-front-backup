@@ -50,8 +50,13 @@ export interface PostDetail extends PostItem {
   updated_date?: string; // 수정일 (예: 2025-09-12)
 }
 
-// 게시글 목록 데이터
-export const posts_data: PostItem[] = [
+// localStorage 키
+// 게시글 데이터를 localStorage에 저장할 때 사용하는 키입니다
+const STORAGE_KEY_POSTS = "posts_data";
+const STORAGE_KEY_POST_DETAILS = "post_details_data";
+
+// 기본 게시글 목록 데이터 (초기값)
+const default_posts_data: PostItem[] = [
   {
     id: "1",
     number: "0000123",
@@ -261,13 +266,220 @@ export const posts_data: PostItem[] = [
   },
 ];
 
-// 게시글 상세 데이터 (ID로 조회)
-// 실제로는 API를 통해 가져오지만, 목업 데이터로 제공
-// 각 게시글마다 실제 내용을 직접 정의합니다.
+/**
+ * localStorage에서 게시글 목록 데이터를 불러오는 함수
+ *
+ * 목적: 페이지 로드 시 localStorage에 저장된 게시글 목록 데이터를 불러옵니다.
+ * - localStorage에 데이터가 있으면 불러온 데이터를 사용합니다.
+ * - localStorage에 데이터가 없으면 기본 데이터를 사용합니다.
+ *
+ * @returns 게시글 목록 배열
+ */
+function load_posts_from_storage(): PostItem[] {
+  // 서버 사이드에서는 localStorage에 접근할 수 없으므로 기본 데이터 반환
+  if (typeof window === "undefined") {
+    return default_posts_data;
+  }
+
+  try {
+    // localStorage에서 게시글 목록 데이터 불러오기
+    const stored = localStorage.getItem(STORAGE_KEY_POSTS);
+    if (!stored) {
+      // localStorage에 데이터가 없으면 기본 데이터 반환
+      return default_posts_data;
+    }
+
+    // JSON 문자열을 객체 배열로 변환
+    const parsed_data: PostItem[] = JSON.parse(stored);
+    
+    // 배열인지 확인 (타입 안전성 확보)
+    if (!Array.isArray(parsed_data)) {
+      return default_posts_data;
+    }
+
+    return parsed_data;
+  } catch (error) {
+    // JSON 파싱 에러 등 예외 상황에서는 기본 데이터 반환
+    console.error("localStorage에서 게시글 목록 데이터 로드 실패:", error);
+    return default_posts_data;
+  }
+}
+
+/**
+ * localStorage에 게시글 목록 데이터를 저장하는 함수
+ *
+ * 목적: 게시글 목록 데이터가 변경될 때마다 localStorage에 저장합니다.
+ *
+ * @param posts - 저장할 게시글 목록 배열
+ */
+function save_posts_to_storage(posts: PostItem[]): void {
+  // 서버 사이드에서는 localStorage에 접근할 수 없으므로 종료
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    // 배열을 JSON 문자열로 변환하여 localStorage에 저장
+    localStorage.setItem(STORAGE_KEY_POSTS, JSON.stringify(posts));
+  } catch (error) {
+    // 저장 실패 시 에러 로그 출력
+    console.error("localStorage에 게시글 목록 데이터 저장 실패:", error);
+  }
+}
+
+/**
+ * localStorage에서 게시글 상세 데이터를 불러오는 함수
+ *
+ * @returns 게시글 상세 데이터 객체 (ID를 키로 하는 객체)
+ */
+function load_post_details_from_storage(): Record<string, PostDetail> {
+  if (typeof window === "undefined") {
+    return {};
+  }
+
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY_POST_DETAILS);
+    if (!stored) {
+      return {};
+    }
+
+    const parsed_data: Record<string, PostDetail> = JSON.parse(stored);
+    if (!parsed_data || typeof parsed_data !== "object") {
+      return {};
+    }
+
+    return parsed_data;
+  } catch (error) {
+    console.error("localStorage에서 게시글 상세 데이터 로드 실패:", error);
+    return {};
+  }
+}
+
+/**
+ * localStorage에 게시글 상세 데이터를 저장하는 함수
+ *
+ * @param post_details - 저장할 게시글 상세 데이터 객체
+ */
+function save_post_details_to_storage(
+  post_details: Record<string, PostDetail>
+): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    localStorage.setItem(
+      STORAGE_KEY_POST_DETAILS,
+      JSON.stringify(post_details)
+    );
+  } catch (error) {
+    console.error("localStorage에 게시글 상세 데이터 저장 실패:", error);
+  }
+}
+
+// 게시글 목록 데이터
+// localStorage에서 불러온 데이터를 사용하고, 없으면 기본 데이터를 사용합니다
+export let posts_data: PostItem[] = load_posts_from_storage();
+
+/**
+ * 게시글 데이터 초기화 함수
+ *
+ * 목적: 클라이언트에서만 실행되어 localStorage에서 게시글 데이터를 불러옵니다.
+ * - 서버 사이드에서는 실행하지 않아 Hydration 오류를 방지합니다.
+ * - 이 함수는 클라이언트 컴포넌트에서 useEffect 내에서 호출해야 합니다.
+ */
+export function initialize_posts_data(): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+  posts_data = load_posts_from_storage();
+}
+
+/**
+ * 게시글 등록 함수
+ *
+ * 목적: 새로운 게시글을 등록하고 localStorage에 저장합니다.
+ *
+ * @param post - 등록할 게시글 데이터 (PostItem)
+ * @param content - 게시글 본문 내용 (HTML 형식)
+ */
+export function add_post(post: PostItem, content: string): void {
+  // 게시글 목록에 추가
+  posts_data.push(post);
+
+  // localStorage에서 기존 상세 데이터 불러오기
+  const current_post_details = load_post_details_from_storage();
+
+  // 게시글 상세 데이터 저장
+  const post_detail: PostDetail = {
+    ...post,
+    content: content,
+    updated_date: post.registered_date.split(" ")[0],
+  };
+  current_post_details[post.id] = post_detail;
+
+  // localStorage에 저장
+  save_posts_to_storage(posts_data);
+  save_post_details_to_storage(current_post_details);
+}
+
+/**
+ * 게시글 수정 함수
+ *
+ * 목적: 기존 게시글을 수정하고 localStorage에 저장합니다.
+ *
+ * @param post_id - 수정할 게시글 ID
+ * @param updated_post - 수정된 게시글 데이터
+ * @param content - 수정된 게시글 본문 내용 (HTML 형식)
+ */
+export function update_post(
+  post_id: string,
+  updated_post: PostItem,
+  content: string
+): void {
+  // 게시글 목록에서 찾아서 수정
+  const index = posts_data.findIndex((p) => p.id === post_id);
+  if (index !== -1) {
+    posts_data[index] = updated_post;
+  }
+
+  // localStorage에서 기존 상세 데이터 불러오기
+  const current_post_details = load_post_details_from_storage();
+
+  // 게시글 상세 데이터 수정
+  const post_detail: PostDetail = {
+    ...updated_post,
+    content: content,
+    updated_date: new Date().toISOString().split("T")[0],
+  };
+  current_post_details[post_id] = post_detail;
+
+  // localStorage에 저장
+  save_posts_to_storage(posts_data);
+  save_post_details_to_storage(current_post_details);
+}
+
+/**
+ * 게시글 상세 데이터 조회 함수
+ *
+ * 목적: 게시글 ID로 상세 정보를 조회합니다.
+ * - localStorage에 저장된 상세 데이터를 우선 사용합니다.
+ * - 없으면 기본 목업 데이터를 사용합니다.
+ *
+ * @param id - 게시글 ID
+ * @returns 게시글 상세 데이터 (PostDetail) 또는 null
+ */
 export const get_post_detail = (id: string): PostDetail | null => {
   const post = posts_data.find((p) => p.id === id);
   if (!post) return null;
 
+  // localStorage에 저장된 상세 데이터가 있으면 우선 사용
+  const current_post_details = load_post_details_from_storage();
+  if (current_post_details[id]) {
+    return current_post_details[id];
+  }
+
+  // 기본 목업 데이터 사용
   // 각 게시글별 실제 내용 정의
   // 공지사항: 공지 형식의 글
   // 자주 묻는 질문: Q&A 형식의 답변
