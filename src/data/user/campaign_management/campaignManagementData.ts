@@ -15,7 +15,7 @@
  * - 날짜 기반 필터링 적용
  */
 
-import type { CampaignApplication } from "@/types/user/user";
+import type { CampaignApplication } from "@/types/domain/user";
 import { deliveryCampaigns } from "@/data/campaign/delivery/deliveryCampaigns";
 import { visitCampaigns } from "@/data/campaign/visit/visitCampaigns";
 import { reviewCampaigns } from "@/data/campaign/review/reviewCampaigns";

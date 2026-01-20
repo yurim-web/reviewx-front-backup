@@ -211,8 +211,9 @@
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
-  min-width: 80px;
+  width: fit-content; /* 텍스트와 padding에 맞게 자동으로 width 조정 */
   height: 22px;
+  white-space: nowrap; /* 텍스트가 줄바꿈되지 않도록 설정 */
 }
 
 /* 카드 결제 태그 */

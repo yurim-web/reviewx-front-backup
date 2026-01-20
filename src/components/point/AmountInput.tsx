@@ -36,8 +36,8 @@ import {
   extractNumericValue,
   formatAmountWithComma,
   parseFormattedAmount,
-  validateAmount,
-} from "@/utils/point/amountFormatter";
+} from "@/utils/formatting/amount";
+import { validateAmount } from "@/utils/validation/amount";
 
 interface AmountInputProps {
   value: string;

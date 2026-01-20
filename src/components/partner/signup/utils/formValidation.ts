@@ -22,7 +22,7 @@ import {
   validateEmail,
   validatePassword,
   validatePasswordMatch,
-} from "@/utils/signup/validation";
+} from "@/utils/validation";
 import { validateBusinessNumber } from "./validation";
 
 export interface PartnerSignupFormErrors {

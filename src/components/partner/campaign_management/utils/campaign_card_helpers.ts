@@ -13,7 +13,7 @@
 /* ----------------------------------------
    📦 의존성 모듈 (데이터 접근 & 타입)
    ---------------------------------------- */
-import type { PartnerCampaign, PartnerStatTab } from "@/types/partner/partner";
+import type { PartnerCampaign, PartnerStatTab } from "@/types/domain/partner";
 import {
   getClosedContentsById,
   getCampaignById,

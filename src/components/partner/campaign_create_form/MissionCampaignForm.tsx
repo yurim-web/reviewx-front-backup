@@ -22,7 +22,7 @@ import { useRouter } from "next/navigation";
 import {
   CampaignFormData,
   CampaignCreateFormBaseProps,
-} from "@/types/user/user";
+} from "@/types/domain/user";
 // 분리된 CSS 모듈들 import
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
@@ -230,7 +230,7 @@ export default function MissionCampaignForm({
    * 설명:
    * - 수정 모드에서 기존 캠페인 데이터를 불러올 때 이미지 미리보기와 체크박스 상태를 설정합니다.
    * - thumbnailImageUrl이 있으면 썸네일 미리보기로 설정합니다.
-   * - 원본 데이터에서 campaign_detail_image를 가져와 상세 이미지 미리보기로 설정합니다.
+   * - detailImagePreviews가 있으면 상세 이미지 미리보기로 설정합니다.
    * - minTextLength, minImageCount, videoCount가 있으면 해당 체크박스를 체크합니다.
    */
   useEffect(() => {
@@ -240,44 +240,9 @@ export default function MissionCampaignForm({
         setThumbnailPreview(initialData.thumbnailImageUrl);
       }
 
-      // 상세 이미지 미리보기 설정 (원본 데이터에서 가져오기)
-      // 원본 데이터를 직접 가져와서 campaign_detail_image 사용
-      if (typeof window !== "undefined") {
-        try {
-          // URL에서 campaign ID 추출
-          const urlParams = new URLSearchParams(window.location.search);
-          const campaignId = window.location.pathname.split("/").pop();
-
-          if (campaignId) {
-            // missionCampaignsExtended에서 원본 데이터 찾기
-            const {
-              missionCampaignsExtended,
-            } = require("@/data/campaign/mission/missionCampaigns");
-            const originalData = missionCampaignsExtended.find(
-              (c: any) => c.id === campaignId
-            );
-
-            // localStorage에서도 확인 (최신 데이터 우선)
-            const storedCampaigns = localStorage.getItem("missionCampaigns");
-            if (storedCampaigns) {
-              const campaigns = JSON.parse(storedCampaigns);
-              const storedCampaign = campaigns.find(
-                (c: any) => c.campaignInfo?.id === campaignId
-              );
-              if (storedCampaign?.campaignInfo) {
-                // localStorage에 저장된 데이터는 CampaignWithApplicants 형태이므로
-                // 원본 확장 데이터를 직접 찾아야 함
-                // 일단 원본 데이터 사용
-              }
-            }
-
-            if (originalData?.campaign_detail_image) {
-              setDetailPreviews([originalData.campaign_detail_image]);
-            }
-          }
-        } catch (error) {
-          console.error("상세 이미지 로드 실패:", error);
-        }
+      // 상세 이미지 미리보기 설정
+      if (initialData.detailImagePreviews && initialData.detailImagePreviews.length > 0) {
+        setDetailPreviews(initialData.detailImagePreviews);
       }
 
       // 체크박스 상태 설정

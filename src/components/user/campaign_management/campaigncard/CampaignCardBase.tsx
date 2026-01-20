@@ -11,7 +11,7 @@
  */
 
 import Link from "next/link";
-import type { CampaignApplication, CampaignType } from "@/types/user/user";
+import type { CampaignApplication, CampaignType } from "@/types/domain/user";
 import cardStyles from "../../../../styles/user/campaign_management/campaign_card.module.css";
 import { CamTag, CamCateIcon } from "../CampaignTag";
 

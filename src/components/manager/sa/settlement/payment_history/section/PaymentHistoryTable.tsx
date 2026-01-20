@@ -48,15 +48,18 @@ import type { PaymentStatus } from "@/components/manager/common/tags/PaymentStat
 interface PaymentHistoryTableRowData extends TableRowData, PaymentHistoryItem {}
 
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
-import type { AccountStatus } from "@/components/manager/sa/settlement/payment_history/filter/AccountStatusFilterModal";
+import type { AccountStatus } from "@/components/manager/sa/settlement/payment_history/filter/AccountStatusFilterDropdown";
+import type { TaxInvoiceType } from "@/components/manager/sa/settlement/payment_history/filter/TaxInvoiceTypeFilterDropdown";
+import type { MemberType } from "@/components/manager/sa/settlement/payment_history/filter/MemberTypeFilterDropdown";
 
 interface PaymentHistoryTableProps {
   search_query?: string;
   selected_date_range?: DateRange | undefined;
   selected_business_types?: BusinessType[];
   selected_payment_methods?: PaymentMethod[];
-  tax_invoice_only?: boolean;
+  selected_tax_invoice_types?: TaxInvoiceType[];
   selected_payment_statuses?: PaymentStatus[];
+  selected_member_types?: MemberType[];
   selected_account_statuses?: AccountStatus[];
 }
 
@@ -65,8 +68,9 @@ export default function PaymentHistoryTable({
   selected_date_range,
   selected_business_types = [],
   selected_payment_methods = [],
-  tax_invoice_only = false,
+  selected_tax_invoice_types = [],
   selected_payment_statuses = [],
+  selected_member_types = [],
   selected_account_statuses = [],
 }: PaymentHistoryTableProps) {
   // 선택된 항목 ID 배열 관리
@@ -126,16 +130,79 @@ export default function PaymentHistoryTable({
     }
 
     // 세금계산서 발행 필터
-    if (tax_invoice_only && item.taxInvoice !== "O") return false;
+    // 학습 포인트:
+    // - filter() 메서드: 배열을 순회하며 조건에 맞는 요소만 남깁니다
+    // - taxInvoice 값("O"/"X")을 TaxInvoiceType으로 매핑합니다
+    // - "O": 세금계산서 또는 현금영수증 발행
+    // - "X": 미발행
+    if (selected_tax_invoice_types.length > 0) {
+      // item.taxInvoice를 TaxInvoiceType으로 변환
+      // 현재 데이터에서는 "O"는 발행, "X"는 미발행으로 간주
+      // 실제 구현에서는 각 항목의 세금계산서 발행 유형 정보가 있어야 합니다
+      const item_tax_invoice_type: TaxInvoiceType | null =
+        item.taxInvoice === "O"
+          ? "세금계산서" // 기본값으로 "세금계산서"로 설정 (실제로는 데이터에 따라 다를 수 있음)
+          : item.taxInvoice === "X"
+          ? "미발행"
+          : null;
+
+      // 선택된 유형 목록에 해당 항목의 유형이 없으면 필터링 제외
+      if (!item_tax_invoice_type || !selected_tax_invoice_types.includes(item_tax_invoice_type)) {
+        return false;
+      }
+    }
 
     // 결제 상태 필터
     if (selected_payment_statuses.length > 0) {
       if (!selected_payment_statuses.includes(item.paymentStatus)) return false;
     }
 
+    // 회원 유형 필터
+    // 학습 포인트:
+    // - 데이터의 memberType("모범 회원", "주의 회원", "이용 제한 회원")을
+    //   필터 옵션("일반 회원", "주의 회원", "이용 제한 회원")으로 매핑합니다
+    // - "모범 회원"을 "일반 회원"으로 변환합니다
+    if (selected_member_types.length > 0) {
+      // item.memberType을 MemberType으로 변환
+      // "모범 회원" -> "일반 회원"으로 매핑
+      const item_member_type: MemberType | null =
+        item.memberType === "모범 회원"
+          ? "일반 회원"
+          : item.memberType === "주의 회원"
+          ? "주의 회원"
+          : item.memberType === "이용 제한 회원"
+          ? "이용 제한 회원"
+          : null;
+
+      // 선택된 유형 목록에 해당 항목의 유형이 없으면 필터링 제외
+      if (!item_member_type || !selected_member_types.includes(item_member_type)) {
+        return false;
+      }
+    }
+
     // 계정 상태 필터
+    // 학습 포인트:
+    // - 데이터의 accountStatus("정상", "일시정지", "영구정지", "탈퇴")를
+    //   필터 옵션("정상", "일시 정지", "영구 정지", "탈퇴")으로 매핑합니다
+    // - "일시정지"를 "일시 정지"로, "영구정지"를 "영구 정지"로 변환합니다
     if (selected_account_statuses.length > 0) {
-      if (!selected_account_statuses.includes(item.accountStatus)) return false;
+      // item.accountStatus를 AccountStatus로 변환
+      // 데이터에서는 띄어쓰기 없이 되어 있지만 필터에서는 띄어쓰기가 있습니다
+      const item_account_status: AccountStatus | null =
+        item.accountStatus === "정상"
+          ? "정상"
+          : item.accountStatus === "일시정지"
+          ? "일시 정지"
+          : item.accountStatus === "영구정지"
+          ? "영구 정지"
+          : item.accountStatus === "탈퇴"
+          ? "탈퇴"
+          : null;
+
+      // 선택된 상태 목록에 해당 항목의 상태가 없으면 필터링 제외
+      if (!item_account_status || !selected_account_statuses.includes(item_account_status)) {
+        return false;
+      }
     }
 
     return true;
@@ -191,7 +258,7 @@ export default function PaymentHistoryTable({
     },
     {
       key: "taxInvoice",
-      label: "세금계산서",
+      label: "발행",
       className: styles.table_cell_tax_invoice,
     },
     {

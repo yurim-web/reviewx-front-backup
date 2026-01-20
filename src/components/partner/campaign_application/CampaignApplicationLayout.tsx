@@ -36,7 +36,7 @@ import SortFilterControl from "@/components/partner/campaign_application/SortFil
 import EmptyApplicantsList from "@/components/partner/campaign_application/EmptyApplicantsList";
 import BaseModal from "@/components/common/modal/BaseModal";
 import { isAnnouncementDatePassed } from "@/components/partner/campaign_application/utils/campaign_info_helpers";
-import { getCampaignDetailPath } from "@/utils/getCampaignDetailPath";
+import { getCampaignDetailPath } from "@/utils/helpers/url";
 import type {
   CampaignWithApplicants,
   AllApplicant,

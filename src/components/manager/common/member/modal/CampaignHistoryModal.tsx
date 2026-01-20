@@ -40,7 +40,7 @@ export interface CampaignHistoryItem {
 }
 
 // 채널 타입 정의
-export type Channel = "Blog" | "Clip" | "Instagram" | "Youtube" | "Store";
+export type Channel = "Blog" | "Clip" | "Instagram" | "Youtube" | "Store" | "Mission" | "Reels" | "Shorts";
 
 interface CampaignHistoryModalProps {
   // 모달 열림/닫힘 상태
@@ -78,6 +78,9 @@ const channel_icon_map: Record<Channel, string> = {
   Instagram: "/images/brand_logo/insta.svg",
   Youtube: "/images/brand_logo/youtube.svg",
   Store: "/images/brand_logo/navershop.svg",
+  Mission: "/images/brand_logo/misssion.svg",
+  Reels: "/images/brand_logo/reels.svg",
+  Shorts: "/images/brand_logo/shots.svg",
 };
 
 export default function CampaignHistoryModal({

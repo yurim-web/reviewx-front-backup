@@ -7,7 +7,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 import CampaignCard from "./CampaignCard";
-import type { PartnerCampaign, PartnerStatTab } from "@/types/partner/partner";
+import type { PartnerCampaign, PartnerStatTab } from "@/types/domain/partner";
 
 const mockCampaign: PartnerCampaign = {
   id: "1",

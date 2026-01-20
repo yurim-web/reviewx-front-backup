@@ -48,7 +48,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import CampaignManagementHeader from "@/components/user/campaign_management/CampaignManagementHeader";
 import PenaltyContent from "@/components/common/campaign_management/penalty/PenaltyContent";
-import type { MainTab } from "@/types/user/user";
+import type { MainTab } from "@/types/domain/user";
 import layoutStyles from "../../../../styles/user/campaign_management/layout.module.css";
 import cardStyles from "../../../../styles/user/campaign_management/campaign_card.module.css";
 import { userPenaltyData, userPenaltyStatus } from "@/data/user/penaltyData";

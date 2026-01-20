@@ -5,7 +5,7 @@
 import {
   PartnerPointHistory,
   PartnerPointSummary,
-} from "@/types/partner/partner";
+} from "@/types/domain/partner";
 
 /**
  * 파트너 포인트 요약 정보 (샘플 데이터)

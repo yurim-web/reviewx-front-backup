@@ -2,7 +2,7 @@
  * 배송형 캠페인 데이터 타입 정의
  */
 
-import type { CampaignFormData } from "@/types/user/user";
+import type { CampaignFormData } from "@/types/domain/user";
 import type { ContentByTab } from "@/data/partner/sharedCampaigns";
 import { calculateDaysLeft, calculateCampaignStatus } from "./utils";
 
@@ -361,7 +361,11 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       purchasePeriod: "2026-01-23 ~ 2026-01-26",
       registrationPeriod: "2026-01-26 ~ 2026-02-02",
     },
-    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    campaign_detail_images: [
+      "/images/campaign_detail/exdetail_1.png",
+      "/images/campaign_detail/exdetail_2.png",
+      "/images/campaign_detail/exdetail_1.png",
+    ],
     channel: "네이버클립",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
@@ -636,6 +640,7 @@ export interface DeliveryCampaignDataExtended {
     registrationPeriod: string;
   };
   campaign_detail_image: string;
+  campaign_detail_images?: string[]; // 캠페인 상세 이미지 경로 배열 (여러 이미지)
   channel: string;
   keyword: string;
   promotionLink?: string;

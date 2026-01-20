@@ -27,28 +27,29 @@
 
 .campaign_detail_image_container {
   width: 100%;
-  height: 500px;
   position: relative;
   overflow: hidden;
-  transition: height 0.3s ease; /* 부드러운 확장/축소 애니메이션 */
+  height: 500px; /* 기본값: 접혀있을 때의 높이 */
 }
 
+/* 접혀있을 때 이미지: 고정 높이로 cover 처리 */
 .campaign_detail_image_container > img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: top; /* 이미지 상단 부분 우선 표시 */
-  transition: height 0.3s ease;
 }
 
-/* 이미지 확장 상태 */
+/* 펼쳐진 이미지: 원본 크기로 표시 */
 .campaign_detail_image_container.expanded {
-  height: auto; /* 원본 크기로 확장 */
+  height: auto; /* 원본 높이로 확장 */
 }
 
 .campaign_detail_image_container.expanded > img {
-  height: auto;
+  width: 100%;
+  height: auto; /* 원본 비율 유지 */
   object-fit: contain; /* 비율 유지하며 전체 표시 */
+  display: block; /* 이미지 아래 공백 제거 */
 }
 
 /* 이미지 확장/축소 버튼 (모든 이미지 아래에 하나만 표시) */
@@ -74,29 +75,27 @@
 /* ✅ 모바일 공통 — 0~739px */
 @media (max-width: 739px) {
   .campaign_detail_image_container {
-    width: 100%;
-    height: 300px;
-    position: relative;
-    overflow: hidden;
-    transition: height 0.3s ease; /* 부드러운 확장/축소 애니메이션 */
+    height: 300px; /* 모바일에서는 더 작은 높이 */
   }
 
+  /* 접혀있을 때 이미지: 고정 높이로 cover 처리 */
   .campaign_detail_image_container > img {
     width: 100%;
-    height: 300px;
+    height: 100%;
     object-fit: cover;
     object-position: top; /* 이미지 상단 부분 우선 표시 */
-    transition: height 0.3s ease;
   }
 
-  /* 이미지 확장 상태 */
+  /* 펼쳐진 이미지: 원본 크기로 표시 */
   .campaign_detail_image_container.expanded {
-    height: auto; /* 원본 크기로 확장 */
+    height: auto; /* 원본 높이로 확장 */
   }
 
   .campaign_detail_image_container.expanded > img {
-    height: auto;
+    width: 100%;
+    height: auto; /* 원본 비율 유지 */
     object-fit: contain; /* 비율 유지하며 전체 표시 */
+    display: block; /* 이미지 아래 공백 제거 */
   }
 
   /* 이미지 확장/축소 버튼 */
@@ -118,13 +117,31 @@
 /* ✅ 태블릿 세로(portrait) 전용 — 740~1100px */
 @media (min-width: 740px) and (max-width: 1100px) and (orientation: portrait) {
   .campaign_detail_image_container {
-    height: 400px;
+    height: 400px; /* 접혀있을 때의 높이 */
+  }
+
+  .campaign_detail_image_container.expanded {
+    height: auto; /* 펼쳐졌을 때는 원본 크기 */
+  }
+
+  .campaign_detail_image_container.expanded > img {
+    height: auto;
+    object-fit: contain;
   }
 }
 
 /* ✅ 태블릿 가로(landscape) 전용 — 740~1100px */
 @media (min-width: 740px) and (max-width: 1366px) and (orientation: landscape) {
   .campaign_detail_image_container {
-    height: 400px;
+    height: 400px; /* 접혀있을 때의 높이 */
+  }
+
+  .campaign_detail_image_container.expanded {
+    height: auto; /* 펼쳐졌을 때는 원본 크기 */
+  }
+
+  .campaign_detail_image_container.expanded > img {
+    height: auto;
+    object-fit: contain;
   }
 }

@@ -40,7 +40,7 @@ import MissionPendingCard from "@/components/partner/campaign_contents/card_type
 import MissionInspectionCard from "@/components/partner/campaign_contents/card_type/mission_card/MissionInspectionCard";
 import MissionCompletedCard from "@/components/partner/campaign_contents/card_type/mission_card/MissionCompletedCard";
 import type { CampaignApplicant } from "@/components/partner/campaign_contents/card_type/shared_card/CampaignTypes";
-import { getChannelUrl } from "@/utils/channelUrlHelper";
+import { getChannelUrl } from "@/utils/helpers/url";
 
 // 미션형 콘텐츠 데이터 로더 및 확장 데이터
 import {
@@ -95,11 +95,11 @@ export default function MissionContentsDetailPage() {
   // 📌 특화 로직:
   // - 미션형 캠페인만의 특별한 데이터 처리가 필요한 경우 여기에 작성
   const params = React.useMemo(() => {
-    if (!campaignId) return { contentType: "link", deadlineDate: undefined };
-    
+    if (!campaignId) return { contentType: "link" as "link" | "image" | "both", deadlineDate: undefined };
+
     const campaignData = missionCampaignsExtended.find((c) => c.id === campaignId);
-    const contentType = campaignData?.contentType || "link";
-    
+    const contentType = (campaignData?.contentType || "link") as "link" | "image" | "both";
+
     // 등록 기간에서 기한 날짜 추출
     let deadlineDate: string | undefined;
     if (campaignData?.detailedSchedule?.registrationPeriod) {
@@ -107,7 +107,7 @@ export default function MissionContentsDetailPage() {
       const match = period.match(/~\s*(\d{4}-\d{2}-\d{2})/);
       deadlineDate = match ? match[1] : undefined;
     }
-    
+
     return { contentType, deadlineDate };
   }, [campaignId]);
 

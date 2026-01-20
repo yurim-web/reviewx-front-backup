@@ -33,7 +33,7 @@ import {
   deliveryChannelOptions,
   deliverySortOptions,
 } from "@/data/campaign/campaignFilterOptions";
-import type { CampaignWithApplicants } from "@/types/partner/partner";
+import type { CampaignWithApplicants } from "@/types/domain/partner";
 import type { DeliveryCampaignData } from "@/data/campaign/delivery/deliveryCampaigns";
 
 /**

@@ -24,7 +24,7 @@
   min-height: 100vh;
   position: relative;
   padding-top: 80px;
-  background-color: #f2f2f2;
+  /* background-color: #f2f2f2; */
 }
 
 /* 관리자 페이지에서 접근한 경우 (사이드바가 있을 때) */
@@ -38,7 +38,7 @@
   margin: 0 auto !important;
   background-color: white;
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 80px);
 }
 
 /* 관리자 페이지에서 접근한 경우 (사이드바가 있을 때) */

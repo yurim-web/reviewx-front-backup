@@ -22,7 +22,7 @@ import { useRouter } from "next/navigation";
 import {
   CampaignFormData,
   CampaignCreateFormBaseProps,
-} from "@/types/user/user";
+} from "@/types/domain/user";
 // 분리된 CSS 모듈들 import
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
@@ -234,6 +234,11 @@ export default function VisitCampaignForm({
       // 썸네일 이미지 미리보기 설정
       if (initialData.thumbnailImageUrl) {
         setThumbnailPreview(initialData.thumbnailImageUrl);
+      }
+
+      // 상세 이미지 미리보기 설정
+      if (initialData.detailImagePreviews && initialData.detailImagePreviews.length > 0) {
+        setDetailPreviews(initialData.detailImagePreviews);
       }
 
       // 체크박스 상태 설정

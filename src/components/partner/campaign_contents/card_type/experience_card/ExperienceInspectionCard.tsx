@@ -24,7 +24,7 @@
 import { useState } from "react";
 import styles from "@/styles/partner/campaign_application/card/applicant_card_shared.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
-import { getChannelUrl } from "@/utils/channelUrlHelper";
+import { getChannelUrl } from "@/utils/helpers/url";
 import type { ExperienceApplicant } from "./ExperienceTypes";
 import TextareaModal from "@/components/common/modal/TextareaModal";
 import ReportModal, {

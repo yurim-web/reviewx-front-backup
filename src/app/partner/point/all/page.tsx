@@ -25,7 +25,7 @@
 
 import { useState } from "react";
 import PartnerPointPageLayout from "@/components/partner/point/PartnerPointPageLayout";
-import { PartnerPointTab, PartnerPointHistory } from "@/types/partner/partner";
+import { PartnerPointTab, PartnerPointHistory } from "@/types/domain/partner";
 import {
   partnerPointHistoryData,
   partnerPointSummary,

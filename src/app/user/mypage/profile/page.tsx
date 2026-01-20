@@ -25,7 +25,7 @@ import { useRouter } from "next/navigation";
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 import SubTabNavigation from "@/components/common/mypage/SubTabNavigation";
 import ProfileContent from "@/components/common/mypage/ProfileContent";
-import type { MainTab } from "@/types/user/user";
+import type { MainTab } from "@/types/domain/user";
 import layoutStyles from "../../../../styles/user/mypage/layout.module.css";
 
 /**

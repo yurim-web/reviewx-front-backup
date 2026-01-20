@@ -14,7 +14,7 @@
  */
 
 import { useState } from "react";
-import type { CampaignApplication } from "@/types/user/user";
+import type { CampaignApplication } from "@/types/domain/user";
 import buttonStyles from "../../../../styles/user/campaign_management/buttons.module.css";
 import { getButtonClassName } from "@/components/common/campaign_management/utils/button_style_utils";
 import CampaignCardBase from "./CampaignCardBase";

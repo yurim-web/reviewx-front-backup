@@ -24,7 +24,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import ReporterCampaignForm from "@/components/partner/campaign_create_form/ReporterCampaignForm";
-import { CampaignFormData } from "@/types/user/user";
+import { CampaignFormData } from "@/types/domain/user";
 import { addReporterCampaign } from "@/data/campaign/reporter/reporterCampaigns";
 // 분리된 CSS 모듈들 import
 import layoutStyles from "@/styles/partner/layout.module.css";

@@ -65,7 +65,7 @@ export default function PartnerSignupCompletePage() {
         {/* 완료 메시지 섹션 */}
         <div className={styles.message_section}>
           <h1 className={styles.welcome_title}>
-            {name}님,
+            <span className={styles.nickname_text}>{name}</span>님,
             <br />
             리뷰엑스의 파트너가 되신 것을 환영합니다.
           </h1>
@@ -81,14 +81,14 @@ export default function PartnerSignupCompletePage() {
             className={styles.campaign_button}
             onClick={handleGoToCampaigns}
           >
-            캠페인 보러 가기
+            캠페인 신청하러 가기
           </button>
           <button
             type="button"
             className={styles.login_button}
             onClick={handleGoToLogin}
           >
-            로그인하기
+            로그인
           </button>
         </div>
       </main>

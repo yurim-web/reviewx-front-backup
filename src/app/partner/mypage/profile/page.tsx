@@ -26,7 +26,7 @@ import PartnerTabNavigation from "@/components/partner/campaign_management/TabNa
 import SubTabNavigation from "@/components/common/mypage/SubTabNavigation";
 import ProfileContent from "@/components/common/mypage/ProfileContent";
 import layoutStyles from "../../../../styles/partner/layout.module.css";
-import type { PartnerMainTab } from "@/types/partner/partner";
+import type { PartnerMainTab } from "@/types/domain/partner";
 
 /**
  * 파트너 프로필 탭 전용 페이지 컴포넌트

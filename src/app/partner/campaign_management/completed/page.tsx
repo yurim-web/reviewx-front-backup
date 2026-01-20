@@ -24,9 +24,9 @@ import { useState, useEffect } from "react";
 import PartnerCampaignManagementHeader from "@/components/partner/campaign_management/PartnerCampaignManagementHeader";
 import CampaignList from "@/components/partner/campaign_management/CampaignList";
 import CampaignFilterBar from "@/components/common/campaign_management/CampaignFilterBar";
-import type { PartnerMainTab } from "@/types/partner/partner";
-import type { PartnerStatTab } from "@/types/partner/partner";
-import type { PartnerCampaign } from "@/types/partner/partner";
+import type { PartnerMainTab } from "@/types/domain/partner";
+import type { PartnerStatTab } from "@/types/domain/partner";
+import type { PartnerCampaign } from "@/types/domain/partner";
 import layoutStyles from "../../../../styles/partner/layout.module.css";
 
 // 공용 데이터 import

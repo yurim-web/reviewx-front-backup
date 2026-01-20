@@ -56,7 +56,7 @@ import Image from "next/image";
 import BaseModal from "@/components/common/modal/BaseModal";
 import ContentVerificationModal from "./content_verification/ContentVerificationModal";
 import styles from "../../../../styles/user/campaign_management/modals/campaign_modal_common.module.css";
-import type { CampaignType } from "@/types/user/user";
+import type { CampaignType } from "@/types/domain/user";
 
 /**
  * 설명:

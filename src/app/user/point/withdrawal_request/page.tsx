@@ -26,10 +26,8 @@ import BaseModal from "@/components/common/modal/BaseModal";
 import AmountInput from "@/components/point/AmountInput";
 import AvailablePointsDisplay from "@/components/point/AvailablePointsDisplay";
 import ReadOnlyFormField from "@/components/point/ReadOnlyFormField";
-import {
-  parseFormattedAmount,
-  validateAmount,
-} from "@/utils/point/amountFormatter";
+import { parseFormattedAmount } from "@/utils/formatting/amount";
+import { validateAmount } from "@/utils/validation/amount";
 import styles from "../../../../styles/user/point/withdrawal_request.module.css";
 
 /**
@@ -250,17 +248,16 @@ export default function WithdrawalRequestPage() {
   const handleAmountChange = (formattedValue: string) => {
     setWithdrawalAmount(formattedValue);
     const numValue = parseFormattedAmount(formattedValue);
-    const validation = validateAmount(
-      numValue,
-      MIN_AMOUNT,
-      MAX_AMOUNT,
-      userInfo.availablePoints,
-      {
+    const validation = validateAmount(numValue, {
+      minAmount: MIN_AMOUNT,
+      maxAmount: MAX_AMOUNT,
+      availablePoints: userInfo.availablePoints,
+      errorMessages: {
         min: "출금은 최소 10,000원부터 신청할 수 있습니다.",
         max: "출금은 최대 500,000원까지 신청할 수 있습니다.",
         exceedsAvailable: "출금은 보유 포인트 이내에서만 신청할 수 있습니다.",
       }
-    );
+    });
     setErrorMessage(validation.errorMessage);
   };
 

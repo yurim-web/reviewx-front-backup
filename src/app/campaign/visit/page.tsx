@@ -35,7 +35,7 @@ import {
   useVisitRegionFilter,
   visitSortOptions,
 } from "@/data/campaign/campaignFilterOptions";
-import type { CampaignWithApplicants } from "@/types/partner/partner";
+import type { CampaignWithApplicants } from "@/types/domain/partner";
 import type { VisitCampaignData } from "@/data/campaign/visit/visitCampaigns";
 
 /**

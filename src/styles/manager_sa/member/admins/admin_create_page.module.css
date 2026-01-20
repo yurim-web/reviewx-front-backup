@@ -132,7 +132,7 @@
   max-width: 920px;
   height: 56px;
   margin-top: auto;
-  background-color: #555555;
+  background-color: #FF5694;
   border: none;
   border-radius: 8px;
   font-size: 16px;
@@ -146,5 +146,5 @@
 
 /* 등록/저장 버튼 활성화 상태 */
 .submit_button:active {
-  background-color: #333333;
+  background-color: #FF5694;
 }

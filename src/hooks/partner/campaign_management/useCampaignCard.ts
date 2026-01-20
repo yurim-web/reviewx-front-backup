@@ -25,7 +25,7 @@
    📦 의존성 모듈 (React 훅 & 비즈니스 헬퍼)
    ---------------------------------------- */
 import { useCallback, useMemo, useState } from "react";
-import type { PartnerCampaign, PartnerStatTab } from "@/types/partner/partner";
+import type { PartnerCampaign, PartnerStatTab } from "@/types/domain/partner";
 import {
   calculateContentCounts,
   getCampaignTypePath,

@@ -27,7 +27,7 @@
 import { useState, useEffect } from "react";
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 import StatisticsTab from "@/components/user/campaign_management/StatisticsTab";
-import type { MainTab } from "@/types/user/user";
+import type { MainTab } from "@/types/domain/user";
 
 // 임시 데이터 import
 import {

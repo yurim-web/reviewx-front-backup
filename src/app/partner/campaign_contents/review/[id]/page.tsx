@@ -50,7 +50,7 @@ import PurchaseSecondInspectionCard from "@/components/partner/campaign_contents
 import PurchaseSecondCompletedCard from "@/components/partner/campaign_contents/card_type/purchase_card/purchase_second_card/PurchaseSecondCompletedCard";
 import ReceiptPreviewModal from "@/components/partner/campaign_contents/ReceiptPreviewModal";
 import type { CampaignApplicant } from "@/components/partner/campaign_contents/card_type/shared_card/CampaignTypes";
-import { getChannelUrl } from "@/utils/channelUrlHelper";
+import { getChannelUrl } from "@/utils/helpers/url";
 
 // 구매평 콘텐츠 데이터 로더 및 확장 데이터
 import {
@@ -105,7 +105,7 @@ export default function PurchaseReviewContentsDetailPage() {
   const params = React.useMemo(() => {
     if (!campaignId)
       return {
-        contentType: "link",
+        contentType: "link" as "link" | "image" | "both",
         deadlineDate: undefined,
         isPurchasePeriod: false,
         isRegistrationPeriod: false,
@@ -116,7 +116,7 @@ export default function PurchaseReviewContentsDetailPage() {
     const campaignData = reviewCampaignsExtended.find(
       (c) => c.id === campaignId
     );
-    const contentType = campaignData?.contentType || "link";
+    const contentType = (campaignData?.contentType || "link") as "link" | "image" | "both";
 
     // 캠페인 마감 여부 확인
     // 📌 캠페인 마감 체크:

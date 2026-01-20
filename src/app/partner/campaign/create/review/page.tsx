@@ -24,7 +24,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import ReviewCampaignForm from "@/components/partner/campaign_create_form/ReviewCampaignForm";
-import { CampaignFormData } from "@/types/user/user";
+import { CampaignFormData } from "@/types/domain/user";
 import { addReviewCampaign } from "@/data/campaign/review/reviewCampaigns";
 // 분리된 CSS 모듈들 import
 import layoutStyles from "@/styles/partner/layout.module.css";

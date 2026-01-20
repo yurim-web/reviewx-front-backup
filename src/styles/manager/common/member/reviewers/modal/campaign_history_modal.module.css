@@ -219,7 +219,7 @@
 
 /* 스크롤바 스타일 (Webkit 브라우저) */
 .table_body::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 .table_body::-webkit-scrollbar-track {

@@ -46,6 +46,6 @@ export const Default: Story = {
   render: (args) => React.createElement(StatCardsSection, args),
   args: {
     stat_card_values: mockStatCardValues,
-    styles: styles,
+    styles: styles as any,
   },
 };

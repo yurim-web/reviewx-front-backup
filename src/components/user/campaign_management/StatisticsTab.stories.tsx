@@ -7,7 +7,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState } from "react";
 import StatisticsTab from "./StatisticsTab";
-import type { CampaignStats, StatTab } from "@/types/user/user";
+import type { CampaignStats, StatTab } from "@/types/domain/user";
 
 const mockStats: CampaignStats = {
   신청: 5,

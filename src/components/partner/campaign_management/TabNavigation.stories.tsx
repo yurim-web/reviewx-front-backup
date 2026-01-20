@@ -9,7 +9,7 @@
 
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState } from "react";
-import type { PartnerMainTab } from "@/types/partner/partner";
+import type { PartnerMainTab } from "@/types/domain/partner";
 
 interface TabNavigationWrapperProps {
   activeTab: PartnerMainTab;

@@ -19,7 +19,7 @@
 
 'use client';
 
-import type { CampaignType } from '@/types/user/user';
+import type { CampaignType } from '@/types/domain/user';
 import { campaign_types } from '../constants/constants';
 // CSS 모듈 import
 import header_styles from '@/styles/partner/campaign_create/campaign_header.module.css';

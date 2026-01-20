@@ -33,7 +33,7 @@ import {
   PartnerPointTab,
   PartnerPointHistory,
   PartnerPointSummary,
-} from "@/types/partner/partner";
+} from "@/types/domain/partner";
 import styles from "@/styles/user/point/point.module.css";
 
 /* ========================================

@@ -28,7 +28,7 @@ import Image from "next/image";
 import styles from "../../../../styles/partner/campaign_management/campaign_management_modal.module.css";
 import { deleteCampaign, cancelCampaign } from "@/data/partner/sharedCampaigns";
 import BaseModal from "@/components/common/modal/BaseModal";
-import type { PartnerStatTab } from "@/types/partner/partner";
+import type { PartnerStatTab } from "@/types/domain/partner";
 
 /**
  * CampaignManagementModal 컴포넌트의 Props 타입 정의

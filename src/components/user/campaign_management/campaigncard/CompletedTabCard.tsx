@@ -13,7 +13,7 @@
 
  */
 
-import type { CampaignApplication } from "@/types/user/user";
+import type { CampaignApplication } from "@/types/domain/user";
 import CampaignCardBase from "./CampaignCardBase";
 
 interface CompletedTabCardProps {

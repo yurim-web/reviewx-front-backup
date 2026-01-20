@@ -31,7 +31,7 @@ import {
   type PartnerSignupFormErrors,
 } from "@/components/partner/signup/utils/formValidation";
 import { formatBusinessNumber } from "@/components/partner/signup/utils/businessNumberUtils";
-import { formatPhoneNumber } from "@/utils/signup/phoneUtils";
+import { formatPhoneNumber } from "@/utils/formatting/phone";
 import PageTitle from "@/components/fragments/PageTitle";
 import { getAccountsByType } from "@/data/login/unifiedAccountData";
 import commonStyles from "@/styles/common/signup/signup.module.css";
