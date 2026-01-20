@@ -82,6 +82,21 @@
   box-sizing: border-box;
 }
 
+/* 필터 버튼 (filter_item과 유사하지만 transition 포함) */
+.filter_button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background-color: white;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  height: 40px;
+  box-sizing: border-box;
+}
+
 /* 필터 아이콘 (작은 회색 사각형) */
 .filter_icon {
   width: 16px;
@@ -198,6 +213,19 @@
   object-fit: contain;
 }
 
+/* 다운로드 버튼 */
+.download_button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background-color: white;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: auto;
+}
+
 /* 다운로드 아이콘 */
 .download_icon {
   width: 16px;
@@ -241,6 +269,16 @@
   font-weight: 500;
   line-height: 16px;
   letter-spacing: -0.32px;
+}
+
+/* 필터 텍스트 (진한 색상 - 버튼 내부 사용) */
+.filter_text_dark {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  white-space: nowrap;
 }
 
 /* 다운로드 버튼 텍스트 (엑셀 아이콘과 함께 사용) */

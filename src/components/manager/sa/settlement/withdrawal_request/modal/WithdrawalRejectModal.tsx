@@ -21,7 +21,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import styles from "@/styles/manager_sa/settlement/withdrawal_request/modal/withdrawal_reject_modal.module.css";
+import TextareaModal from "@/components/common/modal/TextareaModal";
 
 /**
  * WithdrawalRejectModal 컴포넌트 Props 인터페이스
@@ -50,58 +50,25 @@ export default function WithdrawalRejectModal({
     }
   }, [is_open]);
 
-  // 사유 텍스트 변경 핸들러
-  const handle_reason_change = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    set_reason(e.target.value);
-  };
-
   // 확인 버튼 클릭 핸들러
   const handle_confirm = () => {
     on_confirm(reason);
   };
 
-  // 오버레이 클릭 핸들러
-  const handle_overlay_click = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      on_close();
-    }
-  };
-
-  // 모달이 닫혀있으면 아무것도 렌더링하지 않음
-  if (!is_open) return null;
-
   return (
-    <div className={styles.modal_overlay} onClick={handle_overlay_click}>
-      <div
-        className={styles.modal_container}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* 모달 제목 */}
-        <h2 className={styles.modal_title}>출금 요청 반려</h2>
-
-        {/* 사유 입력 영역 */}
-        <div className={styles.reason_box}>
-          <textarea
-            className={styles.reason_text}
-            value={reason}
-            onChange={handle_reason_change}
-            onClick={(e) => e.stopPropagation()}
-            onFocus={(e) => e.stopPropagation()}
-            placeholder="반려 사유를 입력해 주세요."
-            rows={5}
-          />
-        </div>
-
-        {/* 모달 하단 버튼 영역 */}
-        <div className={styles.modal_footer}>
-          <button className={styles.close_button} onClick={on_close}>
-            닫기
-          </button>
-          <button className={styles.confirm_button} onClick={handle_confirm}>
-            확인
-          </button>
-        </div>
-      </div>
-    </div>
+    <TextareaModal
+      is_open={is_open}
+      on_close={on_close}
+      title="출금 요청 반려"
+      titleColor="#ff2626"
+      value={reason}
+      onChange={set_reason}
+      placeholder="반려 사유를 입력해 주세요."
+      buttons={["닫기", "확인"]}
+      on_cancel={on_close}
+      on_confirm={handle_confirm}
+      variant="default"
+      has_error={true}
+    />
   );
 }

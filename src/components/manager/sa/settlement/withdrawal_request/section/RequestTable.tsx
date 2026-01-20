@@ -238,6 +238,27 @@ export default function RequestTable({
     ? calculate_total_amount(sorted_request_list)
     : 0;
 
+  /**
+   * 선택된 항목 합계/건수 계산
+   *
+   * 학습 포인트:
+   * - 배열의 filter 메서드를 사용해서 `selected_ids`에 포함된 행만 골라냅니다.
+   * - includes 메서드는 배열에 특정 값이 존재하는지 검사할 때 사용합니다.
+   * - useMemo를 사용해서 의존성이 바뀔 때만 다시 계산하도록 최적화합니다.
+   */
+  const selected_items = useMemo(
+    () => sorted_request_list.filter((item) => selected_ids.includes(item.id)),
+    [sorted_request_list, selected_ids]
+  );
+
+  // 선택된 항목들의 출금 포인트 합계 (체크된 항목만 합산)
+  const selected_total_amount = show_total
+    ? calculate_total_amount(selected_items)
+    : 0;
+
+  // 선택된 건수 (체크된 행의 개수)
+  const selected_count = selected_items.length;
+
   // 테이블 바디 스타일 계산
   // 긴급 테이블: 5개 항목만 보이도록 높이 제한 (5 * 76px = 380px)
   // 이번 회차 정산 테이블: 더 많은 항목이 보이도록 높이 제한 (약 520px)
@@ -319,11 +340,7 @@ export default function RequestTable({
         // row.status는 문자열이므로, 타입 단언(as)을 사용하여 MemberStatus 타입으로 변환합니다.
         // MemberStatusTag는 공백 없는 형태("일시정지")도 처리할 수 있으므로 타입 단언 사용
         // 데이터의 status 값이 "일시정지" 형태일 수 있지만, MemberStatusTag가 내부에서 정규화하여 처리합니다.
-        return (
-          <MemberStatusTag
-            status={row.status as any as MemberStatus}
-          />
-        );
+        return <MemberStatusTag status={row.status as any as MemberStatus} />;
       case "action":
         // 출금 액션 열: 승인/반려 버튼 표시
         return (
@@ -400,18 +417,23 @@ export default function RequestTable({
               {is_emergency ? (
                 <>
                   {/* 긴급 테이블: 체크 | 번호 | 이름 | 계좌번호 | 주민등록번호 | 출금 포인트 | 신청일 | 유형 | 상태 | 출금 */}
-                  {/* 체크박스 컬럼 위치에 합계 라벨 */}
+                  {/* 왼쪽(첫 번째 컬럼)에 라벨, 출금 포인트 컬럼 위치에 금액을 배치합니다. */}
                   <div className={styles.table_cell_total_label}>
-                    <span className={styles.total_label}>합계</span>
+                    <span className={styles.total_label}>전체 합계</span>
+                    <span className={styles.total_label}>
+                      선택 합계 ({selected_count.toLocaleString()}건)
+                    </span>
                   </div>
                   <div></div>
                   <div></div>
                   <div></div>
-                  <div></div>
-                  {/* 출금 포인트 컬럼 위치에 합계 금액 */}
+                  {/* 출금 포인트 컬럼 위치에 전체/선택 합계 금액 표시 */}
                   <div className={styles.table_cell_total_amount}>
-                    <span className={styles.total_amount}>
+                    <span className={styles.total_amount_main}>
                       {total_amount.toLocaleString()}
+                    </span>
+                    <span className={styles.total_amount_selected}>
+                      {selected_total_amount.toLocaleString()}
                     </span>
                   </div>
                   <div></div>
@@ -422,22 +444,24 @@ export default function RequestTable({
               ) : (
                 <>
                   {/* 회차 정산 테이블: 체크 | 번호 | 회차 | 이름 | 계좌번호 | 주민등록번호 | 출금 포인트 | 신청일 | 유형 | 상태 | 출금 */}
-                  {/* 체크박스 컬럼 위치에 합계 라벨 */}
+                  {/* 왼쪽(첫 번째 컬럼)에 라벨, 출금 포인트 컬럼 위치에 금액을 배치합니다. */}
                   <div className={styles.table_cell_total_label}>
-                    <span className={styles.total_label}>합계</span>
+                    <span className={styles.total_label}>전체 합계</span>
+                    <span className={styles.total_label}>
+                      선택 합계 ({selected_count.toLocaleString()}건)
+                    </span>
                   </div>
                   <div></div>
-                  {/* 회차 컬럼 위치에 총합 라벨 */}
-                  <div className={styles.table_cell_total_label}>
-                    <span className={styles.total_label}>총합</span>
-                  </div>
                   <div></div>
                   <div></div>
                   <div></div>
-                  {/* 출금 포인트 컬럼 위치에 합계 금액 */}
+                  {/* 출금 포인트 컬럼 위치에 전체/선택 합계 금액 표시 */}
                   <div className={styles.table_cell_total_amount}>
-                    <span className={styles.total_amount}>
+                    <span className={styles.total_amount_main}>
                       {total_amount.toLocaleString()}
+                    </span>
+                    <span className={styles.total_amount_selected}>
+                      {selected_total_amount.toLocaleString()}
                     </span>
                   </div>
                   <div></div>

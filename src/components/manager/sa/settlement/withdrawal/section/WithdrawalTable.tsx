@@ -44,7 +44,8 @@ import PayoutStatusTag from "@/components/manager/common/tags/PayoutStatusTag";
 import type { PayoutStatus } from "@/components/manager/common/tags/PayoutStatusTag";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 import type { WithdrawalPaymentStatus } from "@/data/manager_sa/common/filterOptions";
-import type { NormalStatus } from "@/components/manager/sa/settlement/withdrawal/filter/NormalStatusFilterModal";
+import type { NormalStatus } from "@/components/manager/sa/settlement/withdrawal/filter/NormalStatusFilterDropdown";
+import type { WithdrawalMemberType } from "@/components/manager/sa/settlement/withdrawal/filter/MemberTypeFilterDropdown";
 
 // WithdrawalItem을 TableRowData로 확장
 interface WithdrawalTableRowData extends TableRowData, WithdrawalItem {}
@@ -53,6 +54,7 @@ interface WithdrawalTableProps {
   search_query?: string;
   selected_date_range?: DateRange | undefined;
   selected_payment_statuses?: WithdrawalPaymentStatus[];
+  selected_member_types?: WithdrawalMemberType[];
   selected_normal_statuses?: NormalStatus[];
 }
 
@@ -60,6 +62,7 @@ export default function WithdrawalTable({
   search_query = "",
   selected_date_range,
   selected_payment_statuses = [],
+  selected_member_types = [],
   selected_normal_statuses = [],
 }: WithdrawalTableProps) {
   // 선택된 항목 ID 배열 관리
@@ -104,10 +107,16 @@ export default function WithdrawalTable({
       if (!selected_payment_statuses.includes(item.paymentStatus)) return false;
     }
 
-    // 정상 상태 필터
+    // 유형 필터
+    if (selected_member_types.length > 0) {
+      if (!selected_member_types.includes(item.type as WithdrawalMemberType))
+        return false;
+    }
+
+    // 상태 필터
     if (selected_normal_statuses.length > 0) {
-      const item_status: NormalStatus = item.isNormal ? "정상" : "비정상";
-      if (!selected_normal_statuses.includes(item_status)) return false;
+      if (!selected_normal_statuses.includes(item.status as NormalStatus))
+        return false;
     }
 
     return true;
@@ -252,14 +261,11 @@ export default function WithdrawalTable({
       case "paymentDate":
         return <span className={styles.cell_text}>{row.paymentDate}</span>;
       case "type":
+        // 유형 열: 회원 유형 일반 텍스트 표시
         return <span className={styles.cell_text}>{row.type}</span>;
       case "status":
-        // 상태 열: 회원 상태 태그 표시 (isNormal이 true일 때만)
-        return (
-          <>
-            {row.isNormal && <MemberStatusTag status="정상" />}
-          </>
-        );
+        // 상태 열: 회원 상태 태그 표시
+        return <MemberStatusTag status={row.status as MemberStatus} />;
       default:
         return null;
     }

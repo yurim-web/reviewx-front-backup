@@ -52,7 +52,7 @@ export interface BaseFilterDropdownProps<T> {
   // 필터 옵션 목록
   options: FilterOption<T>[];
   // 드롭다운 컨테이너 ref (위치 계산용)
-  container_ref?: React.RefObject<HTMLDivElement>;
+  container_ref?: React.RefObject<HTMLDivElement | null>;
   // 옵션 리스트에 추가할 클래스명 (스크롤 등 스타일 적용용)
   options_list_class_name?: string;
 }

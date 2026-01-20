@@ -51,7 +51,48 @@ export default function AddressPage() {
 
   // 저장하기 버튼 활성화 상태
   const isSaveButtonEnabled = validateRequiredFields();
-  /manager_ga/cimmnotuy / categories;
+
+  /**
+   * 페이지 로드 시 저장된 주소 데이터 불러오기
+   *
+   * 설명:
+   * - 컴포넌트가 처음 마운트될 때 실행됩니다.
+   * - sessionStorage에 저장된 주소 정보가 있으면 불러와서 input 필드에 미리 채웁니다.
+   * - 저장된 데이터가 없으면 빈 값으로 유지됩니다.
+   *
+   * React useEffect 개념:
+   * - useEffect는 컴포넌트가 렌더링된 후에 실행되는 훅입니다.
+   * - 두 번째 인자로 빈 배열 []을 전달하면 컴포넌트가 마운트될 때 한 번만 실행됩니다.
+   * - typeof window !== "undefined"는 서버 사이드 렌더링(SSR) 환경에서
+   *   window 객체가 없을 때를 대비한 안전한 체크입니다.
+   */
+  useEffect(() => {
+    // sessionStorage는 브라우저 환경에서만 사용 가능하므로 체크
+    if (typeof window !== "undefined") {
+      // sessionStorage에서 저장된 주소 정보 가져오기
+      const savedAddress = sessionStorage.getItem("userAddress");
+
+      // 저장된 주소 정보가 있으면 파싱하여 상태에 설정
+      if (savedAddress) {
+        try {
+          // JSON.parse(): JSON 문자열을 JavaScript 객체로 변환
+          const parsedAddress = JSON.parse(savedAddress);
+
+          // 불러온 데이터로 상태 업데이트
+          // 이렇게 하면 input 필드에 기존에 입력했던 주소 정보가 자동으로 채워집니다.
+          setAddressData({
+            postalCode: parsedAddress.postalCode || "",
+            address: parsedAddress.address || "",
+            detailAddress: parsedAddress.detailAddress || "",
+          });
+        } catch (error) {
+          // JSON 파싱 실패 시 에러 처리 (잘못된 형식의 데이터일 경우)
+          console.error("주소 데이터 파싱 오류:", error);
+        }
+      }
+    }
+  }, []); // 빈 배열: 컴포넌트 마운트 시 한 번만 실행
+
   /**
    * 뒤로가기 시 모달 상태 복원
    *

@@ -38,7 +38,7 @@ interface PaymentStatusFilterDropdownProps {
   // 필터 적용 함수
   on_apply: (statuses: WithdrawalPaymentStatus[]) => void;
   // 드롭다운 컨테이너 ref (위치 계산용)
-  container_ref?: React.RefObject<HTMLDivElement>;
+  container_ref?: React.RefObject<HTMLDivElement | null>;
 }
 
 // 지급 상태 옵션을 FilterOption 형태로 변환하는 함수

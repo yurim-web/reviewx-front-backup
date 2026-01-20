@@ -60,6 +60,8 @@ export interface TextareaModalProps {
   close_on_overlay_click?: boolean;
   /** ESC 키로 닫기 여부 (기본값: true) */
   close_on_escape?: boolean;
+  /** textarea 에러 상태 (기본값: false, true일 때 빨간 테두리 표시) */
+  has_error?: boolean;
 }
 
 /**
@@ -81,6 +83,7 @@ export default function TextareaModal({
   variant = "default",
   close_on_overlay_click = true,
   close_on_escape = true,
+  has_error = false,
 }: TextareaModalProps) {
   const buttons =
     prop_buttons && prop_buttons.length > 0 ? prop_buttons : ["닫기"];
@@ -182,7 +185,7 @@ export default function TextareaModal({
             rows={5}
             readOnly={readOnly}
             disabled={readOnly}
-            has_error={readOnly || is_reject_variant}
+            has_error={readOnly || is_reject_variant || has_error}
             className={`${readOnly ? styles.modal_textarea_readonly : ""} ${
               is_reject_variant ? styles.modal_textarea_reject : ""
             }`.trim()}
