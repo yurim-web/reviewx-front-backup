@@ -20,7 +20,7 @@
 import type {
   PartnerCampaignStats,
   PartnerStatTab,
-} from "@/types/partner/partner";
+} from "@/types/domain/partner";
 import styles from "../../../styles/partner/statistics.module.css";
 
 interface StatisticsTabProps {

@@ -64,7 +64,7 @@ type Story = StoryObj<typeof ModalFilter>;
  */
 export const CheckboxFilter: Story = {
   render: (args) => {
-    const [isOpen, setIsOpen] = useState(args.isOpen || true);
+    const [isOpen, setIsOpen] = useState<boolean>(args.isOpen !== undefined ? args.isOpen : true);
     const [selectedValues, setSelectedValues] = useState<string[]>(
       Array.isArray(args.selectedValues) ? args.selectedValues : []
     );
@@ -116,7 +116,7 @@ export const CheckboxFilter: Story = {
  */
 export const RadioFilter: Story = {
   render: (args) => {
-    const [isOpen, setIsOpen] = useState(args.isOpen || true);
+    const [isOpen, setIsOpen] = useState<boolean>(args.isOpen !== undefined ? args.isOpen : true);
     const [selectedValue, setSelectedValue] = useState<string>(
       typeof args.selectedValues === "string" ? args.selectedValues : ""
     );
@@ -163,7 +163,7 @@ export const RadioFilter: Story = {
  */
 export const VerticalLayout: Story = {
   render: (args) => {
-    const [isOpen, setIsOpen] = useState(args.isOpen || true);
+    const [isOpen, setIsOpen] = useState<boolean>(args.isOpen !== undefined ? args.isOpen : true);
     const [selectedValues, setSelectedValues] = useState<string[]>(
       Array.isArray(args.selectedValues) ? args.selectedValues : []
     );

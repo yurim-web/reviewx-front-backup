@@ -22,8 +22,8 @@ import { useState, useEffect } from "react";
 import CampaignManagementHeader from "@/components/user/campaign_management/CampaignManagementHeader";
 import CampaignList from "@/components/user/campaign_management/CampaignList";
 import CampaignFilterBar from "@/components/common/campaign_management/CampaignFilterBar";
-import type { MainTab } from "@/types/user/user";
-import type { CampaignApplication } from "@/types/user/user";
+import type { MainTab } from "@/types/domain/user";
+import type { CampaignApplication } from "@/types/domain/user";
 import layoutStyles from "../../../../styles/user/campaign_management/layout.module.css";
 
 // 임시 데이터 import

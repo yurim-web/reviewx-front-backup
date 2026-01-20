@@ -15,7 +15,7 @@
  */
 
 import { useMemo } from "react";
-import type { CampaignApplication } from "@/types/user/user";
+import type { CampaignApplication } from "@/types/domain/user";
 import { deliveryCampaigns } from "@/data/campaign/delivery/deliveryCampaigns";
 import { visitCampaigns } from "@/data/campaign/visit/visitCampaigns";
 import { reviewCampaigns } from "@/data/campaign/review/reviewCampaigns";

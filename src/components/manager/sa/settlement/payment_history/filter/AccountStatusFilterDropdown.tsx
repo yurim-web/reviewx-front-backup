@@ -19,18 +19,28 @@ import BaseFilterDropdown, {
 } from "@/components/manager/ga/common/filter/BaseFilterDropdown";
 
 // 계정 상태 타입 정의
-export type AccountStatus = "정상" | "일시정지";
+// 각 상태 설명:
+// - "정상": 정상 상태
+// - "일시 정지": 일시적으로 정지된 상태
+// - "영구 정지": 영구적으로 정지된 상태
+// - "탈퇴": 탈퇴한 상태
+export type AccountStatus = "정상" | "일시 정지" | "영구 정지" | "탈퇴";
 
 interface AccountStatusFilterDropdownProps {
   is_open: boolean;
   on_close: () => void;
   selected_statuses: AccountStatus[];
   on_apply: (statuses: AccountStatus[]) => void;
-  container_ref?: React.RefObject<HTMLDivElement>;
+  container_ref?: React.RefObject<HTMLDivElement | null>;
 }
 
 // 계정 상태 필터 옵션 배열
-const account_status_options: AccountStatus[] = ["정상", "일시정지"];
+const account_status_options: AccountStatus[] = [
+  "정상",
+  "일시 정지",
+  "영구 정지",
+  "탈퇴",
+];
 
 // 계정 상태 옵션을 FilterOption 형태로 변환
 const filter_options: FilterOption<AccountStatus>[] =

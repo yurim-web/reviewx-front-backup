@@ -8,7 +8,7 @@
  * 목적: 모든 캠페인 유형에서 공통으로 사용되는 옵션 데이터를 제공
  */
 
-import type { CampaignType, PlatformType } from "@/types/user/user";
+import type { CampaignType, PlatformType } from "@/types/domain/user";
 
 // 캠페인 유형 옵션
 export const campaign_types: CampaignType[] = [

@@ -63,7 +63,7 @@ export default function WithdrawalRejectModal({
       titleColor="#ff2626"
       value={reason}
       onChange={set_reason}
-      placeholder="반려 사유를 입력해 주세요."
+      placeholder="사유 입력"
       buttons={["닫기", "확인"]}
       on_cancel={on_close}
       on_confirm={handle_confirm}

@@ -62,7 +62,7 @@ type Story = StoryObj<typeof SortModalFilter>;
  */
 export const Default: Story = {
   render: (args) => {
-    const [isOpen, setIsOpen] = useState(args.isOpen || true);
+    const [isOpen, setIsOpen] = useState<boolean>(args.isOpen !== undefined ? args.isOpen : true);
     const [selectedValue, setSelectedValue] = useState<string>(
       args.selectedValue || args.defaultSort || "최신순"
     );
@@ -100,7 +100,7 @@ export const Default: Story = {
  */
 export const ExtendedOptions: Story = {
   render: (args) => {
-    const [isOpen, setIsOpen] = useState(args.isOpen || true);
+    const [isOpen, setIsOpen] = useState<boolean>(args.isOpen !== undefined ? args.isOpen : true);
     const [selectedValue, setSelectedValue] = useState<string>(
       args.selectedValue || args.defaultSort || "최신순"
     );

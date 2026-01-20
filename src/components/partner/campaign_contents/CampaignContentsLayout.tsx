@@ -31,7 +31,7 @@ import Campaignbanner from "@/components/partner/campaign_application/CampaignIn
 import ExcelDownloadBtn from "@/components/partner/campaign_application/ExcelDownloadBtn";
 import SortFilterControl from "@/components/partner/campaign_application/SortFilterControl";
 import BaseModal from "@/components/common/modal/BaseModal";
-import { getCampaignDetailPath } from "@/utils/getCampaignDetailPath";
+import { getCampaignDetailPath } from "@/utils/helpers/url";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import appStyles from "@/styles/partner/campaign_application/campaign_application.module.css";
 import type { ContentByTab } from "@/data/partner/sharedCampaigns";

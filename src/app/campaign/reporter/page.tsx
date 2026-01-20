@@ -33,7 +33,7 @@ import {
   reporterChannelOptions,
   reporterSortOptions,
 } from "@/data/campaign/campaignFilterOptions";
-import type { CampaignWithApplicants } from "@/types/partner/partner";
+import type { CampaignWithApplicants } from "@/types/domain/partner";
 import type { ReporterCampaignData } from "@/data/campaign/reporter/reporterCampaigns";
 
 /**

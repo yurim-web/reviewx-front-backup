@@ -59,7 +59,7 @@ import { useEffect, useState, useRef } from "react";
 import {
   validatePhone,
   validateVerificationCode,
-} from "@/utils/signup/validation";
+} from "@/utils/validation";
 import { checkTestVerificationCode } from "@/data/signup/testVerificationData";
 
 interface UsePhoneVerificationReturn {

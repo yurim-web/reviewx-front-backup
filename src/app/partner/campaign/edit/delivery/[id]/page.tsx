@@ -24,7 +24,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import DeliveryCampaignForm from "@/components/partner/campaign_create_form/DeliveryCampaignForm";
-import { CampaignFormData } from "@/types/user/user";
+import { CampaignFormData } from "@/types/domain/user";
 import {
   updateDeliveryCampaign,
   deliveryCampaignsExtended,
@@ -34,8 +34,10 @@ import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import type { DeliveryCampaignDataExtended } from "@/data/campaign/delivery/deliveryCampaigns";
 // 분리된 CSS 모듈들 import
 import layoutStyles from "../../../../../../styles/partner/layout.module.css";
-import PageHeader from "@/components/partner/campaign_create_form/common/layout/PageHeader";
+import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import Toast from "@/components/common/toast/Toast";
+import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
+import guideStyles from "@/styles/partner/campaign_create/campaign_guide.module.css";
 
 /**
  * requirements 배열을 파싱하여 폼 데이터로 변환하는 함수
@@ -131,6 +133,14 @@ function campaignToFormData(
     ? extended.points.toLocaleString("ko-KR")
     : "";
 
+  // 상세 이미지 URL 배열 변환
+  // campaign_detail_images 배열이 있으면 사용, 없으면 campaign_detail_image를 배열로 변환
+  const detailImageUrls = (extended?.campaign_detail_images && extended.campaign_detail_images.length > 0)
+    ? extended.campaign_detail_images
+    : extended?.campaign_detail_image 
+    ? [extended.campaign_detail_image]
+    : [];
+
   return {
     campaignType: info.campaignType as "배송형",
     platform: (platformName as any) || "네이버 블로그",
@@ -164,6 +174,7 @@ function campaignToFormData(
     fairTradeAgreement: true,
     isUrgent: extended?.isUrgent || false,
     thumbnailImageUrl: extended?.image || info.image || "",
+    detailImagePreviews: detailImageUrls, // 상세 이미지 URL 배열
   };
 }
 
@@ -332,24 +343,131 @@ export default function DeliveryCampaignEditPage() {
 
       // 현재는 localStorage에 임시 저장 (실제 프로덕션에서는 API 사용)
       const storedCampaigns = localStorage.getItem("deliveryCampaigns");
+      
+      // 원본 확장 데이터에서 상세 이미지 등 확장 필드 가져오기
+      const originalData = deliveryCampaignsExtended.find(
+        (c) => c.id === campaignId
+      );
+      
+      // 상세 이미지 URL 배열 변환 (formData에서 가져오거나 원본 데이터 사용)
+      const detailImageUrls = (formData.detailImagePreviews && formData.detailImagePreviews.length > 0)
+        ? formData.detailImagePreviews
+        : originalData?.campaign_detail_images && originalData.campaign_detail_images.length > 0
+        ? originalData.campaign_detail_images
+        : originalData?.campaign_detail_image
+        ? [originalData.campaign_detail_image]
+        : [];
+
       if (storedCampaigns) {
         const campaigns: CampaignWithApplicants[] = JSON.parse(storedCampaigns);
         const index = campaigns.findIndex(
           (c) => c.campaignInfo.id === campaignId
         );
         if (index !== -1) {
-          campaigns[index] = updatedCampaign;
+          // 기존 캠페인 업데이트 (확장 데이터 병합)
+          const existingCampaign = campaigns[index];
+          campaigns[index] = {
+            ...updatedCampaign,
+            applicantData: updatedCampaign.applicantData || existingCampaign.applicantData || {
+              applicants: [],
+              selectedApplicants: []
+            },
+            // 확장 데이터 병합 (상세 이미지, isUrgent 등)
+            campaign_detail_images: detailImageUrls,
+            campaign_detail_image: detailImageUrls[0] || originalData?.campaign_detail_image || "",
+            isUrgent: isUrgent,
+            registeredAt: originalData?.registeredAt || (existingCampaign as any).registeredAt,
+            description: formData.providedItems || originalData?.description || "",
+            promotionLink: formData.promotionLink || originalData?.promotionLink || "",
+            keyword: formData.keywords || originalData?.keyword || "",
+            subcategory: formData.category || originalData?.subcategory || "",
+            channel: originalData?.channel || "",
+            points: Number(String(formData.additionalPoints || "").replace(/,/g, "")) || originalData?.points || 0,
+            adultOnly: formData.adultOnly ?? originalData?.adultOnly ?? false,
+            allowReParticipation: formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,
+            allowLateSubmission: formData.allowLateSubmission ?? originalData?.allowLateSubmission ?? false,
+            contactPhone: formData.contactPhone || originalData?.contactPhone || "",
+            detailedSchedule: originalData?.detailedSchedule || {
+              applicationStart: formData.recruitmentPeriod.split("~")[0]?.trim() || "",
+              applicationEnd: formData.recruitmentPeriod.split("~")[1]?.trim() || "",
+              announcement: formData.announcementDate || "",
+              purchasePeriod: "",
+              registrationPeriod: formData.registrationPeriod || "",
+            },
+            requirements: originalData?.requirements || [],
+            guidelineTexts: formData.guidelines ? formData.guidelines.split("\n\n") : (originalData?.guidelineTexts || []),
+          } as any;
           localStorage.setItem("deliveryCampaigns", JSON.stringify(campaigns));
         } else {
-          // localStorage에 없으면 추가
-          campaigns.push(updatedCampaign);
+          // localStorage에 없으면 추가 (확장 데이터 포함)
+          campaigns.push({
+            ...updatedCampaign,
+            applicantData: updatedCampaign.applicantData || {
+              applicants: [],
+              selectedApplicants: []
+            },
+            // 확장 데이터 추가
+            campaign_detail_images: detailImageUrls,
+            campaign_detail_image: detailImageUrls[0] || originalData?.campaign_detail_image || "",
+            isUrgent: isUrgent,
+            registeredAt: originalData?.registeredAt,
+            description: formData.providedItems || originalData?.description || "",
+            promotionLink: formData.promotionLink || originalData?.promotionLink || "",
+            keyword: formData.keywords || originalData?.keyword || "",
+            subcategory: formData.category || originalData?.subcategory || "",
+            channel: originalData?.channel || "",
+            points: Number(String(formData.additionalPoints || "").replace(/,/g, "")) || originalData?.points || 0,
+            adultOnly: formData.adultOnly ?? originalData?.adultOnly ?? false,
+            allowReParticipation: formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,
+            allowLateSubmission: formData.allowLateSubmission ?? originalData?.allowLateSubmission ?? false,
+            contactPhone: formData.contactPhone || originalData?.contactPhone || "",
+            detailedSchedule: originalData?.detailedSchedule || {
+              applicationStart: formData.recruitmentPeriod.split("~")[0]?.trim() || "",
+              applicationEnd: formData.recruitmentPeriod.split("~")[1]?.trim() || "",
+              announcement: formData.announcementDate || "",
+              purchasePeriod: "",
+              registrationPeriod: formData.registrationPeriod || "",
+            },
+            requirements: originalData?.requirements || [],
+            guidelineTexts: formData.guidelines ? formData.guidelines.split("\n\n") : (originalData?.guidelineTexts || []),
+          } as any);
           localStorage.setItem("deliveryCampaigns", JSON.stringify(campaigns));
         }
       } else {
-        // localStorage에 없으면 새로 생성
+        // localStorage에 없으면 새로 생성 (확장 데이터 포함)
         localStorage.setItem(
           "deliveryCampaigns",
-          JSON.stringify([updatedCampaign])
+          JSON.stringify([{
+            ...updatedCampaign,
+            applicantData: updatedCampaign.applicantData || {
+              applicants: [],
+              selectedApplicants: []
+            },
+            // 확장 데이터 추가
+            campaign_detail_images: detailImageUrls,
+            campaign_detail_image: detailImageUrls[0] || originalData?.campaign_detail_image || "",
+            isUrgent: isUrgent,
+            registeredAt: originalData?.registeredAt,
+            description: formData.providedItems || originalData?.description || "",
+            promotionLink: formData.promotionLink || originalData?.promotionLink || "",
+            keyword: formData.keywords || originalData?.keyword || "",
+            subcategory: formData.category || originalData?.subcategory || "",
+            channel: originalData?.channel || "",
+            points: Number(String(formData.additionalPoints || "").replace(/,/g, "")) || originalData?.points || 0,
+            adultOnly: formData.adultOnly ?? originalData?.adultOnly ?? false,
+            allowReParticipation: formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,
+            allowLateSubmission: formData.allowLateSubmission ?? originalData?.allowLateSubmission ?? false,
+            contactPhone: formData.contactPhone || originalData?.contactPhone || "",
+            detailedSchedule: originalData?.detailedSchedule || {
+              applicationStart: formData.recruitmentPeriod.split("~")[0]?.trim() || "",
+              applicationEnd: formData.recruitmentPeriod.split("~")[1]?.trim() || "",
+              announcement: formData.announcementDate || "",
+              purchasePeriod: "",
+              registrationPeriod: formData.registrationPeriod || "",
+            },
+            requirements: originalData?.requirements || [],
+            guidelineTexts: formData.guidelines ? formData.guidelines.split("\n\n") : (originalData?.guidelineTexts || []),
+          } as any])
         );
       }
 
@@ -391,15 +509,34 @@ export default function DeliveryCampaignEditPage() {
 
   return (
     <div className={layoutStyles.container}>
+      {/* 파트너 서브헤더 */}
+      <PartnerSubHeader />
+
+      {/* 페이지 헤더 - 타이틀과 긴급 체크박스 */}
+      <div className={headerStyles.page_header}>
+        <h1 className={headerStyles.page_title}>캠페인 수정</h1>
+
+        {/* 긴급 체크박스 */}
+        <div className={headerStyles.header_urgent_checkbox}>
+          <label
+            className={`${guideStyles.checkbox_label} ${
+              isUrgent ? headerStyles.urgent_checked : ""
+            }`}
+            style={isUrgent ? { color: "#ff2626" } : {}}
+          >
+            <span>긴급</span>
+            <input
+              type="checkbox"
+              className={headerStyles.urgent_checkbox}
+              checked={isUrgent}
+              onChange={(e) => setIsUrgent(e.target.checked)}
+            />
+          </label>
+        </div>
+      </div>
+
       {/* 메인 컨텐츠 영역 */}
       <div className={layoutStyles.main_content}>
-        {/* 페이지 헤더 */}
-        <PageHeader
-          title="캠페인 수정"
-          onUrgentChange={setIsUrgent}
-          initialUrgent={isUrgent}
-        />
-
         {/* 배송형 캠페인 수정 폼 */}
         <DeliveryCampaignForm
           onSubmit={handleSubmit}

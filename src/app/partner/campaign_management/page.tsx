@@ -30,9 +30,9 @@ import PartnerCampaignManagementHeader from "@/components/partner/campaign_manag
 import CampaignList from "@/components/partner/campaign_management/CampaignList";
 import CampaignFilterBar from "@/components/common/campaign_management/CampaignFilterBar";
 import BaseModal from "@/components/common/modal/BaseModal";
-import type { PartnerMainTab } from "@/types/partner/partner";
-import type { PartnerStatTab } from "@/types/partner/partner";
-import type { PartnerCampaign } from "@/types/partner/partner";
+import type { PartnerMainTab } from "@/types/domain/partner";
+import type { PartnerStatTab } from "@/types/domain/partner";
+import type { PartnerCampaign } from "@/types/domain/partner";
 import layoutStyles from "../../../styles/partner/layout.module.css";
 
 // 공용 데이터 import
@@ -59,8 +59,47 @@ export default function PartnerCampaignManagementPage() {
   // 네트워크 오류 상태 (네트워크 지연이나 오류 발생 시 true)
   const [isNetworkError, setIsNetworkError] = useState<boolean>(false);
 
+  // 필터 상태 (필터 바에서 사용)
+  const [activeFilters, setActiveFilters] = useState<{
+    types?: string[];
+    channels?: string[];
+    searchQuery?: string;
+    sortBy?: string;
+  }>({});
+
+  // 클라이언트에서만 localStorage에서 필터 상태 복원 (Hydration 에러 방지)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    try {
+      const stored = localStorage.getItem("partner_campaign_filter_state");
+      if (stored) {
+        const restored = JSON.parse(stored);
+        setActiveFilters(restored);
+      }
+    } catch (error) {
+      console.error("localStorage에서 필터 상태 복원 실패:", error);
+    }
+  }, []); // 빈 의존성 배열: 마운트 시 한 번만 실행
+
   // 탭별 캠페인 목록 가져오기
   const campaigns = getCampaignsByTab(activeStatTab);
+
+  /**
+   * 필터 변경 핸들러
+   *
+   * 설명:
+   * - CampaignFilterBar에서 필터가 변경될 때 호출됩니다.
+   * - 필터 상태를 업데이트하여 필터 바에 전달합니다.
+   */
+  const handleFilterChange = (filters: {
+    types?: string[];
+    channels?: string[];
+    searchQuery?: string;
+    sortBy?: string;
+  }) => {
+    setActiveFilters(filters);
+  };
 
   /**
    * 필터링된 캠페인 목록 변경 핸들러
@@ -127,6 +166,8 @@ export default function PartnerCampaignManagementPage() {
           <CampaignFilterBar
             campaigns={campaigns}
             onFilteredCampaignsChange={handleFilteredCampaignsChange}
+            onFilterChange={handleFilterChange}
+            activeFilters={activeFilters}
           />
 
           {/* 필터링된 캠페인 목록 */}

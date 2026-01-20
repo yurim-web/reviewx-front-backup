@@ -16,14 +16,16 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import ReviewCampaignForm from "@/components/partner/campaign_create_form/ReviewCampaignForm";
-import { CampaignFormData } from "@/types/user/user";
+import { CampaignFormData } from "@/types/domain/user";
 import { updateReviewCampaign, reviewCampaignsExtended } from "@/data/campaign/review/reviewCampaigns";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import type { ReviewCampaignDataExtended } from "@/data/campaign/review/reviewCampaigns";
 import layoutStyles from "../../../../../../styles/partner/layout.module.css";
-import PageHeader from "@/components/partner/campaign_create_form/common/layout/PageHeader";
+import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import Toast from "@/components/common/toast/Toast";
+import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
+import guideStyles from "@/styles/partner/campaign_create/campaign_guide.module.css";
 
 /**
  * requirements 배열을 파싱하여 폼 데이터로 변환하는 함수
@@ -130,6 +132,14 @@ function campaignToFormData(
     ? extended.points.toLocaleString("ko-KR")
     : "";
 
+  // 상세 이미지 URL 배열 변환
+  // campaign_detail_images 배열이 있으면 사용, 없으면 campaign_detail_image를 배열로 변환
+  const detailImageUrls = (extended?.campaign_detail_images && extended.campaign_detail_images.length > 0)
+    ? extended.campaign_detail_images
+    : extended?.campaign_detail_image 
+    ? [extended.campaign_detail_image]
+    : [];
+
   return {
     campaignType: info.campaignType as "구매평",
     platform: (platformName as any) || "네이버 블로그",
@@ -163,6 +173,7 @@ function campaignToFormData(
     fairTradeAgreement: true,
     isUrgent: extended?.isUrgent || false,
     thumbnailImageUrl: extended?.image || info.image || "",
+    detailImagePreviews: detailImageUrls, // 상세 이미지 URL 배열
   };
 }
 
@@ -286,19 +297,134 @@ export default function ReviewCampaignEditPage() {
 
       const updatedCampaign = updateReviewCampaign(campaignId, finalFormData, imageUrl);
 
+      // 원본 확장 데이터에서 상세 이미지 등 확장 필드 가져오기
+      const originalData = reviewCampaignsExtended.find(
+        (c) => c.id === campaignId
+      );
+      
+      // 상세 이미지 URL 배열 변환
+      const detailImageUrls = (formData.detailImagePreviews && formData.detailImagePreviews.length > 0)
+        ? formData.detailImagePreviews
+        : originalData?.campaign_detail_images && originalData.campaign_detail_images.length > 0
+        ? originalData.campaign_detail_images
+        : originalData?.campaign_detail_image
+        ? [originalData.campaign_detail_image]
+        : [];
+
+      // contentType 결정
+      let contentType: "link" | "image" | "both" | undefined = undefined;
+      if (finalFormData.requireContentLink && finalFormData.requireContentImage) {
+        contentType = "both";
+      } else if (finalFormData.requireContentLink) {
+        contentType = "link";
+      } else if (finalFormData.requireContentImage) {
+        contentType = "image";
+      }
+
       const storedCampaigns = localStorage.getItem("reviewCampaigns");
       if (storedCampaigns) {
         const campaigns: CampaignWithApplicants[] = JSON.parse(storedCampaigns);
         const index = campaigns.findIndex((c) => c.campaignInfo.id === campaignId);
         if (index !== -1) {
-          campaigns[index] = updatedCampaign;
+          const existingCampaign = campaigns[index];
+          campaigns[index] = {
+            ...updatedCampaign,
+            applicantData: updatedCampaign.applicantData || existingCampaign.applicantData || {
+              applicants: [],
+              selectedApplicants: []
+            },
+            campaign_detail_images: detailImageUrls,
+            campaign_detail_image: detailImageUrls[0] || originalData?.campaign_detail_image || "",
+            contentType: contentType || originalData?.contentType,
+            isUrgent: isUrgent,
+            registeredAt: originalData?.registeredAt || existingCampaign.registeredAt,
+            description: formData.providedItems || originalData?.description || "",
+            purchaseLink: formData.promotionLink || originalData?.purchaseLink || "",
+            keyword: formData.keywords || originalData?.keyword || "",
+            subcategory: formData.category || originalData?.subcategory || "",
+            channel: originalData?.channel || "",
+            points: Number(String(formData.additionalPoints || "").replace(/,/g, "")) || originalData?.points || 0,
+            adultOnly: formData.adultOnly ?? originalData?.adultOnly ?? false,
+            allowReParticipation: formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,
+            allowLateSubmission: formData.allowLateSubmission ?? originalData?.allowLateSubmission ?? false,
+            contactPhone: formData.contactPhone || originalData?.contactPhone || "",
+            detailedSchedule: originalData?.detailedSchedule || {
+              applicationStart: formData.recruitmentPeriod.split("~")[0]?.trim() || "",
+              applicationEnd: formData.recruitmentPeriod.split("~")[1]?.trim() || "",
+              announcement: formData.announcementDate || "",
+              purchasePeriod: formData.purchasePeriod || "",
+              registrationPeriod: formData.registrationPeriod || "",
+            },
+            requirements: originalData?.requirements || [],
+            guidelineTexts: formData.guidelines ? formData.guidelines.split("\n\n") : (originalData?.guidelineTexts || []),
+          } as any;
           localStorage.setItem("reviewCampaigns", JSON.stringify(campaigns));
         } else {
-          campaigns.push(updatedCampaign);
+          campaigns.push({
+            ...updatedCampaign,
+            applicantData: updatedCampaign.applicantData || {
+              applicants: [],
+              selectedApplicants: []
+            },
+            campaign_detail_images: detailImageUrls,
+            campaign_detail_image: detailImageUrls[0] || originalData?.campaign_detail_image || "",
+            contentType: contentType || originalData?.contentType,
+            isUrgent: isUrgent,
+            registeredAt: originalData?.registeredAt,
+            description: formData.providedItems || originalData?.description || "",
+            purchaseLink: formData.promotionLink || originalData?.purchaseLink || "",
+            keyword: formData.keywords || originalData?.keyword || "",
+            subcategory: formData.category || originalData?.subcategory || "",
+            channel: originalData?.channel || "",
+            points: Number(String(formData.additionalPoints || "").replace(/,/g, "")) || originalData?.points || 0,
+            adultOnly: formData.adultOnly ?? originalData?.adultOnly ?? false,
+            allowReParticipation: formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,
+            allowLateSubmission: formData.allowLateSubmission ?? originalData?.allowLateSubmission ?? false,
+            contactPhone: formData.contactPhone || originalData?.contactPhone || "",
+            detailedSchedule: originalData?.detailedSchedule || {
+              applicationStart: formData.recruitmentPeriod.split("~")[0]?.trim() || "",
+              applicationEnd: formData.recruitmentPeriod.split("~")[1]?.trim() || "",
+              announcement: formData.announcementDate || "",
+              purchasePeriod: formData.purchasePeriod || "",
+              registrationPeriod: formData.registrationPeriod || "",
+            },
+            requirements: originalData?.requirements || [],
+            guidelineTexts: formData.guidelines ? formData.guidelines.split("\n\n") : (originalData?.guidelineTexts || []),
+          } as any);
           localStorage.setItem("reviewCampaigns", JSON.stringify(campaigns));
         }
       } else {
-        localStorage.setItem("reviewCampaigns", JSON.stringify([updatedCampaign]));
+        localStorage.setItem("reviewCampaigns", JSON.stringify([{
+          ...updatedCampaign,
+          applicantData: updatedCampaign.applicantData || {
+            applicants: [],
+            selectedApplicants: []
+          },
+          campaign_detail_images: detailImageUrls,
+          campaign_detail_image: detailImageUrls[0] || originalData?.campaign_detail_image || "",
+          contentType: contentType || originalData?.contentType,
+          isUrgent: isUrgent,
+          registeredAt: originalData?.registeredAt,
+          description: formData.providedItems || originalData?.description || "",
+          purchaseLink: formData.promotionLink || originalData?.purchaseLink || "",
+          keyword: formData.keywords || originalData?.keyword || "",
+          subcategory: formData.category || originalData?.subcategory || "",
+          channel: originalData?.channel || "",
+          points: Number(formData.additionalPoints?.replace(/,/g, "")) || originalData?.points || 0,
+          adultOnly: formData.adultOnly ?? originalData?.adultOnly ?? false,
+          allowReParticipation: formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,
+          allowLateSubmission: formData.allowLateSubmission ?? originalData?.allowLateSubmission ?? false,
+          contactPhone: formData.contactPhone || originalData?.contactPhone || "",
+          detailedSchedule: originalData?.detailedSchedule || {
+            applicationStart: formData.recruitmentPeriod.split("~")[0]?.trim() || "",
+            applicationEnd: formData.recruitmentPeriod.split("~")[1]?.trim() || "",
+            announcement: formData.announcementDate || "",
+            purchasePeriod: formData.purchasePeriod || "",
+            registrationPeriod: formData.registrationPeriod || "",
+          },
+          requirements: originalData?.requirements || [],
+          guidelineTexts: formData.guidelines ? formData.guidelines.split("\n\n") : (originalData?.guidelineTexts || []),
+        } as any]));
       }
 
       console.log("구매평 캠페인 수정 완료:", updatedCampaign);
@@ -339,12 +465,33 @@ export default function ReviewCampaignEditPage() {
 
   return (
     <div className={layoutStyles.container}>
+      {/* 파트너 서브헤더 */}
+      <PartnerSubHeader />
+
+      {/* 페이지 헤더 - 타이틀과 긴급 체크박스 */}
+      <div className={headerStyles.page_header}>
+        <h1 className={headerStyles.page_title}>캠페인 수정</h1>
+
+        {/* 긴급 체크박스 */}
+        <div className={headerStyles.header_urgent_checkbox}>
+          <label
+            className={`${guideStyles.checkbox_label} ${
+              isUrgent ? headerStyles.urgent_checked : ""
+            }`}
+            style={isUrgent ? { color: "#ff2626" } : {}}
+          >
+            <span>긴급</span>
+            <input
+              type="checkbox"
+              className={headerStyles.urgent_checkbox}
+              checked={isUrgent}
+              onChange={(e) => setIsUrgent(e.target.checked)}
+            />
+          </label>
+        </div>
+      </div>
+
       <div className={layoutStyles.main_content}>
-        <PageHeader
-          title="캠페인 수정"
-          onUrgentChange={setIsUrgent}
-          initialUrgent={isUrgent}
-        />
         <ReviewCampaignForm
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}

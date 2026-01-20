@@ -2,7 +2,7 @@
  * 기자단 캠페인 데이터 타입 정의
  */
 
-import type { CampaignFormData } from "@/types/user/user";
+import type { CampaignFormData } from "@/types/domain/user";
 import type {
   ContentByTab,
   CampaignWithApplicants,
@@ -589,6 +589,7 @@ export interface ReporterCampaignDataExtended {
     registrationPeriod: string;
   };
   campaign_detail_image: string;
+  campaign_detail_images?: string[]; // 캠페인 상세 이미지 경로 배열 (여러 이미지)
   channel: string;
   keyword: string;
   productLink?: string;

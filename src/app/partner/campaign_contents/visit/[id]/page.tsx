@@ -39,7 +39,7 @@ import ExperienceInspectionCard from "@/components/partner/campaign_contents/car
 import ExperiencePendingCard from "@/components/partner/campaign_contents/card_type/experience_card/ExperiencePendingCard";
 import ExperienceCompletedCard from "@/components/partner/campaign_contents/card_type/experience_card/ExperienceCompletedCard";
 import type { ExperienceApplicant } from "@/components/partner/campaign_contents/card_type/experience_card/ExperienceTypes";
-import { getChannelUrl } from "@/utils/channelUrlHelper";
+import { getChannelUrl } from "@/utils/helpers/url";
 
 // 방문형 콘텐츠 데이터 로더
 import { getVisitContentsById } from "@/data/campaign/visit/visitCampaigns";

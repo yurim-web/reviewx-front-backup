@@ -25,7 +25,7 @@ interface PaymentMethodFilterDropdownProps {
   on_close: () => void;
   selected_methods: PaymentMethod[];
   on_apply: (methods: PaymentMethod[]) => void;
-  container_ref?: React.RefObject<HTMLDivElement>;
+  container_ref?: React.RefObject<HTMLDivElement | null>;
 }
 
 // 결제 수단 옵션을 FilterOption 형태로 변환

@@ -22,7 +22,7 @@ import BusinessDocumentUpload from "@/components/partner/mypage/BusinessDocument
 import AddressInput from "@/components/common/mypage/AddressInput";
 import BaseModal from "@/components/common/modal/BaseModal";
 import ErrorText from "@/components/common/error_text/ErrorText";
-import { formatPhoneNumber } from "@/utils/signup/phoneUtils";
+import { formatPhoneNumber } from "@/utils/formatting/phone";
 
 /**
  * 파트너 내 정보 수정 페이지 컴포넌트
@@ -93,8 +93,8 @@ export default function PartnerEditProfilePage() {
     setIsPhoneVerified(false);
     setVerificationCode("");
     setVerificationCodeError(undefined);
-    // 타이머 시작 (3분 = 180초)
-    setTimer(180);
+    // 타이머 시작 (4분 = 240초)
+    setTimer(240);
     // TODO: 인증번호 전송 API 호출
   };
 

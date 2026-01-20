@@ -7,7 +7,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState } from "react";
 import { CampaignTypeSelector } from "./CampaignTypeSelector";
-import type { CampaignType } from "@/types/user/user";
+import type { CampaignType } from "@/types/domain/user";
 
 const meta: Meta<typeof CampaignTypeSelector> = {
   title: "Partner/CampaignCreateForm/Common/CampaignTypeSelector",

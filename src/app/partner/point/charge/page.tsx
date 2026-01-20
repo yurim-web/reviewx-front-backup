@@ -16,10 +16,8 @@ import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import Toast from "@/components/common/toast/Toast";
 import BaseModal from "@/components/common/modal/BaseModal";
-import {
-  parseFormattedAmount,
-  validateAmount,
-} from "@/utils/point/amountFormatter";
+import { parseFormattedAmount } from "@/utils/formatting/amount";
+import { validateAmount } from "@/utils/validation/amount";
 import styles from "@/styles/partner/point/charge.module.css";
 import customDropdownStyles from "@/styles/partner/campaign_create/custom_dropdown.module.css";
 
@@ -91,7 +89,10 @@ export default function PartnerPointChargePage() {
   const successPostPoints = availablePoints + chargePoints;
 
   const isValidAmount = () => {
-    const validation = validateAmount(chargePoints, MIN_AMOUNT, MAX_AMOUNT);
+    const validation = validateAmount(chargePoints, {
+      minAmount: MIN_AMOUNT,
+      maxAmount: MAX_AMOUNT
+    });
     return validation.isValid;
   };
 

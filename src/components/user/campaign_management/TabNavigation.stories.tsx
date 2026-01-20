@@ -7,7 +7,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState } from "react";
 import TabNavigation from "./TabNavigation";
-import type { MainTab } from "@/types/user/user";
+import type { MainTab } from "@/types/domain/user";
 
 const meta: Meta<typeof TabNavigation> = {
   title: "User/CampaignManagement/TabNavigation",

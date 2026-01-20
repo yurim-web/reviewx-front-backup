@@ -7,7 +7,7 @@
 import { InstagramApplicant } from "@/data/partner/campaign_application/delivery_applicants";
 import styles from "@/styles/partner/campaign_application/card/applicant_card_shared.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
-import { getChannelUrl } from "@/utils/channelUrlHelper";
+import { getChannelUrl } from "@/utils/helpers/url";
 
 interface ReelsSelectedCardProps {
   applicant: InstagramApplicant;

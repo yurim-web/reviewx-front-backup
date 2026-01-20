@@ -13,7 +13,7 @@
  *
  * 주요 기능:
  * - 체크박스 방식의 다중 선택 필터링
- * - 계정 상태 옵션: 정상, 일시정지
+ * - 계정 상태 옵션: 정상, 일시 정지, 영구 정지, 탈퇴
  * - 필터 적용/초기화 기능
  * - 모달 외부 클릭으로 닫기
  */
@@ -25,7 +25,12 @@ import BaseFilterModal, {
 } from "@/components/manager/ga/common/filter/BaseFilterModal";
 
 // 계정 상태 타입 정의
-export type AccountStatus = "정상" | "일시정지";
+// 각 상태 설명:
+// - "정상": 정상 상태
+// - "일시 정지": 일시적으로 정지된 상태
+// - "영구 정지": 영구적으로 정지된 상태
+// - "탈퇴": 탈퇴한 상태
+export type AccountStatus = "정상" | "일시 정지" | "영구 정지" | "탈퇴";
 
 interface AccountStatusFilterModalProps {
   // 모달 열림/닫힘 상태
@@ -39,7 +44,12 @@ interface AccountStatusFilterModalProps {
 }
 
 // 계정 상태 필터 옵션 배열
-const account_status_options: AccountStatus[] = ["정상", "일시정지"];
+const account_status_options: AccountStatus[] = [
+  "정상",
+  "일시 정지",
+  "영구 정지",
+  "탈퇴",
+];
 
 // 계정 상태 옵션을 FilterOption 형태로 변환하는 함수
 const get_account_status_options = (): FilterOption<AccountStatus>[] => {

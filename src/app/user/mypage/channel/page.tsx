@@ -42,7 +42,7 @@ import ChannelSection from "@/components/user/mypage/ChannelSection";
 
 import SubHeader from "@/components/fragments/SubHeader";
 
-import type { MainTab } from "@/types/user/user";
+import type { MainTab } from "@/types/domain/user";
 
 import layoutStyles from "../../../../styles/user/mypage/layout.module.css";
 

@@ -56,7 +56,7 @@ import {
   reporterCampaigns,
   type ReporterCampaignData,
 } from "@/data/campaign/reporter/reporterCampaigns";
-import type { CampaignWithApplicants } from "@/types/partner/partner";
+import type { CampaignWithApplicants } from "@/types/domain/partner";
 
 /**
  * 시드 기반 난수 생성기 (선형 합동 생성기)

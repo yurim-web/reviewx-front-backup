@@ -24,7 +24,7 @@
 "use client";
 
 import PointHistoryPage from "@/components/user/point/PointHistoryPage";
-import { PointHistory } from "@/types/user/user";
+import { PointHistory } from "@/types/domain/user";
 
 /**
  * 전체 포인트 내역 페이지 컴포넌트

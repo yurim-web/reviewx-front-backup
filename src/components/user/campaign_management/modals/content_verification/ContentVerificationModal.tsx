@@ -38,7 +38,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import styles from "../../../../../styles/user/campaign_management/modals/content_verification.module.css";
-import type { CampaignType } from "@/types/user/user";
+import type { CampaignType } from "@/types/domain/user";
 import Toast from "@/components/common/toast/Toast";
 
 // 실제 캠페인 데이터 import

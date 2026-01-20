@@ -420,9 +420,12 @@ export default function RequestTable({
                   {/* 왼쪽(첫 번째 컬럼)에 라벨, 출금 포인트 컬럼 위치에 금액을 배치합니다. */}
                   <div className={styles.table_cell_total_label}>
                     <span className={styles.total_label}>전체 합계</span>
-                    <span className={styles.total_label}>
-                      선택 합계 ({selected_count.toLocaleString()}건)
-                    </span>
+                    {/* 선택된 항목이 있을 때만 선택 합계 표시 */}
+                    {selected_ids.length > 0 && (
+                      <span className={styles.total_label}>
+                        선택 합계 ({selected_count.toLocaleString()}건)
+                      </span>
+                    )}
                   </div>
                   <div></div>
                   <div></div>
@@ -432,9 +435,12 @@ export default function RequestTable({
                     <span className={styles.total_amount_main}>
                       {total_amount.toLocaleString()}
                     </span>
-                    <span className={styles.total_amount_selected}>
-                      {selected_total_amount.toLocaleString()}
-                    </span>
+                    {/* 선택된 항목이 있을 때만 선택 합계 금액 표시 */}
+                    {selected_ids.length > 0 && (
+                      <span className={styles.total_amount_selected}>
+                        {selected_total_amount.toLocaleString()}
+                      </span>
+                    )}
                   </div>
                   <div></div>
                   <div></div>
@@ -447,9 +453,12 @@ export default function RequestTable({
                   {/* 왼쪽(첫 번째 컬럼)에 라벨, 출금 포인트 컬럼 위치에 금액을 배치합니다. */}
                   <div className={styles.table_cell_total_label}>
                     <span className={styles.total_label}>전체 합계</span>
-                    <span className={styles.total_label}>
-                      선택 합계 ({selected_count.toLocaleString()}건)
-                    </span>
+                    {/* 선택된 항목이 있을 때만 선택 합계 표시 */}
+                    {selected_ids.length > 0 && (
+                      <span className={styles.total_label}>
+                        선택 합계 ({selected_count.toLocaleString()}건)
+                      </span>
+                    )}
                   </div>
                   <div></div>
                   <div></div>
@@ -460,9 +469,12 @@ export default function RequestTable({
                     <span className={styles.total_amount_main}>
                       {total_amount.toLocaleString()}
                     </span>
-                    <span className={styles.total_amount_selected}>
-                      {selected_total_amount.toLocaleString()}
-                    </span>
+                    {/* 선택된 항목이 있을 때만 선택 합계 금액 표시 */}
+                    {selected_ids.length > 0 && (
+                      <span className={styles.total_amount_selected}>
+                        {selected_total_amount.toLocaleString()}
+                      </span>
+                    )}
                   </div>
                   <div></div>
                   <div></div>

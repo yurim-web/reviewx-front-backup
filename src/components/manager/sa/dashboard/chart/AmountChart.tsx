@@ -169,10 +169,64 @@ const CustomXAxisTick = ({ x, y, payload }: any) => {
   );
 };
 
-// 커스텀 툴팁 컴포넌트 - Figma 디자인에 맞춰 검은색 배경에 흰색 텍스트
-const CustomTooltip = ({ active, payload, coordinate }: any) => {
+// 커스텀 툴팁 컴포넌트
+// - 결제(payment) 차트: 흰색 배경(#ffffff), 날짜(#848484), 금액(#ff5694)
+// - 정산(settlement) 차트: 어두운 배경(#444444), 날짜(#d9d9d9), 금액(#ffffff)
+// - 위치에 따라 말풍선 꼭지(삼각형) 방향 자동 변경
+const CustomTooltip = ({ active, payload, coordinate, is_payment_chart }: any) => {
   if (active && payload && payload.length && coordinate) {
     const data = payload[0].payload;
+    
+    // 차트 영역의 중간 지점 계산 (차트 높이 280px, margin top 10px 고려하여 대략 135px)
+    // coordinate.y가 중간보다 작으면 (차트 상단) → 툴팁을 위에 표시하고 화살표는 아래로
+    // coordinate.y가 중간보다 크면 (차트 하단) → 툴팁을 아래에 표시하고 화살표는 위로
+    const chart_midpoint = 135;
+    const is_tooltip_below = coordinate.y > chart_midpoint;
+
+    // 차트 종류에 따라 툴팁 테마 결정
+    const tooltip_background_color = is_payment_chart ? '#ffffff' : '#444444';
+    const tooltip_date_color = is_payment_chart ? '#848484' : '#d9d9d9';
+    const tooltip_value_color = is_payment_chart ? '#ff5694' : '#ffffff';
+    const tooltip_box_shadow = is_payment_chart
+      ? '0 2px 8px rgba(0, 0, 0, 0.15)'
+      : 'none';
+    
+    // 툴팁 위치 스타일 결정
+    const tooltip_transform = is_tooltip_below 
+      ? 'translate(-50%, 0)' // 툴팁이 데이터 포인트 아래에 위치
+      : 'translate(-50%, -100%)'; // 툴팁이 데이터 포인트 위에 위치
+    
+    const tooltip_margin = is_tooltip_below
+      ? '8px 0 0 0' // 아래쪽 여백
+      : '0 0 -8px 0'; // 위쪽 여백
+    
+    // 화살표 스타일 결정
+    const arrow_style = is_tooltip_below
+      ? {
+          // 위쪽 화살표 (툴팁이 아래에 있을 때)
+          position: 'absolute' as const,
+          top: '-4px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: 0,
+          height: 0,
+          borderLeft: '4px solid transparent',
+          borderRight: '4px solid transparent',
+          borderBottom: `4px solid ${tooltip_background_color}`,
+        }
+      : {
+          // 아래쪽 화살표 (툴팁이 위에 있을 때)
+          position: 'absolute' as const,
+          bottom: '-4px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: 0,
+          height: 0,
+          borderLeft: '4px solid transparent',
+          borderRight: '4px solid transparent',
+          borderTop: `4px solid ${tooltip_background_color}`,
+        };
+    
     return (
       <div
         className={styles.chart_tooltip}
@@ -180,18 +234,20 @@ const CustomTooltip = ({ active, payload, coordinate }: any) => {
           position: 'absolute',
           left: coordinate.x,
           top: coordinate.y,
-          transform: 'translate(-50%, -100%)',
-          marginTop: '-8px',
+          transform: tooltip_transform,
+          margin: tooltip_margin,
           pointerEvents: 'none',
-          backgroundColor: '#444444',
-          borderRadius: '4px',
+          backgroundColor: tooltip_background_color,
+          borderRadius: '6px',
           padding: '8px',
           minWidth: 'fit-content',
+          boxShadow: tooltip_box_shadow,
         }}
       >
+        {/* 날짜 텍스트 */}
         <p
           style={{
-            color: '#d9d9d9',
+            color: tooltip_date_color,
             fontSize: '13px',
             fontWeight: 500,
             margin: 0,
@@ -202,11 +258,12 @@ const CustomTooltip = ({ active, payload, coordinate }: any) => {
         >
           {data.date}
         </p>
+        {/* 금액 텍스트 */}
         <p
           style={{
-            color: '#fff',
+            color: tooltip_value_color,
             fontSize: '13px',
-            fontWeight: 500,
+            fontWeight: is_payment_chart ? 600 : 500, // 결제 차트는 600, 정산 차트는 500
             margin: '4px 0 0 0',
             padding: 0,
             lineHeight: '13px',
@@ -215,6 +272,8 @@ const CustomTooltip = ({ active, payload, coordinate }: any) => {
         >
           {data.value.toLocaleString()}
         </p>
+        {/* 위치에 따라 방향이 바뀌는 삼각형 화살표 */}
+        <div style={arrow_style} />
       </div>
     );
   }
@@ -229,6 +288,14 @@ export default function AmountChart({
 }: AmountChartProps) {
   // Y축 최대값은 1억으로 고정 (Figma 디자인 기준)
   const y_axis_max = 100000000;
+
+  // gradientId를 기반으로 차트 색상 결정
+  // paymentGradient → 핑크색 (#ff5694), settlementGradient → 검은색 (#444444)
+  const chart_color =
+    gradientId === 'paymentGradient' ? '#ff5694' : '#444444';
+
+  // 결제 차트 여부
+  const is_payment_chart = gradientId === 'paymentGradient';
 
   return (
     <div
@@ -267,26 +334,27 @@ export default function AmountChart({
             interval={0}
           />
 
-          {/* 그라데이션 정의 */}
+          {/* 그라데이션 정의 - gradientId에 따라 색상 결정 */}
           <defs>
             <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#444444" stopOpacity={0.3} />
-              <stop offset="100%" stopColor="#444444" stopOpacity={0} />
+              <stop offset="0%" stopColor={chart_color} stopOpacity={0.3} />
+              <stop offset="100%" stopColor={chart_color} stopOpacity={0} />
             </linearGradient>
           </defs>
 
           {/* 툴팁 */}
-          <Tooltip content={<CustomTooltip />} />
+          <Tooltip content={<CustomTooltip is_payment_chart={is_payment_chart} />} />
 
           {/* 영역 채우기 - 그라데이션으로 투명하게, 뾰족뾰족한 형태 */}
           <Area
             type="linear"
             dataKey="value"
-            stroke="#444444"
+            stroke={chart_color}
             strokeWidth={2}
             fill={`url(#${gradientId})`}
             dot={false}
-            activeDot={{ r: 6, fill: '#444444', strokeWidth: 0 }}
+            // 활성 점(동그라미) - 결제/정산 모두 흰색 테두리 적용
+            activeDot={{ r: 6, fill: chart_color, stroke: '#ffffff', strokeWidth: 3 }}
           />
         </AreaChart>
       </ResponsiveContainer>

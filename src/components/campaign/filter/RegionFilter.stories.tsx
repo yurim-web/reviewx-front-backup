@@ -58,7 +58,7 @@ type Story = StoryObj<typeof RegionFilter>;
  */
 export const Default: Story = {
   render: (args) => {
-    const [isOpen, setIsOpen] = useState(args.isOpen || true);
+    const [isOpen, setIsOpen] = useState<boolean>(args.isOpen !== undefined ? args.isOpen : true);
     const [selectedRegions, setSelectedRegions] = useState<string[]>(
       args.selectedRegions || []
     );
@@ -99,7 +99,7 @@ export const Default: Story = {
  */
 export const WithSelectedRegions: Story = {
   render: (args) => {
-    const [isOpen, setIsOpen] = useState(args.isOpen || true);
+    const [isOpen, setIsOpen] = useState<boolean>(args.isOpen !== undefined ? args.isOpen : true);
     const [selectedRegions, setSelectedRegions] = useState<string[]>(
       args.selectedRegions || []
     );

@@ -14,7 +14,7 @@
  * - 구매평: 구매기간(구매 영수증) 또는 등록기간(콘텐츠) 등록/수정 + 등록 기한 연장 요청
  */
 
-import type { CampaignApplication } from "@/types/user/user";
+import type { CampaignApplication } from "@/types/domain/user";
 import buttonStyles from "../../../../styles/user/campaign_management/buttons.module.css";
 import {
   isContentTypeCampaign,

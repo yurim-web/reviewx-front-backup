@@ -19,7 +19,7 @@ import { useState } from "react";
 import {
   validatePassword,
   validatePasswordMatch,
-} from "@/utils/signup/validation";
+} from "@/utils/validation";
 import styles from "@/styles/common/signup/signup.module.css";
 
 interface PasswordFieldProps {

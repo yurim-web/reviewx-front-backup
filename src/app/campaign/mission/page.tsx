@@ -31,7 +31,7 @@ import {
   missionCategoryOptions,
   missionSortOptions,
 } from "@/data/campaign/campaignFilterOptions";
-import type { CampaignWithApplicants } from "@/types/partner/partner";
+import type { CampaignWithApplicants } from "@/types/domain/partner";
 import type { MissionCampaignData } from "@/data/campaign/mission/missionCampaigns";
 
 /**

@@ -7,7 +7,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 import CampaignList from "./CampaignList";
-import type { CampaignApplication, StatTab } from "@/types/user/user";
+import type { CampaignApplication, StatTab } from "@/types/domain/user";
 import { campaignManagementData } from "@/data/user/campaign_management/campaignManagementData";
 
 const meta: Meta<typeof CampaignList> = {

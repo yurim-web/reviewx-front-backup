@@ -16,7 +16,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import MissionCampaignForm from "@/components/partner/campaign_create_form/MissionCampaignForm";
-import { CampaignFormData } from "@/types/user/user";
+import { CampaignFormData } from "@/types/domain/user";
 import {
   updateMissionCampaign,
   missionCampaignsExtended,
@@ -25,8 +25,10 @@ import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import type { MissionCampaignDataExtended } from "@/data/campaign/mission/missionCampaigns";
 import layoutStyles from "../../../../../../styles/partner/layout.module.css";
-import PageHeader from "@/components/partner/campaign_create_form/common/layout/PageHeader";
+import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import Toast from "@/components/common/toast/Toast";
+import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
+import guideStyles from "@/styles/partner/campaign_create/campaign_guide.module.css";
 
 /**
  * requirements 배열을 파싱하여 폼 데이터로 변환하는 함수
@@ -147,6 +149,14 @@ function campaignToFormData(
     ? extended.points.toLocaleString("ko-KR")
     : "";
 
+  // 상세 이미지 URL 배열 변환
+  // campaign_detail_images 배열이 있으면 사용, 없으면 campaign_detail_image를 배열로 변환
+  const detailImageUrls = (extended?.campaign_detail_images && extended.campaign_detail_images.length > 0)
+    ? extended.campaign_detail_images
+    : extended?.campaign_detail_image 
+    ? [extended.campaign_detail_image]
+    : [];
+
   return {
     campaignType: info.campaignType as "미션형",
     platform: "",
@@ -184,6 +194,7 @@ function campaignToFormData(
     thumbnailImageUrl: extended?.image || info.image || "",
     // 홍보 링크 (미션형은 productLink 사용)
     promotionLink: extended?.productLink || "",
+    detailImagePreviews: detailImageUrls, // 상세 이미지 URL 배열
   };
 }
 
@@ -353,11 +364,47 @@ export default function MissionCampaignEditPage() {
         contentType = "image";
       }
 
+      // 원본 확장 데이터에서 상세 이미지 등 확장 필드 가져오기
+      const originalData = missionCampaignsExtended.find(
+        (c) => c.id === campaignId
+      );
+      
+      // 상세 이미지 URL 배열 변환
+      const detailImageUrls = (formData.detailImagePreviews && formData.detailImagePreviews.length > 0)
+        ? formData.detailImagePreviews
+        : originalData?.campaign_detail_images && originalData.campaign_detail_images.length > 0
+        ? originalData.campaign_detail_images
+        : originalData?.campaign_detail_image
+        ? [originalData.campaign_detail_image]
+        : [];
+
       // 확장 데이터에 contentType 추가
       const extendedCampaign = {
         ...updatedCampaign,
         contentType: contentType,
-        // 기존 확장 데이터 유지 (localStorage에서 가져온 데이터가 있다면)
+        campaign_detail_images: detailImageUrls,
+        campaign_detail_image: detailImageUrls[0] || originalData?.campaign_detail_image || "",
+        isUrgent: isUrgent,
+        registeredAt: originalData?.registeredAt,
+        description: formData.providedItems || originalData?.description || "",
+        productLink: formData.promotionLink || originalData?.productLink || "",
+        keywords: formData.keywords || originalData?.keyword || "",
+        subcategory: formData.category || originalData?.subcategory || "",
+        channel: originalData?.channel || "",
+        points: Number(formData.additionalPoints?.replace(/,/g, "")) || originalData?.points || 0,
+        adultOnly: formData.adultOnly ?? originalData?.adultOnly ?? false,
+        allowReParticipation: formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,
+        allowLateSubmission: formData.allowLateSubmission ?? originalData?.allowLateSubmission ?? false,
+        contactPhone: formData.contactPhone || originalData?.contactPhone || "",
+        detailedSchedule: originalData?.detailedSchedule || {
+          applicationStart: formData.recruitmentPeriod.split("~")[0]?.trim() || "",
+          applicationEnd: formData.recruitmentPeriod.split("~")[1]?.trim() || "",
+          announcement: formData.announcementDate || "",
+          registrationPeriod: formData.registrationPeriod || "",
+        },
+        requirements: originalData?.requirements || [],
+        guidelineTexts: formData.guidelines ? formData.guidelines.split("\n\n") : (originalData?.guidelineTexts || []),
+        // 기존 localStorage 데이터에서 추가 필드 유지
         ...(typeof window !== "undefined" && (() => {
           try {
             const storedCampaigns = localStorage.getItem("missionCampaigns");
@@ -368,20 +415,12 @@ export default function MissionCampaignEditPage() {
               );
               if (existing) {
                 return {
-                  isUrgent: existing.isUrgent,
-                  registeredAt: existing.registeredAt,
-                  description: existing.description,
-                  productLink: existing.productLink,
-                  keywords: existing.keywords,
-                  guidelines: existing.guidelines,
-                  detailImagePreviews: existing.detailImagePreviews,
                   minTextLength: existing.minTextLength,
                   minImageCount: existing.minImageCount,
                   videoCount: existing.videoCount,
                   videoDuration: existing.videoDuration,
                   requireLinkAttachment: existing.requireLinkAttachment,
                   requireKeywordAttachment: existing.requireKeywordAttachment,
-                  additionalPoints: existing.additionalPoints,
                 };
               }
             }
@@ -450,12 +489,33 @@ export default function MissionCampaignEditPage() {
 
   return (
     <div className={layoutStyles.container}>
+      {/* 파트너 서브헤더 */}
+      <PartnerSubHeader />
+
+      {/* 페이지 헤더 - 타이틀과 긴급 체크박스 */}
+      <div className={headerStyles.page_header}>
+        <h1 className={headerStyles.page_title}>캠페인 수정</h1>
+
+        {/* 긴급 체크박스 */}
+        <div className={headerStyles.header_urgent_checkbox}>
+          <label
+            className={`${guideStyles.checkbox_label} ${
+              isUrgent ? headerStyles.urgent_checked : ""
+            }`}
+            style={isUrgent ? { color: "#ff2626" } : {}}
+          >
+            <span>긴급</span>
+            <input
+              type="checkbox"
+              className={headerStyles.urgent_checkbox}
+              checked={isUrgent}
+              onChange={(e) => setIsUrgent(e.target.checked)}
+            />
+          </label>
+        </div>
+      </div>
+
       <div className={layoutStyles.main_content}>
-        <PageHeader
-          title="캠페인 수정"
-          onUrgentChange={setIsUrgent}
-          initialUrgent={isUrgent}
-        />
         <MissionCampaignForm
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}

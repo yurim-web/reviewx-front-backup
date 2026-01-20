@@ -24,7 +24,7 @@ interface StatusFilterDropdownProps {
   on_close: () => void;
   selected_statuses: AdminStatus[];
   on_apply: (statuses: AdminStatus[]) => void;
-  container_ref?: React.RefObject<HTMLDivElement>;
+  container_ref?: React.RefObject<HTMLDivElement | null>;
 }
 
 // 상태 필터 옵션 배열

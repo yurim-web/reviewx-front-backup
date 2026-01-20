@@ -18,7 +18,7 @@
  */
 
 import { useRouter } from "next/navigation";
-import type { PartnerMainTab } from "@/types/partner/partner";
+import type { PartnerMainTab } from "@/types/domain/partner";
 import styles from "../../../styles/partner/tab_navigation.module.css";
 
 interface TabNavigationProps {

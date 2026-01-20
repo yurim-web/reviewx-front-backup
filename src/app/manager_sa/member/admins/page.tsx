@@ -24,11 +24,13 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import styles from "@/styles/manager_sa/member/admins/page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import AdminFilterSection from "@/components/manager/sa/member/admins/section/AdminFilterSection";
-import AdminTable from "@/components/manager/sa/member/admins/section/AdminTable";
+import AdminTable, {
+  type AdminTableRef,
+} from "@/components/manager/sa/member/admins/section/AdminTable";
 import type { AdminStatus } from "@/data/manager_sa/member/admins";
 
 export default function AdminsPage() {
@@ -42,6 +44,11 @@ export default function AdminsPage() {
     AdminStatus[]
   >([]);
 
+  // AdminTable의 ref 생성
+  // useRef: React Hook으로 DOM 요소나 컴포넌트 인스턴스에 접근할 수 있게 해줍니다
+  // <AdminTableRef>: ref가 가리킬 컴포넌트의 타입을 지정합니다
+  const admin_table_ref = useRef<AdminTableRef>(null);
+
   return (
     <div className={styles.container}>
       <div className={styles.main_content}>
@@ -54,10 +61,12 @@ export default function AdminsPage() {
           on_search_change={set_search_query}
           selected_statuses={selected_statuses}
           on_statuses_change={set_selected_statuses}
+          admin_table_ref={admin_table_ref}
         />
 
         {/* 관리자 목록 테이블 */}
         <AdminTable
+          ref={admin_table_ref}
           search_query={search_query}
           selected_statuses={selected_statuses}
         />

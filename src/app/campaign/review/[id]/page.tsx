@@ -93,6 +93,8 @@ function convertToReviewCampaignData(
     description?: string;
     guidelines?: string;
     detailImagePreviews?: string[]; // 상세 이미지 미리보기 URL 배열
+    campaign_detail_images?: string[]; // localStorage에 저장된 상세 이미지 배열
+    campaign_detail_image?: string; // localStorage에 저장된 단일 상세 이미지
     minTextLength?: string | number;
     minImageCount?: string | number;
     videoCount?: string | number;
@@ -117,17 +119,33 @@ function convertToReviewCampaignData(
 
   // guidelines를 배열로 변환 (줄바꿈 기준)
   // 줄바꿈(\n)을 <br>로 변환하여 HTML로 표시
-  const guidelineTexts = campaign.guidelines
-    ? campaign.guidelines
-        .split("\n\n")
-        .filter((text) => text.trim() !== "")
-        .map((text) => text.replace(/\n/g, "<br>"))
-    : [];
+  // localStorage에 guidelineTexts 배열이 있으면 우선 사용
+  const guidelineTexts = 
+    (campaign as any).guidelineTexts && Array.isArray((campaign as any).guidelineTexts)
+      ? (campaign as any).guidelineTexts.map((text: string) => 
+          typeof text === 'string' ? text.replace(/\n/g, "<br>") : text
+        )
+      : campaign.guidelines
+      ? campaign.guidelines
+          .split("\n\n")
+          .filter((text) => text.trim() !== "")
+          .map((text) => text.replace(/\n/g, "<br>"))
+      : [];
 
-  // 상세 이미지 배열 결정: detailImagePreviews가 있으면 사용, 없으면 썸네일 이미지 사용
+  // 상세 이미지 배열 결정: 
+  // 1. campaign_detail_images가 있으면 사용 (localStorage 데이터)
+  // 2. detailImagePreviews가 있으면 사용 (폼 데이터)
+  // 3. campaign_detail_image가 있으면 단일 이미지로 배열 생성
+  // 4. 없으면 썸네일 이미지 사용
   const detailImages =
-    campaign.detailImagePreviews && campaign.detailImagePreviews.length > 0
+    (campaign as any).campaign_detail_images && 
+    Array.isArray((campaign as any).campaign_detail_images) && 
+    (campaign as any).campaign_detail_images.length > 0
+      ? (campaign as any).campaign_detail_images
+      : campaign.detailImagePreviews && campaign.detailImagePreviews.length > 0
       ? campaign.detailImagePreviews
+      : (campaign as any).campaign_detail_image
+      ? [(campaign as any).campaign_detail_image]
       : [info.image];
 
   // requirements 배열 생성
@@ -140,9 +158,13 @@ function convertToReviewCampaignData(
     requireKeywordAttachment: campaign.requireKeywordAttachment,
   });
 
-  // points 계산
+  // points 계산 
+  // 1. localStorage에 저장된 points 필드 확인
+  // 2. additionalPoints 필드 확인
   let points = 0;
-  if (campaign.additionalPoints) {
+  if ((campaign as any).points !== undefined && (campaign as any).points !== null) {
+    points = Number((campaign as any).points) || 0;
+  } else if (campaign.additionalPoints) {
     const pointsStr = String(campaign.additionalPoints).replace(/,/g, "");
     points = parseInt(pointsStr, 10) || 0;
   }
@@ -231,36 +253,11 @@ export default function ReviewDetailPage({ params }: ReviewDetailPageProps) {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
-  // 정적 데이터와 localStorage 데이터 모두 확인
+  // localStorage 데이터를 먼저 확인 (수정된 내용 우선 반영), 그 다음 정적 데이터 확인
   useEffect(() => {
     setIsLoading(true);
-    // 1. 정적 데이터에서 먼저 찾기
-    const staticCampaign = reviewCampaigns.find((c) => {
-      const campaignId = String(c.id);
-      // 정확히 일치하는 경우
-      if (campaignId === id) return true;
-      // ID 형식 변환 시도
-      if (id.startsWith("review_")) {
-        if (campaignId === id) return true;
-        const idWithoutPrefix = id.replace(/^review_/, "");
-        if (campaignId === idWithoutPrefix) return true;
-      }
-      if (!id.startsWith("review_") && !campaignId.startsWith("review_")) {
-        return campaignId === id;
-      }
-      if (campaignId.startsWith("review_") && !id.startsWith("review_")) {
-        const campaignIdWithoutPrefix = campaignId.replace(/^review_/, "");
-        return campaignIdWithoutPrefix === id;
-      }
-      return false;
-    });
-    if (staticCampaign) {
-      setCampaign(staticCampaign);
-      setIsLoading(false);
-      return;
-    }
-
-    // 2. localStorage에서 찾기
+    
+    // 1. localStorage에서 먼저 찾기 (수정된 데이터 우선)
     if (typeof window !== "undefined") {
       try {
         const storedCampaigns = localStorage.getItem("reviewCampaigns");
@@ -309,6 +306,58 @@ export default function ReviewDetailPage({ params }: ReviewDetailPageProps) {
       } catch (error) {
         console.error("localStorage에서 캠페인 불러오기 실패:", error);
       }
+    }
+
+    // 2. localStorage에 없으면 정적 데이터에서 찾기
+    const staticCampaign = reviewCampaigns.find((c) => {
+      const campaignId = String(c.id);
+      // 정확히 일치하는 경우
+      if (campaignId === id) return true;
+      // ID 형식 변환 시도
+      if (id.startsWith("review_")) {
+        if (campaignId === id) return true;
+        const idWithoutPrefix = id.replace(/^review_/, "");
+        if (campaignId === idWithoutPrefix) return true;
+      }
+      if (!id.startsWith("review_") && !campaignId.startsWith("review_")) {
+        return campaignId === id;
+      }
+      if (campaignId.startsWith("review_") && !id.startsWith("review_")) {
+        const campaignIdWithoutPrefix = campaignId.replace(/^review_/, "");
+        return campaignIdWithoutPrefix === id;
+      }
+      return false;
+    });
+    if (staticCampaign) {
+      setCampaign(staticCampaign);
+      setIsLoading(false);
+      return;
+    }
+
+    // 2. localStorage에 없으면 정적 데이터에서 찾기
+    const staticCampaign = reviewCampaigns.find((c) => {
+      const campaignId = String(c.id);
+      // 정확히 일치하는 경우
+      if (campaignId === id) return true;
+      // ID 형식 변환 시도
+      if (id.startsWith("review_")) {
+        if (campaignId === id) return true;
+        const idWithoutPrefix = id.replace(/^review_/, "");
+        if (campaignId === idWithoutPrefix) return true;
+      }
+      if (!id.startsWith("review_") && !campaignId.startsWith("review_")) {
+        return campaignId === id;
+      }
+      if (campaignId.startsWith("review_") && !id.startsWith("review_")) {
+        const campaignIdWithoutPrefix = campaignId.replace(/^review_/, "");
+        return campaignIdWithoutPrefix === id;
+      }
+      return false;
+    });
+    if (staticCampaign) {
+      setCampaign(staticCampaign);
+      setIsLoading(false);
+      return;
     }
 
     // 3. 찾지 못한 경우

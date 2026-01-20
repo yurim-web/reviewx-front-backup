@@ -24,7 +24,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import VisitCampaignForm from "@/components/partner/campaign_create_form/VisitCampaignForm";
-import { CampaignFormData } from "@/types/user/user";
+import { CampaignFormData } from "@/types/domain/user";
 import {
   updateVisitCampaign,
   visitCampaignsExtended,
@@ -34,8 +34,10 @@ import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import type { VisitCampaignDataExtended } from "@/data/campaign/visit/visitCampaigns";
 // 분리된 CSS 모듈들 import
 import layoutStyles from "../../../../../../styles/partner/layout.module.css";
-import PageHeader from "@/components/partner/campaign_create_form/common/layout/PageHeader";
+import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import Toast from "@/components/common/toast/Toast";
+import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
+import guideStyles from "@/styles/partner/campaign_create/campaign_guide.module.css";
 
 /**
  * requirements 배열을 파싱하여 폼 데이터로 변환하는 함수
@@ -130,6 +132,14 @@ function campaignToFormData(
   const additionalPoints = extended?.points
     ? extended.points.toLocaleString("ko-KR")
     : "";
+
+  // 상세 이미지 URL 배열 변환
+  // campaign_detail_images 배열이 있으면 사용, 없으면 campaign_detail_image를 배열로 변환
+  const detailImageUrls = (extended?.campaign_detail_images && extended.campaign_detail_images.length > 0)
+    ? extended.campaign_detail_images
+    : extended?.campaign_detail_image 
+    ? [extended.campaign_detail_image]
+    : [];
 
   /**
    * 지역 정보 파싱 함수
@@ -272,6 +282,7 @@ function campaignToFormData(
     fairTradeAgreement: true,
     isUrgent: extended?.isUrgent || false,
     thumbnailImageUrl: extended?.image || info.image || "",
+    detailImagePreviews: detailImageUrls, // 상세 이미지 URL 배열
   };
 }
 
@@ -408,6 +419,20 @@ export default function VisitCampaignEditPage() {
         imageUrl
       );
 
+      // 원본 확장 데이터에서 상세 이미지 등 확장 필드 가져오기
+      const originalData = visitCampaignsExtended.find(
+        (c) => c.id === campaignId
+      );
+      
+      // 상세 이미지 URL 배열 변환
+      const detailImageUrls = (formData.detailImagePreviews && formData.detailImagePreviews.length > 0)
+        ? formData.detailImagePreviews
+        : originalData?.campaign_detail_images && originalData.campaign_detail_images.length > 0
+        ? originalData.campaign_detail_images
+        : originalData?.campaign_detail_image
+        ? [originalData.campaign_detail_image]
+        : [];
+
       const storedCampaigns = localStorage.getItem("visitCampaigns");
       if (storedCampaigns) {
         const campaigns: CampaignWithApplicants[] = JSON.parse(storedCampaigns);
@@ -415,16 +440,115 @@ export default function VisitCampaignEditPage() {
           (c) => c.campaignInfo.id === campaignId
         );
         if (index !== -1) {
-          campaigns[index] = updatedCampaign;
+          // 기존 캠페인 업데이트 (확장 데이터 병합)
+          const existingCampaign = campaigns[index];
+          campaigns[index] = {
+            ...updatedCampaign,
+            applicantData: updatedCampaign.applicantData || existingCampaign.applicantData || {
+              applicants: [],
+              selectedApplicants: []
+            },
+            // 확장 데이터 병합
+            campaign_detail_images: detailImageUrls,
+            campaign_detail_image: detailImageUrls[0] || originalData?.campaign_detail_image || "",
+            isUrgent: isUrgent,
+            registeredAt: originalData?.registeredAt || (existingCampaign as any).registeredAt,
+            description: formData.providedItems || originalData?.description || "",
+            visitLink: formData.visitLink || originalData?.visitLink || "",
+            visitAddress: formData.visitAddress || originalData?.visitAddress || "",
+            addressGuide: formData.addressDetail || originalData?.addressGuide || "",
+            keyword: formData.keywords || originalData?.keyword || "",
+            subcategory: formData.category || originalData?.subcategory || "",
+            channel: originalData?.channel || "",
+            region: formData.region || originalData?.region || "",
+            points: Number(String(formData.additionalPoints || "").replace(/,/g, "")) || originalData?.points || 0,
+            adultOnly: formData.adultOnly ?? originalData?.adultOnly ?? false,
+            allowReParticipation: formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,
+            allowLateSubmission: formData.allowLateSubmission ?? originalData?.allowLateSubmission ?? false,
+            contactPhone: formData.contactPhone || originalData?.contactPhone || "",
+            detailedSchedule: originalData?.detailedSchedule || {
+              applicationStart: formData.recruitmentPeriod.split("~")[0]?.trim() || "",
+              applicationEnd: formData.recruitmentPeriod.split("~")[1]?.trim() || "",
+              announcement: formData.announcementDate || "",
+              purchasePeriod: "",
+              registrationPeriod: formData.registrationPeriod || "",
+            },
+            requirements: originalData?.requirements || [],
+            guidelineTexts: formData.guidelines ? formData.guidelines.split("\n\n") : (originalData?.guidelineTexts || []),
+          } as any;
           localStorage.setItem("visitCampaigns", JSON.stringify(campaigns));
         } else {
-          campaigns.push(updatedCampaign);
+          campaigns.push({
+            ...updatedCampaign,
+            applicantData: updatedCampaign.applicantData || {
+              applicants: [],
+              selectedApplicants: []
+            },
+            campaign_detail_images: detailImageUrls,
+            campaign_detail_image: detailImageUrls[0] || originalData?.campaign_detail_image || "",
+            isUrgent: isUrgent,
+            registeredAt: originalData?.registeredAt,
+            description: formData.providedItems || originalData?.description || "",
+            visitLink: formData.visitLink || originalData?.visitLink || "",
+            visitAddress: formData.visitAddress || originalData?.visitAddress || "",
+            addressGuide: formData.addressDetail || originalData?.addressGuide || "",
+            keyword: formData.keywords || originalData?.keyword || "",
+            subcategory: formData.category || originalData?.subcategory || "",
+            channel: originalData?.channel || "",
+            region: formData.region || originalData?.region || "",
+            points: Number(String(formData.additionalPoints || "").replace(/,/g, "")) || originalData?.points || 0,
+            adultOnly: formData.adultOnly ?? originalData?.adultOnly ?? false,
+            allowReParticipation: formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,
+            allowLateSubmission: formData.allowLateSubmission ?? originalData?.allowLateSubmission ?? false,
+            contactPhone: formData.contactPhone || originalData?.contactPhone || "",
+            detailedSchedule: originalData?.detailedSchedule || {
+              applicationStart: formData.recruitmentPeriod.split("~")[0]?.trim() || "",
+              applicationEnd: formData.recruitmentPeriod.split("~")[1]?.trim() || "",
+              announcement: formData.announcementDate || "",
+              purchasePeriod: "",
+              registrationPeriod: formData.registrationPeriod || "",
+            },
+            requirements: originalData?.requirements || [],
+            guidelineTexts: formData.guidelines ? formData.guidelines.split("\n\n") : (originalData?.guidelineTexts || []),
+          } as any);
           localStorage.setItem("visitCampaigns", JSON.stringify(campaigns));
         }
       } else {
         localStorage.setItem(
           "visitCampaigns",
-          JSON.stringify([updatedCampaign])
+          JSON.stringify([{
+            ...updatedCampaign,
+            applicantData: updatedCampaign.applicantData || {
+              applicants: [],
+              selectedApplicants: []
+            },
+            campaign_detail_images: detailImageUrls,
+            campaign_detail_image: detailImageUrls[0] || originalData?.campaign_detail_image || "",
+            isUrgent: isUrgent,
+            registeredAt: originalData?.registeredAt,
+            description: formData.providedItems || originalData?.description || "",
+            visitLink: formData.visitLink || originalData?.visitLink || "",
+            visitAddress: formData.visitAddress || originalData?.visitAddress || "",
+            addressGuide: formData.addressDetail || originalData?.addressGuide || "",
+            keyword: formData.keywords || originalData?.keyword || "",
+            subcategory: formData.category || originalData?.subcategory || "",
+            channel: originalData?.channel || "",
+            region: formData.region || originalData?.region || "",
+            points: Number(String(formData.additionalPoints || "").replace(/,/g, "")) || originalData?.points || 0,
+            adultOnly: formData.adultOnly ?? originalData?.adultOnly ?? false,
+            allowReParticipation: formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,
+            allowLateSubmission: formData.allowLateSubmission ?? originalData?.allowLateSubmission ?? false,
+            contactPhone: formData.contactPhone || originalData?.contactPhone || "",
+            detailedSchedule: originalData?.detailedSchedule || {
+              applicationStart: formData.recruitmentPeriod.split("~")[0]?.trim() || "",
+              applicationEnd: formData.recruitmentPeriod.split("~")[1]?.trim() || "",
+              announcement: formData.announcementDate || "",
+              purchasePeriod: "",
+              registrationPeriod: formData.registrationPeriod || "",
+            },
+            requirements: originalData?.requirements || [],
+            guidelineTexts: formData.guidelines ? formData.guidelines.split("\n\n") : (originalData?.guidelineTexts || []),
+          } as any])
         );
       }
 
@@ -466,12 +590,33 @@ export default function VisitCampaignEditPage() {
 
   return (
     <div className={layoutStyles.container}>
+      {/* 파트너 서브헤더 */}
+      <PartnerSubHeader />
+
+      {/* 페이지 헤더 - 타이틀과 긴급 체크박스 */}
+      <div className={headerStyles.page_header}>
+        <h1 className={headerStyles.page_title}>캠페인 수정</h1>
+
+        {/* 긴급 체크박스 */}
+        <div className={headerStyles.header_urgent_checkbox}>
+          <label
+            className={`${guideStyles.checkbox_label} ${
+              isUrgent ? headerStyles.urgent_checked : ""
+            }`}
+            style={isUrgent ? { color: "#ff2626" } : {}}
+          >
+            <span>긴급</span>
+            <input
+              type="checkbox"
+              className={headerStyles.urgent_checkbox}
+              checked={isUrgent}
+              onChange={(e) => setIsUrgent(e.target.checked)}
+            />
+          </label>
+        </div>
+      </div>
+
       <div className={layoutStyles.main_content}>
-        <PageHeader
-          title="캠페인 수정"
-          onUrgentChange={setIsUrgent}
-          initialUrgent={isUrgent}
-        />
         <VisitCampaignForm
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}

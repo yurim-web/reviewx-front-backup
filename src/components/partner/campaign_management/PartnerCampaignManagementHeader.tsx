@@ -30,11 +30,11 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import TabNavigation from "./TabNavigation";
 import StatisticsTab from "./StatisticsTab";
-import type { PartnerMainTab } from "@/types/partner/partner";
+import type { PartnerMainTab } from "@/types/domain/partner";
 import type {
   PartnerStatTab,
   PartnerCampaignStats,
-} from "@/types/partner/partner";
+} from "@/types/domain/partner";
 
 // 공용 데이터 import
 import {

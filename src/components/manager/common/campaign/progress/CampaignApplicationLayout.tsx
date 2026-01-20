@@ -41,7 +41,7 @@ import Campaignbanner from "@/components/partner/campaign_application/CampaignIn
 import SortFilterControl from "@/components/partner/campaign_application/SortFilterControl";
 import EmptyApplicantsList from "@/components/partner/campaign_application/EmptyApplicantsList";
 import BaseModal from "@/components/common/modal/BaseModal";
-import { getCampaignDetailPath } from "@/utils/getCampaignDetailPath";
+import { getCampaignDetailPath } from "@/utils/helpers/url";
 import type {
   CampaignWithApplicants,
   AllApplicant,

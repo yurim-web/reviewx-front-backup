@@ -26,11 +26,12 @@ interface PaymentStatusFilterDropdownProps {
   on_close: () => void;
   selected_statuses: PaymentStatus[];
   on_apply: (statuses: PaymentStatus[]) => void;
-  container_ref?: React.RefObject<HTMLDivElement>;
+  container_ref?: React.RefObject<HTMLDivElement | null>;
 }
 
 // 결제 상태 필터 옵션 배열
-const payment_status_options: PaymentStatus[] = ["완료", "대기", "취소"];
+// 순서: 대기, 완료, 취소
+const payment_status_options: PaymentStatus[] = ["대기", "완료", "취소"];
 
 // 결제 상태 옵션을 FilterOption 형태로 변환
 const filter_options: FilterOption<PaymentStatus>[] =

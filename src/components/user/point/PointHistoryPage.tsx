@@ -28,7 +28,7 @@ import { useRouter } from "next/navigation";
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 import PointTabNavigation from "@/components/common/point/PointTabNavigation";
 import TextareaModal from "@/components/common/modal/TextareaModal";
-import { MainTab, PointTab, PointHistory } from "@/types/user/user";
+import { MainTab, PointTab, PointHistory } from "@/types/domain/user";
 import { pointHistoryData } from "@/data/user/point/pointData";
 import styles from "@/styles/user/point/point.module.css";
 

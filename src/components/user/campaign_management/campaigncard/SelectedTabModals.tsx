@@ -15,7 +15,7 @@
  * - 등록 기한 연장 요청 모달: 모든 캠페인 공통
  */
 
-import type { CampaignApplication } from "@/types/user/user";
+import type { CampaignApplication } from "@/types/domain/user";
 import BaseModal from "@/components/common/modal/BaseModal";
 import { TextareaModal } from "@/components/common/modal";
 import ReceiptRegistrationModal from "../modals/ReceiptRegistrationModal";

@@ -26,7 +26,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import styles from "@/styles/manager/common/member/partners/page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import PartnerStatsSection from "@/components/manager/common/member/partners/PartnerStatsSection";
@@ -56,6 +56,18 @@ export default function PartnersPage() {
     []
   );
 
+  // 테이블 참조 (모달 열기 함수 호출용)
+  // useRef: React Hook으로 DOM 요소나 컴포넌트 인스턴스에 접근할 수 있게 해줍니다
+  // <{ open_restriction_modal: () => void }>: ref가 가리킬 컴포넌트의 타입을 지정합니다
+  const table_ref = useRef<{ open_restriction_modal: () => void }>(null);
+
+  // 이용 제한 버튼 클릭 핸들러
+  // 필터 섹션의 "이용 제한" 버튼 클릭 시 테이블의 모달을 엽니다
+  const handle_restriction_click = () => {
+    // ?. (옵셔널 체이닝): ref.current가 null이 아닐 때만 함수를 호출합니다
+    table_ref.current?.open_restriction_modal();
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.main_content}>
@@ -77,10 +89,12 @@ export default function PartnersPage() {
           on_types_change={set_selected_types}
           selected_statuses={selected_statuses}
           on_statuses_change={set_selected_statuses}
+          on_restriction_click={handle_restriction_click}
         />
 
         {/* 파트너 목록 테이블 */}
         <PartnerTable
+          ref={table_ref}
           search_query={search_query}
           selected_channels={selected_channels}
           selected_divisions={selected_divisions}

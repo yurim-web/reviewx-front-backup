@@ -19,8 +19,8 @@
  */
 
 import { useState, useEffect } from "react";
-import type { PartnerStatTab } from "@/types/partner/partner";
-import type { PartnerCampaign } from "@/types/partner/partner";
+import type { PartnerStatTab } from "@/types/domain/partner";
+import type { PartnerCampaign } from "@/types/domain/partner";
 import CampaignCard from "./CampaignCard";
 import BaseModal from "@/components/common/modal/BaseModal";
 import cardStyles from "../../../styles/partner/campaign_card.module.css";

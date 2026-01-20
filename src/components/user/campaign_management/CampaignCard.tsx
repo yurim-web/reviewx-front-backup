@@ -17,7 +17,7 @@
 
  */
 
-import type { CampaignApplication, StatTab } from "@/types/user/user";
+import type { CampaignApplication, StatTab } from "@/types/domain/user";
 import ApplicationTabCard from "./campaigncard/ApplicationTabCard";
 import SelectedTabCard from "./campaigncard/SelectedTabCard";
 import CompletedTabCard from "./campaigncard/CompletedTabCard";

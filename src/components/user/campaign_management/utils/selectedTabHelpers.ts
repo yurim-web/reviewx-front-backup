@@ -6,7 +6,7 @@
  * 선정 탭에서 사용하는 유틸리티 함수들
  */
 
-import type { CampaignApplication } from "@/types/user/user";
+import type { CampaignApplication } from "@/types/domain/user";
 
 /**
  * 상태 텍스트 생성 함수

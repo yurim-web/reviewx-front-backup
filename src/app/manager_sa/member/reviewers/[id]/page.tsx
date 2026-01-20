@@ -50,6 +50,9 @@ const channel_icon_map: Record<Channel, string> = {
   Instagram: "/images/brand_logo/insta.svg",
   Youtube: "/images/brand_logo/youtube.svg",
   Store: "/images/brand_logo/navershop.svg",
+  Mission: "/images/brand_logo/misssion.svg",
+  Reels: "/images/brand_logo/reels.svg",
+  Shorts: "/images/brand_logo/shots.svg",
 };
 
 export default function ReviewerDetailPage() {

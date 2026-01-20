@@ -31,7 +31,7 @@ import {
   reviewCategoryOptions,
   reviewSortOptions,
 } from "@/data/campaign/campaignFilterOptions";
-import type { CampaignWithApplicants } from "@/types/partner/partner";
+import type { CampaignWithApplicants } from "@/types/domain/partner";
 import type { ReviewCampaignData } from "@/data/campaign/review/reviewCampaigns";
 
 /**

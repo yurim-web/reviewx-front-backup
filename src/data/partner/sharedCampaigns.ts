@@ -20,7 +20,7 @@
 import type {
   PartnerCampaign,
   PartnerCampaignStats,
-} from "@/types/partner/partner";
+} from "@/types/domain/partner";
 import {
   getStatusMessage,
   getBrandLogo,

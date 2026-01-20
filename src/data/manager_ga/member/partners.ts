@@ -128,8 +128,8 @@ export const partner_list: PartnerItem[] = [
     business_number: "211-23-55991",
     representative_name: "장민석외 2명",
     division: "개인",
-    campaign_in_progress: 1,
-    campaign_completed: 1,
+    campaign_in_progress: 12,
+    campaign_completed: 10,
     current_points: 0,
     used_points: 32500000,
     status_type: "이용 제한 회원",
@@ -176,8 +176,8 @@ export const partner_list: PartnerItem[] = [
     business_number: "000-00-00000",
     representative_name: "이상훈",
     division: "개인",
-    campaign_in_progress: 1,
-    campaign_completed: 1,
+    campaign_in_progress: 8,
+    campaign_completed: 7,
     current_points: 0,
     used_points: 500000,
     status_type: "이용 제한 회원",
@@ -192,8 +192,8 @@ export const partner_list: PartnerItem[] = [
     business_number: "000-00-00000",
     representative_name: "김초롱",
     division: "개인",
-    campaign_in_progress: 1,
-    campaign_completed: 1,
+    campaign_in_progress: 25,
+    campaign_completed: 23,
     current_points: 5400,
     used_points: 1500000,
     status_type: "모범 회원",
@@ -208,8 +208,8 @@ export const partner_list: PartnerItem[] = [
     business_number: "000-00-00000",
     representative_name: "양동찬",
     division: "개인",
-    campaign_in_progress: 1,
-    campaign_completed: 1,
+    campaign_in_progress: 18,
+    campaign_completed: 16,
     current_points: 251450,
     used_points: 589000,
     status_type: "모범 회원",
@@ -224,8 +224,8 @@ export const partner_list: PartnerItem[] = [
     business_number: "000-00-00000",
     representative_name: "정만수",
     division: "개인",
-    campaign_in_progress: 1,
-    campaign_completed: 1,
+    campaign_in_progress: 32,
+    campaign_completed: 30,
     current_points: 0,
     used_points: 0,
     status_type: "모범 회원",
@@ -240,8 +240,8 @@ export const partner_list: PartnerItem[] = [
     business_number: "234-86-01377",
     representative_name: "유기수",
     division: "개인",
-    campaign_in_progress: 1,
-    campaign_completed: 1,
+    campaign_in_progress: 15,
+    campaign_completed: 14,
     current_points: 0,
     used_points: 0,
     status_type: "모범 회원",
@@ -256,8 +256,8 @@ export const partner_list: PartnerItem[] = [
     business_number: "000-00-00000",
     representative_name: "정만수",
     division: "개인",
-    campaign_in_progress: 1,
-    campaign_completed: 1,
+    campaign_in_progress: 42,
+    campaign_completed: 40,
     current_points: 0,
     used_points: 0,
     status_type: "모범 회원",
@@ -272,8 +272,8 @@ export const partner_list: PartnerItem[] = [
     business_number: "000-00-00000",
     representative_name: "정만수",
     division: "개인",
-    campaign_in_progress: 1,
-    campaign_completed: 1,
+    campaign_in_progress: 28,
+    campaign_completed: 26,
     current_points: 0,
     used_points: 0,
     status_type: "모범 회원",
@@ -288,8 +288,8 @@ export const partner_list: PartnerItem[] = [
     business_number: "000-00-00000",
     representative_name: "정만수",
     division: "개인",
-    campaign_in_progress: 1,
-    campaign_completed: 1,
+    campaign_in_progress: 35,
+    campaign_completed: 33,
     current_points: 0,
     used_points: 0,
     status_type: "모범 회원",
@@ -304,8 +304,8 @@ export const partner_list: PartnerItem[] = [
     business_number: "000-00-00000",
     representative_name: "정만수",
     division: "개인",
-    campaign_in_progress: 1,
-    campaign_completed: 1,
+    campaign_in_progress: 22,
+    campaign_completed: 20,
     current_points: 0,
     used_points: 0,
     status_type: "모범 회원",
@@ -320,8 +320,8 @@ export const partner_list: PartnerItem[] = [
     business_number: "000-00-00000",
     representative_name: "노홍철",
     division: "개인",
-    campaign_in_progress: 1,
-    campaign_completed: 1,
+    campaign_in_progress: 19,
+    campaign_completed: 17,
     current_points: 0,
     used_points: 0,
     status_type: "모범 회원",
@@ -577,6 +577,87 @@ export function get_partner_detail_by_id(
     contact_phone: "010-1234-5678",
   };
 
+  // 캠페인 진행 내역 생성: campaign_in_progress에 맞춰서 생성
+  // 각 파트너마다 다른 캠페인 데이터를 가지도록 다양하게 설정
+  const recent_campaigns: RecentCampaign[] = [];
+
+  // 데이터 없음 테스트용: ID가 '15'인 경우 빈 배열로 유지
+  if (partner.id !== "15") {
+    const campaign_count = partner.campaign_in_progress;
+
+    // 캠페인 데이터 템플릿 (파트너마다 다른 데이터를 생성하기 위한 배열)
+    const campaign_templates: Omit<RecentCampaign, "campaign_number">[] = [
+      {
+        campaign_name: "푸러블 고농축 캡슐세제 플라워향, 1개, 110개입",
+        status: "진행",
+        type: "배송형",
+        channel: "Blog",
+        points: 115000,
+      },
+      {
+        campaign_name: "나만의 향수만들기 체험 [그리디센트]",
+        status: "진행",
+        type: "구매평",
+        channel: "Store",
+        points: 50000,
+      },
+      {
+        campaign_name: "스타벅스 리저브 원두 체험",
+        status: "종료",
+        type: "배송형",
+        channel: "Blog",
+        points: 80000,
+      },
+      {
+        campaign_name: "나이키 에어맥스 운동화 리뷰",
+        status: "종료",
+        type: "구매평",
+        channel: "Instagram",
+        points: 120000,
+      },
+      {
+        campaign_name: "갤럭시 버즈 프로 체험",
+        status: "종료",
+        type: "배송형",
+        channel: "Youtube",
+        points: 150000,
+      },
+      {
+        campaign_name: "아이폰 15 프로 맥스 리뷰",
+        status: "진행",
+        type: "구매평",
+        channel: "Blog",
+        points: 200000,
+      },
+      {
+        campaign_name: "코카콜라 제로 슈가 체험",
+        status: "종료",
+        type: "배송형",
+        channel: "Clip",
+        points: 30000,
+      },
+    ];
+
+    // campaign_in_progress 값에 맞춰서 캠페인 내역 생성
+    // 최대 100개까지만 표시 (성능을 위해 제한)
+    const max_campaigns_to_show = Math.min(campaign_count, 100);
+
+    for (let i = 0; i < max_campaigns_to_show; i++) {
+      // 템플릿을 순환하면서 사용 (i % campaign_templates.length로 인덱스 계산)
+      const template_index = i % campaign_templates.length;
+      const template = campaign_templates[template_index];
+
+      recent_campaigns.push({
+        campaign_number: String(i + 1).padStart(6, "0"),
+        ...template,
+        // 진행/종료 상태를 다양하게 설정
+        status: i % 3 === 0 ? "진행" : "종료",
+        // 포인트도 다양하게 설정
+        points: template.points + (i % 5) * 10000,
+      });
+    }
+  }
+
   // 디테일 정보 생성 (목업 데이터)
   // 실제 프로젝트에서는 API에서 받아온 데이터를 사용합니다
   const detail: PartnerDetail = {
@@ -589,53 +670,7 @@ export function get_partner_detail_by_id(
     penalty_count: penalty_count,
     payment_points: 12580000,
     penalty_history: penalty_history,
-    // 데이터 없음 테스트용: ID가 '15'인 경우 빈 배열 반환
-    recent_campaigns:
-      partner.id === "15"
-        ? []
-        : [
-            {
-              campaign_number: "000001",
-              campaign_name:
-                "푸러블 고농축 캡슐세제 플라워향, 1개, 110개입, 푸러블 고농축 캡슐세제 플라워향, 1개, 110개입, 푸러블 고농축 캡슐세제 플라워향, 1개, 110개입",
-              status: "진행",
-              type: "배송형",
-              channel: "Blog",
-              points: 115000,
-            },
-            {
-              campaign_number: "000001",
-              campaign_name: "나만의 향수만들기 체험 [그리디센트]",
-              status: "진행",
-              type: "구매평",
-              channel: "Store",
-              points: 0,
-            },
-            {
-              campaign_number: "000001",
-              campaign_name: "나만의 향수만들기 체험 [그리디센트]",
-              status: "종료",
-              type: "구매평",
-              channel: "Store",
-              points: 0,
-            },
-            {
-              campaign_number: "000001",
-              campaign_name: "나만의 향수만들기 체험 [그리디센트]",
-              status: "종료",
-              type: "구매평",
-              channel: "Store",
-              points: 0,
-            },
-            {
-              campaign_number: "000001",
-              campaign_name: "나만의 향수만들기 체험 [그리디센트]",
-              status: "종료",
-              type: "구매평",
-              channel: "Store",
-              points: 0,
-            },
-          ],
+    recent_campaigns: recent_campaigns,
   };
 
   return detail;

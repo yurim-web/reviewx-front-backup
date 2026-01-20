@@ -18,7 +18,7 @@
  */
 
 import { useRouter } from "next/navigation";
-import type { CampaignStats, StatTab } from "@/types/user/user";
+import type { CampaignStats, StatTab } from "@/types/domain/user";
 import styles from "../../../styles/user/campaign_management/statistics.module.css";
 
 interface StatisticsTabProps {

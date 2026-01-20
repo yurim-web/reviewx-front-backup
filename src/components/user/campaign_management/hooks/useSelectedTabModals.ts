@@ -15,7 +15,7 @@
  */
 
 import { useState } from "react";
-import type { CampaignApplication } from "@/types/user/user";
+import type { CampaignApplication } from "@/types/domain/user";
 import { useSelectedTabCampaign } from "./useSelectedTabCampaign";
 
 export function useSelectedTabModals(campaign: CampaignApplication) {

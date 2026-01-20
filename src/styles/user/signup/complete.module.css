@@ -92,6 +92,11 @@
   padding-bottom: 28px;
 }
 
+/* 닉네임 텍스트 (핑크색 강조) */
+.nickname_text {
+  color: #FF5694;
+}
+
 /* 환영 메시지 */
 .welcome_message {
   color: #444;
@@ -124,7 +129,7 @@
 .campaign_button {
   width: 388px;
   height: 58px;
-  background-color: #444444;
+  background-color: #FF5694;
   border: none;
   border-radius: 8px;
   color: #ffffff;
@@ -143,9 +148,9 @@
   width: 388px;
   height: 58px;
   background-color: #ffffff;
-  border: 1px solid #444444;
+  border: 1px solid #FF5694;
   border-radius: 8px;
-  color: #444444;
+  color: #FF5694;
   font-size: 18px;
   font-weight: 600;
   font-style: normal;

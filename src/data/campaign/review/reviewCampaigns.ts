@@ -2,7 +2,7 @@
  * 구매평 캠페인 데이터 타입 정의
  */
 
-import type { CampaignFormData } from "@/types/user/user";
+import type { CampaignFormData } from "@/types/domain/user";
 import type {
   ContentByTab,
   CampaignWithApplicants,
@@ -657,6 +657,7 @@ export interface ReviewCampaignDataExtended {
   category: string;
   image: string;
   subcategory: string;
+  channel: string; // 채널 (네이버블로그, 네이버클립, 인스타그램 등)
   points: number;
   description: string;
   recruitment: {
@@ -675,6 +676,7 @@ export interface ReviewCampaignDataExtended {
     registrationPeriod: string;
   };
   campaign_detail_image: string;
+  campaign_detail_images?: string[]; // 캠페인 상세 이미지 경로 배열 (여러 이미지)
   keyword: string;
   purchaseLink?: string;
   requirements: string[];

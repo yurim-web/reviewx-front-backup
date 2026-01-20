@@ -84,12 +84,12 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { formatPhoneNumber } from "@/utils/signup/phoneUtils";
-import { formatTimer } from "@/utils/signup/timerUtils";
+import { formatPhoneNumber } from "@/utils/formatting/phone";
+import { formatTimer } from "@/utils/formatting/date";
 import {
   validatePhone,
   validateVerificationCode,
-} from "@/utils/signup/validation";
+} from "@/utils/validation";
 import signupStyles from "@/styles/common/signup/signup.module.css";
 import editProfileStyles from "@/styles/user/mypage/edit_profile.module.css";
 import FormField from "@/components/common/mypage/FormField";

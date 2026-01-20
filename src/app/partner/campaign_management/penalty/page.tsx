@@ -24,8 +24,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import PartnerCampaignManagementHeader from "@/components/partner/campaign_management/PartnerCampaignManagementHeader";
 import PenaltyContent from "@/components/common/campaign_management/penalty/PenaltyContent";
-import type { PartnerMainTab } from "@/types/partner/partner";
-import type { PartnerStatTab } from "@/types/partner/partner";
+import type { PartnerMainTab } from "@/types/domain/partner";
+import type { PartnerStatTab } from "@/types/domain/partner";
 import layoutStyles from "../../../../styles/partner/layout.module.css";
 import cardStyles from "../../../../styles/partner/campaign_card.module.css";
 import {

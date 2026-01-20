@@ -39,7 +39,7 @@
 
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
-import type { CampaignApplication } from "@/types/user/user";
+import type { CampaignApplication } from "@/types/domain/user";
 import CampaignCardBase from "./CampaignCardBase";
 import SelectedTabButtons from "./SelectedTabButtons";
 import SelectedTabModals from "./SelectedTabModals";

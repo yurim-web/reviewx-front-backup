@@ -49,7 +49,6 @@ export const DeliveryCampaign: Story = {
       id: "1",
       title: "프리미엄 화장품 세트",
       category: "배송형",
-      categoryIcon: "/images/brand_logo/coupang.svg",
       image: "/images/main/campaign_img/campaign_1.png",
       dayCount: "D-6",
       recruitment: {
@@ -72,7 +71,6 @@ export const VisitCampaign: Story = {
       id: "2",
       title: "카페 방문 리뷰",
       category: "방문형",
-      categoryIcon: "/images/brand_logo/naverblog.svg",
       image: "/images/main/campaign_img/campaign_2.png",
       dayCount: "D-3",
       recruitment: {
@@ -95,7 +93,6 @@ export const ReviewCampaign: Story = {
       id: "3",
       title: "신제품 구매평 작성",
       category: "구매평",
-      categoryIcon: "/images/brand_logo/review.svg",
       image: "/images/main/campaign_img/campaign_3.png",
       dayCount: "D-10",
       recruitment: {
@@ -118,7 +115,6 @@ export const CampaignWithSchedule: Story = {
       id: "4",
       title: "이벤트 캠페인",
       category: "미션형",
-      categoryIcon: "/images/brand_logo/misssion.svg",
       image: "/images/main/campaign_img/campaign_4.png",
       dayCount: "D-5",
       schedule: "2024.01.15 ~ 2024.01.30",
@@ -142,7 +138,6 @@ export const AlmostFull: Story = {
       id: "5",
       title: "인기 제품 리뷰",
       category: "기자단",
-      categoryIcon: "/images/brand_logo/youtube.svg",
       image: "/images/main/campaign_img/campaign_5.png",
       dayCount: "D-1",
       recruitment: {

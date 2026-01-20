@@ -33,7 +33,7 @@ import EmptyApplicantsList from "@/components/partner/campaign_application/Empty
 import {
   getCampaignDetailPath,
   type CampaignType,
-} from "@/utils/getCampaignDetailPath";
+} from "@/utils/helpers/url";
 import type {
   CampaignWithApplicants,
   AllApplicant,

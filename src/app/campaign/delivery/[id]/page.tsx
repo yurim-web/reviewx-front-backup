@@ -100,6 +100,8 @@ function convertToDeliveryCampaignData(
     keywords?: string;
     guidelines?: string;
     detailImagePreviews?: string[]; // 상세 이미지 미리보기 URL 배열
+    campaign_detail_images?: string[]; // localStorage에 저장된 상세 이미지 배열
+    campaign_detail_image?: string; // localStorage에 저장된 단일 상세 이미지
     // formData 필드들 (requirements 생성용)
     minTextLength?: string | number;
     minImageCount?: string | number;
@@ -126,17 +128,33 @@ function convertToDeliveryCampaignData(
 
   // guidelines를 배열로 변환 (줄바꿈 기준)
   // 줄바꿈(\n)을 <br>로 변환하여 HTML로 표시
-  const guidelineTexts = campaign.guidelines
-    ? campaign.guidelines
-        .split("\n\n")
-        .filter((text) => text.trim() !== "")
-        .map((text) => text.replace(/\n/g, "<br>"))
-    : [];
+  // localStorage에 guidelineTexts 배열이 있으면 우선 사용
+  const guidelineTexts = 
+    (campaign as any).guidelineTexts && Array.isArray((campaign as any).guidelineTexts)
+      ? (campaign as any).guidelineTexts.map((text: string) => 
+          typeof text === 'string' ? text.replace(/\n/g, "<br>") : text
+        )
+      : campaign.guidelines
+      ? campaign.guidelines
+          .split("\n\n")
+          .filter((text) => text.trim() !== "")
+          .map((text) => text.replace(/\n/g, "<br>"))
+      : [];
 
-  // 상세 이미지 배열 결정: detailImagePreviews가 있으면 사용, 없으면 썸네일 이미지 사용
+  // 상세 이미지 배열 결정: 
+  // 1. campaign_detail_images가 있으면 사용 (localStorage 데이터)
+  // 2. detailImagePreviews가 있으면 사용 (폼 데이터)
+  // 3. campaign_detail_image가 있으면 단일 이미지로 배열 생성
+  // 4. 없으면 썸네일 이미지 사용
   const detailImages =
-    campaign.detailImagePreviews && campaign.detailImagePreviews.length > 0
+    (campaign as any).campaign_detail_images && 
+    Array.isArray((campaign as any).campaign_detail_images) && 
+    (campaign as any).campaign_detail_images.length > 0
+      ? (campaign as any).campaign_detail_images
+      : campaign.detailImagePreviews && campaign.detailImagePreviews.length > 0
       ? campaign.detailImagePreviews
+      : (campaign as any).campaign_detail_image
+      ? [(campaign as any).campaign_detail_image]
       : [info.image];
 
   // requirements 배열 생성
@@ -149,9 +167,13 @@ function convertToDeliveryCampaignData(
     requireKeywordAttachment: campaign.requireKeywordAttachment,
   });
 
-  // points 계산 (additionalPoints를 숫자로 변환)
+  // points 계산 
+  // 1. localStorage에 저장된 points 필드 확인
+  // 2. additionalPoints 필드 확인
   let points = 0;
-  if (campaign.additionalPoints) {
+  if ((campaign as any).points !== undefined && (campaign as any).points !== null) {
+    points = Number((campaign as any).points) || 0;
+  } else if (campaign.additionalPoints) {
     const pointsStr = String(campaign.additionalPoints).replace(/,/g, "");
     points = parseInt(pointsStr, 10) || 0;
   }
@@ -243,86 +265,13 @@ export default function DeliveryDetailPage({
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
-  // 정적 데이터와 localStorage 데이터 모두 확인
+  // localStorage 데이터를 먼저 확인 (수정된 내용 우선 반영), 그 다음 정적 데이터 확인
   useEffect(() => {
     setIsLoading(true);
     // 디버깅: 받은 ID 로그
     console.log("[DeliveryDetailPage] 받은 ID:", id);
-    // 1. 정적 데이터에서 먼저 찾기
-    console.log(
-      "[DeliveryDetailPage] 정적 데이터에서 찾기 시작, 전체 캠페인 수:",
-      deliveryCampaigns.length
-    );
-    const staticCampaign = deliveryCampaigns.find((c) => {
-      const campaignId = String(c.id);
-      // 정확히 일치하는 경우
-      if (campaignId === id) {
-        console.log(
-          "[DeliveryDetailPage] 정적 데이터에서 정확히 일치하는 캠페인 찾음:",
-          campaignId
-        );
-        return true;
-      }
-      // ID 형식 변환 시도
-      // URL이 "delivery_903" 형식이고 정적 데이터 ID가 "delivery_1" 형식인 경우
-      if (id.startsWith("delivery_")) {
-        // 둘 다 "delivery_" 형식이면 그대로 비교
-        if (campaignId === id) {
-          console.log(
-            "[DeliveryDetailPage] 정적 데이터에서 delivery_ 형식으로 일치:",
-            campaignId
-          );
-          return true;
-        }
-        // URL에서 "delivery_"를 제거한 값과 정적 데이터 ID 비교 (정적 데이터는 보통 "delivery_1" 형식)
-        const idWithoutPrefix = id.replace(/^delivery_/, "");
-        if (campaignId === idWithoutPrefix) {
-          console.log(
-            "[DeliveryDetailPage] 정적 데이터에서 delivery_ 제거 후 일치:",
-            campaignId,
-            "===",
-            idWithoutPrefix
-          );
-          return true;
-        }
-      }
-      // URL이 "903" 형식이고 정적 데이터 ID도 "delivery_1" 형식이 아닌 경우
-      if (!id.startsWith("delivery_") && !campaignId.startsWith("delivery_")) {
-        const matches = campaignId === id;
-        if (matches)
-          console.log(
-            "[DeliveryDetailPage] 정적 데이터에서 숫자만으로 일치:",
-            campaignId
-          );
-        return matches;
-      }
-      // 정적 데이터 ID가 "delivery_1" 형식이고 URL이 "1" 형식인 경우
-      if (campaignId.startsWith("delivery_") && !id.startsWith("delivery_")) {
-        const campaignIdWithoutPrefix = campaignId.replace(/^delivery_/, "");
-        const matches = campaignIdWithoutPrefix === id;
-        if (matches)
-          console.log(
-            "[DeliveryDetailPage] 정적 데이터에서 delivery_ 제거 후 일치:",
-            campaignIdWithoutPrefix,
-            "===",
-            id
-          );
-        return matches;
-      }
-      return false;
-    });
-    if (staticCampaign) {
-      console.log(
-        "[DeliveryDetailPage] 정적 데이터에서 캠페인 찾음:",
-        staticCampaign.id
-      );
-      setCampaign(staticCampaign);
-      setIsLoading(false);
-      return;
-    }
-    console.log("[DeliveryDetailPage] 정적 데이터에서 캠페인을 찾지 못함");
-
-    // 2. localStorage에서 찾기
+    
+    // 1. localStorage에서 먼저 찾기 (수정된 데이터 우선)
     if (typeof window !== "undefined") {
       try {
         const storedCampaigns = localStorage.getItem("deliveryCampaigns");
@@ -429,6 +378,80 @@ export default function DeliveryDetailPage({
         );
       }
     }
+
+    // 2. localStorage에 없으면 정적 데이터에서 찾기
+    console.log(
+      "[DeliveryDetailPage] 정적 데이터에서 찾기 시작, 전체 캠페인 수:",
+      deliveryCampaigns.length
+    );
+    const staticCampaign = deliveryCampaigns.find((c) => {
+      const campaignId = String(c.id);
+      // 정확히 일치하는 경우
+      if (campaignId === id) {
+        console.log(
+          "[DeliveryDetailPage] 정적 데이터에서 정확히 일치하는 캠페인 찾음:",
+          campaignId
+        );
+        return true;
+      }
+      // ID 형식 변환 시도
+      // URL이 "delivery_903" 형식이고 정적 데이터 ID가 "delivery_1" 형식인 경우
+      if (id.startsWith("delivery_")) {
+        // 둘 다 "delivery_" 형식이면 그대로 비교
+        if (campaignId === id) {
+          console.log(
+            "[DeliveryDetailPage] 정적 데이터에서 delivery_ 형식으로 일치:",
+            campaignId
+          );
+          return true;
+        }
+        // URL에서 "delivery_"를 제거한 값과 정적 데이터 ID 비교 (정적 데이터는 보통 "delivery_1" 형식)
+        const idWithoutPrefix = id.replace(/^delivery_/, "");
+        if (campaignId === idWithoutPrefix) {
+          console.log(
+            "[DeliveryDetailPage] 정적 데이터에서 delivery_ 제거 후 일치:",
+            campaignId,
+            "===",
+            idWithoutPrefix
+          );
+          return true;
+        }
+      }
+      // URL이 "903" 형식이고 정적 데이터 ID도 "delivery_1" 형식이 아닌 경우
+      if (!id.startsWith("delivery_") && !campaignId.startsWith("delivery_")) {
+        const matches = campaignId === id;
+        if (matches)
+          console.log(
+            "[DeliveryDetailPage] 정적 데이터에서 숫자만으로 일치:",
+            campaignId
+          );
+        return matches;
+      }
+      // 정적 데이터 ID가 "delivery_1" 형식이고 URL이 "1" 형식인 경우
+      if (campaignId.startsWith("delivery_") && !id.startsWith("delivery_")) {
+        const campaignIdWithoutPrefix = campaignId.replace(/^delivery_/, "");
+        const matches = campaignIdWithoutPrefix === id;
+        if (matches)
+          console.log(
+            "[DeliveryDetailPage] 정적 데이터에서 delivery_ 제거 후 일치:",
+            campaignIdWithoutPrefix,
+            "===",
+            id
+          );
+        return matches;
+      }
+      return false;
+    });
+    if (staticCampaign) {
+      console.log(
+        "[DeliveryDetailPage] 정적 데이터에서 캠페인 찾음:",
+        staticCampaign.id
+      );
+      setCampaign(staticCampaign);
+      setIsLoading(false);
+      return;
+    }
+    console.log("[DeliveryDetailPage] 정적 데이터에서 캠페인을 찾지 못함");
 
     // 3. 찾지 못한 경우
     console.warn("[DeliveryDetailPage] 캠페인을 찾을 수 없습니다. ID:", id);
