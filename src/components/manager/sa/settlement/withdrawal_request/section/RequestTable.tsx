@@ -26,8 +26,8 @@
 
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import type { ReactNode } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import type { ReactNode, ReactElement } from "react";
 import CommonTable, {
   type TableColumn,
   type TableRowData,
@@ -44,6 +44,7 @@ import WithdrawalRejectModal from "@/components/manager/sa/settlement/withdrawal
 import MemberStatusTag, {
   type MemberStatus,
 } from "@/components/manager/common/tags/MemberStatusTag";
+import BaseModal from "@/components/common/modal/BaseModal";
 
 // WithdrawalRequestItem을 TableRowData로 확장
 interface RequestTableRowData extends TableRowData, WithdrawalRequestItem {}
@@ -81,9 +82,29 @@ export default function RequestTable({
    * 반려 모달 제어 상태
    *
    * - is_reject_modal_open: 모달 표시 여부 (조건부 렌더링으로 제어)
+   * - pending_reject_ids: 모달에서 반려할 항목 ID 배열 (모달 열 때 사용)
    *
    */
   const [is_reject_modal_open, setIsRejectModalOpen] = useState(false);
+  const [pending_reject_ids, setPendingRejectIds] = useState<string[]>([]);
+
+  /**
+   * 승인 모달 제어 상태
+   *
+   * - is_approve_confirm_modal_open: 승인 확인 모달 표시 여부 (조건부 렌더링으로 제어)
+   * - is_approve_success_modal_open: 승인 완료 모달 표시 여부 (조건부 렌더링으로 제어)
+   * - pending_approve_items: 승인할 항목 정보 배열 (단일/다중 선택 모두 처리)
+   *
+   */
+  const [is_approve_confirm_modal_open, setIsApproveConfirmModalOpen] =
+    useState(false);
+  const [is_approve_success_modal_open, setIsApproveSuccessModalOpen] =
+    useState(false);
+  const [pending_approve_items, setPendingApproveItems] = useState<
+    WithdrawalRequestItem[]
+  >([]);
+
+  // (디버깅 로그 제거됨)
 
   // 컬럼별 타입 설정 (정렬을 위한 컬럼 타입 정의)
   // numeric_string: 숫자처럼 보이는 문자열 (예: "1,500,000")
@@ -191,24 +212,162 @@ export default function RequestTable({
   };
 
   /**
-   * 출금 승인 핸들러
+   * 출금 승인 핸들러 (테이블 행의 승인 버튼 클릭 시)
    *
-   * 선택된 출금 요청을 승인합니다.
-   * 실제 구현에서는 API를 호출하여 승인 처리를 합니다.
+   * - 선택된 항목이 있으면: 선택된 모든 항목을 승인
+   * - 선택된 항목이 없으면: 해당 행만 승인
+   * - 승인 확인 모달을 엽니다.
    */
   const handle_approve = (id: string) => {
-    // TODO: 실제 승인 로직 구현
-    console.log("승인:", id);
+    // 선택된 항목이 있으면 선택된 모든 항목을 승인, 없으면 해당 항목만 승인
+    const items_to_approve =
+      selected_ids.length > 0
+        ? sorted_request_list.filter((item) => selected_ids.includes(item.id))
+        : [sorted_request_list.find((item) => item.id === id)];
+
+    // 유효한 항목만 필터링 (undefined 제거)
+    const valid_items = items_to_approve.filter(
+      (item): item is WithdrawalRequestItem => item !== undefined
+    );
+
+    if (valid_items.length === 0) {
+      console.error("승인할 항목을 찾을 수 없습니다:", id);
+      return;
+    }
+
+    // 승인할 항목 정보 저장
+    setPendingApproveItems(valid_items);
+
+    // 선택된 항목이 없었으면 선택 상태도 업데이트 (UI 동기화)
+    if (selected_ids.length === 0) {
+      setSelectedIds([id]);
+    }
+
+    // 승인 확인 모달 열기
+    setIsApproveConfirmModalOpen(true);
   };
 
   /**
-   * 출금 반려 핸들러
+   * 승인 확인 모달 닫기 핸들러
    *
-   * 선택된 출금 요청을 반려합니다.
+   * - setIsApproveConfirmModalOpen(false)로 모달을 닫습니다.
+   * - pending_approve_items도 초기화합니다.
+   */
+  const handle_close_approve_confirm_modal = () => {
+    setIsApproveConfirmModalOpen(false);
+    setPendingApproveItems([]);
+  };
+
+  /**
+   * 승인 확인 모달에서 확인 버튼 클릭 핸들러
+   *
+   * - 실제 서비스에서는 여기서 API를 호출해 승인 처리를 진행합니다.
+   * - 승인 확인 모달을 닫고 승인 완료 모달을 엽니다.
+   */
+  const handle_confirm_approve = () => {
+    if (pending_approve_items.length === 0) {
+      return;
+    }
+
+    // TODO: 실제 승인 API 호출
+    // pending_approve_items의 ID들을 서버에 전송하여 승인 처리
+    const approve_ids = pending_approve_items.map((item) => item.id);
+    console.log("승인할 항목 ID들:", approve_ids);
+
+    // 승인 처리 후 선택 초기화
+    setSelectedIds([]);
+
+    // 승인 확인 모달 닫기
+    setIsApproveConfirmModalOpen(false);
+
+    // 승인 완료 모달 열기
+    setIsApproveSuccessModalOpen(true);
+  };
+
+  /**
+   * 승인 완료 모달 닫기 핸들러
+   *
+   * - setIsApproveSuccessModalOpen(false)로 모달을 닫습니다.
+   * - pending_approve_items도 초기화합니다.
+   */
+  const handle_close_approve_success_modal = () => {
+    setIsApproveSuccessModalOpen(false);
+    setPendingApproveItems([]);
+  };
+
+  /* ========================================================================
+   * 📌 회차 정산 출금 승인/반려 가능 여부 계산 (임시 정책 로직)
+   *
+   * - 긴급 테이블(is_emergency === true)은 항상 즉시 처리 가능
+   * - 회차 정산 테이블(is_emergency === false)은
+   *   "해당 주 수요일 16시(KST) 이후"에만 승인/반려 가능하도록 제한
+   *
+   * 현재 정책:
+   * - 매주 수요일 16시까지 출금 신청 건에 한하여 금요일에 입금
+   * - 수요일 오후 16시 이후 정산 건은 그 다음 주 금요일에 입금
+   *
+   * ⚠️ 주의:
+   * - 이 로직은 UI 레벨에서 버튼 활성/비활성만 제어합니다.
+   * - 향후 정책 변경 또는 백엔드 검증 도입 시, 이 블록 전체를 삭제/수정할 수 있습니다.
+   *   → 삭제 시 `is_round_action_available`를 항상 true로 두면 됩니다.
+   * ====================================================================== */
+  const is_round_action_available = useMemo(() => {
+    // 긴급 테이블은 항상 허용
+    if (is_emergency) {
+      return true;
+    }
+
+    // 현재 시간을 KST(Asia/Seoul) 기준으로 계산
+    const now_utc = new Date();
+    const now_kst = new Date(
+      now_utc.getTime() + now_utc.getTimezoneOffset() * 60000 + 9 * 60 * 60000
+    );
+
+    const day = now_kst.getDay(); // 0: 일요일, 1: 월요일, 2: 화요일, 3: 수요일 ...
+    const hour = now_kst.getHours();
+    const minute = now_kst.getMinutes();
+
+    // 규칙: 이번 주 수요일 16:00 (KST) 이후에만 승인/반려 가능
+    // - 월/화: 항상 불가
+    // - 수요일 16:00 이전: 불가
+    // - 수요일 16:00 이후, 목/금/토/일: 가능
+    if (day < 3) {
+      // 일(0), 월(1), 화(2)
+      return false;
+    }
+
+    if (day === 3) {
+      // 수요일인 경우 16시 이후만 허용
+      if (hour < 16) return false;
+      if (hour === 16 && minute < 0) return false; // 분까지 체크 (사실상 hour < 16이면 이미 막힘)
+      return true;
+    }
+
+    // 목요일(4) 이후는 모두 허용
+    return true;
+  }, [is_emergency]);
+
+  /**
+   * 출금 반려 핸들러 (테이블 행의 반려 버튼 클릭 시)
+   *
+   * - 체크박스로 선택된 항목이 있으면: 선택된 모든 항목을 반려
+   * - 선택된 항목이 없으면: 해당 행만 반려
    * 실제 구현에서는 API를 호출하여 반려 처리를 합니다.
    */
   const handle_reject = (item: WithdrawalRequestItem) => {
-    // 모달을 엽니다.
+    // 선택된 항목이 있으면 그대로 사용, 없으면 해당 항목만 선택
+    const ids_to_reject =
+      selected_ids.length > 0 ? selected_ids : [item.id];
+
+    // 모달에서 반려할 항목 ID 설정
+    setPendingRejectIds(ids_to_reject);
+
+    // 선택된 항목이 없었으면 선택 상태도 업데이트 (UI 동기화)
+    if (selected_ids.length === 0) {
+      setSelectedIds([item.id]);
+    }
+
+    // 모달을 엽니다
     setIsRejectModalOpen(true);
   };
 
@@ -216,20 +375,29 @@ export default function RequestTable({
    * 모달 닫기 핸들러
    *
    * - setIsRejectModalOpen(false)로 모달을 닫습니다.
+   * - pending_reject_ids도 초기화합니다.
    */
   const handle_close_reject_modal = () => {
     setIsRejectModalOpen(false);
+    setPendingRejectIds([]);
   };
 
   /**
    * 모달에서 반려 확정 핸들러
    *
+   * - pending_reject_ids에 있는 항목들을 반려 처리합니다.
    * - 실제 서비스에서는 여기서 API를 호출해 반려 처리를 진행합니다.
-   * - 데모 단계에서는 콘솔 로그 후 모달을 닫습니다.
+   * - 데모 단계에서는 콘솔 로그 후 모달을 닫고 선택을 초기화합니다.
    */
   const handle_confirm_reject = (reason: string) => {
     // TODO: 실제 반려 API 호출
+    // pending_reject_ids에 있는 항목들의 ID와 반려 사유를 서버에 전송
+    console.log("반려할 항목 ID들:", pending_reject_ids);
     console.log("반려 사유:", reason);
+
+    // 반려 처리 후 선택 초기화 및 모달 닫기
+    setSelectedIds([]);
+    setPendingRejectIds([]);
     setIsRejectModalOpen(false);
   };
 
@@ -271,8 +439,8 @@ export default function RequestTable({
    * 회차 정산: 체크 | 번호 | 회차 | 이름 | 계좌번호 | 주민등록번호 | 출금 포인트 | 신청일 | 유형 | 상태 | 출금
    */
   const grid_template_columns = is_emergency
-    ? "0.5fr 0.8fr 1.2fr 2.4fr 1.6fr 1.6fr 1.4fr 1fr 1fr 1.1fr"
-    : "0.5fr 0.8fr 0.8fr 1.2fr 2.2fr 1.5fr 1.5fr 1.4fr 1fr 1fr 1.1fr";
+    ? "0.5fr 0.8fr 1.2fr 3.6fr 1.1fr 1.35fr 1.15fr 0.9fr 0.9fr 0.8fr"
+    : "0.5fr 0.8fr 0.8fr 1.2fr 3.4fr 1.1fr 1.25fr 1.15fr 0.9fr 0.9fr 0.8fr";
 
   // 커스텀 헤더 렌더링 (SortableTableHeader 공통 컴포넌트 사용)
   // 동적 gridTemplateColumns를 container_style로 전달
@@ -343,29 +511,51 @@ export default function RequestTable({
         return <MemberStatusTag status={row.status as any as MemberStatus} />;
       case "action":
         // 출금 액션 열: 승인/반려 버튼 표시
+        // 회차 정산 테이블에서는 특정 요일/시간 전에는 비활성화
+        const is_action_disabled = !is_round_action_available;
         return (
           <div className={styles.table_cell_action}>
+            {/* 승인 버튼 */}
             <button
               className={styles.action_button_approve}
-              onClick={() => handle_approve(row.id)}
+              onClick={(e) => {
+                e.stopPropagation(); // 이벤트 버블링 방지
+                e.preventDefault(); // 기본 동작 방지
+                handle_approve(row.id);
+              }}
+              disabled={is_action_disabled}
               type="button"
               aria-label="승인"
             >
               <img
-                src="/images/icons/sign_ok.svg"
-                alt="승인"
+                src={
+                  is_action_disabled
+                    ? "/images/icons/sign_ok_grey.svg"
+                    : "/images/icons/sign_ok.svg"
+                }
+                alt={is_action_disabled ? "승인 불가" : "승인"}
                 className={styles.action_icon}
               />
             </button>
+            {/* 반려버튼 */}
             <button
               className={styles.action_button_reject}
-              onClick={() => handle_reject(row)}
+              onClick={(e) => {
+                e.stopPropagation(); // 이벤트 버블링 방지
+                e.preventDefault(); // 기본 동작 방지
+                handle_reject(row);
+              }}
+              disabled={is_action_disabled}
               type="button"
               aria-label="반려"
             >
               <img
-                src="/images/icons/sign_x.svg"
-                alt="반려"
+                src={
+                  is_action_disabled
+                    ? "/images/icons/sign_x_grey.svg"
+                    : "/images/icons/sign_x.svg"
+                }
+                alt={is_action_disabled ? "반려 불가" : "반려"}
                 className={styles.action_icon}
               />
             </button>
@@ -376,12 +566,75 @@ export default function RequestTable({
     }
   };
 
+  /**
+   * 필터 섹션에 추가 동작(선택 항목 승인/반려)을 주입하기 위한 래퍼
+   *
+   * - 페이지에서 전달된 `filter_section`이 `WithdrawalRequestFilterSection`일 때
+   *   `on_approve_selected`, `on_reject_selected` 콜백을 주입해서, 상단 버튼 클릭 시에도
+   *   선택된 항목에 대해 승인/반려 모달을 열 수 있게 합니다.
+   */
+  const enhance_filter_section = (section?: ReactNode): ReactNode => {
+    if (!section || !React.isValidElement(section)) return section;
+
+    const element = section as ReactElement<any>;
+
+    // 상단 "승인" 버튼 클릭 시 호출할 핸들러
+    const handle_filter_approve_click = () => {
+      // 회차 정산 테이블에서 아직 승인/반려 가능 시간이 아니면 동작하지 않음
+      if (!is_round_action_available) {
+        return;
+      }
+
+      if (selected_ids.length === 0) {
+        // 선택된 항목이 없으면 모달을 열지 않음
+        return;
+      }
+
+      // 현재 선택된 항목들을 승인할 항목으로 설정
+      const items_to_approve = sorted_request_list.filter((item) =>
+        selected_ids.includes(item.id)
+      );
+
+      if (items_to_approve.length === 0) {
+        return;
+      }
+
+      // 승인할 항목 정보 저장 후 모달 오픈
+      setPendingApproveItems(items_to_approve);
+      setIsApproveConfirmModalOpen(true);
+    };
+
+    // 상단 "반려" 버튼 클릭 시 호출할 핸들러
+    const handle_filter_reject_click = () => {
+      // 회차 정산 테이블에서 아직 승인/반려 가능 시간이 아니면 동작하지 않음
+      if (!is_round_action_available) {
+        return;
+      }
+
+      if (selected_ids.length === 0) {
+        // 선택된 항목이 없으면 모달을 열지 않음
+        return;
+      }
+
+      // 현재 선택된 항목들로 pending_reject_ids 설정 후 모달 오픈
+      setPendingRejectIds(selected_ids);
+      setIsRejectModalOpen(true);
+    };
+
+    return React.cloneElement(element, {
+      on_approve_selected: handle_filter_approve_click,
+      on_reject_selected: handle_filter_reject_click,
+    });
+  };
+
+  const enhanced_filter_section = enhance_filter_section(filter_section);
+
   return (
     <div className={styles.table_section}>
       {/* 섹션 제목 */}
       <h2 className={styles.section_title}>{title}</h2>
       {/* 필터 섹션 (제목 아래) */}
-      {filter_section && <div>{filter_section}</div>}
+      {enhanced_filter_section && <div>{enhanced_filter_section}</div>}
       {/* 테이블 컨테이너 */}
       <div className={styles.table_container}>
         {/* CommonTable 컴포넌트 사용 */}
@@ -492,6 +745,51 @@ export default function RequestTable({
         is_open={is_reject_modal_open}
         on_close={handle_close_reject_modal}
         on_confirm={handle_confirm_reject}
+      />
+
+      {/* 승인 확인 모달 (조건부 렌더링) */}
+      {/* 승인 버튼 클릭 시 표시되는 확인 모달 */}
+      {/* BaseModal 컴포넌트를 사용하여 메시지와 버튼을 표시합니다. */}
+      {/* 선택된 항목이 1개일 때와 여러 개일 때 메시지가 다르게 표시됩니다. */}
+      <BaseModal
+        is_open={is_approve_confirm_modal_open}
+        on_close={handle_close_approve_confirm_modal}
+        message={
+          pending_approve_items.length > 0
+            ? (() => {
+                // 단일 항목일 때: 해당 건을 출금 완료 처리하시겠습니까?
+                if (pending_approve_items.length === 1) {
+                  const item = pending_approve_items[0];
+                  return `해당 건을 출금 완료 처리하시겠습니까?<br />처리 후 되돌릴 수 없습니다.<br /><span style="color: #FF5694;">[${item.name} - ${item.amount}원]</span>`;
+                }
+                // 다중 항목일 때: 선택된 n건을 출금 완료 처리하시겠습니까?
+                else {
+                  const total_amount = calculate_total_amount(
+                    pending_approve_items
+                  );
+                  const count = pending_approve_items.length;
+                  return `선택된 ${count}건을 출금 완료 처리하시겠습니까?<br />처리 후 되돌릴 수 없습니다.<br /><span style="color: #FF5694;">[${count}건 - ${total_amount.toLocaleString()}원]</span>`;
+                }
+              })()
+            : ""
+        }
+        buttons={["취소", "확인"]}
+        on_confirm={handle_confirm_approve}
+        type="center"
+        close_on_overlay_click={true}
+        close_on_escape={true}
+      />
+
+      {/* 승인 완료 모달 (조건부 렌더링) */}
+      {/* 승인 확인 모달에서 확인 버튼 클릭 시 표시되는 완료 모달 */}
+      <BaseModal
+        is_open={is_approve_success_modal_open}
+        on_close={handle_close_approve_success_modal}
+        message="출금 완료 처리되었습니다."
+        buttons={["닫기"]}
+        type="center"
+        close_on_overlay_click={true}
+        close_on_escape={true}
       />
     </div>
   );

@@ -95,15 +95,17 @@ export default function PaymentHistoryTable({
   // 검색어 및 필터로 필터링된 결제 내역 목록
   const filtered_payment_history_list = paymentHistoryList.filter((item) => {
     // 검색어 필터
+    // 학습 포인트:
+    // - includes() 메서드: 문자열에 특정 문자열이 포함되어 있는지 확인합니다
+    // - toLowerCase() 메서드: 문자열을 소문자로 변환하여 대소문자 구분 없이 검색합니다
+    // - 검색 대상: 상호명, 입금자명, 사업자등록번호, 사업자명
     if (search_query) {
+      const search_lower = search_query.toLowerCase();
       const matches_search =
-        item.companyName.toLowerCase().includes(search_query.toLowerCase()) ||
-        item.depositorName.name
-          .toLowerCase()
-          .includes(search_query.toLowerCase()) ||
-        item.depositorName.registrationNumber
-          .toLowerCase()
-          .includes(search_query.toLowerCase());
+        item.companyName.toLowerCase().includes(search_lower) ||
+        item.depositorName.toLowerCase().includes(search_lower) ||
+        item.businessInfo.registrationNumber.toLowerCase().includes(search_lower) ||
+        item.businessInfo.representativeName.toLowerCase().includes(search_lower);
       if (!matches_search) return false;
     }
 
@@ -132,22 +134,11 @@ export default function PaymentHistoryTable({
     // 세금계산서 발행 필터
     // 학습 포인트:
     // - filter() 메서드: 배열을 순회하며 조건에 맞는 요소만 남깁니다
-    // - taxInvoice 값("O"/"X")을 TaxInvoiceType으로 매핑합니다
-    // - "O": 세금계산서 또는 현금영수증 발행
-    // - "X": 미발행
+    // - taxInvoiceType 값이 선택된 유형 목록에 포함되어 있는지 확인합니다
+    // - "세금계산서", "현금영수증 (소득공제)", "현금영수증 (지출증빙)", "미발행" 중 하나입니다
     if (selected_tax_invoice_types.length > 0) {
-      // item.taxInvoice를 TaxInvoiceType으로 변환
-      // 현재 데이터에서는 "O"는 발행, "X"는 미발행으로 간주
-      // 실제 구현에서는 각 항목의 세금계산서 발행 유형 정보가 있어야 합니다
-      const item_tax_invoice_type: TaxInvoiceType | null =
-        item.taxInvoice === "O"
-          ? "세금계산서" // 기본값으로 "세금계산서"로 설정 (실제로는 데이터에 따라 다를 수 있음)
-          : item.taxInvoice === "X"
-          ? "미발행"
-          : null;
-
       // 선택된 유형 목록에 해당 항목의 유형이 없으면 필터링 제외
-      if (!item_tax_invoice_type || !selected_tax_invoice_types.includes(item_tax_invoice_type)) {
+      if (!selected_tax_invoice_types.includes(item.taxInvoiceType)) {
         return false;
       }
     }
@@ -257,7 +248,7 @@ export default function PaymentHistoryTable({
       className: styles.table_cell_payment_method,
     },
     {
-      key: "taxInvoice",
+      key: "taxInvoiceType",
       label: "발행",
       className: styles.table_cell_tax_invoice,
     },
@@ -270,7 +261,7 @@ export default function PaymentHistoryTable({
     {
       key: "paymentStatus",
       label: "결제",
-      sortable: true,
+
       className: styles.table_cell_payment_status,
     },
     {
@@ -354,14 +345,54 @@ export default function PaymentHistoryTable({
       case "number":
         return <span className={styles.cell_text}>{row.number}</span>;
       case "companyName":
-        return <span className={styles.cell_text}>{row.companyName}</span>;
-      case "depositorName":
-        // 템플릿 리터럴: 백틱(`)을 사용하여 문자열과 변수를 함께 사용할 수 있는 문법입니다.
+        // 상호명 열: 두 줄로 표시
+        // 첫 번째 줄: 상호명 + 다운로드 아이콘
+        // 두 번째 줄: 사업자등록번호 · 사업자명
+        // 학습 포인트:
+        // - flexbox 레이아웃: display: flex를 사용하여 요소들을 가로로 배치합니다
+        // - flex-direction: column: 요소들을 세로로 배치합니다
+        // - button: 클릭 가능한 버튼 요소입니다
+        // - img: 이미지 요소입니다
+        // - onClick 이벤트 핸들러: 버튼 클릭 시 실행할 함수를 지정합니다
+        // - stopPropagation(): 이벤트 버블링을 방지하여 부모 요소의 이벤트가 실행되지 않도록 합니다
+        // - aria-label: 접근성을 위한 레이블입니다
         return (
-          <span className={styles.cell_text}>
-            {row.depositorName.registrationNumber} · {row.depositorName.name}
-          </span>
+          <div className={styles.company_name_container}>
+            <div className={styles.company_name_row}>
+              <span className={styles.cell_text}>{row.companyName}</span>
+              <button
+                className={styles.download_button}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // TODO: 사업자 정보 다운로드 기능 구현
+                  // alert: 브라우저에서 제공하는 기본 알림 창을 띄우는 함수입니다
+                  alert("사업자 정보 다운로드 기능은 준비 중입니다.");
+                }}
+                aria-label={`${row.companyName} 사업자 정보 다운로드`}
+              >
+                <img
+                  // 구분(businessType)에 따라 다른 아이콘 표시
+                  // 삼항 연산자: 조건 ? 참일 때 값 : 거짓일 때 값
+                  // row.businessType이 "법인"이면 table_download.svg, "개인"이면 table_download_grey.svg 사용
+                  src={
+                    row.businessType === "법인"
+                      ? "/images/management_page/table/table_download.svg"
+                      : "/images/management_page/table/table_download_grey.svg"
+                  }
+                  alt="다운로드"
+                  className={styles.download_icon}
+                />
+              </button>
+            </div>
+            <span className={styles.business_info_text}>
+              {row.businessInfo.registrationNumber} · {row.businessInfo.representativeName}
+            </span>
+          </div>
         );
+      case "depositorName":
+        // 입금자명 열: 입금자명만 표시
+        // depositorName은 문자열 타입입니다
+        return <span className={styles.cell_text}>{row.depositorName}</span>;
       case "businessType":
         // BusinessTypeTag 컴포넌트를 사용하여 사업자 구분 태그 표시
         return (
@@ -372,8 +403,31 @@ export default function PaymentHistoryTable({
         return (
           <PaymentMethodTag method={row.paymentMethod as PaymentMethod} />
         );
-      case "taxInvoice":
-        return <span className={styles.cell_text}>{row.taxInvoice}</span>;
+      case "taxInvoiceType":
+        // 발행 열: 세금계산서 발행 유형 표시
+        // taxInvoiceType은 "세금계산서", "현금영수증 (소득공제)", "현금영수증 (지출증빙)", "미발행" 중 하나입니다
+        // 학습 포인트:
+        // - includes() 메서드: 문자열에 특정 문자열이 포함되어 있는지 확인합니다
+        // - 조건부 렌더링: 괄호가 있는 경우 두 줄로 표시하고, 없는 경우 한 줄로 표시합니다
+        // - split() 메서드: 문자열을 특정 구분자로 나눕니다
+        // - map() 메서드: 배열의 각 요소를 변환합니다
+        // - fragment(<></>): 여러 요소를 그룹화합니다 (불필요한 DOM 요소 추가 없음)
+        const has_parentheses = row.taxInvoiceType.includes("(");
+        if (has_parentheses) {
+          // 괄호가 있는 경우: "현금영수증"과 "(소득공제)" 또는 "(지출증빙)" 사이에서 줄바꿈
+          // 예: "현금영수증 (소득공제)" -> "현금영수증" / "(소득공제)"
+          const parts = row.taxInvoiceType.split(" (");
+          const main_text = parts[0]; // "현금영수증"
+          const parentheses_text = "(" + parts[1]; // "(소득공제)" 또는 "(지출증빙)"
+          return (
+            <div className={styles.tax_invoice_container}>
+              <span className={styles.cell_text}>{main_text}</span>
+              <span className={styles.cell_text}>{parentheses_text}</span>
+            </div>
+          );
+        }
+        // 괄호가 없는 경우: 한 줄로 표시
+        return <span className={styles.cell_text}>{row.taxInvoiceType}</span>;
       case "chargedPoints":
         // 충전 포인트 열: 충전 포인트와 보유 포인트를 세로로 표시
         return (

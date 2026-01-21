@@ -44,6 +44,14 @@
   cursor: pointer;
   height: 40px;
   box-sizing: border-box;
+  transition: opacity 0.2s ease;
+}
+
+/* 버튼 비활성화 상태 */
+.table_action_button_approve:disabled,
+.table_action_button_reject:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .table_action_icon {
@@ -115,6 +123,8 @@
   padding: 0;
   align-items: center;
   min-height: 56px;
+  /* 바디 스크롤바로 인해 컬럼이 밀리는 현상을 방지 (스크롤바 공간을 항상 예약) */
+  padding-right: 13px;
 }
 
 /* 테이블 헤더 행 */
@@ -126,6 +136,8 @@
 .table_body {
   background-color: white;
   overflow-y: auto !important;
+  /* 스크롤바 공간을 항상 확보해서 헤더/바디 컬럼 정렬 유지 */
+  scrollbar-gutter: stable;
 }
 
 /* CommonTable이 각 행을 감싸는 div를 grid 구조에 포함시키기 위해 */
@@ -217,18 +229,17 @@
   gap: 0;
   align-items: center;
   padding: 0;
-  border-bottom: 1px solid #f2f2f2;
   min-height: 76px;
 }
 
 /* 긴급 테이블 행: 체크 | 번호 | 이름 | 계좌번호 | 주민등록번호 | 출금 포인트 | 신청일 | 유형 | 상태 | 출금 */
 .table_row.table_row_emergency {
-  grid-template-columns: 0.5fr 0.8fr 1.2fr 2.4fr 1.6fr 1.6fr 1.4fr 1fr 1fr 1.1fr;
+  grid-template-columns: 0.5fr 0.8fr 1.2fr 3.6fr 1.1fr 1.35fr 1.15fr 0.9fr 0.9fr 0.8fr;
 }
 
 /* 회차 정산 테이블 행: 체크 | 번호 | 회차 | 이름 | 계좌번호 | 주민등록번호 | 출금 포인트 | 신청일 | 유형 | 상태 | 출금 */
 .table_row.table_row_round {
-  grid-template-columns: 0.5fr 0.8fr 0.8fr 1.2fr 2.2fr 1.5fr 1.5fr 1.4fr 1fr 1fr 1.1fr;
+  grid-template-columns: 0.5fr 0.8fr 0.8fr 1.2fr 3.4fr 1.1fr 1.25fr 1.15fr 0.9fr 0.9fr 0.8fr;
 }
 
 /* 테이블 행 호버 효과 */
@@ -358,11 +369,14 @@
   transition: opacity 0.2s ease;
 }
 
-/* 액션 버튼 호버 효과 */
-.action_button_approve:hover,
-.action_button_reject:hover {
-  opacity: 0.7;
+/* 액션 버튼 비활성화 상태 */
+.action_button_approve:disabled,
+.action_button_reject:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
 }
+
+
 
 /* 액션 아이콘 */
 .action_icon {
@@ -385,6 +399,8 @@
   align-items: center;
   padding: 0;
   gap: 0;
+  /* 헤더/바디와 동일하게 스크롤바 공간만큼 오른쪽 여백 확보 */
+  padding-right: 13px;
 }
 
 /* 합계 라벨 셀 */

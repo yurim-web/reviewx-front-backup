@@ -27,11 +27,17 @@ export type RequestFilterStatus = "all" | "approved" | "rejected";
 interface WithdrawalRequestFilterSectionProps {
   selected_filter?: RequestFilterStatus;
   on_filter_change?: (filter: RequestFilterStatus) => void;
+  /** 상단 "승인" 버튼 클릭 시 호출되는 콜백 (선택된 항목 승인 용도) */
+  on_approve_selected?: () => void;
+  /** 상단 "반려" 버튼 클릭 시 호출되는 콜백 (선택된 항목 반려 용도) */
+  on_reject_selected?: () => void;
 }
 
 export default function WithdrawalRequestFilterSection({
   selected_filter,
   on_filter_change,
+  on_approve_selected,
+  on_reject_selected,
 }: WithdrawalRequestFilterSectionProps = {}) {
   const [local_filter, set_local_filter] = useState<RequestFilterStatus>("all");
 
@@ -68,7 +74,16 @@ export default function WithdrawalRequestFilterSection({
         className={`${styles.filter_button} ${
           current_filter === "approved" ? styles.filter_button_selected : ""
         }`}
-        onClick={() => handle_filter_click("approved")}
+        onClick={(e) => {
+          e.stopPropagation();
+          // 선택된 항목 승인 콜백이 있으면 승인 모달 열기 (우선)
+          if (on_approve_selected) {
+            on_approve_selected();
+          } else {
+            // 승인 콜백이 없으면 필터 기능만 실행
+            handle_filter_click("approved");
+          }
+        }}
         type="button"
       >
         <img
@@ -84,7 +99,16 @@ export default function WithdrawalRequestFilterSection({
         className={`${styles.filter_button} ${
           current_filter === "rejected" ? styles.filter_button_selected : ""
         }`}
-        onClick={() => handle_filter_click("rejected")}
+        onClick={(e) => {
+          e.stopPropagation();
+          // 선택된 항목 반려 콜백이 있으면 반려 모달 열기 (우선)
+          if (on_reject_selected) {
+            on_reject_selected();
+          } else {
+            // 반려 콜백이 없으면 필터 기능만 실행
+            handle_filter_click("rejected");
+          }
+        }}
         type="button"
       >
         <img

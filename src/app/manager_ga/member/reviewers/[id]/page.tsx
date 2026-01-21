@@ -228,6 +228,7 @@ export default function ReviewerDetailPage() {
               reviewer_detail.phone,
               reviewer_detail.address,
             ]}
+            profile_image={reviewer_detail.profile_image}
           />
         )}
 

@@ -360,13 +360,13 @@ export default function PaymentHistoryFilterSection({
               />
             </div>
 
-            {/* 세금계산서 발행 필터 (드롭다운 사용) */}
+            {/*  발행 필터 (드롭다운 사용) */}
             <div
               ref={tax_invoice_type_filter_button_ref}
               className={filterButtonStyles.filter_button_dropdown_wrapper}
             >
               <FilterButton
-                label="세금계산서"
+                label="발행"
                 onClick={() =>
                   set_is_tax_invoice_type_dropdown_open((prev) => !prev)
                 }
