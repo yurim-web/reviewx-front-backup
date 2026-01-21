@@ -63,10 +63,17 @@ export const paymentHistoryStats: PaymentHistoryStats = {
  * - id: 고유 식별자
  * - number: 결제 번호
  * - companyName: 상호명
- * - depositorName: 입금자명 (사업자등록번호 · 이름)
+ * - businessInfo: 사업자 정보 (상호명 아래에 표시될 정보)
+ *   - registrationNumber: 사업자등록번호
+ *   - representativeName: 사업자명 (대표자명)
+ * - depositorName: 입금자명 (단순 문자열)
  * - businessType: 구분 (법인/개인)
  * - paymentMethod: 결제 수단 (카드 결제/무통장 입금)
- * - taxInvoice: 세금계산서 발행 여부 (O/X)
+ * - taxInvoiceType: 세금계산서 발행 유형
+ *   - "세금계산서": 세금계산서 발행
+ *   - "현금영수증 (소득공제)": 현금영수증 발행 (소득공제용)
+ *   - "현금영수증 (지출증빙)": 현금영수증 발행 (지출증빙용)
+ *   - "미발행": 미발행
  * - chargedPoints: 충전 포인트
  * - heldPoints: 보유 포인트
  * - paymentStatus: 결제 상태 (완료/대기/취소)
@@ -79,13 +86,14 @@ export interface PaymentHistoryItem {
   id: string;
   number: string;
   companyName: string;
-  depositorName: {
+  businessInfo: {
     registrationNumber: string;
-    name: string;
+    representativeName: string;
   };
+  depositorName: string;
   businessType: '법인' | '개인';
   paymentMethod: '카드 결제' | '무통장 입금';
-  taxInvoice: 'O' | 'X';
+  taxInvoiceType: '세금계산서' | '현금영수증 (소득공제)' | '현금영수증 (지출증빙)' | '미발행';
   chargedPoints: string;
   heldPoints: string;
   paymentStatus: '완료' | '대기' | '취소';
@@ -100,13 +108,14 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     id: '1',
     number: '999999',
     companyName: '주식회사 청명종합광고기획',
-    depositorName: {
+    businessInfo: {
       registrationNumber: '122-86-45790',
-      name: '김민회',
+      representativeName: '김민회',
     },
+    depositorName: '(주)청명종합광고기',
     businessType: '법인',
     paymentMethod: '카드 결제',
-    taxInvoice: 'X',
+    taxInvoiceType: '세금계산서',
     chargedPoints: '10,000',
     heldPoints: '0',
     paymentStatus: '완료',
@@ -119,13 +128,14 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     id: '2',
     number: '123456',
     companyName: '청불 천막집 방이점',
-    depositorName: {
+    businessInfo: {
       registrationNumber: '211-23-55991',
-      name: '장민석외 2명',
+      representativeName: '장민석외 2명',
     },
+    depositorName: '최대 열글자입니다',
     businessType: '개인',
     paymentMethod: '무통장 입금',
-    taxInvoice: 'O',
+    taxInvoiceType: '현금영수증 (소득공제)',
     chargedPoints: '10,000',
     heldPoints: '0',
     paymentStatus: '대기',
@@ -138,13 +148,14 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     id: '3',
     number: '008156',
     companyName: '명륜진사갈비 수원광교점',
-    depositorName: {
+    businessInfo: {
       registrationNumber: '211-23-55991',
-      name: '도선애, 이종근',
+      representativeName: '도선애, 이종근',
     },
+    depositorName: '명륜수원광교점',
     businessType: '개인',
     paymentMethod: '무통장 입금',
-    taxInvoice: 'O',
+    taxInvoiceType: '현금영수증 (지출증빙)',
     chargedPoints: '500,000',
     heldPoints: '2,000',
     paymentStatus: '대기',
@@ -157,13 +168,14 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     id: '4',
     number: '000046',
     companyName: '(주) 레인보우8',
-    depositorName: {
+    businessInfo: {
       registrationNumber: '110-86-08583',
-      name: '고광웅',
+      representativeName: '고광웅',
     },
+    depositorName: '(주) 레인보우8',
     businessType: '법인',
     paymentMethod: '무통장 입금',
-    taxInvoice: 'O',
+    taxInvoiceType: '미발행',
     chargedPoints: '10,000',
     heldPoints: '100',
     paymentStatus: '완료',
@@ -176,13 +188,14 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     id: '5',
     number: '000001',
     companyName: '(주)플레티어',
-    depositorName: {
+    businessInfo: {
       registrationNumber: '000-00-00000',
-      name: '이상훈',
+      representativeName: '이상훈',
     },
+    depositorName: '(주)플레티어',
     businessType: '개인',
     paymentMethod: '카드 결제',
-    taxInvoice: 'X',
+    taxInvoiceType: '미발행',
     chargedPoints: '10,000',
     heldPoints: '0',
     paymentStatus: '취소',
@@ -195,13 +208,14 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     id: '6',
     number: '000001',
     companyName: '꽃초롱',
-    depositorName: {
+    businessInfo: {
       registrationNumber: '000-00-00000',
-      name: '김초롱',
+      representativeName: '김초롱',
     },
+    depositorName: '꽃초롱',
     businessType: '개인',
     paymentMethod: '카드 결제',
-    taxInvoice: 'X',
+    taxInvoiceType: '미발행',
     chargedPoints: '100,000',
     heldPoints: '280,000',
     paymentStatus: '완료',
@@ -214,13 +228,14 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     id: '7',
     number: '000001',
     companyName: '주식회사 와이디컴퍼니그룹',
-    depositorName: {
+    businessInfo: {
       registrationNumber: '000-00-00000',
-      name: '양동찬',
+      representativeName: '양동찬',
     },
+    depositorName: '주식회사 와이디컴퍼',
     businessType: '개인',
     paymentMethod: '카드 결제',
-    taxInvoice: 'X',
+    taxInvoiceType: '미발행',
     chargedPoints: '10,000',
     heldPoints: '0',
     paymentStatus: '완료',
@@ -233,13 +248,14 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     id: '8',
     number: '000001',
     companyName: '(주)아이엠에스커뮤니케이션',
-    depositorName: {
+    businessInfo: {
       registrationNumber: '000-00-00000',
-      name: '정만수',
+      representativeName: '정만수',
     },
+    depositorName: '(주)아이엠에스',
     businessType: '개인',
     paymentMethod: '카드 결제',
-    taxInvoice: 'X',
+    taxInvoiceType: '미발행',
     chargedPoints: '10,000',
     heldPoints: '0',
     paymentStatus: '완료',
@@ -252,13 +268,14 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     id: '9',
     number: '000001',
     companyName: '주식회사 청명미디어',
-    depositorName: {
+    businessInfo: {
       registrationNumber: '234-86-01377',
-      name: '유기수',
+      representativeName: '유기수',
     },
+    depositorName: '주식회사 청명미디어',
     businessType: '개인',
     paymentMethod: '카드 결제',
-    taxInvoice: 'X',
+    taxInvoiceType: '미발행',
     chargedPoints: '10,000',
     heldPoints: '0',
     paymentStatus: '완료',
@@ -271,13 +288,14 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     id: '10',
     number: '000001',
     companyName: '(주)아이엠에스커뮤니케이션',
-    depositorName: {
+    businessInfo: {
       registrationNumber: '000-00-00000',
-      name: '정만수',
+      representativeName: '정만수',
     },
+    depositorName: '(주)아이엠에스',
     businessType: '개인',
     paymentMethod: '무통장 입금',
-    taxInvoice: 'X',
+    taxInvoiceType: '미발행',
     chargedPoints: '10,000',
     heldPoints: '0',
     paymentStatus: '완료',
@@ -290,13 +308,14 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     id: '11',
     number: '000001',
     companyName: '(주)아이엠에스커뮤니케이션',
-    depositorName: {
+    businessInfo: {
       registrationNumber: '000-00-00000',
-      name: '정만수',
+      representativeName: '정만수',
     },
+    depositorName: '최대 열글자입니다',
     businessType: '개인',
     paymentMethod: '무통장 입금',
-    taxInvoice: 'O',
+    taxInvoiceType: '세금계산서',
     chargedPoints: '10,000',
     heldPoints: '0',
     paymentStatus: '완료',
@@ -309,13 +328,14 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     id: '12',
     number: '000001',
     companyName: '주식회사 재밌는걸참좋아하고하고싶은거하는노신사',
-    depositorName: {
+    businessInfo: {
       registrationNumber: '000-00-00000',
-      name: '노홍철',
+      representativeName: '노홍철',
     },
+    depositorName: '노홍철',
     businessType: '개인',
     paymentMethod: '무통장 입금',
-    taxInvoice: 'O',
+    taxInvoiceType: '세금계산서',
     chargedPoints: '10,000',
     heldPoints: '0',
     paymentStatus: '완료',

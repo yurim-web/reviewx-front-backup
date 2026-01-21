@@ -23,6 +23,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { createPortal } from "react-dom";
 import styles from "@/styles/common/modal/textarea_modal.module.css";
 import CommonTextarea from "@/components/common/textarea/CommonTextarea";
 
@@ -151,7 +152,7 @@ export default function TextareaModal({
       ? styles.modal_container_center
       : styles.modal_container_bottom;
 
-  return (
+  const modal_node = (
     <div
       className={overlay_class}
       onClick={handle_overlay_click}
@@ -251,4 +252,7 @@ export default function TextareaModal({
       </div>
     </div>
   );
+
+  // 모달은 스태킹 컨텍스트/overflow 영향에서 벗어나도록 body에 포탈로 렌더링
+  return createPortal(modal_node, document.body);
 }

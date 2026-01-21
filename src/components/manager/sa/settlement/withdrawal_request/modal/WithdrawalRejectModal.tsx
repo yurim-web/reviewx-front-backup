@@ -42,16 +42,26 @@ export default function WithdrawalRejectModal({
 }: WithdrawalRejectModalProps) {
   // 반려 사유 텍스트 상태 관리
   const [reason, set_reason] = useState<string>("");
+  // 반려 사유 필수 입력 에러 상태
+  const [has_error, set_has_error] = useState<boolean>(false);
 
   // 모달이 열릴 때마다 사유 텍스트 초기화
   useEffect(() => {
     if (is_open) {
       set_reason("");
+      set_has_error(false);
     }
   }, [is_open]);
 
   // 확인 버튼 클릭 핸들러
   const handle_confirm = () => {
+    // 반려 사유 필수 입력 검증
+    if (!reason.trim()) {
+      // 공백이거나 비어 있으면 에러 상태로 전환하고 확인 동작 중단
+      set_has_error(true);
+      return;
+    }
+
     on_confirm(reason);
   };
 
@@ -67,8 +77,8 @@ export default function WithdrawalRejectModal({
       buttons={["닫기", "확인"]}
       on_cancel={on_close}
       on_confirm={handle_confirm}
-      variant="default"
-      has_error={true}
+      variant="reject"
+      has_error={has_error}
     />
   );
 }

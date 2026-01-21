@@ -106,6 +106,7 @@ export interface ReviewerDetail extends ReviewerItem {
   email: string; // 이메일
   phone: string; // 전화번호
   address: string; // 주소
+  profile_image?: string | null; // 프로필 이미지 URL (선택적, 없으면 기본 이미지 사용)
   penalty_count: number; // 패널티 횟수
   channel_details: ChannelDetail[]; // 채널 상세 정보
   account_info: AccountInfo; // 계좌 정보
@@ -133,7 +134,7 @@ export const reviewer_list: ReviewerItem[] = [
     campaign_completed: 80,
     current_points: 1500000,
     withdrawn_points: 11500000,
-    status_type: "모범 회원",
+    status_type: "일반 회원",
     status: "정상",
     last_access_date: "2025-08-01 18:56",
     join_date: "2025-08-01 18:56",

@@ -22,18 +22,26 @@
 .table_header {
   display: grid;
   /* 결제 내역 테이블 컬럼 정의 */
+  /* 학습 포인트:
+   * - grid-template-columns: CSS Grid의 컬럼 크기를 정의합니다
+   * - fr 단위: 사용 가능한 공간을 비율로 나눕니다 (fraction의 약자)
+   * - 상호명: 3fr로 늘려서 긴 상호명을 표시할 수 있도록 합니다
+   * - 입금자명: 1.2fr로 줄여서 공간을 절약합니다
+   * - 충전 포인트: 1.2fr로 줄여서 공간을 절약합니다
+   * - 결제, 신청일, 승인일: 너비를 줄여서 공간을 절약합니다
+   */
   grid-template-columns:
     0.5fr /* 체크박스 */
     0.8fr /* 번호 */
-    1.5fr /* 상호명 */
-    1.8fr /* 입금자명 */
+    3fr /* 상호명 (더 늘림) */
+    1.2fr /* 입금자명 */
     0.8fr /* 구분 */
     1.2fr /* 결제 수단 */
     0.8fr /* 세금계산서 */
-    1.5fr /* 충전 포인트 */
-    1fr /* 결제 */
-    1.4fr /* 신청일 */
-    1.4fr /* 승인일 */
+    1.2fr /* 충전 포인트 */
+    0.8fr /* 결제 (줄임) */
+    1.2fr /* 신청일 (줄임) */
+    1.2fr /* 승인일 (줄임) */
     1fr /* 유형 */
     1fr; /* 상태 */
   background-color: #f5f5f5;
@@ -56,18 +64,24 @@
 .table_row {
   display: grid;
   /* 헤더와 동일한 컬럼 정의를 공유해 정렬 유지 */
+  /* 학습 포인트:
+   * - 테이블 헤더(.table_header)와 동일한 grid-template-columns 값을 사용합니다
+   * - 이렇게 하면 헤더와 데이터 행의 컬럼이 정확히 정렬됩니다
+   * - 상호명, 입금자명, 충전 포인트 너비가 헤더와 일치합니다
+   * - 결제, 신청일, 승인일 너비가 헤더와 일치합니다
+   */
   grid-template-columns:
     0.5fr /* 체크박스 */
     0.8fr /* 번호 */
-    1.5fr /* 상호명 */
-    1.8fr /* 입금자명 */
+    3fr /* 상호명 (더 늘림) */
+    1.2fr /* 입금자명 */
     0.8fr /* 구분 */
     1.2fr /* 결제 수단 */
     0.8fr /* 세금계산서 */
-    1.5fr /* 충전 포인트 */
-    1fr /* 결제 */
-    1.4fr /* 신청일 */
-    1.4fr /* 승인일 */
+    1.2fr /* 충전 포인트 */
+    0.8fr /* 결제 (줄임) */
+    1.2fr /* 신청일 (줄임) */
+    1.2fr /* 승인일 (줄임) */
     1fr /* 유형 */
     1fr; /* 상태 */
   gap: 0;
@@ -197,4 +211,74 @@
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
+}
+
+/* 상호명 컨테이너 (두 줄 표시용) */
+.company_name_container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+}
+
+/* 상호명 첫 번째 줄 (상호명 + 다운로드 아이콘) */
+.company_name_row {
+  display: flex;
+  align-items: center;
+  gap: 6px; /* 상호명과 다운로드 버튼 사이 간격 */
+  width: 100%;
+  min-width: 0; /* flex 아이템이 축소될 수 있도록 */
+}
+
+/* 상호명 텍스트 (말줄임표 적용) */
+
+.company_name_row .cell_text {
+  display: -webkit-box;
+  max-width: 100%;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+/* 다운로드 버튼 */
+.download_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+/* 다운로드 아이콘 */
+.download_icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* 사업자 정보 텍스트 (두 번째 줄) */
+.business_info_text {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 발행 컨테이너 (두 줄 표시용) */
+
+.tax_invoice_container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
 }
