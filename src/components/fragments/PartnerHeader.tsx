@@ -17,16 +17,59 @@
  * - 사용자 아이콘 (마이페이지로 이동)
  */
 
+"use client";
+
 import Link from "next/link";
 import styles from "@/styles/fragments/header.module.css";
 import { mockPartnerNotifications } from "@/data/notification/notificationData";
 import HeaderSearch from "@/components/fragments/HeaderSearch";
+import { useAuth } from "@/hooks/useAuth";
+import { useEffect, useState } from "react";
 
 export default function PartnerHeader() {
-  const has_notifications = mockPartnerNotifications.length > 0;
-  const notification_icon_src = has_notifications
-    ? "/images/header/notification_ok.svg"
-    : "/images/header/notification_icon.svg";
+  const { user } = useAuth();
+  const [isMounted, setIsMounted] = useState(false);
+  const [notificationIconSrc, setNotificationIconSrc] = useState(
+    "/images/header/notification_icon.svg"
+  );
+
+  /**
+   * 클라이언트 마운트 확인 및 알림 아이콘 업데이트
+   *
+   * 설명:
+   * - Hydration 에러를 방지하기 위해 클라이언트 마운트 후에만 알림 아이콘을 업데이트합니다.
+   * - 서버 사이드 렌더링과 클라이언트 사이드 렌더링의 일치를 보장합니다.
+   * - isMounted가 true가 된 후에만 알림 아이콘을 변경하여 hydration mismatch를 방지합니다.
+   */
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  /**
+   * 사용자 상태 및 알림 데이터에 따른 알림 아이콘 업데이트
+   *
+   * 설명:
+   * - 클라이언트 마운트 후에만 실행됩니다 (isMounted 체크).
+   * - 로그인 상태와 알림 데이터를 확인하여 적절한 아이콘을 표시합니다.
+   */
+  useEffect(() => {
+    // 클라이언트 마운트 전에는 실행하지 않음 (Hydration 에러 방지)
+    if (!isMounted) return;
+
+    // 로그인 안 되어 있으면 알림 없음 아이콘
+    if (!user) {
+      setNotificationIconSrc("/images/header/notification_icon.svg");
+      return;
+    }
+
+    // 로그인 되어 있으면 알림 데이터 확인
+    const has_notifications = mockPartnerNotifications.length > 0;
+    setNotificationIconSrc(
+      has_notifications
+        ? "/images/header/notification_ok.svg"
+        : "/images/header/notification_icon.svg"
+    );
+  }, [user, isMounted]);
 
   return (
     <header>
@@ -51,7 +94,7 @@ export default function PartnerHeader() {
             href="/partner/notification"
             className={styles.notification_icon}
           >
-            <img src={notification_icon_src} alt="notification" />
+            <img src={notificationIconSrc} alt="notification" />
           </Link>
 
           {/* 가이드로 연결 */}

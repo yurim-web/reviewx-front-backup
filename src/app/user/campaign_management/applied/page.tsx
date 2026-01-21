@@ -25,6 +25,8 @@ import CampaignFilterBar from "@/components/common/campaign_management/CampaignF
 import type { MainTab } from "@/types/domain/user";
 import type { CampaignApplication } from "@/types/domain/user";
 import layoutStyles from "../../../../styles/user/campaign_management/layout.module.css";
+import { withUserAuth } from "@/components/auth/withAuth";
+import { useAuth } from "@/hooks/useAuth";
 
 // 임시 데이터 import
 import {
@@ -42,7 +44,9 @@ import { missionCampaigns } from "@/data/campaign/mission/missionCampaigns";
 /**
  * 신청 탭 전용 페이지 컴포넌트
  */
-export default function AppliedPage() {
+function AppliedPage() {
+  const { user } = useAuth();
+
   // 상단 메인 탭 상태 (캠페인 / 포인트)
   const [activeTab, setActiveTab] = useState<MainTab>("campaign");
 
@@ -248,14 +252,24 @@ export default function AppliedPage() {
 
   // 캠페인 목록 상태 (취소 시 제거하기 위해 상태로 관리)
   const [campaigns, setCampaigns] = useState<CampaignApplication[]>(() => {
-    const baseCampaigns = getCampaignsByTab(activeStatTab);
-    // 선정 발표일이 지난 캠페인 필터링 (activeStatTab을 명시적으로 전달)
-    const filteredCampaigns = filterCampaignsByAnnouncementDate(
-      baseCampaigns,
-      activeStatTab
-    );
-    // remainingDays와 isUrgent 계산
-    return enrichCampaignsWithRemainingDays(filteredCampaigns);
+    if (!user) return [];
+
+    // LocalStorage에서 내가 신청한 캠페인 가져오기
+    const myApplications = localStorage.getItem('my_applications');
+    if (myApplications) {
+      try {
+        const parsedApplications = JSON.parse(myApplications);
+        // 현재 로그인한 유저의 신청 중인 캠페인만 필터링
+        return parsedApplications.filter((app: any) =>
+          app.user_id === user.id && app.status === 'pending'
+        );
+      } catch (e) {
+        console.error('Failed to parse applications:', e);
+      }
+    }
+
+    // LocalStorage에 없으면 빈 배열 반환
+    return [];
   });
 
   /**
@@ -384,3 +398,6 @@ export default function AppliedPage() {
     </div>
   );
 }
+
+// 유저(리뷰어) 전용 페이지로 보호
+export default withUserAuth(AppliedPage);

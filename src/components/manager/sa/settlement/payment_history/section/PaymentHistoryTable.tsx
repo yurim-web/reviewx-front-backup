@@ -22,7 +22,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CommonTable, {
   type TableColumn,
   type TableRowData,
@@ -33,6 +33,7 @@ import SortableTableHeader from "@/components/manager/common/table/SortableTable
 import styles from "@/styles/manager_sa/settlement/payment_history/payment_history_table.module.css";
 import {
   paymentHistoryList,
+  getPaymentHistoryList,
   type PaymentHistoryItem,
 } from "@/data/manager_sa/settlement/paymentHistoryData";
 import PaymentMethodTag from "@/components/manager/common/tags/PaymentMethodTag";
@@ -78,6 +79,26 @@ export default function PaymentHistoryTable({
   // string[]: 문자열 배열 타입입니다. 선택된 항목의 ID들을 배열로 저장합니다.
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
+  // 결제 내역 데이터 상태
+  // 초기값은 Mock 데이터(paymentHistoryList)를 사용하여 서버와 클라이언트의 초기 렌더링을 일치시킵니다.
+  // 클라이언트 마운트 후 useEffect에서 LocalStorage 데이터를 병합한 실제 리스트로 교체합니다.
+  const [paymentHistory, setPaymentHistory] =
+    useState<PaymentHistoryItem[]>(paymentHistoryList);
+
+  /**
+   * 클라이언트 마운트 후 결제 내역 데이터 로드
+   *
+   * 설명:
+   * - Hydration 에러를 방지하기 위해 서버 렌더링 시에는 paymentHistoryList(고정된 Mock 데이터)만 사용합니다.
+   * - 클라이언트 마운트 후에만 getPaymentHistoryList()를 호출하여
+   *   LocalStorage에 저장된 결제 내역과 Mock 데이터를 병합합니다.
+   * - 이렇게 하면 서버와 클라이언트의 초기 HTML이 동일하게 유지되어 Hydration mismatch가 발생하지 않습니다.
+   */
+  useEffect(() => {
+    const merged_list = getPaymentHistoryList();
+    setPaymentHistory(merged_list);
+  }, []);
+
   // 컬럼별 타입 설정 (정렬을 위한 컬럼 타입 정의)
   // numeric_string: 숫자처럼 보이는 문자열 (예: "1,500,000", "999999")
   // date: 날짜 형식의 문자열 (예: "2025-08-01 18:56")
@@ -93,7 +114,7 @@ export default function PaymentHistoryTable({
   };
 
   // 검색어 및 필터로 필터링된 결제 내역 목록
-  const filtered_payment_history_list = paymentHistoryList.filter((item) => {
+  const filtered_payment_history_list = paymentHistory.filter((item) => {
     // 검색어 필터
     // 학습 포인트:
     // - includes() 메서드: 문자열에 특정 문자열이 포함되어 있는지 확인합니다
@@ -405,6 +426,7 @@ export default function PaymentHistoryTable({
         );
       case "taxInvoiceType":
         // 발행 열: 세금계산서 발행 유형 표시
+        // 카드 결제인 경우 "-" 표시 (카드 결제는 세금계산서 발행 불가)
         // taxInvoiceType은 "세금계산서", "현금영수증 (소득공제)", "현금영수증 (지출증빙)", "미발행" 중 하나입니다
         // 학습 포인트:
         // - includes() 메서드: 문자열에 특정 문자열이 포함되어 있는지 확인합니다
@@ -412,13 +434,25 @@ export default function PaymentHistoryTable({
         // - split() 메서드: 문자열을 특정 구분자로 나눕니다
         // - map() 메서드: 배열의 각 요소를 변환합니다
         // - fragment(<></>): 여러 요소를 그룹화합니다 (불필요한 DOM 요소 추가 없음)
+        
+        // 카드 결제인 경우 "-" 표시
+        if (row.paymentMethod === "카드 결제") {
+          return <span className={styles.cell_text}>-</span>;
+        }
+        
         const has_parentheses = row.taxInvoiceType.includes("(");
         if (has_parentheses) {
           // 괄호가 있는 경우: "현금영수증"과 "(소득공제)" 또는 "(지출증빙)" 사이에서 줄바꿈
           // 예: "현금영수증 (소득공제)" -> "현금영수증" / "(소득공제)"
           const parts = row.taxInvoiceType.split(" (");
-          const main_text = parts[0]; // "현금영수증"
-          const parentheses_text = "(" + parts[1]; // "(소득공제)" 또는 "(지출증빙)"
+          const main_text = parts[0]; // "현금영수증" 또는 "발행"
+          const parentheses_text = parts[1] ? "(" + parts[1] : ""; // "(소득공제)" 또는 "(지출증빙)" 또는 빈 문자열
+
+          // parts[1]이 없으면 한 줄로 표시
+          if (!parts[1]) {
+            return <span className={styles.cell_text}>{row.taxInvoiceType}</span>;
+          }
+
           return (
             <div className={styles.tax_invoice_container}>
               <span className={styles.cell_text}>{main_text}</span>

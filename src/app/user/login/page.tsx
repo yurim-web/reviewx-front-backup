@@ -16,7 +16,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -29,12 +29,16 @@ import {
   type SNSType,
 } from "@/data/login/unifiedAccountData";
 
+// AuthContext import
+import { useAuth } from "@/hooks/useAuth";
+
 type RecentLoginProvider = "naver" | "kakao" | null;
 
 export default function UserLoginPage() {
   // Next.js의 useRouter 훅: 페이지 이동을 위한 라우터 객체
   // 클라이언트 컴포넌트에서 페이지 이동 시 사용합니다.
   const router = useRouter();
+  const { login, user } = useAuth();
 
   // ========================================
   // 상태 관리 (State Management)
@@ -47,6 +51,31 @@ export default function UserLoginPage() {
    *       마지막 로그인 제공자를 설정하도록 교체 필요
    */
   const [recentLoginProvider] = useState<RecentLoginProvider>("naver");
+
+  // ========================================
+  // 자동 로그인 비활성화
+  // ========================================
+  // useEffect(() => {
+  //   // 이미 로그인되어 있으면 처리
+  //   if (user) {
+  //     // user 계정이면 user 페이지로 리다이렉트
+  //     if (user.role === 'user') {
+  //       router.push('/user/campaign_management');
+  //     }
+  //     // 파트너/관리자 계정이면 자동 로그인 안 함
+  //     return;
+  //   }
+
+  //   // 로그인되어 있지 않으면 자동으로 네이버 계정으로 로그인
+  //   const naver_account = UNIFIED_ACCOUNTS.find(
+  //     (account) => account.userType === "user" && account.snsType === "naver"
+  //   );
+
+  //   if (naver_account) {
+  //     login(naver_account);
+  //     router.push(naver_account.redirectUrl || '/user/campaign_management');
+  //   }
+  // }, [user, login, router]);
 
   // ========================================
   // 이벤트 핸들러 (Event Handlers)
@@ -69,11 +98,10 @@ export default function UserLoginPage() {
    * - await 키워드: 비동기 작업이 완료될 때까지 기다립니다.
    * - 실제 서비스에서는 서버 API 호출이 비동기로 처리되므로 async/await를 사용합니다.
    */
-  const handle_social_login_success = async (account: {
-    isBanned: boolean;
-    isBlocked: boolean;
-    redirectUrl: string;
-  }) => {
+  const handle_social_login_success = async (account: any) => {
+    // 로그인 처리
+    login(account);
+
     // 정지/탈퇴된 계정인 경우
     // 조건문: if (조건) { 실행할 코드 }
     if (account.isBanned) {

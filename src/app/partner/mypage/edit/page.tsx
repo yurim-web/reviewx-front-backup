@@ -23,27 +23,31 @@ import AddressInput from "@/components/common/mypage/AddressInput";
 import BaseModal from "@/components/common/modal/BaseModal";
 import ErrorText from "@/components/common/error_text/ErrorText";
 import { formatPhoneNumber } from "@/utils/formatting/phone";
+import { formatBusinessNumber } from "@/components/partner/signup/utils/businessNumberUtils";
+import { useAuth } from "@/hooks/useAuth";
+import { withPartnerAuth } from "@/components/auth/withAuth";
 
 /**
  * 파트너 내 정보 수정 페이지 컴포넌트
  */
-export default function PartnerEditProfilePage() {
+function PartnerEditProfilePage() {
   // Next.js 라우터 훅
   const router = useRouter();
+  const { user } = useAuth();
 
-  // 폼 데이터 state
+  // 폼 데이터 state - 로그인된 사용자 정보로 초기화
   const [formData, setFormData] = useState({
-    name: "아무개",
-    email: "contact@cmcm.co.kr",
-    phone: "010-1234-5678",
-    contactPhone: "010-1234-5678",
-    companyName: "주식회사 청명종합광고기획",
-    ownerName: "김민회",
-    businessNumber: "122-86-125",
+    name: user?.name || "",
+    email: user?.email || "",
+    phone: user?.phone || "",
+    contactPhone: user?.phone || "",
+    companyName: user?.business_name || "",
+    ownerName: user?.name || "",
+    businessNumber: user?.business_number || "",
     businessDocument: "등록 완료",
-    postalCode: "13561",
-    address: "경기 성남시 분당구 정자일로 95",
-    detailAddress: "NAVER",
+    postalCode: "",
+    address: "",
+    detailAddress: "",
   });
 
   const [isPhoneVerified, setIsPhoneVerified] = useState(true); // 휴대폰 인증 완료 여부
@@ -72,6 +76,14 @@ export default function PartnerEditProfilePage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
+    // 사업자등록번호 입력 시: 숫자만 허용 + 3-2-5 형식 자동 하이픈
+    if (name === "businessNumber") {
+      const formatted = formatBusinessNumber(value);
+      setFormData((prev) => ({ ...prev, businessNumber: formatted }));
+      return;
+    }
+
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -175,6 +187,60 @@ export default function PartnerEditProfilePage() {
   const handleWithdrawComplete = () => {
     setIsWithdrawCompleteModalOpen(false);
     router.push("/partner");
+  };
+
+  // 저장 핸들러
+  const handleSave = () => {
+    if (!user?.id) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    try {
+      // LocalStorage의 인증 사용자 정보 업데이트
+      const authUser = localStorage.getItem('reviewx_auth_user');
+      if (authUser) {
+        const userData = JSON.parse(authUser);
+        const updatedUser = {
+          ...userData,
+          name: formData.ownerName,
+          phone: formData.phone,
+          business_name: formData.companyName,
+          business_number: formData.businessNumber,
+        };
+        localStorage.setItem('reviewx_auth_user', JSON.stringify(updatedUser));
+      }
+
+      // unifiedAccountData도 업데이트 (필요시)
+      // 파트너 계정 목록도 업데이트
+      const storedAccounts = localStorage.getItem('partner_accounts');
+      if (storedAccounts) {
+        const accounts = JSON.parse(storedAccounts);
+        const accountIndex = accounts.findIndex((a: any) => a.id === user.id);
+        if (accountIndex >= 0) {
+          accounts[accountIndex] = {
+            ...accounts[accountIndex],
+            name: formData.ownerName,
+            phone: formData.phone,
+            business_name: formData.companyName,
+            business_number: formData.businessNumber,
+            representative_name: formData.ownerName,
+            contact_phone: formData.contactPhone,
+            postal_code: formData.postalCode,
+            address: formData.address,
+            detail_address: formData.detailAddress,
+          };
+          localStorage.setItem('partner_accounts', JSON.stringify(accounts));
+        }
+      }
+
+      alert('정보가 저장되었습니다.');
+      // 페이지 새로고침하여 업데이트된 정보 반영
+      window.location.reload();
+    } catch (error) {
+      console.error('정보 저장 중 오류:', error);
+      alert('정보 저장에 실패했습니다.');
+    }
   };
 
   // 타이머 효과: timer가 0보다 크면 1초마다 감소
@@ -428,6 +494,7 @@ export default function PartnerEditProfilePage() {
               !isSaveEnabled ? styles.disabled_button : ""
             }`}
             disabled={!isSaveEnabled}
+            onClick={handleSave}
           >
             저장하기
           </button>
@@ -465,3 +532,6 @@ export default function PartnerEditProfilePage() {
     </div>
   );
 }
+
+// 파트너 전용 페이지로 보호
+export default withPartnerAuth(PartnerEditProfilePage);

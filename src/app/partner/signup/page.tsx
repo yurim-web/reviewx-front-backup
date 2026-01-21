@@ -360,14 +360,60 @@ export default function PartnerSignupPage() {
       thirdPartyMarketingAgreed,
     });
 
+    // LocalStorage에 새 파트너 계정 저장
+    try {
+      const existingAccounts = localStorage.getItem('partner_accounts');
+      const partnerAccounts = existingAccounts ? JSON.parse(existingAccounts) : [];
+
+      const newPartnerAccount = {
+        id: `partner_${Date.now()}`,
+        number: String(partnerAccounts.length + 1).padStart(6, '0'),
+        userType: 'partner' as const,
+        role: 'partner' as const,
+        email,
+        password,
+        name,
+        phone,
+        business_name: companyName,
+        business_number: businessNumber,
+        representative_name: representativeName,
+        postal_code: postalCode,
+        address,
+        detail_address: detailAddress,
+        contact_phone: contactPhone,
+        business_registration_file: businessRegistrationFileName,
+        approval_status: 'approved' as const,
+        signupDate: new Date().toISOString().split('T')[0].replace(/-/g, '. '),
+        isBlocked: false,
+        isBanned: false,
+        redirectUrl: '/partner',
+        marketing_agreed: marketingAgreed,
+        third_party_marketing_agreed: thirdPartyMarketingAgreed,
+        division: '개인' as const,
+        campaign_in_progress: 0,
+        campaign_completed: 0,
+        current_points: 0,
+        used_points: 0,
+        status_type: '모범 회원' as const,
+        status: '정상' as const,
+        last_access_date: new Date().toISOString().replace('T', ' ').substring(0, 16),
+        join_date: new Date().toISOString().replace('T', ' ').substring(0, 16),
+      };
+
+      partnerAccounts.push(newPartnerAccount);
+      localStorage.setItem('partner_accounts', JSON.stringify(partnerAccounts));
+      console.log('파트너 회원가입 성공!', newPartnerAccount);
+      router.push(`/partner/signup/complete?name=${encodeURIComponent(name)}`);
+    } catch (error) {
+      console.error('회원가입 중 오류 발생:', error);
+      alert('회원가입 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
+    }
+
     // TODO: 실제 API 호출
     // const response = await partnerSignupAPI({ ... });
     // if (response.success) {
     //   router.push('/partner/login');
     // }
-
-    // 테스트용: 성공 시 회원가입 완료 페이지로 이동
-    router.push(`/partner/signup/complete?name=${encodeURIComponent(name)}`);
   };
 
   // ========================================

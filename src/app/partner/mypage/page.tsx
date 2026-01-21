@@ -25,13 +25,16 @@ import SubTabNavigation from "@/components/common/mypage/SubTabNavigation";
 import ProfileContent from "@/components/common/mypage/ProfileContent";
 import layoutStyles from "../../../styles/partner/layout.module.css";
 import type { PartnerMainTab } from "@/types/domain/partner";
+import { withPartnerAuth } from "@/components/auth/withAuth";
+import { useAuth } from "@/hooks/useAuth";
 
 /**
  * 파트너 마이페이지 컴포넌트
  */
-export default function PartnerMypagePage() {
+function PartnerMypagePage() {
   // Next.js의 useRouter 훅: 페이지 이동을 위한 라우터 객체
   const router = useRouter();
+  const { user, logout } = useAuth();
 
   // useState 훅: 컴포넌트의 상태(state)를 관리합니다.
   // activeTopTab: 현재 활성화된 상단 탭 (캠페인/포인트/계정 등)
@@ -56,16 +59,11 @@ export default function PartnerMypagePage() {
 
   /**
    * 로그아웃 핸들러
-   *
-   * 로그아웃 버튼 클릭 시 실행되는 함수입니다.
-   * TODO: 실제 로그아웃 로직 구현 필요 (세션 삭제, 쿠키 삭제 등)
    */
   const handleLogout = () => {
-    // TODO: 실제 로그아웃 API 호출
-    // 예: await logoutAPI();
-    // 예: localStorage.removeItem('token');
-    // 예: router.push('/partner/login');
-    console.log("로그아웃 처리");
+    if (confirm('로그아웃 하시겠습니까?')) {
+      logout();
+    }
   };
 
   return (
@@ -97,7 +95,7 @@ export default function PartnerMypagePage() {
           */}
           <ProfileContent
             role="광고주"
-            nickname="주식회사 청명종합광고기획"
+            nickname={user?.business_name || user?.name || "파트너"}
             editPath="/partner/mypage/edit"
             onLogout={handleLogout}
           />
@@ -106,3 +104,6 @@ export default function PartnerMypagePage() {
     </div>
   );
 }
+
+// 파트너 전용 페이지로 보호
+export default withPartnerAuth(PartnerMypagePage);

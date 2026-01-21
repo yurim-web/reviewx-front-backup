@@ -36,6 +36,7 @@ import "../styles/globals.css";
 import ConditionalHeader from "@/components/fragments/ConditionalHeader";
 import Loading from "./loading";
 import ConsoleFilter from "@/components/dev/ConsoleFilter";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 // 전체 애플리케이션의 메타데이터 설정
 export const metadata: Metadata = {
@@ -66,16 +67,18 @@ export default function RootLayout({
 
       {/* 실제 보이는 콘텐츠 영역 */}
       <body className="antialiased">
-        {/* 공통 상단 헤더 (경로에 따라 파트너 헤더 또는 일반 헤더 표시) */}
-        <ConditionalHeader />
-        {/* 개발환경 콘솔 노이즈 필터 */}
-        <ConsoleFilter />
+        <AuthProvider>
+          {/* 공통 상단 헤더 (경로에 따라 파트너 헤더 또는 일반 헤더 표시) */}
+          <ConditionalHeader />
+          {/* 개발환경 콘솔 노이즈 필터 */}
+          <ConsoleFilter />
 
-        {/* 메인 콘텐츠 영역 */}
-        <main>
-          {/* 페이지별 컴포넌트를 Suspense로 감싸서 로딩 처리 */}
-          <Suspense fallback={<Loading />}>{children}</Suspense>
-        </main>
+          {/* 메인 콘텐츠 영역 */}
+          <main>
+            {/* 페이지별 컴포넌트를 Suspense로 감싸서 로딩 처리 */}
+            <Suspense fallback={<Loading />}>{children}</Suspense>
+          </main>
+        </AuthProvider>
       </body>
     </html>
   );

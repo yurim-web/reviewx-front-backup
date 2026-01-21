@@ -85,28 +85,36 @@ export default function FilterButton({
    * - isActive가 true이고 checkbox_icon_checked 스타일이 있으면: 두 클래스 모두 적용
    * - 그 외: checkbox_icon만 적용
    *
-   * 템플릿 리터럴: `${}`를 사용하여 문자열과 변수를 결합
-   * trim(): 문자열 앞뒤 공백 제거
+   * 배열을 사용하여 클래스를 조합하고, filter로 undefined를 제거한 후 join으로 연결합니다.
+   * 이렇게 하면 CSS 모듈에서 클래스가 올바르게 적용됩니다.
    */
-  const checkboxIconClassName =
-    isActive && styles.checkbox_icon_checked
-      ? `${styles.checkbox_icon} ${styles.checkbox_icon_checked}`.trim()
-      : styles.checkbox_icon;
+  const checkboxIconClassName = [
+    styles.checkbox_icon,
+    isActive && styles.checkbox_icon_checked,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
-  const filterItemClassName =
-    isActive && styles.filter_item_active
-      ? `${styles.filter_item} ${styles.filter_item_active}`.trim()
-      : styles.filter_item;
+  const filterItemClassName = [
+    styles.filter_item,
+    isActive && styles.filter_item_active,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
-  const filterTextClassName =
-    isActive && styles.filter_text_active
-      ? `${styles.filter_text} ${styles.filter_text_active}`.trim()
-      : styles.filter_text;
+  const filterTextClassName = [
+    styles.filter_text,
+    isActive && styles.filter_text_active,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
-  const dropdownArrowClassName =
-    isActive && styles.dropdown_arrow_active
-      ? `${styles.dropdown_arrow} ${styles.dropdown_arrow_active}`.trim()
-      : styles.dropdown_arrow;
+  const dropdownArrowClassName = [
+    styles.dropdown_arrow,
+    isActive && styles.dropdown_arrow_active,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   /**
    * 드롭다운 화살표 아이콘 경로 결정

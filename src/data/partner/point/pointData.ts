@@ -8,7 +8,50 @@ import {
 } from "@/types/domain/partner";
 
 /**
- * 파트너 포인트 요약 정보 (샘플 데이터)
+ * 파트너 포인트 요약 정보 가져오기 (LocalStorage 기반)
+ */
+export function getPartnerPointSummary(userId?: string): PartnerPointSummary {
+  if (typeof window === 'undefined' || !userId) {
+    return {
+      total_points: 0,
+      available_points: 0,
+      pending_points: 0,
+    };
+  }
+
+  try {
+    const pointsKey = `partner_points_${userId}`;
+    const storedPoints = localStorage.getItem(pointsKey);
+
+    if (storedPoints) {
+      const points = JSON.parse(storedPoints);
+      return {
+        total_points: points.total_points || 0,
+        available_points: points.available_points || 0,
+        pending_points: points.pending_points || 0,
+      };
+    }
+
+    // 초기 포인트 0으로 설정
+    const initialPoints = {
+      total_points: 0,
+      available_points: 0,
+      pending_points: 0,
+    };
+    localStorage.setItem(pointsKey, JSON.stringify(initialPoints));
+    return initialPoints;
+  } catch (error) {
+    console.error('포인트 요약 정보 로드 중 오류:', error);
+    return {
+      total_points: 0,
+      available_points: 0,
+      pending_points: 0,
+    };
+  }
+}
+
+/**
+ * 파트너 포인트 요약 정보 (샘플 데이터 - 하위 호환성 유지)
  */
 export const partnerPointSummary: PartnerPointSummary = {
   total_points: 425000, // 전체 보유 포인트
@@ -127,3 +170,132 @@ export const partnerPointHistoryData: PartnerPointHistory[] = [
     rejection_reason: "반환 신청 정보가 일치하지 않습니다.",
   },
 ];
+
+/**
+ * 파트너 포인트 내역 가져오기 (LocalStorage 기반)
+ */
+export function getPartnerPointHistory(userId?: string): PartnerPointHistory[] {
+  if (typeof window === 'undefined' || !userId) {
+    return [];
+  }
+
+  try {
+    const historyKey = `partner_point_history_${userId}`;
+    const storedHistory = localStorage.getItem(historyKey);
+
+    if (storedHistory) {
+      return JSON.parse(storedHistory);
+    }
+
+    // 초기 빈 배열 반환
+    return [];
+  } catch (error) {
+    console.error('포인트 내역 로드 중 오류:', error);
+    return [];
+  }
+}
+
+/**
+ * 포인트 충전 함수
+ */
+export function addPointCharge(
+  userId: string,
+  amount: number,
+  description: string = '포인트 충전'
+): void {
+  if (typeof window === 'undefined' || !userId) return;
+
+  try {
+    // 현재 포인트 요약 정보 가져오기
+    const summary = getPartnerPointSummary(userId);
+    const newTotalPoints = summary.total_points + amount;
+    const newAvailablePoints = summary.available_points + amount;
+
+    // 포인트 요약 정보 업데이트
+    const pointsKey = `partner_points_${userId}`;
+    localStorage.setItem(
+      pointsKey,
+      JSON.stringify({
+        total_points: newTotalPoints,
+        available_points: newAvailablePoints,
+        pending_points: summary.pending_points,
+      })
+    );
+
+    // 포인트 내역 추가
+    const history = getPartnerPointHistory(userId);
+    const newHistory: PartnerPointHistory = {
+      id: `point_${Date.now()}`,
+      type: 'earned',
+      amount,
+      description,
+      date: new Date().toISOString().split('T')[0],
+      status: 'earned',
+      balance: newAvailablePoints,
+    };
+
+    history.unshift(newHistory); // 최신 내역을 맨 앞에 추가
+    const historyKey = `partner_point_history_${userId}`;
+    localStorage.setItem(historyKey, JSON.stringify(history));
+
+    console.log('포인트 충전 완료:', newHistory);
+  } catch (error) {
+    console.error('포인트 충전 중 오류:', error);
+  }
+}
+
+/**
+ * 포인트 사용 함수
+ */
+export function usePartnerPoints(
+  userId: string,
+  amount: number,
+  description: string = '리뷰어 포인트 지급'
+): boolean {
+  if (typeof window === 'undefined' || !userId) return false;
+
+  try {
+    const summary = getPartnerPointSummary(userId);
+
+    // 사용 가능한 포인트가 부족한 경우
+    if (summary.available_points < amount) {
+      alert('보유 포인트가 부족합니다.');
+      return false;
+    }
+
+    const newAvailablePoints = summary.available_points - amount;
+
+    // 포인트 요약 정보 업데이트
+    const pointsKey = `partner_points_${userId}`;
+    localStorage.setItem(
+      pointsKey,
+      JSON.stringify({
+        total_points: summary.total_points,
+        available_points: newAvailablePoints,
+        pending_points: summary.pending_points,
+      })
+    );
+
+    // 포인트 내역 추가
+    const history = getPartnerPointHistory(userId);
+    const newHistory: PartnerPointHistory = {
+      id: `point_${Date.now()}`,
+      type: 'withdrawn',
+      amount: -amount,
+      description,
+      date: new Date().toISOString().split('T')[0],
+      status: 'completed',
+      balance: newAvailablePoints,
+    };
+
+    history.unshift(newHistory);
+    const historyKey = `partner_point_history_${userId}`;
+    localStorage.setItem(historyKey, JSON.stringify(history));
+
+    console.log('포인트 사용 완료:', newHistory);
+    return true;
+  } catch (error) {
+    console.error('포인트 사용 중 오류:', error);
+    return false;
+  }
+}

@@ -23,16 +23,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Header from "@/components/fragments/Header";
+import PartnerHeader from "@/components/fragments/PartnerHeader";
 import styles from "@/styles/login/login.module.css";
-// 🧪 테스트용 - 실제 API 연동 시 삭제 예정
-import {
-  findAccountByCredentials,
-  findAccountByEmail,
-} from "@/data/login/unifiedAccountData";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function PartnerLoginPage() {
   const router = useRouter();
+  const { login, isLoading } = useAuth();
 
   // ========================================
   // 상태 관리
@@ -64,65 +61,17 @@ export default function PartnerLoginPage() {
     setErrorMessage("");
 
     try {
-      // ========================================
-      // ⚠️ 실제 API 연결 시 사용할 코드 (예시)
-      // ========================================
-      // const response = await loginAPI({ email, password, autoLogin });
-      // if (!response.success) {
-      //   setErrorMessage(response.errorMessage);
-      //   return;
-      // }
-      // router.push("/partner/dashboard");
+      // 인증 시스템을 통한 로그인 (LocalStorage 기반)
+      await login({ email, password }, 'partner');
 
-      // ========================================
-      // 🧪 테스트용 코드 (실제 연동 시 전체 삭제)
-      // ========================================
-      console.log("로그인 시도:", { email, password, autoLogin });
-
-      // 먼저 이메일로 계정 존재 여부 확인
-      const accountByEmail = findAccountByEmail(email);
-
-      // 계정이 아예 존재하지 않는 경우
-      if (!accountByEmail) {
-        setErrorMessage("입력하신 정보와 일치하는 계정을 찾을 수 없습니다.");
-        return;
-      }
-
-      // 이메일과 비밀번호로 계정 찾기 (비밀번호 확인)
-      const foundAccount = findAccountByCredentials(email, password);
-
-      // 비밀번호가 틀린 경우 (계정은 있지만 비밀번호가 맞지 않음)
-      if (!foundAccount) {
-        setErrorMessage("아이디 또는 비밀번호가 일치하지 않습니다.");
-        return;
-      }
-
-      // 이용 제한(차단) 계정인지 먼저 확인
-      if (foundAccount.isBlocked) {
-        // 이용 제한 안내 페이지로 이동
-        router.push("/blacklist_info");
-        return;
-      }
-
-      // 정지/탈퇴된 계정인 경우
-      if (foundAccount.isBanned) {
-        setErrorMessage("정지되었거나 탈퇴된 계정입니다.");
-        return;
-      }
-
-      // 성공 케이스
-      console.log("로그인 성공 (테스트 모드)");
-
-      // 테스트용: localStorage에 이메일 저장 (비밀번호 변경 페이지에서 사용)
-      if (typeof window !== "undefined") {
-        localStorage.setItem("partner_email", foundAccount.email);
-      }
-
-      // 통합 계정 데이터의 redirectUrl 사용
-      router.push(foundAccount.redirectUrl);
-      // ========================================
+      // login 함수에서 자동으로 리다이렉트하므로 여기서는 추가 처리 불필요
     } catch (error) {
-      setErrorMessage("아이디 또는 비밀번호가 일치하지 않습니다.");
+      // 에러 메시지 표시
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("로그인 중 오류가 발생했습니다.");
+      }
     }
   };
 
@@ -131,8 +80,8 @@ export default function PartnerLoginPage() {
   // ========================================
   return (
     <div className={styles.partner_login_page_container}>
-      {/* 메인 헤더 */}
-      <Header />
+      {/* 파트너 전용 헤더 */}
+      <PartnerHeader />
 
       {/* 메인 콘텐츠 영역 */}
       <main className={styles.partner_login_main}>
@@ -221,8 +170,9 @@ export default function PartnerLoginPage() {
               type="submit"
               className={styles.partner_login_button}
               aria-label="로그인"
+              disabled={isLoading}
             >
-              로그인
+              {isLoading ? '로그인 중...' : '로그인'}
             </button>
           </div>
         </form>

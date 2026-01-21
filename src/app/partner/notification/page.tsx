@@ -23,10 +23,11 @@ import styles from "@/styles/user/notification/notification.module.css";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import NotificationList from "@/components/notification/NotificationList";
 import PageTitle from "@/components/fragments/PageTitle";
+import { withPartnerAuth } from "@/components/auth/withAuth";
 // 알림 목업 데이터 (향후 API로 대체)
 import { mockPartnerNotifications } from "@/data/notification/notificationData";
 
-export default function PartnerNotificationPage() {
+function PartnerNotificationPage() {
   /**
    * 알림 목록 상태
    * 향후 API 연동 시 useState와 useEffect를 사용하여 서버에서 데이터를 가져올 수 있습니다.
@@ -72,3 +73,6 @@ export default function PartnerNotificationPage() {
     </div>
   );
 }
+
+// 파트너 전용 페이지로 보호
+export default withPartnerAuth(PartnerNotificationPage);

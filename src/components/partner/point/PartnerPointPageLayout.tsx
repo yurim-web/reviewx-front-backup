@@ -315,7 +315,12 @@ export default function PartnerPointPageLayout({
 
           {/* 포인트 내역 리스트 */}
           <article className={styles.history_list}>
-            {filtered_and_sorted_history.map((history) => (
+            {filtered_and_sorted_history.length === 0 ? (
+              <div className={styles.empty_state}>
+                포인트 내역이 없습니다.
+              </div>
+            ) : (
+              filtered_and_sorted_history.map((history) => (
               <div key={history.id} className={styles.history_item}>
                 {/* 상태 배지 */}
                 <div className={styles.status_badge_container}>
@@ -430,7 +435,8 @@ export default function PartnerPointPageLayout({
                   </div>
                 </div>
               </div>
-            ))}
+              ))
+            )}
           </article>
         </div>
       </main>

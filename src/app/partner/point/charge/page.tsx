@@ -20,12 +20,16 @@ import { parseFormattedAmount } from "@/utils/formatting/amount";
 import { validateAmount } from "@/utils/validation/amount";
 import styles from "@/styles/partner/point/charge.module.css";
 import customDropdownStyles from "@/styles/partner/campaign_create/custom_dropdown.module.css";
+import { useAuth } from "@/hooks/useAuth";
+import { getPartnerPointSummary, addPointCharge } from "@/data/partner/point/pointData";
+import { addPaymentHistory } from "@/data/manager_sa/settlement/paymentHistoryData";
 
 /**
  * 파트너 포인트 충전 페이지
  */
 export default function PartnerPointChargePage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [chargeAmount, setChargeAmount] = useState<string>("");
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [agreeTerms, setAgreeTerms] = useState<boolean>(false);
@@ -74,13 +78,32 @@ export default function PartnerPointChargePage() {
   const cardDropdownRef = useRef<HTMLDivElement>(null);
   const invoiceDropdownRef = useRef<HTMLDivElement>(null);
 
-  // 파트너 정보 (실제로는 API에서 가져와야 함)
+  // invoiceType을 결제 내역 타입으로 변환
+  const getTaxInvoiceType = (): '미발행' | '세금계산서' | '현금영수증 (소득공제)' | '현금영수증 (지출증빙)' => {
+    if (invoiceType === 'none') return '미발행';
+    if (invoiceType === 'tax_invoice') return '세금계산서';
+    if (invoiceType === 'cash_income') return '현금영수증 (소득공제)';
+    if (invoiceType === 'cash_expense') return '현금영수증 (지출증빙)';
+    return '미발행';
+  };
+
+  // 파트너 정보 - 로그인된 사용자 정보 사용
+  const [currentPoints, setCurrentPoints] = useState(0);
+
+  // 사용자 포인트 정보 로드
+  useEffect(() => {
+    if (user?.id) {
+      const summary = getPartnerPointSummary(user.id);
+      setCurrentPoints(summary.available_points);
+    }
+  }, [user]);
+
   const partnerInfo = {
-    availablePoints: "",
-    companyName: "주식회사 청명종합광고기획",
-    ownerName: "김민회",
-    businessNumber: "123-45-67890",
-    address: "경기 성남시 분당구 정자일로 95 NAVER (우) 13561",
+    availablePoints: currentPoints,
+    companyName: user?.business_name || "회사명 미등록",
+    ownerName: user?.name || "이름 미등록",
+    businessNumber: user?.business_number || "사업자번호 미등록",
+    address: "주소 미등록",
     bankAccount: "국민은행 659401-01-490957 (주)청명종합광고기획",
   };
 
@@ -141,6 +164,11 @@ export default function PartnerPointChargePage() {
    * - 현재는 시뮬레이션으로 성공/실패를 랜덤하게 처리합니다.
    */
   const handleCardPayment = () => {
+    if (!user?.id) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
     // TODO: 실제 결제 API 호출
     // 예시: const result = await paymentAPI.charge(chargePoints);
 
@@ -148,6 +176,17 @@ export default function PartnerPointChargePage() {
     const isSuccess = Math.random() > 0.3; // 70% 성공률
 
     if (isSuccess) {
+      console.log('포인트 충전 - user.id:', user.id, 'chargePoints:', chargePoints);
+      // 포인트 충전 처리
+      addPointCharge(user.id, chargePoints, '카드 결제를 통한 포인트 충전');
+
+      // 관리자 결제내역에 추가
+      addPaymentHistory(user.id, chargePoints, '카드 결제', undefined, getTaxInvoiceType());
+
+      // 현재 포인트 업데이트
+      const updatedSummary = getPartnerPointSummary(user.id);
+      setCurrentPoints(updatedSummary.available_points);
+
       // 결제 성공: 성공 모달 표시
       setCardPaymentSuccessModal({ is_open: true });
     } else {
@@ -209,28 +248,20 @@ export default function PartnerPointChargePage() {
    * 무통장 입금 신청 처리
    */
   const handleBankDepositSubmit = () => {
-    // 현재 날짜를 YYYY-MM-DD 형식으로 생성
-    const today = new Date();
-    const formattedDate = `${today.getFullYear()}-${String(
-      today.getMonth() + 1
-    ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    if (!user?.id) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
 
-    // 새로운 충전 내역 생성
-    const newHistory = {
-      id: `charge_${Date.now()}`,
-      type: "earned" as const,
-      amount: chargePoints,
-      description: "포인트 충전",
-      date: formattedDate,
-      status: "pending" as const,
-      balance: 0,
-    };
+    // 무통장 입금은 관리자 승인 후 포인트 적립 (임시로 즉시 적립)
+    addPointCharge(user.id, chargePoints, `무통장 입금 (입금자: ${depositorName})`);
 
-    // localStorage에 새 충전 내역 저장
-    localStorage.setItem(
-      "partner_new_point_history",
-      JSON.stringify(newHistory)
-    );
+    // 관리자 결제내역에 추가
+    addPaymentHistory(user.id, chargePoints, '무통장 입금', depositorName, getTaxInvoiceType());
+
+    // 현재 포인트 업데이트
+    const updatedSummary = getPartnerPointSummary(user.id);
+    setCurrentPoints(updatedSummary.available_points);
 
     // 무통장 입금 신청 모달 표시
     setBankDepositModal({ is_open: true });

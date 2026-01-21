@@ -158,18 +158,16 @@ export const partner_status_filter_options: PartnerStatus[] = [
  * 파트너 상태 유형 타입 정의
  */
 export type PartnerStatusType =
-  | "모범 회원"
+  | "일반 회원"
   | "주의 회원"
-  | "경고 회원"
   | "이용 제한 회원";
 
 /**
  * 파트너 상태 유형 필터 옵션 배열
  */
 export const partner_status_type_filter_options: PartnerStatusType[] = [
-  "모범 회원",
+  "일반 회원",
   "주의 회원",
-  "경고 회원",
   "이용 제한 회원",
 ];
 
