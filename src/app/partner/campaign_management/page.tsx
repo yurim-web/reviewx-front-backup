@@ -28,6 +28,7 @@
 import { useState, useEffect } from "react";
 import PartnerCampaignManagementHeader from "@/components/partner/campaign_management/PartnerCampaignManagementHeader";
 import CampaignList from "@/components/partner/campaign_management/CampaignList";
+import { withPartnerAuth } from "@/components/auth/withAuth";
 import CampaignFilterBar from "@/components/common/campaign_management/CampaignFilterBar";
 import BaseModal from "@/components/common/modal/BaseModal";
 import type { PartnerMainTab } from "@/types/domain/partner";
@@ -44,7 +45,7 @@ import {
 /**
  * 파트너 캠페인 관리 메인 페이지 컴포넌트
  */
-export default function PartnerCampaignManagementPage() {
+function PartnerCampaignManagementPage() {
   // 상단 메인 탭 상태 (캠페인 / 포인트)
   const [activeTab, setActiveTab] = useState<PartnerMainTab>("campaign");
 
@@ -188,3 +189,6 @@ export default function PartnerCampaignManagementPage() {
     </>
   );
 }
+
+// 파트너 전용 페이지로 보호
+export default withPartnerAuth(PartnerCampaignManagementPage);

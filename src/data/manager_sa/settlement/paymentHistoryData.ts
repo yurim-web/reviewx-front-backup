@@ -115,7 +115,7 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     depositorName: '(주)청명종합광고기',
     businessType: '법인',
     paymentMethod: '카드 결제',
-    taxInvoiceType: '세금계산서',
+    taxInvoiceType: '',
     chargedPoints: '10,000',
     heldPoints: '0',
     paymentStatus: '완료',
@@ -346,3 +346,95 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
   },
 ];
 
+/**
+ * 결제 내역 가져오기 (LocalStorage 통합)
+ */
+export function getPaymentHistoryList(): PaymentHistoryItem[] {
+  if (typeof window === 'undefined') {
+    return paymentHistoryList;
+  }
+
+  try {
+    // LocalStorage에서 파트너 포인트 충전 내역 가져오기
+    const storedPayments = localStorage.getItem('partner_payment_history');
+    const localPayments = storedPayments ? JSON.parse(storedPayments) : [];
+
+    // LocalStorage 데이터와 Mock 데이터 통합
+    return [...localPayments, ...paymentHistoryList];
+  } catch (error) {
+    console.error('결제 내역 로드 중 오류:', error);
+    return paymentHistoryList;
+  }
+}
+
+/**
+ * 포인트 충전 시 결제 내역 추가
+ */
+export function addPaymentHistory(
+  userId: string,
+  amount: number,
+  paymentMethod: '카드 결제' | '무통장 입금',
+  depositorName?: string,
+  taxInvoiceType?: '미발행' | '세금계산서' | '현금영수증 (소득공제)' | '현금영수증 (지출증빙)'
+): void {
+  if (typeof window === 'undefined') return;
+
+  try {
+    // 사용자 정보 가져오기
+    const authUser = localStorage.getItem('reviewx_auth_user');
+    const user = authUser ? JSON.parse(authUser) : null;
+
+    if (!user) return;
+
+    // 현재 날짜/시간
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const dateTime = `${year}-${month}-${day} ${hours}:${minutes}`;
+
+    // 기존 결제 내역 가져오기
+    const storedPayments = localStorage.getItem('partner_payment_history');
+    const payments = storedPayments ? JSON.parse(storedPayments) : [];
+
+    // 충전 후 보유 포인트 가져오기 (이미 addPointCharge로 업데이트된 상태)
+    const pointsKey = `partner_points_${userId}`;
+    const storedPoints = localStorage.getItem(pointsKey);
+    const currentPoints = storedPoints ? JSON.parse(storedPoints) : { available_points: 0 };
+    const heldPointsAfterCharge = currentPoints.available_points;
+
+    // 새 결제 내역 생성
+    const newPayment: PaymentHistoryItem = {
+      id: `payment_${Date.now()}`,
+      number: String(payments.length + 1).padStart(6, '0'),
+      companyName: user.business_name || '상호명 없음',
+      businessInfo: {
+        registrationNumber: user.business_number || '000-00-00000',
+        representativeName: user.name || '대표자명 없음',
+      },
+      depositorName: depositorName || user.business_name || user.name || '입금자명 없음',
+      businessType: '법인',
+      paymentMethod,
+      taxInvoiceType: taxInvoiceType || '미발행',
+      chargedPoints: amount.toLocaleString(),
+      heldPoints: heldPointsAfterCharge.toLocaleString(),
+      paymentStatus: paymentMethod === '카드 결제' ? '완료' : '대기',
+      requestDate: dateTime,
+      approvalDate: paymentMethod === '카드 결제' ? dateTime : '-',
+      memberType: '일반 회원',
+      accountStatus: '정상',
+    };
+
+    // 목록에 추가
+    payments.unshift(newPayment); // 최신 내역을 맨 앞에 추가
+
+    // LocalStorage에 저장
+    localStorage.setItem('partner_payment_history', JSON.stringify(payments));
+
+    console.log('결제 내역 추가 완료:', newPayment);
+  } catch (error) {
+    console.error('결제 내역 추가 중 오류:', error);
+  }
+}

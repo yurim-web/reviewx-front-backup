@@ -39,8 +39,14 @@ export type SNSType = "kakao" | "naver";
  * 통합 계정 데이터 인터페이스
  */
 export interface UnifiedAccount {
+  /** 계정 ID */
+  id: string;
   /** 계정 타입 */
   userType: AccountType;
+  /** 사용자 역할 (인증 시스템용) */
+  role: 'user' | 'partner' | 'manager_ga' | 'manager_sa';
+  /** 이름 */
+  name: string;
   /** 이메일 (관리자/파트너 로그인용) */
   email: string;
   /** 비밀번호 (관리자/파트너만 사용) */
@@ -57,6 +63,23 @@ export interface UnifiedAccount {
   snsType?: SNSType;
   /** 로그인 성공 후 리다이렉트 URL */
   redirectUrl: string;
+
+  // 리뷰어 전용 필드
+  grade?: 'bronze' | 'silver' | 'gold' | 'platinum' | 'diamond';
+  channels?: Array<{
+    platform: string;
+    url: string;
+    followers: number;
+  }>;
+
+  // 파트너 전용 필드
+  business_name?: string;
+  business_number?: string;
+  approval_status?: 'pending' | 'approved' | 'rejected';
+
+  // 관리자 전용 필드
+  admin_level?: 'GA' | 'SA';
+  permissions?: string[];
 }
 
 /**
@@ -69,7 +92,7 @@ export interface UnifiedAccount {
  * - 유저 (카카오): 전화번호 010-1111-1111 → SNS 로그인만 가능
  * - 유저 (네이버): 전화번호 010-0000-0000 → SNS 로그인만 가능
  */
-export const UNIFIED_ACCOUNTS: UnifiedAccount[] = [
+const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
   // =========================================================
   // 관리자 SA 계정
   // =========================================================
@@ -147,10 +170,16 @@ export const UNIFIED_ACCOUNTS: UnifiedAccount[] = [
   // 파트너 계정
   // =========================================================
   {
+    id: "partner_test_001",
     userType: "partner",
+    role: "partner",
     email: "test@test.com",
     password: "cjdaud1!",
+    name: "테스트파트너",
     phone: "010-5555-5555",
+    business_name: "테스트 주식회사",
+    business_number: "123-45-67890",
+    approval_status: "approved",
     signupDate: "2024. 03. 01",
     isBlocked: false,
     isBanned: false,
@@ -224,25 +253,31 @@ export const UNIFIED_ACCOUNTS: UnifiedAccount[] = [
   // =========================================================
   // 유저 - 카카오 로그인 (SNS 로그인 유도 모달 표시용)
   {
+    id: "user_kakao_001",
     userType: "user",
+    role: "user",
+    name: "카카오유저",
     email: "", // 유저는 이메일/비밀번호 로그인 불가
     phone: "010-1111-1111", // EXISTING_KAKAO
     signupDate: "2024. 04. 01",
     isBlocked: false,
     isBanned: false,
     snsType: "kakao",
-    redirectUrl: "/user/campaign_management", // 유저 메인 페이지
+    redirectUrl: "/user/campaign_management", // 유저 캠페인 관리 페이지
   },
   // 유저 - 네이버 로그인 (SNS 로그인 유도 모달 표시용)
   {
+    id: "user_naver_001",
     userType: "user",
+    role: "user",
+    name: "네이버유저",
     email: "gdhong@naver.com", // 아이디 찾기 결과 모달에 표시될 이메일 (SNS 모달이므로 실제로는 표시 안 됨)
     phone: "010-0000-0000", // EXISTING_NAVER
     signupDate: "2025. 06. 01",
     isBlocked: false,
     isBanned: false,
     snsType: "naver",
-    redirectUrl: "/user/campaign_management", // 유저 메인 페이지
+    redirectUrl: "/user/campaign_management", // 유저 캠페인 관리 페이지
   },
   // 유저 - 일반 계정 (아이디 찾기 결과 모달 표시용)
   {
@@ -333,7 +368,7 @@ export const UNIFIED_ACCOUNTS: UnifiedAccount[] = [
  */
 export function findAccountByPhone(phone: string): UnifiedAccount | undefined {
   const normalizedPhone = phone.replace(/-/g, "");
-  return UNIFIED_ACCOUNTS.find(
+  return UNIFIED_ACCOUNTS_DATA.find(
     (account) => account.phone.replace(/-/g, "") === normalizedPhone
   );
 }
@@ -342,7 +377,7 @@ export function findAccountByPhone(phone: string): UnifiedAccount | undefined {
  * 이메일로 계정 찾기 (관리자/파트너 로그인용)
  */
 export function findAccountByEmail(email: string): UnifiedAccount | undefined {
-  return UNIFIED_ACCOUNTS.find((account) => account.email === email);
+  return UNIFIED_ACCOUNTS_DATA.find((account) => account.email === email);
 }
 
 /**
@@ -352,7 +387,7 @@ export function findAccountByCredentials(
   email: string,
   password: string
 ): UnifiedAccount | undefined {
-  return UNIFIED_ACCOUNTS.find(
+  return UNIFIED_ACCOUNTS_DATA.find(
     (account) => account.email === email && account.password === password
   );
 }
@@ -361,19 +396,25 @@ export function findAccountByCredentials(
  * 계정 타입별로 필터링
  */
 export function getAccountsByType(userType: AccountType): UnifiedAccount[] {
-  return UNIFIED_ACCOUNTS.filter((account) => account.userType === userType);
+  return UNIFIED_ACCOUNTS_DATA.filter((account) => account.userType === userType);
 }
 
 /**
  * 이용 제한(차단) 계정만 필터링
  */
 export function getBlockedAccounts(): UnifiedAccount[] {
-  return UNIFIED_ACCOUNTS.filter((account) => account.isBlocked);
+  return UNIFIED_ACCOUNTS_DATA.filter((account) => account.isBlocked);
 }
 
 /**
  * 정지/탈퇴 계정만 필터링
  */
 export function getBannedAccounts(): UnifiedAccount[] {
-  return UNIFIED_ACCOUNTS.filter((account) => account.isBanned);
+  return UNIFIED_ACCOUNTS_DATA.filter((account) => account.isBanned);
 }
+
+/**
+ * 통합 계정 데이터 export (인증 시스템에서 사용)
+ */
+export const UNIFIED_ACCOUNTS = UNIFIED_ACCOUNTS_DATA;
+export const unifiedAccountData = UNIFIED_ACCOUNTS_DATA;

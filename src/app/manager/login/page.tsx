@@ -25,11 +25,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/fragments/Header";
 import styles from "@/styles/login/login.module.css";
-// 🧪 테스트용 - 실제 API 연결 시 이 import 삭제
-import {
-  findAccountByCredentials,
-  findAccountByEmail,
-} from "@/data/login/unifiedAccountData";
+import { useAuth } from "@/hooks/useAuth";
+import { unifiedAccountData } from "@/data/login/unifiedAccountData";
 
 /**
  * 관리자 로그인 페이지 컴포넌트
@@ -39,6 +36,7 @@ import {
 export default function AdminLoginPage() {
   // Next.js의 useRouter 훅: 페이지 이동을 위한 라우터 객체
   const router = useRouter();
+  const { login, isLoading } = useAuth();
 
   // ========================================
   // 상태 관리 (State Management)
@@ -113,65 +111,33 @@ export default function AdminLoginPage() {
     setErrorMessage("");
 
     try {
-      // ========================================
-      // ⚠️ 실제 API 연결 시 사용할 코드 (아래 주석 해제)
-      // ========================================
-      // const response = await loginAPI({ username, password, autoLogin });
-      // if (!response.success) {
-      //   setErrorMessage(response.errorMessage);
-      //   return;
-      // }
-      // // 로그인 성공 시 처리
-      // router.push('/user/campaign_management');
-      // ========================================
+      // 관리자 계정인지 먼저 확인 (GA 또는 SA)
+      const account = unifiedAccountData.find(
+        (acc) => acc.email === username && acc.password === password
+      );
 
-      // ========================================
-      // 🧪 테스트용 코드 - 실제 API 연결 시 전체 삭제 필요
-      // ========================================
-      console.log("로그인 시도:", { username, password, autoLogin });
-
-      // 먼저 이메일로 계정 존재 여부 확인
-      const accountByEmail = findAccountByEmail(username);
-
-      // 계정이 아예 존재하지 않는 경우
-      if (!accountByEmail) {
-        setErrorMessage("입력하신 정보와 일치하는 계정을 찾을 수 없습니다.");
-        return;
-      }
-
-      // 이메일과 비밀번호로 계정 찾기 (비밀번호 확인)
-      const foundAccount = findAccountByCredentials(username, password);
-
-      // 비밀번호가 틀린 경우 (계정은 있지만 비밀번호가 맞지 않음)
-      if (!foundAccount) {
+      if (!account) {
         setErrorMessage("아이디 또는 비밀번호가 일치하지 않습니다.");
         return;
       }
 
-      // 이용 제한(차단) 계정인지 먼저 확인
-      if (foundAccount.isBlocked) {
-        // 이용 제한 안내 페이지로 이동
-        router.push("/blacklist_info");
+      // 관리자 계정인지 확인
+      if (account.role !== 'manager_ga' && account.role !== 'manager_sa') {
+        setErrorMessage("관리자 계정만 로그인할 수 있습니다.");
         return;
       }
 
-      // 정지/탈퇴된 계정인 경우
-      if (foundAccount.isBanned) {
-        setErrorMessage("정지되었거나 탈퇴된 계정입니다.");
-        return;
-      }
+      // 인증 시스템을 통한 로그인
+      await login({ email: username, password }, account.role);
 
-      // 성공 케이스 (테스트 데이터에 있는 경우)
-      console.log("로그인 성공 (테스트 모드)");
-
-      // 통합 계정 데이터의 redirectUrl 사용
-      router.push(foundAccount.redirectUrl);
-      // ========================================
-      // 🧪 테스트용 코드 끝 - 실제 API 연결 시 위 전체 블록 삭제
-      // ========================================
+      // login 함수에서 자동으로 리다이렉트하므로 여기서는 추가 처리 불필요
     } catch (error) {
-      // API 호출 실패 시 기본 에러 메시지
-      setErrorMessage("아이디 또는 비밀번호가 일치하지 않습니다.");
+      // 에러 메시지 표시
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("로그인 중 오류가 발생했습니다.");
+      }
     }
   };
 
@@ -265,8 +231,9 @@ export default function AdminLoginPage() {
               type="submit"
               className={styles.partner_login_button}
               aria-label="로그인"
+              disabled={isLoading}
             >
-              로그인
+              {isLoading ? '로그인 중...' : '로그인'}
             </button>
           </div>
         </form>

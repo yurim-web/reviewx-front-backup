@@ -22,11 +22,14 @@
 
 "use client";
 
+import { useEffect, useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { withPartnerAuth } from "@/components/auth/withAuth";
 import PartnerPointPageLayout from "@/components/partner/point/PartnerPointPageLayout";
-import { PartnerPointHistory } from "@/types/domain/partner";
+import { PartnerPointHistory, PartnerPointSummary } from "@/types/domain/partner";
 import {
-  partnerPointHistoryData,
-  partnerPointSummary,
+  getPartnerPointHistory,
+  getPartnerPointSummary,
 } from "@/data/partner/point/pointData";
 
 /**
@@ -37,7 +40,24 @@ import {
  * - 사용(withdrawn): 리뷰어 포인트 지급 등
  * - 반환(returned): 리뷰어 포인트 반환, 캠페인 포인트 반환
  */
-export default function PartnerWithdrawnPointPage() {
+function PartnerWithdrawnPointPage() {
+  const { user } = useAuth();
+  const [historyData, setHistoryData] = useState<PartnerPointHistory[]>([]);
+  const [summary, setSummary] = useState<PartnerPointSummary>({
+    total_points: 0,
+    available_points: 0,
+    pending_points: 0,
+  });
+
+  useEffect(() => {
+    if (user?.id) {
+      const userHistory = getPartnerPointHistory(user.id);
+      const userSummary = getPartnerPointSummary(user.id);
+      setHistoryData(userHistory);
+      setSummary(userSummary);
+    }
+  }, [user]);
+
   // 사용 내역과 반환 내역을 필터링하는 함수
   // 📌 필터 함수:
   // - type이 "withdrawn" 또는 "returned"인 내역만 반환
@@ -47,9 +67,11 @@ export default function PartnerWithdrawnPointPage() {
   return (
     <PartnerPointPageLayout
       activePointTab="withdrawn"
-      historyData={partnerPointHistoryData}
-      summary={partnerPointSummary}
+      historyData={historyData}
+      summary={summary}
       filterHistory={filterWithdrawnHistory}
     />
   );
 }
+
+export default withPartnerAuth(PartnerWithdrawnPointPage);

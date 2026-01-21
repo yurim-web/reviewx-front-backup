@@ -22,18 +22,38 @@
 
 "use client";
 
+import { useEffect, useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { withPartnerAuth } from "@/components/auth/withAuth";
 import PartnerPointPageLayout from "@/components/partner/point/PartnerPointPageLayout";
-import { PartnerPointHistory } from "@/types/domain/partner";
+import { PartnerPointHistory, PartnerPointSummary } from "@/types/domain/partner";
 import {
-  partnerPointHistoryData,
-  partnerPointSummary,
+  getPartnerPointHistory,
+  getPartnerPointSummary,
 } from "@/data/partner/point/pointData";
 
 /**
  * 파트너 포인트 충전 내역 페이지 컴포넌트
  *
  */
-export default function PartnerEarnedPointPage() {
+function PartnerEarnedPointPage() {
+  const { user } = useAuth();
+  const [historyData, setHistoryData] = useState<PartnerPointHistory[]>([]);
+  const [summary, setSummary] = useState<PartnerPointSummary>({
+    total_points: 0,
+    available_points: 0,
+    pending_points: 0,
+  });
+
+  useEffect(() => {
+    if (user?.id) {
+      const userHistory = getPartnerPointHistory(user.id);
+      const userSummary = getPartnerPointSummary(user.id);
+      setHistoryData(userHistory);
+      setSummary(userSummary);
+    }
+  }, [user]);
+
   // 충전 내역만 필터링하는 함수
   // 📌 필터 함수:
   // - type이 "earned"인 내역만 반환
@@ -43,9 +63,11 @@ export default function PartnerEarnedPointPage() {
   return (
     <PartnerPointPageLayout
       activePointTab="earned"
-      historyData={partnerPointHistoryData}
-      summary={partnerPointSummary}
+      historyData={historyData}
+      summary={summary}
       filterHistory={filterEarnedHistory}
     />
   );
 }
+
+export default withPartnerAuth(PartnerEarnedPointPage);

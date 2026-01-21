@@ -22,6 +22,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 import SubTabNavigation from "@/components/common/mypage/SubTabNavigation";
 import ProfileContent from "@/components/common/mypage/ProfileContent";
@@ -34,6 +35,9 @@ import layoutStyles from "../../../../styles/user/mypage/layout.module.css";
 export default function ProfilePage() {
   // Next.js의 useRouter 훅: 페이지 이동을 위한 라우터 객체
   const router = useRouter();
+
+  // useAuth 훅: 인증 관련 기능 (로그아웃 등)
+  const { logout } = useAuth();
 
   // useState 훅: 컴포넌트의 상태(state)를 관리합니다.
   // activeTopTab: 현재 활성화된 상단 탭 (캠페인/포인트/계정/커뮤니티)
@@ -66,14 +70,13 @@ export default function ProfilePage() {
    * 로그아웃 핸들러
    *
    * 로그아웃 버튼 클릭 시 실행되는 함수입니다.
-   * TODO: 실제 로그아웃 로직 구현 필요 (세션 삭제, 쿠키 삭제 등)
+   * 확인 창을 띄운 후 localStorage에서 사용자 정보를 삭제하고 로그인 페이지로 이동합니다.
    */
   const handleLogout = () => {
-    // TODO: 실제 로그아웃 API 호출
-    // 예: await logoutAPI();
-    // 예: localStorage.removeItem('token');
-    // 예: router.push('/user/login');
-    console.log("로그아웃 처리");
+    if (confirm('로그아웃 하시겠습니까?')) {
+      logout();
+      router.push('/user/login');
+    }
   };
 
   return (

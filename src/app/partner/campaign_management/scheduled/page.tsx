@@ -20,7 +20,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import PartnerCampaignManagementHeader from "@/components/partner/campaign_management/PartnerCampaignManagementHeader";
 import CampaignList from "@/components/partner/campaign_management/CampaignList";
 import CampaignFilterBar from "@/components/common/campaign_management/CampaignFilterBar";
@@ -28,6 +28,8 @@ import type { PartnerMainTab } from "@/types/domain/partner";
 import type { PartnerStatTab } from "@/types/domain/partner";
 import type { PartnerCampaign } from "@/types/domain/partner";
 import layoutStyles from "../../../../styles/partner/layout.module.css";
+import { withPartnerAuth } from "@/components/auth/withAuth";
+import { useAuth } from "@/hooks/useAuth";
 
 // 공용 데이터 import
 import { getCampaignsByTab } from "@/data/partner/sharedCampaigns";
@@ -35,7 +37,9 @@ import { getCampaignsByTab } from "@/data/partner/sharedCampaigns";
 /**
  * 예정 탭 페이지 컴포넌트
  */
-export default function ScheduledPage() {
+function ScheduledPage() {
+  const { user } = useAuth();
+
   // 상단 메인 탭 상태 (캠페인 / 포인트)
   const [activeTab, setActiveTab] = useState<PartnerMainTab>("campaign");
 
@@ -47,8 +51,30 @@ export default function ScheduledPage() {
     []
   );
 
-  // 탭별 캠페인 목록 가져오기
-  const campaigns = getCampaignsByTab(activeStatTab);
+  // 탭별 캠페인 목록 가져오기 (로그인한 파트너의 캠페인만)
+  const allCampaigns = getCampaignsByTab(activeStatTab);
+
+  // 로그인한 파트너의 캠페인만 필터링
+  const campaigns = useMemo(() => {
+    if (!user) return [];
+
+    // LocalStorage에서 저장된 캠페인 가져오기
+    const storedCampaigns = localStorage.getItem('my_campaigns');
+    if (storedCampaigns) {
+      try {
+        const parsedCampaigns = JSON.parse(storedCampaigns);
+        // 현재 로그인한 파트너의 캠페인만 필터링 (예정 상태만)
+        return parsedCampaigns.filter((c: any) =>
+          c.partner_id === user.id && c.status === '예정'
+        );
+      } catch (e) {
+        console.error('Failed to parse campaigns:', e);
+      }
+    }
+
+    // LocalStorage에 캠페인이 없으면 빈 배열 반환 (Mock 데이터 사용 안 함)
+    return [];
+  }, [user, activeStatTab]);
 
   /**
    * 필터링된 캠페인 목록 변경 핸들러
@@ -99,3 +125,6 @@ export default function ScheduledPage() {
     </div>
   );
 }
+
+// 파트너 전용 페이지로 보호
+export default withPartnerAuth(ScheduledPage);

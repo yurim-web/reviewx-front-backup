@@ -30,9 +30,11 @@ import { addDeliveryCampaign } from "@/data/campaign/delivery/deliveryCampaigns"
 import layoutStyles from "@/styles/partner/layout.module.css";
 import PageHeader from "@/components/partner/campaign_create_form/common/layout/PageHeader";
 import BaseModal from "@/components/common/modal/BaseModal";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function DeliveryCampaignCreatePage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUrgent, setIsUrgent] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
@@ -127,6 +129,8 @@ export default function DeliveryCampaignCreatePage() {
 
       const extendedCampaign = {
         ...newCampaign,
+        // 파트너 ID 추가 (로그인된 사용자)
+        partner_id: user?.id || 'partner_test_001',
         // 긴급 캠페인 여부 (폼 제출 시 저장한 값 사용)
         isUrgent: pendingIsUrgent === true,
         // 등록 시간 (현재 시간)

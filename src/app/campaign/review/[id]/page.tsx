@@ -334,32 +334,6 @@ export default function ReviewDetailPage({ params }: ReviewDetailPageProps) {
       return;
     }
 
-    // 2. localStorage에 없으면 정적 데이터에서 찾기
-    const staticCampaign = reviewCampaigns.find((c) => {
-      const campaignId = String(c.id);
-      // 정확히 일치하는 경우
-      if (campaignId === id) return true;
-      // ID 형식 변환 시도
-      if (id.startsWith("review_")) {
-        if (campaignId === id) return true;
-        const idWithoutPrefix = id.replace(/^review_/, "");
-        if (campaignId === idWithoutPrefix) return true;
-      }
-      if (!id.startsWith("review_") && !campaignId.startsWith("review_")) {
-        return campaignId === id;
-      }
-      if (campaignId.startsWith("review_") && !id.startsWith("review_")) {
-        const campaignIdWithoutPrefix = campaignId.replace(/^review_/, "");
-        return campaignIdWithoutPrefix === id;
-      }
-      return false;
-    });
-    if (staticCampaign) {
-      setCampaign(staticCampaign);
-      setIsLoading(false);
-      return;
-    }
-
     // 3. 찾지 못한 경우
     setCampaign(null);
     setIsLoading(false);

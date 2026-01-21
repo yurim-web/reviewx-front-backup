@@ -26,6 +26,9 @@ import type {
 // 공통 필터 옵션에서 import (manager_ga와 manager_sa 공통)
 import type { Channel } from "@/data/manager/common/filterOptions";
 
+// 파트너 포인트 데이터 가져오기
+import { getPartnerPointSummary } from "@/data/partner/point/pointData";
+
 // 타입 재export (기존 코드와의 호환성을 위해)
 export type { PartnerDivision, PartnerStatus, PartnerStatusType, Channel };
 
@@ -49,7 +52,7 @@ export interface PartnerItem {
   campaign_completed: number; // 캠페인 완료 횟수
   current_points: number; // 보유 포인트
   used_points: number; // 사용 포인트
-  status_type: PartnerStatusType; // 상태 유형 (모범 회원, 주의 회원, 경고 회원, 이용 제한 회원)
+  status_type: PartnerStatusType; // 상태 유형 (일반 회원, 주의 회원, 이용 제한 회원)
   status: PartnerStatus; // 상태
   last_access_date: string; // 접속일 (예: 2025-08-01 18:56)
   join_date: string; // 가입일 (예: 2025-08-01 18:56)
@@ -164,7 +167,7 @@ export const partner_list: PartnerItem[] = [
     campaign_completed: 5,
     current_points: 1200,
     used_points: 1580000,
-    status_type: "경고 회원",
+    status_type: "주의 회원",
     status: "정상",
     last_access_date: "2025-01-12 18:30",
     join_date: "2024-12-20 15:45",
@@ -196,7 +199,7 @@ export const partner_list: PartnerItem[] = [
     campaign_completed: 23,
     current_points: 5400,
     used_points: 1500000,
-    status_type: "모범 회원",
+    status_type: "일반 회원",
     status: "정상",
     last_access_date: "2025-01-13 10:15",
     join_date: "2024-12-28 16:20",
@@ -212,7 +215,7 @@ export const partner_list: PartnerItem[] = [
     campaign_completed: 16,
     current_points: 251450,
     used_points: 589000,
-    status_type: "모범 회원",
+    status_type: "일반 회원",
     status: "정상",
     last_access_date: "2025-01-11 14:50",
     join_date: "2024-11-15 10:30",
@@ -228,7 +231,7 @@ export const partner_list: PartnerItem[] = [
     campaign_completed: 30,
     current_points: 0,
     used_points: 0,
-    status_type: "모범 회원",
+    status_type: "주의 회원",
     status: "정상",
     last_access_date: "2025-01-09 11:25",
     join_date: "2024-10-05 13:40",
@@ -244,7 +247,7 @@ export const partner_list: PartnerItem[] = [
     campaign_completed: 14,
     current_points: 0,
     used_points: 0,
-    status_type: "모범 회원",
+    status_type: "일반 회원",
     status: "정상",
     last_access_date: "2025-01-07 15:10",
     join_date: "2024-09-20 09:15",
@@ -260,7 +263,7 @@ export const partner_list: PartnerItem[] = [
     campaign_completed: 40,
     current_points: 0,
     used_points: 0,
-    status_type: "모범 회원",
+    status_type: "주의 회원",
     status: "정상",
     last_access_date: "2024-10-20 12:30",
     join_date: "2024-01-10 14:20",
@@ -276,7 +279,7 @@ export const partner_list: PartnerItem[] = [
     campaign_completed: 26,
     current_points: 0,
     used_points: 0,
-    status_type: "모범 회원",
+    status_type: "일반 회원",
     status: "정상",
     last_access_date: "2024-09-25 10:45",
     join_date: "2024-03-15 11:30",
@@ -292,7 +295,7 @@ export const partner_list: PartnerItem[] = [
     campaign_completed: 33,
     current_points: 0,
     used_points: 0,
-    status_type: "모범 회원",
+    status_type: "주의 회원",
     status: "정상",
     last_access_date: "2024-08-15 13:20",
     join_date: "2024-02-20 16:10",
@@ -308,7 +311,7 @@ export const partner_list: PartnerItem[] = [
     campaign_completed: 20,
     current_points: 0,
     used_points: 0,
-    status_type: "모범 회원",
+    status_type: "일반 회원",
     status: "정상",
     last_access_date: "2024-07-10 09:30",
     join_date: "2024-01-12 10:45",
@@ -324,7 +327,7 @@ export const partner_list: PartnerItem[] = [
     campaign_completed: 17,
     current_points: 0,
     used_points: 0,
-    status_type: "모범 회원",
+    status_type: "주의 회원",
     status: "정상",
     last_access_date: "2025-01-12 17:40",
     join_date: "2024-12-15 12:00",
@@ -340,7 +343,7 @@ export const partner_list: PartnerItem[] = [
     campaign_completed: 0,
     current_points: 0,
     used_points: 0,
-    status_type: "모범 회원",
+    status_type: "일반 회원",
     status: "정상",
     last_access_date: "2025-01-13 08:20",
     join_date: "2025-01-05 14:15",
@@ -372,7 +375,7 @@ export const partner_list: PartnerItem[] = [
     campaign_completed: 6,
     current_points: 0,
     used_points: 1800000,
-    status_type: "이용 제한 회원",
+    status_type: "주의 회원",
     status: "탈퇴",
     last_access_date: "2024-11-15 16:20",
     join_date: "2023-08-20 11:30",
@@ -384,8 +387,11 @@ export const partner_list: PartnerItem[] = [
 export function get_partner_detail_by_id(
   partner_id: string
 ): PartnerDetail | null {
-  // 목록에서 해당 파트너 찾기
-  const partner = partner_list.find((p) => p.id === partner_id);
+  // 목록에서 해당 파트너 찾기 (get_partner_list 사용하여 LocalStorage 데이터도 포함)
+  const allPartners = get_partner_list();
+  console.log('전체 파트너 목록:', allPartners);
+  const partner = allPartners.find((p) => p.id === partner_id);
+  console.log(`파트너 ${partner_id} 찾기 결과:`, partner);
   if (!partner) {
     return null;
   }
@@ -410,6 +416,7 @@ export function get_partner_detail_by_id(
     "15": 0, // 데이터 없음 테스트용
     "16": 0, // 탈퇴 회원 테스트용
     "17": 0, // 탈퇴 회원 테스트용
+    "partner_test_001": 0, // 테스트 계정
   };
   const penalty_count = penalty_count_map[partner.id] || 0;
 
@@ -566,6 +573,13 @@ export function get_partner_detail_by_id(
       contact_name: "이탈퇴",
       contact_phone: "010-2222-2222",
     },
+    "partner_test_001": {
+      email: "test@test.com",
+      phone: "010-5555-5555",
+      address: "서울시 강남구 테헤란로 123",
+      contact_name: "테스트파트너",
+      contact_phone: "010-5555-5555",
+    },
   };
 
   // 파트너 ID에 해당하는 연락처 정보 가져오기 (없으면 기본값 사용)
@@ -577,12 +591,51 @@ export function get_partner_detail_by_id(
     contact_phone: "010-1234-5678",
   };
 
-  // 캠페인 진행 내역 생성: campaign_in_progress에 맞춰서 생성
+  // 캠페인 진행 내역 생성: LocalStorage에서 실제 데이터 가져오기
   // 각 파트너마다 다른 캠페인 데이터를 가지도록 다양하게 설정
-  const recent_campaigns: RecentCampaign[] = [];
+  let recent_campaigns: RecentCampaign[] = [];
+  let actualCampaignCount = partner.campaign_in_progress;
 
+  // LocalStorage에서 파트너의 실제 캠페인 가져오기
+  if (typeof window !== 'undefined') {
+    try {
+      const deliveryCampaigns = localStorage.getItem('deliveryCampaigns');
+      const missionCampaigns = localStorage.getItem('missionCampaigns');
+      const reviewCampaigns = localStorage.getItem('reviewCampaigns');
+      const visitCampaigns = localStorage.getItem('visitCampaigns');
+      const reporterCampaigns = localStorage.getItem('reporterCampaigns');
+
+      const allCampaigns = [
+        ...(deliveryCampaigns ? JSON.parse(deliveryCampaigns) : []),
+        ...(missionCampaigns ? JSON.parse(missionCampaigns) : []),
+        ...(reviewCampaigns ? JSON.parse(reviewCampaigns) : []),
+        ...(visitCampaigns ? JSON.parse(visitCampaigns) : []),
+        ...(reporterCampaigns ? JSON.parse(reporterCampaigns) : []),
+      ];
+
+      // 해당 파트너의 캠페인만 필터링
+      const partnerCampaigns = allCampaigns.filter((c: any) => c.partner_id === partner.id);
+
+      // 캠페인 데이터를 RecentCampaign 형식으로 변환
+      recent_campaigns = partnerCampaigns.slice(0, 100).map((c: any, index: number) => ({
+        campaign_number: c.id || String(index + 1).padStart(6, '0'),
+        campaign_name: c.name || c.title || '캠페인명 없음',
+        status: c.status === '예정' || c.status === '진행중' ? '진행' : '종료',
+        type: c.type === 'delivery' ? '배송형' : c.type === 'mission' ? '미션형' : c.type === 'review' ? '구매평' : c.type === 'visit' ? '방문형' : '기자단',
+        channel: c.platform || 'Blog',
+        points: c.points || c.totalPoints || 0,
+      }));
+
+      // 실제 캠페인 개수 업데이트
+      actualCampaignCount = partnerCampaigns.length;
+    } catch (error) {
+      console.error('캠페인 데이터 로드 중 오류:', error);
+    }
+  }
+
+  // LocalStorage에 캠페인이 없으면 Mock 데이터 사용
   // 데이터 없음 테스트용: ID가 '15'인 경우 빈 배열로 유지
-  if (partner.id !== "15") {
+  if (recent_campaigns.length === 0 && partner.id !== "15") {
     const campaign_count = partner.campaign_in_progress;
 
     // 캠페인 데이터 템플릿 (파트너마다 다른 데이터를 생성하기 위한 배열)
@@ -658,6 +711,18 @@ export function get_partner_detail_by_id(
     }
   }
 
+  // 파트너 포인트 가져오기 (브라우저 환경에서만)
+  let partnerPoints = 0;
+  if (typeof window !== 'undefined') {
+    try {
+      const points = getPartnerPointSummary(partner.id);
+      partnerPoints = points.available_points;
+      console.log(`파트너 ${partner.id} 상세 페이지 포인트:`, points);
+    } catch (error) {
+      console.error('파트너 포인트 로드 중 오류:', error);
+    }
+  }
+
   // 디테일 정보 생성 (목업 데이터)
   // 실제 프로젝트에서는 API에서 받아온 데이터를 사용합니다
   const detail: PartnerDetail = {
@@ -668,10 +733,13 @@ export function get_partner_detail_by_id(
     contact_name: contact_info.contact_name,
     contact_phone: contact_info.contact_phone,
     penalty_count: penalty_count,
-    payment_points: 12580000,
+    payment_points: partnerPoints,
     penalty_history: penalty_history,
     recent_campaigns: recent_campaigns,
   };
+
+  console.log('생성된 파트너 상세 정보:', detail);
+  console.log('current_points:', detail.current_points, 'payment_points:', detail.payment_points);
 
   return detail;
 }
@@ -753,9 +821,10 @@ function save_previous_status_to_storage(
 const status_type_updates = load_status_updates_from_storage();
 const previous_status_types = load_previous_status_from_storage();
 
-// 파트너 목록 가져오기 (상태 업데이트 반영)
+// 파트너 목록 가져오기 (상태 업데이트 반영 + LocalStorage 통합)
 export function get_partner_list(): PartnerItem[] {
-  return partner_list.map((partner) => {
+  // 기존 Mock 데이터 처리
+  const mockPartners = partner_list.map((partner) => {
     // localStorage에 저장된 상태 업데이트가 있으면 적용
     if (status_type_updates[partner.id]) {
       return {
@@ -765,6 +834,129 @@ export function get_partner_list(): PartnerItem[] {
     }
     return partner;
   });
+
+  // LocalStorage에서 파트너 계정 가져오기
+  if (typeof window !== 'undefined') {
+    try {
+      // 회원가입으로 추가된 파트너 계정
+      const storedPartnerAccounts = localStorage.getItem('partner_accounts');
+      const partnerAccounts = storedPartnerAccounts ? JSON.parse(storedPartnerAccounts) : [];
+
+      // unifiedAccountData에서 test@test.com 파트너 정보 가져오기 (항상 추가)
+      // 현재 시간을 YYYY-MM-DD HH:mm 형식으로 포맷
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const currentDateTime = `${year}-${month}-${day} ${hours}:${minutes}`;
+
+      // LocalStorage에서 test@test.com 파트너의 실제 캠페인 개수 계산
+      let testPartnerCampaignCount = 0;
+      try {
+        const deliveryCampaigns = localStorage.getItem('deliveryCampaigns');
+        const missionCampaigns = localStorage.getItem('missionCampaigns');
+        const reviewCampaigns = localStorage.getItem('reviewCampaigns');
+        const visitCampaigns = localStorage.getItem('visitCampaigns');
+        const reporterCampaigns = localStorage.getItem('reporterCampaigns');
+
+        const allCampaigns = [
+          ...(deliveryCampaigns ? JSON.parse(deliveryCampaigns) : []),
+          ...(missionCampaigns ? JSON.parse(missionCampaigns) : []),
+          ...(reviewCampaigns ? JSON.parse(reviewCampaigns) : []),
+          ...(visitCampaigns ? JSON.parse(visitCampaigns) : []),
+          ...(reporterCampaigns ? JSON.parse(reporterCampaigns) : []),
+        ];
+
+        testPartnerCampaignCount = allCampaigns.filter((c: any) => c.partner_id === 'partner_test_001').length;
+      } catch (error) {
+        console.error('캠페인 개수 계산 중 오류:', error);
+      }
+
+      // 테스트 파트너의 실제 포인트 가져오기
+      const testPartnerPoints = getPartnerPointSummary('partner_test_001');
+      console.log('테스트 파트너 포인트:', testPartnerPoints);
+
+      const testPartner: PartnerItem = {
+        id: 'partner_test_001', // 고정 ID 사용
+        number: '999999',
+        business_name: '테스트 주식회사',
+        business_number: '123-45-67890',
+        representative_name: '테스트파트너',
+        division: '법인',
+        campaign_in_progress: testPartnerCampaignCount,
+        campaign_completed: 0,
+        current_points: testPartnerPoints.available_points,
+        used_points: 0,
+        status_type: '일반 회원',
+        status: '정상',
+        last_access_date: currentDateTime,
+        join_date: '2024-03-01 10:00',
+      };
+
+      // 중복 확인 후 추가 (ID 기준으로 확인)
+      const existsInMock = mockPartners.some(p => p.id === 'partner_test_001');
+      if (!existsInMock) {
+        mockPartners.push(testPartner);
+      }
+
+      // LocalStorage 파트너 계정들을 PartnerItem 형식으로 변환하여 추가
+      const localStoragePartners = partnerAccounts.map((account: any) => {
+        // 날짜 포맷 함수 - YYYY-MM-DD HH:mm 형식으로 변환
+        const formatDateTime = (dateStr?: string): string => {
+          if (!dateStr) {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            return `${year}-${month}-${day} ${hours}:${minutes}`;
+          }
+          // 이미 올바른 형식인지 확인 (YYYY-MM-DD HH:mm)
+          if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(dateStr)) {
+            return dateStr;
+          }
+          // ISO 형식이면 변환 (YYYY-MM-DDTHH:mm:ss.sssZ)
+          if (dateStr.includes('T')) {
+            const date = new Date(dateStr);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${year}-${month}-${day} ${hours}:${minutes}`;
+          }
+          return dateStr;
+        };
+
+        return {
+          id: account.id,
+          number: account.number || String(mockPartners.length + 1).padStart(6, '0'),
+          business_name: account.business_name || account.companyName || '상호명 미등록',
+          business_number: account.business_number || account.businessNumber || '-',
+          representative_name: account.representative_name || account.name || '대표자명 미등록',
+          division: account.division || '개인',
+          campaign_in_progress: account.campaign_in_progress || 0,
+          campaign_completed: account.campaign_completed || 0,
+          current_points: account.current_points || 0,
+          used_points: account.used_points || 0,
+          status_type: account.status_type || '일반 회원',
+          status: account.status || '정상',
+          last_access_date: formatDateTime(account.last_access_date || account.join_date),
+          join_date: formatDateTime(account.join_date),
+        };
+      });
+
+      return [...mockPartners, ...localStoragePartners];
+    } catch (error) {
+      console.error('LocalStorage 파트너 데이터 로드 중 오류:', error);
+      return mockPartners;
+    }
+  }
+
+  return mockPartners;
 }
 
 // 파트너 상태 타입 업데이트
@@ -777,7 +969,7 @@ export function update_partner_status_type(
   const current_partner = partner_list.find((p) => p.id === partner_id);
   const current_status_type =
     status_type_updates[partner_id] ||
-    (current_partner ? current_partner.status_type : "모범 회원");
+    (current_partner ? current_partner.status_type : "일반 회원");
 
   // "이용 제한 회원"으로 변경하는 경우에만 이전 상태 저장
   if (
