@@ -176,7 +176,7 @@
 .account_info_box {
   padding: 20px;
   border-radius: 8px;
-  background: #f9f9f9;
+  background: #FF56940D;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -194,12 +194,12 @@
 /* ✅ 복사 버튼 - 계좌번호 옆 "복사" 버튼 (page.tsx 145번째 줄) */
 .copy_button {
   border-radius: 4px;
-  background: #d9d9d9;
+  background: #FF5694;
   padding: 4px 8px;
   cursor: pointer;
 
   /* 버튼 속 글자 */
-  color: #848484;
+  color: #FFFFFF;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
@@ -341,7 +341,7 @@
 
 .checkbox_row_agree {
   border: none;
-  background: #f9f9f9;
+  background: #FF56940D;
 }
 
 /* ✅ 약관 보기 버튼 - "약관 보기" 버튼 (page.tsx 286, 382번째 줄) */
@@ -351,11 +351,11 @@
   justify-content: center;
   align-items: center;
   border-radius: 4px;
-  background: #d9d9d9;
+  background: #FF5694;
   border: none;
   cursor: pointer;
   /* 버튼 속 글자 스타일 */
-  color: #848484;
+  color: #FFFFFF;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;

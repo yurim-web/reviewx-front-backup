@@ -31,10 +31,28 @@ export default function PartnerPointChargePage() {
   const [agreeTerms, setAgreeTerms] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<"bank" | "card">("bank");
   const [depositorName, setDepositorName] = useState<string>("");
-  const [issueInvoice, setIssueInvoice] = useState<boolean>(false);
+  // 영수증/계산서 발행 옵션: "none" (미발행), "cash_income" (현금영수증 소득공제), "cash_expense" (현금영수증 지출증빙), "tax_invoice" (세금계산서)
+  // 초기값: 현금영수증 (소득공제)로 설정
+  const [invoiceType, setInvoiceType] = useState<
+    "none" | "cash_income" | "cash_expense" | "tax_invoice"
+  >("cash_income");
   const [isBankAmountOpen, setIsBankAmountOpen] = useState<boolean>(false);
   const [isCardAmountOpen, setIsCardAmountOpen] = useState<boolean>(false);
+  const [isInvoiceDropdownOpen, setIsInvoiceDropdownOpen] =
+    useState<boolean>(false);
   const [showCopyToast, setShowCopyToast] = useState<boolean>(false);
+  
+  // 현금영수증 (소득공제) 정보
+  const [cashReceiptIncome, setCashReceiptIncome] = useState({
+    name: "",
+    phone: "",
+  });
+  
+  // 현금영수증 (지출증빙) 정보
+  const [cashReceiptExpense, setCashReceiptExpense] = useState({
+    company_name: "",
+    business_number: "",
+  });
 
   // 카드 결제 실패 모달 상태
   const [cardPaymentFailModal, setCardPaymentFailModal] = useState({
@@ -54,6 +72,7 @@ export default function PartnerPointChargePage() {
   // 드롭다운 ref - 외부 클릭 감지용
   const bankDropdownRef = useRef<HTMLDivElement>(null);
   const cardDropdownRef = useRef<HTMLDivElement>(null);
+  const invoiceDropdownRef = useRef<HTMLDivElement>(null);
 
   // 파트너 정보 (실제로는 API에서 가져와야 함)
   const partnerInfo = {
@@ -271,6 +290,14 @@ export default function PartnerPointChargePage() {
       ) {
         setIsCardAmountOpen(false);
       }
+
+      // 영수증/계산서 발행 드롭다운 외부 클릭 시
+      if (
+        invoiceDropdownRef.current &&
+        !invoiceDropdownRef.current.contains(target)
+      ) {
+        setIsInvoiceDropdownOpen(false);
+      }
     };
 
     // 클릭 이벤트 리스너 등록
@@ -456,21 +483,107 @@ export default function PartnerPointChargePage() {
                   />
                 </div>
 
-                {/* 계산서 발행 */}
+                {/* 영수증/계산서 발행 - 드롭다운 선택 */}
                 <div className={styles.form_section}>
-                  <span className={styles.section_label}>계산서 발행</span>
-                  <div className={styles.checkbox_row}>
-                    <div className={styles.checkbox_container}>
-                      <input
-                        type="checkbox"
-                        id="issueInvoice"
-                        checked={issueInvoice}
-                        onChange={(e) => setIssueInvoice(e.target.checked)}
+                  <label
+                    className={styles.section_label}
+                    htmlFor="invoice_type_select"
+                  >
+                    영수증/계산서 발행
+                  </label>
+                  <div
+                    className={customDropdownStyles.custom_dropdown}
+                    ref={invoiceDropdownRef}
+                  >
+                    <button
+                      id="invoice_type_select"
+                      type="button"
+                      className={customDropdownStyles.dropdown_button}
+                      aria-haspopup="listbox"
+                      aria-expanded={isInvoiceDropdownOpen}
+                      onClick={() => setIsInvoiceDropdownOpen((o) => !o)}
+                    >
+                      <span
+                        className={customDropdownStyles.dropdown_text}
+                        data-placeholder="옵션 선택"
+                      >
+                        {invoiceType === "none"
+                          ? "미발행"
+                          : invoiceType === "cash_income"
+                          ? "현금영수증 (소득공제)"
+                          : invoiceType === "cash_expense"
+                          ? "현금영수증 (지출증빙)"
+                          : "세금계산서"}
+                      </span>
+                      <img
+                        src="/images/icons/dropdown_arrow.svg"
+                        alt=""
+                        className={`${customDropdownStyles.dropdown_arrow} ${
+                          isInvoiceDropdownOpen
+                            ? customDropdownStyles.rotated
+                            : ""
+                        }`}
                       />
-                      <label htmlFor="issueInvoice">세금계산서 발행</label>
-                    </div>
+                    </button>
+                    {isInvoiceDropdownOpen && (
+                      <div
+                        className={customDropdownStyles.dropdown_options}
+                        role="listbox"
+                        aria-label="영수증/계산서 발행 옵션"
+                      >
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={invoiceType === "none"}
+                          className={customDropdownStyles.dropdown_option}
+                          onClick={() => {
+                            setInvoiceType("none");
+                            setIsInvoiceDropdownOpen(false);
+                          }}
+                        >
+                          미발행
+                        </button>
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={invoiceType === "cash_income"}
+                          className={customDropdownStyles.dropdown_option}
+                          onClick={() => {
+                            setInvoiceType("cash_income");
+                            setIsInvoiceDropdownOpen(false);
+                          }}
+                        >
+                          현금영수증 (소득공제)
+                        </button>
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={invoiceType === "cash_expense"}
+                          className={customDropdownStyles.dropdown_option}
+                          onClick={() => {
+                            setInvoiceType("cash_expense");
+                            setIsInvoiceDropdownOpen(false);
+                          }}
+                        >
+                          현금영수증 (지출증빙)
+                        </button>
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={invoiceType === "tax_invoice"}
+                          className={customDropdownStyles.dropdown_option}
+                          onClick={() => {
+                            setInvoiceType("tax_invoice");
+                            setIsInvoiceDropdownOpen(false);
+                          }}
+                        >
+                          세금계산서
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
+                
               </article>
 
               <article className={styles.content_container}>
@@ -502,7 +615,7 @@ export default function PartnerPointChargePage() {
                 </div>
 
                 {/* 사업자 정보 (세금계산서 발행 선택 시에만 표시) */}
-                {issueInvoice && (
+                {invoiceType === "tax_invoice" && (
                   <>
                     <h3 className={styles.content_title}>사업자 정보</h3>
                     <div className={styles.form_section}>
@@ -531,6 +644,104 @@ export default function PartnerPointChargePage() {
                       <div className={styles.read_only_box}>
                         {partnerInfo.address}
                       </div>
+                    </div>
+                  </>
+                )}
+
+                {/* 현금영수증 (소득공제) 정보 입력 섹션 */}
+                {invoiceType === "cash_income" && (
+                  <>
+                    <h3 className={styles.content_title}>기본 정보</h3>
+                    <div className={styles.form_section}>
+                      <label
+                        className={styles.section_label}
+                        htmlFor="cash_receipt_name_input"
+                      >
+                        이름
+                      </label>
+                      <input
+                        id="cash_receipt_name_input"
+                        type="text"
+                        className={styles.input_box}
+                        placeholder="이름 입력"
+                        value={cashReceiptIncome.name}
+                        onChange={(e) =>
+                          setCashReceiptIncome((prev) => ({
+                            ...prev,
+                            name: e.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+                    <div className={styles.form_section}>
+                      <label
+                        className={styles.section_label}
+                        htmlFor="cash_receipt_phone_input"
+                      >
+                        휴대폰 번호
+                      </label>
+                      <input
+                        id="cash_receipt_phone_input"
+                        type="text"
+                        className={styles.input_box}
+                        placeholder="휴대폰 번호 입력"
+                        value={cashReceiptIncome.phone}
+                        onChange={(e) =>
+                          setCashReceiptIncome((prev) => ({
+                            ...prev,
+                            phone: e.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+                  </>
+                )}
+
+                {/* 현금영수증 (지출증빙) 정보 입력 섹션 */}
+                {invoiceType === "cash_expense" && (
+                  <>
+                    <h3 className={styles.content_title}>기본 정보</h3>
+                    <div className={styles.form_section}>
+                      <label
+                        className={styles.section_label}
+                        htmlFor="cash_receipt_company_input"
+                      >
+                        상호명
+                      </label>
+                      <input
+                        id="cash_receipt_company_input"
+                        type="text"
+                        className={styles.input_box}
+                        placeholder="상호명 입력"
+                        value={cashReceiptExpense.company_name}
+                        onChange={(e) =>
+                          setCashReceiptExpense((prev) => ({
+                            ...prev,
+                            company_name: e.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+                    <div className={styles.form_section}>
+                      <label
+                        className={styles.section_label}
+                        htmlFor="cash_receipt_business_input"
+                      >
+                        사업자등록번호
+                      </label>
+                      <input
+                        id="cash_receipt_business_input"
+                        type="text"
+                        className={styles.input_box}
+                        placeholder="사업자등록번호 입력"
+                        value={cashReceiptExpense.business_number}
+                        onChange={(e) =>
+                          setCashReceiptExpense((prev) => ({
+                            ...prev,
+                            business_number: e.target.value,
+                          }))
+                        }
+                      />
                     </div>
                   </>
                 )}
@@ -683,7 +894,7 @@ export default function PartnerPointChargePage() {
               disabled={!isButtonEnabled}
               aria-disabled={!isButtonEnabled}
             >
-              {activeTab === "bank" ? "입금 확인 요청하기" : "결제하기"}
+              {activeTab === "bank" ? "입금 확인 요청" : "결제"}
             </button>
           </div>
         </div>
