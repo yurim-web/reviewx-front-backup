@@ -183,9 +183,9 @@ export default function PartnerPointChargePage() {
       // 관리자 결제내역에 추가
       addPaymentHistory(user.id, chargePoints, '카드 결제', undefined, getTaxInvoiceType());
 
-      // 현재 포인트 업데이트
-      const updatedSummary = getPartnerPointSummary(user.id);
-      setCurrentPoints(updatedSummary.available_points);
+      // 현재 포인트 업데이트 (모달 닫은 후에 업데이트되도록 하지 않음)
+      // const updatedSummary = getPartnerPointSummary(user.id);
+      // setCurrentPoints(updatedSummary.available_points);
 
       // 결제 성공: 성공 모달 표시
       setCardPaymentSuccessModal({ is_open: true });
@@ -214,31 +214,11 @@ export default function PartnerPointChargePage() {
   const handleCardPaymentSuccessClose = () => {
     setCardPaymentSuccessModal({ is_open: false });
 
-    // 현재 날짜를 YYYY-MM-DD 형식으로 생성
-    const today = new Date();
-    const formattedDate = `${today.getFullYear()}-${String(
-      today.getMonth() + 1
-    ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-
-    // 새로운 충전 내역 생성
-    const newHistory = {
-      id: `charge_${Date.now()}`,
-      type: "earned" as const,
-      amount: chargePoints,
-      description: "포인트 충전",
-      date: formattedDate,
-      status: "earned" as const,
-      balance: 0,
-    };
-
-    // localStorage에 새 충전 내역 저장
-    localStorage.setItem(
-      "partner_new_point_history",
-      JSON.stringify(newHistory)
-    );
-
-    // 보유 포인트 업데이트 (실제로는 API에서 처리)
-    localStorage.setItem("partner_available_points", String(successPostPoints));
+    // 포인트 업데이트 (모달 닫을 때)
+    if (user?.id) {
+      const updatedSummary = getPartnerPointSummary(user.id);
+      setCurrentPoints(updatedSummary.available_points);
+    }
 
     // 이전 페이지로 돌아가기
     router.back();
@@ -259,10 +239,6 @@ export default function PartnerPointChargePage() {
     // 관리자 결제내역에 추가
     addPaymentHistory(user.id, chargePoints, '무통장 입금', depositorName, getTaxInvoiceType());
 
-    // 현재 포인트 업데이트
-    const updatedSummary = getPartnerPointSummary(user.id);
-    setCurrentPoints(updatedSummary.available_points);
-
     // 무통장 입금 신청 모달 표시
     setBankDepositModal({ is_open: true });
   };
@@ -272,6 +248,13 @@ export default function PartnerPointChargePage() {
    */
   const handleBankDepositModalClose = () => {
     setBankDepositModal({ is_open: false });
+
+    // 포인트 업데이트 (모달 닫을 때)
+    if (user?.id) {
+      const updatedSummary = getPartnerPointSummary(user.id);
+      setCurrentPoints(updatedSummary.available_points);
+    }
+
     // 이전 페이지로 돌아가기
     router.back();
   };

@@ -35,7 +35,7 @@ import CommonTable, {
 import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
-import styles from "@/styles/manager_sa/settlement/withdrawal_request/request_table.module.css";
+import styles from "@/styles/manager_sa/settlement/withdrawal_request/request_table_ORIGINAL_BACKUP.module.css";
 import {
   calculate_total_amount,
   type WithdrawalRequestItem,
@@ -269,10 +269,170 @@ export default function RequestTable({
       return;
     }
 
-    // TODO: 실제 승인 API 호출
-    // pending_approve_items의 ID들을 서버에 전송하여 승인 처리
-    const approve_ids = pending_approve_items.map((item) => item.id);
-    console.log("승인할 항목 ID들:", approve_ids);
+    try {
+      if (typeof window !== 'undefined') {
+        const now = new Date();
+        const approve_ids = pending_approve_items.map((item) => item.id);
+
+        // 1. withdrawal_requests에서 상태 업데이트 및 실제 금액 정보 가져오기
+        const storedRequests = localStorage.getItem('withdrawal_requests');
+        const requestsMap = new Map(); // ID를 키로 한 요청 정보 맵
+
+        if (storedRequests) {
+          const requests = JSON.parse(storedRequests);
+
+          requests.forEach((req: any) => {
+            if (approve_ids.includes(req.id)) {
+              req.status = 'approved';
+              req.processed_date = now.toISOString();
+              // 나중에 사용하기 위해 맵에 저장
+              requestsMap.set(req.id, req);
+            }
+          });
+
+          localStorage.setItem('withdrawal_requests', JSON.stringify(requests));
+          console.log('✅ [출금 승인] withdrawal_requests 업데이트 완료');
+        }
+
+        // 2. user_accounts에서 포인트 처리 (pending → withdrawn으로 변경)
+        const storedAccounts = localStorage.getItem('user_accounts');
+        if (storedAccounts) {
+          const accounts = JSON.parse(storedAccounts);
+
+          pending_approve_items.forEach((item: any) => {
+            // withdrawal_requests에서 실제 금액 정보 가져오기
+            const requestData = requestsMap.get(item.id);
+            if (!requestData) {
+              console.error('❌ [출금 승인] withdrawal_requests에서 데이터를 찾을 수 없음:', item.id);
+              return;
+            }
+
+            const requestAmount = requestData.requested_amount;
+            console.log('💰 [출금 승인] 처리할 금액:', requestAmount);
+
+            const accountIndex = accounts.findIndex((a: any) =>
+              a.id === requestData.user_id
+            );
+
+            if (accountIndex !== -1) {
+              const account = accounts[accountIndex];
+              console.log('📝 [출금 승인] 승인 전 account:', {
+                user_id: requestData.user_id,
+                available_points: account.available_points,
+                pending_points: account.pending_points,
+                withdrawn_points: account.withdrawn_points,
+              });
+
+              // 승인 시 available_points에서 차감하고 pending_points 차감
+              account.available_points = (account.available_points || 0) - requestAmount;
+              account.pending_points = (account.pending_points || 0) - requestAmount;
+
+              // 포인트 내역에서 withdrawal_pending을 withdrawn으로 변경
+              if (account.point_history) {
+                const historyIndex = account.point_history.findIndex((h: any) => h.id === item.id);
+                if (historyIndex !== -1) {
+                  account.point_history[historyIndex].type = 'withdrawn';
+                  account.point_history[historyIndex].status = 'completed';
+                  account.point_history[historyIndex].description = '출금 완료';
+                  account.point_history[historyIndex].balance = account.available_points;
+                  console.log('📝 [출금 승인] 포인트 내역 업데이트:', account.point_history[historyIndex]);
+                }
+              }
+
+              // withdrawn_points 증가
+              account.withdrawn_points = (account.withdrawn_points || 0) + requestAmount;
+
+              console.log('📝 [출금 승인] 승인 후 account:', {
+                user_id: requestData.user_id,
+                available_points: account.available_points,
+                pending_points: account.pending_points,
+                withdrawn_points: account.withdrawn_points,
+              });
+
+              accounts[accountIndex] = account;
+            } else {
+              console.error('❌ [출금 승인] user_id를 찾을 수 없음:', requestData.user_id);
+            }
+          });
+
+          localStorage.setItem('user_accounts', JSON.stringify(accounts));
+          console.log('✅ [출금 승인] user_accounts 업데이트 완료');
+        }
+
+        // 3. 알람 추가 (출금 완료 알람)
+        const storedNotifications = localStorage.getItem('notifications');
+        const notifications = storedNotifications ? JSON.parse(storedNotifications) : [];
+
+        pending_approve_items.forEach((item: any) => {
+          const requestData = requestsMap.get(item.id);
+          if (requestData) {
+            const notification = {
+              id: `notif_${item.id}_${now.getTime()}`,
+              user_id: requestData.user_id,
+              type: 'withdrawal_completed',
+              title: '출금 완료',
+              message: `${requestData.requested_amount.toLocaleString()}원 출금이 완료되었습니다.`,
+              is_read: false,
+              created_at: now.toISOString(),
+            };
+            notifications.unshift(notification);
+          }
+        });
+
+        localStorage.setItem('notifications', JSON.stringify(notifications));
+        console.log('✅ [출금 승인] 알람 추가 완료');
+
+        // 4. withdrawal_history에 출금 완료 기록 추가
+        const storedWithdrawalHistory = localStorage.getItem('withdrawal_history');
+        const withdrawalHistory = storedWithdrawalHistory ? JSON.parse(storedWithdrawalHistory) : [];
+
+        // localStorage에서 최신 업데이트된 user_accounts 읽기
+        const updatedStoredAccounts = localStorage.getItem('user_accounts');
+        const updatedAccounts = updatedStoredAccounts ? JSON.parse(updatedStoredAccounts) : [];
+
+        pending_approve_items.forEach((item: any) => {
+          const requestData = requestsMap.get(item.id);
+          if (requestData) {
+            // 업데이트된 잔여 포인트 가져오기
+            const userAccount = updatedAccounts.find((a: any) => a.id === requestData.user_id);
+            const updatedRemaining = userAccount ? (userAccount.available_points || 0).toLocaleString() : item.remaining;
+
+            // 출금 완료 기록 생성
+            const withdrawalRecord = {
+              id: `withdrawal_${item.id}_${now.getTime()}`,
+              number: item.number,
+              round: item.round || "-",
+              name: item.name,
+              account: item.account,
+              ssn: item.ssn,
+              amount: requestData.requested_amount.toLocaleString(),
+              remaining: updatedRemaining,
+              requestDate: item.requestDate,
+              paymentDate: now.toLocaleString('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+              }).replace(/\. /g, '-').replace('.', '').replace(',', ''),
+              type: item.type,
+              paymentStatus: "completed",
+              status: item.status,
+            };
+            withdrawalHistory.push(withdrawalRecord);
+          }
+        });
+
+        localStorage.setItem('withdrawal_history', JSON.stringify(withdrawalHistory));
+        console.log('✅ [출금 승인] withdrawal_history 추가 완료');
+      }
+    } catch (error) {
+      console.error('❌ [출금 승인] 처리 실패:', error);
+      console.error('❌ [출금 승인] 에러 상세:', error);
+      alert('출금 승인 처리 중 오류가 발생했습니다: ' + error);
+      return; // 에러 발생 시 모달 열지 않고 리턴
+    }
 
     // 승인 처리 후 선택 초기화
     setSelectedIds([]);
@@ -282,6 +442,11 @@ export default function RequestTable({
 
     // 승인 완료 모달 열기
     setIsApproveSuccessModalOpen(true);
+
+    // 페이지 새로고침하여 업데이트된 데이터 반영
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
   };
 
   /**
@@ -390,15 +555,132 @@ export default function RequestTable({
    * - 데모 단계에서는 콘솔 로그 후 모달을 닫고 선택을 초기화합니다.
    */
   const handle_confirm_reject = (reason: string) => {
-    // TODO: 실제 반려 API 호출
-    // pending_reject_ids에 있는 항목들의 ID와 반려 사유를 서버에 전송
-    console.log("반려할 항목 ID들:", pending_reject_ids);
-    console.log("반려 사유:", reason);
+    if (pending_reject_ids.length === 0 || !reason.trim()) {
+      return;
+    }
+
+    try {
+      if (typeof window !== 'undefined') {
+        const now = new Date();
+
+        // 1. withdrawal_requests에서 상태 업데이트
+        const storedRequests = localStorage.getItem('withdrawal_requests');
+        const requestsMap = new Map(); // ID를 키로 한 요청 정보 맵
+
+        if (storedRequests) {
+          const requests = JSON.parse(storedRequests);
+
+          requests.forEach((req: any) => {
+            if (pending_reject_ids.includes(req.id)) {
+              req.status = 'rejected';
+              req.processed_date = now.toISOString();
+              req.rejection_reason = reason;
+              // 나중에 사용하기 위해 맵에 저장
+              requestsMap.set(req.id, req);
+            }
+          });
+
+          localStorage.setItem('withdrawal_requests', JSON.stringify(requests));
+          console.log('✅ [출금 반려] withdrawal_requests 업데이트 완료');
+        }
+
+        // 2. user_accounts에서 포인트 처리 (pending_points 복원)
+        const storedAccounts = localStorage.getItem('user_accounts');
+        if (storedAccounts) {
+          const accounts = JSON.parse(storedAccounts);
+
+          pending_reject_ids.forEach((id: string) => {
+            // withdrawal_requests에서 실제 금액 정보 가져오기
+            const requestData = requestsMap.get(id);
+            if (!requestData) {
+              console.error('❌ [출금 반려] withdrawal_requests에서 데이터를 찾을 수 없음:', id);
+              return;
+            }
+
+            const requestAmount = requestData.requested_amount;
+            console.log('💰 [출금 반려] 처리할 금액:', requestAmount);
+
+            const accountIndex = accounts.findIndex((a: any) =>
+              a.id === requestData.user_id
+            );
+
+            if (accountIndex !== -1) {
+              const account = accounts[accountIndex];
+              console.log('📝 [출금 반려] 반려 전 account:', {
+                user_id: requestData.user_id,
+                available_points: account.available_points,
+                pending_points: account.pending_points,
+              });
+
+              // 반려 시 pending_points 차감 (available_points는 그대로)
+              account.pending_points = (account.pending_points || 0) - requestAmount;
+
+              // 포인트 내역에서 withdrawal_pending을 failed로 변경
+              if (account.point_history) {
+                const historyIndex = account.point_history.findIndex((h: any) => h.id === id);
+                if (historyIndex !== -1) {
+                  account.point_history[historyIndex].status = 'failed';
+                  account.point_history[historyIndex].description = '출금 신청 반려';
+                  account.point_history[historyIndex].rejection_reason = reason;
+                  account.point_history[historyIndex].balance = account.available_points;
+                  console.log('📝 [출금 반려] 포인트 내역 업데이트:', account.point_history[historyIndex]);
+                }
+              }
+
+              console.log('📝 [출금 반려] 반려 후 account:', {
+                user_id: requestData.user_id,
+                available_points: account.available_points,
+                pending_points: account.pending_points,
+              });
+
+              accounts[accountIndex] = account;
+            } else {
+              console.error('❌ [출금 반려] user_id를 찾을 수 없음:', requestData.user_id);
+            }
+          });
+
+          localStorage.setItem('user_accounts', JSON.stringify(accounts));
+          console.log('✅ [출금 반려] user_accounts 업데이트 완료');
+        }
+
+        // 3. 알람 추가 (출금 반려 알람)
+        const storedNotifications = localStorage.getItem('notifications');
+        const notifications = storedNotifications ? JSON.parse(storedNotifications) : [];
+
+        pending_reject_ids.forEach((id: string) => {
+          const requestData = requestsMap.get(id);
+          if (requestData) {
+            const notification = {
+              id: `notif_${id}_${now.getTime()}`,
+              user_id: requestData.user_id,
+              type: 'withdrawal_rejected',
+              title: '출금 반려',
+              message: `출금 요청이 반려되었습니다.`,
+              is_read: false,
+              created_at: now.toISOString(),
+            };
+            notifications.unshift(notification);
+          }
+        });
+
+        localStorage.setItem('notifications', JSON.stringify(notifications));
+        console.log('✅ [출금 반려] 알람 추가 완료');
+      }
+    } catch (error) {
+      console.error('❌ [출금 반려] 처리 실패:', error);
+      alert('출금 반려 처리 중 오류가 발생했습니다: ' + error);
+      return;
+    }
 
     // 반려 처리 후 선택 초기화 및 모달 닫기
     setSelectedIds([]);
     setPendingRejectIds([]);
     setIsRejectModalOpen(false);
+
+    // 페이지 새로고침하여 업데이트된 데이터 반영
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
   };
 
   // 합계 금액 계산
@@ -466,6 +748,7 @@ export default function RequestTable({
         is_all_selected={is_all_selected}
         styles={styles}
         container_style={{ gridTemplateColumns: grid_template_columns }}
+        use_header_row={true}
       />
     );
   };

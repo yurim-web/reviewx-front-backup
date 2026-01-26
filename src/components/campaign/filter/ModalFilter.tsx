@@ -29,7 +29,10 @@
 "use client";
 
 import React from "react";
-import styles from "../../../styles/filter/filter_bar.module.css";
+import modalStyles from "../../../styles/filter/filter_bar/modal.module.css";
+import optionsStyles from "../../../styles/filter/filter_bar/modal_options.module.css";
+import footerStyles from "../../../styles/filter/filter_bar/modal_footer.module.css";
+import regionStyles from "../../../styles/filter/filter_bar/region.module.css";
 
 interface ModalFilterProps {
   isOpen: boolean;
@@ -90,39 +93,39 @@ export default function ModalFilter({
   };
 
   return (
-    <div className={styles.modal_overlay} onClick={handleBackdropClick}>
+    <div className={modalStyles.modal_overlay} onClick={handleBackdropClick}>
       <div
-        className={styles.modal_content}
+        className={modalStyles.modal_content}
         onClick={(e) => e.stopPropagation()}
       >
         {/* 모달 헤더 */}
-        <div className={styles.modal_header}>
-          <h3 className={styles.modal_title}>{title}</h3>
-          <button className={styles.modal_close_button} onClick={onClose}>
+        <div className={modalStyles.modal_header}>
+          <h3 className={modalStyles.modal_title}>{title}</h3>
+          <button className={modalStyles.modal_close_button} onClick={onClose}>
             <img src="/images/filter/x_icon.svg" alt="닫기" />
           </button>
         </div>
 
         {/* 모달 바디 */}
-        <div className={styles.modal_body}>
+        <div className={modalStyles.modal_body}>
           {/* 섹션 제목 */}
           {sectionTitle && (
-            <h4 className={styles.region_section_title}>{sectionTitle}</h4>
+            <h4 className={regionStyles.region_section_title}>{sectionTitle}</h4>
           )}
 
           <div
             className={`${
               layout === "vertical"
-                ? styles.options_vertical
-                : styles.options_grid
-            } ${noScroll && layout === "vertical" ? styles.no_scroll : ""}`}
+                ? optionsStyles.options_vertical
+                : optionsStyles.options_grid
+            } ${noScroll && layout === "vertical" ? optionsStyles.no_scroll : ""}`}
           >
             {options.map((option, index) => (
               <label
                 key={
                   typeof option === "object" ? option.value || index : option
                 }
-                className={styles.option_item}
+                className={optionsStyles.option_item}
               >
                 <input
                   type={type}
@@ -130,9 +133,9 @@ export default function ModalFilter({
                   value={typeof option === "object" ? option.value : option}
                   checked={isSelected(option)}
                   onChange={() => onOptionChange(option)}
-                  className={styles.option_checkbox}
+                  className={optionsStyles.option_checkbox}
                 />
-                <span className={styles.option_label}>
+                <span className={optionsStyles.option_label}>
                   {typeof option === "object" ? option.label : option}
                 </span>
               </label>
@@ -141,18 +144,18 @@ export default function ModalFilter({
         </div>
 
         {/* 모달 푸터 */}
-        <div className={styles.modal_footer}>
+        <div className={footerStyles.modal_footer}>
           {showApply && (
-            <button className={styles.apply_button} onClick={onApply}>
+            <button className={footerStyles.apply_button} onClick={onApply}>
               필터 적용하기
             </button>
           )}
           {showReset && (
-            <button className={styles.reset_button} onClick={onReset}>
+            <button className={footerStyles.reset_button} onClick={onReset}>
               <img
                 src="/images/icons/reset_icon.svg"
                 alt="초기화"
-                className={styles.reset_icon}
+                className={footerStyles.reset_icon}
               />
               선택 초기화
             </button>

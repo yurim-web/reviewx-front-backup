@@ -1,0 +1,75 @@
+/* ========================================
+   🔘 소셜 로그인 버튼 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - user/login/page.tsx (사용자 소셜 로그인 페이지)
+ *
+ * 주요 스타일:
+ * - 네이버/카카오 로그인 버튼
+ * - 최근 로그인 배지
+ */
+
+/* 소셜 로그인 섹션 */
+.social_login_section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding-top: 56px;
+}
+
+/* 로그인 버튼 래퍼 (배지 포함) */
+.login_button_wrapper {
+  position: relative;
+  width: 400px;
+}
+
+/* 최근 로그인 배지 */
+.recent_login_badge {
+  position: absolute;
+  top: -37px;
+  right: 0;
+  width: 96px;
+  height: 37px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 배지 텍스트 */
+.badge_text {
+  color: #ff2626;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 로그인 버튼 공통 스타일 (소셜 로그인용) */
+.login_button {
+  width: 100%;
+  height: 58px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  transition: opacity 0.2s ease;
+}
+
+/* 네이버 로그인 버튼 */
+.naver_button {
+  background-color: #03c75a;
+  color: #ffffff;
+}
+
+/* 카카오 로그인 버튼 */
+.kakao_button {
+  background-color: #fee500;
+  color: #444444;
+}

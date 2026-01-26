@@ -18,7 +18,9 @@
 
 "use client";
 
-import styles from "@/styles/user/mypage/edit_profile.module.css";
+import layoutStyles from "@/styles/user/mypage/edit_profile/layout.module.css";
+import inputStyles from "@/styles/user/mypage/edit_profile/inputs.module.css";
+import ssnStyles from "@/styles/user/mypage/edit_profile/ssn.module.css";
 
 interface SocialSecurityNumberInputProps {
   /** 생년월일 6자리 */
@@ -43,16 +45,16 @@ export default function SocialSecurityNumberInput({
   const ssnBackGenderDigit = ssnBack.charAt(0);
 
   return (
-    <article className={styles.field_article}>
-      <label className={styles.field_label} htmlFor="ssnFront">
+    <article className={layoutStyles.field_article}>
+      <label className={inputStyles.field_label} htmlFor="ssnFront">
         주민등록번호
       </label>
-      <div className={styles.ssn_container}>
+      <div className={ssnStyles.ssn_container}>
         <input
           type="text"
           id="ssnFront"
           name="ssnFront"
-          className={styles.input_field}
+          className={inputStyles.input_field}
           value={ssnFront}
           inputMode="numeric"
           onChange={(e) => {
@@ -61,13 +63,13 @@ export default function SocialSecurityNumberInput({
           maxLength={6}
           placeholder="생년월일 6자리"
         />
-        <span className={styles.ssn_separator}>-</span>
-        <div className={styles.ssn_back_wrapper}>
+        <span className={ssnStyles.ssn_separator}>-</span>
+        <div className={ssnStyles.ssn_back_wrapper}>
           <input
             type="password"
             id="ssnBack"
             name="ssnBack"
-            className={styles.input_field}
+            className={inputStyles.input_field}
             value={ssnBack}
             onChange={(e) => {
               onSsnBackChange(e.target.value);
@@ -76,7 +78,7 @@ export default function SocialSecurityNumberInput({
             placeholder="뒤 7자리"
           />
           {ssnBackGenderDigit && (
-            <span className={styles.ssn_back_gender_digit}>
+            <span className={ssnStyles.ssn_back_gender_digit}>
               {ssnBackGenderDigit}
             </span>
           )}

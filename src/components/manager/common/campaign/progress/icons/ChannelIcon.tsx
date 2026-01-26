@@ -12,7 +12,7 @@
  * - /manager_sa/campaign/progress (SA 관리자 진행 현황 페이지)
  *
  * 주요 기능:
- * - Blog, Clip, Instagram, Mission, Reels, Shorts, Store, Youtube 채널 아이콘 표시
+ * - Blog, Clip, Instagram, Mission, Reels, Review, Shorts, Store, Youtube 채널 아이콘 표시
  * - 채널 이름에 따라 적절한 아이콘을 표시합니다
  *
  */
@@ -24,6 +24,7 @@ export type Channel =
   | 'Instagram'
   | 'Mission'
   | 'Reels'
+  | 'Review'
   | 'Shorts'
   | 'Store'
   | 'Youtube';
@@ -44,6 +45,7 @@ const channel_icon_map: Record<Channel, string> = {
   Instagram: '/images/brand_logo/insta.svg',
   Youtube: '/images/brand_logo/youtube.svg',
   Reels: '/images/brand_logo/reels.svg',
+  Review: '/images/brand_logo/review.svg',
   Shorts: '/images/brand_logo/shots.svg',
   Mission: '/images/brand_logo/misssion.svg',
   Store: '/images/brand_logo/navershop.svg',

@@ -38,10 +38,10 @@
 }
 
 .main_menu_item {
-  color: #848484;
+  color: #444;
   font-size: 20px;
   font-weight: 500;
-  line-height: 20px; /* 100% */
+  line-height: 20px; 
   letter-spacing: -0.4px;
 }
 
@@ -52,7 +52,7 @@
 
 .container {
   width: 100%;
-  padding: 40px 40px 120px 40px;
+  padding: 40px 40px 80px 40px;
   background-color: #ffffff;
   min-height: calc(100vh - 149px);
 }

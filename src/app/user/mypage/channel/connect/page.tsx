@@ -29,7 +29,7 @@ import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import { getChannelLogo } from "@/utils/channelLogoMap";
 import ChannelConnectModal from "@/components/user/mypage/ChannelConnectModal";
-import styles from "@/styles/user/mypage/edit_profile.module.css";
+import layoutStyles from "@/styles/user/mypage/edit_profile/layout.module.css";
 import channelStyles from "@/styles/user/mypage/channel.module.css";
 
 // 채널 정보 타입
@@ -148,17 +148,17 @@ export default function ChannelConnectPage() {
   };
 
   return (
-    <div className={styles.edit_profile_container}>
+    <div className={layoutStyles.edit_profile_container}>
       {/* 서브헤더: 항상 상단에 고정 */}
       <SubHeader />
 
       {/* 메인 컨텐츠 영역 */}
-      <main className={styles.main_content}>
+      <main className={layoutStyles.main_content}>
         {/* 페이지 제목 */}
         <PageTitle title="채널 연결" />
 
         {/* 채널 목록 */}
-        <section className={styles.section_container}>
+        <section className={layoutStyles.section_container}>
           {channels.map((channel) => (
             <div key={channel.name} className={channelStyles.channel_item}>
               {/* 채널 아이콘 */}

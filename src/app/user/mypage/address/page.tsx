@@ -27,7 +27,8 @@ import { useRouter, usePathname } from "next/navigation";
 import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import AddressInput from "@/components/common/mypage/AddressInput";
-import styles from "@/styles/user/mypage/edit_profile.module.css";
+import layoutStyles from "@/styles/user/mypage/edit_profile/layout.module.css";
+import buttonStyles from "@/styles/user/mypage/edit_profile/buttons.module.css";
 
 export default function AddressPage() {
   const router = useRouter();
@@ -189,17 +190,17 @@ export default function AddressPage() {
   };
 
   return (
-    <div className={styles.edit_profile_container}>
+    <div className={layoutStyles.edit_profile_container}>
       {/* 서브헤더: 항상 상단에 고정 */}
       <SubHeader />
 
       {/* 메인 컨텐츠 영역 */}
-      <main className={`${styles.main_content} ${styles.address_page_main}`}>
+      <main className={`${layoutStyles.main_content} ${buttonStyles.address_page_main}`}>
         {/* 페이지 제목 */}
         <PageTitle title="주소 등록" />
 
         {/* 폼 영역 */}
-        <section className={styles.section_container}>
+        <section className={layoutStyles.section_container}>
           {/* 주소 입력 */}
           <AddressInput
             postalCode={addressData.postalCode}
@@ -216,10 +217,10 @@ export default function AddressPage() {
         </section>
 
         {/* 저장 버튼 - 하단 고정 */}
-        <div className={styles.save_button_container_fixed}>
+        <div className={buttonStyles.save_button_container_fixed}>
           <button
             type="button"
-            className={styles.save_button}
+            className={buttonStyles.save_button}
             onClick={handleSave}
             disabled={!isSaveButtonEnabled}
           >

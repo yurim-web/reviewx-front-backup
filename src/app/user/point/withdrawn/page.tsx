@@ -39,10 +39,11 @@ export default function WithdrawnPointPage() {
    * 출금 내역 필터 함수
    *
    * 설명:
-   * - 출금 관련 상태(completed, pending, failed)만 필터링합니다.
+   * - 출금 관련 타입(withdrawn, withdrawal_pending)과 상태(completed, pending, failed)만 필터링합니다.
    * - Array.includes() 메서드를 사용하여 배열에 포함되어 있는지 확인합니다.
    */
   const filterWithdrawnHistory = (history: PointHistory) =>
+    (history.type === "withdrawn" || history.type === "withdrawal_pending") &&
     ["completed", "pending", "failed"].includes(history.status);
 
   return (

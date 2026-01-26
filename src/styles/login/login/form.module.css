@@ -1,0 +1,107 @@
+/* ========================================
+   📝 로그인 폼 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - partner/login/page.tsx (파트너 로그인 페이지)
+ * - manager/login/page.tsx (관리자 로그인 페이지)
+ *
+ * 주요 스타일:
+ * - 로그인 폼 구조
+ * - 입력 필드
+ * - 에러 메시지
+ */
+
+/* 로그인 폼 */
+.login_form {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 에러 메시지 섹션 */
+.error_message_section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 0;
+}
+
+/* 에러 아이콘 (빨간 원 안에 느낌표) */
+.error_icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #ff2626;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+/* 에러 텍스트 */
+.error_text {
+  color: #ff2626;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.28px;
+}
+
+/* 폼 섹션 (각 박스 구분) */
+.form_section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 입력 필드 래퍼 */
+.input_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 입력 필드 라벨 */
+.input_label {
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 입력 필드 */
+.input_field {
+  width: 100%;
+  height: 56px;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #444444;
+  box-sizing: border-box;
+}
+
+/* 입력 필드 포커스 상태 - 효과 제거 */
+.input_field:focus {
+  outline: none;
+}
+
+/* 입력 필드 플레이스홀더 스타일 */
+.input_field::placeholder {
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}

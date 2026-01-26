@@ -49,7 +49,7 @@ export interface VisitCampaignData {
 export const visitCampaigns: VisitCampaignData[] = [
   // visit_1: 예정 탭
   {
-    id: "visit_1",
+    id: "1001",
     title: "식당 방문 리뷰",
     category: "방문형",
     image: "/images/main/campaign_img/eximg_8.png",
@@ -62,11 +62,11 @@ export const visitCampaigns: VisitCampaignData[] = [
     dayCount: "D-5",
     registeredAt: "2026-01-10T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 오늘 날짜 기준 (2026-01-10 ~ 2026-01-20)
-      applicationStart: "2026-01-10",
-      applicationEnd: "2026-01-20",
-      announcement: "2026-01-22",
-      purchasePeriod: "2026-01-22 ~ 2026-01-26",
+      // 모집 중 - 현재 모집 진행 중
+      applicationStart: "2026-01-05",
+      applicationEnd: "2026-01-18",
+      announcement: "2026-01-20",
+      purchasePeriod: "2026-01-20 ~ 2026-01-27",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
@@ -91,7 +91,7 @@ export const visitCampaigns: VisitCampaignData[] = [
   },
   // visit_2: 연장요청 탭
   {
-    id: "visit_2",
+    id: "1002",
     title: "카페 방문 체험",
     category: "방문형",
     image: "/images/main/campaign_img/eximg_9.png",
@@ -105,11 +105,11 @@ export const visitCampaigns: VisitCampaignData[] = [
     isUrgent: true, // 긴급 캠페인
     registeredAt: "2026-01-08T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 오늘 날짜 기준 (2026-01-08 ~ 2026-01-21)
-      applicationStart: "2026-01-08",
-      applicationEnd: "2026-01-21",
-      announcement: "2026-01-23",
-      purchasePeriod: "2026-01-23 ~ 2026-01-30",
+      // 모집 중 - 현재 모집 진행 중
+      applicationStart: "2026-01-06",
+      applicationEnd: "2026-01-19",
+      announcement: "2026-01-21",
+      purchasePeriod: "2026-01-21 ~ 2026-01-28",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
@@ -135,7 +135,7 @@ export const visitCampaigns: VisitCampaignData[] = [
   },
   // visit_3: 신청 탭
   {
-    id: "visit_3",
+    id: "1003",
     title: "뷰티샵 방문 체험",
     category: "방문형",
     image: "/images/main/campaign_img/eximg_10.png",
@@ -148,11 +148,11 @@ export const visitCampaigns: VisitCampaignData[] = [
     dayCount: "D-3",
     registeredAt: "2026-01-09T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 오늘 날짜 기준 (2026-01-09 ~ 2026-01-22)
-      applicationStart: "2026-01-09",
-      applicationEnd: "2026-01-22",
-      announcement: "2026-01-24",
-      purchasePeriod: "2026-01-24 ~ 2026-01-30",
+      // 모집 중 - 현재 모집 진행 중
+      applicationStart: "2026-01-04",
+      applicationEnd: "2026-01-17",
+      announcement: "2026-01-19",
+      purchasePeriod: "2026-01-19 ~ 2026-01-26",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
@@ -177,7 +177,7 @@ export const visitCampaigns: VisitCampaignData[] = [
   },
   // visit_4: 예정 탭
   {
-    id: "visit_4",
+    id: "1004",
     title: "헬스장 방문 체험",
     category: "방문형",
     image: "/images/main/campaign_img/eximg_11.png",
@@ -219,7 +219,7 @@ export const visitCampaigns: VisitCampaignData[] = [
   },
   // visit_5: 종료 탭
   {
-    id: "visit_5",
+    id: "1005",
     title: "쇼핑몰 방문 리뷰",
     category: "방문형",
     image: "/images/main/campaign_img/eximg_12.png",
@@ -261,7 +261,7 @@ export const visitCampaigns: VisitCampaignData[] = [
   },
   // visit_6: 신청 탭
   {
-    id: "visit_6",
+    id: "1006",
     title: "미술관 방문 체험",
     category: "방문형",
     image: "/images/main/campaign_img/eximg_13.png",
@@ -303,7 +303,7 @@ export const visitCampaigns: VisitCampaignData[] = [
   },
   // visit_7: 진행 탭
   {
-    id: "visit_7",
+    id: "1007",
     title: "스파 방문 체험",
     category: "방문형",
     image: "/images/main/campaign_img/eximg_1.png",
@@ -339,7 +339,7 @@ export const visitCampaigns: VisitCampaignData[] = [
   },
   // visit_8: 종료 탭
   {
-    id: "visit_8",
+    id: "1008",
     title: "반려동물 카페 방문",
     category: "방문형",
     image: "/images/main/campaign_img/eximg_2.png",
@@ -381,7 +381,7 @@ export const visitCampaigns: VisitCampaignData[] = [
   },
   // visit_9: 진행 탭
   {
-    id: "visit_9",
+    id: "1009",
     title: "놀이공원 방문 체험",
     category: "방문형",
     image: "/images/main/campaign_img/eximg_3.png",
@@ -423,7 +423,7 @@ export const visitCampaigns: VisitCampaignData[] = [
   },
   // visit_10: 취소 탭
   {
-    id: "visit_10",
+    id: "1010",
     title: "도서관 방문 체험",
     category: "방문형",
     image: "/images/main/campaign_img/eximg_4.png",
@@ -464,7 +464,7 @@ export const visitCampaigns: VisitCampaignData[] = [
     ],
   },
   {
-    id: "visit_11",
+    id: "1011",
     title: "[강남/서초] 통큰 한우 돼지갈비 체험단",
     category: "방문형",
     image: "/images/main/campaign_img/eximg_5.png",
@@ -506,7 +506,7 @@ export const visitCampaigns: VisitCampaignData[] = [
   },
   // visit_12: 마감임박 캠페인 (홈 메인페이지용)
   {
-    id: "visit_12",
+    id: "1012",
     title: "[마감임박] 프리미엄 스테이크하우스 방문 체험",
     category: "방문형",
     image: "/images/main/campaign_img/eximg_1.png",
@@ -548,7 +548,7 @@ export const visitCampaigns: VisitCampaignData[] = [
   },
   // visit_13: 마감임박 - 네이버 클립 채널
   {
-    id: "visit_13",
+    id: "1013",
     title: "[마감임박] 프리미엄 카페 방문 체험",
     category: "방문형",
     image: "/images/main/campaign_img/eximg_8.png",
@@ -1241,6 +1241,8 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
   // visit_6: 미술관 방문 체험
   {
     ...visitCampaigns[5],
+    // guidelineTexts 명시적으로 포함 (스프레드 연산자로 인한 누락 방지)
+    guidelineTexts: visitCampaigns[5].guidelineTexts || [],
     applicantData: {
       applicants: [
         {
@@ -2075,15 +2077,21 @@ function generateNewVisitCampaignId(): string {
     }
   }
 
+  // 배송형처럼 숫자만 사용 (방문형은 1000번대부터 시작)
   const existingIds = allCampaigns
     .map((c) => {
+      // visit_X 형식이면 숫자만 추출, 아니면 숫자로 직접 변환 시도
       const match = c.id.match(/visit_(\d+)/);
-      return match ? parseInt(match[1]) : 0;
+      if (match) {
+        return parseInt(match[1]) + 1000; // visit_17 -> 1017
+      }
+      const numId = parseInt(c.id);
+      return isNaN(numId) ? 0 : numId;
     })
-    .filter((id) => id > 0);
-  const maxId = existingIds.length > 0 ? Math.max(...existingIds) : 10;
+    .filter((id) => id >= 1000 && id < 2000); // 방문형 범위: 1000-1999
+  const maxId = existingIds.length > 0 ? Math.max(...existingIds) : 1000;
 
-  return `visit_${maxId + 1}`;
+  return String(maxId + 1);
 }
 
 /**
@@ -2132,6 +2140,9 @@ export function createVisitCampaign(
     ? formData.platform.replace(/\s+/g, "")
     : "네이버블로그";
 
+  // 포인트 계산 (additionalPoints를 숫자로 변환)
+  const points = Number(formData.additionalPoints) || 0;
+
   return {
     campaignInfo: {
       id: newId,
@@ -2154,6 +2165,8 @@ export function createVisitCampaign(
       recruitedCount: 0,
       totalCount: totalCount,
       daysLeft: daysLeft,
+      point: points,
+      channel: formData.platform || "",
       // 방문형 캠페인 지역 정보 추가
       region: formData.region || "",
       subRegion: formData.subRegion || "",

@@ -1,0 +1,74 @@
+/* ========================================
+   🗺️ 지역 필터 전용 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - RegionFilter.tsx (지역 필터 컴포넌트)
+ *
+ * 주요 스타일:
+ * - 지역 탭
+ * - 하위 지역 컨테이너
+ */
+
+/* 지역 필터 전용 스타일 */
+.region_section_title {
+  padding-bottom: 24px;
+
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
+}
+
+.region_tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  border-bottom: 1px solid #e0e0e0;
+  position: relative;
+}
+
+.region_tab {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 16px;
+  color: #999;
+  white-space: nowrap;
+  padding: 0px 0px 16px 0px;
+  position: relative;
+  font-weight: 500;
+}
+
+.region_tab:hover {
+  color: #666;
+}
+
+.region_tab_active {
+  color: #333;
+}
+
+.region_tab_active::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #333;
+  border-radius: 1px;
+  z-index: 1;
+}
+
+.sub_regions_container {
+  height: 594px;
+  overflow-y: auto;
+
+  padding: 0 16px;
+  padding-top: 0px;
+  margin-top: 24px;
+  margin-bottom: 24px;
+}

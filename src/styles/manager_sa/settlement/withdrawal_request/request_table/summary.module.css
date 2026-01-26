@@ -1,0 +1,55 @@
+/* ========================================
+   📊 출금 요청 테이블 합계 요약 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - RequestTable.tsx
+ */
+
+/* 푸터 마지막 셀: 전체 합계 / 선택 합계 요약 */
+.table_cell_total_summary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+  gap: 4px;
+}
+
+/* 요약 라벨 공통 (예: 전체 합계, 선택 합계 (1건)) */
+.summary_label {
+  color: #444444;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 선택 합계 텍스트 (금액까지 포함, 강조 색상) */
+.summary_selected_label {
+  color: #ff2626;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 전체 합계 금액 (검정) */
+.total_amount_main {
+  color: #444;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 선택 합계 금액 (핑크) */
+.total_amount_selected {
+  color: #ff5694;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}

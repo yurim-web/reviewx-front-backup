@@ -23,7 +23,9 @@
 import { useState } from "react";
 import Image from "next/image";
 import BaseModal from "@/components/common/modal/BaseModal";
-import styles from "@/styles/user/mypage/edit_profile.module.css";
+import layoutStyles from "@/styles/user/mypage/edit_profile/layout.module.css";
+import inputStyles from "@/styles/user/mypage/edit_profile/inputs.module.css";
+import verificationStyles from "@/styles/user/mypage/edit_profile/verification.module.css";
 import commonStyles from "@/styles/common/signup/signup.module.css";
 
 interface BusinessDocumentUploadProps {
@@ -47,7 +49,16 @@ export default function BusinessDocumentUpload({
   customStyles,
 }: BusinessDocumentUploadProps) {
   const [modalMessage, setModalMessage] = useState<string | null>(null);
-  const componentStyles = customStyles || styles;
+  // For backward compatibility, use customStyles if provided, otherwise use the new split styles
+  const componentStyles = customStyles || {
+    field_article: layoutStyles.field_article,
+    field_label: inputStyles.field_label,
+    input_field: inputStyles.input_field,
+    input_with_button: verificationStyles.input_with_button,
+    phone_input_container: verificationStyles.phone_input_container,
+    phone_check_icon: verificationStyles.phone_check_icon,
+    postal_button: verificationStyles.postal_button,
+  };
   /**
    * 사업자등록증 파일 선택 핸들러
    *

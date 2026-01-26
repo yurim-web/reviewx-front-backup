@@ -1,0 +1,76 @@
+/* ========================================
+   📋 출금 요청 테이블 푸터 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - RequestTable.tsx
+ */
+
+/* 테이블 푸터 (합계 행) */
+.table_footer {
+  background-color: white;
+  border-top: 1px solid #d9d9d9;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+/* 테이블 푸터 행 */
+.table_footer_row {
+  display: grid;
+  min-height: 56px;
+  align-items: center;
+  padding: 0;
+  gap: 0;
+  /* 헤더/바디와 동일하게 스크롤바 공간만큼 오른쪽 여백 확보 */
+  padding-right: 13px;
+}
+
+/* 합계 라벨 셀 */
+.table_cell_total_label {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* 합계 금액 셀 */
+.table_cell_total_amount {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* 합계 라벨 텍스트 */
+.total_label {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+}
+
+/* 합계 금액 텍스트 */
+.total_amount {
+  color: #ff2626;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 합계 행에서 라벨/금액을 세로로 쌓기 위한 보조 스타일 */
+.table_footer_row .table_cell_total_label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  grid-column: 1 / span 2;
+}
+
+.table_footer_row .table_cell_total_amount {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}

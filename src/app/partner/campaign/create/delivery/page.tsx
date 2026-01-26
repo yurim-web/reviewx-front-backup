@@ -38,10 +38,6 @@ export default function DeliveryCampaignCreatePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUrgent, setIsUrgent] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [pendingFormData, setPendingFormData] =
-    useState<CampaignFormData | null>(null);
-  const [pendingIsUrgent, setPendingIsUrgent] = useState(false); // 확인 모달 열 때의 isUrgent 값 저장
 
   /**
    * localStorage에서 저장된 데이터의 isUrgent 값 불러오기
@@ -67,25 +63,24 @@ export default function DeliveryCampaignCreatePage() {
   }, []);
 
   /**
-   * 캠페인 등록 확인 모달 열기
+   * 캠페인 등록 처리 (폼에서 직접 호출)
    *
    * 설명:
-   * - 폼 제출 시 먼저 확인 모달을 표시합니다.
-   * - 사용자가 확인을 누르면 실제 등록이 진행됩니다.
-   * - 현재 isUrgent 상태 값을 함께 저장하여 확인 모달이 열린 후에도 변경되지 않도록 합니다.
+   * - DeliveryCampaignForm에서 이미 확인 모달을 표시하므로,
+   *   여기서는 바로 등록 처리를 진행합니다.
+   * - 현재 isUrgent 상태 값을 함께 저장하여 등록 시 사용합니다.
    */
   const handleSubmit = async (formData: CampaignFormData) => {
     // 디버깅: 폼 제출 시 isUrgent 상태 확인
     console.log("=== 배송형 캠페인 폼 제출 ===");
     console.log("현재 isUrgent 상태:", isUrgent);
 
-    setPendingFormData(formData);
-    setPendingIsUrgent(isUrgent); // 현재 isUrgent 값을 저장
-    setIsConfirmModalOpen(true);
+    // 바로 등록 처리 진행 (확인 모달은 DeliveryCampaignForm에서 이미 표시됨)
+    await handleConfirmRegistration(formData, isUrgent);
   };
 
   /**
-   * 캠페인 등록 처리 (확인 모달에서 확인 버튼 클릭 시 실행)
+   * 캠페인 등록 처리
    *
    * 설명:
    * - 폼에서 입력받은 데이터를 delivery.ts 구조로 변환합니다.
@@ -93,28 +88,24 @@ export default function DeliveryCampaignCreatePage() {
    * - 현재는 클라이언트 사이드 더미 데이터 구조이므로,
    *   localStorage를 사용하여 임시 저장합니다.
    */
-  const handleConfirm = async () => {
-    if (!pendingFormData) return;
+  const handleConfirmRegistration = async (formData: CampaignFormData, isUrgentValue: boolean) => {
+    if (isSubmitting) return;
 
     setIsSubmitting(true);
-    setIsConfirmModalOpen(false);
 
     try {
       // 긴급 상태를 폼 데이터에 추가
-      // 폼 제출 시 저장한 pendingIsUrgent 값을 사용 (확인 모달이 열린 후 변경되지 않도록)
-      const finalFormData = { ...pendingFormData, isUrgent: pendingIsUrgent };
+      const finalFormData = { ...formData, isUrgent: isUrgentValue };
 
       // 디버깅: isUrgent 값 확인
       console.log("=== 배송형 캠페인 등록 - 긴급 상태 확인 ===");
-      console.log("pendingIsUrgent 값:", pendingIsUrgent);
+      console.log("isUrgentValue 값:", isUrgentValue);
       console.log("현재 isUrgent 상태:", isUrgent);
 
       // 이미지 URL 처리
-      // 폼에서 전달받은 thumbnailImageUrl을 사용 (Data URL 형식)
+      // localStorage 용량 문제로 base64 이미지는 저장하지 않고 기본 이미지 사용
       // 실제 프로덕션에서는 이미지를 서버에 업로드하고 URL을 받아와야 합니다
-      let imageUrl =
-        pendingFormData.thumbnailImageUrl ||
-        "/images/main/campaign_img/eximg_1.png"; // 업로드된 이미지 또는 기본 이미지
+      let imageUrl = "/images/main/campaign_img/eximg_1.png"; // 기본 이미지 사용
 
       // TODO: 실제 프로덕션에서는 이미지 업로드 API 호출
       // const imageUploadResponse = await uploadImages(formData.thumbnailImage, formData.detailImages);
@@ -127,21 +118,50 @@ export default function DeliveryCampaignCreatePage() {
       // 등록 시간 생성 (ISO 8601 형식: "2025-01-15T10:30:00")
       const registeredAt = new Date().toISOString();
 
+      // 파트너명 가져오기 (partner_accounts에서)
+      let partnerName = "";
+      try {
+        if (typeof window !== "undefined") {
+          const storedAccounts = localStorage.getItem("partner_accounts");
+          if (storedAccounts) {
+            const accounts = JSON.parse(storedAccounts);
+            const partnerAccount = accounts.find(
+              (a: any) => a.id === (user?.id || 'partner_test_001')
+            );
+            if (partnerAccount) {
+              // business_name 우선, 없으면 name 사용
+              partnerName = partnerAccount.business_name || partnerAccount.name || "";
+            }
+          }
+        }
+      } catch (error) {
+        console.error("파트너명 조회 중 오류:", error);
+      }
+
       const extendedCampaign = {
         ...newCampaign,
         // 파트너 ID 추가 (로그인된 사용자)
         partner_id: user?.id || 'partner_test_001',
-        // 긴급 캠페인 여부 (폼 제출 시 저장한 값 사용)
-        isUrgent: pendingIsUrgent === true,
+        // 파트너명 추가
+        partnerName: partnerName,
+        // campaignInfo에도 partnerName 추가
+        campaignInfo: {
+          ...newCampaign.campaignInfo,
+          partnerName: partnerName,
+        },
+        // 긴급 캠페인 여부
+        isUrgent: isUrgentValue === true,
         // 등록 시간 (현재 시간)
         registeredAt: registeredAt,
+        // 채널 정보 (최상위 레벨에도 추가)
+        channel: finalFormData.platform || "",
         // 상세 페이지에서 필요한 추가 정보
         description: finalFormData.providedItems || "",
         promotionLink: finalFormData.promotionLink || "",
         keywords: finalFormData.keywords || "",
         guidelines: finalFormData.guidelines || "",
-        // 상세 이미지 미리보기 URL 배열 (Data URL) - localStorage 저장용
-        detailImagePreviews: finalFormData.detailImagePreviews || [],
+        // 상세 이미지는 localStorage 용량 문제로 저장하지 않음 (미리보기 URL은 폼에서만 사용)
+        // detailImagePreviews: finalFormData.detailImagePreviews || [],
         // requirements 생성용 필드들
         minTextLength: finalFormData.minTextLength,
         minImageCount: finalFormData.minImageCount,
@@ -231,37 +251,14 @@ export default function DeliveryCampaignCreatePage() {
 
       console.log("배송형 캠페인 등록 완료:", newCampaign);
 
-      // 등록 성공 시 캠페인 상태에 맞는 탭으로 이동
-      // - "대기 중" → "예정" 탭
-      // - "모집 중" → "신청" 탭
-      // - "진행 중" → "진행" 탭
+      // 등록 성공 시 캠페인 관리 전체 탭으로 이동
       // replace를 사용하여 히스토리에 등록 페이지를 남기지 않음
-      const campaignStatus = newCampaign.campaignInfo.status;
-      let redirectPath = "/partner/campaign_management"; // 기본: 전체 탭
-
-      switch (campaignStatus) {
-        case "대기 중":
-          redirectPath = "/partner/campaign_management/scheduled"; // 예정 탭
-          break;
-        case "모집 중":
-          redirectPath = "/partner/campaign_management/applied"; // 신청 탭
-          break;
-        case "진행 중":
-          redirectPath = "/partner/campaign_management/progress"; // 진행 탭
-          break;
-        default:
-          redirectPath = "/partner/campaign_management"; // 전체 탭
-          break;
-      }
-
-      router.replace(redirectPath);
+      router.replace("/partner/campaign_management");
     } catch (error) {
       console.error("배송형 캠페인 등록 실패:", error);
       setIsErrorModalOpen(true);
     } finally {
       setIsSubmitting(false);
-      setPendingFormData(null);
-      setPendingIsUrgent(false); // 초기화
     }
   };
 
@@ -281,18 +278,6 @@ export default function DeliveryCampaignCreatePage() {
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}
           onUrgentLoad={setIsUrgent}
-        />
-
-        {/* 확인 모달 */}
-        <BaseModal
-          is_open={isConfirmModalOpen}
-          on_close={() => {
-            setIsConfirmModalOpen(false);
-            setPendingFormData(null);
-          }}
-          message="캠페인 진행 시에는 삭제/수정이 불가합니다.<br>캠페인을 등록하시겠습니까?"
-          buttons={["취소", "확인"]}
-          on_confirm={handleConfirm}
         />
 
         {/* 오류 모달 */}

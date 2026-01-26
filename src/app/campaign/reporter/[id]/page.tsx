@@ -25,7 +25,7 @@ import CampaignDetailPage from "@/components/campaign/CampaignDetailPage";
 import ApplicationModal from "@/components/user/campaign_detail/modal/ApplicationModal";
 import DetailGuidelinesSectionReporter from "@/components/user/campaign_detail/guidelines/DetailGuidelinesSectionReporter";
 import Toast from "@/components/common/toast/Toast";
-import { reporterCampaigns } from "@/data/campaign/reporter/reporterCampaigns";
+import { reporterCampaigns, reporterCampaignsExtended } from "@/data/campaign/reporter/reporterCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import type { ReporterCampaignData } from "@/data/campaign/reporter/reporterCampaigns";
 
@@ -296,8 +296,8 @@ export default function ReporterDetailPage({
       }
     }
 
-    // 2. localStorage에 없으면 정적 데이터에서 찾기
-    const staticCampaign = reporterCampaigns.find((c) => {
+    // 2. localStorage에 없으면 정적 데이터에서 찾기 (Extended 버전 사용 - guidelineTexts 포함)
+    const staticCampaign = reporterCampaignsExtended.find((c) => {
       const campaignId = String(c.id);
       // 정확히 일치하는 경우
       if (campaignId === id) return true;
@@ -317,7 +317,14 @@ export default function ReporterDetailPage({
       return false;
     });
     if (staticCampaign) {
-      setCampaign(staticCampaign);
+      // staticCampaign은 이미 ReporterCampaignData 형식이지만, guidelineTexts를 보장하기 위해 직접 설정
+      // reporterCampaignsExtended에서 가져온 데이터는 이미 guidelineTexts가 포함되어 있음
+      const finalCampaign: ReporterCampaignData = {
+        ...staticCampaign,
+        // guidelineTexts가 없으면 빈 배열로 설정
+        guidelineTexts: staticCampaign.guidelineTexts || [],
+      };
+      setCampaign(finalCampaign);
       setIsLoading(false);
       return;
     }
@@ -364,7 +371,7 @@ export default function ReporterDetailPage({
               setShowToast(true);
             }}
             requirements={campaign.requirements}
-            guidelineTexts={campaign.guidelineTexts}
+            guidelineTexts={campaign.guidelineTexts || []}
           />
         }
         renderApplicationModal={(isOpen, onClose, campaign) => (
@@ -372,8 +379,11 @@ export default function ReporterDetailPage({
             isOpen={isOpen}
             onClose={onClose}
             type="reporter"
+            campaignId={campaign.id}
             dayCount={campaign.dayCount}
             isUrgent={campaign.isUrgent}
+            channelName={campaign.channel}
+            channelUrl={undefined}
           />
         )}
       />

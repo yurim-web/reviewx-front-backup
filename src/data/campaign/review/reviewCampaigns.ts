@@ -55,7 +55,7 @@ export interface ReviewCampaignData {
 export const reviewCampaigns: ReviewCampaignData[] = [
   // review_1: 예정 탭
   {
-    id: "review_1",
+    id: "2001",
     title: "스마트폰 구매평 리뷰",
     category: "구매평",
     image: "/images/main/campaign_img/eximg_1.png",
@@ -71,15 +71,12 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     dayCount: "D-5",
     registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 선정 중 - 모집 기간 종료 후, 선정 발표 전
-      // 모집 기간: 2025-09-02 ~ 2025-09-14 (종료됨)
-      // 선정 발표: 2025-09-16 (아직 안 지남)
-      // 등록 기간: 2025-09-22 ~ 2025-09-30 (아직 시작 안 함)
-      applicationStart: "2025-09-02",
-      applicationEnd: "2025-09-14",
-      announcement: "2025-09-16",
-      purchasePeriod: "2025-09-16 ~ 2025-09-19",
-      registrationPeriod: "2025-09-22 ~ 2025-09-30",
+      // 모집 중 - 현재 모집 진행 중
+      applicationStart: "2026-01-05",
+      applicationEnd: "2026-01-18",
+      announcement: "2026-01-20",
+      purchasePeriod: "2026-01-20 ~ 2026-01-23",
+      registrationPeriod: "2026-01-23 ~ 2026-01-30",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#스마트폰리뷰 #최신폰 #구매후기 #솔직리뷰 #디지털기기",
@@ -103,7 +100,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
   },
   // review_2: 연장요청 탭
   {
-    id: "review_2",
+    id: "2002",
     title: "화장품 구매평 리뷰",
     category: "구매평",
     image: "/images/main/campaign_img/eximg_2.png",
@@ -120,12 +117,12 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     isUrgent: true, // 긴급 캠페인
     registeredAt: "2026-01-08T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2026-01-10 ~ 2026-01-22)
-      applicationStart: "2026-01-10",
-      applicationEnd: "2026-01-22",
-      announcement: "2026-01-24",
-      purchasePeriod: "2026-01-24 ~ 2026-01-27",
-      registrationPeriod: "2026-01-27 ~ 2026-02-05",
+      // 모집 중 - 현재 모집 진행 중
+      applicationStart: "2026-01-06",
+      applicationEnd: "2026-01-19",
+      announcement: "2026-01-21",
+      purchasePeriod: "2026-01-21 ~ 2026-01-24",
+      registrationPeriod: "2026-01-24 ~ 2026-01-31",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#화장품리뷰 #뷰티 #스킨케어 #구매후기 #솔직리뷰",
@@ -149,7 +146,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
   },
   // review_3: 신청 탭
   {
-    id: "review_3",
+    id: "2003",
     title: "가전제품 구매평 리뷰",
     category: "구매평",
     image: "/images/main/campaign_img/eximg_3.png",
@@ -165,12 +162,12 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     dayCount: "D-3",
     registeredAt: "2026-01-06T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2026-01-08 ~ 2026-01-23)
-      applicationStart: "2026-01-08",
-      applicationEnd: "2026-01-23",
-      announcement: "2026-01-25",
-      purchasePeriod: "2026-01-25 ~ 2026-01-28",
-      registrationPeriod: "2026-01-28 ~ 2026-02-05",
+      // 모집 중 - 현재 모집 진행 중
+      applicationStart: "2026-01-04",
+      applicationEnd: "2026-01-17",
+      announcement: "2026-01-19",
+      purchasePeriod: "2026-01-19 ~ 2026-01-22",
+      registrationPeriod: "2026-01-22 ~ 2026-01-29",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#가전제품리뷰 #주방가전 #생활용품 #구매후기 #솔직리뷰",
@@ -193,7 +190,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
   },
   // review_4: 예정 탭
   {
-    id: "review_4",
+    id: "2004",
     title: "의류 구매평 리뷰",
     category: "구매평",
     image: "/images/main/campaign_img/eximg_4.png",
@@ -237,7 +234,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
   },
   // review_5: 종료 탭
   {
-    id: "review_5",
+    id: "2005",
     title: "식품 구매평 리뷰",
     category: "구매평",
     image: "/images/main/campaign_img/eximg_5.png",
@@ -281,7 +278,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
   },
   // review_6: 신청 탭
   {
-    id: "review_6",
+    id: "2006",
     title: "책 구매평 리뷰",
     category: "구매평",
     image: "/images/main/campaign_img/eximg_6.png",
@@ -325,7 +322,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
   },
   // review_7: 진행 탭 (구매 중 상태 테스트)
   {
-    id: "review_7",
+    id: "2007",
     title: "운동화 구매평 리뷰",
     category: "구매평",
     image: "/images/main/campaign_img/eximg_7.png",
@@ -373,7 +370,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
   },
   // review_8: 종료 탭
   {
-    id: "review_8",
+    id: "2008",
     title: "반려동물 용품 구매평 리뷰",
     category: "구매평",
     image: "/images/main/campaign_img/eximg_8.png",
@@ -417,7 +414,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
   },
   // review_9: 진행 탭
   {
-    id: "review_9",
+    id: "2009",
     title: "자동차 용품 구매평 리뷰",
     category: "구매평",
     image: "/images/main/campaign_img/eximg_9.png",
@@ -461,7 +458,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
   },
   // review_10: 취소 탭
   {
-    id: "review_10",
+    id: "2010",
     title: "홈데코 구매평 리뷰",
     category: "구매평",
     image: "/images/main/campaign_img/eximg_10.png",
@@ -504,7 +501,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     contentType: "link" as const, // 링크만
   },
   {
-    id: "review_11",
+    id: "2011",
     title: "프리미엄 비타민C 세럼 구매평",
     category: "구매평",
     image: "/images/main/campaign_img/eximg_2.png",
@@ -548,7 +545,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
   },
   // review_12: 마감임박
   {
-    id: "review_12",
+    id: "2012",
     title: "[마감임박] 프리미엄 무선 이어폰 구매평",
     category: "구매평",
     image: "/images/main/campaign_img/eximg_1.png",
@@ -593,7 +590,7 @@ export const reviewCampaigns: ReviewCampaignData[] = [
   },
   // review_13: 테스트용 구매평 캠페인 (구매 기간 지남, 등록 기간 진행 중)
   {
-    id: "review_13",
+    id: "2013",
     title: "테스트용 구매평 리뷰 캠페인",
     category: "구매평",
     image: "/images/main/campaign_img/eximg_1.png",
@@ -808,10 +805,25 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
       applicants: [
         {
           id: "app_review_1_네이버블로그_001",
+          Id: "eunji123",
+          nickname: "은지블로그",
+          userType: "리뷰어" as const,
+          profileImage: "/images/mypage/profile.svg",
+          memberType: "모범 회원" as const,
+          dailyVisits: 100,
+          totalVisits: 10000,
+          neighbors: 500,
+          memo: "성실하게 리뷰 작성합니다.",
+          selectionStatus: "미선택" as const,
+          channel: "네이버블로그",
+          registrationDate: "2025-12-15",
+        },
+        {
+          id: "app_review_1_네이버블로그_001_old",
           Id: "reviewer_review_1_001",
           nickname: "스마트폰구매평리뷰어A",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 150,
           totalVisits: 450000,
@@ -826,7 +838,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_1_002",
           nickname: "디지털전문가B",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 180,
           totalVisits: 580000,
@@ -841,7 +853,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_1_003",
           nickname: "스마트폰인플루언서C",
           userType: "인플루언서" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 220,
           totalVisits: 720000,
@@ -856,7 +868,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_1_004",
           nickname: "구매평퀸D",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "주의 회원" as const,
           dailyVisits: 95,
           totalVisits: 280000,
@@ -871,7 +883,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_1_005",
           nickname: "스마트폰마스터E",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 200,
           totalVisits: 650000,
@@ -896,7 +908,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_2_001",
           nickname: "화장품구매평리뷰어A",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 120,
           totalVisits: 400000,
@@ -911,7 +923,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_2_002",
           nickname: "뷰티리뷰어B",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 160,
           totalVisits: 500000,
@@ -926,7 +938,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_2_003",
           nickname: "뷰티인플루언서C",
           userType: "인플루언서" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 250,
           totalVisits: 750000,
@@ -943,7 +955,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "selected_review_2_001",
           nickname: "선정된화장품구매평리뷰어1",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 320,
           totalVisits: 950000,
@@ -1122,7 +1134,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_3_001",
           nickname: "가전제품구매평리뷰어A",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 140,
           totalVisits: 420000,
@@ -1137,7 +1149,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_3_002",
           nickname: "가전인플루언서B",
           userType: "인플루언서" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 280,
           totalVisits: 850000,
@@ -1152,7 +1164,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_3_003",
           nickname: "가전리뷰어C",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 110,
           totalVisits: 350000,
@@ -1169,7 +1181,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "selected_review_3_001",
           nickname: "선정된가전제품구매평리뷰어1",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 350,
           totalVisits: 1000000,
@@ -1253,7 +1265,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_4_001",
           nickname: "의류구매평리뷰어A",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 130,
           totalVisits: 380000,
@@ -1268,7 +1280,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_4_002",
           nickname: "패션전문가B",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 170,
           totalVisits: 520000,
@@ -1313,7 +1325,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_4_005",
           nickname: "옷장리뷰어E",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 140,
           totalVisits: 410000,
@@ -1343,7 +1355,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_4_007",
           nickname: "의류리뷰전문가G",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 120,
           totalVisits: 350000,
@@ -1373,7 +1385,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_4_009",
           nickname: "패션구매평리뷰어I",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 160,
           totalVisits: 480000,
@@ -1403,7 +1415,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_4_011",
           nickname: "패션블로거K",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 180,
           totalVisits: 540000,
@@ -1433,7 +1445,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_4_013",
           nickname: "의류구매평전문가M",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 110,
           totalVisits: 320000,
@@ -1463,7 +1475,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_4_015",
           nickname: "스타일리뷰어O",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 145,
           totalVisits: 430000,
@@ -1493,7 +1505,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_4_017",
           nickname: "의류구매평블로거Q",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 155,
           totalVisits: 460000,
@@ -1523,7 +1535,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_4_019",
           nickname: "패션리뷰전문가S",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 135,
           totalVisits: 400000,
@@ -1553,7 +1565,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_4_021",
           nickname: "패션구매평리뷰어U",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 148,
           totalVisits: 440000,
@@ -1592,7 +1604,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_5_001",
           nickname: "식품구매평리뷰어A",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 100,
           totalVisits: 300000,
@@ -1668,7 +1680,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_6_001",
           nickname: "책구매평리뷰어A",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 160,
           totalVisits: 480000,
@@ -1683,7 +1695,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_6_002",
           nickname: "독서인플루언서B",
           userType: "인플루언서" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 240,
           totalVisits: 720000,
@@ -1698,7 +1710,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_6_003",
           nickname: "책전문가C",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 190,
           totalVisits: 570000,
@@ -1715,7 +1727,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "selected_review_6_001",
           nickname: "선정된책구매평리뷰어1",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 310,
           totalVisits: 930000,
@@ -1799,7 +1811,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_7_001",
           nickname: "운동화구매평리뷰어A",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 280,
           totalVisits: 840000,
@@ -1814,7 +1826,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_7_002",
           nickname: "신발인플루언서B",
           userType: "인플루언서" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 320,
           totalVisits: 960000,
@@ -1831,7 +1843,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "selected_review_7_001",
           nickname: "운동화구매평리뷰어A",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 280,
           totalVisits: 840000,
@@ -1846,7 +1858,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "selected_review_7_002",
           nickname: "신발인플루언서B",
           userType: "인플루언서" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 320,
           totalVisits: 960000,
@@ -1918,7 +1930,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_8_001",
           nickname: "반려동물용품구매평리뷰어A",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 150,
           totalVisits: 450000,
@@ -1992,7 +2004,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_9_001",
           nickname: "자동차용품구매평리뷰어A",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 180,
           totalVisits: 540000,
@@ -2007,7 +2019,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_9_002",
           nickname: "자동차인플루언서B",
           userType: "인플루언서" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 260,
           totalVisits: 780000,
@@ -2024,7 +2036,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_9_001",
           nickname: "자동차용품구매평리뷰어A",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 180,
           totalVisits: 540000,
@@ -2060,7 +2072,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           nickname: "자동차인플루언서B",
           channelId: "blog_029",
           channel: "네이버블로그",
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           actionType: 0,
           thumbnailSrc: undefined,
           extension_request_reason:
@@ -2088,7 +2100,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           nickname: "반려된자동차리뷰어D",
           channelId: "blog_033",
           channel: "네이버블로그",
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg.png",
           isRejected: true,
@@ -2203,7 +2215,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           Id: "reviewer_review_10_001",
           nickname: "홈데코구매평리뷰어A",
           userType: "리뷰어" as const,
-          profileImage: "",
+          profileImage: "/images/mypage/profile.svg",
           memberType: "모범 회원" as const,
           dailyVisits: 140,
           totalVisits: 420000,
@@ -2498,15 +2510,21 @@ function generateNewReviewCampaignId(): string {
     }
   }
 
+  // 배송형처럼 숫자만 사용 (구매평은 2000번대부터 시작)
   const existingIds = allCampaigns
     .map((c) => {
+      // review_X 형식이면 숫자만 추출, 아니면 숫자로 직접 변환 시도
       const match = c.id.match(/review_(\d+)/);
-      return match ? parseInt(match[1]) : 0;
+      if (match) {
+        return parseInt(match[1]) + 2000; // review_18 -> 2018
+      }
+      const numId = parseInt(c.id);
+      return isNaN(numId) ? 0 : numId;
     })
-    .filter((id) => id > 0);
-  const maxId = existingIds.length > 0 ? Math.max(...existingIds) : 10;
+    .filter((id) => id >= 2000 && id < 3000); // 구매평 범위: 2000-2999
+  const maxId = existingIds.length > 0 ? Math.max(...existingIds) : 2000;
 
-  return `review_${maxId + 1}`;
+  return String(maxId + 1);
 }
 
 /**
@@ -2544,6 +2562,9 @@ export function createReviewCampaign(
     ? formData.platform.replace(/\s+/g, "")
     : "네이버블로그";
 
+  // 포인트 계산 (additionalPoints를 숫자로 변환)
+  const points = Number(formData.additionalPoints) || 0;
+
   // calculateCampaignStatus는 "대기 중" | "모집 중" | "진행 중" | "종료"를 반환
   // "종료" 상태를 "마감"으로 변환 (UI 표시용)
   let finalStatus:
@@ -2578,6 +2599,8 @@ export function createReviewCampaign(
       recruitmentPeriod: formData.recruitmentPeriod || "",
       announcementDate: formData.announcementDate || "",
       registrationPeriod: formData.registrationPeriod || "",
+      point: points,
+      channel: formData.platform || "",
       recruitedCount: 0,
       totalCount: totalCount,
       daysLeft: daysLeft,

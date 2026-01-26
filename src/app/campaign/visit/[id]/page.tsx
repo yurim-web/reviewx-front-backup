@@ -25,7 +25,7 @@ import CampaignDetailPage from "@/components/campaign/CampaignDetailPage";
 import ApplicationModal from "@/components/user/campaign_detail/modal/ApplicationModal";
 import DetailGuidelinesSectionVisit from "@/components/user/campaign_detail/guidelines/DetailGuidelinesSectionVisit";
 import Toast from "@/components/common/toast/Toast";
-import { visitCampaigns } from "@/data/campaign/visit/visitCampaigns";
+import { visitCampaigns, visitCampaignsExtended } from "@/data/campaign/visit/visitCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import type { VisitCampaignData } from "@/data/campaign/visit/visitCampaigns";
 
@@ -300,8 +300,8 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
       }
     }
 
-    // 2. localStorage에 없으면 정적 데이터에서 찾기
-    const staticCampaign = visitCampaigns.find((c) => {
+    // 2. localStorage에 없으면 정적 데이터에서 찾기 (Extended 버전 사용 - guidelineTexts 포함)
+    const staticCampaign = visitCampaignsExtended.find((c) => {
       const campaignId = String(c.id);
       // 정확히 일치하는 경우
       if (campaignId === id) return true;
@@ -321,7 +321,23 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
       return false;
     });
     if (staticCampaign) {
-      setCampaign(staticCampaign);
+      // 디버깅: guidelineTexts 확인
+      if (id === "1006" || id === "6") {
+        console.log("[visit_6 디버깅] staticCampaign:", {
+          id: staticCampaign.id,
+          hasGuidelineTexts: !!staticCampaign.guidelineTexts,
+          guidelineTextsLength: staticCampaign.guidelineTexts?.length || 0,
+          guidelineTexts: staticCampaign.guidelineTexts,
+        });
+      }
+      // staticCampaign은 이미 VisitCampaignData 형식이지만, guidelineTexts를 보장하기 위해 직접 설정
+      // visitCampaignsExtended에서 가져온 데이터는 이미 guidelineTexts가 포함되어 있음
+      const finalCampaign: VisitCampaignData = {
+        ...staticCampaign,
+        // guidelineTexts가 없으면 빈 배열로 설정
+        guidelineTexts: staticCampaign.guidelineTexts || [],
+      };
+      setCampaign(finalCampaign);
       setIsLoading(false);
       return;
     }
@@ -338,6 +354,16 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
 
   // 로딩이 완료되었는데 캠페인이 없으면 404
   if (!campaign) return notFound();
+
+  // 디버깅: guidelineTexts 확인
+  if (campaign && (campaign.id === "1006" || campaign.id === "6")) {
+    console.log("[visit_6 디버깅] campaign before render:", {
+      id: campaign.id,
+      hasGuidelineTexts: !!campaign.guidelineTexts,
+      guidelineTextsLength: campaign.guidelineTexts?.length || 0,
+      guidelineTexts: campaign.guidelineTexts,
+    });
+  }
 
   return (
     <>
@@ -377,7 +403,7 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
               setShowToast(true);
             }}
             requirements={campaign.requirements}
-            guidelineTexts={campaign.guidelineTexts}
+            guidelineTexts={campaign.guidelineTexts || []}
           />
         }
         renderApplicationModal={(isOpen, onClose, campaign) => (
@@ -385,6 +411,7 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
             isOpen={isOpen}
             onClose={onClose}
             type="visit"
+            campaignId={campaign.id}
             dayCount={campaign.dayCount}
             isUrgent={campaign.isUrgent}
             channelName={campaign.channel}

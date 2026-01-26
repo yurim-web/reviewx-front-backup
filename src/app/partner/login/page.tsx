@@ -24,7 +24,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import PartnerHeader from "@/components/fragments/PartnerHeader";
-import styles from "@/styles/login/login.module.css";
+import pageStyles from "@/styles/login/login/page.module.css";
+import formStyles from "@/styles/login/login/form.module.css";
+import optionsStyles from "@/styles/login/login/options.module.css";
+import linksStyles from "@/styles/login/login/links.module.css";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function PartnerLoginPage() {
@@ -79,15 +82,15 @@ export default function PartnerLoginPage() {
   // 렌더링
   // ========================================
   return (
-    <div className={styles.partner_login_page_container}>
+    <div className={pageStyles.partner_login_page_container}>
       {/* 파트너 전용 헤더 */}
       <PartnerHeader />
 
       {/* 메인 콘텐츠 영역 */}
-      <main className={styles.partner_login_main}>
+      <main className={pageStyles.partner_login_main}>
         {/* 로그인 메시지 섹션 */}
-        <section className={styles.login_message_section}>
-          <h2 className={styles.login_title}>
+        <section className={pageStyles.login_message_section}>
+          <h2 className={pageStyles.login_title}>
             리뷰엑스,
             <br />
             좋은 리뷰는
@@ -97,14 +100,14 @@ export default function PartnerLoginPage() {
         </section>
 
         {/* 로그인 폼 섹션 */}
-        <form className={styles.login_form} onSubmit={handleSubmit}>
+        <form className={formStyles.login_form} onSubmit={handleSubmit}>
           {/* 입력 필드 섹션 */}
-          <div className={styles.form_section}>
-            <div className={styles.input_wrapper}>
+          <div className={formStyles.form_section}>
+            <div className={formStyles.input_wrapper}>
               <input
                 id="email"
                 type="email"
-                className={styles.input_field}
+                className={formStyles.input_field}
                 placeholder="아이디(이메일)를 입력하세요"
                 value={email}
                 onChange={handleEmailChange}
@@ -113,11 +116,11 @@ export default function PartnerLoginPage() {
               />
             </div>
 
-            <div className={styles.input_wrapper}>
+            <div className={formStyles.input_wrapper}>
               <input
                 id="password"
                 type="password"
-                className={styles.input_field}
+                className={formStyles.input_field}
                 placeholder="비밀번호를 입력하세요"
                 value={password}
                 onChange={handlePasswordChange}
@@ -126,38 +129,38 @@ export default function PartnerLoginPage() {
               />
               {/* 에러 메시지 */}
               {errorMessage && (
-                <div className={styles.error_message_section}>
-                  <span className={styles.error_text}>{errorMessage}</span>
+                <div className={formStyles.error_message_section}>
+                  <span className={formStyles.error_text}>{errorMessage}</span>
                 </div>
               )}
             </div>
           </div>
 
           {/* 옵션 및 링크 섹션 */}
-          <div className={styles.form_section}>
-            <div className={styles.login_options_section}>
+          <div className={formStyles.form_section}>
+            <div className={optionsStyles.login_options_section}>
               {/* 자동 로그인 체크박스 */}
-              <div className={styles.auto_login_wrapper}>
+              <div className={optionsStyles.auto_login_wrapper}>
                 <input
                   id="auto-login"
                   type="checkbox"
-                  className={styles.checkbox}
+                  className={optionsStyles.checkbox}
                   checked={autoLogin}
                   onChange={handleAutoLoginChange}
                   aria-label="자동 로그인"
                 />
-                <label htmlFor="auto-login" className={styles.checkbox_label}>
+                <label htmlFor="auto-login" className={optionsStyles.checkbox_label}>
                   자동 로그인
                 </label>
               </div>
 
               {/* 파트너 회원가입 / 계정찾기 링크 */}
-              <div className={styles.links_group}>
-                <Link href="/partner/signup" className={styles.link_text}>
+              <div className={optionsStyles.links_group}>
+                <Link href="/partner/signup" className={optionsStyles.link_text}>
                   파트너 회원가입
                 </Link>
-                <span className={styles.link_divider}>|</span>
-                <Link href="/partner/find-account" className={styles.link_text}>
+                <span className={optionsStyles.link_divider}>|</span>
+                <Link href="/partner/find-account" className={optionsStyles.link_text}>
                   아이디 · 비밀번호 찾기
                 </Link>
               </div>
@@ -165,10 +168,10 @@ export default function PartnerLoginPage() {
           </div>
 
           {/* 로그인 버튼 섹션 */}
-          <div className={styles.form_section}>
+          <div className={formStyles.form_section}>
             <button
               type="submit"
-              className={styles.partner_login_button}
+              className={optionsStyles.partner_login_button}
               aria-label="로그인"
               disabled={isLoading}
             >
@@ -178,10 +181,10 @@ export default function PartnerLoginPage() {
         </form>
 
         {/* 문의하기 링크 (카카오톡 외부 링크) */}
-        <div className={styles.inquiry_section}>
+        <div className={linksStyles.inquiry_section}>
           <a
             href="https://pf.kakao.com" // TODO: 실제 카카오톡 문의 URL로 교체
-            className={styles.inquiry_link}
+            className={linksStyles.inquiry_link}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -191,8 +194,8 @@ export default function PartnerLoginPage() {
       </main>
 
       {/* 리뷰어 회원 로그인 링크 - 화면 하단 고정 */}
-      <div className={styles.user_login_section}>
-        <Link href="/user/login" className={styles.user_login_link}>
+      <div className={linksStyles.user_login_section}>
+        <Link href="/user/login" className={linksStyles.user_login_link}>
           리뷰어 회원 로그인
         </Link>
       </div>

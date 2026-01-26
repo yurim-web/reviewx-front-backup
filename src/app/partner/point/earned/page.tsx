@@ -30,6 +30,7 @@ import { PartnerPointHistory, PartnerPointSummary } from "@/types/domain/partner
 import {
   getPartnerPointHistory,
   getPartnerPointSummary,
+  partnerPointHistoryData,
 } from "@/data/partner/point/pointData";
 
 /**
@@ -49,7 +50,15 @@ function PartnerEarnedPointPage() {
     if (user?.id) {
       const userHistory = getPartnerPointHistory(user.id);
       const userSummary = getPartnerPointSummary(user.id);
-      setHistoryData(userHistory);
+
+      // 파트너 테스트 계정인 경우 목업 데이터와 실제 충전 내역을 합침
+      if (user.id === 'partner_test_001') {
+        const combinedHistory = [...userHistory, ...partnerPointHistoryData];
+        setHistoryData(combinedHistory);
+      } else {
+        setHistoryData(userHistory);
+      }
+
       setSummary(userSummary);
     }
   }, [user]);

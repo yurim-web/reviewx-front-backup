@@ -1,0 +1,118 @@
+/* ========================================
+   📝 입력 필드 관련 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - 캠페인 생성 폼 컴포넌트들
+ *
+ * 주요 기능:
+ * - 숫자 입력 필드
+ * - underline 스타일 입력
+ * - 단위 텍스트
+ */
+
+/* 옵션 입력 그룹 */
+.option_input_group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.option_label {
+  font-weight: 500;
+  font-size: 16px;
+  color: #444444;
+  white-space: nowrap;
+  letter-spacing: -0.32px;
+}
+
+.number_input_group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.number_input {
+  width: 80px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+  color: #444444;
+  font-weight: 500;
+  font-size: 16px;
+  text-align: center;
+  letter-spacing: -0.32px;
+}
+
+.number_input:focus {
+  outline: none;
+  border-color: #444444;
+}
+
+.input_unit {
+  font-weight: 500;
+  font-size: 16px;
+  color: #444444;
+  white-space: nowrap;
+  letter-spacing: -0.32px;
+}
+
+/* 비디오 입력 그룹 */
+.video_input_group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.underline_input {
+  border: none;
+  border-bottom: 1px solid #d9d9d9;
+  background: transparent;
+  color: #444;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+
+  width: 45px;
+  padding: 4px 0;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.underline_input::-webkit-outer-spin-button,
+.underline_input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+.unit_text {
+  font-weight: 500;
+  font-size: 16px;
+  color: #444444;
+  letter-spacing: -0.32px;
+  white-space: nowrap;
+}
+
+/* ========================================
+   📱 반응형 디자인
+   ======================================== */
+
+@media (max-width: 768px) {
+  .option_input_group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .video_input_group {
+    flex-wrap: wrap;
+  }
+}

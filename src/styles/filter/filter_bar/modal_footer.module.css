@@ -1,0 +1,69 @@
+/* ========================================
+   🔘 필터 모달 푸터 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - ModalFilter.tsx (필터 모달 컴포넌트)
+ * - RegionFilter.tsx (지역 필터 컴포넌트)
+ * - SortModalFilter.tsx (정렬 모달 컴포넌트)
+ *
+ * 주요 스타일:
+ * - 적용하기 버튼
+ * - 초기화 버튼
+ */
+
+/* 모달 푸터 */
+/* 필터적용하기 ,선택초기화 있는 부분 */
+.modal_footer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+}
+
+/* 필터 적용 버튼 */
+.apply_button {
+  width: 100%;
+  padding: 20px;
+  background: #ff5694;
+  border: none;
+  border-radius: 8px;
+
+  /* 버튼속 글자 */
+  color: #fff;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+/* 초기화 버튼 */
+.reset_button {
+  background: none;
+  border: none;
+
+  /* 글자 css */
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+
+  cursor: pointer;
+  transition: color 0.2s ease;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 초기화 아이콘 */
+.reset_icon {
+  width: 16px;
+  height: 16px;
+}

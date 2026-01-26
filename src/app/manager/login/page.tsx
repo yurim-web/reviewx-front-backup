@@ -24,7 +24,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/fragments/Header";
-import styles from "@/styles/login/login.module.css";
+import pageStyles from "@/styles/login/login/page.module.css";
+import formStyles from "@/styles/login/login/form.module.css";
+import optionsStyles from "@/styles/login/login/options.module.css";
 import { useAuth } from "@/hooks/useAuth";
 import { unifiedAccountData } from "@/data/login/unifiedAccountData";
 
@@ -146,15 +148,15 @@ export default function AdminLoginPage() {
   // ========================================
 
   return (
-    <div className={styles.partner_login_page_container}>
+    <div className={pageStyles.partner_login_page_container}>
       {/* 메인 헤더 */}
       <Header />
 
       {/* 메인 콘텐츠 영역 */}
-      <main className={styles.partner_login_main}>
+      <main className={pageStyles.partner_login_main}>
         {/* 로그인 메시지 섹션 */}
-        <section className={styles.login_message_section}>
-          <h2 className={styles.login_title}>
+        <section className={pageStyles.login_message_section}>
+          <h2 className={pageStyles.login_title}>
             리뷰엑스는
             <br />
             여러분이 만들어갑니다.
@@ -162,15 +164,15 @@ export default function AdminLoginPage() {
         </section>
 
         {/* 로그인 폼 섹션 */}
-        <form className={styles.login_form} onSubmit={handleSubmit}>
+        <form className={formStyles.login_form} onSubmit={handleSubmit}>
           {/* 입력 필드 섹션 */}
-          <div className={styles.form_section}>
+          <div className={formStyles.form_section}>
             {/* 아이디 입력 필드 */}
-            <div className={styles.input_wrapper}>
+            <div className={formStyles.input_wrapper}>
               <input
                 id="username"
                 type="text"
-                className={styles.input_field}
+                className={formStyles.input_field}
                 placeholder="아이디를 입력하세요"
                 value={username}
                 onChange={handleUsernameChange}
@@ -180,11 +182,11 @@ export default function AdminLoginPage() {
             </div>
 
             {/* 비밀번호 입력 필드 */}
-            <div className={styles.input_wrapper}>
+            <div className={formStyles.input_wrapper}>
               <input
                 id="password"
                 type="password"
-                className={styles.input_field}
+                className={formStyles.input_field}
                 placeholder="비밀번호를 입력하세요"
                 value={password}
                 onChange={handlePasswordChange}
@@ -193,43 +195,43 @@ export default function AdminLoginPage() {
               />
               {/* 에러 메시지 - 비밀번호 입력 필드 바로 아래 */}
               {errorMessage && (
-                <div className={styles.error_message_section}>
-                  <span className={styles.error_text}>{errorMessage}</span>
+                <div className={formStyles.error_message_section}>
+                  <span className={formStyles.error_text}>{errorMessage}</span>
                 </div>
               )}
             </div>
           </div>
 
           {/* 옵션 및 링크 섹션 */}
-          <div className={styles.form_section}>
-            <div className={styles.login_options_section}>
+          <div className={formStyles.form_section}>
+            <div className={optionsStyles.login_options_section}>
               {/* 자동 로그인 체크박스 */}
-              <div className={styles.auto_login_wrapper}>
+              <div className={optionsStyles.auto_login_wrapper}>
                 <input
                   id="auto-login"
                   type="checkbox"
-                  className={styles.checkbox}
+                  className={optionsStyles.checkbox}
                   checked={autoLogin}
                   onChange={handleAutoLoginChange}
                   aria-label="자동 로그인"
                 />
-                <label htmlFor="auto-login" className={styles.checkbox_label}>
+                <label htmlFor="auto-login" className={optionsStyles.checkbox_label}>
                   자동 로그인
                 </label>
               </div>
 
               {/* 아이디 · 비밀번호 찾기 링크 */}
-              <Link href="/find-account" className={styles.link_text}>
+              <Link href="/find-account" className={optionsStyles.link_text}>
                 아이디 · 비밀번호 찾기
               </Link>
             </div>
           </div>
 
           {/* 로그인 버튼 섹션 */}
-          <div className={styles.form_section}>
+          <div className={formStyles.form_section}>
             <button
               type="submit"
-              className={styles.partner_login_button}
+              className={optionsStyles.partner_login_button}
               aria-label="로그인"
               disabled={isLoading}
             >

@@ -23,6 +23,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 import VisitCampaignForm from "@/components/partner/campaign_create_form/VisitCampaignForm";
 import { CampaignFormData } from "@/types/domain/user";
 import { addVisitCampaign } from "@/data/campaign/visit/visitCampaigns";
@@ -33,6 +34,7 @@ import BaseModal from "@/components/common/modal/BaseModal";
 
 export default function VisitCampaignCreatePage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUrgent, setIsUrgent] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
@@ -93,10 +95,10 @@ export default function VisitCampaignCreatePage() {
    *   localStorage를 사용하여 임시 저장합니다.
    */
   const handleConfirm = async () => {
-    if (!pendingFormData) return;
+    if (!pendingFormData || isSubmitting) return;
 
-    setIsSubmitting(true);
     setIsConfirmModalOpen(false);
+    setIsSubmitting(true);
 
     try {
       // 긴급 상태를 폼 데이터에 추가
@@ -109,11 +111,9 @@ export default function VisitCampaignCreatePage() {
       console.log("현재 isUrgent 상태:", isUrgent);
 
       // 이미지 URL 처리
-      // 폼에서 전달받은 thumbnailImageUrl을 사용 (Data URL 형식)
+      // localStorage 용량 문제로 base64 이미지는 저장하지 않고 기본 이미지 사용
       // 실제 프로덕션에서는 이미지를 서버에 업로드하고 URL을 받아와야 합니다
-      let imageUrl =
-        pendingFormData.thumbnailImageUrl ||
-        "/images/main/campaign_img/eximg_2.png"; // 업로드된 이미지 또는 기본 이미지
+      let imageUrl = "/images/main/campaign_img/eximg_2.png"; // 기본 이미지 사용
 
       // TODO: 실제 프로덕션에서는 이미지 업로드 API 호출
       // const imageUploadResponse = await uploadImages(formData.thumbnailImage, formData.detailImages);
@@ -195,12 +195,43 @@ export default function VisitCampaignCreatePage() {
       // 등록 시간 생성 (ISO 8601 형식: "2025-01-15T10:30:00")
       const registeredAt = new Date().toISOString();
 
+      // 파트너명 가져오기 (partner_accounts에서)
+      let partnerName = "";
+      try {
+        if (typeof window !== "undefined") {
+          const storedAccounts = localStorage.getItem("partner_accounts");
+          if (storedAccounts) {
+            const accounts = JSON.parse(storedAccounts);
+            const partnerAccount = accounts.find(
+              (a: any) => a.id === (user?.id || 'partner_test_001')
+            );
+            if (partnerAccount) {
+              // business_name 우선, 없으면 name 사용
+              partnerName = partnerAccount.business_name || partnerAccount.name || "";
+            }
+          }
+        }
+      } catch (error) {
+        console.error("파트너명 조회 중 오류:", error);
+      }
+
       const extendedCampaign = {
         ...newCampaign,
+        // 파트너 ID 추가
+        partner_id: user?.id || 'partner_test_001',
+        // 파트너명 추가
+        partnerName: partnerName,
+        // campaignInfo에도 partnerName 추가
+        campaignInfo: {
+          ...newCampaign.campaignInfo,
+          partnerName: partnerName,
+        },
         // 긴급 캠페인 여부 (폼 제출 시 저장한 값 사용)
         isUrgent: pendingIsUrgent === true,
         // 등록 시간 (현재 시간)
         registeredAt: registeredAt,
+        // 채널 정보 (최상위 레벨에도 추가)
+        channel: finalFormData.platform || "",
         // 상세 페이지에서 필요한 추가 정보
         description: finalFormData.providedItems || "",
         visitAddress: finalFormData.visitAddress || "",
@@ -317,26 +348,8 @@ export default function VisitCampaignCreatePage() {
 
       console.log("방문형 캠페인 등록 완료:", newCampaign);
 
-      // 등록 성공 시 캠페인 상태에 맞는 탭으로 이동
-      const campaignStatus = newCampaign.campaignInfo.status;
-      let redirectPath = "/partner/campaign_management"; // 기본: 전체 탭
-
-      switch (campaignStatus) {
-        case "대기 중":
-          redirectPath = "/partner/campaign_management/scheduled"; // 예정 탭
-          break;
-        case "모집 중":
-          redirectPath = "/partner/campaign_management/applied"; // 신청 탭
-          break;
-        case "등록 중":
-          redirectPath = "/partner/campaign_management/progress"; // 진행 탭
-          break;
-        default:
-          redirectPath = "/partner/campaign_management"; // 전체 탭
-          break;
-      }
-
-      router.replace(redirectPath);
+      // 등록 성공 시 캠페인 관리 전체 탭으로 이동
+      router.replace("/partner/campaign_management");
     } catch (error) {
       console.error("방문형 캠페인 등록 실패:", error);
       setIsErrorModalOpen(true);

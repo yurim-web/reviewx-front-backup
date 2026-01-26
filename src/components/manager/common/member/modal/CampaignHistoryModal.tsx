@@ -95,8 +95,11 @@ export default function CampaignHistoryModal({
 
   // 숫자를 천 단위로 포맷팅하는 함수
   // 예: 19999 -> "19,999"
-  const format_number = (num: number): string => {
-    return num.toLocaleString("ko-KR");
+  // num이 undefined나 null인 경우 0으로 처리합니다
+  const format_number = (num: number | undefined | null): string => {
+    // num이 undefined, null, 또는 숫자가 아닌 경우 0으로 처리
+    const safe_num = num ?? 0;
+    return safe_num.toLocaleString("ko-KR");
   };
 
   // 오버레이 클릭 핸들러
@@ -114,8 +117,20 @@ export default function CampaignHistoryModal({
   // 내림차순 정렬: b를 먼저 비교하여 큰 번호가 앞에 오도록 합니다
   // campaign_number는 문자열이므로 문자열 비교로 정렬됩니다
   const sorted_campaigns = [...campaigns].sort((a, b) => {
+    // campaign_number가 없는 경우를 처리
+    // undefined나 null인 경우 빈 문자열로 처리하여 맨 뒤로 보냅니다
+    const a_number = a.campaign_number || "";
+    const b_number = b.campaign_number || "";
+    
+    // 둘 다 빈 문자열이면 순서 유지
+    if (!a_number && !b_number) return 0;
+    // a만 빈 문자열이면 b를 앞으로
+    if (!a_number) return 1;
+    // b만 빈 문자열이면 a를 앞으로
+    if (!b_number) return -1;
+    
     // 내림차순: b가 a보다 크면 음수 반환 (b가 앞으로)
-    return b.campaign_number.localeCompare(a.campaign_number);
+    return b_number.localeCompare(a_number);
   });
 
   return (
@@ -199,7 +214,7 @@ export default function CampaignHistoryModal({
                             channel_icon_map[campaign.channel as Channel] ||
                             channel_icon_map.Blog
                           }
-                          alt={campaign.channel}
+                          alt={campaign.channel || "채널"}
                           width={20}
                           height={20}
                           className={cssStyles.channel_icon}

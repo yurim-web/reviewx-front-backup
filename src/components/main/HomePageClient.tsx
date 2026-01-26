@@ -26,6 +26,7 @@
 // 컴포넌트들을 import
 // @/는 src/를 가리키는 별칭입니다 (tsconfig.json에서 설정됨)
 import { useMemo, useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import MainMenu from "@/components/main/MainMenu";
@@ -635,6 +636,63 @@ function getStaticCampaigns() {
 }
 
 export default function HomePageClient() {
+  const pathname = usePathname();
+
+  /**
+   * URL 기반 자동 로그인 (테스트용)
+   * - /user로 접속하면 리뷰어 계정으로 자동 로그인
+   * - /partner로 접속하면 파트너 계정으로 자동 로그인
+   * - 각각 독립적인 키로 저장하여 서로 영향을 주지 않음
+   */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // 개발 환경에서만 동작
+    if (process.env.NODE_ENV !== 'development') return;
+
+    // /user 경로이면 리뷰어 계정으로 설정
+    if (pathname?.startsWith('/user')) {
+      let reviewerAuth = localStorage.getItem('reviewx_auth_user_reviewer');
+
+      // 리뷰어 로그인 정보가 없으면 생성
+      if (!reviewerAuth) {
+        reviewerAuth = JSON.stringify({
+          id: 'user_naver_001',
+          email: 'kimeunji@gmail.com',
+          name: '김은지',
+          role: 'user'
+        });
+        localStorage.setItem('reviewx_auth_user_reviewer', reviewerAuth);
+        console.log('✅ 리뷰어 계정으로 자동 로그인');
+      }
+
+      // 현재 경로에 맞는 계정으로 reviewx_auth_user 설정
+      localStorage.setItem('reviewx_auth_user', reviewerAuth);
+      localStorage.setItem('reviewx_auth_token', 'test_token_reviewer');
+    }
+
+    // /partner 경로이면 파트너 계정으로 설정
+    if (pathname?.startsWith('/partner')) {
+      let partnerAuth = localStorage.getItem('reviewx_auth_user_partner');
+
+      // 파트너 로그인 정보가 없으면 생성
+      if (!partnerAuth) {
+        partnerAuth = JSON.stringify({
+          id: 'partner_test_001',
+          email: 'partner@test.com',
+          name: '테스트파트너',
+          role: 'partner'
+        });
+        localStorage.setItem('reviewx_auth_user_partner', partnerAuth);
+        console.log('✅ 파트너 계정으로 자동 로그인');
+      }
+
+      // 현재 경로에 맞는 계정으로 reviewx_auth_user 설정
+      localStorage.setItem('reviewx_auth_user', partnerAuth);
+      localStorage.setItem('reviewx_auth_token', 'test_token_partner');
+    }
+  }, [pathname]);
+
   /**
    * 캠페인 데이터 상태 관리
    *

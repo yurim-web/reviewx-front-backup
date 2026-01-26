@@ -854,18 +854,118 @@ export function get_reviewer_list(): ReviewerItem[] {
   // 매번 최신 상태를 localStorage에서 로드
   const status_type_updates = load_status_updates_from_storage();
 
-  return reviewer_list.map((reviewer) => {
-    // localStorage에 저장된 상태 업데이트가 있으면 적용
-    // 단, 초기 데이터의 status_type을 localStorage에 저장하지 않은 경우 초기 데이터 사용
-    if (status_type_updates[reviewer.id] !== undefined) {
-      // localStorage에 저장된 값이 있으면 사용 (사용자가 변경한 값)
-      return {
-        ...reviewer,
-        status_type: status_type_updates[reviewer.id],
-      };
+  // user_accounts와 user_applied_campaigns에서 최신 정보 가져오기
+  let userAccountsMap: Record<string, any> = {};
+  let userCampaignsMap: Record<string, any> = {};
+
+  if (typeof window !== 'undefined') {
+    try {
+      // user_accounts에서 포인트 정보 가져오기
+      const storedAccounts = localStorage.getItem('user_accounts');
+      if (storedAccounts) {
+        const accounts = JSON.parse(storedAccounts);
+        accounts.forEach((account: any) => {
+          userAccountsMap[account.id] = account;
+        });
+      }
+
+      // user_applied_campaigns에서 캠페인 통계 가져오기
+      const userAppliedCampaigns = localStorage.getItem('user_applied_campaigns');
+      if (userAppliedCampaigns) {
+        const allAppliedCampaigns = JSON.parse(userAppliedCampaigns);
+        allAppliedCampaigns.forEach((uc: any) => {
+          if (uc.campaigns) {
+            const campaigns = uc.campaigns;
+            // 캠페인 진행 = 대기 + 선정 상태인 캠페인 수
+            const participated = campaigns.filter((c: any) =>
+              c.status === '대기' || c.status === '선정'
+            ).length;
+            // 캠페인 완료 = 완료 상태인 캠페인 수
+            const completed = campaigns.filter((c: any) =>
+              c.status === '완료'
+            ).length;
+            userCampaignsMap[uc.userId] = { participated, completed };
+          }
+        });
+      }
+    } catch (error) {
+      console.error('리뷰어 목록 데이터 로드 실패:', error);
     }
-    // localStorage에 저장된 값이 없으면 초기 데이터의 status_type 사용
-    return reviewer;
+  }
+
+  return reviewer_list.map((reviewer) => {
+    // 기본값은 목업 데이터 사용
+    let updatedReviewer: ReviewerItem = { ...reviewer };
+
+    // localStorage에 저장된 상태 업데이트가 있으면 적용
+    if (status_type_updates[reviewer.id] !== undefined) {
+      updatedReviewer.status_type = status_type_updates[reviewer.id];
+    }
+
+    // ID 매핑: 1 -> user_kakao_001, 2 -> user_naver_001
+    const mappedId = reviewer.id === '1' ? 'user_kakao_001' : 
+                     reviewer.id === '2' ? 'user_naver_001' : 
+                     reviewer.id;
+
+    // user_accounts에서 최신 정보 가져오기
+    const userAccount = userAccountsMap[mappedId] || userAccountsMap[reviewer.id];
+    if (userAccount) {
+      // 포인트 정보 업데이트
+      updatedReviewer.current_points = userAccount.current_points ?? updatedReviewer.current_points;
+      // 출금 포인트는 user_accounts에서 가져오되, 없으면 0으로 설정
+      updatedReviewer.withdrawn_points = userAccount.withdrawn_points !== undefined && userAccount.withdrawn_points !== null 
+        ? userAccount.withdrawn_points 
+        : 0;
+      
+      // 채널 정보 업데이트 (channel_details에서 연결된 채널만)
+      if (userAccount.channel_details) {
+        const connectedChannels: Channel[] = [];
+        userAccount.channel_details.forEach((ch: any) => {
+          if (ch.status === 'connected') {
+            // 채널 이름을 Channel 타입으로 변환
+            const channelMap: Record<string, Channel> = {
+              '네이버 블로그': 'Blog',
+              '네이버 블로그': 'Blog',
+              '블로그': 'Blog',
+              'Blog': 'Blog',
+              '네이버 클립': 'Clip',
+              '네이버 클립': 'Clip',
+              '클립': 'Clip',
+              'Clip': 'Clip',
+              '인스타그램': 'Instagram',
+              'Instagram': 'Instagram',
+              '유튜브': 'Youtube',
+              'Youtube': 'Youtube',
+            };
+            const normalizedChannel = ch.name.replace(/\s+/g, '');
+            const channel = channelMap[normalizedChannel] || channelMap[ch.name];
+            if (channel) {
+              connectedChannels.push(channel);
+            }
+          }
+        });
+        if (connectedChannels.length > 0) {
+          updatedReviewer.channels = connectedChannels;
+        }
+      }
+
+      // 접속일, 가입일 업데이트
+      if (userAccount.last_access_date) {
+        updatedReviewer.last_access_date = userAccount.last_access_date;
+      }
+      if (userAccount.join_date) {
+        updatedReviewer.join_date = userAccount.join_date;
+      }
+    }
+
+    // user_applied_campaigns에서 캠페인 통계 가져오기
+    const userCampaigns = userCampaignsMap[mappedId] || userCampaignsMap[reviewer.id];
+    if (userCampaigns) {
+      updatedReviewer.campaign_participated = userCampaigns.participated;
+      updatedReviewer.campaign_completed = userCampaigns.completed;
+    }
+
+    return updatedReviewer;
   });
 }
 

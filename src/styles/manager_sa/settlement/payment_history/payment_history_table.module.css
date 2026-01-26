@@ -22,14 +22,7 @@
 .table_header {
   display: grid;
   /* 결제 내역 테이블 컬럼 정의 */
-  /* 학습 포인트:
-   * - grid-template-columns: CSS Grid의 컬럼 크기를 정의합니다
-   * - fr 단위: 사용 가능한 공간을 비율로 나눕니다 (fraction의 약자)
-   * - 상호명: 3fr로 늘려서 긴 상호명을 표시할 수 있도록 합니다
-   * - 입금자명: 1.2fr로 줄여서 공간을 절약합니다
-   * - 충전 포인트: 1.2fr로 줄여서 공간을 절약합니다
-   * - 결제, 신청일, 승인일: 너비를 줄여서 공간을 절약합니다
-   */
+
   grid-template-columns:
     0.5fr /* 체크박스 */
     0.8fr /* 번호 */
@@ -64,12 +57,7 @@
 .table_row {
   display: grid;
   /* 헤더와 동일한 컬럼 정의를 공유해 정렬 유지 */
-  /* 학습 포인트:
-   * - 테이블 헤더(.table_header)와 동일한 grid-template-columns 값을 사용합니다
-   * - 이렇게 하면 헤더와 데이터 행의 컬럼이 정확히 정렬됩니다
-   * - 상호명, 입금자명, 충전 포인트 너비가 헤더와 일치합니다
-   * - 결제, 신청일, 승인일 너비가 헤더와 일치합니다
-   */
+
   grid-template-columns:
     0.5fr /* 체크박스 */
     0.8fr /* 번호 */
@@ -226,9 +214,9 @@
 .company_name_row {
   display: flex;
   align-items: center;
-  gap: 6px; /* 상호명과 다운로드 버튼 사이 간격 */
+  gap: 6px; 
   width: 100%;
-  min-width: 0; /* flex 아이템이 축소될 수 있도록 */
+  min-width: 0; 
 }
 
 /* 상호명 텍스트 (말줄임표 적용) */

@@ -18,28 +18,78 @@
 
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import styles from "@/styles/user/notification/notification.module.css";
 import SubHeader from "@/components/fragments/SubHeader";
 import NotificationList from "@/components/notification/NotificationList";
 import PageTitle from "@/components/fragments/PageTitle";
+import { useAuth } from "@/hooks/useAuth";
 // 알림 목업 데이터 (향후 API로 대체)
 import { mockReviewerNotifications } from "@/data/notification/notificationData";
 
 export default function UserNotificationPage() {
+  const { user } = useAuth();
+  const router = useRouter();
+
+  // 로그인 체크
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !user) {
+      router.push('/user/login');
+    }
+  }, [user, router]);
+  const [notifications, setNotifications] = useState<any[]>(mockReviewerNotifications);
+
   /**
-   * 알림 목록 상태
-   * 향후 API 연동 시 useState와 useEffect를 사용하여 서버에서 데이터를 가져올 수 있습니다.
-   *
-   * 예시:
-   * const [notifications, setNotifications] = useState<NotificationItem[]>([]);
-   *
-   * useEffect(() => {
-   *   // API 호출
-   *   fetchUserNotifications().then(setNotifications);
-   * }, []);
+   * localStorage에서 알림 불러오기
    */
-  const notifications = mockReviewerNotifications;
+  useEffect(() => {
+    if (typeof window !== 'undefined' && user) {
+      try {
+        const storedNotifications = localStorage.getItem('notifications');
+        if (storedNotifications) {
+          const allNotifications = JSON.parse(storedNotifications);
+
+          // 현재 유저의 알림만 필터링
+          const userNotifications = allNotifications
+            .filter((notif: any) => notif.user_id === user.id)
+            .map((notif: any) => {
+              // 기존 알림 형식에 맞게 변환
+              let category = 'A_R10'; // 기본값: 출금 신청 카테고리
+
+              if (notif.type === 'withdrawal_completed') {
+                category = 'A_R11';
+              } else if (notif.type === 'withdrawal_requested') {
+                category = 'A_R10';
+              } else if (notif.type === 'withdrawal_rejected') {
+                category = 'A_R12';
+              }
+
+              return {
+                id: notif.id,
+                category: category,
+                message: notif.message,
+                time: new Date(notif.created_at).toLocaleString('ko-KR', {
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: false,
+                }).replace(/\. /g, '-').replace('.', '').replace(',', ''),
+                is_read: notif.is_read,
+              };
+            });
+
+          // localStorage 알림 + mock 알림 합치기
+          setNotifications([...userNotifications, ...mockReviewerNotifications]);
+          console.log('✅ [알림 페이지] 알림 로드 완료:', userNotifications);
+        }
+      } catch (error) {
+        console.error('❌ [알림 페이지] 알림 로드 실패:', error);
+      }
+    }
+  }, [user]);
 
   /**
    * 알림 클릭 핸들러 (향후 구현)

@@ -1,0 +1,99 @@
+/* ========================================
+   📋 필터 모달 기본 구조 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - ModalFilter.tsx (필터 모달 컴포넌트)
+ * - RegionFilter.tsx (지역 필터 컴포넌트)
+ * - SortModalFilter.tsx (정렬 모달 컴포넌트)
+ *
+ * 주요 스타일:
+ * - 모달 오버레이
+ * - 모달 콘텐츠 컨테이너
+ * - 모달 헤더 (제목, 닫기 버튼)
+ * - 모달 바디
+ */
+
+/* 모달 오버레이 (배경) */
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* 모달 콘텐츠 */
+.modal_content {
+  max-height: 1000px;
+  overflow: hidden; /* 전체 모달 스크롤 제거 */
+
+  background: white;
+  width: 100%;
+  max-width: 1000px;
+  border-radius: 40px 40px 0 0;
+  padding: 40px;
+  position: relative;
+  animation: slideUp 0.3s ease-out;
+
+  display: flex;
+  flex-direction: column;
+  /* gap: 24px; */
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* 모달 헤더 */
+.modal_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 24px;
+}
+
+/* 모달 제목 */
+.modal_title {
+  color: #444;
+  text-overflow: ellipsis;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 20px; /* 100% */
+  letter-spacing: -0.4px;
+}
+
+/* 모달 닫기 버튼 */
+.modal_close_button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal_close_button img {
+  width: 20px;
+  height: 20px;
+}
+
+/* 모달 바디 */
+.modal_body {
+  flex: 1;
+  overflow-y: auto;
+}

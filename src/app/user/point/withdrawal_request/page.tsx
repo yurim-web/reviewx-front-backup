@@ -18,7 +18,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
@@ -28,6 +28,7 @@ import AvailablePointsDisplay from "@/components/point/AvailablePointsDisplay";
 import ReadOnlyFormField from "@/components/point/ReadOnlyFormField";
 import { parseFormattedAmount } from "@/utils/formatting/amount";
 import { validateAmount } from "@/utils/validation/amount";
+import { useAuth } from "@/hooks/useAuth";
 import styles from "../../../../styles/user/point/withdrawal_request.module.css";
 
 /**
@@ -35,6 +36,7 @@ import styles from "../../../../styles/user/point/withdrawal_request.module.css"
  */
 export default function WithdrawalRequestPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [withdrawalAmount, setWithdrawalAmount] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   // 출금 신청 완료 모달 상태
@@ -47,16 +49,47 @@ export default function WithdrawalRequestPage() {
   const [isWithdrawalBlockedModalOpen, setIsWithdrawalBlockedModalOpen] =
     useState<boolean>(false);
 
-  // 사용자 정보 (실제로는 API에서 가져와야 함)
-  // TODO: API로 실제 사용자 정보를 가져와야 함
-  const userInfo = {
-    name: "홍길동",
-    bank: "우리은행",
-    accountNumber: "000000000000",
-    residentNumber: "800102-*******",
-    availablePoints: 100000,
+  // 사용자 정보 (user_accounts에서 로드)
+  const [userInfo, setUserInfo] = useState({
+    name: "",
+    bank: "",
+    accountNumber: "",
+    residentNumber: "",
+    availablePoints: 0,
     lastWithdrawalDate: null as Date | null,
-  };
+  });
+
+  // user_accounts에서 사용자 정보 로드
+  useEffect(() => {
+    if (typeof window !== 'undefined' && user) {
+      try {
+        const storedAccounts = localStorage.getItem('user_accounts');
+        if (storedAccounts) {
+          const accounts = JSON.parse(storedAccounts);
+          const userAccount = accounts.find((a: any) =>
+            a.id === user.id || a.email === user.email
+          );
+          if (userAccount) {
+            setUserInfo({
+              name: userAccount.account_holder || userAccount.name || "",
+              bank: userAccount.bank || "",
+              accountNumber: userAccount.account_number || "",
+              residentNumber: userAccount.ssn_front && userAccount.ssn_back
+                ? `${userAccount.ssn_front}-${userAccount.ssn_back}`
+                : "",
+              availablePoints: userAccount.available_points || 0,
+              lastWithdrawalDate: userAccount.last_withdrawal_date
+                ? new Date(userAccount.last_withdrawal_date)
+                : null,
+            });
+            console.log('✅ [출금 신청] 사용자 정보 로드:', userAccount);
+          }
+        }
+      } catch (error) {
+        console.error('❌ [출금 신청] 사용자 정보 로드 실패:', error);
+      }
+    }
+  }, [user]);
 
   // 최소/최대 금액 상수
   const MIN_AMOUNT = 10000;
@@ -199,14 +232,99 @@ export default function WithdrawalRequestPage() {
       return;
     }
 
-    // TODO: 실제 출금 신청 API 호출
-    // const response = await withdrawAPI({ amount });
-    // if (response.success) {
-    //   setIsCompleteModalOpen(true);
-    // }
+    // 출금 신청 처리
+    try {
+      if (typeof window !== 'undefined' && user) {
+        const now = new Date();
+        const requestId = `withdrawal_${user.id}_${now.getTime()}`;
 
-    // 완료 모달 표시
-    setIsCompleteModalOpen(true);
+        // 1. user_accounts에 포인트 내역 추가
+        const storedAccounts = localStorage.getItem('user_accounts');
+        if (storedAccounts) {
+          const accounts = JSON.parse(storedAccounts);
+          const accountIndex = accounts.findIndex((a: any) =>
+            a.id === user.id || a.email === user.email
+          );
+
+          if (accountIndex !== -1) {
+            const account = accounts[accountIndex];
+
+            // 출금 신청 시에는 pending_points만 증가 (available_points는 그대로)
+            // 관리자 승인 시에 available_points에서 차감됨
+            account.pending_points = (account.pending_points || 0) + amount;
+
+            // 포인트 내역에 출금 신청 기록 추가
+            if (!account.point_history) {
+              account.point_history = [];
+            }
+
+            account.point_history.unshift({
+              id: requestId,
+              type: "withdrawal_pending",
+              amount: -amount,
+              description: "출금 신청 대기중",
+              date: now.toISOString().split('T')[0],
+              status: "pending",
+              balance: account.available_points,
+            });
+
+            // 마지막 출금 신청일 업데이트
+            account.last_withdrawal_date = now.toISOString();
+
+            accounts[accountIndex] = account;
+            localStorage.setItem('user_accounts', JSON.stringify(accounts));
+            console.log('✅ [출금 신청] user_accounts 업데이트 완료');
+          }
+        }
+
+        // 2. withdrawal_requests에 관리자용 출금 요청 기록 추가
+        const storedRequests = localStorage.getItem('withdrawal_requests');
+        const requests = storedRequests ? JSON.parse(storedRequests) : [];
+
+        requests.unshift({
+          id: requestId,
+          user_id: user.id,
+          user_name: userInfo.name,
+          user_number: user.id.includes('kakao') ? '000001' : '000002',
+          requested_amount: amount,
+          net_amount: netAmount,
+          tax_amount: amount - netAmount,
+          bank: userInfo.bank,
+          account_number: userInfo.accountNumber,
+          account_holder: userInfo.name,
+          status: 'pending',
+          request_date: now.toISOString(),
+          processed_date: null,
+        });
+
+        localStorage.setItem('withdrawal_requests', JSON.stringify(requests));
+        console.log('✅ [출금 신청] withdrawal_requests 추가 완료');
+
+        // 3. 알람 추가 (출금 신청 알람)
+        const storedNotifications = localStorage.getItem('notifications');
+        const notifications = storedNotifications ? JSON.parse(storedNotifications) : [];
+
+        const notification = {
+          id: `notif_${requestId}_${now.getTime()}`,
+          user_id: user.id,
+          type: 'withdrawal_requested',
+          title: '포인트 출금 신청',
+          message: `포인트 출금 신청이 접수되었습니다.`,
+          is_read: false,
+          created_at: now.toISOString(),
+        };
+        notifications.unshift(notification);
+
+        localStorage.setItem('notifications', JSON.stringify(notifications));
+        console.log('✅ [출금 신청] 알람 추가 완료');
+      }
+
+      // 완료 모달 표시
+      setIsCompleteModalOpen(true);
+    } catch (error) {
+      console.error('❌ [출금 신청] 처리 실패:', error);
+      alert('출금 신청 처리 중 오류가 발생했습니다.');
+    }
   };
 
   /**

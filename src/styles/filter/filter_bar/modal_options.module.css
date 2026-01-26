@@ -1,0 +1,141 @@
+/* ========================================
+   ☑️ 필터 모달 옵션 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - ModalFilter.tsx (필터 모달 컴포넌트)
+ * - RegionFilter.tsx (지역 필터 컴포넌트)
+ * - SortModalFilter.tsx (정렬 모달 컴포넌트)
+ *
+ * 주요 스타일:
+ * - 옵션 그리드 레이아웃
+ * - 체크박스/라디오 버튼
+ * - 옵션 아이템
+ */
+
+/* 옵션 그리드 (2단 레이아웃) - 지역 필터가 아닌 경우에만 스크롤 적용 */
+.options_grid:not(.sub_regions_container .options_grid) {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px 24px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-bottom: 24px;
+}
+
+/* 기본 옵션 그리드 스타일 (지역 필터 포함) */
+.options_grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px 24px;
+  padding-bottom: 8px;
+}
+
+/* 옵션 아이템 */
+.option_item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+/* 체크박스 */
+.option_checkbox {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid #d9d9d9;
+  border-radius: 4px;
+  background: #ffffff;
+  cursor: pointer;
+  appearance: none;
+  position: relative;
+}
+
+.option_checkbox:checked {
+  border-color: #444444;
+  background: #ffffff;
+}
+
+.option_checkbox:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #444444;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* 라디오 버튼 */
+.option_radio {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #d9d9d9;
+  border-radius: 50%;
+  cursor: pointer;
+  appearance: none;
+  background: white;
+  position: relative;
+}
+
+.option_radio:checked {
+  background: #555;
+  border-color: #555;
+}
+
+.option_radio:checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+}
+
+/* 옵션 라벨 */
+.option_label {
+  color: #444;
+  text-overflow: ellipsis;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 지역 화살표 이미지 */
+.region_arrow {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* 세로 레이아웃용 옵션 그리드 - 지역 필터가 아닌 경우에만 스크롤 적용 */
+.options_vertical:not(.sub_regions_container .options_vertical) {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* 정렬 모달용 스타일 - 스크롤 없이 자동 높이 */
+.options_vertical.no_scroll {
+  max-height: none;
+  overflow-y: visible;
+}
+
+/* 기본 세로 레이아웃 스타일 (지역 필터 포함) */
+.options_vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}

@@ -28,7 +28,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import styles from "../../../styles/filter/filter_bar.module.css";
+import mainStyles from "../../../styles/filter/filter_bar/main.module.css";
 import ModalFilter from "./ModalFilter";
 import RegionFilter from "./RegionFilter";
 import SortModalFilter from "./SortModalFilter";
@@ -292,53 +292,53 @@ export default function FilterBar({
 
   return (
     <>
-      <div className={styles.filter_bar}>
-        <div className={styles.filter_buttons_container}>
-          <div className={styles.filter_buttons}>
+      <div className={mainStyles.filter_bar}>
+        <div className={mainStyles.filter_buttons_container}>
+          <div className={mainStyles.filter_buttons}>
             {/* 카테고리 필터 버튼 */}
             <button
-              className={`${styles.filter_button} ${
+              className={`${mainStyles.filter_button} ${
                 activeFilters.categories && activeFilters.categories.length > 0
-                  ? styles.filter_button_active
+                  ? mainStyles.filter_button_active
                   : ""
               }`}
               onClick={handleCategoryButtonClick}
             >
-              {/* 
+              {/*
                 체크박스 아이콘
                 - 필터가 활성화되어 있으면 체크마크가 표시됨
                 - filter_button_active 클래스가 적용되면 CSS의 ::after 가상 요소로 체크마크가 표시됨
               */}
-              <div className={styles.filter_icon}></div>
+              <div className={mainStyles.filter_icon}></div>
               <span>카테고리</span>
               <img
                 src="/images/filter/dropdown_icon.svg"
                 alt="드롭다운"
-                className={styles.dropdown_icon}
+                className={mainStyles.dropdown_icon}
               />
             </button>
 
             {/* 채널 필터 버튼 */}
             {channelOptions.length > 0 && (
               <button
-                className={`${styles.filter_button} ${
+                className={`${mainStyles.filter_button} ${
                   activeFilters.channels && activeFilters.channels.length > 0
-                    ? styles.filter_button_active
+                    ? mainStyles.filter_button_active
                     : ""
                 }`}
                 onClick={handleChannelButtonClick}
               >
-                {/* 
+                {/*
                   체크박스 아이콘
                   - 필터가 활성화되어 있으면 체크마크가 표시됨
                   - filter_button_active 클래스가 적용되면 CSS의 ::after 가상 요소로 체크마크가 표시됨
                 */}
-                <div className={styles.filter_icon}></div>
+                <div className={mainStyles.filter_icon}></div>
                 <span>채널</span>
                 <img
                   src="/images/filter/dropdown_icon.svg"
                   alt="드롭다운"
-                  className={styles.dropdown_icon}
+                  className={mainStyles.dropdown_icon}
                 />
               </button>
             )}
@@ -346,57 +346,57 @@ export default function FilterBar({
             {/* 지역 필터 버튼 */}
             {useRegionFilter && (
               <button
-                className={`${styles.filter_button} ${
+                className={`${mainStyles.filter_button} ${
                   activeFilters.regions && activeFilters.regions.length > 0
-                    ? styles.filter_button_active
+                    ? mainStyles.filter_button_active
                     : ""
                 }`}
                 onClick={handleRegionButtonClick}
               >
-                {/* 
+                {/*
                   체크박스 아이콘
                   - 필터가 활성화되어 있으면 체크마크가 표시됨
                   - filter_button_active 클래스가 적용되면 CSS의 ::after 가상 요소로 체크마크가 표시됨
                 */}
-                <div className={styles.filter_icon}></div>
+                <div className={mainStyles.filter_icon}></div>
                 <span>지역</span>
                 <img
                   src="/images/filter/dropdown_icon.svg"
                   alt="드롭다운"
-                  className={styles.dropdown_icon}
+                  className={mainStyles.dropdown_icon}
                 />
               </button>
             )}
 
             {/* 마감임박 필터 버튼 (토글 방식) */}
             <button
-              className={`${styles.filter_button} ${
-                closingSoon ? styles.filter_button_active : ""
+              className={`${mainStyles.filter_button} ${
+                closingSoon ? mainStyles.filter_button_active : ""
               }`}
               onClick={() => {
                 onClosingSoonChange?.(!closingSoon);
               }}
             >
-              {/* 
+              {/*
                 체크박스 아이콘
                 - 마감임박 필터가 활성화되어 있으면 체크마크가 표시됨
                 - filter_button_active 클래스가 적용되면 CSS의 ::after 가상 요소로 체크마크가 표시됨
               */}
-              <div className={styles.filter_icon}></div>
+              <div className={mainStyles.filter_icon}></div>
               <span>긴급</span>
             </button>
           </div>
 
           {/* 정렬 버튼 (모달 열기) */}
           <button
-            className={styles.sort_button}
+            className={mainStyles.sort_button}
             onClick={handleSortButtonClick}
           >
             <span>{selectedSort}</span>
             <img
               src="/images/filter/dropdown_icon.svg"
               alt="정렬"
-              className={styles.dropdown_icon}
+              className={mainStyles.dropdown_icon}
             />
           </button>
         </div>
@@ -406,53 +406,53 @@ export default function FilterBar({
           (activeFilters.categories?.length || 0) +
           (activeFilters.regions?.length || 0) >
           0 && (
-          <div className={styles.active_filters}>
+          <div className={mainStyles.active_filters}>
             {/* 활성화된 카테고리 필터 태그들 */}
             {activeFilters.categories?.map((category) => (
-              <div key={category} className={styles.filter_tag}>
+              <div key={category} className={mainStyles.filter_tag}>
                 <span>{category}</span>
 
                 {/* x 버튼 */}
                 <button
-                  className={styles.remove_tag}
+                  className={mainStyles.remove_tag}
                   onClick={() => handleCategoryRemove(category)}
                 >
                   <img
                     src="/images/filter/x_small.svg"
                     alt="제거"
-                    className={styles.remove_icon}
+                    className={mainStyles.remove_icon}
                   />
                 </button>
               </div>
             ))}
             {/* 활성화된 채널 필터 태그들 */}
             {activeFilters.channels?.map((channel) => (
-              <div key={channel} className={styles.filter_tag}>
+              <div key={channel} className={mainStyles.filter_tag}>
                 <span>{channel}</span>
                 <button
-                  className={styles.remove_tag}
+                  className={mainStyles.remove_tag}
                   onClick={() => handleChannelRemove(channel)}
                 >
                   <img
                     src="/images/filter/x_small.svg"
                     alt="제거"
-                    className={styles.remove_icon}
+                    className={mainStyles.remove_icon}
                   />
                 </button>
               </div>
             ))}
             {/* 활성화된 지역 필터 태그들 */}
             {activeFilters.regions?.map((region) => (
-              <div key={region} className={styles.filter_tag}>
+              <div key={region} className={mainStyles.filter_tag}>
                 <span>{region}</span>
                 <button
-                  className={styles.remove_tag}
+                  className={mainStyles.remove_tag}
                   onClick={() => handleRegionRemove(region)}
                 >
                   <img
                     src="/images/filter/x_small.svg"
                     alt="제거"
-                    className={styles.remove_icon}
+                    className={mainStyles.remove_icon}
                   />
                 </button>
               </div>

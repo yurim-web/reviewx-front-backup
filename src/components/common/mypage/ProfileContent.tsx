@@ -39,6 +39,8 @@ interface ProfileContentProps {
   editPath: string;
   /** 로그아웃 버튼 클릭 시 실행할 함수 (선택적) */
   onLogout?: () => void;
+  /** 프로필 이미지 URL (선택적) */
+  profileImage?: string;
 }
 
 /**
@@ -52,6 +54,7 @@ export default function ProfileContent({
   nickname,
   editPath,
   onLogout,
+  profileImage,
 }: ProfileContentProps) {
   // Next.js의 useRouter 훅: 페이지 이동을 위한 라우터 객체
   // 훅(Hook): React의 특별한 함수로, 컴포넌트 내부에서만 사용 가능합니다.
@@ -73,8 +76,8 @@ export default function ProfileContent({
           {/* 프로필 이미지 영역 - 기본 프로필 이미지 사용 */}
           <div className={profileStyles.profile_image}>
             <img
-              src="/images/mypage/profile.svg"
-              alt="기본 프로필 이미지"
+              src={profileImage || "/images/mypage/profile.svg"}
+              alt={profileImage ? "프로필 이미지" : "기본 프로필 이미지"}
               className={profileStyles.profile_image_icon}
             />
           </div>

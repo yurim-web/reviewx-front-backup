@@ -1,0 +1,32 @@
+/* ========================================
+   📊 출금 요청 테이블 행 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - RequestTable.tsx
+ */
+
+/* 테이블 행 */
+.table_row {
+  display: grid;
+  gap: 0;
+  align-items: center;
+  padding: 0;
+  min-height: 76px;
+}
+
+/* 긴급 테이블 행: 체크 | 번호 | 이름 | 계좌번호 | 주민등록번호 | 출금 포인트 | 신청일 | 유형 | 상태 | 출금 */
+.table_row.table_row_emergency {
+  grid-template-columns: 0.5fr 0.8fr 1.2fr 3.6fr 1.1fr 1.35fr 1.15fr 0.9fr 0.9fr 0.8fr;
+}
+
+/* 회차 정산 테이블 행: 체크 | 번호 | 회차 | 이름 | 계좌번호 | 주민등록번호 | 출금 포인트 | 신청일 | 유형 | 상태 | 출금 */
+.table_row.table_row_round {
+  grid-template-columns: 0.5fr 0.8fr 0.8fr 1.2fr 3.4fr 1.1fr 1.25fr 1.15fr 0.9fr 0.9fr 0.8fr;
+}
+
+/* 테이블 행 호버 효과 */
+.table_row:hover {
+  background-color: #f9f9f9;
+}

@@ -6,7 +6,7 @@
  */
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import type { AuthUser, AuthContextType, LoginCredentials, UserRole } from '@/types/auth';
 import {
   authenticateUser,
@@ -22,15 +22,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const pathname = usePathname();
 
-  // 자동 로그인 체크 (초기 로드 시)
+  // 자동 로그인 체크 (초기 로드 시 및 경로 변경 시)
   useEffect(() => {
     const storedUser = checkAutoLogin();
     if (storedUser) {
       setUser(storedUser);
     }
     setIsLoading(false);
-  }, []);
+  }, [pathname]); // pathname 변경 시에도 재실행
 
   // 로그인 함수
   const login = useCallback(

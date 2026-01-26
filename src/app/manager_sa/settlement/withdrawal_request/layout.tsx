@@ -16,6 +16,13 @@
  *
  */
 
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "ReviewX | 출금 요청",
+  description: "SA 관리자 출금 요청 페이지입니다",
+};
+
 /**
  * 출금 요청 페이지 레이아웃 컴포넌트
  *

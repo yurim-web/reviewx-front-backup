@@ -1,0 +1,77 @@
+/* ========================================
+   📝 프로필 편집 입력 필드 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - FormField.tsx
+ * - AccountInfoInput.tsx
+ */
+
+/* 입력 필드 */
+.field_label {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  color: #444;
+  display: block;
+}
+
+.field_helper_text {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
+}
+
+.required_asterisk {
+  color: #ff2626;
+  margin-left: 2px;
+}
+
+.input_field {
+  width: 100%;
+  height: 56px;
+  padding: 20px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  /* 글자 css */
+  overflow: hidden;
+  color: #444;
+  text-overflow: ellipsis;
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+}
+
+.input_field::placeholder {
+  color: #999;
+}
+
+.input_field:disabled {
+  background: #f6f6f6;
+  color: #999;
+}
+
+.input_field:focus {
+  outline: none;
+  border-color: #444;
+}
+
+/* 숫자 입력 필드 스피너 화살표 숨기기 */
+/* Chrome, Safari, Edge 등의 WebKit 기반 브라우저에서 스피너 숨김 */
+.input_field[type="number"]::-webkit-inner-spin-button,
+.input_field[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox에서 스피너 숨김 */
+.input_field[type="number"] {
+  -moz-appearance: textfield;
+}

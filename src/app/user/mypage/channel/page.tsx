@@ -46,6 +46,8 @@ import type { MainTab } from "@/types/domain/user";
 
 import layoutStyles from "../../../../styles/user/mypage/layout.module.css";
 
+import { useAuth } from "@/hooks/useAuth";
+
 /**
 
  * 채널 탭 전용 페이지 컴포넌트
@@ -53,6 +55,7 @@ import layoutStyles from "../../../../styles/user/mypage/layout.module.css";
  */
 
 export default function ChannelPage() {
+  const { user } = useAuth();
   const [activeTopTab, setActiveTopTab] = useState<MainTab>("account");
 
   const [activeSubTab, setActiveSubTab] = useState<"profile" | "channel">(
@@ -78,17 +81,54 @@ export default function ChannelPage() {
     {
       name: "네이버 블로그",
 
-      url: "https://blog.naver.com/catcat12344",
+      url: "",
 
-      status: "connected" as const,
+      status: "disconnected" as const,
     },
 
-    { name: "네이버 클립", status: "disconnected" as const },
+    { name: "네이버 클립", url: "", status: "disconnected" as const },
 
-    { name: "인스타그램", status: "disconnected" as const },
+    { name: "인스타그램", url: "", status: "disconnected" as const },
 
-    { name: "유튜브", status: "disconnected" as const },
+    { name: "유튜브", url: "", status: "disconnected" as const },
   ]);
+
+  // user_accounts에서 채널 정보 로드
+  useEffect(() => {
+    if (typeof window !== 'undefined' && user) {
+      try {
+        const storedAccounts = localStorage.getItem('user_accounts');
+        console.log('📦 [채널 페이지] user_accounts:', storedAccounts);
+
+        if (storedAccounts) {
+          const accounts = JSON.parse(storedAccounts);
+          const userAccount = accounts.find((a: any) =>
+            a.id === user.id || a.email === user.email
+          );
+          console.log('✅ [채널 페이지] userAccount:', userAccount);
+
+          if (userAccount?.channel_details) {
+            // channel_details에서 채널 정보 복원
+            const loadedChannels = channels.map(channel => {
+              const detail = userAccount.channel_details.find((d: any) => d.name === channel.name);
+              if (detail) {
+                return {
+                  name: channel.name,
+                  url: detail.url || "",
+                  status: detail.status || "disconnected" as const,
+                };
+              }
+              return channel;
+            });
+            setChannels(loadedChannels);
+            console.log('🔄 [채널 페이지] 채널 정보 로드됨:', loadedChannels);
+          }
+        }
+      } catch (error) {
+        console.error('❌ [채널 페이지] 채널 정보 로드 실패:', error);
+      }
+    }
+  }, [user]);
 
   /**
 
@@ -119,13 +159,34 @@ export default function ChannelPage() {
 
     channelInfo: { url: string }
   ) => {
-    setChannels((prev) =>
-      prev.map((channel) =>
-        channel.name === channelName
-          ? { ...channel, url: channelInfo.url, status: "connected" as const }
-          : channel
-      )
+    const updatedChannels = channels.map((channel) =>
+      channel.name === channelName
+        ? { ...channel, url: channelInfo.url, status: "connected" as const }
+        : channel
     );
+    setChannels(updatedChannels);
+
+    // user_accounts에 저장
+    if (typeof window !== 'undefined' && user) {
+      try {
+        const storedAccounts = localStorage.getItem('user_accounts');
+        const accounts = storedAccounts ? JSON.parse(storedAccounts) : [];
+
+        const accountIndex = accounts.findIndex((a: any) => a.id === user.id || a.email === user.email);
+
+        if (accountIndex >= 0) {
+          // channel_details 업데이트
+          accounts[accountIndex] = {
+            ...accounts[accountIndex],
+            channel_details: updatedChannels,
+          };
+          localStorage.setItem('user_accounts', JSON.stringify(accounts));
+          console.log('✅ [채널 페이지] 채널 정보 저장됨:', updatedChannels);
+        }
+      } catch (error) {
+        console.error('❌ [채널 페이지] 채널 정보 저장 실패:', error);
+      }
+    }
   };
 
   return (

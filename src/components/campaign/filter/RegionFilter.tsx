@@ -27,7 +27,10 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import styles from "../../../styles/filter/filter_bar.module.css";
+import modalStyles from "../../../styles/filter/filter_bar/modal.module.css";
+import optionsStyles from "../../../styles/filter/filter_bar/modal_options.module.css";
+import footerStyles from "../../../styles/filter/filter_bar/modal_footer.module.css";
+import regionStyles from "../../../styles/filter/filter_bar/region.module.css";
 
 // RegionFilter 컴포넌트의 props 타입 정의
 interface RegionFilterProps {
@@ -464,31 +467,31 @@ export default function RegionFilter({
   if (!isOpen) return null;
 
   return (
-    <div className={styles.modal_overlay} onClick={handleBackdropClick}>
+    <div className={modalStyles.modal_overlay} onClick={handleBackdropClick}>
       <div
-        className={styles.modal_content}
+        className={modalStyles.modal_content}
         onClick={(e) => e.stopPropagation()}
       >
         {/* 모달 헤더 */}
-        <div className={styles.modal_header}>
-          <h3 className={styles.modal_title}>{title}</h3>
-          <button className={styles.modal_close_button} onClick={onClose}>
+        <div className={modalStyles.modal_header}>
+          <h3 className={modalStyles.modal_title}>{title}</h3>
+          <button className={modalStyles.modal_close_button} onClick={onClose}>
             <img src="/images/filter/x_icon.svg" alt="닫기" />
           </button>
         </div>
 
         {/* 모달 바디 */}
-        <div className={styles.modal_body}>
+        <div className={modalStyles.modal_body}>
           {/* 지역 섹션 제목 */}
-          <h4 className={styles.region_section_title}>지역</h4>
+          <h4 className={regionStyles.region_section_title}>지역</h4>
 
           {/* 메인 지역 탭들 */}
-          <div className={styles.region_tabs}>
+          <div className={regionStyles.region_tabs}>
             {regionData.mainRegions.map((region) => (
               <button
                 key={region}
-                className={`${styles.region_tab} ${
-                  selectedMainRegion === region ? styles.region_tab_active : ""
+                className={`${regionStyles.region_tab} ${
+                  selectedMainRegion === region ? regionStyles.region_tab_active : ""
                 }`}
                 onClick={() => handleMainRegionClick(region)}
               >
@@ -499,8 +502,8 @@ export default function RegionFilter({
 
           {/* 세부 지역 목록 */}
           {currentSubRegions.length > 0 && (
-            <div className={styles.sub_regions_container}>
-              <div className={styles.options_grid}>
+            <div className={regionStyles.sub_regions_container}>
+              <div className={optionsStyles.options_grid}>
                 {currentSubRegions.map((fullRegionName) => {
                   // "지역 전체" 옵션의 선택 상태: "지역 전체"가 선택되어 있는지 확인
                   const isSelected =
@@ -509,7 +512,7 @@ export default function RegionFilter({
                       : tempSelectedRegions.includes(fullRegionName);
 
                   return (
-                    <label key={fullRegionName} className={styles.option_item}>
+                    <label key={fullRegionName} className={optionsStyles.option_item}>
                       <input
                         type="checkbox"
                         checked={isSelected}
@@ -565,9 +568,9 @@ export default function RegionFilter({
                             });
                           }
                         }}
-                        className={styles.option_checkbox}
+                        className={optionsStyles.option_checkbox}
                       />
-                      <span className={styles.option_label}>
+                      <span className={optionsStyles.option_label}>
                         {/* "지역 전체"는 화살표 없이 그냥 표시 */}
                         {fullRegionName === "지역 전체"
                           ? fullRegionName
@@ -587,7 +590,7 @@ export default function RegionFilter({
                                   <img
                                     src="/images/filter/region_arrow.svg"
                                     alt=">"
-                                    className={styles.region_arrow}
+                                    className={optionsStyles.region_arrow}
                                   />
                                 )}
                               </span>
@@ -602,17 +605,17 @@ export default function RegionFilter({
         </div>
 
         {/* 모달 푸터 */}
-        <div className={styles.modal_footer}>
-          <button className={styles.apply_button} onClick={handleApply}>
+        <div className={footerStyles.modal_footer}>
+          <button className={footerStyles.apply_button} onClick={handleApply}>
             필터 적용하기
           </button>
-          <button className={styles.reset_button} onClick={handleReset}>
+          <button className={footerStyles.reset_button} onClick={handleReset}>
             <Image
               src="/images/icons/reset_icon.svg"
               alt="초기화"
               width={16}
               height={16}
-              className={styles.reset_icon}
+              className={footerStyles.reset_icon}
             />
             선택 초기화
           </button>

@@ -17,7 +17,7 @@
 
 import { useState, useEffect } from "react";
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
-import guideStyles from "@/styles/partner/campaign_create/campaign_guide.module.css";
+import checkboxStyles from "@/styles/partner/campaign_create/campaign_guide/checkboxes.module.css";
 
 interface PageHeaderProps {
   title?: string;
@@ -58,7 +58,7 @@ export default function PageHeader({
       {/* 긴급 체크박스 */}
       <div className={headerStyles.header_urgent_checkbox}>
         <label
-          className={`${guideStyles.checkbox_label} ${
+          className={`${checkboxStyles.checkbox_label} ${
             isUrgent ? headerStyles.urgent_checked : ""
           }`}
           style={isUrgent ? { color: "#ff2626" } : {}}

@@ -20,7 +20,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
@@ -37,7 +37,7 @@ export default function ProfilePage() {
   const router = useRouter();
 
   // useAuth 훅: 인증 관련 기능 (로그아웃 등)
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   // useState 훅: 컴포넌트의 상태(state)를 관리합니다.
   // activeTopTab: 현재 활성화된 상단 탭 (캠페인/포인트/계정/커뮤니티)
@@ -47,6 +47,73 @@ export default function ProfilePage() {
   const [activeSubTab, setActiveSubTab] = useState<"profile" | "channel">(
     "profile"
   );
+
+  // 유저 정보 상태
+  const [userNickname, setUserNickname] = useState("리뷰어");
+  const [profileImage, setProfileImage] = useState<string | undefined>(undefined);
+
+  // 컴포넌트 마운트 시 localStorage에서 유저 정보 로드
+  useEffect(() => {
+    if (typeof window !== 'undefined' && user) {
+      try {
+        const storedAccounts = localStorage.getItem('user_accounts');
+        console.log('📦 [프로필 페이지] user_accounts:', storedAccounts);
+
+        if (storedAccounts) {
+          const accounts = JSON.parse(storedAccounts);
+          const userAccountIndex = accounts.findIndex((a: any) =>
+            a.id === user.id || a.email === user.email
+          );
+          const userAccount = userAccountIndex >= 0 ? accounts[userAccountIndex] : null;
+          console.log('✅ [프로필 페이지] userAccount:', userAccount);
+
+          if (userAccount) {
+            // 기본 닉네임 데이터 매핑 (user_accounts에 nickname이 없을 때 사용)
+            const defaultNicknameMap: Record<string, string> = {
+              'user_kakao_001': '양치하는고양이',
+              'user_naver_001': '은지블로그',
+            };
+            
+            // nickname이 없거나 name과 같은 경우 기본 데이터에서 가져오기
+            let nickname = userAccount.nickname || "";
+            if (!nickname || nickname === userAccount.name) {
+              nickname = defaultNicknameMap[userAccount.id || user.id] || "";
+              
+              // user_accounts에 nickname 업데이트
+              if (nickname && userAccountIndex >= 0) {
+                accounts[userAccountIndex] = {
+                  ...accounts[userAccountIndex],
+                  nickname: nickname,
+                };
+                localStorage.setItem('user_accounts', JSON.stringify(accounts));
+                console.log('✅ [프로필 페이지] user_accounts nickname 자동 업데이트:', {
+                  id: userAccount.id,
+                  oldNickname: userAccount.nickname,
+                  newNickname: nickname,
+                });
+              }
+            }
+            
+            // 닉네임 설정 (name을 fallback으로 사용하지 않음)
+            setUserNickname(nickname);
+            console.log('👤 [프로필 페이지] 닉네임:', {
+              nickname: userAccount.nickname,
+              name: userAccount.name,
+              finalNickname: nickname,
+            });
+
+            // 프로필 이미지 설정
+            if (userAccount.profile_image) {
+              setProfileImage(userAccount.profile_image);
+              console.log('🖼️ [프로필 페이지] 프로필 이미지 설정됨:', userAccount.profile_image);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('❌ [프로필 페이지] 유저 정보 로드 실패:', error);
+      }
+    }
+  }, [user]);
 
   /**
    * 서브 탭 변경 핸들러
@@ -107,9 +174,10 @@ export default function ProfilePage() {
         */}
         <ProfileContent
           role="리뷰어"
-          nickname="양치하는고양이123456"
+          nickname={userNickname}
           editPath="/user/mypage/edit"
           onLogout={handleLogout}
+          profileImage={profileImage}
         />
       </main>
     </div>

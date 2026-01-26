@@ -14,7 +14,7 @@ import { useState } from "react";
 import Image from "next/image";
 import FormField from "./FormField";
 import BaseModal from "@/components/common/modal/BaseModal";
-import styles from "@/styles/user/mypage/edit_profile.module.css";
+import photoStyles from "@/styles/user/mypage/edit_profile/photo.module.css";
 
 interface ProfilePhotoUploadProps {
   /** 현재 프로필 이미지 URL (없으면 null) */
@@ -112,9 +112,9 @@ export default function ProfilePhotoUpload({
   return (
     <>
       <FormField label="프로필 사진">
-        <div className={styles.profile_upload_container}>
-          <div className={styles.profile_image_wrapper}>
-            <div className={styles.profile_image}>
+        <div className={photoStyles.profile_upload_container}>
+          <div className={photoStyles.profile_image_wrapper}>
+            <div className={photoStyles.profile_image}>
               {profileImage ? (
                 <img src={profileImage} alt="프로필 사진" />
               ) : (
@@ -122,17 +122,17 @@ export default function ProfilePhotoUpload({
                 <img
                   src="/images/mypage/profile.svg"
                   alt="기본 프로필 이미지"
-                  className={styles.default_avatar}
+                  className={photoStyles.default_avatar}
                 />
               )}
               {isUploading && (
-                <div className={styles.upload_loading}>
-                  <div className={styles.loading_spinner} />
+                <div className={photoStyles.upload_loading}>
+                  <div className={photoStyles.loading_spinner} />
                 </div>
               )}
             </div>
             <div
-              className={styles.photo_upload_icon}
+              className={photoStyles.photo_upload_icon}
               onClick={handleProfilePhotoUpload}
               title="프로필 사진 변경"
             >
@@ -146,7 +146,7 @@ export default function ProfilePhotoUpload({
             </div>
             {profileImage && (
               <div
-                className={styles.photo_remove_icon}
+                className={photoStyles.photo_remove_icon}
                 onClick={handleRemoveProfilePhoto}
                 title="프로필 사진 삭제"
               >

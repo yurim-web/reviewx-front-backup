@@ -29,7 +29,8 @@
 "use client";
 
 import React from "react";
-import styles from "../../../styles/filter/filter_bar.module.css";
+import modalStyles from "../../../styles/filter/filter_bar/modal.module.css";
+import optionsStyles from "../../../styles/filter/filter_bar/modal_options.module.css";
 
 interface SortModalFilterProps {
   isOpen: boolean;
@@ -66,28 +67,28 @@ export default function SortModalFilter({
   };
 
   return (
-    <div className={styles.modal_overlay} onClick={handleBackdropClick}>
+    <div className={modalStyles.modal_overlay} onClick={handleBackdropClick}>
       <div
-        className={styles.modal_content}
+        className={modalStyles.modal_content}
         onClick={(e) => e.stopPropagation()}
       >
         {/* 모달 헤더 */}
-        <div className={styles.modal_header}>
-          <h3 className={styles.modal_title}>{title}</h3>
-          <button className={styles.modal_close_button} onClick={onClose}>
+        <div className={modalStyles.modal_header}>
+          <h3 className={modalStyles.modal_title}>{title}</h3>
+          <button className={modalStyles.modal_close_button} onClick={onClose}>
             <img src="/images/filter/x_icon.svg" alt="닫기" />
           </button>
         </div>
 
         {/* 모달 바디 */}
-        <div className={styles.modal_body}>
-          <div className={styles.options_vertical}>
+        <div className={modalStyles.modal_body}>
+          <div className={optionsStyles.options_vertical}>
             {options.map((option, index) => (
               <label
                 key={
                   typeof option === "object" ? option.value || index : option
                 }
-                className={styles.option_item}
+                className={optionsStyles.option_item}
               >
                 <input
                   type="radio"
@@ -95,9 +96,9 @@ export default function SortModalFilter({
                   value={typeof option === "object" ? option.value : option}
                   checked={isSelected(option)}
                   onChange={() => onOptionChange(option)}
-                  className={styles.option_radio}
+                  className={optionsStyles.option_radio}
                 />
-                <span className={styles.option_label}>
+                <span className={optionsStyles.option_label}>
                   {typeof option === "object" ? option.label : option}
                 </span>
               </label>

@@ -23,10 +23,13 @@ import {
   CampaignFormData,
   CampaignCreateFormBaseProps,
 } from "@/types/domain/user";
+import { useAuth } from "@/hooks/useAuth";
+import { getPartnerPointSummary } from "@/data/partner/point/pointData";
 // 분리된 CSS 모듈들 import
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
-import guideStyles from "@/styles/partner/campaign_create/campaign_guide.module.css";
+import textareaStyles from "@/styles/partner/campaign_create/campaign_guide/textareas.module.css";
+import buttonStyles from "@/styles/partner/campaign_create/campaign_guide/buttons.module.css";
 import styles from "@/styles/partner/campaign_create/campaign_create.module.css";
 
 // 공통 컴포넌트들 import
@@ -74,6 +77,7 @@ export default function DeliveryCampaignForm({
   onUrgentLoad,
 }: DeliveryCampaignFormProps) {
   const router = useRouter();
+  const { user } = useAuth();
   const isEditMode = mode === "edit";
 
   /**
@@ -125,6 +129,17 @@ export default function DeliveryCampaignForm({
       };
 
   /**
+   * 상호명 초기값 가져오기
+   *
+   * 설명:
+   * - 로그인한 파트너의 상호명을 가져옵니다.
+   * - user.business_name을 사용합니다.
+   */
+  const getDefaultBrandName = (): string => {
+    return user?.business_name || "";
+  };
+
+  /**
    * 문의 담당자 휴대폰 번호 초기값 가져오기
    *
    * 설명:
@@ -148,6 +163,7 @@ export default function DeliveryCampaignForm({
     }
   };
 
+  const defaultBrandName = !initialData ? getDefaultBrandName() : "";
   const defaultContactPhone = !initialData ? getDefaultContactPhone() : "";
 
   const [formData, setFormData] = useState<CampaignFormData>(
@@ -156,7 +172,7 @@ export default function DeliveryCampaignForm({
       platform: "네이버 블로그",
       title: "",
       category: "",
-      brandName: "",
+      brandName: defaultBrandName,
       providedItems: "",
       promotionLink: "",
       currentPoints: "",
@@ -557,34 +573,16 @@ export default function DeliveryCampaignForm({
    * 보유 포인트 가져오기 함수
    *
    * 설명:
-   * - localStorage에서 파트너의 보유 포인트를 가져옵니다.
+   * - getPartnerPointSummary를 사용하여 파트너의 보유 포인트를 가져옵니다.
    * - 포인트 충전 페이지에서 업데이트된 포인트를 반영합니다.
-   * - localStorage에 값이 없으면 기본값 0을 반환합니다.
-   *
-   * 📌 localStorage 사용:
-   * - 포인트 충전 페이지에서 "partner_available_points" 키로 저장됩니다.
-   * - 실제 API 연동 시에는 API에서 가져와야 합니다.
-   *
-
+   * - 로그인되지 않았거나 값이 없으면 기본값 0을 반환합니다.
    */
   const getAvailablePoints = (): string => {
-    if (typeof window === "undefined") return "0";
+    if (typeof window === "undefined" || !user?.id) return "0";
 
     try {
-      // localStorage에서 보유 포인트 가져오기
-      const availablePoints = localStorage.getItem("partner_available_points");
-      if (availablePoints) {
-        // 숫자로 변환하여 유효한 값인지 확인
-        const points = Number(availablePoints);
-        // 유효한 숫자이면 반환, 아니면 0 반환
-        if (!isNaN(points) && points >= 0) {
-          return String(points);
-        }
-      }
-
-      // localStorage에 값이 없거나 유효하지 않은 경우 기본값 0 반환
-      // TODO: 실제 API 연동 시 API에서 가져오도록 수정 필요
-      return "0";
+      const summary = getPartnerPointSummary(user.id);
+      return String(summary.available_points || 0);
     } catch (error) {
       console.error("보유 포인트 가져오기 실패:", error);
       return "0";
@@ -611,14 +609,16 @@ export default function DeliveryCampaignForm({
 
     if (typeof window === "undefined") return;
 
-    // 보유 포인트 초기화 (localStorage에서 가져오기)
+    // 보유 포인트 초기화 또는 업데이트
     const availablePoints = getAvailablePoints();
-    if (availablePoints && formData.currentPoints === "") {
-      updateFormData("currentPoints", availablePoints);
-    }
 
     // 포인트 충전 페이지에서 돌아왔는지 확인
     const fromCampaignCreate = sessionStorage.getItem("from_campaign_create");
+
+    // 포인트 충전 후 돌아왔거나, 처음 로드 시 포인트 업데이트
+    if (availablePoints && (fromCampaignCreate === "true" || formData.currentPoints === "")) {
+      updateFormData("currentPoints", availablePoints);
+    }
 
     // 저장된 임시 데이터 확인
     try {
@@ -642,7 +642,12 @@ export default function DeliveryCampaignForm({
       ) {
         // 포인트 충전 페이지에서 돌아왔다면 자동으로 불러오기
         if (fromCampaignCreate === "true") {
-          setFormData(savedData);
+          // 포인트는 최신 값으로 업데이트
+          const updatedData = {
+            ...savedData,
+            currentPoints: availablePoints,
+          };
+          setFormData(updatedData);
           // 불러온 데이터의 긴급 상태를 부모 컴포넌트로 전달
           if (savedData?.isUrgent === true && onUrgentLoad) {
             onUrgentLoad(true);
@@ -662,7 +667,7 @@ export default function DeliveryCampaignForm({
         sessionStorage.removeItem("from_campaign_create");
       }
     }
-  }, [isEditMode, initialData]);
+  }, [isEditMode, initialData, user?.id]);
 
   /**
    * 포인트 충전 후 돌아왔을 때 보유 포인트 업데이트
@@ -1164,7 +1169,7 @@ export default function DeliveryCampaignForm({
               안내 사항<span className={infoStyles.required}>*</span>
             </label>
             <textarea
-              className={guideStyles.fixed_height_textarea}
+              className={textareaStyles.fixed_height_textarea}
               value={formData.guidelines}
               onChange={(e) => updateFormData("guidelines", e.target.value)}
               placeholder="캠페인 전체 안내 사항, 미션, 기타 참고 사항 등"
@@ -1193,10 +1198,10 @@ export default function DeliveryCampaignForm({
         />
 
         {/* 등록하기 버튼 */}
-        <div className={guideStyles.submit_button_container}>
+        <div className={buttonStyles.submit_button_container}>
           <button
             type="submit"
-            className={guideStyles.submit_button}
+            className={buttonStyles.submit_button}
             disabled={isSubmitting || !isFormValid}
           >
             {isSubmitting

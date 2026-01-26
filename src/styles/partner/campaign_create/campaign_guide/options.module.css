@@ -1,0 +1,86 @@
+/* ========================================
+   📦 옵션 입력 박스 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - 캠페인 생성 폼 컴포넌트들
+ *
+ * 주요 기능:
+ * - 간편 안내 옵션 박스
+ * - 체크박스 포함 옵션
+ */
+
+/* 간편 안내 옵션 박스 */
+.option_input_box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  height: 56px;
+}
+
+/* 옵션 입력 박스 체크박스 - 긴급 체크박스 제외 */
+.option_input_box:not(.header_urgent_checkbox) input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  appearance: none;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.option_input_box:not(.header_urgent_checkbox) input[type="checkbox"]:checked {
+  border-color: #444444;
+  background: #fff;
+}
+
+.option_input_box:not(.header_urgent_checkbox)
+  input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #444444;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.option_input_box .option_label {
+  font-weight: 500;
+  font-size: 16px;
+  color: #848484; /* 체크 전 기본 색상 */
+  letter-spacing: -0.32px;
+  flex: 1;
+  cursor: pointer;
+}
+
+/* 체크박스가 체크되었을 때 레이블 색상 변경 */
+.option_input_box input[type="checkbox"]:checked ~ .option_label,
+.option_input_box input[type="checkbox"]:checked + .option_label {
+  color: #444444; /* 체크 후 색상 */
+}
+
+.option_input_box .option_value {
+  font-weight: 500;
+  font-size: 16px;
+  color: #444444;
+  letter-spacing: -0.32px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.option_input_value {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}

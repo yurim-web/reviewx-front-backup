@@ -1,6 +1,7 @@
 // 헤더
 "use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import styles from "@/styles/fragments/header.module.css";
 import { mockReviewerNotifications } from "@/data/notification/notificationData";
 import HeaderSearch from "@/components/fragments/HeaderSearch";
@@ -13,37 +14,37 @@ interface HeaderProps {
 
 export default function Header({ has_notifications }: HeaderProps) {
   const { user, logout } = useAuth();
+  const router = useRouter();
 
   // Hydration 에러 방지를 위한 마운트 상태
   const [isMounted, setIsMounted] = useState(false);
-  // 알림 아이콘 상태 (마운트 전에는 기본값 사용)
-  const [notificationIconSrc, setNotificationIconSrc] = useState(
-    "/images/header/notification_icon.svg"
-  );
 
   useEffect(() => {
     setIsMounted(true);
-
-    // 로그인 안 되어 있으면 알림 없음 아이콘
-    if (!user) {
-      setNotificationIconSrc("/images/header/notification_icon.svg");
-      return;
-    }
-
-    // 로그인 되어 있으면 알림 데이터 확인
-    const effective_has_notifications =
-      has_notifications ?? mockReviewerNotifications.length > 0;
-    setNotificationIconSrc(
-      effective_has_notifications
-        ? "/images/header/notification_ok.svg"
-        : "/images/header/notification_icon.svg"
-    );
-  }, [has_notifications, user]);
+  }, []);
 
   const handleLogout = () => {
     if (confirm('로그아웃 하시겠습니까?')) {
       logout();
     }
+  };
+
+  // 알림 아이콘 결정 (클라이언트에서만 동적으로 변경)
+  const getNotificationIconSrc = () => {
+    if (!isMounted) {
+      // 서버 렌더링 또는 첫 렌더링 시 기본 아이콘
+      return "/images/header/notification_icon.svg";
+    }
+
+    if (!user) {
+      return "/images/header/notification_icon.svg";
+    }
+
+    const effective_has_notifications =
+      has_notifications ?? mockReviewerNotifications.length > 0;
+    return effective_has_notifications
+      ? "/images/header/notification_ok.svg"
+      : "/images/header/notification_icon.svg";
   };
 
   return (
@@ -56,8 +57,11 @@ export default function Header({ has_notifications }: HeaderProps) {
           {/* 검색 */}
           <HeaderSearch />
           {/* 알림페이지로 연결 */}
-          <Link href="/user/notification" className={styles.notification_icon}>
-            <img src={notificationIconSrc} alt="bell_icon" />
+          <Link
+            href="/user/notification"
+            className={styles.notification_icon}
+          >
+            <img src={getNotificationIconSrc()} alt="bell_icon" />
           </Link>
           {/* 마이페이지로 연결 */}
           <Link href="/user/campaign_management" className={styles.user_icon}>

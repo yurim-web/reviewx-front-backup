@@ -51,30 +51,18 @@ export function calculateCampaignStatus(
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // 등록 기간 체크 (가장 우선순위)
+  // 등록 기간 종료 확인 (종료 상태는 최우선)
   if (registrationPeriod) {
-    // "2025-11-23 ~ 2025-11-30" 또는 "2025-11-23~2025-11-30" 형식에서 시작일과 종료일 추출
     const separator = registrationPeriod.includes(" ~ ") ? " ~ " : "~";
     const parts = registrationPeriod.split(separator);
-    const startDateStr = parts[0]?.trim();
     const endDateStr = parts[1]?.trim();
 
-    if (startDateStr && endDateStr) {
-      const startDate = new Date(startDateStr);
+    if (endDateStr) {
       const endDate = new Date(endDateStr);
-
-      // 유효한 날짜인지 확인
-      if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
-        startDate.setHours(0, 0, 0, 0);
+      if (!isNaN(endDate.getTime())) {
         endDate.setHours(0, 0, 0, 0);
-
-        // 등록 기간이 시작하지 않았으면 무조건 "대기 중" 반환 (예정 탭)
-        if (startDate > today) {
-          return "대기 중";
-        }
-
-        // 등록 기간이 시작되었고 종료일이 지났으면 "종료"
-        if (startDate <= today && endDate < today) {
+        // 등록 기간이 종료되었으면 "종료"
+        if (endDate < today) {
           return "종료";
         }
       }

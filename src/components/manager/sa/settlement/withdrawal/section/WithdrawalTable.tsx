@@ -25,7 +25,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CommonTable, {
   type TableColumn,
   type TableRowData,
@@ -68,6 +68,24 @@ export default function WithdrawalTable({
   // 선택된 항목 ID 배열 관리
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
+  // localStorage에서 출금 완료 내역 로드
+  const [withdrawal_history, set_withdrawal_history] = useState<WithdrawalItem[]>([]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const storedHistory = localStorage.getItem('withdrawal_history');
+        if (storedHistory) {
+          const history = JSON.parse(storedHistory);
+          set_withdrawal_history(history);
+          console.log('✅ [출금 현황] withdrawal_history 로드:', history);
+        }
+      } catch (error) {
+        console.error('❌ [출금 현황] withdrawal_history 로드 실패:', error);
+      }
+    }
+  }, []);
+
   // 컬럼별 타입 설정 (정렬을 위한 컬럼 타입 정의)
   // numeric_string: 숫자처럼 보이는 문자열 (예: "1,500,000")
   // date: 날짜 형식의 문자열 (예: "2025-08-01 18:56")
@@ -80,8 +98,11 @@ export default function WithdrawalTable({
     paymentDate: "date",
   };
 
+  // 목업 데이터와 실제 데이터 합치기
+  const all_withdrawal_list = [...withdrawalList, ...withdrawal_history];
+
   // 검색어 및 필터로 필터링된 출금 현황 목록
-  const filtered_withdrawal_list = withdrawalList.filter((item) => {
+  const filtered_withdrawal_list = all_withdrawal_list.filter((item) => {
     // 검색어 필터
     if (search_query) {
       const matches_search =

@@ -28,7 +28,7 @@ import layoutStyles from "../../../../../../styles/partner/layout.module.css";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import Toast from "@/components/common/toast/Toast";
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
-import guideStyles from "@/styles/partner/campaign_create/campaign_guide.module.css";
+import checkboxStyles from "@/styles/partner/campaign_create/campaign_guide/checkboxes.module.css";
 
 /**
  * requirements 배열을 파싱하여 폼 데이터로 변환하는 함수
@@ -499,7 +499,7 @@ export default function MissionCampaignEditPage() {
         {/* 긴급 체크박스 */}
         <div className={headerStyles.header_urgent_checkbox}>
           <label
-            className={`${guideStyles.checkbox_label} ${
+            className={`${checkboxStyles.checkbox_label} ${
               isUrgent ? headerStyles.urgent_checked : ""
             }`}
             style={isUrgent ? { color: "#ff2626" } : {}}

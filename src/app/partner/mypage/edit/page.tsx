@@ -15,7 +15,9 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
-import styles from "../../../../styles/user/mypage/edit_profile.module.css";
+import layoutStyles from "../../../../styles/user/mypage/edit_profile/layout.module.css";
+import inputStyles from "../../../../styles/user/mypage/edit_profile/inputs.module.css";
+import buttonStyles from "../../../../styles/user/mypage/edit_profile/buttons.module.css";
 import ProfilePhotoUpload from "@/components/common/mypage/ProfilePhotoUpload";
 import PhoneVerification from "@/components/common/phone_verification/PhoneVerification";
 import BusinessDocumentUpload from "@/components/partner/mypage/BusinessDocumentUpload";
@@ -44,6 +46,7 @@ function PartnerEditProfilePage() {
     companyName: user?.business_name || "",
     ownerName: user?.name || "",
     businessNumber: user?.business_number || "",
+    businessType: user?.business_type || "법인사업자",
     businessDocument: "등록 완료",
     postalCode: "",
     address: "",
@@ -207,32 +210,59 @@ function PartnerEditProfilePage() {
           phone: formData.phone,
           business_name: formData.companyName,
           business_number: formData.businessNumber,
+          representative_name: formData.ownerName,
+          contact_phone: formData.contactPhone,
+          postal_code: formData.postalCode,
+          address: formData.address,
+          detail_address: formData.detailAddress,
+          business_type: formData.businessType,
         };
         localStorage.setItem('reviewx_auth_user', JSON.stringify(updatedUser));
       }
 
-      // unifiedAccountData도 업데이트 (필요시)
       // 파트너 계정 목록도 업데이트
       const storedAccounts = localStorage.getItem('partner_accounts');
-      if (storedAccounts) {
-        const accounts = JSON.parse(storedAccounts);
-        const accountIndex = accounts.findIndex((a: any) => a.id === user.id);
-        if (accountIndex >= 0) {
-          accounts[accountIndex] = {
-            ...accounts[accountIndex],
-            name: formData.ownerName,
-            phone: formData.phone,
-            business_name: formData.companyName,
-            business_number: formData.businessNumber,
-            representative_name: formData.ownerName,
-            contact_phone: formData.contactPhone,
-            postal_code: formData.postalCode,
-            address: formData.address,
-            detail_address: formData.detailAddress,
-          };
-          localStorage.setItem('partner_accounts', JSON.stringify(accounts));
-        }
+      const accounts = storedAccounts ? JSON.parse(storedAccounts) : [];
+
+      const accountIndex = accounts.findIndex((a: any) => a.id === user.id || a.email === user.email);
+
+      const updatedAccount = {
+        id: user.id || 'partner_test_001',
+        email: user.email || formData.email,
+        name: formData.ownerName,
+        phone: formData.phone,
+        business_name: formData.companyName,
+        business_number: formData.businessNumber,
+        business_type: formData.businessType,
+        representative_name: formData.ownerName,
+        postal_code: formData.postalCode,
+        address: formData.address,
+        detail_address: formData.detailAddress,
+        contact_phone: formData.contactPhone,
+        division: formData.businessType === '개인사업자' ? '개인' : '법인',
+        profile_image: profileImage, // 프로필 사진 저장
+        join_date: new Date().toISOString().replace('T', ' ').substring(0, 16),
+      };
+
+      console.log('🖼️ [수정 페이지] 저장할 profileImage:', profileImage);
+      console.log('📝 [수정 페이지] updatedAccount:', updatedAccount);
+      console.log('📍 [수정 페이지] accountIndex:', accountIndex);
+
+      if (accountIndex >= 0) {
+        // 기존 계정 업데이트
+        accounts[accountIndex] = {
+          ...accounts[accountIndex],
+          ...updatedAccount,
+        };
+        console.log('🔄 [수정 페이지] 기존 계정 업데이트됨');
+      } else {
+        // 새 계정 추가
+        accounts.push(updatedAccount);
+        console.log('➕ [수정 페이지] 새 계정 추가됨');
       }
+
+      localStorage.setItem('partner_accounts', JSON.stringify(accounts));
+      console.log('✅ [수정 페이지] partner_accounts 저장 완료:', accounts);
 
       alert('정보가 저장되었습니다.');
       // 페이지 새로고침하여 업데이트된 정보 반영
@@ -242,6 +272,41 @@ function PartnerEditProfilePage() {
       alert('정보 저장에 실패했습니다.');
     }
   };
+
+  // partner_accounts에서 상세 정보 로드
+  useEffect(() => {
+    if (!user?.id) return;
+
+    try {
+      const storedAccounts = localStorage.getItem('partner_accounts');
+      if (storedAccounts) {
+        const accounts = JSON.parse(storedAccounts);
+        const partnerAccount = accounts.find((a: any) => a.id === user.id || a.email === user.email);
+        if (partnerAccount) {
+          setFormData({
+            name: partnerAccount.representative_name || partnerAccount.name || user.name || "",
+            email: partnerAccount.email || user.email || "",
+            phone: partnerAccount.phone || user.phone || "",
+            contactPhone: partnerAccount.contact_phone || partnerAccount.phone || "",
+            companyName: partnerAccount.business_name || user.business_name || "",
+            ownerName: partnerAccount.representative_name || partnerAccount.name || user.name || "",
+            businessNumber: partnerAccount.business_number || user.business_number || "",
+            businessType: partnerAccount.business_type || "법인사업자",
+            businessDocument: "등록 완료",
+            postalCode: partnerAccount.postal_code || "",
+            address: partnerAccount.address || "",
+            detailAddress: partnerAccount.detail_address || "",
+          });
+          // 프로필 사진도 불러오기
+          if (partnerAccount.profile_image) {
+            setProfileImage(partnerAccount.profile_image);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('파트너 계정 정보 로드 중 오류:', error);
+    }
+  }, [user]);
 
   // 타이머 효과: timer가 0보다 크면 1초마다 감소
   useEffect(() => {
@@ -286,14 +351,14 @@ function PartnerEditProfilePage() {
   }, []);
 
   return (
-    <div className={styles.edit_profile_container}>
+    <div className={layoutStyles.edit_profile_container}>
       <PartnerSubHeader />
-      <main className={styles.main_content}>
+      <main className={layoutStyles.main_content}>
         <PageTitle title="내 정보 수정" />
 
-        <section className={styles.section_container}>
+        <section className={layoutStyles.section_container}>
           {/* 기본 정보 섹션 */}
-          <h2 className={styles.section_title}>기본 정보</h2>
+          <h2 className={layoutStyles.section_title}>기본 정보</h2>
 
           {/* 프로필 사진 */}
           <ProfilePhotoUpload
@@ -302,29 +367,29 @@ function PartnerEditProfilePage() {
           />
 
           {/* 이름 (읽기 전용) */}
-          <article className={styles.field_article}>
-            <label className={styles.field_label} htmlFor="name">
+          <article className={layoutStyles.field_article}>
+            <label className={inputStyles.field_label} htmlFor="name">
               이름
             </label>
             <input
               id="name"
               name="name"
-              className={styles.input_field}
+              className={inputStyles.input_field}
               value={formData.name}
               disabled
             />
           </article>
 
           {/* 이메일 (읽기 전용) */}
-          <article className={styles.field_article}>
-            <label className={styles.field_label} htmlFor="email">
+          <article className={layoutStyles.field_article}>
+            <label className={inputStyles.field_label} htmlFor="email">
               이메일
             </label>
             <input
               id="email"
               name="email"
               type="email"
-              className={styles.input_field}
+              className={inputStyles.input_field}
               value={formData.email}
               disabled
             />
@@ -361,45 +426,45 @@ function PartnerEditProfilePage() {
           />
 
           {/* 사업자 정보 섹션 */}
-          <h3 className={styles.section_subtitle}>사업자 정보</h3>
+          <h3 className={layoutStyles.section_subtitle}>사업자 정보</h3>
 
           {/* 상호명 (수정 가능) */}
-          <article className={styles.field_article}>
-            <label className={styles.field_label} htmlFor="companyName">
+          <article className={layoutStyles.field_article}>
+            <label className={inputStyles.field_label} htmlFor="companyName">
               상호명
             </label>
             <input
               id="companyName"
               name="companyName"
-              className={styles.input_field}
+              className={inputStyles.input_field}
               value={formData.companyName}
               onChange={handleInputChange}
             />
           </article>
 
           {/* 대표자명 (수정 가능) */}
-          <article className={styles.field_article}>
-            <label className={styles.field_label} htmlFor="ownerName">
+          <article className={layoutStyles.field_article}>
+            <label className={inputStyles.field_label} htmlFor="ownerName">
               대표자명
             </label>
             <input
               id="ownerName"
               name="ownerName"
-              className={styles.input_field}
+              className={inputStyles.input_field}
               value={formData.ownerName}
               onChange={handleInputChange}
             />
           </article>
 
           {/* 사업자등록번호 (수정 가능) */}
-          <article className={styles.field_article}>
-            <label className={styles.field_label} htmlFor="businessNumber">
+          <article className={layoutStyles.field_article}>
+            <label className={inputStyles.field_label} htmlFor="businessNumber">
               사업자등록번호
             </label>
             <input
               id="businessNumber"
               name="businessNumber"
-              className={styles.input_field}
+              className={inputStyles.input_field}
               value={formData.businessNumber}
               onChange={handleInputChange}
             />
@@ -430,18 +495,18 @@ function PartnerEditProfilePage() {
           />
 
           {/* 담당자 정보 섹션 */}
-          <h3 className={styles.section_subtitle}>담당자 정보</h3>
+          <h3 className={layoutStyles.section_subtitle}>담당자 정보</h3>
 
           {/* 문의 담당자 휴대폰 번호 */}
-          <article className={styles.field_article}>
-            <label className={styles.field_label} htmlFor="contactPhone">
+          <article className={layoutStyles.field_article}>
+            <label className={inputStyles.field_label} htmlFor="contactPhone">
               문의 담당자 휴대폰 번호
             </label>
             <input
               id="contactPhone"
               name="contactPhone"
               type="tel"
-              className={styles.input_field}
+              className={inputStyles.input_field}
               value={formData.contactPhone}
               onChange={(e) => {
                 // 휴대폰 번호 포맷팅 유틸리티 사용
@@ -476,10 +541,10 @@ function PartnerEditProfilePage() {
           </article>
 
           {/* 회원탈퇴 버튼 */}
-          <div className={styles.withdraw_button_container}>
+          <div className={buttonStyles.withdraw_button_container}>
             <button
               type="button"
-              className={styles.withdraw_button}
+              className={buttonStyles.withdraw_button}
               onClick={handleWithdraw}
             >
               회원 탈퇴
@@ -488,10 +553,10 @@ function PartnerEditProfilePage() {
         </section>
 
         {/* 저장 버튼 */}
-        <div className={styles.save_button_container}>
+        <div className={buttonStyles.save_button_container}>
           <button
-            className={`${styles.save_button} ${
-              !isSaveEnabled ? styles.disabled_button : ""
+            className={`${buttonStyles.save_button} ${
+              !isSaveEnabled ? buttonStyles.disabled_button : ""
             }`}
             disabled={!isSaveEnabled}
             onClick={handleSave}

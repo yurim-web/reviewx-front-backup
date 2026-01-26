@@ -1,0 +1,63 @@
+/* ========================================
+   📱 로그인 페이지 반응형 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - user/login/page.tsx (사용자 소셜 로그인 페이지)
+ * - partner/login/page.tsx (파트너 로그인 페이지)
+ * - manager/login/page.tsx (관리자 로그인 페이지)
+ *
+ * 주요 스타일:
+ * - 모바일 브레이크포인트
+ * - 반응형 레이아웃 조정
+ */
+
+/* 모바일 (0~739px) */
+@media (max-width: 739px) {
+  .login_main {
+    min-height: calc(100vh - 80px);
+    padding-bottom: 100px;
+  }
+
+  .partner_login_main {
+    min-height: calc(100vh - 80px);
+    padding: 80px 20px 100px;
+  }
+
+  .login_title {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  .login_button_wrapper {
+    width: 90%;
+    max-width: 400px;
+  }
+
+  .login_button {
+    height: 52px;
+    font-size: 16px;
+  }
+
+  .login_form {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .login_options_section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .links_group {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .partner_login_button {
+    height: 52px;
+    font-size: 16px;
+  }
+}

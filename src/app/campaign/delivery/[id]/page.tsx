@@ -504,6 +504,7 @@ export default function DeliveryDetailPage({
             isOpen={isOpen}
             onClose={onClose}
             type="delivery"
+            campaignId={campaign.id}
             dayCount={campaign.dayCount}
             isUrgent={campaign.isUrgent}
             channelName={campaign.channel}

@@ -258,7 +258,7 @@ export type StatTab =
  */
 export interface PointHistory {
   id: string; // 포인트 내역 고유 식별자
-  type: "earned" | "withdrawn"; // 거래 유형 (적립/출금)
+  type: "earned" | "withdrawn" | "withdrawal_pending"; // 거래 유형 (적립/출금/출금신청)
   amount: number; // 포인트 금액
   description: string; // 포인트 내역 설명
   campaign_id?: string; // 관련 캠페인 ID (있는 경우)
