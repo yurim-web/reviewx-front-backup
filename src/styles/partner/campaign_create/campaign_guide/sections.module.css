@@ -1,0 +1,66 @@
+/* ========================================
+   📑 섹션 레이아웃 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - 캠페인 생성 폼 컴포넌트들
+ *
+ * 주요 기능:
+ * - 간편 안내 섹션 레이아웃
+ * - 수정 모드 잠금 상태
+ */
+
+/* 간편 안내 섹션 기본 레이아웃 */
+.guide_section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 수정 모드에서 간편 안내 전체 잠금용 */
+.locked_section {
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 잠금된 섹션 내부의 옵션 입력 박스 - 읽기 전용 필드 스타일과 동일하게 */
+.locked_section .option_input_box {
+  background: #f6f6f6;
+  border-color: #d9d9d9;
+  cursor: default;
+}
+
+/* 잠금된 섹션 내부의 체크박스 - 읽기 전용 스타일 */
+.locked_section input[type="checkbox"] {
+  border-color: #d9d9d9;
+  background: #f6f6f6;
+  cursor: default;
+}
+
+/* 잠금된 섹션 내부의 레이블 - 읽기 전용 필드와 동일한 텍스트 색상 */
+.locked_section .option_label {
+  color: #999;
+  cursor: default;
+}
+
+/* 잠금된 섹션 내부의 밑줄 입력 필드 - 읽기 전용 필드 스타일과 동일하게 */
+.locked_section .underline_input {
+  background: #f6f6f6;
+  border-bottom-color: #d9d9d9;
+  color: #999;
+  cursor: default;
+  outline: none;
+}
+
+/* 잠금된 섹션 내부의 값 텍스트 - 읽기 전용 필드와 동일한 텍스트 색상 */
+.locked_section .option_value {
+  color: #999;
+}
+
+/* 잠금된 섹션 내부의 단위 텍스트 - 읽기 전용 필드와 동일한 텍스트 색상 */
+.locked_section .unit_text {
+  color: #999;
+}

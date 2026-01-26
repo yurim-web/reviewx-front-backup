@@ -56,6 +56,7 @@ export interface PartnerItem {
   status: PartnerStatus; // 상태
   last_access_date: string; // 접속일 (예: 2025-08-01 18:56)
   join_date: string; // 가입일 (예: 2025-08-01 18:56)
+  profile_image?: string | null; // 프로필 이미지 URL (선택적)
 }
 
 // Channel 타입은 위에서 공통 필터 옵션에서 import됨
@@ -387,7 +388,106 @@ export const partner_list: PartnerItem[] = [
 export function get_partner_detail_by_id(
   partner_id: string
 ): PartnerDetail | null {
-  // 목록에서 해당 파트너 찾기 (get_partner_list 사용하여 LocalStorage 데이터도 포함)
+  // partner_test_001인 경우 직접 localStorage에서 읽기
+  if (partner_id === 'partner_test_001' && typeof window !== 'undefined') {
+    try {
+      const storedAccounts = localStorage.getItem('partner_accounts');
+      console.log('💾 get_partner_detail_by_id에서 직접 읽은 partner_accounts:', storedAccounts);
+
+      if (storedAccounts) {
+        const accounts = JSON.parse(storedAccounts);
+        const testAccount = accounts.find((a: any) =>
+          a.email === 'test@test.com' || a.id === 'partner_test_001'
+        );
+
+        if (testAccount) {
+          console.log('✅ test 계정 찾음:', testAccount);
+
+          // 캠페인 개수 계산
+          let campaignCount = 0;
+          try {
+            const deliveryCampaigns = localStorage.getItem('deliveryCampaigns');
+            const missionCampaigns = localStorage.getItem('missionCampaigns');
+            const reviewCampaigns = localStorage.getItem('reviewCampaigns');
+            const visitCampaigns = localStorage.getItem('visitCampaigns');
+            const reporterCampaigns = localStorage.getItem('reporterCampaigns');
+
+            const allCampaigns = [
+              ...(deliveryCampaigns ? JSON.parse(deliveryCampaigns) : []),
+              ...(missionCampaigns ? JSON.parse(missionCampaigns) : []),
+              ...(reviewCampaigns ? JSON.parse(reviewCampaigns) : []),
+              ...(visitCampaigns ? JSON.parse(visitCampaigns) : []),
+              ...(reporterCampaigns ? JSON.parse(reporterCampaigns) : []),
+            ];
+
+            campaignCount = allCampaigns.filter((c: any) => c.partner_id === 'partner_test_001').length;
+          } catch (error) {
+            console.error('캠페인 개수 계산 중 오류:', error);
+          }
+
+          // 포인트 가져오기
+          const testPartnerPoints = getPartnerPointSummary('partner_test_001');
+
+          // PartnerItem 생성
+          const partner: PartnerItem = {
+            id: 'partner_test_001',
+            number: '999999',
+            business_name: testAccount.business_name || '테스트 주식회사',
+            business_number: testAccount.business_number || '123-45-67890',
+            representative_name: testAccount.representative_name || testAccount.name || '테스트파트너',
+            division: testAccount.division || (testAccount.business_type === '개인사업자' ? '개인' : '법인'),
+            campaign_in_progress: campaignCount,
+            campaign_completed: 0,
+            current_points: testPartnerPoints.available_points,
+            used_points: 0,
+            status_type: '일반 회원',
+            status: '정상',
+            last_access_date: new Date().toISOString().replace('T', ' ').substring(0, 16),
+            join_date: testAccount.join_date || testAccount.created_at || '2024-03-01 10:00',
+          };
+
+          // 여기서부터 기존 로직 계속 (패널티, 연락처 정보 등)
+          const penalty_count = 0; // test 계정은 패널티 없음
+          const penalty_history: PenaltyHistoryItem[] = [];
+
+          // 연락처 정보
+          const contact_info = {
+            email: testAccount.email || "test@test.com",
+            phone: testAccount.phone || "010-5555-5555",
+            address: testAccount.address
+              ? `${testAccount.address}${testAccount.detail_address ? ' ' + testAccount.detail_address : ''}`
+              : "서울시 강남구 테헤란로 123",
+            contact_name: testAccount.name || testAccount.representative_name || "테스트파트너",
+            contact_phone: testAccount.contact_phone || testAccount.phone || "010-5555-5555",
+          };
+
+          // 캠페인 내역 생성
+          const recent_campaigns: RecentCampaign[] = [];
+
+          // 포인트 정보
+          const payment_points = testPartnerPoints.used_points;
+
+          // PartnerDetail 반환
+          return {
+            ...partner,
+            email: contact_info.email,
+            phone: contact_info.phone,
+            address: contact_info.address,
+            contact_name: contact_info.contact_name,
+            contact_phone: contact_info.contact_phone,
+            penalty_count,
+            payment_points,
+            recent_campaigns,
+            penalty_history,
+          };
+        }
+      }
+    } catch (error) {
+      console.error('test 파트너 정보 직접 로드 중 오류:', error);
+    }
+  }
+
+  // 기존 로직: 다른 파트너들은 get_partner_list 사용
   const allPartners = get_partner_list();
   console.log('전체 파트너 목록:', allPartners);
   const partner = allPartners.find((p) => p.id === partner_id);
@@ -582,14 +682,45 @@ export function get_partner_detail_by_id(
     },
   };
 
-  // 파트너 ID에 해당하는 연락처 정보 가져오기 (없으면 기본값 사용)
-  const contact_info = contact_info_map[partner.id] || {
-    email: "contact@example.com",
-    phone: "010-0000-0000",
-    address: "서울시 중구 세종대로 123",
-    contact_name: "담당자",
-    contact_phone: "010-1234-5678",
-  };
+  // 파트너 ID에 해당하는 연락처 정보 가져오기
+  let contact_info = contact_info_map[partner.id];
+
+  // test@test.com 파트너인 경우 localStorage에서 실제 정보 가져오기
+  if (partner.id === 'partner_test_001' && typeof window !== 'undefined') {
+    try {
+      const storedAccounts = localStorage.getItem('partner_accounts');
+      if (storedAccounts) {
+        const accounts = JSON.parse(storedAccounts);
+        const testAccount = accounts.find((a: any) =>
+          a.email === 'test@test.com' || a.id === 'partner_test_001'
+        );
+        if (testAccount) {
+          contact_info = {
+            email: testAccount.email || "test@test.com",
+            phone: testAccount.phone || "010-5555-5555",
+            address: testAccount.address
+              ? `${testAccount.address}${testAccount.detail_address ? ' ' + testAccount.detail_address : ''}`
+              : "서울시 강남구 테헤란로 123",
+            contact_name: testAccount.name || testAccount.representative_name || "테스트파트너",
+            contact_phone: testAccount.contact_phone || testAccount.phone || "010-5555-5555",
+          };
+        }
+      }
+    } catch (error) {
+      console.error('파트너 계정 정보 로드 중 오류:', error);
+    }
+  }
+
+  // 연락처 정보가 없으면 기본값 사용
+  if (!contact_info) {
+    contact_info = {
+      email: "contact@example.com",
+      phone: "010-0000-0000",
+      address: "서울시 중구 세종대로 123",
+      contact_name: "담당자",
+      contact_phone: "010-1234-5678",
+    };
+  }
 
   // 캠페인 진행 내역 생성: LocalStorage에서 실제 데이터 가져오기
   // 각 파트너마다 다른 캠페인 데이터를 가지도록 다양하게 설정
@@ -840,7 +971,10 @@ export function get_partner_list(): PartnerItem[] {
     try {
       // 회원가입으로 추가된 파트너 계정
       const storedPartnerAccounts = localStorage.getItem('partner_accounts');
+      console.log('🔑 localStorage에서 읽은 partner_accounts (raw):', storedPartnerAccounts);
       const partnerAccounts = storedPartnerAccounts ? JSON.parse(storedPartnerAccounts) : [];
+      console.log('📋 파싱된 partnerAccounts 배열:', partnerAccounts);
+      console.log('📏 배열 길이:', partnerAccounts.length);
 
       // unifiedAccountData에서 test@test.com 파트너 정보 가져오기 (항상 추가)
       // 현재 시간을 YYYY-MM-DD HH:mm 형식으로 포맷
@@ -878,13 +1012,21 @@ export function get_partner_list(): PartnerItem[] {
       const testPartnerPoints = getPartnerPointSummary('partner_test_001');
       console.log('테스트 파트너 포인트:', testPartnerPoints);
 
+      // test@test.com 파트너 정보를 partner_accounts에서 찾기
+      const testPartnerAccount = partnerAccounts.find((account: any) =>
+        account.email === 'test@test.com' || account.id === 'partner_test_001'
+      );
+
+      console.log('🔍 testPartnerAccount 찾기 결과:', testPartnerAccount);
+      console.log('📦 partnerAccounts 배열:', partnerAccounts);
+
       const testPartner: PartnerItem = {
         id: 'partner_test_001', // 고정 ID 사용
         number: '999999',
-        business_name: '테스트 주식회사',
-        business_number: '123-45-67890',
-        representative_name: '테스트파트너',
-        division: '법인',
+        business_name: testPartnerAccount?.business_name || '테스트 주식회사',
+        business_number: testPartnerAccount?.business_number || '123-45-67890',
+        representative_name: testPartnerAccount?.representative_name || testPartnerAccount?.name || '테스트파트너',
+        division: testPartnerAccount?.division || (testPartnerAccount?.business_type === '개인사업자' ? '개인' : '법인'),
         campaign_in_progress: testPartnerCampaignCount,
         campaign_completed: 0,
         current_points: testPartnerPoints.available_points,
@@ -892,8 +1034,10 @@ export function get_partner_list(): PartnerItem[] {
         status_type: '일반 회원',
         status: '정상',
         last_access_date: currentDateTime,
-        join_date: '2024-03-01 10:00',
+        join_date: testPartnerAccount?.join_date || testPartnerAccount?.created_at || '2024-03-01 10:00',
       };
+
+      console.log('✅ 생성된 testPartner:', testPartner);
 
       // 중복 확인 후 추가 (ID 기준으로 확인)
       const existsInMock = mockPartners.some(p => p.id === 'partner_test_001');
@@ -902,7 +1046,10 @@ export function get_partner_list(): PartnerItem[] {
       }
 
       // LocalStorage 파트너 계정들을 PartnerItem 형식으로 변환하여 추가
-      const localStoragePartners = partnerAccounts.map((account: any) => {
+      // test@test.com 계정은 이미 위에서 추가했으므로 제외
+      const localStoragePartners = partnerAccounts
+        .filter((account: any) => account.email !== 'test@test.com' && account.id !== 'partner_test_001')
+        .map((account: any) => {
         // 날짜 포맷 함수 - YYYY-MM-DD HH:mm 형식으로 변환
         const formatDateTime = (dateStr?: string): string => {
           if (!dateStr) {

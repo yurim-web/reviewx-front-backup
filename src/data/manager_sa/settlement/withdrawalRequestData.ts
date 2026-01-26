@@ -424,9 +424,16 @@ export const currentRoundRequestList: WithdrawalRequestItem[] = [
  */
 export function calculate_total_amount(list: WithdrawalRequestItem[]): number {
   return list.reduce((sum, item) => {
-    // 쉼표 제거 후 숫자로 변환
-    const amount = parseInt(item.amount.replace(/,/g, ""), 10);
-    return sum + amount;
+    // amount가 숫자인 경우와 문자열인 경우를 모두 처리
+    let amount = 0;
+    if (typeof item.amount === 'string') {
+      // 문자열인 경우 쉼표 제거 후 숫자로 변환
+      amount = parseInt(item.amount.replace(/,/g, ""), 10);
+    } else if (typeof item.amount === 'number') {
+      // 이미 숫자인 경우 그대로 사용
+      amount = item.amount;
+    }
+    return sum + (isNaN(amount) ? 0 : amount);
   }, 0);
 }
 

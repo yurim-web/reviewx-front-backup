@@ -218,24 +218,35 @@ function map_brand_name_to_channel(
   brandName: string,
   campaignType: CampaignType
 ): Channel {
+  // 구매평은 항상 "Review"로 변환 (구매평 전용 아이콘)
+  if (campaignType === "구매평") {
+    return "Review";
+  }
+
   // 미션형은 brandName이 빈 문자열이므로 'Mission'으로 변환
   if (campaignType === "미션형" && !brandName) {
     return "Mission";
   }
 
+  // 공백 제거 및 정규화
+  const normalizedBrandName = brandName.replace(/\s+/g, "");
+
   // 브랜드명 매핑
   const brand_map: Record<string, Channel> = {
     네이버블로그: "Blog",
+    블로그: "Blog",
     인스타그램: "Instagram",
     네이버클립: "Clip",
+    클립: "Clip",
     유튜브: "Youtube",
     릴스: "Reels",
     쇼츠: "Shorts",
+    숏츠: "Shorts",
     스토어: "Store",
     기본: "Store", // 기본값은 Store로 설정
   };
 
-  return brand_map[brandName] || "Store";
+  return brand_map[normalizedBrandName] || "Store";
 }
 
 /**
@@ -249,15 +260,16 @@ function map_brand_name_to_channel(
  * @returns CampaignStatus 타입
  */
 function map_status_to_progress_status(
-  status: "진행 중" | "대기 중" | "모집 중" | "종료" | "취소" | "긴급"
+  status: "진행 중" | "대기 중" | "모집 중" | "종료" | "취소" | "긴급" | "등록 중"
 ): CampaignStatus {
   const status_map: Record<
-    "진행 중" | "대기 중" | "모집 중" | "종료" | "취소" | "긴급",
+    "진행 중" | "대기 중" | "모집 중" | "종료" | "취소" | "긴급" | "등록 중",
     CampaignStatus
   > = {
     "대기 중": "예정",
     "모집 중": "신청",
     "진행 중": "진행",
+    "등록 중": "진행", // 등록 중도 진행으로 표시
     종료: "종료",
     취소: "취소", // 취소 상태를 별도로 표시
     긴급: "긴급", // 긴급 상태를 별도로 표시
@@ -349,13 +361,14 @@ function convert_delivery_to_progress_item(
     partner_name: campaignInfo.partnerName ?? "", // 파트너명 (데이터가 없으면 빈 문자열)
     campaign_name: campaignInfo.title,
     type: "배송형",
-    channel: map_brand_name_to_channel(campaignInfo.brandName, "배송형"),
+    channel: map_brand_name_to_channel(campaignInfo.channel || campaignInfo.brandName || "", "배송형"),
     status: map_status_to_progress_status(calculatedStatus),
     recruit_count: campaignInfo.totalCount,
     apply_count: applicantData?.applicants?.length ?? 0,
-    // 지급 포인트: campaignInfo.point가 있으면 사용하고, 없으면 0
-    // campaignInfo.point는 convertExtendedToItem에서 extended.points로부터 설정됨
-    point: campaignInfo.point !== undefined && campaignInfo.point !== null ? campaignInfo.point : 0,
+    // 지급 포인트: campaignInfo.point 또는 campaign.point 사용
+    point: campaignInfo.point !== undefined && campaignInfo.point !== null
+      ? campaignInfo.point
+      : (campaign as any).point || (campaign as any).points || 0,
     detail_campaign_id: campaignInfo.id,
     created_at: parse_recruitment_start_date(campaignInfo.recruitmentPeriod),
   };
@@ -423,11 +436,11 @@ function convert_mission_to_progress_item(
     partner_name: campaign.partnerName ?? "", // 파트너명 (데이터가 없으면 빈 문자열)
     campaign_name: campaign.title,
     type: "미션형",
-    channel: map_brand_name_to_channel(campaign.brandName || "", "미션형"),
+    channel: "Mission", // 미션형은 항상 "Mission" 채널
     status: map_status_to_progress_status(calculatedStatus),
     recruit_count: campaign.recruitment?.total ?? 0,
     apply_count: applicantData?.applicants?.length ?? 0,
-    point: campaign.points ?? 0, // 지급 포인트 (points 필드 사용)
+    point: (campaign as any).point || campaign.points || 0, // 지급 포인트 (point 또는 points 필드 사용)
     detail_campaign_id: campaign.id,
     created_at: parse_recruitment_start_date(recruitmentPeriod),
   };
@@ -465,20 +478,21 @@ function convert_reporter_to_progress_item(
   const announcementDate = campaign.detailedSchedule?.announcement;
   const registrationPeriod = campaign.detailedSchedule?.registrationPeriod;
 
-  // 취소, 긴급 상태는 데이터에서 직접 가져오고, 그 외는 날짜 기반으로 계산
+  // 취소, 긴급, 등록 중 상태는 데이터에서 직접 가져오고, 그 외는 날짜 기반으로 계산
   let calculatedStatus:
     | "진행 중"
     | "대기 중"
     | "모집 중"
     | "종료"
     | "취소"
-    | "긴급";
+    | "긴급"
+    | "등록 중";
 
   // isUrgent가 true이면 무조건 "긴급" 상태로 설정 (최우선)
   if (campaign.isUrgent === true) {
     calculatedStatus = "긴급";
-  } else if (campaign.status === "취소" || campaign.status === "긴급") {
-    calculatedStatus = campaign.status;
+  } else if (campaign.status === "취소" || campaign.status === "긴급" || campaign.status === "등록 중") {
+    calculatedStatus = campaign.status as any;
   } else {
     // 날짜 기반으로 상태 계산 (등록 기간 종료일도 확인)
     const dateBasedStatus = calculateCampaignStatus(
@@ -486,7 +500,12 @@ function convert_reporter_to_progress_item(
       announcementDate,
       registrationPeriod
     );
-    calculatedStatus = dateBasedStatus;
+    // "진행 중" 상태를 기자단의 경우 "등록 중"으로 변환
+    if (dateBasedStatus === "진행 중") {
+      calculatedStatus = "등록 중";
+    } else {
+      calculatedStatus = dateBasedStatus;
+    }
   }
 
   return {
@@ -495,11 +514,11 @@ function convert_reporter_to_progress_item(
     partner_name: campaign.partnerName ?? "", // 파트너명 (데이터가 없으면 빈 문자열)
     campaign_name: campaign.title,
     type: "기자단",
-    channel: map_brand_name_to_channel(campaign.brandName || "", "기자단"),
+    channel: map_brand_name_to_channel((campaign as any).channel || campaign.brandName || "", "기자단"),
     status: map_status_to_progress_status(calculatedStatus),
     recruit_count: campaign.recruitment?.total ?? 0,
     apply_count: applicantData?.applicants?.length ?? 0,
-    point: campaign.points ?? 0, // 지급 포인트 (points 필드 사용)
+    point: (campaign as any).point || campaign.points || 0, // 지급 포인트 (point 또는 points 필드 사용)
     detail_campaign_id: campaign.id,
     created_at: parse_recruitment_start_date(recruitmentPeriod),
   };
@@ -567,11 +586,11 @@ function convert_review_to_progress_item(
     partner_name: campaign.partnerName ?? "", // 파트너명 (데이터가 없으면 빈 문자열)
     campaign_name: campaign.title,
     type: "구매평",
-    channel: map_brand_name_to_channel(campaign.brandName || "", "구매평"),
+    channel: map_brand_name_to_channel((campaign as any).channel || campaign.brandName || "", "구매평"),
     status: map_status_to_progress_status(calculatedStatus),
     recruit_count: campaign.recruitment?.total ?? 0,
     apply_count: applicantData?.applicants?.length ?? 0,
-    point: campaign.points ?? 0, // 지급 포인트 (points 필드 사용)
+    point: (campaign as any).point || campaign.points || 0, // 지급 포인트 (point 또는 points 필드 사용)
     detail_campaign_id: campaign.id,
     created_at: parse_recruitment_start_date(recruitmentPeriod),
   };
@@ -642,11 +661,11 @@ function convert_visit_to_progress_item(
     partner_name: campaign.partnerName ?? "", // 파트너명 (데이터가 없으면 빈 문자열)
     campaign_name: campaign.title,
     type: "방문형",
-    channel: map_brand_name_to_channel(campaign.brandName || "", "방문형"),
+    channel: map_brand_name_to_channel((campaign as any).channel || campaign.brandName || "", "방문형"),
     status: map_status_to_progress_status(calculatedStatus),
     recruit_count: campaign.recruitment?.total ?? 0,
     apply_count: applicantData?.applicants?.length ?? 0,
-    point: campaign.points ?? 0, // 지급 포인트 (points 필드 사용)
+    point: (campaign as any).point || campaign.points || 0, // 지급 포인트 (point 또는 points 필드 사용)
     detail_campaign_id: campaign.id,
     created_at: parse_recruitment_start_date(recruitmentPeriod),
   };
@@ -725,24 +744,84 @@ function convert_campaign_with_applicants_to_progress_item(
     progressStatus = "진행";
   }
 
+  // 캠페인 타입 확인 (미션형의 경우 채널 처리 방식이 다름)
+  const campaignType = campaignInfo.campaignType as CampaignType;
+  const isMissionType = campaignType === "미션형";
+  
+  // 채널 정보 추출: brandName 우선, 없으면 channel 필드 확인 (기자단 캠페인 등)
+  const brandName = campaignInfo.brandName || (campaign as any).brandName || "";
+  const channelField = (campaignInfo as any).channel || (campaign as any).channel || "";
+  
+  // brandName이 없고 channel 필드가 있으면 channel 필드를 brandName으로 사용
+  const finalBrandName = brandName || channelField;
+  
+  // 채널 매핑: 미션형의 경우 항상 "Mission"으로 설정
+  let finalChannel: Channel;
+  if (isMissionType) {
+    // 미션형은 항상 "Mission"으로 설정
+    finalChannel = "Mission";
+  } else if (finalBrandName) {
+    finalChannel = map_brand_name_to_channel(
+      finalBrandName,
+      campaignType
+    );
+  } else {
+    // brandName과 channel 필드 모두 없으면 기본값 (미션형이 아닌 경우만)
+    finalChannel = "Store";
+  }
+
+  // 파트너명 추출: 여러 소스에서 시도
+  let partnerName = (campaignInfo as any).partnerName || (campaign as any).partnerName || "";
+  
+  // partnerName이 없고 partner_id가 있으면 partner_accounts에서 찾기
+  if (!partnerName && (campaign as any).partner_id) {
+    try {
+      if (typeof window !== "undefined") {
+        const storedAccounts = localStorage.getItem("partner_accounts");
+        if (storedAccounts) {
+          const accounts = JSON.parse(storedAccounts);
+          const partnerAccount = accounts.find(
+            (a: any) => a.id === (campaign as any).partner_id
+          );
+          if (partnerAccount) {
+            // business_name 우선, 없으면 name 사용
+            partnerName = partnerAccount.business_name || partnerAccount.name || "";
+          }
+        }
+      }
+    } catch (error) {
+      console.error("파트너명 조회 중 오류:", error);
+    }
+  }
+
   return {
     id: campaignInfo.id,
     campaign_number: format_campaign_number(campaignInfo.id),
-    partner_name:
-      (campaignInfo as any).partnerName || (campaign as any).partnerName || "", // 파트너명 (campaignInfo 또는 campaign 최상위에 있을 수 있음)
+    partner_name: partnerName,
     campaign_name: campaignInfo.title,
-    type: campaignInfo.campaignType as CampaignType,
-    channel: map_brand_name_to_channel(
-      campaignInfo.brandName || "",
-      campaignInfo.campaignType as CampaignType
-    ),
+    type: campaignType,
+    channel: finalChannel,
     status: progressStatus,
     recruit_count: campaignInfo.totalCount || 0,
     apply_count: applicantData?.applicants?.length || 0,
-    // 지급 포인트: campaignInfo.point, campaign.point, 또는 additionalPoints를 확인
+    // 지급 포인트: 미션형의 경우 campaign.points를 우선 확인, 그 외는 campaignInfo.point 우선
     // localStorage에 저장된 캠페인은 additionalPoints 필드를 사용할 수 있습니다
     // additionalPoints는 문자열일 수 있으므로 숫자로 변환합니다
     point: (() => {
+      // 미션형의 경우 campaign.points를 우선 확인
+      if (isMissionType && (campaign as any).points !== undefined && (campaign as any).points !== null) {
+        const pointsValue = (campaign as any).points;
+        if (typeof pointsValue === 'number' && pointsValue > 0) {
+          return pointsValue;
+        }
+        if (typeof pointsValue === 'string') {
+          const parsed = parseInt(pointsValue.replace(/,/g, ''), 10);
+          if (!isNaN(parsed) && parsed > 0) {
+            return parsed;
+          }
+        }
+      }
+      
       // 1순위: campaignInfo.point
       if (
         (campaignInfo as any).point !== undefined &&
@@ -759,7 +838,23 @@ function convert_campaign_with_applicants_to_progress_item(
         const pointValue = (campaign as any).point;
         return typeof pointValue === "number" ? pointValue : Number(pointValue) || 0;
       }
-      // 3순위: additionalPoints (localStorage 캠페인에서 사용)
+      // 3순위: campaign.points (복수형 - 정적 데이터에서 사용)
+      if (
+        (campaign as any).points !== undefined &&
+        (campaign as any).points !== null
+      ) {
+        const pointsValue = (campaign as any).points;
+        return typeof pointsValue === "number" ? pointsValue : Number(pointsValue) || 0;
+      }
+      // 4순위: campaignInfo.points (복수형)
+      if (
+        (campaignInfo as any).points !== undefined &&
+        (campaignInfo as any).points !== null
+      ) {
+        const pointsValue = (campaignInfo as any).points;
+        return typeof pointsValue === "number" ? pointsValue : Number(pointsValue) || 0;
+      }
+      // 5순위: additionalPoints (localStorage 캠페인에서 사용)
       if (
         (campaign as any).additionalPoints !== undefined &&
         (campaign as any).additionalPoints !== null

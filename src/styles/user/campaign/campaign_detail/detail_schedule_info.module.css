@@ -5,13 +5,13 @@
 /**
  * 사용 컴포넌트:
  * - DetailScheduleInfo.tsx (캠페인 일정 정보 컴포넌트)
- * 
+ *
  * 사용 페이지:
- * - /user/delivery/[id] (배송형 캠페인 상세)
- * - /user/visit/[id] (방문형 캠페인 상세)
- * - /user/review/[id] (구매평 캠페인 상세)
- * - /user/mission/[id] (미션형 캠페인 상세)
- * - /user/reporter/[id] (기자단 캠페인 상세)
+ * - /campaign/delivery/[id] (배송형 캠페인 상세)
+ * - /campaign/visit/[id] (방문형 캠페인 상세)
+ * - /campaign/review/[id] (구매평 캠페인 상세)
+ * - /campaign/mission/[id] (미션형 캠페인 상세)
+ * - /campaign/reporter/[id] (기자단 캠페인 상세)
  */
 
 /* ===== 캠페인 정보 섹션 ===== */
@@ -53,11 +53,11 @@
 
 /* 정보 값 */
 .value {
-  color: #848484;
+  color: #444;
   text-align: right;
   font-size: 16px;
   font-weight: 500;
-  line-height: 16px;
+  line-height: 16px; /* 100% */
   letter-spacing: -0.32px;
 }
 
@@ -73,17 +73,34 @@
 
 /* 구분자 (/) */
 .separator {
-  color: #848484;
+  color: #444444;
 }
 
 /* 총 모집 인원 */
 .total_count {
-  color: #848484;
+  color: #444444;
 }
 
 /* 모집 기간 값 강조 */
 .recruitment_info {
   color: #333;
+  font-weight: 600;
+}
+
+/* 포인트 강조 (오늘 해당 기간·모집 인원) — #FF5694, font-weight 600 */
+.label_point {
+  color: #FF5694;
+  font-weight: 600;
+}
+
+.value_point {
+  color: #FF5694;
+  font-weight: 600;
+}
+
+/* 모집 인원 — 신청 인원(앞 n명)만 포인트, 총 모집 인원(뒤 n명)·구분자(/)는 기본 스타일 */
+.current_count_point {
+  color: #FF5694;
   font-weight: 600;
 }
 

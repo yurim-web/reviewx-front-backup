@@ -1,0 +1,47 @@
+/* ========================================
+   🆔 주민등록번호 입력 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - SocialSecurityNumberInput.tsx
+ */
+
+/* 주민등록번호 필드 */
+.ssn_container {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.ssn_separator {
+  font-size: 16px;
+  font-weight: 500;
+  color: #444;
+}
+
+.ssn_container .input_field {
+  flex: 1;
+  /* 주민등록번호 입력 시 커서와 숫자 위치가 어색해 보이지 않도록 자간 초기화 */
+  letter-spacing: 0;
+}
+
+.ssn_back_wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.ssn_back_wrapper .input_field {
+  padding-left: 30px; /* 앞자리 성별 숫자가 겹치지 않도록 여백 추가 */
+}
+
+.ssn_back_gender_digit {
+  position: absolute;
+  left: 20px; /* 인풋 텍스트(●●●…)와 겹치지 않도록 조금 더 왼쪽으로 배치 */
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  font-weight: 500;
+  color: #444;
+  pointer-events: none;
+}

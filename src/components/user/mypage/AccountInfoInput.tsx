@@ -30,7 +30,9 @@ import { useState, useEffect, useRef } from "react";
 
 // localStorage 키 상수
 const STORAGE_KEY = "userAccountVerification";
-import styles from "@/styles/user/mypage/edit_profile.module.css";
+import layoutStyles from "@/styles/user/mypage/edit_profile/layout.module.css";
+import inputStyles from "@/styles/user/mypage/edit_profile/inputs.module.css";
+import verificationStyles from "@/styles/user/mypage/edit_profile/verification.module.css";
 import { CustomDropdown } from "@/components/partner/campaign_create_form/common/selectors/CustomDropdown";
 import InputWithButton from "@/components/common/mypage/InputWithButton";
 import ErrorText from "@/components/common/error_text/ErrorText";
@@ -131,86 +133,147 @@ export default function AccountInfoInput({
    *
    * 작동 방식:
    * - 컴포넌트 마운트 시 한 번만 실행 (isInitialMount.current가 true일 때)
-   * - 1순위: initialVerified가 true이고 계좌 정보가 모두 있으면 서버 데이터 사용
-   * - 2순위: localStorage에 저장된 인증 정보가 있고 현재 계좌 정보와 일치하면 복원
+   * - 1순위: user_accounts에 계좌 정보가 있으면 자동 인증
+   * - 2순위: initialVerified가 true이고 계좌 정보가 모두 있으면 서버 데이터 사용
+   * - 3순위: localStorage에 저장된 인증 정보가 있고 현재 계좌 정보와 일치하면 복원
    */
   useEffect(() => {
     // 초기 마운트 시 한 번만 실행
     if (isInitialMount.current) {
       isInitialMount.current = false; // 초기 마운트 완료 표시
+    }
 
-      // 1순위: initialVerified가 true이고 계좌 정보가 모두 있으면 서버에서 받아온 데이터 사용
-      if (
-        initialVerified &&
-        accountHolder?.trim() &&
-        bank?.trim() &&
-        accountNumber &&
-        String(accountNumber).trim()
-      ) {
-        // 서버에서 받아온 계좌 정보 → 인증 완료 상태
-        setQueriedAccountHolder(accountHolder.trim());
-        setAccountHolderAtQueryTime(accountHolder.trim());
-        return; // 서버 데이터가 있으면 localStorage 확인 생략
-      }
+    // 이미 인증되어 있으면 다시 체크하지 않음
+    if (queriedAccountHolder && accountHolderAtQueryTime) {
+      console.log('✅ [계좌 인증 - 초기] 이미 인증 완료 상태');
+      return;
+    }
 
-      // 2순위: localStorage에서 인증 완료 정보 복원
-      // 계좌 정보가 모두 입력되어 있을 때만 복원 시도
-      if (
-        typeof window !== "undefined" &&
-        bank?.trim() &&
-        accountNumber &&
-        String(accountNumber).trim() &&
-        accountHolder?.trim()
-      ) {
-        try {
-          const stored = localStorage.getItem(STORAGE_KEY);
-          if (stored) {
-            const verificationData = JSON.parse(stored);
-            console.log("localStorage에서 복원 시도:", verificationData);
-            console.log("현재 계좌 정보:", {
+    // 1순위: user_accounts에서 계좌 정보 확인 (가장 우선)
+    console.log('📦 [계좌 인증 - 초기] 계좌 정보 체크:', {
+      accountHolder: accountHolder?.trim(),
+      bank: bank?.trim(),
+      accountNumber: String(accountNumber).trim(),
+    });
+
+    if (
+      typeof window !== "undefined" &&
+      accountHolder?.trim() &&
+      bank?.trim() &&
+      accountNumber &&
+      String(accountNumber).trim()
+    ) {
+      try {
+        const userAccounts = localStorage.getItem('user_accounts');
+        console.log('📦 [계좌 인증 - 초기] user_accounts 읽기 시도');
+        if (userAccounts) {
+          const accounts = JSON.parse(userAccounts);
+          console.log('📦 [계좌 인증 - 초기] accounts:', accounts);
+          const matchingAccount = accounts.find((acc: any) => {
+            const match = acc.bank === bank.trim() &&
+              acc.account_number === String(accountNumber).trim() &&
+              acc.account_holder === accountHolder.trim();
+            console.log('📦 [계좌 인증 - 초기] 계좌 매칭 체크:', {
+              accBank: acc.bank,
               bank: bank.trim(),
-              accountNumber: String(accountNumber || "").trim(),
+              accNumber: acc.account_number,
+              accountNumber: String(accountNumber).trim(),
+              accHolder: acc.account_holder,
               accountHolder: accountHolder.trim(),
+              match,
             });
+            return match;
+          });
 
-            // 저장된 계좌 정보와 현재 입력된 계좌 정보가 일치하는지 확인
-            if (
-              verificationData.bank === bank.trim() &&
-              verificationData.accountNumber ===
-                String(accountNumber || "").trim() &&
-              verificationData.accountHolder === accountHolder.trim()
-            ) {
-              // 계좌 정보가 일치하면 인증 완료 상태 복원
-              console.log("계좌 정보 일치 - 인증 완료 상태 복원");
-              setQueriedAccountHolder(verificationData.queriedAccountHolder);
-              setAccountHolderAtQueryTime(
-                verificationData.accountHolderAtQueryTime ||
-                  verificationData.accountHolder
-              );
-            } else {
-              // 계좌 정보가 일치하지 않으면 localStorage에서 삭제
-              console.log(
-                "계좌 정보 불일치 - localStorage 유지 (다른 계좌일 수 있음)"
-              );
-              // 일치하지 않아도 삭제하지 않음 (사용자가 다른 계좌를 입력했을 수도 있음)
-            }
+          if (matchingAccount) {
+            console.log('✅ [계좌 인증 - 초기] user_accounts에서 계좌 정보 확인 - 인증 완료 상태로 설정');
+            setQueriedAccountHolder(accountHolder.trim());
+            setAccountHolderAtQueryTime(accountHolder.trim());
+            return; // user_accounts에서 찾았으면 더 이상 확인 불필요
           } else {
-            console.log("localStorage에 저장된 데이터 없음");
+            console.log('❌ [계좌 인증 - 초기] 매칭되는 계좌 정보 없음');
           }
-        } catch (error) {
-          console.error("localStorage 읽기 실패:", error);
-          // 에러 발생 시 localStorage에서 삭제하여 깨진 데이터 제거
-          localStorage.removeItem(STORAGE_KEY);
+        } else {
+          console.log('❌ [계좌 인증 - 초기] user_accounts 없음');
         }
-      } else {
-        console.log("계좌 정보가 비어있어 복원 불가");
+      } catch (error) {
+        console.error('❌ [계좌 인증 - 초기] user_accounts 읽기 실패:', error);
       }
+    } else {
+      console.log('❌ [계좌 인증 - 초기] 계좌 정보가 비어있음');
+    }
+
+    // 2순위: initialVerified가 true이고 계좌 정보가 모두 있으면 서버에서 받아온 데이터 사용
+    if (
+      initialVerified &&
+      accountHolder?.trim() &&
+      bank?.trim() &&
+      accountNumber &&
+      String(accountNumber).trim()
+    ) {
+      // 서버에서 받아온 계좌 정보 → 인증 완료 상태
+      setQueriedAccountHolder(accountHolder.trim());
+      setAccountHolderAtQueryTime(accountHolder.trim());
+      return; // 서버 데이터가 있으면 localStorage 확인 생략
+    }
+
+    // 3순위: localStorage에서 인증 완료 정보 복원
+    // 계좌 정보가 모두 입력되어 있을 때만 복원 시도
+    if (
+      typeof window !== "undefined" &&
+      bank?.trim() &&
+      accountNumber &&
+      String(accountNumber).trim() &&
+      accountHolder?.trim()
+    ) {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const verificationData = JSON.parse(stored);
+          console.log("localStorage에서 복원 시도:", verificationData);
+          console.log("현재 계좌 정보:", {
+            bank: bank.trim(),
+            accountNumber: String(accountNumber || "").trim(),
+            accountHolder: accountHolder.trim(),
+          });
+
+          // 저장된 계좌 정보와 현재 입력된 계좌 정보가 일치하는지 확인
+          if (
+            verificationData.bank === bank.trim() &&
+            verificationData.accountNumber ===
+              String(accountNumber || "").trim() &&
+            verificationData.accountHolder === accountHolder.trim()
+          ) {
+            // 계좌 정보가 일치하면 인증 완료 상태 복원
+            console.log("계좌 정보 일치 - 인증 완료 상태 복원");
+            setQueriedAccountHolder(verificationData.queriedAccountHolder);
+            setAccountHolderAtQueryTime(
+              verificationData.accountHolderAtQueryTime ||
+                verificationData.accountHolder
+            );
+          } else {
+            // 계좌 정보가 일치하지 않으면 localStorage에서 삭제
+            console.log(
+              "계좌 정보 불일치 - localStorage 유지 (다른 계좌일 수 있음)"
+            );
+            // 일치하지 않아도 삭제하지 않음 (사용자가 다른 계좌를 입력했을 수도 있음)
+          }
+        } else {
+          console.log("localStorage에 저장된 데이터 없음");
+        }
+      } catch (error) {
+        console.error("localStorage 읽기 실패:", error);
+        // 에러 발생 시 localStorage에서 삭제하여 깨진 데이터 제거
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    } else {
+      console.log("계좌 정보가 비어있어 복원 불가");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // 빈 배열: 컴포넌트 마운트 시 한 번만 실행
+  }, [accountHolder, bank, accountNumber, initialVerified]); // 계좌 정보나 initialVerified가 변경되면 실행
 
   /**
-   * useEffect: 계좌 정보가 변경되면 localStorage에서 인증 완료 정보 복원 확인
+   * useEffect: 계좌 정보가 변경되면 localStorage 또는 user_accounts에서 인증 완료 정보 복원 확인
    *
    * 목적: 부모 컴포넌트에서 localStorage를 통해 계좌 정보를 복원한 후, 인증 완료 상태도 복원합니다.
    *
@@ -218,6 +281,7 @@ export default function AccountInfoInput({
    * - bank, accountNumber, accountHolder가 모두 입력되어 있고
    * - queriedAccountHolder가 없을 때 (아직 인증 완료 상태가 아닐 때)
    * - localStorage에서 인증 완료 정보 확인 및 복원
+   * - user_accounts에서 계좌 정보가 있으면 자동으로 인증 완료 상태로 설정
    */
   useEffect(() => {
     // 초기 마운트가 아니고, 계좌 정보가 모두 입력되어 있고, 아직 인증 완료 상태가 아닐 때
@@ -231,6 +295,27 @@ export default function AccountInfoInput({
       !queriedAccountHolder
     ) {
       try {
+        // 먼저 user_accounts에서 확인
+        const userAccounts = localStorage.getItem('user_accounts');
+        if (userAccounts) {
+          const accounts = JSON.parse(userAccounts);
+          // 현재 계좌 정보와 일치하는 계정이 있는지 확인
+          const matchingAccount = accounts.find((acc: any) =>
+            acc.bank === bank.trim() &&
+            acc.account_number === String(accountNumber).trim() &&
+            acc.account_holder === accountHolder.trim()
+          );
+
+          if (matchingAccount) {
+            // user_accounts에 계좌 정보가 있으면 자동으로 인증 완료 상태로 설정
+            console.log('📦 [계좌 인증] user_accounts에서 계좌 정보 확인 - 인증 완료 상태로 설정');
+            setQueriedAccountHolder(accountHolder.trim());
+            setAccountHolderAtQueryTime(accountHolder.trim());
+            return;
+          }
+        }
+
+        // user_accounts에 없으면 localStorage의 STORAGE_KEY에서 확인
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
           const verificationData = JSON.parse(stored);
@@ -532,8 +617,8 @@ export default function AccountInfoInput({
   return (
     <>
       {/* 은행 */}
-      <article className={styles.field_article}>
-        <label className={styles.field_label} htmlFor="bank">
+      <article className={layoutStyles.field_article}>
+        <label className={inputStyles.field_label} htmlFor="bank">
           은행
         </label>
         <CustomDropdown
@@ -545,15 +630,15 @@ export default function AccountInfoInput({
       </article>
 
       {/* 계좌번호 */}
-      <article className={styles.field_article}>
-        <label className={styles.field_label} htmlFor="accountNumber">
+      <article className={layoutStyles.field_article}>
+        <label className={inputStyles.field_label} htmlFor="accountNumber">
           계좌번호
         </label>
         <input
           type="number"
           id="accountNumber"
           name="accountNumber"
-          className={styles.input_field}
+          className={inputStyles.input_field}
           value={accountNumber}
           onChange={(e) => onAccountNumberChange(e.target.value)}
           placeholder="- 제외"
@@ -561,8 +646,8 @@ export default function AccountInfoInput({
       </article>
 
       {/* 예금주 */}
-      <article className={styles.field_article}>
-        <label className={styles.field_label} htmlFor="accountHolder">
+      <article className={layoutStyles.field_article}>
+        <label className={inputStyles.field_label} htmlFor="accountHolder">
           예금주
         </label>
 
@@ -572,7 +657,7 @@ export default function AccountInfoInput({
               type="text"
               id="accountHolder"
               name="accountHolder"
-              className={styles.input_field}
+              className={inputStyles.input_field}
               value={accountHolder}
               onChange={(e) => onAccountHolderChange(e.target.value)}
               placeholder="회원 이름과 동일한 예금주 입력"
@@ -581,8 +666,8 @@ export default function AccountInfoInput({
           button={
             <button
               type="button"
-              className={`${styles.postal_button} ${
-                isAccountHolderVerified ? styles.postal_button_verified : ""
+              className={`${verificationStyles.postal_button} ${
+                isAccountHolderVerified ? verificationStyles.postal_button_verified : ""
               }`}
               onClick={handleAccountHolderQuery}
               disabled={
@@ -607,7 +692,7 @@ export default function AccountInfoInput({
         {!queriedAccountHolder &&
           !accountQueryError &&
           !accountHolderMismatchError && (
-            <p className={styles.field_helper_text}>
+            <p className={inputStyles.field_helper_text}>
               입력하신 정보와 예금주 정보가 반드시 일치해야 출금이 가능합니다.
             </p>
           )}

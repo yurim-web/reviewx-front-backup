@@ -21,7 +21,8 @@ import styles from "@/styles/user/campaign/campaign_detail/requirement_icons.mod
 interface RequirementItem {
   icon: string; // 아이콘 이미지 경로
   alt: string; // 아이콘 대체 텍스트
-  text: string; // 요구사항 텍스트
+  label: string; // 제목 (글자, 이미지, 동영상, 링크, 키워드/태그)
+  text: string; // 요구사항 상세 (예: 1,500자 이상, 10장 이상)
 }
 
 /**
@@ -32,15 +33,16 @@ interface RequirementIconsProps {
   className?: string; // 추가 CSS 클래스
 }
 
-// 요구사항 코드 매핑 객체 (기본 5가지 종류)
+// 요구사항 코드 매핑 객체 (기본 5가지 종류) — label: 제목, text: 상세
 const requirementMapping: Record<
   string,
-  { icon: string; alt: string; text: string }
+  { icon: string; alt: string; label: string; text: string }
 > = {
   // 1. 글자 관련
   text_1500: {
     icon: "/images/campaign_detail/text_icon.svg",
     alt: "텍스트아이콘",
+    label: "글자",
     text: "1,500자 이상",
   },
 
@@ -48,6 +50,7 @@ const requirementMapping: Record<
   photo_10: {
     icon: "/images/campaign_detail/photo_icon.svg",
     alt: "사진아이콘",
+    label: "이미지",
     text: "10장 이상",
   },
 
@@ -55,6 +58,7 @@ const requirementMapping: Record<
   video_120: {
     icon: "/images/campaign_detail/video_icon.svg",
     alt: "비디오아이콘",
+    label: "동영상",
     text: "1개 이상, 120초 이상",
   },
 
@@ -62,14 +66,16 @@ const requirementMapping: Record<
   product_link: {
     icon: "/images/campaign_detail/product_link_icon.svg",
     alt: "제품링크아이콘",
-    text: "본문 내 링크 첨부",
+    label: "링크",
+    text: "본문 내 첨부",
   },
 
   // 5. 키워드 관련
   keyword: {
     icon: "/images/campaign_detail/keyword_icon.svg",
     alt: "키워드아이콘",
-    text: "본문 내 키워드/태그 첨부",
+    label: "키워드/태그",
+    text: "본문 내 첨부",
   },
 };
 
@@ -88,6 +94,7 @@ function getRequirementItems(requirementCodes: string[]): RequirementItem[] {
       return {
         icon: "/images/campaign_detail/text_icon.svg",
         alt: "텍스트아이콘",
+        label: "글자",
         text: `${number}자 이상`,
       };
     }
@@ -99,6 +106,7 @@ function getRequirementItems(requirementCodes: string[]): RequirementItem[] {
       return {
         icon: "/images/campaign_detail/photo_icon.svg",
         alt: "사진아이콘",
+        label: "이미지",
         text: `${number}장 이상`,
       };
     }
@@ -111,6 +119,7 @@ function getRequirementItems(requirementCodes: string[]): RequirementItem[] {
       return {
         icon: "/images/campaign_detail/video_icon.svg",
         alt: "비디오아이콘",
+        label: "동영상",
         text: `${count}개 이상, ${seconds}초 이상`,
       };
     }
@@ -122,6 +131,7 @@ function getRequirementItems(requirementCodes: string[]): RequirementItem[] {
       return {
         icon: "/images/campaign_detail/video_icon.svg",
         alt: "비디오아이콘",
+        label: "동영상",
         text: `1개 이상, ${number}초 이상`,
       };
     }
@@ -130,6 +140,7 @@ function getRequirementItems(requirementCodes: string[]): RequirementItem[] {
     return {
       icon: "/images/campaign_detail/keyword_icon.svg",
       alt: "기본아이콘",
+      label: "키워드/태그",
       text: "요구사항",
     };
   });
@@ -162,6 +173,7 @@ export default function RequirementIcons({
             src={item.icon}
             alt={item.alt}
           />
+          <span className={styles.requirement_label}>{item.label}</span>
           <span className={styles.requirement_text}>{item.text}</span>
         </div>
       ))}

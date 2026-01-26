@@ -22,7 +22,7 @@
 
 "use client";
 
-import guideStyles from "@/styles/partner/campaign_create/campaign_guide.module.css";
+import guideStyles from "@/styles/partner/campaign_create/campaign_guide/fair_trade.module.css";
 
 /**
  * 공정위 문구 동의 Props

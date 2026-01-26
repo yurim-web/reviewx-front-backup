@@ -12,7 +12,9 @@
 
 import FormField from "./FormField";
 import InputWithButton from "./InputWithButton";
-import styles from "@/styles/user/mypage/edit_profile.module.css";
+import layoutStyles from "@/styles/user/mypage/edit_profile/layout.module.css";
+import inputStyles from "@/styles/user/mypage/edit_profile/inputs.module.css";
+import verificationStyles from "@/styles/user/mypage/edit_profile/verification.module.css";
 
 interface AddressInputProps {
   /** 우편번호 */
@@ -57,12 +59,12 @@ export default function AddressInput({
     onChange: (value: string) => void,
     placeholder: string
   ) => (
-    <div className={styles.field_group}>
+    <div className={layoutStyles.field_group}>
       <input
         type="text"
         id={id}
         name={name}
-        className={styles.input_field}
+        className={inputStyles.input_field}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
@@ -73,14 +75,14 @@ export default function AddressInput({
   // 라벨을 표시하지 않는 경우 직접 렌더링
   if (!showLabel) {
     return (
-      <div className={styles.field_article}>
+      <div className={layoutStyles.field_article}>
         <InputWithButton
           input={
             <input
               type="text"
               id="postalCode"
               name="postalCode"
-              className={styles.input_field}
+              className={inputStyles.input_field}
               value={postalCode}
               onChange={(e) => onPostalCodeChange(e.target.value)}
               readOnly={postalCodeReadOnly}
@@ -91,7 +93,7 @@ export default function AddressInput({
             onPostalCodeSearch ? (
               <button
                 type="button"
-                className={styles.postal_button}
+                className={verificationStyles.postal_button}
                 onClick={onPostalCodeSearch}
               >
                 우편번호 찾기
@@ -130,7 +132,7 @@ export default function AddressInput({
             type="text"
             id="postalCode"
             name="postalCode"
-            className={styles.input_field}
+            className={inputStyles.input_field}
             value={postalCode}
             onChange={(e) => onPostalCodeChange(e.target.value)}
             readOnly={postalCodeReadOnly}
@@ -141,7 +143,7 @@ export default function AddressInput({
           onPostalCodeSearch ? (
             <button
               type="button"
-              className={styles.postal_button}
+              className={verificationStyles.postal_button}
               onClick={onPostalCodeSearch}
             >
               우편번호 찾기

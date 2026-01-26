@@ -37,6 +37,7 @@ export type Channel =
   | 'Instagram'    // 인스타그램
   | 'Mission'      // 미션
   | 'Reels'       // 릴스
+  | 'Review'      // 구매평
   | 'Shorts'      // 쇼츠
   | 'Store'       // 스토어
   | 'Youtube';    // 유튜브
@@ -54,6 +55,7 @@ export const channel_filter_options: Channel[] = [
   'Instagram',
   'Mission',
   'Reels',
+  'Review',
   'Shorts',
   'Store',
   'Youtube',
@@ -72,6 +74,7 @@ export const channel_name_map: Record<Channel, string> = {
   Instagram: '인스타그램',
   Mission: '미션',
   Reels: '릴스',
+  Review: '구매평',
   Shorts: '쇼츠',
   Store: '스토어',
   Youtube: '유튜브',

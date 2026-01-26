@@ -71,15 +71,22 @@ export const filterCampaigns = <T extends FilterableCampaign>(
   const { types, channels, searchQuery } = filters;
   let filtered = [...campaigns];
 
+  console.log('[filterCampaigns] 시작 - 총 캠페인 개수:', campaigns.length);
+  console.log('[filterCampaigns] 필터:', filters);
+
   if (types && types.length > 0) {
+    console.log('[filterCampaigns] 타입 필터 적용:', types);
     filtered = filtered.filter((campaign) => {
       const campaignType =
         (campaign as any).type || (campaign as any).campaignType;
+      console.log('[filterCampaigns] 캠페인 타입:', campaignType, '- ID:', (campaign as any).id);
       return campaignType && types.includes(campaignType);
     });
+    console.log('[filterCampaigns] 타입 필터 후 개수:', filtered.length);
   }
 
   if (channels && channels.length > 0) {
+    console.log('[filterCampaigns] 채널 필터 적용:', channels);
     filtered = filtered.filter((campaign) => {
       const brandName =
         (campaign as any).brand ||
@@ -93,16 +100,21 @@ export const filterCampaigns = <T extends FilterableCampaign>(
         (channel) => normalizeChannelName(channel) === normalizedBrandName,
       );
     });
+    console.log('[filterCampaigns] 채널 필터 후 개수:', filtered.length);
   }
 
   if (searchQuery && searchQuery.trim() !== '') {
+    console.log('[filterCampaigns] 검색어 필터 적용:', searchQuery);
     const query = searchQuery.toLowerCase().trim();
     filtered = filtered.filter((campaign) =>
       campaign.title.toLowerCase().includes(query),
     );
+    console.log('[filterCampaigns] 검색어 필터 후 개수:', filtered.length);
   }
 
   const sortBy = filters.sortBy || selectedSort || defaultSort;
+
+  console.log('[filterCampaigns] 최종 필터링된 캠페인 개수:', filtered.length);
 
   return filtered.sort((a, b) => {
     switch (sortBy) {

@@ -19,6 +19,7 @@ import buttonStyles from "../../../../styles/user/campaign_management/buttons.mo
 import { getButtonClassName } from "@/components/common/campaign_management/utils/button_style_utils";
 import CampaignCardBase from "./CampaignCardBase";
 import BaseModal from "@/components/common/modal/BaseModal";
+import { useAuth } from "@/hooks/useAuth";
 
 interface ApplicationTabCardProps {
   campaign: CampaignApplication;
@@ -38,6 +39,8 @@ export default function ApplicationTabCard({
   campaign,
   onCancelSuccess,
 }: ApplicationTabCardProps) {
+  const { user } = useAuth();
+
   // 모달 상태 관리
   // useState: 컴포넌트의 상태를 관리하는 React 훅입니다.
   // [상태값, 상태변경함수] = useState(초기값) 형태로 사용합니다.
@@ -101,7 +104,7 @@ export default function ApplicationTabCard({
    *
    * 설명:
    * - 확인 모달의 "확인" 버튼을 클릭하면 실행됩니다.
-   * - 실제로는 API 호출을 통해 신청 취소를 처리합니다.
+   * - localStorage의 user_applied_campaigns에서 해당 캠페인의 status를 '취소'로 변경합니다.
    * - 성공 시: 성공 모달을 먼저 표시하고, 모달이 닫힌 후에 리스트에서 제거합니다.
    * - 실패 시: 에러 타입에 따라 다른 모달을 표시합니다.
    *   - 이미 취소된 경우: "이미 취소된 캠페인입니다." 모달
@@ -109,13 +112,113 @@ export default function ApplicationTabCard({
    */
   const handleConfirmCancel = async () => {
     try {
-      // TODO: 신청 취소 API 호출
-      // 예시: await cancelCampaignApplication(campaign.id);
-      //
-      // 서버 응답 예시:
-      // - 성공: { success: true }
-      // - 이미 취소됨: { error: "ALREADY_CANCELLED", message: "이미 취소된 캠페인입니다." }
-      // - 서버 오류: { error: "SERVER_ERROR", message: "서버 오류가 발생했습니다." }
+      // localStorage에서 user_applied_campaigns 가져오기
+      if (typeof window === 'undefined') {
+        throw new Error('브라우저 환경이 아닙니다.');
+      }
+
+      const userAppliedCampaigns = localStorage.getItem('user_applied_campaigns');
+      if (!userAppliedCampaigns) {
+        throw new Error('신청 내역을 찾을 수 없습니다.');
+      }
+
+      const allAppliedCampaigns = JSON.parse(userAppliedCampaigns);
+      
+      // 현재 로그인한 유저 확인
+      if (!user) {
+        throw new Error('로그인 정보를 찾을 수 없습니다.');
+      }
+
+      const userCampaignsIndex = allAppliedCampaigns.findIndex((uc: any) => uc.userId === user.id);
+      
+      if (userCampaignsIndex === -1) {
+        throw new Error('유저의 신청 내역을 찾을 수 없습니다.');
+      }
+
+      const userCampaigns = allAppliedCampaigns[userCampaignsIndex];
+      
+      // 해당 캠페인 찾기
+      const campaignIndex = userCampaigns.campaigns.findIndex((c: any) => c.campaignId === campaign.id);
+      
+      if (campaignIndex === -1) {
+        throw new Error('캠페인을 찾을 수 없습니다.');
+      }
+
+      const targetCampaign = userCampaigns.campaigns[campaignIndex];
+      
+      // 이미 취소된 경우 (이미 제거되었을 수 있음)
+      if (targetCampaign.status === '취소') {
+        setIsConfirmModalOpen(false);
+        setIsAlreadyCancelledModalOpen(true);
+        return;
+      }
+
+      // 취소 시 user_applied_campaigns에서 완전히 제거 (취소/반려 탭으로 이동하지 않음)
+      userCampaigns.campaigns = userCampaigns.campaigns.filter((c: any) => c.campaignId !== campaign.id);
+
+      // localStorage에 저장
+      allAppliedCampaigns[userCampaignsIndex] = userCampaigns;
+      localStorage.setItem('user_applied_campaigns', JSON.stringify(allAppliedCampaigns));
+
+      // localStorage의 해당 캠페인 applicants에서도 제거 (파트너 신청내역에서 사라지도록)
+      const campaignType = targetCampaign.campaignType || 
+                          (campaign.id.startsWith('delivery_') ? 'delivery' :
+                           campaign.id.startsWith('visit_') ? 'visit' :
+                           campaign.id.startsWith('review_') ? 'review' :
+                           campaign.id.startsWith('reporter_') ? 'reporter' :
+                           campaign.id.startsWith('mission_') ? 'mission' : 'delivery');
+      
+      const storageKey = campaignType === 'delivery' ? 'deliveryCampaigns' :
+                        campaignType === 'visit' ? 'visitCampaigns' :
+                        campaignType === 'review' ? 'reviewCampaigns' :
+                        campaignType === 'reporter' ? 'reporterCampaigns' :
+                        campaignType === 'mission' ? 'missionCampaigns' : 'deliveryCampaigns';
+
+      try {
+        const storedCampaigns = localStorage.getItem(storageKey);
+        if (storedCampaigns) {
+          const campaigns = JSON.parse(storedCampaigns);
+          const campaignIndex = campaigns.findIndex((c: any) => 
+            c.campaignInfo?.id === campaign.id || c.id === campaign.id
+          );
+
+          if (campaignIndex !== -1) {
+            const targetCampaignInStorage = campaigns[campaignIndex];
+            
+            // applicants에서 현재 유저 제거
+            if (targetCampaignInStorage.applicantData?.applicants) {
+              targetCampaignInStorage.applicantData.applicants = 
+                targetCampaignInStorage.applicantData.applicants.filter((a: any) => 
+                  a.id !== user.id && a.userId !== user.id
+                );
+            }
+
+            // selectedApplicants에서도 제거 (혹시 선정된 상태였다면)
+            if (targetCampaignInStorage.applicantData?.selectedApplicants) {
+              targetCampaignInStorage.applicantData.selectedApplicants = 
+                targetCampaignInStorage.applicantData.selectedApplicants.filter((a: any) => 
+                  a.id !== user.id && a.userId !== user.id
+                );
+            }
+
+            campaigns[campaignIndex] = targetCampaignInStorage;
+            localStorage.setItem(storageKey, JSON.stringify(campaigns));
+            
+            console.log('✅ [ApplicationTabCard] localStorage 캠페인 applicants에서 신청자 제거 완료:', {
+              campaignId: campaign.id,
+              storageKey,
+              userId: user.id,
+            });
+          }
+        }
+      } catch (error) {
+        console.error('❌ [ApplicationTabCard] localStorage 캠페인 applicants에서 신청자 제거 실패:', error);
+      }
+
+      console.log('✅ [ApplicationTabCard] 캠페인 신청 취소 완료 (user_applied_campaigns에서 제거):', {
+        campaignId: campaign.id,
+        campaignTitle: campaign.title,
+      });
 
       // 확인 모달 닫기
       setIsConfirmModalOpen(false);

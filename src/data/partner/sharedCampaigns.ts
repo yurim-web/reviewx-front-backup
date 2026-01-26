@@ -291,6 +291,282 @@ function getStoredCampaigns(): CampaignWithApplicants[] {
 }
 
 /* ----------------------------------------
+   🔄 신청자 데이터 변환 함수 (localStorage -> NaverBlogCard 형식)
+   ----------------------------------------
+*/
+/**
+ * 채널 이름을 정규화하여 표준 채널 이름으로 변환하는 함수
+ * 
+ * @param channelName - 원본 채널 이름 (예: "클립", "네이버 클립", "네이버클립")
+ * @returns 표준 채널 이름 (예: "네이버클립", "네이버블로그", "인스타그램" 등)
+ */
+const normalizeChannelName = (channelName: string | undefined | null): string => {
+  if (!channelName) return "네이버블로그";
+  
+  // 공백 제거하여 정규화
+  const normalized = channelName.replace(/\s+/g, "").toLowerCase();
+  
+  // 채널 이름 매핑
+  if (normalized === "네이버블로그" || normalized === "블로그") {
+    return "네이버블로그";
+  }
+  if (normalized === "네이버클립" || normalized === "클립") {
+    return "네이버클립";
+  }
+  if (normalized === "인스타그램" || normalized === "instagram") {
+    return "인스타그램";
+  }
+  if (normalized === "유튜브" || normalized === "youtube") {
+    return "유튜브";
+  }
+  if (normalized === "릴스" || normalized === "reels") {
+    return "릴스";
+  }
+  if (normalized === "쇼츠" || normalized === "숏츠" || normalized === "shorts") {
+    return "쇼츠";
+  }
+  
+  // 기본값
+  return "네이버블로그";
+};
+
+const transformApplicantData = (applicant: any) => {
+  // 취소된 신청자는 변환하지 않음 (필터링은 호출 전에 수행)
+  // 하지만 안전을 위해 여기서도 체크
+  if (applicant.status === '취소') {
+    return null;
+  }
+
+  // 채널 이름 정규화 (먼저 수행하여 채널 타입 확인)
+  const normalizedChannel = normalizeChannelName(applicant.channelName || applicant.channel);
+  
+  // 채널 URL에서 채널 ID 추출
+  let channelId = "";
+  if (applicant.channelUrl) {
+    // 클립의 경우 전체 URL을 그대로 사용하거나 ID만 있을 수 있음
+    if (normalizedChannel === "네이버클립") {
+      // 클립은 URL 전체를 사용하거나 ID만 있을 수 있음
+      if (applicant.channelUrl.startsWith("http://") || applicant.channelUrl.startsWith("https://")) {
+        channelId = applicant.channelUrl; // 전체 URL 사용
+      } else {
+        channelId = applicant.channelUrl; // ID만 있는 경우
+      }
+    } else {
+      // 다른 채널의 경우 URL에서 ID 추출
+      // 예: https://blog.naver.com/eunji123 -> eunji123
+      const urlParts = applicant.channelUrl.split('/');
+      channelId = urlParts[urlParts.length - 1] || "";
+      // @ 기호 제거 (인스타그램, 유튜브)
+      if (channelId.startsWith('@')) {
+        channelId = channelId.substring(1);
+      }
+    }
+  }
+  // channelUrl이 없으면 Id 또는 userId 사용
+  if (!channelId) {
+    channelId = applicant.Id || applicant.userId || "";
+  }
+
+  // user_accounts에서 최신 정보 가져오기 (항상 최신 정보 우선 사용)
+  let latestNickname = applicant.nickname || "";
+  let latestProfileImage = applicant.profileImage || "/images/mypage/profile.svg";
+  let latestDailyVisits = applicant.dailyVisits ?? applicant.daily_visits ?? 0;
+  let latestTotalVisits = applicant.totalVisits ?? applicant.total_visits ?? 0;
+  let latestNeighbors = applicant.neighbors ?? 0;
+
+  if (typeof window !== 'undefined' && (applicant.id || applicant.userId)) {
+    try {
+      const storedAccounts = localStorage.getItem('user_accounts');
+      if (storedAccounts) {
+        const accounts = JSON.parse(storedAccounts);
+        const userAccount = accounts.find((a: any) =>
+          a.id === applicant.id || a.id === applicant.userId || a.email === applicant.email
+        );
+        if (userAccount) {
+          // user_accounts에서 최신 정보 가져오기 (항상 최신 정보 우선)
+          latestNickname = userAccount.nickname || latestNickname;
+          latestProfileImage = userAccount.profile_image || latestProfileImage;
+          
+          // 채널 이름을 Channel 타입으로 매핑
+          const channelNameMap: Record<string, string> = {
+            '네이버블로그': 'Blog',
+            '네이버 블로그': 'Blog',
+            '블로그': 'Blog',
+            'Blog': 'Blog',
+            '네이버클립': 'Clip',
+            '네이버 클립': 'Clip',
+            '클립': 'Clip',
+            'Clip': 'Clip',
+            '인스타그램': 'Instagram',
+            'Instagram': 'Instagram',
+            '유튜브': 'Youtube',
+            'Youtube': 'Youtube',
+          };
+          
+          const channelType = channelNameMap[normalizedChannel] || 'Blog';
+          
+          // channel_details에서 해당 채널 정보 찾기
+          let isChannelConnected = false;
+          let channelDetail: any = null;
+          
+          if (userAccount.channel_details && Array.isArray(userAccount.channel_details)) {
+            channelDetail = userAccount.channel_details.find((ch: any) => {
+              const chName = ch.name || '';
+              // 채널 이름 매칭 (한글 이름 또는 영문 이름)
+              if (channelType === 'Blog') {
+                return chName.includes('블로그') || chName.includes('Blog');
+              } else if (channelType === 'Clip') {
+                return chName.includes('클립') || chName.includes('Clip');
+              } else if (channelType === 'Instagram') {
+                return chName.includes('인스타그램') || chName.includes('Instagram');
+              } else if (channelType === 'Youtube') {
+                return chName.includes('유튜브') || chName.includes('Youtube') || chName.includes('유튜브');
+              }
+              return ch.channel === channelType;
+            });
+            
+            if (channelDetail) {
+              isChannelConnected = channelDetail.status === 'connected' || channelDetail.is_connected === true;
+              
+              // channel_details에서 통계 정보 가져오기 (우선순위 1)
+              if (channelType === 'Blog' && isChannelConnected) {
+                // 네이버 블로그: daily_visits, total_visits, neighbors
+                if (channelDetail.daily_visits !== undefined && channelDetail.daily_visits !== null) {
+                  latestDailyVisits = channelDetail.daily_visits;
+                }
+                if (channelDetail.total_visits !== undefined && channelDetail.total_visits !== null) {
+                  latestTotalVisits = channelDetail.total_visits;
+                }
+                if (channelDetail.neighbors !== undefined && channelDetail.neighbors !== null) {
+                  latestNeighbors = channelDetail.neighbors;
+                }
+              }
+            }
+          }
+          
+          // channel_details에서 찾지 못한 경우 최상위 레벨에서 가져오기 (하위 호환성)
+          if (channelType === 'Blog' && isChannelConnected) {
+            // 최상위 레벨에서 통계 정보 가져오기 (daily_visits, total_visits, neighbors)
+            const topLevelDailyVisits = userAccount.daily_visits ?? userAccount.dailyVisits;
+            const topLevelTotalVisits = userAccount.total_visits ?? userAccount.totalVisits;
+            const topLevelNeighbors = userAccount.neighbors;
+            
+            // 최상위 레벨에 값이 있고, channel_details에서 가져온 값이 0이면 사용
+            if (latestDailyVisits === 0 && topLevelDailyVisits !== undefined && topLevelDailyVisits !== null && topLevelDailyVisits > 0) {
+              latestDailyVisits = topLevelDailyVisits;
+            }
+            if (latestTotalVisits === 0 && topLevelTotalVisits !== undefined && topLevelTotalVisits !== null && topLevelTotalVisits > 0) {
+              latestTotalVisits = topLevelTotalVisits;
+            }
+            if (latestNeighbors === 0 && topLevelNeighbors !== undefined && topLevelNeighbors !== null && topLevelNeighbors > 0) {
+              latestNeighbors = topLevelNeighbors;
+            }
+          }
+          
+          console.log('✅ [transformApplicantData] user_accounts에서 최신 정보 로드:', {
+            id: applicant.id || applicant.userId,
+            applicantId: applicant.id,
+            applicantUserId: applicant.userId,
+            applicantEmail: applicant.email,
+            userAccountId: userAccount.id,
+            userAccountEmail: userAccount.email,
+            nickname: latestNickname,
+            normalizedChannel,
+            channelType,
+            isChannelConnected,
+            dailyVisits: latestDailyVisits,
+            totalVisits: latestTotalVisits,
+            neighbors: latestNeighbors,
+            userAccountDailyVisits: userAccount.daily_visits,
+            userAccountTotalVisits: userAccount.total_visits,
+            userAccountNeighbors: userAccount.neighbors,
+            hasChannelDetails: !!userAccount.channel_details,
+            channelDetailsLength: userAccount.channel_details?.length || 0,
+          });
+        } else {
+          console.warn('⚠️ [transformApplicantData] user_accounts에서 사용자를 찾을 수 없음:', {
+            applicantId: applicant.id,
+            applicantUserId: applicant.userId,
+            applicantEmail: applicant.email,
+            availableIds: accounts.map((a: any) => a.id).slice(0, 5),
+          });
+        }
+      }
+    } catch (error) {
+      console.error('❌ [transformApplicantData] user_accounts 로드 실패:', error);
+    }
+  }
+
+  // 프로필 이미지 처리
+  if (latestProfileImage === "/images/default_profile.png") {
+    latestProfileImage = "/images/mypage/profile.svg";
+  }
+
+  return {
+    id: applicant.id || applicant.userId,
+    Id: channelId,
+    // 닉네임: user_accounts의 최신 정보 우선 사용
+    nickname: latestNickname,
+    userType: applicant.userType || "리뷰어",
+    // 프로필 이미지: user_accounts의 최신 정보 우선 사용
+    profileImage: latestProfileImage,
+    memberType: applicant.memberType || "일반 회원",
+    // 통계 정보: user_accounts의 최신 정보 우선 사용
+    dailyVisits: Number(latestDailyVisits) || 0,
+    totalVisits: Number(latestTotalVisits) || 0,
+    neighbors: Number(latestNeighbors) || 0,
+    memo: applicant.memo || "",
+    selectionStatus: applicant.status === "선정" ? "선정하기" : "미선택",
+    channel: normalizedChannel,
+    registrationDate: applicant.appliedAt ? new Date(applicant.appliedAt).toISOString().split('T')[0] : undefined,
+  };
+};
+
+/**
+ * 구매평/미션형 캠페인용 BasicApplicant 변환 함수
+ * 채널 정보 없이 기본 정보만 변환
+ */
+const transformBasicApplicantData = (applicant: any) => {
+  // name 필드가 nickname으로 잘못 들어가지 않도록 명시적으로 제거
+  // nickname만 사용하고, name은 절대 사용하지 않음
+  // applicant.nickname이 없으면 빈 문자열 사용 (name을 fallback으로 사용하지 않음)
+  const nickname = applicant.nickname || "";
+  
+  // 디버깅: name이 있는데 nickname이 없는 경우 경고
+  if (applicant.name && !applicant.nickname) {
+    console.warn('[transformBasicApplicantData] ⚠️ nickname이 없고 name만 있음 (name은 사용하지 않음):', {
+      id: applicant.id || applicant.userId,
+      name: applicant.name,
+      nickname: applicant.nickname,
+      finalNickname: nickname,
+    });
+  }
+  
+  // 디버깅: nickname이 name과 같은 경우 경고 (잘못된 데이터)
+  if (applicant.nickname && applicant.name && applicant.nickname === applicant.name) {
+    console.warn('[transformBasicApplicantData] ⚠️ nickname과 name이 동일함 (잘못된 데이터일 수 있음):', {
+      id: applicant.id || applicant.userId,
+      name: applicant.name,
+      nickname: applicant.nickname,
+    });
+  }
+  
+  return {
+    id: applicant.id || applicant.userId,
+    Id: applicant.Id || applicant.id || applicant.userId || "", // BasicApplicant에 Id 필드 필요
+    // 닉네임만 사용 (name은 절대 사용하지 않음)
+    nickname: nickname,
+    userType: applicant.userType || "리뷰어",
+    profileImage: applicant.profileImage === "/images/default_profile.png"
+      ? "/images/mypage/profile.svg"
+      : (applicant.profileImage || "/images/mypage/profile.svg"),
+    memberType: applicant.memberType || "일반 회원",
+    memo: applicant.memo || "",
+    selectionStatus: applicant.status === "선정" ? "선정하기" : "미선택",
+  };
+};
+
+/* ----------------------------------------
    💾 타입별 localStorage 로더 (getStoredDeliveryCampaigns 등)
    ----------------------------------------
    사용 위치
@@ -353,12 +629,27 @@ function getStoredDeliveryCampaigns(): CampaignWithApplicants[] {
           ) || 0;
       }
 
+      // 신청자 데이터 변환: localStorage 형식 -> NaverBlogCard 형식
+      // 취소된 신청자는 제외하고 변환
+      const transformedApplicants = campaign.applicantData?.applicants
+        ?.filter((a: any) => a.status !== '취소')
+        ?.map(transformApplicantData)
+        ?.filter((a: any) => a !== null) || [];
+      const transformedSelectedApplicants = campaign.applicantData?.selectedApplicants
+        ?.filter((a: any) => a.status !== '취소')
+        ?.map(transformApplicantData)
+        ?.filter((a: any) => a !== null) || [];
+
       return {
         ...campaign,
         campaignInfo: {
           ...campaign.campaignInfo,
           status: updatedStatus,
           daysLeft: daysLeft,
+        },
+        applicantData: {
+          applicants: transformedApplicants,
+          selectedApplicants: transformedSelectedApplicants,
         },
       };
     });
@@ -424,12 +715,27 @@ function getStoredVisitCampaigns(): CampaignWithApplicants[] {
         }
       }
 
+      // 신청자 데이터 변환: localStorage 형식 -> NaverBlogCard 형식
+      // 취소된 신청자는 제외하고 변환
+      const transformedApplicants = campaign.applicantData?.applicants
+        ?.filter((a: any) => a.status !== '취소')
+        ?.map(transformApplicantData)
+        ?.filter((a: any) => a !== null) || [];
+      const transformedSelectedApplicants = campaign.applicantData?.selectedApplicants
+        ?.filter((a: any) => a.status !== '취소')
+        ?.map(transformApplicantData)
+        ?.filter((a: any) => a !== null) || [];
+
       return {
         ...campaign,
         campaignInfo: {
           ...campaign.campaignInfo,
           status: updatedStatus,
           daysLeft: daysLeft,
+        },
+        applicantData: {
+          applicants: transformedApplicants,
+          selectedApplicants: transformedSelectedApplicants,
         },
       };
     });
@@ -495,12 +801,27 @@ function getStoredReviewCampaigns(): CampaignWithApplicants[] {
         }
       }
 
+      // 신청자 데이터 변환: localStorage 형식 -> BasicApplicant 형식 (구매평은 채널 정보 없음)
+      // 취소된 신청자는 제외하고 변환
+      const transformedApplicants = campaign.applicantData?.applicants
+        ?.filter((a: any) => a.status !== '취소')
+        ?.map(transformBasicApplicantData)
+        ?.filter((a: any) => a !== null) || [];
+      const transformedSelectedApplicants = campaign.applicantData?.selectedApplicants
+        ?.filter((a: any) => a.status !== '취소')
+        ?.map(transformBasicApplicantData)
+        ?.filter((a: any) => a !== null) || [];
+
       return {
         ...campaign,
         campaignInfo: {
           ...campaign.campaignInfo,
           status: updatedStatus,
           daysLeft: daysLeft,
+        },
+        applicantData: {
+          applicants: transformedApplicants,
+          selectedApplicants: transformedSelectedApplicants,
         },
       };
     });
@@ -566,12 +887,27 @@ function getStoredReporterCampaigns(): CampaignWithApplicants[] {
         }
       }
 
+      // 신청자 데이터 변환: localStorage 형식 -> NaverBlogCard 형식
+      // 취소된 신청자는 제외하고 변환
+      const transformedApplicants = campaign.applicantData?.applicants
+        ?.filter((a: any) => a.status !== '취소')
+        ?.map(transformApplicantData)
+        ?.filter((a: any) => a !== null) || [];
+      const transformedSelectedApplicants = campaign.applicantData?.selectedApplicants
+        ?.filter((a: any) => a.status !== '취소')
+        ?.map(transformApplicantData)
+        ?.filter((a: any) => a !== null) || [];
+
       return {
         ...campaign,
         campaignInfo: {
           ...campaign.campaignInfo,
           status: updatedStatus,
           daysLeft: daysLeft,
+        },
+        applicantData: {
+          applicants: transformedApplicants,
+          selectedApplicants: transformedSelectedApplicants,
         },
       };
     });
@@ -637,12 +973,27 @@ function getStoredMissionCampaigns(): CampaignWithApplicants[] {
         }
       }
 
+      // 신청자 데이터 변환: localStorage 형식 -> BasicApplicant 형식 (미션형은 채널 정보 없음)
+      // 취소된 신청자는 제외하고 변환
+      const transformedApplicants = campaign.applicantData?.applicants
+        ?.filter((a: any) => a.status !== '취소')
+        ?.map(transformBasicApplicantData)
+        ?.filter((a: any) => a !== null) || [];
+      const transformedSelectedApplicants = campaign.applicantData?.selectedApplicants
+        ?.filter((a: any) => a.status !== '취소')
+        ?.map(transformBasicApplicantData)
+        ?.filter((a: any) => a !== null) || [];
+
       return {
         ...campaign,
         campaignInfo: {
           ...campaign.campaignInfo,
           status: updatedStatus,
           daysLeft: daysLeft,
+        },
+        applicantData: {
+          applicants: transformedApplicants,
+          selectedApplicants: transformedSelectedApplicants,
         },
       };
     });
@@ -1170,7 +1521,7 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
     let calculatedTab: "예정" | "신청" | "진행" | "종료" | "취소" = "예정";
 
     // 디버깅: mission_11 확인
-    if (campaign.campaignInfo.id === "mission_11") {
+    if (campaign.campaignInfo.id === "4011") {
       console.log("[convertToPartnerCampaigns] mission_11 발견:", {
         id: campaign.campaignInfo.id,
         title: campaign.campaignInfo.title,
@@ -1960,11 +2311,11 @@ export const getInitialCampaignStats = (): PartnerCampaignStats => {
       subStatus: (() => {
         // 연장 요청 탭을 위한 subStatus 추가
         if (
-          campaign.campaignInfo.id === "delivery_2" ||
-          campaign.campaignInfo.id === "mission_2" ||
-          campaign.campaignInfo.id === "reporter_2" ||
-          campaign.campaignInfo.id === "review_2" ||
-          campaign.campaignInfo.id === "visit_2" ||
+          campaign.campaignInfo.id === "962" ||
+          campaign.campaignInfo.id === "4002" ||
+          campaign.campaignInfo.id === "3002" ||
+          campaign.campaignInfo.id === "2002" ||
+          campaign.campaignInfo.id === "1002" ||
           campaign.campaignInfo.statusText?.includes("연장 요청")
         ) {
           return "extension_request";

@@ -32,6 +32,46 @@ export function getPartnerPointSummary(userId?: string): PartnerPointSummary {
       };
     }
 
+    // partner_accounts에서 current_points를 확인
+    const storedAccounts = localStorage.getItem('partner_accounts');
+    if (storedAccounts) {
+      const accounts = JSON.parse(storedAccounts);
+      const account = accounts.find((a: any) => a.id === userId);
+
+      if (account && account.current_points) {
+        // partner_accounts에 포인트가 있으면 partner_points에 동기화
+        const initialPoints = {
+          total_points: account.current_points,
+          available_points: account.current_points,
+          pending_points: 0,
+        };
+        localStorage.setItem(pointsKey, JSON.stringify(initialPoints));
+        return initialPoints;
+      }
+    }
+
+    // partner_test_001의 경우 목업 데이터 포인트로 초기화
+    if (userId === 'partner_test_001') {
+      const initialPoints = {
+        total_points: 425000,
+        available_points: 425000,
+        pending_points: 0,
+      };
+      localStorage.setItem(pointsKey, JSON.stringify(initialPoints));
+
+      // partner_accounts에도 동기화
+      if (storedAccounts) {
+        const accounts = JSON.parse(storedAccounts);
+        const accountIndex = accounts.findIndex((a: any) => a.id === userId);
+        if (accountIndex >= 0) {
+          accounts[accountIndex].current_points = 425000;
+          localStorage.setItem('partner_accounts', JSON.stringify(accounts));
+        }
+      }
+
+      return initialPoints;
+    }
+
     // 초기 포인트 0으로 설정
     const initialPoints = {
       total_points: 0,
@@ -222,6 +262,19 @@ export function addPointCharge(
       })
     );
 
+    // partner_accounts의 current_points도 업데이트
+    const storedAccounts = localStorage.getItem('partner_accounts');
+    if (storedAccounts) {
+      const accounts = JSON.parse(storedAccounts);
+      const accountIndex = accounts.findIndex((a: any) => a.id === userId);
+
+      if (accountIndex >= 0) {
+        accounts[accountIndex].current_points = newAvailablePoints;
+        localStorage.setItem('partner_accounts', JSON.stringify(accounts));
+        console.log('✅ partner_accounts current_points 업데이트:', newAvailablePoints);
+      }
+    }
+
     // 포인트 내역 추가
     const history = getPartnerPointHistory(userId);
     const newHistory: PartnerPointHistory = {
@@ -275,6 +328,20 @@ export function usePartnerPoints(
         pending_points: summary.pending_points,
       })
     );
+
+    // partner_accounts의 current_points와 used_points도 업데이트
+    const storedAccounts = localStorage.getItem('partner_accounts');
+    if (storedAccounts) {
+      const accounts = JSON.parse(storedAccounts);
+      const accountIndex = accounts.findIndex((a: any) => a.id === userId);
+
+      if (accountIndex >= 0) {
+        accounts[accountIndex].current_points = newAvailablePoints;
+        accounts[accountIndex].used_points = (accounts[accountIndex].used_points || 0) + amount;
+        localStorage.setItem('partner_accounts', JSON.stringify(accounts));
+        console.log('✅ partner_accounts 포인트 업데이트 - current:', newAvailablePoints, 'used:', accounts[accountIndex].used_points);
+      }
+    }
 
     // 포인트 내역 추가
     const history = getPartnerPointHistory(userId);

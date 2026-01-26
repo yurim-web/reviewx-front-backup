@@ -20,6 +20,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import styles from "@/styles/fragments/header.module.css";
 import { mockPartnerNotifications } from "@/data/notification/notificationData";
 import HeaderSearch from "@/components/fragments/HeaderSearch";
@@ -28,6 +29,7 @@ import { useEffect, useState } from "react";
 
 export default function PartnerHeader() {
   const { user } = useAuth();
+  const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
   const [notificationIconSrc, setNotificationIconSrc] = useState(
     "/images/header/notification_icon.svg"

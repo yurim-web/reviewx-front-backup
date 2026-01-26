@@ -55,7 +55,7 @@ export interface MissionCampaignData {
 export const missionCampaigns: MissionCampaignData[] = [
   // mission_1: 예정 탭
   {
-    id: "mission_1",
+    id: "4001",
     title: "스킨케어 미션형",
     category: "미션형",
     image: "/images/main/campaign_img/eximg_1.png",
@@ -71,14 +71,11 @@ export const missionCampaigns: MissionCampaignData[] = [
     dayCount: "D-5",
     registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 선정 중 - 모집 기간 종료 후, 선정 발표 전
-      // 모집 기간: 2025-09-02 ~ 2025-09-14 (종료됨)
-      // 선정 발표: 2025-09-16 (아직 안 지남)
-      // 등록 기간: 2025-09-22 ~ 2025-09-30 (아직 시작 안 함)
-      applicationStart: "2025-09-02",
-      applicationEnd: "2025-09-14",
-      announcement: "2025-09-16",
-      registrationPeriod: "2025-09-22 ~ 2025-09-30",
+      // 모집 중 - 현재 모집 진행 중
+      applicationStart: "2026-01-05",
+      applicationEnd: "2026-01-18",
+      announcement: "2026-01-20",
+      registrationPeriod: "2026-01-22 ~ 2026-01-29",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#스킨케어체험 #뷰티미션형 #화장품체험 #올리브영 #솔직후기",
@@ -100,7 +97,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     contentType: "both" as const, // 링크 + 이미지
   },
   {
-    id: "mission_2",
+    id: "4002",
     title: "헬스케어 미션형",
     category: "미션형",
     image: "/images/main/campaign_img/eximg_2.png",
@@ -116,11 +113,11 @@ export const missionCampaigns: MissionCampaignData[] = [
     isUrgent: true, // 긴급 캠페인
     registeredAt: "2026-01-08T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2026-01-10 ~ 2026-01-22)
-      applicationStart: "2026-01-10",
-      applicationEnd: "2026-01-22",
-      announcement: "2026-01-24",
-      registrationPeriod: "2026-01-27 ~ 2026-02-10",
+      // 모집 중 - 현재 모집 진행 중
+      applicationStart: "2026-01-06",
+      applicationEnd: "2026-01-19",
+      announcement: "2026-01-21",
+      registrationPeriod: "2026-01-23 ~ 2026-01-30",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#헬스케어체험 #건강관리 #미션형 #유튜브 #솔직후기",
@@ -143,7 +140,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     channel: "", // 미션형은 채널 없음
   },
   {
-    id: "mission_3",
+    id: "4003",
     title: "홈데코 미션형",
     category: "미션형",
     image: "/images/main/campaign_img/eximg_3.png",
@@ -160,10 +157,10 @@ export const missionCampaigns: MissionCampaignData[] = [
     registeredAt: "2026-01-06T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 (2026-01-08 ~ 2026-01-23)
-      applicationStart: "2026-01-08",
-      applicationEnd: "2026-01-23",
-      announcement: "2026-01-25",
-      registrationPeriod: "2026-01-28 ~ 2026-02-05",
+      applicationStart: "2026-01-04",
+      applicationEnd: "2026-01-17",
+      announcement: "2026-01-19",
+      registrationPeriod: "2026-01-21 ~ 2026-01-28",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#홈데코체험 #인테리어 #미션형 #블로그 #홈스타일링",
@@ -182,7 +179,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     contentType: "link" as const, // 링크만
   },
   {
-    id: "mission_4",
+    id: "4004",
     title: "패션 미션형",
     category: "미션형",
     image: "/images/main/campaign_img/eximg_4.png",
@@ -221,7 +218,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     channel: "", // 미션형은 채널 없음
   },
   {
-    id: "mission_5",
+    id: "4005",
     title: "식품 미션형",
     category: "미션형",
     image: "/images/main/campaign_img/eximg_5.png",
@@ -260,7 +257,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     channel: "", // 미션형은 채널 없음
   },
   {
-    id: "mission_6",
+    id: "4006",
     title: "디지털 미션형",
     category: "미션형",
     image: "/images/main/campaign_img/eximg_6.png",
@@ -299,7 +296,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     contentType: "image" as const, // 이미지만
   },
   {
-    id: "mission_12",
+    id: "4012",
     title: "이미지 전용 미션형",
     category: "미션형",
     image: "/images/main/campaign_img/eximg_7.png",
@@ -332,7 +329,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     contentType: "image" as const, // 이미지만
   },
   {
-    id: "mission_7",
+    id: "4007",
     title: "반려동물 미션형",
     category: "미션형",
     image: "/images/main/campaign_img/eximg_7.png",
@@ -371,7 +368,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     channel: "", // 미션형은 채널 없음
   },
   {
-    id: "mission_8",
+    id: "4008",
     title: "스포츠 미션형",
     category: "미션형",
     image: "/images/main/campaign_img/eximg_8.png",
@@ -410,7 +407,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     channel: "", // 미션형은 채널 없음
   },
   {
-    id: "mission_9",
+    id: "4009",
     title: "뷰티 미션형",
     category: "미션형",
     image: "/images/main/campaign_img/eximg_9.png",
@@ -449,7 +446,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     channel: "", // 미션형은 채널 없음
   },
   {
-    id: "mission_10",
+    id: "4010",
     title: "여행 미션형",
     category: "미션형",
     image: "/images/main/campaign_img/eximg_10.png",
@@ -488,7 +485,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     channel: "", // 미션형은 채널 없음
   },
   {
-    id: "mission_11",
+    id: "4011",
     title: "프리미엄 스킨케어 세트 미션형",
     category: "미션형",
     image: "/images/main/campaign_img/eximg_1.png",
@@ -539,7 +536,7 @@ export const missionCampaigns: MissionCampaignData[] = [
   },
   // mission_13: 링크만 미션형 (등록기간 진행 중)
   {
-    id: "mission_13",
+    id: "4013",
     title: "링크 전용 뷰티 미션형",
     category: "미션형",
     image: "/images/main/campaign_img/eximg_2.png",
@@ -576,7 +573,7 @@ export const missionCampaigns: MissionCampaignData[] = [
   },
   // mission_14: 이미지만 미션형 (등록기간 진행 중)
   {
-    id: "mission_14",
+    id: "4014",
     title: "이미지 전용 생활용품 미션형",
     category: "미션형",
     image: "/images/main/campaign_img/eximg_3.png",
@@ -612,7 +609,7 @@ export const missionCampaigns: MissionCampaignData[] = [
   },
   // mission_15: 링크 + 이미지 미션형 (등록기간 진행 중)
   {
-    id: "mission_15",
+    id: "4015",
     title: "종합 리뷰 식품 미션형",
     category: "미션형",
     image: "/images/main/campaign_img/eximg_4.png",
@@ -1761,15 +1758,21 @@ function generateNewMissionCampaignId(): string {
     }
   }
 
+  // 배송형처럼 숫자만 사용 (미션형은 4000번대부터 시작)
   const existingIds = allCampaigns
     .map((c) => {
+      // mission_X 형식이면 숫자만 추출, 아니면 숫자로 직접 변환 시도
       const match = c.id.match(/mission_(\d+)/);
-      return match ? parseInt(match[1]) : 0;
+      if (match) {
+        return parseInt(match[1]) + 4000; // mission_16 -> 4016
+      }
+      const numId = parseInt(c.id);
+      return isNaN(numId) ? 0 : numId;
     })
-    .filter((id) => id > 0);
-  const maxId = existingIds.length > 0 ? Math.max(...existingIds) : 10;
+    .filter((id) => id >= 4000 && id < 5000); // 미션형 범위: 4000-4999
+  const maxId = existingIds.length > 0 ? Math.max(...existingIds) : 4000;
 
-  return `mission_${maxId + 1}`;
+  return String(maxId + 1);
 }
 
 /**
@@ -1817,6 +1820,9 @@ export function createMissionCampaign(
     ? formData.platform.replace(/\s+/g, "")
     : "네이버블로그";
 
+  // 포인트 계산 (additionalPoints를 숫자로 변환)
+  const points = Number(formData.additionalPoints) || 0;
+
   // 날짜 파싱
   const recruitmentPeriod = formData.recruitmentPeriod || "";
   const [applicationStart, applicationEnd] = recruitmentPeriod
@@ -1842,6 +1848,8 @@ export function createMissionCampaign(
       recruitmentPeriod: recruitmentPeriod,
       announcementDate: formData.announcementDate || "",
       registrationPeriod: formData.registrationPeriod || "",
+      point: points,
+      channel: formData.platform || "",
       recruitedCount: 0,
       totalCount: totalCount,
       daysLeft: daysLeft,

@@ -33,9 +33,8 @@ import { useCampaignApplication } from "@/hooks/partner/campaign_application/use
 import CampaignApplicationLayout from "@/components/partner/campaign_application/CampaignApplicationLayout";
 import type { AllApplicant } from "@/data/partner/sharedCampaigns";
 
-// 구매평 전용 카드 컴포넌트들 (basic 타입만 사용)
+// 구매평 전용 카드 컴포넌트 (basic 타입 사용)
 import BasicCard from "@/components/partner/campaign_application/card_type/basic/BasicCard";
-import BasicSelectedCard from "@/components/partner/campaign_application/card_type/basic/BasicSelectedCard";
 
 // 개별 신청자 타입들 import (카드 컴포넌트에서 사용)
 import { type BasicApplicant } from "@/data/partner/campaign_application/delivery_applicants";
@@ -81,37 +80,33 @@ export default function ReviewCampaignApplicationPage() {
    * 구매평 캠페인용 카드 컴포넌트를 렌더링하는 함수
    *
    * 📌 구매평 캠페인 특징:
-   * - basic 카드 타입만 사용
+   * - BasicCard 타입 사용
    * - 채널별 특화 정보 없음 (팔로워, 구독자 수 등)
-   * - 기본 프로필 정보와 메모만 표시
-   * - 선정/미선정 상태에 따라 다른 카드 컴포넌트 사용
+   * - 기본 프로필 정보, 회원 타입, 메모만 표시
+   * - 선정하기 버튼만 제공 (선택 취소는 지원하지 않음)
    *
    * @param applicant - 신청자 데이터 (BasicApplicant)
-   * @param isSelected - 선정 탭 여부
+   * @param isSelected - 선정 탭 여부 (BasicCard는 미사용)
    * @returns JSX 요소
    */
   const renderCardComponent = (
     applicant: AllApplicant,
     isSelected: boolean = false
   ): React.ReactNode => {
-    // 구매평은 항상 BasicApplicant 타입으로 처리
+    // 구매평은 BasicApplicant 타입으로 처리
     const basicApplicant = applicant as BasicApplicant;
 
+    // BasicCard는 선정 탭을 지원하지 않으므로 신청자 탭에서만 표시
     if (isSelected) {
-      return (
-        <BasicSelectedCard
-          applicant={basicApplicant}
-          onCancel={handleCancelApplicant}
-        />
-      );
-    } else {
-      return (
-        <BasicCard
-          applicant={basicApplicant}
-          onSelect={handleSelectApplicant}
-        />
-      );
+      return null;
     }
+
+    return (
+      <BasicCard
+        applicant={basicApplicant}
+        onSelect={handleSelectApplicant}
+      />
+    );
   };
 
   // 📌 공통 레이아웃 컴포넌트 사용:

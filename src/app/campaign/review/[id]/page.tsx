@@ -388,6 +388,7 @@ export default function ReviewDetailPage({ params }: ReviewDetailPageProps) {
             isOpen={isOpen}
             onClose={onClose}
             type="review"
+            campaignId={campaign.id}
             dayCount={campaign.dayCount}
             isUrgent={campaign.isUrgent}
           />

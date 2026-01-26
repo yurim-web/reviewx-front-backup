@@ -5,7 +5,7 @@ import { useState } from "react";
 import CampaignBox from "@/components/main/CampaignBox";
 import Titletext from "@/components/main/Titletext";
 import home_styles from "@/styles/home/home.module.css";
-import filter_styles from "@/styles/filter/filter_bar.module.css";
+import mainStyles from "@/styles/filter/filter_bar/main.module.css";
 import SortModalFilter from "@/components/campaign/filter/SortModalFilter";
 
 interface SearchResultsSectionProps {
@@ -95,14 +95,14 @@ export default function SearchResultsSection({
 
           <button
             type="button"
-            className={filter_styles.sort_button}
+            className={mainStyles.sort_button}
             onClick={handle_click_sort_button}
           >
             <span>{selected_sort}</span>
             <img
               src="/images/filter/dropdown_icon.svg"
               alt="정렬"
-              className={filter_styles.dropdown_icon}
+              className={mainStyles.dropdown_icon}
             />
           </button>
         </div>

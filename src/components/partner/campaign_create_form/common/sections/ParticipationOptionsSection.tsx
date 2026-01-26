@@ -15,7 +15,7 @@
 "use client";
 
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
-import guideStyles from "@/styles/partner/campaign_create/campaign_guide.module.css";
+import optionStyles from "@/styles/partner/campaign_create/campaign_guide/options.module.css";
 
 /**
  * 참여/제출 옵션 섹션 Props
@@ -90,7 +90,7 @@ export function ParticipationOptionsSection({
 
       {/* 추가 옵션들 (미션형의 경우 콘텐츠 링크/이미지 제출 등) */}
       {additionalOptions.map((option) => (
-        <div key={option.id} className={guideStyles.option_input_box}>
+        <div key={option.id} className={optionStyles.option_input_box}>
           <input
             type="checkbox"
             id={option.id}
@@ -98,15 +98,15 @@ export function ParticipationOptionsSection({
             onChange={(e) => option.onChange(e.target.checked)}
             disabled={!canEdit(option.field)}
           />
-          <label htmlFor={option.id} className={guideStyles.option_label}>
+          <label htmlFor={option.id} className={optionStyles.option_label}>
             {option.label}
           </label>
-          <div className={guideStyles.option_input_value}></div>
+          <div className={optionStyles.option_input_value}></div>
         </div>
       ))}
 
       {/* 만 19세 이상 참여 허용 */}
-      <div className={guideStyles.option_input_box}>
+      <div className={optionStyles.option_input_box}>
         <input
           type="checkbox"
           id="adultOnly"
@@ -114,14 +114,14 @@ export function ParticipationOptionsSection({
           onChange={(e) => onAdultOnlyChange(e.target.checked)}
           disabled={!canEdit("adultOnly")}
         />
-        <label htmlFor="adultOnly" className={guideStyles.option_label}>
+        <label htmlFor="adultOnly" className={optionStyles.option_label}>
           만 19세 이상 참여 허용 (성인인증이 필요한 제품/서비스)
         </label>
-        <div className={guideStyles.option_input_value}></div>
+        <div className={optionStyles.option_input_value}></div>
       </div>
 
       {/* 이전 참여자 재참여 허용 */}
-      <div className={guideStyles.option_input_box}>
+      <div className={optionStyles.option_input_box}>
         <input
           type="checkbox"
           id="allowReParticipation"
@@ -131,15 +131,15 @@ export function ParticipationOptionsSection({
         />
         <label
           htmlFor="allowReParticipation"
-          className={guideStyles.option_label}
+          className={optionStyles.option_label}
         >
           이전 참여자 재참여 허용
         </label>
-        <div className={guideStyles.option_input_value}></div>
+        <div className={optionStyles.option_input_value}></div>
       </div>
 
       {/* 지각 제출 허용 */}
-      <div className={guideStyles.option_input_box}>
+      <div className={optionStyles.option_input_box}>
         <input
           type="checkbox"
           id="allowLateSubmission"
@@ -149,11 +149,11 @@ export function ParticipationOptionsSection({
         />
         <label
           htmlFor="allowLateSubmission"
-          className={guideStyles.option_label}
+          className={optionStyles.option_label}
         >
           지각 제출 허용 (7일)
         </label>
-        <div className={guideStyles.option_input_value}></div>
+        <div className={optionStyles.option_input_value}></div>
       </div>
     </article>
   );

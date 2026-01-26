@@ -370,6 +370,7 @@ export default function MissionDetailPage({ params }: MissionDetailPageProps) {
             isOpen={isOpen}
             onClose={onClose}
             type="mission"
+            campaignId={campaign.id}
             dayCount={campaign.dayCount}
             isUrgent={campaign.isUrgent}
           />

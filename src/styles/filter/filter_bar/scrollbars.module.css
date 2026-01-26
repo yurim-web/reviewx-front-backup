@@ -1,0 +1,29 @@
+/* ========================================
+   🎨 필터 모달 스크롤바 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - ModalFilter.tsx (필터 모달 컴포넌트)
+ * - RegionFilter.tsx (지역 필터 컴포넌트)
+ * - SortModalFilter.tsx (정렬 모달 컴포넌트)
+ */
+
+/* 스크롤바 너비 조정 - 모든 필터에 적용 */
+.modal_content *::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal_content *::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.modal_content *::-webkit-scrollbar-thumb {
+  background: #d0d0d0;
+  border-radius: 4px;
+}
+
+.modal_content *::-webkit-scrollbar-thumb:hover {
+  background: #b0b0b0;
+}

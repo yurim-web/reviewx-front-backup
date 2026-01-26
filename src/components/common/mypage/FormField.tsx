@@ -11,7 +11,8 @@
 
 "use client";
 
-import styles from "@/styles/user/mypage/edit_profile.module.css";
+import layoutStyles from "@/styles/user/mypage/edit_profile/layout.module.css";
+import inputStyles from "@/styles/user/mypage/edit_profile/inputs.module.css";
 
 interface FormFieldProps {
   /** 라벨 텍스트 */
@@ -31,10 +32,10 @@ export default function FormField({
   children,
 }: FormFieldProps) {
   return (
-    <article className={styles.field_article}>
-      <label className={styles.field_label} htmlFor={htmlFor}>
+    <article className={layoutStyles.field_article}>
+      <label className={inputStyles.field_label} htmlFor={htmlFor}>
         {label}
-        {required && <span className={styles.required_asterisk}>*</span>}
+        {required && <span className={inputStyles.required_asterisk}>*</span>}
       </label>
       {children}
     </article>

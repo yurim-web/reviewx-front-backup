@@ -8,6 +8,7 @@ export interface AuthUser {
   id: string;
   email: string;
   name: string;
+  nickname?: string; // 닉네임 (리뷰어 전용, name과 별도로 관리)
   role: UserRole;
   // 리뷰어 전용 필드
   grade?: 'bronze' | 'silver' | 'gold' | 'platinum' | 'diamond';
@@ -16,10 +17,18 @@ export interface AuthUser {
     url: string;
     followers: number;
   }>;
+  profile_image?: string; // 프로필 이미지 (리뷰어 전용)
+  phone?: string;
+  address?: string;
+  detail_address?: string;
+  postal_code?: string;
   // 파트너 전용 필드
   business_name?: string;
   business_number?: string;
   approval_status?: 'pending' | 'approved' | 'rejected';
+  representative_name?: string;
+  contact_phone?: string;
+  business_type?: string;
   // 관리자 전용 필드
   admin_level?: 'GA' | 'SA';
   permissions?: string[];

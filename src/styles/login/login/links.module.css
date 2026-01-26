@@ -1,0 +1,108 @@
+/* ========================================
+   🔗 로그인 페이지 링크 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - user/login/page.tsx (사용자 소셜 로그인 페이지)
+ * - partner/login/page.tsx (파트너 로그인 페이지)
+ * - manager/login/page.tsx (관리자 로그인 페이지)
+ *
+ * 주요 스타일:
+ * - 하단 링크 영역
+ * - 문의하기 섹션
+ * - 고정 링크 (파트너/유저 로그인 링크)
+ */
+
+/* 로그인 링크 섹션 (사용자 로그인용) */
+.login_links_section {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  justify-content: center;
+  padding-top: 40px;
+}
+
+/* 로그인 링크 (아이디 찾기, 문의하기 공통) */
+.login_link {
+  color: #848484;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 호버 효과 */
+.login_link:hover {
+  color: #444;
+  text-decoration: underline;
+  text-underline-position: from-font;
+}
+
+/* 문의하기 섹션 */
+.inquiry_section {
+  padding-top: 32px;
+  text-align: center;
+}
+
+/* 문의하기 링크 */
+.inquiry_link {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+}
+
+/* 문의하기 링크 호버 효과 */
+.inquiry_link:hover {
+  color: #444444;
+  text-decoration: underline;
+  text-underline-position: from-font;
+}
+
+/* 파트너 회원 로그인 섹션 (사용자 로그인 페이지 하단) */
+.partner_login_section {
+  position: absolute;
+  bottom: 40px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 100%;
+}
+
+/* 파트너 회원 로그인 링크 */
+.partner_login_link {
+  color: #444;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: -0.32px;
+}
+
+/* 리뷰어 회원 로그인 섹션 (파트너 로그인 페이지 하단) */
+.user_login_section {
+  position: absolute;
+  bottom: 40px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 100%;
+}
+
+/* 리뷰어 회원 로그인 링크 */
+.user_login_link {
+  color: #444;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: -0.32px;
+}

@@ -57,6 +57,8 @@
   font-weight: 600;
   line-height: 18px;
   letter-spacing: -0.36px;
+
+  
 }
 
 /* 내용 박스 */
@@ -159,7 +161,7 @@
   color: #444;
   font-size: 16px;
   font-weight: 500;
-  line-height: 26px;
+  line-height: 26px; 
   letter-spacing: -0.32px;
 }
 

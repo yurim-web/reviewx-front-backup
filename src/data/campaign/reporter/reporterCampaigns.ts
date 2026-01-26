@@ -53,7 +53,7 @@ export interface ReporterCampaignData {
 export const reporterCampaigns: ReporterCampaignData[] = [
   // reporter_1: 예정 탭 - 모집 기간 시작 전
   {
-    id: "reporter_1",
+    id: "3001",
     title: "테크 기자단",
     category: "기자단",
     image: "/images/main/campaign_img/eximg_1.png",
@@ -68,14 +68,11 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     dayCount: "D-5",
     registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 선정 중 - 모집 기간 종료 후, 선정 발표 전 (2일 남음)
-      // 모집 기간: 2025-12-20 ~ 2026-01-05 (종료됨 - 오늘이 2026-01-06이므로)
-      // 선정 발표: 2026-01-15 (미래 - 신청 탭에 표시되도록)
-      // 등록 기간: 2026-01-10 ~ 2026-01-20 (아직 시작 안 함)
-      applicationStart: "2025-12-20",
-      applicationEnd: "2026-01-05",
-      announcement: "2026-01-15",
-      registrationPeriod: "2026-01-10 ~ 2026-01-20",
+      // 모집 중 - 현재 모집 진행 중
+      applicationStart: "2026-01-05",
+      applicationEnd: "2026-01-18",
+      announcement: "2026-01-20",
+      registrationPeriod: "2026-01-22 ~ 2026-01-29",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
@@ -98,7 +95,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
   },
   // reporter_2: 연장요청 탭
   {
-    id: "reporter_2",
+    id: "3002",
     title: "뷰티 기자단",
     category: "기자단",
     image: "/images/main/campaign_img/eximg_2.png",
@@ -113,11 +110,11 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     dayCount: "D-3",
     registeredAt: "2026-01-08T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2026-01-10 ~ 2026-01-22)
-      applicationStart: "2026-01-10",
-      applicationEnd: "2026-01-22",
-      announcement: "2026-01-24",
-      registrationPeriod: "2026-01-25 ~ 2026-02-10",
+      // 모집 중 - 현재 모집 진행 중
+      applicationStart: "2026-01-06",
+      applicationEnd: "2026-01-19",
+      announcement: "2026-01-21",
+      registrationPeriod: "2026-01-23 ~ 2026-01-30",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
@@ -140,7 +137,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
   },
   // reporter_3: 신청 탭
   {
-    id: "reporter_3",
+    id: "3003",
     title: "패션 기자단",
     category: "기자단",
     image: "/images/main/campaign_img/eximg_3.png",
@@ -156,11 +153,11 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     isUrgent: true, // 긴급 캠페인
     registeredAt: "2026-01-06T13:45:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2026-01-08 ~ 2026-01-23)
-      applicationStart: "2026-01-08",
-      applicationEnd: "2026-01-23",
-      announcement: "2026-01-25",
-      registrationPeriod: "2026-01-28 ~ 2026-02-05",
+      // 모집 중 - 현재 모집 진행 중
+      applicationStart: "2026-01-04",
+      applicationEnd: "2026-01-17",
+      announcement: "2026-01-19",
+      registrationPeriod: "2026-01-21 ~ 2026-01-28",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
@@ -182,7 +179,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
   },
   // reporter_4: 예정 탭
   {
-    id: "reporter_4",
+    id: "3004",
     title: "푸드 기자단",
     category: "기자단",
     image: "/images/main/campaign_img/eximg_4.png",
@@ -223,7 +220,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
   },
   // reporter_5: 종료 탭
   {
-    id: "reporter_5",
+    id: "3005",
     title: "여행 기자단",
     category: "기자단",
     image: "/images/main/campaign_img/eximg_5.png",
@@ -264,7 +261,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
   },
   // reporter_6: 신청 탭
   {
-    id: "reporter_6",
+    id: "3006",
     title: "라이프스타일 기자단",
     category: "기자단",
     image: "/images/main/campaign_img/eximg_6.png",
@@ -306,7 +303,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
   },
   // reporter_7: 진행 탭
   {
-    id: "reporter_7",
+    id: "3007",
     title: "게임 기자단",
     category: "기자단",
     image: "/images/main/campaign_img/eximg_7.png",
@@ -347,7 +344,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
   },
   // reporter_8: 종료 탭
   {
-    id: "reporter_8",
+    id: "3008",
     title: "건강 기자단",
     category: "기자단",
     image: "/images/main/campaign_img/eximg_8.png",
@@ -388,7 +385,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
   },
   // reporter_9: 진행 탭
   {
-    id: "reporter_9",
+    id: "3009",
     title: "문화 기자단",
     category: "기자단",
     image: "/images/main/campaign_img/eximg_9.png",
@@ -429,7 +426,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
   },
   // reporter_10: 취소 탭
   {
-    id: "reporter_10",
+    id: "3010",
     title: "스포츠 기자단",
     category: "기자단",
     image: "/images/main/campaign_img/eximg_10.png",
@@ -469,7 +466,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     ],
   },
   {
-    id: "reporter_11",
+    id: "3011",
     title: "뷰티 트렌드 기자단",
     category: "기자단",
     image: "/images/main/campaign_img/eximg_1.png",
@@ -511,7 +508,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
   },
   // reporter_12: 마감임박 - 네이버 클립 채널
   {
-    id: "reporter_12",
+    id: "3012",
     title: "[마감임박] 디지털 기자단",
     category: "기자단",
     image: "/images/main/campaign_img/eximg_1.png",
@@ -1421,6 +1418,8 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
   // reporter_12: 디지털 기자단
   {
     ...reporterCampaigns[11],
+    // guidelineTexts 명시적으로 포함 (스프레드 연산자로 인한 누락 방지)
+    guidelineTexts: reporterCampaigns[11].guidelineTexts || [],
     applicantData: {
       applicants: [
         {
@@ -1531,15 +1530,21 @@ function generateNewReporterCampaignId(): string {
     }
   }
 
+  // 배송형처럼 숫자만 사용 (기자단은 3000번대부터 시작)
   const existingIds = allCampaigns
     .map((c) => {
+      // reporter_X 형식이면 숫자만 추출, 아니면 숫자로 직접 변환 시도
       const match = c.id.match(/reporter_(\d+)/);
-      return match ? parseInt(match[1]) : 0;
+      if (match) {
+        return parseInt(match[1]) + 3000; // reporter_12 -> 3012
+      }
+      const numId = parseInt(c.id);
+      return isNaN(numId) ? 0 : numId;
     })
-    .filter((id) => id > 0);
-  const maxId = existingIds.length > 0 ? Math.max(...existingIds) : 10;
+    .filter((id) => id >= 3000 && id < 4000); // 기자단 범위: 3000-3999
+  const maxId = existingIds.length > 0 ? Math.max(...existingIds) : 3000;
 
-  return `reporter_${maxId + 1}`;
+  return String(maxId + 1);
 }
 
 /**
@@ -1587,6 +1592,9 @@ export function createReporterCampaign(
     ? formData.platform.replace(/\s+/g, "")
     : "유튜브";
 
+  // 포인트 계산 (additionalPoints를 숫자로 변환)
+  const points = Number(formData.additionalPoints) || 0;
+
   return {
     campaignInfo: {
       id: newId,
@@ -1606,6 +1614,8 @@ export function createReporterCampaign(
       recruitmentPeriod: formData.recruitmentPeriod || "",
       announcementDate: formData.announcementDate || "",
       registrationPeriod: formData.registrationPeriod || "",
+      point: points,
+      channel: formData.platform || "",
       recruitedCount: 0,
       totalCount: totalCount,
       daysLeft: daysLeft,

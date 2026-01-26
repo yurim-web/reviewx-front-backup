@@ -22,7 +22,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
@@ -30,6 +30,7 @@ import PointTabNavigation from "@/components/common/point/PointTabNavigation";
 import TextareaModal from "@/components/common/modal/TextareaModal";
 import { MainTab, PointTab, PointHistory } from "@/types/domain/user";
 import { pointHistoryData } from "@/data/user/point/pointData";
+import { useAuth } from "@/hooks/useAuth";
 import styles from "@/styles/user/point/point.module.css";
 
 /**
@@ -84,6 +85,11 @@ export default function PointHistoryPage({
   const router = useRouter();
 
   /**
+   * useAuth Hook - 사용자 인증 정보
+   */
+  const { user } = useAuth();
+
+  /**
    * useState Hook - 메인 탭 상태 관리
    *
    * 설명:
@@ -118,6 +124,92 @@ export default function PointHistoryPage({
    * - 취소 상태에 따라 "적립 취소 사유" 또는 "출금 신청 반려 사유"로 구분됩니다.
    */
   const [modal_title, setModalTitle] = useState("반려 사유");
+
+  /**
+   * useState Hook - 포인트 정보
+   *
+   * 설명:
+   * - user_accounts에서 읽어온 포인트 정보를 저장합니다.
+   */
+  const [pointInfo, setPointInfo] = useState({
+    available_points: 0,
+    pending_points: 0,
+    current_points: 0,
+  });
+
+  /**
+   * useState Hook - 포인트 내역
+   *
+   * 설명:
+   * - user_accounts에서 읽어온 포인트 내역을 저장합니다.
+   */
+  const [userPointHistory, setUserPointHistory] = useState<PointHistory[]>([]);
+
+  // ========================================
+  // 🎯 useEffect - 포인트 정보 로드
+  // ========================================
+
+  /**
+   * 포인트 정보 및 내역 로드 함수
+   */
+  const loadPointData = () => {
+    if (typeof window !== 'undefined' && user) {
+      try {
+        const storedAccounts = localStorage.getItem('user_accounts');
+        console.log('📦 [포인트 페이지] user_accounts 원본:', storedAccounts);
+        if (storedAccounts) {
+          const accounts = JSON.parse(storedAccounts);
+          console.log('📦 [포인트 페이지] 파싱된 accounts:', accounts);
+          const userAccount = accounts.find((a: any) =>
+            a.id === user.id || a.email === user.email
+          );
+          console.log('👤 [포인트 페이지] 현재 유저:', user.id, user.email);
+          console.log('👤 [포인트 페이지] 찾은 userAccount:', userAccount);
+          if (userAccount) {
+            const newPointInfo = {
+              available_points: userAccount.available_points || 0,
+              pending_points: userAccount.pending_points || 0,
+              current_points: userAccount.current_points || 0,
+            };
+            console.log('💰 [포인트 페이지] 업데이트할 포인트 정보:', newPointInfo);
+            setPointInfo(newPointInfo);
+            // 포인트 내역 로드 (없으면 빈 배열)
+            setUserPointHistory(userAccount.point_history || []);
+            console.log('✅ [포인트 페이지] 포인트 정보 로드 완료');
+          } else {
+            console.warn('⚠️ [포인트 페이지] userAccount를 찾을 수 없습니다');
+          }
+        } else {
+          console.warn('⚠️ [포인트 페이지] user_accounts가 localStorage에 없습니다');
+        }
+      } catch (error) {
+        console.error('❌ [포인트 페이지] 포인트 정보 로드 실패:', error);
+      }
+    } else {
+      console.log('⚠️ [포인트 페이지] window 또는 user가 없습니다. window:', typeof window, 'user:', user);
+    }
+  };
+
+  /**
+   * useEffect: user_accounts에서 포인트 정보 및 내역 로드
+   */
+  useEffect(() => {
+    loadPointData();
+
+    // 페이지 포커스 시 데이터 다시 로드
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        console.log('🔄 [포인트 페이지] 페이지 포커스 - 데이터 다시 로드');
+        loadPointData();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [user]);
 
   // ========================================
   // 🎯 이벤트 핸들러 함수들
@@ -187,8 +279,8 @@ export default function PointHistoryPage({
       if (history.type === "earned" && history.status === "failed") {
         setModalTitle("적립 취소 사유");
       }
-      // type이 "withdrawn"이고 status가 "failed"면 출금 신청 반려
-      else if (history.type === "withdrawn" && history.status === "failed") {
+      // type이 "withdrawn" 또는 "withdrawal_pending"이고 status가 "failed"면 출금 신청 반려
+      else if ((history.type === "withdrawn" || history.type === "withdrawal_pending") && history.status === "failed") {
         setModalTitle("출금 신청 반려 사유");
       }
       // 기본값 (혹시 모를 경우를 대비)
@@ -222,12 +314,15 @@ export default function PointHistoryPage({
    * 포인트 내역 필터링 및 정렬
    *
    * 설명:
+   * - user가 로그인되어 있으면 user_accounts의 포인트 내역을 사용합니다.
+   * - user_accounts가 없거나 user가 없으면 기본 데이터를 사용합니다.
    * - Props로 받은 filterFunction을 사용하여 포인트 내역을 필터링합니다.
    * - 날짜 기준으로 최신순(내림차순)으로 정렬합니다.
    * - 배열의 filter와 sort 메서드를 체이닝하여 사용합니다.
    *
    */
-  const filteredHistoryData = pointHistoryData
+  const historyDataSource = user ? userPointHistory : pointHistoryData;
+  const filteredHistoryData = historyDataSource
     .filter(filterFunction)
     .sort((a, b) => {
       // 날짜를 비교하여 최신순(내림차순)으로 정렬
@@ -271,7 +366,7 @@ export default function PointHistoryPage({
             <div className={styles.point_summary_info}>
               <span className={styles.point_label}>보유 포인트</span>
               <div className={styles.point_amount}>
-                <span className={styles.amount_number}>511,200</span>
+                <span className={styles.amount_number}>{pointInfo.available_points.toLocaleString()}</span>
                 <span className={styles.amount_unit}>P</span>
               </div>
             </div>
@@ -288,14 +383,20 @@ export default function PointHistoryPage({
           {/* 포인트 내역 리스트 섹션 */}
           <article className={styles.history_list}>
             {/**
-             * 배열 렌더링
+             * 배열 렌더링 - 빈 상태 처리 추가
              *
              * 설명:
-             * - map 메서드를 사용하여 배열의 각 요소를 JSX로 변환합니다.
+             * - 포인트 내역이 없으면 안내 메시지를 표시합니다.
+             * - 포인트 내역이 있으면 map 메서드를 사용하여 배열의 각 요소를 JSX로 변환합니다.
              * - key prop: React가 각 요소를 구분하기 위해 필요 (고유한 값 사용)
              * - 조건부 렌더링: 삼항 연산자와 && 연산자 사용
              */}
-            {filteredHistoryData.map((history) => (
+            {filteredHistoryData.length === 0 ? (
+              <div className={styles.empty_state}>
+                <p className={styles.empty_message}>포인트 내역이 없습니다.</p>
+              </div>
+            ) : (
+              filteredHistoryData.map((history) => (
               <div key={history.id} className={styles.history_item}>
                 {/* 상태 배지 컨테이너 */}
                 <div className={styles.status_badge_container}>
@@ -416,7 +517,8 @@ export default function PointHistoryPage({
                   </div>
                 </div>
               </div>
-            ))}
+              ))
+            )}
           </article>
         </div>
       </main>

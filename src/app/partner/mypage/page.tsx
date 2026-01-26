@@ -18,7 +18,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import PartnerTabNavigation from "@/components/partner/campaign_management/TabNavigation";
 import SubTabNavigation from "@/components/common/mypage/SubTabNavigation";
@@ -43,6 +43,36 @@ function PartnerMypagePage() {
 
   // activeSubTab: 현재 활성화된 서브 탭 (프로필)
   const [activeSubTab, setActiveSubTab] = useState<"profile">("profile");
+
+  // 프로필 이미지 상태
+  const [profileImage, setProfileImage] = useState<string | undefined>(undefined);
+
+  // 컴포넌트 마운트 시 localStorage에서 프로필 이미지 로드
+  useEffect(() => {
+    if (typeof window !== 'undefined' && user) {
+      try {
+        const storedAccounts = localStorage.getItem('partner_accounts');
+        console.log('📦 [마이페이지] partner_accounts:', storedAccounts);
+
+        if (storedAccounts) {
+          const accounts = JSON.parse(storedAccounts);
+          const partnerAccount = accounts.find((a: any) =>
+            a.id === user.id || a.email === user.email
+          );
+          console.log('✅ [마이페이지] partnerAccount:', partnerAccount);
+
+          if (partnerAccount?.profile_image) {
+            setProfileImage(partnerAccount.profile_image);
+            console.log('🖼️ [마이페이지] 프로필 이미지 설정됨:', partnerAccount.profile_image);
+          } else {
+            console.log('❌ [마이페이지] profile_image가 없습니다');
+          }
+        }
+      } catch (error) {
+        console.error('❌ [마이페이지] 프로필 이미지 로드 실패:', error);
+      }
+    }
+  }, [user]);
 
   /**
    * 서브 탭 변경 핸들러
@@ -98,6 +128,7 @@ function PartnerMypagePage() {
             nickname={user?.business_name || user?.name || "파트너"}
             editPath="/partner/mypage/edit"
             onLogout={handleLogout}
+            profileImage={profileImage}
           />
         </section>
       </main>

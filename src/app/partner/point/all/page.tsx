@@ -48,22 +48,29 @@ export default function PartnerAllPointPage() {
 
   // 사용자 포인트 정보 로드
   useEffect(() => {
+    console.log('🔍 [포인트 페이지] user:', user);
     if (user?.id) {
+      console.log('🔍 [포인트 페이지] user.id:', user.id);
       const userHistory = getPartnerPointHistory(user.id);
       const userSummary = getPartnerPointSummary(user.id);
+      console.log('🔍 [포인트 페이지] userHistory:', userHistory);
+      console.log('🔍 [포인트 페이지] userSummary:', userSummary);
 
-      // localStorage에 데이터가 없으면 샘플 데이터를 fallback으로 사용
-      // 이렇게 하면 "충전" 탭과 "사용" 탭처럼 샘플 데이터를 볼 수 있습니다
-      setHistoryData(
-        userHistory.length > 0 ? userHistory : partnerPointHistoryData
-      );
-      // 요약 정보도 localStorage에 데이터가 없으면 샘플 데이터 사용
-      setSummary(
-        userSummary.total_points > 0 || userSummary.available_points > 0
-          ? userSummary
-          : partnerPointSummary
-      );
+      // 파트너 테스트 계정인 경우 목업 데이터와 실제 충전 내역을 합침
+      if (user.id === 'partner_test_001') {
+        console.log('✅ [포인트 페이지] 파트너 테스트 계정 감지');
+        // 목업 데이터와 실제 데이터를 합쳐서 표시
+        const combinedHistory = [...userHistory, ...partnerPointHistoryData];
+        console.log('🔍 [포인트 페이지] combinedHistory:', combinedHistory);
+        setHistoryData(combinedHistory);
+      } else {
+        // 다른 계정은 실제 데이터만 표시
+        setHistoryData(userHistory);
+      }
+
+      setSummary(userSummary);
     } else {
+      console.log('⚠️ [포인트 페이지] 로그인되지 않음');
       // 로그인되지 않은 경우 샘플 데이터 표시
       setHistoryData(partnerPointHistoryData);
       setSummary(partnerPointSummary);

@@ -1,0 +1,130 @@
+/* ========================================
+   ⚙️ 로그인 옵션 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - partner/login/page.tsx (파트너 로그인 페이지)
+ * - manager/login/page.tsx (관리자 로그인 페이지)
+ *
+ * 주요 스타일:
+ * - 자동 로그인 체크박스
+ * - 아이디/비밀번호 찾기 링크
+ * - 로그인 버튼
+ */
+
+/* 로그인 옵션 섹션 (자동 로그인 + 링크) */
+.login_options_section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+}
+
+/* 자동 로그인 래퍼 */
+.auto_login_wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 체크박스 */
+.checkbox {
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid #d9d9d9;
+  border-radius: 4px;
+  background: #ffffff;
+  cursor: pointer;
+  appearance: none;
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* 체크박스 체크된 상태 */
+.checkbox:checked {
+  border-color: #444444;
+  background: #ffffff;
+}
+
+/* 체크박스 체크마크 (✓) */
+.checkbox:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #444444;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* 체크박스 라벨 */
+.checkbox_label {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  word-wrap: break-word;
+  cursor: pointer;
+}
+
+/* 링크 그룹 */
+.links_group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 링크 텍스트 */
+.link_text {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+/* 링크 호버 효과 */
+.link_text:hover {
+  color: #444444;
+  text-decoration: underline;
+  text-underline-position: from-font;
+}
+
+/* 링크 구분선 */
+.link_divider {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* 파트너/관리자 로그인 버튼 */
+.partner_login_button {
+  width: 100%;
+  height: 56px;
+  background-color: #444444;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+/* 파트너/관리자 로그인 버튼 호버 효과 */
+.partner_login_button:hover {
+  background-color: #333333;
+  opacity: 0.9;
+}
+
+/* 파트너/관리자 로그인 버튼 활성화 상태 */
+.partner_login_button:active {
+  opacity: 0.8;
+}

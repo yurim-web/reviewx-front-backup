@@ -1,0 +1,101 @@
+/* ========================================
+   ✅ 인증 관련 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - PhoneVerification.tsx
+ * - AddressInput.tsx
+ * - AccountInfoInput.tsx
+ */
+
+/* 인증번호 받기 버튼 포함 필드 */
+.input_with_button {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.phone_input_container {
+  position: relative;
+  flex: 1;
+}
+
+.phone_input_container .input_field {
+  width: 100%;
+  padding-right: 40px; /* 체크 아이콘을 위한 공간 */
+}
+
+.phone_check_icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+}
+
+.verification_button {
+  width: 125px;
+  height: 56px;
+  background: #d9d9d9;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  color: #848484;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.verification_button:hover {
+  background: #c9c9c9;
+}
+
+/* 우편번호 찾기 버튼 */
+.postal_button {
+  width: 125px;
+  height: 56px;
+  background: white;
+  border: 1px solid #444;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  color: #444;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* 우편번호 찾기 버튼 비활성화 스타일 */
+.postal_button:disabled {
+  background: #f6f6f6;
+  border: 1px solid #d9d9d9;
+  color: #999;
+  cursor: default;
+}
+
+/* 예금주 조회 버튼 인증 완료 상태
+ * 인증 완료 상태일 때는 비활성화 스타일보다 우선순위가 높아야 함
+ * !important를 사용하여 우선순위 최우선으로 설정
+ */
+.postal_button_verified {
+  background: rgba(255, 86, 148, 0.1) !important;
+  color: #ff5694 !important;
+  border: 1px solid transparent !important;
+}
+
+/* 인증 완료 상태에서 비활성화되어도 인증 완료 스타일 유지 */
+.postal_button_verified:disabled {
+  background: rgba(255, 86, 148, 0.1) !important;
+  color: #ff5694 !important;
+  border: 1px solid transparent !important;
+  cursor: default;
+}

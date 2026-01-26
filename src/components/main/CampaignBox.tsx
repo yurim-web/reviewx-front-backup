@@ -94,8 +94,8 @@ export default function CampaignBox({
    * 2. isUrgent가 true이면 → "긴급" 표시
    * 3. 오늘 < applicationStart → 오픈 예정 → null 반환 (태그 없음, schedule 오버레이만 표시)
    * 4. applicationStart <= 오늘 <= applicationEnd → 모집 중 → 남은 일수 계산
-   *    - 남은 일수가 3일 이하 → "마감임박"
-   *    - 남은 일수가 4일 이상 → "n일 전" 형태
+   *    - 남은 일수가 1일 이하 → "마감임박"
+   *    - 남은 일수가 2일 이상 → "n일 전" 형태
    * 5. dayCount에 "긴급"이 있으면 → "긴급" 표시 (하위 호환성)
    *
    * @returns 상태 태그 텍스트 또는 null (태그 없음)
@@ -158,12 +158,12 @@ export default function CampaignBox({
     const diffTime = endDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    // 남은 일수가 3일 이하 → "마감임박"
-    if (diffDays <= 3) {
+    // 남은 일수가 1일 이하 → "마감임박"
+    if (diffDays <= 1) {
       return "마감임박";
     }
 
-    // 남은 일수가 4일 이상 → "n일 전" 형태
+    // 남은 일수가 2일 이상 → "n일 전" 형태
     return `${diffDays}일 전`;
   };
 

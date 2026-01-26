@@ -91,7 +91,8 @@ import {
   validateVerificationCode,
 } from "@/utils/validation";
 import signupStyles from "@/styles/common/signup/signup.module.css";
-import editProfileStyles from "@/styles/user/mypage/edit_profile.module.css";
+import inputsStyles from "@/styles/user/mypage/edit_profile/inputs.module.css";
+import verificationStyles from "@/styles/user/mypage/edit_profile/verification.module.css";
 import FormField from "@/components/common/mypage/FormField";
 import InputWithButton from "@/components/common/mypage/InputWithButton";
 import ErrorText from "@/components/common/error_text/ErrorText";
@@ -138,8 +139,37 @@ export default function PhoneVerification({
   useMyPageStyle = false,
   showVerificationCode = true,
 }: PhoneVerificationProps) {
-  // 스타일 선택
-  const styles = useMyPageStyle ? editProfileStyles : signupStyles;
+  // 스타일 선택: mypage인 경우 분리된 CSS 모듈들을 조합, 아니면 signupStyles 사용
+  const styles = useMyPageStyle
+    ? {
+        // inputs.module.css에서 가져온 클래스
+        field_label: inputsStyles.field_label,
+        input_field: inputsStyles.input_field,
+        // verification.module.css에서 가져온 클래스
+        verification_button: verificationStyles.verification_button,
+        // signup.module.css에서 가져온 클래스 (분리된 파일에 없는 것들)
+        error_message: signupStyles.error_message,
+        error_text: signupStyles.error_text,
+        form_field: signupStyles.form_field,
+        phone_verification_wrapper: signupStyles.phone_verification_wrapper,
+        phone_input_wrapper: signupStyles.phone_input_wrapper,
+        phone_input: signupStyles.phone_input,
+        phone_input_verified: signupStyles.phone_input_verified,
+        verification_complete_icon: signupStyles.verification_complete_icon,
+        verification_button_completed:
+          signupStyles.verification_button_completed,
+        resend_button: signupStyles.resend_button,
+        verification_code_section: signupStyles.verification_code_section,
+        verification_code_wrapper: signupStyles.verification_code_wrapper,
+        verification_code_input_wrapper:
+          signupStyles.verification_code_input_wrapper,
+        verification_code_input: signupStyles.verification_code_input,
+        timer_text: signupStyles.timer_text,
+        verify_button: signupStyles.verify_button,
+        verification_help_text: signupStyles.verification_help_text,
+        input_error: signupStyles.input_error,
+      }
+    : signupStyles;
 
   // 컴포넌트 내부 에러 상태 관리
   const [internalPhoneError, setInternalPhoneError] = useState<
@@ -260,35 +290,8 @@ export default function PhoneVerification({
    */
   const shouldShowPhoneInputError = false;
 
-  // 마이페이지 스타일인 경우 FormField 사용하되, 회원가입과 동일한 구조 사용
+  // 마이페이지 스타일인 경우 FormField 사용하되, 조합된 스타일 객체 사용
   if (useMyPageStyle) {
-    // 회원가입 스타일 사용 (signupStyles는 항상 사용 가능)
-    // CSS 모듈이 제대로 로드되었는지 확인
-    const phoneVerificationWrapperClass =
-      signupStyles?.phone_verification_wrapper || "";
-    const phoneInputWrapperClass = signupStyles?.phone_input_wrapper || "";
-    const inputFieldClass = signupStyles?.input_field || "";
-    const phoneInputClass = signupStyles?.phone_input || "";
-    const phoneInputVerifiedClass = signupStyles?.phone_input_verified || "";
-    const verificationCompleteIconClass =
-      signupStyles?.verification_complete_icon || "";
-    const verificationButtonClass = signupStyles?.verification_button || "";
-    const verificationButtonCompletedClass =
-      signupStyles?.verification_button_completed || "";
-    const resendButtonClass = signupStyles?.resend_button || "";
-    const verificationCodeSectionClass =
-      signupStyles?.verification_code_section || "";
-    const verificationCodeWrapperClass =
-      signupStyles?.verification_code_wrapper || "";
-    const verificationCodeInputWrapperClass =
-      signupStyles?.verification_code_input_wrapper || "";
-    const verificationCodeInputClass =
-      signupStyles?.verification_code_input || "";
-    const timerTextClass = signupStyles?.timer_text || "";
-    const verifyButtonClass = signupStyles?.verify_button || "";
-    const verificationHelpTextClass =
-      signupStyles?.verification_help_text || "";
-
     return (
       <>
         <FormField
@@ -296,15 +299,15 @@ export default function PhoneVerification({
           htmlFor="phone"
           required={!useMyPageStyle}
         >
-          <div className={phoneVerificationWrapperClass}>
-            <div className={phoneInputWrapperClass}>
+          <div className={styles.phone_verification_wrapper}>
+            <div className={styles.phone_input_wrapper}>
               <input
                 id="phone"
                 name="phone"
                 type="tel"
-                className={`${inputFieldClass} ${phoneInputClass} ${
+                className={`${styles.input_field} ${styles.phone_input} ${
                   isPhoneVerified && phone.trim() !== ""
-                    ? phoneInputVerifiedClass
+                    ? styles.phone_input_verified
                     : ""
                 }`}
                 value={phone}
@@ -316,7 +319,7 @@ export default function PhoneVerification({
                 }}
               />
               {isPhoneVerified && phone.trim() !== "" && (
-                <div className={verificationCompleteIconClass}>
+                <div className={styles.verification_complete_icon}>
                   <Image
                     src="/images/icons/sign_ok.svg"
                     alt="인증 완료"
@@ -329,7 +332,7 @@ export default function PhoneVerification({
             {isVerificationRequested && !isPhoneVerified ? (
               <button
                 type="button"
-                className={resendButtonClass}
+                className={styles.resend_button}
                 onClick={onResend || handleVerificationRequestInternal}
               >
                 재전송
@@ -337,9 +340,9 @@ export default function PhoneVerification({
             ) : (
               <button
                 type="button"
-                className={`${verificationButtonClass} ${
+                className={`${styles.verification_button} ${
                   isPhoneVerified && phone.trim() !== ""
-                    ? verificationButtonCompletedClass
+                    ? styles.verification_button_completed
                     : ""
                 }`}
                 onClick={handleVerificationRequestInternal}
@@ -358,24 +361,26 @@ export default function PhoneVerification({
         {showVerificationCode &&
           isVerificationRequested &&
           !isPhoneVerified && (
-            <div className={verificationCodeSectionClass}>
-              <div className={verificationCodeWrapperClass}>
-                <div className={verificationCodeInputWrapperClass}>
+            <div className={styles.verification_code_section}>
+              <div className={styles.verification_code_wrapper}>
+                <div className={styles.verification_code_input_wrapper}>
                   <input
                     type="text"
-                    className={`${inputFieldClass} ${verificationCodeInputClass}`}
+                    className={`${styles.input_field} ${styles.verification_code_input}`}
                     placeholder="인증번호 6자리 입력"
                     value={verificationCode}
                     onChange={handleVerificationCodeInputChange}
                     maxLength={6}
                   />
                   {timer > 0 && (
-                    <span className={timerTextClass}>{formatTimer(timer)}</span>
+                    <span className={styles.timer_text}>
+                      {formatTimer(timer)}
+                    </span>
                   )}
                 </div>
                 <button
                   type="button"
-                  className={verifyButtonClass}
+                  className={styles.verify_button}
                   onClick={handleVerifyInternal}
                 >
                   인증
@@ -387,7 +392,7 @@ export default function PhoneVerification({
               {error === "MAX_VERIFICATION_REQUEST_EXCEEDED" && (
                 <ErrorText message="인증번호 요청 횟수를 모두 사용했습니다. 24시간 후 다시 시도해 주세요." />
               )}
-              <div className={verificationHelpTextClass}>
+              <div className={styles.verification_help_text}>
                 인증번호를 받지 못하셨나요?
               </div>
             </div>

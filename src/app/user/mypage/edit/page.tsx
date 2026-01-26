@@ -24,7 +24,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import styles from "../../../../styles/user/mypage/edit_profile.module.css";
+import layoutStyles from "../../../../styles/user/mypage/edit_profile/layout.module.css";
+import inputStyles from "../../../../styles/user/mypage/edit_profile/inputs.module.css";
+import buttonStyles from "../../../../styles/user/mypage/edit_profile/buttons.module.css";
 import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 // 공용 컴포넌트
@@ -41,9 +43,12 @@ import ErrorText from "@/components/common/error_text/ErrorText";
 import Toast from "@/components/common/toast/Toast";
 // 휴대폰 인증 훅
 import { usePhoneVerification } from "@/hooks/usePhoneVerification/usePhoneVerification";
+// 인증 훅
+import { useAuth } from "@/hooks/useAuth";
 
 export default function EditProfilePage() {
   const router = useRouter();
+  const { user } = useAuth();
 
   // 은행 옵션 배열
   const bank_options = [
@@ -105,19 +110,71 @@ export default function EditProfilePage() {
   });
 
   /**
-   * useEffect: 페이지 로드 시 localStorage에서 계좌 정보 복원
+   * useEffect: 페이지 로드 시 localStorage에서 유저 정보 및 계좌 정보 복원
    *
-   * 목적: localStorage에 저장된 인증 완료된 계좌 정보를 복원합니다.
+   * 목적:
+   * 1. 로그인한 유저의 기본 정보를 불러옵니다.
+   * 2. localStorage에 저장된 인증 완료된 계좌 정보를 복원합니다.
    *
    * 작동 방식:
    * - 페이지 로드 시 한 번만 실행
+   * - user 정보가 있으면 기본 정보 설정
    * - localStorage에 저장된 계좌 정보가 있고, 현재 계좌 정보가 비어있으면 복원
    */
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && user) {
       try {
+        console.log('📦 [수정 페이지] user:', user);
+
+        // user_accounts에서 최신 정보 가져오기
+        const storedAccounts = localStorage.getItem('user_accounts');
+        console.log('📦 [수정 페이지] user_accounts:', storedAccounts);
+
+        let userAccount = null;
+        if (storedAccounts) {
+          const accounts = JSON.parse(storedAccounts);
+          userAccount = accounts.find((a: any) =>
+            a.id === user.id || a.email === user.email
+          );
+          console.log('✅ [수정 페이지] userAccount:', userAccount);
+        }
+
+        // 유저 기본 정보 설정 (user_accounts에 있으면 그걸 우선, 없으면 user에서)
+        setFormData((prev) => ({
+          ...prev,
+          nickname: userAccount?.nickname || user.nickname || user.name || "",
+          name: userAccount?.name || user.name || "",
+          email: userAccount?.email || user.email || "",
+          postalCode: userAccount?.postal_code || user.postal_code || "",
+          address: userAccount?.address || user.address || "",
+          detailAddress: userAccount?.detail_address || user.detail_address || "",
+          accountHolder: userAccount?.account_holder || "",
+          bank: userAccount?.bank || "",
+          accountNumber: userAccount?.account_number || "",
+          ssnFront: userAccount?.ssn_front || "",
+          ssnBack: userAccount?.ssn_back || "",
+        }));
+
+        // 전화번호 설정 (usePhoneVerification 훅 사용)
+        const phoneNumber = userAccount?.phone || user.phone;
+        if (phoneNumber) {
+          handlePhoneChangeHook(phoneNumber);
+          // 이미 등록된 전화번호가 있으면 인증 완료 상태로 설정
+          setIsVerified(true);
+          setIsVerificationRequested(true);
+          console.log('✅ [수정 페이지] 전화번호 인증 완료 상태로 설정');
+        }
+
+        // 프로필 이미지 설정
+        const profileImg = userAccount?.profile_image || user.profile_image;
+        if (profileImg) {
+          setProfileImage(profileImg);
+          console.log('🖼️ [수정 페이지] 프로필 이미지 설정:', profileImg);
+        }
+
+        // 계좌 정보 복원 (STORAGE_KEY에서)
         const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
+        if (stored && !userAccount) {
           const verificationData = JSON.parse(stored);
           // 계좌 정보가 비어있을 때만 localStorage에서 복원
           if (
@@ -139,7 +196,17 @@ export default function EditProfilePage() {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // 빈 배열: 페이지 로드 시 한 번만 실행
+  }, [user]); // user가 로드되면 실행
+
+  /**
+   * 계좌 정보가 모두 입력되어 있으면 인증 완료 상태로 설정
+   */
+  useEffect(() => {
+    if (formData.accountHolder && formData.bank && formData.accountNumber) {
+      setIsAccountHolderVerified(true);
+      console.log('✅ [수정 페이지] 계좌 정보가 있어서 인증 완료 상태로 설정');
+    }
+  }, [formData.accountHolder, formData.bank, formData.accountNumber]);
 
   /**
    * 서버에서 받아온 계좌 정보가 있는지 확인
@@ -173,6 +240,8 @@ export default function EditProfilePage() {
     handleVerifyCode,
     resetVerification,
     setTimer,
+    setIsVerified,
+    setIsVerificationRequested,
   } = usePhoneVerification();
 
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -303,13 +372,172 @@ export default function EditProfilePage() {
 
   const handleSave = () => {
     if (isSaveButtonEnabled) {
-      // 저장 로직
-      console.log("저장", { ...formData, phone });
-      // TODO: 실제 API 호출로 저장
-      // 예: await fetch('/api/user/profile', { method: 'PUT', body: JSON.stringify({ ...formData, phone }) });
+      try {
+        // LocalStorage의 인증 사용자 정보 업데이트
+        const authUser = localStorage.getItem('reviewx_auth_user');
+        if (authUser) {
+          const userData = JSON.parse(authUser);
+          const updatedUser = {
+            ...userData,
+            name: formData.name,
+            nickname: formData.nickname,
+            email: formData.email,
+            phone: phone,
+            postal_code: formData.postalCode,
+            address: formData.address,
+            detail_address: formData.detailAddress,
+            profile_image: profileImage,
+            // 계좌 정보도 저장
+            account_holder: formData.accountHolder,
+            bank: formData.bank,
+            account_number: formData.accountNumber,
+            ssn_front: formData.ssnFront,
+            ssn_back: formData.ssnBack,
+          };
+          localStorage.setItem('reviewx_auth_user', JSON.stringify(updatedUser));
+          console.log('✅ [수정 페이지] reviewx_auth_user 저장 완료:', updatedUser);
+        }
 
-      // 저장 성공 시 토스트 메시지 표시
-      setShowToast(true);
+        // 유저 계정 목록도 업데이트
+        const storedAccounts = localStorage.getItem('user_accounts');
+        const accounts = storedAccounts ? JSON.parse(storedAccounts) : [];
+
+        const accountIndex = accounts.findIndex((a: any) => a.id === user?.id || a.email === user?.email);
+
+        const updatedAccount = {
+          name: formData.name,
+          nickname: formData.nickname,
+          phone: phone,
+          postal_code: formData.postalCode,
+          address: formData.address,
+          detail_address: formData.detailAddress,
+          profile_image: profileImage,
+          account_holder: formData.accountHolder,
+          bank: formData.bank,
+          account_number: formData.accountNumber,
+          ssn_front: formData.ssnFront,
+          ssn_back: formData.ssnBack,
+        };
+
+        // 모든 캠페인의 신청자 정보도 업데이트 (프로필 사진, 닉네임 등)
+        if (user?.id) {
+          const campaignTypes = ['deliveryCampaigns', 'visitCampaigns', 'reviewCampaigns', 'reporterCampaigns', 'missionCampaigns'];
+          
+          campaignTypes.forEach((campaignType) => {
+            try {
+              const storedCampaigns = localStorage.getItem(campaignType);
+              if (storedCampaigns) {
+                const campaigns = JSON.parse(storedCampaigns);
+                let updated = false;
+
+                campaigns.forEach((campaign: any) => {
+                  // applicants 배열에서 해당 유저 찾아서 업데이트
+                  if (campaign.applicantData?.applicants) {
+                    campaign.applicantData.applicants.forEach((applicant: any) => {
+                      if (applicant.id === user.id || applicant.userId === user.id) {
+                        applicant.nickname = formData.nickname;
+                        // 프로필 이미지가 있으면 업데이트, 없으면 기존 값 유지
+                        if (profileImage) {
+                          applicant.profileImage = profileImage;
+                        }
+                        // 통계 정보도 업데이트 (user_accounts에서 가져온 최신 정보)
+                        const storedAccounts = localStorage.getItem('user_accounts');
+                        if (storedAccounts) {
+                          try {
+                            const accounts = JSON.parse(storedAccounts);
+                            const userAccount = accounts.find((a: any) => a.id === user.id || a.email === user.email);
+                            if (userAccount) {
+                              applicant.dailyVisits = userAccount.daily_visits ?? applicant.dailyVisits ?? 0;
+                              applicant.totalVisits = userAccount.total_visits ?? applicant.totalVisits ?? 0;
+                              applicant.neighbors = userAccount.neighbors ?? applicant.neighbors ?? 0;
+                            }
+                          } catch (e) {
+                            console.error('통계 정보 업데이트 실패:', e);
+                          }
+                        }
+                        updated = true;
+                      }
+                    });
+                  }
+
+                  // selectedApplicants 배열에서도 업데이트
+                  if (campaign.applicantData?.selectedApplicants) {
+                    campaign.applicantData.selectedApplicants.forEach((applicant: any) => {
+                      if (applicant.id === user.id || applicant.userId === user.id) {
+                        applicant.nickname = formData.nickname;
+                        // 프로필 이미지가 있으면 업데이트, 없으면 기존 값 유지
+                        if (profileImage) {
+                          applicant.profileImage = profileImage;
+                        }
+                        // 통계 정보도 업데이트 (user_accounts에서 가져온 최신 정보)
+                        const storedAccounts = localStorage.getItem('user_accounts');
+                        if (storedAccounts) {
+                          try {
+                            const accounts = JSON.parse(storedAccounts);
+                            const userAccount = accounts.find((a: any) => a.id === user.id || a.email === user.email);
+                            if (userAccount) {
+                              applicant.dailyVisits = userAccount.daily_visits ?? applicant.dailyVisits ?? 0;
+                              applicant.totalVisits = userAccount.total_visits ?? applicant.totalVisits ?? 0;
+                              applicant.neighbors = userAccount.neighbors ?? applicant.neighbors ?? 0;
+                            }
+                          } catch (e) {
+                            console.error('통계 정보 업데이트 실패:', e);
+                          }
+                        }
+                        updated = true;
+                      }
+                    });
+                  }
+                });
+
+                if (updated) {
+                  localStorage.setItem(campaignType, JSON.stringify(campaigns));
+                  console.log(`✅ [프로필 수정] ${campaignType}의 신청자 정보 업데이트 완료`);
+                }
+              }
+            } catch (error) {
+              console.error(`❌ [프로필 수정] ${campaignType} 업데이트 실패:`, error);
+            }
+          });
+        }
+
+        console.log('🖼️ [수정 페이지] 저장할 profileImage:', profileImage);
+        console.log('📝 [수정 페이지] updatedAccount:', updatedAccount);
+        console.log('📍 [수정 페이지] accountIndex:', accountIndex);
+
+        if (accountIndex >= 0) {
+          // 기존 계정 업데이트 (기존 데이터 유지하면서 수정된 필드만 업데이트)
+          accounts[accountIndex] = {
+            ...accounts[accountIndex],
+            ...updatedAccount,
+            // 마지막 접속 시간 업데이트
+            last_access_date: new Date().toISOString().replace('T', ' ').substring(0, 16),
+          };
+          console.log('🔄 [수정 페이지] 기존 계정 업데이트됨');
+        } else {
+          // 새 계정 추가
+          accounts.push({
+            id: user?.id || 'user_001',
+            email: user?.email || formData.email,
+            ...updatedAccount,
+            join_date: new Date().toISOString().replace('T', ' ').substring(0, 16),
+            last_access_date: new Date().toISOString().replace('T', ' ').substring(0, 16),
+          });
+          console.log('➕ [수정 페이지] 새 계정 추가됨');
+        }
+
+        localStorage.setItem('user_accounts', JSON.stringify(accounts));
+        console.log('✅ [수정 페이지] user_accounts 저장 완료:', accounts);
+
+        // TODO: 실제 API 호출로 저장
+        // 예: await fetch('/api/user/profile', { method: 'PUT', body: JSON.stringify({ ...formData, phone }) });
+
+        // 저장 성공 시 토스트 메시지 표시
+        setShowToast(true);
+      } catch (error) {
+        console.error('❌ [수정 페이지] 정보 저장 중 오류:', error);
+        alert('정보 저장에 실패했습니다.');
+      }
     }
   };
 
@@ -391,16 +619,16 @@ export default function EditProfilePage() {
   };
 
   return (
-    <div className={styles.edit_profile_container}>
+    <div className={layoutStyles.edit_profile_container}>
       {/* 서브헤더 */}
       <SubHeader />
       {/* 메인 컨텐츠 */}
-      <main className={styles.main_content}>
+      <main className={layoutStyles.main_content}>
         <PageTitle title="내 정보 수정" />
 
-        <section className={styles.section_container}>
+        <section className={layoutStyles.section_container}>
           {/* 기본 정보 섹션 */}
-          <h2 className={styles.section_title}>기본 정보</h2>
+          <h2 className={layoutStyles.section_title}>기본 정보</h2>
 
           {/* 프로필 사진 */}
           <ProfilePhotoUpload
@@ -409,15 +637,15 @@ export default function EditProfilePage() {
           />
 
           {/* 닉네임 */}
-          <article className={styles.field_article}>
-            <label className={styles.field_label} htmlFor="nickname">
+          <article className={layoutStyles.field_article}>
+            <label className={inputStyles.field_label} htmlFor="nickname">
               닉네임
             </label>
             <input
               type="text"
               id="nickname"
               name="nickname"
-              className={styles.input_field}
+              className={inputStyles.input_field}
               value={formData.nickname}
               onChange={handleInputChange}
               placeholder="{자동닉네임 혹은 네이버/카카오 닉네임}"
@@ -425,15 +653,15 @@ export default function EditProfilePage() {
           </article>
 
           {/* 이름 (비활성화) */}
-          <article className={styles.field_article}>
-            <label className={styles.field_label} htmlFor="name">
+          <article className={layoutStyles.field_article}>
+            <label className={inputStyles.field_label} htmlFor="name">
               이름
             </label>
             <input
               type="text"
               id="name"
               name="name"
-              className={styles.input_field}
+              className={inputStyles.input_field}
               value={formData.name}
               disabled
               placeholder="{가입 시 등록한 이름}"
@@ -441,15 +669,15 @@ export default function EditProfilePage() {
           </article>
 
           {/* 이메일 (비활성화) */}
-          <article className={styles.field_article}>
-            <label className={styles.field_label} htmlFor="email">
+          <article className={layoutStyles.field_article}>
+            <label className={inputStyles.field_label} htmlFor="email">
               이메일
             </label>
             <input
               type="email"
               id="email"
               name="email"
-              className={styles.input_field}
+              className={inputStyles.input_field}
               value={formData.email}
               disabled
               placeholder="{가입 시 등록한 이메일}"
@@ -492,7 +720,7 @@ export default function EditProfilePage() {
           />
 
           {/* 본인 명의 계좌 정보 제목 */}
-          <h3 className={styles.section_subtitle}>본인 명의 계좌 정보</h3>
+          <h3 className={layoutStyles.section_subtitle}>본인 명의 계좌 정보</h3>
 
           {/* 계좌 정보 */}
           <AccountInfoInput
@@ -526,21 +754,21 @@ export default function EditProfilePage() {
           />
 
           {/* 회원탈퇴 버튼 */}
-          <div className={styles.withdraw_button_container}>
+          <div className={buttonStyles.withdraw_button_container}>
             <button
               type="button"
-              className={styles.withdraw_button}
+              className={buttonStyles.withdraw_button}
               onClick={handleWithdraw}
             >
               회원 탈퇴
             </button>
           </div>
         </section>
-        <div className={styles.save_button_container}>
+        <div className={buttonStyles.save_button_container}>
           {/* 저장하기 버튼 */}
           <button
-            className={`${styles.save_button} ${
-              !isSaveButtonEnabled ? styles.disabled_button : ""
+            className={`${buttonStyles.save_button} ${
+              !isSaveButtonEnabled ? buttonStyles.disabled_button : ""
             }`}
             onClick={handleSave}
             disabled={!isSaveButtonEnabled}

@@ -15,7 +15,9 @@
 
 "use client";
 
-import guideStyles from "@/styles/partner/campaign_create/campaign_guide.module.css";
+import sectionStyles from "@/styles/partner/campaign_create/campaign_guide/sections.module.css";
+import optionStyles from "@/styles/partner/campaign_create/campaign_guide/options.module.css";
+import inputStyles from "@/styles/partner/campaign_create/campaign_guide/inputs.module.css";
 
 /**
  * 간편 안내 섹션 Props
@@ -112,12 +114,12 @@ export function SimpleGuideSection({
     <div
       className={
         shouldLock
-          ? `${guideStyles.guide_section} ${guideStyles.locked_section}`
-          : guideStyles.guide_section
+          ? `${sectionStyles.guide_section} ${sectionStyles.locked_section}`
+          : sectionStyles.guide_section
       }
     >
       {/* 글자 수 */}
-      <div className={guideStyles.option_input_box}>
+      <div className={optionStyles.option_input_box}>
         <input
           type="checkbox"
           id="minTextLength"
@@ -130,26 +132,26 @@ export function SimpleGuideSection({
           }}
           disabled={!canEdit("minTextLength")}
         />
-        <label htmlFor="minTextLength" className={guideStyles.option_label}>
+        <label htmlFor="minTextLength" className={optionStyles.option_label}>
           글자 수
         </label>
         {checkboxStates.minTextLength && (
-          <div className={guideStyles.option_input_value}>
+          <div className={optionStyles.option_input_value}>
             <input
               type="text"
-              className={guideStyles.underline_input}
+              className={inputStyles.underline_input}
               value={formatNumberWithComma(formData.minTextLength)}
               onChange={(e) => onNumericChange("minTextLength", e)}
               onKeyDown={(e) => onNumericKeyDown("minTextLength", e)}
               readOnly={!canEdit("minTextLength")}
             />
-            <span className={guideStyles.unit_text}>자 이상</span>
+            <span className={inputStyles.unit_text}>자 이상</span>
           </div>
         )}
       </div>
 
       {/* 이미지 장수 */}
-      <div className={guideStyles.option_input_box}>
+      <div className={optionStyles.option_input_box}>
         <input
           type="checkbox"
           id="minImageCount"
@@ -162,26 +164,26 @@ export function SimpleGuideSection({
           }}
           disabled={!canEdit("minImageCount")}
         />
-        <label htmlFor="minImageCount" className={guideStyles.option_label}>
+        <label htmlFor="minImageCount" className={optionStyles.option_label}>
           이미지 장수
         </label>
         {checkboxStates.minImageCount && (
-          <div className={guideStyles.option_input_value}>
+          <div className={optionStyles.option_input_value}>
             <input
               type="text"
-              className={guideStyles.underline_input}
+              className={inputStyles.underline_input}
               value={formatNumberWithComma(formData.minImageCount)}
               onChange={(e) => onNumericChange("minImageCount", e)}
               onKeyDown={(e) => onNumericKeyDown("minImageCount", e)}
               readOnly={!canEdit("minImageCount")}
             />
-            <span className={guideStyles.unit_text}>장 이상</span>
+            <span className={inputStyles.unit_text}>장 이상</span>
           </div>
         )}
       </div>
 
       {/* 동영상 개수, 초수 */}
-      <div className={guideStyles.option_input_box}>
+      <div className={optionStyles.option_input_box}>
         <input
           type="checkbox"
           id="videoCount"
@@ -195,38 +197,38 @@ export function SimpleGuideSection({
           }}
           disabled={!canEdit("videoCount")}
         />
-        <label htmlFor="videoCount" className={guideStyles.option_label}>
+        <label htmlFor="videoCount" className={optionStyles.option_label}>
           동영상 개수, 초수
         </label>
         {checkboxStates.videoCount && (
-          <div className={guideStyles.option_input_value}>
+          <div className={optionStyles.option_input_value}>
             {/* 동영상 개수 입력 필드 */}
             <input
               type="text"
-              className={guideStyles.underline_input}
+              className={inputStyles.underline_input}
               value={formatNumberWithComma(formData.videoCount)}
               onChange={(e) => onNumericChange("videoCount", e)}
               onKeyDown={(e) => onNumericKeyDown("videoCount", e)}
               readOnly={!canEdit("videoCount")}
             />
-            <span className={guideStyles.unit_text}>개 이상</span>
+            <span className={inputStyles.unit_text}>개 이상</span>
 
             {/* 동영상 초수 입력 필드 */}
             <input
               type="text"
-              className={guideStyles.underline_input}
+              className={inputStyles.underline_input}
               value={formatNumberWithComma(formData.videoDuration)}
               onChange={(e) => onNumericChange("videoDuration", e)}
               onKeyDown={(e) => onNumericKeyDown("videoDuration", e)}
               readOnly={!canEdit("videoDuration")}
             />
-            <span className={guideStyles.unit_text}>초 이상</span>
+            <span className={inputStyles.unit_text}>초 이상</span>
           </div>
         )}
       </div>
 
       {/* 본문 링크 첨부 */}
-      <div className={guideStyles.option_input_box}>
+      <div className={optionStyles.option_input_box}>
         <input
           type="checkbox"
           id="requireLinkAttachment"
@@ -238,14 +240,14 @@ export function SimpleGuideSection({
         />
         <label
           htmlFor="requireLinkAttachment"
-          className={guideStyles.option_label}
+          className={optionStyles.option_label}
         >
           본문 링크 첨부
         </label>
       </div>
 
       {/* 본문 키워드/태그 첨부 */}
-      <div className={guideStyles.option_input_box}>
+      <div className={optionStyles.option_input_box}>
         <input
           type="checkbox"
           id="requireKeywordAttachment"
@@ -257,7 +259,7 @@ export function SimpleGuideSection({
         />
         <label
           htmlFor="requireKeywordAttachment"
-          className={guideStyles.option_label}
+          className={optionStyles.option_label}
         >
           본문 키워드/태그 첨부
         </label>

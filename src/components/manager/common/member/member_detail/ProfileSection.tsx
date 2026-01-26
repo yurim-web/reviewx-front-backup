@@ -43,21 +43,13 @@ export default function ProfileSection({
 }: ProfileSectionProps) {
   // 프로필 이미지 URL 결정
   // profile_image가 있으면 사용하고, 없으면 기본 이미지를 사용합니다
-  // 학습 포인트:
-  // - || 연산자: 왼쪽 값이 falsy(null, undefined, "", false 등)이면 오른쪽 값을 반환합니다
-  // - profile_image || "/images/mypage/profile.svg": 프로필 이미지가 없으면 기본 이미지를 사용합니다
   const profile_image_url = profile_image || "/images/mypage/profile.svg";
 
   return (
     <div className={styles.profile_section}>
       <div className={styles.profile_image_wrapper}>
         {/* 프로필 이미지 또는 기본 이미지 표시 */}
-        {/* 학습 포인트:
-         * - img 태그: 이미지를 표시하는 HTML 요소입니다
-         * - src: 이미지의 경로를 지정합니다
-         * - alt: 이미지를 설명하는 대체 텍스트입니다 (접근성)
-         * - className: CSS 클래스를 적용합니다
-         */}
+
         <img
           src={profile_image_url}
           alt={`${name} 프로필`}

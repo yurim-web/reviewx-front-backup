@@ -37,12 +37,6 @@ import type { WithdrawalMemberType } from "@/components/manager/sa/settlement/wi
  * - 현재 날짜를 기준으로 이번 달의 첫 번째 날(1일)과 마지막 날을 계산합니다.
  * - 예: 오늘이 2026년 1월 19일이면 2026-01-01 ~ 2026-01-31을 반환합니다.
  * 
- * React 학습 포인트:
- * - Date 객체: JavaScript의 날짜 객체로 날짜를 생성하고 조작할 수 있습니다.
- * - getFullYear(): 연도를 4자리 숫자로 반환합니다.
- * - getMonth(): 월을 0부터 11까지의 숫자로 반환합니다 (0 = 1월, 11 = 12월).
- * - new Date(year, month, day): 특정 날짜를 생성합니다.
- * - new Date(year, month + 1, 0): 다음 달의 0일은 이번 달의 마지막 날을 의미합니다.
  */
 const get_current_month_range = (): DateRange => {
   // 현재 날짜 객체 생성

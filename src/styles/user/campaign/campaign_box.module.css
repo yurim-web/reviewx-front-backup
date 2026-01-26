@@ -32,21 +32,20 @@
   height: 100%;
 }
 
-/* 상단 라벨 - D-n */
+/* 상단 라벨 */
 .campaign_label {
   position: absolute;
   top: 12px;
   left: 12px;
-  border-radius: 4px;
+  border-radius: 8px;
   background: #ff5694;
-  padding: 4px 8px;
+  padding: 6px 8px;
   z-index: 2;
 
   /* 글자 스타일 */
-  color: #fff;
-  text-align: center;
+  color: #FFF;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 16px;
   letter-spacing: -0.32px;
 }
@@ -113,8 +112,7 @@
   align-items: center;
   gap: 8px;
 
-  color: #333;
-
+  color: #444;
   font-size: 16px;
   font-weight: 500;
   line-height: 16px;
@@ -140,21 +138,19 @@
   font-weight: 500;
   line-height: 22px;
   letter-spacing: -0.32px;
+
 }
 
 .recruitment_status {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
 
   color: #444;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
-}
-/* 모집수 */
-.recruitment_total {
 }
 /* 구분자 /  */
 .recruitment_separator {

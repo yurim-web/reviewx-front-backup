@@ -59,6 +59,8 @@ interface RecruitmentFieldsSectionProps {
   isEditableField?: (field: string) => boolean;
   /** 모집 인원 필드 표시 여부 (기본값: true) */
   showRecruitmentCount?: boolean;
+  /** 등록 기간 필드 표시 여부 (기본값: true) */
+  showRegistrationPeriod?: boolean;
 }
 
 /**
@@ -80,6 +82,7 @@ export function RecruitmentFieldsSection({
   isEditMode = false,
   isEditableField,
   showRecruitmentCount = true,
+  showRegistrationPeriod = true,
 }: RecruitmentFieldsSectionProps) {
   // 필드 편집 가능 여부 확인 함수
   // 설명: isEditableField 함수가 제공되지 않으면 기본적으로 편집 가능하다고 가정합니다.
@@ -141,19 +144,21 @@ export function RecruitmentFieldsSection({
         />
       </article>
 
-      {/* 등록 기간 */}
-      <article className={infoStyles.form_group}>
-        <label className={infoStyles.form_label}>
-          등록 기간<span className={infoStyles.required}>*</span>
-        </label>
-        <DateRangeField
-          value={registrationPeriod}
-          onChange={onRegistrationPeriodChange}
-          placeholder=""
-          isEditMode={isEditMode}
-          isEditable={canEdit("registrationPeriod")}
-        />
-      </article>
+      {/* 등록 기간 - showRegistrationPeriod가 true일 때만 표시 */}
+      {showRegistrationPeriod && (
+        <article className={infoStyles.form_group}>
+          <label className={infoStyles.form_label}>
+            등록 기간<span className={infoStyles.required}>*</span>
+          </label>
+          <DateRangeField
+            value={registrationPeriod}
+            onChange={onRegistrationPeriodChange}
+            placeholder=""
+            isEditMode={isEditMode}
+            isEditable={canEdit("registrationPeriod")}
+          />
+        </article>
+      )}
     </>
   );
 }

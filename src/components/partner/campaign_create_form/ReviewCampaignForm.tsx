@@ -23,10 +23,13 @@ import {
   CampaignFormData,
   CampaignCreateFormBaseProps,
 } from "@/types/domain/user";
+import { useAuth } from "@/hooks/useAuth";
+import { getPartnerPointSummary } from "@/data/partner/point/pointData";
 // 분리된 CSS 모듈들 import
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
-import guideStyles from "@/styles/partner/campaign_create/campaign_guide.module.css";
+import textareaStyles from "@/styles/partner/campaign_create/campaign_guide/textareas.module.css";
+import buttonStyles from "@/styles/partner/campaign_create/campaign_guide/buttons.module.css";
 import styles from "@/styles/partner/campaign_create/campaign_create.module.css";
 
 // 공통 컴포넌트들 import
@@ -75,6 +78,7 @@ export default function ReviewCampaignForm({
   onUrgentLoad,
 }: ReviewCampaignFormProps) {
   const router = useRouter();
+  const { user } = useAuth();
   const isEditMode = mode === "edit";
 
   /**
@@ -158,13 +162,26 @@ export default function ReviewCampaignForm({
         registrationPeriod: "",
       };
 
+  /**
+   * 상호명 초기값 가져오기
+   *
+   * 설명:
+   * - 로그인한 파트너의 상호명을 가져옵니다.
+   * - user.business_name을 사용합니다.
+   */
+  const getDefaultBrandName = (): string => {
+    return user?.business_name || "";
+  };
+
+  const defaultBrandName = !initialData ? getDefaultBrandName() : "";
+
   const [formData, setFormData] = useState<CampaignFormData>(
     initialData || {
       campaignType: "구매평",
       platform: "네이버 블로그",
       title: "",
       category: "",
-      brandName: "",
+      brandName: defaultBrandName,
       providedItems: "",
       promotionLink: "",
       currentPoints: "58,000",
@@ -573,26 +590,16 @@ export default function ReviewCampaignForm({
    * 보유 포인트 가져오기 함수
    *
    * 설명:
-   * - localStorage에서 파트너의 보유 포인트를 가져옵니다.
+   * - getPartnerPointSummary를 사용하여 파트너의 보유 포인트를 가져옵니다.
    * - 포인트 충전 페이지에서 업데이트된 포인트를 반영합니다.
-   * - localStorage에 값이 없으면 기본값 0을 반환합니다.
-   *
-   * 📌 localStorage 사용:
-   * - 포인트 충전 페이지에서 "partner_available_points" 키로 저장됩니다.
-   * - 실제 API 연동 시에는 API에서 가져와야 합니다.
+   * - 로그인되지 않았거나 값이 없으면 기본값 0을 반환합니다.
    */
   const getAvailablePoints = (): string => {
-    if (typeof window === "undefined") return "0";
+    if (typeof window === "undefined" || !user?.id) return "0";
 
     try {
-      const availablePoints = localStorage.getItem("partner_available_points");
-      if (availablePoints) {
-        const points = Number(availablePoints);
-        if (!isNaN(points) && points >= 0) {
-          return String(points);
-        }
-      }
-      return "0";
+      const summary = getPartnerPointSummary(user.id);
+      return String(summary.available_points || 0);
     } catch (error) {
       console.error("보유 포인트 가져오기 실패:", error);
       return "0";
@@ -648,14 +655,16 @@ export default function ReviewCampaignForm({
 
     if (typeof window === "undefined") return;
 
-    // 보유 포인트 초기화 (localStorage에서 가져오기)
+    // 보유 포인트 초기화 또는 업데이트
     const availablePoints = getAvailablePoints();
-    if (availablePoints && formData.currentPoints === "") {
-      updateFormData("currentPoints", availablePoints);
-    }
 
     // 포인트 충전 페이지에서 돌아왔는지 확인
     const fromCampaignCreate = sessionStorage.getItem("from_campaign_create");
+
+    // 포인트 충전 후 돌아왔거나, 처음 로드 시 포인트 업데이트
+    if (availablePoints && (fromCampaignCreate === "true" || formData.currentPoints === "")) {
+      updateFormData("currentPoints", availablePoints);
+    }
 
     // 저장된 임시 데이터 확인
     try {
@@ -679,7 +688,12 @@ export default function ReviewCampaignForm({
       ) {
         // 포인트 충전 페이지에서 돌아왔다면 자동으로 불러오기
         if (fromCampaignCreate === "true") {
-          setFormData(savedData);
+          // 포인트는 최신 값으로 업데이트
+          const updatedData = {
+            ...savedData,
+            currentPoints: availablePoints,
+          };
+          setFormData(updatedData);
           // 불러온 데이터의 긴급 상태를 부모 컴포넌트로 전달
           if (savedData?.isUrgent === true && onUrgentLoad) {
             onUrgentLoad(true);
@@ -699,7 +713,7 @@ export default function ReviewCampaignForm({
         sessionStorage.removeItem("from_campaign_create");
       }
     }
-  }, [isEditMode, initialData]);
+  }, [isEditMode, initialData, user?.id]);
 
   /**
    * 포인트 충전 후 돌아왔을 때 보유 포인트 업데이트
@@ -1064,6 +1078,7 @@ export default function ReviewCampaignForm({
           {/* 모집 관련 필드 */}
           {/* 구매평에서는 구매 링크 밑에 모집 인원 필드가 있으므로, 
             RecruitmentFieldsSection에서는 모집 인원 필드를 표시하지 않습니다 */}
+          {/* 구매평에서는 등록기간을 따로 표시하므로 RecruitmentFieldsSection에서는 등록기간을 표시하지 않습니다 */}
           <RecruitmentFieldsSection
             recruitmentCount={String(formData.recruitmentCount || "")}
             recruitmentPeriod={formData.recruitmentPeriod}
@@ -1084,6 +1099,7 @@ export default function ReviewCampaignForm({
             isEditMode={isEditMode}
             isEditableField={isEditableField}
             showRecruitmentCount={false}
+            showRegistrationPeriod={false}
           />
 
           {/* 구매기간 (구매평 전용) */}
@@ -1097,6 +1113,20 @@ export default function ReviewCampaignForm({
               placeholder="구매기간을 선택해주세요."
               isEditMode={isEditMode}
               isEditable={isEditableField("purchasePeriod")}
+            />
+          </article>
+
+          {/* 등록 기간 (구매평 전용: 구매기간 밑에 표시) */}
+          <article className={infoStyles.form_group}>
+            <label className={infoStyles.form_label}>
+              등록 기간<span className={infoStyles.required}>*</span>
+            </label>
+            <DateRangeField
+              value={formData.registrationPeriod}
+              onChange={(value) => updateFormData("registrationPeriod", value)}
+              placeholder=""
+              isEditMode={isEditMode}
+              isEditable={isEditableField("registrationPeriod")}
             />
           </article>
         </section>
@@ -1183,7 +1213,7 @@ export default function ReviewCampaignForm({
               안내 사항<span className={infoStyles.required}>*</span>
             </label>
             <textarea
-              className={guideStyles.fixed_height_textarea}
+              className={textareaStyles.fixed_height_textarea}
               value={formData.guidelines}
               onChange={(e) => updateFormData("guidelines", e.target.value)}
               placeholder="캠페인 전체 안내 사항, 미션, 기타 참고 사항 등"
@@ -1212,10 +1242,10 @@ export default function ReviewCampaignForm({
         />
 
         {/* 등록하기 버튼 */}
-        <div className={guideStyles.submit_button_container}>
+        <div className={buttonStyles.submit_button_container}>
           <button
             type="submit"
-            className={guideStyles.submit_button}
+            className={buttonStyles.submit_button}
             disabled={isSubmitting || !isFormValid}
           >
             {isSubmitting

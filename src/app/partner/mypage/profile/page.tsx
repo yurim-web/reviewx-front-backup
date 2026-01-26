@@ -20,13 +20,14 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import PartnerTabNavigation from "@/components/partner/campaign_management/TabNavigation";
 import SubTabNavigation from "@/components/common/mypage/SubTabNavigation";
 import ProfileContent from "@/components/common/mypage/ProfileContent";
 import layoutStyles from "../../../../styles/partner/layout.module.css";
 import type { PartnerMainTab } from "@/types/domain/partner";
+import type { AuthUser } from "@/types/auth";
 
 /**
  * 파트너 프로필 탭 전용 페이지 컴포넌트
@@ -41,6 +42,63 @@ export default function PartnerProfilePage() {
 
   // activeSubTab: 현재 활성화된 서브 탭 (프로필)
   const [activeSubTab, setActiveSubTab] = useState<"profile">("profile");
+
+  // 파트너 정보 상태
+  const [partnerName, setPartnerName] = useState("주식회사 청명종합광고기획");
+  const [profileImage, setProfileImage] = useState<string | undefined>(undefined);
+
+  // 컴포넌트 마운트 시 localStorage에서 파트너 정보 로드
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        // 현재 로그인한 사용자 정보 가져오기
+        const storedUser = localStorage.getItem('reviewx_auth_user');
+        console.log('🔍 [프로필 페이지] storedUser:', storedUser);
+
+        if (storedUser) {
+          const user: AuthUser = JSON.parse(storedUser);
+          console.log('👤 [프로필 페이지] user:', user);
+
+          // partner_accounts에서 최신 정보 가져오기
+          const storedAccounts = localStorage.getItem('partner_accounts');
+          console.log('📦 [프로필 페이지] partner_accounts:', storedAccounts);
+
+          if (storedAccounts) {
+            const accounts = JSON.parse(storedAccounts);
+            console.log('📋 [프로필 페이지] accounts array:', accounts);
+
+            const partnerAccount = accounts.find((a: any) =>
+              a.id === user.id || a.email === user.email
+            );
+            console.log('✅ [프로필 페이지] partnerAccount:', partnerAccount);
+
+            if (partnerAccount) {
+              // 사업자명 설정
+              setPartnerName(partnerAccount.business_name || partnerAccount.name || "주식회사 청명종합광고기획");
+              console.log('🏢 [프로필 페이지] 사업자명:', partnerAccount.business_name);
+
+              // 프로필 이미지 설정
+              console.log('🖼️ [프로필 페이지] profile_image:', partnerAccount.profile_image);
+              if (partnerAccount.profile_image) {
+                setProfileImage(partnerAccount.profile_image);
+                console.log('✅ [프로필 페이지] 프로필 이미지 설정됨:', partnerAccount.profile_image);
+              } else {
+                console.log('❌ [프로필 페이지] profile_image가 없습니다');
+              }
+            }
+          } else {
+            console.log('⚠️ [프로필 페이지] partner_accounts가 없음');
+            // partner_accounts가 없으면 reviewx_auth_user에서 가져오기
+            if (user.business_name) {
+              setPartnerName(user.business_name);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('❌ [프로필 페이지] 파트너 정보 로드 실패:', error);
+      }
+    }
+  }, []);
 
   /**
    * 서브 탭 변경 핸들러
@@ -96,9 +154,10 @@ export default function PartnerProfilePage() {
           */}
           <ProfileContent
             role="광고주"
-            nickname="주식회사 청명종합광고기획"
+            nickname={partnerName}
             editPath="/partner/mypage/edit"
             onLogout={handleLogout}
+            profileImage={profileImage}
           />
         </section>
       </main>

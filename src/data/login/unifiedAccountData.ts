@@ -97,11 +97,13 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
   // 관리자 SA 계정
   // =========================================================
   {
+    id: "manager_sa_001",
     userType: "admin_sa",
+    role: "manager_sa",
+    name: "최고관리자",
     email: "manager_sa@test.com",
     password: "cjdaud1!",
     phone: "010-7777-7777",
-
     signupDate: "2024. 01. 01",
     isBlocked: false,
     isBanned: false,
@@ -134,7 +136,10 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
   // 관리자 GA 계정
   // =========================================================
   {
+    id: "manager_ga_001",
     userType: "admin_ga",
+    role: "manager_ga",
+    name: "일반관리자",
     email: "manager_ga@test.com",
     password: "cjdaud1!",
     phone: "010-6666-6666",
