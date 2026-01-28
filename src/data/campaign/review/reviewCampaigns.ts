@@ -72,11 +72,11 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 모집 진행 중
-      applicationStart: "2026-01-05",
-      applicationEnd: "2026-01-18",
-      announcement: "2026-01-20",
-      purchasePeriod: "2026-01-20 ~ 2026-01-23",
-      registrationPeriod: "2026-01-23 ~ 2026-01-30",
+      applicationStart: "2026-01-25",
+      applicationEnd: "2026-02-08",
+      announcement: "2026-02-10",
+      purchasePeriod: "2026-02-10 ~ 2026-02-13",
+      registrationPeriod: "2026-02-13 ~ 2026-02-20",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#스마트폰리뷰 #최신폰 #구매후기 #솔직리뷰 #디지털기기",
@@ -118,11 +118,11 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     registeredAt: "2026-01-08T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 모집 진행 중
-      applicationStart: "2026-01-06",
-      applicationEnd: "2026-01-19",
-      announcement: "2026-01-21",
-      purchasePeriod: "2026-01-21 ~ 2026-01-24",
-      registrationPeriod: "2026-01-24 ~ 2026-01-31",
+      applicationStart: "2026-01-26",
+      applicationEnd: "2026-02-09",
+      announcement: "2026-02-11",
+      purchasePeriod: "2026-02-11 ~ 2026-02-14",
+      registrationPeriod: "2026-02-14 ~ 2026-02-21",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#화장품리뷰 #뷰티 #스킨케어 #구매후기 #솔직리뷰",

@@ -749,13 +749,13 @@ export default function HomePageClient() {
   const high_probability_campaigns = useMemo(() => {
     // 모든 캠페인을 하나의 배열로 합칩니다
     // 스프레드 연산자(...): 배열을 펼쳐서 새 배열에 추가합니다
-    // 📌 서버와 클라이언트에서 동일한 정적 데이터 사용 (hydration 오류 방지)
+    // 📌 mergedCampaigns 사용 (localStorage 데이터 포함)
     const all_campaigns = [
-      ...staticCampaigns.allDelivery,
-      ...staticCampaigns.allReview,
-      ...staticCampaigns.allVisit,
-      ...staticCampaigns.allMission,
-      ...staticCampaigns.allReporter,
+      ...mergedCampaigns.allDelivery,
+      ...mergedCampaigns.allReview,
+      ...mergedCampaigns.allVisit,
+      ...mergedCampaigns.allMission,
+      ...mergedCampaigns.allReporter,
     ];
 
     // 마감되지 않은 캠페인만 필터링
@@ -811,7 +811,7 @@ export default function HomePageClient() {
     // 최종적으로 무작위로 섞어서 반환 (8개)
     // 📌 고정된 시드를 사용하여 서버와 클라이언트에서 동일한 순서 보장
     return shuffle_array(selected, 12345).slice(0, 8);
-  }, [today, staticCampaigns]);
+  }, [today, mergedCampaigns]);
 
   /**
    * 지금 인기 많은 캠페인 - 참여자가 많은 캠페인을 무작위로 선택
@@ -826,13 +826,13 @@ export default function HomePageClient() {
    */
   const popular_campaigns = useMemo(() => {
     // 모든 캠페인을 하나의 배열로 합칩니다
-    // 📌 서버와 클라이언트에서 동일한 정적 데이터 사용 (hydration 오류 방지)
+    // 📌 mergedCampaigns 사용 (localStorage 데이터 포함)
     const all_campaigns = [
-      ...staticCampaigns.allDelivery,
-      ...staticCampaigns.allReview,
-      ...staticCampaigns.allVisit,
-      ...staticCampaigns.allMission,
-      ...staticCampaigns.allReporter,
+      ...mergedCampaigns.allDelivery,
+      ...mergedCampaigns.allReview,
+      ...mergedCampaigns.allVisit,
+      ...mergedCampaigns.allMission,
+      ...mergedCampaigns.allReporter,
     ];
 
     // 마감되지 않은 캠페인만 필터링
@@ -887,7 +887,7 @@ export default function HomePageClient() {
 
     // 최대 8개까지 선택
     return selected.slice(0, 8);
-  }, [today, staticCampaigns]);
+  }, [today, mergedCampaigns]);
 
   /**
    * 진행 중인 캠페인 - 현재 진행 중인 캠페인 32개를 무작위로 선택
@@ -901,13 +901,13 @@ export default function HomePageClient() {
    */
   const ongoing_campaigns = useMemo(() => {
     // 모든 캠페인을 하나의 배열로 합칩니다
-    // 📌 서버와 클라이언트에서 동일한 정적 데이터 사용 (hydration 오류 방지)
+    // 📌 mergedCampaigns 사용 (localStorage 데이터 포함)
     const all_campaigns = [
-      ...staticCampaigns.allDelivery,
-      ...staticCampaigns.allReview,
-      ...staticCampaigns.allVisit,
-      ...staticCampaigns.allMission,
-      ...staticCampaigns.allReporter,
+      ...mergedCampaigns.allDelivery,
+      ...mergedCampaigns.allReview,
+      ...mergedCampaigns.allVisit,
+      ...mergedCampaigns.allMission,
+      ...mergedCampaigns.allReporter,
     ];
 
     // 마감되지 않은 캠페인만 필터링
@@ -921,21 +921,22 @@ export default function HomePageClient() {
 
     // 최대 32개만 선택
     return shuffled.slice(0, 32);
-  }, [today, staticCampaigns]);
+  }, [today, mergedCampaigns]);
 
   return (
     // React Fragment (<>...</>) 사용
     // 불필요한 div 래퍼 없이 여러 요소를 그룹화할 수 있습니다
     <>
-      {/* 메인 메뉴 컴포넌트 - 헤더(80px) 밑에 고정 */}
+      {/* 메인 메뉴 컴포넌트 - 헤더 밑에 고정 */}
       <MainMenu />
 
-      {/* 
-        레이아웃 시프트 방지를 위한 placeholder 
-        - 헤더(80px) + MainMenu(약 69px) = 149px
+      {/*
+        레이아웃 시프트 방지를 위한 placeholder
+        - 데스크톱: 헤더(80px) + MainMenu(약 69px) = 149px
+        - 모바일: 헤더(60px) + MainMenu(약 52px) = 112px (CSS에서 동적으로 처리)
         - fixed된 헤더와 메뉴가 콘텐츠를 가리지 않도록 공간 확보
       */}
-      <div style={{ height: "149px" }}></div>
+      <div className={styles.header_spacer}></div>
 
       {/* ⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️ == 메인 콘텐츠 영역 == ⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️ */}
       <article className={styles.container}>

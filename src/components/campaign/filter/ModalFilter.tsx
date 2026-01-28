@@ -147,7 +147,7 @@ export default function ModalFilter({
         <div className={footerStyles.modal_footer}>
           {showApply && (
             <button className={footerStyles.apply_button} onClick={onApply}>
-              필터 적용하기
+              필터 적용
             </button>
           )}
           {showReset && (

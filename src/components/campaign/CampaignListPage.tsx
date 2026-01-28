@@ -94,10 +94,12 @@ export default function CampaignListPage({
 
       {/* 
         레이아웃 시프트 방지를 위한 placeholder 
-        - 헤더(80px) + MainMenu(약 69px) = 149px
+        - 데스크톱: 헤더(80px) + MainMenu(약 69px) = 149px
+        - 모바일: 헤더(60px) + MainMenu(약 52px) = 112px
+        - 초소형 모바일: 헤더(56px) + MainMenu(약 50px) = 106px
         - fixed된 헤더와 메뉴가 콘텐츠를 가리지 않도록 공간 확보
       */}
-      <div style={{ height: "149px" }}></div>
+      <div className={styles.header_spacer}></div>
 
       <main className={styles.delivery_page}>
         {/* 필터/정렬 바 */}

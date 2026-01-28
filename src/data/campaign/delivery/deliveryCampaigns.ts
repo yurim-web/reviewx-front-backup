@@ -91,15 +91,15 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     dayCount: "테스트",
     registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      applicationStart: "2026-01-05",
+      applicationStart: "2026-01-25",
       // 모집기간 마감일 (미래)
-      applicationEnd: "2026-01-15",
+      applicationEnd: "2026-02-05",
       // 선정 발표일 (미래)
-      announcement: "2026-01-17",
+      announcement: "2026-02-07",
       // 구매 기간
-      purchasePeriod: "2026-01-17 ~ 2026-01-20",
+      purchasePeriod: "2026-02-07 ~ 2026-02-10",
       // 등록 기간
-      registrationPeriod: "2026-01-20 ~ 2026-01-27",
+      registrationPeriod: "2026-02-10 ~ 2026-02-17",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
@@ -140,11 +140,11 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     registeredAt: "2026-01-11T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 모집 진행 중
-      applicationStart: "2026-01-06",
-      applicationEnd: "2026-01-18",
-      announcement: "2026-01-20",
-      purchasePeriod: "2026-01-20 ~ 2026-01-23",
-      registrationPeriod: "2026-01-23 ~ 2026-01-30",
+      applicationStart: "2026-01-26",
+      applicationEnd: "2026-02-08",
+      announcement: "2026-02-10",
+      purchasePeriod: "2026-02-10 ~ 2026-02-13",
+      registrationPeriod: "2026-02-13 ~ 2026-02-20",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
@@ -182,12 +182,12 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     dayCount: "마감임박",
     registeredAt: "2025-12-20T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2025-12-22 ~ 2026-01-08)
-      applicationStart: "2026-01-04",
-      applicationEnd: "2026-01-16",
-      announcement: "2026-01-18",
-      purchasePeriod: "2026-01-18 ~ 2026-01-21",
-      registrationPeriod: "2026-01-21 ~ 2026-01-28",
+      // 모집 중 - 현재 날짜 기준 (2026-01-24 ~ 2026-02-06)
+      applicationStart: "2026-01-24",
+      applicationEnd: "2026-02-06",
+      announcement: "2026-02-08",
+      purchasePeriod: "2026-02-08 ~ 2026-02-11",
+      registrationPeriod: "2026-02-11 ~ 2026-02-18",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",

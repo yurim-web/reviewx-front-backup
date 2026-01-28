@@ -387,7 +387,7 @@ export default function FilterBar({
             </button>
           </div>
 
-          {/* 정렬 버튼 (모달 열기) */}
+          {/* 정렬 버튼 (모달 열기) - 데스크톱용 */}
           <button
             className={mainStyles.sort_button}
             onClick={handleSortButtonClick}
@@ -407,6 +407,8 @@ export default function FilterBar({
           (activeFilters.regions?.length || 0) >
           0 && (
           <div className={mainStyles.active_filters}>
+            {/* 왼쪽 패딩용 빈 요소 */}
+            <div className={mainStyles.filter_padding_left}></div>
             {/* 활성화된 카테고리 필터 태그들 */}
             {activeFilters.categories?.map((category) => (
               <div key={category} className={mainStyles.filter_tag}>
@@ -457,8 +459,25 @@ export default function FilterBar({
                 </button>
               </div>
             ))}
+            {/* 오른쪽 패딩용 빈 요소 */}
+            <div className={mainStyles.filter_padding_right}></div>
           </div>
         )}
+      </div>
+
+      {/* 정렬 버튼 (모달 열기) - 모바일용 (필터 바 border 아래) */}
+      <div className={mainStyles.sort_button_container}>
+        <button
+          className={mainStyles.sort_button}
+          onClick={handleSortButtonClick}
+        >
+          <span>{selectedSort}</span>
+          <img
+            src="/images/filter/dropdown_icon.svg"
+            alt="정렬"
+            className={mainStyles.dropdown_icon}
+          />
+        </button>
       </div>
 
       {/* 카테고리 필터 모달 */}

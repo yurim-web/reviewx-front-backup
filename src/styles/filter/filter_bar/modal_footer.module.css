@@ -31,12 +31,12 @@
   border-radius: 8px;
 
   /* 버튼속 글자 */
-  color: #fff;
-  text-align: center;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 16px; /* 100% */
-  letter-spacing: -0.32px;
+color: #FFF;
+text-align: center;
+font-size: 16px;
+font-weight: 600;
+line-height: 16px; 
+letter-spacing: -0.32px;
 
   cursor: pointer;
   transition: background 0.2s ease;
@@ -50,8 +50,8 @@
   /* 글자 css */
   color: #848484;
   font-size: 16px;
-  font-weight: 500;
-  line-height: 16px; /* 100% */
+  font-weight: 600;
+  line-height: 16px; 
   letter-spacing: -0.32px;
 
   cursor: pointer;
@@ -66,4 +66,23 @@
 .reset_icon {
   width: 16px;
   height: 16px;
+}
+
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+
+/**
+ * 모바일에서 모달 푸터 버튼의 높이를 조정합니다.
+ * PC 스타일과 겹치는 속성은 제외하고
+ * 모바일에서만 변경되는 속성만 포함합니다.
+ */
+
+@media (max-width: 768px) {
+  /* 필터 적용 버튼 - 모바일 */
+  .apply_button {
+    padding: 16px 20px; /* PC: 20px → 모바일: 16px 20px (높이 48px 유지) */
+    height: 48px; /* 모바일에서 명시적으로 높이 지정 */
+    box-sizing: border-box; /* padding 포함한 높이 계산 */
+  }
 }

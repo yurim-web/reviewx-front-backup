@@ -63,10 +63,10 @@ export const visitCampaigns: VisitCampaignData[] = [
     registeredAt: "2026-01-10T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 모집 진행 중
-      applicationStart: "2026-01-05",
-      applicationEnd: "2026-01-18",
-      announcement: "2026-01-20",
-      purchasePeriod: "2026-01-20 ~ 2026-01-27",
+      applicationStart: "2026-01-25",
+      applicationEnd: "2026-02-08",
+      announcement: "2026-02-10",
+      purchasePeriod: "2026-02-10 ~ 2026-02-17",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
@@ -106,10 +106,10 @@ export const visitCampaigns: VisitCampaignData[] = [
     registeredAt: "2026-01-08T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 모집 진행 중
-      applicationStart: "2026-01-06",
-      applicationEnd: "2026-01-19",
-      announcement: "2026-01-21",
-      purchasePeriod: "2026-01-21 ~ 2026-01-28",
+      applicationStart: "2026-01-26",
+      applicationEnd: "2026-02-09",
+      announcement: "2026-02-11",
+      purchasePeriod: "2026-02-11 ~ 2026-02-18",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
@@ -149,10 +149,10 @@ export const visitCampaigns: VisitCampaignData[] = [
     registeredAt: "2026-01-09T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 모집 진행 중
-      applicationStart: "2026-01-04",
-      applicationEnd: "2026-01-17",
-      announcement: "2026-01-19",
-      purchasePeriod: "2026-01-19 ~ 2026-01-26",
+      applicationStart: "2026-01-24",
+      applicationEnd: "2026-02-07",
+      announcement: "2026-02-09",
+      purchasePeriod: "2026-02-09 ~ 2026-02-16",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
@@ -190,11 +190,11 @@ export const visitCampaigns: VisitCampaignData[] = [
     dayCount: "D-7",
     registeredAt: "2026-01-07T13:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 오늘 날짜 기준 (2026-01-07 ~ 2026-01-23)
-      applicationStart: "2026-01-07",
-      applicationEnd: "2026-01-23",
-      announcement: "2026-01-25",
-      purchasePeriod: "2026-01-25 ~ 2026-02-01",
+      // 모집 중 - 오늘 날짜 기준 (2026-01-27 ~ 2026-02-13)
+      applicationStart: "2026-01-27",
+      applicationEnd: "2026-02-13",
+      announcement: "2026-02-15",
+      purchasePeriod: "2026-02-15 ~ 2026-02-22",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
@@ -274,11 +274,11 @@ export const visitCampaigns: VisitCampaignData[] = [
     dayCount: "D-4",
     registeredAt: "2026-01-11T15:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 오늘 날짜 기준 (2026-01-11 ~ 2026-01-24)
-      applicationStart: "2026-01-11",
-      applicationEnd: "2026-01-24",
-      announcement: "2026-01-26",
-      purchasePeriod: "2026-01-26 ~ 2026-02-02",
+      // 모집 중 - 오늘 날짜 기준 (2026-01-28 ~ 2026-02-10)
+      applicationStart: "2026-01-28",
+      applicationEnd: "2026-02-10",
+      announcement: "2026-02-12",
+      purchasePeriod: "2026-02-12 ~ 2026-02-19",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
@@ -465,7 +465,7 @@ export const visitCampaigns: VisitCampaignData[] = [
   },
   {
     id: "1011",
-    title: "[강남/서초] 통큰 한우 돼지갈비 체험단",
+    title: "[강남/서초] 통큰 한우 돼지갈비 체험단가나다라마바사아자잦자자ㅏ자자",
     category: "방문형",
     image: "/images/main/campaign_img/eximg_5.png",
     subcategory: "식품",
