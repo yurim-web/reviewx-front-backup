@@ -1,41 +1,31 @@
 /* ========================================
-   🏠 메인 홈 페이지
+   🏠 메인 홈 페이지 (루트 경로)
    ======================================== */
 
 /**
  * 메인 홈 페이지
  *
- * 목적: 리뷰 캠페인 플랫폼의 메인 홈페이지로, 선정 확률 높은 캠페인과 인기 캠페인을 보여줍니다.
+ * 목적: 루트 경로(/) 접근 시 /user 페이지로 자동 리다이렉트합니다.
  *
  * 페이지 경로:
- * - / (루트 경로)
- *
- * 사용 컴포넌트:
- * - HomePageClient (공통 컴포넌트)
+ * - / (루트 경로) → /user로 리다이렉트
  *
  * 주요 기능:
- * - 메인 배너 표시
- * - 선정 확률 높은 캠페인 섹션 (각 타입별 1-2개씩 선별)
- * - 지금 인기 많은 캠페인 섹션 (각 타입별 1-2개씩 선별)
- * - 진행 중인 캠페인 섹션 (전체 캠페인 중 최대 32개)
- * - 캠페인 상세 페이지로 이동
- * - 메인 메뉴 상단 고정
+ * - 사용자가 루트 경로(/)에 접근하면 자동으로 /user 페이지로 이동
  */
 
-import type { Metadata } from "next";
-import HomePageClient from "@/components/main/HomePageClient";
-
-// 페이지 메타데이터 설정
-export const metadata: Metadata = {
-  title: "ReviewX | 리뷰 캠페인 플랫폼",
-  description: "리뷰 캠페인 플랫폼 메인 페이지입니다",
-};
+import { redirect } from "next/navigation";
 
 /**
  * 메인 홈 페이지 컴포넌트
  *
- * @returns 메인 홈 페이지 JSX 요소
+ * @returns /user 페이지로 리다이렉트
+ * 
+ * 학습 포인트:
+ * - redirect(): Next.js의 서버 컴포넌트에서 사용하는 리다이렉트 함수
+ * - 서버 사이드에서 실행되므로 페이지 로드 전에 리다이렉트가 발생합니다
+ * - 이는 클라이언트 사이드 리다이렉트보다 빠르고 SEO에도 유리합니다
  */
 export default function Home() {
-  return <HomePageClient />;
+  redirect("/user");
 }

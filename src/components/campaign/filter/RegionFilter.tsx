@@ -469,7 +469,7 @@ export default function RegionFilter({
   return (
     <div className={modalStyles.modal_overlay} onClick={handleBackdropClick}>
       <div
-        className={modalStyles.modal_content}
+        className={`${modalStyles.modal_content} ${regionStyles.region_modal_content}`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* 모달 헤더 */}

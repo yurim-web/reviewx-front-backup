@@ -51,7 +51,11 @@ export default function Header({ has_notifications }: HeaderProps) {
     <header>
       <nav className={styles.header_container}>
         <Link href="/user">
-          <h1 className={styles.header_logo}>RX.</h1>
+          <img 
+            src="/images/header/header_vx_logo.svg" 
+            alt="ReviewX 로고" 
+            className={styles.header_logo}
+          />
         </Link>
         <div className={styles.menu_icon_box}>
           {/* 검색 */}

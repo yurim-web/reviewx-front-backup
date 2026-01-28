@@ -3,7 +3,11 @@
     "allow": [
       "Bash(npm run build:*)",
       "Bash(done)",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "Bash(powershell -Command \"Get-Content ''src\\\\data\\\\campaign\\\\review\\\\reviewCampaigns.ts'' | Select-String -Pattern ''applicationEnd.*2026-01'' | Select-Object -First 5\")",
+      "Bash(claude mcp add:*)",
+      "Bash(claude mcp list:*)",
+      "Bash(claude mcp get:*)"
     ]
   }
 }

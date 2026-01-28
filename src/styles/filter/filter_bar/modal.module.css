@@ -31,7 +31,7 @@
 
 /* 모달 콘텐츠 */
 .modal_content {
-  max-height: 1000px;
+  max-height: 900px;
   overflow: hidden; /* 전체 모달 스크롤 제거 */
 
   background: white;
@@ -95,5 +95,39 @@
 /* 모달 바디 */
 .modal_body {
   flex: 1;
-  overflow-y: auto;
+  min-height: 0; /* flex 컨테이너에서 overflow가 정상 동작하도록 보장 */
+}
+
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+
+/**
+ * 모바일에서 모달의 크기와 패딩을 조정합니다.
+ * PC 스타일과 겹치는 속성(color, background 등)은 제외하고
+ * 모바일에서만 변경되는 속성만 포함합니다.
+ */
+
+@media (max-width: 768px) {
+  /* 모달 콘텐츠 - 모바일 */
+  .modal_content {
+    max-width: 100%;
+    /* 모바일에서 모달 전체 높이 최대값 고정 (Figma 기준) */
+    max-height: 662px;
+    border-radius: 24px 24px 0 0; /* PC: 40px → 모바일: 24px */
+    padding: 32px 24px; /* PC: 40px → 모바일: 24px */
+  }
+
+  /* 모달 헤더 - 모바일 */
+  .modal_header {
+    padding-bottom: 24px; /* PC와 동일하지만 명시적으로 유지 */
+  }
+
+  /* 모달 바디 - 모바일
+     - 옵션 목록이 길어질 때 이 영역만 스크롤
+     - 푸터(필터 적용/선택 초기화)는 아래에 고정 */
+  .modal_body {
+    overflow-y: auto;
+    margin-bottom: 16px;
+  }
 }

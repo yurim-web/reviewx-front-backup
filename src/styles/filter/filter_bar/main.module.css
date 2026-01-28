@@ -31,6 +31,11 @@
   justify-content: space-between;
 }
 
+/* 정렬 버튼을 위한 별도 컨테이너 (모바일에서 사용) */
+.sort_button_container {
+  display: none;
+}
+
 .filter_buttons {
   display: flex;
   align-items: center;
@@ -45,7 +50,6 @@
   padding: 12px 12px;
 
   cursor: pointer;
-  transition: all 0.2s ease;
 
   border-radius: 4px;
   border: 1px solid #d9d9d9;
@@ -141,13 +145,13 @@
 .filter_tag {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 
   /* 글자부분 */
-  color: #848484;
+  color: #444;
   font-size: 14px;
   font-weight: 500;
-  line-height: 14px;
+  line-height: 14px; 
   letter-spacing: -0.28px;
 }
 
@@ -175,4 +179,123 @@
 .filter_button_active {
   border: 1px solid #ff5694 !important;
   color: #ff5694 !important;
+}
+
+/* 📱 ================================================================================================
+   모바일 반응형 스타일 (max-width: 768px)
+================================================================================================ 📱 */
+
+@media (max-width: 768px) {
+  /* 필터 바 컨테이너 - 모바일 패딩 조정 */
+  .filter_bar {
+    padding: 20px 0 20px 0;
+    gap: 20px;
+  }
+
+  /* 필터 버튼 컨테이너 - 모바일 (정렬 버튼 숨김) */
+  .filter_buttons_container {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0;
+    padding: 0;
+  }
+
+  /* 필터 버튼들 - 모바일 (가로 스크롤, 스크롤 시 화면 끝까지) */
+  .filter_buttons {
+    gap: 12px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    width: 100%;
+    padding: 0 20px;
+  }
+
+  /* 필터 버튼들 스크롤바 숨기기 */
+  .filter_buttons::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 필터 버튼 - 모바일 (스크롤 가능하도록 flex-shrink: 0) */
+  .filter_button {
+    flex-shrink: 0;
+  }
+
+  /* 필터 버튼 컨테이너 내부의 정렬 버튼 숨김 */
+  .filter_buttons_container > .sort_button {
+    display: none;
+  }
+
+  /* 정렬 버튼 컨테이너 표시 (활성 필터 태그 아래) */
+  .sort_button_container {
+    display: block;
+  }
+
+  /* 필터 버튼 - 모바일 패딩 유지 */
+  .filter_button {
+    padding: 12px;
+  }
+
+
+  /* 정렬 버튼  */
+  .sort_button {
+    margin-left: 0;
+  }
+
+  /* 정렬 버튼 컨테이너 - 모바일 (필터 바 border 아래, 왼쪽 정렬) */
+  .sort_button_container {
+    padding: 20px 20px 0 20px;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  /* 활성 필터 태그 영역 - 모바일 (필터 버튼과 정렬 버튼 사이) */
+  .active_filters {
+    padding: 12px 0;
+    gap: 8px;
+    min-height: 40px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    flex-wrap: nowrap;
+    margin: 0 20px;
+  }
+
+  /* 필터 태그 영역 패딩용 빈 요소 (스크롤 시에도 유지 - 양옆 12px) */
+  .filter_padding_left,
+  .filter_padding_right {
+    flex-shrink: 0;
+    width: 12px;
+    min-width: 12px;
+    height: 1px;
+  }
+
+  /* 스크롤바 숨기기 */
+  .active_filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 필터 태그 - 모바일 gap 조정 */
+  .filter_tag {
+    gap: 8px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  /* X 아이콘 버튼 - 모바일 */
+  .remove_tag {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* X 아이콘 - 모바일 */
+  .remove_icon {
+    width: 16px;
+    height: 16px;
+  }
 }
