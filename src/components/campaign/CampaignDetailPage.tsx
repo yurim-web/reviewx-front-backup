@@ -251,28 +251,21 @@ export default function CampaignDetailPage({
       */}
       {isPartner ? <PartnerSubHeader /> : <SubHeader />}
 
-      {/* 
-        메인 카테고리 메뉴: SubHeader(80px) 아래에 고정 
-        캠페인 정보 라벨이 고정되면 숨김 (isCampaignInfoFixed가 true일 때)
+      {/*
+        메인 카테고리 메뉴: 캠페인 상세 페이지에서는 표시하지 않음
+        TODO: 추후 디자인 변경 시 다시 활성화
       */}
-      {!isCampaignInfoFixed && (
+      {/* {!isCampaignInfoFixed && (
         <div className={styles.main_menu_fixed_container}>
           <MainMenu />
         </div>
-      )}
+      )} */}
 
-      {/* 
-        레이아웃 시프트 방지를 위한 placeholder 
-        - 캠페인 정보 라벨이 고정되지 않았을 때: SubHeader(80px) + MainMenu(약 69px) = 149px
-        - 캠페인 정보 라벨이 고정되었을 때: SubHeader(80px)만 = 80px
+      {/*
+        레이아웃 시프트 방지를 위한 placeholder
+        - MainMenu 제거로 인해 SubHeader(80px)만 = 80px
       */}
-      <div
-        className={
-          isCampaignInfoFixed
-            ? styles.layout_placeholder_fixed
-            : styles.layout_placeholder
-        }
-      ></div>
+      <div className={styles.layout_placeholder_fixed}></div>
 
       <section className={styles.campaign_detail_container}>
         {/* 태그 및 포인트 */}

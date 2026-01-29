@@ -71,11 +71,11 @@ export const missionCampaigns: MissionCampaignData[] = [
     dayCount: "D-5",
     registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 모집 진행 중
-      applicationStart: "2026-01-05",
-      applicationEnd: "2026-01-18",
-      announcement: "2026-01-20",
-      registrationPeriod: "2026-01-22 ~ 2026-01-29",
+      // 오픈 예정 - 모집 시작 전
+      applicationStart: "2026-02-08",
+      applicationEnd: "2026-02-22",
+      announcement: "2026-02-24",
+      registrationPeriod: "2026-02-26 ~ 2026-03-10",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#스킨케어체험 #뷰티미션형 #화장품체험 #올리브영 #솔직후기",
@@ -113,11 +113,11 @@ export const missionCampaigns: MissionCampaignData[] = [
     isUrgent: true, // 긴급 캠페인
     registeredAt: "2026-01-08T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 모집 진행 중
-      applicationStart: "2026-01-06",
-      applicationEnd: "2026-01-19",
-      announcement: "2026-01-21",
-      registrationPeriod: "2026-01-23 ~ 2026-01-30",
+      // 진행 중 - 등록 기간 중
+      applicationStart: "2026-01-20",
+      applicationEnd: "2026-02-10",
+      announcement: "2026-02-12",
+      registrationPeriod: "2026-02-14 ~ 2026-03-10",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#헬스케어체험 #건강관리 #미션형 #유튜브 #솔직후기",
@@ -234,8 +234,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     registeredAt: "2025-10-28T10:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 종료 탭 - registrationPeriod가 과거
-      applicationStart: "2025-11-01",
-      applicationEnd: "2025-11-15",
+      applicationStart: "2026-01-10",
+      applicationEnd: "2026-01-25",
       announcement: "2025-11-17",
       registrationPeriod: "2025-11-20 ~ 2025-11-27",
     },
@@ -345,8 +345,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     registeredAt: "2025-11-10T09:15:00.000Z", // 등록 시간
     detailedSchedule: {
       // 진행 탭 - applicationEnd가 과거, registrationPeriod가 미래 (announcement <= 오늘 <= registrationPeriod 끝)
-      applicationStart: "2025-11-15",
-      applicationEnd: "2025-11-30",
+      applicationStart: "2026-01-15",
+      applicationEnd: "2026-01-30",
       announcement: "2025-12-02",
       registrationPeriod: "2025-12-05 ~ 2025-12-20",
     },
@@ -384,8 +384,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     registeredAt: "2025-11-05T14:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 종료 탭 - registrationPeriod가 과거
-      applicationStart: "2025-11-10",
-      applicationEnd: "2025-11-25",
+      applicationStart: "2026-02-01",
+      applicationEnd: "2026-02-15",
       announcement: "2025-11-27",
       registrationPeriod: "2025-11-30 ~ 2025-12-07",
     },
@@ -423,8 +423,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     registeredAt: "2025-11-15T10:50:00.000Z", // 등록 시간
     detailedSchedule: {
       // 진행 탭 - applicationEnd가 과거, registrationPeriod가 미래 (announcement <= 오늘 <= registrationPeriod 끝)
-      applicationStart: "2025-11-20",
-      applicationEnd: "2025-12-05",
+      applicationStart: "2026-01-18",
+      applicationEnd: "2026-01-10",
       announcement: "2025-12-07",
       registrationPeriod: "2025-12-08 ~ 2025-12-25",
     },
@@ -462,8 +462,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     registeredAt: "2025-11-01T08:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 취소 탭 - status가 "취소"로 설정됨
-      applicationStart: "2025-11-05",
-      applicationEnd: "2025-11-20",
+      applicationStart: "2026-02-05",
+      applicationEnd: "2026-02-20",
       announcement: "2025-11-22",
       registrationPeriod: "2025-11-25 ~ 2025-12-02",
     },
@@ -553,8 +553,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     registeredAt: "2026-01-05T10:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 선정 완료 - 등록기간 진행 중 (오늘 날짜 기준 2026-01-07)
-      applicationStart: "2025-12-15",
-      applicationEnd: "2025-12-30",
+      applicationStart: "2025-12-28",
+      applicationEnd: "2026-01-12",
       announcement: "2026-01-05",
       registrationPeriod: "2026-01-08 ~ 2026-02-28", // 등록기간 길게 설정
     },
@@ -590,8 +590,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     registeredAt: "2026-01-05T11:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 선정 완료 - 등록기간 진행 중 (오늘 날짜 기준 2026-01-07)
-      applicationStart: "2025-12-10",
-      applicationEnd: "2025-12-25",
+      applicationStart: "2026-01-12",
+      applicationEnd: "2026-01-27",
       announcement: "2026-01-03",
       registrationPeriod: "2026-01-08 ~ 2026-03-15", // 등록기간 길게 설정
     },
@@ -626,7 +626,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     registeredAt: "2026-01-06T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
       // 선정 완료 - 등록기간 진행 중 (오늘 날짜 기준 2026-01-07)
-      applicationStart: "2025-12-20",
+      applicationStart: "2026-01-18",
       applicationEnd: "2026-01-02",
       announcement: "2026-01-04",
       registrationPeriod: "2026-01-08 ~ 2026-03-10", // 등록기간 길게 설정

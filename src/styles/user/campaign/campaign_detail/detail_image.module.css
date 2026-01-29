@@ -72,10 +72,12 @@
 
 /* ===== 반응형 스타일 ===== */
 
-/* ✅ 모바일 공통 — 0~739px */
-@media (max-width: 739px) {
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
   .campaign_detail_image_container {
-    height: 300px; /* 모바일에서는 더 작은 높이 */
+    height: 500px;
   }
 
   /* 접혀있을 때 이미지: 고정 높이로 cover 처리 */
@@ -83,34 +85,36 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: top; /* 이미지 상단 부분 우선 표시 */
+    object-position: top;
   }
 
   /* 펼쳐진 이미지: 원본 크기로 표시 */
   .campaign_detail_image_container.expanded {
-    height: auto; /* 원본 높이로 확장 */
+    height: auto;
   }
 
   .campaign_detail_image_container.expanded > img {
     width: 100%;
-    height: auto; /* 원본 비율 유지 */
-    object-fit: contain; /* 비율 유지하며 전체 표시 */
-    display: block; /* 이미지 아래 공백 제거 */
+    height: auto;
+    object-fit: contain;
+    display: block;
   }
 
   /* 이미지 확장/축소 버튼 */
   .expand_image_button {
-    position: relative; /* absolute에서 relative로 변경 */
-    margin: 20px auto; /* 상하 여백과 가로 중앙 정렬 */
+    position: relative;
+    margin: 24px auto;
     cursor: pointer;
-    border-radius: 30px;
+    border-radius: 24px;
     background: #fff;
-    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.05); /* 그림자 효과 */
-    padding: 14px 27px;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.05);
+    padding: 12px 24px;
     font-size: 16px;
+    font-weight: 600;
     line-height: 16px;
-    letter-spacing: -0.36px;
-    display: block; /* 블록 요소로 만들어 중앙 정렬 */
+    letter-spacing: -0.32px;
+    display: block;
   }
 }
 

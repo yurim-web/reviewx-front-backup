@@ -241,49 +241,21 @@ export function clearAuthStorage(): void {
 
   localStorage.removeItem(AUTH_STORAGE_KEY);
   localStorage.removeItem(TOKEN_STORAGE_KEY);
+
+  // 개발/테스트용 자동 로그인 관련 키도 함께 삭제하여
+  // 로그아웃 후에도 자동으로 다시 로그인되지 않도록 처리
+  try {
+    localStorage.removeItem('reviewx_auth_user_reviewer');
+    localStorage.removeItem('reviewx_auth_user_partner');
+  } catch (error) {
+    console.error('Failed to clear dev auth storage:', error);
+  }
 }
 
 /**
- * 로그인 처리 (Mock 데이터 사용)
+ * 로그인 후 공통 후처리 (user_accounts / partner_accounts 관리)
  */
-export async function authenticateUser(
-  credentials: LoginCredentials,
-  role?: UserRole
-): Promise<AuthUser> {
-  // Mock 데이터에서 사용자 찾기
-  const account = findAccountByCredentials(credentials.email, credentials.password);
-
-  if (!account) {
-    throw new Error('이메일 또는 비밀번호가 일치하지 않습니다.');
-  }
-
-  // 차단된 계정 확인
-  if (account.isBlocked) {
-    throw new Error('이용이 제한된 계정입니다.');
-  }
-
-  // 정지/탈퇴 계정 확인
-  if (account.isBanned) {
-    throw new Error('정지되었거나 탈퇴된 계정입니다.');
-  }
-
-  // AuthUser 객체 생성 (매핑 함수 사용)
-  const authUser = mapToAuthUser(account);
-
-  // 역할 검증
-  // role 파라미터가 전달된 경우에만 검증을 수행합니다.
-  // (소셜 로그인 / 자동 로그인 등에서는 role을 생략하고 사용할 수 있도록 하기 위함입니다.)
-  if (role && authUser.role !== role) {
-    throw new Error('해당 계정 유형으로 로그인할 수 없습니다.');
-  }
-
-  // Mock 토큰 생성 (실제 JWT 대신)
-  const mockToken = `mock_token_${authUser.id}_${Date.now()}`;
-
-  // LocalStorage에 저장
-  setStoredUser(authUser);
-  setStoredToken(mockToken);
-
+function applyPostLoginSideEffects(account: UnifiedAccount, authUser: AuthUser): void {
   // 리뷰어 로그인 시 user_accounts에 기본 데이터 생성 (리뷰어 목록 데이터 기반)
   if (authUser.role === 'user' && typeof window !== 'undefined') {
     try {
@@ -295,187 +267,248 @@ export async function authenticateUser(
 
       // ID에 따라 기본 정보 매핑
       const reviewerDataMap: Record<string, any> = {
-          'user_kakao_001': {
-            id: 'user_kakao_001',
-            number: '000001',
-            name: '오은영',
-            nickname: '양치하는고양이',
-            email: 'oheunyoung@naver.com',
-            phone: '010-1111-1111',
-            address: '서울시 강남구 테헤란로 123',
-            postal_code: '06234',
-            detail_address: '',
-            channels: ['Blog', 'Clip', 'Instagram', 'Youtube'],
-            channel_details: [
-              { 
-                name: '네이버 블로그', 
-                url: 'https://blog.naver.com/catcat12344', 
-                status: 'connected',
-                daily_visits: 100,
-                total_visits: 10000,
-                neighbors: 500,
-              },
-              { 
-                name: '네이버 클립', 
-                url: 'https://clip.naver.com/catcat', 
-                status: 'connected',
-                followers: 1000,
-              },
-              { 
-                name: '인스타그램', 
-                url: 'https://instagram.com/catcat', 
-                status: 'connected',
-                followers: 5000,
-              },
-              { 
-                name: '유튜브', 
-                url: 'https://youtube.com/@catcat', 
-                status: 'connected',
-                subscribers: 2000,
-              },
-            ],
-            gender: '남성',
-            age: 37,
-            account_holder: '오은영',
-            bank: 'KB국민은행',
-            account_number: '00001234567000',
-            ssn_front: '810202',
-            ssn_back: '1******',
-            current_points: 511200,
-            available_points: 511200,
-            pending_points: 0,
-            withdrawn_points: 36000,
-            daily_visits: 100,
-            total_visits: 10000,
-            neighbors: 500,
-            point_history: [
-              {
-                id: "1",
-                type: "earned",
-                amount: 150000,
-                description: "[풋필터] 트롯바비 홍지윤 pick! 아치까지 받쳐주는 발 편한 자세 교정 키높이 깔창 2set(1.5cm 1켤레 + 2.5cm 1켤레) 구매평",
-                campaign_id: "camp_001",
-                date: "2025-09-12",
-                status: "earned",
-                balance: 4311885,
-              },
-              {
-                id: "2",
-                type: "earned",
-                amount: 50000,
-                description: "멜킨 엘프리 마사지 멜킨 엘프리 마사지멜킨 엘프리 마사지 멜킨 엘프리 마사지 멜킨 엘프리 마사지멜킨 엘프리 마사지",
-                campaign_id: "camp_002",
-                date: "2025-09-10",
-                status: "earned",
-                balance: 4161885,
-              },
-              {
-                id: "3",
-                type: "withdrawn",
-                amount: -36000,
-                description: "출금 완료",
-                date: "2025-09-06",
-                status: "completed",
-                balance: 6161885,
-              },
-              {
-                id: "4",
-                type: "earned",
-                amount: 27500,
-                description: "[라운지엑스24h] 라운지엑스24h 원그로브점 성수샌드 2개(낱개) + 음료 2잔 체험권",
-                campaign_id: "camp_004",
-                date: "2025-09-01",
-                status: "earned",
-                balance: 6125885,
-              },
-              {
-                id: "5",
-                type: "withdrawn",
-                amount: -2000000,
-                description: "출금 신청 반려",
-                date: "2025-09-01",
-                status: "failed",
-                balance: 7311885,
-                rejection_reason: "예금주와 본인 명의 불일치",
-              },
-              {
-                id: "6",
-                type: "withdrawn",
-                amount: -100000,
-                description: "출금 신청 중",
-                date: "2025-08-28",
-                status: "pending",
-                balance: 9311885,
-              },
-              {
-                id: "7",
-                type: "earned",
-                amount: -50000,
-                description: "적립 취소",
-                campaign_id: "camp_003",
-                date: "2025-08-25",
-                status: "failed",
-                balance: 9411885,
-                rejection_reason: "콘텐츠 내 키워드에 대한 정보를 넣어 달라고 말씀드렸음에도 불구하고 키워드가 없습니다.",
-              },
-            ],
-          },
-          'user_naver_001': {
-            id: 'user_naver_001',
-            number: '000002',
-            name: '김은지',
-            nickname: '은지블로그',
-            email: 'kimeunji@gmail.com',
-            phone: '010-2222-2222',
-            address: '서울시 서초구 서초대로 456',
-            postal_code: '06590',
-            detail_address: '',
-            channels: ['Blog', 'Clip', 'Instagram', 'Youtube'],
-            channel_details: [
-              { 
-                name: '네이버 블로그', 
-                url: 'https://blog.naver.com/eunji123', 
-                status: 'connected',
-                daily_visits: 100,
-                total_visits: 10000,
-                neighbors: 500,
-              },
-              { 
-                name: '네이버 클립', 
-                url: 'https://clip.naver.com/eunji', 
-                status: 'connected',
-                followers: 1000,
-              },
-              { 
-                name: '인스타그램', 
-                url: 'https://instagram.com/eunji', 
-                status: 'connected',
-                followers: 5000,
-              },
-              { 
-                name: '유튜브', 
-                url: 'https://youtube.com/@eunji', 
-                status: 'connected',
-                subscribers: 2000,
-              },
-            ],
-            gender: '여성',
-            age: 28,
-            account_holder: '김은지',
-            bank: '신한은행',
-            account_number: '00002469134000',
-            ssn_front: '820303',
-            ssn_back: '2******',
-            current_points: 30000,
-            available_points: 30000,
-            pending_points: 0,
-            withdrawn_points: 0,
-            point_history: [],
-            daily_visits: 100,
-            total_visits: 10000,
-            neighbors: 500,
-          },
-        };
+        'user_kakao_001': {
+          id: 'user_kakao_001',
+          number: '000001',
+          name: '오은영',
+          nickname: '양치하는고양이',
+          email: 'oheunyoung@naver.com',
+          phone: '010-1111-1111',
+          address: '서울시 강남구 테헤란로 123',
+          postal_code: '06234',
+          detail_address: '',
+          channels: ['Blog', 'Clip', 'Instagram', 'Youtube'],
+          channel_details: [
+            { 
+              name: '네이버 블로그', 
+              url: 'https://blog.naver.com/catcat12344', 
+              status: 'connected',
+              daily_visits: 100,
+              total_visits: 10000,
+              neighbors: 500,
+            },
+            { 
+              name: '네이버 클립', 
+              url: 'https://clip.naver.com/catcat', 
+              status: 'connected',
+              followers: 1000,
+            },
+            { 
+              name: '인스타그램', 
+              url: 'https://instagram.com/catcat', 
+              status: 'connected',
+              followers: 5000,
+            },
+            { 
+              name: '유튜브', 
+              url: 'https://youtube.com/@catcat', 
+              status: 'connected',
+              subscribers: 2000,
+            },
+          ],
+          gender: '남성',
+          age: 37,
+          account_holder: '오은영',
+          bank: 'KB국민은행',
+          account_number: '00001234567000',
+          ssn_front: '810202',
+          ssn_back: '1******',
+          current_points: 511200,
+          available_points: 511200,
+          pending_points: 0,
+          withdrawn_points: 36000,
+          daily_visits: 100,
+          total_visits: 10000,
+          neighbors: 500,
+          point_history: [
+            {
+              id: "1",
+              type: "earned",
+              amount: 150000,
+              description: "[풋필터] 트롯바비 홍지윤 pick! 아치까지 받쳐주는 발 편한 자세 교정 키높이 깔창 2set(1.5cm 1켤레 + 2.5cm 1켤레) 구매평",
+              campaign_id: "camp_001",
+              date: "2025-09-12",
+              status: "earned",
+              balance: 4311885,
+            },
+            {
+              id: "2",
+              type: "earned",
+              amount: 50000,
+              description: "멜킨 엘프리 마사지 멜킨 엘프리 마사지멜킨 엘프리 마사지 멜킨 엘프리 마사지 멜킨 엘프리 마사지멜킨 엘프리 마사지",
+              campaign_id: "camp_002",
+              date: "2025-09-10",
+              status: "earned",
+              balance: 4161885,
+            },
+            {
+              id: "3",
+              type: "withdrawn",
+              amount: -36000,
+              description: "출금 완료",
+              date: "2025-09-06",
+              status: "completed",
+              balance: 6161885,
+            },
+            {
+              id: "4",
+              type: "earned",
+              amount: 27500,
+              description: "[라운지엑스24h] 라운지엑스24h 원그로브점 성수샌드 2개(낱개) + 음료 2잔 체험권",
+              campaign_id: "camp_004",
+              date: "2025-09-01",
+              status: "earned",
+              balance: 6125885,
+            },
+            {
+              id: "5",
+              type: "withdrawn",
+              amount: -2000000,
+              description: "출금 신청 반려",
+              date: "2025-09-01",
+              status: "failed",
+              balance: 7311885,
+              rejection_reason: "예금주와 본인 명의 불일치",
+            },
+            {
+              id: "6",
+              type: "withdrawn",
+              amount: -100000,
+              description: "출금 신청 중",
+              date: "2025-08-28",
+              status: "pending",
+              balance: 9311885,
+            },
+            {
+              id: "7",
+              type: "earned",
+              amount: -50000,
+              description: "적립 취소",
+              campaign_id: "camp_003",
+              date: "2025-08-25",
+              status: "failed",
+              balance: 9411885,
+              rejection_reason: "콘텐츠 내 키워드에 대한 정보를 넣어 달라고 말씀드렸음에도 불구하고 키워드가 없습니다.",
+            },
+          ],
+        },
+        'user_naver_001': {
+          id: 'user_naver_001',
+          number: '000002',
+          name: '김은지',
+          nickname: '은지블로그',
+          email: 'kimeunji@gmail.com',
+          phone: '010-2222-2222',
+          address: '서울시 서초구 서초대로 456',
+          postal_code: '06590',
+          detail_address: '',
+          channels: ['Blog', 'Clip', 'Instagram', 'Youtube'],
+          channel_details: [
+            {
+              name: '네이버 블로그',
+              url: 'https://blog.naver.com/eunji123',
+              status: 'connected',
+              daily_visits: 100,
+              total_visits: 10000,
+              neighbors: 500,
+            },
+            {
+              name: '네이버 클립',
+              url: 'https://clip.naver.com/eunji',
+              status: 'connected',
+              followers: 1000,
+            },
+            {
+              name: '인스타그램',
+              url: 'https://instagram.com/eunji',
+              status: 'connected',
+              followers: 5000,
+            },
+            {
+              name: '유튜브',
+              url: 'https://youtube.com/@eunji',
+              status: 'connected',
+              subscribers: 2000,
+            },
+          ],
+          gender: '여성',
+          age: 28,
+          account_holder: '김은지',
+          bank: '신한은행',
+          account_number: '00002469134000',
+          ssn_front: '820303',
+          ssn_back: '2******',
+          current_points: 511200,
+          available_points: 511200,
+          pending_points: 0,
+          withdrawn_points: 0,
+          point_history: [
+            {
+              id: "1",
+              type: "earned",
+              amount: 150000,
+              description: "[풋필터] 트롯바비 홍지윤 pick! 아치까지 받쳐주는 발 편한 자세 교정 키높이 깔창 2set(1.5cm 1켤레 + 2.5cm 1켤레) 구매평",
+              campaign_id: "camp_001",
+              date: "2025-09-12",
+              status: "earned",
+              balance: 4311885,
+            },
+            {
+              id: "2",
+              type: "withdrawn",
+              amount: -500000,
+              description: "멜킨 엘프리 마사지 멜킨 엘프리 마사지멜킨 엘프리 마사지 멜킨 엘프리 마사지 멜킨 엘프리 마사지멜킨 엘프리 마사지",
+              date: "2025-09-10",
+              status: "completed",
+              balance: 4161885,
+            },
+            {
+              id: "3",
+              type: "earned",
+              amount: 36000,
+              description: "출금 완료",
+              campaign_id: "camp_003",
+              date: "2025-09-06",
+              status: "earned",
+              balance: 6161885,
+            },
+            {
+              id: "4",
+              type: "earned",
+              amount: 27500,
+              description: "[라운지엑스24h] 라운지엑스24h 원그로브점 성수샌드 2개(낱개) + 음료 2잔 체험권",
+              campaign_id: "camp_004",
+              date: "2025-09-01",
+              status: "earned",
+              balance: 6125885,
+            },
+            {
+              id: "5",
+              type: "withdrawn",
+              amount: -2000000,
+              description: "출금 신청 반려",
+              date: "2025-09-01",
+              status: "failed",
+              balance: 7311885,
+              rejection_reason: "예금주와 본인 명의 불일치",
+            },
+            {
+              id: "6",
+              type: "earned",
+              amount: 2000000,
+              description: "적립 취소",
+              campaign_id: "camp_006",
+              date: "2025-09-01",
+              status: "failed",
+              balance: 7311885,
+              rejection_reason: "콘텐츠 내 키워드에 대한 정보를 넣어 달라고 말씀드렸음에도 불구하고 키워드가 없습니다.",
+            },
+          ],
+          daily_visits: 100,
+          total_visits: 10000,
+          neighbors: 500,
+        },
+      };
 
       if (existingIndex === -1) {
         // 계정이 없으면 리뷰어 목록의 기본 데이터로 생성
@@ -682,6 +715,72 @@ export async function authenticateUser(
       console.error('❌ [로그인] partner_accounts 생성/업데이트 실패:', error);
     }
   }
+}
+
+/**
+ * 로그인 처리 (Mock 데이터 사용)
+ */
+export async function authenticateUser(
+  credentials: LoginCredentials,
+  role?: UserRole
+): Promise<AuthUser> {
+  // Mock 데이터에서 사용자 찾기
+  const account = findAccountByCredentials(credentials.email, credentials.password);
+
+  if (!account) {
+    throw new Error('이메일 또는 비밀번호가 일치하지 않습니다.');
+  }
+
+  // 차단된 계정 확인
+  if (account.isBlocked) {
+    throw new Error('이용이 제한된 계정입니다.');
+  }
+
+  // 정지/탈퇴 계정 확인
+  if (account.isBanned) {
+    throw new Error('정지되었거나 탈퇴된 계정입니다.');
+  }
+
+  // AuthUser 객체 생성 (매핑 함수 사용)
+  const authUser = mapToAuthUser(account);
+
+  // 역할 검증
+  // role 파라미터가 전달된 경우에만 검증을 수행합니다.
+  // (소셜 로그인 / 자동 로그인 등에서는 role을 생략하고 사용할 수 있도록 하기 위함입니다.)
+  if (role && authUser.role !== role) {
+    throw new Error('해당 계정 유형으로 로그인할 수 없습니다.');
+  }
+
+  // Mock 토큰 생성 (실제 JWT 대신)
+  const mockToken = `mock_token_${authUser.id}_${Date.now()}`;
+
+  // LocalStorage에 저장
+  setStoredUser(authUser);
+  setStoredToken(mockToken);
+
+  // user_accounts / partner_accounts 후처리
+  applyPostLoginSideEffects(account, authUser);
+
+  return authUser;
+}
+
+/**
+ * 통합 계정 객체(UnifiedAccount)를 직접 받아서 로그인 처리
+ * (SNS 로그인 등 이메일/비밀번호가 없는 경우에 사용)
+ */
+export async function authenticateUnifiedAccount(account: UnifiedAccount): Promise<AuthUser> {
+  // AuthUser 객체 생성 (매핑 함수 사용)
+  const authUser = mapToAuthUser(account);
+
+  // Mock 토큰 생성 (실제 JWT 대신)
+  const mockToken = `mock_token_${authUser.id}_${Date.now()}`;
+
+  // LocalStorage에 저장
+  setStoredUser(authUser);
+  setStoredToken(mockToken);
+
+  // user_accounts / partner_accounts 후처리
+  applyPostLoginSideEffects(account, authUser);
 
   return authUser;
 }

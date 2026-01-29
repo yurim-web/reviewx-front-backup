@@ -32,6 +32,18 @@ export default function UserNotificationPage() {
   const { user } = useAuth();
   const router = useRouter();
 
+  // 모바일 여부 감지
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   // 로그인 체크
   useEffect(() => {
     if (typeof window !== 'undefined' && !user) {
@@ -106,12 +118,17 @@ export default function UserNotificationPage() {
 
   return (
     <div className={styles.notification_container}>
-      {/* 서브헤더 */}
-      <SubHeader />
+      {/* 서브헤더 (PC 전용) - 모바일에서는 렌더링하지 않음 */}
+      {!isMobile && <SubHeader />}
+
+      {/* 페이지 타이틀
+          - PC: sticky로 상단 고정
+          - 모바일: fixed로 최상단 고정 (메인 헤더 대신)
+      */}
+      <PageTitle title="알림" />
 
       {/* 메인 콘텐츠 영역 */}
       <main className={styles.main_content}>
-        <PageTitle title="알림" />
 
         {/* 알림 목록 컴포넌트 */}
         <NotificationList

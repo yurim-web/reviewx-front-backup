@@ -67,6 +67,11 @@ main {
   /* padding-top: 80px; */
 }
 
+/* 사용자 로그인 페이지 전용 헤더 스타일 */
+body.user_login_page header {
+  border-bottom-color: #ffffff;
+}
+
 /* ========================================
    브라우저 기본 validation 메시지 숨기기
    ======================================== */

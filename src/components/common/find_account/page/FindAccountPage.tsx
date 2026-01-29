@@ -11,7 +11,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import PhoneVerification from "@/components/common/phone_verification/PhoneVerification";
 import TabNavigation from "@/components/common/find_account/TabNavigation";
 import EmailInput from "@/components/common/find_account/EmailInput";
@@ -23,10 +23,14 @@ import styles from "@/styles/common/find_account/find_account.module.css";
 
 export default function FindAccountPage() {
   const router = useRouter();
+  const pathname = usePathname();
   const [activeTab, setActiveTab] = useState<"id" | "password">("id");
 
   const phoneVerification = usePhoneVerification();
-  const findAccount = useFindAccount();
+  const findAccount = useFindAccount({
+    // /partner/find-account: partner만, 그 외(/find-account): user만
+    allowedAccountTypes: pathname.startsWith("/partner") ? ["partner"] : ["user"],
+  });
 
   /** 탭 변경 핸들러 */
   const handleTabChange = (tab: "id" | "password") => {

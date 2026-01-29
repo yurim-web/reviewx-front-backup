@@ -201,14 +201,14 @@
 
 /* 적립 상태 배지 (초록색) */
 .status_badge.earned {
-  background: #e8f5e8;
-  color: #2e7d32;
+  background: #2DC469;
+  color: #ffffff;
 }
 
-/* 완료 상태 배지 (보라색) */
+/* 완료 상태 배지 (파란색) */
 .status_badge.completed {
-  background: #f3e5f5;
-  color: #7b1fa2;
+  background: #2B7FFF;
+  color: #ffffff;
 }
 
 /* 충전 상태 배지 (회색 #a8a8a8) */
@@ -229,10 +229,16 @@
   color: #1976d2;
 }
 
-/* 취소 상태 배지 (빨간색) */
+/* 취소 상태 배지 (회색) */
 .status_badge.cancelled {
-  background: #ffebee;
-  color: #d32f2f;
+  background: #ABABAB;
+  color: #ffffff;
+}
+
+/* 반려 상태 배지 (빨간색) - 출금 신청 반려용 */
+.status_badge.failed {
+  background: #FF2626;
+  color: #ffffff;
 }
 
 /* ============================================
@@ -368,21 +374,154 @@
 }
 
 /* ============================================
-   반응형 디자인 (모바일)
+   📱 모바일 반응형 스타일 (max-width: 768px)
    ============================================ */
 
 @media (max-width: 768px) {
-  /* 모바일에서 포인트 탭 네비게이션 고정 위치 조정 */
+  /* 메인 컨테이너 */
+  .container {
+    padding: 64px 0px 0px 0px; /* Header(64px) + 상태바(59px) */
+  }
+
+  /* 포인트 요약 섹션 */
+  .point_summary_section {
+    padding: 32px 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .point_summary_info {
+    gap: 12px;
+    width: 100%;
+  }
+
+  .point_label {
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  .point_amount {
+    font-size: 40px;
+    line-height: 40px;
+    letter-spacing: -0.8px;
+    gap: 10px;
+  }
+
+  .withdrawal_button {
+    width: 125px;
+    padding: 12px 20px;
+font-size: 16px;
+line-height: 16px; 
+letter-spacing: -0.32px;
+  }
+
+  /* 포인트 탭 네비게이션 */
   .point_tab_navigation {
-    top: 125px; /* 모바일에서 조정된 TabNavigation 위치 */
-    padding: 12px 24px;
+    top: 115px; /* Header(64px) + 상태바(59px) */
+    padding: 0px 20px;
+    border-bottom: 1px solid #d9d9d9;
   }
 
   .left_point_tabs {
-    gap: 16px;
+    gap: 20px;
   }
 
   .point_tab {
+    font-size: 18px;
+    line-height: 18px;
+    letter-spacing: -0.36px;
+    padding: 16px 0;
+  }
+
+  /* 포인트 내역 리스트 */
+  .history_list {
+    padding: 0px 20px 40px 20px;
+  }
+
+  .empty_state {
+    padding: 24px 0;
     font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  .history_item {
+    padding: 24px 0;
+    gap: 16px;
+  }
+
+  /* 상태 배지 */
+  .status_badge_container {
+    width: auto;
+    flex-shrink: 0;
+  }
+
+  .status_badge {
+    padding: 8px;
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  /* 내역 정보 */
+  .history_info {
+    flex: 1;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .history_description {
+    width: 100%;
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  .main_text {
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  .reason_section {
+    gap: 4px;
+  }
+
+  .reason_icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .reason_text {
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  .history_date {
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 포인트 정보 */
+  .point_info {
+    width: auto;
+    min-width: 100px;
+    gap: 8px;
+  }
+
+  .point_change {
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  .point_balance {
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
   }
 }

@@ -47,6 +47,45 @@ export default function CampaignHeader({
   dayCount,
   isUrgent: isUrgentProp = false,
 }: CampaignHeaderProps) {
+  // 지역 태그를 "서울 + (화살표) + 영등포구" 형태로 표시하기 위한 분리 로직
+  // - 예: "서울 영등포구" -> ["서울", "영등포구"]
+  // - 예: "서울 강남/서초" -> ["서울", "강남/서초"]
+  // - 예: "서울 > 종로구" -> ["서울", "종로구"] (">" 문자 제거)
+  const get_region_parts = (
+    raw_region: string
+  ): { first: string; second?: string } => {
+    const trimmed = raw_region.trim();
+    if (!trimmed) return { first: "" };
+
+    // 0) ">" 문자가 있으면 먼저 분리하고 ">" 문자 제거
+    const arrow_idx = trimmed.indexOf(">");
+    if (arrow_idx > 0) {
+      const first = trimmed.slice(0, arrow_idx).trim();
+      const second = trimmed.slice(arrow_idx + 1).trim();
+      return second ? { first, second } : { first };
+    }
+
+    // 1) 공백이 있으면 첫 단어를 시/도, 나머지를 구/동으로 사용
+    const space_idx = trimmed.indexOf(" ");
+    if (space_idx > 0) {
+      const first = trimmed.slice(0, space_idx).trim();
+      const second = trimmed.slice(space_idx + 1).trim();
+      return second ? { first, second } : { first };
+    }
+
+    // 2) 공백이 없고 슬래시가 있으면 첫 토큰/나머지로 분리
+    const slash_idx = trimmed.indexOf("/");
+    if (slash_idx > 0) {
+      const first = trimmed.slice(0, slash_idx).trim();
+      const second = trimmed.slice(slash_idx + 1).trim();
+      return second ? { first, second } : { first };
+    }
+
+    return { first: trimmed };
+  };
+
+  const region_parts = region ? get_region_parts(region) : null;
+
   // 긴급 캠페인 여부 확인
   // isUrgent prop이 있으면 우선 사용, 없으면 dayCount에서 "긴급" 포함 여부 확인 (하위 호환성)
   const isUrgent = isUrgentProp || dayCount?.includes("긴급") || false;
@@ -84,7 +123,22 @@ export default function CampaignHeader({
         <div className={styles.subcategory_tag}>{subcategory}</div>
 
         {/* 지역 태그 (예: 서울 강남/서초) - 지역 정보가 있을 때만 표시 */}
-        {region && <div className={styles.region_tag}>{region}</div>}
+        {region_parts?.first && (
+          <div className={styles.region_tag}>
+            <span>{region_parts.first}</span>
+            {region_parts.second && (
+              <>
+                <img
+                  src="/images/filter/region_arrow.svg"
+                  alt=""
+                  aria-hidden="true"
+                  className={styles.region_tag_arrow}
+                />
+                <span>{region_parts.second}</span>
+              </>
+            )}
+          </div>
+        )}
 
         {/* 
           긴급 태그 - dayCount가 "긴급"을 포함할 때만 표시

@@ -64,13 +64,14 @@ export default function ConditionalHeader() {
   const [isPartnerContext, setIsPartnerContext] = useState(false);
 
   /**
-   * 클라이언트 마운트 상태
+   * 클라이언트 마운트 상태 및 모바일 여부
    *
    * 설명:
-   * - Hydration 에러를 방지하기 위해 클라이언트 마운트 여부를 추적합니다.
-   * - 서버 사이드에서는 항상 false, 클라이언트 마운트 후에만 true가 됩니다.
+   * - is_mounted: Hydration 에러를 방지하기 위해 클라이언트 마운트 여부를 추적합니다.
+   * - is_mobile: 현재 뷰포트가 모바일(가로 768px 이하)인지 여부를 나타냅니다.
    */
   const [is_mounted, setIsMounted] = useState(false);
+  const [is_mobile, set_is_mobile] = useState(false);
 
   /**
    * 클라이언트 마운트 확인
@@ -80,7 +81,24 @@ export default function ConditionalHeader() {
    * - 서버 사이드 렌더링과 클라이언트 사이드 렌더링의 일치를 보장합니다.
    */
   useEffect(() => {
+    // 브라우저 환경에서만 실행
+    if (typeof window === "undefined") return;
+
     setIsMounted(true);
+
+    // 모바일 여부 체크 함수
+    const check_mobile = () => {
+      set_is_mobile(window.innerWidth <= 768);
+    };
+
+    // 초기 한 번 실행
+    check_mobile();
+
+    // 윈도우 리사이즈 시에도 모바일 여부 갱신
+    window.addEventListener("resize", check_mobile);
+    return () => {
+      window.removeEventListener("resize", check_mobile);
+    };
   }, []);
 
   /**
@@ -131,6 +149,7 @@ export default function ConditionalHeader() {
    */
   const isPartnerPath = pathname.startsWith("/partner");
   const isCampaignPath = pathname.startsWith("/campaign");
+  const isUserSignupPath = pathname === "/user/signup";
   const shouldShowPartnerHeader =
     isPartnerPath || (isCampaignPath && isPartnerContext);
 
@@ -155,6 +174,11 @@ export default function ConditionalHeader() {
       return <ConditionalPartnerHeader />;
     }
     return <Header />;
+  }
+
+  // 모바일에서 유저 회원가입 페이지(/user/signup)일 때는 헤더를 숨김
+  if (is_mobile && isUserSignupPath) {
+    return null;
   }
 
   if (shouldShowPartnerHeader) {

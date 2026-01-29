@@ -129,16 +129,18 @@ export default function ChannelSection({
                 className={styles.channel_more_button}
                 onClick={() => handleChannelClick(channel.name)}
               >
-                {/* 아마도 임시 아이콘! 추후에 바꿀 예정! */}
-
-                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                  <path
-                    d="M14 8V20M8 14H20"
-                    stroke="#333"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-                </svg>
+                <img
+                  src={
+                    channel.status === "connected"
+                      ? "/images/mypage/channel/channel_ok.svg"
+                      : "/images/mypage/channel/channel_add.svg"
+                  }
+                  alt={
+                    channel.status === "connected"
+                      ? "채널 연결됨"
+                      : "채널 연결하기"
+                  }
+                />
               </button>
             </div>
           ))}

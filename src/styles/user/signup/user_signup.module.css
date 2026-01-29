@@ -29,7 +29,6 @@
    ======================================== */
 
 .signup_page_container {
-  /* min-height: 100vh; */
   width: 100%;
   max-width: 1000px;
   margin: 0 auto;
@@ -38,6 +37,8 @@
   display: flex;
   flex-direction: column;
   padding-top: 80px;
+  background-color: #ffffff;
+  min-height: 100vh;
 }
 
 /* ========================================
@@ -54,14 +55,33 @@
   justify-content: flex-start;
   position: relative;
   box-sizing: border-box;
-  max-width: 400px;
+  max-width: 520px;
   margin: 0 auto;
-  padding: 80px 0 40px;
+  padding: 80px 0px 40px;
   flex: 1;
 }
 
 /* ========================================
-   3. 회원가입 폼 영역 (유저 전용)
+   3. 페이지 타이틀 래퍼
+   ======================================== */
+
+
+
+/* 모바일 뒤로가기 버튼 - PC에서 숨김 */
+.mobile_back_button {
+  display: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ========================================
+   4. 회원가입 폼 영역 (유저 전용)
    ======================================== */
 
 .signup_form {
@@ -74,7 +94,7 @@
 }
 
 /* ========================================
-   4. 회원가입 버튼 (유저 전용 스타일 오버라이드)
+   5. 회원가입 버튼 (유저 전용 스타일 오버라이드)
    ======================================== */
 
 .submit_button {
@@ -82,7 +102,7 @@
 }
 
 /* ========================================
-   5. 기존 계정 모달 (유저 전용)
+   6. 기존 계정 모달 (유저 전용)
    ======================================== */
 
 .modal_overlay {
@@ -170,18 +190,60 @@
   transition: background-color 0.2s ease;
 }
 
-/* ========================================
-   6. 반응형 디자인 (유저 전용)
-   ======================================== */
+/* 📱 ================================================================================================
 
-@media (max-width: 739px) {
-  .signup_main {
-    padding-top: 40px;
-    padding-left: 20px;
-    padding-right: 20px;
+모바일 반응형 스타일 (max-width: 768px)
+
+================================================================================================ 📱 */
+
+@media (max-width: 768px) {
+  /* 페이지 컨테이너 */
+  .signup_page_container {
+    padding-top: 0px;
   }
 
+
+
+  /* 모바일 뒤로가기 버튼 - 모바일에서 표시 */
+  .mobile_back_button {
+    display: flex;
+  }
+
+  /* 메인 영역 */
+  .signup_main {
+    min-height: calc(100vh - 120px);
+    padding: 32px 20px 40px;
+    max-width: 100%;
+  }
+
+  /* 회원가입 폼 */
   .signup_form {
     max-width: 100%;
+    gap: 20px;
+  }
+
+  /* 모달 컨테이너 */
+  .modal_container {
+    width: calc(100% - 40px);
+    max-width: 400px;
+    margin: 0 20px;
+  }
+
+  /* 모달 콘텐츠 */
+  .modal_content {
+    padding: 32px 20px;
+  }
+
+  /* 소셜 로그인 버튼 */
+  .kakao_login_button,
+  .naver_login_button {
+    width: 100%;
+    max-width: 336px;
+  }
+
+  /* 모달 닫기 버튼 */
+  .modal_close_button {
+    width: 100%;
+    max-width: 336px;
   }
 }

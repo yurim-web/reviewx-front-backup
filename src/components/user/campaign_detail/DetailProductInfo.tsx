@@ -39,6 +39,29 @@ export default function CampaignProductInfo({
   image,
   children,
 }: CampaignProductInfoProps) {
+  /**
+   * 공유 버튼 클릭 핸들러
+   * 현재 페이지 URL을 클립보드에 복사
+   */
+  const handleShare = async () => {
+    try {
+      // Web Share API 지원 여부 확인
+      if (navigator.share) {
+        await navigator.share({
+          title: title,
+          text: description,
+          url: window.location.href,
+        });
+      } else {
+        // Web Share API 미지원 시 클립보드에 복사
+        await navigator.clipboard.writeText(window.location.href);
+        alert("링크가 클립보드에 복사되었습니다.");
+      }
+    } catch (error) {
+      console.error("공유 실패:", error);
+    }
+  };
+
   return (
     // ========================================
     // 제품 정보 섹션
@@ -46,13 +69,31 @@ export default function CampaignProductInfo({
     <article className={styles.product_info}>
       {/* 제품 제목 및 설명 */}
       <div className={styles.product_info_title}>
-        {/* 
-          h1 태그: 페이지에서 가장 중요한 제목 (SEO에 유리)
-          시맨틱 HTML: 의미있는 구조로 마크업
-        */}
-        <h1 className={styles.product_title}>{title}</h1>
+        {/* 제목과 공유 버튼을 포함하는 헤더 */}
+        <div className={styles.title_header}>
+          {/*
+            h1 태그: 페이지에서 가장 중요한 제목 (SEO에 유리)
+            시맨틱 HTML: 의미있는 구조로 마크업
+          */}
+          <h1 className={styles.product_title}>{title}</h1>
 
-        {/* 
+          {/* 공유 버튼 */}
+          <button
+            type="button"
+            className={styles.share_button}
+            onClick={handleShare}
+            aria-label="공유하기"
+          >
+            <img
+              src="/images/campaign_detail/share_icon.svg"
+              alt="공유"
+              width={32}
+              height={32}
+            />
+          </button>
+        </div>
+
+        {/*
           p 태그: 문단(paragraph)을 나타냄
         */}
         <p className={styles.product_description}>{description}</p>

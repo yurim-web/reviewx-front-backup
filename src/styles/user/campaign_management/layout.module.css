@@ -56,3 +56,31 @@
 .content_area {
   flex: 1;
 }
+
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  /* 전체 페이지 컨테이너 */
+  .container {
+    padding-top: 64px; /* 모바일 헤더 높이 */
+  }
+
+  /* 메인 콘텐츠 영역 */
+  .main_content {
+    width: 100%; /* 전체 너비 */
+    min-height: calc(100vh - 64px); /* 모바일 헤더 제외한 전체 높이 */
+    padding-bottom: 20px;
+  }
+
+  /* 페이지 헤더 영역 */
+  .page_header {
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  /* 페이지 제목 */
+  .page_title {
+    font-size: 20px;
+  }
+}

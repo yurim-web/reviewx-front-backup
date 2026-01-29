@@ -71,12 +71,12 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     dayCount: "D-5",
     registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 모집 진행 중
-      applicationStart: "2026-01-25",
-      applicationEnd: "2026-02-08",
-      announcement: "2026-02-10",
-      purchasePeriod: "2026-02-10 ~ 2026-02-13",
-      registrationPeriod: "2026-02-13 ~ 2026-02-20",
+      // 오픈 예정 - 모집 시작 전
+      applicationStart: "2026-02-08",
+      applicationEnd: "2026-02-22",
+      announcement: "2026-02-24",
+      purchasePeriod: "2026-02-24 ~ 2026-02-27",
+      registrationPeriod: "2026-02-27 ~ 2026-03-10",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#스마트폰리뷰 #최신폰 #구매후기 #솔직리뷰 #디지털기기",
@@ -117,12 +117,12 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     isUrgent: true, // 긴급 캠페인
     registeredAt: "2026-01-08T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 모집 진행 중
-      applicationStart: "2026-01-26",
-      applicationEnd: "2026-02-09",
-      announcement: "2026-02-11",
-      purchasePeriod: "2026-02-11 ~ 2026-02-14",
-      registrationPeriod: "2026-02-14 ~ 2026-02-21",
+      // 진행 중 - 등록 기간 중
+      applicationStart: "2026-01-20",
+      applicationEnd: "2026-02-05",
+      announcement: "2026-02-07",
+      purchasePeriod: "2026-02-07 ~ 2026-02-10",
+      registrationPeriod: "2026-02-10 ~ 2026-03-10",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#화장품리뷰 #뷰티 #스킨케어 #구매후기 #솔직리뷰",
@@ -251,8 +251,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     registeredAt: "2025-10-28T10:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 종료 탭 - registrationPeriod가 과거
-      applicationStart: "2025-11-01",
-      applicationEnd: "2025-11-15",
+      applicationStart: "2026-01-15",
+      applicationEnd: "2026-01-30",
       announcement: "2025-11-17",
       purchasePeriod: "2025-11-17 ~ 2025-11-20",
       registrationPeriod: "2025-11-20 ~ 2025-11-27",
@@ -343,8 +343,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
       // 선정 발표: 이미 지남 (2026-01-04)
       // 구매 기간: 오늘 날짜(2026-01-07)를 포함하도록 설정 (2026-01-05 ~ 2026-01-09)
       // 등록 기간: 구매 기간 이후 (2026-01-10 ~ 2026-01-20)
-      applicationStart: "2025-12-26",
-      applicationEnd: "2025-12-30",
+      applicationStart: "2026-01-28",
+      applicationEnd: "2026-02-12",
       announcement: "2026-01-04",
       purchasePeriod: "2026-01-05 ~ 2026-01-09",
       registrationPeriod: "2026-01-10 ~ 2026-01-20",
@@ -387,8 +387,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     registeredAt: "2025-11-05T14:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 종료 탭 - registrationPeriod가 과거
-      applicationStart: "2025-11-10",
-      applicationEnd: "2025-11-25",
+      applicationStart: "2026-02-05",
+      applicationEnd: "2026-02-20",
       announcement: "2025-11-27",
       purchasePeriod: "2025-11-27 ~ 2025-11-30",
       registrationPeriod: "2025-11-30 ~ 2025-12-07",
@@ -431,8 +431,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     registeredAt: "2025-11-15T10:50:00.000Z", // 등록 시간
     detailedSchedule: {
       // 진행 탭 - applicationEnd가 과거, registrationPeriod가 미래 (announcement <= 오늘 <= registrationPeriod 끝)
-      applicationStart: "2025-11-20",
-      applicationEnd: "2025-12-05",
+      applicationStart: "2025-12-28",
+      applicationEnd: "2026-01-15",
       announcement: "2025-12-07",
       purchasePeriod: "2025-12-07 ~ 2025-12-10",
       registrationPeriod: "2025-12-08 ~ 2026-01-25",
@@ -475,8 +475,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     registeredAt: "2025-11-01T08:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 취소 탭 - status가 "취소"로 설정됨
-      applicationStart: "2025-11-05",
-      applicationEnd: "2025-11-20",
+      applicationStart: "2026-02-10",
+      applicationEnd: "2026-02-25",
       announcement: "2025-11-22",
       purchasePeriod: "2025-11-22 ~ 2025-11-25",
       registrationPeriod: "2025-11-25 ~ 2025-12-02",
@@ -608,8 +608,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     detailedSchedule: {
       // 구매 기간: 2026-01-01 ~ 2026-01-05 (지남)
       // 등록 기간: 2026-01-06 ~ 2026-01-15 (현재 진행 중)
-      applicationStart: "2025-12-20",
-      applicationEnd: "2025-12-30",
+      applicationStart: "2026-01-12",
+      applicationEnd: "2026-01-27",
       announcement: "2026-01-05",
       purchasePeriod: "2026-01-01 ~ 2026-01-05",
       registrationPeriod: "2026-01-06 ~ 2026-01-15",

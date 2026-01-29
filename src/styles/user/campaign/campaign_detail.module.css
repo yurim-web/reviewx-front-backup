@@ -171,14 +171,26 @@
 
 /* ===== 반응형 스타일 ===== */
 
-/* ✅ 모바일 공통 — 0~739px */
-@media (max-width: 739px) {
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  /* 캠페인 상세 페이지에서 MainMenu 숨김 */
+  :global(.main_menu_container) {
+    display: none !important;
+  }
+
+  .campaign_detail_container {
+    padding: 20px 0px 120px 0px;
+  }
+
   /* ===== 캠페인 신청 버튼 ===== */
   .apply_button {
-    border-radius: 10px;
-    padding: 16px 20px;
+    border-radius: 8px;
+    padding: 16px;
     text-align: center;
     font-size: 16px;
+    font-weight: 600;
     line-height: 16px;
     letter-spacing: -0.32px;
   }
@@ -191,25 +203,31 @@
   }
 
   .bottom_fixed_container {
-    padding: 12px 16px 16px 16px;
+    padding: 0;
+    height: 100px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #fff 40%);
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 24px;
   }
 
   /* 버튼 래퍼 - 모바일 */
   .button_wrapper {
-    max-width: 100%; /* 모바일에서는 전체 너비 */
-    gap: 10px; /* 모바일에서는 간격 조금 줄임 */
+    max-width: 100%;
+    gap: 12px;
+    padding: 0 20px;
   }
 
   /* 긴급 안내 멘트 - 모바일 */
   .urgent_notice {
-    padding: 12px;
-    border-radius: 6px;
+
+
   }
 
   /* 긴급 안내 아이콘 - 모바일 */
   .urgent_notice_icon {
-    width: 14px; /* 모바일에서는 조금 작게 */
-    height: 14px; /* 모바일에서는 조금 작게 */
+    width: 14px;
+    height: 14px;
   }
 
   /* 긴급 안내 텍스트 - 모바일 */
@@ -217,26 +235,24 @@
     font-size: 13px;
     line-height: 18px;
     letter-spacing: -0.26px;
-    text-align: center; /* 텍스트 가운데 정렬 */
+    text-align: center;
   }
 
   .bottom_gradient {
-    bottom: 64px;
-    height: 100px;
+    bottom: 35px;
+    height: 120px;
   }
 
   /* ===== 캠페인 정보 섹션 제목 ===== */
   .campaign_info_text_line {
-    padding: 40px 0px 20px 0px;
-    font-size: 18px;
-    line-height: 18px;
-    letter-spacing: -0.36px;
+    display: none; /* 모바일에서 숨김 */
   }
 
   /* 모바일 화면에서 고정된 상태 */
   .campaign_info_text_line.fixed {
-    padding: 16px 0px; /* 모바일에서는 더 작은 패딩 */
-    font-size: 18px;
-    line-height: 18px;
+    display: none; /* 모바일에서 숨김 */
+  }
+  .campaign_info_placeholder{
+    display: none;
   }
 }

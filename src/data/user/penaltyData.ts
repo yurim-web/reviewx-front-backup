@@ -18,77 +18,36 @@ import type {
 export const userPenaltyData: PenaltyItem[] = [
   {
     id: "1",
-    type: "정지",
+    type: "경고",
     title: "캠페인 지각 제출",
-    campaignTitle: "멜킨 엘프리 마사지 멜킨 엘프리 마사지멜킨 엘프리 마사지",
-    date: "2025-09-12",
+    campaignTitle: "아이디헤어 지축점 맨즈 시술 모집",
+    date: "2025-09-01",
   },
   {
     id: "2",
     type: "주의",
-    title: "캠페인 반복 반려",
+    title: "캠페인 지시 불이행",
     campaignTitle: "멜킨 엘프리 마사지 멜킨 엘프리 마사지멜킨 엘프리 마사지",
-    date: "2025-09-10",
+    date: "2025-09-01",
   },
   {
     id: "3",
-    type: "주의",
-    title: "캠페인 지각 제출",
-    campaignTitle: "멜킨 엘프리 마사지 멜킨 엘프리 마사지멜킨 엘프리 마사지",
-    date: "2025-09-12",
+    type: "정지",
+    title: "캠페인 의무 노출 기간 불이행",
+    campaignTitle: "밀리빙 두유제조기",
+    date: "2025-09-01",
   },
   {
     id: "4",
-    type: "주의",
-    title: "캠페인 반복 반려",
-    campaignTitle: "멜킨 엘프리 마사지 멜킨 엘프리 마사지멜킨 엘프리 마사지",
-    date: "2025-09-10",
+    type: "제재",
+    title: "캠페인 무단 이탈 (노쇼)",
+    campaignTitle: "[충북/충북대점] '픽스팟' 2분만에 완성하는 나만의 폰케이스",
+    date: "2025-09-01",
   },
   {
     id: "5",
-    type: "주의",
-    title: "캠페인 반복 반려",
-    campaignTitle: "멜킨 엘프리 마사지 멜킨 엘프리 마사지멜킨 엘프리 마사지",
-    date: "2025-09-10",
-  },
-  {
-    id: "6",
-    type: "주의",
-    title: "테스트~ 캠페인관련 x 패널티 발생",
-    date: "2025-09-10",
-  },
-  {
-    id: "7",
-    type: "제재",
-    title: "이용 정지 3일",
-
-    date: "2025-09-10",
-  },
-  {
-    id: "8",
-    type: "경고",
-    title: "캠페인 의무 노출 기간 불이행",
-    campaignTitle: "멜킨 엘프리 마사지 멜킨 엘프리 마사지멜킨 엘프리 마사지",
-    date: "2025-09-08",
-  },
-  {
-    id: "9",
-    type: "경고",
-    title: "캠페인 지시 불이행",
-    campaignTitle: "멜킨 엘프리 마사지 멜킨 엘프리 마사지멜킨 엘프리 마사지",
-    date: "2025-09-06",
-  },
-  {
-    id: "10",
     type: "경고",
     title: "캠페인 무단 이탈 (노쇼)",
-    campaignTitle: "멜킨 엘프리 마사지 멜킨 엘프리 마사지멜킨 엘프리 마사지",
-    date: "2025-09-10",
-  },
-  {
-    id: "11",
-    type: "경고",
-    title: "캠페인 의무 노출 기간 불이행",
     campaignTitle: "멜킨 엘프리 마사지 멜킨 엘프리 마사지멜킨 엘프리 마사지",
     date: "2025-09-01",
   },
@@ -97,6 +56,6 @@ export const userPenaltyData: PenaltyItem[] = [
 // 사용자 현재 상태 목업 데이터 - 유저(리뷰어)용
 // as PenaltyStatus는 TypeScript 타입 단언(Type Assertion)
 export const userPenaltyStatus = {
-  currentStatus: "이용 정지 15일" as PenaltyStatus,
+  currentStatus: "경고 조치" as PenaltyStatus,
   penaltyCount: 12,
 };

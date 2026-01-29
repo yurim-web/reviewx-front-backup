@@ -47,6 +47,9 @@ function PartnerMypagePage() {
   // 프로필 이미지 상태
   const [profileImage, setProfileImage] = useState<string | undefined>(undefined);
 
+  // 회원 유형 상태 (리뷰어/광고주)
+  const [memberType, setMemberType] = useState<"reviewer" | "partner">("partner");
+
   // 컴포넌트 마운트 시 localStorage에서 프로필 이미지 로드
   useEffect(() => {
     if (typeof window !== 'undefined' && user) {
@@ -87,12 +90,20 @@ function PartnerMypagePage() {
     }
   };
 
-  /**
-   * 로그아웃 핸들러
-   */
   const handleLogout = () => {
-    if (confirm('로그아웃 하시겠습니까?')) {
-      logout();
+    logout();
+  };
+
+  /**
+   * 회원 유형 변경 핸들러
+   * 리뷰어 ↔ 광고주 간 전환
+   */
+  const handleMemberTypeChange = (type: "reviewer" | "partner") => {
+    setMemberType(type);
+
+    // 리뷰어로 전환 시 유저 마이페이지로 이동
+    if (type === "reviewer") {
+      router.push("/user/mypage/profile");
     }
   };
 
@@ -129,6 +140,9 @@ function PartnerMypagePage() {
             editPath="/partner/mypage/edit"
             onLogout={handleLogout}
             profileImage={profileImage}
+            showMemberTypeToggle={true}
+            activeMemberType={memberType}
+            onMemberTypeChange={handleMemberTypeChange}
           />
         </section>
       </main>

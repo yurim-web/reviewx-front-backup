@@ -14,6 +14,11 @@
   align-items: center;
 }
 
+.ssn_front_input {
+  width: 444px;
+  max-width: 100%;
+}
+
 .ssn_separator {
   font-size: 16px;
   font-weight: 500;
@@ -28,10 +33,12 @@
 
 .ssn_back_wrapper {
   position: relative;
-  flex: 1;
 }
 
-.ssn_back_wrapper .input_field {
+/* 뒷자리 인풋: 성별 첫 자리와 겹치지 않도록 왼쪽 여백 */
+.ssn_back_input {
+  width: 444px;
+  max-width: 100%;
   padding-left: 30px; /* 앞자리 성별 숫자가 겹치지 않도록 여백 추가 */
 }
 
@@ -44,4 +51,37 @@
   font-weight: 500;
   color: #444;
   pointer-events: none;
+}
+
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  /* 주민등록번호 컨테이너 */
+  .ssn_container {
+    gap: 8px;
+  }
+
+  /* 앞자리 입력 필드 */
+  .ssn_front_input {
+    width: 151px;
+    flex: 0 0 151px;
+  }
+
+  /* 뒷자리 입력 필드 */
+  .ssn_back_input {
+    width: 152px;
+    flex: 0 0 152px;
+  }
+
+  /* 구분자 (-) */
+  .ssn_separator {
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  /* 뒷자리 래퍼 */
+  .ssn_back_wrapper {
+    flex: 0 0 152px;
+  }
 }

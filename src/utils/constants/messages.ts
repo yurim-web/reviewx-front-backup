@@ -55,7 +55,6 @@ export const SUCCESS_MESSAGES = {
 export const CONFIRM_MESSAGES = {
   DELETE_CONFIRM: '정말 삭제하시겠습니까?',
   CANCEL_CONFIRM: '작성 중인 내용이 사라집니다. 취소하시겠습니까?',
-  LOGOUT_CONFIRM: '로그아웃 하시겠습니까?',
 } as const;
 
 /**

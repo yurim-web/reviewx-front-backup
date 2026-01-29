@@ -54,7 +54,7 @@ export default function SocialSecurityNumberInput({
           type="text"
           id="ssnFront"
           name="ssnFront"
-          className={inputStyles.input_field}
+          className={`${inputStyles.input_field} ${ssnStyles.ssn_front_input}`}
           value={ssnFront}
           inputMode="numeric"
           onChange={(e) => {
@@ -69,7 +69,7 @@ export default function SocialSecurityNumberInput({
             type="password"
             id="ssnBack"
             name="ssnBack"
-            className={inputStyles.input_field}
+            className={`${inputStyles.input_field} ${ssnStyles.ssn_back_input}`}
             value={ssnBack}
             onChange={(e) => {
               onSsnBackChange(e.target.value);

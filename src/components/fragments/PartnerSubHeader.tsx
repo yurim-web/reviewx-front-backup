@@ -25,7 +25,7 @@
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import styles from "@/styles/fragments/header.module.css";
@@ -56,6 +56,21 @@ export default function PartnerSubHeader() {
    */
   const pathname = usePathname();
 
+  // Hydration 에러 방지
+  const [isMounted, setIsMounted] = useState(false);
+  // 모바일 여부 감지
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   /**
    * 알림 아이콘 경로 결정
    * - 알림이 있으면 notification_ok.svg 사용
@@ -66,9 +81,49 @@ export default function PartnerSubHeader() {
    * - mockPartnerNotifications.length > 0: 알림 데이터가 있는지 확인
    */
   const has_notifications = mockPartnerNotifications.length > 0;
-  const notification_icon_src = has_notifications
-    ? "/images/header/notification_ok.svg"
-    : "/images/header/notification_icon.svg";
+
+  // 알림 아이콘 경로 (모바일/PC 구분)
+  const getNotificationIconSrc = () => {
+    if (!isMounted) {
+      return "/images/header/notification_icon.svg";
+    }
+
+    // 모바일 전용 아이콘
+    if (isMobile) {
+      return has_notifications
+        ? "/images/header/mobile/mo_notification_ok.svg"
+        : "/images/header/mobile/mo_notification_icon.svg";
+    }
+
+    // PC 아이콘
+    return has_notifications
+      ? "/images/header/notification_ok.svg"
+      : "/images/header/notification_icon.svg";
+  };
+
+  // 검색 아이콘 경로 (모바일/PC 구분)
+  const getSearchIconSrc = () => {
+    return isMobile
+      ? "/images/header/mobile/mo_search.svg"
+      : "/images/header/header_search.svg";
+  };
+
+  // 사용자 아이콘 경로 (모바일/PC 구분)
+  const getUserIconSrc = () => {
+    return isMobile
+      ? "/images/header/mobile/mo_user.svg"
+      : "/images/header/header_user.svg";
+  };
+
+  // 로고 이미지 경로 (모바일/PC 구분)
+  const getLogoSrc = () => {
+    if (!isMounted) {
+      return "/images/header/vx_header_logo.svg";
+    }
+    return isMobile
+      ? "/images/header/mobile/mo_header_vx_logo.svg"
+      : "/images/header/vx_header_logo.svg";
+  };
 
   /**
    * 메인 헤더 숨기기 처리
@@ -139,24 +194,30 @@ export default function PartnerSubHeader() {
 
         {/* 오른쪽 아이콘 그룹 */}
         <div className={styles.right_icons}>
-          {/* 새 캠페인 등록 버튼 */}
-          {/* 📌 Link 컴포넌트:
-              - Next.js의 Link 컴포넌트: 클라이언트 사이드 네비게이션
-              - href: 이동할 경로
-              - className: CSS 모듈 클래스명
-          */}
-          <Link
-            href="/partner/campaign/create"
-            className={styles.new_campaign_button}
-          >
-            새 캠페인 등록
-          </Link>
           {/* 검색 아이콘 */}
           {/* 📌 컴포넌트 재사용:
               - HeaderSearch: 기존에 만들어진 검색 컴포넌트 재사용
               - search_path prop: 검색 결과 페이지 경로 전달
           */}
-          <HeaderSearch search_path="/partner/search" />
+          <HeaderSearch searchIconSrc={getSearchIconSrc()} search_path="/partner/search" />
+
+          {/* 새 캠페인 등록: PC에서는 버튼, 모바일에서는 아이콘 */}
+          {isMobile ? (
+            <Link
+              href="/partner/campaign/create"
+              className={styles.notification_icon}
+              aria-label="새 캠페인 등록"
+            >
+              <img src="/images/header/mobile/mo_partner_campaign.svg" alt="새 캠페인 등록" />
+            </Link>
+          ) : (
+            <Link
+              href="/partner/campaign/create"
+              className={styles.new_campaign_button}
+            >
+              새 캠페인 등록
+            </Link>
+          )}
 
           {/* 알림 아이콘 */}
           <Link
@@ -164,7 +225,7 @@ export default function PartnerSubHeader() {
             className={styles.notification_icon}
             aria-label="알림"
           >
-            <img src={notification_icon_src} alt="알림" />
+            <img src={getNotificationIconSrc()} alt="알림" />
           </Link>
 
           {/* 가이드북 아이콘 */}
@@ -188,7 +249,7 @@ export default function PartnerSubHeader() {
             className={styles.user_icon}
             aria-label="마이페이지"
           >
-            <img src="/images/header/header_user.svg" alt="사용자" />
+            <img src={getUserIconSrc()} alt="사용자" />
           </Link>
         </div>
       </div>

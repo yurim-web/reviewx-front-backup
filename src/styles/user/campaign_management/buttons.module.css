@@ -137,3 +137,61 @@
   height: 20px;
   stroke: currentColor;
 }
+
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  /* 캠페인 액션 버튼들 영역 */
+  .campaign_actions {
+    gap: 12px;
+  }
+
+  /* 기본 액션 버튼 */
+  .action_button {
+    padding: 12px;
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+    font-weight: 600;
+  }
+
+  /* 주요 액션 버튼 */
+  .primary_button {
+    border-radius: 4px;
+  }
+
+  /* 일반 액션 버튼 */
+  .default_button {
+    border-radius: 4px;
+  }
+
+  /* 보조 버튼 */
+  .secondary_button {
+    border-radius: 4px;
+  }
+
+  /* 아웃라인 버튼 */
+  .outline_button {
+    border-radius: 4px;
+  }
+
+  /* 콘텐츠 수정 버튼 */
+  .content_edit_button {
+    border-radius: 4px;
+  }
+
+  /* 경고 버튼 */
+  .danger_button {
+    border-radius: 4px;
+  }
+
+  /* 취소 버튼 */
+  .cancel_button {
+    padding: 12px;
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+    font-weight: 600;
+  }
+}

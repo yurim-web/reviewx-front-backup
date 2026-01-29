@@ -24,46 +24,64 @@ import { missionCampaigns } from "@/data/campaign/mission/missionCampaigns";
 
 // 탭별 캠페인 ID 리스트
 const 신청_탭_캠페인_IDS = [
-  "delivery_1",
-  "mission_2",
-  "reporter_1",
-  "review_2",
-  "visit_9",
+  // 배송형
+  "961",
+  // 미션형
+  "4002",
+  // 기자단
+  "3001",
+  // 구매평
+  "2002",
+  // 방문형
+  "1009",
 ];
 
 const 선정_탭_캠페인_IDS = [
-  "review_2",
-  "review_7",
-  "review_9",
-  "review_12",
-  "review_13",
-  "delivery_11",
-  "delivery_12",
-  "visit_2",
-  "visit_7",
-  "visit_9",
-  "visit_11",
-  "visit_12",
-  "reporter_2",
-  "mission_13",
-  "mission_14",
-  "mission_15",
-  "mission_5",
+  // 구매평
+  "2002",
+  "2007",
+  "2009",
+  "2012",
+  "2013",
+  // 배송형
+  "972",
+  "973",
+  // 방문형
+  "1002",
+  "1007",
+  "1009",
+  "1011",
+  "1012",
+  // 기자단
+  "3002",
+  // 미션형
+  "4013",
+  "4014",
+  "4015",
+  "4005",
 ];
 
 const 완료_탭_캠페인_IDS = [
-  "delivery_2",
-  "delivery_10",
-  "mission_4",
-  "reporter_4",
+  // 배송형
+  "962",
+  "970",
+  // 미션형
+  "4004",
+  // 기자단
+  "3004",
 ];
 
 const 취소반려_탭_캠페인_IDS = [
-  "delivery_5",
-  "visit_3",
-  "review_7",
-  "mission_5",
-  "reporter_5",
+  // 배송형
+  "965",
+  // 방문형
+  "1003",
+  // 구매평
+  "2007",
+  // 미션형
+  "4005",
+  // 기자단
+  "3005",
 ];
 
 /**
@@ -82,34 +100,34 @@ const registeredContentData: Record<
   }
 > = {
   // 구매 영수증 이미 등록된 구매평 캠페인
-  review_2: {
+  "2002": {
     receiptImages: [
       "/images/main/campaign_img/eximg_1.png",
       "/images/main/campaign_img/eximg_2.png",
     ],
   },
-  review_7: {
+  "2007": {
     receiptImages: [
       "/images/main/campaign_img/eximg_1.png",
       "/images/main/campaign_img/eximg_2.png",
     ],
   },
   // 콘텐츠 이미 등록된 캠페인
-  delivery_11: {
-    link: "https://blog.naver.com/example-delivery-11",
+  "972": {
+    link: "https://blog.naver.com/example-delivery-972",
   },
-  visit_2: {
-    link: "https://blog.naver.com/example-visit-2",
+  "1002": {
+    link: "https://blog.naver.com/example-visit-1002",
   },
-  mission_13: {
-    link: "https://blog.naver.com/example-mission-13",
+  "4013": {
+    link: "https://blog.naver.com/example-mission-4013",
     images: [
       "/images/main/campaign_img/eximg_1.png",
       "/images/main/campaign_img/eximg_2.png",
     ],
   },
   // 구매평: 콘텐츠(이미지) 이미 등록된 캠페인
-  review_13: {
+  "2013": {
     images: [
       "/images/main/campaign_img/eximg_1.png",
       "/images/main/campaign_img/eximg_2.png",
@@ -133,45 +151,24 @@ function convertToCampaignApplication(
   registeredContentImages?: string[],
   registeredReceiptImages?: string[]
 ): CampaignApplication | null {
-  // 모든 캠페인 데이터를 하나의 배열로 합치기
-  const allCampaigns = [
-    ...deliveryCampaigns,
-    ...visitCampaigns,
-    ...reviewCampaigns,
-    ...reporterCampaigns,
-    ...missionCampaigns,
-  ];
+  // 캠페인 ID(숫자 문자열)를 기준으로 실제 캠페인 데이터 찾기
+  const delivery = deliveryCampaigns.find((c) => c.id === campaignId);
+  const visit = visitCampaigns.find((c) => c.id === campaignId);
+  const review = reviewCampaigns.find((c) => c.id === campaignId);
+  const reporter = reporterCampaigns.find((c) => c.id === campaignId);
+  const mission = missionCampaigns.find((c) => c.id === campaignId);
 
-  // 캠페인 ID로 실제 캠페인 데이터 찾기
-  const actualCampaign = allCampaigns.find((c) => c.id === campaignId);
+  const actualCampaign = delivery || visit || review || reporter || mission;
 
-  if (!actualCampaign) {
-    return null;
-  }
+  if (!actualCampaign) return null;
 
-  // 타입 결정
-  let type: CampaignApplication["type"];
-  if (campaignId.startsWith("delivery_")) {
-    type = "배송형";
-  } else if (campaignId.startsWith("visit_")) {
-    type = "방문형";
-  } else if (campaignId.startsWith("review_")) {
-    type = "구매평";
-  } else if (campaignId.startsWith("reporter_")) {
-    type = "기자단";
-  } else if (campaignId.startsWith("mission_")) {
-    type = "미션형";
-  } else {
-    return null;
-  }
+  // 타입 결정 (실제 데이터 기반)
+  const type: CampaignApplication["type"] =
+    (actualCampaign as any).category ?? "배송형";
 
   // 카테고리 결정
   let category = "";
-  if (type === "배송형" && "channel" in actualCampaign) {
-    category = (actualCampaign as any).channel || "";
-  } else if (type === "방문형" && "channel" in actualCampaign) {
-    category = (actualCampaign as any).channel || "";
-  } else if (type === "기자단" && "channel" in actualCampaign) {
+  if ("channel" in (actualCampaign as any)) {
     category = (actualCampaign as any).channel || "";
   }
 
@@ -260,13 +257,13 @@ function filterSelectedCampaigns(
       }
 
       // 구매 영수증 이미 등록된 구매평 캠페인 (수정 가능)
-      const receiptRegisteredReviewIds = ["review_2", "review_7"];
+      const receiptRegisteredReviewIds = ["2002", "2007"];
       // 콘텐츠 이미 등록된 캠페인 (수정 가능)
       const contentRegisteredIds = [
-        "delivery_11",
-        "visit_2",
-        "mission_13",
-        "review_13",
+        "972",
+        "1002",
+        "4013",
+        "2013",
       ];
 
       let subStatus: CampaignApplication["subStatus"];
@@ -282,7 +279,7 @@ function filterSelectedCampaigns(
         hasContent = true;
       } else {
         // 기본 상태: 미등록 상태
-        const isReview = id.startsWith("review_");
+        const isReview = reviewCampaigns.some((c) => c.id === id);
         subStatus = isReview
           ? "receipt_not_registered"
           : "content_not_registered";
@@ -357,7 +354,7 @@ function filterCancelledCampaigns(
 ): CampaignApplication[] {
   return campaignIds
     .map((id) => {
-      const isPenalty = id === "review_7" || id === "mission_5";
+      const isPenalty = id === "2007" || id === "4005";
       const subStatus: CampaignApplication["subStatus"] = isPenalty
         ? "penalty"
         : "content_rejected,re_register";
@@ -434,3 +431,14 @@ export const getClientCampaignStats = () => {
     패널티: getCampaignsByTab("패널티", completedCampaignIds).length,
   };
 };
+
+/**
+ * 스토리북/개발용 전체 캠페인 목록 (여러 탭 목업을 합친 배열)
+ */
+export const campaignManagementData: CampaignApplication[] = [
+  ...getCampaignsByTab("신청"),
+  ...getCampaignsByTab("선정"),
+  ...getCampaignsByTab("완료"),
+  ...getCampaignsByTab("취소/반려"),
+  ...getCampaignsByTab("패널티"),
+];

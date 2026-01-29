@@ -7,7 +7,14 @@
       "Bash(powershell -Command \"Get-Content ''src\\\\data\\\\campaign\\\\review\\\\reviewCampaigns.ts'' | Select-String -Pattern ''applicationEnd.*2026-01'' | Select-Object -First 5\")",
       "Bash(claude mcp add:*)",
       "Bash(claude mcp list:*)",
-      "Bash(claude mcp get:*)"
+      "Bash(claude mcp get:*)",
+      "mcp__figma__get_design_context",
+      "mcp__figma__get_screenshot",
+      "mcp__atlassian-confluence__getConfluencePage",
+      "mcp__atlassian-confluence__getAccessibleAtlassianResources",
+      "mcp__atlassian-confluence__createConfluencePage",
+      "mcp__atlassian-confluence__searchConfluenceUsingCql",
+      "mcp__atlassian-confluence__updateConfluencePage"
     ]
   }
 }

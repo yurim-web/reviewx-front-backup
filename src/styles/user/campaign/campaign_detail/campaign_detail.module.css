@@ -82,55 +82,57 @@
 
 /* 스크롤 시 상단에 고정된 상태 */
 .campaign_info_text_line.fixed {
-  position: fixed; /* 화면에 고정 */
-  top: 80px; /* 서브헤더(80px) 바로 아래에 배치 */
-  left: 0;
-  right: 0;
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 100%;
-  padding: 20px 0px; /* 고정 시 패딩 조정 */
-  background: #ffffff; /* 흰색 배경 (아래 내용이 비치지 않도록) */
-  border-bottom: 2px solid #d90074;
-  z-index: 90; /* 서브헤더(100)보다 낮게, 다른 요소보다는 높게 */
   max-width: 1000px;
-  margin: 0 auto;
-  min-height: 68px;
+  padding: 20px 0px;
+  background: #ffffff;
+  border-bottom: 2px solid #d90074;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  z-index: 90;
 }
 
 /* ===== 반응형 스타일 ===== */
 
-/* ✅ 모바일 공통 — 0~739px */
-@media (max-width: 739px) {
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  .campaign_detail_container {
+    padding: 20px 0px 120px 0px;
+  }
+
   /* ===== 캠페인 신청 버튼 ===== */
   .apply_button {
-    border-radius: 10px;
-    padding: 16px 20px;
+    border-radius: 8px;
+    padding: 16px;
     text-align: center;
     font-size: 16px;
+    font-weight: 600;
     line-height: 16px;
     letter-spacing: -0.32px;
   }
 
   .bottom_fixed_container {
-    padding: 12px 16px 16px 16px;
+    padding: 12px 20px 20px 20px;
+    background: linear-gradient(rgba(255, 255, 255, 0.2) 0%, #fff 31.048%);
   }
 
   .bottom_gradient {
-    bottom: 64px;
-    height: 100px;
+    bottom: 72px;
+    height: 120px;
   }
 
   /* ===== 캠페인 정보 섹션 제목 ===== */
   .campaign_info_text_line {
-    padding: 40px 0px 20px 0px;
-    font-size: 18px;
-    line-height: 18px;
-    letter-spacing: -0.36px;
+    display: none; /* 모바일에서 숨김 */
   }
 
   /* 모바일 화면에서 고정된 상태 */
   .campaign_info_text_line.fixed {
-    padding: 16px 0px; /* 모바일에서는 더 작은 패딩 */
-    font-size: 18px;
-    line-height: 18px;
+    display: none; /* 모바일에서 숨김 */
   }
 }

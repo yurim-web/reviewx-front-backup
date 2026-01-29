@@ -446,7 +446,20 @@ export default function FilterBar({
             {/* 활성화된 지역 필터 태그들 */}
             {activeFilters.regions?.map((region) => (
               <div key={region} className={mainStyles.filter_tag}>
-                <span>{region}</span>
+                <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                  {region.split(" > ").map((part, index) => (
+                    <span key={index} style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                      {part}
+                      {index < region.split(" > ").length - 1 && (
+                        <img
+                          src="/images/filter/region_arrow.svg"
+                          alt=">"
+                          className={mainStyles.region_arrow}
+                        />
+                      )}
+                    </span>
+                  ))}
+                </span>
                 <button
                   className={mainStyles.remove_tag}
                   onClick={() => handleRegionRemove(region)}

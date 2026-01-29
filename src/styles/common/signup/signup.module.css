@@ -56,6 +56,17 @@
   transition: border-color 0.2s ease;
 }
 
+/* 입력 필드 autofill 스타일 제거 */
+.input_field:-webkit-autofill,
+.input_field:-webkit-autofill:hover,
+.input_field:-webkit-autofill:focus,
+.input_field:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #444 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 /* 입력 필드 포커스 */
 .input_field:focus {
   outline: none;
@@ -146,28 +157,27 @@
   background-color: #ffffff;
   border: 1px solid #444444;
   border-radius: 8px;
-  color: #444444;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 16px;
-  letter-spacing: -0.32px;
   cursor: pointer;
-  transition: all 0.2s ease;
   flex-shrink: 0;
   box-sizing: border-box;
   padding: 0;
+
+
+
+color: #444;
+font-size: 16px;
+font-weight: 600;
+line-height: 16px; 
+letter-spacing: -0.32px;
 }
 
-/* 인증번호 받기 버튼 호버 */
-.verification_button:hover:not(:disabled) {
-  background-color: #f6f6f6;
-}
 
 /* 인증 완료 버튼 */
 .verification_button_completed {
-  background-color: #d9d9d9;
-  border-color: #d9d9d9;
-  color: #848484;
+  width: 125px;
+  background-color: #FF56941A;
+  border: none;
+  color: #FF5694;
   cursor: default;
 }
 
@@ -231,22 +241,20 @@
   background-color: #ffffff;
   border: 1px solid #444444;
   border-radius: 8px;
-  color: #444444;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 16px;
-  letter-spacing: -0.32px;
   cursor: pointer;
-  transition: all 0.2s ease;
   box-sizing: border-box;
   padding: 0;
   flex-shrink: 0;
+
+
+color: #444;
+font-size: 16px;
+font-weight: 600;
+line-height: 16px; 
+letter-spacing: -0.32px;
 }
 
-/* 인증 버튼 호버 */
-.verify_button:hover {
-  background-color: #f6f6f6;
-}
+
 
 /* 재전송 버튼 */
 .resend_button {
@@ -257,11 +265,13 @@
   cursor: pointer;
   border-radius: 8px;
   overflow: hidden;
-  color: #848484;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 16px;
-  letter-spacing: -0.32px;
+
+
+color: #848484;
+font-size: 16px;
+font-weight: 600;
+line-height: 16px;
+letter-spacing: -0.32px;
 }
 
 /* 인증번호 도움말 텍스트 */
@@ -269,7 +279,7 @@
   color: #848484;
   font-size: 14px;
   font-weight: 500;
-  line-height: 14px; /* 100% */
+  line-height: 14px;
   letter-spacing: -0.28px;
   cursor: pointer;
 }
@@ -288,7 +298,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding-top: 20px;
+  padding-top: 12px;
 }
 
 /* 전체 동의 */
@@ -378,6 +388,14 @@
   user-select: none;
 }
 
+/* 전체 동의 라벨 - 더 굵고 큰 폰트 */
+.terms_all_agree .checkbox_label {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
 /* 약관 보기 링크 */
 .terms_view_link {
   color: #848484;
@@ -419,7 +437,7 @@
 .submit_button {
   width: 100%;
   height: 56px;
-  background-color: #555555;
+  background-color: #ff5694;
   color: #ffffff;
   border: none;
   border-radius: 8px;
@@ -428,18 +446,13 @@
   line-height: 16px;
   letter-spacing: -0.32px;
   cursor: pointer;
-  transition: background-color 0.2s ease, opacity 0.2s ease;
+  margin-top: 8px;
 }
 
-/* 회원가입 버튼 호버 */
-.submit_button:hover {
-  background-color: #444444;
-  opacity: 0.9;
-}
 
 /* 회원가입 버튼 활성화 */
-.submit_button:active {
-  opacity: 0.8;
+.submit_button:active:not(:disabled) {
+  opacity: 0.9;
 }
 
 /* 회원가입 버튼 비활성화 */
@@ -458,26 +471,55 @@
   opacity: 1;
 }
 
-/* ========================================
-   6. 반응형 디자인
-   ======================================== */
+/* 📱 ================================================================================================
 
-/* 모바일 (0~739px) */
-@media (max-width: 739px) {
+모바일 반응형 스타일 (max-width: 768px)
+
+================================================================================================ 📱 */
+
+@media (max-width: 768px) {
+  /* 폼 필드 간격 */
+  .form_field {
+    gap: 12px;
+  }
+
+  /* 휴대폰 인증 래퍼 - 세로 정렬 */
   .phone_verification_wrapper {
-    flex-direction: column;
+    flex-direction: row;
+    gap: 12px;
   }
 
+  /* 인증번호 받기 버튼 */
   .verification_button {
-    width: 100%;
+    width: 100px;
+   
   }
 
-  .verification_buttons {
-    flex-direction: column;
+  /* 인증번호 입력 섹션 */
+  .verification_code_section {
+    gap: 12px;
   }
 
+  /* 인증번호 입력 래퍼 */
+  .verification_code_wrapper {
+    gap: 12px;
+  }
+
+  /* 재전송 버튼, 인증 버튼 */
   .resend_button,
   .verify_button {
-    width: 100%;
+    width: 100px;
+
+  }
+
+  /* 약관 동의 섹션 */
+  .terms_section {
+    padding-top: 8px;
+    gap: 12px;
+  }
+
+  /* 회원가입 버튼 */
+  .submit_button {
+    margin-top: 4px;
   }
 }

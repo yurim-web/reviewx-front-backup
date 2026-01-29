@@ -28,6 +28,7 @@ import ProfileContent from "@/components/common/mypage/ProfileContent";
 import layoutStyles from "../../../../styles/partner/layout.module.css";
 import type { PartnerMainTab } from "@/types/domain/partner";
 import type { AuthUser } from "@/types/auth";
+import { useAuth } from "@/hooks/useAuth";
 
 /**
  * 파트너 프로필 탭 전용 페이지 컴포넌트
@@ -35,6 +36,7 @@ import type { AuthUser } from "@/types/auth";
 export default function PartnerProfilePage() {
   // Next.js의 useRouter 훅: 페이지 이동을 위한 라우터 객체
   const router = useRouter();
+  const { logout } = useAuth();
 
   // useState 훅: 컴포넌트의 상태(state)를 관리합니다.
   // activeTopTab: 현재 활성화된 상단 탭 (캠페인/포인트/계정)
@@ -111,18 +113,8 @@ export default function PartnerProfilePage() {
     }
   };
 
-  /**
-   * 로그아웃 핸들러
-   *
-   * 로그아웃 버튼 클릭 시 실행되는 함수입니다.
-   * TODO: 실제 로그아웃 로직 구현 필요 (세션 삭제, 쿠키 삭제 등)
-   */
   const handleLogout = () => {
-    // TODO: 실제 로그아웃 API 호출
-    // 예: await logoutAPI();
-    // 예: localStorage.removeItem('token');
-    // 예: router.push('/partner/login');
-    console.log("로그아웃 처리");
+    logout();
   };
 
   return (

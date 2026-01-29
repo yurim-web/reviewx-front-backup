@@ -406,6 +406,7 @@ export default function PointHistoryPage({
                    * 설명:
                    * - 템플릿 리터럴(백틱)을 사용하여 여러 클래스를 조합합니다.
                    * - 삼항 연산자를 중첩하여 여러 조건을 체크합니다.
+                   * - type과 status를 조합하여 정확한 배지 색상과 텍스트를 표시합니다.
                    */}
                   <div
                     className={`${styles.status_badge} ${
@@ -415,6 +416,8 @@ export default function PointHistoryPage({
                         ? styles.completed
                         : history.status === "pending"
                         ? styles.pending
+                        : history.status === "failed" && history.type === "withdrawn"
+                        ? styles.failed
                         : styles.cancelled
                     }`}
                   >
@@ -423,12 +426,16 @@ export default function PointHistoryPage({
                      *
                      * 설명:
                      * - 중첩된 삼항 연산자를 사용하여 상태에 따라 다른 텍스트를 표시합니다.
-                     * - 조건 ? 값1 : 값2 형태
+                     * - type과 status를 조합하여 정확한 배지 텍스트를 표시합니다.
+                     *   - earned + earned: "적립"
+                     *   - withdrawn + completed: "출금"
+                     *   - withdrawn + failed: "취소"
+                     *   - earned + failed: "취소"
                      */}
                     {history.status === "earned"
                       ? "적립"
                       : history.status === "completed"
-                      ? "완료"
+                      ? "출금"
                       : history.status === "pending"
                       ? "신청"
                       : "취소"}

@@ -74,7 +74,7 @@ export default function ApplicationTabCard({
   const statusText = getStatusText();
 
   // 버튼 텍스트
-  const buttonText = "신청 취소하기";
+  const buttonText = "신청 취소";
 
   // 버튼 스타일 클래스 가져오기
   const buttonStyle = getButtonClassName(buttonText, buttonStyles);
@@ -323,7 +323,7 @@ export default function ApplicationTabCard({
       <BaseModal
         is_open={isErrorModalOpen}
         on_close={handleCloseErrorModal}
-        message="오류가 발생했습니다.\n잠시 후 다시 시도해주세요."
+        message="오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."
         buttons={["확인"]}
         type="center"
       />

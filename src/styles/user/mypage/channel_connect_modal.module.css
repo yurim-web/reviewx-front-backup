@@ -205,20 +205,94 @@
   cursor: default !important;
 }
 
-/* 반응형 */
-@media (max-width: 480px) {
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
   .modal_overlay {
-    padding: 16px;
+    background: rgba(0, 0, 0, 0.25);
   }
 
   .modal_content {
     max-width: 100%;
+    border-radius: 24px 24px 0 0;
   }
 
-  .modal_header,
-  .modal_body,
+  .modal_header {
+    padding: 32px 24px 0px;
+  }
+
+  .modal_title {
+    font-size: 20px;
+    line-height: 20px;
+    letter-spacing: -0.4px;
+  }
+
+  .modal_close_button {
+    width: 20px;
+    height: 20px;
+  }
+
+  .modal_body {
+    padding: 24px 24px;
+  }
+
+  .input_section {
+    gap: 16px;
+  }
+
+  .input_group {
+    gap: 8px;
+  }
+
+  .prefix_input_group {
+    height: 48px;
+  }
+
+  .prefix_text {
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  .input_field_with_prefix {
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  .input_field_with_prefix::placeholder {
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  .error_text {
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.28px;
+  }
+
+  .channel_not_found_text {
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.28px;
+  }
+
+  .info_text {
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.28px;
+  }
+
   .modal_footer {
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 0 24px 32px;
+  }
+
+  .connect_button {
+    height: 48px;
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
   }
 }

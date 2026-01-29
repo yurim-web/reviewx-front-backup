@@ -31,6 +31,7 @@ export default function PartnerHeader() {
   const { user } = useAuth();
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [notificationIconSrc, setNotificationIconSrc] = useState(
     "/images/header/notification_icon.svg"
   );
@@ -45,6 +46,12 @@ export default function PartnerHeader() {
    */
   useEffect(() => {
     setIsMounted(true);
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   /**
@@ -73,11 +80,21 @@ export default function PartnerHeader() {
     );
   }, [user, isMounted]);
 
+  // 로고 이미지 경로 (모바일/PC 구분)
+  const getLogoSrc = () => {
+    if (!isMounted) {
+      return "/images/header/vx_header_logo.svg";
+    }
+    return isMobile
+      ? "/images/header/mobile/mo_header_vx_logo.svg"
+      : "/images/header/vx_header_logo.svg";
+  };
+
   return (
     <header>
       <nav className={styles.header_container}>
-        <Link href="/partner">
-          <h1 className={styles.header_logo}>RX.</h1>
+        <Link href="/partner" className={styles.header_logo}>
+          <img src={getLogoSrc()} alt="VX 로고" />
         </Link>
         <div className={styles.menu_icon_box}>
           {/* 새로운 캠페인 등록 버튼 */}

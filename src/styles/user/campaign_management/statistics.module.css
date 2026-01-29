@@ -106,3 +106,51 @@
   font-weight: 700;
   color: #ff5694;
 }
+
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  /* 통계 섹션 */
+  .statistics {
+    padding: 0px 20px;
+    top: 114px; /* 모바일 헤더(64px) + TabNavigation(50px) = 114px */
+    overflow-x: auto; /* 가로 스크롤 활성화 */
+    -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
+    scrollbar-width: none; /* Firefox 스크롤바 숨김 */
+  }
+
+  /* Webkit 브라우저 스크롤바 숨김 */
+  .statistics::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 통계 탭 네비게이션 컨테이너 */
+  .stat_tab_navigation {
+    min-width: max-content; /* 내용물 크기만큼 확장 */
+    flex-wrap: nowrap; /* 줄바꿈 방지 */
+  }
+
+  /* 좌측 통계 탭들 */
+  .left_stat_tabs {
+    gap: 20px;
+    flex-shrink: 0; /* 줄어들지 않도록 */
+  }
+
+  /* 개별 통계 탭 버튼 */
+  .stat_tab {
+    font-size: 18px;
+    line-height: 18px;
+    letter-spacing: -0.36px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+  }
+
+  /* 통계 탭의 숫자 부분 */
+  .stat_number {
+    font-size: 18px;
+    line-height: 18px;
+    letter-spacing: -0.36px;
+  }
+}

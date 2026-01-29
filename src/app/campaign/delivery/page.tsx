@@ -270,10 +270,16 @@ export default function DeliveryPage() {
     campaigns: allCampaigns,
   });
 
+  // 오픈예정 캠페인에 schedule 필드 추가
+  const campaignsWithSchedule = filteredAndSortedCampaigns.map((campaign) => ({
+    ...campaign,
+    schedule: generateSchedule(campaign.detailedSchedule?.applicationStart || ""),
+  }));
+
   return (
     <CampaignListPage
       title="배송형"
-      campaigns={filteredAndSortedCampaigns}
+      campaigns={campaignsWithSchedule}
       basePath="/campaign/delivery"
       filterBarProps={{
         onFilterChange: handleFilterChange,

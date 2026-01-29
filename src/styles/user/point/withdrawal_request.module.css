@@ -76,7 +76,7 @@
   font-size: 40px;
   line-height: 40px;
   letter-spacing: -0.8px;
-  color: #848484;
+  color: #ff5694;
 }
 
 /* 보유 포인트 섹션 아래 구분선 */
@@ -248,7 +248,7 @@
 
   /* 버튼속 글자 css */
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 16px; /* 100% */
   letter-spacing: -0.32px;
   color: white;

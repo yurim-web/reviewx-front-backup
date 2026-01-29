@@ -24,7 +24,7 @@
   min-height: 100vh;
   position: relative;
   padding-top: 80px;
-  /* background-color: #f2f2f2; */
+
 }
 
 /* 관리자 페이지에서 접근한 경우 (사이드바가 있을 때) */
@@ -60,7 +60,7 @@
 
 /* 알림 목록 컨테이너 */
 .notification_list {
-  /* padding: 0 40px; */
+
   background-color: white;
   padding-bottom: 80px;
 }
@@ -71,6 +71,10 @@
   width: 100%;
   box-sizing: border-box;
   border-bottom: 1px solid #e5e5e5;
+}
+
+.notification_item:last-child {
+  border-bottom: 0;
 }
 
 /* 관리자 페이지에서 접근한 경우 border-bottom 제거 */
@@ -107,22 +111,22 @@
 
 /* 라벨 색상 - 파랑 (blue) */
 .notification_label_blue {
-  color: #2b7fff;
+  color: #2B7FFF;
 }
 
 /* 라벨 색상 - 빨강 (red) */
 .notification_label_red {
-  color: #ff2626;
+  color: #FF2626;
 }
 
 /* 라벨 색상 - 초록 (green) */
 .notification_label_green {
-  color: #4caf50;
+  color: #2DC469;
 }
 
 /* 라벨 색상 - 주황 (orange) */
 .notification_label_orange {
-  color: #ff6600;
+  color: #FF6600;
 }
 
 /* 알림 내용 */
@@ -161,4 +165,84 @@
   font-size: 16px;
   color: #848484;
   margin: 0;
+}
+
+/* 📱 ================================================================================================
+
+모바일 반응형 스타일 (max-width: 768px)
+
+================================================================================================ 📱 */
+
+@media (max-width: 768px) {
+  /* 메인 헤더 숨김 */
+  .notification_container :global(header) {
+    display: none !important;
+  }
+
+  /* 컨테이너 */
+  .notification_container {
+    padding-top: 64px;
+  }
+
+  /* 메인 콘텐츠 영역 */
+  .main_content {
+    height: calc(100vh - 64px);
+  }
+
+  /* 알림 목록 */
+  .notification_list {
+    padding-bottom: 40px;
+  }
+
+  /* 알림 아이템 */
+  .notification_item {
+    padding: 20px;
+  }
+
+  /* 알림 아이템 내부 레이아웃 */
+  .notification_content {
+    gap: 16px;
+  }
+
+  /* 왼쪽 영역 */
+  .notification_left {
+    gap: 8px;
+  }
+
+  /* 알림 라벨 */
+  .notification_label {
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 알림 내용 */
+  .notification_message {
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 캠페인 이름 */
+  .notification_campaign_name {
+    font-size: 13px;
+    line-height: 13px;
+    letter-spacing: -0.26px;
+  }
+
+  /* 시간 */
+  .notification_time {
+    font-size: 13px;
+    line-height: 13px;
+    letter-spacing: -0.26px;
+  }
+
+  /* 빈 상태 */
+  .empty_state {
+    padding: 60px 20px;
+  }
+
+  .empty_text {
+    font-size: 14px;
+  }
 }

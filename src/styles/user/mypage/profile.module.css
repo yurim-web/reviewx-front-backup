@@ -12,6 +12,7 @@
 
 /* 프로필 정보 섹션 */
 .profile_section {
+  position: relative;
   padding: 24px 40px;
   border-bottom: 1px solid #e0e0e0;
 }
@@ -76,6 +77,13 @@
   cursor: pointer;
 }
 
+/* 토글 버튼 래퍼 */
+.toggle_wrapper {
+  position: absolute;
+  top: 24px;
+  right: 40px;
+}
+
 /* ========================================
    📋 메뉴 리스트
    ======================================== */
@@ -104,9 +112,7 @@
 .menu_icon {
   width: 28px;
   height: 28px;
-  background: #a8a8a8;
-  border-radius: 4px;
-  flex-shrink: 0;
+  aspect-ratio: 1/1;
 }
 
 /* 메뉴 텍스트 */
@@ -118,23 +124,71 @@
   letter-spacing: -0.36px;
 }
 
-/* 반응형 스타일  */
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
 @media (max-width: 768px) {
+  /* 프로필 정보 섹션 */
+  .profile_section {
+    position: relative;
+    padding: 20px 20px;
+    border-bottom: 1px solid #e5e5e5;
+    overflow: visible;
+  }
+
+  .profile_info {
+    gap: 20px;
+  }
+
+  .profile_image {
+    width: 80px;
+    height: 80px;
+  }
+
+  .profile_details {
+    gap: 8px;
+  }
+
+  .profile_role {
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  .profile_nickname {
+    font-size: 18px;
+    line-height: 18px;
+    letter-spacing: -0.36px;
+  }
+
+  /* 토글 버튼 래퍼 */
+  .toggle_wrapper {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+  }
+
+  /* 프로필 메뉴 리스트 */
+  .menu_list {
+    padding: 24px 20px;
+    gap: 24px;
+    border-bottom: 1px solid #e5e5e5;
+  }
+
   .menu_item {
-    width: 100%;
+    gap: 16px;
+  }
+
+  .menu_icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .menu_text {
+    font-size: 18px;
+    line-height: 18px;
+    letter-spacing: -0.36px;
   }
 }
 
-/* 반응형 태블릿 세로(portrait) 전용 — 740~1100px */
-@media (min-width: 740px) and (max-width: 1100px) and (orientation: portrait) {
-  .menu_item {
-    width: 100%;
-  }
-}
-
-/* 반응형 태블릿 가로(landscape) 전용 — 740~1366px */
-@media (min-width: 740px) and (max-width: 1366px) and (orientation: landscape) {
-  .menu_item {
-    width: 100%;
-  }
-}

@@ -21,7 +21,10 @@
 
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import BaseModal from "@/components/common/modal/BaseModal";
+import MemberTypeToggle from "@/components/common/mypage/MemberTypeToggle";
 import profileStyles from "@/styles/user/mypage/profile.module.css";
 
 /**
@@ -41,6 +44,12 @@ interface ProfileContentProps {
   onLogout?: () => void;
   /** 프로필 이미지 URL (선택적) */
   profileImage?: string;
+  /** 회원 유형 토글 버튼 표시 여부 (선택적) */
+  showMemberTypeToggle?: boolean;
+  /** 현재 활성화된 회원 유형 (선택적) */
+  activeMemberType?: "reviewer" | "partner";
+  /** 회원 유형 변경 시 실행할 함수 (선택적) */
+  onMemberTypeChange?: (type: "reviewer" | "partner") => void;
 }
 
 /**
@@ -55,11 +64,33 @@ export default function ProfileContent({
   editPath,
   onLogout,
   profileImage,
+  showMemberTypeToggle = false,
+  activeMemberType = "reviewer",
+  onMemberTypeChange,
 }: ProfileContentProps) {
   // Next.js의 useRouter 훅: 페이지 이동을 위한 라우터 객체
   // 훅(Hook): React의 특별한 함수로, 컴포넌트 내부에서만 사용 가능합니다.
   // useRouter는 Next.js에서 제공하는 훅으로, 클라이언트 컴포넌트에서만 사용 가능합니다.
   const router = useRouter();
+  const [is_logout_modal_open, set_is_logout_modal_open] = useState(false);
+
+  // 로그아웃 버튼 클릭 시: 실제 로그아웃은 아직 하지 않고, 모달만 열어줍니다.
+  const handle_logout_click = () => {
+    set_is_logout_modal_open(true);
+  };
+
+  // 로그아웃 모달 확인 버튼 클릭 시: 실제 로그아웃을 실행하고, 로그인 페이지로 이동합니다.
+  const handle_logout_confirm = () => {
+    if (onLogout) {
+      onLogout();
+    }
+
+    if (editPath.startsWith("/partner")) {
+      router.push("/partner/login");
+    } else {
+      router.push("/user/login");
+    }
+  };
 
   return (
     <>
@@ -93,6 +124,16 @@ export default function ProfileContent({
             </div>
           </div>
         </div>
+
+        {/* 회원 유형 토글 버튼 */}
+        {showMemberTypeToggle && onMemberTypeChange && (
+          <div className={profileStyles.toggle_wrapper}>
+            <MemberTypeToggle
+              activeType={activeMemberType}
+              onToggle={onMemberTypeChange}
+            />
+          </div>
+        )}
       </div>
 
       {/* ========================================
@@ -109,7 +150,11 @@ export default function ProfileContent({
           className={profileStyles.menu_item}
           onClick={() => router.push(editPath)}
         >
-          <div className={profileStyles.menu_icon} />
+          <img
+            src="/images/mypage/menu_icon/correction_icon.svg"
+            alt="내 정보 수정 아이콘"
+            className={profileStyles.menu_icon}
+          />
           <div className={profileStyles.menu_text}>내 정보 수정</div>
         </button>
 
@@ -123,7 +168,11 @@ export default function ProfileContent({
             className={profileStyles.menu_item}
             onClick={() => router.push("/partner/reset-password")}
           >
-            <div className={profileStyles.menu_icon} />
+            <img
+              src="/images/mypage/menu_icon/password_icon.svg"
+              alt="비밀번호 변경 아이콘"
+              className={profileStyles.menu_icon}
+            />
             <div className={profileStyles.menu_text}>비밀번호 변경</div>
           </button>
         )}
@@ -142,7 +191,11 @@ export default function ProfileContent({
           className={profileStyles.menu_item}
           onClick={() => window.open("https://markx.dev/guide_book", "_blank")}
         >
-          <div className={profileStyles.menu_icon} />
+          <img
+            src="/images/mypage/menu_icon/guide_icon.svg"
+            alt="이용 가이드 아이콘"
+            className={profileStyles.menu_icon}
+          />
           <div className={profileStyles.menu_text}>이용 가이드</div>
         </button>
 
@@ -162,7 +215,11 @@ export default function ProfileContent({
             )
           }
         >
-          <div className={profileStyles.menu_icon} />
+          <img
+            src="/images/mypage/menu_icon/announcement_icon.svg"
+            alt="공지사항 아이콘"
+            className={profileStyles.menu_icon}
+          />
           <div className={profileStyles.menu_text}>공지사항</div>
         </button>
 
@@ -180,7 +237,11 @@ export default function ProfileContent({
             )
           }
         >
-          <div className={profileStyles.menu_icon} />
+          <img
+            src="/images/mypage/menu_icon/faq_icon.svg"
+            alt="자주 묻는 질문 아이콘"
+            className={profileStyles.menu_icon}
+          />
           <div className={profileStyles.menu_text}>자주 묻는 질문</div>
         </button>
 
@@ -191,7 +252,11 @@ export default function ProfileContent({
             window.open("https://pf.kakao.com/_xjxdxoxG/chat", "_blank")
           }
         >
-          <div className={profileStyles.menu_icon} />
+          <img
+            src="/images/mypage/menu_icon/kakao_icon.svg"
+            alt="카카오톡 상담 아이콘"
+            className={profileStyles.menu_icon}
+          />
           <div className={profileStyles.menu_text}>카카오톡 상담</div>
         </button>
       </div>
@@ -206,12 +271,27 @@ export default function ProfileContent({
       */}
       {onLogout && (
         <div className={profileStyles.menu_list}>
-          <button className={profileStyles.menu_item} onClick={onLogout}>
-            <div className={profileStyles.menu_icon} />
+          <button
+            className={profileStyles.menu_item}
+            onClick={handle_logout_click}
+          >
+            <img
+              src="/images/mypage/menu_icon/logout_icon.svg"
+              alt="로그아웃 아이콘"
+              className={profileStyles.menu_icon}
+            />
             <div className={profileStyles.menu_text}>로그아웃</div>
           </button>
         </div>
       )}
+
+      <BaseModal
+        is_open={is_logout_modal_open}
+        on_close={() => set_is_logout_modal_open(false)}
+        message="로그아웃되었습니다"
+        on_confirm={handle_logout_confirm}
+        buttons={["확인"]}
+      />
     </>
   );
 }

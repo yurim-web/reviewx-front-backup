@@ -69,10 +69,10 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 모집 진행 중
-      applicationStart: "2026-01-05",
-      applicationEnd: "2026-01-18",
-      announcement: "2026-01-20",
-      registrationPeriod: "2026-01-22 ~ 2026-01-29",
+      applicationStart: "2026-01-22",
+      applicationEnd: "2026-02-08",
+      announcement: "2026-02-10",
+      registrationPeriod: "2026-02-12 ~ 2026-02-19",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
@@ -110,11 +110,11 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     dayCount: "D-3",
     registeredAt: "2026-01-08T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 모집 진행 중
-      applicationStart: "2026-01-06",
-      applicationEnd: "2026-01-19",
-      announcement: "2026-01-21",
-      registrationPeriod: "2026-01-23 ~ 2026-01-30",
+      // 오픈 예정 - 모집 시작 전
+      applicationStart: "2026-02-10",
+      applicationEnd: "2026-02-24",
+      announcement: "2026-02-26",
+      registrationPeriod: "2026-02-28 ~ 2026-03-15",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
@@ -236,8 +236,8 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     registeredAt: "2025-10-28T10:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 종료 탭 - registrationPeriod가 과거
-      applicationStart: "2025-11-01",
-      applicationEnd: "2025-11-15",
+      applicationStart: "2026-01-25",
+      applicationEnd: "2026-02-10",
       announcement: "2025-11-17",
       registrationPeriod: "2025-11-20 ~ 2026-02-27",
     },
@@ -319,8 +319,8 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     registeredAt: "2025-11-10T09:15:00.000Z", // 등록 시간
     detailedSchedule: {
       // 진행 탭 - applicationEnd가 과거, registrationPeriod가 미래
-      applicationStart: "2025-11-15",
-      applicationEnd: "2025-11-30",
+      applicationStart: "2026-01-18",
+      applicationEnd: "2026-02-05",
       announcement: "2025-12-02",
       registrationPeriod: "2025-12-05 ~ 2025-12-20",
     },
@@ -360,8 +360,8 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     registeredAt: "2025-11-05T14:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 종료 탭 - registrationPeriod가 과거
-      applicationStart: "2025-11-10",
-      applicationEnd: "2025-11-25",
+      applicationStart: "2026-02-08",
+      applicationEnd: "2026-02-23",
       announcement: "2025-11-27",
       registrationPeriod: "2025-11-30 ~ 2025-12-07",
     },
@@ -401,8 +401,8 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     registeredAt: "2025-11-15T10:50:00.000Z", // 등록 시간
     detailedSchedule: {
       // 진행 탭 - applicationEnd가 과거, registrationPeriod가 미래
-      applicationStart: "2025-11-20",
-      applicationEnd: "2025-12-05",
+      applicationStart: "2025-12-25",
+      applicationEnd: "2026-01-15",
       announcement: "2025-12-07",
       registrationPeriod: "2025-12-08 ~ 2026-01-29",
     },
@@ -442,8 +442,8 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     registeredAt: "2025-11-01T08:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 취소 탭 - status가 "취소"로 설정됨
-      applicationStart: "2025-11-05",
-      applicationEnd: "2025-11-20",
+      applicationStart: "2026-02-12",
+      applicationEnd: "2026-02-27",
       announcement: "2025-11-22",
       registrationPeriod: "2025-11-25 ~ 2025-12-02",
     },
