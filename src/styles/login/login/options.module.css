@@ -106,7 +106,7 @@
 .partner_login_button {
   width: 100%;
   height: 56px;
-  background-color: #444444;
+  background-color: #FF5694;
   color: #ffffff;
   border: none;
   border-radius: 8px;
@@ -118,11 +118,7 @@
   transition: background-color 0.2s ease, opacity 0.2s ease;
 }
 
-/* 파트너/관리자 로그인 버튼 호버 효과 */
-.partner_login_button:hover {
-  background-color: #333333;
-  opacity: 0.9;
-}
+
 
 /* 파트너/관리자 로그인 버튼 활성화 상태 */
 .partner_login_button:active {

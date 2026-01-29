@@ -32,8 +32,17 @@ export interface BaseModalProps {
   message: string;
   /** 버튼 라벨 배열 (1개 또는 2개) */
   buttons?: string[];
+  /** 취소 버튼 클릭 핸들러 (버튼이 두 개일 때 첫 번째 버튼, 기본값: on_close) */
+  on_cancel?: () => void;
   /** 확인 버튼 클릭 핸들러 (버튼이 두 개일 때 두 번째 버튼) */
   on_confirm?: () => void;
+  /** 버튼 영역 레이아웃 (기본값: "row") */
+  button_layout?: "row" | "column";
+  /**
+   * 버튼이 2개이고 button_layout이 "column"일 때,
+   * 확인(핑크) 버튼을 위로 올릴지 여부 (기본값: false)
+   */
+  confirm_first?: boolean;
   /** 모달 형태 (기본값: "center") */
   type?: ModalType;
   /** 오버레이 클릭으로 닫기 여부 (기본값: true) */
@@ -50,7 +59,10 @@ export default function BaseModal({
   on_close,
   message,
   buttons: prop_buttons,
+  on_cancel,
   on_confirm,
+  button_layout = "row",
+  confirm_first = false,
   type = "center",
   close_on_overlay_click = true,
   close_on_escape = true,
@@ -58,6 +70,8 @@ export default function BaseModal({
   const buttons =
     prop_buttons && prop_buttons.length > 0 ? prop_buttons : ["닫기"];
   const has_two_buttons = buttons.length === 2;
+  const is_column_layout = button_layout === "column";
+  const should_confirm_first = is_column_layout && confirm_first;
 
   // ESC 키로 모달 닫기
   useEffect(() => {
@@ -84,6 +98,15 @@ export default function BaseModal({
     on_close();
   };
 
+  // 취소 버튼 클릭 핸들러
+  const handle_cancel = () => {
+    if (on_cancel) {
+      on_cancel();
+      return;
+    }
+    on_close();
+  };
+
   // 오버레이 클릭 핸들러
   const handle_overlay_click = (e: React.MouseEvent) => {
     if (close_on_overlay_click && e.target === e.currentTarget) {
@@ -100,6 +123,9 @@ export default function BaseModal({
     type === "center"
       ? styles.modal_container_center
       : styles.modal_container_bottom;
+  const footer_class = is_column_layout
+    ? `${styles.modal_footer} ${styles.modal_footer_column}`
+    : styles.modal_footer;
 
   return (
     <div
@@ -119,28 +145,48 @@ export default function BaseModal({
           </div>
 
           {/* 모달 푸터 버튼 */}
-          <div className={styles.modal_footer}>
+          <div className={footer_class}>
             {has_two_buttons ? (
               <>
-                {/* 두 개 버튼: 취소, 확인 */}
-                <button
-                  onClick={on_close}
-                  className={styles.modal_footer_button_cancel}
-                >
-                  {buttons[0]}
-                </button>
-                <button
-                  onClick={handle_confirm}
-                  className={styles.modal_footer_button_confirm}
-                >
-                  {buttons[1]}
-                </button>
+                {should_confirm_first ? (
+                  <>
+                    {/* 두 개 버튼(세로): 확인(위), 취소(아래) */}
+                    <button
+                      onClick={handle_confirm}
+                      className={styles.modal_footer_button_confirm}
+                    >
+                      {buttons[1]}
+                    </button>
+                    <button
+                      onClick={handle_cancel}
+                      className={styles.modal_footer_button_cancel}
+                    >
+                      {buttons[0]}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    {/* 두 개 버튼: 취소, 확인 */}
+                    <button
+                      onClick={handle_cancel}
+                      className={styles.modal_footer_button_cancel}
+                    >
+                      {buttons[0]}
+                    </button>
+                    <button
+                      onClick={handle_confirm}
+                      className={styles.modal_footer_button_confirm}
+                    >
+                      {buttons[1]}
+                    </button>
+                  </>
+                )}
               </>
             ) : (
               <>
-                {/* 하나 버튼: 닫기 (전체 너비) */}
+                {/* 하나 버튼: 닫기 또는 확인 (전체 너비) */}
                 <button
-                  onClick={on_close}
+                  onClick={on_confirm ? handle_confirm : on_close}
                   className={styles.modal_footer_button_single}
                 >
                   {buttons[0]}

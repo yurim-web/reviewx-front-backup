@@ -17,7 +17,7 @@ import type {
   AccountStatus,
 } from "@/components/common/find_account/types";
 import {
-  findAccountByPhone,
+  findAccountByPhoneWithTypes,
   type UnifiedAccount,
   type AccountType,
 } from "@/data/login/unifiedAccountData";
@@ -125,6 +125,16 @@ interface UseFindAccountReturn {
   resetAccountState: () => void;
 }
 
+interface UseFindAccountOptions {
+  /** 조회를 허용할 계정 타입들 (예: ["user"] 또는 ["partner"]) */
+  allowedAccountTypes?: AccountType[];
+  /**
+   * SNS 전용(유저 계정찾기)처럼 특정 테스트 번호만 “계정 있음”으로 처리할 때 사용
+   * - 지정 시, 이 목록에 없는 번호는 무조건 "없는 계정" 처리
+   */
+  snsOnlyPhoneWhitelist?: string[];
+}
+
 // ================================================================================================
 // 🎣 useFindAccount 커스텀 훅 (Custom Hook)
 // ================================================================================================
@@ -138,7 +148,9 @@ interface UseFindAccountReturn {
  * - 계정 조회 및 상태 처리 로직
  * - 계정 관련 상태 초기화
  */
-export function useFindAccount(): UseFindAccountReturn {
+export function useFindAccount(
+  options: UseFindAccountOptions = {}
+): UseFindAccountReturn {
   // ============================================================================================
   // 📊 상태 관리 (State Management)
   // ============================================================================================
@@ -203,6 +215,14 @@ export function useFindAccount(): UseFindAccountReturn {
 
     // 통합 계정 데이터에서 계정 상태 결정
     const status = getAccountStatus(account);
+    
+    // 디버깅: 계정 상태 확인
+    console.log("🔍 계정 상태:", {
+      status,
+      userType: account.userType,
+      snsType: account.snsType,
+      isBanned: account.isBanned,
+    });
 
     // 🚫 정지/탈퇴된 계정일 때 (인라인 에러 메시지 표시)
     if (status === "blocked") {
@@ -216,8 +236,10 @@ export function useFindAccount(): UseFindAccountReturn {
     if (status === "sns_only") {
       // SNS로만 가입된 계정인 경우, 소셜 타입을 설정하고 모달 표시
       // (/user/find-account 페이지에서만 실제로 모달이 표시됨)
+      console.log("🔐 SNS 계정 감지:", account.snsType);
       setSocialType(account.snsType || "kakao");
       setIsPhoneAccountModalOpen(true);
+      console.log("✅ SNS 모달 열기:", account.snsType);
       return false; // SNS 계정은 비밀번호 찾기 불가
     }
 
@@ -293,7 +315,32 @@ export function useFindAccount(): UseFindAccountReturn {
 
     // 🧪 테스트용 코드 - 실제 API 연결 시 전체 삭제 필요
     // 통합 계정 데이터에서 전화번호로 계정 찾기
-    const foundAccount = findAccountByPhone(phone);
+    const normalized_input_phone = normalizePhone(phone);
+    const normalized_whitelist = (options.snsOnlyPhoneWhitelist || []).map(
+      normalizePhone
+    );
+
+    const is_phone_whitelisted =
+      normalized_whitelist.length === 0 ||
+      normalized_whitelist.includes(normalized_input_phone);
+
+    const foundAccount = is_phone_whitelisted
+      ? findAccountByPhoneWithTypes(phone, options.allowedAccountTypes)
+      : undefined;
+    
+    // 디버깅: 계정 조회 결과 확인
+    console.log("🔍 계정 조회 결과:", {
+      phone,
+      allowedAccountTypes: options.allowedAccountTypes,
+      snsOnlyPhoneWhitelist: options.snsOnlyPhoneWhitelist,
+      isPhoneWhitelisted: is_phone_whitelisted,
+      foundAccount: foundAccount ? {
+        userType: foundAccount.userType,
+        snsType: foundAccount.snsType,
+        email: foundAccount.email,
+        isBanned: foundAccount.isBanned,
+      } : null,
+    });
 
     // 에러 초기화
     setAccountNotFoundError(undefined);

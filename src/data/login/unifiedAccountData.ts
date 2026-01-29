@@ -36,6 +36,22 @@ export type AccountType = "admin_sa" | "admin_ga" | "user" | "partner";
 export type SNSType = "kakao" | "naver";
 
 /**
+ * 전화번호 정규화 (하이픈 제거)
+ */
+const normalize_phone = (phone: string) => phone.replace(/-/g, "");
+
+/**
+ * 계정 타입별 우선순위 (같은 전화번호가 여러 계정 타입에 있을 경우)
+ * partner > admin_ga > admin_sa > user
+ */
+const account_type_priority: Record<AccountType, number> = {
+  partner: 4,
+  admin_ga: 3,
+  admin_sa: 2,
+  user: 1,
+};
+
+/**
  * 통합 계정 데이터 인터페이스
  */
 export interface UnifiedAccount {
@@ -111,7 +127,10 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
   },
   // 관리자 SA - 차단 계정
   {
+    id: "manager_sa_blocked_001",
     userType: "admin_sa",
+    role: "manager_sa",
+    name: "차단관리자(SA)",
     email: "blocked_sa@test.com",
     password: "cjdaud1!",
     phone: "010-7776-7776",
@@ -122,7 +141,10 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
   },
   // 관리자 SA - 정지/탈퇴 계정
   {
+    id: "manager_sa_banned_001",
     userType: "admin_sa",
+    role: "manager_sa",
+    name: "정지관리자(SA)",
     email: "banned_sa@test.com",
     password: "cjdaud1!",
     phone: "010-7775-7775",
@@ -150,7 +172,10 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
   },
   // 관리자 GA - 차단 계정
   {
+    id: "manager_ga_blocked_001",
     userType: "admin_ga",
+    role: "manager_ga",
+    name: "차단관리자(GA)",
     email: "blocked_ga@test.com",
     password: "cjdaud1!",
     phone: "010-6665-6665",
@@ -161,7 +186,10 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
   },
   // 관리자 GA - 정지/탈퇴 계정
   {
+    id: "manager_ga_banned_001",
     userType: "admin_ga",
+    role: "manager_ga",
+    name: "정지관리자(GA)",
     email: "banned_ga@test.com",
     password: "cjdaud1!",
     phone: "010-6664-6664",
@@ -191,7 +219,10 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
     redirectUrl: "/partner/campaign_management",
   },
   {
+    id: "partner_test_002",
     userType: "partner",
+    role: "partner",
+    name: "테스트파트너2",
     email: "test@cmcm.co.kr",
     password: "cjdaud1!",
     phone: "010-5554-5554",
@@ -202,7 +233,10 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
   },
   // 파트너 - 차단 계정
   {
+    id: "partner_blocked_001",
     userType: "partner",
+    role: "partner",
+    name: "차단파트너1",
     email: "blocked@test.com",
     password: "cjdaud1!",
     phone: "010-5553-5553",
@@ -212,7 +246,10 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
     redirectUrl: "/partner/campaign_management",
   },
   {
+    id: "partner_blocked_002",
     userType: "partner",
+    role: "partner",
+    name: "차단파트너2",
     email: "blocked_partner@test.com",
     password: "cjdaud1!",
     phone: "010-5552-5552",
@@ -223,7 +260,10 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
   },
   // 파트너 - 정지/탈퇴 계정
   {
+    id: "partner_banned_001",
     userType: "partner",
+    role: "partner",
+    name: "정지파트너1",
     email: "banned@test.com",
     password: "cjdaud1!",
     phone: "010-5551-5551",
@@ -233,7 +273,10 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
     redirectUrl: "/partner/campaign_management",
   },
   {
+    id: "partner_banned_002",
     userType: "partner",
+    role: "partner",
+    name: "정지파트너2",
     email: "deleted@test.com",
     password: "cjdaud1!",
     phone: "010-5550-5550",
@@ -243,7 +286,10 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
     redirectUrl: "/partner/campaign_management",
   },
   {
+    id: "partner_banned_003",
     userType: "partner",
+    role: "partner",
+    name: "정지파트너3",
     email: "fail@test.com",
     password: "cjdaud1!",
     phone: "010-5549-5549",
@@ -286,7 +332,10 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
   },
   // 유저 - 일반 계정 (아이디 찾기 결과 모달 표시용)
   {
+    id: "user_normal_001",
     userType: "user",
+    role: "user",
+    name: "일반유저1",
     email: "test@example.com", // 아이디 찾기 결과 모달에 표시될 이메일
     phone: "010-1234-5678", // NORMAL
     signupDate: "2024. 12. 15",
@@ -296,7 +345,10 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
   },
   // 유저 - 추가 테스트 계정들 (아이디 찾기 결과 모달 표시용)
   {
+    id: "user_normal_002",
     userType: "user",
+    role: "user",
+    name: "일반유저2",
     email: "user1@gmail.com",
     phone: "010-2222-2222",
     signupDate: "2024. 03. 20",
@@ -305,7 +357,10 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
     redirectUrl: "/user/campaign_management",
   },
   {
+    id: "user_normal_003",
     userType: "user",
+    role: "user",
+    name: "일반유저3",
     email: "user2@naver.com",
     phone: "010-3333-3333",
     signupDate: "2024. 07. 10",
@@ -314,7 +369,10 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
     redirectUrl: "/user/campaign_management",
   },
   {
+    id: "user_normal_004",
     userType: "user",
+    role: "user",
+    name: "일반유저4",
     email: "user3@daum.net",
     phone: "010-4444-4444",
     signupDate: "2024. 09. 05",
@@ -324,7 +382,10 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
   },
   // 유저 - 정지/탈퇴 계정 (네이버)
   {
+    id: "user_banned_001",
     userType: "user",
+    role: "user",
+    name: "정지유저1",
     email: "",
     phone: "010-9999-9999", // DUPLICATE
     signupDate: "2024. 01. 01",
@@ -335,7 +396,10 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
   },
   // 유저 - 정지/탈퇴 계정 (카카오)
   {
+    id: "user_banned_002",
     userType: "user",
+    role: "user",
+    name: "정지유저2",
     email: "",
     phone: "010-8888-8888", // BLOCKED
     signupDate: "2024. 01. 05",
@@ -346,7 +410,10 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
   },
   // 유저 - 이용 제한 계정 (네이버) - 로그인은 되지만 제한 화면 표시
   {
+    id: "user_blocked_001",
     userType: "user",
+    role: "user",
+    name: "이용제한유저1",
     email: "",
     phone: "010-7777-7777",
     signupDate: "2024. 01. 10",
@@ -357,7 +424,10 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
   },
   // 유저 - 이용 제한 계정 (카카오) - 로그인은 되지만 제한 화면 표시
   {
+    id: "user_blocked_002",
     userType: "user",
+    role: "user",
+    name: "이용제한유저2",
     email: "",
     phone: "010-6666-6666",
     signupDate: "2024. 01. 15",
@@ -372,10 +442,42 @@ const UNIFIED_ACCOUNTS_DATA: UnifiedAccount[] = [
  * 전화번호로 계정 찾기 (아이디/비밀번호 찾기용)
  */
 export function findAccountByPhone(phone: string): UnifiedAccount | undefined {
-  const normalizedPhone = phone.replace(/-/g, "");
-  return UNIFIED_ACCOUNTS_DATA.find(
-    (account) => account.phone.replace(/-/g, "") === normalizedPhone
-  );
+  return findAccountByPhoneWithTypes(phone);
+}
+
+/**
+ * 전화번호로 계정 찾기 (아이디/비밀번호 찾기용) - 타입 필터 지원
+ *
+ * @param phone - 하이픈 포함 가능
+ * @param allowedTypes - 허용 계정 타입(들). 미지정 시 전체에서 조회
+ */
+export function findAccountByPhoneWithTypes(
+  phone: string,
+  allowedTypes?: AccountType | AccountType[]
+): UnifiedAccount | undefined {
+  const normalized_phone = normalize_phone(phone);
+  const allowed_types = allowedTypes
+    ? Array.isArray(allowedTypes)
+      ? allowedTypes
+      : [allowedTypes]
+    : undefined;
+
+  const matched_accounts = UNIFIED_ACCOUNTS_DATA.filter((account) => {
+    const is_phone_match = normalize_phone(account.phone) === normalized_phone;
+    const is_type_allowed = allowed_types
+      ? allowed_types.includes(account.userType)
+      : true;
+    return is_phone_match && is_type_allowed;
+  });
+
+  if (matched_accounts.length === 0) return undefined;
+  if (!allowed_types || allowed_types.length <= 1) return matched_accounts[0];
+
+  return matched_accounts.reduce((best, current) => {
+    const best_priority = account_type_priority[best.userType] ?? 0;
+    const current_priority = account_type_priority[current.userType] ?? 0;
+    return current_priority > best_priority ? current : best;
+  });
 }
 
 /**

@@ -90,7 +90,7 @@
   transform: translateX(-50%);
   padding: 8px 12px;
   background-color: #ffffff;
-  border: 1px solid #ff2626;
+  border: 1px solid #FF5694;
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -111,18 +111,20 @@
   transform: translateX(-50%);
   border-width: 6px 4px 0 4px;
   border-style: solid;
-  border-color: #ff2626 transparent transparent transparent;
+  border-color: #FF5694 transparent transparent transparent;
+  z-index: 1;
 }
 
 .recent_login_badge_top::after {
   content: "";
   position: absolute;
-  bottom: -5px;
+  bottom: -4px;
   left: 50%;
   transform: translateX(-50%);
-  border-width: 5px 3px 0 3px;
+  border-width: 5px 4px 0 4px;
   border-style: solid;
   border-color: #ffffff transparent transparent transparent;
+  z-index: 2;
 }
 
 /* 카카오 버튼 아래에 붙는 배지 (아래쪽) */
@@ -138,23 +140,25 @@
   transform: translateX(-50%);
   border-width: 0 4px 6px 4px;
   border-style: solid;
-  border-color: transparent transparent #ff2626 transparent;
+  border-color: transparent transparent #FF5694 transparent;
+  z-index: 1;
 }
 
 .recent_login_badge_bottom::after {
   content: "";
   position: absolute;
-  top: -5px;
+  top: -4px;
   left: 50%;
   transform: translateX(-50%);
-  border-width: 0 3px 5px 3px;
+  border-width: 0 4px 5px 4px;
   border-style: solid;
   border-color: transparent transparent #ffffff transparent;
+  z-index: 2;
 }
 
 /* 배지 텍스트 */
 .badge_text {
-  color: #ff2626;
+  color: #FF5694;
   text-align: center;
   font-size: 16px;
   font-weight: 500;
@@ -241,11 +245,9 @@
 .partner_login_link {
   color: #444;
   text-align: center;
-  font-family: Pretendard;
   font-size: 16px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 18px; /* 112.5% */
+  font-weight: 600;
+  line-height: 18px; 
   letter-spacing: -0.32px;
 }
 
@@ -255,23 +257,95 @@
 
 /* 모바일 (0~739px) */
 @media (max-width: 739px) {
+  /* 페이지 컨테이너 */
+  .login_page_container {
+    padding: 0 20px;
+  }
+
+  /* 메인 영역 - 중앙 정렬 */
   .login_main {
-    min-height: calc(100vh - 80px);
+    min-height: calc(100vh - 64px);
     padding-bottom: 100px;
+    padding-top: 64px;
+    justify-content: center;
   }
 
+  /* 로그인 메시지 섹션 */
+  .login_message_section {
+    width: 100%;
+  }
+
+  /* 로그인 타이틀 */
   .login_title {
-    font-size: 24px;
-    line-height: 32px;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 32px; /* 145.45% */
+    letter-spacing: -0.44px;
+    text-align: center;
   }
 
+  /* 소셜 로그인 섹션 */
+  .social_login_section {
+    width: 100%;
+    padding-top: 48px;
+    gap: 12px;
+  }
+
+  /* 버튼 래퍼 */
   .login_button_wrapper {
-    width: 90%;
-    max-width: 400px;
+    width: 100%;
+    max-width: 100%;
   }
 
+  /* 로그인 버튼 */
   .login_button {
-    height: 52px;
+    height: 56px;
     font-size: 16px;
+    font-weight: 600;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+    border-radius: 8px;
+  }
+
+  /* 최근 로그인 배지 (위쪽) */
+  .recent_login_badge_top {
+    top: -26px;
+  }
+
+  /* 최근 로그인 배지 (아래쪽) */
+  .recent_login_badge_bottom {
+    bottom: -29px;
+  }
+
+  /* 배지 텍스트 */
+  .badge_text {
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 하단 링크 섹션 */
+  .login_links_section {
+    padding-top: 32px;
+    gap: 20px;
+  }
+
+  /* 로그인 링크 */
+  .login_link {
+    font-size: 13px;
+    line-height: 13px;
+    letter-spacing: -0.26px;
+  }
+
+  /* 파트너 로그인 섹션 */
+  .partner_login_section {
+    bottom: 32px;
+  }
+
+  /* 파트너 로그인 링크 */
+  .partner_login_link {
+    font-size: 14px;
+    line-height: 16px;
+    letter-spacing: -0.28px;
   }
 }

@@ -108,3 +108,13 @@
   height: 2px;
   background: #ff5694;
 }
+
+@media (max-width: 768px) {
+  .top_tab_container {
+    top: 64px;
+  }
+
+  .sub_tab_container {
+    top: 108px;
+  }
+}

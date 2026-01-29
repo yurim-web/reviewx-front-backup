@@ -52,6 +52,9 @@ export default function ProfilePage() {
   const [userNickname, setUserNickname] = useState("리뷰어");
   const [profileImage, setProfileImage] = useState<string | undefined>(undefined);
 
+  // 회원 유형 상태 (리뷰어/광고주)
+  const [memberType, setMemberType] = useState<"reviewer" | "partner">("reviewer");
+
   // 컴포넌트 마운트 시 localStorage에서 유저 정보 로드
   useEffect(() => {
     if (typeof window !== 'undefined' && user) {
@@ -133,16 +136,21 @@ export default function ProfilePage() {
     }
   };
 
-  /**
-   * 로그아웃 핸들러
-   *
-   * 로그아웃 버튼 클릭 시 실행되는 함수입니다.
-   * 확인 창을 띄운 후 localStorage에서 사용자 정보를 삭제하고 로그인 페이지로 이동합니다.
-   */
   const handleLogout = () => {
-    if (confirm('로그아웃 하시겠습니까?')) {
-      logout();
-      router.push('/user/login');
+    // 실제 로그아웃 처리만 수행하고, 페이지 이동은 ProfileContent의 모달 확인 버튼에서 처리
+    logout();
+  };
+
+  /**
+   * 회원 유형 변경 핸들러
+   * 리뷰어 ↔ 광고주 간 전환
+   */
+  const handleMemberTypeChange = (type: "reviewer" | "partner") => {
+    setMemberType(type);
+
+    // 광고주로 전환 시 파트너 마이페이지로 이동
+    if (type === "partner") {
+      router.push("/partner/mypage");
     }
   };
 
@@ -178,6 +186,9 @@ export default function ProfilePage() {
           editPath="/user/mypage/edit"
           onLogout={handleLogout}
           profileImage={profileImage}
+          showMemberTypeToggle={true}
+          activeMemberType={memberType}
+          onMemberTypeChange={handleMemberTypeChange}
         />
       </main>
     </div>

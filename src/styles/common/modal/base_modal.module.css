@@ -77,6 +77,17 @@
   margin-top: auto;
 }
 
+/* 버튼 세로 배치 */
+.modal_footer_column {
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal_footer_column > *:not(:only-child) {
+  flex: none;
+  width: 100%;
+}
+
 /* 버튼이 하나일 때 스타일 */
 .modal_footer > *:only-child {
   width: 100%;

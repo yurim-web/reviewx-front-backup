@@ -18,6 +18,7 @@
 
 "use client";
 
+import { useRouter } from "next/navigation";
 import styles from "@/styles/common/page_title.module.css";
 
 interface PageTitleProps {
@@ -26,9 +27,27 @@ interface PageTitleProps {
 }
 
 export default function PageTitle({ title, className }: PageTitleProps) {
+  const router = useRouter();
   const combinedClassName = className
     ? `${styles.page_title} ${className}`.trim()
     : styles.page_title;
 
-  return <h1 className={combinedClassName}>{title}</h1>;
+  return (
+    <div className={styles.page_title_wrapper}>
+      <button
+        type="button"
+        className={styles.mobile_back_button}
+        onClick={() => router.back()}
+        aria-label="뒤로가기"
+      >
+        <img
+          src="/images/header/mobile/mo_back_btn.svg"
+          alt="뒤로가기"
+          width={16}
+          height={16}
+        />
+      </button>
+      <h1 className={combinedClassName}>{title}</h1>
+    </div>
+  );
 }

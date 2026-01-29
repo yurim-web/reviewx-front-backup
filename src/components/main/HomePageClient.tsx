@@ -650,8 +650,21 @@ export default function HomePageClient() {
     // 개발 환경에서만 동작
     if (process.env.NODE_ENV !== 'development') return;
 
-    // /user 경로이면 리뷰어 계정으로 설정
-    if (pathname?.startsWith('/user')) {
+    // 📌 자동 로그인은 메인 홈(/user, /partner)에서만 동작하도록 제한
+    //    로그인 페이지(/user/login), 마이페이지 등에서는 실행하지 않습니다.
+    // 📌 로그아웃된 상태(토큰이 없는 상태)에서는 자동 로그인을 하지 않습니다.
+
+    // 현재 로그인 상태 확인 (토큰이 없으면 로그아웃된 상태)
+    const currentToken = localStorage.getItem('reviewx_auth_token');
+    const currentUser = localStorage.getItem('reviewx_auth_user');
+
+    // /user 메인 홈 경로일 때만 리뷰어 계정으로 설정
+    if (pathname === '/user') {
+      // 로그아웃된 상태(토큰이 없음)에서는 자동 로그인 하지 않음
+      if (!currentToken && !currentUser) {
+        return;
+      }
+
       let reviewerAuth = localStorage.getItem('reviewx_auth_user_reviewer');
 
       // 리뷰어 로그인 정보가 없으면 생성
@@ -671,8 +684,13 @@ export default function HomePageClient() {
       localStorage.setItem('reviewx_auth_token', 'test_token_reviewer');
     }
 
-    // /partner 경로이면 파트너 계정으로 설정
-    if (pathname?.startsWith('/partner')) {
+    // /partner 메인 홈 경로일 때만 파트너 계정으로 설정
+    if (pathname === '/partner') {
+      // 로그아웃된 상태(토큰이 없음)에서는 자동 로그인 하지 않음
+      if (!currentToken && !currentUser) {
+        return;
+      }
+
       let partnerAuth = localStorage.getItem('reviewx_auth_user_partner');
 
       // 파트너 로그인 정보가 없으면 생성

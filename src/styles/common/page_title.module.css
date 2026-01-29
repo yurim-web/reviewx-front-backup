@@ -15,6 +15,22 @@
  * - SubHeader를 사용하는 모든 페이지
  */
 
+/* 페이지 제목 래퍼 */
+.page_title_wrapper {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: sticky;
+  top: 80px;
+  background: white;
+  z-index: 10;
+  padding: 24px 40px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
 /* 페이지 제목 스타일 */
 .page_title {
   font-size: 20px;
@@ -22,21 +38,52 @@
   line-height: 20px;
   letter-spacing: -0.4px;
   color: #444;
-  padding: 24px 40px;
   margin: 0;
-  position: sticky;
-  top: 80px;
-  background: white;
-  z-index: 10;
-  border-bottom: 1px solid #e0e0e0;
+  flex: 1;
 }
 
-/* 반응형 스타일 */
+/* 모바일 뒤로가기 버튼 - PC에서 숨김 */
+.mobile_back_button {
+  display: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+}
 
-/* ✅ 모바일 공통 — 0~739px */
-@media (max-width: 739px) {
+/* 📱 ================================================================================================
+
+모바일 반응형 스타일 (max-width: 768px)
+
+================================================================================================ 📱 */
+
+@media (max-width: 768px) {
+  .page_title_wrapper {
+    padding: 22px 24px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    background: white;
+    z-index: 1000;
+  }
+
   .page_title {
-    font-size: 18px;
-    padding: 20px 24px;
+    font-size: 20px;
+    line-height: 20px;
+    letter-spacing: -0.4px;
+    position: relative;
+    top: 0;
+  }
+
+  .mobile_back_button {
+    display: flex;
   }
 }

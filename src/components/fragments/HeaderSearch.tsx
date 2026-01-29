@@ -29,12 +29,17 @@ interface HeaderSearchProps {
    * @default "검색"
    */
   placeholder?: string;
+  /**
+   * 검색 아이콘 경로 (모바일/PC 구분)
+   */
+  searchIconSrc?: string;
 }
 
 export default function HeaderSearch({
   on_submit_search,
   search_path = "/search",
   placeholder = "검색",
+  searchIconSrc = "/images/header/header_search.svg",
 }: HeaderSearchProps): ReactElement {
   const router = useRouter();
 
@@ -128,7 +133,7 @@ export default function HeaderSearch({
           onClick={handle_click_search_toggle}
           aria-label="검색 열기"
         >
-          <img src="/images/header/header_search.svg" alt="검색" />
+          <img src={searchIconSrc} alt="검색" suppressHydrationWarning />
         </button>
       )}
     </>

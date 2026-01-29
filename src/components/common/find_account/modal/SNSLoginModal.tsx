@@ -84,9 +84,15 @@ export default function SNSLoginModal({
         <div className={styles.sns_modal_content}>
           {/* 모달 안내 메시지 */}
           <p className={styles.sns_modal_message}>
-            입력하신 휴대폰 번호로 가입된 계정이 있습니다.
-            <br />
-            아래 안내된 버튼을 통해 로그인해 주세요.
+            <span className={styles.sns_modal_message_line1}>
+              입력하신 휴대폰 번호로
+            </span>
+            <span className={styles.sns_modal_message_line2}>
+              가입된 계정이 있습니다.
+            </span>
+            <span className={styles.sns_modal_message_line3}>
+              아래 안내된 버튼을 통해 로그인해 주세요.
+            </span>
           </p>
 
           {/* 버튼 그룹 */}

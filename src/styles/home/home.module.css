@@ -57,7 +57,7 @@
 
 .container {
   width: 100%;
-  padding: 40px 40px 80px 40px;
+  padding: 32px 40px 80px 40px;
   background-color: #ffffff;
   min-height: calc(100vh - 149px);
 }
@@ -108,7 +108,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 40px;
+  padding: 0px;
   text-align: center;
   width: 100%;
   max-width: 1000px;
@@ -116,11 +116,12 @@
 }
 
 .empty_text {
+  color: #ABABAB;
+  text-align: center;
   font-size: 16px;
-  color: #848484;
-  margin: 0;
   font-weight: 500;
-  line-height: 24px;
+  line-height: 16px; 
+  letter-spacing: -0.32px;
 }
 
 /* 캠페인 컨테이너 끝 */
@@ -132,15 +133,15 @@
 @media (max-width: 768px) {
   /* 메인 메뉴 컨테이너 - 모바일 */
   .main_menu_container {
-    top: 60px;
-    padding: 20px 20px;
-    justify-content: space-between;
-    gap: 16px;
+    top: 64px;
+    padding: 16px 20px;
+ justify-content: space-between;
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    gap: 18px;
   }
 
   /* 스크롤바 숨기기 */
@@ -151,21 +152,19 @@
   /* 메인 메뉴 아이템 - 모바일 폰트 크기 조정 */
   .main_menu_item {
     font-size: 18px;
-    line-height: 18px;
+    line-height: 18px; 
     letter-spacing: -0.36px;
-    white-space: nowrap;
-    flex-shrink: 0;
   }
 
-  /* 헤더와 메뉴 공간 확보 - 모바일 */
+  /* 헤더 공간 확보 - 모바일 */
   .header_spacer {
-    height: 122px;
+    height: 120px;
   }
 
   /* 컨테이너 - 모바일 패딩 조정 */
   .container {
     padding: 20px 20px 60px 20px;
-    min-height: calc(100vh - 122px);
+    min-height: calc(100vh - 120px);
   }
 
   /* 메인 배너 컨테이너 - 모바일 */
@@ -183,7 +182,7 @@
   /* 캠페인 그리드 - 모바일 2열로 변경 */
   .campaign_grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 6px;
+    gap: 28px 12px;
   }
 
   /* 검색 결과 없음 상태 - 모바일 패딩 조정 */

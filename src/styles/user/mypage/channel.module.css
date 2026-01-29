@@ -141,3 +141,23 @@
   justify-content: center;
   align-self: center; /* 채널 아이템 내에서 세로 가운데 정렬 */
 }
+
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  /* 채널 연결 섹션 */
+  .channel_section {
+    padding: 20px;
+  }
+
+  /* 채널 플랫폼 아이템 */
+  .platform_item {
+    padding: 16px 0;
+  }
+
+  /* 채널 아이템 */
+  .channel_item {
+    padding: 16px;
+  }
+}

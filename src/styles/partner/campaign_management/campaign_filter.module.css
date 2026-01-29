@@ -279,7 +279,7 @@
   gap: 8px;
 
   /* 글자 스타일 */
-  color: #848484;
+  color: #444444;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
@@ -302,12 +302,6 @@
   transition: all 0.2s ease;
 }
 
-/**
- * 제거 버튼 호버 효과
- */
-.remove_tag:hover {
-  opacity: 0.7;
-}
 
 /**
  * X 아이콘 스타일
@@ -318,23 +312,82 @@
 }
 
 /* ========================================
-   반응형 디자인 (선택사항)
+   📱 모바일 반응형 스타일 (max-width: 768px)
    ======================================== */
-
-/**
- * 모바일 화면에서의 스타일 조정
- */
 @media (max-width: 768px) {
+  /* 필터 컨테이너 */
   .filter_container {
+    padding: 20px 20px;
+    gap: 16px;
+  }
+
+  /* 필터 버튼 컨테이너 */
+  .filter_buttons_container {
     flex-direction: column;
     align-items: stretch;
+    gap: 16px;
   }
 
+  /* 필터 버튼 그룹 */
+  .filter_buttons {
+    gap: 12px;
+    flex-wrap: nowrap;
+  }
+
+  /* 필터 버튼 */
+  .filter_button {
+    padding: 12px;
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  /* 필터 아이콘 - 체크박스 */
+  .filter_icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* 필터 라벨 */
+  .filter_label {
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  /* 검색 및 정렬 컨테이너 */
   .search_sort_container {
     margin-left: 0;
+    width: 100%;
+    display: none; /* 모바일에서는 검색/정렬을 숨김 */
   }
 
-  .search_container {
-    width: 100%;
+  /* 정렬 버튼만 별도로 표시 */
+  .sort_button {
+    padding: 12px;
+    min-width: 89px;
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  /* 정렬 라벨 */
+  .sort_label {
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  /* 활성 필터 태그 */
+  .active_filters {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  /* 필터 태그 */
+  .filter_tag {
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
   }
 }

@@ -168,10 +168,13 @@ export default function CampaignCardBase({
           {/* 캠페인 제목 */}
           <h3 className={cardStyles.campaign_title}>{campaign.title}</h3>
 
-          {/* 캠페인 상태 설명 */}
-          <p className={cardStyles.campaign_status}>{statusText}</p>
+          {/* 캠페인 상태 설명 - PC에서만 표시 */}
+          <p className={cardStyles.campaign_status_pc}>{statusText}</p>
         </div>
       </Link>
+
+      {/* 캠페인 상태 설명 - 모바일에서만 표시 (이미지+정보 아래에 분리) */}
+      <p className={cardStyles.campaign_status_mobile}>{statusText}</p>
 
       {/* 액션 버튼 영역 - children으로 받아서 각 탭별로 다른 버튼 표시 */}
       {/* 

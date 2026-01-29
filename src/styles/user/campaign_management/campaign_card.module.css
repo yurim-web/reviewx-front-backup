@@ -42,6 +42,8 @@
   position: relative;
 }
 
+/* PC에서 campaign_status는 campaign_info 안에 위치 */
+
 /* 캠페인 카드 내부 콘텐츠 (이미지 + 정보) */
 .campaign_content {
   display: flex;
@@ -65,6 +67,7 @@
 
 /* 캠페인 이미지 스타일 */
 .campaign_image img {
+  border-radius: 4px;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -106,6 +109,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  box-shadow: 0 0 4px 0 rgba(68, 68, 68, 0.10);
 }
 
 /* 캠페인 타입 컨테이너 (배송형, 방문형, 구매평, 기자단, 미션형) */
@@ -125,8 +129,8 @@
 
 /* 상태 태그 (마감임박, 일반 등) */
 .cam_tag {
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 6px 8px;
+  border-radius: 8px;
 
   display: flex;
   align-items: center;
@@ -140,24 +144,13 @@
   letter-spacing: -0.32px;
 }
 
-/* 마감임박 태그 (빨간색) */
-.cam_tag.urgent {
-  background-color: #ff6b6b;
-}
-
-/* 일반 태그 (회색) */
-.cam_tag.normal {
-  background-color: #848484;
-}
-
-/* 마감임박 태그 (빨간색) - 보조 클래스 */
-.urgent {
-  background-color: #ff6b6b;
-}
-
-/* 일반 태그 (회색) - 보조 클래스 */
+/* 캠페인 상태 태그 - 공통 스타일 (피그마 기준) */
+.cam_tag.urgent,
+.cam_tag.normal,
+.urgent,
 .normal {
-  background-color: #848484;
+  background-color: #ff5694;
+  color: #ffffff;
 }
 
 /* 캠페인 제목 */
@@ -171,8 +164,8 @@
   padding-bottom: 4px;
 }
 
-/* 캠페인 상태 텍스트 */
-.campaign_status {
+/* 캠페인 상태 텍스트 - PC용 (campaign_info 안에 위치) */
+.campaign_status_pc {
   color: #848484;
   font-size: 14px;
   font-weight: 500;
@@ -180,6 +173,16 @@
   letter-spacing: -0.28px;
 
   padding-bottom: 8px;
+}
+
+/* 캠페인 상태 텍스트 - 모바일용 (campaign_info 밖에 위치) */
+.campaign_status_mobile {
+  display: none; /* PC에서는 숨김 */
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
 }
 
 /* 캠페인 카드 래퍼 (배지 위치 지정용) */
@@ -193,14 +196,134 @@
   top: 20px;
   right: 20px;
   z-index: 10;
-  
+
   padding: 4px 8px;
   border-radius: 4px;
   background-color: rgba(255, 86, 148, 0.10);
   color: #FF5694;
-  
+
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
+}
+
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  /* 캠페인 목록 영역 */
+  .campaign_list {
+    padding: 20px 20px 80px 20px;
+    gap: 20px;
+  }
+
+  /* 개별 캠페인 카드 */
+  .campaign_card {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 12px;
+  }
+
+  /* 캠페인 카드 내부 콘텐츠 - 상단 영역만 (이미지 + 정보) */
+  .campaign_content {
+    gap: 12px;
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  /* 캠페인 이미지 영역 */
+  .campaign_image {
+    width: 80px;
+    height: 80px;
+  }
+
+  /* 캠페인 정보 영역 - 이미지 옆에 위치 */
+  .campaign_info {
+    flex: 1;
+    gap: 8px;
+  }
+
+  /* 캠페인 헤더 - 카테고리와 태그 */
+  .campaign_header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  /* 카테고리 아이콘과 텍스트 그룹 */
+  .cam_cate_icon {
+    gap: 8px;
+  }
+
+  /* 스토어 아이콘 */
+  .cam_icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* 카테고리 텍스트 */
+  .cam_type span {
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  /* 상태 태그 */
+  .cam_tag {
+    padding: 6px 8px;
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+    border-radius: 8px;
+  }
+
+  /* 캠페인 제목 */
+  .campaign_title {
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: -0.32px;
+    padding-bottom: 0;
+  }
+
+  /* PC용 상태 텍스트 숨김 */
+  .campaign_status_pc {
+    display: none;
+  }
+
+  /* 모바일용 상태 텍스트 표시 - 카드 전체 너비로 아래에 표시 */
+  .campaign_status_mobile {
+    display: block;
+    width: 100%;
+    font-size: 14px;
+    line-height: 22px;
+    letter-spacing: -0.28px;
+    padding-bottom: 0;
+    padding-top: 0;
+    order: 2; /* 두 번째 위치 (이미지+정보 다음) */
+  }
+
+  /* 버튼 영역 - 카드 맨 아래에 표시 */
+  .campaign_card > div:last-child {
+    order: 3; /* 세 번째 위치 (맨 아래) */
+  }
+
+  /* campaign_content는 첫 번째 위치 */
+  .campaign_content {
+    order: 1;
+  }
+
+  /* 우측 상단 시간 배지 */
+  .time_badge {
+    top: 20px;
+    right: 20px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+    font-weight: 600;
+  }
 }

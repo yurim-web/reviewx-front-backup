@@ -143,7 +143,6 @@ export default function StatisticsTab({
           onClick={() => handleStatTabClick("패널티")} // 패널티 전용 페이지로 이동
         >
           <span>패널티</span>
-          {/* <span className={styles.stat_number}>{stats.패널티}</span> */}
         </button>
       </div>
     </div>

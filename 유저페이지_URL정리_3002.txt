@@ -1,0 +1,138 @@
+====================================
+ReviewX - 유저(User) 페이지 URL 정리
+====================================
+작성일: 2026-01-28
+
+※ 로컬 개발 환경 기준: http://localhost:3002
+
+
+[메인 페이지]
+------------------------------------
+1. 유저 메인 홈
+   http://localhost:3002/user
+
+
+[캠페인 관련]
+------------------------------------
+2. 배송형 캠페인 목록
+   http://localhost:3002/campaign/delivery
+
+3. 미션형 캠페인 목록
+   http://localhost:3002/campaign/mission
+
+4. 기자단 캠페인 목록
+   http://localhost:3002/campaign/reporter
+
+5. 리뷰형 캠페인 목록
+   http://localhost:3002/campaign/review
+
+6. 방문형 캠페인 목록
+   http://localhost:3002/campaign/visit
+
+
+[캠페인 관리]
+------------------------------------
+7. 캠페인 관리 메인
+   http://localhost:3002/user/campaign_management
+
+8. 캠페인 관리 - 선정된 캠페인
+   http://localhost:3002/user/campaign_management/selected
+
+9. 캠페인 관리 - 완료된 캠페인
+   http://localhost:3002/user/campaign_management/completed
+
+10. 캠페인 관리 - 페널티
+    http://localhost:3002/user/campaign_management/penalty
+
+
+[마이페이지]
+------------------------------------
+11. 마이페이지
+    http://localhost:3002/user/mypage
+
+
+[포인트]
+------------------------------------
+12. 포인트 메인
+    http://localhost:3002/user/point
+
+13. 포인트 - 전체 내역
+    http://localhost:3002/user/point/all
+
+14. 포인트 - 적립 내역
+    http://localhost:3002/user/point/earned
+
+
+[고객지원]
+------------------------------------
+15. FAQ 목록
+    http://localhost:3002/user/faq
+
+16. FAQ 상세 (예시: ID가 1인 경우)
+    http://localhost:3002/user/faq/1
+
+17. 공지사항 목록
+    http://localhost:3002/user/notice
+
+18. 공지사항 상세 (예시: ID가 1인 경우)
+    http://localhost:3002/user/notice/1
+
+
+[회원 관련]
+------------------------------------
+19. 회원가입
+    http://localhost:3002/user/signup
+
+20. 회원가입 완료
+    http://localhost:3002/user/signup/complete
+
+21. 계정 찾기
+    http://localhost:3002/user/find-account
+
+
+[공통 페이지]
+------------------------------------
+22. 알림
+    http://localhost:3002/notification
+
+23. 검색
+    http://localhost:3002/search
+
+24. 비밀번호 재설정
+    http://localhost:3002/reset-password
+
+25. FAQ (공통)
+    http://localhost:3002/faq
+
+26. 계정 찾기 (공통)
+    http://localhost:3002/find-account
+
+27. 블랙리스트 정보
+    http://localhost:3002/blacklist_info
+
+28. 일시정지 정보
+    http://localhost:3002/pause_info
+
+29. 계정 차단 안내
+    http://localhost:3002/blocked
+
+30. 계정 차단 상세
+    http://localhost:3002/blocked/account
+
+
+====================================
+참고사항
+====================================
+- URL 사용 방법:
+  → 크롬 주소창에 URL을 복사해서 붙여넣고 엔터를 치면 해당 페이지로 바로 이동합니다.
+  → Confluence 등에서 URL을 클릭하면 해당 페이지가 열립니다.
+
+- 동적 라우트의 경우 [id] 부분에 실제 ID 값을 넣어서 접근합니다.
+  예: /user/faq/1, /user/faq/2, /user/notice/123 등
+  → FAQ 상세 페이지를 보려면: http://localhost:3002/user/faq/1 (숫자 1을 원하는 ID로 변경)
+  → 공지사항 상세 페이지를 보려면: http://localhost:3002/user/notice/5 (숫자 5를 원하는 ID로 변경)
+
+- 로컬 개발 환경에서는 http://localhost:3002 를 사용합니다.
+
+
+====================================

@@ -69,3 +69,19 @@
   max-width: 1000px;
   margin: 0 auto;
 }
+
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  /* 마이페이지 메인 컨테이너 */
+  .mypage_container {
+    padding-top: 64px; /* 64px(Header) + 59px(상태바) */
+  }
+
+  /* 메인 컨텐츠 컨테이너 */
+  .main_content {
+    max-width: 100%;
+    width: 100%;
+  }
+}

@@ -63,10 +63,10 @@ export const visitCampaigns: VisitCampaignData[] = [
     registeredAt: "2026-01-10T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 모집 진행 중
-      applicationStart: "2026-01-25",
-      applicationEnd: "2026-02-08",
-      announcement: "2026-02-10",
-      purchasePeriod: "2026-02-10 ~ 2026-02-17",
+      applicationStart: "2026-01-20",
+      applicationEnd: "2026-02-05",
+      announcement: "2026-02-07",
+      purchasePeriod: "2026-02-07 ~ 2026-02-14",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
@@ -105,11 +105,11 @@ export const visitCampaigns: VisitCampaignData[] = [
     isUrgent: true, // 긴급 캠페인
     registeredAt: "2026-01-08T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 모집 진행 중
-      applicationStart: "2026-01-26",
-      applicationEnd: "2026-02-09",
-      announcement: "2026-02-11",
-      purchasePeriod: "2026-02-11 ~ 2026-02-18",
+      // 오픈 예정 - 모집 시작 전
+      applicationStart: "2026-02-10",
+      applicationEnd: "2026-02-20",
+      announcement: "2026-02-22",
+      purchasePeriod: "2026-02-22 ~ 2026-03-10",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
@@ -149,10 +149,10 @@ export const visitCampaigns: VisitCampaignData[] = [
     registeredAt: "2026-01-09T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 모집 진행 중
-      applicationStart: "2026-01-24",
-      applicationEnd: "2026-02-07",
-      announcement: "2026-02-09",
-      purchasePeriod: "2026-02-09 ~ 2026-02-16",
+      applicationStart: "2026-01-22",
+      applicationEnd: "2026-02-08",
+      announcement: "2026-02-10",
+      purchasePeriod: "2026-02-10 ~ 2026-02-17",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
@@ -190,11 +190,11 @@ export const visitCampaigns: VisitCampaignData[] = [
     dayCount: "D-7",
     registeredAt: "2026-01-07T13:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 오늘 날짜 기준 (2026-01-27 ~ 2026-02-13)
-      applicationStart: "2026-01-27",
-      applicationEnd: "2026-02-13",
-      announcement: "2026-02-15",
-      purchasePeriod: "2026-02-15 ~ 2026-02-22",
+      // 오픈 예정 - 모집 시작 전
+      applicationStart: "2026-02-05",
+      applicationEnd: "2026-02-18",
+      announcement: "2026-02-20",
+      purchasePeriod: "2026-02-20 ~ 2026-02-27",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
@@ -232,11 +232,11 @@ export const visitCampaigns: VisitCampaignData[] = [
     dayCount: "D-6",
     registeredAt: "2025-10-28T10:00:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 종료 탭 - purchasePeriod가 과거
-      applicationStart: "2025-11-01",
-      applicationEnd: "2025-11-15",
-      announcement: "2025-11-17",
-      purchasePeriod: "2025-11-20 ~ 2025-11-27",
+      // 진행 중 - 등록 기간 중
+      applicationStart: "2026-01-05",
+      applicationEnd: "2026-01-18",
+      announcement: "2026-01-20",
+      purchasePeriod: "2026-01-20 ~ 2026-02-05",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
@@ -274,8 +274,8 @@ export const visitCampaigns: VisitCampaignData[] = [
     dayCount: "D-4",
     registeredAt: "2026-01-11T15:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 오늘 날짜 기준 (2026-01-28 ~ 2026-02-10)
-      applicationStart: "2026-01-28",
+      // 모집 중 - 현재 모집 진행 중
+      applicationStart: "2026-01-25",
       applicationEnd: "2026-02-10",
       announcement: "2026-02-12",
       purchasePeriod: "2026-02-12 ~ 2026-02-19",
@@ -316,11 +316,11 @@ export const visitCampaigns: VisitCampaignData[] = [
     dayCount: "D-2",
     registeredAt: "2025-12-28T09:15:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 등록 중 - 오늘 날짜 기준 (등록 기간: 2026-01-05 ~ 2026-01-25)
-      applicationStart: "2025-12-25",
-      applicationEnd: "2026-01-02",
-      announcement: "2026-01-04",
-      purchasePeriod: "2026-01-05 ~ 2026-01-25",
+      // 진행 중 - 등록 기간 중
+      applicationStart: "2026-01-01",
+      applicationEnd: "2026-01-15",
+      announcement: "2026-01-17",
+      purchasePeriod: "2026-01-17 ~ 2026-02-05",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
@@ -352,11 +352,11 @@ export const visitCampaigns: VisitCampaignData[] = [
     dayCount: "D-8",
     registeredAt: "2025-12-26T14:00:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 등록 중 - 오늘 날짜 기준 (등록 기간: 2026-01-06 ~ 2026-01-26)
-      applicationStart: "2025-12-28",
-      applicationEnd: "2026-01-03",
-      announcement: "2026-01-05",
-      purchasePeriod: "2026-01-06 ~ 2026-01-26",
+      // 진행 중 - 등록 기간 중
+      applicationStart: "2026-01-03",
+      applicationEnd: "2026-01-17",
+      announcement: "2026-01-19",
+      purchasePeriod: "2026-01-19 ~ 2026-02-08",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
@@ -394,11 +394,11 @@ export const visitCampaigns: VisitCampaignData[] = [
     dayCount: "D-1",
     registeredAt: "2025-11-15T10:50:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 진행 탭 - applicationEnd가 과거, purchasePeriod가 미래 (announcement <= 오늘 <= purchasePeriod 끝)
-      applicationStart: "2025-11-20",
-      applicationEnd: "2025-12-05",
-      announcement: "2025-12-07",
-      purchasePeriod: "2025-12-08 ~ 2026-01-25",
+      // 진행 중 - 등록 기간 중
+      applicationStart: "2025-12-20",
+      applicationEnd: "2026-02-10",
+      announcement: "2026-02-12",
+      purchasePeriod: "2026-02-12 ~ 2026-03-10",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
@@ -470,18 +470,18 @@ export const visitCampaigns: VisitCampaignData[] = [
     image: "/images/main/campaign_img/eximg_5.png",
     subcategory: "식품",
     region: "서울 > 강남/서초",
-    points: 40000,
+    points: 4000000,
     description: "프리미엄 한우 돼지갈비 전문점 방문 체험단 모집 예정",
     recruitment: { current: 0, total: 4 },
     schedule: "",
     dayCount: "",
     registeredAt: "2026-01-10T12:00:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 오픈 예정 - 현재 날짜보다 미래 (2026-01-15 ~ 2026-02-05)
-      applicationStart: "2026-01-15",
-      applicationEnd: "2026-02-05",
-      announcement: "2026-02-07",
-      purchasePeriod: "2026-02-07 ~ 2026-02-20",
+      // 오픈 예정 - 모집 시작 전
+      applicationStart: "2026-02-10",
+      applicationEnd: "2026-02-25",
+      announcement: "2026-02-27",
+      purchasePeriod: "2026-02-27 ~ 2026-03-10",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
@@ -519,11 +519,11 @@ export const visitCampaigns: VisitCampaignData[] = [
     dayCount: "마감임박",
     registeredAt: "2025-12-26T11:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 마감임박 - 현재 날짜(2025-12-30) 기준으로 2일 후 마감 (2025-12-28 ~ 2026-01-01)
-      applicationStart: "2025-12-28",
-      applicationEnd: "2026-01-01",
-      announcement: "2026-01-03",
-      purchasePeriod: "2026-01-03 ~ 2026-01-10",
+      // 모집 중 - 마감 임박
+      applicationStart: "2026-01-15",
+      applicationEnd: "2026-01-29",
+      announcement: "2026-01-31",
+      purchasePeriod: "2026-01-31 ~ 2026-02-10",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
@@ -561,11 +561,11 @@ export const visitCampaigns: VisitCampaignData[] = [
     dayCount: "마감임박",
     registeredAt: "2025-12-27T08:45:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 마감임박 - 현재 날짜(2025-12-30) 기준으로 2일 후 마감 (2025-12-28 ~ 2026-01-01)
-      applicationStart: "2025-12-28",
-      applicationEnd: "2026-01-01",
-      announcement: "2026-01-03",
-      purchasePeriod: "2026-01-03 ~ 2026-01-10",
+      // 모집 중 - 마감 임박
+      applicationStart: "2026-01-18",
+      applicationEnd: "2026-01-30",
+      announcement: "2026-02-01",
+      purchasePeriod: "2026-02-01 ~ 2026-02-12",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "클립",

@@ -301,7 +301,7 @@ export default function ContentRegistrationModal({
               <button
                 className={styles.submit_button}
                 onClick={handleSubmit}
-                disabled={isSubmitting}
+                disabled={isSubmitting || !linkUrl.trim()}
               >
                 {isSubmitting ? "등록 중..." : "등록"}
               </button>

@@ -18,6 +18,7 @@
 
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Header from '@/components/fragments/Header';
 import styles from '@/styles/user/signup/complete.module.css';
@@ -31,8 +32,19 @@ export default function UserSignupCompletePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // 이 페이지에서만 헤더 보더 색상 흰색으로 설정
+  useEffect(() => {
+    document.body.classList.add('signup_complete_page');
+    return () => {
+      document.body.classList.remove('signup_complete_page');
+    };
+  }, []);
+
   // URL 파라미터에서 닉네임 가져오기 (없으면 기본값 사용)
   const nickname = searchParams.get('nickname') || '회원';
+
+  // 닉네임이 비어있거나 공백만 있으면 기본값 사용
+  const displayNickname = nickname.trim() || '회원';
 
   /**
    * 캠페인 보러 가기 버튼 클릭 핸들러
@@ -65,12 +77,21 @@ export default function UserSignupCompletePage() {
         {/* 완료 메시지 섹션 */}
         <div className={styles.message_section}>
           <h1 className={styles.welcome_title}>
-            <span className={styles.nickname_text}>{nickname}</span>님,
-            <br />
-            리뷰엑스의 리뷰어가 되신 것을 환영합니다.
+            {displayNickname !== '회원' ? (
+              <>
+                <span className={styles.nickname_text}>{displayNickname}</span>
+                <span className={styles.nickname_honorific}>님,</span>
+                <br className={styles.desktop_br} />
+                리뷰엑스의 리뷰어가<br className={styles.mobile_br} /> 되신 것을 환영합니다.
+              </>
+            ) : (
+              <>
+                리뷰엑스의 리뷰어가<br className={styles.mobile_br} /> 되신 것을 환영합니다.
+              </>
+            )}
           </h1>
           <p className={styles.welcome_message}>
-            지금 바로 리뷰엑스의 다양한 서비스를 이용해 보세요! 🔥🙌
+            지금 바로 리뷰엑스의<br className={styles.mobile_br} /> 다양한 서비스를 이용해 보세요! 🔥🙌
           </p>
         </div>
 

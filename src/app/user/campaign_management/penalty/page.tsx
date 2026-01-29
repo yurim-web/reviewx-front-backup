@@ -44,7 +44,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import CampaignManagementHeader from "@/components/user/campaign_management/CampaignManagementHeader";
 import PenaltyContent from "@/components/common/campaign_management/penalty/PenaltyContent";

@@ -46,9 +46,16 @@
 
 /* 헤더로고 부분 */
 .header_logo {
-  height: 24px;
-  width: auto;
-  object-fit: contain;
+  color: #FF5694;
+  font-family: 'Poppins', sans-serif;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: -0.4px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
 }
 
 /* 헤더 메뉴 아이콘 부분 */
@@ -219,10 +226,22 @@ letter-spacing: -0.32px;
   object-fit: contain;
 }
 
+/* 모바일 타이틀 (뒤로가기 버튼 옆) */
+.mobile_title {
+  color: #444;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+}
+
 /* 서브헤더 오른쪽 아이콘 그룹 */
 .right_icons {
   display: flex;
-  gap: 24px;
+  gap: 16px;
   align-items: center;
 }
 
@@ -278,28 +297,28 @@ letter-spacing: -0.32px;
 
 @media (max-width: 768px) {
   .header_container {
-    padding: 20px 24px;
-    height: 60px;
+    padding: 20px 20px;
+    height: 64px;
   }
 
-  /* 헤더로고 부분 - 모바일에서 적절한 크기로 조정 */
+  /* 헤더로고 부분 - 모바일 동일 */
   .header_logo {
-    height: 24px;
-    width: auto;
+    font-size: 20px;
+    line-height: 24px;
   }
 
   /* 헤더 메뉴 아이콘 부분 */
   .menu_icon_box {
-    gap: 12px;
+    gap: 16px;
   }
 
   /* 터치 영역을 넉넉하게 (최소 44x44px 권장) - 모든 아이콘 통일 */
   .menu_icon_box > a,
   .menu_icon_box > Link,
   .menu_icon_box > button {
-    width: 44px;
-    height: 44px;
-    padding: 10px;
+    width: 24px;
+    height: 24px;
+   
     display: flex;
     align-items: center;
     justify-content: center;
@@ -318,9 +337,9 @@ letter-spacing: -0.32px;
 
   /* 검색 토글 버튼 - 터치 영역 확대 (통일된 크기) */
   .search_toggle_button {
-    width: 44px;
-    height: 44px;
-    padding: 10px;
+    width: 24px;
+    height: 24px;
+
     display: flex;
     align-items: center;
     justify-content: center;
@@ -336,17 +355,17 @@ letter-spacing: -0.32px;
 
   /* 검색 입력 박스 - 모바일 최적화 */
   .search_box {
-    padding: 12px 16px;
-    height: 44px;
+    padding: 11px 16px;
+    height: 36px;
     border-radius: 22px;
-    max-width: 200px;
+    max-width: 160px;
   }
 
   .search_input {
+    max-width: 100px;
+    color: #444;
     font-size: 14px;
-    line-height: 14px;
-    letter-spacing: -0.28px;
-    max-width: 120px;
+    line-height: 14px; 
   }
 
   .search_icon_button {
@@ -355,8 +374,8 @@ letter-spacing: -0.32px;
   }
 
   .search_icon_button img {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
   }
 
   /* 모바일에서 새로운 캠페인 등록 버튼 */
@@ -369,15 +388,14 @@ letter-spacing: -0.32px;
 
   /* 서브헤더 모바일 스타일 */
   .gradient_bar {
-    padding: 20px 24px;
-    height: 60px;
+    padding: 20px 20px;
+    height: 64px;
   }
 
   /* 뒤로가기 버튼 - 터치 영역 확대 */
   .back_button {
-    width: 44px;
-    height: 44px;
-    padding: 10px;
+    width: 24px;
+    height: 24px;
   }
 
   .back_button img {
@@ -389,15 +407,14 @@ letter-spacing: -0.32px;
   }
 
   .right_icons {
-    gap: 12px;
+    gap: 16px;
   }
 
   /* 아이콘 버튼들 - 터치 영역 확대 (통일된 크기) */
   .right_icons > a,
   .right_icons > Link {
-    width: 44px;
-    height: 44px;
-    padding: 10px;
+    width: 24px;
+    height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -416,9 +433,9 @@ letter-spacing: -0.32px;
   .notification_icon,
   .bookmark_icon,
   .user_icon {
-    width: 44px;
-    height: 44px;
-    padding: 10px;
+    width: 24px;
+    height: 24px;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -436,10 +453,14 @@ letter-spacing: -0.32px;
   }
 }
 
-/* 헤더 높이 조정 - 전역 설정 업데이트 */
-@media (max-width: 739px) {
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+
+/* 헤더 높이 조정 - 전역 설정 */
+@media (max-width: 768px) {
   :global(header) {
-    height: 60px;
+    height: 64px;
   }
 }
 

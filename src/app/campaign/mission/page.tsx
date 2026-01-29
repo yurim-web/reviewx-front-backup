@@ -267,10 +267,51 @@ export default function MissionPage() {
     campaigns: allCampaigns,
   });
 
+  // schedule 필드 생성 함수
+  const generateSchedule = (applicationStart: string): string => {
+    if (!applicationStart) {
+      return "";
+    }
+
+    try {
+      // 모집 시작일 파싱
+      const startDate = new Date(applicationStart);
+
+      // 오늘 날짜 (시간 정보 제거)
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      startDate.setHours(0, 0, 0, 0);
+
+      // 오늘 < applicationStart → 오픈 예정일 때만 schedule 생성
+      if (today < startDate) {
+        // 모집 시작일 파싱
+        const startDateTime = new Date(applicationStart);
+
+        // 날짜를 "M/d (E)" 형식으로 포맷팅
+        const formattedDate = format(startDateTime, "M/d (E)", {
+          locale: ko,
+        });
+
+        // "모집 오픈" 텍스트와 함께 반환
+        return `${formattedDate}\n모집 오픈`;
+      }
+    } catch (error) {
+      console.error("[generateSchedule] 날짜 포맷팅 실패:", error);
+    }
+
+    return "";
+  };
+
+  // 오픈예정 캠페인에 schedule 필드 추가
+  const campaignsWithSchedule = filteredAndSortedCampaigns.map((campaign) => ({
+    ...campaign,
+    schedule: generateSchedule(campaign.detailedSchedule?.applicationStart || ""),
+  }));
+
   return (
     <CampaignListPage
       title="미션형"
-      campaigns={filteredAndSortedCampaigns}
+      campaigns={campaignsWithSchedule}
       basePath="/campaign/mission"
       filterBarProps={{
         onFilterChange: handleFilterChange,

@@ -16,7 +16,7 @@
   width: 100%;
   padding-top: 80px; /* 헤더 높이만큼 상단 여백 */
   background-color: white;
-  min-height: 100vh;
+  min-height: calc(100vh - 150px);
 }
 
 .mypage_container {
@@ -24,7 +24,7 @@
   width: 100%;
   padding-top: 80px; /* 헤더 높이만큼 상단 여백 */
   background-color: white;
-  min-height: 100vh;
+  min-height: calc(100vh - 120px);
 }
 
 /* 메인 콘텐츠 영역 - 중앙 정렬된 흰색 배경 */

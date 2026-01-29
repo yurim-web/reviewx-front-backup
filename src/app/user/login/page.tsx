@@ -1,18 +1,6 @@
 // 🔐 사용자 로그인 페이지 (/user/login)
-// - 네이버 / 카카오 로그인 버튼
-// - 최근 로그인 배지(네이버 / 카카오)
-// - 계정찾기 / 문의 / 파트너 로그인 링크
-
-/**
- * 사용자 로그인 페이지
- *
- * 주요 기능:
- * - 네이버/카카오 소셜 로그인
- * - 로그인 성공 후 계정 상태에 따른 리다이렉트
- *   - 정지/탈퇴된 계정 → /pause_info
- *   - 이용 제한된 계정 → /blacklist_info
- *   - 정상 계정 → 일반 페이지
- */
+// - 네이버 / 카카오 소셜 로그인
+// - 계정 상태에 따른 리다이렉트 (정지 / 블랙리스트 / 정상)
 
 "use client";
 
@@ -22,35 +10,29 @@ import Link from "next/link";
 
 import styles from "@/styles/user/login/user_login.module.css";
 
-// 통합 계정 데이터에서 계정 찾기 함수 import
 // ⚠️ 실제 API 연결 시 이 import는 삭제하고 실제 API 호출로 교체
 import {
   UNIFIED_ACCOUNTS,
   type SNSType,
+  type UnifiedAccount,
 } from "@/data/login/unifiedAccountData";
-
-// AuthContext import
-import { useAuth } from "@/hooks/useAuth";
+import { authenticateUnifiedAccount } from "@/lib/auth";
 
 type RecentLoginProvider = "naver" | "kakao" | null;
 
 export default function UserLoginPage() {
-  // Next.js의 useRouter 훅: 페이지 이동을 위한 라우터 객체
-  // 클라이언트 컴포넌트에서 페이지 이동 시 사용합니다.
   const router = useRouter();
-  const { login, user } = useAuth();
 
-  // ========================================
-  // 상태 관리 (State Management)
-  // ========================================
-
-  /**
-   * 최근 로그인 정보 (어느 소셜로 마지막 로그인했는지)
-   *
-   * TODO: 실제 구현 시에는 localStorage 또는 서버 응답을 통해
-   *       마지막 로그인 제공자를 설정하도록 교체 필요
-   */
+  // 최근 로그인한 소셜 제공자 (테스트용)
   const [recentLoginProvider] = useState<RecentLoginProvider>("naver");
+
+  // 이 페이지에서만 헤더 보더 색상 흰색으로 설정
+  useEffect(() => {
+    document.body.classList.add("user_login_page");
+    return () => {
+      document.body.classList.remove("user_login_page");
+    };
+  }, []);
 
   // ========================================
   // 자동 로그인 비활성화
@@ -77,49 +59,27 @@ export default function UserLoginPage() {
   //   }
   // }, [user, login, router]);
 
-  // ========================================
-  // 이벤트 핸들러 (Event Handlers)
-  // ========================================
+  // 소셜 로그인 성공 후 계정 상태에 따른 리다이렉트 + 로컬 세션 저장
+  const handle_social_login_success = async (account: UnifiedAccount) => {
+    try {
+      // SNS 계정 정보를 바로 AuthUser로 변환해서 LocalStorage에 저장
+      await authenticateUnifiedAccount(account);
+    } catch (error) {
+      console.error("소셜 로그인 처리 중 오류:", error);
+      alert("로그인 중 오류가 발생했습니다.");
+      return;
+    }
 
-  /**
-   * 소셜 로그인 성공 후 계정 상태 확인 및 리다이렉트 처리
-   *
-   * 기능:
-   * 1. 소셜 로그인 성공 후 서버에서 받은 계정 정보를 확인합니다.
-   * 2. 계정 상태에 따라 적절한 페이지로 리다이렉트합니다.
-   *    - isBanned: true → 정지/탈퇴 계정 → /pause_info
-   *    - isBlocked: true → 이용 제한 계정 → /blacklist_info
-   *    - 정상 계정 → 일반 페이지로 이동
-   *
-   * @param account - 로그인한 계정 정보 (서버 응답에서 받아온 데이터)
-   *
-   * 비동기 함수란?
-   * - async 키워드: 이 함수가 비동기 작업을 수행한다는 것을 나타냅니다.
-   * - await 키워드: 비동기 작업이 완료될 때까지 기다립니다.
-   * - 실제 서비스에서는 서버 API 호출이 비동기로 처리되므로 async/await를 사용합니다.
-   */
-  const handle_social_login_success = async (account: any) => {
-    // 로그인 처리
-    login(account);
-
-    // 정지/탈퇴된 계정인 경우
-    // 조건문: if (조건) { 실행할 코드 }
     if (account.isBanned) {
-      // /pause_info 페이지로 이동
       router.push("/pause_info");
-      return; // 함수 종료 (아래 코드 실행 안 됨)
+      return;
     }
 
-    // 이용 제한된 계정인 경우
     if (account.isBlocked) {
-      // /blacklist_info 페이지로 이동
-      // 이용 제한된 회원은 로그인은 되지만 제한 화면이 표시됩니다.
       router.push("/blacklist_info");
-      return; // 함수 종료
+      return;
     }
 
-    // 정상 계정인 경우: 일반 페이지로 이동
-    // redirectUrl은 서버에서 제공하는 로그인 성공 후 이동할 페이지 URL입니다.
     router.push(account.redirectUrl || "/user/campaign_management");
   };
 

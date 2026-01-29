@@ -147,6 +147,8 @@ export default function PhoneVerification({
         input_field: inputsStyles.input_field,
         // verification.module.css에서 가져온 클래스
         verification_button: verificationStyles.verification_button,
+        verification_button_completed:
+          verificationStyles.verification_button_completed,
         // signup.module.css에서 가져온 클래스 (분리된 파일에 없는 것들)
         error_message: signupStyles.error_message,
         error_text: signupStyles.error_text,
@@ -156,8 +158,6 @@ export default function PhoneVerification({
         phone_input: signupStyles.phone_input,
         phone_input_verified: signupStyles.phone_input_verified,
         verification_complete_icon: signupStyles.verification_complete_icon,
-        verification_button_completed:
-          signupStyles.verification_button_completed,
         resend_button: signupStyles.resend_button,
         verification_code_section: signupStyles.verification_code_section,
         verification_code_wrapper: signupStyles.verification_code_wrapper,

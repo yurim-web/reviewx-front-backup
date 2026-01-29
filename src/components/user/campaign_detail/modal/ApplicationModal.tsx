@@ -30,7 +30,7 @@ import { getChannelLogo } from "@/utils/channelLogoMap";
 import BaseModal from "@/components/common/modal/BaseModal";
 import { useAuth } from "@/hooks/useAuth";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
-import { convertExtendedToCampaignWithApplicants } from "@/data/partner/sharedCampaigns";
+import type { AllApplicant } from "@/data/partner/sharedCampaigns";
 import styles from "@/styles/user/campaign/application_modal.module.css";
 
 export type ApplicationModalType =
@@ -154,6 +154,28 @@ export default function ApplicationModal({
       });
     }
   }, [isOpen, showChannel, type, campaignChannelName, channelName, channelUrl]);
+
+  // 모바일에서 모달이 열릴 때 body 스크롤 막기
+  useEffect(() => {
+    if (isOpen && typeof window !== "undefined") {
+      const isMobile = window.innerWidth <= 768;
+      if (isMobile) {
+        // body 스크롤 막기
+        document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.width = '100%';
+        document.body.style.top = '0';
+      }
+    }
+
+    return () => {
+      // 모달이 닫힐 때 body 스크롤 복원
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.top = '';
+    };
+  }, [isOpen]);
 
   // 모달이 열릴 때 사용자 정보 불러오기
   useEffect(() => {
@@ -422,34 +444,121 @@ export default function ApplicationModal({
         }
       }
 
-      // 신청자 데이터 생성
-      const applicantData = {
+      // 신청자 데이터 생성 (localStorage 저장용)
+      // - CampaignWithApplicants.applicantData.applicants 타입(AllApplicant)에 맞춰 저장합니다.
+      const appliedAt = new Date().toISOString();
+
+      const normalized_user_type =
+        latestUserAccount?.user_type === "인플루언서" ? "인플루언서" : "리뷰어";
+
+      const normalized_member_type = (() => {
+        const raw = String(latestUserAccount?.member_type || "");
+        if (
+          raw === "모범 회원" ||
+          raw === "주의 회원" ||
+          raw === "경고 회원" ||
+          raw === "이용 제한"
+        ) {
+          return raw;
+        }
+        // 기존 데이터에 "일반 회원" 등 다른 값이 들어올 수 있어 기본값으로 매핑
+        return "모범 회원";
+      })();
+
+      const normalized_channel = (() => {
+        // showChannel이 false(구매평/미션형)면 채널 정보가 없으므로 BasicApplicant로 저장
+        if (!showChannel) return "기본" as const;
+
+        const raw = String(campaignChannelName || channelName || "")
+          .replace(/\s+/g, "")
+          .toLowerCase();
+
+        if (raw.includes("클립")) return "네이버클립" as const;
+        if (raw.includes("인스타")) return "인스타그램" as const;
+        if (raw.includes("유튜브")) return "유튜브" as const;
+        // 기본값: 네이버 블로그
+        return "네이버블로그" as const;
+      })();
+
+      const channel_id = (() => {
+        const url = String(currentChannelUrl || "");
+        if (!url) return user.id;
+        const parts = url.split("/").filter(Boolean);
+        return parts[parts.length - 1] || user.id;
+      })();
+
+      const base_applicant = {
+        id: user.id,
+        Id: channel_id,
+        nickname: latestUserAccount?.nickname || "",
+        userType: normalized_user_type as "리뷰어" | "인플루언서",
+        profileImage:
+          latestUserAccount?.profile_image || "/images/mypage/profile.svg",
+        memberType: normalized_member_type as
+          | "모범 회원"
+          | "주의 회원"
+          | "경고 회원"
+          | "이용 제한",
+        memo: memo,
+        selectionStatus: "미선택" as const,
+        registrationDate: appliedAt.split("T")[0],
+      };
+
+      const applicantData: AllApplicant =
+        normalized_channel === "네이버블로그"
+          ? {
+              ...base_applicant,
+              dailyVisits: Number(latestUserAccount?.daily_visits || 0),
+              totalVisits: Number(latestUserAccount?.total_visits || 0),
+              neighbors: Number(latestUserAccount?.neighbors || 0),
+              channel: "네이버블로그",
+            }
+          : normalized_channel === "네이버클립"
+          ? {
+              ...base_applicant,
+              followers: 0,
+              channel: "네이버클립",
+            }
+          : normalized_channel === "인스타그램"
+          ? {
+              ...base_applicant,
+              followers: 0,
+              channel: "인스타그램",
+            }
+          : normalized_channel === "유튜브"
+          ? {
+              ...base_applicant,
+              subscribers: 0,
+              channel: "유튜브",
+            }
+          : {
+              ...base_applicant,
+              channel: "기본",
+            };
+
+      // 유저 신청내역 저장용 메타데이터
+      const applicant_meta = {
         id: user.id,
         userId: user.id,
         email: user.email,
-        // 닉네임 우선 사용 (userAccount의 nickname, 없으면 name 사용하지 않고 빈 문자열)
-        nickname: latestUserAccount?.nickname || "",
-        name: userName, // 이름은 별도로 저장 (하지만 카드에는 표시하지 않음)
+        name: userName,
         address: userAddress,
         channelUrl: currentChannelUrl,
         channelName: campaignChannelName,
         memo: memo,
-        userType: latestUserAccount?.user_type || "리뷰어",
+        userType: normalized_user_type,
         profileImage: latestUserAccount?.profile_image || "/images/default_profile.png",
-        memberType: latestUserAccount?.member_type || "일반 회원",
+        memberType: normalized_member_type,
         dailyVisits: latestUserAccount?.daily_visits || 0,
         totalVisits: latestUserAccount?.total_visits || 0,
         neighbors: latestUserAccount?.neighbors || 0,
-        appliedAt: new Date().toISOString(),
-        status: "대기", // 신청 상태: 대기, 선정, 탈락
+        appliedAt,
+        status: "대기",
       };
 
       console.log('✅ [캠페인 신청] 신청자 데이터 생성:', {
         userId: user.id,
         nickname: applicantData.nickname,
-        dailyVisits: applicantData.dailyVisits,
-        totalVisits: applicantData.totalVisits,
-        neighbors: applicantData.neighbors,
         userAccountSource: latestUserAccount ? 'user_accounts' : '없음',
       });
 
@@ -583,7 +692,7 @@ export default function ApplicationModal({
             campaignType: type,
             campaignTitle: campaign.campaignInfo?.title || campaign.title || '',
             campaignImage: campaign.campaignInfo?.image || campaign.image || '',
-            appliedAt: applicantData.appliedAt,
+            appliedAt: applicant_meta.appliedAt,
             status: '대기', // 대기, 선정, 탈락
             memo: memo,
             channel: campaignChannelName || campaign.campaignInfo?.channel || campaign.channel || '', // 채널 정보 추가
@@ -695,7 +804,7 @@ export default function ApplicationModal({
               campaignType: type,
               campaignTitle: mockCampaign.campaignInfo.title || '',
               campaignImage: mockCampaign.campaignInfo.image || '',
-              appliedAt: applicantData.appliedAt,
+              appliedAt: applicant_meta.appliedAt,
               status: '대기',
               memo: memo,
               channel: campaignChannelName || mockCampaign.campaignInfo.brandName || '',
@@ -818,7 +927,7 @@ export default function ApplicationModal({
             campaignType: type,
             campaignTitle: mockCampaign.campaignInfo.title || '',
             campaignImage: mockCampaign.campaignInfo.image || '',
-            appliedAt: applicantData.appliedAt,
+            appliedAt: applicant_meta.appliedAt,
             status: '대기',
             memo: memo,
             channel: campaignChannelName || mockCampaign.campaignInfo.brandName || '',
@@ -925,7 +1034,16 @@ export default function ApplicationModal({
       <div className={styles.modal_container}>
         {/* 모달 헤더 */}
         <div className={styles.modal_header}>
+          {/* 모바일 뒤로가기 버튼 (모바일에서만 표시) */}
+          <button 
+            className={styles.back_button} 
+            onClick={handleClose}
+            aria-label="뒤로가기"
+          >
+            <img src="/images/header/header_arrow_back.svg" alt="뒤로가기" />
+          </button>
           <h2 className={styles.modal_title}>캠페인 신청</h2>
+          {/* 데스크톱 X 버튼 (데스크톱에서만 표시) */}
           <button className={styles.close_button} onClick={handleClose}>
             <img src="/images/filter/x_icon.svg" alt="닫기" />
           </button>
@@ -940,39 +1058,43 @@ export default function ApplicationModal({
               <h3 className={styles.section_title}>신청자 정보</h3>
               {/* 신청자 정보 컨테이너 */}
               <div className={styles.user_info_wrapper}>
-                {/* 이름 입력칸 - 읽기 전용 (자동으로 불러오는 값) */}
-                <div className={styles.user_info_row}>
-                  <input
-                    type="text"
-                    value={userName}
-                    readOnly
-                    className={styles.user_input}
-                    placeholder="이름을 입력하세요"
-                  />
+                {/* 이름 블록 */}
+                <div className={styles.field_group}>
+                  <div className={styles.user_info_row}>
+                    <label className={styles.field_label}>이름</label>
+                    <input
+                      type="text"
+                      value={userName}
+                      readOnly
+                      className={styles.user_input}
+                      placeholder="이름을 입력하세요"
+                    />
+                  </div>
                 </div>
-                {/* 주소 정보 - 타입에 따라 표시 여부 결정 */}
+                {/* 주소 블록 - 타입에 따라 표시 여부 결정 */}
                 {showAddress && (
-                  <div className={styles.address_container}>
-                    <div className={styles.address_info}>
-                      {userAddress.trim() ? (
-                        <div className={styles.address_text}>{userAddress}</div>
-                      ) : (
-                        <div className={styles.address_text_empty}>
-                          주소지를 등록해 주세요.
-                        </div>
-                      )}
+                  <div className={styles.field_group}>
+                    <div className={styles.field_label}>
+                      <span>주소</span>
+                      <button
+                        className={styles.edit_label}
+                        onClick={handleEditUserInfo}
+                        type="button"
+                      >
+                        편집
+                      </button>
                     </div>
-                    {/* 수정 버튼 - 클릭 시 주소 등록 페이지로 이동 */}
-                    <button
-                      className={styles.edit_button}
-                      onClick={handleEditUserInfo}
-                      type="button"
-                    >
-                      <img
-                        src="/images/campaign_detail/pencil_icon.svg"
-                        alt="수정"
-                      />
-                    </button>
+                    <div className={styles.address_container}>
+                      <div className={styles.address_info}>
+                        {userAddress.trim() ? (
+                          <div className={styles.address_text}>{userAddress}</div>
+                        ) : (
+                          <div className={styles.address_text_empty}>
+                            주소지를 등록해 주세요.
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -981,36 +1103,37 @@ export default function ApplicationModal({
             {/* 채널 정보 섹션 - 타입에 따라 표시 여부 결정 */}
             {showChannel && (
               <div className={styles.section}>
-                <div className={styles.channel_container}>
-                  {/* 채널 아이콘 - 채널 이름에 따라 동적으로 표시 */}
-                  <div className={styles.channel_icon}>
-                    <img
-                      src={getChannelLogo(channelName)}
-                      alt={channelName}
-                      className={styles.channel_icon_image}
-                    />
+                <div className={styles.field_group}>
+                  <div className={styles.field_label}>
+                    <span>채널</span>
+                    <button
+                      className={styles.edit_label}
+                      onClick={handleEditChannel}
+                      type="button"
+                    >
+                      수정
+                    </button>
                   </div>
-                  <div className={styles.channel_info}>
-                    <div className={styles.channel_name}>{channelName}</div>
-                    {channelUrl ? (
-                      <div className={styles.channel_url}>{channelUrl}</div>
-                    ) : (
-                      <div className={styles.channel_url_empty}>
-                        계정을 연결해 주세요.
-                      </div>
-                    )}
+                  <div className={styles.channel_container}>
+                    {/* 채널 아이콘 - 채널 이름에 따라 동적으로 표시 */}
+                    <div className={styles.channel_icon}>
+                      <img
+                        src={getChannelLogo(channelName)}
+                        alt={channelName}
+                        className={styles.channel_icon_image}
+                      />
+                    </div>
+                    <div className={styles.channel_info}>
+                      <div className={styles.channel_name}>{channelName}</div>
+                      {channelUrl ? (
+                        <div className={styles.channel_url}>{channelUrl}</div>
+                      ) : (
+                        <div className={styles.channel_url_empty}>
+                          계정을 연결해 주세요.
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  {/* 수정 버튼 - 클릭 시 채널 설정 페이지로 이동 */}
-                  <button
-                    className={styles.edit_button}
-                    onClick={handleEditChannel}
-                    type="button"
-                  >
-                    <img
-                      src="/images/campaign_detail/pencil_icon.svg"
-                      alt="수정"
-                    />
-                  </button>
                 </div>
               </div>
             )}
@@ -1018,23 +1141,28 @@ export default function ApplicationModal({
 
           {/* 메모 섹션 */}
           <div className={styles.section}>
-            <h3 className={styles.section_title}>메모</h3>
-            <div className={styles.memo_container}>
-              <input
-                type="text"
-                placeholder="신청 사유 혹은 캠페인에 대한 옵션 작성"
-                value={memo}
-                onChange={(e) => setMemo(e.target.value)}
-                className={styles.memo_input}
-                maxLength={200}
-              />
+            <div className={styles.field_group}>
+              <h3 className={styles.section_title}>메모</h3>
+              <label className={`${styles.field_label} ${styles.field_label_light}`}>메모</label>
+              <div className={styles.memo_container}>
+                <input
+                  type="text"
+                  placeholder="신청 사유 혹은 캠페인에 대한 옵션 작성"
+                  value={memo}
+                  onChange={(e) => setMemo(e.target.value)}
+                  className={styles.memo_input}
+                  maxLength={200}
+                />
+              </div>
             </div>
           </div>
 
           {/* 동의 섹션 */}
           <div className={styles.section}>
-            <h3 className={styles.section_title}>동의</h3>
-            <div className={styles.agreement_container}>
+            <div className={styles.field_group}>
+              <h3 className={styles.section_title}>동의</h3>
+              <label className={`${styles.field_label} ${styles.field_label_light}`}>동의</label>
+              <div className={styles.agreement_container}>
               {/* 첫 번째 동의 체크박스 */}
               <label className={styles.checkbox_label}>
                 <input
@@ -1064,6 +1192,7 @@ export default function ApplicationModal({
                 </label>
               )}
             </div>
+            </div>
           </div>
         </div>
 
@@ -1084,7 +1213,10 @@ export default function ApplicationModal({
         is_open={isSuccessModalOpen}
         on_close={handleSuccessModalClose}
         message="캠페인 신청이 완료되었습니다."
-        buttons={["닫기"]}
+        buttons={["닫기", "다른 체험단 보러 가기"]}
+        button_layout="column"
+        confirm_first
+        on_confirm={() => router.push("/user")}
       />
 
       {/* 이미 참여했는데 신청 버튼이 활성화 되어있는 상태에서 다시 신청 눌렀을 때 모달 */}
