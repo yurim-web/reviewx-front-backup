@@ -71,7 +71,7 @@ export default function ChannelConnectModal({
       placeholder: "인스타그램 아이디 입력",
       link_error_message: "인스타그램 아이디만 입력해 주세요.",
       info_message:
-        "비활성화 또는 비공개 상태의 인스타그램 계정은 확인이 불가능하여 체험단 선정 대상에서 제외됩니다.",
+        "• 비활성화 또는 비공개 상태의 인스타그램 계정은 확인이 불가능하여 체험단 선정 대상에서 제외됩니다.",
     },
     유튜브: {
       prefix: "https://www.youtube.com/@",
@@ -377,7 +377,7 @@ export default function ChannelConnectModal({
               onClick={handleConnect}
               disabled={!isButtonEnabled()}
             >
-              채널 연결
+              연결
             </button>
           </div>
         </div>

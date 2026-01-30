@@ -18,7 +18,8 @@
 .campaign_link {
   text-decoration: none;
   color: inherit;
-  display: block;
+  display: flex;
+  height: 100%;
 }
 
 /* 캠페인 박스 컨테이너 */
@@ -28,8 +29,8 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  height: 100%;
+  gap: 16px;
+  height: 100%; /* 부모 컨테이너의 높이를 모두 차지 */
   will-change: transform;
   -webkit-tap-highlight-color: transparent;
 }
@@ -111,6 +112,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-height: 0; /* flex 아이템이 제대로 줄어들 수 있도록 */
 }
 
 /* 카테고리 부분*/
@@ -147,7 +149,6 @@
   font-weight: 500;
   line-height: 22px;
   letter-spacing: -0.32px;
-
 }
 
 .recruitment_status {
@@ -189,24 +190,9 @@
 
   /* 제품 제목 폰트 크기 조정 (Figma: 16px) */
   .product_title {
-    font-size: 16px;
-    line-height: 22px;
-    letter-spacing: -0.32px;
     -webkit-line-clamp: 2;
   }
 
-  /* 카테고리 폰트 크기 조정 (Figma: 16px) */
-  .category {
-    font-size: 16px;
-    line-height: 16px;
-    letter-spacing: -0.32px;
-    gap: 8px;
-  }
-
-  .category_icon {
-    width: 20px;
-    height: 20px;
-  }
 
   /* 모집 상태 폰트 크기 조정 (Figma: 14px) */
   .recruitment_status {
@@ -223,24 +209,8 @@
     border-radius: 4px;
   }
 
-  /* 스케줄 오버레이 폰트 크기 조정 */
-  .schedule_overlay_text {
-    font-size: 20px;
-    line-height: 28px;
-    letter-spacing: -0.4px;
-  }
 
-  /* 캠페인 라벨 크기 조정 (Figma: 16px, padding 6px 8px) */
-  .campaign_label {
-    font-size: 14px;
-    line-height: 14px; 
-    letter-spacing: -0.28px;
 
-    padding: 6px 8px;
-    top: 12px;
-    left: 12px;
-    border-radius: 8px;
-  }
 
 }
 

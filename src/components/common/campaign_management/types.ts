@@ -91,4 +91,5 @@ export interface CampaignFilterBarProps<
   channelOptions?: string[];
   sortOptions?: SortOption[];
   defaultSort?: string;
+  showSearch?: boolean;
 }

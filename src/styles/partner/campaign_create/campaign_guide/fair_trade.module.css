@@ -63,3 +63,31 @@
 .fair_trade_label.disabled {
   cursor: default;
 }
+
+/* ============================================
+   모바일 반응형 스타일
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* 공정위 문구 동의 */
+  .fair_trade_agreement {
+    gap: 6px;
+  }
+
+  /* 공정위 체크박스 */
+  .fair_trade_checkbox {
+    width: 18px;
+    height: 18px;
+  }
+
+  .fair_trade_checkbox:checked::after {
+    font-size: 14px;
+  }
+
+  /* 공정위 라벨 */
+  .fair_trade_label {
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+}

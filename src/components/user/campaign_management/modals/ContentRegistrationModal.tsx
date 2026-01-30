@@ -280,10 +280,22 @@ export default function ContentRegistrationModal({
 
           <div className={styles.modal_overlay} onClick={handleOverlayClick}>
             <div className={styles.modal_container}>
-              {/* 모달 제목: mode에 따라 다르게 표시 */}
-              <h2 className={styles.modal_title}>
-                {mode === "edit" ? "콘텐츠 수정" : "콘텐츠 등록"}
-              </h2>
+              {/* 모달 헤더 (제목 + 닫기 버튼) */}
+              <div className={styles.modal_header}>
+                {/* 모달 제목: mode에 따라 다르게 표시 */}
+                <h2 className={styles.modal_title}>
+                  {mode === "edit" ? "콘텐츠 수정" : "콘텐츠 등록"}
+                </h2>
+                {/* 닫기 버튼 */}
+                <button className={styles.close_button} onClick={onClose}>
+                  <Image
+                    src="/images/filter/x_icon.svg"
+                    alt="닫기"
+                    width={20}
+                    height={20}
+                  />
+                </button>
+              </div>
 
               {/* 링크 섹션 */}
               <div className={styles.link_section}>
@@ -304,16 +316,6 @@ export default function ContentRegistrationModal({
                 disabled={isSubmitting || !linkUrl.trim()}
               >
                 {isSubmitting ? "등록 중..." : "등록"}
-              </button>
-
-              {/* 닫기 버튼 */}
-              <button className={styles.close_button} onClick={onClose}>
-                <Image
-                  src="/images/filter/x_icon.svg"
-                  alt="닫기"
-                  width={20}
-                  height={20}
-                />
               </button>
             </div>
           </div>

@@ -81,6 +81,8 @@
   border-radius: 20px;
   padding: 12px 16px;
   cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .category_item.active {
@@ -142,8 +144,8 @@
   flex: 1;
   min-width: 0;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: left;
@@ -200,11 +202,13 @@
 }
 
 /* ========================================
-   📱 모바일 반응형 스타일 (max-width: 768px)
+   📱 반응형 스타일
    ======================================== */
-@media (max-width: 768px) {
+
+/* ✅ 모바일 공통 — 0~739px */
+@media (max-width: 739px) {
   .notice_container {
-    padding-top: 64px; /* PageTitle 높이 */
+    padding-top: 64px;
   }
 
   .section_container {
@@ -235,17 +239,18 @@
   /* 카테고리 필터 */
   .category_container {
     gap: 8px;
-    padding-bottom: 16px;
-    flex-wrap: wrap;
+    padding-bottom: 20px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
 
-  .category_item {
-    font-size: 16px;
-    line-height: 16px;
-    letter-spacing: -0.32px;
-    padding: 12px 16px;
-    border-radius: 20px;
+  .category_container::-webkit-scrollbar {
+    display: none;
   }
+
+
 
   /* 공지사항 목록 */
   .notice_list {
@@ -257,7 +262,7 @@
   }
 
   .notice_content {
-    padding: 24px 0px;
+    padding: 20px 0px;
     gap: 8px;
   }
 
@@ -270,11 +275,7 @@
     height: 20px;
   }
 
-  .notice_title {
-    font-size: 16px;
-    line-height: 24px;
-    letter-spacing: -0.32px;
-  }
+
 
   .notice_info_wrapper {
     gap: 12px;
@@ -288,12 +289,6 @@
     border-radius: 12px;
   }
 
-  .notice_date {
-    font-size: 14px;
-    line-height: 14px;
-    letter-spacing: -0.28px;
-  }
-
   /* 빈 상태 */
   .empty_state {
     padding: 40px 0;
@@ -303,5 +298,27 @@
     font-size: 16px;
     line-height: 16px;
     letter-spacing: -0.32px;
+  }
+}
+
+/* ✅ 태블릿 세로(portrait) 전용 — 740~1100px */
+@media (min-width: 740px) and (max-width: 1100px) and (orientation: portrait) {
+  .section_container {
+    padding: 24px 56px;
+  }
+
+  .notice_content {
+    padding: 20px 20px;
+  }
+}
+
+/* ✅ 태블릿 가로(landscape) 전용 — 740~1366px */
+@media (min-width: 740px) and (max-width: 1366px) and (orientation: landscape) {
+  .section_container {
+    padding: 24px 56px;
+  }
+
+  .notice_content {
+    padding: 20px 20px;
   }
 }

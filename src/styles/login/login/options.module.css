@@ -124,3 +124,20 @@
 .partner_login_button:active {
   opacity: 0.8;
 }
+
+/* ========================================
+   📱 모바일 반응형 스타일
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* 로그인 옵션 섹션 */
+  .login_options_section {
+    padding-bottom: 8px;
+  }
+
+  /* 파트너 로그인 버튼 */
+  .partner_login_button {
+    height: 48px;
+    font-size: 15px;
+  }
+}

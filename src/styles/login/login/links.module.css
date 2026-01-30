@@ -106,3 +106,24 @@
   line-height: 18px;
   letter-spacing: -0.32px;
 }
+
+/* ========================================
+   📱 모바일 반응형 스타일
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* 문의하기 섹션 */
+  .inquiry_section {
+    padding-top: 24px;
+  }
+
+  /* 리뷰어 회원 로그인 섹션 */
+  .user_login_section {
+    bottom: 32px;
+  }
+
+  /* 리뷰어 회원 로그인 링크 */
+  .user_login_link {
+    font-size: 15px;
+  }
+}

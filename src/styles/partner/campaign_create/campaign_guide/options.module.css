@@ -84,3 +84,42 @@
   gap: 4px;
   flex-shrink: 0;
 }
+
+/* ============================================
+   모바일 반응형 스타일
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* 간편 안내 옵션 박스 */
+  .option_input_box {
+    gap: 10px;
+    padding: 14px 16px;
+    border-radius: 6px;
+    height: 48px;
+  }
+
+  /* 옵션 입력 박스 체크박스 */
+  .option_input_box:not(.header_urgent_checkbox) input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+  }
+
+  .option_input_box:not(.header_urgent_checkbox)
+    input[type="checkbox"]:checked::after {
+    font-size: 13px;
+  }
+
+  /* 옵션 라벨 */
+  .option_input_box .option_label {
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 옵션 값 */
+  .option_input_box .option_value {
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+}

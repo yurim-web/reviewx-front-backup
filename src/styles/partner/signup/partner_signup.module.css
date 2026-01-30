@@ -194,33 +194,69 @@
    8. 반응형 디자인 (파트너 전용)
    ======================================== */
 
-@media (max-width: 739px) {
-  .signup_main {
-    padding-left: 20px;
-    padding-right: 20px;
+/* 📱 ================================================================================================
+
+모바일 반응형 스타일 (max-width: 768px)
+
+================================================================================================ 📱 */
+
+@media (max-width: 768px) {
+  /* 페이지 컨테이너 */
+  .signup_page_container {
+    /* 모바일에서는 PageTitle가 fixed라서 그 높이(약 64px)만큼 상단 여백을 줌 */
+    padding-top: 64px;
+    background-color: #ffffff;
   }
 
+  /* 서브 헤더 - 모바일에서는 PageTitle 바로 아래에 위치 */
+  .sub_header {
+    top: 64px;
+  }
+
+  /* 메인 영역 */
+  .signup_main {
+    /* PageTitle 높이를 제외한 영역을 꽉 채우도록 min-height 조정 */
+    min-height: calc(100vh - 64px);
+    padding: 32px 20px 40px;
+    max-width: 100%;
+    background-color: #ffffff;
+  }
+
+  /* 회원가입 폼 */
   .signup_form {
     max-width: 100%;
   }
 
+  /* 파일 업로드 래퍼 */
   .file_upload_wrapper {
-    flex-direction: column;
+    gap: 12px;
   }
 
+  /* 파일 선택 버튼 */
   .file_select_button {
-    width: 100%;
+    width: 100px;
+    font-size: 15px;
   }
 
+  /* 주소 우편번호 래퍼 */
   .address_postal_code_wrapper {
-    flex-direction: column;
+    gap: 12px;
   }
 
+  /* 우편번호 입력 필드 */
   .postal_code_input {
-    width: 100%;
+    flex: 1;
+    width: auto;
   }
 
+  /* 우편번호 검색 버튼 */
   .postal_code_search_button {
-    width: 100%;
+    width: 100px;
+    font-size: 15px;
+  }
+
+  /* 회원가입 버튼 */
+  .submit_button {
+    margin-top: 20px;
   }
 }

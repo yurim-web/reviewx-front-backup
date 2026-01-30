@@ -140,6 +140,10 @@ export default function EditProfilePage() {
         }
 
         // 유저 기본 정보 설정 (user_accounts에 있으면 그걸 우선, 없으면 user에서)
+        const accountHolderValue = userAccount?.account_holder || "";
+        const bankValue = userAccount?.bank || "";
+        const accountNumberValue = userAccount?.account_number || "";
+        
         setFormData((prev) => ({
           ...prev,
           nickname: userAccount?.nickname || user.nickname || user.name || "",
@@ -148,12 +152,23 @@ export default function EditProfilePage() {
           postalCode: userAccount?.postal_code || user.postal_code || "",
           address: userAccount?.address || user.address || "",
           detailAddress: userAccount?.detail_address || user.detail_address || "",
-          accountHolder: userAccount?.account_holder || "",
-          bank: userAccount?.bank || "",
-          accountNumber: userAccount?.account_number || "",
+          accountHolder: accountHolderValue,
+          bank: bankValue,
+          accountNumber: accountNumberValue,
           ssnFront: userAccount?.ssn_front || "",
           ssnBack: userAccount?.ssn_back || "",
         }));
+
+        // user_accounts에서 계좌 정보가 모두 있으면 인증 완료 상태로 설정
+        if (
+          accountHolderValue.trim() &&
+          bankValue.trim() &&
+          accountNumberValue &&
+          String(accountNumberValue).trim()
+        ) {
+          setIsAccountHolderVerified(true);
+          console.log('✅ [수정 페이지] user_accounts에서 계좌 정보 확인 - 인증 완료 상태로 설정');
+        }
 
         // 전화번호 설정 (usePhoneVerification 훅 사용)
         const phoneNumber = userAccount?.phone || user.phone;
@@ -200,13 +215,42 @@ export default function EditProfilePage() {
 
   /**
    * 계좌 정보가 모두 입력되어 있으면 인증 완료 상태로 설정
+   * (user_accounts에서 불러온 경우가 아닐 때만 실행)
    */
   useEffect(() => {
-    if (formData.accountHolder && formData.bank && formData.accountNumber) {
-      setIsAccountHolderVerified(true);
-      console.log('✅ [수정 페이지] 계좌 정보가 있어서 인증 완료 상태로 설정');
+    const accountHolderValue = formData.accountHolder?.trim() || "";
+    const bankValue = formData.bank?.trim() || "";
+    const accountNumberValue = String(formData.accountNumber || "").trim();
+    
+    if (accountHolderValue && bankValue && accountNumberValue) {
+      // user_accounts에서 계좌 정보 확인
+      if (typeof window !== "undefined") {
+        try {
+          const storedAccounts = localStorage.getItem('user_accounts');
+          if (storedAccounts) {
+            const accounts = JSON.parse(storedAccounts);
+            const userAccount = accounts.find((a: any) =>
+              a.id === user?.id || a.email === user?.email
+            );
+            
+            // user_accounts에 계좌 정보가 있고 일치하면 인증 완료 상태로 설정
+            if (
+              userAccount &&
+              userAccount.account_holder === accountHolderValue &&
+              userAccount.bank === bankValue &&
+              userAccount.account_number === accountNumberValue
+            ) {
+              setIsAccountHolderVerified(true);
+              console.log('✅ [수정 페이지] user_accounts 계좌 정보 일치 - 인증 완료 상태로 설정');
+              return;
+            }
+          }
+        } catch (error) {
+          console.error('user_accounts 확인 실패:', error);
+        }
+      }
     }
-  }, [formData.accountHolder, formData.bank, formData.accountNumber]);
+  }, [formData.accountHolder, formData.bank, formData.accountNumber, user?.id, user?.email]);
 
   /**
    * 서버에서 받아온 계좌 정보가 있는지 확인
@@ -738,7 +782,7 @@ export default function EditProfilePage() {
             }
             bankOptions={bank_options}
             onVerificationStatusChange={setIsAccountHolderVerified}
-            initialVerified={hasAccountInfoFromServer}
+            initialVerified={isAccountHolderVerified}
           />
 
           {/* 주민등록번호 */}
@@ -773,7 +817,7 @@ export default function EditProfilePage() {
             onClick={handleSave}
             disabled={!isSaveButtonEnabled}
           >
-            저장하기
+            저장
           </button>
         </div>
       </main>

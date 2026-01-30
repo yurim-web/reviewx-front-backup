@@ -25,9 +25,7 @@ import { useRouter } from "next/navigation";
 import SubHeader from "@/components/fragments/SubHeader";
 import PhoneVerification from "@/components/common/phone_verification/PhoneVerification";
 import TermsAgreement from "@/components/user/signup/TermsAgreement";
-import ExistingAccountModal, {
-  type SocialLoginType,
-} from "@/components/user/signup/ExistingAccountModal";
+import SNSLoginModal from "@/components/common/find_account/modal/SNSLoginModal";
 import { useTermsAgreement } from "@/hooks/user/signup/useTermsAgreement";
 import { usePhoneVerification } from "@/hooks/usePhoneVerification/usePhoneVerification";
 import {
@@ -43,6 +41,13 @@ import {
 } from "@/data/signup/testVerificationData";
 import commonStyles from "@/styles/common/signup/signup.module.css";
 import styles from "@/styles/user/signup/user_signup.module.css";
+
+/**
+ * 소셜 로그인 타입
+ * - "kakao": 카카오 로그인
+ * - "naver": 네이버 로그인
+ */
+type SocialLoginType = "kakao" | "naver";
 
 /**
  * 유저 회원가입 페이지 컴포넌트
@@ -444,24 +449,23 @@ export default function UserSignupPage() {
           - 카카오 로그인하기 버튼
           - 닫기 버튼
       */}
-      {showExistingAccountModal && (
-        <ExistingAccountModal
-          onClose={() => setShowExistingAccountModal(false)}
-          socialLoginType={existingAccountSocialType}
-          onKakaoLogin={() => {
-            // TODO: 카카오 로그인 처리
-            console.log("카카오 로그인");
-            setShowExistingAccountModal(false);
-            // router.push('/user/sns_login?provider=kakao');
-          }}
-          onNaverLogin={() => {
-            // TODO: 네이버 로그인 처리
-            console.log("네이버 로그인");
-            setShowExistingAccountModal(false);
-            // router.push('/user/sns_login?provider=naver');
-          }}
-        />
-      )}
+      <SNSLoginModal
+        isOpen={showExistingAccountModal}
+        onClose={() => setShowExistingAccountModal(false)}
+        socialType={existingAccountSocialType}
+        onKakaoLogin={() => {
+          // TODO: 카카오 로그인 처리
+          console.log("카카오 로그인");
+          setShowExistingAccountModal(false);
+          // router.push("/user/sns_login?provider=kakao");
+        }}
+        onNaverLogin={() => {
+          // TODO: 네이버 로그인 처리
+          console.log("네이버 로그인");
+          setShowExistingAccountModal(false);
+          // router.push("/user/sns_login?provider=naver");
+        }}
+      />
     </div>
   );
 }

@@ -11,14 +11,8 @@
  *    - src/app/user/signup/page.tsx
  *      → 사용 클래스: signup_page_container, signup_main, signup_form, submit_button
  *
- * 3️⃣ 유저 회원가입 전용 컴포넌트:
- *    - src/components/user/signup/ExistingAccountModal.tsx
- *      → 사용 클래스: modal_overlay, modal_container, modal_content, modal_message,
- *                     kakao_login_button, naver_login_button, modal_close_button
- *
  * 주요 스타일:
  * - 회원가입 페이지 전체 레이아웃 (유저 전용)
- * - 모달 스타일 (유저 전용)
  *
  * 💡 공통 스타일은 src/styles/common/signup/signup.module.css에 정의되어 있습니다.
  *    이 파일은 유저 전용 스타일만 포함합니다.
@@ -101,95 +95,6 @@
   margin-top: auto; /* 유저 전용: 남는 세로 공간을 모두 차지해 하단 정렬 */
 }
 
-/* ========================================
-   6. 기존 계정 모달 (유저 전용)
-   ======================================== */
-
-.modal_overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modal_container {
-  background-color: #ffffff;
-  border-radius: 12px;
-  width: 400px;
-  padding: 0;
-  position: relative;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-}
-
-.modal_content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 40px 32px;
-  gap: 24px;
-}
-
-.modal_message {
-  color: #444;
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 28px;
-  letter-spacing: -0.36px;
-  text-align: center;
-  margin: 0;
-}
-
-.kakao_login_button {
-  width: 336px;
-  height: 58px;
-  background-color: #fee500;
-  border: none;
-  border-radius: 8px;
-  color: #444444;
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 18px;
-  letter-spacing: -0.36px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.naver_login_button {
-  width: 336px;
-  height: 58px;
-  background-color: #03c75a;
-  border: none;
-  border-radius: 8px;
-  color: #ffffff;
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 18px;
-  letter-spacing: -0.36px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.modal_close_button {
-  width: 336px;
-  height: 48px;
-  background-color: #f6f6f6;
-  border: none;
-  border-radius: 8px;
-  color: #444444;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 16px;
-  letter-spacing: -0.32px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
 /* 📱 ================================================================================================
 
 모바일 반응형 스타일 (max-width: 768px)
@@ -199,10 +104,9 @@
 @media (max-width: 768px) {
   /* 페이지 컨테이너 */
   .signup_page_container {
-    padding-top: 0px;
+    /* 모바일에서는 PageTitle가 fixed라서 그 높이(약 64px)만큼 상단 여백을 줌 */
+    padding-top: 64px;
   }
-
-
 
   /* 모바일 뒤로가기 버튼 - 모바일에서 표시 */
   .mobile_back_button {
@@ -211,7 +115,8 @@
 
   /* 메인 영역 */
   .signup_main {
-    min-height: calc(100vh - 120px);
+    /* PageTitle 높이를 제외한 영역을 꽉 채우도록 min-height 조정 */
+    min-height: calc(100vh - 64px);
     padding: 32px 20px 40px;
     max-width: 100%;
   }
@@ -219,31 +124,10 @@
   /* 회원가입 폼 */
   .signup_form {
     max-width: 100%;
-    gap: 20px;
   }
 
-  /* 모달 컨테이너 */
-  .modal_container {
-    width: calc(100% - 40px);
-    max-width: 400px;
-    margin: 0 20px;
+  .submit_button {
+    margin-top: 20px;
   }
 
-  /* 모달 콘텐츠 */
-  .modal_content {
-    padding: 32px 20px;
-  }
-
-  /* 소셜 로그인 버튼 */
-  .kakao_login_button,
-  .naver_login_button {
-    width: 100%;
-    max-width: 336px;
-  }
-
-  /* 모달 닫기 버튼 */
-  .modal_close_button {
-    width: 100%;
-    max-width: 336px;
-  }
 }

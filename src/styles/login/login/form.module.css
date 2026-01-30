@@ -105,3 +105,28 @@
   line-height: 16px;
   letter-spacing: -0.32px;
 }
+
+/* ========================================
+   📱 모바일 반응형 스타일
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* 로그인 폼 */
+  .login_form {
+    width: 100%;
+    max-width: 100%;
+    gap: 16px;
+  }
+
+  /* 입력 필드 */
+  .input_field {
+    height: 52px;
+    padding: 16px;
+    font-size: 15px;
+  }
+
+  /* 입력 필드 플레이스홀더 */
+  .input_field::placeholder {
+    font-size: 15px;
+  }
+}

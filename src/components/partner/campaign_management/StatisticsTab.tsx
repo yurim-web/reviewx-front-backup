@@ -128,18 +128,17 @@ export default function StatisticsTab({
             <span>연장 요청</span>
             <span className={styles.stat_number}>{stats["연장 요청"]}</span>
           </button>
+
+          {/* 패널티 탭 */}
+          <button
+            className={`${styles.stat_tab} ${
+              activeStatTab === "패널티" ? styles.active : ""
+            }`}
+            onClick={() => setActiveStatTab("패널티")}
+          >
+            <span>패널티</span>
+          </button>
         </div>
-      </div>
-      <div>
-        {/* 오른쪽: 패널티 탭 */}
-        <button
-          className={`${styles.stat_tab} ${
-            activeStatTab === "패널티" ? styles.active : ""
-          }`}
-          onClick={() => setActiveStatTab("패널티")}
-        >
-          <span>패널티</span>
-        </button>
       </div>
     </div>
   );

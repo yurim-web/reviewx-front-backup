@@ -64,7 +64,7 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
       <MainMenu />
 
       {/* 헤더(80px) + MainMenu(약 69px) 공간 확보 */}
-      <div style={{ height: "149px" }}></div>
+      <div className={styles.header_spacer}></div>
 
       <article className={styles.container}>
         {/* 상단 배너는 생략하고, 바로 검색 결과 리스트 + 정렬 필터만 노출 */}

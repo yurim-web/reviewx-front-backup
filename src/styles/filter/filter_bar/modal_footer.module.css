@@ -79,10 +79,35 @@ letter-spacing: -0.32px;
  */
 
 @media (max-width: 768px) {
+  /* 모달 푸터 - 모바일 */
+  .modal_footer {
+    gap: 20px;
+  }
+
   /* 필터 적용 버튼 - 모바일 */
   .apply_button {
-    padding: 16px 20px; /* PC: 20px → 모바일: 16px 20px (높이 48px 유지) */
-    height: 48px; /* 모바일에서 명시적으로 높이 지정 */
-    box-sizing: border-box; /* padding 포함한 높이 계산 */
+    padding: 16px 20px;
+    height: 48px;
+    box-sizing: border-box;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+    border-radius: 8px;
+  }
+
+  /* 초기화 버튼 - 모바일 */
+  .reset_button {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+    gap: 6px;
+  }
+
+  /* 초기화 아이콘 - 모바일 */
+  .reset_icon {
+    width: 14px;
+    height: 14px;
   }
 }

@@ -45,6 +45,8 @@
   letter-spacing: -0.48px;
   flex: 1;
   margin: 0;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 /* 공유 버튼 */
@@ -123,6 +125,10 @@
    📱 모바일 반응형 스타일 (max-width: 768px)
    ======================================== */
 @media (max-width: 768px) {
+
+  .title_header{
+    gap: 8px;
+  }
   .product_info {
     display: flex;
     flex-direction: column;
@@ -142,18 +148,12 @@
     font-size: 20px;
     line-height: 28px;
     letter-spacing: -0.4px;
-    word-break: keep-all;
+    word-break: break-word;
     overflow-wrap: break-word;
   }
 
   /* 제품 설명 */
-  .product_description {
-    font-size: 14px;
-    line-height: 20px;
-    letter-spacing: -0.28px;
-    word-break: keep-all;
-    overflow-wrap: break-word;
-  }
+
 
   /* 메인 제품 이미지 */
   .main_image_container img {
@@ -173,6 +173,12 @@
     font-size: 16px;
     line-height: 22px;
     letter-spacing: -0.32px;
+  }
+
+  /* 공유버튼 */
+  .share_button {
+    width: 28px;
+    height: 28px;
   }
 }
 

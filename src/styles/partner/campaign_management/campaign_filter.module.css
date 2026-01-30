@@ -251,6 +251,13 @@
   letter-spacing: -0.32px;
 }
 
+/**
+ * 정렬 버튼 컨테이너 (모바일용 - 필터 바 border 아래)
+ */
+.sort_button_container {
+  display: none;
+}
+
 /* ========================================
    활성 필터 태그 영역
    ======================================== */
@@ -262,12 +269,21 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   padding: 12px;
   min-height: 40px;
-
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   border-radius: 4px;
   background: #f9f9f9;
+}
+
+/* 활성 필터 태그 컨테이너 스크롤바 숨기기 */
+.active_filters::-webkit-scrollbar {
+  display: none;
 }
 
 /**
@@ -277,6 +293,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
+  white-space: nowrap;
 
   /* 글자 스타일 */
   color: #444444;
@@ -318,76 +336,56 @@
   /* 필터 컨테이너 */
   .filter_container {
     padding: 20px 20px;
-    gap: 16px;
+    gap: 12px;
   }
 
   /* 필터 버튼 컨테이너 */
   .filter_buttons_container {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 16px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0;
   }
 
   /* 필터 버튼 그룹 */
   .filter_buttons {
     gap: 12px;
     flex-wrap: nowrap;
-  }
-
-  /* 필터 버튼 */
-  .filter_button {
-    padding: 12px;
-    font-size: 16px;
-    line-height: 16px;
-    letter-spacing: -0.32px;
-  }
-
-  /* 필터 아이콘 - 체크박스 */
-  .filter_icon {
-    width: 20px;
-    height: 20px;
-  }
-
-  /* 필터 라벨 */
-  .filter_label {
-    font-size: 16px;
-    line-height: 16px;
-    letter-spacing: -0.32px;
-  }
-
-  /* 검색 및 정렬 컨테이너 */
-  .search_sort_container {
-    margin-left: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
     width: 100%;
-    display: none; /* 모바일에서는 검색/정렬을 숨김 */
+  
   }
 
-  /* 정렬 버튼만 별도로 표시 */
-  .sort_button {
-    padding: 12px;
-    min-width: 89px;
-    font-size: 16px;
-    line-height: 16px;
-    letter-spacing: -0.32px;
+  /* 필터 버튼 그룹 스크롤바 숨기기 */
+  .filter_buttons::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
   }
 
-  /* 정렬 라벨 */
-  .sort_label {
-    font-size: 16px;
-    line-height: 16px;
-    letter-spacing: -0.32px;
+  /* 검색 및 정렬 컨테이너 (모바일에서 정렬 버튼 숨김) */
+  .search_sort_container {
+    display: none;
   }
 
-  /* 활성 필터 태그 */
-  .active_filters {
-    padding: 12px;
-    gap: 8px;
+  /* 정렬 버튼 컨테이너 (모바일용 - 필터 바 border 아래) */
+  .sort_button_container {
+    display: flex;
+    justify-content: flex-start;
+    padding: 20px 20px 0 20px;
   }
 
-  /* 필터 태그 */
-  .filter_tag {
-    font-size: 14px;
-    line-height: 14px;
-    letter-spacing: -0.28px;
+  /* 정렬 버튼 (모바일) */
+  .sort_button_container .sort_button {
+    margin-left: 0;
   }
+
+
+
+
+
+
+
+
 }

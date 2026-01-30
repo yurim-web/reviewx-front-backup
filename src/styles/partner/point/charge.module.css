@@ -172,6 +172,13 @@
   padding-bottom: 24px;
 }
 
+/* ✅ 계좌 정보 로우 - 계좌 정보 박스들을 감싸는 컨테이너 */
+.account_info_row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 /* ✅ 계좌 정보 박스 - 회색 배경의 계좌번호 표시 영역 (page.tsx 143번째 줄) */
 .account_info_box {
   padding: 20px;
@@ -364,4 +371,205 @@
 
 .notice_section {
   padding-top: 20px;
+}
+
+/* ============================================
+   모바일 반응형 스타일
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* 메인 컨텐츠 영역 */
+  .main_content {
+    padding-bottom: 40px;
+  }
+
+  /* 컨테이너 */
+  .container {
+    padding-top: 60px;
+  }
+
+  /* 컨텐츠 컨테이너 */
+  .content_container {
+    gap: 16px;
+  }
+
+  /* 섹션 제목 */
+  .content_title {
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  /* ============================================
+     결제 방식 탭 영역 (모바일)
+     ============================================ */
+
+  /* 탭 섹션 */
+  .tab_section {
+    gap: 8px;
+    padding: 20px 20px 16px 20px;
+  }
+
+  /* 개별 탭 버튼 */
+  .tab_button {
+    border-radius: 6px;
+    padding: 14px 12px;
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 무통장 입금 전체 섹션 */
+  .bank_section {
+    gap: 16px;
+    padding: 0 20px;
+  }
+
+  /* 폼 라벨 */
+  .section_label {
+    font-size: 13px;
+    line-height: 13px;
+    letter-spacing: -0.26px;
+  }
+
+  /* 입력 박스 */
+  .input_box {
+    height: 48px;
+    border-radius: 6px;
+    padding: 0 16px;
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 읽기 전용 박스 */
+  .read_only_box {
+    height: 48px;
+    border-radius: 6px;
+    padding: 0 16px;
+    font-size: 14px;
+  }
+
+  /* 폼 섹션 */
+  .form_section {
+    gap: 8px;
+  }
+
+  /* ============================================
+     입금계좌정보 영역 (모바일)
+     ============================================ */
+
+  /* 입금계좌 안내사항 리스트 */
+  .account_notice_list {
+    margin-top: -4px;
+    font-size: 13px;
+    line-height: 20px;
+    letter-spacing: -0.26px;
+    padding-bottom: 16px;
+  }
+
+  /* 계좌 정보 로우 */
+  .account_info_row {
+    gap: 8px;
+  }
+
+  /* 계좌 정보 박스 */
+  .account_info_box {
+    padding: 16px;
+    border-radius: 6px;
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  /* 계좌 정보 텍스트 */
+  .account_text {
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: -0.32px;
+    flex: 1;
+    white-space: pre-wrap;
+  }
+
+  /* 복사 버튼 */
+  .copy_button {
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 13px;
+    line-height: 13px;
+    letter-spacing: -0.26px;
+  }
+
+  /* 일반 안내 리스트 */
+  .notice_list {
+    padding-left: 8px;
+  }
+
+  /* 안내 리스트 아이템 */
+  .notice_list li {
+    font-size: 12px;
+    line-height: 20px;
+    letter-spacing: -0.24px;
+    padding-left: 12px;
+  }
+
+  /* ============================================
+     충전 신청 버튼 영역 (모바일)
+     ============================================ */
+
+  /* 신청 버튼 섹션 */
+  .submit_button_section {
+    padding: 24px 20px 0px 20px;
+  }
+
+  /* 신청 버튼 */
+  .submit_button {
+    height: 52px;
+    border-radius: 6px;
+    font-size: 15px;
+    line-height: 15px;
+    letter-spacing: -0.3px;
+  }
+
+  /* ============================================
+     약관 동의 영역 (모바일)
+     ============================================ */
+
+  /* 체크박스 로우 */
+  .checkbox_row {
+    border-radius: 6px;
+    padding: 14px 16px;
+    gap: 8px;
+  }
+
+  /* 체크박스 라벨 텍스트 */
+  .checkbox_row label {
+    font-size: 13px;
+    line-height: 18px;
+    letter-spacing: -0.26px;
+  }
+
+  /* 체크박스 자체 */
+  .checkbox_row input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    border-radius: 3px;
+  }
+
+  /* 체크된 체크박스 체크마크 */
+  .checkbox_row input[type="checkbox"]:checked::after {
+    font-size: 14px;
+  }
+
+  /* 약관 보기 버튼 */
+  .terms_button {
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 13px;
+    letter-spacing: -0.26px;
+  }
+
+  .notice_section {
+    padding-top: 16px;
+  }
 }

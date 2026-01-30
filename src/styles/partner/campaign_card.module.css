@@ -243,3 +243,147 @@
   height: 48px; /* 단일 버튼일 때 표준 높이 */
   font-size: 16px; /* 표준 폰트 크기 */
 }
+
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  /* 캠페인 목록 영역 */
+  .campaign_list {
+    padding: 0 20px 40px 20px;
+    gap: 16px;
+  }
+
+  /* 개별 캠페인 카드 */
+  .campaign_card {
+    padding: 20px;
+    gap: 16px;
+    border-radius: 8px;
+  }
+
+  /* 캠페인 콘텐츠 컨테이너 */
+  .campaign_content_container {
+    gap: 12px;
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  /* 캠페인 이미지 영역 */
+  .campaign_image {
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+    border-radius: 4px;
+  }
+
+  /* 캠페인 정보 영역 */
+  .campaign_info {
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* 캠페인 헤더 */
+  .campaign_header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* 타입 아이콘 */
+  .type_icon {
+    width: 6px;
+    height: 6px;
+    border-radius: 1.5px;
+  }
+
+  /* 브랜드 로고 */
+  .brand_logo {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* 타입 텍스트 */
+  .type_text {
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 캠페인 제목 */
+  .campaign_title {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 19.6px;
+    letter-spacing: -0.28px;
+    padding-bottom: 4px;
+  }
+
+  /* 캠페인 상태 텍스트 */
+  .campaign_status {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 12px;
+    letter-spacing: -0.24px;
+    padding-bottom: 8px;
+  }
+
+  /* 신청자 수 표시 */
+  .applicant_count {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 12px;
+    letter-spacing: -0.24px;
+    gap: 4px;
+  }
+
+  .applicant_separator {
+    font-size: 12px;
+  }
+
+  /* 액션 버튼 영역 */
+  .campaign_actions {
+    flex-direction: row;
+    gap: 8px;
+    width: 100%;
+    margin-top: 0;
+  }
+
+  /* 액션 버튼 기본 스타일 */
+  .campaign_actions button {
+    height: 38px;
+    min-width: auto;
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+    border-radius: 4px;
+  }
+
+  /* 진행 탭에서 2개 버튼이 있을 때 */
+  .campaign_actions:has(button:nth-child(2)) {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .campaign_actions:has(button:nth-child(2)) button {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 단일 버튼일 때 */
+  .campaign_actions:has(button:only-child) {
+    gap: 0;
+  }
+
+  .campaign_actions:has(button:only-child) button {
+    height: 38px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+}

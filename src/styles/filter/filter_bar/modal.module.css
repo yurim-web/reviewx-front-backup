@@ -112,22 +112,38 @@
   /* 모달 콘텐츠 - 모바일 */
   .modal_content {
     max-width: 100%;
-    /* 모바일에서 모달 전체 높이 최대값 고정 (Figma 기준) */
     max-height: 662px;
-    border-radius: 24px 24px 0 0; /* PC: 40px → 모바일: 24px */
-    padding: 32px 24px; /* PC: 40px → 모바일: 24px */
+    border-radius: 24px 24px 0 0;
+    padding: 32px 24px;
+    overflow: hidden;
   }
 
-  /* 모달 헤더 - 모바일 */
-  .modal_header {
-    padding-bottom: 24px; /* PC와 동일하지만 명시적으로 유지 */
+
+  /* 모달 제목 - 모바일 */
+  .modal_title {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 18px;
+    letter-spacing: -0.36px;
   }
 
-  /* 모달 바디 - 모바일
-     - 옵션 목록이 길어질 때 이 영역만 스크롤
-     - 푸터(필터 적용/선택 초기화)는 아래에 고정 */
+  /* 모달 닫기 버튼 - 모바일 */
+  .modal_close_button {
+    width: 18px;
+    height: 18px;
+  }
+
+  .modal_close_button img {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* 모달 바디 - 모바일 */
   .modal_body {
-    overflow-y: auto;
-    margin-bottom: 16px;
+    overflow-y: visible;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
   }
 }

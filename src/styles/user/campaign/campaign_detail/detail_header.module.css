@@ -141,9 +141,9 @@
    ======================================== */
 @media (max-width: 768px) {
   .tags_section {
-    padding: 0px 20px 16px 20px;
+    padding: 0px 20px 20px 20px;
     flex-wrap: wrap;
-    gap: 12px 8px;
+    gap: 8px;
   }
 
   .tag_icon_container {
@@ -151,6 +151,30 @@
     gap: 8px;
   }
 
+  .tag_icon {
+    width: 30px;
+    height: 30px;
+  }
 
+  .tag_box {
+    padding: 8px;
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  .subcategory_tag {
+    padding: 8px;
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  .points {
+    padding: 8px;
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
 }
 

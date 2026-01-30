@@ -102,17 +102,63 @@
   white-space: nowrap;
 }
 
-/* ========================================
-   📱 반응형 디자인
-   ======================================== */
+/* ============================================
+   모바일 반응형 스타일
+   ============================================ */
 
 @media (max-width: 768px) {
+  /* 옵션 입력 그룹 */
   .option_input_group {
     flex-direction: column;
     align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
   }
 
+  /* 옵션 라벨 */
+  .option_label {
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 숫자 입력 그룹 */
+  .number_input_group {
+    gap: 6px;
+  }
+
+  /* 숫자 입력 필드 */
+  .number_input {
+    width: 70px;
+    height: 36px;
+    padding: 0 10px;
+    font-size: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 입력 단위 */
+  .input_unit {
+    font-size: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 비디오 입력 그룹 */
   .video_input_group {
     flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  /* underline 입력 */
+  .underline_input {
+    width: 40px;
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 단위 텍스트 */
+  .unit_text {
+    font-size: 14px;
+    letter-spacing: -0.28px;
   }
 }

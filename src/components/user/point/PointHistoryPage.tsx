@@ -28,6 +28,7 @@ import { useRouter } from "next/navigation";
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 import PointTabNavigation from "@/components/common/point/PointTabNavigation";
 import TextareaModal from "@/components/common/modal/TextareaModal";
+import BaseModal from "@/components/common/modal/BaseModal";
 import { MainTab, PointTab, PointHistory } from "@/types/domain/user";
 import { pointHistoryData } from "@/data/user/point/pointData";
 import { useAuth } from "@/hooks/useAuth";
@@ -108,6 +109,15 @@ export default function PointHistoryPage({
   const [is_modal_open, setIsModalOpen] = useState(false);
 
   /**
+   * useState Hook - 계좌 정보 확인 모달 상태
+   *
+   * 설명:
+   * - 계좌 정보가 없을 때 표시하는 모달의 열림/닫힘 상태입니다.
+   * - false: 숨김, true: 표시
+   */
+  const [is_account_modal_open, setIsAccountModalOpen] = useState(false);
+
+  /**
    * useState Hook - 선택된 반려 사유
    *
    * 설명:
@@ -135,6 +145,19 @@ export default function PointHistoryPage({
     available_points: 0,
     pending_points: 0,
     current_points: 0,
+  });
+
+  /**
+   * useState Hook - 사용자 계좌 정보
+   *
+   * 설명:
+   * - user_accounts에서 읽어온 사용자의 계좌 정보를 저장합니다.
+   */
+  const [accountInfo, setAccountInfo] = useState({
+    name: "",
+    bank: "",
+    accountNumber: "",
+    residentNumber: "",
   });
 
   /**
@@ -173,6 +196,18 @@ export default function PointHistoryPage({
             };
             console.log('💰 [포인트 페이지] 업데이트할 포인트 정보:', newPointInfo);
             setPointInfo(newPointInfo);
+
+            // 계좌 정보 로드
+            const newAccountInfo = {
+              name: userAccount.account_holder || userAccount.name || "",
+              bank: userAccount.bank || "",
+              accountNumber: userAccount.account_number || "",
+              residentNumber: userAccount.ssn_front && userAccount.ssn_back
+                ? `${userAccount.ssn_front}-${userAccount.ssn_back}`
+                : "",
+            };
+            setAccountInfo(newAccountInfo);
+
             // 포인트 내역 로드 (없으면 빈 배열)
             setUserPointHistory(userAccount.point_history || []);
             console.log('✅ [포인트 페이지] 포인트 정보 로드 완료');
@@ -249,15 +284,63 @@ export default function PointHistoryPage({
   };
 
   /**
+   * 계좌 정보 유효성 검사
+   *
+   * 기능:
+   * - 예금주, 은행, 계좌번호, 주민등록번호가 모두 입력되어 있는지 확인
+   *
+   * 반환값:
+   * - true: 계좌 정보가 모두 입력됨
+   * - false: 계좌 정보가 하나라도 비어있음
+   */
+  const isAccountInfoValid = () => {
+    return (
+      accountInfo.name.trim() !== "" &&
+      accountInfo.bank.trim() !== "" &&
+      accountInfo.accountNumber.trim() !== "" &&
+      accountInfo.residentNumber.trim() !== ""
+    );
+  };
+
+  /**
    * 출금 신청 버튼 클릭 핸들러
    *
    * 설명:
    * - "출금 신청하기" 버튼을 클릭했을 때 실행되는 함수입니다.
-   * - Next.js의 router를 사용하여 출금 신청 페이지로 이동합니다.
+   * - 계좌 정보가 없으면 모달을 표시하고, 있으면 출금 신청 페이지로 이동합니다.
    *
    */
   const handleWithdrawalClick = () => {
+    // 계좌 정보가 없으면 모달 표시
+    if (!isAccountInfoValid()) {
+      setIsAccountModalOpen(true);
+      return;
+    }
+
+    // 계좌 정보가 있으면 출금 신청 페이지로 이동
     router.push("/user/point/withdrawal_request");
+  };
+
+  /**
+   * 계좌 정보 모달 닫기 핸들러
+   *
+   * 설명:
+   * - 모달을 닫을 때 실행되는 함수입니다.
+   */
+  const handleAccountModalClose = () => {
+    setIsAccountModalOpen(false);
+  };
+
+  /**
+   * 계좌 정보 등록 페이지로 이동 핸들러
+   *
+   * 설명:
+   * - "등록하기" 버튼을 클릭했을 때 실행되는 함수입니다.
+   * - 모달을 닫고 내 정보 수정 페이지로 이동합니다.
+   */
+  const handleGoToAccountRegistration = () => {
+    setIsAccountModalOpen(false);
+    router.push("/user/mypage/edit_profile");
   };
 
   /**
@@ -398,16 +481,8 @@ export default function PointHistoryPage({
             ) : (
               filteredHistoryData.map((history) => (
               <div key={history.id} className={styles.history_item}>
-                {/* 상태 배지 컨테이너 */}
+                {/* PC 버전: 기존 구조 (모바일에서 숨김) */}
                 <div className={styles.status_badge_container}>
-                  {/**
-                   * 동적 클래스명 적용
-                   *
-                   * 설명:
-                   * - 템플릿 리터럴(백틱)을 사용하여 여러 클래스를 조합합니다.
-                   * - 삼항 연산자를 중첩하여 여러 조건을 체크합니다.
-                   * - type과 status를 조합하여 정확한 배지 색상과 텍스트를 표시합니다.
-                   */}
                   <div
                     className={`${styles.status_badge} ${
                       history.status === "earned"
@@ -421,17 +496,6 @@ export default function PointHistoryPage({
                         : styles.cancelled
                     }`}
                   >
-                    {/**
-                     * 조건부 텍스트 렌더링
-                     *
-                     * 설명:
-                     * - 중첩된 삼항 연산자를 사용하여 상태에 따라 다른 텍스트를 표시합니다.
-                     * - type과 status를 조합하여 정확한 배지 텍스트를 표시합니다.
-                     *   - earned + earned: "적립"
-                     *   - withdrawn + completed: "출금"
-                     *   - withdrawn + failed: "취소"
-                     *   - earned + failed: "취소"
-                     */}
                     {history.status === "earned"
                       ? "적립"
                       : history.status === "completed"
@@ -442,42 +506,19 @@ export default function PointHistoryPage({
                   </div>
                 </div>
 
-                {/* 내역 정보 */}
                 <div className={styles.history_info}>
                   <div className={styles.history_description}>
-                    {/**
-                     * 조건부 렌더링
-                     *
-                     * 설명:
-                     * - history.status === 'failed'인 경우에만 특별한 UI를 표시합니다.
-                     * - && 연산자: 왼쪽이 true면 오른쪽을 반환, false면 아무것도 반환하지 않음
-                     */}
                     {history.status === "failed" ? (
                       <div className={styles.cancelled_description}>
                         <span className={styles.main_text}>
                           {history.description}
                         </span>
-                        {/**
-                         * 반려 사유가 있는 경우에만 사유보기 버튼 표시
-                         *
-                         * 설명:
-                         * - rejection_reason이 있을 때만 "사유보기" 버튼을 보여줍니다.
-                         * - && 연산자: 왼쪽이 true면 오른쪽을 반환, false면 아무것도 반환하지 않음
-                         */}
                         {history.rejection_reason && (
                           <div
                             className={styles.reason_section}
                             onClick={() => handle_reason_click(history)}
                           >
                             <div className={styles.reason_icon}>
-                              {/**
-                               * Next.js Image 컴포넌트
-                               *
-                               * 설명:
-                               * - Next.js에서 제공하는 최적화된 이미지 컴포넌트입니다.
-                               * - 자동으로 이미지를 최적화하고 lazy loading을 지원합니다.
-                               * - width, height 속성 필수
-                               */}
                               <Image
                                 src="/images/management_page/cancel_info.svg"
                                 alt="정보 아이콘"
@@ -496,15 +537,7 @@ export default function PointHistoryPage({
                   <div className={styles.history_date}>{history.date}</div>
                 </div>
 
-                {/* 포인트 정보 */}
                 <div className={styles.point_info}>
-                  {/**
-                   * 동적 클래스명과 텍스트
-                   *
-                   * 설명:
-                   * - 포인트 금액이 양수/음수에 따라 다른 스타일을 적용합니다.
-                   * - toLocaleString(): 숫자를 천 단위 구분자로 포맷팅
-                   */}
                   <div
                     className={`${styles.point_change} ${
                       history.status === "failed"
@@ -521,6 +554,84 @@ export default function PointHistoryPage({
                   </div>
                   <div className={styles.point_balance}>
                     {history.balance.toLocaleString()} P
+                  </div>
+                </div>
+
+                {/* 모바일 버전: 2줄 구조 (PC에서 숨김) */}
+                {/* 1번째 줄: 설명 (왼쪽) + 포인트 금액 + 잔액 (오른쪽, 세로 묶음) */}
+                <div className={styles.mobile_row_first}>
+                  <div className={styles.mobile_description}>
+                    {history.status === "failed" ? (
+                      <div className={styles.cancelled_description}>
+                        <span className={styles.main_text}>
+                          {history.description}
+                        </span>
+                        {history.rejection_reason && (
+                          <div
+                            className={styles.reason_section}
+                            onClick={() => handle_reason_click(history)}
+                          >
+                            <div className={styles.reason_icon}>
+                              <Image
+                                src="/images/management_page/cancel_info.svg"
+                                alt="정보 아이콘"
+                                width={12}
+                                height={12}
+                              />
+                            </div>
+                            <span className={styles.reason_text}>사유보기</span>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      history.description
+                    )}
+                  </div>
+
+                  <div className={styles.mobile_points_group}>
+                    <div
+                      className={`${styles.mobile_point_change} ${
+                        history.status === "failed"
+                          ? styles.cancelled_amount
+                          : history.amount > 0
+                          ? styles.positive
+                          : styles.negative
+                      }`}
+                    >
+                      {history.amount > 0
+                        ? `+ ${history.amount.toLocaleString()}`
+                        : `${history.amount.toLocaleString()}`}{" "}
+                      P
+                    </div>
+                    <div className={styles.mobile_balance}>
+                      {history.balance.toLocaleString()} P
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2번째 줄: 날짜 (왼쪽) + 상태 (오른쪽) */}
+                <div className={styles.mobile_row_second}>
+                  <div className={styles.mobile_date}>{history.date}</div>
+                  <div
+                    className={`${styles.mobile_status} ${
+                      history.status === "earned"
+                        ? styles.earned
+                        : history.status === "completed"
+                        ? styles.completed
+                        : history.status === "pending"
+                        ? styles.pending
+                        : history.status === "failed" && history.type === "withdrawn"
+                        ? styles.failed
+                        : styles.cancelled
+                    }`}
+                  >
+                    {history.status === "earned"
+                      ? "적립"
+                      : history.status === "completed"
+                      ? "출금"
+                      : history.status === "pending"
+                      ? "출금 신청"
+                      : "취소"}
                   </div>
                 </div>
               </div>
@@ -548,6 +659,25 @@ export default function PointHistoryPage({
         readOnly={true}
         variant="reject"
         buttons={["닫기"]}
+      />
+
+      {/* 계좌 정보 확인 모달 */}
+      {/**
+       * BaseModal 컴포넌트
+       *
+       * 설명:
+       * - 계좌 정보가 없을 때 표시하는 모달입니다.
+       * - "취소" 버튼: 모달을 닫습니다.
+       * - "등록하기" 버튼: 내 정보 수정 페이지로 이동합니다.
+       *
+       */}
+      <BaseModal
+        is_open={is_account_modal_open}
+        on_close={handleAccountModalClose}
+        message="계좌 정보가 없습니다.<br>계좌 정보 등록 후 출금 신청을 할 수 있습니다."
+        buttons={["취소", "등록"]}
+        on_confirm={handleGoToAccountRegistration}
+        type="center"
       />
     </div>
   );

@@ -80,10 +80,13 @@
 
 /* 미션 항목 */
 .mission_item {
-  padding: 16px 20px;
+  padding:  20px;
   border-radius: 8px;
   border: 1px solid;
   background-color: #ffffff;
+  height: 56px;
+  display: flex;
+  align-items: center;
 }
 
 /* 충족된 미션 항목: 초록색 테두리 */
@@ -149,4 +152,52 @@
   background-color: #d9d9d9;
   color: #848484;
   cursor: default;
+}
+
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* 모달 컨테이너 - 모바일에서 전체 너비 */
+  .modal_container {
+    max-width: 100%;
+    width: 100%;
+    padding: 32px 24px;
+    border-radius: 24px 24px 0 0;
+
+  }
+
+
+  /* 닫기 버튼 - 모바일 위치 조정 */
+  .close_button {
+    top: 32px;
+    right: 24px;
+  }
+
+
+  /* 서브타이틀 - 모바일 크기 */
+  .subtitle {
+    padding-bottom: 12px;
+
+  }
+
+
+  /* 미션 항목 - 모바일 패딩 */
+  .mission_item {
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+
+  /* 제출 버튼 - 모바일 크기 */
+  .submit_button {
+    height: 48px;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+    border-radius: 8px;
+  }
 }

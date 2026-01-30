@@ -376,15 +376,17 @@
   }
 
   .left_stage_bar {
-    left: 31px;
-    width: calc(50% - 46px);
+
+
     height: 4px;
+    width: 30%;
   }
 
   .right_stage_bar {
-    right: 31px;
-    width: calc(50% - 46px);
+    
+
     height: 4px;
+    width: 30%;
   }
 
   .stage_bar_fill {

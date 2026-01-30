@@ -387,10 +387,22 @@ export default function ImageUploadModal({
             <div
               className={`${styles.modal_container} ${styles.modal_container_scroll}`}
             >
-              {/* 모달 제목 */}
-              <h2 className={styles.modal_title}>
-                {mode === "edit" ? "콘텐츠 수정" : "콘텐츠 등록"}
-              </h2>
+              {/* 모달 헤더 (제목 + 닫기 버튼) */}
+              <div className={styles.modal_header}>
+                {/* 모달 제목 */}
+                <h2 className={styles.modal_title}>
+                  {mode === "edit" ? "콘텐츠 수정" : "콘텐츠 등록"}
+                </h2>
+                {/* 닫기 버튼 */}
+                <button className={styles.close_button} onClick={onClose}>
+                  <Image
+                    src="/images/filter/x_icon.svg"
+                    alt="닫기"
+                    width={28}
+                    height={28}
+                  />
+                </button>
+              </div>
 
               {/* 이미지 업로드 섹션 */}
               <div className={styles.image_section}>
@@ -482,16 +494,6 @@ export default function ImageUploadModal({
                 }
               >
                 {isSubmitting ? "등록 중..." : "등록"}
-              </button>
-
-              {/* 닫기 버튼 */}
-              <button className={styles.close_button} onClick={onClose}>
-                <Image
-                  src="/images/filter/x_icon.svg"
-                  alt="닫기"
-                  width={28}
-                  height={28}
-                />
               </button>
 
               {/* 숨겨진 파일 입력 */}

@@ -48,3 +48,22 @@
   color: #848484;
   cursor: default;
 }
+
+/* ========================================
+   모바일 반응형 스타일
+   ======================================== */
+
+@media (max-width: 768px) {
+  .container {
+    right: 20px; /* 모바일에서는 우측 고정 */
+    bottom: 20px;
+    gap: 10px;
+  }
+
+  .save_button,
+  .load_button {
+    padding: 10px 14px;
+    font-size: 14px;
+    border-radius: 24px;
+  }
+}

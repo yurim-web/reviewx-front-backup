@@ -48,7 +48,7 @@
 
 /* 개별 통계 탭 버튼 */
 .stat_tab {
-  color: #848484; /* 기본 회색 */
+  color: #444; 
   font-size: 18px;
   font-weight: 500;
   line-height: 18px; /* 100% */
@@ -88,7 +88,7 @@
 
 /* 통계 탭의 숫자 부분 (예: "전체 (5)") */
 .stat_number {
-  color: #848484;
+  color: #444;
   font-size: 18px;
   font-weight: 500;
   line-height: 18px;
@@ -114,7 +114,7 @@
   /* 통계 섹션 */
   .statistics {
     padding: 0px 20px;
-    top: 114px; /* 모바일 헤더(64px) + TabNavigation(50px) = 114px */
+    top: 122px; /* 모바일 헤더(64px) + TabNavigation(50px) = 114px */
     overflow-x: auto; /* 가로 스크롤 활성화 */
     -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
     scrollbar-width: none; /* Firefox 스크롤바 숨김 */

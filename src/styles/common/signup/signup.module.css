@@ -514,8 +514,7 @@ letter-spacing: -0.32px;
 
   /* 약관 동의 섹션 */
   .terms_section {
-    padding-top: 8px;
-    gap: 12px;
+    padding-top: 20px;
   }
 
   /* 회원가입 버튼 */

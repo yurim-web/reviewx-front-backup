@@ -140,6 +140,62 @@
   gap: 32px;
 }
 
+/* 스크롤바 스타일 (Webkit 브라우저) - 카테고리/채널 필터용 */
+.options_grid:not(.sub_regions_container .options_grid)::-webkit-scrollbar,
+.options_vertical:not(.sub_regions_container .options_vertical)::-webkit-scrollbar {
+  width: 4px; /* 스크롤바 너비 */
+}
+
+/* 위아래 화살표 버튼 완전히 제거 */
+.options_grid:not(.sub_regions_container .options_grid)::-webkit-scrollbar-button,
+.options_vertical:not(.sub_regions_container .options_vertical)::-webkit-scrollbar-button {
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+/* 시작/끝 화살표 버튼 제거 */
+.options_grid:not(.sub_regions_container .options_grid)::-webkit-scrollbar-button:start:decrement,
+.options_grid:not(.sub_regions_container .options_grid)::-webkit-scrollbar-button:end:increment,
+.options_vertical:not(.sub_regions_container .options_vertical)::-webkit-scrollbar-button:start:decrement,
+.options_vertical:not(.sub_regions_container .options_vertical)::-webkit-scrollbar-button:end:increment {
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+/* 수직 스크롤바 버튼 제거 */
+.options_grid:not(.sub_regions_container .options_grid)::-webkit-scrollbar-button:vertical:start:decrement,
+.options_grid:not(.sub_regions_container .options_grid)::-webkit-scrollbar-button:vertical:end:increment,
+.options_vertical:not(.sub_regions_container .options_vertical)::-webkit-scrollbar-button:vertical:start:decrement,
+.options_vertical:not(.sub_regions_container .options_vertical)::-webkit-scrollbar-button:vertical:end:increment {
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+/* 스크롤바 트랙 (배경) */
+.options_grid:not(.sub_regions_container .options_grid)::-webkit-scrollbar-track,
+.options_vertical:not(.sub_regions_container .options_vertical)::-webkit-scrollbar-track {
+  background: transparent; 
+  margin-bottom: 5px; 
+  margin-top: 5px;
+}
+
+/* 스크롤바 썸 (드래그 가능한 부분) */
+.options_grid:not(.sub_regions_container .options_grid)::-webkit-scrollbar-thumb,
+.options_vertical:not(.sub_regions_container .options_vertical)::-webkit-scrollbar-thumb {
+  background: #d9d9d9; /* 스크롤바 색상 (연한 회색) */
+  border-radius: 2px; /* 스크롤바 모서리 둥글게 */
+}
+
+/* 스크롤바 썸 호버 효과 */
+.options_grid:not(.sub_regions_container .options_grid)::-webkit-scrollbar-thumb:hover,
+.options_vertical:not(.sub_regions_container .options_vertical)::-webkit-scrollbar-thumb:hover {
+  background: #b0b0b0; /* 호버 시 약간 더 진한 회색 */
+  cursor: pointer;
+}
+
 /* ========================================
    📱 모바일 반응형 스타일 (max-width: 768px)
    ======================================== */
@@ -151,30 +207,73 @@
  */
 
 @media (max-width: 768px) {
-  /* 옵션 그리드 - 모바일
-     - PC에서는 2열(grid) 유지
-     - 모바일에서는 피그마처럼 1열(세로 리스트)로 변경 */
+  /* 옵션 그리드 - 모바일 */
   .options_grid:not(.sub_regions_container .options_grid) {
     grid-template-columns: 1fr;
     gap: 24px;
-    max-height: none; /* 중첩 스크롤 방지 (스크롤은 modal_body가 담당) */
-    overflow-y: visible;
+    max-height: 400px;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+    padding-bottom: 20px;
   }
 
   .options_grid {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 20px;
+    padding: 0;
   }
 
-  /* 세로 레이아웃 옵션 - 모바일 (채널/카테고리/정렬 등 1열 리스트) */
+  /* 세로 레이아웃 옵션 - 모바일 */
   .options_vertical:not(.sub_regions_container .options_vertical) {
-    gap: 24px; 
-    max-height: none; /* 내부 옵션 컨테이너는 높이 제한 X (스크롤은 modal_body가 담당) */
-    overflow-y: visible;
+    gap: 24px;
+    max-height: 400px;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
   }
 
   /* 기본 세로 레이아웃 - 모바일 */
   .options_vertical {
-    gap: 24px; 
+    gap: 20px;
+  }
+
+  /* 옵션 아이템 - 모바일 */
+  .option_item {
+    gap: 12px;
+  }
+
+  /* 체크박스 - 모바일 */
+  .option_checkbox {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+  }
+
+
+
+  /* 라디오 버튼 - 모바일 */
+  .option_radio {
+    width: 20px;
+    height: 20px;
+  }
+
+  .option_radio:checked::after {
+    width: 8px;
+    height: 8px;
+  }
+
+  /* 옵션 라벨 - 모바일 */
+  .option_label {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  /* 지역 화살표 - 모바일 */
+  .region_arrow {
+    width: 14px;
+    height: 14px;
   }
 }

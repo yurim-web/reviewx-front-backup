@@ -60,6 +60,7 @@ export default function PartnerHeader() {
    * 설명:
    * - 클라이언트 마운트 후에만 실행됩니다 (isMounted 체크).
    * - 로그인 상태와 알림 데이터를 확인하여 적절한 아이콘을 표시합니다.
+   * - 모바일/PC 구분하여 적절한 아이콘 경로를 설정합니다.
    */
   useEffect(() => {
     // 클라이언트 마운트 전에는 실행하지 않음 (Hydration 에러 방지)
@@ -67,18 +68,31 @@ export default function PartnerHeader() {
 
     // 로그인 안 되어 있으면 알림 없음 아이콘
     if (!user) {
-      setNotificationIconSrc("/images/header/notification_icon.svg");
+      setNotificationIconSrc(
+        isMobile
+          ? "/images/header/mobile/mo_notification_icon.svg"
+          : "/images/header/notification_icon.svg"
+      );
       return;
     }
 
     // 로그인 되어 있으면 알림 데이터 확인
     const has_notifications = mockPartnerNotifications.length > 0;
-    setNotificationIconSrc(
-      has_notifications
-        ? "/images/header/notification_ok.svg"
-        : "/images/header/notification_icon.svg"
-    );
-  }, [user, isMounted]);
+    
+    if (isMobile) {
+      setNotificationIconSrc(
+        has_notifications
+          ? "/images/header/mobile/mo_notification_ok.svg"
+          : "/images/header/mobile/mo_notification_icon.svg"
+      );
+    } else {
+      setNotificationIconSrc(
+        has_notifications
+          ? "/images/header/notification_ok.svg"
+          : "/images/header/notification_icon.svg"
+      );
+    }
+  }, [user, isMounted, isMobile]);
 
   // 로고 이미지 경로 (모바일/PC 구분)
   const getLogoSrc = () => {
@@ -90,6 +104,26 @@ export default function PartnerHeader() {
       : "/images/header/vx_header_logo.svg";
   };
 
+  // 검색 아이콘 경로 (모바일/PC 구분)
+  const getSearchIconSrc = () => {
+    if (!isMounted) {
+      return "/images/header/header_search.svg";
+    }
+    return isMobile
+      ? "/images/header/mobile/mo_search.svg"
+      : "/images/header/header_search.svg";
+  };
+
+  // 사용자 아이콘 경로 (모바일/PC 구분)
+  const getUserIconSrc = () => {
+    if (!isMounted) {
+      return "/images/header/header_user.svg";
+    }
+    return isMobile
+      ? "/images/header/mobile/mo_user.svg"
+      : "/images/header/header_user.svg";
+  };
+
   return (
     <header>
       <nav className={styles.header_container}>
@@ -97,41 +131,56 @@ export default function PartnerHeader() {
           <img src={getLogoSrc()} alt="VX 로고" />
         </Link>
         <div className={styles.menu_icon_box}>
-          {/* 새로운 캠페인 등록 버튼 */}
-          <Link
-            href="/partner/campaign/create"
-            className={styles.new_campaign_button}
-          >
-            새 캠페인 등록
-          </Link>
+          {/* 새로운 캠페인 등록: PC에서는 버튼, 모바일에서는 아이콘 */}
+          {isMobile ? (
+            <Link
+              href="/partner/campaign/create"
+              className={styles.notification_icon}
+              aria-label="새 캠페인 등록"
+            >
+              <img src="/images/header/mobile/mo_partner_campaign.svg" alt="새 캠페인 등록" />
+            </Link>
+          ) : (
+            <Link
+              href="/partner/campaign/create"
+              className={styles.new_campaign_button}
+            >
+              새 캠페인 등록
+            </Link>
+          )}
 
           {/* 검색창 - 파트너 전용 검색 결과 페이지로 이동 */}
-          <HeaderSearch search_path="/partner/search" />
+          <HeaderSearch searchIconSrc={getSearchIconSrc()} search_path="/partner/search" />
 
           {/* 알림페이지로 연결 */}
           <Link
             href="/partner/notification"
             className={styles.notification_icon}
+            aria-label="알림"
           >
-            <img src={notificationIconSrc} alt="notification" />
+            <img src={notificationIconSrc} alt="알림" suppressHydrationWarning />
           </Link>
 
-          {/* 가이드로 연결 */}
-          <a
-            href="https://markx.dev/guide_book"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.bookmark_icon}
-          >
-            <img src="/images/header/header_book.svg" alt="book" />
-          </a>
+          {/* 가이드로 연결 - PC에서만 표시 */}
+          {!isMobile && (
+            <a
+              href="https://markx.dev/guide_book"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.bookmark_icon}
+              aria-label="가이드북"
+            >
+              <img src="/images/header/header_book.svg" alt="가이드북" />
+            </a>
+          )}
 
           {/* 마이페이지로 연결 */}
           <Link
             href="/partner/campaign_management"
             className={styles.user_icon}
+            aria-label="마이페이지"
           >
-            <img src="/images/header/header_user.svg" alt="user" />
+            <img src={getUserIconSrc()} alt="사용자" suppressHydrationWarning />
           </Link>
         </div>
       </nav>

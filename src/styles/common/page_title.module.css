@@ -73,6 +73,7 @@
     margin: 0 auto;
     background: white;
     z-index: 1000;
+    height: 64px;
   }
 
   .page_title {

@@ -43,7 +43,7 @@
 }
 
 .region_tab_active {
-  color: #333;
+  color: #FF5694;
   font-weight: 600;
 }
 
@@ -54,8 +54,8 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: #333;
-  border-radius: 1px;
+  background: #FF5694;
+  border-radius: 2px;
   z-index: 1;
 }
 
@@ -120,6 +120,11 @@
   height: 900px;
 }
 
+/* 지역 필터 모달 바디 - 스크롤 제거 (sub_regions_container에서 스크롤 처리) */
+.region_modal_content .modal_body {
+  overflow-y: visible;
+}
+
 /* ========================================
    📱 모바일 반응형 스타일 (max-width: 768px)
    ======================================== */
@@ -131,19 +136,75 @@
  */
 
 @media (max-width: 768px) {
+  /* 지역 모달 콘텐츠 - 모바일 높이 제한 */
+  .region_modal_content {
+    max-height: 100vh;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+
   /* 지역 탭 - 모바일 */
   .region_tabs {
-    gap: 24px; /* PC와 동일하지만 명시적으로 유지 */
+    gap: 20px;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-shrink: 0;
+    margin-bottom: 16px;
+  }
+
+  /* 지역 탭 스크롤바 숨기기 */
+  .region_tabs::-webkit-scrollbar {
+    display: none;
   }
 
   /* 지역 탭 버튼 - 모바일 */
   .region_tab {
-    padding: 0px 0px 16px 0px; /* PC와 동일하지만 명시적으로 유지 */
+    padding: 0 0 12px 0;
+    flex-shrink: 0;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 활성화된 지역 탭 - 모바일 */
+  .region_tab_active {
+    font-weight: 600;
+  }
+
+  .region_tab_active::after {
+    height: 2px;
+  }
+
+  /* 지역 필터 모달 바디 - 모바일 */
+  .region_modal_content .modal_body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
 
   /* 하위 지역 컨테이너 - 모바일 */
   .sub_regions_container {
-    padding-top: 24px; /* PC와 동일하지만 명시적으로 유지 */
-    padding-bottom: 24px; /* PC와 동일하지만 명시적으로 유지 */
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    padding: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 하위 지역 컨테이너 스크롤바 숨기기 - 모바일 */
+  .sub_regions_container::-webkit-scrollbar {
+    display: none;
   }
 }
