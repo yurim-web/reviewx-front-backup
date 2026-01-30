@@ -14,7 +14,11 @@
       "mcp__atlassian-confluence__getAccessibleAtlassianResources",
       "mcp__atlassian-confluence__createConfluencePage",
       "mcp__atlassian-confluence__searchConfluenceUsingCql",
-      "mcp__atlassian-confluence__updateConfluencePage"
+      "mcp__atlassian-confluence__updateConfluencePage",
+      "Bash(dir:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npx stylelint:*)",
+      "Bash(findstr:*)"
     ]
   }
 }

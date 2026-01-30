@@ -40,7 +40,7 @@
 
 /* 개별 탭 버튼 스타일 */
 .tab {
-  color: #848484; /* 기본 회색 */
+  color: #444; /* 기본 회색 */
   font-size: 20px;
   font-weight: 500;
   line-height: 20px; /* 100% */
@@ -70,12 +70,13 @@
 @media (max-width: 768px) {
   /* 탭 네비게이션 - 가로 스크롤 가능하게 */
   .tab_navigation {
-    padding-top: 16px;
-    padding-bottom: 16px;
+    padding-top: 20px;
+    padding-bottom: 20px;
     top: 64px; /* 모바일 헤더 높이 */
     overflow-x: auto; /* 가로 스크롤 활성화 */
     -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
     scrollbar-width: none; /* Firefox 스크롤바 숨김 */
+    height: 58px;
   }
 
   /* Webkit 브라우저 스크롤바 숨김 */

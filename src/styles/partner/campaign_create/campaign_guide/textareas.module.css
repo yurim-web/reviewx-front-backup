@@ -71,3 +71,27 @@
   background: #999999;
   background-clip: padding-box;
 }
+
+/* ============================================
+   모바일 반응형 스타일
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* 고정 높이 textarea */
+  .fixed_height_textarea {
+    height: 200px;
+    min-height: 200px;
+    padding: 14px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 22px;
+    letter-spacing: -0.26px;
+  }
+
+  /* placeholder */
+  .fixed_height_textarea::placeholder {
+    font-size: 13px;
+    line-height: 22px;
+    letter-spacing: -0.26px;
+  }
+}

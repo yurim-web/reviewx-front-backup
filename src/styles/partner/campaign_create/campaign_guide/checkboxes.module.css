@@ -64,3 +64,35 @@
   font-size: 12px;
   font-weight: bold;
 }
+
+/* ============================================
+   모바일 반응형 스타일
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* 체크박스 그룹 */
+  .checkbox_group {
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  /* 체크박스 라벨 */
+  .checkbox_label {
+    gap: 6px;
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 체크박스 입력 요소 */
+  .checkbox_label:not(.header_urgent_checkbox .checkbox_label)
+    input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+  }
+
+  .checkbox_label:not(.header_urgent_checkbox .checkbox_label)
+    input[type="checkbox"]:checked::after {
+    font-size: 11px;
+  }
+}

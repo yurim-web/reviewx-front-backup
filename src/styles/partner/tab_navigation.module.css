@@ -52,3 +52,40 @@
   font-weight: 700;
   color: #ff5694;
 }
+
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  /* 상단 탭 네비게이션 */
+  .tab_navigation {
+    padding-top: 16px;
+    padding-bottom: 16px;
+    top: 64px; /* 모바일 헤더 높이 */
+    border-bottom: 1px solid #d9d9d9;
+  }
+
+  /* 탭 네비게이션 내부 컨테이너 */
+  .tab_navigation_container {
+    padding: 0 20px;
+  }
+
+  /* 좌측/우측 탭 그룹 */
+  .left_tabs,
+  .right_tabs {
+    gap: 16px;
+  }
+
+  /* 개별 탭 버튼 스타일 */
+  .tab {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  /* 활성화된 탭 스타일 */
+  .tab.active {
+    font-weight: 700;
+  }
+}

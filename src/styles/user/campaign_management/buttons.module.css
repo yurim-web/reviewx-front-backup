@@ -42,9 +42,9 @@
 
 /* 일반 액션 버튼 (신청 취소하기, 콘텐츠 수정하기) */
 .default_button {
-  border: 1px solid #444;
+  border: 1px solid #848484;
   background: #fff;
-  color: #444;
+  color: #848484;
 }
 
 /* 보조 버튼 (콘텐츠 확인하기) */
@@ -63,9 +63,9 @@
 
 /* 콘텐츠 수정 버튼 (반려 탭 전용) */
 .content_edit_button {
-  border: 1px solid #ff5694;
+  border: 1px solid #444444;
   background: #fff;
-  color: #ff5694;
+  color: #444;
 }
 
 /* 경고 버튼 (콘텐츠 반려 사유보기, 패널티 내역보기) */
@@ -154,11 +154,18 @@
     line-height: 14px;
     letter-spacing: -0.28px;
     font-weight: 600;
+    height: 38px;
+
+    overflow: hidden;
+font-size: 14px;
+line-height: 14px; 
+letter-spacing: -0.28px;
   }
 
   /* 주요 액션 버튼 */
   .primary_button {
     border-radius: 4px;
+  
   }
 
   /* 일반 액션 버튼 */

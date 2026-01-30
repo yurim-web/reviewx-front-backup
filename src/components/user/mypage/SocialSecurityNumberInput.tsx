@@ -42,7 +42,17 @@ export default function SocialSecurityNumberInput({
   onSsnFrontChange,
   onSsnBackChange,
 }: SocialSecurityNumberInputProps) {
-  const ssnBackGenderDigit = ssnBack.charAt(0);
+  /**
+   * 뒷자리 마스킹 처리
+   * - 첫 번째 자리(성별): 그대로 표시
+   * - 나머지 6자리: ● 로 마스킹
+   */
+  const getMaskedSsnBack = (value: string): string => {
+    if (!value) return "";
+    const firstDigit = value.charAt(0);
+    const masked = "●".repeat(value.length - 1);
+    return firstDigit + masked;
+  };
 
   return (
     <article className={layoutStyles.field_article}>
@@ -50,38 +60,59 @@ export default function SocialSecurityNumberInput({
         주민등록번호
       </label>
       <div className={ssnStyles.ssn_container}>
-        <input
-          type="text"
-          id="ssnFront"
-          name="ssnFront"
-          className={`${inputStyles.input_field} ${ssnStyles.ssn_front_input}`}
-          value={ssnFront}
-          inputMode="numeric"
-          onChange={(e) => {
-            onSsnFrontChange(e.target.value);
-          }}
-          maxLength={6}
-          placeholder="생년월일 6자리"
-        />
+        <div className={ssnStyles.ssn_front_wrapper}>
+          <input
+            type="text"
+            id="ssnFront"
+            name="ssnFront"
+            className={`${inputStyles.input_field} ${ssnStyles.ssn_front_input}`}
+            value={ssnFront}
+            inputMode="numeric"
+            onChange={(e) => {
+              onSsnFrontChange(e.target.value);
+            }}
+            maxLength={6}
+            placeholder="생년월일 6자리"
+          />
+        </div>
         <span className={ssnStyles.ssn_separator}>-</span>
         <div className={ssnStyles.ssn_back_wrapper}>
           <input
-            type="password"
+            type="text"
             id="ssnBack"
             name="ssnBack"
             className={`${inputStyles.input_field} ${ssnStyles.ssn_back_input}`}
-            value={ssnBack}
+            value={getMaskedSsnBack(ssnBack)}
+            inputMode="numeric"
             onChange={(e) => {
-              onSsnBackChange(e.target.value);
+              // 실제 입력값 처리 (숫자만)
+              const input = e.target.value;
+              const currentLength = ssnBack.length;
+
+              // 마스킹 문자 제거하고 숫자만 추출
+              if (input.length > currentLength) {
+                // 입력이 추가된 경우
+                const newChar = input.slice(-1);
+                if (/^\d$/.test(newChar)) {
+                  onSsnBackChange(ssnBack + newChar);
+                }
+              } else if (input.length < currentLength) {
+                // 삭제된 경우
+                onSsnBackChange(ssnBack.slice(0, -1));
+              }
+            }}
+            onKeyDown={(e) => {
+              // 백스페이스/Delete 키 처리
+              if (e.key === "Backspace" || e.key === "Delete") {
+                e.preventDefault();
+                if (ssnBack.length > 0) {
+                  onSsnBackChange(ssnBack.slice(0, -1));
+                }
+              }
             }}
             maxLength={7}
             placeholder="뒤 7자리"
           />
-          {ssnBackGenderDigit && (
-            <span className={ssnStyles.ssn_back_gender_digit}>
-              {ssnBackGenderDigit}
-            </span>
-          )}
         </div>
       </div>
     </article>

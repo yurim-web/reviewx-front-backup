@@ -378,12 +378,9 @@ letter-spacing: -0.32px;
     height: 24px;
   }
 
-  /* 모바일에서 새로운 캠페인 등록 버튼 */
+  /* 모바일에서 새로운 캠페인 등록 버튼 숨기기 (아이콘으로 대체) */
   .new_campaign_button {
-    font-size: 14px;
-    padding: 10px 16px;
-    line-height: 14px;
-    min-height: 44px;
+    display: none;
   }
 
   /* 서브헤더 모바일 스타일 */

@@ -48,26 +48,34 @@
   box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.15);
 }
 
+/* 모달 헤더 (제목 + 닫기 버튼) */
+.modal_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 24px;
+}
+
 /* 모달 제목 */
 .modal_title {
   font-size: 20px;
   font-weight: 700;
   color: #444;
-  padding-bottom: 24px;
   text-align: left;
+  margin: 0;
 }
 
 /* 닫기 버튼 */
 .close_button {
-  position: absolute;
-  top: 40px;
-  right: 40px;
   background: none;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
 }
 
 /* 등록/제출 버튼 */
@@ -122,13 +130,14 @@
   background: white;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
-  padding: 16px 20px;
+  padding: 20px;
   font-size: 16px;
   font-weight: 500;
   color: #444;
   transition: border-color 0.2s;
   min-height: 56px;
   box-sizing: border-box;
+  height: 56px;
 }
 
 .link_input:focus {
@@ -203,7 +212,7 @@
 /* 이미지 그리드 (grid 방식 - ReceiptRegistrationModal) */
 .image_grid_grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   width: 100%;
   max-width: 920px;
@@ -404,47 +413,96 @@
    반응형 스타일
    ======================================== */
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  /* 모달 컨테이너 - 모바일에서 전체 너비 */
   .modal_container {
-    padding: 24px;
-    margin: 16px;
-    max-width: calc(100vw - 32px);
+    max-width: 100%;
+    width: 100%;
+    padding: 32px 24px;
+    border-radius: 24px 24px 0 0;
+  }
+  /* 링크 섹션 */
+  .link_section {
+    padding-bottom: 12px;
   }
 
-  .modal_title {
-    font-size: 18px;
-    margin-bottom: 20px;
-  }
-
-  .link_section,
+  /* 이미지 섹션 */
   .image_section {
-    margin-bottom: 24px;
+    gap: 8px;
+
   }
 
-  .link_input {
-    height: 44px;
-    font-size: 15px;
+  .image_upload_area {
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
   }
 
+  .upload_placeholder img {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  /* 이미지 그리드 (flex 방식 -> 모바일에서 grid로 변경) */
   .image_grid {
-    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-    gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    padding-bottom: 8px;
   }
 
+  /* 이미지 그리드 (grid 방식 - ReceiptRegistrationModal) */
+  .image_grid_grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  /* 이미지 아이템 - 모바일 크기 */
   .image_item,
   .upload_button,
   .image_preview,
   .add_more_button {
-    width: 70px;
-    height: 70px;
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
   }
 
-  .upload_guide {
-    font-size: 13px;
+
+  .upload_section{
+  padding-top: 8px;
+  }
+  /* 플러스 아이콘 - 모바일 크기 */
+  .add_more_button img,
+  .plus_icon {
+    width: 40px !important;
+    height: 40px !important;
   }
 
+  .upload_icon img {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  
+
+  .image_label{
+    padding-bottom: 4px;
+  }
+
+
+  /* 안내 문구 (ReceiptRegistrationModal) */
+  .guidelines {
+    padding-bottom: 12px;
+  }
+
+  /* 제출 버튼 - 모바일 크기 */
   .submit_button {
-    height: 44px;
-    font-size: 15px;
+height: 48px;
+padding:16px;
+  }
+
+  /* 모달 컨테이너 스크롤 - 모바일 높이 조정 */
+  .modal_container_scroll {
+    max-height: 80vh;
   }
 }

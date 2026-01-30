@@ -155,3 +155,32 @@
 .modal_footer_button_single:hover {
   background: rgba(119, 119, 119, 0.2);
 }
+
+/* ========================================
+   반응형 스타일 (Mobile)
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* 중앙 정렬 모달 컨테이너 - 모바일 */
+  .modal_container_center {
+    max-width: calc(100% - 40px);
+    padding: 32px 24px;
+    border-radius: 12px;
+  }
+
+  /* 모달 메시지 텍스트 - 모바일 */
+  .modal_message_text {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    letter-spacing: -0.32px;
+  }
+
+  /* 모달 푸터 - 모바일 */
+  .modal_footer {
+    gap: 12px;
+    padding-top: 20px;
+  }
+
+
+}

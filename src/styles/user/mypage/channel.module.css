@@ -75,7 +75,7 @@
 .channel_grid {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .channel_item {
@@ -156,8 +156,5 @@
     padding: 16px 0;
   }
 
-  /* 채널 아이템 */
-  .channel_item {
-    padding: 16px;
-  }
+
 }

@@ -133,7 +133,11 @@ export default function ModalFilter({
                   value={typeof option === "object" ? option.value : option}
                   checked={isSelected(option)}
                   onChange={() => onOptionChange(option)}
-                  className={optionsStyles.option_checkbox}
+                  className={
+                    type === "radio"
+                      ? optionsStyles.option_radio
+                      : optionsStyles.option_checkbox
+                  }
                 />
                 <span className={optionsStyles.option_label}>
                   {typeof option === "object" ? option.label : option}

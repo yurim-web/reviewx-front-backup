@@ -111,7 +111,7 @@ export default function DetailGuidelinesSectionMission({
       {/* 안내사항 섹션 */}
       <div className={styles.info_item_box}>
         <div className={styles.label_box}>안내사항</div>
-        <div className={styles.content_box}>
+        <div>
           {/* 요구사항 아이콘 리스트 */}
           <RequirementIcons requirements={requirements} />
 

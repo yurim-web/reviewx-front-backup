@@ -354,12 +354,11 @@ export default function WithdrawalRequestPage() {
    * 계좌 정보 등록 페이지로 이동 핸들러
    *
    * 기능:
-   * - 모달을 닫고 개인 정보 수정 페이지로 이동
+   * - 개인 정보 수정 페이지로 이동
    *
 
    */
   const handleGoToAccountRegistration = () => {
-    setIsAccountWarningModalOpen(false);
     router.push("/user/mypage/edit");
   };
 
@@ -387,8 +386,10 @@ export default function WithdrawalRequestPage() {
       {/* 메인 컨텐츠 */}
       <main className={styles.main_content}>
         <div className={styles.container}>
-          {/* 제목 */}
-          <PageTitle title="포인트 출금 신청" />
+          {/* 제목 (모바일에서는 숨김) */}
+          <div className={styles.page_title_wrapper}>
+            <PageTitle title="포인트 출금 신청" />
+          </div>
 
           <AvailablePointsDisplay
             points={userInfo.availablePoints}

@@ -39,6 +39,7 @@ export default function CampaignFilterBar<
   channelOptions = DEFAULT_CHANNEL_OPTIONS,
   sortOptions = DEFAULT_SORT_OPTIONS,
   defaultSort = DEFAULT_SORT,
+  showSearch = true,
 }: CampaignFilterBarProps<T>) {
   const {
     state: {
@@ -143,22 +144,26 @@ export default function CampaignFilterBar<
             )}
           </div>
 
+          {/* 검색 및 정렬 컨테이너 (데스크톱용) */}
           <div className={styles.search_sort_container}>
-            <div className={styles.search_container}>
-              <img
-                src="/images/icons/search_icon.svg"
-                alt="검색"
-                className={styles.search_icon}
-              />
-              <input
-                type="text"
-                placeholder="검색"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                className={styles.search_input}
-              />
-            </div>
+            {showSearch && (
+              <div className={styles.search_container}>
+                <img
+                  src="/images/icons/search_icon.svg"
+                  alt="검색"
+                  className={styles.search_icon}
+                />
+                <input
+                  type="text"
+                  placeholder="검색"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  className={styles.search_input}
+                />
+              </div>
+            )}
 
+            {/* 정렬 버튼 (데스크톱용) */}
             <button className={styles.sort_button} onClick={openSortModal}>
               <span className={styles.sort_label}>{selectedSort}</span>
               <img
@@ -182,6 +187,18 @@ export default function CampaignFilterBar<
             </div>
           </div>
         )}
+      </div>
+
+      {/* 정렬 버튼 컨테이너 (모바일용 - 필터 바 border 아래) */}
+      <div className={styles.sort_button_container}>
+        <button className={styles.sort_button} onClick={openSortModal}>
+          <span className={styles.sort_label}>{selectedSort}</span>
+          <img
+            src="/images/filter/dropdown_icon.svg"
+            alt="드롭다운"
+            className={styles.dropdown_icon}
+          />
+        </button>
       </div>
 
       <ModalFilter

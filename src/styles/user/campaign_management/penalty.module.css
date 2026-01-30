@@ -135,9 +135,8 @@
 /* 단계 바 컨테이너 - 단계 표시 바와 라벨들을 담는 상대적 위치 컨테이너 */
 .stage_bar_container {
   position: relative;
-  display: flex;
-  align-items: center;
-  height: 32px;
+  height: 30px;
+  padding-top: 18px;
 }
 
 /* 왼쪽 단계 바 - 경고-주의 구간의 배경 바 */
@@ -148,8 +147,7 @@
   height: 4px;
   background: #f2f2f2;
   border-radius: 4px;
-  top: 50%;
-  transform: translateY(-50%);
+  bottom: 0;
 }
 
 /* 오른쪽 단계 바 - 주의-정지 구간의 배경 바 */
@@ -160,8 +158,7 @@
   height: 4px;
   background: #f2f2f2;
   border-radius: 4px;
-  top: 50%;
-  transform: translateY(-50%);
+  bottom: 0;
 }
 
 /* 단계 바 채우기 - 현재 패널티 진행도를 표시하는 채워진 바 */
@@ -182,8 +179,7 @@
 
   position: absolute;
   left: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 0;
 }
 
 /* 주의 라벨 - 2단계 주의 상태 라벨 (기본 상태) */
@@ -196,8 +192,8 @@
 
   position: absolute;
   left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  top: 0;
+  transform: translateX(-50%);
   z-index: 2;
 }
 
@@ -211,8 +207,7 @@
 
   position: absolute;
   right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 0;
 }
 
 /* ========================================
@@ -344,8 +339,8 @@
 
   position: absolute;
   left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  top: 0;
+  transform: translateX(-50%);
   z-index: 2;
 }
 
@@ -405,4 +400,25 @@
   letter-spacing: -0.36px;
   padding-bottom: 24px;
   border-bottom: 1px solid #d9d9d9;
+}
+
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* 패널티 상태 헤더 - 모바일에서 바와의 간격 8px */
+  .penalty_status_header {
+    margin-bottom: 8px;
+  }
+
+  /* 패널티 단계 정보 - 모바일에서 gap 8px */
+  .penalty_stage_info {
+    gap: 8px;
+  }
+
+  /* 단계 바 컨테이너 - 모바일에서 라벨과 바 사이 간격을 위한 높이 조정 */
+  .stage_bar_container {
+    gap: 8px;
+  }
 }

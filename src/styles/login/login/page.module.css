@@ -84,3 +84,33 @@
   line-height: 40px;
   letter-spacing: -0.56px;
 }
+
+/* ========================================
+   📱 모바일 반응형 스타일
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* 파트너 로그인 페이지 컨테이너 */
+  .partner_login_page_container {
+    padding: 0 20px;
+  }
+
+  /* 파트너 로그인 메인 영역 */
+  .partner_login_main {
+    padding-top: 60px;
+    padding-bottom: 80px;
+    min-height: calc(100vh - 60px);
+  }
+
+  /* 로그인 제목 */
+  .login_title {
+    font-size: 24px;
+    line-height: 36px;
+    letter-spacing: -0.48px;
+  }
+
+  /* 파트너 로그인 메시지 섹션 */
+  .partner_login_main .login_message_section {
+    padding-bottom: 32px;
+  }
+}

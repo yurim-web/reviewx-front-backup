@@ -17,12 +17,12 @@
 
 .modal_content {
   max-width: 1000px;
-  margin: 0 auto;
+  width: 100%;
   background: white;
   border-radius: 40px 40px 0 0;
-  width: 100%;
   overflow-y: auto;
   animation: slideUp 0.3s ease-out;
+  box-sizing: border-box;
 }
 
 @keyframes slideUp {
@@ -125,8 +125,10 @@
   display: flex;
   align-items: center;
   width: 100%;
-  height: 48px;
+  min-height: 48px;
   background: white;
+  padding: 0;
+  position: relative;
 }
 
 /* 고정 텍스트 프리픽스 스타일 - 밑줄 없음 */
@@ -142,13 +144,16 @@
   align-items: center;
   white-space: nowrap;
   flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 70%;
 }
 
-/* 프리픽스와 함께 사용하는 입력 필드 스타일 - 입력창에만 밑줄 */
+/* 프리픽스와 함께 사용하는 입력 필드 스타일 - 입력 부분에만 밑줄 */
 .input_field_with_prefix {
   flex: 1;
   height: 100%;
-  padding: 0 0 0 0;
+  padding: 0 0 12px 0;
   border: none;
   border-bottom: 1px solid #d9d9d9;
   outline: none;
@@ -160,6 +165,7 @@
   font-weight: 500;
   line-height: 16px;
   letter-spacing: -0.32px;
+  margin-top: 12px;
 }
 
 /* 프리픽스 입력 필드의 플레이스홀더 스타일 */
@@ -246,27 +252,18 @@
   }
 
   .prefix_input_group {
-    height: 48px;
-  }
-
-  .prefix_text {
-    font-size: 16px;
-    line-height: 16px;
-    letter-spacing: -0.32px;
+    min-height: 48px;
+    padding: 0 24px 0 0;
+    position: relative;
   }
 
   .input_field_with_prefix {
-    font-size: 16px;
-    line-height: 16px;
-    letter-spacing: -0.32px;
+    flex: 1;
+    min-width: 0;
+    margin-top: 12px;
   }
 
-  .input_field_with_prefix::placeholder {
-    font-size: 16px;
-    line-height: 16px;
-    letter-spacing: -0.32px;
-  }
-
+ 
   .error_text {
     font-size: 14px;
     line-height: 20px;

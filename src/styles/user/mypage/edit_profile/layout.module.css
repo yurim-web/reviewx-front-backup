@@ -32,7 +32,7 @@
   line-height: 18px;
   letter-spacing: -0.36px;
   color: #444;
-  margin-bottom: 4px;
+  padding-bottom: 4px;
 }
 
 .section_subtitle {
@@ -56,13 +56,13 @@
 @media (max-width: 768px) {
   /* 메인 컨텐츠 */
   .main_content {
-    padding: 64px 0px 140px 0px;
+    padding: 64px 0px 40px 0px;
   }
 
   /* 섹션 컨테이너 */
   .section_container {
-    padding: 20px;
-    gap: 16px;
+    padding: 20px 20px 40px 20px;
+
   }
 
   /* 섹션 타이틀 */

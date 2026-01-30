@@ -15,7 +15,7 @@
 
 "use client";
 
-import { useState } from "react";
+import Toast from "@/components/common/toast/Toast";
 import styles from "@/styles/user/campaign/campaign_detail/detail_guidelines_section.module.css";
 import selectedCampaignStyles from "@/styles/user/campaign/campaign_detail/selected_campaign_info.module.css";
 
@@ -43,12 +43,6 @@ export default function SelectedCampaignInfo({
   onCopyContact,
   contactNumber = "010-1234-5678",
 }: SelectedCampaignInfoProps) {
-  // 토스트 메시지 상태 관리
-  // useState: 컴포넌트의 상태를 관리하는 React 훅입니다.
-  // [상태값, 상태변경함수] = useState(초기값) 형태로 사용합니다.
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-
   /**
    * 공정위 이미지 복사 핸들러
    *
@@ -56,18 +50,15 @@ export default function SelectedCampaignInfo({
    * - 공정위 이미지 복사 버튼을 클릭하면 실행됩니다.
    * - 실제로는 공정위 이미지 URL이나 텍스트를 클립보드에 복사합니다.
    * - 현재는 예시로 빈 문자열을 복사합니다.
+   * - 부모 컴포넌트의 핸들러를 호출하여 토스트는 부모에서 처리합니다.
    */
   const handleCopyFtcImage = async () => {
     try {
       // TODO: 실제 공정위 이미지 URL이나 텍스트를 클립보드에 복사
       // 예시: await navigator.clipboard.writeText("공정위 이미지 URL 또는 텍스트");
       await navigator.clipboard.writeText("공정위 이미지");
-      setToastMessage("복사되었습니다.");
-      setShowToast(true);
-      // 2초 후 토스트 메시지 자동 닫기
-      setTimeout(() => setShowToast(false), 2000);
 
-      // 부모 컴포넌트의 핸들러가 있으면 호출
+      // 부모 컴포넌트의 핸들러가 있으면 호출 (토스트는 부모에서 처리)
       if (onCopyFtcImage) {
         onCopyFtcImage();
       }
@@ -82,19 +73,15 @@ export default function SelectedCampaignInfo({
    * 설명:
    * - 문의 담당자 연락처 복사 버튼을 클릭하면 실행됩니다.
    * - 연락처 번호를 클립보드에 복사합니다.
+   * - 부모 컴포넌트의 핸들러를 호출하여 토스트는 부모에서 처리합니다.
    */
   const handleCopyContact = async () => {
     try {
       // navigator.clipboard.writeText: 클립보드에 텍스트를 복사하는 브라우저 API입니다.
       // async/await: 비동기 작업을 처리하는 JavaScript 문법입니다.
       await navigator.clipboard.writeText(contactNumber);
-      setToastMessage("복사되었습니다.");
-      setShowToast(true);
-      // 2초 후 토스트 메시지 자동 닫기
-      // setTimeout: 지정된 시간 후에 함수를 실행하는 JavaScript 함수입니다.
-      setTimeout(() => setShowToast(false), 2000);
 
-      // 부모 컴포넌트의 핸들러가 있으면 호출
+      // 부모 컴포넌트의 핸들러가 있으면 호출 (토스트는 부모에서 처리)
       if (onCopyContact) {
         onCopyContact();
       }
@@ -164,12 +151,6 @@ export default function SelectedCampaignInfo({
         </div>
       </div>
 
-      {/* 토스트 메시지 (복사 완료 알림) */}
-      {showToast && (
-        <div className={selectedCampaignStyles.toast_message}>
-          {toastMessage}
-        </div>
-      )}
     </>
   );
 }

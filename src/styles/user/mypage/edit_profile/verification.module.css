@@ -39,6 +39,29 @@
   pointer-events: none;
 }
 
+/* 예금주 확인 아이콘 */
+.account_holder_check_icon {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+
+/* 예금주 입력 필드 인증 완료 상태 */
+.account_holder_input_verified {
+  background-color: #ffffff !important;
+  -webkit-autofill: none !important;
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  box-shadow: 0 0 0 1000px #ffffff inset !important;
+  padding-right: 44px; /* 체크 아이콘을 위한 공간 (20px right + 16px icon + 8px 여유) */
+}
+
 /* 인증번호 받기 버튼 기본 스타일 */
 .verification_button {
   width: 125px;

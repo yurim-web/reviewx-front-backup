@@ -210,24 +210,25 @@
     flex-direction: column; /* 모바일에서는 세로 배치 */
     align-items: flex-start;
     border-top: 1px solid rgba(0, 0, 0, 0.1); /* 상단 구분선 */
-    padding: 20px 0px;
+    padding: 24px 0px;
     gap: 12px; /* 라벨과 내용 사이 간격 */
   }
 
   /* 라벨 박스 (제공내역, 키워드 등) */
   .label_box {
     width: 100%; /* 모바일에서는 전체 너비 사용 */
-    padding: 0px;
+
     color: #444;
     font-size: 18px;
     font-weight: 600;
     line-height: 18px;
     letter-spacing: -0.36px;
+    padding: 0px 12px;
   }
 
   /* 내용 박스 */
   .content_box {
-    padding: 0px;
+    padding: 0px 12px;
     width: 100%; /* 모바일에서는 전체 너비 사용 */
     color: #444;
     font-size: 16px;
@@ -317,6 +318,7 @@
     letter-spacing: -0.32px;
     word-break: keep-all; /* 자연스러운 줄바꿈 */
     overflow-wrap: break-word;
+    padding: 0px 12px;
   }
 
   /* 추가 안내 사항 텍스트 (더 작은 폰트) */

@@ -49,7 +49,7 @@ function mapToAuthUser(account: UnifiedAccount): AuthUser {
           if (userAccount) {
             // 기본 닉네임 데이터 매핑 (user_accounts에 nickname이 없을 때 사용)
             const defaultNicknameMap: Record<string, string> = {
-              'user_kakao_001': '양치하는고양이',
+              'user_kakao_001': '홍길동님별명',
               'user_naver_001': '은지블로그',
             };
             
@@ -270,8 +270,8 @@ function applyPostLoginSideEffects(account: UnifiedAccount, authUser: AuthUser):
         'user_kakao_001': {
           id: 'user_kakao_001',
           number: '000001',
-          name: '오은영',
-          nickname: '양치하는고양이',
+          name: '홍길동',
+          nickname: '홍길동님별명',
           email: 'oheunyoung@naver.com',
           phone: '010-1111-1111',
           address: '서울시 강남구 테헤란로 123',
@@ -308,9 +308,9 @@ function applyPostLoginSideEffects(account: UnifiedAccount, authUser: AuthUser):
           ],
           gender: '남성',
           age: 37,
-          account_holder: '오은영',
-          bank: 'KB국민은행',
-          account_number: '00001234567000',
+          account_holder: null, // 계좌 정보 미등록 상태
+          bank: null,
+          account_number: null,
           ssn_front: '810202',
           ssn_back: '1******',
           current_points: 511200,

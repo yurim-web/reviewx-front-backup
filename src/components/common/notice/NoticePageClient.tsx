@@ -322,7 +322,7 @@ export default function NoticePageClient({
                       {/* 조건부 렌더링: is_pinned가 true일 때만 아이콘을 표시합니다 */}
                       {notice.is_pinned && (
                         <Image
-                          src="/images/icons/pin_table_icon.svg"
+                          src="/images/mypage/pin_pink.svg"
                           alt="핀"
                           width={20}
                           height={20}

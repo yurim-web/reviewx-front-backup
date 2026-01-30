@@ -121,6 +121,7 @@ function CancelledPage() {
         <CampaignFilterBar<CampaignApplication>
           campaigns={campaigns}
           onFilteredCampaignsChange={handleFilteredCampaignsChange}
+          showSearch={false}
         />
 
         {/* 필터링된 캠페인 목록 */}

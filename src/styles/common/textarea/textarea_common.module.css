@@ -105,3 +105,17 @@
 .textarea_wrapper.textarea_error:focus-within {
   border-color: #ff2626;
 }
+
+/* ========================================
+   반응형 스타일 (모바일)
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* textarea 래퍼 - 모바일 크기 조정 */
+  .textarea_wrapper {
+    padding: 16px;
+    min-height: 144px;
+
+  }
+
+}

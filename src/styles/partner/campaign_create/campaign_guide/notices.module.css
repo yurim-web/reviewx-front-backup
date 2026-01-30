@@ -35,8 +35,8 @@
   margin-bottom: 0;
   position: relative;
   padding-left: 16px;
-  display: flex;
-  align-items: center;
+  word-break: keep-all;
+  line-height: 1.77;
 }
 
 .notice_content li::before {
@@ -80,5 +80,48 @@
   line-height: 1.77;
   color: #999999;
   letter-spacing: -0.26px;
-  word-break: break-all;
+  word-break: keep-all;
+}
+
+/* ============================================
+   모바일 반응형 스타일
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* 유의사항 */
+  .notice_content {
+    border-radius: 6px;
+    padding: 16px;
+    font-size: 12px;
+    line-height: 1.67;
+    letter-spacing: -0.24px;
+  }
+
+  .notice_content li {
+    padding-left: 14px;
+  }
+
+  .notice_content li::before {
+    font-size: 14px;
+  }
+
+  /* 환불방법 안내 */
+  .refund_guide {
+    margin-top: 12px;
+    font-size: 12px;
+    line-height: 1.67;
+    letter-spacing: -0.24px;
+  }
+
+  .refund_guide ol {
+    padding-left: 18px;
+  }
+
+  /* 개발자 노트 */
+  .developer_note {
+    margin-top: 12px;
+    font-size: 12px;
+    line-height: 1.67;
+    letter-spacing: -0.24px;
+  }
 }

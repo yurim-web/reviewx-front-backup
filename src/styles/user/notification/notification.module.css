@@ -5,7 +5,7 @@
 /**
  * 사용 컴포넌트:
  * - page.tsx (알림 페이지)
- * 
+ *
  * 사용 페이지:
  * - /notification (알림 페이지)
  */
@@ -199,14 +199,17 @@
     padding: 20px;
   }
 
-  /* 알림 아이템 내부 레이아웃 */
+  /* 알림 아이템 내부 레이아웃 - 모바일에서는 세로 배치 */
   .notification_content {
-    gap: 16px;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
   }
 
   /* 왼쪽 영역 */
   .notification_left {
     gap: 8px;
+    width: 100%;
   }
 
   /* 알림 라벨 */
@@ -216,25 +219,40 @@
     letter-spacing: -0.28px;
   }
 
-  /* 알림 내용 */
+  /* 알림 내용 - 말줄임표 처리 */
   .notification_message {
     font-size: 14px;
-    line-height: 20px;
+    line-height: 1.43;
     letter-spacing: -0.28px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
   }
 
-  /* 캠페인 이름 */
+  /* 캠페인 이름 - 말줄임표 처리 */
   .notification_campaign_name {
+    color: #848484;
     font-size: 13px;
-    line-height: 13px;
+    line-height: 1.43;
     letter-spacing: -0.26px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
   }
 
-  /* 시간 */
+  /* 시간 - 모바일에서는 맨 아래에 배치 */
   .notification_time {
     font-size: 13px;
     line-height: 13px;
     letter-spacing: -0.26px;
+    width: 100%;
+    order: 3;
   }
 
   /* 빈 상태 */

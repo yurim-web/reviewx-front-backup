@@ -31,3 +31,21 @@
   letter-spacing: -0.36px;
   padding-bottom: 4px;
 }
+
+/* ============================================
+   모바일 반응형 스타일
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* 섹션 간격 줄이기 */
+  .section {
+    gap: 16px;
+  }
+
+  /* 섹션 제목 크기 줄이기 */
+  .section_title {
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+}

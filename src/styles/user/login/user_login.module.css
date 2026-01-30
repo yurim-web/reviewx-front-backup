@@ -277,34 +277,21 @@
 
   /* 로그인 타이틀 */
   .login_title {
-    font-size: 22px;
-    font-weight: 600;
-    line-height: 32px; /* 145.45% */
-    letter-spacing: -0.44px;
-    text-align: center;
+    font-size: 24px;
+    line-height: 140%; 
+    letter-spacing: -0.48px;
   }
 
   /* 소셜 로그인 섹션 */
   .social_login_section {
     width: 100%;
-    padding-top: 48px;
-    gap: 12px;
+    padding-top: 64px;
   }
 
   /* 버튼 래퍼 */
   .login_button_wrapper {
     width: 100%;
     max-width: 100%;
-  }
-
-  /* 로그인 버튼 */
-  .login_button {
-    height: 56px;
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 16px;
-    letter-spacing: -0.32px;
-    border-radius: 8px;
   }
 
   /* 최근 로그인 배지 (위쪽) */
@@ -326,26 +313,15 @@
 
   /* 하단 링크 섹션 */
   .login_links_section {
-    padding-top: 32px;
-    gap: 20px;
+    padding-top: 24px;
+    gap: 24px;
   }
 
-  /* 로그인 링크 */
-  .login_link {
-    font-size: 13px;
-    line-height: 13px;
-    letter-spacing: -0.26px;
-  }
+
 
   /* 파트너 로그인 섹션 */
   .partner_login_section {
     bottom: 32px;
   }
 
-  /* 파트너 로그인 링크 */
-  .partner_login_link {
-    font-size: 14px;
-    line-height: 16px;
-    letter-spacing: -0.28px;
-  }
 }

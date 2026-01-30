@@ -103,6 +103,9 @@ export default function PartnerSubHeader() {
 
   // 검색 아이콘 경로 (모바일/PC 구분)
   const getSearchIconSrc = () => {
+    if (!isMounted) {
+      return "/images/header/header_search.svg";
+    }
     return isMobile
       ? "/images/header/mobile/mo_search.svg"
       : "/images/header/header_search.svg";
@@ -110,6 +113,9 @@ export default function PartnerSubHeader() {
 
   // 사용자 아이콘 경로 (모바일/PC 구분)
   const getUserIconSrc = () => {
+    if (!isMounted) {
+      return "/images/header/header_user.svg";
+    }
     return isMobile
       ? "/images/header/mobile/mo_user.svg"
       : "/images/header/header_user.svg";
@@ -228,20 +234,22 @@ export default function PartnerSubHeader() {
             <img src={getNotificationIconSrc()} alt="알림" />
           </Link>
 
-          {/* 가이드북 아이콘 */}
+          {/* 가이드북 아이콘 - PC에서만 표시 */}
           {/* 📌 외부 링크:
               - target="_blank": 새 탭에서 열기
               - rel="noopener noreferrer": 보안을 위한 속성
           */}
-          <a
-            href="https://markx.dev/guide_book"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.bookmark_icon}
-            aria-label="가이드북"
-          >
-            <img src="/images/header/header_book.svg" alt="가이드북" />
-          </a>
+          {!isMobile && (
+            <a
+              href="https://markx.dev/guide_book"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.bookmark_icon}
+              aria-label="가이드북"
+            >
+              <img src="/images/header/header_book.svg" alt="가이드북" />
+            </a>
+          )}
 
           {/* 사용자 아이콘 (마이페이지) */}
           <Link
