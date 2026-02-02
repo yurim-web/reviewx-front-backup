@@ -35,6 +35,13 @@ export default function BlockedBasePage({
   buttonAriaLabel,
   onClick,
 }: BlockedBasePageProps) {
+  // 모바일에서 줄바꿈 처리를 위한 메시지 분리
+  // "서비스 이용이 제한되었습니다." -> ["서비스 이용이", "제한되었습니다."]
+  // "서비스 일시 정지 혹은 탈퇴된 회원입니다." -> ["서비스 일시 정지 혹은 탈퇴된", "회원입니다."]
+  const messageParts = message.split(" ");
+  const firstPart = messageParts.slice(0, -1).join(" ");
+  const lastPart = messageParts[messageParts.length - 1];
+
   return (
     <div className={styles.blocked_user_page_container}>
       <main className={styles.blocked_user_main}>
@@ -42,7 +49,11 @@ export default function BlockedBasePage({
           <div className={styles.logo_container}>
             <h1 className={styles.logo_text}>VX.</h1>
           </div>
-          <p className={styles.message_text}>{message}</p>
+          <p className={styles.message_text}>
+            <span className={styles.message_line1}>{firstPart}</span>
+            <br className={styles.mobile_br} />
+            <span className={styles.message_line2}>{lastPart}</span>
+          </p>
           <a
             href={buttonHref}
             className={styles.withdrawal_button}

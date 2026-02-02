@@ -172,3 +172,174 @@
   color: #ff5694;
   font-weight: 600;
 }
+
+/* ========== 📱 모바일 반응형 디자인 (375px 기준) ========== */
+@media (max-width: 768px) {
+  /* 전체 컨테이너 */
+  .campaign_info_card_container {
+    padding: 0 20px; /* Figma: 20px left/right */
+  }
+
+  /* 메인 캠페인 정보 카드 */
+  .campaign_info_card {
+    border: 1px solid #e5e5e5; /* Figma: border-color */
+    border-radius: 8px;
+    padding: 20px; /* Figma: 20px */
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Figma: 20px */
+  }
+
+  /* 상단 영역 (이미지 + 상세정보) */
+  .campaign_info_top {
+    display: flex;
+    align-items: flex-start; /* Figma: top 정렬 */
+    gap: 12px; /* Figma: 12px */
+  }
+
+  /* 캠페인 이미지 */
+  .campaign_image {
+    width: 80px; /* Figma: 80px */
+    height: 80px; /* Figma: 80px */
+    background-color: #d9d9d9;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .campaign_image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+
+  /* 캠페인 상세정보 영역 */
+  .campaign_application {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px; /* Figma: 6px */
+    min-width: 0; /* 텍스트 ellipsis를 위한 설정 */
+  }
+
+  /* 헤더 (카테고리 + 상태) */
+  .campaign_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  /* 캠페인 카테고리 */
+  .campaign_category {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #444;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  .campaign_category img {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  /* 캠페인 상태 배지 */
+  .campaign_status {
+    background: #ff5694;
+    padding: 4px 8px; /* Figma: 4px 8px */
+    border-radius: 4px; /* Figma: 4px */
+    color: #ffffff;
+    font-size: 14px; /* Figma: 14px */
+    font-weight: 500;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  /* 캠페인 제목 */
+  .campaign_title {
+    width: 100%;
+    overflow: hidden;
+    color: #444;
+    text-overflow: ellipsis;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 22px; /* Figma: 22px */
+    letter-spacing: -0.32px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2; /* Figma: 2줄 */
+    margin: 0;
+  }
+
+  /* 캠페인 공지사항 */
+  .campaign_notice {
+    color: #848484;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px; /* Figma: 22px */
+    letter-spacing: -0.28px;
+    padding-top: 4px; /* Figma: 간격 조정 */
+  }
+
+  /* 캠페인 일정 영역 */
+  .campaign_schedule {
+    display: flex;
+    flex-direction: column;
+    gap: 14px; /* Figma: 14px */
+    background: #f9f9f9;
+    padding: 16px; /* Figma: 16px */
+    border-radius: 4px;
+  }
+
+  /* 일정 항목 */
+  .schedule_item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* 일정 라벨 */
+  .schedule_label {
+    color: #444; /* Figma: 기본 색상 */
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+    flex-shrink: 0;
+  }
+
+  /* 일정 값 */
+  .schedule_value {
+    color: #444; /* Figma: 기본 색상 */
+    text-align: right;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+    flex-shrink: 0;
+  }
+
+  /* 포인트 스타일 - 모집 인원, 등록 기간 */
+  .schedule_label_point {
+    color: #ff5694;
+    font-weight: 600;
+  }
+
+  .schedule_value_point {
+    color: #ff5694;
+    font-weight: 600;
+  }
+
+  .schedule_value_point strong {
+    color: #ff5694;
+    font-weight: 600;
+  }
+}

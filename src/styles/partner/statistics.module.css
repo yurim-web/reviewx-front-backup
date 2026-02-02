@@ -20,7 +20,7 @@
   gap: 24px;
   align-items: center;
   width: 100%;
-  background: white;
+
 }
 
 /* 좌측 통계 탭들 (전체, 진행중, 완료, 반려 등) */
@@ -32,7 +32,7 @@
 
 /* 개별 통계 탭 버튼 */
 .stat_tab {
-  color: #848484;
+  color: #444;
   font-size: 18px;
   font-weight: 500;
   line-height: 18px;
@@ -73,7 +73,7 @@
 
 /* 통계 탭의 숫자 부분 (예: "전체 (5)") */
 .stat_number {
-  color: #848484;
+  color:#444;
   font-size: 18px;
   font-weight: 500;
   line-height: 18px;

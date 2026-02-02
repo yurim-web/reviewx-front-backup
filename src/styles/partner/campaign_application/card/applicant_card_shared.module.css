@@ -480,3 +480,254 @@
   width: 14px;
   height: 14px;
 }
+
+/* ========== 📱 모바일 반응형 디자인 (375px 기준) ========== */
+@media (max-width: 768px) {
+  /* 카드 래퍼 */
+  .card_wrapper {
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+  }
+
+  /* 카드 스타일 */
+  .applicant_card {
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    padding: 12px; /* Figma: 12px */
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Figma: 8px */
+    background: white;
+    height: fit-content;
+  }
+
+  /* 푸터가 있는 카드인 경우 */
+  .card_wrapper:has(.extension_report_footer) .applicant_card {
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+  }
+
+  /* 프로필 섹션 */
+  .profile_section {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Figma: 8px */
+  }
+
+  /* 프로필 이미지 컨테이너 */
+  .profile_image_container {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #d9d9d9;
+    flex-shrink: 0;
+  }
+
+  .profile_image {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .profile_placeholder {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: #d9d9d9;
+  }
+
+  /* 프로필 정보 컨테이너 */
+  .profile_info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px; /* Figma: 6px */
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* 유저 타입 글자 */
+  .user_type {
+    color: #848484;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 닉네임 글자 */
+  .nickname {
+    color: #444;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
+    max-width: 100%; /* 부모 크기에 맞춤 */
+  }
+
+  /* 채널 섹션 */
+  .channel_section {
+    border-radius: 4px;
+    background: #f9f9f9;
+    padding: 8px; /* Figma: 8px */
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 34px; /* Figma: 34px */
+  }
+
+  /* 채널로고 이미지 스타일 */
+  .channel_icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+
+  /* 신청자 아이디 */
+  .applicant_id {
+    color: #444;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+    text-decoration: none;
+    cursor: pointer;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
+  }
+
+  /* 액션 버튼 섹션 */
+  .action_button_section {
+    display: flex;
+    justify-content: center;
+    gap: 8px; /* Figma: 8px */
+    padding-top: 0;
+  }
+
+  /* 기본 버튼 스타일 */
+  .action_button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 10px 8px; /* Figma: 10px top/bottom, 8px left/right */
+    height: 34px; /* Figma: 34px */
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 콘텐츠 확인 버튼 */
+  .content_check_button {
+    border-radius: 4px;
+    background: #444;
+    color: #fff;
+    padding: 10px; /* Figma: 10px */
+    cursor: pointer;
+    height: 34px; /* Figma: 34px */
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 등록일 정보 */
+  .registration_info {
+    color: #848484;
+    text-align: center;
+    font-size: 13px; /* Figma: 13px */
+    font-weight: 500;
+    line-height: 14px;
+    letter-spacing: -0.26px; /* Figma: -0.26px */
+  }
+
+  /* 승인/반려 버튼 */
+  .approval_buttons {
+    display: flex;
+    gap: 8px; /* Figma: 8px */
+    width: 100%;
+  }
+
+  /* 연장/신고 버튼 footer */
+  .extension_report_footer {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    background: white;
+    padding: 0;
+    border-radius: 0 0 8px 8px;
+    border: 1px solid #d9d9d9;
+    border-top: none;
+    height: 40px; /* Figma: 40px */
+  }
+
+  /* 연장/신고 버튼 공통 스타일 */
+  .extension_button,
+  .report_button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px; /* Figma: 4px */
+    flex: 1 1 50%;
+    width: 50%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 13px 0; /* Figma: 13px top/bottom */
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 연장 버튼 색상 */
+  .extension_button {
+    color: #848484;
+  }
+
+  /* 신고 버튼 색상 */
+  .report_button {
+    color: #ff2626;
+  }
+
+  /* 연장/신고 아이콘 */
+  .extension_icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  .report_icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+
+  /* 수직 구분선 */
+  .vertical_divider {
+    width: 1px;
+    background: #d9d9d9;
+    flex-shrink: 0;
+    align-self: stretch;
+  }
+}

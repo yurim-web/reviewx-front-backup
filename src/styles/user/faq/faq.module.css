@@ -23,6 +23,27 @@
   max-width: 100vw;
 }
 
+/* 메인 콘텐츠 영역 */
+.main_content {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* FAQ 페이지에서 PageTitle을 감싸는 래퍼 */
+.faq_page_title_wrapper {
+  width: 100%;
+}
+
+/* FAQ 페이지에서 PageTitle의 top 값 조정 */
+.faq_page_title_wrapper :global(.page_title_wrapper) {
+  top: 0 !important;
+  position: relative !important;
+  margin-bottom: 0;
+}
+
 /* 메인 콘텐츠 영역 (카테고리 필터 + FAQ 목록을 감싸는 섹션) */
 .section_container {
   padding: 24px 40px;
@@ -513,5 +534,40 @@
 
   .answer_content {
     padding: 20px 36px;
+  }
+}
+
+/* ✅ PC 전용 — 740px 이상 */
+@media (min-width: 740px) {
+  /* 메인 콘텐츠 영역 - PC에서 중앙 정렬 */
+  .main_content {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 섹션 컨테이너 - PC에서 패딩 및 중앙 정렬 */
+  .section_container {
+    padding: 24px 40px;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+
+  /* FAQ 리스트 - PC에서 중앙 정렬 */
+  .faq_list {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  /* 빈 상태 - PC에서 중앙 정렬 */
+  .empty_state {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
   }
 }

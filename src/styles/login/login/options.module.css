@@ -111,7 +111,7 @@
   border: none;
   border-radius: 8px;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 16px;
   letter-spacing: -0.32px;
   cursor: pointer;
@@ -129,15 +129,3 @@
    📱 모바일 반응형 스타일
    ======================================== */
 
-@media (max-width: 768px) {
-  /* 로그인 옵션 섹션 */
-  .login_options_section {
-    padding-bottom: 8px;
-  }
-
-  /* 파트너 로그인 버튼 */
-  .partner_login_button {
-    height: 48px;
-    font-size: 15px;
-  }
-}

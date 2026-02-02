@@ -264,7 +264,9 @@ export default function FAQPageClient({
 
       <main className={styles.main_content}>
         {/* 페이지 제목 */}
-        <PageTitle title="자주 묻는 질문" />
+        <div className={styles.faq_page_title_wrapper}>
+          <PageTitle title="자주 묻는 질문" />
+        </div>
 
         <section className={styles.section_container}>
           {/* 카테고리 필터 */}

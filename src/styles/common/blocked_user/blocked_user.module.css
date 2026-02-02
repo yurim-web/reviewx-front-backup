@@ -93,6 +93,21 @@
   letter-spacing: -0.56px;
 }
 
+/* 메시지 줄바꿈 처리 */
+.message_line1::after {
+  content: " ";
+  white-space: pre;
+}
+
+.message_line2::after {
+  content: "";
+}
+
+/* 모바일 줄바꿈 - PC에서 숨김 */
+.mobile_br {
+  display: none;
+}
+
 /* ========================================
    5. 회원 탈퇴 버튼
    ======================================== */
@@ -116,35 +131,79 @@
   font-weight: 600;
   line-height: 1;
   letter-spacing: -0.32px;
+  text-decoration: none;
+  box-sizing: border-box;
 }
 
 /* ========================================
    6. 반응형 디자인
    ======================================== */
 
-/* 모바일 (0~739px) */
-@media (max-width: 739px) {
+/* 📱 ================================================================================================
+
+모바일 반응형 스타일 (max-width: 768px)
+
+================================================================================================ 📱 */
+
+@media (max-width: 768px) {
+  /* 페이지 컨테이너 */
+  .blocked_user_page_container {
+    background-color: #ffffff;
+  }
+
+  /* 메인 콘텐츠 영역 */
+  .blocked_user_main {
+    min-height: 100vh;
+  }
+
   /* 콘텐츠 섹션 간격 조정 */
   .content_section {
-    gap: 32px;
-    padding: 0 20px;
+    gap: 36px;
+    padding: 0;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   /* 로고 텍스트 크기 조정 */
   .logo_text {
-    font-size: 18px;
-    line-height: 22px;
+    font-size: 20px;
+    line-height: 24px;
+    letter-spacing: -0.4px;
   }
 
   /* 안내 메시지 텍스트 크기 조정 */
   .message_text {
     font-size: 24px;
-    line-height: 32px;
+    line-height: 33.6px; /* 140% */
+    letter-spacing: -0.48px;
   }
 
-  /* 회원 탈퇴 버튼 너비 조정 */
+  /* 모바일 줄바꿈 표시 */
+  .mobile_br {
+    display: block;
+  }
+
+  /* PC 줄바꿈 숨김 */
+  .message_line1::after {
+    content: "";
+  }
+
+  /* 회원 탈퇴 버튼 스타일 변경 - 화면 하단 고정 */
   .withdrawal_button {
-    width: 100%;
-    max-width: 388px;
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 335px;
+    height: 56px;
+    margin-top: 0;
+    background-color: #ffffff;
+    border: 1px solid #FF5694;
+    color: #FF5694;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+    z-index: 10;
   }
 }

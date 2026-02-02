@@ -256,46 +256,168 @@
   color: #848484;
 }
 
-/* ========== 반응형 디자인 ========== */
+/* ========== 📱 모바일 반응형 디자인 (375px 기준) ========== */
 @media (max-width: 768px) {
+  /* ========== 페이지 헤더 ========== */
+  /* 모바일에서는 PageTitle처럼 동작 */
   .page_header {
-    padding: 16px 20px;
+    position: sticky;
+    top: 64px; /* 모바일 메인 헤더 높이 */
+    z-index: 10;
+    padding: 22px 24px; /* Figma: 22px top/bottom, 24px left, 48px + 24px right (back button + padding) */
+    border-bottom: 1px solid #e5e5e5; /* Figma: border-color */
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px; /* Figma: 64px */
   }
 
+  /* 페이지 제목 */
+  .page_title {
+    color: #444;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 20px;
+    letter-spacing: -0.4px;
+    margin: 0;
+  }
+
+  /* 캠페인 보기 버튼 */
+  .view_campaign_button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+    color: #444;
+  }
+
+  .view_campaign_button_icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* ========== 전체 컨텐츠 영역 ========== */
+  .campaign_application_section {
+    padding: 20px 0 0 0; /* Figma: 20px top */
+    background: white;
+    min-height: calc(100vh - 128px); /* 모바일 헤더 + 페이지 헤더 */
+  }
+
+  /* ========== 다운로드 및 정렬 섹션 ========== */
   .download_section {
-    padding: 16px 20px;
-    flex-direction: column;
-    gap: 16px;
-    align-items: stretch;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end; /* Figma: 우측 정렬 */
+    padding: 20px; /* Figma: 20px */
   }
 
+  .download_section_right {
+    justify-content: flex-end;
+    padding: 20px;
+  }
+
+  /* 일괄 기한 연장 버튼 */
+  .batch_extension_button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    background: white;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #444;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+    height: 40px; /* Figma: 40px */
+    min-width: 137px; /* Figma: 137px */
+  }
+
+  .batch_extension_button img {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* ========== 탭 네비게이션 ========== */
   .tab_navigation {
-    margin: 0 20px;
+    position: sticky;
+    top: 128px; /* 모바일 헤더 + 페이지 헤더 */
+    z-index: 9;
+    background: white;
+    border-bottom: 1px solid #d9d9d9;
+    display: flex;
+    height: 66px; /* Figma: 66px */
+    margin: 0;
   }
 
+  /* 탭 버튼 */
+  .tab_button {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    padding: 24px;
+
+    /* 버튼 텍스트 */
+    color: #848484;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 18px;
+    letter-spacing: -0.36px;
+  }
+
+  /* 활성화된 탭 */
+  .tab_button.active {
+    color: #ff5694;
+    font-weight: 600;
+  }
+
+  /* 활성화된 탭 밑줄 */
+  .tab_button.active::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #ff5694;
+  }
+
+  /* ========== 신청자 카드 그리드 ========== */
   .applicants_grid {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 16px;
-    padding: 16px 20px;
-  }
-}
-
-@media (max-width: 480px) {
-  .applicants_grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-    padding: 12px 16px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Figma: 2열 그리드 */
+    gap: 20px 15px; /* Figma: row-gap 20px, column-gap 15px */
+    padding: 20px; /* Figma: 20px */
+    background: white;
+    min-height: 400px;
   }
 
-  .page_header {
-    padding: 12px 16px;
+  /* 빈 상태 */
+  .empty_state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    color: #848484;
   }
 
-  .download_section {
-    padding: 12px 16px;
-  }
-
-  .tab_navigation {
-    margin: 0 16px;
+  .empty_state p {
+    font-size: 1rem;
+    margin: 0;
   }
 }
