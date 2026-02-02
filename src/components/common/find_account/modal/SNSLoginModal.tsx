@@ -23,7 +23,7 @@
 
 "use client";
 
-import styles from "@/styles/common/find_account/find_account.module.css";
+import styles from "@/styles/common/find_account/find_account_modal.module.css";
 import ModalButton from "./ModalButton";
 
 /**

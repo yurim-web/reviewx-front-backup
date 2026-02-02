@@ -143,14 +143,9 @@
   line-height: 16px;
   letter-spacing: -0.32px;
   cursor: pointer;
-  transition: all 0.2s ease;
   flex-shrink: 0;
   box-sizing: border-box;
   padding: 0;
-}
-
-.file_select_button:hover {
-  background-color: #f6f6f6;
 }
 
 /* ========================================
@@ -164,12 +159,12 @@
 }
 
 .postal_code_input {
-  width: 263px;
+  width: calc(100% - 12px - 31%);
   flex-shrink: 0;
 }
 
 .postal_code_search_button {
-  width: 125px;
+  width: 31%;
   height: 56px;
   background-color: #ffffff;
   border: 1px solid #444444;
@@ -180,15 +175,12 @@
   line-height: 16px;
   letter-spacing: -0.32px;
   cursor: pointer;
-  transition: all 0.2s ease;
   flex-shrink: 0;
   box-sizing: border-box;
   padding: 0;
 }
 
-.postal_code_search_button:hover {
-  background-color: #f6f6f6;
-}
+
 
 /* ========================================
    8. 반응형 디자인 (파트너 전용)
@@ -222,41 +214,28 @@
     background-color: #ffffff;
   }
 
+/* 파일 선택 버튼 */
+  .file_select_button {
+    width: 95px;
+  }
+  /* 우편번호  */
+  .postal_code_input {
+    width: calc(100% - 12px - 32%);
+    flex-shrink: 0;
+  }
+  .postal_code_search_button {
+    width: 32%;
+    flex-shrink: 0;
+  }
+
   /* 회원가입 폼 */
   .signup_form {
     max-width: 100%;
   }
 
-  /* 파일 업로드 래퍼 */
-  .file_upload_wrapper {
-    gap: 12px;
-  }
-
-  /* 파일 선택 버튼 */
-  .file_select_button {
-    width: 100px;
-    font-size: 15px;
-  }
-
-  /* 주소 우편번호 래퍼 */
-  .address_postal_code_wrapper {
-    gap: 12px;
-  }
-
-  /* 우편번호 입력 필드 */
-  .postal_code_input {
-    flex: 1;
-    width: auto;
-  }
-
-  /* 우편번호 검색 버튼 */
-  .postal_code_search_button {
-    width: 100px;
-    font-size: 15px;
-  }
 
   /* 회원가입 버튼 */
   .submit_button {
-    margin-top: 20px;
+    margin-top: 40px;
   }
 }

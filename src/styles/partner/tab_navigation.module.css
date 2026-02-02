@@ -30,7 +30,7 @@
 
 /* 개별 탭 버튼 스타일 */
 .tab {
-  color: #848484; /* 기본 회색 */
+  color: #444; /* 기본 회색 */
   font-size: 20px;
   font-weight: 500;
   line-height: 20px; /* 100% */

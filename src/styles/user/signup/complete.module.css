@@ -149,7 +149,7 @@
 
 /* 캠페인 보러 가기 버튼 */
 .campaign_button {
-  width: 388px;
+  width: calc(50% - 12px);
   height: 56px;
   background-color: #FF5694;
   border: none;
@@ -168,7 +168,7 @@
 
 /* 로그인하기 버튼 */
 .login_button {
-  width: 388px;
+  width: calc(50% - 12px);
   height: 56px;
   background-color: #ffffff;
   border: 1px solid #FF5694;
@@ -269,7 +269,7 @@
 
   /* 버튼 섹션 */
   .button_section {
-    bottom: 32px;
+    bottom: 40px;
     flex-direction: column;
     gap: 12px;
     padding: 0 20px;
@@ -279,7 +279,6 @@
   .campaign_button,
   .login_button {
     width: 100%;
-    max-width: 336px;
     height: 56px;
     font-size: 16px;
     font-weight: 600;

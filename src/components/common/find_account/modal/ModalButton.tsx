@@ -10,7 +10,7 @@
 
 "use client";
 
-import styles from "@/styles/common/find_account/find_account.module.css";
+import styles from "@/styles/common/find_account/find_account_modal.module.css";
 
 /**
  * ModalButton Props 타입
