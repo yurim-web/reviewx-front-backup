@@ -17,6 +17,7 @@
 
 "use client";
 
+import { useState, useEffect } from "react";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
 import {
   formatNumberWithComma,
@@ -75,6 +76,18 @@ export function PointsManagementSection({
   isEditable = true,
   showInsufficientPointsWarning = false,
 }: PointsManagementSectionProps) {
+  // 모바일 여부 감지
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   /**
    * 추가 지급 포인트 변경 핸들러
    */
@@ -148,7 +161,7 @@ export function PointsManagementSection({
             className={infoStyles.charge_button}
             onClick={onChargeClick}
           >
-            포인트 충전하기
+            {isMobile ? "포인트 충전" : "포인트 충전하기"}
           </button>
         </div>
       </article>

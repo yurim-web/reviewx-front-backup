@@ -260,8 +260,8 @@ export function useCampaignFilterBar<
   useEffect(() => {
     const prevFiltered = prevFilteredCampaignsRef.current;
 
-    // 첫 로드 시
-    if (prevFiltered.length === 0 && filteredCampaigns.length > 0) {
+    // 첫 로드 시 (빈 배열이어도 콜백 호출)
+    if (prevFiltered.length === 0) {
       prevFilteredCampaignsRef.current = filteredCampaigns;
       onFilteredCampaignsChangeRef.current(filteredCampaigns);
       return;

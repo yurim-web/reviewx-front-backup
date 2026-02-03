@@ -159,7 +159,7 @@ export default function CampaignCard({
 
         {/* 캠페인 상세 정보 */}
         <div className={cardStyles.campaign_info}>
-          {/* 헤더: 타입 아이콘 + 신청자 수 */}
+          {/* 헤더: 타입 아이콘 + 태그 */}
           <div className={cardStyles.campaign_header}>
             <div className={cardStyles.campaign_type}>
               {campaign.brandLogo ? (
@@ -197,7 +197,24 @@ export default function CampaignCard({
               </span>
             </div>
 
-            {/* 신청자 수 표시 */}
+            {/* 상태 태그 표시 - 취소/종료 상태가 아닐 때만 표시 */}
+            {campaignStatus !== "취소" && campaignStatus !== "종료" && (
+              <div
+                className={`${cardStyles.cam_tag} ${
+                  campaign.daysLeft <= 2
+                    ? cardStyles.urgent
+                    : cardStyles.normal
+                }`}
+              >
+                <span>
+                  {campaign.daysLeft <= 2
+                    ? "마감임박"
+                    : `${campaign.daysLeft}일 전`}
+                </span>
+              </div>
+            )}
+
+            {/* 신청자 수 표시 - PC에서만 표시 */}
             <div className={cardStyles.applicant_count}>
               {activeTab === "연장 요청" ||
               (campaignSubStatus &&
@@ -208,23 +225,18 @@ export default function CampaignCard({
                   {/* ✅ 대기 = 대기 탭(waiting)에 있는 리뷰어 수 */}
                   {/* ======================================== */}
                   <span
-                    className={cardStyles.applicant_current}
-                    style={{ color: "#848484" }}
+                    className={`${cardStyles.applicant_current} ${cardStyles.applicant_current_gray}`}
                   >
                     대기 {waitingCount}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
                   <span
-                    className={cardStyles.applicant_current}
-                    style={{ color: "#FF5694" }}
+                    className={`${cardStyles.applicant_current} ${cardStyles.applicant_current_pink}`}
                   >
                     확인 {reviewingCount}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
-                  <span
-                    className={cardStyles.applicant_total}
-                    style={{ color: "#848484" }}
-                  >
+                  <span className={cardStyles.applicant_total}>
                     완료 {completedCount}명
                   </span>
                 </>
@@ -234,23 +246,18 @@ export default function CampaignCard({
                   {/* 진행 중인 캠페인: 대기/확인/완료 수 표시 */}
                   {/* ======================================== */}
                   <span
-                    className={cardStyles.applicant_current}
-                    style={{ color: "#848484" }}
+                    className={`${cardStyles.applicant_current} ${cardStyles.applicant_current_gray}`}
                   >
                     대기 {waitingCount}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
                   <span
-                    className={cardStyles.applicant_current}
-                    style={{ color: "#FF5694" }}
+                    className={`${cardStyles.applicant_current} ${cardStyles.applicant_current_pink}`}
                   >
                     확인 {reviewingCount}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
-                  <span
-                    className={cardStyles.applicant_total}
-                    style={{ color: "#848484" }}
-                  >
+                  <span className={cardStyles.applicant_total}>
                     완료 {completedCount}명
                   </span>
                 </>
@@ -260,23 +267,18 @@ export default function CampaignCard({
                   {/* 종료 캠페인: 대기/확인/완료 수 표시 */}
                   {/* ======================================== */}
                   <span
-                    className={cardStyles.applicant_current}
-                    style={{ color: "#848484" }}
+                    className={`${cardStyles.applicant_current} ${cardStyles.applicant_current_gray}`}
                   >
                     대기 {waitingCount}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
                   <span
-                    className={cardStyles.applicant_current}
-                    style={{ color: "#FF5694" }}
+                    className={`${cardStyles.applicant_current} ${cardStyles.applicant_current_pink}`}
                   >
                     확인 {reviewingCount}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
-                  <span
-                    className={cardStyles.applicant_total}
-                    style={{ color: "#848484" }}
-                  >
+                  <span className={cardStyles.applicant_total}>
                     완료 {completedCount}명
                   </span>
                 </>
@@ -286,23 +288,18 @@ export default function CampaignCard({
                   {/* 취소 캠페인: 신청/모집/선정 수 표시 */}
                   {/* ======================================== */}
                   <span
-                    className={cardStyles.applicant_current}
-                    style={{ color: "#FF5694" }}
+                    className={`${cardStyles.applicant_current} ${cardStyles.applicant_current_pink}`}
                   >
                     신청 {campaign.applicants || 0}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
                   <span
-                    className={cardStyles.applicant_current}
-                    style={{ color: "#848484" }}
+                    className={`${cardStyles.applicant_current} ${cardStyles.applicant_current_gray}`}
                   >
                     모집 {campaign.recruits || 0}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
-                  <span
-                    className={cardStyles.applicant_total}
-                    style={{ color: "#848484" }}
-                  >
+                  <span className={cardStyles.applicant_total}>
                     선정 {campaign.selected || 0}명
                   </span>
                 </>
@@ -312,21 +309,16 @@ export default function CampaignCard({
                   {/* 일반 캠페인: 신청/모집 수 표시 */}
                   {/* ======================================== */}
                   <span
-                    className={cardStyles.applicant_current}
-                    style={{
-                      color:
-                        activeTab === "예정" || activeTab === "신청"
-                          ? "#FF5694"
-                          : "#848484",
-                    }}
+                    className={`${cardStyles.applicant_current} ${
+                      activeTab === "예정" || activeTab === "신청"
+                        ? cardStyles.applicant_current_pink
+                        : cardStyles.applicant_current_gray
+                    }`}
                   >
                     신청 {campaign.applicants || 0}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
-                  <span
-                    className={cardStyles.applicant_total}
-                    style={{ color: "#848484" }}
-                  >
+                  <span className={cardStyles.applicant_total}>
                     모집 {campaign.recruits || 0}명
                   </span>
                 </>
@@ -337,10 +329,13 @@ export default function CampaignCard({
           {/* 캠페인 제목 */}
           <h3 className={cardStyles.campaign_title}>{campaign.title}</h3>
 
-          {/* 캠페인 상태 설명 */}
-          <p className={cardStyles.campaign_status}>{statusDescription}</p>
+          {/* 캠페인 상태 설명 - PC에서만 표시 */}
+          <p className={cardStyles.campaign_status_pc}>{statusDescription}</p>
         </div>
       </Link>
+
+      {/* 캠페인 상태 설명 - 모바일에서만 표시 (이미지+정보 아래에 분리) */}
+      <p className={cardStyles.campaign_status_mobile}>{statusDescription}</p>
 
       {/* 액션 버튼 영역 - Link 밖에 있어서 버튼 클릭 시 상세페이지로 이동하지 않음 */}
       <div className={cardStyles.campaign_actions}>
@@ -368,7 +363,7 @@ export default function CampaignCard({
               캠페인 수정
             </button>
             <button
-              className={`${buttonStyles.action_button} ${buttonStyles.danger_button}`}
+              className={`${buttonStyles.action_button} ${cardStyles.delete_button}`}
               onClick={() => handleButtonClick("캠페인 삭제")}
             >
               캠페인 삭제
@@ -401,12 +396,7 @@ export default function CampaignCard({
                 - 진행 탭 또는 종료 탭일 때: 배경색 #ffffff, 테두리색 #FF5694, 글자색 #FF5694
             */}
             <button
-              className={`${buttonStyles.action_button} ${buttonStyles.secondary_button}`}
-              style={{
-                backgroundColor: "#ffffff",
-                borderColor: "#FF5694",
-                color: "#FF5694",
-              }}
+              className={`${buttonStyles.action_button} ${buttonStyles.secondary_button} ${cardStyles.content_check_button}`}
               onClick={() => {
                 const campaignTypePath = getCampaignTypePath(
                   campaign.campaignType
@@ -431,20 +421,12 @@ export default function CampaignCard({
         ) : (
           /* 그 외의 경우: 상태에 맞는 1개 버튼 표시 (당첨자 선정, 패널티 내역 확인 등) */
           <button
-            className={getButtonStyle()}
-            style={
-              /* 📌 당첨자 선정 버튼 스타일 (진행 탭일 때만):
-                  - 배경색 #FF5694, 글자색 #ffffff, 테두리색 #FF5694
-              */
+            className={`${getButtonStyle()} ${
               primaryButtonText === "당첨자 선정" &&
               (activeTab === "진행" || campaignStatus === "진행 중")
-                ? {
-                    backgroundColor: "#FF5694",
-                    color: "#ffffff",
-                    borderColor: "#FF5694",
-                  }
-                : undefined
-            }
+                ? cardStyles.winner_selection_button
+                : ""
+            }`}
             onClick={() => handleButtonClick(primaryButtonText)}
           >
             {primaryButtonText}

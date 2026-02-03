@@ -124,8 +124,6 @@ export function ThumbnailAndDetailImages({
                 <img
                   src="/images/icons/img_delete_btn.svg"
                   alt="제거"
-                  width="24"
-                  height="24"
                 />
               </button>
             </div>
@@ -149,8 +147,6 @@ export function ThumbnailAndDetailImages({
               <img
                 src="/images/icons/plus_icon.svg"
                 alt="썸네일 추가"
-                width="56"
-                height="56"
               />
             </div>
           )}
@@ -194,8 +190,6 @@ export function ThumbnailAndDetailImages({
                 <img
                   src="/images/icons/img_delete_btn.svg"
                   alt="제거"
-                  width="24"
-                  height="24"
                 />
               </button>
             </div>
@@ -219,8 +213,6 @@ export function ThumbnailAndDetailImages({
               <img
                 src="/images/icons/plus_icon.svg"
                 alt="상세 이미지 추가"
-                width="56"
-                height="56"
               />
             </div>
           )}

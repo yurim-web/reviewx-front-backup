@@ -16,26 +16,44 @@
   width: 100%;
   padding-top: 80px; /* 헤더 높이만큼 상단 여백 */
   background-color: white;
-  min-height: calc(100vh - 150px);
+  min-height: 100vh;
 }
 
 .mypage_container {
-  position: relative;
   width: 100%;
-  padding-top: 80px; /* 헤더 높이만큼 상단 여백 */
-  background-color: white;
-  min-height: calc(100vh - 120px);
+  min-height: 100vh;
+  background: white;
+  position: relative;
+  padding-top: 80px; /* 서브헤더 높이만큼 상단 여백 */
 }
 
 /* 메인 콘텐츠 영역 - 중앙 정렬된 흰색 배경 */
 .main_content {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* 파트너 서브헤더 래퍼 - 모바일에서 숨김 */
+.partner_sub_header_wrapper {
+  display: block;
+}
+
+/* 파트너 마이페이지 대시보드 컨테이너 */
+.partner_dashboard_container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: white;
+  position: relative;
+}
+
+/* 파트너 마이페이지 메인 콘텐츠 */
+.partner_main_content {
   background-color: white;
   width: 100%;
   margin: 0 auto;
   min-height: calc(100vh - 80px);
-  max-width: 1200px;
+  max-width: 1000px;
   padding-bottom: 24px;
-
   display: flex;
   flex-direction: column;
 }
@@ -51,11 +69,22 @@
 
   /* 마이페이지 컨테이너 */
   .mypage_container {
-    padding-top: 64px; /* 모바일 헤더 높이 */
+    padding-top: 64px; /* 64px(Header) + 59px(상태바) */
   }
 
-  /* 메인 콘텐츠 영역 */
+  /* 메인 컨텐츠 컨테이너 */
   .main_content {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  /* 파트너 서브헤더 래퍼 - 모바일에서 숨김 */
+  .partner_sub_header_wrapper {
+    display: none;
+  }
+
+  /* 파트너 마이페이지 메인 콘텐츠 */
+  .partner_main_content {
     min-height: calc(100vh - 64px);
     padding-bottom: 20px;
   }

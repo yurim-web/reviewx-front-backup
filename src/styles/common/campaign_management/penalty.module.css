@@ -240,7 +240,7 @@
 
 .penalty_status_base {
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 16px;
   letter-spacing: -0.32px;
 }
@@ -344,10 +344,7 @@
 ================================================================================================ 📱 */
 
 @media (max-width: 768px) {
-  /* 패널티 메인 콘텐츠 영역 */
-  .penalty_content {
 
-  }
 
   /* 패널티 현황 섹션 */
   .penalty_stage_section {
@@ -358,11 +355,6 @@
     margin-bottom: 20px;
   }
 
-  .penalty_section_title {
-    font-size: 18px;
-    line-height: 18px;
-    letter-spacing: -0.36px;
-  }
 
   .warning_status {
     font-size: 18px;
@@ -414,41 +406,26 @@
 
   /* 패널티 내역 섹션 */
   .penalty_history_title {
-    font-size: 18px;
-    line-height: 18px;
-    letter-spacing: -0.36px;
     padding-bottom: 24px;
   }
 
   /* 패널티 내역 리스트 */
   .penalty_item {
     gap: 16px;
-    padding: 24px 0;
+    padding: 20px 0;
   }
 
   .penalty_point_badge,
   .penalty_status_badge {
-    flex-shrink: 0;
-    font-size: 16px;
-    line-height: 16px;
-    letter-spacing: -0.32px;
-  }
-
-  .penalty_details {
-    gap: 6px;
-    min-width: 0;
-  }
-
-  .penalty_title_text {
-    font-size: 16px;
-    line-height: 16px;
-    letter-spacing: -0.32px;
-  }
-
-  .penalty_campaign_title {
     font-size: 14px;
-    line-height: 22px;
+    font-weight: 500;
+    line-height: 14px; /* 100% */
     letter-spacing: -0.28px;
+  }
+
+
+
+  .penalty_campaign_title { 
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -456,10 +433,6 @@
     -webkit-box-orient: vertical;
   }
 
-  .penalty_date {
-    font-size: 14px;
-    line-height: 14px;
-    letter-spacing: -0.28px;
-  }
+
 }
 

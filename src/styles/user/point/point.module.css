@@ -317,6 +317,10 @@
     color: #2b7fff;
   }
   
+  .point_change.returned {
+    color: #848484;
+  }
+  
   .point_change.cancelled_amount {
     color: #a8a8a8;
     text-decoration: line-through;
@@ -406,7 +410,6 @@
     }
   
     .withdrawal_button {
-      width: 125px;
       height: 40px;
       padding: 0px 20px;
       font-size: 16px;
@@ -550,6 +553,10 @@
   
     .mobile_point_change.negative {
       color: #2b7fff;
+    }
+  
+    .mobile_point_change.returned {
+      color: #848484;
     }
   
     .mobile_point_change.cancelled_amount {

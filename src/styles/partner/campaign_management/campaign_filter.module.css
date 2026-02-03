@@ -258,6 +258,13 @@
   display: none;
 }
 
+/**
+ * 모바일 검색 및 정렬 컨테이너
+ */
+.mobile_search_sort_container {
+  display: none;
+}
+
 /* ========================================
    활성 필터 태그 영역
    ======================================== */
@@ -369,11 +376,27 @@
     display: none;
   }
 
-  /* 정렬 버튼 컨테이너 (모바일용 - 필터 바 border 아래) */
+  /* 모바일 검색 및 정렬 컨테이너 */
+  .mobile_search_sort_container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 20px 0px 20px;
+  }
+
+  /* 모바일 검색 컨테이너 - 오른쪽으로 이동 */
+  .mobile_search_sort_container .search_container {
+    flex: 1;
+    width: auto;
+    order: 2; /* 검색창을 오른쪽으로 */
+  }
+
+  /* 정렬 버튼 컨테이너 (모바일용 - 필터 바 border 아래) - 왼쪽으로 이동 */
   .sort_button_container {
     display: flex;
     justify-content: flex-start;
-    padding: 20px 20px 0 20px;
+    flex-shrink: 0;
+    order: 1; /* 정렬 버튼을 왼쪽으로 */
   }
 
   /* 정렬 버튼 (모바일) */

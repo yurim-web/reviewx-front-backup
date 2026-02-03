@@ -30,7 +30,7 @@ import { PartnerPointHistory, PartnerPointSummary } from "@/types/domain/partner
 import {
   getPartnerPointHistory,
   getPartnerPointSummary,
-  partnerPointHistoryData,
+  partnerPointSummary,
 } from "@/data/partner/point/pointData";
 
 /**
@@ -40,26 +40,20 @@ import {
 function PartnerEarnedPointPage() {
   const { user } = useAuth();
   const [historyData, setHistoryData] = useState<PartnerPointHistory[]>([]);
-  const [summary, setSummary] = useState<PartnerPointSummary>({
-    total_points: 0,
-    available_points: 0,
-    pending_points: 0,
-  });
+  const [summary, setSummary] = useState<PartnerPointSummary>(partnerPointSummary);
 
   useEffect(() => {
     if (user?.id) {
+      // getPartnerPointHistory는 항상 목업 데이터를 포함하고 localStorage 데이터를 추가로 합칩니다
       const userHistory = getPartnerPointHistory(user.id);
       const userSummary = getPartnerPointSummary(user.id);
-
-      // 파트너 테스트 계정인 경우 목업 데이터와 실제 충전 내역을 합침
-      if (user.id === 'partner_test_001') {
-        const combinedHistory = [...userHistory, ...partnerPointHistoryData];
-        setHistoryData(combinedHistory);
-      } else {
-        setHistoryData(userHistory);
-      }
-
+      setHistoryData(userHistory);
       setSummary(userSummary);
+    } else {
+      // 로그인되지 않은 경우 목업 데이터만 표시 (getPartnerPointHistory는 userId가 없어도 목업 데이터 반환)
+      const userHistory = getPartnerPointHistory();
+      setHistoryData(userHistory);
+      setSummary(partnerPointSummary);
     }
   }, [user]);
 

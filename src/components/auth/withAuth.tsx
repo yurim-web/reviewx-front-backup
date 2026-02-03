@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import type { UserRole } from '@/types/auth';
 import { getLoginPathForRole } from '@/lib/auth';
+import Loading from '@/app/loading';
 
 interface WithAuthOptions {
   /**
@@ -86,20 +87,9 @@ export function withAuth<P extends object>(
       }
     }, [user, isLoading, router]);
 
-    // 로딩 중이거나 인증되지 않은 경우 null 반환 (빈 화면)
+    // 로딩 중이거나 인증되지 않은 경우 Loading 컴포넌트 표시
     if (isLoading || !user) {
-      return (
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-          fontSize: '16px',
-          color: '#666'
-        }}>
-          로딩 중...
-        </div>
-      );
+      return <Loading />;
     }
 
     // 허용된 역할 체크

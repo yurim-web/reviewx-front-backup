@@ -92,4 +92,5 @@ export interface CampaignFilterBarProps<
   sortOptions?: SortOption[];
   defaultSort?: string;
   showSearch?: boolean;
+  isPartner?: boolean;
 }

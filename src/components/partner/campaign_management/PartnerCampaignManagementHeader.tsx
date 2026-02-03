@@ -81,55 +81,43 @@ export default function PartnerCampaignManagementHeader({
    * useState로 통계 상태 관리
    *
    * 설명:
-   * - 초기값을 0으로 설정하여 서버와 클라이언트에서 동일하게 렌더링됩니다.
-   * - useEffect에서 즉시 통계를 계산하여 업데이트합니다.
-   * - 이렇게 하면 hydration 에러를 방지하면서도 빠르게 숫자를 표시할 수 있습니다.
+   * - 초기값을 getInitialCampaignStats()로 설정하여 즉시 실제 숫자를 표시합니다.
+   * - useEffect에서 localStorage를 포함한 전체 통계를 계산하여 업데이트합니다.
+   * - 이렇게 하면 숫자가 바뀌는 잔상 없이 바로 표시됩니다.
    */
   // 현재 경로 확인 (페이지 이동 여부 판단용)
   const pathname = usePathname();
 
-  const [stats, setStats] = useState<PartnerCampaignStats>({
-    전체: 0,
-    예정: 0,
-    신청: 0,
-    진행: 0,
-    종료: 0,
-    취소: 0,
-    "연장 요청": 0,
-    패널티: 0,
-  });
-
-  /**
-   * useEffect로 통계 계산
-   *
-   * 설명:
-   * - 컴포넌트 마운트 시 즉시 통계를 계산합니다.
-   * - 정적 데이터로 먼저 계산하여 빠르게 표시하고,
-   * - 그 다음 localStorage를 포함한 전체 통계로 업데이트합니다.
-   */
-  useEffect(() => {
-    // 클라이언트에서만 실행
-    if (typeof window === "undefined") return;
-
-    // 먼저 정적 데이터로 빠르게 표시
-    try {
-      const initialStats = getInitialCampaignStats();
-      setStats(initialStats);
-    } catch (error) {
-      console.error("초기 통계 계산 실패:", error);
+  const [stats] = useState<PartnerCampaignStats>(() => {
+    // SSR에서는 기본값 반환
+    if (typeof window === "undefined") {
+      return {
+        전체: 0,
+        예정: 0,
+        신청: 0,
+        진행: 0,
+        종료: 0,
+        취소: 0,
+        "연장 요청": 0,
+        패널티: 0,
+      };
     }
-
-    // 그 다음 localStorage를 포함한 전체 통계로 업데이트
-    // requestAnimationFrame을 사용하여 브라우저 렌더링 사이클에 맞춰 실행
-    requestAnimationFrame(() => {
-      try {
-        const calculatedStats = getCampaignStats();
-        setStats(calculatedStats);
-      } catch (error) {
-        console.error("전체 통계 계산 실패:", error);
-      }
-    });
-  }, []); // dependency 배열을 비워서 마운트 시 한 번만 실행
+    // 클라이언트에서는 즉시 전체 통계 반환 (localStorage 포함)
+    try {
+      return getCampaignStats();
+    } catch {
+      return {
+        전체: 0,
+        예정: 0,
+        신청: 0,
+        진행: 0,
+        종료: 0,
+        취소: 0,
+        "연장 요청": 0,
+        패널티: 0,
+      };
+    }
+  })
 
   /* ========================================
      통계 탭 변경 핸들러 (Statistics Tab Change Handler)

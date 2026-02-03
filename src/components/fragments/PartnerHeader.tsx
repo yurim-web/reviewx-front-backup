@@ -130,9 +130,9 @@ export default function PartnerHeader() {
         <Link href="/partner" className={styles.header_logo}>
           <img src={getLogoSrc()} alt="VX 로고" />
         </Link>
-        <div className={styles.menu_icon_box}>
+        <div className={styles.menu_icon_box} suppressHydrationWarning>
           {/* 새로운 캠페인 등록: PC에서는 버튼, 모바일에서는 아이콘 */}
-          {isMobile ? (
+          {!isMounted ? null : isMobile ? (
             <Link
               href="/partner/campaign/create"
               className={styles.notification_icon}

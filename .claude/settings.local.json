@@ -20,7 +20,11 @@
       "Bash(npx stylelint:*)",
       "Bash(findstr:*)",
       "Bash(npx claude-code-templates@latest --skill=creative-design/frontend-design --yes)",
-      "Bash(npx claude-code-templates@latest --command=testing/setup-visual-testing --yes)"
+      "Bash(npx claude-code-templates@latest --command=testing/setup-visual-testing --yes)",
+      "Bash(npx tsx scripts/replace-loading.ts)",
+      "Bash(git checkout:*)",
+      "Bash(python:*)",
+      "Bash(node:*)"
     ]
   }
 }

@@ -27,7 +27,6 @@ import { useState, useEffect } from "react";
 import PartnerPointPageLayout from "@/components/partner/point/PartnerPointPageLayout";
 import { PartnerPointTab, PartnerPointHistory } from "@/types/domain/partner";
 import {
-  partnerPointHistoryData,
   partnerPointSummary,
   getPartnerPointHistory,
   getPartnerPointSummary,
@@ -51,28 +50,18 @@ export default function PartnerAllPointPage() {
     console.log('🔍 [포인트 페이지] user:', user);
     if (user?.id) {
       console.log('🔍 [포인트 페이지] user.id:', user.id);
+      // getPartnerPointHistory는 항상 목업 데이터를 포함하고 localStorage 데이터를 추가로 합칩니다
       const userHistory = getPartnerPointHistory(user.id);
       const userSummary = getPartnerPointSummary(user.id);
       console.log('🔍 [포인트 페이지] userHistory:', userHistory);
       console.log('🔍 [포인트 페이지] userSummary:', userSummary);
-
-      // 파트너 테스트 계정인 경우 목업 데이터와 실제 충전 내역을 합침
-      if (user.id === 'partner_test_001') {
-        console.log('✅ [포인트 페이지] 파트너 테스트 계정 감지');
-        // 목업 데이터와 실제 데이터를 합쳐서 표시
-        const combinedHistory = [...userHistory, ...partnerPointHistoryData];
-        console.log('🔍 [포인트 페이지] combinedHistory:', combinedHistory);
-        setHistoryData(combinedHistory);
-      } else {
-        // 다른 계정은 실제 데이터만 표시
-        setHistoryData(userHistory);
-      }
-
+      setHistoryData(userHistory);
       setSummary(userSummary);
     } else {
       console.log('⚠️ [포인트 페이지] 로그인되지 않음');
-      // 로그인되지 않은 경우 샘플 데이터 표시
-      setHistoryData(partnerPointHistoryData);
+      // 로그인되지 않은 경우 목업 데이터만 표시 (getPartnerPointHistory는 userId가 없어도 목업 데이터 반환)
+      const userHistory = getPartnerPointHistory();
+      setHistoryData(userHistory);
       setSummary(partnerPointSummary);
     }
   }, [user]);
