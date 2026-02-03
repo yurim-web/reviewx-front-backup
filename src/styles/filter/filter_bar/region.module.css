@@ -165,11 +165,8 @@
   /* 지역 탭 버튼 - 모바일 */
   .region_tab {
     padding: 0 0 12px 0;
-    flex-shrink: 0;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 14px;
-    letter-spacing: -0.28px;
+
+    
   }
 
   /* 활성화된 지역 탭 - 모바일 */
@@ -178,7 +175,7 @@
   }
 
   .region_tab_active::after {
-    height: 2px;
+    height: 2.5px;
   }
 
   /* 지역 필터 모달 바디 - 모바일 */
