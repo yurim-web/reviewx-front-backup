@@ -24,6 +24,7 @@ import { useState, useEffect } from "react";
 import PartnerCampaignManagementHeader from "@/components/partner/campaign_management/PartnerCampaignManagementHeader";
 import CampaignList from "@/components/partner/campaign_management/CampaignList";
 import CampaignFilterBar from "@/components/common/campaign_management/CampaignFilterBar";
+import Loading from "@/app/loading";
 import type { PartnerMainTab } from "@/types/domain/partner";
 import type { PartnerStatTab } from "@/types/domain/partner";
 import type { PartnerCampaign } from "@/types/domain/partner";
@@ -47,6 +48,9 @@ export default function ExtensionRequestPage() {
     []
   );
 
+  // 로딩 상태
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
   // 탭별 캠페인 목록 가져오기
   const campaigns = getCampaignsByTab(activeStatTab);
 
@@ -67,11 +71,23 @@ export default function ExtensionRequestPage() {
    * 설명:
    * - 탭이 변경되면 새로운 캠페인 목록을 가져옵니다.
    * - 필터 바에 새로운 캠페인 목록을 전달합니다.
+   * - 로딩 상태를 표시하여 사용자에게 피드백을 제공합니다.
    */
   useEffect(() => {
-    const newCampaigns = getCampaignsByTab(activeStatTab);
-    // 필터 바가 자동으로 필터링하여 결과를 반환합니다.
+    // 탭 변경 시 로딩 시작
+    setIsLoading(true);
+
+    // 짧은 딜레이 후 로딩 해제 (데이터 렌더링 시간 확보)
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 300);
+
+    return () => clearTimeout(timer);
   }, [activeStatTab]);
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className={layoutStyles.container}>
@@ -88,6 +104,7 @@ export default function ExtensionRequestPage() {
         <CampaignFilterBar
           campaigns={campaigns}
           onFilteredCampaignsChange={handleFilteredCampaignsChange}
+          isPartner={true}
         />
 
         {/* 필터링된 캠페인 목록 */}
@@ -99,4 +116,3 @@ export default function ExtensionRequestPage() {
     </div>
   );
 }
-

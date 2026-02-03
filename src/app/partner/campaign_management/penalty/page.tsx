@@ -20,10 +20,11 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import PartnerCampaignManagementHeader from "@/components/partner/campaign_management/PartnerCampaignManagementHeader";
 import PenaltyContent from "@/components/common/campaign_management/penalty/PenaltyContent";
+import Loading from "@/app/loading";
 import type { PartnerMainTab } from "@/types/domain/partner";
 import type { PartnerStatTab } from "@/types/domain/partner";
 import layoutStyles from "../../../../styles/partner/layout.module.css";
@@ -45,6 +46,9 @@ export default function PenaltyPage() {
   // 통계 탭 상태 - 패널티 탭이 활성화된 상태로 설정
   const [activeStatTab, setActiveStatTab] = useState<PartnerStatTab>("패널티");
 
+  // 로딩 상태
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
   /**
    * 통계 탭 변경 핸들러
    * 패널티가 아닌 다른 탭을 클릭하면 캠페인 관리 페이지로 이동
@@ -57,6 +61,35 @@ export default function PenaltyPage() {
       router.push("/partner/campaign_management");
     }
   };
+
+  /**
+   * 초기 로딩
+   *
+   * 설명:
+   * - 페이지가 로드되면 로딩 상태를 표시합니다.
+   * - 데이터 로드 후 로딩을 해제합니다.
+   * - 안전장치로 최대 2초 후에는 강제로 로딩을 해제합니다.
+   */
+  useEffect(() => {
+    // 탭 변경 시 로딩 시작
+    setIsLoading(true);
+
+    // 데이터가 준비되면 로딩 해제
+    requestAnimationFrame(() => {
+      setIsLoading(false);
+    });
+
+    // 안전장치: 최대 2초 후에는 강제로 로딩 해제
+    const safetyTimer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(safetyTimer);
+  }, [activeStatTab]);
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className={layoutStyles.container}>

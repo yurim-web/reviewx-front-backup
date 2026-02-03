@@ -52,10 +52,12 @@
 
   border-radius: 4px;
   background: #d9d9d9; /* 이미지 없을 때 배경색 */
+  
 }
 
 /* 캠페인 이미지 스타일 */
 .campaign_image img {
+  border-radius: 4px;
   width: 100%;
   height: 100%;
   object-fit: cover; /* 이미지 비율 유지하며 영역 채우기 */
@@ -66,7 +68,7 @@
   flex: 1; /* 남은 공간 모두 차지 */
   display: flex;
   flex-direction: column;
-  gap: 12px; /* 정보 요소 간격 */
+  gap: 16px; /* 정보 요소 간격 */
 }
 
 /* 캠페인 헤더 (카테고리 아이콘 + 태그) */
@@ -82,6 +84,7 @@
   display: flex;
   align-items: center;
   gap: 8px; /* 아이콘과 텍스트 간격 */
+  
 }
 
 /* 타입 아이콘 */
@@ -99,6 +102,7 @@
   border-radius: 2px;
   flex-shrink: 0;
   object-fit: contain;
+  box-shadow: 0 0 4px 0 rgba(68, 68, 68, 0.10);
 }
 
 /* 배송형 아이콘 (초록색) */
@@ -135,6 +139,29 @@
   letter-spacing: -0.32px;
 }
 
+/* 상태 태그 (마감임박, 일반 등) - PC에서 숨김 */
+.cam_tag {
+  display: none; /* PC에서는 숨김 */
+  padding: 6px 8px;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+}
+
+/* 캠페인 상태 태그 - 공통 스타일 (피그마 기준) */
+.cam_tag.urgent,
+.cam_tag.normal,
+.urgent,
+.normal {
+  background-color: #ff5694;
+  color: #ffffff;
+}
+
 /* 캠페인 제목 */
 .campaign_title {
   color: #444;
@@ -143,18 +170,32 @@
   line-height: 22px; /* 137.5% */
   letter-spacing: -0.32px;
 
-  padding-bottom: 8px;
+  padding-bottom: 4px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* 캠페인 상태 텍스트 */
-.campaign_status {
+/* 캠페인 상태 텍스트 - PC용 (campaign_info 안에 위치) */
+.campaign_status_pc {
   color: #848484;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px; /* 100% */
   letter-spacing: -0.28px;
+}
 
-  padding-bottom: 12px;
+/* 캠페인 상태 텍스트 - 모바일용 (campaign_info 밖에 위치) */
+.campaign_status_mobile {
+  display: none; /* PC에서는 숨김 */
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
 }
 
 /* 신청자 수 표시 */
@@ -170,6 +211,15 @@
 
 .applicant_current {
   color: #444444;
+}
+
+/* 신청자 수 색상 변형 */
+.applicant_current_gray {
+  color: #848484;
+}
+
+.applicant_current_pink {
+  color: #FF5694;
 }
 
 .applicant_separator {
@@ -202,13 +252,17 @@
   white-space: nowrap; /* 텍스트 줄바꿈 방지 */
   overflow: hidden; /* 긴 텍스트 처리 */
   text-overflow: ellipsis; /* 긴 텍스트에 ... 표시 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 /* 기본 버튼 (회색 테두리) - 캠페인 관리하기, 삭제하기 등 */
 .campaign_actions button:first-child {
   background-color: white;
-  border-color: #848484;
-  color: #848484;
+  border-color: #444444;
+  color: #444444;
 }
 
 /* 주요 버튼 (검은색 테두리) - 콘텐츠 확인 + 콘텐츠 확인 완료 , 확인하기 등 */
@@ -230,9 +284,7 @@
   gap: 24px; /* 2개 버튼일 때 적절한 간격 */
 }
 
-.campaign_actions:has(button:nth-child(2)) button {
-  font-size: 16px; /* 표준 폰트 크기 */
-}
+
 
 /* 단일 버튼일 때 특별 레이아웃 */
 .campaign_actions:has(button:only-child) {
@@ -244,13 +296,34 @@
   font-size: 16px; /* 표준 폰트 크기 */
 }
 
+/* 캠페인 삭제 버튼 스타일 */
+.delete_button {
+  border-color: #848484 !important;
+  color: #848484 !important;
+  background-color: white !important;
+}
+
+/* 콘텐츠 확인 버튼 스타일 */
+.content_check_button {
+  background-color: #ffffff !important;
+  border-color: #FF5694 !important;
+  color: #FF5694 !important;
+}
+
+/* 당첨자 선정 버튼 스타일 */
+.winner_selection_button {
+  background-color: #FF5694 !important;
+  color: #ffffff !important;
+  border-color: #FF5694 !important;
+}
+
 /* ========================================
    📱 모바일 반응형 스타일 (max-width: 768px)
    ======================================== */
 @media (max-width: 768px) {
   /* 캠페인 목록 영역 */
   .campaign_list {
-    padding: 0 20px 40px 20px;
+    padding: 20px 20px 70px 20px;
     gap: 16px;
   }
 
@@ -287,53 +360,77 @@
   .campaign_header {
     flex-wrap: wrap;
     gap: 8px;
+    justify-content: space-between;
   }
 
-  /* 타입 아이콘 */
-  .type_icon {
-    width: 6px;
-    height: 6px;
-    border-radius: 1.5px;
-  }
-
-  /* 브랜드 로고 */
-  .brand_logo {
-    width: 16px;
-    height: 16px;
-  }
-
-  /* 타입 텍스트 */
-  .type_text {
+  /* 상태 태그 - 모바일에서만 표시 */
+  .cam_tag {
+    display: flex; /* 모바일에서 표시 */
+    padding: 6px 8px;
+    border-radius: 8px;
     font-size: 14px;
     line-height: 14px;
     letter-spacing: -0.28px;
+
+    color: #FFF;
+font-size: 14px;
+font-weight: 600;
+line-height: 14px; 
+letter-spacing: -0.28px;
   }
+
+
+
+
+
 
   /* 캠페인 제목 */
   .campaign_title {
+    padding-bottom: 0;
+    margin-bottom: 0;
+    max-height: 19.6px; /* line-height와 동일하게 설정하여 한 줄만 표시 */
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* PC용 상태 텍스트 숨김 */
+  .campaign_status_pc {
+    display: none;
+  }
+
+  /* 모바일용 상태 텍스트 표시 - 카드 전체 너비로 아래에 표시 */
+  .campaign_status_mobile {
+    display: block;
+    width: 100%;
     font-size: 14px;
-    font-weight: 500;
-    line-height: 19.6px;
+    line-height: 22px;
     letter-spacing: -0.28px;
-    padding-bottom: 4px;
+    padding-bottom: 0;
+    margin-top: 0;
+    order: 2; /* 두 번째 위치 (이미지+정보 다음) */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; /* 한 줄로 표시 */
   }
 
-  /* 캠페인 상태 텍스트 */
-  .campaign_status {
-    font-size: 12px;
-    font-weight: 500;
-    line-height: 12px;
-    letter-spacing: -0.24px;
-    padding-bottom: 8px;
+  /* 버튼 영역 - 카드 맨 아래에 표시 */
+  .campaign_actions {
+    order: 3; /* 세 번째 위치 (맨 아래) */
   }
 
-  /* 신청자 수 표시 */
+  /* campaign_content_container는 첫 번째 위치 */
+  .campaign_content_container {
+    order: 1;
+  }
+
+  /* 신청자 수 표시 - 모바일에서 숨김 */
   .applicant_count {
-    font-size: 12px;
-    font-weight: 500;
-    line-height: 12px;
-    letter-spacing: -0.24px;
-    gap: 4px;
+    display: none;
   }
 
   .applicant_separator {
@@ -358,12 +455,16 @@
     line-height: 14px;
     letter-spacing: -0.28px;
     border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
   }
 
   /* 진행 탭에서 2개 버튼이 있을 때 */
   .campaign_actions:has(button:nth-child(2)) {
     flex-direction: row;
-    gap: 8px;
+    gap: 12px;
   }
 
   .campaign_actions:has(button:nth-child(2)) button {

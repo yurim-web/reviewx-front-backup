@@ -24,6 +24,7 @@ import { useState, useEffect } from "react";
 import PartnerCampaignManagementHeader from "@/components/partner/campaign_management/PartnerCampaignManagementHeader";
 import CampaignList from "@/components/partner/campaign_management/CampaignList";
 import CampaignFilterBar from "@/components/common/campaign_management/CampaignFilterBar";
+import Loading from "@/app/loading";
 import type { PartnerMainTab } from "@/types/domain/partner";
 import type { PartnerStatTab } from "@/types/domain/partner";
 import type { PartnerCampaign } from "@/types/domain/partner";
@@ -47,6 +48,9 @@ export default function ProgressPage() {
     []
   );
 
+  // 로딩 상태
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
   // 탭별 캠페인 목록 가져오기
   const campaigns = getCampaignsByTab(activeStatTab);
 
@@ -56,22 +60,41 @@ export default function ProgressPage() {
    * 설명:
    * - CampaignFilterBar 컴포넌트에서 필터링된 결과를 받아서 상태를 업데이트합니다.
    * - 이제 필터링 로직은 CampaignFilterBar 내부에서 처리됩니다.
+   * - 데이터가 준비되면 로딩을 종료합니다.
    */
   const handleFilteredCampaignsChange = (filtered: PartnerCampaign[]) => {
     setFilteredCampaigns(filtered);
+    // 데이터가 준비되면 로딩 종료
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setIsLoading(false);
+      });
+    });
   };
 
   /**
-   * 탭 변경 시 캠페인 목록 초기화
+   * 탭 변경 시 로딩 시작
    *
    * 설명:
-   * - 탭이 변경되면 새로운 캠페인 목록을 가져옵니다.
-   * - 필터 바에 새로운 캠페인 목록을 전달합니다.
+   * - 탭이 변경되면 로딩 상태를 표시합니다.
+   * - 실제 데이터가 준비되면 handleFilteredCampaignsChange에서 로딩을 해제합니다.
+   * - 안전장치로 최대 2초 후에는 강제로 로딩을 해제합니다.
    */
   useEffect(() => {
-    const newCampaigns = getCampaignsByTab(activeStatTab);
-    // 필터 바가 자동으로 필터링하여 결과를 반환합니다.
+    // 탭 변경 시 로딩 시작
+    setIsLoading(true);
+
+    // 안전장치: 최대 2초 후에는 강제로 로딩 해제
+    const safetyTimer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(safetyTimer);
   }, [activeStatTab]);
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className={layoutStyles.container}>
@@ -88,6 +111,7 @@ export default function ProgressPage() {
         <CampaignFilterBar
           campaigns={campaigns}
           onFilteredCampaignsChange={handleFilteredCampaignsChange}
+          isPartner={true}
         />
 
         {/* 필터링된 캠페인 목록 */}

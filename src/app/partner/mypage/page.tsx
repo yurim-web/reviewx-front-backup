@@ -108,8 +108,9 @@ function PartnerMypagePage() {
   };
 
   return (
-    <div className={layoutStyles.partner_dashboard_container}>
-      <main className={layoutStyles.partner_main_content}>
+    <div className={layoutStyles.mypage_container}>
+      {/* 메인 컨텐츠 */}
+      <div className={layoutStyles.main_content}>
         {/* 상단 탭 네비게이션: 캠페인/포인트/계정 등 */}
         <PartnerTabNavigation
           activeTab={activeTopTab}
@@ -124,28 +125,25 @@ function PartnerMypagePage() {
           availableTabs={["profile"]}
         />
 
-        {/* 마이페이지 컨테이너 */}
-        <section className={layoutStyles.mypage_container}>
-          {/* 
-            ProfileContent 공통 컴포넌트 사용
-            Props로 필요한 데이터를 전달합니다:
-            - role: 사용자 역할 ("광고주")
-            - nickname: 회사명 또는 닉네임
-            - editPath: 내 정보 수정 페이지 경로
-            - onLogout: 로그아웃 버튼 클릭 시 실행할 함수
-          */}
-          <ProfileContent
-            role="광고주"
-            nickname={user?.business_name || user?.name || "파트너"}
-            editPath="/partner/mypage/edit"
-            onLogout={handleLogout}
-            profileImage={profileImage}
-            showMemberTypeToggle={true}
-            activeMemberType={memberType}
-            onMemberTypeChange={handleMemberTypeChange}
-          />
-        </section>
-      </main>
+        {/* 
+          ProfileContent 공통 컴포넌트 사용
+          Props로 필요한 데이터를 전달합니다:
+          - role: 사용자 역할 ("광고주")
+          - nickname: 회사명 또는 닉네임
+          - editPath: 내 정보 수정 페이지 경로
+          - onLogout: 로그아웃 버튼 클릭 시 실행할 함수
+        */}
+        <ProfileContent
+          role="광고주"
+          nickname={user?.business_name || user?.name || "파트너"}
+          editPath="/partner/mypage/edit"
+          onLogout={handleLogout}
+          profileImage={profileImage}
+          showMemberTypeToggle={true}
+          activeMemberType={memberType}
+          onMemberTypeChange={handleMemberTypeChange}
+        />
+      </div>
     </div>
   );
 }

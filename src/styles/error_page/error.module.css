@@ -9,7 +9,7 @@
 
 /* 최상위 컨테이너 - 에러 페이지 전체 레이아웃 */
 .error_container {
-  min-height: calc(100vh - 80px);
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;

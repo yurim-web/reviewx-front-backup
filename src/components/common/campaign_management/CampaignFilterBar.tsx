@@ -40,6 +40,7 @@ export default function CampaignFilterBar<
   sortOptions = DEFAULT_SORT_OPTIONS,
   defaultSort = DEFAULT_SORT,
   showSearch = true,
+  isPartner = false,
 }: CampaignFilterBarProps<T>) {
   const {
     state: {
@@ -146,7 +147,7 @@ export default function CampaignFilterBar<
 
           {/* 검색 및 정렬 컨테이너 (데스크톱용) */}
           <div className={styles.search_sort_container}>
-            {showSearch && (
+            {showSearch && isPartner && (
               <div className={styles.search_container}>
                 <img
                   src="/images/icons/search_icon.svg"
@@ -189,16 +190,34 @@ export default function CampaignFilterBar<
         )}
       </div>
 
-      {/* 정렬 버튼 컨테이너 (모바일용 - 필터 바 border 아래) */}
-      <div className={styles.sort_button_container}>
-        <button className={styles.sort_button} onClick={openSortModal}>
-          <span className={styles.sort_label}>{selectedSort}</span>
-          <img
-            src="/images/filter/dropdown_icon.svg"
-            alt="드롭다운"
-            className={styles.dropdown_icon}
-          />
-        </button>
+      {/* 검색 및 정렬 컨테이너 (모바일용 - 필터 바 border 아래) */}
+      <div className={styles.mobile_search_sort_container}>
+        {isPartner && (
+          <div className={styles.search_container}>
+            <img
+              src="/images/icons/search_icon.svg"
+              alt="검색"
+              className={styles.search_icon}
+            />
+            <input
+              type="text"
+              placeholder="검색"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className={styles.search_input}
+            />
+          </div>
+        )}
+        <div className={styles.sort_button_container}>
+          <button className={styles.sort_button} onClick={openSortModal}>
+            <span className={styles.sort_label}>{selectedSort}</span>
+            <img
+              src="/images/filter/dropdown_icon.svg"
+              alt="드롭다운"
+              className={styles.dropdown_icon}
+            />
+          </button>
+        </div>
       </div>
 
       <ModalFilter

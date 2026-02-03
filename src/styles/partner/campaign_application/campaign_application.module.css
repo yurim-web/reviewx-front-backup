@@ -31,6 +31,11 @@
   margin: 0;
 }
 
+/* 모바일 뒤로가기 버튼 - PC에서 숨김 */
+.mobile_back_button {
+  display: none;
+}
+
 /* 
  * 캠페인 보기 버튼 스타일
  */
@@ -262,15 +267,35 @@
   /* 모바일에서는 PageTitle처럼 동작 */
   .page_header {
     position: sticky;
-    top: 64px; /* 모바일 메인 헤더 높이 */
+    top: 0; /* 모바일에서 헤더가 없으므로 top: 0 */
     z-index: 10;
-    padding: 22px 24px; /* Figma: 22px top/bottom, 24px left, 48px + 24px right (back button + padding) */
+    padding: 22px 24px; /* Figma: 22px top/bottom, 24px left, 24px right */
     border-bottom: 1px solid #e5e5e5; /* Figma: border-color */
     background-color: white;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 8px; /* 뒤로가기 버튼과 제목 간 간격 */
     height: 64px; /* Figma: 64px */
+  }
+
+  /* 모바일 뒤로가기 버튼 */
+  .mobile_back_button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  .mobile_back_button img {
+    width: 100%;
+    height: 100%;
+    display: block;
   }
 
   /* 페이지 제목 */
@@ -281,6 +306,7 @@
     line-height: 20px;
     letter-spacing: -0.4px;
     margin: 0;
+    flex: 1; /* 남은 공간 차지 */
   }
 
   /* 캠페인 보기 버튼 */
@@ -350,7 +376,7 @@
   /* ========== 탭 네비게이션 ========== */
   .tab_navigation {
     position: sticky;
-    top: 128px; /* 모바일 헤더 + 페이지 헤더 */
+    top: 64px; /* 모바일에서 헤더가 없으므로 페이지 헤더 높이만 */
     z-index: 9;
     background: white;
     border-bottom: 1px solid #d9d9d9;
@@ -401,11 +427,15 @@
   /* ========== 신청자 카드 그리드 ========== */
   .applicants_grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Figma: 2열 그리드 */
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* 반응형: 2열 그리드, 최소 0부터 시작 */
     gap: 20px 15px; /* Figma: row-gap 20px, column-gap 15px */
     padding: 20px; /* Figma: 20px */
     background: white;
     min-height: 400px;
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
+    width: 100%; /* 그리드가 부모 너비를 넘지 않도록 */
+    max-width: 100%; /* 최대 너비 제한 */
+    overflow-x: hidden; /* 가로 스크롤 방지 */
   }
 
   /* 빈 상태 */

@@ -38,8 +38,10 @@ export default function VisitCampaignApplicationLayout({
 }) {
   return (
     <div className={layoutStyles.container}>
-      {/* 파트너 서브헤더 - 뒤로가기 버튼이 있는 서브헤더 */}
-      <PartnerSubHeader />
+      {/* 파트너 서브헤더 - PC에서만 표시, 모바일에서 숨김 */}
+      <div className={layoutStyles.partner_sub_header_wrapper}>
+        <PartnerSubHeader />
+      </div>
 
       {/* 자식 페이지 콘텐츠 영역 */}
       {children}

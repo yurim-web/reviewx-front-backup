@@ -33,3 +33,11 @@
   width: 16px;
   height: 16px;
 }
+
+/* ========== 📱 모바일 반응형 디자인 (375px 기준) ========== */
+@media (max-width: 768px) {
+  /* 모바일에서는 엑셀 다운로드 버튼 그룹 숨김 */
+  .download_btn_group {
+    display: none;
+  }
+}

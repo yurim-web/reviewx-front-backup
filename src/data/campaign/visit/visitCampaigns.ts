@@ -465,7 +465,7 @@ export const visitCampaigns: VisitCampaignData[] = [
   },
   {
     id: "1011",
-    title: "[강남/서초] 통큰 한우 돼지갈비 체험단가나다라마바사아자잦자자ㅏ자자",
+    title: "[강남/서초] 통큰 한우 돼지갈비 체험단가나다라마바사아자잦자자ㅏ자자한줄테스트한줄테스트트한줄테스트한줄테스트트한줄테스트한줄테스트트한줄테스트한줄테스트트한줄테스트한줄테스트트한줄테스트한줄테스트트한줄테스트한줄테스트트",
     category: "방문형",
     image: "/images/main/campaign_img/eximg_5.png",
     subcategory: "식품",

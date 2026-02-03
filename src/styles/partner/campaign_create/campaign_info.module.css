@@ -141,6 +141,13 @@
   transition: all 0.2s ease;
 }
 
+/* 플레이스홀더 내부 plus 아이콘 */
+.image_upload_placeholder img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
 /* 이미지 미리보기 컨테이너 */
 .image_preview_container {
   position: relative;
@@ -166,6 +173,13 @@
   right: 4px;
   cursor: pointer;
   filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.1));
+}
+
+/* 제거 버튼 내부 delete 아이콘 */
+.image_remove_button img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
 }
 
 /* 주소 입력 그룹 - 주소 + 우편번호 버튼 */
@@ -265,57 +279,7 @@
 @media (max-width: 768px) {
   /* 폼 컨테이너 */
   .campaign_form {
-    padding: 20px;
-    gap: 32px;
-  }
-
-  /* 폼 그룹 */
-  .form_group {
-    gap: 10px;
-  }
-
-  /* 폼 라벨 */
-  .form_label {
-    font-size: 13px;
-    line-height: 13px;
-    letter-spacing: -0.26px;
-  }
-
-  /* 기본 입력 필드 */
-  .form_input,
-  .form_select,
-  .form_textarea {
-    height: 48px;
-    padding: 14px 16px;
-    border-radius: 6px;
-    font-size: 14px;
-    line-height: 14px;
-    letter-spacing: -0.28px;
-  }
-
-  /* placeholder 스타일 */
-  .form_input::placeholder,
-  .form_select::placeholder,
-  .form_textarea::placeholder {
-    font-size: 14px;
-    line-height: 14px;
-    letter-spacing: -0.28px;
-  }
-
-  /* 읽기 전용 필드 */
-  .form_input[readonly]:focus,
-  .form_input[readonly] {
-    font-size: 14px;
-    line-height: 14px;
-    letter-spacing: -0.28px;
-  }
-
-  /* 비활성화 필드 */
-  .form_input:disabled {
-    font-size: 14px;
-    line-height: 14px;
-    letter-spacing: -0.28px;
-  }
+    padding: 20px;  }
 
   /* 텍스트영역 */
   .form_textarea {
@@ -330,15 +294,27 @@
 
   /* 이미지 업로드 플레이스홀더 */
   .image_upload_placeholder {
-    width: 80px;
-    height: 80px;
+    width: 76px;
+    height: 76px;
     border-radius: 6px;
+  }
+
+  /* 플레이스홀더 내부 plus 아이콘 - 모바일 */
+  .image_upload_placeholder img {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* 제거 버튼 내부 delete 아이콘 - 모바일 */
+  .image_remove_button img {
+    width: 20px;
+    height: 20px;
   }
 
   /* 이미지 미리보기 컨테이너 */
   .image_preview_container {
-    width: 80px;
-    height: 80px;
+    width: 76px;
+    height: 76px;
     border-radius: 6px;
   }
 
@@ -347,78 +323,6 @@
     border-radius: 6px;
   }
 
-  /* 주소 입력 그룹 */
-  .address_input_group {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-  }
-
-  /* 우편번호 찾기 버튼 */
-  .postal_input_group {
-    gap: 10px;
-  }
-
-  /* 포인트 입력 그룹 */
-  .points_input_group {
-    gap: 10px;
-  }
-
-  .points_input_group .form_input {
-    padding-right: 36px;
-  }
-
-  /* 포인트 단위 표시 */
-  .points_unit {
-    right: 16px;
-    font-size: 14px;
-    letter-spacing: -0.28px;
-  }
-
-  /* 포인트 충전 버튼 */
-  .charge_button {
-    height: 48px;
-    padding: 0 16px;
-    border-radius: 6px;
-    font-size: 14px;
-    line-height: 14px;
-    letter-spacing: -0.28px;
-    width: 100%;
-  }
-
-  /* 카운트 입력 그룹 */
-  .count_input_group {
-    gap: 10px;
-  }
-
-  .count_input_group .form_input {
-    padding-right: 36px;
-  }
-
-  /* 카운트 단위 표시 */
-  .count_unit {
-    right: 16px;
-    font-size: 14px;
-    letter-spacing: -0.28px;
-  }
-
-  /* 지역 선택 그룹 */
-  .region_select_group {
-    gap: 10px;
-  }
-
-  /* 지역 드롭다운 컨테이너 */
-  .region_dropdown_container {
-    gap: 10px;
-  }
-
-  /* 이미지 업로드 안내 문구 */
-  .image_upload_info li {
-    padding-left: 14px;
-    font-size: 13px;
-    line-height: 20px;
-    letter-spacing: -0.26px;
-  }
 }
 
 /* 지역 선택 그룹 - 시/도와 시/구/군 드롭다운을 나란히 배치 */

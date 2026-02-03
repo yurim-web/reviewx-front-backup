@@ -327,12 +327,11 @@ export default function PartnerPointPageLayout({
                   <div
                     className={`${styles.status_badge} ${
                       history.type === "earned"
-                        ? styles.charged
+                        ? styles.earned // 충전: 초록색 #2dc469
                         : history.type === "returned"
-                        ? styles.earned // 반환은 적립과 같은 스타일 (양수이므로)
-                        : history.type === "withdrawn" &&
-                          history.status === "completed"
-                        ? styles.used
+                        ? styles.cancelled // 반환: 회색 #ababab
+                        : history.type === "withdrawn"
+                        ? styles.completed // 사용: 파란색 #2b7fff
                         : history.status === "earned"
                         ? styles.earned
                         : history.status === "completed"
@@ -361,28 +360,26 @@ export default function PartnerPointPageLayout({
                   <div className={styles.history_description}>
                     {/**
                      * 조건부 렌더링:
-                     * - 반환(type === "returned")일 때는 무조건 사유보기 버튼 표시
-                     * - 반려(status === "failed")이고 rejection_reason이 있는 경우에도 반려 사유 버튼 표시
+                     * - 반환(type === "returned")일 때는 무조건 사유보기 버튼 없이 일반 텍스트로 표시
+                     * - 반환 타입이 아니고 반려(status === "failed")이고 rejection_reason이 있는 경우에만 반려 사유 버튼 표시
                      */}
-                    {history.type === "returned" ||
-                    (history.status === "failed" &&
-                      history.rejection_reason) ? (
+                    {history.type !== "returned" &&
+                    history.status === "failed" &&
+                    history.rejection_reason ? (
                       <div className={styles.cancelled_description}>
                         <span className={styles.main_text}>
                           {history.description}
                         </span>
                         {/**
-                         * 반환 상태일 때는 무조건 사유보기 버튼 표시
-                         * 반려 상태일 때는 rejection_reason이 있을 때만 표시
+                         * 반려 상태일 때는 rejection_reason이 있을 때만 사유보기 버튼 표시
+                         * (반환 타입 제외)
                          *
                          * 설명:
-                         * - 반환(type === "returned")일 때는 무조건 "사유보기" 버튼을 보여줍니다.
                          * - 반려(status === "failed")일 때는 rejection_reason이 있을 때만 표시합니다.
-                         * - onClick 핸들러로 모달을 열어 반환 사유 또는 반려 사유를 표시합니다.
+                         * - 반환 타입은 제외합니다.
+                         * - onClick 핸들러로 모달을 열어 반려 사유를 표시합니다.
                          */}
-                        {(history.type === "returned" ||
-                          (history.status === "failed" &&
-                            history.rejection_reason)) && (
+                        {history.rejection_reason && (
                           <div
                             className={styles.reason_section}
                             onClick={() => handle_reason_click(history)}
@@ -410,15 +407,17 @@ export default function PartnerPointPageLayout({
                 <div className={styles.point_info}>
                   <div
                     className={`${styles.point_change} ${
-                      history.type === "returned" || history.type === "earned"
-                        ? styles.positive // 충전과 반환은 초록색
-                        : styles.negative // 사용은 파랑색
+                      history.type === "returned"
+                        ? styles.returned // 반환: 회색 #848484
+                        : history.type === "earned"
+                        ? styles.positive // 충전: 초록색
+                        : styles.negative // 사용: 파랑색
                     }`}
                   >
                     {/**
                      * 포인트 금액 표시 로직:
                      * - 충전(earned): + (양수로 표시, 초록색)
-                     * - 반환(returned): + (양수로 표시, 초록색)
+                     * - 반환(returned): + (양수로 표시, 회색 #848484)
                      * - 사용(withdrawn): - (음수로 표시, 파랑색)
                      *
                      * 📌 스타일:
@@ -432,6 +431,94 @@ export default function PartnerPointPageLayout({
                   </div>
                   <div className={styles.point_balance}>
                     {history.balance.toLocaleString()} P
+                  </div>
+                </div>
+
+                {/* 모바일 버전: 2줄 구조 (PC에서 숨김) */}
+                {/* 1번째 줄: 설명 (왼쪽) + 포인트 금액 + 잔액 (오른쪽, 세로 묶음) */}
+                <div className={styles.mobile_row_first}>
+                  <div className={styles.mobile_description}>
+                    {history.type !== "returned" &&
+                    history.status === "failed" &&
+                    history.rejection_reason ? (
+                      <div className={styles.cancelled_description}>
+                        <span className={styles.main_text}>
+                          {history.description}
+                        </span>
+                        {history.rejection_reason && (
+                          <div
+                            className={styles.reason_section}
+                            onClick={() => handle_reason_click(history)}
+                          >
+                            <div className={styles.reason_icon}>
+                              <Image
+                                src="/images/management_page/cancel_info.svg"
+                                alt="정보 아이콘"
+                                width={12}
+                                height={12}
+                              />
+                            </div>
+                            <span className={styles.reason_text}>사유보기</span>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      history.description
+                    )}
+                  </div>
+
+                  <div className={styles.mobile_points_group}>
+                    <div
+                      className={`${styles.mobile_point_change} ${
+                        history.type === "returned"
+                          ? styles.returned // 반환: 회색 #848484
+                          : history.type === "earned"
+                          ? styles.positive // 충전: 초록색
+                          : styles.negative // 사용: 파랑색
+                      }`}
+                    >
+                      {history.type === "returned" || history.type === "earned"
+                        ? `+ ${Math.abs(history.amount).toLocaleString()}`
+                        : `${history.amount.toLocaleString()}`}{" "}
+                      P
+                    </div>
+                    <div className={styles.mobile_balance}>
+                      {history.balance.toLocaleString()} P
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2번째 줄: 날짜 (왼쪽) + 상태 (오른쪽) */}
+                <div className={styles.mobile_row_second}>
+                  <div className={styles.mobile_date}>{history.date}</div>
+                  <div
+                    className={`${styles.mobile_status} ${
+                      history.type === "earned"
+                        ? styles.earned // 충전: 초록색 #2dc469
+                        : history.type === "returned"
+                        ? styles.cancelled // 반환: 회색 #848484
+                        : history.type === "withdrawn"
+                        ? styles.completed // 사용: 파란색 #2b7fff
+                        : history.status === "earned"
+                        ? styles.earned
+                        : history.status === "completed"
+                        ? styles.completed
+                        : history.status === "pending"
+                        ? styles.pending
+                        : styles.cancelled
+                    }`}
+                  >
+                    {history.type === "earned"
+                      ? "충전"
+                      : history.type === "returned"
+                      ? "반환"
+                      : history.type === "withdrawn"
+                      ? "사용"
+                      : history.status === "completed"
+                      ? "완료"
+                      : history.status === "pending"
+                      ? "신청"
+                      : "취소"}
                   </div>
                 </div>
               </div>

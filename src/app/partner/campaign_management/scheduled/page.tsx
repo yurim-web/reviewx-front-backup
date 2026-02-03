@@ -24,6 +24,7 @@ import { useState, useEffect, useMemo } from "react";
 import PartnerCampaignManagementHeader from "@/components/partner/campaign_management/PartnerCampaignManagementHeader";
 import CampaignList from "@/components/partner/campaign_management/CampaignList";
 import CampaignFilterBar from "@/components/common/campaign_management/CampaignFilterBar";
+import Loading from "@/app/loading";
 import type { PartnerMainTab } from "@/types/domain/partner";
 import type { PartnerStatTab } from "@/types/domain/partner";
 import type { PartnerCampaign } from "@/types/domain/partner";
@@ -51,30 +52,13 @@ function ScheduledPage() {
     []
   );
 
-  // 탭별 캠페인 목록 가져오기 (로그인한 파트너의 캠페인만)
-  const allCampaigns = getCampaignsByTab(activeStatTab);
+  // 로딩 상태
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // 로그인한 파트너의 캠페인만 필터링
+  // 탭별 캠페인 목록 가져오기 (메인 페이지와 동일한 방식)
   const campaigns = useMemo(() => {
-    if (!user) return [];
-
-    // LocalStorage에서 저장된 캠페인 가져오기
-    const storedCampaigns = localStorage.getItem('my_campaigns');
-    if (storedCampaigns) {
-      try {
-        const parsedCampaigns = JSON.parse(storedCampaigns);
-        // 현재 로그인한 파트너의 캠페인만 필터링 (예정 상태만)
-        return parsedCampaigns.filter((c: any) =>
-          c.partner_id === user.id && c.status === '예정'
-        );
-      } catch (e) {
-        console.error('Failed to parse campaigns:', e);
-      }
-    }
-
-    // LocalStorage에 캠페인이 없으면 빈 배열 반환 (Mock 데이터 사용 안 함)
-    return [];
-  }, [user, activeStatTab]);
+    return getCampaignsByTab(activeStatTab);
+  }, [activeStatTab]);
 
   /**
    * 필터링된 캠페인 목록 변경 핸들러
@@ -82,22 +66,42 @@ function ScheduledPage() {
    * 설명:
    * - CampaignFilterBar 컴포넌트에서 필터링된 결과를 받아서 상태를 업데이트합니다.
    * - 이제 필터링 로직은 CampaignFilterBar 내부에서 처리됩니다.
+   * - 데이터가 준비되고 실제 DOM이 렌더링된 후 로딩을 종료합니다.
    */
   const handleFilteredCampaignsChange = (filtered: PartnerCampaign[]) => {
     setFilteredCampaigns(filtered);
+    // 브라우저가 실제로 DOM을 렌더링할 때까지 대기
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        // 2번의 requestAnimationFrame으로 실제 렌더링 완료 후 로딩 종료
+        setIsLoading(false);
+      });
+    });
   };
 
   /**
-   * 탭 변경 시 캠페인 목록 초기화
+   * 탭 변경 시 로딩 시작
    *
    * 설명:
-   * - 탭이 변경되면 새로운 캠페인 목록을 가져옵니다.
-   * - 필터 바에 새로운 캠페인 목록을 전달합니다.
+   * - 탭이 변경되면 로딩 상태를 표시합니다.
+   * - 실제 데이터가 준비되면 handleFilteredCampaignsChange에서 로딩을 해제합니다.
+   * - 안전장치로 최대 2초 후에는 강제로 로딩을 해제합니다.
    */
   useEffect(() => {
-    const newCampaigns = getCampaignsByTab(activeStatTab);
-    // 필터 바가 자동으로 필터링하여 결과를 반환합니다.
+    // 탭 변경 시 로딩 시작
+    setIsLoading(true);
+
+    // 안전장치: 최대 2초 후에는 강제로 로딩 해제
+    const safetyTimer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(safetyTimer);
   }, [activeStatTab]);
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className={layoutStyles.container}>
@@ -114,6 +118,7 @@ function ScheduledPage() {
         <CampaignFilterBar
           campaigns={campaigns}
           onFilteredCampaignsChange={handleFilteredCampaignsChange}
+          isPartner={true}
         />
 
         {/* 필터링된 캠페인 목록 */}

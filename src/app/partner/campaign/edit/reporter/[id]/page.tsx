@@ -15,6 +15,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
+import Loading from "@/app/loading";
 import ReporterCampaignForm from "@/components/partner/campaign_create_form/ReporterCampaignForm";
 import { CampaignFormData } from "@/types/domain/user";
 import {
@@ -428,13 +429,7 @@ export default function ReporterCampaignEditPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className={layoutStyles.container}>
-        <div className={layoutStyles.main_content}>
-          <p>캠페인 데이터를 불러오는 중...</p>
-        </div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (error || !initialData) {

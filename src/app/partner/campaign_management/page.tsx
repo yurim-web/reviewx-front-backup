@@ -31,6 +31,7 @@ import CampaignList from "@/components/partner/campaign_management/CampaignList"
 import { withPartnerAuth } from "@/components/auth/withAuth";
 import CampaignFilterBar from "@/components/common/campaign_management/CampaignFilterBar";
 import BaseModal from "@/components/common/modal/BaseModal";
+import Loading from "@/app/loading";
 import type { PartnerMainTab } from "@/types/domain/partner";
 import type { PartnerStatTab } from "@/types/domain/partner";
 import type { PartnerCampaign } from "@/types/domain/partner";
@@ -59,6 +60,9 @@ function PartnerCampaignManagementPage() {
 
   // 네트워크 오류 상태 (네트워크 지연이나 오류 발생 시 true)
   const [isNetworkError, setIsNetworkError] = useState<boolean>(false);
+
+  // 로딩 상태 (탭 전환 시 로딩 표시) - 초기 로드 시에도 로딩 화면 표시
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // 필터 상태 (필터 바에서 사용)
   const [activeFilters, setActiveFilters] = useState<{
@@ -108,34 +112,40 @@ function PartnerCampaignManagementPage() {
    * 설명:
    * - CampaignFilterBar 컴포넌트에서 필터링된 결과를 받아서 상태를 업데이트합니다.
    * - 이제 필터링 로직은 CampaignFilterBar 내부에서 처리됩니다.
+   * - 데이터가 준비되고 실제 DOM이 렌더링된 후 로딩을 종료합니다.
    */
   const handleFilteredCampaignsChange = (filtered: PartnerCampaign[]) => {
     setFilteredCampaigns(filtered);
+    // 브라우저가 실제로 DOM을 렌더링할 때까지 대기
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        // 2번의 requestAnimationFrame으로 실제 렌더링 완료 후 로딩 종료
+        setIsLoading(false);
+      });
+    });
   };
 
   /**
-   * 탭 변경 시 캠페인 목록 초기화
+   * 탭 변경 시 로딩 시작
    *
    * 설명:
-   * - 탭이 변경되면 새로운 캠페인 목록을 가져옵니다.
-   * - 필터 바가 자동으로 필터링하여 결과를 반환합니다.
+   * - 탭이 변경되면 로딩 상태를 표시합니다.
+   * - 실제 데이터가 준비되면 handleFilteredCampaignsChange에서 로딩을 해제합니다.
+   * - 안전장치로 최대 2초 후에는 강제로 로딩을 해제합니다.
    *
    * 참고: 실제 API 호출 시에는 try-catch로 네트워크 오류를 처리하고
    *       setIsNetworkError(true)를 호출하여 오류 모달을 표시합니다.
    */
   useEffect(() => {
-    // TODO: 실제 API 호출 시 네트워크 오류 처리
-    // 예시:
-    // try {
-    //   const newCampaigns = await fetchCampaignsByTab(activeStatTab);
-    //   setFilteredCampaigns(newCampaigns);
-    // } catch (error) {
-    //   console.error("네트워크 오류:", error);
-    //   setIsNetworkError(true);
-    // }
+    // 탭 변경 시 로딩 시작
+    setIsLoading(true);
 
-    const newCampaigns = getCampaignsByTab(activeStatTab);
-    // 필터 바가 자동으로 필터링하여 결과를 반환합니다.
+    // 안전장치: 최대 2초 후에는 강제로 로딩 해제
+    const safetyTimer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(safetyTimer);
   }, [activeStatTab]);
 
   /**
@@ -149,6 +159,11 @@ function PartnerCampaignManagementPage() {
     setIsNetworkError(false);
     // 필요시 페이지 새로고침 또는 재시도 로직 추가 가능
   };
+
+  // 로딩 중일 때 로딩 화면 표시
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <>
@@ -169,6 +184,7 @@ function PartnerCampaignManagementPage() {
             onFilteredCampaignsChange={handleFilteredCampaignsChange}
             onFilterChange={handleFilterChange}
             activeFilters={activeFilters}
+            isPartner={true}
           />
 
           {/* 필터링된 캠페인 목록 */}
