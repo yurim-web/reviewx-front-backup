@@ -205,7 +205,7 @@
   /* 스케줄 오버레이 */
   /* ex) 1/25 (화) 10:00 모집 오픈 */
   .schedule_overlay {
-    padding: 28px;
+    padding: 20px;
     border-radius: 4px;
   }
 
