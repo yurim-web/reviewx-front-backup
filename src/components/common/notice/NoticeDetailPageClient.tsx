@@ -27,6 +27,8 @@ import { get_post_detail } from "@/data/manager_ga/community/postsData";
 import PostDetailPageCommon, {
   type PostDetailData,
 } from "@/components/common/post/PostDetailPageCommon";
+import PageTitle from "@/components/fragments/PageTitle";
+import styles from "@/styles/user/notice/notice.module.css";
 
 interface NoticeDetailPageClientProps {
   target?: NoticeTarget; // "user" | "partner" (기본값: "user")
@@ -87,18 +89,27 @@ export default function NoticeDetailPageClient({
         content: notice_detail.content,
         meta_label: notice_detail.category,
         date: notice_detail.date,
-        // header_component가 없을 때만 "공지사항" 제목 표시
-        division_title: header_component ? undefined : "공지사항",
+        division_title: undefined,
       }
     : null;
 
   return (
-    <PostDetailPageCommon
-      post_detail={post_detail_data}
-      back_path={back_path}
-      loading_message="공지사항을 불러오는 중..."
-      header_component={header_component}
-      aria_label="공지사항 상세 정보"
-    />
+    <div className={styles.notice_container}>
+      {/* 헤더 컴포넌트 (SubHeader 또는 PartnerSubHeader) */}
+      {header_component}
+
+      <main className={styles.main_content}>
+        {/* 페이지 제목 */}
+        <PageTitle title="공지사항" />
+
+        <PostDetailPageCommon
+          post_detail={post_detail_data}
+          back_path={back_path}
+          loading_message="공지사항을 불러오는 중..."
+          header_component={<></>}
+          aria_label="공지사항 상세 정보"
+        />
+      </main>
+    </div>
   );
 }

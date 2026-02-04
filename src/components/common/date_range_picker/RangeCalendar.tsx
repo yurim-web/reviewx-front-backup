@@ -207,6 +207,8 @@ export default function RangeCalendar({
         element.style.setProperty("border-radius", "0", "important");
 
         if (button) {
+          const isMobile = window.innerWidth <= 768;
+          const buttonHeight = isMobile ? "18px" : "100%";
           button.style.setProperty(
             "background-color",
             "rgba(255,86,148,0.1)",
@@ -216,7 +218,9 @@ export default function RangeCalendar({
           button.style.setProperty("border", "none", "important");
           button.style.setProperty("border-radius", "0", "important");
           button.style.setProperty("width", "100%", "important");
-          button.style.setProperty("height", "100%", "important");
+          button.style.setProperty("height", buttonHeight, "important");
+          button.style.setProperty("min-height", buttonHeight, "important");
+          button.style.setProperty("max-height", buttonHeight, "important");
           button.style.setProperty("display", "flex", "important");
           button.style.setProperty("align-items", "center", "important");
           button.style.setProperty("justify-content", "center", "important");
@@ -225,6 +229,9 @@ export default function RangeCalendar({
         class_list.contains("rdp-day_range_start") ||
         class_list.toString().includes("range_start")
       ) {
+        const isMobile = window.innerWidth <= 768;
+        const elementHeight = isMobile ? "18px" : "var(--rdp-cell-size)";
+
         element.style.setProperty(
           "background-color",
           "transparent",
@@ -236,22 +243,23 @@ export default function RangeCalendar({
         element.style.setProperty("position", "relative", "important");
         element.style.setProperty(
           "height",
-          "var(--rdp-cell-size)",
+          elementHeight,
           "important"
         );
         element.style.setProperty(
           "min-height",
-          "var(--rdp-cell-size)",
+          elementHeight,
           "important"
         );
         element.style.setProperty(
           "max-height",
-          "var(--rdp-cell-size)",
+          elementHeight,
           "important"
         );
         element.style.setProperty("padding", "0", "important");
 
         if (button) {
+          const buttonHeight = isMobile ? "18px" : "24px";
           button.style.setProperty(
             "background-color",
             "rgba(255,86,148,0.1)",
@@ -260,7 +268,7 @@ export default function RangeCalendar({
           button.style.setProperty("color", "white", "important");
           button.style.setProperty("border-radius", "50% 0 0 50%", "important");
           button.style.setProperty("width", "100%", "important");
-          button.style.setProperty("height", "24px", "important");
+          button.style.setProperty("height", buttonHeight, "important");
           button.style.setProperty("border", "none", "important");
           button.style.setProperty("padding", "0", "important");
           button.style.setProperty("margin", "0", "important");
@@ -292,9 +300,11 @@ export default function RangeCalendar({
           if (!circle) {
             circle = document.createElement("div");
             circle.className = "range-start-circle";
+            const isMobile = window.innerWidth <= 768;
+            const circleSize = isMobile ? "20px" : "28px";
             circle.style.setProperty("position", "absolute", "important");
-            circle.style.setProperty("width", "28px", "important");
-            circle.style.setProperty("height", "28px", "important");
+            circle.style.setProperty("width", circleSize, "important");
+            circle.style.setProperty("height", circleSize, "important");
             circle.style.setProperty(
               "background-color",
               "#ff5694",
@@ -310,6 +320,11 @@ export default function RangeCalendar({
             );
             circle.style.setProperty("z-index", "1", "important");
             button.appendChild(circle);
+          } else {
+            const isMobile = window.innerWidth <= 768;
+            const circleSize = isMobile ? "20px" : "28px";
+            circle.style.setProperty("width", circleSize, "important");
+            circle.style.setProperty("height", circleSize, "important");
           }
           circle.style.setProperty("display", "block", "important");
 
@@ -406,6 +421,9 @@ export default function RangeCalendar({
         class_list.contains("rdp-day_range_end") ||
         class_list.toString().includes("range_end")
       ) {
+        const isMobile = window.innerWidth <= 768;
+        const elementHeight = isMobile ? "18px" : "var(--rdp-cell-size)";
+
         element.style.setProperty(
           "background-color",
           "transparent",
@@ -417,22 +435,23 @@ export default function RangeCalendar({
         element.style.setProperty("position", "relative", "important");
         element.style.setProperty(
           "height",
-          "var(--rdp-cell-size)",
+          elementHeight,
           "important"
         );
         element.style.setProperty(
           "min-height",
-          "var(--rdp-cell-size)",
+          elementHeight,
           "important"
         );
         element.style.setProperty(
           "max-height",
-          "var(--rdp-cell-size)",
+          elementHeight,
           "important"
         );
         element.style.setProperty("padding", "0", "important");
 
         if (button) {
+          const buttonHeight = isMobile ? "18px" : "24px";
           button.style.setProperty(
             "background-color",
             "rgba(255,86,148,0.1)",
@@ -441,7 +460,7 @@ export default function RangeCalendar({
           button.style.setProperty("color", "white", "important");
           button.style.setProperty("border-radius", "0 50% 50% 0", "important");
           button.style.setProperty("width", "100%", "important");
-          button.style.setProperty("height", "24px", "important");
+          button.style.setProperty("height", buttonHeight, "important");
           button.style.setProperty("border", "none", "important");
           button.style.setProperty("padding", "0", "important");
           button.style.setProperty("margin", "0", "important");
@@ -471,9 +490,11 @@ export default function RangeCalendar({
           if (!circle) {
             circle = document.createElement("div");
             circle.className = "range-end-circle";
+            const isMobile = window.innerWidth <= 768;
+            const circleSize = isMobile ? "20px" : "28px";
             circle.style.setProperty("position", "absolute", "important");
-            circle.style.setProperty("width", "28px", "important");
-            circle.style.setProperty("height", "28px", "important");
+            circle.style.setProperty("width", circleSize, "important");
+            circle.style.setProperty("height", circleSize, "important");
             circle.style.setProperty(
               "background-color",
               "#ff5694",
@@ -489,6 +510,11 @@ export default function RangeCalendar({
             );
             circle.style.setProperty("z-index", "1", "important");
             button.appendChild(circle);
+          } else {
+            const isMobile = window.innerWidth <= 768;
+            const circleSize = isMobile ? "20px" : "28px";
+            circle.style.setProperty("width", circleSize, "important");
+            circle.style.setProperty("height", circleSize, "important");
           }
           circle.style.setProperty("display", "block", "important");
 
@@ -715,6 +741,9 @@ export default function RangeCalendar({
           }
 
           // 해당 날짜 셀에 핑크색 테두리와 완만한(라운드) 테두리 적용, 배경색 없음, 글자색 핑크 (#FF5694)
+          const isMobile = window.innerWidth <= 768;
+          const todaySize = isMobile ? "20px" : "32px";
+
           element.style.setProperty("border-radius", "50%", "important");
           element.style.setProperty(
             "background-color",
@@ -723,12 +752,12 @@ export default function RangeCalendar({
           );
           element.style.setProperty("color", "#FF5694", "important");
           element.style.setProperty("box-sizing", "border-box", "important");
-          element.style.setProperty("width", "32px", "important");
-          element.style.setProperty("height", "32px", "important");
-          element.style.setProperty("min-width", "32px", "important");
-          element.style.setProperty("min-height", "32px", "important");
-          element.style.setProperty("max-width", "32px", "important");
-          element.style.setProperty("max-height", "32px", "important");
+          element.style.setProperty("width", todaySize, "important");
+          element.style.setProperty("height", todaySize, "important");
+          element.style.setProperty("min-width", todaySize, "important");
+          element.style.setProperty("min-height", todaySize, "important");
+          element.style.setProperty("max-width", todaySize, "important");
+          element.style.setProperty("max-height", todaySize, "important");
           element.style.setProperty("padding", "0", "important");
           element.style.setProperty("margin", "0", "important");
 
@@ -742,12 +771,12 @@ export default function RangeCalendar({
           );
           button.style.setProperty("color", "#FF5694", "important");
           button.style.setProperty("box-sizing", "border-box", "important");
-          button.style.setProperty("width", "32px", "important");
-          button.style.setProperty("height", "32px", "important");
-          button.style.setProperty("min-width", "32px", "important");
-          button.style.setProperty("min-height", "32px", "important");
-          button.style.setProperty("max-width", "32px", "important");
-          button.style.setProperty("max-height", "32px", "important");
+          button.style.setProperty("width", todaySize, "important");
+          button.style.setProperty("height", todaySize, "important");
+          button.style.setProperty("min-width", todaySize, "important");
+          button.style.setProperty("min-height", todaySize, "important");
+          button.style.setProperty("max-width", todaySize, "important");
+          button.style.setProperty("max-height", todaySize, "important");
           button.style.setProperty("padding", "0", "important");
           button.style.setProperty("margin", "0", "important");
           button.style.setProperty("display", "flex", "important");
@@ -834,6 +863,25 @@ export default function RangeCalendar({
       clearTimeout(timeout_id);
     };
   }, [selected, apply_range_styles, hide_previous_month_days]);
+
+  // ========================================
+  // 윈도우 리사이즈 시 스타일 재적용
+  // ========================================
+
+  useEffect(() => {
+    const handle_resize = () => {
+      if (!is_applying_styles_ref.current) {
+        apply_range_styles();
+        hide_previous_month_days();
+      }
+    };
+
+    window.addEventListener("resize", handle_resize);
+
+    return () => {
+      window.removeEventListener("resize", handle_resize);
+    };
+  }, [apply_range_styles, hide_previous_month_days]);
 
   // ========================================
   // DOM 변경 감지 및 스타일 자동 적용

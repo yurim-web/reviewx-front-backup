@@ -47,9 +47,5 @@
   /* 제출 버튼 */
   .submit_button {
     height: 48px;
-    border-radius: 6px;
-    font-size: 14px;
-    line-height: 14px;
-    letter-spacing: -0.28px;
   }
 }

@@ -292,14 +292,14 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     },
     schedule: "",
     dayCount: "D-4",
-    registeredAt: "2026-01-07T15:20:00.000Z", // 등록 시간
+    registeredAt: "2025-12-20T15:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2026-01-09 ~ 2026-01-25)
-      applicationStart: "2026-01-09",
-      applicationEnd: "2026-01-25",
-      announcement: "2026-01-27",
-      purchasePeriod: "2026-01-27 ~ 2026-01-30",
-      registrationPeriod: "2026-01-30 ~ 2026-02-07",
+      // 구매 중 - 오늘 날짜 기준으로 구매 기간이 진행 중
+      applicationStart: "2025-12-15",
+      applicationEnd: "2026-01-05",
+      announcement: "2026-01-07",
+      purchasePeriod: "2026-01-12 ~ 2026-02-20",
+      registrationPeriod: "2026-02-20 ~ 2026-03-05",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#책리뷰 #독서 #문화 #구매후기 #솔직리뷰",
@@ -1781,6 +1781,11 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "/images/test_img/eximg.png",
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg.png",
+          receiptImages: [
+            "/images/test_img/eximg.png",
+            "/images/test_img/eximg3.png",
+            "/images/test_img/eximg.png",
+          ],
         },
       ],
       completed: [
@@ -1797,6 +1802,12 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "/images/test_img/eximg3.png",
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg3.png",
+          receiptImages: [
+            "/images/test_img/eximg3.png",
+            "/images/test_img/eximg.png",
+            "/images/test_img/eximg3.png",
+            "/images/test_img/eximg.png",
+          ],
         },
       ],
     },

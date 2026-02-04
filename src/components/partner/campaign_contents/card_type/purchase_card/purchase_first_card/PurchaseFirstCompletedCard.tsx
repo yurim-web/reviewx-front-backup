@@ -22,9 +22,12 @@
 
 "use client";
 
-import { useState } from "react";
-import styles from "@/styles/partner/campaign_application/card/applicant_card_shared.module.css";
+import { useState, useEffect } from "react";
+import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
+import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
+import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
+import { formatDateForMobile } from "@/utils/formatting/date";
 import type { CampaignApplicant } from "../../shared_card/CampaignTypes";
 import ReportModal, {
   type ReportOption,
@@ -51,6 +54,20 @@ export default function PurchaseFirstCompletedCard({
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [selectedReportOption, setSelectedReportOption] = useState<string>("");
   const [otherReportReason, setOtherReportReason] = useState<string>("");
+
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // 신고 옵션 정의
   const reportOptions: ReportOption[] = [
@@ -89,26 +106,26 @@ export default function PurchaseFirstCompletedCard({
   };
 
   return (
-    <div className={styles.card_wrapper}>
-      <article className={styles.applicant_card}>
+    <div className={baseStyles.card_wrapper}>
+      <article className={baseStyles.applicant_card}>
         {/* 프로필 영역 */}
-        <div className={styles.profile_section}>
-          <div className={styles.profile_image_container}>
+        <div className={contentStyles.profile_section}>
+          <div className={contentStyles.profile_image_container}>
             <img
               src={applicant.profileImage || "/images/mypage/profile.svg"}
               alt="프로필"
-              className={styles.profile_image}
+              className={contentStyles.profile_image}
             />
           </div>
-          <div className={styles.profile_info}>
-            <span className={styles.user_type}>{applicant.userType}</span>
-            <span className={styles.nickname}>{applicant.nickname}</span>
+          <div className={contentStyles.profile_info}>
+            <span className={contentStyles.user_type}>{applicant.userType}</span>
+            <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>
 
         {/* 상단 액션 버튼 - 구매 영수증 확인 */}
         <button
-          className={styles.content_check_button}
+          className={actionStyles.content_check_button}
           onClick={() => {
             console.log("구매 영수증 확인 클릭", applicant.id);
             onCheckReceipt?.(applicant.id);
@@ -118,18 +135,18 @@ export default function PurchaseFirstCompletedCard({
         </button>
 
         {/* 등록 날짜 */}
-        <div className={styles.registration_info}>
+        <div className={actionStyles.registration_info}>
           <span>
             {registrationDate
-              ? `${registrationDate} 등록`
-              : `${applicant.registrationDate} 등록`}
+              ? `${isMobile ? formatDateForMobile(registrationDate) : registrationDate} 등록`
+              : `${isMobile ? formatDateForMobile(applicant.registrationDate) : applicant.registrationDate} 등록`}
           </span>
         </div>
 
         {/* 확인 완료 버튼 (비활성화, 분홍색 배경) */}
-        <div className={styles.action_button_section}>
+        <div className={actionStyles.action_button_section}>
           <button
-            className={styles.action_button}
+            className={actionStyles.action_button}
             disabled
             style={{
               backgroundColor: "rgba(255, 86, 148, 0.1)",
@@ -144,16 +161,16 @@ export default function PurchaseFirstCompletedCard({
       </article>
 
       {/* 신고 버튼 footer (연장 버튼 없음) */}
-      <div className={styles.extension_report_footer}>
+      <div className={actionStyles.extension_report_footer}>
         <button
-          className={styles.report_button}
+          className={actionStyles.report_button}
           onClick={handleReportClick}
           aria-label={`${applicant.nickname} 신고`}
         >
           <img
             src="/images/management_page/report_icon.svg"
             alt="신고 아이콘"
-            className={styles.report_icon}
+            className={actionStyles.report_icon}
           />
           <span>신고</span>
         </button>

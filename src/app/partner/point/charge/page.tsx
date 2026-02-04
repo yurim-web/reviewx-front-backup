@@ -371,7 +371,7 @@ export default function PartnerPointChargePage() {
                 <div className={styles.account_info_row}>
                   <div className={styles.account_info_box}>
                     <span className={styles.account_text}>
-                      {partnerInfo.bankAccount}
+                      국민은행 659401-01-490957<br className={styles.mobile_br} /> (주)청명종합광고기획
                     </span>
                     <button
                       className={styles.copy_button}

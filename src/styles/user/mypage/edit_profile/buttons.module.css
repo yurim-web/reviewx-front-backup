@@ -104,11 +104,6 @@
     letter-spacing: -0.32px;
   }
 
-  /* 회원탈퇴 버튼 컨테이너 */
-  .withdraw_button_container {
-    padding-top: 16px;
-  }
-
   /* 주소 등록 페이지 전용: 저장 버튼 하단 고정 */
   .save_button_container_fixed {
     padding: 16px 20px;

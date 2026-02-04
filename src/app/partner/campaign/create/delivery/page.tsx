@@ -38,6 +38,32 @@ export default function DeliveryCampaignCreatePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUrgent, setIsUrgent] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  /**
+   * 모바일 여부 감지 및 헤더 숨기기 처리
+   */
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    // 모바일에서는 헤더 숨기기
+    const header = document.querySelector("header");
+    if (window.innerWidth <= 768 && header) {
+      header.style.display = "none";
+    }
+
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      // cleanup: 헤더 다시 표시
+      if (header) {
+        header.style.display = "block";
+      }
+    };
+  }, []);
 
   /**
    * localStorage에서 저장된 데이터의 isUrgent 값 불러오기

@@ -53,8 +53,8 @@ export function getChannelUrl(channel: string, channelId: string): string {
       if (cleanId.startsWith('http://') || cleanId.startsWith('https://')) {
         return cleanId;
       }
-      // 클립 ID만 있는 경우
-      return cleanId;
+      // 클립 ID만 있는 경우 네이버 클립 크리에이터 URL 생성
+      return `https://clipcreators.naver.com/${cleanId}`;
 
     case '인스타그램':
       return `https://www.instagram.com/${cleanId}/`;

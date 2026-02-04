@@ -533,6 +533,20 @@ export default function DeliveryCampaignEditPage() {
 
       {/* 페이지 헤더 - 타이틀과 긴급 체크박스 */}
       <div className={headerStyles.page_header}>
+        {/* 뒤로가기 버튼 */}
+        <button
+          className={headerStyles.mobile_back_button}
+          onClick={() => router.back()}
+          aria-label="뒤로가기"
+        >
+          <img
+            src="/images/header/header_arrow_back.svg"
+            alt="뒤로가기"
+            width={16}
+            height={16}
+          />
+        </button>
+
         <h1 className={headerStyles.page_title}>캠페인 수정</h1>
 
         {/* 긴급 체크박스 */}

@@ -166,7 +166,7 @@ export default function ResetPasswordPage() {
                   id="new-password"
                   type={showPassword ? "text" : "password"}
                   className={styles.input_field}
-                  placeholder="영문 + 숫자 + 특수문자 최대 20자 이내 입력"
+                  placeholder="영문 + 숫자 + 특수문자 최대 20자 이내"
                   value={password}
                   onChange={(e) => {
                     // onChange 이벤트: 입력값이 변경될 때마다 실행

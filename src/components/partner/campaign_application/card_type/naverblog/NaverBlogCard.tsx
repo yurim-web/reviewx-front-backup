@@ -23,7 +23,9 @@
 "use client";
 
 import { Applicant } from "@/data/partner/campaign_application/delivery_applicants";
-import styles from "@/styles/partner/campaign_application/card/applicant_card_shared.module.css";
+import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
+import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
+import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
 import { getChannelUrl } from "@/utils/helpers/url";
 
@@ -72,36 +74,36 @@ export default function NaverBlogCard({
 
   return (
     <article
-      className={`${styles.applicant_card} ${
-        variant === "selected" ? styles.selected_card : ""
+      className={`${baseStyles.applicant_card} ${
+        variant === "selected" ? baseStyles.selected_card : ""
       } ${
         variant === "selected" && applicant.userType === "인플루언서"
-          ? styles.selected_card_influencer
+          ? baseStyles.selected_card_influencer
           : ""
       } ${
         applicant.selectionStatus === "이용제한 계정"
-          ? styles.restricted_card
+          ? baseStyles.restricted_card
           : ""
       }`}
     >
       {/* 프로필 영역: 프로필 이미지, 닉네임, 사용자 타입 */}
-      <div className={styles.profile_section}>
-        <div className={styles.profile_image_container}>
+      <div className={contentStyles.profile_section}>
+        <div className={contentStyles.profile_image_container}>
           <img
             src={applicant.profileImage || "/images/mypage/profile.svg"}
             alt="프로필"
-            className={styles.profile_image}
+            className={contentStyles.profile_image}
           />
         </div>
 
-        <div className={styles.profile_info}>
+        <div className={contentStyles.profile_info}>
           {/* 사용자 타입 표시 (리뷰어 / 인플루언서) */}
-          <span className={styles.user_type}>{applicant.userType}</span>
+          <span className={contentStyles.user_type}>{applicant.userType}</span>
           {/* 닉네임 표시 */}
           <span
-            className={`${styles.nickname} ${
+            className={`${contentStyles.nickname} ${
               applicant.userType === "인플루언서"
-                ? styles.influencer_nickname
+                ? contentStyles.influencer_nickname
                 : ""
             }`}
           >
@@ -111,19 +113,19 @@ export default function NaverBlogCard({
       </div>
 
       {/* 채널 정보 영역: 채널 아이콘, 신청자 ID */}
-      <div className={styles.channel_section}>
+      <div className={contentStyles.channel_section}>
         {/* 채널이미지 로고 */}
         <img
           src={channel_icon_src}
           alt="채널"
-          className={styles.channel_icon}
+          className={contentStyles.channel_icon}
         />
         {/* 신청자 아이디 표시 - 클릭 시 해당 채널로 이동 */}
         <a
           href={getChannelUrl(applicant.channel, applicant.Id)}
           target="_blank"
           rel="noopener noreferrer"
-          className={styles.applicant_id}
+          className={contentStyles.applicant_id}
           onClick={(e) => {
             // URL이 유효하지 않은 경우 클릭 방지
             const url = getChannelUrl(applicant.channel, applicant.Id);
@@ -137,18 +139,18 @@ export default function NaverBlogCard({
       </div>
 
       {/* 회원 타입 표시 */}
-      <div className={styles.member_type}>{applicant.memberType}</div>
+      <div className={contentStyles.member_type}>{applicant.memberType}</div>
 
       {/* 통계 정보 영역: 일방문, 총방문, 이웃수 */}
-      <div className={styles.stats_section}>
+      <div className={contentStyles.stats_section}>
         {/* 
           📌 통계 아이템 1: 일방문
           - toLocaleString(): 숫자를 천 단위 콤마로 표시
           - 예: 135 -> "135", 1350 -> "1,350"
         */}
-        <div className={styles.stat_item}>
-          <span className={styles.stat_label}>일방문</span>
-          <span className={styles.stat_value}>
+        <div className={contentStyles.stat_item}>
+          <span className={contentStyles.stat_label}>일방문</span>
+          <span className={contentStyles.stat_value}>
             {applicant.dailyVisits
               ? applicant.dailyVisits.toLocaleString()
               : "0"}
@@ -156,9 +158,9 @@ export default function NaverBlogCard({
         </div>
 
         {/* 통계 아이템 2: 총방문 */}
-        <div className={styles.stat_item}>
-          <span className={styles.stat_label}>총방문</span>
-          <span className={styles.stat_value}>
+        <div className={contentStyles.stat_item}>
+          <span className={contentStyles.stat_label}>총방문</span>
+          <span className={contentStyles.stat_value}>
             {applicant.totalVisits
               ? applicant.totalVisits.toLocaleString()
               : "0"}
@@ -166,33 +168,33 @@ export default function NaverBlogCard({
         </div>
 
         {/* 통계 아이템 3: 이웃수 */}
-        <div className={styles.stat_item}>
-          <span className={styles.stat_label}>이웃수</span>
-          <span className={styles.stat_value}>
+        <div className={contentStyles.stat_item}>
+          <span className={contentStyles.stat_label}>이웃수</span>
+          <span className={contentStyles.stat_value}>
             {applicant.neighbors ? applicant.neighbors.toLocaleString() : "0"}
           </span>
         </div>
       </div>
 
       {/* 메모 영역 */}
-      <div className={styles.memo_section}>
-        <div className={styles.memo_text}>
+      <div className={contentStyles.memo_section}>
+        <div className={contentStyles.memo_text}>
           {applicant.memo && applicant.memo.trim() !== ""
             ? applicant.memo
             : "메모 미작성"}
         </div>
         {/* 선정된 카드일 때만 메모 구분선 표시 */}
-        {variant === "selected" && <div className={styles.memo_divider}></div>}
+        {variant === "selected" && <div className={contentStyles.memo_divider}></div>}
       </div>
 
       {/* 액션 버튼 영역: variant에 따라 다른 버튼 표시 */}
-      <div className={styles.action_button_section}>
+      <div className={actionStyles.action_button_section}>
         {/* 신청 카드: 선정하기 / 이용 제한 표시 */}
         {variant === "applicant" && (
           <>
             {applicant.selectionStatus === "미선택" && onSelect && (
               <button
-                className={`${styles.action_button} ${styles.select_button}`}
+                className={`${actionStyles.action_button} ${actionStyles.select_button}`}
                 onClick={() => onSelect(applicant.id)}
                 aria-label={`${applicant.nickname} 신청자 선정하기`}
               >
@@ -202,7 +204,7 @@ export default function NaverBlogCard({
 
             {applicant.selectionStatus === "이용제한 계정" && (
               <button
-                className={`${styles.action_button} ${styles.restricted_button}`}
+                className={`${actionStyles.action_button} ${actionStyles.restricted_button}`}
                 disabled
                 aria-label="이용 제한 계정"
               >
@@ -215,10 +217,10 @@ export default function NaverBlogCard({
         {/* 선정 카드: 선택 취소 버튼 */}
         {variant === "selected" && onCancel && (
           <button
-            className={`${styles.action_button} ${
+            className={`${actionStyles.action_button} ${
               applicant.userType === "인플루언서"
-                ? styles.influencer_cancel_button
-                : styles.cancel_button
+                ? actionStyles.influencer_cancel_button
+                : actionStyles.cancel_button
             }`}
             onClick={() => onCancel(applicant.id)}
             aria-label={`${applicant.nickname} 신청자 선택 취소`}

@@ -175,13 +175,13 @@ export default function ReporterContentsDetailPage() {
     item: ContentItem,
     index: number
   ): React.ReactNode => {
-    const brandChannel = campaignInfo?.brandName ?? item.channel;
+    // 📌 channel 필드에는 채널 타입(네이버블로그, 인스타그램 등)을 사용해야 getChannelUrl이 올바른 URL을 생성할 수 있습니다
     const applicant: ExperienceApplicant = {
       id: item.id,
       userType: item.userType,
       nickname: item.nickname,
       profileImage: item.profileImage,
-      channel: brandChannel || "",
+      channel: item.channel || "",
       channelId: item.channelId || "",
       registrationDate: formatDateTime(item.createdAt),
       updatedAt: item.updatedAt ? formatDateTime(item.updatedAt) : undefined,
