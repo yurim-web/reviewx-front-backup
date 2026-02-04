@@ -199,10 +199,16 @@ export default function PurchaseSecondInspectionCard({
 
   // 리뷰 확인 버튼 클릭 핸들러
   const handleReviewCheckClick = () => {
+    console.log("리뷰 확인 클릭 - reviewImages:", reviewImages);
+    console.log("리뷰 확인 클릭 - reviewImages.length:", reviewImages?.length);
     if (reviewImages && reviewImages.length > 0) {
+      console.log("모달 열기");
       setIsReviewImageModalOpen(true);
     } else if (onCheckReview) {
+      console.log("onCheckReview 호출");
       onCheckReview(applicant.id);
+    } else {
+      console.log("이미지도 없고 핸들러도 없음");
     }
   };
 

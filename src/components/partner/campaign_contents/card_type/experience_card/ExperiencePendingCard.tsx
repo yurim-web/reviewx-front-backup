@@ -353,7 +353,13 @@ export default function ExperiencePendingCard({
       <article
         className={baseStyles.applicant_card}
         style={
-          localPendingState === "reported" ? { minHeight: "240px" } : undefined
+          localPendingState === "reported"
+            ? {
+                minHeight: "240px",
+                borderBottom: "1px solid #d9d9d9",
+                borderRadius: "8px",
+              }
+            : undefined
         }
       >
         {/* 프로필 영역 */}

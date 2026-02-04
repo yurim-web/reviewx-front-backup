@@ -71,6 +71,10 @@ export default function PartnerSubHeader() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // 캠페인 콘텐츠 내역 페이지에서는 모바일에서 숨김 처리
+  const isCampaignContentsPage = pathname?.includes('/partner/campaign_contents/');
+  const shouldHideOnMobile = isCampaignContentsPage && isMobile;
+
   /**
    * 알림 아이콘 경로 결정
    * - 알림이 있으면 notification_ok.svg 사용
@@ -184,7 +188,7 @@ export default function PartnerSubHeader() {
      * - 고정 위치(position: fixed)로 상단에 고정
      * - 모바일에서는 숨김 처리 (캠페인 콘텐츠 내역 페이지에서만)
      */
-    <div className={`${styles.gradient_bar} ${isMobile ? styles.hide_on_mobile : ''}`}>
+    <div className={`${styles.gradient_bar} ${shouldHideOnMobile ? styles.hide_on_mobile : ''}`}>
       <div className={styles.header_controls}>
         {/* 뒤로가기 버튼 */}
         {/* 📌 버튼 이벤트 핸들러:

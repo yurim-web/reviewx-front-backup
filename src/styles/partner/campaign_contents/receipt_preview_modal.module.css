@@ -39,6 +39,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  pointer-events: auto; /* 닫기 버튼은 클릭 가능 */
 }
 
 .modal_content {
@@ -47,8 +48,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
   position: relative;
+  pointer-events: none; /* 모달 콘텐츠 자체는 클릭 이벤트 차단 */
 }
 
 .empty_state {
@@ -60,6 +61,7 @@
   justify-content: center;
   color: #848484;
   font-size: 14px;
+  pointer-events: auto; /* empty state는 클릭 가능 */
 }
 
 .image_viewer {
@@ -68,6 +70,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  pointer-events: auto; /* 이미지 뷰어는 클릭 가능 */
 }
 
 .nav_button {
@@ -147,7 +150,7 @@
   width: 100%;
   height: auto;
   max-width: 100%;
-  max-height: 90vh;
+  max-height: 800px;
   object-fit: contain;
   display: block;
   margin: 0 auto;
@@ -168,6 +171,7 @@
   left: 0;
   right: 0;
   z-index: 1010;
+  pointer-events: auto; /* 인디케이터는 클릭 가능 */
 }
 
 .indicator_dot {
@@ -192,7 +196,8 @@
 @media (max-width: 768px) {
   /* 모달 오버레이 - 모바일에서 전체 화면 */
   .modal_overlay {
-    align-items: flex-end;
+    align-items: center;
+    justify-content: center;
   }
 
   /* 모달 컨테이너 - 모바일에서 전체 너비 */
@@ -200,6 +205,7 @@
     width: 100%;
     max-width: 100%;
     border-radius: 0;
+    pointer-events: none; /* 컨테이너 자체는 클릭 이벤트 차단 */
   }
 
   /* 모바일에서 닫기 버튼 숨김 */
@@ -209,10 +215,12 @@
 
   /* 모달 콘텐츠 - 모바일 높이 조정 */
   .modal_content {
-    min-height: 100vh;
+    min-height: auto;
     max-height: 100vh;
     justify-content: center;
     align-items: center;
+    pointer-events: none; /* 모바일에서도 배경 클릭 가능하도록 */
+    width: 100%;
   }
 
   /* 이미지 뷰어 - 모바일에서 전체 너비 */
@@ -223,6 +231,8 @@
     align-items: center;
     justify-content: center;
     padding: 0;
+    position: relative;
+    pointer-events: auto; /* 모바일에서도 이미지 클릭 방지 */
   }
 
   /* 모바일에서 네비게이션 버튼 숨김 */
@@ -252,17 +262,24 @@
     margin: 0 auto;
   }
 
-  /* 인디케이터 컨테이너 - 모바일에서 하단 고정 */
+  /* 인디케이터 컨테이너 - 모바일에서 이미지 하단에서 40px 떨어진 위치 */
   .indicator_container {
-    position: fixed;
-    bottom: 20px;
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
     gap: 8px;
     padding: 0;
+    pointer-events: auto; /* 모바일에서도 인디케이터 클릭 가능 */
   }
 
   /* 인디케이터 도트 - 모바일 크기 */
   .indicator_dot {
     width: 8px;
     height: 8px;
+  }
+
+  .empty_state{
+    max-height: 70vh;
   }
 }

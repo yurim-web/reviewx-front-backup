@@ -18,6 +18,11 @@
   padding-bottom: 80px;
 }
 
+/* ✅ 하단 고정 결제 버튼이 있을 때 여유 공간 확보용 (카드 결제 탭 전용) */
+.main_content_with_fixed_button {
+  padding-bottom: 120px;
+}
+
 /* ✅ 컨테이너 - page.tsx의 최상위 div */
 .container {
   margin: 0 auto;
@@ -253,6 +258,19 @@
 /* ✅ 신청 버튼 섹션 - 하단 "입금 확인 요청하기"/"결제하기" 버튼 영역 (page.tsx 389번째 줄) */
 .submit_button_section {
   padding: 40px 40px 0px 40px;
+}
+
+/* ✅ 하단 고정 신청 버튼 (카드 결제 탭 전용) */
+.submit_button_fixed {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 40px; /* 화면 하단에서 40px 위에 위치 */
+  width: 100%;
+  max-width: 1000px;
+  padding: 0 40px;
+  box-sizing: border-box;
+  z-index: 20;
 }
 
 /* ✅ 신청 버튼 - "입금 확인 요청하기" 또는 "결제하기" 버튼 (page.tsx 390번째 줄) */
@@ -508,14 +526,27 @@ color: #848484;
      충전 신청 버튼 영역 (모바일)
      ============================================ */
 
-  /* 신청 버튼 섹션 */
+  /* 신청 버튼 섹션 (기본: 고정 아님) */
   .submit_button_section {
     padding: 24px 20px 0px 20px;
   }
 
+  /* 카드 결제 탭에서만 하단 고정되는 버튼 래퍼 */
+  .submit_button_fixed {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 40px; /* 세로 화면 끝에서 40px 위 */
+    width: 100%;
+    max-width: 768px;
+    padding: 0 20px;
+    box-sizing: border-box;
+    z-index: 20;
+  }
+
   /* 신청 버튼 */
   .submit_button {
-    height: 52px;
+    height: 48px;
     border-radius: 6px;
     font-size: 15px;
     line-height: 15px;

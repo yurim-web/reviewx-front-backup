@@ -25,6 +25,7 @@ import type { ExperienceApplicant } from "./ExperienceTypes";
 import ReportModal, {
   type ReportOption,
 } from "@/components/common/modal/ReportModal";
+import ReceiptPreviewModal from "../../ReceiptPreviewModal";
 
 interface ExperienceCompletedCardProps {
   /** 카드에 표시할 신청자 정보 */
@@ -62,6 +63,8 @@ export default function ExperienceCompletedCard({
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [selectedReportOption, setSelectedReportOption] = useState<string>("");
   const [otherReportReason, setOtherReportReason] = useState<string>("");
+  // 이미지 확인 모달 상태
+  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
 
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
@@ -119,7 +122,9 @@ export default function ExperienceCompletedCard({
   return (
     <div className={baseStyles.card_wrapper}>
       {/* 카드 본문 */}
-      <article className={baseStyles.applicant_card}>
+      <article
+        className={baseStyles.applicant_card}
+      >
         {/* 프로필 영역 */}
         <div className={contentStyles.profile_section}>
           <div className={contentStyles.profile_image_container}>
@@ -166,14 +171,29 @@ export default function ExperienceCompletedCard({
           </a>
         </div>
 
-        {/* 링크 확인 */}
-        <button
-          className={actionStyles.content_check_button}
-          onClick={() => onContentCheck(applicant.id)}
-          aria-label={`${applicant.nickname} 콘텐츠 확인하기`}
-        >
-          링크 확인
-        </button>
+        {/* 링크 확인 / 이미지 확인 버튼 */}
+        {applicant.receiptImages && applicant.receiptImages.length > 0 ? (
+          <button
+            className={actionStyles.content_check_button}
+            onClick={() => setIsReceiptModalOpen(true)}
+            aria-label={`${applicant.nickname} 이미지 확인하기`}
+          >
+            이미지 확인
+          </button>
+        ) : (
+          <button
+            className={actionStyles.content_check_button}
+            onClick={() => {
+              const url = getChannelUrl(applicant.channel, applicant.channelId);
+              if (url && url !== "#") {
+                window.open(url, "_blank", "noopener,noreferrer");
+              }
+            }}
+            aria-label={`${applicant.nickname} 콘텐츠 확인하기`}
+          >
+            링크 확인
+          </button>
+        )}
 
         {/* 등록/수정 일시 */}
         <div className={actionStyles.registration_info}>
@@ -241,6 +261,13 @@ export default function ExperienceCompletedCard({
         buttons={["취소", "신고"]}
         on_confirm={handleReportConfirm}
         type="center"
+      />
+
+      {/* 이미지 확인 모달 */}
+      <ReceiptPreviewModal
+        isOpen={isReceiptModalOpen}
+        images={applicant.receiptImages || []}
+        onClose={() => setIsReceiptModalOpen(false)}
       />
 
       {/* 완료 탭에서는 연장/반려 관련 모달을 사용하지 않습니다 */}

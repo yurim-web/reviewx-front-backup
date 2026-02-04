@@ -292,7 +292,7 @@ export default function PurchaseReviewContentsDetailPage() {
       reviewType: 1,
     };
 
-    const dateLabel: "등록" | "수정" | "지각 등록" = item.isLate
+    const dateLabel: "등록" | "수정" | "지각 등록" = item.isLateSubmission
       ? "지각 등록"
       : item.updatedAt
       ? "수정"
@@ -312,6 +312,10 @@ export default function PurchaseReviewContentsDetailPage() {
           pendingState = "rejected";
         }
 
+        // reportedDate 포맷 적용
+        const reportedDateValue = reportedDates.get(item.id) || item.reportedDate;
+        const formattedReportedDate = reportedDateValue ? formatDateTime(reportedDateValue) : undefined;
+
         return (
           <PurchaseFirstPendingCard
             key={item.id}
@@ -319,7 +323,7 @@ export default function PurchaseReviewContentsDetailPage() {
             pendingState={pendingState}
             deadlineDate={params.deadlineDate}
             reject_reason={rejectReasons.get(item.id) || item.reject_reason}
-            reportedDate={reportedDates.get(item.id) || item.reportedDate}
+            reportedDate={formattedReportedDate}
             onCheckReceipt={() => openReceiptModal(item.receiptImages || [])}
             onExtend={handleExtend}
           />
@@ -355,6 +359,10 @@ export default function PurchaseReviewContentsDetailPage() {
           ? [item.thumbnailSrc]
           : [];
         
+        // reportedDate 포맷 적용
+        const reportedDateValue = reportedDates.get(item.id) || item.reportedDate;
+        const formattedReportedDate = reportedDateValue ? formatDateTime(reportedDateValue) : undefined;
+
         return (
           <PurchaseSecondPendingCard
             key={item.id}
@@ -365,7 +373,7 @@ export default function PurchaseReviewContentsDetailPage() {
             deadlineDate={params.deadlineDate}
             reject_reason={rejectReasons.get(item.id) || item.reject_reason}
             extension_request_reason={item.extension_request_reason}
-            reportedDate={reportedDates.get(item.id) || item.reportedDate}
+            reportedDate={formattedReportedDate}
             reviewImages={reviewImagesForPending}
             onCheckReview={() => openReceiptModal(reviewImagesForPending)}
             onExtend={handleExtend}
@@ -404,7 +412,11 @@ export default function PurchaseReviewContentsDetailPage() {
           : item.thumbnailSrc
           ? [item.thumbnailSrc]
           : [];
-        
+
+        console.log("PurchaseSecondInspectionCard 렌더링 - item:", item.id);
+        console.log("PurchaseSecondInspectionCard 렌더링 - receiptImages:", item.receiptImages);
+        console.log("PurchaseSecondInspectionCard 렌더링 - reviewImages:", reviewImages);
+
         return (
           <PurchaseSecondInspectionCard
             key={item.id}
@@ -425,7 +437,7 @@ export default function PurchaseReviewContentsDetailPage() {
       // 반려 케이스는 PurchaseFirstInspectionCard 또는 PurchaseSecondInspectionCard에서 처리
 
       // 리뷰 대기 중 (영수증 완료 후 리뷰 대기)
-      if (isReceiptFlow && item.isLate) {
+      if (isReceiptFlow && item.isLateSubmission) {
         return (
           <CampaignPendingCard
             key={item.id}

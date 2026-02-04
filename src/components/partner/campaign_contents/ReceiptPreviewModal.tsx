@@ -66,7 +66,6 @@ export default function ReceiptPreviewModal({
     if (touchEndX === null) {
       // 터치 이동이 없으면 단순 탭이므로 이벤트 전파 허용
       setTouchStartX(null);
-      setTouchStartTarget(null);
       return;
     }
     
@@ -85,14 +84,17 @@ export default function ReceiptPreviewModal({
     setTouchEndX(null);
   };
 
-  // 오버레이 클릭 핸들러
-  const handleOverlayClick = (e: React.MouseEvent) => {
+  // 오버레이 클릭 핸들러 (PC)
+  const handleOverlayClick = (e: React.MouseEvent | React.TouchEvent) => {
+    // 오버레이 자체를 클릭/터치한 경우에만 닫기
     if (e.target === e.currentTarget) {
+      e.preventDefault();
+      e.stopPropagation();
       onClose();
     }
   };
 
-  // 오버레이 터치 핸들러
+  // 오버레이 터치 핸들러 (모바일)
   const handleOverlayTouchStart = (e: React.TouchEvent) => {
     // 오버레이 자체를 터치한 경우에만 표시
     if (e.target === e.currentTarget) {
@@ -105,6 +107,8 @@ export default function ReceiptPreviewModal({
   const handleOverlayTouchEnd = (e: React.TouchEvent) => {
     // 오버레이 자체를 터치했고, 터치 시작도 오버레이에서 시작한 경우에만 닫기
     if (e.target === e.currentTarget && overlayTouchStart) {
+      e.preventDefault();
+      e.stopPropagation();
       onClose();
     }
     setOverlayTouchStart(false);
@@ -122,6 +126,7 @@ export default function ReceiptPreviewModal({
       <div
         className={styles.modal_container}
         onClick={(e) => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
         onTouchEnd={(e) => e.stopPropagation()}
       >
         {/* 닫기 버튼 - 우측 상단 */}

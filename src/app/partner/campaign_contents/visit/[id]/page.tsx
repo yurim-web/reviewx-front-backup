@@ -187,7 +187,7 @@ export default function VisitContentsDetailPage() {
       updatedAt: item.updatedAt ? formatDateTime(item.updatedAt) : undefined,
     };
 
-    const dateLabel: "등록" | "수정" | "지각 등록" = item.isLate
+    const dateLabel: "등록" | "수정" | "지각 등록" = item.isLateSubmission
       ? "지각 등록"
       : item.updatedAt
       ? "수정"
@@ -232,6 +232,10 @@ export default function VisitContentsDetailPage() {
         isExtensionApproved = true;
       }
 
+      // reportedDate 포맷 적용
+      const reportedDateValue = reportedDates.get(item.id) || item.reportedDate;
+      const formattedReportedDate = reportedDateValue ? formatDateTime(reportedDateValue) : undefined;
+
       return (
         <ExperiencePendingCard
           key={item.id}
@@ -241,7 +245,7 @@ export default function VisitContentsDetailPage() {
           extendedDeadline={extendedDeadline}
           deadlineDate={localDeadlineDate}
           reject_reason={rejectReason}
-          reportedDate={reportedDates.get(item.id) || item.reportedDate}
+          reportedDate={formattedReportedDate}
           onReport={handleReport}
           extension_request_reason={
             (item as any).extension_request_reason || ""

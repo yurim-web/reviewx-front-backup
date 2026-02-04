@@ -352,7 +352,13 @@ export default function MissionPendingCard({
       <article
         className={baseStyles.applicant_card}
         style={
-          localPendingState === "reported" ? { minHeight: "190px" } : undefined
+          localPendingState === "reported"
+            ? {
+                minHeight: "190px",
+                borderBottom: "1px solid #d9d9d9",
+                borderRadius: "8px",
+              }
+            : undefined
         }
       >
         {/* 프로필 영역 */}

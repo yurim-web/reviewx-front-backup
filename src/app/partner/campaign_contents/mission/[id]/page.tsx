@@ -142,7 +142,7 @@ export default function MissionContentsDetailPage() {
       missionType: 1, // 미션형 카드에서는 missionType을 사용하지 않음
     };
 
-    const dateLabel: "등록" | "수정" | "지각 등록" = item.isLate
+    const dateLabel: "등록" | "수정" | "지각 등록" = item.isLateSubmission
       ? "지각 등록"
       : item.updatedAt
       ? "수정"
@@ -166,6 +166,9 @@ export default function MissionContentsDetailPage() {
         pendingState = "extension_requested";
       }
 
+      const reportedDateValue = reportedDates.get(item.id) || item.reportedDate;
+      const formattedReportedDate = reportedDateValue ? formatDateTime(reportedDateValue) : undefined;
+
       return (
         <MissionPendingCard
           key={item.id}
@@ -176,7 +179,7 @@ export default function MissionContentsDetailPage() {
           deadlineDate={params.deadlineDate}
           reject_reason={rejectReasons.get(item.id) || item.reject_reason}
           extension_request_reason={(item as any).extension_request_reason}
-          reportedDate={reportedDates.get(item.id) || item.reportedDate}
+          reportedDate={formattedReportedDate}
           onExtend={handleExtend}
           onReport={handleReport}
         />

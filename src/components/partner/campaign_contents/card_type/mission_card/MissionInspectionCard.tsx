@@ -40,6 +40,7 @@ import baseStyles from "@/styles/partner/campaign_application/card/applicant_car
 import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
 import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
+import { getChannelUrl } from "@/utils/helpers/url";
 import { formatDateForMobile } from "@/utils/formatting/date";
 import type { CampaignApplicant } from "../shared_card/CampaignTypes";
 import TextareaModal from "@/components/common/modal/TextareaModal";
@@ -47,6 +48,7 @@ import ReportModal, {
   type ReportOption,
 } from "@/components/common/modal/ReportModal";
 import BaseModal from "@/components/common/modal/BaseModal";
+import ReceiptPreviewModal from "../../ReceiptPreviewModal";
 
 interface MissionInspectionCardProps {
   applicant: CampaignApplicant;
@@ -97,6 +99,8 @@ export default function MissionInspectionCard({
     useState(false);
   const [isExtensionLimitModalOpen, setIsExtensionLimitModalOpen] =
     useState(false);
+  // 이미지 확인 모달 상태
+  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
 
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
@@ -225,7 +229,9 @@ export default function MissionInspectionCard({
 
   return (
     <div className={baseStyles.card_wrapper}>
-      <article className={baseStyles.applicant_card}>
+      <article
+        className={baseStyles.applicant_card}
+      >
         {/* 프로필 영역 */}
         <div className={contentStyles.profile_section}>
           <div className={contentStyles.profile_image_container}>
@@ -250,7 +256,7 @@ export default function MissionInspectionCard({
               className={actionStyles.content_check_button}
               onClick={() => {
                 console.log("이미지 확인 클릭", applicant.id);
-                onCheckImage?.(applicant.id);
+                setIsReceiptModalOpen(true);
               }}
             >
               이미지 확인
@@ -259,7 +265,10 @@ export default function MissionInspectionCard({
               className={actionStyles.content_check_button}
               onClick={() => {
                 console.log("링크 확인 클릭", applicant.id);
-                onCheckLink?.(applicant.id);
+                const url = getChannelUrl(applicant.channel, applicant.channelId);
+                if (url && url !== "#") {
+                  window.open(url, "_blank", "noopener,noreferrer");
+                }
               }}
             >
               링크 확인
@@ -271,7 +280,7 @@ export default function MissionInspectionCard({
             className={actionStyles.content_check_button}
             onClick={() => {
               console.log("이미지 확인 클릭", applicant.id);
-              onCheckImage?.(applicant.id);
+              setIsReceiptModalOpen(true);
             }}
           >
             이미지 확인
@@ -282,7 +291,10 @@ export default function MissionInspectionCard({
             className={actionStyles.content_check_button}
             onClick={() => {
               console.log("링크 확인 클릭", applicant.id);
-              onCheckLink?.(applicant.id);
+              const url = getChannelUrl(applicant.channel, applicant.channelId);
+              if (url && url !== "#") {
+                window.open(url, "_blank", "noopener,noreferrer");
+              }
             }}
           >
             링크 확인
@@ -426,6 +438,13 @@ export default function MissionInspectionCard({
         message="연장은 최대 두 번까지만 가능합니다."
         buttons={["닫기"]}
         type="center"
+      />
+
+      {/* 이미지 확인 모달 */}
+      <ReceiptPreviewModal
+        isOpen={isReceiptModalOpen}
+        images={applicant.receiptImages || []}
+        onClose={() => setIsReceiptModalOpen(false)}
       />
     </div>
   );
