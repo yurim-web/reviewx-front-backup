@@ -78,8 +78,11 @@
 "use client";
 
 import { useState } from "react";
-import styles from "@/styles/partner/campaign_application/card/applicant_card_shared.module.css";
+import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
+import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
+import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
+import { getChannelUrl } from "@/utils/helpers/url";
 import type { CampaignApplicant } from "./CampaignTypes";
 import TextareaModal from "@/components/common/modal/TextareaModal";
 import ReportModal, {
@@ -326,21 +329,44 @@ export default function CampaignPendingCard({
   const missionButtons = getMissionButtons();
 
   return (
-    <div className={styles.card_wrapper}>
-      <article className={styles.applicant_card}>
+    <div className={baseStyles.card_wrapper}>
+      <article className={baseStyles.applicant_card}>
         {/* 프로필 영역 */}
-        <div className={styles.profile_section}>
-          <div className={styles.profile_image_container}>
+        <div className={contentStyles.profile_section}>
+          <div className={contentStyles.profile_image_container}>
             <img
               src={applicant.profileImage || "/images/mypage/profile.svg"}
               alt="프로필"
-              className={styles.profile_image}
+              className={contentStyles.profile_image}
             />
           </div>
-          <div className={styles.profile_info}>
-            <span className={styles.user_type}>{applicant.userType}</span>
-            <span className={styles.nickname}>{applicant.nickname}</span>
+          <div className={contentStyles.profile_info}>
+            <span className={contentStyles.user_type}>{applicant.userType}</span>
+            <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
+        </div>
+
+        {/* 채널 정보 */}
+        <div className={contentStyles.channel_section}>
+          <img
+            src={channel_icon_src}
+            alt={applicant.channel}
+            className={contentStyles.channel_icon}
+          />
+          <a
+            href={getChannelUrl(applicant.channel, applicant.channelId)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={contentStyles.applicant_id}
+            onClick={(e) => {
+              const url = getChannelUrl(applicant.channel, applicant.channelId);
+              if (url === "#") {
+                e.preventDefault();
+              }
+            }}
+          >
+            {applicant.channelId}
+          </a>
         </div>
 
         {/* 상단 액션 버튼 */}
@@ -350,7 +376,7 @@ export default function CampaignPendingCard({
           (pendingState === "receipt_not_registered" ||
             (pendingState === "rejected" && applicant.reviewType === 4)) && (
             <button
-              className={styles.content_check_button}
+              className={actionStyles.content_check_button}
               onClick={() => {
                 console.log("구매 영수증 확인 클릭", applicant.id);
                 onCheckReceipt?.(applicant.id);
@@ -365,7 +391,7 @@ export default function CampaignPendingCard({
           pendingState === "rejected" &&
           applicant.reviewType !== 4 && (
             <button
-              className={styles.content_check_button}
+              className={actionStyles.content_check_button}
               onClick={() => {
                 console.log("리뷰 확인 클릭", applicant.id);
                 onCheckReview?.(applicant.id);
@@ -378,11 +404,11 @@ export default function CampaignPendingCard({
         {/* 대기 탭에서는 미션형도 이미지/링크 확인 버튼 없음 (확인 탭에서만 확인 가능) */}
 
         {/* 상태별 버튼 표시 */}
-        <div className={styles.action_button_section}>
+        <div className={actionStyles.action_button_section}>
           {/* 구매평 상태별 버튼 */}
           {isReview && pendingState === "receipt_not_registered" && (
             <button
-              className={`${styles.action_button} ${styles.disabled_button}`}
+              className={`${actionStyles.action_button} ${actionStyles.disabled_button}`}
               disabled
             >
               구매 영수증 미등록
@@ -391,7 +417,7 @@ export default function CampaignPendingCard({
 
           {isReview && pendingState === "content_not_registered" && (
             <button
-              className={`${styles.action_button} ${styles.disabled_button}`}
+              className={`${actionStyles.action_button} ${actionStyles.disabled_button}`}
               disabled
             >
               콘텐츠 미등록
@@ -400,7 +426,7 @@ export default function CampaignPendingCard({
 
           {isReview && pendingState === "extension_requested" && (
             <button
-              className={`${styles.action_button} ${styles.extension_request_button}`}
+              className={`${actionStyles.action_button} ${actionStyles.extension_request_button}`}
               disabled
             >
               등록 기한 연장 요청
@@ -409,7 +435,7 @@ export default function CampaignPendingCard({
 
           {isReview && pendingState === "rejected" && (
             <button
-              className={`${styles.action_button} ${styles.reject_process_button}`}
+              className={`${actionStyles.action_button} ${actionStyles.reject_process_button}`}
               disabled
             >
               {applicant.reviewType === 4
@@ -421,7 +447,7 @@ export default function CampaignPendingCard({
           {/* 미션형 상태별 버튼 */}
           {!isReview && pendingState === "content_not_registered" && (
             <button
-              className={`${styles.action_button} ${styles.disabled_button}`}
+              className={`${actionStyles.action_button} ${actionStyles.disabled_button}`}
               disabled
             >
               콘텐츠 미등록
@@ -430,7 +456,7 @@ export default function CampaignPendingCard({
 
           {!isReview && pendingState === "extension_requested" && (
             <button
-              className={`${styles.action_button} ${styles.extension_request_button}`}
+              className={`${actionStyles.action_button} ${actionStyles.extension_request_button}`}
               disabled
             >
               등록 기한 연장 요청
@@ -439,7 +465,7 @@ export default function CampaignPendingCard({
 
           {!isReview && pendingState === "rejected" && (
             <button
-              className={`${styles.action_button} ${styles.reject_process_button}`}
+              className={`${actionStyles.action_button} ${actionStyles.reject_process_button}`}
               disabled
             >
               콘텐츠 반려 처리
@@ -452,7 +478,7 @@ export default function CampaignPendingCard({
         {/* 기한 표시 (연장 승인 후에는 "기한 연장" 형태로 표시) */}
         {/* 대기 탭에서는 등록 날짜가 아니라 기한 날짜만 표시, 버튼 밑에 표시 */}
         {deadlineDate ? (
-          <div className={styles.registration_info}>
+          <div className={actionStyles.registration_info}>
             <span>
               {isExtensionApproved && extendedDeadline
                 ? `${extendedDeadline} 기한 연장`
@@ -463,29 +489,29 @@ export default function CampaignPendingCard({
       </article>
 
       {/* 연장/신고 버튼 footer */}
-      <div className={styles.extension_report_footer}>
+      <div className={actionStyles.extension_report_footer}>
         <button
-          className={styles.extension_button}
+          className={actionStyles.extension_button}
           onClick={handleExtendClick}
           aria-label={`${applicant.nickname} 연장`}
         >
           <img
             src="/images/management_page/clock_icon.svg"
             alt="연장 아이콘"
-            className={styles.extension_icon}
+            className={actionStyles.extension_icon}
           />
           <span>연장</span>
         </button>
-        <div className={styles.vertical_divider}></div>
+        <div className={actionStyles.vertical_divider}></div>
         <button
-          className={styles.report_button}
+          className={actionStyles.report_button}
           onClick={handleReportClick}
           aria-label={`${applicant.nickname} 신고`}
         >
           <img
             src="/images/management_page/report_icon.svg"
             alt="신고 아이콘"
-            className={styles.report_icon}
+            className={actionStyles.report_icon}
           />
           <span>신고</span>
         </button>

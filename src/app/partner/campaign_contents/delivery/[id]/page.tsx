@@ -191,14 +191,13 @@ export default function DeliveryContentsDetailPage() {
     // 콘텐츠 → 경험형 카드 데이터 매핑
     // 📌 데이터 변환:
     // - ContentItem을 ExperienceApplicant 타입으로 변환합니다
-    // - brandName이 있으면 우선 사용, 없으면 item.channel 사용
-    const brandChannel = campaignInfo?.brandName ?? item.channel;
+    // - channel 필드에는 채널 타입(네이버블로그, 인스타그램 등)을 사용해야 getChannelUrl이 올바른 URL을 생성할 수 있습니다
     const applicant: ExperienceApplicant = {
       id: item.id,
       userType: item.userType,
       nickname: item.nickname,
       profileImage: item.profileImage,
-      channel: brandChannel || "",
+      channel: item.channel || "",
       channelId: item.channelId || "",
       registrationDate: formatDateTime(item.createdAt),
       updatedAt: item.updatedAt ? formatDateTime(item.updatedAt) : undefined,

@@ -39,7 +39,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import styles from "@/styles/partner/campaign_application/card/applicant_card_shared.module.css";
+import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
+import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
+import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
 import type { CampaignApplicant } from "../../shared_card/CampaignTypes";
 import ReportModal, {
@@ -199,33 +201,33 @@ export default function PurchaseFirstPendingCard({
   };
 
   return (
-    <div className={styles.card_wrapper}>
+    <div className={baseStyles.card_wrapper}>
       <article
-        className={styles.applicant_card}
+        className={baseStyles.applicant_card}
         style={
           localPendingState === "reported" ? { minHeight: "190px" } : undefined
         }
       >
         {/* 프로필 영역 */}
-        <div className={styles.profile_section}>
-          <div className={styles.profile_image_container}>
+        <div className={contentStyles.profile_section}>
+          <div className={contentStyles.profile_image_container}>
             <img
               src={applicant.profileImage || "/images/mypage/profile.svg"}
               alt="프로필"
-              className={styles.profile_image}
+              className={contentStyles.profile_image}
             />
           </div>
-          <div className={styles.profile_info}>
-            <span className={styles.user_type}>{applicant.userType}</span>
-            <span className={styles.nickname}>{applicant.nickname}</span>
+          <div className={contentStyles.profile_info}>
+            <span className={contentStyles.user_type}>{applicant.userType}</span>
+            <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>
 
         {/* 상태별 버튼 표시 */}
-        <div className={styles.action_button_section}>
+        <div className={actionStyles.action_button_section}>
           {localPendingState === "receipt_not_registered" && (
             <button
-              className={`${styles.action_button} ${styles.disabled_button}`}
+              className={`${actionStyles.action_button} ${actionStyles.disabled_button}`}
               disabled
             >
               구매 영수증 미등록
@@ -234,7 +236,7 @@ export default function PurchaseFirstPendingCard({
 
           {localPendingState === "rejected" && (
             <button
-              className={`${styles.action_button} ${styles.reject_process_button}`}
+              className={`${actionStyles.action_button} ${actionStyles.reject_process_button}`}
               onClick={handleRejectReasonClick}
               aria-label={`${applicant.nickname} 반려 사유 확인`}
             >
@@ -244,7 +246,7 @@ export default function PurchaseFirstPendingCard({
 
           {localPendingState === "reported" && (
             <button
-              className={`${styles.action_button}`}
+              className={`${actionStyles.action_button}`}
               disabled
               style={{
                 backgroundColor: "rgba(255, 38, 38, 0.1)",
@@ -260,12 +262,12 @@ export default function PurchaseFirstPendingCard({
 
         {/* 기한 표시 (미등록, 반려 처리) 또는 신고 날짜/시간 표시 (신고 처리) */}
         {localPendingState === "reported" && localReportedDate ? (
-          <div className={styles.registration_info}>
+          <div className={actionStyles.registration_info}>
             <span>{localReportedDate} 신고</span>
           </div>
         ) : (
           deadlineDate && (
-            <div className={styles.registration_info}>
+            <div className={actionStyles.registration_info}>
               <span>{deadlineDate} 기한</span>
             </div>
           )
@@ -274,29 +276,29 @@ export default function PurchaseFirstPendingCard({
 
       {/* 연장/신고 버튼 footer (신고 처리된 경우 표시하지 않음) */}
       {localPendingState !== "reported" && (
-        <div className={styles.extension_report_footer}>
+        <div className={actionStyles.extension_report_footer}>
           <button
-            className={styles.extension_button}
+            className={actionStyles.extension_button}
             onClick={handleExtendClick}
             aria-label={`${applicant.nickname} 연장`}
           >
             <img
               src="/images/management_page/clock_icon.svg"
               alt="연장 아이콘"
-              className={styles.extension_icon}
+              className={actionStyles.extension_icon}
             />
             <span>연장</span>
           </button>
-          <div className={styles.vertical_divider}></div>
+          <div className={actionStyles.vertical_divider}></div>
           <button
-            className={styles.report_button}
+            className={actionStyles.report_button}
             onClick={handleReportClick}
             aria-label={`${applicant.nickname} 신고`}
           >
             <img
               src="/images/management_page/report_icon.svg"
               alt="신고 아이콘"
-              className={styles.report_icon}
+              className={actionStyles.report_icon}
             />
             <span>신고</span>
           </button>

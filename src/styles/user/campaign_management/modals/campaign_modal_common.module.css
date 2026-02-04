@@ -421,6 +421,17 @@
     padding: 32px 24px;
     border-radius: 24px 24px 0 0;
   }
+
+  /* 모바일에서 닫기 버튼 숨김 */
+  .close_button {
+    display: none;
+  }
+
+  /* 모달 헤더 - 모바일에서 닫기 버튼 없으므로 justify-content 조정 */
+  .modal_header {
+    justify-content: center;
+  }
+
   /* 링크 섹션 */
   .link_section {
     padding-bottom: 12px;
@@ -504,5 +515,31 @@ padding:16px;
   /* 모달 컨테이너 스크롤 - 모바일 높이 조정 */
   .modal_container_scroll {
     max-height: 80vh;
+  }
+
+  /* 페이지네이션 컨테이너 */
+  .pagination_container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 0;
+    margin-top: 8px;
+  }
+
+  /* 페이지네이션 도트 */
+  .pagination_dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #d9d9d9;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .pagination_dot_active {
+    background: #444444;
   }
 }

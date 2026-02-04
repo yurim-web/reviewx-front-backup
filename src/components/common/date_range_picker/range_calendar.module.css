@@ -246,9 +246,9 @@
 .calendar :global(.rdp-months) {
   display: flex !important;
   flex-direction: row;
-  gap: 16px !important;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 16px;
   width: 100%;
   position: relative !important;
 }
@@ -695,19 +695,46 @@
    ======================================== */
 
 @media (max-width: 768px) {
-  /* 달력 컨테이너 - 가로 배치, 스크롤 없이 */
-  .calendar :global(.rdp-months) {
-    flex-direction: row !important;
-    gap: 8px !important;
-    width: 100%;
+  .calendar_wrapper {
     justify-content: space-between;
+    width: 100%;
+    height: 100%;
   }
 
-  /* 개별 달력 너비 조정 - 정확히 절반씩 */
+  /* 달력 컨테이너 - 가로 배치, 양끝 정렬 */
+  .calendar :global(.rdp-months) {
+    flex-direction: row !important;
+    gap: 1.5% !important;
+    width: 100% !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    display: flex !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* 개별 달력 너비 조정 - gap을 고려한 너비 */
   .calendar :global(.rdp-month) {
-    width: calc(50% - 4px);
-    min-width: 0;
-    flex-shrink: 1;
+    flex: 0 0 calc(50% - 0.75%) !important;
+    min-width: calc(50% - 0.75%) !important;
+    max-width: calc(50% - 0.75%) !important;
+    width: calc(50% - 0.75%) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* 달력 내부 테이블 너비 강제 */
+  .calendar :global(.rdp-month table),
+  .calendar :global(.rdp-month .rdp-table),
+  .calendar :global(.rdp-month .rdp-month_grid) {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* 달력 캡션(헤더) 너비 강제 */
+  .calendar :global(.rdp-month .rdp-caption) {
+    width: 100% !important;
   }
 
   /* 드롭다운 컨텐츠 너비 조정 - input 필드 너비에 맞춤 */
@@ -716,7 +743,7 @@
     right: 0;
     width: 100%;
     max-width: 100%;
-    padding: 8px;
+    padding: 0;
     border-radius: 6px;
     overflow-x: visible;
   }
@@ -773,26 +800,43 @@
   /* 달력 헤더 조정 */
   .calendar :global(.rdp-caption) {
     margin-bottom: 8px;
-    height: 20px;
+    height: 18px;
   }
 
-  /* 월/년 표시 텍스트 */
+  /* 월/년 표시 텍스트 - 너비에 맞게 조정 */
   .calendar :global(.rdp-caption_label) {
-    font-size: 12px !important;
-    line-height: 20px !important;
+    font-size: 11px !important;
+    line-height: 18px !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+    text-align: center !important;
   }
 
-  /* 요일 헤더 */
+  /* 여러 달 표시 모드의 헤더 정렬 통일 */
+  .calendar :global(.rdp-multiple_months .rdp-caption) {
+    justify-content: center !important;
+  }
+
+  .calendar :global(.rdp-multiple_months .rdp-caption_start) {
+    justify-content: center !important;
+  }
+
+  .calendar :global(.rdp-multiple_months .rdp-caption_end) {
+    justify-content: center !important;
+  }
+
+  /* 요일 헤더 - 너비에 맞게 조정 */
   .calendar :global(.rdp-weekday) {
-    font-size: 12px !important;
+    font-size: 9px !important;
     height: 16px !important;
     line-height: 16px !important;
+    font-weight: 500 !important;
   }
 
-  /* 날짜 셀 크기 조정 */
+  /* 날짜 셀 크기 조정 - 너비에 맞게 */
   .calendar :global(.rdp-weeknumber),
   .calendar :global(.rdp-day) {
-    width: 20px !important;
+    width: 14.28% !important;
     height: 20px !important;
     min-height: 20px !important;
     max-height: 20px !important;
@@ -800,31 +844,36 @@
     padding: 0 !important;
   }
 
-  /* 날짜 셀 버튼 크기 */
+  /* 날짜 셀 버튼 크기 - 셀 크기만큼 */
   .calendar :global(.rdp-day) button,
   .calendar :global(.rdp-day) :global(.rdp-button),
   .calendar :global(.rdp-day) :global(.rdp-day_button) {
-    width: 16px !important;
-    height: 16px !important;
-    min-width: 16px !important;
-    min-height: 16px !important;
-    max-width: 16px !important;
-    max-height: 16px !important;
-    font-size: 9px !important;
+    width: 100% !important;
+    height: 20px !important;
+    min-width: 100% !important;
+    min-height: 20px !important;
+    max-width: 100% !important;
+    max-height: 20px !important;
+    font-size: 9.5px !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
   }
 
   /* 선택된 날짜 버튼 크기 */
   .calendar :global(.rdp-day_selected) button,
   .calendar :global(.rdp-day_selected) :global(.rdp-button) {
-    width: 16px !important;
-    height: 16px !important;
+    width: 100% !important;
+    height: 20px !important;
+    font-size: 9px !important;
+    border-radius: 0 !important;
   }
 
   /* 오늘 날짜 버튼 크기 */
   .calendar :global(.rdp-day_today) button,
   .calendar :global(.rdp-day_today) :global(.rdp-day_button) {
-    width: 16px !important;
-    height: 16px !important;
+    width: 100% !important;
+    height: 20px !important;
+    font-size: 9px !important;
   }
 
   /* 이전/다음 달 버튼 */
@@ -850,6 +899,8 @@
     padding-bottom: 1px !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
+    height: 20px !important;
+    max-height: 20px !important;
   }
 
   /* 달력 그리드 상단 여백 조정 */
@@ -872,13 +923,42 @@
         )
     )
     :global(.rdp-button) {
-    width: 16px !important;
-    height: 16px !important;
-    min-width: 16px !important;
-    min-height: 16px !important;
-    max-width: 16px !important;
-    max-height: 16px !important;
+    width: 100% !important;
+    height: 20px !important;
+    min-width: 100% !important;
+    min-height: 20px !important;
+    max-width: 100% !important;
+    max-height: 20px !important;
     font-size: 9px !important;
+    background-color: transparent !important;
+    border-radius: 0 !important;
+  }
+
+  /* 단일 선택 모드의 원 스타일 */
+  .calendar
+    :global(
+      .rdp-day_selected:not(.rdp-day_range_start):not(.rdp-day_range_end):not(
+          .rdp-day_range_middle
+        )
+    )
+    button::after,
+  .calendar
+    :global(
+      .rdp-day_selected:not(.rdp-day_range_start):not(.rdp-day_range_end):not(
+          .rdp-day_range_middle
+        )
+    )
+    :global(.rdp-button)::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px !important;
+    height: 20px !important;
+    background-color: #ff5694;
+    border-radius: 50%;
+    z-index: 2;
   }
 
   /* 날짜 범위 중간 날짜들의 배경 연결 */
@@ -893,57 +973,89 @@
     background-color: transparent !important;
     position: relative !important;
     z-index: 1 !important;
+    height: 20px !important;
   }
 
-  /* 날짜 범위 시작 날짜 오른쪽 절반 배경 */
+  /* 날짜 범위 시작 날짜 배경 */
   .calendar :global(.rdp-day_range_start) {
     position: relative !important;
+    background-color: transparent !important;
   }
 
-  .calendar :global(.rdp-day_range_start)::after {
+  .calendar :global(.rdp-day_range_start)::before {
     content: '';
     position: absolute;
     top: 0;
     left: 50%;
     right: 0;
     bottom: 0;
-    background-color: rgba(255, 86, 148, 0.1);
+    background-color: transparent !important;
     z-index: 0;
   }
 
-  /* 날짜 범위 끝 날짜 왼쪽 절반 배경 */
+  /* 날짜 범위 끝 날짜 배경 */
   .calendar :global(.rdp-day_range_end) {
     position: relative !important;
+    background-color: transparent !important;
   }
 
-  .calendar :global(.rdp-day_range_end)::after {
+  .calendar :global(.rdp-day_range_end)::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 50%;
     bottom: 0;
-    background-color: rgba(255, 86, 148, 0.1);
+    background-color: transparent !important;
     z-index: 0;
   }
 
-  /* 시작/끝 날짜 버튼을 배경 위로 */
+  /* 시작/끝 날짜 버튼 스타일 */
   .calendar :global(.rdp-day_range_start) button,
   .calendar :global(.rdp-day_range_end) button,
   .calendar :global(.rdp-day_range_start) :global(.rdp-button),
   .calendar :global(.rdp-day_range_end) :global(.rdp-button) {
     position: relative !important;
     z-index: 1 !important;
+    background-color: transparent !important;
+    color: #444 !important;
+    width: 100% !important;
+    height: 20px !important;
   }
 
-  /* CSS 변수 재정의 - 모바일용 */
+  /* 시작/끝 날짜에 작은 원 추가 */
+  .calendar :global(.rdp-day_range_start) button::after,
+  .calendar :global(.rdp-day_range_end) button::after,
+  .calendar :global(.rdp-day_range_start) :global(.rdp-button)::after,
+  .calendar :global(.rdp-day_range_end) :global(.rdp-button)::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px !important;
+    height: 20px !important;
+    background-color: #ff5694;
+    border-radius: 50%;
+    z-index: 2;
+  }
+
+  /* 모바일에서 range-start-circle, range-end-circle 크기 조정 */
+  .calendar :global(.range-start-circle),
+  .calendar :global(.range-end-circle) {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  /* CSS 변수 재정의 - 모바일용 (너비에 맞게 조정) */
   .calendar :global(.rdp-root) {
     --rdp-cell-size: 20px !important;
     --rdp-day-width: 20px !important;
     --rdp-day-height: 20px !important;
     --rdp-day_button-width: 20px !important;
     --rdp-day_button-height: 20px !important;
-    --rdp-day_button-border-radius: 50% !important;
+    --rdp-day_button-border-radius: 0 !important;
+    --rdp-months-gap: 1.5% !important;
   }
 
   .calendar {
@@ -952,6 +1064,8 @@
     --rdp-day-height: 20px !important;
     --rdp-day_button-width: 20px !important;
     --rdp-day_button-height: 20px !important;
-    --rdp-day_button-border-radius: 50% !important;
+    --rdp-day_button-border-radius: 0 !important;
+    --rdp-months-gap: 1.5% !important;
+    width: 100% !important;
   }
 }

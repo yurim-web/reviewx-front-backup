@@ -36,6 +36,11 @@
   display: none;
 }
 
+/* PageHeader - PC에서 숨김, 모바일에서만 표시 (공지사항 상세 페이지용) */
+.page_header_mobile_only {
+  display: none;
+}
+
 /* 
  * 캠페인 보기 버튼 스타일
  */
@@ -72,6 +77,14 @@
   padding: 40px 0px;
   background: white;
   min-height: calc(100vh - 80px);
+}
+
+/* ========== 캠페인 신청내역 페이지 래퍼 ========== */
+/* 다른 페이지의 container 클래스 padding을 무효화하기 위한 래퍼 */
+.campaign_application_wrapper {
+  width: 100%;
+  background: white;
+  min-height: 100vh;
 }
 
 /* ========== 다운로드 버튼 영역 ========== */
@@ -242,27 +255,24 @@
   min-height: 400px; /* 최소 높이 설정 */
 }
 
-/* 빈 상태 스타일 */
-.empty_state {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 3rem;
-  color: #6b7280;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 200px;
-}
-
-.empty_state p {
-  font-size: 1rem;
-  margin: 0;
-  color: #848484;
-}
-
 /* ========== 📱 모바일 반응형 디자인 (375px 기준) ========== */
 @media (max-width: 768px) {
+  /* Hide PartnerSubHeader on mobile for campaign application pages */
+  :global(.gradient_bar) {
+    display: none !important;
+  }
+
+  /* Remove any inherited top padding from parent containers */
+  :global(.layout-module__container) {
+    padding-top: 0 !important;
+  }
+
+  /* Wrapper to override any parent container padding */
+  .campaign_application_wrapper {
+    padding-top: 0;
+    margin-top: -64px; /* Offset the parent container's 64px padding-top */
+  }
+
   /* ========== 페이지 헤더 ========== */
   /* 모바일에서는 PageTitle처럼 동작 */
   .page_header {
@@ -309,17 +319,7 @@
     flex: 1; /* 남은 공간 차지 */
   }
 
-  /* 캠페인 보기 버튼 */
-  .view_campaign_button {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 16px;
-    font-weight: 500;
-    line-height: 16px;
-    letter-spacing: -0.32px;
-    color: #444;
-  }
+
 
   .view_campaign_button_icon {
     width: 16px;
@@ -328,9 +328,9 @@
 
   /* ========== 전체 컨텐츠 영역 ========== */
   .campaign_application_section {
-    padding: 20px 0 0 0; /* Figma: 20px top */
+    padding: 20px 0 20px 0; 
     background: white;
-    min-height: calc(100vh - 128px); /* 모바일 헤더 + 페이지 헤더 */
+    min-height: calc(100vh - 64px); /* 모바일 헤더 + 페이지 헤더 */
   }
 
   /* ========== 다운로드 및 정렬 섹션 ========== */
@@ -407,11 +407,6 @@
     letter-spacing: -0.36px;
   }
 
-  /* 활성화된 탭 */
-  .tab_button.active {
-    color: #ff5694;
-    font-weight: 600;
-  }
 
   /* 활성화된 탭 밑줄 */
   .tab_button.active::after {
@@ -427,27 +422,23 @@
   /* ========== 신청자 카드 그리드 ========== */
   .applicants_grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr)); /* 반응형: 2열 그리드, 최소 0부터 시작 */
-    gap: 20px 15px; /* Figma: row-gap 20px, column-gap 15px */
-    padding: 20px; /* Figma: 20px */
-    background: white;
-    min-height: 400px;
-    box-sizing: border-box; /* 패딩 포함 크기 계산 */
-    width: 100%; /* 그리드가 부모 너비를 넘지 않도록 */
-    max-width: 100%; /* 최대 너비 제한 */
-    overflow-x: hidden; /* 가로 스크롤 방지 */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    padding: 20px;
+    min-height: 0px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
-  /* 빈 상태 */
-  .empty_state {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 3rem;
-    color: #848484;
+  /* PageHeader - 모바일에서만 표시 (공지사항 상세 페이지용) */
+  .page_header_mobile_only {
+    display: flex;
   }
 
-  .empty_state p {
-    font-size: 1rem;
-    margin: 0;
+  /* 공지사항 상세 페이지 - SubHeader/PartnerSubHeader 숨김 */
+  :global(.notice_detail_hide_header_mobile) :global(.gradient_bar) {
+    display: none !important;
   }
 }

@@ -16,7 +16,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .fair_trade_checkbox {
@@ -71,23 +71,22 @@
 @media (max-width: 768px) {
   /* 공정위 문구 동의 */
   .fair_trade_agreement {
-    gap: 6px;
+align-items: flex-start;
   }
 
   /* 공정위 체크박스 */
   .fair_trade_checkbox {
-    width: 18px;
-    height: 18px;
+  margin-top: 4px;
   }
 
-  .fair_trade_checkbox:checked::after {
-    font-size: 14px;
-  }
+
 
   /* 공정위 라벨 */
   .fair_trade_label {
-    font-size: 14px;
-    line-height: 14px;
-    letter-spacing: -0.28px;
+    color: #444;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    letter-spacing: -0.32px;
   }
 }

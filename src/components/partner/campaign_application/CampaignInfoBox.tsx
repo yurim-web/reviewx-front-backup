@@ -177,7 +177,8 @@ export default function Campaignbanner({
             </div>
 
             <h2 className={styles.campaign_title}>{campaignInfo.title}</h2>
-            <p className={styles.campaign_notice}>
+            {/* PC에서는 여기에 표시, 모바일에서는 아래로 이동 */}
+            <p className={`${styles.campaign_notice} ${styles.campaign_notice_pc}`}>
               {getStatusText(
                 campaignInfoForHelper,
                 reviewingCount,
@@ -187,6 +188,16 @@ export default function Campaignbanner({
             </p>
           </div>
         </div>
+
+        {/* 모바일에서만 표시되는 campaign_notice */}
+        <p className={`${styles.campaign_notice} ${styles.campaign_notice_mobile}`}>
+          {getStatusText(
+            campaignInfoForHelper,
+            reviewingCount,
+            completedCount,
+            derivedStatus
+          )}
+        </p>
 
         {/* 캠페인 일정 정보 컴포넌트 사용
             📌 컴포넌트 재사용으로 코드 중복 제거

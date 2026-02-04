@@ -24,6 +24,7 @@ import BusinessDocumentUpload from "@/components/partner/mypage/BusinessDocument
 import AddressInput from "@/components/common/mypage/AddressInput";
 import BaseModal from "@/components/common/modal/BaseModal";
 import ErrorText from "@/components/common/error_text/ErrorText";
+import Toast from "@/components/common/toast/Toast";
 import { formatPhoneNumber } from "@/utils/formatting/phone";
 import { formatBusinessNumber } from "@/components/partner/signup/utils/businessNumberUtils";
 import { useAuth } from "@/hooks/useAuth";
@@ -76,6 +77,9 @@ function PartnerEditProfilePage() {
     useState(false);
   const [isWithdrawBlockedModalOpen, setIsWithdrawBlockedModalOpen] =
     useState(false);
+
+  // Toast 상태
+  const [showToast, setShowToast] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -264,9 +268,8 @@ function PartnerEditProfilePage() {
       localStorage.setItem('partner_accounts', JSON.stringify(accounts));
       console.log('✅ [수정 페이지] partner_accounts 저장 완료:', accounts);
 
-      alert('정보가 저장되었습니다.');
-      // 페이지 새로고침하여 업데이트된 정보 반영
-      window.location.reload();
+      // 저장 성공 시 토스트 메시지 표시
+      setShowToast(true);
     } catch (error) {
       console.error('정보 저장 중 오류:', error);
       alert('정보 저장에 실패했습니다.');
@@ -561,7 +564,7 @@ function PartnerEditProfilePage() {
             disabled={!isSaveEnabled}
             onClick={handleSave}
           >
-            저장하기
+            저장
           </button>
         </div>
       </main>
@@ -593,6 +596,14 @@ function PartnerEditProfilePage() {
         buttons={["닫기"]}
         on_confirm={handleWithdrawComplete}
         type="center"
+      />
+
+      {/* 저장 완료 토스트 메시지 */}
+      <Toast
+        message="저장되었습니다."
+        isOpen={showToast}
+        onClose={() => setShowToast(false)}
+        duration={2000}
       />
     </div>
   );

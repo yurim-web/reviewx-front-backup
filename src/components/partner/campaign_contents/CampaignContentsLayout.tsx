@@ -23,7 +23,7 @@
 
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import PageHeader from "@/components/partner/campaign_application/PageHeader";
@@ -227,17 +227,26 @@ export default function CampaignContentsLayout({
     : "";
 
   // 실제 신청자 수 계산
-  // 📌 useMemo: 캠페인 데이터에서 신청자 수를 계산하여 메모이제이션합니다
-  // - campaignInfo.id를 사용하여 전체 캠페인 데이터를 가져옵니다
-  // - applicantData.applicants 배열의 길이를 계산합니다
-  const applicantsCount = useMemo(() => {
-    if (!campaignInfo?.id) return undefined;
+  // 📌 useState + useEffect: Hydration 오류 방지를 위해 클라이언트에서만 계산합니다
+  // - 초기값은 campaignInfo.recruitedCount를 사용하여 서버와 클라이언트가 동일한 값으로 시작합니다
+  // - useEffect에서 클라이언트에서만 실제 신청자 수를 계산하여 업데이트합니다
+  const [applicantsCount, setApplicantsCount] = useState<number | undefined>(
+    campaignInfo?.recruitedCount
+  );
+
+  useEffect(() => {
+    if (!campaignInfo?.id) {
+      setApplicantsCount(undefined);
+      return;
+    }
     const fullCampaignData = getCampaignById(campaignInfo.id);
     if (fullCampaignData && "applicantData" in fullCampaignData) {
-      return fullCampaignData.applicantData?.applicants?.length ?? 0;
+      const count = fullCampaignData.applicantData?.applicants?.length ?? 0;
+      setApplicantsCount(count);
+    } else {
+      setApplicantsCount(campaignInfo?.recruitedCount);
     }
-    return undefined;
-  }, [campaignInfo?.id]);
+  }, [campaignInfo?.id, campaignInfo?.recruitedCount]);
 
   return (
     <>

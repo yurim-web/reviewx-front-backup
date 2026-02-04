@@ -97,9 +97,10 @@
 
   /* 파트너 로그인 메인 영역 */
   .partner_login_main {
-    padding-top: 60px;
-    padding-bottom: 80px;
-    min-height: calc(100vh - 60px);
+    padding-top: 140px;
+    padding-bottom: 120px;
+    min-height: 100vh;
+    justify-content: flex-start;
   }
 
   /* 로그인 제목 */
@@ -111,6 +112,6 @@
 
   /* 파트너 로그인 메시지 섹션 */
   .partner_login_main .login_message_section {
-    padding-bottom: 32px;
+    padding-bottom: 40px;
   }
 }
