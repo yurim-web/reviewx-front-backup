@@ -329,7 +329,11 @@ export default function PartnerPointChargePage() {
       <PartnerSubHeader />
 
       {/* 메인 컨텐츠 */}
-      <main className={styles.main_content}>
+      <main
+        className={`${styles.main_content} ${
+          activeTab === "card" ? styles.main_content_with_fixed_button : ""
+        }`}
+      >
         <div className={styles.container}>
           {/* 제목 */}
           <PageTitle title="포인트 충전" />
@@ -898,8 +902,14 @@ export default function PartnerPointChargePage() {
             </section>
           )}
 
-          {/* 페이지 하단 단일 버튼 (기획서와 동일하게 고정 아님) */}
-          <div className={styles.submit_button_section}>
+          {/* 페이지 하단 단일 버튼
+              - 무통장 입금: 일반 흐름 (고정 X)
+              - 신용카드 결제: 화면 하단 고정 (PC/모바일) */}
+          <div
+            className={`${styles.submit_button_section} ${
+              activeTab === "card" ? styles.submit_button_fixed : ""
+            }`}
+          >
             <button
               className={`${styles.submit_button} ${
                 !isButtonEnabled ? styles.disabled : ""

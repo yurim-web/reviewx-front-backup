@@ -644,6 +644,102 @@ export const missionCampaigns: MissionCampaignData[] = [
     ],
     contentType: "both" as const, // 링크 + 이미지
   },
+  // mission_test_both: 미션형 링크+이미지 테스트 (유저단 노출용)
+  {
+    id: "mission_test_both_all_cases",
+    title: "[테스트] 미션형 링크+이미지 모든 카드 경우의 수",
+    category: "미션형",
+    image: "/images/main/campaign_img/eximg_6.png",
+    subcategory: "뷰티",
+    channel: "",
+    points: 50000,
+    description: "테스트용 미션형 링크+이미지 캠페인",
+    recruitment: {
+      current: 7,
+      total: 10,
+    },
+    schedule: "",
+    dayCount: "D-4",
+    registeredAt: "2026-01-12T10:00:00.000Z",
+    detailedSchedule: {
+      applicationStart: "2026-02-01",
+      applicationEnd: "2026-02-28",
+      announcement: "2026-03-02",
+      registrationPeriod: "2026-02-04 ~ 2026-05-05",
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    keyword: "#테스트 #미션형 #링크이미지",
+    requirements: ["text_2000", "photo_15", "video_1_180", "product_link", "keyword"],
+    guidelineTexts: [
+      "미션형 링크+이미지 테스트 캠페인입니다.",
+      "링크 확인 및 이미지 확인 기능을 테스트할 수 있습니다.",
+    ],
+    contentType: "both" as const,
+  },
+  // mission_test_link: 미션형 링크만 테스트 (유저단 노출용)
+  {
+    id: "mission_test_link_all_cases",
+    title: "[테스트] 미션형 링크만 모든 카드 경우의 수",
+    category: "미션형",
+    image: "/images/main/campaign_img/eximg_7.png",
+    subcategory: "생활",
+    channel: "",
+    points: 30000,
+    description: "테스트용 미션형 링크만 캠페인",
+    recruitment: {
+      current: 7,
+      total: 10,
+    },
+    schedule: "",
+    dayCount: "D-2",
+    registeredAt: "2026-01-22T10:00:00.000Z",
+    detailedSchedule: {
+      applicationStart: "2026-02-01",
+      applicationEnd: "2026-02-28",
+      announcement: "2026-03-02",
+      registrationPeriod: "2026-02-04 ~ 2026-05-05",
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    keyword: "#테스트 #미션형 #링크만",
+    requirements: ["text_1500", "photo_10", "product_link", "keyword"],
+    guidelineTexts: [
+      "미션형 링크만 테스트 캠페인입니다.",
+      "링크 확인 기능을 테스트할 수 있습니다.",
+    ],
+    contentType: "link" as const,
+  },
+  // mission_test_image: 미션형 이미지만 테스트 (유저단 노출용)
+  {
+    id: "mission_test_image_all_cases",
+    title: "[테스트] 미션형 이미지만 모든 카드 경우의 수",
+    category: "미션형",
+    image: "/images/main/campaign_img/eximg_8.png",
+    subcategory: "뷰티",
+    channel: "",
+    points: 35000,
+    description: "테스트용 미션형 이미지만 캠페인",
+    recruitment: {
+      current: 7,
+      total: 10,
+    },
+    schedule: "",
+    dayCount: "D-1",
+    registeredAt: "2026-01-25T10:00:00.000Z",
+    detailedSchedule: {
+      applicationStart: "2026-02-01",
+      applicationEnd: "2026-02-28",
+      announcement: "2026-03-02",
+      registrationPeriod: "2026-02-04 ~ 2026-05-05",
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    keyword: "#테스트 #미션형 #이미지만",
+    requirements: ["text_1500", "photo_12", "keyword"],
+    guidelineTexts: [
+      "미션형 이미지만 테스트 캠페인입니다.",
+      "이미지 확인 기능을 테스트할 수 있습니다.",
+    ],
+    contentType: "image" as const,
+  },
 ];
 
 /**
@@ -950,7 +1046,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           nickname: "헬스케어리뷰어A",
           channelId: "youtube_021",
           channel: "유튜브",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
           actionType: 3, // 이미지만 (contentType: "image")
         },
         {
@@ -961,7 +1057,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           nickname: "건강리뷰어B",
           channelId: "youtube_022",
           channel: "유튜브",
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
           actionType: 3, // 이미지만 (contentType: "image")
         },
       ],
@@ -977,7 +1073,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           updatedAt: "2025-12-19T10:00:00.000Z",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
           actionType: 3, // 이미지만 (contentType: "image")
         },
       ],
@@ -992,7 +1088,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           channel: "유튜브",
           updatedAt: "2025-12-16T09:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
           actionType: 3, // 이미지만 (contentType: "image")
         },
       ],
@@ -1077,7 +1173,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           nickname: "홈데코리뷰어A",
           channelId: "blog_025",
           channel: "네이버블로그",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
           actionType: 4, // 링크만
         },
         {
@@ -1088,7 +1184,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           nickname: "인테리어인플루언서B",
           channelId: "blog_026",
           channel: "네이버블로그",
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
           actionType: 4, // 링크만
         },
       ],
@@ -1104,7 +1200,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           updatedAt: "2025-12-25T10:00:00.000Z",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
           actionType: 4, // 링크만
         },
       ],
@@ -1119,7 +1215,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           channel: "네이버블로그",
           updatedAt: "2025-12-24T09:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
           actionType: 4, // 링크만
         },
       ],
@@ -1279,7 +1375,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           nickname: "선정된이미지전문가",
           channelId: "instagram_045",
           channel: "인스타그램",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
           actionType: 3, // 이미지만 (contentType: "image")
           extension_request_reason: "촬영 일정이 지연되어 2일 연장을 요청드립니다.",
           isExtensionApproved: true,
@@ -1298,7 +1394,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           updatedAt: "2026-01-29T09:00:00.000Z",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
           actionType: 3, // 이미지만 (contentType: "image")
         },
       ],
@@ -1313,7 +1409,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           channel: "유튜브",
           updatedAt: "2026-01-26T10:00:00.000Z",
           isLate: true,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
           actionType: 3, // 이미지만 (contentType: "image")
         },
       ],
@@ -1422,7 +1518,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           nickname: "디지털리뷰어A",
           channelId: "shopping_001",
           channel: "네이버쇼핑",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
           actionType: 2,
         },
         {
@@ -1433,7 +1529,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           nickname: "테크인플루언서B",
           channelId: "shopping_002",
           channel: "네이버쇼핑",
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
           actionType: 3,
         },
       ],
@@ -1449,7 +1545,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           updatedAt: "2025-12-20T10:00:00.000Z",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
           actionType: 2,
         },
       ],
@@ -1464,7 +1560,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           channel: "네이버쇼핑",
           updatedAt: "2025-12-19T09:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
           actionType: 2,
         },
         {
@@ -1477,7 +1573,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           channel: "네이버쇼핑",
           updatedAt: "2025-12-21T17:37:00.000Z",
           isLate: true,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
           actionType: 2,
         },
       ],
@@ -1531,7 +1627,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           nickname: "반려동물리뷰어A",
           channelId: "blog_018",
           channel: "네이버블로그",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
           actionType: 4, // 링크만 (contentType: "link")
         },
       ],
@@ -1547,7 +1643,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           updatedAt: "2025-12-27T10:00:00.000Z",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
           actionType: 4, // 링크만 (contentType: "link")
         },
       ],
@@ -1562,7 +1658,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           channel: "네이버블로그",
           updatedAt: "2025-12-25T09:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
           actionType: 4, // 링크만 (contentType: "link")
         },
       ],
@@ -1672,7 +1768,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           nickname: "뷰티리뷰어A",
           channelId: "olive_001",
           channel: "올리브영",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
           actionType: 2, // 이미지+링크 (contentType: "both")
         },
         // 2. 등록 기한 연장 요청 (이미지+링크)
@@ -1684,7 +1780,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           nickname: "뷰티인플루언서B",
           channelId: "olive_002",
           channel: "올리브영",
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
           actionType: 2, // 이미지+링크 (contentType: "both")
           extension_request_reason:
             "개인 사정으로 인해 등록 기한을 연장해주시면 감사하겠습니다.",
@@ -1698,7 +1794,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           nickname: "뷰티리뷰어C",
           channelId: "olive_003",
           channel: "올리브영",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
           actionType: 2, // 이미지+링크 (contentType: "both")
           isExtensionApproved: true,
           extendedDeadline: "2026-01-20",
@@ -1712,7 +1808,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           nickname: "뷰티인플루언서D",
           channelId: "olive_004",
           channel: "올리브영",
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
           actionType: 2, // 이미지+링크 (contentType: "both")
           isRejected: true,
           reject_reason:
@@ -1727,7 +1823,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           nickname: "뷰티리뷰어E",
           channelId: "olive_005",
           channel: "올리브영",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
           actionType: 2, // 이미지+링크 (contentType: "both")
           isReported: true,
           reportedDate: "2025-12-27 14:30",
@@ -1746,7 +1842,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           updatedAt: undefined, // 최초 등록
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
           actionType: 2, // 이미지+링크 (contentType: "both")
         },
         // 2. 수정 (이미지+링크)
@@ -1761,7 +1857,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           updatedAt: "2025-12-29T10:00:00.000Z", // 수정됨
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
           actionType: 2, // 이미지+링크 (contentType: "both")
         },
         // 3. 지각 등록 (이미지+링크)
@@ -1776,7 +1872,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           updatedAt: "2025-12-30T11:00:00.000Z", // 지각 등록
           isRejected: false,
           isLate: true, // 지각 등록
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
           actionType: 2, // 이미지+링크 (contentType: "both")
         },
       ],
@@ -1792,7 +1888,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           channel: "올리브영",
           updatedAt: "2025-12-27T09:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
           actionType: 2, // 이미지+링크 (contentType: "both")
         },
         // 2. 확인 완료 (이미지+링크)
@@ -1806,7 +1902,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           channel: "올리브영",
           updatedAt: "2025-12-26T08:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
           actionType: 2, // 이미지+링크 (contentType: "both")
         },
         // 3. 확인 완료 (이미지+링크)
@@ -1820,7 +1916,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           channel: "올리브영",
           updatedAt: "2025-12-25T07:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
           actionType: 2, // 이미지+링크 (contentType: "both")
         },
       ],
@@ -1880,6 +1976,395 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
     applicantData: {
       applicants: [],
       selectedApplicants: [],
+    },
+  },
+  // mission_test_both: 미션형 링크+이미지 모든 경우의 수 테스트 캠페인
+  {
+    ...missionCampaigns[0],
+    id: "mission_test_both_all_cases",
+    title: "[테스트] 미션형 링크+이미지 모든 카드 경우의 수",
+    contentType: "both" as const,
+    recruitment: {
+      current: 7,
+      total: 10,
+    },
+    detailedSchedule: {
+      applicationStart: "2026-02-01",
+      applicationEnd: "2026-02-28",
+      announcement: "2026-03-02",
+      registrationPeriod: "2026-02-04 ~ 2026-05-05",
+    },
+    applicantData: {
+      applicants: [],
+      selectedApplicants: [],
+    },
+    contents: {
+      waiting: [
+        // 경우의 수 1: 콘텐츠 미등록 (기한 내)
+        {
+          id: "mission_both_test_waiting_001",
+          createdAt: "2026-02-01T10:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "콘텐츠미등록유저",
+          channelId: "blog_test_001",
+          channel: "네이버블로그",
+          profileImage: "",
+          missionType: "both",
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 경우의 수 2: 연장 요청됨
+        {
+          id: "mission_both_test_waiting_002",
+          createdAt: "2026-02-02T11:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "연장요청유저",
+          channelId: "blog_test_002",
+          channel: "네이버블로그",
+          profileImage: "",
+          missionType: "both",
+          extension_request_reason: "개인 사정으로 3일 연장 요청드립니다.",
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 경우의 수 3: 반려됨
+        {
+          id: "mission_both_test_waiting_003",
+          createdAt: "2026-02-03T12:00:00.000Z",
+          status: "검수" as const,
+          userType: "인플루언서" as const,
+          nickname: "반려당한유저",
+          channelId: "insta_test_001",
+          channel: "인스타그램",
+          profileImage: "",
+          missionType: "both",
+          isRejected: true,
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 경우의 수 4: 신고됨
+        {
+          id: "mission_both_test_waiting_004",
+          createdAt: "2026-02-04T13:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "신고당한유저",
+          channelId: "blog_test_003",
+          channel: "네이버블로그",
+          profileImage: "",
+          missionType: "both",
+          isReported: true,
+          reportedDate: "2026-02-04T14:30:00.000Z",
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+      ],
+      reviewing: [
+        // 확인 탭 경우의 수 1: 검수 중 상태
+        {
+          id: "mission_both_test_reviewing_001",
+          createdAt: "2026-02-01T09:00:00.000Z",
+          status: "검수중" as const,
+          userType: "인플루언서" as const,
+          nickname: "검수중유저",
+          channelId: "insta_test_002",
+          channel: "인스타그램",
+          profileImage: "",
+          missionType: "both",
+          receiptImages: ["/images/test_img/eximg.png"],
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+      ],
+      completed: [
+        // 완료 탭 경우의 수 1: 승인 완료 상태
+        {
+          id: "mission_both_test_completed_001",
+          createdAt: "2026-01-28T08:00:00.000Z",
+          status: "완료" as const,
+          userType: "리뷰어" as const,
+          nickname: "승인완료유저",
+          channelId: "blog_test_004",
+          channel: "네이버블로그",
+          profileImage: "",
+          missionType: "both",
+          updatedAt: "2026-01-29T09:00:00.000Z",
+          receiptImages: ["/images/test_img/eximg.png"],
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 완료 탭 경우의 수 2: 지각등록 승인 완료 상태
+        {
+          id: "mission_both_test_completed_002",
+          createdAt: "2026-02-04T15:00:00.000Z",
+          status: "완료" as const,
+          userType: "인플루언서" as const,
+          nickname: "지각제출유저",
+          channelId: "insta_test_003",
+          channel: "인스타그램",
+          profileImage: "",
+          missionType: "both",
+          updatedAt: "2026-02-04T16:00:00.000Z",
+          isLateSubmission: true,
+          receiptImages: ["/images/test_img/eximg.png"],
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+      ],
+    },
+  },
+  // mission_test_link: 미션형 링크만 모든 경우의 수 테스트 캠페인
+  {
+    ...missionCampaigns[0],
+    id: "mission_test_link_all_cases",
+    title: "[테스트] 미션형 링크만 모든 카드 경우의 수",
+    contentType: "link" as const,
+    recruitment: {
+      current: 7,
+      total: 10,
+    },
+    detailedSchedule: {
+      applicationStart: "2026-02-01",
+      applicationEnd: "2026-02-28",
+      announcement: "2026-03-02",
+      registrationPeriod: "2026-02-04 ~ 2026-05-05",
+    },
+    applicantData: {
+      applicants: [],
+      selectedApplicants: [],
+    },
+    contents: {
+      waiting: [
+        // 경우의 수 1: 콘텐츠 미등록 (기한 내)
+        {
+          id: "mission_link_test_waiting_001",
+          createdAt: "2026-02-01T10:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "콘텐츠미등록유저",
+          channelId: "blog_test_001",
+          channel: "네이버블로그",
+          profileImage: "",
+          missionType: "link",
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 경우의 수 2: 연장 요청됨
+        {
+          id: "mission_link_test_waiting_002",
+          createdAt: "2026-02-02T11:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "연장요청유저",
+          channelId: "blog_test_002",
+          channel: "네이버블로그",
+          profileImage: "",
+          missionType: "link",
+          extension_request_reason: "개인 사정으로 3일 연장 요청드립니다.",
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 경우의 수 3: 반려됨
+        {
+          id: "mission_link_test_waiting_003",
+          createdAt: "2026-02-03T12:00:00.000Z",
+          status: "검수" as const,
+          userType: "인플루언서" as const,
+          nickname: "반려당한유저",
+          channelId: "insta_test_001",
+          channel: "인스타그램",
+          profileImage: "",
+          missionType: "link",
+          isRejected: true,
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 경우의 수 4: 신고됨
+        {
+          id: "mission_link_test_waiting_004",
+          createdAt: "2026-02-04T13:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "신고당한유저",
+          channelId: "blog_test_003",
+          channel: "네이버블로그",
+          profileImage: "",
+          missionType: "link",
+          isReported: true,
+          reportedDate: "2026-02-04T14:30:00.000Z",
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+      ],
+      reviewing: [
+        // 확인 탭 경우의 수 1: 검수 중 상태
+        {
+          id: "mission_link_test_reviewing_001",
+          createdAt: "2026-02-01T09:00:00.000Z",
+          status: "검수중" as const,
+          userType: "인플루언서" as const,
+          nickname: "검수중유저",
+          channelId: "insta_test_002",
+          channel: "인스타그램",
+          profileImage: "",
+          missionType: "link",
+          receiptImages: ["/images/test_img/eximg.png"],
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+      ],
+      completed: [
+        // 완료 탭 경우의 수 1: 승인 완료 상태
+        {
+          id: "mission_link_test_completed_001",
+          createdAt: "2026-01-28T08:00:00.000Z",
+          status: "완료" as const,
+          userType: "리뷰어" as const,
+          nickname: "승인완료유저",
+          channelId: "blog_test_004",
+          channel: "네이버블로그",
+          profileImage: "",
+          missionType: "link",
+          updatedAt: "2026-01-29T09:00:00.000Z",
+          receiptImages: ["/images/test_img/eximg.png"],
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 완료 탭 경우의 수 2: 지각등록 승인 완료 상태
+        {
+          id: "mission_link_test_completed_002",
+          createdAt: "2026-02-04T15:00:00.000Z",
+          status: "완료" as const,
+          userType: "리뷰어" as const,
+          nickname: "지각제출유저",
+          channelId: "blog_test_005",
+          channel: "네이버블로그",
+          profileImage: "",
+          missionType: "link",
+          updatedAt: "2026-02-04T16:00:00.000Z",
+          isLateSubmission: true,
+          receiptImages: ["/images/test_img/eximg.png"],
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+      ],
+    },
+  },
+  // mission_test_image: 미션형 이미지만 모든 경우의 수 테스트 캠페인
+  {
+    ...missionCampaigns[0],
+    id: "mission_test_image_all_cases",
+    title: "[테스트] 미션형 이미지만 모든 카드 경우의 수",
+    contentType: "image" as const,
+    recruitment: {
+      current: 7,
+      total: 10,
+    },
+    detailedSchedule: {
+      applicationStart: "2026-02-01",
+      applicationEnd: "2026-02-28",
+      announcement: "2026-03-02",
+      registrationPeriod: "2026-02-04 ~ 2026-05-05",
+    },
+    applicantData: {
+      applicants: [],
+      selectedApplicants: [],
+    },
+    contents: {
+      waiting: [
+        // 경우의 수 1: 콘텐츠 미등록 (기한 내)
+        {
+          id: "mission_image_test_waiting_001",
+          createdAt: "2026-02-01T10:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "콘텐츠미등록유저",
+          channelId: "blog_test_001",
+          channel: "네이버블로그",
+          profileImage: "",
+          missionType: "image",
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 경우의 수 2: 연장 요청됨
+        {
+          id: "mission_image_test_waiting_002",
+          createdAt: "2026-02-02T11:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "연장요청유저",
+          channelId: "blog_test_002",
+          channel: "네이버블로그",
+          profileImage: "",
+          missionType: "image",
+          extension_request_reason: "개인 사정으로 3일 연장 요청드립니다.",
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 경우의 수 3: 반려됨
+        {
+          id: "mission_image_test_waiting_003",
+          createdAt: "2026-02-03T12:00:00.000Z",
+          status: "검수" as const,
+          userType: "인플루언서" as const,
+          nickname: "반려당한유저",
+          channelId: "insta_test_001",
+          channel: "인스타그램",
+          profileImage: "",
+          missionType: "image",
+          isRejected: true,
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 경우의 수 4: 신고됨
+        {
+          id: "mission_image_test_waiting_004",
+          createdAt: "2026-02-04T13:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "신고당한유저",
+          channelId: "blog_test_003",
+          channel: "네이버블로그",
+          profileImage: "",
+          missionType: "image",
+          isReported: true,
+          reportedDate: "2026-02-04T14:30:00.000Z",
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+      ],
+      reviewing: [
+        // 확인 탭 경우의 수 1: 검수 중 상태
+        {
+          id: "mission_image_test_reviewing_001",
+          createdAt: "2026-02-01T09:00:00.000Z",
+          status: "검수중" as const,
+          userType: "인플루언서" as const,
+          nickname: "검수중유저",
+          channelId: "insta_test_002",
+          channel: "인스타그램",
+          profileImage: "",
+          missionType: "image",
+          receiptImages: ["/images/test_img/eximg.png"],
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+      ],
+      completed: [
+        // 완료 탭 경우의 수 1: 승인 완료 상태
+        {
+          id: "mission_image_test_completed_001",
+          createdAt: "2026-01-28T08:00:00.000Z",
+          status: "완료" as const,
+          userType: "리뷰어" as const,
+          nickname: "승인완료유저",
+          channelId: "blog_test_004",
+          channel: "네이버블로그",
+          profileImage: "",
+          missionType: "image",
+          updatedAt: "2026-01-29T09:00:00.000Z",
+          receiptImages: ["/images/test_img/eximg.png"],
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 완료 탭 경우의 수 2: 지각등록 승인 완료 상태
+        {
+          id: "mission_image_test_completed_002",
+          createdAt: "2026-02-04T15:00:00.000Z",
+          status: "완료" as const,
+          userType: "인플루언서" as const,
+          nickname: "지각제출유저",
+          channelId: "insta_test_004",
+          channel: "인스타그램",
+          profileImage: "",
+          missionType: "image",
+          updatedAt: "2026-02-04T16:00:00.000Z",
+          isLateSubmission: true,
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+      ],
     },
   },
 ];

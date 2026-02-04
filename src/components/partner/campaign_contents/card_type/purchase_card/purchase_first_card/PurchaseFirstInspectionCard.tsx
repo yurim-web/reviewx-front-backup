@@ -49,6 +49,7 @@ import ReportModal, {
   type ReportOption,
 } from "@/components/common/modal/ReportModal";
 import BaseModal from "@/components/common/modal/BaseModal";
+import ReceiptPreviewModal from "../../../ReceiptPreviewModal";
 
 interface PurchaseFirstInspectionCardProps {
   applicant: CampaignApplicant;
@@ -93,6 +94,8 @@ export default function PurchaseFirstInspectionCard({
     useState(false);
   const [isExtensionLimitModalOpen, setIsExtensionLimitModalOpen] =
     useState(false);
+  // 이미지 확인 모달 상태
+  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
 
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
@@ -199,7 +202,9 @@ export default function PurchaseFirstInspectionCard({
 
   return (
     <div className={baseStyles.card_wrapper}>
-      <article className={baseStyles.applicant_card}>
+      <article
+        className={baseStyles.applicant_card}
+      >
         {/* 프로필 영역 */}
         <div className={contentStyles.profile_section}>
           <div className={contentStyles.profile_image_container}>
@@ -215,15 +220,15 @@ export default function PurchaseFirstInspectionCard({
           </div>
         </div>
 
-        {/* 상단 액션 버튼 - 구매 영수증 확인 */}
+        {/* 상단 액션 버튼 - 구매 영수증 확인 / 이미지 확인 */}
         <button
           className={actionStyles.content_check_button}
           onClick={() => {
             console.log("구매 영수증 확인 클릭", applicant.id);
-            onCheckReceipt?.(applicant.id);
+            setIsReceiptModalOpen(true);
           }}
         >
-          구매 영수증 확인
+          구매영수증 확인
         </button>
 
         {/* 등록/수정/지각 등록 날짜 */}
@@ -359,6 +364,13 @@ export default function PurchaseFirstInspectionCard({
         message="연장은 최대 두 번까지만 가능합니다."
         buttons={["닫기"]}
         type="center"
+      />
+
+      {/* 이미지 확인 모달 */}
+      <ReceiptPreviewModal
+        isOpen={isReceiptModalOpen}
+        images={applicant.receiptImages || []}
+        onClose={() => setIsReceiptModalOpen(false)}
       />
     </div>
   );

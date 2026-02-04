@@ -130,20 +130,17 @@
 
 /* 모달 푸터 확인 버튼 */
 .modal_footer_button_confirm {
-  background-color: #ff5694;
+  background-color: #ff2626;
   color: #ffffff;
 }
 
-.modal_footer_button_confirm:hover {
-  background: rgba(119, 119, 119, 0.2);
-}
 .modal_footer_button_confirm:hover {
   background: linear-gradient(
       0deg,
       rgba(0, 0, 0, 0.1) 0%,
       rgba(0, 0, 0, 0.1) 100%
     ),
-    #ff5694;
+    #ff2626;
 }
 
 /* 하나 버튼 스타일 (전체 너비) */

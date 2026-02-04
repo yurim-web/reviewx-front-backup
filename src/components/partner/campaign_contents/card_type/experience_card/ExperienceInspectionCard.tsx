@@ -34,6 +34,7 @@ import ReportModal, {
   type ReportOption,
 } from "@/components/common/modal/ReportModal";
 import BaseModal from "@/components/common/modal/BaseModal";
+import ReceiptPreviewModal from "../../ReceiptPreviewModal";
 
 interface ExperienceInspectionCardProps {
   /** 카드에 표시할 신청자 정보 */
@@ -98,6 +99,8 @@ export default function ExperienceInspectionCard({
     useState(false);
   const [isExtensionLimitModalOpen, setIsExtensionLimitModalOpen] =
     useState(false);
+  // 이미지 확인 모달 상태
+  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
 
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
@@ -198,7 +201,9 @@ export default function ExperienceInspectionCard({
   return (
     <div className={baseStyles.card_wrapper}>
       {/* 카드 본문 */}
-      <article className={baseStyles.applicant_card}>
+      <article
+        className={baseStyles.applicant_card}
+      >
         {/* 프로필 영역 */}
         <div className={contentStyles.profile_section}>
           <div className={contentStyles.profile_image_container}>
@@ -245,14 +250,29 @@ export default function ExperienceInspectionCard({
           </a>
         </div>
 
-        {/* 링크 확인 */}
-        <button
-          className={actionStyles.content_check_button}
-          onClick={() => onContentCheck(applicant.id)}
-          aria-label={`${applicant.nickname} 콘텐츠 확인하기`}
-        >
-          링크 확인
-        </button>
+        {/* 링크 확인 / 이미지 확인 버튼 */}
+        {applicant.receiptImages && applicant.receiptImages.length > 0 ? (
+          <button
+            className={actionStyles.content_check_button}
+            onClick={() => setIsReceiptModalOpen(true)}
+            aria-label={`${applicant.nickname} 이미지 확인하기`}
+          >
+            이미지 확인
+          </button>
+        ) : (
+          <button
+            className={actionStyles.content_check_button}
+            onClick={() => {
+              const url = getChannelUrl(applicant.channel, applicant.channelId);
+              if (url && url !== "#") {
+                window.open(url, "_blank", "noopener,noreferrer");
+              }
+            }}
+            aria-label={`${applicant.nickname} 콘텐츠 확인하기`}
+          >
+            링크 확인
+          </button>
+        )}
 
         {/* 등록/수정/지각 등록 일시 */}
         <div className={actionStyles.registration_info}>
@@ -392,6 +412,13 @@ export default function ExperienceInspectionCard({
         message="연장은 최대 두 번까지만 가능합니다."
         buttons={["닫기"]}
         type="center"
+      />
+
+      {/* 이미지 확인 모달 */}
+      <ReceiptPreviewModal
+        isOpen={isReceiptModalOpen}
+        images={applicant.receiptImages || []}
+        onClose={() => setIsReceiptModalOpen(false)}
       />
     </div>
   );

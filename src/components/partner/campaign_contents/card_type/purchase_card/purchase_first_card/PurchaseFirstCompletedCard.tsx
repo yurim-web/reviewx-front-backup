@@ -32,6 +32,7 @@ import type { CampaignApplicant } from "../../shared_card/CampaignTypes";
 import ReportModal, {
   type ReportOption,
 } from "@/components/common/modal/ReportModal";
+import ReceiptPreviewModal from "../../../ReceiptPreviewModal";
 
 interface PurchaseFirstCompletedCardProps {
   applicant: CampaignApplicant;
@@ -54,6 +55,8 @@ export default function PurchaseFirstCompletedCard({
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [selectedReportOption, setSelectedReportOption] = useState<string>("");
   const [otherReportReason, setOtherReportReason] = useState<string>("");
+  // 이미지 확인 모달 상태
+  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
 
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
@@ -107,7 +110,9 @@ export default function PurchaseFirstCompletedCard({
 
   return (
     <div className={baseStyles.card_wrapper}>
-      <article className={baseStyles.applicant_card}>
+      <article
+        className={baseStyles.applicant_card}
+      >
         {/* 프로필 영역 */}
         <div className={contentStyles.profile_section}>
           <div className={contentStyles.profile_image_container}>
@@ -123,15 +128,15 @@ export default function PurchaseFirstCompletedCard({
           </div>
         </div>
 
-        {/* 상단 액션 버튼 - 구매 영수증 확인 */}
+        {/* 상단 액션 버튼 - 구매 영수증 확인 / 이미지 확인 */}
         <button
           className={actionStyles.content_check_button}
           onClick={() => {
             console.log("구매 영수증 확인 클릭", applicant.id);
-            onCheckReceipt?.(applicant.id);
+            setIsReceiptModalOpen(true);
           }}
         >
-          구매 영수증 확인
+          구매영수증 확인
         </button>
 
         {/* 등록 날짜 */}
@@ -189,6 +194,13 @@ export default function PurchaseFirstCompletedCard({
         buttons={["취소", "신고"]}
         on_confirm={handleReportConfirm}
         type="center"
+      />
+
+      {/* 이미지 확인 모달 */}
+      <ReceiptPreviewModal
+        isOpen={isReceiptModalOpen}
+        images={applicant.receiptImages || []}
+        onClose={() => setIsReceiptModalOpen(false)}
       />
     </div>
   );

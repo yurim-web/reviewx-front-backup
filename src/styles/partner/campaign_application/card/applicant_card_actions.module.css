@@ -79,7 +79,7 @@
 .content_check_buttons_wrapper {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 12px;
   margin-top: 4px;
 }
 
