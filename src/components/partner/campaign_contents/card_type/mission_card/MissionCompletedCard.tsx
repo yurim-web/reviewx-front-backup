@@ -35,13 +35,18 @@
 
 "use client";
 
-import { useState } from "react";
-import styles from "@/styles/partner/campaign_application/card/applicant_card_shared.module.css";
+import { useState, useEffect } from "react";
+import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
+import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
+import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
+import { getChannelUrl } from "@/utils/helpers/url";
+import { formatDateForMobile } from "@/utils/formatting/date";
 import type { CampaignApplicant } from "../shared_card/CampaignTypes";
 import ReportModal, {
   type ReportOption,
 } from "@/components/common/modal/ReportModal";
+import ReceiptPreviewModal from "../../ReceiptPreviewModal";
 
 interface MissionCompletedCardProps {
   applicant: CampaignApplicant;
@@ -73,6 +78,22 @@ export default function MissionCompletedCard({
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [selectedReportOption, setSelectedReportOption] = useState<string>("");
   const [otherReportReason, setOtherReportReason] = useState<string>("");
+  // 이미지 확인 모달 상태
+  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // 신고 옵션 정의
   const reportOptions: ReportOption[] = [
@@ -106,25 +127,27 @@ export default function MissionCompletedCard({
     if (onReport) {
       onReport(applicant.id);
     }
-    console.log("신고 사유:", selectedOption, "기타 사유:", otherReason);
+    // console.log("신고 사유:", selectedOption, "기타 사유:", otherReason);
     handleReportModalClose();
   };
 
   return (
-    <div className={styles.card_wrapper}>
-      <article className={styles.applicant_card}>
+    <div className={baseStyles.card_wrapper}>
+      <article
+        className={baseStyles.applicant_card}
+      >
         {/* 프로필 영역 */}
-        <div className={styles.profile_section}>
-          <div className={styles.profile_image_container}>
+        <div className={contentStyles.profile_section}>
+          <div className={contentStyles.profile_image_container}>
             <img
               src={applicant.profileImage || "/images/mypage/profile.svg"}
               alt="프로필"
-              className={styles.profile_image}
+              className={contentStyles.profile_image}
             />
           </div>
-          <div className={styles.profile_info}>
-            <span className={styles.user_type}>{applicant.userType}</span>
-            <span className={styles.nickname}>{applicant.nickname}</span>
+          <div className={contentStyles.profile_info}>
+            <span className={contentStyles.user_type}>{applicant.userType}</span>
+            <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>
 
@@ -132,21 +155,24 @@ export default function MissionCompletedCard({
         {/* contentType에 따라 다른 버튼 표시 */}
         {contentType === "both" ? (
           // 이미지+링크: 두 개의 버튼 세로 배치
-          <div className={styles.content_check_buttons_wrapper}>
+          <div className={actionStyles.content_check_buttons_wrapper}>
             <button
-              className={styles.content_check_button}
+              className={actionStyles.content_check_button}
               onClick={() => {
-                console.log("이미지 확인 클릭", applicant.id);
-                onCheckImage?.(applicant.id);
+                // console.log("이미지 확인 클릭", applicant.id);
+                setIsReceiptModalOpen(true);
               }}
             >
               이미지 확인
             </button>
             <button
-              className={styles.content_check_button}
+              className={actionStyles.content_check_button}
               onClick={() => {
-                console.log("링크 확인 클릭", applicant.id);
-                onCheckLink?.(applicant.id);
+                // console.log("링크 확인 클릭", applicant.id);
+                const url = getChannelUrl(applicant.channel, applicant.channelId);
+                if (url && url !== "#") {
+                  window.open(url, "_blank", "noopener,noreferrer");
+                }
               }}
             >
               링크 확인
@@ -155,10 +181,10 @@ export default function MissionCompletedCard({
         ) : contentType === "image" ? (
           // 이미지만: 이미지 확인 버튼 하나만
           <button
-            className={styles.content_check_button}
+            className={actionStyles.content_check_button}
             onClick={() => {
-              console.log("이미지 확인 클릭", applicant.id);
-              onCheckImage?.(applicant.id);
+              // console.log("이미지 확인 클릭", applicant.id);
+              setIsReceiptModalOpen(true);
             }}
           >
             이미지 확인
@@ -166,10 +192,13 @@ export default function MissionCompletedCard({
         ) : (
           // 링크만: 링크 확인 버튼 하나만
           <button
-            className={styles.content_check_button}
+            className={actionStyles.content_check_button}
             onClick={() => {
-              console.log("링크 확인 클릭", applicant.id);
-              onCheckLink?.(applicant.id);
+              // console.log("링크 확인 클릭", applicant.id);
+              const url = getChannelUrl(applicant.channel, applicant.channelId);
+              if (url && url !== "#") {
+                window.open(url, "_blank", "noopener,noreferrer");
+              }
             }}
           >
             링크 확인
@@ -177,18 +206,28 @@ export default function MissionCompletedCard({
         )}
 
         {/* 등록/수정 날짜 */}
-        <div className={styles.registration_info}>
-          <span>
-            {registrationDate
-              ? `${registrationDate} ${dateLabel}`
-              : `${applicant.registrationDate} ${dateLabel}`}
-          </span>
+        <div className={actionStyles.registration_info}>
+          {dateLabel === "지각 등록" ? (
+            <span className={actionStyles.late_label}>
+              {isMobile
+                ? formatDateForMobile(registrationDate || applicant.registrationDate)
+                : (registrationDate || applicant.registrationDate)}{" "}
+              <span className={actionStyles.late_text_full}>지각 등록</span>
+              <span className={actionStyles.late_text_short}>지각</span>
+            </span>
+          ) : (
+            <span>
+              {registrationDate
+                ? `${isMobile ? formatDateForMobile(registrationDate) : registrationDate} ${dateLabel}`
+                : `${isMobile ? formatDateForMobile(applicant.registrationDate) : applicant.registrationDate} ${dateLabel}`}
+            </span>
+          )}
         </div>
 
         {/* 확인 완료 버튼 (비활성화, 핑크 배경) */}
-        <div className={styles.action_button_section}>
+        <div className={actionStyles.action_button_section}>
           <button
-            className={`${styles.action_button} ${styles.disabled_button}`}
+            className={`${actionStyles.action_button} ${actionStyles.disabled_button}`}
             disabled
             style={{
               backgroundColor: "rgba(255, 86, 148, 0.1)",
@@ -203,16 +242,16 @@ export default function MissionCompletedCard({
       </article>
 
       {/* 신고 버튼 footer (연장 버튼 없음) */}
-      <div className={styles.extension_report_footer}>
+      <div className={actionStyles.extension_report_footer}>
         <button
-          className={styles.report_button}
+          className={actionStyles.report_button}
           onClick={handleReportClick}
           aria-label={`${applicant.nickname} 신고`}
         >
           <img
             src="/images/management_page/report_icon.svg"
             alt="신고 아이콘"
-            className={styles.report_icon}
+            className={actionStyles.report_icon}
           />
           <span>신고</span>
         </button>
@@ -231,6 +270,13 @@ export default function MissionCompletedCard({
         buttons={["취소", "신고"]}
         on_confirm={handleReportConfirm}
         type="center"
+      />
+
+      {/* 이미지 확인 모달 */}
+      <ReceiptPreviewModal
+        isOpen={isReceiptModalOpen}
+        images={applicant.receiptImages || []}
+        onClose={() => setIsReceiptModalOpen(false)}
       />
     </div>
   );

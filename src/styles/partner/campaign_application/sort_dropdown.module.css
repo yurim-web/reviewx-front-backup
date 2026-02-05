@@ -101,8 +101,29 @@
 .sort_option_radio {
   width: 20px;
   height: 20px;
-  accent-color: #444444;
+  border: 1px solid #d9d9d9;
+  border-radius: 50%;
   cursor: pointer;
+  appearance: none;
+  background: white;
+  position: relative;
+}
+
+.sort_option_radio:checked {
+  background: #ffffff;
+  border-color: #444444; /* 얇은 회색 테두리 */
+}
+
+.sort_option_radio:checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #555; /* 짙은 회색으로 채워진 안쪽 원 */
 }
 
 /* 정렬 옵션 라벨 */
@@ -152,4 +173,60 @@
 /* 모달 열렸을 때 화살표 회전 */
 .sort_modal_trigger_open .sort_trigger_arrow {
   transform: rotate(180deg);
+}
+
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* 모달 콘텐츠 - 모바일 */
+  .sort_modal_content {
+    max-width: 100%;
+    max-height: 662px;
+    border-radius: 24px 24px 0 0;
+    padding: 32px 24px;
+    overflow: hidden;
+  }
+
+  /* 모달 헤더 - 모바일 */
+  .sort_modal_header {
+    padding: 0 0 24px 0;
+  }
+
+  /* 모달 제목 - 모바일 */
+  .sort_modal_title {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 18px;
+    letter-spacing: -0.36px;
+  }
+
+  /* 모달 닫기 버튼 - 모바일 */
+  .sort_modal_close_button {
+    width: 18px;
+    height: 18px;
+  }
+
+  .sort_modal_close_button img {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* 모달 바디 - 모바일 */
+  .sort_modal_body {
+    padding: 0;
+    overflow-y: visible;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  /* 정렬 옵션 리스트 */
+.sort_options_vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
 }

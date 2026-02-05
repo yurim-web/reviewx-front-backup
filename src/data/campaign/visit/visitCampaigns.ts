@@ -588,6 +588,35 @@ export const visitCampaigns: VisitCampaignData[] = [
       "keyword",
     ],
   },
+  // visit_test: 방문형 테스트 (유저단 노출용)
+  {
+    id: "visit_test_all_cases",
+    title: "[테스트] 방문형 모든 카드 경우의 수",
+    category: "방문형",
+    image: "/images/main/campaign_img/eximg_4.png",
+    subcategory: "식품",
+    region: "서울 > 강남구",
+    points: 22000,
+    description: "테스트용 방문형 캠페인",
+    recruitment: { current: 7, total: 10 },
+    schedule: "",
+    dayCount: "D-6",
+    registeredAt: "2026-01-18T10:00:00.000Z",
+    detailedSchedule: {
+      applicationStart: "2026-02-01",
+      applicationEnd: "2026-02-28",
+      announcement: "2026-03-02",
+      purchasePeriod: "2026-02-04 ~ 2026-05-05",
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    channel: "네이버블로그",
+    keyword: "#테스트 #방문형 #맛집",
+    guidelineTexts: [
+      "방문형 테스트 캠페인입니다.",
+      "링크 확인 기능을 테스트할 수 있습니다.",
+    ],
+    requirements: ["text_1800", "photo_12", "video_1_150", "keyword"],
+  },
 ];
 
 /**
@@ -886,7 +915,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           nickname: "부자마님영",
           channelId: "insta_001",
           channel: "인스타그램",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
         {
           id: "content_visit_2_waiting_002",
@@ -896,7 +925,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           nickname: "람",
           channelId: "insta_002",
           channel: "인스타그램",
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
         {
           id: "content_visit_2_waiting_003",
@@ -906,7 +935,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           nickname: "김덮밥",
           channelId: "insta_003",
           channel: "인스타그램",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
       ],
       reviewing: [
@@ -921,7 +950,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           updatedAt: "2025-12-19T10:00:00.000Z",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
         {
           id: "content_visit_2_reviewing_002",
@@ -934,7 +963,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           updatedAt: "2025-12-20T11:00:00.000Z",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
       ],
       completed: [
@@ -948,7 +977,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "인스타그램",
           updatedAt: "2025-12-16T09:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
         {
           id: "content_visit_2_completed_002",
@@ -960,7 +989,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "인스타그램",
           updatedAt: "2025-12-17T10:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
         {
           id: "content_visit_2_completed_003",
@@ -972,7 +1001,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "인스타그램",
           updatedAt: "2025-12-18T11:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
         {
           id: "content_visit_2_completed_004",
@@ -984,7 +1013,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "인스타그램",
           updatedAt: "2025-12-19T12:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
         {
           id: "content_visit_2_completed_005",
@@ -996,7 +1025,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "인스타그램",
           updatedAt: "2025-12-20T13:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
         {
           id: "content_visit_2_completed_006",
@@ -1008,7 +1037,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "인스타그램",
           updatedAt: "2025-12-21T14:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
         {
           id: "content_visit_2_completed_007",
@@ -1020,7 +1049,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "인스타그램",
           updatedAt: "2025-12-22T15:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
         {
           id: "content_visit_2_completed_008",
@@ -1032,7 +1061,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "인스타그램",
           updatedAt: "2025-12-23T16:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
       ],
     },
@@ -1179,7 +1208,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           nickname: "쇼핑몰대기리뷰어A",
           channelId: "blog_005",
           channel: "네이버블로그",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
       ],
       reviewing: [
@@ -1194,7 +1223,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           updatedAt: "2025-11-25T10:00:00.000Z",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
         {
           id: "content_visit_5_002",
@@ -1207,7 +1236,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           updatedAt: "2025-11-26T11:00:00.000Z",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
       ],
       completed: [
@@ -1221,7 +1250,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "네이버블로그",
           updatedAt: "2025-11-27T12:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
         {
           id: "content_visit_5_004",
@@ -1233,7 +1262,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "네이버블로그",
           updatedAt: "2025-11-28T13:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
       ],
     },
@@ -1255,7 +1284,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           dailyVisits: 160,
           totalVisits: 480000,
           neighbors: 1100,
-          memo: "미술관 방문 리뷰 전문 리뷰어입니다.",
+          memo: "미술관 방문 리뷰 전문 리뷰어입니다.미술관 방문 리뷰 전문 리뷰어입니다.미술관 방문 리뷰 전문 리뷰어입니다.미술관 방문 리뷰 전문 리뷰어입니다.미술관 방문 리뷰 전문 리뷰어입니다.",
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-19",
@@ -1319,7 +1348,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           nickname: "미술관방문리뷰어A",
           channelId: "blog_036",
           channel: "네이버블로그",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
         {
           id: "content_visit_6_waiting_002",
@@ -1329,7 +1358,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           nickname: "문화인플루언서B",
           channelId: "blog_037",
           channel: "네이버블로그",
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
       ],
       reviewing: [
@@ -1344,7 +1373,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           updatedAt: "2025-12-20T10:00:00.000Z",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
       ],
       completed: [
@@ -1358,7 +1387,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "네이버블로그",
           updatedAt: "2025-12-19T09:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
         {
           id: "content_visit_6_completed_002",
@@ -1370,7 +1399,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "네이버블로그",
           updatedAt: "2025-12-22T17:37:00.000Z",
           isLate: true,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
       ],
     },
@@ -1411,7 +1440,38 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           registrationDate: "2025-12-29",
         },
       ],
-      selectedApplicants: [],
+      selectedApplicants: [
+        {
+          id: "sel_visit_7_인스타그램_001",
+          Id: "selected_visit_7_001",
+          nickname: "선정된스파리뷰어1",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 300,
+          totalVisits: 900000,
+          neighbors: 2500,
+          memo: "이미 선정된 우수 리뷰어입니다.",
+          selectionStatus: "선정하기" as const,
+          channel: "인스타그램",
+          registrationDate: "2025-12-25",
+        },
+        {
+          id: "sel_visit_7_인스타그램_002",
+          Id: "selected_visit_7_002",
+          nickname: "선정된힐링인플루언서1",
+          userType: "인플루언서" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 350,
+          totalVisits: 1050000,
+          neighbors: 3000,
+          memo: "이미 선정된 우수 인플루언서입니다.",
+          selectionStatus: "선정하기" as const,
+          channel: "인스타그램",
+          registrationDate: "2025-12-26",
+        },
+      ],
     },
     contents: {
       waiting: [
@@ -1423,7 +1483,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           nickname: "스파방문리뷰어A",
           channelId: "insta_014",
           channel: "인스타그램",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
         {
           id: "content_visit_7_waiting_002",
@@ -1433,7 +1493,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           nickname: "힐링인플루언서B",
           channelId: "insta_015",
           channel: "인스타그램",
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
       ],
       reviewing: [
@@ -1448,7 +1508,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           updatedAt: "2025-12-27T10:00:00.000Z",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
       ],
       completed: [
@@ -1462,7 +1522,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "인스타그램",
           updatedAt: "2025-12-25T09:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
         {
           id: "content_visit_7_completed_002",
@@ -1474,7 +1534,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "인스타그램",
           updatedAt: "2025-12-26T10:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
       ],
     },
@@ -1500,7 +1560,53 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           registrationDate: "2025-12-12",
         },
       ],
-      selectedApplicants: [],
+      selectedApplicants: [
+        {
+          id: "sel_visit_8_유튜브_001",
+          Id: "selected_visit_8_001",
+          nickname: "선정된반려동물카페리뷰어1",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 200,
+          totalVisits: 600000,
+          neighbors: 1500,
+          memo: "이미 선정된 우수 리뷰어입니다.",
+          selectionStatus: "선정하기" as const,
+          channel: "유튜브",
+          registrationDate: "2025-12-10",
+        },
+        {
+          id: "sel_visit_8_유튜브_002",
+          Id: "selected_visit_8_002",
+          nickname: "선정된반려동물인플루언서1",
+          userType: "인플루언서" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 280,
+          totalVisits: 840000,
+          neighbors: 2400,
+          memo: "이미 선정된 우수 인플루언서입니다.",
+          selectionStatus: "선정하기" as const,
+          channel: "유튜브",
+          registrationDate: "2025-12-11",
+        },
+        {
+          id: "sel_visit_8_유튜브_003",
+          Id: "selected_visit_8_003",
+          nickname: "선정된반려동물리뷰어2",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 180,
+          totalVisits: 550000,
+          neighbors: 1600,
+          memo: "반려동물 관련 콘텐츠 전문 리뷰어입니다.",
+          selectionStatus: "선정하기" as const,
+          channel: "유튜브",
+          registrationDate: "2025-12-12",
+        },
+      ],
     },
     contents: {
       waiting: [],
@@ -1516,7 +1622,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           updatedAt: "2025-12-05T10:00:00.000Z",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
       ],
       completed: [
@@ -1530,7 +1636,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "유튜브",
           updatedAt: "2025-12-07T11:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
         {
           id: "content_visit_8_003",
@@ -1542,7 +1648,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "유튜브",
           updatedAt: "2025-12-07T12:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
       ],
     },
@@ -1612,7 +1718,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           nickname: "놀이공원방문리뷰어A",
           channelId: "youtube_014",
           channel: "유튜브",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
           extension_request_reason:
             "개인 사정으로 인해 등록 기한을 연장해주시면 감사하겠습니다.",
         },
@@ -1625,7 +1731,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           nickname: "놀이공원방문리뷰어연장B",
           channelId: "youtube_015",
           channel: "유튜브",
-          profileImage: "/images/test_img/eximg2.png",
+          profileImage: "",
           extension_request_reason:
             "촬영 일정이 지연되어 등록 기한을 3일만 연장해주시면 감사하겠습니다.",
         },
@@ -1638,7 +1744,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           nickname: "놀이공원방문인플루언서연장C",
           channelId: "instagram_020",
           channel: "인스타그램",
-          profileImage: "/images/test_img/eximg4.png",
+          profileImage: "",
           extension_request_reason:
             "개인 일정으로 인해 콘텐츠 등록이 어려워 등록 기한 연장을 요청드립니다.",
         },
@@ -1651,7 +1757,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           nickname: "놀이공원방문인플루언서B",
           channelId: "instagram_019",
           channel: "인스타그램",
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
         // 3️⃣ 기한 연장 승인 후 상태 (콘텐츠 미등록 + 기한 연장 표시)
         //    - 실제 기한/연장된 기한 날짜는 페이지 컴포넌트에서 하드코딩으로 전달합니다
@@ -1663,7 +1769,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           nickname: "놀이공원방문리뷰어C",
           channelId: "blog_100",
           channel: "네이버블로그",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
         // 4️⃣ 반려 처리된 상태 (콘텐츠 반려 처리 버튼 노출)
         {
@@ -1675,7 +1781,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channelId: "blog_101",
           channel: "네이버블로그",
           isRejected: true,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
       ],
       reviewing: [
@@ -1691,7 +1797,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "유튜브",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
         // 2️⃣ 수정 (수정 라벨 - 회색 텍스트)
         //    - updatedAt이 있고 isLate가 false인 경우
@@ -1706,7 +1812,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           updatedAt: "2025-12-29T10:00:00.000Z",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
         // 3️⃣ 지각 등록 (지각 등록 라벨 - 빨간색 텍스트)
         //    - isLate가 true인 경우
@@ -1721,7 +1827,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           updatedAt: "2025-12-30T15:30:00.000Z",
           isRejected: false,
           isLate: true,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
         // 4️⃣ 최초 등록 (추가 테스트용)
         {
@@ -1734,7 +1840,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "인스타그램",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
         // 5️⃣ 수정 (추가 테스트용)
         {
@@ -1748,7 +1854,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           updatedAt: "2025-12-30T09:20:00.000Z",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
         // 6️⃣ 지각 등록 (추가 테스트용)
         {
@@ -1762,7 +1868,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           updatedAt: "2025-12-31T10:45:00.000Z",
           isRejected: false,
           isLate: true,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
       ],
       completed: [
@@ -1776,7 +1882,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "유튜브",
           updatedAt: "2025-12-27T09:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
         {
           id: "content_visit_9_completed_002",
@@ -1788,7 +1894,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "유튜브",
           updatedAt: "2025-12-28T10:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
         {
           id: "content_visit_9_completed_003",
@@ -1800,7 +1906,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "인스타그램",
           updatedAt: "2025-12-26T11:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
         {
           id: "content_visit_9_completed_004",
@@ -1812,7 +1918,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "네이버블로그",
           updatedAt: "2025-12-25T15:00:00.000Z",
           isLate: true,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
         {
           id: "content_visit_9_completed_005",
@@ -1824,7 +1930,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "유튜브",
           updatedAt: "2025-12-24T17:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
         {
           id: "content_visit_9_completed_006",
@@ -1836,7 +1942,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "인스타그램",
           updatedAt: "2025-12-23T19:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
         {
           id: "content_visit_9_completed_007",
@@ -1848,7 +1954,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "네이버블로그",
           updatedAt: "2025-12-22T21:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
         {
           id: "content_visit_9_completed_008",
@@ -1860,7 +1966,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "유튜브",
           updatedAt: "2025-12-21T23:00:00.000Z",
           isLate: true,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
         {
           id: "content_visit_9_completed_009",
@@ -1872,7 +1978,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "인스타그램",
           updatedAt: "2025-12-20T10:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
         {
           id: "content_visit_9_completed_010",
@@ -1884,7 +1990,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "네이버블로그",
           updatedAt: "2025-12-19T12:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
         {
           id: "content_visit_9_completed_010",
@@ -1896,7 +2002,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "네이버블로그",
           updatedAt: "2025-12-19T12:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
         {
           id: "content_visit_9_completed_010",
@@ -1908,7 +2014,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "네이버블로그",
           updatedAt: "2025-12-19T12:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
         {
           id: "content_visit_9_completed_010",
@@ -1920,7 +2026,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "네이버블로그",
           updatedAt: "2025-12-19T12:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
       ],
     },
@@ -2017,6 +2123,126 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
     applicantData: {
       applicants: [],
       selectedApplicants: [],
+    },
+  },
+  // visit_test: 모든 경우의 수 테스트 캠페인
+  {
+    ...visitCampaigns[0],
+    id: "visit_test_all_cases",
+    title: "[테스트] 방문형 모든 카드 경우의 수",
+    recruitment: {
+      current: 7,
+      total: 10,
+    },
+    detailedSchedule: {
+      applicationStart: "2026-02-01",
+      applicationEnd: "2026-02-28",
+      announcement: "2026-03-02",
+      purchasePeriod: "2026-01-30 ~ 2026-02-04",
+      registrationPeriod: "2026-02-04 ~ 2026-05-05",
+    },
+    applicantData: {
+      applicants: [],
+      selectedApplicants: [],
+    },
+    contents: {
+      waiting: [
+        // 경우의 수 1: 콘텐츠 미등록 (기한 내)
+        {
+          id: "visit_test_waiting_001",
+          createdAt: "2026-02-01T10:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "콘텐츠미등록유저",
+          channelId: "blog_test_001",
+          channel: "네이버블로그",
+          profileImage: "",
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 경우의 수 2: 연장 요청됨
+        {
+          id: "visit_test_waiting_002",
+          createdAt: "2026-02-02T11:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "연장요청유저",
+          channelId: "blog_test_002",
+          channel: "네이버블로그",
+          profileImage: "",
+          extension_request_reason: "방문 일정 조율 중이라 3일 연장 요청드립니다.",
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 경우의 수 3: 반려됨
+        {
+          id: "visit_test_waiting_003",
+          createdAt: "2026-02-03T12:00:00.000Z",
+          status: "검수" as const,
+          userType: "인플루언서" as const,
+          nickname: "반려당한유저",
+          channelId: "blog_test_001",
+          channel: "네이버블로그",
+          profileImage: "",
+          isRejected: true,
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 경우의 수 4: 신고됨
+        {
+          id: "visit_test_waiting_004",
+          createdAt: "2026-02-04T13:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "신고당한유저",
+          channelId: "blog_test_003",
+          channel: "네이버블로그",
+          profileImage: "",
+          isReported: true,
+          reportedDate: "2026-02-04T14:30:00.000Z",
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+      ],
+      reviewing: [
+        // 확인 탭 경우의 수 1: 검수 중 상태
+        {
+          id: "visit_test_reviewing_001",
+          createdAt: "2026-02-01T09:00:00.000Z",
+          status: "검수중" as const,
+          userType: "인플루언서" as const,
+          nickname: "검수중유저",
+          channelId: "blog_test_002",
+          channel: "네이버블로그",
+          profileImage: "",
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+      ],
+      completed: [
+        // 완료 탭 경우의 수 1: 승인 완료 상태
+        {
+          id: "visit_test_completed_001",
+          createdAt: "2026-01-28T08:00:00.000Z",
+          status: "완료" as const,
+          userType: "리뷰어" as const,
+          nickname: "승인완료유저",
+          channelId: "blog_test_004",
+          channel: "네이버블로그",
+          profileImage: "",
+          updatedAt: "2026-01-29T09:00:00.000Z",
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 완료 탭 경우의 수 2: 지각등록 승인 완료 상태
+        {
+          id: "visit_test_completed_002",
+          createdAt: "2026-02-04T15:00:00.000Z",
+          status: "완료" as const,
+          userType: "인플루언서" as const,
+          nickname: "지각제출유저",
+          channelId: "blog_test_003",
+          channel: "네이버블로그",
+          profileImage: "",
+          updatedAt: "2026-02-04T16:00:00.000Z",
+          isLateSubmission: true,
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+      ],
     },
   },
 ];

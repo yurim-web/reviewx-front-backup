@@ -120,7 +120,7 @@ export default function BusinessDocumentUpload({
         // const formData = new FormData();
         // formData.append("businessDocument", file);
         // await uploadBusinessDocument(formData);
-        console.log("사업자등록증 파일 선택됨:", file.name);
+        // console.log("사업자등록증 파일 선택됨:", file.name);
       }
     };
 

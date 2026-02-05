@@ -186,7 +186,7 @@ export default function TextareaModal({
             rows={5}
             readOnly={readOnly}
             disabled={readOnly}
-            has_error={readOnly || is_reject_variant || has_error}
+            has_error={readOnly || has_error}
             className={`${readOnly ? styles.modal_textarea_readonly : ""} ${
               is_reject_variant ? styles.modal_textarea_reject : ""
             }`.trim()}
@@ -200,16 +200,16 @@ export default function TextareaModal({
                 {/* 두 개 버튼: 취소/거절, 확인/승인 */}
                 {is_extend_variant ? (
                   <>
-                    {/* 연장 모달: 거절(빨간색), 승인(회색) */}
+                    {/* 연장 모달: 거절(빨간색 #FF2626), 승인(초록색) */}
                     <button
                       onClick={handle_cancel}
-                      className={styles.modal_footer_button_reject}
+                      className={styles.modal_footer_button_extend_reject}
                     >
                       {buttons[0]}
                     </button>
                     <button
                       onClick={handle_confirm}
-                      className={styles.modal_footer_button_confirm}
+                      className={styles.modal_footer_button_extend}
                     >
                       {buttons[1]}
                     </button>

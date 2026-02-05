@@ -174,7 +174,7 @@ export default function CampaignApplicationLayout({
     : "";
 
   return (
-    <>
+    <div className={styles.campaign_application_wrapper}>
       {/* 페이지 제목 - 공용 컴포넌트 */}
       {/* 📌 컴포넌트 재사용:
           - PageHeader 컴포넌트를 사용하여 일관된 페이지 제목 스타일을 유지합니다
@@ -394,6 +394,6 @@ export default function CampaignApplicationLayout({
         buttons={["확인"]}
         type="center"
       />
-    </>
+    </div>
   );
 }

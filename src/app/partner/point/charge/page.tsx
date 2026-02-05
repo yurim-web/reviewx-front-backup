@@ -176,7 +176,7 @@ export default function PartnerPointChargePage() {
     const isSuccess = Math.random() > 0.3; // 70% 성공률
 
     if (isSuccess) {
-      console.log('포인트 충전 - user.id:', user.id, 'chargePoints:', chargePoints);
+      // console.log('포인트 충전 - user.id:', user.id, 'chargePoints:', chargePoints);
       // 포인트 충전 처리
       addPointCharge(user.id, chargePoints, '카드 결제를 통한 포인트 충전');
 
@@ -329,7 +329,11 @@ export default function PartnerPointChargePage() {
       <PartnerSubHeader />
 
       {/* 메인 컨텐츠 */}
-      <main className={styles.main_content}>
+      <main
+        className={`${styles.main_content} ${
+          activeTab === "card" ? styles.main_content_with_fixed_button : ""
+        }`}
+      >
         <div className={styles.container}>
           {/* 제목 */}
           <PageTitle title="포인트 충전" />
@@ -371,7 +375,7 @@ export default function PartnerPointChargePage() {
                 <div className={styles.account_info_row}>
                   <div className={styles.account_info_box}>
                     <span className={styles.account_text}>
-                      {partnerInfo.bankAccount}
+                      국민은행 659401-01-490957<br className={styles.mobile_br} /> (주)청명종합광고기획
                     </span>
                     <button
                       className={styles.copy_button}
@@ -898,8 +902,14 @@ export default function PartnerPointChargePage() {
             </section>
           )}
 
-          {/* 페이지 하단 단일 버튼 (기획서와 동일하게 고정 아님) */}
-          <div className={styles.submit_button_section}>
+          {/* 페이지 하단 단일 버튼
+              - 무통장 입금: 일반 흐름 (고정 X)
+              - 신용카드 결제: 화면 하단 고정 (PC/모바일) */}
+          <div
+            className={`${styles.submit_button_section} ${
+              activeTab === "card" ? styles.submit_button_fixed : ""
+            }`}
+          >
             <button
               className={`${styles.submit_button} ${
                 !isButtonEnabled ? styles.disabled : ""

@@ -315,7 +315,7 @@
     width: calc(100% - 40px); /* Figma: 좌우 20px 여백 */
     max-width: calc(100% - 40px);
     border-radius: 12px;
-    padding: 32px 24px; /* Figma: 32px 상하, 24px 좌우 */
+    padding: 32px 20px; /* Figma: 32px 상하, 24px 좌우 */
     display: flex;
     box-sizing: border-box;
     position: relative;
@@ -338,19 +338,8 @@
 
   /* 모달 제목 */
   .modal_title {
-    color: #444;
-    font-size: 18px;
-    font-weight: 600;
-    line-height: 18px;
-    letter-spacing: -0.36px;
+    
     padding-bottom: 24px; /* Figma: 24px */
-  }
-
-  /* 옵션 리스트 */
-  .options_list {
-    display: flex;
-    flex-direction: column;
-    gap: 24px; /* Figma: 24px */
   }
 
   /* 옵션 아이템 */
@@ -407,9 +396,7 @@
 
   /* 모달 푸터 컨테이너 */
   .modal_footer {
-    display: flex;
-    gap: 8px; /* Figma: 8px */
-    margin-top: auto;
+
     padding-top: 24px; /* Figma: 24px */
   }
 
@@ -433,22 +420,5 @@
     justify-content: center;
   }
 
-  /* 모달 푸터 취소 버튼 */
-  .modal_footer_button_cancel {
-    background-color: #f6f6f6;
-    color: #444;
-  }
-
-  /* 모달 푸터 확인 버튼 (신고 버튼) */
-  .modal_footer_button_confirm {
-    background-color: #ff2626;
-    color: #ffffff;
-  }
-
-  /* 하나 버튼 스타일 */
-  .modal_footer_button_single {
-    width: 100%;
-    background-color: #f6f6f6;
-    color: #444444;
-  }
+ 
 }

@@ -99,3 +99,14 @@ export const formatRelativeTime = (date: Date | string): string => {
   if (diffMins > 0) return `${diffMins}분 전`;
   return '방금 전';
 };
+
+/**
+ * 등록 날짜를 모바일용으로 포맷팅 (시간 제거)
+ *
+ * @param dateString - 날짜 문자열 (예: "2025-11-02 17:37" 또는 "2025-11-02")
+ * @returns 날짜만 포함된 문자열 (예: "2025-11-02")
+ */
+export const formatDateForMobile = (dateString: string): string => {
+  // 날짜에서 시간 부분 제거 (공백 이전까지만 추출)
+  return dateString.split(' ')[0];
+};

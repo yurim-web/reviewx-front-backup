@@ -9,8 +9,8 @@
 
 /* 메인 캠페인 정보 카드 */
 .campaign_info_card {
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
+  border: 1px solid #E5E5E5;
+  border-radius: 8px;
   padding: 24px;
   display: flex;
   flex-direction: column;
@@ -28,7 +28,6 @@
 .campaign_image {
   width: 92px;
   height: 92px;
-  background-color: #d9d9d9;
   border-radius: 4px;
   flex-shrink: 0;
 }
@@ -71,6 +70,7 @@
 .campaign_category img {
   width: 20px;
   height: 20px;
+  box-shadow: 0 0 4px 0 rgba(68, 68, 68, 0.10);
 }
 
 /* 캠페인 상태 배지 */
@@ -113,6 +113,16 @@
   padding-top: 16px;
 }
 
+/* PC용 campaign_notice (campaign_application 내부) */
+.campaign_notice_pc {
+  display: block;
+}
+
+/* 모바일용 campaign_notice (campaign_info_card 하위) */
+.campaign_notice_mobile {
+  display: none;
+}
+
 /* 캠페인 일정 영역 */
 .campaign_schedule {
   display: flex;
@@ -132,7 +142,7 @@
 
 /* 일정 라벨 */
 .schedule_label {
-  color: #848484;
+  color: #444444;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
@@ -141,7 +151,7 @@
 
 /* 일정 값 */
 .schedule_value {
-  color: #848484;
+  color: #444444;
   text-align: right;
   font-size: 14px;
   font-weight: 500;
@@ -183,12 +193,10 @@
 
   /* 메인 캠페인 정보 카드 */
   .campaign_info_card {
-    border: 1px solid #e5e5e5; /* Figma: border-color */
-    border-radius: 8px;
-    padding: 20px; /* Figma: 20px */
+    padding: 20px; 
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Figma: 20px */
+    gap: 16px;
   }
 
   /* 상단 영역 (이미지 + 상세정보) */
@@ -219,8 +227,8 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 6px; /* Figma: 6px */
-    min-width: 0; /* 텍스트 ellipsis를 위한 설정 */
+    gap: 14px; 
+    min-width: 0; 
   }
 
   /* 헤더 (카테고리 + 상태) */
@@ -291,41 +299,26 @@
     margin-top: 0;
   }
 
+  /* PC용 campaign_notice 숨김 */
+  .campaign_notice_pc {
+    display: none;
+  }
+
+  /* 모바일용 campaign_notice 표시 */
+  .campaign_notice_mobile {
+    display: block;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
   /* 캠페인 일정 영역 */
   .campaign_schedule {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    background: #f9f9f9;
     padding: 16px;
-    border-radius: 4px;
   }
 
-  /* 일정 항목 */
-  .schedule_item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
 
-  /* 일정 라벨 */
-  .schedule_label {
-    color: #848484;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 14px;
-    letter-spacing: -0.28px;
-  }
 
-  /* 일정 값 */
-  .schedule_value {
-    color: #848484;
-    text-align: right;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 14px;
-    letter-spacing: -0.28px;
-  }
+
 
   /* 포인트 스타일 - 모집 인원, 등록 기간 */
   .schedule_label_point {

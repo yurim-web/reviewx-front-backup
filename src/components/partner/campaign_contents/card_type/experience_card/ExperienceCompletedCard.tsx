@@ -14,14 +14,18 @@
 
 "use client";
 
-import { useState } from "react";
-import styles from "@/styles/partner/campaign_application/card/applicant_card_shared.module.css";
+import { useState, useEffect } from "react";
+import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
+import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
+import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
 import { getChannelUrl } from "@/utils/helpers/url";
+import { formatDateForMobile } from "@/utils/formatting/date";
 import type { ExperienceApplicant } from "./ExperienceTypes";
 import ReportModal, {
   type ReportOption,
 } from "@/components/common/modal/ReportModal";
+import ReceiptPreviewModal from "../../ReceiptPreviewModal";
 
 interface ExperienceCompletedCardProps {
   /** 카드에 표시할 신청자 정보 */
@@ -59,6 +63,22 @@ export default function ExperienceCompletedCard({
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [selectedReportOption, setSelectedReportOption] = useState<string>("");
   const [otherReportReason, setOtherReportReason] = useState<string>("");
+  // 이미지 확인 모달 상태
+  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // 신고 옵션 정의
   const reportOptions: ReportOption[] = [
@@ -92,7 +112,7 @@ export default function ExperienceCompletedCard({
     if (onReport) {
       onReport(applicant.id);
     }
-    console.log("신고 사유:", selectedOption, "기타 사유:", otherReason);
+    // console.log("신고 사유:", selectedOption, "기타 사유:", otherReason);
     handleReportModalClose();
   };
 
@@ -100,21 +120,23 @@ export default function ExperienceCompletedCard({
   const hasFooter = true;
 
   return (
-    <div className={styles.card_wrapper}>
+    <div className={baseStyles.card_wrapper}>
       {/* 카드 본문 */}
-      <article className={styles.applicant_card}>
+      <article
+        className={baseStyles.applicant_card}
+      >
         {/* 프로필 영역 */}
-        <div className={styles.profile_section}>
-          <div className={styles.profile_image_container}>
+        <div className={contentStyles.profile_section}>
+          <div className={contentStyles.profile_image_container}>
             <img
               src={applicant.profileImage || "/images/mypage/profile.svg"}
               alt="프로필"
-              className={styles.profile_image}
+              className={contentStyles.profile_image}
             />
           </div>
-          <div className={styles.profile_info}>
-            <span className={styles.user_type}>{applicant.userType}</span>
-            <span className={styles.nickname}>{applicant.nickname}</span>
+          <div className={contentStyles.profile_info}>
+            <span className={contentStyles.user_type}>{applicant.userType}</span>
+            <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>
 
@@ -124,17 +146,17 @@ export default function ExperienceCompletedCard({
             - getChannelUrl 유틸리티 함수를 사용하여 올바른 URL을 생성합니다
             - 새 창에서 링크를 엽니다 (target="_blank")
         */}
-        <div className={styles.channel_section}>
+        <div className={contentStyles.channel_section}>
           <img
             src={channel_icon_src}
             alt={`${applicant.channel} 채널`}
-            className={styles.channel_icon}
+            className={contentStyles.channel_icon}
           />
           <a
             href={getChannelUrl(applicant.channel, applicant.channelId)}
             target="_blank"
             rel="noopener noreferrer"
-            className={styles.applicant_id}
+            className={contentStyles.applicant_id}
             onClick={(e) => {
               // 📌 링크 클릭 핸들러:
               // - URL이 유효하지 않은 경우 클릭 방지
@@ -149,22 +171,47 @@ export default function ExperienceCompletedCard({
           </a>
         </div>
 
-        {/* 링크 확인 */}
-        <button
-          className={styles.content_check_button}
-          onClick={() => onContentCheck(applicant.id)}
-          aria-label={`${applicant.nickname} 콘텐츠 확인하기`}
-        >
-          링크 확인
-        </button>
+        {/* 링크 확인 / 이미지 확인 버튼 */}
+        {applicant.receiptImages && applicant.receiptImages.length > 0 ? (
+          <button
+            className={actionStyles.content_check_button}
+            onClick={() => setIsReceiptModalOpen(true)}
+            aria-label={`${applicant.nickname} 이미지 확인하기`}
+          >
+            이미지 확인
+          </button>
+        ) : (
+          <button
+            className={actionStyles.content_check_button}
+            onClick={() => {
+              const url = getChannelUrl(applicant.channel, applicant.channelId);
+              if (url && url !== "#") {
+                window.open(url, "_blank", "noopener,noreferrer");
+              }
+            }}
+            aria-label={`${applicant.nickname} 콘텐츠 확인하기`}
+          >
+            링크 확인
+          </button>
+        )}
 
         {/* 등록/수정 일시 */}
-        <div className={styles.registration_info}>
-          <span>
-            {applicant.updatedAt
-              ? `${applicant.updatedAt} ${dateLabel}`
-              : `${applicant.registrationDate} ${dateLabel}`}
-          </span>
+        <div className={actionStyles.registration_info}>
+          {dateLabel === "지각 등록" ? (
+            <span className={actionStyles.late_label}>
+              {isMobile
+                ? formatDateForMobile(applicant.updatedAt || applicant.registrationDate)
+                : (applicant.updatedAt || applicant.registrationDate)}{" "}
+              <span className={actionStyles.late_text_full}>지각 등록</span>
+              <span className={actionStyles.late_text_short}>지각</span>
+            </span>
+          ) : (
+            <span>
+              {applicant.updatedAt
+                ? `${isMobile ? formatDateForMobile(applicant.updatedAt) : applicant.updatedAt} ${dateLabel}`
+                : `${isMobile ? formatDateForMobile(applicant.registrationDate) : applicant.registrationDate} ${dateLabel}`}
+            </span>
+          )}
         </div>
 
         {/* 버튼 영역: 항상 "확인 완료" 버튼 */}
@@ -173,9 +220,9 @@ export default function ExperienceCompletedCard({
             - 배경: rgba(255, 86, 148, 0.1) (연한 핑크)
             - 텍스트: #ff5694 (핑크색)
         */}
-        <div className={styles.action_button_section}>
+        <div className={actionStyles.action_button_section}>
           <button
-            className={`${styles.action_button} ${styles.completion_confirmed_button}`}
+            className={`${actionStyles.action_button} ${actionStyles.completion_confirmed_button}`}
             disabled
           >
             확인 완료
@@ -185,16 +232,16 @@ export default function ExperienceCompletedCard({
 
       {/* Footer: 완료 탭에서는 항상 "신고" 버튼만 노출 */}
       {hasFooter && (
-        <div className={styles.extension_report_footer}>
+        <div className={actionStyles.extension_report_footer}>
           <button
-            className={styles.report_button}
+            className={actionStyles.report_button}
             onClick={handleReportClick}
             aria-label={`${applicant.nickname} 신고`}
           >
             <img
               src="/images/management_page/report_icon.svg"
               alt="신고 아이콘"
-              className={styles.report_icon}
+              className={actionStyles.report_icon}
             />
             <span>신고</span>
           </button>
@@ -214,6 +261,13 @@ export default function ExperienceCompletedCard({
         buttons={["취소", "신고"]}
         on_confirm={handleReportConfirm}
         type="center"
+      />
+
+      {/* 이미지 확인 모달 */}
+      <ReceiptPreviewModal
+        isOpen={isReceiptModalOpen}
+        images={applicant.receiptImages || []}
+        onClose={() => setIsReceiptModalOpen(false)}
       />
 
       {/* 완료 탭에서는 연장/반려 관련 모달을 사용하지 않습니다 */}

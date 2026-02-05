@@ -463,7 +463,7 @@ const transformApplicantData = (applicant: any) => {
             }
           }
           
-          console.log('✅ [transformApplicantData] user_accounts에서 최신 정보 로드:', {
+          // console.log('✅ [transformApplicantData] user_accounts에서 최신 정보 로드:', {
             id: applicant.id || applicant.userId,
             applicantId: applicant.id,
             applicantUserId: applicant.userId,
@@ -1444,7 +1444,7 @@ export function getSharedCampaigns(): CampaignWithApplicants[] {
     const campaignId = String(campaign.campaignInfo.id);
     const isDeleted = deletedCampaignIds.includes(campaignId);
     if (isDeleted) {
-      console.log(
+      // console.log(
         `[getSharedCampaigns] 삭제된 캠페인 필터링: ID=${campaignId}, 제목=${campaign.campaignInfo.title}`
       );
     }
@@ -1452,11 +1452,11 @@ export function getSharedCampaigns(): CampaignWithApplicants[] {
   });
 
   if (deletedCampaignIds.length > 0) {
-    console.log(
+    // console.log(
       `[getSharedCampaigns] 삭제된 캠페인 ID 목록:`,
       deletedCampaignIds
     );
-    console.log(
+    // console.log(
       `[getSharedCampaigns] 필터링 전 캠페인 수: ${allCampaigns.length}, 필터링 후: ${filteredCampaigns.length}`
     );
   }
@@ -1522,7 +1522,7 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
 
     // 디버깅: mission_11 확인
     if (campaign.campaignInfo.id === "4011") {
-      console.log("[convertToPartnerCampaigns] mission_11 발견:", {
+      // console.log("[convertToPartnerCampaigns] mission_11 발견:", {
         id: campaign.campaignInfo.id,
         title: campaign.campaignInfo.title,
         recruitmentPeriod: campaign.campaignInfo.recruitmentPeriod,
@@ -1815,7 +1815,7 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
               regEnd.setHours(0, 0, 0, 0);
               // 등록 기간이 진행 중인지 확인 (오늘이 등록 기간 내에 있는지)
               isRegistrationPeriodActive = today >= regStart && today <= regEnd;
-              console.log(
+              // console.log(
                 `[convertToPartnerCampaigns] 등록 기간 체크: ${
                   campaign.campaignInfo.id
                 } - ${
@@ -1827,17 +1827,17 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
                 }, 진행 중: ${isRegistrationPeriodActive}`
               );
             } else {
-              console.log(
+              // console.log(
                 `[convertToPartnerCampaigns] 등록 기간 파싱 실패: ${campaign.campaignInfo.id} - ${campaign.campaignInfo.title}, 등록 기간: ${registrationPeriod}, regStartStr: ${regStartStr}, regEndStr: ${regEndStr}`
               );
             }
           } else {
-            console.log(
+            // console.log(
               `[convertToPartnerCampaigns] 등록 기간 형식 오류: ${campaign.campaignInfo.id} - ${campaign.campaignInfo.title}, 등록 기간: ${registrationPeriod}, parts: ${regParts.length}`
             );
           }
         } else {
-          console.log(
+          // console.log(
             `[convertToPartnerCampaigns] 등록 기간 없음: ${campaign.campaignInfo.id} - ${campaign.campaignInfo.title}`
           );
         }
@@ -1859,13 +1859,13 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
           hasSelectedApplicants &&
           hasExtensionRequest
         ) {
-          console.log(
+          // console.log(
             `[convertToPartnerCampaigns] extension_request 추가: ${campaign.campaignInfo.id} - ${campaign.campaignInfo.title}, calculatedTab: ${calculatedTab}, 등록 기간: ${registrationPeriod}`
           );
           return `${baseSubStatus},extension_request`;
         } else if (hasExtensionRequest) {
           // 연장 요청이 있지만 조건을 만족하지 않는 경우 디버깅
-          console.log(
+          // console.log(
             `[convertToPartnerCampaigns] extension_request 조건 불만족: ${campaign.campaignInfo.id} - ${campaign.campaignInfo.title}, calculatedTab: ${calculatedTab}, isCampaignNotEnded: ${isCampaignNotEnded}, isRegistrationPeriodActive: ${isRegistrationPeriodActive}, 등록 기간: ${registrationPeriod}`
           );
         }
@@ -1907,7 +1907,7 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
 */
 export const getCampaignById = (id: string): CampaignWithApplicants | null => {
   // 디버깅: ID로 찾는 과정 로그
-  console.log(`[getCampaignById] 찾는 ID: "${id}"`);
+  // console.log(`[getCampaignById] 찾는 ID: "${id}"`);
 
   // 1. localStorage에 저장된 새 캠페인을 먼저 검색 (우선순위, 모든 타입)
   // 이렇게 하면 새로 등록한 캠페인이 ID 중복이 있어도 우선적으로 반환됩니다
@@ -1917,7 +1917,7 @@ export const getCampaignById = (id: string): CampaignWithApplicants | null => {
   );
 
   if (storedFound) {
-    console.log(`[getCampaignById] localStorage에서 캠페인 찾음:`, {
+    // console.log(`[getCampaignById] localStorage에서 캠페인 찾음:`, {
       id: storedFound.campaignInfo.id,
       title: storedFound.campaignInfo.title,
       category: storedFound.campaignInfo.category,
@@ -1929,12 +1929,12 @@ export const getCampaignById = (id: string): CampaignWithApplicants | null => {
 
   // 2. localStorage에 없으면 일반 데이터에서 검색
   const allCampaigns = getSharedCampaigns();
-  console.log(`[getCampaignById] 전체 캠페인 수: ${allCampaigns.length}`);
+  // console.log(`[getCampaignById] 전체 캠페인 수: ${allCampaigns.length}`);
 
   const found = allCampaigns.find((campaign) => {
     const matches = campaign.campaignInfo.id === id;
     if (matches) {
-      console.log(`[getCampaignById] 일반 데이터에서 캠페인 찾음:`, {
+      // console.log(`[getCampaignById] 일반 데이터에서 캠페인 찾음:`, {
         id: campaign.campaignInfo.id,
         title: campaign.campaignInfo.title,
         category: campaign.campaignInfo.category,
@@ -2138,7 +2138,7 @@ export const getCampaignsByTab = (tab: string): PartnerCampaign[] => {
       return partnerCampaigns.filter((campaign) => {
         // 캠페인이 종료되었으면 연장 요청 탭에서 제외 (종료 탭으로 이동)
         if (campaign.status === "종료" || campaign.status === "마감") {
-          console.log(
+          // console.log(
             `[연장 요청 탭] 종료된 캠페인 제외: ${campaign.id} - ${campaign.title}, status: ${campaign.status}`
           );
           return false;
@@ -2148,14 +2148,14 @@ export const getCampaignsByTab = (tab: string): PartnerCampaign[] => {
         // convertToPartnerCampaigns에서 이미 등록 기간이 진행 중이고 연장 요청이 있을 때만 추가했으므로,
         // subStatus에 extension_request가 있으면 바로 포함
         if (campaign.subStatus?.includes("extension_request")) {
-          console.log(
+          // console.log(
             `[연장 요청 탭] 포함: ${campaign.id} - ${campaign.title}, subStatus: ${campaign.subStatus}`
           );
           return true;
         }
 
         // subStatus에 extension_request가 없으면 제외
-        console.log(
+        // console.log(
           `[연장 요청 탭] extension_request 없음: ${campaign.id} - ${
             campaign.title
           }, subStatus: ${campaign.subStatus || "없음"}`
@@ -2357,7 +2357,7 @@ function getDeletedCampaignIds(): string[] {
   try {
     const stored = localStorage.getItem("deletedCampaignIds");
     if (!stored) {
-      console.log("[getDeletedCampaignIds] 삭제 목록이 없음");
+      // console.log("[getDeletedCampaignIds] 삭제 목록이 없음");
       return [];
     }
 
@@ -2365,7 +2365,7 @@ function getDeletedCampaignIds(): string[] {
     const result = Array.isArray(deletedIds)
       ? deletedIds.map((id) => String(id))
       : [];
-    console.log(`[getDeletedCampaignIds] 삭제된 캠페인 ID 목록:`, result);
+    // console.log(`[getDeletedCampaignIds] 삭제된 캠페인 ID 목록:`, result);
     return result;
   } catch (error) {
     console.error("삭제된 캠페인 ID 목록 불러오기 실패:", error);
@@ -2389,12 +2389,12 @@ function addDeletedCampaignId(campaignId: string): void {
     if (!deletedIds.includes(campaignIdStr)) {
       deletedIds.push(campaignIdStr);
       localStorage.setItem("deletedCampaignIds", JSON.stringify(deletedIds));
-      console.log(
+      // console.log(
         `[addDeletedCampaignId] 삭제 목록에 추가됨: ID=${campaignIdStr}, 현재 삭제 목록:`,
         deletedIds
       );
     } else {
-      console.log(
+      // console.log(
         `[addDeletedCampaignId] 이미 삭제 목록에 있음: ID=${campaignIdStr}`
       );
     }
@@ -2420,7 +2420,7 @@ function getCancelledCampaignIds(): string[] {
   try {
     const stored = localStorage.getItem("cancelledCampaignIds");
     if (!stored) {
-      console.log("[getCancelledCampaignIds] 취소 목록이 없음");
+      // console.log("[getCancelledCampaignIds] 취소 목록이 없음");
       return [];
     }
 
@@ -2428,7 +2428,7 @@ function getCancelledCampaignIds(): string[] {
     const result = Array.isArray(cancelledIds)
       ? cancelledIds.map((id) => String(id))
       : [];
-    console.log(`[getCancelledCampaignIds] 취소된 캠페인 ID 목록:`, result);
+    // console.log(`[getCancelledCampaignIds] 취소된 캠페인 ID 목록:`, result);
     return result;
   } catch (error) {
     console.error("취소된 캠페인 ID 목록 불러오기 실패:", error);
@@ -2455,12 +2455,12 @@ function addCancelledCampaignId(campaignId: string): void {
         "cancelledCampaignIds",
         JSON.stringify(cancelledIds)
       );
-      console.log(
+      // console.log(
         `[addCancelledCampaignId] 취소 목록에 추가됨: ID=${campaignIdStr}, 현재 취소 목록:`,
         cancelledIds
       );
     } else {
-      console.log(
+      // console.log(
         `[addCancelledCampaignId] 이미 취소 목록에 있음: ID=${campaignIdStr}`
       );
     }
@@ -2484,7 +2484,7 @@ export function removeCancelledCampaignId(campaignId: string): void {
 
     if (filteredIds.length < cancelledIds.length) {
       localStorage.setItem("cancelledCampaignIds", JSON.stringify(filteredIds));
-      console.log(
+      // console.log(
         `[removeCancelledCampaignId] 취소 목록에서 제거됨: ID=${campaignIdStr}`
       );
     }
@@ -2555,7 +2555,7 @@ export function deleteCampaign(
           // 필터링된 배열을 다시 localStorage에 저장
           localStorage.setItem(storageKey, JSON.stringify(filteredCampaigns));
           deletedFromLocalStorage = true;
-          console.log(
+          // console.log(
             `localStorage에서 캠페인 삭제 완료: ID=${campaignId}, 타입=${campaignType}, 남은 캠페인 수=${filteredCampaigns.length}`
           );
         }
@@ -2566,7 +2566,7 @@ export function deleteCampaign(
     // 이렇게 하면 localStorage에 없는 정적 데이터의 캠페인도 목록에서 제외됩니다
     addDeletedCampaignId(campaignId);
 
-    console.log(
+    // console.log(
       `캠페인 삭제 처리 완료: ID=${campaignId}, 타입=${campaignType}, localStorage에서 삭제=${deletedFromLocalStorage}, 삭제 목록에 추가됨`
     );
     return true;
@@ -2608,7 +2608,7 @@ export function cancelCampaign(
     const campaignIdStr = String(campaignId);
 
     if (cancelledIds.includes(campaignIdStr)) {
-      console.log(
+      // console.log(
         `[cancelCampaign] 이미 취소된 캠페인: ID=${campaignIdStr}, 타입=${campaignType}`
       );
       return { success: false, error: "ALREADY_CANCELLED" };
@@ -2661,7 +2661,7 @@ export function cancelCampaign(
 
         // 변경된 배열을 다시 localStorage에 저장
         localStorage.setItem(storageKey, JSON.stringify(updatedCampaigns));
-        console.log(
+        // console.log(
           `localStorage에서 캠페인 상태를 취소로 변경 완료: ID=${campaignId}, 타입=${campaignType}`
         );
       }
@@ -2670,7 +2670,7 @@ export function cancelCampaign(
     // 취소된 캠페인 ID 목록에 추가 (정적 데이터에 있는 캠페인도 취소 처리하기 위해)
     addCancelledCampaignId(campaignIdStr);
 
-    console.log(
+    // console.log(
       `캠페인 취소 처리 완료: ID=${campaignId}, 타입=${campaignType}, localStorage 업데이트=${updatedInLocalStorage}, 취소 목록에 추가됨`
     );
     return { success: true };
@@ -2756,7 +2756,7 @@ export function updateCampaignApplicants(
           selectedApplicants,
         },
       };
-      console.log(
+      // console.log(
         `localStorage에서 캠페인 신청자 데이터 업데이트 완료: ID=${campaignId}, 타입=${campaignType}, 신청자=${applicants.length}명, 선정자=${selectedApplicants.length}명`
       );
     } else {
@@ -2771,7 +2771,7 @@ export function updateCampaignApplicants(
           },
         };
         campaigns.push(updatedCampaign);
-        console.log(
+        // console.log(
           `localStorage에 캠페인 신청자 데이터 추가 완료: ID=${campaignId}, 타입=${campaignType}, 신청자=${applicants.length}명, 선정자=${selectedApplicants.length}명`
         );
       } else {

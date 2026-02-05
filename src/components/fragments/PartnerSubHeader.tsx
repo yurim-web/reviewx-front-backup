@@ -71,6 +71,10 @@ export default function PartnerSubHeader() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // 캠페인 콘텐츠 내역 페이지에서는 모바일에서 숨김 처리
+  const isCampaignContentsPage = pathname?.includes('/partner/campaign_contents/');
+  const shouldHideOnMobile = isCampaignContentsPage && isMobile;
+
   /**
    * 알림 아이콘 경로 결정
    * - 알림이 있으면 notification_ok.svg 사용
@@ -182,8 +186,9 @@ export default function PartnerSubHeader() {
      * 📌 CSS 모듈:
      * - styles.partner_sub_header: CSS 모듈에서 가져온 클래스명
      * - 고정 위치(position: fixed)로 상단에 고정
+     * - 모바일에서는 숨김 처리 (캠페인 콘텐츠 내역 페이지에서만)
      */
-    <div className={styles.gradient_bar}>
+    <div className={`${styles.gradient_bar} ${shouldHideOnMobile ? styles.hide_on_mobile : ''}`}>
       <div className={styles.header_controls}>
         {/* 뒤로가기 버튼 */}
         {/* 📌 버튼 이벤트 핸들러:
@@ -200,13 +205,6 @@ export default function PartnerSubHeader() {
 
         {/* 오른쪽 아이콘 그룹 */}
         <div className={styles.right_icons}>
-          {/* 검색 아이콘 */}
-          {/* 📌 컴포넌트 재사용:
-              - HeaderSearch: 기존에 만들어진 검색 컴포넌트 재사용
-              - search_path prop: 검색 결과 페이지 경로 전달
-          */}
-          <HeaderSearch searchIconSrc={getSearchIconSrc()} search_path="/partner/search" />
-
           {/* 새 캠페인 등록: PC에서는 버튼, 모바일에서는 아이콘 */}
           {isMobile ? (
             <Link
@@ -224,6 +222,13 @@ export default function PartnerSubHeader() {
               새 캠페인 등록
             </Link>
           )}
+
+          {/* 검색 아이콘 */}
+          {/* 📌 컴포넌트 재사용:
+              - HeaderSearch: 기존에 만들어진 검색 컴포넌트 재사용
+              - search_path prop: 검색 결과 페이지 경로 전달
+          */}
+          <HeaderSearch searchIconSrc={getSearchIconSrc()} search_path="/partner/search" />
 
           {/* 알림 아이콘 */}
           <Link

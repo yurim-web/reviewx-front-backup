@@ -24,7 +24,11 @@
       "Bash(npx tsx scripts/replace-loading.ts)",
       "Bash(git checkout:*)",
       "Bash(python:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(ls:*)",
+      "Bash(tasklist:*)",
+      "Bash(git add:*)",
+      "Bash(grep:*)"
     ]
   }
 }

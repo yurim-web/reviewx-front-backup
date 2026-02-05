@@ -85,6 +85,19 @@
   flex-shrink: 0;
 }
 
+/* 동영상 입력 행 (각 줄을 감싸는 컨테이너) - PC에서는 레이아웃에 영향 없이 표시 */
+.video_input_row {
+  display: contents;
+}
+
+/* PC에서 동영상 입력 값은 한 줄로 표시 */
+.video_input_value {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
 /* ============================================
    모바일 반응형 스타일
    ============================================ */
@@ -92,34 +105,50 @@
 @media (max-width: 768px) {
   /* 간편 안내 옵션 박스 */
   .option_input_box {
-    gap: 10px;
-    padding: 14px 16px;
+    gap: 12px;
+    padding: 20px;
     border-radius: 6px;
-    height: 48px;
+    min-height: 60px;
+    height: auto;
   }
 
-  /* 옵션 입력 박스 체크박스 */
-  .option_input_box:not(.header_urgent_checkbox) input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
+  /* 동영상 옵션 박스 - 모바일에서 높이 자동 조정 */
+  .video_option_box {
+    height: auto !important;
+    align-items: flex-start !important;
+    padding-top: 14px;
+    padding-bottom: 14px;
   }
 
-  .option_input_box:not(.header_urgent_checkbox)
-    input[type="checkbox"]:checked::after {
-    font-size: 13px;
+  /* 모바일에서 동영상 옵션 박스의 체크박스에 margin-top 추가 */
+  .video_option_box input[type="checkbox"] {
+    margin-top: 2px;
   }
 
-  /* 옵션 라벨 */
-  .option_input_box .option_label {
-    font-size: 14px;
-    line-height: 14px;
-    letter-spacing: -0.28px;
+  /* 동영상 입력 값 - 모바일에서 두 줄로 배치 */
+  .video_input_value {
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    gap: 8px !important;
+
+    flex-shrink: 0;
   }
 
-  /* 옵션 값 */
-  .option_input_box .option_value {
-    font-size: 14px;
-    line-height: 14px;
-    letter-spacing: -0.28px;
+  /* 동영상 입력 행 - 모바일에서 각 줄을 가로로 배치 */
+  .video_input_row {
+    display: flex !important;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    justify-content: flex-end;
+    flex-shrink: 0;
   }
+
+  /* 모바일에서 동영상 입력 행 내부 요소 스타일 초기화 */
+  .video_input_row > * {
+    display: flex !important;
+  }
+
+
+
 }

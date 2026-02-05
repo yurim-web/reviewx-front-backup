@@ -127,7 +127,7 @@ export default function CampaignCard({
     );
     const detailPath = `/campaign/${campaignTypePath}/${campaignDataId}`;
     // 디버깅: 생성된 경로 로그
-    console.log("[CampaignCard] 상세 페이지 경로 생성:", {
+    // console.log("[CampaignCard] 상세 페이지 경로 생성:", {
       originalId: campaign.id,
       campaignType: campaign.campaignType,
       campaignTypePath,
@@ -217,12 +217,13 @@ export default function CampaignCard({
             {/* 신청자 수 표시 - PC에서만 표시 */}
             <div className={cardStyles.applicant_count}>
               {activeTab === "연장 요청" ||
-              (campaignSubStatus &&
-                campaignSubStatus.includes("extension_request")) ? (
+              (activeTab === "전체" && campaignSubStatus && campaignSubStatus.includes("extension_request")) ||
+              (activeTab !== "전체" && campaignSubStatus && campaignSubStatus.includes("extension_request")) ? (
                 <>
                   {/* ======================================== */}
                   {/* 연장 요청 탭: 대기/확인/완료 수 표시 */}
                   {/* ✅ 대기 = 대기 탭(waiting)에 있는 리뷰어 수 */}
+                  {/* "전체" 탭에서도 연장 요청이 있는 캠페인은 확인 항목에 핑크색 */}
                   {/* ======================================== */}
                   <span
                     className={`${cardStyles.applicant_current} ${cardStyles.applicant_current_gray}`}
@@ -240,10 +241,11 @@ export default function CampaignCard({
                     완료 {completedCount}명
                   </span>
                 </>
-              ) : campaignStatus === "진행 중" || activeTab === "진행" ? (
+              ) : (activeTab === "전체" && campaignStatus === "진행 중") || campaignStatus === "진행 중" || activeTab === "진행" ? (
                 <>
                   {/* ======================================== */}
                   {/* 진행 중인 캠페인: 대기/확인/완료 수 표시 */}
+                  {/* "전체" 탭에서도 진행 중 캠페인은 확인 항목에 핑크색 */}
                   {/* ======================================== */}
                   <span
                     className={`${cardStyles.applicant_current} ${cardStyles.applicant_current_gray}`}
@@ -261,10 +263,11 @@ export default function CampaignCard({
                     완료 {completedCount}명
                   </span>
                 </>
-              ) : campaignStatus === "종료" || activeTab === "종료" ? (
+              ) : (activeTab === "전체" && campaignStatus === "종료") || campaignStatus === "종료" || activeTab === "종료" ? (
                 <>
                   {/* ======================================== */}
                   {/* 종료 캠페인: 대기/확인/완료 수 표시 */}
+                  {/* "전체" 탭에서도 종료 캠페인은 확인 항목에 핑크색 */}
                   {/* ======================================== */}
                   <span
                     className={`${cardStyles.applicant_current} ${cardStyles.applicant_current_gray}`}
@@ -282,10 +285,11 @@ export default function CampaignCard({
                     완료 {completedCount}명
                   </span>
                 </>
-              ) : campaignStatus === "취소" || activeTab === "취소" ? (
+              ) : (activeTab === "전체" && campaignStatus === "취소") || campaignStatus === "취소" || activeTab === "취소" ? (
                 <>
                   {/* ======================================== */}
                   {/* 취소 캠페인: 신청/모집/선정 수 표시 */}
+                  {/* "전체" 탭에서도 취소 캠페인은 신청 항목에 핑크색 */}
                   {/* ======================================== */}
                   <span
                     className={`${cardStyles.applicant_current} ${cardStyles.applicant_current_pink}`}
@@ -307,12 +311,17 @@ export default function CampaignCard({
                 <>
                   {/* ======================================== */}
                   {/* 일반 캠페인: 신청/모집 수 표시 */}
+                  {/* "전체" 탭에서는 campaignStatus에 따라 색상 결정 */}
                   {/* ======================================== */}
                   <span
                     className={`${cardStyles.applicant_current} ${
-                      activeTab === "예정" || activeTab === "신청"
-                        ? cardStyles.applicant_current_pink
-                        : cardStyles.applicant_current_gray
+                      activeTab === "전체"
+                        ? (campaignStatus === "예정" || campaignStatus === "신청 중"
+                            ? cardStyles.applicant_current_pink
+                            : cardStyles.applicant_current_gray)
+                        : (activeTab === "예정" || activeTab === "신청"
+                            ? cardStyles.applicant_current_pink
+                            : cardStyles.applicant_current_gray)
                     }`}
                   >
                     신청 {campaign.applicants || 0}명
@@ -472,7 +481,7 @@ export default function CampaignCard({
            * - 현재는 프론트엔드 개발을 위해 localStorage에서 처리합니다
            * - 삭제/취소 후 페이지를 새로고침하여 목록을 업데이트합니다
            */
-          console.log(
+          // console.log(
             `[CampaignCard] 캠페인 ${
               activeTab === "예정" ? "취소" : "삭제"
             } 확인: ID=${campaign.id}, 제목=${campaign.title}, 탭=${activeTab}`

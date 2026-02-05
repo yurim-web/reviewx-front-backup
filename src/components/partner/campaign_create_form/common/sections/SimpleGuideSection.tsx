@@ -183,7 +183,7 @@ export function SimpleGuideSection({
       </div>
 
       {/* 동영상 개수, 초수 */}
-      <div className={optionStyles.option_input_box}>
+      <div className={`${optionStyles.option_input_box} ${optionStyles.video_option_box}`}>
         <input
           type="checkbox"
           id="videoCount"
@@ -201,28 +201,32 @@ export function SimpleGuideSection({
           동영상 개수, 초수
         </label>
         {checkboxStates.videoCount && (
-          <div className={optionStyles.option_input_value}>
+          <div className={`${optionStyles.option_input_value} ${optionStyles.video_input_value}`}>
             {/* 동영상 개수 입력 필드 */}
-            <input
-              type="text"
-              className={inputStyles.underline_input}
-              value={formatNumberWithComma(formData.videoCount)}
-              onChange={(e) => onNumericChange("videoCount", e)}
-              onKeyDown={(e) => onNumericKeyDown("videoCount", e)}
-              readOnly={!canEdit("videoCount")}
-            />
-            <span className={inputStyles.unit_text}>개 이상</span>
+            <div className={optionStyles.video_input_row}>
+              <input
+                type="text"
+                className={inputStyles.underline_input}
+                value={formatNumberWithComma(formData.videoCount)}
+                onChange={(e) => onNumericChange("videoCount", e)}
+                onKeyDown={(e) => onNumericKeyDown("videoCount", e)}
+                readOnly={!canEdit("videoCount")}
+              />
+              <span className={inputStyles.unit_text}>개 이상,</span>
+            </div>
 
             {/* 동영상 초수 입력 필드 */}
-            <input
-              type="text"
-              className={inputStyles.underline_input}
-              value={formatNumberWithComma(formData.videoDuration)}
-              onChange={(e) => onNumericChange("videoDuration", e)}
-              onKeyDown={(e) => onNumericKeyDown("videoDuration", e)}
-              readOnly={!canEdit("videoDuration")}
-            />
-            <span className={inputStyles.unit_text}>초 이상</span>
+            <div className={optionStyles.video_input_row}>
+              <input
+                type="text"
+                className={inputStyles.underline_input}
+                value={formatNumberWithComma(formData.videoDuration)}
+                onChange={(e) => onNumericChange("videoDuration", e)}
+                onKeyDown={(e) => onNumericKeyDown("videoDuration", e)}
+                readOnly={!canEdit("videoDuration")}
+              />
+              <span className={inputStyles.unit_text}>초 이상</span>
+            </div>
           </div>
         )}
       </div>

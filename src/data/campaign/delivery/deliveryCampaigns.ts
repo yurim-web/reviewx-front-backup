@@ -179,12 +179,12 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     dayCount: "마감임박",
     registeredAt: "2025-12-20T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 마감 - 모집 종료
-      applicationStart: "2024-12-15",
-      applicationEnd: "2024-12-30",
-      announcement: "2025-01-02",
-      purchasePeriod: "2025-01-02 ~ 2025-01-05",
-      registrationPeriod: "2025-01-05 ~ 2025-01-12",
+      // 진행 중 - 등록 기간 중 (연장 요청 테스트용)
+      applicationStart: "2025-12-10",
+      applicationEnd: "2025-12-25",
+      announcement: "2025-12-27",
+      purchasePeriod: "2025-12-27 ~ 2025-12-30",
+      registrationPeriod: "2025-12-20 ~ 2026-01-10",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
@@ -358,6 +358,8 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       purchasePeriod: "2025-01-07 ~ 2025-01-10",
       registrationPeriod: "2025-01-10 ~ 2025-01-17",
     },
+    // 단일 이미지 필드도 유지 (DeliveryCampaignData 요구사항)
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     campaign_detail_images: [
       "/images/campaign_detail/exdetail_1.png",
       "/images/campaign_detail/exdetail_2.png",
@@ -598,6 +600,38 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     ],
     contactPhone: "010-1357-2468",
   },
+  // delivery_test: 배송형 테스트 (유저단 노출용)
+  {
+    id: "delivery_test_all_cases",
+    title: "[테스트] 배송형 모든 카드 경우의 수",
+    category: "배송형",
+    image: "/images/main/campaign_img/eximg_3.png",
+    subcategory: "생활",
+    points: 25000,
+    description: "테스트용 배송형 캠페인",
+    recruitment: {
+      current: 7,
+      total: 10,
+    },
+    schedule: "",
+    dayCount: "D-7",
+    registeredAt: "2026-01-20T10:00:00.000Z",
+    detailedSchedule: {
+      applicationStart: "2026-02-01",
+      applicationEnd: "2026-02-28",
+      announcement: "2026-03-02",
+      purchasePeriod: "2026-01-30 ~ 2026-02-04",
+      registrationPeriod: "2026-02-04 ~ 2026-05-05",
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    channel: "유튜브",
+    keyword: "#테스트 #배송형 #체험단",
+    requirements: ["text_2000", "photo_15", "video_1_180", "product_link", "keyword"],
+    guidelineTexts: [
+      "배송형 테스트 캠페인입니다.",
+      "링크 확인 기능을 테스트할 수 있습니다.",
+    ],
+  },
 ];
 
 /* ========================================
@@ -666,9 +700,11 @@ export interface DeliveryCampaignDataExtended {
       userType: "리뷰어" | "인플루언서";
       profileImage: string;
       memberType: "모범 회원" | "주의 회원" | "경고 회원" | "이용 제한";
-      dailyVisits: number;
-      totalVisits: number;
-      neighbors: number;
+      // 채널별 스펙 차이 지원 (네이버클립 등)
+      dailyVisits?: number;
+      totalVisits?: number;
+      neighbors?: number;
+      followers?: number;
       memo: string;
       selectionStatus: "미선택" | "선정하기" | "이용제한 계정";
       channel: string;
@@ -681,9 +717,10 @@ export interface DeliveryCampaignDataExtended {
       userType: "리뷰어" | "인플루언서";
       profileImage: string;
       memberType: "모범 회원" | "주의 회원" | "경고 회원" | "이용 제한";
-      dailyVisits: number;
-      totalVisits: number;
-      neighbors: number;
+      dailyVisits?: number;
+      totalVisits?: number;
+      neighbors?: number;
+      followers?: number;
       memo: string;
       selectionStatus: "선정하기";
       channel: string;
@@ -693,7 +730,7 @@ export interface DeliveryCampaignDataExtended {
 
   // 콘텐츠 데이터 (선택사항 - 종료/취소 캠페인에는 필수, 진행/예정/신청 캠페인에는 선택)
   contents?: {
-    reviewing: Array<{
+    waiting: Array<{
       id: string;
       createdAt: string;
       status: "검수";
@@ -701,6 +738,19 @@ export interface DeliveryCampaignDataExtended {
       nickname: string;
       channelId: string;
       channel: string;
+      profileImage?: string;
+      extension_request_reason?: string;
+      isRejected?: boolean;
+    }>;
+    reviewing: Array<{
+      id: string;
+      createdAt: string;
+      status: "검수" | "검수중";
+      userType: "리뷰어" | "인플루언서";
+      nickname: string;
+      channelId: string;
+      channel: string;
+      profileImage?: string;
       updatedAt?: string;
       isRejected?: boolean;
       isLate?: boolean;
@@ -713,6 +763,7 @@ export interface DeliveryCampaignDataExtended {
       nickname: string;
       channelId: string;
       channel: string;
+      profileImage?: string;
       updatedAt?: string;
       isLate?: boolean;
     }>;
@@ -907,7 +958,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           nickname: "생활리뷰어A",
           channelId: "blog_014",
           channel: "네이버블로그",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
         {
           id: "content_delivery_2_waiting_002",
@@ -917,7 +968,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           nickname: "건강리뷰어B",
           channelId: "blog_015",
           channel: "네이버블로그",
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
       ],
       reviewing: [
@@ -932,7 +983,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           updatedAt: "2025-12-19T10:00:00.000Z",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
       ],
       completed: [
@@ -946,7 +997,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           channel: "네이버블로그",
           updatedAt: "2025-12-16T09:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
       ],
     },
@@ -1214,7 +1265,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           nickname: "반려동물리뷰어A",
           channelId: "youtube_028",
           channel: "유튜브",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
         {
           id: "content_delivery_6_waiting_002",
@@ -1224,7 +1275,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           nickname: "펫인플루언서B",
           channelId: "youtube_029",
           channel: "유튜브",
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
       ],
       reviewing: [
@@ -1239,7 +1290,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           updatedAt: "2025-12-20T10:00:00.000Z",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
       ],
       completed: [
@@ -1253,7 +1304,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           channel: "유튜브",
           updatedAt: "2025-12-19T09:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
       ],
     },
@@ -1361,7 +1412,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           nickname: "크리에이터A",
           channelId: "naverclip_018",
           channel: "네이버클립",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         } as any,
       ],
       reviewing: [
@@ -1376,7 +1427,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           updatedAt: "2025-12-27T10:00:00.000Z",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         } as any,
       ],
       completed: [
@@ -1390,7 +1441,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           channel: "네이버클립",
           updatedAt: "2025-12-25T09:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         } as any,
       ],
     },
@@ -1416,7 +1467,68 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           registrationDate: "2025-12-12",
         },
       ],
-      selectedApplicants: [],
+      selectedApplicants: [
+        {
+          id: "sel_8_네이버블로그_001",
+          Id: "selected_8_001",
+          nickname: "선정된홈트리뷰어1",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 200,
+          totalVisits: 600000,
+          neighbors: 1500,
+          memo: "이미 선정된 우수 리뷰어입니다.",
+          selectionStatus: "선정하기" as const,
+          channel: "네이버블로그",
+          registrationDate: "2025-12-18",
+        },
+        {
+          id: "sel_8_네이버블로그_002",
+          Id: "selected_8_002",
+          nickname: "선정된운동인플루언서1",
+          userType: "인플루언서" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          dailyVisits: 250,
+          totalVisits: 750000,
+          neighbors: 2000,
+          memo: "이미 선정된 우수 인플루언서입니다.",
+          selectionStatus: "선정하기" as const,
+          channel: "네이버블로그",
+          registrationDate: "2025-12-19",
+        },
+      ],
+    },
+    contents: {
+      waiting: [
+        {
+          id: "content_delivery_8_waiting_001",
+          createdAt: "2025-12-28T10:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "선정된홈트리뷰어1",
+          channelId: "naverblog_021",
+          channel: "네이버블로그",
+          profileImage: "",
+          extension_request_reason:
+            "개인 사정으로 인해 등록 기한을 3일 연장해주시면 감사하겠습니다.",
+        },
+        {
+          id: "content_delivery_8_waiting_002",
+          createdAt: "2025-12-29T14:30:00.000Z",
+          status: "검수" as const,
+          userType: "인플루언서" as const,
+          nickname: "선정된운동인플루언서1",
+          channelId: "naverblog_022",
+          channel: "네이버블로그",
+          profileImage: "",
+          extension_request_reason:
+            "촬영 일정이 지연되어 등록 기한을 5일만 연장해주시면 감사하겠습니다.",
+        },
+      ],
+      reviewing: [],
+      completed: [],
     },
   },
   // delivery_9: 프리미엄 스킨케어 세트
@@ -1451,7 +1563,34 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           registrationDate: "2025-12-31",
         },
       ],
-      selectedApplicants: [],
+      selectedApplicants: [
+        {
+          id: "sel_9_인스타그램_001",
+          Id: "selected_9_001",
+          nickname: "스킨케어리뷰어A",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          followers: 1500,
+          memo: "이미 선정된 우수 리뷰어입니다.",
+          selectionStatus: "선정하기" as const,
+          channel: "인스타그램" as const,
+          registrationDate: "2025-12-30",
+        },
+        {
+          id: "sel_9_인스타그램_002",
+          Id: "selected_9_002",
+          nickname: "뷰티인플루언서B",
+          userType: "인플루언서" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          followers: 2100,
+          memo: "이미 선정된 우수 인플루언서입니다.",
+          selectionStatus: "선정하기" as const,
+          channel: "인스타그램" as const,
+          registrationDate: "2025-12-31",
+        },
+      ],
     },
     contents: {
       waiting: [
@@ -1463,7 +1602,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           nickname: "스킨케어리뷰어A",
           channelId: "insta_019",
           channel: "인스타그램",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
         {
           id: "content_delivery_9_waiting_002",
@@ -1473,7 +1612,22 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           nickname: "뷰티인플루언서B",
           channelId: "insta_020",
           channel: "인스타그램",
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
+          extension_request_reason:
+            "개인 사정으로 인해 등록 기한을 3일 연장해주시면 감사하겠습니다.",
+        },
+        {
+          id: "content_delivery_9_waiting_003",
+          createdAt: "2025-12-29T09:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "스킨케어리뷰어E",
+          channelId: "insta_023",
+          channel: "인스타그램",
+          profileImage: "",
+          isRejected: true,
+          reject_reason:
+            "제품 사용 사진이 부족하고 리뷰 내용이 너무 간단합니다. 더 상세한 체험 후기를 작성해주세요.",
         },
       ],
       reviewing: [
@@ -1488,7 +1642,33 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           updatedAt: "2025-12-29T10:00:00.000Z",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
+        },
+        {
+          id: "content_delivery_9_reviewing_002",
+          createdAt: "2025-12-27T08:00:00.000Z",
+          status: "검수중" as const,
+          userType: "인플루언서" as const,
+          nickname: "뷰티인플루언서F",
+          channelId: "insta_024",
+          channel: "인스타그램",
+          updatedAt: "2025-12-30T15:00:00.000Z",
+          isRejected: false,
+          isLate: true,
+          profileImage: "",
+        },
+        {
+          id: "content_delivery_9_reviewing_003",
+          createdAt: "2025-12-26T07:00:00.000Z",
+          status: "검수중" as const,
+          userType: "리뷰어" as const,
+          nickname: "스킨케어리뷰어G",
+          channelId: "insta_025",
+          channel: "인스타그램",
+          updatedAt: undefined,
+          isRejected: false,
+          isLate: false,
+          profileImage: "",
         },
       ],
       completed: [
@@ -1502,7 +1682,31 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           channel: "인스타그램",
           updatedAt: "2025-12-27T09:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
+        },
+        {
+          id: "content_delivery_9_completed_002",
+          createdAt: "2025-12-25T07:00:00.000Z",
+          status: "완료" as const,
+          userType: "인플루언서" as const,
+          nickname: "뷰티인플루언서H",
+          channelId: "insta_026",
+          channel: "인스타그램",
+          updatedAt: "2025-12-28T10:00:00.000Z",
+          isLate: true,
+          profileImage: "",
+        },
+        {
+          id: "content_delivery_9_completed_003",
+          createdAt: "2025-12-24T06:00:00.000Z",
+          status: "완료" as const,
+          userType: "리뷰어" as const,
+          nickname: "스킨케어리뷰어I",
+          channelId: "insta_027",
+          channel: "인스타그램",
+          updatedAt: "2025-12-25T08:00:00.000Z",
+          isLate: false,
+          profileImage: "",
         },
       ],
     },
@@ -1545,7 +1749,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           Id: "reviewer_12_001",
           nickname: "스마트워치리뷰어A",
           userType: "리뷰어" as const,
-          profileImage: "/images/mypage/profile.svg",
+          profileImage: "",
           memberType: "모범 회원" as const,
           dailyVisits: 200,
           totalVisits: 600000,
@@ -1560,7 +1764,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           Id: "reviewer_12_002",
           nickname: "테크인플루언서B",
           userType: "인플루언서" as const,
-          profileImage: "/images/mypage/profile.svg",
+          profileImage: "",
           memberType: "모범 회원" as const,
           dailyVisits: 300,
           totalVisits: 900000,
@@ -1575,7 +1779,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           Id: "reviewer_12_003",
           nickname: "웨어러블리뷰어C",
           userType: "리뷰어" as const,
-          profileImage: "/images/mypage/profile.svg",
+          profileImage: "",
           memberType: "모범 회원" as const,
           dailyVisits: 180,
           totalVisits: 550000,
@@ -1590,7 +1794,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           Id: "reviewer_12_004",
           nickname: "스마트기기전문가D",
           userType: "리뷰어" as const,
-          profileImage: "/images/mypage/profile.svg",
+          profileImage: "",
           memberType: "주의 회원" as const,
           dailyVisits: 120,
           totalVisits: 350000,
@@ -1605,7 +1809,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           Id: "reviewer_12_005",
           nickname: "테크리뷰어E",
           userType: "리뷰어" as const,
-          profileImage: "/images/mypage/profile.svg",
+          profileImage: "",
           memberType: "모범 회원" as const,
           dailyVisits: 250,
           totalVisits: 750000,
@@ -1622,7 +1826,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           Id: "selected_12_001",
           nickname: "선정된스마트워치리뷰어1",
           userType: "리뷰어" as const,
-          profileImage: "/images/mypage/profile.svg",
+          profileImage: "",
           memberType: "모범 회원" as const,
           dailyVisits: 350,
           totalVisits: 1000000,
@@ -1637,7 +1841,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           Id: "selected_12_002",
           nickname: "선정된테크인플루언서1",
           userType: "인플루언서" as const,
-          profileImage: "/images/mypage/profile.svg",
+          profileImage: "",
           memberType: "모범 회원" as const,
           dailyVisits: 400,
           totalVisits: 1200000,
@@ -1646,6 +1850,84 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           selectionStatus: "선정하기" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-19",
+        },
+      ],
+    },
+    contents: {
+      waiting: [
+        {
+          id: "content_delivery_12_waiting_001",
+          createdAt: "2026-01-10T10:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "선정된스마트워치리뷰어1",
+          channelId: "naverblog_031",
+          channel: "네이버블로그",
+          profileImage: "",
+        },
+        {
+          id: "content_delivery_12_waiting_002",
+          createdAt: "2026-01-11T11:00:00.000Z",
+          status: "검수" as const,
+          userType: "인플루언서" as const,
+          nickname: "선정된테크인플루언서1",
+          channelId: "naverblog_032",
+          channel: "네이버블로그",
+          profileImage: "",
+        },
+      ],
+      reviewing: [
+        {
+          id: "content_delivery_12_reviewing_001",
+          createdAt: "2026-01-08T09:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "스마트워치리뷰어A",
+          channelId: "naverblog_033",
+          channel: "네이버블로그",
+          updatedAt: "2026-01-09T10:00:00.000Z",
+          isRejected: false,
+          isLate: false,
+          profileImage: "",
+        },
+        {
+          id: "content_delivery_12_reviewing_002",
+          createdAt: "2026-01-09T14:00:00.000Z",
+          status: "검수" as const,
+          userType: "인플루언서" as const,
+          nickname: "테크인플루언서B",
+          channelId: "naverblog_034",
+          channel: "네이버블로그",
+          updatedAt: "2026-01-10T15:00:00.000Z",
+          isRejected: false,
+          isLate: false,
+          profileImage: "",
+        },
+      ],
+      completed: [
+        {
+          id: "content_delivery_12_completed_001",
+          createdAt: "2026-01-05T08:00:00.000Z",
+          status: "완료" as const,
+          userType: "리뷰어" as const,
+          nickname: "웨어러블리뷰어C",
+          channelId: "naverblog_035",
+          channel: "네이버블로그",
+          updatedAt: "2026-01-07T09:00:00.000Z",
+          isLate: false,
+          profileImage: "",
+        },
+        {
+          id: "content_delivery_12_completed_002",
+          createdAt: "2026-01-06T10:00:00.000Z",
+          status: "완료" as const,
+          userType: "리뷰어" as const,
+          nickname: "스마트기기전문가D",
+          channelId: "naverblog_036",
+          channel: "네이버블로그",
+          updatedAt: "2026-01-08T11:00:00.000Z",
+          isLate: false,
+          profileImage: "",
         },
       ],
     },
@@ -1706,6 +1988,136 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
       selectedApplicants: [],
     },
   },
+  // delivery_test: 모든 경우의 수 테스트 캠페인
+  {
+    ...deliveryCampaigns[1],
+    id: "delivery_test_all_cases",
+    title: "[테스트] 배송형 모든 카드 경우의 수",
+    recruitment: {
+      current: 7,
+      total: 10,
+    },
+    detailedSchedule: {
+      applicationStart: "2026-02-01",
+      applicationEnd: "2026-02-28",
+      announcement: "2026-03-02",
+      purchasePeriod: "2026-01-30 ~ 2026-02-04",
+      registrationPeriod: "2026-02-04 ~ 2026-05-05",
+    },
+    applicantData: {
+      applicants: [],
+      selectedApplicants: [],
+    },
+    contents: {
+      waiting: [
+        // 경우의 수 1: 콘텐츠 미등록 (기한 내)
+        {
+          id: "delivery_test_waiting_001",
+          createdAt: "2026-02-01T10:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "콘텐츠미등록유저",
+          channelId: "youtube_test_001",
+          channel: "유튜브",
+          profileImage: "",
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 경우의 수 2: 연장 요청됨
+        {
+          id: "delivery_test_waiting_002",
+          createdAt: "2026-02-02T11:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "연장요청유저",
+          channelId: "youtube_test_002",
+          channel: "유튜브",
+          profileImage: "",
+          extension_request_reason: "개인 사정으로 3일 연장 요청드립니다.",
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 경우의 수 3: 반려됨
+        {
+          id: "delivery_test_waiting_003",
+          createdAt: "2026-02-03T12:00:00.000Z",
+          status: "검수" as const,
+          userType: "인플루언서" as const,
+          nickname: "반려당한유저",
+          channelId: "youtube_test_003",
+          channel: "유튜브",
+          profileImage: "",
+          isRejected: true,
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 경우의 수 4: 신고됨
+        {
+          id: "delivery_test_waiting_004",
+          createdAt: "2026-02-04T13:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "신고당한유저",
+          channelId: "youtube_test_004",
+          channel: "유튜브",
+          profileImage: "",
+          isReported: true,
+          reportedDate: "2026-02-04T14:30:00.000Z",
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+      ],
+      reviewing: [
+        // 확인 탭 경우의 수 1: 검수 중 상태
+        {
+          id: "delivery_test_reviewing_001",
+          createdAt: "2026-02-01T09:00:00.000Z",
+          status: "검수중" as const,
+          userType: "인플루언서" as const,
+          nickname: "검수중유저",
+          channelId: "youtube_test_005",
+          channel: "유튜브",
+          profileImage: "",
+          receiptImages: [
+            "https://via.placeholder.com/800x600/FFB6C1/FFFFFF?text=Receipt+Image+1",
+            "https://via.placeholder.com/800x600/87CEEB/FFFFFF?text=Receipt+Image+2",
+          ],
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+      ],
+      completed: [
+        // 완료 탭 경우의 수 1: 승인 완료 상태
+        {
+          id: "delivery_test_completed_001",
+          createdAt: "2026-01-28T08:00:00.000Z",
+          status: "완료" as const,
+          userType: "리뷰어" as const,
+          nickname: "승인완료유저",
+          channelId: "youtube_test_006",
+          channel: "유튜브",
+          profileImage: "",
+          updatedAt: "2026-01-29T09:00:00.000Z",
+          receiptImages: [
+            "https://via.placeholder.com/800x600/98FB98/FFFFFF?text=Receipt+Image+Completed",
+          ],
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 완료 탭 경우의 수 2: 지각등록 승인 완료 상태
+        {
+          id: "delivery_test_completed_002",
+          createdAt: "2026-02-04T15:00:00.000Z",
+          status: "완료" as const,
+          userType: "리뷰어" as const,
+          nickname: "지각제출유저",
+          channelId: "youtube_test_007",
+          channel: "유튜브",
+          profileImage: "",
+          updatedAt: "2026-02-04T16:00:00.000Z",
+          isLateSubmission: true,
+          receiptImages: [
+            "https://via.placeholder.com/800x600/FFD700/FFFFFF?text=Late+Submission",
+          ],
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+      ],
+    },
+  },
 ];
 
 /**
@@ -1736,7 +2148,7 @@ export const deliveryClosedCampaignsExtended: DeliveryCampaignDataExtended[] = [
           nickname: "참여자-1",
           channelId: "902-r-1",
           updatedAt: "2025-10-28T10:45:00.000Z",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
         {
           id: "902-r-2",
@@ -1747,7 +2159,7 @@ export const deliveryClosedCampaignsExtended: DeliveryCampaignDataExtended[] = [
           nickname: "참여자-2",
           channelId: "902-r-2",
           isRejected: true,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
       ],
       completed: [
@@ -1760,7 +2172,7 @@ export const deliveryClosedCampaignsExtended: DeliveryCampaignDataExtended[] = [
           nickname: "참여자-2",
           channelId: "902-c-1",
           updatedAt: "2025-10-27T19:10:00.000Z",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
         {
           id: "902-c-2",
@@ -1771,7 +2183,7 @@ export const deliveryClosedCampaignsExtended: DeliveryCampaignDataExtended[] = [
           nickname: "참여자-3",
           channelId: "902-c-2",
           isLate: true,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
         {
           id: "902-c-3",
@@ -1781,7 +2193,7 @@ export const deliveryClosedCampaignsExtended: DeliveryCampaignDataExtended[] = [
           userType: "인플루언서" as const,
           nickname: "참여자-4",
           channelId: "902-c-3",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
       ],
     },
@@ -1800,7 +2212,14 @@ export interface DeliveryCampaignDataItem {
     id: string;
     title: string;
     image: string;
-    status: "진행 중" | "대기 중" | "모집 중" | "종료" | "취소" | "긴급";
+    status:
+      | "진행 중"
+      | "대기 중"
+      | "모집 중"
+      | "종료"
+      | "마감"
+      | "취소"
+      | "긴급";
     campaignType: "배송형";
     category: string;
     brandName: string;
@@ -1823,9 +2242,11 @@ export interface DeliveryCampaignDataItem {
       userType: "리뷰어" | "인플루언서";
       profileImage: string;
       memberType: "모범 회원" | "주의 회원" | "경고 회원" | "이용 제한";
-      dailyVisits: number;
-      totalVisits: number;
-      neighbors: number;
+      // 채널별 스펙 차이 지원 (네이버클립 등)
+      dailyVisits?: number;
+      totalVisits?: number;
+      neighbors?: number;
+      followers?: number;
       memo: string;
       selectionStatus: "미선택" | "선정하기" | "이용제한 계정";
       channel: string;
@@ -1838,9 +2259,10 @@ export interface DeliveryCampaignDataItem {
       userType: "리뷰어" | "인플루언서";
       profileImage: string;
       memberType: "모범 회원" | "주의 회원" | "경고 회원" | "이용 제한";
-      dailyVisits: number;
-      totalVisits: number;
-      neighbors: number;
+      dailyVisits?: number;
+      totalVisits?: number;
+      neighbors?: number;
+      followers?: number;
       memo: string;
       selectionStatus: "선정하기";
       channel: string;
@@ -1962,10 +2384,10 @@ export function createDeliveryCampaign(
 
   // calculateCampaignStatus는 "대기 중" | "모집 중" | "진행 중" | "종료"를 반환
   // "종료" 상태를 "마감"으로 변환 (UI 표시용)
-  let finalStatus: string = calculatedStatus;
-  if (calculatedStatus === "종료") {
-    finalStatus = "마감";
-  }
+  const finalStatus =
+    calculatedStatus === "종료"
+      ? "마감"
+      : (calculatedStatus as DeliveryCampaignDataItem["campaignInfo"]["status"]);
 
   // 플랫폼명 정규화 (공백 제거하여 로고 매핑 일치시키기)
   const normalizedBrandName = formData.platform
@@ -2049,10 +2471,10 @@ export function updateDeliveryCampaign(
 
   // calculateCampaignStatus는 "대기 중" | "모집 중" | "진행 중" | "종료"를 반환
   // "종료" 상태를 "마감"으로 변환 (UI 표시용)
-  let finalStatus: string = calculatedStatus;
-  if (calculatedStatus === "종료") {
-    finalStatus = "마감";
-  }
+  const finalStatus =
+    calculatedStatus === "종료"
+      ? "마감"
+      : (calculatedStatus as DeliveryCampaignDataItem["campaignInfo"]["status"]);
 
   // 플랫폼명 정규화
   const normalizedBrandName = formData.platform

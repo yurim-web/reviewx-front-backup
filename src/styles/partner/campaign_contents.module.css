@@ -70,4 +70,12 @@
   background: #fafafa;
 }
 
-
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  /* Hide PartnerSubHeader on mobile for campaign contents pages */
+  :global(.gradient_bar) {
+    display: none !important;
+  }
+}

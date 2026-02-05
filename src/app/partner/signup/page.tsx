@@ -343,7 +343,7 @@ export default function PartnerSignupPage() {
     }
 
     // 회원가입 처리
-    console.log("파트너 회원가입 시도:", {
+    // console.log("파트너 회원가입 시도:", {
       email,
       password,
       name,
@@ -402,7 +402,7 @@ export default function PartnerSignupPage() {
 
       partnerAccounts.push(newPartnerAccount);
       localStorage.setItem('partner_accounts', JSON.stringify(partnerAccounts));
-      console.log('파트너 회원가입 성공!', newPartnerAccount);
+      // console.log('파트너 회원가입 성공!', newPartnerAccount);
       router.push(`/partner/signup/complete?name=${encodeURIComponent(name)}`);
     } catch (error) {
       console.error('회원가입 중 오류 발생:', error);

@@ -77,21 +77,8 @@
    ============================================ */
 
 @media (max-width: 768px) {
-  /* 고정 높이 textarea */
-  .fixed_height_textarea {
-    height: 200px;
-    min-height: 200px;
-    padding: 14px 16px;
-    border-radius: 6px;
-    font-size: 13px;
-    line-height: 22px;
-    letter-spacing: -0.26px;
-  }
-
-  /* placeholder */
-  .fixed_height_textarea::placeholder {
-    font-size: 13px;
-    line-height: 22px;
-    letter-spacing: -0.26px;
-  }
+/* 스크롤바 스타일링 */
+.fixed_height_textarea::-webkit-scrollbar {
+  width: 22px;
+}
 }
