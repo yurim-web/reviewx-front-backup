@@ -221,6 +221,7 @@
     align-items: center;
     pointer-events: none; /* 모바일에서도 배경 클릭 가능하도록 */
     width: 100%;
+    padding: 0px 20px;
   }
 
   /* 이미지 뷰어 - 모바일에서 전체 너비 */
@@ -281,5 +282,6 @@
 
   .empty_state{
     max-height: 70vh;
+    width: 100%;
   }
 }

@@ -31,6 +31,7 @@ import layoutStyles from "@/styles/partner/layout.module.css";
 import PageHeader from "@/components/partner/campaign_create_form/common/layout/PageHeader";
 import BaseModal from "@/components/common/modal/BaseModal";
 import { useAuth } from "@/hooks/useAuth";
+import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 
 export default function DeliveryCampaignCreatePage() {
   const router = useRouter();
@@ -290,6 +291,9 @@ export default function DeliveryCampaignCreatePage() {
 
   return (
     <div className={layoutStyles.container}>
+      {/* 파트너 서브헤더 */}
+      <PartnerSubHeader />
+
       {/* 메인 컨텐츠 영역 */}
       <div className={layoutStyles.main_content}>
         {/* 페이지 헤더 */}

@@ -25,7 +25,7 @@ import CampaignDetailPage from "@/components/campaign/CampaignDetailPage";
 import ApplicationModal from "@/components/user/campaign_detail/modal/ApplicationModal";
 import DetailGuidelinesSectionDelivery from "@/components/user/campaign_detail/guidelines/DetailGuidelinesSectionDelivery";
 import Toast from "@/components/common/toast/Toast";
-import { deliveryCampaigns } from "@/data/campaign/delivery/deliveryCampaigns";
+import { deliveryCampaigns, deliveryClosedCampaignsExtended } from "@/data/campaign/delivery/deliveryCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import type { DeliveryCampaignData } from "@/data/campaign/delivery/deliveryCampaigns";
 
@@ -453,7 +453,87 @@ export default function DeliveryDetailPage({
     }
     console.log("[DeliveryDetailPage] 정적 데이터에서 캠페인을 찾지 못함");
 
-    // 3. 찾지 못한 경우
+    // 3. 정적 데이터에서 찾지 못했으면 취소된 캠페인에서 찾기
+    console.log(
+      "[DeliveryDetailPage] 취소된 캠페인에서 찾기 시작, 전체 캠페인 수:",
+      deliveryClosedCampaignsExtended.length
+    );
+    const closedCampaign = deliveryClosedCampaignsExtended.find((c) => {
+      const campaignId = String(c.id);
+      // 정확히 일치하는 경우
+      if (campaignId === id) {
+        console.log(
+          "[DeliveryDetailPage] 취소된 캠페인에서 정확히 일치하는 캠페인 찾음:",
+          campaignId
+        );
+        return true;
+      }
+      // ID 형식 변환 시도
+      if (id.startsWith("delivery_")) {
+        // 둘 다 "delivery_" 형식이면 그대로 비교
+        if (campaignId === id) {
+          console.log(
+            "[DeliveryDetailPage] 취소된 캠페인에서 delivery_ 형식으로 일치:",
+            campaignId
+          );
+          return true;
+        }
+        // URL에서 "delivery_"를 제거한 값과 비교
+        const idWithoutPrefix = id.replace(/^delivery_/, "");
+        if (campaignId === idWithoutPrefix) {
+          console.log(
+            "[DeliveryDetailPage] 취소된 캠페인에서 delivery_ 제거 후 일치:",
+            campaignId,
+            "===",
+            idWithoutPrefix
+          );
+          return true;
+        }
+      }
+      // URL이 "902" 형식이고 캠페인 ID도 "902" 형식인 경우
+      if (!id.startsWith("delivery_") && !campaignId.startsWith("delivery_")) {
+        const matches = campaignId === id;
+        if (matches)
+          console.log(
+            "[DeliveryDetailPage] 취소된 캠페인에서 숫자만으로 일치:",
+            campaignId
+          );
+        return matches;
+      }
+      // 캠페인 ID가 "delivery_902" 형식이고 URL이 "902" 형식인 경우
+      if (campaignId.startsWith("delivery_") && !id.startsWith("delivery_")) {
+        const campaignIdWithoutPrefix = campaignId.replace(/^delivery_/, "");
+        const matches = campaignIdWithoutPrefix === id;
+        if (matches)
+          console.log(
+            "[DeliveryDetailPage] 취소된 캠페인에서 delivery_ 제거 후 일치:",
+            campaignIdWithoutPrefix,
+            "===",
+            id
+          );
+        return matches;
+      }
+      return false;
+    });
+    if (closedCampaign) {
+      console.log(
+        "[DeliveryDetailPage] 취소된 캠페인에서 캠페인 찾음:",
+        closedCampaign.id
+      );
+      // DeliveryCampaignDataExtended를 DeliveryCampaignData로 변환
+      const convertedCampaign: DeliveryCampaignData = {
+        ...closedCampaign,
+        // 필요한 필드들이 이미 있으면 그대로 사용, 없으면 기본값 설정
+        dayCount: closedCampaign.dayCount || "마감",
+        isUrgent: closedCampaign.isUrgent || false,
+      };
+      setCampaign(convertedCampaign);
+      setIsLoading(false);
+      return;
+    }
+    console.log("[DeliveryDetailPage] 취소된 캠페인에서도 캠페인을 찾지 못함");
+
+    // 4. 찾지 못한 경우
     console.warn("[DeliveryDetailPage] 캠페인을 찾을 수 없습니다. ID:", id);
     setCampaign(null);
     setIsLoading(false);

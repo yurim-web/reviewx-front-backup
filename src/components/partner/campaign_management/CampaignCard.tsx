@@ -30,6 +30,7 @@ import { getCampaignTypePath } from "./utils/campaign_card_helpers";
 import { useCampaignCard } from "@/hooks/partner/campaign_management/useCampaignCard";
 import { getButtonClassName } from "@/components/common/campaign_management/utils/button_style_utils";
 import { deleteCampaign, cancelCampaign } from "@/data/partner/sharedCampaigns";
+import { getPartnerTabByDates } from "@/data/partner/utils/campaignHelpers";
 
 interface CampaignCardProps {
   campaign: PartnerCampaign;
@@ -128,12 +129,12 @@ export default function CampaignCard({
     const detailPath = `/campaign/${campaignTypePath}/${campaignDataId}`;
     // 디버깅: 생성된 경로 로그
     // console.log("[CampaignCard] 상세 페이지 경로 생성:", {
-      originalId: campaign.id,
-      campaignType: campaign.campaignType,
-      campaignTypePath,
-      convertedId: campaignDataId,
-      detailPath,
-    });
+    //   originalId: campaign.id,
+    //   campaignType: campaign.campaignType,
+    //   campaignTypePath,
+    //   convertedId: campaignDataId,
+    //   detailPath,
+    // });
     return detailPath;
   };
 
@@ -311,14 +312,23 @@ export default function CampaignCard({
                 <>
                   {/* ======================================== */}
                   {/* 일반 캠페인: 신청/모집 수 표시 */}
-                  {/* "전체" 탭에서는 campaignStatus에 따라 색상 결정 */}
+                  {/* "전체" 탭에서는 getPartnerTabByDates로 계산한 탭이 "예정"이면 포인트 컬러 */}
                   {/* ======================================== */}
                   <span
                     className={`${cardStyles.applicant_current} ${
                       activeTab === "전체"
-                        ? (campaignStatus === "예정" || campaignStatus === "신청 중"
-                            ? cardStyles.applicant_current_pink
-                            : cardStyles.applicant_current_gray)
+                        ? (() => {
+                            // 전체 탭에서는 날짜 기반으로 실제 탭을 계산
+                            const calculatedTab = getPartnerTabByDates(
+                              campaign.recruitmentPeriod,
+                              campaign.registrationPeriod,
+                              undefined,
+                              campaign.announcementDate
+                            );
+                            return calculatedTab === "예정" || calculatedTab === "신청"
+                              ? cardStyles.applicant_current_pink
+                              : cardStyles.applicant_current_gray;
+                          })()
                         : (activeTab === "예정" || activeTab === "신청"
                             ? cardStyles.applicant_current_pink
                             : cardStyles.applicant_current_gray)
@@ -482,10 +492,10 @@ export default function CampaignCard({
            * - 삭제/취소 후 페이지를 새로고침하여 목록을 업데이트합니다
            */
           // console.log(
-            `[CampaignCard] 캠페인 ${
-              activeTab === "예정" ? "취소" : "삭제"
-            } 확인: ID=${campaign.id}, 제목=${campaign.title}, 탭=${activeTab}`
-          );
+          //   `[CampaignCard] 캠페인 ${
+          //     activeTab === "예정" ? "취소" : "삭제"
+          //   } 확인: ID=${campaign.id}, 제목=${campaign.title}, 탭=${activeTab}`
+          // );
 
           // 모달 닫기
           closeDeleteModal();

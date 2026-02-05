@@ -209,11 +209,11 @@ export default function MissionInspectionCard({
   // - 부모 컴포넌트에서 대기 탭으로 이동하고 날짜를 업데이트합니다
   const handleExtensionCompleteClose = () => {
     // console.log(
-      "연장 완료 모달 닫기, onExtend 호출:",
-      applicant.id,
-      "onExtend 존재:",
-      !!onExtend
-    );
+    //   "연장 완료 모달 닫기, onExtend 호출:",
+    //   applicant.id,
+    //   "onExtend 존재:",
+    //   !!onExtend
+    // );
     setIsExtensionCompleteModalOpen(false);
     // 연장 완료 후 대기 탭으로 이동하기 위해 onExtend를 호출
     // 부모 컴포넌트에서 탭 이동과 날짜 업데이트를 처리합니다

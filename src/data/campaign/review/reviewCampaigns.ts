@@ -2806,9 +2806,6 @@ export function getPurchaseReviewContentsById(
   }
 
   // 콘텐츠가 없는 경우 undefined 반환
-  console.warn(
-    `[getPurchaseReviewContentsById] 캠페인 ${campaignId}에 콘텐츠가 없습니다.`
-  );
   return undefined;
 }
 

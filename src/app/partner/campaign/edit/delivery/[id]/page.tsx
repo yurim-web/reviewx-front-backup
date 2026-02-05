@@ -286,11 +286,11 @@ export default function DeliveryCampaignEditPage() {
       const dataToUse = storedCampaign || originalData;
 
       // console.log('🔍 캠페인 수정 - 불러온 데이터:', {
-        campaignId,
-        storedCampaign,
-        originalData,
-        dataToUse,
-      });
+      //   campaignId,
+      //   storedCampaign,
+      //   originalData,
+      //   dataToUse,
+      // });
 
       // 현재 포인트 가져오기
       const currentPoints = user?.id ? getPartnerPointSummary(user.id).available_points : 0;

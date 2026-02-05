@@ -133,18 +133,18 @@ export default function CampaignManagementModal({
       | "미션형";
 
     // console.log(
-      `[CampaignManagementModal] 캠페인 취소 시도: ID=${campaignIdString}, 타입=${campaignTypeStr}, 제목=${campaignTitle}`
-    );
+    //   `[CampaignManagementModal] 캠페인 취소 시도: ID=${campaignIdString}, 타입=${campaignTypeStr}, 제목=${campaignTitle}`
+    // );
 
     try {
       // 캠페인 취소 함수 호출
       const result = cancelCampaign(campaignIdString, campaignTypeStr);
 
       // console.log(
-        `[CampaignManagementModal] 취소 결과: ${
-          result.success ? "성공" : "실패"
-        }, 오류=${result.error || "없음"}`
-      );
+      //   `[CampaignManagementModal] 취소 결과: ${
+      //     result.success ? "성공" : "실패"
+      //   }, 오류=${result.error || "없음"}`
+      // );
 
       if (result.success) {
         // 취소 성공: 모달 닫기 및 페이지 새로고침
@@ -200,17 +200,17 @@ export default function CampaignManagementModal({
       if (isScheduledTab) {
         // 예정 탭: 취소 탭으로 이동
         // console.log(
-          `[CampaignManagementModal] 캠페인 취소 시도 (예정 탭): ID=${campaignIdString}, 타입=${campaignTypeStr}, 제목=${campaignTitle}`
-        );
+        //   `[CampaignManagementModal] 캠페인 취소 시도 (예정 탭): ID=${campaignIdString}, 타입=${campaignTypeStr}, 제목=${campaignTitle}`
+        // );
 
         try {
           const result = cancelCampaign(campaignIdString, campaignTypeStr);
 
           // console.log(
-            `[CampaignManagementModal] 취소 결과: ${
-              result.success ? "성공" : "실패"
-            }, 오류=${result.error || "없음"}`
-          );
+          //   `[CampaignManagementModal] 취소 결과: ${
+          //     result.success ? "성공" : "실패"
+          //   }, 오류=${result.error || "없음"}`
+          // );
 
           if (result.success) {
             onClose(); // 모달 닫기
@@ -234,16 +234,16 @@ export default function CampaignManagementModal({
       } else {
         // 그 외 탭: 완전 삭제
         // console.log(
-          `[CampaignManagementModal] 캠페인 삭제 시도: ID=${campaignIdString}, 타입=${campaignTypeStr}, 제목=${campaignTitle}`
-        );
+        //   `[CampaignManagementModal] 캠페인 삭제 시도: ID=${campaignIdString}, 타입=${campaignTypeStr}, 제목=${campaignTitle}`
+        // );
 
         const deleteSuccess = deleteCampaign(campaignIdString, campaignTypeStr);
 
         // console.log(
-          `[CampaignManagementModal] 삭제 결과: ${
-            deleteSuccess ? "성공" : "실패"
-          }`
-        );
+        //   `[CampaignManagementModal] 삭제 결과: ${
+        //     deleteSuccess ? "성공" : "실패"
+        //   }`
+        // );
 
         if (deleteSuccess) {
           alert("캠페인이 삭제되었습니다.");

@@ -31,6 +31,7 @@ import { addVisitCampaign } from "@/data/campaign/visit/visitCampaigns";
 import layoutStyles from "@/styles/partner/layout.module.css";
 import PageHeader from "@/components/partner/campaign_create_form/common/layout/PageHeader";
 import BaseModal from "@/components/common/modal/BaseModal";
+import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 
 export default function VisitCampaignCreatePage() {
   const router = useRouter();
@@ -183,13 +184,13 @@ export default function VisitCampaignCreatePage() {
 
       // 디버깅: 생성된 캠페인 정보 확인
       // console.log(
-        "newCampaign.campaignInfo.region:",
-        (newCampaign.campaignInfo as any).region
-      );
+      //   "newCampaign.campaignInfo.region:",
+      //   (newCampaign.campaignInfo as any).region
+      // );
       // console.log(
-        "newCampaign.campaignInfo.subRegion:",
-        (newCampaign.campaignInfo as any).subRegion
-      );
+      //   "newCampaign.campaignInfo.subRegion:",
+      //   (newCampaign.campaignInfo as any).subRegion
+      // );
 
       // 상세 페이지에서 필요한 추가 정보를 포함한 확장 데이터 생성
       // 등록 시간 생성 (ISO 8601 형식: "2025-01-15T10:30:00")
@@ -362,6 +363,9 @@ export default function VisitCampaignCreatePage() {
 
   return (
     <div className={layoutStyles.container}>
+      {/* 파트너 서브헤더 */}
+      <PartnerSubHeader />
+
       {/* 메인 컨텐츠 영역 */}
       <div className={layoutStyles.main_content}>
         {/* 페이지 헤더 */}

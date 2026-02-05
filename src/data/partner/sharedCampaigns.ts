@@ -464,36 +464,36 @@ const transformApplicantData = (applicant: any) => {
           }
           
           // console.log('✅ [transformApplicantData] user_accounts에서 최신 정보 로드:', {
-            id: applicant.id || applicant.userId,
-            applicantId: applicant.id,
-            applicantUserId: applicant.userId,
-            applicantEmail: applicant.email,
-            userAccountId: userAccount.id,
-            userAccountEmail: userAccount.email,
-            nickname: latestNickname,
-            normalizedChannel,
-            channelType,
-            isChannelConnected,
-            dailyVisits: latestDailyVisits,
-            totalVisits: latestTotalVisits,
-            neighbors: latestNeighbors,
-            userAccountDailyVisits: userAccount.daily_visits,
-            userAccountTotalVisits: userAccount.total_visits,
-            userAccountNeighbors: userAccount.neighbors,
-            hasChannelDetails: !!userAccount.channel_details,
-            channelDetailsLength: userAccount.channel_details?.length || 0,
-          });
+          //   id: applicant.id || applicant.userId,
+          //   applicantId: applicant.id,
+          //   applicantUserId: applicant.userId,
+          //   applicantEmail: applicant.email,
+          //   userAccountId: userAccount.id,
+          //   userAccountEmail: userAccount.email,
+          //   nickname: latestNickname,
+          //   normalizedChannel,
+          //   channelType,
+          //   isChannelConnected,
+          //   dailyVisits: latestDailyVisits,
+          //   totalVisits: latestTotalVisits,
+          //   neighbors: latestNeighbors,
+          //   userAccountDailyVisits: userAccount.daily_visits,
+          //   userAccountTotalVisits: userAccount.total_visits,
+          //   userAccountNeighbors: userAccount.neighbors,
+          //   hasChannelDetails: !!userAccount.channel_details,
+          //   channelDetailsLength: userAccount.channel_details?.length || 0,
+          // });
         } else {
-          console.warn('⚠️ [transformApplicantData] user_accounts에서 사용자를 찾을 수 없음:', {
-            applicantId: applicant.id,
-            applicantUserId: applicant.userId,
-            applicantEmail: applicant.email,
-            availableIds: accounts.map((a: any) => a.id).slice(0, 5),
-          });
+          // console.warn('⚠️ [transformApplicantData] user_accounts에서 사용자를 찾을 수 없음:', {
+          //   applicantId: applicant.id,
+          //   applicantUserId: applicant.userId,
+          //   applicantEmail: applicant.email,
+          //   availableIds: accounts.map((a: any) => a.id).slice(0, 5),
+          // });
         }
       }
     } catch (error) {
-      console.error('❌ [transformApplicantData] user_accounts 로드 실패:', error);
+      // console.error('❌ [transformApplicantData] user_accounts 로드 실패:', error);
     }
   }
 
@@ -533,23 +533,23 @@ const transformBasicApplicantData = (applicant: any) => {
   const nickname = applicant.nickname || "";
   
   // 디버깅: name이 있는데 nickname이 없는 경우 경고
-  if (applicant.name && !applicant.nickname) {
-    console.warn('[transformBasicApplicantData] ⚠️ nickname이 없고 name만 있음 (name은 사용하지 않음):', {
-      id: applicant.id || applicant.userId,
-      name: applicant.name,
-      nickname: applicant.nickname,
-      finalNickname: nickname,
-    });
-  }
+  // if (applicant.name && !applicant.nickname) {
+  //   console.warn('[transformBasicApplicantData] ⚠️ nickname이 없고 name만 있음 (name은 사용하지 않음):', {
+  //     id: applicant.id || applicant.userId,
+  //     name: applicant.name,
+  //     nickname: applicant.nickname,
+  //     finalNickname: nickname,
+  //   });
+  // }
   
   // 디버깅: nickname이 name과 같은 경우 경고 (잘못된 데이터)
-  if (applicant.nickname && applicant.name && applicant.nickname === applicant.name) {
-    console.warn('[transformBasicApplicantData] ⚠️ nickname과 name이 동일함 (잘못된 데이터일 수 있음):', {
-      id: applicant.id || applicant.userId,
-      name: applicant.name,
-      nickname: applicant.nickname,
-    });
-  }
+  // if (applicant.nickname && applicant.name && applicant.nickname === applicant.name) {
+  //   console.warn('[transformBasicApplicantData] ⚠️ nickname과 name이 동일함 (잘못된 데이터일 수 있음):', {
+  //     id: applicant.id || applicant.userId,
+  //     name: applicant.name,
+  //     nickname: applicant.nickname,
+  //   });
+  // }
   
   return {
     id: applicant.id || applicant.userId,
@@ -1445,20 +1445,20 @@ export function getSharedCampaigns(): CampaignWithApplicants[] {
     const isDeleted = deletedCampaignIds.includes(campaignId);
     if (isDeleted) {
       // console.log(
-        `[getSharedCampaigns] 삭제된 캠페인 필터링: ID=${campaignId}, 제목=${campaign.campaignInfo.title}`
-      );
+      //   `[getSharedCampaigns] 삭제된 캠페인 필터링: ID=${campaignId}, 제목=${campaign.campaignInfo.title}`
+      // );
     }
     return !isDeleted;
   });
 
   if (deletedCampaignIds.length > 0) {
     // console.log(
-      `[getSharedCampaigns] 삭제된 캠페인 ID 목록:`,
-      deletedCampaignIds
-    );
+    //   `[getSharedCampaigns] 삭제된 캠페인 ID 목록:`,
+    //   deletedCampaignIds
+    // );
     // console.log(
-      `[getSharedCampaigns] 필터링 전 캠페인 수: ${allCampaigns.length}, 필터링 후: ${filteredCampaigns.length}`
-    );
+    //   `[getSharedCampaigns] 필터링 전 캠페인 수: ${allCampaigns.length}, 필터링 후: ${filteredCampaigns.length}`
+    // );
   }
 
   return filteredCampaigns;
@@ -1523,11 +1523,11 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
     // 디버깅: mission_11 확인
     if (campaign.campaignInfo.id === "4011") {
       // console.log("[convertToPartnerCampaigns] mission_11 발견:", {
-        id: campaign.campaignInfo.id,
-        title: campaign.campaignInfo.title,
-        recruitmentPeriod: campaign.campaignInfo.recruitmentPeriod,
-        status: campaign.campaignInfo.status,
-      });
+      //   id: campaign.campaignInfo.id,
+      //   title: campaign.campaignInfo.title,
+      //   recruitmentPeriod: campaign.campaignInfo.recruitmentPeriod,
+      //   status: campaign.campaignInfo.status,
+      // });
     }
 
     const campaignIdStr = String(campaign.campaignInfo.id);
@@ -1816,30 +1816,30 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
               // 등록 기간이 진행 중인지 확인 (오늘이 등록 기간 내에 있는지)
               isRegistrationPeriodActive = today >= regStart && today <= regEnd;
               // console.log(
-                `[convertToPartnerCampaigns] 등록 기간 체크: ${
-                  campaign.campaignInfo.id
-                } - ${
-                  campaign.campaignInfo.title
-                }, 등록 기간: ${registrationPeriod}, 시작: ${
-                  regStart.toISOString().split("T")[0]
-                }, 종료: ${regEnd.toISOString().split("T")[0]}, 오늘: ${
-                  today.toISOString().split("T")[0]
-                }, 진행 중: ${isRegistrationPeriodActive}`
-              );
+              //   `[convertToPartnerCampaigns] 등록 기간 체크: ${
+              //     campaign.campaignInfo.id
+              //   } - ${
+              //     campaign.campaignInfo.title
+              //   }, 등록 기간: ${registrationPeriod}, 시작: ${
+              //     regStart.toISOString().split("T")[0]
+              //   }, 종료: ${regEnd.toISOString().split("T")[0]}, 오늘: ${
+              //     today.toISOString().split("T")[0]
+              //   }, 진행 중: ${isRegistrationPeriodActive}`
+              // );
             } else {
               // console.log(
-                `[convertToPartnerCampaigns] 등록 기간 파싱 실패: ${campaign.campaignInfo.id} - ${campaign.campaignInfo.title}, 등록 기간: ${registrationPeriod}, regStartStr: ${regStartStr}, regEndStr: ${regEndStr}`
-              );
+              //   `[convertToPartnerCampaigns] 등록 기간 파싱 실패: ${campaign.campaignInfo.id} - ${campaign.campaignInfo.title}, 등록 기간: ${registrationPeriod}, regStartStr: ${regStartStr}, regEndStr: ${regEndStr}`
+              // );
             }
           } else {
             // console.log(
-              `[convertToPartnerCampaigns] 등록 기간 형식 오류: ${campaign.campaignInfo.id} - ${campaign.campaignInfo.title}, 등록 기간: ${registrationPeriod}, parts: ${regParts.length}`
-            );
+            //   `[convertToPartnerCampaigns] 등록 기간 형식 오류: ${campaign.campaignInfo.id} - ${campaign.campaignInfo.title}, 등록 기간: ${registrationPeriod}, parts: ${regParts.length}`
+            // );
           }
         } else {
           // console.log(
-            `[convertToPartnerCampaigns] 등록 기간 없음: ${campaign.campaignInfo.id} - ${campaign.campaignInfo.title}`
-          );
+          //   `[convertToPartnerCampaigns] 등록 기간 없음: ${campaign.campaignInfo.id} - ${campaign.campaignInfo.title}`
+          // );
         }
 
         // 캠페인이 종료되지 않았는지 확인 (종료된 캠페인은 종료 탭으로 이동해야 함)
@@ -1850,24 +1850,24 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
         // 연장 요청 탭에 표시될 캠페인들에 extension_request 추가
         // ✅ 조건:
         // 1. 캠페인이 종료되지 않았을 때 (calculatedTab이 "종료" 또는 "취소"가 아닐 때)
-        // 2. 등록 기간이 진행 중일 때 (등록 기간이 끝나지 않았을 때)
-        // 3. 선정자가 있는 경우 (selectedApplicants가 있어야 함)
+        // 2. 등록 기간이 진행 중일 때 (등록 기간이 끝나지 않았을 때) - 단, 연장 요청이 있으면 등록 기간 체크 완화
+        // 3. 선정자가 있는 경우 (selectedApplicants가 있어야 함) - 단, 연장 요청이 있으면 선정자 체크 완화
         // 4. 연장 요청한 리뷰어가 있는 경우 (contents.waiting에 extension_request_reason이 있어야 함)
         if (
           isCampaignNotEnded &&
-          isRegistrationPeriodActive &&
-          hasSelectedApplicants &&
+          (isRegistrationPeriodActive || hasExtensionRequest) && // 연장 요청이 있으면 등록 기간 체크 완화
+          (hasSelectedApplicants || hasExtensionRequest) && // 연장 요청이 있으면 선정자 체크 완화
           hasExtensionRequest
         ) {
           // console.log(
-            `[convertToPartnerCampaigns] extension_request 추가: ${campaign.campaignInfo.id} - ${campaign.campaignInfo.title}, calculatedTab: ${calculatedTab}, 등록 기간: ${registrationPeriod}`
-          );
+          //   `[convertToPartnerCampaigns] extension_request 추가: ${campaign.campaignInfo.id} - ${campaign.campaignInfo.title}, calculatedTab: ${calculatedTab}, 등록 기간: ${registrationPeriod}`
+          // );
           return `${baseSubStatus},extension_request`;
         } else if (hasExtensionRequest) {
           // 연장 요청이 있지만 조건을 만족하지 않는 경우 디버깅
           // console.log(
-            `[convertToPartnerCampaigns] extension_request 조건 불만족: ${campaign.campaignInfo.id} - ${campaign.campaignInfo.title}, calculatedTab: ${calculatedTab}, isCampaignNotEnded: ${isCampaignNotEnded}, isRegistrationPeriodActive: ${isRegistrationPeriodActive}, 등록 기간: ${registrationPeriod}`
-          );
+          //   `[convertToPartnerCampaigns] extension_request 조건 불만족: ${campaign.campaignInfo.id} - ${campaign.campaignInfo.title}, calculatedTab: ${calculatedTab}, isCampaignNotEnded: ${isCampaignNotEnded}, isRegistrationPeriodActive: ${isRegistrationPeriodActive}, 등록 기간: ${registrationPeriod}`
+          // );
         }
         return baseSubStatus;
       })(),
@@ -1918,12 +1918,12 @@ export const getCampaignById = (id: string): CampaignWithApplicants | null => {
 
   if (storedFound) {
     // console.log(`[getCampaignById] localStorage에서 캠페인 찾음:`, {
-      id: storedFound.campaignInfo.id,
-      title: storedFound.campaignInfo.title,
-      category: storedFound.campaignInfo.category,
-      brandName: storedFound.campaignInfo.brandName,
-      applicantsCount: storedFound.applicantData.applicants.length,
-    });
+    //   id: storedFound.campaignInfo.id,
+    //   title: storedFound.campaignInfo.title,
+    //   category: storedFound.campaignInfo.category,
+    //   brandName: storedFound.campaignInfo.brandName,
+    //   applicantsCount: storedFound.applicantData.applicants.length,
+    // });
     return storedFound;
   }
 
@@ -1935,12 +1935,12 @@ export const getCampaignById = (id: string): CampaignWithApplicants | null => {
     const matches = campaign.campaignInfo.id === id;
     if (matches) {
       // console.log(`[getCampaignById] 일반 데이터에서 캠페인 찾음:`, {
-        id: campaign.campaignInfo.id,
-        title: campaign.campaignInfo.title,
-        category: campaign.campaignInfo.category,
-        brandName: campaign.campaignInfo.brandName,
-        applicantsCount: campaign.applicantData?.applicants?.length ?? 0,
-      });
+      //   id: campaign.campaignInfo.id,
+      //   title: campaign.campaignInfo.title,
+      //   category: campaign.campaignInfo.category,
+      //   brandName: campaign.campaignInfo.brandName,
+      //   applicantsCount: campaign.applicantData?.applicants?.length ?? 0,
+      // });
     }
     return matches;
   });
@@ -2139,8 +2139,8 @@ export const getCampaignsByTab = (tab: string): PartnerCampaign[] => {
         // 캠페인이 종료되었으면 연장 요청 탭에서 제외 (종료 탭으로 이동)
         if (campaign.status === "종료" || campaign.status === "마감") {
           // console.log(
-            `[연장 요청 탭] 종료된 캠페인 제외: ${campaign.id} - ${campaign.title}, status: ${campaign.status}`
-          );
+          //   `[연장 요청 탭] 종료된 캠페인 제외: ${campaign.id} - ${campaign.title}, status: ${campaign.status}`
+          // );
           return false;
         }
 
@@ -2149,17 +2149,17 @@ export const getCampaignsByTab = (tab: string): PartnerCampaign[] => {
         // subStatus에 extension_request가 있으면 바로 포함
         if (campaign.subStatus?.includes("extension_request")) {
           // console.log(
-            `[연장 요청 탭] 포함: ${campaign.id} - ${campaign.title}, subStatus: ${campaign.subStatus}`
-          );
+          //   `[연장 요청 탭] 포함: ${campaign.id} - ${campaign.title}, subStatus: ${campaign.subStatus}`
+          // );
           return true;
         }
 
         // subStatus에 extension_request가 없으면 제외
         // console.log(
-          `[연장 요청 탭] extension_request 없음: ${campaign.id} - ${
-            campaign.title
-          }, subStatus: ${campaign.subStatus || "없음"}`
-        );
+        //   `[연장 요청 탭] extension_request 없음: ${campaign.id} - ${
+        //     campaign.title
+        //   }, subStatus: ${campaign.subStatus || "없음"}`
+        // );
         return false;
       });
     default:
@@ -2390,13 +2390,13 @@ function addDeletedCampaignId(campaignId: string): void {
       deletedIds.push(campaignIdStr);
       localStorage.setItem("deletedCampaignIds", JSON.stringify(deletedIds));
       // console.log(
-        `[addDeletedCampaignId] 삭제 목록에 추가됨: ID=${campaignIdStr}, 현재 삭제 목록:`,
-        deletedIds
-      );
+      //   `[addDeletedCampaignId] 삭제 목록에 추가됨: ID=${campaignIdStr}, 현재 삭제 목록:`,
+      //   deletedIds
+      // );
     } else {
       // console.log(
-        `[addDeletedCampaignId] 이미 삭제 목록에 있음: ID=${campaignIdStr}`
-      );
+      //   `[addDeletedCampaignId] 이미 삭제 목록에 있음: ID=${campaignIdStr}`
+      // );
     }
   } catch (error) {
     console.error("삭제된 캠페인 ID 추가 실패:", error);
@@ -2456,13 +2456,13 @@ function addCancelledCampaignId(campaignId: string): void {
         JSON.stringify(cancelledIds)
       );
       // console.log(
-        `[addCancelledCampaignId] 취소 목록에 추가됨: ID=${campaignIdStr}, 현재 취소 목록:`,
-        cancelledIds
-      );
+      //   `[addCancelledCampaignId] 취소 목록에 추가됨: ID=${campaignIdStr}, 현재 취소 목록:`,
+      //   cancelledIds
+      // );
     } else {
       // console.log(
-        `[addCancelledCampaignId] 이미 취소 목록에 있음: ID=${campaignIdStr}`
-      );
+      //   `[addCancelledCampaignId] 이미 취소 목록에 있음: ID=${campaignIdStr}`
+      // );
     }
   } catch (error) {
     console.error("취소된 캠페인 ID 추가 실패:", error);
@@ -2485,8 +2485,8 @@ export function removeCancelledCampaignId(campaignId: string): void {
     if (filteredIds.length < cancelledIds.length) {
       localStorage.setItem("cancelledCampaignIds", JSON.stringify(filteredIds));
       // console.log(
-        `[removeCancelledCampaignId] 취소 목록에서 제거됨: ID=${campaignIdStr}`
-      );
+      //   `[removeCancelledCampaignId] 취소 목록에서 제거됨: ID=${campaignIdStr}`
+      // );
     }
   } catch (error) {
     console.error("취소된 캠페인 ID 제거 실패:", error);
@@ -2556,8 +2556,8 @@ export function deleteCampaign(
           localStorage.setItem(storageKey, JSON.stringify(filteredCampaigns));
           deletedFromLocalStorage = true;
           // console.log(
-            `localStorage에서 캠페인 삭제 완료: ID=${campaignId}, 타입=${campaignType}, 남은 캠페인 수=${filteredCampaigns.length}`
-          );
+          //   `localStorage에서 캠페인 삭제 완료: ID=${campaignId}, 타입=${campaignType}, 남은 캠페인 수=${filteredCampaigns.length}`
+          // );
         }
       }
     }
@@ -2567,8 +2567,8 @@ export function deleteCampaign(
     addDeletedCampaignId(campaignId);
 
     // console.log(
-      `캠페인 삭제 처리 완료: ID=${campaignId}, 타입=${campaignType}, localStorage에서 삭제=${deletedFromLocalStorage}, 삭제 목록에 추가됨`
-    );
+    //   `캠페인 삭제 처리 완료: ID=${campaignId}, 타입=${campaignType}, localStorage에서 삭제=${deletedFromLocalStorage}, 삭제 목록에 추가됨`
+    // );
     return true;
   } catch (error) {
     console.error("캠페인 삭제 중 오류 발생:", error);
@@ -2609,8 +2609,8 @@ export function cancelCampaign(
 
     if (cancelledIds.includes(campaignIdStr)) {
       // console.log(
-        `[cancelCampaign] 이미 취소된 캠페인: ID=${campaignIdStr}, 타입=${campaignType}`
-      );
+      //   `[cancelCampaign] 이미 취소된 캠페인: ID=${campaignIdStr}, 타입=${campaignType}`
+      // );
       return { success: false, error: "ALREADY_CANCELLED" };
     }
 
@@ -2662,8 +2662,8 @@ export function cancelCampaign(
         // 변경된 배열을 다시 localStorage에 저장
         localStorage.setItem(storageKey, JSON.stringify(updatedCampaigns));
         // console.log(
-          `localStorage에서 캠페인 상태를 취소로 변경 완료: ID=${campaignId}, 타입=${campaignType}`
-        );
+        //   `localStorage에서 캠페인 상태를 취소로 변경 완료: ID=${campaignId}, 타입=${campaignType}`
+        // );
       }
     }
 
@@ -2671,8 +2671,8 @@ export function cancelCampaign(
     addCancelledCampaignId(campaignIdStr);
 
     // console.log(
-      `캠페인 취소 처리 완료: ID=${campaignId}, 타입=${campaignType}, localStorage 업데이트=${updatedInLocalStorage}, 취소 목록에 추가됨`
-    );
+    //   `캠페인 취소 처리 완료: ID=${campaignId}, 타입=${campaignType}, localStorage 업데이트=${updatedInLocalStorage}, 취소 목록에 추가됨`
+    // );
     return { success: true };
   } catch (error) {
     console.error("캠페인 취소 중 오류 발생:", error);
@@ -2757,8 +2757,8 @@ export function updateCampaignApplicants(
         },
       };
       // console.log(
-        `localStorage에서 캠페인 신청자 데이터 업데이트 완료: ID=${campaignId}, 타입=${campaignType}, 신청자=${applicants.length}명, 선정자=${selectedApplicants.length}명`
-      );
+      //   `localStorage에서 캠페인 신청자 데이터 업데이트 완료: ID=${campaignId}, 타입=${campaignType}, 신청자=${applicants.length}명, 선정자=${selectedApplicants.length}명`
+      // );
     } else {
       // localStorage에 캠페인이 없으면 getCampaignById로 가져와서 업데이트
       const existingCampaign = getCampaignById(campaignId);
@@ -2772,8 +2772,8 @@ export function updateCampaignApplicants(
         };
         campaigns.push(updatedCampaign);
         // console.log(
-          `localStorage에 캠페인 신청자 데이터 추가 완료: ID=${campaignId}, 타입=${campaignType}, 신청자=${applicants.length}명, 선정자=${selectedApplicants.length}명`
-        );
+        //   `localStorage에 캠페인 신청자 데이터 추가 완료: ID=${campaignId}, 타입=${campaignType}, 신청자=${applicants.length}명, 선정자=${selectedApplicants.length}명`
+        // );
       } else {
         console.error(
           `캠페인을 찾을 수 없습니다: ID=${campaignId}, 타입=${campaignType}`

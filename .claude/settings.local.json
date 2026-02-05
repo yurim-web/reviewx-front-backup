@@ -28,7 +28,13 @@
       "Bash(ls:*)",
       "Bash(tasklist:*)",
       "Bash(git add:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(xargs sed:*)",
+      "Bash(while read file)",
+      "Bash(do sed -i 's/\\\\\\(.*\\\\\\)console\\\\.log\\(/\\\\1\\\\/\\\\/ console.log\\(/g; s/\\\\\\(.*\\\\\\)console\\\\.error\\(/\\\\1\\\\/\\\\/ console.error\\(/g; s/\\\\\\(.*\\\\\\)console\\\\.warn\\(/\\\\1\\\\/\\\\/ console.warn\\(/g; s/\\\\\\(.*\\\\\\)console\\\\.info\\(/\\\\1\\\\/\\\\/ console.info\\(/g' \"$file\")",
+      "Bash(do python3 -c \" import re import sys with open\\(sys.argv[1], ''r'', encoding=''utf-8''\\) as f: content = f.read\\(\\) # 여러 줄에 걸친 console.log, console.error, console.warn 등을 모두 주석 처리 patterns = [ \\(r''console\\\\.log\\\\\\([^;]*\\\\\\);'', lambda m: ''// '' + m.group\\(0\\).replace\\(''\\\\n'', ''\\\\n// ''\\)\\), \\(r''console\\\\.error\\\\\\([^;]*\\\\\\);'', lambda m: ''// '' + m.group\\(0\\).replace\\(''\\\\n'', ''\\\\n// ''\\)\\), \\(r''console\\\\.warn\\\\\\([^;]*\\\\\\);'', lambda m: ''// '' + m.group\\(0\\).replace\\(''\\\\n'', ''\\\\n// ''\\)\\), \\(r''console\\\\.info\\\\\\([^;]*\\\\\\);'', lambda m: ''// '' + m.group\\(0\\).replace\\(''\\\\n'', ''\\\\n// ''\\)\\), ] for pattern, replacement in patterns: content = re.sub\\(pattern, replacement, content, flags=re.DOTALL\\) with open\\(sys.argv[1], ''w'', encoding=''utf-8''\\) as f: f.write\\(content\\) \" \"$file\")",
+      "Bash(git restore:*)",
+      "WebFetch(domain:markx.atlassian.net)"
     ]
   }
 }
