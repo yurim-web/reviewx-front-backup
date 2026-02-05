@@ -148,17 +148,4 @@
     gap: 6px;
   }
 
-  /* underline 입력 */
-  .underline_input {
-    width: 40px;
-    font-size: 14px;
-    line-height: 14px;
-    letter-spacing: -0.28px;
-  }
-
-  /* 단위 텍스트 */
-  .unit_text {
-    font-size: 14px;
-    letter-spacing: -0.28px;
-  }
 }

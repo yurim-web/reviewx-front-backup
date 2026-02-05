@@ -1,0 +1,85 @@
+/* ========================================
+   👤 신청자 카드 - 기본 레이아웃
+   ======================================== */
+
+/**
+ * 사용: 모든 신청자/콘텐츠 카드 컴포넌트
+ * 경로: @/components/partner/campaign_application/card_type/**
+ *       @/components/partner/campaign_contents/card_type/**
+ */
+
+/* ==================== 카드 기본 구조 ==================== */
+
+/* 카드 래퍼 (카드 + footer) */
+.card_wrapper {
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  overflow: hidden;
+  background: white;
+}
+
+/* 카드 컨테이너 */
+.applicant_card {
+  border: 1px solid #d9d9d9;
+  border-radius: 8px 8px 0 0;
+  border-bottom: none;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: white;
+  height: fit-content;
+}
+
+/* 푸터가 있는 카드 스타일 */
+.card_wrapper:has(.extension_report_footer) .applicant_card {
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+}
+
+/* ==================== 선정 카드 스타일 ==================== */
+
+.selected_card {
+  border: 1px solid #ff5694;
+}
+
+.selected_card_influencer {
+  border: 1px solid #2dc469;
+}
+
+/* ==================== 이용 제한 카드 ==================== */
+
+.restricted_card {
+  border-radius: 4px;
+  background: rgba(249, 249, 249, 0.1);
+  position: relative;
+}
+
+.restricted_card .profile_section,
+.restricted_card .channel_section,
+.restricted_card .member_type,
+.restricted_card .stats_section,
+.restricted_card .memo_section {
+  filter: blur(8px);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.restricted_card .action_button_section {
+  position: relative;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+/* ==================== 📱 모바일 반응형 ==================== */
+
+@media (max-width: 768px) {
+  .card_wrapper,
+  .applicant_card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+}

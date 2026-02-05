@@ -175,19 +175,19 @@ export default function ReporterContentsDetailPage() {
     item: ContentItem,
     index: number
   ): React.ReactNode => {
-    const brandChannel = campaignInfo?.brandName ?? item.channel;
+    // 📌 channel 필드에는 채널 타입(네이버블로그, 인스타그램 등)을 사용해야 getChannelUrl이 올바른 URL을 생성할 수 있습니다
     const applicant: ExperienceApplicant = {
       id: item.id,
       userType: item.userType,
       nickname: item.nickname,
       profileImage: item.profileImage,
-      channel: brandChannel || "",
+      channel: item.channel || "",
       channelId: item.channelId || "",
       registrationDate: formatDateTime(item.createdAt),
       updatedAt: item.updatedAt ? formatDateTime(item.updatedAt) : undefined,
     };
 
-    const dateLabel: "등록" | "수정" | "지각 등록" = item.isLate
+    const dateLabel: "등록" | "수정" | "지각 등록" = item.isLateSubmission
       ? "지각 등록"
       : item.updatedAt
       ? "수정"
@@ -214,6 +214,10 @@ export default function ReporterContentsDetailPage() {
       // 반려 사유 가져오기 (rejectReasons에서 조회)
       const rejectReason = rejectReasons.get(item.id) || "";
 
+      // reportedDate 포맷 적용
+      const reportedDateValue = reportedDates.get(item.id) || item.reportedDate;
+      const formattedReportedDate = reportedDateValue ? formatDateTime(reportedDateValue) : undefined;
+
       return (
         <ExperiencePendingCard
           key={item.id}
@@ -223,7 +227,7 @@ export default function ReporterContentsDetailPage() {
           extendedDeadline={extendedDeadline}
           deadlineDate={deadlineDate}
           reject_reason={rejectReason}
-          reportedDate={reportedDates.get(item.id) || item.reportedDate}
+          reportedDate={formattedReportedDate}
           onReport={handleReport}
           onContentCheck={() => {
             // 📌 링크 확인 핸들러:
@@ -297,7 +301,7 @@ export default function ReporterContentsDetailPage() {
   };
 
   const handleBatchExtension = () => {
-    console.log("일괄 기한 연장 클릭");
+    // console.log("일괄 기한 연장 클릭");
   };
 
   return (

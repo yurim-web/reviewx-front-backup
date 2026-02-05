@@ -47,18 +47,18 @@ export default function PartnerAllPointPage() {
 
   // 사용자 포인트 정보 로드
   useEffect(() => {
-    console.log('🔍 [포인트 페이지] user:', user);
+    // console.log('🔍 [포인트 페이지] user:', user);
     if (user?.id) {
-      console.log('🔍 [포인트 페이지] user.id:', user.id);
+      // console.log('🔍 [포인트 페이지] user.id:', user.id);
       // getPartnerPointHistory는 항상 목업 데이터를 포함하고 localStorage 데이터를 추가로 합칩니다
       const userHistory = getPartnerPointHistory(user.id);
       const userSummary = getPartnerPointSummary(user.id);
-      console.log('🔍 [포인트 페이지] userHistory:', userHistory);
-      console.log('🔍 [포인트 페이지] userSummary:', userSummary);
+      // console.log('🔍 [포인트 페이지] userHistory:', userHistory);
+      // console.log('🔍 [포인트 페이지] userSummary:', userSummary);
       setHistoryData(userHistory);
       setSummary(userSummary);
     } else {
-      console.log('⚠️ [포인트 페이지] 로그인되지 않음');
+      // console.log('⚠️ [포인트 페이지] 로그인되지 않음');
       // 로그인되지 않은 경우 목업 데이터만 표시 (getPartnerPointHistory는 userId가 없어도 목업 데이터 반환)
       const userHistory = getPartnerPointHistory();
       setHistoryData(userHistory);

@@ -548,6 +548,37 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       "- 미준수 시 처리 방향에 대한 책임은 기자단에게 있는 점 주의 부탁드립니다 <br /> - 활동 불가 및 활동 착오의 경우 : 페이백 미지급 및 선정취소 <br /> - 리포팅 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 전문적인 장비로 촬영해주세요 (4K 화상 권장) - 성의없는 리포팅은 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 기자단 활동 정보를 정확하게 기재해주세요 (기술 스펙, 테스트 환경, 사용 시간 등<br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리포팅 등록기간 내 리포팅 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리포팅 등록기간 필수로 지켜주시기 바랍니다. <br />- 기자단의 경우 기술 분석과 함께 관련 정보, 참고 자료, 비교 분석 등을 기재해주세요. <br />- 기자단 캠페인의 경우 전문적인 IT 리포팅을 작성해주세요",
     ],
   },
+  // reporter_test: 기자단 테스트 (유저단 노출용)
+  {
+    id: "reporter_test_all_cases",
+    title: "[테스트] 기자단 모든 카드 경우의 수",
+    category: "기자단",
+    image: "/images/main/campaign_img/eximg_5.png",
+    subcategory: "IT/기술",
+    points: 80000,
+    description: "테스트용 기자단 캠페인",
+    recruitment: {
+      current: 7,
+      total: 10,
+    },
+    schedule: "",
+    dayCount: "D-8",
+    registeredAt: "2026-01-10T10:00:00.000Z",
+    detailedSchedule: {
+      applicationStart: "2026-02-01",
+      applicationEnd: "2026-02-28",
+      announcement: "2026-03-02",
+      registrationPeriod: "2026-02-04 ~ 2026-05-05",
+    },
+    campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
+    channel: "유튜브",
+    keyword: "#테스트 #기자단 #IT리뷰",
+    requirements: ["text_3000", "photo_25", "video_2_600", "product_link", "keyword"],
+    guidelineTexts: [
+      "기자단 테스트 캠페인입니다.",
+      "링크 확인 기능을 테스트할 수 있습니다.",
+    ],
+  },
 ];
 
 /* ========================================
@@ -641,31 +672,7 @@ export interface ReporterCampaignDataExtended {
   };
 
   // 콘텐츠 데이터 (선택사항 - 종료/취소 캠페인에는 필수, 진행/예정/신청 캠페인에는 선택)
-  contents?: {
-    reviewing: Array<{
-      id: string;
-      createdAt: string;
-      status: "검수" | "검수중";
-      userType: "리뷰어" | "인플루언서";
-      nickname: string;
-      channelId: string;
-      channel: string;
-      updatedAt?: string;
-      isRejected?: boolean;
-      isLate?: boolean;
-    }>;
-    completed: Array<{
-      id: string;
-      createdAt: string;
-      status: "완료";
-      userType: "리뷰어" | "인플루언서";
-      nickname: string;
-      channelId: string;
-      channel: string;
-      updatedAt?: string;
-      isLate?: boolean;
-    }>;
-  };
+  contents?: ContentByTab;
 }
 
 /**
@@ -840,7 +847,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           nickname: "뷰티기자단리뷰어A",
           channelId: "insta_023",
           channel: "인스타그램",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
         {
           id: "content_reporter_2_waiting_002",
@@ -850,7 +857,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           nickname: "뷰티리뷰어B",
           channelId: "insta_024",
           channel: "인스타그램",
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
       ],
       reviewing: [
@@ -865,7 +872,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           updatedAt: "2025-12-19T10:00:00.000Z",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
       ],
       completed: [
@@ -879,7 +886,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           channel: "인스타그램",
           updatedAt: "2025-12-16T09:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
       ],
     },
@@ -1189,7 +1196,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           nickname: "게임기자단리뷰어A",
           channelId: "youtube_025",
           channel: "유튜브",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
       ],
       reviewing: [
@@ -1204,7 +1211,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           updatedAt: "2025-12-27T10:00:00.000Z",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
       ],
       completed: [
@@ -1218,7 +1225,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           channel: "유튜브",
           updatedAt: "2025-12-25T09:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
       ],
     },
@@ -1260,7 +1267,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           updatedAt: "2025-12-05T10:00:00.000Z",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
       ],
       completed: [
@@ -1274,7 +1281,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           channel: "네이버블로그",
           updatedAt: "2025-12-07T11:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
         {
           id: "content_reporter_8_003",
@@ -1286,7 +1293,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           channel: "네이버블로그",
           updatedAt: "2025-12-07T12:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
       ],
     },
@@ -1339,7 +1346,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           nickname: "문화기자단리뷰어A",
           channelId: "insta_027",
           channel: "인스타그램",
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
         {
           id: "content_reporter_9_waiting_002",
@@ -1349,7 +1356,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           nickname: "문화인플루언서B",
           channelId: "insta_028",
           channel: "인스타그램",
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
       ],
       reviewing: [
@@ -1364,7 +1371,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           updatedAt: "2025-12-29T10:00:00.000Z",
           isRejected: false,
           isLate: false,
-          profileImage: "/images/test_img/eximg.png",
+          profileImage: "",
         },
       ],
       completed: [
@@ -1378,7 +1385,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           channel: "인스타그램",
           updatedAt: "2025-12-27T09:00:00.000Z",
           isLate: false,
-          profileImage: "/images/test_img/eximg3.png",
+          profileImage: "",
         },
       ],
     },
@@ -1415,7 +1422,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
       selectedApplicants: [],
     },
   },
-  // reporter_12: 디지털 기자단
+  // reporter_12: 디지털 기자단 (네이버 클립 채널)
   {
     ...reporterCampaigns[11],
     // guidelineTexts 명시적으로 포함 (스프레드 연산자로 인한 누락 방지)
@@ -1423,51 +1430,281 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
     applicantData: {
       applicants: [
         {
-          id: "app_reporter_12_네이버블로그_001",
+          id: "app_reporter_12_네이버클립_001",
           Id: "reviewer_reporter_12_001",
           nickname: "디지털기자단리뷰어A",
           userType: "리뷰어" as const,
           profileImage: "",
           memberType: "모범 회원" as const,
-          dailyVisits: 200,
-          totalVisits: 600000,
-          neighbors: 1800,
+          followers: 2500,
           memo: "디지털 트렌드 및 IT 제품 리포팅 전문 기자단 리뷰어입니다.",
           selectionStatus: "미선택" as const,
-          channel: "네이버블로그",
-          registrationDate: "2025-12-28",
-        },
+          channel: "네이버클립" as const,
+          registrationDate: "2026-01-13",
+        } as any,
         {
-          id: "app_reporter_12_유튜브_001",
+          id: "app_reporter_12_네이버클립_002",
           Id: "reviewer_reporter_12_002",
           nickname: "디지털인플루언서B",
           userType: "인플루언서" as const,
           profileImage: "",
           memberType: "모범 회원" as const,
-          dailyVisits: 320,
-          totalVisits: 960000,
-          neighbors: 2800,
+          followers: 3800,
           memo: "디지털 제품 리뷰 전문 인플루언서입니다.",
           selectionStatus: "미선택" as const,
-          channel: "유튜브",
-          registrationDate: "2025-12-29",
-        },
+          channel: "네이버클립" as const,
+          registrationDate: "2026-01-14",
+        } as any,
+        {
+          id: "app_reporter_12_네이버클립_003",
+          Id: "reviewer_reporter_12_003",
+          nickname: "IT전문기자단C",
+          userType: "리뷰어" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          followers: 3200,
+          memo: "IT 기술 분석 및 제품 리포팅 전문가입니다.",
+          selectionStatus: "미선택" as const,
+          channel: "네이버클립" as const,
+          registrationDate: "2026-01-15",
+        } as any,
+        {
+          id: "app_reporter_12_네이버클립_004",
+          Id: "reviewer_reporter_12_004",
+          nickname: "테크리포터D",
+          userType: "인플루언서" as const,
+          profileImage: "",
+          memberType: "주의 회원" as const,
+          followers: 1900,
+          memo: "기술 제품 리뷰 전문 인플루언서입니다.",
+          selectionStatus: "미선택" as const,
+          channel: "네이버클립" as const,
+          registrationDate: "2026-01-16",
+        } as any,
       ],
       selectedApplicants: [
         {
-          id: "app_reporter_12_네이버블로그_001",
-          Id: "reviewer_reporter_12_001",
+          id: "sel_reporter_12_네이버클립_001",
+          Id: "selected_reporter_12_001",
           nickname: "디지털기자단리뷰어A",
           userType: "리뷰어" as const,
           profileImage: "",
           memberType: "모범 회원" as const,
-          dailyVisits: 200,
-          totalVisits: 600000,
-          neighbors: 1800,
+          followers: 2500,
           memo: "디지털 트렌드 및 IT 제품 리포팅 전문 기자단 리뷰어입니다.",
           selectionStatus: "선정하기" as const,
-          channel: "네이버블로그",
-          registrationDate: "2025-12-28",
+          channel: "네이버클립" as const,
+          registrationDate: "2026-01-13",
+        } as any,
+        {
+          id: "sel_reporter_12_네이버클립_002",
+          Id: "selected_reporter_12_002",
+          nickname: "디지털인플루언서B",
+          userType: "인플루언서" as const,
+          profileImage: "",
+          memberType: "모범 회원" as const,
+          followers: 3800,
+          memo: "디지털 제품 리뷰 전문 인플루언서입니다.",
+          selectionStatus: "선정하기" as const,
+          channel: "네이버클립" as const,
+          registrationDate: "2026-01-14",
+        } as any,
+      ],
+    },
+    contents: {
+      waiting: [
+        {
+          id: "content_reporter_12_waiting_001",
+          createdAt: "2026-01-31T10:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "디지털기자단리뷰어A",
+          channelId: "naverclip_021",
+          channel: "네이버클립",
+
+        },
+        {
+          id: "content_reporter_12_waiting_002",
+          createdAt: "2026-02-01T11:00:00.000Z",
+          status: "검수" as const,
+          userType: "인플루언서" as const,
+          nickname: "디지털인플루언서B",
+          channelId: "naverclip_022",
+          channel: "네이버클립",
+         
+        },
+      ],
+      reviewing: [
+        {
+          id: "content_reporter_12_reviewing_001",
+          createdAt: "2026-01-29T09:00:00.000Z",
+          status: "검수중" as const,
+          userType: "리뷰어" as const,
+          nickname: "IT전문기자단C",
+          channelId: "naverclip_023",
+          channel: "네이버클립",
+          updatedAt: "2026-01-30T10:00:00.000Z",
+          isRejected: false,
+          isLate: false,
+      
+        },
+        {
+          id: "content_reporter_12_reviewing_002",
+          createdAt: "2026-01-30T14:00:00.000Z",
+          status: "검수중" as const,
+          userType: "인플루언서" as const,
+          nickname: "테크리포터D",
+          channelId: "naverclip_024",
+          channel: "네이버클립",
+          updatedAt: "2026-01-31T15:00:00.000Z",
+          isRejected: false,
+          isLate: false,
+         
+        },
+      ],
+      completed: [
+        {
+          id: "content_reporter_12_completed_001",
+          createdAt: "2026-01-25T08:00:00.000Z",
+          status: "완료" as const,
+          userType: "리뷰어" as const,
+          nickname: "디지털기자단리뷰어A",
+          channelId: "naverclip_025",
+          channel: "네이버클립",
+          updatedAt: "2026-01-27T09:00:00.000Z",
+          isLate: false,
+      
+        },
+        {
+          id: "content_reporter_12_completed_002",
+          createdAt: "2026-01-26T10:00:00.000Z",
+          status: "완료" as const,
+          userType: "인플루언서" as const,
+          nickname: "디지털인플루언서B",
+          channelId: "naverclip_026",
+          channel: "네이버클립",
+          updatedAt: "2026-01-28T11:00:00.000Z",
+          isLate: false,
+
+        },
+      ],
+    },
+  },
+  // reporter_test: 모든 경우의 수 테스트 캠페인
+  {
+    ...reporterCampaigns[0],
+    id: "reporter_test_all_cases",
+    title: "[테스트] 기자단 모든 카드 경우의 수",
+    recruitment: {
+      current: 7,
+      total: 10,
+    },
+    detailedSchedule: {
+      applicationStart: "2026-02-01",
+      applicationEnd: "2026-02-28",
+      announcement: "2026-03-02",
+      registrationPeriod: "2026-02-04 ~ 2026-05-05",
+    },
+    applicantData: {
+      applicants: [],
+      selectedApplicants: [],
+    },
+    contents: {
+      waiting: [
+        // 경우의 수 1: 콘텐츠 미등록 (기한 내)
+        {
+          id: "reporter_test_waiting_001",
+          createdAt: "2026-02-01T10:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "콘텐츠미등록유저",
+          channelId: "youtube_test_001",
+          channel: "유튜브",
+          profileImage: "",
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 경우의 수 2: 연장 요청됨
+        {
+          id: "reporter_test_waiting_002",
+          createdAt: "2026-02-02T11:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "연장요청유저",
+          channelId: "youtube_test_002",
+          channel: "유튜브",
+          profileImage: "",
+          extension_request_reason: "기자단 자료 정리로 3일 연장 요청드립니다.",
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 경우의 수 3: 반려됨
+        {
+          id: "reporter_test_waiting_003",
+          createdAt: "2026-02-03T12:00:00.000Z",
+          status: "검수" as const,
+          userType: "인플루언서" as const,
+          nickname: "반려당한유저",
+          channelId: "youtube_test_006",
+          channel: "유튜브",
+          profileImage: "",
+          isRejected: true,
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 경우의 수 4: 신고됨
+        {
+          id: "reporter_test_waiting_004",
+          createdAt: "2026-02-04T13:00:00.000Z",
+          status: "검수" as const,
+          userType: "리뷰어" as const,
+          nickname: "신고당한유저",
+          channelId: "youtube_test_003",
+          channel: "유튜브",
+          profileImage: "",
+          isReported: true,
+          reportedDate: "2026-02-04T14:30:00.000Z",
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+      ],
+      reviewing: [
+        // 확인 탭 경우의 수 1: 검수 중 상태
+        {
+          id: "reporter_test_reviewing_001",
+          createdAt: "2026-02-01T09:00:00.000Z",
+          status: "검수중" as const,
+          userType: "인플루언서" as const,
+          nickname: "검수중유저",
+          channelId: "youtube_test_007",
+          channel: "유튜브",
+          profileImage: "",
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+      ],
+      completed: [
+        // 완료 탭 경우의 수 1: 승인 완료 상태
+        {
+          id: "reporter_test_completed_001",
+          createdAt: "2026-01-28T08:00:00.000Z",
+          status: "완료" as const,
+          userType: "리뷰어" as const,
+          nickname: "승인완료유저",
+          channelId: "youtube_test_004",
+          channel: "유튜브",
+          profileImage: "",
+          updatedAt: "2026-01-29T09:00:00.000Z",
+          receiptUrl: "/images/test_img/eximg.png",
+        },
+        // 완료 탭 경우의 수 2: 지각등록 승인 완료 상태
+        {
+          id: "reporter_test_completed_002",
+          createdAt: "2026-02-04T15:00:00.000Z",
+          status: "완료" as const,
+          userType: "리뷰어" as const,
+          nickname: "지각제출유저",
+          channelId: "youtube_test_005",
+          channel: "유튜브",
+          profileImage: "",
+          updatedAt: "2026-02-04T16:00:00.000Z",
+          isLateSubmission: true,
+          receiptUrl: "/images/test_img/eximg.png",
         },
       ],
     },

@@ -127,6 +127,7 @@
   justify-content: flex-start;
   padding-bottom: 24px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* 하단 구분선 */
+  width: 100%; /* 전체 너비 사용하여 border-bottom이 끝까지 표시되도록 */
 }
 
 /* 안내 사항 아이템 (키워드 삽입, 이미지 첨부 등) */
@@ -281,6 +282,7 @@
     padding-bottom: 20px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* 하단 구분선 */
     justify-content: space-between; /* 아이콘들을 균등하게 분배 */
+    width: 100%; /* 전체 너비 사용하여 border-bottom이 끝까지 표시되도록 */
   }
 
   /* 안내 사항 아이템 (키워드 삽입, 이미지 첨부 등) */

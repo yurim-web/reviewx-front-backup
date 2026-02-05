@@ -266,8 +266,18 @@
     gap: 8px;
   }
 
+/* 글  */
+  .notice_title {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+  }
+
   .notice_title_wrapper {
-    gap: 8px;
+    gap: 12px;
   }
 
   .pin_icon {

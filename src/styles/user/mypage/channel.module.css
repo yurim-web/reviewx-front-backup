@@ -80,7 +80,7 @@
 
 .channel_item {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 16px;
   padding: 20px;
   background: white;
@@ -111,6 +111,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-width: 0; /* flex 환경에서 말줄임표가 동작하도록 */
 }
 
 .channel_name {
@@ -125,9 +126,16 @@
 .channel_status {
   font-size: 14px;
   font-weight: 500;
-  line-height: 14px;
+  line-height: 16px;
   letter-spacing: -0.28px;
   color: #848484;
+}
+
+/* 채널 URL은 한 줄 말줄임표 처리 */
+.channel_url {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .channel_more_button {
@@ -155,6 +163,19 @@
   .platform_item {
     padding: 16px 0;
   }
+
+  .channel_item {
+ 
+    gap: 12px;
+
+  }
+
+  /* 채널 URL은 한 줄 말줄임표 처리 */
+.channel_url {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 
 }

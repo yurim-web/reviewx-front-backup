@@ -76,8 +76,8 @@ export default function ReviewCampaignCreatePage() {
    */
   const handleSubmit = async (formData: CampaignFormData) => {
     // 디버깅: 폼 제출 시 isUrgent 상태 확인
-    console.log("=== 구매평 캠페인 폼 제출 ===");
-    console.log("현재 isUrgent 상태:", isUrgent);
+    // console.log("=== 구매평 캠페인 폼 제출 ===");
+    // console.log("현재 isUrgent 상태:", isUrgent);
 
     setPendingFormData(formData);
     setPendingIsUrgent(isUrgent); // 현재 isUrgent 값을 저장
@@ -100,9 +100,9 @@ export default function ReviewCampaignCreatePage() {
       const finalFormData = { ...formData, isUrgent: pendingIsUrgent };
 
       // 디버깅: isUrgent 값 확인
-      console.log("=== 구매평 캠페인 등록 - 긴급 상태 확인 ===");
-      console.log("pendingIsUrgent 값:", pendingIsUrgent);
-      console.log("현재 isUrgent 상태:", isUrgent);
+      // console.log("=== 구매평 캠페인 등록 - 긴급 상태 확인 ===");
+      // console.log("pendingIsUrgent 값:", pendingIsUrgent);
+      // console.log("현재 isUrgent 상태:", isUrgent);
 
       // 이미지 URL 처리
       // localStorage 용량 문제로 base64 이미지는 저장하지 않고 기본 이미지 사용
@@ -242,7 +242,7 @@ export default function ReviewCampaignCreatePage() {
         }
       }
 
-      console.log("구매평 캠페인 등록 완료:", newCampaign);
+      // console.log("구매평 캠페인 등록 완료:", newCampaign);
 
       // 등록 성공 시 캠페인 관리 전체 탭으로 이동
       router.replace("/partner/campaign_management");

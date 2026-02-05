@@ -285,7 +285,7 @@ export default function DeliveryCampaignEditPage() {
       // localStorage에 있는 캠페인이면 그것을 사용, 없으면 정적 데이터 사용
       const dataToUse = storedCampaign || originalData;
 
-      console.log('🔍 캠페인 수정 - 불러온 데이터:', {
+      // console.log('🔍 캠페인 수정 - 불러온 데이터:', {
         campaignId,
         storedCampaign,
         originalData,
@@ -496,7 +496,7 @@ export default function DeliveryCampaignEditPage() {
         );
       }
 
-      console.log("배송형 캠페인 수정 완료:", updatedCampaign);
+      // console.log("배송형 캠페인 수정 완료:", updatedCampaign);
 
       // 토스트 메시지 표시
       setToast({ is_open: true, message: "저장되었습니다." });
@@ -533,6 +533,20 @@ export default function DeliveryCampaignEditPage() {
 
       {/* 페이지 헤더 - 타이틀과 긴급 체크박스 */}
       <div className={headerStyles.page_header}>
+        {/* 뒤로가기 버튼 */}
+        <button
+          className={headerStyles.mobile_back_button}
+          onClick={() => router.back()}
+          aria-label="뒤로가기"
+        >
+          <img
+            src="/images/header/header_arrow_back.svg"
+            alt="뒤로가기"
+            width={16}
+            height={16}
+          />
+        </button>
+
         <h1 className={headerStyles.page_title}>캠페인 수정</h1>
 
         {/* 긴급 체크박스 */}

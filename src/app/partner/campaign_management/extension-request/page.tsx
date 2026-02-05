@@ -20,7 +20,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import PartnerCampaignManagementHeader from "@/components/partner/campaign_management/PartnerCampaignManagementHeader";
 import CampaignList from "@/components/partner/campaign_management/CampaignList";
 import CampaignFilterBar from "@/components/common/campaign_management/CampaignFilterBar";
@@ -60,10 +60,11 @@ export default function ExtensionRequestPage() {
    * 설명:
    * - CampaignFilterBar 컴포넌트에서 필터링된 결과를 받아서 상태를 업데이트합니다.
    * - 이제 필터링 로직은 CampaignFilterBar 내부에서 처리됩니다.
+   * - useCallback으로 감싸서 함수 참조를 안정적으로 유지합니다.
    */
-  const handleFilteredCampaignsChange = (filtered: PartnerCampaign[]) => {
+  const handleFilteredCampaignsChange = useCallback((filtered: PartnerCampaign[]) => {
     setFilteredCampaigns(filtered);
-  };
+  }, []);
 
   /**
    * 탭 변경 시 캠페인 목록 초기화

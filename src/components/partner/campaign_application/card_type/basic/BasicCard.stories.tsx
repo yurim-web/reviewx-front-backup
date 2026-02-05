@@ -163,7 +163,10 @@ export const Influencer: Story = {
  *    - 조건부 렌더링으로 처리합니다
  *
  * 5. CSS 모듈 사용
- *    - applicant_card_shared.module.css를 사용하여 스타일을 관리합니다
+ *    - 분리된 CSS 모듈을 사용하여 스타일을 관리합니다:
+ *      - applicant_card_base.module.css (카드 기본 레이아웃)
+ *      - applicant_card_content.module.css (콘텐츠 영역)
+ *      - applicant_card_actions.module.css (버튼 및 액션)
  *    - restricted_card 클래스로 이용 제한 계정을 시각적으로 구분합니다
  *
  * 6. 접근성 (Accessibility)

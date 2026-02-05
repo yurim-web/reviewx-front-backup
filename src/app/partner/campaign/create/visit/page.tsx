@@ -76,9 +76,9 @@ export default function VisitCampaignCreatePage() {
    */
   const handleSubmit = async (formData: CampaignFormData) => {
     // 디버깅: 폼 제출 시 isUrgent 상태 확인
-    console.log("=== 방문형 캠페인 폼 제출 ===");
-    console.log("현재 isUrgent 상태:", isUrgent);
-    console.log("폼 데이터:", formData);
+    // console.log("=== 방문형 캠페인 폼 제출 ===");
+    // console.log("현재 isUrgent 상태:", isUrgent);
+    // console.log("폼 데이터:", formData);
 
     setPendingFormData(formData);
     setPendingIsUrgent(isUrgent); // 현재 isUrgent 값을 저장
@@ -106,9 +106,9 @@ export default function VisitCampaignCreatePage() {
       const finalFormData = { ...pendingFormData, isUrgent: pendingIsUrgent };
 
       // 디버깅: isUrgent 값 확인
-      console.log("=== 방문형 캠페인 등록 - 긴급 상태 확인 ===");
-      console.log("pendingIsUrgent 값:", pendingIsUrgent);
-      console.log("현재 isUrgent 상태:", isUrgent);
+      // console.log("=== 방문형 캠페인 등록 - 긴급 상태 확인 ===");
+      // console.log("pendingIsUrgent 값:", pendingIsUrgent);
+      // console.log("현재 isUrgent 상태:", isUrgent);
 
       // 이미지 URL 처리
       // localStorage 용량 문제로 base64 이미지는 저장하지 않고 기본 이미지 사용
@@ -164,10 +164,10 @@ export default function VisitCampaignCreatePage() {
       const normalizedSubRegion = finalFormData.subRegion || "";
 
       // 디버깅: 지역 정보 확인
-      console.log("=== 방문형 캠페인 등록 - 지역 정보 확인 ===");
-      console.log("원본 region:", finalFormData.region);
-      console.log("변환된 region:", normalizedRegion);
-      console.log("subRegion:", normalizedSubRegion);
+      // console.log("=== 방문형 캠페인 등록 - 지역 정보 확인 ===");
+      // console.log("원본 region:", finalFormData.region);
+      // console.log("변환된 region:", normalizedRegion);
+      // console.log("subRegion:", normalizedSubRegion);
 
       // 변환된 지역 정보를 포함한 폼 데이터 생성
       const formDataWithNormalizedRegion = {
@@ -182,11 +182,11 @@ export default function VisitCampaignCreatePage() {
       );
 
       // 디버깅: 생성된 캠페인 정보 확인
-      console.log(
+      // console.log(
         "newCampaign.campaignInfo.region:",
         (newCampaign.campaignInfo as any).region
       );
-      console.log(
+      // console.log(
         "newCampaign.campaignInfo.subRegion:",
         (newCampaign.campaignInfo as any).subRegion
       );
@@ -259,9 +259,9 @@ export default function VisitCampaignCreatePage() {
       };
 
       // 디버깅: extendedCampaign에 저장되는 isUrgent 값 확인
-      console.log("=== 방문형 캠페인 extendedCampaign 생성 ===");
-      console.log("extendedCampaign.isUrgent:", extendedCampaign.isUrgent);
-      console.log("isUrgent 상태 값:", isUrgent);
+      // console.log("=== 방문형 캠페인 extendedCampaign 생성 ===");
+      // console.log("extendedCampaign.isUrgent:", extendedCampaign.isUrgent);
+      // console.log("isUrgent 상태 값:", isUrgent);
 
       // TODO: 실제 프로덕션에서는 API 호출
       // await fetch('/api/campaigns', {
@@ -334,7 +334,7 @@ export default function VisitCampaignCreatePage() {
             campaigns.push(extendedCampaign);
 
             localStorage.setItem("visitCampaigns", JSON.stringify(campaigns));
-            console.log("오래된 캠페인을 제거하고 저장했습니다.");
+            // console.log("오래된 캠페인을 제거하고 저장했습니다.");
           } catch (retryError) {
             console.error("재시도 실패:", retryError);
             setIsErrorModalOpen(true);
@@ -346,7 +346,7 @@ export default function VisitCampaignCreatePage() {
         }
       }
 
-      console.log("방문형 캠페인 등록 완료:", newCampaign);
+      // console.log("방문형 캠페인 등록 완료:", newCampaign);
 
       // 등록 성공 시 캠페인 관리 전체 탭으로 이동
       router.replace("/partner/campaign_management");

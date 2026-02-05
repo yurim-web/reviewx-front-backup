@@ -7,6 +7,7 @@
 import { Metadata } from "next";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import layoutStyles from "@/styles/partner/layout.module.css";
+import campaignAppStyles from "@/styles/partner/campaign_application/campaign_application.module.css";
 
 // 메타데이터 설정 (브라우저 탭 제목/설명)
 export const metadata: Metadata = {
@@ -25,12 +26,12 @@ export default function VisitCampaignApplicationLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className={layoutStyles.container}>
-      {/* 파트너 서브헤더 - 뒤로가기 버튼이 있는 서브헤더 */}
+    <div className={campaignAppStyles.campaign_application_wrapper}>
       <PartnerSubHeader />
-
-      {/* 자식 페이지 콘텐츠 영역 */}
-      {children}
+      <div className={layoutStyles.container}>
+        {/* 자식 페이지 콘텐츠 영역 */}
+        {children}
+      </div>
     </div>
   );
 }

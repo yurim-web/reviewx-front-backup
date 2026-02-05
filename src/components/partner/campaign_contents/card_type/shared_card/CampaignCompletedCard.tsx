@@ -32,9 +32,13 @@
 
 "use client";
 
-import { useState } from "react";
-import styles from "@/styles/partner/campaign_application/card/applicant_card_shared.module.css";
+import { useState, useEffect } from "react";
+import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
+import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
+import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
+import { getChannelUrl } from "@/utils/helpers/url";
+import { formatDateForMobile } from "@/utils/formatting/date";
 import type { CampaignApplicant } from "./CampaignTypes";
 import TextareaModal from "@/components/common/modal/TextareaModal";
 import ReportModal, {
@@ -101,6 +105,20 @@ export default function CampaignCompletedCard({
   const [isExtensionCompleteModalOpen, setIsExtensionCompleteModalOpen] = useState(false);
   const [isExtensionLimitModalOpen, setIsExtensionLimitModalOpen] = useState(false);
 
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   // 신고 옵션 정의
   const reportOptions: ReportOption[] = [
     { value: "selection_cancelled", label: "선정 후 취소" },
@@ -133,7 +151,7 @@ export default function CampaignCompletedCard({
     if (onReport) {
       onReport(applicant.id);
     }
-    console.log("신고 사유:", selectedOption, "기타 사유:", otherReason);
+    // console.log("신고 사유:", selectedOption, "기타 사유:", otherReason);
     handleReportModalClose();
   };
 
@@ -153,7 +171,7 @@ export default function CampaignCompletedCard({
     if (onReject) {
       onReject(applicant.id);
     }
-    console.log("반려 사유:", rejectReason);
+    // console.log("반려 사유:", rejectReason);
     handleRejectModalClose();
   };
 
@@ -187,7 +205,7 @@ export default function CampaignCompletedCard({
       return {
         label: "이미지 확인",
         onClick: () => {
-          console.log("이미지 확인 클릭", applicant.id);
+          // console.log("이미지 확인 클릭", applicant.id);
           onCheckImage?.(applicant.id) || onCheckReview?.(applicant.id);
         },
       };
@@ -201,7 +219,7 @@ export default function CampaignCompletedCard({
       return {
         label: "구매 영수증 확인",
         onClick: () => {
-          console.log("구매 영수증 확인 클릭", applicant.id);
+          // console.log("구매 영수증 확인 클릭", applicant.id);
           onCheckReceipt?.(applicant.id);
         },
       };
@@ -210,7 +228,7 @@ export default function CampaignCompletedCard({
     return {
       label: "리뷰 확인",
       onClick: () => {
-        console.log("리뷰 확인 클릭", applicant.id);
+        // console.log("리뷰 확인 클릭", applicant.id);
         onCheckReview?.(applicant.id);
       },
     };
@@ -226,14 +244,14 @@ export default function CampaignCompletedCard({
         buttons.push({
           label: "이미지 확인",
           onClick: () => {
-            console.log("이미지 확인 클릭", applicant.id);
+            // console.log("이미지 확인 클릭", applicant.id);
             onCheckImage?.(applicant.id);
           },
         });
         buttons.push({
           label: "링크 확인",
           onClick: () => {
-            console.log("링크 확인 클릭", applicant.id);
+            // console.log("링크 확인 클릭", applicant.id);
             onCheckLink?.(applicant.id);
           },
         });
@@ -243,7 +261,7 @@ export default function CampaignCompletedCard({
         buttons.push({
           label: "이미지 확인",
           onClick: () => {
-            console.log("이미지 확인 클릭", applicant.id);
+            // console.log("이미지 확인 클릭", applicant.id);
             onCheckImage?.(applicant.id);
           },
         });
@@ -253,7 +271,7 @@ export default function CampaignCompletedCard({
         buttons.push({
           label: "링크 확인",
           onClick: () => {
-            console.log("링크 확인 클릭", applicant.id);
+            // console.log("링크 확인 클릭", applicant.id);
             onCheckLink?.(applicant.id);
           },
         });
@@ -267,41 +285,68 @@ export default function CampaignCompletedCard({
   const reviewButton = getReviewButton();
   const missionButtons = getMissionButtons();
 
+  // Format date for display
+  const dateToDisplay = applicant.updatedAt || applicant.registrationDate;
+  const formattedDate = isMobile ? formatDateForMobile(dateToDisplay) : dateToDisplay;
+
   return (
-    <div className={styles.card_wrapper}>
-      <article className={styles.applicant_card}>
+    <div className={baseStyles.card_wrapper}>
+      <article className={baseStyles.applicant_card}>
         {/* 프로필 영역 */}
-        <div className={styles.profile_section}>
-          <div className={styles.profile_image_container}>
+        <div className={contentStyles.profile_section}>
+          <div className={contentStyles.profile_image_container}>
             <img
               src={applicant.profileImage || "/images/mypage/profile.svg"}
               alt="프로필"
-              className={styles.profile_image}
+              className={contentStyles.profile_image}
             />
           </div>
-          <div className={styles.profile_info}>
-            <span className={styles.user_type}>{applicant.userType}</span>
-            <span className={styles.nickname}>{applicant.nickname}</span>
+          <div className={contentStyles.profile_info}>
+            <span className={contentStyles.user_type}>{applicant.userType}</span>
+            <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
+        </div>
+
+        {/* 채널 정보 */}
+        <div className={contentStyles.channel_section}>
+          <img
+            src={channel_icon_src}
+            alt={applicant.channel}
+            className={contentStyles.channel_icon}
+          />
+          <a
+            href={getChannelUrl(applicant.channel, applicant.channelId)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={contentStyles.applicant_id}
+            onClick={(e) => {
+              const url = getChannelUrl(applicant.channel, applicant.channelId);
+              if (url === "#") {
+                e.preventDefault();
+              }
+            }}
+          >
+            {applicant.channelId}
+          </a>
         </div>
 
         {/* 상단 액션 버튼 */}
         {/* 구매평: contentType이 "both"인 경우 이미지 확인 + 링크 확인 버튼 두 개 세로 배치 */}
         {isReview && isBothContentType ? (
-          <div className={styles.content_check_buttons_wrapper}>
+          <div className={actionStyles.content_check_buttons_wrapper}>
             <button
-              className={styles.content_check_button}
+              className={actionStyles.content_check_button}
               onClick={() => {
-                console.log("이미지 확인 클릭", applicant.id);
+                // console.log("이미지 확인 클릭", applicant.id);
                 onCheckImage?.(applicant.id);
               }}
             >
               이미지 확인
             </button>
             <button
-              className={styles.content_check_button}
+              className={actionStyles.content_check_button}
               onClick={() => {
-                console.log("링크 확인 클릭", applicant.id);
+                // console.log("링크 확인 클릭", applicant.id);
                 onCheckLink?.(applicant.id) || onCheckReview?.(applicant.id);
               }}
             >
@@ -310,17 +355,17 @@ export default function CampaignCompletedCard({
           </div>
         ) : isReview && reviewButton ? (
           <button
-            className={styles.content_check_button}
+            className={actionStyles.content_check_button}
             onClick={reviewButton.onClick}
           >
             {reviewButton.label}
           </button>
         ) : !isReview && missionButtons.length > 0 ? (
-          <div className={styles.content_check_buttons_wrapper}>
+          <div className={actionStyles.content_check_buttons_wrapper}>
             {missionButtons.map((btn, idx) => (
               <button
                 key={idx}
-                className={styles.content_check_button}
+                className={actionStyles.content_check_button}
                 onClick={btn.onClick}
               >
                 {btn.label}
@@ -330,34 +375,36 @@ export default function CampaignCompletedCard({
         ) : null}
 
         {/* 등록/수정/지각 등록 */}
-        <div className={styles.registration_info}>
-          <span
-            className={
-              dateLabel === "지각 등록" ? styles.late_label : undefined
-            }
-          >
-            {applicant.updatedAt
-              ? `${applicant.updatedAt} ${dateLabel}`
-              : `${applicant.registrationDate} ${dateLabel}`}
-          </span>
+        <div className={actionStyles.registration_info}>
+          {dateLabel === "지각 등록" ? (
+            <span className={actionStyles.late_label}>
+              {formattedDate}{" "}
+              <span className={actionStyles.late_text_full}>지각 등록</span>
+              <span className={actionStyles.late_text_short}>지각</span>
+            </span>
+          ) : (
+            <span>
+              {formattedDate} {dateLabel}
+            </span>
+          )}
         </div>
 
         {/* 완료 표시 또는 승인/반려 버튼 */}
-        <div className={styles.action_button_section}>
+        <div className={actionStyles.action_button_section}>
           {isLate ? (
             // 지각 등록일 때: 승인/반려 버튼
-            <div className={styles.approval_buttons}>
+            <div className={actionStyles.approval_buttons}>
               <button
-                className={`${styles.action_button} ${styles.approve_button}`}
+                className={`${actionStyles.action_button} ${actionStyles.approve_button}`}
                 onClick={() => {
-                  console.log("승인 클릭", applicant.id);
+                  // console.log("승인 클릭", applicant.id);
                   onApprove?.(applicant.id);
                 }}
               >
                 승인
               </button>
               <button
-                className={`${styles.action_button} ${styles.reject_button}`}
+                className={`${actionStyles.action_button} ${actionStyles.reject_button}`}
                 onClick={handleRejectClick}
               >
                 반려
@@ -366,7 +413,7 @@ export default function CampaignCompletedCard({
           ) : (
             // 일반 완료일 때: 확인 완료 버튼 (비활성화)
             <button
-              className={`${styles.action_button} ${styles.disabled_button}`}
+              className={`${actionStyles.action_button} ${actionStyles.disabled_button}`}
               disabled
             >
               확인 완료
@@ -377,33 +424,33 @@ export default function CampaignCompletedCard({
 
       {/* 연장/신고 버튼 footer */}
       {/* 일반 완료: 신고 버튼만, 지각 등록: 연장/신고 버튼 둘 다 */}
-      <div className={styles.extension_report_footer}>
+      <div className={actionStyles.extension_report_footer}>
           {isLate && (
             <>
               <button
-                className={styles.extension_button}
+                className={actionStyles.extension_button}
                 onClick={handleExtendClick}
                 aria-label={`${applicant.nickname} 연장`}
               >
               <img
                 src="/images/management_page/clock_icon.svg"
                 alt="연장 아이콘"
-                className={styles.extension_icon}
+                className={actionStyles.extension_icon}
               />
               <span>연장</span>
             </button>
-            <div className={styles.vertical_divider}></div>
+            <div className={actionStyles.vertical_divider}></div>
           </>
         )}
         <button
-          className={styles.report_button}
+          className={actionStyles.report_button}
           onClick={handleReportClick}
           aria-label={`${applicant.nickname} 신고`}
         >
           <img
             src="/images/management_page/report_icon.svg"
             alt="신고 아이콘"
-            className={styles.report_icon}
+            className={actionStyles.report_icon}
           />
           <span>신고</span>
         </button>

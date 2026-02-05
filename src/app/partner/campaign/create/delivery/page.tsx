@@ -38,6 +38,32 @@ export default function DeliveryCampaignCreatePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUrgent, setIsUrgent] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  /**
+   * 모바일 여부 감지 및 헤더 숨기기 처리
+   */
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    // 모바일에서는 헤더 숨기기
+    const header = document.querySelector("header");
+    if (window.innerWidth <= 768 && header) {
+      header.style.display = "none";
+    }
+
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      // cleanup: 헤더 다시 표시
+      if (header) {
+        header.style.display = "block";
+      }
+    };
+  }, []);
 
   /**
    * localStorage에서 저장된 데이터의 isUrgent 값 불러오기
@@ -72,8 +98,8 @@ export default function DeliveryCampaignCreatePage() {
    */
   const handleSubmit = async (formData: CampaignFormData) => {
     // 디버깅: 폼 제출 시 isUrgent 상태 확인
-    console.log("=== 배송형 캠페인 폼 제출 ===");
-    console.log("현재 isUrgent 상태:", isUrgent);
+    // console.log("=== 배송형 캠페인 폼 제출 ===");
+    // console.log("현재 isUrgent 상태:", isUrgent);
 
     // 바로 등록 처리 진행 (확인 모달은 DeliveryCampaignForm에서 이미 표시됨)
     await handleConfirmRegistration(formData, isUrgent);
@@ -98,9 +124,9 @@ export default function DeliveryCampaignCreatePage() {
       const finalFormData = { ...formData, isUrgent: isUrgentValue };
 
       // 디버깅: isUrgent 값 확인
-      console.log("=== 배송형 캠페인 등록 - 긴급 상태 확인 ===");
-      console.log("isUrgentValue 값:", isUrgentValue);
-      console.log("현재 isUrgent 상태:", isUrgent);
+      // console.log("=== 배송형 캠페인 등록 - 긴급 상태 확인 ===");
+      // console.log("isUrgentValue 값:", isUrgentValue);
+      // console.log("현재 isUrgent 상태:", isUrgent);
 
       // 이미지 URL 처리
       // localStorage 용량 문제로 base64 이미지는 저장하지 않고 기본 이미지 사용
@@ -249,7 +275,7 @@ export default function DeliveryCampaignCreatePage() {
         }
       }
 
-      console.log("배송형 캠페인 등록 완료:", newCampaign);
+      // console.log("배송형 캠페인 등록 완료:", newCampaign);
 
       // 등록 성공 시 캠페인 관리 전체 탭으로 이동
       // replace를 사용하여 히스토리에 등록 페이지를 남기지 않음

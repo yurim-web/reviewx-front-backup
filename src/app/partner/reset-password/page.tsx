@@ -143,7 +143,7 @@ export default function PartnerResetPasswordPage() {
       // 테스트용: 목업 데이터의 비밀번호 업데이트 (실제로는 API 호출)
       if (currentAccount) {
         currentAccount.password = password;
-        console.log("비밀번호 변경 완료 (테스트 모드):", {
+        // console.log("비밀번호 변경 완료 (테스트 모드):", {
           email: currentEmail,
           newPassword: password,
         });
@@ -241,7 +241,7 @@ export default function PartnerResetPasswordPage() {
                   id="new-password"
                   type={showPassword ? "text" : "password"}
                   className={styles.input_field}
-                  placeholder="영문 + 숫자 + 특수문자 최대 20자 이내 입력"
+                  placeholder="영문 + 숫자 + 특수문자 최대 20자 이내"
                   value={password}
                   onChange={(e) => {
                     const newPassword = e.target.value;

@@ -25,9 +25,30 @@
   z-index: 100;
 }
 
+/* 뒤로가기 버튼 - PC와 모바일 모두 표시 */
+.mobile_back_button {
+  display: flex;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 12px;
+}
+
+.mobile_back_button img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
 /* 페이지 제목 - "새 캠페인 등록" */
 .page_title {
-  font-weight: 600;
+  font-weight: 700;
   font-size: 20px;
   line-height: 1.2;
   color: #444444;
@@ -164,15 +185,36 @@ div.header_urgent_checkbox
    ============================================ */
 
 @media (max-width: 768px) {
-  /* 페이지 헤더 */
+  /* 페이지 헤더 - 모바일에서는 상단 고정 */
   .page_header {
-    padding: 16px 20px;
-    top: 64px; /* 모바일 헤더 높이에 맞춰 조정 */
+    padding: 22px 24px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    height: 64px;
+    z-index: 1000;
+    box-sizing: border-box;
   }
 
+  /* 모바일에서 뒤로가기 버튼 표시 */
+  .mobile_back_button {
+    display: flex;
+    margin-right: 8px;
+  }
 
-
-
+  /* 페이지 제목 - 모바일에서 간격 조정 */
+  .page_title {
+    flex: 1;
+    margin-left: 0;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 20px;
+    letter-spacing: -0.4px;
+  }
 
   .checkbox_label {
     gap: 6px;
@@ -184,7 +226,7 @@ div.header_urgent_checkbox
   /* 캠페인 유형 선택 - 2x3 그리드 형태 */
   .campaign_type_buttons {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* 2열 */
+    grid-template-columns: 1fr 1fr; 
     gap: 12px;
     flex-wrap: wrap;
   }
@@ -193,9 +235,6 @@ div.header_urgent_checkbox
     flex: none;
     min-width: 0;
     max-width: none;
-    width: 100%;
-    height: 56px;
-    padding: 20px;
     display: flex;
     align-items: center;
     justify-content: center;

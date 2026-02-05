@@ -9,6 +9,7 @@
 import { ReactNode } from "react";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import layoutStyles from "@/styles/partner/layout.module.css";
+import campaignAppStyles from "@/styles/partner/campaign_application/campaign_application.module.css";
 
 interface DeliveryContentsLayoutProps {
   children: ReactNode;
@@ -18,9 +19,11 @@ export default function DeliveryContentsLayout({
   children,
 }: DeliveryContentsLayoutProps) {
   return (
-    <div className={layoutStyles.container}>
+    <div className={campaignAppStyles.campaign_application_wrapper}>
       <PartnerSubHeader />
-      {children}
+      <div className={layoutStyles.container}>
+        {children}
+      </div>
     </div>
   );
 }

@@ -60,7 +60,7 @@ export default function ExcelDownloadBtn({
       setIsNoDataModalOpen(true);
       return;
     }
-    console.log("신청자 목록 다운로드 버튼 클릭");
+    // console.log("신청자 목록 다운로드 버튼 클릭");
     onDownloadApplicants();
   };
 
@@ -70,7 +70,7 @@ export default function ExcelDownloadBtn({
       setIsNoDataModalOpen(true);
       return;
     }
-    console.log("선정자 목록 다운로드 버튼 클릭");
+    // console.log("선정자 목록 다운로드 버튼 클릭");
     if (onDownloadSelected) {
       onDownloadSelected();
     }
@@ -82,7 +82,7 @@ export default function ExcelDownloadBtn({
       setIsNoDataModalOpen(true);
       return;
     }
-    console.log("결과보고서 다운로드 버튼 클릭");
+    // console.log("결과보고서 다운로드 버튼 클릭");
     if (onDownloadReport) {
       onDownloadReport();
     }

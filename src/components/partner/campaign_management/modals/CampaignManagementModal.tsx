@@ -132,7 +132,7 @@ export default function CampaignManagementModal({
       | "기자단"
       | "미션형";
 
-    console.log(
+    // console.log(
       `[CampaignManagementModal] 캠페인 취소 시도: ID=${campaignIdString}, 타입=${campaignTypeStr}, 제목=${campaignTitle}`
     );
 
@@ -140,7 +140,7 @@ export default function CampaignManagementModal({
       // 캠페인 취소 함수 호출
       const result = cancelCampaign(campaignIdString, campaignTypeStr);
 
-      console.log(
+      // console.log(
         `[CampaignManagementModal] 취소 결과: ${
           result.success ? "성공" : "실패"
         }, 오류=${result.error || "없음"}`
@@ -199,14 +199,14 @@ export default function CampaignManagementModal({
       // 예정 탭이면 취소 처리, 그 외는 삭제 처리
       if (isScheduledTab) {
         // 예정 탭: 취소 탭으로 이동
-        console.log(
+        // console.log(
           `[CampaignManagementModal] 캠페인 취소 시도 (예정 탭): ID=${campaignIdString}, 타입=${campaignTypeStr}, 제목=${campaignTitle}`
         );
 
         try {
           const result = cancelCampaign(campaignIdString, campaignTypeStr);
 
-          console.log(
+          // console.log(
             `[CampaignManagementModal] 취소 결과: ${
               result.success ? "성공" : "실패"
             }, 오류=${result.error || "없음"}`
@@ -233,13 +233,13 @@ export default function CampaignManagementModal({
         }
       } else {
         // 그 외 탭: 완전 삭제
-        console.log(
+        // console.log(
           `[CampaignManagementModal] 캠페인 삭제 시도: ID=${campaignIdString}, 타입=${campaignTypeStr}, 제목=${campaignTitle}`
         );
 
         const deleteSuccess = deleteCampaign(campaignIdString, campaignTypeStr);
 
-        console.log(
+        // console.log(
           `[CampaignManagementModal] 삭제 결과: ${
             deleteSuccess ? "성공" : "실패"
           }`

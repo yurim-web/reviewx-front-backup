@@ -35,15 +35,20 @@
 
 "use client";
 
-import { useState } from "react";
-import styles from "@/styles/partner/campaign_application/card/applicant_card_shared.module.css";
+import { useState, useEffect } from "react";
+import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
+import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
+import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
+import { getChannelUrl } from "@/utils/helpers/url";
+import { formatDateForMobile } from "@/utils/formatting/date";
 import type { CampaignApplicant } from "../shared_card/CampaignTypes";
 import TextareaModal from "@/components/common/modal/TextareaModal";
 import ReportModal, {
   type ReportOption,
 } from "@/components/common/modal/ReportModal";
 import BaseModal from "@/components/common/modal/BaseModal";
+import ReceiptPreviewModal from "../../ReceiptPreviewModal";
 
 interface MissionInspectionCardProps {
   applicant: CampaignApplicant;
@@ -94,6 +99,22 @@ export default function MissionInspectionCard({
     useState(false);
   const [isExtensionLimitModalOpen, setIsExtensionLimitModalOpen] =
     useState(false);
+  // 이미지 확인 모달 상태
+  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // 신고 옵션 정의
   const reportOptions: ReportOption[] = [
@@ -147,7 +168,7 @@ export default function MissionInspectionCard({
     if (onReport) {
       onReport(applicant.id);
     }
-    console.log("신고 사유:", selectedOption, "기타 사유:", otherReason);
+    // console.log("신고 사유:", selectedOption, "기타 사유:", otherReason);
     handleReportModalClose();
   };
 
@@ -157,15 +178,15 @@ export default function MissionInspectionCard({
   // - 연장 횟수가 2회 이상이면 제한 모달을 표시합니다
   // - 그렇지 않으면 연장 확인 모달을 표시합니다
   const handleExtendClick = () => {
-    console.log("연장 버튼 클릭, 현재 연장 횟수:", extensionCount);
+    // console.log("연장 버튼 클릭, 현재 연장 횟수:", extensionCount);
     // 연장 횟수가 2회 이상이면 제한 모달 표시
     if (extensionCount >= 2) {
-      console.log("연장 제한 모달 표시");
+      // console.log("연장 제한 모달 표시");
       setIsExtensionLimitModalOpen(true);
       return;
     }
     // 연장 확인 모달 표시
-    console.log("연장 확인 모달 표시");
+    // console.log("연장 확인 모달 표시");
     setIsExtensionConfirmModalOpen(true);
   };
 
@@ -174,11 +195,11 @@ export default function MissionInspectionCard({
   // - 연장 완료 모달을 표시합니다
   // - 연장 완료 모달의 "닫기" 버튼을 눌렀을 때만 onExtend를 호출하여 탭 이동을 수행합니다
   const handleExtensionConfirm = () => {
-    console.log("연장 확인 모달에서 연장 버튼 클릭");
+    // console.log("연장 확인 모달에서 연장 버튼 클릭");
     setExtensionCount((prev) => prev + 1);
     setIsExtensionConfirmModalOpen(false);
     setIsExtensionCompleteModalOpen(true);
-    console.log("연장 완료 모달 표시");
+    // console.log("연장 완료 모달 표시");
   };
 
   // 연장 완료 모달 닫기 핸들러
@@ -187,7 +208,7 @@ export default function MissionInspectionCard({
   // - onExtend 콜백을 호출하여 부모 컴포넌트에 탭 이동을 요청합니다
   // - 부모 컴포넌트에서 대기 탭으로 이동하고 날짜를 업데이트합니다
   const handleExtensionCompleteClose = () => {
-    console.log(
+    // console.log(
       "연장 완료 모달 닫기, onExtend 호출:",
       applicant.id,
       "onExtend 존재:",
@@ -207,20 +228,22 @@ export default function MissionInspectionCard({
   const isLate = dateLabel === "지각 등록";
 
   return (
-    <div className={styles.card_wrapper}>
-      <article className={styles.applicant_card}>
+    <div className={baseStyles.card_wrapper}>
+      <article
+        className={baseStyles.applicant_card}
+      >
         {/* 프로필 영역 */}
-        <div className={styles.profile_section}>
-          <div className={styles.profile_image_container}>
+        <div className={contentStyles.profile_section}>
+          <div className={contentStyles.profile_image_container}>
             <img
               src={applicant.profileImage || "/images/mypage/profile.svg"}
               alt="프로필"
-              className={styles.profile_image}
+              className={contentStyles.profile_image}
             />
           </div>
-          <div className={styles.profile_info}>
-            <span className={styles.user_type}>{applicant.userType}</span>
-            <span className={styles.nickname}>{applicant.nickname}</span>
+          <div className={contentStyles.profile_info}>
+            <span className={contentStyles.user_type}>{applicant.userType}</span>
+            <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>
 
@@ -228,21 +251,24 @@ export default function MissionInspectionCard({
         {/* contentType에 따라 다른 버튼 표시 */}
         {contentType === "both" ? (
           // 이미지+링크: 두 개의 버튼 세로 배치
-          <div className={styles.content_check_buttons_wrapper}>
+          <div className={actionStyles.content_check_buttons_wrapper}>
             <button
-              className={styles.content_check_button}
+              className={actionStyles.content_check_button}
               onClick={() => {
-                console.log("이미지 확인 클릭", applicant.id);
-                onCheckImage?.(applicant.id);
+                // console.log("이미지 확인 클릭", applicant.id);
+                setIsReceiptModalOpen(true);
               }}
             >
               이미지 확인
             </button>
             <button
-              className={styles.content_check_button}
+              className={actionStyles.content_check_button}
               onClick={() => {
-                console.log("링크 확인 클릭", applicant.id);
-                onCheckLink?.(applicant.id);
+                // console.log("링크 확인 클릭", applicant.id);
+                const url = getChannelUrl(applicant.channel, applicant.channelId);
+                if (url && url !== "#") {
+                  window.open(url, "_blank", "noopener,noreferrer");
+                }
               }}
             >
               링크 확인
@@ -251,10 +277,10 @@ export default function MissionInspectionCard({
         ) : contentType === "image" ? (
           // 이미지만: 이미지 확인 버튼 하나만
           <button
-            className={styles.content_check_button}
+            className={actionStyles.content_check_button}
             onClick={() => {
-              console.log("이미지 확인 클릭", applicant.id);
-              onCheckImage?.(applicant.id);
+              // console.log("이미지 확인 클릭", applicant.id);
+              setIsReceiptModalOpen(true);
             }}
           >
             이미지 확인
@@ -262,10 +288,13 @@ export default function MissionInspectionCard({
         ) : (
           // 링크만: 링크 확인 버튼 하나만
           <button
-            className={styles.content_check_button}
+            className={actionStyles.content_check_button}
             onClick={() => {
-              console.log("링크 확인 클릭", applicant.id);
-              onCheckLink?.(applicant.id);
+              // console.log("링크 확인 클릭", applicant.id);
+              const url = getChannelUrl(applicant.channel, applicant.channelId);
+              if (url && url !== "#") {
+                window.open(url, "_blank", "noopener,noreferrer");
+              }
             }}
           >
             링크 확인
@@ -273,27 +302,37 @@ export default function MissionInspectionCard({
         )}
 
         {/* 등록/수정/지각 등록 */}
-        <div className={styles.registration_info}>
-          <span className={isLate ? styles.late_label : undefined}>
-            {registrationDate
-              ? `${registrationDate} ${dateLabel}`
-              : `${applicant.registrationDate} ${dateLabel}`}
-          </span>
+        <div className={actionStyles.registration_info}>
+          {isLate ? (
+            <span className={actionStyles.late_label}>
+              {isMobile
+                ? formatDateForMobile(registrationDate || applicant.registrationDate)
+                : (registrationDate || applicant.registrationDate)}{" "}
+              <span className={actionStyles.late_text_full}>지각 등록</span>
+              <span className={actionStyles.late_text_short}>지각</span>
+            </span>
+          ) : (
+            <span>
+              {registrationDate
+                ? `${isMobile ? formatDateForMobile(registrationDate) : registrationDate} ${dateLabel}`
+                : `${isMobile ? formatDateForMobile(applicant.registrationDate) : applicant.registrationDate} ${dateLabel}`}
+            </span>
+          )}
         </div>
 
         {/* 승인/반려 */}
-        <div className={styles.approval_buttons}>
+        <div className={actionStyles.approval_buttons}>
           <button
-            className={`${styles.action_button} ${styles.approve_button}`}
+            className={`${actionStyles.action_button} ${actionStyles.approve_button}`}
             onClick={() => {
-              console.log("승인 클릭", applicant.id);
+              // console.log("승인 클릭", applicant.id);
               onApprove(applicant.id);
             }}
           >
             승인
           </button>
           <button
-            className={`${styles.action_button} ${styles.reject_button}`}
+            className={`${actionStyles.action_button} ${actionStyles.reject_button}`}
             onClick={handleRejectClick}
           >
             반려
@@ -302,29 +341,29 @@ export default function MissionInspectionCard({
       </article>
 
       {/* 연장/신고 버튼 footer */}
-      <div className={styles.extension_report_footer}>
+      <div className={actionStyles.extension_report_footer}>
         <button
-          className={styles.extension_button}
+          className={actionStyles.extension_button}
           onClick={handleExtendClick}
           aria-label={`${applicant.nickname} 연장`}
         >
           <img
             src="/images/management_page/clock_icon.svg"
             alt="연장 아이콘"
-            className={styles.extension_icon}
+            className={actionStyles.extension_icon}
           />
           <span>연장</span>
         </button>
-        <div className={styles.vertical_divider}></div>
+        <div className={actionStyles.vertical_divider}></div>
         <button
-          className={styles.report_button}
+          className={actionStyles.report_button}
           onClick={handleReportClick}
           aria-label={`${applicant.nickname} 신고`}
         >
           <img
             src="/images/management_page/report_icon.svg"
             alt="신고 아이콘"
-            className={styles.report_icon}
+            className={actionStyles.report_icon}
           />
           <span>신고</span>
         </button>
@@ -399,6 +438,13 @@ export default function MissionInspectionCard({
         message="연장은 최대 두 번까지만 가능합니다."
         buttons={["닫기"]}
         type="center"
+      />
+
+      {/* 이미지 확인 모달 */}
+      <ReceiptPreviewModal
+        isOpen={isReceiptModalOpen}
+        images={applicant.receiptImages || []}
+        onClose={() => setIsReceiptModalOpen(false)}
       />
     </div>
   );

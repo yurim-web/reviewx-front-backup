@@ -63,6 +63,8 @@
   display: flex;
   align-items: center;
   gap: 16px;
+  flex-wrap: nowrap; /* 검색창 열려도 줄바꿈 방지 */
+  overflow: visible;
 }
 
 .menu_icon_box > img {
@@ -119,7 +121,10 @@
   border-radius: 24px; 
   background-color: #ffffff;
   border: 1px solid #ff5694; 
-  max-width: 240px;
+  max-width: 240px; /* 기본 최대 */
+  flex: 1 1 auto; /* 남는 공간만큼 커지고, 필요하면 줄어듦 */
+  min-width: 0; /* flex 아이템 축소 허용 */
+  box-sizing: border-box; /* height 안에 padding 포함 (서브헤더에서 밀림 방지) */
 }
 
 .search_input {
@@ -132,7 +137,9 @@ font-size: 16px;
 font-weight: 500;
 line-height: 16px; 
 letter-spacing: -0.32px;
-  max-width: 168px;
+  flex: 1;
+  min-width: 0;
+  max-width: none;
 }
 
 .search_input::placeholder {
@@ -192,7 +199,9 @@ letter-spacing: -0.32px;
   max-width: 1000px;
   margin: 0 auto;
   background: #ffffff;
-  padding: 24px 40px;
+  display: flex;
+  align-items: center; /* height 80 안에서 콘텐츠를 수직 가운데 정렬 */
+  padding: 0 40px; /* height 유지하면서 위/아래 패딩 제거 */
   z-index: 100;
   height: 80px;
   box-sizing: border-box;
@@ -205,6 +214,7 @@ letter-spacing: -0.32px;
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  height: 100%;
 }
 
 /* 뒤로가기 버튼 */
@@ -243,6 +253,9 @@ letter-spacing: -0.32px;
   display: flex;
   gap: 16px;
   align-items: center;
+  position: relative; /* 검색창 absolute 배치를 위한 기준점 */
+  flex-wrap: nowrap; /* 검색창 열려도 줄바꿈 방지 */
+  overflow: visible;
 }
 
 .right_icons > a,
@@ -362,7 +375,7 @@ letter-spacing: -0.32px;
   }
 
   .search_input {
-    max-width: 100px;
+    max-width: none;
     color: #444;
     font-size: 14px;
     line-height: 14px; 
@@ -385,7 +398,7 @@ letter-spacing: -0.32px;
 
   /* 서브헤더 모바일 스타일 */
   .gradient_bar {
-    padding: 20px 20px;
+    padding: 0 20px;
     height: 64px;
   }
 
@@ -459,5 +472,10 @@ letter-spacing: -0.32px;
   :global(header) {
     height: 64px;
   }
+}
+
+/* 모바일에서 PartnerSubHeader 숨기기 - 캠페인 콘텐츠 내역 페이지에서만 PageHeader 표시 */
+.hide_on_mobile {
+  display: none !important;
 }
 

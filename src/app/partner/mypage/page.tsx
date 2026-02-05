@@ -55,20 +55,20 @@ function PartnerMypagePage() {
     if (typeof window !== 'undefined' && user) {
       try {
         const storedAccounts = localStorage.getItem('partner_accounts');
-        console.log('📦 [마이페이지] partner_accounts:', storedAccounts);
+        // console.log('📦 [마이페이지] partner_accounts:', storedAccounts);
 
         if (storedAccounts) {
           const accounts = JSON.parse(storedAccounts);
           const partnerAccount = accounts.find((a: any) =>
             a.id === user.id || a.email === user.email
           );
-          console.log('✅ [마이페이지] partnerAccount:', partnerAccount);
+          // console.log('✅ [마이페이지] partnerAccount:', partnerAccount);
 
           if (partnerAccount?.profile_image) {
             setProfileImage(partnerAccount.profile_image);
-            console.log('🖼️ [마이페이지] 프로필 이미지 설정됨:', partnerAccount.profile_image);
+            // console.log('🖼️ [마이페이지] 프로필 이미지 설정됨:', partnerAccount.profile_image);
           } else {
-            console.log('❌ [마이페이지] profile_image가 없습니다');
+            // console.log('❌ [마이페이지] profile_image가 없습니다');
           }
         }
       } catch (error) {

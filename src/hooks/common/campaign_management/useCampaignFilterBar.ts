@@ -255,13 +255,15 @@ export function useCampaignFilterBar<
 
   // 이전 필터링된 캠페인 목록 저장 (변경 감지용)
   const prevFilteredCampaignsRef = useRef<T[]>([]);
+  const isFirstRenderRef = useRef(true);
 
   // 필터링된 캠페인 목록이 변경되면 부모 컴포넌트에 알림
   useEffect(() => {
     const prevFiltered = prevFilteredCampaignsRef.current;
 
-    // 첫 로드 시 (빈 배열이어도 콜백 호출)
-    if (prevFiltered.length === 0) {
+    // 첫 로드 시에만 콜백 호출
+    if (isFirstRenderRef.current) {
+      isFirstRenderRef.current = false;
       prevFilteredCampaignsRef.current = filteredCampaigns;
       onFilteredCampaignsChangeRef.current(filteredCampaigns);
       return;
@@ -283,8 +285,6 @@ export function useCampaignFilterBar<
       onFilteredCampaignsChangeRef.current(filteredCampaigns);
       return;
     }
-
-    prevFilteredCampaignsRef.current = filteredCampaigns;
   }, [filteredCampaigns]);
 
   // 모달이 열려있을 때 body 스크롤 방지
