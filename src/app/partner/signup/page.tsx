@@ -344,21 +344,21 @@ export default function PartnerSignupPage() {
 
     // 회원가입 처리
     // console.log("파트너 회원가입 시도:", {
-      email,
-      password,
-      name,
-      phone,
-      companyName,
-      representativeName,
-      businessNumber,
-      businessRegistrationFile: businessRegistrationFileName,
-      postalCode,
-      address,
-      detailAddress,
-      contactPhone,
-      marketingAgreed,
-      thirdPartyMarketingAgreed,
-    });
+    //   email,
+    //   password,
+    //   name,
+    //   phone,
+    //   companyName,
+    //   representativeName,
+    //   businessNumber,
+    //   businessRegistrationFile: businessRegistrationFileName,
+    //   postalCode,
+    //   address,
+    //   detailAddress,
+    //   contactPhone,
+    //   marketingAgreed,
+    //   thirdPartyMarketingAgreed,
+    // });
 
     // LocalStorage에 새 파트너 계정 저장
     try {

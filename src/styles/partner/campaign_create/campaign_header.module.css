@@ -25,9 +25,9 @@
   z-index: 100;
 }
 
-/* 뒤로가기 버튼 - PC와 모바일 모두 표시 */
+/* 뒤로가기 버튼 - PC에서는 숨김, 모바일에서만 표시 */
 .mobile_back_button {
-  display: flex;
+  display: none;
   background: none;
   border: none;
   padding: 0;
@@ -54,6 +54,8 @@
   color: #444444;
   margin: 0;
   letter-spacing: -0.4px;
+  flex: 1;
+  text-align: left;
 }
 
 /* 긴급 체크박스 - 헤더 우측 */

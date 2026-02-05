@@ -501,35 +501,35 @@ export default function ReporterCampaignForm({
     // 디버깅: 필드별 상태 확인
     // console.log("=== 폼 검증 상태 ===");
     // console.log(
-      "이미지 업로드:",
-      hasImages,
-      "썸네일:",
-      thumbnailImage !== null,
-      "상세 이미지:",
-      detailImages.length
-    );
+    //   "이미지 업로드:",
+    //   hasImages,
+    //   "썸네일:",
+    //   thumbnailImage !== null,
+    //   "상세 이미지:",
+    //   detailImages.length
+    // );
     // console.log("제목:", formData.title.trim() !== "" ? "✓" : "✗");
     // console.log("카테고리:", formData.category !== "" ? "✓" : "✗");
     // console.log("제공내역:", formData.providedItems.trim() !== "" ? "✓" : "✗");
     // console.log("모집인원:", formData.recruitmentCount !== "" ? "✓" : "✗");
     // console.log(
-      "모집기간:",
-      formData.recruitmentPeriod.trim() !== "" ? "✓" : "✗"
-    );
+    //   "모집기간:",
+    //   formData.recruitmentPeriod.trim() !== "" ? "✓" : "✗"
+    // );
     // console.log(
-      "선정날짜:",
-      formData.announcementDate.trim() !== "" ? "✓" : "✗"
-    );
+    //   "선정날짜:",
+    //   formData.announcementDate.trim() !== "" ? "✓" : "✗"
+    // );
     // console.log(
-      "등록기간:",
-      formData.registrationPeriod.trim() !== "" ? "✓" : "✗"
-    );
+    //   "등록기간:",
+    //   formData.registrationPeriod.trim() !== "" ? "✓" : "✗"
+    // );
     // console.log("키워드:", formData.keywords.trim() !== "" ? "✓" : "✗");
     // console.log("안내사항:", formData.guidelines.trim() !== "" ? "✓" : "✗");
     // console.log(
-      "공정위 동의:",
-      formData.fairTradeAgreement === true ? "✓" : "✗"
-    );
+    //   "공정위 동의:",
+    //   formData.fairTradeAgreement === true ? "✓" : "✗"
+    // );
     // console.log("버튼 활성화:", isValid ? "✓" : "✗");
 
     return isValid;

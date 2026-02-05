@@ -269,15 +269,15 @@ export default function PurchaseReviewContentsDetailPage() {
     index: number
   ): React.ReactNode => {
     // 디버깅: 확인 탭 데이터 확인
-    if (activeTab === "확인") {
-      // console.log("[renderCardComponent] 확인 탭 아이템:", {
-        id: item.id,
-        isPurchasePeriod: params.isPurchasePeriod,
-        isReceiptFlow: item.actionType === 1,
-        isRejected: item.isRejected,
-        isLate: item.isLate,
-      });
-    }
+    // if (activeTab === "확인") {
+    //   console.log("[renderCardComponent] 확인 탭 아이템:", {
+    //     id: item.id,
+    //     isPurchasePeriod: params.isPurchasePeriod,
+    //     isReceiptFlow: item.actionType === 1,
+    //     isRejected: item.isRejected,
+    //     isLate: item.isLate,
+    //   });
+    // }
     const brandChannel = campaignInfo?.brandName ?? item.channel;
     const isReceiptFlow = item.actionType === 1; // actionType 1 = 영수증 흐름
     const applicant: CampaignApplicant = {
