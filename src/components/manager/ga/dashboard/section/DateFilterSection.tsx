@@ -151,7 +151,7 @@ export default function DateFilterSection({
   };
 
   // 날짜 범위 포맷팅 함수
-  // 선택된 날짜 범위를 "YYYY-MM-DD ~ YYYY-MM-DD" 형식으로 변환합니다
+  // 선택된 날짜 범위를 "YYYY-MM-DD~YYYY-MM-DD" 형식으로 변환합니다
   const format_date_range = (range: DateRange | undefined): string => {
     if (!range) {
       // 날짜 범위가 없으면 기본 텍스트 표시
@@ -160,13 +160,13 @@ export default function DateFilterSection({
 
     if (range.from && range.to) {
       // 시작일과 종료일이 모두 있으면 범위 형식으로 표시
-      return `${format(range.from, "yyyy-MM-dd")} ~ ${format(
+      return `${format(range.from, "yyyy-MM-dd")}~${format(
         range.to,
         "yyyy-MM-dd"
       )}`;
     } else if (range.from) {
       // 시작일만 있으면 시작일만 표시
-      return `${format(range.from, "yyyy-MM-dd")} ~`;
+      return `${format(range.from, "yyyy-MM-dd")}~`;
     } else {
       // 아무것도 선택하지 않았으면 기본 텍스트 표시
       return "날짜를 선택해주세요";

@@ -44,7 +44,7 @@
 
 /* 모달 제목 */
 .modal_title {
-  color: #444;
+  color: #ff2626;
   font-size: 18px;
   font-weight: 600;
   line-height: 18px; /* 100% */
@@ -220,9 +220,13 @@
   text-align: center;
 }
 
+.close_button:hover {
+  background: #7777771A;
+}
+
 /* 확인 버튼 */
 .confirm_button {
-  background: #444444;
+  background: #ff5694;
   border: none;
   border-radius: 8px;
   width: 162px;
@@ -234,4 +238,13 @@
   color: white;
   cursor: pointer;
   text-align: center;
+}
+
+.confirm_button:hover {
+  background: linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.1) 0%,
+      rgba(0, 0, 0, 0.1) 100%
+    ),
+    #ff5694;
 }

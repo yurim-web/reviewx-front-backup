@@ -151,7 +151,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
       "푸러블 고농축 캡슐세제 플라워향, 1개, 110개입, 푸러블 고농축 캡슐세제 플라워향, 1개, 110개입",
     inspector: "(주)청명종합광고기획",
     target: "홍길동",
-    processed_date: "2025-11-05 14:23",
+    processed_date: "2026-02-01 14:23",
     reject_count: 1,
   },
   {
@@ -163,7 +163,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "AI 자동 탐지",
     target: "일이삼사오육칠팔구십",
-    processed_date: "2025-11-18 09:45",
+    processed_date: "2026-02-02 09:45",
     reject_count: 3,
   },
   {
@@ -174,7 +174,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "AI 자동 탐지",
     target: "일이삼사오육칠팔구십",
-    processed_date: "2025-11-28 16:12",
+    processed_date: "2026-02-03 16:12",
     reject_count: 7,
   },
   {
@@ -185,7 +185,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "AI 자동 탐지",
     target: "일이삼사오육칠팔구십",
-    processed_date: "2025-12-03 11:30",
+    processed_date: "2026-02-04 11:30",
     reject_count: 5,
   },
   {
@@ -196,7 +196,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육",
     target: "일이삼사오육칠팔구십일이삼사오",
-    processed_date: "2025-12-15 13:55",
+    processed_date: "2026-02-05 13:55",
     reject_count: 3,
   },
   {
@@ -207,7 +207,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "주식회사 아이엠에스커뮤니케이션",
     target: "(주)아이엠에스커뮤니케이션",
-    processed_date: "2025-12-27 10:18",
+    processed_date: "2026-02-06 10:18",
     reject_count: 1,
   },
   {
@@ -218,7 +218,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "네이버 주식회사",
     target: "(주)아이엠에스커뮤니케이션",
-    processed_date: "2026-01-05 15:42",
+    processed_date: "2026-02-07 15:42",
     reject_count: 1,
   },
   {
@@ -230,7 +230,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "주식회사 청명미디어",
     target: "(주)아이엠에스커뮤니케이션",
-    processed_date: "2026-01-12 08:30",
+    processed_date: "2026-02-08 08:30",
     reject_count: 1,
   },
   {
@@ -241,7 +241,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "(주)청명종합광고기획",
     target: "(주)아이엠에스커뮤니케이션",
-    processed_date: "2026-01-20 17:25",
+    processed_date: "2026-02-09 17:25",
     reject_count: 1,
   },
   {
@@ -252,7 +252,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "구매 영수증의 상품명과 캠페인 상품명이 일치하지 않습니다",
     inspector: "AI 자동 탐지",
     target: "김철수",
-    processed_date: "2026-01-02 10:15",
+    processed_date: "2026-02-10 10:15",
     reject_count: 2,
   },
   {
@@ -263,7 +263,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "가이드라인에 명시된 필수 사항을 누락했습니다",
     inspector: "(주)마케팅프로",
     target: "이영희",
-    processed_date: "2026-01-03 14:32",
+    processed_date: "2026-02-11 14:32",
     reject_count: 1,
   },
   {
@@ -274,7 +274,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "AI 자동 탐지",
     target: "박민수",
-    processed_date: "2026-01-04 09:20",
+    processed_date: "2026-02-12 09:20",
     reject_count: 3,
   },
   {
@@ -285,7 +285,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "제공된 이미지가 타인의 작품과 유사도가 높습니다",
     inspector: "(주)콘텐츠리뷰",
     target: "최지영",
-    processed_date: "2026-01-06 16:45",
+    processed_date: "2026-02-13 16:45",
     reject_count: 1,
   },
   {
@@ -296,7 +296,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "동일한 패턴의 반려가 반복적으로 발생했습니다",
     inspector: "네이버 주식회사",
     target: "정수진",
-    processed_date: "2026-01-07 11:30",
+    processed_date: "2026-02-14 11:30",
     reject_count: 5,
   },
   {
@@ -307,7 +307,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "주식회사 아이엠에스커뮤니케이션",
     target: "강호영",
-    processed_date: "2026-01-08 13:15",
+    processed_date: "2026-02-15 13:15",
     reject_count: 1,
   },
   {
@@ -318,7 +318,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "부적절한 언어 사용 및 비매너 행위가 확인되었습니다",
     inspector: "(주)청명종합광고기획",
     target: "윤서연",
-    processed_date: "2026-01-09 15:50",
+    processed_date: "2026-02-16 15:50",
     reject_count: 2,
   },
   {
@@ -329,7 +329,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "AI 자동 탐지",
     target: "장미래",
-    processed_date: "2026-01-10 10:25",
+    processed_date: "2026-02-17 10:25",
     reject_count: 1,
   },
   {
@@ -340,7 +340,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "필수 해시태그 및 링크가 누락되었습니다",
     inspector: "(주)마케팅프로",
     target: "오준호",
-    processed_date: "2026-01-11 14:10",
+    processed_date: "2026-02-18 14:10",
     reject_count: 1,
   },
   {
@@ -351,7 +351,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "AI 자동 탐지",
     target: "한소희",
-    processed_date: "2026-01-13 09:40",
+    processed_date: "2026-02-19 09:40",
     reject_count: 2,
   },
   {
@@ -362,7 +362,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "(주)콘텐츠리뷰",
     target: "신동욱",
-    processed_date: "2026-01-14 16:20",
+    processed_date: "2026-02-20 16:20",
     reject_count: 1,
   },
   {
@@ -373,7 +373,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "출금 계좌 정보가 등록된 정보와 일치하지 않습니다",
     inspector: "네이버 주식회사",
     target: "조은지",
-    processed_date: "2026-01-15 11:55",
+    processed_date: "2026-02-21 11:55",
     reject_count: 1,
   },
   {
@@ -384,7 +384,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "주식회사 아이엠에스커뮤니케이션",
     target: "배성민",
-    processed_date: "2026-01-16 13:30",
+    processed_date: "2026-02-22 13:30",
     reject_count: 4,
   },
   {
@@ -395,7 +395,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "(주)청명종합광고기획",
     target: "류현우",
-    processed_date: "2026-01-17 10:05",
+    processed_date: "2026-02-23 10:05",
     reject_count: 1,
   },
   {
@@ -406,7 +406,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "AI 자동 탐지",
     target: "임태영",
-    processed_date: "2026-01-18 15:25",
+    processed_date: "2026-02-24 15:25",
     reject_count: 1,
   },
   {
@@ -417,7 +417,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "구매 정보가 캠페인 가이드와 일치하지 않습니다",
     inspector: "(주)마케팅프로",
     target: "송하늘",
-    processed_date: "2026-01-19 12:40",
+    processed_date: "2026-02-25 12:40",
     reject_count: 1,
   },
   {
@@ -428,7 +428,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "(주)콘텐츠리뷰",
     target: "문지훈",
-    processed_date: "2026-01-21 09:15",
+    processed_date: "2026-02-26 09:15",
     reject_count: 2,
   },
   {
@@ -439,7 +439,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "네이버 주식회사",
     target: "양지은",
-    processed_date: "2026-01-22 14:50",
+    processed_date: "2026-02-27 14:50",
     reject_count: 1,
   },
   {
@@ -450,7 +450,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "AI 자동 탐지",
     target: "노승현",
-    processed_date: "2026-01-23 11:20",
+    processed_date: "2026-02-28 11:20",
     reject_count: 1,
   },
   {
@@ -461,7 +461,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "주식회사 아이엠에스커뮤니케이션",
     target: "도현수",
-    processed_date: "2026-01-24 16:35",
+    processed_date: "2026-02-29 16:35",
     reject_count: 1,
   },
   {
@@ -472,7 +472,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "(주)청명종합광고기획",
     target: "구민재",
-    processed_date: "2026-01-25 10:45",
+    processed_date: "2026-02-01 10:45",
     reject_count: 1,
   },
   {
@@ -483,7 +483,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "(주)마케팅프로",
     target: "남지호",
-    processed_date: "2026-01-26 13:10",
+    processed_date: "2026-02-02 13:10",
     reject_count: 1,
   },
   {
@@ -494,7 +494,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "AI 자동 탐지",
     target: "백준영",
-    processed_date: "2026-01-27 15:20",
+    processed_date: "2026-02-03 15:20",
     reject_count: 3,
   },
   {
@@ -505,7 +505,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "(주)콘텐츠리뷰",
     target: "서유진",
-    processed_date: "2026-01-28 09:30",
+    processed_date: "2026-02-04 09:30",
     reject_count: 1,
   },
   {
@@ -516,7 +516,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "네이버 주식회사",
     target: "유재석",
-    processed_date: "2026-01-29 12:55",
+    processed_date: "2026-02-05 12:55",
     reject_count: 1,
   },
   {
@@ -527,7 +527,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "주식회사 아이엠에스커뮤니케이션",
     target: "강동원",
-    processed_date: "2026-01-30 14:15",
+    processed_date: "2026-02-06 14:15",
     reject_count: 1,
   },
   {
@@ -538,7 +538,7 @@ export const rejected_campaign_list: RejectedCampaignItem[] = [
     reject_reason: "",
     inspector: "(주)청명종합광고기획",
     target: "이병헌",
-    processed_date: "2026-01-31 11:40",
+    processed_date: "2026-02-07 11:40",
     reject_count: 2,
   },
 ];
@@ -607,4 +607,16 @@ export function get_rejected_campaign_list(): RejectedCampaignItem[] {
   return rejected_campaign_list.filter(
     (item) => !removed_rejected_campaign_ids.has(item.id)
   );
+}
+
+// localStorage 초기화 함수 (개발/디버깅용)
+export function reset_rejected_campaign_storage(): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(STORAGE_KEY_REMOVED_REJECTED_IDS);
+    removed_rejected_campaign_ids = new Set();
+    is_rejected_storage_loaded = false;
+  } catch (error) {
+    console.error("localStorage 초기화 실패:", error);
+  }
 }

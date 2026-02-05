@@ -53,8 +53,9 @@ export default function ManagerRestrictionModal({
   // useEffect는 컴포넌트가 렌더링된 후에 실행됩니다
   useEffect(() => {
     if (is_open) {
-      // 모달이 열릴 때 첫 번째 이용 제한 사유 옵션을 자동으로 선택합니다
-      set_selected_block_reason(block_reason_options[0] || null);
+      // 모달이 열릴 때 이용 제한 사유 선택을 초기화합니다
+      // 사용자가 직접 라디오 버튼을 클릭해서 선택하도록 합니다
+      set_selected_block_reason(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [is_open]);

@@ -25,9 +25,14 @@ import CampaignFilterBar from "@/components/common/campaign_management/CampaignF
 import type { MainTab } from "@/types/domain/user";
 import type { CampaignApplication } from "@/types/domain/user";
 import layoutStyles from "../../../../styles/user/campaign_management/layout.module.css";
+import { withUserAuth } from "@/components/auth/withAuth";
+import { useAuth } from "@/hooks/useAuth";
 
 // 임시 데이터 import
-import { getCampaignsByTab } from "@/data/user/campaign_management/campaignManagementData";
+import {
+  getCampaignsByTab,
+  campaignManagementStats,
+} from "@/data/user/campaign_management/campaignManagementData";
 
 // 실제 캠페인 데이터 import (registrationPeriod 날짜 가져오기 위해)
 import { deliveryCampaigns } from "@/data/campaign/delivery/deliveryCampaigns";
@@ -39,7 +44,9 @@ import { missionCampaigns } from "@/data/campaign/mission/missionCampaigns";
 /**
  * 선정 탭 전용 페이지 컴포넌트
  */
-export default function SelectedPage() {
+function SelectedPage() {
+  const { user } = useAuth();
+
   // 상단 메인 탭 상태 (캠페인 / 포인트)
   const [activeTab, setActiveTab] = useState<MainTab>("campaign");
 
@@ -199,11 +206,54 @@ export default function SelectedPage() {
     return campaigns;
   };
 
-  // 캠페인 목록 상태 (초기값은 정적 데이터만 사용하여 hydration 오류 방지)
-  const [campaigns, setCampaigns] = useState<CampaignApplication[]>(() => {
-    const baseCampaigns = getCampaignsByTab(activeStatTab);
-    return enrichCampaignsWithRemainingDays(baseCampaigns);
-  });
+  /**
+   * 채널 이름을 정규화하여 표준 채널 이름으로 변환하는 함수
+   */
+  const normalizeChannelName = (channelName: string | undefined | null): string => {
+    if (!channelName) return '';
+
+    const normalized = channelName.replace(/\s+/g, "");
+    const normalizedLower = normalized.toLowerCase();
+
+    if (normalized === "네이버블로그" || normalized === "블로그" || normalizedLower === "blog") {
+      return "네이버블로그";
+    }
+    if (normalized === "네이버클립" || normalized === "클립" || normalizedLower === "clip") {
+      return "네이버클립";
+    }
+    if (normalized === "인스타그램" || normalizedLower === "instagram" || normalizedLower === "insta") {
+      return "인스타그램";
+    }
+    if (normalized === "유튜브" || normalizedLower === "youtube" || normalizedLower === "yt") {
+      return "유튜브";
+    }
+    if (normalized === "릴스" || normalizedLower === "reels") {
+      return "릴스";
+    }
+    if (normalized === "쇼츠" || normalized === "숏츠" || normalizedLower === "shorts") {
+      return "쇼츠";
+    }
+
+    const categoryIconMap: Record<string, string> = {
+      네이버블로그: "네이버블로그",
+      네이버클립: "네이버클립",
+      클립: "네이버클립",
+      인스타그램: "인스타그램",
+      유튜브: "유튜브",
+      릴스: "릴스",
+      쇼츠: "쇼츠",
+      숏츠: "쇼츠",
+    };
+
+    if (categoryIconMap[normalized]) {
+      return categoryIconMap[normalized];
+    }
+
+    return normalized;
+  };
+
+  // 캠페인 목록 상태
+  const [campaigns, setCampaigns] = useState<CampaignApplication[]>([]);
 
   /**
    * 필터링된 캠페인 목록 변경 핸들러
@@ -217,32 +267,236 @@ export default function SelectedPage() {
   };
 
   /**
-   * 탭 변경 시 캠페인 목록 초기화
-   *
-   * 설명:
-   * - 탭이 변경되면 새로운 캠페인 목록을 가져옵니다.
-   * - 필터 바에 새로운 캠페인 목록을 전달합니다.
-   * - 선정 탭인 경우 등록기간 기준으로 remainingDays와 isUrgent를 계산합니다.
-   * - 클라이언트에서는 localStorage를 고려한 데이터를 사용합니다.
+   * localStorage에서 유저의 선정 캠페인 불러오기 + 목업 데이터 합치기
+   */
+  const loadUserSelectedCampaigns = () => {
+    if (!user) {
+      console.log('[SelectedPage] user가 없음');
+      return [];
+    }
+
+    console.log('[SelectedPage] 현재 로그인한 user:', user);
+
+    // 1. 목업 데이터에서 선정 탭 캠페인 가져오기
+    const mockCampaigns = getCampaignsByTab('선정');
+    console.log('[SelectedPage] 목업 캠페인 개수:', mockCampaigns.length);
+
+    // 2. LocalStorage에서 내가 선정된 캠페인 가져오기
+    const userAppliedCampaigns = localStorage.getItem('user_applied_campaigns');
+    console.log('[SelectedPage] localStorage에서 가져온 user_applied_campaigns:', userAppliedCampaigns);
+
+    let localStorageCampaigns: CampaignApplication[] = [];
+
+    if (userAppliedCampaigns) {
+      try {
+        const allAppliedCampaigns = JSON.parse(userAppliedCampaigns);
+        console.log('[SelectedPage] 파싱된 allAppliedCampaigns:', allAppliedCampaigns);
+
+        // 현재 로그인한 유저의 신청 내역 찾기
+        const userCampaigns = allAppliedCampaigns.find((uc: any) => uc.userId === user.id);
+        console.log('[SelectedPage] 현재 유저의 캠페인:', userCampaigns);
+
+        if (userCampaigns && userCampaigns.campaigns) {
+          // 선정 상태인 캠페인만 필터링하고 CampaignApplication 형식으로 변환
+          localStorageCampaigns = userCampaigns.campaigns
+            .filter((c: any) => c.status === '선정')
+            .map((c: any) => {
+              // 캠페인 데이터 찾기
+              const allCampaigns = [
+                ...deliveryCampaigns,
+                ...visitCampaigns,
+                ...reviewCampaigns,
+                ...reporterCampaigns,
+                ...missionCampaigns,
+              ];
+
+              let actualCampaign: any = null;
+              let channel = c.channel || '';
+
+              // localStorage에서 찾기
+              const campaignTypeKey = c.campaignType === 'delivery' ? 'deliveryCampaigns' :
+                                     c.campaignType === 'visit' ? 'visitCampaigns' :
+                                     c.campaignType === 'review' ? 'reviewCampaigns' :
+                                     c.campaignType === 'reporter' ? 'reporterCampaigns' :
+                                     c.campaignType === 'mission' ? 'missionCampaigns' : null;
+
+              if (campaignTypeKey && typeof window !== 'undefined') {
+                try {
+                  const stored = localStorage.getItem(campaignTypeKey);
+                  if (stored) {
+                    const storedCampaigns = JSON.parse(stored);
+                    actualCampaign = storedCampaigns.find((camp: any) => {
+                      const campId = String(camp.campaignInfo?.id || camp.id);
+                      const storedId = String(c.campaignId);
+                      return campId === storedId || campId.includes(storedId) || storedId.includes(campId);
+                    });
+
+                    if (actualCampaign && !channel) {
+                      channel = actualCampaign.campaignInfo?.channel || actualCampaign.channel || '';
+                    }
+                  }
+                } catch (error) {
+                  console.error(`[SelectedPage] localStorage에서 ${campaignTypeKey} 로드 실패:`, error);
+                }
+              }
+
+              // 정적 데이터에서 찾기
+              if (!actualCampaign) {
+                actualCampaign = allCampaigns.find((camp: any) => {
+                  const campId = String(camp.campaignInfo?.id || camp.id);
+                  const storedId = String(c.campaignId);
+                  return campId === storedId || campId.includes(storedId) || storedId.includes(campId);
+                });
+
+                if (actualCampaign && (!channel || channel.trim() === '')) {
+                  if (c.campaignType === 'reporter') {
+                    channel = actualCampaign?.channel || '';
+                  } else {
+                    channel = actualCampaign?.campaignInfo?.channel || actualCampaign?.channel || '';
+                  }
+                }
+              }
+
+              if (!actualCampaign) {
+                console.warn('[SelectedPage] 캠페인 데이터를 찾을 수 없음:', c.campaignId);
+                return null;
+              }
+
+              // 타입 결정
+              const type: CampaignApplication['type'] =
+                c.campaignType === 'delivery' ? '배송형' :
+                c.campaignType === 'review' ? '구매평' :
+                c.campaignType === 'mission' ? '미션형' :
+                c.campaignType === 'reporter' ? '기자단' :
+                c.campaignType === 'visit' ? '방문형' : '배송형';
+
+              // 카테고리 정규화
+              const category = channel ? normalizeChannelName(channel) : '';
+
+              const campaignTitle = actualCampaign?.campaignInfo?.title ||
+                                   actualCampaign?.title ||
+                                   c.campaignTitle ||
+                                   '캠페인명 없음';
+              const campaignImage = actualCampaign?.campaignInfo?.image ||
+                                   actualCampaign?.image ||
+                                   c.campaignImage ||
+                                   '/images/default_campaign.png';
+
+              return {
+                id: c.campaignId,
+                title: campaignTitle,
+                category,
+                image: campaignImage,
+                status: '선정' as const,
+                remainingDays: 0,
+                statusMessage: '콘텐츠 등록 기간입니다.',
+                type,
+                isUrgent: false,
+              };
+            })
+            .filter((c: any) => c !== null);
+
+          console.log('[SelectedPage] localStorage에서 변환된 캠페인 개수:', localStorageCampaigns.length);
+          console.log('[SelectedPage] localStorage에서 변환된 캠페인:', localStorageCampaigns);
+        }
+      } catch (e) {
+        console.error('Failed to parse user_applied_campaigns:', e);
+      }
+    }
+
+    // 3. 목업 데이터 + localStorage 데이터 합치기 (중복 제거)
+    const allCampaigns = [...mockCampaigns];
+
+    localStorageCampaigns.forEach((lsCampaign) => {
+      const isDuplicate = allCampaigns.some((c) => c.id === lsCampaign.id);
+      if (!isDuplicate) {
+        allCampaigns.push(lsCampaign);
+      }
+    });
+
+    console.log('[SelectedPage] 최종 합쳐진 캠페인 개수:', allCampaigns.length);
+    return allCampaigns;
+  };
+
+  /**
+   * 컴포넌트 마운트 및 포커스 시 데이터 로드
    */
   useEffect(() => {
-    // localStorage에서 완료된 캠페인 ID 가져오기 (클라이언트에서만)
-    const getCompletedCampaignIds = (): string[] => {
-      if (typeof window === "undefined") return [];
-      try {
-        const completed = localStorage.getItem("completedCampaignIds");
-        return completed ? JSON.parse(completed) : [];
-      } catch (error) {
-        console.error("Failed to get completed campaign IDs:", error);
-        return [];
-      }
+    const loadCampaigns = () => {
+      const loadedCampaigns = loadUserSelectedCampaigns();
+      console.log('[SelectedPage] 로드된 선정 캠페인:', loadedCampaigns);
+      console.log('[SelectedPage] 로드된 캠페인 개수:', loadedCampaigns.length);
+
+      // remainingDays와 isUrgent 계산
+      const enrichedCampaigns = enrichCampaignsWithRemainingDays(loadedCampaigns);
+      console.log('[SelectedPage] remainingDays 계산 후 캠페인 개수:', enrichedCampaigns.length);
+      console.log('[SelectedPage] 최종 캠페인:', enrichedCampaigns);
+
+      setCampaigns(enrichedCampaigns);
     };
 
-    const completedCampaignIds = getCompletedCampaignIds();
-    const baseCampaigns = getCampaignsByTab(activeStatTab, completedCampaignIds);
-    const enrichedCampaigns = enrichCampaignsWithRemainingDays(baseCampaigns);
-    setCampaigns(enrichedCampaigns);
-  }, [activeStatTab]);
+    loadCampaigns();
+
+    // 페이지가 포커스를 받을 때마다 새로고침
+    const handleFocus = () => {
+      console.log('[SelectedPage] 페이지 포커스 - 데이터 새로고침');
+      loadCampaigns();
+    };
+
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [user]);
+
+  /**
+   * 통계 계산 함수
+   */
+  const calculateStats = () => {
+    if (!user) {
+      return campaignManagementStats;
+    }
+
+    const mockStats = { ...campaignManagementStats };
+
+    const userAppliedCampaigns = localStorage.getItem('user_applied_campaigns');
+    if (!userAppliedCampaigns) {
+      return mockStats;
+    }
+
+    try {
+      const allAppliedCampaigns = JSON.parse(userAppliedCampaigns);
+      const userCampaigns = allAppliedCampaigns.find((uc: any) => uc.userId === user.id);
+
+      if (!userCampaigns || !userCampaigns.campaigns) {
+        return mockStats;
+      }
+
+      const campaigns = userCampaigns.campaigns;
+
+      return {
+        신청: mockStats.신청 + campaigns.filter((c: any) => c.status === '대기').length,
+        선정: mockStats.선정 + campaigns.filter((c: any) => c.status === '선정').length,
+        완료: mockStats.완료 + campaigns.filter((c: any) => c.status === '완료').length,
+        "취소/반려": mockStats["취소/반려"] + campaigns.filter((c: any) => c.status === '취소' || c.status === '반려').length,
+        패널티: mockStats.패널티,
+      };
+    } catch (e) {
+      console.error('Failed to calculate stats:', e);
+      return mockStats;
+    }
+  };
+
+  // 통계 상태
+  const [stats, setStats] = useState(() => calculateStats());
+
+  /**
+   * 캠페인 목록이 변경될 때마다 통계 업데이트
+   */
+  useEffect(() => {
+    setStats(calculateStats());
+  }, [campaigns, user]);
 
   return (
     <div className={layoutStyles.container}>
@@ -253,6 +507,7 @@ export default function SelectedPage() {
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           activeStatTab={activeStatTab}
+          stats={stats}
         />
 
         {/* 필터 바: 유형, 채널 필터 및 검색 */}
@@ -272,3 +527,6 @@ export default function SelectedPage() {
     </div>
   );
 }
+
+// 유저(리뷰어) 전용 페이지로 보호
+export default withUserAuth(SelectedPage);

@@ -101,6 +101,7 @@
   width: 16px;
   height: 16px;
   flex-shrink: 0;
+  border-radius: 2px;
 }
 
 /* 리뷰어 전용: 채널 아이콘 */
@@ -108,4 +109,6 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 2px;
+
 }

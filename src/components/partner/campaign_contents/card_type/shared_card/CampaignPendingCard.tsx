@@ -544,6 +544,7 @@ export default function CampaignPendingCard({
         buttons={["취소", "연장"]}
         on_confirm={handleExtensionConfirm}
         type="center"
+        button_variant="red"
       />
 
       {/* 연장 완료 모달 */}

@@ -101,6 +101,8 @@
 /* 모달 푸터 버튼 공통 스타일 */
 .modal_footer_button_cancel,
 .modal_footer_button_confirm,
+.modal_footer_button_confirm_pink,
+.modal_footer_button_confirm_red,
 .modal_footer_button_single {
   flex: 1;
   padding: 16px;
@@ -128,9 +130,39 @@
   background: rgba(119, 119, 119, 0.2);
 }
 
-/* 모달 푸터 확인 버튼 */
-.modal_footer_button_confirm {
+/* 모달 푸터 확인 버튼 (핑크색 - 기본값) */
+.modal_footer_button_confirm_pink {
+  background-color: #ff5694;
+  color: #ffffff;
+}
+
+.modal_footer_button_confirm_pink:hover {
+  background: linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.1) 0%,
+      rgba(0, 0, 0, 0.1) 100%
+    ),
+    #ff5694;
+}
+
+/* 모달 푸터 확인 버튼 (빨간색 - 파트너 연장 등) */
+.modal_footer_button_confirm_red {
   background-color: #ff2626;
+  color: #ffffff;
+}
+
+.modal_footer_button_confirm_red:hover {
+  background: linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.1) 0%,
+      rgba(0, 0, 0, 0.1) 100%
+    ),
+    #ff2626;
+}
+
+/* 기존 호환성을 위한 클래스 (기본값: 핑크) */
+.modal_footer_button_confirm {
+  background-color: #ff5694;
   color: #ffffff;
 }
 
@@ -140,7 +172,7 @@
       rgba(0, 0, 0, 0.1) 0%,
       rgba(0, 0, 0, 0.1) 100%
     ),
-    #ff2626;
+    #ff5694;
 }
 
 /* 하나 버튼 스타일 (전체 너비) */

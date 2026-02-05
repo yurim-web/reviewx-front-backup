@@ -111,33 +111,54 @@ export default function PostFormPageClient({
   const title_input_ref = useRef<HTMLInputElement>(null);
 
   // 폼 상태 관리
-  // mode가 "create"이면 빈 값, "edit"이면 initial_data 사용
+  // mode가 "create"이면 기본값 설정, "edit"이면 initial_data 사용
   const [category_type, setCategoryType] = useState(
-    initial_data?.category_type || ""
+    initial_data?.category_type || (mode === "create" ? "공지사항" : "")
   );
   const [category, setCategory] = useState(initial_data?.category || "");
   const [target, setTarget] = useState(initial_data?.target || "");
   const [title, setTitle] = useState(initial_data?.title || "");
 
+  // initial_data가 변경될 때 state 동기화 (수정 모드에서 데이터 로드 시)
+  useEffect(() => {
+    if (mode === "edit" && initial_data) {
+      console.log("initial_data 동기화:", initial_data);
+      if (initial_data.category_type) setCategoryType(initial_data.category_type);
+      if (initial_data.category) setCategory(initial_data.category);
+      if (initial_data.target) setTarget(initial_data.target);
+      if (initial_data.title) setTitle(initial_data.title);
+    }
+  }, [mode, initial_data]);
+
   // 초기 마운트 여부를 추적하는 ref
   const is_initial_mount = useRef(true);
 
-  /**
-   * 구분(category_type)이 변경되면 카테고리도 초기화
-   * useEffect: 컴포넌트의 상태가 변경될 때 실행되는 React Hook입니다.
-   * category_type이 변경되면 category를 빈 문자열로 초기화합니다.
-   * 단, 초기 마운트 시에는 초기화하지 않습니다 (수정 모드에서 initial_data가 설정된 경우를 위해).
-   */
-  useEffect(() => {
-    // 초기 마운트 시에는 초기화하지 않음 (수정 모드에서 initial_data가 설정된 경우)
-    if (is_initial_mount.current) {
-      is_initial_mount.current = false;
-      return;
-    }
+  // 카테고리 데이터를 state로 관리하여 업데이트 시 리렌더링 발생
+  const [categories_list, setCategoriesList] = useState(categories_data);
 
-    // 구분이 변경되면 카테고리 선택을 초기화
-    setCategory("");
-  }, [category_type]);
+  // 디버깅: initial_data 및 state 값 확인
+  useEffect(() => {
+    console.log("=== PostFormPageClient Debug ===");
+    console.log("mode:", mode);
+    console.log("post_id:", post_id);
+    console.log("initial_data:", initial_data);
+    console.log("category_type state:", category_type);
+    console.log("category state:", category);
+    console.log("categories_list:", categories_list);
+  }, [mode, post_id, initial_data, category_type, category, categories_list]);
+
+  /**
+   * 구분(category_type)이 수동으로 변경되면 카테고리도 초기화
+   * - 사용자가 드롭다운에서 구분을 변경할 때만 카테고리를 초기화
+   * - initial_data에 의한 category_type 변경 시에는 초기화하지 않음
+   */
+  const handleCategoryTypeChange = (new_category_type: string) => {
+    setCategoryType(new_category_type);
+    // 구분이 변경되면 카테고리 선택을 초기화 (초기 마운트가 아닐 때만)
+    if (!is_initial_mount.current) {
+      setCategory("");
+    }
+  };
 
   /**
    * 선택된 구분에 따라 카테고리 목록을 필터링
@@ -146,25 +167,28 @@ export default function PostFormPageClient({
    *
    * 필터링 로직:
    * 1. category_type이 선택되지 않았으면 빈 배열 반환
-   * 2. categories_data에서 division이 category_type과 일치하는 항목만 필터링
+   * 2. categories_list에서 division이 category_type과 일치하는 항목만 필터링
    * 3. category_name만 추출하여 배열로 반환
    */
   const category_options = useMemo(() => {
     // 구분이 선택되지 않았으면 빈 배열 반환
     if (!category_type) {
+      console.log("category_options: 빈 배열 (category_type 없음)");
       return [];
     }
 
     // 카테고리 데이터에서 선택된 구분과 일치하는 카테고리만 필터링
     // filter: 배열에서 조건에 맞는 요소만 추출하는 JavaScript 배열 메서드입니다.
-    const filtered_categories = categories_data.filter(
+    const filtered_categories = categories_list.filter(
       (item) => item.division === (category_type as CategoryDivision)
     );
 
     // map: 배열의 각 요소를 변환하여 새로운 배열을 만드는 JavaScript 배열 메서드입니다.
     // category_name만 추출하여 카테고리 옵션 배열 생성
-    return filtered_categories.map((item) => item.category_name);
-  }, [category_type]);
+    const options = filtered_categories.map((item) => item.category_name);
+    console.log("category_options:", options);
+    return options;
+  }, [category_type, categories_list]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -251,6 +275,15 @@ export default function PostFormPageClient({
       return;
     }
     initialize_categories_data();
+    // 초기화 후 state 업데이트하여 리렌더링 발생
+    console.log("카테고리 데이터 초기화:", categories_data);
+    setCategoriesList([...categories_data]);
+
+    // 초기 데이터 로드가 완료되면 is_initial_mount를 false로 설정
+    // 이후 category_type 변경 시 category를 초기화할 수 있도록
+    setTimeout(() => {
+      is_initial_mount.current = false;
+    }, 200);
   }, []);
 
   /**
@@ -392,7 +425,7 @@ export default function PostFormPageClient({
             <CustomDropdown
               value={category_type}
               options={category_type_options}
-              onChange={setCategoryType}
+              onChange={handleCategoryTypeChange}
               placeholder="구분을 선택하세요"
             />
           </div>

@@ -69,12 +69,19 @@ export default function UserNotificationPage() {
               // 기존 알림 형식에 맞게 변환
               let category = 'A_R10'; // 기본값: 출금 신청 카테고리
 
-              if (notif.type === 'withdrawal_completed') {
-                category = 'A_R11';
+              // 알림 타입에 따라 카테고리 매핑
+              if (notif.type === 'campaign_selected') {
+                category = 'A_R1'; // 캠페인 선정
+              } else if (notif.type === 'campaign_rejected') {
+                category = 'A_R2'; // 캠페인 탈락 (A_R2를 임시로 사용)
+              } else if (notif.type === 'campaign_update') {
+                category = 'A_R2'; // 캠페인 수정
+              } else if (notif.type === 'withdrawal_completed') {
+                category = 'A_R11'; // 출금 승인
               } else if (notif.type === 'withdrawal_requested') {
-                category = 'A_R10';
+                category = 'A_R10'; // 출금 신청
               } else if (notif.type === 'withdrawal_rejected') {
-                category = 'A_R12';
+                category = 'A_R12'; // 출금 반려
               }
 
               return {
@@ -89,12 +96,22 @@ export default function UserNotificationPage() {
                   minute: '2-digit',
                   hour12: false,
                 }).replace(/\. /g, '-').replace('.', '').replace(',', ''),
+                campaign_id: notif.campaign_id ? parseInt(notif.campaign_id) : undefined,
+                campaign_name: notif.campaign_title,
                 is_read: notif.is_read,
+                _source: 'localStorage', // 출처 구분을 위한 속성
               };
             });
 
           // localStorage 알림 + mock 알림 합치기
-          setNotifications([...userNotifications, ...mockReviewerNotifications]);
+          // 각 알림에 출처를 표시하여 고유한 키 생성 가능
+          const mockNotificationsWithSource = mockReviewerNotifications.map(
+            (notif) => ({
+              ...notif,
+              _source: 'mock', // 출처 구분을 위한 속성
+            })
+          );
+          setNotifications([...userNotifications, ...mockNotificationsWithSource]);
           console.log('✅ [알림 페이지] 알림 로드 완료:', userNotifications);
         }
       } catch (error) {

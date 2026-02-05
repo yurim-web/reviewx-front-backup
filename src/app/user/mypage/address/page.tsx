@@ -27,12 +27,14 @@ import { useRouter, usePathname } from "next/navigation";
 import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import AddressInput from "@/components/common/mypage/AddressInput";
+import { useAuth } from "@/hooks/useAuth";
 import layoutStyles from "@/styles/user/mypage/edit_profile/layout.module.css";
 import buttonStyles from "@/styles/user/mypage/edit_profile/buttons.module.css";
 
 export default function AddressPage() {
   const router = useRouter();
   const pathname = usePathname();
+  const { user } = useAuth();
 
   // 주소 정보 상태 관리
   const [addressData, setAddressData] = useState({
@@ -58,41 +60,76 @@ export default function AddressPage() {
    *
    * 설명:
    * - 컴포넌트가 처음 마운트될 때 실행됩니다.
-   * - sessionStorage에 저장된 주소 정보가 있으면 불러와서 input 필드에 미리 채웁니다.
+   * - localStorage의 user_accounts에서 주소 정보를 먼저 확인합니다.
+   * - 없으면 sessionStorage에서 임시 저장된 주소 정보를 불러옵니다.
    * - 저장된 데이터가 없으면 빈 값으로 유지됩니다.
-   *
-   * React useEffect 개념:
-   * - useEffect는 컴포넌트가 렌더링된 후에 실행되는 훅입니다.
-   * - 두 번째 인자로 빈 배열 []을 전달하면 컴포넌트가 마운트될 때 한 번만 실행됩니다.
-   * - typeof window !== "undefined"는 서버 사이드 렌더링(SSR) 환경에서
-   *   window 객체가 없을 때를 대비한 안전한 체크입니다.
    */
   useEffect(() => {
-    // sessionStorage는 브라우저 환경에서만 사용 가능하므로 체크
-    if (typeof window !== "undefined") {
-      // sessionStorage에서 저장된 주소 정보 가져오기
-      const savedAddress = sessionStorage.getItem("userAddress");
+    if (typeof window !== "undefined" && user) {
+      try {
+        console.log('🔍 [주소 페이지] 사용자 정보:', user);
 
-      // 저장된 주소 정보가 있으면 파싱하여 상태에 설정
-      if (savedAddress) {
-        try {
-          // JSON.parse(): JSON 문자열을 JavaScript 객체로 변환
+        // 먼저 localStorage의 user_accounts에서 주소 정보 확인
+        const storedAccounts = localStorage.getItem('user_accounts');
+        console.log('📦 [주소 페이지] user_accounts:', storedAccounts);
+
+        if (storedAccounts) {
+          const accounts = JSON.parse(storedAccounts);
+          const userAccount = accounts.find((a: any) =>
+            a.id === user.id || a.email === user.email
+          );
+          console.log('✅ [주소 페이지] userAccount:', userAccount);
+
+          // user_accounts에 저장된 주소 정보가 있으면 로드
+          // address_details 객체 또는 개별 필드(address, postal_code, detail_address) 모두 지원
+          if (userAccount?.address_details) {
+            setAddressData({
+              postalCode: userAccount.address_details.postalCode || userAccount.address_details.postal_code || "",
+              address: userAccount.address_details.address || "",
+              detailAddress: userAccount.address_details.detailAddress || userAccount.address_details.detail_address || "",
+            });
+            console.log('🔄 [주소 페이지] localStorage에서 주소 정보 로드됨 (address_details):', userAccount.address_details);
+            return; // localStorage에서 로드했으면 sessionStorage 확인 안 함
+          } else if (userAccount?.address || userAccount?.postal_code || userAccount?.detail_address) {
+            // 개별 필드로 저장된 경우
+            setAddressData({
+              postalCode: userAccount.postal_code || "",
+              address: userAccount.address || "",
+              detailAddress: userAccount.detail_address || "",
+            });
+            console.log('🔄 [주소 페이지] localStorage에서 주소 정보 로드됨 (개별 필드):', {
+              address: userAccount.address,
+              postal_code: userAccount.postal_code,
+              detail_address: userAccount.detail_address,
+            });
+            return; // localStorage에서 로드했으면 sessionStorage 확인 안 함
+          } else {
+            console.log('⚠️ [주소 페이지] 주소 정보가 없습니다.');
+          }
+        } else {
+          console.log('⚠️ [주소 페이지] user_accounts가 없습니다.');
+        }
+
+        // localStorage에 없으면 sessionStorage에서 확인 (임시 저장용)
+        const savedAddress = sessionStorage.getItem("userAddress");
+        if (savedAddress) {
           const parsedAddress = JSON.parse(savedAddress);
-
-          // 불러온 데이터로 상태 업데이트
-          // 이렇게 하면 input 필드에 기존에 입력했던 주소 정보가 자동으로 채워집니다.
           setAddressData({
             postalCode: parsedAddress.postalCode || "",
             address: parsedAddress.address || "",
             detailAddress: parsedAddress.detailAddress || "",
           });
-        } catch (error) {
-          // JSON 파싱 실패 시 에러 처리 (잘못된 형식의 데이터일 경우)
-          console.error("주소 데이터 파싱 오류:", error);
+          console.log('🔄 [주소 페이지] sessionStorage에서 주소 정보 로드됨:', parsedAddress);
+        } else {
+          console.log('⚠️ [주소 페이지] sessionStorage에도 주소 정보가 없습니다.');
         }
+      } catch (error) {
+        console.error('❌ [주소 페이지] 주소 정보 로드 실패:', error);
       }
+    } else if (!user) {
+      console.log('⚠️ [주소 페이지] 사용자 정보가 없습니다.');
     }
-  }, []); // 빈 배열: 컴포넌트 마운트 시 한 번만 실행
+  }, [user]); // user가 변경될 때마다 실행
 
   /**
    * 뒤로가기 시 모달 상태 복원
@@ -149,18 +186,15 @@ export default function AddressPage() {
    *
    * 설명:
    * - 입력한 주소 정보를 저장합니다.
-   * - sessionStorage에 주소 정보를 저장하여 캠페인 신청 모달로 돌아갔을 때 불러올 수 있도록 합니다.
+   * - localStorage의 user_accounts에 주소 정보를 저장합니다.
+   * - sessionStorage에도 주소 정보를 저장하여 캠페인 신청 모달로 돌아갔을 때 불러올 수 있도록 합니다.
    * - 저장 완료 후 이전 페이지로 돌아갑니다.
-   *
-   * TODO: 실제 API 연동 필요
    */
   const handleSave = () => {
     if (!isSaveButtonEnabled) return;
 
-    // 주소 정보 저장 로직
-    console.log("주소 저장:", addressData);
+    console.log("📍 [주소 페이지] 주소 저장:", addressData);
 
-    // 주소 정보를 sessionStorage에 저장
     // 전체 주소 문자열 생성 (기본 주소 + 상세 주소 | 우편번호 + 우편번호값)
     // 예: "인천 남동구 장자로 6번길 2, 1층 | 우편번호 12345"
     const addressPart =
@@ -172,7 +206,36 @@ export default function AddressPage() {
       ? `${addressPart} | ${postalCodePart}`
       : addressPart;
 
-    // sessionStorage에 주소 정보 저장
+    // localStorage의 user_accounts에 주소 정보 저장
+    if (typeof window !== 'undefined' && user) {
+      try {
+        const storedAccounts = localStorage.getItem('user_accounts');
+        const accounts = storedAccounts ? JSON.parse(storedAccounts) : [];
+
+        const accountIndex = accounts.findIndex((a: any) => a.id === user.id || a.email === user.email);
+
+        if (accountIndex >= 0) {
+          // address_details 업데이트
+          accounts[accountIndex] = {
+            ...accounts[accountIndex],
+            address_details: {
+              postalCode: addressData.postalCode,
+              address: addressData.address,
+              detailAddress: addressData.detailAddress,
+              fullAddress: fullAddress,
+            },
+          };
+          localStorage.setItem('user_accounts', JSON.stringify(accounts));
+          console.log('✅ [주소 페이지] localStorage의 user_accounts에 주소 정보 저장됨:', addressData);
+        } else {
+          console.warn('⚠️ [주소 페이지] user_accounts에서 사용자를 찾을 수 없습니다. user:', user);
+        }
+      } catch (error) {
+        console.error('❌ [주소 페이지] localStorage 저장 실패:', error);
+      }
+    }
+
+    // sessionStorage에도 주소 정보 저장 (캠페인 신청 모달 복원용)
     if (typeof window !== "undefined") {
       sessionStorage.setItem(
         "userAddress",
@@ -183,6 +246,7 @@ export default function AddressPage() {
           fullAddress: fullAddress, // 전체 주소 문자열 (모달에서 표시용) - 구분자 포함
         })
       );
+      console.log('✅ [주소 페이지] sessionStorage에 주소 정보 저장됨');
     }
 
     // 저장 후 뒤로가기

@@ -96,15 +96,20 @@ export default function NotificationList({
           // 카테고리에 해당하는 템플릿 가져오기
           const template = get_notification_template(notification.category);
 
-          // 메시지 템플릿에서 변수 치환
-          const message = format_notification_message(
+          // 메시지 결정: 직접 전달된 message가 있으면 사용, 없으면 템플릿 사용
+          const message = (notification as any).message || format_notification_message(
             template.message_template,
             notification.message_params
           );
 
+          // 고유한 키 생성: 출처와 id를 조합하여 중복 방지
+          const uniqueKey = (notification as any)._source 
+            ? `${(notification as any)._source}-${notification.id}`
+            : `default-${notification.id}`;
+
           return (
             <div
-              key={notification.id}
+              key={uniqueKey}
               className={styles.notification_item}
               onClick={() => on_notification_click?.(notification)}
               style={{ cursor: on_notification_click ? "pointer" : "default" }}

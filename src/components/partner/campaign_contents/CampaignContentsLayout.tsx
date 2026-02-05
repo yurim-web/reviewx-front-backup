@@ -468,6 +468,7 @@ export default function CampaignContentsLayout({
             : '이미 연장한 내역이 있습니다.<br><span style="color: #FF2626;">3일 더 연장</span>하시겠습니까?'
         }
         buttons={["취소", "연장"]}
+        button_variant="red"
         on_confirm={() => {
           // 📌 연장 확인 핸들러:
           // - 사용자가 "연장" 버튼을 클릭했을 때 실행됩니다

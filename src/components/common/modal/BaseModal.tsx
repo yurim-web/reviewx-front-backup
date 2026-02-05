@@ -49,6 +49,8 @@ export interface BaseModalProps {
   close_on_overlay_click?: boolean;
   /** ESC 키로 닫기 여부 (기본값: true) */
   close_on_escape?: boolean;
+  /** 확인 버튼 색상 변형 (기본값: "pink") */
+  button_variant?: "pink" | "red";
 }
 
 /**
@@ -66,6 +68,7 @@ export default function BaseModal({
   type = "center",
   close_on_overlay_click = true,
   close_on_escape = true,
+  button_variant = "pink",
 }: BaseModalProps) {
   const buttons =
     prop_buttons && prop_buttons.length > 0 ? prop_buttons : ["닫기"];
@@ -126,6 +129,11 @@ export default function BaseModal({
   const footer_class = is_column_layout
     ? `${styles.modal_footer} ${styles.modal_footer_column}`
     : styles.modal_footer;
+  
+  // 확인 버튼 색상 클래스 결정
+  const confirm_button_class = button_variant === "red"
+    ? styles.modal_footer_button_confirm_red
+    : styles.modal_footer_button_confirm_pink;
 
   return (
     <div
@@ -153,7 +161,7 @@ export default function BaseModal({
                     {/* 두 개 버튼(세로): 확인(위), 취소(아래) */}
                     <button
                       onClick={handle_confirm}
-                      className={styles.modal_footer_button_confirm}
+                      className={confirm_button_class}
                     >
                       {buttons[1]}
                     </button>
@@ -175,7 +183,7 @@ export default function BaseModal({
                     </button>
                     <button
                       onClick={handle_confirm}
-                      className={styles.modal_footer_button_confirm}
+                      className={confirm_button_class}
                     >
                       {buttons[1]}
                     </button>

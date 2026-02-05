@@ -88,16 +88,15 @@ export function save_pinned_posts_state(state: PinnedPostsState): void {
  * 게시글 목록에서 현재 고정 상태만 추출하여
  * localStorage에 저장할 수 있는 형태의 객체로 변환합니다.
  *
- * - is_pinned가 true인 게시글들만 저장하여
- *   localStorage 용량을 최소화합니다.
+ * - is_pinned가 true인 게시글은 true로 저장
+ * - is_pinned가 false인 게시글도 false로 저장하여
+ *   고정 해제 상태를 명시적으로 기록합니다.
  */
 export function extract_pinned_state_from_posts(
   posts: PostItem[]
 ): PinnedPostsState {
   return posts.reduce<PinnedPostsState>((accumulator, post) => {
-    if (post.is_pinned) {
-      accumulator[post.id] = true;
-    }
+    accumulator[post.id] = post.is_pinned;
     return accumulator;
   }, {});
 }
