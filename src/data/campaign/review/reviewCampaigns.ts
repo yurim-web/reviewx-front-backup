@@ -2489,14 +2489,12 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           isLate: false,
           profileImage: "",
           actionType: 0,
-          thumbnailSrc: "/images/test_img/eximg3.png",
-          // 📌 페이지네이션 테스트용: 여러 이미지 추가
-          // - ReceiptPreviewModal에서 원 형태 페이지네이션 인디케이터를 확인하기 위한 데이터입니다
           receiptImages: [
             "/images/test_img/eximg3.png",
             "/images/test_img/eximg.png",
-            "/images/test_img/eximg3.png",
+            "/images/main/campaign_img/eximg_1.png",
           ],
+          thumbnailSrc: "/images/test_img/eximg3.png",
         },
       ],
       completed: [],
@@ -2610,9 +2608,13 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           channel: "네이버블로그",
           profileImage: "",
           actionType: 0,
-          receiptImages: ["/images/test_img/eximg3.png"],
+          receiptImages: [
+            "/images/test_img/eximg3.png",
+            "/images/test_img/eximg.png",
+            "/images/main/campaign_img/eximg_1.png",
+          ],
           thumbnailSrc: "/images/test_img/eximg3.png",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptUrl: "/images/test_img/eximg3.png",
         },
         // 완료 탭 경우의 수 2: 지각등록 구매 인증 완료
         {
@@ -2626,7 +2628,12 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           isLateSubmission: true,
-          receiptImages: ["/images/test_img/eximg.png"],
+          receiptImages: [
+            "/images/test_img/eximg.png",
+            "/images/test_img/eximg3.png",
+            "/images/main/campaign_img/eximg_2.png",
+            "/images/main/campaign_img/eximg_3.png",
+          ],
           thumbnailSrc: "/images/test_img/eximg.png",
           receiptUrl: "/images/test_img/eximg.png",
         },

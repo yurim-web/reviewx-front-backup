@@ -290,6 +290,7 @@ export default function PurchaseReviewContentsDetailPage() {
       registrationDate: formatDateTime(item.createdAt),
       campaignType: "review",
       reviewType: 1,
+      receiptImages: item.receiptImages || [],
     };
 
     const dateLabel: "등록" | "수정" | "지각 등록" = item.isLateSubmission
