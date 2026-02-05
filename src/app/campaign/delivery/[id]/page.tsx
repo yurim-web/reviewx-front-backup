@@ -25,7 +25,7 @@ import CampaignDetailPage from "@/components/campaign/CampaignDetailPage";
 import ApplicationModal from "@/components/user/campaign_detail/modal/ApplicationModal";
 import DetailGuidelinesSectionDelivery from "@/components/user/campaign_detail/guidelines/DetailGuidelinesSectionDelivery";
 import Toast from "@/components/common/toast/Toast";
-import { deliveryCampaigns, deliveryClosedCampaignsExtended } from "@/data/campaign/delivery/deliveryCampaigns";
+import { deliveryCampaigns, deliveryCampaignsExtended, deliveryClosedCampaignsExtended } from "@/data/campaign/delivery/deliveryCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import type { DeliveryCampaignData } from "@/data/campaign/delivery/deliveryCampaigns";
 
@@ -265,276 +265,77 @@ export default function DeliveryDetailPage({
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
-  // localStorage 데이터를 먼저 확인 (수정된 내용 우선 반영), 그 다음 정적 데이터 확인
+  // 목업 데이터를 우선으로 확인 (목업 데이터가 있으면 무조건 표시), 그 다음 localStorage 확인
   useEffect(() => {
     setIsLoading(true);
-    // 디버깅: 받은 ID 로그
-    console.log("[DeliveryDetailPage] 받은 ID:", id);
-    
-    // 1. localStorage에서 먼저 찾기 (수정된 데이터 우선)
+
+    // 1. 목업 데이터에서 먼저 찾기 (Extended 버전 사용 - guidelineTexts 포함)
+    const normalizedUrlId = id.startsWith("delivery_") ? id.replace(/^delivery_/, "") : id;
+
+    const staticCampaign = deliveryCampaignsExtended.find((c) => {
+      const campaignId = String(c.id);
+      const normalizedCampaignId = campaignId.startsWith("delivery_") ? campaignId.replace(/^delivery_/, "") : campaignId;
+      return normalizedCampaignId === normalizedUrlId;
+    });
+
+    if (staticCampaign) {
+      console.log(`[배송형 캠페인] 목업 데이터에서 캠페인 찾음: ID=${staticCampaign.id}`);
+      // staticCampaign은 이미 DeliveryCampaignData 형식
+      const finalCampaign: DeliveryCampaignData = {
+        ...staticCampaign,
+        guidelineTexts: staticCampaign.guidelineTexts || [],
+      };
+      setCampaign(finalCampaign);
+      setIsLoading(false);
+      return;
+    }
+
+    // 2. 목업 데이터에서 찾지 못했으면 취소된 캠페인에서 찾기
+    const closedCampaign = deliveryClosedCampaignsExtended.find((c) => {
+      const campaignId = String(c.id);
+      const normalizedCampaignId = campaignId.startsWith("delivery_") ? campaignId.replace(/^delivery_/, "") : campaignId;
+      return normalizedCampaignId === normalizedUrlId;
+    });
+
+    if (closedCampaign) {
+      console.log(`[배송형 캠페인] 취소된 캠페인에서 캠페인 찾음: ID=${closedCampaign.id}`);
+      const finalCampaign: DeliveryCampaignData = {
+        ...closedCampaign,
+        guidelineTexts: closedCampaign.guidelineTexts || [],
+        dayCount: closedCampaign.dayCount || "마감",
+        isUrgent: closedCampaign.isUrgent || false,
+      };
+      setCampaign(finalCampaign);
+      setIsLoading(false);
+      return;
+    }
+
+    // 3. 목업 데이터에 없으면 localStorage에서 찾기 (사용자가 새로 만든 캠페인)
     if (typeof window !== "undefined") {
       try {
         const storedCampaigns = localStorage.getItem("deliveryCampaigns");
         if (storedCampaigns) {
-          const campaigns: CampaignWithApplicants[] =
-            JSON.parse(storedCampaigns);
-          console.log(
-            "[DeliveryDetailPage] localStorage에서 찾기 시작, 저장된 캠페인 수:",
-            campaigns.length
-          );
-          // URL의 ID가 "delivery_903" 형식이거나 "903" 형식일 수 있음
-          // localStorage의 ID는 "delivery_13" 형식이므로 둘 다 확인
+          const campaigns: CampaignWithApplicants[] = JSON.parse(storedCampaigns);
           const storedCampaign = campaigns.find((c) => {
             const campaignId = String(c.campaignInfo.id);
-            // 정확히 일치하는 경우
-            if (campaignId === id) {
-              console.log(
-                "[DeliveryDetailPage] localStorage에서 정확히 일치하는 캠페인 찾음:",
-                campaignId
-              );
-              return true;
-            }
-            // ID 형식 변환 시도
-            // URL이 "delivery_903" 형식이고 localStorage ID가 "903" 형식인 경우
-            if (id.startsWith("delivery_")) {
-              const idWithoutPrefix = id.replace(/^delivery_/, "");
-              // URL에서 "delivery_"를 제거한 값과 localStorage ID 비교
-              if (campaignId === idWithoutPrefix) {
-                console.log(
-                  "[DeliveryDetailPage] localStorage에서 delivery_ 제거 후 일치:",
-                  campaignId,
-                  "===",
-                  idWithoutPrefix
-                );
-                return true;
-              }
-              // 둘 다 "delivery_903" 형식인 경우
-              if (campaignId === id) {
-                console.log(
-                  "[DeliveryDetailPage] localStorage에서 delivery_ 형식으로 일치:",
-                  campaignId
-                );
-                return true;
-              }
-            }
-            // URL이 "903" 형식이고 localStorage ID도 "903" 형식인 경우
-            if (
-              !id.startsWith("delivery_") &&
-              !campaignId.startsWith("delivery_")
-            ) {
-              const matches = campaignId === id;
-              if (matches)
-                console.log(
-                  "[DeliveryDetailPage] localStorage에서 숫자만으로 일치:",
-                  campaignId
-                );
-              return matches;
-            }
-            // localStorage ID가 "delivery_903" 형식이고 URL이 "903" 형식인 경우
-            if (
-              campaignId.startsWith("delivery_") &&
-              !id.startsWith("delivery_")
-            ) {
-              const campaignIdWithoutPrefix = campaignId.replace(
-                /^delivery_/,
-                ""
-              );
-              const matches = campaignIdWithoutPrefix === id;
-              if (matches)
-                console.log(
-                  "[DeliveryDetailPage] localStorage에서 delivery_ 제거 후 일치:",
-                  campaignIdWithoutPrefix,
-                  "===",
-                  id
-                );
-              return matches;
-            }
-            return false;
+            const normalizedCampaignId = campaignId.startsWith("delivery_") ? campaignId.replace(/^delivery_/, "") : campaignId;
+            return normalizedCampaignId === normalizedUrlId;
           });
           if (storedCampaign) {
-            console.log(
-              "[DeliveryDetailPage] localStorage에서 캠페인 찾음:",
-              storedCampaign.campaignInfo.id
-            );
-            // CampaignWithApplicants를 DeliveryCampaignData로 변환
-            const convertedCampaign =
-              convertToDeliveryCampaignData(storedCampaign);
+            console.log(`[배송형 캠페인] localStorage에서 캠페인 찾음: ID=${storedCampaign.campaignInfo.id}`);
+            const convertedCampaign = convertToDeliveryCampaignData(storedCampaign);
             setCampaign(convertedCampaign);
             setIsLoading(false);
             return;
           }
-          console.log(
-            "[DeliveryDetailPage] localStorage에서 캠페인을 찾지 못함"
-          );
-        } else {
-          console.log(
-            "[DeliveryDetailPage] localStorage에 deliveryCampaigns가 없음"
-          );
         }
       } catch (error) {
-        console.error(
-          "[DeliveryDetailPage] localStorage에서 캠페인 불러오기 실패:",
-          error
-        );
+        console.error("localStorage에서 캠페인 불러오기 실패:", error);
       }
     }
 
-    // 2. localStorage에 없으면 정적 데이터에서 찾기
-    console.log(
-      "[DeliveryDetailPage] 정적 데이터에서 찾기 시작, 전체 캠페인 수:",
-      deliveryCampaigns.length
-    );
-    const staticCampaign = deliveryCampaigns.find((c) => {
-      const campaignId = String(c.id);
-      // 정확히 일치하는 경우
-      if (campaignId === id) {
-        console.log(
-          "[DeliveryDetailPage] 정적 데이터에서 정확히 일치하는 캠페인 찾음:",
-          campaignId
-        );
-        return true;
-      }
-      // ID 형식 변환 시도
-      // URL이 "delivery_903" 형식이고 정적 데이터 ID가 "delivery_1" 형식인 경우
-      if (id.startsWith("delivery_")) {
-        // 둘 다 "delivery_" 형식이면 그대로 비교
-        if (campaignId === id) {
-          console.log(
-            "[DeliveryDetailPage] 정적 데이터에서 delivery_ 형식으로 일치:",
-            campaignId
-          );
-          return true;
-        }
-        // URL에서 "delivery_"를 제거한 값과 정적 데이터 ID 비교 (정적 데이터는 보통 "delivery_1" 형식)
-        const idWithoutPrefix = id.replace(/^delivery_/, "");
-        if (campaignId === idWithoutPrefix) {
-          console.log(
-            "[DeliveryDetailPage] 정적 데이터에서 delivery_ 제거 후 일치:",
-            campaignId,
-            "===",
-            idWithoutPrefix
-          );
-          return true;
-        }
-      }
-      // URL이 "903" 형식이고 정적 데이터 ID도 "delivery_1" 형식이 아닌 경우
-      if (!id.startsWith("delivery_") && !campaignId.startsWith("delivery_")) {
-        const matches = campaignId === id;
-        if (matches)
-          console.log(
-            "[DeliveryDetailPage] 정적 데이터에서 숫자만으로 일치:",
-            campaignId
-          );
-        return matches;
-      }
-      // 정적 데이터 ID가 "delivery_1" 형식이고 URL이 "1" 형식인 경우
-      if (campaignId.startsWith("delivery_") && !id.startsWith("delivery_")) {
-        const campaignIdWithoutPrefix = campaignId.replace(/^delivery_/, "");
-        const matches = campaignIdWithoutPrefix === id;
-        if (matches)
-          console.log(
-            "[DeliveryDetailPage] 정적 데이터에서 delivery_ 제거 후 일치:",
-            campaignIdWithoutPrefix,
-            "===",
-            id
-          );
-        return matches;
-      }
-      return false;
-    });
-    if (staticCampaign) {
-      console.log(
-        "[DeliveryDetailPage] 정적 데이터에서 캠페인 찾음:",
-        staticCampaign.id
-      );
-      setCampaign(staticCampaign);
-      setIsLoading(false);
-      return;
-    }
-    console.log("[DeliveryDetailPage] 정적 데이터에서 캠페인을 찾지 못함");
-
-    // 3. 정적 데이터에서 찾지 못했으면 취소된 캠페인에서 찾기
-    console.log(
-      "[DeliveryDetailPage] 취소된 캠페인에서 찾기 시작, 전체 캠페인 수:",
-      deliveryClosedCampaignsExtended.length
-    );
-    const closedCampaign = deliveryClosedCampaignsExtended.find((c) => {
-      const campaignId = String(c.id);
-      // 정확히 일치하는 경우
-      if (campaignId === id) {
-        console.log(
-          "[DeliveryDetailPage] 취소된 캠페인에서 정확히 일치하는 캠페인 찾음:",
-          campaignId
-        );
-        return true;
-      }
-      // ID 형식 변환 시도
-      if (id.startsWith("delivery_")) {
-        // 둘 다 "delivery_" 형식이면 그대로 비교
-        if (campaignId === id) {
-          console.log(
-            "[DeliveryDetailPage] 취소된 캠페인에서 delivery_ 형식으로 일치:",
-            campaignId
-          );
-          return true;
-        }
-        // URL에서 "delivery_"를 제거한 값과 비교
-        const idWithoutPrefix = id.replace(/^delivery_/, "");
-        if (campaignId === idWithoutPrefix) {
-          console.log(
-            "[DeliveryDetailPage] 취소된 캠페인에서 delivery_ 제거 후 일치:",
-            campaignId,
-            "===",
-            idWithoutPrefix
-          );
-          return true;
-        }
-      }
-      // URL이 "902" 형식이고 캠페인 ID도 "902" 형식인 경우
-      if (!id.startsWith("delivery_") && !campaignId.startsWith("delivery_")) {
-        const matches = campaignId === id;
-        if (matches)
-          console.log(
-            "[DeliveryDetailPage] 취소된 캠페인에서 숫자만으로 일치:",
-            campaignId
-          );
-        return matches;
-      }
-      // 캠페인 ID가 "delivery_902" 형식이고 URL이 "902" 형식인 경우
-      if (campaignId.startsWith("delivery_") && !id.startsWith("delivery_")) {
-        const campaignIdWithoutPrefix = campaignId.replace(/^delivery_/, "");
-        const matches = campaignIdWithoutPrefix === id;
-        if (matches)
-          console.log(
-            "[DeliveryDetailPage] 취소된 캠페인에서 delivery_ 제거 후 일치:",
-            campaignIdWithoutPrefix,
-            "===",
-            id
-          );
-        return matches;
-      }
-      return false;
-    });
-    if (closedCampaign) {
-      console.log(
-        "[DeliveryDetailPage] 취소된 캠페인에서 캠페인 찾음:",
-        closedCampaign.id
-      );
-      // DeliveryCampaignDataExtended를 DeliveryCampaignData로 변환
-      const convertedCampaign: DeliveryCampaignData = {
-        ...closedCampaign,
-        // 필요한 필드들이 이미 있으면 그대로 사용, 없으면 기본값 설정
-        dayCount: closedCampaign.dayCount || "마감",
-        isUrgent: closedCampaign.isUrgent || false,
-      };
-      setCampaign(convertedCampaign);
-      setIsLoading(false);
-      return;
-    }
-    console.log("[DeliveryDetailPage] 취소된 캠페인에서도 캠페인을 찾지 못함");
-
-    // 4. 찾지 못한 경우
-    console.warn("[DeliveryDetailPage] 캠페인을 찾을 수 없습니다. ID:", id);
+    // 4. 목업과 localStorage 모두에서 찾지 못한 경우
+    console.warn(`[배송형 캠페인] 캠페인을 찾을 수 없습니다: ID=${id}`);
     setCampaign(null);
     setIsLoading(false);
   }, [id]);

@@ -63,7 +63,7 @@ export interface InstagramApplicant {
   followers: number;
   memo: string;
   selectionStatus: "미선택" | "선정하기" | "이용제한 계정" | "검수중" | "완료";
-  channel: "인스타그램";
+  channel: "인스타그램" | "릴스";
   registrationDate?: string;
 }
 

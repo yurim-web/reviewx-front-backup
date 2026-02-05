@@ -106,7 +106,24 @@ export default function ReporterCampaignApplicationPage() {
     applicant: AllApplicant,
     isSelected: boolean = false
   ): React.ReactNode => {
-    switch (applicant.channel) {
+    const channel = applicant.channel as string;
+    
+    if (channel === "릴스") {
+      // 릴스 채널인 경우 전용 카드 사용
+      return isSelected ? (
+        <ReelsSelectedCard
+          applicant={applicant as InstagramApplicant}
+          onCancel={handleCancelApplicant}
+        />
+      ) : (
+        <ReelsCard
+          applicant={applicant as InstagramApplicant}
+          onSelect={handleSelectApplicant}
+        />
+      );
+    }
+    
+    switch (channel) {
       case "네이버블로그":
         return (
           <NaverBlogCard
