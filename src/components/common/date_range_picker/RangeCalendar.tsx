@@ -301,7 +301,7 @@ export default function RangeCalendar({
             circle = document.createElement("div");
             circle.className = "range-start-circle";
             const isMobile = window.innerWidth <= 768;
-            const circleSize = isMobile ? "20px" : "28px";
+            const circleSize = isMobile ? "20px" : "32px";
             circle.style.setProperty("position", "absolute", "important");
             circle.style.setProperty("width", circleSize, "important");
             circle.style.setProperty("height", circleSize, "important");
@@ -322,7 +322,7 @@ export default function RangeCalendar({
             button.appendChild(circle);
           } else {
             const isMobile = window.innerWidth <= 768;
-            const circleSize = isMobile ? "20px" : "28px";
+            const circleSize = isMobile ? "18px" : "32px";
             circle.style.setProperty("width", circleSize, "important");
             circle.style.setProperty("height", circleSize, "important");
           }
@@ -491,7 +491,7 @@ export default function RangeCalendar({
             circle = document.createElement("div");
             circle.className = "range-end-circle";
             const isMobile = window.innerWidth <= 768;
-            const circleSize = isMobile ? "20px" : "28px";
+            const circleSize = isMobile ? "20px" : "32px";
             circle.style.setProperty("position", "absolute", "important");
             circle.style.setProperty("width", circleSize, "important");
             circle.style.setProperty("height", circleSize, "important");
@@ -512,7 +512,7 @@ export default function RangeCalendar({
             button.appendChild(circle);
           } else {
             const isMobile = window.innerWidth <= 768;
-            const circleSize = isMobile ? "20px" : "28px";
+            const circleSize = isMobile ? "20px" : "32px";
             circle.style.setProperty("width", circleSize, "important");
             circle.style.setProperty("height", circleSize, "important");
           }
