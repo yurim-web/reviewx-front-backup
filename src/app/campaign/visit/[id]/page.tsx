@@ -254,42 +254,45 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
-  // localStorage 데이터를 먼저 확인 (수정된 내용 우선 반영), 그 다음 정적 데이터 확인
+  // 목업 데이터를 우선으로 확인 (목업 데이터가 있으면 무조건 표시), 그 다음 localStorage 확인
   useEffect(() => {
     setIsLoading(true);
-    
-    // 1. localStorage에서 먼저 찾기 (수정된 데이터 우선)
+
+    // 1. 목업 데이터에서 먼저 찾기 (Extended 버전 사용 - guidelineTexts, applicantData 포함)
+    const normalizedUrlId = id.startsWith("visit_") ? id.replace(/^visit_/, "") : id;
+
+    const staticCampaign = visitCampaignsExtended.find((c) => {
+      const campaignId = String(c.id);
+      const normalizedCampaignId = campaignId.startsWith("visit_") ? campaignId.replace(/^visit_/, "") : campaignId;
+      return normalizedCampaignId === normalizedUrlId;
+    });
+
+    if (staticCampaign) {
+      console.log(`[방문형 캠페인] 목업 데이터에서 캠페인 찾음: ID=${staticCampaign.id}`);
+      // staticCampaign은 이미 VisitCampaignData 형식
+      const finalCampaign: VisitCampaignData = {
+        ...staticCampaign,
+        guidelineTexts: staticCampaign.guidelineTexts || [],
+      };
+      setCampaign(finalCampaign);
+      setIsLoading(false);
+      return;
+    }
+
+    // 2. 목업 데이터에 없으면 localStorage에서 찾기 (사용자가 새로 만든 캠페인)
     if (typeof window !== "undefined") {
       try {
         const storedCampaigns = localStorage.getItem("visitCampaigns");
         if (storedCampaigns) {
-          const campaigns: CampaignWithApplicants[] =
-            JSON.parse(storedCampaigns);
+          const campaigns: CampaignWithApplicants[] = JSON.parse(storedCampaigns);
           const storedCampaign = campaigns.find((c) => {
             const campaignId = String(c.campaignInfo.id);
-            // 정확히 일치하는 경우
-            if (campaignId === id) return true;
-            // ID 형식 변환 시도
-            // URL이 "visit_903" 형식이고 localStorage ID가 "903" 형식인 경우
-            if (id.startsWith("visit_")) {
-              const idWithoutPrefix = id.replace(/^visit_/, "");
-              if (campaignId === idWithoutPrefix) return true;
-              if (campaignId === id) return true;
-            }
-            // URL이 "903" 형식이고 localStorage ID도 "903" 형식인 경우
-            if (!id.startsWith("visit_") && !campaignId.startsWith("visit_")) {
-              return campaignId === id;
-            }
-            // localStorage ID가 "visit_903" 형식이고 URL이 "903" 형식인 경우
-            if (campaignId.startsWith("visit_") && !id.startsWith("visit_")) {
-              const campaignIdWithoutPrefix = campaignId.replace(/^visit_/, "");
-              return campaignIdWithoutPrefix === id;
-            }
-            return false;
+            const normalizedCampaignId = campaignId.startsWith("visit_") ? campaignId.replace(/^visit_/, "") : campaignId;
+            return normalizedCampaignId === normalizedUrlId;
           });
           if (storedCampaign) {
-            const convertedCampaign =
-              convertToVisitCampaignData(storedCampaign);
+            console.log(`[방문형 캠페인] localStorage에서 캠페인 찾음: ID=${storedCampaign.campaignInfo.id}`);
+            const convertedCampaign = convertToVisitCampaignData(storedCampaign);
             setCampaign(convertedCampaign);
             setIsLoading(false);
             return;
@@ -300,49 +303,8 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
       }
     }
 
-    // 2. localStorage에 없으면 정적 데이터에서 찾기 (Extended 버전 사용 - guidelineTexts 포함)
-    const staticCampaign = visitCampaignsExtended.find((c) => {
-      const campaignId = String(c.id);
-      // 정확히 일치하는 경우
-      if (campaignId === id) return true;
-      // ID 형식 변환 시도
-      if (id.startsWith("visit_")) {
-        if (campaignId === id) return true;
-        const idWithoutPrefix = id.replace(/^visit_/, "");
-        if (campaignId === idWithoutPrefix) return true;
-      }
-      if (!id.startsWith("visit_") && !campaignId.startsWith("visit_")) {
-        return campaignId === id;
-      }
-      if (campaignId.startsWith("visit_") && !id.startsWith("visit_")) {
-        const campaignIdWithoutPrefix = campaignId.replace(/^visit_/, "");
-        return campaignIdWithoutPrefix === id;
-      }
-      return false;
-    });
-    if (staticCampaign) {
-      // 디버깅: guidelineTexts 확인
-      if (id === "1006" || id === "6") {
-        console.log("[visit_6 디버깅] staticCampaign:", {
-          id: staticCampaign.id,
-          hasGuidelineTexts: !!staticCampaign.guidelineTexts,
-          guidelineTextsLength: staticCampaign.guidelineTexts?.length || 0,
-          guidelineTexts: staticCampaign.guidelineTexts,
-        });
-      }
-      // staticCampaign은 이미 VisitCampaignData 형식이지만, guidelineTexts를 보장하기 위해 직접 설정
-      // visitCampaignsExtended에서 가져온 데이터는 이미 guidelineTexts가 포함되어 있음
-      const finalCampaign: VisitCampaignData = {
-        ...staticCampaign,
-        // guidelineTexts가 없으면 빈 배열로 설정
-        guidelineTexts: staticCampaign.guidelineTexts || [],
-      };
-      setCampaign(finalCampaign);
-      setIsLoading(false);
-      return;
-    }
-
-    // 3. 찾지 못한 경우
+    // 3. 목업과 localStorage 모두에서 찾지 못한 경우
+    console.warn(`[방문형 캠페인] 캠페인을 찾을 수 없습니다: ID=${id}`);
     setCampaign(null);
     setIsLoading(false);
   }, [id]);

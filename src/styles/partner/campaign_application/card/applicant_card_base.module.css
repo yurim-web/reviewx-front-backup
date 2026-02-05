@@ -20,16 +20,22 @@
 }
 
 /* 카드 컨테이너 */
+/* 캠페인 신청 내역용: border-bottom 있음, border-radius 모두 8px */
 .applicant_card {
   border: 1px solid #d9d9d9;
-  border-radius: 8px 8px 0 0;
-  border-bottom: none;
+  border-radius: 8px;
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
   background: white;
   height: fit-content;
+}
+
+/* 캠페인 콘텐츠 내역용: card_wrapper 안에 있는 경우 */
+.card_wrapper .applicant_card {
+  border-radius: 8px 8px 0 0;
+  border-bottom: none;
 }
 
 /* 푸터가 있는 카드 스타일 */

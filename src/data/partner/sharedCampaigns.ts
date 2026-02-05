@@ -1124,7 +1124,8 @@ function convertCampaignDataToPartnerFormat(
       status: status,
       campaignType: campaignType,
       category: campaign.subcategory || "",
-      brandName: campaign.channel || "",
+      brandName: campaign.brandName || campaign.channel || "",
+      channel: campaign.channel || campaign.brandName || "",
       recruitmentPeriod: recruitmentPeriod,
       announcementDate: announcement,
       purchasePeriod: purchasePeriod,
@@ -1346,6 +1347,7 @@ function convertExtendedToCampaignWithApplicants(
       campaignType: campaignType,
       category: extended.subcategory || "",
       brandName: extended.brandName || extended.channel || "",
+      channel: extended.channel || extended.brandName || "",
       recruitmentPeriod:
         applicationStart && applicationEnd
           ? `${applicationStart} ~ ${applicationEnd}`
@@ -1391,15 +1393,18 @@ export function getSharedCampaigns(): CampaignWithApplicants[] {
 
   // 모든 캠페인을 병합
   // /data/campaign 데이터만 사용 (같은 데이터 소스)
+  // 중요: 목업 데이터를 먼저 배치하고, localStorage 데이터를 나중에 배치
+  // convertToPartnerCampaigns에서 Map을 사용할 때 나중에 넣은 데이터가 우선되므로,
+  // localStorage 데이터가 목업 데이터를 덮어쓰게 됨 (사용자가 수정한 데이터 우선)
+  // 하지만 목업 데이터 변경사항도 반영되도록 목업 데이터를 먼저 넣음
   const allCampaigns = [
-    // /data/campaign 데이터 (사용자가 보는 캠페인 목록과 동일한 데이터)
+    // /data/campaign 확장 데이터 (목업 데이터 - 변경사항 반영)
+    // 목업 데이터를 먼저 넣어서 기본 데이터로 사용
     ...campaignDeliveryList,
     ...campaignMissionList,
     ...campaignReviewList,
     ...campaignVisitList,
     ...campaignReporterList,
-    // localStorage에서 불러온 새로 등록된 캠페인 (모든 타입, 매번 최신 데이터 반영)
-    ...getStoredCampaigns(),
     // 종료/취소 데이터 (콘텐츠 전용 구조) → 관리 페이지 목록 노출을 위해 최소 정보 병합
     // 취소 상태는 원본을 유지하여 convertToPartnerCampaigns에서 취소 탭으로 분류할 수 있도록 함
     ...closedCampaigns.map((c) => ({
@@ -1424,6 +1429,10 @@ export function getSharedCampaigns(): CampaignWithApplicants[] {
       },
       applicantData: { applicants: [], selectedApplicants: [] },
     })),
+    // localStorage에서 불러온 새로 등록된 캠페인 (모든 타입, 매번 최신 데이터 반영)
+    // 사용자가 직접 등록/수정한 캠페인은 나중에 넣어서 우선순위를 가짐
+    // 같은 ID가 있으면 localStorage 데이터가 목업 데이터를 덮어씀
+    ...getStoredCampaigns(),
   ];
 
   // 삭제된 캠페인 ID 목록에 있는 캠페인을 필터링하여 제외
@@ -1501,7 +1510,9 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
   });
 
   // 중복 제거: 같은 id를 가진 캠페인 중 마지막 것만 유지
-  // (localStorage의 캠페인이 나중에 오므로 우선순위를 가짐)
+  // (localStorage 데이터가 나중에 오므로 사용자가 수정한 데이터가 우선순위를 가짐)
+  // 목업 데이터는 먼저 넣어서 기본값으로 사용되고,
+  // localStorage에 같은 ID가 있으면 사용자가 수정한 데이터로 덮어씀
   const uniqueCampaignsMap = new Map<string, (typeof validCampaigns)[0]>();
   for (const campaign of validCampaigns) {
     uniqueCampaignsMap.set(campaign.campaignInfo.id, campaign);
@@ -1916,40 +1927,62 @@ export const getCampaignById = (id: string): CampaignWithApplicants | null => {
     (campaign) => campaign.campaignInfo.id === id
   );
 
-  if (storedFound) {
-    // console.log(`[getCampaignById] localStorage에서 캠페인 찾음:`, {
-    //   id: storedFound.campaignInfo.id,
-    //   title: storedFound.campaignInfo.title,
-    //   category: storedFound.campaignInfo.category,
-    //   brandName: storedFound.campaignInfo.brandName,
-    //   applicantsCount: storedFound.applicantData.applicants.length,
-    // });
+  // 2. 목업 데이터에서 검색 (getSharedCampaigns는 localStorage + 목업을 합친 것이므로 분리 필요)
+  // getSharedCampaigns 대신 목업 데이터만 직접 조회
+  const mockCampaigns = [
+    ...(deliveryCampaignsExtended || []).map(convertExtendedToCampaignWithApplicants),
+    ...(missionCampaignsExtended || []).map(convertExtendedToCampaignWithApplicants),
+    ...(reviewCampaignsExtended || []).map(convertExtendedToCampaignWithApplicants),
+    ...(visitCampaignsExtended || []).map(convertExtendedToCampaignWithApplicants),
+    ...(reporterCampaignsExtended || []).map(convertExtendedToCampaignWithApplicants),
+  ];
+  const mockFound = mockCampaigns.find((campaign) => campaign.campaignInfo.id === id);
+
+  // 3. localStorage와 목업 데이터 병합 로직
+  if (storedFound && mockFound) {
+    // localStorage에 있고 목업 데이터에도 있는 경우
+    const storedApplicantsCount = storedFound.applicantData?.applicants?.length ?? 0;
+    const storedSelectedCount = storedFound.applicantData?.selectedApplicants?.length ?? 0;
+    const mockApplicantsCount = mockFound.applicantData?.applicants?.length ?? 0;
+    const mockSelectedCount = mockFound.applicantData?.selectedApplicants?.length ?? 0;
+
+    // localStorage의 신청자 데이터가 비어있고, 목업 데이터에 신청자 데이터가 있으면 병합
+    const needsMerge =
+      (storedApplicantsCount === 0 && mockApplicantsCount > 0) ||
+      (storedSelectedCount === 0 && mockSelectedCount > 0);
+
+    if (needsMerge) {
+      // localStorage의 캠페인 기본 정보 + 목업의 신청자 데이터 병합
+      return {
+        ...storedFound,
+        applicantData: {
+          applicants: storedApplicantsCount > 0
+            ? storedFound.applicantData.applicants
+            : mockFound.applicantData?.applicants || [],
+          selectedApplicants: storedSelectedCount > 0
+            ? storedFound.applicantData.selectedApplicants
+            : mockFound.applicantData?.selectedApplicants || [],
+        },
+      };
+    }
+
+    // localStorage 데이터 우선 반환 (병합 불필요한 경우)
     return storedFound;
   }
 
-  // 2. localStorage에 없으면 일반 데이터에서 검색
-  const allCampaigns = getSharedCampaigns();
-  // console.log(`[getCampaignById] 전체 캠페인 수: ${allCampaigns.length}`);
-
-  const found = allCampaigns.find((campaign) => {
-    const matches = campaign.campaignInfo.id === id;
-    if (matches) {
-      // console.log(`[getCampaignById] 일반 데이터에서 캠페인 찾음:`, {
-      //   id: campaign.campaignInfo.id,
-      //   title: campaign.campaignInfo.title,
-      //   category: campaign.campaignInfo.category,
-      //   brandName: campaign.campaignInfo.brandName,
-      //   applicantsCount: campaign.applicantData?.applicants?.length ?? 0,
-      // });
-    }
-    return matches;
-  });
-
-  if (!found) {
-    console.warn(`[getCampaignById] 캠페인을 찾을 수 없습니다: ${id}`);
+  // 4. localStorage에만 있는 경우
+  if (storedFound) {
+    return storedFound;
   }
 
-  return found || null;
+  // 5. 목업 데이터에만 있는 경우
+  if (mockFound) {
+    return mockFound;
+  }
+
+  // 6. 둘 다 없는 경우
+  console.warn(`[getCampaignById] 캠페인을 찾을 수 없습니다: ${id}`);
+  return null;
 };
 
 /* ========================================

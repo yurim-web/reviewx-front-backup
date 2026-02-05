@@ -74,6 +74,8 @@ export interface CampaignInfo {
   category: string;
   /** 브랜드 이름 (선택적) - 배송형 등에서만 사용 */
   brandName?: string;
+  /** 채널명 (선택적) - 기자단 등에서 사용, brandName이 없을 때 사용 */
+  channel?: string;
   recruitmentPeriod: string;
   announcementDate: string;
   /** 구매 기간 (구매평 캠페인용, 선택적) */
@@ -165,7 +167,7 @@ export default function Campaignbanner({
               <div className={styles.campaign_category}>
                 <img
                   src={getBrandLogo(
-                    campaignInfo.brandName || "기본",
+                    campaignInfo.brandName || campaignInfo.channel || "기본",
                     campaignInfo.campaignType
                   )}
                   alt={`${campaignInfo.campaignType} 브랜드 로고`}
