@@ -163,7 +163,7 @@ export default function CampaignReasonModal({
   };
 
   // 모드에 따른 모달 제목 결정
-  const modal_title = "콘텐츠 반려 사유";
+  const modal_title = "반려 사유";
 
   // textarea의 rows 수 결정 (반려 모드: 5, 신고 모드: 6)
   const textarea_rows = modeProps.mode === "reject" ? 5 : 6;

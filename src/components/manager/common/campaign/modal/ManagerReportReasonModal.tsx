@@ -145,8 +145,9 @@ export default function ManagerReportReasonModal({
   // useEffect는 컴포넌트가 렌더링된 후에 실행됩니다
   useEffect(() => {
     if (is_open) {
-      // 모달이 열릴 때 첫 번째 신고 코드 옵션을 자동으로 선택합니다
-      set_selected_report_code(report_code_options[0] || null);
+      // 모달이 열릴 때 신고 코드 선택을 초기화합니다
+      // 사용자가 직접 라디오 버튼을 클릭해서 선택하도록 합니다
+      set_selected_report_code(null);
       // textarea 입력값도 초기화합니다
       set_textarea_value("");
       // 에러 상태도 초기화합니다
@@ -209,6 +210,10 @@ export default function ManagerReportReasonModal({
     return report_code_info.find((info) => info.code === code);
   };
 
+  // 확인 버튼 비활성화 여부
+  // 신고 사유(라디오 버튼)를 선택하지 않으면 확인 버튼을 비활성화합니다
+  const is_report_button_disabled = !selected_report_code;
+
   if (!is_open) return null;
 
   return (
@@ -268,8 +273,11 @@ export default function ManagerReportReasonModal({
             취소
           </button>
           {/* 확인 버튼 */}
-          {/* 📌 에러 표시를 위해 버튼을 비활성화하지 않고, handle_report 내에서 검증합니다 */}
-          <button className={styles.report_button} onClick={handle_report}>
+          <button
+            className={styles.report_button}
+            onClick={handle_report}
+            disabled={is_report_button_disabled}
+          >
             확인
           </button>
         </div>

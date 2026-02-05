@@ -144,12 +144,12 @@ export default function ProgressPageCommon({
   );
   const [selected_types, set_selected_types] = useState<CampaignType[]>([]);
   const [selected_channels, set_selected_channels] = useState<Channel[]>([]);
-  // 날짜 범위 필터: 초기값을 현재 달의 첫날~마지막 날로 설정
+  // 날짜 범위 필터: 초기값을 undefined로 설정 (모든 캠페인 표시)
   // useState의 초기값을 함수로 설정하면 클라이언트에서만 실행됩니다
-  // 📌 페이지 로드 시 자동으로 이번 달이 선택됩니다
+  // 📌 페이지 로드 시 날짜 필터 없이 모든 캠페인이 표시됩니다
   const [selected_date_range, set_selected_date_range] = useState<
     DateRange | undefined
-  >(get_current_month_date_range);
+  >(undefined);
 
   // manager_type에 따라 데이터를 선택합니다
   // 스타일은 공통 스타일을 사용하므로 선택하지 않습니다

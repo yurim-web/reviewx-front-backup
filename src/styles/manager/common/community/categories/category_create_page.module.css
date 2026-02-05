@@ -115,7 +115,7 @@
 .submit_button {
   width: 920px;
   height: 56px;
-  background-color: #555555;
+  background-color: #FF5694;
   border: none;
   border-radius: 8px;
   font-size: 16px;
@@ -124,16 +124,12 @@
   letter-spacing: -0.32px;
   color: white;
   cursor: pointer;
-  transition: background-color 0.2s ease;
   box-sizing: border-box;
 }
 
-/* 등록 버튼 호버 효과 */
-.submit_button:hover {
-  background-color: #444444;
-}
+
 
 /* 등록 버튼 활성화 상태 */
 .submit_button:active {
-  background-color: #333333;
+  background-color: #FF5694;
 }

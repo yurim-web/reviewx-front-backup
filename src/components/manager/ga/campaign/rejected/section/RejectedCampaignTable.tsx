@@ -32,6 +32,7 @@ import {
   rejected_campaign_list,
   reject_code_info,
   remove_rejected_campaign,
+  reset_rejected_campaign_storage,
   type RejectedCampaignItem,
   type RejectCodeInfo,
   type RejectCode,
@@ -159,6 +160,16 @@ export default function RejectedCampaignTable({
 
   useEffect(() => {
     set_is_mounted(true);
+    
+    // 개발 환경에서 localStorage 확인 및 디버깅
+    if (process.env.NODE_ENV === 'development') {
+      const list = get_rejected_campaign_list();
+      if (list.length === 0 && rejected_campaign_list.length > 0) {
+        console.warn('반려 내역 데이터가 표시되지 않습니다. localStorage에 제거된 항목이 저장되어 있을 수 있습니다.');
+        console.log('localStorage 초기화를 원하시면 브라우저 콘솔에서 다음을 실행하세요:');
+        console.log('localStorage.removeItem("rejected_campaign_removed_ids"); location.reload();');
+      }
+    }
   }, []);
 
   const handle_report_click = (

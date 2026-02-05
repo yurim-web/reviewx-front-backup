@@ -359,7 +359,7 @@ export default function CommonTable<T extends TableRowData>({
     return (
       <div className={`${styles.table_body} ${body_class_name}`}>
         {data.map((row, index) => (
-          <div key={row.id}>{render_table_row(row, index)}</div>
+          <div key={`${row.id}-${index}`}>{render_table_row(row, index)}</div>
         ))}
       </div>
     );

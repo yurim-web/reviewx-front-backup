@@ -44,6 +44,9 @@ export default function EditPostPageClient({
 
     // 게시글 상세 정보 가져오기
     const detail = get_post_detail(post_id);
+    console.log("=== EditPostPageClient Debug ===");
+    console.log("post_id:", post_id);
+    console.log("게시글 상세 정보:", detail);
     set_post_detail(detail);
     set_is_loading(false);
   }, [post_id]);
@@ -59,18 +62,22 @@ export default function EditPostPageClient({
   }
 
   // PostFormPageClient에 수정 모드와 초기 데이터 전달
+  const initial_form_data = {
+    category_type: post_detail.division || "",
+    category: post_detail.category || "",
+    target: post_detail.target || "",
+    title: post_detail.title,
+    body: post_detail.content,
+  };
+
+  console.log("PostFormPageClient에 전달하는 initial_data:", initial_form_data);
+
   return (
     <PostFormPageClient
       mode="edit"
       post_id={post_id}
       manager_type={manager_type}
-      initial_data={{
-        category_type: post_detail.division || "",
-        category: post_detail.category || "",
-        target: post_detail.target || "",
-        title: post_detail.title,
-        body: post_detail.content,
-      }}
+      initial_data={initial_form_data}
     />
   );
 }

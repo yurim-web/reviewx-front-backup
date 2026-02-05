@@ -483,6 +483,7 @@ export default function CampaignCompletedCard({
           buttons={["취소", "연장"]}
           on_confirm={handleExtensionConfirm}
           type="center"
+          button_variant="red"
         />
       )}
 

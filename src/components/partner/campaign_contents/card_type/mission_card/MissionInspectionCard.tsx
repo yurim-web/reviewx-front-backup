@@ -416,6 +416,7 @@ export default function MissionInspectionCard({
         buttons={extensionCount === 0 ? ["취소", "연장"] : ["취소", "확인"]}
         on_confirm={handleExtensionConfirm}
         type="center"
+        button_variant="red"
       />
 
       {/* 연장 완료 모달 */}

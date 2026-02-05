@@ -65,7 +65,7 @@ const default_posts_data: PostItem[] = [
     target: "파트너",
     title: "[건강기능식품] 체험단 등록 유의 사항",
     view_count: 115000,
-    registered_date: "2026-01-02 10:15",
+    registered_date: "2026-02-01 10:15",
     registered_by: "관리자 A",
     is_pinned: false,
   },
@@ -77,7 +77,7 @@ const default_posts_data: PostItem[] = [
     target: "파트너",
     title: "[의료기기] 체험단 진행 불가 공지",
     view_count: 0,
-    registered_date: "2026-01-05 14:20",
+    registered_date: "2026-02-02 14:20",
     registered_by: "관리자 A",
     is_pinned: true,
   },
@@ -90,7 +90,7 @@ const default_posts_data: PostItem[] = [
     title:
       "내 브랜드에 참여한 인플루언서의 중복 당첨 이력을 확인 할 수 있습니다.",
     view_count: 0,
-    registered_date: "2026-01-08 09:30",
+    registered_date: "2026-02-03 09:30",
     registered_by: "관리자 C",
     is_pinned: false,
   },
@@ -102,7 +102,7 @@ const default_posts_data: PostItem[] = [
     target: "파트너",
     title: `스타일씨 무제한 체험단 (추천할인코드) 를 사용해서 '할인'을 받아보세요`,
     view_count: 1100000,
-    registered_date: "2026-01-10 16:45",
+    registered_date: "2026-02-04 16:45",
     registered_by: "관리자 A",
     is_pinned: false,
   },
@@ -114,7 +114,7 @@ const default_posts_data: PostItem[] = [
     target: "파트너",
     title: "구매평 체험단 메뉴 가 신설되었습니니다.",
     view_count: 12000,
-    registered_date: "2026-01-12 11:20",
+    registered_date: "2026-02-05 11:20",
     registered_by: "관리자 C",
     is_pinned: true,
   },
@@ -127,7 +127,7 @@ const default_posts_data: PostItem[] = [
     title:
       "[ 구매평 제한 사이트 안내 ] 카카오선물하기 / 톡딜(톡스토어) / 화해 의 구매평 체험단이 제한됩니다.텥테ㅔ테텥스스스트ㅡㅌ테스트트텥테ㅔ테텥스스스트ㅡㅌ테스트트텥테ㅔ테텥스스스트ㅡㅌ테스트트텥테ㅔ테텥스스스트ㅡㅌ테스트트",
     view_count: 999999999,
-    registered_date: "2026-01-15 13:40",
+    registered_date: "2026-02-06 13:40",
     registered_by: "관리자 C",
     is_pinned: true,
   },
@@ -139,7 +139,7 @@ const default_posts_data: PostItem[] = [
     target: "리뷰어",
     title: "정산 내역을 확인할 수 있는 시스템이 추가되었습니다.텥테ㅔ테텥스스스트ㅡㅌ테스트트텥테ㅔ테텥스스스트ㅡㅌ테스트트텥테ㅔ테텥스스스트ㅡㅌ테스트트텥테ㅔ테텥스스스트ㅡㅌ테스트트텥테ㅔ테텥스스스트ㅡㅌ테스트트",
     view_count: 6828,
-    registered_date: "2026-01-18 10:25",
+    registered_date: "2026-02-07 10:25",
     registered_by: "관리자 B",
     is_pinned: false,
   },
@@ -152,7 +152,7 @@ const default_posts_data: PostItem[] = [
     title:
       "*체험단 구독 중지 시 모든 서비스 활용이 불가합니다.일이삼사오육칠팔구십일이삼사오육칠팔구십",
     view_count: 0,
-    registered_date: "2026-01-20 15:10",
+    registered_date: "2026-02-08 15:10",
     registered_by: "관리자 C",
     is_pinned: false,
   },
@@ -164,7 +164,7 @@ const default_posts_data: PostItem[] = [
     target: "리뷰어",
     title: "인플루언서 신청사유 추가 선정 시 참고/ 확인해주세요.",
     view_count: 0,
-    registered_date: "2026-01-22 09:45",
+    registered_date: "2026-02-09 09:45",
     registered_by: "관리자 C",
     is_pinned: false,
   },
@@ -176,7 +176,7 @@ const default_posts_data: PostItem[] = [
     target: "리뷰어",
     title: "(중요) 체험단 광고주 (구독/환불) 관련 재공지",
     view_count: 0,
-    registered_date: "2026-01-03 14:27",
+    registered_date: "2026-02-10 14:27",
     registered_by: "admin",
     is_pinned: false,
   },
@@ -188,7 +188,7 @@ const default_posts_data: PostItem[] = [
     target: "파트너",
     title: "스타일씨 공식 홈페이지에 나오는 체험단 필터링이 리뉴얼 되었습니다!",
     view_count: 0,
-    registered_date: "2026-01-08 16:10",
+    registered_date: "2026-02-11 16:10",
     registered_by: "관리자 C",
     is_pinned: false,
   },
@@ -200,7 +200,7 @@ const default_posts_data: PostItem[] = [
     target: "파트너",
     title: "* 인스타릴스 (영상) 공식 오픈 *",
     view_count: 144,
-    registered_date: "2026-01-12 11:33",
+    registered_date: "2026-02-12 11:33",
     registered_by: "관리자 A",
     is_pinned: false,
   },
@@ -212,7 +212,7 @@ const default_posts_data: PostItem[] = [
     target: "파트너",
     title: `체험단 등록 실시간 '미리보기' 기능 추가`,
     view_count: 0,
-    registered_date: "2026-01-15 10:48",
+    registered_date: "2026-02-13 10:48",
     registered_by: "관리자 C",
     is_pinned: false,
   },
@@ -224,7 +224,7 @@ const default_posts_data: PostItem[] = [
     target: "파트너",
     title: "*중요* 블로그 리뷰 콘텐츠 스폰서 배너 표시 지침이 변경됩니다.",
     view_count: 0,
-    registered_date: "2026-01-18 15:22",
+    registered_date: "2026-02-14 15:22",
     registered_by: "관리자 C",
     is_pinned: false,
   },
@@ -236,7 +236,7 @@ const default_posts_data: PostItem[] = [
     target: "파트너",
     title: "체험단 등록 시 불러오기 기능이 추가 되었습니다!",
     view_count: 0,
-    registered_date: "2026-01-20 09:15",
+    registered_date: "2026-02-15 09:15",
     registered_by: "관리자 C",
     is_pinned: false,
   },
@@ -248,7 +248,7 @@ const default_posts_data: PostItem[] = [
     target: "전체",
     title: "공정위문구 (대가성 표기) 안내",
     view_count: 250,
-    registered_date: "2026-01-25 13:40",
+    registered_date: "2026-02-16 13:40",
     registered_by: "관리자 C",
     is_pinned: false,
   },
@@ -260,7 +260,7 @@ const default_posts_data: PostItem[] = [
     target: "전체",
     title: "송장 일괄 업로드 기능이 추가 되었습니다.",
     view_count: 0,
-    registered_date: "2026-01-28 17:25",
+    registered_date: "2026-02-17 17:25",
     registered_by: "관리자 C",
     is_pinned: false,
   },
@@ -270,8 +270,9 @@ const default_posts_data: PostItem[] = [
  * localStorage에서 게시글 목록 데이터를 불러오는 함수
  *
  * 목적: 페이지 로드 시 localStorage에 저장된 게시글 목록 데이터를 불러옵니다.
- * - localStorage에 데이터가 있으면 불러온 데이터를 사용합니다.
- * - localStorage에 데이터가 없으면 기본 데이터를 사용합니다.
+ * FIXED: Mock data FIRST, then merge/update with localStorage data
+ * - Mock data should always be displayed
+ * - localStorage data is merged with mock data (updates existing, adds new)
  *
  * @returns 게시글 목록 배열
  */
@@ -291,13 +292,37 @@ function load_posts_from_storage(): PostItem[] {
 
     // JSON 문자열을 객체 배열로 변환
     const parsed_data: PostItem[] = JSON.parse(stored);
-    
+
     // 배열인지 확인 (타입 안전성 확보)
     if (!Array.isArray(parsed_data)) {
       return default_posts_data;
     }
 
-    return parsed_data;
+    // FIXED: Merge mock data with localStorage data
+    // 1. Start with default mock data
+    // 2. Update existing posts from localStorage (by ID)
+    // 3. Add new posts from localStorage that don't exist in mock data
+
+    const mock_data_map = new Map(default_posts_data.map(post => [post.id, post]));
+    const storage_data_map = new Map(parsed_data.map(post => [post.id, post]));
+
+    // Update mock data with localStorage changes and add new localStorage posts
+    const merged_data: PostItem[] = [];
+
+    // First add all mock data (updated with localStorage if exists)
+    for (const mock_post of default_posts_data) {
+      const storage_post = storage_data_map.get(mock_post.id);
+      merged_data.push(storage_post || mock_post);
+    }
+
+    // Then add new posts from localStorage that don't exist in mock data
+    for (const storage_post of parsed_data) {
+      if (!mock_data_map.has(storage_post.id)) {
+        merged_data.push(storage_post);
+      }
+    }
+
+    return merged_data;
   } catch (error) {
     // JSON 파싱 에러 등 예외 상황에서는 기본 데이터 반환
     console.error("localStorage에서 게시글 목록 데이터 로드 실패:", error);

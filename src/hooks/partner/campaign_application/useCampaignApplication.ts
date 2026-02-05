@@ -31,6 +31,199 @@ import {
 } from "@/data/partner/sharedCampaigns";
 
 /**
+ * 유저 신청 내역 상태 업데이트 헬퍼 함수
+ *
+ * 📌 기능:
+ * - localStorage의 user_applied_campaigns에서 해당 유저의 신청 내역을 찾아서 상태를 업데이트합니다
+ * - 파트너가 선정/취소할 때 유저의 캠페인 관리 페이지에서 탭 이동이 일어나도록 합니다
+ *
+ * @param userId - 신청자(유저) ID
+ * @param campaignId - 캠페인 ID
+ * @param newStatus - 새로운 상태 ("대기" | "선정" | "탈락")
+ */
+function updateUserAppliedCampaignStatus(
+  userId: string,
+  campaignId: string,
+  newStatus: "대기" | "선정" | "탈락"
+): void {
+  if (typeof window === "undefined") return;
+
+  try {
+    // localStorage에서 user_applied_campaigns 가져오기
+    const userAppliedCampaigns = localStorage.getItem("user_applied_campaigns");
+    if (!userAppliedCampaigns) {
+      console.log(
+        `[updateUserAppliedCampaignStatus] user_applied_campaigns가 없습니다`
+      );
+      return;
+    }
+
+    const appliedCampaigns = JSON.parse(userAppliedCampaigns);
+    if (!Array.isArray(appliedCampaigns)) {
+      console.error(
+        `[updateUserAppliedCampaignStatus] user_applied_campaigns가 배열이 아닙니다`
+      );
+      return;
+    }
+
+    // 해당 유저의 신청 내역 찾기
+    const userCampaigns = appliedCampaigns.find(
+      (uc: any) => uc.userId === userId
+    );
+    if (!userCampaigns || !userCampaigns.campaigns) {
+      console.log(
+        `[updateUserAppliedCampaignStatus] 유저 ${userId}의 신청 내역이 없습니다`
+      );
+      return;
+    }
+
+    // 해당 캠페인 찾기 (다양한 ID 형식 지원)
+    const campaignIndex = userCampaigns.campaigns.findIndex((c: any) => {
+      const storedCampaignId = String(c.campaignId);
+      const searchCampaignId = String(campaignId);
+
+      // 정확히 일치하는 경우
+      if (storedCampaignId === searchCampaignId) return true;
+
+      // ID 형식 변환 시도 (prefix 제거/추가)
+      const prefixes = ["delivery_", "visit_", "review_", "reporter_", "mission_"];
+      for (const prefix of prefixes) {
+        // searchCampaignId가 prefix를 포함하는 경우
+        if (searchCampaignId.startsWith(prefix)) {
+          const idWithoutPrefix = searchCampaignId.replace(
+            new RegExp(`^${prefix}`),
+            ""
+          );
+          if (storedCampaignId === idWithoutPrefix) return true;
+        }
+        // storedCampaignId가 prefix를 포함하는 경우
+        if (storedCampaignId.startsWith(prefix)) {
+          const idWithoutPrefix = storedCampaignId.replace(
+            new RegExp(`^${prefix}`),
+            ""
+          );
+          if (idWithoutPrefix === searchCampaignId) return true;
+        }
+      }
+
+      return false;
+    });
+
+    if (campaignIndex === -1) {
+      console.log(
+        `[updateUserAppliedCampaignStatus] 유저 ${userId}의 캠페인 ${campaignId} 신청 내역이 없습니다`
+      );
+      return;
+    }
+
+    // 상태 업데이트
+    const oldStatus = userCampaigns.campaigns[campaignIndex].status;
+    userCampaigns.campaigns[campaignIndex].status = newStatus;
+
+    // localStorage에 다시 저장
+    localStorage.setItem(
+      "user_applied_campaigns",
+      JSON.stringify(appliedCampaigns)
+    );
+
+    console.log(
+      `✅ [updateUserAppliedCampaignStatus] 유저 신청 내역 상태 업데이트: userId=${userId}, campaignId=${campaignId}, ${oldStatus} -> ${newStatus}`
+    );
+
+    // storage 이벤트 트리거 (다른 탭에서 변경사항 감지)
+    window.dispatchEvent(new Event("storage"));
+  } catch (error) {
+    console.error(
+      `[updateUserAppliedCampaignStatus] 오류 발생:`,
+      error
+    );
+  }
+}
+
+/**
+ * 유저 알림 추가 헬퍼 함수
+ *
+ * 📌 기능:
+ * - localStorage의 notifications에 새로운 알림을 추가합니다
+ * - 파트너가 유저를 선정했을 때 알림을 생성합니다
+ *
+ * @param userId - 알림을 받을 유저 ID
+ * @param campaignId - 캠페인 ID
+ * @param campaignTitle - 캠페인 제목
+ * @param campaignType - 캠페인 타입 ('delivery' | 'visit' | 'review' | 'mission' | 'reporter')
+ * @param type - 알림 타입 ('선정' | '탈락' | '제출' | '승인' 등)
+ */
+function addUserNotification(
+  userId: string,
+  campaignId: string,
+  campaignTitle: string,
+  campaignType: 'delivery' | 'visit' | 'review' | 'mission' | 'reporter',
+  type: '선정' | '탈락' | '제출' | '승인'
+): void {
+  if (typeof window === "undefined") return;
+
+  try {
+    // localStorage에서 기존 알림 가져오기
+    const storedNotifications = localStorage.getItem("notifications");
+    const notifications = storedNotifications ? JSON.parse(storedNotifications) : [];
+
+    // 새로운 알림 ID 생성 (기존 알림 중 가장 큰 ID + 1)
+    const maxId = notifications.reduce((max: number, notif: any) => {
+      return Math.max(max, notif.id || 0);
+    }, 0);
+    const newId = maxId + 1;
+
+    // 알림 메시지 생성
+    let message = "";
+    switch (type) {
+      case "선정":
+        message = `축하합니다! [${campaignTitle}] 캠페인에 선정되셨습니다.`;
+        break;
+      case "탈락":
+        message = `[${campaignTitle}] 캠페인에서 선정이 취소되었습니다.`;
+        break;
+      case "제출":
+        message = `[${campaignTitle}] 캠페인의 콘텐츠를 제출해주세요.`;
+        break;
+      case "승인":
+        message = `[${campaignTitle}] 캠페인의 콘텐츠가 승인되었습니다.`;
+        break;
+    }
+
+    // 새로운 알림 생성
+    const newNotification = {
+      id: newId,
+      user_id: userId,
+      type: type === "선정" ? "campaign_selected" : type === "탈락" ? "campaign_rejected" : "campaign_update",
+      campaign_id: campaignId,
+      campaign_title: campaignTitle,
+      campaign_type: campaignType,
+      message: message,
+      created_at: new Date().toISOString(),
+      is_read: false,
+    };
+
+    // 알림 배열에 추가 (최신 알림이 맨 앞에 오도록)
+    notifications.unshift(newNotification);
+
+    // localStorage에 저장
+    localStorage.setItem("notifications", JSON.stringify(notifications));
+
+    console.log(
+      `✅ [addUserNotification] 알림 추가 완료: userId=${userId}, campaignId=${campaignId}, type=${type}`
+    );
+
+    // storage 이벤트 트리거 (다른 탭에서 변경사항 감지)
+    window.dispatchEvent(new Event("storage"));
+  } catch (error) {
+    console.error(
+      `[addUserNotification] 오류 발생:`,
+      error
+    );
+  }
+}
+
+/**
  * 정렬 옵션 타입 정의
  * - latest: 최신순
  * - registered: 등록순
@@ -266,6 +459,7 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
    * - 모집 인원을 초과하지 않는지 먼저 체크합니다
    * - 인원 초과 시 모달을 표시하고 선정을 중단합니다
    * - 인원이 충분하면 신청자를 선정 리스트로 이동시킵니다
+   * - user_applied_campaigns의 상태도 '대기' -> '선정'으로 업데이트합니다
    */
   const handleSelectApplicant = (applicantId: string) => {
     console.log("선정하기:", applicantId);
@@ -341,6 +535,20 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
         return [moved, ...prevSelected];
       });
 
+      // 📌 유저 신청 내역 업데이트:
+      // - user_applied_campaigns에서 해당 유저의 신청 내역을 찾아서 상태를 '대기' -> '선정'으로 변경
+      updateUserAppliedCampaignStatus(applicantId, campaignData.campaignInfo.id, "선정");
+
+      // 📌 유저 알림 추가:
+      // - localStorage의 notifications에 선정 알림 추가
+      addUserNotification(
+        applicantId,
+        campaignData.campaignInfo.id,
+        campaignData.campaignInfo.title,
+        campaignData.campaignInfo.campaignType,
+        "선정"
+      );
+
       return nextApplicants;
     });
   };
@@ -363,6 +571,7 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
    * - 선정 목록에서 신청자를 찾아 제거
    * - selectionStatus를 "미선택"으로 변경
    * - 신청 목록에 다시 추가
+   * - user_applied_campaigns의 상태도 '선정' -> '대기'로 업데이트합니다
    */
   const handleCancelApplicant = (applicantId: string) => {
     console.log("선택 취소:", applicantId);
@@ -399,6 +608,22 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
         }
         return [moved, ...prevApplicants];
       });
+
+      // 📌 유저 신청 내역 업데이트:
+      // - user_applied_campaigns에서 해당 유저의 신청 내역을 찾아서 상태를 '선정' -> '대기'로 변경
+      if (campaignData) {
+        updateUserAppliedCampaignStatus(applicantId, campaignData.campaignInfo.id, "대기");
+
+        // 📌 선정 취소 알림 추가:
+        // - localStorage의 notifications에 선정 취소 알림 추가
+        addUserNotification(
+          applicantId,
+          campaignData.campaignInfo.id,
+          campaignData.campaignInfo.title,
+          campaignData.campaignInfo.campaignType,
+          "탈락"
+        );
+      }
 
       return nextSelected;
     });

@@ -231,6 +231,10 @@
   cursor: pointer;
 }
 
+.close_button:hover{
+  background: #77777733;
+}
+
 /* 신고 버튼 */
 .report_button {
   flex: 1;
@@ -248,19 +252,43 @@
   letter-spacing: -0.32px;
 }
 
+.report_button:not(:disabled):hover{
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.10) 0%, rgba(0, 0, 0, 0.10) 100%), #FF2626;
+}
+
+/* 신고 버튼 비활성화 상태 */
+.report_button:disabled {
+  background-color: #d9d9d9;
+  color: #848484;
+  cursor: default;
+}
+
+
+
 /* 차단 버튼 */
 .block_button {
   flex: 1;
   padding: 16px 24px;
-  background-color: #d9d9d9;
+  background-color: #ff2626;
   border: none;
   border-radius: 8px;
   cursor: pointer;
 
-  color: #848484;
+  color: #fff;
   text-align: center;
   font-size: 16px;
   font-weight: 500;
   line-height: 16px; /* 100% */
   letter-spacing: -0.32px;
+}
+
+.block_button:not(:disabled):hover{
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.10) 0%, rgba(0, 0, 0, 0.10) 100%), #FF2626;
+}
+
+/* 차단 버튼 비활성화 상태 */
+.block_button:disabled {
+  background-color: #d9d9d9;
+  color: #848484;
+  cursor: default;
 }

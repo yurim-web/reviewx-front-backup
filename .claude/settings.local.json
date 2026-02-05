@@ -36,7 +36,9 @@
       "Bash(git restore:*)",
       "WebFetch(domain:markx.atlassian.net)",
       "mcp__atlassian-confluence__getConfluenceSpaces",
-      "mcp__atlassian-confluence__getPagesInConfluenceSpace"
+      "mcp__atlassian-confluence__getPagesInConfluenceSpace",
+      "Bash(tree:*)",
+      "Bash(for file in src/data/campaign/delivery/deliveryCampaigns.ts src/data/campaign/mission/missionCampaigns.ts src/data/campaign/reporter/reporterCampaigns.ts src/data/campaign/review/reviewCampaigns.ts src/data/campaign/visit/visitCampaigns.ts)"
     ]
   }
 }

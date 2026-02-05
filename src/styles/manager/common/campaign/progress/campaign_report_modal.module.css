@@ -222,6 +222,11 @@
   cursor: pointer;
 }
 
+
+.close_button:hover{
+  background: #7777771A;
+}
+
 /* 신고 버튼 */
 .report_button {
   flex: 1;
@@ -238,3 +243,4 @@
   line-height: 16px; /* 100% */
   letter-spacing: -0.32px;
 }
+

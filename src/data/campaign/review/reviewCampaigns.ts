@@ -66,7 +66,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 234,
       total: 8,
-    },
+      partnerName: "비타글로우",
+  },
     schedule: "",
     dayCount: "D-5",
     registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
@@ -111,7 +112,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 156,
       total: 12,
-    },
+      partnerName: "세르프코리아",
+  },
     schedule: "",
     dayCount: "",
     isUrgent: true, // 긴급 캠페인
@@ -157,7 +159,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 89,
       total: 6,
-    },
+      partnerName: "테크솔루션",
+  },
     schedule: "",
     dayCount: "D-3",
     registeredAt: "2026-01-06T11:15:00.000Z", // 등록 시간
@@ -201,7 +204,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 178,
       total: 15,
-    },
+      partnerName: "닥터뮬",
+  },
     schedule: "",
     dayCount: "D-7",
     registeredAt: "2026-01-09T13:30:00.000Z", // 등록 시간
@@ -245,7 +249,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 145,
       total: 18,
-    },
+      partnerName: "그린라이프",
+  },
     schedule: "",
     dayCount: "D-6",
     registeredAt: "2025-10-28T10:00:00.000Z", // 등록 시간
@@ -289,7 +294,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 98,
       total: 20,
-    },
+      partnerName: "레더리아",
+  },
     schedule: "",
     dayCount: "D-4",
     registeredAt: "2025-12-20T15:20:00.000Z", // 등록 시간
@@ -333,7 +339,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 67,
       total: 5,
-    },
+      partnerName: "에코라이프",
+  },
     schedule: "",
     dayCount: "D-1",
     registeredAt: "2025-12-25T10:00:00.000Z", // 등록 시간
@@ -381,7 +388,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 123,
       total: 10,
-    },
+      partnerName: "웰빙코리아",
+  },
     schedule: "",
     dayCount: "D-8",
     registeredAt: "2025-11-05T14:00:00.000Z", // 등록 시간
@@ -425,7 +433,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 45,
       total: 4,
-    },
+      partnerName: "프리미엄뷰티",
+  },
     schedule: "",
     dayCount: "D-1",
     registeredAt: "2025-11-15T10:50:00.000Z", // 등록 시간
@@ -469,7 +478,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 167,
       total: 12,
-    },
+      partnerName: "테크솔루션",
+  },
     schedule: "",
     dayCount: "D-9",
     registeredAt: "2025-11-01T08:00:00.000Z", // 등록 시간
@@ -512,7 +522,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 0,
       total: 8,
-    },
+      partnerName: "웰빙코리아",
+  },
     schedule: "1/15 (목) 10:00\n모집 오픈",
     dayCount: "",
     registeredAt: "2026-01-10T12:00:00.000Z", // 등록 시간
@@ -556,7 +567,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 3, // 신청자 수 적게 설정
       total: 5,
-    },
+      partnerName: "내추럴푸드",
+  },
     schedule: "",
     dayCount: "D-2",
     registeredAt: "2026-01-11T11:30:00.000Z", // 등록 시간
@@ -601,7 +613,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 5,
       total: 10,
-    },
+      partnerName: "테크솔루션",
+  },
     schedule: "",
     dayCount: "D-8",
     registeredAt: "2025-12-20T10:00:00.000Z",
@@ -646,7 +659,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 7,
       total: 10,
-    },
+      partnerName: "ABC쇼핑몰",
+  },
     schedule: "",
     dayCount: "D-5",
     registeredAt: "2026-01-15T10:00:00.000Z",
@@ -680,7 +694,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 7,
       total: 10,
-    },
+      partnerName: "라이프스타일",
+  },
     schedule: "",
     dayCount: "D-3",
     registeredAt: "2026-01-15T10:00:00.000Z",
@@ -885,7 +900,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-15",
-        },
+  },
         {
           id: "app_review_1_네이버블로그_001_old",
           Id: "reviewer_review_1_001",
@@ -900,7 +915,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-15",
-        },
+  },
         {
           id: "app_review_1_네이버블로그_002",
           Id: "reviewer_review_1_002",
@@ -915,7 +930,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-16",
-        },
+  },
         {
           id: "app_review_1_네이버블로그_003",
           Id: "reviewer_review_1_003",
@@ -930,7 +945,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-17",
-        },
+  },
         {
           id: "app_review_1_네이버블로그_004",
           Id: "reviewer_review_1_004",
@@ -945,7 +960,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-18",
-        },
+  },
         {
           id: "app_review_1_네이버블로그_005",
           Id: "reviewer_review_1_005",
@@ -960,7 +975,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-19",
-        },
+  },
       ],
       selectedApplicants: [],
     },
@@ -985,7 +1000,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-18",
-        },
+  },
         {
           id: "app_review_2_네이버블로그_002",
           Id: "reviewer_review_2_002",
@@ -1000,7 +1015,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-19",
-        },
+  },
         {
           id: "app_review_2_네이버블로그_003",
           Id: "reviewer_review_2_003",
@@ -1015,7 +1030,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-20",
-        },
+  },
       ],
       selectedApplicants: [
         {
@@ -1032,7 +1047,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "선정하기" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-18",
-        },
+  },
       ],
     },
     contents: {
@@ -1049,7 +1064,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: undefined,
-        },
+  },
         // 2. 등록 기한 연장 요청
         {
           id: "content_review_2_waiting_002",
@@ -1064,7 +1079,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           thumbnailSrc: undefined,
           extension_request_reason:
             "개인 사정으로 인해 등록 기한을 연장해주시면 감사하겠습니다. 3일만 더 주시면 충분히 좋은 리뷰를 작성할 수 있을 것 같습니다.",
-        },
+  },
         // 3. 연장 승인 후 아직 등록 안함 (확인용 - 실제로는 extension_request_reason이 없고 연장된 상태)
         {
           id: "content_review_2_waiting_003",
@@ -1077,7 +1092,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: undefined,
-        },
+  },
         // 4. 반려 처리
         {
           id: "content_review_2_waiting_004",
@@ -1093,7 +1108,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           isRejected: true,
           reject_reason:
             "리뷰 내용이 요구사항에 부합하지 않습니다. 제품의 주요 기능에 대한 설명이 부족하고, 사진의 품질이 낮습니다. 수정 후 재제출 부탁드립니다.",
-        },
+  },
         // 5. 신고 처리
         {
           id: "content_review_2_waiting_005",
@@ -1108,7 +1123,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           thumbnailSrc: "/images/test_img/eximg3.png",
           isReported: true,
           reportedDate: "2025-12-20 17:37",
-        },
+  },
       ],
       reviewing: [
         // 1. 최초 등록 (updatedAt 없음)
@@ -1125,7 +1140,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg.png",
-        },
+  },
         // 2. 수정 (updatedAt 있음)
         {
           id: "content_review_2_reviewing_002",
@@ -1141,7 +1156,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg3.png",
-        },
+  },
         // 3. 지각 등록 (isLate: true)
         {
           id: "content_review_2_reviewing_003",
@@ -1157,7 +1172,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg.png",
-        },
+  },
       ],
       completed: [
         // 1. 확인 완료 (최초 등록)
@@ -1173,7 +1188,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg3.png",
-        },
+  },
         // 2. 확인 완료 (수정 후)
         {
           id: "content_review_2_completed_002",
@@ -1188,7 +1203,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg.png",
-        },
+  },
       ],
     },
   },
@@ -1211,7 +1226,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-20",
-        },
+  },
         {
           id: "app_review_3_네이버블로그_002",
           Id: "reviewer_review_3_002",
@@ -1226,7 +1241,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-21",
-        },
+  },
         {
           id: "app_review_3_네이버블로그_003",
           Id: "reviewer_review_3_003",
@@ -1241,7 +1256,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-22",
-        },
+  },
       ],
       selectedApplicants: [
         {
@@ -1258,7 +1273,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "선정하기" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-20",
-        },
+  },
       ],
     },
     contents: {
@@ -1274,7 +1289,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg3.png",
-        },
+  },
         {
           id: "content_review_3_waiting_002",
           createdAt: "2025-12-21T11:00:00.000Z",
@@ -1286,7 +1301,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 1,
           receiptImages: ["/images/test_img/eximg.png"],
-        },
+  },
       ],
       reviewing: [
         {
@@ -1303,7 +1318,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg.png",
-        },
+  },
       ],
       completed: [
         {
@@ -1319,7 +1334,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg3.png",
-        },
+  },
       ],
     },
   },
@@ -1342,7 +1357,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-25",
-        },
+  },
         {
           id: "app_review_4_네이버블로그_002",
           Id: "reviewer_review_4_002",
@@ -1357,7 +1372,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-26",
-        },
+  },
         {
           id: "app_review_4_네이버블로그_003",
           Id: "reviewer_review_4_003",
@@ -1372,7 +1387,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-27",
-        },
+  },
         {
           id: "app_review_4_인스타그램_001",
           Id: "reviewer_review_4_004",
@@ -1387,7 +1402,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "인스타그램",
           registrationDate: "2025-12-25",
-        },
+  },
         {
           id: "app_review_4_네이버블로그_004",
           Id: "reviewer_review_4_005",
@@ -1402,7 +1417,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-28",
-        },
+  },
         {
           id: "app_review_4_유튜브_001",
           Id: "reviewer_review_4_006",
@@ -1417,7 +1432,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "유튜브",
           registrationDate: "2025-12-26",
-        },
+  },
         {
           id: "app_review_4_네이버블로그_005",
           Id: "reviewer_review_4_007",
@@ -1432,7 +1447,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-29",
-        },
+  },
         {
           id: "app_review_4_인스타그램_002",
           Id: "reviewer_review_4_008",
@@ -1447,7 +1462,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "인스타그램",
           registrationDate: "2025-12-27",
-        },
+  },
         {
           id: "app_review_4_네이버블로그_006",
           Id: "reviewer_review_4_009",
@@ -1462,7 +1477,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-30",
-        },
+  },
         {
           id: "app_review_4_유튜브_002",
           Id: "reviewer_review_4_010",
@@ -1477,7 +1492,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "유튜브",
           registrationDate: "2025-12-28",
-        },
+  },
         {
           id: "app_review_4_네이버블로그_007",
           Id: "reviewer_review_4_011",
@@ -1492,7 +1507,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-31",
-        },
+  },
         {
           id: "app_review_4_인스타그램_003",
           Id: "reviewer_review_4_012",
@@ -1507,7 +1522,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "인스타그램",
           registrationDate: "2026-01-01",
-        },
+  },
         {
           id: "app_review_4_네이버블로그_008",
           Id: "reviewer_review_4_013",
@@ -1522,7 +1537,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2026-01-02",
-        },
+  },
         {
           id: "app_review_4_유튜브_003",
           Id: "reviewer_review_4_014",
@@ -1537,7 +1552,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "유튜브",
           registrationDate: "2025-12-29",
-        },
+  },
         {
           id: "app_review_4_네이버블로그_009",
           Id: "reviewer_review_4_015",
@@ -1552,7 +1567,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2026-01-03",
-        },
+  },
         {
           id: "app_review_4_인스타그램_004",
           Id: "reviewer_review_4_016",
@@ -1567,7 +1582,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "인스타그램",
           registrationDate: "2026-01-01",
-        },
+  },
         {
           id: "app_review_4_네이버블로그_010",
           Id: "reviewer_review_4_017",
@@ -1582,7 +1597,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2026-01-04",
-        },
+  },
         {
           id: "app_review_4_유튜브_004",
           Id: "reviewer_review_4_018",
@@ -1597,7 +1612,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "유튜브",
           registrationDate: "2025-12-30",
-        },
+  },
         {
           id: "app_review_4_네이버블로그_011",
           Id: "reviewer_review_4_019",
@@ -1612,7 +1627,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2026-01-05",
-        },
+  },
         {
           id: "app_review_4_인스타그램_005",
           Id: "reviewer_review_4_020",
@@ -1627,7 +1642,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "인스타그램",
           registrationDate: "2026-01-02",
-        },
+  },
         {
           id: "app_review_4_네이버블로그_012",
           Id: "reviewer_review_4_021",
@@ -1642,7 +1657,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2026-01-06",
-        },
+  },
         {
           id: "app_review_4_유튜브_005",
           Id: "reviewer_review_4_022",
@@ -1657,7 +1672,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "유튜브",
           registrationDate: "2026-01-03",
-        },
+  },
       ],
       selectedApplicants: [],
     },
@@ -1681,7 +1696,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-10",
-        },
+  },
       ],
       selectedApplicants: [],
     },
@@ -1698,7 +1713,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           updatedAt: "2025-11-25",
           isRejected: false,
           isLate: false,
-        },
+  },
         {
           id: "content_review_5_002",
           createdAt: "2025-11-21",
@@ -1710,7 +1725,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           updatedAt: "2025-11-26",
           isRejected: false,
           isLate: false,
-        },
+  },
       ],
       completed: [
         {
@@ -1723,7 +1738,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           channel: "네이버블로그",
           updatedAt: "2025-11-27",
           isLate: false,
-        },
+  },
         {
           id: "content_review_5_004",
           createdAt: "2025-11-23",
@@ -1734,7 +1749,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           channel: "네이버블로그",
           updatedAt: "2025-11-28",
           isLate: false,
-        },
+  },
       ],
     },
   },
@@ -1757,7 +1772,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-19",
-        },
+  },
         {
           id: "app_review_6_네이버블로그_002",
           Id: "reviewer_review_6_002",
@@ -1772,7 +1787,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-20",
-        },
+  },
         {
           id: "app_review_6_네이버블로그_003",
           Id: "reviewer_review_6_003",
@@ -1787,7 +1802,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-21",
-        },
+  },
       ],
       selectedApplicants: [
         {
@@ -1804,7 +1819,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "선정하기" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-19",
-        },
+  },
       ],
     },
     contents: {
@@ -1820,7 +1835,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg3.png",
-        },
+  },
         {
           id: "content_review_6_waiting_002",
           createdAt: "2025-12-21T11:00:00.000Z",
@@ -1832,7 +1847,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 1,
           receiptImages: ["/images/test_img/eximg.png"],
-        },
+  },
       ],
       reviewing: [
         {
@@ -1854,7 +1869,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
             "/images/test_img/eximg3.png",
             "/images/test_img/eximg.png",
           ],
-        },
+  },
       ],
       completed: [
         {
@@ -1876,7 +1891,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
             "/images/test_img/eximg3.png",
             "/images/test_img/eximg.png",
           ],
-        },
+  },
       ],
     },
   },
@@ -1899,7 +1914,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-28",
-        },
+  },
         {
           id: "app_review_7_네이버블로그_002",
           Id: "reviewer_review_7_002",
@@ -1914,7 +1929,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-29",
-        },
+  },
       ],
       selectedApplicants: [
         {
@@ -1931,7 +1946,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "선정하기" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-28",
-        },
+  },
         {
           id: "sel_review_7_네이버블로그_002",
           Id: "selected_review_7_002",
@@ -1946,7 +1961,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "선정하기" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-29",
-        },
+  },
       ],
     },
     contents: {
@@ -1962,7 +1977,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg3.png",
-        },
+  },
       ],
       reviewing: [
         {
@@ -1979,7 +1994,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg.png",
-        },
+  },
       ],
       completed: [
         {
@@ -1995,7 +2010,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg3.png",
-        },
+  },
       ],
     },
   },
@@ -2018,7 +2033,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-12",
-        },
+  },
       ],
       selectedApplicants: [],
     },
@@ -2039,7 +2054,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 1,
           receiptImages: ["/images/test_img/eximg3.png"],
-        },
+  },
       ],
       completed: [
         {
@@ -2055,7 +2070,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 1,
           receiptImages: ["/images/test_img/eximg.png"],
-        },
+  },
         {
           id: "content_review_8_003",
           createdAt: "2025-12-02T12:00:00.000Z",
@@ -2069,7 +2084,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg.png",
-        },
+  },
       ],
     },
   },
@@ -2092,7 +2107,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-30",
-        },
+  },
         {
           id: "app_review_9_네이버블로그_002",
           Id: "reviewer_review_9_002",
@@ -2107,7 +2122,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-31",
-        },
+  },
       ],
       selectedApplicants: [
         {
@@ -2124,7 +2139,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "선정하기" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-30",
-        },
+  },
       ],
     },
     contents: {
@@ -2141,7 +2156,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: undefined,
-        },
+  },
         // 2. 등록 기한 연장 요청
         {
           id: "content_review_9_waiting_002",
@@ -2156,7 +2171,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           thumbnailSrc: undefined,
           extension_request_reason:
             "제품 배송이 지연되어 아직 제품을 받지 못했습니다. 배송이 완료되는 대로 바로 리뷰를 작성하겠습니다. 3일만 연장해주시면 감사하겠습니다.",
-        },
+  },
         // 3. 연장 승인 후 아직 등록 안함
         {
           id: "content_review_9_waiting_003",
@@ -2169,7 +2184,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: undefined,
-        },
+  },
         // 4. 반려 처리
         {
           id: "content_review_9_waiting_004",
@@ -2185,7 +2200,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           isRejected: true,
           reject_reason:
             "리뷰 내용이 너무 간단하고 제품의 핵심 기능에 대한 설명이 부족합니다. 또한 사진이 흐릿하고 제품의 특징을 잘 보여주지 못하고 있습니다. 더 상세한 리뷰와 고품질 사진으로 수정 후 재제출해주세요.",
-        },
+  },
         // 5. 신고 처리
         {
           id: "content_review_9_waiting_005",
@@ -2200,7 +2215,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           thumbnailSrc: "/images/test_img/eximg3.png",
           isReported: true,
           reportedDate: "2025-12-30 14:25",
-        },
+  },
       ],
       reviewing: [
         // 1. 최초 등록 (updatedAt 없음)
@@ -2217,7 +2232,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg.png",
-        },
+  },
         // 2. 수정 (updatedAt 있음)
         {
           id: "content_review_9_reviewing_002",
@@ -2233,7 +2248,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg3.png",
-        },
+  },
         // 3. 지각 등록 (isLate: true)
         {
           id: "content_review_9_reviewing_003",
@@ -2249,7 +2264,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg.png",
-        },
+  },
       ],
       completed: [
         // 1. 확인 완료 (최초 등록)
@@ -2265,7 +2280,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg3.png",
-        },
+  },
         // 2. 확인 완료 (수정 후)
         {
           id: "content_review_9_completed_002",
@@ -2280,7 +2295,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: "/images/test_img/eximg.png",
-        },
+  },
       ],
     },
   },
@@ -2303,7 +2318,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-08",
-        },
+  },
       ],
       selectedApplicants: [],
     },
@@ -2327,7 +2342,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2026-01-15",
-        },
+  },
         {
           id: "app_review_11_네이버블로그_002",
           Id: "reviewer_review_11_002",
@@ -2342,7 +2357,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2026-01-16",
-        },
+  },
         {
           id: "app_review_11_인스타그램_001",
           Id: "reviewer_review_11_003",
@@ -2357,7 +2372,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "인스타그램",
           registrationDate: "2026-01-17",
-        },
+  },
         {
           id: "app_review_11_네이버블로그_003",
           Id: "reviewer_review_11_004",
@@ -2372,7 +2387,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2026-01-18",
-        },
+  },
         {
           id: "app_review_11_유튜브_001",
           Id: "reviewer_review_11_005",
@@ -2387,7 +2402,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "유튜브",
           registrationDate: "2026-01-19",
-        },
+  },
         {
           id: "app_review_11_네이버블로그_004",
           Id: "reviewer_review_11_006",
@@ -2402,7 +2417,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2026-01-20",
-        },
+  },
         {
           id: "app_review_11_인스타그램_002",
           Id: "reviewer_review_11_007",
@@ -2417,7 +2432,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "인스타그램",
           registrationDate: "2026-01-21",
-        },
+  },
         {
           id: "app_review_11_네이버블로그_005",
           Id: "reviewer_review_11_008",
@@ -2432,7 +2447,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2026-01-22",
-        },
+  },
       ],
       selectedApplicants: [
         {
@@ -2449,7 +2464,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "선정하기" as const,
           channel: "네이버블로그",
           registrationDate: "2026-01-15",
-        },
+  },
         {
           id: "sel_review_11_인스타그램_001",
           Id: "selected_review_11_002",
@@ -2464,7 +2479,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "선정하기" as const,
           channel: "인스타그램",
           registrationDate: "2026-01-17",
-        },
+  },
       ],
     },
   },
@@ -2495,7 +2510,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-25",
-        },
+  },
         {
           id: "app_review_13_네이버블로그_002",
           Id: "reviewer_review_13_002",
@@ -2510,7 +2525,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-26",
-        },
+  },
         {
           id: "app_review_13_네이버블로그_003",
           Id: "reviewer_review_13_003",
@@ -2525,7 +2540,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-27",
-        },
+  },
       ],
       selectedApplicants: [
         {
@@ -2542,7 +2557,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "선정하기" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-25",
-        },
+  },
         {
           id: "sel_review_13_네이버블로그_002",
           Id: "selected_review_13_002",
@@ -2557,7 +2572,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "선정하기" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-26",
-        },
+  },
         {
           id: "sel_review_13_네이버블로그_003",
           Id: "selected_review_13_003",
@@ -2572,7 +2587,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           selectionStatus: "선정하기" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-27",
-        },
+  },
       ],
     },
     contents: {
@@ -2589,7 +2604,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: undefined,
-        },
+  },
         // 대기 탭: 등록 기한 연장 요청
         {
           id: "content_review_13_waiting_002",
@@ -2602,7 +2617,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           thumbnailSrc: undefined,
-        },
+  },
       ],
       reviewing: [
         // 확인 탭: 최초 등록 (여러 이미지 테스트용)
@@ -2626,7 +2641,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
             "/images/test_img/eximg3.png",
             "/images/test_img/eximg.png",
           ],
-        },
+  },
         // 확인 탭: 수정 (여러 이미지 테스트용)
         {
           id: "content_review_13_reviewing_002",
@@ -2647,7 +2662,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
             "/images/main/campaign_img/eximg_1.png",
           ],
           thumbnailSrc: "/images/test_img/eximg3.png",
-        },
+  },
       ],
       completed: [],
     },
@@ -2660,7 +2675,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
     recruitment: {
       current: 7,
       total: 10,
-    },
+  },
     detailedSchedule: {
       applicationStart: "2026-02-01",
       applicationEnd: "2026-02-28",
@@ -2686,7 +2701,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           receiptUrl: "/images/test_img/eximg.png",
-        },
+  },
         // 경우의 수 2: 연장 요청됨
         {
           id: "review_1st_test_waiting_002",
@@ -2700,7 +2715,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           actionType: 0,
           extension_request_reason: "구매 일정 조율로 3일 연장 요청드립니다.",
           receiptUrl: "/images/test_img/eximg.png",
-        },
+  },
         // 경우의 수 3: 반려됨
         {
           id: "review_1st_test_waiting_003",
@@ -2714,7 +2729,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           actionType: 0,
           isRejected: true,
           receiptUrl: "/images/test_img/eximg.png",
-        },
+  },
         // 경우의 수 4: 신고됨
         {
           id: "review_1st_test_waiting_004",
@@ -2729,7 +2744,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           isReported: true,
           reportedDate: "2026-02-04T14:30:00.000Z",
           receiptUrl: "/images/test_img/eximg.png",
-        },
+  },
       ],
       reviewing: [
         // 확인 탭 경우의 수 1: 구매 인증 검수 중
@@ -2746,7 +2761,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           receiptImages: ["/images/test_img/eximg.png"],
           thumbnailSrc: "/images/test_img/eximg.png",
           receiptUrl: "/images/test_img/eximg.png",
-        },
+  },
       ],
       completed: [
         // 완료 탭 경우의 수 1: 구매 인증 완료
@@ -2767,7 +2782,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           ],
           thumbnailSrc: "/images/test_img/eximg3.png",
           receiptUrl: "/images/test_img/eximg3.png",
-        },
+  },
         // 완료 탭 경우의 수 2: 지각등록 구매 인증 완료
         {
           id: "review_1st_test_completed_002",
@@ -2788,7 +2803,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           ],
           thumbnailSrc: "/images/test_img/eximg.png",
           receiptUrl: "/images/test_img/eximg.png",
-        },
+  },
       ],
     },
   },
@@ -2800,7 +2815,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
     recruitment: {
       current: 7,
       total: 10,
-    },
+  },
     detailedSchedule: {
       applicationStart: "2026-02-01",
       applicationEnd: "2026-02-28",
@@ -2825,7 +2840,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           channel: "네이버블로그",
           profileImage: "",
           receiptUrl: "/images/test_img/eximg.png",
-        },
+  },
         // 경우의 수 2: 연장 요청됨
         {
           id: "review_2nd_test_waiting_002",
@@ -2838,7 +2853,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           extension_request_reason: "개인 사정으로 3일 연장 요청드립니다.",
           receiptUrl: "/images/test_img/eximg.png",
-        },
+  },
         // 경우의 수 3: 반려됨
         {
           id: "review_2nd_test_waiting_003",
@@ -2851,7 +2866,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           isRejected: true,
           receiptUrl: "/images/test_img/eximg.png",
-        },
+  },
         // 경우의 수 4: 신고됨
         {
           id: "review_2nd_test_waiting_004",
@@ -2865,7 +2880,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           isReported: true,
           reportedDate: "2026-02-04T14:30:00.000Z",
           receiptUrl: "/images/test_img/eximg.png",
-        },
+  },
       ],
       reviewing: [
         // 확인 탭 경우의 수 1: 콘텐츠 검수 중
@@ -2884,7 +2899,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
             "/images/test_img/eximg.png",
             "/images/test_img/eximg3.png"
           ],
-        },
+  },
       ],
       completed: [
         // 완료 탭 경우의 수 1: 승인 완료
@@ -2900,7 +2915,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           updatedAt: "2026-01-29T09:00:00.000Z",
           receiptUrl: "/images/test_img/eximg.png",
           receiptImages: ["/images/test_img/eximg.png"],
-        },
+  },
         // 완료 탭 경우의 수 2: 지각등록 승인 완료
         {
           id: "review_2nd_test_completed_002",
@@ -2915,7 +2930,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           isLateSubmission: true,
           receiptUrl: "/images/test_img/eximg.png",
           receiptImages: ["/images/test_img/eximg.png"],
-        },
+  },
       ],
     },
   },

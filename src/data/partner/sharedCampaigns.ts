@@ -1938,6 +1938,33 @@ export const getCampaignById = (id: string): CampaignWithApplicants | null => {
   ];
   const mockFound = mockCampaigns.find((campaign) => campaign.campaignInfo.id === id);
 
+  // 2-1. 취소/종료된 캠페인에서도 검색
+  const closedFound = closedCampaigns.find((c) => c.campaignInfo.id === id);
+  const closedConverted: CampaignWithApplicants | null = closedFound
+    ? {
+        campaignInfo: {
+          ...closedFound.campaignInfo,
+          status: (closedFound.campaignInfo.status === "취소"
+            ? "취소"
+            : closedFound.campaignInfo.status === "종료"
+            ? "마감"
+            : closedFound.campaignInfo.status === "대기 중"
+            ? "대기 중"
+            : closedFound.campaignInfo.status === "모집 중"
+            ? "모집 중"
+            : "마감") as
+            | "대기 중"
+            | "모집 중"
+            | "선정 중"
+            | "구매 중"
+            | "등록 중"
+            | "마감"
+            | "취소",
+        },
+        applicantData: { applicants: [], selectedApplicants: [] },
+      }
+    : null;
+
   // 3. localStorage와 목업 데이터 병합 로직
   if (storedFound && mockFound) {
     // localStorage에 있고 목업 데이터에도 있는 경우
@@ -1980,7 +2007,12 @@ export const getCampaignById = (id: string): CampaignWithApplicants | null => {
     return mockFound;
   }
 
-  // 6. 둘 다 없는 경우
+  // 6. 취소/종료된 캠페인에 있는 경우
+  if (closedConverted) {
+    return closedConverted;
+  }
+
+  // 7. 모두 없는 경우
   console.warn(`[getCampaignById] 캠페인을 찾을 수 없습니다: ${id}`);
   return null;
 };

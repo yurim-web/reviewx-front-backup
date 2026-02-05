@@ -219,11 +219,20 @@
 
 /* 스크롤바 스타일 (Webkit 브라우저) */
 .table_body::-webkit-scrollbar {
-  width: 4px;
+  width: 3px;
+}
+
+/* 스크롤바 위아래 버튼 제거 (마진 줄이기) */
+.table_body::-webkit-scrollbar-button {
+  display: none;
+  height: 0;
+  width: 0;
 }
 
 .table_body::-webkit-scrollbar-track {
   background: transparent;
+  margin-bottom: 12px;
+  margin-top: 12px;
 }
 
 .table_body::-webkit-scrollbar-thumb {

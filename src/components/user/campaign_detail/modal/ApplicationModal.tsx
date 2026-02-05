@@ -229,8 +229,27 @@ export default function ApplicationModal({
           if (storedChannelInfo) {
             try {
               const channelData = JSON.parse(storedChannelInfo);
-              // 캠페인에서 요구하는 채널 이름과 일치하는 경우에만 URL 업데이트
-              if (channelData.channelName === channelName) {
+
+              // 릴스 → 인스타그램, 쇼츠 → 유튜브 매핑
+              const normalizeChannelName = (name: string) =>
+                name.toLowerCase().replace(/\s+/g, '');
+
+              const normalizedCampaignChannel = normalizeChannelName(channelName);
+              const normalizedStoredChannel = normalizeChannelName(channelData.channelName || '');
+
+              let isMatch = normalizedStoredChannel === normalizedCampaignChannel;
+
+              // 릴스 캠페인인 경우 인스타그램 계정 사용
+              if (normalizedCampaignChannel === '릴스' && normalizedStoredChannel === '인스타그램') {
+                isMatch = true;
+              }
+              // 쇼츠 캠페인인 경우 유튜브 계정 사용
+              if ((normalizedCampaignChannel === '쇼츠' || normalizedCampaignChannel === '숏츠') &&
+                  normalizedStoredChannel === '유튜브') {
+                isMatch = true;
+              }
+
+              if (isMatch) {
                 setCurrentChannelUrl(channelData.channelUrl || "");
               }
             } catch {
@@ -283,17 +302,28 @@ export default function ApplicationModal({
 
                   const normalizedCampaignChannel = normalizeChannelName(campaignChannelName);
 
+                  // 릴스 → 인스타그램, 쇼츠 → 유튜브 매핑
+                  let targetChannelName = campaignChannelName;
+                  if (normalizedCampaignChannel === '릴스') {
+                    targetChannelName = '인스타그램';
+                  } else if (normalizedCampaignChannel === '쇼츠' || normalizedCampaignChannel === '숏츠') {
+                    targetChannelName = '유튜브';
+                  }
+
+                  const normalizedTargetChannel = normalizeChannelName(targetChannelName);
+
                   const matchedChannel = userAccount.channel_details.find((ch: any) => {
                     const normalizedUserChannel = normalizeChannelName(ch.name);
-                    // 양방향 매칭: 캠페인 채널이 유저 채널에 포함되거나, 유저 채널이 캠페인 채널에 포함
-                    return normalizedUserChannel.includes(normalizedCampaignChannel) ||
-                           normalizedCampaignChannel.includes(normalizedUserChannel);
+                    // 양방향 매칭: 타겟 채널이 유저 채널에 포함되거나, 유저 채널이 타겟 채널에 포함
+                    return normalizedUserChannel.includes(normalizedTargetChannel) ||
+                           normalizedTargetChannel.includes(normalizedUserChannel);
                   });
 
                   if (matchedChannel && matchedChannel.status === 'connected' && matchedChannel.url) {
                     setCurrentChannelUrl(matchedChannel.url);
                     console.log('✅ [캠페인 신청] 채널 자동 연동:', {
                       campaignChannel: campaignChannelName,
+                      targetChannel: targetChannelName,
                       userChannel: matchedChannel.name,
                       url: matchedChannel.url
                     });
@@ -301,6 +331,7 @@ export default function ApplicationModal({
                     setCurrentChannelUrl("");
                     console.log('⚠️ [캠페인 신청] 연결된 채널 없음:', {
                       campaignChannel: campaignChannelName,
+                      targetChannel: targetChannelName,
                       userChannels: userAccount.channel_details
                     });
                   }
@@ -1094,6 +1125,18 @@ export default function ApplicationModal({
                           </div>
                         )}
                       </div>
+                      <button
+                        className={styles.edit_button}
+                        onClick={handleEditUserInfo}
+                        type="button"
+                        aria-label="주소 수정"
+                      >
+                        <img
+                          src="/images/icons/pencil_icon.svg"
+                          alt="수정"
+                          className={styles.edit_icon}
+                        />
+                      </button>
                     </div>
                   </div>
                 )}
@@ -1133,6 +1176,18 @@ export default function ApplicationModal({
                         </div>
                       )}
                     </div>
+                    <button
+                      className={styles.edit_button}
+                      onClick={handleEditChannel}
+                      type="button"
+                      aria-label="채널 수정"
+                    >
+                      <img
+                        src="/images/icons/pencil_icon.svg"
+                        alt="수정"
+                        className={styles.edit_icon}
+                      />
+                    </button>
                   </div>
                 </div>
               </div>
