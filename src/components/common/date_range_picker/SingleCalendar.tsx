@@ -187,6 +187,9 @@ export default function SingleCalendar({
         }
 
         // 오늘 날짜 스타일 적용: 핑크색 테두리, 원형, 핑크색 텍스트
+        const isMobile = window.innerWidth <= 768;
+        const todaySize = isMobile ? "28px" : "32px";
+
         element.style.setProperty("border-radius", "50%", "important");
         element.style.setProperty(
           "background-color",
@@ -195,12 +198,12 @@ export default function SingleCalendar({
         );
         element.style.setProperty("color", "#FF5694", "important");
         element.style.setProperty("box-sizing", "border-box", "important");
-        element.style.setProperty("width", "32px", "important");
-        element.style.setProperty("height", "32px", "important");
-        element.style.setProperty("min-width", "32px", "important");
-        element.style.setProperty("min-height", "32px", "important");
-        element.style.setProperty("max-width", "32px", "important");
-        element.style.setProperty("max-height", "32px", "important");
+        element.style.setProperty("width", todaySize, "important");
+        element.style.setProperty("height", todaySize, "important");
+        element.style.setProperty("min-width", todaySize, "important");
+        element.style.setProperty("min-height", todaySize, "important");
+        element.style.setProperty("max-width", todaySize, "important");
+        element.style.setProperty("max-height", todaySize, "important");
         element.style.setProperty("padding", "0", "important");
         element.style.setProperty("margin", "0", "important");
 
@@ -214,12 +217,12 @@ export default function SingleCalendar({
         );
         button.style.setProperty("color", "#FF5694", "important");
         button.style.setProperty("box-sizing", "border-box", "important");
-        button.style.setProperty("width", "32px", "important");
-        button.style.setProperty("height", "32px", "important");
-        button.style.setProperty("min-width", "32px", "important");
-        button.style.setProperty("min-height", "32px", "important");
-        button.style.setProperty("max-width", "32px", "important");
-        button.style.setProperty("max-height", "32px", "important");
+        button.style.setProperty("width", todaySize, "important");
+        button.style.setProperty("height", todaySize, "important");
+        button.style.setProperty("min-width", todaySize, "important");
+        button.style.setProperty("min-height", todaySize, "important");
+        button.style.setProperty("max-width", todaySize, "important");
+        button.style.setProperty("max-height", todaySize, "important");
         button.style.setProperty("padding", "0", "important");
         button.style.setProperty("margin", "0", "important");
         button.style.setProperty("display", "flex", "important");
@@ -424,12 +427,15 @@ export default function SingleCalendar({
         element.style.setProperty("padding", "0", "important");
 
         if (button) {
+          const isMobile = window.innerWidth <= 768;
+          const buttonSize = isMobile ? "28px" : "32px";
+
           // 선택된 날짜 버튼: 핑크색 배경, 흰색 텍스트, 원형
           button.style.setProperty("background-color", "#ff5694", "important");
           button.style.setProperty("color", "white", "important");
           button.style.setProperty("border-radius", "50%", "important");
-          button.style.setProperty("width", "32px", "important");
-          button.style.setProperty("height", "32px", "important");
+          button.style.setProperty("width", buttonSize, "important");
+          button.style.setProperty("height", buttonSize, "important");
           button.style.setProperty("border", "none", "important");
           button.style.setProperty("padding", "0", "important");
           button.style.setProperty("margin", "0", "important");
@@ -449,8 +455,8 @@ export default function SingleCalendar({
             circle = document.createElement("div");
             circle.className = "selected-date-circle";
             circle.style.setProperty("position", "absolute", "important");
-            circle.style.setProperty("width", "32px", "important");
-            circle.style.setProperty("height", "32px", "important");
+            circle.style.setProperty("width", buttonSize, "important");
+            circle.style.setProperty("height", buttonSize, "important");
             circle.style.setProperty(
               "background-color",
               "#ff5694",
@@ -466,6 +472,10 @@ export default function SingleCalendar({
             );
             circle.style.setProperty("z-index", "1", "important");
             button.appendChild(circle);
+          } else {
+            // 기존 circle의 크기도 업데이트
+            circle.style.setProperty("width", buttonSize, "important");
+            circle.style.setProperty("height", buttonSize, "important");
           }
           circle.style.setProperty("display", "block", "important");
 
@@ -754,7 +764,7 @@ export default function SingleCalendar({
   // ========================================
 
   return (
-    <div ref={calendar_ref} className={styles.calendar_wrapper}>
+    <div ref={calendar_ref} className={styles.single_calendar_wrapper}>
       <DayPicker
         mode="single"
         selected={selected}

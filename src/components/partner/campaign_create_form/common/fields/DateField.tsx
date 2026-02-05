@@ -256,7 +256,7 @@ export function DateField({
 
       {/* 단일 날짜 선택 캘린더 - 입력 필드 아래에 표시 */}
       {is_calendar_open && can_edit && (
-        <div className={styles.calendar_dropdown}>
+        <div className={styles.single_calendar_dropdown}>
           <SingleCalendar
             selected={selected_date}
             on_select={handle_date_select}
