@@ -105,9 +105,9 @@ const CustomLabel = (props: any) => {
       fill="#FFF" // 텍스트 색상 (흰색)
       textAnchor="middle" // 텍스트 정렬 (가운데)
       dominantBaseline="middle" // 세로 정렬 (가운데)
-      fontSize={11} // 폰트 크기
+      fontSize={14} // 폰트 크기
       fontWeight={600} // 폰트 굵기
-      letterSpacing="-0.22px" // 글자 간격
+      letterSpacing="-0.28px" // 글자 간격
     >
       {`${(percent * 100).toFixed(0)}%`}{" "}
       {/* 비율을 퍼센트로 변환 (예: 0.5 → "50%") */}

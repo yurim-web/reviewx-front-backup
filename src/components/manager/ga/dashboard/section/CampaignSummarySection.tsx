@@ -359,7 +359,6 @@ export default function CampaignSummarySection({
         change: rejection_change.change,
         changeType: rejection_change.changeType,
         progress: Math.min(rejection_rate, 100),
-        progressColor: "red",
       },
       {
         title: "신고 접수율",
