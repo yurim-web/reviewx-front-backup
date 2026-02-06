@@ -26,9 +26,16 @@
 
 "use client";
 
+import { useState } from "react";
 import styles from "@/styles/main/footer.module.css";
 
 export default function Footer() {
+  const [is_business_info_open, set_is_business_info_open] = useState(false);
+
+  const handle_business_info_toggle = () => {
+    set_is_business_info_open((prev) => !prev);
+  };
+
   return (
     <footer className={styles.footer}>
       <div className={styles.footer_content}>
@@ -51,14 +58,20 @@ export default function Footer() {
               <span className={styles.link_separator}>|</span>
               <span className={styles.link}>이용약관</span>
               <span className={styles.link_separator}>|</span>
-              <span className={styles.link}>
+              <button
+                type="button"
+                className={`${styles.link} ${styles.business_info_toggle}`}
+                onClick={handle_business_info_toggle}
+              >
                 사업자 정보
                 <img
                   src="/images/footer/footer_arrow.svg"
                   alt=""
-                  className={styles.arrow_icon}
+                  className={`${styles.arrow_icon} ${
+                    is_business_info_open ? styles.arrow_icon_rotated : ""
+                  }`}
                 />
-              </span>
+              </button>
             </div>
           </div>
 
@@ -68,36 +81,42 @@ export default function Footer() {
           </p>
         </div>
 
-        {/* 구분선 */}
-        <div className={styles.divider}></div>
+        {is_business_info_open && (
+          <>
+            {/* 구분선 */}
+            <div className={styles.divider}></div>
 
-        {/* 회사 상세 정보 */}
-        <div className={styles.company_info}>
-          <div className={styles.info_row}>
-            <span className={styles.info_value}>주식회사 마크엑스</span>
-            <span className={styles.info_separator}>|</span>
-            <span className={styles.info_label}>대표자</span>
-            <span className={styles.info_value}>유기수</span>
-            <span className={styles.info_separator}>|</span>
-            <span className={styles.info_label}>사업자등록번호</span>
-            <span className={styles.info_value}>246-87-04020</span>
-            <span className={styles.info_separator}>|</span>
-            <span className={styles.info_label}>통신판매업신고번호</span>
-            <span className={styles.info_value}>제2025-인천남동-00000호</span>
-          </div>
-          <div className={styles.info_row}>
-            <span className={styles.info_label}>주소</span>
-            <span className={styles.info_value}>
-              인천 남동구 장자로 14, 2층 201호 (장수동)
-            </span>
-            <span className={styles.info_separator}>|</span>
-            <span className={styles.info_label}>메일</span>
-            <span className={styles.info_value}>contact@markx.dev</span>
-            <span className={styles.info_separator}>|</span>
-            <span className={styles.info_label}>전화</span>
-            <span className={styles.info_value}>1500-0000</span>
-          </div>
-        </div>
+            {/* 회사 상세 정보 */}
+            <div className={styles.company_info}>
+              <div className={styles.info_row}>
+                <span className={styles.info_value}>주식회사 마크엑스</span>
+                <span className={styles.info_separator}>|</span>
+                <span className={styles.info_label}>대표자</span>
+                <span className={styles.info_value}>유기수</span>
+                <span className={styles.info_separator}>|</span>
+                <span className={styles.info_label}>사업자등록번호</span>
+                <span className={styles.info_value}>246-87-04020</span>
+                <span className={styles.info_separator}>|</span>
+                <span className={styles.info_label}>통신판매업신고번호</span>
+                <span className={styles.info_value}>
+                  제2025-인천남동-00000호
+                </span>
+              </div>
+              <div className={styles.info_row}>
+                <span className={styles.info_label}>주소</span>
+                <span className={styles.info_value}>
+                  인천 남동구 장자로 14, 2층 201호 (장수동)
+                </span>
+                <span className={styles.info_separator}>|</span>
+                <span className={styles.info_label}>메일</span>
+                <span className={styles.info_value}>contact@markx.dev</span>
+                <span className={styles.info_separator}>|</span>
+                <span className={styles.info_label}>전화</span>
+                <span className={styles.info_value}>1500-0000</span>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </footer>
   );
