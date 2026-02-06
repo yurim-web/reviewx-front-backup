@@ -18,15 +18,22 @@ import styles from "@/styles/manager/common/dashboard/chart/member_stats.module.
 import MemberActivationSection from "./section/MemberActivationSection";
 import MemberTypeSection from "./section/MemberTypeSection";
 import ChannelMemberSection from "./section/ChannelMemberSection";
+import type { DateRange } from "./section/DateRangePickerModal";
 
-export default function MemberStatsSection() {
+interface MemberStatsSectionProps {
+  dateRange: DateRange;
+}
+
+export default function MemberStatsSection({
+  dateRange,
+}: MemberStatsSectionProps) {
   return (
     <div className={styles.member_stats_grid}>
       {/* 전체 회원 통계 섹션 1 - 활성화 통계 */}
-      <MemberActivationSection />
+      <MemberActivationSection dateRange={dateRange} />
 
       {/* 전체 회원 통계 섹션 2 - 회원 유형 통계 */}
-      <MemberTypeSection />
+      <MemberTypeSection dateRange={dateRange} />
 
       {/* 채널별 회원 통계 섹션 */}
       <ChannelMemberSection />

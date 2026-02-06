@@ -33,7 +33,10 @@ import {
   categories_data,
   delete_categories,
 } from "@/data/manager_ga/community/categoriesData";
-import { posts_data } from "@/data/manager_ga/community/postsData";
+import {
+  posts_data,
+  initialize_posts_data,
+} from "@/data/manager_ga/community/postsData";
 import DivisionFilterDropdown from "@/components/manager/common/community/categories/filter/DivisionFilterDropdown";
 import filterStyles from "@/styles/manager/common/section/filter_section.module.css";
 import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.module.css";
@@ -76,6 +79,10 @@ export default function CategoryFilterSection({
   const [is_post_exists_modal_open, set_is_post_exists_modal_open] =
     useState(false);
 
+  // 삭제 확인 모달 열림/닫힘 상태 관리
+  const [is_delete_confirm_modal_open, set_is_delete_confirm_modal_open] =
+    useState(false);
+
   // 구분 필터 적용 핸들러
   const handle_division_apply = (divisions: CategoryDivision[]) => {
     set_selected_divisions(divisions);
@@ -96,6 +103,10 @@ export default function CategoryFilterSection({
     if (selected_category_ids.length === 0) {
       return;
     }
+
+    // 게시글 데이터를 최신 상태로 업데이트
+    // initialize_posts_data: localStorage에서 최신 게시글 데이터를 불러옵니다
+    initialize_posts_data();
 
     // 선택된 카테고리들 중에 게시글이 있는지 확인
     // find(): 배열에서 조건에 맞는 첫 번째 요소를 찾습니다
@@ -122,7 +133,12 @@ export default function CategoryFilterSection({
       return;
     }
 
-    // 게시글이 없으면 삭제 진행
+    // 게시글이 없으면 삭제 확인 모달 표시
+    set_is_delete_confirm_modal_open(true);
+  };
+
+  // 삭제 확인 핸들러
+  const handle_delete_confirm = () => {
     // delete_categories: 선택된 카테고리들을 삭제하는 함수입니다
     delete_categories(selected_category_ids);
     // 삭제 후 페이지 새로고침하여 업데이트된 목록 표시
@@ -232,6 +248,16 @@ export default function CategoryFilterSection({
         on_close={() => set_is_post_exists_modal_open(false)}
         message="게시글이 등록된 상태에서는 삭제할 수 없습니다.<br>게시글을 삭제한 후 진행해 주세요."
         buttons={["닫기"]}
+      />
+
+      {/* 삭제 확인 모달 */}
+      <BaseModal
+        is_open={is_delete_confirm_modal_open}
+        on_close={() => set_is_delete_confirm_modal_open(false)}
+        message="선택한 내역을 삭제하시겠습니까?"
+        buttons={["취소", "확인"]}
+        on_cancel={() => set_is_delete_confirm_modal_open(false)}
+        on_confirm={handle_delete_confirm}
       />
     </div>
   );

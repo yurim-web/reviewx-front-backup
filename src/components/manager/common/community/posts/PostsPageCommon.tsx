@@ -17,14 +17,16 @@
 
 import { useEffect, useState } from "react";
 import { startOfMonth, endOfMonth } from "date-fns";
-import styles from "@/styles/manager/common/community/posts/page.module.css";
+import styles from "@/styles/manager/common/page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import PostFilterSection from "@/components/manager/common/community/posts/section/PostFilterSection";
 import PostTable from "@/components/manager/common/community/posts/section/PostTable";
 import {
   posts_data,
   initialize_posts_data,
+  delete_posts,
   type PostDivision,
+  type PostTarget,
   type PostItem,
 } from "@/data/manager_ga/community/postsData";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
@@ -34,6 +36,7 @@ import {
   load_pinned_posts_state,
   save_pinned_posts_state,
 } from "@/utils/community/posts/pinnedPostsLocalStorage";
+import BaseModal from "@/components/common/modal/BaseModal";
 
 // 관리자 타입 정의
 export type ManagerType = "ga" | "sa";
@@ -64,6 +67,9 @@ export default function PostsPageCommon({
   const [selected_divisions, set_selected_divisions] = useState<PostDivision[]>(
     []
   );
+
+  // 대상 필터 상태 관리
+  const [selected_targets, set_selected_targets] = useState<PostTarget[]>([]);
 
   // 날짜 범위 필터 상태 관리
   // 기본값: 이번 달 (오늘 날짜 기준 이번 달의 첫날 ~ 마지막날)
@@ -137,6 +143,9 @@ export default function PostsPageCommon({
   // 테이블에서 선택된 게시글 ID 목록 상태
   const [selected_post_ids, set_selected_post_ids] = useState<string[]>([]);
 
+  // 삭제 확인 모달 상태
+  const [is_delete_modal_open, set_is_delete_modal_open] = useState(false);
+
   /* ========================================
      🔄 게시글 고정 상태 변경 공통 함수
      - 고정/해제 이후 변경된 posts 상태를
@@ -188,6 +197,54 @@ export default function PostsPageCommon({
     );
   };
 
+  // 삭제 버튼 클릭 핸들러
+  const handle_delete_click = () => {
+    if (selected_post_ids.length === 0) {
+      return;
+    }
+    set_is_delete_modal_open(true);
+  };
+
+  // 삭제 확인 핸들러
+  const handle_delete_confirm = () => {
+    if (selected_post_ids.length === 0) {
+      return;
+    }
+
+    // localStorage에서 게시글 삭제
+    delete_posts(selected_post_ids);
+
+    // 삭제된 게시글의 고정 상태도 localStorage에서 제거
+    const pinned_state = load_pinned_posts_state();
+    if (pinned_state) {
+      selected_post_ids.forEach((post_id) => {
+        delete pinned_state[post_id];
+      });
+      save_pinned_posts_state(pinned_state);
+    }
+
+    // 게시글 목록 업데이트
+    initialize_posts_data();
+
+    // localStorage에서 고정 상태를 불러와서 적용
+    const updated_pinned_state = load_pinned_posts_state();
+    if (!updated_pinned_state || Object.keys(updated_pinned_state).length === 0) {
+      set_posts([...posts_data]);
+    } else {
+      const updated_posts = apply_pinned_state_to_posts(
+        posts_data,
+        updated_pinned_state
+      );
+      set_posts(updated_posts);
+    }
+
+    // 선택된 게시글 ID 목록 초기화
+    set_selected_post_ids([]);
+
+    // 모달 닫기
+    set_is_delete_modal_open(false);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.main_content}>
@@ -200,10 +257,13 @@ export default function PostsPageCommon({
           on_search_change={handle_search_change}
           selected_divisions={selected_divisions}
           on_divisions_change={set_selected_divisions}
+          selected_targets={selected_targets}
+          on_targets_change={set_selected_targets}
           selected_date_range={selected_date_range}
           on_date_range_change={set_selected_date_range}
           on_pin_selected={handle_pin_selected_posts}
           on_unpin_selected={handle_unpin_selected_posts}
+          on_delete_selected={handle_delete_click}
           manager_type={manager_type}
         />
 
@@ -212,12 +272,23 @@ export default function PostsPageCommon({
           posts={posts}
           search_query={search_query}
           selected_divisions={selected_divisions}
+          selected_targets={selected_targets}
           selected_date_range={selected_date_range}
           selected_post_ids={selected_post_ids}
           on_selected_post_ids_change={set_selected_post_ids}
           manager_type={manager_type}
         />
       </div>
+
+      {/* 삭제 확인 모달 */}
+      <BaseModal
+        is_open={is_delete_modal_open}
+        on_close={() => set_is_delete_modal_open(false)}
+        message="선택한 내역을 삭제하시겠습니까?"
+        buttons={["취소", "확인"]}
+        on_cancel={() => set_is_delete_modal_open(false)}
+        on_confirm={handle_delete_confirm}
+      />
     </div>
   );
 }

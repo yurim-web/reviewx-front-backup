@@ -23,7 +23,7 @@
 "use client";
 
 import { useMemo } from "react";
-import styles from '@/styles/manager_sa/settlement/payment_history/stat_cards_section.module.css';
+import styles from '@/styles/manager/common/settlement/stat_cards_section.module.css';
 import { paymentHistoryList, type PaymentHistoryItem } from '@/data/manager_sa/settlement/paymentHistoryData';
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 import type { BusinessType } from "@/components/manager/sa/settlement/payment_history/filter/BusinessTypeFilterModal";
@@ -295,7 +295,7 @@ export default function StatCardsSection({
   }, [filtered_data, week_range, month_range]);
 
   return (
-    <div className={styles.stat_cards_section}>
+    <div className={styles.stat_cards_section_three}>
       {/* 1. 이번 주 입금 내역 */}
       <div className={styles.stat_card}>
         <p className={styles.stat_card_title}>{stats.weekDeposit.label}</p>

@@ -69,13 +69,17 @@
   transition: background-color 0.2s ease;
 }
 
+/* 모든 행 호버 효과 (파트너/리뷰어/관리자 모두) */
+.table_row_wrapper:hover {
+  background-color: #F9F9F9;
+}
 
 /* 클릭 가능한 행 스타일 (파트너/리뷰어) */
 .clickable_row {
   cursor: pointer;
 }
 
-/* 클릭 가능한 행 호버 효과 */
+/* 클릭 가능한 행 호버 효과 (중복이지만 명시적으로 유지) */
 .clickable_row:hover {
   background-color: #F9F9F9;
 }

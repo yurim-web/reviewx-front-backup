@@ -542,7 +542,7 @@ const PartnerTable = forwardRef<PartnerTableRef, PartnerTableProps>(
 
                   {/* 번호 */}
                   <div className={cssStyles.table_cell_number}>
-                    {partner.number}
+                    <span>{partner.number}</span>
                   </div>
 
                   {/* 상호명 */}
@@ -588,37 +588,37 @@ const PartnerTable = forwardRef<PartnerTableRef, PartnerTableProps>(
 
                   {/* 접속일 */}
                   <div className={cssStyles.table_cell_last_access}>
-                    {partner.last_access_date}
+                    <span>{partner.last_access_date}</span>
                   </div>
 
                   {/* 가입일 */}
                   <div className={cssStyles.table_cell_join_date}>
-                    {partner.join_date}
+                    <span>{partner.join_date}</span>
                   </div>
 
                   {/* 캠페인 진행 */}
                   <div className={cssStyles.table_cell_campaign_in_progress}>
-                    {format_number(partner.campaign_in_progress)}회
+                    <span>{format_number(partner.campaign_in_progress)}회</span>
                   </div>
 
                   {/* 캠페인 완료 */}
                   <div className={cssStyles.table_cell_campaign_completed}>
-                    {format_number(partner.campaign_completed)}회
+                    <span>{format_number(partner.campaign_completed)}회</span>
                   </div>
 
                   {/* 보유 포인트 */}
                   <div className={cssStyles.table_cell_current_points}>
-                    {format_number(partner.current_points)}
+                    <span>{format_number(partner.current_points)}</span>
                   </div>
 
                   {/* 사용 포인트 */}
                   <div className={cssStyles.table_cell_used_points}>
-                    {format_number(partner.used_points)}
+                    <span>{format_number(partner.used_points)}</span>
                   </div>
 
                   {/* 유형 (상태 유형) */}
                   <div className={cssStyles.table_cell_status_type}>
-                    {partner.status_type}
+                    <span>{partner.status_type}</span>
                   </div>
 
                   {/* 상태 */}

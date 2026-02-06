@@ -25,7 +25,7 @@
 
 import { useState } from "react";
 import { startOfMonth, endOfMonth } from "date-fns";
-import styles from "@/styles/manager/common/member/blacklist/page.module.css";
+import styles from "@/styles/manager/common/page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import BlacklistFilterSection from "@/components/manager/common/member/blacklist/BlacklistFilterSection";
 import BlacklistTable from "@/components/manager/common/member/blacklist/BlacklistTable";

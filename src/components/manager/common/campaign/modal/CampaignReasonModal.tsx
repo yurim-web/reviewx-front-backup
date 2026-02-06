@@ -187,6 +187,7 @@ export default function CampaignReasonModal({
             onFocus={(e) => e.stopPropagation()}
             rows={textarea_rows}
             placeholder={get_placeholder()}
+            readOnly
           />
         </div>
 

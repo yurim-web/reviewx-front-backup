@@ -19,16 +19,16 @@
 'use client';
 
 import styles from '@/styles/manager/common/dashboard/chart/member_stats.module.css';
-import {
-  memberActivationDonutData,
-  DonutData,
-} from '@/data/manager_sa/dashboard/dashboardData';
 
-export default function MemberActivationDonutChart() {
-  // 활성화 비율 가져오기
-  const activeValue =
-    memberActivationDonutData.find((entry) => entry.name === '활성화')?.value ||
-    68;
+interface MemberActivationDonutChartProps {
+  activePercentage: number;
+}
+
+export default function MemberActivationDonutChart({
+  activePercentage,
+}: MemberActivationDonutChartProps) {
+  // 활성화 비율 사용
+  const activeValue = activePercentage;
 
   // 원형 프로그래스 바 설정
   const size = 180; // 전체 크기
@@ -76,4 +76,3 @@ export default function MemberActivationDonutChart() {
     </div>
   );
 }
-

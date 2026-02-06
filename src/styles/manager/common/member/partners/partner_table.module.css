@@ -157,6 +157,35 @@
   overflow: hidden; /* 넘치는 내용 숨김 */
 }
 
+/* 모든 텍스트 셀 - 말줄임표 적용 */
+.table_cell_number,
+.table_cell_last_access,
+.table_cell_join_date,
+.table_cell_campaign_in_progress,
+.table_cell_campaign_completed,
+.table_cell_current_points,
+.table_cell_used_points,
+.table_cell_status_type {
+  min-width: 0;
+  flex: 1 1 0; /* flex 아이템이 축소될 수 있도록 */
+}
+
+/* 모든 텍스트 셀 내부 span - 말줄임표 적용 */
+.table_cell_number > span,
+.table_cell_last_access > span,
+.table_cell_join_date > span,
+.table_cell_campaign_in_progress > span,
+.table_cell_campaign_completed > span,
+.table_cell_current_points > span,
+.table_cell_used_points > span,
+.table_cell_status_type > span {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
 /* 상호명 셀은 세로 정렬 */
 .table_cell_business_name {
   align-items: flex-start;

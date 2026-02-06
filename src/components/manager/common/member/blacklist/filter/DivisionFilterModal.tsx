@@ -34,7 +34,7 @@ interface DivisionFilterModalProps {
 }
 
 // 구분 필터 옵션
-const division_options: BlacklistDivision[] = ["파트너", "리뷰어", "관리자"];
+const division_options: BlacklistDivision[] = ["리뷰어", "파트너", "관리자"];
 
 // 구분 옵션을 FilterOption 형태로 변환하는 함수
 const get_division_options = (): FilterOption<BlacklistDivision>[] => {

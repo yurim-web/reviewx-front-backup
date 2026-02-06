@@ -43,11 +43,14 @@ interface DateFilterSectionProps {
   dateFilter: DateFilter;
   // 날짜 필터 변경 함수
   onFilterChange: (filter: DateFilter) => void;
+  // 커스텀 날짜 범위 변경 함수 (선택적)
+  onDateRangeChange?: (range: DateRange | undefined) => void;
 }
 
 export default function DateFilterSection({
   dateFilter,
   onFilterChange,
+  onDateRangeChange,
 }: DateFilterSectionProps) {
   // useState: 드롭다운 열림/닫힘 상태를 관리하는 React Hook
   // [상태값, 상태를 변경하는 함수] = useState(초기값)
@@ -75,32 +78,38 @@ export default function DateFilterSection({
   // dateFilter가 변경될 때마다 오늘 날짜 기준으로 적절한 날짜 범위를 설정합니다
   useEffect(() => {
     const today = new Date();
+    let new_range: DateRange;
 
     switch (dateFilter) {
       case "today":
         // 오늘: 오늘 날짜만 선택 (시작일과 종료일이 동일)
-        setSelectedDateRange({
+        new_range = {
           from: startOfDay(today),
           to: endOfDay(today),
-        });
+        };
         break;
       case "week":
         // 이번 주: 이번 주의 시작일(일요일) ~ 종료일(토요일)
         // weekStartsOn: 0은 일요일을 주의 시작으로 설정합니다
-        setSelectedDateRange({
+        new_range = {
           from: startOfWeek(today, { weekStartsOn: 0 }),
           to: endOfWeek(today, { weekStartsOn: 0 }),
-        });
+        };
         break;
       case "month":
         // 이번 달: 이번 달의 첫날 ~ 마지막날
-        setSelectedDateRange({
+        new_range = {
           from: startOfMonth(today),
           to: endOfMonth(today),
-        });
+        };
         break;
     }
-  }, [dateFilter]);
+
+    setSelectedDateRange(new_range);
+    // 부모 컴포넌트로 날짜 범위 변경 알림
+    onDateRangeChange?.(new_range);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dateFilter]); // onDateRangeChange는 의존성 배열에서 제외 (무한 루프 방지)
 
   // 외부 클릭 감지: 드롭다운 외부를 클릭하면 닫기
   // useEffect는 컴포넌트가 렌더링된 후에 실행됩니다
@@ -140,8 +149,8 @@ export default function DateFilterSection({
   // 모달에서 날짜 범위를 선택하고 "적용" 버튼을 클릭했을 때 호출됩니다
   const handle_date_range_apply = (range: DateRange | undefined) => {
     setSelectedDateRange(range);
-    // TODO: 실제로 날짜 필터링 로직을 부모 컴포넌트로 전달할 수 있습니다
-    // 예: onDateRangeChange?.(range);
+    // 부모 컴포넌트로 날짜 범위 변경 알림
+    onDateRangeChange?.(range);
   };
 
   // 날짜 선택기 클릭 핸들러

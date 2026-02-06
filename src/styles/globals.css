@@ -37,6 +37,13 @@ body {
   padding: 0;
 }
 
+/* 스크롤바로 인한 레이아웃 시프트 방지 */
+/* scrollbar-gutter: stable both-edges - 스크롤바 공간을 양쪽에 예약하여 중앙 정렬 유지 */
+/* 스크롤바가 없을 때도 공간을 예약하되, 양쪽에 분배하여 자연스러운 레이아웃 유지 */
+html {
+  scrollbar-gutter: stable both-edges;
+}
+
 body {
   background: white;
   color: black;
@@ -45,6 +52,8 @@ body {
     "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
     sans-serif;
   font-style: normal;
+  /* body에도 적용하여 일관성 유지 */
+  scrollbar-gutter: stable both-edges;
 }
 
 .antialiased {

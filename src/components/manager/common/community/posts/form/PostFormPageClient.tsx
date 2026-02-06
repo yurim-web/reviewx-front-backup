@@ -37,6 +37,7 @@ import {
   type PostDivision,
 } from "@/data/manager_ga/community/postsData";
 import { useRouter } from "next/navigation";
+import Toast from "@/components/common/toast/Toast";
 
 // 컴포넌트 Props 타입 정의
 interface PostFormPageClientProps {
@@ -106,6 +107,9 @@ export default function PostFormPageClient({
   const [is_mounted, setIsMounted] = useState(false);
   const [is_editor_ready, setIsEditorReady] = useState(false);
   const [is_editor_unlocked, setIsEditorUnlocked] = useState(false);
+  const [editor_content, setEditorContent] = useState("");
+  const [force_check, setForceCheck] = useState(0); // 강제 리렌더링을 위한 카운터
+  const [show_toast, set_show_toast] = useState(false); // Toast 메시지 표시 여부
   const editor_ref = useState<any>(null)[0];
   const editor_instance_ref = useRef<any>(null);
   const title_input_ref = useRef<HTMLInputElement>(null);
@@ -259,12 +263,128 @@ export default function PostFormPageClient({
 
   // mode에 따라 페이지 제목과 버튼 텍스트 결정
   const page_title = mode === "create" ? "게시글 작성" : "게시글 수정";
-  const button_text = mode === "create" ? "등록" : "수정";
+  const button_text = mode === "create" ? "등록" : "저장";
   const form_aria_label =
     mode === "create" ? "게시글 작성 폼" : "게시글 수정 폼";
 
   // 카테고리 타입이 "자주 묻는 질문"인지 여부에 따라 라벨 텍스트 변경
   const is_faq_type = category_type === "자주 묻는 질문";
+
+  /**
+   * 에디터 내용 변경 추적
+   * - 에디터가 준비되면 변경 이벤트 리스너를 추가하여 내용을 추적합니다
+   */
+  useEffect(() => {
+    if (!is_editor_ready || !editor_instance_ref.current) {
+      return;
+    }
+
+    try {
+      const editor = editor_instance_ref.current;
+      
+      // 에디터 변경 이벤트 리스너 추가
+      const handleChange = () => {
+        try {
+          const content = editor.getHTML() || "";
+          setEditorContent(content);
+        } catch (error) {
+          console.error("에디터 내용 가져오기 실패:", error);
+        }
+      };
+
+      // ToastUI Editor의 change 이벤트 리스너 추가
+      if (editor.on) {
+        editor.on("change", handleChange);
+      }
+
+      // addHook을 사용하여 변경 감지 (더 안정적)
+      if (editor.addHook) {
+        editor.addHook("change", handleChange);
+      }
+
+      // 초기 내용 설정
+      const initial_content = editor.getHTML() || "";
+      setEditorContent(initial_content);
+
+      // 주기적으로 에디터 내용 체크 (이벤트가 작동하지 않을 경우를 대비)
+      const interval_id = setInterval(() => {
+        try {
+          if (editor_instance_ref.current) {
+            const content = editor_instance_ref.current.getHTML() || "";
+            setEditorContent((prev) => {
+              // 내용이 변경된 경우에만 업데이트
+              if (prev !== content) {
+                return content;
+              }
+              return prev;
+            });
+            // 강제 리렌더링을 위한 카운터 업데이트
+            setForceCheck((prev) => prev + 1);
+          }
+        } catch (error) {
+          // ignore
+        }
+      }, 300); // 0.3초마다 체크
+
+      return () => {
+        // cleanup: 이벤트 리스너 제거
+        if (editor.off) {
+          editor.off("change", handleChange);
+        }
+        if (editor.removeHook) {
+          editor.removeHook("change", handleChange);
+        }
+        clearInterval(interval_id);
+      };
+    } catch (error) {
+      console.error("에디터 이벤트 리스너 추가 실패:", error);
+    }
+  }, [is_editor_ready]);
+
+  /**
+   * 버튼 비활성화 여부 확인
+   * - 모든 필수 필드가 입력되었는지 확인
+   * - category_type, category, target, title, body(에디터 내용) 모두 필수
+   * - 수정 모드일 때는 초기 데이터가 있으므로 항상 활성화
+   */
+  const is_button_disabled = useMemo(() => {
+    // 수정 모드일 때는 초기 데이터가 있으므로 항상 활성화
+    if (mode === "edit" && initial_data) {
+      return false;
+    }
+
+    // 작성 모드일 때만 필드 검증
+    // 기본 필드 검증
+    if (!category_type || !category || !target || !title.trim()) {
+      return true;
+    }
+
+    // 에디터가 준비되지 않았으면 비활성화
+    if (!is_editor_ready || !editor_instance_ref.current) {
+      return true;
+    }
+
+    // 에디터 내용 검증 (실시간으로 가져오기)
+    try {
+      const content = editor_instance_ref.current.getHTML() || "";
+      
+      // HTML 태그를 제거하고 텍스트만 추출하여 빈 내용인지 확인
+      const text_content = content
+        .replace(/<[^>]*>/g, "")
+        .replace(/&nbsp;/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+      
+      if (!text_content) {
+        return true;
+      }
+    } catch (error) {
+      // 에디터 내용을 가져올 수 없으면 비활성화
+      return true;
+    }
+
+    return false;
+  }, [mode, initial_data, category_type, category, target, title, editor_content, is_editor_ready, force_check]);
 
   /**
    * 카테고리 목록 업데이트 (localStorage에서 최신 데이터 불러오기)
@@ -352,8 +472,13 @@ export default function PostFormPageClient({
       add_post(new_post, content);
       console.log("게시글 등록:", new_post);
 
-      // 게시글 목록 페이지로 이동
-      router.push(base_path);
+      // Toast 메시지 표시
+      set_show_toast(true);
+
+      // Toast 메시지가 표시된 후 새로고침하고 목록 페이지로 이동
+      setTimeout(() => {
+        window.location.href = base_path;
+      }, 2000); // Toast가 2초 동안 표시된 후 이동
     } else {
       // 수정 모드: 기존 게시글 수정
       if (!post_id) {
@@ -381,8 +506,13 @@ export default function PostFormPageClient({
       update_post(post_id, updated_post, content);
       console.log("게시글 수정:", updated_post);
 
-      // 게시글 목록 페이지로 이동
-      router.push(base_path);
+      // Toast 메시지 표시
+      set_show_toast(true);
+
+      // Toast 메시지가 표시된 후 목록 페이지로 이동
+      setTimeout(() => {
+        window.location.href = base_path;
+      }, 2000); // Toast가 2초 동안 표시된 후 이동
     }
   };
 
@@ -485,14 +615,25 @@ export default function PostFormPageClient({
 
           <button
             type="button"
-            className={styles.save_button}
+            className={`${styles.save_button} ${
+              is_button_disabled ? styles.save_button_disabled : ""
+            }`}
             onClick={handle_submit}
+            disabled={is_button_disabled}
             aria-label={`${button_text} 버튼`}
           >
             {button_text}
           </button>
         </div>
       </section>
+
+      {/* Toast 메시지 */}
+      <Toast
+        message={mode === "create" ? "등록되었습니다." : "저장되었습니다."}
+        isOpen={show_toast}
+        onClose={() => set_show_toast(false)}
+        duration={2000}
+      />
     </main>
   );
 }

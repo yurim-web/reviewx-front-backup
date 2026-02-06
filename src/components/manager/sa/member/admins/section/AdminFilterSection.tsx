@@ -271,6 +271,7 @@ export default function AdminFilterSection({
   // 다운로드 버튼 핸들러
   const handle_download = () => {
     // TODO: 관리자 목록 다운로드 기능 구현
+    alert("기능 구현 중");
   };
 
   return (

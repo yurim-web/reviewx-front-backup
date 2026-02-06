@@ -31,10 +31,10 @@
     1fr /* 구분 */
     1.2fr /* 카테고리 */
     1.2fr /* 대상 */
-    3.4fr /* 제목 */
-    1.2fr /* 조회수 */
-    1.5fr /* 등록일 */
-    1.2fr /* 등록자 */
+    5fr /* 제목 - 더 넓게 */
+    0.8fr /* 조회수 - 줄임 */
+    1fr /* 등록일 - 줄임 */
+    0.8fr /* 등록자 - 줄임 */
     60px; /* 수정 버튼 */
   background-color: #f5f5f5;
   padding: 0;
@@ -72,10 +72,10 @@
     1fr /* 구분 */
     1.2fr /* 카테고리 */
     1.2fr /* 대상 */
-    3.4fr /* 제목 */
-    1.2fr /* 조회수 */
-    1.5fr /* 등록일 */
-    1.2fr /* 등록자 */
+    5fr /* 제목 - 더 넓게 */
+    0.8fr /* 조회수 - 줄임 */
+    1fr /* 등록일 - 줄임 */
+    0.8fr /* 등록자 - 줄임 */
     60px; /* 수정 버튼 */
   border-bottom: 1px solid #f2f2f2;
   align-items: center;
@@ -289,6 +289,15 @@
   justify-content: center;
 }
 
+/* 수정 컬럼 래퍼 (버튼을 오른쪽 정렬) */
+.table_cell_edit_wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  height: 100%;
+}
+
 /* 수정 버튼 */
 .edit_button {
   background: none;
@@ -297,9 +306,10 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   opacity: 0;
   transition: opacity 0.2s ease;
+  padding-right: 20px;
 }
 
 /* 수정 아이콘 */

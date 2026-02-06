@@ -34,6 +34,7 @@ import {
 } from "@/data/manager_sa/member/admins";
 import ErrorText from "@/components/common/error_text/ErrorText";
 import { formatPhoneNumber } from "@/utils/formatting/phone";
+import Toast from "@/components/common/toast/Toast";
 
 interface AdminFormProps {
   // mode: "create" | "edit" - 등록 모드 또는 수정 모드
@@ -81,6 +82,9 @@ export default function AdminForm({
   // 필수값 에러(빈 값)에 대한 테두리 표시 여부
   const [show_required_errors, set_show_required_errors] =
     useState<boolean>(false);
+
+  // 토스트 메시지 표시 상태 관리
+  const [show_toast, set_show_toast] = useState<boolean>(false);
 
   // 수정 모드일 때 localStorage에서 데이터 확인 및 폼에 로드
   const [is_loading, set_is_loading] = useState(mode === "edit");
@@ -372,14 +376,12 @@ export default function AdminForm({
       has_required_error = true;
     }
 
-    // 등록 모드일 때만 비밀번호/비밀번호 확인 필수
-    if (!is_edit_mode) {
-      if (!trimmed_password) {
-        has_required_error = true;
-      }
-      if (!trimmed_password_confirm) {
-        has_required_error = true;
-      }
+    // 비밀번호/비밀번호 확인 필수 (등록/수정 모드 모두)
+    if (!trimmed_password) {
+      has_required_error = true;
+    }
+    if (!trimmed_password_confirm) {
+      has_required_error = true;
     }
 
     // 이름은 항상 필수
@@ -448,8 +450,12 @@ export default function AdminForm({
       });
 
       console.log("등록된 관리자:", new_admin);
-      // 등록 성공 후 관리자 목록 페이지로 이동
-      router.push("/manager_sa/member/admins");
+      // Toast 메시지 표시
+      set_show_toast(true);
+      // Toast 메시지가 표시된 후 목록 페이지로 이동
+      setTimeout(() => {
+        window.location.href = "/manager_sa/member/admins";
+      }, 2000); // Toast가 2초 동안 표시된 후 이동
     } else {
       // 수정 모드: localStorage에 저장된 관리자 정보 업데이트
       if (!admin_id) {
@@ -469,8 +475,12 @@ export default function AdminForm({
       }
 
       console.log("수정된 관리자:", updated_admin);
-      // 수정 성공 후 관리자 목록 페이지로 이동
-      router.push("/manager_sa/member/admins");
+      // Toast 메시지 표시
+      set_show_toast(true);
+      // Toast 메시지가 표시된 후 목록 페이지로 이동
+      setTimeout(() => {
+        window.location.href = "/manager_sa/member/admins";
+      }, 2000); // Toast가 2초 동안 표시된 후 이동
     }
   };
 
@@ -482,11 +492,11 @@ export default function AdminForm({
     ? styles.edit_form || styles.register_form
     : styles.register_form;
 
-  // 버튼 활성화 여부 계산
+  // 버튼 비활성화 여부 계산
   // useMemo: 계산 비용이 큰 값을 메모이제이션하여 성능을 최적화합니다
   // form_data와 error_messages가 변경될 때마다 버튼 활성화 여부를 재계산합니다
   // ⚠️ 중요: React Hooks 규칙에 따라 조건부 렌더링 이전에 모든 hooks를 호출해야 합니다
-  const is_form_valid = useMemo(() => {
+  const is_button_disabled = useMemo(() => {
     const trimmed_id = form_data.id.trim();
     const trimmed_password = form_data.password.trim();
     const trimmed_password_confirm = form_data.password_confirm.trim();
@@ -510,14 +520,12 @@ export default function AdminForm({
       has_required_error = true;
     }
 
-    // 등록 모드일 때만 비밀번호/비밀번호 확인 필수
-    if (!is_edit_mode) {
-      if (!trimmed_password) {
-        has_required_error = true;
-      }
-      if (!trimmed_password_confirm) {
-        has_required_error = true;
-      }
+    // 비밀번호/비밀번호 확인 필수 (등록/수정 모드 모두)
+    if (!trimmed_password) {
+      has_required_error = true;
+    }
+    if (!trimmed_password_confirm) {
+      has_required_error = true;
     }
 
     // 이름은 항상 필수
@@ -551,13 +559,15 @@ export default function AdminForm({
     }
 
     // 모든 검사를 통과했는지 확인
-    return (
+    const is_valid =
       !has_id_error &&
       !has_password_error &&
       !has_password_confirm_error &&
       !has_phone_error &&
-      !has_required_error
-    );
+      !has_required_error;
+
+    // 등록/수정 모드 모두 검증 결과에 따라 비활성화
+    return !is_valid;
   }, [form_data, error_messages, is_edit_mode]);
 
   // 수정 모드이고 데이터가 없으면 에러 메시지 표시
@@ -579,7 +589,15 @@ export default function AdminForm({
   }
 
   return (
-    <form className={form_class_name} onSubmit={handle_submit} noValidate>
+    <>
+      {/* Toast 메시지 */}
+      <Toast
+        message={mode === "create" ? "등록되었습니다." : "저장되었습니다."}
+        isOpen={show_toast}
+        onClose={() => set_show_toast(false)}
+        duration={2000}
+      />
+      <form className={form_class_name} onSubmit={handle_submit} noValidate>
       {/* 아이디 입력 필드 */}
       <div className={styles.form_field}>
         <label htmlFor="id" className={styles.form_label}>
@@ -705,12 +723,15 @@ export default function AdminForm({
       {/* disabled 속성: 버튼을 비활성화합니다. 모든 유효성 검사를 통과해야 활성화됩니다 */}
       <button
         type="submit"
-        className={styles.submit_button}
-        disabled={!is_form_valid}
+        className={`${styles.submit_button} ${
+          is_button_disabled ? styles.submit_button_disabled : ""
+        }`}
+        disabled={is_button_disabled}
       >
         {button_text}
       </button>
     </form>
+    </>
   );
 }
 

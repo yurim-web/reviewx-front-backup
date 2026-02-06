@@ -83,7 +83,7 @@ export default function ReviewerFilterSection({
       on_restriction_click={on_restriction_click}
       channel_name_map={channel_name_map}
       ChannelFilterDropdown={ChannelFilterDropdown as any}
-      grade_or_division_label="등급"
+      grade_or_division_label="구분"
       GradeOrDivisionFilterDropdown={GradeFilterDropdown as any}
       TypeFilterDropdown={TypeFilterDropdown as any}
       StatusFilterDropdown={StatusFilterDropdown as any}

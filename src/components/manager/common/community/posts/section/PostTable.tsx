@@ -42,12 +42,13 @@ import { useRouter } from "next/navigation";
 import UserTypeTag, {
   type UserType,
 } from "@/components/manager/common/tags/UserTypeTag";
-import type { PostDivision } from "@/data/manager_ga/community/postsData";
+import type { PostDivision, PostTarget } from "@/data/manager_ga/community/postsData";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 
 interface PostTableProps {
   search_query: string;
   selected_divisions?: PostDivision[];
+  selected_targets?: PostTarget[];
   selected_date_range?: DateRange | undefined;
   posts: PostItem[];
   selected_post_ids: string[];
@@ -114,6 +115,7 @@ const columns: TableColumn[] = [
 export default function PostTable({
   search_query,
   selected_divisions = [],
+  selected_targets = [],
   selected_date_range,
   posts = [],
   selected_post_ids = [],
@@ -144,6 +146,13 @@ export default function PostTable({
       !selected_divisions.includes(item.division)
     ) {
       return false;
+    }
+
+    // 대상 필터
+    if (selected_targets.length > 0) {
+      if (!selected_targets.includes(item.target)) {
+        return false;
+      }
     }
 
     // 날짜 범위 필터
@@ -284,6 +293,7 @@ export default function PostTable({
             return (
               <div
                 data-edit-cell="true"
+                className={styles.table_cell_edit_wrapper}
                 style={{ width: "100%", height: "100%", cursor: "pointer" }}
                 onClick={(e) => {
                   // 이벤트 전파를 막아서 행 클릭 이벤트가 발생하지 않도록 함
