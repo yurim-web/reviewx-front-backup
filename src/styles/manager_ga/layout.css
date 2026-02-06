@@ -5,19 +5,21 @@
 /**
  * 사용 컴포넌트:
  * - layout.tsx (GA 관리자 레이아웃)
- * 
+ *
  * 사용 페이지:
  * - /manager_ga (GA 관리자 페이지 전체)
  * - /manager_sa (SA 관리자 페이지 전체)
- * 
+ *
  * 목적:
  * - 관리자 페이지는 파트너/유저 페이지와 달리 max-width 제한 없이 전체 너비 사용
  * - 전역 .antialiased 클래스와 main 태그의 max-width: 1000px 제한을 override
- * 
+ *
  * 주의:
  * - 이 스타일은 관리자 레이아웃에서만 적용되도록 data 속성을 사용합니다
  * - /campaign/* 경로는 관리자 레이아웃의 영향을 받지 않습니다
  */
+
+/* 초기 렌더링 시 깜빡임 방지 제거 - Suspense로 처리 */
 
 /* 관리자 페이지에서 body의 .antialiased 클래스 max-width 제한 제거 */
 /* 관리자 레이아웃이 적용된 경우에만 스타일 적용 (data-manager-layout 속성 사용) */
@@ -30,6 +32,8 @@ body.antialiased[data-manager-layout="true"] {
   position: relative !important; /* stacking context 설정 */
   /* 관리자 페이지에서는 scrollbar-gutter 제거 */
   scrollbar-gutter: auto !important;
+  /* 초기 로딩 시 부드러운 전환 */
+  transition: none !important;
 }
 
 /* 관리자 페이지에서 main 태그의 max-width 제한 제거 */
