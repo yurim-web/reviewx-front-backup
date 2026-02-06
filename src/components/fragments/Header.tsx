@@ -1,7 +1,7 @@
 // 헤더
 "use client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import styles from "@/styles/fragments/header.module.css";
 import { mockReviewerNotifications } from "@/data/notification/notificationData";
 import HeaderSearch from "@/components/fragments/HeaderSearch";
@@ -15,6 +15,7 @@ interface HeaderProps {
 export default function Header({ has_notifications }: HeaderProps) {
   const { user, logout } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   // Hydration 에러 방지를 위한 마운트 상태
   const [isMounted, setIsMounted] = useState(false);
@@ -99,6 +100,11 @@ export default function Header({ has_notifications }: HeaderProps) {
 
   // 알림 아이콘 클릭 핸들러
   const handleNotificationClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    // 관리자 로그인 페이지에서는 알림 버튼 클릭 시 현재 페이지에 머무름
+    if (pathname === "/manager/login") {
+      event.preventDefault();
+      return;
+    }
     // 로그인하지 않은 상태에서는 알림 페이지로 이동하지 않음
     if (!user) {
       event.preventDefault();

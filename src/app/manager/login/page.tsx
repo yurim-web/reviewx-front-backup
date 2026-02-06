@@ -173,7 +173,7 @@ export default function AdminLoginPage() {
                 id="username"
                 type="text"
                 className={formStyles.input_field}
-                placeholder="아이디를 입력하세요"
+                placeholder="아이디"
                 value={username}
                 onChange={handleUsernameChange}
                 required
@@ -187,7 +187,7 @@ export default function AdminLoginPage() {
                 id="password"
                 type="password"
                 className={formStyles.input_field}
-                placeholder="비밀번호를 입력하세요"
+                placeholder="비밀번호"
                 value={password}
                 onChange={handlePasswordChange}
                 required
