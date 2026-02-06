@@ -27,7 +27,7 @@
 
 /* 파트너/관리자 로그인 페이지 전체 컨테이너 (동일한 스타일) */
 .partner_login_page_container {
-  background-color: #ffffff;
+  background-color: #f2f2f2;
   min-height: 100vh;
   width: 100%;
   max-width: 1000px;
@@ -54,7 +54,7 @@
 .partner_login_main {
   background-color: #ffffff;
   width: 100%;
-  min-height: calc(100vh - 80px);
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;

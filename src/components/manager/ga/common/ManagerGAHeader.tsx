@@ -20,10 +20,11 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import styles from "@/styles/manager_ga/layout/header.module.css";
 import { mockManagerGANotifications } from "@/data/notification/notificationData";
+import { performLogout } from "@/lib/auth";
 
 interface ManagerGAHeaderProps {
   managerType?: "ga" | "sa";
@@ -33,6 +34,7 @@ export default function ManagerGAHeader({
   managerType,
 }: ManagerGAHeaderProps = {}) {
   const pathname = usePathname();
+  const router = useRouter();
   const [is_logout_menu_open, setIsLogoutMenuOpen] = useState(false);
   const user_menu_ref = useRef<HTMLDivElement>(null);
 
@@ -77,6 +79,15 @@ export default function ManagerGAHeader({
     setIsLogoutMenuOpen(!is_logout_menu_open);
   };
 
+  // 로그아웃 버튼 클릭 핸들러
+  const handle_logout_click = () => {
+    // LocalStorage에 저장된 인증 정보 제거
+    performLogout();
+    setIsLogoutMenuOpen(false);
+    // 관리자 공용 로그인 페이지로 이동 (새로고침 포함)
+    window.location.href = "/manager/login";
+  };
+
   return (
     <header className={styles.header}>
       <div className={styles.header_container}>
@@ -107,7 +118,13 @@ export default function ManagerGAHeader({
             </button>
             {/* 클릭 시 표시되는 로그아웃 버튼 */}
             {is_logout_menu_open && (
-              <button className={styles.logout_button}>로그아웃</button>
+              <button
+                type="button"
+                className={styles.logout_button}
+                onClick={handle_logout_click}
+              >
+                로그아웃
+              </button>
             )}
           </div>
         </div>

@@ -114,6 +114,16 @@ export default function Header({ has_notifications }: HeaderProps) {
     // 로그인된 상태에서는 기본 링크 동작으로 /user/notification 이동
   };
 
+  // 사용자 아이콘 클릭 핸들러
+  const handleUserIconClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    // 관리자 로그인 페이지에서는 사용자 아이콘 클릭 시 현재 페이지에 머무름
+    if (pathname === "/manager/login") {
+      event.preventDefault();
+      return;
+    }
+    // 기본 링크 동작으로 /user/campaign_management 이동
+  };
+
   return (
     <header>
       <nav className={styles.header_container}>
@@ -133,7 +143,11 @@ export default function Header({ has_notifications }: HeaderProps) {
             <img src={getNotificationIconSrc()} alt="bell_icon" />
           </Link>
           {/* 마이페이지로 연결 */}
-          <Link href="/user/campaign_management" className={styles.user_icon}>
+          <Link
+            href="/user/campaign_management"
+            className={styles.user_icon}
+            onClick={handleUserIconClick}
+          >
             <img src={getUserIconSrc()} alt="user" />
           </Link>
           {/* 로그인된 사용자 정보 및 로그아웃 영역은 디자인 요구에 따라 숨김 처리 */}
