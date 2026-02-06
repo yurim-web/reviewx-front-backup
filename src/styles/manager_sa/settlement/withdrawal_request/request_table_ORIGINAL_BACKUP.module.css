@@ -262,6 +262,8 @@
   align-items: center;
   box-sizing: border-box;
   padding: 20px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 /* 출금 포인트 셀 - 세로 정렬 (데이터 행에서만) */
@@ -336,6 +338,11 @@
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+  display: block;
 }
 
 /* 셀 텍스트 - 보조 (회색) */
@@ -345,6 +352,11 @@
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+  display: block;
 }
 
 /* 출금 액션 버튼 컨테이너 */

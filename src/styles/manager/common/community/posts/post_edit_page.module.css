@@ -139,13 +139,13 @@
 .form_field {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 /* 입력 필드 라벨 */
 .input_label {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   color: #444444;
 }
 
@@ -407,8 +407,10 @@
 /* 버튼 영역 */
 /* 저장 버튼 */
 .save_button {
-  margin-top: 12px;
-  width: 100%;
+  position: fixed;
+  bottom: 40px;
+  left: 280px; /* 사이드바(240px) + 패딩(40px) */
+  width: 920px; /* form_card 너비와 동일 */
   height: 56px;
   border: none;
   border-radius: 8px;
@@ -420,6 +422,14 @@
   line-height: 16px; /* 100% */
   letter-spacing: -0.32px;
   cursor: pointer;
+  z-index: 5;
+}
+
+/* 저장 버튼 비활성화 상태 */
+.save_button_disabled {
+  background: #D9D9D9;
+  color: #848484;
+  cursor: default;
 }
 
 .editor_container :global(.toastui-editor-defaultUI-toolbar) {

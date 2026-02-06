@@ -46,7 +46,7 @@
   color: #444;
   font-size: 24px;
   font-weight: 600;
-  line-height: 24px; /* 100% */
+  line-height: 24px; 
   letter-spacing: -0.48px;
   padding-bottom: 40px;
 }
@@ -54,16 +54,17 @@
 /* 폼 카드 영역 */
 .form_card {
   background-color: white;
-  margin-bottom: 40px;
   max-width: 920px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 /* 폼 필드 */
 .form_field {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 12px;
 }
 
 /* 입력 필드 라벨 */
@@ -90,6 +91,7 @@
   color: #444444;
   box-sizing: border-box;
   transition: border-color 0.2s ease;
+  padding: 20px;
 }
 
 /* 입력 필드 포커스 상태 */
@@ -130,6 +132,20 @@
 
 
 /* 등록 버튼 활성화 상태 */
-.submit_button:active {
+.submit_button:active:not(:disabled) {
   background-color: #FF5694;
+}
+
+/* 등록 버튼 비활성화 상태 */
+.submit_button_disabled,
+.submit_button:disabled {
+  background: #D9D9D9 !important;
+  color: #848484 !important;
+  cursor: default;
+}
+
+/* 비활성화 상태일 때 active 상태 무시 */
+.submit_button:disabled:active,
+.submit_button_disabled:active {
+  background: #D9D9D9 !important;
 }

@@ -15,14 +15,12 @@
 
 import ChannelMemberSectionCommon from "@/components/manager/common/dashboard/ChannelMemberSection";
 import ChannelMemberPieChart from "../chart/ChannelMemberPieChart";
-import { channelMemberStats } from "@/data/manager_sa/dashboard/dashboardData";
 
 export default function ChannelMemberSection() {
   return (
     <ChannelMemberSectionCommon
       title="채널별 회원 통계"
-      channel_member_stats={channelMemberStats}
-      chart={<ChannelMemberPieChart />}
+      chart={(channelData) => <ChannelMemberPieChart channelData={channelData} />}
     />
   );
 }

@@ -25,7 +25,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import styles from "@/styles/manager_sa/member/admins/page.module.css";
+import styles from "@/styles/manager/common/page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import AdminFilterSection from "@/components/manager/sa/member/admins/section/AdminFilterSection";
 import AdminTable, {

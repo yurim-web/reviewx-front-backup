@@ -20,8 +20,33 @@
 "use client";
 
 import MemberTypeBarChartCommon from "@/components/manager/common/dashboard/MemberTypeBarChart";
-import { memberTypeBarData } from "@/data/manager_sa/dashboard/dashboardData";
 
-export default function MemberTypeBarChart() {
-  return <MemberTypeBarChartCommon member_type_bar_data={memberTypeBarData} />;
+interface MemberTypeBarChartProps {
+  totalPartnerPercentage: number;
+  totalReviewerPercentage: number;
+  activePartnerPercentage: number;
+  activeReviewerPercentage: number;
+}
+
+export default function MemberTypeBarChart({
+  totalPartnerPercentage,
+  totalReviewerPercentage,
+  activePartnerPercentage,
+  activeReviewerPercentage,
+}: MemberTypeBarChartProps) {
+  // props로 받은 비율 데이터를 member_type_bar_data 형식으로 변환
+  const member_type_bar_data = [
+    {
+      category: '전체',
+      partner: totalPartnerPercentage,
+      reviewer: totalReviewerPercentage,
+    },
+    {
+      category: '활성',
+      partner: activePartnerPercentage,
+      reviewer: activeReviewerPercentage,
+    },
+  ];
+
+  return <MemberTypeBarChartCommon member_type_bar_data={member_type_bar_data} />;
 }

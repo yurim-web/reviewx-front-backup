@@ -580,12 +580,12 @@ const ReviewerTable = forwardRef<ReviewerTableRef, ReviewerTableProps>(
 
                   {/* 번호 */}
                   <div className={cssStyles.table_cell_number}>
-                    {reviewer.number}
+                    <span>{reviewer.number}</span>
                   </div>
 
                   {/* 이름 */}
                   <div className={cssStyles.table_cell_name}>
-                    {reviewer.name}
+                    <span>{reviewer.name}</span>
                   </div>
 
                   {/* 채널 */}
@@ -613,37 +613,37 @@ const ReviewerTable = forwardRef<ReviewerTableRef, ReviewerTableProps>(
 
                   {/* 접속일 */}
                   <div className={cssStyles.table_cell_last_access}>
-                    {reviewer.last_access_date}
+                    <span>{reviewer.last_access_date}</span>
                   </div>
 
                   {/* 가입일 */}
                   <div className={cssStyles.table_cell_join_date}>
-                    {reviewer.join_date}
+                    <span>{reviewer.join_date}</span>
                   </div>
 
                   {/* 캠페인 참여 */}
                   <div className={cssStyles.table_cell_campaign_participated}>
-                    {format_number(reviewer.campaign_participated)}회
+                    <span>{format_number(reviewer.campaign_participated)}회</span>
                   </div>
 
                   {/* 캠페인 완료 */}
                   <div className={cssStyles.table_cell_campaign_completed}>
-                    {format_number(reviewer.campaign_completed)}회
+                    <span>{format_number(reviewer.campaign_completed)}회</span>
                   </div>
 
                   {/* 보유 포인트 */}
                   <div className={cssStyles.table_cell_current_points}>
-                    {format_number(reviewer.current_points)}
+                    <span>{format_number(reviewer.current_points)}</span>
                   </div>
 
                   {/* 출금 포인트 */}
                   <div className={cssStyles.table_cell_withdrawn_points}>
-                    {format_number(reviewer.withdrawn_points)}
+                    <span>{format_number(reviewer.withdrawn_points)}</span>
                   </div>
 
                   {/* 유형 (상태 유형) */}
                   <div className={cssStyles.table_cell_status_type}>
-                    {reviewer.status_type}
+                    <span>{reviewer.status_type}</span>
                   </div>
 
                   {/* 상태 */}

@@ -658,9 +658,9 @@ export default function ReviewerDetailPage() {
         </div>
       ),
     },
-    // 캠페인 진행
+    // 캠페인 참여여
     {
-      label: "캠페인 진행",
+      label: "캠페인 참여",
       value: reviewer_detail
         ? `${format_number(reviewer_detail.campaign_participated)}회`
         : "0회",

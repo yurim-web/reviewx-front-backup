@@ -25,14 +25,14 @@
   display: grid;
   grid-template-columns:
     40px /* 체크박스 */
-    100px /* 번호 */
-    1fr /* 이름 (조금 줄임) */
-    140px /* 신고 횟수  */
-    160px /* 차단(이용 제한) 횟수 (조금 늘림) */
-    180px /* 접속일 */
-    180px /* 가입일 */
-    100px /* 상태  */
-    50px; /* 수정 아이콘  */
+    1fr /* 번호 */
+    5fr /* 이름 - 더 넓게 */
+    0.6fr /* 신고 횟수 - 더 좁게 */
+    0.6fr /* 차단(이용 제한) 횟수 - 더 좁게 */
+    0.8fr /* 접속일 - 더 좁게 */
+    0.8fr /* 가입일 - 더 좁게 */
+    0.6fr /* 상태 - 더 좁게 */
+    60px; /* 수정 아이콘 */
   background-color: #f5f5f5;
   padding: 0;
   align-items: center;
@@ -66,14 +66,14 @@
   display: grid;
   grid-template-columns:
     40px /* 체크박스 */
-    100px /* 번호 */
-    1fr /* 이름 (조금 줄임) */
-    140px /* 신고 횟수  */
-    160px /* 차단(이용 제한) 횟수 (조금 늘림) */
-    180px /* 접속일 */
-    180px /* 가입일 */
-    100px /* 상태 */
-    50px; /* 수정 아이콘  */
+    1fr /* 번호 */
+    5fr /* 이름 - 더 넓게 */
+    0.6fr /* 신고 횟수 - 더 좁게 */
+    0.6fr /* 차단(이용 제한) 횟수 - 더 좁게 */
+    0.8fr /* 접속일 - 더 좁게 */
+    0.8fr /* 가입일 - 더 좁게 */
+    0.6fr /* 상태 - 더 좁게 */
+    60px; /* 수정 아이콘 */
   border-bottom: 1px solid #f2f2f2;
   align-items: center;
   min-height: 62px;
@@ -106,6 +106,24 @@
   color: #444444;
   text-align: left;
   box-sizing: border-box;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* 테이블 셀 내부 텍스트에 말줄임표 적용 */
+.table_cell > *,
+.table_cell_number > *,
+.table_cell_name > *,
+.table_cell_report_count > *,
+.table_cell_block_count > *,
+.table_cell_last_access > *,
+.table_cell_join_date > *,
+.table_cell_status > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  display: block;
 }
 
 /* 체크박스 */

@@ -15,8 +15,15 @@
 
 import styles from '@/styles/manager_ga/dashboard/sections/rejection_report_section.module.css';
 import RejectionReportChart from '../chart/RejectionReportChart';
+import type { DateRange } from './DateRangePickerModal';
 
-export default function RejectionReportSection() {
+interface RejectionReportSectionProps {
+  dateRange: DateRange;
+}
+
+export default function RejectionReportSection({
+  dateRange,
+}: RejectionReportSectionProps) {
   return (
     <div className={styles.rejection_report_section_card}>
       {/* 제목과 범례를 같은 줄에 배치 (제목: 왼쪽, 범례: 오른쪽) */}
@@ -46,7 +53,7 @@ export default function RejectionReportSection() {
         </div>
       </div>
       {/* recharts 라이브러리를 사용한 라인 차트 */}
-      <RejectionReportChart />
+      <RejectionReportChart dateRange={dateRange} />
     </div>
   );
 }

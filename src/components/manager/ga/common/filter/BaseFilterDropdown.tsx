@@ -78,7 +78,7 @@ export default function BaseFilterDropdown<T extends string | number>({
   // 모달 내부에서 관리하는 임시 선택 상태
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
   // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
-  const [temp_selected, set_temp_selected] = useState<T[]>(selected_values);
+  const [temp_selected, set_temp_selected] = useState<T[]>(selected_values || []);
 
   // 드롭다운이 열릴 때마다 임시 선택 상태를 초기화
   // useEffect는 React의 Hook으로, 컴포넌트가 렌더링된 후에 실행됩니다
@@ -86,7 +86,7 @@ export default function BaseFilterDropdown<T extends string | number>({
   useEffect(() => {
     if (is_open) {
       // 드롭다운이 열릴 때: 현재 선택된 값으로 초기화
-      set_temp_selected(selected_values);
+      set_temp_selected(selected_values || []);
     }
   }, [is_open, selected_values]);
 

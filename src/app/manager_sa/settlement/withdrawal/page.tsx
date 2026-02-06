@@ -99,7 +99,13 @@ export default function WithdrawalPage() {
         <ManagerPageTitle title="출금 현황" />
 
         {/* 통계 카드 섹션 */}
-        <WithdrawalStatCardsSection />
+        <WithdrawalStatCardsSection
+          search_query={search_query}
+          selected_date_range={selected_date_range}
+          selected_payment_statuses={selected_payment_statuses}
+          selected_member_types={selected_member_types}
+          selected_normal_statuses={selected_normal_statuses}
+        />
 
         {/* 필터 섹션 */}
         <WithdrawalFilterSection

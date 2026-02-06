@@ -30,11 +30,12 @@ import {
   Tooltip,
 } from 'recharts';
 import styles from '@/styles/manager/common/dashboard/chart/member_stats.module.css';
-import {
-  channelData,
-  ChannelData,
-} from '@/data/manager_ga/dashboard/dashboardData';
+import { ChannelData } from '@/data/manager_ga/dashboard/dashboardData';
 import { use_pie_chart_click_handler } from './chart_event_handlers';
+
+interface ChannelMemberPieChartProps {
+  channelData: ChannelData[];
+}
 
 /* ========================================
    🎨 색상 관련 함수
@@ -105,9 +106,9 @@ const CustomLabel = (props: any) => {
       fill="#FFF" // 텍스트 색상 (흰색)
       textAnchor="middle" // 텍스트 정렬 (가운데)
       dominantBaseline="middle" // 세로 정렬 (가운데)
-      fontSize={14} // 폰트 크기
+      fontSize={11} // 폰트 크기
       fontWeight={600} // 폰트 굵기
-      letterSpacing="-0.28px" // 글자 간격
+      letterSpacing="-0.22px" // 글자 간격
     >
       {`${(percent * 100).toFixed(0)}%`}{' '}
       {/* 비율을 퍼센트로 변환 (예: 0.5 → "50%") */}
@@ -259,7 +260,9 @@ const CustomTooltip = ({
    ======================================== */
 
 // 파이 차트를 렌더링하는 메인 컴포넌트
-export default function ChannelMemberPieChart() {
+export default function ChannelMemberPieChart({
+  channelData,
+}: ChannelMemberPieChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   // 툴팁 상태 관리
   const [tooltip_state, set_tooltip_state] = useState<{

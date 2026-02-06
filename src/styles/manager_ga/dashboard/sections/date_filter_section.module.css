@@ -45,6 +45,7 @@
   background-color: #ff5694;
   color: white;
   border-color: #ff5694;
+  font-weight: 600;
 }
 
 /* 날짜 선택기 래퍼 - relative positioning을 위해 추가 */

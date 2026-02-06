@@ -485,6 +485,30 @@ export function update_post(
 }
 
 /**
+ * 게시글 삭제 함수
+ *
+ * 목적: 선택된 게시글들을 삭제하고 localStorage에 저장합니다.
+ *
+ * @param post_ids - 삭제할 게시글 ID 배열
+ */
+export function delete_posts(post_ids: string[]): void {
+  // 게시글 목록에서 삭제
+  posts_data = posts_data.filter((post) => !post_ids.includes(post.id));
+
+  // localStorage에서 기존 상세 데이터 불러오기
+  const current_post_details = load_post_details_from_storage();
+
+  // 선택된 게시글들의 상세 데이터도 삭제
+  post_ids.forEach((post_id) => {
+    delete current_post_details[post_id];
+  });
+
+  // localStorage에 저장
+  save_posts_to_storage(posts_data);
+  save_post_details_to_storage(current_post_details);
+}
+
+/**
  * 게시글 상세 데이터 조회 함수
  *
  * 목적: 게시글 ID로 상세 정보를 조회합니다.

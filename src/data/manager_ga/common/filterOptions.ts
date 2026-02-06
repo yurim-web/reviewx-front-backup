@@ -187,8 +187,8 @@ export type ReviewerType = "서포터즈" | "일반" | "인플루언서";
  * 리뷰어 유형 필터 옵션 배열
  */
 export const reviewer_type_filter_options: ReviewerType[] = [
-  "서포터즈",
   "일반",
+  "서포터즈",
   "인플루언서",
 ];
 
@@ -237,8 +237,8 @@ export type BlacklistDivision = "파트너" | "리뷰어" | "관리자";
  * 차단 구분 필터 옵션 배열
  */
 export const blacklist_division_filter_options: BlacklistDivision[] = [
-  "파트너",
   "리뷰어",
+  "파트너",
   "관리자",
 ];
 

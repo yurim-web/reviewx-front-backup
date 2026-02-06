@@ -28,6 +28,14 @@ body.antialiased[data-manager-layout="true"] {
   background: white !important; /* 관리자 페이지는 흰색 배경 */
   overflow-x: visible !important; /* 사이드바가 보이도록 overflow 제거 */
   position: relative !important; /* stacking context 설정 */
+  /* 관리자 페이지에서는 scrollbar-gutter를 stable로 설정 (both-edges 없이) */
+  /* 스크롤바 공간은 예약하되 양쪽에 분배하지 않아 헤더가 전체 너비를 차지 */
+  scrollbar-gutter: stable !important;
+}
+
+/* 관리자 페이지에서 html에도 scrollbar-gutter 설정 */
+html[data-manager-layout="true"] {
+  scrollbar-gutter: stable !important;
 }
 
 /* 관리자 페이지에서 main 태그의 max-width 제한 제거 */

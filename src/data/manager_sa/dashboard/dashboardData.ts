@@ -47,7 +47,7 @@ export const settlementStats = [
 // 사용 위치:
 // - src/app/manager_sa/page.tsx (SA 관리자 대시보드 메인 페이지)
 // - PaymentSummarySection 컴포넌트에 전달하여 결제 통계 카드를 표시
-// 디자인 기준: 4개의 통계를 표시 (총결제 금액, 입금 증액, 카드 결제 금액, 예상 수수료)
+// 디자인 기준: 4개의 통계를 표시 (총결제 금액, 입금 총액, 카드 결제 금액, 예상 수수료)
 // 주의: title은 PaymentSummarySection 컴포넌트에서 고정값으로 관리됩니다.
 export const paymentStats = [
   {
@@ -305,22 +305,22 @@ export interface ChannelMemberStats {
 // - src/components/manager_sa/dashboard/section/ChannelMemberSection.tsx
 export const channelMemberStats: ChannelMemberStats = {
   blog: {
-    label: "블로그 가입",
+    label: "블로그 등록",
     value: "12,589명",
     percentage: "(50%)",
   },
   instagram: {
-    label: "인스타그램 가입",
+    label: "인스타그램 등록",
     value: "10,124명",
     percentage: "(25%)",
   },
   clip: {
-    label: "클립 가입",
+    label: "클립 등록",
     value: "8,869명",
     percentage: "(20%)",
   },
   youtube: {
-    label: "유튜브 가입",
+    label: "유튜브 등록",
     value: "569명",
     percentage: "(5%)",
   },

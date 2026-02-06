@@ -1,17 +1,33 @@
 /* ========================================
-   📊 출금 현황 통계 카드 섹션 스타일
+   📊 정산 통계 카드 섹션 공통 스타일
    ======================================== */
 
 /**
+ * 정산 통계 카드 섹션 공통 스타일
+ *
  * 사용 컴포넌트:
- * - StatCardsSection (출금 현황 통계 카드 섹션)
- * 
+ * - StatCardsSection (결제 내역 통계 카드 섹션)
+ * - WithdrawalStatCardsSection (출금 현황 통계 카드 섹션)
+ *
  * 사용 페이지:
- * - /manager_sa/settlement/withdrawal
+ * - /manager_sa/settlement/payment_history (결제 내역 페이지)
+ * - /manager_sa/settlement/withdrawal (출금 현황 페이지)
+ *
+ * 목적:
+ * - 결제 내역과 출금 현황 페이지의 통계 카드 섹션에서 공통으로 사용하는 스타일을 정의
+ * - 코드 중복 제거 및 유지보수성 향상
  */
 
-/* 통계 카드 섹션 */
-.stat_cards_section {
+/* 통계 카드 섹션 - 3개 컬럼 (결제 내역) */
+.stat_cards_section_three {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* 통계 카드 섹션 - 4개 컬럼 (출금 현황) */
+.stat_cards_section_four {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
@@ -20,10 +36,10 @@
 
 /* 통계 카드 */
 .stat_card {
-  background-color: white;
-  border: 1px solid #d9d9d9;
+  background-color: #f9f9f9;
+  border: none;
   border-radius: 4px;
-  padding: 16px;
+  padding: 20px;
   height: 84px;
   display: flex;
   flex-direction: column;
@@ -57,11 +73,6 @@
   margin: 0;
 }
 
-/* 통계 카드 값 - 긴급 (빨간색) */
-.stat_card_value_urgent {
-  color: #ff2626;
-}
-
 /* 통계 카드 건수 */
 .stat_card_count {
   color: #444;
@@ -72,7 +83,13 @@
   margin: 0;
 }
 
+/* 통계 카드 값 - 긴급 (빨간색) */
+.stat_card_value_urgent {
+  color: #ff2626;
+}
+
 /* 통계 카드 건수 - 긴급 (빨간색) */
 .stat_card_count_urgent {
   color: #ff2626;
 }
+

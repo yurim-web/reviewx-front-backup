@@ -29,9 +29,11 @@ export default function ManagerLayoutScript() {
     if (isManagerPath && !isCampaignPath) {
       // 관리자 경로이고 캠페인 경로가 아닌 경우 속성 추가
       document.body.setAttribute("data-manager-layout", "true");
+      document.documentElement.setAttribute("data-manager-layout", "true");
     } else {
       // 캠페인 경로이거나 관리자 경로가 아닌 경우 속성 제거
       document.body.removeAttribute("data-manager-layout");
+      document.documentElement.removeAttribute("data-manager-layout");
     }
   }, [pathname]);
 

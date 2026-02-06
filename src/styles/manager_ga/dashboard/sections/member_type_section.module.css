@@ -63,6 +63,13 @@
   width: 100%;
 }
 
+/* 회원 유형 통계 섹션 정보 라벨 행 (라벨과 변화율을 같은 선상에 배치) */
+.member_type_section_info_label_row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 /* 회원 유형 통계 섹션 전체 너비 정보 카드 */
 .member_type_section_info_card_full {
   background-color: #f9f9f9;

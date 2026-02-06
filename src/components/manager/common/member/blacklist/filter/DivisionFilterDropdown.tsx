@@ -28,7 +28,7 @@ interface DivisionFilterDropdownProps {
 }
 
 // 구분 필터 옵션
-const division_options: BlacklistDivision[] = ["파트너", "리뷰어", "관리자"];
+const division_options: BlacklistDivision[] = ["리뷰어", "파트너", "관리자"];
 
 // 구분 옵션을 FilterOption 형태로 변환
 const filter_options: FilterOption<BlacklistDivision>[] =

@@ -91,6 +91,8 @@ export default function TextareaModal({
   const has_two_buttons = buttons.length === 2;
   const is_reject_variant = variant === "reject";
   const is_extend_variant = variant === "extend";
+  // 반려 모달에서 입력값이 없으면 확인 버튼 비활성화
+  const is_confirm_disabled = is_reject_variant && !value.trim();
 
   // ESC 키로 모달 닫기
   useEffect(() => {
@@ -120,6 +122,8 @@ export default function TextareaModal({
 
   // 확인 버튼 클릭 핸들러
   const handle_confirm = () => {
+    // 비활성화 상태면 클릭 무시
+    if (is_confirm_disabled) return;
     if (on_confirm) {
       on_confirm();
     }
@@ -186,7 +190,7 @@ export default function TextareaModal({
             rows={5}
             readOnly={readOnly}
             disabled={readOnly}
-            has_error={readOnly || has_error}
+            has_error={readOnly || has_error || is_reject_variant}
             className={`${readOnly ? styles.modal_textarea_readonly : ""} ${
               is_reject_variant ? styles.modal_textarea_reject : ""
             }`.trim()}
@@ -225,9 +229,12 @@ export default function TextareaModal({
                     </button>
                     <button
                       onClick={handle_confirm}
+                      disabled={is_confirm_disabled}
                       className={`${styles.modal_footer_button_confirm} ${
                         is_reject_variant
-                          ? styles.modal_footer_button_reject
+                          ? is_confirm_disabled
+                            ? styles.modal_footer_button_reject_disabled
+                            : styles.modal_footer_button_reject_active
                           : ""
                       }`}
                     >

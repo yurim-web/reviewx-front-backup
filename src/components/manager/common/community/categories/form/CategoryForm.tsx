@@ -16,7 +16,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import styles from "@/styles/manager/common/community/categories/category_create_page.module.css";
 import { CustomDropdown } from "@/components/partner/campaign_create_form/common/selectors/CustomDropdown";
@@ -164,9 +164,8 @@ export default function CategoryForm({
       // CategoryTable 컴포넌트에서 categories_data를 사용하므로, 추가된 내용이 테이블에 반영됩니다
       add_category(division, category_name.trim());
       console.log("카테고리 등록:", { division, category_name });
-      // 등록 후 카테고리 목록 페이지로 이동
-      // router.push: Next.js에서 페이지를 이동하는 메서드입니다
-      router.push(`/manager_${manager_type}/community/categories`);
+      // Toast 메시지 표시
+      set_show_toast(true);
     } else {
       // 수정 모드일 때는 목업 데이터를 수정한 후 토스트 메시지를 표시합니다
       // TODO: 카테고리 수정 API 호출
@@ -188,11 +187,10 @@ export default function CategoryForm({
   const handle_toast_close = () => {
     // 토스트 상태를 false로 변경
     set_show_toast(false);
-    // 토스트가 닫힌 후 약간의 딜레이를 두고 페이지 이동
-    // setTimeout: 지정된 시간 후 함수를 실행합니다
+    // 등록/수정 모드 모두 목록 페이지로 이동
     setTimeout(() => {
-      router.push(`/manager_${manager_type}/community/categories`);
-    }, 100);
+      window.location.href = `/manager_${manager_type}/community/categories`;
+    }, 2000); // Toast가 2초 동안 표시된 후 이동
   };
 
   // 취소 버튼 클릭 핸들러 (뒤로 가기)
@@ -202,17 +200,26 @@ export default function CategoryForm({
     router.back();
   };
 
-  // 로딩 중일 때 표시할 내용 (수정 모드일 때만)
-  // 조건부 렌더링: is_loading이 true일 때 로딩 메시지를 표시합니다
-  if (is_loading) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.main_content}>
-          <p>카테고리 데이터를 불러오는 중...</p>
-        </div>
-      </div>
-    );
-  }
+  /**
+   * 버튼 비활성화 여부 확인
+   * - 모든 필수 필드가 입력되었는지 확인
+   * - division, category_name 모두 필수
+   * - 수정 모드일 때는 초기 데이터가 있으므로 항상 활성화
+   */
+  const is_button_disabled = useMemo(() => {
+    // 수정 모드일 때는 초기 데이터가 있으므로 항상 활성화
+    if (mode === "edit") {
+      return false;
+    }
+
+    // 등록 모드일 때만 필드 검증
+    // 카테고리명이 2자 이상이어야 함
+    if (!category_name.trim() || category_name.trim().length < 2) {
+      return true;
+    }
+
+    return false;
+  }, [mode, category_name]);
 
   // 페이지 제목과 버튼 텍스트를 mode에 따라 결정
   // 삼항 연산자: 조건 ? 참일 때 값 : 거짓일 때 값
@@ -223,6 +230,19 @@ export default function CategoryForm({
   const button_aria_label =
     mode === "create" ? "카테고리 등록" : "카테고리 저장";
 
+  // 로딩 중일 때 표시할 내용 (수정 모드일 때만)
+  // 조건부 렌더링: is_loading이 true일 때 로딩 메시지를 표시합니다
+  // 주의: Hooks 규칙을 지키기 위해 모든 Hooks는 early return 이전에 호출되어야 합니다
+  if (is_loading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.main_content}>
+          <p>카테고리 데이터를 불러오는 중...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.main_content}>
@@ -232,14 +252,12 @@ export default function CategoryForm({
         {/* isOpen: 토스트 표시 여부를 제어합니다 */}
         {/* onClose: 토스트가 닫힐 때 호출되는 콜백 함수입니다 */}
         {/* duration: 토스트가 자동으로 사라지는 시간입니다 (기본값: 2000ms) */}
-        {mode === "edit" && (
-          <Toast
-            message="저장되었습니다."
-            isOpen={show_toast}
-            onClose={handle_toast_close}
-            duration={2000}
-          />
-        )}
+        <Toast
+          message={mode === "create" ? "등록되었습니다." : "저장되었습니다."}
+          isOpen={show_toast}
+          onClose={handle_toast_close}
+          duration={2000}
+        />
 
         {/* 페이지 제목 */}
         {/* 조건부 렌더링: mode에 따라 제목이 변경됩니다 */}
@@ -305,8 +323,11 @@ export default function CategoryForm({
         <div className={styles.button_container}>
           <button
             type="button"
-            className={styles.submit_button}
+            className={`${styles.submit_button} ${
+              is_button_disabled ? styles.submit_button_disabled : ""
+            }`}
             onClick={handle_submit}
+            disabled={is_button_disabled}
             aria-label={button_aria_label}
           >
             {/* 조건부 렌더링: mode에 따라 버튼 텍스트가 변경됩니다 */}

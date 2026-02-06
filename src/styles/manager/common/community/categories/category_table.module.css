@@ -94,14 +94,6 @@
   overflow: hidden;
 }
 
-/* 테이블 셀 내부 텍스트에 말줄임표 적용 */
-.table_row > div > * {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  min-width: 0;
-}
-
 /* 체크박스 셀 */
 .table_cell_checkbox {
   justify-content: center;
@@ -149,25 +141,23 @@
   cursor: pointer;
 }
 
-/* 번호 셀 */
-.table_cell_number {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* 구분 셀 */
-.table_cell_division {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* 카테고리명 셀 */
+/* 모든 텍스트 셀 - 말줄임표 적용 */
+.table_cell_number,
+.table_cell_division,
 .table_cell_category_name {
+  min-width: 0;
+  flex: 1 1 0; /* flex 아이템이 축소될 수 있도록 */
+}
+
+/* 모든 텍스트 셀 내부 span - 말줄임표 적용 */
+.table_cell_number > span,
+.table_cell_division > span,
+.table_cell_category_name > span {
+  display: block;
   overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 /* 수정 컬럼 */

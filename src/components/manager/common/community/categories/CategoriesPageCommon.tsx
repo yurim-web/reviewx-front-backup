@@ -15,7 +15,7 @@
 "use client";
 
 import { useState } from "react";
-import styles from "@/styles/manager/common/community/categories/page.module.css";
+import styles from "@/styles/manager/common/page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import CategoryFilterSection from "@/components/manager/common/community/categories/section/CategoryFilterSection";
 import CategoryTable from "@/components/manager/common/community/categories/section/CategoryTable";

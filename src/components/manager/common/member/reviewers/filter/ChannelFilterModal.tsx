@@ -43,7 +43,6 @@ const channel_options: { value: Channel; label: string }[] = [
   { value: "Clip", label: "네이버 클립" },
   { value: "Instagram", label: "인스타그램" },
   { value: "Youtube", label: "유튜브" },
-  { value: "Store", label: "네이버 스토어" },
 ];
 
 // 채널 옵션을 FilterOption 형태로 변환하는 함수
