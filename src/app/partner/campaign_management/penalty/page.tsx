@@ -57,8 +57,30 @@ export default function PenaltyPage() {
     if (tab === "패널티") {
       setActiveStatTab(tab);
     } else {
-      // 패널티가 아닌 탭을 클릭하면 캠페인 관리 페이지로 이동
-      router.push("/partner/campaign_management");
+      // 패널티가 아닌 탭을 클릭하면 각 탭 전용 페이지로 이동
+      switch (tab) {
+        case "전체":
+          router.push("/partner/campaign_management");
+          break;
+        case "예정":
+          router.push("/partner/campaign_management/scheduled");
+          break;
+        case "신청":
+          router.push("/partner/campaign_management/applied");
+          break;
+        case "진행":
+          router.push("/partner/campaign_management/progress");
+          break;
+        case "종료":
+          router.push("/partner/campaign_management/completed");
+          break;
+        case "취소":
+          router.push("/partner/campaign_management/cancelled");
+          break;
+        case "연장 요청":
+          router.push("/partner/campaign_management/extension-request");
+          break;
+      }
     }
   };
 
