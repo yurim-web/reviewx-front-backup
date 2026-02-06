@@ -77,6 +77,12 @@ interface ReceiptRegistrationModalProps {
   existingImages?: string[]; // 수정 모드일 때 기존 이미지 URL 배열
 }
 
+interface UploadedImage {
+  id: string;
+  file: File;
+  preview: string;
+}
+
 /**
  * 검수 실패 항목별 에러 메시지 맵
  *
@@ -102,10 +108,13 @@ export default function ReceiptRegistrationModal({
   mode = "register",
   existingImages = [],
 }: ReceiptRegistrationModalProps) {
-  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
   const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // 모달 초기화 플래그 - useRef로 관리하여 리렌더링 트리거 방지
+  const isInitializedRef = useRef(false);
 
   // 구매 영수증 검수 실패 항목 상태
   const [validationError, setValidationError] =
@@ -129,32 +138,58 @@ export default function ReceiptRegistrationModal({
     message: "",
   });
 
-  // 모달이 열릴 때 기존 이미지 설정 및 검수 에러 초기화
+  // 모달이 열릴 때 기존 이미지 설정
+  // isOpen만 의존성으로 하여 모달이 열릴 때만 초기화
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !isInitializedRef.current) {
+      // 모달이 처음 열릴 때만 초기화
+      console.log("[ReceiptRegistrationModal] Modal opening - initializing state");
+      console.log("[ReceiptRegistrationModal] Mode:", mode, "Existing images:", existingImages.length);
+
       if (mode === "edit" && existingImages.length > 0) {
         setExistingImageUrls(existingImages);
       } else {
         setExistingImageUrls([]);
       }
       setUploadedImages([]);
-      setValidationError(null); // 모달이 열릴 때 검수 에러 초기화
+      setValidationError(null);
+      isInitializedRef.current = true;
     }
-  }, [isOpen, mode, existingImages]);
+
+    if (!isOpen && isInitializedRef.current) {
+      // 모달이 닫힐 때 플래그 리셋
+      console.log("[ReceiptRegistrationModal] Modal closing - resetting initialization flag");
+      isInitializedRef.current = false;
+    }
+  }, [isOpen]); // isOpen만 의존성으로 설정
 
   // 메인 모달이 닫혀있고, 성공 모달도 닫혀있을 때만 렌더링하지 않음
   if (!isOpen && !successModal.isOpen) return null;
 
+  // 오류 모달 닫기 핸들러
+  const handleCloseErrorModal = () => {
+    setErrorModal({ isOpen: false, message: "" });
+  };
+
   // 파일 업로드 핸들러
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("[ReceiptRegistrationModal] handleFileUpload called");
     const files = e.target.files;
-    if (!files) return;
+    if (!files || files.length === 0) {
+      console.log("[ReceiptRegistrationModal] No files selected");
+      return;
+    }
 
     const newFiles = Array.from(files);
+    console.log("[ReceiptRegistrationModal] Files selected:", newFiles.length);
+    console.log("[ReceiptRegistrationModal] Current uploadedImages count:", uploadedImages.length);
+    console.log("[ReceiptRegistrationModal] Current existingImageUrls count:", existingImageUrls.length);
 
     // 파일 개수 체크 (최대 7장) - 기존 이미지와 새로 업로드할 이미지 합산
     const totalImages =
       existingImageUrls.length + uploadedImages.length + newFiles.length;
+    console.log("[ReceiptRegistrationModal] Total images after upload:", totalImages);
+
     if (totalImages > 7) {
       setErrorModal({
         isOpen: true,
@@ -221,9 +256,52 @@ export default function ReceiptRegistrationModal({
       return;
     }
 
-    setUploadedImages((prev) => [...prev, ...validFiles]);
-    // 새로운 이미지가 추가되면 검수 에러 초기화
-    setValidationError(null);
+    console.log("[ReceiptRegistrationModal] Valid files to process:", validFiles.length);
+    setIsUploading(true);
+
+    // 이미지 미리보기 생성
+    const newImages: UploadedImage[] = [];
+    let processedCount = 0;
+
+    validFiles.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        console.log("[ReceiptRegistrationModal] File loaded:", file.name);
+        const newImage: UploadedImage = {
+          id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+          file,
+          preview: e.target?.result as string,
+        };
+        newImages.push(newImage);
+
+        processedCount++;
+        console.log("[ReceiptRegistrationModal] Processed count:", processedCount, "Total:", validFiles.length);
+
+        if (processedCount === validFiles.length) {
+          console.log("[ReceiptRegistrationModal] All files processed. New images count:", newImages.length);
+          console.log("[ReceiptRegistrationModal] Before setState - uploadedImages:", uploadedImages.length);
+
+          setUploadedImages((prev) => {
+            console.log("[ReceiptRegistrationModal] Inside setState - prev length:", prev.length);
+            console.log("[ReceiptRegistrationModal] Inside setState - newImages length:", newImages.length);
+            const updated = [...prev, ...newImages];
+            console.log("[ReceiptRegistrationModal] Inside setState - updated length:", updated.length);
+            return updated;
+          });
+
+          setIsUploading(false);
+          // 새로운 이미지가 추가되면 검수 에러 초기화
+          setValidationError(null);
+
+          // 파일 입력 초기화 - 모든 처리가 완료된 후에 초기화
+          if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+          }
+          console.log("[ReceiptRegistrationModal] Upload process completed");
+        }
+      };
+      reader.readAsDataURL(file);
+    });
   };
 
   // 기존 이미지 삭제 핸들러
@@ -232,20 +310,10 @@ export default function ReceiptRegistrationModal({
   };
 
   // 새로 업로드한 이미지 삭제 핸들러
-  const handleRemoveUploadedImage = (index: number) => {
-    setUploadedImages((prev) => prev.filter((_, i) => i !== index));
+  const handleRemoveUploadedImage = (imageId: string) => {
+    setUploadedImages((prev) => prev.filter((img) => img.id !== imageId));
     // 이미지가 변경되면 검수 에러 초기화
     setValidationError(null);
-  };
-
-  // 오류 모달 닫기 핸들러
-  const handleCloseErrorModal = () => {
-    setErrorModal({ isOpen: false, message: "" });
-  };
-
-  // 파일 입력 열기
-  const openFileInput = () => {
-    fileInputRef.current?.click();
   };
 
   // 오버레이 클릭 핸들러
@@ -410,9 +478,9 @@ export default function ReceiptRegistrationModal({
               <div className={styles.upload_section}>
                 {existingImageUrls.length === 0 &&
                 uploadedImages.length === 0 ? (
-                  <div
+                  <label
+                    htmlFor="receipt_file_input"
                     className={styles.image_upload_area}
-                    onClick={openFileInput}
                   >
                     <div className={styles.upload_placeholder}>
                       <Image
@@ -422,7 +490,7 @@ export default function ReceiptRegistrationModal({
                         height={56}
                       />
                     </div>
-                  </div>
+                  </label>
                 ) : (
                   <div className={styles.image_grid_grid}>
                     {/* 기존 이미지 표시 (수정 모드) */}
@@ -455,21 +523,21 @@ export default function ReceiptRegistrationModal({
                       </div>
                     ))}
                     {/* 새로 업로드한 이미지 표시 */}
-                    {uploadedImages.map((file, index) => (
+                    {uploadedImages.map((image) => (
                       <div
-                        key={`uploaded-${index}`}
+                        key={image.id}
                         className={styles.image_preview}
                       >
                         <img
-                          src={URL.createObjectURL(file)}
-                          alt={`영수증 ${index + 1}`}
+                          src={image.preview}
+                          alt={`영수증 ${uploadedImages.indexOf(image) + 1}`}
                           className={styles.preview_image}
                         />
                         <button
                           className={styles.remove_image_button}
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleRemoveUploadedImage(index);
+                            handleRemoveUploadedImage(image.id);
                           }}
                         >
                           <Image
@@ -483,9 +551,9 @@ export default function ReceiptRegistrationModal({
                     ))}
                     {/* 추가 버튼 (최대 7장까지) */}
                     {existingImageUrls.length + uploadedImages.length < 7 && (
-                      <div
+                      <label
+                        htmlFor="receipt_file_input"
                         className={styles.add_more_button}
-                        onClick={openFileInput}
                       >
                         <Image
                           src="/images/icons/plus_icon.svg"
@@ -493,13 +561,14 @@ export default function ReceiptRegistrationModal({
                           width={56}
                           height={56}
                         />
-                      </div>
+                      </label>
                     )}
                   </div>
                 )}
 
                 <input
                   ref={fileInputRef}
+                  id="receipt_file_input"
                   type="file"
                   accept="image/jpeg,image/jpg,image/png,image/gif"
                   multiple

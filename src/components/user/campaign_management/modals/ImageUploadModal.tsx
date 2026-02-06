@@ -97,6 +97,9 @@ export default function ImageUploadModal({
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // 모달 초기화 플래그 - useRef로 관리하여 리렌더링 트리거 방지
+  const isInitializedRef = useRef(false);
+
   // 콘텐츠 확인 모달 상태 관리
   const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
 
@@ -119,16 +122,28 @@ export default function ImageUploadModal({
   });
 
   // 모달이 열릴 때 기존 이미지 설정
+  // isOpen만 의존성으로 하여 모달이 열릴 때만 초기화
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !isInitializedRef.current) {
+      // 모달이 처음 열릴 때만 초기화
+      console.log("[ImageUploadModal] Modal opening - initializing state");
+      console.log("[ImageUploadModal] Mode:", mode, "Existing images:", existingImages.length);
+
       if (mode === "edit" && existingImages.length > 0) {
         setExistingImageUrls(existingImages);
       } else {
         setExistingImageUrls([]);
       }
       setUploadedImages([]);
+      isInitializedRef.current = true;
     }
-  }, [isOpen, mode, existingImages]);
+
+    if (!isOpen && isInitializedRef.current) {
+      // 모달이 닫힐 때 플래그 리셋
+      console.log("[ImageUploadModal] Modal closing - resetting initialization flag");
+      isInitializedRef.current = false;
+    }
+  }, [isOpen]); // isOpen만 의존성으로 설정
 
   // 메인 모달이 닫혀있고, 성공 모달이나 콘텐츠 확인 모달도 닫혀있을 때만 렌더링하지 않음
   if (!isOpen && !successModal.isOpen && !isVerificationModalOpen) return null;
@@ -140,12 +155,22 @@ export default function ImageUploadModal({
 
   // 파일 선택 핸들러
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("[ImageUploadModal] handleFileSelect called");
     const files = Array.from(e.target.files || []);
-    if (files.length === 0) return;
+    if (files.length === 0) {
+      console.log("[ImageUploadModal] No files selected");
+      return;
+    }
+
+    console.log("[ImageUploadModal] Files selected:", files.length);
+    console.log("[ImageUploadModal] Current uploadedImages count:", uploadedImages.length);
+    console.log("[ImageUploadModal] Current existingImageUrls count:", existingImageUrls.length);
 
     // 최대 7장 제한 확인 (기존 이미지 + 새로 업로드할 이미지 합산)
     const totalImages =
       existingImageUrls.length + uploadedImages.length + files.length;
+    console.log("[ImageUploadModal] Total images after upload:", totalImages);
+
     if (totalImages > 7) {
       setErrorModal({
         isOpen: true,
@@ -212,6 +237,7 @@ export default function ImageUploadModal({
       return;
     }
 
+    console.log("[ImageUploadModal] Valid files to process:", validFiles.length);
     setIsUploading(true);
 
     // 이미지 미리보기 생성
@@ -221,6 +247,7 @@ export default function ImageUploadModal({
     validFiles.forEach((file) => {
       const reader = new FileReader();
       reader.onload = (e) => {
+        console.log("[ImageUploadModal] File loaded:", file.name);
         const newImage: UploadedImage = {
           id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
           file,
@@ -229,9 +256,27 @@ export default function ImageUploadModal({
         newImages.push(newImage);
 
         processedCount++;
+        console.log("[ImageUploadModal] Processed count:", processedCount, "Total:", validFiles.length);
+
         if (processedCount === validFiles.length) {
-          setUploadedImages((prev) => [...prev, ...newImages]);
+          console.log("[ImageUploadModal] All files processed. New images count:", newImages.length);
+          console.log("[ImageUploadModal] Before setState - uploadedImages:", uploadedImages.length);
+
+          setUploadedImages((prev) => {
+            console.log("[ImageUploadModal] Inside setState - prev length:", prev.length);
+            console.log("[ImageUploadModal] Inside setState - newImages length:", newImages.length);
+            const updated = [...prev, ...newImages];
+            console.log("[ImageUploadModal] Inside setState - updated length:", updated.length);
+            return updated;
+          });
+
           setIsUploading(false);
+
+          // 파일 입력 초기화 - 모든 처리가 완료된 후에 초기화
+          if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+          }
+          console.log("[ImageUploadModal] Upload process completed");
         }
       };
       reader.readAsDataURL(file);
