@@ -95,6 +95,7 @@ export default function SelectedTabModals({
         buttons={["닫기", "확인"]}
         on_confirm={onConfirmExtension}
         type="center"
+        confirm_disabled_when_empty
       />
 
       {/* 두 번째 신청 시 확인 모달 */}

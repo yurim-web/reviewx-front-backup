@@ -75,16 +75,19 @@ export default function PenaltyPage() {
 
   /**
    * 통계 탭 변경 핸들러
-   * 패널티가 아닌 다른 탭을 클릭하면 캠페인 관리 페이지로 이동
+   * 패널티가 아닌 다른 탭을 클릭하면 해당 캠페인 관리 페이지로 이동
    */
   const handleStatTabChange = (
-    tab: "신청" | "선정" | "완료" | "취소/반려" | "패널티"
+    tab: "신청" | "선정" | "완료" | "취소/반려" | "전체" | "패널티"
   ) => {
     if (tab === "패널티") {
       setActiveStatTab(tab);
     } else {
       // 패널티가 아닌 탭을 클릭하면 해당 탭 전용 페이지로 이동
       switch (tab) {
+        case "전체":
+          router.push("/user/campaign_management/all");
+          break;
         case "신청":
           router.push("/user/campaign_management/applied");
           break;

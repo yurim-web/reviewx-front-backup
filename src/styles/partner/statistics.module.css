@@ -14,13 +14,13 @@
 }
 
 
-/* 통계 탭 네비게이션 컨테이너 */
+/* 통계 탭 네비게이션 컨테이너 - 좌측 탭들 / 우측 패널티 분리 */
 .stat_tab_navigation {
   display: flex;
-  gap: 24px;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
-
+  gap: 24px;
 }
 
 /* 좌측 통계 탭들 (전체, 진행중, 완료, 반려 등) */
@@ -97,49 +97,39 @@
    📱 모바일 반응형 스타일 (max-width: 768px)
    ======================================== */
 @media (max-width: 768px) {
-  /* 통계 섹션 */
+  /* 통계 섹션 - 뷰포트 안에 고정, 페이지 가로 스크롤 방지 */
   .statistics {
-    padding: 0 0 0 20px; /* 왼쪽만 padding, 오른쪽은 0으로 화면 끝까지 */
-    top: 122px; 
-    /* height: 50px; */
+    padding: 0 0 0 20px;
+    padding-right: 20px;
+    top: 122px;
     align-items: flex-start;
-    overflow-x: auto; /* 가로 스크롤 활성화 */
-    -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
-    scrollbar-width: none; /* Firefox 스크롤바 숨김 */
-  }
-
-  /* Webkit 브라우저 스크롤바 숨김 */
-  .statistics::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
-  }
-
-  /* 통계 탭 네비게이션 컨테이너 - 가로 스크롤 */
-  .stat_tab_navigation {
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE and Edge */
-    gap: 16px;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto; /* 탭 영역만 내부 스크롤 */
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    box-sizing: border-box;
+  }
+
+  .statistics::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 통계 탭 네비게이션 - 내용이 넘치면 통계 섹션 내부에서만 스크롤 */
+  .stat_tab_navigation {
+    flex-shrink: 0;
+    gap: 16px;
     height: 50px;
-    padding-right: 20px; /* 마지막 탭이 화면 끝까지 가도록 오른쪽 padding 추가 */
-    min-width: max-content; /* 내용물 크기만큼 확장 */
+    padding-right: 0;
+    min-width: min-content; /* 탭들이 줄어들지 않도록, but 부모가 너비 제한 */
   }
 
-  /* 스크롤바 숨기기 */
-  .stat_tab_navigation::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
-  }
-
-  /* 좌측 통계 탭들 - 가로 스크롤 */
   .left_stat_tabs {
     gap: 20px;
     flex-wrap: nowrap;
-    min-width: max-content;
+    flex-shrink: 0;
     height: 50px;
     align-items: center;
   }
-
-
 }

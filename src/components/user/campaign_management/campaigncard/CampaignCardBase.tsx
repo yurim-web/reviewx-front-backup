@@ -98,18 +98,16 @@ const getCampaignDetailPath = (
   };
 
   // 매핑된 경로를 사용하여 상세페이지 경로 생성
-  // 템플릿 리터럴: 백틱(`)을 사용하여 문자열과 변수를 함께 사용할 수 있습니다.
-  // 예: `/campaign/delivery/delivery_1` → "/campaign/delivery/delivery_1"
   const basePath = `/campaign/${typeMap[type]}/${campaignDataId}`;
 
-  // 선정 상태인 경우 쿼리 파라미터 추가
-  // 쿼리 파라미터: URL 끝에 ?key=value 형태로 추가하여 페이지에 정보를 전달할 수 있습니다.
-  // 예: "/campaign/delivery/delivery_1?selected=true"
+  // 캠페인 관리(참여 캠페인)에서 들어온 경우 항상 participant=true
+  // → 상세 페이지에서 공정위 가이드·캠페인 문의 섹션 표시
+  const params = new URLSearchParams();
+  params.set("participant", "true");
   if (status === "선정") {
-    return `${basePath}?selected=true`;
+    params.set("selected", "true");
   }
-
-  return basePath;
+  return `${basePath}?${params.toString()}`;
 };
 
 /**

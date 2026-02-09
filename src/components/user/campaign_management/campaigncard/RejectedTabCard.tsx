@@ -74,8 +74,37 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
   // Next.js의 useRouter 훅을 사용하여 라우팅 기능 가져오기
   const router = useRouter();
 
-  // 상태 텍스트
-  const statusText = "캠페인 신청이 취소되었습니다.";
+  /**
+   * 반려 여부 확인
+   *
+   * 설명:
+   * - 콘텐츠가 반려된 경우인지 확인합니다.
+   */
+  const isContentRejected =
+    campaign.subStatus === "content_rejected,re_register" ||
+    campaign.subStatus === "penalty,content_rejected";
+
+  /**
+   * 패널티 여부 확인
+   *
+   * 설명:
+   * - 패널티가 부과된 경우인지 확인합니다.
+   * - 패널티 부과 사유:
+   *   1. 마감 기간이 지날 때까지 등록하지 않은 경우
+   *   2. 선정 후 신청 취소 시
+   *   3. 지각 제출 허용 시 7일 유예기간 내 미등록 (자동 신고)
+   */
+  const isPenalty =
+    campaign.subStatus === "penalty" ||
+    campaign.subStatus === "penalty,content_rejected" ||
+    campaign.isPenalty === true;
+
+  // 상태 텍스트 (반려/패널티/기타에 따라 다르게 표시)
+  const statusText = isContentRejected
+    ? "등록한 콘텐츠가 반려되었습니다. 반려 사유 확인 후 다시 등록해 주세요."
+    : isPenalty
+      ? "콘텐츠 등록 기간이 지났습니다."
+      : "캠페인 신청이 취소되었습니다.";
 
   /**
    * 반려 사유 확인 버튼 클릭 핸들러
@@ -149,31 +178,6 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
   };
 
   /**
-   * 반려 여부 확인
-   *
-   * 설명:
-   * - 콘텐츠가 반려된 경우인지 확인합니다.
-   */
-  const isContentRejected =
-    campaign.subStatus === "content_rejected,re_register" ||
-    campaign.subStatus === "penalty,content_rejected";
-
-  /**
-   * 패널티 여부 확인
-   *
-   * 설명:
-   * - 패널티가 부과된 경우인지 확인합니다.
-   * - 패널티 부과 사유:
-   *   1. 마감 기간이 지날 때까지 등록하지 않은 경우
-   *   2. 선정 후 신청 취소 시
-   *   3. 지각 제출 허용 시 7일 유예기간 내 미등록 (자동 신고)
-   */
-  const isPenalty =
-    campaign.subStatus === "penalty" ||
-    campaign.subStatus === "penalty,content_rejected" ||
-    campaign.isPenalty === true;
-
-  /**
    * 버튼 영역 렌더링
    *
    * 설명:
@@ -193,7 +197,7 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
       return (
         <>
           <button
-            className={`${buttonStyles.action_button} ${buttonStyles.content_edit_button}`}
+            className={`${buttonStyles.action_button} ${buttonStyles.rejected_content_edit_button}`}
             onClick={handleContentEditClick}
           >
             콘텐츠 수정
@@ -236,7 +240,7 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
     // 기본: 콘텐츠 재등록하기 (현재는 사용되지 않을 수 있음)
     return (
       <button
-        className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
+        className={`${buttonStyles.action_button} ${buttonStyles.rejected_content_edit_button}`}
         onClick={handleContentEditClick}
       >
         콘텐츠 수정

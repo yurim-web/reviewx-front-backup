@@ -128,30 +128,49 @@
   margin-left: auto;
 }
 
-/* 활성 필터 태그 */
+/* 활성 필터 태그 (PC: 마우스 드래그로 가로 스크롤 가능) */
 .active_filters {
   display: flex;
   align-items: center;
   gap: 12px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   padding: 12px;
-
   background: #f9f9f9;
   min-height: 40px;
-  align-items: center;
   border-radius: 4px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.active_filters:active {
+  cursor: pointer;
+}
+
+.active_filters.active_filters_dragging {
+  cursor: pointer;
+}
+
+.active_filters::-webkit-scrollbar {
+  display: none;
 }
 
 .filter_tag {
   display: flex;
   align-items: center;
   gap: 4px;
+  flex-shrink: 0;
+  white-space: nowrap;
 
   /* 글자부분 */
   color: #444;
   font-size: 14px;
   font-weight: 500;
-  line-height: 14px; 
+  line-height: 14px;
   letter-spacing: -0.28px;
 }
 

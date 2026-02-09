@@ -51,11 +51,11 @@ export default function DetailGuidelinesSectionDelivery({
   requirements,
   guidelineTexts,
 }: DetailGuidelinesSectionDeliveryProps) {
-  // URL 쿼리 파라미터 확인
-  // useSearchParams: Next.js에서 URL 쿼리 파라미터를 읽는 Hook입니다.
-  // ?selected=true 같은 쿼리 파라미터를 확인하여 선정된 캠페인인지 판단합니다.
+  // 참여 캠페인 상세 여부 (캠페인 관리에서 들어온 경우 participant=true 또는 selected=true)
   const searchParams = useSearchParams();
-  const isSelected = searchParams.get("selected") === "true";
+  const isParticipant =
+    searchParams.get("participant") === "true" ||
+    searchParams.get("selected") === "true";
 
   // ========================================
   // 기본 가이드 문구 (props 미전달 시 사용)
@@ -159,15 +159,10 @@ export default function DetailGuidelinesSectionDelivery({
       {/* 추가 안내사항 컴포넌트 */}
       <AdditionalGuidelines />
 
-      {/* 선정 후 추가 안내 섹션 (조건부 렌더링) */}
-      {/* 
-        조건부 렌더링: isSelected가 true일 때만 SelectedCampaignInfo 컴포넌트를 표시합니다.
-        삼항 연산자: 조건 ? true일 때 : false일 때 형태로 사용합니다.
-        여기서는 false일 때 null을 반환하여 아무것도 렌더링하지 않습니다.
-      */}
-      {isSelected && (
+      {/* 참여 캠페인 추가 안내 (공정위 가이드, 캠페인 문의) */}
+      {isParticipant && (
         <SelectedCampaignInfo
-          onCopyFtcImage={onCopyPromotionLink}
+          onGoToGuide={onCopyPromotionLink}
           onCopyContact={onCopyKeyword}
         />
       )}

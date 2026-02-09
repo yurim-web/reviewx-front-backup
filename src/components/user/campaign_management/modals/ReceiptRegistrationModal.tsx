@@ -614,7 +614,7 @@ export default function ReceiptRegistrationModal({
                   existingImageUrls.length + uploadedImages.length === 0
                 }
               >
-                {isUploading ? "제출 중..." : "제출"}
+                {isUploading ? "확인 중..." : "확인"}
               </button>
             </div>
           </div>

@@ -538,7 +538,7 @@ export default function ImageUploadModal({
                   existingImageUrls.length + uploadedImages.length === 0
                 }
               >
-                {isSubmitting ? "등록 중..." : "등록"}
+                {isSubmitting ? "확인 중..." : "확인"}
               </button>
 
               {/* 숨겨진 파일 입력 */}

@@ -63,6 +63,8 @@ export interface TextareaModalProps {
   close_on_escape?: boolean;
   /** textarea 에러 상태 (기본값: false, true일 때 빨간 테두리 표시) */
   has_error?: boolean;
+  /** 사유 미입력 시 확인 버튼 비활성화 (variant 없이 기본 버튼 스타일 쓸 때 사용) */
+  confirm_disabled_when_empty?: boolean;
 }
 
 /**
@@ -85,14 +87,17 @@ export default function TextareaModal({
   close_on_overlay_click = true,
   close_on_escape = true,
   has_error = false,
+  confirm_disabled_when_empty = false,
 }: TextareaModalProps) {
   const buttons =
     prop_buttons && prop_buttons.length > 0 ? prop_buttons : ["닫기"];
   const has_two_buttons = buttons.length === 2;
   const is_reject_variant = variant === "reject";
   const is_extend_variant = variant === "extend";
-  // 반려 모달에서 입력값이 없으면 확인 버튼 비활성화
-  const is_confirm_disabled = is_reject_variant && !value.trim();
+  // 반려/연장(거절·승인) 또는 confirm_disabled_when_empty일 때 입력값 없으면 확인 버튼 비활성화
+  const is_confirm_disabled =
+    (is_reject_variant || is_extend_variant || confirm_disabled_when_empty) &&
+    !value.trim();
 
   // ESC 키로 모달 닫기
   useEffect(() => {
@@ -139,7 +144,7 @@ export default function TextareaModal({
 
   // textarea 값 변경 핸들러
   const handle_textarea_change = (
-    e: React.ChangeEvent<HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
     if (onChange && !readOnly) {
       onChange(e.target.value);
@@ -172,11 +177,9 @@ export default function TextareaModal({
             style={
               titleColor
                 ? { color: titleColor }
-                : is_extend_variant
-                ? { color: "#444444" }
                 : readOnly
-                ? { color: "#ff2626" }
-                : undefined
+                  ? { color: "#ff2626" }
+                  : undefined
             }
           >
             {title}
@@ -204,7 +207,7 @@ export default function TextareaModal({
                 {/* 두 개 버튼: 취소/거절, 확인/승인 */}
                 {is_extend_variant ? (
                   <>
-                    {/* 연장 모달: 거절(빨간색 #FF2626), 승인(초록색) */}
+                    {/* 연장 모달: 거절(빨간색 #FF2626), 승인(초록색) / 비활성 시 회색 */}
                     <button
                       onClick={handle_cancel}
                       className={styles.modal_footer_button_extend_reject}
@@ -213,7 +216,12 @@ export default function TextareaModal({
                     </button>
                     <button
                       onClick={handle_confirm}
-                      className={styles.modal_footer_button_extend}
+                      disabled={is_confirm_disabled}
+                      className={`${styles.modal_footer_button_extend} ${
+                        is_confirm_disabled
+                          ? styles.modal_footer_button_extend_disabled
+                          : ""
+                      }`.trim()}
                     >
                       {buttons[1]}
                     </button>
@@ -235,7 +243,9 @@ export default function TextareaModal({
                           ? is_confirm_disabled
                             ? styles.modal_footer_button_reject_disabled
                             : styles.modal_footer_button_reject_active
-                          : ""
+                          : is_confirm_disabled
+                            ? styles.modal_footer_button_confirm_disabled
+                            : ""
                       }`}
                     >
                       {buttons[1]}

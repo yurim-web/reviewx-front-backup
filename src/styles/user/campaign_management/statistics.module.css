@@ -10,33 +10,26 @@
  * - /user/campaign_management (캠페인 관리 페이지)
  */
 
-/* 통계 섹션 - 캠페인 수량 표시 탭들 */
+/* 통계 섹션 - 캠페인 수량 표시 탭들 (파트너와 동일 구조) */
 .statistics {
-  padding: 0px 40px; /* 좌우 패딩 */
-  position: sticky; /* 스크롤 시 고정 */
-  top: 148.5px; /* TabNavigation(65px) + 서브헤더(80px) = 145px 아래에 고정 */
+  padding: 0px 40px;
+  position: sticky;
+  top: 148.5px; /* TabNavigation + 서브헤더 아래에 고정 */
   background: white;
-  z-index: 85; /* 탭 네비게이션보다 낮은 우선순위 */
+  z-index: 85;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e5e5e5;
 }
 
-/* 통계 섹션 하단 구분선 */
-.statistics::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 0.5px;
-  background-color: #d9d9d9;
-}
-
-/* 통계 탭 네비게이션 컨테이너 */
+/* 통계 탭 네비게이션 컨테이너 - 좌측 탭들 / 우측 패널티 분리 */
 .stat_tab_navigation {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%; /* 전체 너비 차지 */
-  background: white; /* 배경을 흰색으로 설정 */
+  width: 100%;
+  gap: 24px;
 }
 
 /* 좌측 통계 탭들 (전체, 진행중, 완료, 반려 등) */
@@ -48,12 +41,11 @@
 
 /* 개별 통계 탭 버튼 */
 .stat_tab {
-  color: #444; 
+  letter-spacing: -0.36px;
+  color: #444;
   font-size: 18px;
   font-weight: 500;
-  line-height: 18px; /* 100% */
-  letter-spacing: -0.36px;
-
+  line-height: 18px;
   background: none;
   border: none;
   cursor: pointer;
@@ -64,7 +56,10 @@
   transition: color 0.2s ease;
   display: flex;
   align-items: center;
-  gap: 4px; /* 텍스트와 숫자 간격 */
+  gap: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  overflow: visible; /* 활성 밑줄(::after)이 잘리지 않도록 */
 }
 
 /* 활성화된 통계 탭 */
@@ -108,46 +103,52 @@
 }
 
 /* ========================================
-   📱 모바일 반응형 스타일 (max-width: 768px)
+   📱 모바일 반응형 스타일 (max-width: 768px) - 파트너와 동일
    ======================================== */
 @media (max-width: 768px) {
-  /* 통계 섹션 */
   .statistics {
-    padding: 0px 20px;
-    top: 122px; /* 모바일 헤더(64px) + TabNavigation(50px) = 114px */
-    overflow-x: auto; /* 가로 스크롤 활성화 */
-    -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
-    scrollbar-width: none; /* Firefox 스크롤바 숨김 */
+    padding: 0 0 0 20px;
+    padding-right: 20px;
+    top: 122px;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    box-sizing: border-box;
   }
 
-  /* Webkit 브라우저 스크롤바 숨김 */
   .statistics::-webkit-scrollbar {
     display: none;
   }
 
-  /* 통계 탭 네비게이션 컨테이너 */
   .stat_tab_navigation {
-    min-width: max-content; /* 내용물 크기만큼 확장 */
-    flex-wrap: nowrap; /* 줄바꿈 방지 */
+    flex-shrink: 0;
+    gap: 16px;
+    height: 50px;
+    padding-right: 0;
+    min-width: min-content;
   }
 
-  /* 좌측 통계 탭들 */
   .left_stat_tabs {
     gap: 20px;
-    flex-shrink: 0; /* 줄어들지 않도록 */
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    height: 50px;
+    align-items: center;
   }
 
-  /* 개별 통계 탭 버튼 */
   .stat_tab {
     font-size: 18px;
     line-height: 18px;
     letter-spacing: -0.36px;
     padding-top: 16px;
     padding-bottom: 16px;
-    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+    white-space: nowrap;
   }
 
-  /* 통계 탭의 숫자 부분 */
   .stat_number {
     font-size: 18px;
     line-height: 18px;

@@ -64,28 +64,13 @@ function PartnerCampaignManagementPage() {
   // 로딩 상태 (탭 전환 시 로딩 표시) - 초기 로드 시에도 로딩 화면 표시
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // 필터 상태 (필터 바에서 사용)
+  // 필터 상태 (필터 바에서 사용) - 새로고침 시 초기화됨
   const [activeFilters, setActiveFilters] = useState<{
     types?: string[];
     channels?: string[];
     searchQuery?: string;
     sortBy?: string;
   }>({});
-
-  // 클라이언트에서만 localStorage에서 필터 상태 복원 (Hydration 에러 방지)
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    try {
-      const stored = localStorage.getItem("partner_campaign_filter_state");
-      if (stored) {
-        const restored = JSON.parse(stored);
-        setActiveFilters(restored);
-      }
-    } catch (error) {
-      console.error("localStorage에서 필터 상태 복원 실패:", error);
-    }
-  }, []); // 빈 의존성 배열: 마운트 시 한 번만 실행
 
   // 탭별 캠페인 목록 가져오기
   const campaigns = getCampaignsByTab(activeStatTab);
