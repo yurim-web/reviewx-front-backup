@@ -39,12 +39,12 @@ export default function EarnedPointPage() {
    * 적립 내역 필터 함수
    *
    * 설명:
-   * - status가 'earned'인 내역만 필터링합니다.
-   * - 화살표 함수를 사용하여 간단하게 작성했습니다.
+   * - type이 'earned'인 내역을 필터링합니다.
+   * - 적립 완료(status: earned)와 적립 취소(status: failed) 모두 표시합니다.
    *
    */
   const filterEarnedHistory = (history: PointHistory) =>
-    history.status === "earned";
+    history.type === "earned";
 
   return (
     <PointHistoryPage

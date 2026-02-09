@@ -16,7 +16,7 @@
  * - 포인트 내역 필터링 및 표시
  * - 보유 포인트 현황 표시
  * - 출금 신청 기능
- * - 반려 사유 모달 표시 (적립 취소, 출금 신청 반려)
+ * - 반려 사유 모달 표시 (출금 신청 반려 시에만)
  *
  */
 
@@ -130,10 +130,9 @@ export default function PointHistoryPage({
    * useState Hook - 모달 제목
    *
    * 설명:
-   * - 모달의 제목을 저장합니다.
-   * - 취소 상태에 따라 "적립 취소 사유" 또는 "출금 신청 반려 사유"로 구분됩니다.
+   * - 반려/취소 사유 확인 모달의 제목을 저장합니다.
    */
-  const [modal_title, setModalTitle] = useState("반려 사유");
+  const [modal_title, setModalTitle] = useState("사유 확인");
 
   /**
    * useState Hook - 포인트 정보
@@ -176,25 +175,28 @@ export default function PointHistoryPage({
    * 포인트 정보 및 내역 로드 함수
    */
   const loadPointData = () => {
-    if (typeof window !== 'undefined' && user) {
+    if (typeof window !== "undefined" && user) {
       try {
-        const storedAccounts = localStorage.getItem('user_accounts');
-        console.log('📦 [포인트 페이지] user_accounts 원본:', storedAccounts);
+        const storedAccounts = localStorage.getItem("user_accounts");
+        console.log("📦 [포인트 페이지] user_accounts 원본:", storedAccounts);
         if (storedAccounts) {
           const accounts = JSON.parse(storedAccounts);
-          console.log('📦 [포인트 페이지] 파싱된 accounts:', accounts);
-          const userAccount = accounts.find((a: any) =>
-            a.id === user.id || a.email === user.email
+          console.log("📦 [포인트 페이지] 파싱된 accounts:", accounts);
+          const userAccount = accounts.find(
+            (a: any) => a.id === user.id || a.email === user.email,
           );
-          console.log('👤 [포인트 페이지] 현재 유저:', user.id, user.email);
-          console.log('👤 [포인트 페이지] 찾은 userAccount:', userAccount);
+          console.log("👤 [포인트 페이지] 현재 유저:", user.id, user.email);
+          console.log("👤 [포인트 페이지] 찾은 userAccount:", userAccount);
           if (userAccount) {
             const newPointInfo = {
               available_points: userAccount.available_points || 0,
               pending_points: userAccount.pending_points || 0,
               current_points: userAccount.current_points || 0,
             };
-            console.log('💰 [포인트 페이지] 업데이트할 포인트 정보:', newPointInfo);
+            console.log(
+              "💰 [포인트 페이지] 업데이트할 포인트 정보:",
+              newPointInfo,
+            );
             setPointInfo(newPointInfo);
 
             // 계좌 정보 로드
@@ -202,26 +204,34 @@ export default function PointHistoryPage({
               name: userAccount.account_holder || userAccount.name || "",
               bank: userAccount.bank || "",
               accountNumber: userAccount.account_number || "",
-              residentNumber: userAccount.ssn_front && userAccount.ssn_back
-                ? `${userAccount.ssn_front}-${userAccount.ssn_back}`
-                : "",
+              residentNumber:
+                userAccount.ssn_front && userAccount.ssn_back
+                  ? `${userAccount.ssn_front}-${userAccount.ssn_back}`
+                  : "",
             };
             setAccountInfo(newAccountInfo);
 
             // 포인트 내역 로드 (없으면 빈 배열)
             setUserPointHistory(userAccount.point_history || []);
-            console.log('✅ [포인트 페이지] 포인트 정보 로드 완료');
+            console.log("✅ [포인트 페이지] 포인트 정보 로드 완료");
           } else {
-            console.warn('⚠️ [포인트 페이지] userAccount를 찾을 수 없습니다');
+            console.warn("⚠️ [포인트 페이지] userAccount를 찾을 수 없습니다");
           }
         } else {
-          console.warn('⚠️ [포인트 페이지] user_accounts가 localStorage에 없습니다');
+          console.warn(
+            "⚠️ [포인트 페이지] user_accounts가 localStorage에 없습니다",
+          );
         }
       } catch (error) {
-        console.error('❌ [포인트 페이지] 포인트 정보 로드 실패:', error);
+        console.error("❌ [포인트 페이지] 포인트 정보 로드 실패:", error);
       }
     } else {
-      console.log('⚠️ [포인트 페이지] window 또는 user가 없습니다. window:', typeof window, 'user:', user);
+      console.log(
+        "⚠️ [포인트 페이지] window 또는 user가 없습니다. window:",
+        typeof window,
+        "user:",
+        user,
+      );
     }
   };
 
@@ -233,16 +243,16 @@ export default function PointHistoryPage({
 
     // 페이지 포커스 시 데이터 다시 로드
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        console.log('🔄 [포인트 페이지] 페이지 포커스 - 데이터 다시 로드');
+      if (document.visibilityState === "visible") {
+        console.log("🔄 [포인트 페이지] 페이지 포커스 - 데이터 다시 로드");
         loadPointData();
       }
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [user]);
 
@@ -348,30 +358,13 @@ export default function PointHistoryPage({
    *
    * 설명:
    * - "사유보기" 버튼을 클릭했을 때 실행되는 함수입니다.
-   * - 해당 내역의 반려 사유를 모달에 표시합니다.
-   * - 취소 상태에 따라 모달 제목을 구분합니다.
-   *   - type이 "earned"이고 status가 "failed"면 "적립 취소 사유"
-   *   - type이 "withdrawn"이고 status가 "failed"면 "출금 신청 반려 사유"
+   * - 출금 신청 반려 시 해당 내역의 반려 사유를 "사유 확인" 모달에 표시합니다.
    *
    */
   const handle_reason_click = (history: PointHistory) => {
     // 반려 사유가 있는 경우에만 모달 표시
     if (history.rejection_reason) {
-      // 취소 상태 구분
-      // type이 "earned"이고 status가 "failed"면 적립 취소
-      if (history.type === "earned" && history.status === "failed") {
-        setModalTitle("적립 취소 사유");
-      }
-      // type이 "withdrawn" 또는 "withdrawal_pending"이고 status가 "failed"면 출금 신청 반려
-      else if ((history.type === "withdrawn" || history.type === "withdrawal_pending") && history.status === "failed") {
-        setModalTitle("출금 신청 반려 사유");
-      }
-      // 기본값 (혹시 모를 경우를 대비)
-      else {
-        setModalTitle("반려 사유");
-      }
-
-      // 반려 사유 설정 및 모달 열기
+      setModalTitle("사유 확인");
       setSelectedRejectionReason(history.rejection_reason);
       setIsModalOpen(true);
     }
@@ -449,7 +442,9 @@ export default function PointHistoryPage({
             <div className={styles.point_summary_info}>
               <span className={styles.point_label}>보유 포인트</span>
               <div className={styles.point_amount}>
-                <span className={styles.amount_number}>{pointInfo.available_points.toLocaleString()}</span>
+                <span className={styles.amount_number}>
+                  {pointInfo.available_points.toLocaleString()}
+                </span>
                 <span className={styles.amount_unit}>P</span>
               </div>
             </div>
@@ -480,122 +475,81 @@ export default function PointHistoryPage({
               </div>
             ) : (
               filteredHistoryData.map((history) => (
-              <div key={history.id} className={styles.history_item}>
-                {/* PC 버전: 기존 구조 (모바일에서 숨김) */}
-                <div className={styles.status_badge_container}>
-                  <div
-                    className={`${styles.status_badge} ${
-                      history.status === "earned"
-                        ? styles.earned
-                        : history.status === "completed"
-                        ? styles.completed
-                        : history.status === "pending"
-                        ? styles.pending
-                        : history.status === "failed" && history.type === "withdrawn"
-                        ? styles.failed
-                        : styles.cancelled
-                    }`}
-                  >
-                    {history.status === "earned"
-                      ? "적립"
-                      : history.status === "completed"
-                      ? "출금"
-                      : history.status === "pending"
-                      ? "신청"
-                      : "취소"}
-                  </div>
-                </div>
-
-                <div className={styles.history_info}>
-                  <div className={styles.history_description}>
-                    {history.status === "failed" ? (
-                      <div className={styles.cancelled_description}>
-                        <span className={styles.main_text}>
-                          {history.description}
-                        </span>
-                        {history.rejection_reason && (
-                          <div
-                            className={styles.reason_section}
-                            onClick={() => handle_reason_click(history)}
-                          >
-                            <div className={styles.reason_icon}>
-                              <Image
-                                src="/images/management_page/cancel_info.svg"
-                                alt="정보 아이콘"
-                                width={16}
-                                height={16}
-                              />
-                            </div>
-                            <span className={styles.reason_text}>사유보기</span>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      history.description
-                    )}
-                  </div>
-                  <div className={styles.history_date}>{history.date}</div>
-                </div>
-
-                <div className={styles.point_info}>
-                  <div
-                    className={`${styles.point_change} ${
-                      history.status === "failed"
-                        ? styles.cancelled_amount
-                        : history.amount > 0
-                        ? styles.positive
-                        : styles.negative
-                    }`}
-                  >
-                    {history.amount > 0
-                      ? `+ ${history.amount.toLocaleString()}`
-                      : `${history.amount.toLocaleString()}`}{" "}
-                    P
-                  </div>
-                  <div className={styles.point_balance}>
-                    {history.balance.toLocaleString()} P
-                  </div>
-                </div>
-
-                {/* 모바일 버전: 2줄 구조 (PC에서 숨김) */}
-                {/* 1번째 줄: 설명 (왼쪽) + 포인트 금액 + 잔액 (오른쪽, 세로 묶음) */}
-                <div className={styles.mobile_row_first}>
-                  <div className={styles.mobile_description}>
-                    {history.status === "failed" ? (
-                      <div className={styles.cancelled_description}>
-                        <span className={styles.main_text}>
-                          {history.description}
-                        </span>
-                        {history.rejection_reason && (
-                          <div
-                            className={styles.reason_section}
-                            onClick={() => handle_reason_click(history)}
-                          >
-                            <div className={styles.reason_icon}>
-                              <Image
-                                src="/images/management_page/cancel_info.svg"
-                                alt="정보 아이콘"
-                                width={12}
-                                height={12}
-                              />
-                            </div>
-                            <span className={styles.reason_text}>사유보기</span>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      history.description
-                    )}
-                  </div>
-
-                  <div className={styles.mobile_points_group}>
+                <div key={history.id} className={styles.history_item}>
+                  {/* PC 버전: 기존 구조 (모바일에서 숨김) */}
+                  <div className={styles.status_badge_container}>
                     <div
-                      className={`${styles.mobile_point_change} ${
+                      className={`${styles.status_badge} ${
+                        history.status === "earned"
+                          ? styles.earned
+                          : history.status === "completed"
+                            ? styles.completed
+                            : history.status === "pending"
+                              ? styles.pending
+                              : history.status === "failed" &&
+                                  (history.type === "withdrawn" ||
+                                    history.type === "withdrawal_pending")
+                                ? styles.failed
+                                : styles.cancelled
+                      }`}
+                    >
+                      {history.status === "earned"
+                        ? "적립"
+                        : history.status === "completed"
+                          ? "출금"
+                          : history.status === "pending"
+                            ? "신청"
+                            : history.status === "failed" &&
+                                (history.type === "withdrawn" ||
+                                  history.type === "withdrawal_pending")
+                              ? "반려"
+                              : "취소"}
+                    </div>
+                  </div>
+
+                  <div className={styles.history_info}>
+                    <div className={styles.history_description}>
+                      {history.status === "failed" ? (
+                        <div className={styles.cancelled_description}>
+                          <span className={styles.main_text}>
+                            {history.description}
+                          </span>
+                          {history.rejection_reason &&
+                            (history.type === "withdrawn" ||
+                              history.type === "withdrawal_pending") && (
+                              <div
+                                className={styles.reason_section}
+                                onClick={() => handle_reason_click(history)}
+                              >
+                                <div className={styles.reason_icon}>
+                                  <Image
+                                    src="/images/management_page/cancel_info.svg"
+                                    alt="정보 아이콘"
+                                    width={16}
+                                    height={16}
+                                  />
+                                </div>
+                                <span className={styles.reason_text}>
+                                  사유 확인
+                                </span>
+                              </div>
+                            )}
+                        </div>
+                      ) : (
+                        history.description
+                      )}
+                    </div>
+                    <div className={styles.history_date}>{history.date}</div>
+                  </div>
+
+                  <div className={styles.point_info}>
+                    <div
+                      className={`${styles.point_change} ${
                         history.status === "failed"
                           ? styles.cancelled_amount
                           : history.amount > 0
-                          ? styles.positive
-                          : styles.negative
+                            ? styles.positive
+                            : styles.negative
                       }`}
                     >
                       {history.amount > 0
@@ -603,38 +557,99 @@ export default function PointHistoryPage({
                         : `${history.amount.toLocaleString()}`}{" "}
                       P
                     </div>
-                    <div className={styles.mobile_balance}>
+                    <div className={styles.point_balance}>
                       {history.balance.toLocaleString()} P
                     </div>
                   </div>
-                </div>
 
-                {/* 2번째 줄: 날짜 (왼쪽) + 상태 (오른쪽) */}
-                <div className={styles.mobile_row_second}>
-                  <div className={styles.mobile_date}>{history.date}</div>
-                  <div
-                    className={`${styles.mobile_status} ${
-                      history.status === "earned"
-                        ? styles.earned
+                  {/* 모바일 버전: 2줄 구조 (PC에서 숨김) */}
+                  {/* 1번째 줄: 설명 (왼쪽) + 포인트 금액 + 잔액 (오른쪽, 세로 묶음) */}
+                  <div className={styles.mobile_row_first}>
+                    <div className={styles.mobile_description}>
+                      {history.status === "failed" ? (
+                        <div className={styles.cancelled_description}>
+                          <span className={styles.main_text}>
+                            {history.description}
+                          </span>
+                          {history.rejection_reason &&
+                            (history.type === "withdrawn" ||
+                              history.type === "withdrawal_pending") && (
+                              <div
+                                className={styles.reason_section}
+                                onClick={() => handle_reason_click(history)}
+                              >
+                                <div className={styles.reason_icon}>
+                                  <Image
+                                    src="/images/management_page/cancel_info.svg"
+                                    alt="정보 아이콘"
+                                    width={12}
+                                    height={12}
+                                  />
+                                </div>
+                                <span className={styles.reason_text}>
+                                  사유 확인
+                                </span>
+                              </div>
+                            )}
+                        </div>
+                      ) : (
+                        history.description
+                      )}
+                    </div>
+
+                    <div className={styles.mobile_points_group}>
+                      <div
+                        className={`${styles.mobile_point_change} ${
+                          history.status === "failed"
+                            ? styles.cancelled_amount
+                            : history.amount > 0
+                              ? styles.positive
+                              : styles.negative
+                        }`}
+                      >
+                        {history.amount > 0
+                          ? `+ ${history.amount.toLocaleString()}`
+                          : `${history.amount.toLocaleString()}`}{" "}
+                        P
+                      </div>
+                      <div className={styles.mobile_balance}>
+                        {history.balance.toLocaleString()} P
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 2번째 줄: 날짜 (왼쪽) + 상태 (오른쪽) */}
+                  <div className={styles.mobile_row_second}>
+                    <div className={styles.mobile_date}>{history.date}</div>
+                    <div
+                      className={`${styles.mobile_status} ${
+                        history.status === "earned"
+                          ? styles.earned
+                          : history.status === "completed"
+                            ? styles.completed
+                            : history.status === "pending"
+                              ? styles.pending
+                              : history.status === "failed" &&
+                                  (history.type === "withdrawn" ||
+                                    history.type === "withdrawal_pending")
+                                ? styles.failed
+                                : styles.cancelled
+                      }`}
+                    >
+                      {history.status === "earned"
+                        ? "적립"
                         : history.status === "completed"
-                        ? styles.completed
-                        : history.status === "pending"
-                        ? styles.pending
-                        : history.status === "failed" && history.type === "withdrawn"
-                        ? styles.failed
-                        : styles.cancelled
-                    }`}
-                  >
-                    {history.status === "earned"
-                      ? "적립"
-                      : history.status === "completed"
-                      ? "출금"
-                      : history.status === "pending"
-                      ? "출금 신청"
-                      : "취소"}
+                          ? "출금"
+                          : history.status === "pending"
+                            ? "출금 신청"
+                            : history.status === "failed" &&
+                                (history.type === "withdrawn" ||
+                                  history.type === "withdrawal_pending")
+                              ? "반려"
+                              : "취소"}
+                    </div>
                   </div>
                 </div>
-              </div>
               ))
             )}
           </article>

@@ -608,9 +608,12 @@
     }
   
     .mobile_status.cancelled,
-    .mobile_status.failed,
     .mobile_status.pending {
       color: #848484;
+    }
+
+    .mobile_status.failed {
+      color: #ff2626;
     }
   }
   
