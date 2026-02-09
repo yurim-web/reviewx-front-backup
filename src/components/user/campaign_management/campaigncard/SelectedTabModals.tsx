@@ -103,9 +103,10 @@ export default function SelectedTabModals({
         is_open={isExtensionSecondRequestModalOpen}
         on_close={onCloseExtensionSecondRequestModal}
         message="이미 연장한 내역이 있습니다.<br>추가 연장은 이번 요청이 마지막입니다.<br>계속하시겠습니까?"
-        buttons={["취소", "확인"]}
+        buttons={["취소", "연장"]}
         on_confirm={onConfirmSecondRequest}
         type="center"
+        button_variant="red"
       />
 
       {/* 세 번째 이상 신청 시 제한 안내 모달 */}

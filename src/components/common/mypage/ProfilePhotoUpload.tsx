@@ -114,40 +114,46 @@ export default function ProfilePhotoUpload({
       <FormField label="프로필 사진">
         <div className={photoStyles.profile_upload_container}>
           <div className={photoStyles.profile_image_wrapper}>
-            <div className={photoStyles.profile_image}>
-              {profileImage ? (
-                <img src={profileImage} alt="프로필 사진" />
-              ) : (
-                // 기본 프로필 이미지 (공통 프로필 아이콘)
-                <img
-                  src="/images/mypage/profile.svg"
-                  alt="기본 프로필 이미지"
-                  className={photoStyles.default_avatar}
-                />
-              )}
-              {isUploading && (
-                <div className={photoStyles.upload_loading}>
-                  <div className={photoStyles.loading_spinner} />
-                </div>
-              )}
-            </div>
             <div
-              className={photoStyles.photo_upload_icon}
+              className={photoStyles.profile_image_click_area}
               onClick={handleProfilePhotoUpload}
               title="프로필 사진 변경"
+              role="button"
+              aria-label="프로필 사진 변경"
             >
-              <Image
-                src="/images/icons/refresh_icon.svg"
-                alt="프로필 사진 업로드"
-                width={12}
-                height={12}
-                unoptimized
-              />
+              <div className={photoStyles.profile_image}>
+                {profileImage ? (
+                  <img src={profileImage} alt="프로필 사진" />
+                ) : (
+                  <img
+                    src="/images/mypage/profile.svg"
+                    alt="기본 프로필 이미지"
+                    className={photoStyles.default_avatar}
+                  />
+                )}
+                {isUploading && (
+                  <div className={photoStyles.upload_loading}>
+                    <div className={photoStyles.loading_spinner} />
+                  </div>
+                )}
+              </div>
+              <div className={photoStyles.photo_upload_icon}>
+                <Image
+                  src="/images/icons/refresh_icon.svg"
+                  alt="프로필 사진 업로드"
+                  width={12}
+                  height={12}
+                  unoptimized
+                />
+              </div>
             </div>
             {profileImage && (
               <div
                 className={photoStyles.photo_remove_icon}
-                onClick={handleRemoveProfilePhoto}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemoveProfilePhoto();
+                }}
                 title="프로필 사진 삭제"
               >
                 <Image

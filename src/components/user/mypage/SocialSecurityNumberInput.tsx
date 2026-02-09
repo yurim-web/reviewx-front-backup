@@ -45,12 +45,12 @@ export default function SocialSecurityNumberInput({
   /**
    * 뒷자리 마스킹 처리
    * - 첫 번째 자리(성별): 그대로 표시
-   * - 나머지 6자리: ● 로 마스킹
+   * - 나머지 6자리: • (불릿) 로 마스킹
    */
   const getMaskedSsnBack = (value: string): string => {
     if (!value) return "";
     const firstDigit = value.charAt(0);
-    const masked = "●".repeat(value.length - 1);
+    const masked = "•".repeat(value.length - 1);
     return firstDigit + masked;
   };
 

@@ -97,6 +97,7 @@
   flex-shrink: 0;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 0 5px 0 rgba(68, 68, 68, 0.1);
 }
 
 .channel_icon img {

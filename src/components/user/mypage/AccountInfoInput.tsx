@@ -120,10 +120,12 @@ export default function AccountInfoInput({
   const [isLoading, setIsLoading] = useState(false);
   // 계좌 정보 조회 실패 에러 메시지 상태
   const [accountQueryError, setAccountQueryError] = useState<string | null>(
-    null
+    null,
   );
   // 초기 로드 여부를 추적하는 ref (초기 로드 시에만 인증 완료 상태 자동 설정)
   const isInitialMount = useRef(true);
+  // 예금주 조회로 인한 변경인지 추적 (조회 성공 시 리셋 방지)
+  const isFromQueryRef = useRef(false);
 
   /**
    * useEffect: 초기 마운트 시 initialVerified prop 또는 localStorage에서 인증 완료 상태 복원
@@ -146,7 +148,7 @@ export default function AccountInfoInput({
 
     // 이미 인증되어 있으면 다시 체크하지 않음
     if (queriedAccountHolder && accountHolderAtQueryTime) {
-      console.log('✅ [계좌 인증 - 초기] 이미 인증 완료 상태');
+      console.log("✅ [계좌 인증 - 초기] 이미 인증 완료 상태");
       return;
     }
 
@@ -159,7 +161,9 @@ export default function AccountInfoInput({
       String(accountNumber).trim()
     ) {
       // 서버에서 받아온 계좌 정보 → 인증 완료 상태
-      console.log('✅ [계좌 인증 - 초기] initialVerified가 true - 인증 완료 상태로 설정');
+      console.log(
+        "✅ [계좌 인증 - 초기] initialVerified가 true - 인증 완료 상태로 설정",
+      );
       setQueriedAccountHolder(accountHolder.trim());
       setAccountHolderAtQueryTime(accountHolder.trim());
       return; // 서버 데이터가 있으면 localStorage 확인 생략
@@ -172,22 +176,25 @@ export default function AccountInfoInput({
         const accountHolderValue = accountHolder?.trim() || "";
         const bankValue = bank?.trim() || "";
         const accountNumberValue = String(accountNumber || "").trim();
-        
+
         // 계좌 정보가 모두 있으면 user_accounts에서 확인
         if (accountHolderValue && bankValue && accountNumberValue) {
-          const userAccounts = localStorage.getItem('user_accounts');
+          const userAccounts = localStorage.getItem("user_accounts");
           if (userAccounts) {
             const accounts = JSON.parse(userAccounts);
             // 현재 계좌 정보와 일치하는 계정 찾기
             const matchingAccount = accounts.find((acc: any) => {
-              const match = acc.bank === bankValue &&
+              const match =
+                acc.bank === bankValue &&
                 acc.account_number === accountNumberValue &&
                 acc.account_holder === accountHolderValue;
               return match;
             });
 
             if (matchingAccount) {
-              console.log('✅ [계좌 인증 - 초기] user_accounts에서 계좌 정보 확인 - 인증 완료 상태로 설정');
+              console.log(
+                "✅ [계좌 인증 - 초기] user_accounts에서 계좌 정보 확인 - 인증 완료 상태로 설정",
+              );
               setQueriedAccountHolder(accountHolderValue);
               setAccountHolderAtQueryTime(accountHolderValue);
               return; // user_accounts에서 찾았으면 더 이상 확인 불필요
@@ -195,7 +202,7 @@ export default function AccountInfoInput({
           }
         }
       } catch (error) {
-        console.error('❌ [계좌 인증 - 초기] user_accounts 읽기 실패:', error);
+        console.error("❌ [계좌 인증 - 초기] user_accounts 읽기 실패:", error);
       }
     }
 
@@ -231,12 +238,12 @@ export default function AccountInfoInput({
             setQueriedAccountHolder(verificationData.queriedAccountHolder);
             setAccountHolderAtQueryTime(
               verificationData.accountHolderAtQueryTime ||
-                verificationData.accountHolder
+                verificationData.accountHolder,
             );
           } else {
             // 계좌 정보가 일치하지 않으면 localStorage에서 삭제
             console.log(
-              "계좌 정보 불일치 - localStorage 유지 (다른 계좌일 수 있음)"
+              "계좌 정보 불일치 - localStorage 유지 (다른 계좌일 수 있음)",
             );
             // 일치하지 않아도 삭제하지 않음 (사용자가 다른 계좌를 입력했을 수도 있음)
           }
@@ -277,23 +284,26 @@ export default function AccountInfoInput({
     ) {
       try {
         // 먼저 user_accounts에서 확인
-        const userAccounts = localStorage.getItem('user_accounts');
+        const userAccounts = localStorage.getItem("user_accounts");
         if (userAccounts) {
           const accounts = JSON.parse(userAccounts);
           const accountHolderValue = accountHolder.trim();
           const bankValue = bank.trim();
           const accountNumberValue = String(accountNumber).trim();
-          
+
           // 현재 계좌 정보와 일치하는 계정이 있는지 확인
-          const matchingAccount = accounts.find((acc: any) =>
-            acc.bank === bankValue &&
-            acc.account_number === accountNumberValue &&
-            acc.account_holder === accountHolderValue
+          const matchingAccount = accounts.find(
+            (acc: any) =>
+              acc.bank === bankValue &&
+              acc.account_number === accountNumberValue &&
+              acc.account_holder === accountHolderValue,
           );
 
           if (matchingAccount) {
             // user_accounts에 계좌 정보가 있으면 자동으로 인증 완료 상태로 설정
-            console.log('📦 [계좌 인증] user_accounts에서 계좌 정보 확인 - 인증 완료 상태로 설정');
+            console.log(
+              "📦 [계좌 인증] user_accounts에서 계좌 정보 확인 - 인증 완료 상태로 설정",
+            );
             setQueriedAccountHolder(accountHolderValue);
             setAccountHolderAtQueryTime(accountHolderValue);
             return;
@@ -316,7 +326,7 @@ export default function AccountInfoInput({
             setQueriedAccountHolder(verificationData.queriedAccountHolder);
             setAccountHolderAtQueryTime(
               verificationData.accountHolderAtQueryTime ||
-                verificationData.accountHolder
+                verificationData.accountHolder,
             );
           }
         }
@@ -350,6 +360,7 @@ export default function AccountInfoInput({
       // 은행이나 계좌번호가 변경되면 조회된 예금주 정보 초기화
       setQueriedAccountHolder(null);
       setAccountHolderAtQueryTime(null);
+      onAccountHolderChange(""); // 예금주 입력란도 초기화 (조회를 통해 다시 입력)
       // 에러 메시지도 초기화
       setAccountQueryError(null);
       // localStorage에서도 삭제 (계좌 정보가 변경되었으므로 이전 인증 정보 무효)
@@ -380,7 +391,12 @@ export default function AccountInfoInput({
    * 주의: 초기 로드 시에는 실행되지 않도록 함 (isInitialMount.current로 체크)
    */
   useEffect(() => {
-    // 초기 로드가 아닐 때만 실행 (사용자가 실제로 값을 변경한 경우)
+    // 예금주 조회로 인한 변경이면 리셋하지 않음
+    if (isFromQueryRef.current) {
+      isFromQueryRef.current = false;
+      return;
+    }
+    // 초기 로드가 아닐 때만 실행 (은행/계좌번호 변경으로 인한 초기화 등)
     if (!isInitialMount.current) {
       // 예금주 입력값이 변경되면 조회된 예금주 정보 초기화
       setQueriedAccountHolder(null);
@@ -459,17 +475,17 @@ export default function AccountInfoInput({
       } else {
         // 일치하지 않으면 에러 처리 (실제 API에서는 계좌 정보가 없거나 에러 반환)
         setAccountQueryError(
-          "입력하신 정보와 예금주 정보가 일치하지 않습니다."
+          "입력하신 정보와 예금주 정보가 일치하지 않습니다.",
         );
         setIsLoading(false);
         return;
       }
 
-      // 조회 시점의 입력된 예금주 값 저장 (조회할 때의 입력값 기준으로 인증 완료 여부 판단)
-      setAccountHolderAtQueryTime(accountHolder.trim());
-
-      // 조회된 예금주 저장
+      // 조회된 예금주 저장 및 입력 필드에 자동 입력
+      isFromQueryRef.current = true;
       setQueriedAccountHolder(mockQueriedAccountHolder);
+      onAccountHolderChange(mockQueriedAccountHolder);
+      setAccountHolderAtQueryTime(mockQueriedAccountHolder);
 
       // 조회 성공 시 에러 메시지 초기화
       setAccountQueryError(null);
@@ -643,14 +659,14 @@ export default function AccountInfoInput({
                 type="text"
                 id="accountHolder"
                 name="accountHolder"
-                className={`${inputStyles.input_field} ${
+                className={`${inputStyles.input_field} ${verificationStyles.account_holder_input} ${
                   isAccountHolderVerified
                     ? verificationStyles.account_holder_input_verified
                     : ""
                 }`}
                 value={accountHolder}
-                onChange={(e) => onAccountHolderChange(e.target.value)}
-                placeholder="회원 이름과 동일한 예금주 입력"
+                readOnly
+                placeholder=""
               />
               {isAccountHolderVerified && (
                 <div className={verificationStyles.account_holder_check_icon}>
@@ -668,7 +684,9 @@ export default function AccountInfoInput({
             <button
               type="button"
               className={`${verificationStyles.postal_button} ${
-                isAccountHolderVerified ? verificationStyles.postal_button_verified : ""
+                isAccountHolderVerified
+                  ? verificationStyles.postal_button_verified
+                  : ""
               }`}
               onClick={handleAccountHolderQuery}
               disabled={
@@ -683,8 +701,8 @@ export default function AccountInfoInput({
               {isLoading
                 ? "조회 중..."
                 : isAccountHolderVerified
-                ? "인증 완료"
-                : "예금주 조회"}
+                  ? "인증 완료"
+                  : "예금주 조회"}
             </button>
           }
         />

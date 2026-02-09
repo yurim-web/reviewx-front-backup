@@ -22,7 +22,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import layoutStyles from "../../../../styles/user/mypage/edit_profile/layout.module.css";
 import inputStyles from "../../../../styles/user/mypage/edit_profile/inputs.module.css";
@@ -288,6 +288,18 @@ export default function EditProfilePage() {
     setIsVerificationRequested,
   } = usePhoneVerification();
 
+  /**
+   * 인증 성공 시 "인증 완료" 배지 표시 (이번 세션에서 인증한 경우에만 유지)
+   * - 이번 방문에서 인증 완료 시: "인증 완료" 상태 유지
+   * - 다음 방문 시(저장된 번호 로드): "인증번호 받기" 버튼 표시
+   */
+  useEffect(() => {
+    if (isPhoneVerified && expectingVerificationRef.current) {
+      expectingVerificationRef.current = false;
+      setShowVerifiedBadge(true);
+    }
+  }, [isPhoneVerified]);
+
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
   // 계좌 정보 인증 완료 상태 관리
@@ -306,6 +318,10 @@ export default function EditProfilePage() {
 
   // 토스트 메시지 상태 관리
   const [showToast, setShowToast] = useState(false);
+
+  // 인증 완료 배지 표시 여부 (인증 직후에만 true, 저장된 번호 로드 시에는 false)
+  const [showVerifiedBadge, setShowVerifiedBadge] = useState(false);
+  const expectingVerificationRef = useRef(false);
 
   /**
    * 필수 입력 필드 검증 함수
@@ -404,8 +420,10 @@ export default function EditProfilePage() {
    * 인증번호 확인 핸들러
    *
    * 기능: 인증번호 확인 및 인증 완료 처리
+   * - 인증 성공 시 "인증 완료" 배지를 잠시(2초) 표시 후 "인증번호 받기"로 전환
    */
   const handleVerify = () => {
+    expectingVerificationRef.current = true;
     handleVerifyCode();
   };
 
@@ -743,6 +761,7 @@ export default function EditProfilePage() {
             onVerificationCodeChange={handleVerificationCodeChange}
             useMyPageStyle={true}
             showVerificationCode={true}
+            showVerifiedBadge={showVerifiedBadge}
           />
 
           {/* 주소 */}
@@ -839,6 +858,7 @@ export default function EditProfilePage() {
         buttons={["취소", "탈퇴"]}
         on_confirm={handleWithdrawConfirm}
         type="center"
+        button_variant="red"
       />
 
       {/* 회원 탈퇴 완료 모달 (두 번째 모달) */}
