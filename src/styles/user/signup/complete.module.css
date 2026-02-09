@@ -49,10 +49,19 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   position: relative;
   box-sizing: border-box;
   padding: 0 40px 180px;
+}
+
+/* 글 부분 (로고 + 메시지) - 화면 상하 중앙 배치 */
+.content_section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   gap: 24px;
 }
 
@@ -205,8 +214,7 @@
   /* 메인 영역 */
   .complete_main {
     min-height: calc(100vh - 64px);
-    padding: 20px 20px 200px;
-    gap: 24px;
+    padding: 20px 20px 150px; /* 버튼 영역 공간 확보 */
   }
 
   /* 로고 텍스트 */
@@ -267,9 +275,9 @@
     letter-spacing: -0.32px;
   }
 
-  /* 버튼 섹션 */
+  /* 버튼 섹션 - 모바일에서 하단 24px */
   .button_section {
-    bottom: 40px;
+    bottom: 24px;
     flex-direction: column;
     gap: 12px;
     padding: 0 20px;

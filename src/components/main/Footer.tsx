@@ -43,14 +43,18 @@ export default function Footer() {
         <div className={styles.top_section}>
           {/* 로고와 링크 섹션을 묶은 그룹 */}
           <div className={styles.left_group}>
-            {/* 로고 */}
+            {/* 로고 + 회사명 (모바일에서 회사명 표시) */}
             <div className={styles.logo_container}>
               <img
                 src="/images/footer/footer_logo.svg"
                 alt="Mark-X"
                 className={styles.logo}
               />
+              <span className={styles.company_name}>주식회사 마크엑스</span>
             </div>
+
+            {/* 모바일 전용 구분선 (로고/회사명과 링크 사이) */}
+            <div className={styles.mobile_divider} aria-hidden="true" />
 
             {/* 링크 섹션 */}
             <div className={styles.links_section}>
@@ -89,30 +93,35 @@ export default function Footer() {
             {/* 회사 상세 정보 */}
             <div className={styles.company_info}>
               <div className={styles.info_row}>
-                <span className={styles.info_value}>주식회사 마크엑스</span>
-                <span className={styles.info_separator}>|</span>
-                <span className={styles.info_label}>대표자</span>
-                <span className={styles.info_value}>유기수</span>
-                <span className={styles.info_separator}>|</span>
-                <span className={styles.info_label}>사업자등록번호</span>
-                <span className={styles.info_value}>246-87-04020</span>
-                <span className={styles.info_separator}>|</span>
-                <span className={styles.info_label}>통신판매업신고번호</span>
-                <span className={styles.info_value}>
-                  제2025-인천남동-00000호
+                <span className={styles.info_group}>
+                  <span className={styles.info_value}>주식회사 마크엑스</span>
+                  <span className={styles.info_separator}>|</span>
+                  <span className={styles.info_label}>대표자</span>
+                  <span className={styles.info_value}>유기수</span>
+                </span>
+                <span className={styles.info_group}>
+                  <span className={styles.info_label}>사업자등록번호</span>
+                  <span className={styles.info_value}>246-87-04020</span>
+                </span>
+                <span className={styles.info_group}>
+                  <span className={styles.info_label}>통신판매업신고번호</span>
+                  <span className={styles.info_value}>제2025-인천남동-00000호</span>
                 </span>
               </div>
               <div className={styles.info_row}>
-                <span className={styles.info_label}>주소</span>
-                <span className={styles.info_value}>
-                  인천 남동구 장자로 14, 2층 201호 (장수동)
+                <span className={styles.info_group}>
+                  <span className={styles.info_label}>주소</span>
+                  <span className={styles.info_value}>
+                    인천 남동구 장자로 14, 2층 201호 (장수동)
+                  </span>
                 </span>
-                <span className={styles.info_separator}>|</span>
-                <span className={styles.info_label}>메일</span>
-                <span className={styles.info_value}>contact@markx.dev</span>
-                <span className={styles.info_separator}>|</span>
-                <span className={styles.info_label}>전화</span>
-                <span className={styles.info_value}>1500-0000</span>
+                <span className={styles.info_group}>
+                  <span className={styles.info_label}>메일</span>
+                  <span className={styles.info_value}>contact@markx.dev</span>
+                  <span className={styles.info_separator}>|</span>
+                  <span className={styles.info_label}>전화</span>
+                  <span className={styles.info_value}>1500-0000</span>
+                </span>
               </div>
             </div>
           </>

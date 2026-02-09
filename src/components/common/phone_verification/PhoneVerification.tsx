@@ -86,10 +86,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { formatPhoneNumber } from "@/utils/formatting/phone";
 import { formatTimer } from "@/utils/formatting/date";
-import {
-  validatePhone,
-  validateVerificationCode,
-} from "@/utils/validation";
+import { validatePhone, validateVerificationCode } from "@/utils/validation";
 import signupStyles from "@/styles/common/signup/signup.module.css";
 import inputsStyles from "@/styles/user/mypage/edit_profile/inputs.module.css";
 import verificationStyles from "@/styles/user/mypage/edit_profile/verification.module.css";
@@ -195,7 +192,7 @@ export default function PhoneVerification({
 
   /** 인증번호 입력 핸들러 - 숫자만 입력, 최대 6자리 */
   const handleVerificationCodeInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const value = e.target.value.replace(/[^0-9]/g, "").slice(0, 6);
     // 인증번호 변경 시 내부 에러 초기화
@@ -253,7 +250,7 @@ export default function PhoneVerification({
    */
   const mapErrorMessage = (
     errorValue: string | undefined,
-    errorType: "phone" | "verificationCode"
+    errorType: "phone" | "verificationCode",
   ): string | undefined => {
     if (!errorValue) return undefined;
 
@@ -287,7 +284,7 @@ export default function PhoneVerification({
   /** 인증번호 에러 텍스트 - 내부 에러 우선, 외부 에러는 하위 호환성 유지 */
   const verificationCodeErrorText = mapErrorMessage(
     internalVerificationCodeError || verificationCodeError,
-    "verificationCode"
+    "verificationCode",
   );
 
   /** 휴대폰 번호 input 테두리 에러 스타일 적용 여부
@@ -376,7 +373,7 @@ export default function PhoneVerification({
                   <input
                     type="text"
                     className={`${styles.input_field} ${styles.verification_code_input}`}
-                    placeholder="인증번호 6자리 입력"
+                    placeholder="인증번호 입력"
                     value={verificationCode}
                     onChange={handleVerificationCodeInputChange}
                     maxLength={6}
@@ -402,7 +399,7 @@ export default function PhoneVerification({
                 <ErrorText message="인증번호 요청 횟수를 모두 사용했습니다. 24시간 후 다시 시도해 주세요." />
               )}
               <div className={styles.verification_help_text}>
-                인증번호를 받지 못하셨나요?
+                인증번호를 받지 못 하셨나요?
               </div>
             </div>
           )}
@@ -491,7 +488,7 @@ export default function PhoneVerification({
               <input
                 type="text"
                 className={`${styles.input_field} ${styles.verification_code_input}`}
-                placeholder="인증번호 6자리 입력"
+                placeholder="인증번호 입력"
                 value={verificationCode}
                 onChange={handleVerificationCodeInputChange}
                 maxLength={6}
@@ -520,7 +517,7 @@ export default function PhoneVerification({
             </div>
           )}
           <div className={styles.verification_help_text}>
-            인증번호를 받지 못하셨나요?
+            인증번호를 받지 못 하셨나요?
           </div>
         </div>
       )}

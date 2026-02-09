@@ -152,29 +152,23 @@
 
 /* 인증번호 받기 버튼 */
 .verification_button {
-  width: 125px;
-  height: 56px;
+  padding: 20px;
+  min-width: 125px; /* 인증번호 받기/재전송/인증 버튼 너비 통일 */
   background-color: #ffffff;
   border: 1px solid #444444;
   border-radius: 8px;
   cursor: pointer;
   flex-shrink: 0;
   box-sizing: border-box;
-  padding: 0;
-
-
-
-color: #444;
-font-size: 16px;
-font-weight: 600;
-line-height: 16px; 
-letter-spacing: -0.32px;
+  color: #444;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
 }
-
 
 /* 인증 완료 버튼 */
 .verification_button_completed {
-  width: 125px;
   background-color: #FF56941A;
   border: none;
   color: #FF5694;
@@ -236,42 +230,35 @@ letter-spacing: -0.32px;
 
 /* 인증 버튼 */
 .verify_button {
-  width: 125px;
-  height: 56px;
+  padding: 20px;
+  min-width: 125px; /* 인증번호 받기/재전송/인증 버튼 너비 통일 */
   background-color: #ffffff;
   border: 1px solid #444444;
   border-radius: 8px;
   cursor: pointer;
   box-sizing: border-box;
-  padding: 0;
   flex-shrink: 0;
-
-
-color: #444;
-font-size: 16px;
-font-weight: 600;
-line-height: 16px; 
-letter-spacing: -0.32px;
+  color: #444;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
 }
-
-
 
 /* 재전송 버튼 */
 .resend_button {
-  width: 125px;
-  height: 56px;
+  padding: 20px;
+  min-width: 125px; /* 인증번호 받기/재전송/인증 버튼 너비 통일 */
   background-color: #ffffff;
   border: 1px solid #848484;
   cursor: pointer;
   border-radius: 8px;
-  overflow: hidden;
-
-
-color: #848484;
-font-size: 16px;
-font-weight: 600;
-line-height: 16px;
-letter-spacing: -0.32px;
+  flex-shrink: 0;
+  color: #848484;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
 }
 
 /* 인증번호 도움말 텍스트 */
@@ -489,12 +476,6 @@ letter-spacing: -0.32px;
     gap: 12px;
   }
 
-  /* 인증번호 받기 버튼 */
-  .verification_button {
-    width: 100px;
-   
-  }
-
   /* 인증번호 입력 섹션 */
   .verification_code_section {
     gap: 12px;
@@ -503,13 +484,6 @@ letter-spacing: -0.32px;
   /* 인증번호 입력 래퍼 */
   .verification_code_wrapper {
     gap: 12px;
-  }
-
-  /* 재전송 버튼, 인증 버튼 */
-  .resend_button,
-  .verify_button {
-    width: 100px;
-
   }
 
   /* 약관 동의 섹션 */

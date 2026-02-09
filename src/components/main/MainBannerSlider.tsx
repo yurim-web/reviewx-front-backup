@@ -232,7 +232,6 @@ export default function MainBannerSlider({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       onTouchCancel={handleTouchEnd}
-      style={{ touchAction: "pan-y" }}
     >
       {/* 슬라이드 래퍼 */}
       <div

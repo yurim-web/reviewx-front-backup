@@ -41,7 +41,7 @@
   color: #444;
   font-size: 20px;
   font-weight: 500;
-  line-height: 20px; 
+  line-height: 20px;
   letter-spacing: -0.4px;
 }
 
@@ -116,11 +116,11 @@
 }
 
 .empty_text {
-  color: #ABABAB;
+  color: #ababab;
   text-align: center;
   font-size: 16px;
   font-weight: 500;
-  line-height: 16px; 
+  line-height: 16px;
   letter-spacing: -0.32px;
 }
 
@@ -155,13 +155,13 @@
   .main_menu_container {
     top: 64px;
     padding: 20px 20px;
- justify-content: space-between;
+    justify-content: space-between;
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    gap: 18px;
+    gap: 0px;
   }
 
   /* 스크롤바 숨기기 */
@@ -172,7 +172,7 @@
   /* 메인 메뉴 아이템 - 모바일 폰트 크기 조정 */
   .main_menu_item {
     font-size: 18px;
-    line-height: 18px; 
+    line-height: 18px;
     letter-spacing: -0.36px;
   }
 
@@ -195,14 +195,14 @@
 
   /* 캠페인 컨테이너 - 모바일 패딩 조정 */
   .campaign_container {
-    padding-top: 40px;
+    padding-top: 56px;
     gap: 20px;
   }
 
   /* 캠페인 그리드 - 모바일 2열로 변경 */
   .campaign_grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 28px 12px;
+    gap: 32px 12px;
   }
 
   /* 검색 결과 없음 상태 - 모바일 패딩 조정 */
@@ -215,6 +215,3 @@
     line-height: 20px;
   }
 }
-
-
-
