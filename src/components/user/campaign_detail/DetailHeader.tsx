@@ -90,10 +90,6 @@ export default function CampaignHeader({
   // isUrgent prop이 있으면 우선 사용, 없으면 dayCount에서 "긴급" 포함 여부 확인 (하위 호환성)
   const isUrgent = isUrgentProp || dayCount?.includes("긴급") || false;
 
-  // dayCount가 "마감"인지 확인하는 함수
-  // 마감된 캠페인은 "마감" 태그를 표시
-  const isClosed = dayCount === "마감" || false;
-
   // 카테고리에 따라 아이콘 경로 결정
   // 구매평과 미션형은 전용 아이콘으로 고정, 나머지는 채널에 따라 동적 아이콘 사용
   let categoryIcon: string;
@@ -146,11 +142,6 @@ export default function CampaignHeader({
         */}
         {isUrgent && <div className={styles.urgent_tag}>긴급</div>}
 
-        {/* 
-          마감 태그 - dayCount가 "마감"일 때만 표시
-          마감된 캠페인을 명확하게 표시하기 위한 태그
-        */}
-        {isClosed && <div className={styles.closed_tag}>마감</div>}
       </div>
 
       {/* 오른쪽: 포인트 정보 */}

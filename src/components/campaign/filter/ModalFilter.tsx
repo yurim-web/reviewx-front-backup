@@ -28,7 +28,8 @@
 
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
+import { useHasScroll } from "../../../hooks/common/useHasScroll";
 import modalStyles from "../../../styles/filter/filter_bar/modal.module.css";
 import optionsStyles from "../../../styles/filter/filter_bar/modal_options.module.css";
 import footerStyles from "../../../styles/filter/filter_bar/modal_footer.module.css";
@@ -67,6 +68,9 @@ export default function ModalFilter({
   layout = "grid",
   noScroll = false, // 기본값: false (스크롤 표시)
 }: ModalFilterProps) {
+  const optionsRef = useRef<HTMLDivElement>(null);
+  const hasScroll = useHasScroll(optionsRef, isOpen, [options]);
+
   if (!isOpen) return null;
 
   const isSelected = (option: string | { value: string; label: string }) => {
@@ -107,13 +111,16 @@ export default function ModalFilter({
         </div>
 
         {/* 모달 바디 */}
-        <div className={modalStyles.modal_body}>
+        <div
+          className={`${modalStyles.modal_body} ${!hasScroll ? modalStyles.modal_body_no_margin : ""}`}
+        >
           {/* 섹션 제목 */}
           {sectionTitle && (
             <h4 className={regionStyles.region_section_title}>{sectionTitle}</h4>
           )}
 
           <div
+            ref={optionsRef}
             className={`${
               layout === "vertical"
                 ? optionsStyles.options_vertical

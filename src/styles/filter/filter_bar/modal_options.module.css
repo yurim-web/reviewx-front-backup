@@ -142,56 +142,90 @@
 
 /* 스크롤바 스타일 (Webkit 브라우저) - 카테고리/채널 필터용 */
 .options_grid:not(.sub_regions_container .options_grid)::-webkit-scrollbar,
-.options_vertical:not(.sub_regions_container .options_vertical)::-webkit-scrollbar {
+.options_vertical:not(
+    .sub_regions_container .options_vertical
+  )::-webkit-scrollbar {
   width: 4px; /* 스크롤바 너비 */
 }
 
 /* 위아래 화살표 버튼 완전히 제거 */
-.options_grid:not(.sub_regions_container .options_grid)::-webkit-scrollbar-button,
-.options_vertical:not(.sub_regions_container .options_vertical)::-webkit-scrollbar-button {
+.options_grid:not(
+    .sub_regions_container .options_grid
+  )::-webkit-scrollbar-button,
+.options_vertical:not(
+    .sub_regions_container .options_vertical
+  )::-webkit-scrollbar-button {
   display: none !important;
   height: 0 !important;
   width: 0 !important;
 }
 
 /* 시작/끝 화살표 버튼 제거 */
-.options_grid:not(.sub_regions_container .options_grid)::-webkit-scrollbar-button:start:decrement,
-.options_grid:not(.sub_regions_container .options_grid)::-webkit-scrollbar-button:end:increment,
-.options_vertical:not(.sub_regions_container .options_vertical)::-webkit-scrollbar-button:start:decrement,
-.options_vertical:not(.sub_regions_container .options_vertical)::-webkit-scrollbar-button:end:increment {
+.options_grid:not(
+    .sub_regions_container .options_grid
+  )::-webkit-scrollbar-button:start:decrement,
+.options_grid:not(
+    .sub_regions_container .options_grid
+  )::-webkit-scrollbar-button:end:increment,
+.options_vertical:not(
+    .sub_regions_container .options_vertical
+  )::-webkit-scrollbar-button:start:decrement,
+.options_vertical:not(
+    .sub_regions_container .options_vertical
+  )::-webkit-scrollbar-button:end:increment {
   display: none !important;
   height: 0 !important;
   width: 0 !important;
 }
 
 /* 수직 스크롤바 버튼 제거 */
-.options_grid:not(.sub_regions_container .options_grid)::-webkit-scrollbar-button:vertical:start:decrement,
-.options_grid:not(.sub_regions_container .options_grid)::-webkit-scrollbar-button:vertical:end:increment,
-.options_vertical:not(.sub_regions_container .options_vertical)::-webkit-scrollbar-button:vertical:start:decrement,
-.options_vertical:not(.sub_regions_container .options_vertical)::-webkit-scrollbar-button:vertical:end:increment {
+.options_grid:not(
+    .sub_regions_container .options_grid
+  )::-webkit-scrollbar-button:vertical:start:decrement,
+.options_grid:not(
+    .sub_regions_container .options_grid
+  )::-webkit-scrollbar-button:vertical:end:increment,
+.options_vertical:not(
+    .sub_regions_container .options_vertical
+  )::-webkit-scrollbar-button:vertical:start:decrement,
+.options_vertical:not(
+    .sub_regions_container .options_vertical
+  )::-webkit-scrollbar-button:vertical:end:increment {
   display: none !important;
   height: 0 !important;
   width: 0 !important;
 }
 
 /* 스크롤바 트랙 (배경) */
-.options_grid:not(.sub_regions_container .options_grid)::-webkit-scrollbar-track,
-.options_vertical:not(.sub_regions_container .options_vertical)::-webkit-scrollbar-track {
-  background: transparent; 
-  margin-bottom: 5px; 
+.options_grid:not(
+    .sub_regions_container .options_grid
+  )::-webkit-scrollbar-track,
+.options_vertical:not(
+    .sub_regions_container .options_vertical
+  )::-webkit-scrollbar-track {
+  background: transparent;
+  margin-bottom: 5px;
   margin-top: 5px;
 }
 
 /* 스크롤바 썸 (드래그 가능한 부분) */
-.options_grid:not(.sub_regions_container .options_grid)::-webkit-scrollbar-thumb,
-.options_vertical:not(.sub_regions_container .options_vertical)::-webkit-scrollbar-thumb {
+.options_grid:not(
+    .sub_regions_container .options_grid
+  )::-webkit-scrollbar-thumb,
+.options_vertical:not(
+    .sub_regions_container .options_vertical
+  )::-webkit-scrollbar-thumb {
   background: #d9d9d9; /* 스크롤바 색상 (연한 회색) */
   border-radius: 2px; /* 스크롤바 모서리 둥글게 */
 }
 
 /* 스크롤바 썸 호버 효과 */
-.options_grid:not(.sub_regions_container .options_grid)::-webkit-scrollbar-thumb:hover,
-.options_vertical:not(.sub_regions_container .options_vertical)::-webkit-scrollbar-thumb:hover {
+.options_grid:not(
+    .sub_regions_container .options_grid
+  )::-webkit-scrollbar-thumb:hover,
+.options_vertical:not(
+    .sub_regions_container .options_vertical
+  )::-webkit-scrollbar-thumb:hover {
   background: #b0b0b0; /* 호버 시 약간 더 진한 회색 */
   cursor: pointer;
 }
@@ -215,7 +249,7 @@
     overflow-y: auto;
     flex: 1;
     min-height: 0;
-    padding-bottom: 20px;
+    padding-bottom: 24px;
   }
 
   .options_grid {
@@ -249,8 +283,6 @@
     height: 20px;
     border-radius: 4px;
   }
-
-
 
   /* 라디오 버튼 - 모바일 */
   .option_radio {

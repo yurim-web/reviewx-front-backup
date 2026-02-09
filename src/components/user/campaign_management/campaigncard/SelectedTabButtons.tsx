@@ -43,7 +43,10 @@ function DeadlineExtensionButton({
       className={`${buttonStyles.action_button} ${buttonStyles.secondary_button}`}
       onClick={onExtensionRequest}
     >
-      등록 기한 연장 요청
+      <span className={buttonStyles.desktop_only_text}>
+        등록 기한 연장 요청
+      </span>
+      <span className={buttonStyles.mobile_only_text}>등록 기한 연장</span>
     </button>
   );
 }

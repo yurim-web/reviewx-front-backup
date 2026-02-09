@@ -751,14 +751,8 @@
     background: white;
   }
 
-  /* 동의 컨테이너 */
-  .agreement_container {
-    gap: 12px;
-  }
-
   /* 동의 텍스트 */
   .agreement_text {
-    font-size: 14px;
     line-height: 22px;
     letter-spacing: -0.28px;
   }
@@ -772,12 +766,12 @@
 
   /* 버튼 컨테이너 */
   .button_container {
-    padding: 40px 20px 40px 20px;
+    padding: 40px 20px 24px 20px;
   }
 
   /* 신청 버튼 */
   .connect_button {
-    height: 48px;
+    height: 52px;
     font-size: 16px;
     line-height: 16px;
     letter-spacing: -0.32px;

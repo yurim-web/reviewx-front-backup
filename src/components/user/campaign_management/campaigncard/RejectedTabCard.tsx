@@ -206,7 +206,12 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
             className={`${buttonStyles.action_button} ${buttonStyles.danger_button}`}
             onClick={handleRejectionReasonClick}
           >
-            콘텐츠 반려 사유 확인
+            <span className={buttonStyles.desktop_only_text}>
+              콘텐츠 반려 사유 확인
+            </span>
+            <span className={buttonStyles.mobile_only_text}>
+              반려 사유 확인
+            </span>
           </button>
         </>
       );
