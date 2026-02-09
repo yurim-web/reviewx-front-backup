@@ -184,7 +184,7 @@ export default function ApplicationModal({
       const shouldRestore = sessionStorage.getItem("shouldRestoreFormData");
 
       if (shouldRestore === "true") {
-        // 저장된 데이터 복원
+        // 메모·동의만 sessionStorage에서 복원 (채널/주소는 아래에서 user_accounts 최신값으로 로드)
         const stored = getStoredFormData();
         if (stored) {
           setMemo(stored.memo || "");
@@ -192,74 +192,51 @@ export default function ApplicationModal({
           setIsUrgentAgreed(stored.isUrgentAgreed || false);
         }
 
-        // sessionStorage에서 주소 정보 불러오기
+        // 채널 연결/주소 페이지에서 돌아온 경우를 위해 항상 localStorage user_accounts에서 최신 이름·주소·채널 로드
         if (typeof window !== "undefined") {
-          const storedAddress = sessionStorage.getItem("userAddress");
-          if (storedAddress) {
-            try {
-              const addressData = JSON.parse(storedAddress);
-              // 전체 주소 문자열 사용 (기본 주소 + 상세 주소 | 우편번호 + 우편번호값)
-              // 예: "인천 남동구 장자로 6번길 2, 1층 | 우편번호 12345"
-              // fullAddress가 있으면 사용, 없으면 기존 형식으로 생성 (하위 호환성)
-              if (addressData.fullAddress) {
-                setUserAddress(addressData.fullAddress);
-              } else if (
-                addressData.postalCode &&
-                addressData.address &&
-                addressData.detailAddress
-              ) {
-                // 기존 형식의 데이터가 있는 경우 새 형식으로 변환
-                const addressPart =
-                  `${addressData.address} ${addressData.detailAddress}`.trim();
-                const postalCodePart = `우편번호 ${addressData.postalCode}`;
-                setUserAddress(`${addressPart} | ${postalCodePart}`);
-              } else {
-                setUserAddress("");
+          try {
+            const storedAccounts = localStorage.getItem("user_accounts");
+            if (storedAccounts) {
+              const accounts = JSON.parse(storedAccounts);
+              const userAccount = accounts.find(
+                (a: any) => a.id === user.id || a.email === user.email,
+              );
+              if (userAccount) {
+                setUserName(userAccount.name || user.name || "");
+                if (userAccount.address && userAccount.postal_code) {
+                  const addressPart = userAccount.detail_address
+                    ? `${userAccount.address} ${userAccount.detail_address}`.trim()
+                    : userAccount.address;
+                  const postalCodePart = `우편번호 ${userAccount.postal_code}`;
+                  setUserAddress(`${addressPart} | ${postalCodePart}`);
+                } else {
+                  setUserAddress("");
+                }
+                if (showChannel && userAccount.channel_details && campaignChannelName) {
+                  const normalizeChannelName = (name: string) =>
+                    name.toLowerCase().replace(/\s+/g, "");
+                  const normalizedCampaignChannel = normalizeChannelName(campaignChannelName);
+                  let targetChannelName = campaignChannelName;
+                  if (normalizedCampaignChannel === "릴스") targetChannelName = "인스타그램";
+                  else if (normalizedCampaignChannel === "쇼츠" || normalizedCampaignChannel === "숏츠") targetChannelName = "유튜브";
+                  const normalizedTargetChannel = normalizeChannelName(targetChannelName);
+                  const matchedChannel = userAccount.channel_details.find((ch: any) => {
+                    const normalizedUserChannel = normalizeChannelName(ch.name);
+                    return normalizedUserChannel.includes(normalizedTargetChannel) || normalizedTargetChannel.includes(normalizedUserChannel);
+                  });
+                  if (matchedChannel?.status === "connected" && matchedChannel?.url) {
+                    setCurrentChannelUrl(matchedChannel.url);
+                  } else {
+                    setCurrentChannelUrl("");
+                  }
+                }
               }
-            } catch {
-              // 파싱 실패 시 빈 문자열
-              setUserAddress("");
             }
+          } catch (e) {
+            console.error("복원 시 user_accounts 로드 실패:", e);
           }
         }
 
-        // sessionStorage에서 채널 정보 불러오기
-        if (typeof window !== "undefined") {
-          const storedChannelInfo = sessionStorage.getItem("userChannelInfo");
-          if (storedChannelInfo) {
-            try {
-              const channelData = JSON.parse(storedChannelInfo);
-
-              // 릴스 → 인스타그램, 쇼츠 → 유튜브 매핑
-              const normalizeChannelName = (name: string) =>
-                name.toLowerCase().replace(/\s+/g, '');
-
-              const normalizedCampaignChannel = normalizeChannelName(channelName);
-              const normalizedStoredChannel = normalizeChannelName(channelData.channelName || '');
-
-              let isMatch = normalizedStoredChannel === normalizedCampaignChannel;
-
-              // 릴스 캠페인인 경우 인스타그램 계정 사용
-              if (normalizedCampaignChannel === '릴스' && normalizedStoredChannel === '인스타그램') {
-                isMatch = true;
-              }
-              // 쇼츠 캠페인인 경우 유튜브 계정 사용
-              if ((normalizedCampaignChannel === '쇼츠' || normalizedCampaignChannel === '숏츠') &&
-                  normalizedStoredChannel === '유튜브') {
-                isMatch = true;
-              }
-
-              if (isMatch) {
-                setCurrentChannelUrl(channelData.channelUrl || "");
-              }
-            } catch {
-              // 파싱 실패 시 props로 받은 값 유지
-              setCurrentChannelUrl(userChannelUrl || "");
-            }
-          }
-        }
-
-        // 복원 플래그 제거
         sessionStorage.removeItem("shouldRestoreFormData");
       } else {
         // 다른 경로로 모달을 열었을 때는 저장된 데이터 삭제하고 로그인된 사용자 정보 불러오기
@@ -364,7 +341,7 @@ export default function ApplicationModal({
       setUserAddress("");
       setCurrentChannelUrl(userChannelUrl || "");
     }
-  }, [isOpen, user, channelName, userChannelUrl, campaignChannelName]);
+  }, [isOpen, user, channelName, userChannelUrl, campaignChannelName, showChannel]);
 
   if (!isOpen) return null;
 

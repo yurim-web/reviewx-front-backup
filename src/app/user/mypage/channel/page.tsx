@@ -59,7 +59,7 @@ export default function ChannelPage() {
   const [activeTopTab, setActiveTopTab] = useState<MainTab>("account");
 
   const [activeSubTab, setActiveSubTab] = useState<"profile" | "channel">(
-    "channel"
+    "channel",
   );
 
   // SubHeader 표시 여부 (모달에서 들어온 경우에만 표시)
@@ -95,37 +95,39 @@ export default function ChannelPage() {
 
   // user_accounts에서 채널 정보 로드
   useEffect(() => {
-    if (typeof window !== 'undefined' && user) {
+    if (typeof window !== "undefined" && user) {
       try {
-        const storedAccounts = localStorage.getItem('user_accounts');
-        console.log('📦 [채널 페이지] user_accounts:', storedAccounts);
+        const storedAccounts = localStorage.getItem("user_accounts");
+        console.log("📦 [채널 페이지] user_accounts:", storedAccounts);
 
         if (storedAccounts) {
           const accounts = JSON.parse(storedAccounts);
-          const userAccount = accounts.find((a: any) =>
-            a.id === user.id || a.email === user.email
+          const userAccount = accounts.find(
+            (a: any) => a.id === user.id || a.email === user.email,
           );
-          console.log('✅ [채널 페이지] userAccount:', userAccount);
+          console.log("✅ [채널 페이지] userAccount:", userAccount);
 
           if (userAccount?.channel_details) {
             // channel_details에서 채널 정보 복원
-            const loadedChannels = channels.map(channel => {
-              const detail = userAccount.channel_details.find((d: any) => d.name === channel.name);
+            const loadedChannels = channels.map((channel) => {
+              const detail = userAccount.channel_details.find(
+                (d: any) => d.name === channel.name,
+              );
               if (detail) {
                 return {
                   name: channel.name,
                   url: detail.url || "",
-                  status: detail.status || "disconnected" as const,
+                  status: detail.status || ("disconnected" as const),
                 };
               }
               return channel;
             });
             setChannels(loadedChannels);
-            console.log('🔄 [채널 페이지] 채널 정보 로드됨:', loadedChannels);
+            console.log("🔄 [채널 페이지] 채널 정보 로드됨:", loadedChannels);
           }
         }
       } catch (error) {
-        console.error('❌ [채널 페이지] 채널 정보 로드 실패:', error);
+        console.error("❌ [채널 페이지] 채널 정보 로드 실패:", error);
       }
     }
   }, [user]);
@@ -157,22 +159,24 @@ export default function ChannelPage() {
   const handleChannelUpdate = (
     channelName: string,
 
-    channelInfo: { url: string }
+    channelInfo: { url: string },
   ) => {
     const updatedChannels = channels.map((channel) =>
       channel.name === channelName
         ? { ...channel, url: channelInfo.url, status: "connected" as const }
-        : channel
+        : channel,
     );
     setChannels(updatedChannels);
 
     // user_accounts에 저장
-    if (typeof window !== 'undefined' && user) {
+    if (typeof window !== "undefined" && user) {
       try {
-        const storedAccounts = localStorage.getItem('user_accounts');
+        const storedAccounts = localStorage.getItem("user_accounts");
         const accounts = storedAccounts ? JSON.parse(storedAccounts) : [];
 
-        const accountIndex = accounts.findIndex((a: any) => a.id === user.id || a.email === user.email);
+        const accountIndex = accounts.findIndex(
+          (a: any) => a.id === user.id || a.email === user.email,
+        );
 
         if (accountIndex >= 0) {
           // channel_details 업데이트
@@ -180,11 +184,11 @@ export default function ChannelPage() {
             ...accounts[accountIndex],
             channel_details: updatedChannels,
           };
-          localStorage.setItem('user_accounts', JSON.stringify(accounts));
-          console.log('✅ [채널 페이지] 채널 정보 저장됨:', updatedChannels);
+          localStorage.setItem("user_accounts", JSON.stringify(accounts));
+          console.log("✅ [채널 페이지] 채널 정보 저장됨:", updatedChannels);
         }
       } catch (error) {
-        console.error('❌ [채널 페이지] 채널 정보 저장 실패:', error);
+        console.error("❌ [채널 페이지] 채널 정보 저장 실패:", error);
       }
     }
   };
@@ -192,7 +196,6 @@ export default function ChannelPage() {
   return (
     <div
       className={layoutStyles.mypage_container}
-      style={showSubHeader ? { paddingTop: "80px" } : {}}
     >
       {/* SubHeader - 모달에서 들어온 경우에만 표시 */}
       {showSubHeader && <SubHeader />}

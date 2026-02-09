@@ -174,21 +174,35 @@ function convertToCampaignApplication(
     category = (actualCampaign as any).channel || "";
   }
 
-  // remainingDays 계산 (기본값)
+  // remainingDays·isUrgent 계산 (탭별 규칙 통일 — 선정탭/전체탭 동일 표시)
   let remainingDays = 0;
+  let isUrgentResolved = actualCampaign.isUrgent || false;
   if (actualCampaign.detailedSchedule) {
-    if (
-      status === "신청" &&
-      "announcement" in actualCampaign.detailedSchedule
-    ) {
-      const announcementDate = new Date(
-        actualCampaign.detailedSchedule.announcement
-      );
+    const schedule = actualCampaign.detailedSchedule as Record<string, string | undefined>;
+    if (status === "신청" && schedule.announcement) {
+      const announcementDate = new Date(schedule.announcement);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       announcementDate.setHours(0, 0, 0, 0);
       const diffTime = announcementDate.getTime() - today.getTime();
       remainingDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    } else if (status === "선정") {
+      const registrationPeriod =
+        type === "방문형"
+          ? (schedule.purchasePeriod ?? null)
+          : (schedule.registrationPeriod ?? null);
+      if (registrationPeriod) {
+        const endDateStr = registrationPeriod.split("~")[1]?.trim();
+        if (endDateStr) {
+          const registrationEndDate = new Date(endDateStr);
+          registrationEndDate.setHours(0, 0, 0, 0);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const diffTime = registrationEndDate.getTime() - today.getTime();
+          remainingDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          isUrgentResolved = remainingDays <= 3;
+        }
+      }
     }
   }
 
@@ -215,7 +229,7 @@ function convertToCampaignApplication(
     remainingDays,
     statusMessage: defaultStatusMessage,
     type,
-    isUrgent: actualCampaign.isUrgent || false,
+    isUrgent: isUrgentResolved,
     subStatus,
     hasContent: hasContent ?? false,
     isPenalty: isPenalty ?? false,
@@ -397,6 +411,13 @@ export const getCampaignsByTab = (
       return filterCompletedCampaigns(완료_탭_캠페인_IDS, completedCampaignIds);
     case "취소/반려":
       return filterCancelledCampaigns(취소반려_탭_캠페인_IDS);
+    case "전체":
+      return [
+        ...filterAppliedCampaigns(신청_탭_캠페인_IDS),
+        ...filterSelectedCampaigns(선정_탭_캠페인_IDS, completedCampaignIds),
+        ...filterCompletedCampaigns(완료_탭_캠페인_IDS, completedCampaignIds),
+        ...filterCancelledCampaigns(취소반려_탭_캠페인_IDS),
+      ];
     case "패널티":
       // 패널티는 취소/반려 중에서 isPenalty가 true인 것들
       return filterCancelledCampaigns(취소반려_탭_캠페인_IDS).filter(
@@ -416,6 +437,7 @@ export const campaignManagementStats = {
   선정: getCampaignsByTab("선정").length,
   완료: getCampaignsByTab("완료").length,
   "취소/반려": getCampaignsByTab("취소/반려").length,
+  전체: getCampaignsByTab("전체").length,
   패널티: getCampaignsByTab("패널티").length,
 };
 
@@ -430,6 +452,7 @@ export const getClientCampaignStats = () => {
     선정: getCampaignsByTab("선정", completedCampaignIds).length,
     완료: getCampaignsByTab("완료", completedCampaignIds).length,
     "취소/반려": getCampaignsByTab("취소/반려", completedCampaignIds).length,
+    전체: getCampaignsByTab("전체", completedCampaignIds).length,
     패널티: getCampaignsByTab("패널티", completedCampaignIds).length,
   };
 };

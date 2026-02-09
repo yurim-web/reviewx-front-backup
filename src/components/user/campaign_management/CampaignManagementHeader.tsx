@@ -40,11 +40,11 @@ interface CampaignManagementHeaderProps {
   activeTab: MainTab;
   /** 메인 탭 변경 핸들러 */
   setActiveTab: (tab: MainTab) => void;
-  /** 현재 활성 통계 탭 (신청/선정/완료/취소반려/패널티) */
-  activeStatTab: "신청" | "선정" | "완료" | "취소/반려" | "패널티";
+  /** 현재 활성 통계 탭 (신청/선정/완료/취소반려/전체/패널티) */
+  activeStatTab: "신청" | "선정" | "완료" | "취소/반려" | "전체" | "패널티";
   /** 통계 탭 변경 핸들러 (선택적: 제공되지 않으면 StatisticsTab 내부에서 라우팅 처리) */
   setActiveStatTab?: (
-    tab: "신청" | "선정" | "완료" | "취소/반려" | "패널티"
+    tab: "신청" | "선정" | "완료" | "취소/반려" | "전체" | "패널티"
   ) => void;
   /** 통계 데이터 (선택적: 제공되지 않으면 기본 데이터 사용) */
   stats?: {
@@ -52,6 +52,7 @@ interface CampaignManagementHeaderProps {
     선정: number;
     완료: number;
     "취소/반려": number;
+    전체: number;
     패널티: number;
   };
 }

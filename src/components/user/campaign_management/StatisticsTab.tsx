@@ -49,7 +49,7 @@ export default function StatisticsTab({
    * - 제공되지 않으면 내부에서 라우팅 처리
    */
   const handleStatTabClick = (
-    tab: "신청" | "선정" | "완료" | "취소/반려" | "패널티"
+    tab: "신청" | "선정" | "완료" | "취소/반려" | "전체" | "패널티"
   ) => {
     // 부모 컴포넌트에서 핸들러를 제공한 경우 위임
     if (setActiveStatTab) {
@@ -71,6 +71,9 @@ export default function StatisticsTab({
       case "취소/반려":
         router.push("/user/campaign_management/cancelled");
         break;
+      case "전체":
+        router.push("/user/campaign_management/all");
+        break;
       case "패널티":
         router.push("/user/campaign_management/penalty");
         break;
@@ -90,6 +93,17 @@ export default function StatisticsTab({
           - 각 탭에 해당 상태의 캠페인 개수 표시
         */}
         <div className={styles.left_stat_tabs}>
+          {/* 전체 탭 - 선정+완료+취소/반려 합쳐진 목록 (맨 왼쪽) */}
+          <button
+            className={`${styles.stat_tab} ${
+              activeStatTab === "전체" ? styles.active : ""
+            }`}
+            onClick={() => handleStatTabClick("전체")}
+          >
+            <span>전체</span>
+            <span className={styles.stat_number}>{stats.전체}</span>
+          </button>
+
           {/* 신청 탭 - 신청한 캠페인 목록 */}
           <button
             className={`${styles.stat_tab} ${
