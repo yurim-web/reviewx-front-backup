@@ -14,7 +14,6 @@
 // 배송형 카테고리 옵션
 export const deliveryCategoryOptions = [
   // 왼쪽
-  "전체",
   "식품",
   "뷰티",
   "가전",
@@ -56,7 +55,6 @@ export const deliverySortOptions = [
 // 방문형 카테고리 옵션
 export const visitCategoryOptions = [
   // 왼쪽
-  "전체",
   "식품",
   "뷰티",
   "가전",
@@ -96,7 +94,6 @@ export const visitSortOptions = ["최신순", "인기순", "마감임박순", "�
 // 미션형 카테고리 옵션
 export const missionCategoryOptions = [
   // 왼쪽
-  "전체",
   "식품",
   "뷰티",
   "가전",
@@ -128,7 +125,6 @@ export const missionSortOptions = [
 // 구매평 카테고리 옵션
 export const reviewCategoryOptions = [
   // 왼쪽
-  "전체",
   "식품",
   "뷰티",
   "가전",
@@ -155,7 +151,6 @@ export const reviewSortOptions = ["최신순", "인기순", "마감임박순", "
 // 기자단 카테고리 옵션
 export const reporterCategoryOptions = [
   // 왼쪽
-  "전체",
   "식품",
   "뷰티",
   "가전",
