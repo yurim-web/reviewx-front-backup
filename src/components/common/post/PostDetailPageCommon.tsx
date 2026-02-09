@@ -18,6 +18,7 @@
 import { useRouter } from "next/navigation";
 import { type ReactNode } from "react";
 import styles from "@/styles/common/post/post_detail_page.module.css";
+import richtext_styles from "@/styles/common/html_richtext_content.module.css";
 
 /**
  * 게시글 상세 정보 타입
@@ -150,7 +151,7 @@ export default function PostDetailPageCommon({
           {/* dangerouslySetInnerHTML: React에서 HTML 문자열을 직접 렌더링할 때 사용합니다. */}
           {/* 주의: XSS 공격에 취약할 수 있으므로 신뢰할 수 있는 데이터만 사용해야 합니다. */}
           <div
-            className={styles.post_content}
+            className={`${styles.post_content} ${richtext_styles.richtext_content}`}
             dangerouslySetInnerHTML={{ __html: post_detail.content }}
           />
         </div>
