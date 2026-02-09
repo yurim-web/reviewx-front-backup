@@ -24,6 +24,7 @@ import styles from "@/styles/user/notification/notification.module.css";
 import SubHeader from "@/components/fragments/SubHeader";
 import NotificationList from "@/components/notification/NotificationList";
 import PageTitle from "@/components/fragments/PageTitle";
+import BaseModal from "@/components/common/modal/BaseModal";
 import { useAuth } from "@/hooks/useAuth";
 // 알림 목업 데이터 (향후 API로 대체)
 import { mockReviewerNotifications } from "@/data/notification/notificationData";
@@ -51,6 +52,7 @@ export default function UserNotificationPage() {
     }
   }, [user, router]);
   const [notifications, setNotifications] = useState<any[]>(mockReviewerNotifications);
+  const [isDeleteSuccessModalOpen, setIsDeleteSuccessModalOpen] = useState(false);
 
   /**
    * localStorage에서 알림 불러오기
@@ -138,21 +140,53 @@ export default function UserNotificationPage() {
       {/* 서브헤더 (PC 전용) - 모바일에서는 렌더링하지 않음 */}
       {!isMobile && <SubHeader />}
 
-      {/* 페이지 타이틀
-          - PC: sticky로 상단 고정
-          - 모바일: fixed로 최상단 고정 (메인 헤더 대신)
-      */}
-      <PageTitle title="알림" />
+      {/* 알림 페이지 헤더 (제목 + 전체 삭제 버튼) */}
+      <div className={styles.notification_header}>
+        <h1 className={styles.notification_header_title}>알림</h1>
+        <button
+          className={styles.delete_all_button}
+          onClick={() => setIsDeleteSuccessModalOpen(true)}
+        >
+          전체 삭제
+        </button>
+      </div>
 
       {/* 메인 콘텐츠 영역 */}
       <main className={styles.main_content}>
-
         {/* 알림 목록 컴포넌트 */}
         <NotificationList
           notifications={notifications}
           on_notification_click={handle_notification_click}
         />
       </main>
+
+      {/* 삭제 확인 모달 - 확인 버튼 누르면 삭제 */}
+      <BaseModal
+        is_open={isDeleteSuccessModalOpen}
+        on_close={() => setIsDeleteSuccessModalOpen(false)}
+        message="삭제되었습니다."
+        buttons={["확인"]}
+        on_confirm={() => {
+          setNotifications([]);
+          if (typeof window !== "undefined" && user) {
+            try {
+              const storedNotifications = localStorage.getItem("notifications");
+              if (storedNotifications) {
+                const allNotifications = JSON.parse(storedNotifications);
+                const otherUserNotifications = allNotifications.filter(
+                  (notif: any) => notif.user_id !== user.id
+                );
+                localStorage.setItem(
+                  "notifications",
+                  JSON.stringify(otherUserNotifications)
+                );
+              }
+            } catch (error) {
+              console.error("❌ [알림 페이지] 알림 삭제 실패:", error);
+            }
+          }
+        }}
+      />
     </div>
   );
 }

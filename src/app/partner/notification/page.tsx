@@ -18,11 +18,11 @@
 
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import styles from "@/styles/user/notification/notification.module.css";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import NotificationList from "@/components/notification/NotificationList";
-import PageTitle from "@/components/fragments/PageTitle";
+import BaseModal from "@/components/common/modal/BaseModal";
 import { withPartnerAuth } from "@/components/auth/withAuth";
 // 알림 목업 데이터 (향후 API로 대체)
 import { mockPartnerNotifications } from "@/data/notification/notificationData";
@@ -40,7 +40,8 @@ function PartnerNotificationPage() {
    *   fetchPartnerNotifications().then(setNotifications);
    * }, []);
    */
-  const notifications = mockPartnerNotifications;
+  const [notifications, setNotifications] = useState(mockPartnerNotifications);
+  const [isDeleteSuccessModalOpen, setIsDeleteSuccessModalOpen] = useState(false);
 
   /**
    * 알림 클릭 핸들러 (향후 구현)
@@ -60,16 +61,34 @@ function PartnerNotificationPage() {
       {/* 파트너 전용 서브헤더 */}
       <PartnerSubHeader />
 
+      {/* 알림 페이지 헤더 (제목 + 전체 삭제 버튼) */}
+      <div className={styles.notification_header}>
+        <h1 className={styles.notification_header_title}>알림</h1>
+        <button
+          className={styles.delete_all_button}
+          onClick={() => setIsDeleteSuccessModalOpen(true)}
+        >
+          전체 삭제
+        </button>
+      </div>
+
       {/* 메인 콘텐츠 영역 */}
       <main className={styles.main_content}>
-        <PageTitle title="알림" />
-
         {/* 알림 목록 컴포넌트 */}
         <NotificationList
           notifications={notifications}
           on_notification_click={handle_notification_click}
         />
       </main>
+
+      {/* 삭제 확인 모달 - 확인 버튼 누르면 삭제 */}
+      <BaseModal
+        is_open={isDeleteSuccessModalOpen}
+        on_close={() => setIsDeleteSuccessModalOpen(false)}
+        message="삭제되었습니다."
+        buttons={["확인"]}
+        on_confirm={() => setNotifications([])}
+      />
     </div>
   );
 }
