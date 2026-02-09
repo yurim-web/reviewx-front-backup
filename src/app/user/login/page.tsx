@@ -253,7 +253,7 @@ export default function UserLoginPage() {
         <section className={styles.login_links_section}>
           {/* 사용자 전용 계정찾기 페이지로 이동 링크 */}
           <Link href="/user/find-account" className={styles.login_link}>
-            계정찾기
+            계정 찾기
           </Link>
           {/* 카카오 문의 외부 링크 */}
           <a
