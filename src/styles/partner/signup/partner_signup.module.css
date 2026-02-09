@@ -180,8 +180,6 @@
   padding: 0;
 }
 
-
-
 /* ========================================
    8. 반응형 디자인 (파트너 전용)
    ======================================== */
@@ -209,12 +207,12 @@
   .signup_main {
     /* PageTitle 높이를 제외한 영역을 꽉 채우도록 min-height 조정 */
     min-height: calc(100vh - 64px);
-    padding: 32px 20px 40px;
+    padding: 32px 20px 24px;
     max-width: 100%;
     background-color: #ffffff;
   }
 
-/* 파일 선택 버튼 */
+  /* 파일 선택 버튼 */
   .file_select_button {
     width: 95px;
   }
@@ -232,7 +230,6 @@
   .signup_form {
     max-width: 100%;
   }
-
 
   /* 회원가입 버튼 */
   .submit_button {

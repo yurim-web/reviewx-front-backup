@@ -130,7 +130,7 @@
 
 /* 페이지 타이틀 */
 .page_title {
-  color: #FF5694;
+  color: #ff5694;
   font-size: 18px;
   font-weight: 600;
   line-height: 18px;
@@ -160,12 +160,14 @@
 }
 
 /* 사용자 페이지 폼 섹션 */
-.find_account_page_container.user_page .find_account_main.user_page .form_section {
-  max-width: 400px ;
-  width: auto ;
-  min-width: 0 ;
-  margin-left: auto ;
-  margin-right: auto ;
+.find_account_page_container.user_page
+  .find_account_main.user_page
+  .form_section {
+  max-width: 400px;
+  width: auto;
+  min-width: 0;
+  margin-left: auto;
+  margin-right: auto;
   padding: 40px 0px;
   box-sizing: border-box;
 }
@@ -238,7 +240,7 @@
   width: 100%;
   max-width: 920px;
   height: 56px;
-  background-color: #FF5694;
+  background-color: #ff5694;
   border: none;
   border-radius: 8px;
   color: #fff;
@@ -249,7 +251,6 @@
   letter-spacing: -0.32px;
   cursor: pointer;
 }
-
 
 /* 다음 버튼 비활성화 */
 .next_button:disabled {
@@ -264,8 +265,6 @@
   color: #848484;
   cursor: not-allowed;
 }
-
-
 
 /* 📱 ================================================================================================
 
@@ -321,7 +320,6 @@
     display: block;
   }
 
-
   /* 폼 섹션 */
   .form_section {
     padding: 32px 20px;
@@ -332,7 +330,9 @@
   }
 
   /* 사용자 페이지 폼 섹션 - 모바일 */
-  .find_account_page_container.user_page .find_account_main.user_page .form_section {
+  .find_account_page_container.user_page
+    .find_account_main.user_page
+    .form_section {
     max-width: 100% !important;
     width: 100% !important;
     min-width: 0 !important;
@@ -340,8 +340,6 @@
     margin-right: 0 !important;
     padding: 32px 20px !important;
   }
-
-
 
   /* 이메일 라벨 */
   .email_label {
@@ -358,14 +356,9 @@
     letter-spacing: -0.32px;
   }
 
-  /* 버튼 섹션 */
-  .button_section {
-    padding: 0 20px 40px;
-  }
-
   /* 사용자 페이지 버튼 섹션 - 모바일 */
   .find_account_main.user_page .button_section {
-    padding: 0 20px 40px;
+    padding: 0 20px 24px;
   }
 
   /* 다음 버튼 */
@@ -375,5 +368,8 @@
     line-height: 16px;
     letter-spacing: -0.32px;
     width: 100%;
+  }
+  .button_section {
+    padding: 0 20px 24px;
   }
 }

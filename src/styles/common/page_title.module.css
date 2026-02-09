@@ -42,6 +42,11 @@
   flex: 1;
 }
 
+/* 오른쪽 추가 콘텐츠 (예: 전체 삭제 버튼) */
+.page_title_right {
+  margin-left: auto;
+}
+
 /* 모바일 뒤로가기 버튼 - PC에서 숨김 */
 .mobile_back_button {
   display: none;
@@ -63,7 +68,7 @@
 
 @media (max-width: 768px) {
   .page_title_wrapper {
-    padding: 22px 24px;
+    padding: 20px 24px;
     position: fixed;
     top: 0;
     left: 0;

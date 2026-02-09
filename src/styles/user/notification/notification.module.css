@@ -258,14 +258,10 @@
     height: calc(100vh - 64px);
   }
 
-  /* 알림 헤더가 있을 때 메인 콘텐츠 조정 */
-  .notification_container:has(.notification_header) .main_content {
+  /* 알림 헤더가 있을 때 메인 콘텐츠 조정 (PC: notification_header, 모바일: PageTitle) */
+  .notification_container:has(.notification_header) .main_content,
+  .notification_container.mobile .main_content {
     height: calc(100vh - 64px - 64px);
-  }
-
-  /* 알림 목록 */
-  .notification_list {
-    padding-bottom: 40px;
   }
 
   /* 알림 아이템 */

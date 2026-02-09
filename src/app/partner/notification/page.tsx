@@ -18,9 +18,10 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "@/styles/user/notification/notification.module.css";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
+import PageTitle from "@/components/fragments/PageTitle";
 import NotificationList from "@/components/notification/NotificationList";
 import BaseModal from "@/components/common/modal/BaseModal";
 import { withPartnerAuth } from "@/components/auth/withAuth";
@@ -28,6 +29,18 @@ import { withPartnerAuth } from "@/components/auth/withAuth";
 import { mockPartnerNotifications } from "@/data/notification/notificationData";
 
 function PartnerNotificationPage() {
+  // 모바일 여부 감지
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   /**
    * 알림 목록 상태
    * 향후 API 연동 시 useState와 useEffect를 사용하여 서버에서 데이터를 가져올 수 있습니다.
@@ -57,20 +70,39 @@ function PartnerNotificationPage() {
   };
 
   return (
-    <div className={styles.notification_container}>
-      {/* 파트너 전용 서브헤더 */}
-      <PartnerSubHeader />
+    <div
+      className={`${styles.notification_container} ${
+        isMobile ? styles.mobile : ""
+      }`}
+    >
+      {/* 파트너 전용 서브헤더 (PC 전용) - 모바일에서는 렌더링하지 않음 */}
+      {!isMobile && <PartnerSubHeader />}
 
-      {/* 알림 페이지 헤더 (제목 + 전체 삭제 버튼) */}
-      <div className={styles.notification_header}>
-        <h1 className={styles.notification_header_title}>알림</h1>
-        <button
-          className={styles.delete_all_button}
-          onClick={() => setIsDeleteSuccessModalOpen(true)}
-        >
-          전체 삭제
-        </button>
-      </div>
+      {/* 알림 페이지 헤더 */}
+      {/* 모바일: PageTitle (뒤로가기 + 알림 + 전체 삭제) / PC: 기존 notification_header */}
+      {isMobile ? (
+        <PageTitle
+          title="알림"
+          right_content={
+            <button
+              className={styles.delete_all_button}
+              onClick={() => setIsDeleteSuccessModalOpen(true)}
+            >
+              전체 삭제
+            </button>
+          }
+        />
+      ) : (
+        <div className={styles.notification_header}>
+          <h1 className={styles.notification_header_title}>알림</h1>
+          <button
+            className={styles.delete_all_button}
+            onClick={() => setIsDeleteSuccessModalOpen(true)}
+          >
+            전체 삭제
+          </button>
+        </div>
+      )}
 
       {/* 메인 콘텐츠 영역 */}
       <main className={styles.main_content}>

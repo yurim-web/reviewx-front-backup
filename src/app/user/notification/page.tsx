@@ -136,20 +136,39 @@ export default function UserNotificationPage() {
   };
 
   return (
-    <div className={styles.notification_container}>
+    <div
+      className={`${styles.notification_container} ${
+        isMobile ? styles.mobile : ""
+      }`}
+    >
       {/* 서브헤더 (PC 전용) - 모바일에서는 렌더링하지 않음 */}
       {!isMobile && <SubHeader />}
 
-      {/* 알림 페이지 헤더 (제목 + 전체 삭제 버튼) */}
-      <div className={styles.notification_header}>
-        <h1 className={styles.notification_header_title}>알림</h1>
-        <button
-          className={styles.delete_all_button}
-          onClick={() => setIsDeleteSuccessModalOpen(true)}
-        >
-          전체 삭제
-        </button>
-      </div>
+      {/* 알림 페이지 헤더 */}
+      {/* 모바일: PageTitle (뒤로가기 + 알림 + 전체 삭제) / PC: 기존 notification_header */}
+      {isMobile ? (
+        <PageTitle
+          title="알림"
+          right_content={
+            <button
+              className={styles.delete_all_button}
+              onClick={() => setIsDeleteSuccessModalOpen(true)}
+            >
+              전체 삭제
+            </button>
+          }
+        />
+      ) : (
+        <div className={styles.notification_header}>
+          <h1 className={styles.notification_header_title}>알림</h1>
+          <button
+            className={styles.delete_all_button}
+            onClick={() => setIsDeleteSuccessModalOpen(true)}
+          >
+            전체 삭제
+          </button>
+        </div>
+      )}
 
       {/* 메인 콘텐츠 영역 */}
       <main className={styles.main_content}>

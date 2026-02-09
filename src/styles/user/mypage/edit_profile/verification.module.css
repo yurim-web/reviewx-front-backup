@@ -75,8 +75,8 @@
 
 /* 인증번호 받기 버튼 기본 스타일 */
 .verification_button {
-  width: 125px;
-  height: 56px;
+  padding: 20px;
+  min-width: 125px; /* 인증번호 받기/재전송/인증 버튼 너비 통일 */
   background: #ffffff;
   border: 1px solid #444;
   border-radius: 8px;
