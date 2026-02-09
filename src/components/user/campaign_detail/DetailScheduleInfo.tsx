@@ -122,6 +122,7 @@ export default function CampaignScheduleInfo({
   })();
 
   return (
+    <>
     <article className={styles.campaign_info}>
       {/* 모집 인원 — 라벨 + 신청 인원(앞 n명)만 포인트, 총 모집 인원(뒤 n명)은 기본 */}
       <div className={styles.info_item_container}>
@@ -185,5 +186,9 @@ export default function CampaignScheduleInfo({
         );
       })}
     </article>
+
+    {/* 회색 구분선 - article 밖, 양옆 공간 없이 전체 너비 */}
+    <div className={styles.separator_line} aria-hidden="true" />
+    </>
   );
 }

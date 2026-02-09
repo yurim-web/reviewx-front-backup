@@ -90,19 +90,25 @@
 
 /* 포인트 강조 (오늘 해당 기간·모집 인원) — #FF5694, font-weight 600 */
 .label_point {
-  color: #FF5694;
+  color: #ff5694;
   font-weight: 600;
 }
 
 .value_point {
-  color: #FF5694;
+  color: #ff5694;
   font-weight: 600;
 }
 
 /* 모집 인원 — 신청 인원(앞 n명)만 포인트, 총 모집 인원(뒤 n명)·구분자(/)는 기본 스타일 */
 .current_count_point {
-  color: #FF5694;
+  color: #ff5694;
   font-weight: 600;
+}
+
+/* 일정 정보 하단 회색 구분선 - article 밖, 양옆 공간 없이 전체 너비 */
+.separator_line {
+  margin: 10px -40px 0;
+  border-top: 10px solid #f7f7f7;
 }
 
 /* ===== 반응형 스타일 ===== */
@@ -113,8 +119,7 @@
 @media (max-width: 768px) {
   /* 캠페인 정보 섹션 */
   .campaign_info {
-padding-top: 8px;
-
+    padding-top: 8px;
   }
 
   /* 그라데이션 배경 오버레이 - 모바일에서는 숨김 */
@@ -122,7 +127,9 @@ padding-top: 8px;
     display: none;
   }
 
-
-
-
+  /* 구분선 - 모바일 (product_info padding 20px) */
+  .separator_line {
+    margin: 10px -20px 0;
+    border-top: 10px solid #f7f7f7;
+  }
 }
