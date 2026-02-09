@@ -27,6 +27,7 @@ import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import styles from "../../styles/user/faq/faq.module.css";
+import richtext_styles from "@/styles/common/html_richtext_content.module.css";
 import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import { posts_data } from "@/data/manager_ga/community/postsData";
@@ -168,7 +169,10 @@ export default function FAQPage() {
                     <div className={styles.faq_answer}>
                       <div className={styles.answer_content}>
                         <span className={styles.answer_number}>A.</span>
-                        <span className={styles.answer_text}>{faq.answer}</span>
+                        <div
+                          className={`${styles.answer_text} ${richtext_styles.richtext_content}`}
+                          dangerouslySetInnerHTML={{ __html: faq.answer }}
+                        />
                       </div>
                     </div>
                   )}

@@ -28,6 +28,7 @@
 import React, { useState, useMemo, useEffect, type ReactNode } from "react";
 import Image from "next/image";
 import styles from "@/styles/user/faq/faq.module.css";
+import richtext_styles from "@/styles/common/html_richtext_content.module.css";
 import PageTitle from "@/components/fragments/PageTitle";
 import {
   posts_data,
@@ -337,7 +338,7 @@ export default function FAQPageClient({
                       <div className={styles.answer_content}>
                         <span className={styles.answer_number}>A.</span>
                         <div
-                          className={styles.answer_text}
+                          className={`${styles.answer_text} ${richtext_styles.richtext_content}`}
                           dangerouslySetInnerHTML={{ __html: faq.answer }}
                         />
                       </div>
