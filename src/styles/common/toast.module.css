@@ -17,7 +17,7 @@
 /* ✅ 토스트 - 메시지 박스 */
 .toast {
   position: fixed;
-  bottom: 100px;
+  bottom: 120px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 10001; /* 모든 모달 위에 표시되도록 설정 (모달 최대 z-index: 10000) */
@@ -93,5 +93,3 @@
 .toast.hidden {
   animation: toastFadeOut 0.3s ease-out forwards;
 }
-
-
