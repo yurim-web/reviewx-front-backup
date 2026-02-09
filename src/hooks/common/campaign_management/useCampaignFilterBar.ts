@@ -118,47 +118,6 @@ export function useCampaignFilterBar<
   const [tempChannels, setTempChannels] = useState<string[]>([]);
   const [tempSort, setTempSort] = useState<string>(defaultSort);
 
-  // localStorage 키 (파트너 캠페인 관리 페이지 필터 상태)
-  const STORAGE_KEY = "partner_campaign_filter_state";
-
-  /**
-   * localStorage에서 필터 상태 복원
-   *
-   * 설명:
-   * - 페이지 로드 시 저장된 필터 상태를 복원합니다.
-   * - activeFilters가 전달되지 않은 경우에만 localStorage에서 가져옵니다.
-   */
-  const restoreFiltersFromStorage = (): FilterChangeParams | null => {
-    if (typeof window === "undefined") return null;
-
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        return JSON.parse(stored);
-      }
-    } catch (error) {
-      console.error("localStorage에서 필터 상태 복원 실패:", error);
-    }
-    return null;
-  };
-
-  /**
-   * 필터 상태를 localStorage에 저장
-   *
-   * 설명:
-   * - 필터 상태가 변경될 때마다 localStorage에 저장합니다.
-   * - 뒤로 가기 후에도 필터 상태를 유지할 수 있습니다.
-   */
-  const saveFiltersToStorage = (filters: FilterChangeParams) => {
-    if (typeof window === "undefined") return;
-
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(filters));
-    } catch (error) {
-      console.error("localStorage에 필터 상태 저장 실패:", error);
-    }
-  };
-
   // activeFilters가 있는지 확인 (외부에서 필터 상태를 제어하는 경우)
   const hasActiveFilters = 
     activeFilters.types?.length ||
@@ -175,7 +134,7 @@ export function useCampaignFilterBar<
     return activeFilters.searchQuery || "";
   });
 
-  // 내부 필터 상태 (activeFilters와 병합하여 사용)
+  // 내부 필터 상태 (activeFilters와 병합하여 사용) - 새로고침 시 초기화됨
   const [internalFilters, setInternalFilters] = useState<FilterChangeParams>(() => {
     // activeFilters가 있으면 그것을 사용 (외부에서 제어하는 경우)
     if (hasActiveFilters) {
@@ -186,30 +145,11 @@ export function useCampaignFilterBar<
         sortBy: activeFilters.sortBy || defaultSort,
       };
     }
-    // activeFilters가 없으면 빈 상태로 시작 (나중에 useEffect에서 복원)
+    // activeFilters가 없으면 빈 상태로 시작 (새로고침 시 항상 초기 상태)
     return {
       sortBy: defaultSort,
     };
   });
-
-  // 클라이언트에서만 localStorage에서 필터 상태 복원 (Hydration 에러 방지)
-  useEffect(() => {
-    // activeFilters가 이미 있으면 복원하지 않음
-    if (hasActiveFilters) return;
-
-    const restored = restoreFiltersFromStorage();
-    if (restored) {
-      // localStorage에서 복원한 필터 상태 적용
-      setInternalFilters({
-        types: restored.types,
-        channels: restored.channels,
-        searchQuery: restored.searchQuery,
-        sortBy: restored.sortBy || defaultSort,
-      });
-      setSelectedSort(restored.sortBy || defaultSort);
-      setSearchQuery(restored.searchQuery || "");
-    }
-  }, []); // 빈 의존성 배열: 마운트 시 한 번만 실행
 
   // ========================================
   // 🧮 계산된 값 (useMemo)
@@ -352,13 +292,11 @@ export function useCampaignFilterBar<
   // ✅ 필터 적용 함수
   // ========================================
 
-  // 필터를 적용하고 부모 컴포넌트에 알림
+  // 필터를 적용하고 부모 컴포넌트에 알림 (새로고침 시 유지하지 않음)
   const applyFilters = useCallback(
     (filters: FilterChangeParams) => {
       setInternalFilters(filters);
       onFilterChange?.(filters);
-      // 필터 상태를 localStorage에 저장 (필터 유지용)
-      saveFiltersToStorage(filters);
     },
     [onFilterChange]
   );

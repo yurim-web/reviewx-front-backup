@@ -27,7 +27,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import mainStyles from "../../../styles/filter/filter_bar/main.module.css";
 import ModalFilter from "./ModalFilter";
 import RegionFilter from "./RegionFilter";
@@ -255,6 +255,42 @@ export default function FilterBar({
   };
 
   /* ========================================
+     PC에서 활성 필터 태그 영역 마우스 드래그로 가로 스크롤
+     ======================================== */
+  const activeFiltersRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const startXRef = useRef(0);
+
+  const handleDragMove = useCallback((e: MouseEvent) => {
+    if (!activeFiltersRef.current) return;
+    const dx = startXRef.current - e.clientX;
+    activeFiltersRef.current.scrollLeft += dx;
+    startXRef.current = e.clientX;
+  }, []);
+
+  const handleDragEnd = useCallback(() => {
+    setIsDragging(false);
+    document.removeEventListener("mousemove", handleDragMove);
+    document.removeEventListener("mouseup", handleDragEnd);
+    document.body.style.userSelect = "";
+    document.body.style.cursor = "";
+  }, [handleDragMove]);
+
+  const handleDragStart = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if ((e.target as HTMLElement).closest(`.${mainStyles.remove_tag}`)) return;
+      if (!activeFiltersRef.current) return;
+      setIsDragging(true);
+      startXRef.current = e.clientX;
+      document.addEventListener("mousemove", handleDragMove);
+      document.addEventListener("mouseup", handleDragEnd);
+      document.body.style.userSelect = "none";
+      document.body.style.cursor = "pointer";
+    },
+    [handleDragMove, handleDragEnd]
+  );
+
+  /* ========================================
      필터 제거 함수
      ======================================== */
 
@@ -406,7 +442,11 @@ export default function FilterBar({
           (activeFilters.categories?.length || 0) +
           (activeFilters.regions?.length || 0) >
           0 && (
-          <div className={mainStyles.active_filters}>
+          <div
+            ref={activeFiltersRef}
+            className={`${mainStyles.active_filters} ${isDragging ? mainStyles.active_filters_dragging : ""}`}
+            onMouseDown={handleDragStart}
+          >
             {/* 왼쪽 패딩용 빈 요소 */}
             <div className={mainStyles.filter_padding_left}></div>
             {/* 활성화된 카테고리 필터 태그들 */}

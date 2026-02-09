@@ -72,7 +72,7 @@
     padding-top: 64px; /* 64px(Header) + 59px(상태바) */
   }
 
-  /* 메인 컨텐츠 컨테이너 */
+  /* 메인 컨텐츠 컨테이너 - overflow 제거하여 sticky(탭/통계 상단 고정) 동작 */
   .main_content {
     max-width: 100%;
     width: 100%;

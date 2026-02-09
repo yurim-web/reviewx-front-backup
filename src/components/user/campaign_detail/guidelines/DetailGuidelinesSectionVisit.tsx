@@ -59,11 +59,10 @@ export default function DetailGuidelinesSectionVisit({
   requirements,
   guidelineTexts,
 }: DetailGuidelinesSectionVisitProps) {
-  // URL 쿼리 파라미터 확인
-  // useSearchParams: Next.js에서 URL 쿼리 파라미터를 읽는 Hook입니다.
-  // ?selected=true 같은 쿼리 파라미터를 확인하여 선정된 캠페인인지 판단합니다.
   const searchParams = useSearchParams();
-  const isSelected = searchParams.get("selected") === "true";
+  const isParticipant =
+    searchParams.get("participant") === "true" ||
+    searchParams.get("selected") === "true";
 
   // ========================================
   // 기본 가이드 문구 (props 미전달 시 사용)
@@ -195,10 +194,10 @@ export default function DetailGuidelinesSectionVisit({
       {/* 추가 안내사항 컴포넌트 */}
       <AdditionalGuidelines />
 
-      {/* 선정 후 추가 안내 섹션 (조건부 렌더링) */}
-      {isSelected && (
+      {/* 참여 캠페인 추가 안내 (공정위 가이드, 캠페인 문의) */}
+      {isParticipant && (
         <SelectedCampaignInfo
-          onCopyFtcImage={onCopyVisitLink}
+          onGoToGuide={onCopyVisitLink}
           onCopyContact={onCopyKeyword}
         />
       )}

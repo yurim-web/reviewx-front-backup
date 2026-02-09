@@ -66,6 +66,7 @@
 /* 캠페인 정보 영역 (제목, 상태, 버튼 등) */
 .campaign_info {
   flex: 1; /* 남은 공간 모두 차지 */
+  min-width: 0; /* flex 자식이 줄어들 수 있게 (제목 말줄임표 동작) */
   display: flex;
   flex-direction: column;
   gap: 16px; /* 정보 요소 간격 */
@@ -162,21 +163,23 @@
   color: #ffffff;
 }
 
-/* 캠페인 제목 */
+/* 캠페인 제목 - 카드 영역 내 한 줄, 넘치면 말줄임표 */
 .campaign_title {
   color: #444;
   font-size: 16px;
   font-weight: 500;
   line-height: 22px; /* 137.5% */
   letter-spacing: -0.32px;
-
   padding-bottom: 4px;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
+
+  /* 카드 너비 안에서만 표시, 한 줄 말줄임표 */
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 /* 캠페인 상태 텍스트 - PC용 (campaign_info 안에 위치) */
@@ -384,18 +387,17 @@ letter-spacing: -0.28px;
 
 
 
-  /* 캠페인 제목 */
+  /* 캠페인 제목 - 한 줄 말줄임표 유지 */
   .campaign_title {
     padding-bottom: 0;
     margin-bottom: 0;
-    max-height: 19.6px; /* line-height와 동일하게 설정하여 한 줄만 표시 */
-
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-    line-clamp: 1;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+    box-sizing: border-box;
   }
 
   /* PC용 상태 텍스트 숨김 */

@@ -92,7 +92,7 @@
 @media (max-width: 768px) {
   /* 파트너 로그인 페이지 컨테이너 */
   .partner_login_page_container {
-    padding: 0 20px;
+    /* padding: 0 20px; */
   }
 
   /* 파트너 로그인 메인 영역 */

@@ -228,7 +228,7 @@ export default function ContentRegistrationModal({
       alert(
         `콘텐츠 ${
           mode === "edit" ? "수정" : "등록"
-        }에 실패했습니다. 다시 시도해주세요.`
+        }에 실패했습니다. 다시 시도해주세요.`,
       );
     } finally {
       setIsSubmitting(false);
@@ -303,7 +303,7 @@ export default function ContentRegistrationModal({
                 <input
                   type="url"
                   className={styles.link_input}
-                  placeholder="https://example.com"
+                  placeholder="콘텐츠 링크 입력"
                   value={linkUrl}
                   onChange={handleLinkChange}
                 />
@@ -315,7 +315,7 @@ export default function ContentRegistrationModal({
                 onClick={handleSubmit}
                 disabled={isSubmitting || !linkUrl.trim()}
               >
-                {isSubmitting ? "등록 중..." : "등록"}
+                {isSubmitting ? "확인 중..." : "확인"}
               </button>
             </div>
           </div>

@@ -63,9 +63,17 @@
 
 /* 콘텐츠 수정 버튼 (반려 탭 전용) */
 .content_edit_button {
-  border: 1px solid #444444;
+  border: 1px solid #ff5694;
+  background: #fff;
+  color: #ff5694;
+}
+
+/* 콘텐츠 수정 버튼 (취소/반려 탭 - 회색 아웃라인) */
+.rejected_content_edit_button {
+  border: 1px solid #444;
   background: #fff;
   color: #444;
+  border-radius: 4px;
 }
 
 /* 경고 버튼 (콘텐츠 반려 사유보기, 패널티 내역보기) */
@@ -157,15 +165,14 @@
     height: 38px;
 
     overflow: hidden;
-font-size: 14px;
-line-height: 14px; 
-letter-spacing: -0.28px;
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
   }
 
   /* 주요 액션 버튼 */
   .primary_button {
     border-radius: 4px;
-  
   }
 
   /* 일반 액션 버튼 */
@@ -185,6 +192,11 @@ letter-spacing: -0.28px;
 
   /* 콘텐츠 수정 버튼 */
   .content_edit_button {
+    border-radius: 4px;
+  }
+
+  /* 콘텐츠 수정 버튼 (취소/반려 탭) */
+  .rejected_content_edit_button {
     border-radius: 4px;
   }
 

@@ -271,6 +271,7 @@
 
 /**
  * 활성 필터 태그 컨테이너
+ * PC: 마우스 드래그로 가로 스크롤 가능
  */
 .active_filters {
   display: flex;
@@ -286,6 +287,17 @@
   -ms-overflow-style: none;
   border-radius: 4px;
   background: #f9f9f9;
+  cursor: pointer;
+  user-select: none;
+}
+
+.active_filters:active {
+  cursor: pointer;
+}
+
+/* 드래그 중 커서 유지 (JS에서 isDragging 시 적용) */
+.active_filters.active_filters_dragging {
+  cursor: pointer;
 }
 
 /* 활성 필터 태그 컨테이너 스크롤바 숨기기 */

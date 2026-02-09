@@ -120,7 +120,7 @@ const checkServerStatus = async (): Promise<void> => {
 
 /**
  * 캠페인 관리 메인 페이지 컴포넌트
- * 신청 탭 페이지로 리다이렉트
+ * 전체 탭 페이지로 리다이렉트
  */
 export default function CampaignManagementPage() {
   const router = useRouter();
@@ -158,8 +158,8 @@ export default function CampaignManagementPage() {
         // 서버 상태 확인
         await checkServerStatus();
 
-        // 모든 확인이 완료되면 신청 탭으로 리다이렉트
-        router.replace("/user/campaign_management/applied");
+        // 모든 확인이 완료되면 전체 탭으로 리다이렉트
+        router.replace("/user/campaign_management/all");
       } catch (error) {
         // 서버 오류 발생 시 에러 모달 표시
         console.error("서버 오류:", error);

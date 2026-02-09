@@ -11,6 +11,7 @@
 
 "use client";
 
+import { useRef, useState, useCallback } from "react";
 import styles from "@/styles/partner/campaign_management/campaign_filter.module.css";
 import ModalFilter from "@/components/campaign/filter/ModalFilter";
 import { CampaignFilterBarProps, FilterableCampaign } from "./types";
@@ -84,6 +85,40 @@ export default function CampaignFilterBar<
   const hasActiveFilters =
     (currentFilters.types?.length ?? 0) > 0 ||
     (currentFilters.channels?.length ?? 0) > 0;
+
+  /* PC에서 활성 필터 태그 영역 마우스 드래그로 가로 스크롤 */
+  const activeFiltersRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const startXRef = useRef(0);
+
+  const handleDragMove = useCallback((e: MouseEvent) => {
+    if (!activeFiltersRef.current) return;
+    const dx = startXRef.current - e.clientX;
+    activeFiltersRef.current.scrollLeft += dx;
+    startXRef.current = e.clientX;
+  }, []);
+
+  const handleDragEnd = useCallback(() => {
+    setIsDragging(false);
+    document.removeEventListener("mousemove", handleDragMove);
+    document.removeEventListener("mouseup", handleDragEnd);
+    document.body.style.userSelect = "";
+    document.body.style.cursor = "";
+  }, [handleDragMove]);
+
+  const handleDragStart = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if ((e.target as HTMLElement).closest(`.${styles.remove_tag}`)) return;
+      if (!activeFiltersRef.current) return;
+      setIsDragging(true);
+      startXRef.current = e.clientX;
+      document.addEventListener("mousemove", handleDragMove);
+      document.addEventListener("mouseup", handleDragEnd);
+      document.body.style.userSelect = "none";
+      document.body.style.cursor = "pointer";
+    },
+    [handleDragMove, handleDragEnd]
+  );
 
   const renderFilterButton = (
     label: string,
@@ -178,7 +213,11 @@ export default function CampaignFilterBar<
 
         {hasActiveFilters && (
           <div className={styles.filter_tags_container}>
-            <div className={styles.active_filters}>
+            <div
+              ref={activeFiltersRef}
+              className={`${styles.active_filters} ${isDragging ? styles.active_filters_dragging : ""}`}
+              onMouseDown={handleDragStart}
+            >
               {currentFilters.types?.map((type) =>
                 renderFilterTag(type, () => handleTypeRemove(type))
               )}
