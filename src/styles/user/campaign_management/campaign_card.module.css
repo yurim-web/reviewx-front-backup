@@ -280,6 +280,13 @@ letter-spacing: -0.28px;
     line-height: 22px;
     letter-spacing: -0.32px;
     padding-bottom: 0;
+    /* 2줄 말줌임표 */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   /* PC용 상태 텍스트 숨김 */

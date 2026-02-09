@@ -437,14 +437,25 @@
     border-radius: 24px 24px 0 0;
   }
 
-  /* 모바일에서 닫기 버튼 숨김 */
+  /* 모바일에서 닫기 버튼 표시 */
   .close_button {
-    display: none;
+    display: flex;
+    width: 20px;
+    height: 20px;
   }
 
-  /* 모달 헤더 - 모바일에서 닫기 버튼 없으므로 justify-content 조정 */
+  /* 모달 헤더 - 모바일에서도 제목 왼쪽, 닫기 버튼 오른쪽 */
   .modal_header {
-    justify-content: center;
+    justify-content: space-between;
+  }
+
+  /* 모달 제목 - 모바일 */
+  .modal_title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #444;
+    text-align: left;
+    margin: 0;
   }
 
   /* 링크 섹션 */
@@ -480,7 +491,7 @@
   /* 이미지 그리드 (grid 방식 - ReceiptRegistrationModal) */
   .image_grid_grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
+    gap: 12px 14px;
   }
 
   /* 이미지 아이템 - 모바일 크기 */
