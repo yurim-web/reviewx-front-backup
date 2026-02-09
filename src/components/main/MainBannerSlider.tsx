@@ -129,6 +129,21 @@ export default function MainBannerSlider({
     return () => clearInterval(interval);
   }, [isHovered, autoSlideInterval, goToNextSlide]);
 
+  const threshold = 50; // 슬라이드 전환을 위한 최소 드래그/스와이프 거리 (픽셀)
+
+  const applySlideChange = useCallback(
+    (offset: number) => {
+      if (Math.abs(offset) > threshold) {
+        if (offset > 0) {
+          goToPrevSlide();
+        } else {
+          goToNextSlide();
+        }
+      }
+    },
+    [goToPrevSlide, goToNextSlide]
+  );
+
   // 마우스 드래그 시작
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
@@ -148,20 +163,36 @@ export default function MainBannerSlider({
   // 마우스 드래그 종료
   const handleMouseUp = () => {
     if (!isDragging) return;
+    applySlideChange(dragOffset);
+    setIsDragging(false);
+    setDragOffset(0);
+    setStartX(0);
+    setCurrentX(0);
+  };
 
-    const threshold = 50; // 슬라이드 전환을 위한 최소 드래그 거리 (픽셀)
-    const slideWidth = 100; // 슬라이드 너비 (%)
+  // 터치 스와이프 시작 (모바일)
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsDragging(true);
+    setStartX(e.touches[0].clientX);
+    setCurrentX(e.touches[0].clientX);
+    setDragOffset(0);
+  };
 
-    if (Math.abs(dragOffset) > threshold) {
-      if (dragOffset > 0) {
-        // 오른쪽으로 드래그 (이전 슬라이드)
-        goToPrevSlide();
-      } else {
-        // 왼쪽으로 드래그 (다음 슬라이드)
-        goToNextSlide();
-      }
-    }
+  // 터치 스와이프 중 (모바일)
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    const diff = e.touches[0].clientX - startX;
+    setCurrentX(e.touches[0].clientX);
+    setDragOffset(diff);
+  };
 
+  // 터치 스와이프 종료 (모바일)
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    // touchend에서는 touches가 비어있으므로 changedTouches 사용
+    const endX = e.changedTouches[0]?.clientX ?? startX + dragOffset;
+    const offset = endX - startX;
+    applySlideChange(offset);
     setIsDragging(false);
     setDragOffset(0);
     setStartX(0);
@@ -197,6 +228,11 @@ export default function MainBannerSlider({
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
+      style={{ touchAction: "pan-y" }}
     >
       {/* 슬라이드 래퍼 */}
       <div
