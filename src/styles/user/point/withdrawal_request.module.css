@@ -23,7 +23,6 @@
   max-width: 1000px;
   margin: 0 auto;
   min-height: calc(100vh - 80px);
-  padding-bottom: 80px;
 }
 
 /* 컨테이너 */
@@ -234,14 +233,14 @@
 
 /* 버튼 섹션 컨테이너 */
 .submit_button_section {
-  padding: 0px 40px 40px 40px;
+  padding: 0px 40px 80px 40px;
 }
 
 /* 출금 신청 버튼 */
 .submit_button {
   width: 100%;
   height: 56px;
-  background-color: #FF5694;
+  background-color: #ff5694;
   border-radius: 8px;
   border: none;
   cursor: pointer;
@@ -289,16 +288,12 @@
 
   /* 보유 포인트 전체 섹션 */
   .available_points_section {
-
     padding: 32px 20px 32px 20px;
   }
-
-
 
   /* ============================================
      폼 박스 영역 (모바일)
      ============================================ */
-
 
   /* ============================================
      폼 입력 영역 (모바일)
@@ -310,8 +305,6 @@
     gap: 16px;
   }
 
-  
-
   /* ============================================
      출금 안내 사항 영역 (모바일)
      ============================================ */
@@ -320,11 +313,6 @@
   .notice_section {
     padding: 20px 20px 32px 20px;
   }
-
-
-
-
-
 
   /* ============================================
      출금 신청 버튼 (모바일)
@@ -338,6 +326,5 @@
   /* 출금 신청 버튼 */
   .submit_button {
     height: 48px;
-
   }
 }
