@@ -173,7 +173,7 @@ export default function DetailGuidelinesSectionVisit({
       {/* 6. 안내 사항 */}
       <div className={styles.info_item_box}>
         <div className={styles.label_box}>안내 사항</div>
-        <div>
+        <div className={styles.content_box}>
           {/* 요구사항 아이콘 리스트 */}
           <RequirementIcons requirements={requirements} />
 

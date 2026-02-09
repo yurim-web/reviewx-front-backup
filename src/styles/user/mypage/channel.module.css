@@ -138,6 +138,13 @@
   text-overflow: ellipsis;
 }
 
+/* 채널 URL 링크 - 새 창으로 열기, 기본 링크 스타일 제거 */
+a.channel_url {
+  text-decoration: none;
+  color: #848484;
+  cursor: pointer;
+}
+
 .channel_more_button {
   width: 28px;
   height: 28px;
@@ -165,17 +172,13 @@
   }
 
   .channel_item {
- 
     gap: 12px;
-
   }
 
   /* 채널 URL은 한 줄 말줄임표 처리 */
-.channel_url {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-
+  .channel_url {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }

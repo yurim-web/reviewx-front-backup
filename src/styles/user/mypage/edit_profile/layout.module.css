@@ -9,6 +9,11 @@
  * - partner/mypage/edit/page.tsx
  */
 
+/* 메인 영역 최소 높이 */
+.main_min_height {
+  min-height: 100vh;
+}
+
 /* 메인 컨텐츠 */
 .main_content {
   max-width: 1000px;
@@ -62,7 +67,6 @@
   /* 섹션 컨테이너 */
   .section_container {
     padding: 20px 20px 40px 20px;
-
   }
 
   /* 섹션 타이틀 */

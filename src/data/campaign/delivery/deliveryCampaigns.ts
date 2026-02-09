@@ -636,7 +636,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       registrationPeriod: "2026-02-04 ~ 2026-05-05",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "유튜브",
+    channel: "네이버블로그",
     keyword: "#테스트 #배송형 #체험단",
     requirements: ["text_2000", "photo_15", "video_1_180", "product_link", "keyword"],
     guidelineTexts: [

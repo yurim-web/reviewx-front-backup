@@ -50,8 +50,9 @@ interface ChannelInfo {
 
 interface ChannelSectionProps {
   channels: ChannelInfo[];
-
   onChannelUpdate: (channelName: string, channelInfo: { url: string }) => void;
+  /** 채널 아이콘 함수 (미전달 시 내부 CHANNEL_ICON_MAP 사용) */
+  getChannelIcon?: (channelName: string) => string;
 }
 
 const CHANNEL_ICON_MAP: Record<string, string> = {
@@ -66,8 +67,8 @@ const CHANNEL_ICON_MAP: Record<string, string> = {
 
 export default function ChannelSection({
   channels,
-
   onChannelUpdate,
+  getChannelIcon: getChannelIconProp,
 }: ChannelSectionProps) {
   const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
 
@@ -92,7 +93,9 @@ export default function ChannelSection({
   };
 
   const getChannelIcon = (channelName: string) => {
-    return CHANNEL_ICON_MAP[channelName] ?? "";
+    return getChannelIconProp
+      ? getChannelIconProp(channelName)
+      : (CHANNEL_ICON_MAP[channelName] ?? "");
   };
 
   return (
@@ -117,7 +120,22 @@ export default function ChannelSection({
                 <div className={styles.channel_name}>{channel.name}</div>
 
                 {channel.status === "connected" ? (
-                  <div className={styles.channel_url}>{channel.url}</div>
+                  channel.url ? (
+                    <a
+                      href={
+                        channel.url.startsWith("http")
+                          ? channel.url
+                          : `https://${channel.url}`
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.channel_url}
+                    >
+                      {channel.url}
+                    </a>
+                  ) : (
+                    <div className={styles.channel_url}>{channel.url}</div>
+                  )
                 ) : (
                   <div className={styles.channel_status}>
                     계정을 연결해 주세요.
@@ -151,6 +169,9 @@ export default function ChannelSection({
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         channelName={selectedChannel || ""}
+        channelIcon={
+          selectedChannel ? getChannelIcon(selectedChannel) : undefined
+        }
         initialUrl={channels.find((ch) => ch.name === selectedChannel)?.url}
         onConnect={handleConnect}
       />

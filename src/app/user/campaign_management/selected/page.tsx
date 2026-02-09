@@ -475,11 +475,16 @@ function SelectedPage() {
 
       const campaigns = userCampaigns.campaigns;
 
+      const 신청 = mockStats.신청 + campaigns.filter((c: any) => c.status === '대기').length;
+      const 선정 = mockStats.선정 + campaigns.filter((c: any) => c.status === '선정').length;
+      const 완료 = mockStats.완료 + campaigns.filter((c: any) => c.status === '완료').length;
+      const 취소반려 = mockStats["취소/반려"] + campaigns.filter((c: any) => c.status === '취소' || c.status === '반려').length;
       return {
-        신청: mockStats.신청 + campaigns.filter((c: any) => c.status === '대기').length,
-        선정: mockStats.선정 + campaigns.filter((c: any) => c.status === '선정').length,
-        완료: mockStats.완료 + campaigns.filter((c: any) => c.status === '완료').length,
-        "취소/반려": mockStats["취소/반려"] + campaigns.filter((c: any) => c.status === '취소' || c.status === '반려').length,
+        신청,
+        선정,
+        완료,
+        "취소/반려": 취소반려,
+        전체: 신청 + 선정 + 완료 + 취소반려,
         패널티: mockStats.패널티,
       };
     } catch (e) {

@@ -26,7 +26,7 @@ interface CampaignListProps {
   campaigns: CampaignApplication[];
   activeStatTab: StatTab;
   onTabChange?: (
-    tab: "신청" | "선정" | "완료" | "취소/반려" | "패널티"
+    tab: "신청" | "선정" | "완료" | "취소/반려" | "전체" | "패널티"
   ) => void;
   /** 신청 취소 성공 시 호출되는 콜백 함수 */
   onCancelSuccess?: (campaignId: string) => void;
@@ -63,6 +63,8 @@ export default function CampaignList({
         return campaign.status === "완료";
       case "취소/반려":
         return campaign.status === "취소/반려";
+      case "전체":
+        return campaign.status === "신청" || campaign.status === "선정" || campaign.status === "완료" || campaign.status === "취소/반려";
       default:
         return true;
     }
@@ -90,6 +92,7 @@ export default function CampaignList({
       선정: "선정 내역이 없습니다.",
       완료: "완료 내역이 없습니다.",
       "취소/반려": "취소/반려 내역이 없습니다.",
+      전체: "신청·선정·완료·취소/반려 내역이 없습니다.",
       패널티: "패널티 내역이 없습니다.",
       예정: "예정 내역이 없습니다.",
     };
@@ -101,14 +104,16 @@ export default function CampaignList({
     );
   }
 
-  // 캠페인 카드 목록 렌더링
+  // 전체 탭에서는 카드별 실제 상태(선정/완료/취소·반려)에 맞는 카드 컴포넌트 표시
+  const resolvedActiveTab = activeStatTab === "전체" ? undefined : activeStatTab;
+
   return (
     <div className={cardStyles.campaign_list}>
-      {filteredCampaigns.map((campaign) => (
+      {filteredCampaigns.map((campaign, index) => (
         <CampaignCard
-          key={campaign.id}
+          key={activeStatTab === "전체" ? `${campaign.id}-${campaign.status}-${index}` : campaign.id}
           campaign={campaign}
-          activeTab={activeStatTab}
+          activeTab={resolvedActiveTab ?? campaign.status}
           onTabChange={onTabChange}
           onCancelSuccess={onCancelSuccess}
         />
