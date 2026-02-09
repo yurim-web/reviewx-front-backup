@@ -59,7 +59,7 @@
 }
 
 .modal_body {
-  padding: 24px 40px;
+  padding: 12px 40px 24px 40px;
 }
 
 .input_section {
@@ -240,7 +240,7 @@
   }
 
   .modal_body {
-    padding: 24px 24px;
+    padding: 12px 24px 24px 24px;
   }
 
   .input_section {
@@ -263,7 +263,6 @@
     margin-top: 12px;
   }
 
- 
   .error_text {
     font-size: 14px;
     line-height: 20px;

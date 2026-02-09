@@ -116,6 +116,12 @@ interface PhoneVerificationProps {
   useMyPageStyle?: boolean;
   /** 인증번호 입력 필드 표시 여부 (기본값: true) */
   showVerificationCode?: boolean;
+  /**
+   * 인증 완료 배지 표시 여부 (마이페이지 전용)
+   * - true: 인증 완료 시 "인증 완료" 버튼 표시 (인증 직후에만)
+   * - false: 인증된 상태에서도 "인증번호 받기" 버튼 표시 (재인증 가능)
+   */
+  showVerifiedBadge?: boolean;
 }
 
 /**
@@ -138,6 +144,7 @@ export default function PhoneVerification({
   onVerificationCodeChange,
   useMyPageStyle = false,
   showVerificationCode = true,
+  showVerifiedBadge = false,
 }: PhoneVerificationProps) {
   // 스타일 선택: mypage인 경우 분리된 CSS 모듈들을 조합, 아니면 signupStyles 사용
   const styles = useMyPageStyle
@@ -341,14 +348,16 @@ export default function PhoneVerification({
               <button
                 type="button"
                 className={`${styles.verification_button} ${
-                  isPhoneVerified && phone.trim() !== ""
+                  isPhoneVerified && phone.trim() !== "" && showVerifiedBadge
                     ? styles.verification_button_completed
                     : ""
                 }`}
                 onClick={handleVerificationRequestInternal}
-                disabled={isPhoneVerified && phone.trim() !== ""}
+                disabled={
+                  isPhoneVerified && phone.trim() !== "" && showVerifiedBadge
+                }
               >
-                {isPhoneVerified && phone.trim() !== ""
+                {isPhoneVerified && phone.trim() !== "" && showVerifiedBadge
                   ? "인증 완료"
                   : "인증번호 받기"}
               </button>

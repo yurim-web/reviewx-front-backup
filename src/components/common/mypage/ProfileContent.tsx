@@ -21,9 +21,7 @@
 
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
-import BaseModal from "@/components/common/modal/BaseModal";
 import MemberTypeToggle from "@/components/common/mypage/MemberTypeToggle";
 import profileStyles from "@/styles/user/mypage/profile.module.css";
 
@@ -72,15 +70,9 @@ export default function ProfileContent({
   // 훅(Hook): React의 특별한 함수로, 컴포넌트 내부에서만 사용 가능합니다.
   // useRouter는 Next.js에서 제공하는 훅으로, 클라이언트 컴포넌트에서만 사용 가능합니다.
   const router = useRouter();
-  const [is_logout_modal_open, set_is_logout_modal_open] = useState(false);
 
-  // 로그아웃 버튼 클릭 시: 실제 로그아웃은 아직 하지 않고, 모달만 열어줍니다.
+  // 로그아웃 버튼 클릭 시: 로그아웃을 실행하고 로그인 페이지로 이동합니다.
   const handle_logout_click = () => {
-    set_is_logout_modal_open(true);
-  };
-
-  // 로그아웃 모달 확인 버튼 클릭 시: 실제 로그아웃을 실행하고, 로그인 페이지로 이동합니다.
-  const handle_logout_confirm = () => {
     if (onLogout) {
       onLogout();
     }
@@ -299,14 +291,6 @@ export default function ProfileContent({
           </button>
         </div>
       )}
-
-      <BaseModal
-        is_open={is_logout_modal_open}
-        on_close={() => set_is_logout_modal_open(false)}
-        message="로그아웃되었습니다"
-        on_confirm={handle_logout_confirm}
-        buttons={["확인"]}
-      />
     </>
   );
 }

@@ -14,9 +14,37 @@
  * - 등록 기한 연장 요청 관련 상태 및 핸들러
  */
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import type { CampaignApplication } from "@/types/domain/user";
 import { useSelectedTabCampaign } from "./useSelectedTabCampaign";
+
+const EXTENSION_COUNTS_STORAGE_KEY = "user_campaign_extension_counts";
+
+function getStoredExtensionCount(campaignId: string): number {
+  if (typeof window === "undefined") return 0;
+  try {
+    const stored = localStorage.getItem(EXTENSION_COUNTS_STORAGE_KEY);
+    if (!stored) return 0;
+    const counts: Record<string, number> = JSON.parse(stored);
+    return counts[campaignId] ?? 0;
+  } catch {
+    return 0;
+  }
+}
+
+function incrementStoredExtensionCount(campaignId: string): number {
+  if (typeof window === "undefined") return 0;
+  try {
+    const stored = localStorage.getItem(EXTENSION_COUNTS_STORAGE_KEY);
+    const counts: Record<string, number> = stored ? JSON.parse(stored) : {};
+    const newCount = (counts[campaignId] ?? 0) + 1;
+    counts[campaignId] = newCount;
+    localStorage.setItem(EXTENSION_COUNTS_STORAGE_KEY, JSON.stringify(counts));
+    return newCount;
+  } catch {
+    return 0;
+  }
+}
 
 export function useSelectedTabModals(campaign: CampaignApplication) {
   // 캠페인 날짜 및 기간 계산 (등록기간 마감 체크를 위해 필요)
@@ -108,10 +136,12 @@ export function useSelectedTabModals(campaign: CampaignApplication) {
    *   - 1번째 신청 (extensionCount === 0): 바로 사유 입력 모달 표시
    *   - 2번째 신청 (extensionCount === 1): 확인 모달 먼저 표시 (이번이 마지막이라는 안내)
    *   - 3번째 이상 신청 (extensionCount >= 2): 제한 안내 모달 표시 (연장 불가)
+   * - 연장 횟수: campaign.extensionCount 우선, 없으면 localStorage에서 조회
    */
-  const handleExtensionRequest = () => {
-    // TODO: 실제 API에서 연장 신청 횟수 가져오기
-    const extensionCount = (campaign as any).extensionCount ?? 0;
+  const handleExtensionRequest = useCallback(() => {
+    const extensionCount =
+      (campaign as { extensionCount?: number }).extensionCount ??
+      getStoredExtensionCount(campaign.id);
 
     if (extensionCount >= 2) {
       // 세 번째 이상 신청 시: 제한 안내 모달 (연장 불가)
@@ -124,7 +154,7 @@ export function useSelectedTabModals(campaign: CampaignApplication) {
       setExtensionReason(""); // 사유 초기화
       setIsExtensionModalOpen(true);
     }
-  };
+  }, [campaign]);
 
   /**
    * 두 번째 신청 확인 모달에서 확인 버튼 클릭 핸들러
@@ -143,6 +173,7 @@ export function useSelectedTabModals(campaign: CampaignApplication) {
    *
    * 설명:
    * - 실제 API 호출로 등록 기한 연장을 요청합니다.
+   * - 성공 시 localStorage에 연장 횟수 저장 (다음 요청 시 두 번째/세 번째 모달 표시용)
    */
   const handleConfirmExtension = async () => {
     try {
@@ -153,7 +184,10 @@ export function useSelectedTabModals(campaign: CampaignApplication) {
         reason: extensionReason,
       });
 
-      // 성공 시 모달 닫기 및 사유 초기화
+      // 성공 시 연장 횟수 저장 (localStorage)
+      incrementStoredExtensionCount(campaign.id);
+
+      // 모달 닫기 및 사유 초기화
       setIsExtensionModalOpen(false);
       setExtensionReason("");
       // TODO: 성공 모달 표시 또는 토스트 메시지

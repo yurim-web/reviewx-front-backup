@@ -53,6 +53,17 @@
   pointer-events: none;
 }
 
+/* 예금주 입력 필드 (읽기 전용) */
+.account_holder_input {
+  border: 1px solid #d9d9d9;
+  background: #f6f6f6;
+  cursor: default;
+  color: #999999;
+}
+.account_holder_input:focus {
+  border-color: #d9d9d9;
+}
+
 /* 예금주 입력 필드 인증 완료 상태 */
 .account_holder_input_verified {
   background-color: #ffffff !important;
@@ -78,20 +89,12 @@
   flex-shrink: 0;
 }
 
-.verification_button:hover {
-  background: #f9f9f9;
-}
-
 /* 인증 완료 버튼 스타일 */
 .verification_button_completed {
   background: #ff56941a !important;
   border: none !important;
   color: #ff5694 !important;
   cursor: default;
-}
-
-.verification_button_completed:hover {
-  background: #ff56941a !important;
 }
 
 /* 우편번호 찾기 버튼 */
