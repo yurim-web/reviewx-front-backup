@@ -81,7 +81,9 @@ export default function SortModalFilter({
         </div>
 
         {/* 모달 바디 */}
-        <div className={modalStyles.modal_body}>
+        <div
+          className={`${modalStyles.modal_body} ${modalStyles.modal_body_no_margin}`}
+        >
           <div className={optionsStyles.options_vertical}>
             {options.map((option, index) => (
               <label

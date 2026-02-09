@@ -83,6 +83,15 @@
   color: #ff0000;
 }
 
+/* 데스크톱/모바일 전용 텍스트 */
+.desktop_only_text {
+  display: inline;
+}
+
+.mobile_only_text {
+  display: none;
+}
+
 /* 이전 버전 호환성을 위한 레거시 버튼 스타일들 */
 .cancel_button {
   flex: 1;
@@ -157,17 +166,13 @@
 
   /* 기본 액션 버튼 */
   .action_button {
+    letter-spacing: -0.28px;
+    height: 42px;
     padding: 12px;
-    font-size: 14px;
-    line-height: 14px;
-    letter-spacing: -0.28px;
-    font-weight: 600;
-    height: 38px;
-
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 16px;
     overflow: hidden;
-    font-size: 14px;
-    line-height: 14px;
-    letter-spacing: -0.28px;
   }
 
   /* 주요 액션 버튼 */
@@ -203,6 +208,14 @@
   /* 경고 버튼 */
   .danger_button {
     border-radius: 4px;
+  }
+
+  .desktop_only_text {
+    display: none;
+  }
+
+  .mobile_only_text {
+    display: inline;
   }
 
   /* 취소 버튼 */

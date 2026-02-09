@@ -210,8 +210,9 @@ export default function CampaignApplyButton({
                 className={styles.urgent_notice_icon}
               />
               <span className={styles.urgent_notice_text}>
-                이 캠페인은 참여 및 진행 기간이 짧은 대신, 완료 시 보상이 당일
-                지급되는 긴급 캠페인입니다.
+                이 캠페인은 참여 및 진행 기간이 짧은 대신,
+                <br className={styles.urgent_notice_line_break} />
+                완료 시 보상이 당일 지급되는 긴급 캠페인입니다.
               </span>
             </div>
           )}

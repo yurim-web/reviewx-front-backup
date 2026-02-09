@@ -98,7 +98,7 @@
   /* 저장 버튼 */
   .save_button {
     width: 100%;
-    height: 48px;
+    height: 52px;
     font-size: 16px;
     line-height: 16px;
     letter-spacing: -0.32px;
@@ -106,7 +106,6 @@
 
   /* 주소 등록 페이지 전용: 저장 버튼 하단 고정 */
   .save_button_container_fixed {
-    padding: 16px 20px;
-    max-width: 768px;
+    padding: 24px 20px;
   }
 }

@@ -37,7 +37,9 @@
   line-height: 18px;
   letter-spacing: -0.36px;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease; /* 부드러운 전환 효과 */
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease; /* 부드러운 전환 효과 */
 }
 
 /* 버튼 비활성화 상태 */
@@ -95,6 +97,10 @@
   font-weight: 600;
   line-height: 20px;
   letter-spacing: -0.28px;
+}
+
+.urgent_notice_line_break {
+  display: none;
 }
 
 /* 하단 그라데이션 (버튼 위 배경) */
@@ -186,13 +192,17 @@
 
   /* ===== 캠페인 신청 버튼 ===== */
   .apply_button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 8px;
-    padding: 16px;
+    padding: 20px;
     text-align: center;
     font-size: 16px;
     font-weight: 600;
     line-height: 16px;
     letter-spacing: -0.32px;
+    height: 52px;
   }
 
   /* 버튼 비활성화 상태 - 모바일 */
@@ -214,28 +224,25 @@
   /* 버튼 래퍼 - 모바일 */
   .button_wrapper {
     max-width: 100%;
-    gap: 12px;
+    gap: 16px;
     padding: 0 20px;
-  }
-
-  /* 긴급 안내 멘트 - 모바일 */
-  .urgent_notice {
-
-
   }
 
   /* 긴급 안내 아이콘 - 모바일 */
   .urgent_notice_icon {
-    width: 14px;
-    height: 14px;
+    display: none;
   }
 
   /* 긴급 안내 텍스트 - 모바일 */
   .urgent_notice_text {
-    font-size: 13px;
-    line-height: 18px;
-    letter-spacing: -0.26px;
     text-align: center;
+    font-size: 13px;
+    line-height: 20px;
+    letter-spacing: -0.26px;
+  }
+
+  .urgent_notice_line_break {
+    display: block;
   }
 
   .bottom_gradient {
@@ -252,7 +259,10 @@
   .campaign_info_text_line.fixed {
     display: none; /* 모바일에서 숨김 */
   }
-  .campaign_info_placeholder{
+  .campaign_info_placeholder {
     display: none;
+  }
+  .layout_placeholder_fixed {
+    height: 64px;
   }
 }

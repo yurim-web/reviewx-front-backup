@@ -25,8 +25,9 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import { useHasScroll } from "../../../hooks/common/useHasScroll";
 import modalStyles from "../../../styles/filter/filter_bar/modal.module.css";
 import optionsStyles from "../../../styles/filter/filter_bar/modal_options.module.css";
 import footerStyles from "../../../styles/filter/filter_bar/modal_footer.module.css";
@@ -434,6 +435,12 @@ export default function RegionFilter({
     }
   };
 
+  const subRegionsRef = useRef<HTMLDivElement>(null);
+  const hasScroll = useHasScroll(subRegionsRef, isOpen, [
+    currentSubRegions,
+    selectedMainRegion,
+  ]);
+
   if (!isOpen) return null;
 
   return (
@@ -451,7 +458,9 @@ export default function RegionFilter({
         </div>
 
         {/* 모달 바디 */}
-        <div className={modalStyles.modal_body}>
+        <div
+          className={`${modalStyles.modal_body} ${!hasScroll ? modalStyles.modal_body_no_margin : ""}`}
+        >
           {/* 지역 섹션 제목 */}
           <h4 className={regionStyles.region_section_title}>지역</h4>
 
@@ -474,7 +483,10 @@ export default function RegionFilter({
 
           {/* 세부 지역 목록 */}
           {currentSubRegions.length > 0 && (
-            <div className={regionStyles.sub_regions_container}>
+            <div
+              ref={subRegionsRef}
+              className={regionStyles.sub_regions_container}
+            >
               <div className={optionsStyles.options_grid}>
                 {currentSubRegions.map((fullRegionName) => {
                   const isSelected =

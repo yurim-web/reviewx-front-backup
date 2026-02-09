@@ -118,7 +118,6 @@
     overflow: hidden;
   }
 
-
   /* 모달 제목 - 모바일 */
   .modal_title {
     font-size: 18px;
@@ -141,9 +140,12 @@
   /* 모달 바디 - 모바일 */
   .modal_body {
     overflow-y: visible;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     display: flex;
     flex-direction: column;
     min-height: 0;
+  }
+  .modal_body_no_margin {
+    margin-bottom: 0;
   }
 }
