@@ -149,9 +149,6 @@
   word-break: keep-all;
   transition: color 0.2s ease;
   min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 /* 아코디언이 열렸을 때 질문 스타일 (파란색으로 변경) */
@@ -324,6 +321,17 @@
     max-width: 100%;
     box-sizing: border-box;
     gap: 12px;
+  }
+
+  /* 질문 텍스트가 토글 버튼 영역(gap)을 침범하지 않도록 */
+  .question_content {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .question_text {
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
   .answer_content {

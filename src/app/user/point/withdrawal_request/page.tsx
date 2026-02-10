@@ -49,6 +49,16 @@ export default function WithdrawalRequestPage() {
   const [isWithdrawalBlockedModalOpen, setIsWithdrawalBlockedModalOpen] =
     useState<boolean>(false);
 
+  // 모바일 여부 (제목 워딩: PC "포인트 출금 신청", 모바일 "포인트 충전")
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () =>
+      setIsMobile(typeof window !== "undefined" && window.innerWidth <= 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
   // 사용자 정보 (user_accounts에서 로드)
   const [userInfo, setUserInfo] = useState({
     name: "",
@@ -388,7 +398,7 @@ export default function WithdrawalRequestPage() {
 
       {/* 메인 컨텐츠 - 공지사항 페이지와 동일하게 PageTitle을 main 직계 자식으로 두어 상단 고정 */}
       <main className={styles.main_content}>
-        <PageTitle title="포인트 출금 신청" />
+        <PageTitle title={isMobile ? "포인트 충전" : "포인트 출금 신청"} />
 
         <div className={styles.container}>
           <AvailablePointsDisplay

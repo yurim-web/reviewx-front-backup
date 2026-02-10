@@ -17,7 +17,7 @@
 
 'use client';
 
-import styles from '@/styles/manager_ga/campaign/templates/page.module.css';
+import styles from '@/styles/manager_ga/campaign/templates/templates_page.module.css';
 import ManagerPageTitle from '@/components/manager/common/fragments/ManagerPageTitle';
 
 export default function TemplatesPage() {

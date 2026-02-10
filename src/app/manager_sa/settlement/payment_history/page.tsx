@@ -20,7 +20,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import styles from "@/styles/manager_sa/settlement/payment_history/page.module.css";
+import styles from "@/styles/manager_sa/settlement/payment_history/payment_history_page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import StatCardsSection from "@/components/manager/sa/settlement/payment_history/section/StatCardsSection";
 import PaymentHistoryFilterSection from "@/components/manager/sa/settlement/payment_history/section/PaymentHistoryFilterSection";

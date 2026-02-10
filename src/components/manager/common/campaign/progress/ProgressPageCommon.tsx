@@ -52,7 +52,7 @@ import type { Channel } from "./filter/ChannelFilterModal";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 
 // 스타일 import - 공통 스타일 사용
-import pageStyles from "@/styles/manager/common/page.module.css";
+import pageStyles from "@/styles/manager/common/manager_common_page.module.css";
 import statCardStyles from "@/styles/manager/common/campaign/progress/stat_card.module.css";
 import filterSectionStyles from "@/styles/manager/common/section/filter_section.module.css";
 import tableStyles from "@/styles/manager/common/campaign/progress/progress_table.module.css";

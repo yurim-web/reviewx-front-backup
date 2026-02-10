@@ -17,7 +17,7 @@
 
 import { useEffect, useState } from "react";
 import { startOfMonth, endOfMonth } from "date-fns";
-import styles from "@/styles/manager/common/page.module.css";
+import styles from "@/styles/manager/common/manager_common_page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import PostFilterSection from "@/components/manager/common/community/posts/section/PostFilterSection";
 import PostTable from "@/components/manager/common/community/posts/section/PostTable";
