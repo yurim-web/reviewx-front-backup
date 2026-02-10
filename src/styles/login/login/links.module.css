@@ -49,9 +49,11 @@
 /* 문의하기 링크 */
 .inquiry_link {
   color: #848484;
+  text-align: center;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
+  letter-spacing: -0.28px;
 }
 
 /* 문의하기 링크 호버 효과 */

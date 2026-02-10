@@ -148,7 +148,7 @@
 }
 
 .textarea:focus {
-  border-color: #555555;
+  outline: none;
 }
 
 /* textarea 에러 상태 (사유 미입력 시) */
@@ -157,7 +157,7 @@
 }
 
 .textarea_error:focus {
-  border-color: #ff2626;
+  outline: none;
 }
 
 .textarea::placeholder {

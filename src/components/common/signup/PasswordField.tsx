@@ -16,10 +16,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  validatePassword,
-  validatePasswordMatch,
-} from "@/utils/validation";
+import { validatePassword, validatePasswordMatch } from "@/utils/validation";
 import styles from "@/styles/common/signup/signup.module.css";
 
 interface PasswordFieldProps {
@@ -125,9 +122,7 @@ export default function PasswordField({
         <input
           id={fieldId}
           type={showPassword ? "text" : "password"}
-          className={`${styles.input_field} ${
-            error !== undefined ? styles.input_error : ""
-          }`}
+          className={styles.input_field}
           placeholder={placeholder}
           value={value}
           onChange={handleChange}

@@ -148,6 +148,8 @@ export default function UserSignupPage() {
    * 기능: 휴대폰 번호 인증번호 요청
    */
   const handleVerificationRequestClick = async () => {
+    // 인증번호 받기/재전송 시 인증번호 에러 초기화
+    setErrors((prev) => ({ ...prev, verificationCode: undefined }));
     await handleVerificationRequest();
     // 에러는 훅 내부에서 phoneError로 관리됨
     if (phoneError) {

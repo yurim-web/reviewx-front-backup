@@ -65,7 +65,7 @@ export default function PartnerLoginPage() {
 
     try {
       // 인증 시스템을 통한 로그인 (LocalStorage 기반)
-      await login({ email, password }, 'partner');
+      await login({ email, password }, "partner");
 
       // login 함수에서 자동으로 리다이렉트하므로 여기서는 추가 처리 불필요
     } catch (error) {
@@ -108,7 +108,7 @@ export default function PartnerLoginPage() {
                 id="email"
                 type="email"
                 className={formStyles.input_field}
-                placeholder="아이디(이메일)를 입력하세요"
+                placeholder="아이디(이메일)"
                 value={email}
                 onChange={handleEmailChange}
                 required
@@ -121,7 +121,7 @@ export default function PartnerLoginPage() {
                 id="password"
                 type="password"
                 className={formStyles.input_field}
-                placeholder="비밀번호를 입력하세요"
+                placeholder="비밀번호"
                 value={password}
                 onChange={handlePasswordChange}
                 required
@@ -149,18 +149,27 @@ export default function PartnerLoginPage() {
                   onChange={handleAutoLoginChange}
                   aria-label="자동 로그인"
                 />
-                <label htmlFor="auto-login" className={optionsStyles.checkbox_label}>
+                <label
+                  htmlFor="auto-login"
+                  className={optionsStyles.checkbox_label}
+                >
                   자동 로그인
                 </label>
               </div>
 
               {/* 파트너 회원가입 / 계정찾기 링크 */}
               <div className={optionsStyles.links_group}>
-                <Link href="/partner/signup" className={optionsStyles.link_text}>
+                <Link
+                  href="/partner/signup"
+                  className={optionsStyles.link_text}
+                >
                   파트너 회원가입
                 </Link>
                 <span className={optionsStyles.link_divider}>|</span>
-                <Link href="/partner/find-account" className={optionsStyles.link_text}>
+                <Link
+                  href="/partner/find-account"
+                  className={optionsStyles.link_text}
+                >
                   아이디 · 비밀번호 찾기
                 </Link>
               </div>
@@ -175,7 +184,7 @@ export default function PartnerLoginPage() {
               aria-label="로그인"
               disabled={isLoading}
             >
-              {isLoading ? '로그인 중...' : '로그인'}
+              {isLoading ? "로그인 중..." : "로그인"}
             </button>
           </div>
         </form>

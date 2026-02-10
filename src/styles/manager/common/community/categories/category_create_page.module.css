@@ -97,7 +97,6 @@
 /* 입력 필드 포커스 상태 */
 .input_box:focus {
   outline: none;
-  border-color: #444444;
 }
 
 /* 입력 필드 플레이스홀더 스타일 */

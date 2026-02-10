@@ -50,7 +50,6 @@
 
 .number_input:focus {
   outline: none;
-  border-color: #444444;
 }
 
 .input_unit {
