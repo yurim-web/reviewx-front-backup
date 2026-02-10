@@ -54,7 +54,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" style={{ WebkitTouchCallout: "none" } as React.CSSProperties}>
       <head>
         {/* Pretendard 폰트 (CDN) - 한국어 웹폰트 */}
         <link
@@ -79,8 +79,11 @@ export default function RootLayout({
         />
       </head>
 
-      {/* 실제 보이는 콘텐츠 영역 */}
-      <body className="antialiased">
+      {/* 실제 보이는 콘텐츠 영역 (서버/클라이언트 스타일 일치로 hydration 오류 방지) */}
+      <body
+        className="antialiased"
+        style={{ WebkitTextSizeAdjust: "100%" } as React.CSSProperties}
+      >
         <AuthProvider>
           {/* 공통 상단 헤더 (경로에 따라 파트너 헤더 또는 일반 헤더 표시) */}
           <ConditionalHeader />

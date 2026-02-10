@@ -11,11 +11,17 @@
  * - 제품 제목 표시
  * - 제품 설명 표시
  * - 제품 메인 이미지 표시
+ * - 공유: PC는 클립보드 복사 + 토스트, 모바일은 OS 공유(navigator.share)
  * - children을 통해 추가 콘텐츠 렌더링 가능
  */
 
-import { ReactNode } from "react";
+"use client";
+
+import { ReactNode, useState } from "react";
+import Toast from "@/components/common/toast/Toast";
 import styles from "@/styles/user/campaign/campaign_detail/detail_product_info.module.css";
+
+const MOBILE_BREAKPOINT = 768;
 
 /**
  * Props 인터페이스
@@ -39,23 +45,28 @@ export default function CampaignProductInfo({
   image,
   children,
 }: CampaignProductInfoProps) {
+  const [showToast, setShowToast] = useState(false);
+
   /**
    * 공유 버튼 클릭 핸들러
-   * 현재 페이지 URL을 클립보드에 복사
+   * - PC: 클립보드 복사 후 "복사되었습니다." 토스트
+   * - 모바일: OS 공유 시트(navigator.share) 사용
    */
   const handleShare = async () => {
     try {
-      // Web Share API 지원 여부 확인
-      if (navigator.share) {
+      const isMobile =
+        typeof window !== "undefined" &&
+        window.innerWidth <= MOBILE_BREAKPOINT;
+
+      if (isMobile && navigator.share) {
         await navigator.share({
           title: title,
           text: description,
           url: window.location.href,
         });
       } else {
-        // Web Share API 미지원 시 클립보드에 복사
         await navigator.clipboard.writeText(window.location.href);
-        alert("링크가 클립보드에 복사되었습니다.");
+        setShowToast(true);
       }
     } catch (error) {
       console.error("공유 실패:", error);
@@ -109,6 +120,14 @@ export default function CampaignProductInfo({
         예: <CampaignProductInfo>여기에 들어가는 내용</CampaignProductInfo>
       */}
       {children}
+
+      {/* PC에서 링크 복사 시 토스트 */}
+      <Toast
+        message="복사되었습니다."
+        isOpen={showToast}
+        onClose={() => setShowToast(false)}
+        duration={2000}
+      />
     </article>
   );
 }
