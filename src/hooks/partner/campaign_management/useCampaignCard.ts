@@ -90,12 +90,12 @@ export function useCampaignCard({
      ---------------------------------------- */
   const { waitingCount, reviewingCount, completedCount } = useMemo(
     () => calculateContentCounts(campaign),
-    [campaign]
+    [campaign],
   );
 
   const isContentStage = useMemo(
     () => checkIsContentStage(campaign, reviewingCount, completedCount),
-    [campaign, reviewingCount, completedCount]
+    [campaign, reviewingCount, completedCount],
   );
 
   // 연장 요청 건수 계산
@@ -116,9 +116,9 @@ export function useCampaignCard({
         campaign,
         completedCount,
         activeTab,
-        extensionRequestCount
+        extensionRequestCount,
       ),
-    [campaign, completedCount, activeTab, extensionRequestCount]
+    [campaign, completedCount, activeTab, extensionRequestCount],
   );
 
   const statusDescription = useMemo(
@@ -130,7 +130,7 @@ export function useCampaignCard({
         reviewingCount,
         completedCount,
       }),
-    [campaign, activeTab, isContentStage, reviewingCount, completedCount]
+    [campaign, activeTab, isContentStage, reviewingCount, completedCount],
   );
 
   /* ----------------------------------------
@@ -140,11 +140,11 @@ export function useCampaignCard({
   const closeReceiptModal = useCallback(() => setIsReceiptModalOpen(false), []);
   const openManagementModal = useCallback(
     () => setIsManagementModalOpen(true),
-    []
+    [],
   );
   const closeManagementModal = useCallback(
     () => setIsManagementModalOpen(false),
-    []
+    [],
   );
   const openDeleteModal = useCallback(() => setIsDeleteModalOpen(true), []);
   const closeDeleteModal = useCallback(() => setIsDeleteModalOpen(false), []);
@@ -180,7 +180,7 @@ export function useCampaignCard({
         return;
       }
 
-      if (buttonText === "신청내역 확인" || buttonText === "당첨자 선정") {
+      if (buttonText === "신청 내역 확인" || buttonText === "당첨자 선정") {
         const campaignTypePath = getCampaignTypePath(campaign.campaignType);
         window.location.href = `/partner/campaign_application/${campaignTypePath}/${campaign.id}`;
         return;
@@ -201,7 +201,7 @@ export function useCampaignCard({
       openDeleteModal,
       openManagementModal,
       openReceiptModal,
-    ]
+    ],
   );
 
   return {

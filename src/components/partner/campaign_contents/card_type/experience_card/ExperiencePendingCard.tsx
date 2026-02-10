@@ -24,7 +24,7 @@
      - 연장 승인 후에는 기한이 "2025-11-05 기한 연장" 형태로 표시됩니다
      - 4번째 경우(반려 처리)에서 "콘텐츠 반려 처리" 버튼 클릭 시 반려 사유 모달이 표시됩니다
      - 5번째 경우(신고 처리)에서 신고 날짜/시간이 표시되고 footer 버튼이 없습니다
-     - 신고 처리된 카드의 article 요소에 min-height: 240px가 적용됩니다
+     - 신고 처리 시 푸터 미노출, applicant_card_no_footer_experience 클래스로 하단 테두리 적용
    ======================================== */
 
 "use client";
@@ -173,7 +173,7 @@ export default function ExperiencePendingCard({
   // 3. 신고 날짜/시간을 현재 시간으로 설정
   const handleReportConfirm = (
     selectedOption: string,
-    otherReason?: string
+    otherReason?: string,
   ) => {
     if (onReport) {
       onReport(applicant.id);
@@ -351,16 +351,11 @@ export default function ExperiencePendingCard({
     <div className={baseStyles.card_wrapper}>
       {/* 카드 본문 */}
       <article
-        className={baseStyles.applicant_card}
-        style={
+        className={`${baseStyles.applicant_card} ${
           localPendingState === "reported"
-            ? {
-                minHeight: "240px",
-                borderBottom: "1px solid #d9d9d9",
-                borderRadius: "8px",
-              }
-            : undefined
-        }
+            ? baseStyles.applicant_card_no_footer_experience
+            : ""
+        }`.trim()}
       >
         {/* 프로필 영역 */}
         <div className={contentStyles.profile_section}>
@@ -372,7 +367,9 @@ export default function ExperiencePendingCard({
             />
           </div>
           <div className={contentStyles.profile_info}>
-            <span className={contentStyles.user_type}>{applicant.userType}</span>
+            <span className={contentStyles.user_type}>
+              {applicant.userType}
+            </span>
             <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>
@@ -409,27 +406,6 @@ export default function ExperiencePendingCard({
         </div>
 
         {/* 링크 확인 버튼은 대기 탭에서 제거됨 */}
-
-        {/* 기한 표시 (미등록, 반려 처리) 또는 신고 날짜/시간 표시 (신고 처리) */}
-        {localPendingState === "reported" && localReportedDate ? (
-          <div className={actionStyles.registration_info}>
-            <span>{localReportedDate} 신고</span>
-          </div>
-        ) : (
-          (deadlineDate || localExtendedDeadline) && (
-            <div className={actionStyles.registration_info}>
-              <span>
-                {localIsExtensionApproved && localExtendedDeadline
-                  ? `${localExtendedDeadline} 기한 연장`
-                  : deadlineDate
-                  ? `${deadlineDate} 기한`
-                  : localExtendedDeadline
-                  ? `${localExtendedDeadline} 기한`
-                  : ""}
-              </span>
-            </div>
-          )
-        )}
 
         {/* 상태별 버튼 표시 */}
         <div className={actionStyles.action_button_section}>
@@ -476,6 +452,27 @@ export default function ExperiencePendingCard({
             </button>
           )}
         </div>
+
+        {/* 기한 표시 (미등록, 반려 처리) 또는 신고 날짜/시간 표시 (신고 처리) */}
+        {localPendingState === "reported" && localReportedDate ? (
+          <div className={actionStyles.registration_info}>
+            <span>{localReportedDate} 신고</span>
+          </div>
+        ) : (
+          (deadlineDate || localExtendedDeadline) && (
+            <div className={actionStyles.registration_info}>
+              <span>
+                {localIsExtensionApproved && localExtendedDeadline
+                  ? `${localExtendedDeadline} 기한 연장`
+                  : deadlineDate
+                    ? `${deadlineDate} 기한`
+                    : localExtendedDeadline
+                      ? `${localExtendedDeadline} 기한`
+                      : ""}
+              </span>
+            </div>
+          )
+        )}
       </article>
 
       {/* 연장/신고 버튼 footer (신고 처리된 경우 표시하지 않음) */}

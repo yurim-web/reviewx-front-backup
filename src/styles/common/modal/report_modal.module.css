@@ -199,15 +199,6 @@
   outline: none;
 }
 
-/* 기타 사유 textarea 에러 상태 (사유 미입력 시) */
-.other_reason_textarea_error {
-  border-color: #ff2626;
-}
-
-.other_reason_textarea_error:focus {
-  outline: none;
-}
-
 .other_reason_textarea::placeholder {
   color: #999999;
   opacity: 0.8;
@@ -291,10 +282,32 @@
   color: #444;
 }
 
+.modal_footer_button_cancel:hover {
+  background: #77777733;
+}
+
 /* 모달 푸터 확인 버튼 (신고 버튼 - 빨간색 배경) */
 .modal_footer_button_confirm {
   background-color: #ff2626;
   color: #ffffff;
+}
+
+.modal_footer_button_confirm:hover {
+  background:
+    linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%),
+    #ff2626;
+}
+
+/* 신고 버튼 비활성화 (기타 사유 미입력 시) */
+.modal_footer_button_confirm:disabled {
+  cursor: default;
+  background: #d9d9d9;
+  color: #848484;
+}
+
+.modal_footer_button_confirm:disabled:hover {
+  background: #d9d9d9;
+  color: #848484;
 }
 
 /* 하나 버튼 스타일 (전체 너비) */
@@ -338,7 +351,6 @@
 
   /* 모달 제목 */
   .modal_title {
-    
     padding-bottom: 24px; /* Figma: 24px */
   }
 
@@ -396,7 +408,6 @@
 
   /* 모달 푸터 컨테이너 */
   .modal_footer {
-
     padding-top: 24px; /* Figma: 24px */
   }
 
@@ -419,6 +430,4 @@
     align-items: center;
     justify-content: center;
   }
-
- 
 }

@@ -51,7 +51,7 @@
      - reject_reason prop으로 반려 사유를 전달받아 모달에 표시합니다
      - extension_request_reason prop으로 연장 요청 사유를 전달받아 모달에 표시합니다
      - reportedDate prop으로 신고 날짜/시간을 전달받아 표시합니다
-     - 신고 처리된 카드의 article 요소에 min-height: 240px가 적용됩니다
+     - 신고 처리 시 푸터 미노출, applicant_card_no_footer 클래스로 하단 테두리 적용
    ======================================== */
 
 "use client";
@@ -186,7 +186,7 @@ export default function MissionPendingCard({
   // 3. 신고 날짜/시간을 현재 시간으로 설정
   const handleReportConfirm = (
     selectedOption: string,
-    otherReason?: string
+    otherReason?: string,
   ) => {
     if (onReport) {
       onReport(applicant.id);
@@ -350,16 +350,11 @@ export default function MissionPendingCard({
   return (
     <div className={baseStyles.card_wrapper}>
       <article
-        className={baseStyles.applicant_card}
-        style={
+        className={`${baseStyles.applicant_card} ${
           localPendingState === "reported"
-            ? {
-                minHeight: "190px",
-                borderBottom: "1px solid #d9d9d9",
-                borderRadius: "8px",
-              }
-            : undefined
-        }
+            ? baseStyles.applicant_card_no_footer
+            : ""
+        }`.trim()}
       >
         {/* 프로필 영역 */}
         <div className={contentStyles.profile_section}>
@@ -371,7 +366,9 @@ export default function MissionPendingCard({
             />
           </div>
           <div className={contentStyles.profile_info}>
-            <span className={contentStyles.user_type}>{applicant.userType}</span>
+            <span className={contentStyles.user_type}>
+              {applicant.userType}
+            </span>
             <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>
@@ -434,10 +431,10 @@ export default function MissionPendingCard({
                 {localIsExtensionApproved && localExtendedDeadline
                   ? `${localExtendedDeadline} 기한 연장`
                   : deadlineDate
-                  ? `${deadlineDate} 기한`
-                  : localExtendedDeadline
-                  ? `${localExtendedDeadline} 기한`
-                  : ""}
+                    ? `${deadlineDate} 기한`
+                    : localExtendedDeadline
+                      ? `${localExtendedDeadline} 기한`
+                      : ""}
               </span>
             </div>
           )

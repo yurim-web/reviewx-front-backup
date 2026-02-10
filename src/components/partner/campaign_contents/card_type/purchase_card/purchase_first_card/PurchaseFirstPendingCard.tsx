@@ -142,7 +142,7 @@ export default function PurchaseFirstPendingCard({
   // 3. 신고 날짜/시간을 현재 시간으로 설정
   const handleReportConfirm = (
     selectedOption: string,
-    otherReason?: string
+    otherReason?: string,
   ) => {
     if (onReport) {
       onReport(applicant.id);
@@ -203,16 +203,11 @@ export default function PurchaseFirstPendingCard({
   return (
     <div className={baseStyles.card_wrapper}>
       <article
-        className={baseStyles.applicant_card}
-        style={
+        className={`${baseStyles.applicant_card} ${
           localPendingState === "reported"
-            ? {
-                minHeight: "190px",
-                borderBottom: "1px solid #d9d9d9",
-                borderRadius: "8px",
-              }
-            : undefined
-        }
+            ? baseStyles.applicant_card_no_footer
+            : ""
+        }`.trim()}
       >
         {/* 프로필 영역 */}
         <div className={contentStyles.profile_section}>
@@ -224,7 +219,9 @@ export default function PurchaseFirstPendingCard({
             />
           </div>
           <div className={contentStyles.profile_info}>
-            <span className={contentStyles.user_type}>{applicant.userType}</span>
+            <span className={contentStyles.user_type}>
+              {applicant.userType}
+            </span>
             <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>

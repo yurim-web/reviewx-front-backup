@@ -193,10 +193,14 @@ export default function TextareaModal({
             rows={5}
             readOnly={readOnly}
             disabled={readOnly}
-            has_error={readOnly || has_error || is_reject_variant}
-            className={`${readOnly ? styles.modal_textarea_readonly : ""} ${
-              is_reject_variant ? styles.modal_textarea_reject : ""
-            }`.trim()}
+            has_error={
+              is_extend_variant && readOnly ? false : readOnly || has_error
+            }
+            className={
+              readOnly && !is_extend_variant
+                ? styles.modal_textarea_readonly
+                : ""
+            }
             stop_propagation={true}
           />
 

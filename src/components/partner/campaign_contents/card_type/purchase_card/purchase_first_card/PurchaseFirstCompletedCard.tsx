@@ -67,9 +67,9 @@ export default function PurchaseFirstCompletedCard({
     };
 
     checkMobile();
-    window.addEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
 
-    return () => window.removeEventListener('resize', checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // 신고 옵션 정의
@@ -99,7 +99,7 @@ export default function PurchaseFirstCompletedCard({
   // 신고 확인 처리
   const handleReportConfirm = (
     selectedOption: string,
-    otherReason?: string
+    otherReason?: string,
   ) => {
     if (onReport) {
       onReport(applicant.id);
@@ -110,9 +110,7 @@ export default function PurchaseFirstCompletedCard({
 
   return (
     <div className={baseStyles.card_wrapper}>
-      <article
-        className={baseStyles.applicant_card}
-      >
+      <article className={baseStyles.applicant_card}>
         {/* 프로필 영역 */}
         <div className={contentStyles.profile_section}>
           <div className={contentStyles.profile_image_container}>
@@ -123,7 +121,9 @@ export default function PurchaseFirstCompletedCard({
             />
           </div>
           <div className={contentStyles.profile_info}>
-            <span className={contentStyles.user_type}>{applicant.userType}</span>
+            <span className={contentStyles.user_type}>
+              {applicant.userType}
+            </span>
             <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>
@@ -139,15 +139,6 @@ export default function PurchaseFirstCompletedCard({
           구매영수증 확인
         </button>
 
-        {/* 등록 날짜 */}
-        <div className={actionStyles.registration_info}>
-          <span>
-            {registrationDate
-              ? `${isMobile ? formatDateForMobile(registrationDate) : registrationDate} 등록`
-              : `${isMobile ? formatDateForMobile(applicant.registrationDate) : applicant.registrationDate} 등록`}
-          </span>
-        </div>
-
         {/* 확인 완료 버튼 (비활성화, 분홍색 배경) */}
         <div className={actionStyles.action_button_section}>
           <button
@@ -162,6 +153,15 @@ export default function PurchaseFirstCompletedCard({
           >
             확인 완료
           </button>
+        </div>
+
+        {/* 등록 날짜 */}
+        <div className={actionStyles.registration_info}>
+          <span>
+            {registrationDate
+              ? `${isMobile ? formatDateForMobile(registrationDate) : registrationDate} 등록`
+              : `${isMobile ? formatDateForMobile(applicant.registrationDate) : applicant.registrationDate} 등록`}
+          </span>
         </div>
       </article>
 

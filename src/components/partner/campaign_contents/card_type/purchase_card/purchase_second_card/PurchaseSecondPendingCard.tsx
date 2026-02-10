@@ -184,7 +184,7 @@ export default function PurchaseSecondPendingCard({
   // 신고 확인 처리
   const handleReportConfirm = (
     selectedOption: string,
-    otherReason?: string
+    otherReason?: string,
   ) => {
     if (onReport) {
       onReport(applicant.id);
@@ -309,16 +309,9 @@ export default function PurchaseSecondPendingCard({
   return (
     <div className={baseStyles.card_wrapper}>
       <article
-        className={baseStyles.applicant_card}
-        style={
-          localPendingState === "reported"
-            ? {
-                minHeight: "190px",
-                borderBottom: "1px solid #d9d9d9",
-                borderRadius: "8px",
-              }
-            : undefined
-        }
+        className={`${baseStyles.applicant_card} ${
+          localPendingState === "reported" ? baseStyles.applicant_card_no_footer : ""
+        }`.trim()}
       >
         {/* 프로필 영역 */}
         <div className={contentStyles.profile_section}>
@@ -330,7 +323,9 @@ export default function PurchaseSecondPendingCard({
             />
           </div>
           <div className={contentStyles.profile_info}>
-            <span className={contentStyles.user_type}>{applicant.userType}</span>
+            <span className={contentStyles.user_type}>
+              {applicant.userType}
+            </span>
             <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>
@@ -393,10 +388,10 @@ export default function PurchaseSecondPendingCard({
                 {localIsExtensionApproved && localExtendedDeadline
                   ? `${localExtendedDeadline} 기한 연장`
                   : deadlineDate
-                  ? `${deadlineDate} 기한`
-                  : localExtendedDeadline
-                  ? `${localExtendedDeadline} 기한`
-                  : ""}
+                    ? `${deadlineDate} 기한`
+                    : localExtendedDeadline
+                      ? `${localExtendedDeadline} 기한`
+                      : ""}
               </span>
             </div>
           )

@@ -111,9 +111,9 @@ export default function MissionInspectionCard({
     };
 
     checkMobile();
-    window.addEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
 
-    return () => window.removeEventListener('resize', checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // 신고 옵션 정의
@@ -163,7 +163,7 @@ export default function MissionInspectionCard({
   // 신고 확인 처리
   const handleReportConfirm = (
     selectedOption: string,
-    otherReason?: string
+    otherReason?: string,
   ) => {
     if (onReport) {
       onReport(applicant.id);
@@ -229,9 +229,7 @@ export default function MissionInspectionCard({
 
   return (
     <div className={baseStyles.card_wrapper}>
-      <article
-        className={baseStyles.applicant_card}
-      >
+      <article className={baseStyles.applicant_card}>
         {/* 프로필 영역 */}
         <div className={contentStyles.profile_section}>
           <div className={contentStyles.profile_image_container}>
@@ -242,7 +240,9 @@ export default function MissionInspectionCard({
             />
           </div>
           <div className={contentStyles.profile_info}>
-            <span className={contentStyles.user_type}>{applicant.userType}</span>
+            <span className={contentStyles.user_type}>
+              {applicant.userType}
+            </span>
             <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>
@@ -265,7 +265,10 @@ export default function MissionInspectionCard({
               className={actionStyles.content_check_button}
               onClick={() => {
                 // console.log("링크 확인 클릭", applicant.id);
-                const url = getChannelUrl(applicant.channel, applicant.channelId);
+                const url = getChannelUrl(
+                  applicant.channel,
+                  applicant.channelId,
+                );
                 if (url && url !== "#") {
                   window.open(url, "_blank", "noopener,noreferrer");
                 }
@@ -301,25 +304,6 @@ export default function MissionInspectionCard({
           </button>
         )}
 
-        {/* 등록/수정/지각 등록 */}
-        <div className={actionStyles.registration_info}>
-          {isLate ? (
-            <span className={actionStyles.late_label}>
-              {isMobile
-                ? formatDateForMobile(registrationDate || applicant.registrationDate)
-                : (registrationDate || applicant.registrationDate)}{" "}
-              <span className={actionStyles.late_text_full}>지각 등록</span>
-              <span className={actionStyles.late_text_short}>지각</span>
-            </span>
-          ) : (
-            <span>
-              {registrationDate
-                ? `${isMobile ? formatDateForMobile(registrationDate) : registrationDate} ${dateLabel}`
-                : `${isMobile ? formatDateForMobile(applicant.registrationDate) : applicant.registrationDate} ${dateLabel}`}
-            </span>
-          )}
-        </div>
-
         {/* 승인/반려 */}
         <div className={actionStyles.approval_buttons}>
           <button
@@ -337,6 +321,27 @@ export default function MissionInspectionCard({
           >
             반려
           </button>
+        </div>
+
+        {/* 등록/수정/지각 등록 */}
+        <div className={actionStyles.registration_info}>
+          {isLate ? (
+            <span className={actionStyles.late_label}>
+              {isMobile
+                ? formatDateForMobile(
+                    registrationDate || applicant.registrationDate,
+                  )
+                : registrationDate || applicant.registrationDate}{" "}
+              <span className={actionStyles.late_text_full}>지각 등록</span>
+              <span className={actionStyles.late_text_short}>지각</span>
+            </span>
+          ) : (
+            <span>
+              {registrationDate
+                ? `${isMobile ? formatDateForMobile(registrationDate) : registrationDate} ${dateLabel}`
+                : `${isMobile ? formatDateForMobile(applicant.registrationDate) : applicant.registrationDate} ${dateLabel}`}
+            </span>
+          )}
         </div>
       </article>
 
@@ -411,7 +416,7 @@ export default function MissionInspectionCard({
         message={
           extensionCount === 0
             ? '콘텐츠 등록 기간을<br><span style="color: #FF2626;">3일 연장</span>하시겠습니까?'
-            : '이미 연장한 내역이 있습니다.<br>추가 연장은 이번 요청이 마지막입니다.<br>계속하시겠습니까?'
+            : "이미 연장한 내역이 있습니다.<br>추가 연장은 이번 요청이 마지막입니다.<br>계속하시겠습니까?"
         }
         buttons={extensionCount === 0 ? ["취소", "연장"] : ["취소", "확인"]}
         on_confirm={handleExtensionConfirm}

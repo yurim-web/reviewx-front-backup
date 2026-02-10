@@ -124,9 +124,9 @@ export default function CampaignInspectionCard({
     };
 
     checkMobile();
-    window.addEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
 
-    return () => window.removeEventListener('resize', checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // 신고 옵션 정의
@@ -173,7 +173,7 @@ export default function CampaignInspectionCard({
   // 신고 확인 처리
   const handleReportConfirm = (
     selectedOption: string,
-    otherReason?: string
+    otherReason?: string,
   ) => {
     if (onReport) {
       onReport(applicant.id);
@@ -325,7 +325,9 @@ export default function CampaignInspectionCard({
 
   // Format date for display
   const dateToDisplay = applicant.updatedAt || applicant.registrationDate;
-  const formattedDate = isMobile ? formatDateForMobile(dateToDisplay) : dateToDisplay;
+  const formattedDate = isMobile
+    ? formatDateForMobile(dateToDisplay)
+    : dateToDisplay;
 
   return (
     <div className={baseStyles.card_wrapper}>
@@ -340,7 +342,9 @@ export default function CampaignInspectionCard({
             />
           </div>
           <div className={contentStyles.profile_info}>
-            <span className={contentStyles.user_type}>{applicant.userType}</span>
+            <span className={contentStyles.user_type}>
+              {applicant.userType}
+            </span>
             <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>
@@ -412,21 +416,6 @@ export default function CampaignInspectionCard({
           </div>
         ) : null}
 
-        {/* 등록/수정/지각 등록 */}
-        <div className={actionStyles.registration_info}>
-          {dateLabel === "지각 등록" ? (
-            <span className={actionStyles.late_label}>
-              {formattedDate}{" "}
-              <span className={actionStyles.late_text_full}>지각 등록</span>
-              <span className={actionStyles.late_text_short}>지각</span>
-            </span>
-          ) : (
-            <span>
-              {formattedDate} {dateLabel}
-            </span>
-          )}
-        </div>
-
         {/* 승인/반려 */}
         <div className={actionStyles.approval_buttons}>
           <button
@@ -444,6 +433,21 @@ export default function CampaignInspectionCard({
           >
             반려
           </button>
+        </div>
+
+        {/* 등록/수정/지각 등록 */}
+        <div className={actionStyles.registration_info}>
+          {dateLabel === "지각 등록" ? (
+            <span className={actionStyles.late_label}>
+              {formattedDate}{" "}
+              <span className={actionStyles.late_text_full}>지각 등록</span>
+              <span className={actionStyles.late_text_short}>지각</span>
+            </span>
+          ) : (
+            <span>
+              {formattedDate} {dateLabel}
+            </span>
+          )}
         </div>
       </article>
 
@@ -518,7 +522,7 @@ export default function CampaignInspectionCard({
         message={
           extensionCount === 0
             ? '콘텐츠 등록 기간을<br><span style="color: #FF2626;">3일 연장</span>하시겠습니까?'
-            : '이미 연장한 내역이 있습니다.<br>추가 연장은 이번 요청이 마지막입니다.<br>계속하시겠습니까?'
+            : "이미 연장한 내역이 있습니다.<br>추가 연장은 이번 요청이 마지막입니다.<br>계속하시겠습니까?"
         }
         buttons={extensionCount === 0 ? ["취소", "연장"] : ["취소", "확인"]}
         on_confirm={handleExtensionConfirm}

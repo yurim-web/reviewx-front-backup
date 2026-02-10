@@ -101,9 +101,12 @@ export default function CampaignCompletedCard({
   const [rejectReason, setRejectReason] = useState("");
   // 연장 관련 상태
   const [extensionCount, setExtensionCount] = useState(0); // 연장 횟수 추적
-  const [isExtensionConfirmModalOpen, setIsExtensionConfirmModalOpen] = useState(false);
-  const [isExtensionCompleteModalOpen, setIsExtensionCompleteModalOpen] = useState(false);
-  const [isExtensionLimitModalOpen, setIsExtensionLimitModalOpen] = useState(false);
+  const [isExtensionConfirmModalOpen, setIsExtensionConfirmModalOpen] =
+    useState(false);
+  const [isExtensionCompleteModalOpen, setIsExtensionCompleteModalOpen] =
+    useState(false);
+  const [isExtensionLimitModalOpen, setIsExtensionLimitModalOpen] =
+    useState(false);
 
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
@@ -114,9 +117,9 @@ export default function CampaignCompletedCard({
     };
 
     checkMobile();
-    window.addEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
 
-    return () => window.removeEventListener('resize', checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // 신고 옵션 정의
@@ -146,7 +149,7 @@ export default function CampaignCompletedCard({
   // 신고 확인 처리
   const handleReportConfirm = (
     selectedOption: string,
-    otherReason?: string
+    otherReason?: string,
   ) => {
     if (onReport) {
       onReport(applicant.id);
@@ -287,7 +290,9 @@ export default function CampaignCompletedCard({
 
   // Format date for display
   const dateToDisplay = applicant.updatedAt || applicant.registrationDate;
-  const formattedDate = isMobile ? formatDateForMobile(dateToDisplay) : dateToDisplay;
+  const formattedDate = isMobile
+    ? formatDateForMobile(dateToDisplay)
+    : dateToDisplay;
 
   return (
     <div className={baseStyles.card_wrapper}>
@@ -302,7 +307,9 @@ export default function CampaignCompletedCard({
             />
           </div>
           <div className={contentStyles.profile_info}>
-            <span className={contentStyles.user_type}>{applicant.userType}</span>
+            <span className={contentStyles.user_type}>
+              {applicant.userType}
+            </span>
             <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>
@@ -374,21 +381,6 @@ export default function CampaignCompletedCard({
           </div>
         ) : null}
 
-        {/* 등록/수정/지각 등록 */}
-        <div className={actionStyles.registration_info}>
-          {dateLabel === "지각 등록" ? (
-            <span className={actionStyles.late_label}>
-              {formattedDate}{" "}
-              <span className={actionStyles.late_text_full}>지각 등록</span>
-              <span className={actionStyles.late_text_short}>지각</span>
-            </span>
-          ) : (
-            <span>
-              {formattedDate} {dateLabel}
-            </span>
-          )}
-        </div>
-
         {/* 완료 표시 또는 승인/반려 버튼 */}
         <div className={actionStyles.action_button_section}>
           {isLate ? (
@@ -420,18 +412,33 @@ export default function CampaignCompletedCard({
             </button>
           )}
         </div>
+
+        {/* 등록/수정/지각 등록 */}
+        <div className={actionStyles.registration_info}>
+          {dateLabel === "지각 등록" ? (
+            <span className={actionStyles.late_label}>
+              {formattedDate}{" "}
+              <span className={actionStyles.late_text_full}>지각 등록</span>
+              <span className={actionStyles.late_text_short}>지각</span>
+            </span>
+          ) : (
+            <span>
+              {formattedDate} {dateLabel}
+            </span>
+          )}
+        </div>
       </article>
 
       {/* 연장/신고 버튼 footer */}
       {/* 일반 완료: 신고 버튼만, 지각 등록: 연장/신고 버튼 둘 다 */}
       <div className={actionStyles.extension_report_footer}>
-          {isLate && (
-            <>
-              <button
-                className={actionStyles.extension_button}
-                onClick={handleExtendClick}
-                aria-label={`${applicant.nickname} 연장`}
-              >
+        {isLate && (
+          <>
+            <button
+              className={actionStyles.extension_button}
+              onClick={handleExtendClick}
+              aria-label={`${applicant.nickname} 연장`}
+            >
               <img
                 src="/images/management_page/clock_icon.svg"
                 alt="연장 아이콘"
