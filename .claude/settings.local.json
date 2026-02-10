@@ -40,7 +40,10 @@
       "Bash(tree:*)",
       "Bash(for file in src/data/campaign/delivery/deliveryCampaigns.ts src/data/campaign/mission/missionCampaigns.ts src/data/campaign/reporter/reporterCampaigns.ts src/data/campaign/review/reviewCampaigns.ts src/data/campaign/visit/visitCampaigns.ts)",
       "Bash(Get-Content \"c:\\\\develop\\\\reviewx-web\\\\src\\\\styles\\\\manager_ga\\\\layout.css\")",
-      "Bash(Select-String -Pattern \"background\" -Context 2,2)"
+      "Bash(Select-String -Pattern \"background\" -Context 2,2)",
+      "Bash(for file in buttons.module.css campaign_card.module.css campaign_detail.module.css campaign_report_modal.module.css charts.module.css filter_section.module.css footer.module.css header.module.css inputs.module.css layout.module.css member_type_section.module.css options.module.css page.module.css penalty.module.css post_detail_page.module.css reset_password.module.css responsive.module.css statistics.module.css tab_navigation.module.css)",
+      "Bash(do echo \"=== $file ===\")",
+      "Bash(find:*)"
     ]
   }
 }
