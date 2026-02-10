@@ -171,8 +171,7 @@
 
 /* 셀렉트 박스 포커스 상태 */
 .select_box:focus {
-  outline: 2px solid #999999;
-  outline-offset: 0;
+  outline: none;
 }
 
 /* 텍스트 입력 박스 */
@@ -194,8 +193,7 @@
 
 /* 텍스트 입력 박스 포커스 상태 */
 .input_box:focus {
-  outline: 2px solid #999999;
-  outline-offset: 0;
+  outline: none;
 }
 
 /* 텍스트에어리어 헤더 (사용 안 함) */

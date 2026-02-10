@@ -196,7 +196,7 @@
 }
 
 .other_reason_textarea:focus {
-  border-color: #555555;
+  outline: none;
 }
 
 /* 기타 사유 textarea 에러 상태 (사유 미입력 시) */
@@ -205,7 +205,7 @@
 }
 
 .other_reason_textarea_error:focus {
-  border-color: #ff2626;
+  outline: none;
 }
 
 .other_reason_textarea::placeholder {

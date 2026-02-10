@@ -35,7 +35,7 @@ export default function EmailInput({
         id="find-account-email"
         type="email"
         className={styles.email_input}
-        placeholder="가입 시 사용한 이메일을 입력하세요"
+        placeholder="이메일 입력"
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />

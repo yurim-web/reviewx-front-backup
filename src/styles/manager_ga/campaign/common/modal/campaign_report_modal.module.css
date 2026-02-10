@@ -200,7 +200,7 @@
 }
 
 .textarea_wrapper.textarea_error:focus-within {
-  border-color: #ff2626;
+  outline: none;
 }
 
 /* 모달 푸터 */

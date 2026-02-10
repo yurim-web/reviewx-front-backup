@@ -62,12 +62,11 @@
   cursor: default;
 }
 
-/* focus 상태에서 outline 제거 및 border 색상 유지 */
+/* focus 상태에서 outline 제거 */
 .form_input:focus,
 .form_select:focus,
 .form_textarea:focus {
   outline: none;
-  border-color: #d9d9d9;
 }
 
 /* placeholder 스타일 */
@@ -85,7 +84,6 @@
 .form_input[readonly]:focus,
 .form_input[readonly] {
   outline: none;
-  border-color: #d9d9d9;
   cursor: default;
   background: #f6f6f6;
   color: #999;

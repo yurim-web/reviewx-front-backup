@@ -654,8 +654,7 @@
 }
 
 .date_input:focus {
-  border-color: #444444;
-  box-shadow: 0 0 0 3px rgba(68, 68, 68, 0.1);
+  outline: none;
 }
 
 /* 날짜 입력 필드 구분자 */

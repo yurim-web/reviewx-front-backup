@@ -49,7 +49,7 @@
  * 3️⃣ 인증번호 입력 필드 아래 (verificationCodeErrorText)
  *    - 표시 조건: verificationCodeError prop이 전달될 때
  *    - 에러 종류:
- *      ✅ "인증번호 6자리를 입력해주세요."
+ *      ✅ "인증번호 6자리를 입력해 주세요."
  *         → 발생 시점: "인증" 버튼 클릭 시 인증번호가 비어있거나 6자리가 아닐 때
  *         → 표시 위치: 인증번호 입력 필드 바로 아래
  *         → 특징: input 테두리 색상 변경 없이 메시지만 표시
@@ -219,7 +219,7 @@ export default function PhoneVerification({
   const handleVerifyInternal = () => {
     // 인증번호 형식 검증
     if (!verificationCode || !validateVerificationCode(verificationCode)) {
-      setInternalVerificationCodeError("인증번호 6자리를 입력해주세요.");
+      setInternalVerificationCodeError("인증번호 6자리를 입력해 주세요.");
       return;
     }
 
@@ -228,6 +228,16 @@ export default function PhoneVerification({
 
     // 부모의 onVerify 호출
     onVerify?.();
+  };
+
+  /** 재전송 클릭 핸들러 - 인증번호 에러 초기화 후 재전송 */
+  const handleResendClick = async () => {
+    setInternalVerificationCodeError(undefined);
+    if (onResend) {
+      await onResend();
+    } else {
+      await handleVerificationRequestInternal();
+    }
   };
 
   /** 에러 메시지 공통 렌더링 */
@@ -265,8 +275,8 @@ export default function PhoneVerification({
 
     // 인증번호 에러 처리
     if (errorType === "verificationCode") {
-      if (errorValue === "인증번호 6자리를 입력해주세요.") {
-        return "인증번호 6자리를 입력해주세요.";
+      if (errorValue === "인증번호 6자리를 입력해 주세요.") {
+        return "인증번호 6자리를 입력해 주세요.";
       }
       if (errorValue === "인증번호 입력 시간을 초과했습니다.") {
         return "인증번호 입력 시간을 초과했습니다.";
@@ -337,7 +347,7 @@ export default function PhoneVerification({
               <button
                 type="button"
                 className={styles.resend_button}
-                onClick={onResend || handleVerificationRequestInternal}
+                onClick={handleResendClick}
               >
                 재전송
               </button>
@@ -398,9 +408,11 @@ export default function PhoneVerification({
               {error === "MAX_VERIFICATION_REQUEST_EXCEEDED" && (
                 <ErrorText message="인증번호 요청 횟수를 모두 사용했습니다. 24시간 후 다시 시도해 주세요." />
               )}
-              <div className={styles.verification_help_text}>
-                인증번호를 받지 못 하셨나요?
-              </div>
+              {!verificationCodeErrorText && (
+                <div className={styles.verification_help_text}>
+                  인증번호를 받지 못 하셨나요?
+                </div>
+              )}
             </div>
           )}
       </>
@@ -443,7 +455,7 @@ export default function PhoneVerification({
           <button
             type="button"
             className={styles.resend_button}
-            onClick={onResend || handleVerificationRequestInternal}
+            onClick={handleResendClick}
           >
             재전송
           </button>
@@ -516,9 +528,11 @@ export default function PhoneVerification({
               </span>
             </div>
           )}
-          <div className={styles.verification_help_text}>
-            인증번호를 받지 못 하셨나요?
-          </div>
+          {!verificationCodeErrorText && (
+            <div className={styles.verification_help_text}>
+              인증번호를 받지 못 하셨나요?
+            </div>
+          )}
         </div>
       )}
     </div>

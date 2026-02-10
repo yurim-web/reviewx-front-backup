@@ -149,7 +149,7 @@
 
 /* 입력 필드 포커스 상태 */
 .input_field:focus {
-  border-color: #444444;
+  outline: none;
 }
 
 /* 입력 필드 플레이스홀더 스타일 */
