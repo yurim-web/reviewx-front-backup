@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -25,14 +25,6 @@ export default function UserLoginPage() {
 
   // 최근 로그인한 소셜 제공자 (테스트용)
   const [recentLoginProvider] = useState<RecentLoginProvider>("naver");
-
-  // 이 페이지에서만 헤더 보더 색상 흰색으로 설정
-  useEffect(() => {
-    document.body.classList.add("user_login_page");
-    return () => {
-      document.body.classList.remove("user_login_page");
-    };
-  }, []);
 
   // ========================================
   // 자동 로그인 비활성화
@@ -139,50 +131,13 @@ export default function UserLoginPage() {
   };
 
   /**
-   * 카카오 로그인 핸들러
+   * 카카오 버튼 클릭 핸들러
    *
-   * 실제로는 카카오 OAuth API를 호출해야 함
-   *
-   * 소셜 로그인 플로우는 네이버와 동일합니다.
+   * 리뷰어 회원가입 페이지로 이동합니다.
+   * (네이버는 로그인, 카카오는 회원가입으로 분리)
    */
-  const handleKakaoLogin = async () => {
-    console.log("카카오 로그인 클릭");
-
-    // ========================================
-    // ⚠️ 실제 API 연결 시 사용할 코드 (아래 주석 해제)
-    // ========================================
-    // try {
-    //   // 카카오 OAuth 인증 페이지로 리다이렉트
-    //   window.location.href = "카카오 OAuth URL";
-    // } catch (error) {
-    //   console.error("카카오 로그인 오류:", error);
-    //   alert("로그인 중 오류가 발생했습니다.");
-    // }
-    // ========================================
-
-    // ========================================
-    // 🧪 테스트용 코드 - 실제 API 연결 시 전체 삭제 필요
-    // ========================================
-    try {
-      // 테스트용: 카카오 로그인 계정 찾기
-      // 실제로는 서버에서 소셜 로그인 성공 후 계정 정보를 받아옵니다.
-      const kakao_account = UNIFIED_ACCOUNTS.find(
-        (account) => account.userType === "user" && account.snsType === "kakao"
-      );
-
-      if (!kakao_account) {
-        console.error("카카오 계정을 찾을 수 없습니다.");
-        alert("로그인 중 오류가 발생했습니다.");
-        return;
-      }
-
-      // 소셜 로그인 성공 처리
-      await handle_social_login_success(kakao_account);
-    } catch (error) {
-      console.error("카카오 로그인 오류:", error);
-      alert("로그인 중 오류가 발생했습니다.");
-    }
-    // ========================================
+  const handleKakaoLogin = () => {
+    router.push("/user/signup");
   };
 
   // ========================================

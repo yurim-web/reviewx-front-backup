@@ -34,11 +34,6 @@
   background-color: #f2f2f2;
 }
 
-/* 계정찾기 페이지에서 헤더 border-bottom 흰색으로 변경 */
-.find_account_page_container.user_page :global(header) {
-  border-bottom: 1px solid #ffffff;
-}
-
 /* ========================================
    2. 메인 콘텐츠 영역
    ======================================== */
