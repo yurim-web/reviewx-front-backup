@@ -20,7 +20,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import styles from "@/styles/manager_sa/settlement/withdrawal/page.module.css";
+import styles from "@/styles/manager_sa/settlement/withdrawal/withdrawal_page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import WithdrawalStatCardsSection from "@/components/manager/sa/settlement/withdrawal/section/WithdrawalStatCardsSection";
 import WithdrawalFilterSection from "@/components/manager/sa/settlement/withdrawal/section/WithdrawalFilterSection";

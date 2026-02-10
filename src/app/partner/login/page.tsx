@@ -24,7 +24,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import PartnerHeader from "@/components/fragments/PartnerHeader";
-import pageStyles from "@/styles/login/login/page.module.css";
+import pageStyles from "@/styles/login/login/login_page.module.css";
 import formStyles from "@/styles/login/login/form.module.css";
 import optionsStyles from "@/styles/login/login/options.module.css";
 import linksStyles from "@/styles/login/login/links.module.css";

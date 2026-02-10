@@ -274,11 +274,12 @@
     line-height: 20px;
     letter-spacing: -0.28px;
   }
-
+  /* 안내사항 텍스트 */
   .info_text {
     font-size: 14px;
     line-height: 20px;
     letter-spacing: -0.28px;
+    word-break: keep-all;
   }
 
   .modal_footer {

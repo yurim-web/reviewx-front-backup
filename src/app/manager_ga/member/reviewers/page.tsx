@@ -27,7 +27,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import styles from "@/styles/manager/common/page.module.css";
+import styles from "@/styles/manager/common/manager_common_page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import ReviewerStatsSection from "@/components/manager/common/member/reviewers/ReviewerStatsSection";
 import ReviewerFilterSection from "@/components/manager/common/member/reviewers/ReviewerFilterSection";
