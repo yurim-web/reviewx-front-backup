@@ -117,7 +117,7 @@ export default function PenaltyPage() {
         />
 
         {/* 패널티 컨텐츠 영역 */}
-        <div className={cardStyles.campaign_list}>
+        <div className={cardStyles.penalty_list}>
           <PenaltyContent
             penaltyData={userPenaltyData}
             userStatus={userPenaltyStatus}

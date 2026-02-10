@@ -463,6 +463,11 @@
     padding-bottom: 12px;
   }
 
+  /* 링크 섹션 - 모바일에서 하단 여백 20px */
+  .link_section_mobile_pb {
+    padding-bottom: 20px;
+  }
+
   /* 이미지 섹션 */
   .image_section {
     gap: 8px;

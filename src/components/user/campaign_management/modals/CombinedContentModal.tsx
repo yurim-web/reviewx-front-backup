@@ -440,7 +440,7 @@ export default function CombinedContentModal({
               </div>
 
               {/* 링크 섹션 */}
-              <div className={styles.link_section}>
+              <div className={`${styles.link_section} ${styles.link_section_mobile_pb}`}>
                 <p className={styles.link_label}>링크</p>
                 <input
                   type="url"

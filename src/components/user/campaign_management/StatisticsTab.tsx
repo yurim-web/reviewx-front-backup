@@ -18,8 +18,11 @@
  */
 
 import { useRouter } from "next/navigation";
+import { useRef, useEffect } from "react";
 import type { CampaignStats, StatTab } from "@/types/domain/user";
 import styles from "../../../styles/user/campaign_management/statistics.module.css";
+
+const MOBILE_BREAKPOINT = 768;
 
 interface StatisticsTabProps {
   activeStatTab: StatTab;
@@ -38,6 +41,26 @@ export default function StatisticsTab({
   stats,
 }: StatisticsTabProps) {
   const router = useRouter();
+  const tabRefs = useRef<Record<StatTab, HTMLButtonElement | null>>({
+    전체: null,
+    신청: null,
+    선정: null,
+    완료: null,
+    "취소/반려": null,
+    패널티: null,
+  });
+
+  // 모바일에서 선택된 탭이 오른쪽 끝에 보이도록 스크롤
+  useEffect(() => {
+    if (typeof window === "undefined" || window.innerWidth > MOBILE_BREAKPOINT)
+      return;
+    const el = tabRefs.current[activeStatTab];
+    if (!el) return;
+    const timer = requestAnimationFrame(() => {
+      el.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "end" });
+    });
+    return () => cancelAnimationFrame(timer);
+  }, [activeStatTab]);
 
   const handleStatTabClick = (
     tab: "신청" | "선정" | "완료" | "취소/반려" | "전체" | "패널티",
@@ -73,6 +96,9 @@ export default function StatisticsTab({
       <div className={styles.stat_tab_navigation}>
         <div className={styles.left_stat_tabs}>
           <button
+            ref={(el) => {
+              tabRefs.current["전체"] = el;
+            }}
             className={`${styles.stat_tab} ${
               activeStatTab === "전체" ? styles.active : ""
             }`}
@@ -83,6 +109,9 @@ export default function StatisticsTab({
           </button>
 
           <button
+            ref={(el) => {
+              tabRefs.current["신청"] = el;
+            }}
             className={`${styles.stat_tab} ${
               activeStatTab === "신청" ? styles.active : ""
             }`}
@@ -93,6 +122,9 @@ export default function StatisticsTab({
           </button>
 
           <button
+            ref={(el) => {
+              tabRefs.current["선정"] = el;
+            }}
             className={`${styles.stat_tab} ${
               activeStatTab === "선정" ? styles.active : ""
             }`}
@@ -103,6 +135,9 @@ export default function StatisticsTab({
           </button>
 
           <button
+            ref={(el) => {
+              tabRefs.current["완료"] = el;
+            }}
             className={`${styles.stat_tab} ${
               activeStatTab === "완료" ? styles.active : ""
             }`}
@@ -113,6 +148,9 @@ export default function StatisticsTab({
           </button>
 
           <button
+            ref={(el) => {
+              tabRefs.current["취소/반려"] = el;
+            }}
             className={`${styles.stat_tab} ${
               activeStatTab === "취소/반려" ? styles.active : ""
             }`}
@@ -124,6 +162,9 @@ export default function StatisticsTab({
         </div>
 
         <button
+          ref={(el) => {
+            tabRefs.current["패널티"] = el;
+          }}
           className={`${styles.stat_tab} ${
             activeStatTab === "패널티" ? styles.active : ""
           }`}
