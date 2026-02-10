@@ -111,9 +111,9 @@ export default function PurchaseSecondInspectionCard({
     };
 
     checkMobile();
-    window.addEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
 
-    return () => window.removeEventListener('resize', checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // 신고 옵션 정의
@@ -164,7 +164,7 @@ export default function PurchaseSecondInspectionCard({
   // 신고 확인 처리
   const handleReportConfirm = (
     selectedOption: string,
-    otherReason?: string
+    otherReason?: string,
   ) => {
     if (onReport) {
       onReport(applicant.id);
@@ -228,7 +228,9 @@ export default function PurchaseSecondInspectionCard({
             />
           </div>
           <div className={contentStyles.profile_info}>
-            <span className={contentStyles.user_type}>{applicant.userType}</span>
+            <span className={contentStyles.user_type}>
+              {applicant.userType}
+            </span>
             <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>
@@ -240,25 +242,6 @@ export default function PurchaseSecondInspectionCard({
         >
           리뷰 확인
         </button>
-
-        {/* 등록/수정/지각 등록 날짜 */}
-        <div className={actionStyles.registration_info}>
-          {isLate ? (
-            <span className={actionStyles.late_label}>
-              {isMobile
-                ? formatDateForMobile(registrationDate || applicant.registrationDate)
-                : (registrationDate || applicant.registrationDate)}{" "}
-              <span className={actionStyles.late_text_full}>지각 등록</span>
-              <span className={actionStyles.late_text_short}>지각</span>
-            </span>
-          ) : (
-            <span>
-              {registrationDate
-                ? `${isMobile ? formatDateForMobile(registrationDate) : registrationDate} ${dateLabel}`
-                : `${isMobile ? formatDateForMobile(applicant.registrationDate) : applicant.registrationDate} ${dateLabel}`}
-            </span>
-          )}
-        </div>
 
         {/* 승인/반려 버튼 */}
         <div className={actionStyles.approval_buttons}>
@@ -277,6 +260,27 @@ export default function PurchaseSecondInspectionCard({
           >
             반려
           </button>
+        </div>
+
+        {/* 등록/수정/지각 등록 날짜 */}
+        <div className={actionStyles.registration_info}>
+          {isLate ? (
+            <span className={actionStyles.late_label}>
+              {isMobile
+                ? formatDateForMobile(
+                    registrationDate || applicant.registrationDate,
+                  )
+                : registrationDate || applicant.registrationDate}{" "}
+              <span className={actionStyles.late_text_full}>지각 등록</span>
+              <span className={actionStyles.late_text_short}>지각</span>
+            </span>
+          ) : (
+            <span>
+              {registrationDate
+                ? `${isMobile ? formatDateForMobile(registrationDate) : registrationDate} ${dateLabel}`
+                : `${isMobile ? formatDateForMobile(applicant.registrationDate) : applicant.registrationDate} ${dateLabel}`}
+            </span>
+          )}
         </div>
       </article>
 

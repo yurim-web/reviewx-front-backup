@@ -75,9 +75,9 @@ export default function ExperienceCompletedCard({
     };
 
     checkMobile();
-    window.addEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
 
-    return () => window.removeEventListener('resize', checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // 신고 옵션 정의
@@ -107,7 +107,7 @@ export default function ExperienceCompletedCard({
   // 신고 확인 처리
   const handleReportConfirm = (
     selectedOption: string,
-    otherReason?: string
+    otherReason?: string,
   ) => {
     if (onReport) {
       onReport(applicant.id);
@@ -122,9 +122,7 @@ export default function ExperienceCompletedCard({
   return (
     <div className={baseStyles.card_wrapper}>
       {/* 카드 본문 */}
-      <article
-        className={baseStyles.applicant_card}
-      >
+      <article className={baseStyles.applicant_card}>
         {/* 프로필 영역 */}
         <div className={contentStyles.profile_section}>
           <div className={contentStyles.profile_image_container}>
@@ -135,7 +133,9 @@ export default function ExperienceCompletedCard({
             />
           </div>
           <div className={contentStyles.profile_info}>
-            <span className={contentStyles.user_type}>{applicant.userType}</span>
+            <span className={contentStyles.user_type}>
+              {applicant.userType}
+            </span>
             <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>
@@ -195,25 +195,6 @@ export default function ExperienceCompletedCard({
           </button>
         )}
 
-        {/* 등록/수정 일시 */}
-        <div className={actionStyles.registration_info}>
-          {dateLabel === "지각 등록" ? (
-            <span className={actionStyles.late_label}>
-              {isMobile
-                ? formatDateForMobile(applicant.updatedAt || applicant.registrationDate)
-                : (applicant.updatedAt || applicant.registrationDate)}{" "}
-              <span className={actionStyles.late_text_full}>지각 등록</span>
-              <span className={actionStyles.late_text_short}>지각</span>
-            </span>
-          ) : (
-            <span>
-              {applicant.updatedAt
-                ? `${isMobile ? formatDateForMobile(applicant.updatedAt) : applicant.updatedAt} ${dateLabel}`
-                : `${isMobile ? formatDateForMobile(applicant.registrationDate) : applicant.registrationDate} ${dateLabel}`}
-            </span>
-          )}
-        </div>
-
         {/* 버튼 영역: 항상 "확인 완료" 버튼 */}
         {/* 📌 확인 완료 버튼 스타일:
             - 완료 탭에서는 핑크색 배경과 핑크색 텍스트로 표시됩니다
@@ -227,6 +208,27 @@ export default function ExperienceCompletedCard({
           >
             확인 완료
           </button>
+        </div>
+
+        {/* 등록/수정 일시 */}
+        <div className={actionStyles.registration_info}>
+          {dateLabel === "지각 등록" ? (
+            <span className={actionStyles.late_label}>
+              {isMobile
+                ? formatDateForMobile(
+                    applicant.updatedAt || applicant.registrationDate,
+                  )
+                : applicant.updatedAt || applicant.registrationDate}{" "}
+              <span className={actionStyles.late_text_full}>지각 등록</span>
+              <span className={actionStyles.late_text_short}>지각</span>
+            </span>
+          ) : (
+            <span>
+              {applicant.updatedAt
+                ? `${isMobile ? formatDateForMobile(applicant.updatedAt) : applicant.updatedAt} ${dateLabel}`
+                : `${isMobile ? formatDateForMobile(applicant.registrationDate) : applicant.registrationDate} ${dateLabel}`}
+            </span>
+          )}
         </div>
       </article>
 

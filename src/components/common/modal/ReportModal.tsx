@@ -91,10 +91,6 @@ export default function ReportModal({
     useState<string>(options[0]?.value || "");
   const [internal_otherReason, setInternal_otherReason] = useState<string>("");
 
-  // textarea 에러 상태 관리
-  // 신고 버튼을 클릭했을 때만 에러 상태가 true가 되고, 사용자가 입력을 시작하면 false로 리셋됩니다
-  const [has_error, set_has_error] = useState<boolean>(false);
-
   // 제어/비제어 컴포넌트 처리
   const is_controlled = prop_selectedOption !== undefined;
   const selectedOption = is_controlled
@@ -106,16 +102,9 @@ export default function ReportModal({
 
   // 선택된 옵션이 "기타" 옵션인지 확인
   const selectedOptionData = options.find(
-    (opt) => opt.value === selectedOption
+    (opt) => opt.value === selectedOption,
   );
   const showOtherReason = selectedOptionData?.isOther === true;
-
-  // 모달이 열릴 때 에러 상태 초기화
-  useEffect(() => {
-    if (is_open) {
-      set_has_error(false);
-    }
-  }, [is_open]);
 
   // ESC 키로 모달 닫기
   useEffect(() => {
@@ -144,15 +133,10 @@ export default function ReportModal({
   };
 
   // 기타 사유 변경 핸들러
-  // 사용자가 입력을 시작하면 에러 상태를 false로 리셋합니다
   const handle_other_reason_change = (
-    e: React.ChangeEvent<HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
     const value = e.target.value;
-    // 입력을 시작하면 에러 상태를 해제합니다
-    if (has_error) {
-      set_has_error(false);
-    }
     if (is_controlled) {
       onOtherReasonChange?.(value);
     } else {
@@ -160,24 +144,13 @@ export default function ReportModal({
     }
   };
 
-  // 확인 버튼 클릭 핸들러
+  // 확인 버튼 클릭 핸들러 (기타 사유 미입력 시에는 버튼이 비활성화되어 호출되지 않음)
   const handle_confirm = () => {
-    // 📌 기타 옵션 선택 시 사유 입력 필수 검증
-    if (showOtherReason && !otherReason.trim()) {
-      // 사유가 입력되지 않았으면 에러 상태를 true로 설정하고 처리하지 않음
-      set_has_error(true);
-      return;
-    }
-    // 검증 통과 시 에러 상태를 false로 설정하고 처리 진행
-    set_has_error(false);
     if (on_confirm) {
       on_confirm(selectedOption, showOtherReason ? otherReason : undefined);
     }
     on_close();
   };
-
-  // 📌 신고 버튼은 항상 활성화
-  // 에러 표시를 위해 버튼을 비활성화하지 않고, handle_confirm 내에서 검증합니다
 
   // 오버레이 클릭 핸들러
   const handle_overlay_click = (e: React.MouseEvent) => {
@@ -230,11 +203,7 @@ export default function ReportModal({
           {showOtherReason && (
             <div className={styles.other_reason_wrapper}>
               <textarea
-                className={`${styles.other_reason_textarea} ${
-                  has_error && !otherReason.trim()
-                    ? styles.other_reason_textarea_error
-                    : ""
-                }`}
+                className={styles.other_reason_textarea}
                 value={otherReason}
                 onChange={handle_other_reason_change}
                 placeholder="사유 입력"
@@ -255,8 +224,10 @@ export default function ReportModal({
                   {buttons[0]}
                 </button>
                 <button
+                  type="button"
                   onClick={handle_confirm}
                   className={styles.modal_footer_button_confirm}
+                  disabled={showOtherReason && !otherReason.trim()}
                 >
                   {buttons[1]}
                 </button>

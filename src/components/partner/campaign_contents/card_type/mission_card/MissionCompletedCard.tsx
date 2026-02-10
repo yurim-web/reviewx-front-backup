@@ -90,9 +90,9 @@ export default function MissionCompletedCard({
     };
 
     checkMobile();
-    window.addEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
 
-    return () => window.removeEventListener('resize', checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // 신고 옵션 정의
@@ -122,7 +122,7 @@ export default function MissionCompletedCard({
   // 신고 확인 처리
   const handleReportConfirm = (
     selectedOption: string,
-    otherReason?: string
+    otherReason?: string,
   ) => {
     if (onReport) {
       onReport(applicant.id);
@@ -133,9 +133,7 @@ export default function MissionCompletedCard({
 
   return (
     <div className={baseStyles.card_wrapper}>
-      <article
-        className={baseStyles.applicant_card}
-      >
+      <article className={baseStyles.applicant_card}>
         {/* 프로필 영역 */}
         <div className={contentStyles.profile_section}>
           <div className={contentStyles.profile_image_container}>
@@ -146,7 +144,9 @@ export default function MissionCompletedCard({
             />
           </div>
           <div className={contentStyles.profile_info}>
-            <span className={contentStyles.user_type}>{applicant.userType}</span>
+            <span className={contentStyles.user_type}>
+              {applicant.userType}
+            </span>
             <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>
@@ -169,7 +169,10 @@ export default function MissionCompletedCard({
               className={actionStyles.content_check_button}
               onClick={() => {
                 // console.log("링크 확인 클릭", applicant.id);
-                const url = getChannelUrl(applicant.channel, applicant.channelId);
+                const url = getChannelUrl(
+                  applicant.channel,
+                  applicant.channelId,
+                );
                 if (url && url !== "#") {
                   window.open(url, "_blank", "noopener,noreferrer");
                 }
@@ -205,25 +208,6 @@ export default function MissionCompletedCard({
           </button>
         )}
 
-        {/* 등록/수정 날짜 */}
-        <div className={actionStyles.registration_info}>
-          {dateLabel === "지각 등록" ? (
-            <span className={actionStyles.late_label}>
-              {isMobile
-                ? formatDateForMobile(registrationDate || applicant.registrationDate)
-                : (registrationDate || applicant.registrationDate)}{" "}
-              <span className={actionStyles.late_text_full}>지각 등록</span>
-              <span className={actionStyles.late_text_short}>지각</span>
-            </span>
-          ) : (
-            <span>
-              {registrationDate
-                ? `${isMobile ? formatDateForMobile(registrationDate) : registrationDate} ${dateLabel}`
-                : `${isMobile ? formatDateForMobile(applicant.registrationDate) : applicant.registrationDate} ${dateLabel}`}
-            </span>
-          )}
-        </div>
-
         {/* 확인 완료 버튼 (비활성화, 핑크 배경) */}
         <div className={actionStyles.action_button_section}>
           <button
@@ -238,6 +222,27 @@ export default function MissionCompletedCard({
           >
             확인 완료
           </button>
+        </div>
+
+        {/* 등록/수정 날짜 */}
+        <div className={actionStyles.registration_info}>
+          {dateLabel === "지각 등록" ? (
+            <span className={actionStyles.late_label}>
+              {isMobile
+                ? formatDateForMobile(
+                    registrationDate || applicant.registrationDate,
+                  )
+                : registrationDate || applicant.registrationDate}{" "}
+              <span className={actionStyles.late_text_full}>지각 등록</span>
+              <span className={actionStyles.late_text_short}>지각</span>
+            </span>
+          ) : (
+            <span>
+              {registrationDate
+                ? `${isMobile ? formatDateForMobile(registrationDate) : registrationDate} ${dateLabel}`
+                : `${isMobile ? formatDateForMobile(applicant.registrationDate) : applicant.registrationDate} ${dateLabel}`}
+            </span>
+          )}
         </div>
       </article>
 

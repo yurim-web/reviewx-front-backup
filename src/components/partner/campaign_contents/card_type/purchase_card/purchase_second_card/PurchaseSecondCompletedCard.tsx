@@ -72,9 +72,9 @@ export default function PurchaseSecondCompletedCard({
     };
 
     checkMobile();
-    window.addEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
 
-    return () => window.removeEventListener('resize', checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // 신고 옵션 정의
@@ -104,7 +104,7 @@ export default function PurchaseSecondCompletedCard({
   // 신고 확인 처리
   const handleReportConfirm = (
     selectedOption: string,
-    otherReason?: string
+    otherReason?: string,
   ) => {
     if (onReport) {
       onReport(applicant.id);
@@ -141,7 +141,9 @@ export default function PurchaseSecondCompletedCard({
             />
           </div>
           <div className={contentStyles.profile_info}>
-            <span className={contentStyles.user_type}>{applicant.userType}</span>
+            <span className={contentStyles.user_type}>
+              {applicant.userType}
+            </span>
             <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>
@@ -153,27 +155,6 @@ export default function PurchaseSecondCompletedCard({
         >
           리뷰 확인
         </button>
-
-        {/* 등록/수정 날짜 */}
-        <div className={actionStyles.registration_info}>
-          {registrationDate && (registrationDate.includes("지각 등록") || registrationDate.includes("지각")) ? (
-            <span className={actionStyles.late_label}>
-              {isMobile
-                ? formatDateForMobile(registrationDate.replace(" 지각 등록", "").replace(" 지각", ""))
-                : registrationDate.replace(" 지각 등록", "").replace(" 지각", "")}{" "}
-              <span className={actionStyles.late_text_full}>지각 등록</span>
-              <span className={actionStyles.late_text_short}>지각</span>
-            </span>
-          ) : (
-            <span>
-              {registrationDate
-                ? registrationDate.includes("등록") || registrationDate.includes("수정")
-                  ? (isMobile ? formatDateForMobile(registrationDate.split(' ')[0]) + ' ' + registrationDate.split(' ').slice(1).join(' ') : registrationDate)
-                  : `${isMobile ? formatDateForMobile(registrationDate) : registrationDate} 등록`
-                : `${isMobile ? formatDateForMobile(applicant.registrationDate) : applicant.registrationDate} 등록`}
-            </span>
-          )}
-        </div>
 
         {/* 확인 완료 버튼 (비활성화, 분홍색 배경) */}
         <div className={actionStyles.action_button_section}>
@@ -189,6 +170,40 @@ export default function PurchaseSecondCompletedCard({
           >
             확인 완료
           </button>
+        </div>
+
+        {/* 등록/수정 날짜 */}
+        <div className={actionStyles.registration_info}>
+          {registrationDate &&
+          (registrationDate.includes("지각 등록") ||
+            registrationDate.includes("지각")) ? (
+            <span className={actionStyles.late_label}>
+              {isMobile
+                ? formatDateForMobile(
+                    registrationDate
+                      .replace(" 지각 등록", "")
+                      .replace(" 지각", ""),
+                  )
+                : registrationDate
+                    .replace(" 지각 등록", "")
+                    .replace(" 지각", "")}{" "}
+              <span className={actionStyles.late_text_full}>지각 등록</span>
+              <span className={actionStyles.late_text_short}>지각</span>
+            </span>
+          ) : (
+            <span>
+              {registrationDate
+                ? registrationDate.includes("등록") ||
+                  registrationDate.includes("수정")
+                  ? isMobile
+                    ? formatDateForMobile(registrationDate.split(" ")[0]) +
+                      " " +
+                      registrationDate.split(" ").slice(1).join(" ")
+                    : registrationDate
+                  : `${isMobile ? formatDateForMobile(registrationDate) : registrationDate} 등록`
+                : `${isMobile ? formatDateForMobile(applicant.registrationDate) : applicant.registrationDate} 등록`}
+            </span>
+          )}
         </div>
       </article>
 
@@ -232,4 +247,3 @@ export default function PurchaseSecondCompletedCard({
     </div>
   );
 }
-

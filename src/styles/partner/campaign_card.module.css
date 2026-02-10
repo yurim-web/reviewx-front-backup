@@ -52,7 +52,6 @@
 
   border-radius: 4px;
   background: #d9d9d9; /* 이미지 없을 때 배경색 */
-  
 }
 
 /* 캠페인 이미지 스타일 */
@@ -85,7 +84,6 @@
   display: flex;
   align-items: center;
   gap: 8px; /* 아이콘과 텍스트 간격 */
-  
 }
 
 /* 타입 아이콘 */
@@ -103,7 +101,7 @@
   border-radius: 2px;
   flex-shrink: 0;
   object-fit: contain;
-  box-shadow: 0 0 4px 0 rgba(68, 68, 68, 0.10);
+  box-shadow: 0 0 4px 0 rgba(68, 68, 68, 0.1);
 }
 
 /* 배송형 아이콘 (초록색) */
@@ -222,7 +220,7 @@
 }
 
 .applicant_current_pink {
-  color: #FF5694;
+  color: #ff5694;
 }
 
 .applicant_separator {
@@ -287,8 +285,6 @@
   gap: 24px; /* 2개 버튼일 때 적절한 간격 */
 }
 
-
-
 /* 단일 버튼일 때 특별 레이아웃 */
 .campaign_actions:has(button:only-child) {
   gap: 0; /* 단일 버튼일 때 간격 없음 */
@@ -306,18 +302,25 @@
   background-color: white !important;
 }
 
+/* 신청 내역 확인 버튼 스타일 */
+.applicant_list_check_button {
+  border-color: #848484 !important;
+  color: #848484 !important;
+  background-color: #fff !important;
+}
+
 /* 콘텐츠 확인 버튼 스타일 */
 .content_check_button {
   background-color: #ffffff !important;
-  border-color: #FF5694 !important;
-  color: #FF5694 !important;
+  border-color: #ff5694 !important;
+  color: #ff5694 !important;
 }
 
 /* 당첨자 선정 버튼 스타일 */
 .winner_selection_button {
-  background-color: #FF5694 !important;
+  background-color: #ff5694 !important;
   color: #ffffff !important;
-  border-color: #FF5694 !important;
+  border-color: #ff5694 !important;
 }
 
 /* ========================================
@@ -375,17 +378,12 @@
     line-height: 14px;
     letter-spacing: -0.28px;
 
-    color: #FFF;
-font-size: 14px;
-font-weight: 600;
-line-height: 14px; 
-letter-spacing: -0.28px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 14px;
+    letter-spacing: -0.28px;
   }
-
-
-
-
-
 
   /* 캠페인 제목 - 한 줄 말줄임표 유지 */
   .campaign_title {

@@ -274,6 +274,26 @@ export default function ExperienceInspectionCard({
           </button>
         )}
 
+        {/* 승인/반려 버튼 */}
+        <div className={actionStyles.action_button_section}>
+          <div className={actionStyles.approval_buttons}>
+            <button
+              className={`${actionStyles.action_button} ${actionStyles.approve_button}`}
+              onClick={() => onApprove(applicant.id)}
+              aria-label={`${applicant.nickname} 승인`}
+            >
+              승인
+            </button>
+            <button
+              className={`${actionStyles.action_button} ${actionStyles.reject_button}`}
+              onClick={handleRejectClick}
+              aria-label={`${applicant.nickname} 반려`}
+            >
+              반려
+            </button>
+          </div>
+        </div>
+
         {/* 등록/수정/지각 등록 일시 */}
         <div className={actionStyles.registration_info}>
           {dateLabel === "지각 등록" ? (
@@ -293,26 +313,6 @@ export default function ExperienceInspectionCard({
                 : `${isMobile ? formatDateForMobile(applicant.registrationDate) : applicant.registrationDate} ${dateLabel}`}
             </span>
           )}
-        </div>
-
-        {/* 승인/반려 버튼 */}
-        <div className={actionStyles.action_button_section}>
-          <div className={actionStyles.approval_buttons}>
-            <button
-              className={`${actionStyles.action_button} ${actionStyles.approve_button}`}
-              onClick={() => onApprove(applicant.id)}
-              aria-label={`${applicant.nickname} 승인`}
-            >
-              승인
-            </button>
-            <button
-              className={`${actionStyles.action_button} ${actionStyles.reject_button}`}
-              onClick={handleRejectClick}
-              aria-label={`${applicant.nickname} 반려`}
-            >
-              반려
-            </button>
-          </div>
         </div>
       </article>
 

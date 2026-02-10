@@ -118,11 +118,6 @@ export default function NaverBlogReviewCard({
         콘텐츠 확인하기
       </button>
 
-      {/* 등록일 정보 표시 */}
-      <div className={actionStyles.registration_info}>
-        {applicant.registrationDate} 등록
-      </div>
-
       {/* 액션 버튼 영역: 콘텐츠 확인하기, 승인/반려 */}
       <div className={actionStyles.action_button_section}>
         {/* 
@@ -148,6 +143,11 @@ export default function NaverBlogReviewCard({
             반려
           </button>
         </div>
+      </div>
+
+      {/* 등록일 정보 표시 */}
+      <div className={actionStyles.registration_info}>
+        {applicant.registrationDate} 등록
       </div>
     </article>
   );
