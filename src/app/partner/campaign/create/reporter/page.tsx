@@ -28,7 +28,7 @@ import ReporterCampaignForm from "@/components/partner/campaign_create_form/Repo
 import { CampaignFormData } from "@/types/domain/user";
 import { addReporterCampaign } from "@/data/campaign/reporter/reporterCampaigns";
 // 분리된 CSS 모듈들 import
-import layoutStyles from "@/styles/partner/layout.module.css";
+import layoutStyles from "@/styles/partner/partner_layout.module.css";
 import PageHeader from "@/components/partner/campaign_create_form/common/layout/PageHeader";
 import BaseModal from "@/components/common/modal/BaseModal";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";

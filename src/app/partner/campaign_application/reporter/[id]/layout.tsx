@@ -15,7 +15,7 @@
 
 import { Metadata } from "next";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
-import layoutStyles from "@/styles/partner/layout.module.css";
+import layoutStyles from "@/styles/partner/partner_layout.module.css";
 
 // 메타데이터 설정
 export const metadata: Metadata = {

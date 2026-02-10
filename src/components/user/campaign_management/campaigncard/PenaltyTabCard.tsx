@@ -14,7 +14,7 @@
  */
 
 import type { CampaignApplication } from "@/types/domain/user";
-import buttonStyles from "../../../../styles/user/campaign_management/buttons.module.css";
+import buttonStyles from "../../../../styles/user/campaign_management/campaign_buttons.module.css";
 import { getButtonClassName } from "@/components/common/campaign_management/utils/button_style_utils";
 import CampaignCardBase from "./CampaignCardBase";
 

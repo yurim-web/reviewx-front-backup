@@ -17,18 +17,18 @@
   width: 100%;
 }
 
-/* 메인 컨텐츠 영역 (흰색 배경) */
+/* 메인 컨텐츠 영역 (흰색 배경) - 공지사항과 동일: padding-top으로 SubHeader 아래 시작 */
 .main_content {
   background-color: white;
   max-width: 1000px;
   margin: 0 auto;
   min-height: calc(100vh - 80px);
+  padding-top: 80px;
 }
 
-/* 컨테이너 */
+/* 컨테이너 (제목은 main 직계 자식이라 여기선 상단 여백 없음) */
 .container {
   margin: 0 auto;
-  padding-top: 80px;
 }
 
 /* ============================================
@@ -266,20 +266,16 @@
    ============================================ */
 
 @media (max-width: 768px) {
-  /* PageTitle 숨김 (모바일에서는 헤더만 표시) */
-  .page_title_wrapper {
-    display: none;
-  }
-
   /* 메인 컨텐츠 영역 */
   .main_content {
-    min-height: calc(100vh - 60px);
-    padding-bottom: 40px;
+    min-height: calc(100vh - 64px);
+    padding-bottom: 24px;
+    padding-top: 64px;
   }
 
   /* 컨테이너 */
   .container {
-    padding-top: 60px;
+    padding-top: 0px;
   }
 
   /* ============================================
@@ -325,6 +321,6 @@
 
   /* 출금 신청 버튼 */
   .submit_button {
-    height: 48px;
+    height: 52px;
   }
 }

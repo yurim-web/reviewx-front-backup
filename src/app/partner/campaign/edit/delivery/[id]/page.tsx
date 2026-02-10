@@ -36,7 +36,7 @@ import type { DeliveryCampaignDataExtended } from "@/data/campaign/delivery/deli
 import { useAuth } from "@/hooks/useAuth";
 import { getPartnerPointSummary } from "@/data/partner/point/pointData";
 // 분리된 CSS 모듈들 import
-import layoutStyles from "../../../../../../styles/partner/layout.module.css";
+import layoutStyles from "@/styles/partner/partner_layout.module.css";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import Toast from "@/components/common/toast/Toast";
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";

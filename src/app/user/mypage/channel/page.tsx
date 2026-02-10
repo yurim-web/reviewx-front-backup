@@ -44,7 +44,7 @@ import SubHeader from "@/components/fragments/SubHeader";
 
 import type { MainTab } from "@/types/domain/user";
 
-import layoutStyles from "../../../../styles/user/mypage/layout.module.css";
+import layoutStyles from "@/styles/user/mypage/mypage_layout.module.css";
 
 import { useAuth } from "@/hooks/useAuth";
 

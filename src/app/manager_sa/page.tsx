@@ -33,7 +33,7 @@ import {
   startOfMonth,
   endOfMonth,
 } from "date-fns";
-import layoutStyles from "@/styles/manager_sa/layout/layout.module.css";
+import layoutStyles from "@/styles/manager_sa/layout/sa_layout.module.css";
 import DateFilterSection, {
   DateFilter,
 } from "@/components/manager/ga/dashboard/section/DateFilterSection";

@@ -28,7 +28,7 @@ import ReviewCampaignForm from "@/components/partner/campaign_create_form/Review
 import { CampaignFormData } from "@/types/domain/user";
 import { addReviewCampaign } from "@/data/campaign/review/reviewCampaigns";
 // 분리된 CSS 모듈들 import
-import layoutStyles from "@/styles/partner/layout.module.css";
+import layoutStyles from "@/styles/partner/partner_layout.module.css";
 import PageHeader from "@/components/partner/campaign_create_form/common/layout/PageHeader";
 import BaseModal from "@/components/common/modal/BaseModal";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";

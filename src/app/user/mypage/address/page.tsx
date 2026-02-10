@@ -28,8 +28,8 @@ import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import AddressInput from "@/components/common/mypage/AddressInput";
 import { useAuth } from "@/hooks/useAuth";
-import layoutStyles from "@/styles/user/mypage/edit_profile/layout.module.css";
-import buttonStyles from "@/styles/user/mypage/edit_profile/buttons.module.css";
+import layoutStyles from "@/styles/user/mypage/edit_profile/edit_profile_layout.module.css";
+import buttonStyles from "@/styles/user/mypage/edit_profile/profile_buttons.module.css";
 
 export default function AddressPage() {
   const router = useRouter();

@@ -383,17 +383,14 @@ export default function WithdrawalRequestPage() {
 
   return (
     <div className={styles.request_page}>
-      {/* SubHeader */}
+      {/* SubHeader (모바일에서 기본 헤더는 SubHeader가 대체하며, 제목은 아래 PageTitle 사용) */}
       <SubHeader />
 
-      {/* 메인 컨텐츠 */}
+      {/* 메인 컨텐츠 - 공지사항 페이지와 동일하게 PageTitle을 main 직계 자식으로 두어 상단 고정 */}
       <main className={styles.main_content}>
-        <div className={styles.container}>
-          {/* 제목 (모바일에서는 숨김) */}
-          <div className={styles.page_title_wrapper}>
-            <PageTitle title="포인트 출금 신청" />
-          </div>
+        <PageTitle title="포인트 출금 신청" />
 
+        <div className={styles.container}>
           <AvailablePointsDisplay
             points={userInfo.availablePoints}
             className={styles.available_points_section}

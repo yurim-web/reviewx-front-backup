@@ -44,7 +44,7 @@ import CampaignCardBase from "./CampaignCardBase";
 import SelectedTabButtons from "./SelectedTabButtons";
 import SelectedTabModals from "./SelectedTabModals";
 import cardStyles from "../../../../styles/user/campaign_management/campaign_card.module.css";
-import buttonStyles from "../../../../styles/user/campaign_management/buttons.module.css";
+import buttonStyles from "../../../../styles/user/campaign_management/campaign_buttons.module.css";
 import { useSelectedTabCampaign } from "../hooks/useSelectedTabCampaign";
 import { useSelectedTabModals } from "../hooks/useSelectedTabModals";
 import {

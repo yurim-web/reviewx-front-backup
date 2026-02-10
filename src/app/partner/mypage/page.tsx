@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation";
 import PartnerTabNavigation from "@/components/partner/campaign_management/TabNavigation";
 import SubTabNavigation from "@/components/common/mypage/SubTabNavigation";
 import ProfileContent from "@/components/common/mypage/ProfileContent";
-import layoutStyles from "../../../styles/partner/layout.module.css";
+import layoutStyles from "@/styles/partner/partner_layout.module.css";
 import type { PartnerMainTab } from "@/types/domain/partner";
 import { withPartnerAuth } from "@/components/auth/withAuth";
 import { useAuth } from "@/hooks/useAuth";

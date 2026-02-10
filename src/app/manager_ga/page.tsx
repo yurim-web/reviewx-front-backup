@@ -32,7 +32,7 @@ import {
   startOfDay,
   endOfDay,
 } from 'date-fns';
-import layoutStyles from '@/styles/manager_ga/layout/layout.module.css';
+import layoutStyles from '@/styles/manager_ga/layout/ga_layout.module.css';
 import ManagerPageTitle from '@/components/manager/common/fragments/ManagerPageTitle';
 import DateFilterSection, {
   DateFilter,
