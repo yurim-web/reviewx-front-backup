@@ -29,7 +29,7 @@ import Image from "next/image";
 import Loading from "@/app/loading";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import styles from "@/styles/partner/campaign_application/campaign_application.module.css";
-import layoutStyles from "@/styles/partner/layout.module.css";
+import layoutStyles from "@/styles/partner/partner_layout.module.css";
 import Campaignbanner from "@/components/partner/campaign_application/CampaignInfoBox";
 import PageHeader from "@/components/partner/campaign_application/PageHeader";
 import SortFilterControl from "@/components/partner/campaign_application/SortFilterControl";

@@ -34,7 +34,7 @@ import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import type { VisitCampaignDataExtended } from "@/data/campaign/visit/visitCampaigns";
 // 분리된 CSS 모듈들 import
-import layoutStyles from "../../../../../../styles/partner/layout.module.css";
+import layoutStyles from "@/styles/partner/partner_layout.module.css";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import Toast from "@/components/common/toast/Toast";
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";

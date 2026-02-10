@@ -19,7 +19,7 @@
 
 import { ReactNode } from "react";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
-import layoutStyles from "@/styles/partner/layout.module.css";
+import layoutStyles from "@/styles/partner/partner_layout.module.css";
 
 interface DeliveryCampaignLayoutProps {
   children: ReactNode;

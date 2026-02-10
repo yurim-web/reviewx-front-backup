@@ -24,9 +24,9 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import layoutStyles from "../../../../styles/user/mypage/edit_profile/layout.module.css";
+import layoutStyles from "@/styles/user/mypage/edit_profile/edit_profile_layout.module.css";
 import inputStyles from "../../../../styles/user/mypage/edit_profile/inputs.module.css";
-import buttonStyles from "../../../../styles/user/mypage/edit_profile/buttons.module.css";
+import buttonStyles from "../../../../styles/user/mypage/edit_profile/profile_buttons.module.css";
 import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 // 공용 컴포넌트

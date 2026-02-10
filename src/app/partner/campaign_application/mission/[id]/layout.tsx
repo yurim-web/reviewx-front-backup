@@ -14,7 +14,7 @@
  */
 
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
-import layoutStyles from "@/styles/partner/layout.module.css";
+import layoutStyles from "@/styles/partner/partner_layout.module.css";
 
 /**
  * 미션형 캠페인 신청내역 페이지 레이아웃 컴포넌트

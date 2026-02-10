@@ -30,7 +30,7 @@ import { useState, useEffect, useRef } from "react";
 
 // localStorage 키 상수
 const STORAGE_KEY = "userAccountVerification";
-import layoutStyles from "@/styles/user/mypage/edit_profile/layout.module.css";
+import layoutStyles from "@/styles/user/mypage/edit_profile/edit_profile_layout.module.css";
 import inputStyles from "@/styles/user/mypage/edit_profile/inputs.module.css";
 import verificationStyles from "@/styles/user/mypage/edit_profile/verification.module.css";
 import { CustomDropdown } from "@/components/partner/campaign_create_form/common/selectors/CustomDropdown";

@@ -27,7 +27,7 @@ import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 import SubTabNavigation from "@/components/common/mypage/SubTabNavigation";
 import ProfileContent from "@/components/common/mypage/ProfileContent";
 import type { MainTab } from "@/types/domain/user";
-import layoutStyles from "../../../../styles/user/mypage/layout.module.css";
+import layoutStyles from "@/styles/user/mypage/mypage_layout.module.css";
 
 /**
  * 프로필 탭 전용 페이지 컴포넌트

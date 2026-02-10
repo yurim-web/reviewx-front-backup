@@ -23,7 +23,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import BaseModal from "@/components/common/modal/BaseModal";
-import layoutStyles from "@/styles/user/mypage/edit_profile/layout.module.css";
+import layoutStyles from "@/styles/user/mypage/edit_profile/edit_profile_layout.module.css";
 import inputStyles from "@/styles/user/mypage/edit_profile/inputs.module.css";
 import verificationStyles from "@/styles/user/mypage/edit_profile/verification.module.css";
 import commonStyles from "@/styles/common/signup/signup.module.css";

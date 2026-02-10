@@ -28,7 +28,7 @@ import Loading from "@/app/loading";
 import type { PartnerMainTab } from "@/types/domain/partner";
 import type { PartnerStatTab } from "@/types/domain/partner";
 import type { PartnerCampaign } from "@/types/domain/partner";
-import layoutStyles from "../../../../styles/partner/layout.module.css";
+import layoutStyles from "@/styles/partner/partner_layout.module.css";
 
 // 공용 데이터 import
 import { getCampaignsByTab } from "@/data/partner/sharedCampaigns";

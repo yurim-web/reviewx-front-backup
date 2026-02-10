@@ -3,7 +3,7 @@
    ======================================== */
 import { ReactNode } from "react";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
-import layoutStyles from "@/styles/partner/layout.module.css";
+import layoutStyles from "@/styles/partner/partner_layout.module.css";
 import campaignAppStyles from "@/styles/partner/campaign_application/campaign_application.module.css";
 
 interface PurchaseReviewContentsLayoutProps {

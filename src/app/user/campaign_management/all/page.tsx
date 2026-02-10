@@ -23,7 +23,7 @@ import CampaignList from "@/components/user/campaign_management/CampaignList";
 import CampaignFilterBar from "@/components/common/campaign_management/CampaignFilterBar";
 import type { MainTab } from "@/types/domain/user";
 import type { CampaignApplication } from "@/types/domain/user";
-import layoutStyles from "../../../../styles/user/campaign_management/layout.module.css";
+import layoutStyles from "@/styles/user/campaign_management/campaign_management_layout.module.css";
 import { withUserAuth } from "@/components/auth/withAuth";
 
 import {
