@@ -57,8 +57,10 @@ import {
 import BaseModal from "@/components/common/modal/BaseModal";
 import Toast from "@/components/common/toast/Toast";
 
-interface ReviewCampaignFormProps
-  extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
+interface ReviewCampaignFormProps extends Omit<
+  CampaignCreateFormBaseProps,
+  "campaignType"
+> {
   /** 캠페인 수정 시 초기 데이터 (선택사항) */
   initialData?: CampaignFormData | null;
   /** 폼 동작 모드: 생성/수정 */
@@ -206,7 +208,7 @@ export default function ReviewCampaignForm({
       contactPhone: "",
       fairTradeAgreement: false,
       isUrgent: false,
-    }
+    },
   );
 
   /**
@@ -228,13 +230,18 @@ export default function ReviewCampaignForm({
    * - 오픈 전에는 사용자가 체크/해제할 수 있지만, 기본값은 체크된 상태입니다.
    */
   useEffect(() => {
-    if (isEditMode && !formData.fairTradeAgreement) {
+    // 수정 모드 진입 시 한 번만 기본값을 true로 세팅하고,
+    // 이후에는 사용자가 체크/해제를 자유롭게 할 수 있도록 합니다.
+    if (!isEditMode) return;
+    if (!formData.fairTradeAgreement) {
       setFormData((prev) => ({
         ...prev,
         fairTradeAgreement: true,
       }));
     }
-  }, [isEditMode, formData.fairTradeAgreement]);
+    // formData.fairTradeAgreement는 의도적으로 의존성에서 제외합니다.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditMode]);
 
   /**
    * initialData가 있을 때 이미지 미리보기 및 체크박스 상태 설정
@@ -247,7 +254,10 @@ export default function ReviewCampaignForm({
       }
 
       // 상세 이미지 미리보기 설정
-      if (initialData.detailImagePreviews && initialData.detailImagePreviews.length > 0) {
+      if (
+        initialData.detailImagePreviews &&
+        initialData.detailImagePreviews.length > 0
+      ) {
         setDetailPreviews(initialData.detailImagePreviews);
       }
 
@@ -265,7 +275,7 @@ export default function ReviewCampaignForm({
    */
   const updateCheckboxState = (
     field: keyof typeof checkboxStates,
-    checked: boolean
+    checked: boolean,
   ) => {
     setCheckboxStates((prev) => ({
       ...prev,
@@ -291,7 +301,7 @@ export default function ReviewCampaignForm({
    */
   const handleNumericInputWrapper = (
     field: string,
-    e: React.KeyboardEvent<HTMLInputElement>
+    e: React.KeyboardEvent<HTMLInputElement>,
   ) => {
     handleNumericInput(e);
   };
@@ -301,7 +311,7 @@ export default function ReviewCampaignForm({
    */
   const handleNumericChangeWrapper = (
     field: string,
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     handleNumericChange(e, (value) => {
       updateFormData(field as keyof CampaignFormData, value);
@@ -316,7 +326,7 @@ export default function ReviewCampaignForm({
    * - 우선순위: 개수 > 용량 > 확장자 순서로 검증합니다.
    */
   const handleThumbnailSelect = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -364,7 +374,7 @@ export default function ReviewCampaignForm({
    * - 우선순위: 개수 > 용량 > 확장자 순서로 검증합니다.
    */
   const handleDetailImagesSelect = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const files = event.target.files;
     if (!files) return;
@@ -375,7 +385,7 @@ export default function ReviewCampaignForm({
     const validation = validateImagesForUpload(
       newFiles,
       detailImages.length,
-      7 // 최대 7장
+      7, // 최대 7장
     );
 
     if (!validation.isValid && validation.errorMessage) {
@@ -662,7 +672,10 @@ export default function ReviewCampaignForm({
     const fromCampaignCreate = sessionStorage.getItem("from_campaign_create");
 
     // 포인트 충전 후 돌아왔거나, 처음 로드 시 포인트 업데이트
-    if (availablePoints && (fromCampaignCreate === "true" || formData.currentPoints === "")) {
+    if (
+      availablePoints &&
+      (fromCampaignCreate === "true" || formData.currentPoints === "")
+    ) {
       updateFormData("currentPoints", availablePoints);
     }
 
@@ -947,10 +960,10 @@ export default function ReviewCampaignForm({
             </label>
             <input
               type="text"
-              className={infoStyles.form_input}
+              className={`${infoStyles.form_input} ${isEditMode && !isEditableField("title") ? infoStyles.read_only_input : ""}`}
               value={formData.title}
               onChange={(e) => updateFormData("title", e.target.value)}
-              placeholder="지역, 브랜드, 제공하는 서비스/제품 등"
+              placeholder="구매 플랫폼, 브랜드, 제공하는 서비스/제품 등"
               readOnly={isEditMode && !isEditableField("title")}
             />
           </article>
@@ -976,7 +989,7 @@ export default function ReviewCampaignForm({
             </label>
             <input
               type="text"
-              className={infoStyles.form_input}
+              className={`${infoStyles.form_input} ${infoStyles.read_only_input}`}
               value={formData.brandName}
               readOnly
               placeholder="{상호명}"
@@ -990,7 +1003,7 @@ export default function ReviewCampaignForm({
             </label>
             <input
               type="text"
-              className={infoStyles.form_input}
+              className={`${infoStyles.form_input} ${isEditMode && !isEditableField("providedItems") ? infoStyles.read_only_input : ""}`}
               value={formData.providedItems}
               onChange={(e) => updateFormData("providedItems", e.target.value)}
               placeholder="제공하는 서비스/제품/포인트 등 한줄 설명"
@@ -1005,7 +1018,7 @@ export default function ReviewCampaignForm({
             </label>
             <input
               type="url"
-              className={infoStyles.form_input}
+              className={`${infoStyles.form_input} ${isEditMode && !isEditableField("promotionLink") ? infoStyles.read_only_input : ""}`}
               value={formData.promotionLink}
               onChange={(e) => updateFormData("promotionLink", e.target.value)}
               placeholder="제품 구매 링크"
@@ -1022,7 +1035,7 @@ export default function ReviewCampaignForm({
               <div style={{ position: "relative", flex: 1 }}>
                 <input
                   type="number"
-                  className={infoStyles.form_input}
+                  className={`${infoStyles.form_input} ${isEditMode && !isEditableField("recruitmentCount") ? infoStyles.read_only_input : ""}`}
                   value={formData.recruitmentCount}
                   onChange={(e) =>
                     updateFormData("recruitmentCount", e.target.value)
@@ -1035,21 +1048,6 @@ export default function ReviewCampaignForm({
               </div>
             </div>
           </article>
-
-          {/* 포인트 관리 섹션 (구매평 특수: purchasePoints 포함) */}
-          <PointsManagementSection
-            currentPoints={formData.currentPoints}
-            additionalPoints={formData.additionalPoints}
-            deductedPoints={deductedPoints}
-            onAdditionalPointsChange={(value) =>
-              updateFormData("additionalPoints", value)
-            }
-            onChargeClick={handleChargeClick}
-            isEditMode={isEditMode}
-            isEditable={isEditableField("additionalPoints")}
-            showInsufficientPointsWarning={showInsufficientPointsWarning}
-          />
-
           {/* 구매 지급 포인트 (구매평 전용) */}
           <article className={infoStyles.form_group}>
             <label className={infoStyles.form_label}>
@@ -1059,7 +1057,7 @@ export default function ReviewCampaignForm({
               <div style={{ position: "relative", flex: 1 }}>
                 <input
                   type="text"
-                  className={infoStyles.form_input}
+                  className={`${infoStyles.form_input} ${isEditMode && !isEditableField("purchasePoints") ? infoStyles.read_only_input : ""}`}
                   value={formatNumberWithComma(formData.purchasePoints)}
                   onChange={(e) =>
                     handleNumericChangeWrapper("purchasePoints", e)
@@ -1074,6 +1072,19 @@ export default function ReviewCampaignForm({
               </div>
             </div>
           </article>
+          {/* 포인트 관리 섹션 (구매평 특수: purchasePoints 포함) */}
+          <PointsManagementSection
+            currentPoints={formData.currentPoints}
+            additionalPoints={formData.additionalPoints}
+            deductedPoints={deductedPoints}
+            onAdditionalPointsChange={(value) =>
+              updateFormData("additionalPoints", value)
+            }
+            onChargeClick={handleChargeClick}
+            isEditMode={isEditMode}
+            isEditable={isEditableField("additionalPoints")}
+            showInsufficientPointsWarning={showInsufficientPointsWarning}
+          />
 
           {/* 모집 관련 필드 */}
           {/* 구매평에서는 구매 링크 밑에 모집 인원 필드가 있으므로, 
@@ -1105,7 +1116,7 @@ export default function ReviewCampaignForm({
           {/* 구매기간 (구매평 전용) */}
           <article className={infoStyles.form_group}>
             <label className={infoStyles.form_label}>
-              구매기간<span className={infoStyles.required}>*</span>
+              구매 기간<span className={infoStyles.required}>*</span>
             </label>
             <DateRangeField
               value={formData.purchasePeriod || ""}
@@ -1142,16 +1153,16 @@ export default function ReviewCampaignForm({
             </label>
             <input
               type="text"
-              className={infoStyles.form_input}
+              className={`${infoStyles.form_input} ${isEditMode && !isEditableField("keywords") ? infoStyles.read_only_input : ""}`}
               value={formData.keywords}
               onChange={(e) => updateFormData("keywords", e.target.value)}
-              placeholder="최대 10개 입력 가능"
+              placeholder="본문 내 첨부 키워드/해시태그/계정 태그 등"
               readOnly={isEditMode && !isEditableField("keywords")}
             />
           </article>
 
-          {/* 기본 미션 설정 */}
-          <article className={infoStyles.form_group}>
+          {/* 기본 미션 설정 - 캠페인 오픈 후 비활성화 */}
+          <article className={`${infoStyles.form_group} ${isEditMode && isOpen ? infoStyles.form_group_locked : ""}`}>
             <label className={infoStyles.form_label}>기본 미션 설정</label>
             <SimpleGuideSection
               checkboxStates={checkboxStates}
@@ -1253,8 +1264,8 @@ export default function ReviewCampaignForm({
                 ? "저장 중..."
                 : "등록 중..."
               : isEditMode
-              ? "저장"
-              : "등록"}
+                ? "저장"
+                : "등록"}
           </button>
         </div>
       </form>

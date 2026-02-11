@@ -29,9 +29,8 @@ export const platforms: PlatformType[] = [
   "쇼츠",
 ];
 
-// 카테고리 옵션
+// 카테고리 옵션 (캠페인 등록/수정용 - "전체" 제외)
 export const categories = [
-  "전체",
   "식품",
   "뷰티",
   "가전",

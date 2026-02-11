@@ -61,8 +61,10 @@ import {
 import BaseModal from "@/components/common/modal/BaseModal";
 import Toast from "@/components/common/toast/Toast";
 
-interface VisitCampaignFormProps
-  extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
+interface VisitCampaignFormProps extends Omit<
+  CampaignCreateFormBaseProps,
+  "campaignType"
+> {
   /** 캠페인 수정 시 초기 데이터 (선택사항) */
   initialData?: CampaignFormData | null;
   /** 폼 동작 모드: 생성/수정 */
@@ -103,6 +105,7 @@ export default function VisitCampaignForm({
       return field !== "brandName";
     } else {
       // 오픈 후: 홍보 링크, 추가 지급 포인트, 참여/제출 옵션, 문의 담당자 휴대폰 번호만 수정 가능
+      // 방문형 전용: 방문 주소, 주소 상세 안내, 방문 링크도 오픈 후 수정 가능
       const editable = new Set([
         "promotionLink", // 홍보 링크
         "additionalPoints", // 추가 지급 포인트
@@ -117,6 +120,10 @@ export default function VisitCampaignForm({
         "requireLinkAttachment",
         "requireKeywordAttachment",
         "contactPhone", // 문의 담당자 휴대폰 번호
+        // 방문형 전용 - 오픈 후에도 수정 가능
+        "visitAddress", // 방문 주소
+        "addressDetail", // 주소 상세 안내
+        "visitLink", // 방문 링크
       ]);
       return editable.has(field);
     }
@@ -147,7 +154,7 @@ export default function VisitCampaignForm({
   const [formData, setFormData] = useState<CampaignFormData>(
     initialData || {
       campaignType: "방문형",
-      platform: "네이버 블로그",
+      platform: "",
       title: "",
       category: "",
       region: "",
@@ -177,7 +184,7 @@ export default function VisitCampaignForm({
       contactPhone: "",
       fairTradeAgreement: false,
       isUrgent: false,
-    }
+    },
   );
 
   // 이미지 업로드 관련 state (썸네일/상세 이미지 분리)
@@ -235,13 +242,18 @@ export default function VisitCampaignForm({
    *
    */
   useEffect(() => {
-    if (isEditMode && !formData.fairTradeAgreement) {
+    // 수정 모드 진입 시 한 번만 기본값을 true로 세팅하고,
+    // 이후에는 사용자가 체크/해제를 자유롭게 할 수 있도록 합니다.
+    if (!isEditMode) return;
+    if (!formData.fairTradeAgreement) {
       setFormData((prev) => ({
         ...prev,
         fairTradeAgreement: true,
       }));
     }
-  }, [isEditMode, formData.fairTradeAgreement]);
+    // formData.fairTradeAgreement는 의도적으로 의존성에서 제외합니다.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditMode]);
 
   /**
    * initialData가 있을 때 이미지 미리보기 및 체크박스 상태 설정
@@ -254,7 +266,10 @@ export default function VisitCampaignForm({
       }
 
       // 상세 이미지 미리보기 설정
-      if (initialData.detailImagePreviews && initialData.detailImagePreviews.length > 0) {
+      if (
+        initialData.detailImagePreviews &&
+        initialData.detailImagePreviews.length > 0
+      ) {
         setDetailPreviews(initialData.detailImagePreviews);
       }
 
@@ -272,7 +287,7 @@ export default function VisitCampaignForm({
    */
   const updateCheckboxState = (
     field: keyof typeof checkboxStates,
-    checked: boolean
+    checked: boolean,
   ) => {
     setCheckboxStates((prev) => ({
       ...prev,
@@ -285,7 +300,7 @@ export default function VisitCampaignForm({
    */
   const handleNumericInputWrapper = (
     field: string,
-    e: React.KeyboardEvent<HTMLInputElement>
+    e: React.KeyboardEvent<HTMLInputElement>,
   ) => {
     handleNumericInput(e);
   };
@@ -295,7 +310,7 @@ export default function VisitCampaignForm({
    */
   const handleNumericChangeWrapper = (
     field: string,
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     handleNumericChange(e, (value) => {
       updateFormData(field as keyof CampaignFormData, value);
@@ -310,7 +325,7 @@ export default function VisitCampaignForm({
    * - 우선순위: 개수 > 용량 > 확장자 순서로 검증합니다.
    */
   const handleThumbnailSelect = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -358,7 +373,7 @@ export default function VisitCampaignForm({
    * - 우선순위: 개수 > 용량 > 확장자 순서로 검증합니다.
    */
   const handleDetailImagesSelect = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const files = event.target.files;
     if (!files) return;
@@ -369,7 +384,7 @@ export default function VisitCampaignForm({
     const validation = validateImagesForUpload(
       newFiles,
       detailImages.length,
-      7 // 최대 7장
+      7, // 최대 7장
     );
 
     if (!validation.isValid && validation.errorMessage) {
@@ -485,8 +500,9 @@ export default function VisitCampaignForm({
           Number(String(formData.videoDuration).replace(/,/g, "")) > 0));
 
     // 필수 텍스트 필드들이 모두 입력되었는지 확인
-    // platform은 CustomDropdown에서 기본값이 설정되어 있으므로 별도 체크 불필요
+    // platform은 새 캠페인 등록 시 "플랫폼 선택"에서 반드시 선택해야 함
     const hasRequiredFields =
+      (formData.platform || "").trim() !== "" &&
       formData.title.trim() !== "" &&
       formData.category !== "" &&
       formData.region !== "" &&
@@ -747,7 +763,10 @@ export default function VisitCampaignForm({
     const fromCampaignCreate = sessionStorage.getItem("from_campaign_create");
 
     // 포인트 충전 후 돌아왔거나, 처음 로드 시 포인트 업데이트
-    if (availablePoints && (fromCampaignCreate === "true" || formData.currentPoints === "")) {
+    if (
+      availablePoints &&
+      (fromCampaignCreate === "true" || formData.currentPoints === "")
+    ) {
       updateFormData("currentPoints", availablePoints);
     }
 
@@ -1055,10 +1074,10 @@ export default function VisitCampaignForm({
             </label>
             <input
               type="text"
-              className={infoStyles.form_input}
+              className={`${infoStyles.form_input} ${isEditMode && !isEditableField("title") ? infoStyles.read_only_input : ""}`}
               value={formData.title}
               onChange={(e) => updateFormData("title", e.target.value)}
-              placeholder="지역, 브랜드, 제공하는 서비스/제품 등"
+              placeholder="브랜드, 제공하는 서비스/제품 등"
               readOnly={isEditMode && !isEditableField("title")}
             />
           </article>
@@ -1125,7 +1144,7 @@ export default function VisitCampaignForm({
             </label>
             <input
               type="text"
-              className={infoStyles.form_input}
+              className={`${infoStyles.form_input} ${infoStyles.read_only_input}`}
               value={formData.brandName}
               readOnly
               placeholder="{상호명}"
@@ -1139,7 +1158,7 @@ export default function VisitCampaignForm({
             </label>
             <input
               type="text"
-              className={infoStyles.form_input}
+              className={`${infoStyles.form_input} ${isEditMode && !isEditableField("providedItems") ? infoStyles.read_only_input : ""}`}
               value={formData.providedItems}
               onChange={(e) => updateFormData("providedItems", e.target.value)}
               placeholder="제공하는 서비스/제품/포인트 등 한줄 설명"
@@ -1155,7 +1174,7 @@ export default function VisitCampaignForm({
             <div className={infoStyles.postal_input_group}>
               <input
                 type="text"
-                className={infoStyles.form_input}
+                className={`${infoStyles.form_input} ${isEditMode && !isEditableField("visitAddress") ? infoStyles.read_only_input : ""}`}
                 value={formData.visitAddress}
                 onChange={(e) => updateFormData("visitAddress", e.target.value)}
                 placeholder="캠페인 방문 주소"
@@ -1165,6 +1184,7 @@ export default function VisitCampaignForm({
                 type="button"
                 className={infoStyles.charge_button}
                 onClick={handlePostalCodeSearch}
+                disabled={isEditMode && !isEditableField("visitAddress")}
               >
                 우편번호 찾기
               </button>
@@ -1176,7 +1196,7 @@ export default function VisitCampaignForm({
             <label className={infoStyles.form_label}>주소 상세 안내</label>
             <input
               type="text"
-              className={infoStyles.form_input}
+              className={`${infoStyles.form_input} ${isEditMode && !isEditableField("addressDetail") ? infoStyles.read_only_input : ""}`}
               value={formData.addressDetail}
               onChange={(e) => updateFormData("addressDetail", e.target.value)}
               placeholder="캠페인 방문 상세 주소 안내"
@@ -1189,7 +1209,7 @@ export default function VisitCampaignForm({
             <label className={infoStyles.form_label}>방문 링크</label>
             <input
               type="url"
-              className={infoStyles.form_input}
+              className={`${infoStyles.form_input} ${isEditMode && !isEditableField("visitLink") ? infoStyles.read_only_input : ""}`}
               value={formData.visitLink}
               onChange={(e) => updateFormData("visitLink", e.target.value)}
               placeholder="캠페인 방문 링크"
@@ -1206,7 +1226,7 @@ export default function VisitCampaignForm({
               <div style={{ position: "relative", flex: 1 }}>
                 <input
                   type="number"
-                  className={infoStyles.form_input}
+                  className={`${infoStyles.form_input} ${isEditMode && !isEditableField("recruitmentCount") ? infoStyles.read_only_input : ""}`}
                   value={formData.recruitmentCount}
                   onChange={(e) =>
                     updateFormData("recruitmentCount", e.target.value)
@@ -1271,7 +1291,7 @@ export default function VisitCampaignForm({
             </label>
             <input
               type="text"
-              className={infoStyles.form_input}
+              className={`${infoStyles.form_input} ${isEditMode && !isEditableField("keywords") ? infoStyles.read_only_input : ""}`}
               value={formData.keywords}
               onChange={(e) => updateFormData("keywords", e.target.value)}
               placeholder="본문 내 첨부 키워드/해시태그/계정 태그 등"
@@ -1279,8 +1299,8 @@ export default function VisitCampaignForm({
             />
           </article>
 
-          {/* 간편 안내 */}
-          <article className={infoStyles.form_group}>
+          {/* 기본 미션 설정 - 캠페인 오픈 후 비활성화 */}
+          <article className={`${infoStyles.form_group} ${isEditMode && isOpen ? infoStyles.form_group_locked : ""}`}>
             <label className={infoStyles.form_label}>기본 미션 설정</label>
             <SimpleGuideSection
               checkboxStates={checkboxStates}
@@ -1382,8 +1402,8 @@ export default function VisitCampaignForm({
                 ? "저장 중..."
                 : "등록 중..."
               : isEditMode
-              ? "저장"
-              : "등록"}
+                ? "저장"
+                : "등록"}
           </button>
         </div>
       </form>

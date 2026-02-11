@@ -85,6 +85,49 @@
   flex-shrink: 0;
 }
 
+/* ========================================
+   잠금(비활성화) 상태 - 캠페인 오픈 후 수정 시 (Figma 461-1994)
+   data-locked="true" 조상 안의 옵션만 적용
+   ======================================== */
+[data-locked="true"] .option_input_box {
+  background: #f6f6f6 !important;
+  border: 1px solid #d9d9d9 !important;
+  cursor: default !important;
+}
+
+[data-locked="true"] .option_input_box input[type="checkbox"] {
+  border: 1.5px solid #999999 !important;
+  background: #f6f6f6 !important;
+  cursor: default !important;
+}
+
+[data-locked="true"] .option_input_box input[type="checkbox"]:checked {
+  border: 1.5px solid #999999 !important;
+  background: #f6f6f6 !important;
+}
+
+[data-locked="true"] .option_input_box input[type="checkbox"]:checked::after {
+  color: #999999 !important;
+  font-weight: 500 !important;
+}
+
+[data-locked="true"] .option_label,
+[data-locked="true"]
+  .option_input_box
+  input[type="checkbox"]:checked
+  + .option_label,
+[data-locked="true"]
+  .option_input_box
+  input[type="checkbox"]:checked
+  ~ .option_label {
+  color: #999999 !important;
+  cursor: default !important;
+}
+
+[data-locked="true"] .option_value {
+  color: #999999 !important;
+}
+
 /* 동영상 입력 행 (각 줄을 감싸는 컨테이너) - PC에서는 레이아웃에 영향 없이 표시 */
 .video_input_row {
   display: contents;
@@ -148,7 +191,4 @@
   .video_input_row > * {
     display: flex !important;
   }
-
-
-
 }

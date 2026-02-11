@@ -136,6 +136,35 @@ div.header_urgent_checkbox
   font-weight: bold;
 }
 
+/* 캠페인 오픈 후 긴급 체크박스 비활성화 - 기본 미션 설정 비활성과 동일 톤 (Figma 461-1994) */
+.urgent_checkbox_disabled {
+  color: #9ca3af !important;
+  cursor: default;
+  font-weight: 500;
+}
+
+.urgent_checkbox:disabled {
+  border: 1.5px solid #d9d9d9 !important;
+  background: #f6f6f6 !important;
+  cursor: default !important;
+}
+
+/* 비활성화된 긴급 체크박스가 체크된 경우 - 체크마크도 회색 */
+.urgent_checkbox:disabled:checked {
+  border: 1.5px solid #d9d9d9 !important;
+  background: #f6f6f6 !important;
+}
+
+.urgent_checkbox:disabled:checked::after,
+.header_urgent_checkbox .urgent_checkbox:disabled:checked::after {
+  color: #999999 !important;
+}
+
+/* 비활성 시 라벨 빨간색 제거 */
+.header_urgent_checkbox label.urgent_checkbox_disabled {
+  color: #999999 !important;
+}
+
 /* 캠페인 유형 선택 버튼들 - 배송형, 방문형 등 */
 .campaign_type_buttons {
   display: flex;
@@ -179,8 +208,6 @@ div.header_urgent_checkbox
   color: #ff5694;
   background: #fff;
 }
-
-
 
 /* ============================================
    모바일 반응형 스타일 추가
@@ -228,7 +255,7 @@ div.header_urgent_checkbox
   /* 캠페인 유형 선택 - 2x3 그리드 형태 */
   .campaign_type_buttons {
     display: grid;
-    grid-template-columns: 1fr 1fr; 
+    grid-template-columns: 1fr 1fr;
     gap: 12px;
     flex-wrap: wrap;
   }

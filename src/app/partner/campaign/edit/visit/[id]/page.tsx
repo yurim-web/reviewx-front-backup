@@ -279,7 +279,7 @@ function campaignToFormData(
     requireLinkAttachment: parsedRequirements.requireLinkAttachment,
     requireKeywordAttachment: parsedRequirements.requireKeywordAttachment,
     guidelines: guidelines,
-    contactPhone: extended?.contactPhone || "",
+    contactPhone: extended?.contactPhone || (campaign as { contactPhone?: string })?.contactPhone || "010-0000-0000",
     fairTradeAgreement: true,
     isUrgent: extended?.isUrgent || false,
     thumbnailImageUrl: extended?.image || info.image || "",
@@ -606,20 +606,22 @@ export default function VisitCampaignEditPage() {
 
         <h1 className={headerStyles.page_title}>캠페인 수정</h1>
 
-        {/* 긴급 체크박스 */}
+        {/* 긴급 체크박스 - 캠페인 오픈 후에는 선택/해제 불가 (긴급이면 체크된 상태 유지) */}
         <div className={headerStyles.header_urgent_checkbox}>
           <label
             className={`${checkboxStyles.checkbox_label} ${
               isUrgent ? headerStyles.urgent_checked : ""
-            }`}
-            style={isUrgent ? { color: "#ff2626" } : {}}
+            } ${isOpen ? headerStyles.urgent_checkbox_disabled : ""}`}
+            style={!isOpen && isUrgent ? { color: "#ff2626" } : {}}
           >
             <span>긴급</span>
             <input
               type="checkbox"
               className={headerStyles.urgent_checkbox}
               checked={isUrgent}
-              onChange={(e) => setIsUrgent(e.target.checked)}
+              onChange={(e) => !isOpen && setIsUrgent(e.target.checked)}
+              disabled={isOpen}
+              aria-label="긴급"
             />
           </label>
         </div>

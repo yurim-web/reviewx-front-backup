@@ -113,19 +113,19 @@ export function ThumbnailAndDetailImages({
                 alt="썸네일 이미지"
                 className={infoStyles.image_preview}
               />
-              <button
-                type="button"
-                className={infoStyles.image_remove_button}
-                onClick={onThumbnailRemove}
-                aria-label="썸네일 제거"
-                disabled={isEditMode && !isEditable}
-              >
-                {/* 이미지 제거 아이콘 */}
-                <img
-                  src="/images/icons/img_delete_btn.svg"
-                  alt="제거"
-                />
-              </button>
+              {!(isEditMode && !isEditable) && (
+                <button
+                  type="button"
+                  className={infoStyles.image_remove_button}
+                  onClick={onThumbnailRemove}
+                  aria-label="썸네일 제거"
+                >
+                  <img
+                    src="/images/icons/img_delete_btn.svg"
+                    alt="제거"
+                  />
+                </button>
+              )}
             </div>
           )}
 
@@ -179,24 +179,24 @@ export function ThumbnailAndDetailImages({
                 alt={`상세 이미지 ${index + 1}`}
                 className={infoStyles.image_preview}
               />
-              <button
-                type="button"
-                className={infoStyles.image_remove_button}
-                onClick={() => onDetailImageRemove(index)}
-                aria-label={`상세 이미지 ${index + 1} 제거`}
-                disabled={isEditMode && !isEditable}
-              >
-                {/* 이미지 제거 아이콘 */}
-                <img
-                  src="/images/icons/img_delete_btn.svg"
-                  alt="제거"
-                />
-              </button>
+              {!(isEditMode && !isEditable) && (
+                <button
+                  type="button"
+                  className={infoStyles.image_remove_button}
+                  onClick={() => onDetailImageRemove(index)}
+                  aria-label={`상세 이미지 ${index + 1} 제거`}
+                >
+                  <img
+                    src="/images/icons/img_delete_btn.svg"
+                    alt="제거"
+                  />
+                </button>
+              )}
             </div>
           ))}
 
-          {/* 상세 이미지 업로드 버튼 (최대 7개까지) */}
-          {detailImages.length < 7 && (
+          {/* 상세 이미지 업로드 버튼 (최대 7개까지) - 캠페인 오픈 후에는 숨김 */}
+          {detailImages.length < 7 && !(isEditMode && !isEditable) && (
             <div
               className={infoStyles.image_upload_placeholder}
               onClick={

@@ -128,6 +128,33 @@ export function CustomDropdown({
   };
 
   /**
+   * 드롭다운 옵션 리스트 스크롤 전파 방지 핸들러
+   *
+   * 설명:
+   * - 드롭다운 내부 스크롤이 끝에 도달했을 때 페이지 스크롤로 전파되는 것을 방지합니다.
+   * - 스크롤이 최상단/최하단에 도달했을 때만 이벤트 전파를 막습니다.
+   */
+  const handle_options_scroll = (e: React.WheelEvent<HTMLDivElement>) => {
+    const target = e.currentTarget;
+    const scrollTop = target.scrollTop;
+    const scrollHeight = target.scrollHeight;
+    const clientHeight = target.clientHeight;
+
+    // 스크롤이 맨 위에 있고 위로 스크롤하려는 경우
+    const is_scrolling_up = e.deltaY < 0;
+    const is_at_top = scrollTop === 0;
+
+    // 스크롤이 맨 아래에 있고 아래로 스크롤하려는 경우
+    const is_scrolling_down = e.deltaY > 0;
+    const is_at_bottom = scrollTop + clientHeight >= scrollHeight - 1; // 1px 오차 허용
+
+    // 스크롤이 끝에 도달했을 때 이벤트 전파 방지
+    if ((is_at_top && is_scrolling_up) || (is_at_bottom && is_scrolling_down)) {
+      e.preventDefault();
+    }
+  };
+
+  /**
    * 외부 클릭 감지
    *
    * 설명:
@@ -186,6 +213,7 @@ export function CustomDropdown({
           className={`${dropdown_styles.dropdown_options} ${
             is_open_upward ? dropdown_styles.dropdown_options_upward : ''
           }`}
+          onWheel={handle_options_scroll}
         >
           {options.map((option) => (
             <button
