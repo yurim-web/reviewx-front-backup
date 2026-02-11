@@ -68,7 +68,7 @@ export const paymentHistoryStats: PaymentHistoryStats = {
  *   - representativeName: 사업자명 (대표자명)
  * - depositorName: 입금자명 (단순 문자열)
  * - businessType: 구분 (법인/개인)
- * - paymentMethod: 결제 수단 (카드 결제/무통장 입금)
+ * - paymentMethod: 결제 수단 (카드 결제/무통장 입금/포인트 충전)
  * - taxInvoiceType: 세금계산서 발행 유형
  *   - "세금계산서": 세금계산서 발행
  *   - "현금영수증 (소득공제)": 현금영수증 발행 (소득공제용)
@@ -92,7 +92,7 @@ export interface PaymentHistoryItem {
   };
   depositorName: string;
   businessType: '법인' | '개인';
-  paymentMethod: '카드 결제' | '무통장 입금';
+  paymentMethod: '카드 결제' | '무통장 입금' | '포인트 충전';
   taxInvoiceType: '세금계산서' | '현금영수증 (소득공제)' | '현금영수증 (지출증빙)' | '미발행';
   chargedPoints: string;
   heldPoints: string;
@@ -347,23 +347,20 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
 ];
 
 /**
- * 결제 내역 가져오기 (LocalStorage 통합)
+ * 결제 내역 가져오기 (무통장/카드 충전으로 생성된 내역만 사용, 자동 생성 목업 미포함)
  */
 export function getPaymentHistoryList(): PaymentHistoryItem[] {
   if (typeof window === 'undefined') {
-    return paymentHistoryList;
+    return [];
   }
 
   try {
-    // LocalStorage에서 파트너 포인트 충전 내역 가져오기
     const storedPayments = localStorage.getItem('partner_payment_history');
     const localPayments = storedPayments ? JSON.parse(storedPayments) : [];
-
-    // LocalStorage 데이터와 Mock 데이터 통합
-    return [...localPayments, ...paymentHistoryList];
+    return localPayments;
   } catch (error) {
     console.error('결제 내역 로드 중 오류:', error);
-    return paymentHistoryList;
+    return [];
   }
 }
 
@@ -373,7 +370,7 @@ export function getPaymentHistoryList(): PaymentHistoryItem[] {
 export function addPaymentHistory(
   userId: string,
   amount: number,
-  paymentMethod: '카드 결제' | '무통장 입금',
+  paymentMethod: '카드 결제' | '무통장 입금' | '포인트 충전',
   depositorName?: string,
   taxInvoiceType?: '미발행' | '세금계산서' | '현금영수증 (소득공제)' | '현금영수증 (지출증빙)'
 ): void {
@@ -420,9 +417,9 @@ export function addPaymentHistory(
       taxInvoiceType: taxInvoiceType || '미발행',
       chargedPoints: amount.toLocaleString(),
       heldPoints: heldPointsAfterCharge.toLocaleString(),
-      paymentStatus: paymentMethod === '카드 결제' ? '완료' : '대기',
+      paymentStatus: paymentMethod === '카드 결제' || paymentMethod === '포인트 충전' ? '완료' : '대기',
       requestDate: dateTime,
-      approvalDate: paymentMethod === '카드 결제' ? dateTime : '-',
+      approvalDate: paymentMethod === '카드 결제' || paymentMethod === '포인트 충전' ? dateTime : '-',
       memberType: '일반 회원',
       accountStatus: '정상',
     };

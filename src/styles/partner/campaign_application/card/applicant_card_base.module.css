@@ -103,4 +103,9 @@
     min-width: 0;
     box-sizing: border-box;
   }
+
+  /* 푸터 없음 - 체험형(기자단/방문형/배송형) 전용: min-height 256px */
+  .applicant_card_no_footer_experience {
+    min-height: 250px !important;
+  }
 }

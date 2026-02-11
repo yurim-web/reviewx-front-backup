@@ -162,6 +162,8 @@ export default function ReviewCampaignForm({
         recruitmentPeriod: "",
         announcementDate: "",
         registrationPeriod: "",
+        purchasePeriod: "",
+        registrationPeriodAfterPurchase: "",
       };
 
   /**
@@ -191,9 +193,9 @@ export default function ReviewCampaignForm({
       additionalPoints: "",
       recruitmentCount: "",
       recruitmentPeriod: defaultDates.recruitmentPeriod,
-      purchasePeriod: "",
+      purchasePeriod: defaultDates.purchasePeriod,
       announcementDate: defaultDates.announcementDate,
-      registrationPeriod: defaultDates.registrationPeriod,
+      registrationPeriod: defaultDates.registrationPeriodAfterPurchase,
       keywords: "",
       adultOnly: false,
       allowReParticipation: false,

@@ -255,13 +255,17 @@ export function getPartnerPointHistory(userId?: string): PartnerPointHistory[] {
 
 /**
  * 포인트 충전 함수
+ * @param addToHistory - true면 파트너 포인트 충전 내역 목록에 항목 추가, false면 잔액만 반영 (기본 true)
  */
 export function addPointCharge(
   userId: string,
   amount: number,
-  description: string = '포인트 충전'
+  description: string = '포인트 충전',
+  options?: { addToHistory?: boolean }
 ): void {
   if (typeof window === 'undefined' || !userId) return;
+
+  const addToHistory = options?.addToHistory !== false;
 
   try {
     // 현재 포인트 요약 정보 가져오기
@@ -292,6 +296,8 @@ export function addPointCharge(
         console.log('✅ partner_accounts current_points 업데이트:', newAvailablePoints);
       }
     }
+
+    if (!addToHistory) return;
 
     // 포인트 내역 추가 (localStorage에만 저장, 목업 데이터는 제외)
     const historyKey = `partner_point_history_${userId}`;

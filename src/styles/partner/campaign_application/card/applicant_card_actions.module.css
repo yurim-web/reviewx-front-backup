@@ -149,6 +149,29 @@
   background: #fff;
 }
 
+/* 등록 기한 연장 요청 버튼 - PC는 전체 문구, 모바일은 "기간 연장 요청"만 표시 */
+.extension_request_text_pc {
+  display: inline;
+}
+
+.extension_request_text_mobile {
+  display: none;
+}
+
+/* 구매 영수증 미등록 버튼 - padding 축소로 문구가 다 보이도록 */
+.receipt_not_registered_button {
+  padding: 4px;
+}
+
+/* 구매 영수증 반려 버튼 - 모바일에서 "처리" 숨김 */
+.receipt_reject_text_pc {
+  display: inline;
+}
+
+.receipt_reject_text_mobile {
+  display: none;
+}
+
 /* ==================== 연장/신고 Footer ==================== */
 
 .extension_report_footer {
@@ -205,7 +228,26 @@
   align-self: stretch;
 }
 
+/* 구분선 겹침 방지: 세로 구분선 div 대신 신고 버튼 왼쪽 border로 표시 (PC·모바일 공통) */
+.extension_report_footer .vertical_divider {
+  display: none;
+}
+
+.extension_report_footer .report_button {
+  border-left: 1px solid #d9d9d9;
+}
+
+/* 완료 탭: 신고 버튼만 있을 때는 왼쪽 구분선 제거 */
+.extension_report_footer .report_button:only-child {
+  border-left: none;
+}
+
 /* ==================== 📱 모바일 반응형 ==================== */
+
+/* 신고 날짜에서 시간 부분 - 모바일에서만 숨김 (기한처럼 날짜만 표시) */
+.reported_time_mobile_hide {
+  display: inline;
+}
 
 @media (max-width: 768px) {
   .action_button_section {
@@ -214,7 +256,32 @@
 
   .registration_info {
     font-size: 13px;
-    letter-spacing: -0.26px;
+    letter-spacing: -0.32px;
+  }
+
+  .reported_time_mobile_hide {
+    display: none;
+  }
+
+  .extension_request_text_pc {
+    display: none;
+  }
+
+  .extension_request_text_mobile {
+    display: inline;
+  }
+
+  .receipt_reject_text_pc {
+    display: none;
+  }
+
+  .receipt_reject_text_mobile {
+    display: inline;
+  }
+
+  /* 구매 영수증 반려 버튼 - 모바일에서 padding 축소 */
+  .receipt_reject_button {
+    padding: 4px;
   }
 
   /* 지각 등록 텍스트 축약 */

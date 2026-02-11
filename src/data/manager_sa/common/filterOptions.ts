@@ -85,8 +85,9 @@ export const payment_status_filter_options: PaymentStatus[] = [
  *
  * 설명:
  * - 결제 내역 페이지에서 사용하는 결제 수단입니다.
+ * - 포인트 충전: 카드 결제 승인으로 생성된 포인트 충전 항목
  */
-export type PaymentMethod = "카드 결제" | "무통장 입금";
+export type PaymentMethod = "카드 결제" | "무통장 입금" | "포인트 충전";
 
 /**
  * 결제 수단 필터 옵션 배열
@@ -94,6 +95,7 @@ export type PaymentMethod = "카드 결제" | "무통장 입금";
 export const payment_method_filter_options: PaymentMethod[] = [
   "카드 결제",
   "무통장 입금",
+  "포인트 충전",
 ];
 
 /**

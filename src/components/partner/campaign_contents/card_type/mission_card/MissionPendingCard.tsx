@@ -389,7 +389,12 @@ export default function MissionPendingCard({
               className={`${actionStyles.action_button} ${actionStyles.extension_request_button}`}
               onClick={handleExtendClick}
             >
-              등록 기한 연장 요청
+              <span className={actionStyles.extension_request_text_pc}>
+                등록 기한 연장 요청
+              </span>
+              <span className={actionStyles.extension_request_text_mobile}>
+                기간 연장 요청
+              </span>
             </button>
           )}
 
@@ -422,7 +427,15 @@ export default function MissionPendingCard({
         {/* 기한 표시 (미등록, 반려 처리) 또는 신고 날짜/시간 표시 (신고 처리) */}
         {localPendingState === "reported" && localReportedDate ? (
           <div className={actionStyles.registration_info}>
-            <span>{localReportedDate} 신고</span>
+            <span>
+              {localReportedDate.split(" ")[0]}
+              <span className={actionStyles.reported_time_mobile_hide}>
+                {localReportedDate.includes(" ")
+                  ? ` ${localReportedDate.split(" ")[1]}`
+                  : ""}
+              </span>{" "}
+              신고
+            </span>
           </div>
         ) : (
           (deadlineDate || localExtendedDeadline) && (

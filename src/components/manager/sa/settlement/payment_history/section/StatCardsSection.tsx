@@ -249,10 +249,10 @@ export default function StatCardsSection({
         is_date_in_range(item.requestDate, week_range.start, week_range.end)
     );
 
-    // 2. 이번 주 카드 결제: 카드 결제 + 완료 + 이번 주
+    // 2. 이번 주 카드 결제: 카드 결제 또는 포인트 충전 + 완료 + 이번 주
     const week_card_items = completed_items.filter(
       (item) =>
-        item.paymentMethod === "카드 결제" &&
+        (item.paymentMethod === "카드 결제" || item.paymentMethod === "포인트 충전") &&
         is_date_in_range(item.requestDate, week_range.start, week_range.end)
     );
 

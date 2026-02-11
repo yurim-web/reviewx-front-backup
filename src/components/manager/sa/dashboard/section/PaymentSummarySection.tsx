@@ -177,16 +177,16 @@ export default function PaymentSummarySection({
     );
     const deposit_increase_change = calculate_change_percentage(deposit_increase, previous_deposit_increase);
 
-    // 3. 카드 결제 금액: 카드 결제이고 완료된 항목들의 chargedPoints 합계
+    // 3. 카드 결제 금액: 카드 결제 또는 포인트 충전이고 완료된 항목들의 chargedPoints 합계
     const card_items = completed_items.filter(
-      (item) => item.paymentMethod === "카드 결제"
+      (item) => item.paymentMethod === "카드 결제" || item.paymentMethod === "포인트 충전"
     );
     const card_payment = card_items.reduce(
       (sum, item) => sum + parse_amount(item.chargedPoints),
       0
     );
     const previous_card_items = previous_completed_items.filter(
-      (item) => item.paymentMethod === "카드 결제"
+      (item) => item.paymentMethod === "카드 결제" || item.paymentMethod === "포인트 충전"
     );
     const previous_card_payment = previous_card_items.reduce(
       (sum, item) => sum + parse_amount(item.chargedPoints),

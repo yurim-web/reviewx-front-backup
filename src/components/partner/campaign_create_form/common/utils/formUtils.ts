@@ -254,7 +254,9 @@ export function validateImagesForUpload(
  * 설명:
  * - 모집 기간: 오늘부터 7일 후까지 (예: 2025-11-21 ~ 2025-11-28)
  * - 선정 날짜: 모집 기간 종료일 다음 날 (예: 2025-11-29)
- * - 등록 기간: 선정 날짜 다음 날부터 7일간 (예: 2025-11-30 ~ 2025-12-07)
+ * - 등록 기간(배송/방문/기자단/미션): 선정 다음날부터 7일간 (9일 후 ~ 15일 후)
+ * - 구매 기간(구매평 전용): 선정 다음날부터 7일간 (9일 후 ~ 15일 후)
+ * - 등록 기간(구매평 전용): 구매 기간 다음날부터 7일간 (16일 후 ~ 22일 후) — 구매 기간 지나고 등록
  *
  * @returns 날짜 기본값 객체
  */
@@ -262,6 +264,9 @@ export function getDefaultCampaignDates(): {
   recruitmentPeriod: string;
   announcementDate: string;
   registrationPeriod: string;
+  purchasePeriod: string;
+  /** 구매평 전용: 구매 기간 지난 뒤 등록 기간 (16일 후 ~ 22일 후) */
+  registrationPeriodAfterPurchase: string;
 } {
   // 오늘 날짜 (시간 정보 제거)
   const today = new Date();
@@ -278,7 +283,7 @@ export function getDefaultCampaignDates(): {
   // 선정 날짜: 모집 기간 종료일 다음 날 (8일 후)
   const announcementDate = format(addDays(today, 8), "yyyy-MM-dd");
 
-  // 등록 기간: 선정 날짜 다음 날부터 7일간 (9일 후부터 15일 후까지)
+  // 등록 기간(배송/방문/기자단/미션): 선정 다음날부터 7일간 (9일 후 ~ 15일 후)
   const registrationStart = addDays(today, 9);
   const registrationEnd = addDays(today, 15);
   const registrationPeriod = `${format(registrationStart, "yyyy-MM-dd")} ~ ${format(
@@ -286,10 +291,28 @@ export function getDefaultCampaignDates(): {
     "yyyy-MM-dd"
   )}`;
 
+  // 구매 기간(구매평 전용): 선정 다음날부터 7일간 (9일 후 ~ 15일 후)
+  const purchaseStart = addDays(today, 9);
+  const purchaseEnd = addDays(today, 15);
+  const purchasePeriod = `${format(purchaseStart, "yyyy-MM-dd")} ~ ${format(
+    purchaseEnd,
+    "yyyy-MM-dd"
+  )}`;
+
+  // 등록 기간(구매평 전용): 구매 기간 다음날부터 7일간 (16일 후 ~ 22일 후)
+  const registrationAfterPurchaseStart = addDays(today, 16);
+  const registrationAfterPurchaseEnd = addDays(today, 22);
+  const registrationPeriodAfterPurchase = `${format(registrationAfterPurchaseStart, "yyyy-MM-dd")} ~ ${format(
+    registrationAfterPurchaseEnd,
+    "yyyy-MM-dd"
+  )}`;
+
   return {
     recruitmentPeriod,
     announcementDate,
     registrationPeriod,
+    purchasePeriod,
+    registrationPeriodAfterPurchase,
   };
 }
 

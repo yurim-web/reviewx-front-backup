@@ -396,6 +396,7 @@
   border: none;
   padding: 0;
   cursor: pointer;
+  margin-left: 8px; /* 텍스트와 버튼 사이 간격 */
 }
 
 /* ========================================
@@ -490,8 +491,31 @@
     padding-top: 20px;
   }
 
+  /* 약관 항목 - 모바일 레이아웃 수정 */
+  .terms_item {
+    align-items: flex-start;
+  }
+
+  /* 체크박스 - 상단 정렬 */
+  .checkbox {
+    margin-top: 1px; /* 텍스트와 시각적 정렬 */
+  }
+
+  /* 체크박스 라벨 - 유연한 너비 */
+  .checkbox_label {
+    flex: 1;
+    word-break: keep-all; /* 한글 단어 단위로 줄바꿈 */
+    line-height: 18px; /* 가독성 향상 */
+  }
+
+  /* 약관 보기 링크 - 라벨 안에 인라인으로 배치 */
+  .terms_view_link {
+    white-space: nowrap; /* 보기 버튼 텍스트 줄바꿈 방지 */
+  }
+
   /* 회원가입 버튼 */
   .submit_button {
+    height: 52px;
     margin-top: 4px;
   }
 }

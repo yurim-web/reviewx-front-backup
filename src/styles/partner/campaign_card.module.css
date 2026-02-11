@@ -385,7 +385,7 @@
     letter-spacing: -0.28px;
   }
 
-  /* 캠페인 제목 - 한 줄 말줄임표 유지 */
+  /* 캠페인 제목 - 모바일에서 두 줄 말줄임표 */
   .campaign_title {
     padding-bottom: 0;
     margin-bottom: 0;
@@ -394,8 +394,11 @@
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
     box-sizing: border-box;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    white-space: normal;
   }
 
   /* PC용 상태 텍스트 숨김 */
