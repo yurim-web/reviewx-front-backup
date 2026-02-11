@@ -408,7 +408,7 @@ export default function CampaignPendingCard({
           {/* 구매평 상태별 버튼 */}
           {isReview && pendingState === "receipt_not_registered" && (
             <button
-              className={`${actionStyles.action_button} ${actionStyles.disabled_button}`}
+              className={`${actionStyles.action_button} ${actionStyles.disabled_button} ${actionStyles.receipt_not_registered_button}`}
               disabled
             >
               구매 영수증 미등록
@@ -429,18 +429,32 @@ export default function CampaignPendingCard({
               className={`${actionStyles.action_button} ${actionStyles.extension_request_button}`}
               disabled
             >
-              등록 기한 연장 요청
+              <span className={actionStyles.extension_request_text_pc}>
+                등록 기한 연장 요청
+              </span>
+              <span className={actionStyles.extension_request_text_mobile}>
+                기간 연장 요청
+              </span>
             </button>
           )}
 
           {isReview && pendingState === "rejected" && (
             <button
-              className={`${actionStyles.action_button} ${actionStyles.reject_process_button}`}
+              className={`${actionStyles.action_button} ${actionStyles.reject_process_button}${applicant.reviewType === 4 ? ` ${actionStyles.receipt_reject_button}` : ""}`}
               disabled
             >
-              {applicant.reviewType === 4
-                ? "구매 영수증 반려 처리"
-                : "콘텐츠 반려 처리"}
+              {applicant.reviewType === 4 ? (
+                <>
+                  <span className={actionStyles.receipt_reject_text_pc}>
+                    구매 영수증 반려 처리
+                  </span>
+                  <span className={actionStyles.receipt_reject_text_mobile}>
+                    구매 영수증 반려
+                  </span>
+                </>
+              ) : (
+                "콘텐츠 반려 처리"
+              )}
             </button>
           )}
 
@@ -459,7 +473,12 @@ export default function CampaignPendingCard({
               className={`${actionStyles.action_button} ${actionStyles.extension_request_button}`}
               disabled
             >
-              등록 기한 연장 요청
+              <span className={actionStyles.extension_request_text_pc}>
+                등록 기한 연장 요청
+              </span>
+              <span className={actionStyles.extension_request_text_mobile}>
+                기간 연장 요청
+              </span>
             </button>
           )}
 

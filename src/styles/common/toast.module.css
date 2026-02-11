@@ -93,3 +93,10 @@
 .toast.hidden {
   animation: toastFadeOut 0.3s ease-out forwards;
 }
+
+/* 📱 모바일: 토스트 위치를 더 아래로 */
+@media (max-width: 768px) {
+  .toast {
+    bottom: 35px;
+  }
+}

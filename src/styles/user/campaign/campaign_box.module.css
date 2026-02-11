@@ -25,7 +25,9 @@
 /* 캠페인 박스 컨테이너 */
 .campaign_box {
   background: white;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -34,8 +36,6 @@
   will-change: transform;
   -webkit-tap-highlight-color: transparent;
 }
-
-
 
 /* 상단 라벨 */
 .campaign_label {
@@ -48,7 +48,7 @@
   z-index: 2;
 
   /* 글자 스타일 */
-  color: #FFF;
+  color: #fff;
   font-size: 16px;
   font-weight: 600;
   line-height: 16px;
@@ -185,14 +185,10 @@
 ================================================================================================ 📱 */
 
 @media (max-width: 768px) {
-  
-
-
   /* 제품 제목 폰트 크기 조정 (Figma: 16px) */
   .product_title {
     -webkit-line-clamp: 2;
   }
-
 
   /* 모집 상태 폰트 크기 조정 (Figma: 14px) */
   .recruitment_status {
@@ -209,8 +205,13 @@
     border-radius: 4px;
   }
 
-
-
-
+  .campaign_label {
+    top: 12px;
+    left: 12px;
+    padding: 6px 8px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
 }
-

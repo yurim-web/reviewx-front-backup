@@ -435,8 +435,8 @@ export default function PaymentHistoryTable({
         // - map() 메서드: 배열의 각 요소를 변환합니다
         // - fragment(<></>): 여러 요소를 그룹화합니다 (불필요한 DOM 요소 추가 없음)
         
-        // 카드 결제인 경우 "-" 표시
-        if (row.paymentMethod === "카드 결제") {
+        // 카드 결제 또는 포인트 충전인 경우 "-" 표시
+        if (row.paymentMethod === "카드 결제" || row.paymentMethod === "포인트 충전") {
           return <span className={styles.cell_text}>-</span>;
         }
         

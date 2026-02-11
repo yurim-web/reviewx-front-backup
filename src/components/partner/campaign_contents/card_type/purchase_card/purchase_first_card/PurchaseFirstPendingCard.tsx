@@ -230,7 +230,7 @@ export default function PurchaseFirstPendingCard({
         <div className={actionStyles.action_button_section}>
           {localPendingState === "receipt_not_registered" && (
             <button
-              className={`${actionStyles.action_button} ${actionStyles.disabled_button}`}
+              className={`${actionStyles.action_button} ${actionStyles.disabled_button} ${actionStyles.receipt_not_registered_button}`}
               disabled
             >
               구매 영수증 미등록
@@ -239,11 +239,16 @@ export default function PurchaseFirstPendingCard({
 
           {localPendingState === "rejected" && (
             <button
-              className={`${actionStyles.action_button} ${actionStyles.reject_process_button}`}
+              className={`${actionStyles.action_button} ${actionStyles.reject_process_button} ${actionStyles.receipt_reject_button}`}
               onClick={handleRejectReasonClick}
               aria-label={`${applicant.nickname} 반려 사유 확인`}
             >
-              구매 영수증 반려 처리
+              <span className={actionStyles.receipt_reject_text_pc}>
+                구매 영수증 반려 처리
+              </span>
+              <span className={actionStyles.receipt_reject_text_mobile}>
+                구매 영수증 반려
+              </span>
             </button>
           )}
 
@@ -266,7 +271,15 @@ export default function PurchaseFirstPendingCard({
         {/* 기한 표시 (미등록, 반려 처리) 또는 신고 날짜/시간 표시 (신고 처리) */}
         {localPendingState === "reported" && localReportedDate ? (
           <div className={actionStyles.registration_info}>
-            <span>{localReportedDate} 신고</span>
+            <span>
+              {localReportedDate.split(" ")[0]}
+              <span className={actionStyles.reported_time_mobile_hide}>
+                {localReportedDate.includes(" ")
+                  ? ` ${localReportedDate.split(" ")[1]}`
+                  : ""}
+              </span>{" "}
+              신고
+            </span>
           </div>
         ) : (
           deadlineDate && (

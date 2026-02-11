@@ -21,11 +21,24 @@ import { validateAmount } from "@/utils/validation/amount";
 import styles from "@/styles/partner/point/charge.module.css";
 import customDropdownStyles from "@/styles/partner/campaign_create/custom_dropdown.module.css";
 import { useAuth } from "@/hooks/useAuth";
-import {
-  getPartnerPointSummary,
-  addPointCharge,
-} from "@/data/partner/point/pointData";
+import { getPartnerPointSummary } from "@/data/partner/point/pointData";
 import { addPaymentHistory } from "@/data/manager_sa/settlement/paymentHistoryData";
+
+/** 휴대폰 번호: 숫자만 11자리, 3-4-4 하이픈 자동 추가 */
+function formatPhone(value: string): string {
+  const digits = value.replace(/\D/g, "").slice(0, 11);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+}
+
+/** 사업자등록번호: 숫자만 10자리, 3-2-5 하이픈 자동 추가 */
+function formatBusinessNumber(value: string): string {
+  const digits = value.replace(/\D/g, "").slice(0, 10);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 5) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 5)}-${digits.slice(5)}`;
+}
 
 /**
  * 파트너 포인트 충전 페이지
@@ -178,20 +191,18 @@ export default function PartnerPointChargePage() {
 
     // TODO: 실제 결제 API 호출
     // 예시: const result = await paymentAPI.charge(chargePoints);
+    // 실제 연동 시: const isSuccess = result.success;
 
-    // 시뮬레이션: 랜덤하게 성공/실패 결정 (실제로는 API 응답에 따라)
-    const isSuccess = Math.random() > 0.3; // 70% 성공률
+    // 시뮬레이션: API 연동 전까지 항상 성공 처리
+    const isSuccess = true;
 
     if (isSuccess) {
-      // console.log('포인트 충전 - user.id:', user.id, 'chargePoints:', chargePoints);
-      // 포인트 충전 처리
-      addPointCharge(user.id, chargePoints, "카드 결제를 통한 포인트 충전");
-
-      // 관리자 결제내역에 추가
+      // 관리자 승인 후 포인트 적립 예정 → 파트너 보유포인트/충전 내역에는 반영 안 함
+      // 관리자 결제내역에 추가 (카드 결제 승인 시 '포인트 충전' 항목으로 생성)
       addPaymentHistory(
         user.id,
         chargePoints,
-        "카드 결제",
+        "포인트 충전",
         undefined,
         getTaxInvoiceType(),
       );
@@ -246,13 +257,7 @@ export default function PartnerPointChargePage() {
       return;
     }
 
-    // 무통장 입금은 관리자 승인 후 포인트 적립 (임시로 즉시 적립)
-    addPointCharge(
-      user.id,
-      chargePoints,
-      `무통장 입금 (입금자: ${depositorName})`,
-    );
-
+    // 무통장 입금은 관리자 승인 후 포인트 적립 → 파트너 보유포인트/충전 내역에는 반영 안 함
     // 관리자 결제내역에 추가
     addPaymentHistory(
       user.id,
@@ -723,16 +728,20 @@ export default function PartnerPointChargePage() {
                       </label>
                       <input
                         id="cash_receipt_phone_input"
-                        type="text"
+                        type="tel"
+                        inputMode="numeric"
+                        autoComplete="tel"
                         className={styles.input_box}
                         placeholder="- 제외 입력"
                         value={cashReceiptIncome.phone}
-                        onChange={(e) =>
+                        onChange={(e) => {
+                          const formatted = formatPhone(e.target.value);
                           setCashReceiptIncome((prev) => ({
                             ...prev,
-                            phone: e.target.value,
-                          }))
-                        }
+                            phone: formatted,
+                          }));
+                        }}
+                        maxLength={13}
                       />
                     </div>
                   </>
@@ -773,15 +782,18 @@ export default function PartnerPointChargePage() {
                       <input
                         id="cash_receipt_business_input"
                         type="text"
+                        inputMode="numeric"
                         className={styles.input_box}
                         placeholder="- 제외 입력"
                         value={cashReceiptExpense.business_number}
-                        onChange={(e) =>
+                        onChange={(e) => {
+                          const formatted = formatBusinessNumber(e.target.value);
                           setCashReceiptExpense((prev) => ({
                             ...prev,
-                            business_number: e.target.value,
-                          }))
-                        }
+                            business_number: formatted,
+                          }));
+                        }}
+                        maxLength={12}
                       />
                     </div>
                   </>
