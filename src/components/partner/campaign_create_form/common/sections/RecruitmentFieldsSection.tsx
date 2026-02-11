@@ -103,7 +103,7 @@ export function RecruitmentFieldsSection({
             <div style={{ position: "relative", flex: 1 }}>
               <input
                 type="number"
-                className={infoStyles.form_input}
+                className={`${infoStyles.form_input} ${!canEdit("recruitmentCount") ? infoStyles.read_only_input : ""}`}
                 value={recruitmentCount}
                 onChange={(e) => onRecruitmentCountChange(e.target.value)}
                 placeholder="0"

@@ -483,13 +483,9 @@ export default function CampaignCard({
       <BaseModal
         is_open={isDeleteModalOpen}
         on_close={closeDeleteModal}
-        message={
-          activeTab === "예정"
-            ? "캠페인을 삭제하시겠습니까?<br>이 작업은 되돌릴 수 없습니다."
-            : "정말로 이 캠페인을 취소하시겠습니까?<br>취소된 캠페인은 취소 탭으로 이동합니다."
-        }
+        message="캠페인을 삭제하시겠습니까?<br>이 작업은 되돌릴 수 없습니다."
         buttons={["취소", "확인"]}
-        button_variant={activeTab === "예정" ? "red" : "pink"}
+        button_variant="red"
         on_confirm={() => {
           /**
            * 캠페인 삭제/취소 확인 핸들러

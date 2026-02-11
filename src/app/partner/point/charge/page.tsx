@@ -21,7 +21,10 @@ import { validateAmount } from "@/utils/validation/amount";
 import styles from "@/styles/partner/point/charge.module.css";
 import customDropdownStyles from "@/styles/partner/campaign_create/custom_dropdown.module.css";
 import { useAuth } from "@/hooks/useAuth";
-import { getPartnerPointSummary, addPointCharge } from "@/data/partner/point/pointData";
+import {
+  getPartnerPointSummary,
+  addPointCharge,
+} from "@/data/partner/point/pointData";
 import { addPaymentHistory } from "@/data/manager_sa/settlement/paymentHistoryData";
 
 /**
@@ -45,13 +48,13 @@ export default function PartnerPointChargePage() {
   const [isInvoiceDropdownOpen, setIsInvoiceDropdownOpen] =
     useState<boolean>(false);
   const [showCopyToast, setShowCopyToast] = useState<boolean>(false);
-  
+
   // 현금영수증 (소득공제) 정보
   const [cashReceiptIncome, setCashReceiptIncome] = useState({
     name: "",
     phone: "",
   });
-  
+
   // 현금영수증 (지출증빙) 정보
   const [cashReceiptExpense, setCashReceiptExpense] = useState({
     company_name: "",
@@ -79,12 +82,16 @@ export default function PartnerPointChargePage() {
   const invoiceDropdownRef = useRef<HTMLDivElement>(null);
 
   // invoiceType을 결제 내역 타입으로 변환
-  const getTaxInvoiceType = (): '미발행' | '세금계산서' | '현금영수증 (소득공제)' | '현금영수증 (지출증빙)' => {
-    if (invoiceType === 'none') return '미발행';
-    if (invoiceType === 'tax_invoice') return '세금계산서';
-    if (invoiceType === 'cash_income') return '현금영수증 (소득공제)';
-    if (invoiceType === 'cash_expense') return '현금영수증 (지출증빙)';
-    return '미발행';
+  const getTaxInvoiceType = ():
+    | "미발행"
+    | "세금계산서"
+    | "현금영수증 (소득공제)"
+    | "현금영수증 (지출증빙)" => {
+    if (invoiceType === "none") return "미발행";
+    if (invoiceType === "tax_invoice") return "세금계산서";
+    if (invoiceType === "cash_income") return "현금영수증 (소득공제)";
+    if (invoiceType === "cash_expense") return "현금영수증 (지출증빙)";
+    return "미발행";
   };
 
   // 파트너 정보 - 로그인된 사용자 정보 사용
@@ -117,8 +124,8 @@ export default function PartnerPointChargePage() {
     selectedAmount !== null
       ? selectedAmount
       : chargeAmount
-      ? Number(chargeAmount.replace(/,/g, ""))
-      : 0;
+        ? Number(chargeAmount.replace(/,/g, ""))
+        : 0;
 
   // 신청 후 포인트 계산: 현재 보유 포인트 + 충전 예정 포인트
   const availablePoints =
@@ -133,7 +140,7 @@ export default function PartnerPointChargePage() {
   const isValidAmount = () => {
     const validation = validateAmount(chargePoints, {
       minAmount: MIN_AMOUNT,
-      maxAmount: MAX_AMOUNT
+      maxAmount: MAX_AMOUNT,
     });
     return validation.isValid;
   };
@@ -165,7 +172,7 @@ export default function PartnerPointChargePage() {
    */
   const handleCardPayment = () => {
     if (!user?.id) {
-      alert('로그인이 필요합니다.');
+      alert("로그인이 필요합니다.");
       return;
     }
 
@@ -178,10 +185,16 @@ export default function PartnerPointChargePage() {
     if (isSuccess) {
       // console.log('포인트 충전 - user.id:', user.id, 'chargePoints:', chargePoints);
       // 포인트 충전 처리
-      addPointCharge(user.id, chargePoints, '카드 결제를 통한 포인트 충전');
+      addPointCharge(user.id, chargePoints, "카드 결제를 통한 포인트 충전");
 
       // 관리자 결제내역에 추가
-      addPaymentHistory(user.id, chargePoints, '카드 결제', undefined, getTaxInvoiceType());
+      addPaymentHistory(
+        user.id,
+        chargePoints,
+        "카드 결제",
+        undefined,
+        getTaxInvoiceType(),
+      );
 
       // 현재 포인트 업데이트 (모달 닫은 후에 업데이트되도록 하지 않음)
       // const updatedSummary = getPartnerPointSummary(user.id);
@@ -229,15 +242,25 @@ export default function PartnerPointChargePage() {
    */
   const handleBankDepositSubmit = () => {
     if (!user?.id) {
-      alert('로그인이 필요합니다.');
+      alert("로그인이 필요합니다.");
       return;
     }
 
     // 무통장 입금은 관리자 승인 후 포인트 적립 (임시로 즉시 적립)
-    addPointCharge(user.id, chargePoints, `무통장 입금 (입금자: ${depositorName})`);
+    addPointCharge(
+      user.id,
+      chargePoints,
+      `무통장 입금 (입금자: ${depositorName})`,
+    );
 
     // 관리자 결제내역에 추가
-    addPaymentHistory(user.id, chargePoints, '무통장 입금', depositorName, getTaxInvoiceType());
+    addPaymentHistory(
+      user.id,
+      chargePoints,
+      "무통장 입금",
+      depositorName,
+      getTaxInvoiceType(),
+    );
 
     // 무통장 입금 신청 모달 표시
     setBankDepositModal({ is_open: true });
@@ -375,13 +398,14 @@ export default function PartnerPointChargePage() {
                 <div className={styles.account_info_row}>
                   <div className={styles.account_info_box}>
                     <span className={styles.account_text}>
-                      국민은행 659401-01-490957<br className={styles.mobile_br} /> (주)청명종합광고기획
+                      국민은행 659401-01-490957
+                      <br className={styles.mobile_br} /> (주)청명종합광고기획
                     </span>
                     <button
                       className={styles.copy_button}
                       onClick={async () => {
                         await navigator.clipboard.writeText(
-                          partnerInfo.bankAccount
+                          partnerInfo.bankAccount,
                         );
                         setShowCopyToast(true);
                         setTimeout(() => setShowCopyToast(false), 2000);
@@ -528,10 +552,10 @@ export default function PartnerPointChargePage() {
                         {invoiceType === "none"
                           ? "미발행"
                           : invoiceType === "cash_income"
-                          ? "현금영수증 (소득공제)"
-                          : invoiceType === "cash_expense"
-                          ? "현금영수증 (지출증빙)"
-                          : "세금계산서"}
+                            ? "현금영수증 (소득공제)"
+                            : invoiceType === "cash_expense"
+                              ? "현금영수증 (지출증빙)"
+                              : "세금계산서"}
                       </span>
                       <img
                         src="/images/icons/dropdown_arrow.svg"
@@ -601,7 +625,6 @@ export default function PartnerPointChargePage() {
                     )}
                   </div>
                 </div>
-                
               </article>
 
               <article className={styles.content_container}>
@@ -702,7 +725,7 @@ export default function PartnerPointChargePage() {
                         id="cash_receipt_phone_input"
                         type="text"
                         className={styles.input_box}
-                        placeholder="휴대폰 번호 입력"
+                        placeholder="- 제외 입력"
                         value={cashReceiptIncome.phone}
                         onChange={(e) =>
                           setCashReceiptIncome((prev) => ({
@@ -751,7 +774,7 @@ export default function PartnerPointChargePage() {
                         id="cash_receipt_business_input"
                         type="text"
                         className={styles.input_box}
-                        placeholder="사업자등록번호 입력"
+                        placeholder="- 제외 입력"
                         value={cashReceiptExpense.business_number}
                         onChange={(e) =>
                           setCashReceiptExpense((prev) => ({

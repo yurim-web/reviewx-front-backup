@@ -134,7 +134,7 @@ export function PointsManagementSection({
           <div style={{ position: "relative", flex: 1 }}>
             <input
               type="text"
-              className={infoStyles.form_input}
+              className={`${infoStyles.form_input} ${infoStyles.read_only_input}`}
               value={formatNumberWithComma(deductedPoints)}
               readOnly
             />
@@ -150,7 +150,7 @@ export function PointsManagementSection({
           <div style={{ position: "relative", flex: 1 }}>
             <input
               type="text"
-              className={infoStyles.form_input}
+              className={`${infoStyles.form_input} ${infoStyles.read_only_input}`}
               value={formatNumberWithComma(currentPoints)}
               readOnly
             />

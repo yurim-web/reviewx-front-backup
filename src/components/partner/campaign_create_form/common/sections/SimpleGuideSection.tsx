@@ -117,6 +117,7 @@ export function SimpleGuideSection({
           ? `${sectionStyles.guide_section} ${sectionStyles.locked_section}`
           : sectionStyles.guide_section
       }
+      data-locked={shouldLock ? "true" : undefined}
     >
       {/* 글자 수 */}
       <div className={optionStyles.option_input_box}>

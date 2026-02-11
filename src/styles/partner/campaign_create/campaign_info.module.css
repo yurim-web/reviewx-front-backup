@@ -59,7 +59,21 @@
   font-weight: 500;
   line-height: 16px; /* 100% */
   letter-spacing: -0.32px;
-  cursor: default;
+  cursor: text;
+}
+
+/* 날짜/기간 입력 필드 readonly - 클릭용이라 흰색 유지 (read_only_input 제외) */
+.form_input[type="text"]:read-only:not(.read_only_input),
+.form_input[type="text"][readonly]:not(.read_only_input) {
+  background: #fff;
+  color: #444;
+  border: 1px solid #d9d9d9;
+  opacity: 1;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
 }
 
 /* focus 상태에서 outline 제거 */
@@ -80,7 +94,7 @@
   letter-spacing: -0.32px;
 }
 
-/* 읽기 전용 필드 - 브랜드명, 보유포인트 등 */
+/* 읽기 전용 필드 - 브랜드명, 보유포인트 등 (기본) */
 .form_input[readonly]:focus,
 .form_input[readonly] {
   outline: none;
@@ -91,6 +105,15 @@
   font-weight: 500;
   line-height: 16px;
   letter-spacing: -0.32px;
+}
+
+/* 수정 불가 필드 공통 스타일 - 캠페인 제목, 제공내역 등 (로드 시부터 회색 적용) */
+.form_input.read_only_input[readonly],
+.form_input.read_only_input[readonly]:focus {
+  background: #f6f6f6;
+  color: #999999;
+  cursor: default;
+  border-color: #d9d9d9;
 }
 
 /* 비활성화 필드 - 모집기간, 등록기간 등 수정 불가능한 필드 */
@@ -168,7 +191,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border: 1px solid #d9d9d9;
+  border: none;
   border-radius: 8px;
 }
 
@@ -227,7 +250,7 @@
   transform: translateY(-50%);
   font-weight: 500;
   font-size: 16px;
-  color: #444444;
+  color: #999999;
   white-space: nowrap;
   letter-spacing: -0.32px;
   pointer-events: none; /* 클릭 방해하지 않도록 */
@@ -248,6 +271,13 @@
   transition: all 0.2s ease;
   white-space: nowrap;
   letter-spacing: -0.32px;
+}
+
+.charge_button:disabled {
+  background: #f5f5f5;
+  border-color: #e5e7eb;
+  color: #848484;
+  cursor: default;
 }
 
 /* 카운트 입력 그룹 - 모집인원 + 명 단위 */
@@ -278,6 +308,11 @@
   pointer-events: none; /* 클릭 방해하지 않도록 */
 }
 
+/* 비활성화(읽기 전용) 시 카운트 단위 색상 */
+.count_input_group input.read_only_input ~ .count_unit {
+  color: #848484;
+}
+
 /* ============================================
    모바일 반응형 스타일
    ============================================ */
@@ -285,7 +320,8 @@
 @media (max-width: 768px) {
   /* 폼 컨테이너 */
   .campaign_form {
-    padding: 20px 20px 40px 20px;  }
+    padding: 20px 20px 40px 20px;
+  }
 
   /* 텍스트영역 */
   .form_textarea {
@@ -328,7 +364,6 @@
   .image_preview {
     border-radius: 6px;
   }
-
 }
 
 /* 지역 선택 그룹 - 시/도와 시/구/군 드롭다운을 나란히 배치 */

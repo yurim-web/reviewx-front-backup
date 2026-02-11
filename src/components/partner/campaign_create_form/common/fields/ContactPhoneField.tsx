@@ -108,7 +108,7 @@ export function ContactPhoneField({
     // Ctrl, Cmd 키와 함께 사용되는 키 (복사, 붙여넣기 등)
     const isCtrlKey = e.ctrlKey || e.metaKey;
     const isAllowedKeyWithCtrl = ["a", "c", "v", "x"].includes(
-      e.key.toLowerCase()
+      e.key.toLowerCase(),
     );
 
     // 입력된 키가 숫자인지 확인
@@ -131,15 +131,14 @@ export function ContactPhoneField({
       </label>
       <input
         type="tel"
-        className={infoStyles.form_input}
+        className={`${infoStyles.form_input} ${isEditMode && !isEditable ? infoStyles.read_only_input : ""}`}
         value={value}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        placeholder="010-1234-5678"
+        placeholder="- 제외 입력"
         maxLength={13} // 010-1234-5678 (13자)
         readOnly={isEditMode && !isEditable}
       />
     </article>
   );
 }
-

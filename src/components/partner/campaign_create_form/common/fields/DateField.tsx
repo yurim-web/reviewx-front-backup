@@ -245,12 +245,12 @@ export function DateField({
       {/* 단일 날짜 입력 필드 */}
       <input
         type="text"
-        className={infoStyles.form_input}
+        className={`${infoStyles.form_input} ${!can_edit ? infoStyles.read_only_input : ""}`}
         value={value}
-        onChange={() => {}} // 입력 필드는 직접 수정 불가 (캘린더로만 선택)
+        onChange={() => {}}
         onClick={handle_input_click}
         placeholder={placeholder}
-        readOnly={!can_edit} // 수정 가능할 때는 readOnly 해제하여 원래 스타일 유지
+        readOnly
         disabled={!can_edit}
       />
 

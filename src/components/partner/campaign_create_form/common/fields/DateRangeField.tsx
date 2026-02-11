@@ -22,6 +22,7 @@ import { format } from "date-fns";
 import RangeCalendar, {
   type DateRange,
 } from "@/components/common/date_range_picker/RangeCalendar";
+import BaseModal from "@/components/common/modal/BaseModal";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
 import styles from "@/styles/partner/campaign_create/date_range_field.module.css";
 
@@ -67,6 +68,9 @@ export function DateRangeField({
   // [상태값, 상태를 변경하는 함수] = useState(초기값)
   const [is_calendar_open, setIsCalendarOpen] = useState(false);
 
+  // useState: 날짜 검증 모달 열림/닫힘 상태
+  const [is_validation_modal_open, setIsValidationModalOpen] = useState(false);
+
   // useState: 선택된 날짜 범위를 DateRange 타입으로 관리
   // value 문자열을 파싱하여 DateRange 객체로 변환
   const [selected_range, setSelectedRange] = useState<DateRange | undefined>(
@@ -110,6 +114,7 @@ export function DateRangeField({
       return;
     }
 
+    // 시작일만 있는 경우도 처리 (예: "2025-01-15 ~")
     const from_date = parts[0] ? new Date(parts[0]) : undefined;
     const to_date = parts[1] ? new Date(parts[1]) : undefined;
 
@@ -118,7 +123,11 @@ export function DateRangeField({
       return;
     }
     if (to_date && isNaN(to_date.getTime())) {
-      setSelectedRange(undefined);
+      // 종료일이 유효하지 않으면 undefined로 처리 (빈 문자열인 경우)
+      setSelectedRange({
+        from: from_date,
+        to: undefined,
+      });
       return;
     }
 
@@ -161,6 +170,11 @@ export function DateRangeField({
     };
   }, [is_calendar_open]);
 
+  // 날짜 검증 에러 핸들러
+  const handle_validation_error = () => {
+    setIsValidationModalOpen(true);
+  };
+
   // 날짜 범위 선택 핸들러
   // RangeCalendar에서 날짜 범위를 선택했을 때 호출됩니다
   const handle_date_range_select = (range: DateRange | undefined) => {
@@ -173,14 +187,18 @@ export function DateRangeField({
     }
 
     if (range.from && range.to) {
-      // 시작일과 종료일이 모두 있으면 범위 형식으로 변환
-      // format 함수: date-fns 라이브러리의 함수로, 날짜를 원하는 형식으로 변환합니다
-      // "yyyy-MM-dd": 년도 4자리-월 2자리-일 2자리 형식
-      const formatted_range = `${format(range.from, "yyyy-MM-dd")} ~ ${format(
-        range.to,
-        "yyyy-MM-dd"
-      )}`;
-      onChange(formatted_range);
+      // from과 to가 같은 날짜인 경우: 시작일만 선택된 상태
+      if (range.from.getTime() === range.to.getTime()) {
+        const formatted_date = format(range.from, "yyyy-MM-dd");
+        onChange(`${formatted_date} ~`);
+      } else {
+        // 시작일과 종료일이 다른 경우: 범위 완성
+        const formatted_range = `${format(range.from, "yyyy-MM-dd")} ~ ${format(
+          range.to,
+          "yyyy-MM-dd"
+        )}`;
+        onChange(formatted_range);
+      }
     } else if (range.from) {
       // 시작일만 있으면 시작일만 표시
       const formatted_date = format(range.from, "yyyy-MM-dd");
@@ -201,28 +219,39 @@ export function DateRangeField({
   const can_edit = !isEditMode || isEditable;
 
   return (
-    <div className={styles.date_range_field_container} ref={container_ref}>
-      {/* 날짜 범위 입력 필드 */}
-      <input
-        type="text"
-        className={infoStyles.form_input}
-        value={value}
-        onChange={() => {}} // 입력 필드는 직접 수정 불가 (캘린더로만 선택)
-        onClick={handle_input_click}
-        placeholder={placeholder}
-        readOnly={!can_edit} // 수정 가능할 때는 readOnly 해제하여 원래 스타일 유지
-        disabled={!can_edit}
-      />
+    <>
+      <div className={styles.date_range_field_container} ref={container_ref}>
+        {/* 날짜 범위 입력 필드 */}
+        <input
+          type="text"
+          className={`${infoStyles.form_input} ${!can_edit ? infoStyles.read_only_input : ""}`}
+          value={value}
+          onChange={() => {}}
+          onClick={handle_input_click}
+          placeholder={placeholder}
+          readOnly
+          disabled={!can_edit}
+        />
 
-      {/* 날짜 범위 선택 캘린더 - 입력 필드 아래에 표시 */}
-      {is_calendar_open && can_edit && (
-        <div className={styles.calendar_dropdown}>
-          <RangeCalendar
-            selected={selected_range}
-            on_select={handle_date_range_select}
-          />
-        </div>
-      )}
-    </div>
+        {/* 날짜 범위 선택 캘린더 - 입력 필드 아래에 표시 */}
+        {is_calendar_open && can_edit && (
+          <div className={styles.calendar_dropdown}>
+            <RangeCalendar
+              selected={selected_range}
+              on_select={handle_date_range_select}
+              on_validation_error={handle_validation_error}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* 날짜 검증 모달 */}
+      <BaseModal
+        is_open={is_validation_modal_open}
+        on_close={() => setIsValidationModalOpen(false)}
+        message="시작일과 종료일을 확인해 주세요."
+        buttons={["확인"]}
+      />
+    </>
   );
 }

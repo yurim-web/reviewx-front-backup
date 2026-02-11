@@ -8,6 +8,12 @@
   width: 100%;
 }
 
+/* 달력 드롭다운이 열리는 인풋 - 커서/캐럿 숨김 (클릭 전용) */
+.date_range_field_container input[type="text"] {
+  caret-color: transparent;
+  cursor: pointer;
+}
+
 /* 캘린더 드롭다운 */
 .calendar_dropdown {
   position: absolute;

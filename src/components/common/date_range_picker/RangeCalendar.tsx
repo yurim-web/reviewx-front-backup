@@ -55,6 +55,7 @@ export type DateRange = DayPickerDateRange;
 interface RangeCalendarProps {
   selected: DateRange | undefined;
   on_select: (range: DateRange | undefined) => void;
+  on_validation_error?: () => void; // 날짜 순서가 잘못되었을 때 호출
   number_of_months?: number;
   show_outside_days?: boolean;
 }
@@ -66,6 +67,7 @@ interface RangeCalendarProps {
 export default function RangeCalendar({
   selected,
   on_select,
+  on_validation_error,
   number_of_months = 2,
   show_outside_days = false,
 }: RangeCalendarProps) {
@@ -87,17 +89,69 @@ export default function RangeCalendar({
       return;
     }
 
+    // 범위가 이미 완성되어 있는 경우 (from, to 모두 존재하고 다른 날짜)
+    // -> 어떤 날짜를 클릭하든 무조건 초기화 후 새 시작일로 설정
+    if (selected && selected.from && selected.to && selected.from.getTime() !== selected.to.getTime()) {
+      // react-day-picker가 반환한 range가 이미 범위를 가지고 있다면
+      // 이는 종료일 변경 시도이므로, 대신 초기화하고 새 시작일로 설정
+      if (range.from && range.to) {
+        // 두 날짜 중 새로 클릭한 날짜를 찾아서 시작일로 설정
+        // (기존 from과 다른 날짜를 찾음)
+        const clicked_date =
+          range.from.getTime() === selected.from.getTime()
+            ? range.to
+            : range.from;
+        // 시작일만 선택된 상태로 표시하기 위해 from과 to를 동일하게 설정
+        on_select({ from: clicked_date, to: clicked_date });
+        return;
+      } else if (range.from) {
+        // 단순히 한 날짜만 있는 경우도 초기화 후 새 시작일로
+        on_select({ from: range.from, to: range.from });
+        return;
+      }
+    }
+
+    // 시작일만 선택된 상태(from === to)에서 종료일 선택
+    if (selected && selected.from && selected.to && selected.from.getTime() === selected.to.getTime()) {
+      // 두 번째 클릭: 범위 완성
+      if (range.from && range.to) {
+        console.log("📊 범위 선택 검증:", {
+          range_from: range.from,
+          range_to: range.to,
+          selected_from: selected.from,
+          "range.from === selected.from": range.from.getTime() === selected.from.getTime()
+        });
+
+        // react-day-picker는 항상 from < to로 정렬한다
+        // 그래서 range.from이 더 이른 날짜가 됨
+        // 만약 range.from이 selected.from과 다르다면, 사용자가 시작일보다 이른 날짜를 클릭한 것
+        if (range.from.getTime() !== selected.from.getTime()) {
+          console.log("🚫 시작일보다 이른 날짜 선택됨! 모달 표시");
+          if (on_validation_error) {
+            on_validation_error();
+          }
+          // 상태 변경하지 않음 (이전 상태 유지)
+          return;
+        }
+
+        // 정상적인 범위 선택
+        console.log("✅ 정상적인 범위 선택");
+        on_select({ from: range.from, to: range.to });
+        return;
+      }
+    }
+
+    // 첫 번째 선택: 시작일만 선택 (from과 to를 동일하게)
     if (range.from && !range.to) {
-      on_select({ from: range.from, to: undefined });
+      on_select({ from: range.from, to: range.from });
       return;
     }
 
+    // 범위 완성 (시작일 → 종료일 선택 완료)
     if (range.from && range.to) {
-      if (range.from > range.to) {
-        on_select({ from: range.to, to: range.from });
-      } else {
-        on_select({ from: range.from, to: range.to });
-      }
+      // 이 경우는 첫 클릭에서 바로 범위가 만들어진 경우 (드래그 선택 등)
+      // 이미 라이브러리가 정렬해서 from < to를 보장하므로 그대로 허용
+      on_select({ from: range.from, to: range.to });
       return;
     }
 
@@ -129,6 +183,27 @@ export default function RangeCalendar({
       const button = element.querySelector("button") as HTMLElement;
       const class_list = element.classList;
 
+      // 시작일만 선택된 경우를 미리 체크
+      // 1) rdp-day_range_start와 rdp-day_range_end가 동시에 있는 경우 (from === to)
+      // 2) rdp-day_selected만 있고 range 클래스가 없는 경우
+      const has_both_start_and_end =
+        class_list.contains("rdp-day_range_start") &&
+        class_list.contains("rdp-day_range_end") &&
+        !class_list.contains("rdp-day_range_middle");
+
+      const is_single_selected =
+        has_both_start_and_end ||
+        (selected &&
+          selected.from &&
+          selected.to == null &&
+          class_list.contains("rdp-day_selected") &&
+          !class_list.contains("rdp-day_range_start") &&
+          !class_list.contains("rdp-day_range_end") &&
+          !class_list.contains("rdp-day_range_middle") &&
+          !class_list.toString().includes("range_start") &&
+          !class_list.toString().includes("range_end") &&
+          !class_list.toString().includes("range_middle"));
+
       // 오늘 날짜이면서 선택되지 않고 range에 포함되지 않은 경우는 스타일 제거하지 않음
       const is_today_not_selected =
         class_list.contains("rdp-day_today") &&
@@ -138,8 +213,8 @@ export default function RangeCalendar({
         !class_list.contains("rdp-day_range_middle") &&
         !class_list.contains("rdp-day_outside");
 
-      // 오늘 날짜가 아닌 경우에만 스타일 제거
-      if (!is_today_not_selected) {
+      // 오늘 날짜가 아니고 시작일만 선택된 경우가 아닌 경우에만 스타일 제거
+      if (!is_today_not_selected && !is_single_selected) {
         element.style.removeProperty("background-color");
         element.style.removeProperty("color");
         element.style.removeProperty("border-radius");
@@ -151,7 +226,7 @@ export default function RangeCalendar({
         element.style.removeProperty("padding");
       }
 
-      if (button && !is_today_not_selected) {
+      if (button && !is_today_not_selected && !is_single_selected) {
         button.style.removeProperty("background-color");
         button.style.removeProperty("color");
         button.style.removeProperty("border-radius");
@@ -189,12 +264,128 @@ export default function RangeCalendar({
         });
       }
     });
+
     all_days.forEach((day) => {
       const element = day as HTMLElement;
       const button = element.querySelector("button") as HTMLElement;
       const class_list = element.classList;
 
-      if (
+      // has_both_start_and_end를 먼저 정의 (range 조건에서도 사용)
+      const has_both_start_and_end =
+        class_list.contains("rdp-day_range_start") &&
+        class_list.contains("rdp-day_range_end") &&
+        !class_list.contains("rdp-day_range_middle");
+
+      // 시작일만 선택된 경우:
+      // 1) rdp-day_selected 클래스는 있지만 range 관련 클래스가 없는 경우
+      // 2) rdp-day_range_start와 rdp-day_range_end가 동시에 있는 경우 (from === to)
+      const is_single_selected =
+        has_both_start_and_end ||
+        (selected &&
+          selected.from &&
+          selected.to == null &&
+          class_list.contains("rdp-day_selected") &&
+          !class_list.contains("rdp-day_range_start") &&
+          !class_list.contains("rdp-day_range_end") &&
+          !class_list.contains("rdp-day_range_middle") &&
+          !class_list.toString().includes("range_start") &&
+          !class_list.toString().includes("range_end") &&
+          !class_list.toString().includes("range_middle"));
+
+      // 디버깅: 선택된 날짜에 대한 정보 출력
+      if (class_list.contains("rdp-day_selected") || has_both_start_and_end) {
+        console.log("=== 선택된 날짜 디버깅 ===");
+        console.log("날짜 텍스트:", button?.textContent);
+        console.log("클래스 목록:", class_list.toString());
+        console.log("has_both_start_and_end:", has_both_start_and_end);
+        console.log("is_single_selected:", is_single_selected);
+        console.log("selected 상태:", selected);
+        console.log("버튼 현재 스타일:", {
+          backgroundColor: button?.style.backgroundColor,
+          width: button?.style.width,
+          height: button?.style.height,
+          borderRadius: button?.style.borderRadius,
+        });
+      }
+
+      if (is_single_selected) {
+        console.log("✅ 단일 날짜 선택됨! 핑크 원 적용 시작");
+        const isMobile = window.innerWidth <= 768;
+        const circleSize = isMobile ? "20px" : "32px";
+
+        element.style.setProperty(
+          "background-color",
+          "transparent",
+          "important"
+        );
+        element.style.setProperty("position", "relative", "important");
+        element.style.setProperty("color", "#444444", "important");
+        element.style.setProperty("border-radius", "50%", "important");
+        element.style.setProperty("font-weight", "500", "important");
+
+        if (button) {
+          // SingleCalendar 방식: 원형 배경 요소 생성
+          button.style.setProperty("background-color", "#ff5694", "important");
+          button.style.setProperty("color", "white", "important");
+          button.style.setProperty("border-radius", "50%", "important");
+          button.style.setProperty("width", circleSize, "important");
+          button.style.setProperty("height", circleSize, "important");
+          button.style.setProperty("min-width", circleSize, "important");
+          button.style.setProperty("min-height", circleSize, "important");
+          button.style.setProperty("max-width", circleSize, "important");
+          button.style.setProperty("max-height", circleSize, "important");
+          button.style.setProperty("border", "none", "important");
+          button.style.setProperty("padding", "0", "important");
+          button.style.setProperty("margin", "0", "important");
+          button.style.setProperty("font-weight", "500", "important");
+          button.style.setProperty("display", "flex", "important");
+          button.style.setProperty("align-items", "center", "important");
+          button.style.setProperty("justify-content", "center", "important");
+          button.style.setProperty("position", "relative", "important");
+          button.style.setProperty("z-index", "2", "important");
+          button.style.setProperty("outline", "none", "important");
+
+          // 원형 배경 요소 추가 (SingleCalendar 방식)
+          let circle = button.querySelector(".selected-date-circle") as HTMLElement;
+          if (!circle) {
+            circle = document.createElement("div");
+            circle.className = "selected-date-circle";
+            circle.style.setProperty("position", "absolute", "important");
+            circle.style.setProperty("width", circleSize, "important");
+            circle.style.setProperty("height", circleSize, "important");
+            circle.style.setProperty("background-color", "#ff5694", "important");
+            circle.style.setProperty("border-radius", "50%", "important");
+            circle.style.setProperty("left", "50%", "important");
+            circle.style.setProperty("top", "50%", "important");
+            circle.style.setProperty("transform", "translate(-50%, -50%)", "important");
+            circle.style.setProperty("z-index", "1", "important");
+            button.appendChild(circle);
+            console.log("🔵 원형 배경 요소 생성됨:", circle);
+          } else {
+            circle.style.setProperty("width", circleSize, "important");
+            circle.style.setProperty("height", circleSize, "important");
+            console.log("🔵 기존 원형 배경 요소 크기 업데이트:", circle);
+          }
+          circle.style.setProperty("display", "block", "important");
+
+          const button_children = button.querySelectorAll("*");
+          button_children.forEach((child) => {
+            const child_element = child as HTMLElement;
+            if (!child_element.classList.contains("selected-date-circle")) {
+              child_element.style.setProperty("color", "white", "important");
+              child_element.style.setProperty("position", "relative", "important");
+              child_element.style.setProperty("z-index", "2", "important");
+            }
+          });
+
+          console.log("✅ 핑크 원 스타일 적용 완료, 버튼 스타일:", {
+            backgroundColor: button.style.backgroundColor,
+            width: button.style.width,
+            height: button.style.height,
+            borderRadius: button.style.borderRadius,
+          });
+        }
+      } else if (
         class_list.contains("rdp-day_range_middle") ||
         class_list.toString().includes("range_middle")
       ) {
@@ -208,7 +399,7 @@ export default function RangeCalendar({
 
         if (button) {
           const isMobile = window.innerWidth <= 768;
-          const buttonHeight = isMobile ? "18px" : "100%";
+          const buttonHeight = isMobile ? "18px" : "28px";
           button.style.setProperty(
             "background-color",
             "rgba(255,86,148,0.1)",
@@ -226,8 +417,9 @@ export default function RangeCalendar({
           button.style.setProperty("justify-content", "center", "important");
         }
       } else if (
-        class_list.contains("rdp-day_range_start") ||
-        class_list.toString().includes("range_start")
+        (class_list.contains("rdp-day_range_start") ||
+          class_list.toString().includes("range_start")) &&
+        !has_both_start_and_end
       ) {
         const isMobile = window.innerWidth <= 768;
         const elementHeight = isMobile ? "18px" : "var(--rdp-cell-size)";
@@ -259,7 +451,7 @@ export default function RangeCalendar({
         element.style.setProperty("padding", "0", "important");
 
         if (button) {
-          const buttonHeight = isMobile ? "18px" : "24px";
+          const buttonHeight = isMobile ? "18px" : "28px";
           button.style.setProperty(
             "background-color",
             "rgba(255,86,148,0.1)",
@@ -322,7 +514,7 @@ export default function RangeCalendar({
             button.appendChild(circle);
           } else {
             const isMobile = window.innerWidth <= 768;
-            const circleSize = isMobile ? "18px" : "32px";
+            const circleSize = isMobile ? "18px" : "30px";
             circle.style.setProperty("width", circleSize, "important");
             circle.style.setProperty("height", circleSize, "important");
           }
@@ -418,8 +610,9 @@ export default function RangeCalendar({
           setTimeout(apply_white_text_start, 300);
         }
       } else if (
-        class_list.contains("rdp-day_range_end") ||
-        class_list.toString().includes("range_end")
+        (class_list.contains("rdp-day_range_end") ||
+          class_list.toString().includes("range_end")) &&
+        !has_both_start_and_end
       ) {
         const isMobile = window.innerWidth <= 768;
         const elementHeight = isMobile ? "18px" : "var(--rdp-cell-size)";
@@ -451,7 +644,7 @@ export default function RangeCalendar({
         element.style.setProperty("padding", "0", "important");
 
         if (button) {
-          const buttonHeight = isMobile ? "18px" : "24px";
+          const buttonHeight = isMobile ? "18px" : "28px";
           button.style.setProperty(
             "background-color",
             "rgba(255,86,148,0.1)",
@@ -703,13 +896,13 @@ export default function RangeCalendar({
           const is_start_date =
             selected &&
             selected.from &&
-            !selected.to &&
+            selected.to == null &&
             selected.from.getTime() === button_date_time;
 
           // 종료일만 선택된 경우
           const is_end_date =
             selected &&
-            !selected.from &&
+            selected.from == null &&
             selected.to &&
             selected.to.getTime() === button_date_time;
 
@@ -807,7 +1000,7 @@ export default function RangeCalendar({
         });
       }
     });
-  }, []);
+  }, [selected]);
 
   // ========================================
   // 전달 날짜 숨기기 함수
@@ -955,6 +1148,81 @@ export default function RangeCalendar({
   }, [apply_range_styles, hide_previous_month_days]);
 
   // ========================================
+  // 날짜 비활성화 로직 (시작일보다 이른 날짜는 선택 불가)
+  // ========================================
+
+  // 시작일만 선택된 상태에서 시작일보다 이른 날짜를 비활성화
+  const get_disabled_dates = () => {
+    console.log("🔍 get_disabled_dates 호출됨, selected 상태:", selected);
+
+    // 시작일만 선택된 상태가 아니면 비활성화 없음
+    if (!selected || !selected.from || !selected.to) {
+      console.log("❌ selected가 없거나 from/to가 없음");
+      return undefined;
+    }
+
+    console.log("📅 from과 to 비교:", {
+      from: selected.from,
+      to: selected.to,
+      isSame: selected.from.getTime() === selected.to.getTime()
+    });
+
+    if (selected.from.getTime() !== selected.to.getTime()) {
+      console.log("❌ from과 to가 다름 (범위 선택 완료)");
+      return undefined;
+    }
+
+    console.log("✅ 시작일만 선택! 비활성화 함수 반환, 시작일:", selected.from);
+
+    // 시작일보다 이른 날짜를 비활성화하는 함수 반환
+    return (date: Date) => {
+      const check_date = new Date(date);
+      check_date.setHours(0, 0, 0, 0);
+
+      const start_date = new Date(selected.from);
+      start_date.setHours(0, 0, 0, 0);
+
+      const is_before = check_date < start_date;
+
+      console.log(`📆 날짜 체크: ${check_date.toLocaleDateString()} < ${start_date.toLocaleDateString()} = ${is_before}`);
+
+      return is_before;
+    };
+  };
+
+  // ========================================
+  // 날짜 클릭 이벤트 감지 (모달 표시용)
+  // ========================================
+
+  useEffect(() => {
+    if (!calendar_ref.current) return;
+
+    const handle_day_click = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+
+      // 날짜 버튼 클릭인지 확인
+      const day_button = target.closest("button[name^='day']") as HTMLButtonElement;
+      if (!day_button) return;
+
+      // disabled 버튼인지 확인
+      if (day_button.disabled) {
+        // 모달 표시
+        if (on_validation_error) {
+          on_validation_error();
+        }
+      }
+    };
+
+    calendar_ref.current.addEventListener("click", handle_day_click, true);
+
+    return () => {
+      if (calendar_ref.current) {
+        calendar_ref.current.removeEventListener("click", handle_day_click, true);
+      }
+    };
+  }, [on_validation_error]);
+
+  // ========================================
   // 렌더링
   // ========================================
 
@@ -964,6 +1232,7 @@ export default function RangeCalendar({
         mode="range"
         selected={selected}
         onSelect={handle_date_select}
+        disabled={get_disabled_dates()}
         locale={ko}
         showOutsideDays={show_outside_days}
         numberOfMonths={number_of_months}

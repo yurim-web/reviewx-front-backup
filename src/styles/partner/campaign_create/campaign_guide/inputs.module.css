@@ -93,6 +93,28 @@
   margin: 0;
 }
 
+/* 수정 불가 시 readonly 스타일 (캠페인 오픈 후 등) */
+.underline_input:read-only,
+.underline_input[readonly] {
+  background: #f6f6f6;
+  color: #999999;
+  cursor: default;
+  border-bottom-color: #e0e0e0;
+}
+
+/* 잠금(비활성화) 상태 - 기본 미션 설정 data-locked="true" 안의 밑줄 입력/단위 (밑줄 제거) */
+[data-locked="true"] .underline_input {
+  background: #f5f5f5 !important;
+  border-bottom: none !important;
+  border-radius: 4px !important;
+  color: #999999 !important;
+  cursor: default !important;
+}
+
+[data-locked="true"] .unit_text {
+  color: #999999 !important;
+}
+
 .unit_text {
   font-weight: 500;
   font-size: 16px;

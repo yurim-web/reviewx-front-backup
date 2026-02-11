@@ -19,7 +19,7 @@
   border: 1px solid #d9d9d9;
   border-radius: 8px;
   background: #fff;
-  padding: 20px;
+  padding: 20px 0px 20px 20px;
   outline: none;
   resize: none !important;
   overflow-y: auto;
@@ -77,8 +77,12 @@
    ============================================ */
 
 @media (max-width: 768px) {
-/* 스크롤바 스타일링 */
-.fixed_height_textarea::-webkit-scrollbar {
-  width: 22px;
-}
+  /* 스크롤바 스타일링 */
+  .fixed_height_textarea::-webkit-scrollbar {
+    width: 22px;
+  }
+
+  .fixed_height_textarea {
+    padding: 20px 0px 20px 20px;
+  }
 }
