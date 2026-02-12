@@ -40,12 +40,12 @@ interface CategoryFormProps {
 }
 
 // 구분 옵션 목록
-// CategoryDivision 타입의 모든 값을 배열로 정의합니다
+// CategoryDivision 타입의 모든 값을 배열로 정의하고 오름차순으로 정렬합니다
 const division_options: CategoryDivision[] = [
   "공지사항",
   "자주 묻는 질문",
   "이벤트",
-];
+].sort((a, b) => a.localeCompare(b, "ko-KR"));
 
 export default function CategoryForm({
   mode,
@@ -95,7 +95,7 @@ export default function CategoryForm({
     // 현재는 목업 데이터에서 카테고리를 찾습니다
     // 실제 구현 시에는 API를 호출하여 카테고리 데이터를 불러옵니다
     const category: CategoryItem | undefined = categories_data.find(
-      (item) => item.id === category_id
+      (item) => item.id === category_id,
     );
 
     if (category) {
@@ -132,7 +132,7 @@ export default function CategoryForm({
         item.division === division &&
         item.category_name === trimmed_name &&
         // 수정 모드일 때는 현재 수정 중인 카테고리는 제외
-        (mode !== "edit" || item.id !== category_id)
+        (mode !== "edit" || item.id !== category_id),
     );
 
     if (duplicate_category) {
@@ -298,18 +298,11 @@ export default function CategoryForm({
               type="text"
               className={styles.input_box}
               value={category_name}
-              maxLength={10}
-              minLength={2}
               onChange={(e) => {
-                // 카테고리명 변경 시 에러 메시지 초기화
-                // maxLength 속성으로 이미 10자 이상 입력이 막혀있지만, 추가 안전장치로 처리합니다
-                const input_value = e.target.value;
-                // 10자를 초과하는 경우 10자까지만 잘라서 저장합니다
-                const limited_value = input_value.slice(0, 10);
-                set_category_name(limited_value);
+                set_category_name(e.target.value);
                 set_error_message("");
               }}
-              placeholder="카테고리명 입력 (2~10자)"
+              placeholder="카테고리명 입력"
               aria-label="카테고리명"
             />
             {/* 에러 메시지 표시 */}
