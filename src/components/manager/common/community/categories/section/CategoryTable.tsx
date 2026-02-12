@@ -32,10 +32,10 @@ import {
   initialize_categories_data,
   type CategoryItem,
 } from "@/data/manager_ga/community/categoriesData";
-import CommonTable, {
-  type TableColumn,
-  type TableRowData,
-} from "@/components/manager/common/table/CommonTable";
+import CommonTableWithTooltip, {
+  type TooltipConfig,
+} from "@/components/manager/common/table/CommonTableWithTooltip";
+import type { TableColumn, TableRowData } from "@/components/manager/common/table/CommonTable";
 import { useRouter } from "next/navigation";
 
 interface CategoryTableProps {
@@ -168,7 +168,7 @@ export default function CategoryTable({
   } = useTableSort<CategoryTableRowData>({
     data: filtered_categories,
     initial_column_key: "number",
-    initial_direction: "asc",
+    initial_direction: "desc", // 번호 최신순
     column_config,
   });
 
@@ -207,10 +207,16 @@ export default function CategoryTable({
     );
   };
 
+  const tooltip_config: TooltipConfig = {
+    column_key: "all",
+    exclude_column_keys: ["edit"],
+  };
+
   return (
-    <CommonTable<CategoryTableRowData>
+    <CommonTableWithTooltip<CategoryTableRowData>
       columns={columns}
       data={sorted_categories}
+      tooltip_config={tooltip_config}
       enable_hover={true}
       on_row_hover={(row_id) => {
         set_hovered_row_id(row_id);

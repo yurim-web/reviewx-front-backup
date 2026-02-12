@@ -20,18 +20,19 @@ type ToastEditorProps = {
   usageStatistics?: boolean;
   placeholder?: string;
   autofocus?: boolean;
+  hideModeSwitch?: boolean;
   ref?: any;
 };
 
 const ToastEditor = dynamic<ToastEditorProps>(
   () =>
     import("@toast-ui/react-editor").then(
-      (mod) => mod.Editor as unknown as ComponentType<ToastEditorProps>
+      (mod) => mod.Editor as unknown as ComponentType<ToastEditorProps>,
     ),
   {
     ssr: false,
     loading: () => <div className={styles.editor_skeleton}>에디터 로딩중…</div>,
-  }
+  },
 );
 
 interface PostEditorFieldProps {
@@ -110,6 +111,7 @@ export function PostEditorField({
                 usageStatistics={false}
                 placeholder=""
                 autofocus={false}
+                hideModeSwitch={true}
               />
             </div>
             {mode === "create" && !is_editor_ready && (

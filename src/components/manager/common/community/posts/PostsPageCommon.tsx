@@ -15,7 +15,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { startOfMonth, endOfMonth } from "date-fns";
 import styles from "@/styles/manager/common/manager_common_page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
@@ -37,6 +37,7 @@ import {
   save_pinned_posts_state,
 } from "@/utils/community/posts/pinnedPostsLocalStorage";
 import BaseModal from "@/components/common/modal/BaseModal";
+import Toast from "@/components/common/toast/Toast";
 
 // 관리자 타입 정의
 export type ManagerType = "ga" | "sa";
@@ -146,6 +147,17 @@ export default function PostsPageCommon({
   // 삭제 확인 모달 상태
   const [is_delete_modal_open, set_is_delete_modal_open] = useState(false);
 
+  // 토스트 상태 (고정/고정 해제 시 "저장되었습니다." 표시)
+  const [toast, set_toast] = useState<{ is_open: boolean; message: string }>({
+    is_open: false,
+    message: "",
+  });
+
+  // onClose를 고정 참조로 두어 1초마다 갱신되는 목록 때문에 타이머가 리셋되지 않도록 함
+  const handle_toast_close = useCallback(() => {
+    set_toast((prev) => (prev.is_open ? { is_open: false, message: "" } : prev));
+  }, []);
+
   /* ========================================
      🔄 게시글 고정 상태 변경 공통 함수
      - 고정/해제 이후 변경된 posts 상태를
@@ -182,6 +194,7 @@ export default function PostsPageCommon({
           : post
       )
     );
+    set_toast({ is_open: true, message: "저장되었습니다." });
   };
 
   // 선택된 게시글 고정 해제 처리
@@ -195,6 +208,7 @@ export default function PostsPageCommon({
           : post
       )
     );
+    set_toast({ is_open: true, message: "저장되었습니다." });
   };
 
   // 삭제 버튼 클릭 핸들러
@@ -288,6 +302,15 @@ export default function PostsPageCommon({
         buttons={["취소", "확인"]}
         on_cancel={() => set_is_delete_modal_open(false)}
         on_confirm={handle_delete_confirm}
+      />
+
+      {/* 고정/고정 해제 시 토스트 (이 페이지만 위치 조금 아래) */}
+      <Toast
+        message={toast.message}
+        isOpen={toast.is_open}
+        onClose={handle_toast_close}
+        positionVariant="lower"
+        duration={1000}
       />
     </div>
   );
