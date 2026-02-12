@@ -96,10 +96,10 @@
 }
 
 /* 메인 콘텐츠 영역 */
-/* 메인 콘텐츠 컨테이너 */
+/* 메인 콘텐츠 컨테이너 (하단 패딩: 고정 등록 버튼 높이+여유 간격 확보) */
 .main_content {
   margin-left: 240px;
-  padding: 80px 40px 80px 40px;
+  padding: 80px 40px 140px 40px; /* bottom 140px = 버튼(56px)+bottom(40px)+간격(44px) */
   box-sizing: border-box;
 }
 
@@ -210,15 +210,15 @@
 }
 
 /* 에디터 영역 */
-/* 에디터 컨테이너 */
+/* 에디터 컨테이너 (하단 문법 섹션 삭제로 인한 여백 40px 포함) */
 .editor_container {
   width: 100%;
-  border: 1px solid #d9d9d9;
   border-radius: 8px;
-  /* background: #ffffff; */
+
   min-height: 340px;
   overflow: hidden;
   position: relative;
+  box-sizing: border-box;
 }
 
 /* ToastUI Editor 기본 스타일 오버라이드 */
@@ -331,9 +331,24 @@
   background: #c0c0c0;
 }
 
+/* 하단 Markdown/WYSIWYG 전환 영역 숨김 (hideModeSwitch 미지원 시 대비) */
 .editor_container :global(.toastui-editor-mode-switch) {
-  border-radius: 0px 0px 8px 8px !important;
+  display: none !important;
 }
+
+/* 툴바 버튼 호버 시 툴팁 숨김 */
+.editor_container :global(.toastui-editor-tooltip) {
+  display: none !important;
+}
+
+/* 툴바 버튼 호버 효과 제거 (배경/테두리 변경 없음) */
+.editor_container
+  :global(.toastui-editor-defaultUI-toolbar button:not(:disabled):hover),
+.editor_container :global(.toastui-editor-toolbar button:not(:disabled):hover) {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
 /* 에디터 로딩 스켈레톤 */
 .editor_skeleton {
   width: 100%;
@@ -425,7 +440,7 @@
 
 /* 저장 버튼 비활성화 상태 */
 .save_button_disabled {
-  background: #D9D9D9;
+  background: #d9d9d9;
   color: #848484;
   cursor: default;
 }

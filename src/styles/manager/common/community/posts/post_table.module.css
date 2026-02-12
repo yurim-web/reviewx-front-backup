@@ -25,17 +25,7 @@
 .table_header {
   display: grid;
   /* 게시글 목록 테이블 컬럼 정의 - 화면 가득 차게 fr 단위 사용 */
-  grid-template-columns:
-    0.5fr /* 체크박스 */
-    0.9fr /* 번호 */
-    1fr /* 구분 */
-    1.2fr /* 카테고리 */
-    1.2fr /* 대상 */
-    5fr /* 제목 - 더 넓게 */
-    0.8fr /* 조회수 - 줄임 */
-    1fr /* 등록일 - 줄임 */
-    0.8fr /* 등록자 - 줄임 */
-    60px; /* 수정 버튼 */
+  grid-template-columns: 0.5fr 0.8fr 1.2fr 1.2fr 0.8fr 5fr 1.1fr 1.3fr 0.8fr 60px;
   background-color: #f5f5f5;
   padding: 0;
   align-items: center;
@@ -66,17 +56,7 @@
 /* 테이블 행 */
 .table_row {
   display: grid;
-  grid-template-columns:
-    0.5fr /* 체크박스 */
-    0.9fr /* 번호 */
-    1fr /* 구분 */
-    1.2fr /* 카테고리 */
-    1.2fr /* 대상 */
-    5fr /* 제목 - 더 넓게 */
-    0.8fr /* 조회수 - 줄임 */
-    1fr /* 등록일 - 줄임 */
-    0.8fr /* 등록자 - 줄임 */
-    60px; /* 수정 버튼 */
+  grid-template-columns: 0.5fr 0.8fr 1.2fr 1.2fr 0.8fr 5fr 1.1fr 1.3fr 0.8fr 60px;
   border-bottom: 1px solid #f2f2f2;
   align-items: center;
   min-height: 62px;

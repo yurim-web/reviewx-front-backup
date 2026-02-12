@@ -34,10 +34,10 @@ import {
   posts_data,
   type PostItem,
 } from "@/data/manager_ga/community/postsData";
-import CommonTable, {
-  type TableColumn,
-  type TableRowData,
-} from "@/components/manager/common/table/CommonTable";
+import CommonTableWithTooltip, {
+  type TooltipConfig,
+} from "@/components/manager/common/table/CommonTableWithTooltip";
+import type { TableColumn, TableRowData } from "@/components/manager/common/table/CommonTable";
 import { useRouter } from "next/navigation";
 import UserTypeTag, {
   type UserType,
@@ -195,7 +195,7 @@ export default function PostTable({
   } = useTableSort<PostTableRowData>({
     data: filtered_posts,
     initial_column_key: "number",
-    initial_direction: "asc",
+    initial_direction: "desc", // 번호 최신순
     column_config,
   });
 
@@ -227,10 +227,18 @@ export default function PostTable({
     );
   };
 
+  const tooltip_config: TooltipConfig = {
+    column_key: "all",
+    exclude_column_keys: ["edit"],
+    // 제목은 div > button > span.title_text 에서 말줄임되므로, 해당 요소 기준으로 overflow 검사
+    overflow_selector_by_column: { title: `.${styles.title_text}` },
+  };
+
   return (
-    <CommonTable<PostTableRowData>
+    <CommonTableWithTooltip<PostTableRowData>
       columns={columns}
       data={sorted_posts}
+      tooltip_config={tooltip_config}
       enable_hover={true}
       on_row_hover={(row_id) => {
         set_hovered_row_id(row_id);
