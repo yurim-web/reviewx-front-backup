@@ -248,7 +248,7 @@
 
 /* 다음 버튼 비활성화 */
 .next_button:disabled {
-  background-color: #d9d9d9;
+  background-color: #e5e5e5;
   color: #848484;
   cursor: default;
 }

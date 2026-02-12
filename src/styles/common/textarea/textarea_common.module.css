@@ -35,7 +35,7 @@
   color: #444444;
   margin: 0;
   padding: 0;
-  padding-right: 4px; /* 스크롤바와 텍스트 사이 간격 */
+  padding-right: 8px; /* 스크롤바와 텍스트 사이 간격 -- 수정됨*/
   border: none;
   background: transparent;
   resize: none;
