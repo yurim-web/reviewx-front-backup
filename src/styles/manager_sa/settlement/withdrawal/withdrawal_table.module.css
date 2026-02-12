@@ -22,19 +22,7 @@
 .table_header {
   display: grid;
   /* 리뷰어 테이블처럼 fr 단위를 사용해 가로 폭을 가득 채우도록 설정 */
-  grid-template-columns:
-    0.5fr /* 체크박스 */
-    0.8fr /* 번호 */
-    0.8fr /* 회차 */
-    1.2fr /* 이름 */
-    2.2fr /* 계좌번호 */
-    1.5fr /* 주민등록번호 */
-    1.2fr /* 출금 포인트 */
-    1fr /* 지급 (상태 태그) */
-    1.4fr /* 신청일 */
-    1.4fr /* 지급일 */
-    1fr /* 유형 */
-    1fr; /* 상태 */
+  grid-template-columns: 0.5fr 0.8fr 0.6fr 1.5fr 2.5fr 1.3fr 1.2fr 0.7fr 1.4fr 1.4fr 1.1fr 1fr;
   background-color: #f5f5f5;
   padding: 0;
   align-items: center;
@@ -49,19 +37,7 @@
 .table_row {
   display: grid;
   /* 헤더와 동일한 컬럼 정의를 공유해 정렬 유지 */
-  grid-template-columns:
-    0.5fr /* 체크박스 */
-    0.8fr /* 번호 */
-    0.8fr /* 회차 */
-    1.2fr /* 이름 */
-    2.2fr /* 계좌번호 */
-    1.5fr /* 주민등록번호 */
-    1.2fr /* 출금 포인트 */
-    1fr /* 지급 (상태 태그) */
-    1.4fr /* 신청일 */
-    1.4fr /* 지급일 */
-    1fr /* 유형 */
-    1fr; /* 상태 */
+  grid-template-columns: 0.5fr 0.8fr 0.6fr 1.5fr 2.5fr 1.3fr 1.2fr 0.7fr 1.4fr 1.4fr 1.1fr 1fr;
   gap: 0;
   min-height: 76px;
   align-items: center;
@@ -198,6 +174,8 @@
   flex-direction: column;
   gap: 8px;
   align-items: flex-start;
+  width: 100%;
+  min-width: 0;
 }
 
 /* 테이블 바디 */

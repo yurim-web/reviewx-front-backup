@@ -30,6 +30,8 @@
   align-items: flex-start;
   gap: 8px;
   display: flex;
+  width: 100%;
+  min-width: 0;
 }
 
 /* 출금 포인트 헤더 셀 - 가로 정렬 */
@@ -123,6 +125,11 @@
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+  display: block;
 }
 
 /* 셀 텍스트 - 보조 (회색) */
@@ -132,4 +139,9 @@
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+  display: block;
 }

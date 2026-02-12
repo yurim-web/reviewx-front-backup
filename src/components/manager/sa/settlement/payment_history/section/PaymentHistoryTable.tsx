@@ -23,10 +23,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import CommonTable, {
-  type TableColumn,
-  type TableRowData,
-} from "@/components/manager/common/table/CommonTable";
+import CommonTableWithTooltip, {
+  type TooltipConfig,
+} from "@/components/manager/common/table/CommonTableWithTooltip";
+import type { TableColumn, TableRowData } from "@/components/manager/common/table/CommonTable";
 import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
@@ -233,7 +233,7 @@ export default function PaymentHistoryTable({
   } = useTableSort({
     data: filtered_payment_history_list,
     initial_column_key: "number", // 기본 정렬: 번호 컬럼
-    initial_direction: "asc", // 오름차순
+    initial_direction: "desc", // 번호 최신순
     column_config,
   });
 
@@ -355,8 +355,9 @@ export default function PaymentHistoryTable({
   };
 
   // 각 셀 렌더링 함수 (Render Props 패턴)
-  // row: 현재 행의 데이터, column: 현재 컬럼 정보, index: 행 인덱스
+  // row: 현재 행의 데이터, column: 현재 컬럼 정의
   // Render Props 패턴: 함수를 props로 전달하여 컴포넌트의 렌더링 로직을 커스터마이징하는 패턴입니다.
+  // 툴팁이 적용되는 텍스트 셀은 span으로 감싸지 않고 직접 반환 (CommonTableWithTooltip이 자동으로 처리)
   const render_cell = (
     row: PaymentHistoryTableRowData,
     column: TableColumn
@@ -364,7 +365,7 @@ export default function PaymentHistoryTable({
     // switch 문: 여러 조건에 따라 다른 코드를 실행하는 제어문입니다.
     switch (column.key) {
       case "number":
-        return <span className={styles.cell_text}>{row.number}</span>;
+        return row.number;
       case "companyName":
         // 상호명 열: 두 줄로 표시
         // 첫 번째 줄: 상호명 + 다운로드 아이콘
@@ -413,7 +414,7 @@ export default function PaymentHistoryTable({
       case "depositorName":
         // 입금자명 열: 입금자명만 표시
         // depositorName은 문자열 타입입니다
-        return <span className={styles.cell_text}>{row.depositorName}</span>;
+        return row.depositorName;
       case "businessType":
         // BusinessTypeTag 컴포넌트를 사용하여 사업자 구분 태그 표시
         return (
@@ -434,12 +435,12 @@ export default function PaymentHistoryTable({
         // - split() 메서드: 문자열을 특정 구분자로 나눕니다
         // - map() 메서드: 배열의 각 요소를 변환합니다
         // - fragment(<></>): 여러 요소를 그룹화합니다 (불필요한 DOM 요소 추가 없음)
-        
+
         // 카드 결제 또는 포인트 충전인 경우 "-" 표시
         if (row.paymentMethod === "카드 결제" || row.paymentMethod === "포인트 충전") {
-          return <span className={styles.cell_text}>-</span>;
+          return "-";
         }
-        
+
         const has_parentheses = row.taxInvoiceType.includes("(");
         if (has_parentheses) {
           // 괄호가 있는 경우: "현금영수증"과 "(소득공제)" 또는 "(지출증빙)" 사이에서 줄바꿈
@@ -450,7 +451,7 @@ export default function PaymentHistoryTable({
 
           // parts[1]이 없으면 한 줄로 표시
           if (!parts[1]) {
-            return <span className={styles.cell_text}>{row.taxInvoiceType}</span>;
+            return row.taxInvoiceType;
           }
 
           return (
@@ -461,7 +462,7 @@ export default function PaymentHistoryTable({
           );
         }
         // 괄호가 없는 경우: 한 줄로 표시
-        return <span className={styles.cell_text}>{row.taxInvoiceType}</span>;
+        return row.taxInvoiceType;
       case "chargedPoints":
         // 충전 포인트 열: 충전 포인트와 보유 포인트를 세로로 표시
         return (
@@ -478,11 +479,11 @@ export default function PaymentHistoryTable({
           <PaymentStatusTag status={row.paymentStatus as PaymentStatus} />
         );
       case "requestDate":
-        return <span className={styles.cell_text}>{row.requestDate}</span>;
+        return row.requestDate;
       case "approvalDate":
-        return <span className={styles.cell_text}>{row.approvalDate}</span>;
+        return row.approvalDate;
       case "memberType":
-        return <span className={styles.cell_text}>{row.memberType}</span>;
+        return row.memberType;
       case "accountStatus":
         // 계정 상태 열: 회원 상태 태그 표시
         return (
@@ -507,10 +508,13 @@ export default function PaymentHistoryTable({
     }
   };
 
+  const tooltip_config: TooltipConfig = { column_key: "all" };
+
   return (
-    <CommonTable<PaymentHistoryTableRowData>
+    <CommonTableWithTooltip<PaymentHistoryTableRowData>
       columns={columns}
       data={sorted_payment_history_list as PaymentHistoryTableRowData[]}
+      tooltip_config={tooltip_config}
       render_cell={render_cell}
       styles={styles}
       enable_checkbox={true}
