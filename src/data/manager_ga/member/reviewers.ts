@@ -63,6 +63,7 @@ export interface ChannelDetail {
   followers?: number; // 팔로워 (네이버 클립, 인스타그램)
   subscribers?: number; // 구독자 (유튜브)
   is_connected: boolean; // 연결 여부
+  channel_url?: string; // 채널 URL (연결 시 해당 SNS로 이동)
 }
 
 // 계좌 정보 타입 정의
@@ -186,7 +187,7 @@ export const reviewer_list: ReviewerItem[] = [
   },
   {
     id: "5",
-    number: "000005000000000000000",
+    number: "000005",
     name: "김히어라가나다라마바사아자자자자자자",
     channels: ["Blog", "Instagram"],
     type: "일반",
@@ -412,7 +413,7 @@ export const reviewer_list: ReviewerItem[] = [
   {
     id: "20",
     number: "000020",
-    name: "박클립유튜브",
+    name: "박클립유튜브가나다다라라라라라라ㅏ라라라라라라라라",
     channels: ["Clip", "Youtube"],
     type: "서포터즈",
     campaign_participated: 12,
@@ -429,7 +430,7 @@ export const reviewer_list: ReviewerItem[] = [
 // 리뷰어 ID로 디테일 정보를 가져오는 함수
 // 실제 프로젝트에서는 API 호출로 대체됩니다
 export function get_reviewer_detail_by_id(
-  reviewer_id: string
+  reviewer_id: string,
 ): ReviewerDetail | null {
   // 목록에서 해당 리뷰어 찾기
   const reviewer = reviewer_list.find((r) => r.id === reviewer_id);
@@ -756,13 +757,28 @@ export function get_reviewer_detail_by_id(
     },
   };
 
+  // 연결된 채널별 목업 URL (클릭 시 이동용, 리뷰어 ID 기반)
+  const reviewer_slug = `reviewer_${reviewer.id}`;
+  const channel_url_map: Record<Channel, string> = {
+    Blog: `https://blog.naver.com/${reviewer_slug}`,
+    Clip: `https://clip.naver.com/${reviewer_slug}`,
+    Instagram: `https://instagram.com/${reviewer_slug}`,
+    Youtube: `https://youtube.com/@${reviewer_slug}`,
+    Store: `https://smartstore.naver.com/${reviewer_slug}`,
+    Mission: "#",
+    Reels: `https://instagram.com/${reviewer_slug}`,
+    Shorts: `https://youtube.com/@${reviewer_slug}`,
+  };
+
   // 4개 채널 모두 생성 (Blog, Clip, Instagram, Youtube)
   all_channels.forEach((channel) => {
     const base_data = channel_data_map[channel];
+    const is_connected = base_data.is_connected ?? false;
     channel_details.push({
       channel: channel,
       ...base_data,
-      is_connected: base_data.is_connected ?? false,
+      is_connected,
+      channel_url: is_connected ? channel_url_map[channel] : undefined,
     } as ChannelDetail);
   });
 
@@ -859,7 +875,7 @@ function load_previous_status_from_storage(): Record<
 
 // 상태 업데이트 정보를 localStorage에 저장
 function save_status_updates_to_storage(
-  updates: Record<string, ReviewerStatusType>
+  updates: Record<string, ReviewerStatusType>,
 ): void {
   if (typeof window === "undefined") {
     return;
@@ -868,7 +884,7 @@ function save_status_updates_to_storage(
   try {
     localStorage.setItem(
       STORAGE_KEY_REVIEWER_STATUS_UPDATES,
-      JSON.stringify(updates)
+      JSON.stringify(updates),
     );
   } catch (error) {
     console.error("localStorage에 리뷰어 상태 업데이트 저장 실패:", error);
@@ -877,7 +893,7 @@ function save_status_updates_to_storage(
 
 // 이전 상태 정보를 localStorage에 저장
 function save_previous_status_to_storage(
-  previous_status: Record<string, ReviewerStatusType>
+  previous_status: Record<string, ReviewerStatusType>,
 ): void {
   if (typeof window === "undefined") {
     return;
@@ -886,7 +902,7 @@ function save_previous_status_to_storage(
   try {
     localStorage.setItem(
       STORAGE_KEY_REVIEWER_PREVIOUS_STATUS,
-      JSON.stringify(previous_status)
+      JSON.stringify(previous_status),
     );
   } catch (error) {
     console.error("localStorage에 리뷰어 이전 상태 저장 실패:", error);
@@ -903,10 +919,10 @@ export function get_reviewer_list(): ReviewerItem[] {
   let userAccountsMap: Record<string, any> = {};
   let userCampaignsMap: Record<string, any> = {};
 
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     try {
       // user_accounts에서 포인트 정보 가져오기
-      const storedAccounts = localStorage.getItem('user_accounts');
+      const storedAccounts = localStorage.getItem("user_accounts");
       if (storedAccounts) {
         const accounts = JSON.parse(storedAccounts);
         accounts.forEach((account: any) => {
@@ -915,26 +931,28 @@ export function get_reviewer_list(): ReviewerItem[] {
       }
 
       // user_applied_campaigns에서 캠페인 통계 가져오기
-      const userAppliedCampaigns = localStorage.getItem('user_applied_campaigns');
+      const userAppliedCampaigns = localStorage.getItem(
+        "user_applied_campaigns",
+      );
       if (userAppliedCampaigns) {
         const allAppliedCampaigns = JSON.parse(userAppliedCampaigns);
         allAppliedCampaigns.forEach((uc: any) => {
           if (uc.campaigns) {
             const campaigns = uc.campaigns;
             // 캠페인 진행 = 대기 + 선정 상태인 캠페인 수
-            const participated = campaigns.filter((c: any) =>
-              c.status === '대기' || c.status === '선정'
+            const participated = campaigns.filter(
+              (c: any) => c.status === "대기" || c.status === "선정",
             ).length;
             // 캠페인 완료 = 완료 상태인 캠페인 수
-            const completed = campaigns.filter((c: any) =>
-              c.status === '완료'
+            const completed = campaigns.filter(
+              (c: any) => c.status === "완료",
             ).length;
             userCampaignsMap[uc.userId] = { participated, completed };
           }
         });
       }
     } catch (error) {
-      console.error('리뷰어 목록 데이터 로드 실패:', error);
+      console.error("리뷰어 목록 데이터 로드 실패:", error);
     }
   }
 
@@ -948,42 +966,50 @@ export function get_reviewer_list(): ReviewerItem[] {
     }
 
     // ID 매핑: 1 -> user_kakao_001, 2 -> user_naver_001
-    const mappedId = reviewer.id === '1' ? 'user_kakao_001' : 
-                     reviewer.id === '2' ? 'user_naver_001' : 
-                     reviewer.id;
+    const mappedId =
+      reviewer.id === "1"
+        ? "user_kakao_001"
+        : reviewer.id === "2"
+          ? "user_naver_001"
+          : reviewer.id;
 
     // user_accounts에서 최신 정보 가져오기
-    const userAccount = userAccountsMap[mappedId] || userAccountsMap[reviewer.id];
+    const userAccount =
+      userAccountsMap[mappedId] || userAccountsMap[reviewer.id];
     if (userAccount) {
       // 포인트 정보 업데이트
-      updatedReviewer.current_points = userAccount.current_points ?? updatedReviewer.current_points;
+      updatedReviewer.current_points =
+        userAccount.current_points ?? updatedReviewer.current_points;
       // 출금 포인트는 user_accounts에서 가져오되, 없으면 0으로 설정
-      updatedReviewer.withdrawn_points = userAccount.withdrawn_points !== undefined && userAccount.withdrawn_points !== null 
-        ? userAccount.withdrawn_points 
-        : 0;
-      
+      updatedReviewer.withdrawn_points =
+        userAccount.withdrawn_points !== undefined &&
+        userAccount.withdrawn_points !== null
+          ? userAccount.withdrawn_points
+          : 0;
+
       // 채널 정보 업데이트 (channel_details에서 연결된 채널만)
       if (userAccount.channel_details) {
         const connectedChannels: Channel[] = [];
         userAccount.channel_details.forEach((ch: any) => {
-          if (ch.status === 'connected') {
+          if (ch.status === "connected") {
             // 채널 이름을 Channel 타입으로 변환
             const channelMap: Record<string, Channel> = {
-              '네이버 블로그': 'Blog',
-              '네이버 블로그': 'Blog',
-              '블로그': 'Blog',
-              'Blog': 'Blog',
-              '네이버 클립': 'Clip',
-              '네이버 클립': 'Clip',
-              '클립': 'Clip',
-              'Clip': 'Clip',
-              '인스타그램': 'Instagram',
-              'Instagram': 'Instagram',
-              '유튜브': 'Youtube',
-              'Youtube': 'Youtube',
+              "네이버 블로그": "Blog",
+              "네이버 블로그": "Blog",
+              블로그: "Blog",
+              Blog: "Blog",
+              "네이버 클립": "Clip",
+              "네이버 클립": "Clip",
+              클립: "Clip",
+              Clip: "Clip",
+              인스타그램: "Instagram",
+              Instagram: "Instagram",
+              유튜브: "Youtube",
+              Youtube: "Youtube",
             };
-            const normalizedChannel = ch.name.replace(/\s+/g, '');
-            const channel = channelMap[normalizedChannel] || channelMap[ch.name];
+            const normalizedChannel = ch.name.replace(/\s+/g, "");
+            const channel =
+              channelMap[normalizedChannel] || channelMap[ch.name];
             if (channel) {
               connectedChannels.push(channel);
             }
@@ -1004,7 +1030,8 @@ export function get_reviewer_list(): ReviewerItem[] {
     }
 
     // user_applied_campaigns에서 캠페인 통계 가져오기
-    const userCampaigns = userCampaignsMap[mappedId] || userCampaignsMap[reviewer.id];
+    const userCampaigns =
+      userCampaignsMap[mappedId] || userCampaignsMap[reviewer.id];
     if (userCampaigns) {
       updatedReviewer.campaign_participated = userCampaigns.participated;
       updatedReviewer.campaign_completed = userCampaigns.completed;
@@ -1065,7 +1092,7 @@ export function sync_reviewer_status_with_initial_data(): void {
 // 이용 제한 시 이전 상태를 저장하고, 해제 시 복원할 수 있도록 합니다
 export function update_reviewer_status_type(
   reviewer_id: string,
-  new_status_type: ReviewerStatusType
+  new_status_type: ReviewerStatusType,
 ): void {
   // 매번 최신 상태를 localStorage에서 로드
   const status_type_updates = load_status_updates_from_storage();

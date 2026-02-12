@@ -288,8 +288,10 @@ function ensure_additional_reported_storage_loaded(): void {
   is_additional_reported_storage_loaded = true;
 }
 
-// 신고 내역 추가 함수
+// 신고 내역 추가 함수 (저장 전 기존 localStorage 로드하여 덮어쓰기 방지)
 export function add_reported_campaign(item: ReportedCampaignItem): void {
+  if (typeof window === "undefined") return;
+  ensure_additional_reported_storage_loaded();
   additional_reported_campaign_items.push(item);
   save_additional_items_to_storage(additional_reported_campaign_items);
 }

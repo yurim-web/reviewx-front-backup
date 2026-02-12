@@ -180,16 +180,16 @@ export function get_sort_arrow_transform(
   const is_asc = sort_state.direction === "asc";
 
   if (is_current_sorted) {
-    // 정렬 중인 경우
+    // 정렬 중인 경우 (아이콘 기본이 "위" 방향일 때)
+    // 내림차순(최신순) = 위 화살표, 오름차순(등록순) = 아래 화살표로 통일
     if (is_asc) {
-      // 오름차순: 위 방향 (0도, 기본 상태)
-      return "rotate(0deg)";
-    } else {
-      // 내림차순: 아래 방향 (180도 회전)
+      // 오름차순(등록순): 아래 방향
       return "rotate(180deg)";
+    } else {
+      // 내림차순(최신순): 위 방향
+      return "rotate(0deg)";
     }
   } else {
-    // 정렬되지 않은 상태: 모든 화살표를 오름차순 방향(위 방향)으로 통일
     return "rotate(0deg)";
   }
 }
