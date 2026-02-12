@@ -47,19 +47,22 @@
   flex-shrink: 0;
 }
 
-/* 로고 스타일 - 관리자 헤더 전용 흰색 로고 */
+/* 로고 스타일 - 관리자 헤더 전용 로고 이미지 */
 .header_logo {
-  color: #ffffff;
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 24px;
-  letter-spacing: -0.56px;
+  display: flex;
+  align-items: center;
   margin: 0;
   cursor: pointer;
   text-decoration: none;
   /* 레이아웃 시프트 방지 */
   flex-shrink: 0;
   min-width: fit-content;
+}
+
+.header_logo img {
+  height: 24px;
+  width: auto;
+  object-fit: contain;
 }
 
 /* 헤더 메뉴 아이콘 부분 - 일반 헤더와 동일한 스타일 */

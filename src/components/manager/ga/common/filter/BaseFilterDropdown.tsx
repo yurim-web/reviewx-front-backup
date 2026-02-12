@@ -80,15 +80,12 @@ export default function BaseFilterDropdown<T extends string | number>({
   // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
   const [temp_selected, set_temp_selected] = useState<T[]>(selected_values || []);
 
-  // 드롭다운이 열릴 때마다 임시 선택 상태를 초기화
-  // useEffect는 React의 Hook으로, 컴포넌트가 렌더링된 후에 실행됩니다
-  // 의존성 배열 [is_open, selected_values]: 이 값들이 변경될 때마다 함수가 실행됩니다
+  // selected_values 변경 시 항상 temp_selected 동기화
+  // 필터 태그에서 항목 제거 후 드롭다운 재오픈 시 체크박스 잔상 방지
+  const values_key = JSON.stringify(selected_values ?? []);
   useEffect(() => {
-    if (is_open) {
-      // 드롭다운이 열릴 때: 현재 선택된 값으로 초기화
-      set_temp_selected(selected_values || []);
-    }
-  }, [is_open, selected_values]);
+    set_temp_selected(JSON.parse(values_key));
+  }, [values_key]);
 
   // 외부 클릭 감지 (드롭다운 외부를 클릭하면 닫기)
   // useEffect로 이벤트 리스너를 등록하고, 컴포넌트가 unmount될 때 제거합니다

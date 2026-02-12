@@ -146,7 +146,7 @@
 
 /* 체크박스 아이콘 (선택됨) - 핑크색 테두리와 체크마크 */
 .checkbox_icon_checked {
-  border: 1px solid #ff1493;
+  border: 1.5px solid #ff1493;
   background-color: white;
   position: relative;
 }

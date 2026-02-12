@@ -77,7 +77,8 @@ import {
  * - render_custom_cell?: 특정 컬럼에 커스텀 헤더 셀을 렌더링하는 함수 (선택사항, 예: 빈 셀)
  * - enable_checkbox?: 체크박스 표시 여부 (기본값: true)
  * - disable_select_all?: 전체 선택 체크박스 비활성화 여부 (기본값: false, true일 경우 체크박스는 표시되지만 비활성화됨)
- * - container_style?: 헤더 컨테이너에 적용할 인라인 스타일 (선택사항, 예: gridTemplateColumns)
+ * - container_style?: 헤더 컨테이너에 적용할 인라인 스타일 (선택사항)
+ * - container_class_name?: 헤더 컨테이너에 적용할 추가 클래스 (선택사항, 예: grid 레이아웃용)
  * - use_header_row?: table_header_row 사용 여부 (기본값: true, false일 경우 헤더 셀을 직접 table_header에 배치)
  */
 interface SortableTableHeaderProps {
@@ -93,6 +94,7 @@ interface SortableTableHeaderProps {
   enable_checkbox?: boolean;
   disable_select_all?: boolean;
   container_style?: React.CSSProperties;
+  container_class_name?: string;
   use_header_row?: boolean;
 }
 
@@ -121,8 +123,10 @@ export default function SortableTableHeader({
   enable_checkbox = true,
   disable_select_all = false,
   container_style,
+  container_class_name,
   use_header_row = true,
 }: SortableTableHeaderProps) {
+  const header_class = `${styles.table_header} ${container_class_name || ""}`.trim();
   // 헤더 셀들을 렌더링하는 함수
   const render_header_cells = () => {
     return (
@@ -214,14 +218,14 @@ export default function SortableTableHeader({
   // table_header_row를 사용하는 경우와 사용하지 않는 경우를 구분
   if (use_header_row) {
     return (
-      <div className={styles.table_header} style={container_style}>
+      <div className={header_class} style={container_style}>
         <div className={styles.table_header_row}>{render_header_cells()}</div>
       </div>
     );
   } else {
     // table_header_row를 사용하지 않는 경우 (CampaignTable, BlacklistTable, PostTable 등)
     return (
-      <div className={styles.table_header} style={container_style}>
+      <div className={header_class} style={container_style}>
         {render_header_cells()}
       </div>
     );

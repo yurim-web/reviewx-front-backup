@@ -36,10 +36,10 @@ import {
   blacklist_data,
   type BlacklistItem,
 } from "@/data/manager_ga/member/blacklist";
-import CommonTable, {
-  type TableColumn,
-  type TableRowData,
-} from "@/components/manager/common/table/CommonTable";
+import CommonTableWithTooltip, {
+  type TooltipConfig,
+} from "@/components/manager/common/table/CommonTableWithTooltip";
+import type { TableColumn, TableRowData } from "@/components/manager/common/table/CommonTable";
 import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
@@ -156,11 +156,13 @@ export default function BlacklistTable({
   const filtered_blacklist = useMemo(() => {
     // 필터 함수 (공통)
     const filter_item = (item: BlacklistItem): boolean => {
-      // 검색어 필터
+      // 검색어 필터 (이름/상호명, 아이디, 아이피)
       if (search_query) {
+        const q = search_query.toLowerCase();
         const matches_search =
-          item.name.toLowerCase().includes(search_query.toLowerCase()) ||
-          item.user_id.toLowerCase().includes(search_query.toLowerCase());
+          item.name.toLowerCase().includes(q) ||
+          item.user_id.toLowerCase().includes(q) ||
+          (item.ip_address ?? "").toLowerCase().includes(q);
         if (!matches_search) return false;
       }
 
@@ -380,9 +382,10 @@ export default function BlacklistTable({
 
   return (
     <Fragment>
-      <CommonTable<BlacklistTableRowData>
+      <CommonTableWithTooltip<BlacklistTableRowData>
         columns={columns}
         data={sorted_blacklist}
+        tooltip_config={{ column_key: "all" }}
         render_header={render_custom_header}
         render_cell={(row, column) => {
           switch (column.key) {

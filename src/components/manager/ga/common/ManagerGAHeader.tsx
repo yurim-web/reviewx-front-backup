@@ -11,7 +11,7 @@
  * - /manager_ga (GA 관리자 페이지)
  *
  * 주요 기능:
- * - 로고 표시 (일반 헤더와 동일한 "RX." 로고)
+ * - 로고 표시 (관리자 헤더 전용 로고 이미지)
  * - 가이드 버튼 (외부 링크)
  * - 마이페이지 버튼
  *
@@ -91,9 +91,12 @@ export default function ManagerGAHeader({
   return (
     <header className={styles.header}>
       <div className={styles.header_container}>
-        {/* 로고 - 일반 헤더와 동일한 "RX." 로고 */}
-        <Link href={homePath}>
-          <h1 className={styles.header_logo}>RX.</h1>
+        {/* 로고 - 관리자 헤더 전용 로고 이미지 */}
+        <Link href={homePath} className={styles.header_logo}>
+          <img
+            src="/images/header/manager/admin_header_logo.svg"
+            alt="RX 로고"
+          />
         </Link>
 
         {/* 우측 버튼 영역 - 가이드와 마이페이지 버튼 */}
