@@ -37,6 +37,8 @@ interface ToastProps {
   isOpen: boolean; // 토스트 표시 여부
   onClose?: () => void; // 토스트가 닫힐 때 호출되는 콜백 함수 (선택적)
   duration?: number; // 자동으로 사라지는 시간 (밀리초, 기본값: 2000ms)
+  /** 'lower'면 화면에서 조금 더 아래에 표시 (일부 페이지 전용) */
+  positionVariant?: "default" | "lower";
 }
 
 export default function Toast({
@@ -44,6 +46,7 @@ export default function Toast({
   isOpen,
   onClose,
   duration = 2000,
+  positionVariant = "default",
 }: ToastProps) {
   // 클라이언트 사이드에서만 Portal을 사용하기 위한 상태
   const [isMounted, setIsMounted] = useState(false);
@@ -79,7 +82,9 @@ export default function Toast({
    * - isMounted 체크: Next.js의 SSR 환경에서 document가 없을 수 있으므로 클라이언트에서만 Portal을 사용합니다.
    */
   return createPortal(
-    <div className={styles.toast}>
+    <div
+      className={`${styles.toast} ${positionVariant === "lower" ? styles.toast_position_lower : ""}`}
+    >
       {/* 체크마크 아이콘 */}
       <div className={styles.toast_icon}></div>
       {/* 메시지 텍스트 */}

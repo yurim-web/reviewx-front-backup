@@ -35,6 +35,11 @@
   animation: toastFadeIn 0.3s ease-out forwards;
 }
 
+/* ✅ 게시글 목록 등 특정 페이지만 토스트를 조금 더 아래에 표시 */
+.toast_position_lower {
+  bottom: 60px;
+}
+
 /* ✅ 토스트 체크마크 아이콘 - 초록색 원과 체크 */
 .toast_icon {
   width: 24px;

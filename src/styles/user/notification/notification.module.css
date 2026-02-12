@@ -59,7 +59,14 @@
   font-weight: 600;
   line-height: 24px;
   letter-spacing: -0.48px;
-  padding: 40px 0 24px 40px;
+}
+
+/* 관리자 알림 헤더 (제목 + 전체 삭제 버튼 정렬용) */
+.manager_notification_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 40px;
 }
 
 /* 알림 페이지 헤더 (유저/파트너 전용) */
@@ -93,7 +100,6 @@
   background: none;
   border: none;
   color: #444;
-  text-align: right;
   font-size: 16px;
   font-weight: 500;
   line-height: 16px;
