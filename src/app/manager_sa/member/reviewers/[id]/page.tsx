@@ -47,7 +47,7 @@ import ActivityInfoSection, {
 } from "@/components/manager/common/member/member_detail/ActivityInfoSection";
 import ChannelInfoSection from "@/components/manager/common/member/reviewers/section/ChannelInfoSection";
 import AccountInfoSection from "@/components/manager/common/member/reviewers/section/AccountInfoSection";
-import styles from "@/styles/manager/common/member/member_detail/detail_page.module.css";
+import styles from "@/styles/manager/common/member/member_detail/member_detail_page.module.css";
 import infoCardStyles from "@/styles/manager/common/member/member_detail/info_card.module.css";
 
 // 채널 아이콘 경로 매핑
@@ -129,7 +129,8 @@ export default function ReviewerDetailPage() {
                       connectedChannels.push(channelType);
                     }
 
-                    // 모든 채널을 channelDetails에 추가 (연결 여부 포함)
+                    // 모든 채널을 channelDetails에 추가 (연결 여부 + URL 포함)
+                    const channelUrl = ch.url ? String(ch.url) : undefined;
                     if (channelType === 'Blog') {
                       channelDetails.push({
                         channel: channelType,
@@ -137,18 +138,21 @@ export default function ReviewerDetailPage() {
                         total_visits: isConnected ? 10000 : undefined,
                         neighbors: isConnected ? 500 : undefined,
                         is_connected: isConnected,
+                        channel_url: channelUrl,
                       });
                     } else if (channelType === 'Clip' || channelType === 'Instagram') {
                       channelDetails.push({
                         channel: channelType,
                         followers: isConnected ? (channelType === 'Instagram' ? 5000 : 1000) : undefined,
                         is_connected: isConnected,
+                        channel_url: channelUrl,
                       });
                     } else if (channelType === 'Youtube') {
                       channelDetails.push({
                         channel: channelType,
                         subscribers: isConnected ? 2000 : undefined,
                         is_connected: isConnected,
+                        channel_url: channelUrl,
                       });
                     }
                   }
@@ -622,22 +626,44 @@ export default function ReviewerDetailPage() {
   // 활동 정보 아이템 배열 생성
   // ActivityInfoSection 컴포넌트에 전달할 데이터를 준비합니다
   const activity_info_items: ActivityInfoItem[] = [
-    // 채널 정보
+    // 채널 정보 (연결된 채널만 아이콘 표시, 클릭 시 해당 SNS로 이동)
     {
       label: "채널 정보",
       value: (
         <div className={infoCardStyles.channel_icons}>
-          {reviewer_detail?.channels.map((channel, index) => (
-            <div key={index} className={infoCardStyles.channel_icon_wrapper}>
+          {(reviewer_detail?.channel_details ?? [])
+            .filter((channel_detail) => channel_detail.is_connected)
+            .map((channel_detail, index) => {
+            const icon = (
               <Image
-                src={channel_icon_map[channel]}
-                alt={channel}
+                src={channel_icon_map[channel_detail.channel]}
+                alt={channel_detail.channel}
                 width={16}
                 height={16}
                 className={infoCardStyles.channel_icon}
               />
-            </div>
-          ))}
+            );
+            const wrapperClass = infoCardStyles.channel_icon_wrapper;
+            if (channel_detail.is_connected && channel_detail.channel_url) {
+              return (
+                <a
+                  key={index}
+                  href={channel_detail.channel_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`${wrapperClass} ${infoCardStyles.channel_icon_link}`}
+                  aria-label={`${channel_detail.channel} 채널 열기`}
+                >
+                  {icon}
+                </a>
+              );
+            }
+            return (
+              <div key={index} className={wrapperClass}>
+                {icon}
+              </div>
+            );
+          })}
         </div>
       ),
     },

@@ -61,24 +61,34 @@ export default function InfoCard({
       <div
         className={
           on_button_click || additional_content
-            ? styles.info_value_with_button
+            ? `${styles.info_value_with_button}${on_button_click ? ` ${styles.info_value_clickable}` : ""}`
             : styles.info_value
         }
+        role={on_button_click ? "button" : undefined}
+        tabIndex={on_button_click ? 0 : undefined}
+        onClick={on_button_click}
+        onKeyDown={
+          on_button_click
+            ? (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  on_button_click();
+                }
+              }
+            : undefined
+        }
+        aria-label={on_button_click ? button_aria_label : undefined}
       >
         {value}
 
         {on_button_click && (
-          <button
-            className={styles.arrow_button}
-            onClick={on_button_click}
-            aria-label={button_aria_label}
-          >
+          <span className={styles.arrow_button} aria-hidden>
             <img
               src="/images/icons/arronw_btn.svg"
-              alt="화살표"
+              alt=""
               className={styles.arrow_icon}
             />
-          </button>
+          </span>
         )}
 
         {additional_content && (

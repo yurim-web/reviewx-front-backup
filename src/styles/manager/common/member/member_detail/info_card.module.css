@@ -57,6 +57,12 @@
   color: #444;
 }
 
+/* 클릭 가능한 정보 값 (숫자+회+화살표 전체 클릭 시 모달 등 동작) */
+.info_value_clickable,
+.info_value_clickable * {
+  cursor: pointer;
+}
+
 /* 추가 콘텐츠 (배지 등) */
 .additional_content {
   margin-left: auto;
@@ -104,11 +110,24 @@
   border-radius: 2px;
 }
 
+/* 리뷰어 전용: 채널 아이콘 링크 (SNS 채널로 이동, 호버 스타일 없음) */
+.channel_icon_link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border-radius: 2px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
 /* 리뷰어 전용: 채널 아이콘 */
 .channel_icon {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 2px;
-
 }
