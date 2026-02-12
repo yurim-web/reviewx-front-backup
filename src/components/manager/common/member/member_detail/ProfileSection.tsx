@@ -33,6 +33,8 @@ interface ProfileSectionProps {
   // 프로필 이미지 URL (선택적)
   // 이미지가 없으면 기본 이미지(/images/mypage/profile.svg)를 사용합니다
   profile_image?: string | null;
+  // 파트너 상세일 때 true (상호명 색상 #2B7FFF 적용)
+  is_partner?: boolean;
 }
 
 export default function ProfileSection({
@@ -40,6 +42,7 @@ export default function ProfileSection({
   status_type,
   basic_info_items,
   profile_image,
+  is_partner = false,
 }: ProfileSectionProps) {
   // 프로필 이미지 URL 결정
   // profile_image가 있으면 사용하고, 없으면 기본 이미지를 사용합니다
@@ -60,13 +63,17 @@ export default function ProfileSection({
       <div className={styles.profile_info}>
         <div
           className={`${styles.status_type_tag} ${
-            status_type === "주의 회원" ? styles.status_type_tag_warning : ""
+            status_type === "이용 제한 회원" ? styles.status_type_tag_restricted : ""
           }`}
         >
           {status_type}
         </div>
 
-        <h1 className={styles.name}>{name}</h1>
+        <h1
+          className={`${styles.name} ${is_partner ? styles.name_partner : ""}`}
+        >
+          {name}
+        </h1>
 
         <div className={styles.basic_info}>
           {basic_info_items.map((item, index) => (

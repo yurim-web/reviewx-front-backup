@@ -25,7 +25,8 @@ export type ReviewerGrade = ReviewerType;
 interface GradeFilterDropdownProps {
   is_open: boolean;
   on_close: () => void;
-  selected_grades: ReviewerGrade[];
+  selected_grades?: ReviewerGrade[];
+  selected_divisions?: ReviewerGrade[];
   on_apply: (grades: ReviewerGrade[]) => void;
   container_ref?: React.RefObject<HTMLDivElement>;
 }
@@ -41,14 +42,17 @@ export default function GradeFilterDropdown({
   is_open,
   on_close,
   selected_grades,
+  selected_divisions,
   on_apply,
   container_ref,
 }: GradeFilterDropdownProps) {
+  const selected_values =
+    selected_grades ?? selected_divisions ?? [];
   return (
     <BaseFilterDropdown<ReviewerGrade>
       is_open={is_open}
       on_close={on_close}
-      selected_values={selected_grades || []}
+      selected_values={selected_values}
       on_apply={on_apply}
       options={filter_options}
       container_ref={container_ref}

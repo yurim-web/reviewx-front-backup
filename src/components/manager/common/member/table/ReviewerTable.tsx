@@ -36,7 +36,9 @@ import { format } from "date-fns";
 import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
+import EllipsisTooltip from "@/components/manager/common/table/EllipsisTooltip";
 import type { TableColumn } from "@/components/manager/common/table/CommonTable";
+import tooltip_container_styles from "@/styles/manager/common/table/table_tooltip.module.css";
 import {
   reviewer_list,
   get_reviewer_list,
@@ -274,7 +276,7 @@ const ReviewerTable = forwardRef<ReviewerTableRef, ReviewerTableProps>(
     } = useTableSort({
       data: filtered_reviewers,
       initial_column_key: "number",
-      initial_direction: "asc",
+      initial_direction: "desc", // 번호 최신순
       column_config,
     });
 
@@ -535,7 +537,7 @@ const ReviewerTable = forwardRef<ReviewerTableRef, ReviewerTableProps>(
     };
 
     return (
-      <div className={cssStyles.table_container}>
+      <div className={`${cssStyles.table_container} ${tooltip_container_styles.tooltip_container_visible}`}>
         {/* 테이블 헤더 */}
         {render_custom_header()}
         {/* 테이블 바디 */}
@@ -580,12 +582,16 @@ const ReviewerTable = forwardRef<ReviewerTableRef, ReviewerTableProps>(
 
                   {/* 번호 */}
                   <div className={cssStyles.table_cell_number}>
-                    <span>{reviewer.number}</span>
+                    <EllipsisTooltip content={reviewer.number}>
+                      <span>{reviewer.number}</span>
+                    </EllipsisTooltip>
                   </div>
 
                   {/* 이름 */}
                   <div className={cssStyles.table_cell_name}>
-                    <span>{reviewer.name}</span>
+                    <EllipsisTooltip content={reviewer.name}>
+                      <span>{reviewer.name}</span>
+                    </EllipsisTooltip>
                   </div>
 
                   {/* 채널 */}
@@ -613,37 +619,51 @@ const ReviewerTable = forwardRef<ReviewerTableRef, ReviewerTableProps>(
 
                   {/* 접속일 */}
                   <div className={cssStyles.table_cell_last_access}>
-                    <span>{reviewer.last_access_date}</span>
+                    <EllipsisTooltip content={reviewer.last_access_date}>
+                      <span>{reviewer.last_access_date}</span>
+                    </EllipsisTooltip>
                   </div>
 
                   {/* 가입일 */}
                   <div className={cssStyles.table_cell_join_date}>
-                    <span>{reviewer.join_date}</span>
+                    <EllipsisTooltip content={reviewer.join_date}>
+                      <span>{reviewer.join_date}</span>
+                    </EllipsisTooltip>
                   </div>
 
                   {/* 캠페인 참여 */}
                   <div className={cssStyles.table_cell_campaign_participated}>
-                    <span>{format_number(reviewer.campaign_participated)}회</span>
+                    <EllipsisTooltip content={`${format_number(reviewer.campaign_participated)}회`}>
+                      <span>{format_number(reviewer.campaign_participated)}회</span>
+                    </EllipsisTooltip>
                   </div>
 
                   {/* 캠페인 완료 */}
                   <div className={cssStyles.table_cell_campaign_completed}>
-                    <span>{format_number(reviewer.campaign_completed)}회</span>
+                    <EllipsisTooltip content={`${format_number(reviewer.campaign_completed)}회`}>
+                      <span>{format_number(reviewer.campaign_completed)}회</span>
+                    </EllipsisTooltip>
                   </div>
 
                   {/* 보유 포인트 */}
                   <div className={cssStyles.table_cell_current_points}>
-                    <span>{format_number(reviewer.current_points)}</span>
+                    <EllipsisTooltip content={format_number(reviewer.current_points)}>
+                      <span>{format_number(reviewer.current_points)}</span>
+                    </EllipsisTooltip>
                   </div>
 
                   {/* 출금 포인트 */}
                   <div className={cssStyles.table_cell_withdrawn_points}>
-                    <span>{format_number(reviewer.withdrawn_points)}</span>
+                    <EllipsisTooltip content={format_number(reviewer.withdrawn_points)}>
+                      <span>{format_number(reviewer.withdrawn_points)}</span>
+                    </EllipsisTooltip>
                   </div>
 
                   {/* 유형 (상태 유형) */}
                   <div className={cssStyles.table_cell_status_type}>
-                    <span>{reviewer.status_type}</span>
+                    <EllipsisTooltip content={reviewer.status_type}>
+                      <span>{reviewer.status_type}</span>
+                    </EllipsisTooltip>
                   </div>
 
                   {/* 상태 */}

@@ -31,19 +31,7 @@
 .table_header {
   display: grid;
   /* 파트너 목록 테이블 컬럼 정의 - 화면 가득 차게 fr 단위 사용 */
-  grid-template-columns:
-    0.5fr /* 체크박스 */
-    0.8fr /* 번호 */
-    3fr /* 상호명 (상호명 + 사업자등록번호·대표자명 포함) - 더 넓게 */
-    1fr /* 구분 */
-    1.5fr /* 접속일 */
-    1.5fr /* 가입일 */
-    1.2fr /* 캠페인 진행 */
-    1.2fr /* 캠페인 완료 */
-    1.2fr /* 보유 포인트 */
-    1.2fr /* 사용 포인트 */
-    1fr /* 유형 */
-    1.2fr; /* 상태 */
+  grid-template-columns: 0.5fr 0.9fr 2.5fr 0.8fr 1.5fr 1.5fr 1.3fr 1.3fr 1.3fr 1.3fr 1.2fr 1.2fr;
   background-color: #f5f5f5;
   padding: 0;
   align-items: center;
@@ -115,19 +103,7 @@
 .table_row {
   display: grid;
   /* 헤더와 동일한 컬럼 정의를 공유해 정렬 유지 - 화면 가득 차게 fr 단위 사용 */
-  grid-template-columns:
-    0.5fr /* 체크박스 */
-    0.8fr /* 번호 */
-    3fr /* 상호명 (상호명 + 사업자등록번호·대표자명 포함) - 더 넓게 */
-    1fr /* 구분 */
-    1.5fr /* 접속일 */
-    1.5fr /* 가입일 */
-    1.2fr /* 캠페인 진행 */
-    1.2fr /* 캠페인 완료 */
-    1.2fr /* 보유 포인트 */
-    1.2fr /* 사용 포인트 */
-    1fr /* 유형 */
-    1.2fr; /* 상태 */
+  grid-template-columns: 0.5fr 0.9fr 2.5fr 0.8fr 1.5fr 1.5fr 1.3fr 1.3fr 1.3fr 1.3fr 1.2fr 1.2fr;
   border-bottom: 1px solid #f2f2f2;
   align-items: center;
   min-height: 62px;

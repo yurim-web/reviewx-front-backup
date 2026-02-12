@@ -46,19 +46,24 @@
   gap: 12px;
 }
 
-/* 이름/상호명 */
+/* 이름/상호명 (리뷰어/파트너 공통 크기, 글자색만 구분) */
 .name {
-  color: #ff5694;
+  color: #444444;
   font-size: 16px;
   font-weight: 600;
   line-height: 16px;
   letter-spacing: -0.32px;
 }
 
-/* 상태 유형 태그 */
+/* 파트너 상세 전용: 상호명 글자색만 #2B7FFF (크기 변화 없음) */
+.name_partner {
+  color: #2b7fff;
+}
+
+/* 상태 유형 태그 (기본: 검정 #444444, 주의 회원 포함) */
 /* 배경색 없이 글자색만 변경됩니다 */
 .status_type_tag {
-  color: #444;
+  color: #444444;
   text-overflow: ellipsis;
   font-size: 14px;
   font-weight: 500;
@@ -66,8 +71,8 @@
   letter-spacing: -0.28px;
 }
 
-/* 주의 회원 - 빨간색 강조 */
-.status_type_tag_warning {
+/* 이용 제한 회원 - 빨간색 */
+.status_type_tag_restricted {
   color: #ff2626;
 }
 

@@ -24,7 +24,7 @@ import ActivityInfoSection, {
 } from "@/components/manager/common/member/member_detail/ActivityInfoSection";
 import BusinessInfoSection from "@/components/manager/common/member/partners/section/BusinessInfoSection";
 import ContactPersonSection from "@/components/manager/common/member/partners/section/ContactPersonSection";
-import styles from "@/styles/manager/common/member/member_detail/detail_page.module.css";
+import styles from "@/styles/manager/common/member/member_detail/member_detail_page.module.css";
 
 export default function PartnerDetailPage() {
   // ============================================
@@ -364,6 +364,7 @@ export default function PartnerDetailPage() {
               partner_detail.address,
             ]}
             profile_image={partner_detail.profile_image}
+            is_partner
           />
         )}
 
