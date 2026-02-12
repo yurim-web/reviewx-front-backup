@@ -26,7 +26,8 @@
 "use client";
 
 import { useState } from "react";
-import styles from "@/styles/manager_ga/member/blacklist/page.module.css";
+import { startOfMonth, endOfMonth } from "date-fns";
+import styles from "@/styles/manager/common/manager_common_page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import BlacklistFilterSection from "@/components/manager/common/member/blacklist/BlacklistFilterSection";
 import BlacklistTable from "@/components/manager/common/member/blacklist/BlacklistTable";
@@ -44,9 +45,18 @@ export default function BlacklistPage() {
 
   // 필터 상태 관리
   // 각 필터의 선택된 값들을 관리합니다
+  // 날짜 범위 필터 기본값: 이번 달 (오늘 날짜 기준 이번 달의 첫날 ~ 마지막날)
+  // startOfMonth: 주어진 날짜의 월의 첫날을 반환합니다 (예: 2026-01-13 -> 2026-01-01)
+  // endOfMonth: 주어진 날짜의 월의 마지막날을 반환합니다 (예: 2026-01-13 -> 2026-01-31)
   const [selected_date_range, set_selected_date_range] = useState<
     DateRange | undefined
-  >(undefined);
+  >(() => {
+    const today = new Date();
+    return {
+      from: startOfMonth(today),
+      to: endOfMonth(today),
+    };
+  });
   const [selected_divisions, set_selected_divisions] = useState<
     BlacklistDivision[]
   >([]);

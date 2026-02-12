@@ -19,11 +19,38 @@
   min-height: 100vh;
   position: relative;
   padding-top: 80px;
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* 메인 콘텐츠 영역 */
+.main_content {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* FAQ 페이지에서 PageTitle을 감싸는 래퍼 */
+.faq_page_title_wrapper {
+  width: 100%;
+}
+
+/* FAQ 페이지에서 PageTitle의 top 값 조정 */
+.faq_page_title_wrapper :global(.page_title_wrapper) {
+  top: 0 !important;
+  position: relative !important;
+  margin-bottom: 0;
 }
 
 /* 메인 콘텐츠 영역 (카테고리 필터 + FAQ 목록을 감싸는 섹션) */
 .section_container {
   padding: 24px 40px;
+  min-height: calc(100vh - 149px);
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 /* ========================================
@@ -35,7 +62,6 @@
   display: flex;
   gap: 12px;
   padding-bottom: 30px;
-  flex-wrap: wrap;
 }
 
 /* 개별 카테고리 버튼 스타일 (기본 상태 - 회색 배경) */
@@ -44,25 +70,21 @@
   font-weight: 500;
   line-height: 16px;
   letter-spacing: -0.32px;
-  color: #848484;
-  background: #f6f6f6;
+  color: #ff5694;
+  background: rgba(255, 86, 148, 0.05);
   border: none;
   border-radius: 20px;
   padding: 12px 16px;
   cursor: pointer;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* 선택된 카테고리 버튼 스타일 (검은색 배경, 흰색 텍스트) */
 .category_item.active {
-  background: #444;
+  background: #ff5694;
   color: white;
   font-weight: 600;
-}
-
-/* 카테고리 버튼에 마우스 올렸을 때 스타일 (선택되지 않은 버튼만) */
-.category_item:hover:not(.active) {
-  background: #e9e9e9;
 }
 
 /* ========================================
@@ -78,7 +100,7 @@
 
 /* 개별 FAQ 항목 (질문 + 답변을 감싸는 하나의 아이템) */
 .faq_item {
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid #d9d9d9;
 }
 
 /* 질문 영역 버튼 (클릭 가능한 질문 부분) */
@@ -87,6 +109,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 24px;
   padding: 24px 12px;
   background: none;
   border: none;
@@ -98,9 +121,10 @@
 /* 질문 내용 영역 (Q. + 질문 텍스트를 감싸는 컨테이너) */
 .question_content {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   flex: 1;
+  min-width: 0; /* 말줄임표 동작을 위해 flex 아이템 축소 허용 */
 }
 
 /* 질문 번호 (Q. 부분) */
@@ -112,6 +136,7 @@
   color: #444;
   flex-shrink: 0;
   transition: color 0.2s ease;
+  margin-top: 3px;
 }
 
 /* 질문 텍스트 (실제 질문 내용) */
@@ -123,12 +148,13 @@
   color: #444;
   word-break: keep-all;
   transition: color 0.2s ease;
+  min-width: 0;
 }
 
 /* 아코디언이 열렸을 때 질문 스타일 (파란색으로 변경) */
 .question_number.expanded_question,
 .question_text.expanded_question {
-  color: #2b7fff;
+  color: #ff5694;
 }
 
 /* ========================================
@@ -142,13 +168,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease;
   flex-shrink: 0;
 }
 
-/* 아코디언이 열렸을 때 아이콘 회전 (180도 회전) */
+/* 아코디언이 열렸을 때 아이콘 회전 (180도 회전) 및 색상 변경 */
 .expand_icon.expanded {
   transform: rotate(180deg);
+  /* SVG 아이콘 색상을 #FF5694로 변경 */
+  filter: brightness(0) saturate(100%) invert(39%) sepia(99%) saturate(4283%)
+    hue-rotate(315deg) brightness(101%) contrast(101%);
 }
 
 /* ========================================
@@ -168,6 +199,7 @@
   align-items: flex-start;
   gap: 8px;
   padding: 24px 12px;
+  background: rgba(255, 86, 148, 0.05);
 }
 
 /* 답변 번호 (A. 부분) */
@@ -188,6 +220,7 @@
   letter-spacing: -0.32px;
   color: #444;
   word-break: keep-all;
+  width: 100%;
 }
 
 /* ========================================
@@ -216,7 +249,7 @@
   align-items: center;
   justify-content: center;
   padding: 8px 0px 24px 0px;
-  border-bottom: 1px solid #D9D9D9;
+  border-bottom: 1px solid #d9d9d9;
   width: 100%;
 }
 
@@ -236,38 +269,82 @@
 
 /* ✅ 모바일 공통 — 0~739px */
 @media (max-width: 739px) {
-  .category_container {
-    gap: 8px;
-    margin-bottom: 24px;
+  .faq_container {
+    overflow-x: hidden;
+    max-width: 100vw;
   }
 
-  .category_item {
-    font-size: 14px;
-    padding: 10px 14px;
+  .section_container {
+    padding: 0;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+
+  .category_container {
+    gap: 12px;
+    padding-left: 20px;
+    padding-right: 0;
+    padding-bottom: 20px;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .category_container::after {
+    content: "";
+    flex-shrink: 0;
+    width: 20px;
+    height: 1px;
+  }
+
+  .category_container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .faq_list {
+    margin: 0 20px;
+    max-width: calc(100% - 40px);
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
 
   .faq_question {
-    padding: 16px 32px;
+    padding: 20px 8px;
+    max-width: 100%;
+    box-sizing: border-box;
+    gap: 12px;
+  }
+
+  /* 질문 텍스트가 토글 버튼 영역(gap)을 침범하지 않도록 */
+  .question_content {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .question_text {
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
   .answer_content {
-    padding: 16px 32px;
+    padding: 23px 8px;
+    max-width: 100%;
+    box-sizing: border-box;
   }
-
-  .question_number,
-  .answer_number {
-    font-size: 14px;
-  }
-
-  .question_text,
-  .answer_text {
-    font-size: 14px;
-    line-height: 20px;
-  }
-
-  .expand_icon {
-    width: 14px;
-    height: 14px;
+  .empty_state {
+    margin: 0 20px;
+    padding: 20px 20px;
+    max-width: calc(100% - 40px);
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
 }
 
@@ -298,5 +375,40 @@
 
   .answer_content {
     padding: 20px 36px;
+  }
+}
+
+/* ✅ PC 전용 — 740px 이상 */
+@media (min-width: 740px) {
+  /* 메인 콘텐츠 영역 - PC에서 중앙 정렬 */
+  .main_content {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 섹션 컨테이너 - PC에서 패딩 및 중앙 정렬 */
+  .section_container {
+    padding: 24px 40px;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+
+  /* FAQ 리스트 - PC에서 중앙 정렬 */
+  .faq_list {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  /* 빈 상태 - PC에서 중앙 정렬 */
+  .empty_state {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
   }
 }

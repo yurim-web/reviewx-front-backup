@@ -7,7 +7,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState } from "react";
 import PartnerCampaignManagementHeader from "./PartnerCampaignManagementHeader";
-import type { PartnerMainTab, PartnerStatTab } from "@/types/partner/partner";
+import type { PartnerMainTab, PartnerStatTab } from "@/types/domain/partner";
 
 const meta: Meta<typeof PartnerCampaignManagementHeader> = {
   title: "Partner/CampaignManagement/PartnerCampaignManagementHeader",

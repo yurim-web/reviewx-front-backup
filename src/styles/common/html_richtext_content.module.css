@@ -1,0 +1,167 @@
+/* ========================================
+   📝 ToastUI Editor 리치텍스트 공통 스타일
+   ======================================== */
+
+/* FAQ/게시글 등 HTML 콘텐츠 내부 요소 스타일 - margin 없이 통일 */
+
+/* 문단 스타일 - 패딩/마진 제거 */
+.richtext_content p {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* 강조 텍스트 */
+.richtext_content strong {
+  font-weight: 600;
+  color: #333333;
+}
+
+/* 제목 스타일 (h1, h2, h3 등) */
+.richtext_content h1,
+.richtext_content h2,
+.richtext_content h3,
+.richtext_content h4,
+.richtext_content h5,
+.richtext_content h6 {
+  font-weight: 600;
+  color: #333333;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.richtext_content h1 {
+  font-size: 28px;
+}
+
+.richtext_content h2 {
+  font-size: 24px;
+}
+
+.richtext_content h3 {
+  font-size: 20px;
+}
+
+.richtext_content h4 {
+  font-size: 18px;
+}
+
+.richtext_content h5 {
+  font-size: 16px;
+}
+
+.richtext_content h6 {
+  font-size: 14px;
+}
+
+/* 리스트 스타일 */
+.richtext_content ul,
+.richtext_content ol {
+  padding-left: 24px;
+  margin: 0;
+}
+
+.richtext_content li {
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* 링크 스타일 */
+.richtext_content a {
+  color: #0066cc;
+  text-decoration: underline;
+}
+
+.richtext_content a:hover {
+  color: #0052a3;
+}
+
+/* 이미지 스타일 */
+.richtext_content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 24px auto;
+  border-radius: 8px;
+}
+
+/* 표 스타일 */
+.richtext_content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  border: 1px solid #d9d9d9;
+}
+
+.richtext_content table th,
+.richtext_content table td {
+  padding: 12px;
+  border: 1px solid #d9d9d9;
+  text-align: left;
+}
+
+.richtext_content table th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+  color: #333333;
+}
+
+.richtext_content table tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+/* 인용구 스타일 */
+.richtext_content blockquote {
+  padding: 16px 20px;
+  margin: 0;
+  border-left: 4px solid #d9d9d9;
+  background-color: #f9f9f9;
+  color: #666666;
+  font-style: italic;
+}
+
+/* 코드 블록 스타일 */
+.richtext_content code {
+  background-color: #f5f5f5;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  color: #d63384;
+}
+
+.richtext_content pre {
+  background-color: #f5f5f5;
+  padding: 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 24px 0;
+}
+
+.richtext_content pre code {
+  background-color: transparent;
+  padding: 0;
+  color: #444444;
+}
+
+/* 구분선 스타일 */
+.richtext_content hr {
+  border: none;
+  border-top: 1px solid #e5e5e5;
+  margin: 32px 0;
+}
+
+/* 강조 텍스트 (이탤릭) */
+.richtext_content em {
+  font-style: italic;
+}
+
+/* 취소선 */
+.richtext_content del {
+  text-decoration: line-through;
+  color: #999999;
+}
+
+/* 밑줄 */
+.richtext_content u {
+  text-decoration: underline;
+}

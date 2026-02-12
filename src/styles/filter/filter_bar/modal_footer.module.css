@@ -1,0 +1,110 @@
+/* ========================================
+   🔘 필터 모달 푸터 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - ModalFilter.tsx (필터 모달 컴포넌트)
+ * - RegionFilter.tsx (지역 필터 컴포넌트)
+ * - SortModalFilter.tsx (정렬 모달 컴포넌트)
+ *
+ * 주요 스타일:
+ * - 적용하기 버튼
+ * - 초기화 버튼
+ */
+
+/* 모달 푸터 */
+/* 필터적용하기 ,선택초기화 있는 부분 */
+.modal_footer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+}
+
+/* 필터 적용 버튼 */
+.apply_button {
+  width: 100%;
+  padding: 20px;
+  background: #ff5694;
+  border: none;
+  border-radius: 8px;
+
+  /* 버튼속 글자 */
+  color: #fff;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+/* 초기화 버튼 */
+.reset_button {
+  background: none;
+  border: none;
+
+  /* 글자 css */
+  color: #848484;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+
+  cursor: pointer;
+  transition: color 0.2s ease;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 초기화 아이콘 */
+.reset_icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+
+/**
+ * 모바일에서 모달 푸터 버튼의 높이를 조정합니다.
+ * PC 스타일과 겹치는 속성은 제외하고
+ * 모바일에서만 변경되는 속성만 포함합니다.
+ */
+
+@media (max-width: 768px) {
+  /* 모달 푸터 - 모바일 */
+
+  /* 필터 적용 버튼 - 모바일 */
+  .apply_button {
+    padding: 16px 20px;
+    height: 48px;
+    box-sizing: border-box;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+    border-radius: 8px;
+  }
+
+  /* 초기화 버튼 - 모바일 */
+  .reset_button {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+    gap: 6px;
+  }
+
+  /* 초기화 아이콘 - 모바일 */
+  .reset_icon {
+    width: 14px;
+    height: 14px;
+  }
+}

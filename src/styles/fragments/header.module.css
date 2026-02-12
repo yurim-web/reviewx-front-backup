@@ -5,25 +5,35 @@
 /**
  * 사용 컴포넌트:
  * - Header.tsx (메인 헤더 컴포넌트)
- * - SubHeader.tsx (서브헤더 컴포넌트)
+ * - SubHeader.tsx (일반 서브헤더 컴포넌트)
+ * - PartnerSubHeader.tsx (파트너 서브헤더 컴포넌트)
  * - DetailHeader.tsx (상세 페이지 헤더 컴포넌트)
  * 
  * 사용 페이지:
  * - 모든 페이지 (전역 헤더)
+ * - /user/delivery/[id] (배송형 캠페인 상세)
+ * - /user/visit/[id] (방문형 캠페인 상세)
+ * - /user/review/[id] (구매평 캠페인 상세)
+ * - /user/mission/[id] (미션형 캠페인 상세)
+ * - /user/reporter/[id] (기자단 캠페인 상세)
+ * - /user/mypage (마이페이지)
+ * - /partner/campaign_application/* (파트너 캠페인 신청내역 페이지)
+ * - /partner/campaign_contents/* (파트너 캠페인 콘텐츠 내역 페이지)
  */
 /* 상단에 고정되는 메인 헤더 */
 :global(header) {
-  position: fixed; /* 스크롤해도 상단에 고정 */
-  top: 0; /* 화면 최상단에 배치 */
+  position: fixed;
+  top: 0;
   left: 0;
   right: 0;
   width: 100%;
-  max-width: 1000px; /* 최대 너비 제한 */
-  margin: 0 auto; /* 가운데 정렬 */
-  background: linear-gradient(90deg, #ffacae 0%, #d90074 100%);
+  max-width: 1000px;
+  margin: 0 auto;
+  background: #ffffff; /* 그라데이션에서 흰색 배경으로 변경 */
   height: 80px;
-  z-index: 1000; /* 다른 요소들 위에 표시 */
+  z-index: 1000;
   box-sizing: border-box;
+  border-bottom: 1px solid #e5e5e5;
 }
 
 .header_container {
@@ -36,48 +46,278 @@
 
 /* 헤더로고 부분 */
 .header_logo {
-  color: #fff;
-  font-size: 28px;
+  color: #FF5694;
+  font-family: 'Poppins', sans-serif;
+  font-size: 20px;
+  font-style: normal;
   font-weight: 700;
-  line-height: 24px; /* 85.714% */
-  letter-spacing: -0.56px;
+  line-height: 24px;
+  letter-spacing: -0.4px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
 }
 
 /* 헤더 메뉴 아이콘 부분 */
 .menu_icon_box {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 16px;
+  flex-wrap: nowrap; /* 검색창 열려도 줄바꿈 방지 */
+  overflow: visible;
 }
 
 .menu_icon_box > img {
   cursor: pointer;
+  object-fit: contain; /* 아이콘이 비율을 유지하면서 크기에 맞춤 */
+}
+
+.menu_icon_box > a,
+.menu_icon_box > Link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.menu_icon_box > a img,
+.menu_icon_box > Link img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* 검색 아이콘 버튼 */
+.search_toggle_button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.search_toggle_button img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* 검색 입력 박스 */
+.search_box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 20px;
+  height: 48px;
+  border-radius: 24px; 
+  background-color: #ffffff;
+  border: 1px solid #ff5694; 
+  max-width: 240px; /* 기본 최대 */
+  flex: 1 1 auto; /* 남는 공간만큼 커지고, 필요하면 줄어듦 */
+  min-width: 0; /* flex 아이템 축소 허용 */
+  box-sizing: border-box; /* height 안에 padding 포함 (서브헤더에서 밀림 방지) */
+}
+
+.search_input {
+  border: none;
+  outline: none;
+  background: transparent;
+
+  color: #444;
+font-size: 16px;
+font-weight: 500;
+line-height: 16px; 
+letter-spacing: -0.32px;
+  flex: 1;
+  min-width: 0;
+  max-width: none;
+}
+
+.search_input::placeholder {
+  color: #999;
+}
+
+.search_icon_button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0; /* 검색창이 작아져도 아이콘 크기 유지 */
+}
+
+.search_icon_button img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain; /* 아이콘이 비율을 유지하면서 크기에 맞춤 */
 }
 
 /* 새로운 캠페인 등록 버튼 */
 .new_campaign_button {
-  background: #fff;
-  color: #d90074;
+  background: #ff5694; 
+  color: #ffffff; 
   padding: 8px 12px;
   border-radius: 4px;
-  /* 버튼 속 글자 css */
-  color: #ff5694;
   text-align: right;
   font-family: Pretendard;
   font-size: 16px;
   font-style: normal;
   font-weight: 600;
-  line-height: 16px; /* 100% */
+  line-height: 16px; 
   letter-spacing: -0.32px;
   cursor: pointer;
+  text-decoration: none; 
+  display: inline-block; 
+  width: 113px !important;
+  white-space: nowrap;
 }
 
-/* 반응형 스타일 css 코드 */
+/* ========================================
+   서브헤더 스타일
+   ======================================== */
 
-/* ✅ 모바일 공통 — 0~739px */
-@media (max-width: 739px) {
+/* 서브헤더 컨테이너 */
+.gradient_bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  background: #ffffff;
+  display: flex;
+  align-items: center; /* height 80 안에서 콘텐츠를 수직 가운데 정렬 */
+  padding: 0 40px; /* height 유지하면서 위/아래 패딩 제거 */
+  z-index: 100;
+  height: 80px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+/* 서브헤더 컨트롤 영역 */
+.header_controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* 뒤로가기 버튼 */
+.back_button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.back_button img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* 모바일 타이틀 (뒤로가기 버튼 옆) */
+.mobile_title {
+  color: #444;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+}
+
+/* 서브헤더 오른쪽 아이콘 그룹 */
+.right_icons {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  position: relative; /* 검색창 absolute 배치를 위한 기준점 */
+  flex-wrap: nowrap; /* 검색창 열려도 줄바꿈 방지 */
+  overflow: visible;
+}
+
+.right_icons > a,
+.right_icons > Link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.right_icons > a img,
+.right_icons > Link img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* 서브헤더 아이콘 버튼들 */
+.notification_icon,
+.bookmark_icon,
+.user_icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.notification_icon img,
+.bookmark_icon img,
+.user_icon img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+
+
+/* 📱 ================================================================================================
+   모바일 반응형 스타일 (max-width: 768px)
+================================================================================================ 📱 */
+
+@media (max-width: 768px) {
   .header_container {
-    padding: 28px 32px;
+    padding: 20px 20px;
+    height: 64px;
+  }
+
+  /* 헤더로고 부분 - 모바일 동일 */
+  .header_logo {
+    font-size: 20px;
+    line-height: 24px;
   }
 
   /* 헤더 메뉴 아이콘 부분 */
@@ -85,22 +325,157 @@
     gap: 16px;
   }
 
-  .menu_icon_box img {
-    cursor: pointer;
+  /* 터치 영역을 넉넉하게 (최소 44x44px 권장) - 모든 아이콘 통일 */
+  .menu_icon_box > a,
+  .menu_icon_box > Link,
+  .menu_icon_box > button {
+    width: 24px;
+    height: 24px;
+   
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .menu_icon_box > a img,
+  .menu_icon_box > Link img,
+  .menu_icon_box > button img {
+    width: 24px;
+    height: 24px;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  /* 검색 토글 버튼 - 터치 영역 확대 (통일된 크기) */
+  .search_toggle_button {
+    width: 24px;
+    height: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .search_toggle_button img {
+    width: 24px;
+    height: 24px;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  /* 검색 입력 박스 - 모바일 최적화 */
+  .search_box {
+    padding: 11px 16px;
+    height: 36px;
+    border-radius: 22px;
+    max-width: 160px;
+  }
+
+  .search_input {
+    max-width: none;
+    color: #444;
+    font-size: 14px;
+    line-height: 14px; 
+  }
+
+  .search_icon_button {
     width: 24px;
     height: 24px;
   }
 
-  /* 모바일에서 새로운 캠페인 등록 버튼 */
+  .search_icon_button img {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* 모바일에서 새로운 캠페인 등록 버튼 숨기기 (아이콘으로 대체) */
   .new_campaign_button {
-    font-size: 12px;
-    padding: 6px 12px;
+    display: none;
+  }
+
+  /* 서브헤더 모바일 스타일 */
+  .gradient_bar {
+    padding: 0 20px;
+    height: 64px;
+  }
+
+  /* 뒤로가기 버튼 - 터치 영역 확대 */
+  .back_button {
+    width: 24px;
+    height: 24px;
+  }
+
+  .back_button img {
+    width: 24px;
+    height: 24px;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .right_icons {
+    gap: 16px;
+  }
+
+  /* 아이콘 버튼들 - 터치 영역 확대 (통일된 크기) */
+  .right_icons > a,
+  .right_icons > Link {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .right_icons > a img,
+  .right_icons > Link img {
+    width: 24px;
+    height: 24px;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .notification_icon,
+  .bookmark_icon,
+  .user_icon {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .notification_icon img,
+  .bookmark_icon img,
+  .user_icon img {
+    width: 24px;
+    height: 24px;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
   }
 }
 
-/* ✅ 태블릿 세로(portrait) 전용 — 740~1100px */
-@media (min-width: 740px) and (max-width: 1100px) and (orientation: portrait) {
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+
+/* 헤더 높이 조정 - 전역 설정 */
+@media (max-width: 768px) {
+  :global(header) {
+    height: 64px;
+  }
 }
-/* ✅ 태블릿 가로(landscape) 전용 — 740~1100px */
-@media (min-width: 740px) and (max-width: 1366px) and (orientation: landscape) {
+
+/* 모바일에서 PartnerSubHeader 숨기기 - 캠페인 콘텐츠 내역 페이지에서만 PageHeader 표시 */
+.hide_on_mobile {
+  display: none !important;
 }
+

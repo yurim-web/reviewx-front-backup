@@ -1,0 +1,135 @@
+/* ========================================
+   📝 출금 요청 테이블 셀 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - RequestTable.tsx
+ */
+
+/* 테이블 셀 공통 스타일 */
+.table_cell_checkbox,
+.table_cell_number,
+.table_cell_round,
+.table_cell_name,
+.table_cell_amount,
+.table_cell_account,
+.table_cell_ssn,
+.table_cell_request_date,
+.table_cell_type,
+.table_cell_status {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+/* 출금 포인트 셀 - 세로 정렬 (데이터 행에서만) */
+.table_cell_amount {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  display: flex;
+}
+
+/* 출금 포인트 헤더 셀 - 가로 정렬 */
+.table_header .table_cell_amount {
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 체크박스 */
+.checkbox {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid #d9d9d9;
+  border-radius: 4px;
+  background: #ffffff;
+  cursor: pointer;
+  appearance: none;
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* 체크박스 체크된 상태 */
+.checkbox:checked {
+  border-color: #444444;
+  background: #ffffff;
+}
+
+/* 체크박스 체크마크 */
+.checkbox:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #444444;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* 테이블 헤더 셀 공통 스타일 */
+.table_header_cell {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* 헤더 텍스트 */
+.header_text {
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 정렬 버튼 */
+.table_header_sort_button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* 정렬 아이콘 */
+.sort_icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+/* 테이블 헤더 화살표 (sort_icon의 대체 이름) */
+.table_header_arrow {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+/* 셀 텍스트 */
+.cell_text {
+  color: #444;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 셀 텍스트 - 보조 (회색) */
+.cell_text_secondary {
+  color: #ababab;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}

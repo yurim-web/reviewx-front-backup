@@ -32,11 +32,13 @@ interface BaseCampaign {
   subcategory: string;
   channel: string;
   dayCount: string;
+  isUrgent?: boolean; // 긴급 캠페인 여부
+  registeredAt?: string; // 캠페인 등록 시간 (ISO 8601 형식: "2025-01-15T10:30:00")
   recruitment: {
     current: number;
     total: number;
   };
-  points: number;
+  points?: number; // 포인트는 선택적 필드 (없을 수 있음)
   schedule?: string;
   region?: string; // 방문형 캠페인에만 있음
   [key: string]: any; // 추가 필드 허용
@@ -69,9 +71,9 @@ interface UseCampaignFiltersParams<T extends BaseCampaign> {
 /**
  * 훅 반환 타입
  * - activeFilters: 현재 활성화된 필터 상태
- * - closingSoon: 마감임박 필터 활성화 여부
+ * - closingSoon: 긴급 필터 활성화 여부
  * - handleFilterChange: 필터 변경 핸들러 함수
- * - setClosingSoon: 마감임박 필터 변경 함수
+ * - setClosingSoon: 긴급 필터 변경 함수
  * - filteredAndSortedCampaigns: 필터링 및 정렬된 캠페인 목록
  */
 interface UseCampaignFiltersReturn {
@@ -86,7 +88,7 @@ interface UseCampaignFiltersReturn {
     closingSoon?: boolean;
     sortBy?: string;
   }) => void;
-  // 마감임박 필터 변경 핸들러
+  // 긴급 필터 변경 핸들러
   setClosingSoon: (closingSoon: boolean) => void;
   // 필터링 및 정렬된 캠페인 목록
   filteredAndSortedCampaigns: BaseCampaign[];
@@ -126,8 +128,8 @@ export function useCampaignFilters<T extends BaseCampaign>({
   });
 
   /**
-   * 마감임박 필터 상태
-   * - true: 마감임박인 캠페인만 표시
+   * 긴급 필터 상태
+   * - true: 긴급 캠페인만 표시 (isUrgent === true)
    * - false: 모든 캠페인 표시
    */
   const [closingSoon, setClosingSoon] = useState<boolean>(false);
@@ -144,7 +146,7 @@ export function useCampaignFilters<T extends BaseCampaign>({
    *   - category: 카테고리 필터 (쉼표로 구분된 문자열)
    *   - channel: 채널 필터 (쉼표로 구분된 문자열)
    *   - region: 지역 필터 (쉼표로 구분된 문자열, 방문형만)
-   *   - closingSoon: 마감임박 필터 활성화 여부
+   *   - closingSoon: 긴급 필터 활성화 여부 (isUrgent === true인 캠페인만)
    *   - sortBy: 정렬 기준
    */
   const handleFilterChange = (filters: {
@@ -154,7 +156,7 @@ export function useCampaignFilters<T extends BaseCampaign>({
     closingSoon?: boolean;
     sortBy?: string;
   }) => {
-    // 마감임박 필터 처리
+    // 긴급 필터 처리
     if (filters.closingSoon !== undefined) {
       setClosingSoon(filters.closingSoon);
     }
@@ -206,7 +208,7 @@ export function useCampaignFilters<T extends BaseCampaign>({
    * - campaigns, activeFilters, closingSoon, enableRegionFilter가 변경될 때만 재계산
    *
    * 필터링 순서:
-   * 1. 마감임박 필터 적용
+   * 1. 긴급 필터 적용 (isUrgent === true인 캠페인만)
    * 2. 카테고리 필터 적용
    * 3. 채널 필터 적용
    * 4. 지역 필터 적용 (방문형만)
@@ -216,12 +218,10 @@ export function useCampaignFilters<T extends BaseCampaign>({
     // 1단계: 캠페인 데이터 복사
     let filtered = [...campaigns];
 
-    // 2단계: 마감임박 필터 적용
-    // dayCount가 "마감임박"인 캠페인만 필터링
+    // 2단계: 긴급 필터 적용
+    // isUrgent가 true인 캠페인만 필터링
     if (closingSoon) {
-      filtered = filtered.filter(
-        (campaign) => campaign.dayCount === "마감임박"
-      );
+      filtered = filtered.filter((campaign) => campaign.isUrgent === true);
     }
 
     // 3단계: 카테고리 필터 적용
@@ -242,6 +242,7 @@ export function useCampaignFilters<T extends BaseCampaign>({
 
     // 5단계: 지역 필터 적용 (방문형만)
     // 선택된 지역에 해당하는 캠페인만 필터링
+    // - "지역 전체"가 선택되면 모든 지역 포함 (필터링 건너뛰기)
     // - 정확한 매칭: "서울 > 강남구" === "서울 > 강남구"
     // - 전체 지역 매칭: "서울 > 서울 전체"와 "서울 > 강남구" 매칭
     if (
@@ -249,23 +250,28 @@ export function useCampaignFilters<T extends BaseCampaign>({
       activeFilters.regions &&
       activeFilters.regions.length > 0
     ) {
-      filtered = filtered.filter((campaign) => {
-        if (!campaign.region) return false;
+      // "지역 전체"가 선택되어 있으면 모든 지역 포함 (필터링 건너뛰기)
+      if (activeFilters.regions.includes("지역 전체")) {
+        // 필터링하지 않음 (모든 지역 포함)
+      } else {
+        filtered = filtered.filter((campaign) => {
+          if (!campaign.region) return false;
 
-        // 지역 필터와 캠페인 지역 매칭 로직
-        return activeFilters.regions!.some((filterRegion) => {
-          // 1. 정확한 매칭
-          if (filterRegion === campaign.region) {
-            return true;
-          }
-          // 2. 전체 지역 매칭 (예: "서울 > 서울 전체"와 "서울 > 강남구" 매칭)
-          if (filterRegion.endsWith(" 전체")) {
-            const mainRegion = filterRegion.split(" > ")[0];
-            return campaign.region!.startsWith(`${mainRegion} >`);
-          }
-          return false;
+          // 지역 필터와 캠페인 지역 매칭 로직
+          return activeFilters.regions!.some((filterRegion) => {
+            // 1. 정확한 매칭
+            if (filterRegion === campaign.region) {
+              return true;
+            }
+            // 2. 전체 지역 매칭 (예: "서울 > 서울 전체"와 "서울 > 강남구" 매칭)
+            if (filterRegion.endsWith(" 전체")) {
+              const mainRegion = filterRegion.split(" > ")[0];
+              return campaign.region!.startsWith(`${mainRegion} >`);
+            }
+            return false;
+          });
         });
-      });
+      }
     }
 
     // 6단계: 정렬 적용
@@ -286,12 +292,56 @@ export function useCampaignFilters<T extends BaseCampaign>({
       case "포인트순":
       case "포인트높은순":
         // 포인트 기준으로 내림차순 정렬
-        filtered.sort((a, b) => b.points - a.points);
+        // 포인트가 없는 캠페인은 2차 정렬 기준으로 최신순(ID 기준 내림차순) 사용
+        filtered.sort((a, b) => {
+          const pointsA = a.points;
+          const pointsB = b.points;
+
+          // 포인트가 없는 경우를 구분하기 위해 undefined/null 체크
+          const hasPointsA = pointsA !== undefined && pointsA !== null;
+          const hasPointsB = pointsB !== undefined && pointsB !== null;
+
+          // 둘 다 포인트가 있는 경우: 포인트 기준으로 정렬
+          if (hasPointsA && hasPointsB) {
+            // 포인트가 다르면 포인트 기준으로 내림차순 정렬
+            if (pointsA !== pointsB) {
+              return pointsB - pointsA;
+            }
+            // 포인트가 같으면 최신순(ID 기준 내림차순)으로 정렬
+            return b.id.localeCompare(a.id);
+          }
+
+          // 하나만 포인트가 있는 경우: 포인트가 있는 캠페인이 먼저
+          if (hasPointsA && !hasPointsB) return -1;
+          if (!hasPointsA && hasPointsB) return 1;
+
+          // 둘 다 포인트가 없는 경우: 최신순(ID 기준 내림차순)으로 정렬
+          return b.id.localeCompare(a.id);
+        });
         break;
       case "최신순":
       default:
-        // ID 기준으로 내림차순 정렬 (최신이 먼저)
-        filtered.sort((a, b) => b.id.localeCompare(a.id));
+        // 등록 시간(registeredAt) 기준으로 내림차순 정렬 (최신이 먼저)
+        // registeredAt이 없으면 ID 기준으로 정렬 (하위 호환성)
+        filtered.sort((a, b) => {
+          const registeredAtA = (a as any).registeredAt;
+          const registeredAtB = (b as any).registeredAt;
+
+          // 둘 다 등록 시간이 있으면 등록 시간 기준으로 정렬
+          if (registeredAtA && registeredAtB) {
+            return (
+              new Date(registeredAtB).getTime() -
+              new Date(registeredAtA).getTime()
+            );
+          }
+
+          // 하나만 등록 시간이 있으면 등록 시간이 있는 캠페인이 먼저
+          if (registeredAtA && !registeredAtB) return -1;
+          if (!registeredAtA && registeredAtB) return 1;
+
+          // 둘 다 등록 시간이 없으면 ID 기준으로 정렬 (하위 호환성)
+          return b.id.localeCompare(a.id);
+        });
         break;
     }
 
@@ -305,9 +355,9 @@ export function useCampaignFilters<T extends BaseCampaign>({
   /**
    * 훅 반환값
    * - activeFilters: 현재 활성화된 필터 상태
-   * - closingSoon: 마감임박 필터 활성화 여부
+   * - closingSoon: 긴급 필터 활성화 여부 (isUrgent === true인 캠페인만)
    * - handleFilterChange: 필터 변경 핸들러 함수
-   * - setClosingSoon: 마감임박 필터 변경 함수
+   * - setClosingSoon: 긴급 필터 변경 함수
    * - filteredAndSortedCampaigns: 필터링 및 정렬된 캠페인 목록
    */
   return {
@@ -318,4 +368,3 @@ export function useCampaignFilters<T extends BaseCampaign>({
     filteredAndSortedCampaigns: filteredAndSortedCampaigns as BaseCampaign[],
   };
 }
-

@@ -16,8 +16,10 @@
  * - 휴대폰 번호 인증
  */
 
-import Header from '@/components/fragments/Header';
-import FindAccountPage from '@/components/common/FindAccountPage';
+import Header from "@/components/fragments/Header";
+import PageTitle from "@/components/fragments/PageTitle";
+import FindAccountPage from "@/components/common/find_account/page/FindAccountPage";
+import styles from "@/styles/common/find_account/find_account.module.css";
 
 /**
  * 파트너 아이디/비밀번호 찾기 페이지 컴포넌트
@@ -29,6 +31,11 @@ export default function PartnerFindAccountPage() {
     <div>
       {/* 메인 헤더 */}
       <Header />
+
+      {/* 페이지 타이틀 (모바일 전용) */}
+      <div className={styles.mobile_page_title_wrapper}>
+        <PageTitle title="계정 찾기" />
+      </div>
 
       {/* 아이디/비밀번호 찾기 페이지 */}
       <FindAccountPage />

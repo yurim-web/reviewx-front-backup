@@ -19,7 +19,7 @@
 "use client";
 
 import type { AccountInfo } from "../types";
-import styles from "@/styles/common/find_account.module.css";
+import styles from "@/styles/common/find_account/find_account_modal.module.css";
 import ModalButton from "./ModalButton";
 
 /**

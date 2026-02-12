@@ -22,14 +22,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Header from "@/components/fragments/Header";
-import PhoneVerification from "@/components/common/signup/PhoneVerification";
+import SubHeader from "@/components/fragments/SubHeader";
+import PhoneVerification from "@/components/common/phone_verification/PhoneVerification";
 import TermsAgreement from "@/components/user/signup/TermsAgreement";
-import ExistingAccountModal, {
-  type SocialLoginType,
-} from "@/components/user/signup/ExistingAccountModal";
+import SNSLoginModal from "@/components/common/find_account/modal/SNSLoginModal";
 import { useTermsAgreement } from "@/hooks/user/signup/useTermsAgreement";
-import { usePhoneVerification } from "@/hooks/common/signup/usePhoneVerification";
+import { usePhoneVerification } from "@/hooks/usePhoneVerification/usePhoneVerification";
 import {
   validateSignupForm,
   type SignupFormErrors,
@@ -41,7 +39,15 @@ import {
   checkTestVerificationCode,
   checkTestPhoneNumber,
 } from "@/data/signup/testVerificationData";
-import styles from "@/styles/user/signup/signup.module.css";
+import commonStyles from "@/styles/common/signup/signup.module.css";
+import styles from "@/styles/user/signup/user_signup.module.css";
+
+/**
+ * 소셜 로그인 타입
+ * - "kakao": 카카오 로그인
+ * - "naver": 네이버 로그인
+ */
+type SocialLoginType = "kakao" | "naver";
 
 /**
  * 유저 회원가입 페이지 컴포넌트
@@ -54,6 +60,18 @@ export default function UserSignupPage() {
   // ========================================
   // 상태 관리 (State Management)
   // ========================================
+
+  // 모바일 여부 감지
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   // 폼 데이터
   const [email, setEmail] = useState<string>("");
@@ -87,10 +105,14 @@ export default function UserSignupPage() {
     isVerificationRequested,
     isPhoneVerified,
     timer,
+    phoneError,
+    verificationCodeError,
     setPhone,
     setVerificationCode,
+    handlePhoneChange: handlePhoneChangeHook,
     handleVerificationRequest,
-    handleVerify,
+    handleVerificationCodeChange,
+    handleVerifyCode,
     resetVerification,
   } = usePhoneVerification();
 
@@ -105,7 +127,8 @@ export default function UserSignupPage() {
    * 기능: 휴대폰 번호 변경 시 인증 상태 초기화
    */
   const handlePhoneChange = (newPhone: string) => {
-    setPhone(newPhone);
+    // 훅의 handlePhoneChange를 사용하여 phoneError 자동 초기화
+    handlePhoneChangeHook(newPhone);
 
     // 휴대폰 번호 변경 시 인증 상태 초기화
     if (newPhone === "" || isPhoneVerified || isVerificationRequested) {
@@ -124,10 +147,13 @@ export default function UserSignupPage() {
    * ========================================
    * 기능: 휴대폰 번호 인증번호 요청
    */
-  const handleVerificationRequestClick = () => {
-    const error = handleVerificationRequest();
-    if (error) {
-      setErrors((prev) => ({ ...prev, phone: error }));
+  const handleVerificationRequestClick = async () => {
+    // 인증번호 받기/재전송 시 인증번호 에러 초기화
+    setErrors((prev) => ({ ...prev, verificationCode: undefined }));
+    await handleVerificationRequest();
+    // 에러는 훅 내부에서 phoneError로 관리됨
+    if (phoneError) {
+      setErrors((prev) => ({ ...prev, phone: phoneError }));
     } else {
       setErrors((prev) => ({ ...prev, phone: undefined }));
     }
@@ -140,11 +166,12 @@ export default function UserSignupPage() {
    * 기능: 인증번호 확인 및 인증 완료 처리
    */
   const handleVerifyClick = () => {
-    const error = handleVerify();
-    if (error) {
+    handleVerifyCode();
+    // 에러는 훅 내부에서 verificationCodeError로 관리됨
+    if (verificationCodeError) {
       setErrors((prev) => ({
         ...prev,
-        verificationCode: error,
+        verificationCode: verificationCodeError,
       }));
     } else {
       setErrors((prev) => ({ ...prev, verificationCode: undefined }));
@@ -201,6 +228,36 @@ export default function UserSignupPage() {
       return;
     }
 
+    // 테스트 데이터 연계: 휴대폰 번호에 따른 처리
+    const testPhoneInfo = checkTestPhoneNumber(phone);
+
+    // NORMAL (010-1234-5678): 이미 존재하는 계정으로 처리
+    if (testPhoneInfo?.type === "normal") {
+      // 기존 계정 모달 표시 (카카오 또는 네이버)
+      resetVerification();
+      setExistingAccountSocialType("kakao");
+      setShowExistingAccountModal(true);
+      return;
+    }
+
+    // DUPLICATE (010-9999-9999): 중복된 휴대폰 번호
+    if (testPhoneInfo?.type === "duplicate") {
+      setErrors((prev) => ({
+        ...prev,
+        phone: "이미 사용 중인 휴대폰 번호입니다.",
+      }));
+      return;
+    }
+
+    // BLOCKED (010-8888-8888): 정지/탈퇴된 계정
+    if (testPhoneInfo?.type === "blocked") {
+      setErrors((prev) => ({
+        ...prev,
+        phone: "정지되었거나 탈퇴된 계정입니다.",
+      }));
+      return;
+    }
+
     // 회원가입 처리
     console.log("회원가입 시도:", {
       email,
@@ -216,7 +273,9 @@ export default function UserSignupPage() {
     // }
 
     // 테스트용: 성공 시 회원가입 완료 페이지로 이동
-    router.push(`/user/signup/complete?nickname=${encodeURIComponent(name)}`);
+    // name이 비어있으면 기본값 사용
+    const displayName = name.trim() || "회원";
+    router.push(`/user/signup/complete?nickname=${encodeURIComponent(displayName)}`);
   };
 
   // ========================================
@@ -226,14 +285,24 @@ export default function UserSignupPage() {
   return (
     <div className={styles.signup_page_container}>
       {/* ========================================
-          메인 헤더
+          서브 헤더 (PC 전용)
           ========================================
-          기능: 상단 네비게이션 헤더 표시
+          기능: PC에서만 렌더링
+          - 모바일에서는 메인 헤더를 유지하기 위해 SubHeader를 렌더링하지 않음
       */}
-      <Header />
+      {!isMobile && <SubHeader title="리뷰어 회원가입" showBackButton={true} />}
 
-      {/* 서브 헤더 */}
-      <PageTitle title="리뷰어 회원가입" />
+      {/* ========================================
+          페이지 타이틀 헤더
+          ========================================
+          기능:
+          - PC: 일반 PageTitle (sticky, border-bottom 있음)
+          - 모바일: 뒤로가기 버튼 + 타이틀 (심플한 헤더)
+      */}
+     
+
+        <PageTitle title="리뷰어 회원가입" />
+     
 
       {/* ========================================
           메인 콘텐츠 영역
@@ -241,6 +310,7 @@ export default function UserSignupPage() {
           기능: 회원가입 폼이 표시되는 메인 영역
       */}
       <main className={styles.signup_main}>
+
         {/* ========================================
             회원가입 폼
             ========================================
@@ -257,15 +327,15 @@ export default function UserSignupPage() {
               - 이메일 형식 검증
               - 에러 시 빨간색 테두리 표시
           */}
-          <div className={styles.form_field}>
-            <label className={styles.field_label} htmlFor="email">
+          <div className={commonStyles.form_field}>
+            <label className={commonStyles.field_label} htmlFor="email">
               아이디(이메일)
             </label>
             <input
               id="email"
               type="email"
-              className={`${styles.input_field} ${
-                errors.email ? styles.input_error : ""
+              className={`${commonStyles.input_field} ${
+                errors.email ? commonStyles.input_error : ""
               }`}
               placeholder="{SNS에 등록한 이메일}"
               value={email}
@@ -283,15 +353,15 @@ export default function UserSignupPage() {
               - 필수 입력 필드
               - 에러 시 빨간색 테두리 표시
           */}
-          <div className={styles.form_field}>
-            <label className={styles.field_label} htmlFor="name">
+          <div className={commonStyles.form_field}>
+            <label className={commonStyles.field_label} htmlFor="name">
               이름
             </label>
             <input
               id="name"
               type="text"
-              className={`${styles.input_field} ${
-                errors.name ? styles.input_error : ""
+              className={`${commonStyles.input_field} ${
+                errors.name ? commonStyles.input_error : ""
               }`}
               value={name}
               onChange={(e) => {
@@ -315,14 +385,17 @@ export default function UserSignupPage() {
             isVerificationRequested={isVerificationRequested}
             isPhoneVerified={isPhoneVerified}
             timer={timer}
-            error={errors.phone}
-            verificationCodeError={errors.verificationCode}
+            error={phoneError || errors.phone}
+            verificationCodeError={
+              verificationCodeError || errors.verificationCode
+            }
             onPhoneChange={handlePhoneChange}
             onVerificationRequest={handleVerificationRequestClick}
             onResend={handleVerificationRequestClick}
             onVerify={handleVerifyClick}
             onVerificationCodeChange={(code) => {
-              setVerificationCode(code);
+              handleVerificationCodeChange(code);
+              // 로컬 에러 상태도 초기화
               setErrors((prev) => ({
                 ...prev,
                 verificationCode: undefined,
@@ -357,10 +430,10 @@ export default function UserSignupPage() {
           */}
           <button
             type="submit"
-            className={`${styles.submit_button} ${
+            className={`${commonStyles.submit_button} ${styles.submit_button} ${
               name.trim() && isPhoneVerified && termsAgreed && privacyAgreed
                 ? ""
-                : styles.submit_button_disabled
+                : commonStyles.submit_button_disabled
             }`}
             disabled={
               !name.trim() || !isPhoneVerified || !termsAgreed || !privacyAgreed
@@ -378,24 +451,23 @@ export default function UserSignupPage() {
           - 카카오 로그인하기 버튼
           - 닫기 버튼
       */}
-      {showExistingAccountModal && (
-        <ExistingAccountModal
-          onClose={() => setShowExistingAccountModal(false)}
-          socialLoginType={existingAccountSocialType}
-          onKakaoLogin={() => {
-            // TODO: 카카오 로그인 처리
-            console.log("카카오 로그인");
-            setShowExistingAccountModal(false);
-            // router.push('/user/sns_login?provider=kakao');
-          }}
-          onNaverLogin={() => {
-            // TODO: 네이버 로그인 처리
-            console.log("네이버 로그인");
-            setShowExistingAccountModal(false);
-            // router.push('/user/sns_login?provider=naver');
-          }}
-        />
-      )}
+      <SNSLoginModal
+        isOpen={showExistingAccountModal}
+        onClose={() => setShowExistingAccountModal(false)}
+        socialType={existingAccountSocialType}
+        onKakaoLogin={() => {
+          // TODO: 카카오 로그인 처리
+          console.log("카카오 로그인");
+          setShowExistingAccountModal(false);
+          // router.push("/user/sns_login?provider=kakao");
+        }}
+        onNaverLogin={() => {
+          // TODO: 네이버 로그인 처리
+          console.log("네이버 로그인");
+          setShowExistingAccountModal(false);
+          // router.push("/user/sns_login?provider=naver");
+        }}
+      />
     </div>
   );
 }

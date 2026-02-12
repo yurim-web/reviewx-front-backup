@@ -25,14 +25,19 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/fragments/Header";
-import PhoneVerification from "@/components/common/signup/PhoneVerification";
-import FindAccountModals from "@/components/common/find_account/FindAccountModals";
-import { usePhoneVerification } from "@/hooks/common/signup/usePhoneVerification";
-import { useFindAccount } from "@/components/common/find_account/hooks/useFindAccount";
-import styles from "@/styles/user/find_account.module.css";
+import PageTitle from "@/components/fragments/PageTitle";
+import PhoneVerification from "@/components/common/phone_verification/PhoneVerification";
+import FindAccountModals from "@/components/common/find_account/modal/FindAccountModals";
+import { usePhoneVerification } from "@/hooks/usePhoneVerification/usePhoneVerification";
+import { useFindAccount } from "@/hooks/find_account/useFindAccount";
+import {
+  TEST_VERIFICATION_CODES,
+  TEST_PHONE_NUMBERS,
+} from "@/data/signup/testVerificationData";
+import styles from "@/styles/common/find_account/find_account.module.css";
 
 /**
  * 사용자 계정찾기 페이지 컴포넌트
@@ -57,27 +62,17 @@ export default function UserFindAccountPage() {
   // 상태 관리 (State Management)
   // ========================================
 
-  /**
-   * 휴대폰 번호 입력 에러 상태
-   *
-   * useState 훅 사용법:
-   * - useState<string | undefined>(undefined): 초기값을 undefined로 설정
-   * - phoneError: 현재 에러 메시지 (없으면 undefined)
-   * - setPhoneError: 에러 메시지를 설정하는 함수
-   *
-   * 예시: setPhoneError('올바른 휴대폰 번호를 입력해주세요.') 호출 시 phoneError가 해당 메시지로 변경됨
-   */
-  const [phoneError, setPhoneError] = useState<string | undefined>(undefined);
+  // 모바일 여부 감지
+  const [isMobile, setIsMobile] = useState(false);
 
-  /**
-   * 인증번호 입력 에러 상태
-   *
-   * - verificationCodeError: 인증번호 입력 에러 메시지
-   * - setVerificationCodeError: 인증번호 에러 메시지를 설정하는 함수
-   */
-  const [verificationCodeError, setVerificationCodeError] = useState<
-    string | undefined
-  >(undefined);
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   /**
    * 커스텀 훅 사용: 휴대폰 인증 로직 관리
@@ -85,10 +80,20 @@ export default function UserFindAccountPage() {
    * usePhoneVerification 훅은 다음을 제공합니다:
    * - phone: 현재 입력된 휴대폰 번호
    * - isPhoneVerified: 인증 완료 여부
+   * - phoneError: 휴대폰 번호 관련 에러 (훅에서 자동 관리)
+   * - verificationCodeError: 인증번호 관련 에러 (훅에서 자동 관리)
    * - handleVerificationRequest: 인증번호 요청 함수
-   * - handleVerify: 인증번호 확인 함수
+   * - handleVerifyCode: 인증번호 확인 함수
    * - resetVerification: 인증 상태 초기화 함수
    * 등등...
+   *
+   * 🧪 테스트 데이터 사용:
+   * - 인증번호: TEST_VERIFICATION_CODES.SUCCESS ("000000") 입력 시 인증 성공
+   * - 휴대폰 번호: TEST_PHONE_NUMBERS의 각 번호로 다른 동작 테스트 가능
+   *   - NORMAL (010-1234-5678): 일반 계정 찾기 성공
+   *   - EXISTING_KAKAO (010-1111-1111): 카카오 SNS 계정 모달 표시
+   *   - EXISTING_NAVER (010-0000-0000): 네이버 SNS 계정 모달 표시
+   *   - BLOCKED (010-8888-8888): 정지/탈퇴 계정 에러 표시
    */
   const phoneVerification = usePhoneVerification();
 
@@ -99,12 +104,24 @@ export default function UserFindAccountPage() {
    * - foundAccountInfo: 찾은 계정 정보 (이메일, 가입일)
    * - isResultModalOpen: 아이디 찾기 결과 모달 표시 여부
    * - isPhoneAccountModalOpen: SNS 로그인 유도 모달 표시 여부
-   * - isAccountNotFoundModalOpen: 계정 없음 모달 표시 여부
-   * - isBlockedAccountModalOpen: 정지/탈퇴 계정 모달 표시 여부
+   * - accountNotFoundError: 계정 없음 인라인 에러 메시지
+   * - blockedAccountError: 정지/탈퇴 계정 인라인 에러 메시지
    * - handleNext: 다음 버튼 클릭 시 계정 조회 및 모달 표시
    * - resetAccountState: 계정 관련 상태 초기화
+   *
+   * 🧪 테스트 데이터 사용:
+   * - useFindAccount 훅 내부에서 unifiedAccountData를 사용하여 계정 조회
+   * - unifiedAccountData는 testVerificationData의 TEST_PHONE_NUMBERS와 연동됨
+   * - 각 테스트 번호에 따라 다른 계정 상태 반환 (found / sns_only / blocked 등)
    */
-  const findAccount = useFindAccount();
+  const findAccount = useFindAccount({
+    allowedAccountTypes: ["user"],
+    // 유저 계정찾기(/user/find-account)는 SNS 테스트 번호 2개만 "계정 있음" 처리
+    snsOnlyPhoneWhitelist: [
+      TEST_PHONE_NUMBERS.EXISTING_KAKAO,
+      TEST_PHONE_NUMBERS.EXISTING_NAVER,
+    ],
+  });
 
   // ========================================
   // 이벤트 핸들러 (Event Handlers)
@@ -115,15 +132,11 @@ export default function UserFindAccountPage() {
    *
    * - PhoneVerification 컴포넌트에서 호출되는 콜백 함수
    * - 휴대폰 번호가 변경되면 인증 상태 및 계정 상태 초기화
-   * - 입력 시 에러 메시지 초기화
+   * - 입력 시 에러 메시지 자동 초기화 (훅 내부에서 처리)
    */
   const handlePhoneChange = (phone: string) => {
-    phoneVerification.setPhone(phone);
-
-    // 입력 시 에러 메시지 초기화
-    if (phoneError) {
-      setPhoneError(undefined);
-    }
+    // 훅의 handlePhoneChange를 사용하여 phoneError 자동 초기화
+    phoneVerification.handlePhoneChange(phone);
 
     // 휴대폰 번호가 변경되면 인증 상태 및 계정 상태 초기화
     if (phoneVerification.isPhoneVerified) {
@@ -136,45 +149,33 @@ export default function UserFindAccountPage() {
    * 인증번호 요청 핸들러
    *
    * - handleVerificationRequest(): 커스텀 훅에서 제공하는 인증번호 요청 함수
-   * - 반환값: 에러가 있으면 에러 메시지(string), 성공하면 null
-   * - 삼항 연산자: error ? setPhoneError(error) : ... 형태로 에러 처리
+   * - 에러는 훅 내부에서 phoneError로 자동 관리됨
    */
-  const handleVerificationRequest = () => {
-    const error = phoneVerification.handleVerificationRequest();
-    if (error) {
-      setPhoneError(error);
-    }
+  const handleVerificationRequest = async () => {
+    await phoneVerification.handleVerificationRequest();
   };
 
   /**
    * 인증번호 확인 핸들러
    *
-   * - handleVerify(): 커스텀 훅에서 제공하는 인증번호 확인 함수
+   * - handleVerifyCode(): 커스텀 훅에서 제공하는 인증번호 확인 함수
    * - 인증 성공 시 isPhoneVerified가 true로 변경됨
-   * - 에러가 있으면 verificationCodeError 상태에 저장
+   * - 에러는 훅 내부에서 verificationCodeError로 자동 관리됨
    */
   const handleVerify = () => {
-    const error = phoneVerification.handleVerify();
-    if (error) {
-      setVerificationCodeError(error);
-    } else {
-      setVerificationCodeError(undefined);
-    }
+    phoneVerification.handleVerifyCode();
   };
 
   /**
    * 인증번호 변경 핸들러
    *
    * - PhoneVerification 컴포넌트에서 호출되는 콜백 함수
-   * - 인증번호 입력 시 에러 메시지 초기화
+   * - 인증번호 입력 시 에러 메시지 자동 초기화 (훅 내부에서 처리)
    */
   const handleVerificationCodeChange = (code: string) => {
-    phoneVerification.setVerificationCode(code);
-    // 입력 시 에러 메시지 초기화
-    if (verificationCodeError) {
-      setVerificationCodeError(undefined);
-    }
+    phoneVerification.handleVerificationCodeChange(code);
   };
+
 
   /**
    * 다음 버튼 클릭 핸들러
@@ -182,15 +183,23 @@ export default function UserFindAccountPage() {
    * - 인증이 완료된 경우에만 계정 찾기 진행
    * - useFindAccount 훅의 handleNext 함수를 호출하여 목업 데이터로 계정 조회
    * - 조회 결과에 따라 적절한 모달 표시 (계정 찾음, 계정 없음, 정지/탈퇴, SNS 전용 등)
+   *
+   * 🧪 SNS 계정 모달 테스트:
+   * - 카카오 계정: 010-1111-1111 입력 후 인증번호 000000 입력 → 카카오 로그인 모달 표시
+   * - 네이버 계정: 010-0000-0000 입력 후 인증번호 000000 입력 → 네이버 로그인 모달 표시
    */
   const handleNext = async () => {
     if (!phoneVerification.isPhoneVerified) {
-      setPhoneError("휴대폰 인증을 완료해주세요.");
+      phoneVerification.setPhoneError("휴대폰 인증을 완료해주세요.");
       return;
     }
 
     // useFindAccount 훅의 handleNext 함수 호출
     // 이 함수는 목업 데이터를 사용하여 계정을 조회하고 결과에 따라 모달을 표시합니다
+    // - 일반 계정: 아이디 찾기 결과 모달 표시
+    // - SNS 계정 (카카오/네이버): SNS 로그인 유도 모달 표시
+    // - 정지/탈퇴 계정: 인라인 에러 메시지 표시
+    // - 계정 없음: 인라인 에러 메시지 표시
     await findAccount.handleNext(
       phoneVerification.isPhoneVerified,
       "id", // 사용자 계정찾기 페이지는 아이디 찾기만 지원
@@ -203,13 +212,23 @@ export default function UserFindAccountPage() {
   // ========================================
 
   return (
-    <div className={styles.find_account_page_container}>
-      {/* 헤더 컴포넌트 */}
+    <div
+      className={`${styles.find_account_page_container} ${styles.user_page}`}
+    >
+      {/* 헤더 컴포넌트 - 모바일에서는 CSS로 숨김 */}
       <Header />
 
+      {/* 페이지 타이틀 (모바일 전용)
+          - PC: 타이틀 섹션 사용
+          - 모바일: PageTitle 사용 (뒤로가기 버튼 포함)
+      */}
+      <div className={styles.mobile_page_title_wrapper}>
+        <PageTitle title="계정 찾기" />
+      </div>
+
       {/* 메인 콘텐츠 영역 */}
-      <main className={styles.find_account_main}>
-        {/* 타이틀 섹션 */}
+      <main className={`${styles.find_account_main} ${styles.user_page}`}>
+        {/* 타이틀 섹션 (PC 전용) - 유저 페이지는 탭 없이 타이틀만 표시 */}
         <section className={styles.title_section}>
           <h1 className={styles.page_title}>계정 찾기</h1>
         </section>
@@ -243,8 +262,10 @@ export default function UserFindAccountPage() {
             isVerificationRequested={phoneVerification.isVerificationRequested}
             isPhoneVerified={phoneVerification.isPhoneVerified}
             timer={phoneVerification.timer}
-            error={phoneError}
-            verificationCodeError={verificationCodeError}
+            error={phoneVerification.phoneError}
+            verificationCodeError={phoneVerification.verificationCodeError}
+            accountNotFoundError={findAccount.accountNotFoundError}
+            blockedAccountError={findAccount.blockedAccountError}
             onPhoneChange={handlePhoneChange}
             onVerificationRequest={handleVerificationRequest}
             onVerify={handleVerify}
@@ -276,41 +297,35 @@ export default function UserFindAccountPage() {
           FindAccountModals 컴포넌트:
           - 계정 찾기 결과에 따라 다양한 모달을 표시
           - AccountFoundModal: 계정을 찾았을 때 (이메일, 가입일 표시)
-          - AccountNotFoundModal: 계정을 찾을 수 없을 때
-          - BlockedAccountModal: 정지/탈퇴된 계정일 때
-          - SNSLoginModal: SNS로만 가입된 계정일 때
+          - SNSLoginModal: SNS로만 가입된 계정일 때 (카카오/네이버)
+          
+          🧪 SNS 계정 모달 테스트 방법:
+          - 카카오 계정: 휴대폰 번호 010-1111-1111 입력 → 인증번호 000000 입력 → "다음" 클릭
+            → 카카오 로그인 모달이 표시됩니다
+          - 네이버 계정: 휴대폰 번호 010-0000-0000 입력 → 인증번호 000000 입력 → "다음" 클릭
+            → 네이버 로그인 모달이 표시됩니다
           
           Props 설명:
           - activeTab: "id"로 고정 (사용자 계정찾기 페이지는 아이디 찾기만 지원)
           - isResultModalOpen: 아이디 찾기 결과 모달 표시 여부
-          - isPhoneAccountModalOpen: SNS 로그인 유도 모달 표시 여부
-          - isAccountNotFoundModalOpen: 계정 없음 모달 표시 여부
-          - isBlockedAccountModalOpen: 정지/탈퇴 계정 모달 표시 여부
+          - isPhoneAccountModalOpen: SNS 로그인 유도 모달 표시 여부 (카카오/네이버)
           - foundAccountInfo: 찾은 계정 정보
+          - socialType: SNS 타입 (kakao | naver) - 모달에 표시할 버튼 결정
           - onCloseResultModal: 결과 모달 닫기 핸들러
           - onClosePhoneAccountModal: SNS 모달 닫기 핸들러
-          - onCloseAccountNotFoundModal: 계정 없음 모달 닫기 핸들러
-          - onCloseBlockedAccountModal: 차단 계정 모달 닫기 핸들러
           - onLogin: 로그인 버튼 클릭 핸들러
           - onSwitchToPasswordTab: 비밀번호 찾기 버튼 클릭 핸들러 (사용 안 함)
           - onKakaoLogin: 카카오 로그인 버튼 클릭 핸들러
+          - onNaverLogin: 네이버 로그인 버튼 클릭 핸들러
       */}
       <FindAccountModals
         activeTab="id"
         isResultModalOpen={findAccount.isResultModalOpen}
         isPhoneAccountModalOpen={findAccount.isPhoneAccountModalOpen}
-        isAccountNotFoundModalOpen={findAccount.isAccountNotFoundModalOpen}
-        isBlockedAccountModalOpen={findAccount.isBlockedAccountModalOpen}
         foundAccountInfo={findAccount.foundAccountInfo}
         onCloseResultModal={() => findAccount.setIsResultModalOpen(false)}
         onClosePhoneAccountModal={() =>
           findAccount.setIsPhoneAccountModalOpen(false)
-        }
-        onCloseAccountNotFoundModal={() =>
-          findAccount.setIsAccountNotFoundModalOpen(false)
-        }
-        onCloseBlockedAccountModal={() =>
-          findAccount.setIsBlockedAccountModalOpen(false)
         }
         onLogin={() => {
           // TODO: 실제 로그인 페이지로 이동
@@ -322,14 +337,10 @@ export default function UserFindAccountPage() {
           router.push("/find-account");
         }}
         onKakaoLogin={() => {
-          // TODO: 실제 카카오 로그인으로 이동
-          console.log("카카오 로그인");
-          router.push("/user/sns_login");
+          router.push("/user/login");
         }}
         onNaverLogin={() => {
-          // TODO: 실제 네이버 로그인으로 이동
-          console.log("네이버 로그인");
-          router.push("/user/sns_login");
+          router.push("/user/login");
         }}
         socialType={findAccount.socialType}
       />

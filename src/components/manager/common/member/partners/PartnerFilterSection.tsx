@@ -14,13 +14,12 @@
  */
 
 import MemberFilterSectionCommon from "@/components/manager/common/member/filter/MemberFilterSection";
-import styles from "@/styles/manager_ga/member/partners/partner_filter_section.module.css";
-import ChannelFilterModal from "@/components/manager/common/member/partners/filter/ChannelFilterModal";
-import DivisionFilterModal from "@/components/manager/common/member/partners/filter/DivisionFilterModal";
-import TypeFilterModal, {
+import ChannelFilterDropdown from "@/components/manager/common/member/partners/filter/ChannelFilterDropdown";
+import DivisionFilterDropdown from "@/components/manager/common/member/partners/filter/DivisionFilterDropdown";
+import TypeFilterDropdown, {
   type PartnerType,
-} from "@/components/manager/common/member/partners/filter/TypeFilterModal";
-import StatusFilterModal from "@/components/manager/common/member/partners/filter/StatusFilterModal";
+} from "@/components/manager/common/member/partners/filter/TypeFilterDropdown";
+import StatusFilterDropdown from "@/components/manager/common/member/partners/filter/StatusFilterDropdown";
 import type { Channel } from "@/data/manager/common/filterOptions";
 import type {
   PartnerDivision,
@@ -41,6 +40,8 @@ interface PartnerFilterSectionProps {
   on_types_change: (types: PartnerType[]) => void;
   selected_statuses: PartnerStatus[];
   on_statuses_change: (statuses: PartnerStatus[]) => void;
+  // 이용 제한 버튼 클릭 핸들러
+  on_restriction_click?: () => void;
 }
 
 // 채널 이름 매핑 객체
@@ -50,6 +51,9 @@ const channel_name_map: Record<Channel, string> = {
   Instagram: "인스타그램",
   Youtube: "유튜브",
   Store: "네이버 스토어",
+  Mission: "미션",
+  Reels: "릴스",
+  Shorts: "쇼츠",
 };
 
 export default function PartnerFilterSection({
@@ -63,14 +67,10 @@ export default function PartnerFilterSection({
   on_types_change,
   selected_statuses,
   on_statuses_change,
+  on_restriction_click,
 }: PartnerFilterSectionProps) {
   return (
-    <MemberFilterSectionCommon<
-      Channel,
-      PartnerDivision,
-      PartnerType,
-      PartnerStatus
-    >
+    <MemberFilterSectionCommon
       search_query={search_query}
       on_search_change={on_search_change}
       selected_channels={selected_channels}
@@ -81,25 +81,14 @@ export default function PartnerFilterSection({
       on_types_change={on_types_change}
       selected_statuses={selected_statuses}
       on_statuses_change={on_statuses_change}
-      styles={
-        styles as {
-          filter_item: string;
-          checkbox_icon: string;
-          checkbox_icon_checked: string;
-          filter_text: string;
-          dropdown_arrow: string;
-          download_icon: string;
-          report_icon: string;
-        }
-      }
+      on_restriction_click={on_restriction_click}
       channel_name_map={channel_name_map}
-      ChannelFilterModal={ChannelFilterModal as any}
+      ChannelFilterDropdown={ChannelFilterDropdown as any}
       grade_or_division_label="구분"
-      GradeOrDivisionFilterModal={DivisionFilterModal as any}
-      TypeFilterModal={TypeFilterModal as any}
-      StatusFilterModal={StatusFilterModal as any}
+      GradeOrDivisionFilterDropdown={DivisionFilterDropdown as any}
+      TypeFilterDropdown={TypeFilterDropdown as any}
+      StatusFilterDropdown={StatusFilterDropdown as any}
       download_button_text="파트너 목록 다운로드"
     />
   );
 }
-

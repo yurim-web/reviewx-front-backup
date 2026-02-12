@@ -1,0 +1,92 @@
+/* ========================================
+   📅 날짜 범위 입력 필드 스타일
+   ======================================== */
+
+/* 날짜 범위 입력 필드 컨테이너 */
+.date_range_field_container {
+  position: relative;
+  width: 100%;
+}
+
+/* 달력 드롭다운이 열리는 인풋 - 커서/캐럿 숨김 (클릭 전용) */
+.date_range_field_container input[type="text"] {
+  caret-color: transparent;
+  cursor: pointer;
+}
+
+/* 캘린더 드롭다운 */
+.calendar_dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 1000;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+}
+
+/* 단일 달력 드롭다운 (달력 1개만 표시) */
+.single_calendar_dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 1000;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  width: fit-content;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ============================================
+   모바일 반응형 스타일
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* 날짜 범위 입력 필드 컨테이너 */
+  .date_range_field_container {
+    position: relative;
+  }
+
+  /* 캘린더 드롭다운 - 모바일에서도 PC와 유사한 스타일 유지 */
+  .calendar_dropdown {
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: calc(100vw - 40px);
+    transform: none;
+    padding: 8.5px;
+    top: calc(100% + 4px);
+
+
+    border-radius: 4px;
+    border: 1px solid #E5E5E5;
+    box-shadow: 0 0 10.601px 0 rgba(68, 68, 68, 0.10);
+
+  }
+
+  /* 단일 달력 드롭다운 - 모바일에서 더 좁은 너비 */
+  .single_calendar_dropdown {
+    position: absolute;
+    left: 0;
+    right: auto;
+    width: fit-content;
+    max-width: 260px;
+    transform: none;
+    padding: 8.5px;
+    top: calc(100% + 4px);
+    border-radius: 4px;
+    border: 1px solid #E5E5E5;
+    box-shadow: 0 0 10.601px 0 rgba(68, 68, 68, 0.10);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

@@ -21,7 +21,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import { useRouter } from "next/navigation";
 import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
@@ -31,8 +31,9 @@ import CommonTable, {
   type TableRowData,
 } from "@/components/manager/common/table/CommonTable";
 import styles from "@/styles/manager_sa/member/admins/admin_table.module.css";
+import tag_styles from "@/styles/common/tags.module.css";
 import {
-  admin_list,
+  get_admin_list_from_storage,
   type AdminItem,
   type AdminStatus,
 } from "@/data/manager_sa/member/admins";
@@ -47,6 +48,14 @@ interface AdminTableProps {
 
 // AdminItem이 TableRowData를 확장하도록 확장
 interface AdminTableRowData extends AdminItem, TableRowData {}
+
+// 테이블에서 외부로 노출할 함수들의 타입 정의
+export interface AdminTableRef {
+  // 선택된 관리자 ID 목록을 반환하는 함수
+  get_selected_admin_ids: () => string[];
+  // 선택된 관리자 정보를 반환하는 함수
+  get_selected_admin: () => AdminItem | null;
+}
 
 // 컬럼 정의
 const columns: TableColumn[] = [
@@ -67,7 +76,7 @@ const columns: TableColumn[] = [
   },
   {
     key: "block_count",
-    label: "차단 횟수",
+    label: "이용 제한 횟수",
     sortable: true,
   },
   {
@@ -93,18 +102,46 @@ const columns: TableColumn[] = [
   },
 ];
 
-export default function AdminTable({
-  search_query,
-  selected_statuses = [],
-}: AdminTableProps) {
-  // Next.js의 useRouter 훅을 사용하여 페이지 이동 기능 가져오기
-  const router = useRouter();
+const AdminTable = forwardRef<AdminTableRef, AdminTableProps>(
+  function AdminTable({ search_query, selected_statuses = [] }, ref) {
+    // Next.js의 useRouter 훅을 사용하여 페이지 이동 기능 가져오기
+    const router = useRouter();
 
-  // 선택된 관리자 ID 목록 상태 관리
-  const [selected_admin_ids, set_selected_admin_ids] = useState<string[]>([]);
+    // 선택된 관리자 ID 목록 상태 관리
+    const [selected_admin_ids, set_selected_admin_ids] = useState<string[]>([]);
+
+    // localStorage에서 관리자 목록 가져오기
+    // useState: 관리자 목록을 상태로 관리합니다
+    const [admin_list_data, set_admin_list_data] = useState<AdminItem[]>([]);
+
+    // 컴포넌트가 마운트될 때 localStorage에서 관리자 목록 가져오기
+    // useEffect: 컴포넌트가 렌더링된 후 실행되는 훅입니다
+    // 의존성 배열이 빈 배열 []이므로 컴포넌트가 처음 마운트될 때 한 번만 실행됩니다
+    useEffect(() => {
+      // localStorage에서 관리자 목록 가져오기
+      const stored_admin_list = get_admin_list_from_storage();
+      set_admin_list_data(stored_admin_list);
+    }, []);
+
+    // 페이지가 포커스될 때마다 localStorage에서 최신 데이터 가져오기
+    // (다른 페이지에서 관리자를 추가/수정한 후 돌아왔을 때 최신 데이터를 표시하기 위함)
+    useEffect(() => {
+      const handle_focus = () => {
+        const stored_admin_list = get_admin_list_from_storage();
+        set_admin_list_data(stored_admin_list);
+      };
+
+      // window에 focus 이벤트 리스너 추가
+      window.addEventListener("focus", handle_focus);
+
+      // 컴포넌트가 언마운트될 때 이벤트 리스너 제거 (메모리 누수 방지)
+      return () => {
+        window.removeEventListener("focus", handle_focus);
+      };
+    }, []);
 
   // 검색어 및 필터로 필터링된 관리자 목록
-  const filtered_admins = admin_list.filter((admin) => {
+  const filtered_admins = admin_list_data.filter((admin) => {
     // 검색어 필터
     if (search_query) {
       const matches_search = admin.name
@@ -163,6 +200,23 @@ export default function AdminTable({
     set_selected_admin_ids(selected_ids);
   };
 
+  // 외부에서 선택된 관리자 정보에 접근할 수 있도록 ref를 통해 함수 노출
+  // useImperativeHandle: 부모 컴포넌트에서 자식 컴포넌트의 특정 함수나 값에 접근할 수 있게 해주는 React Hook입니다
+  useImperativeHandle(
+    ref,
+    () => ({
+      // 선택된 관리자 ID 목록을 반환하는 함수
+      get_selected_admin_ids: () => selected_admin_ids,
+      // 선택된 관리자가 정확히 1명일 때 해당 관리자 정보를 반환하는 함수
+      get_selected_admin: () => {
+        if (selected_admin_ids.length !== 1) return null;
+        const selected_id = selected_admin_ids[0];
+        return admin_list_data.find((admin) => admin.id === selected_id) || null;
+      },
+    }),
+    [selected_admin_ids]
+  );
+
   // 숫자를 천 단위로 포맷팅하는 함수
   const format_number = (num: number): string => {
     return num.toLocaleString();
@@ -215,7 +269,6 @@ export default function AdminTable({
             return (
               <MemberStatusTag
                 status={row.status as "정상" | "일시 정지" | "영구 정지"}
-                styles={styles}
               />
             );
           case "edit":
@@ -251,4 +304,7 @@ export default function AdminTable({
       empty_message="관리자가 없습니다."
     />
   );
-}
+  }
+);
+
+export default AdminTable;

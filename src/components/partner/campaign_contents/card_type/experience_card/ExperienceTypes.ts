@@ -24,6 +24,8 @@ export interface ExperienceApplicant {
   registrationDate: string;
   /** 수정일 문자열 (선택, 존재 시 등록일 대신 노출) */
   updatedAt?: string;
+  /** 영수증 이미지 URL 배열 (이미지 확인 버튼용) */
+  receiptImages?: string[];
 }
 
 /** 카드 변형 타입 */

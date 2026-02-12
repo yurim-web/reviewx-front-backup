@@ -12,7 +12,9 @@
 
 import FormField from "./FormField";
 import InputWithButton from "./InputWithButton";
-import styles from "@/styles/user/mypage/edit_profile.module.css";
+import layoutStyles from "@/styles/user/mypage/edit_profile/edit_profile_layout.module.css";
+import inputStyles from "@/styles/user/mypage/edit_profile/inputs.module.css";
+import verificationStyles from "@/styles/user/mypage/edit_profile/verification.module.css";
 
 interface AddressInputProps {
   /** 우편번호 */
@@ -33,6 +35,8 @@ interface AddressInputProps {
   postalCodeReadOnly?: boolean;
   /** 라벨에 필수 표시(*) 여부 (기본값: false) */
   showRequiredAsterisk?: boolean;
+  /** 라벨 표시 여부 (기본값: true) */
+  showLabel?: boolean;
 }
 
 export default function AddressInput({
@@ -45,6 +49,7 @@ export default function AddressInput({
   onPostalCodeSearch,
   postalCodeReadOnly = false,
   showRequiredAsterisk = false,
+  showLabel = true,
 }: AddressInputProps) {
   /** 주소 입력 필드 렌더링 헬퍼 함수 */
   const renderAddressField = (
@@ -54,18 +59,66 @@ export default function AddressInput({
     onChange: (value: string) => void,
     placeholder: string
   ) => (
-    <div className={styles.field_group}>
+    <div className={layoutStyles.field_group}>
       <input
         type="text"
         id={id}
         name={name}
-        className={styles.input_field}
+        className={inputStyles.input_field}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
       />
     </div>
   );
+
+  // 라벨을 표시하지 않는 경우 직접 렌더링
+  if (!showLabel) {
+    return (
+      <div className={layoutStyles.field_article}>
+        <InputWithButton
+          input={
+            <input
+              type="text"
+              id="postalCode"
+              name="postalCode"
+              className={inputStyles.input_field}
+              value={postalCode}
+              onChange={(e) => onPostalCodeChange(e.target.value)}
+              readOnly={postalCodeReadOnly}
+              placeholder="우편번호"
+            />
+          }
+          button={
+            onPostalCodeSearch ? (
+              <button
+                type="button"
+                className={verificationStyles.postal_button}
+                onClick={onPostalCodeSearch}
+              >
+                우편번호 찾기
+              </button>
+            ) : undefined
+          }
+        />
+
+        {renderAddressField(
+          "address",
+          "address",
+          address,
+          onAddressChange,
+          "기본 주소"
+        )}
+        {renderAddressField(
+          "detailAddress",
+          "detailAddress",
+          detailAddress,
+          onDetailAddressChange,
+          "상세 주소 입력"
+        )}
+      </div>
+    );
+  }
 
   return (
     <FormField
@@ -79,7 +132,7 @@ export default function AddressInput({
             type="text"
             id="postalCode"
             name="postalCode"
-            className={styles.input_field}
+            className={inputStyles.input_field}
             value={postalCode}
             onChange={(e) => onPostalCodeChange(e.target.value)}
             readOnly={postalCodeReadOnly}
@@ -90,7 +143,7 @@ export default function AddressInput({
           onPostalCodeSearch ? (
             <button
               type="button"
-              className={styles.postal_button}
+              className={verificationStyles.postal_button}
               onClick={onPostalCodeSearch}
             >
               우편번호 찾기

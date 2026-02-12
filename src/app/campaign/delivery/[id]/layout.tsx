@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { deliveryCampaigns } from "@/data/user/delivery/deliveryCampaigns";
+import { deliveryCampaigns } from "@/data/campaign/delivery/deliveryCampaigns";
+import CampaignLayoutScript from "@/components/campaign/CampaignLayoutScript";
 
 // 동적 메타데이터 생성
 export async function generateMetadata({
@@ -28,7 +29,12 @@ export default function DeliveryDetailLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <>
+      <CampaignLayoutScript />
+      {children}
+    </>
+  );
 }
 
 

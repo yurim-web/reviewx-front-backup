@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { visitCampaigns } from "@/data/user/visit/visitCampaigns";
+import { visitCampaigns } from "@/data/campaign/visit/visitCampaigns";
+import CampaignLayoutScript from "@/components/campaign/CampaignLayoutScript";
 
 // 동적 메타데이터 생성
 export async function generateMetadata({
@@ -28,7 +29,12 @@ export default function VisitDetailLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <>
+      <CampaignLayoutScript />
+      {children}
+    </>
+  );
 }
 
 

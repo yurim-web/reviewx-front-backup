@@ -6,7 +6,7 @@
  * 구매평 캠페인 진행 현황 상세 페이지 (GA 관리자 버전)
  *
  * 목적: GA 관리자가 진행 현황 테이블에서 특정 구매평 캠페인을 클릭했을 때
- *       신청자/선정자 목록, 카드 이동, 엑셀 다운로드 등 상세 관리를 학습/체험할 수 있도록 구성합니다.
+ *       신청자/선정자 목록, 카드 이동, 엑셀 다운로드 등 상세 관리를 할 수 있도록 구성합니다.
  *
  * 참고:
  * - 파트너 센터의 `/partner/campaign_application/review/[id]` 페이지 구조를 그대로 차용했습니다.
@@ -99,6 +99,7 @@ export default function ManagerReviewProgressDetailPage() {
    * - 구매평은 basic 카드 타입만 사용
    * - 채널별 특화 정보 없음 (팔로워, 구독자 수 등)
    * - 기본 프로필 정보와 메모만 표시
+   * - 📌 관리자 모드: 선정하기/선택 취소 버튼 비활성화 (빈 함수 전달)
    */
   const render_card: RenderCardFunction = (
     applicant: AllApplicant,
@@ -107,6 +108,9 @@ export default function ManagerReviewProgressDetailPage() {
     handle_select: (id: string) => void,
     handle_cancel: (id: string) => void
   ) => {
+    // 관리자 모드: 버튼 비활성화를 위한 빈 함수
+    const empty_handler = () => {};
+
     // 구매평은 항상 BasicApplicant 타입으로 처리
     const basic_applicant = applicant as BasicApplicant;
 
@@ -114,11 +118,11 @@ export default function ManagerReviewProgressDetailPage() {
       return (
         <BasicSelectedCard
           applicant={basic_applicant}
-          onCancel={handle_cancel}
+          onCancel={empty_handler}
         />
       );
     } else {
-      return <BasicCard applicant={basic_applicant} onSelect={handle_select} />;
+      return <BasicCard applicant={basic_applicant} onSelect={empty_handler} />;
     }
   };
 

@@ -17,7 +17,7 @@
  *   (사용자 회원가입 페이지에서 폼 제출 시 전체 검증에 사용)
  */
 
-import { validateEmail, validatePhone } from "@/utils/signup/validation";
+import { validateEmail, validatePhone } from "@/utils/validation";
 
 export interface SignupFormErrors {
   email?: string;

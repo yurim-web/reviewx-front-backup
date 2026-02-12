@@ -11,23 +11,32 @@
  * - 사업자등록증 파일 선택 (이미지 또는 PDF, 10MB 제한)
  * - 업로드 완료 상태 표시
  * - 파일명 표시
+ * - 내부에서 에러 모달 관리
  *
  * 사용 위치:
  * - /partner/mypage/edit (파트너 내 정보 수정 페이지)
+ * - /partner/signup (파트너 회원가입 페이지)
  */
 
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
-import styles from "@/styles/user/mypage/edit_profile.module.css";
+import BaseModal from "@/components/common/modal/BaseModal";
+import layoutStyles from "@/styles/user/mypage/edit_profile/edit_profile_layout.module.css";
+import inputStyles from "@/styles/user/mypage/edit_profile/inputs.module.css";
+import verificationStyles from "@/styles/user/mypage/edit_profile/verification.module.css";
+import commonStyles from "@/styles/common/signup/signup.module.css";
 
 interface BusinessDocumentUploadProps {
   /** 현재 업로드된 파일명 */
-  fileName: string;
-  /** 업로드 완료 여부 */
-  isUploaded: boolean;
+  fileName: string | null;
+  /** 업로드 완료 여부 (선택적, 체크 아이콘 표시용) */
+  isUploaded?: boolean;
   /** 파일 선택 핸들러 */
-  onFileSelect: (file: File) => void;
+  onFileSelect: (file: File | null) => void;
+  /** 커스텀 스타일 모듈 (선택적, 기본값: edit_profile.module.css) */
+  customStyles?: typeof styles;
 }
 
 /**
@@ -35,17 +44,35 @@ interface BusinessDocumentUploadProps {
  */
 export default function BusinessDocumentUpload({
   fileName,
-  isUploaded,
+  isUploaded = false,
   onFileSelect,
+  customStyles,
 }: BusinessDocumentUploadProps) {
+  const [modalMessage, setModalMessage] = useState<string | null>(null);
+  // For backward compatibility, use customStyles if provided, otherwise use the new split styles
+  const componentStyles = customStyles || {
+    field_article: layoutStyles.field_article,
+    field_label: inputStyles.field_label,
+    input_field: inputStyles.input_field,
+    input_with_button: verificationStyles.input_with_button,
+    phone_input_container: verificationStyles.phone_input_container,
+    phone_check_icon: verificationStyles.phone_check_icon,
+    postal_button: verificationStyles.postal_button,
+  };
   /**
    * 사업자등록증 파일 선택 핸들러
    *
-   * 기능 설명:
-   * 1. 동적으로 숨겨진 파일 입력(input) 요소를 생성합니다.
-   * 2. 사용자가 파일을 선택하면 파일 선택 다이얼로그가 열립니다.
-   * 3. 선택한 파일의 크기와 타입을 검증합니다.
-   * 4. 검증이 통과하면 파일을 state에 저장하고 파일명을 표시합니다.
+   * 오류 모달이 표시되는 경우:
+   * 1. 파일 크기 오류: 10MB를 초과하는 경우
+   *    - 메시지: "10mb 이하의 파일만 업로드할 수 있습니다."
+   * 2. 파일 확장자 오류: 지정된 확장자(PDF, JPG, PNG)가 아닌 경우
+   *    - 메시지: "지정된 확장자(PDF, JPG, PNG)만\n업로드할 수 있습니다."
+   *
+   * 검증 순서:
+   * 1. 파일 선택 여부 확인
+   * 2. 파일 크기 검증 (10MB 이하) - 최우선 검증
+   * 3. 파일 확장자 검증 (PDF, JPG, PNG) - 크기 검증 통과 후
+   * 4. 모든 검증 통과 시 파일 선택
    */
   const handleBusinessDocumentSelect = () => {
     // 숨겨진 파일 입력 요소를 동적으로 생성
@@ -62,27 +89,30 @@ export default function BusinessDocumentUpload({
       // Optional chaining(?.)을 사용하여 files가 없거나 비어있을 때를 안전하게 처리합니다
       const file = (e.target as HTMLInputElement).files?.[0];
 
+      if (!file) {
+        onFileSelect(null);
+        return;
+      }
+
       if (file) {
-        // 파일 크기 검증: 10MB 제한
-        // file.size는 바이트 단위이므로, 10MB = 10 * 1024 * 1024 바이트
-        const maxSize = 10 * 1024 * 1024; // 10MB
+        // (1) 파일 크기 검증 (우선순위 1: 최상위 에러)
+        const maxSize = 10 * 1024 * 1024; // 10MB = 10 * 1024 * 1024 bytes
         if (file.size > maxSize) {
-          alert("파일 크기는 10MB 이하여야 합니다.");
-          return; // 함수 실행 중단
+          setModalMessage("10mb 이하의 파일만 업로드할 수 있습니다.");
+          return; // 크기 에러 발생 시 확장자 검증은 진행하지 않음
         }
 
-        // 파일 타입 검증: 이미지 또는 PDF 파일만 허용
-        // file.type은 MIME 타입을 반환합니다 (예: "image/jpeg", "application/pdf")
-        const isValidType =
-          file.type.startsWith("image/") || // 이미지 파일 (image/jpeg, image/png 등)
-          file.type === "application/pdf"; // PDF 파일
-
-        if (!isValidType) {
-          alert("이미지 파일 또는 PDF 파일만 업로드 가능합니다.");
-          return; // 함수 실행 중단
+        // (2) 파일 확장자 검증 (우선순위 2: 크기 검증 통과 후)
+        const allowedExtensions = ["pdf", "jpg", "jpeg", "png"];
+        const fileExtension = file.name.split(".").pop()?.toLowerCase();
+        if (!fileExtension || !allowedExtensions.includes(fileExtension)) {
+          setModalMessage(
+            "지정된 확장자(PDF, JPG, PNG)만<br>업로드할 수 있습니다."
+          );
+          return; // 확장자 에러 발생 시 파일 선택 취소
         }
 
-        // 검증이 통과하면 파일을 전달
+        // 모든 검증 통과 시 파일 선택 (에러 없음)
         onFileSelect(file);
 
         // TODO: 실제 파일 업로드 API 호출
@@ -90,7 +120,7 @@ export default function BusinessDocumentUpload({
         // const formData = new FormData();
         // formData.append("businessDocument", file);
         // await uploadBusinessDocument(formData);
-        console.log("사업자등록증 파일 선택됨:", file.name);
+        // console.log("사업자등록증 파일 선택됨:", file.name);
       }
     };
 
@@ -99,36 +129,70 @@ export default function BusinessDocumentUpload({
     input.click();
   };
 
+  const handleCloseModal = () => {
+    setModalMessage(null);
+  };
+
+  // signup 스타일인지 확인 (file_upload_wrapper가 있으면 signup 스타일)
+  const isSignupStyle = "file_upload_wrapper" in componentStyles;
+
+  // 스타일에 따라 다른 클래스명 사용
+  // signup 스타일일 때는 공통 스타일(commonStyles) 사용, mypage 스타일일 때는 componentStyles 사용
+  const containerClass = isSignupStyle
+    ? commonStyles.form_field
+    : componentStyles.field_article;
+  const wrapperClass = isSignupStyle
+    ? componentStyles.file_upload_wrapper
+    : componentStyles.input_with_button;
+  const inputWrapperClass = isSignupStyle
+    ? componentStyles.file_upload_input_wrapper
+    : componentStyles.phone_input_container;
+  const inputClass = isSignupStyle
+    ? `${commonStyles.input_field} ${componentStyles.file_name_input}`
+    : componentStyles.input_field;
+  const buttonClass = isSignupStyle
+    ? componentStyles.file_select_button
+    : componentStyles.postal_button;
+  const labelClass = isSignupStyle
+    ? commonStyles.field_label
+    : componentStyles.field_label;
+
   return (
-    <article className={styles.field_article}>
-      <label className={styles.field_label}>사업자등록증</label>
-      <div className={styles.input_with_button}>
-        <div className={styles.phone_input_container}>
-          <input
-            className={styles.input_field}
-            value={fileName}
-            readOnly
-          />
-          {/* 업로드 완료 시 체크 아이콘 표시 */}
-          {isUploaded && (
-            <div className={styles.phone_check_icon}>
-              <Image
-                src="/images/icons/phone_verified.svg"
-                alt="업로드 완료"
-                width={16}
-                height={16}
-              />
-            </div>
-          )}
+    <>
+      <div className={containerClass}>
+        <label className={labelClass}>사업자등록증</label>
+        <div className={wrapperClass}>
+          <div className={inputWrapperClass}>
+            <input className={inputClass} value={fileName || ""} readOnly />
+            {/* 업로드 완료 시 체크 아이콘 표시 (mypage 스타일만) */}
+            {!isSignupStyle && isUploaded && (
+              <div className={componentStyles.phone_check_icon}>
+                <Image
+                  src="/images/icons/phone_verified.svg"
+                  alt="업로드 완료"
+                  width={16}
+                  height={16}
+                />
+              </div>
+            )}
+          </div>
+          <button
+            type="button"
+            className={buttonClass}
+            onClick={handleBusinessDocumentSelect}
+          >
+            파일 선택
+          </button>
         </div>
-        <button
-          className={styles.postal_button}
-          onClick={handleBusinessDocumentSelect}
-        >
-          파일 선택
-        </button>
       </div>
-    </article>
+
+      <BaseModal
+        is_open={modalMessage !== null}
+        on_close={handleCloseModal}
+        message={modalMessage || ""}
+        buttons={["닫기"]}
+        type="center"
+      />
+    </>
   );
 }
-

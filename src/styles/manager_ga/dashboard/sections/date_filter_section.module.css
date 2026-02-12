@@ -32,7 +32,6 @@
   border-radius: 4px;
   background-color: white;
   cursor: pointer;
-  transition: all 0.2s;
   color: #444;
   text-align: center;
   font-size: 16px;
@@ -41,28 +40,17 @@
   letter-spacing: -0.32px;
 }
 
-/* 날짜 필터 버튼 호버 */
-.date_filter_section_button:hover {
-  background-color: #f9f9f9;
-}
-
 /* 활성화된 날짜 필터 버튼 */
 .date_filter_section_button_active {
-  background-color: #444;
+  background-color: #ff5694;
   color: white;
-  border-color: #444;
-}
-
-/* 활성화된 날짜 필터 버튼 호버 효과 제거 */
-.date_filter_section_button_active:hover {
-  background-color: #444;
-  color: white;
-  border-color: #444;
+  border-color: #ff5694;
+  font-weight: 600;
 }
 
 /* 날짜 선택기 래퍼 - relative positioning을 위해 추가 */
 .date_filter_section_picker_wrapper {
-  position: relative; /* 드롭다운을 absolute로 배치하기 위한 기준점 */
+  position: relative;
 }
 
 /* 날짜 선택기 */
@@ -75,28 +63,28 @@
   border: 1px solid #d9d9d9;
   border-radius: 4px;
   background-color: white;
+
+
+  width: 240px;
   cursor: pointer;
+
   color: #444;
   font-size: 16px;
   font-weight: 500;
-  line-height: 16px; /* 100% */
+  line-height: 16px;
   letter-spacing: -0.32px;
 }
 
 /* 날짜 선택기 아이콘 (달력 모양) */
 .date_filter_section_picker_icon {
+  position: relative;
   width: 16px;
   height: 16px;
-  position: relative;
-  /* 달력 아이콘 만들기 */
-  border: 1.5px solid #666;
-  border-radius: 2px;
-  background-color: white;
 }
 
 /* 달력 상단 고리 부분 */
 .date_filter_section_picker_icon::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -2px;
   left: 50%;
@@ -109,7 +97,7 @@
 
 /* 달력 내부 줄 (날짜 구분선) */
 .date_filter_section_picker_icon::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 3px;
   left: 1px;

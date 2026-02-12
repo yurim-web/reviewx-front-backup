@@ -158,18 +158,16 @@ export const partner_status_filter_options: PartnerStatus[] = [
  * 파트너 상태 유형 타입 정의
  */
 export type PartnerStatusType =
-  | "모범 회원"
+  | "일반 회원"
   | "주의 회원"
-  | "경고 회원"
   | "이용 제한 회원";
 
 /**
  * 파트너 상태 유형 필터 옵션 배열
  */
 export const partner_status_type_filter_options: PartnerStatusType[] = [
-  "모범 회원",
+  "일반 회원",
   "주의 회원",
-  "경고 회원",
   "이용 제한 회원",
 ];
 
@@ -189,8 +187,8 @@ export type ReviewerType = "서포터즈" | "일반" | "인플루언서";
  * 리뷰어 유형 필터 옵션 배열
  */
 export const reviewer_type_filter_options: ReviewerType[] = [
-  "서포터즈",
   "일반",
+  "서포터즈",
   "인플루언서",
 ];
 
@@ -212,19 +210,14 @@ export const reviewer_status_filter_options: ReviewerStatus[] = [
 /**
  * 리뷰어 상태 유형 타입 정의
  */
-export type ReviewerStatusType =
-  | "모범 회원"
-  | "주의 회원"
-  | "경고 회원"
-  | "이용 제한 회원";
+export type ReviewerStatusType = "일반 회원" | "주의 회원" | "이용 제한 회원";
 
 /**
  * 리뷰어 상태 유형 필터 옵션 배열
  */
 export const reviewer_status_type_filter_options: ReviewerStatusType[] = [
-  "모범 회원",
+  "일반 회원",
   "주의 회원",
-  "경고 회원",
   "이용 제한 회원",
 ];
 
@@ -244,8 +237,8 @@ export type BlacklistDivision = "파트너" | "리뷰어" | "관리자";
  * 차단 구분 필터 옵션 배열
  */
 export const blacklist_division_filter_options: BlacklistDivision[] = [
-  "파트너",
   "리뷰어",
+  "파트너",
   "관리자",
 ];
 

@@ -17,8 +17,8 @@
  */
 
 import { Metadata } from "next";
-import PartnerHeader from "@/components/fragments/PartnerHeader";
-import layoutStyles from "@/styles/partner/layout.module.css";
+import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
+import layoutStyles from "@/styles/partner/partner_layout.module.css";
 
 // 메타데이터 설정 (브라우저 탭 제목/설명)
 export const metadata: Metadata = {
@@ -38,8 +38,10 @@ export default function VisitCampaignApplicationLayout({
 }) {
   return (
     <div className={layoutStyles.container}>
-      {/* 파트너 전용 헤더 */}
-      <PartnerHeader />
+      {/* 파트너 서브헤더 - PC에서만 표시, 모바일에서 숨김 */}
+      <div className={layoutStyles.partner_sub_header_wrapper}>
+        <PartnerSubHeader />
+      </div>
 
       {/* 자식 페이지 콘텐츠 영역 */}
       {children}

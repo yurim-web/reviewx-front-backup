@@ -23,17 +23,16 @@
 /* 테이블 헤더 */
 .table_header {
   display: grid;
-  /* 관리자 목록 테이블 컬럼 정의 */
   grid-template-columns:
     40px /* 체크박스 */
-    100px /* 번호 */
-    1fr /* 이름 (남은 공간 차지) */
-    140px /* 신고 횟수 (더 늘림) */
-    140px /* 차단 횟수 (더 늘림) */
-    180px /* 접속일 */
-    180px /* 가입일 */
-    100px /* 상태 */
-    50px; /* 수정 아이콘 (맨 끝, 고정) */
+    1fr /* 번호 */
+    5fr /* 이름 - 더 넓게 */
+    0.6fr /* 신고 횟수 - 더 좁게 */
+    0.6fr /* 차단(이용 제한) 횟수 - 더 좁게 */
+    0.8fr /* 접속일 - 더 좁게 */
+    0.8fr /* 가입일 - 더 좁게 */
+    0.6fr /* 상태 - 더 좁게 */
+    60px; /* 수정 아이콘 */
   background-color: #f5f5f5;
   padding: 0;
   align-items: center;
@@ -65,17 +64,16 @@
 /* 테이블 행 */
 .table_row {
   display: grid;
-  /* 헤더와 동일한 컬럼 정의를 공유해 정렬 유지 */
   grid-template-columns:
     40px /* 체크박스 */
-    100px /* 번호 */
-    1fr /* 이름 (남은 공간 차지) */
-    140px /* 신고 횟수 (더 늘림) */
-    140px /* 차단 횟수 (더 늘림) */
-    180px /* 접속일 */
-    180px /* 가입일 */
-    100px /* 상태 */
-    50px; /* 수정 아이콘 (맨 끝, 고정) */
+    1fr /* 번호 */
+    5fr /* 이름 - 더 넓게 */
+    0.6fr /* 신고 횟수 - 더 좁게 */
+    0.6fr /* 차단(이용 제한) 횟수 - 더 좁게 */
+    0.8fr /* 접속일 - 더 좁게 */
+    0.8fr /* 가입일 - 더 좁게 */
+    0.6fr /* 상태 - 더 좁게 */
+    60px; /* 수정 아이콘 */
   border-bottom: 1px solid #f2f2f2;
   align-items: center;
   min-height: 62px;
@@ -108,6 +106,24 @@
   color: #444444;
   text-align: left;
   box-sizing: border-box;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* 테이블 셀 내부 텍스트에 말줄임표 적용 */
+.table_cell > *,
+.table_cell_number > *,
+.table_cell_name > *,
+.table_cell_report_count > *,
+.table_cell_block_count > *,
+.table_cell_last_access > *,
+.table_cell_join_date > *,
+.table_cell_status > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  display: block;
 }
 
 /* 체크박스 */
@@ -149,38 +165,6 @@
   flex-shrink: 0;
 }
 
-/* 상태 태그 공통 스타일 */
-.status_tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: -0.28px;
-  white-space: nowrap;
-}
-
-/* 정상 상태 태그 */
-.status_tag_normal {
-  background-color: rgba(43, 127, 255, 0.1);
-  color: #2b7fff;
-}
-
-/* 일시 정지 상태 태그 */
-.status_tag_suspended {
-  background-color: rgba(255, 38, 38, 0.05);
-  color: #ff2626;
-}
-
-/* 영구 정지 상태 태그 */
-.status_tag_permanent {
-  background-color: #f1f1f1;
-  color: #666666;
-}
-
 /* 빈 메시지 */
 .empty_message {
   padding: 40px;
@@ -207,7 +191,11 @@
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.2s ease;
+}
+
+/* 테이블 행에 호버할 때 수정 버튼 표시 */
+.table_row:hover .edit_button {
+  opacity: 1;
 }
 
 /* 수정 아이콘 */
@@ -215,9 +203,4 @@
   width: 20px;
   height: 20px;
   flex-shrink: 0;
-}
-
-/* 테이블 행 호버 시 수정 버튼 표시 */
-.table_row:hover .edit_button {
-  opacity: 1;
 }

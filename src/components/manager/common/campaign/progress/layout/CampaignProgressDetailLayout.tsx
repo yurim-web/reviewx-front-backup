@@ -29,8 +29,11 @@ import { useRouter } from "next/navigation";
 import styles from "@/styles/partner/campaign_application/campaign_application.module.css";
 import SortFilterControl from "@/components/partner/campaign_application/SortFilterControl";
 import Campaignbanner from "@/components/partner/campaign_application/CampaignInfoBox";
-import ExcelDownloadBtn from "@/components/partner/campaign_application/ExcelDownloadBtn";
 import EmptyApplicantsList from "@/components/partner/campaign_application/EmptyApplicantsList";
+import {
+  getCampaignDetailPath,
+  type CampaignType,
+} from "@/utils/helpers/url";
 import type {
   CampaignWithApplicants,
   AllApplicant,
@@ -150,8 +153,21 @@ export default function CampaignProgressDetailLayout({
             <button
               className={styles.view_campaign_button}
               onClick={() => {
-                // TODO: 캠페인 상세 페이지로 이동하는 로직 구현
-                // 예: router.push(`/manager_ga/campaign/${campaign_id}`);
+                /**
+                 * 캠페인 상세 페이지로 이동하는 로직
+                 *
+                 * - 기존 TODO를 실제 구현으로 교체했습니다.
+                 * - 캠페인 타입(배송형/방문형/구매평/기자단/미션형)에 따라
+                 *   공통 상세 페이지 URL을 생성합니다.
+                 * - 관리자 종류(GA/SA)와 상관없이 동일한 상세 페이지로 이동합니다.
+                 */
+                const campaign_type =
+                  campaign_data.campaignInfo.campaignType as CampaignType;
+                const detail_path = getCampaignDetailPath(
+                  campaign_type,
+                  campaign_id
+                );
+                router.push(detail_path);
               }}
               aria-label="캠페인 보기"
             >
@@ -181,18 +197,22 @@ export default function CampaignProgressDetailLayout({
           */}
           <section className={styles.campaign_application_section}>
             {/* 캠페인 배너 - 캠페인 기본 정보를 표시합니다 */}
-            <Campaignbanner campaignInfo={campaign_data.campaignInfo} />
+            {/* 
+              📌 모집 인원 표시:
+              - applicantsCount를 전달하여 실제 신청자 수를 표시합니다
+              - 파트너 페이지와 동일하게 실제 신청자 수를 보여줍니다
+              - applicantsCount가 없으면 campaignInfo.recruitedCount를 사용합니다
+            */}
+            <Campaignbanner
+              campaignInfo={campaign_data.campaignInfo}
+              applicantsCount={applicants_count}
+            />
 
             {/* 
-              다운로드 및 필터 섹션
+              정렬 섹션
               - article 태그: 독립적인 콘텐츠 영역을 나타내는 시맨틱 태그입니다
             */}
-            <article className={styles.download_section}>
-              {/* 엑셀 다운로드 버튼 */}
-              <ExcelDownloadBtn
-                onDownloadApplicants={handle_download_applicants}
-                onDownloadSelected={handle_download_selected}
-              />
+            <article className={styles.download_section_right}>
               {/* 정렬 필터 컨트롤 */}
               <SortFilterControl
                 options={sort_options}

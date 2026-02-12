@@ -20,6 +20,7 @@
 import { Metadata } from 'next';
 import ManagerGAHeader from '@/components/manager/ga/common/ManagerGAHeader';
 import SidebarMenu from '@/components/manager/ga/common/SidebarMenu';
+import ManagerLayoutWrapper from '@/components/manager/common/ManagerLayoutWrapper';
 // 관리자 페이지 전용 레이아웃 스타일 (전역 main 태그의 max-width 제한 제거)
 // 일반 CSS 파일이므로 전역 스타일을 적용할 수 있습니다
 import '@/styles/manager_ga/layout.css';
@@ -43,13 +44,13 @@ export default function ManagerGALayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <ManagerLayoutWrapper>
       {/* GA 관리자 전용 헤더 */}
       <ManagerGAHeader />
       {/* GA 관리자 사이드바 메뉴 */}
       <SidebarMenu />
       {/* 하위 페이지 컴포넌트 */}
       {children}
-    </>
+    </ManagerLayoutWrapper>
   );
 }

@@ -52,7 +52,7 @@
 .label_box {
   width: 200px;
   padding: 0px 12px;
-  color: #333;
+  color: #444;
   font-size: 18px;
   font-weight: 600;
   line-height: 18px;
@@ -87,8 +87,8 @@
   justify-content: center;
   align-items: center;
   border-radius: 4px;
-  background: rgba(217, 0, 116, 0.1); /* 연한 핑크 배경 */
-  color: #d90074;
+  background: #ff5694;
+  color: #fff;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
@@ -98,12 +98,16 @@
 
 /* 키워드 텍스트 박스 */
 .keyword_text_box {
-  width: 100%;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
+  overflow: hidden;
   color: #444;
+  letter-spacing: -0.32px;
+  width: 100%;
   font-size: 16px;
   font-weight: 500;
   line-height: 26px;
-  letter-spacing: -0.32px;
 }
 
 /* 홍보 링크 스타일 */
@@ -123,6 +127,7 @@
   justify-content: flex-start;
   padding-bottom: 24px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* 하단 구분선 */
+  width: 100%; /* 전체 너비 사용하여 border-bottom이 끝까지 표시되도록 */
 }
 
 /* 안내 사항 아이템 (키워드 삽입, 이미지 첨부 등) */
@@ -155,7 +160,7 @@
   color: #444;
   font-size: 16px;
   font-weight: 500;
-  line-height: 26px;
+  line-height: 26px; 
   letter-spacing: -0.32px;
 }
 
@@ -164,7 +169,7 @@
   color: #848484;
   font-size: 13px;
   font-weight: 500;
-  line-height: 25px;
+  line-height: 24px;
   letter-spacing: -0.26px;
 }
 
@@ -181,21 +186,23 @@
 
 /* ===== 반응형 스타일 ===== */
 
-/* ✅ 모바일 공통 — 0~739px */
-@media (max-width: 739px) {
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
   /* ===== 리뷰 가이드라인 컨테이너 ===== */
   .review_guidelines_container {
     display: flex;
     flex-direction: column;
-    gap: 32px;
-    padding: 20px 24px;
+    gap: 28px;
+    padding: 20px 20px;
   }
 
   /* ===== 상세 정보 컨테이너 ===== */
   .campaign_detail_info_container {
     display: flex;
     flex-direction: column;
-    padding: 0px 24px;
+    padding: 0px 20px;
   }
 
   /* ===== 정보 항목 박스 (제공내역, 키워드, 안내사항 등) ===== */
@@ -204,30 +211,31 @@
     flex-direction: column; /* 모바일에서는 세로 배치 */
     align-items: flex-start;
     border-top: 1px solid rgba(0, 0, 0, 0.1); /* 상단 구분선 */
-    padding: 20px 0px;
+    padding: 24px 0px;
     gap: 12px; /* 라벨과 내용 사이 간격 */
   }
 
   /* 라벨 박스 (제공내역, 키워드 등) */
   .label_box {
     width: 100%; /* 모바일에서는 전체 너비 사용 */
-    padding: 0px;
-    color: #333;
-    font-size: 16px;
+
+    color: #444;
+    font-size: 18px;
     font-weight: 600;
-    line-height: 20px;
-    letter-spacing: -0.32px;
+    line-height: 18px;
+    letter-spacing: -0.36px;
+    padding: 0px 12px;
   }
 
   /* 내용 박스 */
   .content_box {
-    padding: 0px;
+    padding: 0px 12px;
     width: 100%; /* 모바일에서는 전체 너비 사용 */
     color: #444;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
-    line-height: 22px;
-    letter-spacing: -0.28px;
+    line-height: 24px;
+    letter-spacing: -0.32px;
   }
 
   /* ===== 키워드 섹션 ===== */
@@ -245,23 +253,25 @@
     justify-content: center;
     align-items: center;
     border-radius: 4px;
-    background: rgba(217, 0, 116, 0.1); /* 연한 핑크 배경 */
-    color: #d90074;
-    font-size: 14px;
+    background: #ff5694;
+    color: #fff;
+    font-size: 12px;
     font-weight: 500;
-    line-height: 14px;
-    letter-spacing: -0.28px;
+    line-height: 12px;
+    letter-spacing: -0.24px;
     cursor: pointer;
+    min-width: 37px;
+    height: 20px;
   }
 
   /* 키워드 텍스트 박스 */
   .keyword_text_box {
     width: 100%;
     color: #444;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
-    line-height: 22px;
-    letter-spacing: -0.28px;
+    line-height: 26px;
+    letter-spacing: -0.32px;
   }
 
   /* ===== 요구사항 아이콘 컨테이너 ===== */
@@ -272,6 +282,7 @@
     padding-bottom: 20px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* 하단 구분선 */
     justify-content: space-between; /* 아이콘들을 균등하게 분배 */
+    width: 100%; /* 전체 너비 사용하여 border-bottom이 끝까지 표시되도록 */
   }
 
   /* 안내 사항 아이템 (키워드 삽입, 이미지 첨부 등) */
@@ -303,10 +314,10 @@
   /* 안내 사항 텍스트 */
   .guideline_text {
     color: #444;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
-    line-height: 22px;
-    letter-spacing: -0.28px;
+    line-height: 26px;
+    letter-spacing: -0.32px;
     word-break: keep-all; /* 자연스러운 줄바꿈 */
     overflow-wrap: break-word;
   }
@@ -314,10 +325,10 @@
   /* 추가 안내 사항 텍스트 (더 작은 폰트) */
   .additional_guideline_text {
     color: #848484;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
-    line-height: 20px;
-    letter-spacing: -0.24px;
+    line-height: 24px;
+    letter-spacing: -0.26px;
     word-break: keep-all; /* 자연스러운 줄바꿈 */
     overflow-wrap: break-word;
   }

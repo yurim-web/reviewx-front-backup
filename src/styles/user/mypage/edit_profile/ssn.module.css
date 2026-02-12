@@ -1,0 +1,100 @@
+/* ========================================
+   🆔 주민등록번호 입력 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - SocialSecurityNumberInput.tsx
+ */
+
+/* 주민등록번호 필드 */
+.ssn_container {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* 앞자리 래퍼 */
+.ssn_front_wrapper {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 앞자리 입력 */
+.ssn_front_input {
+  width: 100% !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+}
+
+.ssn_separator {
+  font-size: 16px;
+  font-weight: 500;
+  color: #444;
+  flex-shrink: 0;
+}
+
+.ssn_container .input_field {
+  /* 주민등록번호 입력 시 커서와 숫자 위치가 어색해 보이지 않도록 자간 초기화 */
+  letter-spacing: 0;
+}
+
+/* 뒷자리 래퍼 */
+.ssn_back_wrapper {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 뒷자리 인풋: 커스텀 마스킹 표시 */
+.ssn_back_input {
+  width: 100% !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  letter-spacing: 2px; /* 숫자와 마스킹 문자 간격 */
+}
+
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  /* 주민등록번호 컨테이너 */
+  .ssn_container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 12px;
+  }
+
+  /* 앞자리 래퍼 */
+  .ssn_front_wrapper {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* 앞자리 입력 필드 */
+  .ssn_front_input {
+    width: 100% !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  /* 뒷자리 래퍼 */
+  .ssn_back_wrapper {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* 뒷자리 입력 필드 */
+  .ssn_back_input {
+    width: 100% !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    letter-spacing: 2px;
+  }
+
+  /* 구분자 (-) */
+  .ssn_separator {
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+}

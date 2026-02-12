@@ -25,15 +25,37 @@
   z-index: 100;
 }
 
+/* 뒤로가기 버튼 - PC에서는 숨김, 모바일에서만 표시 */
+.mobile_back_button {
+  display: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 12px;
+}
+
+.mobile_back_button img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
 /* 페이지 제목 - "새 캠페인 등록" */
 .page_title {
-  font-family: 'Pretendard', sans-serif;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 20px;
   line-height: 1.2;
   color: #444444;
   margin: 0;
   letter-spacing: -0.4px;
+  flex: 1;
+  text-align: left;
 }
 
 /* 긴급 체크박스 - 헤더 우측 */
@@ -56,17 +78,17 @@
 }
 
 /* 긴급 체크박스 - 체크된 상태 - 더 구체적인 선택자 */
-.header_urgent_checkbox .checkbox_label input[type='checkbox']:checked,
-div.header_urgent_checkbox label.checkbox_label input[type='checkbox']:checked {
+.header_urgent_checkbox .checkbox_label input[type="checkbox"]:checked,
+div.header_urgent_checkbox label.checkbox_label input[type="checkbox"]:checked {
   border: 2px solid #ff2626 !important;
   background: white !important;
 }
 
-.header_urgent_checkbox .checkbox_label input[type='checkbox']:checked::after,
+.header_urgent_checkbox .checkbox_label input[type="checkbox"]:checked::after,
 div.header_urgent_checkbox
   label.checkbox_label
-  input[type='checkbox']:checked::after {
-  content: '✓' !important;
+  input[type="checkbox"]:checked::after {
+  content: "✓" !important;
   position: absolute !important;
   top: 50% !important;
   left: 50% !important;
@@ -104,7 +126,7 @@ div.header_urgent_checkbox
 }
 
 .urgent_checkbox:checked::after {
-  content: '✓';
+  content: "✓";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -114,30 +136,62 @@ div.header_urgent_checkbox
   font-weight: bold;
 }
 
+/* 캠페인 오픈 후 긴급 체크박스 비활성화 - 기본 미션 설정 비활성과 동일 톤 (Figma 461-1994) */
+.urgent_checkbox_disabled {
+  color: #9ca3af !important;
+  cursor: default;
+  font-weight: 500;
+}
+
+.urgent_checkbox:disabled {
+  border: 1.5px solid #d9d9d9 !important;
+  background: #f6f6f6 !important;
+  cursor: default !important;
+}
+
+/* 비활성화된 긴급 체크박스가 체크된 경우 - 체크마크도 회색 */
+.urgent_checkbox:disabled:checked {
+  border: 1.5px solid #d9d9d9 !important;
+  background: #f6f6f6 !important;
+}
+
+.urgent_checkbox:disabled:checked::after,
+.header_urgent_checkbox .urgent_checkbox:disabled:checked::after {
+  color: #999999 !important;
+}
+
+/* 비활성 시 라벨 빨간색 제거 */
+.header_urgent_checkbox label.urgent_checkbox_disabled {
+  color: #999999 !important;
+}
+
 /* 캠페인 유형 선택 버튼들 - 배송형, 방문형 등 */
 .campaign_type_buttons {
   display: flex;
   gap: 20px;
-  flex-wrap: wrap; /* 화면이 작아지면 다음 줄로 넘어가도록 */
+  flex-wrap: wrap;
 }
 
 /* 개별 캠페인 유형 버튼 */
 .campaign_type_button {
   flex: 1;
-  min-width: 100px; /* 최소 너비를 줄여서 작은 화면에서도 잘 맞도록 */
-  max-width: 200px; /* 최대 너비를 설정하여 너무 커지지 않도록 */
+  min-width: 100px;
+  max-width: 200px;
   height: 56px;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
   background: #fff;
   color: #848484;
-  font-family: 'Pretendard', sans-serif;
   font-weight: 500;
   font-size: 16px;
   line-height: 1.2;
   cursor: pointer;
   transition: all 0.2s ease;
   letter-spacing: -0.32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .disabled_button,
@@ -150,49 +204,74 @@ div.header_urgent_checkbox
 
 /* 선택된 캠페인 유형 버튼 */
 .campaign_type_button.active {
-  border-color: #444444;
-  color: #444444;
+  border-color: #ff5694;
+  color: #ff5694;
   background: #fff;
 }
 
-/* 반응형 디자인 */
-/* 태블릿 및 작은 데스크톱 화면 (1024px 이하) */
-@media (max-width: 1024px) {
-  .campaign_type_buttons {
-    gap: 10px;
-  }
+/* ============================================
+   모바일 반응형 스타일 추가
+   ============================================ */
 
-  .campaign_type_button {
-    min-width: 90px;
-    max-width: 180px;
-    font-size: 15px;
-  }
-}
-
-/* 작은 태블릿 및 큰 모바일 화면 (768px 이하) */
 @media (max-width: 768px) {
-  .campaign_type_buttons {
-    gap: 8px;
-  }
-
-  .campaign_type_button {
-    min-width: calc(50% - 4px); /* 2열로 배치 */
-    max-width: calc(50% - 4px);
-    height: 48px;
-    font-size: 14px;
-  }
-}
-
-/* 모바일 화면 (480px 이하) */
-@media (max-width: 480px) {
-  .campaign_type_buttons {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .campaign_type_button {
-    min-width: 100%;
-    max-width: 100%;
+  /* 페이지 헤더 - 모바일에서는 상단 고정 */
+  .page_header {
+    padding: 22px 24px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    height: 64px;
+    z-index: 1000;
+    box-sizing: border-box;
+  }
+
+  /* 모바일에서 뒤로가기 버튼 표시 */
+  .mobile_back_button {
+    display: flex;
+    margin-right: 8px;
+  }
+
+  /* 페이지 제목 - 모바일에서 간격 조정 */
+  .page_title {
+    flex: 1;
+    margin-left: 0;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 20px;
+    letter-spacing: -0.4px;
+  }
+
+  .checkbox_label {
+    gap: 6px;
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 캠페인 유형 선택 - 2x3 그리드 형태 */
+  .campaign_type_buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .campaign_type_button {
+    flex: none;
+    min-width: 0;
+    max-width: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  /* 마지막 버튼(미션형)은 그리드 2열 중 왼쪽에만 배치 */
+  .campaign_type_button:nth-child(5) {
+    grid-column: 1 / 2;
   }
 }

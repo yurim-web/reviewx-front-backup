@@ -17,6 +17,10 @@
  * - 개인: 회색 배경, 회색 텍스트
  */
 
+// CSS 모듈 직접 import
+// 컴포넌트 내부에서 스타일을 직접 가져와서 사용합니다
+import tag_styles from "@/styles/common/tags.module.css";
+
 /**
  * 사업자 구분 타입 정의
  */
@@ -27,23 +31,17 @@ export type BusinessType = "법인" | "개인";
  *
  * 각 속성 설명:
  * - type: 표시할 사업자 구분 값 (법인, 개인 중 하나)
- * - styles: CSS 모듈에서 가져온 스타일 객체
  */
 interface BusinessTypeTagProps {
   type: BusinessType;
-  styles: Record<string, string>;
 }
 
 /**
  * 사업자 구분 태그 컴포넌트
  *
  * @param type - 표시할 사업자 구분 값
- * @param styles - CSS 모듈 스타일 객체
  */
-export default function BusinessTypeTag({
-  type,
-  styles: css_styles,
-}: BusinessTypeTagProps) {
+export default function BusinessTypeTag({ type }: BusinessTypeTagProps) {
   /**
    * 구분에 따라 적절한 CSS 클래스명을 반환하는 함수
    */
@@ -51,13 +49,13 @@ export default function BusinessTypeTag({
     switch (type) {
       case "법인":
         // 법인: 회색 배경, 흰색 텍스트
-        return css_styles.division_tag_corporate;
+        return tag_styles.division_tag_corporate;
       case "개인":
         // 개인: 회색 배경, 회색 텍스트
-        return css_styles.division_tag_individual;
+        return tag_styles.division_tag_individual;
       default:
         // 기본값으로 법인 스타일 반환
-        return css_styles.division_tag_corporate;
+        return tag_styles.division_tag_corporate;
     }
   };
 
@@ -73,7 +71,7 @@ export default function BusinessTypeTag({
    */
   return (
     <div
-      className={`${css_styles.division_tag} ${get_type_class_name()}`}
+      className={`${tag_styles.division_tag} ${get_type_class_name()}`}
       role="status"
       aria-label={`사업자 구분: ${type}`}
     >

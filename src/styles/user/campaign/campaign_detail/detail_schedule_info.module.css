@@ -5,13 +5,13 @@
 /**
  * 사용 컴포넌트:
  * - DetailScheduleInfo.tsx (캠페인 일정 정보 컴포넌트)
- * 
+ *
  * 사용 페이지:
- * - /user/delivery/[id] (배송형 캠페인 상세)
- * - /user/visit/[id] (방문형 캠페인 상세)
- * - /user/review/[id] (구매평 캠페인 상세)
- * - /user/mission/[id] (미션형 캠페인 상세)
- * - /user/reporter/[id] (기자단 캠페인 상세)
+ * - /campaign/delivery/[id] (배송형 캠페인 상세)
+ * - /campaign/visit/[id] (방문형 캠페인 상세)
+ * - /campaign/review/[id] (구매평 캠페인 상세)
+ * - /campaign/mission/[id] (미션형 캠페인 상세)
+ * - /campaign/reporter/[id] (기자단 캠페인 상세)
  */
 
 /* ===== 캠페인 정보 섹션 ===== */
@@ -20,6 +20,7 @@
   flex-direction: column;
   gap: 20px;
   position: relative; /* 그라데이션 배경을 위한 기준점 */
+  padding-top: 12px;
 }
 
 /* 그라데이션 배경 오버레이 */
@@ -44,20 +45,20 @@
 
 /* 정보 라벨 (모집 인원, 모집 기간 등) */
 .label {
-  color: #333;
+  color: #444;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 16px;
   letter-spacing: -0.32px;
 }
 
 /* 정보 값 */
 .value {
-  color: #848484;
+  color: #444;
   text-align: right;
   font-size: 16px;
   font-weight: 500;
-  line-height: 16px;
+  line-height: 16px; /* 100% */
   letter-spacing: -0.32px;
 }
 
@@ -73,67 +74,62 @@
 
 /* 구분자 (/) */
 .separator {
-  color: #848484;
+  color: #444444;
 }
 
 /* 총 모집 인원 */
 .total_count {
-  color: #848484;
+  color: #444444;
 }
 
 /* 모집 기간 값 강조 */
 .recruitment_info {
-  color: #333;
+  color: #444;
+  font-weight: 500;
+}
+
+/* 포인트 강조 (오늘 해당 기간·모집 인원) — #FF5694, font-weight 600 */
+.label_point {
+  color: #ff5694;
   font-weight: 600;
+}
+
+.value_point {
+  color: #ff5694;
+  font-weight: 600;
+}
+
+/* 모집 인원 — 신청 인원(앞 n명)만 포인트, 총 모집 인원(뒤 n명)·구분자(/)는 기본 스타일 */
+.current_count_point {
+  color: #ff5694;
+  font-weight: 600;
+}
+
+/* 일정 정보 하단 회색 구분선 - article 밖, 양옆 공간 없이 전체 너비 */
+.separator_line {
+  margin: 10px -40px 0;
+  border-top: 10px solid #f7f7f7;
 }
 
 /* ===== 반응형 스타일 ===== */
 
-/* ✅ 모바일 공통 — 0~739px */
-@media (max-width: 739px) {
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  /* 캠페인 정보 섹션 */
   .campaign_info {
-    gap: 20px;
-    position: relative; /* 그라데이션 배경을 위한 기준점 */
+    padding: 8px 8px 0 8px;
   }
 
-  /* 그라데이션 배경 오버레이 */
+  /* 그라데이션 배경 오버레이 - 모바일에서는 숨김 */
   .gradient_background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 100%;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, #fff 150%);
-    border-radius: 8px;
-    z-index: 1; /* 다른 요소 위에 표시 */
-    pointer-events: none; /* 클릭 이벤트 방해하지 않음 */
+    display: none;
   }
 
-  /* 캠페인 정보 항목 컨테이너 */
-  .info_item_container {
-    display: flex;
-    justify-content: space-between; /* 라벨과 값 좌우 정렬 */
-    align-items: center;
-  }
-
-  /* 정보 라벨 (모집 인원, 모집 기간 등) */
-  .label {
-    font-size: 15px;
-    line-height: 15px;
-    letter-spacing: -0.3px;
-  }
-
-  /* 정보 값 */
-  .value {
-    font-size: 15px;
-    line-height: 15px;
-    letter-spacing: -0.32px;
-  }
-
-  /* 현재 지원자 수 (강조 표시) */
-  .current_count {
-    font-size: 15px;
-    line-height: 15px;
-    letter-spacing: -0.32px;
+  /* 구분선 - 모바일 (product_info padding 20px) */
+  .separator_line {
+    margin: 10px -20px 0;
+    border-top: 10px solid #f7f7f7;
   }
 }

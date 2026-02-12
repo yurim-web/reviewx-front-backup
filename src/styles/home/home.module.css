@@ -18,57 +18,53 @@
 
 /* 메인 카테고리 메뉴 부분 */
 .main_menu_container {
-  position: fixed; /* 헤더 밑에 고정 */
-  top: 80px; /* 헤더(80px) 바로 아래에 배치 */
+  position: fixed;
+  top: 80px;
   left: 0;
   right: 0;
   width: 100%;
-  max-width: 1000px; /* 최대 너비 제한 */
-  margin: 0 auto; /* 가운데 정렬 */
+  max-width: 1000px;
+  margin: 0 auto;
   padding: 24px 40px;
   display: flex;
   align-items: center;
   gap: 24px;
-  background-color: white; /* 배경색 추가 */
+  background-color: white;
   border-bottom: 1px solid #d9d9d9;
-  z-index: 99; /* 헤더(100)보다 낮지만 콘텐츠보다는 위에 */
-  /* 스크롤 경고 방지를 위한 속성 추가 */
+  z-index: 99;
+
   scroll-margin-top: 0;
   scroll-snap-align: none;
 }
 
 .main_menu_item {
-  color: #848484;
+  color: #444;
   font-size: 20px;
   font-weight: 500;
-  line-height: 20px; /* 100% */
+  line-height: 20px;
   letter-spacing: -0.4px;
 }
 
-.main_menu_item:active {
-  color: #d90074;
+.main_menu_item_active {
+  color: #ff5694;
+  font-weight: 700;
 }
 
-.main_menu_item_active {
-  color: #d90074;
+/* 헤더와 메뉴 공간 확보 */
+.header_spacer {
+  height: 149px;
 }
 
 .container {
   width: 100%;
-  padding: 40px 40px 120px 40px;
+  padding: 32px 40px 80px 40px;
   background-color: #ffffff;
+  min-height: calc(100vh - 149px);
 }
 /* 메인 배너 컨테이너 시작 */
-.main_banner {
+.main_banner_container {
   width: 100%;
-  height: 418px;
-  flex-shrink: 0;
-  border-radius: 8px;
-}
-.main_banner_container > img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  margin-bottom: 0;
 }
 /* 메인 배너 컨테이너 끝 */
 
@@ -81,180 +77,141 @@
   gap: 24px;
 }
 
+/* 검색 페이지 상단: 제목 + 정렬 버튼 정렬용 */
+.search_header_row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 /* 캠페인 그리드 */
 .campaign_grid {
   display: grid;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
   grid-template-columns: repeat(auto-fit, minmax(212px, 1fr));
-  grid-auto-rows: 1fr; /* 각 행의 높이를 동일하게 맞춤 */
-  align-items: stretch; /* 그리드 아이템들이 행 높이에 맞춰 늘어남 */
-  gap: 24px;
+  grid-auto-rows: auto;
+  align-items: stretch;
+  gap: 40px 24px;
 }
 
 /* 캠페인 제목 부분 */
 
+.search_campaign_container {
+  padding-top: 0 !important;
+}
+
+/* 검색 결과 없음 상태 */
+.empty_state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0px;
+  text-align: center;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.empty_text {
+  color: #ababab;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
 /* 캠페인 컨테이너 끝 */
 
-/* ✅ 모바일 공통 — 0~739px */
-@media (max-width: 739px) {
-  /* 메인 카테고리 메뉴 부분 */
-  .main_menu_container {
-    position: fixed; /* 헤더 밑에 고정 */
-    top: 80px; /* 헤더(80px) 바로 아래에 배치 */
-    left: 0;
-    right: 0;
-    width: 100%;
-    padding: 20px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 20px;
-    background-color: white; /* 배경색 추가 */
-    z-index: 99; /* 헤더(100)보다 낮지만 콘텐츠보다는 위에 */
-  }
+/* 📱 ================================================================================================
+   태블릿 반응형 스타일 (768px ~ 1024px)
+================================================================================================ 📱 */
 
-  .main_menu_item {
-    font-size: 16px;
-    line-height: 16px; /* 100% */
-    letter-spacing: -0.32px;
-  }
-
-  .container {
-    width: 100%;
-    padding: 24px 24px 80px 24px;
-  }
-  /* 메인 배너 컨테이너 시작 */
-  .main_banner {
-    width: 100%;
-    height: auto;
-  }
-  /* 모바일에서 이미지 ---? */
-  .main_banner_container > img {
-    width: 100%;
-    height: auto;
-  }
-  /* 메인 배너 컨테이너 끝 */
-
-  /* 캠페인 컨테이너 시작  */
-  .campaign_container {
-    padding-top: 40px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-
-  /* 캠페인 그리드 */
+@media (min-width: 769px) and (max-width: 1024px) {
+  /* 캠페인 그리드 - 태블릿 3열로 변경 */
   .campaign_grid {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-auto-rows: 1fr; /* 각 행의 높이를 동일하게 맞춤 */
-    align-items: stretch; /* 그리드 아이템들이 행 높이에 맞춰 늘어남 */
-    gap: 16px;
-  }
-}
-
-/* ✅ 태블릿 세로(portrait) 전용 — 740~1100px */
-@media (min-width: 740px) and (max-width: 1100px) and (orientation: portrait) {
-  /* 메인 카테고리 메뉴 부분 */
-  .main_menu_container {
-    padding: 20px 56px;
-    display: flex;
-    align-items: center;
-    /* justify-content: space-between; */
-    gap: 24px;
-  }
-
-  .main_menu_item {
-    font-size: 16px;
-    line-height: 16px; /* 100% */
-    letter-spacing: -0.32px;
-  }
-
-  .container {
-    width: 100%;
-    padding: 40px 56px 80px 56px;
-  }
-  /* 메인 배너 컨테이너 시작 */
-  .main_banner {
-    width: 100%;
-    height: auto;
-  }
-  /* 모바일에서 이미지 ---? */
-  .main_banner_container > img {
-    width: 100%;
-    height: auto;
-  }
-  /* 메인 배너 컨테이너 끝 */
-
-  /* 캠페인 컨테이너 시작  */
-  .campaign_container {
-    padding-top: 40px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-
-  /* 캠페인 그리드 */
-  .campaign_grid {
-    width: 100%;
-    display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: 1fr; /* 각 행의 높이를 동일하게 맞춤 */
-    align-items: stretch; /* 그리드 아이템들이 행 높이에 맞춰 늘어남 */
-    gap: 20px;
   }
 }
-/* ✅ 태블릿 가로(landscape) 전용 — 740~1100px */
-@media (min-width: 740px) and (max-width: 1366px) and (orientation: landscape) {
-  /* 메인 카테고리 메뉴 부분 */
-  .main_menu_container {
-    padding: 20px 56px;
-    display: flex;
-    align-items: center;
-    /* justify-content: space-between; */
-    gap: 24px;
-  }
 
-  .main_menu_item {
-    font-size: 16px;
-    line-height: 16px; /* 100% */
-    letter-spacing: -0.32px;
-  }
-
-  .container {
-    width: 100%;
-    padding: 40px 56px 80px 56px;
-  }
-  /* 메인 배너 컨테이너 시작 */
-  .main_banner {
-    width: 100%;
-    height: auto;
-  }
-  /* 모바일에서 이미지 ---? */
-  .main_banner_container > img {
-    width: 100%;
-    height: auto;
-  }
-  /* 메인 배너 컨테이너 끝 */
-
-  /* 캠페인 컨테이너 시작  */
-  .campaign_container {
-    padding-top: 40px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-
-  /* 캠페인 그리드 */
+/* 데스크톱 큰 화면 (1025px 이상) - 최대 4열 보장 */
+@media (min-width: 1025px) {
   .campaign_grid {
-    width: 100%;
-    display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-auto-rows: 1fr; /* 각 행의 높이를 동일하게 맞춤 */
-    align-items: stretch; /* 그리드 아이템들이 행 높이에 맞춰 늘어남 */
+  }
+}
+
+/* 📱 ================================================================================================
+   모바일 반응형 스타일 (max-width: 768px)
+================================================================================================ 📱 */
+
+@media (max-width: 768px) {
+  /* 메인 메뉴 컨테이너 - 모바일 */
+  /* 헤더와 메뉴 공간 확보 */
+
+  .main_menu_container {
+    top: 64px;
+    padding: 20px 20px;
+    justify-content: space-between;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    gap: 0px;
+  }
+
+  /* 스크롤바 숨기기 */
+  .main_menu_container::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 메인 메뉴 아이템 - 모바일 폰트 크기 조정 */
+  .main_menu_item {
+    font-size: 18px;
+    line-height: 18px;
+    letter-spacing: -0.36px;
+  }
+
+  /* 헤더 공간 확보 - 모바일 */
+  .header_spacer {
+    height: 120px;
+  }
+
+  /* 컨테이너 - 모바일 패딩 조정 */
+  .container {
+    padding: 20px 20px 60px 20px;
+    min-height: calc(100vh - 120px);
+  }
+
+  /* 메인 배너 컨테이너 - 모바일 */
+  .main_banner_container {
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  /* 캠페인 컨테이너 - 모바일 패딩 조정 */
+  .campaign_container {
+    padding-top: 56px;
     gap: 20px;
+  }
+
+  /* 캠페인 그리드 - 모바일 2열로 변경 */
+  .campaign_grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px 12px;
+  }
+
+  /* 검색 결과 없음 상태 - 모바일 패딩 조정 */
+  .empty_state {
+    padding: 40px 20px;
+  }
+
+  .empty_text {
+    font-size: 14px;
+    line-height: 20px;
   }
 }

@@ -17,19 +17,18 @@
   width: 100%;
 }
 
-/* 메인 컨텐츠 영역 (흰색 배경) */
+/* 메인 컨텐츠 영역 (흰색 배경) - 공지사항과 동일: padding-top으로 SubHeader 아래 시작 */
 .main_content {
   background-color: white;
   max-width: 1000px;
   margin: 0 auto;
   min-height: calc(100vh - 80px);
-  padding-bottom: 80px;
+  padding-top: 80px;
 }
 
-/* 컨테이너 */
+/* 컨테이너 (제목은 main 직계 자식이라 여기선 상단 여백 없음) */
 .container {
   margin: 0 auto;
-  padding-top: 148px;
 }
 
 /* ============================================
@@ -41,7 +40,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 40px;
+  padding: 40px 40px 24px 40px;
 }
 
 /* "보유 포인트" 라벨 */
@@ -76,7 +75,7 @@
   font-size: 40px;
   line-height: 40px;
   letter-spacing: -0.8px;
-  color: #848484;
+  color: #ff5694;
 }
 
 /* 보유 포인트 섹션 아래 구분선 */
@@ -90,12 +89,23 @@
 }
 
 /* ============================================
+   폼 박스 영역
+   ============================================ */
+
+/* 폼 박스들을 감싸는 컨테이너 */
+.form_boxes_container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* ============================================
    폼 입력 영역
    ============================================ */
 
 /* 폼 전체 섹션 (예금주, 은행, 계좌번호, 출금신청 등) */
 .form_section {
-  padding: 0px 40px 40px 40px;
+  padding: 0px 40px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -108,6 +118,16 @@
   gap: 12px;
 }
 
+/* 타이틀 */
+.form_title {
+  color: #444;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 18px; /* 100% */
+  padding-bottom: 4px;
+}
+
 /* 출금신청 입력 필드의 위쪽 여백 */
 .withdrawal_amount_group {
   margin-top: 20px;
@@ -115,12 +135,11 @@
 
 /* 폼 라벨 (예금주, 은행, 계좌번호 등) */
 .form_label {
-  color: #999;
-  text-overflow: ellipsis;
-  font-size: 16px;
+  color: #444;
+  font-size: 14px;
   font-weight: 500;
-  line-height: 16px; /* 100% */
-  letter-spacing: -0.32px;
+  line-height: 14px;
+  letter-spacing: -0.28px;
 }
 
 /* 입력 필드 기본 스타일 */
@@ -162,25 +181,12 @@
 }
 
 /* ============================================
-   에러 메시지
-   ============================================ */
-
-/* 에러 메시지 텍스트 */
-.error_message {
-  color: #ff4040;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 14px; /* 100% */
-  letter-spacing: -0.28px;
-}
-
-/* ============================================
    출금 안내 사항 영역
    ============================================ */
 
 /* 안내 사항 전체 섹션 */
 .notice_section {
-  padding: 0px 40px 0px 40px;
+  padding: 24px 40px 40px 40px;
 }
 
 /* "출금 안내 사항" 제목 */
@@ -227,21 +233,21 @@
 
 /* 버튼 섹션 컨테이너 */
 .submit_button_section {
-  padding: 40px 40px 0px 40px;
+  padding: 0px 40px 80px 40px;
 }
 
 /* 출금 신청 버튼 */
 .submit_button {
   width: 100%;
   height: 56px;
-  background-color: #555555;
+  background-color: #ff5694;
   border-radius: 8px;
   border: none;
   cursor: pointer;
 
   /* 버튼속 글자 css */
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 16px; /* 100% */
   letter-spacing: -0.32px;
   color: white;
@@ -252,36 +258,68 @@
 .submit_button:disabled {
   background-color: #d9d9d9;
   color: #848484;
+  cursor: default;
 }
 
 /* ============================================
-   반응형 CSS
+   모바일 반응형 스타일 (최대 768px)
    ============================================ */
 
-/* ✅ 모바일 공통 — 0~739px */
-@media (max-width: 739px) {
-  /* 컨테이너 모바일 패딩 */
+@media (max-width: 768px) {
+  /* 메인 컨텐츠 영역 */
+  .main_content {
+    min-height: calc(100vh - 64px);
+    padding-bottom: 24px;
+    padding-top: 64px;
+  }
+
+  /* 컨테이너 */
   .container {
-    padding-top: 160px; /* 모바일에서도 동일한 높이 */
+    padding-top: 0px;
   }
 
-  /* 보유 포인트 섹션 모바일 패딩 */
+  /* ============================================
+     보유 포인트 표시 영역 (모바일)
+     ============================================ */
+
+  /* 보유 포인트 전체 섹션 */
   .available_points_section {
-    padding: 40px 32px;
+    padding: 32px 20px 32px 20px;
   }
 
-  /* 폼 섹션 모바일 패딩 */
+  /* ============================================
+     폼 박스 영역 (모바일)
+     ============================================ */
+
+  /* ============================================
+     폼 입력 영역 (모바일)
+     ============================================ */
+
+  /* 폼 전체 섹션 */
   .form_section {
-    padding: 0px 32px 40px 32px;
+    padding: 0px 20px;
   }
 
-  /* 안내 사항 모바일 패딩 */
+  /* ============================================
+     출금 안내 사항 영역 (모바일)
+     ============================================ */
+
+  /* 안내 사항 전체 섹션 */
   .notice_section {
-    padding: 0px 32px 0px 32px;
+    padding: 24px 20px;
   }
 
-  /* 버튼 섹션 모바일 패딩 */
+  /* ============================================
+     출금 신청 버튼 (모바일)
+     ============================================ */
+
+  /* 버튼 섹션 컨테이너 */
   .submit_button_section {
-    padding: 40px 32px 0px 32px;
+    padding: 0px 20px 0px 20px;
+  }
+
+  /* 출금 신청 버튼 */
+  .submit_button {
+    height: 52px;
   }
 }

@@ -11,8 +11,9 @@
 
 "use client";
 
+import { useRef, useState, useCallback } from "react";
 import styles from "@/styles/partner/campaign_management/campaign_filter.module.css";
-import ModalFilter from "@/components/user/filter/ModalFilter";
+import ModalFilter from "@/components/campaign/filter/ModalFilter";
 import { CampaignFilterBarProps, FilterableCampaign } from "./types";
 import { useCampaignFilterBar } from "@/hooks/common/campaign_management/useCampaignFilterBar";
 
@@ -25,7 +26,7 @@ const DEFAULT_CHANNEL_OPTIONS = [
   "유튜브",
   "쇼츠",
 ];
-const DEFAULT_SORT_OPTIONS = ["최신순", "인기순", "마감임박순"];
+const DEFAULT_SORT_OPTIONS = ["최신순", "오래된순", "마감임박순"];
 const DEFAULT_SORT = "최신순";
 
 export default function CampaignFilterBar<
@@ -39,6 +40,8 @@ export default function CampaignFilterBar<
   channelOptions = DEFAULT_CHANNEL_OPTIONS,
   sortOptions = DEFAULT_SORT_OPTIONS,
   defaultSort = DEFAULT_SORT,
+  showSearch = true,
+  isPartner = false,
 }: CampaignFilterBarProps<T>) {
   const {
     state: {
@@ -83,6 +86,40 @@ export default function CampaignFilterBar<
     (currentFilters.types?.length ?? 0) > 0 ||
     (currentFilters.channels?.length ?? 0) > 0;
 
+  /* PC에서 활성 필터 태그 영역 마우스 드래그로 가로 스크롤 */
+  const activeFiltersRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const startXRef = useRef(0);
+
+  const handleDragMove = useCallback((e: MouseEvent) => {
+    if (!activeFiltersRef.current) return;
+    const dx = startXRef.current - e.clientX;
+    activeFiltersRef.current.scrollLeft += dx;
+    startXRef.current = e.clientX;
+  }, []);
+
+  const handleDragEnd = useCallback(() => {
+    setIsDragging(false);
+    document.removeEventListener("mousemove", handleDragMove);
+    document.removeEventListener("mouseup", handleDragEnd);
+    document.body.style.userSelect = "";
+    document.body.style.cursor = "";
+  }, [handleDragMove]);
+
+  const handleDragStart = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if ((e.target as HTMLElement).closest(`.${styles.remove_tag}`)) return;
+      if (!activeFiltersRef.current) return;
+      setIsDragging(true);
+      startXRef.current = e.clientX;
+      document.addEventListener("mousemove", handleDragMove);
+      document.addEventListener("mouseup", handleDragEnd);
+      document.body.style.userSelect = "none";
+      document.body.style.cursor = "pointer";
+    },
+    [handleDragMove, handleDragEnd]
+  );
+
   const renderFilterButton = (
     label: string,
     isActive: boolean,
@@ -94,13 +131,12 @@ export default function CampaignFilterBar<
       }`}
       onClick={onClick}
     >
-      <div className={styles.checkbox_icon}>
-        {isActive ? (
-          <div className={styles.checkbox_checked} />
-        ) : (
-          <div className={styles.checkbox_unchecked} />
-        )}
-      </div>
+      {/* 
+        체크박스 아이콘
+        - 필터가 활성화되어 있으면 체크마크가 표시됨
+        - filter_button_active 클래스가 적용되면 CSS의 ::after 가상 요소로 체크마크가 표시됨
+      */}
+      <div className={styles.filter_icon}></div>
       <span className={styles.filter_label}>{label}</span>
       <img
         src="/images/filter/dropdown_icon.svg"
@@ -144,22 +180,26 @@ export default function CampaignFilterBar<
             )}
           </div>
 
+          {/* 검색 및 정렬 컨테이너 (데스크톱용) */}
           <div className={styles.search_sort_container}>
-            <div className={styles.search_container}>
-              <img
-                src="/images/icons/search_icon.svg"
-                alt="검색"
-                className={styles.search_icon}
-              />
-              <input
-                type="text"
-                placeholder="검색"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                className={styles.search_input}
-              />
-            </div>
+            {showSearch && isPartner && (
+              <div className={styles.search_container}>
+                <img
+                  src="/images/icons/search_icon.svg"
+                  alt="검색"
+                  className={styles.search_icon}
+                />
+                <input
+                  type="text"
+                  placeholder="검색"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  className={styles.search_input}
+                />
+              </div>
+            )}
 
+            {/* 정렬 버튼 (데스크톱용) */}
             <button className={styles.sort_button} onClick={openSortModal}>
               <span className={styles.sort_label}>{selectedSort}</span>
               <img
@@ -173,7 +213,11 @@ export default function CampaignFilterBar<
 
         {hasActiveFilters && (
           <div className={styles.filter_tags_container}>
-            <div className={styles.active_filters}>
+            <div
+              ref={activeFiltersRef}
+              className={`${styles.active_filters} ${isDragging ? styles.active_filters_dragging : ""}`}
+              onMouseDown={handleDragStart}
+            >
               {currentFilters.types?.map((type) =>
                 renderFilterTag(type, () => handleTypeRemove(type))
               )}
@@ -183,6 +227,36 @@ export default function CampaignFilterBar<
             </div>
           </div>
         )}
+      </div>
+
+      {/* 검색 및 정렬 컨테이너 (모바일용 - 필터 바 border 아래) */}
+      <div className={styles.mobile_search_sort_container}>
+        {isPartner && (
+          <div className={styles.search_container}>
+            <img
+              src="/images/icons/search_icon.svg"
+              alt="검색"
+              className={styles.search_icon}
+            />
+            <input
+              type="text"
+              placeholder="검색"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className={styles.search_input}
+            />
+          </div>
+        )}
+        <div className={styles.sort_button_container}>
+          <button className={styles.sort_button} onClick={openSortModal}>
+            <span className={styles.sort_label}>{selectedSort}</span>
+            <img
+              src="/images/filter/dropdown_icon.svg"
+              alt="드롭다운"
+              className={styles.dropdown_icon}
+            />
+          </button>
+        </div>
       </div>
 
       <ModalFilter

@@ -22,9 +22,10 @@ import { useState, useEffect } from "react";
 import CampaignManagementHeader from "@/components/user/campaign_management/CampaignManagementHeader";
 import CampaignList from "@/components/user/campaign_management/CampaignList";
 import CampaignFilterBar from "@/components/common/campaign_management/CampaignFilterBar";
-import type { MainTab } from "@/types/user/user";
-import type { CampaignApplication } from "@/types/user/user";
-import layoutStyles from "../../../../styles/user/campaign_management/layout.module.css";
+import type { MainTab } from "@/types/domain/user";
+import type { CampaignApplication } from "@/types/domain/user";
+import layoutStyles from "@/styles/user/campaign_management/campaign_management_layout.module.css";
+import { withUserAuth } from "@/components/auth/withAuth";
 
 // 임시 데이터 import
 import { getCampaignsByTab } from "@/data/user/campaign_management/campaignManagementData";
@@ -32,7 +33,8 @@ import { getCampaignsByTab } from "@/data/user/campaign_management/campaignManag
 /**
  * 취소/반려 탭 전용 페이지 컴포넌트
  */
-export default function CancelledPage() {
+function CancelledPage() {
+
   // 상단 메인 탭 상태 (캠페인 / 포인트)
   const [activeTab, setActiveTab] = useState<MainTab>("campaign");
 
@@ -42,10 +44,25 @@ export default function CancelledPage() {
   >("취소/반려");
 
   // 필터링된 캠페인 목록 상태
-  const [filteredCampaigns, setFilteredCampaigns] = useState<CampaignApplication[]>([]);
+  const [filteredCampaigns, setFilteredCampaigns] = useState<
+    CampaignApplication[]
+  >([]);
 
-  // 탭별 캠페인 목록 가져오기
-  const campaigns = getCampaignsByTab(activeStatTab);
+  // 캠페인 목록 상태 (목업 데이터만 사용)
+  const [campaigns, setCampaigns] = useState<CampaignApplication[]>([]);
+
+  /**
+   * 취소/반려 탭 캠페인 불러오기
+   *
+   * 설명:
+   * - 목업 데이터만 사용합니다.
+   * - 신청 내역에서 취소한 캠페인은 user_applied_campaigns에서 완전히 제거되므로 여기에는 표시되지 않습니다.
+   */
+  const loadCancelledCampaigns = () => {
+    const mockCampaigns = getCampaignsByTab('취소/반려');
+    console.log('[CancelledPage] 목업 캠페인 개수:', mockCampaigns.length);
+    return mockCampaigns;
+  };
 
   /**
    * 필터링된 캠페인 목록 변경 핸들러
@@ -59,16 +76,35 @@ export default function CancelledPage() {
   };
 
   /**
-   * 탭 변경 시 캠페인 목록 초기화
+   * 캠페인 목록 로드
    *
    * 설명:
-   * - 탭이 변경되면 새로운 캠페인 목록을 가져옵니다.
-   * - 필터 바에 새로운 캠페인 목록을 전달합니다.
+   * - 컴포넌트 마운트 시 목업 데이터를 로드합니다.
    */
   useEffect(() => {
-    const newCampaigns = getCampaignsByTab(activeStatTab);
-    // 필터 바가 자동으로 필터링하여 결과를 반환합니다.
-  }, [activeStatTab]);
+    const loadedCampaigns = loadCancelledCampaigns();
+    setCampaigns(loadedCampaigns);
+  }, []);
+
+  /**
+   * 페이지 포커스 시 캠페인 목록 새로고침
+   *
+   * 설명:
+   * - 다른 탭에서 돌아왔을 때 최신 데이터를 표시하기 위해 새로고침합니다.
+   */
+  useEffect(() => {
+    const handleFocus = () => {
+      console.log('[CancelledPage] 페이지 포커스 - 데이터 새로고침');
+      const loadedCampaigns = loadCancelledCampaigns();
+      setCampaigns(loadedCampaigns);
+    };
+
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, []);
 
   return (
     <div className={layoutStyles.container}>
@@ -85,11 +121,19 @@ export default function CancelledPage() {
         <CampaignFilterBar<CampaignApplication>
           campaigns={campaigns}
           onFilteredCampaignsChange={handleFilteredCampaignsChange}
+          showSearch={false}
         />
 
         {/* 필터링된 캠페인 목록 */}
-        <CampaignList campaigns={filteredCampaigns} activeStatTab="취소/반려" />
+        <CampaignList
+          campaigns={filteredCampaigns}
+          activeStatTab="취소/반려"
+          originalCampaigns={campaigns}
+        />
       </div>
     </div>
   );
 }
+
+// 유저(리뷰어) 전용 페이지로 보호
+export default withUserAuth(CancelledPage);

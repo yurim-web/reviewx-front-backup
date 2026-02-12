@@ -27,7 +27,9 @@
 "use client";
 
 import { CompletedApplicant } from "@/data/partner/campaign_application/delivery_review_completed";
-import styles from "@/styles/partner/campaign_application/card/applicant_card_shared.module.css";
+import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
+import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
+import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
 
 interface DeliveryCompletedCardProps {
@@ -71,37 +73,33 @@ export default function NaverBlogCompletedCard({
   const channel_icon_src = getChannelLogo(applicant.channel);
 
   return (
-    <article className={styles.applicant_card}>
+    <article className={baseStyles.applicant_card}>
       {/* 프로필 영역: 프로필 이미지, 닉네임, 사용자 타입 */}
-      <div className={styles.profile_section}>
-        <div className={styles.profile_image_container}>
-          {applicant.profileImage ? (
-            <img
-              src={applicant.profileImage}
-              alt="프로필"
-              className={styles.profile_image}
-            />
-          ) : (
-            <div className={styles.profile_placeholder}></div>
-          )}
+      <div className={contentStyles.profile_section}>
+        <div className={contentStyles.profile_image_container}>
+          <img
+            src={applicant.profileImage || "/images/mypage/profile.svg"}
+            alt="프로필"
+            className={contentStyles.profile_image}
+          />
         </div>
-        <div className={styles.profile_info}>
+        <div className={contentStyles.profile_info}>
           {/* 사용자 타입 표시 (리뷰어 / 인플루언서) */}
-          <span className={styles.user_type}>{applicant.userType}</span>
+          <span className={contentStyles.user_type}>{applicant.userType}</span>
           {/* 닉네임 표시 */}
-          <span className={styles.nickname}>{applicant.nickname}</span>
+          <span className={contentStyles.nickname}>{applicant.nickname}</span>
         </div>
       </div>
 
       {/* 채널 정보 영역: 채널 아이콘, 채널 ID */}
-      <div className={styles.channel_section}>
+      <div className={contentStyles.channel_section}>
         <img
           src={channel_icon_src}
           alt={`${applicant.channel} 채널`}
-          className={styles.channel_icon}
+          className={contentStyles.channel_icon}
         />
 
-        <span className={styles.applicant_id}>{applicant.Id}</span>
+        <span className={contentStyles.applicant_id}>{applicant.Id}</span>
       </div>
 
       {/* 
@@ -111,7 +109,7 @@ export default function NaverBlogCompletedCard({
           - 클릭 시 완료된 콘텐츠 상세 페이지로 이동
         */}
       <button
-        className={styles.content_check_button}
+        className={actionStyles.content_check_button}
         onClick={() => onConfirm(applicant.id)}
         aria-label={`${applicant.nickname} 완료된 콘텐츠 확인하기`}
       >
@@ -119,12 +117,12 @@ export default function NaverBlogCompletedCard({
       </button>
 
       {/* 완료일 정보 표시 */}
-      <div className={styles.registration_info}>
+      <div className={actionStyles.registration_info}>
         {applicant.completionDate} 완료
       </div>
 
       {/* 액션 버튼 영역: 콘텐츠 확인하기, 완료일, 검수 완료 */}
-      <div className={styles.action_button_section}>
+      <div className={actionStyles.action_button_section}>
         {/* 
           📌 검수 완료 버튼:
           - 완료된 상태를 표시하는 버튼
@@ -132,7 +130,7 @@ export default function NaverBlogCompletedCard({
           - 완료된 상태임을 명확히 표시
         */}
         <button
-          className={`${styles.action_button} ${styles.completed_button}`}
+          className={`${actionStyles.action_button} ${actionStyles.completed_button}`}
           disabled
           aria-label="검수 완료"
         >

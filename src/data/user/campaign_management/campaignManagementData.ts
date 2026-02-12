@@ -11,365 +11,459 @@
  * - /user/campaign_management 페이지의 캠페인 목록 표시
  *
  * 주요 기능:
- * - 다양한 상태와 서브상태의 캠페인 데이터 제공
- * - 각 캠페인마다 다른 statusMessage 제공
- * - 실제 날짜 기반 remainingDays 계산
+ * - 실제 캠페인 데이터에서 ID로 참조하여 가져오기
+ * - 날짜 기반 필터링 적용
  */
 
-import type { CampaignApplication } from "@/types/user/user";
+import type { CampaignApplication } from "@/types/domain/user";
+import { deliveryCampaigns } from "@/data/campaign/delivery/deliveryCampaigns";
+import { visitCampaigns } from "@/data/campaign/visit/visitCampaigns";
+import { reviewCampaigns } from "@/data/campaign/review/reviewCampaigns";
+import { reporterCampaigns } from "@/data/campaign/reporter/reporterCampaigns";
+import { missionCampaigns } from "@/data/campaign/mission/missionCampaigns";
 
-// 임시 유저 캠페인 관리 데이터 (신청 > 선정 > 완료 > 취소/반려 순서)
-export const campaignManagementData: CampaignApplication[] = [
-  // 신청 상태 캠페인들 (id: 1-5) - 다양한 타입 추가
-  {
-    id: "1",
-    title: "프리미엄 헤드폰 리뷰 캠페인",
-    category: "쿠팡",
-    categoryIcon: "/images/brand_logo/coupang.svg",
-    image: "/images/main/campaign_img/eximg_1.png",
-    status: "신청",
-    remainingDays: 5,
-    statusMessage: "캠페인 선정 발표까지 1일 남았습니다.",
-    type: "배송형",
-    isUrgent: false,
-    subStatus: undefined,
-    hasContent: false,
-    isPenalty: false,
-  },
-  {
-    id: "2",
-    title: "유튜브 쇼츠 제작",
-    category: "유튜브",
-    categoryIcon: "/images/brand_logo/youtube.svg",
-    image: "/images/main/campaign_img/eximg_9.png",
-    status: "신청",
-    remainingDays: 2,
-    statusMessage: "캠페인 선정 발표까지 2일 남았습니다.",
-    type: "미션형",
-    isUrgent: true,
-    subStatus: undefined,
-    hasContent: false,
-    isPenalty: false,
-  },
-  {
-    id: "13",
-    title: "맛집 탐방 기자단 모집",
-    category: "네이버블로그",
-    categoryIcon: "/images/brand_logo/naverblog.svg",
-    image: "/images/main/campaign_img/eximg_3.png",
-    status: "신청",
-    remainingDays: 3,
-    statusMessage: "캠페인 선정 발표까지 3일 남았습니다.",
-    type: "기자단",
-    isUrgent: false,
-    subStatus: undefined,
-    hasContent: false,
-    isPenalty: false,
-  },
-  {
-    id: "14",
-    title: "화장품 구매평 작성 이벤트",
-    category: "올리브영",
-    categoryIcon: "/images/brand_logo/oliveyoung.svg",
-    image: "/images/main/campaign_img/eximg_2.png",
-    status: "신청",
-    remainingDays: 1,
-    statusMessage: "캠페인 선정 발표까지 1일 남았습니다.",
-    type: "구매평",
-    isUrgent: true,
-    subStatus: undefined,
-    hasContent: false,
-    isPenalty: false,
-  },
-  {
-    id: "15",
-    title: "카페 방문 후기 작성",
-    category: "인스타그램",
-    categoryIcon: "/images/brand_logo/insta.svg",
-    image: "/images/main/campaign_img/eximg_5.png",
-    status: "신청",
-    remainingDays: 4,
-    statusMessage: "캠페인 선정 발표까지 4일 남았습니다.",
-    type: "방문형",
-    isUrgent: false,
-    subStatus: undefined,
-    hasContent: false,
-    isPenalty: false,
-  },
-
-  // 선정 상태 캠페인들 (id: 3-8) - 다양한 타입 추가
-  {
-    id: "3",
-    title: "스킨케어 세트 미션형",
-    category: "올리브영",
-    categoryIcon: "/images/brand_logo/oliveyoung.svg",
-    image: "/images/main/campaign_img/eximg_2.png",
-    status: "선정",
-    remainingDays: 12,
-    statusMessage:
-      "캠페인 마감까지 7일 남았습니다. 미션을 완료하고 콘텐츠를 등록해 주세요. ",
-    type: "미션형",
-    isUrgent: false,
-    subStatus: "content_not_registered",
-    hasContent: false,
-    isPenalty: false,
-  },
-  {
-    id: "4",
-    title: "맛집 탐방 블로그 포스팅",
-    category: "네이버블로그",
-    categoryIcon: "/images/brand_logo/naverblog.svg",
-    image: "/images/main/campaign_img/eximg_3.png",
-    status: "선정",
-    remainingDays: 8,
-    statusMessage: "콘텐츠를 검수 중입니다.",
-    type: "방문형",
-    isUrgent: true,
-    subStatus: "content_registered",
-    hasContent: true,
-    isPenalty: false,
-  },
-  {
-    id: "5",
-    title: "스포츠 용품 리뷰",
-    category: "쿠팡",
-    categoryIcon: "/images/brand_logo/coupang.svg",
-    image: "/images/main/campaign_img/eximg_7.png",
-    status: "선정",
-    remainingDays: 15,
-    statusMessage: "제품 구매 기간입니다.",
-    type: "배송형",
-    isUrgent: false,
-    subStatus: "receipt_registered",
-    hasContent: false,
-    isPenalty: false,
-  },
-  {
-    id: "6",
-    title: "게이밍 의자 리뷰",
-    category: "쿠팡",
-    categoryIcon: "/images/brand_logo/coupang.svg",
-    image: "/images/main/campaign_img/eximg_4.png",
-    status: "선정",
-    remainingDays: 10,
-    statusMessage: "구매 영수증을 검수 중입니다.",
-    type: "배송형",
-    isUrgent: false,
-    subStatus: "content_not_registered",
-    hasContent: false,
-    isPenalty: false,
-  },
-  {
-    id: "16",
-    title: "기자단 활동 - 신제품 체험",
-    category: "네이버블로그",
-    categoryIcon: "/images/brand_logo/naverblog.svg",
-    image: "/images/main/campaign_img/eximg_6.png",
-    status: "선정",
-    remainingDays: 14,
-    statusMessage: "기자단 활동을 시작해주세요.",
-    type: "기자단",
-    isUrgent: false,
-    subStatus: "content_not_registered",
-    hasContent: false,
-    isPenalty: false,
-  },
-  {
-    id: "17",
-    title: "화장품 구매평 작성",
-    category: "올리브영",
-    categoryIcon: "/images/brand_logo/oliveyoung.svg",
-    image: "/images/main/campaign_img/eximg_8.png",
-    status: "선정",
-    remainingDays: 6,
-    statusMessage: "구매평 작성을 완료해주세요.",
-    type: "구매평",
-    isUrgent: true,
-    subStatus: "content_not_registered",
-    hasContent: false,
-    isPenalty: false,
-  },
-
-  // 완료 상태 캠페인들 (id: 7-10) - 다양한 타입 추가
-  {
-    id: "7",
-    title: "카카오프렌즈 굿즈 리뷰",
-    category: "카카오프렌즈",
-    categoryIcon: "/images/brand_logo/kakaopre.svg",
-    image: "/images/main/campaign_img/eximg_10.png",
-    status: "완료",
-    remainingDays: -7,
-    statusMessage: "캠페인이 완료되었습니다.",
-    type: "배송형",
-    isUrgent: false,
-    subStatus: "content_registered",
-    hasContent: true,
-    isPenalty: false,
-  },
-  {
-    id: "8",
-    title: "홈카페 원두 추천",
-    category: "네이버쇼핑",
-    categoryIcon: "/images/brand_logo/navershop.svg",
-    image: "/images/main/campaign_img/eximg_5.png",
-    status: "완료",
-    remainingDays: -3,
-    statusMessage: "캠페인이 완료되었습니다.",
-    type: "배송형",
-    isUrgent: false,
-    subStatus: "content_registered",
-    hasContent: true,
-    isPenalty: false,
-  },
-  {
-    id: "18",
-    title: "미션형 캠페인 - 브랜드 체험",
-    category: "인스타그램",
-    categoryIcon: "/images/brand_logo/insta.svg",
-    image: "/images/main/campaign_img/eximg_1.png",
-    status: "완료",
-    remainingDays: -5,
-    statusMessage: "캠페인이 완료되었습니다.",
-    type: "미션형",
-    isUrgent: false,
-    subStatus: "content_registered",
-    hasContent: true,
-    isPenalty: false,
-  },
-  {
-    id: "19",
-    title: "기자단 활동 완료",
-    category: "네이버블로그",
-    categoryIcon: "/images/brand_logo/naverblog.svg",
-    image: "/images/main/campaign_img/eximg_9.png",
-    status: "완료",
-    remainingDays: -2,
-    statusMessage: "캠페인이 완료되었습니다.",
-    type: "기자단",
-    isUrgent: false,
-    subStatus: "content_registered",
-    hasContent: true,
-    isPenalty: false,
-  },
-
-  // 취소/반려 상태 캠페인들 (id: 9-12) - 다양한 타입 추가
-  {
-    id: "9",
-    title:
-      "[정가 26,900원] 분아메티 강아지 모유 구강 유산균 영양제 프로바이오틱스템스",
-    category: "쿠팡",
-    categoryIcon: "/images/brand_logo/coupang.svg",
-    image: "/images/main/campaign_img/eximg_6.png",
-    status: "취소/반려",
-    remainingDays: -1,
-    statusMessage:
-      "등록한 콘텐츠가 반려되었습니다. 반려 사유 확인 후 다시 등록해 주세요.",
-    type: "배송형",
-    isUrgent: false,
-    subStatus: "content_rejected,re_register",
-    hasContent: true,
-    isPenalty: false,
-  },
-  {
-    id: "10",
-    title:
-      "[구매량10자] (워크온비디오프) 베르노 세미 오버핏 카라 니트 [블랙] 25FW",
-    category: "네이버블로그",
-    categoryIcon: "/images/brand_logo/naverblog.svg",
-    image: "/images/main/campaign_img/eximg_7.png",
-    status: "취소/반려",
-    remainingDays: -2,
-    statusMessage:
-      "등록한 콘텐츠가 반려되었습니다. 반려 사유 확인 후 다시 등록해 주세요.",
-    type: "방문형",
-    isUrgent: false,
-    subStatus: "content_rejected,re_register",
-    hasContent: true,
-    isPenalty: false,
-  },
-  {
-    id: "11",
-    title:
-      "[쿠팡 와우회원만, 별정구매평 09월 27일 구매 필수] 조조모모 브라이트닝 레디 톤업",
-    category: "올리브영",
-    categoryIcon: "/images/brand_logo/oliveyoung.svg",
-    image: "/images/main/campaign_img/eximg_8.png",
-    status: "취소/반려",
-    remainingDays: -3,
-    statusMessage: "콘텐츠 등록 기간이 지났습니다.",
-    type: "구매평",
-    isUrgent: false,
-    subStatus: "penalty",
-    hasContent: false,
-    isPenalty: true,
-  },
-  {
-    id: "12",
-    title: "[이야온] 진동클렌지",
-    category: "네이버블로그",
-    categoryIcon: "/images/brand_logo/naverblog.svg",
-    image: "/images/main/campaign_img/eximg_9.png",
-    status: "취소/반려",
-    remainingDays: -4,
-    statusMessage:
-      "콘텐츠 등록 기간이 지났습니다. 미션을 완료하신 뒤 콘텐츠를 등록해주세요",
-    type: "미션형",
-    isUrgent: false,
-    subStatus: "penalty,content_rejected",
-    hasContent: false,
-    isPenalty: true,
-  },
-  {
-    id: "20",
-    title: "기자단 활동 반려",
-    category: "네이버블로그",
-    categoryIcon: "/images/brand_logo/naverblog.svg",
-    image: "/images/main/campaign_img/eximg_10.png",
-    status: "취소/반려",
-    remainingDays: -6,
-    statusMessage: "기자단 활동이 반려되었습니다.",
-    type: "기자단",
-    isUrgent: false,
-    subStatus: "content_rejected,re_register",
-    hasContent: true,
-    isPenalty: false,
-  },
+// 탭별 캠페인 ID 리스트
+const 신청_탭_캠페인_IDS = [
+  // 배송형
+  "961",
+  // 미션형
+  "4002",
+  // 기자단
+  "3001",
+  // 구매평
+  "2002",
+  // 방문형
+  "1009",
 ];
 
-// 탭별 캠페인 필터링 함수
-export const getCampaignsByTab = (tab: string): CampaignApplication[] => {
+const 선정_탭_캠페인_IDS = [
+  // 구매평
+  "2002",
+  "2007",
+  "2009",
+  "2012",
+  "2013",
+  // 구매평 - 현재 구매 기간 테스트용 캠페인
+  "review_test_1st_all_cases",
+  // 배송형
+  "972",
+  "973",
+  // 방문형
+  "1002",
+  "1007",
+  "1009",
+  "1011",
+  "1012",
+  // 기자단
+  "3002",
+  // 미션형
+  "4013",
+  "4014",
+  "4015",
+  "4005",
+];
+
+const 완료_탭_캠페인_IDS = [
+  // 배송형
+  "962",
+  "970",
+  // 미션형
+  "4004",
+  // 기자단
+  "3004",
+];
+
+const 취소반려_탭_캠페인_IDS = [
+  // 배송형
+  "965",
+  // 방문형
+  "1003",
+  // 구매평
+  "2007",
+  // 미션형
+  "4005",
+  // 기자단
+  "3005",
+];
+
+/**
+ * 등록된 콘텐츠 데이터 맵
+ *
+ * 설명:
+ * - 각 캠페인 ID별로 등록된 콘텐츠 데이터를 저장합니다.
+ * - 수정 모드에서 기존 데이터를 표시하기 위해 사용됩니다.
+ */
+const registeredContentData: Record<
+  string,
+  {
+    link?: string;
+    images?: string[];
+    receiptImages?: string[];
+  }
+> = {
+  // 구매 영수증 이미 등록된 구매평 캠페인
+  "2002": {
+    receiptImages: [
+      "/images/main/campaign_img/eximg_1.png",
+      "/images/main/campaign_img/eximg_2.png",
+    ],
+  },
+  "2007": {
+    receiptImages: [
+      "/images/main/campaign_img/eximg_1.png",
+      "/images/main/campaign_img/eximg_2.png",
+    ],
+  },
+  // 콘텐츠 이미 등록된 캠페인
+  "972": {
+    link: "https://blog.naver.com/example-delivery-972",
+  },
+  "1002": {
+    link: "https://blog.naver.com/example-visit-1002",
+  },
+  "4013": {
+    link: "https://blog.naver.com/example-mission-4013",
+    images: [
+      "/images/main/campaign_img/eximg_1.png",
+      "/images/main/campaign_img/eximg_2.png",
+    ],
+  },
+  // 구매평: 콘텐츠(이미지) 이미 등록된 캠페인
+  "2013": {
+    images: [
+      "/images/main/campaign_img/eximg_1.png",
+      "/images/main/campaign_img/eximg_2.png",
+    ],
+  },
+};
+
+/**
+ * 실제 캠페인 데이터를 CampaignApplication 형식으로 변환
+ */
+function convertToCampaignApplication(
+  campaignId: string,
+  status: CampaignApplication["status"],
+  subStatus?: CampaignApplication["subStatus"],
+  hasContent?: boolean,
+  isPenalty?: boolean,
+  contentType?: "link" | "image" | "both",
+  statusMessage?: string,
+  rejectionReason?: string,
+  registeredContentLink?: string,
+  registeredContentImages?: string[],
+  registeredReceiptImages?: string[]
+): CampaignApplication | null {
+  // 캠페인 ID(숫자 문자열)를 기준으로 실제 캠페인 데이터 찾기
+  const delivery = deliveryCampaigns.find((c) => c.id === campaignId);
+  const visit = visitCampaigns.find((c) => c.id === campaignId);
+  const review = reviewCampaigns.find((c) => c.id === campaignId);
+  const reporter = reporterCampaigns.find((c) => c.id === campaignId);
+  const mission = missionCampaigns.find((c) => c.id === campaignId);
+
+  const actualCampaign = delivery || visit || review || reporter || mission;
+
+  if (!actualCampaign) return null;
+
+  // 타입 결정 (실제 데이터 기반)
+  const type: CampaignApplication["type"] =
+    (actualCampaign as any).category ?? "배송형";
+
+  // 카테고리 결정
+  let category = "";
+  if ("channel" in (actualCampaign as any)) {
+    category = (actualCampaign as any).channel || "";
+  }
+
+  // remainingDays·isUrgent 계산 (탭별 규칙 통일 — 선정탭/전체탭 동일 표시)
+  let remainingDays = 0;
+  let isUrgentResolved = actualCampaign.isUrgent || false;
+  if (actualCampaign.detailedSchedule) {
+    const schedule = actualCampaign.detailedSchedule as Record<string, string | undefined>;
+    if (status === "신청" && schedule.announcement) {
+      const announcementDate = new Date(schedule.announcement);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      announcementDate.setHours(0, 0, 0, 0);
+      const diffTime = announcementDate.getTime() - today.getTime();
+      remainingDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    } else if (status === "선정") {
+      const registrationPeriod =
+        type === "방문형"
+          ? (schedule.purchasePeriod ?? null)
+          : (schedule.registrationPeriod ?? null);
+      if (registrationPeriod) {
+        const endDateStr = registrationPeriod.split("~")[1]?.trim();
+        if (endDateStr) {
+          const registrationEndDate = new Date(endDateStr);
+          registrationEndDate.setHours(0, 0, 0, 0);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const diffTime = registrationEndDate.getTime() - today.getTime();
+          remainingDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          isUrgentResolved = remainingDays <= 3;
+        }
+      }
+    }
+  }
+
+  // statusMessage 기본값
+  const defaultStatusMessage =
+    statusMessage ||
+    (status === "신청"
+      ? `캠페인 선정 발표까지 ${remainingDays}일 남았습니다.`
+      : status === "선정"
+      ? "콘텐츠를 등록해주세요."
+      : status === "완료"
+      ? "캠페인이 완료되었습니다."
+      : "캠페인 상태를 확인해주세요.");
+
+  // 등록된 콘텐츠 데이터 가져오기
+  const contentData = registeredContentData[campaignId];
+
+  return {
+    id: campaignId,
+    title: actualCampaign.title,
+    category,
+    image: actualCampaign.image,
+    status,
+    remainingDays,
+    statusMessage: defaultStatusMessage,
+    type,
+    isUrgent: isUrgentResolved,
+    subStatus,
+    hasContent: hasContent ?? false,
+    isPenalty: isPenalty ?? false,
+    contentType:
+      contentType ||
+      (type === "미션형" && "contentType" in actualCampaign
+        ? (actualCampaign as any).contentType
+        : undefined),
+    rejectionReason,
+    registeredContentLink:
+      registeredContentLink ?? contentData?.link ?? undefined,
+    registeredContentImages:
+      registeredContentImages ?? contentData?.images ?? undefined,
+    registeredReceiptImages:
+      registeredReceiptImages ?? contentData?.receiptImages ?? undefined,
+  };
+}
+
+/**
+ * 신청 탭: ID 리스트의 캠페인들을 변환하여 반환
+ */
+function filterAppliedCampaigns(campaignIds: string[]): CampaignApplication[] {
+  return campaignIds
+    .map((id) => convertToCampaignApplication(id, "신청"))
+    .filter((c): c is CampaignApplication => c !== null);
+}
+
+/**
+ * 선정 탭: ID 리스트의 캠페인들을 변환하여 반환
+ * @param excludeCompletedIds - 제외할 완료된 캠페인 ID 목록 (선택적, 클라이언트에서만 사용)
+ */
+function filterSelectedCampaigns(
+  campaignIds: string[],
+  excludeCompletedIds: string[] = []
+): CampaignApplication[] {
+  return campaignIds
+    .map((id) => {
+      // 등록 완료된 캠페인은 선정 탭에서 제외 (완료 탭으로 이동)
+      if (excludeCompletedIds.includes(id)) {
+        return null;
+      }
+
+      // 구매 영수증 이미 등록된 구매평 캠페인 (수정 가능)
+      const receiptRegisteredReviewIds = ["2002", "2007"];
+      // 콘텐츠 이미 등록된 캠페인 (수정 가능)
+      const contentRegisteredIds = [
+        "972",
+        "1002",
+        "4013",
+        "2013",
+      ];
+
+      let subStatus: CampaignApplication["subStatus"];
+      let hasContent = false;
+
+      if (receiptRegisteredReviewIds.includes(id)) {
+        // 구매 영수증 이미 등록됨 (구매평, 수정 가능)
+        subStatus = "receipt_registered";
+        hasContent = true;
+      } else if (contentRegisteredIds.includes(id)) {
+        // 콘텐츠 이미 등록됨 (수정 가능)
+        subStatus = "content_registered";
+        hasContent = true;
+      } else {
+        // 기본 상태: 미등록 상태
+        const isReview = reviewCampaigns.some((c) => c.id === id);
+        subStatus = isReview
+          ? "receipt_not_registered"
+          : "content_not_registered";
+      }
+
+      return convertToCampaignApplication(id, "선정", subStatus, hasContent);
+    })
+    .filter((c): c is CampaignApplication => c !== null);
+}
+
+/**
+ * localStorage에서 등록 완료된 캠페인 ID 목록 가져오기
+ */
+function getCompletedCampaignIds(): string[] {
+  if (typeof window === "undefined") {
+    return [];
+  }
+
+  try {
+    const completed = localStorage.getItem("completedCampaignIds");
+    return completed ? JSON.parse(completed) : [];
+  } catch (error) {
+    console.error("Failed to get completed campaign IDs:", error);
+    return [];
+  }
+}
+
+/**
+ * 캠페인 ID를 완료 목록에 추가
+ */
+export function addCompletedCampaignId(campaignId: string): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    const completed = getCompletedCampaignIds();
+    if (!completed.includes(campaignId)) {
+      completed.push(campaignId);
+      localStorage.setItem("completedCampaignIds", JSON.stringify(completed));
+    }
+  } catch (error) {
+    console.error("Failed to add completed campaign ID:", error);
+  }
+}
+
+/**
+ * 완료 탭: ID 리스트의 캠페인들을 변환하여 반환
+ * @param additionalCompletedIds - 추가로 완료된 캠페인 ID 목록 (선택적, 클라이언트에서만 사용)
+ */
+function filterCompletedCampaigns(
+  campaignIds: string[],
+  additionalCompletedIds: string[] = []
+): CampaignApplication[] {
+  // 기존 완료 탭 캠페인 + 새로 등록 완료된 캠페인 합치기
+  const allCompletedIds = [
+    ...new Set([...campaignIds, ...additionalCompletedIds]),
+  ];
+
+  return allCompletedIds
+    .map((id) =>
+      convertToCampaignApplication(id, "완료", "content_registered", true)
+    )
+    .filter((c): c is CampaignApplication => c !== null);
+}
+
+/**
+ * 취소/반려 탭: 조건 없이 모든 캠페인 반환
+ */
+function filterCancelledCampaigns(
+  campaignIds: string[]
+): CampaignApplication[] {
+  return campaignIds
+    .map((id) => {
+      const isPenalty = id === "2007" || id === "4005";
+      const subStatus: CampaignApplication["subStatus"] = isPenalty
+        ? "penalty"
+        : "content_rejected,re_register";
+
+      return convertToCampaignApplication(
+        id,
+        "취소/반려",
+        subStatus,
+        !isPenalty,
+        isPenalty,
+        undefined,
+        isPenalty
+          ? "콘텐츠 등록 기간이 지났습니다."
+          : "등록한 콘텐츠가 반려되었습니다. 반려 사유 확인 후 다시 등록해 주세요.",
+        isPenalty
+          ? undefined
+          : "제품 사진이 명확하지 않습니다. 제품의 특징이 잘 보이도록 재촬영하여 등록해 주세요.긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스"
+      );
+    })
+    .filter((c): c is CampaignApplication => c !== null);
+}
+
+/**
+ * 탭별 캠페인 필터링 함수
+ * @param tab - 탭 이름
+ * @param completedCampaignIds - 완료된 캠페인 ID 목록 (선택적, 클라이언트에서만 사용)
+ */
+export const getCampaignsByTab = (
+  tab: string,
+  completedCampaignIds: string[] = []
+): CampaignApplication[] => {
   switch (tab) {
     case "신청":
-      return campaignManagementData.filter(
-        (campaign) => campaign.status === "신청"
-      );
+      return filterAppliedCampaigns(신청_탭_캠페인_IDS);
     case "선정":
-      return campaignManagementData.filter(
-        (campaign) => campaign.status === "선정"
-      );
+      return filterSelectedCampaigns(선정_탭_캠페인_IDS, completedCampaignIds);
     case "완료":
-      return campaignManagementData.filter(
-        (campaign) => campaign.status === "완료"
-      );
+      return filterCompletedCampaigns(완료_탭_캠페인_IDS, completedCampaignIds);
     case "취소/반려":
-      return campaignManagementData.filter(
-        (campaign) => campaign.status === "취소/반려"
-      );
+      return filterCancelledCampaigns(취소반려_탭_캠페인_IDS);
+    case "전체":
+      return [
+        ...filterAppliedCampaigns(신청_탭_캠페인_IDS),
+        ...filterSelectedCampaigns(선정_탭_캠페인_IDS, completedCampaignIds),
+        ...filterCompletedCampaigns(완료_탭_캠페인_IDS, completedCampaignIds),
+        ...filterCancelledCampaigns(취소반려_탭_캠페인_IDS),
+      ];
     case "패널티":
-      return campaignManagementData.filter(
-        (campaign) => campaign.isPenalty === true
+      // 패널티는 취소/반려 중에서 isPenalty가 true인 것들
+      return filterCancelledCampaigns(취소반려_탭_캠페인_IDS).filter(
+        (c) => c.isPenalty === true
       );
     default:
-      return campaignManagementData;
+      return [];
   }
 };
 
-// 캠페인 통계 데이터
+/**
+ * 정적 캠페인 통계 데이터 (서버와 클라이언트에서 동일하게 사용)
+ * localStorage를 제외한 정적 데이터만으로 계산하여 hydration 오류 방지
+ */
 export const campaignManagementStats = {
-  신청: campaignManagementData.filter((c) => c.status === "신청").length,
-  선정: campaignManagementData.filter((c) => c.status === "선정").length,
-  완료: campaignManagementData.filter((c) => c.status === "완료").length,
-  "취소/반려": campaignManagementData.filter((c) => c.status === "취소/반려")
-    .length,
-  패널티: campaignManagementData.filter((c) => c.isPenalty === true).length,
+  신청: getCampaignsByTab("신청").length,
+  선정: getCampaignsByTab("선정").length,
+  완료: getCampaignsByTab("완료").length,
+  "취소/반려": getCampaignsByTab("취소/반려").length,
+  전체: getCampaignsByTab("전체").length,
+  패널티: getCampaignsByTab("패널티").length,
 };
+
+/**
+ * 클라이언트에서 localStorage를 고려한 통계 계산
+ * useEffect에서 사용하여 클라이언트 마운트 후 업데이트
+ */
+export const getClientCampaignStats = () => {
+  const completedCampaignIds = getCompletedCampaignIds();
+  return {
+    신청: getCampaignsByTab("신청", completedCampaignIds).length,
+    선정: getCampaignsByTab("선정", completedCampaignIds).length,
+    완료: getCampaignsByTab("완료", completedCampaignIds).length,
+    "취소/반려": getCampaignsByTab("취소/반려", completedCampaignIds).length,
+    전체: getCampaignsByTab("전체", completedCampaignIds).length,
+    패널티: getCampaignsByTab("패널티", completedCampaignIds).length,
+  };
+};
+
+/**
+ * 스토리북/개발용 전체 캠페인 목록 (여러 탭 목업을 합친 배열)
+ */
+export const campaignManagementData: CampaignApplication[] = [
+  ...getCampaignsByTab("신청"),
+  ...getCampaignsByTab("선정"),
+  ...getCampaignsByTab("완료"),
+  ...getCampaignsByTab("취소/반려"),
+  ...getCampaignsByTab("패널티"),
+];

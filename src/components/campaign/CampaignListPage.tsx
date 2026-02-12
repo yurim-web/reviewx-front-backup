@@ -16,9 +16,10 @@
 "use client";
 
 import MainMenu from "@/components/main/MainMenu";
-import FilterBar from "@/components/user/filter/FilterBar";
+import FilterBar from "@/components/campaign/filter/FilterBar";
 import CampaignBox from "@/components/main/CampaignBox";
 import Titletext from "@/components/main/Titletext";
+import Footer from "@/components/main/Footer";
 import styles from "@/styles/user/delivery/delivery.module.css";
 
 // FilterBar props 타입 (FilterBar 컴포넌트에서 가져온 타입과 동일)
@@ -93,10 +94,12 @@ export default function CampaignListPage({
 
       {/* 
         레이아웃 시프트 방지를 위한 placeholder 
-        - 헤더(80px) + MainMenu(약 69px) = 149px
+        - 데스크톱: 헤더(80px) + MainMenu(약 69px) = 149px
+        - 모바일: 헤더(60px) + MainMenu(약 52px) = 112px
+        - 초소형 모바일: 헤더(56px) + MainMenu(약 50px) = 106px
         - fixed된 헤더와 메뉴가 콘텐츠를 가리지 않도록 공간 확보
       */}
-      <div style={{ height: "149px" }}></div>
+      <div className={styles.header_spacer}></div>
 
       <main className={styles.delivery_page}>
         {/* 필터/정렬 바 */}
@@ -119,7 +122,9 @@ export default function CampaignListPage({
           </div>
         </section>
       </main>
+
+      {/* 푸터 */}
+      <Footer />
     </>
   );
 }
-

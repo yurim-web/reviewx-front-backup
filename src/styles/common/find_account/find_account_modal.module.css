@@ -1,0 +1,314 @@
+/* ========================================
+   🔍 계정 찾기 모달 스타일
+   ======================================== */
+
+/**
+ * CSS 모듈 위치
+ * - src/styles/common/find_account/find_account_modal.module.css
+ *
+ * 사용 컴포넌트
+ * - src/components/common/find_account/modal/AccountFoundModal.tsx
+ * - src/components/common/find_account/modal/SNSLoginModal.tsx
+ *
+ * 적용 페이지
+ * - /find-account
+ * - /partner/find-account
+ * - /user/find-account
+ */
+
+/* ========================================
+   1. 아이디 찾기 결과 모달
+   ======================================== */
+
+/* 모달 오버레이 */
+.result_modal_overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* 모달 컨테이너 */
+.result_modal_container {
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+}
+
+/* 모달 내용 영역 */
+.result_modal_content {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 40px 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 모달 타이틀 */
+.result_modal_title {
+  color: #444;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 28px; /* 155.556% */
+  letter-spacing: -0.36px;
+}
+
+/* 아이디 강조 텍스트 */
+.result_modal_id_text {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 26px;
+  letter-spacing: -0.32px;
+}
+
+.result_modal_info_box {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 모달 버튼 */
+.result_modal_button {
+  width: 100%;
+  height: 48px;
+  background-color: #FF5694;
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  cursor: pointer;
+}
+
+/* 버튼 그룹 (로그인 / 비밀번호 찾기) */
+.result_modal_button_group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 8px;
+}
+
+/* 로그인 버튼 (위, 진한색) */
+.result_modal_login_button {
+  width: 100%;
+  height: 48px;
+  background-color: #FF5694;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  cursor: pointer;
+}
+
+/* 비밀번호 찾기 버튼 (아래, 연한색) */
+.result_modal_secondary_button {
+  width: 100%;
+  height: 48px;
+  background-color: #7777771A;
+  border: none;
+  border-radius: 8px;
+  color: #444444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  cursor: pointer;
+}
+
+/* ========================================
+   2. 휴대폰 번호 계정 안내 모달 (SNS 로그인 유도)
+   ======================================== */
+
+/* 오버레이는 결과 모달과 동일 스타일 재사용 */
+.sns_modal_overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.sns_modal_container {
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+}
+
+.sns_modal_content {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 40px 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.sns_modal_message {
+  color: #444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.36px;
+}
+
+/* PC: line1과 line2 사이 공백, line2 다음 줄바꿈 */
+.sns_modal_message_line1::after {
+  content: " ";
+  white-space: pre;
+}
+
+.sns_modal_message_line2::after {
+  content: "\A";
+  white-space: pre;
+}
+
+.sns_modal_button_group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 카카오 로그인 버튼 (노란색) */
+.sns_modal_primary_button {
+  width: 100%;
+  height: 58px;
+  background-color: #FEE500; /* 카카오 노란색 계열 */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #444;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px; 
+  letter-spacing: -0.36px;
+}
+
+/* 네이버 로그인 버튼 (초록색) */
+.sns_modal_naver_button {
+  width: 100%;
+  height: 58px;
+  background-color: #03c75a; /* 네이버 초록색 */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #ffffff; 
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px; 
+  letter-spacing: -0.36px;
+}
+
+/* 닫기 버튼 (회색) */
+.sns_modal_secondary_button {
+  width: 100%;
+  height: 58px;
+  background-color: #7777771A;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #444;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px; 
+  letter-spacing: -0.32px;
+}
+
+/* 📱 ================================================================================================
+
+모바일 반응형 스타일 (max-width: 768px)
+
+================================================================================================ 📱 */
+
+@media (max-width: 768px) {
+  /* 결과 모달 컨테이너 */
+  .result_modal_container {
+    max-width: 335px;
+    width: calc(100% - 40px);
+    margin: 0 20px;
+  }
+
+  /* 모달 내용 영역 */
+  .result_modal_content {
+    padding: 32px 20px;
+  }
+
+  /* 아이디조회 모달 */
+  .result_modal_title {
+    font-weight: 600;
+    line-height: 26px; /* 162.5% */
+    letter-spacing: -0.32px;
+  }
+
+  /* 모바일 모달 버튼 그룹 */
+  .result_modal_button_group {
+    gap: 12px;
+  }
+
+  /* SNS 모달 컨테이너 */
+  .sns_modal_container {
+    max-width: 335px;
+    width: calc(100% - 40px);
+    margin: 0 20px;
+  }
+
+  /* SNS 모달 내용 영역 */
+  .sns_modal_content {
+    padding: 32px 20px;
+  }
+
+  .sns_modal_button_group {
+    gap: 12px;
+  }
+
+  /* 카카오 로그인 버튼 */
+  .sns_modal_primary_button {
+    height: 48px;
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  /* 네이버 로그인 버튼 */
+  .sns_modal_naver_button {
+    height: 48px;
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  /* 닫기 버튼 */
+  .sns_modal_secondary_button {
+    height: 48px;
+    background-color: #f6f6f6;
+  }
+
+  .sns_modal_message {
+    font-size: 16px;
+    line-height: 26px;
+    letter-spacing: -0.32px;
+  }
+
+  /* 모바일: line1 다음 줄바꿈(3줄로 표시) */
+  .sns_modal_message_line1::after {
+    content: "\A";
+    white-space: pre;
+  }
+}
+

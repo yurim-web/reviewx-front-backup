@@ -1,0 +1,127 @@
+/* ========================================
+   ⚠️ 유의사항 및 안내 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - 캠페인 생성 폼 컴포넌트들
+ *
+ * 주요 기능:
+ * - 유의사항 박스
+ * - 환불 안내
+ * - 개발자 노트
+ */
+
+/* 유의사항 */
+.notice_content {
+  background: #f6f6f6;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 20px;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.77;
+  color: #999999;
+  letter-spacing: -0.26px;
+}
+
+.notice_content ul {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.notice_content li {
+  margin-bottom: 0;
+  position: relative;
+  padding-left: 16px;
+  word-break: keep-all;
+  line-height: 1.77;
+}
+
+.notice_content li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #000000;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.notice_content strong {
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+/* 환불방법 안내 */
+.refund_guide {
+  margin-top: 16px;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.77;
+  color: #999999;
+  letter-spacing: -0.26px;
+}
+
+.refund_guide ol {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.refund_guide li {
+  margin-bottom: 0;
+}
+
+/* 개발자 노트 */
+.developer_note {
+  margin-top: 16px;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.77;
+  color: #999999;
+  letter-spacing: -0.26px;
+  word-break: keep-all;
+}
+
+/* ============================================
+   모바일 반응형 스타일
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* 유의사항 */
+  .notice_content {
+    border-radius: 6px;
+    padding: 16px;
+    font-size: 12px;
+    line-height: 1.67;
+    letter-spacing: -0.24px;
+  }
+
+  .notice_content li {
+    padding-left: 14px;
+  }
+
+  .notice_content li::before {
+    font-size: 14px;
+  }
+
+  /* 환불방법 안내 */
+  .refund_guide {
+    margin-top: 12px;
+    font-size: 12px;
+    line-height: 1.67;
+    letter-spacing: -0.24px;
+  }
+
+  .refund_guide ol {
+    padding-left: 18px;
+  }
+
+  /* 개발자 노트 */
+  .developer_note {
+    margin-top: 12px;
+    font-size: 12px;
+    line-height: 1.67;
+    letter-spacing: -0.24px;
+  }
+}

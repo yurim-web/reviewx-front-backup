@@ -1,7 +1,7 @@
-import { PointHistory, PointSummary } from "@/types/user/user";
+import { PointHistory, PointSummary } from "@/types/domain/user";
 
 /**
- * 포인트 요약 정보 (샘플 데이터)
+ * 포인트 요약 정보 (김은지 계정 데이터)
  */
 export const pointSummary: PointSummary = {
   total_points: 511200,
@@ -10,7 +10,7 @@ export const pointSummary: PointSummary = {
 };
 
 /**
- * 포인트 내역 (샘플 데이터) - Figma 디자인에 맞춤
+ * 포인트 내역 (김은지 계정 데이터) - Figma 디자인에 맞춤
  */
 export const pointHistoryData: PointHistory[] = [
   {
@@ -26,22 +26,22 @@ export const pointHistoryData: PointHistory[] = [
   },
   {
     id: "2",
-    type: "earned",
-    amount: 50000,
+    type: "withdrawn",
+    amount: -500000,
     description:
       "멜킨 엘프리 마사지 멜킨 엘프리 마사지멜킨 엘프리 마사지 멜킨 엘프리 마사지 멜킨 엘프리 마사지멜킨 엘프리 마사지",
-    campaign_id: "camp_002",
     date: "2025-09-10",
-    status: "earned",
+    status: "completed",
     balance: 4161885,
   },
   {
     id: "3",
-    type: "withdrawn",
-    amount: -36000,
+    type: "earned",
+    amount: 36000,
     description: "출금 완료",
+    campaign_id: "camp_003",
     date: "2025-09-06",
-    status: "completed",
+    status: "earned",
     balance: 6161885,
   },
   {
@@ -63,14 +63,18 @@ export const pointHistoryData: PointHistory[] = [
     date: "2025-09-01",
     status: "failed",
     balance: 7311885,
+    rejection_reason: "예금주와 본인 명의 불일치",
   },
   {
     id: "6",
-    type: "withdrawn",
-    amount: -100000,
-    description: "출금 신청 중",
-    date: "2025-08-28",
-    status: "pending",
-    balance: 9311885,
+    type: "earned",
+    amount: 2000000,
+    description: "적립 취소",
+    campaign_id: "camp_006",
+    date: "2025-09-01",
+    status: "failed",
+    balance: 7311885,
+    rejection_reason:
+      "콘텐츠 내 키워드에 대한 정보를 넣어 달라고 말씀드렸음에도 불구하고 키워드가 없습니다.",
   },
 ];

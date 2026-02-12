@@ -29,23 +29,24 @@ import {
   Label,
   Tooltip,
 } from 'recharts';
-import styles from '@/styles/manager_ga/dashboard/member_stats.module.css';
-import {
-  channelData,
-  ChannelData,
-} from '@/data/manager_ga/dashboard/dashboardData';
+import styles from '@/styles/manager/common/dashboard/chart/member_stats.module.css';
+import { ChannelData } from '@/data/manager_ga/dashboard/dashboardData';
 import { use_pie_chart_click_handler } from './chart_event_handlers';
+
+interface ChannelMemberPieChartProps {
+  channelData: ChannelData[];
+}
 
 /* ========================================
    🎨 색상 관련 함수
    ======================================== */
 
-// 색상 정의 (이미지 설명 기반 - 회색 계열)
+// 색상 정의
 const colors = {
-  blog: '#666666', // 어두운 회색 (블로그 50%)
-  instagram: '#999999', // 중간 회색 (인스타그램 25%)
-  clip: '#d9d9d9', // 밝은 회색 (클립 20%)
-  youtube: '#f1f1f1', // 가장 밝은 회색 (유튜브 5%)
+  blog: '#2DC469', // 초록색 (블로그)
+  instagram: '#FF5694', // 핑크색 (인스타그램)
+  clip: '#9747FF', // 보라색 (클립)
+  youtube: '#FF2626', // 빨간색 (유튜브)
 };
 
 // ──────────────────────────────────────
@@ -56,13 +57,13 @@ const colors = {
 const getChannelColor = (channel: string): string => {
   switch (channel) {
     case '블로그':
-      return colors.blog; // 어두운 회색
+      return colors.blog; // 초록색
     case '인스타그램':
-      return colors.instagram; // 중간 회색
+      return colors.instagram; // 핑크색
     case '클립':
-      return colors.clip; // 밝은 회색
+      return colors.clip; // 보라색
     case '유튜브':
-      return colors.youtube; // 가장 밝은 회색
+      return colors.youtube; // 빨간색
     default:
       return colors.blog; // 기본값 (블로그 색상)
   }
@@ -259,7 +260,9 @@ const CustomTooltip = ({
    ======================================== */
 
 // 파이 차트를 렌더링하는 메인 컴포넌트
-export default function ChannelMemberPieChart() {
+export default function ChannelMemberPieChart({
+  channelData,
+}: ChannelMemberPieChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   // 툴팁 상태 관리
   const [tooltip_state, set_tooltip_state] = useState<{
@@ -440,6 +443,7 @@ export default function ChannelMemberPieChart() {
             startAngle={90} // 시작 각도 (12시 방향부터 시작)
             endAngle={-270} // 끝 각도 (한 바퀴 돌아서 12시 방향으로)
             paddingAngle={0} // 섹션 간 간격 (0이면 붙어있음)
+            minAngle={5} // 최소 각도 (5도) - 작은 섹션도 최소한의 너비를 가지도록 설정
             label={<CustomLabel />} // 각 섹션에 퍼센트 표시
             stroke="white" // 섹션 사이 흰색 선
             strokeWidth={2} // 경계선 두께

@@ -1,0 +1,70 @@
+/* ========================================
+   ☑️ 체크박스 관련 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - 캠페인 생성 폼 컴포넌트들
+ *
+ * 주요 기능:
+ * - 체크박스 그룹 레이아웃
+ * - 체크박스 라벨 및 입력 요소
+ * - 체크 상태 스타일링
+ */
+
+/* 체크박스 그룹 - 동의/선택 항목들 */
+.checkbox_group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* 체크박스 라벨 - 텍스트 + 체크박스 */
+.checkbox_label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 체크박스 입력 요소 - 긴급 체크박스 제외 */
+.checkbox_label:not(.header_urgent_checkbox .checkbox_label)
+  input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  appearance: none;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.checkbox_label:not(.header_urgent_checkbox .checkbox_label)
+  input[type="checkbox"]:checked {
+  border-color: #444444;
+  background: #fff;
+}
+
+.checkbox_label:not(.header_urgent_checkbox .checkbox_label)
+  input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #444444;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* ============================================
+   모바일 반응형 스타일
+   ============================================ */

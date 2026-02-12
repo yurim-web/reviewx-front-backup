@@ -118,15 +118,37 @@ export function useCampaignFilterBar<
   const [tempChannels, setTempChannels] = useState<string[]>([]);
   const [tempSort, setTempSort] = useState<string>(defaultSort);
 
-  // 현재 적용된 값들
-  const [selectedSort, setSelectedSort] = useState<string>(defaultSort);
-  const [searchQuery, setSearchQuery] = useState<string>(
-    activeFilters.searchQuery || ""
-  );
+  // activeFilters가 있는지 확인 (외부에서 필터 상태를 제어하는 경우)
+  const hasActiveFilters = 
+    activeFilters.types?.length ||
+    activeFilters.channels?.length ||
+    activeFilters.searchQuery ||
+    activeFilters.sortBy;
 
-  // 내부 필터 상태 (activeFilters와 병합하여 사용)
-  const [internalFilters, setInternalFilters] = useState<FilterChangeParams>({
-    sortBy: defaultSort,
+  // 현재 적용된 값들 (activeFilters 우선 사용, 없으면 기본값)
+  const [selectedSort, setSelectedSort] = useState<string>(() => {
+    return activeFilters.sortBy || defaultSort;
+  });
+  
+  const [searchQuery, setSearchQuery] = useState<string>(() => {
+    return activeFilters.searchQuery || "";
+  });
+
+  // 내부 필터 상태 (activeFilters와 병합하여 사용) - 새로고침 시 초기화됨
+  const [internalFilters, setInternalFilters] = useState<FilterChangeParams>(() => {
+    // activeFilters가 있으면 그것을 사용 (외부에서 제어하는 경우)
+    if (hasActiveFilters) {
+      return {
+        types: activeFilters.types,
+        channels: activeFilters.channels,
+        searchQuery: activeFilters.searchQuery,
+        sortBy: activeFilters.sortBy || defaultSort,
+      };
+    }
+    // activeFilters가 없으면 빈 상태로 시작 (새로고침 시 항상 초기 상태)
+    return {
+      sortBy: defaultSort,
+    };
   });
 
   // ========================================
@@ -173,13 +195,15 @@ export function useCampaignFilterBar<
 
   // 이전 필터링된 캠페인 목록 저장 (변경 감지용)
   const prevFilteredCampaignsRef = useRef<T[]>([]);
+  const isFirstRenderRef = useRef(true);
 
   // 필터링된 캠페인 목록이 변경되면 부모 컴포넌트에 알림
   useEffect(() => {
     const prevFiltered = prevFilteredCampaignsRef.current;
 
-    // 첫 로드 시
-    if (prevFiltered.length === 0 && filteredCampaigns.length > 0) {
+    // 첫 로드 시에만 콜백 호출
+    if (isFirstRenderRef.current) {
+      isFirstRenderRef.current = false;
       prevFilteredCampaignsRef.current = filteredCampaigns;
       onFilteredCampaignsChangeRef.current(filteredCampaigns);
       return;
@@ -201,8 +225,6 @@ export function useCampaignFilterBar<
       onFilteredCampaignsChangeRef.current(filteredCampaigns);
       return;
     }
-
-    prevFilteredCampaignsRef.current = filteredCampaigns;
   }, [filteredCampaigns]);
 
   // 모달이 열려있을 때 body 스크롤 방지
@@ -270,7 +292,7 @@ export function useCampaignFilterBar<
   // ✅ 필터 적용 함수
   // ========================================
 
-  // 필터를 적용하고 부모 컴포넌트에 알림
+  // 필터를 적용하고 부모 컴포넌트에 알림 (새로고침 시 유지하지 않음)
   const applyFilters = useCallback(
     (filters: FilterChangeParams) => {
       setInternalFilters(filters);

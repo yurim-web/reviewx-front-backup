@@ -17,7 +17,8 @@
  * - 카테고리 아이콘 + 타입 조합 (CamCateIcon)
  */
 
-import cardStyles from '../../../styles/user/campaign_management/campaign_card.module.css';
+import cardStyles from "../../../styles/user/campaign_management/campaign_card.module.css";
+import { getCategoryIcon } from "@/utils/channelLogoMap";
 
 /**
  * 마감 임박 또는 D-day 태그
@@ -37,7 +38,7 @@ export function CamTag({
         isUrgent ? cardStyles.urgent : cardStyles.normal
       }`}
     >
-      <span>{isUrgent ? '마감임박' : `${remainingDays}일 전`}</span>
+      <span>{isUrgent ? "마감임박" : `${remainingDays}일 전`}</span>
     </div>
   );
 }
@@ -52,7 +53,7 @@ export function CamTag({
 export function CamType({
   type,
 }: {
-  type: '배송형' | '방문형' | '구매평' | '기자단' | '미션형';
+  type: "배송형" | "방문형" | "구매평" | "기자단" | "미션형";
 }) {
   return (
     <div className={cardStyles.cam_type}>
@@ -77,21 +78,24 @@ export function CamIcon({ icon }: { icon: string }) {
  *
  * 설명:
  * - 브랜드/플랫폼 아이콘과 캠페인 타입(배송형, 방문형, 구매평, 기자단, 미션형)을 함께 표시합니다.
- * - 모든 타입이 동일하게 아이콘과 타입 텍스트를 표시합니다.
+ * - 구매평, 미션형은 타입에 따라 고정 아이콘을 사용합니다.
+ * - 그 외 타입은 카테고리에 따라 동적으로 아이콘을 가져옵니다.
+ *
+
  */
 export function CamCateIcon({
   category,
-  icon,
   type,
 }: {
-  category: string;
-  icon: string;
-  type: '배송형' | '방문형' | '구매평' | '기자단' | '미션형';
+  category?: string; // 카테고리 (구매평, 미션형은 필요 없음)
+  type: "배송형" | "방문형" | "구매평" | "기자단" | "미션형";
 }) {
-  // 모든 타입에 대해 아이콘과 타입 텍스트를 함께 표시
+  // 타입과 카테고리에 따라 아이콘 경로 자동 결정
+  const icon_path = getCategoryIcon(type, category);
+
   return (
     <div className={cardStyles.cam_cate_icon}>
-      <CamIcon icon={icon} />
+      <CamIcon icon={icon_path} />
       <CamType type={type} />
     </div>
   );

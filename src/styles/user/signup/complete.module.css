@@ -28,7 +28,13 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  padding-top: 80px; /* 헤더(80px) + 서브 헤더(68px) 높이만큼 상단 여백 */
+  padding-top: 80px;
+  background-color: #ffffff;
+}
+
+/* 회원가입 완료 페이지에서 헤더 보더 색상 흰색으로 */
+:global(body.signup_complete_page) header {
+  border-bottom-color: #ffffff;
 }
 
 /* ========================================
@@ -43,10 +49,19 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   position: relative;
   box-sizing: border-box;
-  padding: 0 40px;
+  padding: 0 40px 180px;
+}
+
+/* 글 부분 (로고 + 메시지) - 화면 상하 중앙 배치 */
+.content_section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   gap: 24px;
 }
 
@@ -61,7 +76,8 @@
 
 /* 로고 텍스트 */
 .logo_text {
-  color: #333;
+  color: #444;
+  font-family: 'Poppins', sans-serif;
   font-size: 20px;
   font-style: normal;
   font-weight: 700;
@@ -92,6 +108,26 @@
   padding-bottom: 28px;
 }
 
+/* 닉네임 텍스트 (핑크색 강조) */
+.nickname_text {
+  color: #FF5694;
+}
+
+/* 닉네임 뒤 "님," (PC에서만 표시) */
+.nickname_honorific {
+  display: inline;
+}
+
+/* PC에서만 보이는 줄바꿈 */
+.desktop_br {
+  display: inline;
+}
+
+/* 모바일에서만 보이는 줄바꿈 */
+.mobile_br {
+  display: none;
+}
+
 /* 환영 메시지 */
 .welcome_message {
   color: #444;
@@ -110,7 +146,7 @@
 /* 버튼 섹션 */
 .button_section {
   position: absolute;
-  bottom: 40px;
+  bottom: 80px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -122,71 +158,139 @@
 
 /* 캠페인 보러 가기 버튼 */
 .campaign_button {
-  width: 388px;
-  height: 58px;
-  background-color: #444444;
+  width: calc(50% - 12px);
+  height: 56px;
+  background-color: #FF5694;
   border: none;
   border-radius: 8px;
   color: #ffffff;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   font-style: normal;
-  line-height: 18px;
-  letter-spacing: -0.36px;
+  line-height: 16px;
+  letter-spacing: -0.32px;
   font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
+
 /* 로그인하기 버튼 */
 .login_button {
-  width: 388px;
-  height: 58px;
+  width: calc(50% - 12px);
+  height: 56px;
   background-color: #ffffff;
-  border: 1px solid #444444;
+  border: 1px solid #FF5694;
   border-radius: 8px;
-  color: #444444;
-  font-size: 18px;
+  color: #FF5694;
+  font-size: 16px;
   font-weight: 600;
   font-style: normal;
-  line-height: 18px;
-  letter-spacing: -0.36px;
+  line-height: 16px;
+  letter-spacing: -0.32px;
   font-family: "Pretendard", sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-/* ========================================
-   5. 반응형 디자인
-   ======================================== */
 
-/* 모바일 (0~739px) */
-@media (max-width: 739px) {
+/* 📱 ================================================================================================
+
+모바일 반응형 스타일 (max-width: 768px)
+
+================================================================================================ 📱 */
+
+@media (max-width: 768px) {
+  /* 페이지 컨테이너 */
   .complete_page_container {
-    padding-top: 148px;
+    padding-top: 64px;
   }
 
+  /* 모바일에서 헤더 border-bottom 흰색으로 */
+  :global(body.signup_complete_page) header {
+    border-bottom-color: #e5e5e5;
+  }
+
+  /* 메인 영역 */
   .complete_main {
-    padding: 20px;
+    min-height: calc(100vh - 64px);
+    padding: 20px 20px 150px; /* 버튼 영역 공간 확보 */
   }
 
+  /* 로고 텍스트 */
+  .logo_text {
+    color: #444;
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 24px;
+    letter-spacing: -0.4px;
+  }
+
+  /* 메시지 섹션 */
+  .message_section {
+    gap: 24px;
+  }
+
+  /* 환영 제목 */
   .welcome_title {
+    color: #444;
+    text-align: center;
     font-size: 24px;
-    line-height: 32px;
+    font-weight: 600;
+    line-height: 140%; 
+    letter-spacing: -0.48px;
+    padding-bottom:0px;
   }
 
+  /* 모바일에서 닉네임 숨기기 */
+  .nickname_text {
+    display: none;
+  }
+
+  /* 모바일에서 "님," 숨기기 */
+  .nickname_honorific {
+    display: none;
+  }
+
+  /* PC 줄바꿈 숨기기 */
+  .desktop_br {
+    display: none;
+  }
+
+  /* 모바일 줄바꿈 보이기 */
+  .mobile_br {
+    display: inline;
+  }
+
+  /* 환영 메시지 */
   .welcome_message {
-    font-size: 14px;
+    color: #444;
+    text-align: center;
+    font-family: Pretendard;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 150%; /* 24px */
+    letter-spacing: -0.32px;
   }
 
+  /* 버튼 섹션 - 모바일에서 하단 24px */
   .button_section {
+    bottom: 24px;
     flex-direction: column;
     gap: 12px;
+    padding: 0 20px;
   }
 
+  /* 버튼들 */
   .campaign_button,
   .login_button {
     width: 100%;
-    max-width: 400px;
+    height: 56px;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 16px;
+    letter-spacing: -0.32px;
   }
 }

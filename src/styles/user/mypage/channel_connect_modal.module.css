@@ -17,12 +17,12 @@
 
 .modal_content {
   max-width: 1000px;
-  margin: 0 auto;
+  width: 100%;
   background: white;
   border-radius: 40px 40px 0 0;
-  width: 100%;
   overflow-y: auto;
   animation: slideUp 0.3s ease-out;
+  box-sizing: border-box;
 }
 
 @keyframes slideUp {
@@ -59,7 +59,7 @@
 }
 
 .modal_body {
-  padding: 24px 40px;
+  padding: 12px 40px 24px 40px;
 }
 
 .input_section {
@@ -72,6 +72,39 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+/* 오류/안내 문구 스타일 (빨간색) */
+.error_text {
+  color: #ff2626;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.28px;
+  margin: 0;
+  padding-top: 4px;
+}
+
+/* 채널을 찾을 수 없을 때 오류 메시지 스타일 */
+.channel_not_found_text {
+  color: #ff2626;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.28px;
+  margin: 0;
+  padding-top: 4px;
+}
+
+/* 안내 문구 스타일 (인스타그램 전용, 회색) */
+.info_text {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.28px;
+  margin: 0;
+  padding-top: 4px;
 }
 
 .input_field {
@@ -92,8 +125,10 @@
   display: flex;
   align-items: center;
   width: 100%;
-  height: 48px;
+  min-height: 48px;
   background: white;
+  padding: 0;
+  position: relative;
 }
 
 /* 고정 텍스트 프리픽스 스타일 - 밑줄 없음 */
@@ -101,7 +136,7 @@
   color: #444;
   font-size: 16px;
   font-weight: 500;
-  line-height: 16px; /* 100% */
+  line-height: 20px; /* 100% */
   letter-spacing: -0.32px;
   padding: 0 0 0 0;
   height: 100%;
@@ -109,13 +144,16 @@
   align-items: center;
   white-space: nowrap;
   flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 70%;
 }
 
-/* 프리픽스와 함께 사용하는 입력 필드 스타일 - 입력창에만 밑줄 */
+/* 프리픽스와 함께 사용하는 입력 필드 스타일 - 입력 부분에만 밑줄 */
 .input_field_with_prefix {
   flex: 1;
   height: 100%;
-  padding: 0 0 0 0;
+  padding: 0 0 12px 0;
   border: none;
   border-bottom: 1px solid #d9d9d9;
   outline: none;
@@ -127,6 +165,7 @@
   font-weight: 500;
   line-height: 16px;
   letter-spacing: -0.32px;
+  margin-top: 12px;
 }
 
 /* 프리픽스 입력 필드의 플레이스홀더 스타일 */
@@ -158,39 +197,99 @@
   letter-spacing: -0.32px;
 
   cursor: pointer;
-  transition: background-color 0.2s ease;
 }
 
 /* 활성화된 버튼 스타일 */
 .connect_button:not(.disabled_button) {
-  background: #333333;
-}
-
-.connect_button:not(.disabled_button):hover {
-  background: #222222;
+  background: #ff5694;
 }
 
 /* 비활성화된 버튼 스타일 */
 .disabled_button {
   background: #e0e0e0 !important;
   color: #999999 !important;
-  cursor: not-allowed !important;
+  cursor: default !important;
 }
 
-/* 반응형 */
-@media (max-width: 480px) {
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
   .modal_overlay {
-    padding: 16px;
+    background: rgba(0, 0, 0, 0.25);
   }
 
   .modal_content {
     max-width: 100%;
+    border-radius: 24px 24px 0 0;
   }
 
-  .modal_header,
-  .modal_body,
+  .modal_header {
+    padding: 32px 24px 0px;
+  }
+
+  .modal_title {
+    font-size: 20px;
+    line-height: 20px;
+    letter-spacing: -0.4px;
+  }
+
+  .modal_close_button {
+    width: 20px;
+    height: 20px;
+  }
+
+  .modal_body {
+    padding: 12px 24px 24px 24px;
+  }
+
+  .input_section {
+    gap: 16px;
+  }
+
+  .input_group {
+    gap: 8px;
+  }
+
+  .prefix_input_group {
+    min-height: 48px;
+    padding: 0 24px 0 0;
+    position: relative;
+  }
+
+  .input_field_with_prefix {
+    flex: 1;
+    min-width: 0;
+    margin-top: 12px;
+  }
+
+  .error_text {
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.28px;
+  }
+
+  .channel_not_found_text {
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.28px;
+  }
+  /* 모달 하단 안내사항 텍스트 */
+  .info_text {
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.28px;
+    word-break: keep-all;
+  }
+
   .modal_footer {
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 0 24px 32px;
+  }
+
+  .connect_button {
+    height: 48px;
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
   }
 }

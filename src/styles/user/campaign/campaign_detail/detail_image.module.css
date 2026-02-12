@@ -15,109 +15,137 @@
  */
 
 /* ===== 캠페인 상세 이미지 섹션 ===== */
-.campaign_detail_image_container {
+
+/* 모든 이미지를 감싸는 컨테이너 */
+.all_images_container {
   width: 100%;
-  height: 500px;
+  display: flex;
+  flex-direction: column; /* 세로로 나열 */
+  gap: 0; /* 이미지 간 간격 없음 */
   position: relative;
-  overflow: hidden;
-  transition: height 0.3s ease; /* 부드러운 확장/축소 애니메이션 */
 }
 
+.campaign_detail_image_container {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  height: 500px; /* 기본값: 접혀있을 때의 높이 */
+}
+
+/* 접혀있을 때 이미지: 고정 높이로 cover 처리 */
 .campaign_detail_image_container > img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: top; /* 이미지 상단 부분 우선 표시 */
-  transition: height 0.3s ease;
 }
 
-/* 이미지 확장 상태 */
+/* 펼쳐진 이미지: 원본 크기로 표시 */
 .campaign_detail_image_container.expanded {
-  height: auto; /* 원본 크기로 확장 */
+  height: auto; /* 원본 높이로 확장 */
 }
 
 .campaign_detail_image_container.expanded > img {
-  height: auto;
+  width: 100%;
+  height: auto; /* 원본 비율 유지 */
   object-fit: contain; /* 비율 유지하며 전체 표시 */
+  display: block; /* 이미지 아래 공백 제거 */
 }
 
-/* 이미지 확장/축소 버튼 */
+/* 이미지 확장/축소 버튼 (모든 이미지 아래에 하나만 표시) */
 .expand_image_button {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%); /* 가로 중앙 정렬 */
+  position: relative;
+  margin: 20px auto;
   cursor: pointer;
   border-radius: 24px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e5e5;
   background: #fff;
-  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.05); /* 그림자 효과 */
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.05);
   padding: 14px 27px;
-  color: #333;
-  text-align: center;
+  color: #444;
   font-size: 18px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 18px;
   letter-spacing: -0.36px;
+  display: block; /* 블록 요소로 만들어 중앙 정렬 */
 }
 
 /* ===== 반응형 스타일 ===== */
 
-/* ✅ 모바일 공통 — 0~739px */
-@media (max-width: 739px) {
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
   .campaign_detail_image_container {
-    width: 100%;
-    height: 300px;
-    position: relative;
-    overflow: hidden;
-    transition: height 0.3s ease; /* 부드러운 확장/축소 애니메이션 */
+    height: 500px;
   }
 
+  /* 접혀있을 때 이미지: 고정 높이로 cover 처리 */
   .campaign_detail_image_container > img {
     width: 100%;
-    height: 300px;
+    height: 100%;
     object-fit: cover;
-    object-position: top; /* 이미지 상단 부분 우선 표시 */
-    transition: height 0.3s ease;
+    object-position: top;
   }
 
-  /* 이미지 확장 상태 */
+  /* 펼쳐진 이미지: 원본 크기로 표시 */
   .campaign_detail_image_container.expanded {
-    height: auto; /* 원본 크기로 확장 */
+    height: auto;
   }
 
   .campaign_detail_image_container.expanded > img {
+    width: 100%;
     height: auto;
-    object-fit: contain; /* 비율 유지하며 전체 표시 */
+    object-fit: contain;
+    display: block;
   }
 
   /* 이미지 확장/축소 버튼 */
   .expand_image_button {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%); /* 가로 중앙 정렬 */
+    position: relative;
+    margin: 24px auto;
     cursor: pointer;
-    border-radius: 30px;
+    border-radius: 24px;
     background: #fff;
-    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.05); /* 그림자 효과 */
-    padding: 14px 27px;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.05);
+    padding: 12px 20px;
     font-size: 16px;
+    font-weight: 600;
     line-height: 16px;
-    letter-spacing: -0.36px;
+    letter-spacing: -0.32px;
+    display: block;
   }
 }
 
 /* ✅ 태블릿 세로(portrait) 전용 — 740~1100px */
 @media (min-width: 740px) and (max-width: 1100px) and (orientation: portrait) {
   .campaign_detail_image_container {
-    height: 400px;
+    height: 400px; /* 접혀있을 때의 높이 */
+  }
+
+  .campaign_detail_image_container.expanded {
+    height: auto; /* 펼쳐졌을 때는 원본 크기 */
+  }
+
+  .campaign_detail_image_container.expanded > img {
+    height: auto;
+    object-fit: contain;
   }
 }
 
 /* ✅ 태블릿 가로(landscape) 전용 — 740~1100px */
 @media (min-width: 740px) and (max-width: 1366px) and (orientation: landscape) {
   .campaign_detail_image_container {
-    height: 400px;
+    height: 400px; /* 접혀있을 때의 높이 */
+  }
+
+  .campaign_detail_image_container.expanded {
+    height: auto; /* 펼쳐졌을 때는 원본 크기 */
+  }
+
+  .campaign_detail_image_container.expanded > img {
+    height: auto;
+    object-fit: contain;
   }
 }

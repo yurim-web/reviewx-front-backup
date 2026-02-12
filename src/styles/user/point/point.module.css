@@ -4,407 +4,616 @@
 
 /**
  * 사용 컴포넌트:
- * - page.tsx (포인트 관리 페이지)
- * - PointTabNavigation.tsx (포인트 탭 네비게이션 컴포넌트)
- * 
+ * - PointHistoryPage.tsx (포인트 내역 페이지)
+ * - PointTabNavigation.tsx (포인트 탭 네비게이션)
+ *
  * 사용 페이지:
- * - /user/point (포인트 관리 페이지)
+ * - /user/point/all (전체 포인트 내역)
+ * - /user/point/earned (적립 포인트 내역)
+ * - /user/point/withdrawn (출금 포인트 내역)
  */
 
-/* 포인트 페이지 전체 컨테이너 */
-.point_page {
-  font-family: "Pretendard", sans-serif;
-}
+/* ========================================
+   기본 레이아웃
+   ======================================== */
 
-/* 메인 컨테이너 (흰색 배경) */
-.container {
-  margin: 0 auto;
-  background-color: white;
-  min-height: 100vh;
-  padding-top: 80px;
-}
-
-/* ============================================
-   포인트 요약 정보 영역
-   ============================================ */
-
-/* 포인트 요약 섹션 (보유포인트 + 출금신청 버튼) */
-.point_summary_section {
-  padding: 40px 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* 포인트 정보 컨테이너 (라벨 + 금액) */
-.point_summary_info {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-/* "보유포인트" 라벨 */
-.point_label {
-  color: #444;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 16px; /* 100% */
-  letter-spacing: -0.32px;
-}
-
-/* 포인트 금액과 단위를 감싸는 컨테이너 */
-.point_amount {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  color: #444;
-  font-size: 40px;
-  font-weight: 700;
-  line-height: 40px; /* 100% */
-  letter-spacing: -0.8px;
-}
-
-/* 포인트 단위 (P) */
-.amount_unit {
-  color: #848484;
-}
-
-/* "출금신청하기" 버튼 */
-.withdrawal_button {
-  border-radius: 24px;
-  background: #d9d9d9;
-  cursor: pointer;
-  flex-shrink: 0;
-  padding: 16px 24px;
-  color: #444;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 18px; /* 100% */
-  letter-spacing: -0.36px;
-}
-
-/* ============================================
-   포인트 탭 네비게이션
-   
-   ============================================ */
-
-/* 탭 네비게이션 전체 컨테이너 */
-.point_tab_navigation {
-  display: flex;
-  align-items: center;
-  padding: 0px 40px;
-  border-bottom: 1px solid #d9d9d9;
-  position: sticky;
-  top: 148.5px; /* TabNavigation(65px) + 서브헤더(80px) = 145px 아래에 고정 */
-  background: white;
-  z-index: 85;
-}
-
-/* 왼쪽 탭들 컨테이너 */
-.left_point_tabs {
-  display: flex;
-  gap: 24px;
-  align-items: center;
-}
-
-/* 개별 탭 버튼 */
-.point_tab {
-  position: relative;
-  background: none;
-  border: none;
-  color: #848484;
-  font-size: 18px;
-  font-weight: 500;
-  line-height: 18px;
-  letter-spacing: -0.36px;
-  cursor: pointer;
-  padding: 16px 0;
-}
-
-/* 활성화된 탭 */
-.point_tab.active {
-  font-weight: 700;
-  color: #444444;
-}
-
-/* 활성화된 탭 아래 밑줄 */
-.point_tab.active::after {
-  content: "";
-  position: absolute;
-  bottom: 0px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background-color: #333;
-  border-radius: 1px;
-}
-
-/* ============================================
-   포인트 내역 리스트
-   ============================================ */
-
-/* 내역 리스트 전체 컨테이너 */
-.history_list {
-  padding: 0 40px;
-}
-
-/* 개별 내역 아이템 */
-.history_item {
-  display: flex;
-  align-items: center;
-  padding: 24px 0;
-  border-top: 1px solid #d9d9d9;
-}
-
-/* 마지막 내역 아이템 아래 구분선 */
-.history_item:last-child {
-  border-bottom: 1px solid #d9d9d9;
-}
-
-/* ============================================
-   상태 배지
-   ============================================ */
-
-/* 상태 배지 컨테이너 */
-.status_badge_container {
-  width: 68px;
-}
-
-/* 상태 배지 기본 스타일 */
-.status_badge {
-  width: fit-content;
-  padding: 8px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  text-align: center;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 16px; /* 100% */
-  letter-spacing: -0.32px;
-}
-
-/* 적립 상태 배지 (초록색) */
-.status_badge.earned {
-  background: #e8f5e8;
-  color: #2e7d32;
-}
-
-/* 완료 상태 배지 (보라색) */
-.status_badge.completed {
-  background: #f3e5f5;
-  color: #7b1fa2;
-}
-
-/* 충전 상태 배지 (회색 #a8a8a8) */
-.status_badge.charged {
-  background: #a8a8a8;
-  color: #ffffff;
-}
-
-/* 사용 상태 배지 (진한 회색 #555555) */
-.status_badge.used {
-  background: #555555;
-  color: #ffffff;
-}
-
-/* 신청 상태 배지 (파란색) */
-.status_badge.pending {
-  background: #e3f2fd;
-  color: #1976d2;
-}
-
-/* 취소 상태 배지 (빨간색) */
-.status_badge.cancelled {
-  background: #ffebee;
-  color: #d32f2f;
-}
-
-/* ============================================
-   내역 정보
-   ============================================ */
-
-/* 내역 정보 컨테이너 (설명 + 날짜) */
-.history_info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-/* 내역 설명 텍스트 */
-.history_description {
-  display: -webkit-box;
-  width: 732px;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-  overflow: hidden;
-  color: #444;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 16px; /* 100% */
-  letter-spacing: -0.32px;
-}
-
-/* 취소된 내역 설명 컨테이너 */
-.cancelled_description {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-/* 취소된 내역의 메인 텍스트 */
-.main_text {
-  color: #444;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 16px;
-  letter-spacing: -0.32px;
-}
-
-/* ============================================
-   취소 사유 섹션
-   ============================================ */
-
-/* 취소 사유 전체 컨테이너 */
-.reason_section {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  position: relative;
-  /* cursor: pointer; */
-}
-
-/* JavaScript로 제어하므로 호버 효과 제거 */
-
-/* 취소 사유 아이콘 */
-.reason_icon {
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-/* 취소 사유 텍스트 */
-.reason_text {
-  overflow: hidden;
-  color: #f00;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px; /* 100% */
-  letter-spacing: -0.28px;
-}
-
-/* 취소 사유 내용 (말풍선 스타일) - 기본적으로 숨김 */
-.reason_content {
-  position: fixed;
-  z-index: 9999;
-  padding: 4px;
-  border-radius: 4px;
-  background: rgba(255, 0, 0, 0.1);
-  color: #f00;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px; /* 100% */
-  letter-spacing: -0.28px;
-  white-space: nowrap;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-/* 취소 사유 말풍선 화살표 */
-.reason_content::before {
-  content: "";
-  position: absolute;
-  left: -6px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 0;
-  height: 0;
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;
-  border-right: 6px solid rgba(255, 0, 0, 0.1);
-}
-
-/* 내역 날짜 */
-.history_date {
-  font-size: 14px;
-  font-weight: 500;
-  color: #848484;
-  line-height: 14px;
-}
-
-/* ============================================
-   포인트 정보 (금액 + 잔액)
-   ============================================ */
-
-/* 포인트 정보 컨테이너 (오른쪽 정렬) */
-.point_info {
-  width: 120px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-/* 포인트 변동 금액 */
-.point_change {
-  text-align: right;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 16px; /* 100% */
-  letter-spacing: -0.32px;
-}
-
-/* 포인트 증가 (+ 금액) - 초록색 */
-.point_change.positive {
-  color: #2dc469;
-}
-
-/* 포인트 감소 (- 금액) - 파란색 */
-.point_change.negative {
-  color: #2b7fff;
-}
-
-/* 취소된 포인트 금액 - 회색 취소선 */
-.point_change.cancelled_amount {
-  color: #a8a8a8;
-  text-decoration: line-through;
-}
-
-/* 포인트 잔액 */
-.point_balance {
-  color: #a8a8a8;
-  text-align: right;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px; /* 100% */
-  letter-spacing: -0.28px;
-}
-
-/* ============================================
-   반응형 디자인 (모바일)
-   ============================================ */
-
-@media (max-width: 768px) {
-  /* 모바일에서 포인트 탭 네비게이션 고정 위치 조정 */
-  .point_tab_navigation {
-    top: 125px; /* 모바일에서 조정된 TabNavigation 위치 */
-    padding: 12px 24px;
+   .point_page {
+    font-family: "Pretendard", sans-serif;
   }
-
-  .left_point_tabs {
+  
+  .container {
+    margin: 0 auto;
+    background-color: white;
+    min-height: 100vh;
+    padding: 80px 0px;
+  }
+  
+  /* ========================================
+     포인트 요약 정보 영역
+     ======================================== */
+  
+  .point_summary_section {
+    padding: 40px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .point_summary_info {
+    display: flex;
+    flex-direction: column;
     gap: 16px;
   }
-
-  .point_tab {
+  
+  .point_label {
+    color: #444;
     font-size: 16px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: -0.32px;
   }
-}
+  
+  .point_amount {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    color: #444;
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 40px;
+    letter-spacing: -0.8px;
+  }
+  
+  .amount_unit {
+    color: #ff5694;
+  }
+  
+  .withdrawal_button {
+    border-radius: 24px;
+    background: #ff5694;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 16px 24px;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 18px;
+    letter-spacing: -0.36px;
+    border: none;
+  }
+  
+  /* ========================================
+     포인트 탭 네비게이션
+     ======================================== */
+  
+  .point_tab_navigation {
+    display: flex;
+    align-items: center;
+    padding: 0px 40px;
+    border-bottom: 1px solid #d9d9d9;
+    position: sticky;
+    top: 148.5px;
+    background: white;
+    z-index: 85;
+  }
+  
+  .left_point_tabs {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+  
+  .point_tab {
+    position: relative;
+    background: none;
+    border: none;
+    color: #444;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 18px;
+    letter-spacing: -0.36px;
+    cursor: pointer;
+    padding: 16px 0;
+  }
+  
+  .point_tab.active {
+    font-weight: 700;
+    color: #ff5694;
+  }
+  
+  .point_tab.active::after {
+    content: "";
+    position: absolute;
+    bottom: 0px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #ff5694;
+    border-radius: 1px;
+  }
+  
+  /* ========================================
+     포인트 내역 리스트
+     ======================================== */
+  
+  .history_list {
+    padding: 0 40px;
+  }
+  
+  .empty_state {
+    padding: 24px 0;
+    text-align: center;
+    color: #ababab;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+    border-top: 1px solid #d9d9d9;
+    border-bottom: 1px solid #d9d9d9;
+  }
+  
+  .history_item {
+    display: flex;
+    align-items: center;
+    padding: 24px 0;
+    border-top: 1px solid #d9d9d9;
+  }
+  
+  .history_item:last-child {
+    border-bottom: 1px solid #d9d9d9;
+  }
+  
+  /* ========================================
+     PC 버전 레이아웃
+     ======================================== */
+  
+  .status_badge_container {
+    width: 68px;
+  }
+  
+  .status_badge {
+    width: fit-content;
+    padding: 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+  
+  .status_badge.earned {
+    background: #2dc469;
+    color: #ffffff;
+  }
+  
+  .status_badge.completed {
+    background: #2b7fff;
+    color: #ffffff;
+  }
+  
+  .status_badge.charged {
+    background: #a8a8a8;
+    color: #ffffff;
+  }
+  
+  .status_badge.used {
+    background: #555555;
+    color: #ffffff;
+  }
+  
+  .status_badge.pending {
+    background: #e3f2fd;
+    color: #1976d2;
+  }
+  
+  .status_badge.cancelled {
+    background: #ababab;
+    color: #ffffff;
+  }
+  
+  .status_badge.failed {
+    background: #ff2626;
+    color: #ffffff;
+  }
+  
+  .history_info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .history_description {
+    display: -webkit-box;
+    width: 732px;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    color: #444;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+  
+  .cancelled_description {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .main_text {
+    color: #444;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+  
+  .reason_section {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+  
+  .reason_icon {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .reason_icon > img{
+    width: 100%;
+    height: 100%;
+  }
+  
+  .reason_text {
+    overflow: hidden;
+    color: #f00;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+  
+  .history_date {
+    font-size: 14px;
+    font-weight: 500;
+    color: #848484;
+    line-height: 14px;
+  }
+  
+  .point_info {
+    width: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  
+  .point_change {
+    text-align: right;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+  
+  .point_change.positive {
+    color: #2dc469;
+  }
+  
+  .point_change.negative {
+    color: #2b7fff;
+  }
+  
+  .point_change.returned {
+    color: #848484;
+  }
+  
+  .point_change.cancelled_amount {
+    color: #a8a8a8;
+    text-decoration: line-through;
+  }
+  
+  .point_balance {
+    color: #a8a8a8;
+    text-align: right;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+  
+  /* ========================================
+     모바일 버전 레이아웃 (기본 숨김)
+     ======================================== */
+  
+  .mobile_row_first {
+    display: none;
+  }
+  
+  .mobile_row_second {
+    display: none;
+  }
+  
+  .mobile_description {
+    display: none;
+  }
+  
+  .mobile_points_group {
+    display: none;
+  }
+  
+  .mobile_point_change {
+    display: none;
+  }
+  
+  .mobile_date {
+    display: none;
+  }
+  
+  .mobile_balance {
+    display: none;
+  }
+  
+  .mobile_status {
+    display: none;
+  }
+  
+  /* ========================================
+     📱 모바일 반응형 (768px 이하)
+     ======================================== */
+  
+  @media screen and (max-width: 768px) {
+    /* 컨테이너 */
+    .container {
+      padding: 64px 0px 0px 0px;
+    }
+  
+    /* 포인트 요약 섹션 */
+    .point_summary_section {
+      padding: 32px 20px 32px 20px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 20px;
+    }
+  
+    .point_summary_info {
+      gap: 16px;
+      width: 100%;
+    }
+  
+    .point_label {
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 18px;
+      letter-spacing: -0.36px;
+    }
+  
+    .point_amount {
+      font-size: 40px;
+      font-weight: 700;
+      line-height: 40px;
+      letter-spacing: -0.8px;
+      gap: 10px;
+    }
+  
+    .withdrawal_button {
+      height: 40px;
+      padding: 0px 20px;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 16px;
+      letter-spacing: -0.32px;
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  
+    /* 포인트 탭 네비게이션 */
+    .point_tab_navigation {
+      top: 122px;
+      padding: 0px 20px;
+      border-bottom: 1px solid #d9d9d9;
+    }
+  
+    .left_point_tabs {
+      gap: 20px;
+    }
+  
+    .point_tab {
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 18px;
+      letter-spacing: -0.36px;
+      padding: 16px 0;
+    }
+  
+    .point_tab.active {
+      font-weight: 700;
+    }
+  
+    /* 포인트 내역 리스트 */
+    .history_list {
+      padding: 0px 20px 40px 20px;
+    }
+  
+    .empty_state {
+      padding: 20px 0;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 14px;
+      letter-spacing: -0.28px;
+    }
+  
+    /* PC 버전 레이아웃 숨김 */
+    .status_badge_container {
+      display: none !important;
+    }
+  
+    .history_info {
+      display: none !important;
+    }
+  
+    .point_info {
+      display: none !important;
+    }
+  
+    /* 내역 아이템 모바일 레이아웃 */
+    .history_item {
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: stretch;
+    }
+  
+    /* 모바일 1번째 줄: 설명 + (포인트 금액 + 잔액) */
+    .mobile_row_first {
+      display: flex !important;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+  
+    .mobile_description {
+      display: -webkit-box !important;
+      flex: 1;
+      min-width: 0; /* flex 아이템이 제대로 줄어들 수 있도록 */
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      color: #444;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 22px;
+      letter-spacing: -0.28px;
+      word-break: normal; /* 단어 중간에서 잘리지 않도록 */
+      overflow-wrap: break-word; /* 단어가 너무 길 때만 줄바꿈 */
+    }
+  
+    .mobile_description .cancelled_description {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: nowrap;
+      flex-direction: row !important;
+    }
+  
+    .mobile_description .main_text {
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 22px;
+      letter-spacing: -0.28px;
+      color: #444;
+    }
+  
+    .mobile_description .reason_section {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+  
+
+    /* 포인트 금액과 잔액을 세로로 묶는 그룹 */
+    .mobile_points_group {
+      display: flex !important;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+  
+    .mobile_point_change {
+      display: block !important;
+      flex-shrink: 0;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 16px;
+      letter-spacing: -0.32px;
+    }
+  
+    .mobile_point_change.positive {
+      color: #2dc469;
+    }
+  
+    .mobile_point_change.negative {
+      color: #2b7fff;
+    }
+  
+    .mobile_point_change.returned {
+      color: #848484;
+    }
+  
+    .mobile_point_change.cancelled_amount {
+      color: #ababab;
+      text-decoration: line-through;
+    }
+  
+    .mobile_balance {
+      display: block !important;
+      color: #ababab;
+      text-align: right;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 14px;
+      letter-spacing: -0.28px;
+    }
+  
+    /* 모바일 2번째 줄: 날짜 + 상태 */
+    .mobile_row_second {
+      display: flex !important;
+      justify-content: space-between;
+      align-items: center;
+    }
+  
+    .mobile_date {
+      display: block !important;
+      color: #848484;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 14px;
+      letter-spacing: -0.28px;
+    }
+  
+    .mobile_status {
+      display: block !important;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 14px;
+      letter-spacing: -0.28px;
+      text-align: right;
+    }
+  
+    .mobile_status.earned {
+      color: #2dc469;
+    }
+  
+    .mobile_status.completed {
+      color: #2b7fff;
+    }
+  
+    .mobile_status.cancelled,
+    .mobile_status.pending {
+      color: #848484;
+    }
+
+    .mobile_status.failed {
+      color: #ff2626;
+    }
+  }
+  

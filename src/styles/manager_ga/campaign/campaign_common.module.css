@@ -1,0 +1,213 @@
+/* ========================================
+   🔄 캠페인 관련 공통 스타일 (반려/신고)
+   ======================================== */
+
+/**
+ * 캠페인 관련 컴포넌트에서 사용하는 모든 스타일
+ * 
+ * 사용 컴포넌트:
+ * - RejectCodeInfoSection.tsx (반려 코드 안내 섹션)
+ * - RejectStatsSection.tsx (반려 내역 통계 섹션)
+ * - ReportCodeInfoSection.tsx (신고 코드 안내 섹션)
+ * - ReportStatsSection.tsx (신고 내역 통계 섹션)
+ * 
+ * 사용 페이지:
+ * - /manager_ga/campaign/rejected (GA 관리자 반려내역)
+ * - /manager_ga/campaign/reported (GA 관리자 신고내역)
+ */
+
+/* ========================================
+   공통 스타일
+   ======================================== */
+
+/* ========================================
+   페이지 레이아웃 스타일 (반려/신고 공통)
+   ======================================== */
+
+/* CSS 변수 정의 - 폰트 패밀리를 한 곳에서 관리 */
+.page_container {
+  --font-family: "Pretendard", sans-serif;
+}
+
+/* 전체 페이지 컨테이너 */
+.page_container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-color: white;
+  padding-top: 80px;
+  padding-left: 240px;
+  box-sizing: border-box;
+  font-family: var(--font-family);
+}
+
+/* 메인 콘텐츠 영역 */
+.page_main_content {
+  padding: 40px 40px 40px 40px;
+  width: 100%;
+}
+
+/* 페이지 섹션 제목 (반려 내역, 신고 내역) */
+.page_section_title {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  color: #444444;
+  padding-bottom: 24px;
+  padding-top: 40px;
+}
+
+/* 섹션 제목 - 공통 스타일 */
+.section_title {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  color: #444444;
+}
+
+/* 코드 스타일 - 반려 코드 (주황색 #f60) */
+.code {
+  color: #f60;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 신고 코드 스타일 - 신고 코드 전용 (빨간색 #ff2626) */
+.report_code {
+  color: #ff2626;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* 섹션 박스 - 공통 스타일 */
+.section_box {
+  background-color: #f9f9f9;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+/* 텍스트 - 공통 스타일 */
+.text {
+  color: #444;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* ========================================
+   반려 코드 안내 섹션 스타일
+   ======================================== */
+
+/* 반려 코드 안내 섹션 컨테이너 */
+.reject_code_info_section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-top: 16px;
+}
+
+/* 반려 코드 그리드 */
+.reject_code_grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 20px;
+}
+
+/* 반려 코드 아이템 */
+.reject_code_item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ========================================
+   반려 내역 통계 섹션 스타일
+   ======================================== */
+
+/* 반려 내역 통계 섹션 - margin-bottom 추가 */
+.reject_stats_section {
+  margin-bottom: 24px;
+}
+
+/* 반려 내역 통계 그리드 */
+.reject_stats_grid {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 133px;
+  row-gap: 16px;
+}
+
+/* 반려 내역 통계 아이템 - 레이아웃만 (텍스트 스타일은 공통) */
+.reject_stats_item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 반려 내역 통계 구분자 */
+.reject_stats_separator {
+  color: #444444;
+}
+
+/* ========================================
+   신고 코드 안내 섹션 스타일
+   ======================================== */
+
+/* 신고 코드 안내 섹션 컨테이너 */
+.report_code_info_section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* 신고 코드 그리드 */
+.report_code_grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 32px;
+}
+
+/* 신고 코드 아이템 */
+.report_code_item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ========================================
+   신고 내역 통계 섹션 스타일
+   ======================================== */
+
+/* 신고 내역 통계 섹션 - margin-bottom 추가 */
+.report_stats_section {
+  margin-bottom: 24px;
+}
+
+/* 신고 내역 통계 그리드 */
+.report_stats_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, auto));
+  grid-auto-flow: column;
+  grid-template-rows: repeat(2, 1fr);
+  gap: 24px;
+}
+
+/* 신고 내역 통계 아이템 - 레이아웃만 (텍스트 스타일은 공통) */
+.report_stats_item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 신고 내역 통계 구분자 */
+.report_stats_separator {
+  color: #444444;
+}

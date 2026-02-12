@@ -1,140 +1,288 @@
 /* ========================================
-   ✅ 미션형 전용 - 완료 카드 (type7~9)
-   - type7: 이미지 확인 + 링크 확인
-   - type8: 이미지 확인만
-   - type9: 링크 확인만
-   - 하단: 비활성화 "검수 완료"
+   ✅ 미션형 - 완료 탭 카드
+   
+   📍 사용 위치: 캠페인 콘텐츠 내역 > 미션형 > "완료" 탭
+   
+   🎯 완료 탭 카드 유형 - 1가지 (각 contentType별):
+   
+   【링크만 (contentType: "link")】
+   - 상단: "링크 확인" 버튼 1개
+   - 중간: 등록/수정 날짜 표시
+   - 하단: "확인 완료" 버튼 (비활성화, 핑크 배경)
+   - footer: "신고" 버튼만 (연장 버튼 없음)
+   
+   【이미지만 (contentType: "image")】
+   - 상단: "이미지 확인" 버튼 1개
+   - 중간: 등록/수정 날짜 표시
+   - 하단: "확인 완료" 버튼 (비활성화, 핑크 배경)
+   - footer: "신고" 버튼만 (연장 버튼 없음)
+   
+   【이미지+링크 (contentType: "both")】
+   - 상단: "이미지 확인" + "링크 확인" 버튼 2개 (세로 배치)
+   - 중간: 등록/수정 날짜 표시
+   - 하단: "확인 완료" 버튼 (비활성화, 핑크 배경)
+   - footer: "신고" 버튼만 (연장 버튼 없음)
+   
+   🎯 주요 기능:
+     - 확인 완료: 검수가 완료되어 더 이상 승인/반려 불가능한 상태
+     - 신고: 콘텐츠 신고 모달 (선정 후 취소, 무단 이탈, 노출 기간 불이행 등)
+   
+   📝 참고:
+     - contentType prop으로 링크만/이미지만/이미지+링크 구분
+     - "확인 완료" 버튼은 비활성화 상태이며 핑크 배경(rgba(255,86,148,0.1))과 핑크 텍스트(#ff5694)로 표시됩니다
+     - 완료 탭에서는 연장 버튼이 없고 신고 버튼만 표시됩니다
    ======================================== */
 
 "use client";
 
-import styles from "@/styles/partner/campaign_application/card/applicant_card_shared.module.css";
+import { useState, useEffect } from "react";
+import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
+import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
+import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
-import type { ExperienceApplicant, MissionCardType } from "./MissionTypes";
+import { getChannelUrl } from "@/utils/helpers/url";
+import { formatDateForMobile } from "@/utils/formatting/date";
+import type { CampaignApplicant } from "../shared_card/CampaignTypes";
+import ReportModal, {
+  type ReportOption,
+} from "@/components/common/modal/ReportModal";
+import ReceiptPreviewModal from "../../ReceiptPreviewModal";
 
 interface MissionCompletedCardProps {
-  applicant: ExperienceApplicant;
+  applicant: CampaignApplicant;
+  /** 링크 확인 버튼 클릭 */
   onCheckLink?: (applicantId: string) => void;
+  /** 이미지 확인 버튼 클릭 */
   onCheckImage?: (applicantId: string) => void;
+  /** 신고 버튼 클릭 */
+  onReport?: (applicantId: string) => void;
+  /** 콘텐츠 타입 (링크만, 이미지만, 링크+이미지) */
+  contentType: "link" | "image" | "both";
+  /** 등록/수정 날짜 */
+  registrationDate?: string;
+  /** 등록/수정 라벨 */
   dateLabel?: string;
-}
-
-function getPrimaryButtons(
-  type: MissionCardType,
-  id: string,
-  handlers: {
-    onCheckLink?: (id: string) => void;
-    onCheckImage?: (id: string) => void;
-  }
-) {
-  const { onCheckLink, onCheckImage } = handlers;
-  switch (type) {
-    case 7:
-      return [
-        {
-          label: "이미지 확인",
-          onClick: () => {
-            console.log("이미지 확인 클릭", id);
-            onCheckImage?.(id);
-          },
-        },
-        {
-          label: "링크 확인",
-          onClick: () => {
-            console.log("링크 확인 클릭", id);
-            onCheckLink?.(id);
-          },
-        },
-      ];
-    case 8:
-      return [
-        {
-          label: "이미지 확인",
-          onClick: () => {
-            console.log("이미지 확인 클릭", id);
-            onCheckImage?.(id);
-          },
-        },
-      ];
-    case 9:
-    default:
-      return [
-        {
-          label: "링크 확인",
-          onClick: () => {
-            console.log("링크 확인 클릭", id);
-            onCheckLink?.(id);
-          },
-        },
-      ];
-  }
 }
 
 export default function MissionCompletedCard({
   applicant,
   onCheckLink,
   onCheckImage,
-  dateLabel = "수정",
+  onReport,
+  contentType,
+  registrationDate,
+  dateLabel = "등록",
 }: MissionCompletedCardProps) {
   const channel_icon_src = getChannelLogo(applicant.channel);
-  const buttons = getPrimaryButtons(applicant.missionType, applicant.id, {
-    onCheckLink,
-    onCheckImage,
-  });
+
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [selectedReportOption, setSelectedReportOption] = useState<string>("");
+  const [otherReportReason, setOtherReportReason] = useState<string>("");
+  // 이미지 확인 모달 상태
+  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // 신고 옵션 정의
+  const reportOptions: ReportOption[] = [
+    { value: "selection_cancelled", label: "선정 후 취소" },
+    { value: "no_show", label: "무단 이탈 · 노쇼" },
+    { value: "exposure_period", label: "노출 기간 불이행" },
+    { value: "modification_request", label: "수정 요청 불이행" },
+    { value: "other", label: "기타 비매너 행위", isOther: true },
+  ];
+
+  // 신고 모달 열기
+  const handleReportClick = () => {
+    setIsReportModalOpen(true);
+    if (!selectedReportOption && reportOptions.length > 0) {
+      setSelectedReportOption(reportOptions[0].value);
+    }
+  };
+
+  // 신고 모달 닫기
+  const handleReportModalClose = () => {
+    setIsReportModalOpen(false);
+    setSelectedReportOption("");
+    setOtherReportReason("");
+  };
+
+  // 신고 확인 처리
+  const handleReportConfirm = (
+    selectedOption: string,
+    otherReason?: string,
+  ) => {
+    if (onReport) {
+      onReport(applicant.id);
+    }
+    // console.log("신고 사유:", selectedOption, "기타 사유:", otherReason);
+    handleReportModalClose();
+  };
 
   return (
-    <article className={styles.applicant_card}>
-      {/* 프로필 영역 */}
-      <div className={styles.profile_section}>
-        <div className={styles.profile_image_container}>
-          {applicant.profileImage ? (
+    <div className={baseStyles.card_wrapper}>
+      <article className={baseStyles.applicant_card}>
+        {/* 프로필 영역 */}
+        <div className={contentStyles.profile_section}>
+          <div className={contentStyles.profile_image_container}>
             <img
-              src={applicant.profileImage}
+              src={applicant.profileImage || "/images/mypage/profile.svg"}
               alt="프로필"
-              className={styles.profile_image}
+              className={contentStyles.profile_image}
             />
+          </div>
+          <div className={contentStyles.profile_info}>
+            <span className={contentStyles.user_type}>
+              {applicant.userType}
+            </span>
+            <span className={contentStyles.nickname}>{applicant.nickname}</span>
+          </div>
+        </div>
+
+        {/* 상단 액션 버튼 */}
+        {/* contentType에 따라 다른 버튼 표시 */}
+        {contentType === "both" ? (
+          // 이미지+링크: 두 개의 버튼 세로 배치
+          <div className={actionStyles.content_check_buttons_wrapper}>
+            <button
+              className={actionStyles.content_check_button}
+              onClick={() => {
+                // console.log("이미지 확인 클릭", applicant.id);
+                setIsReceiptModalOpen(true);
+              }}
+            >
+              이미지 확인
+            </button>
+            <button
+              className={actionStyles.content_check_button}
+              onClick={() => {
+                // console.log("링크 확인 클릭", applicant.id);
+                const url = getChannelUrl(
+                  applicant.channel,
+                  applicant.channelId,
+                );
+                if (url && url !== "#") {
+                  window.open(url, "_blank", "noopener,noreferrer");
+                }
+              }}
+            >
+              링크 확인
+            </button>
+          </div>
+        ) : contentType === "image" ? (
+          // 이미지만: 이미지 확인 버튼 하나만
+          <button
+            className={actionStyles.content_check_button}
+            onClick={() => {
+              // console.log("이미지 확인 클릭", applicant.id);
+              setIsReceiptModalOpen(true);
+            }}
+          >
+            이미지 확인
+          </button>
+        ) : (
+          // 링크만: 링크 확인 버튼 하나만
+          <button
+            className={actionStyles.content_check_button}
+            onClick={() => {
+              // console.log("링크 확인 클릭", applicant.id);
+              const url = getChannelUrl(applicant.channel, applicant.channelId);
+              if (url && url !== "#") {
+                window.open(url, "_blank", "noopener,noreferrer");
+              }
+            }}
+          >
+            링크 확인
+          </button>
+        )}
+
+        {/* 확인 완료 버튼 (비활성화, 핑크 배경) */}
+        <div className={actionStyles.action_button_section}>
+          <button
+            className={`${actionStyles.action_button} ${actionStyles.disabled_button}`}
+            disabled
+            style={{
+              backgroundColor: "rgba(255, 86, 148, 0.1)",
+              color: "#ff5694",
+              border: "1px solid transparent",
+              cursor: "auto",
+            }}
+          >
+            확인 완료
+          </button>
+        </div>
+
+        {/* 등록/수정 날짜 */}
+        <div className={actionStyles.registration_info}>
+          {dateLabel === "지각 등록" ? (
+            <span className={actionStyles.late_label}>
+              {isMobile
+                ? formatDateForMobile(
+                    registrationDate || applicant.registrationDate,
+                  )
+                : registrationDate || applicant.registrationDate}{" "}
+              <span className={actionStyles.late_text_full}>지각 등록</span>
+              <span className={actionStyles.late_text_short}>지각</span>
+            </span>
           ) : (
-            <div className={styles.profile_placeholder}></div>
+            <span>
+              {registrationDate
+                ? `${isMobile ? formatDateForMobile(registrationDate) : registrationDate} ${dateLabel}`
+                : `${isMobile ? formatDateForMobile(applicant.registrationDate) : applicant.registrationDate} ${dateLabel}`}
+            </span>
           )}
         </div>
-        <div className={styles.profile_info}>
-          <span className={styles.user_type}>{applicant.userType}</span>
-          <span className={styles.nickname}>{applicant.nickname}</span>
-        </div>
-      </div>
+      </article>
 
-      {/* 상단 액션 버튼 */}
-      {buttons.map((btn, idx) => (
+      {/* 신고 버튼 footer (연장 버튼 없음) */}
+      <div className={actionStyles.extension_report_footer}>
         <button
-          key={idx}
-          className={styles.content_check_button}
-          onClick={btn.onClick}
+          className={actionStyles.report_button}
+          onClick={handleReportClick}
+          aria-label={`${applicant.nickname} 신고`}
         >
-          {btn.label}
-        </button>
-      ))}
-
-      {/* 등록/수정/지각 등록 */}
-      <div className={styles.registration_info}>
-        <span
-          className={dateLabel === "지각 등록" ? styles.late_label : undefined}
-        >
-          {applicant.updatedAt
-            ? `${applicant.updatedAt} ${dateLabel}`
-            : `${applicant.registrationDate} ${dateLabel}`}
-        </span>
-      </div>
-
-      {/* 완료 표시 */}
-      <div className={styles.action_button_section}>
-        <button
-          className={`${styles.action_button} ${styles.disabled_button}`}
-          disabled
-        >
-          검수 완료
+          <img
+            src="/images/management_page/report_icon.svg"
+            alt="신고 아이콘"
+            className={actionStyles.report_icon}
+          />
+          <span>신고</span>
         </button>
       </div>
-    </article>
+
+      {/* 신고 모달 */}
+      <ReportModal
+        is_open={isReportModalOpen}
+        on_close={handleReportModalClose}
+        title="콘텐츠 신고"
+        options={reportOptions}
+        selectedOption={selectedReportOption}
+        onOptionChange={setSelectedReportOption}
+        otherReason={otherReportReason}
+        onOtherReasonChange={setOtherReportReason}
+        buttons={["취소", "신고"]}
+        on_confirm={handleReportConfirm}
+        type="center"
+      />
+
+      {/* 이미지 확인 모달 */}
+      <ReceiptPreviewModal
+        isOpen={isReceiptModalOpen}
+        images={applicant.receiptImages || []}
+        onClose={() => setIsReceiptModalOpen(false)}
+      />
+    </div>
   );
 }
-

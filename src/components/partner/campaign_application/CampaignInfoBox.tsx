@@ -47,8 +47,6 @@ import {
    4️⃣ 타입 정의와 메인 컴포넌트
        - CampaignInfo 인터페이스와 Campaignbanner 컴포넌트를 정의합니다.
 
-   📌 학습 순서 추천
-       ① 날짜 계산 함수 이해 → ② 유틸 모듈 구조 파악 → ③ 상태 판별 흐름 읽기 → ④ 컴포넌트에서 어떻게 사용하는지 확인
 */
 
 // 목록 카드와 동일한 로고 매핑을 사용하기 위해 유틸의 getBrandLogo를 그대로 사용합니다.
@@ -65,13 +63,19 @@ export interface CampaignInfo {
     | "선정 중"
     | "구매 중"
     | "등록 중"
-    | "마감";
+    | "마감"
+    | "진행 중"
+    | "종료"
+    | "취소"
+    | "긴급";
   /** 캠페인 유형 - 배송형, 방문형, 구매평, 기자단, 미션형 */
   campaignType: "배송형" | "방문형" | "구매평" | "기자단" | "미션형";
   /** 카테고리 - 식품, 뷰티, 가전, 유아동, 여가, 서비스, 생활, 패션, 가구, 디지털, 문화, 반려동물, 기타 */
   category: string;
   /** 브랜드 이름 (선택적) - 배송형 등에서만 사용 */
   brandName?: string;
+  /** 채널명 (선택적) - 기자단 등에서 사용, brandName이 없을 때 사용 */
+  channel?: string;
   recruitmentPeriod: string;
   announcementDate: string;
   /** 구매 기간 (구매평 캠페인용, 선택적) */
@@ -107,6 +111,8 @@ interface CampaignbannerProps {
   reviewingCount?: number;
   /** 콘텐츠 확인 완료 건수 (진행 중 상태일 때 사용) */
   completedCount?: number;
+  /** 실제 신청자 수 (모집 인원 표시용) */
+  applicantsCount?: number;
 }
 
 /* ========================================
@@ -116,6 +122,7 @@ export default function Campaignbanner({
   campaignInfo,
   reviewingCount,
   completedCount,
+  applicantsCount,
 }: CampaignbannerProps) {
   /**
    * ✅ 실시간 상태 계산
@@ -126,8 +133,22 @@ export default function Campaignbanner({
    *
    * - 파생 상태(derivedStatus)를 변수로 분리하면 JSX가 간결해지고 의도가 명확해집니다.
    * - 상태 계산 로직을 별도 함수로 추출하여 테스트/재사용이 쉬워집니다.
+   *
+   * 📌 타입 호환성:
+   * - CampaignInfo를 CampaignInfoForHelper 타입으로 변환하여 전달합니다
+   * - 필요한 필드만 추출하여 타입 안정성을 확보합니다
    */
-  const derivedStatus = deriveCampaignStatus(campaignInfo);
+  const campaignInfoForHelper = {
+    status: campaignInfo.status,
+    campaignType: campaignInfo.campaignType,
+    recruitmentPeriod: campaignInfo.recruitmentPeriod,
+    announcementDate: campaignInfo.announcementDate,
+    purchasePeriod: campaignInfo.purchasePeriod,
+    registrationPeriod: campaignInfo.registrationPeriod,
+    daysLeft: campaignInfo.daysLeft,
+    statusText: campaignInfo.statusText,
+  };
+  const derivedStatus = deriveCampaignStatus(campaignInfoForHelper);
 
   return (
     <article className={styles.campaign_info_card_container}>
@@ -146,7 +167,7 @@ export default function Campaignbanner({
               <div className={styles.campaign_category}>
                 <img
                   src={getBrandLogo(
-                    campaignInfo.brandName || "기본",
+                    campaignInfo.brandName || campaignInfo.channel || "기본",
                     campaignInfo.campaignType
                   )}
                   alt={`${campaignInfo.campaignType} 브랜드 로고`}
@@ -154,15 +175,14 @@ export default function Campaignbanner({
                 <span>{campaignInfo.campaignType}</span>
               </div>
 
-              <div className={styles.campaign_status}>
-                {derivedStatus}
-              </div>
+              <div className={styles.campaign_status}>{derivedStatus}</div>
             </div>
 
             <h2 className={styles.campaign_title}>{campaignInfo.title}</h2>
-            <p className={styles.campaign_notice}>
+            {/* PC에서는 여기에 표시, 모바일에서는 아래로 이동 */}
+            <p className={`${styles.campaign_notice} ${styles.campaign_notice_pc}`}>
               {getStatusText(
-                campaignInfo,
+                campaignInfoForHelper,
                 reviewingCount,
                 completedCount,
                 derivedStatus
@@ -171,19 +191,35 @@ export default function Campaignbanner({
           </div>
         </div>
 
+        {/* 모바일에서만 표시되는 campaign_notice */}
+        <p className={`${styles.campaign_notice} ${styles.campaign_notice_mobile}`}>
+          {getStatusText(
+            campaignInfoForHelper,
+            reviewingCount,
+            completedCount,
+            derivedStatus
+          )}
+        </p>
+
         {/* 캠페인 일정 정보 컴포넌트 사용
             📌 컴포넌트 재사용으로 코드 중복 제거
             📌 일정 정보만 별도 컴포넌트로 분리하여 관리 용이
+            📌 applicantsCount가 있으면 실제 신청자 수를 사용, 없으면 기존 recruitedCount 사용
         */}
         <CampaignSchedule
           scheduleData={{
-            recruitedCount: campaignInfo.recruitedCount,
+            recruitedCount:
+              applicantsCount !== undefined
+                ? applicantsCount
+                : campaignInfo.recruitedCount,
             totalCount: campaignInfo.totalCount,
             recruitmentPeriod: campaignInfo.recruitmentPeriod,
             announcementDate: campaignInfo.announcementDate,
             purchasePeriod: campaignInfo.purchasePeriod,
             registrationPeriod: campaignInfo.registrationPeriod,
           }}
+          campaignType={campaignInfo.campaignType}
+          status={derivedStatus}
         />
       </div>
     </article>

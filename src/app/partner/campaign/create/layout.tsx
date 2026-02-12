@@ -8,7 +8,7 @@
  * 목적: 모든 캠페인 생성 페이지에서 공통으로 사용되는 요소들을 관리
  *
  * 공통 요소:
- * - SubHeader (뒤로가기, 가이드북, 마이페이지 버튼)
+ * - PartnerSubHeader (뒤로가기, 검색, 새 캠페인 등록, 알림, 가이드북, 마이페이지 버튼)
  * - 메인 헤더 숨기기 처리
  * - 페이지 컨테이너 스타일링
  *
@@ -22,7 +22,7 @@
 
 "use client";
 
-import SubHeader from "@/components/fragments/SubHeader";
+import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 
 /**
  * 캠페인 생성 페이지들의 공통 레이아웃 컴포넌트
@@ -30,7 +30,7 @@ import SubHeader from "@/components/fragments/SubHeader";
  * @param children - 하위 페이지 컴포넌트들
  *
  * 주요 기능:
- * 1. SubHeader 렌더링 (메인 헤더 숨기기는 SubHeader 컴포넌트 내부에서 처리)
+ * 1. PartnerSubHeader 렌더링 (메인 헤더 숨기기는 PartnerSubHeader 컴포넌트 내부에서 처리)
  * 2. 페이지 컨테이너 스타일링
  */
 export default function CampaignCreateLayout({
@@ -40,8 +40,8 @@ export default function CampaignCreateLayout({
 }) {
   return (
     <div>
-      {/* 서브헤더 컴포넌트 - 모든 캠페인 생성 페이지에서 공통으로 사용 */}
-      <SubHeader />
+      {/* 파트너 서브헤더 컴포넌트 - 모든 캠페인 생성 페이지에서 공통으로 사용 */}
+      <PartnerSubHeader />
 
       {/* 하위 페이지 컨텐츠 */}
       {children}

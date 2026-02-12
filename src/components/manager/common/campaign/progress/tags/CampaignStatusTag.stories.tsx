@@ -11,7 +11,7 @@ import CampaignStatusTag, {
 } from "@/components/manager/common/tags/CampaignStatusTag";
 
 // CSS 모듈 import
-import tagsStylesModule from "@/styles/manager_ga/campaign/progress/tags.module.css";
+import tagsStylesModule from "@/styles/common/tags.module.css";
 
 // CSS 모듈 객체를 타입 단언하여 사용
 const tagsStyles = (tagsStylesModule || {

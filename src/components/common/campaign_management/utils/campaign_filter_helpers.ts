@@ -116,10 +116,15 @@ export const filterCampaigns = <T extends FilterableCampaign>(
         const dateB = parseDate(periodB);
         return dateB.getTime() - dateA.getTime();
       }
-      case '인기순': {
-        const countA = (a as any).recruitedCount ?? 0;
-        const countB = (b as any).recruitedCount ?? 0;
-        return countB - countA;
+      case '오래된순': {
+        const periodA = (a as any).recruitmentPeriod;
+        const periodB = (b as any).recruitmentPeriod;
+        if (!periodA && !periodB) return 0;
+        if (!periodA) return 1;
+        if (!periodB) return -1;
+        const dateA = parseDate(periodA);
+        const dateB = parseDate(periodB);
+        return dateA.getTime() - dateB.getTime(); // 오래된 것부터 정렬 (최신순의 반대)
       }
       case '마감임박순': {
         const leftA =

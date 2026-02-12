@@ -22,7 +22,7 @@
 import Image from "next/image";
 import Section from "@/components/manager/common/member/member_detail/Section";
 import type { ChannelDetail } from "@/data/manager_ga/member/reviewers";
-import styles from "@/styles/manager_ga/member/member_detail/reviewers/channel_info_section.module.css";
+import styles from "@/styles/manager/common/member/member_detail/reviewers/channel_info_section.module.css";
 
 // 채널 아이콘 경로 매핑 객체
 const channel_icon_map: Record<string, string> = {

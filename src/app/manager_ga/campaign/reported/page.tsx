@@ -21,7 +21,8 @@
 "use client";
 
 import { useState } from "react";
-import styles from "@/styles/manager_ga/campaign/reported/page.module.css";
+import { startOfMonth, endOfMonth } from "date-fns";
+import styles from "@/styles/manager_ga/campaign/campaign_common.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import ReportCodeInfoSection from "@/components/manager/ga/campaign/reported/section/ReportCodeInfoSection";
 import ReportStatsSection from "@/components/manager/ga/campaign/reported/section/ReportStatsSection";
@@ -65,21 +66,30 @@ export default function ReportedPage() {
   >([]);
 
   // 날짜 범위 필터 상태 관리
+  // 기본값: 이번 달 (오늘 날짜 기준 이번 달의 첫날 ~ 마지막날)
+  // startOfMonth: 주어진 날짜의 월의 첫날을 반환합니다 (예: 2026-01-13 -> 2026-01-01)
+  // endOfMonth: 주어진 날짜의 월의 마지막날을 반환합니다 (예: 2026-01-13 -> 2026-01-31)
   const [selected_date_range, set_selected_date_range] = useState<
     DateRange | undefined
-  >(undefined);
+  >(() => {
+    const today = new Date();
+    return {
+      from: startOfMonth(today),
+      to: endOfMonth(today),
+    };
+  });
 
   return (
-    <div className={styles.container}>
-      <div className={styles.main_content}>
+    <div className={styles.page_container}>
+      <div className={styles.page_main_content}>
         {/* 페이지 제목 */}
-        <ManagerPageTitle title="캠페인 신고 이력" />
+        <ManagerPageTitle title="전체 신고 내역" />
 
         {/* 신고 코드 안내 섹션 */}
         <ReportCodeInfoSection />
 
         {/* 신고 이력 섹션 제목 */}
-        <h2 className={styles.section_title}>신고 내역</h2>
+        <h2 className={styles.page_section_title}>신고 내역</h2>
 
         {/* 필터 섹션 */}
         <CampaignReportedFilterSection
@@ -92,7 +102,12 @@ export default function ReportedPage() {
         />
 
         {/* 신고 이력 통계 섹션 */}
-        <ReportStatsSection />
+        {/* 필터에 따라 동적으로 통계를 계산하여 표시 */}
+        <ReportStatsSection
+          search_query={search_query}
+          selected_report_codes={selected_report_codes}
+          selected_date_range={selected_date_range}
+        />
 
         {/* 신고 이력 테이블 */}
         <ReportedCampaignTable

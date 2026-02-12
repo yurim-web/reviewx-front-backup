@@ -150,7 +150,7 @@ export default function AdminRegisterForm() {
           value={form_data.phone}
           onChange={handle_input_change}
           className={styles.form_input}
-          placeholder="010-1234-5678"
+          placeholder="- 제외 입력"
           pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}"
           required
         />

@@ -22,19 +22,21 @@
 
 "use client";
 
-import { useState } from "react";
-import styles from "@/styles/manager_ga/member/blacklist/blacklist_filter_section.module.css";
+import { useState, useRef } from "react";
 import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
 import DateFilterButton from "@/components/manager/ga/common/filter/DateFilterButton";
+import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
-import DivisionFilterModal from "@/components/manager/common/member/blacklist/filter/DivisionFilterModal";
-import BlockCodeFilterModal from "@/components/manager/common/member/blacklist/filter/BlockCodeFilterModal";
+import DivisionFilterDropdown from "@/components/manager/common/member/blacklist/filter/DivisionFilterDropdown";
+import BlockCodeFilterDropdown from "@/components/manager/common/member/blacklist/filter/BlockCodeFilterDropdown";
 import type {
   BlacklistDivision,
   BlockCode,
 } from "@/data/manager_ga/common/filterOptions";
+import filterStyles from "@/styles/manager/common/section/filter_section.module.css";
+import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.module.css";
 
 interface BlacklistFilterSectionProps {
   search_query: string;
@@ -58,9 +60,13 @@ export default function BlacklistFilterSection({
   selected_block_codes,
   on_block_codes_change,
 }: BlacklistFilterSectionProps) {
-  const [is_division_modal_open, set_is_division_modal_open] = useState(false);
-  const [is_block_code_modal_open, set_is_block_code_modal_open] =
+  const [is_division_dropdown_open, set_is_division_dropdown_open] =
     useState(false);
+  const division_filter_button_ref = useRef<HTMLDivElement>(null);
+
+  const [is_block_code_dropdown_open, set_is_block_code_dropdown_open] =
+    useState(false);
+  const block_code_filter_button_ref = useRef<HTMLDivElement>(null);
 
   const [selected_sort, set_selected_sort] = useState("최신순");
 
@@ -100,7 +106,7 @@ export default function BlacklistFilterSection({
     })),
     ...selected_block_codes.map((block_code) => ({
       value: block_code,
-      label: `차단 코드: ${block_code}`,
+      label: block_code,
     })),
   ];
 
@@ -128,40 +134,62 @@ export default function BlacklistFilterSection({
         filter_modal_button={
           <>
             <div
-              className={styles.filter_item}
-              onClick={() => set_is_division_modal_open(true)}
+              ref={division_filter_button_ref}
+              className={filterButtonStyles.filter_button_dropdown_wrapper}
             >
-              <div
-                className={`${styles.checkbox_icon} ${
-                  selected_divisions.length > 0
-                    ? styles.checkbox_icon_checked
-                    : ""
-                }`}
-              ></div>
-              <span className={styles.filter_text}>구분</span>
-              <img
-                src="/images/icons/dropdown_arrow.svg"
-                alt="드롭다운"
-                className={styles.dropdown_arrow}
+              <FilterButton
+                label="구분"
+                onClick={() => set_is_division_dropdown_open((prev) => !prev)}
+                isActive={selected_divisions.length > 0}
+                styles={{
+                  filter_item: filterStyles.filter_item,
+                  checkbox_icon: filterStyles.checkbox_icon,
+                  checkbox_icon_checked:
+                    filterButtonStyles.checkbox_icon_checked,
+                  filter_text: filterStyles.filter_text,
+                  dropdown_arrow: filterStyles.dropdown_arrow,
+                  filter_item_active: filterButtonStyles.filter_item_active,
+                  filter_text_active: filterButtonStyles.filter_text_active,
+                  dropdown_arrow_active:
+                    filterButtonStyles.dropdown_arrow_active,
+                }}
+              />
+              <DivisionFilterDropdown
+                is_open={is_division_dropdown_open}
+                on_close={() => set_is_division_dropdown_open(false)}
+                selected_divisions={selected_divisions}
+                on_apply={handle_division_apply}
+                container_ref={division_filter_button_ref}
               />
             </div>
 
             <div
-              className={styles.filter_item}
-              onClick={() => set_is_block_code_modal_open(true)}
+              ref={block_code_filter_button_ref}
+              className={filterButtonStyles.filter_button_dropdown_wrapper}
             >
-              <div
-                className={`${styles.checkbox_icon} ${
-                  selected_block_codes.length > 0
-                    ? styles.checkbox_icon_checked
-                    : ""
-                }`}
-              ></div>
-              <span className={styles.filter_text}>차단 코드</span>
-              <img
-                src="/images/icons/dropdown_arrow.svg"
-                alt="드롭다운"
-                className={styles.dropdown_arrow}
+              <FilterButton
+                label="이용 제한 코드"
+                onClick={() => set_is_block_code_dropdown_open((prev) => !prev)}
+                isActive={selected_block_codes.length > 0}
+                styles={{
+                  filter_item: filterStyles.filter_item,
+                  checkbox_icon: filterStyles.checkbox_icon,
+                  checkbox_icon_checked:
+                    filterButtonStyles.checkbox_icon_checked,
+                  filter_text: filterStyles.filter_text,
+                  dropdown_arrow: filterStyles.dropdown_arrow,
+                  filter_item_active: filterButtonStyles.filter_item_active,
+                  filter_text_active: filterButtonStyles.filter_text_active,
+                  dropdown_arrow_active:
+                    filterButtonStyles.dropdown_arrow_active,
+                }}
+              />
+              <BlockCodeFilterDropdown
+                is_open={is_block_code_dropdown_open}
+                on_close={() => set_is_block_code_dropdown_open(false)}
+                selected_block_codes={selected_block_codes}
+                on_apply={handle_block_code_apply}
+                container_ref={block_code_filter_button_ref}
               />
             </div>
           </>
@@ -170,19 +198,8 @@ export default function BlacklistFilterSection({
         on_filter_tag_remove={handle_filter_tag_remove}
       />
 
-      <DivisionFilterModal
-        is_open={is_division_modal_open}
-        on_close={() => set_is_division_modal_open(false)}
-        selected_divisions={selected_divisions}
-        on_apply={handle_division_apply}
-      />
-
-      <BlockCodeFilterModal
-        is_open={is_block_code_modal_open}
-        on_close={() => set_is_block_code_modal_open(false)}
-        selected_block_codes={selected_block_codes}
-        on_apply={handle_block_code_apply}
-      />
+      {/* 필터 모달들 (모두 드롭다운으로 대체) */}
+      {/* DivisionFilterModal, BlockCodeFilterModal은 각각 드롭다운으로 대체되었습니다 */}
     </div>
   );
 }

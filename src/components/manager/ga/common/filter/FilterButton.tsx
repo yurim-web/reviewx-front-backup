@@ -53,6 +53,9 @@ interface FilterButtonProps {
     checkbox_icon_checked?: string; // 선택적: 선택된 상태 스타일
     filter_text: string;
     dropdown_arrow: string;
+    filter_item_active?: string; // 선택적: 활성화된 버튼 스타일
+    filter_text_active?: string; // 선택적: 활성화된 텍스트 스타일
+    dropdown_arrow_active?: string; // 선택적: 활성화된 화살표 스타일
   };
 }
 
@@ -82,16 +85,54 @@ export default function FilterButton({
    * - isActive가 true이고 checkbox_icon_checked 스타일이 있으면: 두 클래스 모두 적용
    * - 그 외: checkbox_icon만 적용
    *
-   * 템플릿 리터럴: `${}`를 사용하여 문자열과 변수를 결합
-   * trim(): 문자열 앞뒤 공백 제거
+   * 배열을 사용하여 클래스를 조합하고, filter로 undefined를 제거한 후 join으로 연결합니다.
+   * 이렇게 하면 CSS 모듈에서 클래스가 올바르게 적용됩니다.
    */
-  const checkboxIconClassName =
-    isActive && styles.checkbox_icon_checked
-      ? `${styles.checkbox_icon} ${styles.checkbox_icon_checked}`.trim()
-      : styles.checkbox_icon;
+  const checkboxIconClassName = [
+    styles.checkbox_icon,
+    isActive && styles.checkbox_icon_checked,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const filterItemClassName = [
+    styles.filter_item,
+    isActive && styles.filter_item_active,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const filterTextClassName = [
+    styles.filter_text,
+    isActive && styles.filter_text_active,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const dropdownArrowClassName = [
+    styles.dropdown_arrow,
+    isActive && styles.dropdown_arrow_active,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  /**
+   * 드롭다운 화살표 아이콘 경로 결정
+   *
+   * 조건부 렌더링: isActive 상태에 따라 다른 아이콘 사용
+   * - isActive가 true일 때: manager_dropdown_ok.svg (활성화 상태)
+   * - isActive가 false일 때: manager_dropdown.svg (비활성화 상태)
+   *
+   * 삼항 연산자: 조건 ? 값1 : 값2
+   * - 조건이 true이면 값1 반환
+   * - 조건이 false이면 값2 반환
+   */
+  const dropdownIconSrc = isActive
+    ? "/images/management_page/manager_dropdown_ok.svg"
+    : "/images/management_page/manager_dropdown.svg";
 
   return (
-    <div className={styles.filter_item} onClick={onClick}>
+    <div className={filterItemClassName} onClick={onClick}>
       {/* 
         체크박스 아이콘 영역
         - 나중에 아이콘이 들어갈 예정이므로 icon prop이 있으면 표시
@@ -100,13 +141,18 @@ export default function FilterButton({
       <div className={checkboxIconClassName}>{icon || null}</div>
 
       {/* 필터 텍스트 */}
-      <span className={styles.filter_text}>{label}</span>
+      <span className={filterTextClassName}>{label}</span>
 
-      {/* 드롭다운 화살표 아이콘 */}
+      {/* 
+        드롭다운 화살표 아이콘 (매니저 전용)
+        - 비활성화 상태(isActive=false): manager_dropdown.svg (회색 화살표)
+        - 활성화 상태(isActive=true): manager_dropdown_ok.svg (핑크색 화살표)
+        - 조건부 렌더링으로 상태에 따라 다른 아이콘 표시
+      */}
       <img
-        src="/images/icons/dropdown_arrow.svg"
+        src={dropdownIconSrc}
         alt="드롭다운"
-        className={styles.dropdown_arrow}
+        className={dropdownArrowClassName}
       />
     </div>
   );

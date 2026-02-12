@@ -17,9 +17,9 @@
  * - 유튜브 등록: 5% (가장 밝은 회색)
  */
 
-'use client';
+"use client";
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from "react";
 import {
   PieChart,
   Pie,
@@ -27,24 +27,25 @@ import {
   ResponsiveContainer,
   Label,
   Tooltip,
-} from 'recharts';
-import styles from '@/styles/manager_sa/dashboard/member_stats.module.css';
-import {
-  channelData,
-  ChannelData,
-} from '@/data/manager_sa/dashboard/dashboardData';
-import { use_pie_chart_click_handler } from '@/components/manager/ga/dashboard/chart/chart_event_handlers';
+} from "recharts";
+import styles from "@/styles/manager/common/dashboard/chart/member_stats.module.css";
+import { ChannelData } from "@/data/manager_sa/dashboard/dashboardData";
+import { use_pie_chart_click_handler } from "@/components/manager/ga/dashboard/chart/chart_event_handlers";
+
+interface ChannelMemberPieChartProps {
+  channelData: ChannelData[];
+}
 
 /* ========================================
    🎨 색상 관련 함수
    ======================================== */
 
-// 색상 정의 (이미지 설명 기반 - 회색 계열)
+// 색상 정의 (GA 기준 색상)
 const colors = {
-  blog: '#666666', // 어두운 회색 (블로그 50%)
-  instagram: '#999999', // 중간 회색 (인스타그램 25%)
-  clip: '#d9d9d9', // 밝은 회색 (클립 20%)
-  youtube: '#f1f1f1', // 가장 밝은 회색 (유튜브 5%)
+  blog: "#2DC469", // 초록색 (블로그)
+  instagram: "#FF5694", // 핑크색 (인스타그램)
+  clip: "#9747FF", // 보라색 (클립)
+  youtube: "#FF2626", // 빨간색 (유튜브)
 };
 
 // ──────────────────────────────────────
@@ -54,13 +55,13 @@ const colors = {
 // 출력: 해당 채널의 색상 코드 (예: "#666666")
 const getChannelColor = (channel: string): string => {
   switch (channel) {
-    case '블로그':
+    case "블로그":
       return colors.blog; // 어두운 회색
-    case '인스타그램':
+    case "인스타그램":
       return colors.instagram; // 중간 회색
-    case '클립':
+    case "클립":
       return colors.clip; // 밝은 회색
-    case '유튜브':
+    case "유튜브":
       return colors.youtube; // 가장 밝은 회색
     default:
       return colors.blog; // 기본값 (블로그 색상)
@@ -108,7 +109,7 @@ const CustomLabel = (props: any) => {
       fontWeight={600} // 폰트 굵기
       letterSpacing="-0.28px" // 글자 간격
     >
-      {`${(percent * 100).toFixed(0)}%`}{' '}
+      {`${(percent * 100).toFixed(0)}%`}{" "}
       {/* 비율을 퍼센트로 변환 (예: 0.5 → "50%") */}
     </text>
   );
@@ -146,7 +147,7 @@ const CustomTooltip = ({
       if (prev_calculated_ref.current !== null) {
         // setTimeout으로 지연하여 무한 루프 방지
         const timeout_id = setTimeout(() => {
-          setTooltipState({ visible: false, x: 0, y: 0, name: '' });
+          setTooltipState({ visible: false, x: 0, y: 0, name: "" });
         }, 0);
         prev_calculated_ref.current = null;
         return () => clearTimeout(timeout_id);
@@ -168,7 +169,7 @@ const CustomTooltip = ({
     }
 
     const container = containerRef.current;
-    const svgElement = container.querySelector('svg');
+    const svgElement = container.querySelector("svg");
 
     if (svgElement) {
       // ──────────────────────────────────────
@@ -176,7 +177,7 @@ const CustomTooltip = ({
       // ──────────────────────────────────────
       // SVG 내부의 모든 text 요소 찾기
       const text_elements = svgElement.querySelectorAll(
-        'text',
+        "text"
       ) as NodeListOf<SVGTextElement>;
 
       // 해당 섹션의 퍼센트 값 계산
@@ -194,15 +195,15 @@ const CustomTooltip = ({
 
       if (target_text_element) {
         // 텍스트 요소의 실제 SVG 좌표 가져오기
-        const text_x = parseFloat(target_text_element.getAttribute('x') || '0');
-        const text_y = parseFloat(target_text_element.getAttribute('y') || '0');
+        const text_x = parseFloat(target_text_element.getAttribute("x") || "0");
+        const text_y = parseFloat(target_text_element.getAttribute("y") || "0");
 
         const svgRect = svgElement.getBoundingClientRect();
         const containerRect = container.getBoundingClientRect();
-        const viewBox = svgElement.getAttribute('viewBox');
+        const viewBox = svgElement.getAttribute("viewBox");
 
         if (viewBox) {
-          const [x, y, width, height] = viewBox.split(' ').map(Number);
+          const [x, y, width, height] = viewBox.split(" ").map(Number);
           // SVG 좌표를 픽셀 좌표로 변환
           const scaleX = svgRect.width / width;
           const scaleY = svgRect.height / height;
@@ -258,7 +259,9 @@ const CustomTooltip = ({
    ======================================== */
 
 // 파이 차트를 렌더링하는 메인 컴포넌트
-export default function ChannelMemberPieChart() {
+export default function ChannelMemberPieChart({
+  channelData,
+}: ChannelMemberPieChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   // 툴팁 상태 관리
   const [tooltip_state, set_tooltip_state] = useState<{
@@ -266,7 +269,7 @@ export default function ChannelMemberPieChart() {
     x: number;
     y: number;
     name: string;
-  }>({ visible: false, x: 0, y: 0, name: '' });
+  }>({ visible: false, x: 0, y: 0, name: "" });
 
   /* ========================================
      🔧 부가 기능 처리 (공용 유틸리티 사용)
@@ -285,61 +288,61 @@ export default function ChannelMemberPieChart() {
 
     const check_interval = setInterval(() => {
       const paths = container.querySelectorAll<SVGPathElement>(
-        'path.recharts-pie-sector, path.recharts-sector',
+        "path.recharts-pie-sector, path.recharts-sector"
       );
       paths.forEach((path) => {
         // ──────────────────────────────────────
         // clipPath 적용: 바깥으로 튀어나오는 선 제거
         // ──────────────────────────────────────
-        const svg = path.closest('svg');
+        const svg = path.closest("svg");
         if (svg) {
           // SVG에 clipPath 추가 (원 모양으로 잘라내기)
-          const clipPathId = 'channel-pie-clip-path';
+          const clipPathId = "channel-pie-clip-path";
           let clipPath = svg.querySelector(`#${clipPathId}`);
           if (!clipPath) {
-            let defs = svg.querySelector('defs');
+            let defs = svg.querySelector("defs");
             if (!defs) {
               defs = document.createElementNS(
-                'http://www.w3.org/2000/svg',
-                'defs',
+                "http://www.w3.org/2000/svg",
+                "defs"
               );
               svg.insertBefore(defs, svg.firstChild);
             }
             clipPath = document.createElementNS(
-              'http://www.w3.org/2000/svg',
-              'clipPath',
+              "http://www.w3.org/2000/svg",
+              "clipPath"
             );
-            clipPath.setAttribute('id', clipPathId);
+            clipPath.setAttribute("id", clipPathId);
             const circle = document.createElementNS(
-              'http://www.w3.org/2000/svg',
-              'circle',
+              "http://www.w3.org/2000/svg",
+              "circle"
             );
             // viewBox를 기반으로 중심점 계산
-            const viewBox = svg.getAttribute('viewBox');
+            const viewBox = svg.getAttribute("viewBox");
             if (viewBox) {
-              const [x, y, width, height] = viewBox.split(' ').map(Number);
+              const [x, y, width, height] = viewBox.split(" ").map(Number);
               const centerX = x + width / 2;
               const centerY = y + height / 2;
-              circle.setAttribute('cx', centerX.toString());
-              circle.setAttribute('cy', centerY.toString());
+              circle.setAttribute("cx", centerX.toString());
+              circle.setAttribute("cy", centerY.toString());
             } else {
               // viewBox가 없으면 SVG의 실제 크기 사용
               const svgRect = svg.getBoundingClientRect();
               const centerX = svgRect.width / 2;
               const centerY = svgRect.height / 2;
-              circle.setAttribute('cx', centerX.toString());
-              circle.setAttribute('cy', centerY.toString());
+              circle.setAttribute("cx", centerX.toString());
+              circle.setAttribute("cy", centerY.toString());
             }
-            circle.setAttribute('r', '90');
+            circle.setAttribute("r", "90");
             clipPath.appendChild(circle);
             defs.appendChild(clipPath);
           }
           // path에 clipPath 적용
-          path.setAttribute('clip-path', `url(#${clipPathId})`);
+          path.setAttribute("clip-path", `url(#${clipPathId})`);
           path.style.setProperty(
-            'clip-path',
+            "clip-path",
             `url(#${clipPathId})`,
-            'important',
+            "important"
           );
         }
       });
@@ -350,21 +353,21 @@ export default function ChannelMemberPieChart() {
 
       // Recharts가 자동으로 만드는 선들 제거
       const lines = container.querySelectorAll<SVGLineElement>(
-        'line.recharts-tooltip-cursor, line.recharts-active-shape',
+        "line.recharts-tooltip-cursor, line.recharts-active-shape"
       );
       lines.forEach((line) => {
-        line.style.setProperty('display', 'none', 'important');
-        line.setAttribute('display', 'none');
+        line.style.setProperty("display", "none", "important");
+        line.setAttribute("display", "none");
       });
 
       // 모든 line 요소 중 바깥으로 나가는 선 제거
-      const allLines = container.querySelectorAll<SVGLineElement>('line');
+      const allLines = container.querySelectorAll<SVGLineElement>("line");
       allLines.forEach((line) => {
         // 선의 시작점과 끝점 좌표 가져오기
-        const x1 = parseFloat(line.getAttribute('x1') || '0');
-        const y1 = parseFloat(line.getAttribute('y1') || '0');
-        const x2 = parseFloat(line.getAttribute('x2') || '0');
-        const y2 = parseFloat(line.getAttribute('y2') || '0');
+        const x1 = parseFloat(line.getAttribute("x1") || "0");
+        const y1 = parseFloat(line.getAttribute("y1") || "0");
+        const x2 = parseFloat(line.getAttribute("x2") || "0");
+        const y2 = parseFloat(line.getAttribute("y2") || "0");
 
         // ──────────────────────────────────────
         // 중심점에서 멀리 떨어진 선 제거 (바깥으로 나가는 선)
@@ -373,12 +376,12 @@ export default function ChannelMemberPieChart() {
         const centerY = 180; // 차트 중심 Y (대략적인 값)
         // 선의 끝점과 중심점 사이의 거리 계산 (피타고라스 정리)
         const distance = Math.sqrt(
-          Math.pow(x2 - centerX, 2) + Math.pow(y2 - centerY, 2),
+          Math.pow(x2 - centerX, 2) + Math.pow(y2 - centerY, 2)
         );
         // 외부 반지름(90)보다 멀리 나가는 선은 제거
         if (distance > 100) {
-          line.style.setProperty('display', 'none', 'important');
-          line.setAttribute('display', 'none');
+          line.style.setProperty("display", "none", "important");
+          line.setAttribute("display", "none");
         }
       });
     }, 100);
@@ -396,13 +399,13 @@ export default function ChannelMemberPieChart() {
     <div
       ref={containerRef}
       style={{
-        width: '180px',
-        height: '180px',
-        position: 'relative',
-        backgroundColor: 'transparent',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        width: "180px",
+        height: "180px",
+        position: "relative",
+        backgroundColor: "transparent",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
       {/* 반응형 컨테이너: 180px × 180px 크기로 고정 */}
@@ -467,18 +470,18 @@ export default function ChannelMemberPieChart() {
       {tooltip_state.visible && (
         <div
           style={{
-            position: 'absolute',
+            position: "absolute",
             left: `${tooltip_state.x}px`,
             top: `${tooltip_state.y}px`,
-            transform: 'translateY(-50%)',
-            backgroundColor: '#444444', // 배경색 (어두운 회색)
-            color: 'white', // 텍스트 색상
-            padding: '8px 8px', // 내부 여백
-            borderRadius: '4px', // 모서리 둥글게
-            fontSize: '13px', // 폰트 크기
+            transform: "translateY(-50%)",
+            backgroundColor: "#444444", // 배경색 (어두운 회색)
+            color: "white", // 텍스트 색상
+            padding: "8px 8px", // 내부 여백
+            borderRadius: "4px", // 모서리 둥글게
+            fontSize: "13px", // 폰트 크기
             fontWeight: 500, // 폰트 굵기
-            pointerEvents: 'none', // 클릭 이벤트 방지
-            whiteSpace: 'nowrap', // 텍스트 줄바꿈 방지
+            pointerEvents: "none", // 클릭 이벤트 방지
+            whiteSpace: "nowrap", // 텍스트 줄바꿈 방지
             zIndex: 1000, // 다른 요소 위에 표시
           }}
         >

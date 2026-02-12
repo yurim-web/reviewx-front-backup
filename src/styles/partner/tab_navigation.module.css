@@ -1,4 +1,18 @@
-/* 캠페인 관리 페이지 탭 네비게이션 */
+/* ========================================
+   🗂️ 파트너 캠페인 관리 페이지 탭 네비게이션
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - TabNavigation.tsx (파트너 캠페인 관리 탭 네비게이션 컴포넌트)
+ * - CampaignApplicationLayout.tsx (캠페인 신청 페이지 레이아웃)
+ * - CampaignContentsLayout.tsx (캠페인 콘텐츠 페이지 레이아웃)
+ * 
+ * 사용 페이지:
+ * - /partner/campaign_management/* (파트너 캠페인 관리 페이지들)
+ * - /partner/campaign_application/* (파트너 캠페인 신청 페이지들)
+ * - /partner/campaign_contents/* (파트너 캠페인 콘텐츠 페이지들)
+ */
 
 /* 상단 탭 네비게이션 - 스크롤 시 상단에 고정 */
 .tab_navigation {
@@ -30,7 +44,7 @@
 
 /* 개별 탭 버튼 스타일 */
 .tab {
-  color: #848484; /* 기본 회색 */
+  color: #444; /* 기본 회색 */
   font-size: 20px;
   font-weight: 500;
   line-height: 20px; /* 100% */
@@ -45,30 +59,46 @@
 /* 활성화된 탭 스타일 */
 .tab.active {
   font-weight: 700; /* 굵은 글씨 */
-  color: #444; /* 진한 회색 */
+  color: #ff5694; /* 핑크색 */
 }
 
-/* JS에서 `${styles.tab} ${styles.active}` 형태로 사용할 수 있도록 보조 클래스 제공 */
 .active {
   font-weight: 700;
-  color: #444;
+  color: #ff5694;
 }
 
-/* 새 캠페인 등록 버튼 */
-.create_campaign_button {
-  background: #007bff;
-  border: none;
-  border-radius: 6px;
-  color: white;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 14px;
-  letter-spacing: -0.28px;
-  padding: 10px 20px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  /* 상단 탭 네비게이션 */
+  .tab_navigation {
+    padding: 20px 0;
+    height: 58px;
+    
+    top: 64px; /* 모바일 헤더 높이 */
+    border-bottom: 1px solid #d9d9d9;
+  }
 
-.create_campaign_button:hover {
-  background: #0056b3;
+  /* 탭 네비게이션 내부 컨테이너 */
+  .tab_navigation_container {
+    padding: 0 20px;
+  }
+
+  /* 좌측/우측 탭 그룹 */
+  .left_tabs,
+  .right_tabs {
+    gap: 16px;
+  }
+
+  .tab {
+    letter-spacing: -.36px;
+    white-space: nowrap;
+    font-size: 18px;
+    line-height: 18px;
+  }
+
+
+
+
 }

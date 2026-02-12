@@ -52,6 +52,17 @@ export interface CampaignScheduleData {
 interface CampaignScheduleProps {
   /** 캠페인 일정 데이터 */
   scheduleData: CampaignScheduleData;
+  /** 캠페인 유형 - 배송형, 방문형, 구매평, 기자단, 미션형 (선택적) */
+  campaignType?: "배송형" | "방문형" | "구매평" | "기자단" | "미션형";
+  /** 캠페인 상태 - 대기 중, 모집 중, 선정 중 등 (선택적) */
+  status?:
+    | "대기 중"
+    | "모집 중"
+    | "선정 중"
+    | "구매 중"
+    | "등록 중"
+    | "마감"
+    | "취소";
 }
 
 /**
@@ -62,6 +73,8 @@ interface CampaignScheduleProps {
  */
 export default function CampaignSchedule({
   scheduleData,
+  campaignType,
+  status,
 }: CampaignScheduleProps) {
   /**
    * 동적으로 일정 정보 목록 생성
@@ -69,17 +82,61 @@ export default function CampaignSchedule({
    */
   const scheduleItems: ScheduleItem[] = [];
 
+  /**
+   * 포인트 스타일 적용 여부 확인 함수
+   * 모든 캠페인 유형 + 상태에 따라 포인트 스타일 적용
+   *
+   * @param itemLabel - 일정 항목 라벨 (예: "모집 인원", "모집 기간", "선정 발표", "구매 기간", "등록 기간")
+   * @returns 포인트 스타일 적용 여부
+   *
+   * 📌 적용 조건:
+   * - 모든 캠페인 유형 (배송형, 방문형, 구매평, 기자단, 미션형)
+   * - "모집 중" 상태: 모집 인원, 모집 기간에 포인트 스타일 적용
+   * - "선정 중" 상태: 모집 인원, 선정 발표에 포인트 스타일 적용
+   * - "구매 중" 상태(구매평): 모집 인원, 구매 기간에 포인트 스타일 적용
+   * - "등록 중" 상태: 모집 인원, 등록 기간에 포인트 스타일 적용
+   * - "마감" 상태: 모집 인원(n명) 숫자 부분에만 포인트 스타일 적용
+   */
+  const shouldApplyPointStyle = (itemLabel: string): boolean => {
+    // 모집 중 상태일 때: 모집 인원과 모집 기간에 포인트 스타일 적용
+    if (status === "모집 중") {
+      return itemLabel === "모집 인원" || itemLabel === "모집 기간";
+    }
+    // 선정 중 상태일 때: 모집 인원과 선정 발표에 포인트 스타일 적용
+    if (status === "선정 중") {
+      return itemLabel === "모집 인원" || itemLabel === "선정 발표";
+    }
+    // 구매 중 상태(구매평)일 때: 모집 인원과 구매 기간에 포인트 스타일 적용
+    if (status === "구매 중") {
+      return itemLabel === "모집 인원" || itemLabel === "구매 기간";
+    }
+    // 등록 중 상태일 때: 모집 인원과 등록 기간에 포인트 스타일 적용
+    if (status === "등록 중") {
+      return itemLabel === "모집 인원" || itemLabel === "등록 기간";
+    }
+    // 마감 상태일 때: 모집 인원(n명) 숫자 부분에만 포인트 스타일 적용
+    if (status === "마감") {
+      return itemLabel === "모집 인원";
+    }
+    return false;
+  };
+
   // 모집 인원 정보 추가 (있는 경우)
   if (
     scheduleData.recruitedCount !== undefined &&
     scheduleData.totalCount !== undefined
   ) {
+    const isPointStyle = shouldApplyPointStyle("모집 인원");
     scheduleItems.push({
       label: "모집 인원",
       value: (
         <>
-          <strong>{scheduleData.recruitedCount}명</strong> /{" "}
-          {scheduleData.totalCount}명
+          <strong
+            className={isPointStyle ? styles.schedule_value_point : undefined}
+          >
+            {scheduleData.recruitedCount}명
+          </strong>{" "}
+          / {scheduleData.totalCount}명
         </>
       ),
     });
@@ -129,12 +186,38 @@ export default function CampaignSchedule({
         📌 map: 배열의 각 요소를 새로운 형태로 변환하여 새로운 배열 생성
         📌 key: React가 리스트를 효율적으로 업데이트하기 위해 필요한 고유값
       */}
-      {scheduleItems.map((item, index) => (
-        <div key={index} className={styles.schedule_item}>
-          <span className={styles.schedule_label}>{item.label}</span>
-          <span className={styles.schedule_value}>{item.value}</span>
-        </div>
-      ))}
+      {scheduleItems.map((item, index) => {
+        // 포인트 스타일 적용 여부 확인
+        const isPointStyle = shouldApplyPointStyle(item.label);
+        // 모집 인원의 경우 전체 값이 아닌 라벨과 첫 번째 숫자에만 포인트 스타일 적용
+        const isRecruitmentCount = item.label === "모집 인원";
+        // 라벨에 포인트를 적용할지 여부 (마감 상태의 모집 인원은 라벨은 기본색 유지)
+        const applyLabelPoint =
+          isPointStyle && !(status === "마감" && isRecruitmentCount);
+        return (
+          <div key={index} className={styles.schedule_item}>
+            <span
+              className={
+                applyLabelPoint
+                  ? `${styles.schedule_label} ${styles.schedule_label_point}`
+                  : styles.schedule_label
+              }
+            >
+              {item.label}
+            </span>
+            <span
+              className={
+                // 모집 인원은 전체 값에 포인트 스타일 적용하지 않음 (라벨과 첫 번째 숫자만 적용)
+                isPointStyle && !isRecruitmentCount
+                  ? `${styles.schedule_value} ${styles.schedule_value_point}`
+                  : styles.schedule_value
+              }
+            >
+              {item.value}
+            </span>
+          </div>
+        );
+      })}
     </div>
   );
 }

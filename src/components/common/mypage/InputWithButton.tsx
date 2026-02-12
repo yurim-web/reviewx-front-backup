@@ -5,12 +5,12 @@
  *
  * 사용처:
  * - src/components/common/mypage/AddressInput.tsx
- * - src/components/common/mypage/PhoneVerificationInput.tsx
+ * - src/components/common/phone_verification/PhoneVerification.tsx (마이페이지 스타일)
  */
 
 "use client";
 
-import styles from "@/styles/user/mypage/edit_profile.module.css";
+import verificationStyles from "@/styles/user/mypage/edit_profile/verification.module.css";
 
 interface InputWithButtonProps {
   /** 입력 필드 요소 */
@@ -27,7 +27,7 @@ export default function InputWithButton({
   className = "",
 }: InputWithButtonProps) {
   return (
-    <div className={`${styles.input_with_button} ${className}`.trim()}>
+    <div className={`${verificationStyles.input_with_button} ${className}`.trim()}>
       {input}
       {button}
     </div>

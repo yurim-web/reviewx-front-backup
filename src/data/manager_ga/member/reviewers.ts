@@ -48,7 +48,7 @@ export interface ReviewerItem {
   campaign_completed: number; // 캠페인 완료 횟수
   current_points: number; // 보유 포인트
   withdrawn_points: number; // 출금 포인트
-  status_type: ReviewerStatusType; // 상태 유형 (모범 회원, 주의 회원, 경고 회원, 이용 제한 회원)
+  status_type: ReviewerStatusType; // 상태 유형 (일반 회원, 주의 회원, 이용 제한 회원)
   status: ReviewerStatus; // 상태
   last_access_date: string; // 접속일 (예: 2025-08-01 18:56)
   join_date: string; // 가입일 (예: 2025-08-01 18:56)
@@ -106,6 +106,7 @@ export interface ReviewerDetail extends ReviewerItem {
   email: string; // 이메일
   phone: string; // 전화번호
   address: string; // 주소
+  profile_image?: string | null; // 프로필 이미지 URL (선택적, 없으면 기본 이미지 사용)
   penalty_count: number; // 패널티 횟수
   channel_details: ChannelDetail[]; // 채널 상세 정보
   account_info: AccountInfo; // 계좌 정보
@@ -133,29 +134,29 @@ export const reviewer_list: ReviewerItem[] = [
     campaign_completed: 80,
     current_points: 1500000,
     withdrawn_points: 11500000,
-    status_type: "이용 제한 회원",
-    status: "일시 정지",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    status_type: "일반 회원",
+    status: "정상",
+    last_access_date: "2026-01-15 14:30",
+    join_date: "2025-12-05 10:20",
   },
   {
     id: "2",
-    number: "000001",
+    number: "000002",
     name: "김은지",
     channels: ["Blog", "Clip"],
     type: "일반",
-    campaign_participated: 1,
-    campaign_completed: 1,
+    campaign_participated: 12,
+    campaign_completed: 10,
     current_points: 1500000,
     withdrawn_points: 132500000,
     status_type: "이용 제한 회원",
     status: "일시 정지",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2026-01-20 16:45",
+    join_date: "2025-12-12 14:30",
   },
   {
     id: "3",
-    number: "000001",
+    number: "000003",
     name: "홍길동",
     channels: ["Blog", "Instagram"],
     type: "서포터즈",
@@ -165,28 +166,28 @@ export const reviewer_list: ReviewerItem[] = [
     withdrawn_points: 999999999,
     status_type: "이용 제한 회원",
     status: "일시 정지",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2026-01-25 09:20",
+    join_date: "2025-12-18 16:45",
   },
   {
     id: "4",
-    number: "000001",
+    number: "000004",
     name: "유연희",
     channels: ["Blog"],
     type: "인플루언서",
-    campaign_participated: 1,
-    campaign_completed: 1,
+    campaign_participated: 8,
+    campaign_completed: 7,
     current_points: 1500000,
     withdrawn_points: 900000000,
     status_type: "이용 제한 회원",
     status: "영구 정지",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2026-01-28 11:15",
+    join_date: "2025-12-22 11:15",
   },
   {
     id: "5",
-    number: "000001",
-    name: "김히어라",
+    number: "000005000000000000000",
+    name: "김히어라가나다라마바사아자자자자자자",
     channels: ["Blog", "Instagram"],
     type: "일반",
     campaign_participated: 5,
@@ -195,158 +196,158 @@ export const reviewer_list: ReviewerItem[] = [
     withdrawn_points: 500000,
     status_type: "주의 회원",
     status: "정상",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2026-01-30 18:30",
+    join_date: "2025-12-28 09:30",
   },
   {
     id: "6",
-    number: "000001",
+    number: "000006",
     name: "일이삼사오육칠팔구십",
     channels: ["Blog"],
     type: "일반",
-    campaign_participated: 1,
-    campaign_completed: 1,
+    campaign_participated: 25,
+    campaign_completed: 23,
     current_points: 1500000,
     withdrawn_points: 1500000,
-    status_type: "모범 회원",
+    status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2026-01-31 15:20",
+    join_date: "2025-12-31 15:20",
   },
   {
     id: "7",
-    number: "000001",
+    number: "000007",
     name: "이은",
     channels: ["Blog"],
     type: "일반",
-    campaign_participated: 1,
-    campaign_completed: 1,
+    campaign_participated: 18,
+    campaign_completed: 16,
     current_points: 1500000,
     withdrawn_points: 1500000,
-    status_type: "모범 회원",
+    status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2026-02-01 10:45",
+    join_date: "2026-01-03 10:45",
   },
   {
     id: "8",
-    number: "000001",
+    number: "000008",
     name: "김휘수",
     channels: ["Blog"],
     type: "일반",
-    campaign_participated: 1,
-    campaign_completed: 1,
+    campaign_participated: 32,
+    campaign_completed: 30,
     current_points: 1500000,
     withdrawn_points: 1500000,
-    status_type: "모범 회원",
+    status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2026-02-02 14:20",
+    join_date: "2026-01-08 14:20",
   },
   {
     id: "9",
-    number: "000001",
+    number: "000009",
     name: "황보선혜",
     channels: ["Blog"],
     type: "일반",
-    campaign_participated: 1,
-    campaign_completed: 1,
+    campaign_participated: 15,
+    campaign_completed: 14,
     current_points: 1500000,
     withdrawn_points: 1500000,
-    status_type: "모범 회원",
+    status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2026-02-03 16:30",
+    join_date: "2026-01-15 16:30",
   },
   {
     id: "10",
-    number: "000001",
+    number: "000010",
     name: "장세희",
     channels: ["Blog", "Instagram"],
     type: "일반",
-    campaign_participated: 1,
-    campaign_completed: 1,
+    campaign_participated: 42,
+    campaign_completed: 40,
     current_points: 1500000,
     withdrawn_points: 1500000,
-    status_type: "모범 회원",
+    status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2026-02-04 11:10",
+    join_date: "2026-01-20 11:10",
   },
   {
     id: "11",
-    number: "000001",
+    number: "000011",
     name: "김은빛",
     channels: ["Blog", "Instagram"],
     type: "일반",
-    campaign_participated: 1,
-    campaign_completed: 1,
+    campaign_participated: 28,
+    campaign_completed: 26,
     current_points: 1500000,
     withdrawn_points: 1500000,
-    status_type: "모범 회원",
+    status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2026-02-05 13:40",
+    join_date: "2026-01-25 13:40",
   },
   {
     id: "12",
-    number: "000001",
+    number: "000012",
     name: "김도토리",
     channels: ["Blog", "Instagram"],
     type: "일반",
-    campaign_participated: 1,
-    campaign_completed: 1,
+    campaign_participated: 35,
+    campaign_completed: 33,
     current_points: 1500000,
     withdrawn_points: 1500000,
-    status_type: "모범 회원",
+    status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2026-02-06 17:50",
+    join_date: "2026-01-31 17:50",
   },
   {
     id: "13",
-    number: "000001",
+    number: "000013",
     name: "박요셉",
     channels: ["Blog", "Instagram"],
     type: "일반",
-    campaign_participated: 1,
-    campaign_completed: 1,
+    campaign_participated: 22,
+    campaign_completed: 20,
     current_points: 1500000,
     withdrawn_points: 1500000,
-    status_type: "모범 회원",
+    status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2026-02-07 09:15",
+    join_date: "2026-02-01 09:15",
   },
   {
     id: "14",
-    number: "000001",
+    number: "000014",
     name: "황에스더",
     channels: ["Blog", "Instagram"],
     type: "일반",
-    campaign_participated: 1,
-    campaign_completed: 1,
+    campaign_participated: 19,
+    campaign_completed: 17,
     current_points: 1500000,
     withdrawn_points: 1500000,
-    status_type: "모범 회원",
+    status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2026-02-08 14:25",
+    join_date: "2026-02-02 14:25",
   },
   {
     id: "15",
-    number: "000001",
+    number: "000015",
     name: "조로이스",
     channels: ["Blog", "Instagram"],
     type: "일반",
-    campaign_participated: 1,
-    campaign_completed: 1,
+    campaign_participated: 38,
+    campaign_completed: 36,
     current_points: 1500000,
     withdrawn_points: 1500000,
-    status_type: "모범 회원",
+    status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2026-02-09 10:35",
+    join_date: "2026-02-03 10:35",
   },
   {
     id: "16",
@@ -358,10 +359,70 @@ export const reviewer_list: ReviewerItem[] = [
     campaign_completed: 0,
     current_points: 0,
     withdrawn_points: 0,
-    status_type: "모범 회원",
+    status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2025-08-01 18:56",
-    join_date: "2025-08-01 18:56",
+    last_access_date: "2026-02-10 16:45",
+    join_date: "2026-02-04 16:45",
+  },
+  {
+    id: "17",
+    number: "000017",
+    name: "탈퇴회원테스트",
+    channels: ["Blog", "Instagram"],
+    type: "일반",
+    campaign_participated: 10,
+    campaign_completed: 8,
+    current_points: 0,
+    withdrawn_points: 500000,
+    status_type: "이용 제한 회원",
+    status: "탈퇴",
+    last_access_date: "2025-07-15 10:30",
+    join_date: "2024-01-15 14:20",
+  },
+  {
+    id: "18",
+    number: "000018",
+    name: "이클립",
+    channels: ["Blog", "Clip"],
+    type: "일반",
+    campaign_participated: 5,
+    campaign_completed: 4,
+    current_points: 500000,
+    withdrawn_points: 1000000,
+    status_type: "일반 회원",
+    status: "정상",
+    last_access_date: "2026-02-11 12:00",
+    join_date: "2026-02-05 12:00",
+  },
+  {
+    id: "19",
+    number: "000019",
+    name: "김유튜브",
+    channels: ["Blog", "Youtube"],
+    type: "일반",
+    campaign_participated: 8,
+    campaign_completed: 7,
+    current_points: 800000,
+    withdrawn_points: 1200000,
+    status_type: "일반 회원",
+    status: "정상",
+    last_access_date: "2026-02-12 15:30",
+    join_date: "2026-02-06 15:30",
+  },
+  {
+    id: "20",
+    number: "000020",
+    name: "박클립유튜브",
+    channels: ["Clip", "Youtube"],
+    type: "서포터즈",
+    campaign_participated: 12,
+    campaign_completed: 11,
+    current_points: 1000000,
+    withdrawn_points: 2000000,
+    status_type: "일반 회원",
+    status: "정상",
+    last_access_date: "2026-02-13 09:20",
+    join_date: "2026-02-07 09:20",
   },
 ];
 
@@ -395,6 +456,7 @@ export function get_reviewer_detail_by_id(
     "14": 0,
     "15": 0,
     "16": 0, // 데이터 없음 테스트용
+    "17": 0, // 탈퇴 회원 테스트용
   };
   const penalty_count = penalty_count_map[reviewer.id] || 0;
 
@@ -650,6 +712,14 @@ export function get_reviewer_detail_by_id(
       phone: "010-9999-9999",
       address: "서울시 강남구 테헤란로 999",
     },
+    "17": {
+      nickname: "탈퇴회원테스트",
+      gender: "여성",
+      age: 28,
+      email: "withdrawn@test.com",
+      phone: "010-7070-7070",
+      address: "서울시 마포구 홍대입구로 123",
+    },
   };
 
   const personal_info =
@@ -745,4 +815,308 @@ export function get_reviewer_detail_by_id(
   };
 
   return detail;
+}
+
+// localStorage 키
+const STORAGE_KEY_REVIEWER_STATUS_UPDATES = "reviewer_status_type_updates";
+const STORAGE_KEY_REVIEWER_PREVIOUS_STATUS = "reviewer_previous_status_type";
+
+// localStorage에서 상태 업데이트 정보 로드
+function load_status_updates_from_storage(): Record<
+  string,
+  ReviewerStatusType
+> {
+  if (typeof window === "undefined") {
+    return {};
+  }
+
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY_REVIEWER_STATUS_UPDATES);
+    return stored ? JSON.parse(stored) : {};
+  } catch (error) {
+    console.error("localStorage에서 리뷰어 상태 업데이트 로드 실패:", error);
+    return {};
+  }
+}
+
+// localStorage에서 이전 상태 정보 로드 (해제 시 복원용)
+function load_previous_status_from_storage(): Record<
+  string,
+  ReviewerStatusType
+> {
+  if (typeof window === "undefined") {
+    return {};
+  }
+
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY_REVIEWER_PREVIOUS_STATUS);
+    return stored ? JSON.parse(stored) : {};
+  } catch (error) {
+    console.error("localStorage에서 리뷰어 이전 상태 로드 실패:", error);
+    return {};
+  }
+}
+
+// 상태 업데이트 정보를 localStorage에 저장
+function save_status_updates_to_storage(
+  updates: Record<string, ReviewerStatusType>
+): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    localStorage.setItem(
+      STORAGE_KEY_REVIEWER_STATUS_UPDATES,
+      JSON.stringify(updates)
+    );
+  } catch (error) {
+    console.error("localStorage에 리뷰어 상태 업데이트 저장 실패:", error);
+  }
+}
+
+// 이전 상태 정보를 localStorage에 저장
+function save_previous_status_to_storage(
+  previous_status: Record<string, ReviewerStatusType>
+): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    localStorage.setItem(
+      STORAGE_KEY_REVIEWER_PREVIOUS_STATUS,
+      JSON.stringify(previous_status)
+    );
+  } catch (error) {
+    console.error("localStorage에 리뷰어 이전 상태 저장 실패:", error);
+  }
+}
+
+// 리뷰어 목록 가져오기 (상태 업데이트 반영)
+// 매번 호출 시 localStorage에서 최신 상태를 가져와서 반영합니다
+export function get_reviewer_list(): ReviewerItem[] {
+  // 매번 최신 상태를 localStorage에서 로드
+  const status_type_updates = load_status_updates_from_storage();
+
+  // user_accounts와 user_applied_campaigns에서 최신 정보 가져오기
+  let userAccountsMap: Record<string, any> = {};
+  let userCampaignsMap: Record<string, any> = {};
+
+  if (typeof window !== 'undefined') {
+    try {
+      // user_accounts에서 포인트 정보 가져오기
+      const storedAccounts = localStorage.getItem('user_accounts');
+      if (storedAccounts) {
+        const accounts = JSON.parse(storedAccounts);
+        accounts.forEach((account: any) => {
+          userAccountsMap[account.id] = account;
+        });
+      }
+
+      // user_applied_campaigns에서 캠페인 통계 가져오기
+      const userAppliedCampaigns = localStorage.getItem('user_applied_campaigns');
+      if (userAppliedCampaigns) {
+        const allAppliedCampaigns = JSON.parse(userAppliedCampaigns);
+        allAppliedCampaigns.forEach((uc: any) => {
+          if (uc.campaigns) {
+            const campaigns = uc.campaigns;
+            // 캠페인 진행 = 대기 + 선정 상태인 캠페인 수
+            const participated = campaigns.filter((c: any) =>
+              c.status === '대기' || c.status === '선정'
+            ).length;
+            // 캠페인 완료 = 완료 상태인 캠페인 수
+            const completed = campaigns.filter((c: any) =>
+              c.status === '완료'
+            ).length;
+            userCampaignsMap[uc.userId] = { participated, completed };
+          }
+        });
+      }
+    } catch (error) {
+      console.error('리뷰어 목록 데이터 로드 실패:', error);
+    }
+  }
+
+  return reviewer_list.map((reviewer) => {
+    // 기본값은 목업 데이터 사용
+    let updatedReviewer: ReviewerItem = { ...reviewer };
+
+    // localStorage에 저장된 상태 업데이트가 있으면 적용
+    if (status_type_updates[reviewer.id] !== undefined) {
+      updatedReviewer.status_type = status_type_updates[reviewer.id];
+    }
+
+    // ID 매핑: 1 -> user_kakao_001, 2 -> user_naver_001
+    const mappedId = reviewer.id === '1' ? 'user_kakao_001' : 
+                     reviewer.id === '2' ? 'user_naver_001' : 
+                     reviewer.id;
+
+    // user_accounts에서 최신 정보 가져오기
+    const userAccount = userAccountsMap[mappedId] || userAccountsMap[reviewer.id];
+    if (userAccount) {
+      // 포인트 정보 업데이트
+      updatedReviewer.current_points = userAccount.current_points ?? updatedReviewer.current_points;
+      // 출금 포인트는 user_accounts에서 가져오되, 없으면 0으로 설정
+      updatedReviewer.withdrawn_points = userAccount.withdrawn_points !== undefined && userAccount.withdrawn_points !== null 
+        ? userAccount.withdrawn_points 
+        : 0;
+      
+      // 채널 정보 업데이트 (channel_details에서 연결된 채널만)
+      if (userAccount.channel_details) {
+        const connectedChannels: Channel[] = [];
+        userAccount.channel_details.forEach((ch: any) => {
+          if (ch.status === 'connected') {
+            // 채널 이름을 Channel 타입으로 변환
+            const channelMap: Record<string, Channel> = {
+              '네이버 블로그': 'Blog',
+              '네이버 블로그': 'Blog',
+              '블로그': 'Blog',
+              'Blog': 'Blog',
+              '네이버 클립': 'Clip',
+              '네이버 클립': 'Clip',
+              '클립': 'Clip',
+              'Clip': 'Clip',
+              '인스타그램': 'Instagram',
+              'Instagram': 'Instagram',
+              '유튜브': 'Youtube',
+              'Youtube': 'Youtube',
+            };
+            const normalizedChannel = ch.name.replace(/\s+/g, '');
+            const channel = channelMap[normalizedChannel] || channelMap[ch.name];
+            if (channel) {
+              connectedChannels.push(channel);
+            }
+          }
+        });
+        if (connectedChannels.length > 0) {
+          updatedReviewer.channels = connectedChannels;
+        }
+      }
+
+      // 접속일, 가입일 업데이트
+      if (userAccount.last_access_date) {
+        updatedReviewer.last_access_date = userAccount.last_access_date;
+      }
+      if (userAccount.join_date) {
+        updatedReviewer.join_date = userAccount.join_date;
+      }
+    }
+
+    // user_applied_campaigns에서 캠페인 통계 가져오기
+    const userCampaigns = userCampaignsMap[mappedId] || userCampaignsMap[reviewer.id];
+    if (userCampaigns) {
+      updatedReviewer.campaign_participated = userCampaigns.participated;
+      updatedReviewer.campaign_completed = userCampaigns.completed;
+    }
+
+    return updatedReviewer;
+  });
+}
+
+// localStorage 초기화 함수 (개발/테스트용)
+// 초기 데이터로 localStorage를 리셋합니다
+export function reset_reviewer_status_storage(): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    localStorage.removeItem(STORAGE_KEY_REVIEWER_STATUS_UPDATES);
+    localStorage.removeItem(STORAGE_KEY_REVIEWER_PREVIOUS_STATUS);
+    console.log("리뷰어 상태 localStorage가 초기화되었습니다.");
+  } catch (error) {
+    console.error("localStorage 초기화 실패:", error);
+  }
+}
+
+// 초기 데이터와 localStorage 동기화 함수
+// 초기 데이터의 status_type을 기준으로 localStorage를 업데이트합니다
+// 초기 데이터를 우선시하여 localStorage에 반영합니다
+export function sync_reviewer_status_with_initial_data(): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    const status_type_updates = load_status_updates_from_storage();
+    const updated_status: Record<string, ReviewerStatusType> = {};
+
+    // 초기 데이터를 기준으로 localStorage 업데이트
+    reviewer_list.forEach((reviewer) => {
+      // localStorage에 저장된 값이 있으면 유지 (사용자가 변경한 값)
+      // 없으면 초기 데이터의 status_type을 localStorage에 저장
+      if (status_type_updates[reviewer.id] !== undefined) {
+        // localStorage에 저장된 값이 있으면 유지 (사용자가 변경한 값)
+        updated_status[reviewer.id] = status_type_updates[reviewer.id];
+      } else {
+        // 초기 데이터의 status_type을 localStorage에 저장
+        updated_status[reviewer.id] = reviewer.status_type;
+      }
+    });
+
+    save_status_updates_to_storage(updated_status);
+  } catch (error) {
+    console.error("리뷰어 상태 동기화 실패:", error);
+  }
+}
+
+// 리뷰어 상태 타입 업데이트
+// 이용 제한 시 이전 상태를 저장하고, 해제 시 복원할 수 있도록 합니다
+export function update_reviewer_status_type(
+  reviewer_id: string,
+  new_status_type: ReviewerStatusType
+): void {
+  // 매번 최신 상태를 localStorage에서 로드
+  const status_type_updates = load_status_updates_from_storage();
+  const previous_status_types = load_previous_status_from_storage();
+
+  // 현재 상태 가져오기 (이전 상태 저장용)
+  const current_reviewer = reviewer_list.find((r) => r.id === reviewer_id);
+  const current_status_type =
+    status_type_updates[reviewer_id] ||
+    (current_reviewer ? current_reviewer.status_type : "일반 회원");
+
+  // "이용 제한 회원"으로 변경하는 경우에만 이전 상태 저장
+  if (
+    new_status_type === "이용 제한 회원" &&
+    current_status_type !== "이용 제한 회원"
+  ) {
+    const updated_previous_status = {
+      ...previous_status_types,
+      [reviewer_id]: current_status_type,
+    };
+    save_previous_status_to_storage(updated_previous_status);
+  }
+
+  // localStorage에 업데이트 저장
+  const updated_status_updates = {
+    ...status_type_updates,
+    [reviewer_id]: new_status_type,
+  };
+  save_status_updates_to_storage(updated_status_updates);
+}
+
+// 리뷰어 상태 타입 복원 (해제 시 이전 상태로 복원)
+export function restore_reviewer_status_type(reviewer_id: string): void {
+  // 매번 최신 상태를 localStorage에서 로드
+  const status_type_updates = load_status_updates_from_storage();
+  const previous_status_types = load_previous_status_from_storage();
+
+  // 이전 상태가 있으면 복원
+  if (previous_status_types[reviewer_id]) {
+    const updated_status_updates = {
+      ...status_type_updates,
+      [reviewer_id]: previous_status_types[reviewer_id],
+    };
+    const updated_previous_status = { ...previous_status_types };
+    delete updated_previous_status[reviewer_id];
+    save_status_updates_to_storage(updated_status_updates);
+    save_previous_status_to_storage(updated_previous_status);
+  } else {
+    // 이전 상태가 없으면 기본값으로 복원 (localStorage에서 제거)
+    const updated_status_updates = { ...status_type_updates };
+    delete updated_status_updates[reviewer_id];
+    save_status_updates_to_storage(updated_status_updates);
+  }
 }

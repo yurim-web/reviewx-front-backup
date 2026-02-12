@@ -5,7 +5,9 @@
 "use client";
 
 import { BasicApplicant } from "@/data/partner/campaign_application/delivery_applicants";
-import styles from "@/styles/partner/campaign_application/card/applicant_card_shared.module.css";
+import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
+import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
+import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
 
 /**
  * BasicSelectedCard 컴포넌트
@@ -35,38 +37,34 @@ export default function BasicSelectedCard({
 }: BasicSelectedCardProps) {
   return (
     <article
-      className={`${styles.applicant_card} ${styles.selected_card} ${
+      className={`${baseStyles.applicant_card} ${baseStyles.selected_card} ${
         applicant.selectionStatus === "이용제한 계정"
-          ? styles.restricted_card
+          ? baseStyles.restricted_card
           : ""
       }`}
     >
       {/* 프로필 영역 */}
-      <div className={styles.profile_section}>
-        <div className={styles.profile_image_container}>
-          {applicant.profileImage ? (
-            <img
-              src={applicant.profileImage}
-              alt="프로필"
-              className={styles.profile_image}
-            />
-          ) : (
-            <div className={styles.profile_placeholder}></div>
-          )}
+      <div className={contentStyles.profile_section}>
+        <div className={contentStyles.profile_image_container}>
+          <img
+            src={applicant.profileImage || "/images/mypage/profile.svg"}
+            alt="프로필"
+            className={contentStyles.profile_image}
+          />
         </div>
 
-        <div className={styles.profile_info}>
-          <span className={styles.user_type}>{applicant.userType}</span>
-          <span className={styles.nickname}>{applicant.nickname}</span>
+        <div className={contentStyles.profile_info}>
+          <span className={contentStyles.user_type}>{applicant.userType}</span>
+          <span className={contentStyles.nickname}>{applicant.nickname}</span>
         </div>
       </div>
 
       {/* 회원 타입 */}
-      <div className={styles.member_type}>{applicant.memberType}</div>
+      <div className={contentStyles.member_type}>{applicant.memberType}</div>
 
       {/* 메모 */}
-      <div className={styles.memo_section}>
-        <div className={styles.memo_text}>
+      <div className={contentStyles.memo_section}>
+        <div className={contentStyles.memo_text}>
           {applicant.memo && applicant.memo.trim() !== ""
             ? applicant.memo
             : "메모 미작성"}
@@ -74,9 +72,9 @@ export default function BasicSelectedCard({
       </div>
 
       {/* 액션 버튼 - 선택 취소 */}
-      <div className={styles.action_button_section}>
+      <div className={actionStyles.action_button_section}>
         <button
-          className={`${styles.action_button} ${styles.cancel_button}`}
+          className={`${actionStyles.action_button} ${actionStyles.cancel_button}`}
           onClick={() => onCancel(applicant.id)}
           aria-label={`${applicant.nickname} 선정 취소하기`}
         >

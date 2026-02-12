@@ -21,8 +21,8 @@ import { Metadata } from 'next';
 // 페이지 메타데이터 설정
 
 export const metadata: Metadata = {
-  title: 'ReviewX | 캠페인 신고내역',
-  description: 'GA 관리자 캠페인 신고내역 페이지입니다',
+  title: 'ReviewX | 전체 신고내역',
+  description: 'GA 관리자 전체 신고내역 페이지입니다',
 };
 
 /**

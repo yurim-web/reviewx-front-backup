@@ -14,20 +14,21 @@
 .sidebar {
   position: fixed;
   left: 0;
-  top: 80px; /* 헤더 높이만큼 아래로 */
+  top: 80px; 
   width: 240px;
-  height: calc(100vh - 80px); /* 헤더를 제외한 전체 높이 */
-  background-color: #fafafa;
+  height: calc(100vh - 80px); 
+  background-color: #ffffff;
   border-right: 1px solid #d9d9d9;
   padding: 24px 0;
-  overflow-y: auto; /* 내용이 많을 경우 스크롤 가능 */
+  overflow-y: auto; 
   box-sizing: border-box;
-  z-index: 999; /* 헤더(z-index: 1000)보다 낮지만 다른 요소들보다 위에 표시 */
+  z-index: 999; 
 
   /* 메뉴들  */
   display: flex;
   flex-direction: column;
   gap: 24px;
+ 
 }
 
 /* 메뉴 카테고리 컨테이너 */
@@ -40,10 +41,10 @@
 
 /* 카테고리 제목 */
 .category_title {
-  color: #848484;
+  color: #ff5694;
   font-size: 14px;
   font-weight: 500;
-  line-height: 14px; /* 100% */
+  line-height: 14px;
   letter-spacing: -0.28px;
   padding-bottom: 4px;
 }
@@ -59,26 +60,24 @@
 
 /* 메뉴 아이템 호버 효과 */
 
-/* 메뉴 아이콘 (작은 회색 사각형) */
+/* 메뉴 아이콘 */
 .menu_icon {
   width: 16px;
   height: 16px;
-  background-color: #d9d9d9;
-  border-radius: 2px;
   flex-shrink: 0;
 }
 
 /* 메뉴 라벨 */
 .menu_label {
-  color: #848484;
+  color: #444;
   font-size: 16px;
   font-weight: 500;
-  line-height: 16px; /* 100% */
+  line-height: 16px;
   letter-spacing: -0.32px;
 }
 
 /* 활성화된 메뉴 라벨 */
 .menu_label_active {
-  color: #444;
+  color: #ff5694;
   font-weight: 600;
 }

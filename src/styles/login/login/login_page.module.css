@@ -1,0 +1,117 @@
+/* ========================================
+   📄 로그인 페이지 레이아웃 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - user/login/page.tsx (사용자 소셜 로그인 페이지)
+ * - partner/login/page.tsx (파트너 로그인 페이지)
+ * - manager/login/page.tsx (관리자 로그인 페이지)
+ *
+ * 주요 스타일:
+ * - 페이지 전체 컨테이너
+ * - 메인 콘텐츠 영역
+ * - 메시지 섹션
+ */
+
+/* 로그인 페이지 전체 컨테이너 */
+.login_page_container {
+  background-color: #ffffff;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* 파트너/관리자 로그인 페이지 전체 컨테이너 (동일한 스타일) */
+.partner_login_page_container {
+  background-color: #f2f2f2;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* 로그인 메인 영역 (사용자 소셜 로그인) */
+.login_main {
+  background-color: #ffffff;
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  box-sizing: border-box;
+  padding-bottom: 100px;
+}
+
+/* 파트너/관리자 로그인 메인 영역 */
+.partner_login_main {
+  background-color: #ffffff;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+  padding-top: 80px;
+  padding-bottom: 100px;
+}
+
+/* 로그인 메시지 섹션 (공통) */
+.login_message_section {
+  text-align: center;
+}
+
+/* 파트너/관리자 로그인 메시지 섹션 (하단 여백 추가) */
+.partner_login_main .login_message_section {
+  padding-bottom: 40px;
+}
+
+/* 로그인 제목 (공통) */
+.login_title {
+  color: #444;
+  text-align: center;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 40px;
+  letter-spacing: -0.56px;
+}
+
+/* ========================================
+   📱 모바일 반응형 스타일
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* 파트너 로그인 페이지 컨테이너 */
+  .partner_login_page_container {
+    /* padding: 0 20px; */
+  }
+
+  /* 파트너 로그인 메인 영역 */
+  .partner_login_main {
+    padding-top: 140px;
+    padding-bottom: 120px;
+    min-height: 100vh;
+    justify-content: flex-start;
+  }
+
+  /* 로그인 제목 */
+  .login_title {
+    font-size: 24px;
+    line-height: 36px;
+    letter-spacing: -0.48px;
+  }
+
+  /* 파트너 로그인 메시지 섹션 */
+  .partner_login_main .login_message_section {
+    padding-bottom: 40px;
+  }
+}

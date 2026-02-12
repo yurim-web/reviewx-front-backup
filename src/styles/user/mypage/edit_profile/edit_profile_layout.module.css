@@ -1,0 +1,87 @@
+/* ========================================
+   📐 프로필 편집 레이아웃 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - FormField.tsx
+ * - user/mypage/edit/page.tsx
+ * - partner/mypage/edit/page.tsx
+ */
+
+/* 메인 영역 최소 높이 */
+.main_min_height {
+  min-height: 100vh;
+}
+
+/* 메인 컨텐츠 */
+.main_content {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 80px 0px 80px 0px;
+  background: white;
+  min-height: 100vh;
+}
+
+.section_container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 40px 40px;
+}
+
+/* 섹션 타이틀 */
+.section_title {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  color: #444;
+  padding-bottom: 4px;
+}
+
+.section_subtitle {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  color: #444;
+  padding: 20px 0 4px 0;
+}
+
+.field_article {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  /* 메인 컨텐츠 */
+  .main_content {
+    padding: 64px 0px 40px 0px;
+  }
+
+  /* 섹션 컨테이너 */
+  .section_container {
+    padding: 20px 20px 40px 20px;
+  }
+
+  /* 섹션 타이틀 */
+  .section_title {
+    font-size: 18px;
+    line-height: 18px;
+    letter-spacing: -0.36px;
+  }
+
+  /* 섹션 서브타이틀 */
+  .section_subtitle {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 18px;
+    letter-spacing: -0.36px;
+    padding: 20px 0 4px 0;
+  }
+}

@@ -8,41 +8,291 @@
  * 목적: 정산 요약 통계와 정산 금액 통계 차트를 한 박스 안에 표시하는 섹션 컴포넌트입니다.
  *
  * 주요 기능:
- * - 위쪽: 예상 수수료, 카드 결제 총액, 입금 총액, 총 결제 금액 등 통계 표시
  * - 위쪽: 출금 요청 금액, 출금 완료 총액, 총 예치금 잔액 통계 표시
  * - 아래쪽: 정산 금액 통계 차트 표시
- * - 7개의 통계 카드를 그리드로 배치
+ * - 출금 현황 데이터를 기반으로 통계 계산
+ * - 날짜 필터에 따라 통계 값이 변경됨
  *
  */
 
+"use client";
+
+import { useMemo, useState, useEffect } from "react";
 import styles from "@/styles/manager_sa/dashboard/sections/summary_section.module.css";
 import StatCard, { StatCardData } from "../StatCard";
 import AmountChart from "../chart/AmountChart";
-import { settlementChartData } from "@/data/manager_sa/dashboard/dashboardData";
-
-// title 없는 통계 데이터 타입 (dashboardData에서 사용)
-interface SettlementStatData {
-  value: string;
-  change: string;
-  changeType: "positive" | "negative" | "neutral";
-}
+import { withdrawalList, type WithdrawalItem } from "@/data/manager_sa/settlement/withdrawalData";
+import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
+import { format, parse, eachDayOfInterval, differenceInDays, startOfWeek, endOfWeek, subDays } from "date-fns";
 
 // SettlementSummarySection 컴포넌트의 props 타입 정의
 interface SettlementSummarySectionProps {
-  // 정산 통계 데이터 배열 (title 제외)
-  stats: SettlementStatData[];
+  // 날짜 범위 (필터에 따라 변경됨)
+  dateRange: DateRange;
 }
 
-// 통계 카드 title 고정값 (순서 중요: stats 배열의 인덱스와 일치해야 함)
+// 통계 카드 title 고정값
 const SETTLEMENT_STAT_TITLES: readonly string[] = [
   "출금 요청 금액",
   "출금 완료 총액",
   "총 예치금 잔액",
 ] as const;
 
+// 금액 문자열을 숫자로 변환하는 함수
+const parse_amount = (amount_str: string): number => {
+  return parseInt(amount_str.replace(/,/g, ""), 10) || 0;
+};
+
+// 숫자를 금액 형식 문자열로 변환하는 함수
+const format_amount = (amount: number): string => {
+  return `${(amount || 0).toLocaleString("ko-KR")}원`;
+};
+
+// 날짜 문자열이 특정 날짜 범위 내에 있는지 확인하는 함수
+const is_date_in_range = (
+  date_str: string,
+  start_date: Date,
+  end_date: Date
+): boolean => {
+  const item_date_str = date_str.split(" ")[0];
+  const item_date = parse(item_date_str, "yyyy-MM-dd", new Date());
+  item_date.setHours(0, 0, 0, 0);
+  return item_date >= start_date && item_date <= end_date;
+};
+
 export default function SettlementSummarySection({
-  stats,
+  dateRange,
 }: SettlementSummarySectionProps) {
+  // localStorage에서 출금 완료 내역 로드
+  const [withdrawal_history, set_withdrawal_history] = useState<
+    WithdrawalItem[]
+  >([]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const storedHistory = localStorage.getItem("withdrawal_history");
+        if (storedHistory) {
+          const history = JSON.parse(storedHistory);
+          set_withdrawal_history(history);
+        }
+      } catch (error) {
+        console.error("출금 내역 로드 실패:", error);
+      }
+    }
+  }, []);
+
+  // 증감률 계산 함수
+  const calculate_change_percentage = (
+    current: number,
+    previous: number
+  ): { change: string; changeType: "positive" | "negative" | "neutral" } => {
+    if (previous === 0) {
+      if (current === 0) {
+        return { change: "- 0%", changeType: "neutral" };
+      }
+      return { change: "↑ 100%", changeType: "positive" };
+    }
+
+    const percentage = Math.round(((current - previous) / previous) * 100);
+    
+    if (percentage > 0) {
+      return { change: `↑ ${percentage}%`, changeType: "positive" };
+    } else if (percentage < 0) {
+      return { change: `↓ ${Math.abs(percentage)}%`, changeType: "negative" };
+    } else {
+      return { change: "- 0%", changeType: "neutral" };
+    }
+  };
+
+  // 날짜 범위에 따라 통계 계산
+  const stats = useMemo(() => {
+    if (!dateRange.from || !dateRange.to) {
+      return {
+        request_amount: "0원",
+        completed_amount: "0원",
+        total_deposit: "0원",
+        request_amount_change: "- 0%",
+        completed_amount_change: "- 0%",
+        total_deposit_change: "- 0%",
+        request_amount_changeType: "neutral" as const,
+        completed_amount_changeType: "neutral" as const,
+        total_deposit_changeType: "neutral" as const,
+      };
+    }
+
+    // 날짜 범위 설정
+    const start_date = new Date(dateRange.from);
+    start_date.setHours(0, 0, 0, 0);
+    const end_date = new Date(dateRange.to);
+    end_date.setHours(23, 59, 59, 999);
+
+    // 전월 대비 증감 계산을 위한 이전 기간 계산
+    const period_days = differenceInDays(end_date, start_date) + 1;
+    const previous_start_date = subDays(start_date, period_days);
+    const previous_end_date = subDays(start_date, 1);
+    previous_start_date.setHours(0, 0, 0, 0);
+    previous_end_date.setHours(23, 59, 59, 999);
+
+    // 모든 출금 데이터 합치기
+    const all_withdrawal_list = [...withdrawalList, ...withdrawal_history];
+
+    // 현재 기간 데이터 필터링
+    const filtered_list = all_withdrawal_list.filter((item) =>
+      is_date_in_range(item.requestDate, start_date, end_date)
+    );
+
+    // 이전 기간 데이터 필터링
+    const previous_filtered_list = all_withdrawal_list.filter((item) =>
+      is_date_in_range(item.requestDate, previous_start_date, previous_end_date)
+    );
+
+    // 1. 출금 요청 금액: paymentStatus가 "request" 또는 "urgent"인 항목들의 amount 합계
+    const request_items = filtered_list.filter(
+      (item) => item.paymentStatus === "request" || item.paymentStatus === "urgent"
+    );
+    const request_amount = request_items.reduce(
+      (sum, item) => sum + parse_amount(item.amount),
+      0
+    );
+
+    const previous_request_items = previous_filtered_list.filter(
+      (item) => item.paymentStatus === "request" || item.paymentStatus === "urgent"
+    );
+    const previous_request_amount = previous_request_items.reduce(
+      (sum, item) => sum + parse_amount(item.amount),
+      0
+    );
+
+    const request_change = calculate_change_percentage(request_amount, previous_request_amount);
+
+    // 2. 출금 완료 총액: paymentStatus가 "completed"인 항목들의 amount 합계
+    const completed_items = filtered_list.filter(
+      (item) => item.paymentStatus === "completed"
+    );
+    const completed_amount = completed_items.reduce(
+      (sum, item) => sum + parse_amount(item.amount),
+      0
+    );
+
+    const previous_completed_items = previous_filtered_list.filter(
+      (item) => item.paymentStatus === "completed"
+    );
+    const previous_completed_amount = previous_completed_items.reduce(
+      (sum, item) => sum + parse_amount(item.amount),
+      0
+    );
+
+    const completed_change = calculate_change_percentage(completed_amount, previous_completed_amount);
+
+    // 3. 총 예치금 잔액: 모든 항목의 remaining 합계
+    const total_deposit = filtered_list.reduce(
+      (sum, item) => sum + parse_amount(item.remaining),
+      0
+    );
+
+    const previous_total_deposit = previous_filtered_list.reduce(
+      (sum, item) => sum + parse_amount(item.remaining),
+      0
+    );
+
+    const deposit_change = calculate_change_percentage(total_deposit, previous_total_deposit);
+
+    return {
+      request_amount: format_amount(request_amount),
+      completed_amount: format_amount(completed_amount),
+      total_deposit: format_amount(total_deposit),
+      request_amount_change: request_change.change,
+      completed_amount_change: completed_change.change,
+      total_deposit_change: deposit_change.change,
+      request_amount_changeType: request_change.changeType,
+      completed_amount_changeType: completed_change.changeType,
+      total_deposit_changeType: deposit_change.changeType,
+    };
+  }, [dateRange, withdrawal_history]);
+
+  // 차트 데이터 생성 (날짜 범위에 따라)
+  const chart_data = useMemo(() => {
+    if (!dateRange.from || !dateRange.to) {
+      return [];
+    }
+
+    // 날짜 범위의 일수 계산
+    const days_count = differenceInDays(dateRange.to, dateRange.from) + 1;
+
+    // 오늘(1일)을 선택했을 경우 이번 주 범위로 확장
+    let chart_start_date: Date;
+    let chart_end_date: Date;
+    if (days_count === 1) {
+      chart_start_date = startOfWeek(dateRange.from, { weekStartsOn: 0 });
+      chart_end_date = endOfWeek(dateRange.from, { weekStartsOn: 0 });
+    } else {
+      chart_start_date = dateRange.from;
+      chart_end_date = dateRange.to;
+    }
+
+    // 날짜 범위의 모든 날짜 생성
+    const all_dates = eachDayOfInterval({
+      start: chart_start_date,
+      end: chart_end_date,
+    });
+
+    // 모든 출금 데이터 합치기
+    const all_withdrawal_list = [...withdrawalList, ...withdrawal_history];
+
+    // 날짜별로 출금 완료 금액 집계
+    const date_map = new Map<string, number>();
+    all_dates.forEach((date) => {
+      const date_key = format(date, "M/d");
+      date_map.set(date_key, 0);
+    });
+
+    all_withdrawal_list.forEach((item) => {
+      if (item.paymentStatus === "completed" && item.paymentDate !== "-") {
+        const payment_date_str = item.paymentDate.split(" ")[0];
+        const payment_date = parse(payment_date_str, "yyyy-MM-dd", new Date());
+        payment_date.setHours(0, 0, 0, 0);
+
+        if (payment_date >= chart_start_date && payment_date <= chart_end_date) {
+          const date_key = format(payment_date, "M/d");
+          const current = date_map.get(date_key) || 0;
+          date_map.set(date_key, current + parse_amount(item.amount));
+        }
+      }
+    });
+
+    // Map을 배열로 변환하고 날짜 순으로 정렬
+    return all_dates.map((date) => {
+      const date_key = format(date, "M/d");
+      return {
+        date: date_key,
+        value: date_map.get(date_key) || 0,
+      };
+    });
+  }, [dateRange, withdrawal_history]);
+
+  // 통계 카드 데이터 생성
+  const stat_cards_data: StatCardData[] = [
+    {
+      title: SETTLEMENT_STAT_TITLES[0],
+      value: stats.request_amount,
+      change: stats.request_amount_change,
+      changeType: stats.request_amount_changeType,
+    },
+    {
+      title: SETTLEMENT_STAT_TITLES[1],
+      value: stats.completed_amount,
+      change: stats.completed_amount_change,
+      changeType: stats.completed_amount_changeType,
+    },
+    {
+      title: SETTLEMENT_STAT_TITLES[2],
+      value: stats.total_deposit,
+      change: stats.total_deposit_change,
+      changeType: stats.total_deposit_changeType,
+    },
+  ];
+
   return (
     <div className={styles.summary_section_container}>
       {/* 섹션 제목 */}
@@ -52,18 +302,9 @@ export default function SettlementSummarySection({
       <div
         className={`${styles.summary_section_stats_grid} ${styles.summary_section_stats_grid_settlement}`}
       >
-        {/* map 함수를 사용하여 통계 카드 배열을 순회하며 렌더링 */}
-        {/* title은 컴포넌트 내부에서 고정값으로 추가 */}
-        {stats.map((stat, index) => {
-          // 고정된 title과 stats 데이터를 결합하여 StatCardData 객체 생성
-          const statCardData: StatCardData = {
-            title: SETTLEMENT_STAT_TITLES[index],
-            value: stat.value,
-            change: stat.change,
-            changeType: stat.changeType,
-          };
-          return <StatCard key={index} stat={statCardData} />;
-        })}
+        {stat_cards_data.map((stat, index) => (
+          <StatCard key={index} stat={stat} />
+        ))}
       </div>
 
       {/* 정산 금액 통계 차트 제목 */}
@@ -72,9 +313,10 @@ export default function SettlementSummarySection({
       {/* 차트 영역 */}
       <div className={styles.summary_section_chart_container}>
         <AmountChart
-          data={settlementChartData}
+          data={chart_data}
           gradientId="settlementGradient"
           chartAreaClass="chart_area_settlement"
+          dateRange={dateRange}
         />
       </div>
     </div>

@@ -9,8 +9,8 @@
 
 /* 메인 캠페인 정보 카드 */
 .campaign_info_card {
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
+  border: 1px solid #E5E5E5;
+  border-radius: 8px;
   padding: 24px;
   display: flex;
   flex-direction: column;
@@ -28,7 +28,6 @@
 .campaign_image {
   width: 92px;
   height: 92px;
-  background-color: #d9d9d9;
   border-radius: 4px;
   flex-shrink: 0;
 }
@@ -71,15 +70,16 @@
 .campaign_category img {
   width: 20px;
   height: 20px;
+  box-shadow: 0 0 4px 0 rgba(68, 68, 68, 0.10);
 }
 
 /* 캠페인 상태 배지 */
 .campaign_status {
-  background: #f2f2f2;
+  background: #ff5694;
   padding: 8px 12px;
   border-radius: 8px;
 
-  color: #444;
+  color: #ffffff;
   font-size: 16px;
   font-weight: 500;
   line-height: 16px;
@@ -100,6 +100,7 @@
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
+  line-clamp: 1;
 }
 
 /* 캠페인 공지사항 */
@@ -110,6 +111,16 @@
   line-height: 14px; /* 100% */
   letter-spacing: -0.28px;
   padding-top: 16px;
+}
+
+/* PC용 campaign_notice (campaign_application 내부) */
+.campaign_notice_pc {
+  display: block;
+}
+
+/* 모바일용 campaign_notice (campaign_info_card 하위) */
+.campaign_notice_mobile {
+  display: none;
 }
 
 /* 캠페인 일정 영역 */
@@ -131,7 +142,7 @@
 
 /* 일정 라벨 */
 .schedule_label {
-  color: #848484;
+  color: #444444;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
@@ -140,7 +151,7 @@
 
 /* 일정 값 */
 .schedule_value {
-  color: #848484;
+  color: #444444;
   text-align: right;
   font-size: 14px;
   font-weight: 500;
@@ -148,8 +159,180 @@
   letter-spacing: -0.28px;
 }
 
-/* 일정 값 강조 텍스트 */
-.schedule_value strong {
+/* 포인트 스타일 - 기자단 캠페인 모집 중 상태용 */
+/* 📌 조건부 스타일링:
+    - 기자단 캠페인 + 모집 중 상태일 때만 적용되는 포인트 색상
+    - 라벨과 값 모두에 포인트 색상과 굵기 적용
+*/
+.schedule_label_point {
+  color: #ff5694;
   font-weight: 600;
-  color: #444444;
+}
+
+.schedule_value_point {
+  color: #ff5694;
+  font-weight: 600;
+}
+
+/* 포인트 스타일이 적용된 값 내부의 strong 태그도 포인트 색상 적용 */
+/* 📌 CSS 우선순위:
+    - .schedule_value strong (기본 스타일)보다 더 구체적인 선택자 사용
+    - 포인트 스타일 클래스가 적용된 경우 strong 태그도 포인트 색상으로 변경
+*/
+.schedule_value_point strong {
+  color: #ff5694;
+  font-weight: 600;
+}
+
+/* ========== 📱 모바일 반응형 디자인 (375px 기준) ========== */
+@media (max-width: 768px) {
+  /* 전체 컨테이너 */
+  .campaign_info_card_container {
+    padding: 0 20px; /* Figma: 20px left/right */
+  }
+
+  /* 메인 캠페인 정보 카드 */
+  .campaign_info_card {
+    padding: 20px; 
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* 상단 영역 (이미지 + 상세정보) */
+  .campaign_info_top {
+    display: flex;
+    align-items: flex-start; /* Figma: top 정렬 */
+    gap: 12px; /* Figma: 12px */
+  }
+
+  /* 캠페인 이미지 */
+  .campaign_image {
+    width: 80px; /* Figma: 80px */
+    height: 80px; /* Figma: 80px */
+    background-color: #d9d9d9;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .campaign_image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+
+  /* 캠페인 상세정보 영역 */
+  .campaign_application {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 14px; 
+    min-width: 0; 
+  }
+
+  /* 헤더 (카테고리 + 상태) */
+  .campaign_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  /* 캠페인 카테고리 */
+  .campaign_category {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #444;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  .campaign_category img {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  /* 캠페인 상태 배지 */
+  .campaign_status {
+    background: #ff5694;
+    padding: 4px 8px; /* Figma: 4px 8px */
+    border-radius: 4px; /* Figma: 4px */
+    color: #ffffff;
+    font-size: 14px; /* Figma: 14px */
+    font-weight: 500;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  /* 캠페인 제목 */
+  .campaign_title {
+    width: 100%;
+    overflow: hidden;
+    color: #444;
+    text-overflow: ellipsis;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 22px; /* Figma: 22px */
+    letter-spacing: -0.32px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    margin: 0;
+  }
+
+  /* 캠페인 공지사항 */
+  .campaign_notice {
+    color: #848484;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+    letter-spacing: -0.28px;
+    padding-top: 0;
+    margin-top: 0;
+  }
+
+  /* PC용 campaign_notice 숨김 */
+  .campaign_notice_pc {
+    display: none;
+  }
+
+  /* 모바일용 campaign_notice 표시 */
+  .campaign_notice_mobile {
+    display: block;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  /* 캠페인 일정 영역 */
+  .campaign_schedule {
+    padding: 16px;
+  }
+
+
+
+
+
+  /* 포인트 스타일 - 모집 인원, 등록 기간 */
+  .schedule_label_point {
+    color: #ff5694;
+    font-weight: 600;
+  }
+
+  .schedule_value_point {
+    color: #ff5694;
+    font-weight: 600;
+  }
+
+  .schedule_value_point strong {
+    color: #ff5694;
+    font-weight: 600;
+  }
 }

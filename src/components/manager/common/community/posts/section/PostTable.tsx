@@ -29,7 +29,7 @@ import { useState } from "react";
 import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
-import styles from "@/styles/manager_ga/community/posts/post_table.module.css";
+import styles from "@/styles/manager/common/community/posts/post_table.module.css";
 import {
   posts_data,
   type PostItem,
@@ -42,13 +42,19 @@ import { useRouter } from "next/navigation";
 import UserTypeTag, {
   type UserType,
 } from "@/components/manager/common/tags/UserTypeTag";
-import type { PostDivision } from "@/data/manager_ga/community/postsData";
+import type { PostDivision, PostTarget } from "@/data/manager_ga/community/postsData";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 
 interface PostTableProps {
   search_query: string;
   selected_divisions?: PostDivision[];
+  selected_targets?: PostTarget[];
   selected_date_range?: DateRange | undefined;
+  posts: PostItem[];
+  selected_post_ids: string[];
+  on_selected_post_ids_change: (ids: string[]) => void;
+  // 관리자 타입 ('ga' | 'sa')
+  manager_type: "ga" | "sa";
 }
 
 // PostItem이 TableRowData를 확장하도록 확장
@@ -109,14 +115,23 @@ const columns: TableColumn[] = [
 export default function PostTable({
   search_query,
   selected_divisions = [],
+  selected_targets = [],
   selected_date_range,
+  posts = [],
+  selected_post_ids = [],
+  on_selected_post_ids_change,
+  manager_type,
 }: PostTableProps) {
-  // Next.js 라우터: 수정 페이지로 이동에 사용
   const router = useRouter();
-  const [selected_post_ids, set_selected_post_ids] = useState<string[]>([]);
+
+  // manager_type에 따른 base path 설정
+  const base_path =
+    manager_type === "ga"
+      ? "/manager_ga/community/posts"
+      : "/manager_sa/community/posts";
   const [hovered_row_id, set_hovered_row_id] = useState<string | null>(null);
 
-  const filtered_posts = posts_data.filter((item) => {
+  const filtered_posts = posts.filter((item) => {
     // 검색어 필터
     if (search_query) {
       const query = search_query.toLowerCase();
@@ -131,6 +146,13 @@ export default function PostTable({
       !selected_divisions.includes(item.division)
     ) {
       return false;
+    }
+
+    // 대상 필터
+    if (selected_targets.length > 0) {
+      if (!selected_targets.includes(item.target)) {
+        return false;
+      }
     }
 
     // 날짜 범위 필터
@@ -185,10 +207,10 @@ export default function PostTable({
 
     const handle_select_all = () => {
       if (is_all_selected) {
-        set_selected_post_ids([]);
+        on_selected_post_ids_change([]);
       } else {
         const all_ids = sorted_posts.map((post) => post.id);
-        set_selected_post_ids(all_ids);
+        on_selected_post_ids_change(all_ids);
       }
     };
 
@@ -224,37 +246,38 @@ export default function PostTable({
             // 카테고리는 일반 텍스트로 표시 (태그 스타일 제거)
             return <span>{row.category}</span>;
           case "target":
-            return (
-              <UserTypeTag
-                type={row.target as UserType | "전체"}
-                styles={styles}
-              />
-            );
+            return <UserTypeTag type={row.target as UserType | "전체"} />;
           case "title":
             // 제목과 고정 아이콘을 함께 표시
-            // 제목 클릭 시 상세 페이지로 이동
+            // 제목은 원래 스타일(title_button)을 유지하되, onClick 핸들러는 제거
+            // 행 클릭 시 상세 페이지로 이동하고, 수정 페이지로 이동하는 것은 맨 끝 수정 버튼을 클릭했을 때만 가능
             return (
               <div className={styles.title_wrapper}>
                 <button
                   className={styles.title_button}
+                  type="button"
                   onClick={(e) => {
-                    // 이벤트 전파를 막아서 행 클릭 이벤트가 발생하지 않도록 함
-                    e.stopPropagation();
-                    // 게시글 상세 페이지로 이동
-                    router.push(`/manager_ga/community/posts/${row.id}`);
+                    // 제목 클릭 시 이벤트 전파를 막지 않아서 행 클릭 이벤트가 발생하도록 함
+                    // 이렇게 하면 제목 클릭 시 상세 페이지로 이동
                   }}
                   aria-label={`${row.title} 게시글 상세 보기`}
                 >
                   <span className={styles.title_text}>{row.title}</span>
+                  {/* 고정된 게시글인 경우 제목 바로 옆에 고정 아이콘 표시 */}
+                  {/* 고정 아이콘은 단순 표시용이므로 클릭해도 아무 동작을 하지 않음 */}
+                  {row.is_pinned && (
+                    <img
+                      src="/images/icons/pin_table_icon.svg"
+                      alt="고정"
+                      className={styles.pin_icon}
+                      onClick={(e) => {
+                        // 고정 아이콘 클릭 시 이벤트 전파를 막아서 행 클릭 이벤트가 발생하지 않도록 함
+                        e.stopPropagation();
+                      }}
+                      style={{ cursor: "default" }}
+                    />
+                  )}
                 </button>
-                {/* 고정된 게시글인 경우 고정 아이콘 표시 */}
-                {row.is_pinned && (
-                  <img
-                    src="/images/icons/pin_table_icon.svg"
-                    alt="고정"
-                    className={styles.pin_icon}
-                  />
-                )}
               </div>
             );
           case "view_count":
@@ -265,34 +288,78 @@ export default function PostTable({
             return <span>{row.registered_by}</span>;
           case "edit":
             // 호버된 행에만 수정 버튼 표시
+            // 수정 컬럼 전체를 클릭해도 수정 페이지로 이동
             const is_hovered = hovered_row_id === row.id;
-            return is_hovered ? (
-              <button
-                className={styles.edit_button}
+            return (
+              <div
+                data-edit-cell="true"
+                className={styles.table_cell_edit_wrapper}
+                style={{ width: "100%", height: "100%", cursor: "pointer" }}
                 onClick={(e) => {
                   // 이벤트 전파를 막아서 행 클릭 이벤트가 발생하지 않도록 함
                   e.stopPropagation();
                   // 게시글 수정 페이지로 이동
-                  router.push(`/manager_ga/community/posts/${row.id}/edit`);
+                  router.push(`${base_path}/${row.id}/edit`);
                 }}
-                aria-label="수정"
               >
-                <img
-                  src="/images/icons/pencil_icon.svg"
-                  alt="수정"
-                  className={styles.edit_icon}
-                />
-              </button>
-            ) : null;
+                {is_hovered ? (
+                  <button
+                    className={styles.edit_button}
+                    onClick={(e) => {
+                      // 이벤트 전파를 막아서 행 클릭 이벤트가 발생하지 않도록 함
+                      e.stopPropagation();
+                      // 게시글 수정 페이지로 이동
+                      router.push(`${base_path}/${row.id}/edit`);
+                    }}
+                    aria-label="수정"
+                  >
+                    <img
+                      src="/images/icons/pencil_icon.svg"
+                      alt="수정"
+                      className={styles.edit_icon}
+                    />
+                  </button>
+                ) : null}
+              </div>
+            );
           default:
             return null;
         }
       }}
       render_header={render_table_header}
+      render_row_wrapper={(row, row_content) => (
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={(event) => {
+            const target = event.target as HTMLElement;
+
+            // 수정 컬럼 영역(data-edit-cell 또는 table_cell_edit) 클릭 시 상세 페이지로 이동하지 않음
+            const is_click_in_edit_cell =
+              target.closest('[data-edit-cell="true"]') ||
+              target.closest(`.${styles.table_cell_edit}`);
+
+            if (is_click_in_edit_cell) {
+              event.stopPropagation();
+              return;
+            }
+
+            router.push(`${base_path}/${row.id}`);
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              router.push(`${base_path}/${row.id}`);
+            }
+          }}
+        >
+          {row_content}
+        </div>
+      )}
       styles={styles}
       enable_checkbox={true}
       selected_ids={selected_post_ids}
-      on_select_change={set_selected_post_ids}
+      on_select_change={on_selected_post_ids_change}
       empty_message="게시글이 없습니다."
     />
   );

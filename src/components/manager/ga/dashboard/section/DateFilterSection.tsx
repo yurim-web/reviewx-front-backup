@@ -7,17 +7,30 @@
  *
  * 목적: 대시보드 페이지의 날짜 필터 기능을 제공하는 컴포넌트입니다.
  *
+ * 📍 사용 위치:
+ * - /manager_ga (GA 관리자 대시보드 메인 페이지)
+ * - /manager_sa (SA 관리자 대시보드 메인 페이지)
+ *
  * 주요 기능:
  * - 날짜 필터 버튼 (오늘/이번 주/이번 달)
  * - 커스텀 날짜 선택기 (스카이스캐너 스타일)
  * - 날짜 범위 선택 모달
+ * - 기본값: 이번 달 (오늘 날짜 기준 이번 달의 첫날 ~ 마지막날)
  *
  */
 
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { format } from "date-fns";
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  startOfDay,
+  endOfDay,
+} from "date-fns";
 import styles from "@/styles/manager_ga/dashboard/sections/date_filter_section.module.css";
 import DateRangePickerModal, { type DateRange } from "./DateRangePickerModal";
 
@@ -30,24 +43,73 @@ interface DateFilterSectionProps {
   dateFilter: DateFilter;
   // 날짜 필터 변경 함수
   onFilterChange: (filter: DateFilter) => void;
+  // 커스텀 날짜 범위 변경 함수 (선택적)
+  onDateRangeChange?: (range: DateRange | undefined) => void;
 }
 
 export default function DateFilterSection({
   dateFilter,
   onFilterChange,
+  onDateRangeChange,
 }: DateFilterSectionProps) {
   // useState: 드롭다운 열림/닫힘 상태를 관리하는 React Hook
   // [상태값, 상태를 변경하는 함수] = useState(초기값)
   const [is_date_modal_open, setIsDateModalOpen] = useState(false);
 
   // useState: 선택된 날짜 범위를 관리하는 상태
+  // 기본값: 이번 달 (오늘 날짜 기준 이번 달의 첫날 ~ 마지막날)
+  // startOfMonth: 주어진 날짜의 월의 첫날을 반환합니다 (예: 2026-01-13 -> 2026-01-01)
+  // endOfMonth: 주어진 날짜의 월의 마지막날을 반환합니다 (예: 2026-01-13 -> 2026-01-31)
   const [selected_date_range, setSelectedDateRange] = useState<
     DateRange | undefined
-  >(undefined);
+  >(() => {
+    const today = new Date();
+    return {
+      from: startOfMonth(today),
+      to: endOfMonth(today),
+    };
+  });
 
   // useRef: 날짜 선택기 버튼의 참조를 저장하는 React Hook
   // ref는 DOM 요소에 직접 접근할 수 있게 해줍니다
   const picker_ref = useRef<HTMLDivElement>(null);
+
+  // 날짜 필터에 따라 날짜 범위를 자동으로 업데이트하는 useEffect
+  // dateFilter가 변경될 때마다 오늘 날짜 기준으로 적절한 날짜 범위를 설정합니다
+  useEffect(() => {
+    const today = new Date();
+    let new_range: DateRange;
+
+    switch (dateFilter) {
+      case "today":
+        // 오늘: 오늘 날짜만 선택 (시작일과 종료일이 동일)
+        new_range = {
+          from: startOfDay(today),
+          to: endOfDay(today),
+        };
+        break;
+      case "week":
+        // 이번 주: 이번 주의 시작일(일요일) ~ 종료일(토요일)
+        // weekStartsOn: 0은 일요일을 주의 시작으로 설정합니다
+        new_range = {
+          from: startOfWeek(today, { weekStartsOn: 0 }),
+          to: endOfWeek(today, { weekStartsOn: 0 }),
+        };
+        break;
+      case "month":
+        // 이번 달: 이번 달의 첫날 ~ 마지막날
+        new_range = {
+          from: startOfMonth(today),
+          to: endOfMonth(today),
+        };
+        break;
+    }
+
+    setSelectedDateRange(new_range);
+    // 부모 컴포넌트로 날짜 범위 변경 알림
+    onDateRangeChange?.(new_range);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dateFilter]); // onDateRangeChange는 의존성 배열에서 제외 (무한 루프 방지)
 
   // 외부 클릭 감지: 드롭다운 외부를 클릭하면 닫기
   // useEffect는 컴포넌트가 렌더링된 후에 실행됩니다
@@ -87,8 +149,8 @@ export default function DateFilterSection({
   // 모달에서 날짜 범위를 선택하고 "적용" 버튼을 클릭했을 때 호출됩니다
   const handle_date_range_apply = (range: DateRange | undefined) => {
     setSelectedDateRange(range);
-    // TODO: 실제로 날짜 필터링 로직을 부모 컴포넌트로 전달할 수 있습니다
-    // 예: onDateRangeChange?.(range);
+    // 부모 컴포넌트로 날짜 범위 변경 알림
+    onDateRangeChange?.(range);
   };
 
   // 날짜 선택기 클릭 핸들러
@@ -98,7 +160,7 @@ export default function DateFilterSection({
   };
 
   // 날짜 범위 포맷팅 함수
-  // 선택된 날짜 범위를 "YYYY-MM-DD ~ YYYY-MM-DD" 형식으로 변환합니다
+  // 선택된 날짜 범위를 "YYYY-MM-DD~YYYY-MM-DD" 형식으로 변환합니다
   const format_date_range = (range: DateRange | undefined): string => {
     if (!range) {
       // 날짜 범위가 없으면 기본 텍스트 표시
@@ -107,13 +169,13 @@ export default function DateFilterSection({
 
     if (range.from && range.to) {
       // 시작일과 종료일이 모두 있으면 범위 형식으로 표시
-      return `${format(range.from, "yyyy-MM-dd")} ~ ${format(
+      return `${format(range.from, "yyyy-MM-dd")}~${format(
         range.to,
         "yyyy-MM-dd"
       )}`;
     } else if (range.from) {
       // 시작일만 있으면 시작일만 표시
-      return `${format(range.from, "yyyy-MM-dd")} ~`;
+      return `${format(range.from, "yyyy-MM-dd")}~`;
     } else {
       // 아무것도 선택하지 않았으면 기본 텍스트 표시
       return "날짜를 선택해주세요";
@@ -177,7 +239,11 @@ export default function DateFilterSection({
           aria-label="날짜 범위 선택"
         >
           {/* 날짜 선택 아이콘 */}
-          <div className={styles.date_filter_section_picker_icon}></div>
+          <img
+            src="/images/calendar/calendar_icon.svg"
+            alt="날짜 선택"
+            className={styles.date_filter_section_picker_icon}
+          />
           {/* 선택된 날짜 범위를 동적으로 표시 */}
           <span>{format_date_range(selected_date_range)}</span>
         </div>

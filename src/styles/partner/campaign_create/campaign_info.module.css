@@ -31,7 +31,6 @@
 
 .form_label {
   display: block;
-  font-family: 'Pretendard', sans-serif;
   font-weight: 500;
   font-size: 14px;
   line-height: 1.2;
@@ -60,6 +59,28 @@
   font-weight: 500;
   line-height: 16px; /* 100% */
   letter-spacing: -0.32px;
+  cursor: text;
+}
+
+/* 날짜/기간 입력 필드 readonly - 클릭용이라 흰색 유지 (read_only_input 제외) */
+.form_input[type="text"]:read-only:not(.read_only_input),
+.form_input[type="text"][readonly]:not(.read_only_input) {
+  background: #fff;
+  color: #444;
+  border: 1px solid #d9d9d9;
+  opacity: 1;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* focus 상태에서 outline 제거 */
+.form_input:focus,
+.form_select:focus,
+.form_textarea:focus {
+  outline: none;
 }
 
 /* placeholder 스타일 */
@@ -73,9 +94,30 @@
   letter-spacing: -0.32px;
 }
 
-/* 읽기 전용 필드 - 브랜드명, 보유포인트 등 */
+/* 읽기 전용 필드 - 브랜드명, 보유포인트 등 (기본) */
 .form_input[readonly]:focus,
 .form_input[readonly] {
+  outline: none;
+  cursor: default;
+  background: #f6f6f6;
+  color: #999;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 수정 불가 필드 공통 스타일 - 캠페인 제목, 제공내역 등 (로드 시부터 회색 적용) */
+.form_input.read_only_input[readonly],
+.form_input.read_only_input[readonly]:focus {
+  background: #f6f6f6;
+  color: #999999;
+  cursor: default;
+  border-color: #d9d9d9;
+}
+
+/* 비활성화 필드 - 모집기간, 등록기간 등 수정 불가능한 필드 */
+.form_input:disabled {
   outline: none;
   border-color: #d9d9d9;
   cursor: default;
@@ -88,13 +130,13 @@
 }
 
 /* 숫자 입력 필드 - 스피너 화살표 제거 */
-.form_input[type='number']::-webkit-outer-spin-button,
-.form_input[type='number']::-webkit-inner-spin-button {
+.form_input[type="number"]::-webkit-outer-spin-button,
+.form_input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-.form_input[type='number'] {
+.form_input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
 }
@@ -128,6 +170,13 @@
   transition: all 0.2s ease;
 }
 
+/* 플레이스홀더 내부 plus 아이콘 */
+.image_upload_placeholder img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
 /* 이미지 미리보기 컨테이너 */
 .image_preview_container {
   position: relative;
@@ -142,7 +191,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border: 1px solid #d9d9d9;
+  border: none;
   border-radius: 8px;
 }
 
@@ -151,23 +200,15 @@
   position: absolute;
   top: 4px;
   right: 4px;
-  width: 24px;
-  height: 24px;
-  border: none;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s ease;
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.1));
 }
 
-.image_remove_button:hover {
-  background: rgba(0, 0, 0, 0.8);
+/* 제거 버튼 내부 delete 아이콘 */
+.image_remove_button img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
 }
 
 /* 주소 입력 그룹 - 주소 + 우편번호 버튼 */
@@ -207,10 +248,9 @@
   right: 20px;
   top: 50%;
   transform: translateY(-50%);
-  font-family: 'Pretendard', sans-serif;
   font-weight: 500;
   font-size: 16px;
-  color: #444444;
+  color: #999999;
   white-space: nowrap;
   letter-spacing: -0.32px;
   pointer-events: none; /* 클릭 방해하지 않도록 */
@@ -224,7 +264,6 @@
   border-radius: 8px;
   background: #fff;
   color: #444444;
-  font-family: 'Pretendard', sans-serif;
   font-weight: 600;
   font-size: 16px;
   line-height: 1.2;
@@ -232,6 +271,13 @@
   transition: all 0.2s ease;
   white-space: nowrap;
   letter-spacing: -0.32px;
+}
+
+.charge_button:disabled {
+  background: #f5f5f5;
+  border-color: #e5e7eb;
+  color: #848484;
+  cursor: default;
 }
 
 /* 카운트 입력 그룹 - 모집인원 + 명 단위 */
@@ -253,7 +299,7 @@
   right: 20px;
   top: 50%;
   transform: translateY(-50%);
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   font-weight: 500;
   font-size: 16px;
   color: #444444;
@@ -262,23 +308,77 @@
   pointer-events: none; /* 클릭 방해하지 않도록 */
 }
 
-/* 반응형 디자인 */
+/* 비활성화(읽기 전용) 시 카운트 단위 색상 */
+.count_input_group input.read_only_input ~ .count_unit {
+  color: #848484;
+}
+
+/* ============================================
+   모바일 반응형 스타일
+   ============================================ */
+
 @media (max-width: 768px) {
+  /* 폼 컨테이너 */
   .campaign_form {
-    padding: 0 16px;
+    padding: 20px 20px 24px 20px;
   }
 
-  .address_input_group,
-  .points_input_group,
-  .count_input_group {
-    flex-direction: column;
-    align-items: stretch;
+  /* 텍스트영역 */
+  .form_textarea {
+    min-height: 100px;
+    padding: 14px 16px;
   }
 
-  .postal_code_button,
-  .charge_button {
-    width: 100%;
+  /* 이미지 업로드 영역 */
+  .image_upload_area {
+    gap: 10px;
   }
+
+  /* 이미지 업로드 플레이스홀더 */
+  .image_upload_placeholder {
+    width: 76px;
+    height: 76px;
+    border-radius: 6px;
+  }
+
+  /* 플레이스홀더 내부 plus 아이콘 - 모바일 */
+  .image_upload_placeholder img {
+    width: 35px;
+    height: 35px;
+  }
+
+  /* 제거 버튼 내부 delete 아이콘 - 모바일 */
+  .image_remove_button img {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* 이미지 미리보기 컨테이너 */
+  .image_preview_container {
+    width: 76px;
+    height: 76px;
+    border-radius: 6px;
+  }
+
+  /* 이미지 미리보기 */
+  .image_preview {
+    border-radius: 6px;
+  }
+}
+
+/* 지역 선택 그룹 - 시/도와 시/구/군 드롭다운을 나란히 배치 */
+.region_select_group {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+/* 지역 드롭다운 컨테이너 - 각 드롭다운을 감싸는 div */
+.region_dropdown_container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 /* 수정 모드(읽기 전용) 시각화 */
@@ -291,4 +391,29 @@
 .locked_placeholder {
   pointer-events: none;
   opacity: 0.5;
+}
+
+/* 이미지 업로드 안내 문구 */
+.image_upload_info {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.image_upload_info li {
+  position: relative;
+  padding-left: 16px;
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+  letter-spacing: -0.28px;
+}
+
+.image_upload_info li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #848484;
 }

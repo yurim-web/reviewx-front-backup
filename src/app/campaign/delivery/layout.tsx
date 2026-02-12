@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
+import React from "react";
 
 export const metadata: Metadata = {
-  title: "ReviewX | 배송형 캠페인 ",
-  description: "배송형 리뷰 캠페인 목록",
+  title: "ReviewX | 배송형 캠페인",
 };
 
 export default function DeliveryLayout({
@@ -10,7 +10,5 @@ export default function DeliveryLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return children;
 }
-
-

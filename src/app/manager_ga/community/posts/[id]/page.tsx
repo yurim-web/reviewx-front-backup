@@ -9,5 +9,5 @@ export const metadata: Metadata = {
 export default function PostDetailPage() {
   // 서버 컴포넌트에서 클라이언트 전용 페이지를 전달만 수행
   // 클라이언트 컴포넌트에서 useParams를 사용하여 동적 라우트 값을 가져옵니다.
-  return <PostDetailPageClient />;
+  return <PostDetailPageClient manager_type="ga" />;
 }

@@ -39,6 +39,12 @@
   border-color: #e5e7eb; /* gray-200 */
 }
 
+/* disabled 상태일 때 드롭다운 화살표 색상 #848484 (img에 filter 적용) */
+.dropdown_button.disabled .dropdown_arrow,
+.disabled .dropdown_arrow {
+  filter: brightness(0) saturate(100%) invert(52%);
+}
+
 /* disabled 상태일 때 드롭다운 텍스트 색상 */
 .dropdown_button.disabled .dropdown_text,
 .disabled .dropdown_text {
@@ -93,8 +99,11 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-
   padding: 4px;
+
+  /* 스크롤 전파 방지 */
+  overscroll-behavior: contain;
+  overscroll-behavior-y: contain;
 }
 
 /* 드롭다운 옵션 */
@@ -139,4 +148,11 @@
 .dropdown_options::-webkit-scrollbar-thumb:hover {
   background: #999999;
   background-clip: padding-box;
+}
+
+/* ============================================
+   모바일 반응형 스타일
+   ============================================ */
+
+@media (max-width: 768px) {
 }

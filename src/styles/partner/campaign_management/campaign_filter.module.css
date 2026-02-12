@@ -76,67 +76,47 @@
 }
 
 /**
- * 필터 버튼 호버 효과
- */
-.filter_button:hover {
-  border: 1px solid #444;
-}
-
-/**
  * 활성화된 필터 버튼 스타일
  */
 .filter_button_active {
-  border: 1px solid #444 !important;
-  color: #444 !important;
+  border: 1px solid #ff5694 !important;
+  color: #ff5694 !important;
 }
 
 /**
- * 체크박스 아이콘 컨테이너
+ * 필터 아이콘 - 체크박스 스타일
  */
-.checkbox_icon {
+.filter_icon {
   width: 16px;
   height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-/**
- * 체크박스 체크됨 상태
- */
-.checkbox_checked {
-  width: 16px;
-  height: 16px;
-  border: 1px solid #444;
+  border: 1.5px solid #d9d9d9;
   border-radius: 4px;
-
+  background: #ffffff;
+  flex-shrink: 0;
   position: relative;
 }
 
 /**
- * 체크박스 체크 표시 (체크마크)
+ * 활성화된 필터 버튼의 체크박스 스타일
  */
-.checkbox_checked::after {
-  content: '✓';
+.filter_button_active .filter_icon {
+  border-color: #ff5694;
+  background: #ffffff;
+}
+
+/**
+ * 활성화된 필터 버튼의 체크박스에 체크마크 표시
+ */
+.filter_button_active .filter_icon::after {
+  content: "✓";
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #444444;
+  color: #ff5694;
   font-size: 12px;
-  font-weight: bold;
-}
-
-/**
- * 체크박스 체크 안 됨 상태
- */
-.checkbox_unchecked {
-  width: 16px;
-  height: 16px;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  background: white;
+  font-weight: 600;
+  line-height: 1;
 }
 
 /**
@@ -154,7 +134,7 @@
  * 활성화된 필터 버튼 내의 라벨 색상
  */
 .filter_button_active .filter_label {
-  color: #444 !important;
+  color: #ff5694 !important;
 }
 
 /**
@@ -164,7 +144,15 @@
   width: 16px;
   height: 16px;
   flex-shrink: 0;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+/**
+ * 활성화된 필터 버튼의 드롭다운 아이콘 색상 변경
+ */
+.filter_button_active .dropdown_icon {
+  filter: brightness(0) saturate(100%) invert(39%) sepia(99%) saturate(4283%)
+    hue-rotate(315deg) brightness(101%) contrast(101%);
 }
 
 /* ========================================
@@ -223,13 +211,6 @@
 }
 
 /**
- * 검색 입력창 포커스 효과
- */
-.search_input:focus {
-  border-color: #444;
-}
-
-/**
  * 검색 입력창 placeholder 스타일
  */
 .search_input::placeholder {
@@ -260,13 +241,6 @@
 }
 
 /**
- * 정렬 버튼 호버 효과
- */
-.sort_button:hover {
-  border: 1px solid #444;
-}
-
-/**
  * 정렬 라벨
  */
 .sort_label {
@@ -277,23 +251,58 @@
   letter-spacing: -0.32px;
 }
 
+/**
+ * 정렬 버튼 컨테이너 (모바일용 - 필터 바 border 아래)
+ */
+.sort_button_container {
+  display: none;
+}
+
+/**
+ * 모바일 검색 및 정렬 컨테이너
+ */
+.mobile_search_sort_container {
+  display: none;
+}
+
 /* ========================================
    활성 필터 태그 영역
    ======================================== */
 
 /**
  * 활성 필터 태그 컨테이너
+ * PC: 마우스 드래그로 가로 스크롤 가능
  */
 .active_filters {
   display: flex;
   align-items: center;
   gap: 12px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   padding: 12px;
   min-height: 40px;
-
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   border-radius: 4px;
   background: #f9f9f9;
+  cursor: pointer;
+  user-select: none;
+}
+
+.active_filters:active {
+  cursor: pointer;
+}
+
+/* 드래그 중 커서 유지 (JS에서 isDragging 시 적용) */
+.active_filters.active_filters_dragging {
+  cursor: pointer;
+}
+
+/* 활성 필터 태그 컨테이너 스크롤바 숨기기 */
+.active_filters::-webkit-scrollbar {
+  display: none;
 }
 
 /**
@@ -303,9 +312,11 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
+  white-space: nowrap;
 
   /* 글자 스타일 */
-  color: #848484;
+  color: #444444;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
@@ -328,12 +339,6 @@
   transition: all 0.2s ease;
 }
 
-/**
- * 제거 버튼 호버 효과
- */
-.remove_tag:hover {
-  opacity: 0.7;
-}
 
 /**
  * X 아이콘 스타일
@@ -344,23 +349,78 @@
 }
 
 /* ========================================
-   반응형 디자인 (선택사항)
+   📱 모바일 반응형 스타일 (max-width: 768px)
    ======================================== */
-
-/**
- * 모바일 화면에서의 스타일 조정
- */
 @media (max-width: 768px) {
+  /* 필터 컨테이너 */
   .filter_container {
-    flex-direction: column;
-    align-items: stretch;
+    padding: 20px 20px;
+    gap: 12px;
   }
 
+  /* 필터 버튼 컨테이너 */
+  .filter_buttons_container {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0;
+  }
+
+  /* 필터 버튼 그룹 */
+  .filter_buttons {
+    gap: 12px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    width: 100%;
+  
+  }
+
+  /* 필터 버튼 그룹 스크롤바 숨기기 */
+  .filter_buttons::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+
+  /* 검색 및 정렬 컨테이너 (모바일에서 정렬 버튼 숨김) */
   .search_sort_container {
+    display: none;
+  }
+
+  /* 모바일 검색 및 정렬 컨테이너 */
+  .mobile_search_sort_container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 20px 0px 20px;
+  }
+
+  /* 모바일 검색 컨테이너 - 오른쪽으로 이동 */
+  .mobile_search_sort_container .search_container {
+    flex: 1;
+    width: auto;
+    order: 2; /* 검색창을 오른쪽으로 */
+  }
+
+  /* 정렬 버튼 컨테이너 (모바일용 - 필터 바 border 아래) - 왼쪽으로 이동 */
+  .sort_button_container {
+    display: flex;
+    justify-content: flex-start;
+    flex-shrink: 0;
+    order: 1; /* 정렬 버튼을 왼쪽으로 */
+  }
+
+  /* 정렬 버튼 (모바일) */
+  .sort_button_container .sort_button {
     margin-left: 0;
   }
 
-  .search_container {
-    width: 100%;
-  }
+
+
+
+
+
+
+
 }

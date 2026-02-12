@@ -9,7 +9,7 @@
 
 "use client";
 
-import styles from "@/styles/common/find_account.module.css";
+import styles from "@/styles/common/find_account/find_account.module.css";
 
 interface NextButtonProps {
   /** 버튼 활성화 여부 */

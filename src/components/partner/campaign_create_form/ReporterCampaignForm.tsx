@@ -17,29 +17,57 @@
 
 "use client";
 
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   CampaignFormData,
   CampaignCreateFormBaseProps,
-} from "@/types/user/user";
+} from "@/types/domain/user";
+import { useAuth } from "@/hooks/useAuth";
+import { getPartnerPointSummary } from "@/data/partner/point/pointData";
 // 분리된 CSS 모듈들 import
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
-import guideStyles from "@/styles/partner/campaign_create/campaign_guide.module.css";
+import textareaStyles from "@/styles/partner/campaign_create/campaign_guide/textareas.module.css";
+import buttonStyles from "@/styles/partner/campaign_create/campaign_guide/submit_buttons.module.css";
 import styles from "@/styles/partner/campaign_create/campaign_create.module.css";
 
 // 공통 컴포넌트들 import
-import { CampaignTypeSelector } from "./common/CampaignTypeSelector";
-import { CustomDropdown } from "./common/CustomDropdown";
-import { platforms, categories } from "./common/constants";
-import NoticeSection from "./common/NoticeSection";
+import { CampaignTypeSelector } from "./common/selectors/CampaignTypeSelector";
+import { CustomDropdown } from "./common/selectors/CustomDropdown";
+import { platforms, categories } from "./common/constants/constants";
+import NoticeSection from "./common/sections/NoticeSection";
+import { ThumbnailAndDetailImages } from "./common/images/ThumbnailAndDetailImages";
+import { PointsManagementSection } from "./common/sections/PointsManagementSection";
+import { RecruitmentFieldsSection } from "./common/sections/RecruitmentFieldsSection";
+import { SimpleGuideSection } from "./common/sections/SimpleGuideSection";
+import { ParticipationOptionsSection } from "./common/sections/ParticipationOptionsSection";
+import { ContactPhoneField } from "./common/fields/ContactPhoneField";
+import { FairTradeAgreement } from "./common/fields/FairTradeAgreement";
+import { FloatingActionButtons } from "./common/layout/FloatingActionButtons";
+import {
+  formatNumberWithComma,
+  handleNumericInput,
+  handleNumericChange,
+  validateImageFile,
+  validateImagesForUpload,
+  getDefaultCampaignDates,
+} from "./common/utils/formUtils";
+import BaseModal from "@/components/common/modal/BaseModal";
+import Toast from "@/components/common/toast/Toast";
 
-interface ReporterCampaignFormProps extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
+interface ReporterCampaignFormProps extends Omit<
+  CampaignCreateFormBaseProps,
+  "campaignType"
+> {
   /** 캠페인 수정 시 초기 데이터 (선택사항) */
   initialData?: CampaignFormData | null;
   /** 폼 동작 모드: 생성/수정 */
   mode?: "create" | "edit";
+  /** 캠페인 오픈 여부 (수정 모드에서만 사용) */
+  isOpen?: boolean;
+  /** 불러온 데이터의 긴급 상태를 부모 컴포넌트로 전달하는 콜백 */
+  onUrgentLoad?: (isUrgent: boolean) => void;
 }
 
 export default function ReporterCampaignForm({
@@ -47,28 +75,55 @@ export default function ReporterCampaignForm({
   isSubmitting,
   initialData,
   mode = "create",
+  isOpen = false,
+  onUrgentLoad,
 }: ReporterCampaignFormProps) {
   const router = useRouter();
+  const { user } = useAuth();
   const isEditMode = mode === "edit";
 
-  // 수정 모드에서 편집 가능 필드 정의 (이미지, 제공 내역, 홍보 링크, 추가 지급 포인트, 참여/제출 옵션)
+  /**
+   * 수정 모드에서 편집 가능 필드 정의
+   *
+   * 설명:
+   * - 오픈 전 (isOpen = false): 상호명(brandName) 제외 모든 항목 수정 가능
+   * - 오픈 후 (isOpen = true): 홍보 링크, 추가 지급 포인트, 참여/제출 옵션, 문의 담당자 휴대폰 번호만 수정 가능
+   */
   const isEditableField = (field: string): boolean => {
-    const editable = new Set([
-      "images",
-      "providedItems",
-      "promotionLink",
-      "additionalPoints",
-      // 참여/제출 옵션 필드들
-      "adultOnly",
-      "allowReParticipation",
-      "allowLateSubmission",
-    ]);
-    return editable.has(field);
+    if (!isEditMode) {
+      // 생성 모드에서는 모든 필드 편집 가능
+      return true;
+    }
+
+    if (!isOpen) {
+      // 오픈 전: 상호명(brandName) 제외 모든 항목 수정 가능
+      return field !== "brandName";
+    } else {
+      // 오픈 후: 홍보 링크, 추가 지급 포인트, 참여/제출 옵션, 문의 담당자 휴대폰 번호만 수정 가능
+      const editable = new Set([
+        "promotionLink", // 홍보 링크
+        "additionalPoints", // 추가 지급 포인트
+        // 참여/제출 옵션 필드들
+        "adultOnly",
+        "allowReParticipation",
+        "allowLateSubmission",
+        "minTextLength",
+        "minImageCount",
+        "videoCount",
+        "videoDuration",
+        "requireLinkAttachment",
+        "requireKeywordAttachment",
+        "contactPhone", // 문의 담당자 휴대폰 번호
+      ]);
+      return editable.has(field);
+    }
   };
 
-  // 이미지 업로드 관련 상태
-  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  // 이미지 업로드 관련 state (썸네일/상세 이미지 분리)
+  const [thumbnailImage, setThumbnailImage] = useState<File | null>(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+  const [detailImages, setDetailImages] = useState<File[]>([]);
+  const [detailPreviews, setDetailPreviews] = useState<string[]>([]);
 
   // 체크박스 상태 관리
   const [checkboxStates, setCheckboxStates] = useState({
@@ -77,21 +132,65 @@ export default function ReporterCampaignForm({
     videoCount: false,
   });
 
+  // 이미지 업로드 오류 모달 상태
+  const [imageErrorModal, setImageErrorModal] = useState({
+    is_open: false,
+    message: "",
+  });
+
+  // 임시 저장 확인 모달 상태
+  const [saveConfirmModal, setSaveConfirmModal] = useState({
+    is_open: false,
+  });
+
+  // 불러오기 확인 모달 상태
+  const [loadConfirmModal, setLoadConfirmModal] = useState({
+    is_open: false,
+  });
+
+  // 토스트 메시지 상태
+  const [toast, setToast] = useState({
+    is_open: false,
+    message: "",
+  });
+
+  // 날짜 기본값 생성 (생성 모드이고 initialData가 없을 때만)
+  const defaultDates = !initialData
+    ? getDefaultCampaignDates()
+    : {
+        recruitmentPeriod: "",
+        announcementDate: "",
+        registrationPeriod: "",
+      };
+
+  /**
+   * 상호명 초기값 가져오기
+   *
+   * 설명:
+   * - 로그인한 파트너의 상호명을 가져옵니다.
+   * - user.business_name을 사용합니다.
+   */
+  const getDefaultBrandName = (): string => {
+    return user?.business_name || "";
+  };
+
+  const defaultBrandName = !initialData ? getDefaultBrandName() : "";
+
   const [formData, setFormData] = useState<CampaignFormData>(
     initialData || {
       campaignType: "기자단",
       platform: "",
       title: "",
       category: "",
-      brandName: "",
+      brandName: defaultBrandName,
       providedItems: "",
       promotionLink: "",
       currentPoints: "58,000", // 보유 포인트 ( 이 계정에 남아있는 포인트 값을 불러온다)
       additionalPoints: "",
       recruitmentCount: "",
-      recruitmentPeriod: "",
-      announcementDate: "",
-      registrationPeriod: "",
+      recruitmentPeriod: defaultDates.recruitmentPeriod,
+      announcementDate: defaultDates.announcementDate,
+      registrationPeriod: defaultDates.registrationPeriod,
       keywords: "",
       adultOnly: false,
       allowReParticipation: false,
@@ -100,11 +199,14 @@ export default function ReporterCampaignForm({
       minImageCount: "",
       videoCount: "",
       videoDuration: "",
-    requireLinkAttachment: false,
-    requireKeywordAttachment: false,
-    guidelines: "",
-    isUrgent: false,
-  });
+      requireLinkAttachment: false,
+      requireKeywordAttachment: false,
+      guidelines: "",
+      contactPhone: "",
+      fairTradeAgreement: false,
+      isUrgent: false,
+    },
+  );
 
   /**
    * 폼 데이터 업데이트
@@ -117,11 +219,60 @@ export default function ReporterCampaignForm({
   };
 
   /**
+   * 수정 모드일 때 공정위 문구 기본 체크
+   *
+   * 설명:
+   * - 수정 페이지에서는 이미 등록된 캠페인이므로 공정위 문구 동의가 기본적으로 되어 있어야 합니다.
+   * - 수정 모드일 때 자동으로 fairTradeAgreement를 true로 설정합니다.
+   * - 오픈 전에는 사용자가 체크/해제할 수 있지만, 기본값은 체크된 상태입니다.
+   */
+  useEffect(() => {
+    // 수정 모드 진입 시 한 번만 기본값을 true로 세팅하고,
+    // 이후에는 사용자가 체크/해제를 자유롭게 할 수 있도록 합니다.
+    if (!isEditMode) return;
+    if (!formData.fairTradeAgreement) {
+      setFormData((prev) => ({
+        ...prev,
+        fairTradeAgreement: true,
+      }));
+    }
+    // formData.fairTradeAgreement는 의도적으로 의존성에서 제외합니다.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditMode]);
+
+  /**
+   * initialData가 있을 때 이미지 미리보기 및 체크박스 상태 설정
+   */
+  useEffect(() => {
+    if (initialData && isEditMode) {
+      // 썸네일 이미지 미리보기 설정
+      if (initialData.thumbnailImageUrl) {
+        setThumbnailPreview(initialData.thumbnailImageUrl);
+      }
+
+      // 상세 이미지 미리보기 설정
+      if (
+        initialData.detailImagePreviews &&
+        initialData.detailImagePreviews.length > 0
+      ) {
+        setDetailPreviews(initialData.detailImagePreviews);
+      }
+
+      // 체크박스 상태 설정
+      setCheckboxStates({
+        minTextLength: !!initialData.minTextLength,
+        minImageCount: !!initialData.minImageCount,
+        videoCount: !!initialData.videoCount,
+      });
+    }
+  }, [initialData, isEditMode]);
+
+  /**
    * 체크박스 상태 업데이트
    */
   const updateCheckboxState = (
     field: keyof typeof checkboxStates,
-    checked: boolean
+    checked: boolean,
   ) => {
     setCheckboxStates((prev) => ({
       ...prev,
@@ -143,151 +294,131 @@ export default function ReporterCampaignForm({
   };
 
   /**
-   * 숫자에 쉼표 추가하는 포맷팅 함수
+   * 숫자 입력 핸들러 래퍼 함수
    */
-  const formatNumberWithComma = (
-    value: string | number | undefined
-  ): string => {
-    // undefined나 null이면 빈 문자열 반환
-    if (value === undefined || value === null) return "";
-
-    // 문자열로 변환
-    const stringValue = String(value);
-
-    // 쉼표 제거 후 숫자만 추출
-    const numericValue = stringValue.replace(/,/g, "");
-
-    // 빈 문자열이면 그대로 반환
-    if (numericValue === "") return "";
-
-    // 숫자가 아니면 빈 문자열 반환
-    if (isNaN(Number(numericValue))) return "";
-
-    // 숫자에 쉼표 추가하여 반환
-    return Number(numericValue).toLocaleString("ko-KR");
-  };
-
-  /**
-   * 숫자 입력 핸들러 (숫자만 입력 가능 + 쉼표 자동 추가)
-   */
-  const handleNumericInput = (
+  const handleNumericInputWrapper = (
+    field: string,
     e: React.KeyboardEvent<HTMLInputElement>,
-    field: keyof CampaignFormData
   ) => {
-    // 허용할 키들
-    const allowedKeys = [
-      "Backspace",
-      "Delete",
-      "Tab",
-      "ArrowLeft",
-      "ArrowRight",
-      "ArrowUp",
-      "ArrowDown",
-      "Home",
-      "End",
-    ];
-
-    // Ctrl, Cmd 키와 함께 사용되는 키 (복사, 붙여넣기 등)
-    const isCtrlKey = e.ctrlKey || e.metaKey;
-    const isAllowedKeyWithCtrl = ["a", "c", "v", "x"].includes(
-      e.key.toLowerCase()
-    );
-
-    // 입력된 키가 숫자인지 확인
-    const isNumeric = /^[0-9]$/.test(e.key);
-
-    // 허용된 키가 아니면 입력 방지
-    if (
-      !isNumeric &&
-      !allowedKeys.includes(e.key) &&
-      !(isCtrlKey && isAllowedKeyWithCtrl)
-    ) {
-      e.preventDefault();
-    }
+    handleNumericInput(e);
   };
 
   /**
-   * 숫자 입력 변경 핸들러 (쉼표 자동 추가)
+   * 숫자 입력 변경 핸들러 래퍼 함수
    */
-  const handleNumericChange = (
+  const handleNumericChangeWrapper = (
+    field: string,
     e: React.ChangeEvent<HTMLInputElement>,
-    field: keyof CampaignFormData
   ) => {
-    const inputValue = e.target.value;
-    const inputElement = e.target;
-
-    // 기존 커서 위치 저장
-    const cursorPosition = inputElement.selectionStart || 0;
-
-    // 쉼표 개수 계산
-    const beforeCursor = inputValue.substring(0, cursorPosition);
-    const commasBeforeCursor = (beforeCursor.match(/,/g) || []).length;
-
-    // 실제 값 저장 (쉼표 제거)
-    const numericValue = inputValue.replace(/,/g, "");
-
-    // 화면에 표시할 값 업데이트
-    setFormData((prev) => ({
-      ...prev,
-      [field]: numericValue, // 실제 저장값은 쉼표 없이
-    }));
-
-    // 다음 렌더링 후 커서 위치 복원
-    setTimeout(() => {
-      const newValue = formatNumberWithComma(numericValue);
-      const newCommasBeforeCursor = (
-        newValue.substring(0, cursorPosition).match(/,/g) || []
-      ).length;
-      const cursorOffset = newCommasBeforeCursor - commasBeforeCursor;
-      const newCursorPosition = cursorPosition + cursorOffset;
-
-      inputElement.setSelectionRange(newCursorPosition, newCursorPosition);
-    }, 0);
+    handleNumericChange(e, (value) => {
+      updateFormData(field as keyof CampaignFormData, value);
+    });
   };
 
   /**
-   * 이미지 파일 선택 처리
+   * 썸네일 이미지 선택 처리
+   *
+   * 설명:
+   * - 썸네일은 1장만 업로드 가능합니다.
+   * - 우선순위: 개수 > 용량 > 확장자 순서로 검증합니다.
    */
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    const validFiles = files.filter((file) => {
-      const isValidType = file.type.startsWith("image/");
-      const isValidSize = file.size <= 5 * 1024 * 1024; // 5MB 제한
-      return isValidType && isValidSize;
-    });
+  const handleThumbnailSelect = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
 
-    if (uploadedImages.length + validFiles.length > 7) {
-      alert("최대 7개의 이미지만 업로드할 수 있습니다.");
+    // 이미지 파일 검증 (우선순위: 확장자 > 용량)
+    const validation = validateImageFile(file);
+    if (!validation.isValid && validation.errorMessage) {
+      setImageErrorModal({
+        is_open: true,
+        message: validation.errorMessage,
+      });
+      // input 값 초기화
+      event.target.value = "";
       return;
     }
 
-    const newImages = [...uploadedImages, ...validFiles];
-    setUploadedImages(newImages);
+    setThumbnailImage(file);
 
-    // 미리보기 URL 생성
-    const newPreviews = validFiles.map((file) => URL.createObjectURL(file));
-    setImagePreviews([...imagePreviews, ...newPreviews]);
+    // 미리보기 생성
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        setThumbnailPreview(e.target.result as string);
+      }
+    };
+    reader.readAsDataURL(file);
+
+    // input 값 초기화
+    event.target.value = "";
   };
 
   /**
-   * 이미지 제거 처리
+   * 썸네일 이미지 제거 처리
    */
-  const handleImageRemove = (index: number) => {
-    const newImages = uploadedImages.filter((_, i) => i !== index);
-    const newPreviews = imagePreviews.filter((_, i) => i !== index);
-
-    setUploadedImages(newImages);
-    setImagePreviews(newPreviews);
+  const handleThumbnailRemove = () => {
+    setThumbnailImage(null);
+    setThumbnailPreview(null);
   };
 
   /**
-   * 업로드 버튼 클릭 처리
+   * 상세 이미지 선택 처리
+   *
+   * 설명:
+   * - 상세 이미지는 최대 7장까지 업로드 가능합니다.
+   * - 우선순위: 개수 > 용량 > 확장자 순서로 검증합니다.
    */
-  const handleUploadClick = () => {
-    const fileInput = document.getElementById(
-      "image-upload"
-    ) as HTMLInputElement;
-    fileInput?.click();
+  const handleDetailImagesSelect = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const files = event.target.files;
+    if (!files) return;
+
+    const newFiles = Array.from(files);
+
+    // 이미지 업로드 검증 (우선순위: 개수 > 용량 > 확장자)
+    const validation = validateImagesForUpload(
+      newFiles,
+      detailImages.length,
+      7, // 최대 7장
+    );
+
+    if (!validation.isValid && validation.errorMessage) {
+      setImageErrorModal({
+        is_open: true,
+        message: validation.errorMessage,
+      });
+      // input 값 초기화
+      event.target.value = "";
+      return;
+    }
+
+    // 검증 통과한 파일들 추가
+    setDetailImages((prev) => [...prev, ...newFiles]);
+
+    // 이미지 미리보기 생성
+    newFiles.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          setDetailPreviews((prev) => [...prev, e.target!.result as string]);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // input 값 초기화
+    event.target.value = "";
+  };
+
+  /**
+   * 상세 이미지 제거 처리
+   */
+  const handleDetailImageRemove = (index: number) => {
+    setDetailImages((prev) => prev.filter((_, i) => i !== index));
+    setDetailPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   /**
@@ -313,9 +444,48 @@ export default function ReporterCampaignForm({
    *
    */
   const isFormValid = useMemo(() => {
-    if (isEditMode) return true;
-    // 이미지가 최소 1개 이상 업로드되었는지 확인
-    const hasImages = uploadedImages.length > 0;
+    // 포인트 검증: 보유 포인트가 0보다 커야 합니다.
+    const currentPoints =
+      Number(String(formData.currentPoints).replace(/,/g, "")) || 0;
+    if (currentPoints <= 0) {
+      return false;
+    }
+
+    // 썸네일과 상세 이미지 검증
+    // 수정 모드에서는 기존 이미지가 있으면 통과, 없으면 새로 업로드한 이미지가 있어야 함
+    // 생성 모드에서는 새로 업로드한 이미지가 있어야 함
+    const hasImages = isEditMode
+      ? (thumbnailPreview !== null || thumbnailImage !== null) &&
+        (detailPreviews.length > 0 || detailImages.length > 0)
+      : thumbnailImage !== null && detailImages.length > 0;
+
+    /**
+     * 기본 미션 설정 필수 입력 검증
+     *
+     * 설명:
+     * - 체크박스가 체크되어 있으면 해당 input 필드에 값이 필수로 입력되어야 합니다.
+     * - 글자 수 체크박스가 체크되어 있으면 minTextLength가 필수
+     * - 이미지 장수 체크박스가 체크되어 있으면 minImageCount가 필수
+     * - 동영상 개수 체크박스가 체크되어 있으면 videoCount와 videoDuration이 필수
+     */
+    const hasValidMissionSettings =
+      // 글자 수 체크박스가 체크되어 있으면 값이 필수
+      (!checkboxStates.minTextLength ||
+        (checkboxStates.minTextLength &&
+          formData.minTextLength !== "" &&
+          Number(String(formData.minTextLength).replace(/,/g, "")) > 0)) &&
+      // 이미지 장수 체크박스가 체크되어 있으면 값이 필수
+      (!checkboxStates.minImageCount ||
+        (checkboxStates.minImageCount &&
+          formData.minImageCount !== "" &&
+          Number(String(formData.minImageCount).replace(/,/g, "")) > 0)) &&
+      // 동영상 개수 체크박스가 체크되어 있으면 개수와 초수가 모두 필수
+      (!checkboxStates.videoCount ||
+        (checkboxStates.videoCount &&
+          formData.videoCount !== "" &&
+          Number(String(formData.videoCount).replace(/,/g, "")) > 0 &&
+          formData.videoDuration !== "" &&
+          Number(String(formData.videoDuration).replace(/,/g, "")) > 0));
 
     // 필수 텍스트 필드들이 모두 입력되었는지 확인
     const hasRequiredFields =
@@ -327,49 +497,340 @@ export default function ReporterCampaignForm({
       formData.announcementDate.trim() !== "" &&
       formData.registrationPeriod.trim() !== "" &&
       formData.keywords.trim() !== "" &&
-      formData.guidelines.trim() !== "";
+      formData.guidelines.trim() !== "" &&
+      formData.fairTradeAgreement === true && // 공정위 문구 동의 필수
+      hasValidMissionSettings; // 기본 미션 설정 필수 입력 검증
 
     const isValid = hasImages && hasRequiredFields;
 
     // 버튼이 활성화되었을 때 콘솔에 로그 출력
     if (isValid) {
-      console.log("필수 입력완료 버튼 활성화");
+      // console.log("필수 입력완료 버튼 활성화");
     }
 
     // 디버깅: 필드별 상태 확인
-    console.log("=== 폼 검증 상태 ===");
-    console.log("이미지 업로드:", hasImages, "개수:", uploadedImages.length);
-    console.log("제목:", formData.title.trim() !== "" ? "✓" : "✗");
-    console.log("카테고리:", formData.category !== "" ? "✓" : "✗");
-    console.log("제공내역:", formData.providedItems.trim() !== "" ? "✓" : "✗");
-    console.log("모집인원:", formData.recruitmentCount !== "" ? "✓" : "✗");
-    console.log(
-      "모집기간:",
-      formData.recruitmentPeriod.trim() !== "" ? "✓" : "✗"
-    );
-    console.log(
-      "선정날짜:",
-      formData.announcementDate.trim() !== "" ? "✓" : "✗"
-    );
-    console.log(
-      "등록기간:",
-      formData.registrationPeriod.trim() !== "" ? "✓" : "✗"
-    );
-    console.log("키워드:", formData.keywords.trim() !== "" ? "✓" : "✗");
-    console.log("안내사항:", formData.guidelines.trim() !== "" ? "✓" : "✗");
-    console.log("버튼 활성화:", isValid ? "✓" : "✗");
+    // console.log("=== 폼 검증 상태 ===");
+    // console.log(
+    //   "이미지 업로드:",
+    //   hasImages,
+    //   "썸네일:",
+    //   thumbnailImage !== null,
+    //   "상세 이미지:",
+    //   detailImages.length
+    // );
+    // console.log("제목:", formData.title.trim() !== "" ? "✓" : "✗");
+    // console.log("카테고리:", formData.category !== "" ? "✓" : "✗");
+    // console.log("제공내역:", formData.providedItems.trim() !== "" ? "✓" : "✗");
+    // console.log("모집인원:", formData.recruitmentCount !== "" ? "✓" : "✗");
+    // console.log(
+    //   "모집기간:",
+    //   formData.recruitmentPeriod.trim() !== "" ? "✓" : "✗"
+    // );
+    // console.log(
+    //   "선정날짜:",
+    //   formData.announcementDate.trim() !== "" ? "✓" : "✗"
+    // );
+    // console.log(
+    //   "등록기간:",
+    //   formData.registrationPeriod.trim() !== "" ? "✓" : "✗"
+    // );
+    // console.log("키워드:", formData.keywords.trim() !== "" ? "✓" : "✗");
+    // console.log("안내사항:", formData.guidelines.trim() !== "" ? "✓" : "✗");
+    // console.log(
+    //   "공정위 동의:",
+    //   formData.fairTradeAgreement === true ? "✓" : "✗"
+    // );
+    // console.log("버튼 활성화:", isValid ? "✓" : "✗");
 
     return isValid;
-  }, [formData, uploadedImages]);
+  }, [formData, thumbnailImage, detailImages, checkboxStates]);
+
+  /**
+   * 차감 포인트 계산
+   *
+   * 설명:
+   * - 기자단 캠페인의 차감 포인트는 {추가 지급 포인트 × 모집 인원}입니다.
+   */
+  const deductedPoints = useMemo(() => {
+    const recruitmentCount = Number(formData.recruitmentCount) || 0;
+    const additionalPoints =
+      Number(String(formData.additionalPoints).replace(/,/g, "")) || 0;
+    return additionalPoints * recruitmentCount;
+  }, [formData.recruitmentCount, formData.additionalPoints]);
+
+  /**
+   * 포인트 부족 경고 표시 여부
+   */
+  const showInsufficientPointsWarning = useMemo(() => {
+    const currentPoints =
+      Number(String(formData.currentPoints).replace(/,/g, "")) || 0;
+    return currentPoints < deductedPoints;
+  }, [formData.currentPoints, deductedPoints]);
+
+  /**
+   * 보유 포인트 가져오기 함수
+   *
+   * 설명:
+   * - getPartnerPointSummary를 사용하여 파트너의 보유 포인트를 가져옵니다.
+   * - 포인트 충전 페이지에서 업데이트된 포인트를 반영합니다.
+   * - 로그인되지 않았거나 값이 없으면 기본값 0을 반환합니다.
+   */
+  const getAvailablePoints = (): string => {
+    if (typeof window === "undefined" || !user?.id) return "0";
+
+    try {
+      const summary = getPartnerPointSummary(user.id);
+      return String(summary.available_points || 0);
+    } catch (error) {
+      console.error("보유 포인트 가져오기 실패:", error);
+      return "0";
+    }
+  };
+
+  /**
+   * 포인트 충전 버튼 클릭 처리
+   *
+   * 설명:
+   * - 포인트 충전 페이지로 이동하기 전에 현재 폼 데이터를 자동으로 저장합니다.
+   * - 캠페인 등록 페이지에서 온 것임을 표시하기 위해 sessionStorage에 플래그를 저장합니다.
+   * - 포인트 충전 후 돌아왔을 때 저장된 데이터를 자동으로 불러옵니다.
+   *
+
+   */
+  const handleChargeClick = () => {
+    if (typeof window !== "undefined") {
+      // 포인트 충전 페이지에서 돌아왔을 때를 표시하기 위한 플래그 저장
+      sessionStorage.setItem("from_campaign_create", "true");
+
+      // 현재 폼 데이터를 자동으로 저장 (이미지 파일은 제외)
+      try {
+        const dataToSave = { ...formData };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+      } catch (error) {
+        console.error("포인트 충전 전 자동 저장 실패:", error);
+      }
+    }
+    router.push("/partner/point/charge");
+  };
+
+  // localStorage 키 (캠페인 타입별로 구분)
+  const STORAGE_KEY = "temp_reporter_campaign";
+
+  /**
+   * 컴포넌트 마운트 시 보유 포인트 초기화 및 저장된 임시 데이터 확인
+   *
+   * 설명:
+   * - 생성 모드이고 initialData가 없을 때만 실행합니다.
+   * - 보유 포인트를 localStorage에서 가져와서 formData에 설정합니다.
+   * - 포인트 충전 페이지에서 돌아왔는지 확인하고, 돌아왔다면 저장된 데이터를 자동으로 불러옵니다.
+   * - 포인트 충전 페이지에서 돌아오지 않았고 저장된 데이터가 있으면 불러오기 모달을 표시합니다.
+   *
+
+   */
+  useEffect(() => {
+    if (isEditMode || initialData) return; // 수정 모드이거나 initialData가 있으면 실행하지 않음
+
+    if (typeof window === "undefined") return;
+
+    // 보유 포인트 초기화 또는 업데이트
+    const availablePoints = getAvailablePoints();
+
+    // 포인트 충전 페이지에서 돌아왔는지 확인
+    const fromCampaignCreate = sessionStorage.getItem("from_campaign_create");
+
+    // 포인트 충전 후 돌아왔거나, 처음 로드 시 포인트 업데이트
+    if (
+      availablePoints &&
+      (fromCampaignCreate === "true" || formData.currentPoints === "")
+    ) {
+      updateFormData("currentPoints", availablePoints);
+    }
+
+    // 저장된 임시 데이터 확인
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) {
+        // 저장된 데이터가 없으면 플래그 제거하고 종료
+        if (fromCampaignCreate) {
+          sessionStorage.removeItem("from_campaign_create");
+        }
+        return;
+      }
+
+      // JSON 파싱하여 유효한 데이터인지 확인
+      const savedData = JSON.parse(saved);
+
+      // 저장된 데이터가 객체이고 비어있지 않은 경우
+      if (
+        savedData &&
+        typeof savedData === "object" &&
+        Object.keys(savedData).length > 0
+      ) {
+        // 포인트 충전 페이지에서 돌아왔다면 자동으로 불러오기
+        if (fromCampaignCreate === "true") {
+          // 포인트는 최신 값으로 업데이트
+          const updatedData = {
+            ...savedData,
+            currentPoints: availablePoints,
+          };
+          setFormData(updatedData);
+          // 불러온 데이터의 긴급 상태를 부모 컴포넌트로 전달
+          if (savedData?.isUrgent === true && onUrgentLoad) {
+            onUrgentLoad(true);
+          }
+          // 플래그 제거
+          sessionStorage.removeItem("from_campaign_create");
+        } else {
+          // 포인트 충전 페이지에서 돌아오지 않았다면 불러오기 모달 표시
+          setLoadConfirmModal({ is_open: true });
+        }
+      }
+    } catch (error) {
+      // JSON 파싱 실패 시 무효한 데이터로 간주하고 무시
+      console.error("임시 저장 데이터 확인 실패:", error);
+      // 플래그 제거
+      if (fromCampaignCreate) {
+        sessionStorage.removeItem("from_campaign_create");
+      }
+    }
+  }, [isEditMode, initialData, user?.id]);
+
+  /**
+   * 포인트 충전 후 돌아왔을 때 보유 포인트 업데이트
+   *
+   * 설명:
+   * - 포인트 충전 페이지에서 돌아왔을 때 업데이트된 보유 포인트를 반영합니다.
+   * - localStorage의 "partner_available_points" 값을 확인하여 업데이트합니다.
+   */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const handleFocus = () => {
+      const availablePoints = getAvailablePoints();
+      if (availablePoints) {
+        updateFormData("currentPoints", availablePoints);
+      }
+    };
+
+    window.addEventListener("focus", handleFocus);
+    handleFocus();
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, []);
+
+  /**
+   * 임시 저장 처리
+   *
+   * 설명:
+   * - 임시 저장 확인 모달을 표시합니다.
+   */
+  const handleSave = () => {
+    setSaveConfirmModal({ is_open: true });
+  };
+
+  /**
+   * 임시 저장 확인 처리
+   *
+   * 설명:
+   * - localStorage에 현재 폼 데이터를 저장합니다.
+   * - 이미지 파일은 저장할 수 없으므로 제외합니다.
+   */
+  const handleSaveConfirm = () => {
+    try {
+      if (typeof window === "undefined") return;
+
+      // 이미지를 제외한 formData만 저장 (File 객체는 JSON으로 변환할 수 없음)
+      const dataToSave = { ...formData };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+
+      // 모달 닫기
+      setSaveConfirmModal({ is_open: false });
+
+      // 토스트 메시지 표시
+      setToast({ is_open: true, message: "저장되었습니다." });
+    } catch (error) {
+      console.error("임시 저장 실패:", error);
+      alert("임시 저장에 실패했습니다.");
+    }
+  };
+
+  /**
+   * 불러오기 확인 처리
+   *
+   * 설명:
+   * - localStorage에서 저장된 데이터를 불러와서 formData에 적용합니다.
+   */
+  const handleLoadConfirm = () => {
+    try {
+      if (typeof window === "undefined") return;
+
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return;
+
+      const savedData = JSON.parse(saved) as CampaignFormData;
+
+      // 저장된 데이터로 formData 업데이트
+      setFormData(savedData);
+
+      // 불러온 데이터의 긴급 상태를 부모 컴포넌트로 전달
+      if (savedData?.isUrgent === true && onUrgentLoad) {
+        onUrgentLoad(true);
+      } else if (savedData?.isUrgent === false && onUrgentLoad) {
+        onUrgentLoad(false);
+      }
+
+      // 모달 닫기
+      setLoadConfirmModal({ is_open: false });
+    } catch (error) {
+      console.error("임시 저장 데이터 불러오기 실패:", error);
+      alert("임시 저장 데이터를 불러오는데 실패했습니다.");
+      setLoadConfirmModal({ is_open: false });
+    }
+  };
+
+  /**
+   * 불러오기 버튼 비활성화 여부
+   *
+   * 설명:
+   * - localStorage에 저장된 데이터가 없으면 비활성화합니다.
+   */
+  /**
+   * 불러오기 버튼 비활성화 여부
+   *
+   * 설명:
+   * - 서버와 클라이언트 간 hydration mismatch를 방지하기 위해
+   *   useState와 useEffect를 사용하여 클라이언트에서만 값을 계산합니다.
+   * - 초기값은 true로 설정하고, 클라이언트에서 마운트된 후에 실제 값을 계산합니다.
+   */
+  const [isLoadDisabled, setIsLoadDisabled] = useState(true);
+
+  useEffect(() => {
+    if (isSubmitting) {
+      setIsLoadDisabled(true);
+      return;
+    }
+    if (isEditMode || initialData) {
+      setIsLoadDisabled(true);
+      return;
+    }
+
+    if (typeof window === "undefined") {
+      setIsLoadDisabled(true);
+      return;
+    }
+
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      setIsLoadDisabled(!saved);
+    } catch {
+      setIsLoadDisabled(true);
+    }
+  }, [isSubmitting, isEditMode, initialData]);
 
   /**
    * 폼 제출 처리
-   *
-   * 설명:
-   * - 폼 데이터와 업로드된 이미지를 함께 onSubmit으로 전달합니다.
-   * - thumbnailImageUrl은 첫 번째 이미지의 미리보기 URL(Data URL)을 전달합니다.
-   *   이는 캠페인 카드에서 썸네일을 표시하는 데 사용됩니다.
-   *
    */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -377,529 +838,363 @@ export default function ReporterCampaignForm({
     // 업로드된 이미지 파일을 폼 데이터에 추가
     const formDataWithImages = {
       ...formData,
-      // 첫 번째 이미지를 썸네일로 사용 (File 객체)
-      thumbnailImage: uploadedImages[0],
-      // 첫 번째 이미지의 미리보기 URL (Data URL) - 캠페인 카드 표시용
-      thumbnailImageUrl: imagePreviews[0] || undefined,
-      // 나머지 이미지를 상세 이미지로 사용
-      detailImages: uploadedImages.slice(1),
+      // 썸네일 이미지
+      thumbnailImage: thumbnailImage || undefined,
+      // 썸네일 미리보기 URL (Data URL) - 캠페인 카드 표시용
+      thumbnailImageUrl: thumbnailPreview || undefined,
+      // 상세 이미지
+      detailImages: detailImages,
+      // 상세 이미지 미리보기 URL 배열 (Data URL) - localStorage 저장용
+      detailImagePreviews: detailPreviews,
     };
 
     onSubmit(formDataWithImages);
   };
 
   return (
-    <form onSubmit={handleSubmit} className={infoStyles.campaign_form}>
-      {/* 캠페인 정보 섹션 */}
-      <section className={styles.section}>
-        <h2 className={styles.section_title}>캠페인 정보</h2>
+    <>
+      {/* 이미지 업로드 오류 모달 */}
+      <BaseModal
+        is_open={imageErrorModal.is_open}
+        on_close={() => setImageErrorModal({ is_open: false, message: "" })}
+        message={imageErrorModal.message}
+        buttons={["확인"]}
+      />
 
-        {/* 캠페인 유형 선택 */}
-        <CampaignTypeSelector
-          currentType="기자단"
-          onTypeChange={handleCampaignTypeChange}
-          disabled={isEditMode}
+      {/* 임시 저장 확인 모달 */}
+      <BaseModal
+        is_open={saveConfirmModal.is_open}
+        on_close={() => setSaveConfirmModal({ is_open: false })}
+        message="임시 저장하시겠습니까?"
+        buttons={["취소", "확인"]}
+        on_confirm={handleSaveConfirm}
+      />
+
+      {/* 불러오기 확인 모달 */}
+      <BaseModal
+        is_open={loadConfirmModal.is_open}
+        on_close={() => setLoadConfirmModal({ is_open: false })}
+        message="마지막에 저장된 내용을 불러오시겠습니까?"
+        buttons={["취소", "확인"]}
+        on_confirm={handleLoadConfirm}
+      />
+
+      {/* 토스트 메시지 */}
+      <Toast
+        message={toast.message}
+        isOpen={toast.is_open}
+        onClose={() => setToast({ is_open: false, message: "" })}
+      />
+
+      {/* 플로팅 액션 버튼 */}
+      <FloatingActionButtons
+        onSave={handleSave}
+        onLoad={() => setLoadConfirmModal({ is_open: true })}
+        isSaveDisabled={isSubmitting}
+        isLoadDisabled={isLoadDisabled}
+      />
+
+      <form onSubmit={handleSubmit} className={infoStyles.campaign_form}>
+        {/* 캠페인 정보 섹션 */}
+        <section className={styles.section}>
+          <h2 className={styles.section_title}>캠페인 정보</h2>
+
+          {/* 캠페인 유형 선택 */}
+          <CampaignTypeSelector
+            currentType="기자단"
+            onTypeChange={handleCampaignTypeChange}
+            disabled={isEditMode}
+          />
+
+          {/* 플랫폼 선택 */}
+          <article className={infoStyles.form_group}>
+            <label className={infoStyles.form_label}>
+              등록 플랫폼<span className={infoStyles.required}>*</span>
+            </label>
+            <CustomDropdown
+              value={formData.platform || ""}
+              options={platforms}
+              onChange={(value) => updateFormData("platform", value)}
+              disabled={isEditMode && !isEditableField("platform")}
+              placeholder="플랫폼 선택"
+            />
+          </article>
+
+          {/* 썸네일 및 상세 이미지 업로드 */}
+          <ThumbnailAndDetailImages
+            thumbnailImage={thumbnailImage}
+            thumbnailPreview={thumbnailPreview}
+            detailImages={detailImages}
+            detailPreviews={detailPreviews}
+            onThumbnailSelect={handleThumbnailSelect}
+            onThumbnailRemove={handleThumbnailRemove}
+            onDetailImagesSelect={handleDetailImagesSelect}
+            onDetailImageRemove={handleDetailImageRemove}
+            isEditMode={isEditMode}
+            isEditable={isEditableField("images")}
+          />
+
+          {/* 캠페인 제목 */}
+          <article className={infoStyles.form_group}>
+            <label className={infoStyles.form_label}>
+              캠페인 제목<span className={infoStyles.required}>*</span>
+            </label>
+            <input
+              type="text"
+              className={`${infoStyles.form_input} ${isEditMode && !isEditableField("title") ? infoStyles.read_only_input : ""}`}
+              value={formData.title}
+              onChange={(e) => updateFormData("title", e.target.value)}
+              placeholder="브랜드, 제공하는 서비스/제품 등"
+              readOnly={isEditMode && !isEditableField("title")}
+            />
+          </article>
+
+          {/* 카테고리 */}
+          <article className={infoStyles.form_group}>
+            <label className={infoStyles.form_label}>
+              카테고리<span className={infoStyles.required}>*</span>
+            </label>
+            <CustomDropdown
+              value={formData.category}
+              options={categories}
+              onChange={(value) => updateFormData("category", value)}
+              disabled={isEditMode && !isEditableField("category")}
+              placeholder="카테고리 선택"
+            />
+          </article>
+
+          {/* 브랜드명 */}
+          <article className={infoStyles.form_group}>
+            <label className={infoStyles.form_label}>
+              브랜드명<span className={infoStyles.required}>*</span>
+            </label>
+            <input
+              type="text"
+              className={`${infoStyles.form_input} ${infoStyles.read_only_input}`}
+              value={formData.brandName}
+              readOnly
+              placeholder="{상호명}"
+            />
+          </article>
+
+          {/* 제공 내역 */}
+          <article className={infoStyles.form_group}>
+            <label className={infoStyles.form_label}>
+              제공 내역<span className={infoStyles.required}>*</span>
+            </label>
+            <input
+              type="text"
+              className={`${infoStyles.form_input} ${isEditMode && !isEditableField("providedItems") ? infoStyles.read_only_input : ""}`}
+              value={formData.providedItems}
+              onChange={(e) => updateFormData("providedItems", e.target.value)}
+              placeholder="제공하는 서비스/제품/포인트 등 한줄 설명"
+              readOnly={isEditMode && !isEditableField("providedItems")}
+            />
+          </article>
+
+          {/* 홍보 링크 */}
+          <article className={infoStyles.form_group}>
+            <label className={infoStyles.form_label}>홍보 링크</label>
+            <input
+              type="url"
+              className={`${infoStyles.form_input} ${isEditMode && !isEditableField("promotionLink") ? infoStyles.read_only_input : ""}`}
+              value={formData.promotionLink}
+              onChange={(e) => updateFormData("promotionLink", e.target.value)}
+              placeholder="캠페인 홍보 링크"
+              readOnly={isEditMode && !isEditableField("promotionLink")}
+            />
+          </article>
+
+          {/* 모집 인원 */}
+          <article className={infoStyles.form_group}>
+            <label className={infoStyles.form_label}>
+              모집 인원<span className={infoStyles.required}>*</span>
+            </label>
+            <div className={infoStyles.count_input_group}>
+              <div style={{ position: "relative", flex: 1 }}>
+                <input
+                  type="number"
+                  className={`${infoStyles.form_input} ${isEditMode && !isEditableField("recruitmentCount") ? infoStyles.read_only_input : ""}`}
+                  value={formData.recruitmentCount}
+                  onChange={(e) =>
+                    updateFormData("recruitmentCount", e.target.value)
+                  }
+                  placeholder="0"
+                  min="0"
+                  readOnly={isEditMode && !isEditableField("recruitmentCount")}
+                />
+                <span className={infoStyles.count_unit}>명</span>
+              </div>
+            </div>
+          </article>
+
+          {/* 포인트 관리 섹션 */}
+          <PointsManagementSection
+            currentPoints={formData.currentPoints}
+            additionalPoints={formData.additionalPoints}
+            deductedPoints={deductedPoints}
+            onAdditionalPointsChange={(value) =>
+              updateFormData("additionalPoints", value)
+            }
+            onChargeClick={handleChargeClick}
+            isEditMode={isEditMode}
+            isEditable={isEditableField("additionalPoints")}
+            showInsufficientPointsWarning={showInsufficientPointsWarning}
+          />
+
+          {/* 모집 관련 필드 */}
+          {/* 기자단에서는 제공 내역 밑에 모집 인원 필드가 있으므로, 
+            RecruitmentFieldsSection에서는 모집 인원 필드를 표시하지 않습니다 */}
+          <RecruitmentFieldsSection
+            recruitmentCount={String(formData.recruitmentCount || "")}
+            recruitmentPeriod={formData.recruitmentPeriod}
+            announcementDate={formData.announcementDate}
+            registrationPeriod={formData.registrationPeriod}
+            onRecruitmentCountChange={(value) =>
+              updateFormData("recruitmentCount", value)
+            }
+            onRecruitmentPeriodChange={(value) =>
+              updateFormData("recruitmentPeriod", value)
+            }
+            onAnnouncementDateChange={(value) =>
+              updateFormData("announcementDate", value)
+            }
+            onRegistrationPeriodChange={(value) =>
+              updateFormData("registrationPeriod", value)
+            }
+            isEditMode={isEditMode}
+            isEditableField={isEditableField}
+            showRecruitmentCount={false}
+          />
+        </section>
+
+        {/* 캠페인 안내 섹션 */}
+        <section className={styles.section}>
+          <h2 className={styles.section_title}>캠페인 안내</h2>
+
+          {/* 키워드 */}
+          <article className={infoStyles.form_group}>
+            <label className={infoStyles.form_label}>
+              키워드/태그<span className={infoStyles.required}>*</span>
+            </label>
+            <input
+              type="text"
+              className={`${infoStyles.form_input} ${isEditMode && !isEditableField("keywords") ? infoStyles.read_only_input : ""}`}
+              value={formData.keywords}
+              onChange={(e) => updateFormData("keywords", e.target.value)}
+              placeholder="본문 내 첨부 키워드/해시태그/계정 태그 등"
+              readOnly={isEditMode && !isEditableField("keywords")}
+            />
+          </article>
+
+          {/* 기본 미션 설정 - 캠페인 오픈 후 비활성화 */}
+          <article className={`${infoStyles.form_group} ${isEditMode && isOpen ? infoStyles.form_group_locked : ""}`}>
+            <label className={infoStyles.form_label}>기본 미션 설정</label>
+            <SimpleGuideSection
+              checkboxStates={checkboxStates}
+              formData={{
+                minTextLength: String(formData.minTextLength || ""),
+                minImageCount: String(formData.minImageCount || ""),
+                videoCount: String(formData.videoCount || ""),
+                videoDuration: String(formData.videoDuration || ""),
+                requireLinkAttachment: formData.requireLinkAttachment,
+                requireKeywordAttachment: formData.requireKeywordAttachment,
+              }}
+              onCheckboxChange={(field, checked) => {
+                updateCheckboxState(field, checked);
+                if (!checked) {
+                  if (field === "minTextLength") {
+                    updateFormData("minTextLength", "");
+                  } else if (field === "minImageCount") {
+                    updateFormData("minImageCount", "");
+                  } else if (field === "videoCount") {
+                    updateFormData("videoCount", "");
+                    updateFormData("videoDuration", "");
+                  }
+                }
+              }}
+              onNumericChange={handleNumericChangeWrapper}
+              onNumericKeyDown={handleNumericInputWrapper}
+              formatNumberWithComma={formatNumberWithComma}
+              onFieldClear={(field) =>
+                updateFormData(field as keyof CampaignFormData, "")
+              }
+              onAttachmentChange={(field, value) =>
+                updateFormData(field, value)
+              }
+              isEditMode={isEditMode}
+              isEditableField={isEditableField}
+              isOpen={isOpen}
+            />
+          </article>
+
+          {/* 참여/제출 옵션 */}
+          <ParticipationOptionsSection
+            adultOnly={formData.adultOnly}
+            allowReParticipation={formData.allowReParticipation}
+            allowLateSubmission={formData.allowLateSubmission}
+            onAdultOnlyChange={(value) => updateFormData("adultOnly", value)}
+            onAllowReParticipationChange={(value) =>
+              updateFormData("allowReParticipation", value)
+            }
+            onAllowLateSubmissionChange={(value) =>
+              updateFormData("allowLateSubmission", value)
+            }
+            isEditMode={isEditMode}
+            isEditableField={isEditableField}
+          />
+
+          {/* 안내 사항 */}
+          <article className={infoStyles.form_group}>
+            <label className={infoStyles.form_label}>
+              안내 사항<span className={infoStyles.required}>*</span>
+            </label>
+            <textarea
+              className={textareaStyles.fixed_height_textarea}
+              value={formData.guidelines}
+              onChange={(e) => updateFormData("guidelines", e.target.value)}
+              placeholder="캠페인 전체 안내 사항, 미션, 기타 참고 사항 등"
+              readOnly={isEditMode && !isEditableField("guidelines")}
+            />
+          </article>
+
+          {/* 유의 사항 */}
+          <NoticeSection />
+
+          {/* 문의 담당자 휴대폰 번호 */}
+          <ContactPhoneField
+            value={formData.contactPhone || ""}
+            onChange={(value) => updateFormData("contactPhone", value)}
+            isEditMode={isEditMode}
+            isEditable={isEditableField("contactPhone")}
+          />
+        </section>
+
+        {/* 공정위 문구 동의 */}
+        <FairTradeAgreement
+          agreed={formData.fairTradeAgreement || false}
+          onChange={(agreed) => updateFormData("fairTradeAgreement", agreed)}
+          isEditMode={isEditMode}
+          isOpen={isOpen}
         />
 
-        {/* 플랫폼 선택 */}
-        <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>
-            등록 플랫폼<span className={infoStyles.required}>*</span>
-          </label>
-          <CustomDropdown
-            value={formData.platform || ""}
-            options={platforms}
-            onChange={(value) => updateFormData("platform", value)}
-            disabled={isEditMode && !isEditableField("platform")}
-            placeholder="플랫폼 선택"
-          />
-        </article>
-
-        {/* 이미지 업로드 */}
-        <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>
-            썸네일/상세 이미지<span className={infoStyles.required}>*</span>
-          </label>
-          <div className={infoStyles.image_upload_area}>
-            {/* 업로드된 이미지 미리보기 */}
-            {imagePreviews.map((preview, index) => (
-              <div key={index} className={infoStyles.image_preview_container}>
-                <img
-                  src={preview}
-                  alt={`미리보기 ${index + 1}`}
-                  className={infoStyles.image_preview}
-                />
-                <button
-                  type="button"
-                  className={infoStyles.image_remove_button}
-                  onClick={() => handleImageRemove(index)}
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-
-            {/* 업로드 버튼 (최대 7개까지) */}
-            {imagePreviews.length < 7 && (
-              <div
-                className={infoStyles.image_upload_placeholder}
-                onClick={isEditMode && !isEditableField("images") ? undefined : handleUploadClick}
-                style={isEditMode && !isEditableField("images") ? { pointerEvents: "none", opacity: 0.5 } : undefined}
-              >
-                <img src="/images/icons/plus_icon.svg" alt="이미지 추가" />
-              </div>
-            )}
-          </div>
-
-          {/* 숨겨진 파일 입력 */}
-          <input
-            id="image-upload"
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={handleImageSelect}
-            style={{ display: "none" }}
-            disabled={isEditMode && !isEditableField("images")}
-          />
-        </article>
-
-        {/* 캠페인 제목 */}
-        <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>
-            캠페인 제목<span className={infoStyles.required}>*</span>
-          </label>
-          <input
-            type="text"
-            className={infoStyles.form_input}
-            value={formData.title}
-            onChange={(e) => updateFormData("title", e.target.value)}
-            placeholder="지역, 브랜드, 제공하는 서비스/제품 등"
-            readOnly={isEditMode && !isEditableField("title")}
-          />
-        </article>
-
-        {/* 카테고리 */}
-        <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>
-            카테고리<span className={infoStyles.required}>*</span>
-          </label>
-          <CustomDropdown
-            value={formData.category}
-            options={categories}
-            onChange={(value) => updateFormData("category", value)}
-            disabled={isEditMode && !isEditableField("category")}
-            placeholder="카테고리 선택"
-          />
-        </article>
-
-        {/* 브랜드명 */}
-        <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>
-            브랜드명<span className={infoStyles.required}>*</span>
-          </label>
-          <input
-            type="text"
-            className={infoStyles.form_input}
-            value={formData.brandName}
-            readOnly
-            placeholder="{상호명}"
-          />
-        </article>
-
-        {/* 제공 내역 */}
-        <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>
-            제공 내역<span className={infoStyles.required}>*</span>
-          </label>
-          <input
-            type="text"
-            className={infoStyles.form_input}
-            value={formData.providedItems}
-            onChange={(e) => updateFormData("providedItems", e.target.value)}
-            placeholder="제공하는 서비스/제품/포인트 등 한줄 설명"
-            readOnly={isEditMode && !isEditableField("providedItems")}
-          />
-        </article>
-
-        {/* 홍보 링크 */}
-        <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>홍보 링크</label>
-          <input
-            type="url"
-            className={infoStyles.form_input}
-            value={formData.promotionLink}
-            onChange={(e) => updateFormData("promotionLink", e.target.value)}
-            placeholder="링크를 입력하세요"
-            readOnly={isEditMode && !isEditableField("promotionLink")}
-          />
-        </article>
-
-        {/* 보유 포인트 */}
-        <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>보유 포인트</label>
-          <div className={infoStyles.points_input_group}>
-            <div style={{ position: "relative", flex: 1 }}>
-              <input
-                type="text"
-                className={infoStyles.form_input}
-                value={formData.currentPoints}
-                readOnly
-              />
-              <span className={infoStyles.points_unit}>P</span>
-            </div>
-            <button type="button" className={infoStyles.charge_button}>
-              포인트 충전하기
-            </button>
-          </div>
-        </article>
-
-        {/* 추가 지급 포인트 */}
-        <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>추가 지급 포인트</label>
-          <div className={infoStyles.points_input_group}>
-            <div style={{ position: "relative", flex: 1 }}>
-              <input
-                type="text"
-                className={infoStyles.form_input}
-                value={formatNumberWithComma(formData.additionalPoints)}
-                onChange={(e) => handleNumericChange(e, "additionalPoints")}
-                onKeyDown={(e) => handleNumericInput(e, "additionalPoints")}
-                placeholder="캠페인 수행에 대한 추가 지급 포인트"
-                readOnly={isEditMode && !isEditableField("additionalPoints")}
-              />
-              <span className={infoStyles.points_unit}>P</span>
-            </div>
-          </div>
-        </article>
-
-        {/* 모집 인원 */}
-        <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>
-            모집 인원<span className={infoStyles.required}>*</span>
-          </label>
-          <div className={infoStyles.count_input_group}>
-            <div style={{ position: "relative", flex: 1 }}>
-              <input
-                type="number"
-                className={infoStyles.form_input}
-                value={formData.recruitmentCount}
-                onChange={(e) =>
-                  updateFormData("recruitmentCount", e.target.value)
-                }
-                placeholder="0"
-                min="0"
-                readOnly={isEditMode && !isEditableField("recruitmentCount")}
-              />
-              <span className={infoStyles.count_unit}>명</span>
-            </div>
-          </div>
-        </article>
-
-        {/* 모집 기간 */}
-        <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>
-            모집 기간<span className={infoStyles.required}>*</span>
-          </label>
-          <input
-            type="text"
-            className={infoStyles.form_input}
-            value={formData.recruitmentPeriod}
-            onChange={(e) =>
-              updateFormData("recruitmentPeriod", e.target.value)
-            }
-            placeholder=""
-            readOnly={isEditMode && !isEditableField("recruitmentPeriod")}
-          />
-        </article>
-
-        {/* 선정 날짜 */}
-        <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>
-            선정 날짜<span className={infoStyles.required}>*</span>
-          </label>
-          <input
-            type="text"
-            className={infoStyles.form_input}
-            value={formData.announcementDate}
-            onChange={(e) => updateFormData("announcementDate", e.target.value)}
-            placeholder=""
-            readOnly={isEditMode && !isEditableField("announcementDate")}
-          />
-        </article>
-
-        {/* 등록 기간 */}
-        <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>
-            등록 기간<span className={infoStyles.required}>*</span>
-          </label>
-          <input
-            type="text"
-            className={infoStyles.form_input}
-            value={formData.registrationPeriod}
-            onChange={(e) =>
-              updateFormData("registrationPeriod", e.target.value)
-            }
-            placeholder=""
-            readOnly={isEditMode && !isEditableField("registrationPeriod")}
-          />
-        </article>
-      </section>
-
-      {/* 캠페인 안내 섹션 */}
-      <section className={styles.section}>
-        <h2 className={styles.section_title}>캠페인 안내</h2>
-
-        {/* 키워드 */}
-        <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>
-            키워드/태그<span className={infoStyles.required}>*</span>
-          </label>
-          <input
-            type="text"
-            className={infoStyles.form_input}
-            value={formData.keywords}
-            onChange={(e) => updateFormData("keywords", e.target.value)}
-            placeholder="최대 10개 입력 가능"
-            readOnly={isEditMode && !isEditableField("keywords")}
-          />
-        </article>
-
-        {/* 간편 안내 */}
-        <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>간편 안내</label>
-          <div className={isEditMode ? `${guideStyles.guide_section} ${guideStyles.locked_section}` : guideStyles.guide_section}>
-          {/* 글자 수 */}
-          <div className={guideStyles.option_input_box}>
-            <input
-              type="checkbox"
-              id="minTextLength"
-              checked={checkboxStates.minTextLength}
-              onChange={(e) => {
-                updateCheckboxState("minTextLength", e.target.checked);
-                if (!e.target.checked) {
-                  updateFormData("minTextLength", "");
-                }
-              }}
-            />
-            <label htmlFor="minTextLength" className={guideStyles.option_label}>
-              글자 수
-            </label>
-            {checkboxStates.minTextLength && (
-              <div className={guideStyles.option_input_value}>
-                <input
-                  type="text"
-                  className={guideStyles.underline_input}
-                  value={formatNumberWithComma(formData.minTextLength)}
-                  onChange={(e) => handleNumericChange(e, "minTextLength")}
-                  onKeyDown={(e) => handleNumericInput(e, "minTextLength")}
-                />
-                <span className={guideStyles.unit_text}>자 이상</span>
-              </div>
-            )}
-          </div>
-
-          {/* 이미지 장수 */}
-          <div className={guideStyles.option_input_box}>
-            <input
-              type="checkbox"
-              id="minImageCount"
-              checked={checkboxStates.minImageCount}
-              onChange={(e) => {
-                updateCheckboxState("minImageCount", e.target.checked);
-                if (!e.target.checked) {
-                  updateFormData("minImageCount", "");
-                }
-              }}
-            />
-            <label htmlFor="minImageCount" className={guideStyles.option_label}>
-              이미지 장수
-            </label>
-            {checkboxStates.minImageCount && (
-              <div className={guideStyles.option_input_value}>
-                <input
-                  type="text"
-                  className={guideStyles.underline_input}
-                  value={formatNumberWithComma(formData.minImageCount)}
-                  onChange={(e) => handleNumericChange(e, "minImageCount")}
-                  onKeyDown={(e) => handleNumericInput(e, "minImageCount")}
-                />
-                <span className={guideStyles.unit_text}>장 이상</span>
-              </div>
-            )}
-          </div>
-
-          {/* 동영상 개수, 초수 */}
-          <div className={guideStyles.option_input_box}>
-            <input
-              type="checkbox"
-              id="videoCount"
-              checked={checkboxStates.videoCount}
-              onChange={(e) => {
-                updateCheckboxState("videoCount", e.target.checked);
-                if (!e.target.checked) {
-                  updateFormData("videoCount", "");
-                  updateFormData("videoDuration", "");
-                }
-              }}
-            />
-            <label htmlFor="videoCount" className={guideStyles.option_label}>
-              동영상 개수, 초수
-            </label>
-            {checkboxStates.videoCount && (
-              <div className={guideStyles.option_input_value}>
-                {/* 동영상 개수 입력 필드 */}
-                <input
-                  type="text"
-                  className={guideStyles.underline_input}
-                  value={formatNumberWithComma(formData.videoCount)}
-                  onChange={(e) => handleNumericChange(e, "videoCount")}
-                  onKeyDown={(e) => handleNumericInput(e, "videoCount")}
-                />
-                <span className={guideStyles.unit_text}>개 이상</span>
-
-                {/* 동영상 초수 입력 필드 */}
-                <input
-                  type="text"
-                  className={guideStyles.underline_input}
-                  value={formatNumberWithComma(formData.videoDuration)}
-                  onChange={(e) => handleNumericChange(e, "videoDuration")}
-                  onKeyDown={(e) => handleNumericInput(e, "videoDuration")}
-                />
-                <span className={guideStyles.unit_text}>초 이상</span>
-              </div>
-            )}
-          </div>
-
-          {/* 본문 링크 첨부 */}
-          <div className={guideStyles.option_input_box}>
-            <input
-              type="checkbox"
-              id="requireLinkAttachment"
-              checked={formData.requireLinkAttachment}
-              onChange={(e) =>
-                updateFormData("requireLinkAttachment", e.target.checked)
-              }
-            />
-            <label
-              htmlFor="requireLinkAttachment"
-              className={guideStyles.option_label}
-            >
-              본문 링크 첨부
-            </label>
-            <span className={guideStyles.option_value}></span>
-          </div>
-
-          {/* 본문 키워드/태그 첨부 */}
-          <div className={guideStyles.option_input_box}>
-            <input
-              type="checkbox"
-              id="requireKeywordAttachment"
-              checked={formData.requireKeywordAttachment}
-              onChange={(e) =>
-                updateFormData("requireKeywordAttachment", e.target.checked)
-              }
-            />
-            <label
-              htmlFor="requireKeywordAttachment"
-              className={guideStyles.option_label}
-            >
-              본문 키워드/태그 첨부
-            </label>
-            <span className={guideStyles.option_value}></span>
-          </div>
-          </div>
-        </article>
-
-        {/* 참여/제출 옵션 */}
-        <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>
-            참여/제출 옵션<span className={infoStyles.required}>*</span>
-          </label>
-
-          {/* 만 19세 이상 참여 허용 */}
-          <div className={guideStyles.option_input_box}>
-            <input
-              type="checkbox"
-              id="adultOnly"
-              checked={formData.adultOnly}
-              onChange={(e) => updateFormData("adultOnly", e.target.checked)}
-              disabled={isEditMode && !isEditableField("adultOnly")}
-            />
-            <label htmlFor="adultOnly" className={guideStyles.option_label}>
-              만 19세 이상 참여 허용 (성인인증이 필요한 제품/서비스)
-            </label>
-            <div className={guideStyles.option_input_value}></div>
-          </div>
-
-          {/* 이전 참여자 재참여 허용 */}
-          <div className={guideStyles.option_input_box}>
-            <input
-              type="checkbox"
-              id="allowReParticipation"
-              checked={formData.allowReParticipation}
-              onChange={(e) =>
-                updateFormData("allowReParticipation", e.target.checked)
-              }
-              disabled={isEditMode && !isEditableField("allowReParticipation")}
-            />
-            <label
-              htmlFor="allowReParticipation"
-              className={guideStyles.option_label}
-            >
-              이전 참여자 재참여 허용
-            </label>
-            <div className={guideStyles.option_input_value}></div>
-          </div>
-
-          {/* 지각 제출 허용 */}
-          <div className={guideStyles.option_input_box}>
-            <input
-              type="checkbox"
-              id="allowLateSubmission"
-              checked={formData.allowLateSubmission}
-              onChange={(e) =>
-                updateFormData("allowLateSubmission", e.target.checked)
-              }
-              disabled={isEditMode && !isEditableField("allowLateSubmission")}
-            />
-            <label
-              htmlFor="allowLateSubmission"
-              className={guideStyles.option_label}
-            >
-              지각 제출 허용
-            </label>
-            <div className={guideStyles.option_input_value}></div>
-          </div>
-        </article>
-
-        {/* 안내 사항 */}
-        <article className={infoStyles.form_group}>
-          <label className={infoStyles.form_label}>
-            안내 사항<span className={infoStyles.required}>*</span>
-          </label>
-          <textarea
-            className={guideStyles.fixed_height_textarea}
-            value={formData.guidelines}
-            onChange={(e) => updateFormData("guidelines", e.target.value)}
-            placeholder="캠페인 전체 안내 사항, 미션, 기타 참고 사항 등"
-            readOnly={isEditMode && !isEditableField("guidelines")}
-          />
-        </article>
-
-        {/* 유의 사항 */}
-        <NoticeSection />
-      </section>
-
-      {/* 등록하기 버튼 */}
-      <div className={guideStyles.submit_button_container}>
-        <button
-          type="submit"
-          className={guideStyles.submit_button}
-          disabled={isSubmitting || !isFormValid}
-        >
-          {isSubmitting ? (isEditMode ? "저장 중..." : "등록 중...") : (isEditMode ? "저장하기" : "등록하기")}
-        </button>
-      </div>
-    </form>
+        {/* 등록하기 버튼 */}
+        <div className={buttonStyles.submit_button_container}>
+          <button
+            type="submit"
+            className={buttonStyles.submit_button}
+            disabled={isSubmitting || !isFormValid}
+          >
+            {isSubmitting
+              ? isEditMode
+                ? "저장 중..."
+                : "등록 중..."
+              : isEditMode
+                ? "저장"
+                : "등록"}
+          </button>
+        </div>
+      </form>
+    </>
   );
 }

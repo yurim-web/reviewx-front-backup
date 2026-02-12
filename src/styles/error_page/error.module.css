@@ -2,20 +2,28 @@
    에러 페이지 스타일
    ======================================== */
 
+/**
+ * 사용처:
+ * - src/app/error.tsx (Next.js 에러 바운더리 페이지)
+ */
+
+/* 최상위 컨테이너 - 에러 페이지 전체 레이아웃 */
 .error_container {
-  min-height: calc(100vh - 80px);
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: white;
 }
 
+/* 콘텐츠 래퍼 - 에러 메시지 및 버튼 영역 */
 .error_content {
   text-align: center;
   max-width: 600px;
   padding: 40px 20px;
 }
 
+/* 에러 제목 - "ERROR" 텍스트 */
 .error_title {
   font-size: 48px;
   font-weight: bold;
@@ -24,6 +32,7 @@
   letter-spacing: 2px;
 }
 
+/* 에러 메시지 영역 - 사용자 안내 문구 */
 .error_message {
   margin-bottom: 40px;
 }
@@ -35,6 +44,7 @@
   line-height: 1.5;
 }
 
+/* 에러 상세 정보 - 에러 메시지 및 코드 표시 영역 */
 .error_details {
   background-color: #f8f8f8;
   border: 1px solid #e0e0e0;
@@ -47,17 +57,20 @@
   word-break: break-all;
 }
 
+/* 에러 일러스트레이션 영역 - SVG 아이콘 컨테이너 */
 .error_illustration {
   margin: 40px 0;
   display: flex;
   justify-content: center;
 }
 
+/* 에러 아이콘 SVG - 경고 아이콘 스타일 */
 .error_icon_svg {
   max-width: 200px;
   height: auto;
 }
 
+/* 홈으로 링크 - 홈 페이지로 이동하는 링크 */
 .home_link {
   display: inline-block;
   color: black;
@@ -71,6 +84,7 @@
   color: #666;
 }
 
+/* 다시 시도 버튼 - 에러 재시도 버튼 */
 .retry_button {
   display: inline-block;
   background-color: black;
@@ -89,6 +103,7 @@
   background-color: #333;
 }
 
+/* 반응형 스타일 - 모바일 화면 (768px 이하) */
 @media (max-width: 768px) {
   .error_title {
     font-size: 36px;

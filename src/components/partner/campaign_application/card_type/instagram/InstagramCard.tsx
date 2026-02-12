@@ -30,8 +30,11 @@
 "use client";
 
 import { InstagramApplicant } from "@/data/partner/campaign_application/delivery_applicants";
-import styles from "@/styles/partner/campaign_application/card/applicant_card_shared.module.css";
+import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
+import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
+import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
+import { getChannelUrl } from "@/utils/helpers/url";
 
 interface InstagramCardProps {
   /** 인스타그램 신청자 정보 객체 */
@@ -72,69 +75,77 @@ export default function InstagramCard({
 
   return (
     <article
-      className={`${styles.applicant_card} ${
+      className={`${baseStyles.applicant_card} ${
         applicant.selectionStatus === "이용제한 계정"
-          ? styles.restricted_card
+          ? baseStyles.restricted_card
           : ""
       }`}
     >
       {/* 프로필 영역: 프로필 이미지, 닉네임, 사용자 타입 */}
-      <div className={styles.profile_section}>
-        <div className={styles.profile_image_container}>
-          {applicant.profileImage ? (
-            <img
-              src={applicant.profileImage}
-              alt="프로필"
-              className={styles.profile_image}
-            />
-          ) : (
-            // 이미지사진 없을 때 대체
-            <div className={styles.profile_placeholder}></div>
-          )}
+      <div className={contentStyles.profile_section}>
+        <div className={contentStyles.profile_image_container}>
+          <img
+            src={applicant.profileImage || "/images/mypage/profile.svg"}
+            alt="프로필"
+            className={contentStyles.profile_image}
+          />
         </div>
 
-        <div className={styles.profile_info}>
+        <div className={contentStyles.profile_info}>
           {/* 사용자 타입 표시 (리뷰어 / 인플루언서) */}
-          <span className={styles.user_type}>{applicant.userType}</span>
+          <span className={contentStyles.user_type}>{applicant.userType}</span>
           {/* 닉네임 표시 */}
-          <span className={styles.nickname}>{applicant.nickname}</span>
+          <span className={contentStyles.nickname}>{applicant.nickname}</span>
         </div>
       </div>
 
       {/* 채널 정보 영역: 인스타그램 아이콘, 신청자 ID */}
-      <div className={styles.channel_section}>
+      <div className={contentStyles.channel_section}>
         {/* 인스타그램 로고 */}
         <img
           src={channel_icon_src}
           alt="인스타그램"
-          className={styles.channel_icon}
+          className={contentStyles.channel_icon}
         />
-        {/* 신청자 아이디 표시 */}
-        <span className={styles.applicant_id}>{applicant.Id}</span>
+        {/* 신청자 아이디 표시 - 클릭 시 해당 채널로 이동 */}
+        <a
+          href={getChannelUrl("인스타그램", applicant.Id)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={contentStyles.applicant_id}
+          onClick={(e) => {
+            const url = getChannelUrl("인스타그램", applicant.Id);
+            if (url === "#") {
+              e.preventDefault();
+            }
+          }}
+        >
+          {applicant.Id}
+        </a>
       </div>
 
       {/* 회원 타입 표시 */}
-      <div className={styles.member_type}>{applicant.memberType}</div>
+      <div className={contentStyles.member_type}>{applicant.memberType}</div>
 
       {/* 통계 정보 영역: 팔로워 수 (인스타그램 특화) */}
-      <div className={styles.stats_section}>
+      <div className={contentStyles.stats_section}>
         {/* 
           📌 통계 아이템: 팔로워 수
           - 인스타그램에서는 팔로워 수가 가장 중요한 지표
           - toLocaleString(): 숫자를 천 단위 콤마로 표시
           - 예: 122838 -> "122,838"
         */}
-        <div className={styles.stat_item}>
-          <span className={styles.stat_label}>팔로워</span>
-          <span className={styles.stat_value}>
+        <div className={contentStyles.stat_item}>
+          <span className={contentStyles.stat_label}>팔로워</span>
+          <span className={contentStyles.stat_value}>
             {applicant.followers ? applicant.followers.toLocaleString() : "0"}
           </span>
         </div>
       </div>
 
       {/* 메모 영역 */}
-      <div className={styles.memo_section}>
-        <div className={styles.memo_text}>
+      <div className={contentStyles.memo_section}>
+        <div className={contentStyles.memo_text}>
           {applicant.memo && applicant.memo.trim() !== ""
             ? applicant.memo
             : "메모 미작성"}
@@ -142,10 +153,10 @@ export default function InstagramCard({
       </div>
 
       {/* 액션 버튼 영역: 선정하기 / 이용 제한 표시 */}
-      <div className={styles.action_button_section}>
+      <div className={actionStyles.action_button_section}>
         {applicant.selectionStatus === "미선택" && (
           <button
-            className={`${styles.action_button} ${styles.select_button}`}
+            className={`${actionStyles.action_button} ${actionStyles.select_button}`}
             onClick={() => onSelect(applicant.id)}
             aria-label={`${applicant.nickname} 신청자 선정하기`}
           >
@@ -160,7 +171,7 @@ export default function InstagramCard({
         */}
         {applicant.selectionStatus === "이용제한 계정" && (
           <button
-            className={`${styles.action_button} ${styles.restricted_button}`}
+            className={`${actionStyles.action_button} ${actionStyles.restricted_button}`}
             disabled
             aria-label="이용 제한 계정"
           >

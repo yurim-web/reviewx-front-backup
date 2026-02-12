@@ -20,18 +20,24 @@
 "use client";
 
 import { useState } from "react";
-import styles from "@/styles/manager_sa/settlement/withdrawal_request/filter_section.module.css";
+import styles from "@/styles/manager/common/section/filter_section.module.css";
 
 export type RequestFilterStatus = "all" | "approved" | "rejected";
 
 interface WithdrawalRequestFilterSectionProps {
   selected_filter?: RequestFilterStatus;
   on_filter_change?: (filter: RequestFilterStatus) => void;
+  /** 상단 "승인" 버튼 클릭 시 호출되는 콜백 (선택된 항목 승인 용도) */
+  on_approve_selected?: () => void;
+  /** 상단 "반려" 버튼 클릭 시 호출되는 콜백 (선택된 항목 반려 용도) */
+  on_reject_selected?: () => void;
 }
 
 export default function WithdrawalRequestFilterSection({
   selected_filter,
   on_filter_change,
+  on_approve_selected,
+  on_reject_selected,
 }: WithdrawalRequestFilterSectionProps = {}) {
   const [local_filter, set_local_filter] = useState<RequestFilterStatus>("all");
 
@@ -42,11 +48,12 @@ export default function WithdrawalRequestFilterSection({
   /**
    * 필터 버튼 클릭 핸들러
    *
-   * 승인/반려 필터 버튼 클릭 시 아무 동작도 하지 않습니다.
+   * 승인/반려 필터 버튼 클릭 시 필터 상태를 변경합니다.
    */
   const handle_filter_click = (filter: RequestFilterStatus) => {
-    // 버튼 클릭 시 아무 변화 없음
-    return;
+    // 이미 선택된 필터를 클릭하면 "all"로 초기화, 아니면 해당 필터로 변경
+    const new_filter = current_filter === filter ? "all" : filter;
+    handle_filter_change(new_filter);
   };
 
   /**
@@ -64,8 +71,19 @@ export default function WithdrawalRequestFilterSection({
     <div className={styles.filter_section}>
       {/* 승인 필터 버튼 */}
       <button
-        className={styles.filter_button}
-        onClick={() => handle_filter_click("approved")}
+        className={`${styles.filter_button} ${
+          current_filter === "approved" ? styles.filter_button_selected : ""
+        }`}
+        onClick={(e) => {
+          e.stopPropagation();
+          // 선택된 항목 승인 콜백이 있으면 승인 모달 열기 (우선)
+          if (on_approve_selected) {
+            on_approve_selected();
+          } else {
+            // 승인 콜백이 없으면 필터 기능만 실행
+            handle_filter_click("approved");
+          }
+        }}
         type="button"
       >
         <img
@@ -73,13 +91,24 @@ export default function WithdrawalRequestFilterSection({
           alt="승인"
           className={styles.filter_icon}
         />
-        <span className={styles.filter_text}>승인</span>
+        <span className={styles.filter_text_dark}>승인</span>
       </button>
 
       {/* 반려 필터 버튼 */}
       <button
-        className={styles.filter_button}
-        onClick={() => handle_filter_click("rejected")}
+        className={`${styles.filter_button} ${
+          current_filter === "rejected" ? styles.filter_button_selected : ""
+        }`}
+        onClick={(e) => {
+          e.stopPropagation();
+          // 선택된 항목 반려 콜백이 있으면 반려 모달 열기 (우선)
+          if (on_reject_selected) {
+            on_reject_selected();
+          } else {
+            // 반려 콜백이 없으면 필터 기능만 실행
+            handle_filter_click("rejected");
+          }
+        }}
         type="button"
       >
         <img
@@ -87,7 +116,7 @@ export default function WithdrawalRequestFilterSection({
           alt="반려"
           className={styles.filter_icon}
         />
-        <span className={styles.filter_text}>반려</span>
+        <span className={styles.filter_text_dark}>반려</span>
       </button>
 
       {/* 원천징수 양식 다운로드 버튼 */}
@@ -101,7 +130,7 @@ export default function WithdrawalRequestFilterSection({
           alt="다운로드"
           className={styles.download_icon}
         />
-        <span className={styles.download_text}>
+        <span className={styles.download_button_text}>
           신청자 원천징수 양식 다운로드
         </span>
       </button>

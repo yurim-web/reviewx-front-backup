@@ -19,12 +19,20 @@
   gap: 24px; /* 캠페인 카드 간격 */
 }
 
+/* 패널티 목록 영역 (패널티 페이지 전용) */
+.penalty_list {
+  padding: 40px 40px 80px 40px; /* 상하좌우 패딩 */
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
 /* 빈 상태 메시지 (캠페인이 없을 때) */
 .empty_state {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 60px 20px;
+  padding: 40px 20px;
   color: #848484;
   font-size: 16px;
   font-weight: 500;
@@ -42,35 +50,41 @@
   position: relative;
 }
 
+/* PC에서 campaign_status는 campaign_info 안에 위치 */
+
 /* 캠페인 카드 내부 콘텐츠 (이미지 + 정보) */
 .campaign_content {
   display: flex;
-  gap: 24px; /* 이미지와 정보 간격 */
-
+  gap: 24px;
   align-items: center;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
 }
 
 /* 캠페인 이미지 영역 */
 .campaign_image {
   width: 92px;
   height: 92px;
-  flex-shrink: 0; /* 크기 고정 */
-  aspect-ratio: 1/1; /* 정사각형 비율 */
+  flex-shrink: 0;
+  aspect-ratio: 1/1;
 
   border-radius: 4px;
-  background: #d9d9d9; /* 이미지 없을 때 배경색 */
+  background: #d9d9d9;
 }
 
 /* 캠페인 이미지 스타일 */
 .campaign_image img {
+  border-radius: 4px;
   width: 100%;
   height: 100%;
-  object-fit: cover; /* 이미지 비율 유지하며 영역 채우기 */
+  object-fit: cover;
 }
 
 /* 캠페인 정보 영역 (제목, 상태, 버튼 등) */
 .campaign_info {
   flex: 1; /* 남은 공간 모두 차지 */
+  min-width: 0; /* flex 자식이 줄어들 수 있게 (제목 말줄임표 동작) */
   display: flex;
   flex-direction: column;
   gap: 16px; /* 정보 요소 간격 */
@@ -104,6 +118,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  box-shadow: 0 0 4px 0 rgba(68, 68, 68, 0.1);
 }
 
 /* 캠페인 타입 컨테이너 (배송형, 방문형, 구매평, 기자단, 미션형) */
@@ -123,8 +138,8 @@
 
 /* 상태 태그 (마감임박, 일반 등) */
 .cam_tag {
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 6px 8px;
+  border-radius: 8px;
 
   display: flex;
   align-items: center;
@@ -138,41 +153,35 @@
   letter-spacing: -0.32px;
 }
 
-
-
-/* 마감임박 태그 (빨간색) */
-.cam_tag.urgent {
-  background-color: #ff6b6b;
-}
-
-/* 일반 태그 (회색) */
-.cam_tag.normal {
-  background-color: #848484;
-}
-
-/* 마감임박 태그 (빨간색) - 보조 클래스 */
-.urgent {
-  background-color: #ff6b6b;
-}
-
-/* 일반 태그 (회색) - 보조 클래스 */
+/* 캠페인 상태 태그 - 공통 스타일 (피그마 기준) */
+.cam_tag.urgent,
+.cam_tag.normal,
+.urgent,
 .normal {
-  background-color: #848484;
+  background-color: #ff5694;
+  color: #ffffff;
 }
 
-/* 캠페인 제목 */
+/* 캠페인 제목 - 카드 영역 내 한 줄, 넘치면 말줄임표 */
 .campaign_title {
   color: #444;
   font-size: 16px;
   font-weight: 500;
   line-height: 22px; /* 137.5% */
   letter-spacing: -0.32px;
-
   padding-bottom: 4px;
+
+  /* 한 줄 말줄임표 (카드 너비 안에서만 표시) */
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* 캠페인 상태 텍스트 */
-.campaign_status {
+/* 캠페인 상태 텍스트 - PC용 (campaign_info 안에 위치) */
+.campaign_status_pc {
   color: #848484;
   font-size: 14px;
   font-weight: 500;
@@ -180,4 +189,163 @@
   letter-spacing: -0.28px;
 
   padding-bottom: 8px;
+}
+
+/* 캠페인 상태 텍스트 - 모바일용 (campaign_info 밖에 위치) */
+.campaign_status_mobile {
+  display: none; /* PC에서는 숨김 */
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
+}
+
+/* 캠페인 카드 래퍼 (배지 위치 지정용) */
+.campaign_card_wrapper {
+  position: relative;
+}
+
+/* 우측 상단 시간 배지 */
+.time_badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: rgba(255, 86, 148, 0.1);
+  color: #ff5694;
+
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  /* 캠페인 목록 영역 */
+  .campaign_list {
+    padding: 20px 20px 20px 20px;
+    gap: 20px;
+  }
+
+  /* 패널티 목록 영역 */
+  .penalty_list {
+    padding: 32px 20px 20px 20px;
+    gap: 20px;
+  }
+
+  /* 캠페인 카드 내부 콘텐츠 - 상단 영역만 (이미지 + 정보) */
+  .campaign_content {
+    gap: 12px;
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  /* 캠페인 이미지 영역 */
+  .campaign_image {
+    width: 80px;
+    height: 80px;
+  }
+
+  /* 캠페인 정보 영역 - 이미지 옆에 위치 */
+  .campaign_info {
+    flex: 1;
+    gap: 8px;
+  }
+
+  /* 캠페인 헤더 - 카테고리와 태그 */
+  .campaign_header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  /* 카테고리 아이콘과 텍스트 그룹 */
+  .cam_cate_icon {
+    gap: 8px;
+  }
+
+  /* 스토어 아이콘 */
+  .cam_icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* 카테고리 텍스트 */
+  .cam_type span {
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  /* 상태 태그 */
+  .cam_tag {
+    padding: 6px 8px;
+    border-radius: 8px;
+
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 캠페인 제목 - 모바일에서만 2줄 말줄임표 */
+  .campaign_title {
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: -0.32px;
+    padding-bottom: 0;
+    white-space: normal; /* PC의 nowrap 덮어써서 2줄 허용 */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* PC용 상태 텍스트 숨김 */
+  .campaign_status_pc {
+    display: none;
+  }
+
+  /* 모바일용 상태 텍스트 표시 - 카드 전체 너비로 아래에 표시 */
+  .campaign_status_mobile {
+    display: block;
+    width: 100%;
+    font-size: 14px;
+    line-height: 22px;
+    letter-spacing: -0.28px;
+    padding-bottom: 0;
+    padding-top: 0;
+    order: 2; /* 두 번째 위치 (이미지+정보 다음) */
+  }
+
+  /* 버튼 영역 - 카드 맨 아래에 표시 */
+  .campaign_card > div:last-child {
+    order: 3; /* 세 번째 위치 (맨 아래) */
+  }
+
+  /* campaign_content는 첫 번째 위치 */
+  .campaign_content {
+    order: 1;
+  }
+
+  /* 우측 상단 시간 배지 */
+  .time_badge {
+    top: 20px;
+    right: 20px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+    font-weight: 600;
+  }
 }

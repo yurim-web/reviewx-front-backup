@@ -75,12 +75,12 @@
 .channel_grid {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .channel_item {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 16px;
   padding: 20px;
   background: white;
@@ -92,9 +92,19 @@
 .channel_icon {
   width: 28px;
   height: 28px;
-  background: #a8a8a8;
+  /* background: #a8a8a8; */
   border-radius: 4px;
   flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 5px 0 rgba(68, 68, 68, 0.1);
+}
+
+.channel_icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .channel_info {
@@ -102,6 +112,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-width: 0; /* flex 환경에서 말줄임표가 동작하도록 */
 }
 
 .channel_name {
@@ -116,9 +127,23 @@
 .channel_status {
   font-size: 14px;
   font-weight: 500;
-  line-height: 14px;
+  line-height: 16px;
   letter-spacing: -0.28px;
   color: #848484;
+}
+
+/* 채널 URL은 한 줄 말줄임표 처리 */
+.channel_url {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 채널 URL 링크 - 새 창으로 열기, 기본 링크 스타일 제거 */
+a.channel_url {
+  text-decoration: none;
+  color: #848484;
+  cursor: pointer;
 }
 
 .channel_more_button {
@@ -131,4 +156,30 @@
   align-items: center;
   justify-content: center;
   align-self: center; /* 채널 아이템 내에서 세로 가운데 정렬 */
+}
+
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  /* 채널 연결 섹션 */
+  .channel_section {
+    padding: 20px;
+  }
+
+  /* 채널 플랫폼 아이템 */
+  .platform_item {
+    padding: 16px 0;
+  }
+
+  .channel_item {
+    gap: 12px;
+  }
+
+  /* 채널 URL은 한 줄 말줄임표 처리 */
+  .channel_url {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }

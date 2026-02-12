@@ -19,6 +19,10 @@
  * - 전체(게시글 목록 전용): 연한 회색 배경, 짙은 회색 텍스트
  */
 
+// CSS 모듈 직접 import
+// 컴포넌트 내부에서 스타일을 직접 가져와서 사용합니다
+import tag_styles from "@/styles/common/tags.module.css";
+
 /**
  * 유저 타입 정의
  */
@@ -29,23 +33,17 @@ export type UserType = "리뷰어" | "파트너" | "관리자" | "전체";
  *
  * 각 속성 설명:
  * - type: 표시할 유저 타입 값 (리뷰어, 파트너, 관리자 중 하나)
- * - styles: CSS 모듈에서 가져온 스타일 객체
  */
 interface UserTypeTagProps {
   type: UserType;
-  styles: Record<string, string>;
 }
 
 /**
  * 유저 타입 태그 컴포넌트
  *
  * @param type - 표시할 유저 타입 값
- * @param styles - CSS 모듈 스타일 객체
  */
-export default function UserTypeTag({
-  type,
-  styles: css_styles,
-}: UserTypeTagProps) {
+export default function UserTypeTag({ type }: UserTypeTagProps) {
   /**
    * 타입에 따라 적절한 CSS 클래스명을 반환하는 함수
    */
@@ -53,19 +51,19 @@ export default function UserTypeTag({
     switch (type) {
       case "리뷰어":
         // 리뷰어: 분홍색 배경, 분홍색 텍스트
-        return css_styles.division_tag_reviewer;
+        return tag_styles.division_tag_reviewer;
       case "파트너":
         // 파트너: 파란색 배경, 파란색 텍스트
-        return css_styles.division_tag_partner;
+        return tag_styles.division_tag_partner;
       case "관리자":
         // 관리자: 회색 배경, 회색 텍스트
-        return css_styles.division_tag_admin;
+        return tag_styles.division_tag_admin;
       case "전체":
         // 게시글 목록 전용: 연한 회색 배경, 짙은 회색 텍스트
-        return css_styles.division_tag_all;
+        return tag_styles.division_tag_all;
       default:
         // 기본값으로 리뷰어 스타일 반환
-        return css_styles.division_tag_reviewer;
+        return tag_styles.division_tag_reviewer;
     }
   };
 
@@ -81,7 +79,7 @@ export default function UserTypeTag({
    */
   return (
     <div
-      className={`${css_styles.division_tag} ${get_type_class_name()}`}
+      className={`${tag_styles.division_tag} ${get_type_class_name()}`}
       role="status"
       aria-label={`유저 타입: ${type}`}
     >

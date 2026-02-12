@@ -55,13 +55,13 @@ type Story = StoryObj<typeof ChannelFilterModal>;
 export const ChannelFilter: Story = {
   render: () => {
     const [isOpen, setIsOpen] = useState(true);
-    const [selectedChannels, setSelectedChannels] = useState<string[]>([]);
+    const [selectedChannels, setSelectedChannels] = useState<("Blog" | "Instagram" | "Youtube" | "NaverClip")[]>([]);
 
     const handleClose = useCallback(() => {
       setIsOpen(false);
     }, []);
 
-    const handleApply = useCallback((values: string[]) => {
+    const handleApply = useCallback((values: ("Blog" | "Instagram" | "Youtube" | "NaverClip")[]) => {
       setSelectedChannels(values);
       console.log("선택된 채널:", values);
     }, []);
@@ -104,13 +104,13 @@ export const ChannelFilter: Story = {
 export const StatusFilter: Story = {
   render: () => {
     const [isOpen, setIsOpen] = useState(true);
-    const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+    const [selectedStatuses, setSelectedStatuses] = useState<("경고" | "정지" | "정상" | "일시정지")[]>([]);
 
     const handleClose = useCallback(() => {
       setIsOpen(false);
     }, []);
 
-    const handleApply = useCallback((values: string[]) => {
+    const handleApply = useCallback((values: ("경고" | "정지" | "정상" | "일시정지")[]) => {
       setSelectedStatuses(values);
       console.log("선택된 상태:", values);
     }, []);
@@ -153,13 +153,13 @@ export const StatusFilter: Story = {
 export const TypeFilter: Story = {
   render: () => {
     const [isOpen, setIsOpen] = useState(true);
-    const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+    const [selectedTypes, setSelectedTypes] = useState<("서포터즈" | "일반" | "프로모즈")[]>([]);
 
     const handleClose = useCallback(() => {
       setIsOpen(false);
     }, []);
 
-    const handleApply = useCallback((values: string[]) => {
+    const handleApply = useCallback((values: ("서포터즈" | "일반" | "프로모즈")[]) => {
       setSelectedTypes(values);
       console.log("선택된 유형:", values);
     }, []);

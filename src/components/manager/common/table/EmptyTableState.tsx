@@ -29,9 +29,13 @@ interface EmptyTableStateProps {
 
 export default function EmptyTableState({
   message,
-  className = "",
+  className,
 }: EmptyTableStateProps) {
+  // className이 undefined일 때 빈 문자열로 처리하여 Hydration 오류 방지
+  const class_name = className || "";
   return (
-    <div className={`${styles.empty_message} ${className}`}>{message}</div>
+    <div className={`${styles.empty_message} ${class_name}`.trim()}>
+      {message}
+    </div>
   );
 }

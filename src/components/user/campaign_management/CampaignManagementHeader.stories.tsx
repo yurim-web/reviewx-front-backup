@@ -7,7 +7,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState } from "react";
 import CampaignManagementHeader from "./CampaignManagementHeader";
-import type { MainTab } from "@/types/user/user";
+import type { MainTab } from "@/types/domain/user";
 import { campaignManagementStats } from "@/data/user/campaign_management/campaignManagementData";
 
 const meta: Meta<typeof CampaignManagementHeader> = {

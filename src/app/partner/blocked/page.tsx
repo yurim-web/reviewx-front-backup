@@ -9,23 +9,17 @@
  *
  * 페이지 경로:
  * - /partner/blocked
- *
- * 주요 기능:
- * - 차단 안내 메시지 표시
- * - 회원 탈퇴 버튼 제공
  */
 
-import BlockedUserPage from '@/components/common/BlockedUserPage';
+import BlockedBasePage from "@/components/common/blocked/BlockedBasePage";
 
-/**
- * 파트너 차단 페이지 컴포넌트
- *
- * @returns JSX.Element - 파트너 차단 페이지 UI
- */
 export default function PartnerBlockedPage() {
-  return <BlockedUserPage />;
+  return (
+    <BlockedBasePage
+      message="서비스 이용이 제한되었습니다."
+      buttonLabel="회원 탈퇴"
+      buttonHref="/user/login"
+      buttonAriaLabel="회원 탈퇴"
+    />
+  );
 }
-
-
-
-

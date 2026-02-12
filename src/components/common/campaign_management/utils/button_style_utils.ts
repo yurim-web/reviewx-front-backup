@@ -84,7 +84,7 @@ export function getButtonStyleType(buttonText: string): ButtonStyleType {
 
   // 보조 버튼 - 회색 테두리 (확인하기)
   // User: "콘텐츠 확인하기"
-  // Partner: "신청내역 확인", "콘텐츠 확인" 등
+  // Partner: "신청 내역 확인", "콘텐츠 확인" 등
   if (
     buttonText === "콘텐츠 확인하기" ||
     buttonText.includes("확인하기") ||
@@ -121,12 +121,13 @@ export function getButtonStyleType(buttonText: string): ButtonStyleType {
 export function getButtonClassName(
   buttonText: string,
   buttonStyles: {
-    action_button: string;
-    primary_button: string;
-    danger_button: string;
-    secondary_button: string;
-    default_button: string;
-  }
+    action_button?: string;
+    primary_button?: string;
+    danger_button?: string;
+    secondary_button?: string;
+    default_button?: string;
+    [key: string]: string | undefined;
+  },
 ): string {
   const styleType = getButtonStyleType(buttonText);
   const baseClass = buttonStyles.action_button;

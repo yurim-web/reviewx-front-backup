@@ -19,25 +19,35 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { format } from "date-fns";
+import BaseModal from "@/components/common/modal/BaseModal";
 import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
-import styles from "@/styles/manager_ga/campaign/rejected_table.module.css";
+import styles from "@/styles/manager_ga/campaign/rejected/rejected_table.module.css";
 import {
+  get_rejected_campaign_list,
   rejected_campaign_list,
   reject_code_info,
+  remove_rejected_campaign,
+  reset_rejected_campaign_storage,
   type RejectedCampaignItem,
   type RejectCodeInfo,
   type RejectCode,
 } from "@/data/manager_ga/rejected";
+import {
+  add_reported_campaign,
+  get_reported_campaign_list,
+  report_code_info,
+  reported_campaign_list,
+  type ReportedCampaignItem,
+} from "@/data/manager_ga/reported";
 import CampaignReasonModal from "@/components/manager/common/campaign/modal/CampaignReasonModal";
-import CampaignReportModalCommon, {
+import ManagerReportReasonModalCommon, {
   type ReportCode,
-} from "@/components/manager/common/campaign/modal/CampaignReportModal";
-import { report_code_info } from "@/data/manager_ga/reported";
-import campaignReportModalStyles from "@/styles/manager_ga/campaign/common/modal/campaign_report_modal.module.css";
-import campaignReasonModalStyles from "@/styles/manager_ga/campaign/common/modal/campaign_reason_modal.module.css";
+} from "@/components/manager/common/campaign/modal/ManagerReportReasonModal";
 import CommonTableWithTooltip, {
   type TooltipConfig,
 } from "@/components/manager/common/table/CommonTableWithTooltip";
@@ -67,17 +77,17 @@ const get_reject_code_info = (code: string): RejectCodeInfo | undefined => {
 const get_columns = (styles: Record<string, string>): TableColumn[] => [
   {
     key: "campaign_number",
-    label: "캠페인 번호",
+    label: "번호",
     sortable: true,
   },
   {
     key: "campaign_name",
-    label: "캠페인명",
+    label: "캠페인명/이름",
     className: styles.table_cell_campaign_name,
   },
   {
     key: "target",
-    label: "등록자",
+    label: "대상자",
   },
   {
     key: "inspector",
@@ -113,6 +123,9 @@ export default function RejectedCampaignTable({
   selected_reject_codes,
   selected_date_range,
 }: RejectedCampaignTableProps) {
+  // Next.js 라우터: 페이지 이동에 사용
+  const router = useRouter();
+
   const [hovered_report_row_id, set_hovered_report_row_id] = useState<
     string | null
   >(null);
@@ -128,15 +141,45 @@ export default function RejectedCampaignTable({
   const [report_modal_state, set_report_modal_state] = useState<{
     is_open: boolean;
     campaign_id: string | null;
+    item: RejectedCampaignItem | null;
   }>({
     is_open: false,
     campaign_id: null,
+    item: null,
   });
 
-  const handle_report_click = (campaign_id: string) => {
+  // 이미 처리된 요청 모달 상태
+  const [already_processed_modal_state, set_already_processed_modal_state] =
+    useState<boolean>(false);
+
+  // 반려 내역 업데이트를 위한 리렌더링 트리거
+  const [rejected_update_key, set_rejected_update_key] = useState<number>(0);
+
+  // Hydration 오류 방지를 위한 마운트 상태
+  const [is_mounted, set_is_mounted] = useState<boolean>(false);
+
+  useEffect(() => {
+    set_is_mounted(true);
+    
+    // 개발 환경에서 localStorage 확인 및 디버깅
+    if (process.env.NODE_ENV === 'development') {
+      const list = get_rejected_campaign_list();
+      if (list.length === 0 && rejected_campaign_list.length > 0) {
+        console.warn('반려 내역 데이터가 표시되지 않습니다. localStorage에 제거된 항목이 저장되어 있을 수 있습니다.');
+        console.log('localStorage 초기화를 원하시면 브라우저 콘솔에서 다음을 실행하세요:');
+        console.log('localStorage.removeItem("rejected_campaign_removed_ids"); location.reload();');
+      }
+    }
+  }, []);
+
+  const handle_report_click = (
+    campaign_id: string,
+    item: RejectedCampaignItem
+  ) => {
     set_report_modal_state({
       is_open: true,
       campaign_id,
+      item,
     });
   };
 
@@ -144,51 +187,136 @@ export default function RejectedCampaignTable({
     set_report_modal_state({
       is_open: false,
       campaign_id: null,
+      item: null,
     });
   };
 
+  // 신고 핸들러
+  // 신고 모달에서 "신고" 버튼을 클릭했을 때 실행됩니다
   const handle_report_submit = (report_code: ReportCode) => {
-    // TODO: 실제 신고 로직 구현
+    if (!report_modal_state.item) return;
+
+    const rejected_item = report_modal_state.item;
+
+    // 이미 신고된 내역인지 확인
+    // 같은 캠페인 번호와 대상자로 이미 신고된 내역이 있는지 체크
+    const existing_reported_list = get_reported_campaign_list();
+    const is_already_reported = existing_reported_list.some(
+      (item) =>
+        item.campaign_number === rejected_item.campaign_number &&
+        item.target === rejected_item.target
+    );
+
+    // 이미 신고된 경우 예외 처리
+    if (is_already_reported) {
+      // 신고 모달 닫기
+      handle_report_modal_close();
+      // 이미 처리된 요청 모달 표시
+      set_already_processed_modal_state(true);
+      return;
+    }
+
+    // 신고 코드 정보 가져오기
+    const code_info = report_code_info.find(
+      (info) => info.code === report_code
+    );
+    const report_reason = code_info?.reason || "";
+
+    // 새로운 신고 내역 ID 생성
+    // 기존 신고 내역 목록에서 최대 ID 찾기
+    const max_id = Math.max(
+      ...reported_campaign_list.map((item) => parseInt(item.id) || 0)
+    );
+    const new_id = (max_id + 1).toString();
+
+    // 현재 날짜/시간 생성
+    const current_date = format(new Date(), "yyyy-MM-dd HH:mm");
+
+    // 신고 내역 항목 생성 (반려 내역 → 신고 내역 변환)
+    const new_reported_item: ReportedCampaignItem = {
+      id: new_id,
+      campaign_number: rejected_item.campaign_number,
+      campaign_name: rejected_item.campaign_name,
+      report_code: report_code,
+      report_reason: report_reason,
+      inspector: rejected_item.inspector,
+      target: rejected_item.target,
+      processed_date: current_date,
+      report_count: 1,
+    };
+
+    // 신고 내역에 추가
+    add_reported_campaign(new_reported_item);
+
+    // 반려 내역에서 제거 (localStorage에 저장)
+    remove_rejected_campaign(rejected_item.id);
+
+    // 목록 업데이트를 위한 리렌더링 트리거
+    set_rejected_update_key((prev) => prev + 1);
+
+    // 신고 내역 페이지로 이동
+    router.push("/manager_ga/campaign/reported");
+
+    // 모달 닫기
+    handle_report_modal_close();
   };
 
-  const filtered_list = rejected_campaign_list.filter((item) => {
-    // 검색어 필터
-    if (
-      search_query &&
-      !item.campaign_name.includes(search_query) &&
-      !item.campaign_number.includes(search_query)
-    ) {
-      return false;
-    }
+  // 이미 처리된 요청 모달 닫기 핸들러
+  const handle_already_processed_modal_close = () => {
+    set_already_processed_modal_state(false);
+  };
 
-    // 반려 코드 필터
-    if (
-      selected_reject_codes.length > 0 &&
-      !selected_reject_codes.includes(item.reject_code)
-    ) {
-      return false;
-    }
+  const filtered_list = useMemo(() => {
+    // 서버 사이드에서는 기본 데이터만 반환 (Hydration 오류 방지)
+    const list_to_filter = !is_mounted
+      ? rejected_campaign_list
+      : get_rejected_campaign_list();
 
-    // 날짜 범위 필터
-    if (selected_date_range?.from && selected_date_range?.to) {
-      // processed_date 형식: "2025-08-01 18:56"
-      const processed_date_str = item.processed_date.split(" ")[0]; // 날짜 부분만 추출
-      const processed_date = new Date(processed_date_str);
-      const from_date = new Date(selected_date_range.from);
-      const to_date = new Date(selected_date_range.to);
-      to_date.setHours(23, 59, 59, 999); // 종료일의 끝 시간까지 포함
-
-      // 날짜 비교 시 시간 부분을 제거하여 날짜만 비교
-      processed_date.setHours(0, 0, 0, 0);
-      from_date.setHours(0, 0, 0, 0);
-
-      if (processed_date < from_date || processed_date > to_date) {
+    return list_to_filter.filter((item) => {
+      // 검색어 필터
+      if (
+        search_query &&
+        !item.campaign_name.includes(search_query) &&
+        !item.campaign_number.includes(search_query)
+      ) {
         return false;
       }
-    }
 
-    return true;
-  });
+      // 반려 코드 필터
+      if (
+        selected_reject_codes.length > 0 &&
+        !selected_reject_codes.includes(item.reject_code)
+      ) {
+        return false;
+      }
+
+      // 날짜 범위 필터
+      if (selected_date_range?.from && selected_date_range?.to) {
+        // processed_date 형식: "2025-08-01 18:56"
+        const processed_date_str = item.processed_date.split(" ")[0]; // 날짜 부분만 추출
+        const processed_date = new Date(processed_date_str);
+        const from_date = new Date(selected_date_range.from);
+        const to_date = new Date(selected_date_range.to);
+        to_date.setHours(23, 59, 59, 999); // 종료일의 끝 시간까지 포함
+
+        // 날짜 비교 시 시간 부분을 제거하여 날짜만 비교
+        processed_date.setHours(0, 0, 0, 0);
+        from_date.setHours(0, 0, 0, 0);
+
+        if (processed_date < from_date || processed_date > to_date) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [
+    search_query,
+    selected_reject_codes,
+    selected_date_range,
+    rejected_update_key,
+    is_mounted, // is_mounted를 의존성으로 추가
+  ]);
 
   // 컬럼별 타입 설정
   const column_config: SortColumnConfig = {
@@ -301,7 +429,7 @@ export default function RejectedCampaignTable({
               const is_report_hovered = hovered_report_row_id === row.id;
               return is_report_hovered ? (
                 <button
-                  onClick={() => handle_report_click(row.id)}
+                  onClick={() => handle_report_click(row.id, row)}
                   className={styles.report_button}
                   aria-label={`${row.campaign_name} 신고`}
                 >
@@ -323,7 +451,7 @@ export default function RejectedCampaignTable({
         on_row_wrapper_hover={(row_id) => {
           set_hovered_report_row_id(row_id);
         }}
-        empty_message="반려 이력이 없습니다."
+        empty_message="검색 결과가 없습니다."
       />
       {modal_state.item && (
         <CampaignReasonModal
@@ -346,50 +474,13 @@ export default function RejectedCampaignTable({
             category: info.category,
             reason: info.reason,
           }))}
-          styles={
-            campaignReasonModalStyles as Record<string, string> & {
-              modal_overlay: string;
-              modal_container: string;
-              modal_title: string;
-              reason_box: string;
-              reason_text: string;
-              ai_recommended_section: string;
-              ai_recommended_label: string;
-              classification_container: string;
-              classification_item: string;
-              classification_item_selected: string;
-              classification_radio: string;
-              classification_check_icon: string;
-              classification_label: string;
-              modal_footer: string;
-              close_button: string;
-              confirm_button: string;
-            }
-          }
         />
       )}
-      <CampaignReportModalCommon
-        mode="report"
+      <ManagerReportReasonModalCommon
         is_open={report_modal_state.is_open}
         on_close={handle_report_modal_close}
         campaign_id={report_modal_state.campaign_id || undefined}
         on_report={handle_report_submit}
-        styles={
-          campaignReportModalStyles as {
-            modal_overlay: string;
-            modal_content: string;
-            modal_title: string;
-            options_list: string;
-            option_item: string;
-            option_radio: string;
-            option_label: string;
-            modal_footer: string;
-            close_button: string;
-            report_button: string;
-            block_button: string;
-          }
-        }
-        report_code_info={report_code_info}
         report_code_options={[
           "W001",
           "W002",
@@ -403,6 +494,14 @@ export default function RejectedCampaignTable({
           "W011",
           "W013",
         ]}
+      />
+      {/* 이미 처리된 요청 모달 */}
+      <BaseModal
+        is_open={already_processed_modal_state}
+        on_close={handle_already_processed_modal_close}
+        message="이미 처리된 요청입니다."
+        buttons={["확인"]}
+        type="center"
       />
     </>
   );

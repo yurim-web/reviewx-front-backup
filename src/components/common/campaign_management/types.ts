@@ -9,8 +9,8 @@
  * - src/components/common/campaign_management/utils/campaign_filter_helpers.ts
  */
 
-import type { PartnerCampaign } from "@/types/partner/partner";
-import type { CampaignApplication } from "@/types/user/user";
+import type { PartnerCampaign } from "@/types/domain/partner";
+import type { CampaignApplication } from "@/types/domain/user";
 
 /**
  * 필터 변경 시 전달되는 파라미터
@@ -36,6 +36,7 @@ export interface ActiveFilters {
   types?: string[];
   channels?: string[];
   searchQuery?: string;
+  sortBy?: string;
 }
 
 /**
@@ -90,4 +91,6 @@ export interface CampaignFilterBarProps<
   channelOptions?: string[];
   sortOptions?: SortOption[];
   defaultSort?: string;
+  showSearch?: boolean;
+  isPartner?: boolean;
 }

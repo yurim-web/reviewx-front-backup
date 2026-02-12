@@ -67,7 +67,7 @@
   overflow: visible;
 }
 
-/* 차트 툴팁 컨테이너 */
+/* 차트 툴팁 컨테이너 - Figma 디자인에 맞춰 검은색 배경 (#444444) */
 .chart_tooltip {
   background-color: #444444;
   padding: 8px;
@@ -78,6 +78,7 @@
   min-width: 50px;
   transition: none !important;
   animation: none !important;
+  position: relative; /* 삼각형 화살표를 위한 relative positioning */
 }
 
 /* 차트 툴팁 이름 (예: "11/9") */

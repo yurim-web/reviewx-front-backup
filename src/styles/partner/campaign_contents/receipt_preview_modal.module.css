@@ -20,7 +20,7 @@
   position: relative;
   width: 1000px;
   max-width: 92vw;
-border-radius: 0;
+  border-radius: 0;
   overflow: visible;
 }
 
@@ -39,10 +39,7 @@ border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.close_button:hover {
-  opacity: 0.7;
+  pointer-events: auto; /* 닫기 버튼은 클릭 가능 */
 }
 
 .modal_content {
@@ -51,19 +48,20 @@ border-radius: 0;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 600px;
   position: relative;
+  pointer-events: none; /* 모달 콘텐츠 자체는 클릭 이벤트 차단 */
 }
 
 .empty_state {
-   width: 369px;
-   background-color: #FFFFFF;
+  width: 369px;
+  background-color: #ffffff;
   height: 800px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #848484;
   font-size: 14px;
+  pointer-events: auto; /* empty state는 클릭 가능 */
 }
 
 .image_viewer {
@@ -72,6 +70,7 @@ border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  pointer-events: auto; /* 이미지 뷰어는 클릭 가능 */
 }
 
 .nav_button {
@@ -90,15 +89,47 @@ border-radius: 0;
   z-index: 1010;
 }
 
-.nav_left { left: 40px; }
-.nav_right { right: 40px; }
-
-.nav_button:hover {
-  opacity: 0.7;
+.nav_left {
+  left: 40px;
+}
+.nav_right {
+  right: 40px;
 }
 
 .nav_button svg {
   display: block;
+}
+
+/* 비활성화된 네비게이션 버튼 */
+.nav_button_disabled {
+  cursor: default;
+}
+
+/* 네비게이션 아이콘 기본 스타일 */
+.nav_button img {
+  transition: filter 0.2s ease;
+}
+
+/* 이전 버튼 활성화: modal_arrow.svg (#999999) → #444444 */
+.nav_left:not(.nav_button_disabled) img {
+  /* #999999를 #444444로 변경하기 위한 필터 */
+  filter: brightness(0.44);
+}
+
+/* 이전 버튼 비활성화: 이미 #999999이므로 필터 없음 */
+.nav_left.nav_button_disabled img {
+  filter: none;
+}
+
+/* 다음 버튼 활성화: modal_next.svg는 이미 #444444이므로 필터 없음 */
+.nav_right:not(.nav_button_disabled) img {
+  filter: none;
+}
+
+/* 다음 버튼 비활성화: #444444 → #999999 */
+.nav_right.nav_button_disabled img {
+  /* brightness를 조정하여 #444444를 #999999로 변경 */
+  filter: brightness(2.25);
 }
 
 .image_wrapper {
@@ -106,40 +137,151 @@ border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
   max-width: 1000px;
   margin: 0 auto;
+  height: 100%;
+  min-height: 600px;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
 
 .receipt_image {
-  width: auto;
+  width: 100%;
   height: auto;
+  max-width: 100%;
+  max-height: 800px;
   object-fit: contain;
   display: block;
+  margin: 0 auto;
 }
 
-/* 하단 인디케이터 */
+/* 하단 인디케이터 - 원 형태 페이지네이션 */
+/* 📌 전체 화면 기준으로 하단에서 40px 떨어진 위치에 고정 */
 .indicator_container {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 20px 0;
+  gap: 12px;
+  padding: 0;
   width: 100%;
-  background-color:transparent;
+  background-color: transparent;
+  position: fixed;
+  bottom: 40px;
+  left: 0;
+  right: 0;
+  z-index: 1010;
+  pointer-events: auto; /* 인디케이터는 클릭 가능 */
 }
 
 .indicator_dot {
-  width: 6px;
-  height: 6px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   border: none;
-  background: #d9d9d9;
+  background: #999999;
   cursor: pointer;
   padding: 0;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .indicator_dot_active {
   background: #444444;
 }
 
+/* ========================================
+   반응형 스타일
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* 모달 오버레이 - 모바일에서 전체 화면 */
+  .modal_overlay {
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* 모달 컨테이너 - 모바일에서 전체 너비 */
+  .modal_container {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 0;
+    pointer-events: none; /* 컨테이너 자체는 클릭 이벤트 차단 */
+  }
+
+  /* 모바일에서 닫기 버튼 숨김 */
+  .close_button {
+    display: none;
+  }
+
+  /* 모달 콘텐츠 - 모바일 높이 조정 */
+  .modal_content {
+    min-height: auto;
+    max-height: 100vh;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none; /* 모바일에서도 배경 클릭 가능하도록 */
+    width: 100%;
+    padding: 0px 20px;
+  }
+
+  /* 이미지 뷰어 - 모바일에서 전체 너비 */
+  .image_viewer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    position: relative;
+    pointer-events: auto; /* 모바일에서도 이미지 클릭 방지 */
+  }
+
+  /* 모바일에서 네비게이션 버튼 숨김 */
+  .nav_button {
+    display: none;
+  }
+
+  /* 이미지 래퍼 - 모바일에서 전체 너비 및 중앙 정렬 */
+  .image_wrapper {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    min-height: 70vh;
+    padding: 0 20px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* 영수증 이미지 - 모바일 크기 조정 및 중앙 정렬 */
+  .receipt_image {
+    max-height: 70vh;
+    width: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    margin: 0 auto;
+  }
+
+  /* 인디케이터 컨테이너 - 모바일에서 이미지 하단에서 40px 떨어진 위치 */
+  .indicator_container {
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    gap: 8px;
+    padding: 0;
+    pointer-events: auto; /* 모바일에서도 인디케이터 클릭 가능 */
+  }
+
+  /* 인디케이터 도트 - 모바일 크기 */
+  .indicator_dot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .empty_state{
+    max-height: 70vh;
+    width: 100%;
+  }
+}

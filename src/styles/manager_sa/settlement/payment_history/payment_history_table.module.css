@@ -22,18 +22,19 @@
 .table_header {
   display: grid;
   /* 결제 내역 테이블 컬럼 정의 */
+
   grid-template-columns:
     0.5fr /* 체크박스 */
     0.8fr /* 번호 */
-    1.5fr /* 상호명 */
-    1.8fr /* 입금자명 */
+    3fr /* 상호명 (더 늘림) */
+    1.2fr /* 입금자명 */
     0.8fr /* 구분 */
     1.2fr /* 결제 수단 */
     0.8fr /* 세금계산서 */
-    1.5fr /* 충전 포인트 */
-    1fr /* 결제 */
-    1.4fr /* 신청일 */
-    1.4fr /* 승인일 */
+    1.2fr /* 충전 포인트 */
+    0.8fr /* 결제 (줄임) */
+    1.2fr /* 신청일 (줄임) */
+    1.2fr /* 승인일 (줄임) */
     1fr /* 유형 */
     1fr; /* 상태 */
   background-color: #f5f5f5;
@@ -56,18 +57,19 @@
 .table_row {
   display: grid;
   /* 헤더와 동일한 컬럼 정의를 공유해 정렬 유지 */
+
   grid-template-columns:
     0.5fr /* 체크박스 */
     0.8fr /* 번호 */
-    1.5fr /* 상호명 */
-    1.8fr /* 입금자명 */
+    3fr /* 상호명 (더 늘림) */
+    1.2fr /* 입금자명 */
     0.8fr /* 구분 */
     1.2fr /* 결제 수단 */
     0.8fr /* 세금계산서 */
-    1.5fr /* 충전 포인트 */
-    1fr /* 결제 */
-    1.4fr /* 신청일 */
-    1.4fr /* 승인일 */
+    1.2fr /* 충전 포인트 */
+    0.8fr /* 결제 (줄임) */
+    1.2fr /* 신청일 (줄임) */
+    1.2fr /* 승인일 (줄임) */
     1fr /* 유형 */
     1fr; /* 상태 */
   gap: 0;
@@ -84,17 +86,16 @@
 }
 
 /* 테이블 셀 공통 스타일 (CommonTable에서 사용) */
-/* CommonTable은 .table_cell 클래스를 사용하여 각 셀을 렌더링합니다 */
 .table_cell {
   display: flex;
   align-items: center;
   padding: 20px;
   box-sizing: border-box;
+  min-width: 0;
+  overflow: hidden;
 }
 
 /* 테이블 헤더 셀 공통 스타일 (CommonTable에서 사용) */
-/* CommonTable은 .table_header_cell 클래스를 사용하여 각 헤더 셀을 렌더링합니다 */
-/* 헤더 셀은 항상 가로 정렬(텍스트와 아이콘이 한 줄)이어야 합니다 */
 .table_header_cell {
   display: flex;
   flex-direction: row;
@@ -113,18 +114,31 @@
 }
 
 /* 개별 셀 스타일 (컬럼별 특별한 스타일이 필요한 경우에만 정의) */
-/* 대부분의 셀은 .table_cell 기본 스타일을 사용하므로 별도 정의 불필요 */
-/* 단, 특별한 스타일이 필요한 셀만 아래에 정의합니다 */
+/* 모든 텍스트 셀에 말줄임표 적용을 위한 기본 스타일 */
+.table_cell_number,
+.table_cell_company_name,
+.table_cell_depositor,
+.table_cell_business_type,
+.table_cell_payment_method,
+.table_cell_tax_invoice,
+.table_cell_payment_status,
+.table_cell_request_date,
+.table_cell_approval_date,
+.table_cell_member_type,
+.table_cell_account_status {
+  min-width: 0;
+  flex: 1 1 0;
+}
 
-/* 충전 포인트 셀 - 세로 정렬 (데이터 행용) */
 .table_cell_charged_points {
   flex-direction: column;
   align-items: flex-start;
   gap: 4px;
+  min-width: 0;
+  flex: 1 1 0;
 }
 
 /* 충전 포인트 헤더 셀 - 가로 정렬 (헤더 행용) */
-/* 헤더에서는 텍스트와 화살표 아이콘이 가로 한 줄로 배치되어야 합니다 */
 .table_header_cell_charged_points {
   flex-direction: row !important;
   align-items: center !important;
@@ -196,6 +210,11 @@
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+  display: block;
 }
 
 /* 셀 텍스트 - 보조 (회색) */
@@ -205,192 +224,85 @@
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
-}
-
-/* ========================================
-   태그 스타일 (공통 태그 컴포넌트용)
-   ======================================== */
-
-/**
- * 참고: 공통 태그 스타일은 @/styles/common/tags.module.css를 참조하세요.
- * 
- * 사용 컴포넌트:
- * - BusinessTypeTag (사업자 구분 태그)
- */
-
-/* 사업자 구분 태그 기본 스타일 */
-/* BusinessTypeTag 컴포넌트는 division_tag 클래스를 사용합니다 */
-.division_tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: -0.28px;
-  min-width: 40px;
-  height: 22px;
+  overflow: hidden;
   white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+  display: block;
 }
 
-/* 법인 태그 (BusinessTypeTag용) */
-/* BusinessTypeTag 컴포넌트는 division_tag_corporate 클래스를 사용합니다 */
-.division_tag_corporate {
-  background-color: #666666;
-  color: white;
+/* 상호명 컨테이너 (두 줄 표시용) */
+.company_name_container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
 }
 
-/* 개인 태그 (BusinessTypeTag용) */
-/* BusinessTypeTag 컴포넌트는 division_tag_individual 클래스를 사용합니다 */
-.division_tag_individual {
-  background-color: #f1f1f1;
-  color: #666666;
+/* 상호명 첫 번째 줄 (상호명 + 다운로드 아이콘) */
+.company_name_row {
+  display: flex;
+  align-items: center;
+  gap: 6px; 
+  width: 100%;
+  min-width: 0; 
 }
 
-/* ========================================
-   태그 스타일 (공통 태그 컴포넌트용)
-   ======================================== */
+/* 상호명 텍스트 (말줄임표 적용) */
 
-/**
- * 참고: 공통 태그 스타일은 @/styles/common/tags.module.css를 참조하세요.
- * 
- * 사용 컴포넌트:
- * - PaymentMethodTag (결제 수단 태그)
- */
+.company_name_row .cell_text {
+  display: -webkit-box;
+  max-width: 100%;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  min-width: 0;
+  flex-shrink: 1;
+}
 
-/* 결제 수단 태그 기본 스타일 */
-.payment_method_tag {
-  display: inline-flex;
+/* 다운로드 버튼 */
+.download_button {
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px 8px;
-  border-radius: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+/* 다운로드 아이콘 */
+.download_icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* 사업자 정보 텍스트 (두 번째 줄) */
+.business_info_text {
+  color: #848484;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
-  min-width: 80px;
-  height: 22px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+  display: block;
+  width: 100%;
 }
 
-/* 카드 결제 태그 (PaymentMethodTag용) */
-.payment_method_card {
-  background-color: rgba(255, 86, 148, 0.1);
-  color: #ff5694;
-}
+/* 발행 컨테이너 (두 줄 표시용) */
 
-/* 무통장 입금 태그 (PaymentMethodTag용) */
-.payment_method_bank {
-  background-color: #f1f1f1;
-  color: #666666;
-}
-
-/* 결제 상태 태그 */
-/* ========================================
-   결제 상태 태그 스타일 (PaymentStatusTag용)
-   ======================================== */
-
-/**
- * 참고: 공통 태그 스타일은 @/styles/common/tags.module.css를 참조하세요.
- * 
- * 사용 컴포넌트:
- * - PaymentStatusTag (결제 상태 태그)
- */
-
-/* 결제 상태 태그 기본 스타일 */
-.payment_status_tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: -0.28px;
-  min-width: 40px;
-  height: 22px;
-}
-
-/* 완료 태그 (PaymentStatusTag용) */
-.payment_status_completed {
-  background-color: rgba(45, 196, 105, 0.1);
-  color: #2dc469;
-}
-
-/* 대기 태그 (PaymentStatusTag용) */
-.payment_status_pending {
-  background-color: #f1f1f1;
-  color: #666666;
-}
-
-/* 취소 태그 (PaymentStatusTag용) */
-.payment_status_cancelled {
-  background-color: rgba(255, 38, 38, 0.05);
-  color: #ff2626;
-}
-
-/* ========================================
-   회원 상태 태그 스타일 (MemberStatusTag용)
-   ======================================== */
-
-/**
- * 참고: 공통 태그 스타일은 @/styles/common/tags.module.css를 참조하세요.
- * 
- * 사용 컴포넌트:
- * - MemberStatusTag (회원 상태 태그)
- */
-
-/* 상태 태그 기본 스타일 (MemberStatusTag용) */
-.status_tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: -0.28px;
-  min-width: 50px;
-  height: 22px;
-}
-
-/* 정상 상태 태그 (MemberStatusTag용) */
-.status_tag_normal {
-  background-color: rgba(43, 127, 255, 0.1);
-  color: #2b7fff;
-}
-
-/* 일시 정지 상태 태그 (MemberStatusTag용) */
-.status_tag_suspended {
-  background-color: rgba(255, 38, 38, 0.05);
-  color: #ff2626;
-}
-
-/* 기존 호환성을 위한 별칭 (더 이상 사용하지 않음) */
-.account_status_tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: -0.28px;
-  min-width: 50px;
-  height: 22px;
-}
-
-.account_status_normal {
-  background-color: rgba(43, 127, 255, 0.1);
-  color: #2b7fff;
-}
-
-.account_status_suspended {
-  background-color: rgba(255, 38, 38, 0.05);
-  color: #ff2626;
+.tax_invoice_container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
 }

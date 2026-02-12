@@ -15,8 +15,12 @@
  * - 추가 안내사항 컴포넌트
  */
 
+"use client";
+
+import { useSearchParams } from "next/navigation";
 import AdditionalGuidelines from "../AdditionalGuidelines";
 import RequirementIcons from "../RequirementIcons";
+import SelectedCampaignInfo from "../SelectedCampaignInfo";
 import styles from "@/styles/user/campaign/campaign_detail/detail_guidelines_section.module.css";
 
 /**
@@ -47,6 +51,12 @@ export default function DetailGuidelinesSectionDelivery({
   requirements,
   guidelineTexts,
 }: DetailGuidelinesSectionDeliveryProps) {
+  // 참여 캠페인 상세 여부 (캠페인 관리에서 들어온 경우 participant=true 또는 selected=true)
+  const searchParams = useSearchParams();
+  const isParticipant =
+    searchParams.get("participant") === "true" ||
+    searchParams.get("selected") === "true";
+
   // ========================================
   // 기본 가이드 문구 (props 미전달 시 사용)
   // ========================================
@@ -148,6 +158,14 @@ export default function DetailGuidelinesSectionDelivery({
 
       {/* 추가 안내사항 컴포넌트 */}
       <AdditionalGuidelines />
+
+      {/* 참여 캠페인 추가 안내 (공정위 가이드, 캠페인 문의) */}
+      {isParticipant && (
+        <SelectedCampaignInfo
+          onGoToGuide={onCopyPromotionLink}
+          onCopyContact={onCopyKeyword}
+        />
+      )}
     </article>
   );
 }

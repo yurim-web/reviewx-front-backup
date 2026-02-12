@@ -211,15 +211,15 @@ export const reviewer_notification_templates: Record<
   },
   A_R15: {
     category: "A_R15",
-    label: "계정 정지",
+    label: "계정 일시 정지",
     message_template:
       "운영 정책 위반으로 인해 {정지기간}일 동안 캠페인에 참여할 수 없습니다.",
     color: "orange",
   },
   A_R16: {
     category: "A_R16",
-    label: "계정 차단",
-    message_template: "운영 정책 위반으로 인해 영구 차단되었습니다.",
+    label: "계정 이용 제한",
+    message_template: "운영 정책 위반으로 인해 이용 제한되었습니다.",
     color: "orange",
   },
   A_R17: {
@@ -242,42 +242,47 @@ export const partner_notification_templates: Record<
     label: "캠페인 진행 상태 변경",
     message_template: "캠페인 진행 상태가 변경되었습니다.",
     color: "blue",
+    has_campaign_link: true,
   },
   A_P2: {
     category: "A_P2",
     label: "캠페인 완료",
     message_template: "캠페인이 완료되었습니다.",
     color: "blue",
+    has_campaign_link: true,
   },
   A_P3: {
     category: "A_P3",
     label: "캠페인 중지",
     message_template: "운영 정책 위반으로 인해 캠페인이 게시 중지되었습니다.",
     color: "red",
+    has_campaign_link: true,
   },
   A_P4: {
     category: "A_P4",
     label: "콘텐츠 등록",
     message_template: "리뷰어가 콘텐츠를 등록했습니다.",
     color: "blue",
+    has_campaign_link: true,
   },
   A_P5: {
     category: "A_P5",
     label: "콘텐츠 등록 기한 연장 요청",
     message_template: "리뷰어가 콘텐츠 등록 기한 연장을 요청했습니다.",
     color: "red",
+    has_campaign_link: true,
   },
   A_P6: {
     category: "A_P6",
-    label: "계정 정지",
+    label: "계정 일시 정지",
     message_template:
       "운영 정책 위반으로 인해 {정지기간}일 동안 캠페인을 등록할 수 없습니다.",
     color: "orange",
   },
   A_P7: {
     category: "A_P7",
-    label: "계정 차단",
-    message_template: "운영 정책 위반으로 인해 영구 차단되었습니다.",
+    label: "계정 이용 제한",
+    message_template: "운영 정책 위반으로 인해 이용 제한되었습니다.",
     color: "orange",
   },
 };
@@ -305,9 +310,9 @@ export const admin_notification_templates: Record<
   },
   A_A3: {
     category: "A_A3",
-    label: "차단 발생",
+    label: "이용 제한 발생",
     message_template:
-      "운영 정책 위반으로 차단된 계정이 {개수}건 발생했습니다. 차단 내역을 확인해 주세요.",
+      "운영 정책 위반으로 이용 제한된 계정이 {개수}건 발생했습니다. 이용 제한 내역을 확인해 주세요.",
     color: "red",
   },
   A_A4: {
@@ -522,26 +527,37 @@ export const mockPartnerNotifications: NotificationItem[] = [
     id: 1,
     category: "A_P1",
     time: "2025-09-01 18:35",
+    campaign_id: 1,
+    campaign_name: "[인천/서구] 맛집 캠페인",
   },
   {
     id: 2,
     category: "A_P2",
     time: "2025-09-01 17:20",
+    campaign_id: 2,
+    campaign_name:
+      "[쿠팡/바울리] 판도로 크리스마스 빵 이탈리아 케이크 디저트 500g, 1개",
   },
   {
     id: 3,
     category: "A_P3",
     time: "2025-09-01 16:15",
+    campaign_id: 3,
+    campaign_name: "[서울/강남구] 카페 리뷰 캠페인",
   },
   {
     id: 4,
     category: "A_P4",
     time: "2025-09-01 15:10",
+    campaign_id: 4,
+    campaign_name: "[부산/해운대구] 해변 맛집 캠페인",
   },
   {
     id: 5,
     category: "A_P5",
     time: "2025-09-01 14:05",
+    campaign_id: 5,
+    campaign_name: "[경기/성남시] 신상품 체험 캠페인",
   },
   {
     id: 6,

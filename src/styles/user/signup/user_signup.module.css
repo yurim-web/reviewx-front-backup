@@ -1,0 +1,131 @@
+/* ========================================
+   📝 유저 회원가입 페이지 스타일
+   ======================================== */
+
+/**
+ * 유저 회원가입 페이지 전용 CSS 모듈
+ *
+ * 📍 사용 위치 (사용 파일 목록):
+ * 
+ * 1️⃣ 페이지 컴포넌트:
+ *    - src/app/user/signup/page.tsx
+ *      → 사용 클래스: signup_page_container, signup_main, signup_form, submit_button
+ *
+ * 주요 스타일:
+ * - 회원가입 페이지 전체 레이아웃 (유저 전용)
+ *
+ * 💡 공통 스타일은 src/styles/common/signup/signup.module.css에 정의되어 있습니다.
+ *    이 파일은 유저 전용 스타일만 포함합니다.
+ */
+
+/* ========================================
+   1. 페이지 전체 컨테이너 (유저 전용)
+   ======================================== */
+
+.signup_page_container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding-top: 80px;
+  background-color: #ffffff;
+  min-height: 100vh;
+}
+
+/* ========================================
+   2. 메인 콘텐츠 영역 (유저 전용)
+   ======================================== */
+
+.signup_main {
+  background-color: #ffffff;
+  width: 100%;
+  min-height: calc(100vh - 150px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  box-sizing: border-box;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 80px 0px 40px;
+  flex: 1;
+}
+
+/* ========================================
+   3. 페이지 타이틀 래퍼
+   ======================================== */
+
+/* 모바일 뒤로가기 버튼 - PC에서 숨김 */
+.mobile_back_button {
+  display: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ========================================
+   4. 회원가입 폼 영역 (유저 전용)
+   ======================================== */
+
+.signup_form {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+}
+
+/* ========================================
+   5. 회원가입 버튼 (유저 전용 스타일 오버라이드)
+   ======================================== */
+
+.submit_button {
+  margin-top: auto; /* 유저 전용: 남는 세로 공간을 모두 차지해 하단 정렬 */
+}
+
+/* 📱 ================================================================================================
+
+모바일 반응형 스타일 (max-width: 768px)
+
+================================================================================================ 📱 */
+
+@media (max-width: 768px) {
+  /* 페이지 컨테이너 */
+  .signup_page_container {
+    /* 모바일에서는 PageTitle가 fixed라서 그 높이(약 64px)만큼 상단 여백을 줌 */
+    padding-top: 64px;
+  }
+
+  /* 모바일 뒤로가기 버튼 - 모바일에서 표시 */
+  .mobile_back_button {
+    display: flex;
+  }
+
+  /* 메인 영역 */
+  .signup_main {
+    /* PageTitle 높이를 제외한 영역을 꽉 채우도록 min-height 조정 */
+    min-height: calc(100vh - 64px);
+    padding: 32px 20px 24px;
+    max-width: 100%;
+  }
+
+  /* 회원가입 폼 */
+  .signup_form {
+    max-width: 100%;
+  }
+
+  /* 모바일: 회원가입 버튼 폼 맨 밑에 위치 (margin-top: auto) */
+  .submit_button {
+    margin-top: auto;
+  }
+}

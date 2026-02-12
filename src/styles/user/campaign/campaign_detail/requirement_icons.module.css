@@ -20,6 +20,7 @@
   justify-content: flex-start;
   padding-bottom: 24px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* 하단 구분선 */
+  width: 100%; /* 전체 너비 사용하여 border-bottom이 끝까지 표시되도록 */
 }
 
 /* 안내 사항 아이템 (키워드 삽입, 이미지 첨부 등) */
@@ -37,7 +38,17 @@
   height: 40px;
 }
 
-/* 안내 사항 텍스트 */
+/* 안내 사항 제목 (글자, 이미지, 동영상, 링크, 키워드/태그) */
+.requirement_label {
+  color: #444;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 14px; 
+  letter-spacing: -0.28px;
+}
+
+/* 안내 사항 상세 (1,500자 이상, 10장 이상 등) */
 .requirement_text {
   color: #444;
   text-align: center;
@@ -49,37 +60,49 @@
 
 /* ===== 반응형 스타일 ===== */
 
-/* ✅ 모바일 공통 — 0~739px */
-@media (max-width: 739px) {
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
   .requirement_container {
     display: flex;
-    flex-wrap: wrap; /* 모바일에서 줄바꿈 허용 */
-    gap: 16px; /* 아이콘 간 간격 줄임 */
+    flex-wrap: wrap;
+    gap: 0;
     padding-bottom: 20px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* 하단 구분선 */
-    justify-content: space-between; /* 아이콘들을 균등하게 분배 */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    justify-content: flex-start;
+    width: 100%; /* 전체 너비 사용하여 border-bottom이 끝까지 표시되도록 */
   }
 
   /* 안내 사항 아이템 (키워드 삽입, 이미지 첨부 등) */
   .requirement_item {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     align-items: center;
-    flex: 1; /* 각 아이템이 균등한 공간 차지 */
-    min-width: 0; /* flex 아이템이 축소될 수 있도록 */
+    width: 50%;
+    height: 116px;
+    padding: 16px 0;
   }
 
   /* 안내 사항 아이콘 */
   .requirement_icon {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
   }
 
-  /* 안내 사항 텍스트 */
-  .requirement_text {
-    font-size: 12px;
+  /* 안내 사항 제목 */
+  .requirement_label {
+    font-size: 14px;
     line-height: 14px;
+    font-weight: 600;
+  }
+
+  /* 안내 사항 상세 */
+  .requirement_text {
+    font-size: 14px;
+    line-height: 14px;
+    font-weight: 500;
     text-align: center;
     word-break: keep-all;
   }

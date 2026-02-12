@@ -16,8 +16,13 @@
  * - 휴대폰 번호 인증
  */
 
-import Header from '@/components/fragments/Header';
-import FindAccountPage from '@/components/common/FindAccountPage';
+import Header from "@/components/fragments/Header";
+import FindAccountPage from "@/components/common/find_account/page/FindAccountPage";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "ReviewX | 아이디·비밀번호 찾기",
+};
 
 /**
  * 사용자 아이디/비밀번호 찾기 페이지 컴포넌트

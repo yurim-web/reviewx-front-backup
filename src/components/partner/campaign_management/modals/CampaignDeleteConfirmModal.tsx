@@ -90,7 +90,7 @@ export default function CampaignDeleteConfirmModal({
     } else {
       // 기본 삭제 로직 (개발/테스트용)
       // TODO: 실제 캠페인 삭제 API 호출 로직 추가
-      console.log('캠페인 삭제:', campaignTitle, campaignId);
+      // console.log('캠페인 삭제:', campaignTitle, campaignId);
       alert('캠페인이 삭제되었습니다.');
     }
     onClose(); // 삭제 처리 후 모달 닫기

@@ -76,6 +76,7 @@ import {
  * - get_custom_header_class?: 특정 컬럼에 커스텀 클래스를 추가하는 함수 (선택사항)
  * - render_custom_cell?: 특정 컬럼에 커스텀 헤더 셀을 렌더링하는 함수 (선택사항, 예: 빈 셀)
  * - enable_checkbox?: 체크박스 표시 여부 (기본값: true)
+ * - disable_select_all?: 전체 선택 체크박스 비활성화 여부 (기본값: false, true일 경우 체크박스는 표시되지만 비활성화됨)
  * - container_style?: 헤더 컨테이너에 적용할 인라인 스타일 (선택사항, 예: gridTemplateColumns)
  * - use_header_row?: table_header_row 사용 여부 (기본값: true, false일 경우 헤더 셀을 직접 table_header에 배치)
  */
@@ -90,6 +91,7 @@ interface SortableTableHeaderProps {
   get_custom_header_class?: (column_key: string) => string;
   render_custom_cell?: (column: TableColumn) => ReactNode | null;
   enable_checkbox?: boolean;
+  disable_select_all?: boolean;
   container_style?: React.CSSProperties;
   use_header_row?: boolean;
 }
@@ -117,6 +119,7 @@ export default function SortableTableHeader({
   get_custom_header_class,
   render_custom_cell,
   enable_checkbox = true,
+  disable_select_all = false,
   container_style,
   use_header_row = true,
 }: SortableTableHeaderProps) {
@@ -134,6 +137,7 @@ export default function SortableTableHeader({
                 type="checkbox"
                 checked={is_all_selected}
                 onChange={handle_select_all}
+                disabled={disable_select_all}
                 className={styles.checkbox}
                 aria-label="전체 선택"
               />

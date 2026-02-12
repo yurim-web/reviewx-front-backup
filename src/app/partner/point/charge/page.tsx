@@ -12,37 +12,118 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import SubHeader from "@/components/fragments/SubHeader";
+import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
+import Toast from "@/components/common/toast/Toast";
+import BaseModal from "@/components/common/modal/BaseModal";
+import { parseFormattedAmount } from "@/utils/formatting/amount";
+import { validateAmount } from "@/utils/validation/amount";
 import styles from "@/styles/partner/point/charge.module.css";
 import customDropdownStyles from "@/styles/partner/campaign_create/custom_dropdown.module.css";
+import { useAuth } from "@/hooks/useAuth";
+import { getPartnerPointSummary } from "@/data/partner/point/pointData";
+import { addPaymentHistory } from "@/data/manager_sa/settlement/paymentHistoryData";
+
+/** 휴대폰 번호: 숫자만 11자리, 3-4-4 하이픈 자동 추가 */
+function formatPhone(value: string): string {
+  const digits = value.replace(/\D/g, "").slice(0, 11);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+}
+
+/** 사업자등록번호: 숫자만 10자리, 3-2-5 하이픈 자동 추가 */
+function formatBusinessNumber(value: string): string {
+  const digits = value.replace(/\D/g, "").slice(0, 10);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 5) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 5)}-${digits.slice(5)}`;
+}
 
 /**
  * 파트너 포인트 충전 페이지
  */
 export default function PartnerPointChargePage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [chargeAmount, setChargeAmount] = useState<string>("");
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [agreeTerms, setAgreeTerms] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<"bank" | "card">("bank");
   const [depositorName, setDepositorName] = useState<string>("");
-  const [issueInvoice, setIssueInvoice] = useState<boolean>(false);
+  // 영수증/계산서 발행 옵션: "none" (미발행), "cash_income" (현금영수증 소득공제), "cash_expense" (현금영수증 지출증빙), "tax_invoice" (세금계산서)
+  // 초기값: 현금영수증 (소득공제)로 설정
+  const [invoiceType, setInvoiceType] = useState<
+    "none" | "cash_income" | "cash_expense" | "tax_invoice"
+  >("cash_income");
   const [isBankAmountOpen, setIsBankAmountOpen] = useState<boolean>(false);
   const [isCardAmountOpen, setIsCardAmountOpen] = useState<boolean>(false);
+  const [isInvoiceDropdownOpen, setIsInvoiceDropdownOpen] =
+    useState<boolean>(false);
   const [showCopyToast, setShowCopyToast] = useState<boolean>(false);
+
+  // 현금영수증 (소득공제) 정보
+  const [cashReceiptIncome, setCashReceiptIncome] = useState({
+    name: "",
+    phone: "",
+  });
+
+  // 현금영수증 (지출증빙) 정보
+  const [cashReceiptExpense, setCashReceiptExpense] = useState({
+    company_name: "",
+    business_number: "",
+  });
+
+  // 카드 결제 실패 모달 상태
+  const [cardPaymentFailModal, setCardPaymentFailModal] = useState({
+    is_open: false,
+  });
+
+  // 카드 결제 성공 모달 상태
+  const [cardPaymentSuccessModal, setCardPaymentSuccessModal] = useState({
+    is_open: false,
+  });
+
+  // 무통장 입금 신청 모달 상태
+  const [bankDepositModal, setBankDepositModal] = useState({
+    is_open: false,
+  });
 
   // 드롭다운 ref - 외부 클릭 감지용
   const bankDropdownRef = useRef<HTMLDivElement>(null);
   const cardDropdownRef = useRef<HTMLDivElement>(null);
+  const invoiceDropdownRef = useRef<HTMLDivElement>(null);
 
-  // 파트너 정보 (실제로는 API에서 가져와야 함)
+  // invoiceType을 결제 내역 타입으로 변환
+  const getTaxInvoiceType = ():
+    | "미발행"
+    | "세금계산서"
+    | "현금영수증 (소득공제)"
+    | "현금영수증 (지출증빙)" => {
+    if (invoiceType === "none") return "미발행";
+    if (invoiceType === "tax_invoice") return "세금계산서";
+    if (invoiceType === "cash_income") return "현금영수증 (소득공제)";
+    if (invoiceType === "cash_expense") return "현금영수증 (지출증빙)";
+    return "미발행";
+  };
+
+  // 파트너 정보 - 로그인된 사용자 정보 사용
+  const [currentPoints, setCurrentPoints] = useState(0);
+
+  // 사용자 포인트 정보 로드
+  useEffect(() => {
+    if (user?.id) {
+      const summary = getPartnerPointSummary(user.id);
+      setCurrentPoints(summary.available_points);
+    }
+  }, [user]);
+
   const partnerInfo = {
-    availablePoints: "",
-    companyName: "주식회사 청명종합광고기획",
-    ownerName: "김민회",
-    businessNumber: "123-45-67890",
-    address: "경기 성남시 분당구 정자일로 95 NAVER (우) 13561",
+    availablePoints: currentPoints,
+    companyName: user?.business_name || "회사명 미등록",
+    ownerName: user?.name || "이름 미등록",
+    businessNumber: user?.business_number || "사업자번호 미등록",
+    address: "주소 미등록",
     bankAccount: "국민은행 659401-01-490957 (주)청명종합광고기획",
   };
 
@@ -56,18 +137,25 @@ export default function PartnerPointChargePage() {
     selectedAmount !== null
       ? selectedAmount
       : chargeAmount
-      ? Number(chargeAmount.replace(/,/g, ""))
-      : 0;
+        ? Number(chargeAmount.replace(/,/g, ""))
+        : 0;
 
   // 신청 후 포인트 계산: 현재 보유 포인트 + 충전 예정 포인트
-  const postPoints = partnerInfo.availablePoints + chargePoints;
+  const availablePoints =
+    typeof partnerInfo.availablePoints === "number"
+      ? partnerInfo.availablePoints
+      : Number(partnerInfo.availablePoints) || 0;
+  const postPoints = availablePoints + chargePoints;
 
-  // 유효성 검사 및 버튼 활성화 조건
+  // 카드 결제 성공 후 보유 포인트 (충전 완료된 포인트)
+  const successPostPoints = availablePoints + chargePoints;
+
   const isValidAmount = () => {
-    if (chargePoints === 0) return false;
-    if (chargePoints < MIN_AMOUNT) return false;
-    if (chargePoints > MAX_AMOUNT) return false;
-    return true;
+    const validation = validateAmount(chargePoints, {
+      minAmount: MIN_AMOUNT,
+      maxAmount: MAX_AMOUNT,
+    });
+    return validation.isValid;
   };
 
   // 무통장 입금 버튼 활성화 조건: 금액 + 입금자명 + 약관 동의
@@ -88,40 +176,128 @@ export default function PartnerPointChargePage() {
   const isButtonEnabled =
     activeTab === "bank" ? isBankButtonEnabled() : isCardButtonEnabled();
 
+  /**
+   * 카드 결제 처리 (실제 결제 API 호출 시뮬레이션)
+   *
+   * 설명:
+   * - 실제로는 결제 API를 호출하고 성공/실패에 따라 모달을 표시합니다.
+   * - 현재는 시뮬레이션으로 성공/실패를 랜덤하게 처리합니다.
+   */
+  const handleCardPayment = () => {
+    if (!user?.id) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+
+    // TODO: 실제 결제 API 호출
+    // 예시: const result = await paymentAPI.charge(chargePoints);
+    // 실제 연동 시: const isSuccess = result.success;
+
+    // 시뮬레이션: API 연동 전까지 항상 성공 처리
+    const isSuccess = true;
+
+    if (isSuccess) {
+      // 관리자 승인 후 포인트 적립 예정 → 파트너 보유포인트/충전 내역에는 반영 안 함
+      // 관리자 결제내역에 추가 (카드 결제 승인 시 '포인트 충전' 항목으로 생성)
+      addPaymentHistory(
+        user.id,
+        chargePoints,
+        "포인트 충전",
+        undefined,
+        getTaxInvoiceType(),
+      );
+
+      // 현재 포인트 업데이트 (모달 닫은 후에 업데이트되도록 하지 않음)
+      // const updatedSummary = getPartnerPointSummary(user.id);
+      // setCurrentPoints(updatedSummary.available_points);
+
+      // 결제 성공: 성공 모달 표시
+      setCardPaymentSuccessModal({ is_open: true });
+    } else {
+      // 결제 실패: 실패 모달 표시
+      setCardPaymentFailModal({ is_open: true });
+    }
+  };
+
+  /**
+   * 카드 결제 실패 모달에서 다시 시도 클릭
+   */
+  const handleCardPaymentRetry = () => {
+    setCardPaymentFailModal({ is_open: false });
+    // 다시 결제 시도
+    handleCardPayment();
+  };
+
+  /**
+   * 카드 결제 성공 모달에서 닫기 클릭
+   *
+   * 설명:
+   * - 이전 페이지(캠페인 등록 페이지)로 돌아갑니다.
+   * - localStorage에 저장된 이전 페이지 경로를 사용합니다.
+   */
+  const handleCardPaymentSuccessClose = () => {
+    setCardPaymentSuccessModal({ is_open: false });
+
+    // 포인트 업데이트 (모달 닫을 때)
+    if (user?.id) {
+      const updatedSummary = getPartnerPointSummary(user.id);
+      setCurrentPoints(updatedSummary.available_points);
+    }
+
+    // 이전 페이지로 돌아가기
+    router.back();
+  };
+
+  /**
+   * 무통장 입금 신청 처리
+   */
+  const handleBankDepositSubmit = () => {
+    if (!user?.id) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+
+    // 무통장 입금은 관리자 승인 후 포인트 적립 → 파트너 보유포인트/충전 내역에는 반영 안 함
+    // 관리자 결제내역에 추가
+    addPaymentHistory(
+      user.id,
+      chargePoints,
+      "무통장 입금",
+      depositorName,
+      getTaxInvoiceType(),
+    );
+
+    // 무통장 입금 신청 모달 표시
+    setBankDepositModal({ is_open: true });
+  };
+
+  /**
+   * 무통장 입금 신청 모달에서 닫기 클릭
+   */
+  const handleBankDepositModalClose = () => {
+    setBankDepositModal({ is_open: false });
+
+    // 포인트 업데이트 (모달 닫을 때)
+    if (user?.id) {
+      const updatedSummary = getPartnerPointSummary(user.id);
+      setCurrentPoints(updatedSummary.available_points);
+    }
+
+    // 이전 페이지로 돌아가기
+    router.back();
+  };
+
   // 충전 처리: 실제 결제 연동 시 결제 API를 호출한 뒤 성공/실패에 맞춰 흐름 제어가 필요합니다.
   const handleSubmit = () => {
     if (!isButtonEnabled) return;
 
-    // TODO: 실제 결제/입금 확인 요청 API 호출
-    const actionLabel = activeTab === "bank" ? "입금 확인 요청" : "결제";
-
-    // 현재 날짜를 YYYY-MM-DD 형식으로 생성
-    const today = new Date();
-    const formattedDate = `${today.getFullYear()}-${String(
-      today.getMonth() + 1
-    ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-
-    // 새로운 충전 내역 생성
-    const newHistory = {
-      id: `charge_${Date.now()}`, // 고유 ID 생성 (타임스탬프 사용)
-      type: "earned" as const, // 충전 타입
-      amount: chargePoints, // 충전 금액
-      description: "포인트 충전", // 내역 설명
-      date: formattedDate, // 오늘 날짜
-      status: activeTab === "bank" ? ("pending" as const) : ("earned" as const), // 무통장 입금은 "신청", 카드 결제는 "충전"
-      balance: 0, // 잔액은 all 페이지에서 계산됨
-    };
-
-    // localStorage에 새 충전 내역 저장 (all 페이지에서 불러와서 표시)
-    localStorage.setItem(
-      "partner_new_point_history",
-      JSON.stringify(newHistory)
-    );
-
-    alert(
-      `${actionLabel}이 완료되었습니다. (${chargePoints.toLocaleString()}원)`
-    );
-    router.push("/partner/point/all");
+    if (activeTab === "bank") {
+      // 무통장 입금 처리
+      handleBankDepositSubmit();
+    } else {
+      // 카드 결제 처리
+      handleCardPayment();
+    }
   };
 
   // 충전 금액 옵션 선택
@@ -134,19 +310,7 @@ export default function PartnerPointChargePage() {
     }
   };
 
-  // 메인 헤더 숨기기
-  useEffect(() => {
-    const header = document.querySelector("header");
-    if (header) {
-      header.style.display = "none";
-    }
-
-    return () => {
-      if (header) {
-        header.style.display = "block";
-      }
-    };
-  }, []);
+  // 메인 헤더 숨기기는 SubHeader 컴포넌트에서 처리
 
   // 드롭다운 외부 클릭 감지 - 드롭다운 닫기
   useEffect(() => {
@@ -168,6 +332,14 @@ export default function PartnerPointChargePage() {
       ) {
         setIsCardAmountOpen(false);
       }
+
+      // 영수증/계산서 발행 드롭다운 외부 클릭 시
+      if (
+        invoiceDropdownRef.current &&
+        !invoiceDropdownRef.current.contains(target)
+      ) {
+        setIsInvoiceDropdownOpen(false);
+      }
     };
 
     // 클릭 이벤트 리스너 등록
@@ -181,11 +353,15 @@ export default function PartnerPointChargePage() {
 
   return (
     <div className={styles.charge_page}>
-      {/* SubHeader */}
-      <SubHeader />
+      {/* 파트너 전용 서브헤더 */}
+      <PartnerSubHeader />
 
       {/* 메인 컨텐츠 */}
-      <main className={styles.main_content}>
+      <main
+        className={`${styles.main_content} ${
+          activeTab === "card" ? styles.main_content_with_fixed_button : ""
+        }`}
+      >
         <div className={styles.container}>
           {/* 제목 */}
           <PageTitle title="포인트 충전" />
@@ -227,13 +403,14 @@ export default function PartnerPointChargePage() {
                 <div className={styles.account_info_row}>
                   <div className={styles.account_info_box}>
                     <span className={styles.account_text}>
-                      {partnerInfo.bankAccount}
+                      국민은행 659401-01-490957
+                      <br className={styles.mobile_br} /> (주)청명종합광고기획
                     </span>
                     <button
                       className={styles.copy_button}
                       onClick={async () => {
                         await navigator.clipboard.writeText(
-                          partnerInfo.bankAccount
+                          partnerInfo.bankAccount,
                         );
                         setShowCopyToast(true);
                         setTimeout(() => setShowCopyToast(false), 2000);
@@ -353,26 +530,138 @@ export default function PartnerPointChargePage() {
                   />
                 </div>
 
-                {/* 계산서 발행 */}
+                {/* 영수증/계산서 발행 - 드롭다운 선택 */}
                 <div className={styles.form_section}>
-                  <span className={styles.section_label}>계산서 발행</span>
-                  <div className={styles.checkbox_row}>
-                    <div className={styles.checkbox_container}>
-                      <input
-                        type="checkbox"
-                        id="issueInvoice"
-                        checked={issueInvoice}
-                        onChange={(e) => setIssueInvoice(e.target.checked)}
+                  <label
+                    className={styles.section_label}
+                    htmlFor="invoice_type_select"
+                  >
+                    영수증/계산서 발행
+                  </label>
+                  <div
+                    className={customDropdownStyles.custom_dropdown}
+                    ref={invoiceDropdownRef}
+                  >
+                    <button
+                      id="invoice_type_select"
+                      type="button"
+                      className={customDropdownStyles.dropdown_button}
+                      aria-haspopup="listbox"
+                      aria-expanded={isInvoiceDropdownOpen}
+                      onClick={() => setIsInvoiceDropdownOpen((o) => !o)}
+                    >
+                      <span
+                        className={customDropdownStyles.dropdown_text}
+                        data-placeholder="옵션 선택"
+                      >
+                        {invoiceType === "none"
+                          ? "미발행"
+                          : invoiceType === "cash_income"
+                            ? "현금영수증 (소득공제)"
+                            : invoiceType === "cash_expense"
+                              ? "현금영수증 (지출증빙)"
+                              : "세금계산서"}
+                      </span>
+                      <img
+                        src="/images/icons/dropdown_arrow.svg"
+                        alt=""
+                        className={`${customDropdownStyles.dropdown_arrow} ${
+                          isInvoiceDropdownOpen
+                            ? customDropdownStyles.rotated
+                            : ""
+                        }`}
                       />
-                      <label htmlFor="issueInvoice">세금계산서 발행</label>
-                    </div>
+                    </button>
+                    {isInvoiceDropdownOpen && (
+                      <div
+                        className={customDropdownStyles.dropdown_options}
+                        role="listbox"
+                        aria-label="영수증/계산서 발행 옵션"
+                      >
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={invoiceType === "none"}
+                          className={customDropdownStyles.dropdown_option}
+                          onClick={() => {
+                            setInvoiceType("none");
+                            setIsInvoiceDropdownOpen(false);
+                          }}
+                        >
+                          미발행
+                        </button>
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={invoiceType === "cash_income"}
+                          className={customDropdownStyles.dropdown_option}
+                          onClick={() => {
+                            setInvoiceType("cash_income");
+                            setIsInvoiceDropdownOpen(false);
+                          }}
+                        >
+                          현금영수증 (소득공제)
+                        </button>
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={invoiceType === "cash_expense"}
+                          className={customDropdownStyles.dropdown_option}
+                          onClick={() => {
+                            setInvoiceType("cash_expense");
+                            setIsInvoiceDropdownOpen(false);
+                          }}
+                        >
+                          현금영수증 (지출증빙)
+                        </button>
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={invoiceType === "tax_invoice"}
+                          className={customDropdownStyles.dropdown_option}
+                          onClick={() => {
+                            setInvoiceType("tax_invoice");
+                            setIsInvoiceDropdownOpen(false);
+                          }}
+                        >
+                          세금계산서
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </article>
 
               <article className={styles.content_container}>
+                {/* 약관 동의 */}
+                <div className={styles.form_section}>
+                  <span className={styles.section_label}>
+                    결제 · 환불 및 이용약관 동의
+                  </span>
+
+                  <div
+                    className={`${styles.checkbox_row} ${styles.checkbox_row_agree}`}
+                  >
+                    <div className={styles.checkbox_container}>
+                      <input
+                        type="checkbox"
+                        id="agreeTerms"
+                        checked={agreeTerms}
+                        onChange={(e) => setAgreeTerms(e.target.checked)}
+                      />
+                      <label htmlFor="agreeTerms">
+                        구매 조건 확인 및 결제 진행에 동의합니다.
+                      </label>
+                    </div>
+
+                    <button type="button" className={styles.terms_button}>
+                      약관 보기
+                    </button>
+                  </div>
+                </div>
+
                 {/* 사업자 정보 (세금계산서 발행 선택 시에만 표시) */}
-                {issueInvoice && (
+                {invoiceType === "tax_invoice" && (
                   <>
                     <h3 className={styles.content_title}>사업자 정보</h3>
                     <div className={styles.form_section}>
@@ -405,32 +694,110 @@ export default function PartnerPointChargePage() {
                   </>
                 )}
 
-                {/* 약관 동의 */}
-                <div className={styles.form_section}>
-                  <span className={styles.section_label}>
-                    결제 · 환불 및 이용약관 동의
-                  </span>
-
-                  <div
-                    className={`${styles.checkbox_row} ${styles.checkbox_row_agree}`}
-                  >
-                    <div className={styles.checkbox_container}>
-                      <input
-                        type="checkbox"
-                        id="agreeTerms"
-                        checked={agreeTerms}
-                        onChange={(e) => setAgreeTerms(e.target.checked)}
-                      />
-                      <label htmlFor="agreeTerms">
-                        구매 조건 확인 및 결제 진행에 동의합니다.
+                {/* 현금영수증 (소득공제) 정보 입력 섹션 */}
+                {invoiceType === "cash_income" && (
+                  <>
+                    <h3 className={styles.content_title}>기본 정보</h3>
+                    <div className={styles.form_section}>
+                      <label
+                        className={styles.section_label}
+                        htmlFor="cash_receipt_name_input"
+                      >
+                        이름
                       </label>
+                      <input
+                        id="cash_receipt_name_input"
+                        type="text"
+                        className={styles.input_box}
+                        placeholder="이름 입력"
+                        value={cashReceiptIncome.name}
+                        onChange={(e) =>
+                          setCashReceiptIncome((prev) => ({
+                            ...prev,
+                            name: e.target.value,
+                          }))
+                        }
+                      />
                     </div>
+                    <div className={styles.form_section}>
+                      <label
+                        className={styles.section_label}
+                        htmlFor="cash_receipt_phone_input"
+                      >
+                        휴대폰 번호
+                      </label>
+                      <input
+                        id="cash_receipt_phone_input"
+                        type="tel"
+                        inputMode="numeric"
+                        autoComplete="tel"
+                        className={styles.input_box}
+                        placeholder="- 제외 입력"
+                        value={cashReceiptIncome.phone}
+                        onChange={(e) => {
+                          const formatted = formatPhone(e.target.value);
+                          setCashReceiptIncome((prev) => ({
+                            ...prev,
+                            phone: formatted,
+                          }));
+                        }}
+                        maxLength={13}
+                      />
+                    </div>
+                  </>
+                )}
 
-                    <button type="button" className={styles.terms_button}>
-                      약관 보기
-                    </button>
-                  </div>
-                </div>
+                {/* 현금영수증 (지출증빙) 정보 입력 섹션 */}
+                {invoiceType === "cash_expense" && (
+                  <>
+                    <h3 className={styles.content_title}>기본 정보</h3>
+                    <div className={styles.form_section}>
+                      <label
+                        className={styles.section_label}
+                        htmlFor="cash_receipt_company_input"
+                      >
+                        상호명
+                      </label>
+                      <input
+                        id="cash_receipt_company_input"
+                        type="text"
+                        className={styles.input_box}
+                        placeholder="상호명 입력"
+                        value={cashReceiptExpense.company_name}
+                        onChange={(e) =>
+                          setCashReceiptExpense((prev) => ({
+                            ...prev,
+                            company_name: e.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+                    <div className={styles.form_section}>
+                      <label
+                        className={styles.section_label}
+                        htmlFor="cash_receipt_business_input"
+                      >
+                        사업자등록번호
+                      </label>
+                      <input
+                        id="cash_receipt_business_input"
+                        type="text"
+                        inputMode="numeric"
+                        className={styles.input_box}
+                        placeholder="- 제외 입력"
+                        value={cashReceiptExpense.business_number}
+                        onChange={(e) => {
+                          const formatted = formatBusinessNumber(e.target.value);
+                          setCashReceiptExpense((prev) => ({
+                            ...prev,
+                            business_number: formatted,
+                          }));
+                        }}
+                        maxLength={12}
+                      />
+                    </div>
+                  </>
+                )}
 
                 {/* 입금 안내 사항 */}
                 <div
@@ -570,8 +937,14 @@ export default function PartnerPointChargePage() {
             </section>
           )}
 
-          {/* 페이지 하단 단일 버튼 (기획서와 동일하게 고정 아님) */}
-          <div className={styles.submit_button_section}>
+          {/* 페이지 하단 단일 버튼
+              - 무통장 입금: 일반 흐름 (고정 X)
+              - 신용카드 결제: 화면 하단 고정 (PC/모바일) */}
+          <div
+            className={`${styles.submit_button_section} ${
+              activeTab === "card" ? styles.submit_button_fixed : ""
+            }`}
+          >
             <button
               className={`${styles.submit_button} ${
                 !isButtonEnabled ? styles.disabled : ""
@@ -580,19 +953,44 @@ export default function PartnerPointChargePage() {
               disabled={!isButtonEnabled}
               aria-disabled={!isButtonEnabled}
             >
-              {activeTab === "bank" ? "입금 확인 요청하기" : "결제하기"}
+              {activeTab === "bank" ? "입금 확인 요청" : "결제"}
             </button>
           </div>
         </div>
       </main>
 
       {/* 복사 완료 토스트 메시지 */}
-      {showCopyToast && (
-        <div className={styles.copy_toast}>
-          <div className={styles.copy_toast_icon}></div>
-          <span className={styles.copy_toast_text}>복사되었습니다.</span>
-        </div>
-      )}
+      <Toast
+        message="복사되었습니다."
+        isOpen={showCopyToast}
+        onClose={() => setShowCopyToast(false)}
+        duration={2000}
+      />
+
+      {/* 카드 결제 실패 모달 */}
+      <BaseModal
+        is_open={cardPaymentFailModal.is_open}
+        on_close={() => setCardPaymentFailModal({ is_open: false })}
+        message="결제가 실패했습니다.<br>다시 시도하시겠습니까?"
+        buttons={["취소", "확인"]}
+        on_confirm={handleCardPaymentRetry}
+      />
+
+      {/* 카드 결제 성공 모달 */}
+      <BaseModal
+        is_open={cardPaymentSuccessModal.is_open}
+        on_close={handleCardPaymentSuccessClose}
+        message={`결제가 완료되었습니다.<br><span style="color: #2DC469;">(보유 포인트: ${successPostPoints.toLocaleString()} P)</span><br>닫기를 누르면 이전 페이지로 돌아갑니다.`}
+        buttons={["닫기"]}
+      />
+
+      {/* 무통장 입금 신청 모달 */}
+      <BaseModal
+        is_open={bankDepositModal.is_open}
+        on_close={handleBankDepositModalClose}
+        message="입금 확인 요청이 등록되었습니다."
+        buttons={["닫기"]}
+      />
     </div>
   );
 }

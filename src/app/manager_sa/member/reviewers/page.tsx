@@ -24,26 +24,26 @@
  * @returns 리뷰어 목록 페이지 JSX
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import styles from '@/styles/manager_ga/member/reviewers/page.module.css';
-import ManagerPageTitle from '@/components/manager/common/fragments/ManagerPageTitle';
-import ReviewerStatsSection from '@/components/manager/common/member/reviewers/ReviewerStatsSection';
-import ReviewerFilterSection from '@/components/manager/common/member/reviewers/ReviewerFilterSection';
-import ReviewerTable from '@/components/manager/common/member/reviewers/ReviewerTable';
-import type { Channel } from '@/data/manager/common/filterOptions';
+import { useState, useRef } from "react";
+import styles from "@/styles/manager/common/manager_common_page.module.css";
+import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
+import ReviewerStatsSection from "@/components/manager/common/member/reviewers/ReviewerStatsSection";
+import ReviewerFilterSection from "@/components/manager/common/member/reviewers/ReviewerFilterSection";
+import ReviewerTable from "@/components/manager/common/member/reviewers/ReviewerTable";
+import type { Channel } from "@/data/manager/common/filterOptions";
 import type {
   ReviewerStatus,
   ReviewerStatusType,
-} from '@/data/manager_ga/common/filterOptions';
-import type { ReviewerGrade } from '@/components/manager/common/member/reviewers/filter/GradeFilterModal';
+} from "@/data/manager_ga/common/filterOptions";
+import type { ReviewerGrade } from "@/components/manager/common/member/reviewers/filter/GradeFilterModal";
 
 export default function ReviewersPage() {
   // 검색어 상태 관리
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
   // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
-  const [search_query, set_search_query] = useState<string>('');
+  const [search_query, set_search_query] = useState<string>("");
 
   // 필터 상태 관리
   // 각 필터의 선택된 값들을 배열로 관리합니다
@@ -52,9 +52,21 @@ export default function ReviewersPage() {
   const [selected_types, set_selected_types] = useState<ReviewerStatusType[]>(
     []
   );
-  const [selected_statuses, set_selected_statuses] = useState<
-    ReviewerStatus[]
-  >([]);
+  const [selected_statuses, set_selected_statuses] = useState<ReviewerStatus[]>(
+    []
+  );
+
+  // 테이블 참조 (모달 열기 함수 호출용)
+  // useRef: React Hook으로 DOM 요소나 컴포넌트 인스턴스에 접근할 수 있게 해줍니다
+  // <{ open_restriction_modal: () => void }>: ref가 가리킬 컴포넌트의 타입을 지정합니다
+  const table_ref = useRef<{ open_restriction_modal: () => void }>(null);
+
+  // 이용 제한 버튼 클릭 핸들러
+  // 필터 섹션의 "이용 제한" 버튼 클릭 시 테이블의 모달을 엽니다
+  const handle_restriction_click = () => {
+    // ?. (옵셔널 체이닝): ref.current가 null이 아닐 때만 함수를 호출합니다
+    table_ref.current?.open_restriction_modal();
+  };
 
   return (
     <div className={styles.container}>
@@ -77,10 +89,12 @@ export default function ReviewersPage() {
           on_types_change={set_selected_types}
           selected_statuses={selected_statuses}
           on_statuses_change={set_selected_statuses}
+          on_restriction_click={handle_restriction_click}
         />
 
         {/* 리뷰어 목록 테이블 */}
         <ReviewerTable
+          ref={table_ref}
           search_query={search_query}
           selected_channels={selected_channels}
           selected_grades={selected_grades}

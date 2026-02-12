@@ -6,7 +6,7 @@
 
 import type { Meta, StoryObj } from "@storybook/react";
 import MemberDetailLayout from "./MemberDetailLayout";
-import styles from "@/styles/manager_ga/member/member_detail/member_detail_layout.module.css";
+import styles from "@/styles/manager/common/member/member_detail/member_detail_layout.module.css";
 
 const meta: Meta<typeof MemberDetailLayout> = {
   title: "Manager/Common/Member/MemberDetail/MemberDetailLayout",
@@ -124,7 +124,3 @@ export const Error: Story = {
  *    - 리뷰어와 파트너 디테일 페이지에서 공통으로 사용됩니다
  *    - children을 통해 메인 콘텐츠를 전달받습니다
  */
-
-
-
-

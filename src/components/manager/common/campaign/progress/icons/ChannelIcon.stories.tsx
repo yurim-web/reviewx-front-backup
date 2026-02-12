@@ -9,7 +9,7 @@ import React from "react";
 import ChannelIcon, { type Channel } from "./ChannelIcon";
 
 // CSS 모듈 import
-import channelIconStylesModule from "@/styles/manager_ga/campaign/progress/channel_icon.module.css";
+import channelIconStylesModule from "@/styles/manager/common/campaign/progress/channel_icon.module.css";
 
 // CSS 모듈 객체를 타입 단언하여 사용
 const channelIconStyles = (channelIconStylesModule || {

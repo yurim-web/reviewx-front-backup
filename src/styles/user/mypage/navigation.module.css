@@ -78,7 +78,7 @@
   font-weight: 500;
   line-height: 18px;
   letter-spacing: -0.36px;
-  color: #848484;
+  color: #444;
   cursor: pointer;
   background: none;
   border: none;
@@ -87,7 +87,7 @@
 }
 
 .sub_tab_item.active {
-  color: #444;
+  color: #ff5694;
   font-weight: 700;
 }
 
@@ -97,14 +97,28 @@
   left: 40px;
   width: 46px;
   height: 2px;
-  background: #444;
+  background: #ff5694;
 }
 
 .sub_tab_indicator_channel {
   position: absolute;
   bottom: -1px;
-  left: 104px; /* "프로필" 텍스트 너비 + gap(24px) */
+  left: 110px; /* "프로필" 텍스트 너비 + gap(24px) */
   width: 43px;
   height: 2px;
-  background: #444;
+  background: #ff5694;
+}
+
+@media (max-width: 768px) {
+  .top_tab_container {
+    top: 64px;
+  }
+
+  .sub_tab_container {
+    top: 122px;
+    padding: 16px 20px;
+    height: 50px;
+  }
+  .sub_tab_indicator{left: 20px;}
+    .sub_tab_indicator_channel{left: 85px;}
 }

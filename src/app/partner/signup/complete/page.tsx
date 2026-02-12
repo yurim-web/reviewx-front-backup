@@ -18,6 +18,7 @@
 
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Header from '@/components/fragments/Header';
 import styles from '@/styles/user/signup/complete.module.css';
@@ -30,6 +31,14 @@ import styles from '@/styles/user/signup/complete.module.css';
 export default function PartnerSignupCompletePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  // 이 페이지에서만 헤더 보더 색상 흰색으로 설정
+  useEffect(() => {
+    document.body.classList.add('signup_complete_page');
+    return () => {
+      document.body.classList.remove('signup_complete_page');
+    };
+  }, []);
 
   // URL 파라미터에서 이름 가져오기 (없으면 기본값 사용)
   const name = searchParams.get('name') || '파트너';
@@ -57,21 +66,33 @@ export default function PartnerSignupCompletePage() {
 
       {/* 메인 콘텐츠 영역 */}
       <main className={styles.complete_main}>
-        {/* 로고 섹션 */}
-        <div className={styles.logo_section}>
-          <h2 className={styles.logo_text}>VX.</h2>
-        </div>
+        {/* 글 부분 (로고 + 메시지) - 화면 상하 중앙 배치 */}
+        <div className={styles.content_section}>
+          {/* 로고 섹션 */}
+          <div className={styles.logo_section}>
+            <h2 className={styles.logo_text}>VX.</h2>
+          </div>
 
-        {/* 완료 메시지 섹션 */}
-        <div className={styles.message_section}>
+          {/* 완료 메시지 섹션 */}
+          <div className={styles.message_section}>
           <h1 className={styles.welcome_title}>
-            {name}님,
-            <br />
-            리뷰엑스의 파트너가 되신 것을 환영합니다.
+            {name !== '파트너' ? (
+              <>
+                <span className={styles.nickname_text}>{name}</span>
+                <span className={styles.nickname_honorific}>님,</span>
+                <br className={styles.desktop_br} />
+                리뷰엑스의 파트너가<br className={styles.mobile_br} /> 되신 것을 환영합니다.
+              </>
+            ) : (
+              <>
+                리뷰엑스의 파트너가<br className={styles.mobile_br} /> 되신 것을 환영합니다.
+              </>
+            )}
           </h1>
           <p className={styles.welcome_message}>
-            지금 바로 리뷰엑스의 다양한 서비스를 이용해 보세요! 🔥🙌
+            지금 바로 리뷰엑스의<br className={styles.mobile_br} /> 다양한 서비스를 이용해 보세요! 🔥🙌
           </p>
+        </div>
         </div>
 
         {/* 버튼 섹션 */}
@@ -81,14 +102,14 @@ export default function PartnerSignupCompletePage() {
             className={styles.campaign_button}
             onClick={handleGoToCampaigns}
           >
-            캠페인 보러 가기
+            캠페인 등록 가이드 보기
           </button>
           <button
             type="button"
             className={styles.login_button}
             onClick={handleGoToLogin}
           >
-            로그인하기
+            로그인
           </button>
         </div>
       </main>

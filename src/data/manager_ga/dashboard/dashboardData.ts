@@ -188,22 +188,22 @@ export interface ChannelMemberStats {
 // - 블로그, 인스타그램, 클립, 유튜브 가입 회원 수와 비율을 표시
 export const channelMemberStats: ChannelMemberStats = {
   blog: {
-    label: '블로그 가입',
+    label: '블로그 등록',
     value: '12,589명',
     percentage: '(50%)',
   },
   instagram: {
-    label: '인스타그램 가입',
+    label: '인스타그램 등록',
     value: '10,124명',
     percentage: '(25%)',
   },
   clip: {
-    label: '클립 가입',
+    label: '클립 등록',
     value: '8,869명',
     percentage: '(20%)',
   },
   youtube: {
-    label: '유튜브 가입',
+    label: '유튜브 등록',
     value: '569명',
     percentage: '(5%)',
   },

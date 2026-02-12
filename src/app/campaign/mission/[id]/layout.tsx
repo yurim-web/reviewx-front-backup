@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { missionCampaigns } from "@/data/user/mission/missionCampaigns";
+import { missionCampaigns } from "@/data/campaign/mission/missionCampaigns";
+import CampaignLayoutScript from "@/components/campaign/CampaignLayoutScript";
 
 // 동적 메타데이터 생성
 export async function generateMetadata({
@@ -28,7 +29,12 @@ export default function MissionDetailLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <>
+      <CampaignLayoutScript />
+      {children}
+    </>
+  );
 }
 
 

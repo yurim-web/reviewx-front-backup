@@ -18,6 +18,11 @@
   padding-bottom: 80px;
 }
 
+/* ✅ 하단 고정 결제 버튼이 있을 때 여유 공간 확보용 (카드 결제 탭 전용) */
+.main_content_with_fixed_button {
+  padding-bottom: 120px;
+}
+
 /* ✅ 컨테이너 - page.tsx의 최상위 div */
 .container {
   margin: 0 auto;
@@ -70,8 +75,8 @@
 
 /* ✅ 활성화된 탭 버튼 스타일 (page.tsx 118, 126번째 줄에서 tab_button에 추가) */
 .tab_active {
-  border-color: #444444;
-  color: #444444;
+  border-color: #ff5694;
+  color: #ff5694;
 }
 
 /* ✅ 무통장 입금 전체 섹션 (page.tsx 135번째 줄 <section>) */
@@ -172,11 +177,18 @@
   padding-bottom: 24px;
 }
 
+/* ✅ 계좌 정보 로우 - 계좌 정보 박스들을 감싸는 컨테이너 */
+.account_info_row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 /* ✅ 계좌 정보 박스 - 회색 배경의 계좌번호 표시 영역 (page.tsx 143번째 줄) */
 .account_info_box {
   padding: 20px;
   border-radius: 8px;
-  background: #f9f9f9;
+  background: #ff56940d;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -191,15 +203,20 @@
   letter-spacing: -0.32px;
 }
 
+/* ✅ 모바일 전용 줄바꿈 - PC에서는 숨김 */
+.mobile_br {
+  display: none;
+}
+
 /* ✅ 복사 버튼 - 계좌번호 옆 "복사" 버튼 (page.tsx 145번째 줄) */
 .copy_button {
   border-radius: 4px;
-  background: #d9d9d9;
+  background: #ff5694;
   padding: 4px 8px;
   cursor: pointer;
 
   /* 버튼 속 글자 */
-  color: #848484;
+  color: #ffffff;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
@@ -243,11 +260,24 @@
   padding: 40px 40px 0px 40px;
 }
 
+/* ✅ 하단 고정 신청 버튼 (카드 결제 탭 전용) */
+.submit_button_fixed {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 40px; /* 화면 하단에서 40px 위에 위치 */
+  width: 100%;
+  max-width: 1000px;
+  padding: 0 40px;
+  box-sizing: border-box;
+  z-index: 20;
+}
+
 /* ✅ 신청 버튼 - "입금 확인 요청하기" 또는 "결제하기" 버튼 (page.tsx 390번째 줄) */
 .submit_button {
   width: 100%;
   height: 56px;
-  background-color: #555555;
+  background-color: #ff5694;
   border-radius: 8px;
   border: none;
   cursor: pointer;
@@ -255,7 +285,7 @@
   font-weight: 500;
   line-height: 16px;
   letter-spacing: -0.32px;
-  color: white;
+  color: #ffffff;
 }
 
 /* ✅ 비활성화된 신청 버튼 - 금액 미입력 또는 약관 미동의 시 */
@@ -290,7 +320,7 @@
   width: 100%;
   border-radius: 8px;
   border: 1px solid #d9d9d9;
-  padding: 18px 20px;
+  padding: 20px;
 
   display: inline-flex;
   justify-content: space-between;
@@ -341,9 +371,16 @@
 
 .checkbox_row_agree {
   border: none;
-  background: #f9f9f9;
+  background: #ff56940d;
 }
-
+/* 체크박스 라벨 텍스트 */
+.checkbox_row label {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 22px;
+  letter-spacing: -0.32px;
+  color: #444;
+}
 /* ✅ 약관 보기 버튼 - "약관 보기" 버튼 (page.tsx 286, 382번째 줄) */
 .terms_button {
   display: inline-flex;
@@ -351,11 +388,11 @@
   justify-content: center;
   align-items: center;
   border-radius: 4px;
-  background: #d9d9d9;
+  background: #ff5694;
   border: none;
   cursor: pointer;
   /* 버튼 속 글자 스타일 */
-  color: #848484;
+  color: #ffffff;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
@@ -367,85 +404,183 @@
 }
 
 /* ============================================
-   토스트 메시지 (복사 완료 알림)
+   모바일 반응형 스타일
    ============================================ */
 
-/* ✅ 토스트 - "복사되었습니다" 메시지 박스 */
-.copy_toast {
-  position: fixed;
-  bottom: 100px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 9999;
-
-  /* 토스트 박스 스타일 */
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px 24px;
-  border-radius: 100px;
-  background-color: #333333;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-
-  /* 페이드 인 애니메이션 */
-  animation: toastFadeIn 0.3s ease-out forwards;
-}
-
-/* ✅ 토스트 체크마크 아이콘 - 초록색 원과 체크 */
-.copy_toast_icon {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 2px solid #4caf50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.copy_toast_icon::after {
-  content: "✓";
-  color: #4caf50;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1;
-}
-
-/* ✅ 토스트 텍스트 - "복사되었습니다" */
-.copy_toast_text {
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 16px;
-  letter-spacing: -0.32px;
-  white-space: nowrap;
-}
-
-/* ✅ 토스트 페이드 인 애니메이션 */
-@keyframes toastFadeIn {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(10px);
+@media (max-width: 768px) {
+  /* 메인 컨텐츠 영역 */
+  .main_content {
+    padding-bottom: 24px;
   }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-}
 
-/* ✅ 토스트 페이드 아웃 애니메이션 */
-@keyframes toastFadeOut {
-  from {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
+  /* 컨테이너 */
+  .container {
+    padding-top: 60px;
   }
-  to {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-10px);
-  }
-}
 
-/* ✅ 토스트 숨김 상태 */
-.copy_toast.hidden {
-  animation: toastFadeOut 0.3s ease-out forwards;
+  /* 섹션 제목 */
+  .content_title {
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  /* ============================================
+     결제 방식 탭 영역 (모바일)
+     ============================================ */
+
+  /* 탭 섹션 - 모바일에서는 underline 스타일 적용 */
+  .tab_section {
+    gap: 0;
+    padding: 24px 0px 0 0px;
+    border-bottom: 1px solid #d9d9d9;
+  }
+
+  /* 개별 탭 버튼 - 모바일에서는 underline 스타일로 변경 */
+  .tab_button {
+    flex: 1;
+    border: none;
+    border-radius: 0;
+    padding: 0 0 24px 0;
+    background: transparent;
+    position: relative;
+
+    color: #848484;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 18px;
+    word-wrap: break-word;
+  }
+
+  /* 활성화된 탭 버튼 - 모바일에서는 하단 underline 표시 */
+  .tab_active {
+    color: #ff5694;
+    border: none;
+    font-weight: 600;
+  }
+
+  /* 활성화된 탭에 underline 추가 */
+  .tab_active::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #ff5694;
+  }
+
+  /* 무통장 입금 전체 섹션 */
+  .bank_section {
+    padding: 32px 20px 40px 20px;
+  }
+
+  /* ============================================
+     입금계좌정보 영역 (모바일)
+     ============================================ */
+
+  /* 계좌 정보 로우 */
+  .account_info_row {
+    gap: 8px;
+  }
+
+  /* 계좌 정보 박스 */
+  .account_info_box {
+    padding: 16px;
+    border-radius: 6px;
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  /* 계좌 정보 텍스트 */
+  .account_text {
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: -0.32px;
+    flex: 1;
+  }
+
+  /* 모바일에서 줄바꿈 활성화 */
+  .mobile_br {
+    display: block;
+  }
+
+  /* 복사 버튼 */
+  .copy_button {
+    padding: 4px 8px;
+  }
+
+  /* ============================================
+     충전 신청 버튼 영역 (모바일)
+     ============================================ */
+
+  /* 신청 버튼 섹션 (기본: 고정 아님) */
+  .submit_button_section {
+    padding: 0px 20px 0px 20px;
+  }
+
+  /* 카드 결제 탭에서만 하단 고정되는 버튼 래퍼 */
+  .submit_button_fixed {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 40px; /* 세로 화면 끝에서 40px 위 */
+    width: 100%;
+    max-width: 768px;
+    padding: 0 20px;
+    box-sizing: border-box;
+    z-index: 20;
+  }
+
+  /* 신청 버튼 */
+  .submit_button {
+    height: 52px;
+    border-radius: 6px;
+    font-size: 15px;
+    line-height: 15px;
+    letter-spacing: -0.3px;
+  }
+
+  /* ============================================
+     약관 동의 영역 (모바일)
+     ============================================ */
+
+  /* 체크박스 로우 */
+  .checkbox_row {
+    border-radius: 6px;
+    padding: 16px 16px;
+    gap: 12px;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+  }
+
+  .checkbox_container {
+    align-items: flex-start;
+    flex: 1;
+    min-width: 0;
+    gap: 12px;
+  }
+
+  /* 체크박스 자체 - 모바일에서 텍스트와 정렬 */
+  .checkbox_row input[type="checkbox"] {
+    flex-shrink: 0;
+    margin-top: 1px; /* 텍스트 첫 줄과 정확히 맞추기 위한 미세 조정 */
+  }
+
+  /* 체크박스 라벨 - 모바일에서 텍스트 줄바꿈 허용 */
+  .checkbox_row label {
+    flex: 1;
+    min-width: 0;
+    word-break: keep-all;
+  }
+
+  /* 약관 보기 버튼 */
+  .terms_button {
+    padding: 4px 8px;
+    border-radius: 4px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
 }

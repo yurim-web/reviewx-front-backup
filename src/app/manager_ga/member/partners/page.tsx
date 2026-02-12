@@ -26,8 +26,8 @@
 
 "use client";
 
-import { useState } from "react";
-import styles from "@/styles/manager_ga/member/partners/page.module.css";
+import { useState, useRef } from "react";
+import styles from "@/styles/manager/common/manager_common_page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import PartnerStatsSection from "@/components/manager/common/member/partners/PartnerStatsSection";
 import PartnerFilterSection from "@/components/manager/common/member/partners/PartnerFilterSection";
@@ -56,6 +56,15 @@ export default function PartnersPage() {
     []
   );
 
+  // 테이블 참조 (모달 열기 함수 호출용)
+  const table_ref = useRef<{ open_restriction_modal: () => void }>(null);
+
+  // 이용 제한 버튼 클릭 핸들러
+  // 필터 섹션의 "이용 제한" 버튼 클릭 시 테이블의 모달을 엽니다
+  const handle_restriction_click = () => {
+    table_ref.current?.open_restriction_modal();
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.main_content}>
@@ -77,10 +86,12 @@ export default function PartnersPage() {
           on_types_change={set_selected_types}
           selected_statuses={selected_statuses}
           on_statuses_change={set_selected_statuses}
+          on_restriction_click={handle_restriction_click}
         />
 
         {/* 파트너 목록 테이블 */}
         <PartnerTable
+          ref={table_ref}
           search_query={search_query}
           selected_channels={selected_channels}
           selected_divisions={selected_divisions}

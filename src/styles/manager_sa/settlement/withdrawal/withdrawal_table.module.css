@@ -75,15 +75,14 @@
   background-color: #f9f9f9;
 }
 
-.table_row:last-child {
-}
-
 /* 테이블 셀 공통 스타일 (CommonTable에서 사용) */
 .table_cell {
   display: flex;
   align-items: center;
   padding: 20px;
   box-sizing: border-box;
+  min-width: 0;
+  overflow: hidden;
 }
 
 /* 테이블 헤더 셀 공통 스타일 (CommonTable에서 사용) */
@@ -111,6 +110,8 @@
   align-items: center;
   padding: 20px;
   box-sizing: border-box;
+  min-width: 0;
+  flex: 1 1 0;
 }
 
 /* 체크박스 */
@@ -170,6 +171,11 @@
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+  display: block;
 }
 
 /* 셀 텍스트 - 보조 (회색) */
@@ -179,98 +185,19 @@
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+  display: block;
 }
 
 /* 출금 포인트 컨테이너 (금액과 잔여 금액을 세로로 배치) */
 .amount_container {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
   align-items: flex-start;
-}
-
-/* 상태 태그 */
-.status_tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: -0.28px;
-  min-width: 40px;
-  height: 22px;
-}
-
-/* ========================================
-   출금 처리 상태 태그 스타일 (PayoutStatusTag용)
-   ======================================== */
-
-/**
- * 참고: 공통 태그 스타일은 @/styles/common/tags.module.css를 참조하세요.
- * 
- * 사용 컴포넌트:
- * - PayoutStatusTag (출금 처리 상태 태그)
- */
-
-/* 신청 태그 (PayoutStatusTag용) */
-.status_tag_request {
-  background-color: #f1f1f1;
-  color: #666666;
-}
-
-/* 긴급 태그 (PayoutStatusTag용) */
-.status_tag_urgent {
-  background-color: #ff2626;
-  color: white;
-}
-
-/* 완료 태그 (PayoutStatusTag용) */
-.status_tag_completed {
-  background-color: rgba(45, 196, 105, 0.1);
-  color: #2dc469;
-}
-
-/* 반려 태그 (PayoutStatusTag용) */
-.status_tag_rejected {
-  background-color: rgba(255, 38, 38, 0.05);
-  color: #ff2626;
-}
-
-/* ========================================
-   태그 스타일 (공통 태그 컴포넌트용)
-   ======================================== */
-
-/**
- * 참고: 공통 태그 스타일은 @/styles/common/tags.module.css를 참조하세요.
- * 
- * 사용 컴포넌트:
- * - MemberStatusTag (회원 상태 태그)
- */
-
-/* 정상 상태 태그 (MemberStatusTag용) */
-.status_tag_normal {
-  background-color: rgba(43, 127, 255, 0.1);
-  color: #2b7fff;
-}
-
-/* 기존 호환성을 위한 별칭 (더 이상 사용하지 않음) */
-.normal_tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 8px;
-  border-radius: 8px;
-  background-color: rgba(43, 127, 255, 0.1);
-  color: #2b7fff;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: -0.28px;
-  min-width: 40px;
-  height: 22px;
 }
 
 /* 테이블 바디 */

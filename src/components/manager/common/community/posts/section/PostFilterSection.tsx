@@ -26,16 +26,19 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import styles from "@/styles/manager_ga/community/posts/post_filter_section.module.css";
 import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
 import DateFilterButton from "@/components/manager/ga/common/filter/DateFilterButton";
+import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
-import type { PostDivision } from "@/data/manager_ga/community/postsData";
-import DivisionFilterModal from "@/components/manager/common/community/posts/filter/DivisionFilterModal";
+import type { PostDivision, PostTarget } from "@/data/manager_ga/community/postsData";
+import DivisionFilterDropdown from "@/components/manager/common/community/posts/filter/DivisionFilterDropdown";
+import TargetFilterDropdown from "@/components/manager/common/community/posts/filter/TargetFilterDropdown";
+import filterStyles from "@/styles/manager/common/section/filter_section.module.css";
+import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.module.css";
 
 interface PostFilterSectionProps {
   // 검색어 상태를 props로 받습니다
@@ -45,9 +48,19 @@ interface PostFilterSectionProps {
   // 구분 필터 상태와 변경 함수
   selected_divisions: PostDivision[];
   on_divisions_change: (divisions: PostDivision[]) => void;
+  // 대상 필터 상태와 변경 함수
+  selected_targets: PostTarget[];
+  on_targets_change: (targets: PostTarget[]) => void;
   // 날짜 범위 필터 상태와 변경 함수
   selected_date_range: DateRange | undefined;
   on_date_range_change: (range: DateRange | undefined) => void;
+  // 선택된 게시글들에 대해 고정/해제를 수행하는 핸들러
+  on_pin_selected?: () => void;
+  on_unpin_selected?: () => void;
+  // 선택된 게시글들에 대해 삭제를 수행하는 핸들러
+  on_delete_selected?: () => void;
+  // 관리자 타입 ('ga' | 'sa')
+  manager_type: "ga" | "sa";
 }
 
 export default function PostFilterSection({
@@ -55,37 +68,80 @@ export default function PostFilterSection({
   on_search_change,
   selected_divisions,
   on_divisions_change,
+  selected_targets,
+  on_targets_change,
   selected_date_range,
   on_date_range_change,
+  on_pin_selected,
+  on_unpin_selected,
+  on_delete_selected,
+  manager_type,
 }: PostFilterSectionProps) {
-  // Next.js 라우터 사용
   const router = useRouter();
 
-  // 모달 열림/닫힘 상태 관리
-  const [is_division_modal_open, set_is_division_modal_open] = useState(false);
+  // manager_type에 따른 base path 설정
+  const base_path =
+    manager_type === "ga"
+      ? "/manager_ga/community/posts"
+      : "/manager_sa/community/posts";
+
+  // 드롭다운 열림/닫힘 상태 관리
+  const [is_division_dropdown_open, set_is_division_dropdown_open] =
+    useState(false);
+  const [is_target_dropdown_open, set_is_target_dropdown_open] =
+    useState(false);
+  const division_filter_button_ref = useRef<HTMLDivElement | null>(null);
+  const target_filter_button_ref = useRef<HTMLDivElement | null>(null);
   const [selected_sort, set_selected_sort] = useState("최신순");
 
-  // 구분 필터 핸들러
-  // 화살표 함수로 이벤트 핸들러를 정의합니다
-  // 선택된 구분들을 상태에 저장하고 모달을 닫습니다
+  /* ========================================
+     🔧 구분(division) 필터 관련 핸들러
+     - 구분 모달 열기/적용/제거
+     ======================================== */
+
   const handle_division_apply = (divisions: PostDivision[]) => {
     on_divisions_change(divisions);
-    set_is_division_modal_open(false);
   };
 
   const handle_remove_division = (division: PostDivision) => {
     on_divisions_change(selected_divisions.filter((d) => d !== division));
   };
 
+  /* ========================================
+     🎯 대상(target) 필터 관련 핸들러
+     - 대상 모달 열기/적용/제거
+     ======================================== */
+
+  const handle_target_apply = (targets: PostTarget[]) => {
+    on_targets_change(targets);
+  };
+
+  const handle_remove_target = (target: PostTarget) => {
+    on_targets_change(selected_targets.filter((t) => t !== target));
+  };
+
+  /* ========================================
+     📌 게시글 고정 / 고정 해제 액션 핸들러
+     - 상단 '고정', '해제' 버튼 클릭 시
+     - 부모 컴포넌트(페이지)에서 실제 is_pinned 업데이트
+     ======================================== */
+
   // 고정 버튼 핸들러
   const handle_pin = () => {
-    // TODO: 선택된 게시글 고정 기능 구현
+    on_pin_selected?.();
   };
 
   // 해제 버튼 핸들러
   const handle_unpin = () => {
-    // TODO: 선택된 게시글 고정 해제 기능 구현
+    on_unpin_selected?.();
   };
+
+  /* ========================================
+     ✏️ 수정 / 등록 / 삭제 액션 핸들러
+     - 선택된 게시글 수정 (미구현)
+     - 새 게시글 등록 페이지로 이동
+     - 선택된 게시글 삭제 (미구현)
+     ======================================== */
 
   // 수정 버튼 핸들러
   const handle_edit = () => {
@@ -95,13 +151,19 @@ export default function PostFilterSection({
   // 등록 버튼 핸들러
   const handle_create = () => {
     // 게시글 작성 페이지로 이동
-    router.push("/manager_ga/community/posts/create");
+    router.push(`${base_path}/create`);
   };
 
   // 삭제 버튼 핸들러
   const handle_delete = () => {
-    // TODO: 선택된 게시글 삭제 기능 구현
+    on_delete_selected?.();
   };
+
+  /* ========================================
+     🔽 정렬 / 날짜 범위 필터 관련 핸들러
+     - 정렬 옵션 변경 (최신순 / 오래된순)
+     - DateRangePicker로부터 날짜 범위 전달
+     ======================================== */
 
   // 정렬 옵션
   const sort_options = ["최신순", "오래된순"];
@@ -118,20 +180,38 @@ export default function PostFilterSection({
     on_date_range_change(range);
   };
 
-  // 활성 필터 태그 목록 생성
-  // 배열 map 메서드를 사용하여 필터 태그를 생성합니다
-  // selected_divisions 배열의 각 구분에 대해 필터 태그를 생성합니다
-  const active_filter_tags: FilterTag<string>[] = selected_divisions.map(
-    (division) => ({
+  /* ========================================
+     🏷️ 활성 필터 태그(구분, 대상) 관리
+     - 선택된 구분과 대상을 상단 태그로 표시
+     - 태그 X 버튼 클릭 시 해당 필터 제거
+     ======================================== */
+
+  const active_filter_tags: FilterTag<string>[] = [
+    ...selected_divisions.map((division) => ({
       value: division,
-      label: division, // "구분: " 접두사 제거
-    })
-  );
+      label: division,
+    })),
+    ...selected_targets.map((target) => ({
+      value: target,
+      label: target,
+    })),
+  ];
 
   // 필터 태그 제거 핸들러
   const handle_filter_tag_remove = (value: string) => {
-    handle_remove_division(value as PostDivision);
+    // 구분인지 대상인지 확인
+    if (selected_divisions.includes(value as PostDivision)) {
+      handle_remove_division(value as PostDivision);
+    } else if (selected_targets.includes(value as PostTarget)) {
+      handle_remove_target(value as PostTarget);
+    }
   };
+
+  /* ========================================
+     🎨 렌더링
+     - BaseFilterSection 공통 컴포넌트에 필터/액션 버튼 주입
+     - 구분 필터 모달(DivisionFilterModal) 렌더링
+     ======================================== */
 
   return (
     <div>
@@ -147,80 +227,124 @@ export default function PostFilterSection({
             on_range_change={handle_date_range_change}
           />
         }
-        // 필터 모달 버튼 (구분 필터만)
+        // 필터 드롭다운 버튼 (구분, 대상 필터)
         filter_modal_button={
-          <div
-            className={styles.filter_item}
-            onClick={() => set_is_division_modal_open(true)}
-          >
+          <>
             <div
-              className={`${styles.checkbox_icon} ${
-                selected_divisions.length > 0
-                  ? styles.checkbox_icon_checked
-                  : ""
-              }`}
-            ></div>
-            <span className={styles.filter_text}>구분</span>
-            <img
-              src="/images/icons/dropdown_arrow.svg"
-              alt="드롭다운"
-              className={styles.dropdown_arrow}
-            />
-          </div>
+              ref={division_filter_button_ref}
+              className={filterButtonStyles.filter_button_dropdown_wrapper}
+            >
+              <FilterButton
+                label="구분"
+                onClick={() => set_is_division_dropdown_open((prev) => !prev)}
+                isActive={selected_divisions.length > 0}
+                styles={{
+                  filter_item: filterStyles.filter_item,
+                  checkbox_icon: filterStyles.checkbox_icon,
+                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
+                  filter_text: filterStyles.filter_text,
+                  dropdown_arrow: filterStyles.dropdown_arrow,
+                  filter_item_active: filterButtonStyles.filter_item_active,
+                  filter_text_active: filterButtonStyles.filter_text_active,
+                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
+                }}
+              />
+              <DivisionFilterDropdown
+                is_open={is_division_dropdown_open}
+                on_close={() => set_is_division_dropdown_open(false)}
+                selected_divisions={selected_divisions}
+                on_apply={handle_division_apply}
+                container_ref={division_filter_button_ref}
+              />
+            </div>
+            <div
+              ref={target_filter_button_ref}
+              className={filterButtonStyles.filter_button_dropdown_wrapper}
+            >
+              <FilterButton
+                label="대상"
+                onClick={() => set_is_target_dropdown_open((prev) => !prev)}
+                isActive={selected_targets.length > 0}
+                styles={{
+                  filter_item: filterStyles.filter_item,
+                  checkbox_icon: filterStyles.checkbox_icon,
+                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
+                  filter_text: filterStyles.filter_text,
+                  dropdown_arrow: filterStyles.dropdown_arrow,
+                  filter_item_active: filterButtonStyles.filter_item_active,
+                  filter_text_active: filterButtonStyles.filter_text_active,
+                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
+                }}
+              />
+              <TargetFilterDropdown
+                is_open={is_target_dropdown_open}
+                on_close={() => set_is_target_dropdown_open(false)}
+                selected_targets={selected_targets}
+                on_apply={handle_target_apply}
+                container_ref={target_filter_button_ref}
+              />
+            </div>
+          </>
         }
         // 검색어 필터 뒤에 오는 버튼들 (고정, 해제)
         search_after_buttons={
-          <>
-            {/* 고정 버튼 */}
-            <div key="pin" className={styles.filter_item} onClick={handle_pin}>
-              <img
-                src="/images/icons/pin_icon_black.svg"
-                alt="고정"
-                className={styles.action_icon}
-              />
-              <span className={styles.filter_text}>고정</span>
-            </div>
-            {/* 해제 버튼 */}
-            <div
-              key="unpin"
-              className={styles.filter_item}
-              onClick={handle_unpin}
-            >
-              <img
-                src="/images/icons/pin_icon_grey.svg"
-                alt="해제"
-                className={styles.action_icon}
-              />
-              <span className={styles.filter_text}>해제</span>
-            </div>
-          </>
+          on_pin_selected && on_unpin_selected ? (
+            <>
+              {/* 고정 버튼 */}
+              <div
+                key="pin"
+                className={filterStyles.filter_item}
+                onClick={handle_pin}
+              >
+                <img
+                  src="/images/icons/pin_table_icon.svg"
+                  alt="고정"
+                  className={filterStyles.action_icon}
+                />
+                <span className={filterStyles.pin_action_text}>고정</span>
+              </div>
+              {/* 해제 버튼 */}
+              <div
+                key="unpin"
+                className={filterStyles.filter_item}
+                onClick={handle_unpin}
+              >
+                <img
+                  src="/images/icons/pin_icon_grey.svg"
+                  alt="해제"
+                  className={filterStyles.action_icon}
+                />
+                <span className={filterStyles.pin_action_text}>해제</span>
+              </div>
+            </>
+          ) : undefined
         }
         // 오른쪽 액션 버튼들 (등록, 삭제)
         right_buttons={
           <>
             <div
               key="create"
-              className={styles.filter_item}
+              className={filterStyles.filter_item}
               onClick={handle_create}
             >
               <img
                 src="/images/icons/sign_plus.svg"
                 alt="등록"
-                className={styles.action_icon}
+                className={filterStyles.action_icon}
               />
-              <span className={styles.filter_text}>등록</span>
+              <span className={filterStyles.post_action_text}>등록</span>
             </div>
             <div
               key="delete"
-              className={styles.filter_item}
+              className={filterStyles.filter_item}
               onClick={handle_delete}
             >
               <img
                 src="/images/icons/sign_x.svg"
                 alt="삭제"
-                className={styles.action_icon}
+                className={filterStyles.action_icon}
               />
-              <span className={styles.filter_text}>삭제</span>
+              <span className={filterStyles.post_action_text}>삭제</span>
             </div>
           </>
         }
@@ -229,14 +353,8 @@ export default function PostFilterSection({
         on_filter_tag_remove={handle_filter_tag_remove}
       />
 
-      {/* 구분 필터 모달 */}
-      {/* DivisionFilterModal: 구분을 선택할 수 있는 모달 컴포넌트 */}
-      <DivisionFilterModal
-        is_open={is_division_modal_open}
-        on_close={() => set_is_division_modal_open(false)}
-        selected_divisions={selected_divisions}
-        on_apply={handle_division_apply}
-      />
+      {/* 구분 필터 모달 (드롭다운으로 대체) */}
+      {/* DivisionFilterModal은 드롭다운으로 대체되었습니다 */}
     </div>
   );
 }

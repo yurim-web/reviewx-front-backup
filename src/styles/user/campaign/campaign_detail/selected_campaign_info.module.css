@@ -1,0 +1,133 @@
+/* ========================================
+   📋 선정 후 캠페인 상세 페이지 추가 안내 섹션 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - SelectedCampaignInfo.tsx (선정 후 추가 안내 섹션)
+ * 
+ * 사용 페이지:
+ * - /campaign/delivery/[id]?selected=true (배송형 캠페인 상세 - 선정 후)
+ * - /campaign/visit/[id]?selected=true (방문형 캠페인 상세 - 선정 후)
+ * - /campaign/review/[id]?selected=true (구매평 캠페인 상세 - 선정 후)
+ * - /campaign/mission/[id]?selected=true (미션형 캠페인 상세 - 선정 후)
+ * - /campaign/reporter/[id]?selected=true (기자단 캠페인 상세 - 선정 후)
+ */
+
+/* 안내 문구 텍스트 */
+.info_text {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 26px; /* 162.5% */
+  letter-spacing: -0.32px;
+  margin-bottom: 16px;
+}
+
+/* 공정위 이미지 박스 */
+.ftc_image_box {
+  width: 100%;
+  min-height: 200px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background-color: #ffffff;
+  margin-bottom: 16px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* 이미지가 없을 때 안내 텍스트 스타일 */
+  color: #848484;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* 문의 담당자 연락처 박스 */
+/* 라벨 박스와 같은 높이에서 시작하도록 padding-top을 0으로 설정 */
+.contact_number_box {
+  display: flex;
+  align-items: center;
+  padding: 0; /* 라벨 박스와 같은 선상에 정렬되도록 padding 제거 */
+}
+
+/* 문의 담당자 연락처 번호 */
+.contact_number {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 26px;
+  letter-spacing: -0.32px;
+}
+
+/* 토스트 메시지 (복사 완료 알림) */
+.toast_message {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 1000;
+  animation: fadeInOut 2s ease-in-out;
+}
+
+/* 토스트 메시지 애니메이션 */
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  20% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  80% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+}
+
+/* ===== 반응형 스타일 ===== */
+
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  /* 안내 문구 텍스트 */
+  .info_text {
+    font-size: 14px;
+    line-height: 22px;
+    letter-spacing: -0.28px;
+    margin-bottom: 12px;
+  }
+
+  /* 공정위 이미지 박스 */
+  .ftc_image_box {
+    min-height: 150px;
+    padding: 12px;
+    font-size: 12px;
+  }
+
+  /* 문의 담당자 연락처 번호 */
+  .contact_number {
+    font-size: 14px;
+    line-height: 22px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 토스트 메시지 */
+  .toast_message {
+    bottom: 80px;
+    padding: 10px 20px;
+    font-size: 12px;
+  }
+}

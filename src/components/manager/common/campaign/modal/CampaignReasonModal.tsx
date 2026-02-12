@@ -1,42 +1,19 @@
 /* ========================================
-   📋 캠페인 반려/신고 사유 모달 컴포넌트 (공통)
+   📋 반려/신고 사유 모달 컴포넌트
    ======================================== */
 
 /**
- * 캠페인 반려/신고 사유 모달 컴포넌트 (공통)
+ * 반려/신고 사유 모달 컴포넌트
  *
- * 목적: GA 관리자 반려내역 페이지와 신고내역 페이지에서
- *       반려 사유 또는 신고 사유를 확인하고 수정할 수 있는 모달입니다.
- *
- * 📍 사용 위치:
- * - 직접 사용 컴포넌트:
- *   - RejectedCampaignTable 컴포넌트의 사유 확인 버튼 클릭 시 (반려 내역 페이지)
- *   - ReportedCampaignTable 컴포넌트의 사유 확인 버튼 클릭 시 (신고 내역 페이지)
- *
- * - 최종 사용 페이지:
- *   - /manager_ga/campaign/rejected (GA 관리자 반려 내역 페이지)
- *   - /manager_ga/campaign/reported (GA 관리자 신고 내역 페이지)
- *
- * 사용 흐름:
- * 반려 내역 페이지 (/manager_ga/campaign/rejected)
- *   └─> RejectedCampaignTable 컴포넌트
- *       └─> CampaignReasonModal 컴포넌트 (사유 확인 버튼 클릭 시, mode="reject")
- *
- * 신고 내역 페이지 (/manager_ga/campaign/reported)
- *   └─> ReportedCampaignTable 컴포넌트
- *       └─> CampaignReasonModal 컴포넌트 (사유 확인 버튼 클릭 시, mode="report")
- *
- * 주요 기능:
- * - 반려/신고 사유 텍스트 표시 및 수정
- * - AI 추천 분류 태그 표시 및 선택 (라디오 버튼 방식)
- * - 반려/신고 사유 저장 기능
- * - 모달 오버레이 클릭으로 닫기
- *
+ * 📝 사용처:
+ * - src/components/manager/ga/campaign/rejected/section/RejectedCampaignTable.tsx
+ * - src/components/manager/ga/campaign/reported/section/ReportedCampaignTable.tsx
  */
 
 "use client";
 
 import { useState, useEffect } from "react";
+import styles from "@/styles/manager_ga/campaign/common/modal/campaign_reason_modal.module.css";
 
 // 코드 정보 타입 정의 (반려/신고 공통)
 export interface CodeInfo {
@@ -84,25 +61,6 @@ interface CommonProps {
   is_open: boolean;
   // 모달 닫기 함수
   on_close: () => void;
-  // CSS 모듈 스타일 객체
-  styles: Record<string, string> & {
-    modal_overlay: string;
-    modal_container: string;
-    modal_title: string;
-    reason_box: string; // reject_reason_box 또는 report_reason_box
-    reason_text: string; // reject_reason_text 또는 report_reason_text
-    ai_recommended_section: string;
-    ai_recommended_label: string;
-    classification_container: string;
-    classification_item: string;
-    classification_item_selected: string;
-    classification_radio: string;
-    classification_check_icon: string;
-    classification_label: string;
-    modal_footer: string;
-    close_button: string;
-    confirm_button: string;
-  };
 }
 
 // Props 타입: 공통 Props + 모드별 Props
@@ -112,7 +70,6 @@ type CampaignReasonModalProps = CommonProps &
 export default function CampaignReasonModal({
   is_open,
   on_close,
-  styles: cssStyles,
   ...modeProps
 }: CampaignReasonModalProps) {
   // 선택된 AI 추천 분류 (라디오 버튼이므로 단일 값)
@@ -206,37 +163,38 @@ export default function CampaignReasonModal({
   };
 
   // 모드에 따른 모달 제목 결정
-  const modal_title = "콘텐츠 반려 사유";
+  const modal_title = "반려 사유";
 
   // textarea의 rows 수 결정 (반려 모드: 5, 신고 모드: 6)
   const textarea_rows = modeProps.mode === "reject" ? 5 : 6;
 
   return (
-    <div className={cssStyles.modal_overlay} onClick={handle_overlay_click}>
+    <div className={styles.modal_overlay} onClick={handle_overlay_click}>
       <div
-        className={cssStyles.modal_container}
+        className={styles.modal_container}
         onClick={(e) => e.stopPropagation()}
       >
         {/* 모달 제목 */}
-        <h2 className={cssStyles.modal_title}>{modal_title}</h2>
+        <h2 className={styles.modal_title}>{modal_title}</h2>
 
         {/* 사유 텍스트 영역 (input 스타일) */}
-        <div className={cssStyles.reason_box}>
+        <div className={styles.reason_box}>
           <textarea
-            className={cssStyles.reason_text}
+            className={styles.reason_text}
             value={reason_text}
             onChange={handle_reason_change}
             onClick={(e) => e.stopPropagation()}
             onFocus={(e) => e.stopPropagation()}
             rows={textarea_rows}
             placeholder={get_placeholder()}
+            readOnly
           />
         </div>
 
         {/* AI 추천 분류 섹션 */}
-        <div className={cssStyles.ai_recommended_section}>
-          <p className={cssStyles.ai_recommended_label}>AI 추천 분류</p>
-          <div className={cssStyles.classification_container}>
+        <div className={styles.ai_recommended_section}>
+          <p className={styles.ai_recommended_label}>AI 추천 분류</p>
+          <div className={styles.classification_container}>
             {/* map 메서드를 사용하여 태그 목록을 렌더링합니다 */}
             {ai_recommended_tags.map((tag) => {
               // 현재 태그가 선택되었는지 확인
@@ -244,8 +202,8 @@ export default function CampaignReasonModal({
               return (
                 <label
                   key={tag}
-                  className={`${cssStyles.classification_item} ${
-                    is_selected ? cssStyles.classification_item_selected : ""
+                  className={`${styles.classification_item} ${
+                    is_selected ? styles.classification_item_selected : ""
                   }`}
                 >
                   <input
@@ -254,17 +212,17 @@ export default function CampaignReasonModal({
                     value={tag}
                     checked={is_selected}
                     onChange={() => handle_classification_change(tag)}
-                    className={cssStyles.classification_radio}
+                    className={styles.classification_radio}
                   />
                   {/* 조건부 렌더링: 선택된 경우에만 체크 아이콘 표시 */}
                   {is_selected && (
                     <img
                       src="/images/icons/red_check_icon.svg"
                       alt="선택됨"
-                      className={cssStyles.classification_check_icon}
+                      className={styles.classification_check_icon}
                     />
                   )}
-                  <span className={cssStyles.classification_label}>{tag}</span>
+                  <span className={styles.classification_label}>{tag}</span>
                 </label>
               );
             })}
@@ -272,11 +230,11 @@ export default function CampaignReasonModal({
         </div>
 
         {/* 모달 하단 버튼 영역 */}
-        <div className={cssStyles.modal_footer}>
-          <button className={cssStyles.close_button} onClick={on_close}>
+        <div className={styles.modal_footer}>
+          <button className={styles.close_button} onClick={on_close}>
             닫기
           </button>
-          <button className={cssStyles.confirm_button} onClick={handle_confirm}>
+          <button className={styles.confirm_button} onClick={handle_confirm}>
             확인
           </button>
         </div>

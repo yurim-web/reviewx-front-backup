@@ -62,6 +62,14 @@
   width: 100%;
 }
 
+/* 회원 유형 통계 섹션 정보 그리드 (3열) */
+.member_type_section_info_grid_three {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
 /* 회원 유형 통계 섹션 정보 라벨 행 (라벨과 변화율을 같은 선상에 배치) */
 .member_type_section_info_label_row {
   display: flex;
@@ -110,7 +118,6 @@
 .member_type_section_info_change_positive,
 .member_type_section_info_change_negative,
 .member_type_section_info_change_neutral {
-  text-align: left;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;

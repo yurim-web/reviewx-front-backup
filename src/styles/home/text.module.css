@@ -20,16 +20,20 @@
   color: #333;
   font-size: 24px;
   font-weight: 500;
-  line-height: 24px; /* 100% */
+  line-height: 24px; 
   letter-spacing: -0.48px;
 }
 
-/* 반응형 스타일 css 코드 */ /* ✅ 모바일 공통 — 0~739px */
+/* 반응형 스타일 css 코드 */
+
+/* ✅ 모바일 공통 — 0~739px */
 @media (max-width: 739px) {
   .title_text {
     font-size: 20px;
-    line-height: 20px; /* 100% */
+    line-height: 20px;
     letter-spacing: -0.4px;
+    font-weight: 500;
+    color: #444;
   }
 }
 
@@ -37,7 +41,7 @@
 @media (min-width: 740px) and (max-width: 1100px) and (orientation: portrait) {
   .title_text {
     font-size: 24px;
-    line-height: 24px; /* 100% */
+    line-height: 24px;
     letter-spacing: -0.48px;
   }
 }
@@ -45,7 +49,7 @@
 @media (min-width: 740px) and (max-width: 1366px) and (orientation: landscape) {
   .title_text {
     font-size: 24px;
-    line-height: 24px; /* 100% */
+    line-height: 24px;
     letter-spacing: -0.48px;
   }
 }

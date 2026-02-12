@@ -33,7 +33,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import styles from "@/styles/manager_ga/campaign/progress/filter_section.module.css";
+import styles from "@/styles/manager/common/section/filter_section.module.css";
 
 // 필터 태그 타입 정의
 export interface FilterTag<T> {
@@ -230,21 +230,6 @@ export default function BaseFilterSection<T extends string | number>({
               className={styles.search_input}
               aria-label="검색어 입력"
             />
-            {/* 검색어가 있을 때 초기화 버튼 표시 */}
-            {internal_search_query && (
-              <button
-                type="button"
-                onClick={handle_search_clear}
-                className={styles.search_clear_button}
-                aria-label="검색어 초기화"
-              >
-                <img
-                  src="/images/icons/clear_icon.svg"
-                  alt="초기화"
-                  className={styles.search_clear_icon}
-                />
-              </button>
-            )}
           </div>
 
           {/* 검색 필터 뒤에 올 버튼들 (선택적) */}

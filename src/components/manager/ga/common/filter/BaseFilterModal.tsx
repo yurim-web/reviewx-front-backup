@@ -9,8 +9,6 @@
  *       체크박스 방식의 다중 선택 필터링을 제공합니다.
  *
  * 📍 사용 위치 (현재):
- * - src/components/manager_ga/campaign/rejected/filter/RejectCodeFilterModal.tsx
- * - src/components/manager_ga/campaign/reported/filter/ReportCodeFilterModal.tsx
  * - src/components/manager_common/campaign/progress/filter/ChannelFilterModal.tsx
  * - src/components/manager_common/campaign/progress/filter/StatusFilterModal.tsx
  * - src/components/manager_common/campaign/progress/filter/TypeFilterModal.tsx
@@ -33,10 +31,10 @@
  *
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import styles from '@/styles/manager_ga/campaign/progress/status_filter_modal.module.css';
+import { useState, useEffect } from "react";
+import styles from "@/styles/manager/common/campaign/progress/status_filter_modal.module.css";
 
 // 필터 옵션 타입 정의
 // value: 실제 값 (예: 'R001', 'Blog')
@@ -77,7 +75,7 @@ export default function BaseFilterModal<T extends string | number>({
   on_apply,
   options,
   section_title,
-  modal_title = '필터',
+  modal_title = "필터",
 }: BaseFilterModalProps<T>) {
   // 모달 내부에서 관리하는 임시 선택 상태
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
@@ -183,7 +181,7 @@ export default function BaseFilterModal<T extends string | number>({
             필터 적용하기
           </button>
           <button className={styles.reset_button} onClick={handle_reset}>
-            <div 
+            <div
               className={styles.reset_icon}
               style={{ backgroundImage: "url('/images/filter/x_small.svg')" }}
             ></div>

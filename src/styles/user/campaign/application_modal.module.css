@@ -81,6 +81,30 @@
   justify-content: space-between;
   align-items: center;
   padding: 40px 40px 24px 40px;
+  position: relative; /* 뒤로가기 버튼 위치 지정을 위해 */
+}
+
+/* 뒤로가기 버튼 (모바일에서만 표시) */
+.back_button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  display: none; /* 기본적으로 숨김 (데스크톱) */
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.back_button img {
+  width: 16px;
+  height: 16px;
+  display: block;
 }
 
 /* 모달 제목 */
@@ -93,7 +117,7 @@
   letter-spacing: -0.4px;
 }
 
-/* 닫기 버튼 */
+/* 닫기 버튼 (데스크톱에서만 표시) */
 .close_button {
   background: none;
   border: none;
@@ -119,6 +143,12 @@
   gap: 24px;
 }
 
+/* 필드 라벨 (데스크톱에서는 숨김) */
+.field_label,
+.field_label_dark {
+  display: none;
+}
+
 /* 섹션 공통 스타일 */
 .section {
   padding: 0px 40px;
@@ -129,6 +159,11 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+/* 각 필드를 하나의 블록으로 묶는 래퍼 */
+.field_group {
+  width: 100%;
 }
 
 /* 섹션 제목 */
@@ -145,7 +180,122 @@
    5. 신청자 정보 영역
    ======================================== */
 
-/* 신청자 정보 컨테이너 */
+/* 신청자 정보 래퍼 (이름과 주소 입력칸을 감싸는 컨테이너) */
+.user_info_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* 이름과 주소 입력칸 사이 간격 */
+}
+
+/* 신청자 정보 행 (이름 입력칸만 포함하는 행) */
+.user_info_row {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 신청자 정보 입력칸 (이름만) */
+.user_input {
+  width: 100%; /* 전체 너비 사용 */
+  height: 56px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 0 20px;
+  background: #f6f6f6;
+  color: #444444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 주소 정보 컨테이너 (채널 정보와 같은 형태) */
+.address_container {
+  background: white;
+  border: 1px solid #848484;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 주소 정보 내용 */
+.address_info {
+  flex: 1;
+}
+
+/* 주소 텍스트 */
+.address_text {
+  font-weight: 500;
+  font-size: 16px;
+  color: #444444;
+}
+
+/* 주소가 없을 때 메시지 */
+.address_text_empty {
+  font-weight: 500;
+  font-size: 16px;
+  color: #848484;
+}
+
+/* 입력칸 플레이스홀더 */
+.user_input::placeholder {
+  color: #999999;
+}
+
+/* 입력칸 포커스 상태 */
+.user_input:focus {
+  outline: none;
+  border-color: #848484;
+  background: white;
+}
+
+/* 읽기 전용 입력칸 스타일 */
+.user_input:read-only {
+  cursor: default; /* 커서를 기본 포인터로 변경 */
+  background: #f6f6f6; /* 읽기 전용 배경 유지 */
+  color: #999;
+}
+
+/* 읽기 전용 입력칸 포커스 시 변화 없음 */
+.user_input:read-only:focus {
+  outline: none;
+  border-color: #d9d9d9;
+  background: #f6f6f6;
+  cursor: default;
+}
+
+/* 연필/텍스트 버튼 (수정 버튼) */
+.edit_button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: auto; /* 오른쪽 정렬 */
+}
+
+/* 수정/편집 텍스트 라벨 (모바일에서 사용, 기본은 숨김) */
+.edit_label {
+  display: none;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  color: #848484;
+}
+
+/* 연필 아이콘 이미지 (데스크톱 기본) */
+.edit_icon {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+/* 기존 스타일 (호환성을 위해 유지) */
 .user_info_container {
   background: #f6f6f6;
   border: 1px solid #d9d9d9;
@@ -157,26 +307,22 @@
   height: 80px;
 }
 
-/* 신청자 정보 내용 */
 .user_info {
   flex: 1;
 }
 
-/* 신청자 이름 */
 .user_name {
   font-weight: 500;
   font-size: 16px;
   color: #999999;
 }
 
-/* 신청자 주소 */
 .user_address {
   font-weight: 500;
   font-size: 16px;
   color: #999999;
 }
 
-/* 신청자 우편번호 */
 .user_zipcode {
   font-weight: 500;
   font-size: 16px;
@@ -196,20 +342,32 @@
   display: flex;
   align-items: center;
   height: 78px;
+  gap: 16px;
 }
 
-/* 채널 아이콘 */
+/* 채널 아이콘 컨테이너 */
 .channel_icon {
-  background: #a8a8a8;
   border-radius: 4px;
   width: 28px;
   height: 28px;
-  margin-right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-/* 채널 정보 내용 */
+/* 채널 아이콘 이미지 */
+.channel_icon_image {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  display: block;
+}
+
+/* 채널 정보 내용 - 말줄임표를 위해 min-width: 0 */
 .channel_info {
   flex: 1;
+  min-width: 0;
 }
 
 /* 채널 이름 */
@@ -219,14 +377,25 @@
   color: #444444;
 }
 
-/* 채널 URL */
+/* 채널 URL - 한 줄 넘어가면 말줄임표 */
 .channel_url {
+  font-weight: 500;
+  font-size: 14px;
+  color: #848484;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* 채널 URL 없을 때 메시지 */
+.channel_url_empty {
   font-weight: 500;
   font-size: 14px;
   color: #848484;
 }
 
-/* 더보기 버튼 */
+/* 더보기 버튼 (기존 호환성을 위해 유지) */
 .more_button {
   font-size: 20px;
   color: #666666;
@@ -246,12 +415,11 @@
 /* 메모 입력 필드 */
 .memo_input {
   width: 100%;
-  height: 56px;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
-  padding: 0 20px;
+  padding: 20px;
   background: white;
-  color: #999;
+  color: #444;
   font-size: 16px;
   font-weight: 500;
   line-height: 16px;
@@ -275,6 +443,9 @@
 /* 동의 컨테이너 */
 .agreement_container {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* 체크박스들 사이 간격 */
 }
 
 /* 체크박스 라벨 */
@@ -292,30 +463,32 @@
 .checkbox {
   width: 20px;
   height: 20px;
+  border: 1.5px solid #d9d9d9;
   border-radius: 4px;
-  border: 1px solid #d9d9d9;
-  background: #d9d9d9;
-  appearance: none;
+  background: #ffffff;
   cursor: pointer;
-  position: relative;
+  appearance: none; /* 기본 브라우저 스타일 제거 */
+  position: relative; /* 체크마크 위치 지정을 위해 */
+  flex-shrink: 0; /* 크기 고정 */
 }
 
 /* 체크박스 체크된 상태 */
 .checkbox:checked {
-  background: #555555;
-  border-color: #555555;
+  border-color: #444444; /* 어두운 회색 테두리 */
+  background: #ffffff; /* 흰색 배경 유지 */
 }
 
-/* 체크박스 체크 마크 */
+/* 체크박스 체크마크 (✓) */
 .checkbox:checked::after {
   content: "✓";
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: white;
-  font-size: 12px;
-  font-weight: bold;
+  color: #444444; /* 어두운 회색 체크마크 */
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
 }
 
 /* 동의 텍스트 */
@@ -338,11 +511,11 @@
   padding: 40px 40px 40px 40px;
 }
 
-/* 연결하기 버튼 */
+/* 신청 버튼 */
 .connect_button {
   width: 100%;
   height: 56px;
-  background: #555555;
+  background: #ff5694;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -353,4 +526,264 @@
   font-weight: 600;
   line-height: 16px;
   letter-spacing: -0.32px;
+}
+
+/* 버튼 비활성화 상태 */
+.connect_button:disabled {
+  background: #d9d9d9;
+  color: #848484;
+  cursor: default;
+}
+
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  /* 오버레이를 '페이지'처럼 보이도록 수정 */
+  .modal_overlay {
+    align-items: flex-start; /* 화면 상단부터 시작 */
+    background-color: #ffffff; /* 배경 어둡게 제거 → 흰색 페이지 느낌 */
+    animation: none; /* 모바일에서 fadeIn 애니메이션 제거 - 바로 나타나게 */
+    overflow-y: auto; /* 모바일에서 스크롤 가능하게 */
+  }
+
+  /* 모달 컨테이너 */
+  .modal_container {
+    border-radius: 0; /* 상단 라운드 제거 → 진짜 페이지처럼 풀스크린 */
+    max-height: none;
+    min-height: 100vh;
+    max-width: 100%;
+    animation: none; /* 모바일에서 slideUp 애니메이션 제거 - 바로 나타나게 */
+  }
+
+  /* 모달 헤더 */
+  .modal_header {
+    height: 64px;
+    padding: 0;
+    border-bottom: 1px solid #e5e5e5;
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+
+  /* 모바일에서 뒤로가기 버튼 표시 */
+  .back_button {
+    display: flex;
+    left: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* 모바일에서 X 버튼 숨기기 */
+  .close_button {
+    display: none;
+  }
+
+  /* 모바일에서 제목 위치 조정 */
+  .modal_title {
+    position: absolute;
+    left: 48px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+    font-size: 20px;
+    line-height: 20px;
+    letter-spacing: -0.4px;
+    font-weight: 700;
+  }
+
+  /* 메인 컨텐츠 영역 */
+  .modal_content {
+    gap: 20px;
+    padding-top: 20px;
+    overflow-y: auto; /* 컨텐츠 스크롤 가능 */
+    flex: 1;
+  }
+
+  /* 섹션 패딩 */
+  .section {
+    padding: 0px 20px;
+    position: relative;
+  }
+
+  /* 섹션 제목 - 모바일에서 숨김 */
+  .section_title {
+    display: none;
+  }
+
+  /* 라벨 스타일 추가 */
+  .field_label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #444;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+    padding-bottom: 12px;
+  }
+
+  .field_label_dark {
+    color: #444;
+  }
+
+  /* 메모, 동의 라벨은 더 밝은 회색 (#848484) */
+  .field_label_light {
+    color: #848484;
+  }
+
+  /* 신청자 정보 입력칸 */
+  .user_input {
+    height: 56px;
+    padding: 0 20px;
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+    color: #999;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    background: #f6f6f6;
+  }
+
+  /* 주소 컨테이너 */
+  .address_container {
+    padding: 20px;
+    min-height: 0; /* 내용이 짧으면 낮아지고, 길면 자동으로 늘어나게 */
+    height: auto;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    background: white;
+    align-items: flex-start; /* 글이 위에서부터 시작 */
+  }
+
+  /* 주소 텍스트 */
+  .address_text {
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: -0.32px;
+    color: #444;
+  }
+
+  .address_text_empty {
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: -0.32px;
+    color: #848484;
+  }
+
+  /* 연필 버튼 숨김 */
+  .edit_button {
+    display: none;
+  }
+
+  /* 채널 컨테이너 */
+  .channel_container {
+    padding: 20px;
+    height: 56px;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    background: white;
+    gap: 8px;
+  }
+
+  /* 채널 정보 - 말줄임표를 위해 min-width: 0 */
+  .channel_info {
+    min-width: 0;
+  }
+
+  /* 채널 아이콘 */
+  .channel_icon {
+    width: 16px;
+    height: 16px;
+    box-shadow: 0 0 4px 0 rgba(68, 68, 68, 0.1);
+  }
+
+  .channel_icon_image {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* 채널 이름 - 모바일에서 숨김 */
+  .channel_name {
+    display: none;
+  }
+
+  /* 채널 URL - 한 줄 넘어가면 말줄임표 */
+  .channel_url {
+    font-size: 16px;
+    line-height: 20px;
+    letter-spacing: -0.32px;
+    color: #444;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+
+  .channel_url_empty {
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+    color: #848484;
+  }
+
+  /* 모바일에서 수정/편집 텍스트는 라벨 옆에 표시 */
+  .edit_label {
+    display: inline-block !important;
+    color: #848484;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 메모 입력 필드 */
+  .memo_input {
+    padding: 20px;
+
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    background: white;
+  }
+
+  /* 동의 텍스트 */
+  .agreement_text {
+    line-height: 22px;
+    letter-spacing: -0.28px;
+  }
+
+  /* 체크박스 */
+  .checkbox {
+    width: 20px;
+    height: 20px;
+    margin-top: 3px;
+  }
+
+  /* 버튼 컨테이너 */
+  .button_container {
+    padding: 40px 20px 24px 20px;
+  }
+
+  /* 신청 버튼 */
+  .connect_button {
+    height: 52px;
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+
+  /* 신청자 정보 컨테이너 - 간격 조정 */
+  .application_info_container {
+    gap: 20px;
+  }
+
+  .checkbox_label {
+    padding-top: 0;
+    align-items: flex-start;
+  }
 }

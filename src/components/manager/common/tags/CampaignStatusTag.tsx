@@ -21,6 +21,10 @@
  * - 긴급: 빨간색 배경, 흰색 텍스트
  */
 
+// CSS 모듈 직접 import
+// 컴포넌트 내부에서 스타일을 직접 가져와서 사용합니다
+import tag_styles from "@/styles/common/tags.module.css";
+
 /**
  * 캠페인 상태 타입 정의
  */
@@ -37,22 +41,18 @@ export type CampaignStatus =
  *
  * 각 속성 설명:
  * - status: 표시할 상태 값 (예정, 신청, 진행, 종료, 취소, 긴급 중 하나)
- * - styles: CSS 모듈에서 가져온 스타일 객체
  */
 interface CampaignStatusTagProps {
   status: CampaignStatus;
-  styles: Record<string, string>;
 }
 
 /**
  * 캠페인 상태 태그 컴포넌트
  *
  * @param status - 표시할 상태 값
- * @param styles - CSS 모듈 스타일 객체
  */
 export default function CampaignStatusTag({
   status,
-  styles: css_styles,
 }: CampaignStatusTagProps) {
   /**
    * 상태에 따라 적절한 CSS 클래스명을 반환하는 함수
@@ -65,20 +65,20 @@ export default function CampaignStatusTag({
   const get_status_class_name = () => {
     switch (status) {
       case "예정":
-        return css_styles.status_tag_scheduled;
+        return tag_styles.status_tag_scheduled;
       case "신청":
-        return css_styles.status_tag_applied;
+        return tag_styles.status_tag_applied;
       case "진행":
-        return css_styles.status_tag_progress;
+        return tag_styles.status_tag_progress;
       case "종료":
-        return css_styles.status_tag_ended;
+        return tag_styles.status_tag_ended;
       case "취소":
-        return css_styles.status_tag_cancelled;
+        return tag_styles.status_tag_cancelled;
       case "긴급":
-        return css_styles.status_tag_urgent;
+        return tag_styles.status_tag_urgent;
       default:
         // 기본값으로 예정 상태 스타일 반환
-        return css_styles.status_tag_scheduled;
+        return tag_styles.status_tag_scheduled;
     }
   };
 
@@ -94,7 +94,7 @@ export default function CampaignStatusTag({
    */
   return (
     <div
-      className={`${css_styles.status_tag} ${get_status_class_name()}`}
+      className={`${tag_styles.status_tag} ${get_status_class_name()}`}
       role="status"
       aria-label={`캠페인 상태: ${status}`}
     >

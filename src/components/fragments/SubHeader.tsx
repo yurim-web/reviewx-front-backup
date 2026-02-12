@@ -2,7 +2,8 @@
  * 서브헤더 컴포넌트
  * 캠페인 상세 페이지 등에서 사용되는 헤더
  * - 뒤로가기 버튼
- * - 가이드북 링크
+ * - 검색 아이콘
+ * - 알림 아이콘
  * - 마이페이지 링크
  * - 항상 상단에 고정됨 (position: fixed)
  * - 메인 헤더를 자동으로 숨김 (SubHeader가 표시될 때는 메인 헤더 숨김)
@@ -10,14 +11,38 @@
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState, MouseEvent } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import styles from "../../styles/fragments/sub_header.module.css";
+import styles from "@/styles/fragments/header.module.css";
+import HeaderSearch from "@/components/fragments/HeaderSearch";
+import { mockReviewerNotifications } from "@/data/notification/notificationData";
+import { useAuth } from "@/hooks/useAuth";
 
-export default function SubHeader() {
+interface SubHeaderProps {
+  title?: string;
+  showBackButton?: boolean;
+}
+
+export default function SubHeader({ title, showBackButton }: SubHeaderProps = {}) {
   const router = useRouter();
   const pathname = usePathname();
+  const { user } = useAuth();
+
+  // Hydration 에러 방지
+  const [isMounted, setIsMounted] = useState(false);
+  // 모바일 여부 감지
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // 메인 헤더 숨기기 처리
   // SubHeader가 마운트될 때 메인 헤더를 숨기고, 언마운트될 때 다시 표시
@@ -38,28 +63,110 @@ export default function SubHeader() {
     if (pathname?.startsWith("/partner/campaign/create")) {
       router.push("/partner");
     } else {
+      // 포인트 충전 페이지 포함 모든 경우 이전 페이지로 이동
       router.back();
     }
+  };
+
+  // 검색 아이콘 경로 (모바일/PC 구분)
+  const getSearchIconSrc = () => {
+    return isMobile
+      ? "/images/header/mobile/mo_search.svg"
+      : "/images/header/header_search.svg";
+  };
+
+  // 알림 아이콘 결정 로직
+  const getNotificationIconSrc = () => {
+    if (!isMounted) {
+      return "/images/header/notification_icon.svg";
+    }
+
+    // 모바일 전용 아이콘
+    if (isMobile) {
+      const effective_has_notifications = mockReviewerNotifications.length > 0;
+      return effective_has_notifications
+        ? "/images/header/mobile/mo_notification_ok.svg"
+        : "/images/header/mobile/mo_notification_icon.svg";
+    }
+
+    // PC 아이콘
+    const effective_has_notifications = mockReviewerNotifications.length > 0;
+    return effective_has_notifications
+      ? "/images/header/notification_ok.svg"
+      : "/images/header/notification_icon.svg";
+  };
+
+  // 사용자 아이콘 경로 (모바일/PC 구분)
+  const getUserIconSrc = () => {
+    return isMobile
+      ? "/images/header/mobile/mo_user.svg"
+      : "/images/header/header_user.svg";
+  };
+
+  // 로고 이미지 경로 (모바일/PC 구분)
+  const getLogoSrc = () => {
+    if (!isMounted) {
+      return "/images/header/vx_header_logo.svg";
+    }
+    return isMobile
+      ? "/images/header/mobile/mo_header_vx_logo.svg"
+      : "/images/header/vx_header_logo.svg";
+  };
+
+  // 알림 아이콘 클릭 핸들러
+  const handleNotificationClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    // 로그인하지 않은 상태에서는 알림 페이지로 이동하지 않음
+    if (!user) {
+      event.preventDefault();
+      router.push("/user/login");
+      return;
+    }
+    // 로그인된 상태에서는 기본 링크 동작으로 /user/notification 이동
   };
 
   return (
     // 항상 fixed 클래스 적용
     <div className={styles.gradient_bar}>
       <div className={styles.header_controls}>
-        <button className={styles.back_button} onClick={handleGoBack}>
-          <img src="/images/header/header_arrow_back.svg" alt="뒤로가기" />
-        </button>
+        {/* 모바일에서 타이틀이 있으면 뒤로가기 + 타이틀 표시 */}
+        {isMobile && title ? (
+          <>
+            <button className={styles.back_button} onClick={handleGoBack}>
+              <img src="/images/header/mobile/mo_back_btn.svg" alt="뒤로가기" />
+            </button>
+            <h1 className={styles.mobile_title}>{title}</h1>
+          </>
+        ) : isMobile ? (
+          <Link href="/user" className={styles.header_logo}>
+            <img src={getLogoSrc()} alt="VX 로고" />
+          </Link>
+        ) : (
+          <button className={styles.back_button} onClick={handleGoBack}>
+            <img src="/images/header/header_arrow_back.svg" alt="뒤로가기" />
+          </button>
+        )}
         <div className={styles.right_icons}>
-          <a
-            href="https://markx.dev/guide_book"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.bookmark_icon}
+          {/* 검색 */}
+          <HeaderSearch searchIconSrc={getSearchIconSrc()} />
+          {/* 알림 아이콘 (로그인 상태에 따라 동작) */}
+          <Link
+            href="/user/notification"
+            className={styles.notification_icon}
+            onClick={handleNotificationClick}
+            aria-label="알림"
           >
-            <img src="/images/header/header_book.svg" alt="book" />
-          </a>
-          <Link href="/user/mypage" className={styles.user_icon}>
-            <img src="/images/header/header_user.svg" alt="user" />
+            <img src={getNotificationIconSrc()} alt="bell_icon" />
+          </Link>
+          {/* 마이페이지로 연결 */}
+          <Link
+            href={
+              pathname?.startsWith("/partner")
+                ? "/partner/campaign_management"
+                : "/user/mypage"
+            }
+            className={styles.user_icon}
+          >
+            <img src={getUserIconSrc()} alt="user" />
           </Link>
         </div>
       </div>

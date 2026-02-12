@@ -24,24 +24,37 @@
 
 "use client";
 
+import { useState, useEffect } from "react";
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 import StatisticsTab from "@/components/user/campaign_management/StatisticsTab";
-import type { MainTab } from "@/types/user/user";
+import type { MainTab } from "@/types/domain/user";
 
 // 임시 데이터 import
-import { campaignManagementStats } from "@/data/user/campaign_management/campaignManagementData";
+import {
+  campaignManagementStats,
+  getClientCampaignStats,
+} from "@/data/user/campaign_management/campaignManagementData";
 
 interface CampaignManagementHeaderProps {
   /** 현재 활성 메인 탭 (캠페인/포인트/계정) */
   activeTab: MainTab;
   /** 메인 탭 변경 핸들러 */
   setActiveTab: (tab: MainTab) => void;
-  /** 현재 활성 통계 탭 (신청/선정/완료/취소반려/패널티) */
-  activeStatTab: "신청" | "선정" | "완료" | "취소/반려" | "패널티";
+  /** 현재 활성 통계 탭 (신청/선정/완료/취소반려/전체/패널티) */
+  activeStatTab: "신청" | "선정" | "완료" | "취소/반려" | "전체" | "패널티";
   /** 통계 탭 변경 핸들러 (선택적: 제공되지 않으면 StatisticsTab 내부에서 라우팅 처리) */
   setActiveStatTab?: (
-    tab: "신청" | "선정" | "완료" | "취소/반려" | "패널티"
+    tab: "신청" | "선정" | "완료" | "취소/반려" | "전체" | "패널티"
   ) => void;
+  /** 통계 데이터 (선택적: 제공되지 않으면 기본 데이터 사용) */
+  stats?: {
+    신청: number;
+    선정: number;
+    완료: number;
+    "취소/반려": number;
+    전체: number;
+    패널티: number;
+  };
 }
 
 /**
@@ -57,9 +70,24 @@ export default function CampaignManagementHeader({
   setActiveTab,
   activeStatTab,
   setActiveStatTab,
+  stats: propStats,
 }: CampaignManagementHeaderProps) {
-  // 임시 데이터에서 통계 정보 사용
-  const stats = campaignManagementStats;
+  // 통계 상태 관리 (hydration 오류 방지를 위해 초기값은 정적 데이터 사용)
+  const [stats, setStats] = useState(
+    propStats ?? campaignManagementStats
+  );
+
+  // 클라이언트에서만 localStorage를 고려한 통계로 업데이트
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // prop으로 전달된 통계가 있으면 업데이트하지 않음
+    if (propStats) return;
+
+    // localStorage를 고려한 통계 계산
+    const clientStats = getClientCampaignStats();
+    setStats(clientStats);
+  }, [propStats]);
 
   return (
     <>

@@ -22,7 +22,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CommonTable, {
   type TableColumn,
   type TableRowData,
@@ -33,6 +33,7 @@ import SortableTableHeader from "@/components/manager/common/table/SortableTable
 import styles from "@/styles/manager_sa/settlement/payment_history/payment_history_table.module.css";
 import {
   paymentHistoryList,
+  getPaymentHistoryList,
   type PaymentHistoryItem,
 } from "@/data/manager_sa/settlement/paymentHistoryData";
 import PaymentMethodTag from "@/components/manager/common/tags/PaymentMethodTag";
@@ -48,15 +49,18 @@ import type { PaymentStatus } from "@/components/manager/common/tags/PaymentStat
 interface PaymentHistoryTableRowData extends TableRowData, PaymentHistoryItem {}
 
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
-import type { AccountStatus } from "@/components/manager/sa/settlement/payment_history/filter/AccountStatusFilterModal";
+import type { AccountStatus } from "@/components/manager/sa/settlement/payment_history/filter/AccountStatusFilterDropdown";
+import type { TaxInvoiceType } from "@/components/manager/sa/settlement/payment_history/filter/TaxInvoiceTypeFilterDropdown";
+import type { MemberType } from "@/components/manager/sa/settlement/payment_history/filter/MemberTypeFilterDropdown";
 
 interface PaymentHistoryTableProps {
   search_query?: string;
   selected_date_range?: DateRange | undefined;
   selected_business_types?: BusinessType[];
   selected_payment_methods?: PaymentMethod[];
-  tax_invoice_only?: boolean;
+  selected_tax_invoice_types?: TaxInvoiceType[];
   selected_payment_statuses?: PaymentStatus[];
+  selected_member_types?: MemberType[];
   selected_account_statuses?: AccountStatus[];
 }
 
@@ -65,14 +69,35 @@ export default function PaymentHistoryTable({
   selected_date_range,
   selected_business_types = [],
   selected_payment_methods = [],
-  tax_invoice_only = false,
+  selected_tax_invoice_types = [],
   selected_payment_statuses = [],
+  selected_member_types = [],
   selected_account_statuses = [],
 }: PaymentHistoryTableProps) {
   // 선택된 항목 ID 배열 관리
   // useState: React의 상태 관리 훅입니다. 컴포넌트의 상태를 관리하고 상태가 변경되면 컴포넌트를 다시 렌더링합니다.
   // string[]: 문자열 배열 타입입니다. 선택된 항목의 ID들을 배열로 저장합니다.
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  // 결제 내역 데이터 상태
+  // 초기값은 Mock 데이터(paymentHistoryList)를 사용하여 서버와 클라이언트의 초기 렌더링을 일치시킵니다.
+  // 클라이언트 마운트 후 useEffect에서 LocalStorage 데이터를 병합한 실제 리스트로 교체합니다.
+  const [paymentHistory, setPaymentHistory] =
+    useState<PaymentHistoryItem[]>(paymentHistoryList);
+
+  /**
+   * 클라이언트 마운트 후 결제 내역 데이터 로드
+   *
+   * 설명:
+   * - Hydration 에러를 방지하기 위해 서버 렌더링 시에는 paymentHistoryList(고정된 Mock 데이터)만 사용합니다.
+   * - 클라이언트 마운트 후에만 getPaymentHistoryList()를 호출하여
+   *   LocalStorage에 저장된 결제 내역과 Mock 데이터를 병합합니다.
+   * - 이렇게 하면 서버와 클라이언트의 초기 HTML이 동일하게 유지되어 Hydration mismatch가 발생하지 않습니다.
+   */
+  useEffect(() => {
+    const merged_list = getPaymentHistoryList();
+    setPaymentHistory(merged_list);
+  }, []);
 
   // 컬럼별 타입 설정 (정렬을 위한 컬럼 타입 정의)
   // numeric_string: 숫자처럼 보이는 문자열 (예: "1,500,000", "999999")
@@ -89,17 +114,19 @@ export default function PaymentHistoryTable({
   };
 
   // 검색어 및 필터로 필터링된 결제 내역 목록
-  const filtered_payment_history_list = paymentHistoryList.filter((item) => {
+  const filtered_payment_history_list = paymentHistory.filter((item) => {
     // 검색어 필터
+    // 학습 포인트:
+    // - includes() 메서드: 문자열에 특정 문자열이 포함되어 있는지 확인합니다
+    // - toLowerCase() 메서드: 문자열을 소문자로 변환하여 대소문자 구분 없이 검색합니다
+    // - 검색 대상: 상호명, 입금자명, 사업자등록번호, 사업자명
     if (search_query) {
+      const search_lower = search_query.toLowerCase();
       const matches_search =
-        item.companyName.toLowerCase().includes(search_query.toLowerCase()) ||
-        item.depositorName.name
-          .toLowerCase()
-          .includes(search_query.toLowerCase()) ||
-        item.depositorName.registrationNumber
-          .toLowerCase()
-          .includes(search_query.toLowerCase());
+        item.companyName.toLowerCase().includes(search_lower) ||
+        item.depositorName.toLowerCase().includes(search_lower) ||
+        item.businessInfo.registrationNumber.toLowerCase().includes(search_lower) ||
+        item.businessInfo.representativeName.toLowerCase().includes(search_lower);
       if (!matches_search) return false;
     }
 
@@ -126,16 +153,68 @@ export default function PaymentHistoryTable({
     }
 
     // 세금계산서 발행 필터
-    if (tax_invoice_only && item.taxInvoice !== "O") return false;
+    // 학습 포인트:
+    // - filter() 메서드: 배열을 순회하며 조건에 맞는 요소만 남깁니다
+    // - taxInvoiceType 값이 선택된 유형 목록에 포함되어 있는지 확인합니다
+    // - "세금계산서", "현금영수증 (소득공제)", "현금영수증 (지출증빙)", "미발행" 중 하나입니다
+    if (selected_tax_invoice_types.length > 0) {
+      // 선택된 유형 목록에 해당 항목의 유형이 없으면 필터링 제외
+      if (!selected_tax_invoice_types.includes(item.taxInvoiceType)) {
+        return false;
+      }
+    }
 
     // 결제 상태 필터
     if (selected_payment_statuses.length > 0) {
       if (!selected_payment_statuses.includes(item.paymentStatus)) return false;
     }
 
+    // 회원 유형 필터
+    // 학습 포인트:
+    // - 데이터의 memberType("모범 회원", "주의 회원", "이용 제한 회원")을
+    //   필터 옵션("일반 회원", "주의 회원", "이용 제한 회원")으로 매핑합니다
+    // - "모범 회원"을 "일반 회원"으로 변환합니다
+    if (selected_member_types.length > 0) {
+      // item.memberType을 MemberType으로 변환
+      // "모범 회원" -> "일반 회원"으로 매핑
+      const item_member_type: MemberType | null =
+        item.memberType === "모범 회원"
+          ? "일반 회원"
+          : item.memberType === "주의 회원"
+          ? "주의 회원"
+          : item.memberType === "이용 제한 회원"
+          ? "이용 제한 회원"
+          : null;
+
+      // 선택된 유형 목록에 해당 항목의 유형이 없으면 필터링 제외
+      if (!item_member_type || !selected_member_types.includes(item_member_type)) {
+        return false;
+      }
+    }
+
     // 계정 상태 필터
+    // 학습 포인트:
+    // - 데이터의 accountStatus("정상", "일시정지", "영구정지", "탈퇴")를
+    //   필터 옵션("정상", "일시 정지", "영구 정지", "탈퇴")으로 매핑합니다
+    // - "일시정지"를 "일시 정지"로, "영구정지"를 "영구 정지"로 변환합니다
     if (selected_account_statuses.length > 0) {
-      if (!selected_account_statuses.includes(item.accountStatus)) return false;
+      // item.accountStatus를 AccountStatus로 변환
+      // 데이터에서는 띄어쓰기 없이 되어 있지만 필터에서는 띄어쓰기가 있습니다
+      const item_account_status: AccountStatus | null =
+        item.accountStatus === "정상"
+          ? "정상"
+          : item.accountStatus === "일시정지"
+          ? "일시 정지"
+          : item.accountStatus === "영구정지"
+          ? "영구 정지"
+          : item.accountStatus === "탈퇴"
+          ? "탈퇴"
+          : null;
+
+      // 선택된 상태 목록에 해당 항목의 상태가 없으면 필터링 제외
+      if (!item_account_status || !selected_account_statuses.includes(item_account_status)) {
+        return false;
+      }
     }
 
     return true;
@@ -190,8 +269,8 @@ export default function PaymentHistoryTable({
       className: styles.table_cell_payment_method,
     },
     {
-      key: "taxInvoice",
-      label: "세금계산서",
+      key: "taxInvoiceType",
+      label: "발행",
       className: styles.table_cell_tax_invoice,
     },
     {
@@ -203,7 +282,7 @@ export default function PaymentHistoryTable({
     {
       key: "paymentStatus",
       label: "결제",
-      sortable: true,
+
       className: styles.table_cell_payment_status,
     },
     {
@@ -287,32 +366,102 @@ export default function PaymentHistoryTable({
       case "number":
         return <span className={styles.cell_text}>{row.number}</span>;
       case "companyName":
-        return <span className={styles.cell_text}>{row.companyName}</span>;
-      case "depositorName":
-        // 템플릿 리터럴: 백틱(`)을 사용하여 문자열과 변수를 함께 사용할 수 있는 문법입니다.
+        // 상호명 열: 두 줄로 표시
+        // 첫 번째 줄: 상호명 + 다운로드 아이콘
+        // 두 번째 줄: 사업자등록번호 · 사업자명
+        // 학습 포인트:
+        // - flexbox 레이아웃: display: flex를 사용하여 요소들을 가로로 배치합니다
+        // - flex-direction: column: 요소들을 세로로 배치합니다
+        // - button: 클릭 가능한 버튼 요소입니다
+        // - img: 이미지 요소입니다
+        // - onClick 이벤트 핸들러: 버튼 클릭 시 실행할 함수를 지정합니다
+        // - stopPropagation(): 이벤트 버블링을 방지하여 부모 요소의 이벤트가 실행되지 않도록 합니다
+        // - aria-label: 접근성을 위한 레이블입니다
         return (
-          <span className={styles.cell_text}>
-            {row.depositorName.registrationNumber} · {row.depositorName.name}
-          </span>
+          <div className={styles.company_name_container}>
+            <div className={styles.company_name_row}>
+              <span className={styles.cell_text}>{row.companyName}</span>
+              <button
+                className={styles.download_button}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // TODO: 사업자 정보 다운로드 기능 구현
+                  // alert: 브라우저에서 제공하는 기본 알림 창을 띄우는 함수입니다
+                  alert("사업자 정보 다운로드 기능은 준비 중입니다.");
+                }}
+                aria-label={`${row.companyName} 사업자 정보 다운로드`}
+              >
+                <img
+                  // 구분(businessType)에 따라 다른 아이콘 표시
+                  // 삼항 연산자: 조건 ? 참일 때 값 : 거짓일 때 값
+                  // row.businessType이 "법인"이면 table_download.svg, "개인"이면 table_download_grey.svg 사용
+                  src={
+                    row.businessType === "법인"
+                      ? "/images/management_page/table/table_download.svg"
+                      : "/images/management_page/table/table_download_grey.svg"
+                  }
+                  alt="다운로드"
+                  className={styles.download_icon}
+                />
+              </button>
+            </div>
+            <span className={styles.business_info_text}>
+              {row.businessInfo.registrationNumber} · {row.businessInfo.representativeName}
+            </span>
+          </div>
         );
+      case "depositorName":
+        // 입금자명 열: 입금자명만 표시
+        // depositorName은 문자열 타입입니다
+        return <span className={styles.cell_text}>{row.depositorName}</span>;
       case "businessType":
         // BusinessTypeTag 컴포넌트를 사용하여 사업자 구분 태그 표시
         return (
-          <BusinessTypeTag
-            type={row.businessType as BusinessType}
-            styles={styles}
-          />
+          <BusinessTypeTag type={row.businessType as BusinessType} />
         );
       case "paymentMethod":
         // PaymentMethodTag 컴포넌트를 사용하여 결제 수단 태그 표시
         return (
-          <PaymentMethodTag
-            method={row.paymentMethod as PaymentMethod}
-            styles={styles}
-          />
+          <PaymentMethodTag method={row.paymentMethod as PaymentMethod} />
         );
-      case "taxInvoice":
-        return <span className={styles.cell_text}>{row.taxInvoice}</span>;
+      case "taxInvoiceType":
+        // 발행 열: 세금계산서 발행 유형 표시
+        // 카드 결제인 경우 "-" 표시 (카드 결제는 세금계산서 발행 불가)
+        // taxInvoiceType은 "세금계산서", "현금영수증 (소득공제)", "현금영수증 (지출증빙)", "미발행" 중 하나입니다
+        // 학습 포인트:
+        // - includes() 메서드: 문자열에 특정 문자열이 포함되어 있는지 확인합니다
+        // - 조건부 렌더링: 괄호가 있는 경우 두 줄로 표시하고, 없는 경우 한 줄로 표시합니다
+        // - split() 메서드: 문자열을 특정 구분자로 나눕니다
+        // - map() 메서드: 배열의 각 요소를 변환합니다
+        // - fragment(<></>): 여러 요소를 그룹화합니다 (불필요한 DOM 요소 추가 없음)
+        
+        // 카드 결제 또는 포인트 충전인 경우 "-" 표시
+        if (row.paymentMethod === "카드 결제" || row.paymentMethod === "포인트 충전") {
+          return <span className={styles.cell_text}>-</span>;
+        }
+        
+        const has_parentheses = row.taxInvoiceType.includes("(");
+        if (has_parentheses) {
+          // 괄호가 있는 경우: "현금영수증"과 "(소득공제)" 또는 "(지출증빙)" 사이에서 줄바꿈
+          // 예: "현금영수증 (소득공제)" -> "현금영수증" / "(소득공제)"
+          const parts = row.taxInvoiceType.split(" (");
+          const main_text = parts[0]; // "현금영수증" 또는 "발행"
+          const parentheses_text = parts[1] ? "(" + parts[1] : ""; // "(소득공제)" 또는 "(지출증빙)" 또는 빈 문자열
+
+          // parts[1]이 없으면 한 줄로 표시
+          if (!parts[1]) {
+            return <span className={styles.cell_text}>{row.taxInvoiceType}</span>;
+          }
+
+          return (
+            <div className={styles.tax_invoice_container}>
+              <span className={styles.cell_text}>{main_text}</span>
+              <span className={styles.cell_text}>{parentheses_text}</span>
+            </div>
+          );
+        }
+        // 괄호가 없는 경우: 한 줄로 표시
+        return <span className={styles.cell_text}>{row.taxInvoiceType}</span>;
       case "chargedPoints":
         // 충전 포인트 열: 충전 포인트와 보유 포인트를 세로로 표시
         return (
@@ -326,10 +475,7 @@ export default function PaymentHistoryTable({
       case "paymentStatus":
         // 결제 상태 열: 결제 상태 태그 표시
         return (
-          <PaymentStatusTag
-            status={row.paymentStatus as PaymentStatus}
-            styles={styles}
-          />
+          <PaymentStatusTag status={row.paymentStatus as PaymentStatus} />
         );
       case "requestDate":
         return <span className={styles.cell_text}>{row.requestDate}</span>;
@@ -342,7 +488,6 @@ export default function PaymentHistoryTable({
         return (
           <MemberStatusTag
             status={row.accountStatus as MemberStatus}
-            styles={styles}
           />
         );
       default:

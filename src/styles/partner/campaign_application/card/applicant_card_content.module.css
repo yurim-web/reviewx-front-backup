@@ -1,0 +1,253 @@
+/* ========================================
+   👤 신청자 카드 - 콘텐츠 영역
+   ======================================== */
+
+/**
+ * 사용: 모든 신청자/콘텐츠 카드 컴포넌트
+ * 경로: @/components/partner/campaign_application/card_type/**
+ *       @/components/partner/campaign_contents/card_type/**
+ */
+
+/* ==================== 프로필 섹션 ==================== */
+
+.profile_section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile_image_container {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.profile_image,
+.profile_placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile_info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.user_type {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nickname {
+  color: #444;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 128px;
+}
+
+.influencer_nickname {
+  color: #22c55e !important;
+}
+
+/* ==================== 채널 섹션 ==================== */
+
+.channel_section {
+  border-radius: 4px;
+  background: #f9f9f9;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 38px;
+}
+
+.channel_icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.applicant_id {
+  color: #444;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.28px;
+  text-decoration: none;
+  cursor: pointer;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+}
+
+/* ==================== 회원 타입 ==================== */
+
+.member_type {
+  border-radius: 4px;
+  background: #f9f9f9;
+  padding: 12px;
+  color: #444;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* ==================== 통계 섹션 ==================== */
+
+.stats_section {
+  border-radius: 4px;
+  background: #f9f9f9;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stat_item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+.stat_label {
+  color: #848484;
+}
+
+.stat_value {
+  color: #444;
+}
+
+/* ==================== 메모 섹션 ==================== */
+
+.memo_section {
+  border-radius: 4px;
+  background: #f9f9f9;
+  padding: 12px;
+  max-height: 56px;
+  min-height: 56px;
+}
+
+.memo_text {
+  color: #848484;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.24px;
+  max-height: 36px;
+  overflow-y: auto;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+/* 메모 스크롤바 */
+.memo_text::-webkit-scrollbar {
+  width: 4px;
+}
+
+.memo_text::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.memo_text::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 100px;
+  border-left: 1px solid transparent;
+  background-clip: padding-box;
+}
+
+.memo_text::-webkit-scrollbar-thumb:hover {
+  background: #999;
+  background-clip: padding-box;
+}
+
+/* ==================== 📱 모바일 반응형 ==================== */
+
+@media (max-width: 768px) {
+  /* 프로필 섹션 */
+  .profile_image_container,
+  .profile_image,
+  .profile_placeholder {
+    flex-shrink: 0;
+  }
+
+  .profile_info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .nickname {
+    max-width: 100%;
+  }
+
+  /* 채널 섹션 */
+  .channel_section {
+    max-height: 38px;
+  }
+
+  .channel_section > *:not(.channel_icon) {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .applicant_id {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* 통계 섹션 */
+  .stat_item {
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .stat_label {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .stat_value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+    text-align: right;
+  }
+
+  /* 메모 섹션 */
+  .memo_section {
+    padding: 8px;
+    min-height: 64px;
+    max-height: 64px;
+  }
+
+  .memo_text {
+    max-height: 48px;
+  }
+}

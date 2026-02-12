@@ -15,7 +15,7 @@
  
  */
 
-'use client';
+"use client";
 
 import {
   ComposedChart,
@@ -27,8 +27,8 @@ import {
   ResponsiveContainer,
   CartesianGrid,
   Legend,
-} from 'recharts';
-import styles from '@/styles/manager_ga/dashboard/charts.module.css';
+} from "recharts";
+import styles from "@/styles/manager_ga/dashboard/charts.module.css";
 
 // 차트 데이터 타입 정의
 interface ChartData {
@@ -41,79 +41,79 @@ interface ChartData {
 // 차트 데이터 (Figma 디자인 기반)
 const chart_data: ChartData[] = [
   {
-    category: '생활',
+    category: "생활",
     recruitmentRate: 22,
     achievementRate: 55,
     averageDuration: 55,
   },
   {
-    category: '식품',
+    category: "식품",
     recruitmentRate: 38,
     achievementRate: 68,
     averageDuration: 55,
   },
   {
-    category: '패션',
+    category: "패션",
     recruitmentRate: 50,
     achievementRate: 69,
     averageDuration: 12,
   },
   {
-    category: '뷰티',
+    category: "뷰티",
     recruitmentRate: 52,
     achievementRate: 65,
     averageDuration: 12,
   },
   {
-    category: '가구',
+    category: "가구",
     recruitmentRate: 32,
     achievementRate: 72,
     averageDuration: 55,
   },
   {
-    category: '가전',
+    category: "가전",
     recruitmentRate: 28,
     achievementRate: 82,
     averageDuration: 55,
   },
   {
-    category: '디지털',
+    category: "디지털",
     recruitmentRate: 78,
     achievementRate: 98,
     averageDuration: 28,
   },
   {
-    category: '유아동',
+    category: "유아동",
     recruitmentRate: 88,
     achievementRate: 60,
     averageDuration: 28,
   },
   {
-    category: '문화',
+    category: "문화",
     recruitmentRate: 80,
     achievementRate: 50,
     averageDuration: 55,
   },
   {
-    category: '여가',
+    category: "여가",
     recruitmentRate: 88,
     achievementRate: 45,
     averageDuration: 28,
   },
   {
-    category: '반려동물',
+    category: "반려동물",
     recruitmentRate: 88,
     achievementRate: 70,
     averageDuration: 55,
   },
   {
-    category: '서비스',
+    category: "서비스",
     recruitmentRate: 90,
     achievementRate: 75,
     averageDuration: 55,
   },
   {
-    category: '기타',
+    category: "기타",
     recruitmentRate: 64,
     achievementRate: 62,
     averageDuration: 2,
@@ -135,7 +135,7 @@ const CustomXAxisTick = ({ x, y, payload }: any) => {
       fontWeight={500}
       letterSpacing="-0.24px"
       style={{
-        lineHeight: '12px',
+        lineHeight: "12px",
       }}
     >
       {payload.value}
@@ -157,7 +157,7 @@ const CustomYAxisTick = ({ x, y, payload }: any) => {
       fontWeight={500}
       letterSpacing="-0.24px"
       style={{
-        lineHeight: '12px',
+        lineHeight: "12px",
       }}
     >
       {payload.value}
@@ -179,7 +179,7 @@ const CustomYAxisTickRight = ({ x, y, payload }: any) => {
       fontWeight={500}
       letterSpacing="-0.24px"
       style={{
-        lineHeight: '12px',
+        lineHeight: "12px",
       }}
     >
       {payload.value}
@@ -197,8 +197,8 @@ const CustomTooltip = ({ active, payload, coordinate }: any) => {
         item.value !== null &&
         item.value !== undefined &&
         item.dataKey &&
-        (item.dataKey === 'recruitmentRate' ||
-          item.dataKey === 'achievementRate'),
+        (item.dataKey === "recruitmentRate" ||
+          item.dataKey === "achievementRate")
     );
 
     // lineItems가 없으면 (막대에 호버한 경우) 툴팁 표시 안 함
@@ -213,12 +213,12 @@ const CustomTooltip = ({ active, payload, coordinate }: any) => {
         <div
           className={styles.chart_tooltip}
           style={{
-            position: 'absolute',
+            position: "absolute",
             left: coordinate.x,
             top: coordinate.y,
-            transform: 'translate(-50%, -100%)',
-            marginTop: '-8px',
-            pointerEvents: 'none',
+            transform: "translate(-50%, -100%)",
+            marginTop: "-8px",
+            pointerEvents: "none",
           }}
         >
           <p className={styles.chart_tooltip_name}>{activeItem.name}</p>
@@ -251,7 +251,7 @@ const CustomTooltip = ({ active, payload, coordinate }: any) => {
 
       // 거리가 가장 가까운 항목 선택
       const closestItem = itemsWithDistance.reduce((prev: any, curr: any) =>
-        curr.distance < prev.distance ? curr : prev,
+        curr.distance < prev.distance ? curr : prev
       );
 
       if (closestItem.item) {
@@ -259,12 +259,12 @@ const CustomTooltip = ({ active, payload, coordinate }: any) => {
           <div
             className={styles.chart_tooltip}
             style={{
-              position: 'absolute',
+              position: "absolute",
               left: coordinate.x,
               top: coordinate.y,
-              transform: 'translate(-50%, -100%)',
-              marginTop: '-8px',
-              pointerEvents: 'none',
+              transform: "translate(-50%, -100%)",
+              marginTop: "-8px",
+              pointerEvents: "none",
             }}
           >
             <p className={styles.chart_tooltip_name}>{closestItem.item.name}</p>
@@ -283,12 +283,12 @@ const CustomTooltip = ({ active, payload, coordinate }: any) => {
         <div
           className={styles.chart_tooltip}
           style={{
-            position: 'absolute',
+            position: "absolute",
             left: coordinate.x,
             top: coordinate.y,
-            transform: 'translate(-50%, -100%)',
-            marginTop: '-8px',
-            pointerEvents: 'none',
+            transform: "translate(-50%, -100%)",
+            marginTop: "-8px",
+            pointerEvents: "none",
           }}
         >
           <p className={styles.chart_tooltip_name}>{activeItem.name}</p>
@@ -341,19 +341,19 @@ export default function CampaignRecruitmentChart() {
             tickLine={false}
             axisLine={false}
             label={{
-              value: '단위 (%)',
+              value: "단위 (%)",
               angle: 0,
-              position: 'top',
+              position: "top",
               offset: 35,
               dx: -15,
               style: {
-                textAnchor: 'start',
-                fill: '#999',
-                fontSize: '12px',
-                fontFamily: 'Pretendard',
+                textAnchor: "start",
+                fill: "#999",
+                fontSize: "12px",
+                fontFamily: "Pretendard",
                 fontWeight: 500,
-                lineHeight: '12px',
-                letterSpacing: '-0.24px',
+                lineHeight: "12px",
+                letterSpacing: "-0.24px",
               },
             }}
           />
@@ -368,25 +368,25 @@ export default function CampaignRecruitmentChart() {
             tickLine={false}
             axisLine={false}
             label={{
-              value: '단위 (일)',
+              value: "단위 (일)",
               angle: 0,
-              position: 'top',
+              position: "top",
               offset: 35,
               dx: 15,
               style: {
-                textAnchor: 'end',
-                fill: '#999',
-                fontSize: '12px',
-                fontFamily: 'Pretendard',
+                textAnchor: "end",
+                fill: "#999",
+                fontSize: "12px",
+                fontFamily: "Pretendard",
                 fontWeight: 500,
-                lineHeight: '12px',
-                letterSpacing: '-0.24px',
+                lineHeight: "12px",
+                letterSpacing: "-0.24px",
               },
             }}
           />
 
           {/* 범례 숨김 - 섹션 컴포넌트에서 커스텀 범례로 표시 */}
-          <Legend wrapperStyle={{ display: 'none' }} />
+          <Legend wrapperStyle={{ display: "none" }} />
 
           {/* 툴팁 - 각 라인별로 개별 표시 */}
           <Tooltip
@@ -396,19 +396,19 @@ export default function CampaignRecruitmentChart() {
             allowEscapeViewBox={{ x: true, y: true }}
           />
 
-          {/* 달성률 라인 (밝은 회색) - 막대 뒤에 표시되도록 먼저 렌더링 */}
+          {/* 달성률 라인 (핑크색) - 막대 뒤에 표시되도록 먼저 렌더링 */}
           <Line
             yAxisId="left"
             type="linear"
             dataKey="achievementRate"
             name="달성률"
-            stroke="#ABABAB"
+            stroke="#FF5694"
             strokeWidth={2}
-            dot={{ r: 3, fill: '#ABABAB' }}
+            dot={{ r: 3, fill: "#FF5694" }}
             activeDot={{
               r: 4,
-              fill: '#ABABAB',
-              stroke: '#ABABAB',
+              fill: "#FF5694",
+              stroke: "#FF5694",
               strokeWidth: 1,
             }}
           />
@@ -421,11 +421,11 @@ export default function CampaignRecruitmentChart() {
             name="모집률"
             stroke="#444444"
             strokeWidth={2}
-            dot={{ r: 3, fill: '#444444' }}
+            dot={{ r: 3, fill: "#444444" }}
             activeDot={{
               r: 4,
-              fill: '#444444',
-              stroke: '#444444',
+              fill: "#444444",
+              stroke: "#444444",
               strokeWidth: 1,
             }}
           />

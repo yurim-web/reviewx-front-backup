@@ -4,7 +4,7 @@
 
 import type { Meta, StoryObj } from "@storybook/react";
 import ReviewerTable from "./ReviewerTable";
-import styles from "@/styles/manager_ga/member/reviewers/reviewer_table.module.css";
+import styles from "@/styles/manager/common/member/reviewers/reviewer_table.module.css";
 
 const meta: Meta<typeof ReviewerTable> = {
   title: "Manager/Common/Member/Table/ReviewerTable",

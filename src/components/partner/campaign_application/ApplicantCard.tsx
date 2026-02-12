@@ -33,7 +33,9 @@
 "use client";
 
 import { Applicant } from "@/data/partner/campaign_application/delivery_applicants";
-import styles from "@/styles/partner/campaign_application/card/applicant_card_shared.module.css";
+import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
+import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
+import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
 
 /**
  * 채널 이름과 아이콘 경로를 매핑하는 객체
@@ -99,103 +101,103 @@ export default function ApplicantCard({
   const channel_icon_src = channel_logo_map[applicant.channel];
 
   return (
-    <div className={styles.applicant_card}>
+    <div className={baseStyles.applicant_card}>
       {/* 프로필 영역: 프로필 이미지, 닉네임, 사용자 타입 */}
-      <div className={styles.profile_section}>
+      <div className={contentStyles.profile_section}>
         <img
-          src={applicant.profileImage}
-          alt=""
-          className={styles.profile_image}
+          src={applicant.profileImage || "/images/mypage/profile.svg"}
+          alt="프로필"
+          className={contentStyles.profile_image}
         />
-        <div className={styles.profile_info}>
+        <div className={contentStyles.profile_info}>
           {/* 닉네임 표시 */}
-          <div className={styles.user_type}>{applicant.userType}</div>
+          <div className={contentStyles.user_type}>{applicant.userType}</div>
           {/* 사용자 타입 표시 (리뷰어 / 인플루언서) */}
-          <div className={styles.nickname}>{applicant.nickname}</div>
+          <div className={contentStyles.nickname}>{applicant.nickname}</div>
         </div>
       </div>
 
       {/* 채널 정보 영역: 채널 아이콘, 채널 ID */}
-      <div className={styles.channel_section}>
+      <div className={contentStyles.channel_section}>
         <img
           src={channel_icon_src}
           alt="채널"
-          className={styles.channel_icon}
+          className={contentStyles.channel_icon}
         />
-        {/* 
+        {/*
           📌 하드코딩된 텍스트:
           - 현재 "id"로 고정되어 있음
           - 실제로는 applicant.channelId 같은 prop을 사용해야 함
         */}
-        <span className={styles.channel_id}>id</span>
+        <span className={contentStyles.applicant_id}>id</span>
       </div>
 
       {/* 회원 타입 표시 */}
-      <div className={styles.member_type}>{applicant.memberType}</div>
+      <div className={contentStyles.member_type}>{applicant.memberType}</div>
 
       {/* 통계 정보 영역: 일방문, 총방문, 이웃수 */}
-      <div className={styles.stats_section}>
-        {/* 
+      <div className={contentStyles.stats_section}>
+        {/*
           📌 통계 아이템 1: 일방문
           - toLocaleString(): 숫자를 천 단위 콤마로 표시
           - 예: 135 -> "135", 1350 -> "1,350"
         */}
-        <div className={styles.stat_item}>
-          <span className={styles.stat_label}>일방문</span>
-          <span className={styles.stat_value}>
+        <div className={contentStyles.stat_item}>
+          <span className={contentStyles.stat_label}>일방문</span>
+          <span className={contentStyles.stat_value}>
             {applicant.dailyVisits.toLocaleString()}
           </span>
         </div>
 
         {/* 통계 아이템 2: 총방문 */}
-        <div className={styles.stat_item}>
-          <span className={styles.stat_label}>총방문</span>
-          <span className={styles.stat_value}>
+        <div className={contentStyles.stat_item}>
+          <span className={contentStyles.stat_label}>총방문</span>
+          <span className={contentStyles.stat_value}>
             {applicant.totalVisits.toLocaleString()}
           </span>
         </div>
 
         {/* 통계 아이템 3: 이웃수 */}
-        <div className={styles.stat_item}>
-          <span className={styles.stat_label}>이웃수</span>
-          <span className={styles.stat_value}>
+        <div className={contentStyles.stat_item}>
+          <span className={contentStyles.stat_label}>이웃수</span>
+          <span className={contentStyles.stat_value}>
             {applicant.neighbors.toLocaleString()}
           </span>
         </div>
       </div>
 
       {/* 메모 영역: 신청자가 작성한 자기소개 */}
-      <div className={styles.memo_section}>
-        <div className={styles.memo_text}>{applicant.memo}</div>
-        <div className={styles.memo_divider}></div>
+      <div className={contentStyles.memo_section}>
+        <div className={contentStyles.memo_text}>{applicant.memo}</div>
+        <div className={contentStyles.memo_divider}></div>
       </div>
 
       {/* 액션 버튼 영역: 선정하기 / 이용 제한 표시 */}
-      <div className={styles.action_button}>
-        {/* 
+      <div className={actionStyles.action_button}>
+        {/*
           📌 조건부 렌더링 (Conditional Rendering):
           - && 연산자: 왼쪽 조건이 true일 때만 오른쪽 렌더링
           - 삼항 연산자 대신 더 간결한 방법
-          
+
           applicant.selectionStatus === "미선택" 조건이 true면
           선정하기 버튼을 렌더링
         */}
         {applicant.selectionStatus === "미선택" && (
           <button
-            className={styles.select_button}
+            className={actionStyles.select_button}
             onClick={() => onSelect(applicant.id)}
           >
             선정하기
           </button>
         )}
 
-        {/* 
+        {/*
           📌 이용 제한 계정 표시:
           - disabled 속성: 버튼 비활성화
           - 클릭 불가능한 상태
         */}
         {applicant.selectionStatus === "이용제한 계정" && (
-          <button className={styles.restricted_button} disabled>
+          <button className={actionStyles.restricted_button} disabled>
             이용 제한 계정
           </button>
         )}

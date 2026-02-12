@@ -1,0 +1,66 @@
+/* ========================================
+   🏗️ 출금 요청 테이블 구조 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - RequestTable.tsx
+ */
+
+/* 섹션 제목 */
+.section_title {
+  color: #444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  padding-bottom: 24px;
+}
+
+/* 테이블 컨테이너 */
+.table_container {
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: white;
+}
+
+/* 테이블 헤더 */
+.table_header {
+  display: grid;
+  background-color: #f5f5f5;
+  padding: 0;
+  align-items: center;
+  min-height: 56px;
+  /* 바디 스크롤바로 인해 컬럼이 밀리는 현상을 방지 (스크롤바 공간을 항상 예약) */
+  padding-right: 13px;
+  /* grid-template-columns는 인라인 스타일로 동적으로 설정됨 (긴급/회차 정산에 따라 다름) */
+}
+
+/* 테이블 헤더 행 */
+.table_header_row {
+  display: contents;
+}
+
+/* 테이블 바디 */
+.table_body {
+  background-color: white;
+  overflow-y: auto !important;
+  /* 스크롤바 공간을 항상 확보해서 헤더/바디 컬럼 정렬 유지 */
+  scrollbar-gutter: stable;
+}
+
+/* CommonTable이 각 행을 감싸는 div를 grid 구조에 포함시키기 위해 */
+.table_body > div {
+  display: contents;
+}
+
+/* 긴급 테이블 바디 높이 제한 */
+.table_body_emergency {
+  max-height: 380px;
+}
+
+/* 회차 정산 테이블 바디 높이 제한 */
+.table_body_round {
+  max-height: 760px;
+}

@@ -1,160 +1,143 @@
-/* ========================================
-   🔐 사용자 로그인 페이지
-   ======================================== */
+// 🔐 사용자 로그인 페이지 (/user/login)
+// - 네이버 / 카카오 소셜 로그인
+// - 계정 상태에 따른 리다이렉트 (정지 / 블랙리스트 / 정상)
 
-/**
- * 사용자 로그인 페이지
- *
- * 목적: 사용자가 아이디와 비밀번호를 입력하여 로그인할 수 있는 페이지입니다.
- *
- * 페이지 경로:
- * - /user/login
- *
- * 주요 기능:
- * - 아이디 입력
- * - 비밀번호 입력
- * - 자동 로그인 체크박스
- * - 로그인 버튼
- * - 아이디 · 비밀번호 찾기 링크
- */
+"use client";
 
-'use client';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import Header from '@/components/fragments/Header';
-import styles from '@/styles/login/partner_login.module.css';
-// 🧪 테스트용 - 실제 API 연결 시 이 import 삭제
+import styles from "@/styles/user/login/user_login.module.css";
+
+// ⚠️ 실제 API 연결 시 이 import는 삭제하고 실제 API 호출로 교체
 import {
-  checkUserTestLogin,
-  isBlockedUserAccount,
-} from '@/data/login/testLoginData';
+  UNIFIED_ACCOUNTS,
+  type SNSType,
+  type UnifiedAccount,
+} from "@/data/login/unifiedAccountData";
+import { authenticateUnifiedAccount } from "@/lib/auth";
 
-/**
- * 사용자 로그인 페이지 컴포넌트
- *
- * @returns JSX.Element - 사용자 로그인 페이지 UI
- */
+type RecentLoginProvider = "naver" | "kakao" | null;
+
 export default function UserLoginPage() {
-  // Next.js의 useRouter 훅: 페이지 이동을 위한 라우터 객체
   const router = useRouter();
 
-  // ========================================
-  // 상태 관리 (State Management)
-  // ========================================
-
-  /**
-   * 아이디 상태
-   */
-  const [username, setUsername] = useState<string>('');
-
-  /**
-   * 비밀번호 상태
-   */
-  const [password, setPassword] = useState<string>('');
-
-  /**
-   * 자동 로그인 체크박스 상태
-   */
-  const [autoLogin, setAutoLogin] = useState<boolean>(false);
-
-  /**
-   * 로그인 에러 메시지 상태
-   */
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  // 최근 로그인한 소셜 제공자 (테스트용)
+  const [recentLoginProvider] = useState<RecentLoginProvider>("naver");
 
   // ========================================
-  // 이벤트 핸들러 (Event Handlers)
+  // 자동 로그인 비활성화
   // ========================================
+  // useEffect(() => {
+  //   // 이미 로그인되어 있으면 처리
+  //   if (user) {
+  //     // user 계정이면 user 페이지로 리다이렉트
+  //     if (user.role === 'user') {
+  //       router.push('/user/campaign_management');
+  //     }
+  //     // 파트너/관리자 계정이면 자동 로그인 안 함
+  //     return;
+  //   }
 
-  /**
-   * 아이디 입력 변경 핸들러
-   *
-   * @param e - React의 ChangeEvent 타입 (input 요소의 변경 이벤트)
-   */
-  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(e.target.value);
-    // 입력 시 에러 메시지 초기화
-    if (errorMessage) {
-      setErrorMessage('');
-    }
-  };
+  //   // 로그인되어 있지 않으면 자동으로 네이버 계정으로 로그인
+  //   const naver_account = UNIFIED_ACCOUNTS.find(
+  //     (account) => account.userType === "user" && account.snsType === "naver"
+  //   );
 
-  /**
-   * 비밀번호 입력 변경 핸들러
-   */
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-    // 입력 시 에러 메시지 초기화
-    if (errorMessage) {
-      setErrorMessage('');
-    }
-  };
+  //   if (naver_account) {
+  //     login(naver_account);
+  //     router.push(naver_account.redirectUrl || '/user/campaign_management');
+  //   }
+  // }, [user, login, router]);
 
-  /**
-   * 자동 로그인 체크박스 변경 핸들러
-   *
-   * @param e - React의 ChangeEvent 타입 (checkbox 요소의 변경 이벤트)
-   */
-  const handleAutoLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAutoLogin(e.target.checked);
-  };
-
-  /**
-   * 로그인 폼 제출 핸들러
-   *
-   * @param e - React의 FormEvent 타입 (폼 제출 이벤트)
-   */
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    // 에러 메시지 초기화
-    setErrorMessage('');
-
+  // 소셜 로그인 성공 후 계정 상태에 따른 리다이렉트 + 로컬 세션 저장
+  const handle_social_login_success = async (account: UnifiedAccount) => {
     try {
-      // ========================================
-      // ⚠️ 실제 API 연결 시 사용할 코드 (아래 주석 해제)
-      // ========================================
-      // const response = await loginAPI({ username, password, autoLogin });
-      // if (!response.success) {
-      //   setErrorMessage(response.errorMessage);
-      //   return;
-      // }
-      // // 로그인 성공 시 처리
-      // router.push('/user/campaign_management');
-      // ========================================
-
-      // ========================================
-      // 🧪 테스트용 코드 - 실제 API 연결 시 전체 삭제 필요
-      // ========================================
-      console.log('로그인 시도:', { username, password, autoLogin });
-
-      // 차단된 계정인지 먼저 확인 (비밀번호가 맞는 경우)
-      if (isBlockedUserAccount(username, password)) {
-        // 차단된 계정인 경우 차단 페이지로 이동
-        router.push('/blocked');
-        return;
-      }
-
-      // 테스트 데이터 확인 (testLoginData.ts 파일 참고)
-      const testError = checkUserTestLogin(username, password);
-      if (testError) {
-        setErrorMessage(testError);
-        return;
-      }
-
-      // 성공 케이스 (테스트 데이터에 있는 경우)
-      console.log('로그인 성공 (테스트 모드)');
-      // 로그인 성공 시 페이지 이동
-      router.push('/user/campaign_management');
-      // ========================================
-      // 🧪 테스트용 코드 끝 - 실제 API 연결 시 위 전체 블록 삭제
-      // ========================================
+      // SNS 계정 정보를 바로 AuthUser로 변환해서 LocalStorage에 저장
+      await authenticateUnifiedAccount(account);
     } catch (error) {
-      // API 호출 실패 시 기본 에러 메시지
-      setErrorMessage('아이디 또는 비밀번호가 일치하지 않습니다.');
+      console.error("소셜 로그인 처리 중 오류:", error);
+      alert("로그인 중 오류가 발생했습니다.");
+      return;
     }
+
+    if (account.isBanned) {
+      router.push("/pause_info");
+      return;
+    }
+
+    if (account.isBlocked) {
+      router.push("/blacklist_info");
+      return;
+    }
+
+    router.push(account.redirectUrl || "/user/campaign_management");
+  };
+
+  /**
+   * 네이버 로그인 핸들러
+   *
+   * 실제로는 네이버 OAuth API를 호출해야 함
+   *
+   * 소셜 로그인 플로우:
+   * 1. 사용자가 네이버 로그인 버튼 클릭
+   * 2. 네이버 OAuth 인증 페이지로 리다이렉트
+   * 3. 사용자가 네이버에서 인증 완료
+   * 4. 콜백 URL로 리다이렉트 (예: /user/login/callback?provider=naver)
+   * 5. 콜백에서 인증 코드를 받아 서버에 전달
+   * 6. 서버에서 네이버 API로 사용자 정보 조회
+   * 7. 서버에서 계정 정보와 함께 응답
+   * 8. handle_social_login_success 함수 호출하여 리다이렉트 처리
+   */
+  const handleNaverLogin = async () => {
+    console.log("네이버 로그인 클릭");
+
+    // ========================================
+    // ⚠️ 실제 API 연결 시 사용할 코드 (아래 주석 해제)
+    // ========================================
+    // try {
+    //   // 네이버 OAuth 인증 페이지로 리다이렉트
+    //   window.location.href = "네이버 OAuth URL";
+    // } catch (error) {
+    //   console.error("네이버 로그인 오류:", error);
+    //   alert("로그인 중 오류가 발생했습니다.");
+    // }
+    // ========================================
+
+    // ========================================
+    // 🧪 테스트용 코드 - 실제 API 연결 시 전체 삭제 필요
+    // ========================================
+    try {
+      // 테스트용: 네이버 로그인 계정 찾기
+      // 실제로는 서버에서 소셜 로그인 성공 후 계정 정보를 받아옵니다.
+      const naver_account = UNIFIED_ACCOUNTS.find(
+        (account) => account.userType === "user" && account.snsType === "naver"
+      );
+
+      if (!naver_account) {
+        console.error("네이버 계정을 찾을 수 없습니다.");
+        alert("로그인 중 오류가 발생했습니다.");
+        return;
+      }
+
+      // 소셜 로그인 성공 처리
+      await handle_social_login_success(naver_account);
+    } catch (error) {
+      console.error("네이버 로그인 오류:", error);
+      alert("로그인 중 오류가 발생했습니다.");
+    }
+    // ========================================
+  };
+
+  /**
+   * 카카오 버튼 클릭 핸들러
+   *
+   * 리뷰어 회원가입 페이지로 이동합니다.
+   * (네이버는 로그인, 카카오는 회원가입으로 분리)
+   */
+  const handleKakaoLogin = () => {
+    router.push("/user/signup");
   };
 
   // ========================================
@@ -162,97 +145,89 @@ export default function UserLoginPage() {
   // ========================================
 
   return (
-    <div className={styles.partner_login_page_container}>
-      {/* 메인 헤더 */}
-      <Header />
-
+    <div className={styles.login_page_container}>
       {/* 메인 콘텐츠 영역 */}
-      <main className={styles.partner_login_main}>
+      <main className={styles.login_main}>
         {/* 로그인 메시지 섹션 */}
         <section className={styles.login_message_section}>
           <h2 className={styles.login_title}>
-            리뷰엑스는
+            리뷰엑스,
             <br />
-            여러분이 만들어갑니다.
+            캠페인의 완성은
+            <br />
+            당신의 리뷰가 담당합니다.
           </h2>
         </section>
 
-        {/* 로그인 폼 섹션 */}
-        <form className={styles.login_form} onSubmit={handleSubmit}>
-          {/* 입력 필드 섹션 */}
-          <div className={styles.form_section}>
-            {/* 아이디 입력 필드 */}
-            <div className={styles.input_wrapper}>
-              <input
-                id="username"
-                type="text"
-                className={styles.input_field}
-                placeholder="아이디를 입력하세요"
-                value={username}
-                onChange={handleUsernameChange}
-                required
-                aria-label="아이디 입력"
-              />
-            </div>
-
-            {/* 비밀번호 입력 필드 */}
-            <div className={styles.input_wrapper}>
-              <input
-                id="password"
-                type="password"
-                className={styles.input_field}
-                placeholder="비밀번호를 입력하세요"
-                value={password}
-                onChange={handlePasswordChange}
-                required
-                aria-label="비밀번호 입력"
-              />
-              {/* 에러 메시지 - 비밀번호 입력 필드 바로 아래 */}
-              {errorMessage && (
-                <div className={styles.error_message_section}>
-                  <span className={styles.error_text}>{errorMessage}</span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* 옵션 및 링크 섹션 */}
-          <div className={styles.form_section}>
-            <div className={styles.login_options_section}>
-              {/* 자동 로그인 체크박스 */}
-              <div className={styles.auto_login_wrapper}>
-                <input
-                  id="auto-login"
-                  type="checkbox"
-                  className={styles.checkbox}
-                  checked={autoLogin}
-                  onChange={handleAutoLoginChange}
-                  aria-label="자동 로그인"
-                />
-                <label htmlFor="auto-login" className={styles.checkbox_label}>
-                  자동 로그인
-                </label>
+        {/* 소셜 로그인 버튼 섹션 */}
+        <section className={styles.social_login_section}>
+          {/* 네이버 로그인 버튼 */}
+          <div className={styles.login_button_wrapper}>
+            {/* 최근 로그인 배지 (네이버 최근 로그인 시 - 버튼 위 말풍선) */}
+            {recentLoginProvider === "naver" && (
+              <div
+                className={`${styles.recent_login_badge} ${styles.recent_login_badge_top}`}
+              >
+                <span className={styles.badge_text}>최근 로그인</span>
               </div>
+            )}
 
-              {/* 아이디 · 비밀번호 찾기 링크 */}
-              <Link href="/find-account" className={styles.link_text}>
-                아이디 · 비밀번호 찾기
-              </Link>
-            </div>
-          </div>
-
-          {/* 로그인 버튼 섹션 */}
-          <div className={styles.form_section}>
             <button
-              type="submit"
-              className={styles.login_button}
-              aria-label="로그인"
+              className={`${styles.login_button} ${styles.naver_button}`}
+              onClick={handleNaverLogin}
+              type="button"
+              aria-label="네이버로 로그인"
             >
-              로그인
+              네이버로 시작하기
             </button>
           </div>
-        </form>
+
+          {/* 카카오 로그인 버튼 */}
+          <div className={styles.login_button_wrapper}>
+            {/* 최근 로그인 배지 (카카오 최근 로그인 시 - 버튼 아래 말풍선) */}
+            {recentLoginProvider === "kakao" && (
+              <div
+                className={`${styles.recent_login_badge} ${styles.recent_login_badge_bottom}`}
+              >
+                <span className={styles.badge_text}>최근 로그인</span>
+              </div>
+            )}
+
+            <button
+              className={`${styles.login_button} ${styles.kakao_button}`}
+              onClick={handleKakaoLogin}
+              type="button"
+              aria-label="카카오로 로그인"
+            >
+              카카오로 시작하기
+            </button>
+          </div>
+        </section>
+
+        {/* 하단 링크 섹션 */}
+        <section className={styles.login_links_section}>
+          {/* 사용자 전용 계정찾기 페이지로 이동 링크 */}
+          <Link href="/user/find-account" className={styles.login_link}>
+            계정 찾기
+          </Link>
+          {/* 카카오 문의 외부 링크 */}
+          <a
+            href="https://pf.kakao.com" // TODO: 실제 카카오톡 문의 URL로 교체
+            className={styles.login_link}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            문의가 필요한가요?
+          </a>
+        </section>
       </main>
+
+      {/* 파트너 회원 로그인 링크 - 화면 하단 고정 */}
+      <div className={styles.partner_login_section}>
+        <Link href="/partner/login" className={styles.partner_login_link}>
+          파트너 회원 로그인
+        </Link>
+      </div>
     </div>
   );
 }

@@ -9,7 +9,8 @@
 
 "use client";
 
-import styles from "@/styles/common/find_account.module.css";
+import styles from "@/styles/common/find_account/find_account.module.css";
+import signupStyles from "@/styles/common/signup/signup.module.css";
 
 interface EmailInputProps {
   /** 이메일 값 */
@@ -34,13 +35,13 @@ export default function EmailInput({
         id="find-account-email"
         type="email"
         className={styles.email_input}
-        placeholder="가입 시 사용한 이메일을 입력하세요"
+        placeholder="이메일 입력"
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
       {error && (
-        <div className={styles.email_error_message}>
-          <span className={styles.email_error_text}>{error}</span>
+        <div className={signupStyles.error_message}>
+          <span className={signupStyles.error_text}>{error}</span>
         </div>
       )}
     </div>

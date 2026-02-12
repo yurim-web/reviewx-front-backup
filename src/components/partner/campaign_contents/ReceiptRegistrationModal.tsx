@@ -95,7 +95,7 @@ export default function ReceiptRegistrationModal({
 
     try {
       // TODO: 실제 API 호출로 영수증 등록
-      console.log("영수증 등록:", uploadedImages);
+      // console.log("영수증 등록:", uploadedImages);
 
       // 성공 시 모달 닫기
       alert("영수증이 성공적으로 등록되었습니다.");

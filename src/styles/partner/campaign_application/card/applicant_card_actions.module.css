@@ -1,0 +1,295 @@
+/* ========================================
+   👤 신청자 카드 - 액션 버튼
+   ======================================== */
+
+/**
+ * 사용: 모든 신청자/콘텐츠 카드 컴포넌트
+ * 경로: @/components/partner/campaign_application/card_type/**
+ *       @/components/partner/campaign_contents/card_type/**
+ */
+
+/* ==================== 버튼 공통 스타일 ==================== */
+
+.action_button_section {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.action_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 12px;
+  height: 38px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* ==================== 선정/취소 버튼 ==================== */
+
+.select_button {
+  background: #fff;
+  border: 1px solid #444;
+  color: #444;
+}
+
+.restricted_button {
+  background: #d9d9d9;
+  border: 1px solid #d9d9d9;
+  color: #999;
+}
+
+.cancel_button {
+  background: #ff5694;
+  border: 1px solid #ff5694;
+  color: #fff;
+}
+
+.influencer_cancel_button {
+  background: #22c55e;
+  border: 1px solid #22c55e;
+  color: #fff;
+}
+
+.completed_button,
+.disabled_button {
+  border: 1px solid #e5e5e5 !important;
+  color: #848484 !important;
+  background: #e5e5e5 !important;
+  cursor: default;
+}
+
+.completion_confirmed_button {
+  border: none;
+  color: #ff5694;
+  background: rgba(255, 86, 148, 0.1);
+  cursor: default;
+}
+
+/* ==================== 콘텐츠 확인 버튼 ==================== */
+
+.content_check_buttons_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.content_check_button {
+  border-radius: 4px;
+  background: #444;
+  color: #fff;
+  padding: 12px;
+  cursor: pointer;
+  height: 38px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+/* ==================== 등록일 정보 ==================== */
+
+.registration_info {
+  color: #848484;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  margin-top: 4px;
+}
+
+.late_label {
+  color: #ff2626;
+}
+
+.late_text_full {
+  display: inline;
+}
+
+.late_text_short {
+  display: none;
+}
+
+/* ==================== 승인/반려 버튼 ==================== */
+
+.approval_buttons {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.approve_button,
+.approval_button,
+.reject_button {
+  border: 1px solid #444;
+  color: #444;
+  background: #fff;
+}
+
+.reject_process_button {
+  border: 1px solid #ff2626;
+  color: #fff;
+  background: #ff2626;
+}
+
+.extension_request_button {
+  border: 1px solid #444;
+  color: #444;
+  background: #fff;
+}
+
+/* 등록 기한 연장 요청 버튼 - PC는 전체 문구, 모바일은 "기간 연장 요청"만 표시 */
+.extension_request_text_pc {
+  display: inline;
+}
+
+.extension_request_text_mobile {
+  display: none;
+}
+
+/* 구매 영수증 미등록 버튼 - padding 축소로 문구가 다 보이도록 */
+.receipt_not_registered_button {
+  padding: 4px;
+}
+
+/* 구매 영수증 반려 버튼 - 모바일에서 "처리" 숨김 */
+.receipt_reject_text_pc {
+  display: inline;
+}
+
+.receipt_reject_text_mobile {
+  display: none;
+}
+
+/* ==================== 연장/신고 Footer ==================== */
+
+.extension_report_footer {
+  display: flex;
+  align-items: stretch;
+  background: white;
+  border-radius: 0 0 8px 8px;
+  border: 1px solid #d9d9d9;
+  height: 43px;
+}
+
+.extension_button,
+.report_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: 1;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 13px 0;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+.extension_button {
+  color: #848484;
+}
+
+.report_button {
+  color: #ff2626;
+}
+
+.extension_icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.report_icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.vertical_divider {
+  width: 1px;
+  background: #d9d9d9;
+  flex-shrink: 0;
+  align-self: stretch;
+}
+
+/* 구분선 겹침 방지: 세로 구분선 div 대신 신고 버튼 왼쪽 border로 표시 (PC·모바일 공통) */
+.extension_report_footer .vertical_divider {
+  display: none;
+}
+
+.extension_report_footer .report_button {
+  border-left: 1px solid #d9d9d9;
+}
+
+/* 완료 탭: 신고 버튼만 있을 때는 왼쪽 구분선 제거 */
+.extension_report_footer .report_button:only-child {
+  border-left: none;
+}
+
+/* ==================== 📱 모바일 반응형 ==================== */
+
+/* 신고 날짜에서 시간 부분 - 모바일에서만 숨김 (기한처럼 날짜만 표시) */
+.reported_time_mobile_hide {
+  display: inline;
+}
+
+@media (max-width: 768px) {
+  .action_button_section {
+    gap: 8px;
+  }
+
+  .registration_info {
+    font-size: 13px;
+    letter-spacing: -0.32px;
+  }
+
+  .reported_time_mobile_hide {
+    display: none;
+  }
+
+  .extension_request_text_pc {
+    display: none;
+  }
+
+  .extension_request_text_mobile {
+    display: inline;
+  }
+
+  .receipt_reject_text_pc {
+    display: none;
+  }
+
+  .receipt_reject_text_mobile {
+    display: inline;
+  }
+
+  /* 구매 영수증 반려 버튼 - 모바일에서 padding 축소 */
+  .receipt_reject_button {
+    padding: 4px;
+  }
+
+  /* 지각 등록 텍스트 축약 */
+  .late_text_full {
+    display: none;
+  }
+
+  .late_text_short {
+    display: inline;
+  }
+}

@@ -18,12 +18,12 @@
  * - 사업자등록증 다운로드 버튼
  */
 
-'use client';
+"use client";
 
-import Image from 'next/image';
-import InfoCard from '@/components/manager/common/member/member_detail/InfoCard';
-import Section from '@/components/manager/common/member/member_detail/Section';
-import styles from '@/styles/manager_ga/member/member_detail/partners/business_info_section.module.css';
+import Image from "next/image";
+import InfoCard from "@/components/manager/common/member/member_detail/InfoCard";
+import Section from "@/components/manager/common/member/member_detail/Section";
+import styles from "@/styles/manager/common/member/member_detail/partners/business_info_section.module.css";
 
 interface BusinessInfoSectionProps {
   // 상호명
@@ -60,7 +60,14 @@ export default function BusinessInfoSection({
         <div className={styles.info_card}>
           <div className={styles.info_label}>사업자등록증</div>
           <button
-            onClick={on_download}
+            onClick={(e) => {
+              // alert: 브라우저에서 제공하는 기본 알림 창을 띄우는 함수입니다
+              // 사업자등록증 다운로드 기능이 아직 구현되지 않았음을 사용자에게 알립니다
+              alert("사업자등록증 다운로드 기능은 준비 중입니다.");
+              // 부모 컴포넌트에서 전달받은 on_download 함수도 호출합니다
+              // (향후 실제 다운로드 기능 구현 시 사용)
+              on_download();
+            }}
             className={styles.download_button}
             aria-label="사업자등록증 다운로드"
           >
@@ -79,4 +86,3 @@ export default function BusinessInfoSection({
     </Section>
   );
 }
-

@@ -17,6 +17,8 @@
  */
 
 import { Metadata } from 'next';
+import { Suspense } from 'react';
+import Loading from './loading';
 
 // 페이지 메타데이터 설정
 
@@ -37,6 +39,10 @@ export default function PostsLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // children만 반환하면 부모 레이아웃이 자동으로 적용됩니다
-  return <>{children}</>;
+  // Suspense로 감싸서 로딩 처리
+  return (
+    <Suspense fallback={<Loading />}>
+      {children}
+    </Suspense>
+  );
 }

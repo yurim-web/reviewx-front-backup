@@ -15,6 +15,7 @@
  * - /partner/campaign_management/progress (진행 탭)
  * - /partner/campaign_management/completed (종료 탭)
  * - /partner/campaign_management/cancelled (취소 탭)
+ * - /partner/campaign_management/extension-request (연장 요청 탭)
  *
  * 주요 기능:
  * - 상단 메인 탭 네비게이션 (캠페인/포인트/계정)
@@ -26,13 +27,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import TabNavigation from "./TabNavigation";
 import StatisticsTab from "./StatisticsTab";
-import type { PartnerMainTab } from "@/types/partner/partner";
-import type { PartnerStatTab, PartnerCampaignStats } from "@/types/partner/partner";
+import type { PartnerMainTab } from "@/types/domain/partner";
+import type {
+  PartnerStatTab,
+  PartnerCampaignStats,
+} from "@/types/domain/partner";
 
 // 공용 데이터 import
-import { getCampaignStats } from "@/data/partner/sharedCampaigns";
+import {
+  getCampaignStats,
+  getInitialCampaignStats,
+} from "@/data/partner/sharedCampaigns";
 
 interface PartnerCampaignManagementHeaderProps {
   /** 현재 활성 메인 탭 (캠페인/포인트/계정) */
@@ -70,43 +78,46 @@ export default function PartnerCampaignManagementHeader({
      ======================================== */
 
   /**
-   * useState 훅: 컴포넌트의 상태를 관리하는 React 훅
-   * 
+   * useState로 통계 상태 관리
+   *
    * 설명:
-   * - 통계 데이터를 컴포넌트 상태로 저장합니다.
-   * - 초기값은 서버와 클라이언트가 동일하게 렌더링되도록 모든 값이 0인 객체입니다.
-   * - setStats 함수를 사용하여 상태를 업데이트할 수 있습니다.
-   * 
+   * - 초기값을 getInitialCampaignStats()로 설정하여 즉시 실제 숫자를 표시합니다.
+   * - useEffect에서 localStorage를 포함한 전체 통계를 계산하여 업데이트합니다.
+   * - 이렇게 하면 숫자가 바뀌는 잔상 없이 바로 표시됩니다.
    */
-  const [stats, setStats] = useState<PartnerCampaignStats>({
-    전체: 0,
-    예정: 0,
-    신청: 0,
-    진행: 0,
-    종료: 0,
-    취소: 0,
-    패널티: 0,
-  });
+  // 현재 경로 확인 (페이지 이동 여부 판단용)
+  const pathname = usePathname();
 
-  /**
-   * useEffect 훅: 컴포넌트의 부수 효과(side effects)를 처리하는 React 훅
-   * 
-   * 설명:
-   * - 컴포넌트가 클라이언트에서 마운트된 후에만 실행됩니다.
-   * - localStorage를 사용하는 getCampaignStats()를 호출하여 실제 통계를 계산합니다.
-   * - 의존성 배열이 비어있으므로 컴포넌트 마운트 시 한 번만 실행됩니다.
-   * 
-   * Hydration 에러 해결 원리:
-   * - 서버 사이드 렌더링(SSR) 시: 초기값(모두 0)으로 렌더링됩니다.
-   * - 클라이언트 마운트 후: useEffect가 실행되어 실제 통계를 계산하고 상태를 업데이트합니다.
-   * - 이렇게 하면 서버와 클라이언트의 초기 렌더링 결과가 일치하여 hydration 에러가 발생하지 않습니다.
-   * 
-   */
-  useEffect(() => {
-    // 클라이언트에서만 실행되므로 localStorage 접근 가능
-    const calculatedStats = getCampaignStats();
-    setStats(calculatedStats);
-  }, []);
+  const [stats] = useState<PartnerCampaignStats>(() => {
+    // SSR에서는 기본값 반환
+    if (typeof window === "undefined") {
+      return {
+        전체: 0,
+        예정: 0,
+        신청: 0,
+        진행: 0,
+        종료: 0,
+        취소: 0,
+        "연장 요청": 0,
+        패널티: 0,
+      };
+    }
+    // 클라이언트에서는 즉시 전체 통계 반환 (localStorage 포함)
+    try {
+      return getCampaignStats();
+    } catch {
+      return {
+        전체: 0,
+        예정: 0,
+        신청: 0,
+        진행: 0,
+        종료: 0,
+        취소: 0,
+        "연장 요청": 0,
+        패널티: 0,
+      };
+    }
+  })
 
   /* ========================================
      통계 탭 변경 핸들러 (Statistics Tab Change Handler)
@@ -116,41 +127,28 @@ export default function PartnerCampaignManagementHeader({
    * 통계 탭 변경 핸들러
    *
    * 설명:
-   * - 통계 탭을 클릭하면 해당 페이지로 이동합니다.
-   * - 현재 페이지와 같은 탭이면 이동하지 않습니다.
-   * - setActiveStatTab prop이 제공되면 그것을 사용하고, 없으면 내부에서 페이지 이동을 처리합니다.
-   *
+   * - 탭을 클릭하면 항상 해당 탭의 페이지로 이동합니다.
+   * - 현재 경로와 클릭한 탭의 경로가 같으면 이동하지 않습니다.
+   * - URL 기반 라우팅으로 새로고침 시에도 현재 탭이 유지됩니다.
    */
   const handleStatTabChange = (tab: PartnerStatTab) => {
-    // setActiveStatTab prop이 제공되면 그것을 사용
-    if (setActiveStatTab) {
-      setActiveStatTab(tab);
-      return;
-    }
+    // 각 탭에 해당하는 경로 매핑
+    const tabPaths: Record<PartnerStatTab, string> = {
+      전체: "/partner/campaign_management",
+      예정: "/partner/campaign_management/scheduled",
+      신청: "/partner/campaign_management/applied",
+      진행: "/partner/campaign_management/progress",
+      종료: "/partner/campaign_management/completed",
+      취소: "/partner/campaign_management/cancelled",
+      "연장 요청": "/partner/campaign_management/extension-request",
+      패널티: "/partner/campaign_management/penalty",
+    };
 
-    // prop이 없으면 내부에서 페이지 이동 처리
-    switch (tab) {
-      case "전체":
-        window.location.href = "/partner/campaign_management";
-        break;
-      case "예정":
-        window.location.href = "/partner/campaign_management/scheduled";
-        break;
-      case "신청":
-        window.location.href = "/partner/campaign_management/applied";
-        break;
-      case "진행":
-        window.location.href = "/partner/campaign_management/progress";
-        break;
-      case "종료":
-        window.location.href = "/partner/campaign_management/completed";
-        break;
-      case "취소":
-        window.location.href = "/partner/campaign_management/cancelled";
-        break;
-      case "패널티":
-        window.location.href = "/partner/campaign_management/penalty";
-        break;
+    const targetPath = tabPaths[tab];
+
+    // 현재 경로와 목표 경로가 다르면 페이지 이동
+    if (pathname !== targetPath) {
+      window.location.href = targetPath;
     }
   };
 

@@ -1,0 +1,84 @@
+/* ========================================
+   🔄 회원 유형 토글 버튼 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트:
+ * - MemberTypeToggle.tsx (회원 유형 토글 버튼)
+ *
+ * 사용 페이지:
+ * - /user/mypage/profile (유저 마이페이지)
+ * - /partner/mypage (파트너 마이페이지)
+ */
+
+/* 토글 컨테이너 */
+.toggle_container {
+  position: relative;
+  width: 154px;
+  height: 40px;
+}
+
+/* 배경 */
+.toggle_background {
+  position: absolute;
+  inset: 0;
+  background: #ffeff5;
+  border-radius: 24px;
+}
+
+/* 토글 버튼 공통 스타일 */
+.toggle_button {
+  position: absolute;
+  top: 0;
+  width: 81px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: "Pretendard", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  color: #ff5694;
+  border-radius: 24px;
+  z-index: 1;
+}
+
+/* 리뷰어 버튼 */
+.reviewer_button {
+  left: 0;
+}
+
+/* 광고주 버튼 */
+.partner_button {
+  right: 0;
+}
+
+/* 활성 상태 */
+.toggle_button.active {
+  background: #ff5694;
+  color: #ffffff;
+}
+
+/* ========================================
+   📱 모바일 반응형 스타일 (max-width: 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  /* 토글 컨테이너 */
+  .toggle_container {
+    width: 154px;
+    height: 40px;
+  }
+
+  /* 토글 버튼 */
+  .toggle_button {
+    width: 81px;
+    height: 40px;
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+}
+
+

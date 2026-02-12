@@ -24,7 +24,7 @@ import ActivityInfoSection, {
 } from "@/components/manager/common/member/member_detail/ActivityInfoSection";
 import BusinessInfoSection from "@/components/manager/common/member/partners/section/BusinessInfoSection";
 import ContactPersonSection from "@/components/manager/common/member/partners/section/ContactPersonSection";
-import styles from "@/styles/manager_ga/member/member_detail/detail_page.module.css";
+import styles from "@/styles/manager/common/member/member_detail/detail_page.module.css";
 
 export default function PartnerDetailPage() {
   // ============================================
@@ -55,19 +55,233 @@ export default function PartnerDetailPage() {
   useEffect(() => {
     const fetch_partner_detail = async () => {
       set_is_loading(true);
+
+      // partner_test_001의 경우 직접 localStorage에서 데이터 로드
+      if (partner_id === 'partner_test_001') {
+        try {
+          const storedAccounts = localStorage.getItem('partner_accounts');
+          console.log('🔍 useEffect에서 읽은 partner_accounts:', storedAccounts);
+
+          if (storedAccounts) {
+            const accounts = JSON.parse(storedAccounts);
+            const testAccount = accounts.find((a: any) =>
+              a.email === 'test@test.com' || a.id === 'partner_test_001'
+            );
+
+            console.log('✅ useEffect에서 찾은 test 계정:', testAccount);
+
+            if (testAccount) {
+              // 캠페인 개수 계산
+              let campaignCount = 0;
+              try {
+                const deliveryCampaigns = localStorage.getItem('deliveryCampaigns');
+                const missionCampaigns = localStorage.getItem('missionCampaigns');
+                const reviewCampaigns = localStorage.getItem('reviewCampaigns');
+                const visitCampaigns = localStorage.getItem('visitCampaigns');
+                const reporterCampaigns = localStorage.getItem('reporterCampaigns');
+
+                const allCampaigns = [
+                  ...(deliveryCampaigns ? JSON.parse(deliveryCampaigns) : []),
+                  ...(missionCampaigns ? JSON.parse(missionCampaigns) : []),
+                  ...(reviewCampaigns ? JSON.parse(reviewCampaigns) : []),
+                  ...(visitCampaigns ? JSON.parse(visitCampaigns) : []),
+                  ...(reporterCampaigns ? JSON.parse(reporterCampaigns) : []),
+                ];
+
+                campaignCount = allCampaigns.filter((c: any) => c.partner_id === 'partner_test_001').length;
+              } catch (error) {
+                console.error('캠페인 개수 계산 중 오류:', error);
+              }
+
+              // 포인트 정보를 testAccount에서 직접 가져오기
+              const currentPoints = testAccount.current_points || 0;
+              const usedPoints = testAccount.used_points || 0;
+
+              // 결제 포인트 계산 (총 충전 금액)
+              let paymentPoints = 0;
+              try {
+                const pointHistoryKey = `partner_point_history_partner_test_001`;
+                const storedHistory = localStorage.getItem(pointHistoryKey);
+                if (storedHistory) {
+                  const history = JSON.parse(storedHistory);
+                  // type이 'earned'인 내역의 amount 합계
+                  paymentPoints = history
+                    .filter((h: any) => h.type === 'earned')
+                    .reduce((sum: number, h: any) => sum + (h.amount || 0), 0);
+                }
+              } catch (error) {
+                console.error('결제 포인트 계산 중 오류:', error);
+              }
+
+              // 최근 캠페인 목록 생성
+              const recentCampaigns: any[] = [];
+              try {
+                const deliveryCampaigns = localStorage.getItem('deliveryCampaigns');
+                const missionCampaigns = localStorage.getItem('missionCampaigns');
+                const reviewCampaigns = localStorage.getItem('reviewCampaigns');
+                const visitCampaigns = localStorage.getItem('visitCampaigns');
+                const reporterCampaigns = localStorage.getItem('reporterCampaigns');
+
+                const allCampaigns = [
+                  ...(deliveryCampaigns ? JSON.parse(deliveryCampaigns) : []),
+                  ...(missionCampaigns ? JSON.parse(missionCampaigns) : []),
+                  ...(reviewCampaigns ? JSON.parse(reviewCampaigns) : []),
+                  ...(visitCampaigns ? JSON.parse(visitCampaigns) : []),
+                  ...(reporterCampaigns ? JSON.parse(reporterCampaigns) : []),
+                ];
+
+                // 해당 파트너의 캠페인만 필터링하고 RecentCampaign 형식으로 변환
+                const partnerCampaigns = allCampaigns.filter((c: any) => c.partner_id === 'partner_test_001');
+
+                console.log('🔍 파트너 캠페인 전체 데이터:', partnerCampaigns);
+
+                partnerCampaigns.forEach((campaign: any) => {
+                  const campaignInfo = campaign.campaignInfo || campaign;
+
+                  console.log('📦 개별 캠페인 정보:', {
+                    전체: campaign,
+                    campaignInfo: campaignInfo,
+                    channel: campaignInfo.channel,
+                    point: campaignInfo.point,
+                    points: campaignInfo.points,
+                    brandName: campaignInfo.brandName,
+                    status: campaignInfo.status,
+                  });
+
+                  // 상태 변환 함수 (progress.ts의 map_status_to_progress_status 참고)
+                  const map_status_to_progress_status = (status: string): "신청" | "진행" | "종료" | "취소" | "예정" | "긴급" => {
+                    if (status === "긴급") return "긴급";
+                    if (status === "취소") return "취소";
+                    if (status === "종료" || status === "마감") return "종료";
+                    if (status === "대기 중") return "예정";
+                    if (status === "모집 중") return "신청";
+                    if (status === "진행 중") return "진행";
+                    // 기본값: 모집 중이면 "신청", 아니면 "진행"
+                    return "신청";
+                  };
+
+                  // 채널 매핑 함수 (progress.ts의 map_brand_name_to_channel 참고)
+                  const map_brand_name_to_channel = (brandName: string, campaignType: string): string => {
+                    // 구매평은 항상 "Review"로 변환
+                    if (campaignType === "구매평") {
+                      return "Review";
+                    }
+                    // 미션형은 항상 "Mission"으로 변환
+                    if (campaignType === "미션형") {
+                      return "Mission";
+                    }
+                    // 공백 제거 및 정규화
+                    const normalizedBrandName = brandName.replace(/\s+/g, "");
+                    // 브랜드명 매핑
+                    const brand_map: Record<string, string> = {
+                      네이버블로그: "Blog",
+                      블로그: "Blog",
+                      인스타그램: "Instagram",
+                      네이버클립: "Clip",
+                      클립: "Clip",
+                      유튜브: "Youtube",
+                      릴스: "Reels",
+                      쇼츠: "Shorts",
+                      숏츠: "Shorts",
+                      스토어: "Store",
+                    };
+                    return brand_map[normalizedBrandName] || "Store";
+                  };
+
+                  // 캠페인 상태 결정
+                  const campaignStatus = campaignInfo.status || "모집 중";
+                  const status = map_status_to_progress_status(campaignStatus);
+
+                  // 채널 정보 추출 - 여러 소스에서 시도
+                  const brandName = campaignInfo.brandName || campaignInfo.channel || campaign.channel || "";
+                  const campaignType = campaignInfo.campaignType || "배송형";
+                  const channel = map_brand_name_to_channel(brandName, campaignType);
+
+                  // 포인트 정보 추출 (point 또는 points 필드)
+                  const points = campaignInfo.point || campaignInfo.points || (campaign as any).points || (campaign as any).point || 0;
+
+                  console.log('✅ 최종 변환 데이터:', { 
+                    status, 
+                    channel, 
+                    points, 
+                    brandName, 
+                    campaignType 
+                  });
+
+                  recentCampaigns.push({
+                    campaign_number: campaignInfo.id || '',
+                    campaign_name: campaignInfo.title || '',
+                    status: status,
+                    type: campaignType,
+                    channel: channel,
+                    points: points,
+                  });
+                });
+              } catch (error) {
+                console.error('캠페인 목록 로드 중 오류:', error);
+              }
+
+              // PartnerDetail 직접 생성
+              const detail: PartnerDetail = {
+                id: 'partner_test_001',
+                number: '999999',
+                business_name: testAccount.business_name || '테스트 주식회사',
+                business_number: testAccount.business_number || '123-45-67890',
+                representative_name: testAccount.representative_name || testAccount.name || '테스트파트너',
+                division: testAccount.division || (testAccount.business_type === '개인사업자' ? '개인' : '법인'),
+                campaign_in_progress: campaignCount,
+                campaign_completed: 0,
+                current_points: currentPoints,
+                used_points: usedPoints,
+                status_type: '일반 회원',
+                status: '정상',
+                last_access_date: testAccount.last_access_date || new Date().toISOString().replace('T', ' ').substring(0, 16),
+                join_date: testAccount.join_date || testAccount.created_at || '2024-03-01 10:00',
+                email: testAccount.email || 'test@test.com',
+                phone: testAccount.phone || '010-5555-5555',
+                address: testAccount.address
+                  ? `${testAccount.address}${testAccount.detail_address ? ' ' + testAccount.detail_address : ''}`
+                  : '서울시 강남구 테헤란로 123',
+                contact_name: testAccount.name || testAccount.representative_name || '테스트파트너',
+                contact_phone: testAccount.contact_phone || testAccount.phone || '010-5555-5555',
+                penalty_count: 0,
+                payment_points: paymentPoints,
+                recent_campaigns: recentCampaigns,
+                penalty_history: [],
+                profile_image: testAccount.profile_image || null,
+              };
+
+              console.log('📄 최종 생성된 detail:', detail);
+              set_partner_detail(detail);
+              set_is_loading(false);
+              return;
+            }
+          }
+        } catch (error) {
+          console.error('test 파트너 정보 로드 중 오류:', error);
+        }
+      }
+
+      // 다른 파트너들은 기존 함수 사용
       const detail = get_partner_detail_by_id(partner_id);
+      console.log('📄 가져온 파트너 상세:', detail);
+
       set_partner_detail(detail);
       set_is_loading(false);
     };
 
-    fetch_partner_detail();
+    // 클라이언트에서만 실행되도록 보장
+    if (typeof window !== 'undefined') {
+      fetch_partner_detail();
+    }
   }, [partner_id]);
 
   // ============================================
   // 4. 헬퍼 함수들
   // ============================================
   // 숫자를 천 단위로 포맷팅 (예: 1000 -> "1,000")
-  const format_number = (num: number): string => {
+  const format_number = (num: number | undefined): string => {
+    if (num === undefined || num === null) return "0";
     return num.toLocaleString();
   };
 
@@ -102,10 +316,6 @@ export default function PartnerDetailPage() {
         : "0회",
       on_button_click: () => set_is_penalty_history_modal_open(true),
       button_aria_label: "패널티 내역 보기",
-      additional_content:
-        partner_detail?.status_type === "모범 회원" ? (
-          <div className={styles.status_type_badge}>모범 회원</div>
-        ) : undefined,
     },
     {
       label: "접속일",
@@ -153,6 +363,7 @@ export default function PartnerDetailPage() {
               partner_detail.phone,
               partner_detail.address,
             ]}
+            profile_image={partner_detail.profile_image}
           />
         )}
 
@@ -172,9 +383,12 @@ export default function PartnerDetailPage() {
           />
         )}
 
-        {/* 담당자 정보 섹션: 문의 담당자 휴대폰 번호 */}
+        {/* 담당자 정보 섹션: 담당자 이름, 문의 담당자 휴대폰 번호 */}
         {partner_detail && (
-          <ContactPersonSection contact_phone={partner_detail.contact_phone} />
+          <ContactPersonSection
+            contact_name={partner_detail.contact_name}
+            contact_phone={partner_detail.contact_phone}
+          />
         )}
       </div>
 

@@ -39,6 +39,8 @@ import "@/styles/manager_ga/layout.css";
 import {
   mockNotifications,
   NotificationItem,
+  get_notification_template,
+  format_notification_message,
 } from "@/data/notification/notificationData";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 
@@ -157,16 +159,20 @@ export default function NotificationPage() {
    * - CSS 모듈은 클래스명을 해시화하므로 .class1.class2 같은 결합 선택자는 작동하지 않음
    * - 따라서 별도의 클래스명을 사용해야 함
    *
-   * @param type - 알림 타입 ("withdrawal" | "urgent_withdrawal" | "block")
+   * @param notification - 알림 아이템
    * @returns CSS 클래스명
    */
-  const getLabelClassName = (type: NotificationItem["type"]): string => {
-    switch (type) {
-      case "withdrawal":
+  const getLabelClassName = (notification: NotificationItem): string => {
+    const template = get_notification_template(notification.category);
+    const color = template.color;
+
+    switch (color) {
+      case "blue":
         return styles.notification_label_withdrawal;
-      case "urgent_withdrawal":
+      case "red":
         return styles.notification_label_urgent_withdrawal;
-      case "block":
+      case "green":
+      case "orange":
         return styles.notification_label_block;
       default:
         return styles.notification_label_block;
@@ -190,12 +196,15 @@ export default function NotificationPage() {
                       <p
                         className={`${
                           styles.notification_label
-                        } ${getLabelClassName(notification.type)}`.trim()}
+                        } ${getLabelClassName(notification)}`.trim()}
                       >
-                        {notification.label}
+                        {get_notification_template(notification.category).label}
                       </p>
                       <p className={styles.notification_message}>
-                        {notification.message}
+                        {format_notification_message(
+                          get_notification_template(notification.category).message_template,
+                          notification.message_params
+                        )}
                       </p>
                     </div>
                     <p className={styles.notification_time}>
@@ -293,14 +302,17 @@ export default function NotificationPage() {
                     <p
                       className={`${
                         styles.notification_label
-                      } ${getLabelClassName(notification.type)}`.trim()}
+                      } ${getLabelClassName(notification)}`.trim()}
                     >
-                      {notification.label}
+                      {get_notification_template(notification.category).label}
                     </p>
 
                     {/* 알림 내용 */}
                     <p className={styles.notification_message}>
-                      {notification.message}
+                      {format_notification_message(
+                        get_notification_template(notification.category).message_template,
+                        notification.message_params
+                      )}
                     </p>
                   </div>
 

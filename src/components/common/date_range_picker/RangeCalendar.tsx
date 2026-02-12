@@ -20,20 +20,12 @@ import styles from "./range_calendar.module.css";
  */
 function PreviousMonthIcon() {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
+    <img
+      src="/images/calendar/calendar_left.svg"
+      alt="이전 달"
       width="24"
       height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-    >
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M15.6759 18.7071C16.0664 18.3166 16.0664 17.6834 15.6759 17.2929L10.383 12L15.6759 6.7071C16.0664 6.31658 16.0664 5.68342 15.6759 5.29289C15.2853 4.90237 14.6522 4.90237 14.2616 5.29289L8.36771 11.1868C7.91861 11.6359 7.9186 12.3641 8.36771 12.8132L14.2616 18.7071C14.6522 19.0976 15.2853 19.0976 15.6759 18.7071Z"
-        fill="#444444"
-      />
-    </svg>
+    />
   );
 }
 
@@ -45,20 +37,12 @@ function PreviousMonthIcon() {
  */
 function NextMonthIcon() {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
+    <img
+      src="/images/calendar/calendar_right.svg"
+      alt="다음 달"
       width="24"
       height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-    >
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M8.32414 18.7071C7.93362 18.3166 7.93362 17.6834 8.32414 17.2929L13.617 12L8.32414 6.7071C7.93362 6.31658 7.93362 5.68342 8.32414 5.29289C8.71467 4.90237 9.34783 4.90237 9.73836 5.29289L15.6323 11.1868C16.0814 11.6359 16.0814 12.3641 15.6323 12.8132L9.73836 18.7071C9.34783 19.0976 8.71467 19.0976 8.32414 18.7071Z"
-        fill="#444444"
-      />
-    </svg>
+    />
   );
 }
 
@@ -71,6 +55,7 @@ export type DateRange = DayPickerDateRange;
 interface RangeCalendarProps {
   selected: DateRange | undefined;
   on_select: (range: DateRange | undefined) => void;
+  on_validation_error?: () => void; // 날짜 순서가 잘못되었을 때 호출
   number_of_months?: number;
   show_outside_days?: boolean;
 }
@@ -82,6 +67,7 @@ interface RangeCalendarProps {
 export default function RangeCalendar({
   selected,
   on_select,
+  on_validation_error,
   number_of_months = 2,
   show_outside_days = false,
 }: RangeCalendarProps) {
@@ -92,6 +78,8 @@ export default function RangeCalendar({
   const calendar_ref = useRef<HTMLDivElement>(null);
   const is_applying_styles_ref = useRef(false);
   const observer_ref = useRef<MutationObserver | null>(null);
+  const last_apply_time_ref = useRef(0);
+  const reconnect_timer_ref = useRef<NodeJS.Timeout | null>(null);
 
   // ========================================
   // 날짜 선택 핸들러
@@ -103,17 +91,75 @@ export default function RangeCalendar({
       return;
     }
 
+    // 범위가 이미 완성되어 있는 경우 (from, to 모두 존재하고 다른 날짜)
+    // -> 어떤 날짜를 클릭하든 무조건 초기화 후 새 시작일로 설정
+    if (selected && selected.from && selected.to && selected.from.getTime() !== selected.to.getTime()) {
+      // react-day-picker가 반환한 range가 이미 범위를 가지고 있다면
+      // 이는 종료일 변경 시도이므로, 대신 초기화하고 새 시작일로 설정
+      if (range.from && range.to) {
+        // 시작일을 다시 클릭한 경우: 기간 취소하고 해당 날짜만 선택
+        if (range.from.getTime() === selected.from.getTime() && range.to.getTime() === selected.from.getTime()) {
+          on_select({ from: selected.from, to: selected.from });
+          return;
+        }
+
+        // 두 날짜 중 새로 클릭한 날짜를 찾아서 시작일로 설정
+        // (기존 from과 다른 날짜를 찾음)
+        const clicked_date =
+          range.from.getTime() === selected.from.getTime()
+            ? range.to
+            : range.from;
+        // 시작일만 선택된 상태로 표시하기 위해 from과 to를 동일하게 설정
+        on_select({ from: clicked_date, to: clicked_date });
+        return;
+      } else if (range.from) {
+        // 단순히 한 날짜만 있는 경우도 초기화 후 새 시작일로
+        on_select({ from: range.from, to: range.from });
+        return;
+      }
+    }
+
+    // 시작일만 선택된 상태(from === to)에서 종료일 선택
+    if (selected && selected.from && selected.to && selected.from.getTime() === selected.to.getTime()) {
+      // 두 번째 클릭: 범위 완성
+      if (range.from && range.to) {
+        console.log("📊 범위 선택 검증:", {
+          range_from: range.from,
+          range_to: range.to,
+          selected_from: selected.from,
+          "range.from === selected.from": range.from.getTime() === selected.from.getTime()
+        });
+
+        // react-day-picker는 항상 from < to로 정렬한다
+        // 그래서 range.from이 더 이른 날짜가 됨
+        // 만약 range.from이 selected.from과 다르다면, 사용자가 시작일보다 이른 날짜를 클릭한 것
+        if (range.from.getTime() !== selected.from.getTime()) {
+          console.log("🚫 시작일보다 이른 날짜 선택됨! 모달 표시");
+          if (on_validation_error) {
+            on_validation_error();
+          }
+          // 상태 변경하지 않음 (이전 상태 유지)
+          return;
+        }
+
+        // 정상적인 범위 선택
+        console.log("✅ 정상적인 범위 선택");
+        on_select({ from: range.from, to: range.to });
+        return;
+      }
+    }
+
+    // 첫 번째 선택: 시작일만 선택 (from과 to를 동일하게)
     if (range.from && !range.to) {
-      on_select({ from: range.from, to: undefined });
+      on_select({ from: range.from, to: range.from });
       return;
     }
 
+    // 범위 완성 (시작일 → 종료일 선택 완료)
     if (range.from && range.to) {
-      if (range.from > range.to) {
-        on_select({ from: range.to, to: range.from });
-      } else {
-        on_select({ from: range.from, to: range.to });
-      }
+      // 이 경우는 첫 클릭에서 바로 범위가 만들어진 경우 (드래그 선택 등)
+      // 이미 라이브러리가 정렬해서 from < to를 보장하므로 그대로 허용
+      on_select({ from: range.from, to: range.to });
       return;
     }
 
@@ -140,22 +186,49 @@ export default function RangeCalendar({
     const all_days = calendar_ref.current.querySelectorAll(
       "td.rdp-day, .rdp-day, [class*='rdp-day']"
     );
+
+    // react-day-picker v9: rdp-range_start, rdp-selected / v8: rdp-day_range_start, rdp-day_selected 등
+    const has_range_class = (el: DOMTokenList, name: string) =>
+      el.contains(`rdp-${name}`) ||
+      el.contains(`rdp-day_range_${name.replace("range_", "")}`) ||
+      el.toString().includes(name);
+    const is_selected = (el: DOMTokenList) =>
+      el.contains("rdp-selected") || el.contains("rdp-day_selected");
+
     all_days.forEach((day) => {
       const element = day as HTMLElement;
       const button = element.querySelector("button") as HTMLElement;
       const class_list = element.classList;
 
+      // 시작일만 선택된 경우: 시작+끝이 동일한 날 (from === to)
+      const has_both_start_and_end =
+        has_range_class(class_list, "range_start") &&
+        has_range_class(class_list, "range_end") &&
+        !has_range_class(class_list, "range_middle");
+
+      const is_outside_first = class_list.contains("rdp-day_outside");
+      const is_single_selected =
+        !is_outside_first &&
+        (has_both_start_and_end ||
+          (selected &&
+            selected.from &&
+            selected.to == null &&
+            class_list.contains("rdp-day_selected") &&
+            !has_range_class(class_list, "range_start") &&
+            !has_range_class(class_list, "range_end") &&
+            !has_range_class(class_list, "range_middle")));
+
       // 오늘 날짜이면서 선택되지 않고 range에 포함되지 않은 경우는 스타일 제거하지 않음
       const is_today_not_selected =
         class_list.contains("rdp-day_today") &&
-        !class_list.contains("rdp-day_selected") &&
-        !class_list.contains("rdp-day_range_start") &&
-        !class_list.contains("rdp-day_range_end") &&
-        !class_list.contains("rdp-day_range_middle") &&
+        !is_selected(class_list) &&
+        !has_range_class(class_list, "range_start") &&
+        !has_range_class(class_list, "range_end") &&
+        !has_range_class(class_list, "range_middle") &&
         !class_list.contains("rdp-day_outside");
 
-      // 오늘 날짜가 아닌 경우에만 스타일 제거
-      if (!is_today_not_selected) {
+      // 오늘 날짜가 아니고 시작일만 선택된 경우가 아닌 경우에만 스타일 제거
+      if (!is_today_not_selected && !is_single_selected) {
         element.style.removeProperty("background-color");
         element.style.removeProperty("color");
         element.style.removeProperty("border-radius");
@@ -167,7 +240,7 @@ export default function RangeCalendar({
         element.style.removeProperty("padding");
       }
 
-      if (button && !is_today_not_selected) {
+      if (button && !is_today_not_selected && !is_single_selected) {
         button.style.removeProperty("background-color");
         button.style.removeProperty("color");
         button.style.removeProperty("border-radius");
@@ -205,15 +278,144 @@ export default function RangeCalendar({
         });
       }
     });
+
     all_days.forEach((day) => {
       const element = day as HTMLElement;
       const button = element.querySelector("button") as HTMLElement;
       const class_list = element.classList;
 
-      if (
-        class_list.contains("rdp-day_range_middle") ||
-        class_list.toString().includes("range_middle")
-      ) {
+      // has_both_start_and_end를 먼저 정의 (range 조건에서도 사용)
+      const has_both_start_and_end =
+        has_range_class(class_list, "range_start") &&
+        has_range_class(class_list, "range_end") &&
+        !has_range_class(class_list, "range_middle");
+
+      // 전월/다음달 날짜(rdp-day_outside)는 스타일 적용 제외
+      const is_outside = class_list.contains("rdp-day_outside");
+
+      // 시작일만 선택된 경우: from === to 또는 to가 undefined (시작일만 선택)
+      const is_single_selected =
+        !is_outside &&
+        (has_both_start_and_end ||
+          (selected &&
+            selected.from &&
+            (selected.to == null || selected.from.getTime() === selected.to.getTime()) &&
+            is_selected(class_list) &&
+            !has_range_class(class_list, "range_start") &&
+            !has_range_class(class_list, "range_end") &&
+            !has_range_class(class_list, "range_middle")));
+
+      if (is_single_selected) {
+        const isMobile = window.innerWidth <= 768;
+        const circleSize = isMobile ? "20px" : "32px";
+
+        element.style.setProperty(
+          "background-color",
+          "transparent",
+          "important"
+        );
+        element.style.setProperty("position", "relative", "important");
+        element.style.setProperty("color", "#444444", "important");
+        element.style.setProperty("border-radius", "50%", "important");
+        element.style.setProperty("font-weight", "500", "important");
+
+        if (button) {
+          // 시작일만 선택 시 range-start-circle만 사용 (버튼 배경은 투명 - 중복 원 방지)
+          button.style.setProperty("background-color", "transparent", "important");
+          button.style.setProperty("color", "white", "important");
+          button.style.setProperty("border-radius", "50%", "important");
+          button.style.setProperty("width", circleSize, "important");
+          button.style.setProperty("height", circleSize, "important");
+          button.style.setProperty("min-width", circleSize, "important");
+          button.style.setProperty("min-height", circleSize, "important");
+          button.style.setProperty("max-width", circleSize, "important");
+          button.style.setProperty("max-height", circleSize, "important");
+          button.style.setProperty("border", "none", "important");
+          button.style.setProperty("padding", "0", "important");
+          button.style.setProperty("margin", "0", "important");
+          button.style.setProperty("font-weight", "500", "important");
+          button.style.setProperty("display", "flex", "important");
+          button.style.setProperty("align-items", "center", "important");
+          button.style.setProperty("justify-content", "center", "important");
+          button.style.setProperty("position", "relative", "important");
+          button.style.setProperty("z-index", "2", "important");
+          button.style.setProperty("outline", "none", "important");
+
+          // range-start-circle 사용 (시작일 선택 시)
+          const old_circle = button.querySelector(".selected-date-circle");
+          if (old_circle) old_circle.remove();
+          let circle = button.querySelector(".range-start-circle") as HTMLElement;
+          if (!circle) {
+            circle = document.createElement("div");
+            circle.className = "range-start-circle";
+            circle.style.setProperty("position", "absolute", "important");
+            circle.style.setProperty("width", circleSize, "important");
+            circle.style.setProperty("height", circleSize, "important");
+            circle.style.setProperty("background-color", "#ff5694", "important");
+            circle.style.setProperty("border-radius", "50%", "important");
+            circle.style.setProperty("left", "calc(50% - 1px)", "important");
+            circle.style.setProperty("top", "50%", "important");
+            circle.style.setProperty("transform", "translate(-50%, -50%)", "important");
+            circle.style.setProperty("z-index", "0", "important");
+            circle.style.setProperty("pointer-events", "none", "important");
+            circle.style.setProperty("display", "block", "important");
+            button.prepend(circle);
+          } else {
+            circle.style.setProperty("width", circleSize, "important");
+            circle.style.setProperty("height", circleSize, "important");
+            circle.style.setProperty("left", "calc(50% - 1px)", "important");
+            circle.style.setProperty("transform", "translate(-50%, -50%)", "important");
+            circle.style.setProperty("pointer-events", "none", "important");
+          }
+          circle.style.setProperty("display", "block", "important");
+
+          // 날짜 텍스트가 원 위에 보이도록 (모바일에서 absolute로 확실히 위에 배치)
+          const apply_text_on_top = () => {
+            const button_children = button.querySelectorAll("*");
+            button_children.forEach((child) => {
+              const child_element = child as HTMLElement;
+              if (!child_element.classList.contains("range-start-circle")) {
+                child_element.style.setProperty("color", "white", "important");
+                child_element.style.setProperty("position", "relative", "important");
+                child_element.style.setProperty("z-index", "10", "important");
+                child_element.style.setProperty("font-size", "inherit", "important");
+                child_element.style.setProperty("pointer-events", "none", "important");
+              }
+            });
+            // 텍스트 노드를 span으로 감싸서 원 위에 절대 위치로 표시
+            const walker = document.createTreeWalker(button, NodeFilter.SHOW_TEXT, null);
+            let text_node;
+            const text_nodes: Text[] = [];
+            while ((text_node = walker.nextNode())) {
+              if (text_node.textContent?.trim() && !(text_node.parentElement?.classList.contains("range-text-wrapper"))) {
+                text_nodes.push(text_node as Text);
+              }
+            }
+            text_nodes.forEach((text_node) => {
+              const wrapper = document.createElement("span");
+              wrapper.className = "range-text-wrapper";
+              wrapper.style.setProperty("color", "white", "important");
+              wrapper.style.setProperty("position", "absolute", "important");
+              wrapper.style.setProperty("left", "0", "important");
+              wrapper.style.setProperty("right", "0", "important");
+              wrapper.style.setProperty("top", "0", "important");
+              wrapper.style.setProperty("bottom", "0", "important");
+              wrapper.style.setProperty("display", "flex", "important");
+              wrapper.style.setProperty("align-items", "center", "important");
+              wrapper.style.setProperty("justify-content", "center", "important");
+              wrapper.style.setProperty("z-index", "10", "important");
+              wrapper.style.setProperty("font-size", "inherit", "important");
+              wrapper.style.setProperty("pointer-events", "none", "important");
+              wrapper.style.setProperty("transform", "translateX(-1px)", "important");
+              text_node.parentNode?.insertBefore(wrapper, text_node);
+              wrapper.appendChild(text_node);
+            });
+          };
+          apply_text_on_top();
+          setTimeout(apply_text_on_top, 0);
+          setTimeout(apply_text_on_top, 100);
+        }
+      } else if (!is_outside && has_range_class(class_list, "range_middle")) {
         element.style.setProperty(
           "background-color",
           "transparent",
@@ -223,20 +425,32 @@ export default function RangeCalendar({
         element.style.setProperty("border-radius", "0", "important");
 
         if (button) {
-          button.style.setProperty("background-color", "#f5f5f5", "important");
+          const isMobile = window.innerWidth <= 768;
+          const buttonHeight = isMobile ? "18px" : "28px";
+          button.style.setProperty(
+            "background-color",
+            "rgba(255,86,148,0.1)",
+            "important"
+          );
           button.style.setProperty("color", "#444444", "important");
           button.style.setProperty("border", "none", "important");
           button.style.setProperty("border-radius", "0", "important");
           button.style.setProperty("width", "100%", "important");
-          button.style.setProperty("height", "100%", "important");
+          button.style.setProperty("height", buttonHeight, "important");
+          button.style.setProperty("min-height", buttonHeight, "important");
+          button.style.setProperty("max-height", buttonHeight, "important");
           button.style.setProperty("display", "flex", "important");
           button.style.setProperty("align-items", "center", "important");
           button.style.setProperty("justify-content", "center", "important");
         }
       } else if (
-        class_list.contains("rdp-day_range_start") ||
-        class_list.toString().includes("range_start")
+        !is_outside &&
+        has_range_class(class_list, "range_start") &&
+        !has_both_start_and_end
       ) {
+        const isMobile = window.innerWidth <= 768;
+        const elementHeight = isMobile ? "18px" : "var(--rdp-cell-size)";
+
         element.style.setProperty(
           "background-color",
           "transparent",
@@ -248,27 +462,32 @@ export default function RangeCalendar({
         element.style.setProperty("position", "relative", "important");
         element.style.setProperty(
           "height",
-          "var(--rdp-cell-size)",
+          elementHeight,
           "important"
         );
         element.style.setProperty(
           "min-height",
-          "var(--rdp-cell-size)",
+          elementHeight,
           "important"
         );
         element.style.setProperty(
           "max-height",
-          "var(--rdp-cell-size)",
+          elementHeight,
           "important"
         );
         element.style.setProperty("padding", "0", "important");
 
         if (button) {
-          button.style.setProperty("background-color", "#f5f5f5", "important");
+          const buttonHeight = isMobile ? "18px" : "28px";
+          button.style.setProperty(
+            "background-color",
+            "rgba(255,86,148,0.1)",
+            "important"
+          );
           button.style.setProperty("color", "white", "important");
           button.style.setProperty("border-radius", "50% 0 0 50%", "important");
           button.style.setProperty("width", "100%", "important");
-          button.style.setProperty("height", "24px", "important");
+          button.style.setProperty("height", buttonHeight, "important");
           button.style.setProperty("border", "none", "important");
           button.style.setProperty("padding", "0", "important");
           button.style.setProperty("margin", "0", "important");
@@ -282,18 +501,17 @@ export default function RangeCalendar({
           const button_children = button.querySelectorAll("*");
           button_children.forEach((child) => {
             const child_element = child as HTMLElement;
-            child_element.style.setProperty("color", "white", "important");
-            child_element.style.setProperty(
-              "position",
-              "relative",
-              "important"
-            );
-            child_element.style.setProperty("z-index", "2", "important");
+            if (!child_element.classList.contains("range-start-circle")) {
+              child_element.style.setProperty("color", "white", "important");
+              child_element.style.setProperty("position", "relative", "important");
+              child_element.style.setProperty("z-index", "10", "important");
+            }
           });
 
           button.style.setProperty("color", "white", "important");
           button.style.setProperty("z-index", "2", "important");
 
+          const circle_size_range = isMobile ? "20px" : "32px";
           let circle = button.querySelector(
             ".range-start-circle"
           ) as HTMLElement;
@@ -301,23 +519,23 @@ export default function RangeCalendar({
             circle = document.createElement("div");
             circle.className = "range-start-circle";
             circle.style.setProperty("position", "absolute", "important");
-            circle.style.setProperty("width", "28px", "important");
-            circle.style.setProperty("height", "28px", "important");
-            circle.style.setProperty(
-              "background-color",
-              "#444444",
-              "important"
-            );
+            circle.style.setProperty("width", circle_size_range, "important");
+            circle.style.setProperty("height", circle_size_range, "important");
+            circle.style.setProperty("background-color", "#ff5694", "important");
             circle.style.setProperty("border-radius", "50%", "important");
-            circle.style.setProperty("left", "50%", "important");
+            circle.style.setProperty("left", "calc(50% - 1px)", "important");
             circle.style.setProperty("top", "50%", "important");
-            circle.style.setProperty(
-              "transform",
-              "translate(-50%, -50%)",
-              "important"
-            );
-            circle.style.setProperty("z-index", "1", "important");
-            button.appendChild(circle);
+            circle.style.setProperty("transform", "translate(-50%, -50%)", "important");
+            circle.style.setProperty("z-index", "0", "important");
+            circle.style.setProperty("pointer-events", "none", "important");
+            circle.style.setProperty("display", "block", "important");
+            button.prepend(circle);
+          } else {
+            circle.style.setProperty("width", circle_size_range, "important");
+            circle.style.setProperty("height", circle_size_range, "important");
+            circle.style.setProperty("left", "calc(50% - 1px)", "important");
+            circle.style.setProperty("transform", "translate(-50%, -50%)", "important");
+            circle.style.setProperty("pointer-events", "none", "important");
           }
           circle.style.setProperty("display", "block", "important");
 
@@ -370,18 +588,17 @@ export default function RangeCalendar({
                   const wrapper = document.createElement("span");
                   wrapper.className = "range-text-wrapper";
                   wrapper.style.setProperty("color", "white", "important");
-                  wrapper.style.setProperty(
-                    "position",
-                    "relative",
-                    "important"
-                  );
-                  wrapper.style.setProperty("z-index", "2", "important");
-                  wrapper.style.setProperty(
-                    "display",
-                    "inline-block",
-                    "important"
-                  );
-
+                  wrapper.style.setProperty("position", "absolute", "important");
+                  wrapper.style.setProperty("left", "0", "important");
+                  wrapper.style.setProperty("right", "0", "important");
+                  wrapper.style.setProperty("top", "0", "important");
+                  wrapper.style.setProperty("bottom", "0", "important");
+                  wrapper.style.setProperty("display", "flex", "important");
+                  wrapper.style.setProperty("align-items", "center", "important");
+                  wrapper.style.setProperty("justify-content", "center", "important");
+                  wrapper.style.setProperty("z-index", "10", "important");
+                  wrapper.style.setProperty("font-size", "inherit", "important");
+                  wrapper.style.setProperty("transform", "translateX(-1px)", "important");
                   text_node.parentNode?.insertBefore(wrapper, text_node);
                   wrapper.appendChild(text_node);
                 }
@@ -389,14 +606,17 @@ export default function RangeCalendar({
                 const wrapper = document.createElement("span");
                 wrapper.className = "range-text-wrapper";
                 wrapper.style.setProperty("color", "white", "important");
-                wrapper.style.setProperty("position", "relative", "important");
-                wrapper.style.setProperty("z-index", "2", "important");
-                wrapper.style.setProperty(
-                  "display",
-                  "inline-block",
-                  "important"
-                );
-
+                wrapper.style.setProperty("position", "absolute", "important");
+                wrapper.style.setProperty("left", "0", "important");
+                wrapper.style.setProperty("right", "0", "important");
+                wrapper.style.setProperty("top", "0", "important");
+                wrapper.style.setProperty("bottom", "0", "important");
+                wrapper.style.setProperty("display", "flex", "important");
+                wrapper.style.setProperty("align-items", "center", "important");
+                wrapper.style.setProperty("justify-content", "center", "important");
+                wrapper.style.setProperty("z-index", "10", "important");
+                wrapper.style.setProperty("font-size", "inherit", "important");
+                wrapper.style.setProperty("transform", "translateX(-1px)", "important");
                 button.insertBefore(wrapper, text_node);
                 wrapper.appendChild(text_node);
               }
@@ -405,15 +625,16 @@ export default function RangeCalendar({
 
           apply_white_text_start();
           setTimeout(apply_white_text_start, 0);
-          setTimeout(apply_white_text_start, 50);
           setTimeout(apply_white_text_start, 100);
-          setTimeout(apply_white_text_start, 200);
-          setTimeout(apply_white_text_start, 300);
         }
       } else if (
-        class_list.contains("rdp-day_range_end") ||
-        class_list.toString().includes("range_end")
+        !is_outside &&
+        has_range_class(class_list, "range_end") &&
+        !has_both_start_and_end
       ) {
+        const isMobile = window.innerWidth <= 768;
+        const elementHeight = isMobile ? "18px" : "var(--rdp-cell-size)";
+
         element.style.setProperty(
           "background-color",
           "transparent",
@@ -425,27 +646,32 @@ export default function RangeCalendar({
         element.style.setProperty("position", "relative", "important");
         element.style.setProperty(
           "height",
-          "var(--rdp-cell-size)",
+          elementHeight,
           "important"
         );
         element.style.setProperty(
           "min-height",
-          "var(--rdp-cell-size)",
+          elementHeight,
           "important"
         );
         element.style.setProperty(
           "max-height",
-          "var(--rdp-cell-size)",
+          elementHeight,
           "important"
         );
         element.style.setProperty("padding", "0", "important");
 
         if (button) {
-          button.style.setProperty("background-color", "#f5f5f5", "important");
+          const buttonHeight = isMobile ? "18px" : "28px";
+          button.style.setProperty(
+            "background-color",
+            "rgba(255,86,148,0.1)",
+            "important"
+          );
           button.style.setProperty("color", "white", "important");
           button.style.setProperty("border-radius", "0 50% 50% 0", "important");
           button.style.setProperty("width", "100%", "important");
-          button.style.setProperty("height", "24px", "important");
+          button.style.setProperty("height", buttonHeight, "important");
           button.style.setProperty("border", "none", "important");
           button.style.setProperty("padding", "0", "important");
           button.style.setProperty("margin", "0", "important");
@@ -475,12 +701,14 @@ export default function RangeCalendar({
           if (!circle) {
             circle = document.createElement("div");
             circle.className = "range-end-circle";
+            const isMobile = window.innerWidth <= 768;
+            const circleSize = isMobile ? "20px" : "32px";
             circle.style.setProperty("position", "absolute", "important");
-            circle.style.setProperty("width", "28px", "important");
-            circle.style.setProperty("height", "28px", "important");
+            circle.style.setProperty("width", circleSize, "important");
+            circle.style.setProperty("height", circleSize, "important");
             circle.style.setProperty(
               "background-color",
-              "#444444",
+              "#ff5694",
               "important"
             );
             circle.style.setProperty("border-radius", "50%", "important");
@@ -491,8 +719,15 @@ export default function RangeCalendar({
               "translate(-50%, -50%)",
               "important"
             );
-            circle.style.setProperty("z-index", "1", "important");
-            button.appendChild(circle);
+            circle.style.setProperty("z-index", "0", "important");
+            circle.style.setProperty("pointer-events", "none", "important");
+            button.prepend(circle);
+          } else {
+            const isMobile = window.innerWidth <= 768;
+            const circleSize = isMobile ? "20px" : "32px";
+            circle.style.setProperty("width", circleSize, "important");
+            circle.style.setProperty("height", circleSize, "important");
+            circle.style.setProperty("pointer-events", "none", "important");
           }
           circle.style.setProperty("display", "block", "important");
 
@@ -509,12 +744,8 @@ export default function RangeCalendar({
                 !html_element.classList.contains("range-text-wrapper")
               ) {
                 html_element.style.setProperty("color", "white", "important");
-                html_element.style.setProperty(
-                  "position",
-                  "relative",
-                  "important"
-                );
-                html_element.style.setProperty("z-index", "2", "important");
+                html_element.style.setProperty("position", "relative", "important");
+                html_element.style.setProperty("z-index", "10", "important");
               }
             });
 
@@ -545,18 +776,16 @@ export default function RangeCalendar({
                   const wrapper = document.createElement("span");
                   wrapper.className = "range-text-wrapper";
                   wrapper.style.setProperty("color", "white", "important");
-                  wrapper.style.setProperty(
-                    "position",
-                    "relative",
-                    "important"
-                  );
-                  wrapper.style.setProperty("z-index", "2", "important");
-                  wrapper.style.setProperty(
-                    "display",
-                    "inline-block",
-                    "important"
-                  );
-
+                  wrapper.style.setProperty("position", "absolute", "important");
+                  wrapper.style.setProperty("left", "0", "important");
+                  wrapper.style.setProperty("right", "0", "important");
+                  wrapper.style.setProperty("top", "0", "important");
+                  wrapper.style.setProperty("bottom", "0", "important");
+                  wrapper.style.setProperty("display", "flex", "important");
+                  wrapper.style.setProperty("align-items", "center", "important");
+                  wrapper.style.setProperty("justify-content", "center", "important");
+                  wrapper.style.setProperty("z-index", "10", "important");
+                  wrapper.style.setProperty("font-size", "inherit", "important");
                   text_node.parentNode?.insertBefore(wrapper, text_node);
                   wrapper.appendChild(text_node);
                 }
@@ -564,14 +793,16 @@ export default function RangeCalendar({
                 const wrapper = document.createElement("span");
                 wrapper.className = "range-text-wrapper";
                 wrapper.style.setProperty("color", "white", "important");
-                wrapper.style.setProperty("position", "relative", "important");
-                wrapper.style.setProperty("z-index", "2", "important");
-                wrapper.style.setProperty(
-                  "display",
-                  "inline-block",
-                  "important"
-                );
-
+                wrapper.style.setProperty("position", "absolute", "important");
+                wrapper.style.setProperty("left", "0", "important");
+                wrapper.style.setProperty("right", "0", "important");
+                wrapper.style.setProperty("top", "0", "important");
+                wrapper.style.setProperty("bottom", "0", "important");
+                wrapper.style.setProperty("display", "flex", "important");
+                wrapper.style.setProperty("align-items", "center", "important");
+                wrapper.style.setProperty("justify-content", "center", "important");
+                wrapper.style.setProperty("z-index", "10", "important");
+                wrapper.style.setProperty("font-size", "inherit", "important");
                 button.insertBefore(wrapper, text_node);
                 wrapper.appendChild(text_node);
               }
@@ -580,10 +811,7 @@ export default function RangeCalendar({
 
           apply_white_text_end();
           setTimeout(apply_white_text_end, 0);
-          setTimeout(apply_white_text_end, 50);
           setTimeout(apply_white_text_end, 100);
-          setTimeout(apply_white_text_end, 200);
-          setTimeout(apply_white_text_end, 300);
         }
       }
     });
@@ -620,18 +848,17 @@ export default function RangeCalendar({
         const class_list = element.classList;
 
         // 선택되거나 range에 포함된 날짜는 제외
-        // 클래스명에 range 관련 문자열이 포함되어 있는지도 확인
-        const has_range_class =
+        const is_range_or_selected =
           class_list.contains("rdp-day_selected") ||
+          class_list.contains("rdp-range_start") ||
+          class_list.contains("rdp-range_end") ||
+          class_list.contains("rdp-range_middle") ||
           class_list.contains("rdp-day_range_start") ||
           class_list.contains("rdp-day_range_end") ||
           class_list.contains("rdp-day_range_middle") ||
-          class_list.toString().includes("range_start") ||
-          class_list.toString().includes("range_end") ||
-          class_list.toString().includes("range_middle") ||
           class_list.contains("rdp-day_outside");
 
-        if (has_range_class) {
+        if (is_range_or_selected) {
           return;
         }
 
@@ -681,13 +908,13 @@ export default function RangeCalendar({
           const is_start_date =
             selected &&
             selected.from &&
-            !selected.to &&
+            selected.to == null &&
             selected.from.getTime() === button_date_time;
 
           // 종료일만 선택된 경우
           const is_end_date =
             selected &&
-            !selected.from &&
+            selected.from == null &&
             selected.to &&
             selected.to.getTime() === button_date_time;
 
@@ -705,53 +932,56 @@ export default function RangeCalendar({
           }
 
           // 클래스 체크를 한 번 더 확인 (혹시 모를 경우를 대비)
-          const has_range_class_again =
+          const is_range_or_selected_again =
             class_list.contains("rdp-day_selected") ||
+            class_list.contains("rdp-range_start") ||
+            class_list.contains("rdp-range_end") ||
+            class_list.contains("rdp-range_middle") ||
             class_list.contains("rdp-day_range_start") ||
             class_list.contains("rdp-day_range_end") ||
-            class_list.contains("rdp-day_range_middle") ||
-            class_list.toString().includes("range_start") ||
-            class_list.toString().includes("range_end") ||
-            class_list.toString().includes("range_middle");
+            class_list.contains("rdp-day_range_middle");
 
-          if (has_range_class_again) {
+          if (is_range_or_selected_again) {
             return;
           }
 
-          // 해당 날짜 셀에 검정 테두리와 완만한(라운드) 테두리 적용, 배경색 없음, 글자색 진회색 (#444)
+          // 해당 날짜 셀에 핑크색 테두리와 완만한(라운드) 테두리 적용, 배경색 없음, 글자색 핑크 (#FF5694)
+          const isMobile = window.innerWidth <= 768;
+          const todaySize = isMobile ? "20px" : "32px";
+
           element.style.setProperty("border-radius", "50%", "important");
           element.style.setProperty(
             "background-color",
             "transparent",
             "important"
           );
-          element.style.setProperty("color", "#444444", "important");
+          element.style.setProperty("color", "#FF5694", "important");
           element.style.setProperty("box-sizing", "border-box", "important");
-          element.style.setProperty("width", "32px", "important");
-          element.style.setProperty("height", "32px", "important");
-          element.style.setProperty("min-width", "32px", "important");
-          element.style.setProperty("min-height", "32px", "important");
-          element.style.setProperty("max-width", "32px", "important");
-          element.style.setProperty("max-height", "32px", "important");
+          element.style.setProperty("width", todaySize, "important");
+          element.style.setProperty("height", todaySize, "important");
+          element.style.setProperty("min-width", todaySize, "important");
+          element.style.setProperty("min-height", todaySize, "important");
+          element.style.setProperty("max-width", todaySize, "important");
+          element.style.setProperty("max-height", todaySize, "important");
           element.style.setProperty("padding", "0", "important");
           element.style.setProperty("margin", "0", "important");
 
           // 버튼(숫자 포함)에도 동일하게 적용
-          button.style.setProperty("border", "1px solid #444444", "important");
+          button.style.setProperty("border", "1px solid #FF5694", "important");
           button.style.setProperty("border-radius", "50%", "important");
           button.style.setProperty(
             "background-color",
             "transparent",
             "important"
           );
-          button.style.setProperty("color", "#444444", "important");
+          button.style.setProperty("color", "#FF5694", "important");
           button.style.setProperty("box-sizing", "border-box", "important");
-          button.style.setProperty("width", "32px", "important");
-          button.style.setProperty("height", "32px", "important");
-          button.style.setProperty("min-width", "32px", "important");
-          button.style.setProperty("min-height", "32px", "important");
-          button.style.setProperty("max-width", "32px", "important");
-          button.style.setProperty("max-height", "32px", "important");
+          button.style.setProperty("width", todaySize, "important");
+          button.style.setProperty("height", todaySize, "important");
+          button.style.setProperty("min-width", todaySize, "important");
+          button.style.setProperty("min-height", todaySize, "important");
+          button.style.setProperty("max-width", todaySize, "important");
+          button.style.setProperty("max-height", todaySize, "important");
           button.style.setProperty("padding", "0", "important");
           button.style.setProperty("margin", "0", "important");
           button.style.setProperty("display", "flex", "important");
@@ -761,28 +991,39 @@ export default function RangeCalendar({
       });
     };
 
-    // 오늘 날짜 스타일 적용 (여러 번 호출하여 확실하게 적용)
+    // 오늘 날짜 스타일 적용 (react-day-picker 비동기 렌더 대응을 위해 0, 100ms에 한 번씩)
     apply_today_styles();
     setTimeout(apply_today_styles, 0);
-    setTimeout(apply_today_styles, 50);
     setTimeout(apply_today_styles, 100);
-    setTimeout(apply_today_styles, 200);
-    setTimeout(apply_today_styles, 300);
 
     requestAnimationFrame(() => {
-      // requestAnimationFrame 내에서도 한 번 더 적용
       apply_today_styles();
       is_applying_styles_ref.current = false;
-      if (observer_ref.current && calendar_ref.current) {
-        observer_ref.current.observe(calendar_ref.current, {
-          childList: true,
-          subtree: true,
-          attributes: true,
-          attributeFilter: ["class"],
-        });
+      last_apply_time_ref.current = Date.now();
+      // 모바일: observer 재연결 지연으로 DOM 업데이트 완료 후 감시 시작 (깜빡임 감소)
+      if (reconnect_timer_ref.current) {
+        clearTimeout(reconnect_timer_ref.current);
+        reconnect_timer_ref.current = null;
+      }
+      const reconnect = () => {
+        reconnect_timer_ref.current = null;
+        if (observer_ref.current && calendar_ref.current) {
+          observer_ref.current.observe(calendar_ref.current, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ["class"],
+          });
+        }
+      };
+      const reconnect_delay = window.innerWidth <= 768 ? 350 : 0;
+      if (reconnect_delay > 0) {
+        reconnect_timer_ref.current = setTimeout(reconnect, reconnect_delay);
+      } else {
+        reconnect();
       }
     });
-  }, []);
+  }, [selected]);
 
   // ========================================
   // 전달 날짜 숨기기 함수
@@ -840,6 +1081,31 @@ export default function RangeCalendar({
   }, [selected, apply_range_styles, hide_previous_month_days]);
 
   // ========================================
+  // 윈도우 리사이즈 시 스타일 재적용
+  // ========================================
+
+  useEffect(() => {
+    let resize_timer: NodeJS.Timeout | null = null;
+    const handle_resize = () => {
+      if (resize_timer) clearTimeout(resize_timer);
+      resize_timer = setTimeout(() => {
+        resize_timer = null;
+        if (!is_applying_styles_ref.current) {
+          apply_range_styles();
+          hide_previous_month_days();
+        }
+      }, 150);
+    };
+
+    window.addEventListener("resize", handle_resize);
+
+    return () => {
+      window.removeEventListener("resize", handle_resize);
+      if (resize_timer) clearTimeout(resize_timer);
+    };
+  }, [apply_range_styles, hide_previous_month_days]);
+
+  // ========================================
   // DOM 변경 감지 및 스타일 자동 적용
   // ========================================
 
@@ -853,13 +1119,25 @@ export default function RangeCalendar({
 
       const is_our_change = mutations.some((mutation) => {
         if (mutation.type === "childList") {
-          return Array.from(mutation.addedNodes).some(
+          // 추가된 노드가 우리 컴포넌트 요소인지
+          const added_is_ours = Array.from(mutation.addedNodes).some(
             (node) =>
               node instanceof HTMLElement &&
               (node.classList.contains("range-start-circle") ||
                 node.classList.contains("range-end-circle") ||
                 node.classList.contains("range-text-wrapper"))
           );
+          if (added_is_ours) return true;
+          // appendChild로 텍스트를 wrapper에 넣을 때 target이 range-text-wrapper가 됨 (우리 변경)
+          const target = mutation.target as HTMLElement;
+          if (
+            target?.classList?.contains?.("range-text-wrapper") ||
+            target?.closest?.(".range-start-circle") ||
+            target?.closest?.(".range-end-circle")
+          ) {
+            return true;
+          }
+          return false;
         }
         if (mutation.type === "attributes") {
           const target = mutation.target as HTMLElement;
@@ -879,6 +1157,10 @@ export default function RangeCalendar({
           clearTimeout(debounce_timer);
         }
         debounce_timer = setTimeout(() => {
+          // selected 변경으로 최근에 적용했으면 중복 실행 방지 (깜빡임 방지)
+          // 모바일은 렌더가 느려 쿨다운을 더 길게
+          const cooldown_ms = window.innerWidth <= 768 ? 600 : 400;
+          if (Date.now() - last_apply_time_ref.current < cooldown_ms) return;
           if (!is_applying_styles_ref.current) {
             apply_range_styles();
             hide_previous_month_days();
@@ -904,11 +1186,71 @@ export default function RangeCalendar({
       observer.disconnect();
       observer_ref.current = null;
       clearTimeout(initial_timeout);
-      if (debounce_timer) {
-        clearTimeout(debounce_timer);
+      if (debounce_timer) clearTimeout(debounce_timer);
+      if (reconnect_timer_ref.current) {
+        clearTimeout(reconnect_timer_ref.current);
+        reconnect_timer_ref.current = null;
       }
     };
   }, [apply_range_styles, hide_previous_month_days]);
+
+  // ========================================
+  // 날짜 비활성화 로직 (시작일보다 이른 날짜는 선택 불가)
+  // ========================================
+
+  // 시작일만 선택된 상태에서 시작일보다 이른 날짜를 비활성화
+  const get_disabled_dates = () => {
+    // 시작일만 선택된 상태가 아니면 비활성화 없음
+    if (!selected || !selected.from) return undefined;
+    // to가 있고 from과 다르면 범위 선택 완료 → 비활성화 없음
+    if (selected.to != null && selected.from.getTime() !== selected.to.getTime()) return undefined;
+
+    const start_date_from = selected.from;
+
+    // 시작일보다 이른 날짜를 비활성화하는 함수 반환
+    return (date: Date) => {
+      const check_date = new Date(date);
+      check_date.setHours(0, 0, 0, 0);
+
+      const start_date = new Date(start_date_from);
+      start_date.setHours(0, 0, 0, 0);
+
+      const is_before = check_date < start_date;
+      return is_before;
+    };
+  };
+
+  // ========================================
+  // 날짜 클릭 이벤트 감지 (모달 표시용)
+  // ========================================
+
+  useEffect(() => {
+    if (!calendar_ref.current) return;
+
+    const handle_day_click = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+
+      // 날짜 버튼 클릭인지 확인
+      const day_button = target.closest("button[name^='day']") as HTMLButtonElement;
+      if (!day_button) return;
+
+      // disabled 버튼인지 확인
+      if (day_button.disabled) {
+        // 모달 표시
+        if (on_validation_error) {
+          on_validation_error();
+        }
+      }
+    };
+
+    calendar_ref.current.addEventListener("click", handle_day_click, true);
+
+    return () => {
+      if (calendar_ref.current) {
+        calendar_ref.current.removeEventListener("click", handle_day_click, true);
+      }
+    };
+  }, [on_validation_error]);
 
   // ========================================
   // 렌더링
@@ -920,6 +1262,7 @@ export default function RangeCalendar({
         mode="range"
         selected={selected}
         onSelect={handle_date_select}
+        disabled={get_disabled_dates()}
         locale={ko}
         showOutsideDays={show_outside_days}
         numberOfMonths={number_of_months}

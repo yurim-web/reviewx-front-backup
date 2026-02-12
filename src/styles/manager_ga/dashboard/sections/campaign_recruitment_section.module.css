@@ -64,7 +64,7 @@
 
 /* 캠페인 모집 통계 섹션 범례 아이콘 - 달성률 */
 .campaign_recruitment_section_legend_icon_achievement {
-  background-color: #ababab;
+  background-color: #ff5694;
 }
 
 /* 캠페인 모집 통계 섹션 범례 아이콘 - 평균 진행 기간 */
@@ -76,4 +76,3 @@
 .campaign_recruitment_section_legend_icon_dark {
   background-color: #444444;
 }
-

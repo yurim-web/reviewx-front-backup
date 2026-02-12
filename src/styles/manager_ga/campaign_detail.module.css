@@ -4,7 +4,7 @@
 
 .detail_page_wrapper {
   width: 100%;
-  padding: 80px 24px 80px;
+  padding: 80px 24px 0px;
   background-color: #f9fafc;
   box-sizing: border-box;
 }
@@ -19,5 +19,4 @@
 
 .content_inner {
   width: 100%;
-  height: calc(100vh - 80px); /* header 높이(80px)를 제외한 높이 */
 }

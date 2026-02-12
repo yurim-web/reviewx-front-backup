@@ -9,7 +9,7 @@
 
 "use client";
 
-import styles from "@/styles/common/find_account.module.css";
+import styles from "@/styles/common/find_account/find_account.module.css";
 
 interface TabNavigationProps {
   /** 현재 활성화된 탭 */
@@ -22,6 +22,12 @@ export default function TabNavigation({
   activeTab,
   onTabChange,
 }: TabNavigationProps) {
+  const handleTabClick = (tab: "id" | "password", e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onTabChange(tab);
+  };
+
   return (
     <section className={styles.tab_section}>
       <button
@@ -29,7 +35,7 @@ export default function TabNavigation({
         className={`${styles.tab_button} ${
           activeTab === "id" ? styles.tab_button_active : ""
         }`}
-        onClick={() => onTabChange("id")}
+        onClick={(e) => handleTabClick("id", e)}
         aria-label="아이디 찾기"
         aria-selected={activeTab === "id"}
       >
@@ -40,7 +46,7 @@ export default function TabNavigation({
         className={`${styles.tab_button} ${
           activeTab === "password" ? styles.tab_button_active : ""
         }`}
-        onClick={() => onTabChange("password")}
+        onClick={(e) => handleTabClick("password", e)}
         aria-label="비밀번호 찾기"
         aria-selected={activeTab === "password"}
       >

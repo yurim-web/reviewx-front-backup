@@ -23,21 +23,22 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
 import DateFilterButton from "@/components/manager/ga/common/filter/DateFilterButton";
 import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
-import StatusFilterModal from "../filter/StatusFilterModal";
-import TypeFilterModal from "../filter/TypeFilterModal";
-import ChannelFilterModal, {
+import StatusFilterDropdown from "../filter/StatusFilterDropdown";
+import TypeFilterDropdown from "../filter/TypeFilterDropdown";
+import ChannelFilterDropdown, {
   channel_label_map,
-} from "../filter/ChannelFilterModal";
+} from "../filter/ChannelFilterDropdown";
 import type { CampaignStatus } from "../filter/StatusFilterModal";
 import type { CampaignType } from "../filter/TypeFilterModal";
 import type { Channel } from "../filter/ChannelFilterModal";
+import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.module.css";
 
 interface CampaignProgressFilterSectionProps {
   // CSS 모듈 스타일 객체
@@ -82,14 +83,26 @@ export default function CampaignProgressFilterSection({
      📌 상태 관리 (State Management)
      ======================================== */
 
-  // 상태 필터 모달 열림/닫힘 상태
-  const [is_status_modal_open, set_is_status_modal_open] = useState(false);
+  // 상태 필터 드롭다운 열림/닫힘 상태
+  const [is_status_dropdown_open, set_is_status_dropdown_open] =
+    useState(false);
 
-  // 유형 필터 모달 열림/닫힘 상태
-  const [is_type_modal_open, set_is_type_modal_open] = useState(false);
+  // 상태 필터 버튼 컨테이너 ref (드롭다운 위치 계산용)
+  // useRef: DOM 요소에 직접 접근하기 위한 React Hook
+  const status_filter_button_ref = useRef<HTMLDivElement>(null);
 
-  // 채널 필터 모달 열림/닫힘 상태
-  const [is_channel_modal_open, set_is_channel_modal_open] = useState(false);
+  // 유형 필터 드롭다운 열림/닫힘 상태
+  const [is_type_dropdown_open, set_is_type_dropdown_open] = useState(false);
+
+  // 유형 필터 버튼 컨테이너 ref (드롭다운 위치 계산용)
+  const type_filter_button_ref = useRef<HTMLDivElement>(null);
+
+  // 채널 필터 드롭다운 열림/닫힘 상태
+  const [is_channel_dropdown_open, set_is_channel_dropdown_open] =
+    useState(false);
+
+  // 채널 필터 버튼 컨테이너 ref (드롭다운 위치 계산용)
+  const channel_filter_button_ref = useRef<HTMLDivElement>(null);
 
   // 선택된 정렬 옵션
   const [selected_sort, set_selected_sort] = useState<string>("최신순");
@@ -101,19 +114,20 @@ export default function CampaignProgressFilterSection({
      🎯 이벤트 핸들러 (Event Handlers)
      ======================================== */
 
-  // 상태 필터 모달 열기
+  // 상태 필터 드롭다운 열기/닫기 토글
   const handle_status_filter_click = () => {
-    set_is_status_modal_open(true);
+    set_is_status_dropdown_open((prev) => !prev); // 이전 상태의 반대로 변경 (토글)
   };
 
-  // 상태 필터 모달 닫기
-  const handle_status_modal_close = () => {
-    set_is_status_modal_open(false);
+  // 상태 필터 드롭다운 닫기
+  const handle_status_dropdown_close = () => {
+    set_is_status_dropdown_open(false);
   };
 
   // 상태 필터 적용
   const handle_status_apply = (statuses: CampaignStatus[]) => {
     on_statuses_change(statuses);
+    // 드롭다운은 선택 시 즉시 적용되므로 닫지 않음 (BaseFilterDropdown에서 처리)
   };
 
   // 상태 태그 제거 핸들러
@@ -121,19 +135,20 @@ export default function CampaignProgressFilterSection({
     on_statuses_change(selected_statuses.filter((s) => s !== status));
   };
 
-  // 유형 필터 모달 열기
+  // 유형 필터 드롭다운 열기/닫기 토글
   const handle_type_filter_click = () => {
-    set_is_type_modal_open(true);
+    set_is_type_dropdown_open((prev) => !prev); // 이전 상태의 반대로 변경 (토글)
   };
 
-  // 유형 필터 모달 닫기
-  const handle_type_modal_close = () => {
-    set_is_type_modal_open(false);
+  // 유형 필터 드롭다운 닫기
+  const handle_type_dropdown_close = () => {
+    set_is_type_dropdown_open(false);
   };
 
   // 유형 필터 적용
   const handle_type_apply = (types: CampaignType[]) => {
     on_types_change(types);
+    // 드롭다운은 선택 시 즉시 적용되므로 닫지 않음 (BaseFilterDropdown에서 처리)
   };
 
   // 유형 태그 제거 핸들러
@@ -141,19 +156,20 @@ export default function CampaignProgressFilterSection({
     on_types_change(selected_types.filter((t) => t !== type));
   };
 
-  // 채널 필터 모달 열기
+  // 채널 필터 드롭다운 열기/닫기 토글
   const handle_channel_filter_click = () => {
-    set_is_channel_modal_open(true);
+    set_is_channel_dropdown_open((prev) => !prev); // 이전 상태의 반대로 변경 (토글)
   };
 
-  // 채널 필터 모달 닫기
-  const handle_channel_modal_close = () => {
-    set_is_channel_modal_open(false);
+  // 채널 필터 드롭다운 닫기
+  const handle_channel_dropdown_close = () => {
+    set_is_channel_dropdown_open(false);
   };
 
   // 채널 필터 적용
   const handle_channel_apply = (channels: Channel[]) => {
     on_channels_change(channels);
+    // 드롭다운은 선택 시 즉시 적용되므로 닫지 않음 (BaseFilterDropdown에서 처리)
   };
 
   // 채널 태그 제거 핸들러
@@ -205,6 +221,7 @@ export default function CampaignProgressFilterSection({
       <BaseFilterSection<string>
         search_query={search_query}
         on_search_change={on_search_change}
+        // 검색어 초기화 버튼 숨기기
         // 날짜 필터 - DateFilterButton 컴포넌트 사용
         // DateFilterButton은 BaseFilterSection의 date_filter prop으로 전달됩니다
         date_filter={
@@ -217,29 +234,94 @@ export default function CampaignProgressFilterSection({
         // FilterButton 공통 컴포넌트 사용으로 코드 중복 제거
         filter_modal_button={
           <>
-            {/* 상태 필터 */}
-            <FilterButton
-              label="상태"
-              onClick={handle_status_filter_click}
-              isActive={selected_statuses.length > 0}
-              styles={styles}
-            />
+            {/* 상태 필터 (드롭다운 사용) */}
+            {/* filter_button_dropdown_wrapper: FilterButton과 드롭다운을 함께 감싸는 래퍼 */}
+            {/* position: relative로 설정하여 드롭다운의 위치 기준점이 됩니다 */}
+            <div
+              ref={status_filter_button_ref}
+              className={filterButtonStyles.filter_button_dropdown_wrapper}
+            >
+              <FilterButton
+                label="상태"
+                onClick={handle_status_filter_click}
+                isActive={selected_statuses.length > 0}
+                styles={{
+                  ...styles,
+                  checkbox_icon_checked:
+                    filterButtonStyles.checkbox_icon_checked,
+                  filter_item_active: filterButtonStyles.filter_item_active,
+                  filter_text_active: filterButtonStyles.filter_text_active,
+                  dropdown_arrow_active:
+                    filterButtonStyles.dropdown_arrow_active,
+                }}
+              />
+              {/* 상태 필터 드롭다운 */}
+              <StatusFilterDropdown
+                is_open={is_status_dropdown_open}
+                on_close={handle_status_dropdown_close}
+                selected_statuses={selected_statuses}
+                on_apply={handle_status_apply}
+                container_ref={status_filter_button_ref}
+              />
+            </div>
 
-            {/* 유형 필터 */}
-            <FilterButton
-              label="유형"
-              onClick={handle_type_filter_click}
-              isActive={selected_types.length > 0}
-              styles={styles}
-            />
+            {/* 유형 필터 (드롭다운 사용) */}
+            <div
+              ref={type_filter_button_ref}
+              className={filterButtonStyles.filter_button_dropdown_wrapper}
+            >
+              <FilterButton
+                label="유형"
+                onClick={handle_type_filter_click}
+                isActive={selected_types.length > 0}
+                styles={{
+                  ...styles,
+                  checkbox_icon_checked:
+                    filterButtonStyles.checkbox_icon_checked,
+                  filter_item_active: filterButtonStyles.filter_item_active,
+                  filter_text_active: filterButtonStyles.filter_text_active,
+                  dropdown_arrow_active:
+                    filterButtonStyles.dropdown_arrow_active,
+                }}
+              />
+              {/* 유형 필터 드롭다운 */}
+              <TypeFilterDropdown
+                is_open={is_type_dropdown_open}
+                on_close={handle_type_dropdown_close}
+                selected_types={selected_types}
+                on_apply={handle_type_apply}
+                container_ref={type_filter_button_ref}
+              />
+            </div>
 
-            {/* 채널 필터 */}
-            <FilterButton
-              label="채널"
-              onClick={handle_channel_filter_click}
-              isActive={selected_channels.length > 0}
-              styles={styles}
-            />
+            {/* 채널 필터 (드롭다운 사용) */}
+            <div
+              ref={channel_filter_button_ref}
+              className={filterButtonStyles.filter_button_dropdown_wrapper}
+            >
+              <FilterButton
+                label="채널"
+                onClick={handle_channel_filter_click}
+                isActive={selected_channels.length > 0}
+                styles={{
+                  ...styles,
+                  checkbox_icon_checked:
+                    filterButtonStyles.checkbox_icon_checked,
+                  filter_item_active: filterButtonStyles.filter_item_active,
+                  filter_text_active: filterButtonStyles.filter_text_active,
+                  dropdown_arrow_active:
+                    filterButtonStyles.dropdown_arrow_active,
+                }}
+              />
+              {/* 채널 필터 드롭다운 */}
+              <ChannelFilterDropdown
+                is_open={is_channel_dropdown_open}
+                on_close={handle_channel_dropdown_close}
+                selected_channels={selected_channels}
+                on_apply={handle_channel_apply}
+                container_ref={channel_filter_button_ref}
+              />
+            </div>
           </>
         }
         // 활성 필터 태그들
@@ -249,27 +331,8 @@ export default function CampaignProgressFilterSection({
         on_filter_reset={on_filter_reset}
       />
 
-      {/* 필터 모달들 */}
-      <StatusFilterModal
-        is_open={is_status_modal_open}
-        on_close={handle_status_modal_close}
-        selected_statuses={selected_statuses}
-        on_apply={handle_status_apply}
-      />
-
-      <TypeFilterModal
-        is_open={is_type_modal_open}
-        on_close={handle_type_modal_close}
-        selected_types={selected_types}
-        on_apply={handle_type_apply}
-      />
-
-      <ChannelFilterModal
-        is_open={is_channel_modal_open}
-        on_close={handle_channel_modal_close}
-        selected_channels={selected_channels}
-        on_apply={handle_channel_apply}
-      />
+      {/* 필터 모달들 (모두 드롭다운으로 대체) */}
+      {/* StatusFilterModal, TypeFilterModal, ChannelFilterModal은 각각 드롭다운으로 대체되었습니다 */}
     </div>
   );
 }

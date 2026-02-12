@@ -2,8 +2,9 @@
    📰 기자단 콘텐츠 내역 레이아웃 (/partner/campaign_contents/reporter/[id])
    ======================================== */
 import { ReactNode } from "react";
-import PartnerHeader from "@/components/fragments/PartnerHeader";
-import layoutStyles from "@/styles/partner/layout.module.css";
+import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
+import layoutStyles from "@/styles/partner/partner_layout.module.css";
+import campaignAppStyles from "@/styles/partner/campaign_application/campaign_application.module.css";
 
 interface ReporterContentsLayoutProps {
   children: ReactNode;
@@ -13,9 +14,11 @@ export default function ReporterContentsLayout({
   children,
 }: ReporterContentsLayoutProps) {
   return (
-    <div className={layoutStyles.container}>
-      <PartnerHeader />
-      {children}
+    <div className={campaignAppStyles.campaign_application_wrapper}>
+      <PartnerSubHeader />
+      <div className={layoutStyles.container}>
+        {children}
+      </div>
     </div>
   );
 }
