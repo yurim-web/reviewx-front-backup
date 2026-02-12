@@ -20,7 +20,6 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import {
   add_blacklist_item,
@@ -131,10 +130,6 @@ export default function ReportedCampaignTable({
     // localStorage에서 데이터를 로드하여 상태 업데이트
     set_reported_update_key((prev) => prev + 1);
   }, []);
-
-  // Next.js 라우터: 페이지 이동에 사용
-  // useRouter는 Next.js의 클라이언트 사이드 라우팅을 위한 Hook입니다.
-  const router = useRouter();
 
   const [block_modal_state, set_block_modal_state] = useState<{
     is_open: boolean;
@@ -326,16 +321,10 @@ export default function ReportedCampaignTable({
     // 신고 내역에서 제거 (localStorage에 저장)
     if (block_modal_state.item) {
       remove_reported_campaign(block_modal_state.item.id);
-      // 목록 업데이트를 위한 리렌더링 트리거
       set_reported_update_key((prev) => prev + 1);
     }
 
-    // 블랙리스트 페이지로 이동
-    // router.push: Next.js에서 페이지를 이동하는 메서드입니다.
-    router.push("/manager_ga/member/blacklist");
-
-    // 모달 닫기
-    handle_block_modal_close();
+    // 모달은 완료 안내 모달에서 "닫기" 클릭 시 on_close로 닫힘 (페이지 이동 없음)
   };
 
   // reported_update_key를 의존성으로 추가하여 리렌더링 트리거
@@ -411,7 +400,7 @@ export default function ReportedCampaignTable({
   } = useTableSort({
     data: filtered_list,
     initial_column_key: "campaign_number", // 기본 정렬: 캠페인 번호 컬럼
-    initial_direction: "asc", // 오름차순
+    initial_direction: "desc", // 번호 최신순
     column_config,
   });
 
@@ -419,10 +408,8 @@ export default function ReportedCampaignTable({
 
   // 툴팁 설정
   const tooltip_config: TooltipConfig = {
-    column_key: "campaign_name",
-    tooltip_content: (row: ReportedCampaignItem) => row.campaign_name,
-    tooltip_class_name: styles.tooltip_box,
-    text_class_name: styles.campaign_name_text,
+    column_key: "all",
+    exclude_column_keys: ["block"],
   };
 
   // 커스텀 헤더 렌더링 (SortableTableHeader 공통 컴포넌트 사용)
@@ -556,6 +543,10 @@ export default function ReportedCampaignTable({
               is_open: false,
               item: null,
             });
+          }}
+          on_confirm={(reason_text) => {
+            modal_state.item.report_reason = reason_text;
+            set_reported_update_key((prev) => prev + 1);
           }}
           reason_text={
             modal_state.item.report_reason ||

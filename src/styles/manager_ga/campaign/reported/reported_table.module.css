@@ -152,15 +152,6 @@
   box-sizing: border-box;
 }
 
-/* 캠페인명 텍스트 - 호버 이벤트를 위한 인라인 요소 */
-.campaign_name_text {
-  display: inline-block;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 /* 신고 사유 셀 - 버튼을 정렬 */
 .table_cell_report_reason {
   display: flex;
@@ -265,25 +256,7 @@
   object-fit: contain;
 }
 
-/* 호버 시 나타나는 툴팁 박스 - 캠페인명 셀 바로 아래에 표시 (공간 차지하지 않음) */
-.tooltip_box {
-  position: absolute;
-  border-radius: 4px;
-  border: 1px solid #ffc2d9;
-  background: #fff;
-  padding: 8px;
-  box-sizing: border-box;
-  z-index: 10;
-  overflow: hidden;
-  color: #ff5694;
-  text-overflow: ellipsis;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: -0.28px;
-  white-space: nowrap;
-  width: max-content;
-}
+/* 툴팁 스타일은 공용 사용: @/styles/manager/common/table/table_tooltip.module.css */
 
 /* 신고 코드 셀 - 코드와 아이콘을 함께 표시 */
 .report_code_cell {

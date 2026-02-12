@@ -9,12 +9,14 @@
  * - src/components/manager/ga/campaign/reported/section/ReportedCampaignTable.tsx
  * - src/components/manager/common/member/table/ReviewerTable.tsx
  * - src/components/manager/common/member/table/PartnerTable.tsx
+ * - src/components/manager/sa/member/admins/section/AdminFilterSection.tsx
  */
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "@/styles/manager_ga/campaign/common/modal/campaign_report_modal.module.css";
+import BaseModal from "@/components/common/modal/BaseModal";
 
 // 이용 제한 사유 옵션 목록 (컴포넌트 내부에 직접 정의)
 const block_reason_options: string[] = [
@@ -22,7 +24,7 @@ const block_reason_options: string[] = [
   "반복 취소 누적",
   "무단 이탈·노쇼 누적",
   "공정위 위반 게시 요청 누적",
-  "콘텐츠 도용·중복",
+  "콘텐츠 도용 · 중복",
   "부적절 캠페인 게시",
   "비정상 요청·접근",
   "외부 결제·금전 요구",
@@ -43,19 +45,16 @@ export default function ManagerRestrictionModal({
   campaign_id,
   on_block,
 }: ManagerRestrictionModalProps) {
-  // useState: 선택된 이용 제한 사유를 관리하는 React Hook
-  // [상태값, 상태를 변경하는 함수] = useState(초기값)
   const [selected_block_reason, set_selected_block_reason] = useState<
     string | null
   >(null);
+  const [show_completion_modal, set_show_completion_modal] = useState(false);
+  const pending_restriction_reason_ref = useRef<string | null>(null);
 
-  // useEffect: 모달이 열릴 때마다 선택 상태를 초기화
-  // useEffect는 컴포넌트가 렌더링된 후에 실행됩니다
   useEffect(() => {
     if (is_open) {
-      // 모달이 열릴 때 이용 제한 사유 선택을 초기화합니다
-      // 사용자가 직접 라디오 버튼을 클릭해서 선택하도록 합니다
       set_selected_block_reason(null);
+      set_show_completion_modal(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [is_open]);
@@ -66,15 +65,22 @@ export default function ManagerRestrictionModal({
     set_selected_block_reason(reason);
   };
 
-  // 이용 제한 핸들러
-  // "확인" 버튼을 클릭했을 때 선택된 이용 제한 사유로 이용 제한을 실행합니다
+  // 확인 클릭: 완료 모달만 표시 (실제 적용은 닫기 시)
   const handle_block = () => {
-    if (selected_block_reason) {
-      // on_block 함수가 전달되었으면 실행합니다
-      // ?. (옵셔널 체이닝): 함수가 존재할 때만 호출합니다
-      on_block?.(selected_block_reason);
-      on_close();
+    if (!selected_block_reason) return;
+    pending_restriction_reason_ref.current = selected_block_reason;
+    set_show_completion_modal(true);
+  };
+
+  // 완료 모달 "닫기" 클릭 시: 이용 제한 적용(on_block) 후 모달 닫기
+  const handle_completion_close = () => {
+    const reason = pending_restriction_reason_ref.current;
+    if (reason) {
+      on_block?.(reason);
+      pending_restriction_reason_ref.current = null;
     }
+    set_show_completion_modal(false);
+    on_close();
   };
 
   // 모달 오버레이 클릭 핸들러
@@ -88,8 +94,19 @@ export default function ManagerRestrictionModal({
     }
   };
 
-  // 모달이 닫혀있으면 렌더링하지 않음
   if (!is_open) return null;
+
+  // 이용 제한 완료 시: 이용 제한 사유 모달은 숨기고 완료 안내 모달만 표시 (중첩 방지)
+  if (show_completion_modal) {
+    return (
+      <BaseModal
+        is_open={true}
+        on_close={handle_completion_close}
+        message="이용 제한이 완료되었습니다."
+        buttons={["닫기"]}
+      />
+    );
+  }
 
   return (
     <div className={styles.modal_overlay} onClick={handle_backdrop_click}>

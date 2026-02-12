@@ -15,6 +15,7 @@
 import { useState, useEffect, useRef } from "react";
 import styles from "@/styles/manager_ga/campaign/common/modal/campaign_report_modal.module.css";
 import CommonTextarea from "@/components/common/textarea/CommonTextarea";
+import BaseModal from "@/components/common/modal/BaseModal";
 
 // 신고 코드 타입 정의
 export type ReportCode =
@@ -110,11 +111,14 @@ const report_code_info: ReportCodeInfo[] = [
 
 // ManagerReportReasonModal 컴포넌트의 props 타입 정의
 export interface ManagerReportReasonModalProps {
-  is_open: boolean; // 모달 열림/닫힘 상태
-  on_close: () => void; // 모달 닫기 함수
-  campaign_id?: string; // 신고할 캠페인 ID (옵션)
-  on_report?: (report_code: ReportCode) => void; // 신고 완료 함수
-  report_code_options: ReportCode[]; // 신고 코드 옵션 목록
+  is_open: boolean;
+  on_close: () => void;
+  campaign_id?: string;
+  /** 신고 완료 시 (report_code, report_item) 호출. 반려→신고 시 item 전달하면 신고 내역 추가/반려 제거에 사용 */
+  on_report?: (report_code: ReportCode, report_item?: unknown) => void;
+  report_code_options: ReportCode[];
+  /** 반려 이력 등에서 신고 시 대상 항목 (닫기 클릭 시 on_report(code, report_item)으로 전달) */
+  report_item?: unknown;
 }
 
 export default function ManagerReportReasonModal({
@@ -123,6 +127,7 @@ export default function ManagerReportReasonModal({
   campaign_id,
   on_report,
   report_code_options,
+  report_item,
 }: ManagerReportReasonModalProps) {
   // useState: 선택된 신고 코드를 관리하는 React Hook
   // [상태값, 상태를 변경하는 함수] = useState(초기값)
@@ -137,6 +142,11 @@ export default function ManagerReportReasonModal({
   // 확인 버튼을 클릭했을 때만 에러 상태가 true가 되고, 사용자가 입력을 시작하면 false로 리셋됩니다
   const [has_error, set_has_error] = useState<boolean>(false);
 
+  // 신고 완료 안내 모달 표시 여부 (확인 → 완료 모달만 표시, 닫기 → 신고 적용 후 모달 닫힘)
+  const [show_completion_modal, set_show_completion_modal] = useState<boolean>(false);
+  // 확인 시 선택한 신고 코드 (닫기 클릭 시 on_report로 전달해 신고 내역 추가/반려 제거 적용)
+  const pending_report_code_ref = useRef<ReportCode | null>(null);
+
   // useRef: textarea 요소에 대한 참조
   // DOM 요소에 직접 접근하기 위해 사용합니다
   const textarea_ref = useRef<HTMLTextAreaElement>(null);
@@ -146,12 +156,10 @@ export default function ManagerReportReasonModal({
   useEffect(() => {
     if (is_open) {
       // 모달이 열릴 때 신고 코드 선택을 초기화합니다
-      // 사용자가 직접 라디오 버튼을 클릭해서 선택하도록 합니다
       set_selected_report_code(null);
-      // textarea 입력값도 초기화합니다
       set_textarea_value("");
-      // 에러 상태도 초기화합니다
       set_has_error(false);
+      set_show_completion_modal(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [is_open]);
@@ -162,25 +170,26 @@ export default function ManagerReportReasonModal({
     set_selected_report_code(code);
   };
 
-  // 신고 핸들러
-  // "확인" 버튼을 클릭했을 때 선택된 신고 코드로 신고를 실행합니다
+  // 신고 핸들러: 확인 클릭 시 검증만 하고 완료 모달만 표시 (실제 적용은 닫기 시)
   const handle_report = () => {
-    if (!selected_report_code) {
-      return;
-    }
-
-    // 📌 W013(기타 비매너 행위) 선택 시 사유 입력 필수 검증
+    if (!selected_report_code) return;
     if (selected_report_code === "W013" && !textarea_value.trim()) {
-      // 사유가 입력되지 않았으면 에러 상태를 true로 설정하고 처리하지 않음
       set_has_error(true);
       return;
     }
-
-    // 검증 통과 시 에러 상태를 false로 설정하고 처리 진행
     set_has_error(false);
-    // on_report 함수가 전달되었으면 실행합니다
-    // ?. (옵셔널 체이닝): 함수가 존재할 때만 호출합니다
-    on_report?.(selected_report_code);
+    pending_report_code_ref.current = selected_report_code;
+    set_show_completion_modal(true);
+  };
+
+  // 완료 모달 "닫기" 클릭 시: 신고 적용(on_report에 code + item 전달) 후 모달 닫기
+  const handle_completion_close = () => {
+    const code = pending_report_code_ref.current;
+    if (code) {
+      on_report?.(code, report_item);
+      pending_report_code_ref.current = null;
+    }
+    set_show_completion_modal(false);
     on_close();
   };
 
@@ -216,6 +225,18 @@ export default function ManagerReportReasonModal({
 
   if (!is_open) return null;
 
+  // 신고 완료 시: 신고 사유 모달은 숨기고 완료 안내 모달만 표시 (중첩 방지)
+  if (show_completion_modal) {
+    return (
+      <BaseModal
+        is_open={true}
+        on_close={handle_completion_close}
+        message="신고가 완료되었습니다."
+        buttons={["닫기"]}
+      />
+    );
+  }
+
   return (
     <div className={styles.modal_overlay} onClick={handle_backdrop_click}>
       <div
@@ -227,13 +248,10 @@ export default function ManagerReportReasonModal({
 
         {/* 옵션 리스트 (세로 레이아웃) */}
         <div className={styles.options_list}>
-          {/* 신고 코드 옵션 렌더링 */}
-          {/* map(): 배열의 각 요소를 순회하며 JSX 요소를 생성합니다 */}
           {report_code_options.map((code) => {
             const code_info = get_code_info(code);
             return (
               <label key={code} className={styles.option_item}>
-                {/* 라디오 버튼: 단일 선택만 가능 */}
                 <input
                   type="radio"
                   name="report-reason"
@@ -250,8 +268,6 @@ export default function ManagerReportReasonModal({
           })}
         </div>
 
-        {/* 기타 비매너 행위(W013) 선택 시 표시되는 textarea */}
-        {/* 조건부 렌더링: selected_report_code가 "W013"일 때만 textarea를 표시합니다 */}
         {selected_report_code === "W013" && (
           <div style={{ marginTop: "16px" }}>
             <CommonTextarea
@@ -266,13 +282,10 @@ export default function ManagerReportReasonModal({
           </div>
         )}
 
-        {/* 모달 푸터 */}
         <div className={styles.modal_footer}>
-          {/* 취소 버튼 */}
           <button className={styles.close_button} onClick={on_close}>
             취소
           </button>
-          {/* 확인 버튼 */}
           <button
             className={styles.report_button}
             onClick={handle_report}

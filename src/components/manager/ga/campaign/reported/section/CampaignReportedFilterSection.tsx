@@ -188,7 +188,7 @@ export default function CampaignReportedFilterSection({
                 dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
               }}
             />
-            {/* 신고 코드 필터 드롭다운 */}
+            {/* 신고 코드 필터 드롭다운 (8개 이상일 때 스크롤) */}
             <BaseFilterDropdown<ReportCode>
               is_open={is_report_code_dropdown_open}
               on_close={handle_report_code_dropdown_close}
@@ -197,6 +197,11 @@ export default function CampaignReportedFilterSection({
               options={report_code_dropdown_options}
               container_ref={
                 report_code_filter_button_ref as React.RefObject<HTMLDivElement>
+              }
+              options_list_class_name={
+                report_code_dropdown_options.length >= 8
+                  ? "block_code_options_list_scroll"
+                  : undefined
               }
             />
           </div>

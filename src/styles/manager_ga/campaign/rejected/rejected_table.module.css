@@ -25,16 +25,7 @@
 .table_header {
   display: grid;
   /* 반려내역 테이블 컬럼 정의 */
-  grid-template-columns:
-    0.12fr
-    0.4fr /* 캠페인명 */
-    0.2fr
-    0.2fr
-    0.1fr /* 반려 코드  */
-    0.12fr /* 반려 사유  */
-    0.12fr
-    0.2fr /* 처리일 */
-    60px; /* 신고 아이콘 칸 */
+  grid-template-columns: 0.09fr 0.5fr 0.2fr 0.2fr 0.1fr 0.12fr 0.1fr 0.15fr 60px;
   background-color: #f5f5f5;
   padding: 0;
   align-items: center;
@@ -93,16 +84,7 @@
 /* 테이블 행 */
 .table_row {
   display: grid;
-  grid-template-columns:
-    0.12fr
-    0.4fr /* 캠페인명  */
-    0.2fr
-    0.2fr
-    0.1fr /* 반려 코드  */
-    0.12fr /* 반려 사유  */
-    0.12fr
-    0.2fr /* 처리일 */
-    60px; /* 신고 아이콘 칸 */
+  grid-template-columns: 0.09fr 0.5fr 0.2fr 0.2fr 0.1fr 0.12fr 0.1fr 0.15fr 60px;
   border-bottom: 1px solid #f2f2f2;
   align-items: center;
   height: 61px;
@@ -159,15 +141,6 @@
   gap: 6px;
   white-space: nowrap;
   box-sizing: border-box;
-}
-
-/* 캠페인명 텍스트 - 호버 이벤트를 위한 인라인 요소 */
-.campaign_name_text {
-  display: inline-block;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 /* 반려 사유 셀 - 버튼을 정렬 */
@@ -238,22 +211,4 @@
   cursor: pointer;
 }
 
-/* 호버 시 나타나는 툴팁 박스 - 캠페인명 셀 바로 아래에 표시 (공간 차지하지 않음) */
-.tooltip_box {
-  position: absolute;
-  border-radius: 4px;
-  border: 1px solid #ffc2d9;
-  background: #fff;
-  padding: 8px;
-  box-sizing: border-box;
-  z-index: 10;
-  overflow: hidden;
-  color: #ff5694;
-  text-overflow: ellipsis;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  letter-spacing: -0.28px;
-  white-space: nowrap;
-  width: max-content;
-}
+/* 툴팁 스타일은 공용 사용: @/styles/manager/common/table/table_tooltip.module.css */

@@ -19,7 +19,7 @@
 
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import BaseModal from "@/components/common/modal/BaseModal";
@@ -147,6 +147,8 @@ export default function RejectedCampaignTable({
     campaign_id: null,
     item: null,
   });
+  // on_report 호출 시 항상 최신 item 사용 (클로저/배칭으로 인한 stale state 방지)
+  const report_modal_item_ref = useRef<RejectedCampaignItem | null>(null);
 
   // 이미 처리된 요청 모달 상태
   const [already_processed_modal_state, set_already_processed_modal_state] =
@@ -176,6 +178,7 @@ export default function RejectedCampaignTable({
     campaign_id: string,
     item: RejectedCampaignItem
   ) => {
+    report_modal_item_ref.current = item;
     set_report_modal_state({
       is_open: true,
       campaign_id,
@@ -184,6 +187,7 @@ export default function RejectedCampaignTable({
   };
 
   const handle_report_modal_close = () => {
+    report_modal_item_ref.current = null;
     set_report_modal_state({
       is_open: false,
       campaign_id: null,
@@ -191,12 +195,16 @@ export default function RejectedCampaignTable({
     });
   };
 
-  // 신고 핸들러
-  // 신고 모달에서 "신고" 버튼을 클릭했을 때 실행됩니다
-  const handle_report_submit = (report_code: ReportCode) => {
-    if (!report_modal_state.item) return;
-
-    const rejected_item = report_modal_state.item;
+  // 신고 핸들러 (닫기 시 모달에서 report_item으로 전달받거나 ref 사용)
+  const handle_report_submit = (
+    report_code: ReportCode,
+    report_item_from_modal?: unknown
+  ) => {
+    const rejected_item =
+      (report_item_from_modal as RejectedCampaignItem | null) ??
+      report_modal_item_ref.current ??
+      report_modal_state.item;
+    if (!rejected_item) return;
 
     // 이미 신고된 내역인지 확인
     // 같은 캠페인 번호와 대상자로 이미 신고된 내역이 있는지 체크
@@ -254,11 +262,8 @@ export default function RejectedCampaignTable({
     // 목록 업데이트를 위한 리렌더링 트리거
     set_rejected_update_key((prev) => prev + 1);
 
-    // 신고 내역 페이지로 이동
-    router.push("/manager_ga/campaign/reported");
-
-    // 모달 닫기
-    handle_report_modal_close();
+    // 모달은 신고 완료 안내 모달에서 "닫기" 클릭 시 닫힘 (handle_report_modal_close는 on_close로 호출됨)
+    // 신고 내역 페이지로 이동은 닫기 클릭 시 처리
   };
 
   // 이미 처리된 요청 모달 닫기 핸들러
@@ -334,7 +339,7 @@ export default function RejectedCampaignTable({
   } = useTableSort({
     data: filtered_list,
     initial_column_key: "campaign_number", // 기본 정렬: 캠페인 번호 컬럼
-    initial_direction: "asc", // 오름차순
+    initial_direction: "desc", // 번호 최신순
     column_config,
   });
 
@@ -342,10 +347,8 @@ export default function RejectedCampaignTable({
 
   // 툴팁 설정
   const tooltip_config: TooltipConfig = {
-    column_key: "campaign_name",
-    tooltip_content: (row: RejectedCampaignItem) => row.campaign_name,
-    tooltip_class_name: styles.tooltip_box,
-    text_class_name: styles.campaign_name_text,
+    column_key: "all",
+    exclude_column_keys: ["report"],
   };
 
   // 커스텀 헤더 렌더링 (SortableTableHeader 공통 컴포넌트 사용)
@@ -463,6 +466,12 @@ export default function RejectedCampaignTable({
               item: null,
             });
           }}
+          on_confirm={(reason_text) => {
+            if (modal_state.item) {
+              modal_state.item.reject_reason = reason_text;
+              set_rejected_update_key((k) => k + 1);
+            }
+          }}
           reason_text={
             modal_state.item.reject_reason ||
             get_reject_code_info(modal_state.item.reject_code)?.reason ||
@@ -481,6 +490,7 @@ export default function RejectedCampaignTable({
         on_close={handle_report_modal_close}
         campaign_id={report_modal_state.campaign_id || undefined}
         on_report={handle_report_submit}
+        report_item={report_modal_state.item}
         report_code_options={[
           "W001",
           "W002",
