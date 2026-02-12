@@ -37,14 +37,18 @@
   gap: 20px;
 }
 
-/* 채널별 회원 통계 섹션 파이 차트 컨테이너 */
+/* 채널별 회원 통계 섹션 파이 차트 컨테이너 (정사각형 유지로 찌그러짐 방지) */
 .channel_member_section_pie_chart_container {
   flex-shrink: 0;
-  width: 220px;
-  height: 220px;
+  width: 200px;
+  height: 200px;
+  min-width: 200px;
+  min-height: 200px;
+  aspect-ratio: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 /* 채널별 회원 통계 섹션 통계 정보 영역 */
@@ -99,4 +103,3 @@
   line-height: 14px;
   letter-spacing: -0.28px;
 }
-

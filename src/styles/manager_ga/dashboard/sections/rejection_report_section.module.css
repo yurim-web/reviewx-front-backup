@@ -10,21 +10,32 @@
  * - /manager_ga (GA 관리자 대시보드)
  */
 
-/* 반려/신고 통계 섹션 카드 */
+/* 반려/신고 통계 섹션 카드 - 높이·너비 안에 전부 들어오게 */
 .rejection_report_section_card {
+  display: flex;
+  flex-direction: column;
   background-color: white;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
   padding: 20px;
   max-height: 356px;
+  min-width: 0;
+  overflow: hidden;
 }
 
-/* 반려/신고 통계 섹션 헤더 (제목과 범례를 같은 줄에 배치) */
+/* 반려/신고 통계 섹션 헤더 (제목과 범례를 같은 줄에 배치) - 높이 고정 */
 .rejection_report_section_header {
+  flex-shrink: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-bottom: 24px;
+}
+
+/* 차트가 들어갈 영역(카드의 두 번째 자식) - 남는 높이만 쓰고 박스 안에 맞춤 */
+.rejection_report_section_card > div:last-child {
+  flex: 1;
+  min-height: 0;
 }
 
 /* 반려/신고 통계 섹션 제목 */
@@ -42,10 +53,10 @@
   align-items: center;
   gap: 16px;
   color: #444;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
-  line-height: 12px; /* 100% */
-  letter-spacing: -0.24px;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
 }
 
 /* 반려/신고 통계 섹션 범례 아이템 */

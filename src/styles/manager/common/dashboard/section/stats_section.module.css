@@ -37,11 +37,11 @@
   gap: 24px;
 }
 
-/* 회원 활성화 통계 섹션 도넛 차트 컨테이너 */
+/* 회원 활성화 통계 섹션 도넛 차트 컨테이너 (200x200, 박스 안에 맞춤) */
 .member_activation_section_donut_chart_container {
   flex-shrink: 0;
-  width: 180px;
-  height: 180px;
+  width: 200px;
+  height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -326,20 +326,22 @@ export default function RejectionReportChart({
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           data={chart_data}
-          margin={{ top: 20, right: 12, left: 12, bottom: 10 }}
+          margin={{ top: 20, right: 28, left: 12, bottom: 10 }}
         >
           {/* 그리드 라인 - 수평선만 표시 (Y축 구분선 5개, 일반 선) */}
           <CartesianGrid stroke="#F2F2F2" vertical={false} horizontal={true} />
 
-          {/* X축 (날짜) - 날짜 범위에 따라 동적으로 생성 */}
+          {/* X축 (날짜) - scale point + padding 0으로 그리드(12~344)와 선·축 끝 일치 */}
           <XAxis
             dataKey="date"
+            scale="point"
             tick={{ fontSize: 12, fill: '#999999', dy: 10 }}
             tickLine={false}
             axisLine={false}
             ticks={x_axis_ticks}
             interval={0}
             angle={0}
+            padding={{ left: 0, right: 0 }}
           />
 
           {/* Y축 (건수) - 동적으로 최대값 계산, 라벨은 숨김 */}
@@ -363,7 +365,7 @@ export default function RejectionReportChart({
             }}
           />
 
-          {/* 반려 라인 (오렌지색) - 부드러운 곡선 */}
+          {/* 반려 라인 (오렌지색) - 로드 시 애니메이션 없음 */}
           <Line
             type="monotone"
             dataKey="rejection"
@@ -377,9 +379,10 @@ export default function RejectionReportChart({
               stroke: '#FF6600',
               strokeWidth: 2,
             }}
+            isAnimationActive={false}
           />
 
-          {/* 신고 라인 (빨간색) - 부드러운 곡선 */}
+          {/* 신고 라인 (빨간색) - 로드 시 애니메이션 없음 */}
           <Line
             type="monotone"
             dataKey="report"
@@ -393,6 +396,7 @@ export default function RejectionReportChart({
               stroke: '#FF2626',
               strokeWidth: 2,
             }}
+            isAnimationActive={false}
           />
         </LineChart>
       </ResponsiveContainer>

@@ -62,10 +62,10 @@
   align-items: center;
   gap: 16px;
   color: #444;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
-  line-height: 12px; /* 100% */
-  letter-spacing: -0.24px;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
 }
 
 /* 차트 범례 아이템 */
@@ -145,19 +145,17 @@
   margin-right: 0px;
 }
 
-/* 반려/신고 차트 영역  */
+/* 반려/신고 차트 영역 - 박스 밖으로 튀어나오지 않도록 */
 .chart_area_rejection_report {
   height: 100%;
   width: 100%;
+  min-width: 0; /* flex/grid 자식이 내용보다 줄어들 수 있게 */
   position: relative;
   background-color: transparent;
   outline: none;
   border: none;
   box-shadow: none;
-  overflow: visible;
-  padding-bottom: 20px;
-  padding-left: 5px;
-  padding-right: 5px;
+  overflow: hidden;
 }
 
 /* 차트 툴팁 컨테이너 */
@@ -166,9 +164,9 @@
   padding: 8px;
   border-radius: 4px;
   color: white;
-  font-size: 13px;
+  font-size: 14px;
   width: fit-content; /* 내용에 맞게 너비 자동 조정 */
-  min-width: 50px; /* 최소 너비 50px */
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
   transition: none !important; /* 애니메이션 제거 */
   animation: none !important; /* 애니메이션 제거 */
 }
@@ -176,40 +174,40 @@
 /* 차트 툴팁 날짜 텍스트 */
 .chart_tooltip_date {
   color: #d9d9d9;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
-  line-height: 13px; /* 100% */
-  letter-spacing: -0.26px;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
 }
 
 /* 차트 툴팁 항목 텍스트 */
 .chart_tooltip_item {
   color: #fff;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
-  line-height: 13px; /* 100% */
-  letter-spacing: -0.26px;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
   margin: 4px 0 0 0;
 }
 
 /* 차트 툴팁 마지막 항목 텍스트 */
 .chart_tooltip_item_last {
   color: #fff;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
-  line-height: 13px; /* 100% */
-  letter-spacing: -0.26px;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
   margin: 4px 0 0 0;
 }
 
 /* 차트 툴팁 이름 (예: "달성률", "모집률") */
 .chart_tooltip_name {
   color: #d9d9d9;
-  font-family: 'Pretendard', sans-serif;
-  font-size: 13px;
+  font-family: "Pretendard", sans-serif;
+  font-size: 14px;
   font-weight: 500;
-  line-height: 13px; /* 100% */
-  letter-spacing: -0.26px;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
   margin: 0;
   padding: 0;
 }
@@ -217,11 +215,41 @@
 /* 차트 툴팁 값 (예: "60%") */
 .chart_tooltip_value {
   color: #fff;
-  font-family: 'Pretendard', sans-serif;
-  font-size: 13px;
+  font-family: "Pretendard", sans-serif;
+  font-size: 14px;
   font-weight: 500;
-  line-height: 13px; /* 100% */
-  letter-spacing: -0.26px;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
   margin: 4px 0 0 0;
   padding: 0;
+}
+
+/* 캠페인 모집 통계 툴팁 - width 113px, padding 8px, 3줄 항목 간 8px, 라벨/수치 space-between */
+.chart_tooltip_campaign_recruitment {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 113px;
+  padding: 8px;
+}
+
+.chart_tooltip_campaign_recruitment .chart_tooltip_row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: "Pretendard", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  margin: 0;
+  padding: 0;
+}
+
+.chart_tooltip_campaign_recruitment .chart_tooltip_campaign_label {
+  color: #d9d9d9;
+}
+
+.chart_tooltip_campaign_recruitment .chart_tooltip_campaign_value {
+  color: #ffffff;
 }

@@ -58,10 +58,10 @@
   justify-content: center;
 }
 
-/* 원형 프로그래스 바 컨테이너 */
+/* 원형 프로그래스 바 컨테이너 (200x200) */
 .donut_progress_container {
-  width: 180px;
-  height: 180px;
+  width: 200px;
+  height: 200px;
   position: relative;
   background-color: transparent;
   display: flex;
@@ -88,7 +88,14 @@
   stroke: #ff5694;
   stroke-width: 20;
   stroke-linecap: round;
-  transition: stroke-dasharray 0.3s ease;
+  transition: stroke-dasharray 1s ease-out;
+  animation: donut_progress_fill 1s ease-out forwards;
+}
+
+@keyframes donut_progress_fill {
+  from {
+    stroke-dasharray: 0 440;
+  }
 }
 
 /* 원형 프로그래스 바 텍스트 그룹 */
