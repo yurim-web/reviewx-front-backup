@@ -26,10 +26,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import CommonTable, {
-  type TableColumn,
-  type TableRowData,
-} from "@/components/manager/common/table/CommonTable";
+import CommonTableWithTooltip, {
+  type TooltipConfig,
+} from "@/components/manager/common/table/CommonTableWithTooltip";
+import type { TableColumn, TableRowData } from "@/components/manager/common/table/CommonTable";
 import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
@@ -103,11 +103,13 @@ export default function WithdrawalTable({
 
   // 검색어 및 필터로 필터링된 출금 현황 목록
   const filtered_withdrawal_list = all_withdrawal_list.filter((item) => {
-    // 검색어 필터
+    // 검색어 필터 (이름, 계좌번호, 주민등록번호)
     if (search_query) {
+      const q = search_query.toLowerCase();
       const matches_search =
-        item.name.toLowerCase().includes(search_query.toLowerCase()) ||
-        item.account.toLowerCase().includes(search_query.toLowerCase());
+        item.name.toLowerCase().includes(q) ||
+        item.account.toLowerCase().includes(q) ||
+        (item.ssn && item.ssn.toLowerCase().includes(q));
       if (!matches_search) return false;
     }
 
@@ -152,7 +154,7 @@ export default function WithdrawalTable({
   } = useTableSort({
     data: filtered_withdrawal_list,
     initial_column_key: "number", // 기본 정렬: 번호 컬럼
-    initial_direction: "asc", // 오름차순
+    initial_direction: "desc", // 번호 최신순
     column_config,
   });
 
@@ -247,19 +249,20 @@ export default function WithdrawalTable({
   };
 
   // 각 셀 렌더링 함수 (Render Props 패턴)
-  // row: 현재 행의 데이터, column: 현재 컬럼 정보, index: 행 인덱스
+  // row: 현재 행의 데이터, column: 현재 컬럼 정의
+  // 툴팁이 적용되는 텍스트 셀은 span으로 감싸지 않고 직접 반환 (CommonTableWithTooltip이 자동으로 처리)
   const render_cell = (row: WithdrawalTableRowData, column: TableColumn) => {
     switch (column.key) {
       case "number":
-        return <span className={styles.cell_text}>{row.number}</span>;
+        return row.number;
       case "round":
-        return <span className={styles.cell_text}>{row.round}</span>;
+        return row.round;
       case "name":
-        return <span className={styles.cell_text}>{row.name}</span>;
+        return row.name;
       case "account":
-        return <span className={styles.cell_text}>{row.account}</span>;
+        return row.account;
       case "ssn":
-        return <span className={styles.cell_text}>{row.ssn}</span>;
+        return row.ssn;
       case "amount":
         // 출금 포인트 열: 금액과 잔여 금액을 세로로 표시
         return (
@@ -278,12 +281,12 @@ export default function WithdrawalTable({
           />
         );
       case "requestDate":
-        return <span className={styles.cell_text}>{row.requestDate}</span>;
+        return row.requestDate;
       case "paymentDate":
-        return <span className={styles.cell_text}>{row.paymentDate}</span>;
+        return row.paymentDate;
       case "type":
         // 유형 열: 회원 유형 일반 텍스트 표시
-        return <span className={styles.cell_text}>{row.type}</span>;
+        return row.type;
       case "status":
         // 상태 열: 회원 상태 태그 표시
         return <MemberStatusTag status={row.status as MemberStatus} />;
@@ -301,10 +304,13 @@ export default function WithdrawalTable({
     }
   };
 
+  const tooltip_config: TooltipConfig = { column_key: "all" };
+
   return (
-    <CommonTable<WithdrawalTableRowData>
+    <CommonTableWithTooltip<WithdrawalTableRowData>
       columns={columns}
       data={sorted_withdrawal_list as WithdrawalTableRowData[]}
+      tooltip_config={tooltip_config}
       render_cell={render_cell}
       styles={styles}
       enable_checkbox={true}
