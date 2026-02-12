@@ -12,7 +12,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "@/styles/manager_ga/campaign/common/modal/campaign_reason_modal.module.css";
 
 // 코드 정보 타입 정의 (반려/신고 공통)
@@ -61,6 +61,8 @@ interface CommonProps {
   is_open: boolean;
   // 모달 닫기 함수
   on_close: () => void;
+  // 확인 클릭 시 선택된 사유 저장 콜백 (저장 후 다시 열면 해당 분류가 선택된 상태로 복원)
+  on_confirm?: (reason_text: string) => void;
 }
 
 // Props 타입: 공통 Props + 모드별 Props
@@ -70,40 +72,54 @@ type CampaignReasonModalProps = CommonProps &
 export default function CampaignReasonModal({
   is_open,
   on_close,
+  on_confirm,
   ...modeProps
 }: CampaignReasonModalProps) {
-  // 선택된 AI 추천 분류 (라디오 버튼이므로 단일 값)
-  // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
-  // 컴포넌트가 리렌더링되어도 이 값이 유지됩니다
-  const [selected_classification, set_selected_classification] = useState<
-    string | null
-  >(null);
-
   // 코드 정보 가져오기 (반려 코드 또는 신고 코드)
-  // find 메서드는 배열에서 조건에 맞는 첫 번째 요소를 찾아 반환합니다
   const code_info = modeProps.code_info_list.find(
     (info) => info.code === modeProps.code
   );
 
-  // 사유 텍스트 상태 관리
-  // 초기값은 props로 받은 reason_text 또는 code_info의 reason을 사용
-  // || 연산자는 왼쪽 값이 falsy이면 오른쪽 값을 사용합니다
-  const [reason_text, set_reason_text] = useState<string>(
-    modeProps.reason_text || code_info?.reason || get_default_message()
-  );
+  // 모달이 열릴 때 표시할 초기 사유·선택 분류 (첫 페인트에서 바로 사용해 잔상 방지)
+  const get_initial_reason = () =>
+    modeProps.reason_text || code_info?.reason || get_default_message();
+  const get_initial_selected = () => {
+    const initial_reason = get_initial_reason();
+    const same_category_reasons = modeProps.code_info_list
+      .filter((info) => info.category === code_info?.category)
+      .map((info) => info.reason);
+    return same_category_reasons.includes(initial_reason) ? initial_reason : null;
+  };
 
-  // 모달이 열릴 때마다 사유 텍스트 초기화
-  // useEffect는 컴포넌트가 렌더링된 후에 실행되는 Hook입니다
-  // 의존성 배열 [is_open, modeProps.reason_text, code_info?.reason]의 값이 변경될 때마다 실행됩니다
+  const [selected_classification, set_selected_classification] = useState<
+    string | null
+  >(null);
+  const [reason_text, set_reason_text] = useState<string>(get_default_message());
+
+  // 모달이 열릴 때 한 번만 동기화했는지 (닫을 때 리셋)
+  const synced_for_open_ref = useRef(false);
+
+  // 모달이 열릴 때마다 사유 텍스트·선택된 분류를 초기값으로 동기화 (state에 반영)
   useEffect(() => {
     if (is_open) {
-      set_reason_text(
-        modeProps.reason_text || code_info?.reason || get_default_message()
-      );
-      // 모달이 열릴 때 선택된 분류 초기화
-      set_selected_classification(null);
+      const initial_reason = get_initial_reason();
+      set_reason_text(initial_reason);
+      set_selected_classification(get_initial_selected());
+      synced_for_open_ref.current = true;
+    } else {
+      synced_for_open_ref.current = false;
     }
-  }, [is_open, modeProps.reason_text, code_info?.reason]);
+  }, [is_open, modeProps.reason_text, code_info?.reason, code_info?.category, modeProps.code_info_list]);
+
+  // 모달이 열려 있는데 아직 state가 동기화되기 전 첫 렌더: 표시만 초기값으로 해서 잔상 방지
+  const display_reason_text =
+    is_open && !synced_for_open_ref.current
+      ? get_initial_reason()
+      : reason_text;
+  const display_selection =
+    is_open && !synced_for_open_ref.current
+      ? get_initial_selected()
+      : selected_classification;
 
   // 모드에 따른 기본 메시지 반환 함수
   function get_default_message(): string {
@@ -131,10 +147,9 @@ export default function CampaignReasonModal({
     .filter((info) => info.category === code_info?.category)
     .map((info) => info.reason);
 
-  // AI 추천 분류 선택 핸들러 (라디오 버튼 방식)
+  // AI 추천 분류 선택 핸들러 (라디오 버튼 방식, 다시 눌러도 해제되지 않음)
   const handle_classification_change = (classification: string) => {
     set_selected_classification(classification);
-    // 선택한 분류를 사유 텍스트에 자동으로 설정
     set_reason_text(classification);
   };
 
@@ -145,10 +160,9 @@ export default function CampaignReasonModal({
     set_reason_text(e.target.value);
   };
 
-  // 확인 버튼 클릭 핸들러
+  // 확인 버튼 클릭 핸들러 (선택된 사유 저장 후 닫기)
   const handle_confirm = () => {
-    // TODO: 반려/신고 사유 확인 로직 구현
-    // 여기에 실제 API 호출이나 상태 업데이트 로직을 추가할 수 있습니다
+    on_confirm?.(reason_text);
     on_close();
   };
 
@@ -181,7 +195,7 @@ export default function CampaignReasonModal({
         <div className={styles.reason_box}>
           <textarea
             className={styles.reason_text}
-            value={reason_text}
+            value={display_reason_text}
             onChange={handle_reason_change}
             onClick={(e) => e.stopPropagation()}
             onFocus={(e) => e.stopPropagation()}
@@ -197,8 +211,8 @@ export default function CampaignReasonModal({
           <div className={styles.classification_container}>
             {/* map 메서드를 사용하여 태그 목록을 렌더링합니다 */}
             {ai_recommended_tags.map((tag) => {
-              // 현재 태그가 선택되었는지 확인
-              const is_selected = selected_classification === tag;
+              // 현재 태그가 선택되었는지 확인 (첫 페인트는 display_selection으로 잔상 방지)
+              const is_selected = display_selection === tag;
               return (
                 <label
                   key={tag}

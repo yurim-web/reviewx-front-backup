@@ -278,25 +278,27 @@ export default function ProgressPageCommon({
   ];
 
   // 신고 모달 컴포넌트를 wrapper 함수로 생성
-  // CampaignTableCommon이 컴포넌트 타입을 기대하므로 wrapper 함수를 만들어서 전달합니다
   const ReportModal = ({
     is_open,
     on_close,
     campaign_id,
     on_report,
+    report_item,
   }: {
     is_open: boolean;
     on_close: () => void;
     campaign_id?: string;
-    on_report?: (report_code: string) => void;
+    on_report?: (report_code: string, report_item?: unknown) => void;
+    report_item?: unknown;
   }) => {
     return (
       <ManagerReportReasonModalCommon
         is_open={is_open}
         on_close={on_close}
         campaign_id={campaign_id}
-        on_report={on_report as (report_code: ReportCode) => void}
+        on_report={on_report as (report_code: ReportCode, report_item?: unknown) => void}
         report_code_options={report_code_options}
+        report_item={report_item}
       />
     );
   };

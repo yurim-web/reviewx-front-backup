@@ -31,7 +31,15 @@
 
 import Link from "next/link";
 import React, { useState, useEffect, useMemo } from "react";
+import { format } from "date-fns";
 import { useTableSort } from "@/hooks/table/useTableSort";
+import {
+  add_reported_campaign,
+  get_reported_campaign_list,
+  report_code_info,
+  reported_campaign_list,
+  type ReportedCampaignItem,
+} from "@/data/manager_ga/reported";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
 import CampaignStatusTag from "@/components/manager/common/tags/CampaignStatusTag";
@@ -40,10 +48,10 @@ import ChannelIcon from "../icons/ChannelIcon";
 import type { CampaignStatus } from "@/components/manager/common/tags/CampaignStatusTag";
 import type { CampaignType } from "@/components/manager/common/tags/CampaignTypeTag";
 import type { Channel } from "../icons/ChannelIcon";
-import CommonTable, {
-  type TableColumn,
-  type TableRowData,
-} from "@/components/manager/common/table/CommonTable";
+import CommonTableWithTooltip, {
+  type TooltipConfig,
+} from "@/components/manager/common/table/CommonTableWithTooltip";
+import type { TableColumn, TableRowData } from "@/components/manager/common/table/CommonTable";
 
 // 캠페인 진행 아이템 타입 정의
 export interface CampaignProgressItem {
@@ -68,7 +76,8 @@ interface ReportModalComponent {
   is_open: boolean;
   on_close: () => void;
   campaign_id?: string;
-  on_report?: (report_code: string) => void;
+  on_report?: (report_code: string, report_item?: unknown) => void;
+  report_item?: unknown;
 }
 
 interface CampaignTableProps {
@@ -188,22 +197,25 @@ export default function CampaignProgressTable({
   } = useTableSort({
     data: campaign_list,
     initial_column_key: "campaign_number",
-    initial_direction: "asc",
+    initial_direction: "desc", // 번호 최신순
     column_config,
   });
 
   const [report_modal_state, set_report_modal_state] = useState<{
     is_open: boolean;
     campaign_id: string | null;
+    item: CampaignProgressItem | null;
   }>({
     is_open: false,
     campaign_id: null,
+    item: null,
   });
 
-  const handle_report_click = (campaign_id: string) => {
+  const handle_report_click = (campaign_id: string, row: CampaignProgressItem) => {
     set_report_modal_state({
       is_open: true,
       campaign_id,
+      item: row,
     });
   };
 
@@ -211,11 +223,37 @@ export default function CampaignProgressTable({
     set_report_modal_state({
       is_open: false,
       campaign_id: null,
+      item: null,
     });
   };
 
-  const handle_report_submit = (report_code: string) => {
-    handle_report_modal_close();
+  const handle_report_submit = (
+    report_code: string,
+    report_item_from_modal?: unknown
+  ) => {
+    const row = report_item_from_modal as CampaignProgressItem | null;
+    if (!row?.campaign_number) return;
+
+    const code_info = report_code_info.find((info) => info.code === report_code);
+    const report_reason = code_info?.reason ?? "";
+    const max_id = Math.max(
+      0,
+      ...reported_campaign_list.map((item) => parseInt(item.id) || 0),
+      ...get_reported_campaign_list().map((item) => parseInt(item.id) || 0)
+    );
+    const new_id = String(max_id + 1);
+    const new_reported_item: ReportedCampaignItem = {
+      id: new_id,
+      campaign_number: row.campaign_number,
+      campaign_name: row.campaign_name,
+      report_code: report_code as ReportedCampaignItem["report_code"],
+      report_reason,
+      inspector: row.partner_name ?? "-",
+      target: "-",
+      processed_date: format(new Date(), "yyyy-MM-dd HH:mm"),
+      report_count: 1,
+    };
+    add_reported_campaign(new_reported_item);
   };
 
   const format_number = (num: number): string => {
@@ -360,11 +398,17 @@ export default function CampaignProgressTable({
     );
   };
 
+  const tooltip_config: TooltipConfig = {
+    column_key: "all",
+    exclude_column_keys: ["report"],
+  };
+
   return (
     <>
-      <CommonTable<CampaignTableRowData>
+      <CommonTableWithTooltip<CampaignTableRowData>
         columns={columns}
         data={sorted_campaign_list}
+        tooltip_config={tooltip_config}
         render_cell={(row, column) => {
           switch (column.key) {
             case "campaign_number":
@@ -414,7 +458,7 @@ export default function CampaignProgressTable({
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation(); // 행 클릭 이벤트 전파 방지
-                        handle_report_click(row.id);
+                        handle_report_click(row.id, row);
                       }}
                       className={cssStyles.report_button}
                       aria-label={`${row.campaign_name} 신고`}
@@ -446,6 +490,7 @@ export default function CampaignProgressTable({
         on_close={handle_report_modal_close}
         campaign_id={report_modal_state.campaign_id || undefined}
         on_report={handle_report_submit}
+        report_item={report_modal_state.item}
       />
     </>
   );
