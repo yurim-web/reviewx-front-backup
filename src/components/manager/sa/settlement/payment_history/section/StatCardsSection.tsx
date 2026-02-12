@@ -24,7 +24,7 @@
 
 import { useMemo } from "react";
 import styles from '@/styles/manager/common/settlement/stat_cards_section.module.css';
-import { paymentHistoryList, type PaymentHistoryItem } from '@/data/manager_sa/settlement/paymentHistoryData';
+import { getPaymentHistoryList, type PaymentHistoryItem } from '@/data/manager_sa/settlement/paymentHistoryData';
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 import type { BusinessType } from "@/components/manager/sa/settlement/payment_history/filter/BusinessTypeFilterModal";
 import type { PaymentMethod } from "@/data/manager_sa/common/filterOptions";
@@ -146,7 +146,8 @@ export default function StatCardsSection({
   // - useMemo: 의존성 배열의 값이 변경될 때만 함수를 실행하여 성능을 최적화합니다
   // - 테이블과 동일한 필터링 로직을 사용합니다
   const filtered_data = useMemo(() => {
-    return paymentHistoryList.filter((item) => {
+    const list = getPaymentHistoryList();
+    return list.filter((item) => {
       // 날짜 범위 필터 (신청일 기준)
       if (selected_date_range?.from && selected_date_range?.to) {
         if (!is_date_in_range(item.requestDate, selected_date_range.from, selected_date_range.to)) {

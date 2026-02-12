@@ -178,6 +178,7 @@ export default function WithdrawalFilterSection({
       <BaseFilterSection<string>
         search_query={current_search_query}
         on_search_change={handle_search_change}
+        search_placeholder="이름, 계좌번호, 주민등록번호 검색"
         // 날짜 필터 - DateFilterButton 컴포넌트 사용
         date_filter={
           <DateFilterButton

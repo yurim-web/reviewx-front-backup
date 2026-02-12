@@ -26,10 +26,10 @@ import { useRouter } from "next/navigation";
 import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
-import CommonTable, {
-  type TableColumn,
-  type TableRowData,
-} from "@/components/manager/common/table/CommonTable";
+import CommonTableWithTooltip, {
+  type TooltipConfig,
+} from "@/components/manager/common/table/CommonTableWithTooltip";
+import type { TableColumn, TableRowData } from "@/components/manager/common/table/CommonTable";
 import styles from "@/styles/manager_sa/member/admins/admin_table.module.css";
 import tag_styles from "@/styles/common/tags.module.css";
 import {
@@ -176,7 +176,7 @@ const AdminTable = forwardRef<AdminTableRef, AdminTableProps>(
   } = useTableSort<AdminTableRowData>({
     data: filtered_admins,
     initial_column_key: "number",
-    initial_direction: "asc",
+    initial_direction: "desc", // 번호 최신순
     column_config,
   });
 
@@ -247,10 +247,16 @@ const AdminTable = forwardRef<AdminTableRef, AdminTableProps>(
     );
   };
 
+  const tooltip_config: TooltipConfig = {
+    column_key: "all",
+    exclude_column_keys: ["edit"],
+  };
+
   return (
-    <CommonTable<AdminTableRowData>
+    <CommonTableWithTooltip<AdminTableRowData>
       columns={columns}
       data={sorted_admins}
+      tooltip_config={tooltip_config}
       render_cell={(row, column) => {
         switch (column.key) {
           case "number":
