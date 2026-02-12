@@ -49,7 +49,16 @@
       "Bash(git -C c:/develop/reviewx-web diff --name-only)",
       "Bash(git diff:*)",
       "Bash(git --no-pager diff src/components/fragments/PartnerHeader.tsx)",
-      "Bash(powershell -Command:*)"
+      "Bash(powershell -Command:*)",
+      "Bash(npx claude-code-templates@latest:*)",
+      "Bash(timeout:*)",
+      "Bash(npx playwright test:*)",
+      "Bash(npm install:*)",
+      "Bash(npx playwright install:*)",
+      "Bash(netstat:*)",
+      "Bash(wc:*)",
+      "Bash(sort:*)",
+      "Bash(curl:*)"
     ]
   }
 }
