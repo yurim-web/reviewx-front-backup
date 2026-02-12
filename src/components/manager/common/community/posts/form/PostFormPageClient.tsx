@@ -78,8 +78,10 @@ const side_menu_items = [
 ];
 
 // 드롭다운 옵션 데이터
-// 구분 옵션: 공지사항, 자주 묻는 질문
-const category_type_options = ["공지사항", "자주 묻는 질문"];
+// 구분 옵션: 오름차순 정렬
+const category_type_options = ["공지사항", "자주 묻는 질문"].sort((a, b) =>
+  a.localeCompare(b, "ko-KR")
+);
 // 대상 옵션
 const target_options = ["전체", "리뷰어", "파트너", "관리자"];
 
@@ -173,6 +175,7 @@ export default function PostFormPageClient({
    * 1. category_type이 선택되지 않았으면 빈 배열 반환
    * 2. categories_list에서 division이 category_type과 일치하는 항목만 필터링
    * 3. category_name만 추출하여 배열로 반환
+   * 4. 오름차순으로 정렬
    */
   const category_options = useMemo(() => {
     // 구분이 선택되지 않았으면 빈 배열 반환
@@ -188,8 +191,10 @@ export default function PostFormPageClient({
     );
 
     // map: 배열의 각 요소를 변환하여 새로운 배열을 만드는 JavaScript 배열 메서드입니다.
-    // category_name만 추출하여 카테고리 옵션 배열 생성
-    const options = filtered_categories.map((item) => item.category_name);
+    // category_name만 추출하여 카테고리 옵션 배열 생성 후 오름차순 정렬
+    const options = filtered_categories
+      .map((item) => item.category_name)
+      .sort((a, b) => a.localeCompare(b, "ko-KR"));
     console.log("category_options:", options);
     return options;
   }, [category_type, categories_list]);
