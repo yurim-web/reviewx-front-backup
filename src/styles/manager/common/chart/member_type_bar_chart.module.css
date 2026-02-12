@@ -115,17 +115,15 @@
   left: 0;
   width: 100%;
   border-radius: 8px 8px 0 0;
-  transition: height 0.6s ease-out;
+  transition: height 1s ease-out;
   z-index: 1;
-  animation: fill_progress 0.8s ease-out;
+  animation: fill_progress 1s ease-out forwards;
 }
 
 /* 프로그레스 바 채워지는 애니메이션 */
 @keyframes fill_progress {
   from {
     height: 0%;
-  }
-  to {
   }
 }
 
@@ -180,8 +178,8 @@
 /* 범례 텍스트 */
 .legend_text {
   color: #444;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
-  line-height: 12px;
-  letter-spacing: -0.24px;
+  line-height: 14px;
+  letter-spacing: -0.28px;
 }

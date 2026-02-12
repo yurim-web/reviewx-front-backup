@@ -187,118 +187,42 @@ const CustomYAxisTickRight = ({ x, y, payload }: any) => {
   );
 };
 
-// 커스텀 툴팁 컴포넌트
-// coordinate: 마우스 위치 좌표
+// 커스텀 툴팁: 모집률, 달성률, 진행 기간 (60일 이상이면 "60일+"), 항목 간 8px
 const CustomTooltip = ({ active, payload, coordinate }: any) => {
-  if (active && payload && payload.length && coordinate) {
-    // payload에서 달성률과 모집률만 필터링 (평균 진행 기간 제외)
-    const lineItems = payload.filter(
-      (item: any) =>
-        item.value !== null &&
-        item.value !== undefined &&
-        item.dataKey &&
-        (item.dataKey === "recruitmentRate" ||
-          item.dataKey === "achievementRate")
-    );
+  if (!active || !payload?.length || !coordinate) return null;
 
-    // lineItems가 없으면 (막대에 호버한 경우) 툴팁 표시 안 함
-    if (lineItems.length === 0) {
-      return null;
-    }
+  const data = payload[0]?.payload as ChartData | undefined;
+  if (!data) return null;
 
-    // payload에 하나의 항목만 있으면 그 항목 사용
-    if (lineItems.length === 1) {
-      const activeItem = lineItems[0];
-      return (
-        <div
-          className={styles.chart_tooltip}
-          style={{
-            position: "absolute",
-            left: coordinate.x,
-            top: coordinate.y,
-            transform: "translate(-50%, -100%)",
-            marginTop: "-8px",
-            pointerEvents: "none",
-          }}
-        >
-          <p className={styles.chart_tooltip_name}>{activeItem.name}</p>
-          <p className={styles.chart_tooltip_value}>{activeItem.value}%</p>
-        </div>
-      );
-    }
+  const durationText =
+    data.averageDuration >= 60 ? "60일+" : `${data.averageDuration}일`;
 
-    // payload에 여러 항목이 있으면, 각 항목의 value 차이를 비교하여
-    // 마우스 Y 좌표에 가장 가까운 항목을 찾습니다
-    // Y축 범위는 0-100이고, value가 클수록 차트 상단에 가깝습니다
-    if (lineItems.length > 1 && coordinate.y !== undefined) {
-      // 각 항목의 value를 사용하여 거리를 계산
-      // 실제로는 Recharts가 내부적으로 Y 좌표를 계산하지만,
-      // 여기서는 value의 차이를 사용하여 가장 가까운 항목을 찾습니다
-
-      const estimatedChartHeight = 300;
-      const yAxisRange = 100; // 0-100
-
-      // 마우스 Y 좌표를 value 범위로 변환 (역변환)
-      const mouseValue =
-        ((estimatedChartHeight - coordinate.y) / estimatedChartHeight) *
-        yAxisRange;
-
-      // 각 항목의 value와 마우스 value의 차이를 계산
-      const itemsWithDistance = lineItems.map((item: any) => {
-        const distance = Math.abs(item.value - mouseValue);
-        return { item, distance };
-      });
-
-      // 거리가 가장 가까운 항목 선택
-      const closestItem = itemsWithDistance.reduce((prev: any, curr: any) =>
-        curr.distance < prev.distance ? curr : prev
-      );
-
-      if (closestItem.item) {
-        return (
-          <div
-            className={styles.chart_tooltip}
-            style={{
-              position: "absolute",
-              left: coordinate.x,
-              top: coordinate.y,
-              transform: "translate(-50%, -100%)",
-              marginTop: "-8px",
-              pointerEvents: "none",
-            }}
-          >
-            <p className={styles.chart_tooltip_name}>{closestItem.item.name}</p>
-            <p className={styles.chart_tooltip_value}>
-              {closestItem.item.value}%
-            </p>
-          </div>
-        );
-      }
-    }
-
-    // 위의 방법들이 실패하면 첫 번째 항목 사용
-    if (lineItems.length > 0) {
-      const activeItem = lineItems[0];
-      return (
-        <div
-          className={styles.chart_tooltip}
-          style={{
-            position: "absolute",
-            left: coordinate.x,
-            top: coordinate.y,
-            transform: "translate(-50%, -100%)",
-            marginTop: "-8px",
-            pointerEvents: "none",
-          }}
-        >
-          <p className={styles.chart_tooltip_name}>{activeItem.name}</p>
-          <p className={styles.chart_tooltip_value}>{activeItem.value}%</p>
-        </div>
-      );
-    }
-  }
-
-  return null;
+  return (
+    <div
+      className={`${styles.chart_tooltip} ${styles.chart_tooltip_campaign_recruitment}`}
+      style={{
+        position: "absolute",
+        left: coordinate.x,
+        top: coordinate.y,
+        transform: "translate(-50%, -100%)",
+        marginTop: "-8px",
+        pointerEvents: "none",
+      }}
+    >
+      <div className={styles.chart_tooltip_row}>
+        <span className={styles.chart_tooltip_campaign_label}>모집률</span>
+        <span className={styles.chart_tooltip_campaign_value}>{data.recruitmentRate}%</span>
+      </div>
+      <div className={styles.chart_tooltip_row}>
+        <span className={styles.chart_tooltip_campaign_label}>달성률</span>
+        <span className={styles.chart_tooltip_campaign_value}>{data.achievementRate}%</span>
+      </div>
+      <div className={styles.chart_tooltip_row}>
+        <span className={styles.chart_tooltip_campaign_label}>진행 기간</span>
+        <span className={styles.chart_tooltip_campaign_value}>{durationText}</span>
+      </div>
+    </div>
+  );
 };
 
 export default function CampaignRecruitmentChart() {
@@ -314,6 +238,7 @@ export default function CampaignRecruitmentChart() {
           margin={{ top: 50, right: -10, left: -10, bottom: 80 }}
           barCategoryGap="8%"
         >
+          {/* 애니메이션 설정 */}
           {/* 그리드 라인 - 수평선만 표시 (왼쪽 Y축 숫자에 맞춰) */}
           <CartesianGrid
             stroke="#F2F2F2"
@@ -388,15 +313,16 @@ export default function CampaignRecruitmentChart() {
           {/* 범례 숨김 - 섹션 컴포넌트에서 커스텀 범례로 표시 */}
           <Legend wrapperStyle={{ display: "none" }} />
 
-          {/* 툴팁 - 각 라인별로 개별 표시 */}
+          {/* 툴팁 - 크로스헤어 숨김, 포인트 중앙 위에 배치 */}
           <Tooltip
             content={<CustomTooltip />}
-            shared={false}
+            shared={true}
             filterNull={true}
             allowEscapeViewBox={{ x: true, y: true }}
+            cursor={false}
           />
 
-          {/* 달성률 라인 (핑크색) - 막대 뒤에 표시되도록 먼저 렌더링 */}
+          {/* 달성률 라인 (핑크색) - 막대 뒤에 표시, 로드 시 선·점 동시 표시 */}
           <Line
             yAxisId="left"
             type="linear"
@@ -411,9 +337,10 @@ export default function CampaignRecruitmentChart() {
               stroke: "#FF5694",
               strokeWidth: 1,
             }}
+            isAnimationActive={false}
           />
 
-          {/* 모집률 라인 (어두운 회색) - 막대 뒤에 표시되도록 먼저 렌더링 */}
+          {/* 모집률 라인 (어두운 회색) - 막대 뒤에 표시, 로드 시 선·점 동시 표시 */}
           <Line
             yAxisId="left"
             type="linear"
@@ -428,10 +355,10 @@ export default function CampaignRecruitmentChart() {
               stroke: "#444444",
               strokeWidth: 1,
             }}
+            isAnimationActive={false}
           />
 
-          {/* 평균 진행 기간 막대 (밝은 회색) - 라인 앞에 표시되도록 나중에 렌더링 */}
-          {/* Recharts에서는 나중에 렌더링된 컴포넌트가 앞에 표시됩니다 */}
+          {/* 평균 진행 기간 막대 (밝은 회색) - 라인 앞에 표시, 로드 시 동시 표시 */}
           <Bar
             yAxisId="right"
             dataKey="averageDuration"
@@ -439,6 +366,7 @@ export default function CampaignRecruitmentChart() {
             fill="#E5E5E5"
             radius={[4, 4, 0, 0]}
             barSize={16}
+            isAnimationActive={false}
           />
         </ComposedChart>
       </ResponsiveContainer>

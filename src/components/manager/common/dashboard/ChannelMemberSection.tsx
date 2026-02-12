@@ -116,6 +116,7 @@ export default function ChannelMemberSection({
     const youtube_percentage =
       total > 0 ? Math.round((youtube_count / total) * 100) : 0;
 
+    // 안내 섹션: 괄호 없이 표시
     return {
       blog: {
         label: "네이버 블로그",
@@ -143,17 +144,22 @@ export default function ChannelMemberSection({
   // 구조 분해 할당으로 props 사용
   const { blog, instagram, clip, youtube } = channel_member_stats;
 
-  // 파이 차트용 데이터 생성
+  // 파이 차트용 데이터 생성 (표시용 괄호 제거 후 숫자만 파싱)
   const pie_chart_data = useMemo(() => {
-    const blog_percentage = parseInt(blog.percentage.replace("%", "")) || 0;
-    const instagram_percentage = parseInt(instagram.percentage.replace("%", "")) || 0;
-    const clip_percentage = parseInt(clip.percentage.replace("%", "")) || 0;
-    const youtube_percentage = parseInt(youtube.percentage.replace("%", "")) || 0;
+    const parse_percentage = (s: string) =>
+      parseInt(s.replace(/%|\(|\)/g, ""), 10) || 0;
+    const parse_count = (s: string) =>
+      parseInt(s.replace(/명|\(|\)/g, ""), 10) || 0;
 
-    const blog_count = parseInt(blog.value.replace("명", "")) || 0;
-    const instagram_count = parseInt(instagram.value.replace("명", "")) || 0;
-    const clip_count = parseInt(clip.value.replace("명", "")) || 0;
-    const youtube_count = parseInt(youtube.value.replace("명", "")) || 0;
+    const blog_percentage = parse_percentage(blog.percentage);
+    const instagram_percentage = parse_percentage(instagram.percentage);
+    const clip_percentage = parse_percentage(clip.percentage);
+    const youtube_percentage = parse_percentage(youtube.percentage);
+
+    const blog_count = parse_count(blog.value);
+    const instagram_count = parse_count(instagram.value);
+    const clip_count = parse_count(clip.value);
+    const youtube_count = parse_count(youtube.value);
 
     return [
       { name: "블로그", value: blog_percentage, count: blog_count },

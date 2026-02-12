@@ -27,6 +27,7 @@ import {
   ResponsiveContainer,
   Label,
   Tooltip,
+  Sector,
 } from "recharts";
 import styles from "@/styles/manager/common/dashboard/chart/member_stats.module.css";
 import { ChannelData } from "@/data/manager_sa/dashboard/dashboardData";
@@ -40,7 +41,7 @@ interface ChannelMemberPieChartProps {
    🎨 색상 관련 함수
    ======================================== */
 
-// 색상 정의 (GA 기준 색상)
+// 색상 정의
 const colors = {
   blog: "#2DC469", // 초록색 (블로그)
   instagram: "#FF5694", // 핑크색 (인스타그램)
@@ -92,8 +93,8 @@ const CustomLabel = (props: any) => {
   const x = cx + radius * Math.cos(-midAngle * RADIAN); // X 좌표 계산
   const y = cy + radius * Math.sin(-midAngle * RADIAN); // Y 좌표 계산
 
-  // 퍼센트가 너무 작으면 표시하지 않음 (5% 미만)
-  if (percent < 0.05) {
+  // 조각이 작으면(8% 미만) 원 안에 글씨를 넣지 않음 → 공간이 좁아 겹침/잘림 방지, 툴팁에서 퍼센트 표시
+  if (percent < 0.08) {
     return null;
   }
 
@@ -147,7 +148,7 @@ const CustomTooltip = ({
       if (prev_calculated_ref.current !== null) {
         // setTimeout으로 지연하여 무한 루프 방지
         const timeout_id = setTimeout(() => {
-          setTooltipState({ visible: false, x: 0, y: 0, name: "" });
+          setTooltipState({ visible: false, x: 0, y: 0, name: "", value: undefined });
         }, 0);
         prev_calculated_ref.current = null;
         return () => clearTimeout(timeout_id);
@@ -172,19 +173,23 @@ const CustomTooltip = ({
     const svgElement = container.querySelector("svg");
 
     if (svgElement) {
-      // ──────────────────────────────────────
-      // 실제 텍스트 요소의 위치를 직접 가져오기
-      // ──────────────────────────────────────
-      // SVG 내부의 모든 text 요소 찾기
-      const text_elements = svgElement.querySelectorAll(
-        "text"
-      ) as NodeListOf<SVGTextElement>;
+      const svgRect = svgElement.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      const viewBox = svgElement.getAttribute("viewBox");
+      if (!viewBox) return;
 
-      // 해당 섹션의 퍼센트 값 계산
+      const [vbX, vbY, vbW, vbH] = viewBox.split(" ").map(Number);
+      const scaleX = svgRect.width / vbW;
+      const scaleY = svgRect.height / vbH;
+      const offsetX = 8;
+      const RADIAN = Math.PI / 180;
+      const chartCx = 100;
+      const chartCy = 100;
+
+      // 원 안에 퍼센트 라벨이 있으면(8% 이상) 그 텍스트 오른쪽에 툴팁 배치
       const percent_value = data.value;
       const percent_text = `${Math.round(percent_value)}%`;
-
-      // 퍼센트 텍스트와 일치하는 text 요소 찾기
+      const text_elements = svgElement.querySelectorAll("text") as NodeListOf<SVGTextElement>;
       let target_text_element: SVGTextElement | null = null;
       for (const text_el of text_elements) {
         if (text_el.textContent?.trim() === percent_text) {
@@ -193,61 +198,52 @@ const CustomTooltip = ({
         }
       }
 
+      let tooltipXLocal: number;
+      let tooltipYLocal: number;
+
       if (target_text_element) {
-        // 텍스트 요소의 실제 SVG 좌표 가져오기
+        // 8% 이상: 라벨 텍스트 오른쪽에 툴팁 배치
         const text_x = parseFloat(target_text_element.getAttribute("x") || "0");
         const text_y = parseFloat(target_text_element.getAttribute("y") || "0");
-
-        const svgRect = svgElement.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
-        const viewBox = svgElement.getAttribute("viewBox");
-
-        if (viewBox) {
-          const [x, y, width, height] = viewBox.split(" ").map(Number);
-          // SVG 좌표를 픽셀 좌표로 변환
-          const scaleX = svgRect.width / width;
-          const scaleY = svgRect.height / height;
-
-          // SVG 내부 픽셀 좌표 계산
-          // text_x, text_y는 SVG 좌표계 (viewBox 기준)이므로 픽셀 좌표로 변환
-          const pixelX = (text_x - x) * scaleX;
-          const pixelY = (text_y - y) * scaleY;
-
-          // 컨테이너 기준 상대 좌표로 변환
-          // SVG 요소의 화면상 위치에서 컨테이너의 화면상 위치를 빼서 상대 좌표 계산
-          const finalX = pixelX + (svgRect.left - containerRect.left);
-          const finalY = pixelY + (svgRect.top - containerRect.top);
-
-          // 텍스트 요소의 실제 크기 가져오기 (오른쪽 끝 위치 계산용)
-          const text_bbox = target_text_element.getBBox();
-          const text_width_px = text_bbox.width * scaleX;
-
-          // 퍼센트 텍스트의 오른쪽에 툴팁 배치
-          const offsetX = 8; // 텍스트와 툴팁 사이 간격
-          const tooltipX = finalX + text_width_px / 2 + offsetX; // 텍스트 중앙에서 오른쪽으로
-          const tooltipY = finalY;
-
-          // setTimeout으로 지연하여 무한 루프 방지
-          const timeout_id = setTimeout(() => {
-            setTooltipState({
-              visible: true,
-              x: tooltipX,
-              y: tooltipY,
-              name: data.name,
-            });
-
-            // 이전 계산값 저장 (각 섹션마다 다른 midAngle을 추적)
-            prev_calculated_ref.current = {
-              midAngle,
-              name: data.name,
-              x: tooltipX,
-              y: tooltipY,
-            };
-          }, 0);
-
-          return () => clearTimeout(timeout_id);
-        }
+        const px = (text_x - vbX) * scaleX;
+        const py = (text_y - vbY) * scaleY;
+        const fx = px + (svgRect.left - containerRect.left);
+        const fy = py + (svgRect.top - containerRect.top);
+        const text_bbox = target_text_element.getBBox();
+        const text_width_px = text_bbox.width * scaleX;
+        tooltipXLocal = fx + text_width_px / 2 + offsetX;
+        tooltipYLocal = fy;
+      } else {
+        // 8% 미만(1% 등): 라벨이 없으므로 섹터 바깥쪽(외곽)에 툴팁 배치
+        // 반지름 100(원 가장자리) 밖으로 살짝 띄워서 해당 조각 옆에 표시
+        const outerRadius = 100;
+        const xSvg = chartCx + outerRadius * Math.cos(-midAngle * RADIAN);
+        const ySvg = chartCy + outerRadius * Math.sin(-midAngle * RADIAN);
+        tooltipXLocal = (xSvg - vbX) * scaleX + (svgRect.left - containerRect.left) + offsetX;
+        tooltipYLocal = (ySvg - vbY) * scaleY + (svgRect.top - containerRect.top);
       }
+
+      const tooltipXFixed = containerRect.left + tooltipXLocal;
+      const tooltipYFixed = containerRect.top + tooltipYLocal;
+
+      const timeout_id = setTimeout(() => {
+        setTooltipState({
+          visible: true,
+          x: tooltipXFixed,
+          y: tooltipYFixed,
+          name: data.name,
+          value: data.value != null ? Math.round(Number(data.value)) : undefined,
+          useFixed: true,
+        });
+        prev_calculated_ref.current = {
+          midAngle,
+          name: data.name,
+          x: tooltipXLocal,
+          y: tooltipYLocal,
+        };
+      }, 0);
+
+      return () => clearTimeout(timeout_id);
     }
   }, [active, payload, containerRef]);
 
@@ -269,6 +265,8 @@ export default function ChannelMemberPieChart({
     x: number;
     y: number;
     name: string;
+    value?: number;
+    useFixed?: boolean;
   }>({ visible: false, x: 0, y: 0, name: "" });
 
   /* ========================================
@@ -297,7 +295,7 @@ export default function ChannelMemberPieChart({
         const svg = path.closest("svg");
         if (svg) {
           // SVG에 clipPath 추가 (원 모양으로 잘라내기)
-          const clipPathId = "channel-pie-clip-path";
+          const clipPathId = "pie-clip-path";
           let clipPath = svg.querySelector(`#${clipPathId}`);
           if (!clipPath) {
             let defs = svg.querySelector("defs");
@@ -333,7 +331,7 @@ export default function ChannelMemberPieChart({
               circle.setAttribute("cx", centerX.toString());
               circle.setAttribute("cy", centerY.toString());
             }
-            circle.setAttribute("r", "90");
+            circle.setAttribute("r", "100");
             clipPath.appendChild(circle);
             defs.appendChild(clipPath);
           }
@@ -372,13 +370,13 @@ export default function ChannelMemberPieChart({
         // ──────────────────────────────────────
         // 중심점에서 멀리 떨어진 선 제거 (바깥으로 나가는 선)
         // ──────────────────────────────────────
-        const centerX = 180; // 차트 중심 X (대략적인 값)
-        const centerY = 180; // 차트 중심 Y (대략적인 값)
+        const centerX = 100; // 차트 중심 X (200px 차트 기준)
+        const centerY = 100; // 차트 중심 Y (200px 차트 기준)
         // 선의 끝점과 중심점 사이의 거리 계산 (피타고라스 정리)
         const distance = Math.sqrt(
           Math.pow(x2 - centerX, 2) + Math.pow(y2 - centerY, 2)
         );
-        // 외부 반지름(90)보다 멀리 나가는 선은 제거
+        // 외부 반지름(100)보다 멀리 나가는 선은 제거
         if (distance > 100) {
           line.style.setProperty("display", "none", "important");
           line.setAttribute("display", "none");
@@ -399,22 +397,26 @@ export default function ChannelMemberPieChart({
     <div
       ref={containerRef}
       style={{
-        width: "180px",
-        height: "180px",
+        width: "200px",
+        height: "200px",
+        minWidth: "200px",
+        minHeight: "200px",
+        aspectRatio: "1",
         position: "relative",
         backgroundColor: "transparent",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        overflow: "hidden",
       }}
     >
-      {/* 반응형 컨테이너: 180px × 180px 크기로 고정 */}
-      <ResponsiveContainer width={180} height={180}>
+      {/* 반응형 컨테이너: 부모와 동일 200×200, 원형 유지 */}
+      <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           {/* clipPath 정의: 원 모양으로 잘라내기 */}
           <defs>
-            <clipPath id="channel-pie-clip">
-              <circle cx="50%" cy="50%" r="90" />
+            <clipPath id="pie-clip">
+              <circle cx="50%" cy="50%" r="100" />
             </clipPath>
           </defs>
 
@@ -431,23 +433,25 @@ export default function ChannelMemberPieChart({
             animationEasing="linear"
           />
 
-          {/* 파이 차트 메인 설정 */}
+          {/* 파이 차트 메인 설정 - 호버 시 크기 변경/지직거림 방지: activeShape로 동일 크기 유지 */}
           <Pie
             data={channelData as any} // 차트 데이터
             cx="50%" // 중심 X 좌표
             cy="50%" // 중심 Y 좌표
             innerRadius={0} // 내부 반지름 (0이면 파이 차트, 0보다 크면 도넛 차트)
-            outerRadius={90} // 외부 반지름 (180px 크기에 맞춤)
+            outerRadius={100} // 외부 반지름 (200px 크기에 맞춤)
             dataKey="value" // 사용할 데이터 키
             startAngle={90} // 시작 각도 (12시 방향부터 시작)
             endAngle={-270} // 끝 각도 (한 바퀴 돌아서 12시 방향으로)
             paddingAngle={0} // 섹션 간 간격 (0이면 붙어있음)
+            minAngle={5} // 최소 각도 (5도) - 작은 섹션도 최소한의 너비를 가지도록 설정
             label={<CustomLabel />} // 각 섹션에 퍼센트 표시
             stroke="white" // 섹션 사이 흰색 선
             strokeWidth={2} // 경계선 두께
             strokeLinecap="butt" // 선 끝을 둥글게 하지 않음
-            clipPath="url(#channel-pie-clip)" // 외부로 튀어나오는 선 제거
+            clipPath="url(#pie-clip)" // 외부로 튀어나오는 선 제거
             isAnimationActive={false} // 애니메이션 비활성화
+            activeShape={(props: any) => <Sector {...props} />} // 호버 시 크기 그대로 (커지지 않음)
           >
             {/* 각 섹션에 색상 적용 */}
             {channelData.map((entry, index) => {
@@ -466,26 +470,30 @@ export default function ChannelMemberPieChart({
         </PieChart>
       </ResponsiveContainer>
 
-      {/* 컨테이너 밖에 렌더링되는 툴팁 */}
+      {/* 툴팁: position fixed로 뷰포트 기준 배치 → overflow에 잘리지 않음 */}
       {tooltip_state.visible && (
         <div
           style={{
-            position: "absolute",
+            position: tooltip_state.useFixed ? "fixed" : "absolute",
             left: `${tooltip_state.x}px`,
             top: `${tooltip_state.y}px`,
             transform: "translateY(-50%)",
-            backgroundColor: "#444444", // 배경색 (어두운 회색)
-            color: "white", // 텍스트 색상
-            padding: "8px 8px", // 내부 여백
-            borderRadius: "4px", // 모서리 둥글게
-            fontSize: "13px", // 폰트 크기
-            fontWeight: 500, // 폰트 굵기
-            pointerEvents: "none", // 클릭 이벤트 방지
-            whiteSpace: "nowrap", // 텍스트 줄바꿈 방지
-            zIndex: 1000, // 다른 요소 위에 표시
+            backgroundColor: "#444444",
+            color: "white",
+            padding: "8px",
+            borderRadius: "4px",
+            fontSize: "14px",
+            fontWeight: 500,
+            pointerEvents: "none",
+            whiteSpace: "nowrap",
+            zIndex: 10000,
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
           }}
         >
-          {tooltip_state.name}
+          <span>{tooltip_state.name}</span>
+          {tooltip_state.value != null && <span>{tooltip_state.value}%</span>}
         </div>
       )}
     </div>

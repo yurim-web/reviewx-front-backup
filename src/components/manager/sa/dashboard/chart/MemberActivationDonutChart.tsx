@@ -30,42 +30,41 @@ export default function MemberActivationDonutChart({
   // 활성화 비율 사용
   const activeValue = activePercentage;
 
-  // 원형 프로그래스 바 설정
-  const size = 180; // 전체 크기
-  const center = size / 2; // 중심점
-  const radius = 77.5; // 반지름 (outerRadius 90 - innerRadius 65) / 2 + innerRadius
-  const strokeWidth = 25; // 도넛 두께 (90 - 65)
+  // 원형 프로그래스 바 설정 (200x200, 컨테이너와 동일)
+  const size = 200; // 전체 크기
+  const center = size / 2; // 중심점 100
+  const radius = 86.1; // 반지름 (비율 유지: 77.5 * 200/180)
+  const strokeWidth = 25; // 도넛 두께
   const circumference = 2 * Math.PI * radius; // 원주
 
   // 활성화 비율에 따른 stroke-dasharray 계산
-  // 왼쪽부터 채워지도록 (9시 방향부터 시작)
   const activeLength = (activeValue / 100) * circumference;
   const inactiveLength = circumference - activeLength;
 
-  // stroke-dashoffset: 왼쪽(9시 방향)부터 시작하도록 조정
-  // SVG circle은 기본적으로 3시 방향부터 시작하므로 -180도 회전
-  const offset = circumference * 0.5; // 180도 = 50% of circumference
+  // 12시(상단)에서 시작해서 시계방향·오른쪽으로 채우기 (12→3→6→9)
+  const groupTransform = `rotate(-90 ${center} ${center}) translate(${center} ${center}) scale(-1 1) translate(${-center} ${-center})`;
 
   return (
     <div className={styles.donut_progress_container}>
       <svg width={size} height={size} className={styles.donut_progress_svg}>
-        {/* 배경 원 (비활성화 부분) */}
-        <circle
-          cx={center}
-          cy={center}
-          r={radius}
-          className={styles.donut_progress_background}
-        />
-
-        {/* 활성화 프로그래스 원 */}
-        <circle
-          cx={center}
-          cy={center}
-          r={radius}
-          className={styles.donut_progress_active}
-          strokeDasharray={`${activeLength} ${inactiveLength}`}
-          strokeDashoffset={offset}
-        />
+        <g transform={groupTransform}>
+          {/* 배경 원 (비활성화 부분) */}
+          <circle
+            cx={center}
+            cy={center}
+            r={radius}
+            className={styles.donut_progress_background}
+          />
+          {/* 활성화 프로그래스 원 - 12시부터 오른쪽(3시)으로 시계방향 */}
+          <circle
+            cx={center}
+            cy={center}
+            r={radius}
+            className={styles.donut_progress_active}
+            strokeDasharray={`${activeLength} ${inactiveLength}`}
+            strokeDashoffset={0}
+          />
+        </g>
       </svg>
 
       {/* 중앙 텍스트 (HTML 요소로 배치) */}

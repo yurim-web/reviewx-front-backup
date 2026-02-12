@@ -22,7 +22,7 @@ export default function CampaignRecruitmentSection() {
       {/* 제목과 범례를 같은 줄에 배치 (제목: 왼쪽, 범례: 오른쪽) */}
       <div className={styles.campaign_recruitment_section_header}>
         {/* 섹션 제목 */}
-        <h2 className={styles.campaign_recruitment_section_title}>캠페인 모집 통계</h2>
+        <h2 className={styles.campaign_recruitment_section_title}>캠페인 카테고리 별 모집 통계</h2>
 
         {/* 커스텀 범례 */}
         <div className={styles.campaign_recruitment_section_legend}>
