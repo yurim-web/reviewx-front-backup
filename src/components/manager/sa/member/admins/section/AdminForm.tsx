@@ -89,7 +89,7 @@ export default function AdminForm({
   // 수정 모드일 때 localStorage에서 데이터 확인 및 폼에 로드
   const [is_loading, set_is_loading] = useState(mode === "edit");
   const [edit_admin_data, set_edit_admin_data] = useState<AdminItem | null>(
-    null
+    null,
   );
 
   // 수정 모드일 때 localStorage에서 관리자 데이터 가져오기 및 폼에 채우기
@@ -121,10 +121,10 @@ export default function AdminForm({
   }, [mode, admin_id, initial_data]);
 
   // 아이디 형식 검증 함수
-  // 8~16자 영문+숫자 조합인지 확인합니다
+  // 4~20자 영문+숫자 조합인지 확인합니다
   const is_valid_id = (id: string): boolean => {
-    // 8~16자, 영문 + 숫자 조합
-    const id_regex = /^[A-Za-z0-9]{8,16}$/;
+    // 4~20자, 영문 + 숫자 조합
+    const id_regex = /^[A-Za-z0-9]{4,20}$/;
     return id_regex.test(id);
   };
 
@@ -135,7 +135,7 @@ export default function AdminForm({
     if (mode === "edit" && admin_id) {
       const stored_admin_list = get_admin_list_from_storage();
       const current_admin = stored_admin_list.find(
-        (admin) => admin.id === admin_id
+        (admin) => admin.id === admin_id,
       );
       if (current_admin && current_admin.id === id) {
         return false;
@@ -155,7 +155,7 @@ export default function AdminForm({
     if (mode === "edit" && admin_id) {
       const stored_admin_list = get_admin_list_from_storage();
       const current_admin = stored_admin_list.find(
-        (admin) => admin.id === admin_id
+        (admin) => admin.id === admin_id,
       );
       if (current_admin && current_admin.phone === phone) {
         return false;
@@ -195,6 +195,13 @@ export default function AdminForm({
     }));
   };
 
+  // 휴대폰 번호 형식 검증 함수
+  const is_valid_phone = (phone: string): boolean => {
+    // 010-1234-5678 형식 또는 01012345678 형식 (11자리)
+    const phone_regex = /^010-?\d{4}-?\d{4}$/;
+    return phone_regex.test(phone);
+  };
+
   // 휴대폰 번호 유효성 검증 함수
   const validate_phone_field = (phone: string) => {
     const trimmed_phone = phone.trim();
@@ -202,9 +209,14 @@ export default function AdminForm({
 
     // 휴대폰 번호가 입력되어 있을 때만 검증
     if (trimmed_phone.length > 0) {
-      // 휴대폰 번호 중복 체크
-      if (is_phone_duplicate(trimmed_phone)) {
-        phone_error_message = "이미 가입된 휴대폰 번호입니다.";
+      // 휴대폰 번호 형식 검증
+      if (!is_valid_phone(trimmed_phone)) {
+        phone_error_message = "올바른 휴대폰 번호를 입력해 주세요.";
+      } else {
+        // 형식이 맞는 경우에만 중복 체크
+        if (is_phone_duplicate(trimmed_phone)) {
+          phone_error_message = "이미 가입된 휴대폰 번호입니다.";
+        }
       }
     }
 
@@ -303,9 +315,7 @@ export default function AdminForm({
 
   // 휴대폰 번호 키 입력 핸들러
   // 숫자와 특정 키만 입력 가능하도록 제한합니다
-  const handle_phone_key_down = (
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) => {
+  const handle_phone_key_down = (e: React.KeyboardEvent<HTMLInputElement>) => {
     // 허용할 키들 (커서 이동, 삭제 등)
     const allowed_keys = [
       "Backspace",
@@ -322,7 +332,7 @@ export default function AdminForm({
     // Ctrl, Cmd 키와 함께 사용되는 키 (복사, 붙여넣기 등)
     const is_ctrl_key = e.ctrlKey || e.metaKey;
     const is_allowed_key_with_ctrl = ["a", "c", "v", "x"].includes(
-      e.key.toLowerCase()
+      e.key.toLowerCase(),
     );
 
     // 입력된 키가 숫자인지 확인
@@ -391,6 +401,11 @@ export default function AdminForm({
 
     // 휴대폰 번호는 항상 필수
     if (!trimmed_phone) {
+      has_required_error = true;
+    }
+
+    // 휴대폰 번호 형식 검증 (값이 있을 때만)
+    if (trimmed_phone && !is_valid_phone(trimmed_phone)) {
       has_required_error = true;
     }
 
@@ -538,6 +553,11 @@ export default function AdminForm({
       has_required_error = true;
     }
 
+    // 휴대폰 번호 형식 검증 (값이 있을 때만)
+    if (trimmed_phone && !is_valid_phone(trimmed_phone)) {
+      has_required_error = true;
+    }
+
     // 등록 모드일 때 아이디 형식 검증
     if (!is_edit_mode && trimmed_id && !is_valid_id(trimmed_id)) {
       has_required_error = true;
@@ -574,9 +594,7 @@ export default function AdminForm({
   // ⚠️ 중요: 조건부 렌더링은 모든 hooks 호출 이후에 수행해야 합니다
   if (mode === "edit") {
     if (is_loading) {
-      return (
-        <div className={styles.error_message || ""}>로딩 중...</div>
-      );
+      return <div className={styles.error_message || ""}>로딩 중...</div>;
     }
 
     if (!edit_admin_data && !initial_data) {
@@ -598,140 +616,142 @@ export default function AdminForm({
         duration={2000}
       />
       <form className={form_class_name} onSubmit={handle_submit} noValidate>
-      {/* 아이디 입력 필드 */}
-      <div className={styles.form_field}>
-        <label htmlFor="id" className={styles.form_label}>
-          아이디
-        </label>
-        <input
-          type="text"
-          id="id"
-          name="id"
-          value={form_data.id}
-          onChange={handle_input_change}
-          disabled={is_edit_mode} // 수정 모드일 때 비활성화
-          readOnly={is_edit_mode} // 수정 모드일 때 읽기 전용
-          className={`${styles.form_input} ${
-            is_edit_mode ? styles.form_input_disabled || "" : ""
-          } ${
-            show_required_errors && !is_edit_mode && !form_data.id.trim()
-              ? styles.form_input_error
-              : ""
-          }`}
-          placeholder={is_edit_mode ? "" : "8~16자 영문, 숫자 조합 입력"}
-          maxLength={16} // 최대 16자까지만 입력 가능
-        />
-        {/* 아이디 에러 메시지 표시 */}
-        {!is_edit_mode && <ErrorText message={error_messages.id} />}
-      </div>
+        {/* 아이디 입력 필드 */}
+        <div className={styles.form_field}>
+          <label htmlFor="id" className={styles.form_label}>
+            아이디
+          </label>
+          <input
+            type="text"
+            id="id"
+            name="id"
+            value={form_data.id}
+            onChange={handle_input_change}
+            disabled={is_edit_mode} // 수정 모드일 때 비활성화
+            readOnly={is_edit_mode} // 수정 모드일 때 읽기 전용
+            className={`${styles.form_input} ${
+              is_edit_mode ? styles.form_input_disabled || "" : ""
+            } ${
+              show_required_errors && !is_edit_mode && !form_data.id.trim()
+                ? styles.form_input_error
+                : ""
+            }`}
+            placeholder={is_edit_mode ? "" : ""}
+            minLength={4}
+            maxLength={20} // 시스템 아이디 규칙: 4자 이상 20자 이내
+          />
+          {/* 아이디 에러 메시지 표시 */}
+          {!is_edit_mode && <ErrorText message={error_messages.id} />}
+        </div>
 
-      {/* 비밀번호 입력 필드 */}
-      <div className={styles.form_field}>
-        <label htmlFor="password" className={styles.form_label}>
-          비밀번호
-        </label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          value={form_data.password}
-          onChange={handle_input_change}
-          className={`${styles.form_input} ${
-            show_required_errors && !is_edit_mode && !form_data.password.trim()
-              ? styles.form_input_error
-              : ""
-          }`}
-          placeholder={
-            is_edit_mode
-              ? "변경 시 8~16자 영문, 숫자, 특수문자 조합 입력"
-              : "변경 시 8~16자 영문, 숫자, 특수문자 조합 입력"
-          }
-        />
-        <ErrorText message={error_messages.password} />
-      </div>
+        {/* 비밀번호 입력 필드 */}
+        <div className={styles.form_field}>
+          <label htmlFor="password" className={styles.form_label}>
+            비밀번호
+          </label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={form_data.password}
+            onChange={handle_input_change}
+            className={`${styles.form_input} ${
+              show_required_errors &&
+              !is_edit_mode &&
+              !form_data.password.trim()
+                ? styles.form_input_error
+                : ""
+            }`}
+            placeholder={
+              is_edit_mode
+                ? "변경 시 8~16자 영문, 숫자, 특수문자 조합 입력"
+                : "변경 시 8~16자 영문, 숫자, 특수문자 조합 입력"
+            }
+          />
+          <ErrorText message={error_messages.password} />
+        </div>
 
-      {/* 비밀번호 확인 입력 필드 */}
-      <div className={styles.form_field}>
-        <label htmlFor="password_confirm" className={styles.form_label}>
-          비밀번호 확인
-        </label>
-        <input
-          type="password"
-          id="password_confirm"
-          name="password_confirm"
-          value={form_data.password_confirm}
-          onChange={handle_input_change}
-          className={`${styles.form_input} ${
-            show_required_errors &&
-            !is_edit_mode &&
-            !form_data.password_confirm.trim()
-              ? styles.form_input_error
-              : ""
-          }`}
-          placeholder={
-            is_edit_mode ? "변경 시 비밀번호 재입력" : "비밀번호 재입력"
-          }
-        />
-        <ErrorText message={error_messages.password_confirm} />
-      </div>
+        {/* 비밀번호 확인 입력 필드 */}
+        <div className={styles.form_field}>
+          <label htmlFor="password_confirm" className={styles.form_label}>
+            비밀번호 확인
+          </label>
+          <input
+            type="password"
+            id="password_confirm"
+            name="password_confirm"
+            value={form_data.password_confirm}
+            onChange={handle_input_change}
+            className={`${styles.form_input} ${
+              show_required_errors &&
+              !is_edit_mode &&
+              !form_data.password_confirm.trim()
+                ? styles.form_input_error
+                : ""
+            }`}
+            placeholder={
+              is_edit_mode ? "변경 시 비밀번호 재입력" : "비밀번호 재입력"
+            }
+          />
+          <ErrorText message={error_messages.password_confirm} />
+        </div>
 
-      {/* 이름 입력 필드 */}
-      <div className={styles.form_field}>
-        <label htmlFor="name" className={styles.form_label}>
-          이름
-        </label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          value={form_data.name}
-          onChange={handle_input_change}
-          className={`${styles.form_input} ${
-            show_required_errors && !form_data.name.trim()
-              ? styles.form_input_error
-              : ""
-          }`}
-          placeholder="이름 입력"
-        />
-      </div>
+        {/* 이름 입력 필드 */}
+        <div className={styles.form_field}>
+          <label htmlFor="name" className={styles.form_label}>
+            이름
+          </label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={form_data.name}
+            onChange={handle_input_change}
+            className={`${styles.form_input} ${
+              show_required_errors && !form_data.name.trim()
+                ? styles.form_input_error
+                : ""
+            }`}
+            placeholder=""
+          />
+        </div>
 
-      {/* 휴대폰 번호 입력 필드 */}
-      <div className={styles.form_field}>
-        <label htmlFor="phone" className={styles.form_label}>
-          휴대폰 번호
-        </label>
-        <input
-          type="tel"
-          id="phone"
-          name="phone"
-          value={form_data.phone}
-          onChange={handle_input_change}
-          onKeyDown={handle_phone_key_down}
-          className={`${styles.form_input} ${
-            show_required_errors && !form_data.phone.trim()
-              ? styles.form_input_error
-              : ""
-          }`}
-          placeholder="010-1234-5678"
-          maxLength={13} // 010-1234-5678 (13자)
-        />
-        {/* 휴대폰 번호 에러 메시지 표시 */}
-        <ErrorText message={error_messages.phone} />
-      </div>
+        {/* 휴대폰 번호 입력 필드 */}
+        <div className={styles.form_field}>
+          <label htmlFor="phone" className={styles.form_label}>
+            휴대폰 번호
+          </label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            value={form_data.phone}
+            onChange={handle_input_change}
+            onKeyDown={handle_phone_key_down}
+            className={`${styles.form_input} ${
+              show_required_errors && !form_data.phone.trim()
+                ? styles.form_input_error
+                : ""
+            }`}
+            placeholder="- 제외 입력"
+            maxLength={13} // 010-1234-5678 (13자)
+          />
+          {/* 휴대폰 번호 에러 메시지 표시 */}
+          <ErrorText message={error_messages.phone} />
+        </div>
 
-      {/* 등록/저장 버튼 */}
-      {/* disabled 속성: 버튼을 비활성화합니다. 모든 유효성 검사를 통과해야 활성화됩니다 */}
-      <button
-        type="submit"
-        className={`${styles.submit_button} ${
-          is_button_disabled ? styles.submit_button_disabled : ""
-        }`}
-        disabled={is_button_disabled}
-      >
-        {button_text}
-      </button>
-    </form>
+        {/* 등록/저장 버튼 */}
+        {/* disabled 속성: 버튼을 비활성화합니다. 모든 유효성 검사를 통과해야 활성화됩니다 */}
+        <button
+          type="submit"
+          className={`${styles.submit_button} ${
+            is_button_disabled ? styles.submit_button_disabled : ""
+          }`}
+          disabled={is_button_disabled}
+        >
+          {button_text}
+        </button>
+      </form>
     </>
   );
 }
-
