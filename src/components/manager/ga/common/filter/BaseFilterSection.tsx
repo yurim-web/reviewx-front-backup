@@ -67,6 +67,8 @@ interface BaseFilterSectionProps<T extends string | number> {
     search_query: string;
     active_filters: T[];
   }) => void;
+  // 검색 입력 placeholder (미지정 시 "검색")
+  search_placeholder?: string;
 }
 
 export default function BaseFilterSection<T extends string | number>({
@@ -82,6 +84,7 @@ export default function BaseFilterSection<T extends string | number>({
   on_filter_reset,
   search_debounce_ms = 300,
   on_filter_apply,
+  search_placeholder,
 }: BaseFilterSectionProps<T>) {
   // 내부 검색어 상태 (debounce를 위한)
   // useState: React Hook으로 컴포넌트의 검색어 상태를 관리합니다
@@ -224,7 +227,7 @@ export default function BaseFilterSection<T extends string | number>({
             />
             <input
               type="text"
-              placeholder="검색"
+              placeholder={search_placeholder ?? "검색"}
               value={internal_search_query}
               onChange={handle_search_change}
               className={styles.search_input}
