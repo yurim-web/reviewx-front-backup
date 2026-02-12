@@ -119,8 +119,8 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     chargedPoints: '15,200,000',
     heldPoints: '0',
     paymentStatus: '완료',
-    requestDate: '2026-02-01 14:32',
-    approvalDate: '2026-02-01 14:35',
+    requestDate: '2025-02-01 14:32',
+    approvalDate: '2025-02-01 14:35',
     memberType: '모범 회원',
     accountStatus: '정상',
   },
@@ -139,7 +139,7 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     chargedPoints: '8,500,000',
     heldPoints: '0',
     paymentStatus: '대기',
-    requestDate: '2026-02-02 09:15',
+    requestDate: '2025-02-02 09:15',
     approvalDate: '-',
     memberType: '모범 회원',
     accountStatus: '정상',
@@ -159,7 +159,7 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     chargedPoints: '22,300,000',
     heldPoints: '2,000',
     paymentStatus: '대기',
-    requestDate: '2026-02-03 16:42',
+    requestDate: '2025-02-03 16:42',
     approvalDate: '-',
     memberType: '모범 회원',
     accountStatus: '정상',
@@ -179,8 +179,8 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     chargedPoints: '6,800,000',
     heldPoints: '100',
     paymentStatus: '완료',
-    requestDate: '2026-02-04 11:20',
-    approvalDate: '2026-02-04 11:25',
+    requestDate: '2025-02-04 11:20',
+    approvalDate: '2025-02-04 11:25',
     memberType: '모범 회원',
     accountStatus: '일시정지',
   },
@@ -199,8 +199,8 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     chargedPoints: '3,200,000',
     heldPoints: '0',
     paymentStatus: '취소',
-    requestDate: '2026-02-05 13:55',
-    approvalDate: '2026-02-05 13:58',
+    requestDate: '2025-02-05 13:55',
+    approvalDate: '2025-02-05 13:58',
     memberType: '주의 회원',
     accountStatus: '일시정지',
   },
@@ -219,8 +219,8 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     chargedPoints: '12,500,000',
     heldPoints: '280,000',
     paymentStatus: '완료',
-    requestDate: '2026-02-06 10:30',
-    approvalDate: '2026-02-06 10:32',
+    requestDate: '2025-02-06 10:30',
+    approvalDate: '2025-02-06 10:32',
     memberType: '주의 회원',
     accountStatus: '일시정지',
   },
@@ -239,8 +239,8 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     chargedPoints: '4,600,000',
     heldPoints: '0',
     paymentStatus: '완료',
-    requestDate: '2026-02-07 15:18',
-    approvalDate: '2026-02-07 15:20',
+    requestDate: '2025-02-07 15:18',
+    approvalDate: '2025-02-07 15:20',
     memberType: '이용 제한 회원',
     accountStatus: '영구정지',
   },
@@ -259,8 +259,8 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     chargedPoints: '9,300,000',
     heldPoints: '0',
     paymentStatus: '완료',
-    requestDate: '2026-02-08 17:45',
-    approvalDate: '2026-02-08 17:47',
+    requestDate: '2025-02-08 17:45',
+    approvalDate: '2025-02-08 17:47',
     memberType: '주의 회원',
     accountStatus: '영구정지',
   },
@@ -279,8 +279,8 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     chargedPoints: '38,800,000',
     heldPoints: '0',
     paymentStatus: '완료',
-    requestDate: '2026-02-09 12:10',
-    approvalDate: '2026-02-09 12:12',
+    requestDate: '2025-02-09 12:10',
+    approvalDate: '2025-02-09 12:12',
     memberType: '주의 회원',
     accountStatus: '영구정지',
   },
@@ -299,8 +299,8 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     chargedPoints: '7,100,000',
     heldPoints: '0',
     paymentStatus: '완료',
-    requestDate: '2026-02-10 09:25',
-    approvalDate: '2026-02-10 09:30',
+    requestDate: '2025-02-10 09:25',
+    approvalDate: '2025-02-10 09:30',
     memberType: '이용 제한 회원',
     accountStatus: '탈퇴',
   },
@@ -319,8 +319,8 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     chargedPoints: '55,500,000',
     heldPoints: '0',
     paymentStatus: '완료',
-    requestDate: '2026-02-11 14:50',
-    approvalDate: '2026-02-11 14:55',
+    requestDate: '2025-02-11 14:50',
+    approvalDate: '2025-02-11 14:55',
     memberType: '이용 제한 회원',
     accountStatus: '탈퇴',
   },
@@ -339,15 +339,37 @@ export const paymentHistoryList: PaymentHistoryItem[] = [
     chargedPoints: '2,400,000',
     heldPoints: '0',
     paymentStatus: '완료',
-    requestDate: '2026-02-12 16:33',
-    approvalDate: '2026-02-12 16:38',
+    requestDate: '2025-02-12 16:33',
+    approvalDate: '2025-02-12 16:38',
     memberType: '이용 제한 회원',
     accountStatus: '탈퇴',
   },
 ];
 
 /**
- * 결제 내역 가져오기 (무통장/카드 충전으로 생성된 내역만 사용, 자동 생성 목업 미포함)
+ * 목업 데이터의 날짜를 "이번 달"로 바꾼 복사본 반환
+ * - 날짜 필터 기본값(이번 달)과 항상 맞추기 위함
+ */
+function get_mock_list_for_current_month(): PaymentHistoryItem[] {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  return paymentHistoryList.map((item, index) => {
+    const day = String(Math.min(index + 1, 28)).padStart(2, '0');
+    const request_time = item.requestDate.split(' ')[1] ?? '00:00';
+    const approval_val = item.approvalDate === '-' ? '-' : `${year}-${month}-${day} ${request_time}`;
+    return {
+      ...item,
+      requestDate: `${year}-${month}-${day} ${request_time}`,
+      approvalDate: approval_val,
+    };
+  });
+}
+
+/**
+ * 결제 내역 가져오기
+ * - localStorage에 저장된 내역이 있으면 반환
+ * - 없으면 이번 달 기준 목업 데이터 반환 (날짜 필터와 항상 일치)
  */
 export function getPaymentHistoryList(): PaymentHistoryItem[] {
   if (typeof window === 'undefined') {
@@ -357,10 +379,14 @@ export function getPaymentHistoryList(): PaymentHistoryItem[] {
   try {
     const storedPayments = localStorage.getItem('partner_payment_history');
     const localPayments = storedPayments ? JSON.parse(storedPayments) : [];
+    // 저장된 내역이 없으면 이번 달 목업 데이터 사용 (날짜를 현재 연·월로 맞춤)
+    if (localPayments.length === 0) {
+      return get_mock_list_for_current_month();
+    }
     return localPayments;
   } catch (error) {
     console.error('결제 내역 로드 중 오류:', error);
-    return [];
+    return get_mock_list_for_current_month();
   }
 }
 

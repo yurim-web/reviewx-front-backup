@@ -80,7 +80,7 @@ function load_from_storage(): {
   try {
     // 추가된 항목 로드
     const stored_additional = localStorage.getItem(
-      STORAGE_KEY_ADDITIONAL_ITEMS
+      STORAGE_KEY_ADDITIONAL_ITEMS,
     );
     const additional_items: BlacklistItem[] = stored_additional
       ? JSON.parse(stored_additional)
@@ -103,7 +103,7 @@ function load_from_storage(): {
 // localStorage에 데이터 저장 함수
 function save_to_storage(
   additional_items: BlacklistItem[],
-  removed_ids: Set<string>
+  removed_ids: Set<string>,
 ): void {
   if (typeof window === "undefined") return;
 
@@ -111,14 +111,14 @@ function save_to_storage(
     // 추가된 항목 저장
     localStorage.setItem(
       STORAGE_KEY_ADDITIONAL_ITEMS,
-      JSON.stringify(additional_items)
+      JSON.stringify(additional_items),
     );
 
     // 제거된 ID 저장
     const removed_ids_array = Array.from(removed_ids);
     localStorage.setItem(
       STORAGE_KEY_REMOVED_IDS,
-      JSON.stringify(removed_ids_array)
+      JSON.stringify(removed_ids_array),
     );
   } catch (error) {
     console.error("localStorage에 블랙리스트 데이터 저장 실패:", error);
@@ -163,7 +163,7 @@ export function remove_blacklist_item(item_id: string): void {
 
   // 추가된 항목에서 제거
   additional_blacklist_items = additional_blacklist_items.filter(
-    (item) => item.id !== item_id
+    (item) => item.id !== item_id,
   );
   // 제거된 항목 ID를 Set에 추가 (기본 데이터에서도 필터링하기 위해)
   removed_blacklist_item_ids.add(item_id);
@@ -205,12 +205,12 @@ export function get_blacklist_data(): BlacklistItem[] {
 
   // 제거된 항목을 제외한 기본 데이터
   const filtered_base_data = blacklist_data.filter(
-    (item) => !removed_blacklist_item_ids.has(item.id)
+    (item) => !removed_blacklist_item_ids.has(item.id),
   );
 
   // 제거된 항목을 제외한 추가 데이터
   const filtered_additional_data = additional_blacklist_items.filter(
-    (item) => !removed_blacklist_item_ids.has(item.id)
+    (item) => !removed_blacklist_item_ids.has(item.id),
   );
 
   // FIXED: Mock data FIRST, then localStorage data (기본 데이터 + 추가된 데이터)
@@ -257,7 +257,7 @@ export const blacklist_data: BlacklistItem[] = [
   // 파트너: 명륜진사갈비 수원광교점 (id: "3")
   {
     id: "partner_3",
-    name: "명륜진사갈비 수원광교점",
+    name: "명륜진사갈비 수원광교점명륜진사갈비 수원광교점명륜진사갈비 수원광교점명륜진사갈비 수원광교점명륜진사갈비 수원광교점명륜진사갈비 수원광교점",
     user_id: "3",
     division: "파트너",
     current_points: 100000,
