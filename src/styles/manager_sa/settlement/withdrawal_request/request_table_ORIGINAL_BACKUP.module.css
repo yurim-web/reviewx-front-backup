@@ -127,6 +127,16 @@
   padding-right: 13px;
 }
 
+/* 테이블 헤더 - 긴급: 체크 | 번호 | 이름 | 계좌번호 | 주민등록번호 | 출금 포인트 | 신청일 | 유형 | 상태 | 출금 */
+.table_header.table_header_emergency {
+  grid-template-columns: 0.5fr 0.7fr 1.2fr 3.6fr 1.1fr 1.1fr 1.2fr 0.9fr 0.8fr 0.5fr;
+}
+
+/* 테이블 헤더 - 회차 정산: 체크 | 번호 | 회차 | 이름 | 계좌번호 | 주민등록번호 | 출금 포인트 | 신청일 | 유형 | 상태 | 출금 */
+.table_header.table_header_round {
+  grid-template-columns: 0.5fr 0.8fr 0.7fr 1.3fr 3fr 1.2fr 1.15fr 1.25fr 1fr 0.8fr 0.5fr;
+}
+
 /* 테이블 헤더 행 */
 .table_header_row {
   display: contents;
@@ -138,6 +148,8 @@
   overflow-y: auto !important;
   /* 스크롤바 공간을 항상 확보해서 헤더/바디 컬럼 정렬 유지 */
   scrollbar-gutter: stable;
+  /* 테이블 내부 스크롤 시 해당 영역에만 적용, 페이지 스크롤로 전파 방지 */
+  overscroll-behavior: contain;
 }
 
 /* CommonTable이 각 행을 감싸는 div를 grid 구조에 포함시키기 위해 */
@@ -148,11 +160,13 @@
 /* 긴급 테이블 바디 높이 제한 */
 .table_body_emergency {
   max-height: 380px;
+  overscroll-behavior: contain;
 }
 
 /* 회차 정산 테이블 바디 높이 제한 */
 .table_body_round {
   max-height: 760px;
+  overscroll-behavior: contain;
 }
 
 /* 스크롤바 스타일 (Webkit 브라우저) */
@@ -234,12 +248,12 @@
 
 /* 긴급 테이블 행: 체크 | 번호 | 이름 | 계좌번호 | 주민등록번호 | 출금 포인트 | 신청일 | 유형 | 상태 | 출금 */
 .table_row.table_row_emergency {
-  grid-template-columns: 0.5fr 0.8fr 1.2fr 3.6fr 1.1fr 1.35fr 1.15fr 0.9fr 0.9fr 0.8fr;
+  grid-template-columns: 0.5fr 0.7fr 1.2fr 3.6fr 1.1fr 1.1fr 1.2fr 0.9fr 0.8fr 0.5fr;
 }
 
 /* 회차 정산 테이블 행: 체크 | 번호 | 회차 | 이름 | 계좌번호 | 주민등록번호 | 출금 포인트 | 신청일 | 유형 | 상태 | 출금 */
 .table_row.table_row_round {
-  grid-template-columns: 0.5fr 0.8fr 0.8fr 1.2fr 3.4fr 1.1fr 1.25fr 1.15fr 0.9fr 0.9fr 0.8fr;
+  grid-template-columns: 0.5fr 0.8fr 0.7fr 1.3fr 3fr 1.2fr 1.15fr 1.25fr 1fr 0.8fr 0.5fr;
 }
 
 /* 테이블 행 호버 효과 */
@@ -270,8 +284,21 @@
 .table_cell_amount {
   flex-direction: column;
   align-items: flex-start;
-  gap: 8px;
   display: flex;
+}
+
+/* 툴팁 래퍼가 한 단계 감싸서 gap이 적용 안 됨 → 직계 자식 span에 flex + gap 적용 */
+.table_cell_amount > span {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+/* 포인트 / 잔여 텍스트 간 간격만 8px 유지 (margin 제거) */
+.table_cell_amount .cell_text,
+.table_cell_amount .cell_text_secondary {
+  margin: 0;
 }
 
 /* 출금 포인트 헤더 셀 - 가로 정렬 */
@@ -388,8 +415,6 @@
   pointer-events: none;
 }
 
-
-
 /* 액션 아이콘 */
 .action_icon {
   width: 20px;
@@ -413,6 +438,16 @@
   gap: 0;
   /* 헤더/바디와 동일하게 스크롤바 공간만큼 오른쪽 여백 확보 */
   padding-right: 13px;
+}
+
+/* 테이블 푸터 행 - 긴급 */
+.table_footer_row.table_footer_row_emergency {
+  grid-template-columns: 0.5fr 0.7fr 1.2fr 3.6fr 1.1fr 1.1fr 1.2fr 0.9fr 0.8fr 0.5fr;
+}
+
+/* 테이블 푸터 행 - 회차 정산 */
+.table_footer_row.table_footer_row_round {
+  grid-template-columns: 0.5fr 0.8fr 0.7fr 1.3fr 3fr 1.2fr 1.15fr 1.25fr 1fr 0.8fr 0.5fr;
 }
 
 /* 합계 라벨 셀 */

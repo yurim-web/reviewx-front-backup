@@ -166,11 +166,13 @@ export default function WithdrawalStatCardsSection({
 
     // 검색어 및 필터로 필터링된 출금 현황 목록 (WithdrawalTable과 동일한 로직)
     const filtered_withdrawal_list = all_withdrawal_list.filter((item) => {
-      // 검색어 필터
+      // 검색어 필터 (이름, 계좌번호, 주민등록번호)
       if (search_query) {
+        const q = search_query.toLowerCase();
         const matches_search =
-          item.name.toLowerCase().includes(search_query.toLowerCase()) ||
-          item.account.toLowerCase().includes(search_query.toLowerCase());
+          item.name.toLowerCase().includes(q) ||
+          item.account.toLowerCase().includes(q) ||
+          (item.ssn && item.ssn.toLowerCase().includes(q));
         if (!matches_search) return false;
       }
 
