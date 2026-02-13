@@ -21,6 +21,7 @@ import { visitCampaigns } from "@/data/campaign/visit/visitCampaigns";
 import { reviewCampaigns } from "@/data/campaign/review/reviewCampaigns";
 import { reporterCampaigns } from "@/data/campaign/reporter/reporterCampaigns";
 import { missionCampaigns } from "@/data/campaign/mission/missionCampaigns";
+import { checkAutoLogin } from "@/lib/auth";
 
 // 탭별 캠페인 ID 리스트
 const 신청_탭_캠페인_IDS = [
@@ -307,6 +308,64 @@ function filterSelectedCampaigns(
 }
 
 /**
+ * 선정 발표일이 오늘이거나 지났는지 여부 (신청 탭 표시 개수와 동일 기준)
+ * - 공통 통계(전체/선정/완료 등 탭)에서 신청 숫자를 신청 탭과 맞추기 위해 사용
+ */
+function isAnnouncementDatePassed(campaignId: string): boolean {
+  const allCampaigns = [
+    ...deliveryCampaigns,
+    ...visitCampaigns,
+    ...reviewCampaigns,
+    ...reporterCampaigns,
+    ...missionCampaigns,
+  ];
+  const actualCampaign = allCampaigns.find((c) => c.id === campaignId);
+  if (!actualCampaign?.detailedSchedule?.announcement) return false;
+  const announcementDateStr =
+    actualCampaign.detailedSchedule.announcement.trim();
+  const [year, month, day] = announcementDateStr.split("-").map(Number);
+  if (!year || !month || !day || isNaN(year) || isNaN(month) || isNaN(day)) {
+    return false;
+  }
+  const announcementDate = new Date(year, month - 1, day);
+  announcementDate.setHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return announcementDate <= today;
+}
+
+/**
+ * 신청 탭에 실제로 표시되는 개수 (선정 발표일 지나지 않은 대기 건만)
+ * - 전체/선정/완료 등 다른 탭에서도 탭 숫자가 동일하게 보이도록 공통 사용
+ */
+function getAppliedCountForDisplay(): number {
+  const mockFiltered = filterAppliedCampaignsAfterAnnouncement(신청_탭_캠페인_IDS);
+  const mockIds = new Set(mockFiltered.map((c) => c.id));
+
+  if (typeof window === "undefined") {
+    return mockFiltered.length;
+  }
+  try {
+    const currentUser = checkAutoLogin();
+    const raw = localStorage.getItem("user_applied_campaigns");
+    if (!raw || !currentUser?.id) return mockFiltered.length;
+    const parsed = JSON.parse(raw);
+    const userEntry = parsed.find((uc: { userId: string }) => uc.userId === currentUser.id);
+    if (!userEntry?.campaigns) return mockFiltered.length;
+    const waiting = userEntry.campaigns.filter((c: { status: string }) => c.status === "대기");
+    const fromUser = waiting.filter(
+      (c: { campaignId: string }) => !isAnnouncementDatePassed(c.campaignId)
+    );
+    const userOnlyCount = fromUser.filter(
+      (c: { campaignId: string }) => !mockIds.has(c.campaignId)
+    ).length;
+    return mockFiltered.length + userOnlyCount;
+  } catch {
+    return mockFiltered.length;
+  }
+}
+
+/**
  * localStorage에서 등록 완료된 캠페인 ID 목록 가져오기
  */
 function getCompletedCampaignIds(): string[] {
@@ -394,6 +453,17 @@ function filterCancelledCampaigns(
 }
 
 /**
+ * 신청 탭용: 선정 발표일이 지나지 않은 캠페인만 (탭 숫자·목록 공통 기준)
+ */
+function filterAppliedCampaignsAfterAnnouncement(
+  campaignIds: string[]
+): CampaignApplication[] {
+  return filterAppliedCampaigns(campaignIds).filter(
+    (c) => !isAnnouncementDatePassed(c.id)
+  );
+}
+
+/**
  * 탭별 캠페인 필터링 함수
  * @param tab - 탭 이름
  * @param completedCampaignIds - 완료된 캠페인 ID 목록 (선택적, 클라이언트에서만 사용)
@@ -404,7 +474,7 @@ export const getCampaignsByTab = (
 ): CampaignApplication[] => {
   switch (tab) {
     case "신청":
-      return filterAppliedCampaigns(신청_탭_캠페인_IDS);
+      return filterAppliedCampaignsAfterAnnouncement(신청_탭_캠페인_IDS);
     case "선정":
       return filterSelectedCampaigns(선정_탭_캠페인_IDS, completedCampaignIds);
     case "완료":
@@ -413,7 +483,7 @@ export const getCampaignsByTab = (
       return filterCancelledCampaigns(취소반려_탭_캠페인_IDS);
     case "전체":
       return [
-        ...filterAppliedCampaigns(신청_탭_캠페인_IDS),
+        ...filterAppliedCampaignsAfterAnnouncement(신청_탭_캠페인_IDS),
         ...filterSelectedCampaigns(선정_탭_캠페인_IDS, completedCampaignIds),
         ...filterCompletedCampaigns(완료_탭_캠페인_IDS, completedCampaignIds),
         ...filterCancelledCampaigns(취소반려_탭_캠페인_IDS),
@@ -443,17 +513,22 @@ export const campaignManagementStats = {
 
 /**
  * 클라이언트에서 localStorage를 고려한 통계 계산
- * useEffect에서 사용하여 클라이언트 마운트 후 업데이트
+ * - 신청 수는 선정 발표일 지나지 않은 건만 사용(신청 탭과 동일 기준) → 모든 탭에서 숫자 일치
  */
 export const getClientCampaignStats = () => {
   const completedCampaignIds = getCompletedCampaignIds();
+  const 신청 = getAppliedCountForDisplay();
+  const 선정 = getCampaignsByTab("선정", completedCampaignIds).length;
+  const 완료 = getCampaignsByTab("완료", completedCampaignIds).length;
+  const 취소반려 = getCampaignsByTab("취소/반려", completedCampaignIds).length;
+  const 패널티 = getCampaignsByTab("패널티", completedCampaignIds).length;
   return {
-    신청: getCampaignsByTab("신청", completedCampaignIds).length,
-    선정: getCampaignsByTab("선정", completedCampaignIds).length,
-    완료: getCampaignsByTab("완료", completedCampaignIds).length,
-    "취소/반려": getCampaignsByTab("취소/반려", completedCampaignIds).length,
-    전체: getCampaignsByTab("전체", completedCampaignIds).length,
-    패널티: getCampaignsByTab("패널티", completedCampaignIds).length,
+    신청,
+    선정,
+    완료,
+    "취소/반려": 취소반려,
+    전체: 신청 + 선정 + 완료 + 취소반려,
+    패널티,
   };
 };
 

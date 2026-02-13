@@ -313,6 +313,8 @@ function AppliedPage() {
 
   // 캠페인 목록 상태 (취소 시 제거하기 위해 상태로 관리)
   const [campaigns, setCampaigns] = useState<CampaignApplication[]>([]);
+  // 통계를 헤더에 넘기기 전 로드 완료 여부 (숫자 잔상/깜빡임 방지)
+  const [statsReady, setStatsReady] = useState(false);
 
   /**
    * localStorage에서 유저의 신청 캠페인 불러오기 + 목업 데이터 합치기
@@ -696,6 +698,7 @@ function AppliedPage() {
     };
 
     loadCampaigns();
+    setStatsReady(true);
 
     // 페이지가 포커스를 받을 때마다 새로고침
     const handleFocus = () => {
@@ -769,15 +772,19 @@ function AppliedPage() {
     }
   };
 
-  // 통계 상태 (카운트 갱신을 위해 상태로 관리)
-  const [stats, setStats] = useState(() => calculateStats());
-
   /**
-   * 캠페인 목록이 변경될 때마다 통계 업데이트
+   * 화면에 보여줄 통계 = 실제 표시되는 신청 개수와 동기화
+   * - 신청 수는 선정 발표일 필터 적용 후 목록(campaigns.length)과 일치, 탭 숫자 = 카드 개수
    */
-  useEffect(() => {
-    setStats(calculateStats());
-  }, [campaigns, user]);
+  const displayStats = (() => {
+    const base = calculateStats();
+    const 신청 = campaigns.length;
+    return {
+      ...base,
+      신청,
+      전체: 신청 + base.선정 + base.완료 + base["취소/반려"],
+    };
+  })();
 
   /**
    * 필터링된 캠페인 목록 변경 핸들러
@@ -812,11 +819,7 @@ function AppliedPage() {
       prevFiltered.filter((campaign) => campaign.id !== campaignId)
     );
 
-    // 통계 카운트 갱신 (신청 탭 카운트 감소)
-    setStats((prevStats) => ({
-      ...prevStats,
-      신청: Math.max(0, prevStats.신청 - 1),
-    }));
+    // 신청 수는 displayStats가 campaigns.length로 자동 반영되므로 별도 갱신 불필요
   };
 
   return (
@@ -828,7 +831,7 @@ function AppliedPage() {
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           activeStatTab={activeStatTab}
-          stats={stats}
+          stats={statsReady ? displayStats : undefined}
         />
 
         {/* 필터 바: 유형, 채널 필터 및 검색 */}

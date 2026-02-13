@@ -82,14 +82,14 @@
   stroke-linecap: round;
 }
 
-/* 원형 프로그래스 바 활성화 원 */
+/* 원형 프로그래스 바 활성화 원 (대시보드 프로그레스 바 애니메이션 통일: 0.8s) */
 .donut_progress_active {
   fill: none;
   stroke: #ff5694;
   stroke-width: 20;
   stroke-linecap: round;
-  transition: stroke-dasharray 1s ease-out;
-  animation: donut_progress_fill 1s ease-out forwards;
+  transition: stroke-dasharray 0.8s ease-out;
+  animation: donut_progress_fill 0.8s ease-out forwards;
 }
 
 @keyframes donut_progress_fill {

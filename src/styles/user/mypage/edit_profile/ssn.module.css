@@ -50,7 +50,7 @@
   width: 100% !important;
   padding-left: 20px !important;
   padding-right: 20px !important;
-  letter-spacing: 2px; /* 숫자와 마스킹 문자 간격 */
+  letter-spacing: 1px; /* 숫자와 마스킹 문자 간격 */
 }
 
 /* ========================================

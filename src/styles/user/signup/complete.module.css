@@ -146,7 +146,7 @@
 /* 버튼 섹션 */
 .button_section {
   position: absolute;
-  bottom: 80px;
+  bottom: 40px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -277,7 +277,7 @@
 
   /* 버튼 섹션 - 모바일에서 하단 24px */
   .button_section {
-    bottom: 24px;
+    bottom: 40px;
     flex-direction: column;
     gap: 12px;
     padding: 0 20px;

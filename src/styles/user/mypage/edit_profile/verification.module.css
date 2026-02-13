@@ -16,6 +16,18 @@
   align-items: center;
 }
 
+/* 내 정보 수정 페이지 전용: 휴대폰 인증 블록 전체 간격 12px (라벨~인증번호 영역) */
+.phone_verification_block_mypage {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 마이페이지 인증번호 섹션 (위 블록 gap으로 간격 처리하므로 margin 제거) */
+.verification_code_section_mypage {
+  margin-top: 0;
+}
+
 .phone_input_container {
   position: relative;
   flex: 1;

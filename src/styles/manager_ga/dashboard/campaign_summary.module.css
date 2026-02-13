@@ -110,12 +110,12 @@
   margin-top: 4px;
 }
 
-/* 진행 바 */
+/* 진행 바 (대시보드 프로그레스 바 애니메이션 통일: 0.8s) */
 .progress_bar {
   height: 100%;
   background-color: #444444;
   border-radius: 8px;
-  transition: width 0.3s;
+  transition: width 0.8s ease-out;
 }
 
 /* 진행 바 - 빨간색 (신고율 등) */

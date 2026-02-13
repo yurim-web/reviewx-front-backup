@@ -31,6 +31,7 @@ import Link from "next/link";
 import styles from "@/styles/fragments/header.module.css";
 import HeaderSearch from "@/components/fragments/HeaderSearch";
 import { mockPartnerNotifications } from "@/data/notification/notificationData";
+import { useAuth } from "@/hooks/useAuth";
 
 /**
  * 파트너 서브헤더 컴포넌트
@@ -56,6 +57,13 @@ export default function PartnerSubHeader() {
    */
   const pathname = usePathname();
 
+  /**
+   * useAuth: 인증 상태를 확인하는 Hook
+   * - isAuthenticated: 로그인 여부 (알림 아이콘 표시용)
+   * - user: 로그인한 사용자 정보
+   */
+  const { isAuthenticated, user } = useAuth();
+
   // Hydration 에러 방지
   const [isMounted, setIsMounted] = useState(false);
   // 모바일 여부 감지
@@ -76,30 +84,21 @@ export default function PartnerSubHeader() {
   const shouldHideOnMobile = isCampaignContentsPage && isMobile;
 
   /**
-   * 알림 아이콘 경로 결정
-   * - 알림이 있으면 notification_ok.svg 사용
-   * - 알림이 없으면 notification_icon.svg 사용
-   *
-   * 📌 조건부 값 할당:
-   * - 삼항 연산자(? :)를 사용하여 조건에 따라 다른 값 할당
-   * - mockPartnerNotifications.length > 0: 알림 데이터가 있는지 확인
+   * 알림 아이콘: 비로그인 시 무조건 비활성(알림 X), 로그인 시 알림 1개 이상이면 활성
    */
-  const has_notifications = mockPartnerNotifications.length > 0;
+  const has_notifications =
+    isAuthenticated && mockPartnerNotifications.length > 0;
 
-  // 알림 아이콘 경로 (모바일/PC 구분)
+  // 알림 아이콘 경로 (비로그인 → 비활성, 로그인+알림 있음 → 활성)
   const getNotificationIconSrc = () => {
     if (!isMounted) {
       return "/images/header/notification_icon.svg";
     }
-
-    // 모바일 전용 아이콘
     if (isMobile) {
       return has_notifications
         ? "/images/header/mobile/mo_notification_ok.svg"
         : "/images/header/mobile/mo_notification_icon.svg";
     }
-
-    // PC 아이콘
     return has_notifications
       ? "/images/header/notification_ok.svg"
       : "/images/header/notification_icon.svg";
@@ -205,8 +204,8 @@ export default function PartnerSubHeader() {
 
         {/* 오른쪽 아이콘 그룹 */}
         <div className={styles.right_icons}>
-          {/* 새 캠페인 등록: PC에서는 버튼, 모바일에서는 아이콘 */}
-          {isMobile ? (
+          {/* 새 캠페인 등록: 로그인한 상태에서만 표시, PC에서는 버튼, 모바일에서는 아이콘 */}
+          {user && (isMobile ? (
             <Link
               href="/partner/campaign/create"
               className={styles.notification_icon}
@@ -221,7 +220,7 @@ export default function PartnerSubHeader() {
             >
               새 캠페인 등록
             </Link>
-          )}
+          ))}
 
           {/* 검색 아이콘 */}
           {/* 📌 컴포넌트 재사용:

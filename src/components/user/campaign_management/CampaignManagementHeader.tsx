@@ -24,7 +24,8 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
+import { usePathname } from "next/navigation";
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 import StatisticsTab from "@/components/user/campaign_management/StatisticsTab";
 import type { MainTab } from "@/types/domain/user";
@@ -72,21 +73,26 @@ export default function CampaignManagementHeader({
   setActiveStatTab,
   stats: propStats,
 }: CampaignManagementHeaderProps) {
-  // 통계 상태 관리 (hydration 오류 방지를 위해 초기값은 정적 데이터 사용)
-  const [stats, setStats] = useState(
-    propStats ?? campaignManagementStats
-  );
+  const pathname = usePathname();
+  // 신청 탭 등에서 propStats가 아직 undefined로 올 때 정적(5) 잔상 방지: 클라이언트에서는 곧바로 실제 통계로 초기화
+  const [stats, setStats] = useState(() => {
+    if (propStats != null) return propStats;
+    if (typeof window !== "undefined") return getClientCampaignStats();
+    return campaignManagementStats;
+  });
 
-  // 클라이언트에서만 localStorage를 고려한 통계로 업데이트
-  useEffect(() => {
+  // 경로/prop 변경 시 통계 동기화 (첫 페인트 전에 맞춤)
+  useLayoutEffect(() => {
     if (typeof window === "undefined") return;
+    if (propStats != null) {
+      setStats(propStats);
+      return;
+    }
+    setStats(getClientCampaignStats());
+  }, [pathname, propStats]);
 
-    // prop으로 전달된 통계가 있으면 업데이트하지 않음
-    if (propStats) return;
-
-    // localStorage를 고려한 통계 계산
-    const clientStats = getClientCampaignStats();
-    setStats(clientStats);
+  useEffect(() => {
+    if (propStats != null) setStats(propStats);
   }, [propStats]);
 
   return (
