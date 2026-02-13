@@ -62,7 +62,8 @@
       "Bash(git --version:*)",
       "Bash(gh:*)",
       "Skill(git-commit-helper)",
-      "Skill(git-commit-helper:*)"
+      "Skill(git-commit-helper:*)",
+      "Bash(git -C C:developreviewx-web show 75d94e5:src/styles/user/campaign/application_modal.module.css)"
     ]
   },
   "hooks": {
