@@ -43,7 +43,7 @@
 }
 
 .region_tab_active {
-  color: #FF5694;
+  color: #ff5694;
   font-weight: 600;
 }
 
@@ -54,7 +54,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: #FF5694;
+  background: #ff5694;
   border-radius: 2px;
   z-index: 1;
 }
@@ -98,8 +98,8 @@
 
 /* 스크롤바 트랙 (배경) */
 .sub_regions_container::-webkit-scrollbar-track {
-  background: transparent; 
-  margin-bottom: 24px; 
+  background: transparent;
+  margin-bottom: 24px;
   margin-top: 24px;
 }
 
@@ -138,12 +138,11 @@
 @media (max-width: 768px) {
   /* 지역 모달 콘텐츠 - 모바일 높이 제한 */
   .region_modal_content {
-    max-height: 100vh;
+    max-height: 90vh;
     height: auto;
     display: flex;
     flex-direction: column;
   }
-
 
   /* 지역 탭 - 모바일 */
   .region_tabs {
@@ -165,8 +164,6 @@
   /* 지역 탭 버튼 - 모바일 */
   .region_tab {
     padding: 0 0 12px 0;
-
-    
   }
 
   /* 활성화된 지역 탭 - 모바일 */

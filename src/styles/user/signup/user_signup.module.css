@@ -126,6 +126,6 @@
 
   /* 모바일: 회원가입 버튼 폼 맨 밑에 위치 (margin-top: auto) */
   .submit_button {
-    margin-top: auto;
+    margin-top: 20px;
   }
 }

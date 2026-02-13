@@ -158,7 +158,6 @@
 
 .input_field:focus {
   outline: none;
-  border-color: #007bff;
 }
 
 .input_field::placeholder {
