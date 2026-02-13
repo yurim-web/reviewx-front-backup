@@ -1077,7 +1077,7 @@ export default function VisitCampaignForm({
               className={`${infoStyles.form_input} ${isEditMode && !isEditableField("title") ? infoStyles.read_only_input : ""}`}
               value={formData.title}
               onChange={(e) => updateFormData("title", e.target.value)}
-              placeholder="브랜드, 제공하는 서비스/제품 등"
+              placeholder="지역, 브랜드, 제공하는 서비스/제품 "
               readOnly={isEditMode && !isEditableField("title")}
             />
           </article>
@@ -1300,7 +1300,9 @@ export default function VisitCampaignForm({
           </article>
 
           {/* 기본 미션 설정 - 캠페인 오픈 후 비활성화 */}
-          <article className={`${infoStyles.form_group} ${isEditMode && isOpen ? infoStyles.form_group_locked : ""}`}>
+          <article
+            className={`${infoStyles.form_group} ${isEditMode && isOpen ? infoStyles.form_group_locked : ""}`}
+          >
             <label className={infoStyles.form_label}>기본 미션 설정</label>
             <SimpleGuideSection
               checkboxStates={checkboxStates}
