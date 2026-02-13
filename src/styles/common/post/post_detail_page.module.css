@@ -141,6 +141,7 @@
   margin: 0 auto;
   background: #ffffff;
   box-sizing: border-box;
+  min-height: calc(100vh - 149px);
 }
 
 /* 게시글 헤더 박스 (메타 정보 + 제목 + 구분선) */
@@ -227,6 +228,7 @@
   /* 게시글 상세 카드 */
   .post_card {
     width: 100%;
+    min-height: calc(100vh - 64px);
   }
 
   /* 게시글 헤더 박스 */
