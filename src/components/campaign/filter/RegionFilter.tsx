@@ -353,6 +353,10 @@ export default function RegionFilter({
     setSelectedMainRegion(region);
   };
 
+  // "X > X 전체" 형식 문자열 생성 (예: "서울 > 서울 전체")
+  const getRegionAllKey = (mainRegion: string) =>
+    `${mainRegion} > ${mainRegion} 전체`;
+
   // 세부 지역 선택/해제 핸들러
   const handleSubRegionToggle = (subRegion: string) => {
     const fullRegionName = `${selectedMainRegion} > ${subRegion}`;
@@ -368,41 +372,56 @@ export default function RegionFilter({
 
   // 전체 선택/해제 핸들러
   const handleSelectAll = () => {
-    const regionsToToggle =
-      selectedMainRegion === "전체"
-        ? Object.keys(regionData.subRegions).map(
-            (mainRegion) => `${mainRegion} > ${mainRegion} 전체`,
-          )
-        : (regionData.subRegions[
-            selectedMainRegion as keyof typeof regionData.subRegions
-          ]?.map(
-            (subRegion: string) => `${selectedMainRegion} > ${subRegion}`,
-          ) || []);
-
-    const isAllSelected = regionsToToggle.every((region) =>
-      tempSelectedRegions.includes(region),
-    );
-
+    if (selectedMainRegion === "전체") {
+      const regionsToToggle = Object.keys(regionData.subRegions).map(
+        (mainRegion) => `${mainRegion} > ${mainRegion} 전체`,
+      );
+      const isAllSelected = regionsToToggle.every((region) =>
+        tempSelectedRegions.includes(region),
+      );
+      if (isAllSelected) {
+        setTempSelectedRegions((prev) =>
+          prev.filter((region) => !regionsToToggle.includes(region)),
+        );
+      } else {
+        setTempSelectedRegions((prev) => {
+          const newRegions = [...prev];
+          regionsToToggle.forEach((region) => {
+            if (!newRegions.includes(region)) newRegions.push(region);
+          });
+          return newRegions;
+        });
+      }
+      return;
+    }
+    const regionAllKey = getRegionAllKey(selectedMainRegion);
+    const subList =
+      regionData.subRegions[
+        selectedMainRegion as keyof typeof regionData.subRegions
+      ]?.map(
+        (subRegion: string) => `${selectedMainRegion} > ${subRegion}`,
+      ) || [];
+    const isAllSelected =
+      tempSelectedRegions.includes(regionAllKey) ||
+      subList.every((s) => tempSelectedRegions.includes(s));
     if (isAllSelected) {
       setTempSelectedRegions((prev) =>
-        prev.filter((region) => !regionsToToggle.includes(region)),
+        prev.filter(
+          (r) => r !== regionAllKey && !subList.includes(r),
+        ),
       );
     } else {
       setTempSelectedRegions((prev) => {
-        const newRegions = [...prev];
-        regionsToToggle.forEach((region) => {
-          if (!newRegions.includes(region)) {
-            newRegions.push(region);
-          }
-        });
-        return newRegions;
+        const without_this_main = prev.filter(
+          (r) => r !== regionAllKey && !subList.includes(r),
+        );
+        return [...without_this_main, regionAllKey];
       });
     }
   };
 
   // 적용 핸들러
   const handleApply = () => {
-    console.log("🔧 RegionFilter - 적용할 지역들:", tempSelectedRegions);
     onRegionChange(tempSelectedRegions);
     onApply(tempSelectedRegions);
   };
@@ -414,15 +433,38 @@ export default function RegionFilter({
   };
 
   // 현재 선택된 메인 지역의 세부 지역들
-  // 전체 탭: 각 지역별 "X > X 전체" 옵션 | 개별 탭: 실제 세부 지역만 (X 전체 제외)
+  // 전체 탭: 각 지역별 "X > X 전체" 옵션 | 개별 탭: "X 전체" + 실제 세부 지역 목록
   const currentSubRegions =
     selectedMainRegion === "전체"
-      ? Object.keys(regionData.subRegions).map(
-          (mainRegion) => `${mainRegion} > ${mainRegion} 전체`,
+      ? Object.keys(regionData.subRegions).map((mainRegion) =>
+          getRegionAllKey(mainRegion),
         )
-      : (regionData.subRegions[
+      : (() => {
+          const subList =
+            regionData.subRegions[
+              selectedMainRegion as keyof typeof regionData.subRegions
+            ]?.map(
+              (subRegion: string) => `${selectedMainRegion} > ${subRegion}`,
+            ) || [];
+          // 개별 탭(서울, 경기 등)에서는 맨 앞에 "X 전체" 옵션 추가
+          return [getRegionAllKey(selectedMainRegion), ...subList];
+        })();
+
+  // 현재 메인 지역의 "X 전체"가 선택됐는지 (개별 탭에서만 의미 있음)
+  // "X 전체"가 있거나, 해당 메인 지역의 모든 구가 선택된 경우에도 true
+  const currentMainSubList =
+    selectedMainRegion !== "전체"
+      ? (regionData.subRegions[
           selectedMainRegion as keyof typeof regionData.subRegions
-        ]?.map((subRegion) => `${selectedMainRegion} > ${subRegion}`) || []);
+        ]?.map(
+          (sub: string) => `${selectedMainRegion} > ${sub}`,
+        ) || [])
+      : [];
+  const isRegionAllSelected =
+    selectedMainRegion !== "전체" &&
+    (tempSelectedRegions.includes(getRegionAllKey(selectedMainRegion)) ||
+      (currentMainSubList.length > 0 &&
+        currentMainSubList.every((r) => tempSelectedRegions.includes(r))));
 
   // 현재 메인 지역의 모든 세부 지역이 선택되었는지 확인
   const isAllSelectedInCurrentRegion =
@@ -489,8 +531,13 @@ export default function RegionFilter({
             >
               <div className={optionsStyles.options_grid}>
                 {currentSubRegions.map((fullRegionName) => {
-                  const isSelected =
-                    tempSelectedRegions.includes(fullRegionName);
+                  const isRegionAll =
+                    selectedMainRegion !== "전체" &&
+                    fullRegionName === getRegionAllKey(selectedMainRegion);
+                  const isSelected = isRegionAll
+                    ? isRegionAllSelected
+                    : tempSelectedRegions.includes(fullRegionName) ||
+                      isRegionAllSelected;
 
                   return (
                     <label
@@ -502,41 +549,72 @@ export default function RegionFilter({
                         checked={isSelected}
                         onChange={() => {
                           if (selectedMainRegion === "전체") {
-                            // 전체 탭에서는 이미 fullRegionName이 완성된 형태
+                            // 전체 탭: "서울 > 서울 전체" 등 토글
                             setTempSelectedRegions((prev) => {
-                              // "지역 전체"가 선택되어 있으면 해제
                               const filtered = prev.filter(
                                 (region) => region !== "지역 전체",
                               );
-
                               if (filtered.includes(fullRegionName)) {
                                 return filtered.filter(
                                   (region) => region !== fullRegionName,
                                 );
-                              } else {
-                                return [...filtered, fullRegionName];
                               }
+                              return [...filtered, fullRegionName];
                             });
                           } else {
-                            // 개별 지역 탭에서는 subRegion만 전달
-                            const subRegion = fullRegionName.split(" > ")[1];
-                            const fullRegionNameForToggle = `${selectedMainRegion} > ${subRegion}`;
+                            // 개별 지역 탭 (서울 등): "X 전체" ↔ 구 목록 연동
+                            const regionAllKey =
+                              getRegionAllKey(selectedMainRegion);
+                            const subList =
+                              regionData.subRegions[
+                                selectedMainRegion as keyof typeof regionData.subRegions
+                              ]?.map(
+                                (sub: string) =>
+                                  `${selectedMainRegion} > ${sub}`,
+                              ) || [];
 
                             setTempSelectedRegions((prev) => {
-                              // "지역 전체"가 선택되어 있으면 해제
                               const filtered = prev.filter(
                                 (region) => region !== "지역 전체",
                               );
 
-                              // 세부 지역 선택/해제
-                              if (filtered.includes(fullRegionNameForToggle)) {
-                                return filtered.filter(
-                                  (region) =>
-                                    region !== fullRegionNameForToggle,
+                              if (isRegionAll) {
+                                // "서울 전체" 체크/해제
+                                if (
+                                  filtered.includes(regionAllKey) ||
+                                  subList.every((s) => filtered.includes(s))
+                                ) {
+                                  return filtered.filter(
+                                    (r) =>
+                                      r !== regionAllKey &&
+                                      !subList.includes(r),
+                                  );
+                                }
+                                const without_this_main = filtered.filter(
+                                  (r) =>
+                                    r !== regionAllKey &&
+                                    !subList.includes(r),
                                 );
-                              } else {
-                                return [...filtered, fullRegionNameForToggle];
+                                return [...without_this_main, regionAllKey];
                               }
+
+                              // 구 하나 체크/해제
+                              if (filtered.includes(regionAllKey)) {
+                                // 서울 전체 체크된 상태에서 이 구 해제 → 전체 해제, 나머지 구만 선택
+                                const withoutAll = filtered.filter(
+                                  (r) => r !== regionAllKey,
+                                );
+                                const other_gu = subList.filter(
+                                  (s) => s !== fullRegionName,
+                                );
+                                return [...withoutAll, ...other_gu];
+                              }
+                              if (filtered.includes(fullRegionName)) {
+                                return filtered.filter(
+                                  (r) => r !== fullRegionName,
+                                );
+                              }
+                              return [...filtered, fullRegionName];
                             });
                           }
                         }}

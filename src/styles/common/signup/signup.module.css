@@ -317,6 +317,13 @@
   position: relative;
 }
 
+/* 약관 라벨 + 보기 버튼 묶음 (라벨 바로 옆에 보기 버튼 배치용) */
+.terms_label_row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 /* 약관 하위 항목 */
 .terms_sub_items {
   margin-left: 24px;

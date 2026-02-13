@@ -60,32 +60,28 @@ export default function Header({ has_notifications }: HeaderProps) {
       : "/images/header/header_search.svg";
   };
 
-  // 알림 아이콘 결정 (클라이언트에서만 동적으로 변경)
+  // 알림 아이콘: 비로그인 시 항상 비활성(알림 X), 로그인 시 알림 1개 이상이면 활성
   const getNotificationIconSrc = () => {
     if (!isMounted) {
-      // 서버 렌더링 또는 첫 렌더링 시 기본 아이콘
       return "/images/header/notification_icon.svg";
     }
 
-    // 모바일 전용 아이콘
+    // 비로그인 → 무조건 알림 비활성 아이콘
+    if (!user) {
+      return isMobile
+        ? "/images/header/mobile/mo_notification_icon.svg"
+        : "/images/header/notification_icon.svg";
+    }
+
+    // 로그인 상태: 알림 페이지에 알림이 1개라도 있으면 활성 아이콘
+    const effective_has_notifications =
+      has_notifications ?? mockReviewerNotifications.length > 0;
+
     if (isMobile) {
-      if (!user) {
-        return "/images/header/mobile/mo_notification_icon.svg";
-      }
-      const effective_has_notifications =
-        has_notifications ?? mockReviewerNotifications.length > 0;
       return effective_has_notifications
         ? "/images/header/mobile/mo_notification_ok.svg"
         : "/images/header/mobile/mo_notification_icon.svg";
     }
-
-    // PC 아이콘
-    if (!user) {
-      return "/images/header/notification_icon.svg";
-    }
-
-    const effective_has_notifications =
-      has_notifications ?? mockReviewerNotifications.length > 0;
     return effective_has_notifications
       ? "/images/header/notification_ok.svg"
       : "/images/header/notification_icon.svg";

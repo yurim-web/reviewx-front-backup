@@ -58,7 +58,24 @@
       "Bash(netstat:*)",
       "Bash(wc:*)",
       "Bash(sort:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(git --version:*)",
+      "Bash(gh:*)",
+      "Skill(git-commit-helper)",
+      "Skill(git-commit-helper:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/conventional-commits.py"
+          }
+        ]
+      }
     ]
   }
 }

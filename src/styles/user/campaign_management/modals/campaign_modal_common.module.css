@@ -46,6 +46,8 @@
   padding: 40px;
   position: relative;
   box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.15);
+  /* 바텀시트 슬라이드 업 애니메이션 (필터 모달과 통일) */
+  animation: slideUp 0.3s ease-out;
 }
 
 /* 모달 헤더 (제목 + 닫기 버튼) */
@@ -392,6 +394,15 @@
   to {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
   }
 }
 

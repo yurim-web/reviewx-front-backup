@@ -124,15 +124,20 @@ export default function AdminLoginPage() {
       }
 
       // 관리자 계정인지 확인
-      if (account.role !== 'manager_ga' && account.role !== 'manager_sa') {
+      if (account.role !== "manager_ga" && account.role !== "manager_sa") {
         setErrorMessage("관리자 계정만 로그인할 수 있습니다.");
         return;
       }
 
-      // 인증 시스템을 통한 로그인
+      // 인증 시스템을 통한 로그인 (토큰 기반)
+      // login 함수는 토큰을 localStorage에 저장하고 사용자 정보를 설정합니다
       await login({ email: username, password }, account.role);
 
       // login 함수에서 자동으로 리다이렉트하므로 여기서는 추가 처리 불필요
+      console.log("✅ [관리자 로그인] 로그인 성공:", {
+        role: account.role,
+        name: account.name,
+      });
     } catch (error) {
       // 에러 메시지 표시
       if (error instanceof Error) {
@@ -148,11 +153,11 @@ export default function AdminLoginPage() {
   // ========================================
 
   return (
-    <div className={pageStyles.partner_login_page_container}>
+    <>
       {/* 메인 헤더 */}
       <Header />
 
-      {/* 메인 콘텐츠 영역 */}
+      {/* 메인 콘텐츠 영역 (너비 제한은 app/manager/layout.tsx 컨테이너에서 적용) */}
       <main className={pageStyles.partner_login_main}>
         {/* 로그인 메시지 섹션 */}
         <section className={pageStyles.login_message_section}>
@@ -240,6 +245,6 @@ export default function AdminLoginPage() {
           </div>
         </form>
       </main>
-    </div>
+    </>
   );
 }

@@ -55,7 +55,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 16px 24px 24px 24px;
+  padding: 16px 24px 40px 24px;
   display: flex;
   justify-content: center; /* 버튼 가로 중앙 정렬 */
   background: transparent; /* 그라데이션은 별도 요소에서 처리 */

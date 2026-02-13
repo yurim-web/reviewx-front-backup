@@ -1095,7 +1095,19 @@ export default function ApplicationModal({
                     <div className={styles.address_container}>
                       <div className={styles.address_info}>
                         {userAddress.trim() ? (
-                          <div className={styles.address_text}>{userAddress}</div>
+                          <div className={styles.address_text}>
+                            {userAddress.includes(" | ") ? (
+                              <>
+                                {userAddress.split(" | ")[0]}
+                                <span className={styles.address_separator}>
+                                  {" "}|{" "}
+                                </span>
+                                {userAddress.split(" | ").slice(1).join(" | ")}
+                              </>
+                            ) : (
+                              userAddress
+                            )}
+                          </div>
                         ) : (
                           <div className={styles.address_text_empty}>
                             주소지를 등록해 주세요.

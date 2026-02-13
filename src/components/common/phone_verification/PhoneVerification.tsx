@@ -153,6 +153,10 @@ export default function PhoneVerification({
         verification_button: verificationStyles.verification_button,
         verification_button_completed:
           verificationStyles.verification_button_completed,
+        phone_verification_block_mypage:
+          verificationStyles.phone_verification_block_mypage,
+        verification_code_section_mypage:
+          verificationStyles.verification_code_section_mypage,
         // signup.module.css에서 가져온 클래스 (분리된 파일에 없는 것들)
         error_message: signupStyles.error_message,
         error_text: signupStyles.error_text,
@@ -304,10 +308,10 @@ export default function PhoneVerification({
    */
   const shouldShowPhoneInputError = false;
 
-  // 마이페이지 스타일인 경우 FormField 사용하되, 조합된 스타일 객체 사용
+  // 마이페이지 스타일인 경우 FormField 사용, 내 정보 수정 페이지에서만 간격 12px
   if (useMyPageStyle) {
     return (
-      <>
+      <div className={styles.phone_verification_block_mypage}>
         <FormField
           label="휴대폰 번호"
           htmlFor="phone"
@@ -377,7 +381,9 @@ export default function PhoneVerification({
         {showVerificationCode &&
           isVerificationRequested &&
           !isPhoneVerified && (
-            <div className={styles.verification_code_section}>
+          <div
+            className={`${styles.verification_code_section} ${styles.verification_code_section_mypage}`}
+          >
               <div className={styles.verification_code_wrapper}>
                 <div className={styles.verification_code_input_wrapper}>
                   <input
@@ -415,7 +421,7 @@ export default function PhoneVerification({
               )}
             </div>
           )}
-      </>
+      </div>
     );
   }
 

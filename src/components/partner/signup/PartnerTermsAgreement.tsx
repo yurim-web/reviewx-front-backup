@@ -92,20 +92,22 @@ export default function PartnerTermsAgreement({
             checked={serviceTermsAgreed}
             onChange={(e) => onServiceTermsAgreedChange(e.target.checked)}
           />
-          <label
-            htmlFor="service-terms-agree"
-            className={commonStyles.checkbox_label}
-          >
-            [필수] 서비스 이용 약관 동의
-          </label>
-          <button
-            type="button"
-            onClick={() => handle_terms_view_click("서비스 이용")}
-            className={commonStyles.terms_view_link}
-            aria-label="서비스 이용 약관 보기"
-          >
-            보기
-          </button>
+          <div className={commonStyles.terms_label_row}>
+            <label
+              htmlFor="service-terms-agree"
+              className={commonStyles.checkbox_label}
+            >
+              [필수] 서비스 이용 약관 동의
+            </label>
+            <button
+              type="button"
+              onClick={() => handle_terms_view_click("서비스 이용")}
+              className={commonStyles.terms_view_link}
+              aria-label="서비스 이용 약관 보기"
+            >
+              보기
+            </button>
+          </div>
         </div>
 
         <div className={commonStyles.terms_item}>
@@ -116,20 +118,22 @@ export default function PartnerTermsAgreement({
             checked={privacyAgreed}
             onChange={(e) => onPrivacyAgreedChange(e.target.checked)}
           />
-          <label
-            htmlFor="privacy-agree"
-            className={commonStyles.checkbox_label}
-          >
-            [필수] 개인정보 수집 및 이용 동의
-          </label>
-          <button
-            type="button"
-            onClick={() => handle_terms_view_click("개인정보 수집 및 이용")}
-            className={commonStyles.terms_view_link}
-            aria-label="개인정보 수집 및 이용 약관 보기"
-          >
-            보기
-          </button>
+          <div className={commonStyles.terms_label_row}>
+            <label
+              htmlFor="privacy-agree"
+              className={commonStyles.checkbox_label}
+            >
+              [필수] 개인정보 수집 및 이용 동의
+            </label>
+            <button
+              type="button"
+              onClick={() => handle_terms_view_click("개인정보 수집 및 이용")}
+              className={commonStyles.terms_view_link}
+              aria-label="개인정보 수집 및 이용 약관 보기"
+            >
+              보기
+            </button>
+          </div>
         </div>
 
         <div className={commonStyles.terms_item}>
@@ -140,20 +144,22 @@ export default function PartnerTermsAgreement({
             checked={thirdPartyAgreed}
             onChange={(e) => onThirdPartyAgreedChange(e.target.checked)}
           />
-          <label
-            htmlFor="third-party-agree"
-            className={commonStyles.checkbox_label}
-          >
-            [필수] 개인정보 제3자 제공 동의
-          </label>
-          <button
-            type="button"
-            onClick={() => handle_terms_view_click("개인정보 제3자 제공")}
-            className={commonStyles.terms_view_link}
-            aria-label="개인정보 제3자 제공 약관 보기"
-          >
-            보기
-          </button>
+          <div className={commonStyles.terms_label_row}>
+            <label
+              htmlFor="third-party-agree"
+              className={commonStyles.checkbox_label}
+            >
+              [필수] 개인정보 제3자 제공 동의
+            </label>
+            <button
+              type="button"
+              onClick={() => handle_terms_view_click("개인정보 제3자 제공")}
+              className={commonStyles.terms_view_link}
+              aria-label="개인정보 제3자 제공 약관 보기"
+            >
+              보기
+            </button>
+          </div>
         </div>
 
         <div className={commonStyles.terms_item}>
@@ -164,22 +170,24 @@ export default function PartnerTermsAgreement({
             checked={advertisingAgreed}
             onChange={(e) => onAdvertisingAgreedChange(e.target.checked)}
           />
-          <label
-            htmlFor="advertising-agree"
-            className={commonStyles.checkbox_label}
-          >
-            [필수] 광고 · 홍보 관련 준수 사항 동의
-          </label>
-          <button
-            type="button"
-            onClick={() =>
-              handle_terms_view_click("광고 · 홍보 관련 준수 사항")
-            }
-            className={commonStyles.terms_view_link}
-            aria-label="광고 · 홍보 관련 준수 사항 약관 보기"
-          >
-            보기
-          </button>
+          <div className={commonStyles.terms_label_row}>
+            <label
+              htmlFor="advertising-agree"
+              className={commonStyles.checkbox_label}
+            >
+              [필수] 광고 · 홍보 관련 준수 사항 동의
+            </label>
+            <button
+              type="button"
+              onClick={() =>
+                handle_terms_view_click("광고 · 홍보 관련 준수 사항")
+              }
+              className={commonStyles.terms_view_link}
+              aria-label="광고 · 홍보 관련 준수 사항 약관 보기"
+            >
+              보기
+            </button>
+          </div>
         </div>
 
         <div className={commonStyles.terms_item}>
@@ -190,22 +198,24 @@ export default function PartnerTermsAgreement({
             checked={marketingAgreed}
             onChange={(e) => onMarketingAgreedChange(e.target.checked)}
           />
-          <label
-            htmlFor="marketing-agree"
-            className={commonStyles.checkbox_label}
-          >
-            [선택] 마케팅 목적의 개인정보 수집 및 이용 동의
-          </label>
-          <button
-            type="button"
-            onClick={() =>
-              handle_terms_view_click("마케팅 목적의 개인정보 수집 및 이용")
-            }
-            className={commonStyles.terms_view_link}
-            aria-label="마케팅 목적의 개인정보 수집 및 이용 약관 보기"
-          >
-            보기
-          </button>
+          <div className={commonStyles.terms_label_row}>
+            <label
+              htmlFor="marketing-agree"
+              className={commonStyles.checkbox_label}
+            >
+              [선택] 마케팅 목적의 개인정보 수집 및 이용 동의
+            </label>
+            <button
+              type="button"
+              onClick={() =>
+                handle_terms_view_click("마케팅 목적의 개인정보 수집 및 이용")
+              }
+              className={commonStyles.terms_view_link}
+              aria-label="마케팅 목적의 개인정보 수집 및 이용 약관 보기"
+            >
+              보기
+            </button>
+          </div>
         </div>
 
         <div className={commonStyles.terms_item}>
@@ -218,22 +228,24 @@ export default function PartnerTermsAgreement({
               onThirdPartyMarketingAgreedChange(e.target.checked)
             }
           />
-          <label
-            htmlFor="third-party-marketing-agree"
-            className={commonStyles.checkbox_label}
-          >
-            [선택] 제3자 정보 제공(마케팅/프로모션 목적) 동의
-          </label>
-          <button
-            type="button"
-            onClick={() =>
-              handle_terms_view_click("제3자 정보 제공(마케팅/프로모션 목적)")
-            }
-            className={commonStyles.terms_view_link}
-            aria-label="제3자 정보 제공(마케팅/프로모션 목적) 약관 보기"
-          >
-            보기
-          </button>
+          <div className={commonStyles.terms_label_row}>
+            <label
+              htmlFor="third-party-marketing-agree"
+              className={commonStyles.checkbox_label}
+            >
+              [선택] 제3자 정보 제공(마케팅/프로모션 목적) 동의
+            </label>
+            <button
+              type="button"
+              onClick={() =>
+                handle_terms_view_click("제3자 정보 제공(마케팅/프로모션 목적)")
+              }
+              className={commonStyles.terms_view_link}
+              aria-label="제3자 정보 제공(마케팅/프로모션 목적) 약관 보기"
+            >
+              보기
+            </button>
+          </div>
         </div>
       </div>
 

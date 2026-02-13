@@ -55,18 +55,11 @@ export default function PartnerHeader() {
   }, []);
 
   /**
-   * 사용자 상태 및 알림 데이터에 따른 알림 아이콘 업데이트
-   *
-   * 설명:
-   * - 클라이언트 마운트 후에만 실행됩니다 (isMounted 체크).
-   * - 로그인 상태와 알림 데이터를 확인하여 적절한 아이콘을 표시합니다.
-   * - 모바일/PC 구분하여 적절한 아이콘 경로를 설정합니다.
+   * 알림 아이콘: 비로그인 → 무조건 비활성(알림 X), 로그인 시 알림 1개 이상이면 활성
    */
   useEffect(() => {
-    // 클라이언트 마운트 전에는 실행하지 않음 (Hydration 에러 방지)
     if (!isMounted) return;
 
-    // 로그인 안 되어 있으면 알림 없음 아이콘
     if (!user) {
       setNotificationIconSrc(
         isMobile
@@ -76,9 +69,7 @@ export default function PartnerHeader() {
       return;
     }
 
-    // 로그인 되어 있으면 알림 데이터 확인
     const has_notifications = mockPartnerNotifications.length > 0;
-    
     if (isMobile) {
       setNotificationIconSrc(
         has_notifications
@@ -131,8 +122,8 @@ export default function PartnerHeader() {
           <img src={getLogoSrc()} alt="VX 로고" />
         </Link>
         <div className={styles.menu_icon_box} suppressHydrationWarning>
-          {/* 새로운 캠페인 등록: PC에서는 버튼, 모바일에서는 아이콘 */}
-          {!isMounted ? null : isMobile ? (
+          {/* 새로운 캠페인 등록: 로그인한 상태에서만 표시, PC에서는 버튼, 모바일에서는 아이콘 */}
+          {!isMounted ? null : user && (isMobile ? (
             <Link
               href="/partner/campaign/create"
               className={styles.notification_icon}
@@ -147,7 +138,7 @@ export default function PartnerHeader() {
             >
               새 캠페인 등록
             </Link>
-          )}
+          ))}
 
           {/* 검색창 - 파트너 전용 검색 결과 페이지로 이동 */}
           <HeaderSearch searchIconSrc={getSearchIconSrc()} search_path="/partner/search" />

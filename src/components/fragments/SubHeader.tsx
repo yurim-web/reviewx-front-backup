@@ -75,22 +75,23 @@ export default function SubHeader({ title, showBackButton }: SubHeaderProps = {}
       : "/images/header/header_search.svg";
   };
 
-  // 알림 아이콘 결정 로직
+  // 알림 아이콘: 비로그인 → 무조건 비활성(알림 X), 로그인 시 알림 1개 이상이면 활성
   const getNotificationIconSrc = () => {
     if (!isMounted) {
       return "/images/header/notification_icon.svg";
     }
-
-    // 모바일 전용 아이콘
+    // 비로그인 → 항상 비활성 아이콘
+    if (!user) {
+      return isMobile
+        ? "/images/header/mobile/mo_notification_icon.svg"
+        : "/images/header/notification_icon.svg";
+    }
+    const effective_has_notifications = mockReviewerNotifications.length > 0;
     if (isMobile) {
-      const effective_has_notifications = mockReviewerNotifications.length > 0;
       return effective_has_notifications
         ? "/images/header/mobile/mo_notification_ok.svg"
         : "/images/header/mobile/mo_notification_icon.svg";
     }
-
-    // PC 아이콘
-    const effective_has_notifications = mockReviewerNotifications.length > 0;
     return effective_has_notifications
       ? "/images/header/notification_ok.svg"
       : "/images/header/notification_icon.svg";
