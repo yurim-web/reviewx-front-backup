@@ -592,7 +592,9 @@ export default function ReceiptRegistrationModal({
 
               {/* 검수 에러 메시지 */}
               {validationError && (
-                <ErrorText message={VALIDATION_MESSAGES[validationError]} />
+                <div className={styles.receipt_validation_error}>
+                  <ErrorText message={VALIDATION_MESSAGES[validationError]} />
+                </div>
               )}
 
               {/* 등록/수정 버튼 */}

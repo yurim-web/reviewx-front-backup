@@ -166,7 +166,6 @@
 /* 입력 필드 포커스 상태 */
 .form_input:focus {
   outline: none;
-  border-color: #444444;
 }
 
 /* 비활성화된 입력 필드 (예금주, 은행 등) */

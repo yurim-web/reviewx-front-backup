@@ -142,9 +142,10 @@
   height: 56px;
 }
 
+/* focus 시 테두리 색 변화 없음 */
 .link_input:focus {
   outline: none;
-  border-color: #666;
+  border-color: #d9d9d9;
 }
 
 .link_input::placeholder {
@@ -373,6 +374,11 @@
   position: absolute;
   left: 0;
   color: #848484;
+}
+
+/* 구매 영수증 등록/수정 모달 - 검수 에러 메시지 하단 여백 */
+.receipt_validation_error {
+  margin-bottom: 12px;
 }
 
 /* ========================================
