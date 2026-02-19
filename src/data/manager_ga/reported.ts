@@ -190,7 +190,7 @@ function load_removed_ids_from_storage(): Set<string> {
 
   try {
     const stored_removed = localStorage.getItem(
-      STORAGE_KEY_REMOVED_REPORTED_IDS
+      STORAGE_KEY_REMOVED_REPORTED_IDS,
     );
     const removed_ids_array: string[] = stored_removed
       ? JSON.parse(stored_removed)
@@ -210,7 +210,7 @@ function save_removed_ids_to_storage(removed_ids: Set<string>): void {
     const removed_ids_array = Array.from(removed_ids);
     localStorage.setItem(
       STORAGE_KEY_REMOVED_REPORTED_IDS,
-      JSON.stringify(removed_ids_array)
+      JSON.stringify(removed_ids_array),
     );
   } catch (error) {
     console.error("localStorage에 제거된 신고 내역 ID 저장 실패:", error);
@@ -247,7 +247,7 @@ function load_additional_items_from_storage(): ReportedCampaignItem[] {
 
   try {
     const stored_additional = localStorage.getItem(
-      STORAGE_KEY_ADDITIONAL_REPORTED_ITEMS
+      STORAGE_KEY_ADDITIONAL_REPORTED_ITEMS,
     );
     const additional_items: ReportedCampaignItem[] = stored_additional
       ? JSON.parse(stored_additional)
@@ -261,14 +261,14 @@ function load_additional_items_from_storage(): ReportedCampaignItem[] {
 
 // localStorage에 추가된 신고 내역 저장 함수
 function save_additional_items_to_storage(
-  additional_items: ReportedCampaignItem[]
+  additional_items: ReportedCampaignItem[],
 ): void {
   if (typeof window === "undefined") return;
 
   try {
     localStorage.setItem(
       STORAGE_KEY_ADDITIONAL_REPORTED_ITEMS,
-      JSON.stringify(additional_items)
+      JSON.stringify(additional_items),
     );
   } catch (error) {
     console.error("localStorage에 추가된 신고 내역 저장 실패:", error);
@@ -304,12 +304,12 @@ export function get_reported_campaign_list(): ReportedCampaignItem[] {
 
   // 제거된 항목을 제외한 기본 목록
   const filtered_base_list = reported_campaign_list.filter(
-    (item) => !removed_reported_campaign_ids.has(item.id)
+    (item) => !removed_reported_campaign_ids.has(item.id),
   );
 
   // 추가된 항목 (제거되지 않은 것만)
   const filtered_additional_items = additional_reported_campaign_items.filter(
-    (item) => !removed_reported_campaign_ids.has(item.id)
+    (item) => !removed_reported_campaign_ids.has(item.id),
   );
 
   // FIXED: Mock data FIRST, then localStorage data (기본 목록 + 추가된 항목)
@@ -731,7 +731,8 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     campaign_number: "000325",
     campaign_name: "인테리어 소품 리뷰 캠페인",
     report_code: "W013",
-    report_reason: "타인에 대한 모욕적인 발언 및 비매너 행위가 확인되었습니다",
+    report_reason:
+      "타인에 대한 모욕적인 발언 및 비매너 행위가 확인되었습니다타인에 대한 모욕적인 발언 및 비매너 행위가 확인되었습니다타인에 대한 모욕적인 발언 및 비매너 행위가 확인되었습니다타인에 대한 모욕적인 발언 및 비매너 행위가 확인되었습니다타인에 대한 모욕적인 발언 및 비매너 행위가 확인되었습니다타인에 대한 모욕적인 발언 및 비매너 행위가 확인되었습니다",
     inspector: "주식회사 아이엠에스커뮤니케이션",
     target: "강동원",
     processed_date: "2026-02-01 14:50",
