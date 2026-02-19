@@ -66,6 +66,13 @@ export default function Header({ has_notifications }: HeaderProps) {
       return "/images/header/notification_icon.svg";
     }
 
+    // 관리자 로그인 페이지에서는 항상 알림 없음(비활성) 아이콘
+    if (pathname === "/manager/login") {
+      return isMobile
+        ? "/images/header/mobile/mo_notification_icon.svg"
+        : "/images/header/notification_icon.svg";
+    }
+
     // 비로그인 → 무조건 알림 비활성 아이콘
     if (!user) {
       return isMobile
