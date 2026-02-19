@@ -124,7 +124,7 @@ export default function WithdrawalFilterSection({
   // 지급 필터 태그 제거 핸들러
   const handle_remove_payment_status = (status: WithdrawalPaymentStatus) => {
     on_payment_statuses_change?.(
-      selected_payment_statuses.filter((s) => s !== status)
+      selected_payment_statuses.filter((s) => s !== status),
     );
   };
 
@@ -136,7 +136,7 @@ export default function WithdrawalFilterSection({
   // 상태 필터 태그 제거 핸들러
   const handle_remove_normal_status = (status: NormalStatus) => {
     on_normal_statuses_change?.(
-      selected_normal_statuses.filter((s) => s !== status)
+      selected_normal_statuses.filter((s) => s !== status),
     );
   };
 
@@ -178,7 +178,7 @@ export default function WithdrawalFilterSection({
       <BaseFilterSection<string>
         search_query={current_search_query}
         on_search_change={handle_search_change}
-        search_placeholder="이름, 계좌번호, 주민등록번호 검색"
+        search_placeholder="검색"
         // 날짜 필터 - DateFilterButton 컴포넌트 사용
         date_filter={
           <DateFilterButton
