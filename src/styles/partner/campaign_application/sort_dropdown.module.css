@@ -157,7 +157,7 @@
 .sort_trigger_text {
   color: #444;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 16px; /* 100% */
   letter-spacing: -0.32px;
 }
@@ -223,10 +223,9 @@
   }
 
   /* 정렬 옵션 리스트 */
-.sort_options_vertical {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
+  .sort_options_vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
 }
