@@ -241,6 +241,7 @@
   letter-spacing: -0.26px;
   padding-left: 13px;
   position: relative;
+  word-break: keep-all;
 }
 
 /* ✅ 안내 리스트 불릿(•) - li::before 가상 요소로 만든 불릿 */
