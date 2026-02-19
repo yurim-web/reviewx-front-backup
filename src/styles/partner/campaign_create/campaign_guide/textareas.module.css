@@ -19,12 +19,14 @@
   border: 1px solid #d9d9d9;
   border-radius: 8px;
   background: #fff;
-  padding: 20px 0px 20px 20px;
+  padding: 20px 20px 20px 20px;
   outline: none;
   resize: none !important;
   overflow-y: auto;
   word-wrap: break-word;
   white-space: pre-wrap;
+  /* 마우스 오버 후 스크롤 시 내부에서만 스크롤 (바깥 페이지 스크롤 방지) */
+  overscroll-behavior: contain;
 
   /* 인풋창 속 글자 css */
   color: #444;
@@ -32,6 +34,11 @@
   font-weight: 500;
   line-height: 24px; /* 171.429% */
   letter-spacing: -0.28px;
+}
+
+/* 스크롤이 생겼을 때만 padding-right 0 (스크롤바 공간 확보) */
+.fixed_height_textarea.has_scroll {
+  padding-right: 0;
 }
 
 /* readOnly 상태의 textarea 스타일 (수정 모드) */
@@ -83,6 +90,10 @@
   }
 
   .fixed_height_textarea {
-    padding: 20px 0px 20px 20px;
+    padding: 20px 20px 20px 20px;
+  }
+
+  .fixed_height_textarea.has_scroll {
+    padding-right: 0;
   }
 }
