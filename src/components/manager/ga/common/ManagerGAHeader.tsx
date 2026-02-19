@@ -99,7 +99,7 @@ export default function ManagerGAHeader({
         <Link href={homePath} className={styles.header_logo}>
           <img
             src="/images/header/manager/admin_header_logo.svg"
-            alt="RX 로고"
+            alt="VX 로고"
           />
         </Link>
 
