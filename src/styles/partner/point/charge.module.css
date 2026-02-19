@@ -519,12 +519,12 @@
     padding: 0px 20px 0px 20px;
   }
 
-  /* 카드 결제 탭에서만 하단 고정되는 버튼 래퍼 */
+  /* 카드 결제 탭에서만 하단 고정되는 버튼 래퍼 - 모바일만 결제 버튼 밑 간격 24px */
   .submit_button_fixed {
     position: fixed;
     left: 50%;
     transform: translateX(-50%);
-    bottom: 40px; /* 세로 화면 끝에서 40px 위 */
+    bottom: 24px; /* 모바일: 신용카드 결제 버튼 밑 24px */
     width: 100%;
     max-width: 768px;
     padding: 0 20px;
