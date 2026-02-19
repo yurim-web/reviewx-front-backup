@@ -48,7 +48,7 @@ function PartnerEditProfilePage() {
     ownerName: user?.name || "",
     businessNumber: user?.business_number || "",
     businessType: user?.business_type || "법인사업자",
-    businessDocument: "등록 완료",
+    businessDocument: "사업자등록증.pdf", // 등록 완료 시 입력란에는 파일명 표시 (실제 파일명은 API 연동 시 user 등에서 로드)
     postalCode: "",
     address: "",
     detailAddress: "",
@@ -63,7 +63,7 @@ function PartnerEditProfilePage() {
     string | undefined
   >(undefined); // 인증번호 에러 메시지
   const [isBusinessDocumentUploaded, setIsBusinessDocumentUploaded] =
-    useState(true); // 사업자등록증 업로드 여부
+    useState(false); // 사업자등록증 업로드 여부 (새로고침 시 완료 배지 비표시)
   const [profileImage, setProfileImage] = useState<string | null>(null); // 프로필 사진 미리보기 URL
   const [phoneError, setPhoneError] = useState<string | undefined>(undefined); // 휴대폰 번호 에러 메시지
   const [contactPhoneError, setContactPhoneError] = useState<
@@ -151,17 +151,38 @@ function PartnerEditProfilePage() {
   /**
    * 사업자등록증 파일 선택 핸들러
    * BusinessDocumentUpload 컴포넌트에서 호출됨
+   * - 파일 선택 시 바로 partner_accounts에 파일명 반영 → 새로고침 후에도 등록한 파일명 유지
    */
   const handleBusinessDocumentSelect = (file: File | null) => {
     if (!file) {
       setIsBusinessDocumentUploaded(false);
       return;
     }
+    const file_name = file.name;
     setFormData((prev) => ({
       ...prev,
-      businessDocument: file.name,
+      businessDocument: file_name,
     }));
     setIsBusinessDocumentUploaded(true);
+
+    // 파일 선택 시점에 localStorage에 반영 (저장 버튼 없이 새로고침해도 파일명 유지)
+    try {
+      if (!user?.id) return;
+      const storedAccounts = localStorage.getItem("partner_accounts");
+      const accounts = storedAccounts ? JSON.parse(storedAccounts) : [];
+      const accountIndex = accounts.findIndex(
+        (a: { id?: string; email?: string }) => a.id === user.id || a.email === user.email
+      );
+      if (accountIndex >= 0) {
+        accounts[accountIndex] = {
+          ...accounts[accountIndex],
+          business_document_file_name: file_name,
+        };
+        localStorage.setItem("partner_accounts", JSON.stringify(accounts));
+      }
+    } catch (e) {
+      console.error("사업자등록증 파일명 저장 실패:", e);
+    }
   };
 
   const isSaveEnabled = formData.phone.trim().length > 0;
@@ -246,6 +267,7 @@ function PartnerEditProfilePage() {
         division: formData.businessType === '개인사업자' ? '개인' : '법인',
         profile_image: profileImage, // 프로필 사진 저장
         join_date: new Date().toISOString().replace('T', ' ').substring(0, 16),
+        business_document_file_name: formData.businessDocument, // 사업자등록증 파일명 저장 (새로고침 후 복원)
       };
 
       // console.log('🖼️ [수정 페이지] 저장할 profileImage:', profileImage);
@@ -286,6 +308,7 @@ function PartnerEditProfilePage() {
         const accounts = JSON.parse(storedAccounts);
         const partnerAccount = accounts.find((a: any) => a.id === user.id || a.email === user.email);
         if (partnerAccount) {
+          const savedFileName = (partnerAccount as { business_document_file_name?: string }).business_document_file_name;
           setFormData({
             name: partnerAccount.representative_name || partnerAccount.name || user.name || "",
             email: partnerAccount.email || user.email || "",
@@ -295,11 +318,13 @@ function PartnerEditProfilePage() {
             ownerName: partnerAccount.representative_name || partnerAccount.name || user.name || "",
             businessNumber: partnerAccount.business_number || user.business_number || "",
             businessType: partnerAccount.business_type || "법인사업자",
-            businessDocument: "등록 완료",
+            businessDocument: savedFileName || "사업자등록증.pdf",
             postalCode: partnerAccount.postal_code || "",
             address: partnerAccount.address || "",
             detailAddress: partnerAccount.detail_address || "",
           });
+          // 새로고침 시에는 완료 아이콘은 표시하지 않음 (파일명만 복원)
+          // setIsBusinessDocumentUploaded는 파일 선택 시에만 true로 설정
           // 프로필 사진도 불러오기
           if (partnerAccount.profile_image) {
             setProfileImage(partnerAccount.profile_image);
@@ -473,11 +498,12 @@ function PartnerEditProfilePage() {
             />
           </article>
 
-          {/* 사업자등록증 */}
+          {/* 사업자등록증 - 새로 등록(파일 선택) 클릭 시 완료 배지 숨김 */}
           <BusinessDocumentUpload
             fileName={formData.businessDocument}
             isUploaded={isBusinessDocumentUploaded}
             onFileSelect={handleBusinessDocumentSelect}
+            onSelectClick={() => setIsBusinessDocumentUploaded(false)}
           />
 
           {/* 주소 입력 */}
