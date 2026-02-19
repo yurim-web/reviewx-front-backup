@@ -526,7 +526,7 @@
 
   .mobile_description {
     display: -webkit-box !important;
-    flex: 1;
+
     min-width: 0; /* flex 아이템이 제대로 줄어들 수 있도록 */
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;

@@ -196,6 +196,8 @@ export interface PartnerPointHistory {
   balance: number; // 거래 후 잔액
   rejection_reason?: string; // 반려 사유 (status가 "failed"일 때 사용)
   return_reason?: string; // 반환 사유 (type이 "returned"일 때 사용, 반환 사유가 없으면 rejection_reason 사용)
+  /** 충전 결제 수단 (earned일 때만). 없으면 카드 결제로 간주 */
+  payment_method?: "card" | "bank";
 }
 
 /**
