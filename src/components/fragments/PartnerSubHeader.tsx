@@ -179,14 +179,16 @@ export default function PartnerSubHeader() {
           />
 
           {/* 알림 아이콘 */}
-          <Link href="/partner/notification" className={styles.notification_icon} aria-label="알림">
-            <img
-              src={isMobile
-                ? (has_notifications ? "/images/header/mobile/mo_notification_ok.svg" : "/images/header/mobile/mo_notification_icon.svg")
-                : (has_notifications ? "/images/header/notification_ok.svg" : "/images/header/notification_icon.svg")}
-              alt="알림"
-            />
-          </Link>
+          {user && (
+            <Link href="/partner/notification" className={styles.notification_icon} aria-label="알림">
+              <img
+                src={isMobile
+                  ? (has_notifications ? "/images/header/mobile/mo_notification_ok.svg" : "/images/header/mobile/mo_notification_icon.svg")
+                  : (has_notifications ? "/images/header/notification_ok.svg" : "/images/header/notification_icon.svg")}
+                alt="알림"
+              />
+            </Link>
+          )}
 
           {/* 가이드북 아이콘 - PC에서만 표시 */}
           {!isMobile && (

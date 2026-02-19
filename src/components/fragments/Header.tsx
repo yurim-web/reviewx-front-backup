@@ -1,7 +1,7 @@
 // 헤더
 "use client";
 import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import styles from "@/styles/fragments/header.module.css";
 import { mockReviewerNotifications } from "@/data/notification/notificationData";
 import HeaderSearch from "@/components/fragments/HeaderSearch";
@@ -14,16 +14,17 @@ interface HeaderProps {
 
 export default function Header({ has_notifications }: HeaderProps) {
   const { user, logout } = useAuth();
-  const router = useRouter();
   const pathname = usePathname();
 
   const handleLogout = () => {
     logout();
   };
 
-  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [has_mounted, set_has_mounted] = useState(false);
 
   useEffect(() => {
+    set_has_mounted(true);
     const check = () => setIsMobile(window.innerWidth <= 768);
     check();
     window.addEventListener("resize", check);
@@ -38,21 +39,8 @@ export default function Header({ has_notifications }: HeaderProps) {
   const showNotificationActive =
     user && pathname !== "/manager/login" && effective_has_notifications;
 
-  // 마운트 전(isMobile=null)에는 아이콘 영역을 숨김 처리
-  const iconVisibility = isMobile === null ? { visibility: "hidden" as const } : {};
-
-  // 알림 아이콘 클릭 핸들러
-  const handleNotificationClick = (event: MouseEvent<HTMLAnchorElement>) => {
-    if (pathname === "/manager/login") {
-      event.preventDefault();
-      return;
-    }
-    if (!user) {
-      event.preventDefault();
-      router.push("/user/login");
-      return;
-    }
-  };
+  // SSR/클라이언트 초기 렌더 시 동일하게 숨김 → 하이드레이션 불일치 방지
+  const iconVisibility = !has_mounted ? { visibility: "hidden" as const } : {};
 
   // 사용자 아이콘 클릭 핸들러
   const handleUserIconClick = (event: MouseEvent<HTMLAnchorElement>) => {
@@ -88,14 +76,15 @@ export default function Header({ has_notifications }: HeaderProps) {
         <div className={styles.menu_icon_box} style={iconVisibility}>
           <HeaderSearch searchIconSrc={searchIconSrc} />
 
-          <Link
-            href="/user/notification"
-            className={styles.notification_icon}
-            onClick={handleNotificationClick}
-            aria-label="알림"
-          >
-            <img src={notificationIconSrc} alt="bell_icon" />
-          </Link>
+          {user && (
+            <Link
+              href="/user/notification"
+              className={styles.notification_icon}
+              aria-label="알림"
+            >
+              <img src={notificationIconSrc} alt="bell_icon" />
+            </Link>
+          )}
 
           <Link
             href="/user/campaign_management"

@@ -130,13 +130,15 @@ export default function PartnerHeader() {
           <HeaderSearch searchIconSrc={searchIconSrc} search_path="/partner/search" />
 
           {/* 알림페이지로 연결 */}
-          <Link
-            href="/partner/notification"
-            className={styles.notification_icon}
-            aria-label="알림"
-          >
-            <img src={notificationIconSrc} alt="알림" />
-          </Link>
+          {user && (
+            <Link
+              href="/partner/notification"
+              className={styles.notification_icon}
+              aria-label="알림"
+            >
+              <img src={notificationIconSrc} alt="알림" />
+            </Link>
+          )}
 
           {/* 가이드로 연결 - PC에서만 표시 */}
           {isMobile === false && (
