@@ -261,7 +261,7 @@
   letter-spacing: -0.32px;
 }
 
-/* 인증번호 도움말 텍스트 */
+/* 인증번호 도움말 텍스트 (클릭 시 도움말 모달 열림) */
 .verification_help_text {
   color: #848484;
   font-size: 14px;
@@ -269,6 +269,11 @@
   line-height: 14px;
   letter-spacing: -0.28px;
   cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  width: auto;
 }
 
 .verification_help_text:hover {
@@ -403,7 +408,6 @@
   border: none;
   padding: 0;
   cursor: pointer;
-  margin-left: 8px; /* 텍스트와 버튼 사이 간격 */
 }
 
 /* ========================================
