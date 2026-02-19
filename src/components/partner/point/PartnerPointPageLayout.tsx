@@ -28,6 +28,7 @@ import { useRouter } from "next/navigation";
 import TabNavigation from "@/components/partner/campaign_management/TabNavigation";
 import PointTabNavigation from "@/components/common/point/PointTabNavigation";
 import TextareaModal from "@/components/common/modal/TextareaModal";
+import PartnerPaymentInfoModal from "@/components/partner/point/PartnerPaymentInfoModal";
 import {
   PartnerMainTab,
   PartnerPointTab,
@@ -89,6 +90,12 @@ export default function PartnerPointPageLayout({
   // - 모달의 제목을 저장합니다
   // - 반환 반려 상태에 따라 "반환 반려 사유"로 표시됩니다
   const [modal_title, setModalTitle] = useState("반려 사유");
+
+  // 결제 정보 하단 시트 모달 (포인트 충전 항목 클릭 시)
+  const [payment_info_modal_open, set_payment_info_modal_open] =
+    useState(false);
+  const [payment_info_modal_history, set_payment_info_modal_history] =
+    useState<PartnerPointHistory | null>(null);
 
   /**
    * 포인트 탭 변경 핸들러
@@ -356,49 +363,59 @@ export default function PartnerPointPageLayout({
                   </div>
                 </div>
 
-                {/* 내역 정보 */}
+                {/* 내역 정보 (설명 + 결제정보 버튼은 description 바로 옆 한 줄) */}
                 <div className={styles.history_info}>
-                  <div className={styles.history_description}>
-                    {/**
-                     * 조건부 렌더링:
-                     * - 반환(type === "returned")일 때는 무조건 사유보기 버튼 없이 일반 텍스트로 표시
-                     * - 반환 타입이 아니고 반려(status === "failed")이고 rejection_reason이 있는 경우에만 반려 사유 버튼 표시
-                     */}
-                    {history.type !== "returned" &&
-                    history.status === "failed" &&
-                    history.rejection_reason ? (
-                      <div className={styles.cancelled_description}>
-                        <span className={styles.main_text}>
-                          {history.description}
-                        </span>
-                        {/**
-                         * 반려 상태일 때는 rejection_reason이 있을 때만 사유보기 버튼 표시
-                         * (반환 타입 제외)
-                         *
-                         * 설명:
-                         * - 반려(status === "failed")일 때는 rejection_reason이 있을 때만 표시합니다.
-                         * - 반환 타입은 제외합니다.
-                         * - onClick 핸들러로 모달을 열어 반려 사유를 표시합니다.
-                         */}
-                        {history.rejection_reason && (
-                          <div
-                            className={styles.reason_section}
-                            onClick={() => handle_reason_click(history)}
-                          >
-                            <div className={styles.reason_icon}>
-                              <Image
-                                src="/images/management_page/cancel_info.svg"
-                                alt="정보 아이콘"
-                                width={16}
-                                height={16}
-                              />
+                  <div className={partnerPointStyles.history_description_row}>
+                    <div
+                      className={`${styles.history_description} ${partnerPointStyles.history_description_cell}`}
+                    >
+                      {history.type !== "returned" &&
+                      history.status === "failed" &&
+                      history.rejection_reason ? (
+                        <div className={styles.cancelled_description}>
+                          <span className={styles.main_text}>
+                            {history.description}
+                          </span>
+                          {history.rejection_reason && (
+                            <div
+                              className={styles.reason_section}
+                              onClick={() => handle_reason_click(history)}
+                            >
+                              <div className={styles.reason_icon}>
+                                <Image
+                                  src="/images/management_page/cancel_info.svg"
+                                  alt="정보 아이콘"
+                                  width={16}
+                                  height={16}
+                                />
+                              </div>
+                              <span className={styles.reason_text}>
+                                사유보기
+                              </span>
                             </div>
-                            <span className={styles.reason_text}>사유보기</span>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      history.description
+                          )}
+                        </div>
+                      ) : (
+                        history.description
+                      )}
+                    </div>
+                    {history.type === "earned" && (
+                      <button
+                        type="button"
+                        className={partnerPointStyles.payment_info_btn}
+                        onClick={() => {
+                          set_payment_info_modal_history(history);
+                          set_payment_info_modal_open(true);
+                        }}
+                        aria-label="결제 정보 보기"
+                      >
+                        <Image
+                          src="/images/icons/point/point_bell.svg"
+                          alt=""
+                          width={16}
+                          height={16}
+                        />
+                      </button>
                     )}
                   </div>
                   <div className={styles.history_date}>{history.date}</div>
@@ -435,38 +452,69 @@ export default function PartnerPointPageLayout({
                   </div>
                 </div>
 
-                {/* 모바일 버전: 2줄 구조 (PC에서 숨김) */}
-                {/* 1번째 줄: 설명 (왼쪽) + 포인트 금액 + 잔액 (오른쪽, 세로 묶음) */}
-                <div className={styles.mobile_row_first}>
+                {/* 모바일 버전: 2줄 구조 (PC에서 숨김) - 제목+아이콘 한 박스, gap 모바일만 */}
+                <div
+                  className={`${styles.mobile_row_first} ${partnerPointStyles.partner_mobile_row_first}`}
+                >
                   <div
-                    className={`${styles.mobile_description} ${partnerPointStyles.partner_mobile_description}`}
+                    className={partnerPointStyles.mobile_description_with_btn}
                   >
-                    {history.type !== "returned" &&
-                    history.status === "failed" &&
-                    history.rejection_reason ? (
-                      <div className={styles.cancelled_description}>
-                        <span className={styles.main_text}>
-                          {history.description}
-                        </span>
-                        {history.rejection_reason && (
-                          <div
-                            className={styles.reason_section}
-                            onClick={() => handle_reason_click(history)}
-                          >
-                            <div className={styles.reason_icon}>
-                              <Image
-                                src="/images/management_page/cancel_info.svg"
-                                alt="정보 아이콘"
-                                width={12}
-                                height={12}
-                              />
+                    <div
+                      className={`${styles.mobile_description} ${partnerPointStyles.partner_mobile_description}`}
+                    >
+                      {history.type !== "returned" &&
+                      history.status === "failed" &&
+                      history.rejection_reason ? (
+                        <div className={styles.cancelled_description}>
+                          <span className={styles.main_text}>
+                            {history.description}
+                          </span>
+                          {history.rejection_reason && (
+                            <div
+                              className={styles.reason_section}
+                              onClick={() => handle_reason_click(history)}
+                            >
+                              <div className={styles.reason_icon}>
+                                <Image
+                                  src="/images/management_page/cancel_info.svg"
+                                  alt="정보 아이콘"
+                                  width={12}
+                                  height={12}
+                                />
+                              </div>
+                              <span className={styles.reason_text}>
+                                사유보기
+                              </span>
                             </div>
-                            <span className={styles.reason_text}>사유보기</span>
-                          </div>
-                        )}
+                          )}
+                        </div>
+                      ) : (
+                        history.description
+                      )}
+                    </div>
+                    {history.type === "earned" && (
+                      <div
+                        className={
+                          partnerPointStyles.payment_info_btn_wrapper_mobile
+                        }
+                      >
+                        <button
+                          type="button"
+                          className={partnerPointStyles.payment_info_btn}
+                          onClick={() => {
+                            set_payment_info_modal_history(history);
+                            set_payment_info_modal_open(true);
+                          }}
+                          aria-label="결제 정보 보기"
+                        >
+                          <Image
+                            src="/images/icons/point/point_bell.svg"
+                            alt=""
+                            width={16}
+                            height={16}
+                          />
+                        </button>
                       </div>
-                    ) : (
-                      history.description
                     )}
                   </div>
 
@@ -551,6 +599,16 @@ export default function PartnerPointPageLayout({
         readOnly={true}
         variant="reject"
         buttons={["닫기"]}
+      />
+
+      {/* 결제 정보 하단 시트 모달 (충전 항목 클릭 시) - Figma 4417-18179 */}
+      <PartnerPaymentInfoModal
+        is_open={payment_info_modal_open}
+        on_close={() => {
+          set_payment_info_modal_open(false);
+          set_payment_info_modal_history(null);
+        }}
+        history={payment_info_modal_history}
       />
     </div>
   );
