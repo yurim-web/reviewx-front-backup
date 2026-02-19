@@ -1,0 +1,213 @@
+/* ========================================
+   💰 적립 예정 포인트 확인 모달 스타일
+   ======================================== */
+
+/**
+ * 사용 컴포넌트: PendingPointModal.tsx
+ * 사용 페이지: /user/point/*
+ * Figma: 적립 예정 포인트 모달 (목록형)
+ * base_modal과 무관하게 이 모달 전용 스타일만 사용
+ */
+
+/* 모달 오버레이 */
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* 모달 컨테이너: 800x800, 헤더 + 스크롤 영역 분리 */
+.modal_container {
+  background: #ffffff;
+  border-radius: 12px;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 800px;
+  max-width: 800px;
+  max-height: 800px;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* 헤더: 타이틀 + X 버튼, 구분선은 양옆 32px 간격 */
+.modal_header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  padding: 40px 32px 24px 32px;
+}
+
+.title {
+  color: #444;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 28px; /* 155.556% */
+  letter-spacing: -0.36px;
+}
+
+.close_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+/* 스크롤 가능한 목록 영역 (8개 이상 시 스크롤, 하단 여백 유지) */
+.list_wrapper {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0 32px 40px 32px;
+}
+
+/* 스크롤 생겼을 때만 list_wrapper 오른쪽 패딩 제거 */
+.list_wrapper_has_scroll {
+  padding-right: 0;
+}
+
+/* 하단 여백: 스크롤 끝에서 구분선이 여백 뒤에 숨겨지고, 밑 공간까지 스크롤되지 않도록 */
+.list_wrapper_inner {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* 스크롤바 생기면: 위·아래·오른쪽 16px 간격, 콘텐츠-스크롤바 16px */
+.list_wrapper_inner_has_scroll {
+  margin: 0px 16px 0px 0;
+  padding-right: 16px;
+}
+
+/* 스크롤바 스타일 (terms_view_modal과 동일) */
+.list_wrapper_inner::-webkit-scrollbar {
+  width: 3px;
+}
+
+.list_wrapper_inner::-webkit-scrollbar-button {
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+.list_wrapper_inner::-webkit-scrollbar-button:start:decrement,
+.list_wrapper_inner::-webkit-scrollbar-button:end:increment,
+.list_wrapper_inner::-webkit-scrollbar-button:vertical:start:decrement,
+.list_wrapper_inner::-webkit-scrollbar-button:vertical:end:increment {
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+.list_wrapper_inner::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.list_wrapper_inner::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 2px;
+}
+
+.list_wrapper_inner::-webkit-scrollbar-thumb:hover {
+  background: #b0b0b0;
+  cursor: pointer;
+}
+
+.pending_list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pending_item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 0;
+  border-top: 1px solid #e5e5e5;
+}
+
+/* 예정 뱃지 (녹색) */
+.item_badge {
+  flex-shrink: 0;
+  padding: 8px;
+  border-radius: 4px;
+  background: #2dc469;
+  color: #fff;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 설명 + 예정일 */
+.item_info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.item_description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+}
+
+.item_date {
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.28px;
+}
+
+/* 포인트 금액 (녹색) */
+.item_amount {
+  flex-shrink: 0;
+  color: #2dc469;
+  text-align: right;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  text-align: right;
+}
+
+.empty_message {
+  padding: 32px 0;
+  text-align: center;
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.28px;
+  margin: 0;
+}
