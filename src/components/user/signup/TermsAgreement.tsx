@@ -15,8 +15,11 @@
 
 "use client";
 
+import { useState } from "react";
 import commonStyles from "@/styles/common/signup/signup.module.css";
-import styles from "@/styles/user/signup/user_signup.module.css";
+import TermsViewModal, {
+  type TermsViewModalType,
+} from "@/components/user/signup/TermsViewModal";
 
 interface TermsAgreementProps {
   allAgreed: boolean;
@@ -41,8 +44,16 @@ export default function TermsAgreement({
   onPrivacyAgreedChange,
   onMarketingAgreedChange,
 }: TermsAgreementProps) {
+  const [terms_modal_type, set_terms_modal_type] =
+    useState<TermsViewModalType>(null);
+
   return (
     <>
+      <TermsViewModal
+        is_open={terms_modal_type !== null}
+        on_close={() => set_terms_modal_type(null)}
+        type={terms_modal_type}
+      />
       <div className={commonStyles.terms_section}>
         <div className={commonStyles.terms_all_agree}>
           <input
@@ -78,7 +89,7 @@ export default function TermsAgreement({
               <button
                 type="button"
                 className={commonStyles.terms_view_link}
-                onClick={() => alert("이용약관 및 개인정보 관련 동의 내용")}
+                onClick={() => set_terms_modal_type("terms")}
               >
                 보기
               </button>
@@ -111,7 +122,7 @@ export default function TermsAgreement({
             <button
               type="button"
               className={commonStyles.terms_view_link}
-              onClick={() => alert("개인정보 제3자 제공 동의 내용")}
+              onClick={() => set_terms_modal_type("privacy")}
             >
               보기
             </button>
@@ -136,9 +147,7 @@ export default function TermsAgreement({
             <button
               type="button"
               className={commonStyles.terms_view_link}
-              onClick={() =>
-                alert("마케팅 목적의 개인정보 수집 및 이용 동의 내용")
-              }
+              onClick={() => set_terms_modal_type("marketing")}
             >
               보기
             </button>

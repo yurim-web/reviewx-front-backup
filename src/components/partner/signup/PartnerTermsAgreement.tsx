@@ -16,8 +16,11 @@
 
 "use client";
 
+import { useState } from "react";
 import commonStyles from "@/styles/common/signup/signup.module.css";
-import styles from "@/styles/partner/signup/partner_signup.module.css";
+import PartnerTermsViewModal, {
+  type PartnerTermsViewModalType,
+} from "@/components/partner/signup/PartnerTermsViewModal";
 
 interface PartnerTermsAgreementProps {
   allAgreed: boolean;
@@ -54,20 +57,20 @@ export default function PartnerTermsAgreement({
   onMarketingAgreedChange,
   onThirdPartyMarketingAgreedChange,
 }: PartnerTermsAgreementProps) {
-  /**
-   * 약관 보기 클릭 핸들러
-   *
-   * 현재는 alert를 띄우지만, 추후 모달로 교체 예정입니다.
-   *
-   * @param termsType - 약관 타입 (서비스 이용, 개인정보 수집 등)
-   */
-  const handle_terms_view_click = (termsType: string) => {
-    // 기본 동작 방지 (링크 이동 방지)
-    // TODO: 추후 모달 컴포넌트로 교체 예정
-    alert(`${termsType} 약관을 확인합니다.\n\n(추후 모달로 교체 예정)`);
+  const [terms_modal_type, set_terms_modal_type] =
+    useState<PartnerTermsViewModalType>(null);
+
+  const handle_terms_view_click = (modalType: PartnerTermsViewModalType) => {
+    set_terms_modal_type(modalType);
   };
+
   return (
     <>
+      <PartnerTermsViewModal
+        is_open={terms_modal_type !== null}
+        on_close={() => set_terms_modal_type(null)}
+        type={terms_modal_type}
+      />
       <div className={commonStyles.terms_section}>
         <div className={commonStyles.terms_all_agree}>
           <input
@@ -101,7 +104,9 @@ export default function PartnerTermsAgreement({
             </label>
             <button
               type="button"
-              onClick={() => handle_terms_view_click("서비스 이용")}
+              onClick={() =>
+                handle_terms_view_click("partner_service_terms")
+              }
               className={commonStyles.terms_view_link}
               aria-label="서비스 이용 약관 보기"
             >
@@ -127,7 +132,7 @@ export default function PartnerTermsAgreement({
             </label>
             <button
               type="button"
-              onClick={() => handle_terms_view_click("개인정보 수집 및 이용")}
+              onClick={() => handle_terms_view_click("partner_privacy")}
               className={commonStyles.terms_view_link}
               aria-label="개인정보 수집 및 이용 약관 보기"
             >
@@ -153,7 +158,7 @@ export default function PartnerTermsAgreement({
             </label>
             <button
               type="button"
-              onClick={() => handle_terms_view_click("개인정보 제3자 제공")}
+              onClick={() => handle_terms_view_click("partner_third_party")}
               className={commonStyles.terms_view_link}
               aria-label="개인정보 제3자 제공 약관 보기"
             >
@@ -179,9 +184,7 @@ export default function PartnerTermsAgreement({
             </label>
             <button
               type="button"
-              onClick={() =>
-                handle_terms_view_click("광고 · 홍보 관련 준수 사항")
-              }
+              onClick={() => handle_terms_view_click("partner_advertising")}
               className={commonStyles.terms_view_link}
               aria-label="광고 · 홍보 관련 준수 사항 약관 보기"
             >
@@ -207,9 +210,7 @@ export default function PartnerTermsAgreement({
             </label>
             <button
               type="button"
-              onClick={() =>
-                handle_terms_view_click("마케팅 목적의 개인정보 수집 및 이용")
-              }
+              onClick={() => handle_terms_view_click("partner_marketing")}
               className={commonStyles.terms_view_link}
               aria-label="마케팅 목적의 개인정보 수집 및 이용 약관 보기"
             >
@@ -238,7 +239,7 @@ export default function PartnerTermsAgreement({
             <button
               type="button"
               onClick={() =>
-                handle_terms_view_click("제3자 정보 제공(마케팅/프로모션 목적)")
+                handle_terms_view_click("partner_third_party_marketing")
               }
               className={commonStyles.terms_view_link}
               aria-label="제3자 정보 제공(마케팅/프로모션 목적) 약관 보기"

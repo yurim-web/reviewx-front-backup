@@ -1,0 +1,175 @@
+/* ========================================
+   약관 보기 모달 (Figma: node 4781-18323)
+   ========================================
+   사용처: TermsViewModal.tsx
+   ======================================== */
+
+/* 래퍼 */
+.terms_modal_wrapper {
+  width: 800px;
+  max-width: calc(100% - 40px);
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* 모달 카드 */
+.terms_modal_card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+  flex: 1;
+  isolation: isolate;
+  box-sizing: border-box;
+}
+
+/* 헤더 */
+.terms_modal_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 40px 32px 24px 32px;
+  flex-shrink: 0;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.terms_modal_title {
+  flex: 1;
+  min-width: 0;
+  color: #444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.36px;
+  margin: 0;
+}
+
+.terms_modal_close_btn {
+  flex-shrink: 0;
+
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.terms_modal_close_btn:focus-visible {
+  outline: 2px solid #ff5694;
+  outline-offset: 2px;
+}
+
+/* 본문 */
+.terms_modal_body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0 32px 40px 32px;
+}
+
+.terms_modal_body_has_scroll {
+  padding-right: 16px;
+}
+
+.terms_modal_body_scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.terms_modal_body_scroll_has_scroll {
+  padding-right: 16px;
+}
+
+/* 스크롤바 */
+.terms_modal_body_scroll::-webkit-scrollbar {
+  width: 3px;
+}
+
+.terms_modal_body_scroll::-webkit-scrollbar-button {
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+.terms_modal_body_scroll::-webkit-scrollbar-button:start:decrement,
+.terms_modal_body_scroll::-webkit-scrollbar-button:end:increment,
+.terms_modal_body_scroll::-webkit-scrollbar-button:vertical:start:decrement,
+.terms_modal_body_scroll::-webkit-scrollbar-button:vertical:end:increment {
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+.terms_modal_body_scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.terms_modal_body_scroll::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 2px;
+}
+
+.terms_modal_body_scroll::-webkit-scrollbar-thumb:hover {
+  background: #b0b0b0;
+  cursor: pointer;
+}
+
+/* 본문 공통: 글자 통일 */
+.terms_modal_body_inner {
+  color: #444;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: -0.28px;
+}
+
+/* 제목 통일 (조항 제목, 섹션 제목 모두) */
+.terms_modal_heading {
+  font-weight: 600;
+  color: #444;
+  font-size: 14px;
+  line-height: 24px;
+  letter-spacing: -0.28px;
+}
+
+.terms_modal_heading:first-child {
+  margin-top: 0;
+}
+
+@media (max-width: 768px) {
+  .terms_modal_wrapper {
+    max-width: calc(100% - 32px);
+    max-height: 72vh;
+  }
+
+  .terms_modal_header {
+    padding: 32px 20px 20px;
+    gap: 12px;
+    /* align-items: flex-start; */
+  }
+  .terms_modal_title {
+    word-break: keep-all;
+  }
+
+  .terms_modal_body {
+    padding: 0px 20px 32px;
+  }
+
+  .terms_modal_body_has_scroll {
+    padding-right: 12px;
+  }
+
+  .terms_modal_body_scroll_has_scroll {
+    padding-right: 12px;
+  }
+}
