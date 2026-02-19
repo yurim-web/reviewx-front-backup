@@ -787,7 +787,9 @@ export default function PartnerPointChargePage() {
                         placeholder="- 제외 입력"
                         value={cashReceiptExpense.business_number}
                         onChange={(e) => {
-                          const formatted = formatBusinessNumber(e.target.value);
+                          const formatted = formatBusinessNumber(
+                            e.target.value,
+                          );
                           setCashReceiptExpense((prev) => ({
                             ...prev,
                             business_number: formatted,
@@ -805,14 +807,24 @@ export default function PartnerPointChargePage() {
                 >
                   <label className={styles.section_label}>입금 안내 사항</label>
                   <ul className={styles.notice_list}>
-                    <li>입금 확인 후 승인 처리되어야 이용 권한이 생깁니다.</li>
                     <li>
-                      신청 후 1일 이내 입금 확인이 안 될 경우 신청 내역이 삭제될
-                      수 있습니다.
+                      입금 확인 후 승인 처리되어야 포인트를 사용할 수 있습니다.
                     </li>
                     <li>
-                      신청 이후 계좌 정보 수정이 불가능하며, 잘못 입력된 정보로
-                      인해 발생하는 책임은 신청자 본인에게 있습니다.
+                      신청 후 24시간 이내 입금 확인이 안 될 경우 신청 내역이
+                      삭제됩니다.
+                    </li>
+                    <li>
+                      환불 계좌는 입금 금액이 다를 경우 환불 처리를 위해
+                      필요합니다.
+                    </li>
+                    <li>
+                      신청 이후 정보 수정이 불가능하며, 잘못 입력된 정보로 인해
+                      발생하는 책임은 신청자 본인에게 있습니다.
+                    </li>
+                    <li>
+                      입금자명이 다를 경우 확인이 불가능하며, 1:1 문의를 통해
+                      별도 확인이 필요합니다.
                     </li>
                   </ul>
                 </div>
