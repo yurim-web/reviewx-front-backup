@@ -1,0 +1,73 @@
+/* ========================================
+   인증번호 도움말 모달 (Figma 기획 반영)
+   ========================================
+   사용처: VerificationHelpModal.tsx
+   → PhoneVerification에서 "인증번호를 받지 못 하셨나요?" 클릭 시 노출
+   → 사용 페이지: 유저/파트너 회원가입, 계정 찾기, 유저/파트너 마이페이지 수정
+   ======================================== */
+
+/* 모달 제목 "인증번호를 받지 못 하셨나요?" */
+.verification_help_modal_title {
+  color: #444;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.36px;
+  padding-bottom: 24px;
+}
+
+/* 안내 문구 3줄 감싸는 ul */
+.verification_help_modal_list {
+  list-style: none;
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* 안내 문구 한 줄 (불릿 적용) */
+.verification_help_modal_list_item {
+  position: relative;
+  padding-left: 12px;
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: -0.28px;
+}
+
+/* 불릿 점 (원형) */
+.verification_help_modal_list_item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: #848484;
+}
+
+/* "다른 전화번호로 변경" 버튼 (연한 핑크 배경, 글자 #ff5694) */
+.verification_help_modal_button_secondary {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: rgba(255, 86, 148, 0.15);
+  color: #ff5694;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  cursor: pointer;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.verification_help_modal_button_secondary:hover {
+  background-color: rgba(255, 86, 148, 0.25);
+}

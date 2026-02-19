@@ -93,6 +93,7 @@ import verificationStyles from "@/styles/user/mypage/edit_profile/verification.m
 import FormField from "@/components/common/mypage/FormField";
 import InputWithButton from "@/components/common/mypage/InputWithButton";
 import ErrorText from "@/components/common/error_text/ErrorText";
+import VerificationHelpModal from "@/components/common/phone_verification/VerificationHelpModal";
 
 interface PhoneVerificationProps {
   phone: string;
@@ -184,6 +185,9 @@ export default function PhoneVerification({
   >(undefined);
   const [internalVerificationCodeError, setInternalVerificationCodeError] =
     useState<string | undefined>(undefined);
+  /** 인증번호 도움말 모달 ("인증번호를 받지 못 하셨나요?" 클릭 시) */
+  const [is_verification_help_modal_open, set_is_verification_help_modal_open] =
+    useState(false);
 
   /** 휴대폰 번호 입력 핸들러 - 자동 포맷팅 후 부모에 전달 */
   const handlePhoneInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -376,9 +380,9 @@ export default function PhoneVerification({
         {showVerificationCode &&
           isVerificationRequested &&
           !isPhoneVerified && (
-          <div
-            className={`${styles.verification_code_section} ${styles.verification_code_section_mypage}`}
-          >
+            <div
+              className={`${styles.verification_code_section} ${styles.verification_code_section_mypage}`}
+            >
               <div className={styles.verification_code_wrapper}>
                 <div className={styles.verification_code_input_wrapper}>
                   <input
@@ -410,12 +414,25 @@ export default function PhoneVerification({
                 <ErrorText message="인증번호 요청 횟수를 모두 사용했습니다. 24시간 후 다시 시도해 주세요." />
               )}
               {!verificationCodeErrorText && (
-                <div className={styles.verification_help_text}>
+                <button
+                  type="button"
+                  className={styles.verification_help_text}
+                  onClick={() => set_is_verification_help_modal_open(true)}
+                >
                   인증번호를 받지 못 하셨나요?
-                </div>
+                </button>
               )}
             </div>
           )}
+        <VerificationHelpModal
+          is_open={is_verification_help_modal_open}
+          on_close={() => set_is_verification_help_modal_open(false)}
+          on_resend={handleResendClick}
+          on_change_phone={() => {
+            onPhoneChange("");
+            set_is_verification_help_modal_open(false);
+          }}
+        />
       </div>
     );
   }
@@ -524,12 +541,25 @@ export default function PhoneVerification({
             </div>
           )}
           {!verificationCodeErrorText && (
-            <div className={styles.verification_help_text}>
+            <button
+              type="button"
+              className={styles.verification_help_text}
+              onClick={() => set_is_verification_help_modal_open(true)}
+            >
               인증번호를 받지 못 하셨나요?
-            </div>
+            </button>
           )}
         </div>
       )}
+      <VerificationHelpModal
+        is_open={is_verification_help_modal_open}
+        on_close={() => set_is_verification_help_modal_open(false)}
+        on_resend={handleResendClick}
+        on_change_phone={() => {
+          onPhoneChange("");
+          set_is_verification_help_modal_open(false);
+        }}
+      />
     </div>
   );
 }
