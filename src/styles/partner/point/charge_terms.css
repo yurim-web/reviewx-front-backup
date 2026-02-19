@@ -1,0 +1,95 @@
+/* ========================================
+   약관 동의 / 체크박스
+   ======================================== */
+
+.terms_section {
+  padding: 24px 40px 0 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.terms_row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.checkbox_row {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+  padding: 20px;
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.checkbox_row label {
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 22px;
+  letter-spacing: -0.32px;
+  color: #444;
+}
+
+.checkbox_container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkbox_row input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  appearance: none;
+  position: relative;
+}
+
+.checkbox_row input[type="checkbox"]:checked {
+  border-color: #444444;
+  background: #fff;
+}
+
+.checkbox_row input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #444444;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.checkbox_row_agree {
+  border: none;
+  background: #ff56940d;
+}
+
+.terms_button {
+  display: inline-flex;
+  padding: 4px 8px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  background: #ff5694;
+  border: none;
+  cursor: pointer;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+.notice_section {
+  padding-top: 20px;
+}

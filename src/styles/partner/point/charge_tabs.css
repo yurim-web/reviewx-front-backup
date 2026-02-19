@@ -1,0 +1,98 @@
+/* ========================================
+   결제 방식 탭 / 무통장 입금 섹션 / 폼 공통
+   ======================================== */
+
+.tab_section {
+  display: flex;
+  gap: 16px;
+  padding: 40px;
+}
+
+.tab_button {
+  flex: 1;
+  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+  padding: 20px;
+  cursor: pointer;
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.32px;
+}
+
+.tab_active {
+  border-color: #ff5694;
+  color: #ff5694;
+}
+
+.bank_section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 0 40px;
+}
+
+.section_label {
+  color: #444;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+.input_box {
+  width: 100%;
+  height: 56px;
+  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+  background-color: #ffffff;
+  padding: 0 20px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  color: #444444;
+  box-sizing: border-box;
+}
+
+.read_only_box {
+  width: 100%;
+  height: 56px;
+  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+  background-color: #f6f6f6;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  color: #999999;
+  font-size: 16px;
+}
+
+.form_section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.section_heading {
+  color: #444444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  padding: 0 40px 12px 40px;
+}
+
+.sub_section_heading {
+  color: #444444;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  padding: 24px 40px 12px 40px;
+}
+
+.bank_section {
+  gap: 40px;
+}
