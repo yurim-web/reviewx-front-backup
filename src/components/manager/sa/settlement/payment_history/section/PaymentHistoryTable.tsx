@@ -22,7 +22,8 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import CommonTableWithTooltip, {
   type TooltipConfig,
 } from "@/components/manager/common/table/CommonTableWithTooltip";
@@ -44,6 +45,8 @@ import MemberStatusTag from "@/components/manager/common/tags/MemberStatusTag";
 import type { MemberStatus } from "@/components/manager/common/tags/MemberStatusTag";
 import PaymentStatusTag from "@/components/manager/common/tags/PaymentStatusTag";
 import type { PaymentStatus } from "@/components/manager/common/tags/PaymentStatusTag";
+import ManagerReceiptLookupModal from "@/components/manager/sa/settlement/payment_history/modal/ManagerReceiptLookupModal";
+import ManagerRefundAccountModal from "@/components/manager/sa/settlement/payment_history/modal/ManagerRefundAccountModal";
 
 // PaymentHistoryItem을 TableRowData로 확장
 interface PaymentHistoryTableRowData extends TableRowData, PaymentHistoryItem {}
@@ -74,10 +77,18 @@ export default function PaymentHistoryTable({
   selected_member_types = [],
   selected_account_statuses = [],
 }: PaymentHistoryTableProps) {
-  // 선택된 항목 ID 배열 관리
-  // useState: React의 상태 관리 훅입니다. 컴포넌트의 상태를 관리하고 상태가 변경되면 컴포넌트를 다시 렌더링합니다.
-  // string[]: 문자열 배열 타입입니다. 선택된 항목의 ID들을 배열로 저장합니다.
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  /** 상호명 ... 메뉴 열린 행 ID (null이면 닫힘) */
+  const [openMenuRowId, setOpenMenuRowId] = useState<string | null>(null);
+  /** 드롭다운 위치 (Portal fixed용) */
+  const [dropdownRect, setDropdownRect] = useState<{ left: number; top: number } | null>(null);
+  /** 거래명세서 조회 모달에 넘길 행 */
+  const [receiptModalItem, setReceiptModalItem] = useState<PaymentHistoryItem | null>(null);
+  /** 환불 계좌 조회 모달에 넘길 행 */
+  const [refundAccountModalItem, setRefundAccountModalItem] = useState<PaymentHistoryItem | null>(null);
+  const menu_wrapper_ref = useRef<HTMLDivElement | null>(null);
+  /** 드롭다운 위치 갱신용: 메뉴가 열린 행의 트리거 버튼 */
+  const menu_trigger_button_ref = useRef<HTMLButtonElement | null>(null);
 
   // 결제 내역 데이터 상태
   // 초기값은 Mock 데이터(paymentHistoryList)를 사용하여 서버와 클라이언트의 초기 렌더링을 일치시킵니다.
@@ -98,6 +109,53 @@ export default function PaymentHistoryTable({
     const merged_list = getPaymentHistoryList();
     setPaymentHistory(merged_list);
   }, []);
+
+  /** 상호명 ... 메뉴 외부 클릭 시 닫기 */
+  useEffect(() => {
+    if (openMenuRowId === null) return;
+    const handle_click_outside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (menu_wrapper_ref.current?.contains(target)) return;
+      if (target.closest?.(`[data-dropdown-menu="payment-history-company-menu"]`)) return;
+      setOpenMenuRowId(null);
+      setDropdownRect(null);
+    };
+    document.addEventListener("mousedown", handle_click_outside);
+    return () => document.removeEventListener("mousedown", handle_click_outside);
+  }, [openMenuRowId]);
+
+  /** 스크롤/리사이즈 시 드롭다운 위치를 트리거 버튼에 맞춰 갱신 */
+  useEffect(() => {
+    if (openMenuRowId === null) return;
+    const trigger = menu_trigger_button_ref.current;
+    if (!trigger) return;
+
+    const update_position = () => {
+      const rect = trigger.getBoundingClientRect();
+      setDropdownRect({ left: rect.left, top: rect.bottom + 4 });
+    };
+
+    const scroll_parents: Element[] = [];
+    let el: Element | null = trigger.parentElement;
+    while (el) {
+      const { scrollHeight, clientHeight, scrollWidth, clientWidth } = el;
+      if (scrollHeight > clientHeight || scrollWidth > clientWidth) {
+        el.addEventListener("scroll", update_position, { passive: true });
+        scroll_parents.push(el);
+      }
+      el = el.parentElement;
+    }
+    window.addEventListener("scroll", update_position, { passive: true });
+    window.addEventListener("resize", update_position);
+
+    return () => {
+      window.removeEventListener("scroll", update_position);
+      window.removeEventListener("resize", update_position);
+      scroll_parents.forEach((parent) =>
+        parent.removeEventListener("scroll", update_position)
+      );
+    };
+  }, [openMenuRowId]);
 
   // 컬럼별 타입 설정 (정렬을 위한 컬럼 타입 정의)
   // numeric_string: 숫자처럼 보이는 문자열 (예: "1,500,000", "999999")
@@ -366,43 +424,44 @@ export default function PaymentHistoryTable({
     switch (column.key) {
       case "number":
         return row.number;
-      case "companyName":
-        // 상호명 열: 두 줄로 표시
-        // 첫 번째 줄: 상호명 + 다운로드 아이콘
-        // 두 번째 줄: 사업자등록번호 · 사업자명
-        // 학습 포인트:
-        // - flexbox 레이아웃: display: flex를 사용하여 요소들을 가로로 배치합니다
-        // - flex-direction: column: 요소들을 세로로 배치합니다
-        // - button: 클릭 가능한 버튼 요소입니다
-        // - img: 이미지 요소입니다
-        // - onClick 이벤트 핸들러: 버튼 클릭 시 실행할 함수를 지정합니다
-        // - stopPropagation(): 이벤트 버블링을 방지하여 부모 요소의 이벤트가 실행되지 않도록 합니다
-        // - aria-label: 접근성을 위한 레이블입니다
+      case "companyName": {
+        // 상호명 열: 상호명 + ... 아이콘 (클릭 시 드롭다운은 Portal로 body에 렌더)
+        const is_menu_open = openMenuRowId === row.id;
         return (
           <div className={styles.company_name_container}>
-            <div className={styles.company_name_row}>
+            <div
+              className={styles.company_name_menu_wrapper}
+              ref={(el) => {
+                if (is_menu_open) menu_wrapper_ref.current = el;
+              }}
+            >
               <span className={styles.cell_text}>{row.companyName}</span>
               <button
-                className={styles.download_button}
+                ref={(el) => {
+                  if (is_menu_open) menu_trigger_button_ref.current = el;
+                }}
+                type="button"
+                className={styles.menu_trigger_button}
                 onClick={(e) => {
                   e.stopPropagation();
-                  // TODO: 사업자 정보 다운로드 기능 구현
-                  // alert: 브라우저에서 제공하는 기본 알림 창을 띄우는 함수입니다
-                  alert("사업자 정보 다운로드 기능은 준비 중입니다.");
+                  const btn = e.currentTarget as HTMLButtonElement;
+                  const rect = btn.getBoundingClientRect();
+                  if (openMenuRowId === row.id) {
+                    setOpenMenuRowId(null);
+                    setDropdownRect(null);
+                  } else {
+                    setDropdownRect({ left: rect.left, top: rect.bottom + 4 });
+                    setOpenMenuRowId(row.id);
+                  }
                 }}
-                aria-label={`${row.companyName} 사업자 정보 다운로드`}
+                aria-label={`${row.companyName} 메뉴`}
+                aria-expanded={is_menu_open}
+                aria-haspopup="menu"
               >
                 <img
-                  // 구분(businessType)에 따라 다른 아이콘 표시
-                  // 삼항 연산자: 조건 ? 참일 때 값 : 거짓일 때 값
-                  // row.businessType이 "법인"이면 table_download.svg, "개인"이면 table_download_grey.svg 사용
-                  src={
-                    row.businessType === "법인"
-                      ? "/images/management_page/table/table_download.svg"
-                      : "/images/management_page/table/table_download_grey.svg"
-                  }
-                  alt="다운로드"
-                  className={styles.download_icon}
+                  src="/images/management_page/table/more_icon.svg"
+                  alt=""
+                  className={styles.menu_trigger_icon}
                 />
               </button>
             </div>
@@ -411,6 +470,7 @@ export default function PaymentHistoryTable({
             </span>
           </div>
         );
+      }
       case "depositorName":
         // 입금자명 열: 입금자명만 표시
         // depositorName은 문자열 타입입니다
@@ -510,19 +570,92 @@ export default function PaymentHistoryTable({
 
   const tooltip_config: TooltipConfig = { column_key: "all" };
 
+  /** 열린 메뉴의 행 데이터 (Portal 드롭다운용) */
+  const menu_row =
+    openMenuRowId != null
+      ? (sorted_payment_history_list.find((r) => r.id === openMenuRowId) as PaymentHistoryItem | undefined)
+      : null;
+
   return (
-    <CommonTableWithTooltip<PaymentHistoryTableRowData>
-      columns={columns}
-      data={sorted_payment_history_list as PaymentHistoryTableRowData[]}
-      tooltip_config={tooltip_config}
-      render_cell={render_cell}
-      styles={styles}
-      enable_checkbox={true}
-      selected_ids={selectedIds}
-      on_select_change={setSelectedIds}
-      on_select_all={handle_select_all}
-      render_header={render_table_header}
-      empty_message="결제 내역이 없습니다."
-    />
+    <>
+      <CommonTableWithTooltip<PaymentHistoryTableRowData>
+        columns={columns}
+        data={sorted_payment_history_list as PaymentHistoryTableRowData[]}
+        tooltip_config={tooltip_config}
+        render_cell={render_cell}
+        styles={styles}
+        enable_checkbox={true}
+        selected_ids={selectedIds}
+        on_select_change={setSelectedIds}
+        on_select_all={handle_select_all}
+        render_header={render_table_header}
+        empty_message="결제 내역이 없습니다."
+      />
+      {typeof document !== "undefined" &&
+        openMenuRowId != null &&
+        dropdownRect != null &&
+        menu_row != null &&
+        createPortal(
+          <div
+            data-dropdown-menu="payment-history-company-menu"
+            className={styles.company_name_dropdown_portal}
+            style={{
+              position: "fixed",
+              left: dropdownRect.left,
+              top: dropdownRect.top,
+              zIndex: 9999,
+            }}
+            role="menu"
+          >
+            <button
+              type="button"
+              className={styles.company_name_dropdown_item}
+              role="menuitem"
+              onClick={() => {
+                setOpenMenuRowId(null);
+                setDropdownRect(null);
+                alert("아직 구현 중입니다.");
+              }}
+            >
+              사업자등록증 다운로드
+            </button>
+            <button
+              type="button"
+              className={styles.company_name_dropdown_item}
+              role="menuitem"
+              onClick={() => {
+                setOpenMenuRowId(null);
+                setDropdownRect(null);
+                setReceiptModalItem(menu_row);
+              }}
+            >
+              거래명세서 조회
+            </button>
+            <button
+              type="button"
+              className={styles.company_name_dropdown_item}
+              role="menuitem"
+              onClick={() => {
+                setOpenMenuRowId(null);
+                setDropdownRect(null);
+                setRefundAccountModalItem(menu_row);
+              }}
+            >
+              환불 계좌 조회
+            </button>
+          </div>,
+          document.body
+        )}
+      <ManagerReceiptLookupModal
+        is_open={receiptModalItem !== null}
+        on_close={() => setReceiptModalItem(null)}
+        item={receiptModalItem}
+      />
+      <ManagerRefundAccountModal
+        is_open={refundAccountModalItem !== null}
+        on_close={() => setRefundAccountModalItem(null)}
+        item={refundAccountModalItem}
+      />
+    </>
   );
 }

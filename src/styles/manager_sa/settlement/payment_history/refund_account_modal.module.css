@@ -1,0 +1,110 @@
+/* 환불 계좌 조회 모달 - Figma 4483-22748 */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal_content {
+  background: #fff;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 100%;
+}
+
+.modal_header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 40px 0px 40px;
+}
+
+.modal_title {
+  color: #444;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 18px; /* 100% */
+  letter-spacing: -0.36px;
+}
+
+.modal_body {
+  padding: 32px 32px;
+}
+
+.info_block {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.info_row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.info_label {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+}
+
+.info_value {
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+  text-align: right;
+}
+
+.modal_actions {
+  display: flex;
+  gap: 12px;
+  padding: 0px 32px 40px;
+}
+
+.btn_close {
+  flex: 1;
+  height: 48px;
+  border-radius: 8px;
+  background: rgba(119, 119, 119, 0.1);
+  color: #444;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  cursor: pointer;
+}
+
+.btn_close:hover {
+  background: rgba(119, 119, 119, 0.2);
+}
+
+.btn_copy {
+  flex: 1;
+  height: 48px;
+  border-radius: 8px;
+  border: none;
+  background-color: #ff5694;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn_copy:hover {
+  background:
+    linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%),
+    #ff5694;
+}

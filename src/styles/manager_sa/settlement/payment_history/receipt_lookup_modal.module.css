@@ -1,0 +1,75 @@
+/* 거래명세서 조회 모달 - Figma 4490-23257 */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal_content {
+  background: #fff;
+  border-radius: 8px;
+  max-width: 520px;
+  max-height: 90vh;
+  width: 100%;
+  overflow-y: auto;
+}
+
+.modal_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 40px 40px 0px 40px;
+}
+
+.modal_title {
+  color: #444;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 20px; /* 100% */
+  letter-spacing: -0.4px;
+}
+
+.modal_body {
+  padding: 0px 40px 16px;
+}
+
+.info_block {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px 0px;
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.info_block:last-of-type {
+  border-bottom: none;
+}
+
+.info_row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.info_label {
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+.info_value {
+  color: #444;
+  text-align: right;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
