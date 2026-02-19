@@ -35,6 +35,7 @@ import {
   PartnerPointSummary,
 } from "@/types/domain/partner";
 import styles from "@/styles/user/point/point.module.css";
+import partnerPointStyles from "@/styles/partner/point/point_layout.module.css";
 
 /* ========================================
    📦 컴포넌트 Props 타입 정의
@@ -437,7 +438,9 @@ export default function PartnerPointPageLayout({
                 {/* 모바일 버전: 2줄 구조 (PC에서 숨김) */}
                 {/* 1번째 줄: 설명 (왼쪽) + 포인트 금액 + 잔액 (오른쪽, 세로 묶음) */}
                 <div className={styles.mobile_row_first}>
-                  <div className={styles.mobile_description}>
+                  <div
+                    className={`${styles.mobile_description} ${partnerPointStyles.partner_mobile_description}`}
+                  >
                     {history.type !== "returned" &&
                     history.status === "failed" &&
                     history.rejection_reason ? (
