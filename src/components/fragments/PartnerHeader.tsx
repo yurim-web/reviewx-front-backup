@@ -20,7 +20,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import styles from "@/styles/fragments/header.module.css";
 import { mockPartnerNotifications } from "@/data/notification/notificationData";
 import HeaderSearch from "@/components/fragments/HeaderSearch";
@@ -29,9 +28,8 @@ import { useEffect, useState } from "react";
 
 export default function PartnerHeader() {
   const { user } = useAuth();
-  const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
   const [notificationIconSrc, setNotificationIconSrc] = useState(
     "/images/header/notification_icon.svg"
   );
@@ -54,11 +52,14 @@ export default function PartnerHeader() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // 마운트 전(isMobile=null)에는 아이콘 영역을 숨김 처리
+  const iconVisibility = isMobile === null ? { visibility: "hidden" as const } : {};
+
   /**
    * 알림 아이콘: 비로그인 → 무조건 비활성(알림 X), 로그인 시 알림 1개 이상이면 활성
    */
   useEffect(() => {
-    if (!isMounted) return;
+    if (!isMounted || isMobile === null) return;
 
     if (!user) {
       setNotificationIconSrc(
@@ -86,44 +87,29 @@ export default function PartnerHeader() {
   }, [user, isMounted, isMobile]);
 
   // 로고 이미지 경로 (모바일/PC 구분)
-  const getLogoSrc = () => {
-    if (!isMounted) {
-      return "/images/header/vx_header_logo.svg";
-    }
-    return isMobile
-      ? "/images/header/mobile/mo_header_vx_logo.svg"
-      : "/images/header/vx_header_logo.svg";
-  };
+  const logoSrc = isMobile
+    ? "/images/header/mobile/mo_header_vx_logo.svg"
+    : "/images/header/vx_header_logo.svg";
 
   // 검색 아이콘 경로 (모바일/PC 구분)
-  const getSearchIconSrc = () => {
-    if (!isMounted) {
-      return "/images/header/header_search.svg";
-    }
-    return isMobile
-      ? "/images/header/mobile/mo_search.svg"
-      : "/images/header/header_search.svg";
-  };
+  const searchIconSrc = isMobile
+    ? "/images/header/mobile/mo_search.svg"
+    : "/images/header/header_search.svg";
 
   // 사용자 아이콘 경로 (모바일/PC 구분)
-  const getUserIconSrc = () => {
-    if (!isMounted) {
-      return "/images/header/header_user.svg";
-    }
-    return isMobile
-      ? "/images/header/mobile/mo_user.svg"
-      : "/images/header/header_user.svg";
-  };
+  const userIconSrc = isMobile
+    ? "/images/header/mobile/mo_user.svg"
+    : "/images/header/header_user.svg";
 
   return (
     <header>
       <nav className={styles.header_container}>
-        <Link href="/partner" className={styles.header_logo}>
-          <img src={getLogoSrc()} alt="VX 로고" />
+        <Link href="/partner" className={styles.header_logo} style={iconVisibility}>
+          <img src={logoSrc} alt="VX 로고" />
         </Link>
-        <div className={styles.menu_icon_box} suppressHydrationWarning>
+        <div className={styles.menu_icon_box} style={iconVisibility}>
           {/* 새로운 캠페인 등록: 로그인한 상태에서만 표시, PC에서는 버튼, 모바일에서는 아이콘 */}
-          {!isMounted ? null : user && (isMobile ? (
+          {user && (isMobile ? (
             <Link
               href="/partner/campaign/create"
               className={styles.notification_icon}
@@ -141,7 +127,7 @@ export default function PartnerHeader() {
           ))}
 
           {/* 검색창 - 파트너 전용 검색 결과 페이지로 이동 */}
-          <HeaderSearch searchIconSrc={getSearchIconSrc()} search_path="/partner/search" />
+          <HeaderSearch searchIconSrc={searchIconSrc} search_path="/partner/search" />
 
           {/* 알림페이지로 연결 */}
           <Link
@@ -149,11 +135,11 @@ export default function PartnerHeader() {
             className={styles.notification_icon}
             aria-label="알림"
           >
-            <img src={notificationIconSrc} alt="알림" suppressHydrationWarning />
+            <img src={notificationIconSrc} alt="알림" />
           </Link>
 
           {/* 가이드로 연결 - PC에서만 표시 */}
-          {!isMobile && (
+          {isMobile === false && (
             <a
               href="https://markx.dev/guide_book"
               target="_blank"
@@ -171,7 +157,7 @@ export default function PartnerHeader() {
             className={styles.user_icon}
             aria-label="마이페이지"
           >
-            <img src={getUserIconSrc()} alt="사용자" suppressHydrationWarning />
+            <img src={userIconSrc} alt="사용자" />
           </Link>
         </div>
       </nav>
