@@ -156,11 +156,11 @@
   flex-wrap: wrap;
 }
 
-/* 이미지 업로드 플레이스홀더 - + 버튼 */
+/* 이미지 업로드 플레이스홀더 - + 버튼 (새로 추가하는 칸, 테두리 없음) */
 .image_upload_placeholder {
   width: 120px;
   height: 120px;
-  border: 1px solid #d9d9d9;
+  border: none;
   border-radius: 8px;
   background: #f2f2f2;
   display: flex;
@@ -177,11 +177,12 @@
   object-fit: contain;
 }
 
-/* 이미지 미리보기 컨테이너 */
+/* 이미지 미리보기 컨테이너 (등록한 이미지에 테두리) */
 .image_preview_container {
   position: relative;
   width: 120px;
   height: 120px;
+  border: 1px solid #d9d9d9;
   border-radius: 8px;
   overflow: hidden;
 }
@@ -227,6 +228,10 @@
   display: flex;
   gap: 12px;
   align-items: center;
+}
+
+.postal_input_group .form_input {
+  flex: 1;
 }
 
 /* 포인트 입력 그룹 - 보유포인트 + P 단위 */
@@ -320,7 +325,7 @@
 @media (max-width: 768px) {
   /* 폼 컨테이너 */
   .campaign_form {
-    padding: 20px 20px 24px 20px;
+    padding: 20px 20px 40px 20px;
   }
 
   /* 텍스트영역 */
@@ -357,6 +362,7 @@
   .image_preview_container {
     width: 76px;
     height: 76px;
+    border: 1px solid #d9d9d9;
     border-radius: 6px;
   }
 
