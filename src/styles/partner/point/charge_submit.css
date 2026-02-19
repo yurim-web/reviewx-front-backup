@@ -1,0 +1,40 @@
+/* ========================================
+   충전 신청 버튼 영역
+   ======================================== */
+
+.submit_button_section {
+  padding: 40px 40px 0px 40px;
+}
+
+.submit_button_fixed {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 40px;
+  width: 100%;
+  max-width: 1000px;
+  padding: 0 40px;
+  box-sizing: border-box;
+  z-index: 20;
+}
+
+.submit_button {
+  width: 100%;
+  height: 56px;
+  background-color: #ff5694;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  color: #ffffff;
+}
+
+.submit_button.disabled,
+.submit_button:disabled {
+  background-color: #d9d9d9;
+  color: #848484;
+  cursor: default;
+}

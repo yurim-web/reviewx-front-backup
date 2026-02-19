@@ -1,0 +1,79 @@
+/* ========================================
+   입금계좌정보 / 안내 리스트
+   ======================================== */
+
+.account_notice_list {
+  margin-top: -4px;
+  color: #848484;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+  letter-spacing: -0.28px;
+  border-bottom: 1px solid #d9d9d9;
+  padding-bottom: 24px;
+}
+
+.account_info_row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.account_info_box {
+  padding: 20px;
+  border-radius: 8px;
+  background: #ff56940d;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.account_text {
+  color: #444444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+.mobile_br {
+  display: none;
+}
+
+.copy_button {
+  border-radius: 4px;
+  background: #ff5694;
+  padding: 4px 8px;
+  cursor: pointer;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+}
+
+.notice_list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: #848484;
+  padding-left: 10px;
+}
+
+.notice_list li {
+  color: #848484;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 25px;
+  letter-spacing: -0.26px;
+  padding-left: 13px;
+  position: relative;
+  word-break: keep-all;
+}
+
+.notice_list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #848484;
+}
