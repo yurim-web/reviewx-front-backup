@@ -78,8 +78,11 @@ export interface CampaignFormData {
   providedItems: string; // 제공 품목
   promotionLink?: string; // 프로모션 링크
   visitLink?: string; // 방문 링크 (방문형에만 필요)
-  visitAddress?: string; // 방문 주소 (방문형에만 필요)
-  addressDetail?: string; // 상세 주소 (방문형에만 필요)
+  visitAddress?: string; // 방문 주소 통합 문자열 (방문형, 제출 시 조합됨)
+  visitZipCode?: string; // 방문 주소 우편번호 (방문형)
+  visitBaseAddress?: string; // 방문 주소 기본 주소 (방문형)
+  visitDetailAddress?: string; // 방문 주소 상세 주소 (방문형)
+  addressDetail?: string; // 주소 상세 안내 (방문형에만 필요)
   currentPoints: string | number; // 현재 포인트
   purchasePoints?: string | number; // 구매 포인트 (구매평에만 필요)
   additionalPoints: string | number; // 추가 포인트

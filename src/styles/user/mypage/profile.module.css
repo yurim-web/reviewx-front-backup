@@ -84,6 +84,11 @@
   cursor: pointer;
 }
 
+/* 모바일 전용 광고주 전환 버튼 (PC에서는 숨김) */
+.partner_switch_button_mobile_only {
+  display: none;
+}
+
 /* 토글 버튼 래퍼 */
 .toggle_wrapper {
   position: absolute;
@@ -148,10 +153,34 @@
     overflow: visible;
   }
 
-
   /* 토글 버튼 래퍼 - 모바일에서 숨김 */
   .toggle_wrapper {
     display: none;
+  }
+
+  /* 모바일에서 광고주 전환 버튼 표시 (Figma: 핑크 배경, 흰색 글씨) */
+  .partner_switch_button_mobile_only {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 8px;
+    background: #ff56941a;
+    color: #ffffff;
+    color: #ff5694;
+    text-align: right;
+    font-family: Pretendard;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 14px; /* 100% */
+    letter-spacing: -0.28px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: fit-content;
+  }
+
+  .partner_switch_button_mobile_only:active {
+    opacity: 0.9;
   }
 
   /* 프로필 메뉴 리스트 */
@@ -178,6 +207,4 @@
     min-width: 0;
     max-width: 100%;
   }
-
 }
-
