@@ -29,8 +29,12 @@ import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 import PointTabNavigation from "@/components/common/point/PointTabNavigation";
 import TextareaModal from "@/components/common/modal/TextareaModal";
 import BaseModal from "@/components/common/modal/BaseModal";
+import PendingPointModal from "@/components/user/point/PendingPointModal";
 import { MainTab, PointTab, PointHistory } from "@/types/domain/user";
-import { pointHistoryData } from "@/data/user/point/pointData";
+import {
+  pointHistoryData,
+  pendingPointListData,
+} from "@/data/user/point/pointData";
 import { useAuth } from "@/hooks/useAuth";
 import styles from "@/styles/user/point/point.module.css";
 
@@ -117,6 +121,12 @@ export default function PointHistoryPage({
    */
   const [is_account_modal_open, setIsAccountModalOpen] = useState(false);
 
+  /** 적립 예정 포인트 확인 모달 (데스크톱) */
+  const [is_pending_modal_open, setIsPendingModalOpen] = useState(false);
+
+  /** 모바일 여부 (모바일에서는 적립 예정 포인트를 페이지로 이동) */
+  const [is_mobile, setIsMobile] = useState(false);
+
   /**
    * useState Hook - 선택된 반려 사유
    *
@@ -167,6 +177,17 @@ export default function PointHistoryPage({
    */
   const [userPointHistory, setUserPointHistory] = useState<PointHistory[]>([]);
 
+  /**
+   * useState Hook - 적립 예정 포인트 목록
+   *
+   * 설명:
+   * - 캠페인 참여 후 들어오기로 되어 있는 포인트(예정) 목록입니다.
+   * - user_accounts.pending_point_list가 있으면 사용, 없으면 기본 데이터 사용.
+   */
+  const [pendingPointList, setPendingPointList] = useState(
+    () => pendingPointListData,
+  );
+
   // ========================================
   // 🎯 useEffect - 포인트 정보 로드
   // ========================================
@@ -213,6 +234,12 @@ export default function PointHistoryPage({
 
             // 포인트 내역 로드 (없으면 빈 배열)
             setUserPointHistory(userAccount.point_history || []);
+
+            // 적립 예정 포인트 목록 (user_accounts에 있으면 사용, 없으면 기본 데이터 유지)
+            if (userAccount.pending_point_list?.length !== undefined) {
+              setPendingPointList(userAccount.pending_point_list);
+            }
+
             console.log("✅ [포인트 페이지] 포인트 정보 로드 완료");
           } else {
             console.warn("⚠️ [포인트 페이지] userAccount를 찾을 수 없습니다");
@@ -255,6 +282,14 @@ export default function PointHistoryPage({
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [user]);
+
+  /** 모바일 여부 감지 (적립 예정 포인트: 모바일 → 페이지 이동, 데스크톱 → 모달) */
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   // ========================================
   // 🎯 이벤트 핸들러 함수들
@@ -449,13 +484,27 @@ export default function PointHistoryPage({
               </div>
             </div>
 
-            {/* 출금 신청 버튼 */}
-            <button
-              className={styles.withdrawal_button}
-              onClick={handleWithdrawalClick}
-            >
-              출금 신청하기
-            </button>
+            {/* 버튼 영역: 적립 예정 포인트 확인 + 출금 신청하기 */}
+            <div className={styles.point_buttons}>
+              <button
+                className={styles.pending_point_button}
+                onClick={() => {
+                  if (is_mobile) {
+                    router.push("/user/point/pending");
+                  } else {
+                    setIsPendingModalOpen(true);
+                  }
+                }}
+              >
+                적립 예정 포인트 확인
+              </button>
+              <button
+                className={styles.withdrawal_button}
+                onClick={handleWithdrawalClick}
+              >
+                출금 신청하기
+              </button>
+            </div>
           </article>
 
           {/* 포인트 내역 리스트 섹션 */}
@@ -655,6 +704,13 @@ export default function PointHistoryPage({
           </article>
         </div>
       </main>
+
+      {/* 적립 예정 포인트 확인 모달 */}
+      <PendingPointModal
+        is_open={is_pending_modal_open}
+        on_close={() => setIsPendingModalOpen(false)}
+        pending_list={pendingPointList}
+      />
 
       {/* 반려 사유 모달 */}
       {/**

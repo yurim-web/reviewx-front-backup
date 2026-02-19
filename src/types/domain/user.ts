@@ -274,6 +274,20 @@ export interface PointHistory {
 }
 
 /**
+ * 적립 예정 포인트 항목 인터페이스
+ *
+ * 설명:
+ * - 캠페인 참여 후 검수 대기 등으로 아직 적립되지 않은 포인트 내역입니다.
+ * - "적립 예정 포인트 확인" 모달 목록에 사용됩니다.
+ */
+export interface PendingPointItem {
+  id: string;
+  description: string;
+  date: string; // 예정일 (YYYY-MM-DD)
+  amount: number;
+}
+
+/**
  * 포인트 요약 정보 인터페이스
  *
  * 설명:
