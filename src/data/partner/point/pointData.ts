@@ -142,6 +142,7 @@ export const partnerPointHistoryData: PartnerPointHistory[] = [
     date: "2025-09-10",
     status: "earned",
     balance: 275000,
+    payment_method: "bank", // 무통장입금 → 결제 정보 모달에서 현금 영수증 UI
   },
   {
     id: "5",
@@ -256,12 +257,13 @@ export function getPartnerPointHistory(userId?: string): PartnerPointHistory[] {
 /**
  * 포인트 충전 함수
  * @param addToHistory - true면 파트너 포인트 충전 내역 목록에 항목 추가, false면 잔액만 반영 (기본 true)
+ * @param payment_method - 'card' | 'bank' (무통장입금 시 'bank'). 결제 정보 모달에서 현금 영수증/카드 전표 구분용
  */
 export function addPointCharge(
   userId: string,
   amount: number,
   description: string = '포인트 충전',
-  options?: { addToHistory?: boolean }
+  options?: { addToHistory?: boolean; payment_method?: 'card' | 'bank' }
 ): void {
   if (typeof window === 'undefined' || !userId) return;
 
@@ -314,6 +316,7 @@ export function addPointCharge(
       date: new Date().toISOString().split('T')[0],
       status: 'earned',
       balance: newAvailablePoints,
+      ...(options?.payment_method && { payment_method: options.payment_method }),
     };
 
     storedHistory.unshift(newHistory); // 최신 내역을 맨 앞에 추가
