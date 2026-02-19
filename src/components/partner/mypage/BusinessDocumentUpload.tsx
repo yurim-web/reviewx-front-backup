@@ -35,6 +35,8 @@ interface BusinessDocumentUploadProps {
   isUploaded?: boolean;
   /** 파일 선택 핸들러 */
   onFileSelect: (file: File | null) => void;
+  /** 파일 선택 버튼 클릭 시 호출 (새로 등록 시 완료 배지 숨김용) */
+  onSelectClick?: () => void;
   /** 커스텀 스타일 모듈 (선택적, 기본값: edit_profile.module.css) */
   customStyles?: typeof styles;
 }
@@ -46,6 +48,7 @@ export default function BusinessDocumentUpload({
   fileName,
   isUploaded = false,
   onFileSelect,
+  onSelectClick,
   customStyles,
 }: BusinessDocumentUploadProps) {
   const [modalMessage, setModalMessage] = useState<string | null>(null);
@@ -75,6 +78,8 @@ export default function BusinessDocumentUpload({
    * 4. 모든 검증 통과 시 파일 선택
    */
   const handleBusinessDocumentSelect = () => {
+    // 새로 등록 시 상위에서 완료 배지 숨기기 (파일 선택 버튼 클릭 시점)
+    onSelectClick?.();
     // 숨겨진 파일 입력 요소를 동적으로 생성
     // 이렇게 하면 UI에 input 요소를 렌더링하지 않고도 파일 선택 기능을 사용할 수 있습니다.
     const input = document.createElement("input");
