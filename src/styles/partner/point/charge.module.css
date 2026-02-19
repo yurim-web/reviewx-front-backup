@@ -36,6 +36,14 @@
   gap: 20px;
 }
 
+/* ✅ 한 블록씩 묶는 영역 - 기본 정보 / 환불 정보 등 (무통장 입금 폼) */
+.content_block {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 20px;
+}
+
 /* ✅ 섹션 제목 - "입금 계좌 정보", "입금 확인", "사업자 정보" 등 (page.tsx 141, 160, 250번째 줄) */
 .content_title {
   color: #444444;
