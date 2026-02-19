@@ -28,7 +28,6 @@ import { getPartnerPointSummary } from "@/data/partner/point/pointData";
 // 분리된 CSS 모듈들 import
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
-import textareaStyles from "@/styles/partner/campaign_create/campaign_guide/textareas.module.css";
 import buttonStyles from "@/styles/partner/campaign_create/campaign_guide/submit_buttons.module.css";
 import styles from "@/styles/partner/campaign_create/campaign_create.module.css";
 
@@ -43,6 +42,7 @@ import { RecruitmentFieldsSection } from "./common/sections/RecruitmentFieldsSec
 import { SimpleGuideSection } from "./common/sections/SimpleGuideSection";
 import { ParticipationOptionsSection } from "./common/sections/ParticipationOptionsSection";
 import { ContactPhoneField } from "./common/fields/ContactPhoneField";
+import { GuidelinesTextarea } from "./common/fields/GuidelinesTextarea";
 import { FairTradeAgreement } from "./common/fields/FairTradeAgreement";
 import { FloatingActionButtons } from "./common/layout/FloatingActionButtons";
 import {
@@ -55,6 +55,7 @@ import {
 } from "./common/utils/formUtils";
 import BaseModal from "@/components/common/modal/BaseModal";
 import Toast from "@/components/common/toast/Toast";
+import { validatePhone } from "@/utils/validation";
 
 interface ReporterCampaignFormProps extends Omit<
   CampaignCreateFormBaseProps,
@@ -498,6 +499,7 @@ export default function ReporterCampaignForm({
       formData.registrationPeriod.trim() !== "" &&
       formData.keywords.trim() !== "" &&
       formData.guidelines.trim() !== "" &&
+      validatePhone((formData.contactPhone || "").trim()) && // 문의 담당자 휴대폰 번호 필수 (010-XXXX-XXXX 형식)
       formData.fairTradeAgreement === true && // 공정위 문구 동의 필수
       hasValidMissionSettings; // 기본 미션 설정 필수 입력 검증
 
@@ -1149,8 +1151,7 @@ export default function ReporterCampaignForm({
             <label className={infoStyles.form_label}>
               안내 사항<span className={infoStyles.required}>*</span>
             </label>
-            <textarea
-              className={textareaStyles.fixed_height_textarea}
+            <GuidelinesTextarea
               value={formData.guidelines}
               onChange={(e) => updateFormData("guidelines", e.target.value)}
               placeholder="캠페인 전체 안내 사항, 미션, 기타 참고 사항 등"
