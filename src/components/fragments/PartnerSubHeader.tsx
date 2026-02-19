@@ -64,24 +64,20 @@ export default function PartnerSubHeader() {
    */
   const { isAuthenticated, user } = useAuth();
 
-  // Hydration 에러 방지
-  const [isMounted, setIsMounted] = useState(false);
-  // 모바일 여부 감지
-  const [isMobile, setIsMobile] = useState(false);
+  // null: 마운트 전, true/false: 마운트 후
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
   useEffect(() => {
-    setIsMounted(true);
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
   }, []);
 
-  // 캠페인 콘텐츠 내역 페이지에서는 모바일에서 숨김 처리
+  // 캠페인 콘텐츠 내역 / 캠페인 신청 내역 페이지에서는 모바일에서 숨김 처리 (페이지 전용 헤더 사용)
   const isCampaignContentsPage = pathname?.includes('/partner/campaign_contents/');
-  const shouldHideOnMobile = isCampaignContentsPage && isMobile;
+  const isCampaignApplicationPage = pathname?.includes('/partner/campaign_application/');
+  const shouldHideOnMobile = (isCampaignContentsPage || isCampaignApplicationPage) && isMobile === true;
 
   /**
    * 알림 아이콘: 비로그인 시 무조건 비활성(알림 X), 로그인 시 알림 1개 이상이면 활성
@@ -89,50 +85,9 @@ export default function PartnerSubHeader() {
   const has_notifications =
     isAuthenticated && mockPartnerNotifications.length > 0;
 
-  // 알림 아이콘 경로 (비로그인 → 비활성, 로그인+알림 있음 → 활성)
-  const getNotificationIconSrc = () => {
-    if (!isMounted) {
-      return "/images/header/notification_icon.svg";
-    }
-    if (isMobile) {
-      return has_notifications
-        ? "/images/header/mobile/mo_notification_ok.svg"
-        : "/images/header/mobile/mo_notification_icon.svg";
-    }
-    return has_notifications
-      ? "/images/header/notification_ok.svg"
-      : "/images/header/notification_icon.svg";
-  };
+  // 마운트 전에는 아이콘 영역을 숨김 처리 (PC 아이콘이 잠깐 보이는 깜빡임 방지)
+  const iconVisibility = isMobile === null ? { visibility: "hidden" as const } : {};
 
-  // 검색 아이콘 경로 (모바일/PC 구분)
-  const getSearchIconSrc = () => {
-    if (!isMounted) {
-      return "/images/header/header_search.svg";
-    }
-    return isMobile
-      ? "/images/header/mobile/mo_search.svg"
-      : "/images/header/header_search.svg";
-  };
-
-  // 사용자 아이콘 경로 (모바일/PC 구분)
-  const getUserIconSrc = () => {
-    if (!isMounted) {
-      return "/images/header/header_user.svg";
-    }
-    return isMobile
-      ? "/images/header/mobile/mo_user.svg"
-      : "/images/header/header_user.svg";
-  };
-
-  // 로고 이미지 경로 (모바일/PC 구분)
-  const getLogoSrc = () => {
-    if (!isMounted) {
-      return "/images/header/vx_header_logo.svg";
-    }
-    return isMobile
-      ? "/images/header/mobile/mo_header_vx_logo.svg"
-      : "/images/header/vx_header_logo.svg";
-  };
 
   /**
    * 메인 헤더 숨기기 처리
@@ -190,10 +145,6 @@ export default function PartnerSubHeader() {
     <div className={`${styles.gradient_bar} ${shouldHideOnMobile ? styles.hide_on_mobile : ''}`}>
       <div className={styles.header_controls}>
         {/* 뒤로가기 버튼 */}
-        {/* 📌 버튼 이벤트 핸들러:
-            - onClick: 버튼 클릭 시 실행될 함수
-            - handleGoBack: 이전 페이지로 이동하는 함수
-        */}
         <button
           className={styles.back_button}
           onClick={handleGoBack}
@@ -202,9 +153,9 @@ export default function PartnerSubHeader() {
           <img src="/images/header/header_arrow_back.svg" alt="뒤로가기" />
         </button>
 
-        {/* 오른쪽 아이콘 그룹 */}
-        <div className={styles.right_icons}>
-          {/* 새 캠페인 등록: 로그인한 상태에서만 표시, PC에서는 버튼, 모바일에서는 아이콘 */}
+        {/* 오른쪽 아이콘 그룹 - 마운트 전 visibility:hidden으로 PC 아이콘 깜빡임 방지 */}
+        <div className={styles.right_icons} style={iconVisibility}>
+          {/* 새 캠페인 등록: PC에서는 버튼, 모바일에서는 아이콘 */}
           {user && (isMobile ? (
             <Link
               href="/partner/campaign/create"
@@ -214,35 +165,30 @@ export default function PartnerSubHeader() {
               <img src="/images/header/mobile/mo_partner_campaign.svg" alt="새 캠페인 등록" />
             </Link>
           ) : (
-            <Link
-              href="/partner/campaign/create"
-              className={styles.new_campaign_button}
-            >
+            <Link href="/partner/campaign/create" className={styles.new_campaign_button}>
               새 캠페인 등록
             </Link>
           ))}
 
           {/* 검색 아이콘 */}
-          {/* 📌 컴포넌트 재사용:
-              - HeaderSearch: 기존에 만들어진 검색 컴포넌트 재사용
-              - search_path prop: 검색 결과 페이지 경로 전달
-          */}
-          <HeaderSearch searchIconSrc={getSearchIconSrc()} search_path="/partner/search" />
+          <HeaderSearch
+            searchIconSrc={isMobile
+              ? "/images/header/mobile/mo_search.svg"
+              : "/images/header/header_search.svg"}
+            search_path="/partner/search"
+          />
 
           {/* 알림 아이콘 */}
-          <Link
-            href="/partner/notification"
-            className={styles.notification_icon}
-            aria-label="알림"
-          >
-            <img src={getNotificationIconSrc()} alt="알림" />
+          <Link href="/partner/notification" className={styles.notification_icon} aria-label="알림">
+            <img
+              src={isMobile
+                ? (has_notifications ? "/images/header/mobile/mo_notification_ok.svg" : "/images/header/mobile/mo_notification_icon.svg")
+                : (has_notifications ? "/images/header/notification_ok.svg" : "/images/header/notification_icon.svg")}
+              alt="알림"
+            />
           </Link>
 
           {/* 가이드북 아이콘 - PC에서만 표시 */}
-          {/* 📌 외부 링크:
-              - target="_blank": 새 탭에서 열기
-              - rel="noopener noreferrer": 보안을 위한 속성
-          */}
           {!isMobile && (
             <a
               href="https://markx.dev/guide_book"
@@ -255,13 +201,14 @@ export default function PartnerSubHeader() {
             </a>
           )}
 
-          {/* 사용자 아이콘 (마이페이지) */}
-          <Link
-            href="/partner/campaign_management"
-            className={styles.user_icon}
-            aria-label="마이페이지"
-          >
-            <img src={getUserIconSrc()} alt="사용자" />
+          {/* 사용자 아이콘 */}
+          <Link href="/partner/campaign_management" className={styles.user_icon} aria-label="마이페이지">
+            <img
+              src={isMobile
+                ? "/images/header/mobile/mo_user.svg"
+                : "/images/header/header_user.svg"}
+              alt="사용자"
+            />
           </Link>
         </div>
       </div>
