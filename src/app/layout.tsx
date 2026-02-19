@@ -36,6 +36,7 @@ import "../styles/globals.css";
 import ConditionalHeader from "@/components/fragments/ConditionalHeader";
 import Loading from "./loading";
 import ConsoleFilter from "@/components/dev/ConsoleFilter";
+import BuildIdLocalStorageClear from "@/components/dev/BuildIdLocalStorageClear";
 import { AuthProvider } from "@/contexts/AuthContext";
 
 // 전체 애플리케이션의 메타데이터 설정
@@ -85,6 +86,8 @@ export default function RootLayout({
         style={{ WebkitTextSizeAdjust: "100%" } as React.CSSProperties}
       >
         <AuthProvider>
+          {/* 새 빌드 시 localStorage 비우기 (빌드 시점 ID로 판별) */}
+          <BuildIdLocalStorageClear />
           {/* 공통 상단 헤더 (경로에 따라 파트너 헤더 또는 일반 헤더 표시) */}
           <ConditionalHeader />
           {/* 개발환경 콘솔 노이즈 필터 */}
