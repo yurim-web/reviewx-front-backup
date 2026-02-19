@@ -410,7 +410,7 @@
 @media (max-width: 768px) {
   /* 메인 컨텐츠 영역 */
   .main_content {
-    padding-bottom: 24px;
+    padding-bottom: 40px;
   }
 
   /* 컨테이너 */

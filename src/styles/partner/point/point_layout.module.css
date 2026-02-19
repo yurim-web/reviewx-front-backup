@@ -1,0 +1,17 @@
+/* ========================================
+   💰 파트너 포인트 페이지 전용 오버라이드
+   ======================================== */
+
+/**
+ * 유저 포인트와 동일한 point.module.css를 쓰기 때문에
+ * 파트너만 적용할 스타일만 여기서 오버라이드합니다.
+ *
+ * 사용: PartnerPointPageLayout.tsx
+ */
+
+@media screen and (max-width: 768px) {
+  /* 포인트 내역 설명(리뷰어 포인트 지급, 포인트 충전 등) 16px */
+  .partner_mobile_description {
+    font-size: 16px !important;
+  }
+}
