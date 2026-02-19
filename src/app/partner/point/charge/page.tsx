@@ -16,6 +16,7 @@ import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import Toast from "@/components/common/toast/Toast";
 import BaseModal from "@/components/common/modal/BaseModal";
+import PartnerChargeTermsModal from "@/components/partner/point/PartnerChargeTermsModal";
 import { parseFormattedAmount } from "@/utils/formatting/amount";
 import { validateAmount } from "@/utils/validation/amount";
 import styles from "@/styles/partner/point/charge.module.css";
@@ -23,6 +24,7 @@ import customDropdownStyles from "@/styles/partner/campaign_create/custom_dropdo
 import { useAuth } from "@/hooks/useAuth";
 import { getPartnerPointSummary } from "@/data/partner/point/pointData";
 import { addPaymentHistory } from "@/data/manager_sa/settlement/paymentHistoryData";
+import { REFUND_BANKS } from "./constants";
 
 /** 휴대폰 번호: 숫자만 11자리, 3-4-4 하이픈 자동 추가 */
 function formatPhone(value: string): string {
@@ -60,7 +62,14 @@ export default function PartnerPointChargePage() {
   const [isCardAmountOpen, setIsCardAmountOpen] = useState<boolean>(false);
   const [isInvoiceDropdownOpen, setIsInvoiceDropdownOpen] =
     useState<boolean>(false);
+  const [isRefundBankDropdownOpen, setIsRefundBankDropdownOpen] =
+    useState<boolean>(false);
   const [showCopyToast, setShowCopyToast] = useState<boolean>(false);
+
+  // 환불 정보 (무통장 입금 - Figma 4129-17244)
+  const [refundBank, setRefundBank] = useState<string>("");
+  const [refundAccountNumber, setRefundAccountNumber] = useState<string>("");
+  const [refundAccountHolder, setRefundAccountHolder] = useState<string>("");
 
   // 현금영수증 (소득공제) 정보
   const [cashReceiptIncome, setCashReceiptIncome] = useState({
@@ -89,10 +98,15 @@ export default function PartnerPointChargePage() {
     is_open: false,
   });
 
+  // 결제·환불 및 이용약관 보기 모달 상태
+  const [charge_terms_modal_open, set_charge_terms_modal_open] =
+    useState<boolean>(false);
+
   // 드롭다운 ref - 외부 클릭 감지용
   const bankDropdownRef = useRef<HTMLDivElement>(null);
   const cardDropdownRef = useRef<HTMLDivElement>(null);
   const invoiceDropdownRef = useRef<HTMLDivElement>(null);
+  const refundBankDropdownRef = useRef<HTMLDivElement>(null);
 
   // invoiceType을 결제 내역 타입으로 변환
   const getTaxInvoiceType = ():
@@ -158,11 +172,24 @@ export default function PartnerPointChargePage() {
     return validation.isValid;
   };
 
-  // 무통장 입금 버튼 활성화 조건: 금액 + 입금자명 + 약관 동의
+  // 무통장 입금 버튼 활성화 조건: 모든 필수 입력 채워져야 활성화
   const isBankButtonEnabled = () => {
     if (!isValidAmount()) return false;
-    if (!depositorName.trim()) return false; // 입금자명이 비어있으면 false
+    if (!depositorName.trim()) return false;
     if (!agreeTerms) return false;
+    // 환불 정보 필수
+    if (!refundBank.trim()) return false;
+    if (!refundAccountNumber.trim()) return false;
+    if (!refundAccountHolder.trim()) return false;
+    // 영수증/계산서 타입별 기본 정보 필수
+    if (invoiceType === "cash_income") {
+      if (!cashReceiptIncome.name.trim()) return false;
+      if (!cashReceiptIncome.phone.trim()) return false;
+    }
+    if (invoiceType === "cash_expense") {
+      if (!cashReceiptExpense.company_name.trim()) return false;
+      if (!cashReceiptExpense.business_number.trim()) return false;
+    }
     return true;
   };
 
@@ -339,6 +366,13 @@ export default function PartnerPointChargePage() {
         !invoiceDropdownRef.current.contains(target)
       ) {
         setIsInvoiceDropdownOpen(false);
+      }
+
+      if (
+        refundBankDropdownRef.current &&
+        !refundBankDropdownRef.current.contains(target)
+      ) {
+        setIsRefundBankDropdownOpen(false);
       }
     };
 
@@ -654,7 +688,12 @@ export default function PartnerPointChargePage() {
                       </label>
                     </div>
 
-                    <button type="button" className={styles.terms_button}>
+                    <button
+                      type="button"
+                      className={styles.terms_button}
+                      onClick={() => set_charge_terms_modal_open(true)}
+                      aria-label="결제·환불 및 이용약관 보기"
+                    >
                       약관 보기
                     </button>
                   </div>
@@ -694,9 +733,9 @@ export default function PartnerPointChargePage() {
                   </>
                 )}
 
-                {/* 현금영수증 (소득공제) 정보 입력 섹션 */}
+                {/* 현금영수증 (소득공제) 정보 입력 섹션 - 한 블록 */}
                 {invoiceType === "cash_income" && (
-                  <>
+                  <div className={styles.content_block}>
                     <h3 className={styles.content_title}>기본 정보</h3>
                     <div className={styles.form_section}>
                       <label
@@ -744,12 +783,12 @@ export default function PartnerPointChargePage() {
                         maxLength={13}
                       />
                     </div>
-                  </>
+                  </div>
                 )}
 
-                {/* 현금영수증 (지출증빙) 정보 입력 섹션 */}
+                {/* 현금영수증 (지출증빙) 정보 입력 섹션 - 한 블록 */}
                 {invoiceType === "cash_expense" && (
-                  <>
+                  <div className={styles.content_block}>
                     <h3 className={styles.content_title}>기본 정보</h3>
                     <div className={styles.form_section}>
                       <label
@@ -798,8 +837,114 @@ export default function PartnerPointChargePage() {
                         maxLength={12}
                       />
                     </div>
-                  </>
+                  </div>
                 )}
+
+                {/* 환불 정보 (Figma 4129-17244) - 한 블록 */}
+                <div className={styles.content_block}>
+                  <h3 className={styles.content_title}>환불 정보</h3>
+                  <div className={styles.form_section}>
+                    <label
+                      className={styles.section_label}
+                      htmlFor="refund_bank_select"
+                    >
+                      은행
+                    </label>
+                    <div
+                      className={customDropdownStyles.custom_dropdown}
+                      ref={refundBankDropdownRef}
+                    >
+                      <button
+                        id="refund_bank_select"
+                        type="button"
+                        className={customDropdownStyles.dropdown_button}
+                        aria-haspopup="listbox"
+                        aria-expanded={isRefundBankDropdownOpen}
+                        onClick={() =>
+                          setIsRefundBankDropdownOpen((o) => !o)
+                        }
+                      >
+                        <span
+                          className={customDropdownStyles.dropdown_text}
+                          data-placeholder="은행 선택"
+                        >
+                          {refundBank || ""}
+                        </span>
+                        <img
+                          src="/images/icons/dropdown_arrow.svg"
+                          alt=""
+                          className={`${customDropdownStyles.dropdown_arrow} ${
+                            isRefundBankDropdownOpen
+                              ? customDropdownStyles.rotated
+                              : ""
+                          }`}
+                        />
+                      </button>
+                      {isRefundBankDropdownOpen && (
+                        <div
+                          className={customDropdownStyles.dropdown_options}
+                          role="listbox"
+                          aria-label="환불 은행 선택"
+                        >
+                          {REFUND_BANKS.map((bank) => (
+                            <button
+                              key={bank}
+                              type="button"
+                              role="option"
+                              aria-selected={refundBank === bank}
+                              className={customDropdownStyles.dropdown_option}
+                              onClick={() => {
+                                setRefundBank(bank);
+                                setIsRefundBankDropdownOpen(false);
+                              }}
+                            >
+                              {bank}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className={styles.form_section}>
+                    <label
+                      className={styles.section_label}
+                      htmlFor="refund_account_number_input"
+                    >
+                      계좌번호
+                    </label>
+                    <input
+                      id="refund_account_number_input"
+                      type="text"
+                      inputMode="numeric"
+                      className={styles.input_box}
+                      placeholder="- 제외 입력"
+                      value={refundAccountNumber}
+                      onChange={(e) =>
+                        setRefundAccountNumber(
+                          e.target.value.replace(/\D/g, "").slice(0, 20),
+                        )
+                      }
+                    />
+                  </div>
+                  <div className={styles.form_section}>
+                    <label
+                      className={styles.section_label}
+                      htmlFor="refund_account_holder_input"
+                    >
+                      예금주
+                    </label>
+                    <input
+                      id="refund_account_holder_input"
+                      type="text"
+                      className={styles.input_box}
+                      placeholder="예금주 입력"
+                      value={refundAccountHolder}
+                      onChange={(e) =>
+                        setRefundAccountHolder(e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
 
                 {/* 입금 안내 사항 */}
                 <div
@@ -940,7 +1085,12 @@ export default function PartnerPointChargePage() {
                       </label>
                     </div>
 
-                    <button type="button" className={styles.terms_button}>
+                    <button
+                      type="button"
+                      className={styles.terms_button}
+                      onClick={() => set_charge_terms_modal_open(true)}
+                      aria-label="결제·환불 및 이용약관 보기"
+                    >
                       약관 보기
                     </button>
                   </div>
@@ -1002,6 +1152,12 @@ export default function PartnerPointChargePage() {
         on_close={handleBankDepositModalClose}
         message="입금 확인 요청이 등록되었습니다."
         buttons={["닫기"]}
+      />
+
+      {/* 결제·환불 및 이용약관 보기 모달 */}
+      <PartnerChargeTermsModal
+        is_open={charge_terms_modal_open}
+        on_close={() => set_charge_terms_modal_open(false)}
       />
     </div>
   );

@@ -1,0 +1,276 @@
+/* ========================================
+   결제 정보 하단 시트 모달 (파트너 포인트 내역)
+   Figma: node-id=4417-18179
+   ======================================== */
+
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal_content {
+  max-width: 1000px;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 40px 40px 0 0;
+  overflow-y: auto;
+  animation: payment_modal_slide_up 0.3s ease-out;
+  box-sizing: border-box;
+  max-height: 90vh;
+}
+
+@keyframes payment_modal_slide_up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.modal_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 40px 32px 0px 32px;
+  flex-shrink: 0;
+}
+
+.modal_title {
+  color: #444;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 20px; /* 100% */
+  letter-spacing: -0.4px;
+}
+
+.modal_close_btn {
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal_body {
+  padding: 0 32px 40px;
+}
+
+/* 섹션: 제목 + 행 목록 (Figma 4417-18179) */
+.info_section {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+}
+
+/* 블록 단위: 3개 박스 (거래/구매자 | 결제상세 | 회사정보), 블록 하단에만 구분선 */
+.info_block {
+  display: flex;
+  flex-direction: column;
+}
+
+.info_block_has_border {
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.info_section_rows {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px 0;
+}
+
+/* 각 행: 라벨(좌) + 값(우), 행에는 구분선 없음 */
+.info_row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.info_label {
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+.info_value {
+  color: #444;
+  text-align: right;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+.modal_actions {
+  display: flex;
+  gap: 12px;
+  justify-content: stretch;
+  padding-top: 16px;
+  width: 100%;
+}
+
+/* 거래명세서 다운로드: 흰 배경, 검정 글씨, 핑크 테두리 (호버 없음) */
+.btn_outline {
+  flex: 1;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #ff5694;
+  background: #ffffff;
+  color: #ff5694;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+  cursor: pointer;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 확인: 핑크 배경, 흰 글씨 (호버 없음) */
+.btn_primary {
+  flex: 1;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  background: #ff5694;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: -0.32px;
+  cursor: pointer;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ========================================
+   거래명세서 이미지 캡처용 (html2canvas)
+   화면에 안 보이게 렌더 후 캡처
+   ======================================== */
+.receipt_sheet_wrapper {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  width: 520px;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.receipt_sheet {
+  width: 100%;
+  background: #ffffff;
+  padding: 40px;
+  box-sizing: border-box;
+  font-family: "Pretendard", sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+}
+
+/* 제목 ~ 첫 행·행 사이·구분선 ~ 회사정보: 부모 gap 24px로 통일 */
+.receipt_sheet_title {
+  margin: 0;
+  color: #444;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: -0.4px;
+}
+
+.receipt_sheet_row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.receipt_sheet_label {
+  color: #848484;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+.receipt_sheet_value {
+  color: #444;
+  text-align: right;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
+}
+
+/* 거래명세서: 한 블록 = padding 상 24px / 하 50px, 내부 행 간격 24px(margin), 마지막 블록만 border 제외 */
+.receipt_sheet_block {
+  padding-top: 24px;
+  padding-bottom: 34px;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid #e5e5e5;
+  gap: 24px;
+}
+
+.receipt_sheet_block:last-of-type {
+  border-bottom: none;
+}
+
+/* 모바일: Figma 4912-37187(카드), 4912-37259(무통장) */
+@media (max-width: 768px) {
+  .modal_content {
+    max-height: 90vh;
+    border-radius: 24px 24px 0 0;
+  }
+
+  .modal_header {
+    padding: 32px 20px 0px 20px;
+  }
+
+  .modal_body {
+    padding: 0 20px 24px;
+  }
+
+  .info_section_rows {
+    padding: 20px 0;
+  }
+
+  .info_label,
+  .info_value {
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  .modal_actions {
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 4px;
+  }
+
+  .btn_outline,
+  .btn_primary {
+    width: 100%;
+    min-height: 48px;
+    padding: 16px 20px;
+    font-size: 16px;
+    justify-content: center;
+  }
+}
