@@ -317,7 +317,7 @@
   }
 
   .faq_question {
-    padding: 20px 8px;
+    padding: 20px 12px;
     max-width: 100%;
     box-sizing: border-box;
     gap: 12px;
@@ -331,11 +331,11 @@
 
   .question_text {
     overflow-wrap: break-word;
-    word-break: break-word;
+    word-break: keep-all;
   }
 
   .answer_content {
-    padding: 23px 8px;
+    padding: 20px 12px;
     max-width: 100%;
     box-sizing: border-box;
   }
