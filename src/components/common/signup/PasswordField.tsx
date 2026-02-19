@@ -100,9 +100,7 @@ export default function PasswordField({
   const renderErrorMessage = () => {
     if (!error || value.length === 0) return null;
     return (
-      <div className={styles.error_message}>
-        <span className={styles.error_text}>{error}</span>
-      </div>
+      <div className={styles.error_message}>{error}</div>
     );
   };
 

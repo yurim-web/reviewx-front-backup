@@ -147,9 +147,7 @@ export default function TermsAgreement({
       </div>
 
       {error && (
-        <div className={commonStyles.error_message}>
-          <span className={commonStyles.error_text}>{error}</span>
-        </div>
+        <div className={commonStyles.error_message}>{error}</div>
       )}
     </>
   );
