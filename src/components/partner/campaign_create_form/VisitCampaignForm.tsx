@@ -28,7 +28,6 @@ import { getPartnerPointSummary } from "@/data/partner/point/pointData";
 // 분리된 CSS 모듈들 import
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
-import textareaStyles from "@/styles/partner/campaign_create/campaign_guide/textareas.module.css";
 import buttonStyles from "@/styles/partner/campaign_create/campaign_guide/submit_buttons.module.css";
 import styles from "@/styles/partner/campaign_create/campaign_create.module.css";
 
@@ -48,6 +47,7 @@ import { RecruitmentFieldsSection } from "./common/sections/RecruitmentFieldsSec
 import { SimpleGuideSection } from "./common/sections/SimpleGuideSection";
 import { ParticipationOptionsSection } from "./common/sections/ParticipationOptionsSection";
 import { ContactPhoneField } from "./common/fields/ContactPhoneField";
+import { GuidelinesTextarea } from "./common/fields/GuidelinesTextarea";
 import { FairTradeAgreement } from "./common/fields/FairTradeAgreement";
 import { FloatingActionButtons } from "./common/layout/FloatingActionButtons";
 import {
@@ -60,6 +60,7 @@ import {
 } from "./common/utils/formUtils";
 import BaseModal from "@/components/common/modal/BaseModal";
 import Toast from "@/components/common/toast/Toast";
+import { validatePhone } from "@/utils/validation";
 
 interface VisitCampaignFormProps extends Omit<
   CampaignCreateFormBaseProps,
@@ -151,8 +152,8 @@ export default function VisitCampaignForm({
 
   const defaultBrandName = !initialData ? getDefaultBrandName() : "";
 
-  const [formData, setFormData] = useState<CampaignFormData>(
-    initialData || {
+  const [formData, setFormData] = useState<CampaignFormData>(() => {
+    const defaultState: CampaignFormData = {
       campaignType: "방문형",
       platform: "",
       title: "",
@@ -163,6 +164,9 @@ export default function VisitCampaignForm({
       providedItems: "",
       visitLink: "",
       visitAddress: "",
+      visitZipCode: "",
+      visitBaseAddress: "",
+      visitDetailAddress: "",
       addressDetail: "",
       currentPoints: "",
       additionalPoints: "",
@@ -184,8 +188,16 @@ export default function VisitCampaignForm({
       contactPhone: "",
       fairTradeAgreement: false,
       isUrgent: false,
-    },
-  );
+    };
+    if (!initialData) return defaultState;
+    return {
+      ...initialData,
+      visitZipCode: initialData.visitZipCode ?? "",
+      visitBaseAddress:
+        initialData.visitBaseAddress ?? initialData.visitAddress ?? "",
+      visitDetailAddress: initialData.visitDetailAddress ?? "",
+    };
+  });
 
   // 이미지 업로드 관련 state (썸네일/상세 이미지 분리)
   const [thumbnailImage, setThumbnailImage] = useState<File | null>(null);
@@ -508,13 +520,14 @@ export default function VisitCampaignForm({
       formData.region !== "" &&
       formData.subRegion !== "" &&
       formData.providedItems.trim() !== "" &&
-      (formData.visitAddress?.trim() ?? "") !== "" &&
+      (formData.visitBaseAddress?.trim() ?? "") !== "" &&
       formData.recruitmentCount !== "" &&
       formData.recruitmentPeriod.trim() !== "" &&
       formData.announcementDate.trim() !== "" &&
       formData.registrationPeriod.trim() !== "" &&
       formData.keywords.trim() !== "" &&
       formData.guidelines.trim() !== "" &&
+      validatePhone((formData.contactPhone || "").trim()) && // 문의 담당자 휴대폰 번호 필수 (010-XXXX-XXXX 형식)
       formData.fairTradeAgreement === true && // 공정위 문구 동의 필수
       hasValidMissionSettings; // 기본 미션 설정 필수 입력 검증
 
@@ -968,9 +981,19 @@ export default function VisitCampaignForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // 방문 주소: 기본 주소 + 상세 주소를 하나의 문자열로 조합 (API 호환)
+    const combinedVisitAddress = [
+      formData.visitBaseAddress?.trim(),
+      formData.visitDetailAddress?.trim(),
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .trim();
+
     // 업로드된 이미지 파일을 폼 데이터에 추가
     const formDataWithImages = {
       ...formData,
+      visitAddress: combinedVisitAddress,
       // 썸네일 이미지
       thumbnailImage: thumbnailImage || undefined,
       // 썸네일 미리보기 URL (Data URL) - 캠페인 카드 표시용
@@ -1174,10 +1197,13 @@ export default function VisitCampaignForm({
             <div className={infoStyles.postal_input_group}>
               <input
                 type="text"
+                id="visit_zip_code"
                 className={`${infoStyles.form_input} ${isEditMode && !isEditableField("visitAddress") ? infoStyles.read_only_input : ""}`}
-                value={formData.visitAddress}
-                onChange={(e) => updateFormData("visitAddress", e.target.value)}
-                placeholder="캠페인 방문 주소"
+                value={formData.visitZipCode ?? ""}
+                onChange={(e) =>
+                  updateFormData("visitZipCode", e.target.value)
+                }
+                placeholder="우편번호"
                 readOnly={isEditMode && !isEditableField("visitAddress")}
               />
               <button
@@ -1189,6 +1215,28 @@ export default function VisitCampaignForm({
                 우편번호 찾기
               </button>
             </div>
+            <input
+              type="text"
+              id="visit_base_address"
+              className={`${infoStyles.form_input} ${infoStyles.visit_address_row} ${isEditMode && !isEditableField("visitAddress") ? infoStyles.read_only_input : ""}`}
+              value={formData.visitBaseAddress ?? ""}
+              onChange={(e) =>
+                updateFormData("visitBaseAddress", e.target.value)
+              }
+              placeholder="기본 주소"
+              readOnly={isEditMode && !isEditableField("visitAddress")}
+            />
+            <input
+              type="text"
+              id="visit_detail_address"
+              className={`${infoStyles.form_input} ${infoStyles.visit_address_row} ${isEditMode && !isEditableField("visitAddress") ? infoStyles.read_only_input : ""}`}
+              value={formData.visitDetailAddress ?? ""}
+              onChange={(e) =>
+                updateFormData("visitDetailAddress", e.target.value)
+              }
+              placeholder="상세 주소"
+              readOnly={isEditMode && !isEditableField("visitAddress")}
+            />
           </article>
 
           {/* 주소 상세 안내 */}
@@ -1363,8 +1411,7 @@ export default function VisitCampaignForm({
             <label className={infoStyles.form_label}>
               안내 사항<span className={infoStyles.required}>*</span>
             </label>
-            <textarea
-              className={textareaStyles.fixed_height_textarea}
+            <GuidelinesTextarea
               value={formData.guidelines}
               onChange={(e) => updateFormData("guidelines", e.target.value)}
               placeholder="캠페인 전체 안내 사항, 미션, 기타 참고 사항 등"
