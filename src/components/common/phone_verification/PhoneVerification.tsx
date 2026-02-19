@@ -159,7 +159,6 @@ export default function PhoneVerification({
           verificationStyles.verification_code_section_mypage,
         // signup.module.css에서 가져온 클래스 (분리된 파일에 없는 것들)
         error_message: signupStyles.error_message,
-        error_text: signupStyles.error_text,
         form_field: signupStyles.form_field,
         phone_verification_wrapper: signupStyles.phone_verification_wrapper,
         phone_input_wrapper: signupStyles.phone_input_wrapper,
@@ -244,14 +243,10 @@ export default function PhoneVerification({
     }
   };
 
-  /** 에러 메시지 공통 렌더링 */
+  /** 에러 메시지 공통 렌더링 (헬프 메시지와 동일하게 div 단일 구조) */
   const renderErrorMessage = (errorMessage?: string) => {
     if (!errorMessage) return null;
-    return (
-      <div className={styles.error_message}>
-        <span className={styles.error_text}>{errorMessage}</span>
-      </div>
-    );
+    return <div className={styles.error_message}>{errorMessage}</div>;
   };
 
   /** 에러 메시지 매핑 함수 (공통)
@@ -485,17 +480,13 @@ export default function PhoneVerification({
       {/* 계정 없음 에러 메시지 (input 테두리 변경 없이 메시지만 표시) */}
       {/* 인증 완료 후에도 표시되어야 하므로 인증번호 입력 필드 밖에 위치 */}
       {accountNotFoundError && (
-        <div className={styles.error_message}>
-          <span className={styles.error_text}>{accountNotFoundError}</span>
-        </div>
+        <div className={styles.error_message}>{accountNotFoundError}</div>
       )}
 
       {/* 정지/탈퇴 계정 에러 메시지 (input 테두리 변경 없이 메시지만 표시) */}
       {/* 인증 완료 후에도 표시되어야 하므로 인증번호 입력 필드 밖에 위치 */}
       {blockedAccountError && (
-        <div className={styles.error_message}>
-          <span className={styles.error_text}>{blockedAccountError}</span>
-        </div>
+        <div className={styles.error_message}>{blockedAccountError}</div>
       )}
 
       {/* 인증번호 입력 필드 */}
@@ -528,10 +519,8 @@ export default function PhoneVerification({
           {/* 인증번호 5회 초과 에러 */}
           {error === "MAX_VERIFICATION_REQUEST_EXCEEDED" && (
             <div className={styles.error_message}>
-              <span className={styles.error_text}>
-                인증번호 요청 횟수를 모두 사용했습니다. 24시간 후 다시 시도해
-                주세요.
-              </span>
+              인증번호 요청 횟수를 모두 사용했습니다. 24시간 후 다시 시도해
+              주세요.
             </div>
           )}
           {!verificationCodeErrorText && (

@@ -40,9 +40,7 @@ export default function EmailInput({
         onChange={(e) => onChange(e.target.value)}
       />
       {error && (
-        <div className={signupStyles.error_message}>
-          <span className={signupStyles.error_text}>{error}</span>
-        </div>
+        <div className={signupStyles.error_message}>{error}</div>
       )}
     </div>
   );
