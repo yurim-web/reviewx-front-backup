@@ -226,6 +226,7 @@ td.rdp-day.rdp-day_selected.rdp-day_range_start .rdp-day_button,
   outline: none !important;
 }
 
+
 /* 종료일 스타일 - td 요소 포함, 모든 가능한 선택자 */
 td.rdp-day.rdp-day_range_end,
 td.rdp-day.rdp-day_selected.rdp-day_range_end,

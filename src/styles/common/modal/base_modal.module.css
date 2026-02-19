@@ -110,7 +110,7 @@
   border-radius: 8px;
   text-align: center;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 16px;
   letter-spacing: -0.32px;
   cursor: pointer;
@@ -137,11 +137,8 @@
 }
 
 .modal_footer_button_confirm_pink:hover {
-  background: linear-gradient(
-      0deg,
-      rgba(0, 0, 0, 0.1) 0%,
-      rgba(0, 0, 0, 0.1) 100%
-    ),
+  background:
+    linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%),
     #ff5694;
 }
 
@@ -152,11 +149,8 @@
 }
 
 .modal_footer_button_confirm_red:hover {
-  background: linear-gradient(
-      0deg,
-      rgba(0, 0, 0, 0.1) 0%,
-      rgba(0, 0, 0, 0.1) 100%
-    ),
+  background:
+    linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%),
     #ff2626;
 }
 
@@ -167,11 +161,8 @@
 }
 
 .modal_footer_button_confirm:hover {
-  background: linear-gradient(
-      0deg,
-      rgba(0, 0, 0, 0.1) 0%,
-      rgba(0, 0, 0, 0.1) 100%
-    ),
+  background:
+    linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%),
     #ff5694;
 }
 
@@ -210,6 +201,4 @@
     gap: 12px;
     padding-top: 20px;
   }
-
-
 }
