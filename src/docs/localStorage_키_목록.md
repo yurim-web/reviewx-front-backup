@@ -7,6 +7,17 @@
 
 ---
 
+## 🔧 0. 시스템/빌드 (자동 관리)
+
+| 키 | 데이터 타입 | 설명 | 사용 위치 |
+|---|---|---|---|
+| `reviewx_build_id` | string | 현재 빌드 시점 ID. 새 빌드 배포 시 이 값이 바뀌면 **전체 localStorage가 자동으로 비워집니다.** | `src/components/dev/BuildIdLocalStorageClear.tsx` |
+
+- `next build` 또는 `next dev` 실행 시마다 `next.config`의 `NEXT_PUBLIC_BUILD_ID`가 갱신됩니다.
+- 앱 로드 시 저장된 `reviewx_build_id`와 비교해 다르면 `localStorage.clear()` 후 현재 빌드 ID만 다시 저장합니다.
+
+---
+
 ## 🔐 1. 인증 관련 (Auth)
 
 | 키 | 데이터 타입 | 설명 | 사용 위치 |
