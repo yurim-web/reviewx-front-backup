@@ -69,11 +69,11 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     dayCount: "D-5",
     registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 모집 진행 중
-      applicationStart: "2026-01-22",
-      applicationEnd: "2026-02-08",
-      announcement: "2026-02-10",
-      registrationPeriod: "2026-02-12 ~ 2026-02-19",
+      // 예정 탭용 - 모집 시작을 넉넉히 미래로 (2026-06-01 ~)
+      applicationStart: "2026-06-01",
+      applicationEnd: "2026-06-30",
+      announcement: "2026-07-02",
+      registrationPeriod: "2026-07-05 ~ 2026-07-25",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "릴스",
