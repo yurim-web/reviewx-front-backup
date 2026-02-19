@@ -104,6 +104,11 @@
   flex: 1 1 0;
 }
 
+/* 상호명 셀: ... 메뉴 드롭다운이 보이도록 overflow 허용 */
+.table_cell_company_name {
+  overflow: visible;
+}
+
 .table_cell_charged_points {
   flex-direction: column;
   align-items: flex-start;
@@ -270,6 +275,86 @@
   min-width: 0;
   display: block;
   width: 100%;
+}
+
+/* 상호명 옆 ... 메뉴 (Figma 4415-17679) */
+.company_name_menu_wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+}
+
+.menu_trigger_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+
+  flex-shrink: 0;
+}
+
+.menu_trigger_icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.company_name_dropdown {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  margin-left: 4px;
+  min-width: 180px;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  overflow: hidden;
+}
+
+/* Portal로 body에 렌더되는 드롭다운 (테이블 overflow 밖에서도 보이도록) */
+.company_name_dropdown_portal {
+  min-width: 163px;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.08);
+}
+
+/* 옵션 아이템과 동일 스타일 */
+.company_name_dropdown_item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 12px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+
+  color: #444;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; /* 100% */
+  letter-spacing: -0.32px;
+  user-select: none;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.company_name_dropdown_item:hover {
+  background-color: #f9f9f9;
+  border-radius: 4px;
 }
 
 /* 발행 열: 툴팁 래퍼·컨테이너에 너비 제한 전달 → 말줄임표 적용 */
