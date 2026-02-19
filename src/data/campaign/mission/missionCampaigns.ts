@@ -72,11 +72,11 @@ export const missionCampaigns: MissionCampaignData[] = [
     dayCount: "D-5",
     registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 오픈 예정 - 모집 시작 전
-      applicationStart: "2026-02-08",
-      applicationEnd: "2026-02-22",
-      announcement: "2026-02-24",
-      registrationPeriod: "2026-02-26 ~ 2026-03-10",
+      // 예정 탭용 - 모집 시작을 넉넉히 미래로 (2026-06-01 ~)
+      applicationStart: "2026-06-01",
+      applicationEnd: "2026-06-30",
+      announcement: "2026-07-02",
+      registrationPeriod: "2026-07-05 ~ 2026-07-25",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#스킨케어체험 #뷰티미션형 #화장품체험 #올리브영 #솔직후기",

@@ -62,11 +62,11 @@ export const visitCampaigns: VisitCampaignData[] = [
     dayCount: "D-5",
     registeredAt: "2026-01-10T09:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 모집 진행 중
-      applicationStart: "2026-01-20",
-      applicationEnd: "2026-02-05",
-      announcement: "2026-02-07",
-      purchasePeriod: "2026-02-07 ~ 2026-02-14",
+      // 예정 탭용 - 모집 시작을 넉넉히 미래로 (2026-06-01 ~)
+      applicationStart: "2026-06-01",
+      applicationEnd: "2026-06-30",
+      announcement: "2026-07-02",
+      purchasePeriod: "2026-07-05 ~ 2026-07-25",
       partnerName: "내추럴푸드",
   },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
