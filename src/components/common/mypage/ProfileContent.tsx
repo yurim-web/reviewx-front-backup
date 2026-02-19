@@ -114,10 +114,36 @@ export default function ProfileContent({
             <div className={profileStyles.profile_nickname_container}>
               <div className={profileStyles.profile_nickname}>{nickname}</div>
             </div>
+
+            {/* 모바일 전용: 광고주 전환 버튼 (유저 마이페이지에서만) */}
+            {showMemberTypeToggle &&
+              onMemberTypeChange &&
+              editPath.startsWith("/user") && (
+                <button
+                  type="button"
+                  className={profileStyles.partner_switch_button_mobile_only}
+                  onClick={() => onMemberTypeChange("partner")}
+                  aria-label="광고주로 전환"
+                >
+                  광고주 전환
+                </button>
+              )}
+
+            {/* 모바일 전용: 리뷰어 전환 버튼 (파트너 마이페이지에서만) */}
+            {editPath.startsWith("/partner") && (
+              <button
+                type="button"
+                className={profileStyles.partner_switch_button_mobile_only}
+                onClick={() => router.push("/user/mypage/profile")}
+                aria-label="리뷰어로 전환"
+              >
+                리뷰어 전환
+              </button>
+            )}
           </div>
         </div>
 
-        {/* 회원 유형 토글 버튼 */}
+        {/* 회원 유형 토글 버튼 (PC 전용) */}
         {showMemberTypeToggle && onMemberTypeChange && (
           <div className={profileStyles.toggle_wrapper}>
             <MemberTypeToggle
