@@ -63,6 +63,8 @@ export default function UserSignupPage() {
 
   // 모바일 여부 감지
   const [isMobile, setIsMobile] = useState(false);
+  // 모바일에서 콘텐츠 스크롤 여부 (한 페이지 vs 스크롤 필요)
+  const [hasScroll, setHasScroll] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -72,6 +74,22 @@ export default function UserSignupPage() {
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
+  // 모바일에서만: 페이지 스크롤 여부 감지 (한 페이지 내 vs 스크롤 필요)
+  useEffect(() => {
+    if (!isMobile) return;
+    const check = () => {
+      setHasScroll(document.documentElement.scrollHeight > window.innerHeight);
+    };
+    check();
+    requestAnimationFrame(check);
+    window.addEventListener("resize", check);
+    window.addEventListener("scroll", check, { passive: true });
+    return () => {
+      window.removeEventListener("resize", check);
+      window.removeEventListener("scroll", check);
+    };
+  }, [isMobile]);
 
   // 폼 데이터
   const [email, setEmail] = useState<string>("");
@@ -283,7 +301,9 @@ export default function UserSignupPage() {
   // ========================================
 
   return (
-    <div className={styles.signup_page_container}>
+    <div
+      className={`${styles.signup_page_container} ${isMobile && hasScroll ? styles.has_scroll : ""}`.trim()}
+    >
       {/* ========================================
           서브 헤더 (PC 전용)
           ========================================
