@@ -115,7 +115,8 @@
   .signup_main {
     /* PageTitle 높이를 제외한 영역을 꽉 채우도록 min-height 조정 */
     min-height: calc(100vh - 64px);
-    padding: 32px 20px 40px;
+    /* 한 페이지일 때: 버튼(52px) + 하단 여백(24px) = 76px 확보 */
+    padding: 32px 20px 76px;
     max-width: 100%;
   }
 
@@ -124,8 +125,30 @@
     max-width: 100%;
   }
 
-  /* 모바일: 회원가입 버튼 폼 맨 밑에 위치 (margin-top: auto) */
+  /* 모바일 기본: 콘텐츠가 한 페이지 내 → 버튼 하단 고정, 하단 여백 24px */
   .submit_button {
+    position: fixed;
+    bottom: 24px;
+    left: 20px;
+    right: 20px;
+    width: auto;
+    margin-top: 0;
+    z-index: 10;
+    box-sizing: border-box;
+  }
+
+  /* 모바일 + 스크롤 있는 경우: 버튼은 콘텐츠 하단 배치, 버튼 아래 여백 40px */
+  .signup_page_container.has_scroll .signup_main {
+    padding-bottom: 40px;
+  }
+
+  .signup_page_container.has_scroll .submit_button {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    width: 100%;
     margin-top: 20px;
+    z-index: auto;
   }
 }
