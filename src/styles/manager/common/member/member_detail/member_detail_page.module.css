@@ -16,7 +16,6 @@
 .main_content {
   padding: 40px 40px 40px 40px;
   width: 100%;
-  max-width: 1920px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
