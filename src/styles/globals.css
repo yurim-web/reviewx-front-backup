@@ -32,7 +32,7 @@
 
 /* 버튼 전역 스타일 통일 */
 button {
-  font-weight: 600;
+  font-weight: 500;
 }
 
 button:disabled {
