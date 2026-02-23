@@ -84,10 +84,7 @@ export default function PendingPointModal({
       >
         {/* 헤더: 타이틀 + 닫기(X) 버튼 */}
         <div className={styles.modal_header}>
-          <h2
-            id="pending_point_modal_title"
-            className={styles.title}
-          >
+          <h2 id="pending_point_modal_title" className={styles.title}>
             적립 예정 포인트
           </h2>
           <button
@@ -114,24 +111,26 @@ export default function PendingPointModal({
             className={`${styles.list_wrapper_inner} ${has_scroll ? styles.list_wrapper_inner_has_scroll : ""}`.trim()}
           >
             {pending_list.length === 0 ? (
-            <p className={styles.empty_message}>적립 예정 포인트가 없습니다.</p>
-          ) : (
-            <ul className={styles.pending_list}>
-              {pending_list.map((item) => (
-                <li key={item.id} className={styles.pending_item}>
-                  <div className={styles.item_badge}>예정</div>
-                  <div className={styles.item_info}>
-                    <span className={styles.item_description}>
-                      {item.description}
-                    </span>
-                    <span className={styles.item_date}>{item.date}</span>
-                  </div>
-                  <div className={styles.item_amount}>
-                    + {item.amount.toLocaleString()} P
-                  </div>
-                </li>
-              ))}
-            </ul>
+              <p className={styles.empty_message}>
+                적립 예정 포인트가 없습니다.
+              </p>
+            ) : (
+              <ul className={styles.pending_list}>
+                {pending_list.map((item) => (
+                  <li key={item.id} className={styles.pending_item}>
+                    <div className={styles.item_badge}>예정</div>
+                    <div className={styles.item_info}>
+                      <span className={styles.item_description}>
+                        {item.description}
+                      </span>
+                      <span className={styles.item_date}>{item.date} 예정</span>
+                    </div>
+                    <div className={styles.item_amount}>
+                      + {item.amount.toLocaleString()} P
+                    </div>
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
         </div>
