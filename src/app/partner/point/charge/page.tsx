@@ -19,12 +19,24 @@ import BaseModal from "@/components/common/modal/BaseModal";
 import PartnerChargeTermsModal from "@/components/partner/point/PartnerChargeTermsModal";
 import { parseFormattedAmount } from "@/utils/formatting/amount";
 import { validateAmount } from "@/utils/validation/amount";
-import styles from "@/styles/partner/point/charge.module.css";
+import chargeBaseStyles from "@/styles/partner/point/charge_base.module.css";
+import chargeTabsStyles from "@/styles/partner/point/charge_tabs.module.css";
+import chargeAccountStyles from "@/styles/partner/point/charge_account.module.css";
+import chargeSubmitStyles from "@/styles/partner/point/charge_submit.module.css";
+import chargeTermsStyles from "@/styles/partner/point/charge_terms.module.css";
 import customDropdownStyles from "@/styles/partner/campaign_create/custom_dropdown.module.css";
 import { useAuth } from "@/hooks/useAuth";
 import { getPartnerPointSummary } from "@/data/partner/point/pointData";
 import { addPaymentHistory } from "@/data/manager_sa/settlement/paymentHistoryData";
 import { REFUND_BANKS } from "./constants";
+
+const styles = {
+  ...chargeBaseStyles,
+  ...chargeTabsStyles,
+  ...chargeAccountStyles,
+  ...chargeSubmitStyles,
+  ...chargeTermsStyles,
+};
 
 /** 휴대폰 번호: 숫자만 11자리, 3-4-4 하이픈 자동 추가 */
 function formatPhone(value: string): string {
@@ -748,7 +760,7 @@ export default function PartnerPointChargePage() {
                         id="cash_receipt_name_input"
                         type="text"
                         className={styles.input_box}
-                        placeholder="이름 입력"
+                        placeholder=""
                         value={cashReceiptIncome.name}
                         onChange={(e) =>
                           setCashReceiptIncome((prev) => ({
@@ -860,9 +872,7 @@ export default function PartnerPointChargePage() {
                         className={customDropdownStyles.dropdown_button}
                         aria-haspopup="listbox"
                         aria-expanded={isRefundBankDropdownOpen}
-                        onClick={() =>
-                          setIsRefundBankDropdownOpen((o) => !o)
-                        }
+                        onClick={() => setIsRefundBankDropdownOpen((o) => !o)}
                       >
                         <span
                           className={customDropdownStyles.dropdown_text}
@@ -939,9 +949,7 @@ export default function PartnerPointChargePage() {
                       className={styles.input_box}
                       placeholder="예금주 입력"
                       value={refundAccountHolder}
-                      onChange={(e) =>
-                        setRefundAccountHolder(e.target.value)
-                      }
+                      onChange={(e) => setRefundAccountHolder(e.target.value)}
                     />
                   </div>
                 </div>
