@@ -46,3 +46,19 @@
   letter-spacing: -0.36px;
   padding-bottom: 4px;
 }
+
+@media (max-width: 768px) {
+  .main_content {
+    padding-bottom: 40px;
+  }
+
+  .container {
+    padding-top: 60px;
+  }
+
+  .content_title {
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+}

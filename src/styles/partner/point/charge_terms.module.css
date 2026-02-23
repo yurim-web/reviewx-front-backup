@@ -93,3 +93,40 @@
 .notice_section {
   padding-top: 20px;
 }
+
+@media (max-width: 768px) {
+  .checkbox_row {
+    border-radius: 6px;
+    padding: 16px 16px;
+    gap: 12px;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+  }
+
+  .checkbox_container {
+    align-items: flex-start;
+    flex: 1;
+    min-width: 0;
+    gap: 12px;
+  }
+
+  .checkbox_row input[type="checkbox"] {
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .checkbox_row label {
+    flex: 1;
+    min-width: 0;
+    word-break: keep-all;
+  }
+
+  .terms_button {
+    padding: 4px 8px;
+    border-radius: 4px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+}

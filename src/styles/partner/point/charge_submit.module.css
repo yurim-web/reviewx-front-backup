@@ -38,3 +38,23 @@
   color: #848484;
   cursor: default;
 }
+
+@media (max-width: 768px) {
+  .submit_button_section {
+    padding: 0px 20px 0px 20px;
+  }
+
+  .submit_button_fixed {
+    bottom: 24px;
+    max-width: 768px;
+    padding: 0 20px;
+  }
+
+  .submit_button {
+    height: 52px;
+    border-radius: 6px;
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
+  }
+}
