@@ -1,7 +1,10 @@
 /* ========================================
    약관 보기 모달 (Figma: node 4781-18323)
    ========================================
-   사용처: TermsViewModal.tsx
+   사용처:
+   - AgreementTermsModalShell.tsx (공통 셸)
+   - TermsViewModal.tsx (리뷰어)
+   - PartnerTermsViewModal.tsx (파트너)
    ======================================== */
 
 /* 래퍼 */
@@ -144,6 +147,15 @@
 
 .terms_modal_heading:first-child {
   margin-top: 0;
+}
+
+/* 소제목 (취소 가능 기간, 환불 불가 사항 등 하위 섹션) */
+.terms_modal_sub_heading {
+  font-weight: 600;
+  color: #555;
+  font-size: 13px;
+  line-height: 22px;
+  letter-spacing: -0.26px;
 }
 
 @media (max-width: 768px) {
