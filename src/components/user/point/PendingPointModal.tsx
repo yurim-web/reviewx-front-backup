@@ -124,7 +124,7 @@ export default function PendingPointModal({
                     <span className={styles.item_description}>
                       {item.description}
                     </span>
-                    <span className={styles.item_date}>{item.date} 예정</span>
+                    <span className={styles.item_date}>{item.date}</span>
                   </div>
                   <div className={styles.item_amount}>
                     + {item.amount.toLocaleString()} P
