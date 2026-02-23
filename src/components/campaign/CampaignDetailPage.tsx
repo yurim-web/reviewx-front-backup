@@ -30,6 +30,7 @@ import BaseModal from "@/components/common/modal/BaseModal";
 import styles from "@/styles/user/campaign/campaign_detail.module.css";
 import { useCampaignDetailScroll } from "@/hooks/common/campaign/useCampaignDetailScroll";
 import { calculateDayCount } from "@/utils/campaignDayCount";
+import { useAuth } from "@/hooks/useAuth";
 
 // 캠페인 기본 타입
 interface BaseCampaign {
@@ -100,9 +101,13 @@ export default function CampaignDetailPage({
   guidelinesComponent,
   renderApplicationModal,
   isParticipated = false,
-  isLoggedIn = true,
+  isLoggedIn,
   isMinor = false,
 }: CampaignDetailPageProps) {
+  // 실제 로그인 상태 (prop이 없으면 AuthContext에서 가져옴)
+  const { isAuthenticated } = useAuth();
+  const resolvedIsLoggedIn = isLoggedIn ?? isAuthenticated;
+
   // 스크롤 이벨 고정 훅 사용
   const { isCampaignInfoFixed, campaignInfoLabelRef } =
     useCampaignDetailScroll();
@@ -338,7 +343,7 @@ export default function CampaignDetailPage({
         dayCount={campaignWithDayCount.dayCount}
         isUrgent={campaignWithDayCount.isUrgent}
         isParticipated={isParticipated}
-        isLoggedIn={isLoggedIn}
+        isLoggedIn={resolvedIsLoggedIn}
         onApply={handleApplyClick}
       />
 

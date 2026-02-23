@@ -202,12 +202,18 @@ export default function ApplicationModal({
               );
               if (userAccount) {
                 setUserName(userAccount.name || user.name || "");
-                if (userAccount.address && userAccount.postal_code) {
+                // address_details 우선(주소 수정 페이지에서 저장), 없으면 개별 필드
+                const addrSrc = userAccount.address_details;
+                if (addrSrc?.address) {
+                  const addressPart = addrSrc.detailAddress
+                    ? `${addrSrc.address} ${addrSrc.detailAddress}`.trim()
+                    : addrSrc.address;
+                  setUserAddress(addrSrc.postalCode ? `${addressPart} | ${addrSrc.postalCode}` : addressPart);
+                } else if (userAccount.address && userAccount.postal_code) {
                   const addressPart = userAccount.detail_address
                     ? `${userAccount.address} ${userAccount.detail_address}`.trim()
                     : userAccount.address;
-                  const postalCodePart = `${userAccount.postal_code}`;
-                  setUserAddress(`${addressPart} | ${postalCodePart}`);
+                  setUserAddress(`${addressPart} | ${userAccount.postal_code}`);
                 } else {
                   setUserAddress("");
                 }
@@ -282,13 +288,18 @@ export default function ApplicationModal({
                 // 이름 설정
                 setUserName(userAccount.name || user.name || "");
 
-                // 주소 설정
-                if (userAccount.address && userAccount.postal_code) {
+                // 주소 설정: address_details 우선(주소 수정 페이지에서 저장), 없으면 개별 필드
+                const addrSrc = userAccount.address_details;
+                if (addrSrc?.address) {
+                  const addressPart = addrSrc.detailAddress
+                    ? `${addrSrc.address} ${addrSrc.detailAddress}`.trim()
+                    : addrSrc.address;
+                  setUserAddress(addrSrc.postalCode ? `${addressPart} | ${addrSrc.postalCode}` : addressPart);
+                } else if (userAccount.address && userAccount.postal_code) {
                   const addressPart = userAccount.detail_address
                     ? `${userAccount.address} ${userAccount.detail_address}`.trim()
                     : userAccount.address;
-                  const postalCodePart = `${userAccount.postal_code}`;
-                  setUserAddress(`${addressPart} | ${postalCodePart}`);
+                  setUserAddress(`${addressPart} | ${userAccount.postal_code}`);
                 } else {
                   setUserAddress("");
                 }
