@@ -58,8 +58,10 @@ export default function PendingPointPage() {
       <div className={pointStyles.point_page}>
         <main className={pointStyles.main_content}>
           <div className={pointStyles.container}>
-            {/* 보유 포인트 (모바일 포인트 내역과 동일) */}
-            <article className={pointStyles.point_summary_section}>
+            {/* 보유 포인트 (모바일에서만 숨김) */}
+            <article
+              className={`${pointStyles.point_summary_section} ${pointStyles.point_summary_section_hide_on_mobile}`}
+            >
               <div className={pointStyles.point_summary_info}>
                 <span className={pointStyles.point_label}>보유 포인트</span>
                 <div className={pointStyles.point_amount}>
@@ -71,8 +73,10 @@ export default function PendingPointPage() {
               </div>
             </article>
 
-            {/* 적립 예정 목록 (모바일 포인트 내역과 동일 구조) */}
-            <article className={pointStyles.history_list}>
+            {/* 적립 예정 목록 (구분선 가로 풀 너비 - Figma 기획) */}
+            <article
+              className={`${pointStyles.history_list} ${pointStyles.history_list_full_bleed_lines}`}
+            >
               {pending_list.length === 0 ? (
                 <div className={pointStyles.empty_state}>
                   <p className={pointStyles.empty_message}>
