@@ -41,6 +41,8 @@ interface DateRangePickerModalProps {
   on_apply: (range: DateRange | undefined) => void;
   // 드롭다운 위치 정렬 (기본값: 'right')
   align?: "left" | "right";
+  // 날짜 순서 오류 시 호출되는 콜백
+  on_validation_error?: () => void;
 }
 
 /**
@@ -56,6 +58,7 @@ export default function DateRangePickerModal({
   selected_range,
   on_apply,
   align = "right",
+  on_validation_error,
 }: DateRangePickerModalProps) {
   // 드롭다운 내부에서 관리하는 임시 선택 상태
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
@@ -121,7 +124,11 @@ export default function DateRangePickerModal({
           - number_of_months: 기본값 2개월 (생략 가능)
           - show_outside_days: 기본값 true (생략 가능)
         */}
-        <RangeCalendar selected={temp_range} on_select={handle_date_select} />
+        <RangeCalendar
+          selected={temp_range}
+          on_select={handle_date_select}
+          on_validation_error={on_validation_error}
+        />
       </div>
     </div>
   );

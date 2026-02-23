@@ -33,6 +33,7 @@ import {
 } from "date-fns";
 import styles from "@/styles/manager_ga/dashboard/sections/date_filter_section.module.css";
 import DateRangePickerModal, { type DateRange } from "./DateRangePickerModal";
+import BaseModal from "@/components/common/modal/BaseModal";
 
 // 날짜 필터 타입 정의
 export type DateFilter = "today" | "week" | "month";
@@ -69,6 +70,9 @@ export default function DateFilterSection({
       to: endOfMonth(today),
     };
   });
+
+  // useState: 날짜 검증 오류 모달 상태
+  const [is_error_modal_open, setIsErrorModalOpen] = useState(false);
 
   // useRef: 날짜 선택기 버튼의 참조를 저장하는 React Hook
   // ref는 DOM 요소에 직접 접근할 수 있게 해줍니다
@@ -254,8 +258,18 @@ export default function DateFilterSection({
           on_close={() => setIsDateModalOpen(false)}
           selected_range={selected_date_range}
           on_apply={handle_date_range_apply}
+          on_validation_error={() => setIsErrorModalOpen(true)}
         />
       </div>
+
+      {/* 날짜 검증 오류 모달 */}
+      <BaseModal
+        is_open={is_error_modal_open}
+        on_close={() => setIsErrorModalOpen(false)}
+        message="시작일과 종료일을 확인해 주세요."
+        buttons={["확인"]}
+        type="center"
+      />
     </div>
   );
 }
