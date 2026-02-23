@@ -17,8 +17,18 @@
 .table_container {
   width: 100%;
   border-radius: 4px;
-  overflow: hidden;
+  overflow-x: auto;
   background-color: white;
+}
+
+/* 헤더·데이터 행이 같은 열 너비를 쓰도록 한 그리드로 통일 (subgrid) */
+.table_grid_wrapper {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: 0.5fr 0.9fr 2.5fr 0.8fr 1.5fr 1.5fr 1.3fr 1.3fr 1.3fr 1.3fr 1.2fr 1.2fr;
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 /* 테이블 헤더 래퍼 (헤더 + 이용 제한 버튼) */
@@ -27,15 +37,16 @@
   width: 100%;
 }
 
-/* 테이블 헤더 */
+/* 테이블 헤더 (그리드 래퍼와 열 너비 일치 - subgrid) */
 .table_header {
+  grid-column: 1 / -1;
   display: grid;
-  /* 파트너 목록 테이블 컬럼 정의 - 화면 가득 차게 fr 단위 사용 */
-  grid-template-columns: 0.5fr 0.9fr 2.5fr 0.8fr 1.5fr 1.5fr 1.3fr 1.3fr 1.3fr 1.3fr 1.2fr 1.2fr;
+  grid-template-columns: subgrid;
   background-color: #f5f5f5;
   padding: 0;
   align-items: center;
-  width: 100%;
+  min-width: 0;
+  border-radius: 4px;
 }
 
 /* 이용 제한 버튼 */
@@ -73,7 +84,7 @@
 .restriction_button_text {
   color: #444;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 16px;
   letter-spacing: -0.32px;
 }
@@ -94,20 +105,24 @@
   box-sizing: border-box;
 }
 
-/* 테이블 바디 */
+/* 테이블 바디 (그리드 래퍼와 열 너비 일치 - subgrid) */
 .table_body {
-  width: 100%;
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-auto-rows: auto;
+  min-width: 0;
 }
 
-/* 테이블 행 */
+/* 테이블 행 (그리드 래퍼 열 너비 상속 - subgrid) */
 .table_row {
+  grid-column: 1 / -1;
   display: grid;
-  /* 헤더와 동일한 컬럼 정의를 공유해 정렬 유지 - 화면 가득 차게 fr 단위 사용 */
-  grid-template-columns: 0.5fr 0.9fr 2.5fr 0.8fr 1.5fr 1.5fr 1.3fr 1.3fr 1.3fr 1.3fr 1.2fr 1.2fr;
+  grid-template-columns: subgrid;
   border-bottom: 1px solid #f2f2f2;
   align-items: center;
   min-height: 62px;
-  width: 100%;
+  min-width: 0;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }

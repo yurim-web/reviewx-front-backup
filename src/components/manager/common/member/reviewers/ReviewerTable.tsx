@@ -63,6 +63,7 @@ const ReviewerTable = forwardRef<ReviewerTableRef, ReviewerTableProps>(
         styles={
           styles as {
             table_container: string;
+            table_grid_wrapper: string;
             table_header_wrapper: string;
             table_header: string;
             table_body: string;

@@ -195,6 +195,7 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
     -webkit-overflow-scrolling: touch;
+    margin-bottom: 16px;
   }
 
   /* 하위 지역 컨테이너 스크롤바 숨기기 - 모바일 */

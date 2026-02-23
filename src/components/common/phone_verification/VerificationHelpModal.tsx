@@ -25,7 +25,7 @@ export interface VerificationHelpModalProps {
 }
 
 const HELP_ITEMS = [
-  "인증을 요청한 전화번호가 정확한지 확인해주세요.",
+  "인증을 요청한 전화번호가 정확한지 확인해 주세요.",
   "통신사에 따라 인증번호 발송이 늦어질 수 있습니다.",
   "인증번호를 재발송해도 계속 받지 못했다면 고객센터로 문의해 주세요.",
 ];
@@ -102,7 +102,9 @@ export default function VerificationHelpModal({
             </button>
             <button
               type="button"
-              className={helpModalStyles.verification_help_modal_button_secondary}
+              className={
+                helpModalStyles.verification_help_modal_button_secondary
+              }
               onClick={handle_change_phone}
             >
               다른 전화번호로 변경

@@ -30,6 +30,15 @@
   box-sizing: border-box;
 }
 
+/* 버튼 전역 스타일 통일 */
+button {
+  font-weight: 600;
+}
+
+button:disabled {
+  background-color: #e5e5e5;
+}
+
 /* 기본 여백 제거 */
 html,
 body {
@@ -38,11 +47,9 @@ body {
 }
 
 /* 스크롤바로 인한 레이아웃 시프트 방지 */
-/* scrollbar-gutter: stable - 스크롤바 공간을 예약하여 레이아웃 시프트 방지 */
-/* both-edges를 제거하여 관리자 페이지에서 양쪽 여백 문제 해결 */
-/* 스크롤바는 오른쪽에만 공간을 예약하여 자연스러운 레이아웃 유지 */
+/* 스크롤바가 있든 없든 항상 동일한 너비 유지 */
 html {
-  scrollbar-gutter: stable;
+  overflow-y: scroll; /* 항상 스크롤바 표시 */
 }
 
 body {
@@ -53,7 +60,7 @@ body {
     "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
     sans-serif;
   font-style: normal;
-  scrollbar-gutter: stable;
+  min-height: 100vh; /* body가 항상 최소 화면 높이를 가지도록 */
 }
 
 /* 모바일: 가로 스크롤 방지 (main_content의 overflow 제거로 sticky가 동작하도록 body에서 처리) */
@@ -219,7 +226,7 @@ td.rdp-day.rdp-day_selected.rdp-day_range_start .rdp-day_button,
   border: none !important;
   padding: 0 !important;
   margin: 0 !important;
-  font-weight: 500 !important;
+  font-weight: 600 !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -262,7 +269,7 @@ td.rdp-day.rdp-day_selected.rdp-day_range_end .rdp-day_button,
   border: none !important;
   padding: 0 !important;
   margin: 0 !important;
-  font-weight: 500 !important;
+  font-weight: 600 !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;

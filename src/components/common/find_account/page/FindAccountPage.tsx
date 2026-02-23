@@ -47,6 +47,7 @@ export default function FindAccountPage() {
         <section className={styles.form_section}>
           {activeTab === "password" && (
             <EmailInput
+              isManager={pathname === "/find-account"}
               value={findAccount.email}
               onChange={(value) => {
                 findAccount.setEmail(value);

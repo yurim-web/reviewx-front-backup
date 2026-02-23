@@ -14,7 +14,7 @@
   overflow: visible !important;
 }
 
-/* 툴팁 박스 - 셀 바로 아래에 표시, 한 줄로 표시(줄바꿈 없음) */
+/* 툴팁 박스 - 테이블 끝까지 넓게, 넘치면 최대 2줄만 (위쪽 행 가리지 않음) */
 .tooltip_box {
   position: absolute;
   border-radius: 4px;
@@ -23,16 +23,22 @@
   padding: 8px;
   box-sizing: border-box;
   z-index: 9999;
-  overflow: visible;
+  overflow: hidden;
   color: #ff5694;
   font-size: 14px;
   font-weight: 500;
-  line-height: 14px;
+  line-height: 20px;
   letter-spacing: -0.28px;
-  white-space: nowrap;
+  white-space: normal;
+  max-width: min(1000px, 95vw);
+  max-height: 56px;
   margin-top: 3px;
   opacity: 0;
   animation: manager_table_tooltip_fade_in 0.15s ease-out 0.05s forwards;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  word-break: break-all;
 }
 
 @keyframes manager_table_tooltip_fade_in {

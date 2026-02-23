@@ -14,9 +14,9 @@
  * - 툴팁으로 상세 정보 표시
  */
 
-'use client';
+"use client";
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -26,7 +26,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
   Legend,
-} from 'recharts';
+} from "recharts";
 import {
   eachDayOfInterval,
   format,
@@ -35,11 +35,11 @@ import {
   endOfWeek,
   isSameDay,
   parse,
-} from 'date-fns';
-import styles from '@/styles/manager_ga/dashboard/charts.module.css';
-import type { DateRange } from '../section/DateRangePickerModal';
-import { get_rejected_campaign_list } from '@/data/manager_ga/rejected';
-import { get_reported_campaign_list } from '@/data/manager_ga/reported';
+} from "date-fns";
+import styles from "@/styles/manager_ga/dashboard/charts.module.css";
+import type { DateRange } from "../section/DateRangePickerModal";
+import { get_rejected_campaign_list } from "@/data/manager_ga/rejected";
+import { get_reported_campaign_list } from "@/data/manager_ga/reported";
 
 // 차트 데이터 타입 정의
 interface ChartData {
@@ -52,32 +52,31 @@ interface RejectionReportChartProps {
   dateRange: DateRange;
 }
 
-// 커스텀 툴팁 컴포넌트
-// Tooltip 컴포넌트에서 호출되는 함수형 컴포넌트
-const CustomTooltip = ({ active, payload }: any) => {
-  // active: 툴팁이 활성화되어 있는지 여부
-  // payload: 차트 데이터 정보
-  if (active && payload && payload.length) {
-    // 값이 0일 경우 "0건"으로 명확하게 표기
-    const rejection_value = payload[0].value ?? 0;
-    const report_value = payload[1].value ?? 0;
-    
-    return (
+// 커스텀 툴팁 - 형태/크로스헤어 유지, 툴팁 등장만 캠페인 모집 차트처럼 애니메이션 없음(coordinate 배치)
+const CustomTooltip = ({ active, payload, coordinate }: any) => {
+  if (!active || !payload?.length || !coordinate) return null;
+
+  const rejection_value = payload[0].value ?? 0;
+  const report_value = payload[1]?.value ?? 0;
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: coordinate.x,
+        top: coordinate.y,
+        transform: "translate(-50%, -100%)",
+        marginTop: "-8px",
+        pointerEvents: "none",
+      }}
+    >
       <div className={styles.chart_tooltip}>
-        {/* 날짜 표시 */}
         <p className={styles.chart_tooltip_date}>{payload[0].payload.date}</p>
-        {/* 반려 건수 표시 - 0일 경우 "0건"으로 명확하게 표기 */}
-        <p className={styles.chart_tooltip_item}>
-          반려 {rejection_value}건
-        </p>
-        {/* 신고 건수 표시 - 0일 경우 "0건"으로 명확하게 표기 */}
-        <p className={styles.chart_tooltip_item_last}>
-          신고 {report_value}건
-        </p>
+        <p className={styles.chart_tooltip_item}>반려 {rejection_value}건</p>
+        <p className={styles.chart_tooltip_item_last}>신고 {report_value}건</p>
       </div>
-    );
-  }
-  return null;
+    </div>
+  );
 };
 
 export default function RejectionReportChart({
@@ -120,20 +119,20 @@ export default function RejectionReportChart({
     const ticks: string[] = [];
     if (all_dates.length > 0) {
       // 시작일
-      ticks.push(format(all_dates[0], 'M/d'));
+      ticks.push(format(all_dates[0], "M/d"));
 
       // 중간일 (날짜 범위의 정중앙)
       if (all_dates.length > 2) {
         const middle_index = Math.floor(all_dates.length / 2);
-        ticks.push(format(all_dates[middle_index], 'M/d'));
+        ticks.push(format(all_dates[middle_index], "M/d"));
       } else if (all_dates.length === 2) {
         // 날짜가 2개일 경우 중간일은 시작일과 동일하게 처리
-        ticks.push(format(all_dates[0], 'M/d'));
+        ticks.push(format(all_dates[0], "M/d"));
       }
 
       // 종료일
       if (all_dates.length > 1) {
-        const last_date = format(all_dates[all_dates.length - 1], 'M/d');
+        const last_date = format(all_dates[all_dates.length - 1], "M/d");
         // 중복 제거
         if (!ticks.includes(last_date)) {
           ticks.push(last_date);
@@ -182,31 +181,41 @@ export default function RejectionReportChart({
         const reported_list = get_reported_campaign_list();
 
         // 날짜별로 반려/신고 건수 집계
-        const data_map = new Map<string, { rejection: number; report: number }>();
+        const data_map = new Map<
+          string,
+          { rejection: number; report: number }
+        >();
 
         // 모든 날짜를 초기화 (0으로 시작)
         all_dates.forEach((date) => {
-          const date_key = format(date, 'M/d');
+          const date_key = format(date, "M/d");
           data_map.set(date_key, { rejection: 0, report: 0 });
         });
 
         // 반려 내역 집계
         rejected_list.forEach((item) => {
           // processed_date 형식: "2026-02-01 14:23"
-          const processed_date_str = item.processed_date.split(' ')[0]; // 날짜 부분만 추출
-          const processed_date = parse(processed_date_str, 'yyyy-MM-dd', new Date());
+          const processed_date_str = item.processed_date.split(" ")[0]; // 날짜 부분만 추출
+          const processed_date = parse(
+            processed_date_str,
+            "yyyy-MM-dd",
+            new Date(),
+          );
           // 시간 부분 제거하여 날짜만 비교
           processed_date.setHours(0, 0, 0, 0);
-          
+
           // 날짜 범위 내에 있는지 확인 (시간 부분 제거)
           const start_date = new Date(chart_start_date);
           start_date.setHours(0, 0, 0, 0);
           const end_date = new Date(chart_end_date);
           end_date.setHours(23, 59, 59, 999);
-          
+
           if (processed_date >= start_date && processed_date <= end_date) {
-            const date_key = format(processed_date, 'M/d');
-            const current = data_map.get(date_key) || { rejection: 0, report: 0 };
+            const date_key = format(processed_date, "M/d");
+            const current = data_map.get(date_key) || {
+              rejection: 0,
+              report: 0,
+            };
             data_map.set(date_key, {
               ...current,
               rejection: current.rejection + (item.reject_count || 1),
@@ -218,20 +227,27 @@ export default function RejectionReportChart({
         // 신고내역 테이블에서는 항목 개수를 세는 방식이므로, report_count가 아닌 항목 개수로 집계
         reported_list.forEach((item) => {
           // processed_date 형식: "2026-02-01 18:56"
-          const processed_date_str = item.processed_date.split(' ')[0]; // 날짜 부분만 추출
-          const processed_date = parse(processed_date_str, 'yyyy-MM-dd', new Date());
+          const processed_date_str = item.processed_date.split(" ")[0]; // 날짜 부분만 추출
+          const processed_date = parse(
+            processed_date_str,
+            "yyyy-MM-dd",
+            new Date(),
+          );
           // 시간 부분 제거하여 날짜만 비교
           processed_date.setHours(0, 0, 0, 0);
-          
+
           // 날짜 범위 내에 있는지 확인 (시간 부분 제거)
           const start_date = new Date(chart_start_date);
           start_date.setHours(0, 0, 0, 0);
           const end_date = new Date(chart_end_date);
           end_date.setHours(23, 59, 59, 999);
-          
+
           if (processed_date >= start_date && processed_date <= end_date) {
-            const date_key = format(processed_date, 'M/d');
-            const current = data_map.get(date_key) || { rejection: 0, report: 0 };
+            const date_key = format(processed_date, "M/d");
+            const current = data_map.get(date_key) || {
+              rejection: 0,
+              report: 0,
+            };
             // 신고내역은 항목 개수로 집계 (테이블과 동일하게)
             data_map.set(date_key, {
               ...current,
@@ -242,7 +258,7 @@ export default function RejectionReportChart({
 
         // Map을 배열로 변환하고 날짜 순으로 정렬
         const data: ChartData[] = all_dates.map((date) => {
-          const date_key = format(date, 'M/d');
+          const date_key = format(date, "M/d");
           const counts = data_map.get(date_key) || { rejection: 0, report: 0 };
           return {
             date: date_key,
@@ -260,14 +276,14 @@ export default function RejectionReportChart({
 
         // 데이터가 없을 경우 에러 메시지 설정
         if (!data || data.length === 0) {
-          setErrorMessage('데이터를 불러오지 못 했습니다.');
+          setErrorMessage("데이터를 불러오지 못 했습니다.");
           setChartData([]);
         } else {
           setChartData(data);
         }
       } catch (error) {
-        console.error('반려/신고 통계 데이터 로딩 실패:', error);
-        setErrorMessage('데이터를 불러오지 못 했습니다.');
+        console.error("반려/신고 통계 데이터 로딩 실패:", error);
+        setErrorMessage("데이터를 불러오지 못 했습니다.");
         setChartData([]);
       } finally {
         setIsLoading(false);
@@ -285,11 +301,11 @@ export default function RejectionReportChart({
         tabIndex={-1}
         onFocus={(e) => e.target.blur()}
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: '#999999',
-          fontSize: '14px',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#999999",
+          fontSize: "14px",
         }}
       >
         데이터를 불러오지 못 했습니다.
@@ -305,11 +321,11 @@ export default function RejectionReportChart({
         tabIndex={-1}
         onFocus={(e) => e.target.blur()}
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: '#999999',
-          fontSize: '14px',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#999999",
+          fontSize: "14px",
         }}
       >
         로딩 중...
@@ -335,7 +351,7 @@ export default function RejectionReportChart({
           <XAxis
             dataKey="date"
             scale="point"
-            tick={{ fontSize: 12, fill: '#999999', dy: 10 }}
+            tick={{ fontSize: 12, fill: "#999999", dy: 10 }}
             tickLine={false}
             axisLine={false}
             ticks={x_axis_ticks}
@@ -353,15 +369,18 @@ export default function RejectionReportChart({
           />
 
           {/* 범례 숨김 - 섹션 컴포넌트에서 커스텀 범례로 표시 */}
-          <Legend wrapperStyle={{ display: 'none' }} />
+          <Legend wrapperStyle={{ display: "none" }} />
 
-          {/* 툴팁 */}
+          {/* 툴팁 - 등장만 캠페인 모집 차트와 동일(애니메이션 없음), 형태/크로스헤어 유지 */}
           <Tooltip
             content={<CustomTooltip />}
+            shared={true}
+            filterNull={true}
+            allowEscapeViewBox={{ x: true, y: true }}
             cursor={{
-              stroke: '#d9d9d9',
+              stroke: "#d9d9d9",
               strokeWidth: 1,
-              strokeDasharray: '8 8',
+              strokeDasharray: "8 8",
             }}
           />
 
@@ -375,8 +394,8 @@ export default function RejectionReportChart({
             dot={false}
             activeDot={{
               r: 4,
-              fill: '#ffffff',
-              stroke: '#FF6600',
+              fill: "#ffffff",
+              stroke: "#FF6600",
               strokeWidth: 2,
             }}
             isAnimationActive={false}
@@ -392,8 +411,8 @@ export default function RejectionReportChart({
             dot={false}
             activeDot={{
               r: 4,
-              fill: '#ffffff',
-              stroke: '#FF2626',
+              fill: "#ffffff",
+              stroke: "#FF2626",
               strokeWidth: 2,
             }}
             isAnimationActive={false}

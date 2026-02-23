@@ -96,10 +96,10 @@
 }
 
 /* 메인 콘텐츠 영역 */
-/* 메인 콘텐츠 컨테이너 (하단 패딩: 고정 등록 버튼 높이+여유 간격 확보) */
+/* 메인 콘텐츠 컨테이너 */
 .main_content {
   margin-left: 240px;
-  padding: 80px 40px 140px 40px; /* bottom 140px = 버튼(56px)+bottom(40px)+간격(44px) */
+  padding: 80px 40px 40px 40px;
   box-sizing: border-box;
 }
 
@@ -418,11 +418,9 @@
 }
 
 /* 버튼 영역 */
-/* 저장 버튼 */
+/* 저장 버튼 (에디터 밑에 붙이기, 상하 여백 40px) */
 .save_button {
-  position: fixed;
-  bottom: 40px;
-  left: 280px; /* 사이드바(240px) + 패딩(40px) */
+  margin-top: 20px;
   width: 920px; /* form_card 너비와 동일 */
   height: 56px;
   border: none;
@@ -435,12 +433,11 @@
   line-height: 16px; /* 100% */
   letter-spacing: -0.32px;
   cursor: pointer;
-  z-index: 5;
 }
 
 /* 저장 버튼 비활성화 상태 */
 .save_button_disabled {
-  background: #d9d9d9;
+  background: #e5e5e5;
   color: #848484;
   cursor: default;
 }

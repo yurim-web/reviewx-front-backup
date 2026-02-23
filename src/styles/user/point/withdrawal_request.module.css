@@ -255,7 +255,7 @@
 /* 비활성화된 버튼 */
 .submit_button.disabled,
 .submit_button:disabled {
-  background-color: #d9d9d9;
+  background-color: #e5e5e5;
   color: #848484;
   cursor: default;
 }

@@ -24,7 +24,6 @@ import styles from "@/styles/user/notification/notification.module.css";
 import ManagerGAHeader from "@/components/manager/ga/common/ManagerGAHeader";
 import SidebarMenuGA from "@/components/manager/ga/common/SidebarMenu";
 import NotificationList from "@/components/notification/NotificationList";
-import BaseModal from "@/components/common/modal/BaseModal";
 import Toast from "@/components/common/toast/Toast";
 // 관리자 페이지 레이아웃 스타일 (사이드바가 있을 때 사용)
 import "@/styles/manager_ga/layout.css";
@@ -33,7 +32,6 @@ import { mockManagerGANotifications } from "@/data/notification/notificationData
 
 export default function ManagerGANotificationPage() {
   const [notifications, setNotifications] = useState(mockManagerGANotifications);
-  const [is_delete_done_modal_open, set_is_delete_done_modal_open] = useState(false);
   const [is_delete_toast_open, set_is_delete_toast_open] = useState(false);
 
   /**
@@ -45,10 +43,10 @@ export default function ManagerGANotificationPage() {
     // TODO: 알림 상세 페이지로 이동 또는 모달 열기
   };
 
-  /** 전체 삭제 버튼 클릭 → 바로 삭제 후 "삭제되었습니다." 모달만 표시 */
+  /** 전체 삭제 버튼 클릭 → 바로 삭제 후 토스트만 표시 */
   const handle_delete_all_click = () => {
     setNotifications([]);
-    set_is_delete_done_modal_open(true);
+    set_is_delete_toast_open(true);
   };
 
   return (
@@ -81,17 +79,6 @@ export default function ManagerGANotificationPage() {
           on_notification_click={handle_notification_click}
         />
       </main>
-
-      {/* 삭제 완료 모달 (삭제되었습니다. + 닫기) → 닫기 클릭 시 토스트 표시 */}
-      <BaseModal
-        is_open={is_delete_done_modal_open}
-        on_close={() => {
-          set_is_delete_done_modal_open(false);
-          set_is_delete_toast_open(true);
-        }}
-        message="삭제되었습니다."
-        buttons={["닫기"]}
-      />
 
       <Toast
         message="삭제되었습니다."

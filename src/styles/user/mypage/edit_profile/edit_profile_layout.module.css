@@ -59,6 +59,10 @@
    📱 모바일 반응형 스타일 (max-width: 768px)
    ======================================== */
 @media (max-width: 768px) {
+  .main_min_height {
+    min-height: calc(100vh - 64px);
+  }
+
   /* 메인 컨텐츠 */
   .main_content {
     padding: 64px 0px 40px 0px;

@@ -17,7 +17,7 @@
   text-align: center;
   text-overflow: ellipsis;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 16px; /* 100% */
   letter-spacing: -0.32px;
   transition: all 0.2s ease; /* 호버 효과 */
@@ -67,7 +67,7 @@
   text-align: center;
   text-overflow: ellipsis;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 16px;
   letter-spacing: -0.32px;
   transition: all 0.2s ease;
@@ -115,7 +115,7 @@
   .action_button {
     padding: 12px;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     line-height: 14px;
     letter-spacing: -0.28px;
     border-radius: 4px;
@@ -125,7 +125,7 @@
   .cancel_button {
     padding: 12px;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     line-height: 14px;
     letter-spacing: -0.28px;
     border-radius: 4px;
