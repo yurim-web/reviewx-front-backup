@@ -234,9 +234,14 @@
   letter-spacing: -0.32px;
 }
 
-/* 주소와 우편번호 사이 구분자(|) 양쪽 8px 간격 */
+/* PC: | 구분자 - 양옆 8px 간격 */
 .address_separator {
   margin: 0 8px;
+}
+
+/* PC: 우편번호 prefix */
+.address_postal_code::before {
+  content: "우편번호\00a0";
 }
 
 /* 주소가 없을 때 메시지 */
@@ -288,11 +293,11 @@
 /* 수정/편집 텍스트 라벨 (모바일에서 사용, 기본은 숨김) */
 .edit_label {
   display: none;
+  color: #848484;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
   letter-spacing: -0.28px;
-  color: #848484;
 }
 
 /* 연필 아이콘 이미지 (데스크톱 기본) */
@@ -537,7 +542,7 @@
 
 /* 버튼 비활성화 상태 */
 .connect_button:disabled {
-  background: #d9d9d9;
+  background: #e5e5e5;
   color: #848484;
   cursor: default;
 }
@@ -679,6 +684,19 @@
     color: #848484;
   }
 
+  /* 모바일: | 구분자 숨김 */
+  .address_separator {
+    display: none;
+  }
+
+  /* 우편번호 - 모바일: 별도 줄에 표시, (우) prefix */
+  .address_postal_code {
+    display: block;
+  }
+  .address_postal_code::before {
+    content: "(우) ";
+  }
+
   /* 연필 버튼 숨김 */
   .edit_button {
     display: none;
@@ -741,7 +759,7 @@
     color: #848484;
     font-size: 14px;
     font-weight: 500;
-    line-height: 14px;
+    line-height: 14px; /* 100% */
     letter-spacing: -0.28px;
   }
 

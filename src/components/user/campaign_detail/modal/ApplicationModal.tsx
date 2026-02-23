@@ -88,12 +88,12 @@ export default function ApplicationModal({
   const saveFormData = (
     memo: string,
     isAgreed: boolean,
-    isUrgentAgreed: boolean
+    isUrgentAgreed: boolean,
   ) => {
     if (typeof window === "undefined") return;
     sessionStorage.setItem(
       "applicationModalFormData",
-      JSON.stringify({ memo, isAgreed, isUrgentAgreed })
+      JSON.stringify({ memo, isAgreed, isUrgentAgreed }),
     );
   };
 
@@ -112,7 +112,7 @@ export default function ApplicationModal({
   const [userAddress, setUserAddress] = useState("");
   // 채널 URL 정보 (props로 받은 값 또는 sessionStorage에서 불러온 값)
   const [currentChannelUrl, setCurrentChannelUrl] = useState(
-    userChannelUrl || ""
+    userChannelUrl || "",
   );
 
   // 신청 완료 모달 상태
@@ -138,15 +138,14 @@ export default function ApplicationModal({
 
   // 타입별 표시 여부 결정
   const showAddress =
-    type === "delivery" ||
-    type === "review" ||
-    type === "mission";
-  const showChannel = type === "delivery" || type === "visit" || type === "reporter";
+    type === "delivery" || type === "review" || type === "mission";
+  const showChannel =
+    type === "delivery" || type === "visit" || type === "reporter";
 
   // 디버깅: 채널 정보 확인
   useEffect(() => {
     if (isOpen && showChannel) {
-      console.log('🔍 [캠페인 신청 모달] 채널 정보:', {
+      console.log("🔍 [캠페인 신청 모달] 채널 정보:", {
         type,
         campaignChannelName,
         channelName,
@@ -161,19 +160,19 @@ export default function ApplicationModal({
       const isMobile = window.innerWidth <= 768;
       if (isMobile) {
         // body 스크롤 막기
-        document.body.style.overflow = 'hidden';
-        document.body.style.position = 'fixed';
-        document.body.style.width = '100%';
-        document.body.style.top = '0';
+        document.body.style.overflow = "hidden";
+        document.body.style.position = "fixed";
+        document.body.style.width = "100%";
+        document.body.style.top = "0";
       }
     }
 
     return () => {
       // 모달이 닫힐 때 body 스크롤 복원
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.width = '';
-      document.body.style.top = '';
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+      document.body.style.top = "";
     };
   }, [isOpen]);
 
@@ -207,24 +206,47 @@ export default function ApplicationModal({
                   const addressPart = userAccount.detail_address
                     ? `${userAccount.address} ${userAccount.detail_address}`.trim()
                     : userAccount.address;
-                  const postalCodePart = `우편번호 ${userAccount.postal_code}`;
+                  const postalCodePart = `${userAccount.postal_code}`;
                   setUserAddress(`${addressPart} | ${postalCodePart}`);
                 } else {
                   setUserAddress("");
                 }
-                if (showChannel && userAccount.channel_details && campaignChannelName) {
+                if (
+                  showChannel &&
+                  userAccount.channel_details &&
+                  campaignChannelName
+                ) {
                   const normalizeChannelName = (name: string) =>
                     name.toLowerCase().replace(/\s+/g, "");
-                  const normalizedCampaignChannel = normalizeChannelName(campaignChannelName);
+                  const normalizedCampaignChannel =
+                    normalizeChannelName(campaignChannelName);
                   let targetChannelName = campaignChannelName;
-                  if (normalizedCampaignChannel === "릴스") targetChannelName = "인스타그램";
-                  else if (normalizedCampaignChannel === "쇼츠" || normalizedCampaignChannel === "숏츠") targetChannelName = "유튜브";
-                  const normalizedTargetChannel = normalizeChannelName(targetChannelName);
-                  const matchedChannel = userAccount.channel_details.find((ch: any) => {
-                    const normalizedUserChannel = normalizeChannelName(ch.name);
-                    return normalizedUserChannel.includes(normalizedTargetChannel) || normalizedTargetChannel.includes(normalizedUserChannel);
-                  });
-                  if (matchedChannel?.status === "connected" && matchedChannel?.url) {
+                  if (normalizedCampaignChannel === "릴스")
+                    targetChannelName = "인스타그램";
+                  else if (
+                    normalizedCampaignChannel === "쇼츠" ||
+                    normalizedCampaignChannel === "숏츠"
+                  )
+                    targetChannelName = "유튜브";
+                  const normalizedTargetChannel =
+                    normalizeChannelName(targetChannelName);
+                  const matchedChannel = userAccount.channel_details.find(
+                    (ch: any) => {
+                      const normalizedUserChannel = normalizeChannelName(
+                        ch.name,
+                      );
+                      return (
+                        normalizedUserChannel.includes(
+                          normalizedTargetChannel,
+                        ) ||
+                        normalizedTargetChannel.includes(normalizedUserChannel)
+                      );
+                    },
+                  );
+                  if (
+                    matchedChannel?.status === "connected" &&
+                    matchedChannel?.url
+                  ) {
                     setCurrentChannelUrl(matchedChannel.url);
                   } else {
                     setCurrentChannelUrl("");
@@ -249,11 +271,11 @@ export default function ApplicationModal({
         // 로그인된 사용자 정보 불러오기
         if (typeof window !== "undefined") {
           try {
-            const storedAccounts = localStorage.getItem('user_accounts');
+            const storedAccounts = localStorage.getItem("user_accounts");
             if (storedAccounts) {
               const accounts = JSON.parse(storedAccounts);
-              const userAccount = accounts.find((a: any) =>
-                a.id === user.id || a.email === user.email
+              const userAccount = accounts.find(
+                (a: any) => a.id === user.id || a.email === user.email,
               );
 
               if (userAccount) {
@@ -265,7 +287,7 @@ export default function ApplicationModal({
                   const addressPart = userAccount.detail_address
                     ? `${userAccount.address} ${userAccount.detail_address}`.trim()
                     : userAccount.address;
-                  const postalCodePart = `우편번호 ${userAccount.postal_code}`;
+                  const postalCodePart = `${userAccount.postal_code}`;
                   setUserAddress(`${addressPart} | ${postalCodePart}`);
                 } else {
                   setUserAddress("");
@@ -275,41 +297,58 @@ export default function ApplicationModal({
                 if (userAccount.channel_details && campaignChannelName) {
                   // 채널 이름을 정규화하여 매칭 (소문자 변환 + 공백 제거)
                   const normalizeChannelName = (name: string) =>
-                    name.toLowerCase().replace(/\s+/g, '');
+                    name.toLowerCase().replace(/\s+/g, "");
 
-                  const normalizedCampaignChannel = normalizeChannelName(campaignChannelName);
+                  const normalizedCampaignChannel =
+                    normalizeChannelName(campaignChannelName);
 
                   // 릴스 → 인스타그램, 쇼츠 → 유튜브 매핑
                   let targetChannelName = campaignChannelName;
-                  if (normalizedCampaignChannel === '릴스') {
-                    targetChannelName = '인스타그램';
-                  } else if (normalizedCampaignChannel === '쇼츠' || normalizedCampaignChannel === '숏츠') {
-                    targetChannelName = '유튜브';
+                  if (normalizedCampaignChannel === "릴스") {
+                    targetChannelName = "인스타그램";
+                  } else if (
+                    normalizedCampaignChannel === "쇼츠" ||
+                    normalizedCampaignChannel === "숏츠"
+                  ) {
+                    targetChannelName = "유튜브";
                   }
 
-                  const normalizedTargetChannel = normalizeChannelName(targetChannelName);
+                  const normalizedTargetChannel =
+                    normalizeChannelName(targetChannelName);
 
-                  const matchedChannel = userAccount.channel_details.find((ch: any) => {
-                    const normalizedUserChannel = normalizeChannelName(ch.name);
-                    // 양방향 매칭: 타겟 채널이 유저 채널에 포함되거나, 유저 채널이 타겟 채널에 포함
-                    return normalizedUserChannel.includes(normalizedTargetChannel) ||
-                           normalizedTargetChannel.includes(normalizedUserChannel);
-                  });
+                  const matchedChannel = userAccount.channel_details.find(
+                    (ch: any) => {
+                      const normalizedUserChannel = normalizeChannelName(
+                        ch.name,
+                      );
+                      // 양방향 매칭: 타겟 채널이 유저 채널에 포함되거나, 유저 채널이 타겟 채널에 포함
+                      return (
+                        normalizedUserChannel.includes(
+                          normalizedTargetChannel,
+                        ) ||
+                        normalizedTargetChannel.includes(normalizedUserChannel)
+                      );
+                    },
+                  );
 
-                  if (matchedChannel && matchedChannel.status === 'connected' && matchedChannel.url) {
+                  if (
+                    matchedChannel &&
+                    matchedChannel.status === "connected" &&
+                    matchedChannel.url
+                  ) {
                     setCurrentChannelUrl(matchedChannel.url);
-                    console.log('✅ [캠페인 신청] 채널 자동 연동:', {
+                    console.log("✅ [캠페인 신청] 채널 자동 연동:", {
                       campaignChannel: campaignChannelName,
                       targetChannel: targetChannelName,
                       userChannel: matchedChannel.name,
-                      url: matchedChannel.url
+                      url: matchedChannel.url,
                     });
                   } else {
                     setCurrentChannelUrl("");
-                    console.log('⚠️ [캠페인 신청] 연결된 채널 없음:', {
+                    console.log("⚠️ [캠페인 신청] 연결된 채널 없음:", {
                       campaignChannel: campaignChannelName,
                       targetChannel: targetChannelName,
-                      userChannels: userAccount.channel_details
+                      userChannels: userAccount.channel_details,
                     });
                   }
                 } else {
@@ -328,7 +367,7 @@ export default function ApplicationModal({
               setCurrentChannelUrl(userChannelUrl || "");
             }
           } catch (error) {
-            console.error('사용자 정보 로드 실패:', error);
+            console.error("사용자 정보 로드 실패:", error);
             setUserName(user.name || "");
             setUserAddress("");
             setCurrentChannelUrl(userChannelUrl || "");
@@ -341,7 +380,14 @@ export default function ApplicationModal({
       setUserAddress("");
       setCurrentChannelUrl(userChannelUrl || "");
     }
-  }, [isOpen, user, channelName, userChannelUrl, campaignChannelName, showChannel]);
+  }, [
+    isOpen,
+    user,
+    channelName,
+    userChannelUrl,
+    campaignChannelName,
+    showChannel,
+  ]);
 
   if (!isOpen) return null;
 
@@ -379,8 +425,10 @@ export default function ApplicationModal({
   const handleSubmit = () => {
     // campaignId가 없으면 에러
     if (!campaignId) {
-      console.error('❌ [캠페인 신청 실패] campaignId가 없습니다.');
-      alert('캠페인 정보를 불러올 수 없습니다. 페이지를 새로고침하고 다시 시도해주세요.');
+      console.error("❌ [캠페인 신청 실패] campaignId가 없습니다.");
+      alert(
+        "캠페인 정보를 불러올 수 없습니다. 페이지를 새로고침하고 다시 시도해주세요.",
+      );
       return;
     }
 
@@ -404,51 +452,54 @@ export default function ApplicationModal({
 
     // 4. 로그인되지 않은 경우
     if (!user) {
-      console.error('로그인이 필요합니다');
+      console.error("로그인이 필요합니다");
       return;
     }
 
     // 5. 캠페인 ID가 없는 경우
     if (!campaignId) {
-      console.error('캠페인 ID가 없습니다');
+      console.error("캠페인 ID가 없습니다");
       return;
     }
 
     // 신청자 정보 저장
     try {
       // user_accounts에서 사용자 상세 정보 가져오기
-      const storedAccounts = localStorage.getItem('user_accounts');
+      const storedAccounts = localStorage.getItem("user_accounts");
       let userAccount: any = null;
 
       if (storedAccounts) {
         const accounts = JSON.parse(storedAccounts);
-        userAccount = accounts.find((a: any) =>
-          a.id === user.id || a.email === user.email
+        userAccount = accounts.find(
+          (a: any) => a.id === user.id || a.email === user.email,
         );
       }
 
       // userAccount 다시 로드 (최신 정보 확인)
       let latestUserAccount = userAccount;
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         try {
-          const storedAccounts = localStorage.getItem('user_accounts');
+          const storedAccounts = localStorage.getItem("user_accounts");
           if (storedAccounts) {
             const accounts = JSON.parse(storedAccounts);
-            const foundAccount = accounts.find((a: any) =>
-              a.id === user.id || a.email === user.email
+            const foundAccount = accounts.find(
+              (a: any) => a.id === user.id || a.email === user.email,
             );
             if (foundAccount) {
               latestUserAccount = foundAccount;
-              console.log('✅ [캠페인 신청] user_accounts에서 최신 정보 로드:', {
-                id: foundAccount.id,
-                daily_visits: foundAccount.daily_visits,
-                total_visits: foundAccount.total_visits,
-                neighbors: foundAccount.neighbors,
-              });
+              console.log(
+                "✅ [캠페인 신청] user_accounts에서 최신 정보 로드:",
+                {
+                  id: foundAccount.id,
+                  daily_visits: foundAccount.daily_visits,
+                  total_visits: foundAccount.total_visits,
+                  neighbors: foundAccount.neighbors,
+                },
+              );
             }
           }
         } catch (error) {
-          console.error('❌ [캠페인 신청] user_accounts 로드 실패:', error);
+          console.error("❌ [캠페인 신청] user_accounts 로드 실패:", error);
         }
       }
 
@@ -522,27 +573,27 @@ export default function ApplicationModal({
               channel: "네이버블로그",
             }
           : normalized_channel === "네이버클립"
-          ? {
-              ...base_applicant,
-              followers: 0,
-              channel: "네이버클립",
-            }
-          : normalized_channel === "인스타그램"
-          ? {
-              ...base_applicant,
-              followers: 0,
-              channel: "인스타그램",
-            }
-          : normalized_channel === "유튜브"
-          ? {
-              ...base_applicant,
-              subscribers: 0,
-              channel: "유튜브",
-            }
-          : {
-              ...base_applicant,
-              channel: "기본",
-            };
+            ? {
+                ...base_applicant,
+                followers: 0,
+                channel: "네이버클립",
+              }
+            : normalized_channel === "인스타그램"
+              ? {
+                  ...base_applicant,
+                  followers: 0,
+                  channel: "인스타그램",
+                }
+              : normalized_channel === "유튜브"
+                ? {
+                    ...base_applicant,
+                    subscribers: 0,
+                    channel: "유튜브",
+                  }
+                : {
+                    ...base_applicant,
+                    channel: "기본",
+                  };
 
       // 유저 신청내역 저장용 메타데이터
       const applicant_meta = {
@@ -555,7 +606,8 @@ export default function ApplicationModal({
         channelName: campaignChannelName,
         memo: memo,
         userType: normalized_user_type,
-        profileImage: latestUserAccount?.profile_image || "/images/default_profile.png",
+        profileImage:
+          latestUserAccount?.profile_image || "/images/default_profile.png",
         memberType: normalized_member_type,
         dailyVisits: latestUserAccount?.daily_visits || 0,
         totalVisits: latestUserAccount?.total_visits || 0,
@@ -564,20 +616,25 @@ export default function ApplicationModal({
         status: "대기",
       };
 
-      console.log('✅ [캠페인 신청] 신청자 데이터 생성:', {
+      console.log("✅ [캠페인 신청] 신청자 데이터 생성:", {
         userId: user.id,
         nickname: applicantData.nickname,
-        userAccountSource: latestUserAccount ? 'user_accounts' : '없음',
+        userAccountSource: latestUserAccount ? "user_accounts" : "없음",
       });
 
       // localStorage의 해당 캠페인 applicants에 추가
-      const campaignType = type === 'delivery' ? 'deliveryCampaigns' :
-                          type === 'review' ? 'reviewCampaigns' :
-                          type === 'mission' ? 'missionCampaigns' :
-                          type === 'reporter' ? 'reporterCampaigns' :
-                          'visitCampaigns';
+      const campaignType =
+        type === "delivery"
+          ? "deliveryCampaigns"
+          : type === "review"
+            ? "reviewCampaigns"
+            : type === "mission"
+              ? "missionCampaigns"
+              : type === "reporter"
+                ? "reporterCampaigns"
+                : "visitCampaigns";
 
-      console.log('🔍 [캠페인 신청] 시작:', {
+      console.log("🔍 [캠페인 신청] 시작:", {
         campaignId,
         campaignType,
         type,
@@ -585,50 +642,65 @@ export default function ApplicationModal({
       });
 
       const storedCampaigns = localStorage.getItem(campaignType);
-      console.log('🔍 [캠페인 신청] localStorage 확인:', {
+      console.log("🔍 [캠페인 신청] localStorage 확인:", {
         campaignType,
         hasStoredCampaigns: !!storedCampaigns,
       });
 
       if (storedCampaigns) {
         const campaigns = JSON.parse(storedCampaigns);
-        console.log('🔍 [캠페인 신청] 캠페인 목록:', {
+        console.log("🔍 [캠페인 신청] 캠페인 목록:", {
           totalCampaigns: campaigns.length,
-          campaignIds: campaigns.map((c: any) => c.campaignInfo?.id || c.id).slice(0, 5),
+          campaignIds: campaigns
+            .map((c: any) => c.campaignInfo?.id || c.id)
+            .slice(0, 5),
         });
 
         // ID 매칭 로직 개선 (다양한 ID 형식 지원)
         const campaignIndex = campaigns.findIndex((c: any) => {
-          const storedId = String(c.campaignInfo?.id || c.id || '');
+          const storedId = String(c.campaignInfo?.id || c.id || "");
           const searchId = String(campaignId);
-          
+
           // 정확히 일치하는 경우
           if (storedId === searchId) return true;
-          
+
           // ID 형식 변환 시도 (prefix 제거)
-          const typePrefix = type === 'delivery' ? 'delivery_' :
-                            type === 'visit' ? 'visit_' :
-                            type === 'review' ? 'review_' :
-                            type === 'reporter' ? 'reporter_' :
-                            type === 'mission' ? 'mission_' : '';
-          
+          const typePrefix =
+            type === "delivery"
+              ? "delivery_"
+              : type === "visit"
+                ? "visit_"
+                : type === "review"
+                  ? "review_"
+                  : type === "reporter"
+                    ? "reporter_"
+                    : type === "mission"
+                      ? "mission_"
+                      : "";
+
           if (typePrefix) {
             // searchId가 "reporter_1" 형식이고 storedId가 "1" 형식인 경우
             if (searchId.startsWith(typePrefix)) {
-              const searchIdWithoutPrefix = searchId.replace(new RegExp(`^${typePrefix}`), '');
+              const searchIdWithoutPrefix = searchId.replace(
+                new RegExp(`^${typePrefix}`),
+                "",
+              );
               if (storedId === searchIdWithoutPrefix) return true;
             }
             // storedId가 "reporter_1" 형식이고 searchId가 "1" 형식인 경우
             if (storedId.startsWith(typePrefix)) {
-              const storedIdWithoutPrefix = storedId.replace(new RegExp(`^${typePrefix}`), '');
+              const storedIdWithoutPrefix = storedId.replace(
+                new RegExp(`^${typePrefix}`),
+                "",
+              );
               if (storedIdWithoutPrefix === searchId) return true;
             }
           }
-          
+
           return false;
         });
 
-        console.log('🔍 [캠페인 신청] 캠페인 찾기 결과:', {
+        console.log("🔍 [캠페인 신청] 캠페인 찾기 결과:", {
           campaignIndex,
           campaignId,
           found: campaignIndex >= 0,
@@ -646,8 +718,8 @@ export default function ApplicationModal({
           }
 
           // 중복 신청 체크
-          const isDuplicate = campaign.applicantData.applicants.some((a: any) =>
-            a.id === user.id || a.userId === user.id
+          const isDuplicate = campaign.applicantData.applicants.some(
+            (a: any) => a.id === user.id || a.userId === user.id,
           );
 
           if (isDuplicate) {
@@ -669,14 +741,16 @@ export default function ApplicationModal({
           campaigns[campaignIndex] = campaign;
           localStorage.setItem(campaignType, JSON.stringify(campaigns));
 
-          console.log('✅ 캠페인 신청 완료:', {
+          console.log("✅ 캠페인 신청 완료:", {
             campaignId,
             campaignType,
             applicant: applicantData,
           });
 
           // 유저 신청 내역에도 추가
-          const userAppliedCampaigns = localStorage.getItem('user_applied_campaigns');
+          const userAppliedCampaigns = localStorage.getItem(
+            "user_applied_campaigns",
+          );
           let appliedCampaigns: any[] = [];
 
           if (userAppliedCampaigns) {
@@ -684,12 +758,14 @@ export default function ApplicationModal({
           }
 
           // 유저별 신청 내역 찾기
-          let userCampaigns = appliedCampaigns.find((uc: any) => uc.userId === user.id);
+          let userCampaigns = appliedCampaigns.find(
+            (uc: any) => uc.userId === user.id,
+          );
 
           if (!userCampaigns) {
             userCampaigns = {
               userId: user.id,
-              campaigns: []
+              campaigns: [],
             };
             appliedCampaigns.push(userCampaigns);
           }
@@ -698,17 +774,24 @@ export default function ApplicationModal({
           userCampaigns.campaigns.push({
             campaignId: campaignId,
             campaignType: type,
-            campaignTitle: campaign.campaignInfo?.title || campaign.title || '',
-            campaignImage: campaign.campaignInfo?.image || campaign.image || '',
+            campaignTitle: campaign.campaignInfo?.title || campaign.title || "",
+            campaignImage: campaign.campaignInfo?.image || campaign.image || "",
             appliedAt: applicant_meta.appliedAt,
-            status: '대기', // 대기, 선정, 탈락
+            status: "대기", // 대기, 선정, 탈락
             memo: memo,
-            channel: campaignChannelName || campaign.campaignInfo?.channel || campaign.channel || '', // 채널 정보 추가
+            channel:
+              campaignChannelName ||
+              campaign.campaignInfo?.channel ||
+              campaign.channel ||
+              "", // 채널 정보 추가
           });
 
-          localStorage.setItem('user_applied_campaigns', JSON.stringify(appliedCampaigns));
+          localStorage.setItem(
+            "user_applied_campaigns",
+            JSON.stringify(appliedCampaigns),
+          );
 
-          console.log('✅ 유저 신청 내역에 추가 완료:', {
+          console.log("✅ 유저 신청 내역에 추가 완료:", {
             userId: user.id,
             campaignId,
           });
@@ -717,25 +800,38 @@ export default function ApplicationModal({
           setIsSuccessModalOpen(true);
         } else {
           // 캠페인을 찾지 못한 경우 - 목업 데이터에서 찾아서 localStorage에 추가
-          console.log('🔍 [캠페인 신청] localStorage에서 찾지 못함, 목업 데이터에서 찾기 시도:', {
-            campaignId,
-            campaignType,
-          });
+          console.log(
+            "🔍 [캠페인 신청] localStorage에서 찾지 못함, 목업 데이터에서 찾기 시도:",
+            {
+              campaignId,
+              campaignType,
+            },
+          );
 
           // getCampaignById로 목업 데이터에서 찾기 (다양한 ID 형식 시도)
           let mockCampaign = getCampaignById(campaignId);
-          
+
           // 찾지 못한 경우 ID 형식 변환 시도
           if (!mockCampaign) {
-            const typePrefix = type === 'delivery' ? 'delivery_' :
-                              type === 'visit' ? 'visit_' :
-                              type === 'review' ? 'review_' :
-                              type === 'reporter' ? 'reporter_' :
-                              type === 'mission' ? 'mission_' : '';
-            
+            const typePrefix =
+              type === "delivery"
+                ? "delivery_"
+                : type === "visit"
+                  ? "visit_"
+                  : type === "review"
+                    ? "review_"
+                    : type === "reporter"
+                      ? "reporter_"
+                      : type === "mission"
+                        ? "mission_"
+                        : "";
+
             if (typePrefix && campaignId.startsWith(typePrefix)) {
               // "reporter_1" -> "1"로 변환 시도
-              const idWithoutPrefix = campaignId.replace(new RegExp(`^${typePrefix}`), '');
+              const idWithoutPrefix = campaignId.replace(
+                new RegExp(`^${typePrefix}`),
+                "",
+              );
               mockCampaign = getCampaignById(idWithoutPrefix);
             } else if (typePrefix) {
               // "1" -> "reporter_1"로 변환 시도
@@ -743,13 +839,16 @@ export default function ApplicationModal({
               mockCampaign = getCampaignById(idWithPrefix);
             }
           }
-          
+
           if (mockCampaign) {
-            console.log('✅ [캠페인 신청] 목업 데이터에서 캠페인 찾음, localStorage에 추가:', {
-              campaignId,
-              campaignType,
-              title: mockCampaign.campaignInfo.title,
-            });
+            console.log(
+              "✅ [캠페인 신청] 목업 데이터에서 캠페인 찾음, localStorage에 추가:",
+              {
+                campaignId,
+                campaignType,
+                title: mockCampaign.campaignInfo.title,
+              },
+            );
 
             // applicantData가 없으면 초기화
             if (!mockCampaign.applicantData) {
@@ -760,8 +859,8 @@ export default function ApplicationModal({
             }
 
             // 중복 신청 체크
-            const isDuplicate = mockCampaign.applicantData.applicants.some((a: any) =>
-              a.id === user.id || a.userId === user.id
+            const isDuplicate = mockCampaign.applicantData.applicants.some(
+              (a: any) => a.id === user.id || a.userId === user.id,
             );
 
             if (isDuplicate) {
@@ -781,14 +880,19 @@ export default function ApplicationModal({
             campaigns.push(mockCampaign);
             localStorage.setItem(campaignType, JSON.stringify(campaigns));
 
-            console.log('✅ [캠페인 신청] 목업 데이터 캠페인 localStorage에 추가 완료:', {
-              campaignId,
-              campaignType,
-              applicant: applicantData,
-            });
+            console.log(
+              "✅ [캠페인 신청] 목업 데이터 캠페인 localStorage에 추가 완료:",
+              {
+                campaignId,
+                campaignType,
+                applicant: applicantData,
+              },
+            );
 
             // 유저 신청 내역에도 추가
-            const userAppliedCampaigns = localStorage.getItem('user_applied_campaigns');
+            const userAppliedCampaigns = localStorage.getItem(
+              "user_applied_campaigns",
+            );
             let appliedCampaigns: any[] = [];
 
             if (userAppliedCampaigns) {
@@ -796,12 +900,14 @@ export default function ApplicationModal({
             }
 
             // 유저별 신청 내역 찾기
-            let userCampaigns = appliedCampaigns.find((uc: any) => uc.userId === user.id);
+            let userCampaigns = appliedCampaigns.find(
+              (uc: any) => uc.userId === user.id,
+            );
 
             if (!userCampaigns) {
               userCampaigns = {
                 userId: user.id,
-                campaigns: []
+                campaigns: [],
               };
               appliedCampaigns.push(userCampaigns);
             }
@@ -810,17 +916,23 @@ export default function ApplicationModal({
             userCampaigns.campaigns.push({
               campaignId: campaignId,
               campaignType: type,
-              campaignTitle: mockCampaign.campaignInfo.title || '',
-              campaignImage: mockCampaign.campaignInfo.image || '',
+              campaignTitle: mockCampaign.campaignInfo.title || "",
+              campaignImage: mockCampaign.campaignInfo.image || "",
               appliedAt: applicant_meta.appliedAt,
-              status: '대기',
+              status: "대기",
               memo: memo,
-              channel: campaignChannelName || mockCampaign.campaignInfo.brandName || '',
+              channel:
+                campaignChannelName ||
+                mockCampaign.campaignInfo.brandName ||
+                "",
             });
 
-            localStorage.setItem('user_applied_campaigns', JSON.stringify(appliedCampaigns));
+            localStorage.setItem(
+              "user_applied_campaigns",
+              JSON.stringify(appliedCampaigns),
+            );
 
-            console.log('✅ [캠페인 신청] 유저 신청 내역에 추가 완료:', {
+            console.log("✅ [캠페인 신청] 유저 신청 내역에 추가 완료:", {
               userId: user.id,
               campaignId,
             });
@@ -829,36 +941,56 @@ export default function ApplicationModal({
             setIsSuccessModalOpen(true);
           } else {
             // 목업 데이터에서도 찾지 못한 경우
-            console.error('❌ [캠페인 신청 실패] 목업 데이터에서도 캠페인을 찾을 수 없습니다:', {
-              campaignId,
-              campaignType,
-              availableIds: campaigns.map((c: any) => c.campaignInfo?.id || c.id).slice(0, 10),
-            });
-            alert('캠페인을 찾을 수 없습니다. 페이지를 새로고침하고 다시 시도해주세요.');
+            console.error(
+              "❌ [캠페인 신청 실패] 목업 데이터에서도 캠페인을 찾을 수 없습니다:",
+              {
+                campaignId,
+                campaignType,
+                availableIds: campaigns
+                  .map((c: any) => c.campaignInfo?.id || c.id)
+                  .slice(0, 10),
+              },
+            );
+            alert(
+              "캠페인을 찾을 수 없습니다. 페이지를 새로고침하고 다시 시도해주세요.",
+            );
             return;
           }
         }
       } else {
         // localStorage에 캠페인 데이터가 없는 경우 - 목업 데이터에서 가져와서 초기화
-        console.log('🔍 [캠페인 신청] localStorage에 데이터 없음, 목업 데이터에서 찾기 시도:', {
-          campaignType,
-          campaignId,
-        });
+        console.log(
+          "🔍 [캠페인 신청] localStorage에 데이터 없음, 목업 데이터에서 찾기 시도:",
+          {
+            campaignType,
+            campaignId,
+          },
+        );
 
         // getCampaignById로 목업 데이터에서 찾기 (다양한 ID 형식 시도)
         let mockCampaign = getCampaignById(campaignId);
-        
+
         // 찾지 못한 경우 ID 형식 변환 시도
         if (!mockCampaign) {
-          const typePrefix = type === 'delivery' ? 'delivery_' :
-                            type === 'visit' ? 'visit_' :
-                            type === 'review' ? 'review_' :
-                            type === 'reporter' ? 'reporter_' :
-                            type === 'mission' ? 'mission_' : '';
-          
+          const typePrefix =
+            type === "delivery"
+              ? "delivery_"
+              : type === "visit"
+                ? "visit_"
+                : type === "review"
+                  ? "review_"
+                  : type === "reporter"
+                    ? "reporter_"
+                    : type === "mission"
+                      ? "mission_"
+                      : "";
+
           if (typePrefix && campaignId.startsWith(typePrefix)) {
             // "reporter_1" -> "1"로 변환 시도
-            const idWithoutPrefix = campaignId.replace(new RegExp(`^${typePrefix}`), '');
+            const idWithoutPrefix = campaignId.replace(
+              new RegExp(`^${typePrefix}`),
+              "",
+            );
             mockCampaign = getCampaignById(idWithoutPrefix);
           } else if (typePrefix) {
             // "1" -> "reporter_1"로 변환 시도
@@ -866,13 +998,16 @@ export default function ApplicationModal({
             mockCampaign = getCampaignById(idWithPrefix);
           }
         }
-        
+
         if (mockCampaign) {
-          console.log('✅ [캠페인 신청] 목업 데이터에서 캠페인 찾음, localStorage 초기화:', {
-            campaignId,
-            campaignType,
-            title: mockCampaign.campaignInfo.title,
-          });
+          console.log(
+            "✅ [캠페인 신청] 목업 데이터에서 캠페인 찾음, localStorage 초기화:",
+            {
+              campaignId,
+              campaignType,
+              title: mockCampaign.campaignInfo.title,
+            },
+          );
 
           // applicantData가 없으면 초기화
           if (!mockCampaign.applicantData) {
@@ -883,8 +1018,8 @@ export default function ApplicationModal({
           }
 
           // 중복 신청 체크
-          const isDuplicate = mockCampaign.applicantData.applicants.some((a: any) =>
-            a.id === user.id || a.userId === user.id
+          const isDuplicate = mockCampaign.applicantData.applicants.some(
+            (a: any) => a.id === user.id || a.userId === user.id,
           );
 
           if (isDuplicate) {
@@ -904,14 +1039,19 @@ export default function ApplicationModal({
           const initialCampaigns = [mockCampaign];
           localStorage.setItem(campaignType, JSON.stringify(initialCampaigns));
 
-          console.log('✅ [캠페인 신청] 목업 데이터로 localStorage 초기화 완료:', {
-            campaignId,
-            campaignType,
-            applicant: applicantData,
-          });
+          console.log(
+            "✅ [캠페인 신청] 목업 데이터로 localStorage 초기화 완료:",
+            {
+              campaignId,
+              campaignType,
+              applicant: applicantData,
+            },
+          );
 
           // 유저 신청 내역에도 추가
-          const userAppliedCampaigns = localStorage.getItem('user_applied_campaigns');
+          const userAppliedCampaigns = localStorage.getItem(
+            "user_applied_campaigns",
+          );
           let appliedCampaigns: any[] = [];
 
           if (userAppliedCampaigns) {
@@ -919,12 +1059,14 @@ export default function ApplicationModal({
           }
 
           // 유저별 신청 내역 찾기
-          let userCampaigns = appliedCampaigns.find((uc: any) => uc.userId === user.id);
+          let userCampaigns = appliedCampaigns.find(
+            (uc: any) => uc.userId === user.id,
+          );
 
           if (!userCampaigns) {
             userCampaigns = {
               userId: user.id,
-              campaigns: []
+              campaigns: [],
             };
             appliedCampaigns.push(userCampaigns);
           }
@@ -933,17 +1075,21 @@ export default function ApplicationModal({
           userCampaigns.campaigns.push({
             campaignId: campaignId,
             campaignType: type,
-            campaignTitle: mockCampaign.campaignInfo.title || '',
-            campaignImage: mockCampaign.campaignInfo.image || '',
+            campaignTitle: mockCampaign.campaignInfo.title || "",
+            campaignImage: mockCampaign.campaignInfo.image || "",
             appliedAt: applicant_meta.appliedAt,
-            status: '대기',
+            status: "대기",
             memo: memo,
-            channel: campaignChannelName || mockCampaign.campaignInfo.brandName || '',
+            channel:
+              campaignChannelName || mockCampaign.campaignInfo.brandName || "",
           });
 
-          localStorage.setItem('user_applied_campaigns', JSON.stringify(appliedCampaigns));
+          localStorage.setItem(
+            "user_applied_campaigns",
+            JSON.stringify(appliedCampaigns),
+          );
 
-          console.log('✅ [캠페인 신청] 유저 신청 내역에 추가 완료:', {
+          console.log("✅ [캠페인 신청] 유저 신청 내역에 추가 완료:", {
             userId: user.id,
             campaignId,
           });
@@ -952,17 +1098,22 @@ export default function ApplicationModal({
           setIsSuccessModalOpen(true);
         } else {
           // 목업 데이터에서도 찾지 못한 경우
-          console.error('❌ [캠페인 신청 실패] 목업 데이터에서도 캠페인을 찾을 수 없습니다:', {
-            campaignType,
-            campaignId,
-          });
-          alert('캠페인 데이터를 불러올 수 없습니다. 페이지를 새로고침하고 다시 시도해주세요.');
+          console.error(
+            "❌ [캠페인 신청 실패] 목업 데이터에서도 캠페인을 찾을 수 없습니다:",
+            {
+              campaignType,
+              campaignId,
+            },
+          );
+          alert(
+            "캠페인 데이터를 불러올 수 없습니다. 페이지를 새로고침하고 다시 시도해주세요.",
+          );
           return;
         }
       }
     } catch (error) {
-      console.error('❌ [캠페인 신청 저장 실패]', error);
-      alert('캠페인 신청 중 오류가 발생했습니다. 다시 시도해주세요.');
+      console.error("❌ [캠페인 신청 저장 실패]", error);
+      alert("캠페인 신청 중 오류가 발생했습니다. 다시 시도해주세요.");
       return;
     }
   };
@@ -1043,8 +1194,8 @@ export default function ApplicationModal({
         {/* 모달 헤더 */}
         <div className={styles.modal_header}>
           {/* 모바일 뒤로가기 버튼 (모바일에서만 표시) */}
-          <button 
-            className={styles.back_button} 
+          <button
+            className={styles.back_button}
             onClick={handleClose}
             aria-label="뒤로가기"
           >
@@ -1089,7 +1240,7 @@ export default function ApplicationModal({
                         onClick={handleEditUserInfo}
                         type="button"
                       >
-                        편집
+                        수정
                       </button>
                     </div>
                     <div className={styles.address_container}>
@@ -1098,11 +1249,11 @@ export default function ApplicationModal({
                           <div className={styles.address_text}>
                             {userAddress.includes(" | ") ? (
                               <>
-                                {userAddress.split(" | ")[0]}
-                                <span className={styles.address_separator}>
-                                  {" "}|{" "}
+                                <span>{userAddress.split(" | ")[0]}</span>
+                                <span className={styles.address_separator}>|</span>
+                                <span className={styles.address_postal_code}>
+                                  {userAddress.split(" | ").slice(1).join(" | ")}
                                 </span>
-                                {userAddress.split(" | ").slice(1).join(" | ")}
                               </>
                             ) : (
                               userAddress
@@ -1187,7 +1338,11 @@ export default function ApplicationModal({
           <div className={styles.section}>
             <div className={styles.field_group}>
               <h3 className={styles.section_title}>메모</h3>
-              <label className={`${styles.field_label} ${styles.field_label_light}`}>메모</label>
+              <label
+                className={`${styles.field_label} ${styles.field_label_light}`}
+              >
+                메모
+              </label>
               <div className={styles.memo_container}>
                 <input
                   type="text"
@@ -1205,37 +1360,41 @@ export default function ApplicationModal({
           <div className={styles.section}>
             <div className={styles.field_group}>
               <h3 className={styles.section_title}>동의</h3>
-              <label className={`${styles.field_label} ${styles.field_label_light}`}>동의</label>
-              <div className={styles.agreement_container}>
-              {/* 첫 번째 동의 체크박스 */}
-              <label className={styles.checkbox_label}>
-                <input
-                  type="checkbox"
-                  checked={isAgreed}
-                  onChange={(e) => setIsAgreed(e.target.checked)}
-                  className={styles.checkbox}
-                />
-                <span className={styles.agreement_text}>
-                  본 캠페인과 관련된 유의사항, 개인정보 및 콘텐츠의 제3자 제공,
-                  저작물 사용, 초상권 활용에 대해 동의합니다.
-                </span>
+              <label
+                className={`${styles.field_label} ${styles.field_label_light}`}
+              >
+                동의
               </label>
-
-              {/* 긴급 캠페인 추가 동의 체크박스 - 긴급 캠페인일 때만 표시 */}
-              {isUrgent && (
+              <div className={styles.agreement_container}>
+                {/* 첫 번째 동의 체크박스 */}
                 <label className={styles.checkbox_label}>
                   <input
                     type="checkbox"
-                    checked={isUrgentAgreed}
-                    onChange={(e) => setIsUrgentAgreed(e.target.checked)}
+                    checked={isAgreed}
+                    onChange={(e) => setIsAgreed(e.target.checked)}
                     className={styles.checkbox}
                   />
                   <span className={styles.agreement_text}>
-                    긴급 캠페인과 관련된 유의사항에 대해 확인했습니다.
+                    본 캠페인과 관련된 유의사항, 개인정보 및 콘텐츠의 제3자
+                    제공, 저작물 사용, 초상권 활용에 대해 동의합니다.
                   </span>
                 </label>
-              )}
-            </div>
+
+                {/* 긴급 캠페인 추가 동의 체크박스 - 긴급 캠페인일 때만 표시 */}
+                {isUrgent && (
+                  <label className={styles.checkbox_label}>
+                    <input
+                      type="checkbox"
+                      checked={isUrgentAgreed}
+                      onChange={(e) => setIsUrgentAgreed(e.target.checked)}
+                      className={styles.checkbox}
+                    />
+                    <span className={styles.agreement_text}>
+                      긴급 캠페인과 관련된 유의사항에 대해 확인했습니다.
+                    </span>
+                  </label>
+                )}
+              </div>
             </div>
           </div>
         </div>
