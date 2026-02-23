@@ -168,7 +168,11 @@ export default function BusinessDocumentUpload({
         <label className={labelClass}>사업자등록증</label>
         <div className={wrapperClass}>
           <div className={inputWrapperClass}>
-            <input className={inputClass} value={fileName || ""} readOnly />
+            <input
+              className={inputClass}
+              value={!isSignupStyle && isUploaded ? "등록 완료" : fileName || ""}
+              readOnly
+            />
             {/* 업로드 완료 시 체크 아이콘 표시 (mypage 스타일만) */}
             {!isSignupStyle && isUploaded && (
               <div className={componentStyles.phone_check_icon}>
