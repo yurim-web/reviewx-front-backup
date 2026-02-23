@@ -163,7 +163,7 @@ function PartnerEditProfilePage() {
       ...prev,
       businessDocument: file_name,
     }));
-    setIsBusinessDocumentUploaded(true);
+    setIsBusinessDocumentUploaded(false);
 
     // 파일 선택 시점에 localStorage에 반영 (저장 버튼 없이 새로고침해도 파일명 유지)
     try {
@@ -290,8 +290,9 @@ function PartnerEditProfilePage() {
       localStorage.setItem('partner_accounts', JSON.stringify(accounts));
       // console.log('✅ [수정 페이지] partner_accounts 저장 완료:', accounts);
 
-      // 저장 성공 시 토스트 메시지 표시
+      // 저장 성공 시 토스트 메시지 표시 및 등록 완료 배지 표시
       setShowToast(true);
+      setIsBusinessDocumentUploaded(true);
     } catch (error) {
       console.error('정보 저장 중 오류:', error);
       alert('정보 저장에 실패했습니다.');
@@ -323,8 +324,8 @@ function PartnerEditProfilePage() {
             address: partnerAccount.address || "",
             detailAddress: partnerAccount.detail_address || "",
           });
-          // 새로고침 시에는 완료 아이콘은 표시하지 않음 (파일명만 복원)
-          // setIsBusinessDocumentUploaded는 파일 선택 시에만 true로 설정
+          // 저장된 파일이 있으면 등록 완료 배지 표시
+          if (savedFileName) setIsBusinessDocumentUploaded(true);
           // 프로필 사진도 불러오기
           if (partnerAccount.profile_image) {
             setProfileImage(partnerAccount.profile_image);
