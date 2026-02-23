@@ -140,7 +140,7 @@
   /* 모달 바디 - 모바일 */
   .modal_body {
     overflow-y: visible;
-    margin-bottom: 24px;
+    margin-bottom: 0px;
     display: flex;
     flex-direction: column;
     min-height: 0;
