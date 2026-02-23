@@ -265,6 +265,7 @@ export default function MemberTypeSection({
         {/* 왼쪽: 막대 차트 */}
         <div className={styles.member_type_section_bar_chart_container}>
           <MemberTypeBarChart
+            key={isClient ? `${dateRange.from?.toISOString()}-${dateRange.to?.toISOString()}` : 'init'}
             totalPartnerPercentage={stats.partnerPercentage}
             totalReviewerPercentage={stats.reviewerPercentage}
             activePartnerPercentage={stats.activePartnerPercentage}

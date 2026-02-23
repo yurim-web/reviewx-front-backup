@@ -194,7 +194,10 @@ export default function MemberActivationSection({
       <div className={styles.member_activation_section_content}>
         {/* 왼쪽: 도넛 차트 */}
         <div className={styles.member_activation_section_donut_chart_container}>
-          <MemberActivationDonutChart activePercentage={stats.activePercentage} />
+          <MemberActivationDonutChart
+            key={isClient ? `${dateRange.from?.toISOString()}-${dateRange.to?.toISOString()}` : 'init'}
+            activePercentage={stats.activePercentage}
+          />
         </div>
 
         {/* 오른쪽: 통계 정보 - 상단 전체 너비 + 하단 2개 나란히 */}
