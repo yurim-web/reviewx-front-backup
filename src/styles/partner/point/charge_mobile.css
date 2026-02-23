@@ -32,7 +32,7 @@
     position: relative;
     color: #848484;
     font-size: 18px;
-    font-weight: 500;
+    font-weight: 600;
     line-height: 18px;
     word-wrap: break-word;
   }
@@ -96,9 +96,9 @@
   .submit_button {
     height: 52px;
     border-radius: 6px;
-    font-size: 15px;
-    line-height: 15px;
-    letter-spacing: -0.3px;
+    font-size: 16px;
+    line-height: 16px;
+    letter-spacing: -0.32px;
   }
 
   .checkbox_row {
