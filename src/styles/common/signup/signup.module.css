@@ -175,6 +175,12 @@
   cursor: default;
 }
 
+/* 인증 완료 버튼 - disabled 상태에서도 배경색 유지 */
+.verification_button_completed:disabled {
+  background-color: #ff56941a;
+  color: #ff5694;
+}
+
 /* 인증 완료 아이콘 */
 .verification_complete_icon {
   position: absolute;
@@ -452,7 +458,7 @@
 /* 회원가입 버튼 비활성화 */
 .submit_button:disabled,
 .submit_button_disabled {
-  background-color: #d9d9d9;
+  background-color: #e5e5e5;
   color: #848484;
   cursor: default;
   opacity: 1;
@@ -461,7 +467,7 @@
 /* 회원가입 버튼 비활성화 호버 (호버 효과 제거) */
 .submit_button:disabled:hover,
 .submit_button_disabled:hover {
-  background-color: #d9d9d9;
+  background-color: #e5e5e5;
   opacity: 1;
 }
 
