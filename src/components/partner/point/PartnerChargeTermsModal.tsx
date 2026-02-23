@@ -42,17 +42,33 @@ const CHARGE_TERMS_CONTENT = {
     purposes: ["캠페인 등록", "상품 구매", "광고 비용"],
   },
   cancel_refund: {
-    title: "결제 취소 및 환불",
-    desc: "취소 가능 기간: 충전 후 24시간 이내 취소 요청 가능 (충전 직후 미사용 상태일 때)",
-  },
-  no_refund: {
-    title: "환불 불가 사항",
-    desc: "다음의 경우 환불이 불가합니다.",
-    items: [
+    cancel_period: "충전 후 24시간 이내 취소 요청 가능 (충전 직후 미사용 상태일 때)",
+    no_refund_desc: "다음의 경우 환불이 불가합니다.",
+    no_refund_items: [
       "포인트가 이미 캠페인에 배치된 경우",
       "리뷰어가 캠페인에 신청한 이후",
+      "콘텐츠 제출이 시작된 이후",
+      "파트너가 광고 비용을 사용한 이후",
+      "수익이 지급된 이후",
+      "기타 회사가 판단하기에 환불이 부적절한 경우",
     ],
+    refund_process: [
+      "회사는 환불 가능한 경우, 환불 요청 접수 후 10 영업일 이내에 원래 결제 수단으로 환불 처리합니다.",
+      "환불 시 발생한 수수료는 파트너가 부담합니다.",
+      "PG사 또는 금융기관의 정책에 따라 추가 시간이 소요될 수 있습니다.",
+    ],
+    partial_refund: "부분적인 환불(예: 일부 포인트만 반환)은 불가합니다.",
   },
+  duplicate_payment: [
+    "중복 결제가 발생한 경우, 파트너는 즉시 회사에 통보해야 합니다.",
+    "회사는 중복 결제 사실을 확인 후 10 영업일 이내에 중복분을 환불 처리합니다.",
+    "오류로 인한 환불은 수수료 없이 진행됩니다.",
+  ],
+  tax_fee: [
+    "포인트 충전에 부가세(VAT)가 포함되어 있으며, 별도 납부의 대상이 아닙니다.",
+    "카드사, 통신사, PG사 등에서 부과하는 수수료는 파트너가 부담합니다.",
+    "환불 시 카드사의 수수료 정책에 따라 금액이 조정될 수 있습니다.",
+  ],
 };
 
 export default function PartnerChargeTermsModal({
@@ -96,7 +112,7 @@ export default function PartnerChargeTermsModal({
     if (e.target === e.currentTarget) on_close();
   };
 
-  const { payment_method, payment_info, point_charge, cancel_refund, no_refund } =
+  const { payment_method, payment_info, point_charge, cancel_refund, duplicate_payment, tax_fee } =
     CHARGE_TERMS_CONTENT;
 
   return (
@@ -174,18 +190,37 @@ export default function PartnerChargeTermsModal({
                 ))}
                 <br />
 
-                <p className={modalStyles.terms_modal_heading}>
-                  {cancel_refund.title}
-                </p>
-                <p>{cancel_refund.desc}</p>
+                <p className={modalStyles.terms_modal_heading}>결제 취소 및 환불</p>
+                <p className={modalStyles.terms_modal_sub_heading}>취소 가능 기간</p>
+                <p>{cancel_refund.cancel_period}</p>
                 <br />
 
-                <p className={modalStyles.terms_modal_heading}>
-                  {no_refund.title}
-                </p>
-                <p>{no_refund.desc}</p>
-                {no_refund.items.map((item, i) => (
+                <p className={modalStyles.terms_modal_sub_heading}>환불 불가 사항</p>
+                <p>{cancel_refund.no_refund_desc}</p>
+                {cancel_refund.no_refund_items.map((item, i) => (
                   <p key={i}>- {item}</p>
+                ))}
+                <br />
+
+                <p className={modalStyles.terms_modal_sub_heading}>환불 처리 절차</p>
+                {cancel_refund.refund_process.map((text, i) => (
+                  <p key={i}>{i + 1}. {text}</p>
+                ))}
+                <br />
+
+                <p className={modalStyles.terms_modal_sub_heading}>부분 환불</p>
+                <p>{cancel_refund.partial_refund}</p>
+                <br />
+
+                <p className={modalStyles.terms_modal_heading}>결제 오류 및 중복 결제</p>
+                {duplicate_payment.map((text, i) => (
+                  <p key={i}>{i + 1}. {text}</p>
+                ))}
+                <br />
+
+                <p className={modalStyles.terms_modal_heading}>세금 및 수수료</p>
+                {tax_fee.map((text, i) => (
+                  <p key={i}>{i + 1}. {text}</p>
                 ))}
               </div>
             </div>
