@@ -374,7 +374,7 @@ export default function RegionFilter({
   const handleSelectAll = () => {
     if (selectedMainRegion === "전체") {
       const regionsToToggle = Object.keys(regionData.subRegions).map(
-        (mainRegion) => `${mainRegion} > ${mainRegion} 전체`,
+        (mainRegion) => getRegionAllKey(mainRegion),
       );
       const isAllSelected = regionsToToggle.every((region) =>
         tempSelectedRegions.includes(region),
@@ -446,8 +446,7 @@ export default function RegionFilter({
             ]?.map(
               (subRegion: string) => `${selectedMainRegion} > ${subRegion}`,
             ) || [];
-          // 개별 탭(서울, 경기 등)에서는 맨 앞에 "X 전체" 옵션 추가
-          return [getRegionAllKey(selectedMainRegion), ...subList];
+          return subList;
         })();
 
   // 현재 메인 지역의 "X 전체"가 선택됐는지 (개별 탭에서만 의미 있음)
@@ -559,7 +558,18 @@ export default function RegionFilter({
                                   (region) => region !== fullRegionName,
                                 );
                               }
-                              return [...filtered, fullRegionName];
+                              // "X > X 전체" 선택 시, 해당 시/도의 개별 구 선택 제거
+                              const mainPart = fullRegionName.split(" > ")[0];
+                              const subList =
+                                regionData.subRegions[
+                                  mainPart as keyof typeof regionData.subRegions
+                                ]?.map(
+                                  (sub: string) => `${mainPart} > ${sub}`,
+                                ) || [];
+                              const withoutSubRegions = filtered.filter(
+                                (r) => !subList.includes(r),
+                              );
+                              return [...withoutSubRegions, fullRegionName];
                             });
                           } else {
                             // 개별 지역 탭 (서울 등): "X 전체" ↔ 구 목록 연동
