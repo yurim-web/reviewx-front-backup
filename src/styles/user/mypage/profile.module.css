@@ -89,11 +89,12 @@
   display: none;
 }
 
-/* 토글 버튼 래퍼 */
+/* 토글 버튼 래퍼 (PC: 프로필 영역 위아래 가운데 정렬) */
 .toggle_wrapper {
   position: absolute;
-  top: 24px;
+  top: 50%;
   right: 40px;
+  transform: translateY(-50%);
 }
 
 /* ========================================

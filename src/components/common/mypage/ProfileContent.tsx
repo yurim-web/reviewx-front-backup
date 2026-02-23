@@ -289,21 +289,6 @@ export default function ProfileContent({
       */}
       {onLogout && (
         <div className={profileStyles.menu_list}>
-          {/* 모바일 전용: 리뷰어로 변경 버튼 (파트너일 때만) */}
-          {editPath.startsWith("/partner") && (
-            <button
-              className={`${profileStyles.menu_item} ${profileStyles.menu_item_mobile_only}`}
-              onClick={() => router.push("/user/mypage/profile")}
-            >
-              <img
-                src="/images/mypage/menu_icon/logout_icon.svg"
-                alt="리뷰어로 변경 아이콘"
-                className={profileStyles.menu_icon}
-              />
-              <div className={profileStyles.menu_text}>리뷰어로 변경</div>
-            </button>
-          )}
-          
           <button
             className={profileStyles.menu_item}
             onClick={handle_logout_click}
