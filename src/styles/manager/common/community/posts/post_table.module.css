@@ -181,6 +181,7 @@
   text-align: left;
   max-width: 100%;
   overflow: visible;
+  font-weight: 500 !important;
 }
 
 /* 제목 텍스트에 말줄임표 적용 */
