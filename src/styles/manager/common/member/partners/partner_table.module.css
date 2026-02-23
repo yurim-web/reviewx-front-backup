@@ -26,7 +26,7 @@
   display: grid;
   width: 100%;
   min-width: 0;
-  grid-template-columns: 0.5fr 0.9fr 2.5fr 0.8fr 1.5fr 1.5fr 1.3fr 1.3fr 1.3fr 1.3fr 1.2fr 1.2fr;
+  grid-template-columns: 0.5fr 1.1fr 2.5fr 0.8fr 2fr 2fr 1.6fr 1.6fr 1.5fr 1.5fr 1.5fr 1.0fr;
   border-radius: 4px;
   overflow: hidden;
 }
@@ -175,6 +175,26 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   min-width: 0;
+}
+
+/* 접속일·가입일은 날짜+시간 전체 표시 (말줄임표 없음) */
+.table_cell_last_access > span,
+.table_cell_join_date > span {
+  overflow: visible;
+  text-overflow: clip;
+}
+
+/* 번호(6자리 고정)·유형 셀 - 말줄임표 없음 */
+.table_cell_number > span,
+.table_cell_status_type > span {
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+/* 헤더 내 span - 말줄임표 없이 클립 처리 */
+.table_header > div > span {
+  overflow: hidden;
+  text-overflow: clip;
 }
 
 /* 상호명 셀은 세로 정렬 */
