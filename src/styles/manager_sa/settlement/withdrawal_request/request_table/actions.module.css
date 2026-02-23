@@ -118,11 +118,13 @@
   transition: opacity 0.2s ease;
 }
 
-/* 액션 버튼 비활성화 상태 */
+/* 액션 버튼 비활성화 상태 (배경색 제거) */
 .action_button_approve:disabled,
 .action_button_reject:disabled {
   cursor: not-allowed;
   pointer-events: none;
+  background: none !important;
+  background-color: transparent !important;
 }
 
 /* 액션 아이콘 */
