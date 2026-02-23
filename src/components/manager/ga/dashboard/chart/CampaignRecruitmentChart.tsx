@@ -211,15 +211,21 @@ const CustomTooltip = ({ active, payload, coordinate }: any) => {
     >
       <div className={styles.chart_tooltip_row}>
         <span className={styles.chart_tooltip_campaign_label}>모집률</span>
-        <span className={styles.chart_tooltip_campaign_value}>{data.recruitmentRate}%</span>
+        <span className={styles.chart_tooltip_campaign_value}>
+          {data.recruitmentRate}%
+        </span>
       </div>
       <div className={styles.chart_tooltip_row}>
         <span className={styles.chart_tooltip_campaign_label}>달성률</span>
-        <span className={styles.chart_tooltip_campaign_value}>{data.achievementRate}%</span>
+        <span className={styles.chart_tooltip_campaign_value}>
+          {data.achievementRate}%
+        </span>
       </div>
       <div className={styles.chart_tooltip_row}>
         <span className={styles.chart_tooltip_campaign_label}>진행 기간</span>
-        <span className={styles.chart_tooltip_campaign_value}>{durationText}</span>
+        <span className={styles.chart_tooltip_campaign_value}>
+          {durationText}
+        </span>
       </div>
     </div>
   );
@@ -313,13 +319,13 @@ export default function CampaignRecruitmentChart() {
           {/* 범례 숨김 - 섹션 컴포넌트에서 커스텀 범례로 표시 */}
           <Legend wrapperStyle={{ display: "none" }} />
 
-          {/* 툴팁 - 크로스헤어 숨김, 포인트 중앙 위에 배치 */}
+          {/* 툴팁 - 세로 크로스헤어 표시, 포인트 중앙 위에 배치 */}
           <Tooltip
             content={<CustomTooltip />}
             shared={true}
             filterNull={true}
             allowEscapeViewBox={{ x: true, y: true }}
-            cursor={false}
+            cursor={{ stroke: "#d9d9d9", strokeWidth: 1 }}
           />
 
           {/* 달성률 라인 (핑크색) - 막대 뒤에 표시, 로드 시 선·점 동시 표시 */}

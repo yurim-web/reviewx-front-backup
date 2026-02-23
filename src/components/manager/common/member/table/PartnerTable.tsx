@@ -74,6 +74,7 @@ interface PartnerTableProps {
   // CSS 모듈 스타일 객체
   styles: Record<string, string> & {
     table_container: string;
+    table_grid_wrapper: string;
     table_header: string;
     table_body: string;
     table_row: string;
@@ -500,10 +501,11 @@ const PartnerTable = forwardRef<PartnerTableRef, PartnerTableProps>(
 
     return (
       <div className={`${cssStyles.table_container} ${tooltip_container_styles.tooltip_container_visible}`}>
-        {/* 테이블 헤더 */}
-        {render_custom_header()}
-        {/* 테이블 바디 */}
-        <div className={cssStyles.table_body}>
+        <div className={cssStyles.table_grid_wrapper}>
+          {/* 테이블 헤더 */}
+          {render_custom_header()}
+          {/* 테이블 바디 */}
+          <div className={cssStyles.table_body}>
           {filtered_partners.length === 0 ? (
             <div className={cssStyles.empty_message}>파트너가 없습니다.</div>
           ) : (
@@ -657,6 +659,7 @@ const PartnerTable = forwardRef<PartnerTableRef, PartnerTableProps>(
               );
             })
           )}
+          </div>
         </div>
         {/* 이용 제한 사유 모달 */}
         <ManagerRestrictionModal

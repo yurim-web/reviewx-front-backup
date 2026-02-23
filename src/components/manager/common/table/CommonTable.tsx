@@ -356,27 +356,42 @@ export default function CommonTable<T extends TableRowData>({
     }
 
     // 데이터가 있으면 각 행 렌더링
+    const row_wrapper_class = styles.table_body_row_wrapper || "";
     return (
       <div className={`${styles.table_body} ${body_class_name}`}>
         {data.map((row, index) => (
-          <div key={`${row.id}-${index}`}>{render_table_row(row, index)}</div>
+          <div
+            key={`${row.id}-${index}`}
+            className={row_wrapper_class || undefined}
+          >
+            {render_table_row(row, index)}
+          </div>
         ))}
       </div>
     );
   };
 
-  // 메인 렌더링
+  const table_content = (
+    <>
+      {/* 테이블 헤더 */}
+      {render_table_header()}
+      {/* 테이블 바디 */}
+      {render_table_body()}
+    </>
+  );
+
+  // 메인 렌더링 (table_grid_wrapper가 있으면 헤더+바디를 한 그리드로 감쌈)
   return (
     <div
       className={`${
         styles.table_container || styles.table_section
       } ${container_class_name}`}
     >
-      {/* 테이블 헤더 */}
-      {render_table_header()}
-
-      {/* 테이블 바디 */}
-      {render_table_body()}
+      {styles.table_grid_wrapper ? (
+        <div className={styles.table_grid_wrapper}>{table_content}</div>
+      ) : (
+        table_content
+      )}
     </div>
   );
 }

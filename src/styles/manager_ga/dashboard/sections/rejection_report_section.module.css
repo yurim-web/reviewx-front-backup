@@ -10,7 +10,7 @@
  * - /manager_ga (GA 관리자 대시보드)
  */
 
-/* 반려/신고 통계 섹션 카드 - 높이·너비 안에 전부 들어오게 */
+/* 반려/신고 통계 섹션 카드 - 툴팁이 잘리지 않도록 overflow: visible */
 .rejection_report_section_card {
   display: flex;
   flex-direction: column;
@@ -20,7 +20,7 @@
   padding: 20px;
   max-height: 356px;
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* 반려/신고 통계 섹션 헤더 (제목과 범례를 같은 줄에 배치) - 높이 고정 */

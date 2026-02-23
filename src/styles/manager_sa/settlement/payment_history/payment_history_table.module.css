@@ -28,6 +28,7 @@
   padding: 0;
   align-items: center;
   min-height: 56px;
+  border-radius: 4px;
 }
 
 /* 테이블 헤더 행 */

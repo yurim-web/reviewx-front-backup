@@ -19,23 +19,26 @@ interface EmailInputProps {
   onChange: (value: string) => void;
   /** 에러 메시지 */
   error?: string;
+  /** 관리자용: true면 라벨 "아이디", placeholder "아이디 입력", type="text" */
+  isManager?: boolean;
 }
 
 export default function EmailInput({
   value,
   onChange,
   error,
+  isManager = false,
 }: EmailInputProps) {
   return (
     <div className={styles.email_input_wrapper}>
       <label htmlFor="find-account-email" className={styles.email_label}>
-        아이디(이메일)
+        {isManager ? "아이디" : "아이디(이메일)"}
       </label>
       <input
         id="find-account-email"
-        type="email"
+        type={isManager ? "text" : "email"}
         className={styles.email_input}
-        placeholder="이메일 입력"
+        placeholder={isManager ? "아이디 입력" : "이메일 입력"}
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />

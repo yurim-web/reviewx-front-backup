@@ -66,28 +66,6 @@ export default function DeliveryCampaignCreatePage() {
     };
   }, []);
 
-  /**
-   * localStorage에서 저장된 데이터의 isUrgent 값 불러오기
-   *
-   * 설명:
-   * - 임시 저장된 데이터가 있으면 isUrgent 값을 불러와서 설정합니다.
-   * - 컴포넌트 마운트 시 한 번만 실행됩니다.
-   */
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    try {
-      const saved = localStorage.getItem("temp_delivery_campaign");
-      if (saved) {
-        const savedData = JSON.parse(saved);
-        if (savedData?.isUrgent === true) {
-          setIsUrgent(true);
-        }
-      }
-    } catch (error) {
-      console.error("저장된 긴급 상태 불러오기 실패:", error);
-    }
-  }, []);
 
   /**
    * 캠페인 등록 처리 (폼에서 직접 호출)
@@ -308,6 +286,7 @@ export default function DeliveryCampaignCreatePage() {
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}
           onUrgentLoad={setIsUrgent}
+          isUrgent={isUrgent}
         />
 
         {/* 오류 모달 */}

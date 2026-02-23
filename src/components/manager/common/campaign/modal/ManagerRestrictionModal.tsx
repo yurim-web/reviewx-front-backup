@@ -22,12 +22,12 @@ import BaseModal from "@/components/common/modal/BaseModal";
 const block_reason_options: string[] = [
   "반복 반려 누적",
   "반복 취소 누적",
-  "무단 이탈·노쇼 누적",
+  "무단 이탈 · 노쇼 누적",
   "공정위 위반 게시 요청 누적",
   "콘텐츠 도용 · 중복",
   "부적절 캠페인 게시",
-  "비정상 요청·접근",
-  "외부 결제·금전 요구",
+  "비정상 요청 · 접근",
+  "외부 결제 · 금전 요구",
   "비매너 행위",
 ];
 

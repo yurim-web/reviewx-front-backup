@@ -12,10 +12,10 @@
  * - 전체 회원 수, 활성 파트너 수, 전체 리뷰어 수, 활성 리뷰어 수 표시
  */
 
-'use client';
+"use client";
 
-import { useMemo, useState, useEffect } from 'react';
-import { parse, differenceInDays, subDays } from 'date-fns';
+import { useMemo, useState, useEffect } from "react";
+import { parse, differenceInDays, subDays } from "date-fns";
 import styles from "@/styles/manager_ga/dashboard/sections/member_type_section.module.css";
 import MemberTypeBarChart from "../chart/MemberTypeBarChart";
 import { get_reviewer_list } from "@/data/manager_ga/member/reviewers";
@@ -49,8 +49,8 @@ export default function MemberTypeSection({
         reviewerPercentage: 0,
         activePartnerPercentage: 0,
         activeReviewerPercentage: 0,
-        totalPartnersChange: { percentage: 0, type: 'neutral' as const },
-        totalReviewersChange: { percentage: 0, type: 'neutral' as const },
+        totalPartnersChange: { percentage: 0, type: "neutral" as const },
+        totalReviewersChange: { percentage: 0, type: "neutral" as const },
       };
     }
 
@@ -66,8 +66,8 @@ export default function MemberTypeSection({
         reviewerPercentage: 0,
         activePartnerPercentage: 0,
         activeReviewerPercentage: 0,
-        totalPartnersChange: { percentage: 0, type: 'neutral' as const },
-        totalReviewersChange: { percentage: 0, type: 'neutral' as const },
+        totalPartnersChange: { percentage: 0, type: "neutral" as const },
+        totalReviewersChange: { percentage: 0, type: "neutral" as const },
       };
     }
 
@@ -90,8 +90,8 @@ export default function MemberTypeSection({
     let active_partners = 0;
     partners.forEach((partner) => {
       if (partner.last_access_date) {
-        const access_date_str = partner.last_access_date.split(' ')[0];
-        const access_date = parse(access_date_str, 'yyyy-MM-dd', new Date());
+        const access_date_str = partner.last_access_date.split(" ")[0];
+        const access_date = parse(access_date_str, "yyyy-MM-dd", new Date());
         access_date.setHours(0, 0, 0, 0);
 
         if (access_date >= start_date && access_date <= end_date) {
@@ -104,8 +104,8 @@ export default function MemberTypeSection({
     let active_reviewers = 0;
     reviewers.forEach((reviewer) => {
       if (reviewer.last_access_date) {
-        const access_date_str = reviewer.last_access_date.split(' ')[0];
-        const access_date = parse(access_date_str, 'yyyy-MM-dd', new Date());
+        const access_date_str = reviewer.last_access_date.split(" ")[0];
+        const access_date = parse(access_date_str, "yyyy-MM-dd", new Date());
         access_date.setHours(0, 0, 0, 0);
 
         if (access_date >= start_date && access_date <= end_date) {
@@ -126,8 +126,8 @@ export default function MemberTypeSection({
     let previous_active_partners = 0;
     partners.forEach((partner) => {
       if (partner.last_access_date) {
-        const access_date_str = partner.last_access_date.split(' ')[0];
-        const access_date = parse(access_date_str, 'yyyy-MM-dd', new Date());
+        const access_date_str = partner.last_access_date.split(" ")[0];
+        const access_date = parse(access_date_str, "yyyy-MM-dd", new Date());
         access_date.setHours(0, 0, 0, 0);
 
         if (
@@ -143,8 +143,8 @@ export default function MemberTypeSection({
     let previous_active_reviewers = 0;
     reviewers.forEach((reviewer) => {
       if (reviewer.last_access_date) {
-        const access_date_str = reviewer.last_access_date.split(' ')[0];
-        const access_date = parse(access_date_str, 'yyyy-MM-dd', new Date());
+        const access_date_str = reviewer.last_access_date.split(" ")[0];
+        const access_date = parse(access_date_str, "yyyy-MM-dd", new Date());
         access_date.setHours(0, 0, 0, 0);
 
         if (
@@ -160,8 +160,8 @@ export default function MemberTypeSection({
     let previous_total_partners = 0;
     partners.forEach((partner) => {
       if (partner.join_date) {
-        const join_date_str = partner.join_date.split(' ')[0];
-        const join_date = parse(join_date_str, 'yyyy-MM-dd', new Date());
+        const join_date_str = partner.join_date.split(" ")[0];
+        const join_date = parse(join_date_str, "yyyy-MM-dd", new Date());
         join_date.setHours(0, 0, 0, 0);
 
         if (join_date <= previous_end_date) {
@@ -174,8 +174,8 @@ export default function MemberTypeSection({
     let previous_total_reviewers = 0;
     reviewers.forEach((reviewer) => {
       if (reviewer.join_date) {
-        const join_date_str = reviewer.join_date.split(' ')[0];
-        const join_date = parse(join_date_str, 'yyyy-MM-dd', new Date());
+        const join_date_str = reviewer.join_date.split(" ")[0];
+        const join_date = parse(join_date_str, "yyyy-MM-dd", new Date());
         join_date.setHours(0, 0, 0, 0);
 
         if (join_date <= previous_end_date) {
@@ -187,35 +187,35 @@ export default function MemberTypeSection({
     // 증감률 계산 함수
     const calculate_change_percentage = (
       current: number,
-      previous: number
-    ): { percentage: number; type: 'positive' | 'negative' | 'neutral' } => {
+      previous: number,
+    ): { percentage: number; type: "positive" | "negative" | "neutral" } => {
       if (previous === 0) {
         if (current > 0) {
-          return { percentage: 100, type: 'positive' };
+          return { percentage: 100, type: "positive" };
         }
-        return { percentage: 0, type: 'neutral' };
+        return { percentage: 0, type: "neutral" };
       }
       const change = ((current - previous) / previous) * 100;
       const rounded_change = Math.round(change);
       if (rounded_change > 0) {
-        return { percentage: rounded_change, type: 'positive' };
+        return { percentage: rounded_change, type: "positive" };
       } else if (rounded_change < 0) {
-        return { percentage: Math.abs(rounded_change), type: 'negative' };
+        return { percentage: Math.abs(rounded_change), type: "negative" };
       } else {
-        return { percentage: 0, type: 'neutral' };
+        return { percentage: 0, type: "neutral" };
       }
     };
 
     // 전체 파트너 수 증감률
     const total_partners_change = calculate_change_percentage(
       total_partners,
-      previous_total_partners
+      previous_total_partners,
     );
 
     // 전체 리뷰어 수 증감률
     const total_reviewers_change = calculate_change_percentage(
       total_reviewers,
-      previous_total_reviewers
+      previous_total_reviewers,
     );
 
     // 비율 계산
@@ -253,12 +253,12 @@ export default function MemberTypeSection({
 
   // 숫자를 천 단위로 포맷팅하는 함수
   const format_number = (num: number): string => {
-    return num.toLocaleString('ko-KR');
+    return num.toLocaleString("ko-KR");
   };
   return (
     <div className={styles.member_type_section_card}>
       {/* 섹션 제목 */}
-      <h2 className={styles.member_type_section_title}>회원 유형 별 통계</h2>
+      <h2 className={styles.member_type_section_title}>회원 유형별 통계</h2>
 
       {/* 막대 차트와 통계 정보를 나란히 배치 */}
       <div className={styles.member_type_section_content}>
@@ -292,17 +292,17 @@ export default function MemberTypeSection({
                   ]
                 }
               >
-                {stats.totalPartnersChange.type === 'positive' && (
+                {stats.totalPartnersChange.type === "positive" && (
                   <>
                     <span>↑</span> {stats.totalPartnersChange.percentage}%
                   </>
                 )}
-                {stats.totalPartnersChange.type === 'negative' && (
+                {stats.totalPartnersChange.type === "negative" && (
                   <>
                     <span>↓</span> {stats.totalPartnersChange.percentage}%
                   </>
                 )}
-                {stats.totalPartnersChange.type === 'neutral' && (
+                {stats.totalPartnersChange.type === "neutral" && (
                   <>
                     <span>-</span> 0%
                   </>
@@ -340,17 +340,17 @@ export default function MemberTypeSection({
                   ]
                 }
               >
-                {stats.totalReviewersChange.type === 'positive' && (
+                {stats.totalReviewersChange.type === "positive" && (
                   <>
                     <span>↑</span> {stats.totalReviewersChange.percentage}%
                   </>
                 )}
-                {stats.totalReviewersChange.type === 'negative' && (
+                {stats.totalReviewersChange.type === "negative" && (
                   <>
                     <span>↓</span> {stats.totalReviewersChange.percentage}%
                   </>
                 )}
-                {stats.totalReviewersChange.type === 'neutral' && (
+                {stats.totalReviewersChange.type === "neutral" && (
                   <>
                     <span>-</span> 0%
                   </>

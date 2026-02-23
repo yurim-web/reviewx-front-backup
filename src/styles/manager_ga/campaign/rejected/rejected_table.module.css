@@ -21,14 +21,27 @@
   margin-top: 8px;
 }
 
-/* 테이블 헤더 */
-.table_header {
+/* 헤더·데이터 행이 같은 열 너비를 쓰도록 한 그리드로 통일 (subgrid) */
+.table_grid_wrapper {
   display: grid;
+  width: 100%;
+  min-width: 0;
   /* 반려내역 테이블 컬럼 정의 */
   grid-template-columns: 0.09fr 0.5fr 0.2fr 0.2fr 0.1fr 0.12fr 0.1fr 0.15fr 60px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* 테이블 헤더 (그리드 래퍼와 열 너비 일치 - subgrid) */
+.table_header {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
   background-color: #f5f5f5;
   padding: 0;
   align-items: center;
+  min-width: 0;
+  border-radius: 4px;
 }
 
 /* 테이블 헤더 셀 */
@@ -75,20 +88,41 @@
   justify-content: center;
 }
 
-/* 테이블 행을 감싸는 컨테이너 - 툴팁과 함께 배치 */
-.table_row_wrapper {
+/* 테이블 바디 (그리드 래퍼 안에서 전체 너비 사용) */
+.table_body {
+  grid-column: 1 / -1;
   width: 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: subgrid;
+}
+
+/* 테이블 바디 내부 행 래퍼 (그리드 구조 유지) */
+.table_body_row_wrapper {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+}
+
+/* 테이블 행을 감싸는 컨테이너 - 툴팁과 함께 배치 (그리드 구조 유지) */
+.table_row_wrapper {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
   position: relative;
 }
 
-/* 테이블 행 */
+/* 테이블 행 (subgrid 사용) */
 .table_row {
+  grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: 0.09fr 0.5fr 0.2fr 0.2fr 0.1fr 0.12fr 0.1fr 0.15fr 60px;
+  grid-template-columns: subgrid;
   border-bottom: 1px solid #f2f2f2;
   align-items: center;
   height: 61px;
   transition: background-color 0.2s;
+  min-width: 0;
+  width: 100%;
 }
 
 /* 호버시 배경색 변경 */
@@ -156,7 +190,7 @@
   align-items: center;
   gap: 4px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 14px;
   letter-spacing: -0.28px;
   color: #ff2626;

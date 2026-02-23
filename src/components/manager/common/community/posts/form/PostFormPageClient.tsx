@@ -267,10 +267,10 @@ export default function PostFormPageClient({
   }, [is_mounted, mode]);
 
   // mode에 따라 페이지 제목과 버튼 텍스트 결정
-  const page_title = mode === "create" ? "게시글 작성" : "게시글 수정";
+  const page_title = mode === "create" ? "게시글 등록" : "게시글 수정";
   const button_text = mode === "create" ? "등록" : "저장";
   const form_aria_label =
-    mode === "create" ? "게시글 작성 폼" : "게시글 수정 폼";
+    mode === "create" ? "게시글 등록 폼" : "게시글 수정 폼";
 
   // 카테고리 타입이 "자주 묻는 질문"인지 여부에 따라 라벨 텍스트 변경
   const is_faq_type = category_type === "자주 묻는 질문";

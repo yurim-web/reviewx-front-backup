@@ -21,7 +21,7 @@
 
 "use client";
 
-import { useState, useEffect, ReactNode } from "react";
+import { useState, useEffect, useRef, ReactNode } from "react";
 import { createPortal } from "react-dom";
 import CommonTable, {
   type TableColumn,
@@ -87,10 +87,49 @@ export default function CommonTableWithTooltip<T extends TableRowData>({
     top: number;
   } | null>(null);
   const [mounted, set_mounted] = useState(false);
+  const table_container_ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     set_mounted(true);
   }, []);
+
+  // 스크롤 시 툴팁 즉시 숨김 (윈도우 + 테이블을 감싼 스크롤 컨테이너 모두 감지)
+  const hide_tooltip = () => {
+    set_tooltip_hovered_cell(null);
+    set_tooltip_position(null);
+  };
+
+  useEffect(() => {
+    if (!tooltip_config) return;
+    const on_scroll = () => {
+      set_tooltip_hovered_cell(null);
+      set_tooltip_position(null);
+    };
+    const scrollables: (Window | HTMLElement)[] = [window];
+    const root = table_container_ref.current;
+    if (root) {
+      let el: HTMLElement | null = root;
+      while (el && el !== document.body) {
+        const style = getComputedStyle(el);
+        const overflow_y = style.overflowY;
+        if (
+          (overflow_y === "auto" || overflow_y === "scroll" || overflow_y === "overlay") &&
+          el.scrollHeight > el.clientHeight
+        ) {
+          scrollables.push(el);
+        }
+        el = el.parentElement;
+      }
+    }
+    scrollables.forEach((target) => {
+      target.addEventListener("scroll", on_scroll, { passive: true });
+    });
+    return () => {
+      scrollables.forEach((target) => {
+        target.removeEventListener("scroll", on_scroll);
+      });
+    };
+  }, [tooltip_config]);
 
   /* ========================================
      🛠️ 유틸리티 함수 (Utility Functions)
@@ -137,8 +176,7 @@ export default function CommonTableWithTooltip<T extends TableRowData>({
   };
 
   const handle_tooltip_cell_mouse_leave = () => {
-    set_tooltip_hovered_cell(null);
-    set_tooltip_position(null);
+    hide_tooltip();
   };
 
   /* ========================================
@@ -285,17 +323,19 @@ export default function CommonTableWithTooltip<T extends TableRowData>({
 
   return (
     <>
-      <CommonTable<T>
-        {...rest_props}
-        container_class_name={container_class}
-        columns={columns}
-        data={data}
-        render_cell={render_cell_with_tooltip}
-        styles={styles}
-        render_row_wrapper={
-          tooltip_config ? render_row_wrapper_with_tooltip : render_row_wrapper
-        }
-      />
+      <div ref={table_container_ref}>
+        <CommonTable<T>
+          {...rest_props}
+          container_class_name={container_class}
+          columns={columns}
+          data={data}
+          render_cell={render_cell_with_tooltip}
+          styles={styles}
+          render_row_wrapper={
+            tooltip_config ? render_row_wrapper_with_tooltip : render_row_wrapper
+          }
+        />
+      </div>
       {tooltip_portal}
     </>
   );

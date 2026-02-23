@@ -20,14 +20,27 @@
   background-color: white;
 }
 
-/* 테이블 헤더 */
-.table_header {
+/* 헤더·데이터 행이 같은 열 너비를 쓰도록 한 그리드로 통일 (subgrid) */
+.table_grid_wrapper {
   display: grid;
-  grid-template-columns: 40px 0.6fr 4fr 0.6fr 0.6fr 0.9fr 0.9fr 0.6fr 60px;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: 60px .6fr 4fr .6fr .6fr .9fr .9fr .6fr 60px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* 테이블 헤더 (그리드 래퍼와 열 너비 일치 - subgrid) */
+.table_header {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
   background-color: #f5f5f5;
   padding: 0;
   align-items: center;
   width: 100%;
+  min-width: 0;
+  border-radius: 4px;
 }
 
 /* 테이블 헤더 셀 */
@@ -47,19 +60,37 @@
   box-sizing: border-box;
 }
 
-/* 테이블 바디 */
+/* 테이블 바디 (그리드 래퍼 안에서 전체 너비 사용) */
 .table_body {
+  grid-column: 1 / -1;
   width: 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: subgrid;
 }
 
-/* 테이블 행 */
-.table_row {
+/* 테이블 바디 내부 행 래퍼 (그리드 구조 유지) */
+.table_body_row_wrapper {
+  grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: 40px 0.6fr 4fr 0.6fr 0.6fr 0.9fr 0.9fr 0.6fr 60px;
+  grid-template-columns: subgrid;
+}
+
+/* 테이블 행 래퍼 (CommonTableWithTooltip에서 사용, 그리드 방해하지 않도록 contents 사용) */
+.table_row_wrapper {
+  display: contents;
+}
+
+/* 테이블 행 (subgrid 사용) */
+.table_row {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
   border-bottom: 1px solid #f2f2f2;
   align-items: center;
   min-height: 62px;
   width: 100%;
+  min-width: 0;
   position: relative;
 }
 
@@ -106,6 +137,15 @@
   white-space: nowrap;
   min-width: 0;
   display: block;
+}
+
+/* 체크박스 셀 */
+.table_cell_checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 /* 체크박스 */

@@ -244,6 +244,7 @@
   align-items: center;
   padding: 0;
   min-height: 76px;
+  border-bottom: 1px solid #f2f2f2;
 }
 
 /* 긴급 테이블 행: 체크 | 번호 | 이름 | 계좌번호 | 주민등록번호 | 출금 포인트 | 신청일 | 유형 | 상태 | 출금 */

@@ -226,24 +226,21 @@ const CustomTooltip = ({
       const tooltipXFixed = containerRect.left + tooltipXLocal;
       const tooltipYFixed = containerRect.top + tooltipYLocal;
 
-      const timeout_id = setTimeout(() => {
-        setTooltipState({
-          visible: true,
-          x: tooltipXFixed,
-          y: tooltipYFixed,
-          name: data.name,
-          value: data.value != null ? Math.round(Number(data.value)) : undefined,
-          useFixed: true,
-        });
-        prev_calculated_ref.current = {
-          midAngle,
-          name: data.name,
-          x: tooltipXLocal,
-          y: tooltipYLocal,
-        };
-      }, 0);
-
-      return () => clearTimeout(timeout_id);
+      // GA와 동일: 지연 없이 즉시 표시 (애니메이션은 부모에서 opacity 0.5s 처리)
+      setTooltipState({
+        visible: true,
+        x: tooltipXFixed,
+        y: tooltipYFixed,
+        name: data.name,
+        value: data.value != null ? Math.round(Number(data.value)) : undefined,
+        useFixed: true,
+      });
+      prev_calculated_ref.current = {
+        midAngle,
+        name: data.name,
+        x: tooltipXLocal,
+        y: tooltipYLocal,
+      };
     }
   }, [active, payload, containerRef]);
 
@@ -268,10 +265,25 @@ export default function ChannelMemberPieChart({
     value?: number;
     useFixed?: boolean;
   }>({ visible: false, x: 0, y: 0, name: "" });
+  // 채널별 회원 통계 전용: 툴팁이 조금 더 느리게 나오도록 0.5s (GA와 동일)
+  const [tooltip_opacity, set_tooltip_opacity] = useState(0);
 
   /* ========================================
      🔧 부가 기능 처리 (공용 유틸리티 사용)
      ======================================== */
+
+  // 툴팁 페이드인: GA 채널별 회원 통계와 동일 (opacity 0.5s ease)
+  useEffect(() => {
+    if (tooltip_state.visible) {
+      set_tooltip_opacity(0);
+      const raf = requestAnimationFrame(() => {
+        set_tooltip_opacity(1);
+      });
+      return () => cancelAnimationFrame(raf);
+    } else {
+      set_tooltip_opacity(0);
+    }
+  }, [tooltip_state.visible]);
 
   // 흰색 선 유지 및 클릭 이벤트 처리
   // 파이 차트의 경계선을 흰색으로 유지하고, 바깥으로 튀어나오는 선 제거
@@ -470,7 +482,7 @@ export default function ChannelMemberPieChart({
         </PieChart>
       </ResponsiveContainer>
 
-      {/* 툴팁: position fixed로 뷰포트 기준 배치 → overflow에 잘리지 않음 */}
+      {/* 툴팁: GA와 동일한 opacity 0.5s ease 페이드인 */}
       {tooltip_state.visible && (
         <div
           style={{
@@ -490,6 +502,8 @@ export default function ChannelMemberPieChart({
             display: "flex",
             alignItems: "center",
             gap: "8px",
+            opacity: tooltip_opacity,
+            transition: "opacity 0.5s ease",
           }}
         >
           <span>{tooltip_state.name}</span>
