@@ -109,6 +109,12 @@
   cursor: default;
 }
 
+/* 인증 완료 버튼 - disabled 상태에서도 배경색 유지 */
+.verification_button_completed:disabled {
+  background: #ff56941a;
+  color: #ff5694;
+}
+
 /* 우편번호 찾기 버튼 */
 .postal_button {
   width: 125px;
