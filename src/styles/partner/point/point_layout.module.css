@@ -87,8 +87,9 @@
     display: flex;
   }
 
-  /* 포인트 내역 설명(리뷰어 포인트 지급, 포인트 충전 등) 16px */
+  /* 포인트 내역 설명(리뷰어 포인트 지급, 포인트 충전 등) 16px, flex:1 해제 */
   .partner_mobile_description {
     font-size: 16px !important;
+    flex: unset;
   }
 }
