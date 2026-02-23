@@ -13,12 +13,22 @@
  * - /manager_sa/member/reviewers (SA 관리자 리뷰어 목록)
  */
 
-/* 테이블 컨테이너 */
+/* 테이블 컨테이너 - 좁은 화면에서 가로 스크롤로 열 정렬 유지 */
 .table_container {
   width: 100%;
   border-radius: 4px;
-  overflow: hidden;
+  overflow-x: auto;
   background-color: white;
+}
+
+/* 헤더·데이터 행이 같은 열 너비를 쓰도록 한 그리드로 통일 (subgrid) */
+.table_grid_wrapper {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: 0.5fr 1fr 1.7fr 1.3fr 1.2fr 2fr 2fr 1.3fr 1.3fr 1.3fr 1.3fr 1.3fr 1fr;
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 /* 테이블 헤더 래퍼 (헤더 + 이용 제한 버튼) */
@@ -27,15 +37,16 @@
   width: 100%;
 }
 
-/* 테이블 헤더 */
+/* 테이블 헤더 (그리드 래퍼와 열 너비 일치 - subgrid) */
 .table_header {
+  grid-column: 1 / -1;
   display: grid;
-  /* 리뷰어 목록 테이블 컬럼 정의 - 화면 가득 차게 fr 단위 사용 */
-  grid-template-columns: 0.5fr 0.9fr 1.7fr 1.3fr 1.2fr 1.6fr 1.6fr 1.3fr 1.3fr 1.3fr 1.3fr 1.3fr 1fr;
+  grid-template-columns: subgrid;
   background-color: #f5f5f5;
   padding: 0;
   align-items: center;
-  width: 100%;
+  min-width: 0;
+  border-radius: 4px;
 }
 
 /* 이용 제한 버튼 */
@@ -73,12 +84,12 @@
 .restriction_button_text {
   color: #444;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 16px;
   letter-spacing: -0.32px;
 }
 
-/* 테이블 헤더 셀 */
+/* 테이블 헤더 셀 - Figma 1920px 기준 말줄임 없이 표시되도록 텍스트 축소 방지 */
 .table_header > div {
   padding: 20px;
   color: #848484;
@@ -92,22 +103,31 @@
   gap: 6px;
   white-space: nowrap;
   box-sizing: border-box;
+  min-width: 0; /* grid 셀 내 flex 축소 허용 */
+}
+.table_header > div > span:first-child {
+  flex-shrink: 0; /* 헤더 텍스트가 줄어들어 말줄임 되지 않도록 */
+  overflow: visible;
 }
 
-/* 테이블 바디 */
+/* 테이블 바디 (그리드 래퍼와 열 너비 일치 - subgrid) */
 .table_body {
-  width: 100%;
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-auto-rows: auto;
+  min-width: 0;
 }
 
-/* 테이블 행 */
+/* 테이블 행 (그리드 래퍼 열 너비 상속 - subgrid) */
 .table_row {
+  grid-column: 1 / -1;
   display: grid;
-  /* 헤더와 동일한 컬럼 정의를 공유해 정렬 유지 - 화면 가득 차게 fr 단위 사용 */
-  grid-template-columns: 0.5fr 0.9fr 1.7fr 1.3fr 1.2fr 1.6fr 1.6fr 1.3fr 1.3fr 1.3fr 1.3fr 1.3fr 1fr;
+  grid-template-columns: subgrid;
   border-bottom: 1px solid #f2f2f2;
   align-items: center;
   min-height: 62px;
-  width: 100%;
+  min-width: 0;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -246,7 +266,7 @@
   align-items: center;
   justify-content: center;
   padding: 4px 8px;
-  border-radius: 8px;
+  border-radius: 4px;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
@@ -278,7 +298,7 @@
   align-items: center;
   justify-content: center;
   padding: 4px 8px;
-  border-radius: 8px;
+  border-radius: 4px;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
@@ -310,7 +330,7 @@
   align-items: center;
   justify-content: center;
   padding: 4px 8px;
-  border-radius: 8px;
+  border-radius: 4px;
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
