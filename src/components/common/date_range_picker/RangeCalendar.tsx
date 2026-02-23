@@ -1195,64 +1195,6 @@ export default function RangeCalendar({
   }, [apply_range_styles, hide_previous_month_days]);
 
   // ========================================
-  // 날짜 비활성화 로직 (시작일보다 이른 날짜는 선택 불가)
-  // ========================================
-
-  // 시작일만 선택된 상태에서 시작일보다 이른 날짜를 비활성화
-  const get_disabled_dates = () => {
-    // 시작일만 선택된 상태가 아니면 비활성화 없음
-    if (!selected || !selected.from) return undefined;
-    // to가 있고 from과 다르면 범위 선택 완료 → 비활성화 없음
-    if (selected.to != null && selected.from.getTime() !== selected.to.getTime()) return undefined;
-
-    const start_date_from = selected.from;
-
-    // 시작일보다 이른 날짜를 비활성화하는 함수 반환
-    return (date: Date) => {
-      const check_date = new Date(date);
-      check_date.setHours(0, 0, 0, 0);
-
-      const start_date = new Date(start_date_from);
-      start_date.setHours(0, 0, 0, 0);
-
-      const is_before = check_date < start_date;
-      return is_before;
-    };
-  };
-
-  // ========================================
-  // 날짜 클릭 이벤트 감지 (모달 표시용)
-  // ========================================
-
-  useEffect(() => {
-    if (!calendar_ref.current) return;
-
-    const handle_day_click = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-
-      // 날짜 버튼 클릭인지 확인
-      const day_button = target.closest("button[name^='day']") as HTMLButtonElement;
-      if (!day_button) return;
-
-      // disabled 버튼인지 확인
-      if (day_button.disabled) {
-        // 모달 표시
-        if (on_validation_error) {
-          on_validation_error();
-        }
-      }
-    };
-
-    calendar_ref.current.addEventListener("click", handle_day_click, true);
-
-    return () => {
-      if (calendar_ref.current) {
-        calendar_ref.current.removeEventListener("click", handle_day_click, true);
-      }
-    };
-  }, [on_validation_error]);
-
-  // ========================================
   // 렌더링
   // ========================================
 
@@ -1262,7 +1204,6 @@ export default function RangeCalendar({
         mode="range"
         selected={selected}
         onSelect={handle_date_select}
-        disabled={get_disabled_dates()}
         locale={ko}
         showOutsideDays={show_outside_days}
         numberOfMonths={number_of_months}

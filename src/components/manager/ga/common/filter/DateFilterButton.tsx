@@ -245,6 +245,7 @@ export default function DateFilterButton({
         on_close={() => setIsDateModalOpen(false)}
         selected_range={selected_date_range}
         on_apply={handle_date_range_apply}
+        on_validation_error={() => setIsErrorModalOpen(true)}
         align="left"
       />
 
