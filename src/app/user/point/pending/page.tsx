@@ -100,13 +100,8 @@ export default function PendingPointPage() {
                     </div>
                     <div className={pointStyles.mobile_row_second}>
                       <div className={pointStyles.mobile_date}>
-                        {item.date}
+                        {item.date} 예정
                       </div>
-                      <span
-                        className={`${pointStyles.mobile_status} ${pointStyles.earned}`}
-                      >
-                        예정
-                      </span>
                     </div>
                   </div>
                 ))
