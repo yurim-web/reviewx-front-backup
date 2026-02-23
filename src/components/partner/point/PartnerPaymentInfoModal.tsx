@@ -302,13 +302,6 @@ export default function PartnerPaymentInfoModal({
               >
                 거래명세서 다운로드
               </button>
-              <button
-                type="button"
-                className={styles.btn_primary}
-                onClick={on_close}
-              >
-                확인
-              </button>
             </div>
           </div>
         </div>

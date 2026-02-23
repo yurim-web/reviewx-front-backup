@@ -86,7 +86,7 @@
 .info_section_rows {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
   padding: 24px 0;
 }
 
@@ -134,25 +134,6 @@
   font-size: 16px;
   font-weight: 600;
   line-height: 16px;
-  letter-spacing: -0.32px;
-  cursor: pointer;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* 확인: 핑크 배경, 흰 글씨 (호버 없음) */
-.btn_primary {
-  flex: 1;
-  padding: 12px 24px;
-  border-radius: 8px;
-  border: none;
-  background: #ff5694;
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 24px;
   letter-spacing: -0.32px;
   cursor: pointer;
   height: 56px;
@@ -245,18 +226,34 @@
   }
 
   .modal_body {
-    padding: 0 20px 24px;
+    padding: 4px 20px 24px;
   }
 
   .info_section_rows {
     padding: 20px 0;
   }
 
-  .info_label,
+  /* 모바일: 라벨 너비를 '사업자등록번호' 기준으로 고정, 값은 우측 정렬 */
+  .info_row {
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+
+  .info_label {
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+    flex-shrink: 0;
+    white-space: nowrap;
+    min-width: 7em; /* '사업자등록번호' 7자 기준 */
+  }
+
   .info_value {
     font-size: 14px;
     line-height: 14px;
     letter-spacing: -0.28px;
+    flex: 1;
+    line-height: 20px; /* 142.857% */
   }
 
   .modal_actions {
@@ -265,8 +262,7 @@
     padding-top: 4px;
   }
 
-  .btn_outline,
-  .btn_primary {
+  .btn_outline {
     width: 100%;
     min-height: 48px;
     padding: 16px 20px;
