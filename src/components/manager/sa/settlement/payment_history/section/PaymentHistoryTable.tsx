@@ -90,6 +90,29 @@ export default function PaymentHistoryTable({
   /** 드롭다운 위치 갱신용: 메뉴가 열린 행의 트리거 버튼 */
   const menu_trigger_button_ref = useRef<HTMLButtonElement | null>(null);
 
+  /** 드롭다운 위치 계산: 가로는 원래대로(트리거 왼쪽 기준), 하단 여유 없을 때만 위로 열기 */
+  const get_dropdown_position = (trigger_rect: DOMRect) => {
+    const DROPDOWN_ESTIMATED_HEIGHT = 145;
+    const GAP = 4;
+    const HORIZONTAL_PADDING = 8;
+    const MIN_DROPDOWN_WIDTH = 163;
+    /** 위로 열릴 때 트리거에서 너무 멀지 않게 살짝 아래로 내림 */
+    const OPEN_ABOVE_OFFSET_DOWN = 24;
+    const space_below =
+      typeof window !== "undefined" ? window.innerHeight - trigger_rect.bottom - GAP : 0;
+    const open_above = space_below < DROPDOWN_ESTIMATED_HEIGHT;
+    const top = open_above
+      ? trigger_rect.top - DROPDOWN_ESTIMATED_HEIGHT - GAP + OPEN_ABOVE_OFFSET_DOWN
+      : trigger_rect.bottom + GAP;
+    let left = trigger_rect.left;
+    if (typeof window !== "undefined") {
+      const max_left = window.innerWidth - MIN_DROPDOWN_WIDTH - HORIZONTAL_PADDING;
+      if (left > max_left) left = max_left;
+      if (left < HORIZONTAL_PADDING) left = HORIZONTAL_PADDING;
+    }
+    return { left, top };
+  };
+
   // 결제 내역 데이터 상태
   // 초기값은 Mock 데이터(paymentHistoryList)를 사용하여 서버와 클라이언트의 초기 렌더링을 일치시킵니다.
   // 클라이언트 마운트 후 useEffect에서 LocalStorage 데이터를 병합한 실제 리스트로 교체합니다.
@@ -124,7 +147,7 @@ export default function PaymentHistoryTable({
     return () => document.removeEventListener("mousedown", handle_click_outside);
   }, [openMenuRowId]);
 
-  /** 스크롤/리사이즈 시 드롭다운 위치를 트리거 버튼에 맞춰 갱신 */
+  /** 스크롤/리사이즈 시 드롭다운 위치를 트리거 버튼에 맞춰 갱신 (뷰포트 안으로 유지) */
   useEffect(() => {
     if (openMenuRowId === null) return;
     const trigger = menu_trigger_button_ref.current;
@@ -132,7 +155,7 @@ export default function PaymentHistoryTable({
 
     const update_position = () => {
       const rect = trigger.getBoundingClientRect();
-      setDropdownRect({ left: rect.left, top: rect.bottom + 4 });
+      setDropdownRect(get_dropdown_position(rect));
     };
 
     const scroll_parents: Element[] = [];
@@ -450,7 +473,7 @@ export default function PaymentHistoryTable({
                     setOpenMenuRowId(null);
                     setDropdownRect(null);
                   } else {
-                    setDropdownRect({ left: rect.left, top: rect.bottom + 4 });
+                    setDropdownRect(get_dropdown_position(rect));
                     setOpenMenuRowId(row.id);
                   }
                 }}
