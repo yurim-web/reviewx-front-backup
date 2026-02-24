@@ -84,6 +84,7 @@ export const Default: Story = {
         setAccountHolder(value);
         args.onAccountHolderChange?.(value);
       },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       [args.onAccountHolderChange]
     );
 
@@ -92,6 +93,7 @@ export const Default: Story = {
         setBank(value);
         args.onBankChange?.(value);
       },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       [args.onBankChange]
     );
 
@@ -100,6 +102,7 @@ export const Default: Story = {
         setAccountNumber(value);
         args.onAccountNumberChange?.(value);
       },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       [args.onAccountNumberChange]
     );
 
@@ -152,6 +155,7 @@ export const Filled: Story = {
         setAccountHolder(value);
         args.onAccountHolderChange?.(value);
       },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       [args.onAccountHolderChange]
     );
 
@@ -160,6 +164,7 @@ export const Filled: Story = {
         setBank(value);
         args.onBankChange?.(value);
       },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       [args.onBankChange]
     );
 
@@ -168,6 +173,7 @@ export const Filled: Story = {
         setAccountNumber(value);
         args.onAccountNumberChange?.(value);
       },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       [args.onAccountNumberChange]
     );
 
@@ -205,4 +211,3 @@ export const Filled: Story = {
     onAccountNumberChange: (value) => console.log("Account number changed:", value),
   },
 };
-
