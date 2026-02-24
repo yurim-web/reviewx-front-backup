@@ -21,7 +21,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import ReporterCampaignForm from "@/components/partner/campaign_create_form/ReporterCampaignForm";
@@ -32,6 +32,7 @@ import layoutStyles from "@/styles/partner/partner_layout.module.css";
 import PageHeader from "@/components/partner/campaign_create_form/common/layout/PageHeader";
 import BaseModal from "@/components/common/modal/BaseModal";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
+import { getPartnerName } from "@/utils/partner/partnerHelpers";
 
 export default function ReporterCampaignCreatePage() {
   const router = useRouter();
@@ -40,8 +41,7 @@ export default function ReporterCampaignCreatePage() {
   const [isUrgent, setIsUrgent] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [pendingFormData, setPendingFormData] =
-    useState<CampaignFormData | null>(null);
+  const [pendingFormData, setPendingFormData] = useState<CampaignFormData | null>(null);
   const [pendingIsUrgent, setPendingIsUrgent] = useState(false); // 확인 모달 열 때의 isUrgent 값 저장
 
   /**
@@ -85,7 +85,7 @@ export default function ReporterCampaignCreatePage() {
       // 이미지 URL 처리
       // localStorage 용량 문제로 base64 이미지는 저장하지 않고 기본 이미지 사용
       // 실제 프로덕션에서는 이미지를 서버에 업로드하고 URL을 받아와야 합니다
-      let imageUrl = "/images/main/campaign_img/eximg_8.png"; // 기본 이미지 사용
+      const imageUrl = "/images/main/campaign_img/eximg_8.png"; // 기본 이미지 사용
 
       // 폼 데이터를 CampaignWithApplicants 형태로 변환
       const newCampaign = addReporterCampaign(finalFormData, imageUrl);
@@ -95,29 +95,12 @@ export default function ReporterCampaignCreatePage() {
       const registeredAt = new Date().toISOString();
 
       // 파트너명 가져오기 (partner_accounts에서)
-      let partnerName = "";
-      try {
-        if (typeof window !== "undefined") {
-          const storedAccounts = localStorage.getItem("partner_accounts");
-          if (storedAccounts) {
-            const accounts = JSON.parse(storedAccounts);
-            const partnerAccount = accounts.find(
-              (a: any) => a.id === (user?.id || 'partner_test_001')
-            );
-            if (partnerAccount) {
-              // business_name 우선, 없으면 name 사용
-              partnerName = partnerAccount.business_name || partnerAccount.name || "";
-            }
-          }
-        }
-      } catch (error) {
-        console.error("파트너명 조회 중 오류:", error);
-      }
+      const partnerName = getPartnerName(user?.id || "partner_test_001");
 
       const extendedCampaign = {
         ...newCampaign,
         // 파트너 ID 추가
-        partner_id: user?.id || 'partner_test_001',
+        partner_id: user?.id || "partner_test_001",
         // 파트너명 추가
         partnerName: partnerName,
         // campaignInfo에도 partnerName 추가
@@ -156,7 +139,7 @@ export default function ReporterCampaignCreatePage() {
 
         // 중복 ID 제거 (같은 ID가 있으면 새 것으로 교체)
         const existingIndex = campaigns.findIndex(
-          (c: any) => c.id === (extendedCampaign as any).id
+          (c: Record<string, unknown>) => c.id === (extendedCampaign as Record<string, unknown>).id
         );
         if (existingIndex >= 0) {
           campaigns[existingIndex] = extendedCampaign;
@@ -176,23 +159,20 @@ export default function ReporterCampaignCreatePage() {
         const MAX_STORAGE_SIZE = 4 * 1024 * 1024; // 4MB
         if (campaignsString.length > MAX_STORAGE_SIZE) {
           // 가장 오래된 캠페인부터 제거하여 크기 줄이기
-          let trimmedCampaigns = [...campaigns];
+          const trimmedCampaigns = [...campaigns];
           while (
             JSON.stringify(trimmedCampaigns).length > MAX_STORAGE_SIZE &&
             trimmedCampaigns.length > 1
           ) {
             trimmedCampaigns.shift(); // 가장 오래된 것 제거
           }
-          localStorage.setItem(
-            "reporterCampaigns",
-            JSON.stringify(trimmedCampaigns)
-          );
+          localStorage.setItem("reporterCampaigns", JSON.stringify(trimmedCampaigns));
         } else {
           localStorage.setItem("reporterCampaigns", campaignsString);
         }
-      } catch (error: any) {
+      } catch (error) {
         // localStorage 할당량 초과 또는 기타 오류 처리
-        if (error.name === "QuotaExceededError") {
+        if (error instanceof Error && error.name === "QuotaExceededError") {
           // 오래된 캠페인 제거 후 재시도
           const storedCampaigns = localStorage.getItem("reporterCampaigns");
           if (storedCampaigns) {
@@ -201,16 +181,10 @@ export default function ReporterCampaignCreatePage() {
             const keepCount = Math.floor(campaigns.length / 2);
             const trimmedCampaigns = campaigns.slice(-keepCount);
             trimmedCampaigns.push(extendedCampaign);
-            localStorage.setItem(
-              "reporterCampaigns",
-              JSON.stringify(trimmedCampaigns)
-            );
+            localStorage.setItem("reporterCampaigns", JSON.stringify(trimmedCampaigns));
           } else {
             // 저장된 데이터가 없으면 새로 저장
-            localStorage.setItem(
-              "reporterCampaigns",
-              JSON.stringify([extendedCampaign])
-            );
+            localStorage.setItem("reporterCampaigns", JSON.stringify([extendedCampaign]));
           }
         } else {
           console.error("localStorage 저장 실패:", error);
@@ -241,11 +215,7 @@ export default function ReporterCampaignCreatePage() {
       {/* 메인 컨텐츠 영역 */}
       <div className={layoutStyles.main_content}>
         {/* 페이지 헤더 */}
-        <PageHeader
-          title="새 캠페인 등록"
-          onUrgentChange={setIsUrgent}
-          initialUrgent={isUrgent}
-        />
+        <PageHeader title="새 캠페인 등록" onUrgentChange={setIsUrgent} initialUrgent={isUrgent} />
 
         {/* 기자단 캠페인 등록 폼 */}
         <ReporterCampaignForm

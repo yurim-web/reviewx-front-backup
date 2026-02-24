@@ -32,6 +32,7 @@ import PageHeader from "@/components/partner/campaign_create_form/common/layout/
 import BaseModal from "@/components/common/modal/BaseModal";
 import { useAuth } from "@/hooks/useAuth";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
+import { getPartnerName } from "@/utils/partner/partnerHelpers";
 
 export default function DeliveryCampaignCreatePage() {
   const router = useRouter();
@@ -39,33 +40,29 @@ export default function DeliveryCampaignCreatePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUrgent, setIsUrgent] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
   /**
    * 모바일 여부 감지 및 헤더 숨기기 처리
    */
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
-    // 모바일에서는 헤더 숨기기
     const header = document.querySelector("header");
-    if (window.innerWidth <= 768 && header) {
-      header.style.display = "none";
-    }
+
+    const applyMobileHeader = () => {
+      if (header) {
+        header.style.display = window.innerWidth <= 768 ? "none" : "block";
+      }
+    };
+
+    applyMobileHeader();
+    window.addEventListener("resize", applyMobileHeader);
 
     return () => {
-      window.removeEventListener('resize', checkMobile);
+      window.removeEventListener("resize", applyMobileHeader);
       // cleanup: 헤더 다시 표시
       if (header) {
         header.style.display = "block";
       }
     };
   }, []);
-
 
   /**
    * 캠페인 등록 처리 (폼에서 직접 호출)
@@ -110,7 +107,7 @@ export default function DeliveryCampaignCreatePage() {
       // 이미지 URL 처리
       // localStorage 용량 문제로 base64 이미지는 저장하지 않고 기본 이미지 사용
       // 실제 프로덕션에서는 이미지를 서버에 업로드하고 URL을 받아와야 합니다
-      let imageUrl = "/images/main/campaign_img/eximg_1.png"; // 기본 이미지 사용
+      const imageUrl = "/images/main/campaign_img/eximg_1.png"; // 기본 이미지 사용
 
       // TODO: 실제 프로덕션에서는 이미지 업로드 API 호출
       // const imageUploadResponse = await uploadImages(formData.thumbnailImage, formData.detailImages);
@@ -124,29 +121,12 @@ export default function DeliveryCampaignCreatePage() {
       const registeredAt = new Date().toISOString();
 
       // 파트너명 가져오기 (partner_accounts에서)
-      let partnerName = "";
-      try {
-        if (typeof window !== "undefined") {
-          const storedAccounts = localStorage.getItem("partner_accounts");
-          if (storedAccounts) {
-            const accounts = JSON.parse(storedAccounts);
-            const partnerAccount = accounts.find(
-              (a: any) => a.id === (user?.id || 'partner_test_001')
-            );
-            if (partnerAccount) {
-              // business_name 우선, 없으면 name 사용
-              partnerName = partnerAccount.business_name || partnerAccount.name || "";
-            }
-          }
-        }
-      } catch (error) {
-        console.error("파트너명 조회 중 오류:", error);
-      }
+      const partnerName = getPartnerName(user?.id || "partner_test_001");
 
       const extendedCampaign = {
         ...newCampaign,
         // 파트너 ID 추가 (로그인된 사용자)
-        partner_id: user?.id || 'partner_test_001',
+        partner_id: user?.id || "partner_test_001",
         // 파트너명 추가
         partnerName: partnerName,
         // campaignInfo에도 partnerName 추가
@@ -191,7 +171,7 @@ export default function DeliveryCampaignCreatePage() {
 
         // 중복 ID 제거 (같은 ID가 있으면 새 것으로 교체)
         const existingIndex = campaigns.findIndex(
-          (c: any) => c.id === (extendedCampaign as any).id
+          (c: Record<string, unknown>) => c.id === (extendedCampaign as Record<string, unknown>).id
         );
         if (existingIndex >= 0) {
           campaigns[existingIndex] = extendedCampaign;
@@ -211,23 +191,20 @@ export default function DeliveryCampaignCreatePage() {
         const MAX_STORAGE_SIZE = 4 * 1024 * 1024; // 4MB
         if (campaignsString.length > MAX_STORAGE_SIZE) {
           // 가장 오래된 캠페인부터 제거하여 크기 줄이기
-          let trimmedCampaigns = [...campaigns];
+          const trimmedCampaigns = [...campaigns];
           while (
             JSON.stringify(trimmedCampaigns).length > MAX_STORAGE_SIZE &&
             trimmedCampaigns.length > 1
           ) {
             trimmedCampaigns.shift(); // 가장 오래된 것 제거
           }
-          localStorage.setItem(
-            "deliveryCampaigns",
-            JSON.stringify(trimmedCampaigns)
-          );
+          localStorage.setItem("deliveryCampaigns", JSON.stringify(trimmedCampaigns));
         } else {
           localStorage.setItem("deliveryCampaigns", campaignsString);
         }
-      } catch (error: any) {
+      } catch (error) {
         // localStorage 할당량 초과 또는 기타 오류 처리
-        if (error.name === "QuotaExceededError") {
+        if (error instanceof Error && error.name === "QuotaExceededError") {
           // 오래된 캠페인 제거 후 재시도
           const storedCampaigns = localStorage.getItem("deliveryCampaigns");
           if (storedCampaigns) {
@@ -236,16 +213,10 @@ export default function DeliveryCampaignCreatePage() {
             const keepCount = Math.floor(campaigns.length / 2);
             const trimmedCampaigns = campaigns.slice(-keepCount);
             trimmedCampaigns.push(extendedCampaign);
-            localStorage.setItem(
-              "deliveryCampaigns",
-              JSON.stringify(trimmedCampaigns)
-            );
+            localStorage.setItem("deliveryCampaigns", JSON.stringify(trimmedCampaigns));
           } else {
             // 저장된 데이터가 없으면 새로 저장
-            localStorage.setItem(
-              "deliveryCampaigns",
-              JSON.stringify([extendedCampaign])
-            );
+            localStorage.setItem("deliveryCampaigns", JSON.stringify([extendedCampaign]));
           }
         } else {
           console.error("localStorage 저장 실패:", error);
@@ -275,11 +246,7 @@ export default function DeliveryCampaignCreatePage() {
       {/* 메인 컨텐츠 영역 */}
       <div className={layoutStyles.main_content}>
         {/* 페이지 헤더 */}
-        <PageHeader
-          title="새 캠페인 등록"
-          onUrgentChange={setIsUrgent}
-          initialUrgent={isUrgent}
-        />
+        <PageHeader title="새 캠페인 등록" onUrgentChange={setIsUrgent} initialUrgent={isUrgent} />
 
         {/* 배송형 캠페인 등록 폼 */}
         <DeliveryCampaignForm
