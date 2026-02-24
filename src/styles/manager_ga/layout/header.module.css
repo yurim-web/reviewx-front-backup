@@ -22,7 +22,7 @@
   min-height: 80px;
   max-height: 80px;
   /* 📌 관리자 헤더 전용 그라데이션 배경 */
-  background: var(--Header, linear-gradient(90deg, #FFACAE 0%, #FF5694 100%));
+  background: var(--Header, linear-gradient(90deg, #ffacae 0%, #ff5694 100%));
   z-index: 1000;
   box-sizing: border-box;
   border-bottom: 1px solid #e5e5e5;
@@ -110,7 +110,7 @@
   border-radius: 4px;
   color: #444;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 16px;
   letter-spacing: -0.32px;
   cursor: pointer;
