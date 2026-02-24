@@ -30,108 +30,9 @@ import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import Toast from "@/components/common/toast/Toast";
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import checkboxStyles from "@/styles/partner/campaign_create/campaign_guide/checkboxes.module.css";
-import { parseRequirements } from "@/utils/partner/campaignEdit/parseRequirements";
+import { campaignToFormData } from "@/utils/partner/campaignEdit/campaignToFormData";
 
 type StoredCampaignRaw = { campaignInfo?: { id?: string }; id?: string };
-
-/**
- * CampaignWithApplicants를 CampaignFormData로 변환하는 함수
- *
- * 설명:
- * - 캠페인 수정 페이지에서 기존 캠페인 데이터를 폼 데이터로 변환합니다.
- * - 원본 확장 데이터(missionCampaignsExtended)에서 상세 정보를 가져옵니다.
- * - 모든 필드를 올바르게 매핑하여 폼에 채워집니다.
- */
-function campaignToFormData(
-  campaign: CampaignWithApplicants,
-  originalData?: MissionCampaignDataExtended
-): CampaignFormData {
-  const info = campaign.campaignInfo;
-
-  // 원본 확장 데이터가 있으면 사용, 없으면 campaignInfo에서 추출
-  const extended = originalData;
-
-  // requirements 파싱
-  const requirements = extended?.requirements || [];
-  const parsedRequirements = parseRequirements(requirements);
-
-  // contentType에 따른 참여/제출 옵션 설정
-  const contentType = extended?.contentType;
-  let requireContentLink = false;
-  let requireContentImage = false;
-
-  if (contentType === "link") {
-    requireContentLink = true;
-    requireContentImage = false;
-  } else if (contentType === "image") {
-    requireContentLink = false;
-    requireContentImage = true;
-  } else if (contentType === "both") {
-    requireContentLink = true;
-    requireContentImage = true;
-  }
-
-  // guidelineTexts 배열을 하나의 문자열로 합치기
-  const guidelines = extended?.guidelineTexts?.join("\n\n") || "";
-
-  // 모집기간 형식 변환: "2026-01-15 ~ 2026-02-05" 형식으로
-  const recruitmentPeriod = extended?.detailedSchedule
-    ? `${extended.detailedSchedule.applicationStart} ~ ${extended.detailedSchedule.applicationEnd}`
-    : info.recruitmentPeriod || "";
-
-  // 포인트를 콤마 형식으로 변환
-  const additionalPoints = extended?.points
-    ? extended.points.toLocaleString("ko-KR")
-    : "";
-
-  // 상세 이미지 URL 배열 변환
-  // campaign_detail_images 배열이 있으면 사용, 없으면 campaign_detail_image를 배열로 변환
-  const detailImageUrls = (extended?.campaign_detail_images && extended.campaign_detail_images.length > 0)
-    ? extended.campaign_detail_images
-    : extended?.campaign_detail_image 
-    ? [extended.campaign_detail_image]
-    : [];
-
-  return {
-    campaignType: info.campaignType as "미션형",
-    platform: "",
-    title: info.title || "",
-    category: extended?.subcategory || info.category || "기타", // subcategory 사용
-    brandName: extended?.brandName || info.brandName || "",
-    providedItems: extended?.description || "",
-    currentPoints: "58,000", // 기본값 (실제로는 사용자 정보에서 가져와야 함)
-    additionalPoints: additionalPoints,
-    recruitmentCount: String(info.totalCount || ""),
-    recruitmentPeriod: recruitmentPeriod,
-    announcementDate:
-      extended?.detailedSchedule?.announcement || info.announcementDate || "",
-    registrationPeriod:
-      extended?.detailedSchedule?.registrationPeriod ||
-      info.registrationPeriod ||
-      "",
-    keywords: extended?.keyword || "",
-    adultOnly: extended?.adultOnly || false,
-    allowReParticipation: extended?.allowReParticipation || false,
-    allowLateSubmission: extended?.allowLateSubmission || false,
-    minTextLength: parsedRequirements.minTextLength,
-    minImageCount: parsedRequirements.minImageCount,
-    videoCount: parsedRequirements.videoCount,
-    videoDuration: parsedRequirements.videoDuration,
-    requireLinkAttachment: parsedRequirements.requireLinkAttachment,
-    requireKeywordAttachment: parsedRequirements.requireKeywordAttachment,
-    requireContentLink: requireContentLink,
-    requireContentImage: requireContentImage,
-    guidelines: guidelines,
-    contactPhone: extended?.contactPhone || (campaign as { contactPhone?: string })?.contactPhone || "010-0000-0000",
-    fairTradeAgreement: true, // 수정 모드에서는 기본적으로 체크
-    isUrgent: extended?.isUrgent || false,
-    // 이미지 URL 설정 (썸네일)
-    thumbnailImageUrl: extended?.image || info.image || "",
-    // 홍보 링크 (미션형은 productLink 사용)
-    promotionLink: extended?.productLink || "",
-    detailImagePreviews: detailImageUrls, // 상세 이미지 URL 배열
-  };
-}
 
 export default function MissionCampaignEditPage() {
   const router = useRouter();
@@ -192,9 +93,7 @@ export default function MissionCampaignEditPage() {
       }
 
       // 원본 확장 데이터 찾기
-      const originalData = missionCampaignsExtended.find(
-        (c) => c.id === campaignId
-      );
+      const originalData = missionCampaignsExtended.find((c) => c.id === campaignId);
 
       // localStorage에서 저장된 캠페인 확인 (최신 데이터 우선)
       let storedOriginalData: MissionCampaignDataExtended | undefined;
@@ -202,9 +101,7 @@ export default function MissionCampaignEditPage() {
         const storedCampaigns = localStorage.getItem("missionCampaigns");
         if (storedCampaigns) {
           const campaigns: StoredCampaignRaw[] = JSON.parse(storedCampaigns);
-          const storedCampaign = campaigns.find(
-            (c) => c.campaignInfo?.id === campaignId,
-          );
+          const storedCampaign = campaigns.find((c) => c.campaignInfo?.id === campaignId);
           if (storedCampaign) {
             // localStorage에 저장된 캠페인에서 확장 데이터 재구성
             // contentType 등 확장 필드를 포함하여 원본 데이터와 병합
@@ -247,9 +144,7 @@ export default function MissionCampaignEditPage() {
       }
 
       // 캠페인 오픈 여부 확인
-      const openStatus = isCampaignOpen(
-        campaign.campaignInfo.recruitmentPeriod
-      );
+      const openStatus = isCampaignOpen(campaign.campaignInfo.recruitmentPeriod);
       setIsOpen(openStatus);
 
       setIsLoading(false);
@@ -280,11 +175,7 @@ export default function MissionCampaignEditPage() {
         }
       }
 
-      const updatedCampaign = updateMissionCampaign(
-        campaignId,
-        finalFormData,
-        imageUrl
-      );
+      const updatedCampaign = updateMissionCampaign(campaignId, finalFormData, imageUrl);
 
       // contentType 결정: requireContentLink와 requireContentImage 체크박스에 따라 결정
       // - requireContentLink만 true → "link"
@@ -300,18 +191,17 @@ export default function MissionCampaignEditPage() {
       }
 
       // 원본 확장 데이터에서 상세 이미지 등 확장 필드 가져오기
-      const originalData = missionCampaignsExtended.find(
-        (c) => c.id === campaignId
-      );
-      
+      const originalData = missionCampaignsExtended.find((c) => c.id === campaignId);
+
       // 상세 이미지 URL 배열 변환
-      const detailImageUrls = (formData.detailImagePreviews && formData.detailImagePreviews.length > 0)
-        ? formData.detailImagePreviews
-        : originalData?.campaign_detail_images && originalData.campaign_detail_images.length > 0
-        ? originalData.campaign_detail_images
-        : originalData?.campaign_detail_image
-        ? [originalData.campaign_detail_image]
-        : [];
+      const detailImageUrls =
+        formData.detailImagePreviews && formData.detailImagePreviews.length > 0
+          ? formData.detailImagePreviews
+          : originalData?.campaign_detail_images && originalData.campaign_detail_images.length > 0
+            ? originalData.campaign_detail_images
+            : originalData?.campaign_detail_image
+              ? [originalData.campaign_detail_image]
+              : [];
 
       // 확장 데이터에 contentType 추가
       const extendedCampaign = {
@@ -328,8 +218,10 @@ export default function MissionCampaignEditPage() {
         channel: originalData?.channel || "",
         points: Number(formData.additionalPoints?.replace(/,/g, "")) || originalData?.points || 0,
         adultOnly: formData.adultOnly ?? originalData?.adultOnly ?? false,
-        allowReParticipation: formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,
-        allowLateSubmission: formData.allowLateSubmission ?? originalData?.allowLateSubmission ?? false,
+        allowReParticipation:
+          formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,
+        allowLateSubmission:
+          formData.allowLateSubmission ?? originalData?.allowLateSubmission ?? false,
         contactPhone: formData.contactPhone || originalData?.contactPhone || "",
         detailedSchedule: originalData?.detailedSchedule || {
           applicationStart: formData.recruitmentPeriod.split("~")[0]?.trim() || "",
@@ -338,40 +230,39 @@ export default function MissionCampaignEditPage() {
           registrationPeriod: formData.registrationPeriod || "",
         },
         requirements: originalData?.requirements || [],
-        guidelineTexts: formData.guidelines ? formData.guidelines.split("\n\n") : (originalData?.guidelineTexts || []),
+        guidelineTexts: formData.guidelines
+          ? formData.guidelines.split("\n\n")
+          : originalData?.guidelineTexts || [],
         // 기존 localStorage 데이터에서 추가 필드 유지
-        ...(typeof window !== "undefined" && (() => {
-          try {
-            const storedCampaigns = localStorage.getItem("missionCampaigns");
-            if (storedCampaigns) {
-              const campaigns: StoredCampaignRaw[] = JSON.parse(storedCampaigns);
-              const existing = campaigns.find(
-                (c) => c.campaignInfo?.id === campaignId,
-              );
-              if (existing) {
-                return {
-                  minTextLength: existing.minTextLength,
-                  minImageCount: existing.minImageCount,
-                  videoCount: existing.videoCount,
-                  videoDuration: existing.videoDuration,
-                  requireLinkAttachment: existing.requireLinkAttachment,
-                  requireKeywordAttachment: existing.requireKeywordAttachment,
-                };
+        ...(typeof window !== "undefined" &&
+          (() => {
+            try {
+              const storedCampaigns = localStorage.getItem("missionCampaigns");
+              if (storedCampaigns) {
+                const campaigns: StoredCampaignRaw[] = JSON.parse(storedCampaigns);
+                const existing = campaigns.find((c) => c.campaignInfo?.id === campaignId);
+                if (existing) {
+                  return {
+                    minTextLength: existing.minTextLength,
+                    minImageCount: existing.minImageCount,
+                    videoCount: existing.videoCount,
+                    videoDuration: existing.videoDuration,
+                    requireLinkAttachment: existing.requireLinkAttachment,
+                    requireKeywordAttachment: existing.requireKeywordAttachment,
+                  };
+                }
               }
+            } catch (error) {
+              console.error("기존 확장 데이터 로드 실패:", error);
             }
-          } catch (error) {
-            console.error("기존 확장 데이터 로드 실패:", error);
-          }
-          return {};
-        })()),
+            return {};
+          })()),
       };
 
       const storedCampaigns = localStorage.getItem("missionCampaigns");
       if (storedCampaigns) {
         const campaigns: CampaignWithApplicants[] = JSON.parse(storedCampaigns);
-        const index = campaigns.findIndex(
-          (c) => c.campaignInfo.id === campaignId
-        );
+        const index = campaigns.findIndex((c) => c.campaignInfo.id === campaignId);
         if (index !== -1) {
           campaigns[index] = extendedCampaign as unknown as CampaignWithApplicants;
           localStorage.setItem("missionCampaigns", JSON.stringify(campaigns));
@@ -380,10 +271,7 @@ export default function MissionCampaignEditPage() {
           localStorage.setItem("missionCampaigns", JSON.stringify(campaigns));
         }
       } else {
-        localStorage.setItem(
-          "missionCampaigns",
-          JSON.stringify([extendedCampaign])
-        );
+        localStorage.setItem("missionCampaigns", JSON.stringify([extendedCampaign]));
       }
 
       // console.log("미션형 캠페인 수정 완료:", updatedCampaign);
@@ -429,12 +317,7 @@ export default function MissionCampaignEditPage() {
           onClick={() => router.back()}
           aria-label="뒤로가기"
         >
-          <img
-            src="/images/header/header_arrow_back.svg"
-            alt="뒤로가기"
-            width={16}
-            height={16}
-          />
+          <img src="/images/header/header_arrow_back.svg" alt="뒤로가기" width={16} height={16} />
         </button>
 
         <h1 className={headerStyles.page_title}>캠페인 수정</h1>
