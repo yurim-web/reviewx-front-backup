@@ -78,8 +78,7 @@ export function generateSchedule(applicationStart: string): string {
       const formattedDate = format(startDateTime, "M/d (E)", { locale: ko });
       return `${formattedDate}\n모집 오픈`;
     }
-  } catch (error) {
-    console.error("[generateSchedule] 날짜 포맷팅 실패:", error);
+  } catch (_error) {
   }
   return "";
 }

@@ -9,13 +9,6 @@
  *
  * 사용 페이지:
  * - /user/campaign_management (캠페인 관리 페이지)
- *
- * 주요 기능:
- * - 선택된 탭에 따라 필터링된 캠페인 목록 표시
- * - 패널티 탭: PenaltyContent 컴포넌트 표시
- * - 나머지 탭: 해당 상태의 캠페인 카드 목록 표시
- * - 빈 상태 메시지 표시 (해당 상태의 캠페인이 없는 경우)
- * - 조건부 렌더링으로 다른 UI 표시
  */
 
 import type { CampaignApplication, StatTab } from "@/types/domain/user";

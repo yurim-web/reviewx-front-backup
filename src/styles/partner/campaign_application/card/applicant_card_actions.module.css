@@ -70,7 +70,7 @@
 .completion_confirmed_button {
   border: none;
   color: #ff5694;
-  background: rgba(255, 86, 148, 0.1);
+  background: #ff56941a;
   cursor: default;
 }
 

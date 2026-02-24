@@ -11,12 +11,6 @@
  * - /user/campaign_management (캠페인 관리 페이지)
  * - /user/point (포인트 페이지)
  * - /user/mypage (마이페이지)
- *
- * 주요 기능:
- * - 캠페인/포인트/계정 탭 전환
- * - 각 탭 클릭 시 해당 페이지로 라우팅
- * - 활성 탭 스타일 표시
- * - 상단 고정으로 스크롤 시에도 접근 가능
  */
 
 import { useRouter } from "next/navigation";

@@ -147,3 +147,22 @@ export function getCampaignDetailPath(type: CampaignType, id: string): string {
   const campaignDataId = convertToCampaignDataId(type, id);
   return `/campaign/${campaignTypePath}/${campaignDataId}`;
 }
+
+/**
+ * 채널 URL을 새 창에서 열기
+ *
+ * @param channel - 채널 타입 (예: "네이버블로그", "인스타그램", "유튜브")
+ * @param channelId - 채널 ID 또는 사용자명
+ *
+ * 예시:
+ * ```ts
+ * openChannelUrl("인스타그램", "test_user")
+ * // => 새 창에서 https://www.instagram.com/test_user/ 열기
+ * ```
+ */
+export function openChannelUrl(channel: string, channelId: string): void {
+  const linkUrl = getChannelUrl(channel, channelId);
+  if (linkUrl && linkUrl !== "#") {
+    window.open(linkUrl, "_blank", "noopener,noreferrer");
+  }
+}

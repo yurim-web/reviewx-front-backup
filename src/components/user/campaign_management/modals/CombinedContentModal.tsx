@@ -5,48 +5,11 @@
 /**
  * 통합 콘텐츠 등록/수정 모달 컴포넌트 (유저용)
  *
- * 목적: 사용자가 링크와 이미지를 모두 업로드하여 콘텐츠를 등록하거나 수정할 수 있는 모달입니다.
+ * 목적: 미션형 캠페인의 링크+이미지 동시 업로드를 지원하는 콘텐츠 등록/수정 모달
  *
- * 사용 위치:
- * 1. 유저 캠페인 관리 페이지 > 선정 탭 > 미션형 캠페인
- *    - contentType === "both" 또는 undefined인 경우 (링크 + 이미지 모두 업로드)
- *    - "콘텐츠 등록" 또는 "콘텐츠 수정" 버튼 클릭 시
- *    - SelectedTabModals 컴포넌트에서 사용
- *
- * 2. 유저 캠페인 관리 페이지 > 취소/반려 탭 > 미션형 캠페인
- *    - "콘텐츠 수정" 버튼 클릭 시 (수정 모드)
- *    - RejectedTabCard 컴포넌트에서 campaign.type === "미션형"일 때 사용
- *
- * 모달 구성:
- * 1. 링크 입력 섹션
- *    - URL 입력 필드 (선택 사항)
- *    - 등록 모드: 빈 입력창에서 새로 입력
- *    - 수정 모드: 기존 등록된 링크가 미리 입력되어 있음
- *    - 링크가 입력된 경우 URL 형식 검증
- *
- * 2. 이미지 업로드 섹션
- *    - 이미지 업로드 (최대 7장, 10MB 이하)
- *    - 등록 모드: 빈 상태에서 새로 업로드
- *    - 수정 모드: 기존 등록된 이미지가 미리 표시됨
- *    - 업로드된 이미지 미리보기
- *    - 이미지 삭제 기능
- *    - JPG, PNG, GIF 파일 형식 지원
- *
- * 3. 등록/수정 버튼
- *    - 링크 또는 이미지 중 최소 하나는 입력되어야 함
- *    - mode prop에 따라 버튼 텍스트 변경 ("등록하기" / "수정")
- *
- * 오류 처리:
- * - 링크 검증 오류: BaseModal로 "콘텐츠를 확인할 수 없습니다." 표시
- * - 이미지 오류: alert 사용 (향후 BaseModal로 변경 예정)
- *   - 이미지 개수 초과 (7장)
- *   - 파일 형식 오류 (JPG, PNG, GIF만 허용)
- *   - 파일 크기 오류 (10MB 이하)
- *
- * 다른 모달과의 차이점:
- * - ContentRegistrationModal: 링크만 입력 (배송형, 방문형, 기자단)
- * - ImageUploadModal: 이미지만 업로드 (구매평)
- * - CombinedContentModal: 링크 + 이미지 모두 지원 (미션형)
+ * 사용 페이지:
+ * - /user/campaign_management (선정 탭 - 미션형 콘텐츠 등록/수정)
+ * - /user/campaign_management (취소/반려 탭 - 미션형 콘텐츠 재등록)
  */
 
 "use client";
@@ -55,6 +18,7 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import BaseModal from "@/components/common/modal/BaseModal";
 import ContentVerificationModal from "./content_verification/ContentVerificationModal";
+import { useModalState } from "@/hooks/useModalState";
 import styles from "../../../../styles/user/campaign_management/modals/campaign_modal_common.module.css";
 import type { CampaignType } from "@/types/domain/user";
 
@@ -107,7 +71,7 @@ export default function CombinedContentModal({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 콘텐츠 확인 모달 상태 관리
-  const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
+  const verificationModal = useModalState();
 
   // 성공 모달 상태 관리
   const [successModal, setSuccessModal] = useState<{
@@ -311,7 +275,7 @@ export default function CombinedContentModal({
     }
 
     // 검증이 통과하면 콘텐츠 확인 모달 열기
-    setIsVerificationModalOpen(true);
+    verificationModal.open();
   };
 
   /**
@@ -327,13 +291,8 @@ export default function CombinedContentModal({
     try {
       if (mode === "edit") {
         // TODO: 실제 API 호출로 통합 콘텐츠 수정
-        console.log("통합 콘텐츠 수정:", {
-          linkUrl: linkUrl.trim(),
-          existingImages: existingImageUrls,
-          newImages: uploadedImages,
-        });
         // 콘텐츠 확인 모달 닫기
-        setIsVerificationModalOpen(false);
+        verificationModal.close();
         // 성공 모달 먼저 표시
         setSuccessModal({
           isOpen: true,
@@ -345,12 +304,8 @@ export default function CombinedContentModal({
         }, 0);
       } else {
         // TODO: 실제 API 호출로 통합 콘텐츠 등록
-        console.log("통합 콘텐츠 등록:", {
-          linkUrl: linkUrl.trim(),
-          images: uploadedImages,
-        });
         // 콘텐츠 확인 모달 닫기
-        setIsVerificationModalOpen(false);
+        verificationModal.close();
         // 성공 모달 먼저 표시
         setSuccessModal({
           isOpen: true,
@@ -363,8 +318,7 @@ export default function CombinedContentModal({
       }
 
       // 입력값 초기화는 성공 모달을 닫을 때 수행
-    } catch (error) {
-      console.error(`콘텐츠 ${mode === "edit" ? "수정" : "등록"} 실패:`, error);
+    } catch (_error) {
       alert(
         `콘텐츠 ${
           mode === "edit" ? "수정" : "등록"
@@ -397,10 +351,10 @@ export default function CombinedContentModal({
       />
 
       {/* 콘텐츠 확인 모달 - 항상 렌더링 (메인 모달이 닫혀있어도 확인 모달은 표시될 수 있음) */}
-      {isVerificationModalOpen && (
+      {verificationModal.isOpen && (
         <ContentVerificationModal
-          isOpen={isVerificationModalOpen}
-          onClose={() => setIsVerificationModalOpen(false)}
+          isOpen={verificationModal.isOpen}
+          onClose={() => verificationModal.close()}
           campaignTitle={campaignTitle}
           campaignId={campaignId}
           campaignType={campaignType}

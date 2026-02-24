@@ -1,13 +1,19 @@
+/* ========================================
+   CampaignList 스토리북
+   ======================================== */
+
 /**
- * CampaignList 컴포넌트 스토리북
+ * CampaignList.stories
  *
- * 캠페인 목록 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 캠페인 목록 컴포넌트 스토리 모음
+ *
+ * 사용 페이지:
+ * - Storybook (User/CampaignManagement/CampaignList)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 import CampaignList from "./CampaignList";
-import type { CampaignApplication, StatTab } from "@/types/domain/user";
 import { campaignManagementData } from "@/data/user/campaign_management/campaignManagementData";
 
 const meta: Meta<typeof CampaignList> = {

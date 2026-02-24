@@ -7,12 +7,8 @@
  *
  * 목적: 캠페인 제품의 제목, 설명, 이미지를 표시합니다.
  *
- * 주요 기능:
- * - 제품 제목 표시
- * - 제품 설명 표시
- * - 제품 메인 이미지 표시
- * - 공유: PC는 클립보드 복사 + 토스트, 모바일은 OS 공유(navigator.share)
- * - children을 통해 추가 콘텐츠 렌더링 가능
+ * 사용 페이지:
+ * - /user/campaign/[type]/[id] (캠페인 상세 페이지)
  */
 
 "use client";
@@ -68,8 +64,7 @@ export default function CampaignProductInfo({
         await navigator.clipboard.writeText(window.location.href);
         setShowToast(true);
       }
-    } catch (error) {
-      console.error("공유 실패:", error);
+    } catch (_error) {
     }
   };
 

@@ -35,7 +35,8 @@ button {
   font-weight: 500;
 }
 
-button:disabled {
+/* 비활성화 버튼 기본 회색 (확인 완료 버튼은 제외 → 모듈에서 #ff56941a 적용) */
+button:disabled:not(.completion_confirmed_btn) {
   background-color: #e5e5e5;
 }
 

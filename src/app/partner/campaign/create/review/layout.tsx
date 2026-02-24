@@ -1,3 +1,16 @@
+/* ========================================
+   구매평 캠페인 등록 레이아웃
+   ======================================== */
+
+/**
+ * ReviewCampaignLayout
+ *
+ * 목적: 구매평 캠페인 등록 페이지에 메타데이터를 제공하는 레이아웃
+ *
+ * 사용 페이지:
+ * - /partner/campaign/create/review
+ */
+
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

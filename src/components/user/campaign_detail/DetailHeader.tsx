@@ -7,10 +7,8 @@
  *
  * 목적: 캠페인 상세 페이지 상단의 태그와 포인트 정보를 표시합니다.
  *
- * 주요 기능:
- * - 카테고리 아이콘 및 태그 표시
- * - 서브카테고리 태그 표시
- * - 포인트 정보 표시
+ * 사용 페이지:
+ * - /user/campaign/[type]/[id] (캠페인 상세 페이지)
  */
 
 import { getChannelLogo } from "@/utils/channelLogoMap";

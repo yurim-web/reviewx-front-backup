@@ -1,104 +1,44 @@
 /* ========================================
-   📋 캠페인 카드 기본 컴포넌트 (공통 부분)
+   캠페인 카드 기본 컴포넌트
    ======================================== */
 
 /**
- * 캠페인 카드 기본 컴포넌트
+ * CampaignCardBase
  *
  * 목적: 모든 탭에서 공통으로 사용되는 캠페인 카드의 기본 구조를 제공합니다.
  *
-
+ * 사용 페이지:
+ * - /user/campaign_management (캠페인 관리 페이지)
  */
 
 import Link from "next/link";
 import type { CampaignApplication, CampaignType } from "@/types/domain/user";
+import { getCampaignTypePath } from "@/utils/helpers/url";
 import cardStyles from "../../../../styles/user/campaign_management/campaign_card.module.css";
 import { CamTag, CamCateIcon } from "../CampaignTag";
 
 interface CampaignCardBaseProps {
   campaign: CampaignApplication;
   statusText: string;
-  children: React.ReactNode; // 버튼 영역에 들어갈 내용
+  children: React.ReactNode;
 }
 
-/**
- * CampaignApplication의 ID를 실제 캠페인 데이터의 ID 형식으로 변환하는 함수
- *
- * 설명:
- * - CampaignApplication의 id는 "1", "2" 같은 단순 숫자 형식입니다.
- * - 실제 캠페인 상세페이지 데이터는 "delivery_1", "delivery_2" 같은 형식을 사용합니다.
- * - 이 함수는 CampaignApplication의 id를 실제 캠페인 데이터의 id 형식으로 변환합니다.
- *
- * 예시:
- * - type: "배송형", id: "1" → "delivery_1"
- * - type: "방문형", id: "15" → "visit_15"
- * - type: "구매평", id: "14" → "review_14"
- *
- * @param type - 캠페인 타입 (예: "배송형", "방문형", "구매평", "기자단", "미션형")
- * @param id - CampaignApplication의 ID (예: "1", "2")
- * @returns 실제 캠페인 데이터의 ID 형식 (예: "delivery_1", "visit_15")
- */
 const convertToCampaignDataId = (type: CampaignType, id: string): string => {
-  // 캠페인 타입을 URL 경로 형식으로 매핑하는 객체
-  // Record<키타입, 값타입>: TypeScript에서 객체 타입을 정의하는 방법입니다.
-  const typeMap: Record<CampaignType, string> = {
-    배송형: "delivery",
-    방문형: "visit",
-    구매평: "review",
-    기자단: "reporter",
-    미션형: "mission",
-  };
-
-  // 타입에 해당하는 경로 형식 가져오기
-  // 예: "배송형" → "delivery"
-  const typePath = typeMap[type];
-
-  // ID가 이미 "delivery_1" 형식인지 확인
-  // startsWith: 문자열이 특정 문자열로 시작하는지 확인하는 메서드입니다.
+  const typePath = getCampaignTypePath(type as Parameters<typeof getCampaignTypePath>[0]);
   if (id.startsWith(`${typePath}_`)) {
-    // 이미 올바른 형식이면 그대로 반환
     return id;
   }
-
-  // ID를 실제 캠페인 데이터 형식으로 변환
-  // 템플릿 리터럴: 백틱(`)을 사용하여 문자열과 변수를 함께 사용할 수 있습니다.
-  // 예: `delivery_1`, `visit_15`
   return `${typePath}_${id}`;
 };
 
-/**
- * 캠페인 타입에 따른 상세페이지 경로 생성 함수
- *
- * 설명:
- * - 캠페인 타입("배송형", "방문형" 등)을 URL 경로 형식("delivery", "visit" 등)으로 변환합니다.
- * - CampaignApplication의 id를 실제 캠페인 데이터의 id 형식으로 변환한 후 경로를 생성합니다.
- * - 선정 상태인 경우 쿼리 파라미터 `selected=true`를 추가합니다.
- *
- * @param type - 캠페인 타입 (예: "배송형", "방문형", "구매평", "기자단", "미션형")
- * @param id - CampaignApplication의 ID (예: "1", "2" 또는 "delivery_1", "delivery_2")
- * @param status - 캠페인 상태 (예: "신청", "선정", "완료", "취소/반려")
- * @returns 상세페이지 경로 (예: "/campaign/delivery/delivery_1" 또는 "/campaign/delivery/delivery_1?selected=true")
- */
 const getCampaignDetailPath = (
   type: CampaignType,
   id: string,
   status: CampaignApplication["status"]
 ): string => {
-  // CampaignApplication의 ID를 실제 캠페인 데이터의 ID 형식으로 변환
-  // 예: "1" → "delivery_1", "15" → "visit_15"
   const campaignDataId = convertToCampaignDataId(type, id);
-
-  // 캠페인 타입을 URL 경로로 매핑하는 객체
-  const typeMap: Record<CampaignType, string> = {
-    배송형: "delivery",
-    방문형: "visit",
-    구매평: "review",
-    기자단: "reporter",
-    미션형: "mission",
-  };
-
-  // 매핑된 경로를 사용하여 상세페이지 경로 생성
-  const basePath = `/campaign/${typeMap[type]}/${campaignDataId}`;
+  const typePath = getCampaignTypePath(type as Parameters<typeof getCampaignTypePath>[0]);
+  const basePath = `/campaign/${typePath}/${campaignDataId}`;
 
   // 캠페인 관리(참여 캠페인)에서 들어온 경우 항상 participant=true
   // → 상세 페이지에서 공정위 가이드·캠페인 문의 섹션 표시

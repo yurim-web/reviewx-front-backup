@@ -17,14 +17,13 @@
 
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   CampaignFormData,
   CampaignCreateFormBaseProps,
 } from "@/types/domain/user";
 // 분리된 CSS 모듈들 import
-import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
 import buttonStyles from "@/styles/partner/campaign_create/campaign_guide/submit_buttons.module.css";
 import styles from "@/styles/partner/campaign_create/campaign_create.module.css";

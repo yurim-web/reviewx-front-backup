@@ -5,45 +5,11 @@
 /**
  * 이미지 업로드 콘텐츠 등록 모달 컴포넌트 (유저용)
  *
- * 목적: 사용자가 이미지를 업로드하여 콘텐츠를 등록할 수 있는 모달입니다.
+ * 목적: 구매평·미션형(이미지) 캠페인의 콘텐츠 이미지 업로드 등록/수정 모달
  *
- * 사용 위치:
- * 1. 선정 탭
- *    - 미션형 캠페인 (contentType === "image"인 경우)
- *      - "콘텐츠 등록" 버튼 클릭 시 (등록 모드)
- *      - "콘텐츠 수정" 버튼 클릭 시 (수정 모드)
- *    - 구매평 캠페인 (등록기간일 때)
- *      - "콘텐츠 등록하기" 버튼 클릭 시 (등록 모드)
- *      - "콘텐츠 수정하기" 버튼 클릭 시 (수정 모드)
- *    - SelectedTabModals 컴포넌트에서 사용
- *
- * 2. 취소/반려 탭
- *    - 구매평 캠페인
- *      - "콘텐츠 재등록하기" 버튼 클릭 시 (등록 모드)
- *    - RejectedTabCard 컴포넌트에서 사용
- *
- * 모달 구성:
- * 1. 이미지 업로드 섹션
- *    - 이미지 업로드 (최대 7장, 10MB 이하)
- *    - 등록 모드: 빈 상태에서 시작
- *    - 수정 모드: 기존 등록된 이미지가 미리 표시됨 (existingImages prop)
- *    - 업로드된 이미지 미리보기
- *    - 이미지 삭제 기능 (기존 이미지 및 새로 업로드한 이미지 모두 삭제 가능)
- *    - 이미지 개수 표시: "이미지 (현재 개수/7)"
- *
- * 2. 등록/수정 버튼
- *    - mode prop에 따라 버튼 텍스트 변경 ("등록" / "수정")
- *
- * 오류 처리:
- * - 이미지 개수 오류: BaseModal로 "이미지는 최대 7장까지 등록할 수 있습니다." 표시
- * - 이미지 확장자 오류: BaseModal로 "지정된 확장자(JPG, PNG, GIF)만\n업로드할 수 있습니다." 표시
- * - 이미지 크기 오류: BaseModal로 "10mb 이하의 파일만 업로드할 수 있습니다." 표시
- *
- * 다른 모달과의 차이점:
- * - ContentRegistrationModal: 링크만 입력 (배송형, 방문형, 기자단, 미션형-링크만)
- * - ImageUploadModal: 이미지만 업로드 (구매평, 미션형-이미지만)
- * - CombinedContentModal: 링크 + 이미지 모두 지원 (미션형-링크+이미지)
- * - ReceiptRegistrationModal: 구매 영수증 이미지 업로드 (미션형, 구매평)
+ * 사용 페이지:
+ * - /user/campaign_management (선정 탭 - 구매평·미션형 이미지 콘텐츠 등록/수정)
+ * - /user/campaign_management (취소/반려 탭 - 구매평 콘텐츠 재등록)
  */
 
 "use client";
@@ -52,6 +18,7 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import BaseModal from "@/components/common/modal/BaseModal";
 import ContentVerificationModal from "./content_verification/ContentVerificationModal";
+import { useModalState } from "@/hooks/useModalState";
 import styles from "../../../../styles/user/campaign_management/modals/campaign_modal_common.module.css";
 import type { CampaignType } from "@/types/domain/user";
 
@@ -94,14 +61,14 @@ export default function ImageUploadModal({
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
   const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
+  const [_isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 모달 초기화 플래그 - useRef로 관리하여 리렌더링 트리거 방지
   const isInitializedRef = useRef(false);
 
   // 콘텐츠 확인 모달 상태 관리
-  const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
+  const verificationModal = useModalState();
 
   // 성공 모달 상태 관리
   const [successModal, setSuccessModal] = useState<{
@@ -126,8 +93,6 @@ export default function ImageUploadModal({
   useEffect(() => {
     if (isOpen && !isInitializedRef.current) {
       // 모달이 처음 열릴 때만 초기화
-      console.log("[ImageUploadModal] Modal opening - initializing state");
-      console.log("[ImageUploadModal] Mode:", mode, "Existing images:", existingImages.length);
 
       if (mode === "edit" && existingImages.length > 0) {
         setExistingImageUrls(existingImages);
@@ -140,13 +105,12 @@ export default function ImageUploadModal({
 
     if (!isOpen && isInitializedRef.current) {
       // 모달이 닫힐 때 플래그 리셋
-      console.log("[ImageUploadModal] Modal closing - resetting initialization flag");
       isInitializedRef.current = false;
     }
   }, [isOpen]); // isOpen만 의존성으로 설정
 
   // 메인 모달이 닫혀있고, 성공 모달이나 콘텐츠 확인 모달도 닫혀있을 때만 렌더링하지 않음
-  if (!isOpen && !successModal.isOpen && !isVerificationModalOpen) return null;
+  if (!isOpen && !successModal.isOpen && !verificationModal.isOpen) return null;
 
   // 오류 모달 닫기 핸들러
   const handleCloseErrorModal = () => {
@@ -155,21 +119,15 @@ export default function ImageUploadModal({
 
   // 파일 선택 핸들러
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("[ImageUploadModal] handleFileSelect called");
     const files = Array.from(e.target.files || []);
     if (files.length === 0) {
-      console.log("[ImageUploadModal] No files selected");
       return;
     }
 
-    console.log("[ImageUploadModal] Files selected:", files.length);
-    console.log("[ImageUploadModal] Current uploadedImages count:", uploadedImages.length);
-    console.log("[ImageUploadModal] Current existingImageUrls count:", existingImageUrls.length);
 
     // 최대 7장 제한 확인 (기존 이미지 + 새로 업로드할 이미지 합산)
     const totalImages =
       existingImageUrls.length + uploadedImages.length + files.length;
-    console.log("[ImageUploadModal] Total images after upload:", totalImages);
 
     if (totalImages > 7) {
       setErrorModal({
@@ -237,7 +195,6 @@ export default function ImageUploadModal({
       return;
     }
 
-    console.log("[ImageUploadModal] Valid files to process:", validFiles.length);
     setIsUploading(true);
 
     // 이미지 미리보기 생성
@@ -247,7 +204,6 @@ export default function ImageUploadModal({
     validFiles.forEach((file) => {
       const reader = new FileReader();
       reader.onload = (e) => {
-        console.log("[ImageUploadModal] File loaded:", file.name);
         const newImage: UploadedImage = {
           id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
           file,
@@ -256,17 +212,11 @@ export default function ImageUploadModal({
         newImages.push(newImage);
 
         processedCount++;
-        console.log("[ImageUploadModal] Processed count:", processedCount, "Total:", validFiles.length);
 
         if (processedCount === validFiles.length) {
-          console.log("[ImageUploadModal] All files processed. New images count:", newImages.length);
-          console.log("[ImageUploadModal] Before setState - uploadedImages:", uploadedImages.length);
 
           setUploadedImages((prev) => {
-            console.log("[ImageUploadModal] Inside setState - prev length:", prev.length);
-            console.log("[ImageUploadModal] Inside setState - newImages length:", newImages.length);
             const updated = [...prev, ...newImages];
-            console.log("[ImageUploadModal] Inside setState - updated length:", updated.length);
             return updated;
           });
 
@@ -276,7 +226,6 @@ export default function ImageUploadModal({
           if (fileInputRef.current) {
             fileInputRef.current.value = "";
           }
-          console.log("[ImageUploadModal] Upload process completed");
         }
       };
       reader.readAsDataURL(file);
@@ -321,7 +270,7 @@ export default function ImageUploadModal({
     }
 
     // 검증이 통과하면 콘텐츠 확인 모달 열기
-    setIsVerificationModalOpen(true);
+    verificationModal.open();
   };
 
   /**
@@ -337,12 +286,8 @@ export default function ImageUploadModal({
     try {
       if (mode === "edit") {
         // TODO: 실제 API 호출로 이미지 콘텐츠 수정
-        console.log("이미지 콘텐츠 수정:", {
-          existingImages: existingImageUrls,
-          newImages: uploadedImages,
-        });
         // 콘텐츠 확인 모달 닫기
-        setIsVerificationModalOpen(false);
+        verificationModal.close();
         // 성공 모달 먼저 표시
         setSuccessModal({
           isOpen: true,
@@ -354,9 +299,8 @@ export default function ImageUploadModal({
         }, 0);
       } else {
         // TODO: 실제 API 호출로 이미지 콘텐츠 등록
-        console.log("이미지 콘텐츠 등록:", uploadedImages);
         // 콘텐츠 확인 모달 닫기
-        setIsVerificationModalOpen(false);
+        verificationModal.close();
         // 성공 모달 먼저 표시
         setSuccessModal({
           isOpen: true,
@@ -369,11 +313,7 @@ export default function ImageUploadModal({
       }
 
       // 입력값 초기화는 성공 모달을 닫을 때 수행
-    } catch (error) {
-      console.error(
-        `이미지 콘텐츠 ${mode === "edit" ? "수정" : "등록"} 실패:`,
-        error
-      );
+    } catch (_error) {
       alert(
         `이미지 콘텐츠 ${
           mode === "edit" ? "수정" : "등록"
@@ -405,10 +345,10 @@ export default function ImageUploadModal({
       />
 
       {/* 콘텐츠 확인 모달 - 항상 렌더링 (메인 모달이 닫혀있어도 확인 모달은 표시될 수 있음) */}
-      {isVerificationModalOpen && (
+      {verificationModal.isOpen && (
         <ContentVerificationModal
-          isOpen={isVerificationModalOpen}
-          onClose={() => setIsVerificationModalOpen(false)}
+          isOpen={verificationModal.isOpen}
+          onClose={() => verificationModal.close()}
           campaignTitle={campaignTitle}
           campaignId={campaignId}
           campaignType={campaignType}

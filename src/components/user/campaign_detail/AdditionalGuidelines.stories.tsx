@@ -1,7 +1,14 @@
+/* ========================================
+   AdditionalGuidelines 스토리북
+   ======================================== */
+
 /**
- * AdditionalGuidelines 컴포넌트 스토리북
+ * AdditionalGuidelines.stories
  *
- * 유의사항 컴포넌트의 사용 예시를 보여줍니다.
+ * 목적: 캠페인 공통 유의사항 컴포넌트 스토리 모음
+ *
+ * 사용 페이지:
+ * - Storybook (User/CampaignDetail/AdditionalGuidelines)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";

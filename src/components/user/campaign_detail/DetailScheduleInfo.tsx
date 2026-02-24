@@ -7,11 +7,8 @@
  *
  * 목적: 캠페인의 모집 인원, 일정 등의 정보를 표시합니다.
  *
- * 주요 기능:
- * - 모집 인원 (현재/전체) — 항상 포인트 색상 (#FF5694)
- * - 모집 기간 — 오늘이 모집 기간이면 포인트
- * - 선정 발표일 — 오늘이 선정 발표일이면 포인트
- * - 추가 일정 (등록 기간, 구매 기간 등) — 오늘이 해당 기간이면 포인트
+ * 사용 페이지:
+ * - /user/campaign/[type]/[id] (캠페인 상세 페이지)
  */
 
 import styles from "@/styles/user/campaign/campaign_detail/detail_schedule_info.module.css";

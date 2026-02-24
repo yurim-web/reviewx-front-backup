@@ -7,10 +7,8 @@
  *
  * 목적: 캠페인 상세 페이지에서 공통으로 사용되는 요구사항 아이콘들을 표시합니다.
  *
- * 주요 기능:
- * - 다양한 요구사항 코드를 아이콘과 텍스트로 변환
- * - 동적 패턴 매칭 (text_숫자, photo_숫자, video_숫자 등)
- * - 기본 요구사항 제공
+ * 사용 페이지:
+ * - /user/campaign/[type]/[id] (캠페인 상세 페이지)
  */
 
 import styles from "@/styles/user/campaign/campaign_detail/requirement_icons.module.css";

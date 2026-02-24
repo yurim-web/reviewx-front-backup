@@ -35,8 +35,7 @@ export const getPartnerName = (userId: string): string => {
     if (!partnerAccount) return "";
 
     return partnerAccount.business_name || partnerAccount.name || "";
-  } catch (error) {
-    console.error("파트너명 조회 중 오류:", error);
+  } catch (_error) {
     return "";
   }
 };

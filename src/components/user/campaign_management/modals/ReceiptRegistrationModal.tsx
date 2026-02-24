@@ -5,45 +5,11 @@
 /**
  * 구매 영수증 등록 모달 컴포넌트 (유저용)
  *
- * 목적: 사용자가 구매 영수증 이미지를 등록하거나 수정할 수 있는 모달입니다.
+ * 목적: 구매평 캠페인의 구매 영수증 이미지를 등록하거나 수정하는 모달
  *
- * 사용 위치:
- * 1. 선정 탭 > 구매평 캠페인 (구매기간일 때 - 1차)
- *    - "구매 영수증 등록" 버튼 클릭 시 (등록 모드)
- *    - "구매 영수증 수정" 버튼 클릭 시 (수정 모드)
- *    - SelectedTabModals 컴포넌트에서 isPurchasePeriod === true일 때 사용
- *    - 구매평의 구매기간(1차)에만 사용되며, 등록기간(2차)에는 ImageUploadModal 사용
- *
- * 2. 취소/반려 탭 > 모든 캠페인 타입
- *    - "구매 영수증 재등록하기" 버튼 클릭 시 (등록 모드)
- *    - RejectedTabCard 컴포넌트에서 사용
- *
- * 모달 구성:
- * 1. 이미지 업로드 섹션
- *    - 구매 영수증 이미지 업로드 (최대 7장, 10MB 이하)
- *    - 등록 모드: 빈 상태에서 시작
- *    - 수정 모드: 기존 등록된 영수증 이미지가 미리 표시됨 (existingImages prop)
- *    - 업로드된 이미지 미리보기
- *    - 이미지 삭제 기능 (기존 이미지 및 새로 업로드한 이미지 모두 삭제 가능)
- *    - 이미지 개수 표시: "이미지 (현재 개수/7)"
- *
- * 2. 안내 문구
- *    - 파일 형식 및 크기 제한 안내
- *    - 영수증에 포함되어야 할 정보 안내 (주문번호, 구매 상품, 주문 금액, 배송지)
- *
- * 3. 등록/수정 버튼
- *    - mode prop에 따라 버튼 텍스트 변경 ("등록" / "수정")
- *
- * 오류 처리:
- * - 이미지 개수 오류: BaseModal로 "이미지는 최대 7장까지 등록할 수 있습니다." 표시
- * - 이미지 확장자 오류: BaseModal로 "지정된 확장자(JPG, PNG, GIF)만\n업로드할 수 있습니다." 표시
- * - 이미지 크기 오류: BaseModal로 "10mb 이하의 파일만 업로드할 수 있습니다." 표시
- *
- * 다른 모달과의 차이점:
- * - ContentRegistrationModal: 링크만 입력 (배송형, 방문형, 기자단, 미션형-링크만)
- * - ImageUploadModal: 콘텐츠 이미지 업로드 (구매평-등록기간, 미션형-이미지만)
- * - CombinedContentModal: 링크 + 이미지 모두 지원 (미션형-링크+이미지)
- * - ReceiptRegistrationModal: 구매 영수증 이미지 업로드 (구매평-구매기간)
+ * 사용 페이지:
+ * - /user/campaign_management (선정 탭 - 구매평 구매기간 영수증 등록/수정)
+ * - /user/campaign_management (취소/반려 탭 - 영수증 재등록)
  */
 
 "use client";
@@ -104,7 +70,7 @@ const VALIDATION_MESSAGES: Record<ValidationFailureType, string> = {
 export default function ReceiptRegistrationModal({
   isOpen,
   onClose,
-  campaignTitle,
+  campaignTitle: _campaignTitle,
   mode = "register",
   existingImages = [],
 }: ReceiptRegistrationModalProps) {
@@ -143,8 +109,6 @@ export default function ReceiptRegistrationModal({
   useEffect(() => {
     if (isOpen && !isInitializedRef.current) {
       // 모달이 처음 열릴 때만 초기화
-      console.log("[ReceiptRegistrationModal] Modal opening - initializing state");
-      console.log("[ReceiptRegistrationModal] Mode:", mode, "Existing images:", existingImages.length);
 
       if (mode === "edit" && existingImages.length > 0) {
         setExistingImageUrls(existingImages);
@@ -158,7 +122,6 @@ export default function ReceiptRegistrationModal({
 
     if (!isOpen && isInitializedRef.current) {
       // 모달이 닫힐 때 플래그 리셋
-      console.log("[ReceiptRegistrationModal] Modal closing - resetting initialization flag");
       isInitializedRef.current = false;
     }
   }, [isOpen]); // isOpen만 의존성으로 설정
@@ -173,22 +136,16 @@ export default function ReceiptRegistrationModal({
 
   // 파일 업로드 핸들러
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("[ReceiptRegistrationModal] handleFileUpload called");
     const files = e.target.files;
     if (!files || files.length === 0) {
-      console.log("[ReceiptRegistrationModal] No files selected");
       return;
     }
 
     const newFiles = Array.from(files);
-    console.log("[ReceiptRegistrationModal] Files selected:", newFiles.length);
-    console.log("[ReceiptRegistrationModal] Current uploadedImages count:", uploadedImages.length);
-    console.log("[ReceiptRegistrationModal] Current existingImageUrls count:", existingImageUrls.length);
 
     // 파일 개수 체크 (최대 7장) - 기존 이미지와 새로 업로드할 이미지 합산
     const totalImages =
       existingImageUrls.length + uploadedImages.length + newFiles.length;
-    console.log("[ReceiptRegistrationModal] Total images after upload:", totalImages);
 
     if (totalImages > 7) {
       setErrorModal({
@@ -256,7 +213,6 @@ export default function ReceiptRegistrationModal({
       return;
     }
 
-    console.log("[ReceiptRegistrationModal] Valid files to process:", validFiles.length);
     setIsUploading(true);
 
     // 이미지 미리보기 생성
@@ -266,7 +222,6 @@ export default function ReceiptRegistrationModal({
     validFiles.forEach((file) => {
       const reader = new FileReader();
       reader.onload = (e) => {
-        console.log("[ReceiptRegistrationModal] File loaded:", file.name);
         const newImage: UploadedImage = {
           id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
           file,
@@ -275,17 +230,11 @@ export default function ReceiptRegistrationModal({
         newImages.push(newImage);
 
         processedCount++;
-        console.log("[ReceiptRegistrationModal] Processed count:", processedCount, "Total:", validFiles.length);
 
         if (processedCount === validFiles.length) {
-          console.log("[ReceiptRegistrationModal] All files processed. New images count:", newImages.length);
-          console.log("[ReceiptRegistrationModal] Before setState - uploadedImages:", uploadedImages.length);
 
           setUploadedImages((prev) => {
-            console.log("[ReceiptRegistrationModal] Inside setState - prev length:", prev.length);
-            console.log("[ReceiptRegistrationModal] Inside setState - newImages length:", newImages.length);
             const updated = [...prev, ...newImages];
-            console.log("[ReceiptRegistrationModal] Inside setState - updated length:", updated.length);
             return updated;
           });
 
@@ -297,7 +246,6 @@ export default function ReceiptRegistrationModal({
           if (fileInputRef.current) {
             fileInputRef.current.value = "";
           }
-          console.log("[ReceiptRegistrationModal] Upload process completed");
         }
       };
       reader.readAsDataURL(file);
@@ -382,10 +330,6 @@ export default function ReceiptRegistrationModal({
     try {
       if (mode === "edit") {
         // TODO: 실제 API 호출로 영수증 수정
-        console.log("영수증 수정:", {
-          existingImages: existingImageUrls,
-          newImages: uploadedImages,
-        });
         // 성공 모달 먼저 표시
         setSuccessModal({
           isOpen: true,
@@ -397,7 +341,6 @@ export default function ReceiptRegistrationModal({
         }, 0);
       } else {
         // TODO: 실제 API 호출로 영수증 등록
-        console.log("영수증 등록:", uploadedImages);
         // 성공 모달 먼저 표시
         setSuccessModal({
           isOpen: true,
@@ -410,8 +353,7 @@ export default function ReceiptRegistrationModal({
       }
 
       // 입력값 초기화는 성공 모달을 닫을 때 수행
-    } catch (error) {
-      console.error(`영수증 ${mode === "edit" ? "수정" : "등록"} 실패:`, error);
+    } catch (_error) {
       alert(
         `영수증 ${
           mode === "edit" ? "수정" : "등록"

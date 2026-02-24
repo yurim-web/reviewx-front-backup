@@ -122,7 +122,9 @@ export default function PostFormPageClient({
     initial_data?.category_type || (mode === "create" ? "공지사항" : "")
   );
   const [category, setCategory] = useState(initial_data?.category || "");
-  const [target, setTarget] = useState(initial_data?.target || "");
+  const [target, setTarget] = useState(
+    initial_data?.target || (mode === "create" ? "전체" : "")
+  );
   const [title, setTitle] = useState(initial_data?.title || "");
 
   // initial_data가 변경될 때 state 동기화 (수정 모드에서 데이터 로드 시)
@@ -198,6 +200,14 @@ export default function PostFormPageClient({
     console.log("category_options:", options);
     return options;
   }, [category_type, categories_list]);
+
+  // 게시글 등록 모드: 카테고리를 첫 번째 옵션으로 기본 선택 (빈 값이거나 현재 구분 목록에 없을 때)
+  useEffect(() => {
+    if (mode !== "create" || category_options.length === 0) return;
+    if (category === "" || !category_options.includes(category)) {
+      setCategory(category_options[0]);
+    }
+  }, [mode, category_options, category]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -601,7 +611,6 @@ export default function PostFormPageClient({
               autoComplete="off"
               ref={title_input_ref}
               aria-label="게시글 제목"
-              placeholder="제목을 입력하세요"
             />
           </div>
 

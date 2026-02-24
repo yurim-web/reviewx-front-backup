@@ -40,13 +40,13 @@ export interface SortColumnConfig {
  * @returns 비교 결과 (-1, 0, 1)
  */
 export function compare_values(
-  a_value: any,
-  b_value: any,
+  a_value: unknown,
+  b_value: unknown,
   direction: "asc" | "desc",
   column_type: ColumnType
 ): number {
-  let a_parsed: any;
-  let b_parsed: any;
+  let a_parsed: number | string;
+  let b_parsed: number | string;
 
   switch (column_type) {
     case "number":
@@ -94,7 +94,7 @@ export function compare_values(
  * @param column_config - 컬럼별 타입 설정 (옵션)
  * @returns 정렬된 데이터 배열
  */
-export function sort_table_data<T extends Record<string, any>>(
+export function sort_table_data<T extends Record<string, unknown>>(
   data: T[],
   sort_state: SortState,
   column_config?: SortColumnConfig

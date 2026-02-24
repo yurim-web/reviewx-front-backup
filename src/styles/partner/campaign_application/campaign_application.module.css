@@ -118,7 +118,7 @@
   cursor: pointer;
   color: #444;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 16px;
   letter-spacing: -0.32px;
   transition: all 0.2s;
@@ -319,8 +319,6 @@
     flex: 1; /* 남은 공간 차지 */
   }
 
-
-
   .view_campaign_button_icon {
     width: 16px;
     height: 16px;
@@ -328,7 +326,7 @@
 
   /* ========== 전체 컨텐츠 영역 ========== */
   .campaign_application_section {
-    padding: 20px 0 20px 0; 
+    padding: 20px 0 20px 0;
     background: white;
     min-height: calc(100vh - 64px); /* 모바일 헤더 + 페이지 헤더 */
   }
@@ -406,7 +404,6 @@
     line-height: 18px;
     letter-spacing: -0.36px;
   }
-
 
   /* 활성화된 탭 밑줄 */
   .tab_button.active::after {

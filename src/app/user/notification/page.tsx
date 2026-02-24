@@ -1,19 +1,14 @@
 /* ========================================
-   🔔 유저 알림 페이지
+   유저 알림 페이지
    ======================================== */
 
 /**
- * 유저 알림 페이지
+ * UserNotificationPage
  *
- * 목적: 유저 단에서 사용되는 알림 페이지입니다.
+ * 목적: 유저의 알림 내역을 표시하는 페이지
  *
- * 페이지 경로:
- * - /user/notification
- *
- * 주요 기능:
- * - 유저 전용 헤더 표시
- * - 알림 목록 표시
- *
+ * 사용 페이지:
+ * - /user/notification (알림)
  */
 
 "use client";
@@ -28,6 +23,28 @@ import Toast from "@/components/common/toast/Toast";
 import { useAuth } from "@/hooks/useAuth";
 // 알림 목업 데이터 (향후 API로 대체)
 import { mockReviewerNotifications } from "@/data/notification/notificationData";
+
+interface StoredNotification {
+  id: string;
+  user_id: string;
+  type: string;
+  message: string;
+  created_at: string;
+  campaign_id?: string;
+  campaign_title?: string;
+  is_read: boolean;
+}
+
+interface NotificationItem {
+  id: string | number;
+  category: string;
+  message: string;
+  time?: string;
+  campaign_id?: number;
+  campaign_name?: string;
+  is_read: boolean;
+  _source?: string;
+}
 
 export default function UserNotificationPage() {
   const { user } = useAuth();
@@ -51,7 +68,9 @@ export default function UserNotificationPage() {
       router.push('/user/login');
     }
   }, [user, router]);
-  const [notifications, setNotifications] = useState<any[]>(mockReviewerNotifications);
+  const [notifications, setNotifications] = useState<NotificationItem[]>(
+    mockReviewerNotifications as NotificationItem[],
+  );
   const [is_delete_toast_open, set_is_delete_toast_open] = useState(false);
 
   /**
@@ -65,9 +84,9 @@ export default function UserNotificationPage() {
           const allNotifications = JSON.parse(storedNotifications);
 
           // 현재 유저의 알림만 필터링
-          const userNotifications = allNotifications
-            .filter((notif: any) => notif.user_id === user.id)
-            .map((notif: any) => {
+          const userNotifications = (allNotifications as StoredNotification[])
+            .filter((notif) => notif.user_id === user.id)
+            .map((notif) => {
               // 기존 알림 형식에 맞게 변환
               let category = 'A_R10'; // 기본값: 출금 신청 카테고리
 
@@ -113,11 +132,12 @@ export default function UserNotificationPage() {
               _source: 'mock', // 출처 구분을 위한 속성
             })
           );
-          setNotifications([...userNotifications, ...mockNotificationsWithSource]);
-          console.log('✅ [알림 페이지] 알림 로드 완료:', userNotifications);
+          setNotifications([
+            ...userNotifications,
+            ...(mockNotificationsWithSource as NotificationItem[]),
+          ]);
         }
-      } catch (error) {
-        console.error('❌ [알림 페이지] 알림 로드 실패:', error);
+      } catch (_error) {
       }
     }
   }, [user]);
@@ -129,10 +149,9 @@ export default function UserNotificationPage() {
    * @param notification - 클릭된 알림 아이템
    */
   const handle_notification_click = (
-    notification: (typeof mockReviewerNotifications)[0]
+    _notification: (typeof mockReviewerNotifications)[0],
   ) => {
     // TODO: 알림 상세 페이지로 이동 또는 모달 열기
-    // 예시: router.push(`/user/notification/${notification.id}`)
   };
 
   /** 전체 삭제 버튼 클릭 → 바로 삭제 후 토스트만 표시 */
@@ -143,16 +162,15 @@ export default function UserNotificationPage() {
         const storedNotifications = localStorage.getItem("notifications");
         if (storedNotifications) {
           const allNotifications = JSON.parse(storedNotifications);
-          const otherUserNotifications = allNotifications.filter(
-            (notif: any) => notif.user_id !== user.id
-          );
+          const otherUserNotifications = (
+            allNotifications as StoredNotification[]
+          ).filter((notif) => notif.user_id !== user.id);
           localStorage.setItem(
             "notifications",
             JSON.stringify(otherUserNotifications)
           );
         }
-      } catch (error) {
-        console.error("❌ [알림 페이지] 알림 삭제 실패:", error);
+      } catch (_error) {
       }
     }
     set_is_delete_toast_open(true);

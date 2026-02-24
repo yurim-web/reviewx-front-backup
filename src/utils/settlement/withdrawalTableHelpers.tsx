@@ -1,13 +1,13 @@
 /* ========================================
-   🧰 출금 테이블 공통 유틸리티
+   출금 테이블 공통 유틸리티
    ======================================== */
 
 /**
- * 출금 관련 테이블 컴포넌트에서 공통으로 사용하는 유틸리티 함수
+ * withdrawalTableHelpers
  *
  * 목적: WithdrawalTable, RequestTable 등에서 중복되는 셀 렌더링 로직을 공통화
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /manager_sa/settlement/withdrawal (출금 현황)
  * - /manager_sa/settlement/withdrawal_request (출금 요청)
  */
@@ -32,6 +32,11 @@ export interface WithdrawalTableRowBase {
   type?: string;
 }
 
+type CellRenderer = (
+  row: WithdrawalTableRowBase,
+  styles: Record<string, string>
+) => ReactNode;
+
 /**
  * 공통 셀 렌더링 함수
  *
@@ -46,16 +51,11 @@ export function renderCommonWithdrawalCell(
   column: TableColumn,
   styles: Record<string, string>,
   customRenderers?: {
-    amount?: (
-      row: WithdrawalTableRowBase,
-      styles: Record<string, string>
-    ) => ReactNode;
-    status?: (row: any, styles: Record<string, string>) => ReactNode;
-    paymentStatus?: (row: any, styles: Record<string, string>) => ReactNode;
-    action?: (row: any, styles: Record<string, string>) => ReactNode;
-    [key: string]:
-      | ((row: any, styles: Record<string, string>) => ReactNode)
-      | undefined;
+    amount?: CellRenderer;
+    status?: CellRenderer;
+    paymentStatus?: CellRenderer;
+    action?: CellRenderer;
+    [key: string]: CellRenderer | undefined;
   }
 ): ReactNode {
   // 커스텀 렌더러가 있으면 우선 사용

@@ -280,7 +280,6 @@ export default function ContentVerificationModal({
    */
   const handleSubmit = () => {
     if (allCompleted) {
-      console.log("콘텐츠 확인 제출");
 
       // Toast 메시지 표시
       setShowToast(true);

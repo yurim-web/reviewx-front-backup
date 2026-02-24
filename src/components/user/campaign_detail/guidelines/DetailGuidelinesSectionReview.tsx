@@ -15,7 +15,8 @@
 
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useParticipantQuery } from "@/hooks/useParticipantQuery";
+import { REVIEW_GUIDELINE_DEFAULTS } from "@/data/user/campaign_detail/guidelineDefaults";
 import styles from "@/styles/user/campaign/campaign_detail/detail_guidelines_section.module.css";
 import AdditionalGuidelines from "../AdditionalGuidelines";
 import RequirementIcons from "../RequirementIcons";
@@ -31,14 +32,6 @@ interface DetailGuidelinesSectionReviewProps {
   guidelineTexts?: string[]; // 유의사항 텍스트 목록
 }
 
-// 기본 유의사항 텍스트 (데이터가 없을 때 사용)
-const defaultGuidelineTexts: string[] = [
-  "구매평 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
-  "★★안내된 가격과 주문 가격이 상이한 경우 임의 주문하지 마시고, 꼭 1:1문의로 제보 부탁드립니다!!★",
-  "★제공된 제품을 모두 활용하여 작성해주세요★",
-  "★구매평은 인위적이기 않고 최대한 자연스럽게 작성 부탁드립니다★",
-];
-
 export default function DetailGuidelinesSectionReview({
   description,
   purchaseLink,
@@ -48,15 +41,9 @@ export default function DetailGuidelinesSectionReview({
   requirements,
   guidelineTexts,
 }: DetailGuidelinesSectionReviewProps) {
-  // URL 쿼리 파라미터 확인
-  // useSearchParams: Next.js에서 URL 쿼리 파라미터를 읽는 Hook입니다.
-  // ?selected=true 같은 쿼리 파라미터를 확인하여 선정된 캠페인인지 판단합니다.
-  const searchParams = useSearchParams();
-  const isParticipant =
-    searchParams.get("participant") === "true" ||
-    searchParams.get("selected") === "true";
+  const isParticipant = useParticipantQuery();
 
-  const activeGuidelineTexts = guidelineTexts || defaultGuidelineTexts;
+  const activeGuidelineTexts = guidelineTexts ?? REVIEW_GUIDELINE_DEFAULTS;
 
   return (
     <article className={styles.campaign_detail_info_container}>

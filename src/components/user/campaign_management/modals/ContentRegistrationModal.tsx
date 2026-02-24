@@ -5,42 +5,11 @@
 /**
  * 콘텐츠 등록/수정 모달 컴포넌트 (유저용)
  *
- * 목적: 사용자가 콘텐츠 링크를 등록하거나 수정할 수 있는 모달입니다.
+ * 목적: 배송형·방문형·기자단·미션형(링크) 캠페인의 콘텐츠 링크 등록/수정 모달
  *
- * 사용 위치:
- * 1. 선정 탭
- *    - 배송형, 방문형, 기자단 캠페인
- *      - "콘텐츠 등록하기" 버튼 클릭 시 (등록 모드)
- *      - "콘텐츠 수정하기" 버튼 클릭 시 (수정 모드)
- *    - 미션형 캠페인 (contentType === "link"인 경우)
- *      - "콘텐츠 등록" 버튼 클릭 시 (등록 모드)
- *      - "콘텐츠 수정" 버튼 클릭 시 (수정 모드)
- *    - SelectedTabModals 컴포넌트에서 사용
- *
- * 2. 취소/반려 탭
- *    - 배송형, 방문형, 기자단 캠페인
- *      - "콘텐츠 재등록하기" 버튼 클릭 시 (등록 모드)
- *    - RejectedTabCard 컴포넌트에서 사용
- *
- * 모달 구성:
- * 1. 링크 입력 섹션
- *    - URL 입력 필드
- *    - 등록 모드: 빈 입력창에서 새로 입력
- *    - 수정 모드: 기존 등록된 링크가 미리 입력되어 있음 (existingLink prop)
- *
- * 2. 등록/수정 버튼
- *    - mode prop에 따라 버튼 텍스트 변경 ("등록" / "수정")
- *
- * 오류 처리:
- * - 링크 입력 오류: BaseModal로 "콘텐츠 링크를 입력해주세요." 표시
- * - 링크 검증 오류: BaseModal로 "콘텐츠를 확인할 수 없습니다." 표시
- *   (URL 형식이 올바르지 않을 때)
- *
- * 다른 모달과의 차이점:
- * - ContentRegistrationModal: 링크만 입력 (배송형, 방문형, 기자단, 미션형-링크만)
- * - ImageUploadModal: 이미지만 업로드 (구매평, 미션형-이미지만)
- * - CombinedContentModal: 링크 + 이미지 모두 지원 (미션형-링크+이미지)
- * - ReceiptRegistrationModal: 구매 영수증 이미지 업로드 (미션형, 구매평)
+ * 사용 페이지:
+ * - /user/campaign_management (선정 탭 - 배송형·방문형·기자단·미션형 콘텐츠 등록/수정)
+ * - /user/campaign_management (취소/반려 탭 - 콘텐츠 재등록)
  */
 
 "use client";
@@ -49,6 +18,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import BaseModal from "@/components/common/modal/BaseModal";
 import ContentVerificationModal from "./content_verification/ContentVerificationModal";
+import { useModalState } from "@/hooks/useModalState";
 import styles from "../../../../styles/user/campaign_management/modals/campaign_modal_common.module.css";
 import type { CampaignType } from "@/types/domain/user";
 
@@ -88,7 +58,7 @@ export default function ContentRegistrationModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // 콘텐츠 확인 모달 상태 관리
-  const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
+  const verificationModal = useModalState();
 
   // 성공 모달 상태 관리
   const [successModal, setSuccessModal] = useState<{
@@ -176,7 +146,7 @@ export default function ContentRegistrationModal({
     }
 
     // 검증이 통과하면 콘텐츠 확인 모달 열기
-    setIsVerificationModalOpen(true);
+    verificationModal.open();
   };
 
   /**
@@ -193,9 +163,8 @@ export default function ContentRegistrationModal({
       if (mode === "edit") {
         // TODO: 실제 API 호출로 콘텐츠 수정
         // 예시: await updateContent(campaignId, linkUrl);
-        console.log("콘텐츠 수정:", linkUrl);
         // 콘텐츠 확인 모달 닫기
-        setIsVerificationModalOpen(false);
+        verificationModal.close();
         // 성공 모달 먼저 표시
         setSuccessModal({
           isOpen: true,
@@ -208,9 +177,8 @@ export default function ContentRegistrationModal({
       } else {
         // TODO: 실제 API 호출로 콘텐츠 등록
         // 예시: await registerContent(campaignId, linkUrl);
-        console.log("콘텐츠 등록:", linkUrl);
         // 콘텐츠 확인 모달 닫기
-        setIsVerificationModalOpen(false);
+        verificationModal.close();
         // 성공 모달 먼저 표시
         setSuccessModal({
           isOpen: true,
@@ -223,8 +191,7 @@ export default function ContentRegistrationModal({
       }
 
       // 입력값 초기화는 성공 모달을 닫을 때 수행
-    } catch (error) {
-      console.error(`콘텐츠 ${mode === "edit" ? "수정" : "등록"} 실패:`, error);
+    } catch (_error) {
       alert(
         `콘텐츠 ${
           mode === "edit" ? "수정" : "등록"
@@ -255,10 +222,10 @@ export default function ContentRegistrationModal({
       />
 
       {/* 콘텐츠 확인 모달 - 항상 렌더링 (메인 모달이 닫혀있어도 확인 모달은 표시될 수 있음) */}
-      {isVerificationModalOpen && (
+      {verificationModal.isOpen && (
         <ContentVerificationModal
-          isOpen={isVerificationModalOpen}
-          onClose={() => setIsVerificationModalOpen(false)}
+          isOpen={verificationModal.isOpen}
+          onClose={() => verificationModal.close()}
           campaignTitle={campaignTitle}
           campaignId={campaignId}
           campaignType={campaignType}

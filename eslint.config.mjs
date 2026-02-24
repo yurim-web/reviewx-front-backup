@@ -37,11 +37,32 @@ const eslintConfig = [
           varsIgnorePattern: "^_",
           args: "after-used",
           argsIgnorePattern: "^_",
+          caughtErrors: "all",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          vars: "all",
+          varsIgnorePattern: "^_",
+          args: "after-used",
+          argsIgnorePattern: "^_",
+          caughtErrors: "all",
+          caughtErrorsIgnorePattern: "^_",
         },
       ],
     },
   },
   ...storybook.configs["flat/recommended"],
+  // Stories 파일: renderer 패키지 직접 import 허용 (react-webpack5 환경)
+  {
+    files: ["**/*.stories.tsx", "**/*.stories.ts"],
+    rules: {
+      "storybook/no-renderer-packages": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
 ];
 
 export default eslintConfig;

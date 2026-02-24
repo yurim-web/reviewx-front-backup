@@ -1,7 +1,14 @@
+/* ========================================
+   RequirementIcons 스토리북
+   ======================================== */
+
 /**
- * RequirementIcons 컴포넌트 스토리북
+ * RequirementIcons.stories
  *
- * 요구사항 아이콘 리스트 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 캠페인 요구사항 아이콘 컴포넌트 스토리 모음
+ *
+ * 사용 페이지:
+ * - Storybook (User/CampaignDetail/RequirementIcons)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";

@@ -1,29 +1,36 @@
 /* ========================================
-   📍 주소 등록 페이지
+   주소 등록 페이지
    ======================================== */
 
 /**
- * 주소 등록 페이지
+ * AddressPage
  *
- * 목적: 사용자의 주소 정보를 등록/수정할 수 있는 페이지입니다.
+ * 목적: 사용자의 배송 주소를 등록/수정하는 페이지
  *
- * 페이지 경로:
- * - /user/mypage/address
- *
- * 주요 기능:
- * - 우편번호 검색
- * - 기본 주소 입력
- * - 상세 주소 입력
- * - 주소 정보 저장
- *
- * 사용 위치:
- * - 캠페인 신청 모달에서 주소 수정 버튼 클릭 시 이동
+ * 사용 페이지:
+ * - /user/mypage/address (주소 등록)
+ * - 캠페인 신청 모달에서 주소 수정 시 이동
  */
 
 "use client";
 
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
+
+interface LocalAccount {
+  id?: string;
+  email?: string;
+  address?: string;
+  postal_code?: string;
+  detail_address?: string;
+  address_details?: {
+    postalCode?: string;
+    postal_code?: string;
+    address?: string;
+    detailAddress?: string;
+    detail_address?: string;
+  };
+}
 import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import AddressInput from "@/components/common/mypage/AddressInput";
@@ -67,50 +74,40 @@ export default function AddressPage() {
   useEffect(() => {
     if (typeof window !== "undefined" && user) {
       try {
-        console.log('🔍 [주소 페이지] 사용자 정보:', user);
-
-        // 먼저 localStorage의 user_accounts에서 주소 정보 확인
-        const storedAccounts = localStorage.getItem('user_accounts');
-        console.log('📦 [주소 페이지] user_accounts:', storedAccounts);
-
+        const storedAccounts = localStorage.getItem("user_accounts");
         if (storedAccounts) {
-          const accounts = JSON.parse(storedAccounts);
-          const userAccount = accounts.find((a: any) =>
-            a.id === user.id || a.email === user.email
+          const accounts = JSON.parse(storedAccounts) as LocalAccount[];
+          const userAccount = accounts.find(
+            (a) => a.id === user.id || a.email === user.email,
           );
-          console.log('✅ [주소 페이지] userAccount:', userAccount);
 
-          // user_accounts에 저장된 주소 정보가 있으면 로드
-          // address_details 객체 또는 개별 필드(address, postal_code, detail_address) 모두 지원
           if (userAccount?.address_details) {
             setAddressData({
-              postalCode: userAccount.address_details.postalCode || userAccount.address_details.postal_code || "",
+              postalCode:
+                userAccount.address_details.postalCode ||
+                userAccount.address_details.postal_code ||
+                "",
               address: userAccount.address_details.address || "",
-              detailAddress: userAccount.address_details.detailAddress || userAccount.address_details.detail_address || "",
+              detailAddress:
+                userAccount.address_details.detailAddress ||
+                userAccount.address_details.detail_address ||
+                "",
             });
-            console.log('🔄 [주소 페이지] localStorage에서 주소 정보 로드됨 (address_details):', userAccount.address_details);
-            return; // localStorage에서 로드했으면 sessionStorage 확인 안 함
-          } else if (userAccount?.address || userAccount?.postal_code || userAccount?.detail_address) {
-            // 개별 필드로 저장된 경우
+            return;
+          } else if (
+            userAccount?.address ||
+            userAccount?.postal_code ||
+            userAccount?.detail_address
+          ) {
             setAddressData({
               postalCode: userAccount.postal_code || "",
               address: userAccount.address || "",
               detailAddress: userAccount.detail_address || "",
             });
-            console.log('🔄 [주소 페이지] localStorage에서 주소 정보 로드됨 (개별 필드):', {
-              address: userAccount.address,
-              postal_code: userAccount.postal_code,
-              detail_address: userAccount.detail_address,
-            });
-            return; // localStorage에서 로드했으면 sessionStorage 확인 안 함
-          } else {
-            console.log('⚠️ [주소 페이지] 주소 정보가 없습니다.');
+            return;
           }
-        } else {
-          console.log('⚠️ [주소 페이지] user_accounts가 없습니다.');
         }
 
-        // localStorage에 없으면 sessionStorage에서 확인 (임시 저장용)
         const savedAddress = sessionStorage.getItem("userAddress");
         if (savedAddress) {
           const parsedAddress = JSON.parse(savedAddress);
@@ -119,17 +116,11 @@ export default function AddressPage() {
             address: parsedAddress.address || "",
             detailAddress: parsedAddress.detailAddress || "",
           });
-          console.log('🔄 [주소 페이지] sessionStorage에서 주소 정보 로드됨:', parsedAddress);
-        } else {
-          console.log('⚠️ [주소 페이지] sessionStorage에도 주소 정보가 없습니다.');
         }
-      } catch (error) {
-        console.error('❌ [주소 페이지] 주소 정보 로드 실패:', error);
+      } catch (_error) {
       }
-    } else if (!user) {
-      console.log('⚠️ [주소 페이지] 사용자 정보가 없습니다.');
     }
-  }, [user]); // user가 변경될 때마다 실행
+  }, [user]);
 
   /**
    * 뒤로가기 시 모달 상태 복원
@@ -159,8 +150,7 @@ export default function AddressPage() {
    * TODO: 실제 우편번호 찾기 API 연동 필요
    */
   const handlePostalSearch = () => {
-    // 임시로 콘솔 로그 출력
-    console.log("우편번호 찾기");
+    // TODO: 실제 우편번호 찾기 API 연동 필요
   };
 
   /**
@@ -193,8 +183,6 @@ export default function AddressPage() {
   const handleSave = () => {
     if (!isSaveButtonEnabled) return;
 
-    console.log("📍 [주소 페이지] 주소 저장:", addressData);
-
     // 전체 주소 문자열 생성 (기본 주소 + 상세 주소 | 우편번호 + 우편번호값)
     // 예: "인천 남동구 장자로 6번길 2, 1층 | 우편번호 12345"
     const addressPart =
@@ -206,36 +194,32 @@ export default function AddressPage() {
       ? `${addressPart} | ${postalCodePart}`
       : addressPart;
 
-    // localStorage의 user_accounts에 주소 정보 저장
-    if (typeof window !== 'undefined' && user) {
+    if (typeof window !== "undefined" && user) {
       try {
-        const storedAccounts = localStorage.getItem('user_accounts');
-        const accounts = storedAccounts ? JSON.parse(storedAccounts) : [];
+        const storedAccounts = localStorage.getItem("user_accounts");
+        const accounts: LocalAccount[] = storedAccounts
+          ? JSON.parse(storedAccounts)
+          : [];
 
-        const accountIndex = accounts.findIndex((a: any) => a.id === user.id || a.email === user.email);
+        const accountIndex = accounts.findIndex(
+          (a) => a.id === user.id || a.email === user.email,
+        );
 
         if (accountIndex >= 0) {
-          // address_details 업데이트
           accounts[accountIndex] = {
             ...accounts[accountIndex],
             address_details: {
               postalCode: addressData.postalCode,
               address: addressData.address,
               detailAddress: addressData.detailAddress,
-              fullAddress: fullAddress,
             },
           };
-          localStorage.setItem('user_accounts', JSON.stringify(accounts));
-          console.log('✅ [주소 페이지] localStorage의 user_accounts에 주소 정보 저장됨:', addressData);
-        } else {
-          console.warn('⚠️ [주소 페이지] user_accounts에서 사용자를 찾을 수 없습니다. user:', user);
+          localStorage.setItem("user_accounts", JSON.stringify(accounts));
         }
-      } catch (error) {
-        console.error('❌ [주소 페이지] localStorage 저장 실패:', error);
+      } catch (_error) {
       }
     }
 
-    // sessionStorage에도 주소 정보 저장 (캠페인 신청 모달 복원용)
     if (typeof window !== "undefined") {
       sessionStorage.setItem(
         "userAddress",
@@ -243,10 +227,9 @@ export default function AddressPage() {
           postalCode: addressData.postalCode,
           address: addressData.address,
           detailAddress: addressData.detailAddress,
-          fullAddress: fullAddress, // 전체 주소 문자열 (모달에서 표시용) - 구분자 포함
-        })
+          fullAddress,
+        }),
       );
-      console.log('✅ [주소 페이지] sessionStorage에 주소 정보 저장됨');
     }
 
     // 저장 후 뒤로가기

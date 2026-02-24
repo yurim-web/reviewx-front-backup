@@ -129,8 +129,7 @@ export function useSelectedTabCampaign(campaign: CampaignApplication) {
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
       return diffDays >= 0 ? diffDays : null;
-    } catch (error) {
-      console.error("선정일 계산 실패:", error);
+    } catch (_error) {
       return null;
     }
   }, [getCampaignDates.announcementDate]);
@@ -159,8 +158,7 @@ export function useSelectedTabCampaign(campaign: CampaignApplication) {
 
       // 오늘이 구매기간 내에 있는지 확인
       return today >= startDate && today <= endDate;
-    } catch (error) {
-      console.error("구매기간 계산 실패:", error);
+    } catch (_error) {
       return false;
     }
   }, [campaign.type, getCampaignDates.purchasePeriod]);
@@ -191,8 +189,7 @@ export function useSelectedTabCampaign(campaign: CampaignApplication) {
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
       return diffDays;
-    } catch (error) {
-      console.error("마감일 계산 실패:", error);
+    } catch (_error) {
       return null;
     }
   }, [

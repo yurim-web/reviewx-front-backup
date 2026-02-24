@@ -47,7 +47,6 @@ export default function PenaltyTabCard({ campaign }: PenaltyTabCardProps) {
    * - 현재는 콘솔에 로그만 출력하지만, 실제로는 API 호출을 통해 패널티 해제를 처리합니다.
    */
   const handleButtonClick = () => {
-    console.log(`${buttonText} 버튼 클릭됨`);
     // TODO: 패널티 해제 API 호출
   };
 

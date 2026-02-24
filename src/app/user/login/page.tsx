@@ -1,6 +1,15 @@
-// 🔐 사용자 로그인 페이지 (/user/login)
-// - 네이버 / 카카오 소셜 로그인
-// - 계정 상태에 따른 리다이렉트 (정지 / 블랙리스트 / 정상)
+/* ========================================
+   유저 로그인 페이지
+   ======================================== */
+
+/**
+ * UserLoginPage
+ *
+ * 목적: 카카오/네이버 소셜 로그인으로 사용자를 인증하는 페이지
+ *
+ * 사용 페이지:
+ * - /user/login (사용자 로그인)
+ */
 
 "use client";
 
@@ -13,7 +22,6 @@ import styles from "@/styles/user/login/user_login.module.css";
 // ⚠️ 실제 API 연결 시 이 import는 삭제하고 실제 API 호출로 교체
 import {
   UNIFIED_ACCOUNTS,
-  type SNSType,
   type UnifiedAccount,
 } from "@/data/login/unifiedAccountData";
 import { authenticateUnifiedAccount } from "@/lib/auth";
@@ -56,8 +64,7 @@ export default function UserLoginPage() {
     try {
       // SNS 계정 정보를 바로 AuthUser로 변환해서 LocalStorage에 저장
       await authenticateUnifiedAccount(account);
-    } catch (error) {
-      console.error("소셜 로그인 처리 중 오류:", error);
+    } catch (_error) {
       alert("로그인 중 오류가 발생했습니다.");
       return;
     }
@@ -91,16 +98,13 @@ export default function UserLoginPage() {
    * 8. handle_social_login_success 함수 호출하여 리다이렉트 처리
    */
   const handleNaverLogin = async () => {
-    console.log("네이버 로그인 클릭");
-
     // ========================================
     // ⚠️ 실제 API 연결 시 사용할 코드 (아래 주석 해제)
     // ========================================
     // try {
     //   // 네이버 OAuth 인증 페이지로 리다이렉트
     //   window.location.href = "네이버 OAuth URL";
-    // } catch (error) {
-    //   console.error("네이버 로그인 오류:", error);
+    // } catch (_error) {
     //   alert("로그인 중 오류가 발생했습니다.");
     // }
     // ========================================
@@ -116,15 +120,13 @@ export default function UserLoginPage() {
       );
 
       if (!naver_account) {
-        console.error("네이버 계정을 찾을 수 없습니다.");
         alert("로그인 중 오류가 발생했습니다.");
         return;
       }
 
       // 소셜 로그인 성공 처리
       await handle_social_login_success(naver_account);
-    } catch (error) {
-      console.error("네이버 로그인 오류:", error);
+    } catch (_error) {
       alert("로그인 중 오류가 발생했습니다.");
     }
     // ========================================

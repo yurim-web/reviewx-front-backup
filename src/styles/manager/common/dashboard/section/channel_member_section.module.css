@@ -51,6 +51,14 @@
   overflow: hidden;
 }
 
+/* Recharts 툴팁 래퍼 잔상 제거 (커스텀 툴팁만 사용) */
+.channel_member_section_pie_chart_container :global(.recharts-tooltip-wrapper),
+.channel_member_section_pie_chart_container :global(.recharts-default-tooltip) {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
 /* 채널별 회원 통계 섹션 통계 정보 영역 */
 .channel_member_section_stats_info {
   flex: 1;

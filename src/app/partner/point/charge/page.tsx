@@ -17,14 +17,19 @@ import PageTitle from "@/components/fragments/PageTitle";
 import Toast from "@/components/common/toast/Toast";
 import BaseModal from "@/components/common/modal/BaseModal";
 import PartnerChargeTermsModal from "@/components/partner/point/PartnerChargeTermsModal";
-import { parseFormattedAmount } from "@/utils/formatting/amount";
+import AmountDropdown from "@/components/partner/point/AmountDropdown";
+import InvoiceTypeDropdown, {
+  InvoiceType,
+} from "@/components/partner/point/InvoiceTypeDropdown";
+import BankDropdown from "@/components/partner/point/BankDropdown";
 import { validateAmount } from "@/utils/validation/amount";
+import { formatPhone, formatBusinessNumber } from "@/utils/formatting/input";
+import { useOutsideClick } from "@/hooks/useOutsideClick";
 import chargeBaseStyles from "@/styles/partner/point/charge_base.module.css";
 import chargeTabsStyles from "@/styles/partner/point/charge_tabs.module.css";
 import chargeAccountStyles from "@/styles/partner/point/charge_account.module.css";
 import chargeSubmitStyles from "@/styles/partner/point/charge_submit.module.css";
 import chargeTermsStyles from "@/styles/partner/point/charge_terms.module.css";
-import customDropdownStyles from "@/styles/partner/campaign_create/custom_dropdown.module.css";
 import { useAuth } from "@/hooks/useAuth";
 import { getPartnerPointSummary } from "@/data/partner/point/pointData";
 import { addPaymentHistory } from "@/data/manager_sa/settlement/paymentHistoryData";
@@ -37,22 +42,6 @@ const styles = {
   ...chargeSubmitStyles,
   ...chargeTermsStyles,
 };
-
-/** 휴대폰 번호: 숫자만 11자리, 3-4-4 하이픈 자동 추가 */
-function formatPhone(value: string): string {
-  const digits = value.replace(/\D/g, "").slice(0, 11);
-  if (digits.length <= 3) return digits;
-  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
-  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
-}
-
-/** 사업자등록번호: 숫자만 10자리, 3-2-5 하이픈 자동 추가 */
-function formatBusinessNumber(value: string): string {
-  const digits = value.replace(/\D/g, "").slice(0, 10);
-  if (digits.length <= 3) return digits;
-  if (digits.length <= 5) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
-  return `${digits.slice(0, 3)}-${digits.slice(3, 5)}-${digits.slice(5)}`;
-}
 
 /**
  * 파트너 포인트 충전 페이지
@@ -67,9 +56,7 @@ export default function PartnerPointChargePage() {
   const [depositorName, setDepositorName] = useState<string>("");
   // 영수증/계산서 발행 옵션: "none" (미발행), "cash_income" (현금영수증 소득공제), "cash_expense" (현금영수증 지출증빙), "tax_invoice" (세금계산서)
   // 초기값: 현금영수증 (소득공제)로 설정
-  const [invoiceType, setInvoiceType] = useState<
-    "none" | "cash_income" | "cash_expense" | "tax_invoice"
-  >("cash_income");
+  const [invoiceType, setInvoiceType] = useState<InvoiceType>("cash_income");
   const [isBankAmountOpen, setIsBankAmountOpen] = useState<boolean>(false);
   const [isCardAmountOpen, setIsCardAmountOpen] = useState<boolean>(false);
   const [isInvoiceDropdownOpen, setIsInvoiceDropdownOpen] =
@@ -352,50 +339,18 @@ export default function PartnerPointChargePage() {
   // 메인 헤더 숨기기는 SubHeader 컴포넌트에서 처리
 
   // 드롭다운 외부 클릭 감지 - 드롭다운 닫기
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
+  useOutsideClick([bankDropdownRef, cardDropdownRef], () => {
+    setIsBankAmountOpen(false);
+    setIsCardAmountOpen(false);
+  });
 
-      // 무통장 입금 드롭다운 외부 클릭 시
-      if (
-        bankDropdownRef.current &&
-        !bankDropdownRef.current.contains(target)
-      ) {
-        setIsBankAmountOpen(false);
-      }
+  useOutsideClick([invoiceDropdownRef], () => {
+    setIsInvoiceDropdownOpen(false);
+  });
 
-      // 신용카드 결제 드롭다운 외부 클릭 시
-      if (
-        cardDropdownRef.current &&
-        !cardDropdownRef.current.contains(target)
-      ) {
-        setIsCardAmountOpen(false);
-      }
-
-      // 영수증/계산서 발행 드롭다운 외부 클릭 시
-      if (
-        invoiceDropdownRef.current &&
-        !invoiceDropdownRef.current.contains(target)
-      ) {
-        setIsInvoiceDropdownOpen(false);
-      }
-
-      if (
-        refundBankDropdownRef.current &&
-        !refundBankDropdownRef.current.contains(target)
-      ) {
-        setIsRefundBankDropdownOpen(false);
-      }
-    };
-
-    // 클릭 이벤트 리스너 등록
-    document.addEventListener("mousedown", handleClickOutside);
-
-    // 컴포넌트 언마운트 시 이벤트 리스너 제거
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  useOutsideClick([refundBankDropdownRef], () => {
+    setIsRefundBankDropdownOpen(false);
+  });
 
   return (
     <div className={styles.charge_page}>
@@ -487,59 +442,18 @@ export default function PartnerPointChargePage() {
                   >
                     신청 금액
                   </label>
-                  <div
-                    className={customDropdownStyles.custom_dropdown}
-                    ref={bankDropdownRef}
-                  >
-                    <button
-                      id="bank_amount_select"
-                      type="button"
-                      className={customDropdownStyles.dropdown_button}
-                      aria-haspopup="listbox"
-                      aria-expanded={isBankAmountOpen}
-                      onClick={() => setIsBankAmountOpen((o) => !o)}
-                    >
-                      <span
-                        className={customDropdownStyles.dropdown_text}
-                        data-placeholder="금액 선택"
-                      >
-                        {selectedAmount ? selectedAmount.toLocaleString() : ""}
-                      </span>
-                      <img
-                        src="/images/icons/dropdown_arrow.svg"
-                        alt=""
-                        className={`${customDropdownStyles.dropdown_arrow} ${
-                          isBankAmountOpen ? customDropdownStyles.rotated : ""
-                        }`}
-                      />
-                    </button>
-                    {isBankAmountOpen && (
-                      <div
-                        className={customDropdownStyles.dropdown_options}
-                        role="listbox"
-                        aria-label="신청 금액"
-                      >
-                        {[
-                          50000, 100000, 150000, 200000, 300000, 500000,
-                          1000000,
-                        ].map((v) => (
-                          <button
-                            key={v}
-                            type="button"
-                            role="option"
-                            aria-selected={selectedAmount === v}
-                            className={customDropdownStyles.dropdown_option}
-                            onClick={() => {
-                              handleAmountOptionClick(v);
-                              setIsBankAmountOpen(false);
-                            }}
-                          >
-                            {v.toLocaleString()}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                  <AmountDropdown
+                    id="bank_amount_select"
+                    label="신청 금액"
+                    selectedAmount={selectedAmount}
+                    isOpen={isBankAmountOpen}
+                    onToggle={() => setIsBankAmountOpen((o) => !o)}
+                    onSelect={(amount) => {
+                      handleAmountOptionClick(amount);
+                      setIsBankAmountOpen(false);
+                    }}
+                    dropdownRef={bankDropdownRef}
+                  />
                 </div>
 
                 {/* 신청 후 포인트 */}
@@ -570,7 +484,6 @@ export default function PartnerPointChargePage() {
                     id="depositor_name_input"
                     type="text"
                     className={styles.input_box}
-                    placeholder="입금자명 입력"
                     value={depositorName}
                     onChange={(e) => setDepositorName(e.target.value)}
                   />
@@ -584,97 +497,17 @@ export default function PartnerPointChargePage() {
                   >
                     영수증/계산서 발행
                   </label>
-                  <div
-                    className={customDropdownStyles.custom_dropdown}
-                    ref={invoiceDropdownRef}
-                  >
-                    <button
-                      id="invoice_type_select"
-                      type="button"
-                      className={customDropdownStyles.dropdown_button}
-                      aria-haspopup="listbox"
-                      aria-expanded={isInvoiceDropdownOpen}
-                      onClick={() => setIsInvoiceDropdownOpen((o) => !o)}
-                    >
-                      <span
-                        className={customDropdownStyles.dropdown_text}
-                        data-placeholder="옵션 선택"
-                      >
-                        {invoiceType === "none"
-                          ? "미발행"
-                          : invoiceType === "cash_income"
-                            ? "현금영수증 (소득공제)"
-                            : invoiceType === "cash_expense"
-                              ? "현금영수증 (지출증빙)"
-                              : "세금계산서"}
-                      </span>
-                      <img
-                        src="/images/icons/dropdown_arrow.svg"
-                        alt=""
-                        className={`${customDropdownStyles.dropdown_arrow} ${
-                          isInvoiceDropdownOpen
-                            ? customDropdownStyles.rotated
-                            : ""
-                        }`}
-                      />
-                    </button>
-                    {isInvoiceDropdownOpen && (
-                      <div
-                        className={customDropdownStyles.dropdown_options}
-                        role="listbox"
-                        aria-label="영수증/계산서 발행 옵션"
-                      >
-                        <button
-                          type="button"
-                          role="option"
-                          aria-selected={invoiceType === "none"}
-                          className={customDropdownStyles.dropdown_option}
-                          onClick={() => {
-                            setInvoiceType("none");
-                            setIsInvoiceDropdownOpen(false);
-                          }}
-                        >
-                          미발행
-                        </button>
-                        <button
-                          type="button"
-                          role="option"
-                          aria-selected={invoiceType === "cash_income"}
-                          className={customDropdownStyles.dropdown_option}
-                          onClick={() => {
-                            setInvoiceType("cash_income");
-                            setIsInvoiceDropdownOpen(false);
-                          }}
-                        >
-                          현금영수증 (소득공제)
-                        </button>
-                        <button
-                          type="button"
-                          role="option"
-                          aria-selected={invoiceType === "cash_expense"}
-                          className={customDropdownStyles.dropdown_option}
-                          onClick={() => {
-                            setInvoiceType("cash_expense");
-                            setIsInvoiceDropdownOpen(false);
-                          }}
-                        >
-                          현금영수증 (지출증빙)
-                        </button>
-                        <button
-                          type="button"
-                          role="option"
-                          aria-selected={invoiceType === "tax_invoice"}
-                          className={customDropdownStyles.dropdown_option}
-                          onClick={() => {
-                            setInvoiceType("tax_invoice");
-                            setIsInvoiceDropdownOpen(false);
-                          }}
-                        >
-                          세금계산서
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                  <InvoiceTypeDropdown
+                    id="invoice_type_select"
+                    selectedType={invoiceType}
+                    isOpen={isInvoiceDropdownOpen}
+                    onToggle={() => setIsInvoiceDropdownOpen((o) => !o)}
+                    onSelect={(type) => {
+                      setInvoiceType(type);
+                      setIsInvoiceDropdownOpen(false);
+                    }}
+                    dropdownRef={invoiceDropdownRef}
+                  />
                 </div>
               </article>
 
@@ -760,7 +593,6 @@ export default function PartnerPointChargePage() {
                         id="cash_receipt_name_input"
                         type="text"
                         className={styles.input_box}
-                        placeholder=""
                         value={cashReceiptIncome.name}
                         onChange={(e) =>
                           setCashReceiptIncome((prev) => ({
@@ -813,7 +645,6 @@ export default function PartnerPointChargePage() {
                         id="cash_receipt_company_input"
                         type="text"
                         className={styles.input_box}
-                        placeholder="상호명 입력"
                         value={cashReceiptExpense.company_name}
                         onChange={(e) =>
                           setCashReceiptExpense((prev) => ({
@@ -862,58 +693,19 @@ export default function PartnerPointChargePage() {
                     >
                       은행
                     </label>
-                    <div
-                      className={customDropdownStyles.custom_dropdown}
-                      ref={refundBankDropdownRef}
-                    >
-                      <button
-                        id="refund_bank_select"
-                        type="button"
-                        className={customDropdownStyles.dropdown_button}
-                        aria-haspopup="listbox"
-                        aria-expanded={isRefundBankDropdownOpen}
-                        onClick={() => setIsRefundBankDropdownOpen((o) => !o)}
-                      >
-                        <span
-                          className={customDropdownStyles.dropdown_text}
-                          data-placeholder="은행 선택"
-                        >
-                          {refundBank || ""}
-                        </span>
-                        <img
-                          src="/images/icons/dropdown_arrow.svg"
-                          alt=""
-                          className={`${customDropdownStyles.dropdown_arrow} ${
-                            isRefundBankDropdownOpen
-                              ? customDropdownStyles.rotated
-                              : ""
-                          }`}
-                        />
-                      </button>
-                      {isRefundBankDropdownOpen && (
-                        <div
-                          className={customDropdownStyles.dropdown_options}
-                          role="listbox"
-                          aria-label="환불 은행 선택"
-                        >
-                          {REFUND_BANKS.map((bank) => (
-                            <button
-                              key={bank}
-                              type="button"
-                              role="option"
-                              aria-selected={refundBank === bank}
-                              className={customDropdownStyles.dropdown_option}
-                              onClick={() => {
-                                setRefundBank(bank);
-                                setIsRefundBankDropdownOpen(false);
-                              }}
-                            >
-                              {bank}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
+                    <BankDropdown
+                      id="refund_bank_select"
+                      label="환불 은행 선택"
+                      selectedBank={refundBank}
+                      isOpen={isRefundBankDropdownOpen}
+                      onToggle={() => setIsRefundBankDropdownOpen((o) => !o)}
+                      onSelect={(bank) => {
+                        setRefundBank(bank);
+                        setIsRefundBankDropdownOpen(false);
+                      }}
+                      banks={REFUND_BANKS}
+                      dropdownRef={refundBankDropdownRef}
+                    />
                   </div>
                   <div className={styles.form_section}>
                     <label
@@ -947,7 +739,6 @@ export default function PartnerPointChargePage() {
                       id="refund_account_holder_input"
                       type="text"
                       className={styles.input_box}
-                      placeholder="예금주 입력"
                       value={refundAccountHolder}
                       onChange={(e) => setRefundAccountHolder(e.target.value)}
                     />
@@ -1004,59 +795,18 @@ export default function PartnerPointChargePage() {
                   >
                     신청 금액
                   </label>
-                  <div
-                    className={customDropdownStyles.custom_dropdown}
-                    ref={cardDropdownRef}
-                  >
-                    <button
-                      id="card_amount_select"
-                      type="button"
-                      className={customDropdownStyles.dropdown_button}
-                      aria-haspopup="listbox"
-                      aria-expanded={isCardAmountOpen}
-                      onClick={() => setIsCardAmountOpen((o) => !o)}
-                    >
-                      <span
-                        className={customDropdownStyles.dropdown_text}
-                        data-placeholder="금액 선택"
-                      >
-                        {selectedAmount ? selectedAmount.toLocaleString() : ""}
-                      </span>
-                      <img
-                        src="/images/icons/dropdown_arrow.svg"
-                        alt=""
-                        className={`${customDropdownStyles.dropdown_arrow} ${
-                          isCardAmountOpen ? customDropdownStyles.rotated : ""
-                        }`}
-                      />
-                    </button>
-                    {isCardAmountOpen && (
-                      <div
-                        className={customDropdownStyles.dropdown_options}
-                        role="listbox"
-                        aria-label="신청 금액"
-                      >
-                        {[
-                          50000, 100000, 150000, 200000, 300000, 500000,
-                          1000000,
-                        ].map((v) => (
-                          <button
-                            key={v}
-                            type="button"
-                            role="option"
-                            aria-selected={selectedAmount === v}
-                            className={customDropdownStyles.dropdown_option}
-                            onClick={() => {
-                              handleAmountOptionClick(v);
-                              setIsCardAmountOpen(false);
-                            }}
-                          >
-                            {v.toLocaleString()}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                  <AmountDropdown
+                    id="card_amount_select"
+                    label="신청 금액"
+                    selectedAmount={selectedAmount}
+                    isOpen={isCardAmountOpen}
+                    onToggle={() => setIsCardAmountOpen((o) => !o)}
+                    onSelect={(amount) => {
+                      handleAmountOptionClick(amount);
+                      setIsCardAmountOpen(false);
+                    }}
+                    dropdownRef={cardDropdownRef}
+                  />
                 </div>
 
                 {/* 신청 후 포인트 */}

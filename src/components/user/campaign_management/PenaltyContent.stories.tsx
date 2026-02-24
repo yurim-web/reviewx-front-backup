@@ -1,7 +1,14 @@
+/* ========================================
+   PenaltyContent 스토리북
+   ======================================== */
+
 /**
- * PenaltyContent 컴포넌트 스토리북
+ * PenaltyContent.stories
  *
- * 패널티 내역 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 패널티 내역 컴포넌트 스토리 모음
+ *
+ * 사용 페이지:
+ * - Storybook (User/CampaignManagement/PenaltyContent)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
