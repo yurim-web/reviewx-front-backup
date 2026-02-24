@@ -1,5 +1,5 @@
 /* ========================================
-   🔗 채널 연결 모달 컴포넌트
+   채널 연결 모달 컴포넌트
    ======================================== */
 
 /**
@@ -16,6 +16,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import BaseModal from "@/components/common/modal/BaseModal";
+import { useModalState } from "@/hooks/useModalState";
 import styles from "../../../styles/user/mypage/channel_connect_modal.module.css";
 
 interface ChannelConnectModalProps {
@@ -31,7 +32,7 @@ export default function ChannelConnectModal({
   isOpen,
   onClose,
   channelName,
-  channelIcon,
+  channelIcon: _channelIcon,
   initialUrl,
   onConnect,
 }: ChannelConnectModalProps) {
@@ -41,7 +42,7 @@ export default function ChannelConnectModal({
   const [errorType, setErrorType] = useState<
     "not_found" | "already_registered" | "server_error" | null
   >(null);
-  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false); // 연결 성공 모달 표시 여부
+  const successModal = useModalState();
 
   /**
    * 채널별 설정 정보
@@ -130,10 +131,7 @@ export default function ChannelConnectModal({
       if (initialUrl) {
         // 기존 URL이 있으면 (수정 모드)
         // URL에서 채널별 아이디를 추출하여 username에 설정
-        const extractedUsername = extractUsernameFromUrl(
-          initialUrl,
-          channelName
-        );
+        const extractedUsername = extractUsernameFromUrl(initialUrl, channelName);
         setUsername(extractedUsername);
         setUrl(initialUrl);
       } else {
@@ -144,27 +142,6 @@ export default function ChannelConnectModal({
       setErrorType(null); // 오류 메시지 초기화
     }
   }, [isOpen, initialUrl, channelName]);
-
-  // URL 유효성 검사 함수
-  const isValidUrl = (urlString: string): boolean => {
-    if (!urlString.trim()) return false;
-
-    try {
-      // URL 객체를 생성하여 유효성 검사
-      const url = new URL(urlString);
-
-      // http 또는 https 프로토콜만 허용
-      const isValidProtocol =
-        url.protocol === "http:" || url.protocol === "https:";
-
-      // 호스트명이 있는지 확인 (www 포함)
-      const hasValidHost = Boolean(url.hostname && url.hostname.length > 0);
-
-      return isValidProtocol && hasValidHost;
-    } catch {
-      return false;
-    }
-  };
 
   /**
    * 버튼 활성화 상태 계산
@@ -229,7 +206,7 @@ export default function ChannelConnectModal({
 
       // 연결 성공 모달 표시를 위해 현재 모달을 먼저 닫고 성공 모달을 띄움
       onClose();
-      setIsSuccessModalOpen(true);
+      successModal.open();
     } catch (_error) {
       // 서버 오류 또는 기타 읽을 수 없는 경우
       setErrorType("server_error");
@@ -245,33 +222,22 @@ export default function ChannelConnectModal({
 
     const link_patterns = {
       "네이버 블로그": (val: string) =>
-        val.startsWith("http://") ||
-        val.startsWith("https://") ||
-        val.includes("blog.naver.com"),
-      "네이버 클립": (val: string) =>
-        val.startsWith("http://") || val.startsWith("https://"),
+        val.startsWith("http://") || val.startsWith("https://") || val.includes("blog.naver.com"),
+      "네이버 클립": (val: string) => val.startsWith("http://") || val.startsWith("https://"),
       인스타그램: (val: string) =>
-        val.startsWith("http://") ||
-        val.startsWith("https://") ||
-        val.includes("instagram.com"),
+        val.startsWith("http://") || val.startsWith("https://") || val.includes("instagram.com"),
       유튜브: (val: string) =>
-        val.startsWith("http://") ||
-        val.startsWith("https://") ||
-        val.includes("youtube.com"),
+        val.startsWith("http://") || val.startsWith("https://") || val.includes("youtube.com"),
     };
 
-    const check_pattern =
-      link_patterns[channelType as keyof typeof link_patterns];
+    const check_pattern = link_patterns[channelType as keyof typeof link_patterns];
     return check_pattern ? check_pattern(value) : false;
   };
 
   /**
    * 입력값이 변경되면 오류 메시지 초기화 및 URL 생성
    */
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    channelType: string
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, channelType: string) => {
     const value = e.target.value;
     setUsername(value);
     setErrorType(null); // 입력값 변경 시 오류 메시지 초기화
@@ -284,8 +250,7 @@ export default function ChannelConnectModal({
       유튜브: (val: string) => `https://www.youtube.com/@${val}`,
     };
 
-    const generate_url =
-      url_generators[channelType as keyof typeof url_generators];
+    const generate_url = url_generators[channelType as keyof typeof url_generators];
     setUrl(generate_url ? generate_url(value) : value);
   };
 
@@ -293,20 +258,12 @@ export default function ChannelConnectModal({
     <>
       {/* 채널 연결 모달 */}
       <div className={styles.modal_overlay} onClick={handleBackdropClick}>
-        <div
-          className={styles.modal_content}
-          onClick={(e) => e.stopPropagation()}
-        >
+        <div className={styles.modal_content} onClick={(e) => e.stopPropagation()}>
           {/* 모달 헤더 */}
           <div className={styles.modal_header}>
             <h3 className={styles.modal_title}>{channelName} 연결</h3>
             <button className={styles.modal_close_button} onClick={onClose}>
-              <Image
-                src="/images/filter/x_icon.svg"
-                alt="닫기"
-                width={20}
-                height={20}
-              />
+              <Image src="/images/filter/x_icon.svg" alt="닫기" width={20} height={20} />
             </button>
           </div>
 
@@ -315,19 +272,14 @@ export default function ChannelConnectModal({
             <div className={styles.input_section}>
               {/* 채널별 입력 필드 - 공통 구조로 렌더링 */}
               {(() => {
-                const config =
-                  channel_config[channelName as keyof typeof channel_config];
+                const config = channel_config[channelName as keyof typeof channel_config];
                 if (!config) return null;
 
                 return (
                   <div className={styles.input_group}>
                     <div className={styles.prefix_input_group}>
                       {/* prefix가 있으면 표시 */}
-                      {config.prefix && (
-                        <span className={styles.prefix_text}>
-                          {config.prefix}
-                        </span>
-                      )}
+                      {config.prefix && <span className={styles.prefix_text}>{config.prefix}</span>}
                       <input
                         type="text"
                         className={styles.input_field_with_prefix}
@@ -338,9 +290,7 @@ export default function ChannelConnectModal({
                     </div>
                     {/* 링크 형태로 입력했을 때 안내 문구 */}
                     {isLinkFormat(username, channelName) && (
-                      <p className={styles.error_text}>
-                        {config.link_error_message}
-                      </p>
+                      <p className={styles.error_text}>{config.link_error_message}</p>
                     )}
                     {/* 에러 메시지 표시 */}
                     {/* 에러 타입별 메시지:
@@ -348,9 +298,7 @@ export default function ChannelConnectModal({
                         - already_registered: 이미 다른 계정에서 사용 중인 채널
                         - server_error: 서버 오류 또는 기타 읽을 수 없는 경우 */}
                     {errorType && (
-                      <p className={styles.channel_not_found_text}>
-                        {error_messages[errorType]}
-                      </p>
+                      <p className={styles.channel_not_found_text}>{error_messages[errorType]}</p>
                     )}
                     {/* 인스타그램만 info_message 표시 */}
                     {config.info_message && (
@@ -379,8 +327,8 @@ export default function ChannelConnectModal({
 
       {/* 연결 성공 모달 */}
       <BaseModal
-        is_open={isSuccessModalOpen}
-        on_close={() => setIsSuccessModalOpen(false)}
+        is_open={successModal.isOpen}
+        on_close={successModal.close}
         message="채널이 연결되었습니다."
         buttons={["닫기"]}
       />
