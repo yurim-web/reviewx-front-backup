@@ -23,10 +23,9 @@ import PhoneVerification from "@/components/common/phone_verification/PhoneVerif
 import BusinessDocumentUpload from "@/components/partner/mypage/BusinessDocumentUpload";
 import AddressInput from "@/components/common/mypage/AddressInput";
 import WithdrawModals from "@/components/common/mypage/WithdrawModals";
-import ErrorText from "@/components/common/error_text/ErrorText";
 import Toast from "@/components/common/toast/Toast";
-import { formatPhoneNumber } from "@/utils/formatting/phone";
-import { formatBusinessNumber } from "@/components/partner/signup/utils/businessNumberUtils";
+import BusinessNumberInput from "@/components/partner/signup/BusinessNumberInput";
+import ContactPhoneInput from "@/components/partner/signup/ContactPhoneInput";
 import { useAuth } from "@/hooks/useAuth";
 import { withPartnerAuth } from "@/components/auth/withAuth";
 import { usePhoneVerification } from "@/hooks/usePhoneVerification/usePhoneVerification";
@@ -123,13 +122,6 @@ function PartnerEditProfilePage() {
     if (name === "phone") {
       handlePhoneChange(value);
       setFormData((prev) => ({ ...prev, phone: value }));
-      return;
-    }
-
-    // 사업자등록번호 입력 시: 숫자만 허용 + 3-2-5 형식 자동 하이픈
-    if (name === "businessNumber") {
-      const formatted = formatBusinessNumber(value);
-      setFormData((prev) => ({ ...prev, businessNumber: formatted }));
       return;
     }
 
@@ -398,18 +390,15 @@ function PartnerEditProfilePage() {
           </article>
 
           {/* 사업자등록번호 (수정 가능) */}
-          <article className={layoutStyles.field_article}>
-            <label className={inputStyles.field_label} htmlFor="businessNumber">
-              사업자등록번호
-            </label>
-            <input
-              id="businessNumber"
-              name="businessNumber"
-              className={inputStyles.input_field}
-              value={formData.businessNumber}
-              onChange={handleInputChange}
-            />
-          </article>
+          <BusinessNumberInput
+            id="businessNumber"
+            label="사업자등록번호"
+            value={formData.businessNumber}
+            onChange={(value) => setFormData((prev) => ({ ...prev, businessNumber: value }))}
+            wrapperClassName={layoutStyles.field_article}
+            labelClassName={inputStyles.field_label}
+            inputClassName={inputStyles.input_field}
+          />
 
           {/* 사업자등록증 - 새로 등록(파일 선택) 클릭 시 완료 배지 숨김 */}
           <BusinessDocumentUpload
@@ -436,45 +425,18 @@ function PartnerEditProfilePage() {
           <h3 className={layoutStyles.section_subtitle}>담당자 정보</h3>
 
           {/* 문의 담당자 휴대폰 번호 */}
-          <article className={layoutStyles.field_article}>
-            <label className={inputStyles.field_label} htmlFor="contactPhone">
-              문의 담당자 휴대폰 번호
-            </label>
-            <input
-              id="contactPhone"
-              name="contactPhone"
-              type="tel"
-              className={inputStyles.input_field}
-              value={formData.contactPhone}
-              onChange={(e) => {
-                // 휴대폰 번호 포맷팅 유틸리티 사용
-                const formatted = formatPhoneNumber(e.target.value);
-                setFormData((prev) => ({ ...prev, contactPhone: formatted }));
-
-                // 실시간 휴대폰 번호 형식 검증
-                if (formatted.trim() === "") {
-                  // 빈 필드: 에러 초기화
-                  setContactPhoneError(undefined);
-                } else {
-                  // 휴대폰 번호 형식 검증 (010-1234-5678 형식)
-                  const phoneRegex = /^010-\d{4}-\d{4}$/;
-                  if (!phoneRegex.test(formatted)) {
-                    // 형식 오류: 실시간으로 에러 메시지 표시
-                    setContactPhoneError("올바른 휴대폰 번호 형식을 입력해주세요.");
-                  } else {
-                    // 형식이 유효한 경우: 에러 초기화
-                    setContactPhoneError(undefined);
-                  }
-                }
-              }}
-              placeholder="- 제외 입력"
-              maxLength={13}
-              onInvalid={(e) => {
-                e.preventDefault();
-              }}
-            />
-            <ErrorText message={contactPhoneError} />
-          </article>
+          <ContactPhoneInput
+            id="contactPhone"
+            label="문의 담당자 휴대폰 번호"
+            value={formData.contactPhone}
+            error={contactPhoneError}
+            onChange={(value) => setFormData((prev) => ({ ...prev, contactPhone: value }))}
+            onErrorChange={setContactPhoneError}
+            placeholder="- 제외 입력"
+            wrapperClassName={layoutStyles.field_article}
+            labelClassName={inputStyles.field_label}
+            inputClassName={inputStyles.input_field}
+          />
 
           {/* 회원탈퇴 버튼 */}
           <div className={buttonStyles.withdraw_button_container}>
