@@ -22,11 +22,13 @@
 }
 
 /* 헤더·데이터 행이 같은 열 너비를 쓰도록 한 그리드로 통일 (subgrid) */
+/* 채널 열: 1920px 기준 Figma 기획에 맞게 최대 4개 아이콘(20px*4 + gap 4px*3 + padding 40px)이 잘리지 않도록 minmax 적용 */
 .table_grid_wrapper {
   display: grid;
   width: 100%;
   min-width: 0;
-  grid-template-columns: 0.5fr 1fr 1.7fr 1.3fr 1.2fr 2fr 2fr 1.3fr 1.3fr 1.3fr 1.3fr 1.3fr 1fr;
+  /* 번호 6자리 확보(1fr), 이름 칸 축소(1.5fr) */
+  grid-template-columns: 0.5fr 1fr 1.5fr 1.3fr 1.2fr 1.6fr 1.6fr 1.3fr 1.3fr 1.3fr 1.3fr 1.3fr 1fr;
   border-radius: 4px;
   overflow: hidden;
 }
@@ -194,6 +196,17 @@
   justify-content: center;
 }
 
+/* 채널 셀 - 4개 아이콘이 잘리지 않도록 overflow 허용 (열 너비는 grid에서 minmax로 확보) */
+.table_cell_channel {
+  overflow: visible;
+}
+
+/* 상태 셀 - 태그가 패딩·글자 수에 맞춰 잘리지 않고 원래 크기로 보이도록 */
+.table_cell_status {
+  overflow: visible;
+  flex-shrink: 0;
+}
+
 /* 체크박스 */
 .checkbox {
   width: 20px;
@@ -234,13 +247,14 @@
   cursor: pointer;
 }
 
-/* 채널 아이콘 컨테이너 */
+/* 채널 아이콘 컨테이너 - 최대 4개 아이콘 기준, 1920px 기획처럼 잘리지 않도록 표시 */
 .channel_icons {
   display: flex;
   align-items: center;
   gap: 4px;
   flex-wrap: nowrap; /* 줄바꿈 방지 */
-  overflow: hidden; /* 넘치는 경우 숨김 */
+  min-width: 0;
+  overflow: visible; /* 채널 열 너비 확보로 4개 아이콘까지 잘리지 않음 */
 }
 
 /* 채널 아이콘 래퍼 */
@@ -293,6 +307,7 @@
 }
 
 /* 상태 태그 */
+/* 상태 태그 공통 - 글자 수에 맞춰 높이·너비 유지(일시 정지, 영구 정지 등 길이 관계없이 동일 체감) */
 .status_tag {
   display: inline-flex;
   align-items: center;
@@ -304,6 +319,10 @@
   line-height: 14px;
   letter-spacing: -0.28px;
   white-space: nowrap;
+  flex-shrink: 0; /* 셀 안에서 눌리지 않도록 */
+  width: fit-content;
+  min-height: 22px; /* padding 4*2 + line-height 14 = 22 */
+  box-sizing: border-box;
 }
 
 /* 정상 상태 태그 */
