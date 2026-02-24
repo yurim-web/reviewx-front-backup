@@ -23,10 +23,17 @@ import { useRouter } from "next/navigation";
 import PartnerTabNavigation from "@/components/partner/campaign_management/TabNavigation";
 import SubTabNavigation from "@/components/common/mypage/SubTabNavigation";
 import ProfileContent from "@/components/common/mypage/ProfileContent";
+import BaseModal from "@/components/common/modal/BaseModal";
 import layoutStyles from "@/styles/partner/partner_layout.module.css";
 import type { PartnerMainTab } from "@/types/domain/partner";
 import { withPartnerAuth } from "@/components/auth/withAuth";
 import { useAuth } from "@/hooks/useAuth";
+
+interface PartnerAccount {
+  id?: string;
+  email?: string;
+  profile_image?: string;
+}
 
 /**
  * 파트너 마이페이지 컴포넌트
@@ -49,6 +56,8 @@ function PartnerMypagePage() {
 
   // 회원 유형 상태 (리뷰어/광고주)
   const [memberType, setMemberType] = useState<"reviewer" | "partner">("partner");
+  // 리뷰어 정보 없음 모달 (광고주 → 리뷰어 전환 시)
+  const [showReviewerInfoModal, setShowReviewerInfoModal] = useState(false);
 
   // 컴포넌트 마운트 시 localStorage에서 프로필 이미지 로드
   useEffect(() => {
@@ -58,9 +67,9 @@ function PartnerMypagePage() {
         // console.log('📦 [마이페이지] partner_accounts:', storedAccounts);
 
         if (storedAccounts) {
-          const accounts = JSON.parse(storedAccounts);
-          const partnerAccount = accounts.find((a: any) =>
-            a.id === user.id || a.email === user.email
+          const accounts = JSON.parse(storedAccounts) as PartnerAccount[];
+          const partnerAccount = accounts.find(
+            (a) => a.id === user.id || a.email === user.email,
           );
           // console.log('✅ [마이페이지] partnerAccount:', partnerAccount);
 
@@ -99,12 +108,27 @@ function PartnerMypagePage() {
    * 리뷰어 ↔ 광고주 간 전환
    */
   const handleMemberTypeChange = (type: "reviewer" | "partner") => {
-    setMemberType(type);
-
-    // 리뷰어로 전환 시 유저 마이페이지로 이동
     if (type === "reviewer") {
+      // 리뷰어(유저) 정보 등록 여부 확인
+      try {
+        const stored = localStorage.getItem("user_accounts");
+        const accounts = stored ? (JSON.parse(stored) as { id?: string; email?: string }[]) : [];
+        const hasReviewerInfo = accounts.some(
+          (a) => a.id === user?.id || a.email === user?.email,
+        );
+        if (!hasReviewerInfo) {
+          setShowReviewerInfoModal(true);
+          return;
+        }
+      } catch {
+        setShowReviewerInfoModal(true);
+        return;
+      }
+      setMemberType("reviewer");
       router.push("/user/mypage/profile");
+      return;
     }
+    setMemberType(type);
   };
 
   return (
@@ -142,6 +166,20 @@ function PartnerMypagePage() {
           showMemberTypeToggle={true}
           activeMemberType={memberType}
           onMemberTypeChange={handleMemberTypeChange}
+        />
+
+        {/* 리뷰어 정보 없음 모달: 등록 클릭 시 유저 내 정보 수정 페이지로 이동 */}
+        <BaseModal
+          is_open={showReviewerInfoModal}
+          on_close={() => setShowReviewerInfoModal(false)}
+          message="리뷰어 정보가 없습니다.<br>내 정보 등록 후 활동할 수 있습니다."
+          buttons={["닫기", "등록"]}
+          on_cancel={() => setShowReviewerInfoModal(false)}
+          on_confirm={() => {
+            setShowReviewerInfoModal(false);
+            router.push("/user/mypage/edit");
+          }}
+          type="center"
         />
       </div>
     </div>

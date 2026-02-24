@@ -5,36 +5,16 @@
 /**
  * 취소/반려 탭 캠페인 카드 컴포넌트
  *
- * 목적: "취소/반려" 탭에 표시되는 캠페인 카드를 렌더링합니다.
+ * 목적: 취소/반려 탭에 표시되는 캠페인 카드 (반려·패널티·영수증 반려 상태별 버튼 렌더링)
  *
- * 경우의 수: 4가지
- * 1. 반려일 때 (content_rejected,re_register 또는 penalty,content_rejected):
- *    - 2개 버튼: "콘텐츠 반려 사유 확인" + "콘텐츠 수정"
- *    - 사유 확인 클릭 시 반려 사유 모달 표시
- *    - 콘텐츠 수정 클릭 시 콘텐츠 수정 모달 노출
- *    - 단, 수정 기간이 지난 경우 "등록 기간이 마감되었습니다." 모달 표시
- * 2. 패널티일 때 (penalty 또는 penalty,content_rejected):
- *    - 패널티 부과 사유:
- *      - 마감 기간이 지날 때까지 등록하지 않은 경우
- *      - 선정 후 신청 취소 시
- *      - 지각 제출 허용 시 7일 유예기간 내 미등록 (자동 신고)
- *    - 1개 버튼: "패널티 내역 확인"
- *    - 클릭하면 패널티 페이지(/user/campaign_management/penalty)로 이동
- * 3. 구매 영수증 반려일 때 (receipt_rejected):
- *    - 1개 버튼: "구매 영수증 재등록하기"
- *    - 클릭하면 구매 영수증 등록 모달 노출
- *
- * 참고사항:
- * - 지각 제출 허용 시 7일의 유예기간이 주어지며, 그 기간 안에 등록하지 않을 경우 회원 자동 신고
- * - 지각 제출 시 7일 안에 '완료' 상태가 되어야만 포인트 지급 (수정 기간 포함)
- *
+ * 사용 페이지:
+ * - /user/campaign_management (취소/반려 탭)
  */
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { CampaignApplication } from "@/types/domain/user";
 import buttonStyles from "../../../../styles/user/campaign_management/campaign_buttons.module.css";
-import { getButtonClassName } from "@/components/common/campaign_management/utils/button_style_utils";
 import CampaignCardBase from "./CampaignCardBase";
 import ReceiptRegistrationModal from "../modals/ReceiptRegistrationModal";
 import ContentRegistrationModal from "../modals/ContentRegistrationModal";
@@ -42,6 +22,7 @@ import ImageUploadModal from "../modals/ImageUploadModal";
 import CombinedContentModal from "../modals/CombinedContentModal";
 import RejectionReasonModal from "../modals/RejectionReasonModal";
 import BaseModal from "@/components/common/modal/BaseModal";
+import { useModalState } from "@/hooks/useModalState";
 
 interface RejectedTabCardProps {
   campaign: CampaignApplication;
@@ -57,14 +38,10 @@ interface RejectedTabCardProps {
  */
 export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
   // 모달 상태 관리
-  const [isContentModalOpen, setIsContentModalOpen] = useState(false);
-  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
-  const [isRejectionReasonModalOpen, setIsRejectionReasonModalOpen] =
-    useState(false);
-  const [
-    isRegistrationPeriodEndedModalOpen,
-    setIsRegistrationPeriodEndedModalOpen,
-  ] = useState(false);
+  const contentModal = useModalState();
+  const receiptModal = useModalState();
+  const rejectionReasonModal = useModalState();
+  const registrationPeriodEndedModal = useModalState();
 
   // 콘텐츠 수정 모달 모드 관리 (등록/수정)
   const [contentModalMode, setContentModalMode] = useState<"register" | "edit">(
@@ -113,7 +90,7 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
    * - 반려 사유 모달을 엽니다.
    */
   const handleRejectionReasonClick = () => {
-    setIsRejectionReasonModalOpen(true);
+    rejectionReasonModal.open();
   };
 
   /**
@@ -145,13 +122,13 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
   const handleContentEditClick = () => {
     // 반려된 캠페인이고 수정 기간이 지났을 경우
     if (isContentRejected && isEditPeriodEnded()) {
-      setIsRegistrationPeriodEndedModalOpen(true);
+      registrationPeriodEndedModal.open();
       return;
     }
 
     // 수정 기간이 남았거나 반려되지 않은 경우 콘텐츠 수정 모달 열기
     setContentModalMode("edit");
-    setIsContentModalOpen(true);
+    contentModal.open();
   };
 
   /**
@@ -161,20 +138,7 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
    * - 구매 영수증 등록 모달을 엽니다.
    */
   const handleReceiptReRegisterClick = () => {
-    setIsReceiptModalOpen(true);
-  };
-
-  // 모달 닫기 핸들러
-  const handleCloseContentModal = () => {
-    setIsContentModalOpen(false);
-  };
-
-  const handleCloseReceiptModal = () => {
-    setIsReceiptModalOpen(false);
-  };
-
-  const handleCloseRejectionReasonModal = () => {
-    setIsRejectionReasonModalOpen(false);
+    receiptModal.open();
   };
 
   /**
@@ -261,8 +225,8 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
 
       {/* 반려 사유 확인 모달 */}
       <RejectionReasonModal
-        isOpen={isRejectionReasonModalOpen}
-        onClose={handleCloseRejectionReasonModal}
+        isOpen={rejectionReasonModal.isOpen}
+        onClose={rejectionReasonModal.close}
         rejectionReason={campaign.rejectionReason}
         campaignTitle={campaign.title}
       />
@@ -270,8 +234,8 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
       {/* 캠페인 타입별 콘텐츠 수정 모달 */}
       {campaign.type === "미션형" && (
         <CombinedContentModal
-          isOpen={isContentModalOpen}
-          onClose={handleCloseContentModal}
+          isOpen={contentModal.isOpen}
+          onClose={contentModal.close}
           campaignTitle={campaign.title}
           mode={contentModalMode}
           existingLink={
@@ -291,8 +255,8 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
       )}
       {campaign.type === "구매평" && (
         <ImageUploadModal
-          isOpen={isContentModalOpen}
-          onClose={handleCloseContentModal}
+          isOpen={contentModal.isOpen}
+          onClose={contentModal.close}
           campaignTitle={campaign.title}
           mode={contentModalMode}
           existingImages={
@@ -307,8 +271,8 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
       )}
       {["배송형", "방문형", "기자단"].includes(campaign.type) && (
         <ContentRegistrationModal
-          isOpen={isContentModalOpen}
-          onClose={handleCloseContentModal}
+          isOpen={contentModal.isOpen}
+          onClose={contentModal.close}
           campaignTitle={campaign.title}
           mode={contentModalMode}
           existingLink={
@@ -321,15 +285,15 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
 
       {/* 구매 영수증 등록 모달 */}
       <ReceiptRegistrationModal
-        isOpen={isReceiptModalOpen}
-        onClose={handleCloseReceiptModal}
+        isOpen={receiptModal.isOpen}
+        onClose={receiptModal.close}
         campaignTitle={campaign.title}
       />
 
       {/* 등록 기간 마감 모달 */}
       <BaseModal
-        is_open={isRegistrationPeriodEndedModalOpen}
-        on_close={() => setIsRegistrationPeriodEndedModalOpen(false)}
+        is_open={registrationPeriodEndedModal.isOpen}
+        on_close={registrationPeriodEndedModal.close}
         message="등록 기간이 마감되었습니다."
         buttons={["닫기"]}
       />

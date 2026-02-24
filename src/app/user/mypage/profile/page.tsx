@@ -1,21 +1,14 @@
 /* ========================================
-   👤 프로필 탭 전용 페이지
+   마이페이지 프로필 탭 페이지
    ======================================== */
 
 /**
- * 프로필 탭 전용 페이지
+ * ProfilePage
  *
- * 목적: 사용자의 프로필 정보와 메뉴를 보여주는 독립적인 페이지입니다.
+ * 목적: 사용자의 프로필 정보와 마이페이지 메뉴를 보여주는 페이지
  *
- * 페이지 경로:
- * - /user/mypage/profile
- *
- * 주요 기능:
- * - 프로필 정보 표시 및 편집
- * - 이용 가이드, 공지사항, FAQ, 카카오톡 상담 메뉴
- * - 로그아웃 기능
- * - URL 기반 라우팅으로 새로고침 시에도 페이지 유지
- *
+ * 사용 페이지:
+ * - /user/mypage/profile (프로필 탭)
  */
 
 "use client";
@@ -23,9 +16,18 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+
+interface LocalAccount {
+  id?: string;
+  email?: string;
+  name?: string;
+  nickname?: string;
+  profile_image?: string;
+}
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 import SubTabNavigation from "@/components/common/mypage/SubTabNavigation";
 import ProfileContent from "@/components/common/mypage/ProfileContent";
+import BaseModal from "@/components/common/modal/BaseModal";
 import type { MainTab } from "@/types/domain/user";
 import layoutStyles from "@/styles/user/mypage/mypage_layout.module.css";
 
@@ -44,8 +46,8 @@ export default function ProfilePage() {
   const [activeTopTab, setActiveTopTab] = useState<MainTab>("account");
 
   // activeSubTab: 현재 활성화된 서브 탭 (프로필/채널)
-  const [activeSubTab, setActiveSubTab] = useState<"profile" | "channel">(
-    "profile"
+  const [activeSubTab, _setActiveSubTab] = useState<"profile" | "channel">(
+    "profile",
   );
 
   // 유저 정보 상태
@@ -54,66 +56,53 @@ export default function ProfilePage() {
 
   // 회원 유형 상태 (리뷰어/광고주)
   const [memberType, setMemberType] = useState<"reviewer" | "partner">("reviewer");
+  // 광고주 정보 없음 모달 (리뷰어 → 광고주 전환 시)
+  const [showPartnerInfoModal, setShowPartnerInfoModal] = useState(false);
 
   // 컴포넌트 마운트 시 localStorage에서 유저 정보 로드
   useEffect(() => {
-    if (typeof window !== 'undefined' && user) {
+    if (typeof window !== "undefined" && user) {
       try {
-        const storedAccounts = localStorage.getItem('user_accounts');
-        console.log('📦 [프로필 페이지] user_accounts:', storedAccounts);
-
+        const storedAccounts = localStorage.getItem("user_accounts");
         if (storedAccounts) {
-          const accounts = JSON.parse(storedAccounts);
-          const userAccountIndex = accounts.findIndex((a: any) =>
-            a.id === user.id || a.email === user.email
+          const accounts = JSON.parse(storedAccounts) as LocalAccount[];
+          const userAccountIndex = accounts.findIndex(
+            (a) => a.id === user.id || a.email === user.email,
           );
-          const userAccount = userAccountIndex >= 0 ? accounts[userAccountIndex] : null;
-          console.log('✅ [프로필 페이지] userAccount:', userAccount);
+          const userAccount =
+            userAccountIndex >= 0 ? accounts[userAccountIndex] : null;
 
           if (userAccount) {
-            // 기본 닉네임 데이터 매핑 (user_accounts에 nickname이 없을 때 사용)
             const defaultNicknameMap: Record<string, string> = {
-              'user_kakao_001': '양치하는고양이',
-              'user_naver_001': '은지블로그',
+              user_kakao_001: "양치하는고양이",
+              user_naver_001: "은지블로그",
             };
-            
-            // nickname이 없거나 name과 같은 경우 기본 데이터에서 가져오기
+
             let nickname = userAccount.nickname || "";
             if (!nickname || nickname === userAccount.name) {
-              nickname = defaultNicknameMap[userAccount.id || user.id] || "";
-              
-              // user_accounts에 nickname 업데이트
+              nickname =
+                defaultNicknameMap[userAccount.id || user.id] || "";
+
               if (nickname && userAccountIndex >= 0) {
                 accounts[userAccountIndex] = {
                   ...accounts[userAccountIndex],
-                  nickname: nickname,
+                  nickname,
                 };
-                localStorage.setItem('user_accounts', JSON.stringify(accounts));
-                console.log('✅ [프로필 페이지] user_accounts nickname 자동 업데이트:', {
-                  id: userAccount.id,
-                  oldNickname: userAccount.nickname,
-                  newNickname: nickname,
-                });
+                localStorage.setItem(
+                  "user_accounts",
+                  JSON.stringify(accounts),
+                );
               }
             }
-            
-            // 닉네임 설정 (name을 fallback으로 사용하지 않음)
-            setUserNickname(nickname);
-            console.log('👤 [프로필 페이지] 닉네임:', {
-              nickname: userAccount.nickname,
-              name: userAccount.name,
-              finalNickname: nickname,
-            });
 
-            // 프로필 이미지 설정
+            setUserNickname(nickname);
+
             if (userAccount.profile_image) {
               setProfileImage(userAccount.profile_image);
-              console.log('🖼️ [프로필 페이지] 프로필 이미지 설정됨:', userAccount.profile_image);
             }
           }
         }
-      } catch (error) {
-        console.error('❌ [프로필 페이지] 유저 정보 로드 실패:', error);
+      } catch (_error) {
       }
     }
   }, [user]);
@@ -146,12 +135,27 @@ export default function ProfilePage() {
    * 리뷰어 ↔ 광고주 간 전환
    */
   const handleMemberTypeChange = (type: "reviewer" | "partner") => {
-    setMemberType(type);
-
-    // 광고주로 전환 시 파트너 마이페이지로 이동
     if (type === "partner") {
+      // 광고주(파트너) 정보 등록 여부 확인
+      try {
+        const stored = localStorage.getItem("partner_accounts");
+        const accounts = stored ? (JSON.parse(stored) as { id?: string; email?: string }[]) : [];
+        const hasPartnerInfo = accounts.some(
+          (a) => a.id === user?.id || a.email === user?.email,
+        );
+        if (!hasPartnerInfo) {
+          setShowPartnerInfoModal(true);
+          return;
+        }
+      } catch {
+        setShowPartnerInfoModal(true);
+        return;
+      }
+      setMemberType("partner");
       router.push("/partner/mypage");
+      return;
     }
+    setMemberType(type);
   };
 
   return (
@@ -189,6 +193,20 @@ export default function ProfilePage() {
           showMemberTypeToggle={true}
           activeMemberType={memberType}
           onMemberTypeChange={handleMemberTypeChange}
+        />
+
+        {/* 광고주 정보 없음 모달: 등록 클릭 시 파트너 내 정보 수정 페이지로 이동 */}
+        <BaseModal
+          is_open={showPartnerInfoModal}
+          on_close={() => setShowPartnerInfoModal(false)}
+          message="광고주 정보가 없습니다.<br>사업자 정보 등록 후 활동할 수 있습니다."
+          buttons={["닫기", "등록"]}
+          on_cancel={() => setShowPartnerInfoModal(false)}
+          on_confirm={() => {
+            setShowPartnerInfoModal(false);
+            router.push("/partner/mypage/edit");
+          }}
+          type="center"
         />
       </main>
     </div>

@@ -96,29 +96,24 @@ export const AllVariants: Story = {
       },
       React.createElement(ModalButton, {
         variant: "primary",
-        onClick: () => console.log("Primary clicked"),
-        children: "Primary 버튼"
-      }),
+        onClick: () => {},
+      }, "Primary 버튼"),
       React.createElement(ModalButton, {
         variant: "secondary",
-        onClick: () => console.log("Secondary clicked"),
-        children: "Secondary 버튼"
-      }),
+        onClick: () => {},
+      }, "Secondary 버튼"),
       React.createElement(ModalButton, {
         variant: "close",
-        onClick: () => console.log("Close clicked"),
-        children: "Close 버튼"
-      }),
+        onClick: () => {},
+      }, "Close 버튼"),
       React.createElement(ModalButton, {
         variant: "kakao",
-        onClick: () => console.log("Kakao clicked"),
-        children: "Kakao 버튼"
-      }),
+        onClick: () => {},
+      }, "Kakao 버튼"),
       React.createElement(ModalButton, {
         variant: "sns-secondary",
-        onClick: () => console.log("SNS Secondary clicked"),
-        children: "SNS Secondary 버튼"
-      })
+        onClick: () => {},
+      }, "SNS Secondary 버튼")
     );
   },
 };

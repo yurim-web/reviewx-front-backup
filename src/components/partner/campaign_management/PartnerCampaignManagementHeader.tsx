@@ -26,7 +26,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import TabNavigation from "./TabNavigation";
 import StatisticsTab from "./StatisticsTab";
@@ -39,7 +39,6 @@ import type {
 // 공용 데이터 import
 import {
   getCampaignStats,
-  getInitialCampaignStats,
 } from "@/data/partner/sharedCampaigns";
 
 interface PartnerCampaignManagementHeaderProps {

@@ -1,7 +1,14 @@
+/* ========================================
+   DetailGuidelinesSectionMission 스토리북
+   ======================================== */
+
 /**
- * DetailGuidelinesSectionMission 컴포넌트 스토리북
+ * DetailGuidelinesSectionMission.stories
  *
- * 미션형 캠페인 안내사항 섹션 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 미션형 캠페인 안내사항 섹션 컴포넌트 스토리 모음
+ *
+ * 사용 페이지:
+ * - Storybook (User/CampaignDetail/Guidelines/DetailGuidelinesSectionMission)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";

@@ -91,7 +91,7 @@ const checkServerStatus = async (): Promise<void> => {
     // if (!response.ok) {
     //   throw new Error("서버 오류");
     // }
-  } catch (error) {
+  } catch (_error) {
     throw error;
   }
 };
@@ -138,9 +138,8 @@ export default function CampaignManagementPage() {
 
         // 모든 확인이 완료되면 전체 탭으로 리다이렉트
         router.replace("/user/campaign_management/all");
-      } catch (error) {
+      } catch (_error) {
         // 서버 오류 발생 시 에러 모달 표시
-        console.error("서버 오류:", error);
         setIsServerErrorModalOpen(true);
       }
     };

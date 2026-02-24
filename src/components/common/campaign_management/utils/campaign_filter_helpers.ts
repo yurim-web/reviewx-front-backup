@@ -15,6 +15,19 @@
 
 import { FilterableCampaign } from '../types';
 
+/** 필터링 헬퍼에서 사용하는 선택적 확장 필드 */
+interface FilterableExtra {
+  id?: string;
+  type?: string;
+  campaignType?: string;
+  brand?: string;
+  brandName?: string;
+  category?: string;
+  recruitmentPeriod?: string;
+  daysLeft?: number;
+  remainingDays?: number;
+}
+
 /**
  * 채널 이름을 비교를 위해 정규화 (공백 제거)
  */
@@ -53,8 +66,9 @@ export interface CurrentFilters {
  * 캠페인 식별 키 추출 (id > title)
  */
 export const getItemKey = (item: FilterableCampaign): string => {
-  if (typeof (item as any).id === 'string') {
-    return (item as any).id;
+  const ext = item as FilterableExtra;
+  if (typeof ext.id === 'string') {
+    return ext.id;
   }
   return item.title;
 };
@@ -73,18 +87,16 @@ export const filterCampaigns = <T extends FilterableCampaign>(
 
   if (types && types.length > 0) {
     filtered = filtered.filter((campaign) => {
-      const campaignType =
-        (campaign as any).type || (campaign as any).campaignType;
+      const ext = campaign as FilterableExtra;
+      const campaignType = ext.type || ext.campaignType;
       return campaignType && types.includes(campaignType);
     });
   }
 
   if (channels && channels.length > 0) {
     filtered = filtered.filter((campaign) => {
-      const brandName =
-        (campaign as any).brand ||
-        (campaign as any).brandName ||
-        (campaign as any).category;
+      const ext = campaign as FilterableExtra;
+      const brandName = ext.brand || ext.brandName || ext.category;
 
       if (!brandName) return false;
 
@@ -107,8 +119,8 @@ export const filterCampaigns = <T extends FilterableCampaign>(
   return filtered.sort((a, b) => {
     switch (sortBy) {
       case '최신순': {
-        const periodA = (a as any).recruitmentPeriod;
-        const periodB = (b as any).recruitmentPeriod;
+        const periodA = (a as FilterableExtra).recruitmentPeriod;
+        const periodB = (b as FilterableExtra).recruitmentPeriod;
         if (!periodA && !periodB) return 0;
         if (!periodA) return 1;
         if (!periodB) return -1;
@@ -117,8 +129,8 @@ export const filterCampaigns = <T extends FilterableCampaign>(
         return dateB.getTime() - dateA.getTime();
       }
       case '오래된순': {
-        const periodA = (a as any).recruitmentPeriod;
-        const periodB = (b as any).recruitmentPeriod;
+        const periodA = (a as FilterableExtra).recruitmentPeriod;
+        const periodB = (b as FilterableExtra).recruitmentPeriod;
         if (!periodA && !periodB) return 0;
         if (!periodA) return 1;
         if (!periodB) return -1;
@@ -127,10 +139,10 @@ export const filterCampaigns = <T extends FilterableCampaign>(
         return dateA.getTime() - dateB.getTime(); // 오래된 것부터 정렬 (최신순의 반대)
       }
       case '마감임박순': {
-        const leftA =
-          (a as any).daysLeft ?? (a as any).remainingDays ?? Infinity;
-        const leftB =
-          (b as any).daysLeft ?? (b as any).remainingDays ?? Infinity;
+        const extA = a as FilterableExtra;
+        const extB = b as FilterableExtra;
+        const leftA = extA.daysLeft ?? extA.remainingDays ?? Infinity;
+        const leftB = extB.daysLeft ?? extB.remainingDays ?? Infinity;
         if (leftA < 0 && leftB >= 0) return 1;
         if (leftA >= 0 && leftB < 0) return -1;
         return leftA - leftB;

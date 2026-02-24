@@ -11,7 +11,7 @@
 
  */
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
@@ -22,13 +22,34 @@ import ProfilePhotoUpload from "@/components/common/mypage/ProfilePhotoUpload";
 import PhoneVerification from "@/components/common/phone_verification/PhoneVerification";
 import BusinessDocumentUpload from "@/components/partner/mypage/BusinessDocumentUpload";
 import AddressInput from "@/components/common/mypage/AddressInput";
-import BaseModal from "@/components/common/modal/BaseModal";
+import WithdrawModals from "@/components/common/mypage/WithdrawModals";
 import ErrorText from "@/components/common/error_text/ErrorText";
 import Toast from "@/components/common/toast/Toast";
 import { formatPhoneNumber } from "@/utils/formatting/phone";
 import { formatBusinessNumber } from "@/components/partner/signup/utils/businessNumberUtils";
 import { useAuth } from "@/hooks/useAuth";
 import { withPartnerAuth } from "@/components/auth/withAuth";
+import { usePhoneVerification } from "@/hooks/usePhoneVerification/usePhoneVerification";
+import { useWithdrawFlow } from "@/hooks/useWithdrawFlow";
+
+interface PartnerAccount {
+  id?: string;
+  email?: string;
+  name?: string;
+  phone?: string;
+  business_name?: string;
+  business_number?: string;
+  business_type?: string;
+  representative_name?: string;
+  postal_code?: string;
+  address?: string;
+  detail_address?: string;
+  contact_phone?: string;
+  division?: string;
+  profile_image?: string;
+  join_date?: string;
+  business_document_file_name?: string;
+}
 
 /**
  * 파트너 내 정보 수정 페이지 컴포넌트
@@ -54,35 +75,56 @@ function PartnerEditProfilePage() {
     detailAddress: "",
   });
 
-  const [isPhoneVerified, setIsPhoneVerified] = useState(true); // 휴대폰 인증 완료 여부
-  const [isVerificationRequested, setIsVerificationRequested] = useState(false); // 인증번호 요청 여부
-  const [verificationCode, setVerificationCode] = useState(""); // 인증번호
-  const [timer, setTimer] = useState(0); // 타이머
-  const timerIntervalRef = useRef<NodeJS.Timeout | null>(null); // 타이머 ID 저장
-  const [verificationCodeError, setVerificationCodeError] = useState<
-    string | undefined
-  >(undefined); // 인증번호 에러 메시지
-  const [isBusinessDocumentUploaded, setIsBusinessDocumentUploaded] =
-    useState(false); // 사업자등록증 업로드 여부 (새로고침 시 완료 배지 비표시)
-  const [profileImage, setProfileImage] = useState<string | null>(null); // 프로필 사진 미리보기 URL
-  const [phoneError, setPhoneError] = useState<string | undefined>(undefined); // 휴대폰 번호 에러 메시지
-  const [contactPhoneError, setContactPhoneError] = useState<
-    string | undefined
-  >(undefined); // 문의 담당자 휴대폰 번호 에러 메시지
+  // 휴대폰 인증 훅
+  const {
+    phone,
+    verificationCode,
+    isVerified: isPhoneVerified,
+    isVerificationRequested,
+    timer,
+    phoneError,
+    verificationCodeError,
+    handlePhoneChange,
+    handleVerificationCodeChange,
+    handleVerificationRequest,
+    handleVerifyCode,
+  } = usePhoneVerification();
 
-  // 회원 탈퇴 관련 모달 상태
-  const [isWithdrawConfirmModalOpen, setIsWithdrawConfirmModalOpen] =
-    useState(false);
-  const [isWithdrawCompleteModalOpen, setIsWithdrawCompleteModalOpen] =
-    useState(false);
-  const [isWithdrawBlockedModalOpen, setIsWithdrawBlockedModalOpen] =
-    useState(false);
+  // 회원 탈퇴 플로우 훅
+  const {
+    isWithdrawConfirmModalOpen,
+    isWithdrawCompleteModalOpen,
+    isWithdrawBlockedModalOpen,
+    setIsWithdrawConfirmModalOpen,
+    setIsWithdrawCompleteModalOpen,
+    setIsWithdrawBlockedModalOpen,
+    handleWithdraw,
+    handleWithdrawConfirm,
+    handleWithdrawComplete,
+  } = useWithdrawFlow({
+    redirectPath: "/partner",
+    checkOngoingCampaigns: async () => {
+      // TODO: 실제 API 연동 필요
+      return false;
+    },
+  });
+
+  const [isBusinessDocumentUploaded, setIsBusinessDocumentUploaded] = useState(false); // 사업자등록증 업로드 여부 (새로고침 시 완료 배지 비표시)
+  const [profileImage, setProfileImage] = useState<string | null>(null); // 프로필 사진 미리보기 URL
+  const [contactPhoneError, setContactPhoneError] = useState<string | undefined>(undefined); // 문의 담당자 휴대폰 번호 에러 메시지
 
   // Toast 상태
   const [showToast, setShowToast] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
+    // 휴대폰 번호 입력 시: 훅의 핸들러 사용
+    if (name === "phone") {
+      handlePhoneChange(value);
+      setFormData((prev) => ({ ...prev, phone: value }));
+      return;
+    }
 
     // 사업자등록번호 입력 시: 숫자만 허용 + 3-2-5 형식 자동 하이픈
     if (name === "businessNumber") {
@@ -92,53 +134,6 @@ function PartnerEditProfilePage() {
     }
 
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const isValidPhoneNumber = (phone: string) => /^010-\d{4}-\d{4}$/.test(phone);
-
-  /**
-   * 인증번호 요청 핸들러
-   * 휴대폰 번호가 올바른 형식인지 확인 후 인증번호 전송
-   */
-  const handleVerificationRequest = () => {
-    if (!isValidPhoneNumber(formData.phone)) {
-      setPhoneError("올바른 휴대폰 번호 형식을 입력해주세요.");
-      return;
-    }
-    // 에러 초기화
-    setPhoneError(undefined);
-    // 인증번호 요청 상태 설정
-    setIsVerificationRequested(true);
-    setIsPhoneVerified(false);
-    setVerificationCode("");
-    setVerificationCodeError(undefined);
-    // 타이머 시작 (4분 = 240초)
-    setTimer(240);
-    // TODO: 인증번호 전송 API 호출
-  };
-
-  /**
-   * 인증번호 확인 핸들러
-   */
-  const handleVerify = () => {
-    if (!verificationCode || verificationCode.length !== 6) {
-      setVerificationCodeError("인증번호 6자리를 입력해주세요.");
-      return;
-    }
-    // TODO: 인증번호 확인 API 호출
-    // 임시로 인증 완료 처리
-    setIsPhoneVerified(true);
-    setIsVerificationRequested(false);
-    setTimer(0);
-    setVerificationCodeError(undefined);
-  };
-
-  /**
-   * 인증번호 변경 핸들러
-   */
-  const handleVerificationCodeChange = (code: string) => {
-    setVerificationCode(code);
-    setVerificationCodeError(undefined);
   };
 
   /**
@@ -169,7 +164,7 @@ function PartnerEditProfilePage() {
     try {
       if (!user?.id) return;
       const storedAccounts = localStorage.getItem("partner_accounts");
-      const accounts = storedAccounts ? JSON.parse(storedAccounts) : [];
+      const accounts: PartnerAccount[] = storedAccounts ? JSON.parse(storedAccounts) : [];
       const accountIndex = accounts.findIndex(
         (a: { id?: string; email?: string }) => a.id === user.id || a.email === user.email
       );
@@ -187,46 +182,16 @@ function PartnerEditProfilePage() {
 
   const isSaveEnabled = formData.phone.trim().length > 0;
 
-  /**
-   * 진행 중인 캠페인 확인 함수
-   * TODO: 실제 API 연동 필요
-   */
-  const checkOngoingCampaigns = async (): Promise<boolean> => {
-    // TODO: API 호출로 진행 중인 캠페인 확인
-    return false;
-  };
-
-  const handleWithdraw = async () => {
-    const hasOngoingCampaigns = await checkOngoingCampaigns();
-
-    if (hasOngoingCampaigns) {
-      setIsWithdrawBlockedModalOpen(true);
-    } else {
-      setIsWithdrawConfirmModalOpen(true);
-    }
-  };
-
-  const handleWithdrawConfirm = () => {
-    setIsWithdrawConfirmModalOpen(false);
-    // TODO: 파트너 탈퇴 API 호출
-    setIsWithdrawCompleteModalOpen(true);
-  };
-
-  const handleWithdrawComplete = () => {
-    setIsWithdrawCompleteModalOpen(false);
-    router.push("/partner");
-  };
-
   // 저장 핸들러
   const handleSave = () => {
     if (!user?.id) {
-      alert('로그인이 필요합니다.');
+      alert("로그인이 필요합니다.");
       return;
     }
 
     try {
       // LocalStorage의 인증 사용자 정보 업데이트
-      const authUser = localStorage.getItem('reviewx_auth_user');
+      const authUser = localStorage.getItem("reviewx_auth_user");
       if (authUser) {
         const userData = JSON.parse(authUser);
         const updatedUser = {
@@ -242,17 +207,19 @@ function PartnerEditProfilePage() {
           detail_address: formData.detailAddress,
           business_type: formData.businessType,
         };
-        localStorage.setItem('reviewx_auth_user', JSON.stringify(updatedUser));
+        localStorage.setItem("reviewx_auth_user", JSON.stringify(updatedUser));
       }
 
       // 파트너 계정 목록도 업데이트
-      const storedAccounts = localStorage.getItem('partner_accounts');
+      const storedAccounts = localStorage.getItem("partner_accounts");
       const accounts = storedAccounts ? JSON.parse(storedAccounts) : [];
 
-      const accountIndex = accounts.findIndex((a: any) => a.id === user.id || a.email === user.email);
+      const accountIndex = (accounts as PartnerAccount[]).findIndex(
+        (a) => a.id === user.id || a.email === user.email
+      );
 
       const updatedAccount = {
-        id: user.id || 'partner_test_001',
+        id: user.id || "partner_test_001",
         email: user.email || formData.email,
         name: formData.ownerName,
         phone: formData.phone,
@@ -264,9 +231,9 @@ function PartnerEditProfilePage() {
         address: formData.address,
         detail_address: formData.detailAddress,
         contact_phone: formData.contactPhone,
-        division: formData.businessType === '개인사업자' ? '개인' : '법인',
+        division: formData.businessType === "개인사업자" ? "개인" : "법인",
         profile_image: profileImage, // 프로필 사진 저장
-        join_date: new Date().toISOString().replace('T', ' ').substring(0, 16),
+        join_date: new Date().toISOString().replace("T", " ").substring(0, 16),
         business_document_file_name: formData.businessDocument, // 사업자등록증 파일명 저장 (새로고침 후 복원)
       };
 
@@ -287,15 +254,15 @@ function PartnerEditProfilePage() {
         // console.log('➕ [수정 페이지] 새 계정 추가됨');
       }
 
-      localStorage.setItem('partner_accounts', JSON.stringify(accounts));
+      localStorage.setItem("partner_accounts", JSON.stringify(accounts));
       // console.log('✅ [수정 페이지] partner_accounts 저장 완료:', accounts);
 
       // 저장 성공 시 토스트 메시지 표시 및 등록 완료 배지 표시
       setShowToast(true);
       setIsBusinessDocumentUploaded(true);
     } catch (error) {
-      console.error('정보 저장 중 오류:', error);
-      alert('정보 저장에 실패했습니다.');
+      console.error("정보 저장 중 오류:", error);
+      alert("정보 저장에 실패했습니다.");
     }
   };
 
@@ -304,12 +271,12 @@ function PartnerEditProfilePage() {
     if (!user?.id) return;
 
     try {
-      const storedAccounts = localStorage.getItem('partner_accounts');
+      const storedAccounts = localStorage.getItem("partner_accounts");
       if (storedAccounts) {
-        const accounts = JSON.parse(storedAccounts);
-        const partnerAccount = accounts.find((a: any) => a.id === user.id || a.email === user.email);
+        const accounts = JSON.parse(storedAccounts) as PartnerAccount[];
+        const partnerAccount = accounts.find((a) => a.id === user.id || a.email === user.email);
         if (partnerAccount) {
-          const savedFileName = (partnerAccount as { business_document_file_name?: string }).business_document_file_name;
+          const savedFileName = partnerAccount.business_document_file_name;
           setFormData({
             name: partnerAccount.representative_name || partnerAccount.name || user.name || "",
             email: partnerAccount.email || user.email || "",
@@ -333,51 +300,9 @@ function PartnerEditProfilePage() {
         }
       }
     } catch (error) {
-      console.error('파트너 계정 정보 로드 중 오류:', error);
+      console.error("파트너 계정 정보 로드 중 오류:", error);
     }
   }, [user]);
-
-  // 타이머 효과: timer가 0보다 크면 1초마다 감소
-  useEffect(() => {
-    if (timer > 0) {
-      timerIntervalRef.current = setInterval(() => {
-        setTimer((prev) => {
-          if (prev <= 1) {
-            if (timerIntervalRef.current) {
-              clearInterval(timerIntervalRef.current);
-            }
-            setIsVerificationRequested(false);
-            // 타이머가 0이 되고 인증이 완료되지 않았으면 에러 메시지 설정
-            if (!isPhoneVerified) {
-              setVerificationCodeError("인증번호 입력 시간을 초과했습니다.");
-            }
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } else {
-      if (timerIntervalRef.current) {
-        clearInterval(timerIntervalRef.current);
-        timerIntervalRef.current = null;
-      }
-    }
-
-    return () => {
-      if (timerIntervalRef.current) {
-        clearInterval(timerIntervalRef.current);
-      }
-    };
-  }, [timer, isPhoneVerified]);
-
-  useEffect(() => {
-    const header = document.querySelector("header");
-    if (header) header.style.display = "none";
-
-    return () => {
-      if (header) header.style.display = "block";
-    };
-  }, []);
 
   return (
     <div className={layoutStyles.edit_profile_container}>
@@ -390,10 +315,7 @@ function PartnerEditProfilePage() {
           <h2 className={layoutStyles.section_title}>기본 정보</h2>
 
           {/* 프로필 사진 */}
-          <ProfilePhotoUpload
-            profileImage={profileImage}
-            onImageChange={setProfileImage}
-          />
+          <ProfilePhotoUpload profileImage={profileImage} onImageChange={setProfileImage} />
 
           {/* 이름 (읽기 전용) */}
           <article className={layoutStyles.field_article}>
@@ -426,29 +348,19 @@ function PartnerEditProfilePage() {
 
           {/* 휴대폰 번호 (수정 가능) */}
           <PhoneVerification
-            phone={formData.phone}
+            phone={phone}
             isPhoneVerified={isPhoneVerified}
             error={phoneError}
-            onPhoneChange={(phone) => {
-              const prevPhone = formData.phone;
-              setFormData((prev) => ({ ...prev, phone }));
-              // 휴대폰 번호 변경 시 에러 초기화 및 인증 상태 초기화
-              setPhoneError(undefined);
-              // 휴대폰 번호가 비어지거나 변경되면 인증 상태 초기화 (회원가입과 동일)
-              if (phone === "" || phone !== prevPhone) {
-                setIsPhoneVerified(false);
-                setIsVerificationRequested(false);
-                setVerificationCode("");
-                setTimer(0);
-                setVerificationCodeError(undefined);
-              }
+            onPhoneChange={(newPhone) => {
+              handlePhoneChange(newPhone);
+              setFormData((prev) => ({ ...prev, phone: newPhone }));
             }}
             verificationCode={verificationCode}
             isVerificationRequested={isVerificationRequested}
             timer={timer}
             verificationCodeError={verificationCodeError}
             onVerificationRequest={handleVerificationRequest}
-            onVerify={handleVerify}
+            onVerify={handleVerifyCode}
             onVerificationCodeChange={handleVerificationCodeChange}
             useMyPageStyle={true}
             showVerificationCode={true}
@@ -512,12 +424,8 @@ function PartnerEditProfilePage() {
             postalCode={formData.postalCode}
             address={formData.address}
             detailAddress={formData.detailAddress}
-            onPostalCodeChange={(value) =>
-              setFormData((prev) => ({ ...prev, postalCode: value }))
-            }
-            onAddressChange={(value) =>
-              setFormData((prev) => ({ ...prev, address: value }))
-            }
+            onPostalCodeChange={(value) => setFormData((prev) => ({ ...prev, postalCode: value }))}
+            onAddressChange={(value) => setFormData((prev) => ({ ...prev, address: value }))}
             onDetailAddressChange={(value) =>
               setFormData((prev) => ({ ...prev, detailAddress: value }))
             }
@@ -552,16 +460,14 @@ function PartnerEditProfilePage() {
                   const phoneRegex = /^010-\d{4}-\d{4}$/;
                   if (!phoneRegex.test(formatted)) {
                     // 형식 오류: 실시간으로 에러 메시지 표시
-                    setContactPhoneError(
-                      "올바른 휴대폰 번호 형식을 입력해주세요."
-                    );
+                    setContactPhoneError("올바른 휴대폰 번호 형식을 입력해주세요.");
                   } else {
                     // 형식이 유효한 경우: 에러 초기화
                     setContactPhoneError(undefined);
                   }
                 }
               }}
-              placeholder="010-0000-0000"
+              placeholder="- 제외 입력"
               maxLength={13}
               onInvalid={(e) => {
                 e.preventDefault();
@@ -572,11 +478,7 @@ function PartnerEditProfilePage() {
 
           {/* 회원탈퇴 버튼 */}
           <div className={buttonStyles.withdraw_button_container}>
-            <button
-              type="button"
-              className={buttonStyles.withdraw_button}
-              onClick={handleWithdraw}
-            >
+            <button type="button" className={buttonStyles.withdraw_button} onClick={handleWithdraw}>
               회원 탈퇴
             </button>
           </div>
@@ -596,40 +498,25 @@ function PartnerEditProfilePage() {
         </div>
       </main>
 
-      {/* 탈퇴 불가 안내 모달 (진행 중인 캠페인이 있을 때) */}
-      <BaseModal
-        is_open={isWithdrawBlockedModalOpen}
-        on_close={() => setIsWithdrawBlockedModalOpen(false)}
-        message="진행 중인 캠페인이 있을 경우<br>탈퇴가 불가합니다.<br>먼저 캠페인을 완료해 주세요."
-        buttons={["닫기"]}
-        type="center"
-      />
-
-      {/* 회원 탈퇴 확인 모달 (첫 번째 모달) */}
-      <BaseModal
-        is_open={isWithdrawConfirmModalOpen}
-        on_close={() => setIsWithdrawConfirmModalOpen(false)}
-        message='탈퇴 시 진행한 캠페인 기록과<br>포인트가 모두 삭제되며, 재가입이 불가합니다.<br><span style="color: #FF2626;">정말 탈퇴하시겠습니까?</span>'
-        buttons={["취소", "탈퇴"]}
-        on_confirm={handleWithdrawConfirm}
-        type="center"
-      />
-
-      {/* 회원 탈퇴 완료 모달 (두 번째 모달) */}
-      <BaseModal
-        is_open={isWithdrawCompleteModalOpen}
-        on_close={handleWithdrawComplete}
-        message="탈퇴가 완료되었습니다.<br>그동안 리뷰엑스를 이용해 주셔서 감사합니다."
-        buttons={["닫기"]}
-        on_confirm={handleWithdrawComplete}
-        type="center"
+      {/* 회원 탈퇴 모달 */}
+      <WithdrawModals
+        isWithdrawBlockedModalOpen={isWithdrawBlockedModalOpen}
+        isWithdrawConfirmModalOpen={isWithdrawConfirmModalOpen}
+        isWithdrawCompleteModalOpen={isWithdrawCompleteModalOpen}
+        onBlockedClose={() => setIsWithdrawBlockedModalOpen(false)}
+        onConfirmClose={() => setIsWithdrawConfirmModalOpen(false)}
+        onWithdrawConfirm={handleWithdrawConfirm}
+        onWithdrawComplete={handleWithdrawComplete}
       />
 
       {/* 저장 완료 토스트 메시지 */}
       <Toast
         message="저장되었습니다."
         isOpen={showToast}
-        onClose={() => setShowToast(false)}
+        onClose={() => {
+          setShowToast(false);
+          router.back();
+        }}
         duration={2000}
       />
     </div>

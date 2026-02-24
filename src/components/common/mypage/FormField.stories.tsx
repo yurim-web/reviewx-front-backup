@@ -52,15 +52,16 @@ export const Optional: Story = {
       border: "1px solid #ccc",
       borderRadius: "4px",
     };
-    return React.createElement(FormField, {
-      ...args,
-      children: React.createElement("input", {
+    return React.createElement(
+      FormField,
+      { ...args },
+      React.createElement("input", {
         id: "nickname",
         type: "text",
         placeholder: "닉네임을 입력하세요",
         style: inputStyle,
       }),
-    });
+    );
   },
   args: {
     label: "닉네임",
@@ -82,16 +83,17 @@ export const Required: Story = {
       border: "1px solid #ccc",
       borderRadius: "4px",
     };
-    return React.createElement(FormField, {
-      ...args,
-      children: React.createElement("input", {
+    return React.createElement(
+      FormField,
+      { ...args },
+      React.createElement("input", {
         id: "name",
         type: "text",
         placeholder: "이름을 입력하세요",
         required: true,
         style: inputStyle,
       }),
-    });
+    );
   },
   args: {
     label: "이름",
@@ -113,16 +115,17 @@ export const EmailField: Story = {
       border: "1px solid #ccc",
       borderRadius: "4px",
     };
-    return React.createElement(FormField, {
-      ...args,
-      children: React.createElement("input", {
+    return React.createElement(
+      FormField,
+      { ...args },
+      React.createElement("input", {
         id: "email",
         type: "email",
         placeholder: "example@email.com",
         required: true,
         style: inputStyle,
       }),
-    });
+    );
   },
   args: {
     label: "이메일",
@@ -144,16 +147,17 @@ export const PhoneField: Story = {
       border: "1px solid #ccc",
       borderRadius: "4px",
     };
-    return React.createElement(FormField, {
-      ...args,
-      children: React.createElement("input", {
+    return React.createElement(
+      FormField,
+      { ...args },
+      React.createElement("input", {
         id: "phone",
         type: "tel",
         placeholder: "010-1234-5678",
         required: true,
         style: inputStyle,
       }),
-    });
+    );
   },
   args: {
     label: "전화번호",
@@ -182,9 +186,10 @@ export const AddressField: Story = {
       cursor: "pointer",
       borderRadius: "4px",
     };
-    return React.createElement(FormField, {
-      ...args,
-      children: React.createElement(
+    return React.createElement(
+      FormField,
+      { ...args },
+      React.createElement(
         "div",
         { style: { display: "flex", gap: "8px" } },
         React.createElement("input", {
@@ -202,8 +207,8 @@ export const AddressField: Story = {
           },
           "검색"
         )
-      ),
-    });
+      )
+    );
   },
   args: {
     label: "주소",

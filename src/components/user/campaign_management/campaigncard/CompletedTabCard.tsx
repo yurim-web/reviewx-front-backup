@@ -7,10 +7,8 @@
  *
  * 목적: "완료" 탭에 표시되는 캠페인 카드를 렌더링합니다.
  *
- * 주요 기능:
- * - 완료된 캠페인 정보 표시
- * - 완료 탭에서는 버튼이 표시되지 않습니다.
-
+ * 사용 페이지:
+ * - /user/campaign_management (완료 탭)
  */
 
 import type { CampaignApplication } from "@/types/domain/user";

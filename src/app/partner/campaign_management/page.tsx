@@ -39,7 +39,6 @@ import layoutStyles from "@/styles/partner/partner_layout.module.css";
 
 // 공용 데이터 import
 import {
-  convertToPartnerCampaigns,
   getCampaignsByTab,
 } from "@/data/partner/sharedCampaigns";
 

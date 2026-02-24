@@ -9,12 +9,6 @@
  *
  * 사용 페이지:
  * - /user/campaign_management (캠페인 관리 페이지 - CampaignCard에서 사용)
- *
- * 주요 기능:
- * - 마감임박/D-day 태그 (CamTag)
- * - 캠페인 타입 태그 (배송형/방문형/구매평/기자단/미션형) (CamType)
- * - 브랜드/플랫폼 아이콘 (CamIcon)
- * - 카테고리 아이콘 + 타입 조합 (CamCateIcon)
  */
 
 import cardStyles from "../../../styles/user/campaign_management/campaign_card.module.css";

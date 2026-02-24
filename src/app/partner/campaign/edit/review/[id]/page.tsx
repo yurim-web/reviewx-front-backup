@@ -27,57 +27,7 @@ import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import Toast from "@/components/common/toast/Toast";
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import checkboxStyles from "@/styles/partner/campaign_create/campaign_guide/checkboxes.module.css";
-
-/**
- * requirements 배열을 파싱하여 폼 데이터로 변환하는 함수
- */
-function parseRequirements(requirements: string[]): {
-  minTextLength: string;
-  minImageCount: string;
-  videoCount: string;
-  videoDuration: string;
-  requireLinkAttachment: boolean;
-  requireKeywordAttachment: boolean;
-} {
-  let minTextLength = "";
-  let minImageCount = "";
-  let videoCount = "";
-  let videoDuration = "";
-  let requireLinkAttachment = false;
-  let requireKeywordAttachment = false;
-
-  requirements.forEach((req) => {
-    if (req.startsWith("text_")) {
-      const charCount = req.replace("text_", "");
-      minTextLength = charCount;
-    } else if (req.startsWith("photo_")) {
-      const photoCount = req.replace("photo_", "");
-      minImageCount = photoCount;
-    } else if (req.startsWith("video_")) {
-      const parts = req.replace("video_", "").split("_");
-      if (parts.length === 2) {
-        videoCount = parts[0];
-        videoDuration = parts[1];
-      } else if (parts.length === 1) {
-        videoCount = "1";
-        videoDuration = parts[0];
-      }
-    } else if (req === "product_link") {
-      requireLinkAttachment = true;
-    } else if (req === "keyword") {
-      requireKeywordAttachment = true;
-    }
-  });
-
-  return {
-    minTextLength,
-    minImageCount,
-    videoCount,
-    videoDuration,
-    requireLinkAttachment,
-    requireKeywordAttachment,
-  };
-}
+import { parseRequirements } from "@/utils/partner/campaignEdit/parseRequirements";
 
 function campaignToFormData(
   campaign: CampaignWithApplicants,
@@ -143,7 +93,7 @@ function campaignToFormData(
 
   return {
     campaignType: info.campaignType as "구매평",
-    platform: (platformName as any) || "네이버 블로그",
+    platform: (platformName as string) || "네이버 블로그",
     title: info.title || "",
     category: extended?.subcategory || info.category || "기타",
     brandName: extended?.brandName || extended?.channel || info.brandName || "",
@@ -358,7 +308,7 @@ export default function ReviewCampaignEditPage() {
             },
             requirements: originalData?.requirements || [],
             guidelineTexts: formData.guidelines ? formData.guidelines.split("\n\n") : (originalData?.guidelineTexts || []),
-          } as any;
+          } as unknown as CampaignWithApplicants;
           localStorage.setItem("reviewCampaigns", JSON.stringify(campaigns));
         } else {
           campaigns.push({
@@ -391,7 +341,7 @@ export default function ReviewCampaignEditPage() {
             },
             requirements: originalData?.requirements || [],
             guidelineTexts: formData.guidelines ? formData.guidelines.split("\n\n") : (originalData?.guidelineTexts || []),
-          } as any);
+          } as unknown as CampaignWithApplicants);
           localStorage.setItem("reviewCampaigns", JSON.stringify(campaigns));
         }
       } else {
@@ -425,7 +375,7 @@ export default function ReviewCampaignEditPage() {
           },
           requirements: originalData?.requirements || [],
           guidelineTexts: formData.guidelines ? formData.guidelines.split("\n\n") : (originalData?.guidelineTexts || []),
-        } as any]));
+        } as unknown as CampaignWithApplicants]));
       }
 
       // console.log("구매평 캠페인 수정 완료:", updatedCampaign);

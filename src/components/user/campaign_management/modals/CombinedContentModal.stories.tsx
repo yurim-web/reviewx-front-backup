@@ -1,7 +1,14 @@
+/* ========================================
+   CombinedContentModal 스토리북
+   ======================================== */
+
 /**
- * CombinedContentModal 컴포넌트 스토리북
+ * CombinedContentModal.stories
  *
- * 통합 콘텐츠 등록 모달 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 통합 콘텐츠 등록 모달 컴포넌트 스토리 모음
+ *
+ * 사용 페이지:
+ * - Storybook (User/CampaignManagement/Modals/CombinedContentModal)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";

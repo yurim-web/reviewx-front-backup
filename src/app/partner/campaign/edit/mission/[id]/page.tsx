@@ -30,75 +30,9 @@ import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import Toast from "@/components/common/toast/Toast";
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import checkboxStyles from "@/styles/partner/campaign_create/campaign_guide/checkboxes.module.css";
+import { parseRequirements } from "@/utils/partner/campaignEdit/parseRequirements";
 
-/**
- * requirements 배열을 파싱하여 폼 데이터로 변환하는 함수
- *
- * 설명:
- * - requirements 배열의 코드를 파싱하여 각 필드에 매핑합니다.
- * - 예: "text_2500" → minTextLength: "2500"
- * - 예: "photo_25" → minImageCount: "25"
- * - 예: "video_2_300" → videoCount: "2", videoDuration: "300"
- * - 예: "product_link" → requireLinkAttachment: true
- * - 예: "keyword" → requireKeywordAttachment: true
- */
-function parseRequirements(requirements: string[]): {
-  minTextLength: string;
-  minImageCount: string;
-  videoCount: string;
-  videoDuration: string;
-  requireLinkAttachment: boolean;
-  requireKeywordAttachment: boolean;
-} {
-  let minTextLength = "";
-  let minImageCount = "";
-  let videoCount = "";
-  let videoDuration = "";
-  let requireLinkAttachment = false;
-  let requireKeywordAttachment = false;
-
-  requirements.forEach((req) => {
-    // 텍스트 요구사항: "text_2500" → minTextLength: "2500"
-    if (req.startsWith("text_")) {
-      const charCount = req.replace("text_", "");
-      minTextLength = charCount;
-    }
-    // 사진 요구사항: "photo_25" → minImageCount: "25"
-    else if (req.startsWith("photo_")) {
-      const photoCount = req.replace("photo_", "");
-      minImageCount = photoCount;
-    }
-    // 동영상 요구사항: "video_2_300" → videoCount: "2", videoDuration: "300"
-    else if (req.startsWith("video_")) {
-      const parts = req.replace("video_", "").split("_");
-      if (parts.length === 2) {
-        videoCount = parts[0];
-        videoDuration = parts[1];
-      } else if (parts.length === 1) {
-        // "video_60" 같은 경우 (개수는 1개로 기본값)
-        videoCount = "1";
-        videoDuration = parts[0];
-      }
-    }
-    // 제품 링크 요구사항: "product_link" → requireLinkAttachment: true
-    else if (req === "product_link") {
-      requireLinkAttachment = true;
-    }
-    // 키워드 요구사항: "keyword" → requireKeywordAttachment: true
-    else if (req === "keyword") {
-      requireKeywordAttachment = true;
-    }
-  });
-
-  return {
-    minTextLength,
-    minImageCount,
-    videoCount,
-    videoDuration,
-    requireLinkAttachment,
-    requireKeywordAttachment,
-  };
-}
+type StoredCampaignRaw = { campaignInfo?: { id?: string }; id?: string };
 
 /**
  * CampaignWithApplicants를 CampaignFormData로 변환하는 함수
@@ -267,9 +201,9 @@ export default function MissionCampaignEditPage() {
       if (typeof window !== "undefined") {
         const storedCampaigns = localStorage.getItem("missionCampaigns");
         if (storedCampaigns) {
-          const campaigns: any[] = JSON.parse(storedCampaigns);
+          const campaigns: StoredCampaignRaw[] = JSON.parse(storedCampaigns);
           const storedCampaign = campaigns.find(
-            (c: any) => c.campaignInfo?.id === campaignId
+            (c) => c.campaignInfo?.id === campaignId,
           );
           if (storedCampaign) {
             // localStorage에 저장된 캠페인에서 확장 데이터 재구성
@@ -410,9 +344,9 @@ export default function MissionCampaignEditPage() {
           try {
             const storedCampaigns = localStorage.getItem("missionCampaigns");
             if (storedCampaigns) {
-              const campaigns: any[] = JSON.parse(storedCampaigns);
+              const campaigns: StoredCampaignRaw[] = JSON.parse(storedCampaigns);
               const existing = campaigns.find(
-                (c: any) => c.campaignInfo?.id === campaignId
+                (c) => c.campaignInfo?.id === campaignId,
               );
               if (existing) {
                 return {
@@ -439,10 +373,10 @@ export default function MissionCampaignEditPage() {
           (c) => c.campaignInfo.id === campaignId
         );
         if (index !== -1) {
-          campaigns[index] = extendedCampaign as any;
+          campaigns[index] = extendedCampaign as unknown as CampaignWithApplicants;
           localStorage.setItem("missionCampaigns", JSON.stringify(campaigns));
         } else {
-          campaigns.push(extendedCampaign as any);
+          campaigns.push(extendedCampaign as unknown as CampaignWithApplicants);
           localStorage.setItem("missionCampaigns", JSON.stringify(campaigns));
         }
       } else {

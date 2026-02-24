@@ -1,7 +1,14 @@
+/* ========================================
+   TermsAgreement 스토리북
+   ======================================== */
+
 /**
- * TermsAgreement 컴포넌트 스토리북
+ * TermsAgreement.stories
  *
- * 약관 동의 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 약관 동의 컴포넌트 스토리 모음
+ *
+ * 사용 페이지:
+ * - Storybook (User/SignUp/TermsAgreement)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";

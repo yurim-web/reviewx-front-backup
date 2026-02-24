@@ -143,16 +143,10 @@ const CustomTooltip = ({
   } | null>(null);
 
   useEffect(() => {
-    // active가 false이거나 payload가 없으면 툴팁 숨김
+    // active가 false이거나 payload가 없으면 툴팁 즉시 숨김 (잔상 방지)
     if (!active || !payload || !payload.length || !containerRef?.current) {
-      if (prev_calculated_ref.current !== null) {
-        // setTimeout으로 지연하여 무한 루프 방지
-        const timeout_id = setTimeout(() => {
-          setTooltipState({ visible: false, x: 0, y: 0, name: "", value: undefined });
-        }, 0);
-        prev_calculated_ref.current = null;
-        return () => clearTimeout(timeout_id);
-      }
+      setTooltipState({ visible: false, x: 0, y: 0, name: "", value: undefined });
+      prev_calculated_ref.current = null;
       return;
     }
 
@@ -432,7 +426,7 @@ export default function ChannelMemberPieChart({
             </clipPath>
           </defs>
 
-          {/* 툴팁 설정: 마우스 호버 시 채널 이름 표시 */}
+          {/* 툴팁 설정: 마우스 호버 시 채널 이름 표시 (래퍼는 숨겨서 잔상 방지) */}
           <Tooltip
             content={
               <CustomTooltip
@@ -443,6 +437,7 @@ export default function ChannelMemberPieChart({
             cursor={false}
             animationDuration={0}
             animationEasing="linear"
+            wrapperStyle={{ visibility: "hidden", pointerEvents: "none" }}
           />
 
           {/* 파이 차트 메인 설정 - 호버 시 크기 변경/지직거림 방지: activeShape로 동일 크기 유지 */}

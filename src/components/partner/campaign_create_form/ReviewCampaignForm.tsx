@@ -17,14 +17,13 @@
 
 "use client";
 
-import { useMemo, useEffect } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   CampaignFormData,
   CampaignCreateFormBaseProps,
 } from "@/types/domain/user";
 // 분리된 CSS 모듈들 import
-import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
 import buttonStyles from "@/styles/partner/campaign_create/campaign_guide/submit_buttons.module.css";
 import styles from "@/styles/partner/campaign_create/campaign_create.module.css";
@@ -32,7 +31,7 @@ import styles from "@/styles/partner/campaign_create/campaign_create.module.css"
 // 공통 컴포넌트들 import
 import { CampaignTypeSelector } from "./common/selectors/CampaignTypeSelector";
 import { CustomDropdown } from "./common/selectors/CustomDropdown";
-import { platforms, categories } from "./common/constants/constants";
+import { categories } from "./common/constants/constants";
 import NoticeSection from "./common/sections/NoticeSection";
 import { ThumbnailAndDetailImages } from "./common/images/ThumbnailAndDetailImages";
 import { PointsManagementSection } from "./common/sections/PointsManagementSection";

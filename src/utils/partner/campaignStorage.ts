@@ -77,7 +77,6 @@ export const saveCampaignToStorage = (campaign: StoredCampaign, storageKey: stri
       return _retryAfterTrim(campaign, storageKey);
     }
 
-    console.error(`캠페인 저장 실패 (key: ${storageKey}):`, error);
     return false;
   }
 };
@@ -101,8 +100,7 @@ const _retryAfterTrim = (campaign: StoredCampaign, storageKey: string): boolean 
 
     localStorage.setItem(storageKey, JSON.stringify(trimmed));
     return true;
-  } catch (retryError) {
-    console.error(`캠페인 저장 재시도 실패 (key: ${storageKey}):`, retryError);
+  } catch (_retryError) {
     return false;
   }
 };

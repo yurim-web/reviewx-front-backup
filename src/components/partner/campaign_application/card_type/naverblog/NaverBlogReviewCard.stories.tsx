@@ -5,7 +5,6 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
-import React from "react";
 import NaverBlogReviewCard from "./NaverBlogReviewCard";
 import type { ReviewApplicant } from "@/data/partner/campaign_application/delivery_review_completed";
 

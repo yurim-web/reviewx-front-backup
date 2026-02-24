@@ -10,11 +10,6 @@
  * 사용 페이지:
  * - /user/campaign_management (캠페인 관리 페이지)
  *
- * 주요 기능:
- * - 탭 상태에 따라 적절한 하위 컴포넌트로 라우팅
- * - 각 탭별로 분리된 컴포넌트를 사용하여 코드 가독성 향상
- *
-
  */
 
 import type { CampaignApplication, StatTab } from "@/types/domain/user";

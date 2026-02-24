@@ -1,26 +1,32 @@
 /* ========================================
-   📱 채널 연결 페이지
+   채널 연결 페이지
    ======================================== */
 
 /**
- * 채널 연결 페이지
+ * ChannelConnectPage
  *
- * 목적: 사용자의 소셜 미디어 채널을 연결할 수 있는 독립적인 페이지입니다.
+ * 목적: 소셜 채널(네이버 블로그, 인스타그램 등)을 연결/해제하는 페이지
  *
- * 페이지 경로:
- * - /user/mypage/channel/connect
- *
- * 주요 기능:
- * - 네이버 블로그, 네이버 클립, 인스타그램, 유튜브 연결
- * - 채널 연결/해제 기능
- *
- * 사용 위치:
- * - 캠페인 신청 모달에서 채널 수정 버튼 클릭 시 이동
+ * 사용 페이지:
+ * - /user/mypage/channel/connect (채널 연결)
+ * - 캠페인 신청 모달에서 채널 수정 시 이동
  */
 
 "use client";
 
 import { useState, useEffect } from "react";
+
+interface ChannelDetail {
+  name: string;
+  url?: string;
+  status?: "connected" | "disconnected";
+}
+
+interface LocalAccount {
+  id?: string;
+  email?: string;
+  channel_details?: ChannelDetail[];
+}
 import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import { getChannelLogo } from "@/utils/channelLogoMap";
@@ -55,15 +61,15 @@ export default function ChannelConnectPage() {
       try {
         const storedAccounts = localStorage.getItem("user_accounts");
         if (storedAccounts) {
-          const accounts = JSON.parse(storedAccounts);
+          const accounts = JSON.parse(storedAccounts) as LocalAccount[];
           const userAccount = accounts.find(
-            (a: any) => a.id === user.id || a.email === user.email,
+            (a) => a.id === user.id || a.email === user.email,
           );
 
           if (userAccount?.channel_details) {
             const loadedChannels = defaultChannels.map((channel) => {
-              const detail = userAccount.channel_details.find(
-                (d: any) => d.name === channel.name,
+              const detail = userAccount.channel_details!.find(
+                (d) => d.name === channel.name,
               );
               if (detail) {
                 return {
@@ -77,8 +83,7 @@ export default function ChannelConnectPage() {
             setChannels(loadedChannels);
           }
         }
-      } catch (error) {
-        console.error("❌ [채널 연결 페이지] 채널 정보 로드 실패:", error);
+      } catch (_error) {
       }
     }
   }, [user]);
@@ -104,9 +109,11 @@ export default function ChannelConnectPage() {
     if (typeof window !== "undefined" && user) {
       try {
         const storedAccounts = localStorage.getItem("user_accounts");
-        const accounts = storedAccounts ? JSON.parse(storedAccounts) : [];
+        const accounts: LocalAccount[] = storedAccounts
+          ? JSON.parse(storedAccounts)
+          : [];
         const accountIndex = accounts.findIndex(
-          (a: any) => a.id === user.id || a.email === user.email,
+          (a) => a.id === user.id || a.email === user.email,
         );
 
         if (accountIndex >= 0) {
@@ -116,8 +123,7 @@ export default function ChannelConnectPage() {
           };
           localStorage.setItem("user_accounts", JSON.stringify(accounts));
         }
-      } catch (error) {
-        console.error("❌ [채널 연결] localStorage 저장 실패:", error);
+      } catch (_error) {
       }
     }
 

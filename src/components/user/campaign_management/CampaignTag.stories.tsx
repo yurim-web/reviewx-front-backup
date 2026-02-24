@@ -1,7 +1,14 @@
+/* ========================================
+   CampaignTag 스토리북
+   ======================================== */
+
 /**
- * CampaignTag 컴포넌트 스토리북
- * 
- * 캠페인 태그 컴포넌트들의 다양한 사용 예시를 보여줍니다.
+ * CampaignTag.stories
+ *
+ * 목적: 캠페인 태그 컴포넌트 스토리 모음
+ *
+ * 사용 페이지:
+ * - Storybook (User/CampaignManagement/CampaignTag)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";

@@ -86,12 +86,11 @@ import { useState } from "react";
 import Image from "next/image";
 import { formatPhoneNumber } from "@/utils/formatting/phone";
 import { formatTimer } from "@/utils/formatting/date";
-import { validatePhone, validateVerificationCode } from "@/utils/validation";
+import { validateVerificationCode } from "@/utils/validation";
 import signupStyles from "@/styles/common/signup/signup.module.css";
 import inputsStyles from "@/styles/user/mypage/edit_profile/inputs.module.css";
 import verificationStyles from "@/styles/user/mypage/edit_profile/verification.module.css";
 import FormField from "@/components/common/mypage/FormField";
-import InputWithButton from "@/components/common/mypage/InputWithButton";
 import ErrorText from "@/components/common/error_text/ErrorText";
 import VerificationHelpModal from "@/components/common/phone_verification/VerificationHelpModal";
 

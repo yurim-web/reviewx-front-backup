@@ -5,7 +5,6 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
-import React from "react";
 import ShortsSelectedCard from "./ShortsSelectedCard";
 import type { YoutubeApplicant } from "@/data/partner/campaign_application/delivery_applicants";
 

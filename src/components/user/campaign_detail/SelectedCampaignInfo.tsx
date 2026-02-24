@@ -8,9 +8,8 @@
  * 목적: 유저가 참여한 캠페인(캠페인 관리 목록에서 진입) 상세 페이지에
  *       공정위 가이드 안내와 캠페인 문의 정보를 표시합니다.
  *
- * 주요 기능:
- * - 공정위 가이드 섹션 (이동 버튼으로 가이드 참고)
- * - 캠페인 문의 담당자 연락처 섹션 (복사 버튼 포함)
+ * 사용 페이지:
+ * - /user/campaign_management (선정 탭 - 참여 캠페인 상세 진입 시)
  */
 
 "use client";
@@ -43,8 +42,7 @@ export default function SelectedCampaignInfo({
       if (onCopyContact) {
         onCopyContact();
       }
-    } catch (error) {
-      console.error("연락처 복사 실패:", error);
+    } catch (_error) {
     }
   };
 

@@ -1,6 +1,19 @@
 /* ========================================
-   커스텀 드롭다운 스타일
-   ======================================== */
+🔽 커스텀 드롭다운 스타일
+======================================== */
+
+/**
+ * 커스텀 드롭다운 스타일
+ *
+ * 목적: 캠페인 등록 폼의 커스텀 드롭다운 컴포넌트 스타일링
+ *
+ * 사용 페이지:
+ * - /partner/campaign/create/delivery (배송형)
+ * - /partner/campaign/create/visit (방문형)
+ * - /partner/campaign/create/review (구매평)
+ * - /partner/campaign/create/reporter (기자단)
+ * - /partner/campaign/create/mission (미션형)
+ */
 
 /* 드롭다운 컨테이너 */
 .custom_dropdown {
@@ -150,9 +163,3 @@
   background-clip: padding-box;
 }
 
-/* ============================================
-   모바일 반응형 스타일
-   ============================================ */
-
-@media (max-width: 768px) {
-}

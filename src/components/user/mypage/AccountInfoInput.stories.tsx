@@ -1,7 +1,14 @@
+/* ========================================
+   AccountInfoInput 스토리북
+   ======================================== */
+
 /**
- * AccountInfoInput 컴포넌트 스토리북
+ * AccountInfoInput.stories
  *
- * 계좌 정보 입력 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 계좌 정보 입력 컴포넌트 스토리 모음
+ *
+ * 사용 페이지:
+ * - Storybook (User/MyPage/AccountInfoInput)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";

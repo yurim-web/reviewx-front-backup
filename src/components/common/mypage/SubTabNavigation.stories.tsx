@@ -27,11 +27,12 @@ function SubTabNavigationWrapper(props: SubTabNavigationProps) {
 
   // CSS 모듈 import (Storybook에서도 작동하도록)
   // 동적 import를 사용하여 에러 발생 시 처리
-  let styles: any = {};
+  let styles: Record<string, string> = {};
   try {
     // CSS 모듈을 require로 로드
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     styles = require("@/styles/user/mypage/navigation.module.css");
-  } catch (e) {
+  } catch (_e) {
     // CSS가 없어도 컴포넌트는 표시되도록 인라인 스타일 사용
     styles = {
       sub_tab_container: "",

@@ -179,10 +179,6 @@ export function useSelectedTabModals(campaign: CampaignApplication) {
     try {
       // TODO: 실제 API 호출로 등록 기한 연장 요청
       // const response = await requestDeadlineExtension(campaign.id, extensionReason);
-      console.log("등록 기한 연장 요청:", {
-        campaignId: campaign.id,
-        reason: extensionReason,
-      });
 
       // 성공 시 연장 횟수 저장 (localStorage)
       incrementStoredExtensionCount(campaign.id);
@@ -191,8 +187,7 @@ export function useSelectedTabModals(campaign: CampaignApplication) {
       setIsExtensionModalOpen(false);
       setExtensionReason("");
       // TODO: 성공 모달 표시 또는 토스트 메시지
-    } catch (error) {
-      console.error("등록 기한 연장 요청 실패:", error);
+    } catch (_error) {
       // TODO: 오류 모달 표시
     }
   };

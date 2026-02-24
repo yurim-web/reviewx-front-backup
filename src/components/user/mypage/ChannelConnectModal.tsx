@@ -5,16 +5,10 @@
 /**
  * 채널 연결 모달 컴포넌트
  *
- * 목적: 마이페이지의 채널 섹션에서 채널을 연결할 때 사용되는 모달창입니다.
+ * 목적: 마이페이지 채널 섹션에서 네이버 블로그·클립·인스타그램·유튜브 채널을 연결하는 모달
  *
  * 사용 페이지:
  * - /user/mypage (채널 탭 - 채널 연결 시)
- *
- * 주요 기능:
- * - 채널별 URL 입력 (네이버 블로그, 네이버 클립, 인스타그램, 유튜브)
- * - 채널별 다른 입력 형태 제공 (전체 URL, @ 프리픽스, 도메인 프리픽스)
- * - 채널 연결 처리
- * - 모달 오버레이 클릭으로 닫기
  */
 
 "use client";
@@ -236,7 +230,7 @@ export default function ChannelConnectModal({
       // 연결 성공 모달 표시를 위해 현재 모달을 먼저 닫고 성공 모달을 띄움
       onClose();
       setIsSuccessModalOpen(true);
-    } catch (error) {
+    } catch (_error) {
       // 서버 오류 또는 기타 읽을 수 없는 경우
       setErrorType("server_error");
     }

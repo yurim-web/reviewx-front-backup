@@ -197,13 +197,13 @@ export default function ExperienceCompletedCard({
 
         {/* 버튼 영역: 항상 "확인 완료" 버튼 */}
         {/* 📌 확인 완료 버튼 스타일:
-            - 완료 탭에서는 핑크색 배경과 핑크색 텍스트로 표시됩니다
-            - 배경: rgba(255, 86, 148, 0.1) (연한 핑크)
-            - 텍스트: #ff5694 (핑크색)
+            - 완료 탭에서는 연한 핑크 배경과 핑크 텍스트로 표시됩니다
+            - 배경: #ff56941a
+            - 텍스트: #ff5694 (핑크)
         */}
         <div className={actionStyles.action_button_section}>
           <button
-            className={`${actionStyles.action_button} ${actionStyles.completion_confirmed_button}`}
+            className={`completion_confirmed_btn ${actionStyles.action_button} ${actionStyles.completion_confirmed_button}`}
             disabled
           >
             확인 완료

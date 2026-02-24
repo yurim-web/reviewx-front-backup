@@ -30,6 +30,14 @@ import type { PartnerMainTab } from "@/types/domain/partner";
 import type { AuthUser } from "@/types/auth";
 import { useAuth } from "@/hooks/useAuth";
 
+interface PartnerAccount {
+  id?: string;
+  email?: string;
+  business_name?: string;
+  name?: string;
+  profile_image?: string;
+}
+
 /**
  * 파트너 프로필 탭 전용 페이지 컴포넌트
  */
@@ -66,11 +74,11 @@ export default function PartnerProfilePage() {
           // console.log('📦 [프로필 페이지] partner_accounts:', storedAccounts);
 
           if (storedAccounts) {
-            const accounts = JSON.parse(storedAccounts);
+            const accounts = JSON.parse(storedAccounts) as PartnerAccount[];
             // console.log('📋 [프로필 페이지] accounts array:', accounts);
 
-            const partnerAccount = accounts.find((a: any) =>
-              a.id === user.id || a.email === user.email
+            const partnerAccount = accounts.find(
+              (a) => a.id === user.id || a.email === user.email,
             );
             // console.log('✅ [프로필 페이지] partnerAccount:', partnerAccount);
 

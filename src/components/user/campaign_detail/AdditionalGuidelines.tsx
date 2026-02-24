@@ -7,13 +7,8 @@
  *
  * 목적: 배송형, 방문형, 구매평, 미션형, 기자단 상세페이지에 공통으로 사용되는 유의사항을 표시합니다.
  *
- * 주요 기능:
- * - 캠페인 참여 시 주의사항 안내
- * - 패널티 관련 안내
- * - 콘텐츠 유지 기간 안내
- * - 양도/판매/교환 금지 안내
- * - 허위·과장 금지 안내
- * - 미션 불이행 시 패널티 안내
+ * 사용 페이지:
+ * - /user/campaign/[type]/[id] (캠페인 상세 페이지)
  */
 
 import styles from "@/styles/user/campaign/campaign_detail/detail_guidelines_section.module.css";

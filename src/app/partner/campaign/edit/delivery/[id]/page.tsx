@@ -41,57 +41,9 @@ import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import Toast from "@/components/common/toast/Toast";
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import checkboxStyles from "@/styles/partner/campaign_create/campaign_guide/checkboxes.module.css";
+import { parseRequirements } from "@/utils/partner/campaignEdit/parseRequirements";
 
-/**
- * requirements 배열을 파싱하여 폼 데이터로 변환하는 함수
- */
-function parseRequirements(requirements: string[]): {
-  minTextLength: string;
-  minImageCount: string;
-  videoCount: string;
-  videoDuration: string;
-  requireLinkAttachment: boolean;
-  requireKeywordAttachment: boolean;
-} {
-  let minTextLength = "";
-  let minImageCount = "";
-  let videoCount = "";
-  let videoDuration = "";
-  let requireLinkAttachment = false;
-  let requireKeywordAttachment = false;
-
-  requirements.forEach((req) => {
-    if (req.startsWith("text_")) {
-      const charCount = req.replace("text_", "");
-      minTextLength = charCount;
-    } else if (req.startsWith("photo_")) {
-      const photoCount = req.replace("photo_", "");
-      minImageCount = photoCount;
-    } else if (req.startsWith("video_")) {
-      const parts = req.replace("video_", "").split("_");
-      if (parts.length === 2) {
-        videoCount = parts[0];
-        videoDuration = parts[1];
-      } else if (parts.length === 1) {
-        videoCount = "1";
-        videoDuration = parts[0];
-      }
-    } else if (req === "product_link") {
-      requireLinkAttachment = true;
-    } else if (req === "keyword") {
-      requireKeywordAttachment = true;
-    }
-  });
-
-  return {
-    minTextLength,
-    minImageCount,
-    videoCount,
-    videoDuration,
-    requireLinkAttachment,
-    requireKeywordAttachment,
-  };
-}
+type StoredCampaignRaw = { campaignInfo?: { id?: string }; id?: string };
 
 /**
  * CampaignWithApplicants를 CampaignFormData로 변환하는 함수
@@ -160,7 +112,7 @@ function campaignToFormData(
 
   return {
     campaignType: info.campaignType as "배송형",
-    platform: (platformName as any) || "네이버 블로그",
+    platform: (platformName as string) || "네이버 블로그",
     title: info.title || "",
     category: extended?.subcategory || info.category || "기타",
     brandName: userBusinessName || extended?.brandName || extended?.channel || info.brandName || "",
@@ -271,14 +223,15 @@ export default function DeliveryCampaignEditPage() {
       );
 
       // localStorage에서 저장된 캠페인 확인 (최신 데이터 우선)
-      let storedCampaign: any = null;
+      let storedCampaign: Record<string, unknown> | null = null;
       if (typeof window !== "undefined") {
         const storedCampaigns = localStorage.getItem("deliveryCampaigns");
         if (storedCampaigns) {
-          const campaigns = JSON.parse(storedCampaigns);
-          storedCampaign = campaigns.find(
-            (c: any) => (c.campaignInfo?.id || c.id) === campaignId
-          );
+          const campaigns: StoredCampaignRaw[] = JSON.parse(storedCampaigns);
+          storedCampaign =
+            (campaigns.find(
+              (c) => (c.campaignInfo?.id || c.id) === campaignId,
+            ) as Record<string, unknown>) ?? null;
         }
       }
 
@@ -401,7 +354,7 @@ export default function DeliveryCampaignEditPage() {
             campaign_detail_images: detailImageUrls,
             campaign_detail_image: detailImageUrls[0] || originalData?.campaign_detail_image || "",
             isUrgent: isUrgent,
-            registeredAt: originalData?.registeredAt || (existingCampaign as any).registeredAt,
+            registeredAt: originalData?.registeredAt || (existingCampaign as Record<string, unknown>).registeredAt as string | undefined,
             description: formData.providedItems || originalData?.description || "",
             promotionLink: formData.promotionLink || originalData?.promotionLink || "",
             keyword: formData.keywords || originalData?.keyword || "",
@@ -421,7 +374,7 @@ export default function DeliveryCampaignEditPage() {
             },
             requirements: originalData?.requirements || [],
             guidelineTexts: formData.guidelines ? formData.guidelines.split("\n\n") : (originalData?.guidelineTexts || []),
-          } as any;
+          } as unknown as CampaignWithApplicants;
           localStorage.setItem("deliveryCampaigns", JSON.stringify(campaigns));
         } else {
           // localStorage에 없으면 추가 (확장 데이터 포함)
@@ -455,7 +408,7 @@ export default function DeliveryCampaignEditPage() {
             },
             requirements: originalData?.requirements || [],
             guidelineTexts: formData.guidelines ? formData.guidelines.split("\n\n") : (originalData?.guidelineTexts || []),
-          } as any);
+          } as unknown as CampaignWithApplicants);
           localStorage.setItem("deliveryCampaigns", JSON.stringify(campaigns));
         }
       } else {
@@ -492,7 +445,7 @@ export default function DeliveryCampaignEditPage() {
             },
             requirements: originalData?.requirements || [],
             guidelineTexts: formData.guidelines ? formData.guidelines.split("\n\n") : (originalData?.guidelineTexts || []),
-          } as any])
+          } as unknown as CampaignWithApplicants])
         );
       }
 

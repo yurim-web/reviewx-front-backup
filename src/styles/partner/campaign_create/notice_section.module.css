@@ -1,16 +1,18 @@
 /* ========================================
-   📋 유의 사항 섹션 스타일
-   ======================================== */
+⚠️ 유의사항 섹션 스타일
+======================================== */
 
 /**
- * 유의 사항 섹션 전용 CSS 모듈
+ * 유의사항 섹션 스타일
  *
- * 목적: 모든 캠페인 폼에서 공통으로 사용되는 유의 사항 스타일
+ * 목적: 캠페인 등록 폼의 유의사항 섹션 스타일링
  *
- * 주요 스타일:
- * - 폼 그룹 레이아웃
- * - 유의 사항 컨테이너 스타일링
- * - 불릿 포인트 리스트 스타일링
+ * 사용 페이지:
+ * - /partner/campaign/create/delivery (배송형)
+ * - /partner/campaign/create/visit (방문형)
+ * - /partner/campaign/create/review (구매평)
+ * - /partner/campaign/create/reporter (기자단)
+ * - /partner/campaign/create/mission (미션형)
  */
 
 /* 폼 그룹 */
@@ -69,31 +71,10 @@
 /* 모바일 반응형 스타일 */
 @media (max-width: 768px) {
   .notice_content {
-    background: #f6f6f6;
-    border: 1px solid #d9d9d9;
-    border-radius: 8px;
-    padding: 20px;
-    color: #999;
-    font-family: Pretendard;
-    font-size: 13px;
-    font-style: normal;
-    font-weight: 500;
     line-height: 24px;
-    letter-spacing: -0.26px;
   }
 
   .notice_content li {
     margin-bottom: 0px;
-  }
-
-  .highlight {
-    color: #999;
-    font-family: Pretendard;
-    font-size: 13px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 24px;
-    letter-spacing: -0.26px;
-    text-decoration-line: underline;
   }
 }

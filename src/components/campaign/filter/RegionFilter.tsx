@@ -465,6 +465,13 @@ export default function RegionFilter({
       (currentMainSubList.length > 0 &&
         currentMainSubList.every((r) => tempSelectedRegions.includes(r))));
 
+  // 하위 구 일부만 선택된 경우 "X 전체" 체크박스 indeterminate 표시
+  const isRegionPartiallySelected =
+    selectedMainRegion !== "전체" &&
+    !tempSelectedRegions.includes(getRegionAllKey(selectedMainRegion)) &&
+    currentMainSubList.some((r) => tempSelectedRegions.includes(r)) &&
+    !currentMainSubList.every((r) => tempSelectedRegions.includes(r));
+
   // 현재 메인 지역의 모든 세부 지역이 선택되었는지 확인
   const isAllSelectedInCurrentRegion =
     currentSubRegions.length > 0 &&
@@ -545,6 +552,11 @@ export default function RegionFilter({
                     >
                       <input
                         type="checkbox"
+                        ref={(el) => {
+                          if (el && isRegionAll) {
+                            el.indeterminate = isRegionPartiallySelected;
+                          }
+                        }}
                         checked={isSelected}
                         onChange={() => {
                           if (selectedMainRegion === "전체") {
@@ -624,7 +636,17 @@ export default function RegionFilter({
                                   (r) => r !== fullRegionName,
                                 );
                               }
-                              return [...filtered, fullRegionName];
+                              // 구 하나 추가: 전부 선택되면 "X 전체"로 정규화 (서울 전체 자동 체크)
+                              const next = [...filtered, fullRegionName];
+                              if (
+                                subList.length > 0 &&
+                                subList.every((s) => next.includes(s))
+                              ) {
+                                return next
+                                  .filter((r) => !subList.includes(r))
+                                  .concat([regionAllKey]);
+                              }
+                              return next;
                             });
                           }
                         }}

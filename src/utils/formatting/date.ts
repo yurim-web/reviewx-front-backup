@@ -110,3 +110,32 @@ export const formatDateForMobile = (dateString: string): string => {
   // 날짜에서 시간 부분 제거 (공백 이전까지만 추출)
   return dateString.split(' ')[0];
 };
+
+/**
+ * 등록 기간 문자열에서 마감 날짜(기한) 추출
+ *
+ * @param registrationPeriod - 등록 기간 문자열 (예: "2025-12-08 ~ 2025-12-25" 또는 "~2025-12-25")
+ * @returns 마감 날짜 문자열 (예: "2025-12-25") 또는 undefined
+ *
+ * 예시:
+ * ```ts
+ * extractDeadlineDate("2025-12-08 ~ 2025-12-25")
+ * // => "2025-12-25"
+ *
+ * extractDeadlineDate("~ 2025-12-25")
+ * // => "2025-12-25"
+ * ```
+ */
+export function extractDeadlineDate(registrationPeriod?: string): string | undefined {
+  if (!registrationPeriod) return undefined;
+
+  const separator = registrationPeriod.includes(" ~ ") ? " ~ " : "~";
+  const endDateStr = registrationPeriod.split(separator)[1]?.trim();
+
+  if (endDateStr) {
+    const dateMatch = endDateStr.match(/^(\d{4}-\d{2}-\d{2})/);
+    return dateMatch ? dateMatch[1] : undefined;
+  }
+
+  return undefined;
+}

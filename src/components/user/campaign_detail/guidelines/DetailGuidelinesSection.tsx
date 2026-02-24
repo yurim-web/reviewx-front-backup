@@ -7,11 +7,8 @@
  *
  * 목적: 캠페인의 제공내역, 키워드, 안내사항 등을 표시합니다.
  *
- * 주요 기능:
- * - 제공내역 표시
- * - 키워드 입력란 및 복사 버튼
- * - 안내 사항 (요구사항 아이콘 + 상세 가이드라인)
- * - 추가 안내사항 컴포넌트
+ * 사용 페이지:
+ * - /user/campaign/[type]/[id] (캠페인 상세 페이지)
  */
 
 import AdditionalGuidelines from "../AdditionalGuidelines";

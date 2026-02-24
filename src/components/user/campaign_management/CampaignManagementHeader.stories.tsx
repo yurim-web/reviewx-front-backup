@@ -1,14 +1,20 @@
+/* ========================================
+   CampaignManagementHeader 스토리북
+   ======================================== */
+
 /**
- * CampaignManagementHeader 컴포넌트 스토리북
+ * CampaignManagementHeader.stories
  *
- * 캠페인 관리 공통 헤더 컴포넌트의 사용 예시를 보여줍니다.
+ * 목적: 캠페인 관리 헤더 컴포넌트 스토리 모음
+ *
+ * 사용 페이지:
+ * - Storybook (User/CampaignManagement/CampaignManagementHeader)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState } from "react";
 import CampaignManagementHeader from "./CampaignManagementHeader";
 import type { MainTab } from "@/types/domain/user";
-import { campaignManagementStats } from "@/data/user/campaign_management/campaignManagementData";
 
 const meta: Meta<typeof CampaignManagementHeader> = {
   title: "User/CampaignManagement/CampaignManagementHeader",

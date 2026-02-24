@@ -24,6 +24,22 @@ import { getReporterContentsById } from "@/data/campaign/reporter/reporterCampai
 import { getPurchaseReviewContentsById } from "@/data/campaign/review/reviewCampaigns";
 import { getMissionContentsById } from "@/data/campaign/mission/missionCampaigns";
 
+/** 콘텐츠 항목 타입 */
+interface ContentItem {
+  extension_request_reason?: string;
+  [key: string]: unknown;
+}
+
+/** 콘텐츠가 있는 캠페인 데이터 타입 */
+interface CampaignWithContents {
+  contents?: {
+    waiting?: ContentItem[];
+    reviewing?: ContentItem[];
+    completed?: ContentItem[];
+  };
+}
+
+
 /**
  * 콘텐츠 대기/검수/완료 건수를 표현하는 타입
  */
@@ -84,8 +100,8 @@ export function calculateContentCounts(
     }
 
     const campaignData = getCampaignById(id);
-    if (campaignData && (campaignData as any).contents) {
-      const contents = (campaignData as any).contents;
+    if (campaignData && (campaignData as CampaignWithContents).contents) {
+      const contents = (campaignData as CampaignWithContents).contents;
       return {
         waitingCount: contents.waiting?.length ?? 0,
         reviewingCount: contents.reviewing?.length ?? 0,
@@ -98,8 +114,8 @@ export function calculateContentCounts(
 
   // 진행/신청 캠페인: 우선 원본 데이터 contents 확인
   const campaignData = getCampaignById(id);
-  if (campaignData && (campaignData as any).contents) {
-    const contents = (campaignData as any).contents;
+  if (campaignData && (campaignData as CampaignWithContents).contents) {
+    const contents = (campaignData as CampaignWithContents).contents;
     return {
       waitingCount: contents.waiting?.length ?? 0,
       reviewingCount: contents.reviewing?.length ?? 0,
@@ -456,28 +472,24 @@ export function calculateExtensionRequestCount(
     const closedContents = getClosedContentsById(id);
     if (closedContents && closedContents.waiting) {
       const count = closedContents.waiting.filter(
-        (item: any) => item.extension_request_reason,
+        (item: ContentItem) => item.extension_request_reason,
       ).length;
       if (count > 0) return count;
     }
 
     // 2️⃣ 그 외에는 일반 캠페인 데이터에서 contents 확인
     const fullCampaign = getCampaignById(id);
-    if (!fullCampaign || !(fullCampaign as any).contents) {
+    if (!fullCampaign || !(fullCampaign as CampaignWithContents).contents) {
       return 0;
     }
 
-    const waitingItems = (fullCampaign as any).contents.waiting || [];
+    const waitingItems = (fullCampaign as CampaignWithContents).contents.waiting || [];
     const count = waitingItems.filter(
-      (item: any) => item.extension_request_reason,
+      (item: ContentItem) => item.extension_request_reason,
     ).length;
 
     return count;
   } catch (error) {
-    console.error(
-      "[calculateExtensionRequestCount] 연장 요청 건수 계산 실패:",
-      error,
-    );
     // 문제가 생겨도 버튼 텍스트만 영향을 받으므로 0으로 안전하게 처리
     return 0;
   }

@@ -29,10 +29,11 @@ function PointTabNavigationWrapper(props: PointTabNavigationProps) {
   const { activePointTab, setActivePointTab, basePath, tabLabels } = props;
 
   // CSS 모듈 import (Storybook에서도 작동하도록)
-  let styles: any = {};
+  let styles: Record<string, string> = {};
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     styles = require("@/styles/user/point/point.module.css");
-  } catch (e) {
+  } catch (_e) {
     // CSS가 없어도 컴포넌트는 표시되도록 인라인 스타일 사용
     styles = {
       point_tab_navigation: "",

@@ -38,7 +38,6 @@ import {
 } from "@/data/manager_ga/community/postsData";
 import {
   convertPostsToFAQs,
-  type FAQItem,
   type FAQTarget,
 } from "@/utils/faq/convertPostToFAQ";
 import {

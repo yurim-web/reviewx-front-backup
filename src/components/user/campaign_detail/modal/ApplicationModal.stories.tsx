@@ -1,13 +1,19 @@
+/* ========================================
+   ApplicationModal 스토리북
+   ======================================== */
+
 /**
- * ApplicationModal 컴포넌트 스토리북
+ * ApplicationModal.stories
  *
- * 캠페인 신청 모달 컴포넌트의 다양한 사용 예시를 보여줍니다.
- * 통합된 모달로 모든 캠페인 타입(배송형, 구매평, 미션형, 기자단, 방문형)을 지원합니다.
+ * 목적: 캠페인 신청 모달 컴포넌트 스토리 모음
+ *
+ * 사용 페이지:
+ * - Storybook (User/CampaignDetail/Modal/ApplicationModal)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState } from "react";
-import ApplicationModal, { ApplicationModalType } from "./ApplicationModal";
+import ApplicationModal from "./ApplicationModal";
 
 const meta: Meta<typeof ApplicationModal> = {
   title: "User/CampaignDetail/Modal/ApplicationModal",

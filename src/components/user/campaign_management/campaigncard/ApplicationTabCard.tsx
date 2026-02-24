@@ -27,6 +27,31 @@ interface ApplicationTabCardProps {
   onCancelSuccess?: (campaignId: string) => void;
 }
 
+interface StoredCampaignRecord {
+  campaignId: string;
+  status?: string;
+  campaignType?: string;
+}
+
+interface StoredApplicant {
+  id?: string | number;
+  userId?: string | number;
+}
+
+interface StoredCampaignData {
+  id?: string | number;
+  campaignInfo?: { id?: string | number };
+  applicantData?: {
+    applicants: StoredApplicant[];
+    selectedApplicants: StoredApplicant[];
+  };
+}
+
+interface StoredUserCampaigns {
+  userId: string | number;
+  campaigns: StoredCampaignRecord[];
+}
+
 /**
  * 신청 탭 캠페인 카드
  *
@@ -129,7 +154,7 @@ export default function ApplicationTabCard({
         throw new Error('로그인 정보를 찾을 수 없습니다.');
       }
 
-      const userCampaignsIndex = allAppliedCampaigns.findIndex((uc: any) => uc.userId === user.id);
+      const userCampaignsIndex = allAppliedCampaigns.findIndex((uc: StoredUserCampaigns) => uc.userId === user.id);
       
       if (userCampaignsIndex === -1) {
         throw new Error('유저의 신청 내역을 찾을 수 없습니다.');
@@ -138,7 +163,7 @@ export default function ApplicationTabCard({
       const userCampaigns = allAppliedCampaigns[userCampaignsIndex];
       
       // 해당 캠페인 찾기
-      const campaignIndex = userCampaigns.campaigns.findIndex((c: any) => c.campaignId === campaign.id);
+      const campaignIndex = userCampaigns.campaigns.findIndex((c: StoredCampaignRecord) => c.campaignId === campaign.id);
       
       if (campaignIndex === -1) {
         throw new Error('캠페인을 찾을 수 없습니다.');
@@ -154,7 +179,7 @@ export default function ApplicationTabCard({
       }
 
       // 취소 시 user_applied_campaigns에서 완전히 제거 (취소/반려 탭으로 이동하지 않음)
-      userCampaigns.campaigns = userCampaigns.campaigns.filter((c: any) => c.campaignId !== campaign.id);
+      userCampaigns.campaigns = userCampaigns.campaigns.filter((c: StoredCampaignRecord) => c.campaignId !== campaign.id);
 
       // localStorage에 저장
       allAppliedCampaigns[userCampaignsIndex] = userCampaigns;
@@ -178,7 +203,7 @@ export default function ApplicationTabCard({
         const storedCampaigns = localStorage.getItem(storageKey);
         if (storedCampaigns) {
           const campaigns = JSON.parse(storedCampaigns);
-          const campaignIndex = campaigns.findIndex((c: any) => 
+          const campaignIndex = campaigns.findIndex((c: StoredCampaignData) =>
             c.campaignInfo?.id === campaign.id || c.id === campaign.id
           );
 
@@ -187,16 +212,16 @@ export default function ApplicationTabCard({
             
             // applicants에서 현재 유저 제거
             if (targetCampaignInStorage.applicantData?.applicants) {
-              targetCampaignInStorage.applicantData.applicants = 
-                targetCampaignInStorage.applicantData.applicants.filter((a: any) => 
+              targetCampaignInStorage.applicantData.applicants =
+                targetCampaignInStorage.applicantData.applicants.filter((a: StoredApplicant) =>
                   a.id !== user.id && a.userId !== user.id
                 );
             }
 
             // selectedApplicants에서도 제거 (혹시 선정된 상태였다면)
             if (targetCampaignInStorage.applicantData?.selectedApplicants) {
-              targetCampaignInStorage.applicantData.selectedApplicants = 
-                targetCampaignInStorage.applicantData.selectedApplicants.filter((a: any) => 
+              targetCampaignInStorage.applicantData.selectedApplicants =
+                targetCampaignInStorage.applicantData.selectedApplicants.filter((a: StoredApplicant) =>
                   a.id !== user.id && a.userId !== user.id
                 );
             }
@@ -204,45 +229,28 @@ export default function ApplicationTabCard({
             campaigns[campaignIndex] = targetCampaignInStorage;
             localStorage.setItem(storageKey, JSON.stringify(campaigns));
             
-            console.log('✅ [ApplicationTabCard] localStorage 캠페인 applicants에서 신청자 제거 완료:', {
-              campaignId: campaign.id,
-              storageKey,
-              userId: user.id,
-            });
           }
         }
-      } catch (error) {
-        console.error('❌ [ApplicationTabCard] localStorage 캠페인 applicants에서 신청자 제거 실패:', error);
+      } catch (_error) {
       }
 
-      console.log('✅ [ApplicationTabCard] 캠페인 신청 취소 완료 (user_applied_campaigns에서 제거):', {
-        campaignId: campaign.id,
-        campaignTitle: campaign.title,
-      });
 
       // 확인 모달 닫기
       setIsConfirmModalOpen(false);
 
       // 성공 모달 열기 (먼저 모달을 표시)
       setIsSuccessModalOpen(true);
-    } catch (error: any) {
-      // 에러 처리
-      console.error("신청 취소 실패:", error);
-
-      // 확인 모달 닫기
+    } catch (error: unknown) {
       setIsConfirmModalOpen(false);
 
-      // 에러 타입에 따라 다른 모달 표시
-      // 이미 취소된 경우를 확인 (에러 코드나 메시지로 판단)
+      const err = error as { code?: string; message?: string; response?: { data?: { error?: string } } };
       if (
-        error?.code === "ALREADY_CANCELLED" ||
-        error?.message?.includes("이미 취소") ||
-        error?.response?.data?.error === "ALREADY_CANCELLED"
+        err?.code === "ALREADY_CANCELLED" ||
+        err?.message?.includes("이미 취소") ||
+        err?.response?.data?.error === "ALREADY_CANCELLED"
       ) {
-        // 이미 취소된 캠페인 모달 표시
         setIsAlreadyCancelledModalOpen(true);
       } else {
-        // 일반 서버 오류 모달 표시
         setIsErrorModalOpen(true);
       }
     }

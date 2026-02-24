@@ -1,7 +1,14 @@
+/* ========================================
+   ReceiptRegistrationModal 스토리북
+   ======================================== */
+
 /**
- * ReceiptRegistrationModal 컴포넌트 스토리북
+ * ReceiptRegistrationModal.stories
  *
- * 구매 영수증 등록 모달 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 구매 영수증 등록 모달 컴포넌트 스토리 모음
+ *
+ * 사용 페이지:
+ * - Storybook (User/CampaignManagement/Modals/ReceiptRegistrationModal)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
