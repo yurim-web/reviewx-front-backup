@@ -21,17 +21,18 @@ import PhoneVerification from "@/components/common/phone_verification/PhoneVerif
 import PartnerTermsAgreement from "@/components/partner/signup/PartnerTermsAgreement";
 import BusinessDocumentUpload from "@/components/partner/mypage/BusinessDocumentUpload";
 import AddressInput from "@/components/partner/signup/AddressInput";
-import BaseModal from "@/components/common/modal/BaseModal";
 import ErrorText from "@/components/common/error_text/ErrorText";
 import PasswordField from "@/components/common/signup/PasswordField";
+import FormInputField from "@/components/common/signup/FormInputField";
+import EmailInputField from "@/components/common/signup/EmailInputField";
+import BusinessNumberInput from "@/components/partner/signup/BusinessNumberInput";
+import ContactPhoneInput from "@/components/partner/signup/ContactPhoneInput";
 import { usePartnerTermsAgreement } from "@/hooks/partner/signup/usePartnerTermsAgreement";
 import { usePhoneVerification } from "@/hooks/usePhoneVerification/usePhoneVerification";
 import {
   validatePartnerSignupForm,
   type PartnerSignupFormErrors,
 } from "@/components/partner/signup/utils/formValidation";
-import { formatBusinessNumber } from "@/components/partner/signup/utils/businessNumberUtils";
-import { formatPhoneNumber } from "@/utils/formatting/phone";
 import PageTitle from "@/components/fragments/PageTitle";
 import { getAccountsByType } from "@/data/login/unifiedAccountData";
 import commonStyles from "@/styles/common/signup/signup.module.css";
@@ -130,10 +131,10 @@ export default function PartnerSignupPage() {
   const [companyName, setCompanyName] = useState<string>("");
   const [representativeName, setRepresentativeName] = useState<string>("");
   const [businessNumber, setBusinessNumber] = useState<string>("");
-  const [businessRegistrationFile, setBusinessRegistrationFile] =
-    useState<File | null>(null);
-  const [businessRegistrationFileName, setBusinessRegistrationFileName] =
-    useState<string | null>(null);
+  const [businessRegistrationFile, setBusinessRegistrationFile] = useState<File | null>(null);
+  const [businessRegistrationFileName, setBusinessRegistrationFileName] = useState<string | null>(
+    null
+  );
   const [postalCode, setPostalCode] = useState<string>("");
   const [address, setAddress] = useState<string>("");
   const [detailAddress, setDetailAddress] = useState<string>("");
@@ -170,7 +171,6 @@ export default function PartnerSignupPage() {
     timer,
     phoneError,
     verificationCodeError,
-    setPhone,
     setVerificationCode,
     handlePhoneChange: handlePhoneChangeHook,
     handleVerificationRequest,
@@ -266,19 +266,6 @@ export default function PartnerSignupPage() {
 
   /**
    * ========================================
-   * 사업자등록번호 변경 핸들러
-   * ========================================
-   */
-  const handleBusinessNumberChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const formatted = formatBusinessNumber(e.target.value);
-    setBusinessNumber(formatted);
-    setErrors((prev) => ({ ...prev, businessNumber: undefined }));
-  };
-
-  /**
-   * ========================================
    * 사업자등록증 파일 선택 핸들러
    * ========================================
    */
@@ -364,14 +351,14 @@ export default function PartnerSignupPage() {
 
     // LocalStorage에 새 파트너 계정 저장
     try {
-      const existingAccounts = localStorage.getItem('partner_accounts');
+      const existingAccounts = localStorage.getItem("partner_accounts");
       const partnerAccounts = existingAccounts ? JSON.parse(existingAccounts) : [];
 
       const newPartnerAccount = {
         id: `partner_${Date.now()}`,
-        number: String(partnerAccounts.length + 1).padStart(6, '0'),
-        userType: 'partner' as const,
-        role: 'partner' as const,
+        number: String(partnerAccounts.length + 1).padStart(6, "0"),
+        userType: "partner" as const,
+        role: "partner" as const,
         email,
         password,
         name,
@@ -384,31 +371,31 @@ export default function PartnerSignupPage() {
         detail_address: detailAddress,
         contact_phone: contactPhone,
         business_registration_file: businessRegistrationFileName,
-        approval_status: 'approved' as const,
-        signupDate: new Date().toISOString().split('T')[0].replace(/-/g, '. '),
+        approval_status: "approved" as const,
+        signupDate: new Date().toISOString().split("T")[0].replace(/-/g, ". "),
         isBlocked: false,
         isBanned: false,
-        redirectUrl: '/partner',
+        redirectUrl: "/partner",
         marketing_agreed: marketingAgreed,
         third_party_marketing_agreed: thirdPartyMarketingAgreed,
-        division: '개인' as const,
+        division: "개인" as const,
         campaign_in_progress: 0,
         campaign_completed: 0,
         current_points: 0,
         used_points: 0,
-        status_type: '모범 회원' as const,
-        status: '정상' as const,
-        last_access_date: new Date().toISOString().replace('T', ' ').substring(0, 16),
-        join_date: new Date().toISOString().replace('T', ' ').substring(0, 16),
+        status_type: "모범 회원" as const,
+        status: "정상" as const,
+        last_access_date: new Date().toISOString().replace("T", " ").substring(0, 16),
+        join_date: new Date().toISOString().replace("T", " ").substring(0, 16),
       };
 
       partnerAccounts.push(newPartnerAccount);
-      localStorage.setItem('partner_accounts', JSON.stringify(partnerAccounts));
+      localStorage.setItem("partner_accounts", JSON.stringify(partnerAccounts));
       // console.log('파트너 회원가입 성공!', newPartnerAccount);
       router.push(`/partner/signup/complete?name=${encodeURIComponent(name)}`);
     } catch (error) {
-      console.error('회원가입 중 오류 발생:', error);
-      alert('회원가입 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
+      console.error("회원가입 중 오류 발생:", error);
+      alert("회원가입 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
     }
 
     // TODO: 실제 API 호출
@@ -417,6 +404,29 @@ export default function PartnerSignupPage() {
     //   router.push('/partner/login');
     // }
   };
+
+  // ========================================
+  // 버튼 활성화 조건 계산
+  // ========================================
+  const canSubmit =
+    email.trim() &&
+    password.trim() &&
+    passwordConfirm.trim() &&
+    name.trim() &&
+    isPhoneVerified &&
+    companyName.trim() &&
+    representativeName.trim() &&
+    businessNumber.trim() &&
+    businessRegistrationFile &&
+    postalCode.trim() &&
+    address.trim() &&
+    detailAddress.trim() &&
+    contactPhone.trim() &&
+    serviceTermsAgreed &&
+    privacyAgreed &&
+    thirdPartyAgreed &&
+    advertisingAgreed &&
+    !Object.keys(errors).some((key) => errors[key as keyof typeof errors] !== undefined);
 
   // ========================================
   // 렌더링 (JSX)
@@ -436,72 +446,17 @@ export default function PartnerSignupPage() {
         {/* 회원가입 폼 */}
         <form className={styles.signup_form} onSubmit={handleSubmit}>
           {/* 아이디(이메일) 입력 */}
-          <div className={commonStyles.form_field}>
-            <label className={commonStyles.field_label} htmlFor="email">
-              아이디(이메일)
-            </label>
-            <input
-              id="email"
-              type="email"
-              className={commonStyles.input_field}
-              placeholder="이메일 입력"
-              value={email}
-              onChange={(e) => {
-                const newEmail = e.target.value;
-                setEmail(newEmail);
-
-                // 실시간 이메일 형식 검증
-                if (newEmail.trim() === "") {
-                  // 빈 필드: 에러 초기화
-                  setErrors((prev) => ({ ...prev, email: undefined }));
-                } else {
-                  // 이메일 형식 검증
-                  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                  if (!emailRegex.test(newEmail)) {
-                    // 형식 오류: 실시간으로 에러 메시지 표시
-                    setErrors((prev) => ({
-                      ...prev,
-                      email: "올바른 이메일 형식을 입력해주세요.",
-                    }));
-                  } else {
-                    // 형식이 유효한 경우: 중복 체크 수행
-                    // TODO: 실제 API 호출 (debounce 적용 권장)
-                    // const checkEmailDuplicate = async () => {
-                    //   const response = await checkPartnerEmailDuplicate(newEmail);
-                    //   if (response.isDuplicate) {
-                    //     setErrors((prev) => ({
-                    //       ...prev,
-                    //       email: "이미 사용 중인 아이디입니다.",
-                    //     }));
-                    //   }
-                    // };
-                    // checkEmailDuplicate();
-
-                    // 테스트용: 파트너 계정 데이터에서 이메일 중복 체크
-                    // 실제 구현 시 API 호출로 교체 필요
-                    const partnerAccounts = getAccountsByType("partner");
-                    const isDuplicate = partnerAccounts.some(
-                      (account) => account.email === newEmail
-                    );
-                    if (isDuplicate) {
-                      setErrors((prev) => ({
-                        ...prev,
-                        email: "이미 사용 중인 아이디입니다.",
-                      }));
-                    } else {
-                      // 중복이 없으면 에러 초기화
-                      setErrors((prev) => ({ ...prev, email: undefined }));
-                    }
-                  }
-                }
-              }}
-              onInvalid={(e) => {
-                e.preventDefault();
-              }}
-            />
-            {/* 이메일 에러 메시지 표시 */}
-            <ErrorText message={errors.email} />
-          </div>
+          <EmailInputField
+            id="email"
+            label="아이디(이메일)"
+            value={email}
+            error={errors.email}
+            onChange={setEmail}
+            onErrorChange={(error) => {
+              setErrors((prev) => ({ ...prev, email: error }));
+            }}
+            userType="partner"
+          />
 
           {/* 비밀번호 입력 */}
           <PasswordField
@@ -548,25 +503,16 @@ export default function PartnerSignupPage() {
           />
 
           {/* 이름 입력 */}
-          <div className={commonStyles.form_field}>
-            <label className={commonStyles.field_label} htmlFor="name">
-              이름
-            </label>
-            <input
-              id="name"
-              type="text"
-              className={commonStyles.input_field}
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-                setErrors((prev) => ({ ...prev, name: undefined }));
-              }}
-              onInvalid={(e) => {
-                e.preventDefault();
-              }}
-            />
-            <ErrorText message={errors.name} />
-          </div>
+          <FormInputField
+            id="name"
+            label="이름"
+            value={name}
+            error={errors.name}
+            onChange={(value) => {
+              setName(value);
+              setErrors((prev) => ({ ...prev, name: undefined }));
+            }}
+          />
 
           {/* 휴대폰 번호 입력 및 인증 */}
           <PhoneVerification
@@ -581,9 +527,7 @@ export default function PartnerSignupPage() {
                 ? errors.phone
                 : undefined)
             }
-            verificationCodeError={
-              verificationCodeError || errors.verificationCode
-            }
+            verificationCodeError={verificationCodeError || errors.verificationCode}
             onPhoneChange={handlePhoneChange}
             onVerificationRequest={handleVerificationRequestClick}
             onResend={handleVerificationRequestClick}
@@ -603,74 +547,44 @@ export default function PartnerSignupPage() {
           )}
 
           {/* 상호명 입력 */}
-          <div className={commonStyles.form_field}>
-            <label className={commonStyles.field_label} htmlFor="company-name">
-              상호명
-            </label>
-            <input
-              id="company-name"
-              type="text"
-              className={commonStyles.input_field}
-              value={companyName}
-              onChange={(e) => {
-                setCompanyName(e.target.value);
-                setErrors((prev) => ({ ...prev, companyName: undefined }));
-              }}
-              onInvalid={(e) => {
-                e.preventDefault();
-              }}
-            />
-            <ErrorText message={errors.companyName} />
-          </div>
+          <FormInputField
+            id="company-name"
+            label="상호명"
+            value={companyName}
+            error={errors.companyName}
+            onChange={(value) => {
+              setCompanyName(value);
+              setErrors((prev) => ({ ...prev, companyName: undefined }));
+            }}
+          />
 
           {/* 대표자명 입력 */}
-          <div className={commonStyles.form_field}>
-            <label
-              className={commonStyles.field_label}
-              htmlFor="representative-name"
-            >
-              대표자명
-            </label>
-            <input
-              id="representative-name"
-              type="text"
-              className={commonStyles.input_field}
-              value={representativeName}
-              onChange={(e) => {
-                setRepresentativeName(e.target.value);
-                setErrors((prev) => ({
-                  ...prev,
-                  representativeName: undefined,
-                }));
-              }}
-              onInvalid={(e) => {
-                e.preventDefault();
-              }}
-            />
-            <ErrorText message={errors.representativeName} />
-          </div>
+          <FormInputField
+            id="representative-name"
+            label="대표자명"
+            value={representativeName}
+            error={errors.representativeName}
+            onChange={(value) => {
+              setRepresentativeName(value);
+              setErrors((prev) => ({
+                ...prev,
+                representativeName: undefined,
+              }));
+            }}
+          />
 
           {/* 사업자등록번호 입력 */}
-          <div className={commonStyles.form_field}>
-            <label
-              className={commonStyles.field_label}
-              htmlFor="business-number"
-            >
-              사업자등록번호
-            </label>
-            <input
-              id="business-number"
-              type="text"
-              className={commonStyles.input_field}
-              placeholder="- 제외 입력"
-              value={businessNumber}
-              onChange={handleBusinessNumberChange}
-              onInvalid={(e) => {
-                e.preventDefault();
-              }}
-            />
-            <ErrorText message={errors.businessNumber} />
-          </div>
+          <BusinessNumberInput
+            id="business-number"
+            label="사업자등록번호"
+            value={businessNumber}
+            error={errors.businessNumber}
+            placeholder="사업자등록번호 10자리"
+            onChange={(value) => {
+              setBusinessNumber(value);
+              setErrors((prev) => ({ ...prev, businessNumber: undefined }));
+            }}
+          />
 
           {/* 사업자등록증 업로드 */}
           <BusinessDocumentUpload
@@ -704,50 +618,17 @@ export default function PartnerSignupPage() {
           />
 
           {/* 문의 담당자 휴대폰 번호 입력 */}
-          <div className={commonStyles.form_field}>
-            <label className={commonStyles.field_label} htmlFor="contact-phone">
-              문의 담당자 휴대폰 번호
-            </label>
-            <input
-              id="contact-phone"
-              type="tel"
-              className={commonStyles.input_field}
-              placeholder="- 제외 입력"
-              value={contactPhone}
-              onChange={(e) => {
-                // 휴대폰 번호 포맷팅 유틸리티 사용
-                const formatted = formatPhoneNumber(e.target.value);
-                setContactPhone(formatted);
-
-                // 실시간 휴대폰 번호 형식 검증
-                if (formatted.trim() === "") {
-                  // 빈 필드: 에러 초기화
-                  setErrors((prev) => ({ ...prev, contactPhone: undefined }));
-                } else {
-                  // 휴대폰 번호 형식 검증 (010-1234-5678 형식)
-                  const phoneRegex = /^010-\d{4}-\d{4}$/;
-                  if (!phoneRegex.test(formatted)) {
-                    // 형식 오류: 실시간으로 에러 메시지 표시
-                    setErrors((prev) => ({
-                      ...prev,
-                      contactPhone: "올바른 휴대폰 번호 형식을 입력해주세요.",
-                    }));
-                  } else {
-                    // 형식이 유효한 경우: 에러 초기화
-                    setErrors((prev) => ({
-                      ...prev,
-                      contactPhone: undefined,
-                    }));
-                  }
-                }
-              }}
-              maxLength={13}
-              onInvalid={(e) => {
-                e.preventDefault();
-              }}
-            />
-            <ErrorText message={errors.contactPhone} />
-          </div>
+          <ContactPhoneInput
+            id="contact-phone"
+            label="문의 담당자 휴대폰 번호"
+            value={contactPhone}
+            error={errors.contactPhone}
+            placeholder="- 제외 입력"
+            onChange={setContactPhone}
+            onErrorChange={(error) => {
+              setErrors((prev) => ({ ...prev, contactPhone: error }));
+            }}
+          />
 
           {/* 약관 동의 섹션 */}
           <PartnerTermsAgreement
@@ -772,51 +653,9 @@ export default function PartnerSignupPage() {
           <button
             type="submit"
             className={`${commonStyles.submit_button} ${styles.submit_button} ${
-              email.trim() &&
-              password.trim() &&
-              passwordConfirm.trim() &&
-              name.trim() &&
-              isPhoneVerified &&
-              companyName.trim() &&
-              representativeName.trim() &&
-              businessNumber.trim() &&
-              businessRegistrationFile &&
-              postalCode.trim() &&
-              address.trim() &&
-              detailAddress.trim() &&
-              contactPhone.trim() &&
-              serviceTermsAgreed &&
-              privacyAgreed &&
-              thirdPartyAgreed &&
-              advertisingAgreed &&
-              !Object.keys(errors).some(
-                (key) => errors[key as keyof typeof errors] !== undefined
-              )
-                ? ""
-                : commonStyles.submit_button_disabled
+              canSubmit ? "" : commonStyles.submit_button_disabled
             }`}
-            disabled={
-              !email.trim() ||
-              !password.trim() ||
-              !passwordConfirm.trim() ||
-              !name.trim() ||
-              !isPhoneVerified ||
-              !companyName.trim() ||
-              !representativeName.trim() ||
-              !businessNumber.trim() ||
-              !businessRegistrationFile ||
-              !postalCode.trim() ||
-              !address.trim() ||
-              !detailAddress.trim() ||
-              !contactPhone.trim() ||
-              !serviceTermsAgreed ||
-              !privacyAgreed ||
-              !thirdPartyAgreed ||
-              !advertisingAgreed ||
-              Object.keys(errors).some(
-                (key) => errors[key as keyof typeof errors] !== undefined
-              )
-            }
+            disabled={!canSubmit}
           >
             회원가입
           </button>
