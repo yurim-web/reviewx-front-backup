@@ -13,23 +13,22 @@
  * - /manager_sa/community/posts (SA 관리자 게시글 목록)
  */
 
-/* 테이블 컨테이너 */
+/* 테이블 컨테이너 - 가로 스크롤 허용 */
 .table_container {
   width: 100%;
   border-radius: 4px;
-  overflow: hidden;
+  overflow-x: auto;
   background-color: white;
 }
 
-/* 테이블 헤더 */
+/* 테이블 헤더 (헤더·행 동일 열 비율로 subgrid 없이 직접 지정) */
 .table_header {
   display: grid;
-  /* 게시글 목록 테이블 컬럼 정의 - 화면 가득 차게 fr 단위 사용 */
-  grid-template-columns: 0.5fr 0.8fr 1.2fr 1.2fr 0.8fr 5fr 1.1fr 1.3fr 0.8fr 60px;
+  min-width: 1100px;
+  grid-template-columns: 0.5fr minmax(80px, 0.9fr) 1.2fr 1.2fr 0.8fr 5fr minmax(70px, 1.1fr) minmax(130px, 1.4fr) minmax(80px, 0.9fr) 60px;
   background-color: #f5f5f5;
   padding: 0;
   align-items: center;
-  width: 100%;
   border-radius: 4px;
 }
 
@@ -54,15 +53,27 @@
   width: 100%;
 }
 
-/* 테이블 행 */
+/* 데이터 행 래퍼들이 최소 너비를 막지 않도록 (CommonTable + WithTooltip + PostTable 3단 래퍼) */
+/* .table_row를 포함하는 래퍼만 적용 (빈 메시지 행 제외) */
+.table_body > div:has(.table_row),
+.table_body > div:has(.table_row) > div,
+.table_body > div:has(.table_row) > div > div {
+  min-width: 1100px;
+  box-sizing: border-box;
+}
+
+/* 테이블 행 (헤더와 동일한 열 비율 - 구체 선택자로 그리드 확실 적용) */
+.table_body .table_row,
 .table_row {
-  display: grid;
-  grid-template-columns: 0.5fr 0.8fr 1.2fr 1.2fr 0.8fr 5fr 1.1fr 1.3fr 0.8fr 60px;
+  display: grid !important;
+  width: 100%;
+  min-width: 1100px;
+  grid-template-columns: 0.5fr minmax(80px, 0.9fr) 1.2fr 1.2fr 0.8fr 5fr minmax(70px, 1.1fr) minmax(130px, 1.4fr) minmax(80px, 0.9fr) 60px;
   border-bottom: 1px solid #f2f2f2;
   align-items: center;
   min-height: 62px;
-  width: 100%;
   transition: background-color 0.2s ease;
+  box-sizing: border-box;
 }
 
 /* 테이블 행 호버 효과 */
