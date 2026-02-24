@@ -107,7 +107,9 @@
       "Bash(/c/Users/청명/AppData/Local/Microsoft/WindowsApps/python3 --version)",
       "Bash(cmd /c \"where python\")",
       "Bash(cmd /c \"py --version\")",
-      "Bash(npx playwright --version)"
+      "Bash(npx playwright --version)",
+      "Bash(__NEW_LINE_20e7f63e9082b1fb__ echo \"=== 2. 사용 위치: ===\")",
+      "Bash(__NEW_LINE_5e66aec24462ec8b__ echo \"=== 3. 사용처: ===\")"
     ]
   },
   "hooks": {
