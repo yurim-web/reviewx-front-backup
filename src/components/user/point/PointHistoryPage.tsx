@@ -18,16 +18,14 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useModalState } from "@/hooks/useModalState";
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 import PointTabNavigation from "@/components/common/point/PointTabNavigation";
 import TextareaModal from "@/components/common/modal/TextareaModal";
 import BaseModal from "@/components/common/modal/BaseModal";
 import PendingPointModal from "@/components/user/point/PendingPointModal";
 import { MainTab, PointTab, PointHistory } from "@/types/domain/user";
-import {
-  pointHistoryData,
-  pendingPointListData,
-} from "@/data/user/point/pointData";
+import { pointHistoryData, pendingPointListData } from "@/data/user/point/pointData";
 import { useAuth } from "@/hooks/useAuth";
 import styles from "@/styles/user/point/point.module.css";
 
@@ -62,12 +60,12 @@ export default function PointHistoryPage({
   const { user } = useAuth();
 
   const [activeMainTab, setActiveMainTab] = useState<MainTab>("point");
-  const [is_modal_open, setIsModalOpen] = useState(false);
-  const [is_account_modal_open, setIsAccountModalOpen] = useState(false);
-  const [is_pending_modal_open, setIsPendingModalOpen] = useState(false);
-  const [is_mobile, setIsMobile] = useState(false);
-  const [selected_rejection_reason, setSelectedRejectionReason] = useState("");
-  const [modal_title, setModalTitle] = useState("사유 확인");
+  const rejectionModal = useModalState();
+  const accountModal = useModalState();
+  const pendingModal = useModalState();
+  const [isMobile, setIsMobile] = useState(false);
+  const [selectedRejectionReason, setSelectedRejectionReason] = useState("");
+  const [modalTitle, setModalTitle] = useState("사유 확인");
   const [pointInfo, setPointInfo] = useState({
     available_points: 0,
     pending_points: 0,
@@ -80,9 +78,7 @@ export default function PointHistoryPage({
     residentNumber: "",
   });
   const [userPointHistory, setUserPointHistory] = useState<PointHistory[]>([]);
-  const [pendingPointList, setPendingPointList] = useState(
-    () => pendingPointListData,
-  );
+  const [pendingPointList, setPendingPointList] = useState(() => pendingPointListData);
 
   const loadPointData = () => {
     if (typeof window === "undefined" || !user) return;
@@ -90,9 +86,7 @@ export default function PointHistoryPage({
       const storedAccounts = localStorage.getItem("user_accounts");
       if (storedAccounts) {
         const accounts: StoredUserAccount[] = JSON.parse(storedAccounts);
-        const userAccount = accounts.find(
-          (a) => a.id === user.id || a.email === user.email,
-        );
+        const userAccount = accounts.find((a) => a.id === user.id || a.email === user.email);
         if (userAccount) {
           setPointInfo({
             available_points: userAccount.available_points || 0,
@@ -148,12 +142,10 @@ export default function PointHistoryPage({
         if (activePointTab !== "all") window.location.href = "/user/point/all";
         break;
       case "earned":
-        if (activePointTab !== "earned")
-          window.location.href = "/user/point/earned";
+        if (activePointTab !== "earned") window.location.href = "/user/point/earned";
         break;
       case "withdrawn":
-        if (activePointTab !== "withdrawn")
-          window.location.href = "/user/point/withdrawn";
+        if (activePointTab !== "withdrawn") window.location.href = "/user/point/withdrawn";
         break;
     }
   };
@@ -166,29 +158,27 @@ export default function PointHistoryPage({
 
   const handleWithdrawalClick = () => {
     if (!isAccountInfoValid()) {
-      setIsAccountModalOpen(true);
+      accountModal.open();
       return;
     }
     router.push("/user/point/withdrawal_request");
   };
 
-  const handleAccountModalClose = () => setIsAccountModalOpen(false);
-
   const handleGoToAccountRegistration = () => {
-    setIsAccountModalOpen(false);
+    accountModal.close();
     router.push("/user/mypage/edit_profile");
   };
 
-  const handle_reason_click = (history: PointHistory) => {
+  const handleReasonClick = (history: PointHistory) => {
     if (history.rejection_reason) {
       setModalTitle("사유 확인");
       setSelectedRejectionReason(history.rejection_reason);
-      setIsModalOpen(true);
+      rejectionModal.open();
     }
   };
 
-  const handle_modal_close = () => {
-    setIsModalOpen(false);
+  const handleModalClose = () => {
+    rejectionModal.close();
     setSelectedRejectionReason("");
   };
 
@@ -206,8 +196,7 @@ export default function PointHistoryPage({
   // ========================================
 
   const isWithdrawalFailed = (h: PointHistory): boolean =>
-    h.status === "failed" &&
-    (h.type === "withdrawn" || h.type === "withdrawal_pending");
+    h.status === "failed" && (h.type === "withdrawn" || h.type === "withdrawal_pending");
 
   const getStatusBadgeClass = (h: PointHistory): string => {
     if (h.status === "earned") return styles.earned;
@@ -239,10 +228,7 @@ export default function PointHistoryPage({
       return null;
     }
     return (
-      <div
-        className={styles.reason_section}
-        onClick={() => handle_reason_click(history)}
-      >
+      <div className={styles.reason_section} onClick={() => handleReasonClick(history)}>
         <div className={styles.reason_icon}>
           <Image
             src="/images/management_page/cancel_info.svg"
@@ -261,10 +247,7 @@ export default function PointHistoryPage({
       <main className={styles.main_content}>
         <div className={styles.container}>
           {/* 메인 탭 네비게이션 */}
-          <TabNavigation
-            activeTab={activeMainTab}
-            setActiveTab={setActiveMainTab}
-          />
+          <TabNavigation activeTab={activeMainTab} setActiveTab={setActiveMainTab} />
 
           {/* 포인트 세부 탭 네비게이션 */}
           <PointTabNavigation
@@ -290,19 +273,16 @@ export default function PointHistoryPage({
               <button
                 className={styles.pending_point_button}
                 onClick={() => {
-                  if (is_mobile) {
+                  if (isMobile) {
                     router.push("/user/point/pending");
                   } else {
-                    setIsPendingModalOpen(true);
+                    pendingModal.open();
                   }
                 }}
               >
                 적립 예정 포인트 확인
               </button>
-              <button
-                className={styles.withdrawal_button}
-                onClick={handleWithdrawalClick}
-              >
+              <button className={styles.withdrawal_button} onClick={handleWithdrawalClick}>
                 출금 신청하기
               </button>
             </div>
@@ -319,9 +299,7 @@ export default function PointHistoryPage({
                 <div key={history.id} className={styles.history_item}>
                   {/* PC 버전 (모바일에서 숨김) */}
                   <div className={styles.status_badge_container}>
-                    <div
-                      className={`${styles.status_badge} ${getStatusBadgeClass(history)}`}
-                    >
+                    <div className={`${styles.status_badge} ${getStatusBadgeClass(history)}`}>
                       {getStatusBadgeText(history)}
                     </div>
                   </div>
@@ -330,13 +308,8 @@ export default function PointHistoryPage({
                     <div className={styles.history_description}>
                       {history.status === "failed" ? (
                         <div className={styles.cancelled_description}>
-                          <span className={styles.main_text}>
-                            {history.description}
-                          </span>
-                          <RejectionReasonLink
-                            history={history}
-                            iconSize={16}
-                          />
+                          <span className={styles.main_text}>{history.description}</span>
+                          <RejectionReasonLink history={history} iconSize={16} />
                         </div>
                       ) : (
                         history.description
@@ -360,9 +333,7 @@ export default function PointHistoryPage({
                         : `${history.amount.toLocaleString()}`}{" "}
                       P
                     </div>
-                    <div className={styles.point_balance}>
-                      {history.balance.toLocaleString()} P
-                    </div>
+                    <div className={styles.point_balance}>{history.balance.toLocaleString()} P</div>
                   </div>
 
                   {/* 모바일 버전 (PC에서 숨김) */}
@@ -371,13 +342,8 @@ export default function PointHistoryPage({
                     <div className={styles.mobile_description}>
                       {history.status === "failed" ? (
                         <div className={styles.cancelled_description}>
-                          <span className={styles.main_text}>
-                            {history.description}
-                          </span>
-                          <RejectionReasonLink
-                            history={history}
-                            iconSize={12}
-                          />
+                          <span className={styles.main_text}>{history.description}</span>
+                          <RejectionReasonLink history={history} iconSize={12} />
                         </div>
                       ) : (
                         history.description
@@ -408,9 +374,7 @@ export default function PointHistoryPage({
                   {/* 2번째 줄: 날짜 (왼쪽) + 상태 (오른쪽) */}
                   <div className={styles.mobile_row_second}>
                     <div className={styles.mobile_date}>{history.date}</div>
-                    <div
-                      className={`${styles.mobile_status} ${getStatusBadgeClass(history)}`}
-                    >
+                    <div className={`${styles.mobile_status} ${getStatusBadgeClass(history)}`}>
                       {getStatusBadgeText(history, true)}
                     </div>
                   </div>
@@ -423,17 +387,17 @@ export default function PointHistoryPage({
 
       {/* 적립 예정 포인트 확인 모달 */}
       <PendingPointModal
-        is_open={is_pending_modal_open}
-        on_close={() => setIsPendingModalOpen(false)}
+        is_open={pendingModal.isOpen}
+        on_close={pendingModal.close}
         pending_list={pendingPointList}
       />
 
       {/* 반려 사유 모달 */}
       <TextareaModal
-        is_open={is_modal_open}
-        on_close={handle_modal_close}
-        title={modal_title}
-        value={selected_rejection_reason}
+        is_open={rejectionModal.isOpen}
+        on_close={handleModalClose}
+        title={modalTitle}
+        value={selectedRejectionReason}
         readOnly={true}
         variant="reject"
         buttons={["닫기"]}
@@ -441,8 +405,8 @@ export default function PointHistoryPage({
 
       {/* 계좌 정보 확인 모달 */}
       <BaseModal
-        is_open={is_account_modal_open}
-        on_close={handleAccountModalClose}
+        is_open={accountModal.isOpen}
+        on_close={accountModal.close}
         message="계좌 정보가 없습니다.<br>계좌 정보 등록 후 출금 신청을 할 수 있습니다."
         buttons={["취소", "등록"]}
         on_confirm={handleGoToAccountRegistration}
