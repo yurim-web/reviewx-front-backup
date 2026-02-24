@@ -1,5 +1,5 @@
 /* ========================================
-   🔗📸 통합 콘텐츠 등록 모달 컴포넌트 (유저용)
+   통합 콘텐츠 등록 모달 컴포넌트 (유저용)
    ======================================== */
 
 /**
@@ -21,12 +21,6 @@ import ContentVerificationModal from "./content_verification/ContentVerification
 import { useModalState } from "@/hooks/useModalState";
 import styles from "../../../../styles/user/campaign_management/modals/campaign_modal_common.module.css";
 import type { CampaignType } from "@/types/domain/user";
-
-/**
- * 설명:
- * - styles: 통합된 캠페인 모달 스타일 (모든 모달이 공통으로 사용)
- * - 모든 모달 스타일이 campaign_modal_common.module.css에 통합되어 있습니다.
- */
 
 interface CombinedContentModalProps {
   isOpen: boolean;
@@ -67,7 +61,7 @@ export default function CombinedContentModal({
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
   const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
+  const [_isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 콘텐츠 확인 모달 상태 관리
@@ -139,8 +133,7 @@ export default function CombinedContentModal({
     if (files.length === 0) return;
 
     // 최대 7장 제한 확인 (기존 이미지 + 업로드된 이미지 + 새로 선택한 파일)
-    const totalImages =
-      existingImageUrls.length + uploadedImages.length + files.length;
+    const totalImages = existingImageUrls.length + uploadedImages.length + files.length;
     if (totalImages > 7) {
       // 파일 입력 초기화
       if (fileInputRef.current) {
@@ -319,11 +312,7 @@ export default function CombinedContentModal({
 
       // 입력값 초기화는 성공 모달을 닫을 때 수행
     } catch (_error) {
-      alert(
-        `콘텐츠 ${
-          mode === "edit" ? "수정" : "등록"
-        }에 실패했습니다. 다시 시도해주세요.`,
-      );
+      alert(`콘텐츠 ${mode === "edit" ? "수정" : "등록"}에 실패했습니다. 다시 시도해주세요.`);
     } finally {
       setIsSubmitting(false);
     }
@@ -384,12 +373,7 @@ export default function CombinedContentModal({
                 </h2>
                 {/* 닫기 버튼 */}
                 <button className={styles.close_button} onClick={onClose}>
-                  <Image
-                    src="/images/filter/x_icon.svg"
-                    alt="닫기"
-                    width={28}
-                    height={28}
-                  />
+                  <Image src="/images/filter/x_icon.svg" alt="닫기" width={28} height={28} />
                 </button>
               </div>
 
@@ -413,10 +397,7 @@ export default function CombinedContentModal({
                 <div className={styles.image_grid}>
                   {/* 기존 이미지들 (수정 모드일 때 표시) */}
                   {existingImageUrls.map((imageUrl, index) => (
-                    <div
-                      key={`existing-${index}`}
-                      className={styles.image_item}
-                    >
+                    <div key={`existing-${index}`} className={styles.image_item}>
                       <img
                         src={imageUrl}
                         alt={`기존 이미지 ${index + 1}`}
@@ -462,10 +443,7 @@ export default function CombinedContentModal({
 
                   {/* 업로드 버튼 (최대 7장까지) */}
                   {existingImageUrls.length + uploadedImages.length < 7 && (
-                    <div
-                      className={styles.upload_button}
-                      onClick={handleUploadClick}
-                    >
+                    <div className={styles.upload_button} onClick={handleUploadClick}>
                       <div className={styles.upload_icon}>
                         <img
                           src="/images/icons/plus_icon.svg"
@@ -489,8 +467,7 @@ export default function CombinedContentModal({
                 onClick={handleSubmit}
                 disabled={
                   isSubmitting ||
-                  (!linkUrl.trim() &&
-                    existingImageUrls.length + uploadedImages.length === 0)
+                  (!linkUrl.trim() && existingImageUrls.length + uploadedImages.length === 0)
                 }
               >
                 {isSubmitting ? "확인 중..." : "확인"}

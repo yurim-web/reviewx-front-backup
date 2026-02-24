@@ -1,5 +1,5 @@
 /* ========================================
-   ✅ 콘텐츠 확인 모달 컴포넌트 (유저용)
+   콘텐츠 확인 모달 컴포넌트 (유저용)
    ======================================== */
 
 /**
@@ -7,30 +7,8 @@
  *
  * 목적: 사용자가 등록한 콘텐츠가 기본 미션 기준을 충족하는지 확인할 수 있는 모달입니다.
  *
- * 사용 위치:
- * - 완료 탭 > 모든 캠페인 타입
- *   - "콘텐츠 확인하기" 버튼 클릭 시
- *   - CompletedTabCard 컴포넌트에서 사용
- *
- * 모달 구성:
- * 1. 모달 제목: "콘텐츠 확인"
- * 2. 서브타이틀: "기본 미션"
- * 3. 미션 항목 목록:
- *    - 각 항목은 박스 형태로 표시
- *    - 충족: 초록색 테두리
- *    - 미충족: 빨간색 테두리
- * 4. 안내 메시지 (미충족 항목이 있을 때만 표시):
- *    - "기본 미션 기준을 충족하지 못했습니다. 기준을 달성하신 후 다시 신청해 주세요."
- * 5. 제출 버튼:
- *    - 모든 기준 충족 시: 활성화
- *    - 미충족 항목이 있을 시: 비활성화
- *
- * 경우의 수:
- * 1. 모든 기준 충족: 모든 항목 초록색, 메시지 없음, 제출 버튼 활성화
- * 2. 일부만 충족: 일부 초록색/일부 빨간색, 메시지 표시, 제출 버튼 비활성화
- * 3. 아예 다 충족하지 못함: 모든 항목 빨간색, 메시지 표시, 제출 버튼 비활성화
- *
- *
+ * 사용 페이지:
+ * - /user/campaign_management (완료 탭 - "콘텐츠 확인하기" 버튼 클릭 시)
  */
 
 "use client";
@@ -153,7 +131,7 @@ const parseRequirement = (requirement: string): string => {
  */
 const getMissionItemsFromCampaign = (
   campaignId: string,
-  campaignType: CampaignType
+  _campaignType: CampaignType
 ): MissionItem[] => {
   // 모든 캠페인 데이터를 하나의 배열로 합치기
   const allCampaigns = [
@@ -184,7 +162,7 @@ const getMissionItemsFromCampaign = (
 export default function ContentVerificationModal({
   isOpen,
   onClose,
-  campaignTitle,
+  campaignTitle: _campaignTitle,
   campaignId,
   campaignType,
   missionItems,
@@ -206,10 +184,7 @@ export default function ContentVerificationModal({
   useEffect(() => {
     if (campaignId && campaignType) {
       // 실제 캠페인 데이터에서 requirements를 가져와서 변환
-      const missionItemsFromCampaign = getMissionItemsFromCampaign(
-        campaignId,
-        campaignType
-      );
+      const missionItemsFromCampaign = getMissionItemsFromCampaign(campaignId, campaignType);
       setItems(missionItemsFromCampaign);
     } else if (missionItems) {
       // missionItems prop이 제공되면 사용
@@ -250,9 +225,6 @@ export default function ContentVerificationModal({
   // 모든 미션 항목이 충족되었는지 확인
   const allCompleted = items.every((item) => item.isCompleted);
 
-  // 미충족 항목이 있는지 확인
-  const hasIncompleteItems = items.some((item) => !item.isCompleted);
-
   // 모달이 열려있지 않으면 렌더링하지 않음
   if (!isOpen) return null;
 
@@ -280,7 +252,6 @@ export default function ContentVerificationModal({
    */
   const handleSubmit = () => {
     if (allCompleted) {
-
       // Toast 메시지 표시
       setShowToast(true);
 
@@ -314,12 +285,7 @@ export default function ContentVerificationModal({
 
           {/* 닫기 버튼 */}
           <button className={styles.close_button} onClick={onClose}>
-            <Image
-              src="/images/filter/x_icon.svg"
-              alt="닫기"
-              width={20}
-              height={20}
-            />
+            <Image src="/images/filter/x_icon.svg" alt="닫기" width={20} height={20} />
           </button>
 
           {/* 미션 항목 목록 */}
@@ -341,21 +307,16 @@ export default function ContentVerificationModal({
 
           {/* 안내 메시지 */}
           {allCompleted ? (
-            <p className={styles.warning_message}>
-              기본 미션 기준을 충족하셨습니다.
-            </p>
+            <p className={styles.warning_message}>기본 미션 기준을 충족하셨습니다.</p>
           ) : (
             <p className={styles.warning_message}>
-              기본 미션 기준을 충족하지 못했습니다. 기준을 달성하신 후 다시
-              신청해 주세요.
+              기본 미션 기준을 충족하지 못했습니다. 기준을 달성하신 후 다시 신청해 주세요.
             </p>
           )}
 
           {/* 제출 버튼 */}
           <button
-            className={`${styles.submit_button} ${
-              allCompleted ? styles.active : styles.disabled
-            }`}
+            className={`${styles.submit_button} ${allCompleted ? styles.active : styles.disabled}`}
             onClick={handleSubmit}
             disabled={!allCompleted}
           >

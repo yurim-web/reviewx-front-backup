@@ -21,12 +21,6 @@ import ErrorText from "@/components/common/error_text/ErrorText";
 import styles from "../../../../styles/user/campaign_management/modals/campaign_modal_common.module.css";
 
 /**
- * 설명:
- * - styles: 통합된 캠페인 모달 스타일 (모든 모달이 공통으로 사용)
- * - 모든 모달 스타일이 campaign_modal_common.module.css에 통합되어 있습니다.
- */
-
-/**
  * 검수 실패 항목 타입
  */
 export type ValidationFailureType =
@@ -83,8 +77,7 @@ export default function ReceiptRegistrationModal({
   const isInitializedRef = useRef(false);
 
   // 구매 영수증 검수 실패 항목 상태
-  const [validationError, setValidationError] =
-    useState<ValidationFailureType | null>(null);
+  const [validationError, setValidationError] = useState<ValidationFailureType | null>(null);
 
   // 성공 모달 상태 관리
   const [successModal, setSuccessModal] = useState<{
@@ -124,6 +117,7 @@ export default function ReceiptRegistrationModal({
       // 모달이 닫힐 때 플래그 리셋
       isInitializedRef.current = false;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]); // isOpen만 의존성으로 설정
 
   // 메인 모달이 닫혀있고, 성공 모달도 닫혀있을 때만 렌더링하지 않음
@@ -144,8 +138,7 @@ export default function ReceiptRegistrationModal({
     const newFiles = Array.from(files);
 
     // 파일 개수 체크 (최대 7장) - 기존 이미지와 새로 업로드할 이미지 합산
-    const totalImages =
-      existingImageUrls.length + uploadedImages.length + newFiles.length;
+    const totalImages = existingImageUrls.length + uploadedImages.length + newFiles.length;
 
     if (totalImages > 7) {
       setErrorModal({
@@ -232,7 +225,6 @@ export default function ReceiptRegistrationModal({
         processedCount++;
 
         if (processedCount === validFiles.length) {
-
           setUploadedImages((prev) => {
             const updated = [...prev, ...newImages];
             return updated;
@@ -354,11 +346,7 @@ export default function ReceiptRegistrationModal({
 
       // 입력값 초기화는 성공 모달을 닫을 때 수행
     } catch (_error) {
-      alert(
-        `영수증 ${
-          mode === "edit" ? "수정" : "등록"
-        }에 실패했습니다. 다시 시도해주세요.`
-      );
+      alert(`영수증 ${mode === "edit" ? "수정" : "등록"}에 실패했습니다. 다시 시도해주세요.`);
     } finally {
       setIsUploading(false);
     }
@@ -402,12 +390,7 @@ export default function ReceiptRegistrationModal({
                 </h2>
                 {/* 닫기 버튼 */}
                 <button className={styles.close_button} onClick={onClose}>
-                  <Image
-                    src="/images/filter/x_icon.svg"
-                    alt="닫기"
-                    width={20}
-                    height={20}
-                  />
+                  <Image src="/images/filter/x_icon.svg" alt="닫기" width={20} height={20} />
                 </button>
               </div>
 
@@ -418,12 +401,8 @@ export default function ReceiptRegistrationModal({
 
               {/* 이미지 업로드 영역 */}
               <div className={styles.upload_section}>
-                {existingImageUrls.length === 0 &&
-                uploadedImages.length === 0 ? (
-                  <label
-                    htmlFor="receipt_file_input"
-                    className={styles.image_upload_area}
-                  >
+                {existingImageUrls.length === 0 && uploadedImages.length === 0 ? (
+                  <label htmlFor="receipt_file_input" className={styles.image_upload_area}>
                     <div className={styles.upload_placeholder}>
                       <Image
                         src="/images/icons/plus_icon.svg"
@@ -437,10 +416,7 @@ export default function ReceiptRegistrationModal({
                   <div className={styles.image_grid_grid}>
                     {/* 기존 이미지 표시 (수정 모드) */}
                     {existingImageUrls.map((imageUrl, index) => (
-                      <div
-                        key={`existing-${index}`}
-                        className={styles.image_preview}
-                      >
+                      <div key={`existing-${index}`} className={styles.image_preview}>
                         <img
                           src={imageUrl}
                           alt={`기존 영수증 ${index + 1}`}
@@ -466,10 +442,7 @@ export default function ReceiptRegistrationModal({
                     ))}
                     {/* 새로 업로드한 이미지 표시 */}
                     {uploadedImages.map((image) => (
-                      <div
-                        key={image.id}
-                        className={styles.image_preview}
-                      >
+                      <div key={image.id} className={styles.image_preview}>
                         <img
                           src={image.preview}
                           alt={`영수증 ${uploadedImages.indexOf(image) + 1}`}
@@ -493,10 +466,7 @@ export default function ReceiptRegistrationModal({
                     ))}
                     {/* 추가 버튼 (최대 7장까지) */}
                     {existingImageUrls.length + uploadedImages.length < 7 && (
-                      <label
-                        htmlFor="receipt_file_input"
-                        className={styles.add_more_button}
-                      >
+                      <label htmlFor="receipt_file_input" className={styles.add_more_button}>
                         <Image
                           src="/images/icons/plus_icon.svg"
                           alt="이미지 추가"
@@ -522,12 +492,10 @@ export default function ReceiptRegistrationModal({
               {/* 안내 문구 */}
               <div className={styles.guidelines}>
                 <ul className={styles.guidelines_list}>
+                  <li>10mb 이하의 JPG, PNG, GIF 파일 최대 7장까지 등록 가능합니다.</li>
                   <li>
-                    10mb 이하의 JPG, PNG, GIF 파일 최대 7장까지 등록 가능합니다.
-                  </li>
-                  <li>
-                    주문번호, 구매 상품, 주문 금액, 배송지가 모두 확인될 수
-                    있도록 캡처한 이미지를 업로드해 주세요.
+                    주문번호, 구매 상품, 주문 금액, 배송지가 모두 확인될 수 있도록 캡처한 이미지를
+                    업로드해 주세요.
                   </li>
                 </ul>
               </div>
