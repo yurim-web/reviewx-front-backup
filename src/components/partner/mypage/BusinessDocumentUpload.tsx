@@ -7,13 +7,7 @@
  *
  * 목적: 사업자등록증 파일을 업로드하고 상태를 표시하는 컴포넌트입니다.
  *
- * 주요 기능:
- * - 사업자등록증 파일 선택 (이미지 또는 PDF, 10MB 제한)
- * - 업로드 완료 상태 표시
- * - 파일명 표시
- * - 내부에서 에러 모달 관리
- *
- * 사용 위치:
+ * 사용 페이지:
  * - /partner/mypage/edit (파트너 내 정보 수정 페이지)
  * - /partner/signup (파트너 회원가입 페이지)
  */
@@ -111,9 +105,7 @@ export default function BusinessDocumentUpload({
         const allowedExtensions = ["pdf", "jpg", "jpeg", "png"];
         const fileExtension = file.name.split(".").pop()?.toLowerCase();
         if (!fileExtension || !allowedExtensions.includes(fileExtension)) {
-          setModalMessage(
-            "지정된 확장자(PDF, JPG, PNG)만<br>업로드할 수 있습니다."
-          );
+          setModalMessage("지정된 확장자(PDF, JPG, PNG)만<br>업로드할 수 있습니다.");
           return; // 확장자 에러 발생 시 파일 선택 취소
         }
 
@@ -143,9 +135,7 @@ export default function BusinessDocumentUpload({
 
   // 스타일에 따라 다른 클래스명 사용
   // signup 스타일일 때는 공통 스타일(commonStyles) 사용, mypage 스타일일 때는 componentStyles 사용
-  const containerClass = isSignupStyle
-    ? commonStyles.form_field
-    : componentStyles.field_article;
+  const containerClass = isSignupStyle ? commonStyles.form_field : componentStyles.field_article;
   const wrapperClass = isSignupStyle
     ? componentStyles.file_upload_wrapper
     : componentStyles.input_with_button;
@@ -158,9 +148,7 @@ export default function BusinessDocumentUpload({
   const buttonClass = isSignupStyle
     ? componentStyles.file_select_button
     : componentStyles.postal_button;
-  const labelClass = isSignupStyle
-    ? commonStyles.field_label
-    : componentStyles.field_label;
+  const labelClass = isSignupStyle ? commonStyles.field_label : componentStyles.field_label;
 
   return (
     <>
@@ -185,11 +173,7 @@ export default function BusinessDocumentUpload({
               </div>
             )}
           </div>
-          <button
-            type="button"
-            className={buttonClass}
-            onClick={handleBusinessDocumentSelect}
-          >
+          <button type="button" className={buttonClass} onClick={handleBusinessDocumentSelect}>
             파일 선택
           </button>
         </div>
