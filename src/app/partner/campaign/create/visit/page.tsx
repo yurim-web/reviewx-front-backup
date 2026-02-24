@@ -21,7 +21,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import VisitCampaignForm from "@/components/partner/campaign_create_form/VisitCampaignForm";
@@ -32,6 +32,7 @@ import layoutStyles from "@/styles/partner/partner_layout.module.css";
 import PageHeader from "@/components/partner/campaign_create_form/common/layout/PageHeader";
 import BaseModal from "@/components/common/modal/BaseModal";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
+import { getPartnerName } from "@/utils/partner/partnerHelpers";
 
 export default function VisitCampaignCreatePage() {
   const router = useRouter();
@@ -40,8 +41,7 @@ export default function VisitCampaignCreatePage() {
   const [isUrgent, setIsUrgent] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [pendingFormData, setPendingFormData] =
-    useState<CampaignFormData | null>(null);
+  const [pendingFormData, setPendingFormData] = useState<CampaignFormData | null>(null);
   const [pendingIsUrgent, setPendingIsUrgent] = useState(false); // 확인 모달 열 때의 isUrgent 값 저장
 
   /**
@@ -91,7 +91,7 @@ export default function VisitCampaignCreatePage() {
       // 이미지 URL 처리
       // localStorage 용량 문제로 base64 이미지는 저장하지 않고 기본 이미지 사용
       // 실제 프로덕션에서는 이미지를 서버에 업로드하고 URL을 받아와야 합니다
-      let imageUrl = "/images/main/campaign_img/eximg_2.png"; // 기본 이미지 사용
+      const imageUrl = "/images/main/campaign_img/eximg_2.png"; // 기본 이미지 사용
 
       // TODO: 실제 프로덕션에서는 이미지 업로드 API 호출
       // const imageUploadResponse = await uploadImages(formData.thumbnailImage, formData.detailImages);
@@ -154,10 +154,7 @@ export default function VisitCampaignCreatePage() {
       };
 
       // 폼 데이터를 CampaignWithApplicants 형태로 변환
-      const newCampaign = addVisitCampaign(
-        formDataWithNormalizedRegion,
-        imageUrl
-      );
+      const newCampaign = addVisitCampaign(formDataWithNormalizedRegion, imageUrl);
 
       // 디버깅: 생성된 캠페인 정보 확인
       // console.log(
@@ -174,29 +171,12 @@ export default function VisitCampaignCreatePage() {
       const registeredAt = new Date().toISOString();
 
       // 파트너명 가져오기 (partner_accounts에서)
-      let partnerName = "";
-      try {
-        if (typeof window !== "undefined") {
-          const storedAccounts = localStorage.getItem("partner_accounts");
-          if (storedAccounts) {
-            const accounts = JSON.parse(storedAccounts);
-            const partnerAccount = accounts.find(
-              (a: any) => a.id === (user?.id || 'partner_test_001')
-            );
-            if (partnerAccount) {
-              // business_name 우선, 없으면 name 사용
-              partnerName = partnerAccount.business_name || partnerAccount.name || "";
-            }
-          }
-        }
-      } catch (error) {
-        console.error("파트너명 조회 중 오류:", error);
-      }
+      const partnerName = getPartnerName(user?.id || "partner_test_001");
 
       const extendedCampaign = {
         ...newCampaign,
         // 파트너 ID 추가
-        partner_id: user?.id || 'partner_test_001',
+        partner_id: user?.id || "partner_test_001",
         // 파트너명 추가
         partnerName: partnerName,
         // campaignInfo에도 partnerName 추가
@@ -256,10 +236,6 @@ export default function VisitCampaignCreatePage() {
        * - localStorage 용량 제한은 보통 5-10MB입니다.
        */
       try {
-        // 현재 저장할 데이터 크기 추정 (문자열 길이로 대략 계산)
-        const dataToStore = JSON.stringify(extendedCampaign);
-        const estimatedSize = new Blob([dataToStore]).size; // 바이트 단위
-
         // localStorage에서 기존 캠페인 불러오기
         const storedCampaigns = localStorage.getItem("visitCampaigns");
         let campaigns = storedCampaigns ? JSON.parse(storedCampaigns) : [];
@@ -274,9 +250,7 @@ export default function VisitCampaignCreatePage() {
 
         if (totalSize > maxSize) {
           // 오래된 캠페인 제거 (가장 오래된 것부터 제거)
-          console.warn(
-            "localStorage 용량 초과. 오래된 캠페인 데이터를 정리합니다."
-          );
+          console.warn("localStorage 용량 초과. 오래된 캠페인 데이터를 정리합니다.");
 
           // 최근 10개만 유지 (가장 최근에 추가된 것부터)
           campaigns = campaigns.slice(-10);
@@ -287,9 +261,7 @@ export default function VisitCampaignCreatePage() {
 
           if (cleanedSize > maxSize) {
             // 여전히 용량 초과 시 경고
-            console.error(
-              "localStorage 용량이 여전히 초과합니다. 일부 데이터를 제거하세요."
-            );
+            console.error("localStorage 용량이 여전히 초과합니다. 일부 데이터를 제거하세요.");
             setIsErrorModalOpen(true);
             return;
           }
@@ -297,9 +269,13 @@ export default function VisitCampaignCreatePage() {
 
         // localStorage에 저장
         localStorage.setItem("visitCampaigns", JSON.stringify(campaigns));
-      } catch (error: any) {
+      } catch (error) {
         // QuotaExceededError 처리
-        if (error.name === "QuotaExceededError" || error.code === 22) {
+        if (
+          error instanceof Error &&
+          (error.name === "QuotaExceededError" ||
+            (error as unknown as { code: number }).code === 22)
+        ) {
           console.error("localStorage 용량 초과:", error);
 
           // 오래된 캠페인 제거 후 재시도
@@ -346,11 +322,7 @@ export default function VisitCampaignCreatePage() {
       {/* 메인 컨텐츠 영역 */}
       <div className={layoutStyles.main_content}>
         {/* 페이지 헤더 */}
-        <PageHeader
-          title="새 캠페인 등록"
-          onUrgentChange={setIsUrgent}
-          initialUrgent={isUrgent}
-        />
+        <PageHeader title="새 캠페인 등록" onUrgentChange={setIsUrgent} initialUrgent={isUrgent} />
 
         {/* 방문형 캠페인 등록 폼 */}
         <VisitCampaignForm
