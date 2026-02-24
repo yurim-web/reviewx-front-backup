@@ -1,8 +1,20 @@
-/* 캠페인 관리 페이지 메인 스타일 파일 */
-/* 
+/* ========================================
+   캠페인 관리 - 공통 스타일
+   ======================================== */
+
+/**
+ * campaign_management.module.css
+ *
+ * 목적: 캠페인 관리 페이지 공통 스타일 (헤더, 탭, 통계 등)
+ *
+ * 사용 페이지:
+ * - /user/campaign_management/* (캠페인 관리 전체)
+ */
+
+/*
  * 이 파일은 더 이상 사용되지 않습니다.
  * 각 컴포넌트에서 필요한 CSS 모듈을 직접 import하세요.
- * 
+ *
  * 사용 예시:
  * import layoutStyles from './layout.module.css';
  * import tabStyles from './tab_navigation.module.css';

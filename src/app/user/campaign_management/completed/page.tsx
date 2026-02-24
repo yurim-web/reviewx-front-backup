@@ -1,112 +1,73 @@
 /* ========================================
-   ✅ 완료 탭 전용 페이지
+   캠페인 관리 - 완료 탭 페이지
    ======================================== */
 
 /**
- * 완료 탭 전용 페이지
+ * CompletedPage
  *
- * 목적: 완료 상태의 캠페인 목록을 보여주는 독립적인 페이지입니다.
+ * 목적: 완료 상태의 캠페인 목록을 보여주는 페이지
  *
- * 페이지 경로:
- * - /user/campaign_management/completed
- *
- * 주요 기능:
- * - 완료 상태의 캠페인 목록 표시
- * - 캠페인별 액션 버튼 (콘텐츠 확인하기 등)
- * - URL 기반 라우팅으로 새로고침 시에도 페이지 유지
+ * 사용 페이지:
+ * - /user/campaign_management/completed (완료 탭)
  */
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import CampaignManagementHeader from "@/components/user/campaign_management/CampaignManagementHeader";
 import CampaignList from "@/components/user/campaign_management/CampaignList";
 import CampaignFilterBar from "@/components/common/campaign_management/CampaignFilterBar";
 import type { MainTab } from "@/types/domain/user";
 import type { CampaignApplication } from "@/types/domain/user";
 import layoutStyles from "@/styles/user/campaign_management/campaign_management_layout.module.css";
-
-// 임시 데이터 import
+import { useWindowFocus } from "@/hooks/common/useWindowFocus";
 import { getCampaignsByTab } from "@/data/user/campaign_management/campaignManagementData";
 
-/**
- * 완료 탭 전용 페이지 컴포넌트
- */
 export default function CompletedPage() {
-  // 상단 메인 탭 상태 (캠페인 / 포인트)
   const [activeTab, setActiveTab] = useState<MainTab>("campaign");
+  const [activeStatTab] = useState<"완료">("완료");
+  const [filteredCampaigns, setFilteredCampaigns] = useState<CampaignApplication[]>([]);
+  const [campaigns, setCampaigns] = useState<CampaignApplication[]>(() =>
+    getCampaignsByTab("완료")
+  );
 
-  // 통계 탭 상태 - 완료 탭이 활성화된 상태로 설정
-  const [activeStatTab, setActiveStatTab] = useState<
-    "신청" | "선정" | "완료" | "취소/반려" | "패널티"
-  >("완료");
+  const getCompletedCampaignIds = (): string[] => {
+    if (typeof window === "undefined") return [];
+    try {
+      const completed = localStorage.getItem("completedCampaignIds");
+      return completed ? JSON.parse(completed) : [];
+    } catch {
+      return [];
+    }
+  };
 
-  // 필터링된 캠페인 목록 상태
-  const [filteredCampaigns, setFilteredCampaigns] = useState<
-    CampaignApplication[]
-  >([]);
+  const loadCampaigns = useCallback(() => {
+    setCampaigns(getCampaignsByTab("완료", getCompletedCampaignIds()));
+  }, []);
 
-  // 캠페인 목록 상태 (초기값은 정적 데이터만 사용하여 hydration 오류 방지)
-  const [campaigns, setCampaigns] = useState<CampaignApplication[]>(() => {
-    return getCampaignsByTab(activeStatTab);
-  });
+  useEffect(() => {
+    loadCampaigns();
+  }, [loadCampaigns]);
 
-  /**
-   * 필터링된 캠페인 목록 변경 핸들러
-   *
-   * 설명:
-   * - CampaignFilterBar 컴포넌트에서 필터링된 결과를 받아서 상태를 업데이트합니다.
-   * - 이제 필터링 로직은 CampaignFilterBar 내부에서 처리됩니다.
-   */
+  useWindowFocus(loadCampaigns);
+
   const handleFilteredCampaignsChange = (filtered: CampaignApplication[]) => {
     setFilteredCampaigns(filtered);
   };
 
-  /**
-   * 탭 변경 시 캠페인 목록 초기화
-   *
-   * 설명:
-   * - 탭이 변경되면 새로운 캠페인 목록을 가져옵니다.
-   * - 필터 바에 새로운 캠페인 목록을 전달합니다.
-   * - 클라이언트에서는 localStorage를 고려한 데이터를 사용합니다.
-   */
-  useEffect(() => {
-    // localStorage에서 완료된 캠페인 ID 가져오기 (클라이언트에서만)
-    const getCompletedCampaignIds = (): string[] => {
-      if (typeof window === "undefined") return [];
-      try {
-        const completed = localStorage.getItem("completedCampaignIds");
-        return completed ? JSON.parse(completed) : [];
-      } catch (error) {
-        console.error("Failed to get completed campaign IDs:", error);
-        return [];
-      }
-    };
-
-    const completedCampaignIds = getCompletedCampaignIds();
-    const newCampaigns = getCampaignsByTab(activeStatTab, completedCampaignIds);
-    setCampaigns(newCampaigns);
-  }, [activeStatTab]);
-
   return (
     <div className={layoutStyles.container}>
-      {/* 메인 컨텐츠 영역 */}
       <div className={layoutStyles.main_content}>
-        {/* 공통 헤더: 상단 탭 네비게이션 + 통계 탭 */}
         <CampaignManagementHeader
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           activeStatTab={activeStatTab}
         />
-
-        {/* 필터 바: 유형, 채널 필터 및 검색 */}
         <CampaignFilterBar<CampaignApplication>
           campaigns={campaigns}
           onFilteredCampaignsChange={handleFilteredCampaignsChange}
           showSearch={false}
         />
-
-        {/* 필터링된 캠페인 목록 */}
         <CampaignList
           campaigns={filteredCampaigns}
           activeStatTab="완료"

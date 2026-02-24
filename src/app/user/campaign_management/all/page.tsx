@@ -1,23 +1,19 @@
 /* ========================================
-   📋 전체 탭 전용 페이지 (선정+완료+취소/반려 통합)
+   캠페인 관리 - 전체 탭 페이지
    ======================================== */
 
 /**
- * 전체 탭 전용 페이지
+ * AllPage
  *
- * 목적: 신청·선정·완료·취소/반려 상태의 캠페인을 한 목록에 모아 보여줍니다.
+ * 목적: 신청·선정·완료·취소/반려 상태의 캠페인을 통합하여 보여주는 페이지
  *
- * 페이지 경로:
- * - /user/campaign_management/all
- *
- * 주요 기능:
- * - 신청·선정·완료·취소/반려 캠페인 통합 목록 표시
- * - 카드별 해당 탭 규칙 적용 (n일 전 등 각 탭 규칙 따름)
+ * 사용 페이지:
+ * - /user/campaign_management/all (전체 탭)
  */
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import CampaignManagementHeader from "@/components/user/campaign_management/CampaignManagementHeader";
 import CampaignList from "@/components/user/campaign_management/CampaignList";
 import CampaignFilterBar from "@/components/common/campaign_management/CampaignFilterBar";
@@ -25,7 +21,7 @@ import type { MainTab } from "@/types/domain/user";
 import type { CampaignApplication } from "@/types/domain/user";
 import layoutStyles from "@/styles/user/campaign_management/campaign_management_layout.module.css";
 import { withUserAuth } from "@/components/auth/withAuth";
-
+import { useWindowFocus } from "@/hooks/common/useWindowFocus";
 import {
   getCampaignsByTab,
   getClientCampaignStats,
@@ -33,50 +29,38 @@ import {
 
 function AllPage() {
   const [activeTab, setActiveTab] = useState<MainTab>("campaign");
-  const [activeStatTab, setActiveStatTab] = useState<"전체">("전체");
-  const [filteredCampaigns, setFilteredCampaigns] = useState<
-    CampaignApplication[]
-  >([]);
+  const [activeStatTab] = useState<"전체">("전체");
+  const [filteredCampaigns, setFilteredCampaigns] = useState<CampaignApplication[]>([]);
   const [campaigns, setCampaigns] = useState<CampaignApplication[]>(() =>
     getCampaignsByTab("전체")
   );
   const [stats, setStats] = useState(() => getClientCampaignStats());
 
-  const handleFilteredCampaignsChange = (filtered: CampaignApplication[]) => {
-    setFilteredCampaigns(filtered);
+  const getCompletedCampaignIds = (): string[] => {
+    if (typeof window === "undefined") return [];
+    try {
+      const completed = localStorage.getItem("completedCampaignIds");
+      return completed ? JSON.parse(completed) : [];
+    } catch {
+      return [];
+    }
   };
 
-  useEffect(() => {
-    const getCompletedCampaignIds = (): string[] => {
-      if (typeof window === "undefined") return [];
-      try {
-        const completed = localStorage.getItem("completedCampaignIds");
-        return completed ? JSON.parse(completed) : [];
-      } catch {
-        return [];
-      }
-    };
+  const loadCampaigns = useCallback(() => {
     const completedCampaignIds = getCompletedCampaignIds();
     setCampaigns(getCampaignsByTab("전체", completedCampaignIds));
     setStats(getClientCampaignStats());
   }, []);
 
   useEffect(() => {
-    const handleFocus = () => {
-      const getCompletedCampaignIds = (): string[] => {
-        try {
-          const completed = localStorage.getItem("completedCampaignIds");
-          return completed ? JSON.parse(completed) : [];
-        } catch {
-          return [];
-        }
-      };
-      setCampaigns(getCampaignsByTab("전체", getCompletedCampaignIds()));
-      setStats(getClientCampaignStats());
-    };
-    window.addEventListener("focus", handleFocus);
-    return () => window.removeEventListener("focus", handleFocus);
-  }, []);
+    loadCampaigns();
+  }, [loadCampaigns]);
+
+  useWindowFocus(loadCampaigns);
+
+  const handleFilteredCampaignsChange = (filtered: CampaignApplication[]) => {
+    setFilteredCampaigns(filtered);
+  };
 
   return (
     <div className={layoutStyles.container}>

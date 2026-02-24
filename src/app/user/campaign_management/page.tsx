@@ -1,27 +1,14 @@
 /* ========================================
-   📊 캠페인 관리 메인 페이지
+   캠페인 관리 메인 페이지
    ======================================== */
 
 /**
- * 캠페인 관리 메인 페이지
+ * CampaignManagementPage
  *
- * 목적: 사용자가 신청/선정/완료된 캠페인을 관리하고 패널티 정보를 확인하는 통합 관리 페이지입니다.
+ * 목적: 로그인 상태 확인 후 /user/campaign_management/all 로 리다이렉트하는 진입 페이지
  *
- * 페이지 경로:
- * - /user/campaign_management
- *
- * 사용 파일:
- * - 컴포넌트: TabNavigation, StatisticsTab, CampaignList
- * - 타입: CampaignApplication, MainTab
- * - CSS: campaign_management.module.css
- *
- * 주요 기능:
- * - 캠페인 상태별 통계 표시 (신청/선정/완료/취소반려/패널티)
- * - 상태별 캠페인 목록 필터링 및 표시
- * - 캠페인별 액션 버튼 (신청 취소, 콘텐츠 등록, 패널티 해제 등)
- * - 상단 고정 탭 네비게이션 (캠페인/포인트/계정)
- * - 통계 탭 네비게이션 (상태별 필터링)
- * - 패널티 내역 및 현황 표시
+ * 사용 페이지:
+ * - /user/campaign_management (진입점, all 탭으로 리다이렉트)
  */
 
 "use client";
@@ -63,16 +50,7 @@ const checkLoginStatus = (): LoginStatus => {
   // }
   // return "valid";
 
-  // 임시: sessionStorage에서 로그인 상태 확인
-  // 개발/테스트용: sessionStorage에 "isLoggedIn" = "true"로 설정하면 로그인 상태로 처리됨
-  const isLoggedIn = sessionStorage.getItem("isLoggedIn");
   const isExpired = sessionStorage.getItem("isExpired");
-
-  // 개발 중: 항상 로그인 상태로 처리 (테스트용)
-  // 실제 배포 시에는 아래 주석을 해제하고 위의 로직을 사용하세요
-  // if (isExpired === "true") return "expired";
-  // if (isLoggedIn === "true") return "valid";
-  // return "not_logged_in";
 
   // 테스트용: sessionStorage에 "isExpired" = "true"로 설정하면 만료 상태로 처리됨
   if (isExpired === "true") {
