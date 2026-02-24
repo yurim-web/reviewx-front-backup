@@ -33,6 +33,7 @@ import PageHeader from "@/components/partner/campaign_create_form/common/layout/
 import BaseModal from "@/components/common/modal/BaseModal";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import { getPartnerName } from "@/utils/partner/partnerHelpers";
+import { saveCampaignToStorage } from "@/utils/partner/campaignStorage";
 
 export default function VisitCampaignCreatePage() {
   const router = useRouter();
@@ -227,77 +228,14 @@ export default function VisitCampaignCreatePage() {
       //   body: JSON.stringify(newCampaign),
       // });
 
-      /**
-       * localStorage 저장 시 용량 체크 및 오래된 데이터 정리
-       *
-       * 설명:
-       * - Data URL은 매우 크기 때문에 localStorage 용량을 초과할 수 있습니다.
-       * - 저장 전에 데이터 크기를 체크하고, 필요시 오래된 캠페인을 제거합니다.
-       * - localStorage 용량 제한은 보통 5-10MB입니다.
-       */
-      try {
-        // localStorage에서 기존 캠페인 불러오기
-        const storedCampaigns = localStorage.getItem("visitCampaigns");
-        let campaigns = storedCampaigns ? JSON.parse(storedCampaigns) : [];
-
-        // 저장 시도
-        campaigns.push(extendedCampaign);
-        const allData = JSON.stringify(campaigns);
-        const totalSize = new Blob([allData]).size;
-
-        // localStorage 용량 제한 체크 (5MB = 5 * 1024 * 1024 바이트)
-        const maxSize = 5 * 1024 * 1024; // 5MB
-
-        if (totalSize > maxSize) {
-          // 오래된 캠페인 제거 (가장 오래된 것부터 제거)
-          console.warn("localStorage 용량 초과. 오래된 캠페인 데이터를 정리합니다.");
-
-          // 최근 10개만 유지 (가장 최근에 추가된 것부터)
-          campaigns = campaigns.slice(-10);
-
-          // 다시 저장 시도
-          const cleanedData = JSON.stringify(campaigns);
-          const cleanedSize = new Blob([cleanedData]).size;
-
-          if (cleanedSize > maxSize) {
-            // 여전히 용량 초과 시 경고
-            console.error("localStorage 용량이 여전히 초과합니다. 일부 데이터를 제거하세요.");
-            setIsErrorModalOpen(true);
-            return;
-          }
-        }
-
-        // localStorage에 저장
-        localStorage.setItem("visitCampaigns", JSON.stringify(campaigns));
-      } catch (error) {
-        // QuotaExceededError 처리
-        if (
-          error instanceof Error &&
-          (error.name === "QuotaExceededError" ||
-            (error as unknown as { code: number }).code === 22)
-        ) {
-          console.error("localStorage 용량 초과:", error);
-
-          // 오래된 캠페인 제거 후 재시도
-          try {
-            const storedCampaigns = localStorage.getItem("visitCampaigns");
-            let campaigns = storedCampaigns ? JSON.parse(storedCampaigns) : [];
-
-            // 최근 5개만 유지
-            campaigns = campaigns.slice(-5);
-            campaigns.push(extendedCampaign);
-
-            localStorage.setItem("visitCampaigns", JSON.stringify(campaigns));
-            // console.log("오래된 캠페인을 제거하고 저장했습니다.");
-          } catch (retryError) {
-            console.error("재시도 실패:", retryError);
-            setIsErrorModalOpen(true);
-            return;
-          }
-        } else {
-          setIsErrorModalOpen(true);
-          return;
-        }
+      // 현재는 localStorage에 임시 저장 (실제 프로덕션에서는 API 사용)
+      const saved = saveCampaignToStorage(
+        extendedCampaign as Record<string, unknown>,
+        "visitCampaigns"
+      );
+      if (!saved) {
+        setIsErrorModalOpen(true);
+        return;
       }
 
       // console.log("방문형 캠페인 등록 완료:", newCampaign);
