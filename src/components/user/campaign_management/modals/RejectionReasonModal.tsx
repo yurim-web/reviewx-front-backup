@@ -7,17 +7,8 @@
  *
  * 목적: 사용자가 콘텐츠 반려 사유를 확인할 수 있는 모달입니다.
  *
- * 사용 위치:
- * - 유저 캠페인 관리 페이지 > 취소/반려 탭
- *   - "콘텐츠 반려 사유 확인" 버튼 클릭 시
- *   - RejectedTabCard 컴포넌트에서 사용
- *
- * 모달 구성:
- * 1. 모달 제목: "반려 사유"
- * 2. 반려 사유 텍스트 영역 (읽기 전용)
- * 3. 닫기 버튼
- *
-
+ * 사용 페이지:
+ * - /user/campaign_management (취소/반려 탭 - "콘텐츠 반려 사유 확인" 버튼 클릭 시)
  */
 
 "use client";
@@ -40,7 +31,7 @@ export default function RejectionReasonModal({
   isOpen,
   onClose,
   rejectionReason,
-  campaignTitle,
+  campaignTitle: _campaignTitle,
 }: RejectionReasonModalProps) {
   // 반려 사유 텍스트 상태 관리
   const [reasonText, setReasonText] = useState<string>("");

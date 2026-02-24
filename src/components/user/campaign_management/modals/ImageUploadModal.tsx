@@ -1,5 +1,5 @@
 /* ========================================
-   📸 이미지 업로드 콘텐츠 등록 모달 컴포넌트 (유저용)
+   이미지 업로드 콘텐츠 등록 모달 컴포넌트 (유저용)
    ======================================== */
 
 /**
@@ -21,12 +21,6 @@ import ContentVerificationModal from "./content_verification/ContentVerification
 import { useModalState } from "@/hooks/useModalState";
 import styles from "../../../../styles/user/campaign_management/modals/campaign_modal_common.module.css";
 import type { CampaignType } from "@/types/domain/user";
-
-/**
- * 설명:
- * - styles: 통합된 캠페인 모달 스타일 (모든 모달이 공통으로 사용)
- * - 모든 모달 스타일이 campaign_modal_common.module.css에 통합되어 있습니다.
- */
 
 interface ImageUploadModalProps {
   isOpen: boolean;
@@ -107,6 +101,7 @@ export default function ImageUploadModal({
       // 모달이 닫힐 때 플래그 리셋
       isInitializedRef.current = false;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]); // isOpen만 의존성으로 설정
 
   // 메인 모달이 닫혀있고, 성공 모달이나 콘텐츠 확인 모달도 닫혀있을 때만 렌더링하지 않음
@@ -124,10 +119,8 @@ export default function ImageUploadModal({
       return;
     }
 
-
     // 최대 7장 제한 확인 (기존 이미지 + 새로 업로드할 이미지 합산)
-    const totalImages =
-      existingImageUrls.length + uploadedImages.length + files.length;
+    const totalImages = existingImageUrls.length + uploadedImages.length + files.length;
 
     if (totalImages > 7) {
       setErrorModal({
@@ -214,7 +207,6 @@ export default function ImageUploadModal({
         processedCount++;
 
         if (processedCount === validFiles.length) {
-
           setUploadedImages((prev) => {
             const updated = [...prev, ...newImages];
             return updated;
@@ -315,9 +307,7 @@ export default function ImageUploadModal({
       // 입력값 초기화는 성공 모달을 닫을 때 수행
     } catch (_error) {
       alert(
-        `이미지 콘텐츠 ${
-          mode === "edit" ? "수정" : "등록"
-        }에 실패했습니다. 다시 시도해주세요.`
+        `이미지 콘텐츠 ${mode === "edit" ? "수정" : "등록"}에 실패했습니다. 다시 시도해주세요.`
       );
     } finally {
       setIsSubmitting(false);
@@ -369,9 +359,7 @@ export default function ImageUploadModal({
           />
 
           <div className={styles.modal_overlay} onClick={handleOverlayClick}>
-            <div
-              className={`${styles.modal_container} ${styles.modal_container_scroll}`}
-            >
+            <div className={`${styles.modal_container} ${styles.modal_container_scroll}`}>
               {/* 모달 헤더 (제목 + 닫기 버튼) */}
               <div className={styles.modal_header}>
                 {/* 모달 제목 */}
@@ -380,12 +368,7 @@ export default function ImageUploadModal({
                 </h2>
                 {/* 닫기 버튼 */}
                 <button className={styles.close_button} onClick={onClose}>
-                  <Image
-                    src="/images/filter/x_icon.svg"
-                    alt="닫기"
-                    width={28}
-                    height={28}
-                  />
+                  <Image src="/images/filter/x_icon.svg" alt="닫기" width={28} height={28} />
                 </button>
               </div>
 
@@ -399,10 +382,7 @@ export default function ImageUploadModal({
                 <div className={styles.image_grid}>
                   {/* 기존 이미지 표시 (수정 모드) */}
                   {existingImageUrls.map((imageUrl, index) => (
-                    <div
-                      key={`existing-${index}`}
-                      className={styles.image_item}
-                    >
+                    <div key={`existing-${index}`} className={styles.image_item}>
                       <img
                         src={imageUrl}
                         alt={`기존 이미지 ${index + 1}`}
@@ -448,10 +428,7 @@ export default function ImageUploadModal({
 
                   {/* 업로드 버튼 (최대 7장까지) */}
                   {existingImageUrls.length + uploadedImages.length < 7 && (
-                    <div
-                      className={styles.upload_button}
-                      onClick={handleUploadClick}
-                    >
+                    <div className={styles.upload_button} onClick={handleUploadClick}>
                       <div className={styles.upload_icon}>
                         <img
                           src="/images/icons/plus_icon.svg"
@@ -473,10 +450,7 @@ export default function ImageUploadModal({
               <button
                 className={styles.submit_button}
                 onClick={handleSubmit}
-                disabled={
-                  isSubmitting ||
-                  existingImageUrls.length + uploadedImages.length === 0
-                }
+                disabled={isSubmitting || existingImageUrls.length + uploadedImages.length === 0}
               >
                 {isSubmitting ? "확인 중..." : "확인"}
               </button>

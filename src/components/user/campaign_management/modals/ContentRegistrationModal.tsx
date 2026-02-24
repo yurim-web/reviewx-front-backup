@@ -1,5 +1,5 @@
 /* ========================================
-   📄 콘텐츠 등록/수정 모달 컴포넌트 (유저용)
+   콘텐츠 등록/수정 모달 컴포넌트 (유저용)
    ======================================== */
 
 /**
@@ -21,12 +21,6 @@ import ContentVerificationModal from "./content_verification/ContentVerification
 import { useModalState } from "@/hooks/useModalState";
 import styles from "../../../../styles/user/campaign_management/modals/campaign_modal_common.module.css";
 import type { CampaignType } from "@/types/domain/user";
-
-/**
- * 설명:
- * - styles: 통합된 캠페인 모달 스타일 (모든 모달이 공통으로 사용)
- * - 모든 모달 스타일이 campaign_modal_common.module.css에 통합되어 있습니다.
- */
 
 interface ContentRegistrationModalProps {
   isOpen: boolean;
@@ -192,11 +186,7 @@ export default function ContentRegistrationModal({
 
       // 입력값 초기화는 성공 모달을 닫을 때 수행
     } catch (_error) {
-      alert(
-        `콘텐츠 ${
-          mode === "edit" ? "수정" : "등록"
-        }에 실패했습니다. 다시 시도해주세요.`,
-      );
+      alert(`콘텐츠 ${mode === "edit" ? "수정" : "등록"}에 실패했습니다. 다시 시도해주세요.`);
     } finally {
       setIsSubmitting(false);
     }
@@ -255,12 +245,7 @@ export default function ContentRegistrationModal({
                 </h2>
                 {/* 닫기 버튼 */}
                 <button className={styles.close_button} onClick={onClose}>
-                  <Image
-                    src="/images/filter/x_icon.svg"
-                    alt="닫기"
-                    width={20}
-                    height={20}
-                  />
+                  <Image src="/images/filter/x_icon.svg" alt="닫기" width={20} height={20} />
                 </button>
               </div>
 

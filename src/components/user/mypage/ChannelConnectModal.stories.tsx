@@ -73,7 +73,7 @@ export const Open: Story = {
     // useState 제거, args.isOpen을 직접 사용 (깜빡임 방지)
     const handleClose = useCallback(() => {
       args.onClose?.();
-    }, [args.onClose]);
+    }, [args.onClose]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const props = useMemo(
       () => ({
@@ -105,7 +105,7 @@ export const WithExistingUrl: Story = {
     // useState 제거, args.isOpen을 직접 사용 (깜빡임 방지)
     const handleClose = useCallback(() => {
       args.onClose?.();
-    }, [args.onClose]);
+    }, [args.onClose]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const props = useMemo(
       () => ({
@@ -143,7 +143,7 @@ export const Interactive: Story = {
     const handleClose = useCallback(() => {
       setIsOpen(false);
       args.onClose?.();
-    }, [args.onClose]);
+    }, [args.onClose]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const modalProps = useMemo(
       () => ({
@@ -182,4 +182,3 @@ export const Interactive: Story = {
     onConnect: (channelInfo) => console.log("Channel connected:", channelInfo),
   },
 };
-
