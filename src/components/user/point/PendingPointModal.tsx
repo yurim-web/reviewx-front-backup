@@ -17,7 +17,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import styles from "@/styles/user/point/pending_point_modal.module.css";
 import type { PendingPointItem } from "@/types/domain/user";
 
@@ -34,6 +34,24 @@ export default function PendingPointModal({
 }: PendingPointModalProps) {
   const list_wrapper_ref = useRef<HTMLDivElement>(null);
   const [has_scroll, set_has_scroll] = useState(false);
+  const [point_col_width, set_point_col_width] = useState<number | null>(null);
+
+  /* 포인트 영역 너비를 목록에서 가장 긴 값에 맞춰 동일하게 적용 */
+  useLayoutEffect(() => {
+    if (!is_open || pending_list.length === 0) {
+      set_point_col_width(null);
+      return;
+    }
+    const container = list_wrapper_ref.current;
+    if (!container) return;
+    const nodes = container.querySelectorAll(`.${styles.item_amount}`);
+    let max_w = 0;
+    nodes.forEach((el) => {
+      const w = (el as HTMLElement).getBoundingClientRect().width;
+      if (w > max_w) max_w = w;
+    });
+    if (max_w > 0) set_point_col_width(max_w);
+  }, [is_open, pending_list]);
 
   useEffect(() => {
     if (!is_open) return;
@@ -78,10 +96,7 @@ export default function PendingPointModal({
       aria-modal="true"
       aria-labelledby="pending_point_modal_title"
     >
-      <div
-        className={styles.modal_container}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className={styles.modal_container} onClick={(e) => e.stopPropagation()}>
         {/* 헤더: 타이틀 + 닫기(X) 버튼 */}
         <div className={styles.modal_header}>
           <h2 id="pending_point_modal_title" className={styles.title}>
@@ -93,12 +108,7 @@ export default function PendingPointModal({
             onClick={on_close}
             aria-label="모달 닫기"
           >
-            <Image
-              src="/images/filter/x_icon.svg"
-              alt="닫기"
-              width={24}
-              height={24}
-            />
+            <Image src="/images/filter/x_icon.svg" alt="닫기" width={24} height={24} />
           </button>
         </div>
 
@@ -111,21 +121,20 @@ export default function PendingPointModal({
             className={`${styles.list_wrapper_inner} ${has_scroll ? styles.list_wrapper_inner_has_scroll : ""}`.trim()}
           >
             {pending_list.length === 0 ? (
-              <p className={styles.empty_message}>
-                적립 예정 포인트가 없습니다.
-              </p>
+              <p className={styles.empty_message}>적립 예정 포인트가 없습니다.</p>
             ) : (
               <ul className={styles.pending_list}>
                 {pending_list.map((item) => (
                   <li key={item.id} className={styles.pending_item}>
                     <div className={styles.item_badge}>예정</div>
                     <div className={styles.item_info}>
-                      <span className={styles.item_description}>
-                        {item.description}
-                      </span>
+                      <span className={styles.item_description}>{item.description}</span>
                       <span className={styles.item_date}>{item.date} 예정</span>
                     </div>
-                    <div className={styles.item_amount}>
+                    <div
+                      className={styles.item_amount}
+                      style={point_col_width != null ? { width: point_col_width } : undefined}
+                    >
                       + {item.amount.toLocaleString()} P
                     </div>
                   </li>
