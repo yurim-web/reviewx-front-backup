@@ -1,14 +1,15 @@
 /* ========================================
-   🎯 구매평/미션형 공통 카드 타입
-   
-   📍 사용 위치: 구매평과 미션형 캠페인 콘텐츠 내역
-   - 대기 탭, 확인 탭, 완료 탭에서 공통으로 사용
-   
-   📝 참고:
-     - 구매평: reviewType 사용 (1~6)
-     - 미션형: missionType 사용 (1~9)
-     - campaignType prop으로 구매평/미션형 구분
+   구매평/미션형 공통 카드 타입
    ======================================== */
+
+/**
+ * CampaignTypes
+ *
+ * 목적: 구매평/미션형 콘텐츠 카드에서 공통으로 사용하는 타입을 정의합니다.
+ *
+ * 사용 페이지:
+ * - /partner/campaign/[id]/contents (구매평/미션형 > 대기·확인·완료 탭)
+ */
 
 import type { ExperienceApplicant as BaseExperienceApplicant } from "../experience_card/ExperienceTypes";
 

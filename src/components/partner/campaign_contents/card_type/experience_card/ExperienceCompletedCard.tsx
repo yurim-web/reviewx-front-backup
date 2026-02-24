@@ -1,20 +1,20 @@
 /* ========================================
-   ✅ 경험형 완료 카드 (완료 탭)
-   
-   📍 사용 위치: 캠페인 콘텐츠 내역 > 배송형/방문형/기자단형 > "완료" 탭
-   
-   🎯 주요 기능:
-     - "확인 완료" 버튼 (비활성화 상태)
-     - footer에 "신고" 버튼만 노출
-   
-   📝 참고:
-     - 완료 탭에서는 한 가지 경우의 수만 있습니다
-     - 모든 완료된 콘텐츠는 동일한 형태로 표시됩니다
+   경험형 완료 카드 (완료 탭)
    ======================================== */
+
+/**
+ * ExperienceCompletedCard
+ *
+ * 목적: 배송형/방문형/기자단형 캠페인의 완료 탭 콘텐츠 카드를 렌더링합니다.
+ *
+ * 사용 페이지:
+ * - /partner/campaign/[id]/contents (배송형/방문형/기자단형 > "완료" 탭)
+ */
 
 "use client";
 
 import { useState, useEffect } from "react";
+import { useModalState } from "@/hooks/useModalState";
 import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
 import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
 import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
@@ -22,9 +22,7 @@ import { getChannelLogo } from "@/utils/channelLogoMap";
 import { getChannelUrl } from "@/utils/helpers/url";
 import { formatDateForMobile } from "@/utils/formatting/date";
 import type { ExperienceApplicant } from "./ExperienceTypes";
-import ReportModal, {
-  type ReportOption,
-} from "@/components/common/modal/ReportModal";
+import ReportModal, { type ReportOption } from "@/components/common/modal/ReportModal";
 import ReceiptPreviewModal from "../../ReceiptPreviewModal";
 
 interface ExperienceCompletedCardProps {
@@ -44,7 +42,7 @@ interface ExperienceCompletedCardProps {
  * 완료 탭에서 사용되는 카드로, 한 가지 경우의 수만 있습니다:
  * - "확인 완료" 버튼 (비활성화) + footer에 "신고" 버튼
  *
- * 사용 위치:
+ * 사용 페이지:
  * - 캠페인 콘텐츠 내역 페이지 > "완료" 탭
  * - 배송형, 방문형, 기자단형 캠페인에서 사용
  *
@@ -60,11 +58,11 @@ export default function ExperienceCompletedCard({
   onReport,
 }: ExperienceCompletedCardProps) {
   const channel_icon_src = getChannelLogo(applicant.channel);
-  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const reportModal = useModalState();
   const [selectedReportOption, setSelectedReportOption] = useState<string>("");
   const [otherReportReason, setOtherReportReason] = useState<string>("");
   // 이미지 확인 모달 상태
-  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+  const receiptModal = useModalState();
 
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
@@ -91,7 +89,7 @@ export default function ExperienceCompletedCard({
 
   // 신고 모달 열기
   const handleReportClick = () => {
-    setIsReportModalOpen(true);
+    reportModal.open();
     if (!selectedReportOption && reportOptions.length > 0) {
       setSelectedReportOption(reportOptions[0].value);
     }
@@ -99,16 +97,13 @@ export default function ExperienceCompletedCard({
 
   // 신고 모달 닫기
   const handleReportModalClose = () => {
-    setIsReportModalOpen(false);
+    reportModal.close();
     setSelectedReportOption("");
     setOtherReportReason("");
   };
 
   // 신고 확인 처리
-  const handleReportConfirm = (
-    selectedOption: string,
-    otherReason?: string,
-  ) => {
+  const handleReportConfirm = (selectedOption: string, otherReason?: string) => {
     if (onReport) {
       onReport(applicant.id);
     }
@@ -133,9 +128,7 @@ export default function ExperienceCompletedCard({
             />
           </div>
           <div className={contentStyles.profile_info}>
-            <span className={contentStyles.user_type}>
-              {applicant.userType}
-            </span>
+            <span className={contentStyles.user_type}>{applicant.userType}</span>
             <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>
@@ -175,7 +168,7 @@ export default function ExperienceCompletedCard({
         {applicant.receiptImages && applicant.receiptImages.length > 0 ? (
           <button
             className={actionStyles.content_check_button}
-            onClick={() => setIsReceiptModalOpen(true)}
+            onClick={() => receiptModal.open()}
             aria-label={`${applicant.nickname} 이미지 확인하기`}
           >
             이미지 확인
@@ -215,9 +208,7 @@ export default function ExperienceCompletedCard({
           {dateLabel === "지각 등록" ? (
             <span className={actionStyles.late_label}>
               {isMobile
-                ? formatDateForMobile(
-                    applicant.updatedAt || applicant.registrationDate,
-                  )
+                ? formatDateForMobile(applicant.updatedAt || applicant.registrationDate)
                 : applicant.updatedAt || applicant.registrationDate}{" "}
               <span className={actionStyles.late_text_full}>지각 등록</span>
               <span className={actionStyles.late_text_short}>지각</span>
@@ -252,7 +243,7 @@ export default function ExperienceCompletedCard({
 
       {/* 신고 모달 */}
       <ReportModal
-        is_open={isReportModalOpen}
+        is_open={reportModal.isOpen}
         on_close={handleReportModalClose}
         title="콘텐츠 신고"
         options={reportOptions}
@@ -267,9 +258,9 @@ export default function ExperienceCompletedCard({
 
       {/* 이미지 확인 모달 */}
       <ReceiptPreviewModal
-        isOpen={isReceiptModalOpen}
+        isOpen={receiptModal.isOpen}
         images={applicant.receiptImages || []}
-        onClose={() => setIsReceiptModalOpen(false)}
+        onClose={() => receiptModal.close()}
       />
 
       {/* 완료 탭에서는 연장/반려 관련 모달을 사용하지 않습니다 */}

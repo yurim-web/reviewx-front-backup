@@ -3,7 +3,7 @@
  *
  * input_with_button 패턴을 재사용하는 컴포넌트입니다.
  *
- * 사용처:
+ * 사용 페이지:
  * - src/components/common/mypage/AddressInput.tsx
  * - src/components/common/phone_verification/PhoneVerification.tsx (마이페이지 스타일)
  */
@@ -21,11 +21,7 @@ interface InputWithButtonProps {
   className?: string;
 }
 
-export default function InputWithButton({
-  input,
-  button,
-  className = "",
-}: InputWithButtonProps) {
+export default function InputWithButton({ input, button, className = "" }: InputWithButtonProps) {
   return (
     <div className={`${verificationStyles.input_with_button} ${className}`.trim()}>
       {input}

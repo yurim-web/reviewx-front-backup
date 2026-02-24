@@ -7,7 +7,7 @@
  *
  * 목적: 인스타그램 캠페인에 신청한 사용자의 정보를 카드 형태로 표시하는 전용 컴포넌트입니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /partner/campaign_application/delivery (배송형 캠페인 신청자 목록)
  * - 인스타그램 채널 신청자들만 표시
  *
@@ -59,10 +59,7 @@ interface InstagramCardProps {
  * @param props - InstagramCardProps 타입의 props
  * @returns JSX 요소
  */
-export default function InstagramCard({
-  applicant,
-  onSelect,
-}: InstagramCardProps) {
+export default function InstagramCard({ applicant, onSelect }: InstagramCardProps) {
   /**
    * 인스타그램 아이콘 경로 가져오기
    *
@@ -76,9 +73,7 @@ export default function InstagramCard({
   return (
     <article
       className={`${baseStyles.applicant_card} ${
-        applicant.selectionStatus === "이용제한 계정"
-          ? baseStyles.restricted_card
-          : ""
+        applicant.selectionStatus === "이용제한 계정" ? baseStyles.restricted_card : ""
       }`}
     >
       {/* 프로필 영역: 프로필 이미지, 닉네임, 사용자 타입 */}
@@ -102,11 +97,7 @@ export default function InstagramCard({
       {/* 채널 정보 영역: 인스타그램 아이콘, 신청자 ID */}
       <div className={contentStyles.channel_section}>
         {/* 인스타그램 로고 */}
-        <img
-          src={channel_icon_src}
-          alt="인스타그램"
-          className={contentStyles.channel_icon}
-        />
+        <img src={channel_icon_src} alt="인스타그램" className={contentStyles.channel_icon} />
         {/* 신청자 아이디 표시 - 클릭 시 해당 채널로 이동 */}
         <a
           href={getChannelUrl("인스타그램", applicant.Id)}
@@ -146,9 +137,7 @@ export default function InstagramCard({
       {/* 메모 영역 */}
       <div className={contentStyles.memo_section}>
         <div className={contentStyles.memo_text}>
-          {applicant.memo && applicant.memo.trim() !== ""
-            ? applicant.memo
-            : "메모 미작성"}
+          {applicant.memo && applicant.memo.trim() !== "" ? applicant.memo : "메모 미작성"}
         </div>
       </div>
 

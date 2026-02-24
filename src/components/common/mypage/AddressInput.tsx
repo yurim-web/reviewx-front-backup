@@ -3,7 +3,7 @@
  *
  * 우편번호, 기본 주소, 상세 주소를 입력할 수 있는 컴포넌트입니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /partner/mypage/edit (파트너 내 정보 수정 페이지)
  * - /user/mypage/edit (유저 내 정보 수정 페이지)
  */
@@ -102,13 +102,7 @@ export default function AddressInput({
           }
         />
 
-        {renderAddressField(
-          "address",
-          "address",
-          address,
-          onAddressChange,
-          "기본 주소"
-        )}
+        {renderAddressField("address", "address", address, onAddressChange, "기본 주소")}
         {renderAddressField(
           "detailAddress",
           "detailAddress",
@@ -121,11 +115,7 @@ export default function AddressInput({
   }
 
   return (
-    <FormField
-      label="주소"
-      htmlFor="postalCode"
-      required={showRequiredAsterisk}
-    >
+    <FormField label="주소" htmlFor="postalCode" required={showRequiredAsterisk}>
       <InputWithButton
         input={
           <input
@@ -152,13 +142,7 @@ export default function AddressInput({
         }
       />
 
-      {renderAddressField(
-        "address",
-        "address",
-        address,
-        onAddressChange,
-        "기본 주소"
-      )}
+      {renderAddressField("address", "address", address, onAddressChange, "기본 주소")}
       {renderAddressField(
         "detailAddress",
         "detailAddress",

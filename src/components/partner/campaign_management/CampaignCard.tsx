@@ -10,12 +10,6 @@
  * 사용 페이지:
  * - /partner (파트너 캠페인 관리 페이지)
  *
- * 주요 기능:
- * - 캠페인 정보 표시 (제목, 카테고리, 상태)
- * - 탭 상태에 따른 동적 버튼 텍스트 및 스타일
- * - 캠페인 상태별 액션 버튼 (신청 취소, 콘텐츠 등록, 패널티 해제 등)
- * - 카테고리 아이콘 및 마감 태그 표시
- * - 반려된 콘텐츠의 경우 2개 버튼 표시
  */
 
 import Link from "next/link";
@@ -41,10 +35,7 @@ interface CampaignCardProps {
  * 개별 캠페인 카드
  * 탭 상태에 따라 다른 버튼과 텍스트를 표시
  */
-export default function CampaignCard({
-  campaign,
-  activeTab,
-}: CampaignCardProps) {
+export default function CampaignCard({ campaign, activeTab }: CampaignCardProps) {
   const {
     state: {
       campaignStatus,
@@ -59,12 +50,7 @@ export default function CampaignCard({
       isManagementModalOpen,
       isDeleteModalOpen,
     },
-    actions: {
-      closeReceiptModal,
-      closeManagementModal,
-      closeDeleteModal,
-      handleButtonClick,
-    },
+    actions: { closeReceiptModal, closeManagementModal, closeDeleteModal, handleButtonClick },
   } = useCampaignCard({ campaign, activeTab });
 
   /**
@@ -96,9 +82,7 @@ export default function CampaignCard({
    * - user 캠페인 카드의 convertToCampaignDataId 함수와 동일한 로직
    */
   const convertToCampaignDataId = (type: string, id: string): string => {
-    const campaignTypePath = getCampaignTypePath(
-      type as PartnerCampaign["campaignType"],
-    );
+    const campaignTypePath = getCampaignTypePath(type as PartnerCampaign["campaignType"]);
 
     // ID가 이미 "mission_3" 형식인지 확인
     if (id.startsWith(`${campaignTypePath}_`)) {
@@ -122,10 +106,7 @@ export default function CampaignCard({
   const getCampaignDetailPath = (): string => {
     const campaignTypePath = getCampaignTypePath(campaign.campaignType);
     // campaign.id를 올바른 형식으로 변환 (이미 "mission_3" 형식이면 그대로 사용)
-    const campaignDataId = convertToCampaignDataId(
-      campaign.campaignType,
-      String(campaign.id),
-    );
+    const campaignDataId = convertToCampaignDataId(campaign.campaignType, String(campaign.id));
     const detailPath = `/campaign/${campaignTypePath}/${campaignDataId}`;
     // 디버깅: 생성된 경로 로그
     // console.log("[CampaignCard] 상세 페이지 경로 생성:", {
@@ -153,9 +134,7 @@ export default function CampaignCard({
       >
         {/* 캠페인 이미지 */}
         <div className={cardStyles.campaign_image}>
-          {campaign.image ? (
-            <img src={campaign.image} alt="캠페인 이미지" />
-          ) : null}
+          {campaign.image ? <img src={campaign.image} alt="캠페인 이미지" /> : null}
         </div>
 
         {/* 캠페인 상세 정보 */}
@@ -193,9 +172,7 @@ export default function CampaignCard({
                   }`}
                 />
               )}
-              <span className={cardStyles.type_text}>
-                {campaign.campaignType}
-              </span>
+              <span className={cardStyles.type_text}>{campaign.campaignType}</span>
             </div>
 
             {/* 상태 태그 표시 - 취소/종료 상태가 아닐 때만 표시 */}
@@ -205,11 +182,7 @@ export default function CampaignCard({
                   campaign.daysLeft <= 2 ? cardStyles.urgent : cardStyles.normal
                 }`}
               >
-                <span>
-                  {campaign.daysLeft <= 2
-                    ? "마감임박"
-                    : `${campaign.daysLeft}일 전`}
-                </span>
+                <span>{campaign.daysLeft <= 2 ? "마감임박" : `${campaign.daysLeft}일 전`}</span>
               </div>
             )}
 
@@ -240,9 +213,7 @@ export default function CampaignCard({
                     확인 {reviewingCount}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
-                  <span className={cardStyles.applicant_total}>
-                    완료 {completedCount}명
-                  </span>
+                  <span className={cardStyles.applicant_total}>완료 {completedCount}명</span>
                 </>
               ) : (activeTab === "전체" && campaignStatus === "진행 중") ||
                 campaignStatus === "진행 중" ||
@@ -264,9 +235,7 @@ export default function CampaignCard({
                     확인 {reviewingCount}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
-                  <span className={cardStyles.applicant_total}>
-                    완료 {completedCount}명
-                  </span>
+                  <span className={cardStyles.applicant_total}>완료 {completedCount}명</span>
                 </>
               ) : (activeTab === "전체" && campaignStatus === "종료") ||
                 campaignStatus === "종료" ||
@@ -288,9 +257,7 @@ export default function CampaignCard({
                     확인 {reviewingCount}명
                   </span>
                   <span className={cardStyles.applicant_separator}>|</span>
-                  <span className={cardStyles.applicant_total}>
-                    완료 {completedCount}명
-                  </span>
+                  <span className={cardStyles.applicant_total}>완료 {completedCount}명</span>
                 </>
               ) : (activeTab === "전체" && campaignStatus === "취소") ||
                 campaignStatus === "취소" ||
@@ -331,10 +298,9 @@ export default function CampaignCard({
                               campaign.recruitmentPeriod,
                               campaign.registrationPeriod,
                               undefined,
-                              campaign.announcementDate,
+                              campaign.announcementDate
                             );
-                            return calculatedTab === "예정" ||
-                              calculatedTab === "신청"
+                            return calculatedTab === "예정" || calculatedTab === "신청"
                               ? cardStyles.applicant_current_pink
                               : cardStyles.applicant_current_gray;
                           })()
@@ -371,8 +337,7 @@ export default function CampaignCard({
         {/* 연장 요청 탭: 등록 기한 연장 요청 버튼만 표시 */}
         {/* ======================================== */}
         {activeTab === "연장 요청" ||
-        (campaignSubStatus &&
-          campaignSubStatus.includes("extension_request")) ? (
+        (campaignSubStatus && campaignSubStatus.includes("extension_request")) ? (
           <button
             className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
             onClick={() => handleButtonClick(primaryButtonText)}
@@ -426,9 +391,7 @@ export default function CampaignCard({
             <button
               className={`${buttonStyles.action_button} ${buttonStyles.secondary_button} ${cardStyles.content_check_button}`}
               onClick={() => {
-                const campaignTypePath = getCampaignTypePath(
-                  campaign.campaignType,
-                );
+                const campaignTypePath = getCampaignTypePath(campaign.campaignType);
                 window.location.href = `/partner/campaign_contents/${campaignTypePath}/${campaign.id}?tab=확인`;
               }}
             >
@@ -437,9 +400,7 @@ export default function CampaignCard({
             <button
               className={`${buttonStyles.action_button} ${buttonStyles.primary_button}`}
               onClick={() => {
-                const campaignTypePath = getCampaignTypePath(
-                  campaign.campaignType,
-                );
+                const campaignTypePath = getCampaignTypePath(campaign.campaignType);
                 window.location.href = `/partner/campaign_contents/${campaignTypePath}/${campaign.id}?tab=완료`;
               }}
             >
@@ -509,10 +470,7 @@ export default function CampaignCard({
           // 예정 탭이면 취소 처리, 그 외는 삭제 처리
           if (activeTab === "예정") {
             // 예정 탭: 취소 탭으로 이동
-            const result = cancelCampaign(
-              String(campaign.id),
-              campaign.campaignType,
-            );
+            const result = cancelCampaign(String(campaign.id), campaign.campaignType);
 
             if (result.success) {
               window.location.reload();
@@ -523,10 +481,7 @@ export default function CampaignCard({
             }
           } else {
             // 그 외 탭: 완전 삭제
-            const deleteSuccess = deleteCampaign(
-              String(campaign.id),
-              campaign.campaignType,
-            );
+            const deleteSuccess = deleteCampaign(String(campaign.id), campaign.campaignType);
 
             if (deleteSuccess) {
               alert("캠페인이 삭제되었습니다.");

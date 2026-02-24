@@ -1,27 +1,20 @@
 /* ========================================
-   🔍 경험형 검수 카드 (확인 탭 전용)
-   
-   📍 사용 위치: 캠페인 콘텐츠 내역 > 배송형/방문형/기자단형 > "확인" 탭
-   
-   🎯 주요 기능:
-     - 링크 확인 버튼
-     - 승인/반려 버튼 (필수)
-     - footer: 연장/신고 버튼
-   
-   📝 경우의 수 (3가지):
-     1. 최초 등록: "2025-11-02 17:37 등록" (회색 텍스트)
-     2. 수정: "2025-11-02 02:21 수정" (회색 텍스트)
-     3. 지각 등록: "2025-11-02 17:37 지각 등록" (빨간색 텍스트)
-   
-   📝 참고:
-     - 이 카드는 "확인" 탭에서만 사용됩니다
-     - "대기" 탭에는 ExperiencePendingCard를 사용하세요
-     - dateLabel prop으로 경우의 수를 구분합니다
+   경험형 검수 카드 (확인 탭 전용)
    ======================================== */
+
+/**
+ * ExperienceInspectionCard
+ *
+ * 목적: 배송형/방문형/기자단형 캠페인의 검수 탭 콘텐츠 카드를 렌더링합니다.
+ *
+ * 사용 페이지:
+ * - /partner/campaign/[id]/contents (배송형/방문형/기자단형 > "확인" 탭)
+ */
 
 "use client";
 
 import { useState, useEffect } from "react";
+import { useModalState } from "@/hooks/useModalState";
 import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
 import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
 import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
@@ -30,9 +23,7 @@ import { getChannelUrl } from "@/utils/helpers/url";
 import { formatDateForMobile } from "@/utils/formatting/date";
 import type { ExperienceApplicant } from "./ExperienceTypes";
 import TextareaModal from "@/components/common/modal/TextareaModal";
-import ReportModal, {
-  type ReportOption,
-} from "@/components/common/modal/ReportModal";
+import ReportModal, { type ReportOption } from "@/components/common/modal/ReportModal";
 import BaseModal from "@/components/common/modal/BaseModal";
 import ReceiptPreviewModal from "../../ReceiptPreviewModal";
 
@@ -58,7 +49,7 @@ interface ExperienceInspectionCardProps {
 /**
  * 경험형 검수 카드 (확인 탭 전용)
  *
- * 사용 위치:
+ * 사용 페이지:
  * - 캠페인 콘텐츠 내역 페이지 > "확인" 탭
  * - 배송형, 방문형, 기자단형 캠페인에서 사용
  *
@@ -66,12 +57,6 @@ interface ExperienceInspectionCardProps {
  * 1. 최초 등록: dateLabel="등록" → "2025-11-02 17:37 등록" (회색 텍스트)
  * 2. 수정: dateLabel="수정" → "2025-11-02 02:21 수정" (회색 텍스트)
  * 3. 지각 등록: dateLabel="지각 등록" → "2025-11-02 17:37 지각 등록" (빨간색 텍스트)
- *
- * 주요 기능:
- * - 링크 확인 버튼
- * - 승인/반려 버튼 (필수)
- * - 하단에 연장/신고 버튼이 항상 노출
- * - 클래스/아이디는 스네이크 케이스 사용
  *
  * @param dateLabel - "등록", "수정", "지각 등록" 중 하나
  */
@@ -86,21 +71,18 @@ export default function ExperienceInspectionCard({
   dateLabel = "등록",
 }: ExperienceInspectionCardProps) {
   const channel_icon_src = getChannelLogo(applicant.channel);
-  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const rejectModal = useModalState();
   const [rejectReason, setRejectReason] = useState("");
-  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const reportModal = useModalState();
   const [selectedReportOption, setSelectedReportOption] = useState<string>("");
   const [otherReportReason, setOtherReportReason] = useState<string>("");
   // 연장 관련 상태
   const [extensionCount, setExtensionCount] = useState(0); // 연장 횟수 추적
-  const [isExtensionConfirmModalOpen, setIsExtensionConfirmModalOpen] =
-    useState(false);
-  const [isExtensionCompleteModalOpen, setIsExtensionCompleteModalOpen] =
-    useState(false);
-  const [isExtensionLimitModalOpen, setIsExtensionLimitModalOpen] =
-    useState(false);
+  const extensionConfirmModal = useModalState();
+  const extensionCompleteModal = useModalState();
+  const extensionLimitModal = useModalState();
   // 이미지 확인 모달 상태
-  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+  const receiptModal = useModalState();
 
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
@@ -111,9 +93,9 @@ export default function ExperienceInspectionCard({
     };
 
     checkMobile();
-    window.addEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
 
-    return () => window.removeEventListener('resize', checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // 신고 옵션 정의
@@ -127,12 +109,12 @@ export default function ExperienceInspectionCard({
 
   // 반려 모달 열기
   const handleRejectClick = () => {
-    setIsRejectModalOpen(true);
+    rejectModal.open();
   };
 
   // 반려 모달 닫기
   const handleRejectModalClose = () => {
-    setIsRejectModalOpen(false);
+    rejectModal.close();
     setRejectReason("");
   };
 
@@ -150,7 +132,7 @@ export default function ExperienceInspectionCard({
 
   // 신고 모달 열기
   const handleReportClick = () => {
-    setIsReportModalOpen(true);
+    reportModal.open();
     // 기본값 설정 (첫 번째 옵션)
     if (!selectedReportOption && reportOptions.length > 0) {
       setSelectedReportOption(reportOptions[0].value);
@@ -159,16 +141,13 @@ export default function ExperienceInspectionCard({
 
   // 신고 모달 닫기
   const handleReportModalClose = () => {
-    setIsReportModalOpen(false);
+    reportModal.close();
     setSelectedReportOption("");
     setOtherReportReason("");
   };
 
   // 신고 확인 처리
-  const handleReportConfirm = (
-    selectedOption: string,
-    otherReason?: string
-  ) => {
+  const handleReportConfirm = (selectedOption: string, otherReason?: string) => {
     if (onReport) {
       onReport(applicant.id);
     }
@@ -181,11 +160,11 @@ export default function ExperienceInspectionCard({
   const handleExtendClick = () => {
     // 연장 횟수가 2회 이상이면 제한 모달 표시
     if (extensionCount >= 2) {
-      setIsExtensionLimitModalOpen(true);
+      extensionLimitModal.open();
       return;
     }
     // 연장 확인 모달 표시
-    setIsExtensionConfirmModalOpen(true);
+    extensionConfirmModal.open();
   };
 
   // 연장 확인 모달에서 연장 버튼 클릭
@@ -194,16 +173,14 @@ export default function ExperienceInspectionCard({
       onExtend(applicant.id);
     }
     setExtensionCount((prev) => prev + 1);
-    setIsExtensionConfirmModalOpen(false);
-    setIsExtensionCompleteModalOpen(true);
+    extensionConfirmModal.close();
+    extensionCompleteModal.open();
   };
 
   return (
     <div className={baseStyles.card_wrapper}>
       {/* 카드 본문 */}
-      <article
-        className={baseStyles.applicant_card}
-      >
+      <article className={baseStyles.applicant_card}>
         {/* 프로필 영역 */}
         <div className={contentStyles.profile_section}>
           <div className={contentStyles.profile_image_container}>
@@ -254,7 +231,7 @@ export default function ExperienceInspectionCard({
         {applicant.receiptImages && applicant.receiptImages.length > 0 ? (
           <button
             className={actionStyles.content_check_button}
-            onClick={() => setIsReceiptModalOpen(true)}
+            onClick={() => receiptModal.open()}
             aria-label={`${applicant.nickname} 이미지 확인하기`}
           >
             이미지 확인
@@ -300,7 +277,7 @@ export default function ExperienceInspectionCard({
             <span className={actionStyles.late_label}>
               {isMobile
                 ? formatDateForMobile(applicant.updatedAt || applicant.registrationDate)
-                : (applicant.updatedAt || applicant.registrationDate)}{" "}
+                : applicant.updatedAt || applicant.registrationDate}{" "}
               <span className={actionStyles.late_text_full}>지각 등록</span>
               <span className={actionStyles.late_text_short}>지각</span>
             </span>
@@ -309,8 +286,8 @@ export default function ExperienceInspectionCard({
               {dateLabel === "등록"
                 ? `${isMobile ? formatDateForMobile(applicant.registrationDate) : applicant.registrationDate} ${dateLabel}`
                 : applicant.updatedAt
-                ? `${isMobile ? formatDateForMobile(applicant.updatedAt) : applicant.updatedAt} ${dateLabel}`
-                : `${isMobile ? formatDateForMobile(applicant.registrationDate) : applicant.registrationDate} ${dateLabel}`}
+                  ? `${isMobile ? formatDateForMobile(applicant.updatedAt) : applicant.updatedAt} ${dateLabel}`
+                  : `${isMobile ? formatDateForMobile(applicant.registrationDate) : applicant.registrationDate} ${dateLabel}`}
             </span>
           )}
         </div>
@@ -347,7 +324,7 @@ export default function ExperienceInspectionCard({
 
       {/* 반려 사유 입력 모달 */}
       <TextareaModal
-        is_open={isRejectModalOpen}
+        is_open={rejectModal.isOpen}
         on_close={handleRejectModalClose}
         title="반려 사유"
         titleColor="#ff2626"
@@ -362,7 +339,7 @@ export default function ExperienceInspectionCard({
 
       {/* 신고 모달 */}
       <ReportModal
-        is_open={isReportModalOpen}
+        is_open={reportModal.isOpen}
         on_close={handleReportModalClose}
         title="콘텐츠 신고"
         options={reportOptions}
@@ -382,12 +359,12 @@ export default function ExperienceInspectionCard({
           - 두 번째 연장 (중복 연장): "이미 연장한 내역이 있습니다. 추가 연장은 이번 요청이 마지막입니다. 계속하시겠습니까?"
       */}
       <BaseModal
-        is_open={isExtensionConfirmModalOpen}
-        on_close={() => setIsExtensionConfirmModalOpen(false)}
+        is_open={extensionConfirmModal.isOpen}
+        on_close={() => extensionConfirmModal.close()}
         message={
           extensionCount === 0
             ? '콘텐츠 등록 기간을<br><span style="color: #FF2626;">3일 연장</span>하시겠습니까?'
-            : '이미 연장한 내역이 있습니다.<br>추가 연장은 이번 요청이 마지막입니다.<br>계속하시겠습니까?'
+            : "이미 연장한 내역이 있습니다.<br>추가 연장은 이번 요청이 마지막입니다.<br>계속하시겠습니까?"
         }
         buttons={extensionCount === 0 ? ["취소", "연장"] : ["취소", "확인"]}
         on_confirm={handleExtensionConfirm}
@@ -398,8 +375,8 @@ export default function ExperienceInspectionCard({
       {/* 연장 완료 모달 (푸터 연장 버튼용) */}
       {/* 📌 연장 확인 후 표시되는 완료 메시지 모달 */}
       <BaseModal
-        is_open={isExtensionCompleteModalOpen}
-        on_close={() => setIsExtensionCompleteModalOpen(false)}
+        is_open={extensionCompleteModal.isOpen}
+        on_close={() => extensionCompleteModal.close()}
         message="등록 기간 연장이 완료되었습니다."
         buttons={["닫기"]}
         type="center"
@@ -408,8 +385,8 @@ export default function ExperienceInspectionCard({
       {/* 연장 제한 초과 모달 (푸터 연장 버튼용) */}
       {/* 📌 연장 횟수가 2회 이상일 때 표시되는 제한 모달 */}
       <BaseModal
-        is_open={isExtensionLimitModalOpen}
-        on_close={() => setIsExtensionLimitModalOpen(false)}
+        is_open={extensionLimitModal.isOpen}
+        on_close={() => extensionLimitModal.close()}
         message="연장은 최대 두 번까지만 가능합니다."
         buttons={["닫기"]}
         type="center"
@@ -417,9 +394,9 @@ export default function ExperienceInspectionCard({
 
       {/* 이미지 확인 모달 */}
       <ReceiptPreviewModal
-        isOpen={isReceiptModalOpen}
+        isOpen={receiptModal.isOpen}
         images={applicant.receiptImages || []}
-        onClose={() => setIsReceiptModalOpen(false)}
+        onClose={() => receiptModal.close()}
       />
     </div>
   );

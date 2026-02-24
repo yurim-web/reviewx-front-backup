@@ -7,9 +7,6 @@
  *
  * 목적: 만 19세 이상 참여 허용, 이전 참여자 재참여 허용, 지각 제출 허용 등 참여/제출 옵션을 재사용 가능하게 만듭니다.
  *
- * 주요 기능:
- * - 체크박스로 옵션 활성화/비활성화
- * - 수정 모드에서 편집 제어
  */
 
 "use client";
@@ -129,10 +126,7 @@ export function ParticipationOptionsSection({
           onChange={(e) => onAllowReParticipationChange(e.target.checked)}
           disabled={!canEdit("allowReParticipation")}
         />
-        <label
-          htmlFor="allowReParticipation"
-          className={optionStyles.option_label}
-        >
+        <label htmlFor="allowReParticipation" className={optionStyles.option_label}>
           이전 참여자 재참여 허용
         </label>
         <div className={optionStyles.option_input_value}></div>
@@ -147,10 +141,7 @@ export function ParticipationOptionsSection({
           onChange={(e) => onAllowLateSubmissionChange(e.target.checked)}
           disabled={!canEdit("allowLateSubmission")}
         />
-        <label
-          htmlFor="allowLateSubmission"
-          className={optionStyles.option_label}
-        >
+        <label htmlFor="allowLateSubmission" className={optionStyles.option_label}>
           지각 제출 허용 (7일)
         </label>
         <div className={optionStyles.option_input_value}></div>

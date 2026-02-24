@@ -1,38 +1,20 @@
 /* ========================================
-   ✅ 구매평/미션형 공통 - 완료 카드
-   
-   📍 사용 위치: 캠페인 콘텐츠 내역 > 구매평/미션형 > "완료" 탭
-   
-   🎯 2가지 상태 유형:
-   
-   1️⃣ 일반 완료 상태 (dateLabel !== "지각 등록")
-      - 상단: 리뷰 확인/구매 영수증 확인/이미지 확인/링크 확인 버튼
-      - 중간: 등록/수정 날짜 표시
-      - 하단: "확인 완료" 버튼 (비활성화, 클릭 불가)
-      - footer: "신고" 버튼만 (연장 버튼 없음)
-   
-   2️⃣ 지각 등록 상태 (dateLabel === "지각 등록")
-      - 상단: 리뷰 확인/구매 영수증 확인/이미지 확인/링크 확인 버튼
-      - 중간: 지각 등록 날짜 (빨간색 텍스트)
-      - 하단: "승인", "반려" 버튼 (두 개)
-      - footer: "연장", "신고" 버튼 (둘 다 표시)
-      → 연장 버튼 클릭 시 연장 확인 모달 → 연장 완료 모달 표시
-   
-   🎯 주요 기능:
-     - 일반 완료: 검수가 완료되어 더 이상 승인/반려 불가능한 상태
-     - 지각 등록: 아직 승인/반려가 필요한 상태, 연장 기능 제공
-     - footer: 신고 모달 (선정 후 취소, 무단 이탈, 노출 기간 불이행 등)
-   
-   📝 참고:
-     - campaignType prop으로 구매평/미션형 구분
-     - dateLabel prop으로 일반 완료/지각 등록 구분
-     - 지각 등록 상태에서만 연장 버튼이 표시됩니다
-     - 연장은 최대 두 번까지만 가능합니다
+   구매평/미션형 공통 - 완료 카드
    ======================================== */
+
+/**
+ * CampaignCompletedCard
+ *
+ * 목적: 구매평/미션형 공통 캠페인의 완료 탭 콘텐츠 카드를 렌더링합니다.
+ *
+ * 사용 페이지:
+ * - /partner/campaign/[id]/contents (구매평/미션형 > "완료" 탭)
+ */
 
 "use client";
 
 import { useState, useEffect } from "react";
+import { useModalState } from "@/hooks/useModalState";
 import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
 import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
 import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
@@ -41,9 +23,7 @@ import { getChannelUrl } from "@/utils/helpers/url";
 import { formatDateForMobile } from "@/utils/formatting/date";
 import type { CampaignApplicant } from "./CampaignTypes";
 import TextareaModal from "@/components/common/modal/TextareaModal";
-import ReportModal, {
-  type ReportOption,
-} from "@/components/common/modal/ReportModal";
+import ReportModal, { type ReportOption } from "@/components/common/modal/ReportModal";
 import BaseModal from "@/components/common/modal/BaseModal";
 
 interface CampaignCompletedCardProps {
@@ -94,19 +74,16 @@ export default function CampaignCompletedCard({
   // 지각 등록 상태인지 확인
   const isLate = dateLabel === "지각 등록";
 
-  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const reportModal = useModalState();
   const [selectedReportOption, setSelectedReportOption] = useState<string>("");
   const [otherReportReason, setOtherReportReason] = useState<string>("");
-  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const rejectModal = useModalState();
   const [rejectReason, setRejectReason] = useState("");
   // 연장 관련 상태
   const [extensionCount, setExtensionCount] = useState(0); // 연장 횟수 추적
-  const [isExtensionConfirmModalOpen, setIsExtensionConfirmModalOpen] =
-    useState(false);
-  const [isExtensionCompleteModalOpen, setIsExtensionCompleteModalOpen] =
-    useState(false);
-  const [isExtensionLimitModalOpen, setIsExtensionLimitModalOpen] =
-    useState(false);
+  const extensionConfirmModal = useModalState();
+  const extensionCompleteModal = useModalState();
+  const extensionLimitModal = useModalState();
 
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
@@ -133,7 +110,7 @@ export default function CampaignCompletedCard({
 
   // 신고 모달 열기
   const handleReportClick = () => {
-    setIsReportModalOpen(true);
+    reportModal.open();
     if (!selectedReportOption && reportOptions.length > 0) {
       setSelectedReportOption(reportOptions[0].value);
     }
@@ -141,16 +118,13 @@ export default function CampaignCompletedCard({
 
   // 신고 모달 닫기
   const handleReportModalClose = () => {
-    setIsReportModalOpen(false);
+    reportModal.close();
     setSelectedReportOption("");
     setOtherReportReason("");
   };
 
   // 신고 확인 처리
-  const handleReportConfirm = (
-    selectedOption: string,
-    otherReason?: string,
-  ) => {
+  const handleReportConfirm = (selectedOption: string, otherReason?: string) => {
     if (onReport) {
       onReport(applicant.id);
     }
@@ -160,12 +134,12 @@ export default function CampaignCompletedCard({
 
   // 반려 모달 열기 (지각 등록일 때만)
   const handleRejectClick = () => {
-    setIsRejectModalOpen(true);
+    rejectModal.open();
   };
 
   // 반려 모달 닫기
   const handleRejectModalClose = () => {
-    setIsRejectModalOpen(false);
+    rejectModal.close();
     setRejectReason("");
   };
 
@@ -182,11 +156,11 @@ export default function CampaignCompletedCard({
   const handleExtendClick = () => {
     // 연장 횟수가 2회 이상이면 제한 모달 표시
     if (extensionCount >= 2) {
-      setIsExtensionLimitModalOpen(true);
+      extensionLimitModal.open();
       return;
     }
     // 연장 확인 모달 표시
-    setIsExtensionConfirmModalOpen(true);
+    extensionConfirmModal.open();
   };
 
   // 연장 확인 모달에서 연장 버튼 클릭
@@ -195,8 +169,8 @@ export default function CampaignCompletedCard({
       onExtend(applicant.id);
     }
     setExtensionCount((prev) => prev + 1);
-    setIsExtensionConfirmModalOpen(false);
-    setIsExtensionCompleteModalOpen(true);
+    extensionConfirmModal.close();
+    extensionCompleteModal.open();
   };
 
   // 구매평 버튼 생성 함수
@@ -290,9 +264,7 @@ export default function CampaignCompletedCard({
 
   // Format date for display
   const dateToDisplay = applicant.updatedAt || applicant.registrationDate;
-  const formattedDate = isMobile
-    ? formatDateForMobile(dateToDisplay)
-    : dateToDisplay;
+  const formattedDate = isMobile ? formatDateForMobile(dateToDisplay) : dateToDisplay;
 
   return (
     <div className={baseStyles.card_wrapper}>
@@ -307,9 +279,7 @@ export default function CampaignCompletedCard({
             />
           </div>
           <div className={contentStyles.profile_info}>
-            <span className={contentStyles.user_type}>
-              {applicant.userType}
-            </span>
+            <span className={contentStyles.user_type}>{applicant.userType}</span>
             <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>
@@ -361,20 +331,13 @@ export default function CampaignCompletedCard({
             </button>
           </div>
         ) : isReview && reviewButton ? (
-          <button
-            className={actionStyles.content_check_button}
-            onClick={reviewButton.onClick}
-          >
+          <button className={actionStyles.content_check_button} onClick={reviewButton.onClick}>
             {reviewButton.label}
           </button>
         ) : !isReview && missionButtons.length > 0 ? (
           <div className={actionStyles.content_check_buttons_wrapper}>
             {missionButtons.map((btn, idx) => (
-              <button
-                key={idx}
-                className={actionStyles.content_check_button}
-                onClick={btn.onClick}
-              >
+              <button key={idx} className={actionStyles.content_check_button} onClick={btn.onClick}>
                 {btn.label}
               </button>
             ))}
@@ -417,8 +380,7 @@ export default function CampaignCompletedCard({
         <div className={actionStyles.registration_info}>
           {dateLabel === "지각 등록" ? (
             <span className={actionStyles.late_label}>
-              {formattedDate}{" "}
-              <span className={actionStyles.late_text_full}>지각 등록</span>
+              {formattedDate} <span className={actionStyles.late_text_full}>지각 등록</span>
               <span className={actionStyles.late_text_short}>지각</span>
             </span>
           ) : (
@@ -465,7 +427,7 @@ export default function CampaignCompletedCard({
 
       {/* 신고 모달 */}
       <ReportModal
-        is_open={isReportModalOpen}
+        is_open={reportModal.isOpen}
         on_close={handleReportModalClose}
         title="콘텐츠 신고"
         options={reportOptions}
@@ -480,8 +442,8 @@ export default function CampaignCompletedCard({
       {/* 연장 확인 모달 (지각 등록인 경우) */}
       {isLate && (
         <BaseModal
-          is_open={isExtensionConfirmModalOpen}
-          on_close={() => setIsExtensionConfirmModalOpen(false)}
+          is_open={extensionConfirmModal.isOpen}
+          on_close={() => extensionConfirmModal.close()}
           message={
             extensionCount === 0
               ? '콘텐츠 등록 기간을<br><span style="color: #FF2626;">3일 연장</span>하시겠습니까?'
@@ -497,8 +459,8 @@ export default function CampaignCompletedCard({
       {/* 연장 완료 모달 (지각 등록인 경우) */}
       {isLate && (
         <BaseModal
-          is_open={isExtensionCompleteModalOpen}
-          on_close={() => setIsExtensionCompleteModalOpen(false)}
+          is_open={extensionCompleteModal.isOpen}
+          on_close={() => extensionCompleteModal.close()}
           message="등록 기간 연장이 완료되었습니다."
           buttons={["닫기"]}
           type="center"
@@ -508,8 +470,8 @@ export default function CampaignCompletedCard({
       {/* 연장 제한 초과 모달 (지각 등록인 경우) */}
       {isLate && (
         <BaseModal
-          is_open={isExtensionLimitModalOpen}
-          on_close={() => setIsExtensionLimitModalOpen(false)}
+          is_open={extensionLimitModal.isOpen}
+          on_close={() => extensionLimitModal.close()}
           message="연장은 최대 두 번까지만 가능합니다."
           buttons={["닫기"]}
           type="center"
@@ -519,7 +481,7 @@ export default function CampaignCompletedCard({
       {/* 반려 사유 입력 모달 (지각 등록일 때만) */}
       {isLate && (
         <TextareaModal
-          is_open={isRejectModalOpen}
+          is_open={rejectModal.isOpen}
           on_close={handleRejectModalClose}
           title="반려 사유"
           titleColor="#ff2626"

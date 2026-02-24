@@ -7,13 +7,10 @@
  *
  * 목적: User와 Partner의 CampaignCard에서 공통으로 사용하는 버튼 스타일 로직을 추출
  *
- * 사용 위치:
+ * 사용 페이지:
  * - src/components/user/campaign_management/CampaignCard.tsx
  * - src/components/partner/campaign_management/CampaignCard.tsx
  *
- * 주요 기능:
- * - 버튼 텍스트에 따라 적절한 스타일 클래스 반환
- * - primary, danger, secondary, default 버튼 타입 지원
  */
 
 /**
@@ -127,7 +124,7 @@ export function getButtonClassName(
     secondary_button?: string;
     default_button?: string;
     [key: string]: string | undefined;
-  },
+  }
 ): string {
   const styleType = getButtonStyleType(buttonText);
   const baseClass = buttonStyles.action_button;

@@ -7,7 +7,7 @@
  *
  * 목적: 포인트 충전 금액을 선택하는 드롭다운
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /partner/point/charge (무통장 입금)
  * - /partner/point/charge (카드 결제)
  */
@@ -49,10 +49,7 @@ export default function AmountDropdown({
         aria-expanded={isOpen}
         onClick={onToggle}
       >
-        <span
-          className={customDropdownStyles.dropdown_text}
-          data-placeholder="금액 선택"
-        >
+        <span className={customDropdownStyles.dropdown_text} data-placeholder="금액 선택">
           {selectedAmount ? selectedAmount.toLocaleString() : ""}
         </span>
         <img
@@ -64,11 +61,7 @@ export default function AmountDropdown({
         />
       </button>
       {isOpen && (
-        <div
-          className={customDropdownStyles.dropdown_options}
-          role="listbox"
-          aria-label={label}
-        >
+        <div className={customDropdownStyles.dropdown_options} role="listbox" aria-label={label}>
           {AMOUNT_OPTIONS.map((amount) => (
             <button
               key={amount}

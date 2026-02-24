@@ -9,13 +9,6 @@
  * - 여러 페이지에서 동일한 UI 구조를 사용할 때 중복을 제거합니다
  * - 레이아웃 변경 시 한 곳만 수정하면 모든 페이지에 반영됩니다
  *
- * 주요 기능:
- * - 캠페인 정보 박스 표시
- * - 다운로드 버튼 및 정렬 컨트롤
- * - 일괄 기한 연장 버튼
- * - 탭 네비게이션 (대기/확인/완료)
- * - 콘텐츠 카드 그리드
- *
  * 📌 Props 패턴:
  * - 컴포넌트에 데이터와 함수를 props로 전달하여 재사용성을 높입니다
  * - renderCard 함수를 props로 받아 각 캠페인 유형별로 다른 카드를 렌더링합니다
@@ -24,6 +17,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useModalState } from "@/hooks/useModalState";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import PageHeader from "@/components/partner/campaign_application/PageHeader";
@@ -35,10 +29,7 @@ import { getCampaignDetailPath } from "@/utils/helpers/url";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import appStyles from "@/styles/partner/campaign_application/campaign_application.module.css";
 import type { ContentByTab } from "@/data/partner/sharedCampaigns";
-import type {
-  TabKey,
-  SortOption,
-} from "@/hooks/partner/campaign_contents/useCampaignContents";
+import type { TabKey, SortOption } from "@/hooks/partner/campaign_contents/useCampaignContents";
 
 /**
  * 카드 렌더링 함수 타입 정의
@@ -66,9 +57,7 @@ interface CampaignContentsLayoutProps {
   // 캠페인 정보
   campaignInfo:
     | NonNullable<
-        ReturnType<
-          typeof import("@/data/partner/sharedCampaigns").getCampaignById
-        >
+        ReturnType<typeof import("@/data/partner/sharedCampaigns").getCampaignById>
       >["campaignInfo"]
     | undefined;
 
@@ -134,29 +123,21 @@ export default function CampaignContentsLayout({
   // 📌 모달 상태 관리:
   // - 파일 생성 오류 시 표시할 모달의 열림/닫힘 상태를 관리합니다
   // - useState 훅을 사용하여 컴포넌트 내부 상태를 관리합니다
-  const [is_download_error_modal_open, setIs_download_error_modal_open] =
-    useState(false);
+  const downloadErrorModal = useModalState();
 
   // 📌 일괄 기한 연장 상태 관리:
   // - 일괄 기한 연장 확인/완료/제한 모달의 열림/닫힘 상태와 연장 횟수를 관리합니다
   // - registrationPeriod는 UI 상에서만 일시적으로 +3일, +6일로 늘려서 보여줍니다
-  const [is_batch_extension_modal_open, setIs_batch_extension_modal_open] =
-    useState(false);
-  const [
-    is_batch_extension_complete_modal_open,
-    setIs_batch_extension_complete_modal_open,
-  ] = useState(false);
-  const [
-    is_batch_extension_limit_modal_open,
-    setIs_batch_extension_limit_modal_open,
-  ] = useState(false);
+  const batchExtensionModal = useModalState();
+  const batchExtensionCompleteModal = useModalState();
+  const batchExtensionLimitModal = useModalState();
   const [batch_extension_count, setBatch_extension_count] = useState(0);
 
   // 📌 UI용 등록 기간 상태:
   // - 실제 데이터는 변경하지 않고, 화면에 보여줄 등록 기간만 +3일 단위로 늘립니다
-  const [extendedRegistrationPeriod, setExtendedRegistrationPeriod] = useState<
-    string | undefined
-  >(campaignInfo?.registrationPeriod);
+  const [extendedRegistrationPeriod, setExtendedRegistrationPeriod] = useState<string | undefined>(
+    campaignInfo?.registrationPeriod
+  );
 
   // 등록 기간 문자열의 종료일을 기준으로 N일 연장하는 헬퍼
   const extendRegistrationPeriodByDays = (
@@ -189,17 +170,15 @@ export default function CampaignContentsLayout({
     activeTab === "대기"
       ? contents.waiting || []
       : activeTab === "확인"
-      ? contents.reviewing || []
-      : contents.completed || [];
+        ? contents.reviewing || []
+        : contents.completed || [];
 
   // 📌 캠페인 마감 여부 확인:
   // - 캠페인이 마감되었을 때만 결과보고서 다운로드 버튼을 표시합니다
   // - status가 "마감"이거나 statusText에 "마감"이 포함되어 있을 때 마감된 것으로 간주합니다
   // - 등록 기간이 종료되었는지도 확인합니다 (등록 기간 종료일이 오늘보다 이전이면 마감)
   // - 결과보고서는 캠페인 마감 후에만 다운로드 가능합니다 (마감 전까지는 생성되지 않음)
-  const checkRegistrationPeriodEnded = (
-    registrationPeriod?: string
-  ): boolean => {
+  const checkRegistrationPeriodEnded = (registrationPeriod?: string): boolean => {
     if (!registrationPeriod) return false;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -268,12 +247,7 @@ export default function CampaignContentsLayout({
             >
               <span>캠페인 보기</span>
               <span className={appStyles.view_campaign_button_icon}>
-                <Image
-                  src="/images/icons/chevron_right.svg"
-                  alt=""
-                  width={16}
-                  height={16}
-                />
+                <Image src="/images/icons/chevron_right.svg" alt="" width={16} height={16} />
               </span>
             </button>
           ) : null
@@ -295,8 +269,7 @@ export default function CampaignContentsLayout({
           <Campaignbanner
             campaignInfo={{
               ...campaignInfo,
-              registrationPeriod:
-                effectiveRegistrationPeriod ?? campaignInfo.registrationPeriod,
+              registrationPeriod: effectiveRegistrationPeriod ?? campaignInfo.registrationPeriod,
             }}
             reviewingCount={reviewCount}
             completedCount={completedCount}
@@ -325,7 +298,7 @@ export default function CampaignContentsLayout({
                   throw new Error("파일 생성 실패");
                 } catch (error) {
                   // 파일 생성 오류 시 모달 표시ㄷㄷ
-                  setIs_download_error_modal_open(true);
+                  downloadErrorModal.open();
                 }
               }
             }}
@@ -341,7 +314,7 @@ export default function CampaignContentsLayout({
                       throw new Error("파일 생성 실패");
                     } catch (error) {
                       // 파일 생성 오류 시 모달 표시
-                      setIs_download_error_modal_open(true);
+                      downloadErrorModal.open();
                     }
                   }
                 : undefined
@@ -361,10 +334,10 @@ export default function CampaignContentsLayout({
                 onClick={() => {
                   // 연장 요청 2회 초과 시에는 제한 모달만 표시
                   if (batch_extension_count >= 2) {
-                    setIs_batch_extension_limit_modal_open(true);
+                    batchExtensionLimitModal.open();
                     return;
                   }
-                  setIs_batch_extension_modal_open(true);
+                  batchExtensionModal.open();
                 }}
               >
                 <Image
@@ -398,25 +371,19 @@ export default function CampaignContentsLayout({
         */}
         <article className={appStyles.tab_navigation}>
           <button
-            className={`${appStyles.tab_button} ${
-              activeTab === "대기" ? appStyles.active : ""
-            }`}
+            className={`${appStyles.tab_button} ${activeTab === "대기" ? appStyles.active : ""}`}
             onClick={() => setActiveTab("대기")}
           >
             대기 <span className={appStyles.tab_count}>{waitingCount}</span>
           </button>
           <button
-            className={`${appStyles.tab_button} ${
-              activeTab === "확인" ? appStyles.active : ""
-            }`}
+            className={`${appStyles.tab_button} ${activeTab === "확인" ? appStyles.active : ""}`}
             onClick={() => setActiveTab("확인")}
           >
             확인 <span className={appStyles.tab_count}>{reviewCount}</span>
           </button>
           <button
-            className={`${appStyles.tab_button} ${
-              activeTab === "완료" ? appStyles.active : ""
-            }`}
+            className={`${appStyles.tab_button} ${activeTab === "완료" ? appStyles.active : ""}`}
             onClick={() => setActiveTab("완료")}
           >
             완료 <span className={appStyles.tab_count}>{completedCount}</span>
@@ -436,9 +403,7 @@ export default function CampaignContentsLayout({
             // - item.id와 index를 조합하여 고유한 키를 생성합니다 (중복 방지)
             // - renderCard 함수를 호출하여 각 캠페인 유형에 맞는 카드를 렌더링합니다
             return (
-              <React.Fragment key={`${item.id}-${index}`}>
-                {renderCard(item, index)}
-              </React.Fragment>
+              <React.Fragment key={`${item.id}-${index}`}>{renderCard(item, index)}</React.Fragment>
             );
           })}
         </article>
@@ -447,11 +412,11 @@ export default function CampaignContentsLayout({
       {/* 파일 생성 오류 모달 */}
       {/* 📌 조건부 렌더링:
           - BaseModal 컴포넌트는 is_open prop이 true일 때만 렌더링됩니다
-          - 모달이 닫혀있으면 (is_download_error_modal_open === false) null을 반환하여 아무것도 렌더링하지 않습니다
+          - 모달이 닫혀있으면 (downloadErrorModal.isOpen === false) null을 반환하여 아무것도 렌더링하지 않습니다
       */}
       <BaseModal
-        is_open={is_download_error_modal_open}
-        on_close={() => setIs_download_error_modal_open(false)}
+        is_open={downloadErrorModal.isOpen}
+        on_close={() => downloadErrorModal.close()}
         message="다운로드에 실패하였습니다."
         buttons={["닫기"]}
         type="center"
@@ -460,8 +425,8 @@ export default function CampaignContentsLayout({
       {/* 일괄 기한 연장 확인 모달 */}
       {/* 📌 일괄 기한 연장 확인 모달 */}
       <BaseModal
-        is_open={is_batch_extension_modal_open}
-        on_close={() => setIs_batch_extension_modal_open(false)}
+        is_open={batchExtensionModal.isOpen}
+        on_close={() => batchExtensionModal.close()}
         message={
           batch_extension_count === 0
             ? '캠페인의 콘텐츠 등록 기간을<br><span style="color: #FF2626;">3일 연장</span>하시겠습니까?'
@@ -475,13 +440,12 @@ export default function CampaignContentsLayout({
           // - 등록 기간의 종료일을 기준으로 3일 연장하여 UI에 반영합니다
           // - 연장 요청은 최대 2회까지만 허용됩니다
           if (batch_extension_count >= 2) {
-            setIs_batch_extension_modal_open(false);
-            setIs_batch_extension_limit_modal_open(true);
+            batchExtensionModal.close();
+            batchExtensionLimitModal.open();
             return;
           }
 
-          const basePeriod =
-            extendedRegistrationPeriod ?? campaignInfo?.registrationPeriod;
+          const basePeriod = extendedRegistrationPeriod ?? campaignInfo?.registrationPeriod;
           const updated = extendRegistrationPeriodByDays(basePeriod, 3);
           if (updated) {
             setExtendedRegistrationPeriod(updated);
@@ -493,16 +457,16 @@ export default function CampaignContentsLayout({
             onBatchExtension();
           }
 
-          setIs_batch_extension_modal_open(false);
-          setIs_batch_extension_complete_modal_open(true);
+          batchExtensionModal.close();
+          batchExtensionCompleteModal.open();
         }}
         type="center"
       />
 
       {/* 📌 일괄 기한 연장 완료 모달 */}
       <BaseModal
-        is_open={is_batch_extension_complete_modal_open}
-        on_close={() => setIs_batch_extension_complete_modal_open(false)}
+        is_open={batchExtensionCompleteModal.isOpen}
+        on_close={() => batchExtensionCompleteModal.close()}
         message="등록 기간 연장이 완료되었습니다."
         buttons={["닫기"]}
         type="center"
@@ -510,8 +474,8 @@ export default function CampaignContentsLayout({
 
       {/* 📌 일괄 기한 연장 제한 초과 모달 */}
       <BaseModal
-        is_open={is_batch_extension_limit_modal_open}
-        on_close={() => setIs_batch_extension_limit_modal_open(false)}
+        is_open={batchExtensionLimitModal.isOpen}
+        on_close={() => batchExtensionLimitModal.close()}
         message="연장은 최대 두 번까지만 가능합니다."
         buttons={["닫기"]}
         type="center"

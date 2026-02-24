@@ -14,18 +14,13 @@
  * - /partner/campaign_application/reporter (기자단형 캠페인 신청내역)
  * - /partner/campaign_application/mission (미션형 캠페인 신청내역)
  *
- * 주요 기능:
- * - 신청자 목록 엑셀 다운로드
- * - 선정자 목록 엑셀 다운로드
- * - 정렬 옵션 선택 (최신순/오래된순)
- * - 데이터가 없을 때 안내 모달 표시
  */
 
 "use client";
 
-import { useState } from "react";
 import styles from "@/styles/partner/campaign_application/excel_download_btn.module.css";
 import BaseModal from "@/components/common/modal/BaseModal";
+import { useModalState } from "@/hooks/useModalState";
 
 interface ExcelDownloadBtnProps {
   onDownloadApplicants: () => void;
@@ -52,12 +47,12 @@ export default function ExcelDownloadBtn({
   hasReport = true,
   showApplicantsButton = true,
 }: ExcelDownloadBtnProps) {
-  const [isNoDataModalOpen, setIsNoDataModalOpen] = useState(false);
+  const noDataModal = useModalState();
 
   // 신청자 목록 다운로드 핸들러
   const handleDownloadApplicants = () => {
     if (!hasApplicants) {
-      setIsNoDataModalOpen(true);
+      noDataModal.open();
       return;
     }
     // console.log("신청자 목록 다운로드 버튼 클릭");
@@ -67,7 +62,7 @@ export default function ExcelDownloadBtn({
   // 선정자 목록 다운로드 핸들러
   const handleDownloadSelected = () => {
     if (!hasSelected) {
-      setIsNoDataModalOpen(true);
+      noDataModal.open();
       return;
     }
     // console.log("선정자 목록 다운로드 버튼 클릭");
@@ -79,7 +74,7 @@ export default function ExcelDownloadBtn({
   // 결과보고서 다운로드 핸들러
   const handleDownloadReport = () => {
     if (!hasReport) {
-      setIsNoDataModalOpen(true);
+      noDataModal.open();
       return;
     }
     // console.log("결과보고서 다운로드 버튼 클릭");
@@ -93,10 +88,7 @@ export default function ExcelDownloadBtn({
       <div className={styles.download_btn_group}>
         {/* 신청자 목록 다운로드 버튼 (옵션) */}
         {showApplicantsButton && (
-          <button
-            className={styles.download_button}
-            onClick={handleDownloadApplicants}
-          >
+          <button className={styles.download_button} onClick={handleDownloadApplicants}>
             <img src="/images/excel_icon.png" alt="다운로드" />
             신청자 목록 다운로드
           </button>
@@ -104,10 +96,7 @@ export default function ExcelDownloadBtn({
 
         {/* 선정자 목록 다운로드 버튼 (옵션) */}
         {onDownloadSelected ? (
-          <button
-            className={styles.download_button}
-            onClick={handleDownloadSelected}
-          >
+          <button className={styles.download_button} onClick={handleDownloadSelected}>
             <img src="/images/excel_icon.png" alt="다운로드" />
             선정자 목록 다운로드
           </button>
@@ -115,10 +104,7 @@ export default function ExcelDownloadBtn({
 
         {/* 결과보고서 다운로드 버튼 (옵션) */}
         {onDownloadReport ? (
-          <button
-            className={styles.download_button}
-            onClick={handleDownloadReport}
-          >
+          <button className={styles.download_button} onClick={handleDownloadReport}>
             <img src="/images/excel_icon.png" alt="다운로드" />
             결과보고서 다운로드
           </button>
@@ -127,8 +113,8 @@ export default function ExcelDownloadBtn({
 
       {/* 데이터 없음 안내 모달 */}
       <BaseModal
-        is_open={isNoDataModalOpen}
-        on_close={() => setIsNoDataModalOpen(false)}
+        is_open={noDataModal.isOpen}
+        on_close={noDataModal.close}
         message="다운로드할 데이터가 없습니다."
         buttons={["닫기"]}
         type="center"

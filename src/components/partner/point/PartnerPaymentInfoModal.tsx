@@ -11,10 +11,6 @@
  * - /partner/point/all (전체 포인트 내역)
  * - /partner/point/earned (충전 포인트 내역)
  *
- * 주요 기능:
- * - 충전 내역 클릭 시 결제 정보(거래번호, 구매자, 카드 정보, 금액 등) 표시
- * - 회사 정보 표시
- * - 거래명세서 다운로드 버튼, 확인 버튼
  */
 
 "use client";
@@ -65,8 +61,7 @@ export default function PartnerPaymentInfoModal({
   const bankPayment = getBankTransferPaymentInfoFromHistory(history);
 
   const hasContent =
-    (paymentMethod === "card" && payment) ||
-    (paymentMethod === "bank" && bankPayment);
+    (paymentMethod === "card" && payment) || (paymentMethod === "bank" && bankPayment);
 
   const handle_download_receipt = async () => {
     if (!receipt_ref.current || !hasContent) return;
@@ -99,9 +94,7 @@ export default function PartnerPaymentInfoModal({
         <div className={styles.receipt_sheet_wrapper}>
           <div ref={receipt_ref} className={styles.receipt_sheet}>
             <h3 className={styles.receipt_sheet_title}>거래명세서</h3>
-            {paymentMethod === "card" && payment && (
-              <ReceiptCardContent payment={payment} />
-            )}
+            {paymentMethod === "card" && payment && <ReceiptCardContent payment={payment} />}
             {paymentMethod === "bank" && bankPayment && (
               <ReceiptBankContent bankPayment={bankPayment} />
             )}
@@ -117,15 +110,9 @@ export default function PartnerPaymentInfoModal({
         aria-modal="true"
         aria-labelledby="partner_payment_info_modal_title"
       >
-        <div
-          className={styles.modal_content}
-          onClick={(e) => e.stopPropagation()}
-        >
+        <div className={styles.modal_content} onClick={(e) => e.stopPropagation()}>
           <div className={styles.modal_header}>
-            <h2
-              id="partner_payment_info_modal_title"
-              className={styles.modal_title}
-            >
+            <h2 id="partner_payment_info_modal_title" className={styles.modal_title}>
               결제 정보
             </h2>
             <button
@@ -134,12 +121,7 @@ export default function PartnerPaymentInfoModal({
               onClick={on_close}
               aria-label="닫기"
             >
-              <Image
-                src="/images/filter/x_icon.svg"
-                alt=""
-                width={20}
-                height={20}
-              />
+              <Image src="/images/filter/x_icon.svg" alt="" width={20} height={20} />
             </button>
           </div>
 
@@ -149,57 +131,39 @@ export default function PartnerPaymentInfoModal({
                 {paymentMethod === "card" && payment && (
                   <>
                     {/* 카드 결제: 블록 1 거래번호/구매자 → 블록 2 카드 상세 → 블록 3 회사 정보 */}
-                    <div
-                      className={`${styles.info_block} ${styles.info_block_has_border}`}
-                    >
+                    <div className={`${styles.info_block} ${styles.info_block_has_border}`}>
                       <div className={styles.info_section_rows}>
                         <div className={styles.info_row}>
                           <span className={styles.info_label}>거래번호</span>
-                          <span className={styles.info_value}>
-                            {payment.transaction_number}
-                          </span>
+                          <span className={styles.info_value}>{payment.transaction_number}</span>
                         </div>
                         <div className={styles.info_row}>
                           <span className={styles.info_label}>구매자</span>
-                          <span className={styles.info_value}>
-                            {payment.buyer}
-                          </span>
+                          <span className={styles.info_value}>{payment.buyer}</span>
                         </div>
                       </div>
                     </div>
-                    <div
-                      className={`${styles.info_block} ${styles.info_block_has_border}`}
-                    >
+                    <div className={`${styles.info_block} ${styles.info_block_has_border}`}>
                       <div className={styles.info_section_rows}>
                         <div className={styles.info_row}>
                           <span className={styles.info_label}>카드 종류</span>
-                          <span className={styles.info_value}>
-                            {payment.card_type}
-                          </span>
+                          <span className={styles.info_value}>{payment.card_type}</span>
                         </div>
                         <div className={styles.info_row}>
                           <span className={styles.info_label}>카드번호</span>
-                          <span className={styles.info_value}>
-                            {payment.card_number}
-                          </span>
+                          <span className={styles.info_value}>{payment.card_number}</span>
                         </div>
                         <div className={styles.info_row}>
                           <span className={styles.info_label}>승인번호</span>
-                          <span className={styles.info_value}>
-                            {payment.approval_number}
-                          </span>
+                          <span className={styles.info_value}>{payment.approval_number}</span>
                         </div>
                         <div className={styles.info_row}>
                           <span className={styles.info_label}>결제일시</span>
-                          <span className={styles.info_value}>
-                            {payment.payment_datetime}
-                          </span>
+                          <span className={styles.info_value}>{payment.payment_datetime}</span>
                         </div>
                         <div className={styles.info_row}>
                           <span className={styles.info_label}>금액</span>
-                          <span className={styles.info_value}>
-                            {payment.amount}
-                          </span>
+                          <span className={styles.info_value}>{payment.amount}</span>
                         </div>
                       </div>
                     </div>
@@ -209,9 +173,7 @@ export default function PartnerPaymentInfoModal({
                 {paymentMethod === "bank" && bankPayment && (
                   <>
                     {/* 무통장입금(현금 영수증): 블록 1 거래번호~금액 → 블록 2 회사 정보 */}
-                    <div
-                      className={`${styles.info_block} ${styles.info_block_has_border}`}
-                    >
+                    <div className={`${styles.info_block} ${styles.info_block_has_border}`}>
                       <div className={styles.info_section_rows}>
                         <div className={styles.info_row}>
                           <span className={styles.info_label}>거래번호</span>
@@ -221,33 +183,23 @@ export default function PartnerPaymentInfoModal({
                         </div>
                         <div className={styles.info_row}>
                           <span className={styles.info_label}>구매자</span>
-                          <span className={styles.info_value}>
-                            {bankPayment.buyer}
-                          </span>
+                          <span className={styles.info_value}>{bankPayment.buyer}</span>
                         </div>
                         <div className={styles.info_row}>
                           <span className={styles.info_label}>용도</span>
-                          <span className={styles.info_value}>
-                            {bankPayment.purpose}
-                          </span>
+                          <span className={styles.info_value}>{bankPayment.purpose}</span>
                         </div>
                         <div className={styles.info_row}>
                           <span className={styles.info_label}>발급번호</span>
-                          <span className={styles.info_value}>
-                            {bankPayment.issuance_number}
-                          </span>
+                          <span className={styles.info_value}>{bankPayment.issuance_number}</span>
                         </div>
                         <div className={styles.info_row}>
                           <span className={styles.info_label}>결제일시</span>
-                          <span className={styles.info_value}>
-                            {bankPayment.payment_datetime}
-                          </span>
+                          <span className={styles.info_value}>{bankPayment.payment_datetime}</span>
                         </div>
                         <div className={styles.info_row}>
                           <span className={styles.info_label}>금액</span>
-                          <span className={styles.info_value}>
-                            {bankPayment.amount}
-                          </span>
+                          <span className={styles.info_value}>{bankPayment.amount}</span>
                         </div>
                       </div>
                     </div>
@@ -255,39 +207,27 @@ export default function PartnerPaymentInfoModal({
                 )}
 
                 {/* 회사 정보 (카드/무통장 공통) → 구분선 없음 */}
-                <div
-                  className={`${styles.info_block} ${styles.info_block_company}`}
-                >
+                <div className={`${styles.info_block} ${styles.info_block_company}`}>
                   <div className={styles.info_section_rows}>
                     <div className={styles.info_row}>
                       <span className={styles.info_label}>상호명</span>
-                      <span className={styles.info_value}>
-                        {COMPANY_INFO.company_name}
-                      </span>
+                      <span className={styles.info_value}>{COMPANY_INFO.company_name}</span>
                     </div>
                     <div className={styles.info_row}>
                       <span className={styles.info_label}>대표자명</span>
-                      <span className={styles.info_value}>
-                        {COMPANY_INFO.ceo}
-                      </span>
+                      <span className={styles.info_value}>{COMPANY_INFO.ceo}</span>
                     </div>
                     <div className={styles.info_row}>
                       <span className={styles.info_label}>사업자등록번호</span>
-                      <span className={styles.info_value}>
-                        {COMPANY_INFO.business_number}
-                      </span>
+                      <span className={styles.info_value}>{COMPANY_INFO.business_number}</span>
                     </div>
                     <div className={styles.info_row}>
                       <span className={styles.info_label}>전화번호</span>
-                      <span className={styles.info_value}>
-                        {COMPANY_INFO.phone}
-                      </span>
+                      <span className={styles.info_value}>{COMPANY_INFO.phone}</span>
                     </div>
                     <div className={styles.info_row}>
                       <span className={styles.info_label}>주소</span>
-                      <span className={styles.info_value}>
-                        {COMPANY_INFO.address}
-                      </span>
+                      <span className={styles.info_value}>{COMPANY_INFO.address}</span>
                     </div>
                   </div>
                 </div>
@@ -317,9 +257,7 @@ function ReceiptCardContent({ payment }: { payment: PaymentInfoFromHistory }) {
       <div className={styles.receipt_sheet_block}>
         <div className={styles.receipt_sheet_row}>
           <span className={styles.receipt_sheet_label}>거래번호</span>
-          <span className={styles.receipt_sheet_value}>
-            {payment.transaction_number}
-          </span>
+          <span className={styles.receipt_sheet_value}>{payment.transaction_number}</span>
         </div>
         <div className={styles.receipt_sheet_row}>
           <span className={styles.receipt_sheet_label}>구매자</span>
@@ -329,27 +267,19 @@ function ReceiptCardContent({ payment }: { payment: PaymentInfoFromHistory }) {
       <div className={styles.receipt_sheet_block}>
         <div className={styles.receipt_sheet_row}>
           <span className={styles.receipt_sheet_label}>카드 종류</span>
-          <span className={styles.receipt_sheet_value}>
-            {payment.card_type}
-          </span>
+          <span className={styles.receipt_sheet_value}>{payment.card_type}</span>
         </div>
         <div className={styles.receipt_sheet_row}>
           <span className={styles.receipt_sheet_label}>카드번호</span>
-          <span className={styles.receipt_sheet_value}>
-            {payment.card_number}
-          </span>
+          <span className={styles.receipt_sheet_value}>{payment.card_number}</span>
         </div>
         <div className={styles.receipt_sheet_row}>
           <span className={styles.receipt_sheet_label}>승인번호</span>
-          <span className={styles.receipt_sheet_value}>
-            {payment.approval_number}
-          </span>
+          <span className={styles.receipt_sheet_value}>{payment.approval_number}</span>
         </div>
         <div className={styles.receipt_sheet_row}>
           <span className={styles.receipt_sheet_label}>결제일시</span>
-          <span className={styles.receipt_sheet_value}>
-            {payment.payment_datetime}
-          </span>
+          <span className={styles.receipt_sheet_value}>{payment.payment_datetime}</span>
         </div>
         <div className={styles.receipt_sheet_row}>
           <span className={styles.receipt_sheet_label}>금액</span>
@@ -361,18 +291,12 @@ function ReceiptCardContent({ payment }: { payment: PaymentInfoFromHistory }) {
 }
 
 /** 거래명세서 캡처용: 무통장입금(현금 영수증) - 한 블록으로 표시 */
-function ReceiptBankContent({
-  bankPayment,
-}: {
-  bankPayment: BankTransferPaymentInfo;
-}) {
+function ReceiptBankContent({ bankPayment }: { bankPayment: BankTransferPaymentInfo }) {
   return (
     <div className={styles.receipt_sheet_block}>
       <div className={styles.receipt_sheet_row}>
         <span className={styles.receipt_sheet_label}>거래번호</span>
-        <span className={styles.receipt_sheet_value}>
-          {bankPayment.transaction_number}
-        </span>
+        <span className={styles.receipt_sheet_value}>{bankPayment.transaction_number}</span>
       </div>
       <div className={styles.receipt_sheet_row}>
         <span className={styles.receipt_sheet_label}>구매자</span>
@@ -384,15 +308,11 @@ function ReceiptBankContent({
       </div>
       <div className={styles.receipt_sheet_row}>
         <span className={styles.receipt_sheet_label}>발급번호</span>
-        <span className={styles.receipt_sheet_value}>
-          {bankPayment.issuance_number}
-        </span>
+        <span className={styles.receipt_sheet_value}>{bankPayment.issuance_number}</span>
       </div>
       <div className={styles.receipt_sheet_row}>
         <span className={styles.receipt_sheet_label}>결제일시</span>
-        <span className={styles.receipt_sheet_value}>
-          {bankPayment.payment_datetime}
-        </span>
+        <span className={styles.receipt_sheet_value}>{bankPayment.payment_datetime}</span>
       </div>
       <div className={styles.receipt_sheet_row}>
         <span className={styles.receipt_sheet_label}>금액</span>
@@ -408,9 +328,7 @@ function ReceiptCompanyContent() {
     <div className={styles.receipt_sheet_block}>
       <div className={styles.receipt_sheet_row}>
         <span className={styles.receipt_sheet_label}>상호명</span>
-        <span className={styles.receipt_sheet_value}>
-          {COMPANY_INFO.company_name}
-        </span>
+        <span className={styles.receipt_sheet_value}>{COMPANY_INFO.company_name}</span>
       </div>
       <div className={styles.receipt_sheet_row}>
         <span className={styles.receipt_sheet_label}>대표자명</span>
@@ -418,9 +336,7 @@ function ReceiptCompanyContent() {
       </div>
       <div className={styles.receipt_sheet_row}>
         <span className={styles.receipt_sheet_label}>사업자등록번호</span>
-        <span className={styles.receipt_sheet_value}>
-          {COMPANY_INFO.business_number}
-        </span>
+        <span className={styles.receipt_sheet_value}>{COMPANY_INFO.business_number}</span>
       </div>
       <div className={styles.receipt_sheet_row}>
         <span className={styles.receipt_sheet_label}>전화번호</span>
@@ -428,9 +344,7 @@ function ReceiptCompanyContent() {
       </div>
       <div className={styles.receipt_sheet_row}>
         <span className={styles.receipt_sheet_label}>주소</span>
-        <span className={styles.receipt_sheet_value}>
-          {COMPANY_INFO.address}
-        </span>
+        <span className={styles.receipt_sheet_value}>{COMPANY_INFO.address}</span>
       </div>
     </div>
   );

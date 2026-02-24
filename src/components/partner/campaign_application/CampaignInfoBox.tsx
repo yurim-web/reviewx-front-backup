@@ -14,19 +14,12 @@
  * - /partner/campaign_application/reporter (기자단형 캠페인 신청내역)
  * - /partner/campaign_application/mission (미션형 캠페인 신청내역)
  *
- * 주요 기능:
- * - 캠페인 기본 정보 표시 (이미지, 제목, 카테고리, 상태)
- * - 캠페인 일정 정보 표시 (모집 인원, 모집 기간, 선정 발표, 등록 기간)
- * - 캠페인 상태 알림 (선정 발표까지 남은 일수)
  */
 
 import styles from "@/styles/partner/campaign_application/campaign_infocard.module.css";
 import CampaignSchedule from "./CampaignSchedule";
 import { getBrandLogo } from "@/data/partner/utils/campaignHelpers";
-import {
-  deriveCampaignStatus,
-  getStatusText,
-} from "./utils/campaign_info_helpers";
+import { deriveCampaignStatus, getStatusText } from "./utils/campaign_info_helpers";
 
 /* ========================================
    🧭 파일 구조 한눈에 보기
@@ -181,24 +174,14 @@ export default function Campaignbanner({
             <h2 className={styles.campaign_title}>{campaignInfo.title}</h2>
             {/* PC에서는 여기에 표시, 모바일에서는 아래로 이동 */}
             <p className={`${styles.campaign_notice} ${styles.campaign_notice_pc}`}>
-              {getStatusText(
-                campaignInfoForHelper,
-                reviewingCount,
-                completedCount,
-                derivedStatus
-              )}
+              {getStatusText(campaignInfoForHelper, reviewingCount, completedCount, derivedStatus)}
             </p>
           </div>
         </div>
 
         {/* 모바일에서만 표시되는 campaign_notice */}
         <p className={`${styles.campaign_notice} ${styles.campaign_notice_mobile}`}>
-          {getStatusText(
-            campaignInfoForHelper,
-            reviewingCount,
-            completedCount,
-            derivedStatus
-          )}
+          {getStatusText(campaignInfoForHelper, reviewingCount, completedCount, derivedStatus)}
         </p>
 
         {/* 캠페인 일정 정보 컴포넌트 사용
@@ -209,9 +192,7 @@ export default function Campaignbanner({
         <CampaignSchedule
           scheduleData={{
             recruitedCount:
-              applicantsCount !== undefined
-                ? applicantsCount
-                : campaignInfo.recruitedCount,
+              applicantsCount !== undefined ? applicantsCount : campaignInfo.recruitedCount,
             totalCount: campaignInfo.totalCount,
             recruitmentPeriod: campaignInfo.recruitmentPeriod,
             announcementDate: campaignInfo.announcementDate,

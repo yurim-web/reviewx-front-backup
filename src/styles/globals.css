@@ -30,16 +30,6 @@
   box-sizing: border-box;
 }
 
-/* 버튼 전역 스타일 통일 */
-button {
-  font-weight: 500;
-}
-
-/* 비활성화 버튼 기본 회색 (확인 완료 버튼은 제외 → 모듈에서 #ff56941a 적용) */
-button:disabled:not(.completion_confirmed_btn) {
-  background-color: #e5e5e5;
-}
-
 /* 기본 여백 제거 */
 html,
 body {
@@ -55,10 +45,21 @@ html {
 
 body {
   background: white;
-  color:#444;
-  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui,
-    Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR",
-    "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+  color: #444;
+  font-family:
+    "Pretendard",
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    Roboto,
+    "Helvetica Neue",
+    "Segoe UI",
+    "Apple SD Gothic Neo",
+    "Noto Sans KR",
+    "Malgun Gothic",
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Segoe UI Symbol",
     sans-serif;
   font-style: normal;
   min-height: 100vh; /* body가 항상 최소 화면 높이를 가지도록 */
@@ -78,7 +79,7 @@ body {
   max-width: min(1000px, 100%);
   margin: 0 auto;
   box-sizing: border-box;
-  background: #F2F2F2;
+  background: #f2f2f2;
 }
 
 main {
@@ -233,7 +234,6 @@ td.rdp-day.rdp-day_selected.rdp-day_range_start .rdp-day_button,
   justify-content: center !important;
   outline: none !important;
 }
-
 
 /* 종료일 스타일 - td 요소 포함, 모든 가능한 선택자 */
 td.rdp-day.rdp-day_range_end,

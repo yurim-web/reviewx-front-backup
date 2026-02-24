@@ -19,7 +19,7 @@ import actionStyles from "@/styles/partner/campaign_application/card/applicant_c
  * - 프로필, 회원 타입, 메모, 선택 취소 버튼 포함
  * - 선정된 상태를 시각적으로 구분
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /partner/campaign_application/mission (미션형 캠페인 선정 탭)
  * - /partner/campaign_application/review (구매평 캠페인 선정 탭)
  */
@@ -31,16 +31,11 @@ interface BasicSelectedCardProps {
   onCancel: (applicantId: string) => void;
 }
 
-export default function BasicSelectedCard({
-  applicant,
-  onCancel,
-}: BasicSelectedCardProps) {
+export default function BasicSelectedCard({ applicant, onCancel }: BasicSelectedCardProps) {
   return (
     <article
       className={`${baseStyles.applicant_card} ${baseStyles.selected_card} ${
-        applicant.selectionStatus === "이용제한 계정"
-          ? baseStyles.restricted_card
-          : ""
+        applicant.selectionStatus === "이용제한 계정" ? baseStyles.restricted_card : ""
       }`}
     >
       {/* 프로필 영역 */}
@@ -65,9 +60,7 @@ export default function BasicSelectedCard({
       {/* 메모 */}
       <div className={contentStyles.memo_section}>
         <div className={contentStyles.memo_text}>
-          {applicant.memo && applicant.memo.trim() !== ""
-            ? applicant.memo
-            : "메모 미작성"}
+          {applicant.memo && applicant.memo.trim() !== "" ? applicant.memo : "메모 미작성"}
         </div>
       </div>
 

@@ -7,14 +7,9 @@
  *
  * 목적: 파트너가 구매 영수증을 등록할 수 있는 모달입니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - 파트너 캠페인 관리 페이지에서 "구매 영수증 등록하기" 버튼 클릭 시
  *
- * 주요 기능:
- * - 영수증 이미지 업로드 (최대 7장, 10MB 이하)
- * - 파일 형식 제한 (JPG, PNG, GIF)
- * - 업로드된 이미지 미리보기
- * - 영수증 등록 완료
  */
 
 "use client";
@@ -158,12 +153,7 @@ export default function ReceiptRegistrationModal({
                           handleRemoveImage(index);
                         }}
                       >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 16 16"
-                          fill="none"
-                        >
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                           <path
                             d="M12 4L4 12M4 4L12 12"
                             stroke="currentColor"
@@ -176,16 +166,8 @@ export default function ReceiptRegistrationModal({
                     </div>
                   ))}
                   {uploadedImages.length < 7 && (
-                    <div
-                      className={styles.add_more_button}
-                      onClick={openFileInput}
-                    >
-                      <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
+                    <div className={styles.add_more_button} onClick={openFileInput}>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <path
                           d="M12 5V19M5 12H19"
                           stroke="currentColor"
@@ -212,22 +194,16 @@ export default function ReceiptRegistrationModal({
           {/* 안내 문구 */}
           <div className={styles.guidelines}>
             <ul className={styles.guidelines_list}>
+              <li>10mb 이하의 JPG, PNG, GIF 파일 최대 7장까지 등록 가능합니다.</li>
               <li>
-                10mb 이하의 JPG, PNG, GIF 파일 최대 7장까지 등록 가능합니다.
-              </li>
-              <li>
-                주문번호, 구매 상품, 주문 금액, 배송지가 모두 확인될 수 있도록
-                캡처한 이미지를 업로드해 주세요.
+                주문번호, 구매 상품, 주문 금액, 배송지가 모두 확인될 수 있도록 캡처한 이미지를
+                업로드해 주세요.
               </li>
             </ul>
           </div>
 
           {/* 등록 버튼 */}
-          <button
-            className={styles.submit_button}
-            onClick={handleSubmit}
-            disabled={isUploading}
-          >
+          <button className={styles.submit_button} onClick={handleSubmit} disabled={isUploading}>
             {isUploading ? "등록 중..." : "등록하기"}
           </button>
         </div>
@@ -235,5 +211,3 @@ export default function ReceiptRegistrationModal({
     </div>
   );
 }
-
-

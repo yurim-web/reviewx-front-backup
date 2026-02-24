@@ -7,7 +7,7 @@
  *
  * 목적: 검수가 완료된 신청자의 정보를 표시하는 카드 컴포넌트입니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /partner/campaign_application/delivery (배송형 캠페인 완료된 검수 목록)
  *
  * 완료 카드 특징:
@@ -117,9 +117,7 @@ export default function NaverBlogCompletedCard({
       </button>
 
       {/* 완료일 정보 표시 */}
-      <div className={actionStyles.registration_info}>
-        {applicant.completionDate} 완료
-      </div>
+      <div className={actionStyles.registration_info}>{applicant.completionDate} 완료</div>
 
       {/* 액션 버튼 영역: 콘텐츠 확인하기, 완료일, 검수 완료 */}
       <div className={actionStyles.action_button_section}>

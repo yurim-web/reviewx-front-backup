@@ -14,10 +14,6 @@
  * - /partner/campaign_content/reporter (기자단형 캠페인 콘텐츠 내역)
  * - /partner/campaign_content/mission (미션형 캠페인 콘텐츠 내역)
  *
- * 주요 기능:
- * - 검수 중인 콘텐츠 목록 엑셀 다운로드
- * - 완료된 콘텐츠 목록 엑셀 다운로드
- * - 결과 보고서 엑셀 다운로드
  */
 
 import styles from "@/styles/partner/campaign_application/excel_download_btn.module.css";

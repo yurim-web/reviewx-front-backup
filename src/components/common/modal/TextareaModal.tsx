@@ -8,13 +8,6 @@
  * 목적: 프로젝트 전반에서 사용할 수 있는 텍스트 입력 모달 컴포넌트입니다.
  *       textarea를 사용하여 사용자 입력을 받을 수 있습니다.
  *
- * 주요 기능:
- * - 제목과 textarea 입력 필드 제공
- * - 버튼이 하나일 때와 두 개일 때 자동 처리
- * - 스크롤바 너비 고려한 레이아웃 유지
- * - ESC 키, 오버레이 클릭으로 닫기
- * - 입력값 제어 (value, onChange)
- *
  * 사용 예시:
  * - 등록 기한 연장 요청 모달
  * - 사유 입력이 필요한 모든 모달
@@ -89,15 +82,13 @@ export default function TextareaModal({
   has_error = false,
   confirm_disabled_when_empty = false,
 }: TextareaModalProps) {
-  const buttons =
-    prop_buttons && prop_buttons.length > 0 ? prop_buttons : ["닫기"];
+  const buttons = prop_buttons && prop_buttons.length > 0 ? prop_buttons : ["닫기"];
   const has_two_buttons = buttons.length === 2;
   const is_reject_variant = variant === "reject";
   const is_extend_variant = variant === "extend";
   // 반려/연장(거절·승인) 또는 confirm_disabled_when_empty일 때 입력값 없으면 확인 버튼 비활성화
   const is_confirm_disabled =
-    (is_reject_variant || is_extend_variant || confirm_disabled_when_empty) &&
-    !value.trim();
+    (is_reject_variant || is_extend_variant || confirm_disabled_when_empty) && !value.trim();
 
   // ESC 키로 모달 닫기
   useEffect(() => {
@@ -143,9 +134,7 @@ export default function TextareaModal({
   };
 
   // textarea 값 변경 핸들러
-  const handle_textarea_change = (
-    e: React.ChangeEvent<HTMLTextAreaElement>,
-  ) => {
+  const handle_textarea_change = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (onChange && !readOnly) {
       onChange(e.target.value);
     }
@@ -153,34 +142,19 @@ export default function TextareaModal({
 
   // 모달 타입에 따른 클래스명 결정
   const overlay_class =
-    type === "center"
-      ? styles.modal_overlay_center
-      : styles.modal_overlay_bottom;
+    type === "center" ? styles.modal_overlay_center : styles.modal_overlay_bottom;
   const container_class =
-    type === "center"
-      ? styles.modal_container_center
-      : styles.modal_container_bottom;
+    type === "center" ? styles.modal_container_center : styles.modal_container_bottom;
 
   const modal_node = (
-    <div
-      className={overlay_class}
-      onClick={handle_overlay_click}
-      role="dialog"
-      aria-modal="true"
-    >
+    <div className={overlay_class} onClick={handle_overlay_click} role="dialog" aria-modal="true">
       <div className={container_class} onClick={(e) => e.stopPropagation()}>
         {/* 모달 콘텐츠 */}
         <div className={styles.modal_content}>
           {/* 모달 제목 */}
           <h2
             className={styles.modal_title}
-            style={
-              titleColor
-                ? { color: titleColor }
-                : readOnly
-                  ? { color: "#ff2626" }
-                  : undefined
-            }
+            style={titleColor ? { color: titleColor } : readOnly ? { color: "#ff2626" } : undefined}
           >
             {title}
           </h2>
@@ -193,14 +167,8 @@ export default function TextareaModal({
             rows={5}
             readOnly={readOnly}
             disabled={readOnly}
-            has_error={
-              is_extend_variant && readOnly ? false : readOnly || has_error
-            }
-            className={
-              readOnly && !is_extend_variant
-                ? styles.modal_textarea_readonly
-                : ""
-            }
+            has_error={is_extend_variant && readOnly ? false : readOnly || has_error}
+            className={readOnly && !is_extend_variant ? styles.modal_textarea_readonly : ""}
             stop_propagation={true}
           />
 
@@ -222,9 +190,7 @@ export default function TextareaModal({
                       onClick={handle_confirm}
                       disabled={is_confirm_disabled}
                       className={`${styles.modal_footer_button_extend} ${
-                        is_confirm_disabled
-                          ? styles.modal_footer_button_extend_disabled
-                          : ""
+                        is_confirm_disabled ? styles.modal_footer_button_extend_disabled : ""
                       }`.trim()}
                     >
                       {buttons[1]}
@@ -233,10 +199,7 @@ export default function TextareaModal({
                 ) : (
                   <>
                     {/* 일반 모달: 취소(회색), 확인(회색/빨간색) */}
-                    <button
-                      onClick={handle_cancel}
-                      className={styles.modal_footer_button_cancel}
-                    >
+                    <button onClick={handle_cancel} className={styles.modal_footer_button_cancel}>
                       {buttons[0]}
                     </button>
                     <button
@@ -260,10 +223,7 @@ export default function TextareaModal({
             ) : (
               <>
                 {/* 하나 버튼: 닫기 (전체 너비) */}
-                <button
-                  onClick={on_close}
-                  className={styles.modal_footer_button_single}
-                >
+                <button onClick={on_close} className={styles.modal_footer_button_single}>
                   {buttons[0]}
                 </button>
               </>

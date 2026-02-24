@@ -1,45 +1,20 @@
 /* ========================================
-   🧾 구매평 2차 - 확인 탭 카드
-   
-   📍 사용 위치: 캠페인 콘텐츠 내역 > 구매평 > "확인" 탭 (등록 기간)
-   
-   🎯 확인 탭 카드 유형 - 3가지:
-   
-   1️⃣ 최초 등록 (dateLabel: "등록")
-      - 상단: "리뷰 확인" 버튼 (검은색 배경, 클릭 시 리뷰 이미지 모달 표시)
-      - 중간: 등록 날짜 (예: "2025-11-02 17:37 등록")
-      - 하단: "승인", "반려" 버튼 (두 개)
-      - footer: "연장", "신고" 버튼
-   
-   2️⃣ 수정 (dateLabel: "수정")
-      - 상단: "리뷰 확인" 버튼 (검은색 배경, 클릭 시 리뷰 이미지 모달 표시)
-      - 중간: 수정 날짜 (예: "2025-11-05 22:01 수정")
-      - 하단: "승인", "반려" 버튼 (두 개)
-      - footer: "연장", "신고" 버튼
-   
-   3️⃣ 지각 등록 (dateLabel: "지각 등록")
-      - 상단: "리뷰 확인" 버튼 (검은색 배경, 클릭 시 리뷰 이미지 모달 표시)
-      - 중간: 지각 등록 날짜 (예: "2025-11-02 17:37 지각 등록", 빨간색 텍스트)
-      - 하단: "승인", "반려" 버튼 (두 개)
-      - footer: "연장", "신고" 버튼
-   
-   🎯 주요 기능:
-     - 승인/반려: 리뷰 검수 후 승인 또는 반려 처리
-     - 연장: 등록 기한을 3일 연장 (최대 2회까지 가능)
-     - 신고: 콘텐츠 신고 모달 (선정 후 취소, 무단 이탈 등)
-     - 반려: 반려 사유 입력 모달 표시
-     - 리뷰 확인: "리뷰 확인" 버튼 클릭 시 리뷰 이미지 모달 표시
-   
-   📝 참고:
-     - 등록 기간에 해당하는 구매평 2차 카드입니다
-     - dateLabel prop으로 등록/수정/지각 등록 구분
-     - 지각 등록일 때 날짜 텍스트가 빨간색으로 표시됩니다
-     - 리뷰 확인 버튼 클릭 시 리뷰 이미지가 모달로 표시됩니다
+   구매평 2차 - 확인 탭 카드
    ======================================== */
+
+/**
+ * PurchaseSecondInspectionCard
+ *
+ * 목적: 구매평 2단계 캠페인의 검수 탭 콘텐츠 카드를 렌더링합니다.
+ *
+ * 사용 페이지:
+ * - /partner/campaign/[id]/contents (구매평 > "확인" 탭 (등록 기간))
+ */
 
 "use client";
 
 import { useState, useEffect } from "react";
+import { useModalState } from "@/hooks/useModalState";
 import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
 import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
 import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
@@ -47,9 +22,7 @@ import { getChannelLogo } from "@/utils/channelLogoMap";
 import { formatDateForMobile } from "@/utils/formatting/date";
 import type { CampaignApplicant } from "../../shared_card/CampaignTypes";
 import TextareaModal from "@/components/common/modal/TextareaModal";
-import ReportModal, {
-  type ReportOption,
-} from "@/components/common/modal/ReportModal";
+import ReportModal, { type ReportOption } from "@/components/common/modal/ReportModal";
 import BaseModal from "@/components/common/modal/BaseModal";
 import ReceiptPreviewModal from "@/components/partner/campaign_contents/ReceiptPreviewModal";
 
@@ -86,21 +59,18 @@ export default function PurchaseSecondInspectionCard({
 }: PurchaseSecondInspectionCardProps) {
   const channel_icon_src = getChannelLogo(applicant.channel);
 
-  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const rejectModal = useModalState();
   const [rejectReason, setRejectReason] = useState("");
-  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const reportModal = useModalState();
   const [selectedReportOption, setSelectedReportOption] = useState<string>("");
   const [otherReportReason, setOtherReportReason] = useState<string>("");
   // 연장 관련 상태
   const [extensionCount, setExtensionCount] = useState(0);
-  const [isExtensionConfirmModalOpen, setIsExtensionConfirmModalOpen] =
-    useState(false);
-  const [isExtensionCompleteModalOpen, setIsExtensionCompleteModalOpen] =
-    useState(false);
-  const [isExtensionLimitModalOpen, setIsExtensionLimitModalOpen] =
-    useState(false);
+  const extensionConfirmModal = useModalState();
+  const extensionCompleteModal = useModalState();
+  const extensionLimitModal = useModalState();
   // 리뷰 이미지 모달 상태
-  const [isReviewImageModalOpen, setIsReviewImageModalOpen] = useState(false);
+  const reviewImageModal = useModalState();
 
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
@@ -127,12 +97,12 @@ export default function PurchaseSecondInspectionCard({
 
   // 반려 모달 열기
   const handleRejectClick = () => {
-    setIsRejectModalOpen(true);
+    rejectModal.open();
   };
 
   // 반려 모달 닫기
   const handleRejectModalClose = () => {
-    setIsRejectModalOpen(false);
+    rejectModal.close();
     setRejectReason("");
   };
 
@@ -148,7 +118,7 @@ export default function PurchaseSecondInspectionCard({
 
   // 신고 모달 열기
   const handleReportClick = () => {
-    setIsReportModalOpen(true);
+    reportModal.open();
     if (!selectedReportOption && reportOptions.length > 0) {
       setSelectedReportOption(reportOptions[0].value);
     }
@@ -156,16 +126,13 @@ export default function PurchaseSecondInspectionCard({
 
   // 신고 모달 닫기
   const handleReportModalClose = () => {
-    setIsReportModalOpen(false);
+    reportModal.close();
     setSelectedReportOption("");
     setOtherReportReason("");
   };
 
   // 신고 확인 처리
-  const handleReportConfirm = (
-    selectedOption: string,
-    otherReason?: string,
-  ) => {
+  const handleReportConfirm = (selectedOption: string, otherReason?: string) => {
     if (onReport) {
       onReport(applicant.id);
     }
@@ -176,22 +143,22 @@ export default function PurchaseSecondInspectionCard({
   // 연장 버튼 클릭 핸들러
   const handleExtendClick = () => {
     if (extensionCount >= 2) {
-      setIsExtensionLimitModalOpen(true);
+      extensionLimitModal.open();
       return;
     }
-    setIsExtensionConfirmModalOpen(true);
+    extensionConfirmModal.open();
   };
 
   // 연장 확인 모달에서 연장 버튼 클릭
   const handleExtensionConfirm = () => {
     setExtensionCount((prev) => prev + 1);
-    setIsExtensionConfirmModalOpen(false);
-    setIsExtensionCompleteModalOpen(true);
+    extensionConfirmModal.close();
+    extensionCompleteModal.open();
   };
 
   // 연장 완료 모달 닫기 핸들러
   const handleExtensionCompleteClose = () => {
-    setIsExtensionCompleteModalOpen(false);
+    extensionCompleteModal.close();
     if (onExtend) {
       onExtend(applicant.id);
     }
@@ -203,7 +170,7 @@ export default function PurchaseSecondInspectionCard({
     // console.log("리뷰 확인 클릭 - reviewImages.length:", reviewImages?.length);
     if (reviewImages && reviewImages.length > 0) {
       // console.log("모달 열기");
-      setIsReviewImageModalOpen(true);
+      reviewImageModal.open();
     } else if (onCheckReview) {
       // console.log("onCheckReview 호출");
       onCheckReview(applicant.id);
@@ -228,18 +195,13 @@ export default function PurchaseSecondInspectionCard({
             />
           </div>
           <div className={contentStyles.profile_info}>
-            <span className={contentStyles.user_type}>
-              {applicant.userType}
-            </span>
+            <span className={contentStyles.user_type}>{applicant.userType}</span>
             <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>
 
         {/* 상단 액션 버튼 - 리뷰 확인 */}
-        <button
-          className={actionStyles.content_check_button}
-          onClick={handleReviewCheckClick}
-        >
+        <button className={actionStyles.content_check_button} onClick={handleReviewCheckClick}>
           리뷰 확인
         </button>
 
@@ -267,9 +229,7 @@ export default function PurchaseSecondInspectionCard({
           {isLate ? (
             <span className={actionStyles.late_label}>
               {isMobile
-                ? formatDateForMobile(
-                    registrationDate || applicant.registrationDate,
-                  )
+                ? formatDateForMobile(registrationDate || applicant.registrationDate)
                 : registrationDate || applicant.registrationDate}{" "}
               <span className={actionStyles.late_text_full}>지각 등록</span>
               <span className={actionStyles.late_text_short}>지각</span>
@@ -315,7 +275,7 @@ export default function PurchaseSecondInspectionCard({
 
       {/* 반려 사유 입력 모달 */}
       <TextareaModal
-        is_open={isRejectModalOpen}
+        is_open={rejectModal.isOpen}
         on_close={handleRejectModalClose}
         title="반려 사유"
         titleColor="#ff2626"
@@ -330,7 +290,7 @@ export default function PurchaseSecondInspectionCard({
 
       {/* 신고 모달 */}
       <ReportModal
-        is_open={isReportModalOpen}
+        is_open={reportModal.isOpen}
         on_close={handleReportModalClose}
         title="콘텐츠 신고"
         options={reportOptions}
@@ -350,8 +310,8 @@ export default function PurchaseSecondInspectionCard({
           - 두 번째 연장 (중복 연장): "이미 연장한 내역이 있습니다. 추가 연장은 이번 요청이 마지막입니다. 계속하시겠습니까?"
       */}
       <BaseModal
-        is_open={isExtensionConfirmModalOpen}
-        on_close={() => setIsExtensionConfirmModalOpen(false)}
+        is_open={extensionConfirmModal.isOpen}
+        on_close={() => extensionConfirmModal.close()}
         message={
           extensionCount === 0
             ? '콘텐츠 등록 기간을<br><span style="color: #FF2626;">3일 연장</span>하시겠습니까?'
@@ -365,7 +325,7 @@ export default function PurchaseSecondInspectionCard({
 
       {/* 연장 완료 모달 */}
       <BaseModal
-        is_open={isExtensionCompleteModalOpen}
+        is_open={extensionCompleteModal.isOpen}
         on_close={handleExtensionCompleteClose}
         message="등록 기간 연장이 완료되었습니다."
         buttons={["닫기"]}
@@ -374,8 +334,8 @@ export default function PurchaseSecondInspectionCard({
 
       {/* 연장 제한 초과 모달 */}
       <BaseModal
-        is_open={isExtensionLimitModalOpen}
-        on_close={() => setIsExtensionLimitModalOpen(false)}
+        is_open={extensionLimitModal.isOpen}
+        on_close={() => extensionLimitModal.close()}
         message="연장은 최대 두 번까지만 가능합니다."
         buttons={["닫기"]}
         type="center"
@@ -383,9 +343,9 @@ export default function PurchaseSecondInspectionCard({
 
       {/* 리뷰 이미지 모달 */}
       <ReceiptPreviewModal
-        isOpen={isReviewImageModalOpen}
+        isOpen={reviewImageModal.isOpen}
         images={reviewImages}
-        onClose={() => setIsReviewImageModalOpen(false)}
+        onClose={() => reviewImageModal.close()}
       />
     </div>
   );

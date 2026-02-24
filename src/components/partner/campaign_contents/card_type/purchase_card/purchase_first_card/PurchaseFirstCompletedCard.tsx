@@ -1,37 +1,27 @@
 /* ========================================
-   ✅ 구매평 1차 - 완료 탭 카드
-   
-   📍 사용 위치: 캠페인 콘텐츠 내역 > 구매평 > "완료" 탭 (구매 기간)
-   
-   🎯 완료 탭 카드 유형 - 1가지:
-   
-   1️⃣ 확인 완료
-      - 상단: "구매 영수증 확인" 버튼 (검은색 배경)
-      - 중간: 등록 날짜 (예: "2025-11-02 17:37 등록")
-      - 하단: "확인 완료" 버튼 (분홍색 배경, 비활성화, 클릭 불가)
-      - footer: "신고" 버튼만 (연장 버튼 없음)
-   
-   🎯 주요 기능:
-     - 신고: 콘텐츠 신고 모달 (선정 후 취소, 무단 이탈, 노출 기간 불이행 등)
-   
-   📝 참고:
-     - 구매 기간에 해당하는 구매평 1차 카드입니다
-     - 검수가 완료되어 더 이상 승인/반려가 불가능한 상태입니다
-     - 연장 버튼은 표시되지 않습니다
+   구매평 1차 - 완료 탭 카드
    ======================================== */
+
+/**
+ * PurchaseFirstCompletedCard
+ *
+ * 목적: 구매평 1단계 캠페인의 완료 탭 콘텐츠 카드를 렌더링합니다.
+ *
+ * 사용 페이지:
+ * - /partner/campaign/[id]/contents (구매평 > "완료" 탭 (구매 기간))
+ */
 
 "use client";
 
 import { useState, useEffect } from "react";
+import { useModalState } from "@/hooks/useModalState";
 import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
 import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
 import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
 import { formatDateForMobile } from "@/utils/formatting/date";
 import type { CampaignApplicant } from "../../shared_card/CampaignTypes";
-import ReportModal, {
-  type ReportOption,
-} from "@/components/common/modal/ReportModal";
+import ReportModal, { type ReportOption } from "@/components/common/modal/ReportModal";
 import ReceiptPreviewModal from "../../../ReceiptPreviewModal";
 
 interface PurchaseFirstCompletedCardProps {
@@ -52,11 +42,11 @@ export default function PurchaseFirstCompletedCard({
 }: PurchaseFirstCompletedCardProps) {
   const channel_icon_src = getChannelLogo(applicant.channel);
 
-  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const reportModal = useModalState();
   const [selectedReportOption, setSelectedReportOption] = useState<string>("");
   const [otherReportReason, setOtherReportReason] = useState<string>("");
   // 이미지 확인 모달 상태
-  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+  const receiptModal = useModalState();
 
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
@@ -83,7 +73,7 @@ export default function PurchaseFirstCompletedCard({
 
   // 신고 모달 열기
   const handleReportClick = () => {
-    setIsReportModalOpen(true);
+    reportModal.open();
     if (!selectedReportOption && reportOptions.length > 0) {
       setSelectedReportOption(reportOptions[0].value);
     }
@@ -91,16 +81,13 @@ export default function PurchaseFirstCompletedCard({
 
   // 신고 모달 닫기
   const handleReportModalClose = () => {
-    setIsReportModalOpen(false);
+    reportModal.close();
     setSelectedReportOption("");
     setOtherReportReason("");
   };
 
   // 신고 확인 처리
-  const handleReportConfirm = (
-    selectedOption: string,
-    otherReason?: string,
-  ) => {
+  const handleReportConfirm = (selectedOption: string, otherReason?: string) => {
     if (onReport) {
       onReport(applicant.id);
     }
@@ -121,9 +108,7 @@ export default function PurchaseFirstCompletedCard({
             />
           </div>
           <div className={contentStyles.profile_info}>
-            <span className={contentStyles.user_type}>
-              {applicant.userType}
-            </span>
+            <span className={contentStyles.user_type}>{applicant.userType}</span>
             <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>
@@ -133,7 +118,7 @@ export default function PurchaseFirstCompletedCard({
           className={actionStyles.content_check_button}
           onClick={() => {
             // console.log("구매 영수증 확인 클릭", applicant.id);
-            setIsReceiptModalOpen(true);
+            receiptModal.open();
           }}
         >
           구매영수증 확인
@@ -183,7 +168,7 @@ export default function PurchaseFirstCompletedCard({
 
       {/* 신고 모달 */}
       <ReportModal
-        is_open={isReportModalOpen}
+        is_open={reportModal.isOpen}
         on_close={handleReportModalClose}
         title="콘텐츠 신고"
         options={reportOptions}
@@ -198,9 +183,9 @@ export default function PurchaseFirstCompletedCard({
 
       {/* 이미지 확인 모달 */}
       <ReceiptPreviewModal
-        isOpen={isReceiptModalOpen}
+        isOpen={receiptModal.isOpen}
         images={applicant.receiptImages || []}
-        onClose={() => setIsReceiptModalOpen(false)}
+        onClose={() => receiptModal.close()}
       />
     </div>
   );

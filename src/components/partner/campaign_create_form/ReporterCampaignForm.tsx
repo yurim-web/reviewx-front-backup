@@ -7,22 +7,13 @@
  *
  * 목적: 기자단 캠페인 등록을 위한 전용 폼 컴포넌트
  *
- * 주요 기능:
- * - 기자단 캠페인 기본 정보 입력
- * - 썸네일/상세 이미지 업로드
- * - 기자단 캠페인 상세 정보 입력
- * - 참여/제출 옵션 설정
- * - 안내 사항 및 유의 사항
  */
 
 "use client";
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import {
-  CampaignFormData,
-  CampaignCreateFormBaseProps,
-} from "@/types/domain/user";
+import { CampaignFormData, CampaignCreateFormBaseProps } from "@/types/domain/user";
 // 분리된 CSS 모듈들 import
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
 import buttonStyles from "@/styles/partner/campaign_create/campaign_guide/submit_buttons.module.css";
@@ -51,10 +42,7 @@ import { useCampaignForm } from "@/hooks/partner/campaign_create_form/useCampaig
 import { useCampaignFormValidation } from "@/hooks/partner/campaign_create_form/useCampaignFormValidation";
 import { useCampaignFormStorage } from "@/hooks/partner/campaign_create_form/useCampaignFormStorage";
 
-interface ReporterCampaignFormProps extends Omit<
-  CampaignCreateFormBaseProps,
-  "campaignType"
-> {
+interface ReporterCampaignFormProps extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
   /** 캠페인 수정 시 초기 데이터 (선택사항) */
   initialData?: CampaignFormData | null;
   /** 폼 동작 모드: 생성/수정 */
@@ -132,25 +120,24 @@ export default function ReporterCampaignForm({
   });
 
   // localStorage 관리 훅
-  const { handleChargeClick, handleSaveConfirm, handleLoadConfirm } =
-    useCampaignFormStorage({
-      campaignType: "기자단",
-      formData,
-      setFormData,
-      initialData,
-      isEditMode,
-      setLoadConfirmModal,
-      setToast,
-      onUrgentLoad,
-      setIsLoadDisabled,
-      isSubmitting,
-      thumbnailPreview,
-      detailPreviews,
-      setThumbnailPreview,
-      setDetailPreviews,
-      checkboxStates,
-      updateCheckboxState,
-    });
+  const { handleChargeClick, handleSaveConfirm, handleLoadConfirm } = useCampaignFormStorage({
+    campaignType: "기자단",
+    formData,
+    setFormData,
+    initialData,
+    isEditMode,
+    setLoadConfirmModal,
+    setToast,
+    onUrgentLoad,
+    setIsLoadDisabled,
+    isSubmitting,
+    thumbnailPreview,
+    detailPreviews,
+    setThumbnailPreview,
+    setDetailPreviews,
+    checkboxStates,
+    updateCheckboxState,
+  });
 
   /**
    * 페이지의 isUrgent 상태가 변경될 때 formData 동기화
@@ -360,9 +347,7 @@ export default function ReporterCampaignForm({
                   type="number"
                   className={`${infoStyles.form_input} ${isEditMode && !isEditableField("recruitmentCount") ? infoStyles.read_only_input : ""}`}
                   value={formData.recruitmentCount}
-                  onChange={(e) =>
-                    updateFormData("recruitmentCount", e.target.value)
-                  }
+                  onChange={(e) => updateFormData("recruitmentCount", e.target.value)}
                   placeholder="0"
                   min="0"
                   readOnly={isEditMode && !isEditableField("recruitmentCount")}
@@ -377,9 +362,7 @@ export default function ReporterCampaignForm({
             currentPoints={formData.currentPoints}
             additionalPoints={formData.additionalPoints}
             deductedPoints={deductedPoints}
-            onAdditionalPointsChange={(value) =>
-              updateFormData("additionalPoints", value)
-            }
+            onAdditionalPointsChange={(value) => updateFormData("additionalPoints", value)}
             onChargeClick={handleChargeClick}
             isEditMode={isEditMode}
             isEditable={isEditableField("additionalPoints")}
@@ -394,18 +377,10 @@ export default function ReporterCampaignForm({
             recruitmentPeriod={formData.recruitmentPeriod}
             announcementDate={formData.announcementDate}
             registrationPeriod={formData.registrationPeriod}
-            onRecruitmentCountChange={(value) =>
-              updateFormData("recruitmentCount", value)
-            }
-            onRecruitmentPeriodChange={(value) =>
-              updateFormData("recruitmentPeriod", value)
-            }
-            onAnnouncementDateChange={(value) =>
-              updateFormData("announcementDate", value)
-            }
-            onRegistrationPeriodChange={(value) =>
-              updateFormData("registrationPeriod", value)
-            }
+            onRecruitmentCountChange={(value) => updateFormData("recruitmentCount", value)}
+            onRecruitmentPeriodChange={(value) => updateFormData("recruitmentPeriod", value)}
+            onAnnouncementDateChange={(value) => updateFormData("announcementDate", value)}
+            onRegistrationPeriodChange={(value) => updateFormData("registrationPeriod", value)}
             isEditMode={isEditMode}
             isEditableField={isEditableField}
             showRecruitmentCount={false}
@@ -462,12 +437,8 @@ export default function ReporterCampaignForm({
               onNumericChange={handleNumericChangeWrapper}
               onNumericKeyDown={handleNumericInputWrapper}
               formatNumberWithComma={formatNumberWithComma}
-              onFieldClear={(field) =>
-                updateFormData(field as keyof CampaignFormData, "")
-              }
-              onAttachmentChange={(field, value) =>
-                updateFormData(field, value)
-              }
+              onFieldClear={(field) => updateFormData(field as keyof CampaignFormData, "")}
+              onAttachmentChange={(field, value) => updateFormData(field, value)}
               isEditMode={isEditMode}
               isEditableField={isEditableField}
               isOpen={isOpen}
@@ -480,12 +451,8 @@ export default function ReporterCampaignForm({
             allowReParticipation={formData.allowReParticipation}
             allowLateSubmission={formData.allowLateSubmission}
             onAdultOnlyChange={(value) => updateFormData("adultOnly", value)}
-            onAllowReParticipationChange={(value) =>
-              updateFormData("allowReParticipation", value)
-            }
-            onAllowLateSubmissionChange={(value) =>
-              updateFormData("allowLateSubmission", value)
-            }
+            onAllowReParticipationChange={(value) => updateFormData("allowReParticipation", value)}
+            onAllowLateSubmissionChange={(value) => updateFormData("allowLateSubmission", value)}
             isEditMode={isEditMode}
             isEditableField={isEditableField}
           />

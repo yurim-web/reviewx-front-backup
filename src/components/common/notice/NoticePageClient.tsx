@@ -7,14 +7,9 @@
  *
  * 목적: 유저와 파트너 공지사항 페이지에서 공통으로 사용하는 컴포넌트입니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /user/notice (유저 공지사항 페이지)
  * - /partner/notice (파트너 공지사항 페이지)
- *
- * 주요 기능:
- * - 카테고리별 공지사항 필터링
- * - 공지사항 목록 표시 (제목, 날짜, 카테고리)
- * - 핀된 공지사항 맨 위 고정
  *
  * Props 설명:
  * - header_component: 헤더 컴포넌트 (SubHeader 또는 PartnerHeader)
@@ -29,10 +24,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import styles from "@/styles/user/notice/notice.module.css";
 import PageTitle from "@/components/fragments/PageTitle";
-import {
-  type NoticeDetail,
-  type NoticeTarget,
-} from "@/data/user/notice/noticesData";
+import { type NoticeDetail, type NoticeTarget } from "@/data/user/notice/noticesData";
 import {
   posts_data,
   initialize_posts_data,
@@ -127,10 +119,7 @@ export default function NoticePageClient({
         return;
       }
 
-      const updated_posts = apply_pinned_state_to_posts(
-        posts_data,
-        pinned_state
-      );
+      const updated_posts = apply_pinned_state_to_posts(posts_data, pinned_state);
       set_posts_for_notice(updated_posts);
     };
 
@@ -257,8 +246,7 @@ export default function NoticePageClient({
         )
       : converted_notices.filter(
           (notice) =>
-            (!notice.target || notice.target === target) &&
-            notice.category === selected_category
+            (!notice.target || notice.target === target) && notice.category === selected_category
         )
   ).sort((a, b) => {
     // sort: 배열을 정렬합니다

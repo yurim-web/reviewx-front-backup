@@ -7,12 +7,6 @@
  *
  * 목적: 모든 캠페인 폼에서 사용되는 이미지 업로드 UI를 재사용 가능하게 만듭니다.
  *
- * 주요 기능:
- * - 이미지 파일 선택 및 업로드
- * - 이미지 미리보기 표시
- * - 이미지 제거 기능
- * - 최대 7개 이미지 제한
- * - 수정 모드에서 편집 제어
  */
 
 "use client";
@@ -108,18 +102,9 @@ export function ImageUploadSection({
           <div
             className={infoStyles.image_upload_placeholder}
             onClick={isEditMode && !isEditable ? undefined : handleUploadClick}
-            style={
-              isEditMode && !isEditable
-                ? { pointerEvents: "none", opacity: 0.5 }
-                : undefined
-            }
+            style={isEditMode && !isEditable ? { pointerEvents: "none", opacity: 0.5 } : undefined}
           >
-            <img
-              src="/images/icons/plus_icon.svg"
-              alt="이미지 추가"
-              width="56"
-              height="56"
-            />
+            <img src="/images/icons/plus_icon.svg" alt="이미지 추가" width="56" height="56" />
           </div>
         )}
       </div>
@@ -138,4 +123,3 @@ export function ImageUploadSection({
     </article>
   );
 }
-

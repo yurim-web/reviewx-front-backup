@@ -7,7 +7,7 @@
  *
  * 목적: 이미 선정된 인스타그램 신청자의 정보를 표시하는 카드 컴포넌트입니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /partner/campaign_application/delivery (배송형 캠페인 선정자 목록)
  * - 인스타그램 채널 선정자들만 표시
  *
@@ -60,10 +60,7 @@ interface InstagramSelectedCardProps {
  * @param props - InstagramSelectedCardProps 타입의 props
  * @returns JSX 요소
  */
-export default function InstagramSelectedCard({
-  applicant,
-  onCancel,
-}: InstagramSelectedCardProps) {
+export default function InstagramSelectedCard({ applicant, onCancel }: InstagramSelectedCardProps) {
   /**
    * 인스타그램 아이콘 경로 가져오기
    *
@@ -77,9 +74,7 @@ export default function InstagramSelectedCard({
   return (
     <article
       className={`${baseStyles.applicant_card} ${baseStyles.selected_card} ${
-        applicant.userType === "인플루언서"
-          ? baseStyles.selected_card_influencer
-          : ""
+        applicant.userType === "인플루언서" ? baseStyles.selected_card_influencer : ""
       }`}
     >
       {/* 프로필 영역: 프로필 이미지, 닉네임, 사용자 타입 */}
@@ -97,9 +92,7 @@ export default function InstagramSelectedCard({
           {/* 닉네임 표시 - 인플루언서일 때 특별한 스타일 적용 */}
           <span
             className={`${contentStyles.nickname} ${
-              applicant.userType === "인플루언서"
-                ? contentStyles.influencer_nickname
-                : ""
+              applicant.userType === "인플루언서" ? contentStyles.influencer_nickname : ""
             }`}
           >
             {applicant.nickname}
@@ -109,11 +102,7 @@ export default function InstagramSelectedCard({
 
       {/* 채널 정보 영역: 인스타그램 아이콘, 채널 ID */}
       <div className={contentStyles.channel_section}>
-        <img
-          src={channel_icon_src}
-          alt="인스타그램"
-          className={contentStyles.channel_icon}
-        />
+        <img src={channel_icon_src} alt="인스타그램" className={contentStyles.channel_icon} />
 
         <a
           href={getChannelUrl("인스타그램", applicant.Id)}
@@ -150,9 +139,7 @@ export default function InstagramSelectedCard({
       {/* 메모 영역: 신청자가 작성한 자기소개 */}
       <div className={contentStyles.memo_section}>
         <div className={contentStyles.memo_text}>
-          {applicant.memo && applicant.memo.trim() !== ""
-            ? applicant.memo
-            : "메모 미작성"}
+          {applicant.memo && applicant.memo.trim() !== "" ? applicant.memo : "메모 미작성"}
         </div>
         <div className={contentStyles.memo_divider}></div>
       </div>

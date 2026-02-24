@@ -1,5 +1,5 @@
 /* ========================================
-   📭 신청 내역 빈 상태 컴포넌트
+   신청 내역 빈 상태 컴포넌트
    ======================================== */
 
 /**
@@ -7,13 +7,8 @@
  *
  * 목적: 신청자 목록이 비어있을 때 사용자에게 명확한 안내 메시지를 제공합니다.
  *
- * 📍 사용 위치:
- * - src/components/manager/common/campaign/progress/layout/CampaignProgressDetailLayout.tsx
- * - 캠페인 신청 내역 페이지에서 신청자 목록이 비어있을 때 표시
- *
- * 📌 React 컴포넌트 기본 구조:
- * - 함수형 컴포넌트: React에서 가장 일반적인 컴포넌트 작성 방식
- * - JSX 반환: JavaScript XML 문법으로 UI를 작성합니다
+ * 사용 페이지:
+ * - /partner/campaign/[id]/application (신청 내역 목록이 비어있을 때)
  */
 
 "use client";
@@ -50,14 +45,3 @@ export default function EmptyApplicantsList() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-

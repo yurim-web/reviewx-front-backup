@@ -1,41 +1,20 @@
 /* ========================================
-   ✅ 미션형 - 완료 탭 카드
-   
-   📍 사용 위치: 캠페인 콘텐츠 내역 > 미션형 > "완료" 탭
-   
-   🎯 완료 탭 카드 유형 - 1가지 (각 contentType별):
-   
-   【링크만 (contentType: "link")】
-   - 상단: "링크 확인" 버튼 1개
-   - 중간: 등록/수정 날짜 표시
-   - 하단: "확인 완료" 버튼 (비활성화, 핑크 배경)
-   - footer: "신고" 버튼만 (연장 버튼 없음)
-   
-   【이미지만 (contentType: "image")】
-   - 상단: "이미지 확인" 버튼 1개
-   - 중간: 등록/수정 날짜 표시
-   - 하단: "확인 완료" 버튼 (비활성화, 핑크 배경)
-   - footer: "신고" 버튼만 (연장 버튼 없음)
-   
-   【이미지+링크 (contentType: "both")】
-   - 상단: "이미지 확인" + "링크 확인" 버튼 2개 (세로 배치)
-   - 중간: 등록/수정 날짜 표시
-   - 하단: "확인 완료" 버튼 (비활성화, 핑크 배경)
-   - footer: "신고" 버튼만 (연장 버튼 없음)
-   
-   🎯 주요 기능:
-     - 확인 완료: 검수가 완료되어 더 이상 승인/반려 불가능한 상태
-     - 신고: 콘텐츠 신고 모달 (선정 후 취소, 무단 이탈, 노출 기간 불이행 등)
-   
-   📝 참고:
-     - contentType prop으로 링크만/이미지만/이미지+링크 구분
-     - "확인 완료" 버튼은 비활성화 상태이며 핑크 배경(rgba(255,86,148,0.1))과 핑크 텍스트(#ff5694)로 표시됩니다
-     - 완료 탭에서는 연장 버튼이 없고 신고 버튼만 표시됩니다
+   미션형 - 완료 탭 카드
    ======================================== */
+
+/**
+ * MissionCompletedCard
+ *
+ * 목적: 미션형 캠페인의 완료 탭 콘텐츠 카드를 렌더링합니다.
+ *
+ * 사용 페이지:
+ * - /partner/campaign/[id]/contents (미션형 > "완료" 탭)
+ */
 
 "use client";
 
 import { useState, useEffect } from "react";
+import { useModalState } from "@/hooks/useModalState";
 import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
 import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
 import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
@@ -43,9 +22,7 @@ import { getChannelLogo } from "@/utils/channelLogoMap";
 import { getChannelUrl } from "@/utils/helpers/url";
 import { formatDateForMobile } from "@/utils/formatting/date";
 import type { CampaignApplicant } from "../shared_card/CampaignTypes";
-import ReportModal, {
-  type ReportOption,
-} from "@/components/common/modal/ReportModal";
+import ReportModal, { type ReportOption } from "@/components/common/modal/ReportModal";
 import ReceiptPreviewModal from "../../ReceiptPreviewModal";
 
 interface MissionCompletedCardProps {
@@ -75,11 +52,11 @@ export default function MissionCompletedCard({
 }: MissionCompletedCardProps) {
   const channel_icon_src = getChannelLogo(applicant.channel);
 
-  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const reportModal = useModalState();
   const [selectedReportOption, setSelectedReportOption] = useState<string>("");
   const [otherReportReason, setOtherReportReason] = useState<string>("");
   // 이미지 확인 모달 상태
-  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+  const receiptModal = useModalState();
 
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
@@ -106,7 +83,7 @@ export default function MissionCompletedCard({
 
   // 신고 모달 열기
   const handleReportClick = () => {
-    setIsReportModalOpen(true);
+    reportModal.open();
     if (!selectedReportOption && reportOptions.length > 0) {
       setSelectedReportOption(reportOptions[0].value);
     }
@@ -114,16 +91,13 @@ export default function MissionCompletedCard({
 
   // 신고 모달 닫기
   const handleReportModalClose = () => {
-    setIsReportModalOpen(false);
+    reportModal.close();
     setSelectedReportOption("");
     setOtherReportReason("");
   };
 
   // 신고 확인 처리
-  const handleReportConfirm = (
-    selectedOption: string,
-    otherReason?: string,
-  ) => {
+  const handleReportConfirm = (selectedOption: string, otherReason?: string) => {
     if (onReport) {
       onReport(applicant.id);
     }
@@ -144,9 +118,7 @@ export default function MissionCompletedCard({
             />
           </div>
           <div className={contentStyles.profile_info}>
-            <span className={contentStyles.user_type}>
-              {applicant.userType}
-            </span>
+            <span className={contentStyles.user_type}>{applicant.userType}</span>
             <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>
@@ -160,7 +132,7 @@ export default function MissionCompletedCard({
               className={actionStyles.content_check_button}
               onClick={() => {
                 // console.log("이미지 확인 클릭", applicant.id);
-                setIsReceiptModalOpen(true);
+                receiptModal.open();
               }}
             >
               이미지 확인
@@ -169,10 +141,7 @@ export default function MissionCompletedCard({
               className={actionStyles.content_check_button}
               onClick={() => {
                 // console.log("링크 확인 클릭", applicant.id);
-                const url = getChannelUrl(
-                  applicant.channel,
-                  applicant.channelId,
-                );
+                const url = getChannelUrl(applicant.channel, applicant.channelId);
                 if (url && url !== "#") {
                   window.open(url, "_blank", "noopener,noreferrer");
                 }
@@ -187,7 +156,7 @@ export default function MissionCompletedCard({
             className={actionStyles.content_check_button}
             onClick={() => {
               // console.log("이미지 확인 클릭", applicant.id);
-              setIsReceiptModalOpen(true);
+              receiptModal.open();
             }}
           >
             이미지 확인
@@ -229,9 +198,7 @@ export default function MissionCompletedCard({
           {dateLabel === "지각 등록" ? (
             <span className={actionStyles.late_label}>
               {isMobile
-                ? formatDateForMobile(
-                    registrationDate || applicant.registrationDate,
-                  )
+                ? formatDateForMobile(registrationDate || applicant.registrationDate)
                 : registrationDate || applicant.registrationDate}{" "}
               <span className={actionStyles.late_text_full}>지각 등록</span>
               <span className={actionStyles.late_text_short}>지각</span>
@@ -264,7 +231,7 @@ export default function MissionCompletedCard({
 
       {/* 신고 모달 */}
       <ReportModal
-        is_open={isReportModalOpen}
+        is_open={reportModal.isOpen}
         on_close={handleReportModalClose}
         title="콘텐츠 신고"
         options={reportOptions}
@@ -279,9 +246,9 @@ export default function MissionCompletedCard({
 
       {/* 이미지 확인 모달 */}
       <ReceiptPreviewModal
-        isOpen={isReceiptModalOpen}
+        isOpen={receiptModal.isOpen}
         images={applicant.receiptImages || []}
-        onClose={() => setIsReceiptModalOpen(false)}
+        onClose={() => receiptModal.close()}
       />
     </div>
   );

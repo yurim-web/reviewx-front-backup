@@ -19,7 +19,7 @@ import actionStyles from "@/styles/partner/campaign_application/card/applicant_c
  * - 프로필, 회원 타입, 메모, 액션 버튼 포함
  * - 다른 카드들과 동일한 레이아웃 구조 유지
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /partner/campaign_application/mission (미션형 캠페인)
  * - /partner/campaign_application/review (구매평 캠페인)
  */
@@ -35,9 +35,7 @@ export default function BasicCard({ applicant, onSelect }: BasicCardProps) {
   return (
     <article
       className={`${baseStyles.applicant_card} ${
-        applicant.selectionStatus === "이용제한 계정"
-          ? baseStyles.restricted_card
-          : ""
+        applicant.selectionStatus === "이용제한 계정" ? baseStyles.restricted_card : ""
       }`}
     >
       {/* 프로필 영역 */}
@@ -62,9 +60,7 @@ export default function BasicCard({ applicant, onSelect }: BasicCardProps) {
       {/* 메모 */}
       <div className={contentStyles.memo_section}>
         <div className={contentStyles.memo_text}>
-          {applicant.memo && applicant.memo.trim() !== ""
-            ? applicant.memo
-            : "메모 미작성"}
+          {applicant.memo && applicant.memo.trim() !== "" ? applicant.memo : "메모 미작성"}
         </div>
       </div>
 

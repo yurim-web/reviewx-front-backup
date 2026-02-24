@@ -1,39 +1,27 @@
 /* ========================================
-   ✅ 구매평 2차 - 완료 탭 카드
-   
-   📍 사용 위치: 캠페인 콘텐츠 내역 > 구매평 > "완료" 탭 (등록 기간)
-   
-   🎯 완료 탭 카드 유형 - 1가지:
-   
-   1️⃣ 확인 완료
-      - 상단: "리뷰 확인" 버튼 (검은색 배경, 클릭 시 리뷰 이미지 모달 표시)
-      - 중간: 등록/수정 날짜 (예: "2025-11-05 22:01 수정")
-      - 하단: "확인 완료" 버튼 (분홍색 배경, 비활성화, 클릭 불가)
-      - footer: "신고" 버튼만 (연장 버튼 없음)
-   
-   🎯 주요 기능:
-     - 신고: 콘텐츠 신고 모달 (선정 후 취소, 무단 이탈, 노출 기간 불이행 등)
-     - 리뷰 확인: "리뷰 확인" 버튼 클릭 시 리뷰 이미지 모달 표시
-   
-   📝 참고:
-     - 등록 기간에 해당하는 구매평 2차 카드입니다
-     - 검수가 완료되어 더 이상 승인/반려가 불가능한 상태입니다
-     - 연장 버튼은 표시되지 않습니다
-     - 리뷰 확인 버튼 클릭 시 리뷰 이미지가 모달로 표시됩니다
+   구매평 2차 - 완료 탭 카드
    ======================================== */
+
+/**
+ * PurchaseSecondCompletedCard
+ *
+ * 목적: 구매평 2단계 캠페인의 완료 탭 콘텐츠 카드를 렌더링합니다.
+ *
+ * 사용 페이지:
+ * - /partner/campaign/[id]/contents (구매평 > "완료" 탭 (등록 기간))
+ */
 
 "use client";
 
 import { useState, useEffect } from "react";
+import { useModalState } from "@/hooks/useModalState";
 import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
 import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
 import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
 import { formatDateForMobile } from "@/utils/formatting/date";
 import type { CampaignApplicant } from "../../shared_card/CampaignTypes";
-import ReportModal, {
-  type ReportOption,
-} from "@/components/common/modal/ReportModal";
+import ReportModal, { type ReportOption } from "@/components/common/modal/ReportModal";
 import ReceiptPreviewModal from "@/components/partner/campaign_contents/ReceiptPreviewModal";
 
 interface PurchaseSecondCompletedCardProps {
@@ -57,11 +45,11 @@ export default function PurchaseSecondCompletedCard({
 }: PurchaseSecondCompletedCardProps) {
   const channel_icon_src = getChannelLogo(applicant.channel);
 
-  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const reportModal = useModalState();
   const [selectedReportOption, setSelectedReportOption] = useState<string>("");
   const [otherReportReason, setOtherReportReason] = useState<string>("");
   // 리뷰 이미지 모달 상태
-  const [isReviewImageModalOpen, setIsReviewImageModalOpen] = useState(false);
+  const reviewImageModal = useModalState();
 
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
@@ -88,7 +76,7 @@ export default function PurchaseSecondCompletedCard({
 
   // 신고 모달 열기
   const handleReportClick = () => {
-    setIsReportModalOpen(true);
+    reportModal.open();
     if (!selectedReportOption && reportOptions.length > 0) {
       setSelectedReportOption(reportOptions[0].value);
     }
@@ -96,16 +84,13 @@ export default function PurchaseSecondCompletedCard({
 
   // 신고 모달 닫기
   const handleReportModalClose = () => {
-    setIsReportModalOpen(false);
+    reportModal.close();
     setSelectedReportOption("");
     setOtherReportReason("");
   };
 
   // 신고 확인 처리
-  const handleReportConfirm = (
-    selectedOption: string,
-    otherReason?: string,
-  ) => {
+  const handleReportConfirm = (selectedOption: string, otherReason?: string) => {
     if (onReport) {
       onReport(applicant.id);
     }
@@ -119,7 +104,7 @@ export default function PurchaseSecondCompletedCard({
     // console.log("리뷰 확인 클릭 (완료) - reviewImages.length:", reviewImages?.length);
     if (reviewImages && reviewImages.length > 0) {
       // console.log("모달 열기 (완료)");
-      setIsReviewImageModalOpen(true);
+      reviewImageModal.open();
     } else if (onCheckReview) {
       // console.log("onCheckReview 호출 (완료)");
       onCheckReview(applicant.id);
@@ -141,18 +126,13 @@ export default function PurchaseSecondCompletedCard({
             />
           </div>
           <div className={contentStyles.profile_info}>
-            <span className={contentStyles.user_type}>
-              {applicant.userType}
-            </span>
+            <span className={contentStyles.user_type}>{applicant.userType}</span>
             <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>
 
         {/* 상단 액션 버튼 - 리뷰 확인 */}
-        <button
-          className={actionStyles.content_check_button}
-          onClick={handleReviewCheckClick}
-        >
+        <button className={actionStyles.content_check_button} onClick={handleReviewCheckClick}>
           리뷰 확인
         </button>
 
@@ -175,26 +155,20 @@ export default function PurchaseSecondCompletedCard({
         {/* 등록/수정 날짜 */}
         <div className={actionStyles.registration_info}>
           {registrationDate &&
-          (registrationDate.includes("지각 등록") ||
-            registrationDate.includes("지각")) ? (
+          (registrationDate.includes("지각 등록") || registrationDate.includes("지각")) ? (
             <span className={actionStyles.late_label}>
               {isMobile
                 ? formatDateForMobile(
-                    registrationDate
-                      .replace(" 지각 등록", "")
-                      .replace(" 지각", ""),
+                    registrationDate.replace(" 지각 등록", "").replace(" 지각", "")
                   )
-                : registrationDate
-                    .replace(" 지각 등록", "")
-                    .replace(" 지각", "")}{" "}
+                : registrationDate.replace(" 지각 등록", "").replace(" 지각", "")}{" "}
               <span className={actionStyles.late_text_full}>지각 등록</span>
               <span className={actionStyles.late_text_short}>지각</span>
             </span>
           ) : (
             <span>
               {registrationDate
-                ? registrationDate.includes("등록") ||
-                  registrationDate.includes("수정")
+                ? registrationDate.includes("등록") || registrationDate.includes("수정")
                   ? isMobile
                     ? formatDateForMobile(registrationDate.split(" ")[0]) +
                       " " +
@@ -225,7 +199,7 @@ export default function PurchaseSecondCompletedCard({
 
       {/* 신고 모달 */}
       <ReportModal
-        is_open={isReportModalOpen}
+        is_open={reportModal.isOpen}
         on_close={handleReportModalClose}
         title="콘텐츠 신고"
         options={reportOptions}
@@ -240,9 +214,9 @@ export default function PurchaseSecondCompletedCard({
 
       {/* 리뷰 이미지 모달 */}
       <ReceiptPreviewModal
-        isOpen={isReviewImageModalOpen}
+        isOpen={reviewImageModal.isOpen}
         images={reviewImages}
-        onClose={() => setIsReviewImageModalOpen(false)}
+        onClose={() => reviewImageModal.close()}
       />
     </div>
   );

@@ -8,20 +8,14 @@
  * 목적: 날짜 범위를 선택할 수 있는 입력 필드입니다.
  *       입력 필드를 클릭하면 RangeCalendar가 열립니다.
  *
- * 주요 기능:
- * - 날짜 범위 선택 (시작일 ~ 종료일)
- * - 입력 필드 클릭 시 캘린더 열기/닫기
- * - 선택된 날짜 범위 표시 (YYYY-MM-DD ~ YYYY-MM-DD 형식)
- * - 외부 클릭 시 자동 닫기
  */
 
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useModalState } from "@/hooks/useModalState";
 import { format } from "date-fns";
-import RangeCalendar, {
-  type DateRange,
-} from "@/components/common/date_range_picker/RangeCalendar";
+import RangeCalendar, { type DateRange } from "@/components/common/date_range_picker/RangeCalendar";
 import BaseModal from "@/components/common/modal/BaseModal";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
 import styles from "@/styles/partner/campaign_create/date_range_field.module.css";
@@ -69,32 +63,30 @@ export function DateRangeField({
   const [is_calendar_open, setIsCalendarOpen] = useState(false);
 
   // useState: 날짜 검증 모달 열림/닫힘 상태
-  const [is_validation_modal_open, setIsValidationModalOpen] = useState(false);
+  const validationModal = useModalState();
 
   // useState: 선택된 날짜 범위를 DateRange 타입으로 관리
   // value 문자열을 파싱하여 DateRange 객체로 변환
-  const [selected_range, setSelectedRange] = useState<DateRange | undefined>(
-    () => {
-      // value 문자열을 파싱하여 DateRange 객체로 변환
-      // "2025-09-30 ~ 2025-10-06" 형식에서 날짜 추출
-      if (!value || !value.includes("~")) return undefined;
+  const [selected_range, setSelectedRange] = useState<DateRange | undefined>(() => {
+    // value 문자열을 파싱하여 DateRange 객체로 변환
+    // "2025-09-30 ~ 2025-10-06" 형식에서 날짜 추출
+    if (!value || !value.includes("~")) return undefined;
 
-      const parts = value.split("~").map((part) => part.trim());
-      if (parts.length !== 2) return undefined;
+    const parts = value.split("~").map((part) => part.trim());
+    if (parts.length !== 2) return undefined;
 
-      const from_date = parts[0] ? new Date(parts[0]) : undefined;
-      const to_date = parts[1] ? new Date(parts[1]) : undefined;
+    const from_date = parts[0] ? new Date(parts[0]) : undefined;
+    const to_date = parts[1] ? new Date(parts[1]) : undefined;
 
-      // 유효한 날짜인지 확인
-      if (from_date && isNaN(from_date.getTime())) return undefined;
-      if (to_date && isNaN(to_date.getTime())) return undefined;
+    // 유효한 날짜인지 확인
+    if (from_date && isNaN(from_date.getTime())) return undefined;
+    if (to_date && isNaN(to_date.getTime())) return undefined;
 
-      return {
-        from: from_date,
-        to: to_date,
-      };
-    }
-  );
+    return {
+      from: from_date,
+      to: to_date,
+    };
+  });
 
   // useRef: 입력 필드 컨테이너의 참조를 저장하는 React Hook
   // ref는 DOM 요소에 직접 접근할 수 있게 해줍니다
@@ -147,10 +139,7 @@ export function DateRangeField({
       // event.target: 클릭한 요소
       // container_ref.current: 입력 필드 컨테이너 요소
       // contains(): 요소가 다른 요소의 자식인지 확인하는 메서드
-      if (
-        container_ref.current &&
-        !container_ref.current.contains(event.target as Node)
-      ) {
+      if (container_ref.current && !container_ref.current.contains(event.target as Node)) {
         // 캘린더 외부를 클릭했으면 닫기
         setIsCalendarOpen(false);
       }
@@ -172,7 +161,7 @@ export function DateRangeField({
 
   // 날짜 검증 에러 핸들러
   const handle_validation_error = () => {
-    setIsValidationModalOpen(true);
+    validationModal.open();
   };
 
   // 날짜 범위 선택 핸들러
@@ -247,8 +236,8 @@ export function DateRangeField({
 
       {/* 날짜 검증 모달 */}
       <BaseModal
-        is_open={is_validation_modal_open}
-        on_close={() => setIsValidationModalOpen(false)}
+        is_open={validationModal.isOpen}
+        on_close={validationModal.close}
         message="시작일과 종료일을 확인해 주세요."
         buttons={["확인"]}
       />

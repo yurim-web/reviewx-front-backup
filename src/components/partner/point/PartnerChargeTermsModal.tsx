@@ -1,10 +1,15 @@
 /* ========================================
    파트너 포인트 충전 - 결제·환불 및 이용약관 보기 모달
-   ========================================
-   사용처: /partner/point/charge 페이지 "약관 보기" 버튼
-   Figma: https://www.figma.com/design/R1Ih7ESDc1aHKw2NYjGQkI?node-id=4906-26514
-   스타일: terms_view_modal.module.css 동일 적용
    ======================================== */
+
+/**
+ * PartnerChargeTermsModal
+ *
+ * 목적: 파트너 포인트 충전 시 결제·환불 약관 내용을 모달로 표시합니다.
+ *
+ * 사용 페이지:
+ * - /partner/point/charge ("약관 보기" 버튼 클릭 시)
+ */
 
 "use client";
 
@@ -21,8 +26,7 @@ export interface PartnerChargeTermsModalProps {
 const MODAL_TITLE = "결제 · 환불 및 이용약관 동의";
 
 const CHARGE_TERMS_CONTENT = {
-  intro:
-    "본 약관은 회사와 파트너 간의 결제, 포인트 충전, 환불 등에 관한 사항을 규정합니다.",
+  intro: "본 약관은 회사와 파트너 간의 결제, 포인트 충전, 환불 등에 관한 사항을 규정합니다.",
   payment_method: {
     desc: "파트너는 캠페인 등록, 콘텐츠 배치, 포인트 충전 등을 위해 다음의 결제 방법을 이용할 수 있습니다.",
     items: ["무통장 입금", "카드 결제"],
@@ -123,20 +127,10 @@ export default function PartnerChargeTermsModal({
       aria-modal="true"
       aria-labelledby="partner_charge_terms_modal_title"
     >
-      <div
-        className={modalStyles.terms_modal_wrapper}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className={modalStyles.terms_modal_wrapper} onClick={(e) => e.stopPropagation()}>
         <div className={modalStyles.terms_modal_card}>
-          <div
-            className={modalStyles.terms_modal_header}
-            role="banner"
-            aria-label={MODAL_TITLE}
-          >
-            <h2
-              id="partner_charge_terms_modal_title"
-              className={modalStyles.terms_modal_title}
-            >
+          <div className={modalStyles.terms_modal_header} role="banner" aria-label={MODAL_TITLE}>
+            <h2 id="partner_charge_terms_modal_title" className={modalStyles.terms_modal_title}>
               {MODAL_TITLE}
             </h2>
             <button
@@ -145,12 +139,7 @@ export default function PartnerChargeTermsModal({
               onClick={on_close}
               aria-label="닫기"
             >
-              <Image
-                src="/images/filter/x_icon.svg"
-                alt=""
-                width={20}
-                height={20}
-              />
+              <Image src="/images/filter/x_icon.svg" alt="" width={20} height={20} />
             </button>
           </div>
 
@@ -173,9 +162,7 @@ export default function PartnerChargeTermsModal({
                 <p>{payment_method.note}</p>
                 <br />
 
-                <p className={modalStyles.terms_modal_heading}>
-                  결제 정보 관리
-                </p>
+                <p className={modalStyles.terms_modal_heading}>결제 정보 관리</p>
                 {payment_info.map((text, i) => (
                   <p key={i}>{text}</p>
                 ))}
@@ -204,7 +191,9 @@ export default function PartnerChargeTermsModal({
 
                 <p className={modalStyles.terms_modal_sub_heading}>환불 처리 절차</p>
                 {cancel_refund.refund_process.map((text, i) => (
-                  <p key={i}>{i + 1}. {text}</p>
+                  <p key={i}>
+                    {i + 1}. {text}
+                  </p>
                 ))}
                 <br />
 
@@ -214,13 +203,17 @@ export default function PartnerChargeTermsModal({
 
                 <p className={modalStyles.terms_modal_heading}>결제 오류 및 중복 결제</p>
                 {duplicate_payment.map((text, i) => (
-                  <p key={i}>{i + 1}. {text}</p>
+                  <p key={i}>
+                    {i + 1}. {text}
+                  </p>
                 ))}
                 <br />
 
                 <p className={modalStyles.terms_modal_heading}>세금 및 수수료</p>
                 {tax_fee.map((text, i) => (
-                  <p key={i}>{i + 1}. {text}</p>
+                  <p key={i}>
+                    {i + 1}. {text}
+                  </p>
                 ))}
               </div>
             </div>

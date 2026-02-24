@@ -11,10 +11,6 @@
  * - /user/mypage/profile (유저 마이페이지 프로필)
  * - /partner/mypage (파트너 마이페이지)
  *
- * 주요 기능:
- * - 현재 활성화된 회원 유형 표시 (리뷰어/광고주)
- * - 클릭 시 다른 회원 유형으로 전환
- *
  */
 
 "use client";
@@ -37,10 +33,7 @@ interface MemberTypeToggleProps {
  * @param props - MemberTypeToggleProps 타입의 props 객체
  * @returns JSX.Element - 토글 버튼 JSX 요소
  */
-export default function MemberTypeToggle({
-  activeType,
-  onToggle,
-}: MemberTypeToggleProps) {
+export default function MemberTypeToggle({ activeType, onToggle }: MemberTypeToggleProps) {
   return (
     <div className={styles.toggle_container}>
       {/* 배경 */}

@@ -1,83 +1,20 @@
 /* ========================================
-   ⏳ 구매평/미션형 공통 - 대기 탭 카드
-   
-   📍 사용 위치: 캠페인 콘텐츠 내역 > 구매평/미션형 > "대기" 탭
-   
-   🎯 대기 탭 카드 유형 정리:
-   
-   【구매평 (campaignType: "review")】- 총 4가지 유형
-   
-   1️⃣ 구매 영수증 미등록 (pendingState: "receipt_not_registered")
-      - 상단: "구매 영수증 확인" 버튼 (검은색 배경)
-      - 중간: "구매 영수증 미등록" 버튼 (회색, 비활성화)
-      - 하단: 기한 날짜 (예: "2025-11-27 기한")
-      - footer: 연장/신고 버튼
-   
-   2️⃣ 콘텐츠 미등록 (pendingState: "content_not_registered")
-      - 상단: 없음
-      - 중간: "콘텐츠 미등록" 버튼 (회색, 비활성화)
-      - 하단: 기한 날짜 (예: "2025-11-27 기한")
-      - footer: 연장/신고 버튼
-      → 연장 버튼 클릭 시 연장 확인 모달 → 연장 완료 모달 → 기한 연장 표시
-   
-   3️⃣ 등록 기한 연장 요청 (pendingState: "extension_requested")
-      - 상단: 없음
-      - 중간: "등록 기한 연장 요청" 버튼 (흰색 배경, 검은 테두리, 비활성화)
-      - 하단: 기한 날짜 (예: "2025-11-27 기한")
-      - footer: 연장/신고 버튼
-      → 버튼 클릭 시 리뷰어가 입력한 연장 요청 사유 모달 표시
-   
-   4️⃣ 반려 처리 (pendingState: "rejected")
-      - 상단: 
-        * reviewType 4 (영수증 흐름): "구매 영수증 확인" 버튼
-        * reviewType !== 4 (일반): "리뷰 확인" 버튼
-      - 중간: 
-        * reviewType 4: "구매 영수증 반려 처리" 버튼 (빨간색)
-        * reviewType !== 4: "콘텐츠 반려 처리" 버튼 (빨간색)
-      - 하단: 기한 날짜 (예: "2025-11-27 기한")
-      - footer: 연장/신고 버튼
-   
-   【미션형 (campaignType: "mission")】- 총 3가지 유형
-   
-   1️⃣ 콘텐츠 미등록 (pendingState: "content_not_registered")
-      - 상단: 없음 (대기 탭에서는 확인 버튼 없음)
-      - 중간: "콘텐츠 미등록" 버튼 (회색, 비활성화)
-      - 하단: 기한 날짜 (예: "2025-12-30 기한")
-      - footer: 연장/신고 버튼
-      → 연장 버튼 클릭 시 연장 확인 모달 → 연장 완료 모달 → 기한 연장 표시
-   
-   2️⃣ 등록 기한 연장 요청 (pendingState: "extension_requested")
-      - 상단: 없음
-      - 중간: "등록 기한 연장 요청" 버튼 (흰색 배경, 검은 테두리, 비활성화)
-      - 하단: 기한 날짜 (예: "2025-12-30 기한")
-      - footer: 연장/신고 버튼
-      → 버튼 클릭 시 리뷰어가 입력한 연장 요청 사유 모달 표시
-   
-   3️⃣ 반려 처리 (pendingState: "rejected")
-      - 상단: 없음
-      - 중간: "콘텐츠 반려 처리" 버튼 (빨간색)
-      - 하단: 기한 날짜 (예: "2025-12-30 기한")
-      - footer: 연장/신고 버튼
-   
-   🎯 주요 기능:
-     - 연장: 등록 기한을 3일 연장 (최대 2회까지 가능)
-       → 연장 승인 후 isExtensionApproved가 true가 되면 "기한 연장" 형태로 표시
-     - 신고: 콘텐츠 신고 모달 (선정 후 취소, 무단 이탈, 노출 기간 불이행 등)
-     - 연장 요청 사유 확인: extension_requested 상태에서 버튼 클릭 시 사유 모달 표시
-   
-   📝 참고:
-     - 모든 카드에 footer: 연장/신고 버튼 표시
-     - 기한 날짜는 상태 버튼 아래에 표시
-     - 대기 탭에서는 승인/반려 버튼 없음 (확인 탭에서만 승인/반려 가능)
-     - 미션형 대기 탭에서는 이미지/링크 확인 버튼 없음 (확인 탭에서만 확인 가능)
-     - pendingState prop으로 상태를 구분합니다
-     - isExtensionApproved와 extendedDeadline prop으로 연장 상태 표시
-     - deadlineDate prop으로 캠페인 등록 기간의 마지막 날짜를 표시합니다
+   구매평/미션형 공통 - 대기 탭 카드
    ======================================== */
+
+/**
+ * CampaignPendingCard
+ *
+ * 목적: 구매평/미션형 공통 캠페인의 제출 대기 탭 콘텐츠 카드를 렌더링합니다.
+ *
+ * 사용 페이지:
+ * - /partner/campaign/[id]/contents (구매평/미션형 > "대기" 탭)
+ */
 
 "use client";
 
 import { useState } from "react";
+import { useModalState } from "@/hooks/useModalState";
 import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
 import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
 import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
@@ -85,9 +22,7 @@ import { getChannelLogo } from "@/utils/channelLogoMap";
 import { getChannelUrl } from "@/utils/helpers/url";
 import type { CampaignApplicant } from "./CampaignTypes";
 import TextareaModal from "@/components/common/modal/TextareaModal";
-import ReportModal, {
-  type ReportOption,
-} from "@/components/common/modal/ReportModal";
+import ReportModal, { type ReportOption } from "@/components/common/modal/ReportModal";
 import BaseModal from "@/components/common/modal/BaseModal";
 
 /**
@@ -157,19 +92,16 @@ export default function CampaignPendingCard({
   const channel_icon_src = getChannelLogo(applicant.channel);
   const isReview = applicant.campaignType === "review";
 
-  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const reportModal = useModalState();
   const [selectedReportOption, setSelectedReportOption] = useState<string>("");
   const [otherReportReason, setOtherReportReason] = useState<string>("");
-  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const rejectModal = useModalState();
   const [rejectReason, setRejectReason] = useState("");
   // 연장 관련 상태
   const [extensionCount, setExtensionCount] = useState(0); // 연장 횟수 추적
-  const [isExtensionConfirmModalOpen, setIsExtensionConfirmModalOpen] =
-    useState(false);
-  const [isExtensionCompleteModalOpen, setIsExtensionCompleteModalOpen] =
-    useState(false);
-  const [isExtensionLimitModalOpen, setIsExtensionLimitModalOpen] =
-    useState(false);
+  const extensionConfirmModal = useModalState();
+  const extensionCompleteModal = useModalState();
+  const extensionLimitModal = useModalState();
 
   // 신고 옵션 정의
   const reportOptions: ReportOption[] = [
@@ -182,7 +114,7 @@ export default function CampaignPendingCard({
 
   // 신고 모달 열기
   const handleReportClick = () => {
-    setIsReportModalOpen(true);
+    reportModal.open();
     if (!selectedReportOption && reportOptions.length > 0) {
       setSelectedReportOption(reportOptions[0].value);
     }
@@ -190,16 +122,13 @@ export default function CampaignPendingCard({
 
   // 신고 모달 닫기
   const handleReportModalClose = () => {
-    setIsReportModalOpen(false);
+    reportModal.close();
     setSelectedReportOption("");
     setOtherReportReason("");
   };
 
   // 신고 확인 처리
-  const handleReportConfirm = (
-    selectedOption: string,
-    otherReason?: string
-  ) => {
+  const handleReportConfirm = (selectedOption: string, otherReason?: string) => {
     if (onReport) {
       onReport(applicant.id);
     }
@@ -217,12 +146,12 @@ export default function CampaignPendingCard({
     // 연장 횟수가 2회 이상이면 제한 모달 표시
     if (extensionCount >= 2) {
       // console.log("연장 제한 모달 표시");
-      setIsExtensionLimitModalOpen(true);
+      extensionLimitModal.open();
       return;
     }
     // 연장 확인 모달 표시
     // console.log("연장 확인 모달 표시");
-    setIsExtensionConfirmModalOpen(true);
+    extensionConfirmModal.open();
   };
 
   // 연장 확인 모달에서 연장 버튼 클릭
@@ -232,8 +161,8 @@ export default function CampaignPendingCard({
   const handleExtensionConfirm = () => {
     // console.log("연장 확인 모달에서 연장 버튼 클릭");
     setExtensionCount((prev) => prev + 1);
-    setIsExtensionConfirmModalOpen(false);
-    setIsExtensionCompleteModalOpen(true);
+    extensionConfirmModal.close();
+    extensionCompleteModal.open();
     // console.log("연장 완료 모달 표시");
   };
 
@@ -249,7 +178,7 @@ export default function CampaignPendingCard({
     //   "onExtend 존재:",
     //   !!onExtend
     // );
-    setIsExtensionCompleteModalOpen(false);
+    extensionCompleteModal.close();
     // 연장 완료 후 대기 탭으로 이동하기 위해 onExtend를 호출
     // 부모 컴포넌트에서 탭 이동과 날짜 업데이트를 처리합니다
     if (onExtend) {
@@ -261,12 +190,12 @@ export default function CampaignPendingCard({
 
   // 반려 모달 열기 (미션형만)
   const handleRejectClick = () => {
-    setIsRejectModalOpen(true);
+    rejectModal.open();
   };
 
   // 반려 모달 닫기
   const handleRejectModalClose = () => {
-    setIsRejectModalOpen(false);
+    rejectModal.close();
     setRejectReason("");
   };
 
@@ -387,19 +316,17 @@ export default function CampaignPendingCard({
           )}
 
         {/* 구매평: 반려 상태일 때 리뷰 확인 버튼 (상단에 표시) */}
-        {isReview &&
-          pendingState === "rejected" &&
-          applicant.reviewType !== 4 && (
-            <button
-              className={actionStyles.content_check_button}
-              onClick={() => {
-                // console.log("리뷰 확인 클릭", applicant.id);
-                onCheckReview?.(applicant.id);
-              }}
-            >
-              리뷰 확인
-            </button>
-          )}
+        {isReview && pendingState === "rejected" && applicant.reviewType !== 4 && (
+          <button
+            className={actionStyles.content_check_button}
+            onClick={() => {
+              // console.log("리뷰 확인 클릭", applicant.id);
+              onCheckReview?.(applicant.id);
+            }}
+          >
+            리뷰 확인
+          </button>
+        )}
 
         {/* 대기 탭에서는 미션형도 이미지/링크 확인 버튼 없음 (확인 탭에서만 확인 가능) */}
 
@@ -429,12 +356,8 @@ export default function CampaignPendingCard({
               className={`${actionStyles.action_button} ${actionStyles.extension_request_button}`}
               disabled
             >
-              <span className={actionStyles.extension_request_text_pc}>
-                등록 기한 연장 요청
-              </span>
-              <span className={actionStyles.extension_request_text_mobile}>
-                기간 연장 요청
-              </span>
+              <span className={actionStyles.extension_request_text_pc}>등록 기한 연장 요청</span>
+              <span className={actionStyles.extension_request_text_mobile}>기간 연장 요청</span>
             </button>
           )}
 
@@ -445,12 +368,8 @@ export default function CampaignPendingCard({
             >
               {applicant.reviewType === 4 ? (
                 <>
-                  <span className={actionStyles.receipt_reject_text_pc}>
-                    구매 영수증 반려 처리
-                  </span>
-                  <span className={actionStyles.receipt_reject_text_mobile}>
-                    구매 영수증 반려
-                  </span>
+                  <span className={actionStyles.receipt_reject_text_pc}>구매 영수증 반려 처리</span>
+                  <span className={actionStyles.receipt_reject_text_mobile}>구매 영수증 반려</span>
                 </>
               ) : (
                 "콘텐츠 반려 처리"
@@ -473,12 +392,8 @@ export default function CampaignPendingCard({
               className={`${actionStyles.action_button} ${actionStyles.extension_request_button}`}
               disabled
             >
-              <span className={actionStyles.extension_request_text_pc}>
-                등록 기한 연장 요청
-              </span>
-              <span className={actionStyles.extension_request_text_mobile}>
-                기간 연장 요청
-              </span>
+              <span className={actionStyles.extension_request_text_pc}>등록 기한 연장 요청</span>
+              <span className={actionStyles.extension_request_text_mobile}>기간 연장 요청</span>
             </button>
           )}
 
@@ -538,7 +453,7 @@ export default function CampaignPendingCard({
 
       {/* 신고 모달 */}
       <ReportModal
-        is_open={isReportModalOpen}
+        is_open={reportModal.isOpen}
         on_close={handleReportModalClose}
         title="콘텐츠 신고"
         options={reportOptions}
@@ -553,8 +468,8 @@ export default function CampaignPendingCard({
 
       {/* 연장 확인 모달 */}
       <BaseModal
-        is_open={isExtensionConfirmModalOpen}
-        on_close={() => setIsExtensionConfirmModalOpen(false)}
+        is_open={extensionConfirmModal.isOpen}
+        on_close={() => extensionConfirmModal.close()}
         message={
           extensionCount === 0
             ? '콘텐츠 등록 기간을<br><span style="color: #FF2626;">3일 연장</span>하시겠습니까?'
@@ -572,7 +487,7 @@ export default function CampaignPendingCard({
           - "닫기" 버튼을 클릭하면 대기 탭으로 이동합니다
       */}
       <BaseModal
-        is_open={isExtensionCompleteModalOpen}
+        is_open={extensionCompleteModal.isOpen}
         on_close={handleExtensionCompleteClose}
         message="등록 기간 연장이 완료되었습니다."
         buttons={["닫기"]}
@@ -581,8 +496,8 @@ export default function CampaignPendingCard({
 
       {/* 연장 제한 초과 모달 */}
       <BaseModal
-        is_open={isExtensionLimitModalOpen}
-        on_close={() => setIsExtensionLimitModalOpen(false)}
+        is_open={extensionLimitModal.isOpen}
+        on_close={() => extensionLimitModal.close()}
         message="연장은 최대 두 번까지만 가능합니다."
         buttons={["닫기"]}
         type="center"
@@ -591,7 +506,7 @@ export default function CampaignPendingCard({
       {/* 반려 사유 입력 모달 (미션형만, 승인/반려 버튼이 있을 때) */}
       {!isReview && onApprove && onReject && !pendingState && (
         <TextareaModal
-          is_open={isRejectModalOpen}
+          is_open={rejectModal.isOpen}
           on_close={handleRejectModalClose}
           title="반려 사유"
           titleColor="#ff2626"

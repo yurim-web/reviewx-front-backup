@@ -7,11 +7,6 @@
  *
  * 목적: 모든 캠페인 폼에서 공통으로 사용되는 유틸리티 함수들을 제공합니다.
  *
- * 주요 기능:
- * - 숫자 포맷팅 (쉼표 추가)
- * - 숫자 입력 검증
- * - 이미지 파일 검증
- * - 날짜 기본값 생성
  */
 
 import { format, addDays } from "date-fns";
@@ -27,9 +22,7 @@ import { format, addDays } from "date-fns";
  * @param value - 포맷팅할 값 (문자열, 숫자, 또는 undefined)
  * @returns 쉼표가 추가된 숫자 문자열
  */
-export function formatNumberWithComma(
-  value: string | number | undefined
-): string {
+export function formatNumberWithComma(value: string | number | undefined): string {
   // undefined나 null이면 빈 문자열 반환
   if (value === undefined || value === null) return "";
 
@@ -58,9 +51,7 @@ export function formatNumberWithComma(
  *
  * @param e - 키보드 이벤트 객체
  */
-export function handleNumericInput(
-  e: React.KeyboardEvent<HTMLInputElement>
-): void {
+export function handleNumericInput(e: React.KeyboardEvent<HTMLInputElement>): void {
   // 허용할 키들
   const allowedKeys = [
     "Backspace",
@@ -76,19 +67,13 @@ export function handleNumericInput(
 
   // Ctrl, Cmd 키와 함께 사용되는 키 (복사, 붙여넣기 등)
   const isCtrlKey = e.ctrlKey || e.metaKey;
-  const isAllowedKeyWithCtrl = ["a", "c", "v", "x"].includes(
-    e.key.toLowerCase()
-  );
+  const isAllowedKeyWithCtrl = ["a", "c", "v", "x"].includes(e.key.toLowerCase());
 
   // 입력된 키가 숫자인지 확인
   const isNumeric = /^[0-9]$/.test(e.key);
 
   // 허용된 키가 아니면 입력 방지
-  if (
-    !isNumeric &&
-    !allowedKeys.includes(e.key) &&
-    !(isCtrlKey && isAllowedKeyWithCtrl)
-  ) {
+  if (!isNumeric && !allowedKeys.includes(e.key) && !(isCtrlKey && isAllowedKeyWithCtrl)) {
     e.preventDefault();
   }
 }
@@ -127,9 +112,7 @@ export function handleNumericChange(
   // 다음 렌더링 후 커서 위치 복원
   setTimeout(() => {
     const newValue = formatNumberWithComma(numericValue);
-    const newCommasBeforeCursor = (
-      newValue.substring(0, cursorPosition).match(/,/g) || []
-    ).length;
+    const newCommasBeforeCursor = (newValue.substring(0, cursorPosition).match(/,/g) || []).length;
     const cursorOffset = newCommasBeforeCursor - commasBeforeCursor;
     const newCursorPosition = cursorPosition + cursorOffset;
 
@@ -150,7 +133,7 @@ function isValidImageExtension(file: File): boolean {
   // 파일 확장자 추출 (소문자로 변환)
   const fileName = file.name.toLowerCase();
   const validExtensions = [".jpg", ".jpeg", ".png", ".gif"];
-  
+
   // 확장자 검증
   return validExtensions.some((ext) => fileName.endsWith(ext));
 }
@@ -315,4 +298,3 @@ export function getDefaultCampaignDates(): {
     registrationPeriodAfterPurchase,
   };
 }
-

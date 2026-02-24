@@ -7,7 +7,7 @@
  *
  * 목적: 영수증/계산서 발행 옵션을 선택하는 드롭다운
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /partner/point/charge
  */
 
@@ -54,10 +54,7 @@ export default function InvoiceTypeDropdown({
         aria-expanded={isOpen}
         onClick={onToggle}
       >
-        <span
-          className={customDropdownStyles.dropdown_text}
-          data-placeholder="옵션 선택"
-        >
+        <span className={customDropdownStyles.dropdown_text} data-placeholder="옵션 선택">
           {getInvoiceLabel(selectedType)}
         </span>
         <img

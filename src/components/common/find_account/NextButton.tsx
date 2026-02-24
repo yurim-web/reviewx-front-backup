@@ -3,7 +3,7 @@
  *
  * 인증 완료 후 다음 단계로 진행하는 버튼입니다.
  *
- * 사용처:
+ * 사용 페이지:
  * - src/components/common/FindAccountPage.tsx
  */
 

@@ -1,23 +1,14 @@
 /* ========================================
-   📋 공통 Textarea 컴포넌트
+   공통 Textarea 컴포넌트
    ======================================== */
 
 /**
- * 공통 Textarea 컴포넌트
+ * CommonTextarea
  *
- * 📝 목적:
- * - 재사용 가능한 textarea 컴포넌트
- * - 커스텀 스크롤바 스타일 적용
- * - 에러 상태 표시 지원
+ * 목적: 커스텀 스크롤바 스타일과 에러 상태 표시를 지원하는 재사용 가능한 textarea 컴포넌트입니다.
  *
- * 📝 사용처:
- * - ManagerReportReasonModal.tsx
- * - 기타 textarea가 필요한 모달 컴포넌트
- *
- * 📝 React 학습 포인트:
- * - forwardRef: 부모 컴포넌트에서 ref를 전달받기 위해 사용
- * - React.forwardRef는 ref를 자식 컴포넌트로 전달할 수 있게 해주는 고차 컴포넌트(HOC)입니다
- * - useRef로 생성한 ref를 textarea DOM 요소에 직접 연결할 수 있습니다
+ * 사용 페이지:
+ * - 신고 사유 입력 모달 등 textarea가 필요한 컴포넌트에서 공통 사용
  */
 
 "use client";

@@ -7,23 +7,13 @@
  *
  * 목적: 보유 포인트, 차감 포인트, 추가 지급 포인트를 한 번에 관리하는 UI를 제공합니다.
  *
- * 주요 기능:
- * - 보유 포인트 표시 (읽기 전용)
- * - 차감 포인트 계산 및 표시 (읽기 전용)
- * - 추가 지급 포인트 입력
- * - 포인트 충전 버튼
- * - 포인트 부족 시 경고 메시지
  */
 
 "use client";
 
 import { useState, useEffect } from "react";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
-import {
-  formatNumberWithComma,
-  handleNumericInput,
-  handleNumericChange,
-} from "../utils/formUtils";
+import { formatNumberWithComma, handleNumericInput, handleNumericChange } from "../utils/formUtils";
 import ErrorText from "@/components/common/error_text/ErrorText";
 
 /**
@@ -91,18 +81,14 @@ export function PointsManagementSection({
   /**
    * 추가 지급 포인트 변경 핸들러
    */
-  const handleAdditionalPointsChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleAdditionalPointsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     handleNumericChange(e, onAdditionalPointsChange);
   };
 
   /**
    * 추가 지급 포인트 키 입력 핸들러
    */
-  const handleAdditionalPointsKeyDown = (
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) => {
+  const handleAdditionalPointsKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     handleNumericInput(e);
   };
 
@@ -156,11 +142,7 @@ export function PointsManagementSection({
             />
             <span className={infoStyles.points_unit}>P</span>
           </div>
-          <button
-            type="button"
-            className={infoStyles.charge_button}
-            onClick={onChargeClick}
-          >
+          <button type="button" className={infoStyles.charge_button} onClick={onChargeClick}>
             {isMobile ? "포인트 충전" : "포인트 충전하기"}
           </button>
         </div>

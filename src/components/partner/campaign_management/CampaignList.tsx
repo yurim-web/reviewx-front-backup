@@ -10,12 +10,6 @@
  * 사용 페이지:
  * - /partner (파트너 캠페인 관리 페이지)
  *
- * 주요 기능:
- * - 선택된 탭에 따라 필터링된 캠페인 목록 표시
- * - 패널티 탭: PenaltyContent 컴포넌트 표시
- * - 나머지 탭: 해당 상태의 캠페인 카드 목록 표시
- * - 빈 상태 메시지 표시 (해당 상태의 캠페인이 없는 경우)
- * - 조건부 렌더링으로 다른 UI 표시
  */
 
 import { useState, useEffect } from "react";
@@ -68,15 +62,9 @@ export default function CampaignList({
         // 전체 탭: 모든 캠페인 표시 (연장 요청 탭의 캠페인도 포함)
         return true;
       case "예정":
-        return (
-          campaign.status === "대기 중" &&
-          !campaign.subStatus?.includes("extension_request")
-        );
+        return campaign.status === "대기 중" && !campaign.subStatus?.includes("extension_request");
       case "신청":
-        return (
-          campaign.status === "모집 중" &&
-          !campaign.subStatus?.includes("extension_request")
-        );
+        return campaign.status === "모집 중" && !campaign.subStatus?.includes("extension_request");
       case "진행":
         /**
          * 진행 탭 필터링
@@ -110,15 +98,9 @@ export default function CampaignList({
 
         return false;
       case "종료":
-        return (
-          campaign.status === "종료" &&
-          !campaign.subStatus?.includes("extension_request")
-        );
+        return campaign.status === "종료" && !campaign.subStatus?.includes("extension_request");
       case "취소":
-        return (
-          campaign.status === "취소" &&
-          !campaign.subStatus?.includes("extension_request")
-        );
+        return campaign.status === "취소" && !campaign.subStatus?.includes("extension_request");
       case "연장 요청":
         /**
          * 연장 요청 탭 필터링
@@ -167,13 +149,7 @@ export default function CampaignList({
             ? `${String(campaign.id)}-${campaign.campaignType || "unknown"}`
             : `campaign-${index}-${campaign.campaignType || "unknown"}`;
 
-          return (
-            <CampaignCard
-              key={uniqueKey}
-              campaign={campaign}
-              activeTab={activeStatTab}
-            />
-          );
+          return <CampaignCard key={uniqueKey} campaign={campaign} activeTab={activeStatTab} />;
         })}
       </div>
 
