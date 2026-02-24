@@ -8,7 +8,18 @@
     "start": "next start --port 3002",
     "lint": "eslint",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "prepare": "husky",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\""
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "src/**/*.css": [
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "@toast-ui/editor": "^3.2.2",
@@ -45,6 +56,12 @@
     "copy-webpack-plugin": "^13.0.1",
     "eslint": "^9",
     "eslint-config-next": "15.5.3",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-storybook": "^10.2.11",
+    "eslint-plugin-unused-imports": "^4.4.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.8.1",
     "storybook": "^8.6.14",
     "tailwindcss": "^4",
     "typescript": "^5"
