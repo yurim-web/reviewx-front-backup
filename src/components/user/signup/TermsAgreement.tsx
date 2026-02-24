@@ -1,25 +1,21 @@
 /* ========================================
-   ✅ 약관 동의 컴포넌트
+   약관 동의 컴포넌트
    ======================================== */
 
 /**
- * 모듈 목적
+ * TermsAgreement
  *
- * - 이용약관 및 개인정보 동의 체크박스 UI
- * - 전체 동의 및 개별 동의 관리
+ * 목적: 이용약관 및 개인정보 처리방침에 대한 동의 체크박스 UI를 제공합니다.
  *
- * 📍 사용 페이지/컴포넌트:
- * - src/app/user/signup/page.tsx
- *   (사용자 회원가입 페이지에서 약관 동의에 사용)
+ * 사용 페이지:
+ * - /user/signup (유저 회원가입 > 약관 동의 섹션)
  */
 
 "use client";
 
 import { useState } from "react";
 import commonStyles from "@/styles/common/signup/signup.module.css";
-import TermsViewModal, {
-  type TermsViewModalType,
-} from "@/components/user/signup/TermsViewModal";
+import TermsViewModal, { type TermsViewModalType } from "@/components/user/signup/TermsViewModal";
 
 interface TermsAgreementProps {
   allAgreed: boolean;
@@ -44,8 +40,7 @@ export default function TermsAgreement({
   onPrivacyAgreedChange,
   onMarketingAgreedChange,
 }: TermsAgreementProps) {
-  const [terms_modal_type, set_terms_modal_type] =
-    useState<TermsViewModalType>(null);
+  const [terms_modal_type, set_terms_modal_type] = useState<TermsViewModalType>(null);
 
   return (
     <>
@@ -80,10 +75,7 @@ export default function TermsAgreement({
               onChange={(e) => onTermsAgreedChange(e.target.checked)}
             />
             <div className={commonStyles.terms_label_row}>
-              <label
-                htmlFor="terms-agree"
-                className={commonStyles.checkbox_label}
-              >
+              <label htmlFor="terms-agree" className={commonStyles.checkbox_label}>
                 [필수] 이용약관 및 개인정보 관련 동의
               </label>
               <button
@@ -113,10 +105,7 @@ export default function TermsAgreement({
             onChange={(e) => onPrivacyAgreedChange(e.target.checked)}
           />
           <div className={commonStyles.terms_label_row}>
-            <label
-              htmlFor="privacy-agree"
-              className={commonStyles.checkbox_label}
-            >
+            <label htmlFor="privacy-agree" className={commonStyles.checkbox_label}>
               [필수] 개인정보 제3자 제공 동의
             </label>
             <button
@@ -138,10 +127,7 @@ export default function TermsAgreement({
             onChange={(e) => onMarketingAgreedChange(e.target.checked)}
           />
           <div className={commonStyles.terms_label_row}>
-            <label
-              htmlFor="marketing-agree"
-              className={commonStyles.checkbox_label}
-            >
+            <label htmlFor="marketing-agree" className={commonStyles.checkbox_label}>
               [선택] 마케팅 목적의 개인정보 수집 및 이용 동의
             </label>
             <button
@@ -155,9 +141,7 @@ export default function TermsAgreement({
         </div>
       </div>
 
-      {error && (
-        <div className={commonStyles.error_message}>{error}</div>
-      )}
+      {error && <div className={commonStyles.error_message}>{error}</div>}
     </>
   );
 }

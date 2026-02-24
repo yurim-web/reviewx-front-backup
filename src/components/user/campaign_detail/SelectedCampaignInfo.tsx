@@ -1,5 +1,5 @@
 /* ========================================
-   📋 참여 캠페인 상세 페이지 추가 안내 섹션
+   참여 캠페인 상세 페이지 추가 안내 섹션
    ======================================== */
 
 /**
@@ -27,7 +27,7 @@ interface SelectedCampaignInfoProps {
 }
 
 export default function SelectedCampaignInfo({
-  onGoToGuide,
+  onGoToGuide: _onGoToGuide,
   onCopyContact,
   contactNumber = "010-1234-5678",
 }: SelectedCampaignInfoProps) {
@@ -42,8 +42,7 @@ export default function SelectedCampaignInfo({
       if (onCopyContact) {
         onCopyContact();
       }
-    } catch (_error) {
-    }
+    } catch (_error) {}
   };
 
   return (
@@ -53,20 +52,15 @@ export default function SelectedCampaignInfo({
         <div className={styles.label_box}>
           <div className={styles.label_keyword_box}>
             <span>공정위 가이드</span>
-            <button
-              className={styles.copy_tag_button}
-              onClick={handleGoToGuide}
-              type="button"
-            >
+            <button className={styles.copy_tag_button} onClick={handleGoToGuide} type="button">
               이동
             </button>
           </div>
         </div>
         <div className={styles.content_box}>
           <p className={selectedCampaignStyles.info_text}>
-            좌측 이동 버튼을 통해 가이드를 참고하여 콘텐츠 작성하실 때 첫
-            부분에 공정위 문구 혹은 이미지를 먼저 삽입해 주시고 작성해
-            주세요.
+            좌측 이동 버튼을 통해 가이드를 참고하여 콘텐츠 작성하실 때 첫 부분에 공정위 문구 혹은
+            이미지를 먼저 삽입해 주시고 작성해 주세요.
           </p>
         </div>
       </div>
@@ -76,11 +70,7 @@ export default function SelectedCampaignInfo({
         <div className={styles.label_box}>
           <div className={styles.label_keyword_box}>
             <span>캠페인 문의</span>
-            <button
-              className={styles.copy_tag_button}
-              onClick={handleCopyContact}
-              type="button"
-            >
+            <button className={styles.copy_tag_button} onClick={handleCopyContact} type="button">
               복사
             </button>
           </div>
@@ -88,13 +78,10 @@ export default function SelectedCampaignInfo({
         <div className={styles.content_box}>
           {/* 문의 담당자 연락처 */}
           <div className={selectedCampaignStyles.contact_number_box}>
-            <span className={selectedCampaignStyles.contact_number}>
-              {contactNumber}
-            </span>
+            <span className={selectedCampaignStyles.contact_number}>{contactNumber}</span>
           </div>
         </div>
       </div>
-
     </>
   );
 }

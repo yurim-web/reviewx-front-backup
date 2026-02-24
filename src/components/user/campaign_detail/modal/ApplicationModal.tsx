@@ -15,13 +15,13 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useModalState } from "@/hooks/useModalState";
 import { getChannelLogo } from "@/utils/channelLogoMap";
 import BaseModal from "@/components/common/modal/BaseModal";
 import { useAuth } from "@/hooks/useAuth";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import type { AllApplicant } from "@/data/partner/sharedCampaigns";
 import styles from "@/styles/user/campaign/application_modal.module.css";
-
 
 interface StoredChannelDetail {
   name: string;
@@ -83,34 +83,25 @@ function normalizeChannelName(name: string): string {
  */
 function resolveUserChannelUrl(
   channelDetails: StoredChannelDetail[],
-  campaignChannelName: string,
+  campaignChannelName: string
 ): string {
   const normalized = normalizeChannelName(campaignChannelName);
 
   let targetChannelName = campaignChannelName;
   if (normalized === "릴스") targetChannelName = "인스타그램";
-  else if (normalized === "쇼츠" || normalized === "숏츠")
-    targetChannelName = "유튜브";
+  else if (normalized === "쇼츠" || normalized === "숏츠") targetChannelName = "유튜브";
 
   const normalizedTarget = normalizeChannelName(targetChannelName);
 
   const matched = channelDetails.find((ch) => {
     const normalizedUser = normalizeChannelName(ch.name);
-    return (
-      normalizedUser.includes(normalizedTarget) ||
-      normalizedTarget.includes(normalizedUser)
-    );
+    return normalizedUser.includes(normalizedTarget) || normalizedTarget.includes(normalizedUser);
   });
 
   return matched?.status === "connected" && matched.url ? matched.url : "";
 }
 
-export type ApplicationModalType =
-  | "delivery"
-  | "review"
-  | "mission"
-  | "reporter"
-  | "visit";
+export type ApplicationModalType = "delivery" | "review" | "mission" | "reporter" | "visit";
 
 interface ApplicationModalProps {
   isOpen: boolean;
@@ -157,15 +148,11 @@ export default function ApplicationModal({
   };
 
   // sessionStorage에 입력값 저장
-  const saveFormData = (
-    memo: string,
-    isAgreed: boolean,
-    isUrgentAgreed: boolean,
-  ) => {
+  const saveFormData = (memo: string, isAgreed: boolean, isUrgentAgreed: boolean) => {
     if (typeof window === "undefined") return;
     sessionStorage.setItem(
       "applicationModalFormData",
-      JSON.stringify({ memo, isAgreed, isUrgentAgreed }),
+      JSON.stringify({ memo, isAgreed, isUrgentAgreed })
     );
   };
 
@@ -183,20 +170,15 @@ export default function ApplicationModal({
   // 주소 정보 (등록되어 있지 않으면 빈 문자열)
   const [userAddress, setUserAddress] = useState("");
   // 채널 URL 정보 (props로 받은 값 또는 sessionStorage에서 불러온 값)
-  const [currentChannelUrl, setCurrentChannelUrl] = useState(
-    userChannelUrl || "",
-  );
+  const [currentChannelUrl, setCurrentChannelUrl] = useState(userChannelUrl || "");
 
-  // 신청 완료 모달 상태
-  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
-
-  // 에러 모달 상태들
-  const [isParticipatedModalOpen, setIsParticipatedModalOpen] = useState(false);
-  const [isClosedModalOpen, setIsClosedModalOpen] = useState(false);
-  const [isSuspendedModalOpen, setIsSuspendedModalOpen] = useState(false);
-  const [isInvalidRequestModalOpen, setIsInvalidRequestModalOpen] =
-    useState(false);
-  const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
+  // 모달 상태 관리
+  const successModal = useModalState();
+  const participatedModal = useModalState();
+  const closedModal = useModalState();
+  const suspendedModal = useModalState();
+  const invalidRequestModal = useModalState();
+  const duplicateModal = useModalState();
 
   // 채널 정보: 캠페인에서 요구하는 채널 이름을 사용 (없으면 기본값)
   const channelName = campaignChannelName || "네이버 블로그";
@@ -209,16 +191,8 @@ export default function ApplicationModal({
   const isUrgent = isUrgentProp || dayCount?.includes("긴급") || false;
 
   // 타입별 표시 여부 결정
-  const showAddress =
-    type === "delivery" || type === "review" || type === "mission";
-  const showChannel =
-    type === "delivery" || type === "visit" || type === "reporter";
-
-  // 디버깅: 채널 정보 확인
-  useEffect(() => {
-    if (isOpen && showChannel) {
-    }
-  }, [isOpen, showChannel, type, campaignChannelName, channelName, channelUrl]);
+  const showAddress = type === "delivery" || type === "review" || type === "mission";
+  const showChannel = type === "delivery" || type === "visit" || type === "reporter";
 
   // 모바일에서 모달이 열릴 때 body 스크롤 막기
   useEffect(() => {
@@ -263,7 +237,8 @@ export default function ApplicationModal({
             const storedAccounts = localStorage.getItem("user_accounts");
             if (storedAccounts) {
               const accounts = JSON.parse(storedAccounts);
-              const userAccount = accounts.find((a: StoredUserAccount) => a.id === user.id || a.email === user.email,
+              const userAccount = accounts.find(
+                (a: StoredUserAccount) => a.id === user.id || a.email === user.email
               );
               if (userAccount) {
                 setUserName(userAccount.name || user.name || "");
@@ -273,7 +248,9 @@ export default function ApplicationModal({
                   const addressPart = addrSrc.detailAddress
                     ? `${addrSrc.address} ${addrSrc.detailAddress}`.trim()
                     : addrSrc.address;
-                  setUserAddress(addrSrc.postalCode ? `${addressPart} | ${addrSrc.postalCode}` : addressPart);
+                  setUserAddress(
+                    addrSrc.postalCode ? `${addressPart} | ${addrSrc.postalCode}` : addressPart
+                  );
                 } else if (userAccount.address && userAccount.postal_code) {
                   const addressPart = userAccount.detail_address
                     ? `${userAccount.address} ${userAccount.detail_address}`.trim()
@@ -282,22 +259,14 @@ export default function ApplicationModal({
                 } else {
                   setUserAddress("");
                 }
-                if (
-                  showChannel &&
-                  userAccount.channel_details &&
-                  campaignChannelName
-                ) {
+                if (showChannel && userAccount.channel_details && campaignChannelName) {
                   setCurrentChannelUrl(
-                    resolveUserChannelUrl(
-                      userAccount.channel_details,
-                      campaignChannelName,
-                    ),
+                    resolveUserChannelUrl(userAccount.channel_details, campaignChannelName)
                   );
                 }
               }
             }
-          } catch (_e) {
-          }
+          } catch (_e) {}
         }
 
         sessionStorage.removeItem("shouldRestoreFormData");
@@ -315,7 +284,8 @@ export default function ApplicationModal({
             const storedAccounts = localStorage.getItem("user_accounts");
             if (storedAccounts) {
               const accounts = JSON.parse(storedAccounts);
-              const userAccount = accounts.find((a: StoredUserAccount) => a.id === user.id || a.email === user.email,
+              const userAccount = accounts.find(
+                (a: StoredUserAccount) => a.id === user.id || a.email === user.email
               );
 
               if (userAccount) {
@@ -328,7 +298,9 @@ export default function ApplicationModal({
                   const addressPart = addrSrc.detailAddress
                     ? `${addrSrc.address} ${addrSrc.detailAddress}`.trim()
                     : addrSrc.address;
-                  setUserAddress(addrSrc.postalCode ? `${addressPart} | ${addrSrc.postalCode}` : addressPart);
+                  setUserAddress(
+                    addrSrc.postalCode ? `${addressPart} | ${addrSrc.postalCode}` : addressPart
+                  );
                 } else if (userAccount.address && userAccount.postal_code) {
                   const addressPart = userAccount.detail_address
                     ? `${userAccount.address} ${userAccount.detail_address}`.trim()
@@ -341,10 +313,7 @@ export default function ApplicationModal({
                 // 채널 정보 설정 (캠페인에서 요구하는 채널 확인)
                 if (userAccount.channel_details && campaignChannelName) {
                   setCurrentChannelUrl(
-                    resolveUserChannelUrl(
-                      userAccount.channel_details,
-                      campaignChannelName,
-                    ),
+                    resolveUserChannelUrl(userAccount.channel_details, campaignChannelName)
                   );
                 } else {
                   setCurrentChannelUrl(userChannelUrl || "");
@@ -374,14 +343,7 @@ export default function ApplicationModal({
       setUserAddress("");
       setCurrentChannelUrl(userChannelUrl || "");
     }
-  }, [
-    isOpen,
-    user,
-    channelName,
-    userChannelUrl,
-    campaignChannelName,
-    showChannel,
-  ]);
+  }, [isOpen, user, channelName, userChannelUrl, campaignChannelName, showChannel]);
 
   if (!isOpen) return null;
 
@@ -419,27 +381,25 @@ export default function ApplicationModal({
   const handleSubmit = () => {
     // campaignId가 없으면 에러
     if (!campaignId) {
-      alert(
-        "캠페인 정보를 불러올 수 없습니다. 페이지를 새로고침하고 다시 시도해주세요.",
-      );
+      alert("캠페인 정보를 불러올 수 없습니다. 페이지를 새로고침하고 다시 시도해주세요.");
       return;
     }
 
     // 1. 이미 참여한 캠페인인지 확인
     if (isParticipated) {
-      setIsParticipatedModalOpen(true);
+      participatedModal.open();
       return;
     }
 
     // 2. 일시 정지된 회원인지 확인
     if (isSuspended) {
-      setIsSuspendedModalOpen(true);
+      suspendedModal.open();
       return;
     }
 
     // 3. 등록 기간이 마감되었는지 확인
     if (isClosed) {
-      setIsClosedModalOpen(true);
+      closedModal.open();
       return;
     }
 
@@ -461,29 +421,14 @@ export default function ApplicationModal({
 
       if (storedAccounts) {
         const accounts = JSON.parse(storedAccounts);
-        userAccount = accounts.find((a: StoredUserAccount) => a.id === user.id || a.email === user.email,
+        userAccount = accounts.find(
+          (a: StoredUserAccount) => a.id === user.id || a.email === user.email
         );
       }
 
-      // userAccount 다시 로드 (최신 정보 확인)
-      let latestUserAccount = userAccount;
-      if (typeof window !== "undefined") {
-        try {
-          const storedAccounts = localStorage.getItem("user_accounts");
-          if (storedAccounts) {
-            const accounts = JSON.parse(storedAccounts);
-            const foundAccount = accounts.find((a: StoredUserAccount) => a.id === user.id || a.email === user.email,
-            );
-            if (foundAccount) {
-              latestUserAccount = foundAccount;
-            }
-          }
-        } catch (_error) {
-        }
-      }
+      const latestUserAccount = userAccount;
 
       // 신청자 데이터 생성 (localStorage 저장용)
-      // - CampaignWithApplicants.applicantData.applicants 타입(AllApplicant)에 맞춰 저장합니다.
       const appliedAt = new Date().toISOString();
 
       const normalized_user_type =
@@ -530,13 +475,8 @@ export default function ApplicationModal({
         Id: channel_id,
         nickname: latestUserAccount?.nickname || "",
         userType: normalized_user_type as "리뷰어" | "인플루언서",
-        profileImage:
-          latestUserAccount?.profile_image || "/images/mypage/profile.svg",
-        memberType: normalized_member_type as
-          | "모범 회원"
-          | "주의 회원"
-          | "경고 회원"
-          | "이용 제한",
+        profileImage: latestUserAccount?.profile_image || "/images/mypage/profile.svg",
+        memberType: normalized_member_type as "모범 회원" | "주의 회원" | "경고 회원" | "이용 제한",
         memo: memo,
         selectionStatus: "미선택" as const,
         registrationDate: appliedAt.split("T")[0],
@@ -585,8 +525,7 @@ export default function ApplicationModal({
         channelName: campaignChannelName,
         memo: memo,
         userType: normalized_user_type,
-        profileImage:
-          latestUserAccount?.profile_image || "/images/default_profile.png",
+        profileImage: latestUserAccount?.profile_image || "/images/default_profile.png",
         memberType: normalized_member_type,
         dailyVisits: latestUserAccount?.daily_visits || 0,
         totalVisits: latestUserAccount?.total_visits || 0,
@@ -594,7 +533,6 @@ export default function ApplicationModal({
         appliedAt,
         status: "대기",
       };
-
 
       // localStorage의 해당 캠페인 applicants에 추가
       const campaignType =
@@ -607,7 +545,6 @@ export default function ApplicationModal({
               : type === "reporter"
                 ? "reporterCampaigns"
                 : "visitCampaigns";
-
 
       const storedCampaigns = localStorage.getItem(campaignType);
 
@@ -639,25 +576,18 @@ export default function ApplicationModal({
           if (typePrefix) {
             // searchId가 "reporter_1" 형식이고 storedId가 "1" 형식인 경우
             if (searchId.startsWith(typePrefix)) {
-              const searchIdWithoutPrefix = searchId.replace(
-                new RegExp(`^${typePrefix}`),
-                "",
-              );
+              const searchIdWithoutPrefix = searchId.replace(new RegExp(`^${typePrefix}`), "");
               if (storedId === searchIdWithoutPrefix) return true;
             }
             // storedId가 "reporter_1" 형식이고 searchId가 "1" 형식인 경우
             if (storedId.startsWith(typePrefix)) {
-              const storedIdWithoutPrefix = storedId.replace(
-                new RegExp(`^${typePrefix}`),
-                "",
-              );
+              const storedIdWithoutPrefix = storedId.replace(new RegExp(`^${typePrefix}`), "");
               if (storedIdWithoutPrefix === searchId) return true;
             }
           }
 
           return false;
         });
-
 
         if (campaignIndex >= 0) {
           const campaign = campaigns[campaignIndex];
@@ -671,12 +601,13 @@ export default function ApplicationModal({
           }
 
           // 중복 신청 체크
-          const isDuplicate = campaign.applicantData.applicants.some((a: StoredApplicant) => a.id === user.id || a.userId === user.id,
+          const isDuplicate = campaign.applicantData.applicants.some(
+            (a: StoredApplicant) => a.id === user.id || a.userId === user.id
           );
 
           if (isDuplicate) {
             // 중복 신청 시 모달 표시
-            setIsDuplicateModalOpen(true);
+            duplicateModal.open();
             return;
           }
 
@@ -685,19 +616,15 @@ export default function ApplicationModal({
 
           // campaignInfo의 recruitedCount 증가
           if (campaign.campaignInfo) {
-            campaign.campaignInfo.recruitedCount =
-              (campaign.campaignInfo.recruitedCount || 0) + 1;
+            campaign.campaignInfo.recruitedCount = (campaign.campaignInfo.recruitedCount || 0) + 1;
           }
 
           // localStorage에 저장
           campaigns[campaignIndex] = campaign;
           localStorage.setItem(campaignType, JSON.stringify(campaigns));
 
-
           // 유저 신청 내역에도 추가
-          const userAppliedCampaigns = localStorage.getItem(
-            "user_applied_campaigns",
-          );
+          const userAppliedCampaigns = localStorage.getItem("user_applied_campaigns");
           let appliedCampaigns: StoredUserCampaign[] = [];
 
           if (userAppliedCampaigns) {
@@ -705,7 +632,8 @@ export default function ApplicationModal({
           }
 
           // 유저별 신청 내역 찾기
-          let userCampaigns = appliedCampaigns.find((uc: StoredUserCampaign) => uc.userId === user.id,
+          let userCampaigns = appliedCampaigns.find(
+            (uc: StoredUserCampaign) => uc.userId === user.id
           );
 
           if (!userCampaigns) {
@@ -726,20 +654,13 @@ export default function ApplicationModal({
             status: "대기", // 대기, 선정, 탈락
             memo: memo,
             channel:
-              campaignChannelName ||
-              campaign.campaignInfo?.channel ||
-              campaign.channel ||
-              "", // 채널 정보 추가
+              campaignChannelName || campaign.campaignInfo?.channel || campaign.channel || "", // 채널 정보 추가
           });
 
-          localStorage.setItem(
-            "user_applied_campaigns",
-            JSON.stringify(appliedCampaigns),
-          );
-
+          localStorage.setItem("user_applied_campaigns", JSON.stringify(appliedCampaigns));
 
           // 신청 완료 모달 열기
-          setIsSuccessModalOpen(true);
+          successModal.open();
         } else {
           // 캠페인을 찾지 못한 경우 - 목업 데이터에서 찾아서 localStorage에 추가
 
@@ -763,10 +684,7 @@ export default function ApplicationModal({
 
             if (typePrefix && campaignId.startsWith(typePrefix)) {
               // "reporter_1" -> "1"로 변환 시도
-              const idWithoutPrefix = campaignId.replace(
-                new RegExp(`^${typePrefix}`),
-                "",
-              );
+              const idWithoutPrefix = campaignId.replace(new RegExp(`^${typePrefix}`), "");
               mockCampaign = getCampaignById(idWithoutPrefix);
             } else if (typePrefix) {
               // "1" -> "reporter_1"로 변환 시도
@@ -776,7 +694,6 @@ export default function ApplicationModal({
           }
 
           if (mockCampaign) {
-
             // applicantData가 없으면 초기화
             if (!mockCampaign.applicantData) {
               mockCampaign.applicantData = {
@@ -786,12 +703,13 @@ export default function ApplicationModal({
             }
 
             // 중복 신청 체크
-            const isDuplicate = mockCampaign.applicantData.applicants.some((a: StoredApplicant) => a.id === user.id || a.userId === user.id,
+            const isDuplicate = mockCampaign.applicantData.applicants.some(
+              (a: StoredApplicant) => a.id === user.id || a.userId === user.id
             );
 
             if (isDuplicate) {
               // 중복 신청 시 모달 표시
-              setIsDuplicateModalOpen(true);
+              duplicateModal.open();
               return;
             }
 
@@ -806,11 +724,8 @@ export default function ApplicationModal({
             campaigns.push(mockCampaign);
             localStorage.setItem(campaignType, JSON.stringify(campaigns));
 
-
             // 유저 신청 내역에도 추가
-            const userAppliedCampaigns = localStorage.getItem(
-              "user_applied_campaigns",
-            );
+            const userAppliedCampaigns = localStorage.getItem("user_applied_campaigns");
             let appliedCampaigns: StoredUserCampaign[] = [];
 
             if (userAppliedCampaigns) {
@@ -818,7 +733,8 @@ export default function ApplicationModal({
             }
 
             // 유저별 신청 내역 찾기
-            let userCampaigns = appliedCampaigns.find((uc: StoredUserCampaign) => uc.userId === user.id,
+            let userCampaigns = appliedCampaigns.find(
+              (uc: StoredUserCampaign) => uc.userId === user.id
             );
 
             if (!userCampaigns) {
@@ -838,25 +754,16 @@ export default function ApplicationModal({
               appliedAt: applicant_meta.appliedAt,
               status: "대기",
               memo: memo,
-              channel:
-                campaignChannelName ||
-                mockCampaign.campaignInfo.brandName ||
-                "",
+              channel: campaignChannelName || mockCampaign.campaignInfo.brandName || "",
             });
 
-            localStorage.setItem(
-              "user_applied_campaigns",
-              JSON.stringify(appliedCampaigns),
-            );
-
+            localStorage.setItem("user_applied_campaigns", JSON.stringify(appliedCampaigns));
 
             // 신청 완료 모달 열기
-            setIsSuccessModalOpen(true);
+            successModal.open();
           } else {
             // 목업 데이터에서도 찾지 못한 경우
-            alert(
-              "캠페인을 찾을 수 없습니다. 페이지를 새로고침하고 다시 시도해주세요.",
-            );
+            alert("캠페인을 찾을 수 없습니다. 페이지를 새로고침하고 다시 시도해주세요.");
             return;
           }
         }
@@ -883,10 +790,7 @@ export default function ApplicationModal({
 
           if (typePrefix && campaignId.startsWith(typePrefix)) {
             // "reporter_1" -> "1"로 변환 시도
-            const idWithoutPrefix = campaignId.replace(
-              new RegExp(`^${typePrefix}`),
-              "",
-            );
+            const idWithoutPrefix = campaignId.replace(new RegExp(`^${typePrefix}`), "");
             mockCampaign = getCampaignById(idWithoutPrefix);
           } else if (typePrefix) {
             // "1" -> "reporter_1"로 변환 시도
@@ -896,7 +800,6 @@ export default function ApplicationModal({
         }
 
         if (mockCampaign) {
-
           // applicantData가 없으면 초기화
           if (!mockCampaign.applicantData) {
             mockCampaign.applicantData = {
@@ -906,12 +809,13 @@ export default function ApplicationModal({
           }
 
           // 중복 신청 체크
-          const isDuplicate = mockCampaign.applicantData.applicants.some((a: StoredApplicant) => a.id === user.id || a.userId === user.id,
+          const isDuplicate = mockCampaign.applicantData.applicants.some(
+            (a: StoredApplicant) => a.id === user.id || a.userId === user.id
           );
 
           if (isDuplicate) {
             // 중복 신청 시 모달 표시
-            setIsDuplicateModalOpen(true);
+            duplicateModal.open();
             return;
           }
 
@@ -926,11 +830,8 @@ export default function ApplicationModal({
           const initialCampaigns = [mockCampaign];
           localStorage.setItem(campaignType, JSON.stringify(initialCampaigns));
 
-
           // 유저 신청 내역에도 추가
-          const userAppliedCampaigns = localStorage.getItem(
-            "user_applied_campaigns",
-          );
+          const userAppliedCampaigns = localStorage.getItem("user_applied_campaigns");
           let appliedCampaigns: StoredUserCampaign[] = [];
 
           if (userAppliedCampaigns) {
@@ -938,7 +839,8 @@ export default function ApplicationModal({
           }
 
           // 유저별 신청 내역 찾기
-          let userCampaigns = appliedCampaigns.find((uc: StoredUserCampaign) => uc.userId === user.id,
+          let userCampaigns = appliedCampaigns.find(
+            (uc: StoredUserCampaign) => uc.userId === user.id
           );
 
           if (!userCampaigns) {
@@ -958,23 +860,16 @@ export default function ApplicationModal({
             appliedAt: applicant_meta.appliedAt,
             status: "대기",
             memo: memo,
-            channel:
-              campaignChannelName || mockCampaign.campaignInfo.brandName || "",
+            channel: campaignChannelName || mockCampaign.campaignInfo.brandName || "",
           });
 
-          localStorage.setItem(
-            "user_applied_campaigns",
-            JSON.stringify(appliedCampaigns),
-          );
-
+          localStorage.setItem("user_applied_campaigns", JSON.stringify(appliedCampaigns));
 
           // 신청 완료 모달 열기
-          setIsSuccessModalOpen(true);
+          successModal.open();
         } else {
           // 목업 데이터에서도 찾지 못한 경우
-          alert(
-            "캠페인 데이터를 불러올 수 없습니다. 페이지를 새로고침하고 다시 시도해주세요.",
-          );
+          alert("캠페인 데이터를 불러올 수 없습니다. 페이지를 새로고침하고 다시 시도해주세요.");
           return;
         }
       }
@@ -986,7 +881,7 @@ export default function ApplicationModal({
 
   // 신청 완료 모달 닫기 핸들러
   const handleSuccessModalClose = () => {
-    setIsSuccessModalOpen(false);
+    successModal.close();
     // 신청 완료 후 저장된 입력값 및 플래그 삭제
     clearFormData();
     sessionStorage.removeItem("shouldRestoreFormData");
@@ -1026,9 +921,7 @@ export default function ApplicationModal({
       if (!channelUrl) {
         return true;
       }
-      return (
-        userName.trim() === "" || !isAgreed || (isUrgent && !isUrgentAgreed)
-      );
+      return userName.trim() === "" || !isAgreed || (isUrgent && !isUrgentAgreed);
     }
 
     return true;
@@ -1060,11 +953,7 @@ export default function ApplicationModal({
         {/* 모달 헤더 */}
         <div className={styles.modal_header}>
           {/* 모바일 뒤로가기 버튼 (모바일에서만 표시) */}
-          <button
-            className={styles.back_button}
-            onClick={handleClose}
-            aria-label="뒤로가기"
-          >
+          <button className={styles.back_button} onClick={handleClose} aria-label="뒤로가기">
             <img src="/images/header/header_arrow_back.svg" alt="뒤로가기" />
           </button>
           <h2 className={styles.modal_title}>캠페인 신청</h2>
@@ -1126,9 +1015,7 @@ export default function ApplicationModal({
                             )}
                           </div>
                         ) : (
-                          <div className={styles.address_text_empty}>
-                            주소지를 등록해 주세요.
-                          </div>
+                          <div className={styles.address_text_empty}>주소지를 등록해 주세요.</div>
                         )}
                       </div>
                       <button
@@ -1155,11 +1042,7 @@ export default function ApplicationModal({
                 <div className={styles.field_group}>
                   <div className={styles.field_label}>
                     <span>채널</span>
-                    <button
-                      className={styles.edit_label}
-                      onClick={handleEditChannel}
-                      type="button"
-                    >
+                    <button className={styles.edit_label} onClick={handleEditChannel} type="button">
                       수정
                     </button>
                   </div>
@@ -1177,9 +1060,7 @@ export default function ApplicationModal({
                       {channelUrl ? (
                         <div className={styles.channel_url}>{channelUrl}</div>
                       ) : (
-                        <div className={styles.channel_url_empty}>
-                          계정을 연결해 주세요.
-                        </div>
+                        <div className={styles.channel_url_empty}>계정을 연결해 주세요.</div>
                       )}
                     </div>
                     <button
@@ -1204,11 +1085,7 @@ export default function ApplicationModal({
           <div className={styles.section}>
             <div className={styles.field_group}>
               <h3 className={styles.section_title}>메모</h3>
-              <label
-                className={`${styles.field_label} ${styles.field_label_light}`}
-              >
-                메모
-              </label>
+              <label className={`${styles.field_label} ${styles.field_label_light}`}>메모</label>
               <div className={styles.memo_container}>
                 <input
                   type="text"
@@ -1226,11 +1103,7 @@ export default function ApplicationModal({
           <div className={styles.section}>
             <div className={styles.field_group}>
               <h3 className={styles.section_title}>동의</h3>
-              <label
-                className={`${styles.field_label} ${styles.field_label_light}`}
-              >
-                동의
-              </label>
+              <label className={`${styles.field_label} ${styles.field_label_light}`}>동의</label>
               <div className={styles.agreement_container}>
                 {/* 첫 번째 동의 체크박스 */}
                 <label className={styles.checkbox_label}>
@@ -1241,8 +1114,8 @@ export default function ApplicationModal({
                     className={styles.checkbox}
                   />
                   <span className={styles.agreement_text}>
-                    본 캠페인과 관련된 유의사항, 개인정보 및 콘텐츠의 제3자
-                    제공, 저작물 사용, 초상권 활용에 대해 동의합니다.
+                    본 캠페인과 관련된 유의사항, 개인정보 및 콘텐츠의 제3자 제공, 저작물 사용,
+                    초상권 활용에 대해 동의합니다.
                   </span>
                 </label>
 
@@ -1279,7 +1152,7 @@ export default function ApplicationModal({
 
       {/* 신청 완료 모달 */}
       <BaseModal
-        is_open={isSuccessModalOpen}
+        is_open={successModal.isOpen}
         on_close={handleSuccessModalClose}
         message="캠페인 신청이 완료되었습니다."
         buttons={["닫기", "다른 체험단 보러 가기"]}
@@ -1290,41 +1163,41 @@ export default function ApplicationModal({
 
       {/* 이미 참여했는데 신청 버튼이 활성화 되어있는 상태에서 다시 신청 눌렀을 때 모달 */}
       <BaseModal
-        is_open={isParticipatedModalOpen}
-        on_close={() => setIsParticipatedModalOpen(false)}
+        is_open={participatedModal.isOpen}
+        on_close={participatedModal.close}
         message="이미 참여한 캠페인입니다."
         buttons={["확인"]}
       />
 
       {/* 신청 버튼이 활성화 되어있는 상태에서 마감되었을 경우 모달 */}
       <BaseModal
-        is_open={isClosedModalOpen}
-        on_close={() => setIsClosedModalOpen(false)}
+        is_open={closedModal.isOpen}
+        on_close={closedModal.close}
         message="등록 기간이 마감되었습니다."
         buttons={["닫기"]}
       />
 
       {/* 일시 정지된 회원이 캠페인 신청 시 모달 */}
       <BaseModal
-        is_open={isSuspendedModalOpen}
-        on_close={() => setIsSuspendedModalOpen(false)}
+        is_open={suspendedModal.isOpen}
+        on_close={suspendedModal.close}
         message="정지 회원은 캠페인 신청이 불가합니다."
         buttons={["닫기"]}
       />
 
       {/* 일시 정지 상태에서 버튼이 활성화되어 있을 때 모달 */}
       <BaseModal
-        is_open={isInvalidRequestModalOpen}
-        on_close={() => setIsInvalidRequestModalOpen(false)}
+        is_open={invalidRequestModal.isOpen}
+        on_close={invalidRequestModal.close}
         message="유효하지 않은 요청입니다."
         buttons={["확인"]}
       />
 
       {/* 중복 신청 시 모달 */}
       <BaseModal
-        is_open={isDuplicateModalOpen}
+        is_open={duplicateModal.isOpen}
         on_close={() => {
-          setIsDuplicateModalOpen(false);
+          duplicateModal.close();
           onClose(); // 신청 모달도 닫기
         }}
         message="이미 참여한 캠페인입니다."

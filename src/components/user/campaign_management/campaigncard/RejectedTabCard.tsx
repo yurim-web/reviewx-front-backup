@@ -1,5 +1,5 @@
 /* ========================================
-   📋 취소/반려 탭 캠페인 카드 컴포넌트
+   취소/반려 탭 캠페인 카드 컴포넌트
    ======================================== */
 
 /**
@@ -44,9 +44,7 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
   const registrationPeriodEndedModal = useModalState();
 
   // 콘텐츠 수정 모달 모드 관리 (등록/수정)
-  const [contentModalMode, setContentModalMode] = useState<"register" | "edit">(
-    "edit"
-  );
+  const [contentModalMode, setContentModalMode] = useState<"register" | "edit">("edit");
 
   // Next.js의 useRouter 훅을 사용하여 라우팅 기능 가져오기
   const router = useRouter();
@@ -170,12 +168,8 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
             className={`${buttonStyles.action_button} ${buttonStyles.danger_button}`}
             onClick={handleRejectionReasonClick}
           >
-            <span className={buttonStyles.desktop_only_text}>
-              콘텐츠 반려 사유 확인
-            </span>
-            <span className={buttonStyles.mobile_only_text}>
-              반려 사유 확인
-            </span>
+            <span className={buttonStyles.desktop_only_text}>콘텐츠 반려 사유 확인</span>
+            <span className={buttonStyles.mobile_only_text}>반려 사유 확인</span>
           </button>
         </>
       );
@@ -245,10 +239,7 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
           }
           existingImages={
             contentModalMode === "edit"
-              ? [
-                  "/images/main/campaign_img/eximg_1.png",
-                  "/images/main/campaign_img/eximg_2.png",
-                ] // TODO: 실제 등록된 이미지 URL을 campaign 데이터에서 가져오기
+              ? ["/images/main/campaign_img/eximg_1.png", "/images/main/campaign_img/eximg_2.png"] // TODO: 실제 등록된 이미지 URL을 campaign 데이터에서 가져오기
               : []
           }
         />
@@ -261,10 +252,7 @@ export default function RejectedTabCard({ campaign }: RejectedTabCardProps) {
           mode={contentModalMode}
           existingImages={
             contentModalMode === "edit"
-              ? [
-                  "/images/main/campaign_img/eximg_1.png",
-                  "/images/main/campaign_img/eximg_2.png",
-                ] // TODO: 실제 등록된 이미지 URL을 campaign 데이터에서 가져오기
+              ? ["/images/main/campaign_img/eximg_1.png", "/images/main/campaign_img/eximg_2.png"] // TODO: 실제 등록된 이미지 URL을 campaign 데이터에서 가져오기
               : []
           }
         />
