@@ -8,7 +8,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
 import PageTitle from "@/components/fragments/PageTitle";
 import { pendingPointListData } from "@/data/user/point/pointData";
 import { useAuth } from "@/hooks/useAuth";
@@ -17,10 +17,37 @@ import pointStyles from "@/styles/user/point/point.module.css";
 
 export default function PendingPointPage() {
   const { user } = useAuth();
+  const list_container_ref = useRef<HTMLElement>(null);
   const [available_points, setAvailablePoints] = useState(0);
-  const [pending_list, setPendingList] = useState<PendingPointItem[]>(
-    () => pendingPointListData,
-  );
+  const [pending_list, setPendingList] = useState<PendingPointItem[]>(() => pendingPointListData);
+  const [point_col_width, set_point_col_width] = useState<number | null>(null);
+
+  /* 모바일: 포인트 영역 너비를 목록에서 가장 긴 값에 맞춰 동일하게 적용 */
+  const measure_point_width = useCallback(() => {
+    const container = list_container_ref.current;
+    if (!container || pending_list.length === 0) return;
+    if (typeof window !== "undefined" && window.innerWidth > 768) {
+      set_point_col_width(null);
+      return;
+    }
+    const nodes = container.querySelectorAll(`.${pointStyles.mobile_point_change}`);
+    let max_w = 0;
+    nodes.forEach((el) => {
+      const w = (el as HTMLElement).getBoundingClientRect().width;
+      if (w > max_w) max_w = w;
+    });
+    if (max_w > 0) set_point_col_width(max_w);
+  }, [pending_list]);
+
+  useLayoutEffect(() => {
+    measure_point_width();
+  }, [measure_point_width]);
+
+  useEffect(() => {
+    const on_resize = () => measure_point_width();
+    window.addEventListener("resize", on_resize);
+    return () => window.removeEventListener("resize", on_resize);
+  }, [measure_point_width]);
 
   useEffect(() => {
     if (typeof window === "undefined" || !user) return;
@@ -29,7 +56,12 @@ export default function PendingPointPage() {
       if (stored) {
         const accounts = JSON.parse(stored);
         const account = accounts.find(
-          (a: any) => a.id === user.id || a.email === user.email,
+          (a: {
+            id: string;
+            email: string;
+            available_points?: number;
+            pending_point_list?: PendingPointItem[];
+          }) => a.id === user.id || a.email === user.email
         );
         if (account) {
           setAvailablePoints(account.available_points ?? 0);
@@ -75,22 +107,22 @@ export default function PendingPointPage() {
 
             {/* 적립 예정 목록 (구분선 가로 풀 너비 - Figma 기획) */}
             <article
+              ref={list_container_ref}
               className={`${pointStyles.history_list} ${pointStyles.history_list_full_bleed_lines}`}
             >
               {pending_list.length === 0 ? (
                 <div className={pointStyles.empty_state}>
-                  <p className={pointStyles.empty_message}>
-                    적립 예정 포인트가 없습니다.
-                  </p>
+                  <p className={pointStyles.empty_message}>적립 예정 포인트가 없습니다.</p>
                 </div>
               ) : (
                 pending_list.map((item) => (
                   <div key={item.id} className={pointStyles.history_item}>
                     <div className={pointStyles.mobile_row_first}>
-                      <div className={pointStyles.mobile_description}>
-                        {item.description}
-                      </div>
-                      <div className={pointStyles.mobile_points_group}>
+                      <div className={pointStyles.mobile_description}>{item.description}</div>
+                      <div
+                        className={pointStyles.mobile_points_group}
+                        style={point_col_width != null ? { width: point_col_width } : undefined}
+                      >
                         <div
                           className={`${pointStyles.mobile_point_change} ${pointStyles.positive}`}
                         >
@@ -99,9 +131,7 @@ export default function PendingPointPage() {
                       </div>
                     </div>
                     <div className={pointStyles.mobile_row_second}>
-                      <div className={pointStyles.mobile_date}>
-                        {item.date} 예정
-                      </div>
+                      <div className={pointStyles.mobile_date}>{item.date} 예정</div>
                     </div>
                   </div>
                 ))

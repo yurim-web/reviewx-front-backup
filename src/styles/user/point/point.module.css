@@ -555,19 +555,18 @@
     align-items: stretch;
   }
 
-  /* 모바일 1번째 줄: 설명 + (포인트 금액 + 잔액) */
+  /* 모바일 1번째 줄: 설명 + (포인트 금액 + 잔액), 글·포인트 간격 20px 고정 */
   .mobile_row_first {
     display: flex !important;
     justify-content: space-between;
     align-items: flex-start;
-    gap: 8px;
+    gap: 20px;
   }
 
   .mobile_description {
     display: -webkit-box !important;
 
-    flex: 1;
-    min-width: 0; /* flex 아이템이 제대로 줄어들 수 있도록 */
+    min-width: 0;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     overflow: hidden;
@@ -604,7 +603,7 @@
     cursor: pointer;
   }
 
-  /* 포인트 금액과 잔액을 세로로 묶는 그룹 */
+  /* 포인트 영역: JS로 가장 긴 값에 맞춰 동일 너비 적용, 글과 20px 간격 */
   .mobile_points_group {
     display: flex !important;
     flex-direction: column;
@@ -617,6 +616,7 @@
     display: block !important;
     flex-shrink: 0;
     white-space: nowrap;
+    text-align: right;
     font-size: 16px;
     font-weight: 700;
     line-height: 16px;

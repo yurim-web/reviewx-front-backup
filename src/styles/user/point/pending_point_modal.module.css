@@ -189,7 +189,7 @@
   letter-spacing: -0.28px;
 }
 
-/* 포인트 금액 (녹색) */
+/* 포인트 금액 (녹색): JS로 가장 긴 값에 맞춰 동일 너비 적용, 글과 20px 간격은 .pending_item gap 유지 */
 .item_amount {
   flex-shrink: 0;
   color: #2dc469;
@@ -198,7 +198,7 @@
   font-weight: 700;
   line-height: 16px;
   letter-spacing: -0.32px;
-  text-align: right;
+  white-space: nowrap;
 }
 
 .empty_message {
