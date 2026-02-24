@@ -33,6 +33,7 @@ import PageHeader from "@/components/partner/campaign_create_form/common/layout/
 import BaseModal from "@/components/common/modal/BaseModal";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import { getPartnerName } from "@/utils/partner/partnerHelpers";
+import { saveCampaignToStorage } from "@/utils/partner/campaignStorage";
 
 export default function ReporterCampaignCreatePage() {
   const router = useRouter();
@@ -132,65 +133,14 @@ export default function ReporterCampaignCreatePage() {
         additionalPoints: pendingFormData.additionalPoints,
       };
 
-      // localStorage에 임시 저장
-      try {
-        const storedCampaigns = localStorage.getItem("reporterCampaigns");
-        const campaigns = storedCampaigns ? JSON.parse(storedCampaigns) : [];
-
-        // 중복 ID 제거 (같은 ID가 있으면 새 것으로 교체)
-        const existingIndex = campaigns.findIndex(
-          (c: Record<string, unknown>) => c.id === (extendedCampaign as Record<string, unknown>).id
-        );
-        if (existingIndex >= 0) {
-          campaigns[existingIndex] = extendedCampaign;
-        } else {
-          campaigns.push(extendedCampaign);
-        }
-
-        // 최대 50개까지만 유지 (오래된 것부터 제거)
-        const MAX_CAMPAIGNS = 50;
-        if (campaigns.length > MAX_CAMPAIGNS) {
-          campaigns.splice(0, campaigns.length - MAX_CAMPAIGNS);
-        }
-
-        const campaignsString = JSON.stringify(campaigns);
-
-        // localStorage 크기 제한 확인 (약 5MB 제한, 안전하게 4MB로 제한)
-        const MAX_STORAGE_SIZE = 4 * 1024 * 1024; // 4MB
-        if (campaignsString.length > MAX_STORAGE_SIZE) {
-          // 가장 오래된 캠페인부터 제거하여 크기 줄이기
-          const trimmedCampaigns = [...campaigns];
-          while (
-            JSON.stringify(trimmedCampaigns).length > MAX_STORAGE_SIZE &&
-            trimmedCampaigns.length > 1
-          ) {
-            trimmedCampaigns.shift(); // 가장 오래된 것 제거
-          }
-          localStorage.setItem("reporterCampaigns", JSON.stringify(trimmedCampaigns));
-        } else {
-          localStorage.setItem("reporterCampaigns", campaignsString);
-        }
-      } catch (error) {
-        // localStorage 할당량 초과 또는 기타 오류 처리
-        if (error instanceof Error && error.name === "QuotaExceededError") {
-          // 오래된 캠페인 제거 후 재시도
-          const storedCampaigns = localStorage.getItem("reporterCampaigns");
-          if (storedCampaigns) {
-            const campaigns = JSON.parse(storedCampaigns);
-            // 절반만 남기고 나머지 제거
-            const keepCount = Math.floor(campaigns.length / 2);
-            const trimmedCampaigns = campaigns.slice(-keepCount);
-            trimmedCampaigns.push(extendedCampaign);
-            localStorage.setItem("reporterCampaigns", JSON.stringify(trimmedCampaigns));
-          } else {
-            // 저장된 데이터가 없으면 새로 저장
-            localStorage.setItem("reporterCampaigns", JSON.stringify([extendedCampaign]));
-          }
-        } else {
-          console.error("localStorage 저장 실패:", error);
-          setIsErrorModalOpen(true);
-          return;
-        }
+      // 현재는 localStorage에 임시 저장 (실제 프로덕션에서는 API 사용)
+      const saved = saveCampaignToStorage(
+        extendedCampaign as Record<string, unknown>,
+        "reporterCampaigns"
+      );
+      if (!saved) {
+        setIsErrorModalOpen(true);
+        return;
       }
 
       // console.log("기자단 캠페인 등록 완료:", newCampaign);
