@@ -7,14 +7,9 @@
  *
  * 목적: 입력 필드 아래에 에러 메시지를 표시하는 재사용 가능한 컴포넌트입니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - 입력 필드 아래에 에러 메시지를 표시할 때
  * - 폼 유효성 검사 실패 시 에러 메시지 표시
- *
- * 주요 기능:
- * - 에러 메시지 텍스트를 props로 받아서 표시
- * - 메시지가 없으면 렌더링하지 않음 (조건부 렌더링)
- * - 공통 스타일 적용
  *
  */
 
@@ -54,11 +49,7 @@ interface ErrorTextProps {
  * {errorMessage && <ErrorText message={errorMessage} />}
  * ```
  */
-export default function ErrorText({
-  message,
-  className,
-  style,
-}: ErrorTextProps) {
+export default function ErrorText({ message, className, style }: ErrorTextProps) {
   // 메시지가 없으면 렌더링하지 않음 (조건부 렌더링)
   if (!message) return null;
 

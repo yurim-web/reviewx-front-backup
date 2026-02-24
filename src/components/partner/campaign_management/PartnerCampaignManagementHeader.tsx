@@ -17,11 +17,6 @@
  * - /partner/campaign_management/cancelled (취소 탭)
  * - /partner/campaign_management/extension-request (연장 요청 탭)
  *
- * 주요 기능:
- * - 상단 메인 탭 네비게이션 (캠페인/포인트/계정)
- * - 통계 탭 네비게이션 (전체/예정/신청/진행/종료/취소)
- * - 각 페이지에서 재사용 가능한 공통 레이아웃
- * - 중복 코드 제거로 유지보수성 향상
  */
 
 "use client";
@@ -31,15 +26,10 @@ import { usePathname } from "next/navigation";
 import TabNavigation from "./TabNavigation";
 import StatisticsTab from "./StatisticsTab";
 import type { PartnerMainTab } from "@/types/domain/partner";
-import type {
-  PartnerStatTab,
-  PartnerCampaignStats,
-} from "@/types/domain/partner";
+import type { PartnerStatTab, PartnerCampaignStats } from "@/types/domain/partner";
 
 // 공용 데이터 import
-import {
-  getCampaignStats,
-} from "@/data/partner/sharedCampaigns";
+import { getCampaignStats } from "@/data/partner/sharedCampaigns";
 
 interface PartnerCampaignManagementHeaderProps {
   /** 현재 활성 메인 탭 (캠페인/포인트/계정) */
@@ -116,7 +106,7 @@ export default function PartnerCampaignManagementHeader({
         패널티: 0,
       };
     }
-  })
+  });
 
   /* ========================================
      통계 탭 변경 핸들러 (Statistics Tab Change Handler)

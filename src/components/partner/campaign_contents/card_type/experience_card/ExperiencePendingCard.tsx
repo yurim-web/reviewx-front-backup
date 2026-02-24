@@ -1,35 +1,20 @@
 /* ========================================
-   ⏳ 경험형 대기 탭 카드
-   
-   📍 사용 위치: 캠페인 콘텐츠 내역 > 배송형/방문형/기자단형 > "대기" 탭
-   
-   🎯 5가지 상태 유형:
-     1. "콘텐츠 미등록" (회색 버튼) - 아직 콘텐츠를 등록하지 않았을 때
-     2. "등록 기한 연장 요청" (흰색 버튼, 회색 테두리) - 리뷰어가 등록 기한 연장 요청을 했을 때
-        → 버튼 클릭 시 리뷰어가 입력한 사유 모달 표시 → "승인" 클릭 시 3번째 상태로 변경
-     3. "콘텐츠 미등록" (회색 버튼) + "기한 연장" 표시 - 연장 승인 후 상태
-        (예: "2026-01-13 기한 연장")
-     4. "콘텐츠 반려 처리" (빨간 버튼) - 확인 탭에서 반려 처리된 상태 (버튼 클릭 시 반려 사유 모달 표시)
-     5. "임시 참여 제한" (빨간색 배경, 빨간색 텍스트) - 신고 처리된 상태
-        - 하단: 신고 날짜/시간 (예: "2025-11-02 17:37 신고")
-        - footer: 없음 (연장/신고 버튼 없음)
-   
-   🎯 주요 기능:
-     - 상태에 따라 다른 버튼 텍스트와 스타일 표시
-     - footer: 연장/신고 버튼 (연장 요청 사유 확인, 신고 모달)
-     - 신고: 콘텐츠 신고 모달 (선정 후 취소, 무단 이탈, 노출 기간 불이행 등)
-   
-   📝 참고:
-     - pendingState prop으로 상태를 구분합니다
-     - 연장 승인 후에는 기한이 "2025-11-05 기한 연장" 형태로 표시됩니다
-     - 4번째 경우(반려 처리)에서 "콘텐츠 반려 처리" 버튼 클릭 시 반려 사유 모달이 표시됩니다
-     - 5번째 경우(신고 처리)에서 신고 날짜/시간이 표시되고 footer 버튼이 없습니다
-     - 신고 처리 시 푸터 미노출, applicant_card_no_footer_experience 클래스로 하단 테두리 적용
+   경험형 대기 탭 카드
    ======================================== */
+
+/**
+ * ExperiencePendingCard
+ *
+ * 목적: 배송형/방문형/기자단형 캠페인의 제출 대기 탭 콘텐츠 카드를 렌더링합니다.
+ *
+ * 사용 페이지:
+ * - /partner/campaign/[id]/contents (배송형/방문형/기자단형 > "대기" 탭)
+ */
 
 "use client";
 
 import { useState, useEffect } from "react";
+import { useModalState } from "@/hooks/useModalState";
 import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
 import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
 import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
@@ -37,9 +22,7 @@ import { getChannelLogo } from "@/utils/channelLogoMap";
 import { getChannelUrl } from "@/utils/helpers/url";
 import type { ExperienceApplicant } from "./ExperienceTypes";
 import TextareaModal from "@/components/common/modal/TextareaModal";
-import ReportModal, {
-  type ReportOption,
-} from "@/components/common/modal/ReportModal";
+import ReportModal, { type ReportOption } from "@/components/common/modal/ReportModal";
 import BaseModal from "@/components/common/modal/BaseModal";
 
 type PendingState =
@@ -78,16 +61,10 @@ interface ExperiencePendingCardProps {
 /**
  * 경험형 대기 탭 카드
  *
- * 사용 위치:
+ * 사용 페이지:
  * - 캠페인 콘텐츠 내역 페이지 > "대기" 탭
  * - 배송형, 방문형, 기자단형 캠페인에서 사용
  *
- * 주요 기능:
- * - 링크 확인 버튼
- * - 상태에 따라 다른 버튼 텍스트와 스타일 표시
- * - 하단에 연장/신고 버튼이 항상 노출
- * - 승인/반려 버튼은 없음 (확인 탭 전용 기능)
- * - 클래스/아이디는 스네이크 케이스 사용
  */
 export default function ExperiencePendingCard({
   applicant,
@@ -104,21 +81,18 @@ export default function ExperiencePendingCard({
   dateLabel = "등록",
 }: ExperiencePendingCardProps) {
   const channel_icon_src = getChannelLogo(applicant.channel);
-  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const reportModal = useModalState();
   const [selectedReportOption, setSelectedReportOption] = useState<string>("");
   const [otherReportReason, setOtherReportReason] = useState<string>("");
-  const [isExtendModalOpen, setIsExtendModalOpen] = useState(false);
-  const [isExtendResultModalOpen, setIsExtendResultModalOpen] = useState(false);
+  const extendModal = useModalState();
+  const extendResultModal = useModalState();
   const [extendResultMessage, setExtendResultMessage] = useState<string>("");
 
   // 📌 로컬 상태 관리: 승인 시 카드 상태를 즉시 변경하기 위해 사용
   // - 부모 컴포넌트의 prop을 초기값으로 사용하되, 로컬에서 상태 변경 가능
-  const [localPendingState, setLocalPendingState] =
-    useState<PendingState>(pendingState);
-  const [localIsExtensionApproved, setLocalIsExtensionApproved] =
-    useState(isExtensionApproved);
-  const [localExtendedDeadline, setLocalExtendedDeadline] =
-    useState(extendedDeadline);
+  const [localPendingState, setLocalPendingState] = useState<PendingState>(pendingState);
+  const [localIsExtensionApproved, setLocalIsExtensionApproved] = useState(isExtensionApproved);
+  const [localExtendedDeadline, setLocalExtendedDeadline] = useState(extendedDeadline);
   // 📌 신고 날짜/시간 로컬 상태 (신고 버튼 클릭 시 즉시 표시하기 위해)
   const [localReportedDate, setLocalReportedDate] = useState(reportedDate);
 
@@ -139,7 +113,7 @@ export default function ExperiencePendingCard({
     setLocalReportedDate(reportedDate);
   }, [reportedDate]);
   // 반려 사유 모달 상태
-  const [isRejectReasonModalOpen, setIsRejectReasonModalOpen] = useState(false);
+  const rejectReasonModal = useModalState();
 
   // 신고 옵션 정의
   const reportOptions: ReportOption[] = [
@@ -152,7 +126,7 @@ export default function ExperiencePendingCard({
 
   // 신고 모달 열기
   const handleReportClick = () => {
-    setIsReportModalOpen(true);
+    reportModal.open();
     // 기본값 설정 (첫 번째 옵션)
     if (!selectedReportOption && reportOptions.length > 0) {
       setSelectedReportOption(reportOptions[0].value);
@@ -161,7 +135,7 @@ export default function ExperiencePendingCard({
 
   // 신고 모달 닫기
   const handleReportModalClose = () => {
-    setIsReportModalOpen(false);
+    reportModal.close();
     setSelectedReportOption("");
     setOtherReportReason("");
   };
@@ -171,10 +145,7 @@ export default function ExperiencePendingCard({
   // 1. onReport 콜백을 호출하여 부모 컴포넌트에 신고 알림
   // 2. 카드 상태를 "reported"로 변경
   // 3. 신고 날짜/시간을 현재 시간으로 설정
-  const handleReportConfirm = (
-    selectedOption: string,
-    otherReason?: string,
-  ) => {
+  const handleReportConfirm = (selectedOption: string, otherReason?: string) => {
     if (onReport) {
       onReport(applicant.id);
     }
@@ -198,22 +169,19 @@ export default function ExperiencePendingCard({
 
   // 연장 버튼 클릭 핸들러 (푸터 연장 버튼)
   const [extensionCount, setExtensionCount] = useState(0); // 연장 횟수 추적
-  const [isExtensionConfirmModalOpen, setIsExtensionConfirmModalOpen] =
-    useState(false);
-  const [isExtensionCompleteModalOpen, setIsExtensionCompleteModalOpen] =
-    useState(false);
-  const [isExtensionLimitModalOpen, setIsExtensionLimitModalOpen] =
-    useState(false);
+  const extensionConfirmModal = useModalState();
+  const extensionCompleteModal = useModalState();
+  const extensionLimitModal = useModalState();
 
   // 푸터 연장 버튼 클릭 핸들러
   const handleFooterExtendClick = () => {
     // 연장 횟수가 2회 이상이면 제한 모달 표시
     if (extensionCount >= 2) {
-      setIsExtensionLimitModalOpen(true);
+      extensionLimitModal.open();
       return;
     }
     // 연장 확인 모달 표시
-    setIsExtensionConfirmModalOpen(true);
+    extensionConfirmModal.open();
   };
 
   // 연장 확인 모달에서 연장 버튼 클릭
@@ -226,8 +194,8 @@ export default function ExperiencePendingCard({
       onExtend(applicant.id);
     }
     setExtensionCount((prev) => prev + 1);
-    setIsExtensionConfirmModalOpen(false);
-    setIsExtensionCompleteModalOpen(true);
+    extensionConfirmModal.close();
+    extensionCompleteModal.open();
   };
 
   // 연장 완료 모달 닫기 핸들러 (footer 연장 버튼용)
@@ -264,24 +232,24 @@ export default function ExperiencePendingCard({
       setLocalExtendedDeadline(formattedDate);
     }
 
-    setIsExtensionCompleteModalOpen(false);
+    extensionCompleteModal.close();
   };
 
   // 연장 모달 열기 (상단 "등록 기한 연장 요청" 버튼용)
   const handleExtendClick = () => {
-    setIsExtendModalOpen(true);
+    extendModal.open();
   };
 
   // 연장 모달 닫기
   const handleExtendModalClose = () => {
-    setIsExtendModalOpen(false);
+    extendModal.close();
   };
 
   // 연장 거절 처리
   const handleExtendReject = () => {
-    setIsExtendModalOpen(false);
+    extendModal.close();
     setExtendResultMessage("등록 기간 연장이 거절되었습니다.");
-    setIsExtendResultModalOpen(true);
+    extendResultModal.open();
   };
 
   // 연장 승인 처리
@@ -295,9 +263,9 @@ export default function ExperiencePendingCard({
       onExtend(applicant.id);
     }
 
-    setIsExtendModalOpen(false);
+    extendModal.close();
     setExtendResultMessage("등록 기간 연장이 완료되었습니다.");
-    setIsExtendResultModalOpen(true);
+    extendResultModal.open();
   };
 
   // 연장 결과 모달 닫기
@@ -333,18 +301,18 @@ export default function ExperiencePendingCard({
       }
     }
 
-    setIsExtendResultModalOpen(false);
+    extendResultModal.close();
     setExtendResultMessage("");
   };
 
   // 반려 사유 모달 열기
   const handleRejectReasonClick = () => {
-    setIsRejectReasonModalOpen(true);
+    rejectReasonModal.open();
   };
 
   // 반려 사유 모달 닫기
   const handleRejectReasonModalClose = () => {
-    setIsRejectReasonModalOpen(false);
+    rejectReasonModal.close();
   };
 
   return (
@@ -352,9 +320,7 @@ export default function ExperiencePendingCard({
       {/* 카드 본문 */}
       <article
         className={`${baseStyles.applicant_card} ${
-          localPendingState === "reported"
-            ? baseStyles.applicant_card_no_footer_experience
-            : ""
+          localPendingState === "reported" ? baseStyles.applicant_card_no_footer_experience : ""
         }`.trim()}
       >
         {/* 프로필 영역 */}
@@ -367,9 +333,7 @@ export default function ExperiencePendingCard({
             />
           </div>
           <div className={contentStyles.profile_info}>
-            <span className={contentStyles.user_type}>
-              {applicant.userType}
-            </span>
+            <span className={contentStyles.user_type}>{applicant.userType}</span>
             <span className={contentStyles.nickname}>{applicant.nickname}</span>
           </div>
         </div>
@@ -423,12 +387,8 @@ export default function ExperiencePendingCard({
               className={`${actionStyles.action_button} ${actionStyles.extension_request_button}`}
               onClick={handleExtendClick}
             >
-              <span className={actionStyles.extension_request_text_pc}>
-                등록 기한 연장 요청
-              </span>
-              <span className={actionStyles.extension_request_text_mobile}>
-                기간 연장 요청
-              </span>
+              <span className={actionStyles.extension_request_text_pc}>등록 기한 연장 요청</span>
+              <span className={actionStyles.extension_request_text_mobile}>기간 연장 요청</span>
             </button>
           )}
 
@@ -464,9 +424,7 @@ export default function ExperiencePendingCard({
             <span>
               {localReportedDate.split(" ")[0]}
               <span className={actionStyles.reported_time_mobile_hide}>
-                {localReportedDate.includes(" ")
-                  ? ` ${localReportedDate.split(" ")[1]}`
-                  : ""}
+                {localReportedDate.includes(" ") ? ` ${localReportedDate.split(" ")[1]}` : ""}
               </span>{" "}
               신고
             </span>
@@ -521,7 +479,7 @@ export default function ExperiencePendingCard({
 
       {/* 신고 모달 */}
       <ReportModal
-        is_open={isReportModalOpen}
+        is_open={reportModal.isOpen}
         on_close={handleReportModalClose}
         title="콘텐츠 신고"
         options={reportOptions}
@@ -541,7 +499,7 @@ export default function ExperiencePendingCard({
           - "승인" 버튼: 연장 요청을 승인하고 카드를 3번째 상태(기한 연장)로 변경합니다
       */}
       <TextareaModal
-        is_open={isExtendModalOpen}
+        is_open={extendModal.isOpen}
         on_close={handleExtendModalClose}
         title="등록 기한 연장 요청 사유"
         value={extension_request_reason}
@@ -556,7 +514,7 @@ export default function ExperiencePendingCard({
 
       {/* 연장 결과 모달 (승인/거절 후 표시) */}
       <BaseModal
-        is_open={isExtendResultModalOpen}
+        is_open={extendResultModal.isOpen}
         on_close={handleExtendResultModalClose}
         message={extendResultMessage}
         buttons={["닫기"]}
@@ -565,8 +523,8 @@ export default function ExperiencePendingCard({
 
       {/* 연장 확인 모달 (푸터 연장 버튼용) */}
       <BaseModal
-        is_open={isExtensionConfirmModalOpen}
-        on_close={() => setIsExtensionConfirmModalOpen(false)}
+        is_open={extensionConfirmModal.isOpen}
+        on_close={() => extensionConfirmModal.close()}
         message={
           extensionCount === 0
             ? '콘텐츠 등록 기간을<br><span style="color: #FF2626;">3일 연장</span>하시겠습니까?'
@@ -584,7 +542,7 @@ export default function ExperiencePendingCard({
           - 카드가 "기한 연장" 상태로 변경되고 날짜가 3일 추가됩니다
       */}
       <BaseModal
-        is_open={isExtensionCompleteModalOpen}
+        is_open={extensionCompleteModal.isOpen}
         on_close={handleExtensionCompleteClose}
         message="등록 기간 연장이 완료되었습니다."
         buttons={["닫기"]}
@@ -593,8 +551,8 @@ export default function ExperiencePendingCard({
 
       {/* 연장 제한 초과 모달 (푸터 연장 버튼용) */}
       <BaseModal
-        is_open={isExtensionLimitModalOpen}
-        on_close={() => setIsExtensionLimitModalOpen(false)}
+        is_open={extensionLimitModal.isOpen}
+        on_close={() => extensionLimitModal.close()}
         message="연장은 최대 두 번까지만 가능합니다."
         buttons={["닫기"]}
         type="center"
@@ -603,7 +561,7 @@ export default function ExperiencePendingCard({
       {/* 반려 사유 모달 (4번째 경우: 반려 처리된 카드에서 버튼 클릭 시 표시) */}
       {/* 📌 "콘텐츠 반려 처리" 버튼 클릭 시 파트너가 입력한 반려 사유를 표시합니다 */}
       <TextareaModal
-        is_open={isRejectReasonModalOpen}
+        is_open={rejectReasonModal.isOpen}
         on_close={handleRejectReasonModalClose}
         title="반려 사유"
         titleColor="#ff2626"

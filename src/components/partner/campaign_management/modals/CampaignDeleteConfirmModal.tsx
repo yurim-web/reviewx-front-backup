@@ -11,25 +11,15 @@
  * 목적: 캠페인 카드에서 "캠페인 삭제" 버튼을 클릭했을 때 표시되는 확인 모달입니다.
  *       사용자에게 삭제 작업의 확실성을 확인받기 위해 사용됩니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - CampaignCard 컴포넌트에서 "캠페인 삭제" 버튼 클릭 시
  *
- * 주요 기능:
- * - 삭제 확인 메시지 표시
- * - 취소 버튼 (모달 닫기)
- * - 삭제하기 버튼 (실제 삭제 처리)
- * - 모달 닫기 기능 (오버레이 클릭, X 버튼)
- *
- * - 조건부 렌더링: isOpen prop에 따라 모달 표시/숨김
- * - 이벤트 핸들러: 버튼 클릭 및 오버레이 클릭 처리
- * - Props 타입 정의: TypeScript 인터페이스를 통한 타입 안정성
- * - 모달 패턴: 오버레이와 컨텐츠 영역으로 구성된 모달 UI
  */
 
-'use client';
+"use client";
 
-import Image from 'next/image';
-import styles from '../../../../styles/partner/campaign_management/campaign_delete_confirm_modal.module.css';
+import Image from "next/image";
+import styles from "../../../../styles/partner/campaign_management/campaign_delete_confirm_modal.module.css";
 
 /**
  * CampaignDeleteConfirmModal 컴포넌트의 Props 타입 정의
@@ -91,7 +81,7 @@ export default function CampaignDeleteConfirmModal({
       // 기본 삭제 로직 (개발/테스트용)
       // TODO: 실제 캠페인 삭제 API 호출 로직 추가
       // console.log('캠페인 삭제:', campaignTitle, campaignId);
-      alert('캠페인이 삭제되었습니다.');
+      alert("캠페인이 삭제되었습니다.");
     }
     onClose(); // 삭제 처리 후 모달 닫기
   };
@@ -131,15 +121,9 @@ export default function CampaignDeleteConfirmModal({
 
         {/* 삭제 확인 메시지 */}
         <div className={styles.message_container}>
-          <p className={styles.message_text}>
-            정말로 이 캠페인을 삭제하시겠습니까?
-          </p>
-          {campaignTitle && (
-            <p className={styles.campaign_title_text}>{campaignTitle}</p>
-          )}
-          <p className={styles.warning_text}>
-            삭제된 캠페인은 복구할 수 없습니다.
-          </p>
+          <p className={styles.message_text}>정말로 이 캠페인을 삭제하시겠습니까?</p>
+          {campaignTitle && <p className={styles.campaign_title_text}>{campaignTitle}</p>}
+          <p className={styles.warning_text}>삭제된 캠페인은 복구할 수 없습니다.</p>
         </div>
 
         {/* 액션 버튼 영역 */}
@@ -163,12 +147,7 @@ export default function CampaignDeleteConfirmModal({
 
         {/* 모달 닫기 버튼 - 우측 상단 X 아이콘 */}
         <button className={styles.close_button} onClick={onClose}>
-          <Image
-            src="/images/filter/x_icon.svg"
-            alt="닫기"
-            width={20}
-            height={20}
-          />
+          <Image src="/images/filter/x_icon.svg" alt="닫기" width={20} height={20} />
         </button>
       </div>
     </div>

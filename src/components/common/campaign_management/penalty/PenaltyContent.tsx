@@ -11,12 +11,6 @@
  * - /user/campaign_management (유저 캠페인 관리 페이지 - 패널티 탭)
  * - /partner/campaign_management (파트너 캠페인 관리 페이지 - 패널티 탭)
  *
- * 주요 기능:
- * - 패널티 현황 표시 (활동 가능, 경고 조치, 이용 정지, 영구 정지)
- * - 패널티 단계별 진행 상황 시각화 (진행바)
- * - 패널티 내역 리스트 표시 (경고, 주의, 정지, 제재)
- * - 빈 상태 처리 (패널티 내역이 없는 경우)
- * - TypeScript 타입 안전성과 접근성 지원
  */
 
 import type {
@@ -72,10 +66,7 @@ const getTypeBadgeClasses = (): Record<PenaltyType, string> => ({
   제재: penaltyStyles.sanction_badge,
 });
 
-export default function PenaltyContent({
-  penaltyData,
-  userStatus,
-}: PenaltyContentProps) {
+export default function PenaltyContent({ penaltyData, userStatus }: PenaltyContentProps) {
   const hasPenaltyData = penaltyData.length > 0;
 
   const statusConfig = getStatusConfig();
@@ -116,10 +107,7 @@ export default function PenaltyContent({
               </span>
 
               <div className={penaltyStyles.left_stage_bar} aria-hidden="true">
-                <div
-                  className={penaltyStyles.stage_bar_fill}
-                  style={{ width: leftWidth }}
-                ></div>
+                <div className={penaltyStyles.stage_bar_fill} style={{ width: leftWidth }}></div>
               </div>
 
               <span className={cautionLabelClass}>주의</span>
@@ -157,20 +145,13 @@ export default function PenaltyContent({
                 {/* 패널티 상세 정보 */}
                 <div className={penaltyStyles.penalty_details}>
                   {/* 패널티 제목 */}
-                  <h3 className={penaltyStyles.penalty_title_text}>
-                    {penalty.title}
-                  </h3>
+                  <h3 className={penaltyStyles.penalty_title_text}>{penalty.title}</h3>
                   {/* 캠페인 제목 - 캠페인으로 인한 패널티 발생 시에만 표시 */}
                   {penalty.campaignTitle && (
-                    <p className={penaltyStyles.penalty_campaign_title}>
-                      {penalty.campaignTitle}
-                    </p>
+                    <p className={penaltyStyles.penalty_campaign_title}>{penalty.campaignTitle}</p>
                   )}
                   {/* 패널티 날짜 */}
-                  <time
-                    className={penaltyStyles.penalty_date}
-                    dateTime={penalty.date}
-                  >
+                  <time className={penaltyStyles.penalty_date} dateTime={penalty.date}>
                     {penalty.date}
                   </time>
                 </div>
@@ -179,9 +160,7 @@ export default function PenaltyContent({
           </ul>
         ) : (
           <div className={penaltyStyles.empty_penalty_state}>
-            <p className={penaltyStyles.empty_penalty_message}>
-              패널티 내역이 없습니다.
-            </p>
+            <p className={penaltyStyles.empty_penalty_message}>패널티 내역이 없습니다.</p>
           </div>
         )}
       </section>

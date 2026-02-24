@@ -8,12 +8,6 @@
  * 목적: 콘텐츠 신고 시 사용하는 모달 컴포넌트입니다.
  *       라디오 버튼으로 신고 사유를 선택하고, "기타" 옵션 선택 시 추가 사유를 입력할 수 있습니다.
  *
- * 주요 기능:
- * - 라디오 버튼으로 신고 사유 선택
- * - "기타" 옵션 선택 시 textarea 표시
- * - 스크롤바 너비 고려한 레이아웃 유지
- * - ESC 키, 오버레이 클릭으로 닫기
- *
  * 사용 예시:
  * - 콘텐츠 신고 모달
  * - 신고 사유 선택이 필요한 모든 모달
@@ -82,28 +76,22 @@ export default function ReportModal({
   close_on_overlay_click = true,
   close_on_escape = true,
 }: ReportModalProps) {
-  const buttons =
-    prop_buttons && prop_buttons.length > 0 ? prop_buttons : ["취소", "신고"];
+  const buttons = prop_buttons && prop_buttons.length > 0 ? prop_buttons : ["취소", "신고"];
   const has_two_buttons = buttons.length === 2;
 
   // 내부 상태 관리 (제어되지 않는 경우)
-  const [internal_selectedOption, setInternal_selectedOption] =
-    useState<string>(options[0]?.value || "");
+  const [internal_selectedOption, setInternal_selectedOption] = useState<string>(
+    options[0]?.value || ""
+  );
   const [internal_otherReason, setInternal_otherReason] = useState<string>("");
 
   // 제어/비제어 컴포넌트 처리
   const is_controlled = prop_selectedOption !== undefined;
-  const selectedOption = is_controlled
-    ? prop_selectedOption
-    : internal_selectedOption;
-  const otherReason = is_controlled
-    ? prop_otherReason || ""
-    : internal_otherReason;
+  const selectedOption = is_controlled ? prop_selectedOption : internal_selectedOption;
+  const otherReason = is_controlled ? prop_otherReason || "" : internal_otherReason;
 
   // 선택된 옵션이 "기타" 옵션인지 확인
-  const selectedOptionData = options.find(
-    (opt) => opt.value === selectedOption,
-  );
+  const selectedOptionData = options.find((opt) => opt.value === selectedOption);
   const showOtherReason = selectedOptionData?.isOther === true;
 
   // ESC 키로 모달 닫기
@@ -133,9 +121,7 @@ export default function ReportModal({
   };
 
   // 기타 사유 변경 핸들러
-  const handle_other_reason_change = (
-    e: React.ChangeEvent<HTMLTextAreaElement>,
-  ) => {
+  const handle_other_reason_change = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     if (is_controlled) {
       onOtherReasonChange?.(value);
@@ -161,21 +147,12 @@ export default function ReportModal({
 
   // 모달 타입에 따른 클래스명 결정
   const overlay_class =
-    type === "center"
-      ? styles.modal_overlay_center
-      : styles.modal_overlay_bottom;
+    type === "center" ? styles.modal_overlay_center : styles.modal_overlay_bottom;
   const container_class =
-    type === "center"
-      ? styles.modal_container_center
-      : styles.modal_container_bottom;
+    type === "center" ? styles.modal_container_center : styles.modal_container_bottom;
 
   return (
-    <div
-      className={overlay_class}
-      onClick={handle_overlay_click}
-      role="dialog"
-      aria-modal="true"
-    >
+    <div className={overlay_class} onClick={handle_overlay_click} role="dialog" aria-modal="true">
       <div className={container_class} onClick={(e) => e.stopPropagation()}>
         {/* 모달 콘텐츠 */}
         <div className={styles.modal_content}>
@@ -217,10 +194,7 @@ export default function ReportModal({
             {has_two_buttons ? (
               <>
                 {/* 두 개 버튼: 취소, 신고 */}
-                <button
-                  onClick={on_close}
-                  className={styles.modal_footer_button_cancel}
-                >
+                <button onClick={on_close} className={styles.modal_footer_button_cancel}>
                   {buttons[0]}
                 </button>
                 <button
@@ -235,10 +209,7 @@ export default function ReportModal({
             ) : (
               <>
                 {/* 하나 버튼: 닫기 (전체 너비) */}
-                <button
-                  onClick={on_close}
-                  className={styles.modal_footer_button_single}
-                >
+                <button onClick={on_close} className={styles.modal_footer_button_single}>
                   {buttons[0]}
                 </button>
               </>

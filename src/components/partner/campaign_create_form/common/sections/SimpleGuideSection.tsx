@@ -7,10 +7,6 @@
  *
  * 목적: 글자 수, 이미지 장수, 동영상 개수/초수, 본문 링크/키워드 첨부 등 간편 안내 옵션을 재사용 가능하게 만듭니다.
  *
- * 주요 기능:
- * - 체크박스로 옵션 활성화/비활성화
- * - 조건부 입력 필드 표시
- * - 숫자 포맷팅 (쉼표 자동 추가)
  */
 
 "use client";
@@ -54,15 +50,9 @@ interface SimpleGuideSectionProps {
     checked: boolean
   ) => void;
   /** 숫자 입력 변경 시 호출되는 콜백 함수 */
-  onNumericChange: (
-    field: string,
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => void;
+  onNumericChange: (field: string, e: React.ChangeEvent<HTMLInputElement>) => void;
   /** 숫자 입력 키 입력 시 호출되는 콜백 함수 */
-  onNumericKeyDown: (
-    field: string,
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) => void;
+  onNumericKeyDown: (field: string, e: React.KeyboardEvent<HTMLInputElement>) => void;
   /** 숫자에 쉼표를 추가하는 함수 */
   formatNumberWithComma: (value: string | number | undefined) => string;
   /** 체크박스 해제 시 필드 초기화 함수 */
@@ -238,15 +228,10 @@ export function SimpleGuideSection({
           type="checkbox"
           id="requireLinkAttachment"
           checked={formData.requireLinkAttachment}
-          onChange={(e) =>
-            onAttachmentChange("requireLinkAttachment", e.target.checked)
-          }
+          onChange={(e) => onAttachmentChange("requireLinkAttachment", e.target.checked)}
           disabled={!canEdit("requireLinkAttachment")}
         />
-        <label
-          htmlFor="requireLinkAttachment"
-          className={optionStyles.option_label}
-        >
+        <label htmlFor="requireLinkAttachment" className={optionStyles.option_label}>
           본문 링크 첨부
         </label>
       </div>
@@ -257,15 +242,10 @@ export function SimpleGuideSection({
           type="checkbox"
           id="requireKeywordAttachment"
           checked={formData.requireKeywordAttachment}
-          onChange={(e) =>
-            onAttachmentChange("requireKeywordAttachment", e.target.checked)
-          }
+          onChange={(e) => onAttachmentChange("requireKeywordAttachment", e.target.checked)}
           disabled={!canEdit("requireKeywordAttachment")}
         />
-        <label
-          htmlFor="requireKeywordAttachment"
-          className={optionStyles.option_label}
-        >
+        <label htmlFor="requireKeywordAttachment" className={optionStyles.option_label}>
           본문 키워드/태그 첨부
         </label>
       </div>

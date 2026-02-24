@@ -10,17 +10,9 @@
  * 사용 페이지:
  * - /partner (파트너 캠페인 관리 페이지 - 상단 고정)
  *
- * 주요 기능:
- * - 전체/예정/신청/진행/종료/취소/연장 요청/패널티 상태별 개수 표시
- * - 각 탭 클릭 시 상태 변경으로 캠페인 목록 필터링
- * - 활성화된 탭 스타일 표시 (노란색 밑줄)
- * - 상단 고정으로 스크롤 시에도 접근 가능
  */
 
-import type {
-  PartnerCampaignStats,
-  PartnerStatTab,
-} from "@/types/domain/partner";
+import type { PartnerCampaignStats, PartnerStatTab } from "@/types/domain/partner";
 import styles from "../../../styles/partner/statistics.module.css";
 
 interface StatisticsTabProps {
@@ -54,9 +46,7 @@ export default function StatisticsTab({
         <div className={styles.left_stat_tabs}>
           {/* 전체 탭 */}
           <button
-            className={`${styles.stat_tab} ${
-              activeStatTab === "전체" ? styles.active : ""
-            }`}
+            className={`${styles.stat_tab} ${activeStatTab === "전체" ? styles.active : ""}`}
             onClick={() => setActiveStatTab("전체")}
           >
             <span>전체</span>
@@ -65,9 +55,7 @@ export default function StatisticsTab({
 
           {/* 예정 탭 */}
           <button
-            className={`${styles.stat_tab} ${
-              activeStatTab === "예정" ? styles.active : ""
-            }`}
+            className={`${styles.stat_tab} ${activeStatTab === "예정" ? styles.active : ""}`}
             onClick={() => setActiveStatTab("예정")}
           >
             <span>예정</span>
@@ -76,9 +64,7 @@ export default function StatisticsTab({
 
           {/* 신청 탭 */}
           <button
-            className={`${styles.stat_tab} ${
-              activeStatTab === "신청" ? styles.active : ""
-            }`}
+            className={`${styles.stat_tab} ${activeStatTab === "신청" ? styles.active : ""}`}
             onClick={() => setActiveStatTab("신청")}
           >
             <span>신청</span>
@@ -87,9 +73,7 @@ export default function StatisticsTab({
 
           {/* 진행 탭 */}
           <button
-            className={`${styles.stat_tab} ${
-              activeStatTab === "진행" ? styles.active : ""
-            }`}
+            className={`${styles.stat_tab} ${activeStatTab === "진행" ? styles.active : ""}`}
             onClick={() => setActiveStatTab("진행")}
           >
             <span>진행</span>
@@ -98,9 +82,7 @@ export default function StatisticsTab({
 
           {/* 종료 탭 */}
           <button
-            className={`${styles.stat_tab} ${
-              activeStatTab === "종료" ? styles.active : ""
-            }`}
+            className={`${styles.stat_tab} ${activeStatTab === "종료" ? styles.active : ""}`}
             onClick={() => setActiveStatTab("종료")}
           >
             <span>종료</span>
@@ -109,9 +91,7 @@ export default function StatisticsTab({
 
           {/* 취소 탭 */}
           <button
-            className={`${styles.stat_tab} ${
-              activeStatTab === "취소" ? styles.active : ""
-            }`}
+            className={`${styles.stat_tab} ${activeStatTab === "취소" ? styles.active : ""}`}
             onClick={() => setActiveStatTab("취소")}
           >
             <span>취소</span>
@@ -120,9 +100,7 @@ export default function StatisticsTab({
 
           {/* 연장 요청 탭 */}
           <button
-            className={`${styles.stat_tab} ${
-              activeStatTab === "연장 요청" ? styles.active : ""
-            }`}
+            className={`${styles.stat_tab} ${activeStatTab === "연장 요청" ? styles.active : ""}`}
             onClick={() => setActiveStatTab("연장 요청")}
           >
             <span>연장 요청</span>
@@ -132,9 +110,7 @@ export default function StatisticsTab({
 
         {/* 오른쪽: 패널티 탭 */}
         <button
-          className={`${styles.stat_tab} ${
-            activeStatTab === "패널티" ? styles.active : ""
-          }`}
+          className={`${styles.stat_tab} ${activeStatTab === "패널티" ? styles.active : ""}`}
           onClick={() => setActiveStatTab("패널티")}
         >
           <span>패널티</span>

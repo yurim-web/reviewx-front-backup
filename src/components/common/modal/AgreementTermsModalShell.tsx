@@ -1,13 +1,16 @@
 /* ========================================
    약관 보기 모달 공통 레이아웃 (셸)
-   ========================================
-   리뷰어/파트너 약관 모달 공통: 오버레이, 헤더(제목+닫기), 스크롤 본문.
-   내용은 각 모달에서 children으로 주입.
-
-   사용처:
-   - src/components/user/signup/TermsViewModal.tsx
-   - src/components/partner/signup/PartnerTermsViewModal.tsx
    ======================================== */
+
+/**
+ * AgreementTermsModalShell
+ *
+ * 목적: 유저·파트너 약관 모달의 공통 레이아웃(오버레이·헤더·스크롤 본문)을 제공합니다.
+ *
+ * 사용 페이지:
+ * - /user/signup (유저 회원가입 약관 모달)
+ * - /partner/signup (파트너 회원가입 약관 모달)
+ */
 
 "use client";
 
@@ -77,20 +80,10 @@ export default function AgreementTermsModalShell({
       aria-modal="true"
       aria-labelledby={title_id}
     >
-      <div
-        className={modalStyles.terms_modal_wrapper}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className={modalStyles.terms_modal_wrapper} onClick={(e) => e.stopPropagation()}>
         <div className={modalStyles.terms_modal_card}>
-          <div
-            className={modalStyles.terms_modal_header}
-            role="banner"
-            aria-label={title}
-          >
-            <h2
-              id={title_id}
-              className={modalStyles.terms_modal_title}
-            >
+          <div className={modalStyles.terms_modal_header} role="banner" aria-label={title}>
+            <h2 id={title_id} className={modalStyles.terms_modal_title}>
               {title}
             </h2>
             <button
@@ -99,12 +92,7 @@ export default function AgreementTermsModalShell({
               onClick={on_close}
               aria-label="닫기"
             >
-              <Image
-                src="/images/filter/x_icon.svg"
-                alt=""
-                width={20}
-                height={20}
-              />
+              <Image src="/images/filter/x_icon.svg" alt="" width={20} height={20} />
             </button>
           </div>
 

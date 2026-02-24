@@ -7,10 +7,6 @@
  *
  * 목적: 캠페인 문의 담당자 휴대폰 번호를 입력받는 필드를 제공합니다.
  *
- * 주요 기능:
- * - 휴대폰 번호 입력 (필수 필드)
- * - 전화번호 형식 자동 포맷팅 (010-1234-5678)
- * - 수정 모드에서 편집 제어
  */
 
 "use client";
@@ -107,19 +103,13 @@ export function ContactPhoneField({
 
     // Ctrl, Cmd 키와 함께 사용되는 키 (복사, 붙여넣기 등)
     const isCtrlKey = e.ctrlKey || e.metaKey;
-    const isAllowedKeyWithCtrl = ["a", "c", "v", "x"].includes(
-      e.key.toLowerCase(),
-    );
+    const isAllowedKeyWithCtrl = ["a", "c", "v", "x"].includes(e.key.toLowerCase());
 
     // 입력된 키가 숫자인지 확인
     const isNumeric = /^[0-9]$/.test(e.key);
 
     // 허용된 키가 아니면 입력 방지
-    if (
-      !isNumeric &&
-      !allowedKeys.includes(e.key) &&
-      !(isCtrlKey && isAllowedKeyWithCtrl)
-    ) {
+    if (!isNumeric && !allowedKeys.includes(e.key) && !(isCtrlKey && isAllowedKeyWithCtrl)) {
       e.preventDefault();
     }
   };

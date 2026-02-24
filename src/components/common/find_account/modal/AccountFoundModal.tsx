@@ -7,12 +7,7 @@
  *
  * 목적: 휴대폰 인증으로 찾은 아이디(이메일)와 가입일을 표시하는 모달입니다.
  *
- * 주요 기능:
- * - 조회한 계정 정보 표시 (이메일, 가입일)
- * - 로그인 버튼
- * - 비밀번호 찾기 버튼
- *
- * 사용처:
+ * 사용 페이지:
  * - src/components/common/FindAccountPage.tsx
  */
 
@@ -55,16 +50,8 @@ export default function AccountFoundModal({
   if (!isOpen || !accountInfo) return null;
 
   return (
-    <div
-      className={styles.result_modal_overlay}
-      role="dialog"
-      aria-modal="true"
-      onClick={onClose}
-    >
-      <div
-        className={styles.result_modal_container}
-        onClick={(e) => e.stopPropagation()}
-      >
+    <div className={styles.result_modal_overlay} role="dialog" aria-modal="true" onClick={onClose}>
+      <div className={styles.result_modal_container} onClick={(e) => e.stopPropagation()}>
         <div className={styles.result_modal_content}>
           {/* 제목 */}
           <p className={styles.result_modal_title}>아이디 조회</p>
@@ -72,9 +59,7 @@ export default function AccountFoundModal({
           {/* 조회한 계정 정보 표시 */}
           <div className={styles.result_modal_info_box}>
             <p className={styles.result_modal_id_text}>{accountInfo.email}</p>
-            <p className={styles.result_modal_id_text}>
-              가입일: {accountInfo.signupDate}
-            </p>
+            <p className={styles.result_modal_id_text}>가입일: {accountInfo.signupDate}</p>
           </div>
 
           {/* 버튼 영역: 로그인 / 비밀번호 찾기 */}

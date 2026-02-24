@@ -3,7 +3,7 @@
  *
  * 비밀번호 찾기 탭에서 사용하는 이메일 입력 필드입니다.
  *
- * 사용처:
+ * 사용 페이지:
  * - src/components/common/FindAccountPage.tsx
  */
 
@@ -23,12 +23,7 @@ interface EmailInputProps {
   isManager?: boolean;
 }
 
-export default function EmailInput({
-  value,
-  onChange,
-  error,
-  isManager = false,
-}: EmailInputProps) {
+export default function EmailInput({ value, onChange, error, isManager = false }: EmailInputProps) {
   return (
     <div className={styles.email_input_wrapper}>
       <label htmlFor="find-account-email" className={styles.email_label}>
@@ -42,9 +37,7 @@ export default function EmailInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
-      {error && (
-        <div className={signupStyles.error_message}>{error}</div>
-      )}
+      {error && <div className={signupStyles.error_message}>{error}</div>}
     </div>
   );
 }

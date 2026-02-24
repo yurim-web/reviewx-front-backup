@@ -11,19 +11,14 @@
  * 목적: 캠페인 카드에서 "캠페인 관리" 버튼을 클릭했을 때 표시되는 모달입니다.
  *       캠페인을 수정하거나 삭제할 수 있는 옵션을 제공합니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - CampaignCard 컴포넌트에서 "캠페인 관리" 버튼 클릭 시
  *
- * 주요 기능:
- * - 캠페인 수정 버튼 (수정 페이지로 이동)
- * - 캠페인 삭제 버튼 (삭제 확인 및 처리)
- * - 모달 닫기 기능
- * - 오버레이 클릭 시 모달 닫기
  */
 
 "use client";
 
-import { useState } from "react";
+import { useModalState } from "@/hooks/useModalState";
 import Image from "next/image";
 import styles from "../../../../styles/partner/campaign_management/campaign_management_modal.module.css";
 import { deleteCampaign, cancelCampaign } from "@/data/partner/sharedCampaigns";
@@ -67,9 +62,8 @@ export default function CampaignManagementModal({
   activeTab,
 }: CampaignManagementModalProps) {
   // 오류 모달 상태 관리
-  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
-  const [isAlreadyCancelledModalOpen, setIsAlreadyCancelledModalOpen] =
-    useState(false);
+  const errorModal = useModalState();
+  const alreadyCancelledModal = useModalState();
 
   // 조건부 렌더링: 모달이 열려있지 않으면 아무것도 렌더링하지 않음
   if (!isOpen) return null;
@@ -125,12 +119,7 @@ export default function CampaignManagementModal({
     if (!campaignId || !campaignType) return;
 
     const campaignIdString = String(campaignId);
-    const campaignTypeStr = campaignType as
-      | "배송형"
-      | "방문형"
-      | "구매평"
-      | "기자단"
-      | "미션형";
+    const campaignTypeStr = campaignType as "배송형" | "방문형" | "구매평" | "기자단" | "미션형";
 
     // console.log(
     //   `[CampaignManagementModal] 캠페인 취소 시도: ID=${campaignIdString}, 타입=${campaignTypeStr}, 제목=${campaignTitle}`
@@ -152,18 +141,15 @@ export default function CampaignManagementModal({
         window.location.reload();
       } else if (result.error === "ALREADY_CANCELLED") {
         // 이미 취소된 캠페인: 이미 취소된 상태 모달 표시
-        setIsAlreadyCancelledModalOpen(true);
+        alreadyCancelledModal.open();
       } else {
         // 서버 오류: 서버 오류 모달 표시
-        setIsErrorModalOpen(true);
+        errorModal.open();
       }
     } catch (error) {
       // 예상치 못한 오류: 서버 오류 모달 표시
-      console.error(
-        "[CampaignManagementModal] 캠페인 취소 중 예외 발생:",
-        error
-      );
-      setIsErrorModalOpen(true);
+      console.error("[CampaignManagementModal] 캠페인 취소 중 예외 발생:", error);
+      errorModal.open();
     }
   };
 
@@ -189,12 +175,7 @@ export default function CampaignManagementModal({
 
     if (isConfirmed && campaignId && campaignType) {
       const campaignIdString = String(campaignId);
-      const campaignTypeStr = campaignType as
-        | "배송형"
-        | "방문형"
-        | "구매평"
-        | "기자단"
-        | "미션형";
+      const campaignTypeStr = campaignType as "배송형" | "방문형" | "구매평" | "기자단" | "미션형";
 
       // 예정 탭이면 취소 처리, 그 외는 삭제 처리
       if (isScheduledTab) {
@@ -218,18 +199,15 @@ export default function CampaignManagementModal({
             window.location.reload();
           } else if (result.error === "ALREADY_CANCELLED") {
             // 이미 취소된 캠페인: 이미 취소된 상태 모달 표시
-            setIsAlreadyCancelledModalOpen(true);
+            alreadyCancelledModal.open();
           } else {
             // 서버 오류: 서버 오류 모달 표시
-            setIsErrorModalOpen(true);
+            errorModal.open();
           }
         } catch (error) {
           // 예상치 못한 오류: 서버 오류 모달 표시
-          console.error(
-            "[CampaignManagementModal] 캠페인 취소 중 예외 발생:",
-            error
-          );
-          setIsErrorModalOpen(true);
+          console.error("[CampaignManagementModal] 캠페인 취소 중 예외 발생:", error);
+          errorModal.open();
         }
       } else {
         // 그 외 탭: 완전 삭제
@@ -277,9 +255,7 @@ export default function CampaignManagementModal({
         <h2 className={styles.modal_title}>캠페인 관리</h2>
 
         {/* 캠페인 제목 표시 (있는 경우) */}
-        {campaignTitle && (
-          <p className={styles.campaign_title_text}>{campaignTitle}</p>
-        )}
+        {campaignTitle && <p className={styles.campaign_title_text}>{campaignTitle}</p>}
 
         {/* 액션 버튼 영역 */}
         <div className={styles.action_buttons}>
@@ -311,27 +287,22 @@ export default function CampaignManagementModal({
 
         {/* 모달 닫기 버튼 */}
         <button className={styles.close_button} onClick={onClose}>
-          <Image
-            src="/images/filter/x_icon.svg"
-            alt="닫기"
-            width={20}
-            height={20}
-          />
+          <Image src="/images/filter/x_icon.svg" alt="닫기" width={20} height={20} />
         </button>
       </div>
 
       {/* 서버 오류 모달 */}
       <BaseModal
-        is_open={isErrorModalOpen}
-        on_close={() => setIsErrorModalOpen(false)}
+        is_open={errorModal.isOpen}
+        on_close={errorModal.close}
         message="오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."
         buttons={["확인"]}
       />
 
       {/* 이미 취소된 캠페인 모달 */}
       <BaseModal
-        is_open={isAlreadyCancelledModalOpen}
-        on_close={() => setIsAlreadyCancelledModalOpen(false)}
+        is_open={alreadyCancelledModal.isOpen}
+        on_close={alreadyCancelledModal.close}
         message="이미 취소된 캠페인입니다."
         buttons={["확인"]}
       />

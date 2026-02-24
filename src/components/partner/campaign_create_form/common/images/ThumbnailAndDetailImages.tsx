@@ -7,11 +7,6 @@
  *
  * 목적: 썸네일(1개)과 상세 이미지(최대 7개)를 분리하여 업로드하는 UI를 제공합니다.
  *
- * 주요 기능:
- * - 썸네일 이미지 1개 업로드
- * - 상세 이미지 최대 7개 업로드
- * - 이미지 미리보기 및 제거
- * - 수정 모드에서 편집 제어
  */
 
 "use client";
@@ -120,10 +115,7 @@ export function ThumbnailAndDetailImages({
                   onClick={onThumbnailRemove}
                   aria-label="썸네일 제거"
                 >
-                  <img
-                    src="/images/icons/img_delete_btn.svg"
-                    alt="제거"
-                  />
+                  <img src="/images/icons/img_delete_btn.svg" alt="제거" />
                 </button>
               )}
             </div>
@@ -133,21 +125,12 @@ export function ThumbnailAndDetailImages({
           {!thumbnailPreview && (
             <div
               className={infoStyles.image_upload_placeholder}
-              onClick={
-                isEditMode && !isEditable
-                  ? undefined
-                  : handleThumbnailUploadClick
-              }
+              onClick={isEditMode && !isEditable ? undefined : handleThumbnailUploadClick}
               style={
-                isEditMode && !isEditable
-                  ? { pointerEvents: "none", opacity: 0.5 }
-                  : undefined
+                isEditMode && !isEditable ? { pointerEvents: "none", opacity: 0.5 } : undefined
               }
             >
-              <img
-                src="/images/icons/plus_icon.svg"
-                alt="썸네일 추가"
-              />
+              <img src="/images/icons/plus_icon.svg" alt="썸네일 추가" />
             </div>
           )}
 
@@ -186,10 +169,7 @@ export function ThumbnailAndDetailImages({
                   onClick={() => onDetailImageRemove(index)}
                   aria-label={`상세 이미지 ${index + 1} 제거`}
                 >
-                  <img
-                    src="/images/icons/img_delete_btn.svg"
-                    alt="제거"
-                  />
+                  <img src="/images/icons/img_delete_btn.svg" alt="제거" />
                 </button>
               )}
             </div>
@@ -199,21 +179,12 @@ export function ThumbnailAndDetailImages({
           {detailImages.length < 7 && !(isEditMode && !isEditable) && (
             <div
               className={infoStyles.image_upload_placeholder}
-              onClick={
-                isEditMode && !isEditable
-                  ? undefined
-                  : handleDetailImagesUploadClick
-              }
+              onClick={isEditMode && !isEditable ? undefined : handleDetailImagesUploadClick}
               style={
-                isEditMode && !isEditable
-                  ? { pointerEvents: "none", opacity: 0.5 }
-                  : undefined
+                isEditMode && !isEditable ? { pointerEvents: "none", opacity: 0.5 } : undefined
               }
             >
-              <img
-                src="/images/icons/plus_icon.svg"
-                alt="상세 이미지 추가"
-              />
+              <img src="/images/icons/plus_icon.svg" alt="상세 이미지 추가" />
             </div>
           )}
 
@@ -231,13 +202,10 @@ export function ThumbnailAndDetailImages({
         </div>
         {/* 이미지 업로드 안내 문구 */}
         <ul className={infoStyles.image_upload_info}>
+          <li>썸네일 및 상세 이미지는 10mb 이하의 JPG, PNG, GIF 파일만 등록할 수 있습니다.</li>
           <li>
-            썸네일 및 상세 이미지는 10mb 이하의 JPG, PNG, GIF 파일만 등록할 수
-            있습니다.
-          </li>
-          <li>
-            업로드 가능 개수는 화면에 표시된 개수까지 업로드할 수 있습니다.
-            (썸네일 1개, 상세 이미지 최대 7개)
+            업로드 가능 개수는 화면에 표시된 개수까지 업로드할 수 있습니다. (썸네일 1개, 상세 이미지
+            최대 7개)
           </li>
         </ul>
       </article>

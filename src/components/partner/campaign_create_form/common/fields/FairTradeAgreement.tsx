@@ -7,12 +7,7 @@
  *
  * 목적: 공정거래위원회 문구(경제적 이해관계) 동의 체크박스를 제공합니다.
  *
- * 주요 기능:
- * - 공정위 문구 동의 체크박스
- * - 필수 안내 사항 표시
- * - 등록 버튼 활성화를 위한 필수 체크
- *
- * 사용처:
+ * 사용 페이지:
  * - VisitCampaignForm.tsx (방문형 캠페인 폼)
  * - ReviewCampaignForm.tsx (구매평 캠페인 폼)
  * - ReporterCampaignForm.tsx (기자단 캠페인 폼)
@@ -75,12 +70,10 @@ export function FairTradeAgreement({
       />
       <label
         htmlFor="fairTradeAgreement"
-        className={`${guideStyles.fair_trade_label} ${
-          isDisabled ? guideStyles.disabled : ""
-        }`}
+        className={`${guideStyles.fair_trade_label} ${isDisabled ? guideStyles.disabled : ""}`}
       >
-        공정위 문구(경제적 이해관계)는 필수 안내 사항입니다. 해당 내용의 삭제
-        요청은 규정에 위반됨을 인지하고 캠페인을 등록하겠습니다.
+        공정위 문구(경제적 이해관계)는 필수 안내 사항입니다. 해당 내용의 삭제 요청은 규정에 위반됨을
+        인지하고 캠페인을 등록하겠습니다.
       </label>
     </div>
   );

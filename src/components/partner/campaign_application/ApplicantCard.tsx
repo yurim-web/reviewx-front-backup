@@ -7,21 +7,12 @@
  *
  * 목적: 캠페인에 신청한 사용자의 정보를 카드 형태로 표시하는 컴포넌트입니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /partner/campaign_application/delivery (배송형)
  * - /partner/campaign_application/mission (미션형)
  * - /partner/campaign_application/review (리뷰형)
  * - /partner/campaign_application/reporter (기자단형)
  * - /partner/campaign_application/visit (방문형)
- *
- * 주요 기능:
- * - 신청자 프로필 정보 표시 (닉네임, 사용자 타입, 프로필 이미지)
- * - 채널 정보 표시 (채널 아이콘, 채널 ID)
- * - 회원 타입 표시 (모범 회원 / 이용 제한)
- * - 통계 정보 표시 (일방문, 총방문, 이웃수)
- * - 메모/자기소개 표시
- * - 선정하기 버튼 (미선택 상태)
- * - 이용 제한 표시 (이용제한 계정 상태)
  *
  * 📌 컴포넌트 분리의 장점:
  * 1. 재사용성: 같은 컴포넌트를 여러 곳에서 사용 가능
@@ -83,10 +74,7 @@ interface ApplicantCardProps {
  * @param props - ApplicantCardProps 타입의 props
  * @returns JSX 요소
  */
-export default function ApplicantCard({
-  applicant,
-  onSelect,
-}: ApplicantCardProps) {
+export default function ApplicantCard({ applicant, onSelect }: ApplicantCardProps) {
   /**
    * 채널 아이콘 경로 가져오기
    *
@@ -119,11 +107,7 @@ export default function ApplicantCard({
 
       {/* 채널 정보 영역: 채널 아이콘, 채널 ID */}
       <div className={contentStyles.channel_section}>
-        <img
-          src={channel_icon_src}
-          alt="채널"
-          className={contentStyles.channel_icon}
-        />
+        <img src={channel_icon_src} alt="채널" className={contentStyles.channel_icon} />
         {/*
           📌 하드코딩된 텍스트:
           - 현재 "id"로 고정되어 있음
@@ -144,25 +128,19 @@ export default function ApplicantCard({
         */}
         <div className={contentStyles.stat_item}>
           <span className={contentStyles.stat_label}>일방문</span>
-          <span className={contentStyles.stat_value}>
-            {applicant.dailyVisits.toLocaleString()}
-          </span>
+          <span className={contentStyles.stat_value}>{applicant.dailyVisits.toLocaleString()}</span>
         </div>
 
         {/* 통계 아이템 2: 총방문 */}
         <div className={contentStyles.stat_item}>
           <span className={contentStyles.stat_label}>총방문</span>
-          <span className={contentStyles.stat_value}>
-            {applicant.totalVisits.toLocaleString()}
-          </span>
+          <span className={contentStyles.stat_value}>{applicant.totalVisits.toLocaleString()}</span>
         </div>
 
         {/* 통계 아이템 3: 이웃수 */}
         <div className={contentStyles.stat_item}>
           <span className={contentStyles.stat_label}>이웃수</span>
-          <span className={contentStyles.stat_value}>
-            {applicant.neighbors.toLocaleString()}
-          </span>
+          <span className={contentStyles.stat_value}>{applicant.neighbors.toLocaleString()}</span>
         </div>
       </div>
 
@@ -183,10 +161,7 @@ export default function ApplicantCard({
           선정하기 버튼을 렌더링
         */}
         {applicant.selectionStatus === "미선택" && (
-          <button
-            className={actionStyles.select_button}
-            onClick={() => onSelect(applicant.id)}
-          >
+          <button className={actionStyles.select_button} onClick={() => onSelect(applicant.id)}>
             선정하기
           </button>
         )}

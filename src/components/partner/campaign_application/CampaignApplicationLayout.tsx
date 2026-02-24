@@ -9,13 +9,6 @@
  * - 여러 페이지에서 동일한 UI 구조를 사용할 때 중복을 제거합니다
  * - 레이아웃 변경 시 한 곳만 수정하면 모든 페이지에 반영됩니다
  *
- * 주요 기능:
- * - 캠페인 정보 박스 표시
- * - 정렬 컨트롤
- * - 탭 네비게이션
- * - 신청자 목록 그리드
- * - 모달 표시
- *
  * 📌 Props 패턴:
  * - 컴포넌트에 데이터와 함수를 props로 전달하여 재사용성을 높입니다
  * - renderCard 함수를 props로 받아 각 캠페인 유형별로 다른 카드를 렌더링합니다
@@ -37,10 +30,7 @@ import EmptyApplicantsList from "@/components/partner/campaign_application/Empty
 import BaseModal from "@/components/common/modal/BaseModal";
 import { isAnnouncementDatePassed } from "@/components/partner/campaign_application/utils/campaign_info_helpers";
 import { getCampaignDetailPath } from "@/utils/helpers/url";
-import type {
-  CampaignWithApplicants,
-  AllApplicant,
-} from "@/data/partner/sharedCampaigns";
+import type { CampaignWithApplicants, AllApplicant } from "@/data/partner/sharedCampaigns";
 import type {
   SortOption,
   TabType,
@@ -53,10 +43,7 @@ import type {
  * - (applicant: AllApplicant, isSelected: boolean) => React.ReactNode
  * - 신청자 데이터와 선정 여부를 받아서 React 컴포넌트를 반환하는 함수
  */
-type CardRenderer = (
-  applicant: AllApplicant,
-  isSelected: boolean
-) => React.ReactNode;
+type CardRenderer = (applicant: AllApplicant, isSelected: boolean) => React.ReactNode;
 
 /**
  * CampaignApplicationLayout 컴포넌트의 Props 타입 정의
@@ -167,10 +154,7 @@ export default function CampaignApplicationLayout({
   // 캠페인 상세 페이지 경로 생성
   // 📌 getCampaignDetailPath: 캠페인 타입과 ID를 사용하여 상세 페이지 경로를 생성합니다
   const campaignDetailPath = campaignData
-    ? getCampaignDetailPath(
-        campaignData.campaignInfo.campaignType,
-        campaignData.campaignInfo.id
-      )
+    ? getCampaignDetailPath(campaignData.campaignInfo.campaignType, campaignData.campaignInfo.id)
     : "";
 
   return (
@@ -193,12 +177,7 @@ export default function CampaignApplicationLayout({
             >
               <span>캠페인 보기</span>
               <span className={styles.view_campaign_button_icon}>
-                <Image
-                  src="/images/icons/chevron_right.svg"
-                  alt=""
-                  width={16}
-                  height={16}
-                />
+                <Image src="/images/icons/chevron_right.svg" alt="" width={16} height={16} />
               </span>
             </button>
           ) : null
@@ -259,9 +238,7 @@ export default function CampaignApplicationLayout({
                 신청 <span className={styles.tab_count}>{applicantsCount}</span>
               </button>
               <button
-                className={`${styles.tab_button} ${
-                  activeTab === "selected" ? styles.active : ""
-                }`}
+                className={`${styles.tab_button} ${activeTab === "selected" ? styles.active : ""}`}
                 onClick={() => setActiveTab("selected")}
               >
                 선정 <span className={styles.tab_count}>{selectedCount}</span>
@@ -292,9 +269,7 @@ export default function CampaignApplicationLayout({
               )}
             </article>
           </>
-        ) : isAnnouncementDatePassed(
-            campaignData.campaignInfo.announcementDate
-          ) ? (
+        ) : isAnnouncementDatePassed(campaignData.campaignInfo.announcementDate) ? (
           /* 선정 날짜가 지난 경우 - 신청 내역 열람 불가 */
           <article className={styles.access_denied_message}>
             <p>신청 내역 열람 불가</p>
@@ -334,9 +309,7 @@ export default function CampaignApplicationLayout({
                 신청 <span className={styles.tab_count}>{applicantsCount}</span>
               </button>
               <button
-                className={`${styles.tab_button} ${
-                  activeTab === "selected" ? styles.active : ""
-                }`}
+                className={`${styles.tab_button} ${activeTab === "selected" ? styles.active : ""}`}
                 onClick={() => setActiveTab("selected")}
               >
                 선정 <span className={styles.tab_count}>{selectedCount}</span>

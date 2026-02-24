@@ -3,7 +3,7 @@
  *
  * find_account 모달에서 사용하는 공통 버튼 컴포넌트
  *
- * 사용처:
+ * 사용 페이지:
  * - src/components/common/find_account/modal/AccountFoundModal.tsx
  * - src/components/common/find_account/modal/SNSLoginModal.tsx
  */
@@ -25,13 +25,7 @@ interface ModalButtonProps {
   /** 버튼 텍스트 */
   children: React.ReactNode;
   /** 버튼 variant 타입 */
-  variant?:
-    | "primary"
-    | "secondary"
-    | "close"
-    | "kakao"
-    | "naver"
-    | "sns-secondary";
+  variant?: "primary" | "secondary" | "close" | "kakao" | "naver" | "sns-secondary";
   /** 클릭 핸들러 */
   onClick?: () => void;
   /** 추가 클래스명 */

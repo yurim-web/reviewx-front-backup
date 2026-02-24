@@ -10,7 +10,7 @@
  * 목적: 관리자 게시글 상세 페이지와 유저/파트너 공지사항 상세 페이지에서
  *       공통으로 사용하는 게시글 상세 조회 컴포넌트입니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - PostDetailPageClient (관리자 게시글 상세)
  * - NoticeDetailPageClient (유저/파트너 공지사항 상세)
  */
@@ -98,26 +98,18 @@ export default function PostDetailPageCommon({
       {header_component}
 
       {/* 메인 콘텐츠 영역 */}
-      <section
-        className={
-          sidebar ? styles.main_content_with_sidebar : styles.main_content
-        }
-      >
+      <section className={sidebar ? styles.main_content_with_sidebar : styles.main_content}>
         {/* 상단 헤더 영역 (구분 제목 + 뒤로가기 버튼) */}
         {/* header_component가 없을 때만 표시 */}
         {!header_component && (
           <div
             className={
-              sidebar
-                ? styles.page_header_wrapper_with_sidebar
-                : styles.page_header_wrapper
+              sidebar ? styles.page_header_wrapper_with_sidebar : styles.page_header_wrapper
             }
           >
             {/* 구분 제목 (division_title이 있으면 표시, 없으면 표시하지 않음) */}
             {post_detail.division_title && (
-              <h1 className={styles.division_title}>
-                {post_detail.division_title}
-              </h1>
+              <h1 className={styles.division_title}>{post_detail.division_title}</h1>
             )}
 
             {/* 뒤로가기 버튼 */}
@@ -137,9 +129,7 @@ export default function PostDetailPageCommon({
           <div className={styles.post_header_box}>
             {/* 게시글 메타 정보 (라벨 + 날짜) */}
             <div className={styles.post_meta}>
-              <span className={styles.update_label}>
-                {post_detail.meta_label}
-              </span>
+              <span className={styles.update_label}>{post_detail.meta_label}</span>
               <span className={styles.post_date}>{post_detail.date}</span>
             </div>
 

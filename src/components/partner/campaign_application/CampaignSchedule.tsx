@@ -10,9 +10,6 @@
  * 사용 페이지:
  * - 배송형, 방문형, 리뷰형, 기자단형, 미션형 캠페인 신청내역 페이지
  *
- * 주요 기능:
- * - 캠페인 일정 정보를 그리드 형태로 표시
- * - 재사용 가능한 컴포넌트로 코드 중복 제거
  */
 
 import styles from "@/styles/partner/campaign_application/campaign_infocard.module.css";
@@ -55,14 +52,7 @@ interface CampaignScheduleProps {
   /** 캠페인 유형 - 배송형, 방문형, 구매평, 기자단, 미션형 (선택적) */
   campaignType?: "배송형" | "방문형" | "구매평" | "기자단" | "미션형";
   /** 캠페인 상태 - 대기 중, 모집 중, 선정 중 등 (선택적) */
-  status?:
-    | "대기 중"
-    | "모집 중"
-    | "선정 중"
-    | "구매 중"
-    | "등록 중"
-    | "마감"
-    | "취소";
+  status?: "대기 중" | "모집 중" | "선정 중" | "구매 중" | "등록 중" | "마감" | "취소";
 }
 
 /**
@@ -122,18 +112,13 @@ export default function CampaignSchedule({
   };
 
   // 모집 인원 정보 추가 (있는 경우)
-  if (
-    scheduleData.recruitedCount !== undefined &&
-    scheduleData.totalCount !== undefined
-  ) {
+  if (scheduleData.recruitedCount !== undefined && scheduleData.totalCount !== undefined) {
     const isPointStyle = shouldApplyPointStyle("모집 인원");
     scheduleItems.push({
       label: "모집 인원",
       value: (
         <>
-          <strong
-            className={isPointStyle ? styles.schedule_value_point : undefined}
-          >
+          <strong className={isPointStyle ? styles.schedule_value_point : undefined}>
             {scheduleData.recruitedCount}명
           </strong>{" "}
           / {scheduleData.totalCount}명
@@ -192,8 +177,7 @@ export default function CampaignSchedule({
         // 모집 인원의 경우 전체 값이 아닌 라벨과 첫 번째 숫자에만 포인트 스타일 적용
         const isRecruitmentCount = item.label === "모집 인원";
         // 라벨에 포인트를 적용할지 여부 (마감 상태의 모집 인원은 라벨은 기본색 유지)
-        const applyLabelPoint =
-          isPointStyle && !(status === "마감" && isRecruitmentCount);
+        const applyLabelPoint = isPointStyle && !(status === "마감" && isRecruitmentCount);
         return (
           <div key={index} className={styles.schedule_item}>
             <span

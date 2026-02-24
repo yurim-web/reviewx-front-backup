@@ -7,10 +7,6 @@
  *
  * 목적: 모든 캠페인 생성 페이지에서 공통으로 사용되는 헤더
  *
- * 주요 기능:
- * - 페이지 제목 표시
- * - 긴급 체크박스 기능
- * - 일관된 헤더 스타일 제공
  */
 
 "use client";
@@ -40,8 +36,8 @@ export default function PageHeader({
       setIsMobile(window.innerWidth <= 768);
     };
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   /**
@@ -78,12 +74,7 @@ export default function PageHeader({
         onClick={handleGoBack}
         aria-label="뒤로가기"
       >
-        <img
-          src="/images/header/header_arrow_back.svg"
-          alt="뒤로가기"
-          width={16}
-          height={16}
-        />
+        <img src="/images/header/header_arrow_back.svg" alt="뒤로가기" width={16} height={16} />
       </button>
 
       <h1 className={headerStyles.page_title}>{title}</h1>

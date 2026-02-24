@@ -7,7 +7,7 @@
  *
  * 목적: 포인트 충전 시 환불 계좌 은행을 선택하는 드롭다운
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /partner/point/charge (무통장 입금)
  */
 
@@ -45,10 +45,7 @@ export default function BankDropdown({
         aria-expanded={isOpen}
         onClick={onToggle}
       >
-        <span
-          className={customDropdownStyles.dropdown_text}
-          data-placeholder="은행 선택"
-        >
+        <span className={customDropdownStyles.dropdown_text} data-placeholder="은행 선택">
           {selectedBank || ""}
         </span>
         <img
@@ -60,11 +57,7 @@ export default function BankDropdown({
         />
       </button>
       {isOpen && (
-        <div
-          className={customDropdownStyles.dropdown_options}
-          role="listbox"
-          aria-label={label}
-        >
+        <div className={customDropdownStyles.dropdown_options} role="listbox" aria-label={label}>
           {banks.map((bank) => (
             <button
               key={bank}

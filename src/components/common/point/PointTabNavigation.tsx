@@ -15,10 +15,6 @@
  *
  * 목적: 포인트 페이지에서 전체/적립(충전)/출금(사용) 탭을 전환하는 네비게이션입니다.
  *
- * 주요 기능:
- * - 전체/적립(충전)/출금(사용) 탭 전환
- * - 활성 탭 표시
- * - 상단 고정으로 스크롤 시에도 접근 가능
  */
 
 "use client";
@@ -67,9 +63,7 @@ export default function PointTabNavigation({
   /** 탭 버튼 렌더링 헬퍼 함수 */
   const renderTabButton = (tab: PointTab, label: string) => (
     <button
-      className={`${styles.point_tab} ${
-        activePointTab === tab ? styles.active : ""
-      }`}
+      className={`${styles.point_tab} ${activePointTab === tab ? styles.active : ""}`}
       onClick={() => handlePointTabClick(tab)}
     >
       <span>{label}</span>

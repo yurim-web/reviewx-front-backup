@@ -3,7 +3,7 @@
  *
  * 아이디 찾기 / 비밀번호 찾기 탭을 표시합니다.
  *
- * 사용처:
+ * 사용 페이지:
  * - src/components/common/FindAccountPage.tsx
  */
 
@@ -18,10 +18,7 @@ interface TabNavigationProps {
   onTabChange: (tab: "id" | "password") => void;
 }
 
-export default function TabNavigation({
-  activeTab,
-  onTabChange,
-}: TabNavigationProps) {
+export default function TabNavigation({ activeTab, onTabChange }: TabNavigationProps) {
   const handleTabClick = (tab: "id" | "password", e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -32,9 +29,7 @@ export default function TabNavigation({
     <section className={styles.tab_section}>
       <button
         type="button"
-        className={`${styles.tab_button} ${
-          activeTab === "id" ? styles.tab_button_active : ""
-        }`}
+        className={`${styles.tab_button} ${activeTab === "id" ? styles.tab_button_active : ""}`}
         onClick={(e) => handleTabClick("id", e)}
         aria-label="아이디 찾기"
         aria-selected={activeTab === "id"}

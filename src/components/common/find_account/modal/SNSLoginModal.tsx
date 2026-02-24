@@ -8,12 +8,7 @@
  * 목적: 휴대폰 번호로 가입된 계정이 SNS(카카오/네이버)로만 가입된 경우,
  *       SNS 로그인을 유도하는 모달입니다.
  *
- * 주요 기능:
- * - SNS 로그인 안내 메시지 표시
- * - 카카오 또는 네이버 로그인 버튼 (소셜 타입에 따라 동적 표시)
- * - 닫기 버튼
- *
- * 사용처:
+ * 사용 페이지:
  * - src/components/common/FindAccountPage.tsx
  *
  * React 핵심 개념:
@@ -71,25 +66,13 @@ export default function SNSLoginModal({
   // JSX 반환: 모달 UI 구조
   // ========================================
   return (
-    <div
-      className={styles.sns_modal_overlay}
-      role="dialog"
-      aria-modal="true"
-      onClick={onClose}
-    >
-      <div
-        className={styles.sns_modal_container}
-        onClick={(e) => e.stopPropagation()}
-      >
+    <div className={styles.sns_modal_overlay} role="dialog" aria-modal="true" onClick={onClose}>
+      <div className={styles.sns_modal_container} onClick={(e) => e.stopPropagation()}>
         <div className={styles.sns_modal_content}>
           {/* 모달 안내 메시지 */}
           <p className={styles.sns_modal_message}>
-            <span className={styles.sns_modal_message_line1}>
-              입력하신 휴대폰 번호로
-            </span>
-            <span className={styles.sns_modal_message_line2}>
-              가입된 계정이 있습니다.
-            </span>
+            <span className={styles.sns_modal_message_line1}>입력하신 휴대폰 번호로</span>
+            <span className={styles.sns_modal_message_line2}>가입된 계정이 있습니다.</span>
             <span className={styles.sns_modal_message_line3}>
               아래 안내된 버튼을 통해 로그인해 주세요.
             </span>

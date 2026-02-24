@@ -7,15 +7,9 @@
  *
  * 목적: 유저와 파트너 FAQ 페이지에서 공통으로 사용하는 컴포넌트입니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /user/faq (유저 FAQ 페이지)
  * - /partner/faq (파트너 FAQ 페이지)
- *
- * 주요 기능:
- * - 카테고리별 FAQ 필터링
- * - 아코디언 형태의 Q&A 표시
- * - 질문 클릭 시 답변 펼치기/접기
- * - 핀된 FAQ 맨 위 고정
  *
  * Props 설명:
  * - header_component: 헤더 컴포넌트 (SubHeader 또는 PartnerHeader)
@@ -36,10 +30,7 @@ import {
   get_post_detail,
   type PostItem,
 } from "@/data/manager_ga/community/postsData";
-import {
-  convertPostsToFAQs,
-  type FAQTarget,
-} from "@/utils/faq/convertPostToFAQ";
+import { convertPostsToFAQs, type FAQTarget } from "@/utils/faq/convertPostToFAQ";
 import {
   categories_data,
   initialize_categories_data,
@@ -125,10 +116,7 @@ export default function FAQPageClient({
         return;
       }
 
-      const updated_posts = apply_pinned_state_to_posts(
-        posts_data,
-        pinned_state
-      );
+      const updated_posts = apply_pinned_state_to_posts(posts_data, pinned_state);
       set_posts_for_faq(updated_posts);
     };
 
@@ -174,9 +162,7 @@ export default function FAQPageClient({
     const update_categories = () => {
       // division이 "자주 묻는 질문"인 카테고리만 필터링
       const faq_categories = categories_data
-        .filter(
-          (category: CategoryItem) => category.division === "자주 묻는 질문"
-        )
+        .filter((category: CategoryItem) => category.division === "자주 묻는 질문")
         .map((category: CategoryItem) => category.category_name);
 
       // 중복 제거
@@ -239,9 +225,7 @@ export default function FAQPageClient({
           (faq) => !faq.target || faq.target === target
         )
       : converted_faqs.filter(
-          (faq) =>
-            (!faq.target || faq.target === target) &&
-            faq.category === selected_category
+          (faq) => (!faq.target || faq.target === target) && faq.category === selected_category
         )
   ).sort((a, b) => {
     // sort: 배열을 정렬합니다
@@ -299,18 +283,14 @@ export default function FAQPageClient({
                     <div className={styles.question_content}>
                       <span
                         className={`${styles.question_number} ${
-                          expanded_items.includes(faq.id)
-                            ? styles.expanded_question
-                            : ""
+                          expanded_items.includes(faq.id) ? styles.expanded_question : ""
                         }`}
                       >
                         Q.
                       </span>
                       <span
                         className={`${styles.question_text} ${
-                          expanded_items.includes(faq.id)
-                            ? styles.expanded_question
-                            : ""
+                          expanded_items.includes(faq.id) ? styles.expanded_question : ""
                         }`}
                       >
                         {faq.question}

@@ -8,10 +8,6 @@
  * 목적: 하나의 날짜만 선택할 수 있는 캘린더입니다.
  *       RangeCalendar와 달리 날짜 범위가 아닌 단일 날짜를 선택합니다.
  *
- * 주요 기능:
- * - 단일 날짜 선택 (하나의 날짜만 선택 가능)
- * - 달력 한 개만 표시 (number_of_months=1)
- * - 한국어 로케일 지원
  */
 
 "use client";
@@ -32,14 +28,7 @@ import styles from "./range_calendar.module.css";
  * react-day-picker의 이전 달 버튼에 사용됩니다.
  */
 function PreviousMonthIcon() {
-  return (
-    <img
-      src="/images/calendar/calendar_left.svg"
-      alt="이전 달"
-      width="24"
-      height="24"
-    />
-  );
+  return <img src="/images/calendar/calendar_left.svg" alt="이전 달" width="24" height="24" />;
 }
 
 /**
@@ -49,14 +38,7 @@ function PreviousMonthIcon() {
  * react-day-picker의 다음 달 버튼에 사용됩니다.
  */
 function NextMonthIcon() {
-  return (
-    <img
-      src="/images/calendar/calendar_right.svg"
-      alt="다음 달"
-      width="24"
-      height="24"
-    />
-  );
+  return <img src="/images/calendar/calendar_right.svg" alt="다음 달" width="24" height="24" />;
 }
 
 // ========================================
@@ -126,9 +108,7 @@ export default function SingleCalendar({
     const today_date = today.getDate();
 
     // 모든 날짜 요소를 순회하면서 오늘 날짜 찾기
-    const all_day_elements = calendar_ref.current.querySelectorAll(
-      "td.rdp-day, .rdp-day"
-    );
+    const all_day_elements = calendar_ref.current.querySelectorAll("td.rdp-day, .rdp-day");
 
     all_day_elements.forEach((day_element) => {
       const element = day_element as HTMLElement;
@@ -191,11 +171,7 @@ export default function SingleCalendar({
         const todaySize = isMobile ? "28px" : "32px";
 
         element.style.setProperty("border-radius", "50%", "important");
-        element.style.setProperty(
-          "background-color",
-          "transparent",
-          "important"
-        );
+        element.style.setProperty("background-color", "transparent", "important");
         element.style.setProperty("color", "#FF5694", "important");
         element.style.setProperty("box-sizing", "border-box", "important");
         element.style.setProperty("width", todaySize, "important");
@@ -210,11 +186,7 @@ export default function SingleCalendar({
         // 버튼에도 동일하게 적용
         button.style.setProperty("border", "1px solid #FF5694", "important");
         button.style.setProperty("border-radius", "50%", "important");
-        button.style.setProperty(
-          "background-color",
-          "transparent",
-          "important"
-        );
+        button.style.setProperty("background-color", "transparent", "important");
         button.style.setProperty("color", "#FF5694", "important");
         button.style.setProperty("box-sizing", "border-box", "important");
         button.style.setProperty("width", todaySize, "important");
@@ -334,9 +306,7 @@ export default function SingleCalendar({
       const selected_date = selected.getDate();
 
       // 모든 날짜 요소를 순회하면서 선택된 날짜 찾기
-      const all_day_elements = calendar_ref.current.querySelectorAll(
-        "td.rdp-day, .rdp-day"
-      );
+      const all_day_elements = calendar_ref.current.querySelectorAll("td.rdp-day, .rdp-day");
 
       all_day_elements.forEach((day_element) => {
         const element = day_element as HTMLElement;
@@ -379,10 +349,7 @@ export default function SingleCalendar({
     selected_days_by_class.forEach((day) => {
       all_selected_days.push(day as HTMLElement);
     });
-    if (
-      selected_day_element &&
-      !all_selected_days.includes(selected_day_element)
-    ) {
+    if (selected_day_element && !all_selected_days.includes(selected_day_element)) {
       all_selected_days.push(selected_day_element);
     }
 
@@ -394,36 +361,19 @@ export default function SingleCalendar({
 
       // 선택된 날짜인 경우 (range 클래스가 없는 경우만)
       if (
-        (class_list.contains("rdp-day_selected") ||
-          selected_day_element === element) &&
+        (class_list.contains("rdp-day_selected") || selected_day_element === element) &&
         !class_list.contains("rdp-day_range_start") &&
         !class_list.contains("rdp-day_range_end") &&
         !class_list.contains("rdp-day_range_middle")
       ) {
-        element.style.setProperty(
-          "background-color",
-          "transparent",
-          "important"
-        );
+        element.style.setProperty("background-color", "transparent", "important");
         element.style.setProperty("color", "#444444", "important");
         element.style.setProperty("border-radius", "50%", "important");
         element.style.setProperty("font-weight", "500", "important");
         element.style.setProperty("position", "relative", "important");
-        element.style.setProperty(
-          "height",
-          "var(--rdp-cell-size)",
-          "important"
-        );
-        element.style.setProperty(
-          "min-height",
-          "var(--rdp-cell-size)",
-          "important"
-        );
-        element.style.setProperty(
-          "max-height",
-          "var(--rdp-cell-size)",
-          "important"
-        );
+        element.style.setProperty("height", "var(--rdp-cell-size)", "important");
+        element.style.setProperty("min-height", "var(--rdp-cell-size)", "important");
+        element.style.setProperty("max-height", "var(--rdp-cell-size)", "important");
         element.style.setProperty("padding", "0", "important");
 
         if (button) {
@@ -448,28 +398,18 @@ export default function SingleCalendar({
           button.style.setProperty("z-index", "2", "important");
 
           // 원형 배경 요소 추가 (RangeCalendar의 circle과 유사)
-          let circle = button.querySelector(
-            ".selected-date-circle"
-          ) as HTMLElement;
+          let circle = button.querySelector(".selected-date-circle") as HTMLElement;
           if (!circle) {
             circle = document.createElement("div");
             circle.className = "selected-date-circle";
             circle.style.setProperty("position", "absolute", "important");
             circle.style.setProperty("width", buttonSize, "important");
             circle.style.setProperty("height", buttonSize, "important");
-            circle.style.setProperty(
-              "background-color",
-              "#ff5694",
-              "important"
-            );
+            circle.style.setProperty("background-color", "#ff5694", "important");
             circle.style.setProperty("border-radius", "50%", "important");
             circle.style.setProperty("left", "50%", "important");
             circle.style.setProperty("top", "50%", "important");
-            circle.style.setProperty(
-              "transform",
-              "translate(-50%, -50%)",
-              "important"
-            );
+            circle.style.setProperty("transform", "translate(-50%, -50%)", "important");
             circle.style.setProperty("z-index", "1", "important");
             button.appendChild(circle);
           } else {
@@ -485,11 +425,7 @@ export default function SingleCalendar({
             const child_element = child as HTMLElement;
             if (!child_element.classList.contains("selected-date-circle")) {
               child_element.style.setProperty("color", "white", "important");
-              child_element.style.setProperty(
-                "position",
-                "relative",
-                "important"
-              );
+              child_element.style.setProperty("position", "relative", "important");
               child_element.style.setProperty("z-index", "2", "important");
             }
           });
@@ -498,11 +434,7 @@ export default function SingleCalendar({
           const apply_white_text = () => {
             button.style.setProperty("color", "white", "important");
             button.style.setProperty("z-index", "2", "important");
-            button.style.setProperty(
-              "background-color",
-              "#ff5694",
-              "important"
-            );
+            button.style.setProperty("background-color", "#ff5694", "important");
 
             const all_elements = button.querySelectorAll("*");
             all_elements.forEach((element) => {
@@ -512,31 +444,20 @@ export default function SingleCalendar({
                 !html_element.classList.contains("range-text-wrapper")
               ) {
                 html_element.style.setProperty("color", "white", "important");
-                html_element.style.setProperty(
-                  "position",
-                  "relative",
-                  "important"
-                );
+                html_element.style.setProperty("position", "relative", "important");
                 html_element.style.setProperty("z-index", "2", "important");
               }
             });
 
             // 텍스트 노드를 wrapper로 감싸기
-            const walker = document.createTreeWalker(
-              button,
-              NodeFilter.SHOW_TEXT,
-              null
-            );
+            const walker = document.createTreeWalker(button, NodeFilter.SHOW_TEXT, null);
             let text_node;
             const text_nodes: Text[] = [];
 
             while ((text_node = walker.nextNode())) {
               if (text_node.textContent && text_node.textContent.trim()) {
                 const parent = text_node.parentElement;
-                if (
-                  parent &&
-                  !parent.classList.contains("range-text-wrapper")
-                ) {
+                if (parent && !parent.classList.contains("range-text-wrapper")) {
                   text_nodes.push(text_node as Text);
                 }
               }
@@ -549,17 +470,9 @@ export default function SingleCalendar({
                   const wrapper = document.createElement("span");
                   wrapper.className = "range-text-wrapper";
                   wrapper.style.setProperty("color", "white", "important");
-                  wrapper.style.setProperty(
-                    "position",
-                    "relative",
-                    "important"
-                  );
+                  wrapper.style.setProperty("position", "relative", "important");
                   wrapper.style.setProperty("z-index", "2", "important");
-                  wrapper.style.setProperty(
-                    "display",
-                    "inline-block",
-                    "important"
-                  );
+                  wrapper.style.setProperty("display", "inline-block", "important");
 
                   text_node.parentNode?.insertBefore(wrapper, text_node);
                   wrapper.appendChild(text_node);
@@ -570,11 +483,7 @@ export default function SingleCalendar({
                 wrapper.style.setProperty("color", "white", "important");
                 wrapper.style.setProperty("position", "relative", "important");
                 wrapper.style.setProperty("z-index", "2", "important");
-                wrapper.style.setProperty(
-                  "display",
-                  "inline-block",
-                  "important"
-                );
+                wrapper.style.setProperty("display", "inline-block", "important");
 
                 button.insertBefore(wrapper, text_node);
                 wrapper.appendChild(text_node);
@@ -656,10 +565,7 @@ export default function SingleCalendar({
 
       // rdp-day_selected 클래스가 추가되었는지 확인
       const has_selected_class_added = mutations.some((mutation) => {
-        if (
-          mutation.type === "attributes" &&
-          mutation.attributeName === "class"
-        ) {
+        if (mutation.type === "attributes" && mutation.attributeName === "class") {
           const target = mutation.target as HTMLElement;
           if (target.classList.contains("rdp-day_selected")) {
             return true;
@@ -700,10 +606,7 @@ export default function SingleCalendar({
       });
 
       // 선택된 날짜 클래스가 추가되었거나, 우리 변경이 아닌 경우 스타일 적용
-      if (
-        has_selected_class_added ||
-        (!is_our_change && !has_selected_class_added)
-      ) {
+      if (has_selected_class_added || (!is_our_change && !has_selected_class_added)) {
         if (debounce_timer) {
           clearTimeout(debounce_timer);
         }

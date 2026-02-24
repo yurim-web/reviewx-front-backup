@@ -11,10 +11,6 @@
  * - /user/faq/[id] (유저 FAQ 상세)
  * - /partner/faq/[id] (파트너 FAQ 상세)
  *
- * 주요 기능:
- * - FAQ 상세 내용 표시 (질문 + 답변)
- * - 뒤로가기 기능
- * - 카테고리 및 날짜 표시
  */
 
 "use client";
@@ -24,11 +20,7 @@ import { useEffect, useState, useMemo, type ReactNode } from "react";
 import styles from "@/styles/user/faq/faq_detail_page.module.css";
 import { posts_data } from "@/data/manager_ga/community/postsData";
 import { get_post_detail } from "@/data/manager_ga/community/postsData";
-import {
-  convertPostsToFAQs,
-  type FAQItem,
-  type FAQTarget,
-} from "@/utils/faq/convertPostToFAQ";
+import { convertPostsToFAQs, type FAQItem, type FAQTarget } from "@/utils/faq/convertPostToFAQ";
 
 interface FAQDetailPageClientProps {
   target?: FAQTarget; // "user" | "partner" (기본값: "user")
@@ -144,4 +136,3 @@ export default function FAQDetailPageClient({
     </main>
   );
 }
-

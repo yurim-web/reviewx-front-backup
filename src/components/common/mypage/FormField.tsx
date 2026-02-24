@@ -3,7 +3,7 @@
  *
  * field_article + label + required asterisk 패턴을 재사용하는 컴포넌트입니다.
  *
- * 사용처:
+ * 사용 페이지:
  * - src/components/common/mypage/AddressInput.tsx
  * - src/components/common/mypage/ProfilePhotoUpload.tsx
  * - src/components/common/phone_verification/PhoneVerification.tsx (마이페이지 스타일)
@@ -25,12 +25,7 @@ interface FormFieldProps {
   children: React.ReactNode;
 }
 
-export default function FormField({
-  label,
-  htmlFor,
-  required = false,
-  children,
-}: FormFieldProps) {
+export default function FormField({ label, htmlFor, required = false, children }: FormFieldProps) {
   return (
     <article className={layoutStyles.field_article}>
       <label className={inputStyles.field_label} htmlFor={htmlFor}>

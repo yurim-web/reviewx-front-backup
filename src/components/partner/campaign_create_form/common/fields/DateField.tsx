@@ -8,12 +8,6 @@
  * 목적: 하나의 날짜를 선택할 수 있는 입력 필드입니다.
  *       입력 필드를 클릭하면 SingleCalendar가 열립니다.
  *
- * 주요 기능:
- * - 단일 날짜 선택 (하나의 날짜만 선택)
- * - 입력 필드 클릭 시 캘린더 열기/닫기
- * - 선택된 날짜 표시 (YYYY-MM-DD 형식)
- * - 외부 클릭 시 자동 닫기
- *
  * 📌 DateRangeField와의 차이점:
  * - DateRangeField: 날짜 범위 선택 (시작일 ~ 종료일), 달력 2개 표시
  * - DateField: 단일 날짜 선택, 달력 1개 표시
@@ -174,10 +168,7 @@ export function DateField({
       // event.target: 클릭한 요소
       // container_ref.current: 입력 필드 컨테이너 요소
       // contains(): 요소가 다른 요소의 자식인지 확인하는 메서드
-      if (
-        container_ref.current &&
-        !container_ref.current.contains(event.target as Node)
-      ) {
+      if (container_ref.current && !container_ref.current.contains(event.target as Node)) {
         // 캘린더 외부를 클릭했으면 닫기
         setIsCalendarOpen(false);
       }
@@ -257,10 +248,7 @@ export function DateField({
       {/* 단일 날짜 선택 캘린더 - 입력 필드 아래에 표시 */}
       {is_calendar_open && can_edit && (
         <div className={styles.single_calendar_dropdown}>
-          <SingleCalendar
-            selected={selected_date}
-            on_select={handle_date_select}
-          />
+          <SingleCalendar selected={selected_date} on_select={handle_date_select} />
         </div>
       )}
     </div>

@@ -7,7 +7,7 @@
  *
  * 목적: 회원 탈퇴 관련 3가지 모달을 하나의 컴포넌트로 통합
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /user/mypage/edit
  * - /partner/mypage/edit
  */

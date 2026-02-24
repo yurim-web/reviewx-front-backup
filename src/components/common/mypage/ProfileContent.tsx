@@ -11,12 +11,6 @@
  * - /user/mypage/profile (유저 마이페이지 프로필)
  * - /partner/mypage (파트너 마이페이지)
  *
- * 주요 기능:
- * - 프로필 정보 표시 (역할, 닉네임)
- * - 내 정보 수정 버튼
- * - 이용 가이드, 공지사항, FAQ, 카카오톡 상담 메뉴
- * - 로그아웃 버튼
- *
  */
 
 "use client";
@@ -116,18 +110,16 @@ export default function ProfileContent({
             </div>
 
             {/* 모바일 전용: 광고주 전환 버튼 (유저 마이페이지에서만) */}
-            {showMemberTypeToggle &&
-              onMemberTypeChange &&
-              editPath.startsWith("/user") && (
-                <button
-                  type="button"
-                  className={profileStyles.partner_switch_button_mobile_only}
-                  onClick={() => onMemberTypeChange("partner")}
-                  aria-label="광고주로 전환"
-                >
-                  광고주 전환
-                </button>
-              )}
+            {showMemberTypeToggle && onMemberTypeChange && editPath.startsWith("/user") && (
+              <button
+                type="button"
+                className={profileStyles.partner_switch_button_mobile_only}
+                onClick={() => onMemberTypeChange("partner")}
+                aria-label="광고주로 전환"
+              >
+                광고주 전환
+              </button>
+            )}
 
             {/* 모바일 전용: 리뷰어 전환 버튼 (파트너 마이페이지에서만) */}
             {editPath.startsWith("/partner") && onMemberTypeChange && (
@@ -146,10 +138,7 @@ export default function ProfileContent({
         {/* 회원 유형 토글 버튼 (PC 전용) */}
         {showMemberTypeToggle && onMemberTypeChange && (
           <div className={profileStyles.toggle_wrapper}>
-            <MemberTypeToggle
-              activeType={activeMemberType}
-              onToggle={onMemberTypeChange}
-            />
+            <MemberTypeToggle activeType={activeMemberType} onToggle={onMemberTypeChange} />
           </div>
         )}
       </div>
@@ -164,10 +153,7 @@ export default function ProfileContent({
           화살표 함수: () => {} 형식으로 간단한 함수를 정의합니다.
           router.push(): Next.js에서 페이지 이동을 위한 메서드입니다.
         */}
-        <button
-          className={profileStyles.menu_item}
-          onClick={() => router.push(editPath)}
-        >
+        <button className={profileStyles.menu_item} onClick={() => router.push(editPath)}>
           <img
             src="/images/mypage/menu_icon/correction_icon.svg"
             alt="내 정보 수정 아이콘"
@@ -226,11 +212,7 @@ export default function ProfileContent({
         <button
           className={profileStyles.menu_item}
           onClick={() =>
-            router.push(
-              editPath.startsWith("/partner")
-                ? "/partner/notice"
-                : "/user/notice"
-            )
+            router.push(editPath.startsWith("/partner") ? "/partner/notice" : "/user/notice")
           }
         >
           <img
@@ -250,9 +232,7 @@ export default function ProfileContent({
         <button
           className={profileStyles.menu_item}
           onClick={() =>
-            router.push(
-              editPath.startsWith("/partner") ? "/partner/faq" : "/user/faq"
-            )
+            router.push(editPath.startsWith("/partner") ? "/partner/faq" : "/user/faq")
           }
         >
           <img
@@ -266,9 +246,7 @@ export default function ProfileContent({
         {/* 카카오톡 상담 버튼 */}
         <button
           className={profileStyles.menu_item}
-          onClick={() =>
-            window.open("https://pf.kakao.com/_xjxdxoxG/chat", "_blank")
-          }
+          onClick={() => window.open("https://pf.kakao.com/_xjxdxoxG/chat", "_blank")}
         >
           <img
             src="/images/mypage/menu_icon/kakao_icon.svg"
@@ -289,10 +267,7 @@ export default function ProfileContent({
       */}
       {onLogout && (
         <div className={profileStyles.menu_list}>
-          <button
-            className={profileStyles.menu_item}
-            onClick={handle_logout_click}
-          >
+          <button className={profileStyles.menu_item} onClick={handle_logout_click}>
             <img
               src="/images/mypage/menu_icon/logout_icon.svg"
               alt="로그아웃 아이콘"

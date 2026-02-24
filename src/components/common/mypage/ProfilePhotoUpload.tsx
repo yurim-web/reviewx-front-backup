@@ -3,7 +3,7 @@
  *
  * 사용자가 프로필 사진을 업로드하고 삭제할 수 있는 컴포넌트입니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /partner/mypage/edit (파트너 내 정보 수정 페이지)
  * - /user/mypage/edit (유저 내 정보 수정 페이지)
  */
@@ -31,9 +31,7 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const validateFileType = (file: File): boolean => {
   const fileName = file.name.toLowerCase();
   const fileExtension = fileName.split(".").pop();
-  const isValidExtension = fileExtension
-    ? ALLOWED_EXTENSIONS.includes(fileExtension)
-    : false;
+  const isValidExtension = fileExtension ? ALLOWED_EXTENSIONS.includes(fileExtension) : false;
   const isValidMimeType = ALLOWED_MIME_TYPES.includes(file.type);
   return isValidExtension || isValidMimeType;
 };
@@ -76,9 +74,7 @@ export default function ProfilePhotoUpload({
       if (!file) return;
 
       if (!validateFileType(file)) {
-        setModalMessage(
-          "지정된 확장자(JPG, PNG, GIF)만<br>업로드할 수 있습니다."
-        );
+        setModalMessage("지정된 확장자(JPG, PNG, GIF)만<br>업로드할 수 있습니다.");
         return;
       }
 

@@ -7,7 +7,7 @@
  *
  * 목적: 이용 제한된 계정의 신청자 정보를 표시하는 카드 컴포넌트입니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /partner/campaign_application/delivery (배송형 캠페인 신청자 목록)
  *
  * 이용제한계정 카드 특징:
@@ -54,9 +54,7 @@ interface DeliveryRestrictedCardProps {
  * @param props - DeliveryRestrictedCardProps 타입의 props
  * @returns JSX 요소
  */
-export default function NaverBlogRestrictedCard({
-  applicant,
-}: DeliveryRestrictedCardProps) {
+export default function NaverBlogRestrictedCard({ applicant }: DeliveryRestrictedCardProps) {
   /**
    * 채널 아이콘 경로 가져오기
    *
@@ -116,34 +114,26 @@ export default function NaverBlogRestrictedCard({
         */}
         <div className={contentStyles.stat_item}>
           <span className={contentStyles.stat_label}>일방문</span>
-          <span className={contentStyles.stat_value}>
-            {applicant.dailyVisits.toLocaleString()}
-          </span>
+          <span className={contentStyles.stat_value}>{applicant.dailyVisits.toLocaleString()}</span>
         </div>
 
         {/* 통계 아이템 2: 총방문 */}
         <div className={contentStyles.stat_item}>
           <span className={contentStyles.stat_label}>총방문</span>
-          <span className={contentStyles.stat_value}>
-            {applicant.totalVisits.toLocaleString()}
-          </span>
+          <span className={contentStyles.stat_value}>{applicant.totalVisits.toLocaleString()}</span>
         </div>
 
         {/* 통계 아이템 3: 이웃수 */}
         <div className={contentStyles.stat_item}>
           <span className={contentStyles.stat_label}>이웃수</span>
-          <span className={contentStyles.stat_value}>
-            {applicant.neighbors.toLocaleString()}
-          </span>
+          <span className={contentStyles.stat_value}>{applicant.neighbors.toLocaleString()}</span>
         </div>
       </div>
 
       {/* 메모 영역: 신청자가 작성한 자기소개 */}
       <div className={contentStyles.memo_section}>
         <div className={contentStyles.memo_text}>
-          {applicant.memo && applicant.memo.trim() !== ""
-            ? applicant.memo
-            : "메모 미작성"}
+          {applicant.memo && applicant.memo.trim() !== "" ? applicant.memo : "메모 미작성"}
         </div>
         <div className={contentStyles.memo_divider}></div>
       </div>

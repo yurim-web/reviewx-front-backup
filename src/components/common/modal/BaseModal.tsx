@@ -8,12 +8,6 @@
  * 목적: 프로젝트 전반에서 사용할 수 있는 통합 모달 컴포넌트입니다.
  *       메시지 코드를 사용하여 메시지와 버튼을 자동으로 구성합니다.
  *
- * 주요 기능:
- * - 메시지 코드 기반 모달 (A_M 코드 사용)
- * - 버튼이 하나일 때와 두 개일 때 자동 처리
- * - 스크롤바 너비 고려한 레이아웃 유지
- * - ESC 키, 오버레이 클릭으로 닫기
- *
  */
 
 "use client";
@@ -70,8 +64,7 @@ export default function BaseModal({
   close_on_escape = true,
   button_variant = "pink",
 }: BaseModalProps) {
-  const buttons =
-    prop_buttons && prop_buttons.length > 0 ? prop_buttons : ["닫기"];
+  const buttons = prop_buttons && prop_buttons.length > 0 ? prop_buttons : ["닫기"];
   const has_two_buttons = buttons.length === 2;
   const is_column_layout = button_layout === "column";
   const should_confirm_first = is_column_layout && confirm_first;
@@ -119,29 +112,21 @@ export default function BaseModal({
 
   // 모달 타입에 따른 클래스명 결정
   const overlay_class =
-    type === "center"
-      ? styles.modal_overlay_center
-      : styles.modal_overlay_bottom;
+    type === "center" ? styles.modal_overlay_center : styles.modal_overlay_bottom;
   const container_class =
-    type === "center"
-      ? styles.modal_container_center
-      : styles.modal_container_bottom;
+    type === "center" ? styles.modal_container_center : styles.modal_container_bottom;
   const footer_class = is_column_layout
     ? `${styles.modal_footer} ${styles.modal_footer_column}`
     : styles.modal_footer;
-  
+
   // 확인 버튼 색상 클래스 결정
-  const confirm_button_class = button_variant === "red"
-    ? styles.modal_footer_button_confirm_red
-    : styles.modal_footer_button_confirm_pink;
+  const confirm_button_class =
+    button_variant === "red"
+      ? styles.modal_footer_button_confirm_red
+      : styles.modal_footer_button_confirm_pink;
 
   return (
-    <div
-      className={overlay_class}
-      onClick={handle_overlay_click}
-      role="dialog"
-      aria-modal="true"
-    >
+    <div className={overlay_class} onClick={handle_overlay_click} role="dialog" aria-modal="true">
       <div className={container_class} onClick={(e) => e.stopPropagation()}>
         {/* 모달 메시지 */}
         <div className={styles.modal_content}>
@@ -159,32 +144,20 @@ export default function BaseModal({
                 {should_confirm_first ? (
                   <>
                     {/* 두 개 버튼(세로): 확인(위), 취소(아래) */}
-                    <button
-                      onClick={handle_confirm}
-                      className={confirm_button_class}
-                    >
+                    <button onClick={handle_confirm} className={confirm_button_class}>
                       {buttons[1]}
                     </button>
-                    <button
-                      onClick={handle_cancel}
-                      className={styles.modal_footer_button_cancel}
-                    >
+                    <button onClick={handle_cancel} className={styles.modal_footer_button_cancel}>
                       {buttons[0]}
                     </button>
                   </>
                 ) : (
                   <>
                     {/* 두 개 버튼: 취소, 확인 */}
-                    <button
-                      onClick={handle_cancel}
-                      className={styles.modal_footer_button_cancel}
-                    >
+                    <button onClick={handle_cancel} className={styles.modal_footer_button_cancel}>
                       {buttons[0]}
                     </button>
-                    <button
-                      onClick={handle_confirm}
-                      className={confirm_button_class}
-                    >
+                    <button onClick={handle_confirm} className={confirm_button_class}>
                       {buttons[1]}
                     </button>
                   </>

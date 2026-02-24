@@ -7,7 +7,7 @@
  *
  * 목적: 네이버블로그 채널 신청자/선정자 정보를 표시하는 통합 카드 컴포넌트
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /partner/campaign_application/delivery (배송형 캠페인 신청/선정자 목록)
  *
  * 통합된 기능:
@@ -80,11 +80,7 @@ export default function NaverBlogCard({
         variant === "selected" && applicant.userType === "인플루언서"
           ? baseStyles.selected_card_influencer
           : ""
-      } ${
-        applicant.selectionStatus === "이용제한 계정"
-          ? baseStyles.restricted_card
-          : ""
-      }`}
+      } ${applicant.selectionStatus === "이용제한 계정" ? baseStyles.restricted_card : ""}`}
     >
       {/* 프로필 영역: 프로필 이미지, 닉네임, 사용자 타입 */}
       <div className={contentStyles.profile_section}>
@@ -102,9 +98,7 @@ export default function NaverBlogCard({
           {/* 닉네임 표시 */}
           <span
             className={`${contentStyles.nickname} ${
-              applicant.userType === "인플루언서"
-                ? contentStyles.influencer_nickname
-                : ""
+              applicant.userType === "인플루언서" ? contentStyles.influencer_nickname : ""
             }`}
           >
             {applicant.nickname}
@@ -115,11 +109,7 @@ export default function NaverBlogCard({
       {/* 채널 정보 영역: 채널 아이콘, 신청자 ID */}
       <div className={contentStyles.channel_section}>
         {/* 채널이미지 로고 */}
-        <img
-          src={channel_icon_src}
-          alt="채널"
-          className={contentStyles.channel_icon}
-        />
+        <img src={channel_icon_src} alt="채널" className={contentStyles.channel_icon} />
         {/* 신청자 아이디 표시 - 클릭 시 해당 채널로 이동 */}
         <a
           href={getChannelUrl(applicant.channel, applicant.Id)}
@@ -151,9 +141,7 @@ export default function NaverBlogCard({
         <div className={contentStyles.stat_item}>
           <span className={contentStyles.stat_label}>일방문</span>
           <span className={contentStyles.stat_value}>
-            {applicant.dailyVisits
-              ? applicant.dailyVisits.toLocaleString()
-              : "0"}
+            {applicant.dailyVisits ? applicant.dailyVisits.toLocaleString() : "0"}
           </span>
         </div>
 
@@ -161,9 +149,7 @@ export default function NaverBlogCard({
         <div className={contentStyles.stat_item}>
           <span className={contentStyles.stat_label}>총방문</span>
           <span className={contentStyles.stat_value}>
-            {applicant.totalVisits
-              ? applicant.totalVisits.toLocaleString()
-              : "0"}
+            {applicant.totalVisits ? applicant.totalVisits.toLocaleString() : "0"}
           </span>
         </div>
 
@@ -179,9 +165,7 @@ export default function NaverBlogCard({
       {/* 메모 영역 */}
       <div className={contentStyles.memo_section}>
         <div className={contentStyles.memo_text}>
-          {applicant.memo && applicant.memo.trim() !== ""
-            ? applicant.memo
-            : "메모 미작성"}
+          {applicant.memo && applicant.memo.trim() !== "" ? applicant.memo : "메모 미작성"}
         </div>
         {/* 선정된 카드일 때만 메모 구분선 표시 */}
         {variant === "selected" && <div className={contentStyles.memo_divider}></div>}

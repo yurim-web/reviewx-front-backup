@@ -11,19 +11,15 @@
  * - /partner/campaign_application/create (캠페인 생성 페이지)
  * - /partner/campaign_application/edit (캠페인 수정 페이지)
  *
- * 주요 기능:
- * - 5가지 캠페인 유형 중 하나 선택 (배송형, 방문형, 구매평, 기자단, 미션형)
- * - 현재 선택된 유형 하이라이트
- * - 수정 모드에서 비활성화 가능
  */
 
-'use client';
+"use client";
 
-import type { CampaignType } from '@/types/domain/user';
-import { campaign_types } from '../constants/constants';
+import type { CampaignType } from "@/types/domain/user";
+import { campaign_types } from "../constants/constants";
 // CSS 모듈 import
-import header_styles from '@/styles/partner/campaign_create/campaign_header.module.css';
-import info_styles from '@/styles/partner/campaign_create/campaign_info.module.css';
+import header_styles from "@/styles/partner/campaign_create/campaign_header.module.css";
+import info_styles from "@/styles/partner/campaign_create/campaign_info.module.css";
 
 /**
  * 캠페인 유형 선택 컴포넌트 Props
@@ -63,8 +59,8 @@ export function CampaignTypeSelector({
             key={type}
             type="button"
             className={`${header_styles.campaign_type_button} ${
-              currentType === type ? header_styles.active : ''
-            } ${disabled ? header_styles.disabled_button : ''}`}
+              currentType === type ? header_styles.active : ""
+            } ${disabled ? header_styles.disabled_button : ""}`}
             onClick={disabled ? undefined : () => onTypeChange(type)}
             disabled={disabled}
           >

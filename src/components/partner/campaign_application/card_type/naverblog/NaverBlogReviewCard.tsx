@@ -7,7 +7,7 @@
  *
  * 목적: 콘텐츠 검수가 필요한 신청자의 정보를 표시하는 카드 컴포넌트입니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /partner/campaign_application/delivery (배송형 캠페인 검수 대기 목록)
  *
  * 검수카드 특징:
@@ -119,9 +119,7 @@ export default function NaverBlogReviewCard({
       </button>
 
       {/* 등록일 정보 표시 */}
-      <div className={actionStyles.registration_info}>
-        {applicant.registrationDate} 등록
-      </div>
+      <div className={actionStyles.registration_info}>{applicant.registrationDate} 등록</div>
 
       {/* 액션 버튼 영역: 콘텐츠 확인하기, 승인/반려 */}
       <div className={actionStyles.action_button_section}>

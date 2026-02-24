@@ -11,18 +11,12 @@
  * - /partner/campaign_application/create (캠페인 생성 페이지)
  * - /partner/campaign_application/edit (캠페인 수정 페이지)
  *
- * 주요 기능:
- * - 클릭 시 옵션 리스트 표시/숨김
- * - 옵션 선택 시 드롭다운 자동 닫기
- * - 외부 클릭 시 드롭다운 닫기
- * - 화면 하단에 공간이 부족하면 위쪽으로 열림
- * - 키보드 접근성 지원 (aria 속성)
  */
 
-'use client';
+"use client";
 
-import { useState, useRef, useEffect } from 'react';
-import dropdown_styles from '@/styles/partner/campaign_create/custom_dropdown.module.css';
+import { useState, useRef, useEffect } from "react";
+import dropdown_styles from "@/styles/partner/campaign_create/custom_dropdown.module.css";
 
 /**
  * 커스텀 드롭다운 컴포넌트 Props
@@ -54,7 +48,7 @@ export function CustomDropdown({
   value,
   options,
   onChange,
-  placeholder = '선택하세요',
+  placeholder = "선택하세요",
   disabled = false,
 }: CustomDropdownProps) {
   // 드롭다운 열림/닫힘 상태 관리
@@ -118,9 +112,9 @@ export function CustomDropdown({
       if (!is_open_upward) {
         setTimeout(() => {
           dropdown_ref.current?.scrollIntoView({
-            behavior: 'smooth',
-            block: 'nearest',
-            inline: 'nearest',
+            behavior: "smooth",
+            block: "nearest",
+            inline: "nearest",
           });
         }, 100);
       }
@@ -163,23 +157,20 @@ export function CustomDropdown({
    */
   useEffect(() => {
     const handle_click_outside = (event: MouseEvent) => {
-      if (
-        dropdown_ref.current &&
-        !dropdown_ref.current.contains(event.target as Node)
-      ) {
+      if (dropdown_ref.current && !dropdown_ref.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
 
     // 드롭다운이 열려있을 때만 이벤트 리스너 추가
     if (is_open) {
-      document.addEventListener('mousedown', handle_click_outside);
+      document.addEventListener("mousedown", handle_click_outside);
     }
 
     // 클린업 함수: 컴포넌트 언마운트 시 이벤트 리스너 제거
     // 설명: 메모리 누수를 방지하기 위해 반드시 이벤트 리스너를 제거해야 합니다.
     return () => {
-      document.removeEventListener('mousedown', handle_click_outside);
+      document.removeEventListener("mousedown", handle_click_outside);
     };
   }, [is_open]);
 
@@ -189,8 +180,8 @@ export function CustomDropdown({
       <button
         type="button"
         className={`${dropdown_styles.dropdown_button} ${
-          is_open ? dropdown_styles.open : ''
-        } ${disabled ? dropdown_styles.disabled : ''}`}
+          is_open ? dropdown_styles.open : ""
+        } ${disabled ? dropdown_styles.disabled : ""}`}
         onClick={toggle_dropdown}
         aria-expanded={is_open}
         aria-haspopup="listbox"
@@ -201,9 +192,7 @@ export function CustomDropdown({
         <img
           src="/images/icons/dropdown_arrow.svg"
           alt="드롭다운 화살표"
-          className={`${dropdown_styles.dropdown_arrow} ${
-            is_open ? dropdown_styles.rotated : ''
-          }`}
+          className={`${dropdown_styles.dropdown_arrow} ${is_open ? dropdown_styles.rotated : ""}`}
         />
       </button>
 
@@ -211,7 +200,7 @@ export function CustomDropdown({
       {is_open && (
         <div
           className={`${dropdown_styles.dropdown_options} ${
-            is_open_upward ? dropdown_styles.dropdown_options_upward : ''
+            is_open_upward ? dropdown_styles.dropdown_options_upward : ""
           }`}
           onWheel={handle_options_scroll}
         >
@@ -220,7 +209,7 @@ export function CustomDropdown({
               key={option}
               type="button"
               className={`${dropdown_styles.dropdown_option} ${
-                value === option ? dropdown_styles.selected : ''
+                value === option ? dropdown_styles.selected : ""
               }`}
               onClick={() => handle_option_select(option)}
               role="option"
