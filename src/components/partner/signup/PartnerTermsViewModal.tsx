@@ -1,14 +1,15 @@
 /* ========================================
    파트너 약관 보기 모달
-   ========================================
-   파트너 회원가입 페이지 동의 약관 "보기" 클릭 시 노출.
-   형태/스타일은 유저 약관 모달과 동일 (공통 셸 사용).
-
-   사용처:
-   - src/components/partner/signup/PartnerTermsAgreement.tsx (파트너 회원가입 약관 동의)
-   - src/app/partner/signup/page.tsx (파트너 회원가입 페이지)
-   - src/components/partner/signup/PartnerTermsAgreement.stories.tsx (스토리북)
    ======================================== */
+
+/**
+ * PartnerTermsViewModal
+ *
+ * 목적: 파트너 회원가입 시 동의 약관 내용을 모달로 표시합니다.
+ *
+ * 사용 페이지:
+ * - /partner/signup ("보기" 버튼 클릭 시)
+ */
 
 "use client";
 
@@ -59,9 +60,7 @@ function is_partner_advertising_heading(line: string): boolean {
   return line.trim() !== "" && PARTNER_ADVERTISING_HEADINGS.includes(line.trim());
 }
 
-function render_partner_content(
-  type: NonNullable<PartnerTermsViewModalType>,
-): ReactNode {
+function render_partner_content(type: NonNullable<PartnerTermsViewModalType>): ReactNode {
   if (type === "partner_service_terms") {
     return (
       <div className={modalStyles.terms_modal_body_inner}>
@@ -101,9 +100,7 @@ function render_partner_content(
   if (type === "partner_third_party") {
     return (
       <div className={modalStyles.terms_modal_body_inner}>
-        <p className={modalStyles.terms_modal_heading}>
-          정보 제공 대상 및 목적
-        </p>
+        <p className={modalStyles.terms_modal_heading}>정보 제공 대상 및 목적</p>
         {PARTNER_THIRD_PARTY_ITEMS.map((item, i) => (
           <Fragment key={i}>
             <p>제공받는 자: {item.recipient}</p>
@@ -143,9 +140,7 @@ function render_partner_content(
   if (type === "partner_marketing") {
     return (
       <div className={modalStyles.terms_modal_body_inner}>
-        <p className={modalStyles.terms_modal_heading}>
-          마케팅 정보 제공 목적
-        </p>
+        <p className={modalStyles.terms_modal_heading}>마케팅 정보 제공 목적</p>
         {PARTNER_MARKETING_CONTENT.purposes.map((text, i) => (
           <p key={i}>- {text}</p>
         ))}
