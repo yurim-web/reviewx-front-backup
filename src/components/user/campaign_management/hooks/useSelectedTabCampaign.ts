@@ -1,17 +1,14 @@
 /* ========================================
-   🎣 선정 탭 캠페인 데이터 훅
+   선정 탭 캠페인 데이터 훅
    ======================================== */
 
 /**
  * useSelectedTabCampaign
  *
- * 목적: 선정 탭 캠페인 카드에서 사용하는 캠페인 날짜 및 기간 관련 데이터를 계산하는 커스텀 훅
+ * 목적: 선정 탭 캠페인 카드에서 캠페인 날짜 및 기간 관련 데이터를 계산하는 커스텀 훅입니다.
  *
- * 반환값:
- * - getCampaignDates: 캠페인 날짜 정보 (선정일, 구매기간, 등록기간 등)
- * - daysSinceSelection: 선정일로부터 경과된 일수
- * - isPurchasePeriod: 구매평 캠페인의 현재 구매기간 여부
- * - daysUntilDeadline: 마감일까지 남은 일수
+ * 사용 페이지:
+ * - /user/campaign_management (캠페인 관리 > 선정 탭)
  */
 
 import { useMemo } from "react";
@@ -48,8 +45,7 @@ export function useSelectedTabCampaign(campaign: CampaignApplication) {
     }
 
     // 선정일 가져오기
-    const announcementDate =
-      actualCampaign.detailedSchedule.announcement?.trim() || null;
+    const announcementDate = actualCampaign.detailedSchedule.announcement?.trim() || null;
 
     // 구매평 캠페인: 구매기간과 등록기간 모두 확인
     let purchasePeriod: string | null = null;
@@ -113,9 +109,7 @@ export function useSelectedTabCampaign(campaign: CampaignApplication) {
     if (!getCampaignDates.announcementDate) return null;
 
     try {
-      const announcementDateStr = getCampaignDates.announcementDate
-        .split(" ")[0]
-        ?.trim();
+      const announcementDateStr = getCampaignDates.announcementDate.split(" ")[0]?.trim();
       if (!announcementDateStr) return null;
 
       const today = new Date();

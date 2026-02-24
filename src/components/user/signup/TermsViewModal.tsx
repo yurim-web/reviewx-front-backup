@@ -1,13 +1,15 @@
 /* ========================================
    약관 보기 모달
-   ========================================
-   회원가입 페이지 동의 약관 "보기" 클릭 시 노출.
-
-   사용처:
-   - src/components/user/signup/TermsAgreement.tsx (리뷰어 회원가입 약관 동의)
-   - src/app/user/signup/page.tsx (리뷰어 회원가입 페이지)
-   - src/components/user/signup/TermsAgreement.stories.tsx (스토리북)
    ======================================== */
+
+/**
+ * TermsViewModal
+ *
+ * 목적: 유저 회원가입 시 동의 약관 내용을 모달로 표시합니다.
+ *
+ * 사용 페이지:
+ * - /user/signup ("보기" 버튼 클릭 시)
+ */
 
 "use client";
 
@@ -54,11 +56,7 @@ function is_terms_heading(line: string): boolean {
   return TERMS_HEADING_STRINGS.includes(line.trim());
 }
 
-export default function TermsViewModal({
-  is_open,
-  on_close,
-  type,
-}: TermsViewModalProps) {
+export default function TermsViewModal({ is_open, on_close, type }: TermsViewModalProps) {
   if (!type) return null;
 
   const title = TITLES[type];
@@ -80,9 +78,7 @@ export default function TermsViewModal({
       </div>
     ) : type === "privacy" ? (
       <div className={modalStyles.terms_modal_body_inner}>
-        <p className={modalStyles.terms_modal_heading}>
-          정보 제공 대상 및 목적
-        </p>
+        <p className={modalStyles.terms_modal_heading}>정보 제공 대상 및 목적</p>
         {PRIVACY_THIRD_PARTY_ITEMS.map((item, i) => (
           <Fragment key={i}>
             <p>제공받는 자: {item.recipient}</p>
@@ -100,9 +96,7 @@ export default function TermsViewModal({
       </div>
     ) : (
       <div className={modalStyles.terms_modal_body_inner}>
-        <p className={modalStyles.terms_modal_heading}>
-          마케팅 정보 제공 목적
-        </p>
+        <p className={modalStyles.terms_modal_heading}>마케팅 정보 제공 목적</p>
         {MARKETING_CONTENT.purposes.map((text, i) => (
           <p key={i}>- {text}</p>
         ))}

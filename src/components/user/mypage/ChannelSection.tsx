@@ -1,41 +1,20 @@
 /* ========================================
-
-   📺 채널 섹션 컴포넌트
-
+   채널 섹션 컴포넌트
    ======================================== */
 
 /**
-
  * 채널 섹션 컴포넌트
-
  *
-
  * 목적: 마이페이지의 채널 탭에서 사용되는 채널 연결 관리 섹션입니다.
-
  *
-
  * 사용 페이지:
-
  * - /user/mypage (채널 탭)
-
- *
-
- * 주요 기능:
-
- * - 채널 목록 표시 (연결됨/연결 안됨 상태)
-
- * - 채널 연결 모달 열기
-
- * - 채널 정보 업데이트
-
- * - 채널별 아이콘 표시
-
  */
 
 "use client";
 
 import React, { useState } from "react";
-
+import { useModalState } from "@/hooks/useModalState";
 import ChannelConnectModal from "./ChannelConnectModal";
 
 import styles from "../../../styles/user/mypage/channel.module.css";
@@ -71,18 +50,15 @@ export default function ChannelSection({
   getChannelIcon: getChannelIconProp,
 }: ChannelSectionProps) {
   const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const channelModal = useModalState();
 
   const handleChannelClick = (channelName: string) => {
     setSelectedChannel(channelName);
-
-    setIsModalOpen(true);
+    channelModal.open();
   };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false);
-
+    channelModal.close();
     setSelectedChannel(null);
   };
 
@@ -122,11 +98,7 @@ export default function ChannelSection({
                 {channel.status === "connected" ? (
                   channel.url ? (
                     <a
-                      href={
-                        channel.url.startsWith("http")
-                          ? channel.url
-                          : `https://${channel.url}`
-                      }
+                      href={channel.url.startsWith("http") ? channel.url : `https://${channel.url}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className={styles.channel_url}
@@ -137,9 +109,7 @@ export default function ChannelSection({
                     <div className={styles.channel_url}>{channel.url}</div>
                   )
                 ) : (
-                  <div className={styles.channel_status}>
-                    계정을 연결해 주세요.
-                  </div>
+                  <div className={styles.channel_status}>계정을 연결해 주세요.</div>
                 )}
               </div>
 
@@ -153,11 +123,7 @@ export default function ChannelSection({
                       ? "/images/mypage/channel/channel_ok.svg"
                       : "/images/mypage/channel/channel_add.svg"
                   }
-                  alt={
-                    channel.status === "connected"
-                      ? "채널 연결됨"
-                      : "채널 연결하기"
-                  }
+                  alt={channel.status === "connected" ? "채널 연결됨" : "채널 연결하기"}
                 />
               </button>
             </div>
@@ -166,12 +132,10 @@ export default function ChannelSection({
       </div>
 
       <ChannelConnectModal
-        isOpen={isModalOpen}
+        isOpen={channelModal.isOpen}
         onClose={handleCloseModal}
         channelName={selectedChannel || ""}
-        channelIcon={
-          selectedChannel ? getChannelIcon(selectedChannel) : undefined
-        }
+        channelIcon={selectedChannel ? getChannelIcon(selectedChannel) : undefined}
         initialUrl={channels.find((ch) => ch.name === selectedChannel)?.url}
         onConnect={handleConnect}
       />

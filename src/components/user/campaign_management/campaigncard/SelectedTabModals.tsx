@@ -1,18 +1,14 @@
 /* ========================================
-   🪟 선정 탭 모달 컴포넌트
+   선정 탭 모달 컴포넌트
    ======================================== */
 
 /**
  * SelectedTabModals
  *
- * 목적: 선정 탭 캠페인 카드의 모든 모달을 렌더링하는 컴포넌트
+ * 목적: 선정 탭 캠페인 카드의 모든 모달을 캠페인 타입에 따라 렌더링하는 컴포넌트입니다.
  *
- * 설명:
- * - 캠페인 타입에 따라 다른 모달을 표시합니다.
- * - 배송형, 방문형, 기자단: ContentRegistrationModal (링크만)
- * - 미션형: contentType에 따라 ContentRegistrationModal, ImageUploadModal, CombinedContentModal
- * - 구매평: ReceiptRegistrationModal (구매기간) 또는 ImageUploadModal (등록기간)
- * - 등록 기한 연장 요청 모달: 모든 캠페인 공통
+ * 사용 페이지:
+ * - /user/campaign_management (캠페인 관리 > 선정 탭)
  */
 
 import type { CampaignApplication } from "@/types/domain/user";
@@ -22,10 +18,7 @@ import ReceiptRegistrationModal from "../modals/ReceiptRegistrationModal";
 import ContentRegistrationModal from "../modals/ContentRegistrationModal";
 import ImageUploadModal from "../modals/ImageUploadModal";
 import CombinedContentModal from "../modals/CombinedContentModal";
-import {
-  isContentTypeCampaign,
-  isMissionTypeCampaign,
-} from "../utils/selectedTabHelpers";
+import { isContentTypeCampaign, isMissionTypeCampaign } from "../utils/selectedTabHelpers";
 
 interface SelectedTabModalsProps {
   campaign: CampaignApplication;
@@ -125,11 +118,7 @@ export default function SelectedTabModals({
           onClose={onCloseContentModal}
           campaignTitle={campaign.title}
           mode={contentModalMode}
-          existingLink={
-            contentModalMode === "edit"
-              ? campaign.registeredContentLink || ""
-              : ""
-          }
+          existingLink={contentModalMode === "edit" ? campaign.registeredContentLink || "" : ""}
           campaignId={campaign.id}
           campaignType={campaign.type}
           onContentRegistered={onContentRegistered}
@@ -146,11 +135,7 @@ export default function SelectedTabModals({
               onClose={onCloseContentModal}
               campaignTitle={campaign.title}
               mode={contentModalMode}
-              existingLink={
-                contentModalMode === "edit"
-                  ? campaign.registeredContentLink || ""
-                  : ""
-              }
+              existingLink={contentModalMode === "edit" ? campaign.registeredContentLink || "" : ""}
               campaignId={campaign.id}
               campaignType={campaign.type}
               onContentRegistered={onContentRegistered}
@@ -165,9 +150,7 @@ export default function SelectedTabModals({
               campaignTitle={campaign.title}
               mode={contentModalMode}
               existingImages={
-                contentModalMode === "edit"
-                  ? campaign.registeredContentImages || []
-                  : []
+                contentModalMode === "edit" ? campaign.registeredContentImages || [] : []
               }
               campaignId={campaign.id}
               campaignType={campaign.type}
@@ -182,15 +165,9 @@ export default function SelectedTabModals({
               onClose={onCloseContentModal}
               campaignTitle={campaign.title}
               mode={contentModalMode}
-              existingLink={
-                contentModalMode === "edit"
-                  ? campaign.registeredContentLink || ""
-                  : ""
-              }
+              existingLink={contentModalMode === "edit" ? campaign.registeredContentLink || "" : ""}
               existingImages={
-                contentModalMode === "edit"
-                  ? campaign.registeredContentImages || []
-                  : []
+                contentModalMode === "edit" ? campaign.registeredContentImages || [] : []
               }
               campaignId={campaign.id}
               campaignType={campaign.type}
@@ -207,11 +184,7 @@ export default function SelectedTabModals({
           onClose={onCloseContentModal}
           campaignTitle={campaign.title}
           mode={contentModalMode}
-          existingImages={
-            contentModalMode === "edit"
-              ? campaign.registeredContentImages || []
-              : []
-          }
+          existingImages={contentModalMode === "edit" ? campaign.registeredContentImages || [] : []}
           campaignId={campaign.id}
           campaignType={campaign.type}
           onContentRegistered={onContentRegistered}
@@ -224,11 +197,7 @@ export default function SelectedTabModals({
         onClose={onCloseReceiptModal}
         campaignTitle={campaign.title}
         mode={receiptModalMode}
-        existingImages={
-          receiptModalMode === "edit"
-            ? campaign.registeredReceiptImages || []
-            : []
-        }
+        existingImages={receiptModalMode === "edit" ? campaign.registeredReceiptImages || [] : []}
       />
 
       {/* 등록 기간 마감 모달 */}

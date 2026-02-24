@@ -1,40 +1,14 @@
 /* ========================================
-   📋 선정 탭 캠페인 카드 컴포넌트
+   선정 탭 캠페인 카드 컴포넌트
    ======================================== */
 
 /**
- * 선정 탭 캠페인 카드 컴포넌트
+ * SelectedTabCard
  *
  * 목적: "선정" 탭에 표시되는 캠페인 카드를 렌더링합니다.
  *
- * 캠페인 유형별 경우의 수:
- *
- * 1. 배송형, 방문형, 기자단:
- *    - Type 1: 콘텐츠 등록 + 등록 기한 연장 요청 (2개 버튼)
- *      - 모달: ContentRegistrationModal.tsx(링크만)
- *    - Type 2: 콘텐츠 수정 + 등록 기한 연장 요청 (2개 버튼)
- *      - 모달: ContentRegistrationModal.tsx(링크만)
- *
- * 2. 미션형:
- *    - Type 1: 콘텐츠 등록 + 등록 기한 연장 요청 (2개 버튼)
- *      - contentType === "link": ContentRegistrationModal.tsx (링크만)
- *      - contentType === "image": ImageUploadModal.tsx (이미지만)
- *      - contentType === "both" 또는 undefined: CombinedContentModal.tsx (링크 + 이미지)
- *    - Type 2: 콘텐츠 수정 + 등록 기한 연장 요청 (2개 버튼)
- *      - contentType에 따라 동일한 모달이 수정 모드로 열림
- *
- * 3. 구매평:
- *    - 구매기간: 구매 영수증 등록/수정
- *      - Type 1: 구매 영수증 미등록 → "구매 영수증 등록" + "등록 기한 연장 요청" (2개 버튼)
- *        - 모달: ReceiptRegistrationModal.tsx(구매 영수증 이미지 업로드)
- *      - Type 2: 구매 영수증 등록 완료 → "구매 영수증 수정" + "등록 기한 연장 요청" (2개 버튼)
- *        - 모달: ReceiptRegistrationModal.tsx(구매 영수증 이미지 업로드, 수정 모드)
- *    - 등록기간: 콘텐츠 등록/수정
- *      - Type 1: 콘텐츠 미등록 → "콘텐츠 등록" + "등록 기한 연장 요청" (2개 버튼)
- *        - 모달: ImageUploadModal.tsx(이미지 업로드)
- *      - Type 2: 콘텐츠 등록 완료 → "콘텐츠 수정" + "등록 기한 연장 요청" (2개 버튼)
- *        - 모달: ImageUploadModal.tsx(이미지 업로드, 수정 모드)
- *
+ * 사용 페이지:
+ * - /user/campaign_management (캠페인 관리 > 선정 탭)
  */
 
 import { useMemo } from "react";
@@ -47,10 +21,7 @@ import cardStyles from "../../../../styles/user/campaign_management/campaign_car
 import buttonStyles from "../../../../styles/user/campaign_management/campaign_buttons.module.css";
 import { useSelectedTabCampaign } from "../hooks/useSelectedTabCampaign";
 import { useSelectedTabModals } from "../hooks/useSelectedTabModals";
-import {
-  getStatusText,
-  isContentRegistered,
-} from "../utils/selectedTabHelpers";
+import { getStatusText, isContentRegistered } from "../utils/selectedTabHelpers";
 import { addCompletedCampaignId } from "@/data/user/campaign_management/campaignManagementData";
 
 interface SelectedTabCardProps {
@@ -70,8 +41,7 @@ export default function SelectedTabCard({ campaign }: SelectedTabCardProps) {
   const router = useRouter();
 
   // 캠페인 날짜 및 기간 계산 훅
-  const { isPurchasePeriod, daysUntilDeadline } =
-    useSelectedTabCampaign(campaign);
+  const { isPurchasePeriod, daysUntilDeadline } = useSelectedTabCampaign(campaign);
 
   // 모달 상태 관리 훅
   const {
@@ -101,12 +71,7 @@ export default function SelectedTabCard({ campaign }: SelectedTabCardProps) {
   // 상태 텍스트 계산
   const statusText = useMemo(
     () =>
-      getStatusText(
-        campaign,
-        isContentRegistered(campaign),
-        isPurchasePeriod,
-        daysUntilDeadline
-      ),
+      getStatusText(campaign, isContentRegistered(campaign), isPurchasePeriod, daysUntilDeadline),
     [campaign, isPurchasePeriod, daysUntilDeadline]
   );
 

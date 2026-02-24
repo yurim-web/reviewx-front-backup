@@ -1,16 +1,14 @@
 /* ========================================
-   ⭐ 구매평 캠페인 안내사항 섹션 컴포넌트
+   구매평 캠페인 안내사항 섹션 컴포넌트
    ======================================== */
 
 /**
- * 구매평 캠페인 전용 가이드라인 섹션 컴포넌트
+ * DetailGuidelinesSectionReview
  *
- * 구성 요소:
- * - 제공내역
- * - 구매 링크 (복사 기능)
- * - 키워드 (복사 기능)
- * - 안내사항 (요구사항)
- * - 유의사항 (가이드라인 텍스트)
+ * 목적: 구매평 캠페인 상세 페이지의 안내사항 섹션을 렌더링합니다.
+ *
+ * 사용 페이지:
+ * - /user/campaign/[id] (구매평 캠페인 상세 > 안내사항 섹션)
  */
 
 "use client";
@@ -61,10 +59,7 @@ export default function DetailGuidelinesSectionReview({
           <div className={styles.label_box}>
             <div className={styles.label_keyword_box}>
               <span>구매 링크</span>
-              <button
-                className={styles.copy_tag_button}
-                onClick={onCopyPurchaseLink}
-              >
+              <button className={styles.copy_tag_button} onClick={onCopyPurchaseLink}>
                 복사
               </button>
             </div>
@@ -90,18 +85,13 @@ export default function DetailGuidelinesSectionReview({
           <div className={styles.label_box}>
             <div className={styles.label_keyword_box}>
               <span>키워드</span>
-              <button
-                className={styles.copy_tag_button}
-                onClick={onCopyKeyword}
-              >
+              <button className={styles.copy_tag_button} onClick={onCopyKeyword}>
                 복사
               </button>
             </div>
           </div>
           <div className={styles.content_box}>
-            <div className={styles.keyword_text_box}>
-              {keyword || "자유롭게 입력하세요."}
-            </div>
+            <div className={styles.keyword_text_box}>{keyword || "자유롭게 입력하세요."}</div>
           </div>
         </div>
       )}
@@ -114,9 +104,7 @@ export default function DetailGuidelinesSectionReview({
           <RequirementIcons requirements={requirements} />
 
           {/* 상세 가이드라인 */}
-          <div
-            className={`${styles.requirement_container} ${styles.important_note_container}`}
-          >
+          <div className={`${styles.requirement_container} ${styles.important_note_container}`}>
             {activeGuidelineTexts.map((text, index) => (
               <div
                 key={index}
@@ -133,10 +121,7 @@ export default function DetailGuidelinesSectionReview({
 
       {/* 참여 캠페인 추가 안내 (공정위 가이드, 캠페인 문의) */}
       {isParticipant && (
-        <SelectedCampaignInfo
-          onGoToGuide={onCopyPurchaseLink}
-          onCopyContact={onCopyKeyword}
-        />
+        <SelectedCampaignInfo onGoToGuide={onCopyPurchaseLink} onCopyContact={onCopyKeyword} />
       )}
     </article>
   );

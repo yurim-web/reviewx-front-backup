@@ -1,17 +1,14 @@
 /* ========================================
-   🎣 선정 탭 모달 상태 관리 훅
+   선정 탭 모달 상태 관리 훅
    ======================================== */
 
 /**
  * useSelectedTabModals
  *
- * 목적: 선정 탭 캠페인 카드에서 사용하는 모든 모달의 상태를 관리하는 커스텀 훅
+ * 목적: 선정 탭 캠페인 카드에서 사용하는 모든 모달의 상태와 핸들러를 관리하는 커스텀 훅입니다.
  *
- * 반환값:
- * - 모달 상태들 (isContentModalOpen, isReceiptModalOpen 등)
- * - 모달 모드들 (contentModalMode, receiptModalMode)
- * - 모달 핸들러들 (열기/닫기 함수들)
- * - 등록 기한 연장 요청 관련 상태 및 핸들러
+ * 사용 페이지:
+ * - /user/campaign_management (캠페인 관리 > 선정 탭)
  */
 
 import { useState, useCallback } from "react";
@@ -48,27 +45,20 @@ function incrementStoredExtensionCount(campaignId: string): number {
 
 export function useSelectedTabModals(campaign: CampaignApplication) {
   // 캠페인 날짜 및 기간 계산 (등록기간 마감 체크를 위해 필요)
-  const { daysUntilDeadline, isPurchasePeriod } =
-    useSelectedTabCampaign(campaign);
+  const { daysUntilDeadline, isPurchasePeriod } = useSelectedTabCampaign(campaign);
 
   // 콘텐츠 모달 상태 관리
   const [isContentModalOpen, setIsContentModalOpen] = useState(false);
-  const [contentModalMode, setContentModalMode] = useState<"register" | "edit">(
-    "register"
-  );
+  const [contentModalMode, setContentModalMode] = useState<"register" | "edit">("register");
 
   // 구매 영수증 모달 상태 관리
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
-  const [receiptModalMode, setReceiptModalMode] = useState<"register" | "edit">(
-    "register"
-  );
+  const [receiptModalMode, setReceiptModalMode] = useState<"register" | "edit">("register");
 
   // 등록 기한 연장 요청 모달 상태 관리
   const [isExtensionModalOpen, setIsExtensionModalOpen] = useState(false);
-  const [isExtensionLimitModalOpen, setIsExtensionLimitModalOpen] =
-    useState(false);
-  const [isExtensionSecondRequestModalOpen, setIsExtensionSecondRequestModalOpen] =
-    useState(false);
+  const [isExtensionLimitModalOpen, setIsExtensionLimitModalOpen] = useState(false);
+  const [isExtensionSecondRequestModalOpen, setIsExtensionSecondRequestModalOpen] = useState(false);
   const [extensionReason, setExtensionReason] = useState<string>("");
 
   // 등록기간 마감 모달 상태 관리
