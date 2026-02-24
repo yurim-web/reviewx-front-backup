@@ -26,10 +26,7 @@ import { useRouter, useParams } from "next/navigation";
 import Loading from "@/app/loading";
 import VisitCampaignForm from "@/components/partner/campaign_create_form/VisitCampaignForm";
 import { CampaignFormData } from "@/types/domain/user";
-import {
-  updateVisitCampaign,
-  visitCampaignsExtended,
-} from "@/data/campaign/visit/visitCampaigns";
+import { updateVisitCampaign, visitCampaignsExtended } from "@/data/campaign/visit/visitCampaigns";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import type { VisitCampaignDataExtended } from "@/data/campaign/visit/visitCampaigns";
@@ -39,203 +36,7 @@ import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import Toast from "@/components/common/toast/Toast";
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import checkboxStyles from "@/styles/partner/campaign_create/campaign_guide/checkboxes.module.css";
-import { parseRequirements } from "@/utils/partner/campaignEdit/parseRequirements";
-
-/**
- * 캠페인 데이터를 폼 데이터로 변환
- */
-function campaignToFormData(
-  campaign: CampaignWithApplicants,
-  originalData?: VisitCampaignDataExtended
-): CampaignFormData {
-  const info = campaign.campaignInfo;
-  const extended = originalData;
-
-  // 브랜드명을 플랫폼 이름으로 매핑
-  const brandNameToPlatform: Record<string, string> = {
-    네이버블로그: "네이버 블로그",
-    네이버클립: "네이버 클립",
-    인스타그램: "인스타그램",
-    릴스: "릴스",
-    유튜브: "유튜브",
-    쇼츠: "쇼츠",
-  };
-
-  const platformName =
-    extended?.channel || info.brandName
-      ? brandNameToPlatform[extended?.channel || info.brandName || ""] ||
-        "네이버 블로그"
-      : "네이버 블로그";
-
-  // requirements 파싱
-  const requirements = extended?.requirements || [];
-  const parsedRequirements = parseRequirements(requirements);
-
-  // guidelineTexts 배열을 하나의 문자열로 합치기
-  const guidelines = extended?.guidelineTexts?.join("\n\n") || "";
-
-  // 모집기간 형식 변환
-  const recruitmentPeriod = extended?.detailedSchedule
-    ? `${extended.detailedSchedule.applicationStart} ~ ${extended.detailedSchedule.applicationEnd}`
-    : info.recruitmentPeriod || "";
-
-  // 포인트를 콤마 형식으로 변환
-  const additionalPoints = extended?.points
-    ? extended.points.toLocaleString("ko-KR")
-    : "";
-
-  // 상세 이미지 URL 배열 변환
-  // campaign_detail_images 배열이 있으면 사용, 없으면 campaign_detail_image를 배열로 변환
-  const detailImageUrls = (extended?.campaign_detail_images && extended.campaign_detail_images.length > 0)
-    ? extended.campaign_detail_images
-    : extended?.campaign_detail_image 
-    ? [extended.campaign_detail_image]
-    : [];
-
-  /**
-   * 지역 정보 파싱 함수
-   *
-   * 설명:
-   * - 저장된 region 값이 "서울 > 강남/서초" 형식일 경우 파싱하여 분리합니다.
-   * - "서울" → "서울특별시" (regions 배열의 전체 이름)
-   * - "강남/서초" → 첫 번째 값인 "강남"을 사용하고 "강남구"로 변환 (sub_regions 배열의 값)
-   *
-   * 반환값:
-   * - { region: "서울특별시", subRegion: "강남구" } 형식의 객체
-   */
-  const parseRegionData = (
-    regionString: string
-  ): {
-    region: string;
-    subRegion: string;
-  } => {
-    // 이미 분리된 경우 (campaign.campaignInfo에 region과 subRegion이 별도로 있는 경우)
-    // 타입 단언 사용: 실제 데이터에는 region과 subRegion이 있지만 타입 정의에 없을 수 있음
-    const campaignInfoWithRegion = info as typeof info & {
-      region?: string;
-      subRegion?: string;
-    };
-
-    if (campaignInfoWithRegion.region && campaignInfoWithRegion.subRegion) {
-      return {
-        region: campaignInfoWithRegion.region,
-        subRegion: campaignInfoWithRegion.subRegion,
-      };
-    }
-
-    // "서울 > 강남/서초" 형식 파싱
-    if (regionString && regionString.includes(" > ")) {
-      const parts = regionString.split(" > ").map((s) => s.trim());
-      if (parts.length >= 2) {
-        const regionShort = parts[0]; // "서울"
-        const subRegionPart = parts[1]; // "강남/서초" 또는 "강남구"
-
-        // 시/도 이름을 전체 이름으로 변환 (regions 배열 형식)
-        const regionMapping: Record<string, string> = {
-          서울: "서울특별시",
-          인천: "인천광역시",
-          경기: "경기도",
-          강원: "강원특별자치도",
-          대전: "대전광역시",
-          세종: "세종특별자치시",
-          충북: "충청북도",
-          충남: "충청남도",
-          전북: "전라북도",
-          전남: "전라남도",
-          광주: "광주광역시",
-          대구: "대구광역시",
-          경북: "경상북도",
-          경남: "경상남도",
-          부산: "부산광역시",
-          울산: "울산광역시",
-          제주: "제주특별자치도",
-        };
-
-        const fullRegionName = regionMapping[regionShort] || regionShort;
-
-        // 시/구/군 처리 ("강남/서초" → "강남" 추출 후 "강남구"로 변환)
-        let subRegionName = "";
-        if (subRegionPart.includes("/")) {
-          // "강남/서초" 형식인 경우 첫 번째 값 사용
-          const firstSubRegion = subRegionPart.split("/")[0].trim(); // "강남"
-          // "강남"을 "강남구"로 변환 (이미 "구"가 있으면 그대로 사용)
-          subRegionName =
-            firstSubRegion.endsWith("구") ||
-            firstSubRegion.endsWith("시") ||
-            firstSubRegion.endsWith("군")
-              ? firstSubRegion
-              : `${firstSubRegion}구`;
-        } else {
-          // 이미 완전한 이름인 경우 ("강남구", "서초구" 등)
-          subRegionName = subRegionPart;
-        }
-
-        return {
-          region: fullRegionName,
-          subRegion: subRegionName,
-        };
-      }
-    }
-
-    // 파싱 실패 시 빈 값 반환
-    return {
-      region: "",
-      subRegion: "",
-    };
-  };
-
-  // 지역 정보 파싱
-  // 타입 단언 사용: 실제 데이터에는 region이 있지만 타입 정의에 없을 수 있음
-  const campaignInfoWithRegion = info as typeof info & {
-    region?: string;
-    subRegion?: string;
-  };
-
-  const regionData = parseRegionData(
-    extended?.region || campaignInfoWithRegion.region || ""
-  );
-
-  return {
-    campaignType: info.campaignType as "방문형",
-    platform: (platformName as string) || "네이버 블로그",
-    title: info.title || "",
-    category: extended?.subcategory || info.category || "기타",
-    region: regionData.region,
-    subRegion: regionData.subRegion,
-    brandName: extended?.brandName || extended?.channel || info.brandName || "",
-    providedItems: extended?.description || "",
-    visitLink: extended?.visitLink || "",
-    visitAddress: extended?.visitAddress || "",
-    addressDetail: extended?.addressGuide || "",
-    promotionLink: "",
-    currentPoints: "58,000",
-    additionalPoints: additionalPoints,
-    recruitmentCount: String(info.totalCount || ""),
-    recruitmentPeriod: recruitmentPeriod,
-    announcementDate:
-      extended?.detailedSchedule?.announcement || info.announcementDate || "",
-    registrationPeriod:
-      extended?.detailedSchedule?.purchasePeriod ||
-      info.registrationPeriod ||
-      "",
-    keywords: extended?.keyword || "",
-    adultOnly: extended?.adultOnly || false,
-    allowReParticipation: extended?.allowReParticipation || false,
-    allowLateSubmission: extended?.allowLateSubmission || false,
-    minTextLength: parsedRequirements.minTextLength,
-    minImageCount: parsedRequirements.minImageCount,
-    videoCount: parsedRequirements.videoCount,
-    videoDuration: parsedRequirements.videoDuration,
-    requireLinkAttachment: parsedRequirements.requireLinkAttachment,
-    requireKeywordAttachment: parsedRequirements.requireKeywordAttachment,
-    guidelines: guidelines,
-    contactPhone: extended?.contactPhone || (campaign as { contactPhone?: string })?.contactPhone || "010-0000-0000",
-    fairTradeAgreement: true,
-    isUrgent: extended?.isUrgent || false,
-    thumbnailImageUrl: extended?.image || info.image || "",
-    detailImagePreviews: detailImageUrls, // 상세 이미지 URL 배열
-  };
-}
+import { campaignToFormData } from "@/utils/partner/campaignEdit/campaignToFormData";
 
 export default function VisitCampaignEditPage() {
   const router = useRouter();
@@ -302,20 +103,15 @@ export default function VisitCampaignEditPage() {
       }
 
       // 원본 확장 데이터 찾기
-      const originalData = visitCampaignsExtended.find(
-        (c) => c.id === campaignId
-      );
+      const originalData = visitCampaignsExtended.find((c) => c.id === campaignId);
 
       // localStorage에서 저장된 캠페인 확인
       let storedOriginalData: VisitCampaignDataExtended | undefined;
       if (typeof window !== "undefined") {
         const storedCampaigns = localStorage.getItem("visitCampaigns");
         if (storedCampaigns) {
-          const campaigns: CampaignWithApplicants[] =
-            JSON.parse(storedCampaigns);
-          const storedCampaign = campaigns.find(
-            (c) => c.campaignInfo.id === campaignId
-          );
+          const campaigns: CampaignWithApplicants[] = JSON.parse(storedCampaigns);
+          const storedCampaign = campaigns.find((c) => c.campaignInfo.id === campaignId);
           if (storedCampaign) {
             storedOriginalData = originalData;
           }
@@ -331,9 +127,7 @@ export default function VisitCampaignEditPage() {
       setIsUrgent(dataToUse?.isUrgent || false);
 
       // 캠페인 오픈 여부 확인
-      const openStatus = isCampaignOpen(
-        campaign.campaignInfo.recruitmentPeriod
-      );
+      const openStatus = isCampaignOpen(campaign.campaignInfo.recruitmentPeriod);
       setIsOpen(openStatus);
 
       setIsLoading(false);
@@ -364,46 +158,42 @@ export default function VisitCampaignEditPage() {
         }
       }
 
-      const updatedCampaign = updateVisitCampaign(
-        campaignId,
-        finalFormData,
-        imageUrl
-      );
+      const updatedCampaign = updateVisitCampaign(campaignId, finalFormData, imageUrl);
 
       // 원본 확장 데이터에서 상세 이미지 등 확장 필드 가져오기
-      const originalData = visitCampaignsExtended.find(
-        (c) => c.id === campaignId
-      );
-      
+      const originalData = visitCampaignsExtended.find((c) => c.id === campaignId);
+
       // 상세 이미지 URL 배열 변환
-      const detailImageUrls = (formData.detailImagePreviews && formData.detailImagePreviews.length > 0)
-        ? formData.detailImagePreviews
-        : originalData?.campaign_detail_images && originalData.campaign_detail_images.length > 0
-        ? originalData.campaign_detail_images
-        : originalData?.campaign_detail_image
-        ? [originalData.campaign_detail_image]
-        : [];
+      const detailImageUrls =
+        formData.detailImagePreviews && formData.detailImagePreviews.length > 0
+          ? formData.detailImagePreviews
+          : originalData?.campaign_detail_images && originalData.campaign_detail_images.length > 0
+            ? originalData.campaign_detail_images
+            : originalData?.campaign_detail_image
+              ? [originalData.campaign_detail_image]
+              : [];
 
       const storedCampaigns = localStorage.getItem("visitCampaigns");
       if (storedCampaigns) {
         const campaigns: CampaignWithApplicants[] = JSON.parse(storedCampaigns);
-        const index = campaigns.findIndex(
-          (c) => c.campaignInfo.id === campaignId
-        );
+        const index = campaigns.findIndex((c) => c.campaignInfo.id === campaignId);
         if (index !== -1) {
           // 기존 캠페인 업데이트 (확장 데이터 병합)
           const existingCampaign = campaigns[index];
           campaigns[index] = {
             ...updatedCampaign,
-            applicantData: updatedCampaign.applicantData || existingCampaign.applicantData || {
-              applicants: [],
-              selectedApplicants: []
-            },
+            applicantData: updatedCampaign.applicantData ||
+              existingCampaign.applicantData || {
+                applicants: [],
+                selectedApplicants: [],
+              },
             // 확장 데이터 병합
             campaign_detail_images: detailImageUrls,
             campaign_detail_image: detailImageUrls[0] || originalData?.campaign_detail_image || "",
             isUrgent: isUrgent,
-            registeredAt: originalData?.registeredAt || (existingCampaign as Record<string, unknown>).registeredAt as string | undefined,
+            registeredAt:
+              originalData?.registeredAt ||
+              ((existingCampaign as Record<string, unknown>).registeredAt as string | undefined),
             description: formData.providedItems || originalData?.description || "",
             visitLink: formData.visitLink || originalData?.visitLink || "",
             visitAddress: formData.visitAddress || originalData?.visitAddress || "",
@@ -412,10 +202,15 @@ export default function VisitCampaignEditPage() {
             subcategory: formData.category || originalData?.subcategory || "",
             channel: originalData?.channel || "",
             region: formData.region || originalData?.region || "",
-            points: Number(String(formData.additionalPoints || "").replace(/,/g, "")) || originalData?.points || 0,
+            points:
+              Number(String(formData.additionalPoints || "").replace(/,/g, "")) ||
+              originalData?.points ||
+              0,
             adultOnly: formData.adultOnly ?? originalData?.adultOnly ?? false,
-            allowReParticipation: formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,
-            allowLateSubmission: formData.allowLateSubmission ?? originalData?.allowLateSubmission ?? false,
+            allowReParticipation:
+              formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,
+            allowLateSubmission:
+              formData.allowLateSubmission ?? originalData?.allowLateSubmission ?? false,
             contactPhone: formData.contactPhone || originalData?.contactPhone || "",
             detailedSchedule: originalData?.detailedSchedule || {
               applicationStart: formData.recruitmentPeriod.split("~")[0]?.trim() || "",
@@ -425,7 +220,9 @@ export default function VisitCampaignEditPage() {
               registrationPeriod: formData.registrationPeriod || "",
             },
             requirements: originalData?.requirements || [],
-            guidelineTexts: formData.guidelines ? formData.guidelines.split("\n\n") : (originalData?.guidelineTexts || []),
+            guidelineTexts: formData.guidelines
+              ? formData.guidelines.split("\n\n")
+              : originalData?.guidelineTexts || [],
           } as unknown as CampaignWithApplicants;
           localStorage.setItem("visitCampaigns", JSON.stringify(campaigns));
         } else {
@@ -433,7 +230,7 @@ export default function VisitCampaignEditPage() {
             ...updatedCampaign,
             applicantData: updatedCampaign.applicantData || {
               applicants: [],
-              selectedApplicants: []
+              selectedApplicants: [],
             },
             campaign_detail_images: detailImageUrls,
             campaign_detail_image: detailImageUrls[0] || originalData?.campaign_detail_image || "",
@@ -447,10 +244,15 @@ export default function VisitCampaignEditPage() {
             subcategory: formData.category || originalData?.subcategory || "",
             channel: originalData?.channel || "",
             region: formData.region || originalData?.region || "",
-            points: Number(String(formData.additionalPoints || "").replace(/,/g, "")) || originalData?.points || 0,
+            points:
+              Number(String(formData.additionalPoints || "").replace(/,/g, "")) ||
+              originalData?.points ||
+              0,
             adultOnly: formData.adultOnly ?? originalData?.adultOnly ?? false,
-            allowReParticipation: formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,
-            allowLateSubmission: formData.allowLateSubmission ?? originalData?.allowLateSubmission ?? false,
+            allowReParticipation:
+              formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,
+            allowLateSubmission:
+              formData.allowLateSubmission ?? originalData?.allowLateSubmission ?? false,
             contactPhone: formData.contactPhone || originalData?.contactPhone || "",
             detailedSchedule: originalData?.detailedSchedule || {
               applicationStart: formData.recruitmentPeriod.split("~")[0]?.trim() || "",
@@ -460,46 +262,58 @@ export default function VisitCampaignEditPage() {
               registrationPeriod: formData.registrationPeriod || "",
             },
             requirements: originalData?.requirements || [],
-            guidelineTexts: formData.guidelines ? formData.guidelines.split("\n\n") : (originalData?.guidelineTexts || []),
+            guidelineTexts: formData.guidelines
+              ? formData.guidelines.split("\n\n")
+              : originalData?.guidelineTexts || [],
           } as unknown as CampaignWithApplicants);
           localStorage.setItem("visitCampaigns", JSON.stringify(campaigns));
         }
       } else {
         localStorage.setItem(
           "visitCampaigns",
-          JSON.stringify([{
-            ...updatedCampaign,
-            applicantData: updatedCampaign.applicantData || {
-              applicants: [],
-              selectedApplicants: []
-            },
-            campaign_detail_images: detailImageUrls,
-            campaign_detail_image: detailImageUrls[0] || originalData?.campaign_detail_image || "",
-            isUrgent: isUrgent,
-            registeredAt: originalData?.registeredAt,
-            description: formData.providedItems || originalData?.description || "",
-            visitLink: formData.visitLink || originalData?.visitLink || "",
-            visitAddress: formData.visitAddress || originalData?.visitAddress || "",
-            addressGuide: formData.addressDetail || originalData?.addressGuide || "",
-            keyword: formData.keywords || originalData?.keyword || "",
-            subcategory: formData.category || originalData?.subcategory || "",
-            channel: originalData?.channel || "",
-            region: formData.region || originalData?.region || "",
-            points: Number(String(formData.additionalPoints || "").replace(/,/g, "")) || originalData?.points || 0,
-            adultOnly: formData.adultOnly ?? originalData?.adultOnly ?? false,
-            allowReParticipation: formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,
-            allowLateSubmission: formData.allowLateSubmission ?? originalData?.allowLateSubmission ?? false,
-            contactPhone: formData.contactPhone || originalData?.contactPhone || "",
-            detailedSchedule: originalData?.detailedSchedule || {
-              applicationStart: formData.recruitmentPeriod.split("~")[0]?.trim() || "",
-              applicationEnd: formData.recruitmentPeriod.split("~")[1]?.trim() || "",
-              announcement: formData.announcementDate || "",
-              purchasePeriod: "",
-              registrationPeriod: formData.registrationPeriod || "",
-            },
-            requirements: originalData?.requirements || [],
-            guidelineTexts: formData.guidelines ? formData.guidelines.split("\n\n") : (originalData?.guidelineTexts || []),
-          } as unknown as CampaignWithApplicants])
+          JSON.stringify([
+            {
+              ...updatedCampaign,
+              applicantData: updatedCampaign.applicantData || {
+                applicants: [],
+                selectedApplicants: [],
+              },
+              campaign_detail_images: detailImageUrls,
+              campaign_detail_image:
+                detailImageUrls[0] || originalData?.campaign_detail_image || "",
+              isUrgent: isUrgent,
+              registeredAt: originalData?.registeredAt,
+              description: formData.providedItems || originalData?.description || "",
+              visitLink: formData.visitLink || originalData?.visitLink || "",
+              visitAddress: formData.visitAddress || originalData?.visitAddress || "",
+              addressGuide: formData.addressDetail || originalData?.addressGuide || "",
+              keyword: formData.keywords || originalData?.keyword || "",
+              subcategory: formData.category || originalData?.subcategory || "",
+              channel: originalData?.channel || "",
+              region: formData.region || originalData?.region || "",
+              points:
+                Number(String(formData.additionalPoints || "").replace(/,/g, "")) ||
+                originalData?.points ||
+                0,
+              adultOnly: formData.adultOnly ?? originalData?.adultOnly ?? false,
+              allowReParticipation:
+                formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,
+              allowLateSubmission:
+                formData.allowLateSubmission ?? originalData?.allowLateSubmission ?? false,
+              contactPhone: formData.contactPhone || originalData?.contactPhone || "",
+              detailedSchedule: originalData?.detailedSchedule || {
+                applicationStart: formData.recruitmentPeriod.split("~")[0]?.trim() || "",
+                applicationEnd: formData.recruitmentPeriod.split("~")[1]?.trim() || "",
+                announcement: formData.announcementDate || "",
+                purchasePeriod: "",
+                registrationPeriod: formData.registrationPeriod || "",
+              },
+              requirements: originalData?.requirements || [],
+              guidelineTexts: formData.guidelines
+                ? formData.guidelines.split("\n\n")
+                : originalData?.guidelineTexts || [],
+            } as unknown as CampaignWithApplicants,
+          ])
         );
       }
 
@@ -546,12 +360,7 @@ export default function VisitCampaignEditPage() {
           onClick={() => router.back()}
           aria-label="뒤로가기"
         >
-          <img
-            src="/images/header/header_arrow_back.svg"
-            alt="뒤로가기"
-            width={16}
-            height={16}
-          />
+          <img src="/images/header/header_arrow_back.svg" alt="뒤로가기" width={16} height={16} />
         </button>
 
         <h1 className={headerStyles.page_title}>캠페인 수정</h1>
