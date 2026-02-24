@@ -7,22 +7,13 @@
  *
  * 목적: 방문형 캠페인 등록을 위한 전용 폼 컴포넌트
  *
- * 주요 기능:
- * - 방문형 캠페인 기본 정보 입력
- * - 썸네일/상세 이미지 업로드
- * - 방문형 캠페인 상세 정보 입력 (지역, 방문 주소 등)
- * - 참여/제출 옵션 설정
- * - 안내 사항 및 유의 사항
  */
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import {
-  CampaignFormData,
-  CampaignCreateFormBaseProps,
-} from "@/types/domain/user";
+import { CampaignFormData, CampaignCreateFormBaseProps } from "@/types/domain/user";
 // 분리된 CSS 모듈들 import
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
 import buttonStyles from "@/styles/partner/campaign_create/campaign_guide/submit_buttons.module.css";
@@ -31,12 +22,7 @@ import styles from "@/styles/partner/campaign_create/campaign_create.module.css"
 // 공통 컴포넌트들 import
 import { CampaignTypeSelector } from "./common/selectors/CampaignTypeSelector";
 import { CustomDropdown } from "./common/selectors/CustomDropdown";
-import {
-  platforms,
-  categories,
-  regions,
-  sub_regions,
-} from "./common/constants/constants";
+import { platforms, categories, regions, sub_regions } from "./common/constants/constants";
 import NoticeSection from "./common/sections/NoticeSection";
 import { ThumbnailAndDetailImages } from "./common/images/ThumbnailAndDetailImages";
 import { PointsManagementSection } from "./common/sections/PointsManagementSection";
@@ -56,10 +42,7 @@ import { useCampaignForm } from "@/hooks/partner/campaign_create_form/useCampaig
 import { useCampaignFormValidation } from "@/hooks/partner/campaign_create_form/useCampaignFormValidation";
 import { useCampaignFormStorage } from "@/hooks/partner/campaign_create_form/useCampaignFormStorage";
 
-interface VisitCampaignFormProps extends Omit<
-  CampaignCreateFormBaseProps,
-  "campaignType"
-> {
+interface VisitCampaignFormProps extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
   /** 캠페인 수정 시 초기 데이터 (선택사항) */
   initialData?: CampaignFormData | null;
   /** 폼 동작 모드: 생성/수정 */
@@ -137,25 +120,24 @@ export default function VisitCampaignForm({
   });
 
   // localStorage 관리 훅
-  const { handleChargeClick, handleSaveConfirm, handleLoadConfirm } =
-    useCampaignFormStorage({
-      campaignType: "방문형",
-      formData,
-      setFormData,
-      initialData,
-      isEditMode,
-      setLoadConfirmModal,
-      setToast,
-      onUrgentLoad,
-      setIsLoadDisabled,
-      isSubmitting,
-      thumbnailPreview,
-      detailPreviews,
-      setThumbnailPreview,
-      setDetailPreviews,
-      checkboxStates,
-      updateCheckboxState,
-    });
+  const { handleChargeClick, handleSaveConfirm, handleLoadConfirm } = useCampaignFormStorage({
+    campaignType: "방문형",
+    formData,
+    setFormData,
+    initialData,
+    isEditMode,
+    setLoadConfirmModal,
+    setToast,
+    onUrgentLoad,
+    setIsLoadDisabled,
+    isSubmitting,
+    thumbnailPreview,
+    detailPreviews,
+    setThumbnailPreview,
+    setDetailPreviews,
+    checkboxStates,
+    updateCheckboxState,
+  });
 
   /**
    * 우편번호 찾기 버튼 클릭 처리
@@ -217,8 +199,7 @@ export default function VisitCampaignForm({
     };
 
     return (
-      regionMapping[regionName] ||
-      regionName.replace(/특별시|광역시|특별자치시|도|특별자치도/g, "")
+      regionMapping[regionName] || regionName.replace(/특별시|광역시|특별자치시|도|특별자치도/g, "")
     );
   };
 
@@ -401,16 +382,9 @@ export default function VisitCampaignForm({
                 </label>
                 <CustomDropdown
                   value={formData.subRegion || ""}
-                  options={
-                    formData.region
-                      ? sub_regions[getRegionKey(formData.region)] || []
-                      : []
-                  }
+                  options={formData.region ? sub_regions[getRegionKey(formData.region)] || [] : []}
                   onChange={(value) => updateFormData("subRegion", value)}
-                  disabled={
-                    !formData.region ||
-                    (isEditMode && !isEditableField("region"))
-                  }
+                  disabled={!formData.region || (isEditMode && !isEditableField("region"))}
                   placeholder={subRegionPlaceholder}
                 />
               </div>
@@ -475,9 +449,7 @@ export default function VisitCampaignForm({
               id="visit_base_address"
               className={`${infoStyles.form_input} ${infoStyles.visit_address_row} ${isEditMode && !isEditableField("visitAddress") ? infoStyles.read_only_input : ""}`}
               value={formData.visitBaseAddress ?? ""}
-              onChange={(e) =>
-                updateFormData("visitBaseAddress", e.target.value)
-              }
+              onChange={(e) => updateFormData("visitBaseAddress", e.target.value)}
               placeholder="기본 주소"
               readOnly={isEditMode && !isEditableField("visitAddress")}
             />
@@ -486,9 +458,7 @@ export default function VisitCampaignForm({
               id="visit_detail_address"
               className={`${infoStyles.form_input} ${infoStyles.visit_address_row} ${isEditMode && !isEditableField("visitAddress") ? infoStyles.read_only_input : ""}`}
               value={formData.visitDetailAddress ?? ""}
-              onChange={(e) =>
-                updateFormData("visitDetailAddress", e.target.value)
-              }
+              onChange={(e) => updateFormData("visitDetailAddress", e.target.value)}
               placeholder="상세 주소"
               readOnly={isEditMode && !isEditableField("visitAddress")}
             />
@@ -531,9 +501,7 @@ export default function VisitCampaignForm({
                   type="number"
                   className={`${infoStyles.form_input} ${isEditMode && !isEditableField("recruitmentCount") ? infoStyles.read_only_input : ""}`}
                   value={formData.recruitmentCount}
-                  onChange={(e) =>
-                    updateFormData("recruitmentCount", e.target.value)
-                  }
+                  onChange={(e) => updateFormData("recruitmentCount", e.target.value)}
                   placeholder="0"
                   min="0"
                   readOnly={isEditMode && !isEditableField("recruitmentCount")}
@@ -548,9 +516,7 @@ export default function VisitCampaignForm({
             currentPoints={formData.currentPoints}
             additionalPoints={formData.additionalPoints}
             deductedPoints={deductedPoints}
-            onAdditionalPointsChange={(value) =>
-              updateFormData("additionalPoints", value)
-            }
+            onAdditionalPointsChange={(value) => updateFormData("additionalPoints", value)}
             onChargeClick={handleChargeClick}
             isEditMode={isEditMode}
             isEditable={isEditableField("additionalPoints")}
@@ -563,18 +529,10 @@ export default function VisitCampaignForm({
             recruitmentPeriod={formData.recruitmentPeriod}
             announcementDate={formData.announcementDate}
             registrationPeriod={formData.registrationPeriod}
-            onRecruitmentCountChange={(value) =>
-              updateFormData("recruitmentCount", value)
-            }
-            onRecruitmentPeriodChange={(value) =>
-              updateFormData("recruitmentPeriod", value)
-            }
-            onAnnouncementDateChange={(value) =>
-              updateFormData("announcementDate", value)
-            }
-            onRegistrationPeriodChange={(value) =>
-              updateFormData("registrationPeriod", value)
-            }
+            onRecruitmentCountChange={(value) => updateFormData("recruitmentCount", value)}
+            onRecruitmentPeriodChange={(value) => updateFormData("recruitmentPeriod", value)}
+            onAnnouncementDateChange={(value) => updateFormData("announcementDate", value)}
+            onRegistrationPeriodChange={(value) => updateFormData("registrationPeriod", value)}
             isEditMode={isEditMode}
             isEditableField={isEditableField}
             showRecruitmentCount={false}
@@ -631,12 +589,8 @@ export default function VisitCampaignForm({
               onNumericChange={handleNumericChangeWrapper}
               onNumericKeyDown={handleNumericInputWrapper}
               formatNumberWithComma={formatNumberWithComma}
-              onFieldClear={(field) =>
-                updateFormData(field as keyof CampaignFormData, "")
-              }
-              onAttachmentChange={(field, value) =>
-                updateFormData(field, value)
-              }
+              onFieldClear={(field) => updateFormData(field as keyof CampaignFormData, "")}
+              onAttachmentChange={(field, value) => updateFormData(field, value)}
               isEditMode={isEditMode}
               isEditableField={isEditableField}
               isOpen={isOpen}
@@ -649,12 +603,8 @@ export default function VisitCampaignForm({
             allowReParticipation={formData.allowReParticipation}
             allowLateSubmission={formData.allowLateSubmission}
             onAdultOnlyChange={(value) => updateFormData("adultOnly", value)}
-            onAllowReParticipationChange={(value) =>
-              updateFormData("allowReParticipation", value)
-            }
-            onAllowLateSubmissionChange={(value) =>
-              updateFormData("allowLateSubmission", value)
-            }
+            onAllowReParticipationChange={(value) => updateFormData("allowReParticipation", value)}
+            onAllowLateSubmissionChange={(value) => updateFormData("allowLateSubmission", value)}
             isEditMode={isEditMode}
             isEditableField={isEditableField}
           />
