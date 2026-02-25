@@ -76,7 +76,7 @@ interface UseTableSortReturn<T> {
  * });
  * ```
  */
-export function useTableSort<T extends Record<string, unknown>>({
+export function useTableSort<T extends object>({
   data,
   initial_column_key = undefined,
   initial_direction = "asc",

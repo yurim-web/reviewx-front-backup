@@ -39,9 +39,7 @@ function getAllCampaignsList(merged: MergedCampaigns): HomeCampaign[] {
 }
 
 export function useHomeCampaigns() {
-  const [mergedCampaigns, setMergedCampaigns] = useState<MergedCampaigns>(
-    getStaticCampaigns
-  );
+  const [mergedCampaigns, setMergedCampaigns] = useState<MergedCampaigns>(getStaticCampaigns);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -58,12 +56,10 @@ export function useHomeCampaigns() {
     const all = getAllCampaignsList(mergedCampaigns);
     const not_closed = all.filter((c) => isNotClosed(c, today));
     const low_applicant = not_closed.filter((c) => c.recruitment.current <= 100);
-    const sorted = [...low_applicant].sort(
-      (a, b) => a.recruitment.current - b.recruitment.current
-    );
+    const sorted = [...low_applicant].sort((a, b) => a.recruitment.current - b.recruitment.current);
     const very_low = sorted.filter((c) => c.recruitment.current <= 5);
     const other = sorted.filter((c) => c.recruitment.current > 5);
-    let selected = very_low.slice(0, HIGH_PROBABILITY_MAX);
+    const selected = very_low.slice(0, HIGH_PROBABILITY_MAX);
     if (selected.length < HIGH_PROBABILITY_MAX) {
       const selectedIds = new Set(selected.map((c) => c.id));
       for (const c of other) {
@@ -81,10 +77,7 @@ export function useHomeCampaigns() {
     const all = getAllCampaignsList(mergedCampaigns);
     const not_closed = all.filter((c) => isNotClosed(c, today));
     const high_participation = not_closed.filter((c) => {
-      const rate =
-        c.recruitment.total > 0
-          ? c.recruitment.current / c.recruitment.total
-          : 0;
+      const rate = c.recruitment.total > 0 ? c.recruitment.current / c.recruitment.total : 0;
       return rate >= 0.5;
     });
     const shuffled = shuffle_array(high_participation, SHUFFLE_SEED);
