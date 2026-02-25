@@ -12,9 +12,7 @@ import type { ReviewerType } from "@/data/manager_ga/member/reviewers";
 // 안정적인 래퍼 컴포넌트 (깜빡임 방지)
 const TypeFilterModalWrapper = (args: any) => {
   const [isOpen, setIsOpen] = useState(true);
-  const [selectedTypes, setSelectedTypes] = useState<ReviewerType[]>(
-    args.selected_types || []
-  );
+  const [selectedTypes, setSelectedTypes] = useState<ReviewerType[]>(args.selected_types || []);
 
   // args가 변경될 때 selectedTypes 업데이트
   useEffect(() => {
@@ -101,7 +99,7 @@ export const Default: Story = {
 export const WithSelectedTypes: Story = {
   render: TypeFilterModalWrapper,
   args: {
-    selected_types: ["서포터즈"],
+    selected_types: ["일반 회원"],
     on_apply: (types) => console.log("Types applied:", types),
   },
 };
