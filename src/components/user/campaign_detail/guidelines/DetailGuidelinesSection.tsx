@@ -11,62 +11,10 @@
  * - /user/campaign/[type]/[id] (캠페인 상세 페이지)
  */
 
+import Image from "next/image";
+import { getRequirementItems } from "../utils/requirementUtils";
 import AdditionalGuidelines from "../AdditionalGuidelines";
 import styles from "@/styles/user/campaign/campaign_detail/detail_guidelines_section.module.css";
-
-/**
- * 요구사항 항목 인터페이스
- * 각 캠페인 타입별로 다른 요구사항을 표시하기 위한 타입
- */
-interface RequirementItem {
-  icon: string; // 아이콘 이미지 경로
-  alt: string; // 아이콘 대체 텍스트
-  text: string; // 요구사항 텍스트
-}
-
-// 요구사항 코드 매핑 객체 (기본 5가지 종류)
-const requirementMapping: Record<
-  string,
-  { icon: string; alt: string; text: string }
-> = {
-  keyword: {
-    icon: "/images/campaign_detail/keyword_icon.svg",
-    alt: "키워드아이콘",
-    text: "키워드 삽입",
-  },
-  product_link: {
-    icon: "/images/campaign_detail/product_link_icon.svg",
-    alt: "제품링크아이콘",
-    text: "제품 링크 삽입",
-  },
-  text_1500: {
-    icon: "/images/campaign_detail/text_icon.svg",
-    alt: "텍스트아이콘",
-    text: "1,500자 이상",
-  },
-  photo_10: {
-    icon: "/images/campaign_detail/photo_icon.svg",
-    alt: "사진아이콘",
-    text: "10장 이상",
-  },
-  video_120: {
-    icon: "/images/campaign_detail/video_icon.svg",
-    alt: "비디오아이콘",
-    text: "1개 이상, 120초 이상",
-  },
-};
-
-// 요구사항 코드를 실제 객체로 변환하는 함수
-function getRequirementItems(requirementCodes: string[]): RequirementItem[] {
-  return requirementCodes.map(
-    (code) =>
-      requirementMapping[code] || {
-        icon: "/images/campaign_detail/keyword_icon.svg",
-        alt: "기본아이콘",
-        text: "요구사항",
-      }
-  );
-}
 
 /**
  * Props 인터페이스
@@ -120,7 +68,7 @@ export default function CampaignGuidelinesSection({
   // ========================================
   // 기본 요구사항 (props 미전달 시 사용)
   // ========================================
-  const defaultRequirements: RequirementItem[] = [
+  const defaultRequirements = [
     {
       icon: "/images/campaign_detail/keyword_icon.svg",
       alt: "키워드아이콘",
@@ -160,9 +108,7 @@ export default function CampaignGuidelinesSection({
   ];
 
   // requirements가 문자열 배열이면 매핑하여 변환, 아니면 기본값 사용
-  const activeRequirements = requirements
-    ? getRequirementItems(requirements)
-    : defaultRequirements;
+  const activeRequirements = requirements ? getRequirementItems(requirements) : defaultRequirements;
   const activeGuidelineTexts = guidelineTexts || defaultGuidelineTexts;
   return (
     // ========================================
@@ -193,18 +139,13 @@ export default function CampaignGuidelinesSection({
                 복사 버튼
                 onCopyKeyword가 제공되면 클릭 시 실행
               */}
-              <button
-                className={styles.copy_tag_button}
-                onClick={onCopyKeyword}
-              >
+              <button className={styles.copy_tag_button} onClick={onCopyKeyword}>
                 복사
               </button>
             </div>
           </div>
           <div className={styles.content_box}>
-            <div className={styles.keyword_text_box}>
-              {keyword || "자유롭게 입력하세요."}
-            </div>
+            <div className={styles.keyword_text_box}>{keyword || "자유롭게 입력하세요."}</div>
           </div>
         </div>
       )}
@@ -222,10 +163,7 @@ export default function CampaignGuidelinesSection({
                 복사 버튼
                 onCopyPromotionLink가 제공되면 클릭 시 실행
               */}
-              <button
-                className={styles.copy_tag_button}
-                onClick={onCopyPromotionLink}
-              >
+              <button className={styles.copy_tag_button} onClick={onCopyPromotionLink}>
                 복사
               </button>
             </div>
@@ -262,10 +200,7 @@ export default function CampaignGuidelinesSection({
                 복사 버튼
                 onCopyVisitAddress가 제공되면 클릭 시 실행
               */}
-              <button
-                className={styles.copy_tag_button}
-                onClick={onCopyVisitAddress}
-              >
+              <button className={styles.copy_tag_button} onClick={onCopyVisitAddress}>
                 복사
               </button>
             </div>
@@ -300,10 +235,7 @@ export default function CampaignGuidelinesSection({
                 복사 버튼
                 onCopyVisitLink가 제공되면 클릭 시 실행
               */}
-              <button
-                className={styles.copy_tag_button}
-                onClick={onCopyVisitLink}
-              >
+              <button className={styles.copy_tag_button} onClick={onCopyVisitLink}>
                 복사
               </button>
             </div>
@@ -335,10 +267,12 @@ export default function CampaignGuidelinesSection({
             <div className={styles.requirement_container}>
               {activeRequirements.map((item, index) => (
                 <div key={index} className={styles.requirement_item}>
-                  <img
+                  <Image
                     className={styles.requirement_icon}
                     src={item.icon}
                     alt={item.alt}
+                    width={40}
+                    height={40}
                   />
                   <span>{item.text}</span>
                 </div>
@@ -346,9 +280,7 @@ export default function CampaignGuidelinesSection({
             </div>
 
             {/* 상세 가이드라인 */}
-            <div
-              className={`${styles.requirement_container} ${styles.important_note_container}`}
-            >
+            <div className={`${styles.requirement_container} ${styles.important_note_container}`}>
               {activeGuidelineTexts.map((text, index) => (
                 <div
                   key={index}

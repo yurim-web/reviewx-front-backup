@@ -388,10 +388,11 @@ export default function ReceiptRegistrationModal({
                     {/* 기존 이미지 표시 (수정 모드) */}
                     {existingImageUrls.map((imageUrl, index) => (
                       <div key={`existing-${index}`} className={styles.image_preview}>
-                        <img
+                        <Image
                           src={imageUrl}
                           alt={`기존 영수증 ${index + 1}`}
-                          className={styles.preview_image}
+                          fill
+                          style={{ objectFit: "cover" }}
                         />
                         <button
                           className={styles.remove_image_button}
@@ -414,10 +415,12 @@ export default function ReceiptRegistrationModal({
                     {/* 새로 업로드한 이미지 표시 */}
                     {uploadedImages.map((image) => (
                       <div key={image.id} className={styles.image_preview}>
-                        <img
+                        <Image
                           src={image.preview}
                           alt={`영수증 ${uploadedImages.indexOf(image) + 1}`}
-                          className={styles.preview_image}
+                          fill
+                          unoptimized
+                          style={{ objectFit: "cover" }}
                         />
                         <button
                           className={styles.remove_image_button}

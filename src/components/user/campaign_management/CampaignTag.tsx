@@ -11,6 +11,7 @@
  * - /user/campaign_management (캠페인 관리 페이지 - CampaignCard에서 사용)
  */
 
+import Image from "next/image";
 import cardStyles from "../../../styles/user/campaign_management/campaign_card.module.css";
 import { getCategoryIcon } from "@/utils/channelLogoMap";
 
@@ -19,19 +20,9 @@ import { getCategoryIcon } from "@/utils/channelLogoMap";
  * @param isUrgent - 긴급 여부 (마감임박)
  * @param remainingDays - 남은 일수
  */
-export function CamTag({
-  isUrgent,
-  remainingDays,
-}: {
-  isUrgent: boolean;
-  remainingDays: number;
-}) {
+export function CamTag({ isUrgent, remainingDays }: { isUrgent: boolean; remainingDays: number }) {
   return (
-    <div
-      className={`${cardStyles.cam_tag} ${
-        isUrgent ? cardStyles.urgent : cardStyles.normal
-      }`}
-    >
+    <div className={`${cardStyles.cam_tag} ${isUrgent ? cardStyles.urgent : cardStyles.normal}`}>
       <span>{isUrgent ? "마감임박" : `${remainingDays}일 전`}</span>
     </div>
   );
@@ -44,11 +35,7 @@ export function CamTag({
  * - 모든 캠페인 타입을 표시할 수 있는 컴포넌트입니다.
  * - CSS 스타일은 동일하게 적용됩니다.
  */
-export function CamType({
-  type,
-}: {
-  type: "배송형" | "방문형" | "구매평" | "기자단" | "미션형";
-}) {
+export function CamType({ type }: { type: "배송형" | "방문형" | "구매평" | "기자단" | "미션형" }) {
   return (
     <div className={cardStyles.cam_type}>
       <span>{type}</span>
@@ -62,7 +49,7 @@ export function CamType({
 export function CamIcon({ icon }: { icon: string }) {
   return (
     <div className={cardStyles.cam_icon}>
-      <img src={icon} alt="브랜드 아이콘" />
+      <Image src={icon} alt="브랜드 아이콘" width={20} height={20} />
     </div>
   );
 }

@@ -11,6 +11,7 @@
  * - /user/campaign/[type]/[id] (캠페인 상세 페이지)
  */
 
+import Image from "next/image";
 import { getChannelLogo } from "@/utils/channelLogoMap";
 import styles from "@/styles/user/campaign/campaign_detail/detail_header.module.css";
 
@@ -49,9 +50,7 @@ export default function CampaignHeader({
   // - 예: "서울 영등포구" -> ["서울", "영등포구"]
   // - 예: "서울 강남/서초" -> ["서울", "강남/서초"]
   // - 예: "서울 > 종로구" -> ["서울", "종로구"] (">" 문자 제거)
-  const get_region_parts = (
-    raw_region: string
-  ): { first: string; second?: string } => {
+  const get_region_parts = (raw_region: string): { first: string; second?: string } => {
     const trimmed = raw_region.trim();
     if (!trimmed) return { first: "" };
 
@@ -108,7 +107,13 @@ export default function CampaignHeader({
       {/* 왼쪽: 태그 정보 */}
       <div className={styles.tag_icon_container}>
         {/* 카테고리 아이콘 */}
-        <img className={styles.tag_icon} src={categoryIcon} alt={altText} />
+        <Image
+          className={styles.tag_icon}
+          src={categoryIcon}
+          alt={altText}
+          width={30}
+          height={30}
+        />
 
         {/* 카테고리 태그 (예: 배송형) */}
         <div className={styles.tag_box}>{category}</div>
@@ -122,10 +127,12 @@ export default function CampaignHeader({
             <span>{region_parts.first}</span>
             {region_parts.second && (
               <>
-                <img
+                <Image
                   src="/images/filter/region_arrow.svg"
                   alt=""
                   aria-hidden="true"
+                  width={12}
+                  height={12}
                   className={styles.region_tag_arrow}
                 />
                 <span>{region_parts.second}</span>
@@ -139,7 +146,6 @@ export default function CampaignHeader({
           조건부 렌더링: && 연산자를 사용하여 조건이 true일 때만 요소를 렌더링
         */}
         {isUrgent && <div className={styles.urgent_tag}>긴급</div>}
-
       </div>
 
       {/* 오른쪽: 포인트 정보 */}

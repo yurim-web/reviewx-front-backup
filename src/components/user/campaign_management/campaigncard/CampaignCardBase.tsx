@@ -12,6 +12,7 @@
  */
 
 import Link from "next/link";
+import Image from "next/image";
 import type { CampaignApplication, CampaignType } from "@/types/domain/user";
 import { getCampaignTypePath } from "@/utils/helpers/url";
 import cardStyles from "../../../../styles/user/campaign_management/campaign_card.module.css";
@@ -62,7 +63,14 @@ export default function CampaignCardBase({
       {/* 캠페인 정보 영역 - 클릭 시 상세페이지로 이동 */}
       <Link href={detailPath} className={cardStyles.campaign_content}>
         <div className={cardStyles.campaign_image}>
-          {campaign.image && <img src={campaign.image} alt={campaign.title} />}
+          {campaign.image && (
+            <Image
+              src={campaign.image}
+              alt={campaign.title}
+              fill
+              style={{ objectFit: "cover", borderRadius: "4px" }}
+            />
+          )}
         </div>
 
         <div className={cardStyles.campaign_info}>

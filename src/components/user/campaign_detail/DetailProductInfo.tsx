@@ -14,6 +14,7 @@
 "use client";
 
 import { ReactNode, useState } from "react";
+import Image from "next/image";
 import Toast from "@/components/common/toast/Toast";
 import styles from "@/styles/user/campaign/campaign_detail/detail_product_info.module.css";
 
@@ -50,9 +51,7 @@ export default function CampaignProductInfo({
    */
   const handleShare = async () => {
     try {
-      const isMobile =
-        typeof window !== "undefined" &&
-        window.innerWidth <= MOBILE_BREAKPOINT;
+      const isMobile = typeof window !== "undefined" && window.innerWidth <= MOBILE_BREAKPOINT;
 
       if (isMobile && navigator.share) {
         await navigator.share({
@@ -64,8 +63,7 @@ export default function CampaignProductInfo({
         await navigator.clipboard.writeText(window.location.href);
         setShowToast(true);
       }
-    } catch (_error) {
-    }
+    } catch (_error) {}
   };
 
   return (
@@ -90,12 +88,7 @@ export default function CampaignProductInfo({
             onClick={handleShare}
             aria-label="공유하기"
           >
-            <img
-              src="/images/campaign_detail/share_icon.svg"
-              alt="공유"
-              width={32}
-              height={32}
-            />
+            <Image src="/images/campaign_detail/share_icon.svg" alt="공유" width={32} height={32} />
           </button>
         </div>
 
@@ -107,7 +100,7 @@ export default function CampaignProductInfo({
 
       {/* 제품 메인 이미지 */}
       <div className={styles.main_image_container}>
-        <img src={image} alt={title} />
+        <Image src={image} alt={title} fill style={{ objectFit: "cover" }} />
       </div>
 
       {/* 

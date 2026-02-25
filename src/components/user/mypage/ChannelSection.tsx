@@ -14,6 +14,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { useModalState } from "@/hooks/useModalState";
 import ChannelConnectModal from "./ChannelConnectModal";
 
@@ -81,15 +82,18 @@ export default function ChannelSection({
           {channels.map((channel) => (
             <div key={channel.name} className={styles.channel_item}>
               <div className={styles.channel_icon}>
-                <img
-                  src={getChannelIcon(channel.name)}
-                  alt={channel.name}
-                  onError={(e) => {
-                    // 아이콘이 없을 경우 기본 아이콘 표시 대신 숨김 처리
-
-                    e.currentTarget.style.display = "none";
-                  }}
-                />
+                {getChannelIcon(channel.name) && (
+                  <Image
+                    src={getChannelIcon(channel.name)}
+                    alt={channel.name}
+                    fill
+                    style={{ objectFit: "cover" }}
+                    onError={(e) => {
+                      // 아이콘이 없을 경우 기본 아이콘 표시 대신 숨김 처리
+                      e.currentTarget.style.display = "none";
+                    }}
+                  />
+                )}
               </div>
 
               <div className={styles.channel_info}>
@@ -117,13 +121,15 @@ export default function ChannelSection({
                 className={styles.channel_more_button}
                 onClick={() => handleChannelClick(channel.name)}
               >
-                <img
+                <Image
                   src={
                     channel.status === "connected"
                       ? "/images/mypage/channel/channel_ok.svg"
                       : "/images/mypage/channel/channel_add.svg"
                   }
                   alt={channel.status === "connected" ? "채널 연결됨" : "채널 연결하기"}
+                  width={28}
+                  height={28}
                 />
               </button>
             </div>

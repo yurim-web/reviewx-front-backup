@@ -398,10 +398,11 @@ export default function CombinedContentModal({
                   {/* 기존 이미지들 (수정 모드일 때 표시) */}
                   {existingImageUrls.map((imageUrl, index) => (
                     <div key={`existing-${index}`} className={styles.image_item}>
-                      <img
+                      <Image
                         src={imageUrl}
                         alt={`기존 이미지 ${index + 1}`}
-                        className={styles.uploaded_image}
+                        fill
+                        style={{ objectFit: "cover", borderRadius: "8px" }}
                       />
                       <button
                         className={styles.remove_button}
@@ -421,10 +422,12 @@ export default function CombinedContentModal({
                   {/* 업로드된 이미지들 */}
                   {uploadedImages.map((image) => (
                     <div key={image.id} className={styles.image_item}>
-                      <img
+                      <Image
                         src={image.preview}
                         alt="업로드된 이미지"
-                        className={styles.uploaded_image}
+                        fill
+                        unoptimized
+                        style={{ objectFit: "cover", borderRadius: "8px" }}
                       />
                       <button
                         className={styles.remove_button}
@@ -445,9 +448,11 @@ export default function CombinedContentModal({
                   {existingImageUrls.length + uploadedImages.length < 7 && (
                     <div className={styles.upload_button} onClick={handleUploadClick}>
                       <div className={styles.upload_icon}>
-                        <img
+                        <Image
                           src="/images/icons/plus_icon.svg"
                           alt="이미지 추가"
+                          width={56}
+                          height={56}
                           className={styles.plus_icon}
                         />
                       </div>
