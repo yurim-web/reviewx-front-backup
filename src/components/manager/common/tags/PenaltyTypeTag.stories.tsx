@@ -6,25 +6,7 @@
 
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
-import PenaltyTypeTag, {
-  type PenaltyType,
-} from "@/components/manager/common/tags/PenaltyTypeTag";
-
-// CSS 모듈 import
-import tagsStylesModule from "@/styles/common/tags.module.css";
-
-// CSS 모듈 객체를 타입 단언하여 사용
-const tagsStyles = (tagsStylesModule || {
-  type_tag_penalty: "type_tag_penalty",
-  type_tag_penalty_warning: "type_tag_penalty_warning",
-  type_tag_penalty_caution: "type_tag_penalty_caution",
-  type_tag_penalty_suspension: "type_tag_penalty_suspension",
-}) as Record<string, string> & {
-  type_tag_penalty: string;
-  type_tag_penalty_warning: string;
-  type_tag_penalty_caution: string;
-  type_tag_penalty_suspension: string;
-};
+import PenaltyTypeTag, { type PenaltyType } from "@/components/manager/common/tags/PenaltyTypeTag";
 
 const meta: Meta<typeof PenaltyTypeTag> = {
   title: "Manager/Common/Tags/PenaltyTypeTag",
@@ -39,10 +21,6 @@ const meta: Meta<typeof PenaltyTypeTag> = {
       control: "select",
       options: ["경고", "주의", "정지"],
     },
-    styles: {
-      description: "CSS 모듈 스타일 객체",
-      control: false,
-    },
   },
 };
 
@@ -54,7 +32,6 @@ type Story = StoryObj<typeof PenaltyTypeTag>;
 export const Warning: Story = {
   args: {
     type: "경고",
-    styles: tagsStyles,
   },
 };
 
@@ -62,7 +39,6 @@ export const Warning: Story = {
 export const Caution: Story = {
   args: {
     type: "주의",
-    styles: tagsStyles,
   },
 };
 
@@ -70,7 +46,6 @@ export const Caution: Story = {
 export const Suspension: Story = {
   args: {
     type: "정지",
-    styles: tagsStyles,
   },
 };
 
@@ -93,10 +68,8 @@ export const AllTypes: Story = {
         React.createElement(PenaltyTypeTag, {
           key: type,
           type,
-          styles: tagsStyles,
         })
       )
     );
   },
 };
-

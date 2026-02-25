@@ -55,7 +55,6 @@ export const WithFilters: Story = {
   render: (args) => React.createElement(ReportedCampaignTable, args),
   args: {
     search_query: "",
-    selected_report_codes: ["R001", "R002"] as ReportCode[],
+    selected_report_codes: ["R001", "R002"] as unknown as ReportCode[],
   },
 };
-

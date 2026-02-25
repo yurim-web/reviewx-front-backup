@@ -25,10 +25,13 @@ const BaseFilterModalWrapper = (args: any) => {
     setIsOpen(false);
   }, []);
 
-  const handleApply = useCallback((values: string[]) => {
-    setSelectedValues(values);
-    args.on_apply?.(values);
-  }, [args]);
+  const handleApply = useCallback(
+    (values: string[]) => {
+      setSelectedValues(values);
+      args.on_apply?.(values);
+    },
+    [args]
+  );
 
   return (
     <BaseFilterModal
@@ -115,7 +118,7 @@ export const WithSelectedValues: Story = {
         on_close={() => setIsOpen(false)}
         selected_values={selectedValues}
         on_apply={(values) => {
-          setSelectedValues(values);
+          setSelectedValues(values as string[]);
           args.on_apply?.(values);
         }}
       />

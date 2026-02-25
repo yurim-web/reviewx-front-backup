@@ -10,22 +10,6 @@ import ReviewerTypeTag, {
   type ReviewerType,
 } from "@/components/manager/common/tags/ReviewerTypeTag";
 
-// CSS 모듈 import
-import tagsStylesModule from "@/styles/common/tags.module.css";
-
-// CSS 모듈 객체를 타입 단언하여 사용
-const tagsStyles = (tagsStylesModule || {
-  type_tag: "type_tag",
-  type_tag_supporter: "type_tag_supporter",
-  type_tag_normal: "type_tag_normal",
-  type_tag_influencer: "type_tag_influencer",
-}) as Record<string, string> & {
-  type_tag: string;
-  type_tag_supporter: string;
-  type_tag_normal: string;
-  type_tag_influencer: string;
-};
-
 const meta: Meta<typeof ReviewerTypeTag> = {
   title: "Manager/Common/Tags/ReviewerTypeTag",
   component: ReviewerTypeTag,
@@ -39,10 +23,6 @@ const meta: Meta<typeof ReviewerTypeTag> = {
       control: "select",
       options: ["서포터즈", "일반", "인플루언서"],
     },
-    styles: {
-      description: "CSS 모듈 스타일 객체",
-      control: false,
-    },
   },
 };
 
@@ -54,7 +34,6 @@ type Story = StoryObj<typeof ReviewerTypeTag>;
 export const Supporter: Story = {
   args: {
     type: "서포터즈",
-    styles: tagsStyles,
   },
 };
 
@@ -62,7 +41,6 @@ export const Supporter: Story = {
 export const Normal: Story = {
   args: {
     type: "일반",
-    styles: tagsStyles,
   },
 };
 
@@ -70,7 +48,6 @@ export const Normal: Story = {
 export const Influencer: Story = {
   args: {
     type: "인플루언서",
-    styles: tagsStyles,
   },
 };
 
@@ -93,10 +70,8 @@ export const AllTypes: Story = {
         React.createElement(ReviewerTypeTag, {
           key: type,
           type,
-          styles: tagsStyles,
         })
       )
     );
   },
 };
-

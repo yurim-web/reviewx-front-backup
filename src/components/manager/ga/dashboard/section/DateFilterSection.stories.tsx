@@ -19,11 +19,6 @@ type Story = StoryObj<typeof DateFilterSection>;
 export const Default: Story = {
   render: () => {
     const [dateFilter, setDateFilter] = useState<DateFilter>("today");
-    return (
-      <DateFilterSection
-        dateFilter={dateFilter}
-        onDateFilterChange={setDateFilter}
-      />
-    );
+    return <DateFilterSection dateFilter={dateFilter} onFilterChange={setDateFilter} />;
   },
 };

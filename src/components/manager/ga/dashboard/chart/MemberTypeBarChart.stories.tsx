@@ -15,5 +15,13 @@ const meta: Meta<typeof MemberTypeBarChart> = {
 export default meta;
 type Story = StoryObj<typeof MemberTypeBarChart>;
 
-export const Default: Story = { render: () => <MemberTypeBarChart /> };
-
+export const Default: Story = {
+  render: () => (
+    <MemberTypeBarChart
+      totalPartnerPercentage={30}
+      totalReviewerPercentage={70}
+      activePartnerPercentage={40}
+      activeReviewerPercentage={60}
+    />
+  ),
+};

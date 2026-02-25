@@ -54,7 +54,8 @@ export const Default: Story = {
   render: renderMemberStatsSection,
   args: {
     stats: mockStats,
-    styles: styles,
+
+    styles: styles as any,
   },
 };
 
@@ -72,7 +73,8 @@ export const LargeNumbers: Story = {
       monthly_new: 12345,
       dormant: 5678,
     },
-    styles: styles,
+
+    styles: styles as any,
   },
 };
 
@@ -90,7 +92,8 @@ export const SmallNumbers: Story = {
       monthly_new: 2,
       dormant: 1,
     },
-    styles: styles,
+
+    styles: styles as any,
   },
 };
 

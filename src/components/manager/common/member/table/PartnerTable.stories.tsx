@@ -19,7 +19,8 @@ type Story = StoryObj<typeof PartnerTable>;
 export const Default: Story = {
   args: {
     search_query: "",
-    styles: styles,
+
+    styles: styles as any,
     detail_path: "/manager_ga/member/partners",
   },
 };

@@ -17,8 +17,8 @@ import { useState, useEffect, useMemo } from "react";
 import { isDateInRange } from "@/utils/formatting/date";
 
 interface DateRangeParam {
-  from?: string;
-  to?: string;
+  from?: Date | string;
+  to?: Date | string;
 }
 
 interface UseCampaignCodeTableFiltersParams<TItem, TCode extends string> {
