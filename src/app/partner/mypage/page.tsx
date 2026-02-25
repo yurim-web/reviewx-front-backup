@@ -61,16 +61,14 @@ function PartnerMypagePage() {
 
   // 컴포넌트 마운트 시 localStorage에서 프로필 이미지 로드
   useEffect(() => {
-    if (typeof window !== 'undefined' && user) {
+    if (typeof window !== "undefined" && user) {
       try {
-        const storedAccounts = localStorage.getItem('partner_accounts');
+        const storedAccounts = localStorage.getItem("partner_accounts");
         // console.log('📦 [마이페이지] partner_accounts:', storedAccounts);
 
         if (storedAccounts) {
           const accounts = JSON.parse(storedAccounts) as PartnerAccount[];
-          const partnerAccount = accounts.find(
-            (a) => a.id === user.id || a.email === user.email,
-          );
+          const partnerAccount = accounts.find((a) => a.id === user.id || a.email === user.email);
           // console.log('✅ [마이페이지] partnerAccount:', partnerAccount);
 
           if (partnerAccount?.profile_image) {
@@ -81,7 +79,7 @@ function PartnerMypagePage() {
           }
         }
       } catch (error) {
-        console.error('❌ [마이페이지] 프로필 이미지 로드 실패:', error);
+        console.error("❌ [마이페이지] 프로필 이미지 로드 실패:", error);
       }
     }
   }, [user]);
@@ -113,9 +111,7 @@ function PartnerMypagePage() {
       try {
         const stored = localStorage.getItem("user_accounts");
         const accounts = stored ? (JSON.parse(stored) as { id?: string; email?: string }[]) : [];
-        const hasReviewerInfo = accounts.some(
-          (a) => a.id === user?.id || a.email === user?.email,
-        );
+        const hasReviewerInfo = accounts.some((a) => a.id === user?.id || a.email === user?.email);
         if (!hasReviewerInfo) {
           setShowReviewerInfoModal(true);
           return;
@@ -136,10 +132,7 @@ function PartnerMypagePage() {
       {/* 메인 컨텐츠 */}
       <div className={layoutStyles.main_content}>
         {/* 상단 탭 네비게이션: 캠페인/포인트/계정 등 */}
-        <PartnerTabNavigation
-          activeTab={activeTopTab}
-          setActiveTab={setActiveTopTab}
-        />
+        <PartnerTabNavigation activeTab={activeTopTab} setActiveTab={setActiveTopTab} />
 
         {/* 서브 탭 네비게이션: 프로필 */}
         <SubTabNavigation
@@ -177,7 +170,7 @@ function PartnerMypagePage() {
           on_cancel={() => setShowReviewerInfoModal(false)}
           on_confirm={() => {
             setShowReviewerInfoModal(false);
-            router.push("/user/mypage/edit");
+            router.push("/partner/mypage/edit");
           }}
           type="center"
         />

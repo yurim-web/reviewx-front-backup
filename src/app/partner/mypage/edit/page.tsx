@@ -24,8 +24,8 @@ import BusinessDocumentUpload from "@/components/partner/mypage/BusinessDocument
 import AddressInput from "@/components/common/mypage/AddressInput";
 import WithdrawModals from "@/components/common/mypage/WithdrawModals";
 import Toast from "@/components/common/toast/Toast";
-import BusinessNumberInput from "@/components/partner/signup/BusinessNumberInput";
-import ContactPhoneInput from "@/components/partner/signup/ContactPhoneInput";
+import BusinessNumberInput from "@/components/common/signup/BusinessNumberInput";
+import ContactPhoneInput from "@/components/common/signup/ContactPhoneInput";
 import { useAuth } from "@/hooks/useAuth";
 import { withPartnerAuth } from "@/components/auth/withAuth";
 import { usePhoneVerification } from "@/hooks/usePhoneVerification/usePhoneVerification";

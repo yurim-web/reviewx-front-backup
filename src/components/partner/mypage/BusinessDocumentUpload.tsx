@@ -32,7 +32,7 @@ interface BusinessDocumentUploadProps {
   /** 파일 선택 버튼 클릭 시 호출 (새로 등록 시 완료 배지 숨김용) */
   onSelectClick?: () => void;
   /** 커스텀 스타일 모듈 (선택적, 기본값: edit_profile.module.css) */
-  customStyles?: typeof styles;
+  customStyles?: Record<string, string>;
 }
 
 /**
