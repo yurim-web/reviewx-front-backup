@@ -31,7 +31,6 @@ import {
   posts_data,
   add_post,
   update_post,
-  initialize_posts_data,
   type PostItem,
   type PostTarget,
   type PostDivision,
@@ -102,9 +101,7 @@ export default function PostFormPageClient({
 
   // manager_type에 따른 base path 설정
   const base_path =
-    manager_type === "ga"
-      ? "/manager_ga/community/posts"
-      : "/manager_sa/community/posts";
+    manager_type === "ga" ? "/manager_ga/community/posts" : "/manager_sa/community/posts";
   // 🧭 클라이언트에서만 에디터를 그리기 위해 마운트 여부를 체크합니다.
   const [is_mounted, setIsMounted] = useState(false);
   const [is_editor_ready, setIsEditorReady] = useState(false);
@@ -112,7 +109,7 @@ export default function PostFormPageClient({
   const [editor_content, setEditorContent] = useState("");
   const [force_check, setForceCheck] = useState(0); // 강제 리렌더링을 위한 카운터
   const [show_toast, set_show_toast] = useState(false); // Toast 메시지 표시 여부
-  const editor_ref = useState<any>(null)[0];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const editor_instance_ref = useRef<any>(null);
   const title_input_ref = useRef<HTMLInputElement>(null);
 
@@ -122,15 +119,12 @@ export default function PostFormPageClient({
     initial_data?.category_type || (mode === "create" ? "공지사항" : "")
   );
   const [category, setCategory] = useState(initial_data?.category || "");
-  const [target, setTarget] = useState(
-    initial_data?.target || (mode === "create" ? "전체" : "")
-  );
+  const [target, setTarget] = useState(initial_data?.target || (mode === "create" ? "전체" : ""));
   const [title, setTitle] = useState(initial_data?.title || "");
 
   // initial_data가 변경될 때 state 동기화 (수정 모드에서 데이터 로드 시)
   useEffect(() => {
     if (mode === "edit" && initial_data) {
-      console.log("initial_data 동기화:", initial_data);
       if (initial_data.category_type) setCategoryType(initial_data.category_type);
       if (initial_data.category) setCategory(initial_data.category);
       if (initial_data.target) setTarget(initial_data.target);
@@ -143,17 +137,6 @@ export default function PostFormPageClient({
 
   // 카테고리 데이터를 state로 관리하여 업데이트 시 리렌더링 발생
   const [categories_list, setCategoriesList] = useState(categories_data);
-
-  // 디버깅: initial_data 및 state 값 확인
-  useEffect(() => {
-    console.log("=== PostFormPageClient Debug ===");
-    console.log("mode:", mode);
-    console.log("post_id:", post_id);
-    console.log("initial_data:", initial_data);
-    console.log("category_type state:", category_type);
-    console.log("category state:", category);
-    console.log("categories_list:", categories_list);
-  }, [mode, post_id, initial_data, category_type, category, categories_list]);
 
   /**
    * 구분(category_type)이 수동으로 변경되면 카테고리도 초기화
@@ -182,7 +165,6 @@ export default function PostFormPageClient({
   const category_options = useMemo(() => {
     // 구분이 선택되지 않았으면 빈 배열 반환
     if (!category_type) {
-      console.log("category_options: 빈 배열 (category_type 없음)");
       return [];
     }
 
@@ -197,7 +179,6 @@ export default function PostFormPageClient({
     const options = filtered_categories
       .map((item) => item.category_name)
       .sort((a, b) => a.localeCompare(b, "ko-KR"));
-    console.log("category_options:", options);
     return options;
   }, [category_type, categories_list]);
 
@@ -256,9 +237,7 @@ export default function PostFormPageClient({
     document.head.appendChild(style);
 
     return () => {
-      const styleElement = document.getElementById(
-        "toast-editor-button-margin"
-      );
+      const styleElement = document.getElementById("toast-editor-button-margin");
       if (styleElement) {
         document.head.removeChild(styleElement);
       }
@@ -279,8 +258,7 @@ export default function PostFormPageClient({
   // mode에 따라 페이지 제목과 버튼 텍스트 결정
   const page_title = mode === "create" ? "게시글 등록" : "게시글 수정";
   const button_text = mode === "create" ? "등록" : "저장";
-  const form_aria_label =
-    mode === "create" ? "게시글 등록 폼" : "게시글 수정 폼";
+  const form_aria_label = mode === "create" ? "게시글 등록 폼" : "게시글 수정 폼";
 
   // 카테고리 타입이 "자주 묻는 질문"인지 여부에 따라 라벨 텍스트 변경
   const is_faq_type = category_type === "자주 묻는 질문";
@@ -296,7 +274,7 @@ export default function PostFormPageClient({
 
     try {
       const editor = editor_instance_ref.current;
-      
+
       // 에디터 변경 이벤트 리스너 추가
       const handleChange = () => {
         try {
@@ -382,14 +360,14 @@ export default function PostFormPageClient({
     // 에디터 내용 검증 (실시간으로 가져오기)
     try {
       const content = editor_instance_ref.current.getHTML() || "";
-      
+
       // HTML 태그를 제거하고 텍스트만 추출하여 빈 내용인지 확인
       const text_content = content
         .replace(/<[^>]*>/g, "")
         .replace(/&nbsp;/g, " ")
         .replace(/\s+/g, " ")
         .trim();
-      
+
       if (!text_content) {
         return true;
       }
@@ -399,7 +377,17 @@ export default function PostFormPageClient({
     }
 
     return false;
-  }, [mode, initial_data, category_type, category, target, title, editor_content, is_editor_ready, force_check]);
+  }, [
+    mode,
+    initial_data,
+    category_type,
+    category,
+    target,
+    title,
+    editor_content,
+    is_editor_ready,
+    force_check,
+  ]);
 
   /**
    * 카테고리 목록 업데이트 (localStorage에서 최신 데이터 불러오기)
@@ -410,8 +398,6 @@ export default function PostFormPageClient({
       return;
     }
     initialize_categories_data();
-    // 초기화 후 state 업데이트하여 리렌더링 발생
-    console.log("카테고리 데이터 초기화:", categories_data);
     setCategoriesList([...categories_data]);
 
     // 초기 데이터 로드가 완료되면 is_initial_mount를 false로 설정
@@ -448,9 +434,10 @@ export default function PostFormPageClient({
 
     // 게시글 데이터 생성
     const now = new Date();
-    const date_string = `${now.getFullYear()}-${String(
-      now.getMonth() + 1
-    ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    const date_string = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}-${String(now.getDate()).padStart(2, "0")}`;
     const time_string = `${String(now.getHours()).padStart(2, "0")}:${String(
       now.getMinutes()
     ).padStart(2, "0")}`;
@@ -463,10 +450,7 @@ export default function PostFormPageClient({
       const new_id = String(max_id + 1);
 
       // 새로운 번호 생성
-      const max_number = Math.max(
-        ...posts_data.map((item) => Number(item.number)),
-        0
-      );
+      const max_number = Math.max(...posts_data.map((item) => Number(item.number)), 0);
       const new_number = String(max_number + 1).padStart(6, "0");
 
       // 게시글 데이터 생성
@@ -485,7 +469,6 @@ export default function PostFormPageClient({
 
       // 게시글 등록 및 localStorage 저장
       add_post(new_post, content);
-      console.log("게시글 등록:", new_post);
 
       // Toast 메시지 표시
       set_show_toast(true);
@@ -519,7 +502,6 @@ export default function PostFormPageClient({
 
       // 게시글 수정 및 localStorage 저장
       update_post(post_id, updated_post, content);
-      console.log("게시글 수정:", updated_post);
 
       // Toast 메시지 표시
       set_show_toast(true);
@@ -548,9 +530,7 @@ export default function PostFormPageClient({
         {side_menu_items.map((item) => (
           <p
             key={item.label}
-            className={`${styles.sidebar_item} ${
-              item.isActive ? styles.sidebar_item_active : ""
-            }`}
+            className={`${styles.sidebar_item} ${item.isActive ? styles.sidebar_item_active : ""}`}
           >
             {item.label}
           </p>
