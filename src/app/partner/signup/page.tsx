@@ -1,5 +1,5 @@
 /* ========================================
-   📝 파트너 회원가입 페이지
+   파트너 회원가입 페이지
    ======================================== */
 
 /**
@@ -7,9 +7,8 @@
  *
  * 목적: 새로운 파트너가 회원가입을 할 수 있는 페이지입니다.
  *
- * 페이지 경로:
+ * 사용 페이지:
  * - /partner/signup
- *
  */
 
 "use client";
@@ -171,7 +170,6 @@ export default function PartnerSignupPage() {
     timer,
     phoneError,
     verificationCodeError,
-    setVerificationCode,
     handlePhoneChange: handlePhoneChangeHook,
     handleVerificationRequest,
     handleVerificationCodeChange,
@@ -393,8 +391,7 @@ export default function PartnerSignupPage() {
       localStorage.setItem("partner_accounts", JSON.stringify(partnerAccounts));
       // console.log('파트너 회원가입 성공!', newPartnerAccount);
       router.push(`/partner/signup/complete?name=${encodeURIComponent(name)}`);
-    } catch (error) {
-      console.error("회원가입 중 오류 발생:", error);
+    } catch (_error) {
       alert("회원가입 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
     }
 

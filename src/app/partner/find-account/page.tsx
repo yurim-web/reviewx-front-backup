@@ -7,13 +7,8 @@
  *
  * 목적: 파트너 회원이 아이디와 비밀번호를 찾을 수 있는 페이지입니다.
  *
- * 페이지 경로:
+ * 사용 페이지:
  * - /partner/find-account
- *
- * 주요 기능:
- * - 아이디 찾기
- * - 비밀번호 찾기
- * - 휴대폰 번호 인증
  */
 
 import Header from "@/components/fragments/Header";

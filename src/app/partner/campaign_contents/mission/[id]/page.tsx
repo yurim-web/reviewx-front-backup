@@ -70,7 +70,7 @@ export default function MissionContentsDetailPage() {
     return { contentType, deadlineDate };
   }, [campaignId]);
 
-  const handleExtend = (applicantId: string) => {
+  const handleExtend = (_applicantId: string) => {
     // TODO: 실제 연장 로직 구현
   };
 

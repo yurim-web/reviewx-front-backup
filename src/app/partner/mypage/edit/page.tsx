@@ -1,15 +1,17 @@
-"use client";
-
 /* ========================================
-   ✏️ 파트너 내 정보 수정 페이지
+   파트너 내 정보 수정 페이지
    ======================================== */
 
 /**
+ * 파트너 내 정보 수정 페이지
+ *
  * 목적: 파트너가 자신의 계정 정보를 수정하는 페이지입니다.
- * 경로: /partner/mypage/edit
- * 주요 기능: 프로필 사진, 기본 정보, 사업자 정보, 담당자 정보, 주소 정보 수정 + 회원 탈퇴
-
+ *
+ * 사용 페이지:
+ * - /partner/mypage/edit
  */
+
+"use client";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -95,7 +97,7 @@ function PartnerEditProfilePage() {
     isWithdrawCompleteModalOpen,
     isWithdrawBlockedModalOpen,
     setIsWithdrawConfirmModalOpen,
-    setIsWithdrawCompleteModalOpen,
+    setIsWithdrawCompleteModalOpen: _setIsWithdrawCompleteModalOpen,
     setIsWithdrawBlockedModalOpen,
     handleWithdraw,
     handleWithdrawConfirm,
@@ -167,8 +169,8 @@ function PartnerEditProfilePage() {
         };
         localStorage.setItem("partner_accounts", JSON.stringify(accounts));
       }
-    } catch (e) {
-      console.error("사업자등록증 파일명 저장 실패:", e);
+    } catch (_e) {
+      // 사업자등록증 파일명 저장 실패 시 무시
     }
   };
 
@@ -252,8 +254,7 @@ function PartnerEditProfilePage() {
       // 저장 성공 시 토스트 메시지 표시 및 등록 완료 배지 표시
       setShowToast(true);
       setIsBusinessDocumentUploaded(true);
-    } catch (error) {
-      console.error("정보 저장 중 오류:", error);
+    } catch (_error) {
       alert("정보 저장에 실패했습니다.");
     }
   };
@@ -291,10 +292,10 @@ function PartnerEditProfilePage() {
           }
         }
       }
-    } catch (error) {
-      console.error("파트너 계정 정보 로드 중 오류:", error);
+    } catch (_error) {
+      // 파트너 계정 정보 로드 실패 시 무시
     }
-  }, [user]);
+  }, [user, user?.business_name]);
 
   return (
     <div className={layoutStyles.edit_profile_container}>

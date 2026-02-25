@@ -8,19 +8,8 @@
  * 목적: 파트너가 생성한 캠페인들을 관리하고 모니터링하는 페이지입니다.
  * 이제 공통 헤더 컴포넌트를 사용하여 중복 코드를 제거합니다.
  *
- * 페이지 경로:
+ * 사용 페이지:
  * - /partner/campaign_management (전체 탭)
- *
- * 사용 파일:
- * - 컴포넌트: PartnerCampaignManagementHeader, CampaignList
- * - 타입: MainTab, PartnerStatTab
- * - CSS: layout.module.css
- *
- * 주요 기능:
- * - 캠페인/포인트 탭 네비게이션
- * - 캠페인 상태별 통계 표시 (전체/예정/신청/진행/종료/취소)
- * - 상태별 캠페인 목록 필터링 및 표시
- * - 캠페인별 액션 버튼 (수정, 삭제, 검수 등)
  */
 
 "use client";
@@ -38,9 +27,7 @@ import type { PartnerCampaign } from "@/types/domain/partner";
 import layoutStyles from "@/styles/partner/partner_layout.module.css";
 
 // 공용 데이터 import
-import {
-  getCampaignsByTab,
-} from "@/data/partner/sharedCampaigns";
+import { getCampaignsByTab } from "@/data/partner/sharedCampaigns";
 
 /**
  * 파트너 캠페인 관리 메인 페이지 컴포넌트
@@ -53,9 +40,7 @@ function PartnerCampaignManagementPage() {
   const [activeStatTab, setActiveStatTab] = useState<PartnerStatTab>("전체");
 
   // 필터링된 캠페인 목록 상태
-  const [filteredCampaigns, setFilteredCampaigns] = useState<PartnerCampaign[]>(
-    []
-  );
+  const [filteredCampaigns, setFilteredCampaigns] = useState<PartnerCampaign[]>([]);
 
   // 네트워크 오류 상태 (네트워크 지연이나 오류 발생 시 true)
   const [isNetworkError, setIsNetworkError] = useState<boolean>(false);
@@ -172,10 +157,7 @@ function PartnerCampaignManagementPage() {
           />
 
           {/* 필터링된 캠페인 목록 */}
-          <CampaignList
-            campaigns={filteredCampaigns}
-            activeStatTab={activeStatTab}
-          />
+          <CampaignList campaigns={filteredCampaigns} activeStatTab={activeStatTab} />
         </div>
       </div>
 

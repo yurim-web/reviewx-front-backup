@@ -7,13 +7,8 @@
  *
  * 목적: 파트너(광고주)의 프로필 정보와 메뉴를 보여주는 페이지입니다.
  *
- * 페이지 경로:
+ * 사용 페이지:
  * - /partner/mypage
- *
- * 주요 기능:
- * - 프로필 정보 표시 및 편집
- * - 이용 가이드, 공지사항, FAQ, 카카오톡 상담 메뉴
- * - 로그아웃 기능
  */
 
 "use client";
@@ -78,9 +73,7 @@ function PartnerMypagePage() {
             // console.log('❌ [마이페이지] profile_image가 없습니다');
           }
         }
-      } catch (error) {
-        console.error("❌ [마이페이지] 프로필 이미지 로드 실패:", error);
-      }
+      } catch (_error) {}
     }
   }, [user]);
 

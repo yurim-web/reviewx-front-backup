@@ -7,10 +7,8 @@
  *
  * 목적: 구매평 캠페인 신청내역 페이지의 공통 레이아웃을 제공
  *
- * 주요 기능:
- * - PartnerHeader 컴포넌트 포함
- * - 페이지별 공통 스타일 적용
- * - 반응형 레이아웃 설정
+ * 사용 페이지:
+ * - /partner/campaign_application/review/[id] (동적 라우팅)
  */
 
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";

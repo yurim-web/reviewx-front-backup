@@ -7,21 +7,16 @@
  *
  * 목적: 파트너 회원가입이 성공적으로 완료되었음을 알리는 페이지입니다.
  *
- * 페이지 경로:
+ * 사용 페이지:
  * - /partner/signup/complete
- *
- * 주요 기능:
- * - 회원가입 완료 메시지 표시
- * - 캠페인 보러 가기 버튼 (홈으로 이동)
- * - 로그인하기 버튼 (로그인 페이지로 이동)
  */
 
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Header from '@/components/fragments/Header';
-import styles from '@/styles/user/signup/complete.module.css';
+import { useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Header from "@/components/fragments/Header";
+import styles from "@/styles/user/signup/complete.module.css";
 
 /**
  * 파트너 회원가입 완료 페이지 컴포넌트
@@ -34,21 +29,21 @@ export default function PartnerSignupCompletePage() {
 
   // 이 페이지에서만 헤더 보더 색상 흰색으로 설정
   useEffect(() => {
-    document.body.classList.add('signup_complete_page');
+    document.body.classList.add("signup_complete_page");
     return () => {
-      document.body.classList.remove('signup_complete_page');
+      document.body.classList.remove("signup_complete_page");
     };
   }, []);
 
   // URL 파라미터에서 이름 가져오기 (없으면 기본값 사용)
-  const name = searchParams.get('name') || '파트너';
+  const name = searchParams.get("name") || "파트너";
 
   /**
    * 캠페인 보러 가기 버튼 클릭 핸들러
    * 홈 페이지로 이동
    */
   const handleGoToCampaigns = () => {
-    router.push('/partner');
+    router.push("/partner");
   };
 
   /**
@@ -56,7 +51,7 @@ export default function PartnerSignupCompletePage() {
    * 로그인 페이지로 이동
    */
   const handleGoToLogin = () => {
-    router.push('/partner/login');
+    router.push("/partner/login");
   };
 
   return (
@@ -75,40 +70,35 @@ export default function PartnerSignupCompletePage() {
 
           {/* 완료 메시지 섹션 */}
           <div className={styles.message_section}>
-          <h1 className={styles.welcome_title}>
-            {name !== '파트너' ? (
-              <>
-                <span className={styles.nickname_text}>{name}</span>
-                <span className={styles.nickname_honorific}>님,</span>
-                <br className={styles.desktop_br} />
-                리뷰엑스의 파트너가<br className={styles.mobile_br} /> 되신 것을 환영합니다.
-              </>
-            ) : (
-              <>
-                리뷰엑스의 파트너가<br className={styles.mobile_br} /> 되신 것을 환영합니다.
-              </>
-            )}
-          </h1>
-          <p className={styles.welcome_message}>
-            지금 바로 리뷰엑스의<br className={styles.mobile_br} /> 다양한 서비스를 이용해 보세요! 🔥🙌
-          </p>
-        </div>
+            <h1 className={styles.welcome_title}>
+              {name !== "파트너" ? (
+                <>
+                  <span className={styles.nickname_text}>{name}</span>
+                  <span className={styles.nickname_honorific}>님,</span>
+                  <br className={styles.desktop_br} />
+                  리뷰엑스의 파트너가
+                  <br className={styles.mobile_br} /> 되신 것을 환영합니다.
+                </>
+              ) : (
+                <>
+                  리뷰엑스의 파트너가
+                  <br className={styles.mobile_br} /> 되신 것을 환영합니다.
+                </>
+              )}
+            </h1>
+            <p className={styles.welcome_message}>
+              지금 바로 리뷰엑스의
+              <br className={styles.mobile_br} /> 다양한 서비스를 이용해 보세요! 🔥🙌
+            </p>
+          </div>
         </div>
 
         {/* 버튼 섹션 */}
         <div className={styles.button_section}>
-          <button
-            type="button"
-            className={styles.campaign_button}
-            onClick={handleGoToCampaigns}
-          >
+          <button type="button" className={styles.campaign_button} onClick={handleGoToCampaigns}>
             캠페인 등록 가이드 보기
           </button>
-          <button
-            type="button"
-            className={styles.login_button}
-            onClick={handleGoToLogin}
-          >
+          <button type="button" className={styles.login_button} onClick={handleGoToLogin}>
             로그인
           </button>
         </div>

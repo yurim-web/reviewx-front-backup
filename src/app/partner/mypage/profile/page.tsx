@@ -1,5 +1,5 @@
 /* ========================================
-   👤 파트너 프로필 탭 전용 페이지
+   파트너 프로필 탭 전용 페이지
    ======================================== */
 
 /**
@@ -7,21 +7,13 @@
  *
  * 목적: 파트너(광고주)의 프로필 정보와 메뉴를 보여주는 독립적인 페이지입니다.
  *
- * 페이지 경로:
+ * 사용 페이지:
  * - /partner/mypage/profile
- *
- * 주요 기능:
- * - 프로필 정보 표시 및 편집
- * - 이용 가이드, 공지사항, FAQ, 카카오톡 상담 메뉴
- * - 로그아웃 기능
- * - URL 기반 라우팅으로 새로고침 시에도 페이지 유지
- *
  */
 
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import PartnerTabNavigation from "@/components/partner/campaign_management/TabNavigation";
 import SubTabNavigation from "@/components/common/mypage/SubTabNavigation";
 import ProfileContent from "@/components/common/mypage/ProfileContent";
@@ -42,8 +34,6 @@ interface PartnerAccount {
  * 파트너 프로필 탭 전용 페이지 컴포넌트
  */
 export default function PartnerProfilePage() {
-  // Next.js의 useRouter 훅: 페이지 이동을 위한 라우터 객체
-  const router = useRouter();
   const { logout } = useAuth();
 
   // useState 훅: 컴포넌트의 상태(state)를 관리합니다.
@@ -59,10 +49,10 @@ export default function PartnerProfilePage() {
 
   // 컴포넌트 마운트 시 localStorage에서 파트너 정보 로드
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       try {
         // 현재 로그인한 사용자 정보 가져오기
-        const storedUser = localStorage.getItem('reviewx_auth_user');
+        const storedUser = localStorage.getItem("reviewx_auth_user");
         // console.log('🔍 [프로필 페이지] storedUser:', storedUser);
 
         if (storedUser) {
@@ -70,21 +60,21 @@ export default function PartnerProfilePage() {
           // console.log('👤 [프로필 페이지] user:', user);
 
           // partner_accounts에서 최신 정보 가져오기
-          const storedAccounts = localStorage.getItem('partner_accounts');
+          const storedAccounts = localStorage.getItem("partner_accounts");
           // console.log('📦 [프로필 페이지] partner_accounts:', storedAccounts);
 
           if (storedAccounts) {
             const accounts = JSON.parse(storedAccounts) as PartnerAccount[];
             // console.log('📋 [프로필 페이지] accounts array:', accounts);
 
-            const partnerAccount = accounts.find(
-              (a) => a.id === user.id || a.email === user.email,
-            );
+            const partnerAccount = accounts.find((a) => a.id === user.id || a.email === user.email);
             // console.log('✅ [프로필 페이지] partnerAccount:', partnerAccount);
 
             if (partnerAccount) {
               // 사업자명 설정
-              setPartnerName(partnerAccount.business_name || partnerAccount.name || "주식회사 청명종합광고기획");
+              setPartnerName(
+                partnerAccount.business_name || partnerAccount.name || "주식회사 청명종합광고기획"
+              );
               // console.log('🏢 [프로필 페이지] 사업자명:', partnerAccount.business_name);
 
               // 프로필 이미지 설정
@@ -104,8 +94,8 @@ export default function PartnerProfilePage() {
             }
           }
         }
-      } catch (error) {
-        console.error('❌ [프로필 페이지] 파트너 정보 로드 실패:', error);
+      } catch (_error) {
+        // 파트너 정보 로드 실패 시 무시
       }
     }
   }, []);
@@ -130,10 +120,7 @@ export default function PartnerProfilePage() {
       {/* 메인 컨텐츠 */}
       <div className={layoutStyles.main_content}>
         {/* 상단 탭 네비게이션: 캠페인/포인트/계정 등 */}
-        <PartnerTabNavigation
-          activeTab={activeTopTab}
-          setActiveTab={setActiveTopTab}
-        />
+        <PartnerTabNavigation activeTab={activeTopTab} setActiveTab={setActiveTopTab} />
 
         {/* 서브 탭 네비게이션: 프로필 */}
         <SubTabNavigation

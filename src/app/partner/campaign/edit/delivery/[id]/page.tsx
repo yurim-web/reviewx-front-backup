@@ -1,5 +1,5 @@
 /* ========================================
-   📦 배송형 캠페인 수정 페이지
+   배송형 캠페인 수정 페이지
    ======================================== */
 
 /**
@@ -7,16 +7,8 @@
  *
  * 목적: 파트너가 배송형 캠페인을 수정하는 페이지입니다.
  *
- * 페이지 경로:
+ * 사용 페이지:
  * - /partner/campaign/edit/delivery/[id]
- *
- * 주요 기능:
- * - 배송형 캠페인 기본 정보 수정
- * - 썸네일/상세 이미지 수정
- * - 배송형 캠페인 상세 정보 수정
- * - 참여/제출 옵션 수정
- * - 안내 사항 및 유의 사항 수정
- * - 배송형 캠페인 수정 처리
  */
 
 "use client";
@@ -32,6 +24,7 @@ import {
 } from "@/data/campaign/delivery/deliveryCampaigns";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
+import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
 import { getPartnerPointSummary } from "@/data/partner/point/pointData";
 // 분리된 CSS 모듈들 import
@@ -89,8 +82,7 @@ export default function DeliveryCampaignEditPage() {
 
       // 시작일이 오늘보다 과거거나 같으면 오픈 후
       return startDate <= today;
-    } catch (error) {
-      console.error("캠페인 오픈 여부 확인 실패:", error);
+    } catch (_error) {
       return false;
     }
   };
@@ -159,12 +151,11 @@ export default function DeliveryCampaignEditPage() {
       setIsOpen(openStatus);
 
       setIsLoading(false);
-    } catch (err) {
-      console.error("캠페인 로드 실패:", err);
+    } catch (_err) {
       setError("캠페인을 불러오는 중 오류가 발생했습니다.");
       setIsLoading(false);
     }
-  }, [campaignId]);
+  }, [campaignId, user?.id, user?.business_name]);
 
   /**
    * 캠페인 수정 처리
@@ -375,8 +366,7 @@ export default function DeliveryCampaignEditPage() {
 
       // 페이지 새로고침
       router.refresh();
-    } catch (error) {
-      console.error("배송형 캠페인 수정 실패:", error);
+    } catch (_error) {
       alert("캠페인 수정에 실패했습니다. 다시 시도해주세요.");
     } finally {
       setIsSubmitting(false);
@@ -411,7 +401,7 @@ export default function DeliveryCampaignEditPage() {
           onClick={() => router.back()}
           aria-label="뒤로가기"
         >
-          <img src="/images/header/header_arrow_back.svg" alt="뒤로가기" width={16} height={16} />
+          <Image src="/images/header/header_arrow_back.svg" alt="뒤로가기" width={16} height={16} />
         </button>
 
         <h1 className={headerStyles.page_title}>캠페인 수정</h1>

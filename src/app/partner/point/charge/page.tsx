@@ -5,9 +5,12 @@
    ======================================== */
 
 /**
+ * 파트너 포인트 충전 페이지
+ *
  * 목적: 파트너가 캠페인 운영을 위해 포인트를 충전하는 페이지입니다.
- * 경로: /partner/point/charge
- * 주요 기능: 포인트 표시, 금액 선택, 약관 동의, 신청 처리
+ *
+ * 사용 페이지:
+ * - /partner/point/charge
  */
 
 import { useState, useEffect, useRef } from "react";
@@ -18,9 +21,7 @@ import Toast from "@/components/common/toast/Toast";
 import BaseModal from "@/components/common/modal/BaseModal";
 import PartnerChargeTermsModal from "@/components/partner/point/PartnerChargeTermsModal";
 import AmountDropdown from "@/components/partner/point/AmountDropdown";
-import InvoiceTypeDropdown, {
-  InvoiceType,
-} from "@/components/partner/point/InvoiceTypeDropdown";
+import InvoiceTypeDropdown, { InvoiceType } from "@/components/partner/point/InvoiceTypeDropdown";
 import BankDropdown from "@/components/partner/point/BankDropdown";
 import { validateAmount } from "@/utils/validation/amount";
 import { formatPhone, formatBusinessNumber } from "@/utils/formatting/input";
@@ -59,10 +60,8 @@ export default function PartnerPointChargePage() {
   const [invoiceType, setInvoiceType] = useState<InvoiceType>("cash_income");
   const [isBankAmountOpen, setIsBankAmountOpen] = useState<boolean>(false);
   const [isCardAmountOpen, setIsCardAmountOpen] = useState<boolean>(false);
-  const [isInvoiceDropdownOpen, setIsInvoiceDropdownOpen] =
-    useState<boolean>(false);
-  const [isRefundBankDropdownOpen, setIsRefundBankDropdownOpen] =
-    useState<boolean>(false);
+  const [isInvoiceDropdownOpen, setIsInvoiceDropdownOpen] = useState<boolean>(false);
+  const [isRefundBankDropdownOpen, setIsRefundBankDropdownOpen] = useState<boolean>(false);
   const [showCopyToast, setShowCopyToast] = useState<boolean>(false);
 
   // 환불 정보 (무통장 입금 - Figma 4129-17244)
@@ -98,8 +97,7 @@ export default function PartnerPointChargePage() {
   });
 
   // 결제·환불 및 이용약관 보기 모달 상태
-  const [charge_terms_modal_open, set_charge_terms_modal_open] =
-    useState<boolean>(false);
+  const [charge_terms_modal_open, set_charge_terms_modal_open] = useState<boolean>(false);
 
   // 드롭다운 ref - 외부 클릭 감지용
   const bankDropdownRef = useRef<HTMLDivElement>(null);
@@ -199,8 +197,7 @@ export default function PartnerPointChargePage() {
     return true;
   };
 
-  const isButtonEnabled =
-    activeTab === "bank" ? isBankButtonEnabled() : isCardButtonEnabled();
+  const isButtonEnabled = activeTab === "bank" ? isBankButtonEnabled() : isCardButtonEnabled();
 
   /**
    * 카드 결제 처리 (실제 결제 API 호출 시뮬레이션)
@@ -225,13 +222,7 @@ export default function PartnerPointChargePage() {
     if (isSuccess) {
       // 관리자 승인 후 포인트 적립 예정 → 파트너 보유포인트/충전 내역에는 반영 안 함
       // 관리자 결제내역에 추가 (카드 결제 승인 시 '포인트 충전' 항목으로 생성)
-      addPaymentHistory(
-        user.id,
-        chargePoints,
-        "포인트 충전",
-        undefined,
-        getTaxInvoiceType(),
-      );
+      addPaymentHistory(user.id, chargePoints, "포인트 충전", undefined, getTaxInvoiceType());
 
       // 현재 포인트 업데이트 (모달 닫은 후에 업데이트되도록 하지 않음)
       // const updatedSummary = getPartnerPointSummary(user.id);
@@ -285,13 +276,7 @@ export default function PartnerPointChargePage() {
 
     // 무통장 입금은 관리자 승인 후 포인트 적립 → 파트너 보유포인트/충전 내역에는 반영 안 함
     // 관리자 결제내역에 추가
-    addPaymentHistory(
-      user.id,
-      chargePoints,
-      "무통장 입금",
-      depositorName,
-      getTaxInvoiceType(),
-    );
+    addPaymentHistory(user.id, chargePoints, "무통장 입금", depositorName, getTaxInvoiceType());
 
     // 무통장 입금 신청 모달 표시
     setBankDepositModal({ is_open: true });
@@ -368,17 +353,11 @@ export default function PartnerPointChargePage() {
           <PageTitle title="포인트 충전" />
 
           {/* 결제 방식 탭 */}
-          <article
-            className={styles.tab_section}
-            role="tablist"
-            aria-label="결제 방식 선택"
-          >
+          <article className={styles.tab_section} role="tablist" aria-label="결제 방식 선택">
             <button
               role="tab"
               aria-selected={activeTab === "bank"}
-              className={`${styles.tab_button} ${
-                activeTab === "bank" ? styles.tab_active : ""
-              }`}
+              className={`${styles.tab_button} ${activeTab === "bank" ? styles.tab_active : ""}`}
               onClick={() => setActiveTab("bank")}
             >
               무통장 입금
@@ -386,9 +365,7 @@ export default function PartnerPointChargePage() {
             <button
               role="tab"
               aria-selected={activeTab === "card"}
-              className={`${styles.tab_button} ${
-                activeTab === "card" ? styles.tab_active : ""
-              }`}
+              className={`${styles.tab_button} ${activeTab === "card" ? styles.tab_active : ""}`}
               onClick={() => setActiveTab("card")}
             >
               신용카드 결제
@@ -410,9 +387,7 @@ export default function PartnerPointChargePage() {
                     <button
                       className={styles.copy_button}
                       onClick={async () => {
-                        await navigator.clipboard.writeText(
-                          partnerInfo.bankAccount,
-                        );
+                        await navigator.clipboard.writeText(partnerInfo.bankAccount);
                         setShowCopyToast(true);
                         setTimeout(() => setShowCopyToast(false), 2000);
                       }}
@@ -425,8 +400,7 @@ export default function PartnerPointChargePage() {
                 <ul className={styles.account_notice_list}>
                   <li>
                     {" "}
-                    • 아래 계좌로 신청할 금액을 입금 후 결제 포인트 충전 요청을
-                    진행해 주세요.
+                    • 아래 계좌로 신청할 금액을 입금 후 결제 포인트 충전 요청을 진행해 주세요.
                   </li>
                 </ul>
               </article>
@@ -436,10 +410,7 @@ export default function PartnerPointChargePage() {
 
                 {/* 신청 금액 */}
                 <div className={styles.form_section}>
-                  <label
-                    className={styles.section_label}
-                    htmlFor="bank_amount_select"
-                  >
+                  <label className={styles.section_label} htmlFor="bank_amount_select">
                     신청 금액
                   </label>
                   <AmountDropdown
@@ -458,26 +429,17 @@ export default function PartnerPointChargePage() {
 
                 {/* 신청 후 포인트 */}
                 <div className={styles.form_section}>
-                  <label
-                    className={styles.section_label}
-                    htmlFor="post_points_display"
-                  >
+                  <label className={styles.section_label} htmlFor="post_points_display">
                     신청 후 포인트
                   </label>
-                  <div
-                    id="post_points_display"
-                    className={styles.read_only_box}
-                  >
+                  <div id="post_points_display" className={styles.read_only_box}>
                     {postPoints.toLocaleString()}
                   </div>
                 </div>
 
                 {/* 입금자명 */}
                 <div className={styles.form_section}>
-                  <label
-                    className={styles.section_label}
-                    htmlFor="depositor_name_input"
-                  >
+                  <label className={styles.section_label} htmlFor="depositor_name_input">
                     입금자명
                   </label>
                   <input
@@ -491,10 +453,7 @@ export default function PartnerPointChargePage() {
 
                 {/* 영수증/계산서 발행 - 드롭다운 선택 */}
                 <div className={styles.form_section}>
-                  <label
-                    className={styles.section_label}
-                    htmlFor="invoice_type_select"
-                  >
+                  <label className={styles.section_label} htmlFor="invoice_type_select">
                     영수증/계산서 발행
                   </label>
                   <InvoiceTypeDropdown
@@ -514,13 +473,9 @@ export default function PartnerPointChargePage() {
               <article className={styles.content_container}>
                 {/* 약관 동의 */}
                 <div className={styles.form_section}>
-                  <span className={styles.section_label}>
-                    결제 · 환불 및 이용약관 동의
-                  </span>
+                  <span className={styles.section_label}>결제 · 환불 및 이용약관 동의</span>
 
-                  <div
-                    className={`${styles.checkbox_row} ${styles.checkbox_row_agree}`}
-                  >
+                  <div className={`${styles.checkbox_row} ${styles.checkbox_row_agree}`}>
                     <div className={styles.checkbox_container}>
                       <input
                         type="checkbox"
@@ -528,9 +483,7 @@ export default function PartnerPointChargePage() {
                         checked={agreeTerms}
                         onChange={(e) => setAgreeTerms(e.target.checked)}
                       />
-                      <label htmlFor="agreeTerms">
-                        구매 조건 확인 및 결제 진행에 동의합니다.
-                      </label>
+                      <label htmlFor="agreeTerms">구매 조건 확인 및 결제 진행에 동의합니다.</label>
                     </div>
 
                     <button
@@ -550,30 +503,20 @@ export default function PartnerPointChargePage() {
                     <h3 className={styles.content_title}>사업자 정보</h3>
                     <div className={styles.form_section}>
                       <label className={styles.section_label}>상호명</label>
-                      <div className={styles.read_only_box}>
-                        {partnerInfo.companyName}
-                      </div>
+                      <div className={styles.read_only_box}>{partnerInfo.companyName}</div>
                     </div>
                     <div className={styles.form_section}>
                       <label className={styles.section_label}>대표자명</label>
-                      <div className={styles.read_only_box}>
-                        {partnerInfo.ownerName}
-                      </div>
+                      <div className={styles.read_only_box}>{partnerInfo.ownerName}</div>
                     </div>
                     <div className={styles.form_section}>
-                      <label className={styles.section_label}>
-                        사업자등록번호
-                      </label>
-                      <div className={styles.read_only_box}>
-                        {partnerInfo.businessNumber}
-                      </div>
+                      <label className={styles.section_label}>사업자등록번호</label>
+                      <div className={styles.read_only_box}>{partnerInfo.businessNumber}</div>
                     </div>
                     {/* 주소 */}
                     <div className={styles.form_section}>
                       <label className={styles.section_label}>주소</label>
-                      <div className={styles.read_only_box}>
-                        {partnerInfo.address}
-                      </div>
+                      <div className={styles.read_only_box}>{partnerInfo.address}</div>
                     </div>
                   </>
                 )}
@@ -583,10 +526,7 @@ export default function PartnerPointChargePage() {
                   <div className={styles.content_block}>
                     <h3 className={styles.content_title}>기본 정보</h3>
                     <div className={styles.form_section}>
-                      <label
-                        className={styles.section_label}
-                        htmlFor="cash_receipt_name_input"
-                      >
+                      <label className={styles.section_label} htmlFor="cash_receipt_name_input">
                         이름
                       </label>
                       <input
@@ -603,10 +543,7 @@ export default function PartnerPointChargePage() {
                       />
                     </div>
                     <div className={styles.form_section}>
-                      <label
-                        className={styles.section_label}
-                        htmlFor="cash_receipt_phone_input"
-                      >
+                      <label className={styles.section_label} htmlFor="cash_receipt_phone_input">
                         휴대폰 번호
                       </label>
                       <input
@@ -635,10 +572,7 @@ export default function PartnerPointChargePage() {
                   <div className={styles.content_block}>
                     <h3 className={styles.content_title}>기본 정보</h3>
                     <div className={styles.form_section}>
-                      <label
-                        className={styles.section_label}
-                        htmlFor="cash_receipt_company_input"
-                      >
+                      <label className={styles.section_label} htmlFor="cash_receipt_company_input">
                         상호명
                       </label>
                       <input
@@ -655,10 +589,7 @@ export default function PartnerPointChargePage() {
                       />
                     </div>
                     <div className={styles.form_section}>
-                      <label
-                        className={styles.section_label}
-                        htmlFor="cash_receipt_business_input"
-                      >
+                      <label className={styles.section_label} htmlFor="cash_receipt_business_input">
                         사업자등록번호
                       </label>
                       <input
@@ -669,9 +600,7 @@ export default function PartnerPointChargePage() {
                         placeholder="- 제외 입력"
                         value={cashReceiptExpense.business_number}
                         onChange={(e) => {
-                          const formatted = formatBusinessNumber(
-                            e.target.value,
-                          );
+                          const formatted = formatBusinessNumber(e.target.value);
                           setCashReceiptExpense((prev) => ({
                             ...prev,
                             business_number: formatted,
@@ -687,10 +616,7 @@ export default function PartnerPointChargePage() {
                 <div className={styles.content_block}>
                   <h3 className={styles.content_title}>환불 정보</h3>
                   <div className={styles.form_section}>
-                    <label
-                      className={styles.section_label}
-                      htmlFor="refund_bank_select"
-                    >
+                    <label className={styles.section_label} htmlFor="refund_bank_select">
                       은행
                     </label>
                     <BankDropdown
@@ -708,10 +634,7 @@ export default function PartnerPointChargePage() {
                     />
                   </div>
                   <div className={styles.form_section}>
-                    <label
-                      className={styles.section_label}
-                      htmlFor="refund_account_number_input"
-                    >
+                    <label className={styles.section_label} htmlFor="refund_account_number_input">
                       계좌번호
                     </label>
                     <input
@@ -722,17 +645,12 @@ export default function PartnerPointChargePage() {
                       placeholder="- 제외 입력"
                       value={refundAccountNumber}
                       onChange={(e) =>
-                        setRefundAccountNumber(
-                          e.target.value.replace(/\D/g, "").slice(0, 20),
-                        )
+                        setRefundAccountNumber(e.target.value.replace(/\D/g, "").slice(0, 20))
                       }
                     />
                   </div>
                   <div className={styles.form_section}>
-                    <label
-                      className={styles.section_label}
-                      htmlFor="refund_account_holder_input"
-                    >
+                    <label className={styles.section_label} htmlFor="refund_account_holder_input">
                       예금주
                     </label>
                     <input
@@ -746,29 +664,19 @@ export default function PartnerPointChargePage() {
                 </div>
 
                 {/* 입금 안내 사항 */}
-                <div
-                  className={`${styles.form_section} ${styles.notice_section}`}
-                >
+                <div className={`${styles.form_section} ${styles.notice_section}`}>
                   <label className={styles.section_label}>입금 안내 사항</label>
                   <ul className={styles.notice_list}>
+                    <li>입금 확인 후 승인 처리되어야 포인트를 사용할 수 있습니다.</li>
+                    <li>신청 후 24시간 이내 입금 확인이 안 될 경우 신청 내역이 삭제됩니다.</li>
+                    <li>환불 계좌는 입금 금액이 다를 경우 환불 처리를 위해 필요합니다.</li>
                     <li>
-                      입금 확인 후 승인 처리되어야 포인트를 사용할 수 있습니다.
+                      신청 이후 정보 수정이 불가능하며, 잘못 입력된 정보로 인해 발생하는 책임은
+                      신청자 본인에게 있습니다.
                     </li>
                     <li>
-                      신청 후 24시간 이내 입금 확인이 안 될 경우 신청 내역이
-                      삭제됩니다.
-                    </li>
-                    <li>
-                      환불 계좌는 입금 금액이 다를 경우 환불 처리를 위해
+                      입금자명이 다를 경우 확인이 불가능하며, 1:1 문의를 통해 별도 확인이
                       필요합니다.
-                    </li>
-                    <li>
-                      신청 이후 정보 수정이 불가능하며, 잘못 입력된 정보로 인해
-                      발생하는 책임은 신청자 본인에게 있습니다.
-                    </li>
-                    <li>
-                      입금자명이 다를 경우 확인이 불가능하며, 1:1 문의를 통해
-                      별도 확인이 필요합니다.
                     </li>
                   </ul>
                 </div>
@@ -778,10 +686,7 @@ export default function PartnerPointChargePage() {
 
           {/* 신용카드 결제 탭 - 기존 흐름 유지 */}
           {activeTab === "card" && (
-            <section
-              aria-labelledby="card_payment_title"
-              className={styles.bank_section}
-            >
+            <section aria-labelledby="card_payment_title" className={styles.bank_section}>
               <article className={styles.content_container}>
                 <h2 id="card_payment_title" className={styles.content_title}>
                   결제 진행
@@ -789,10 +694,7 @@ export default function PartnerPointChargePage() {
 
                 {/* 신청 금액 - 드롭다운 선택 */}
                 <div className={styles.form_section}>
-                  <label
-                    className={styles.section_label}
-                    htmlFor="card_amount_select"
-                  >
+                  <label className={styles.section_label} htmlFor="card_amount_select">
                     신청 금액
                   </label>
                   <AmountDropdown
@@ -811,10 +713,7 @@ export default function PartnerPointChargePage() {
 
                 {/* 신청 후 포인트 */}
                 <div className={styles.form_section}>
-                  <label
-                    className={styles.section_label}
-                    htmlFor="card_post_points"
-                  >
+                  <label className={styles.section_label} htmlFor="card_post_points">
                     신청 후 포인트
                   </label>
                   <div id="card_post_points" className={styles.read_only_box}>
@@ -824,13 +723,9 @@ export default function PartnerPointChargePage() {
 
                 {/* 약관 동의 */}
                 <div className={styles.form_section}>
-                  <span className={styles.section_label}>
-                    결제 · 환불 및 이용약관 동의
-                  </span>
+                  <span className={styles.section_label}>결제 · 환불 및 이용약관 동의</span>
 
-                  <div
-                    className={`${styles.checkbox_row} ${styles.checkbox_row_agree}`}
-                  >
+                  <div className={`${styles.checkbox_row} ${styles.checkbox_row_agree}`}>
                     <div className={styles.checkbox_container}>
                       <input
                         type="checkbox"
@@ -838,9 +733,7 @@ export default function PartnerPointChargePage() {
                         checked={agreeTerms}
                         onChange={(e) => setAgreeTerms(e.target.checked)}
                       />
-                      <label htmlFor="agreeTerms">
-                        구매 조건 확인 및 결제 진행에 동의합니다.
-                      </label>
+                      <label htmlFor="agreeTerms">구매 조건 확인 및 결제 진행에 동의합니다.</label>
                     </div>
 
                     <button
@@ -866,9 +759,7 @@ export default function PartnerPointChargePage() {
             }`}
           >
             <button
-              className={`${styles.submit_button} ${
-                !isButtonEnabled ? styles.disabled : ""
-              }`}
+              className={`${styles.submit_button} ${!isButtonEnabled ? styles.disabled : ""}`}
               onClick={handleSubmit}
               disabled={!isButtonEnabled}
               aria-disabled={!isButtonEnabled}
