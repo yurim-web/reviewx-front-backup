@@ -18,7 +18,7 @@
 /**
  * 정렬 방향
  */
-export type SortDirection = 'asc' | 'desc';
+export type SortDirection = "asc" | "desc";
 
 /**
  * 정렬 옵션
@@ -31,13 +31,13 @@ export interface SortOption {
 /**
  * 테이블 컬럼 정의
  */
-export interface TableColumn<T = any> {
+export interface TableColumn<T = Record<string, unknown>> {
   key: string;
   label: string;
   width?: string | number;
-  align?: 'left' | 'center' | 'right';
+  align?: "left" | "center" | "right";
   sortable?: boolean;
-  render?: (value: any, row: T, index: number) => React.ReactNode;
+  render?: (value: unknown, row: T, index: number) => React.ReactNode;
   headerRender?: () => React.ReactNode;
 }
 
@@ -69,18 +69,18 @@ export interface PaginationProps {
  */
 export interface TableFilter {
   field: string;
-  operator: 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte' | 'contains' | 'in';
-  value: any;
+  operator: "eq" | "ne" | "gt" | "gte" | "lt" | "lte" | "contains" | "in";
+  value: unknown;
 }
 
 /**
  * 테이블 액션 버튼
  */
-export interface TableAction<T = any> {
+export interface TableAction<T = Record<string, unknown>> {
   label: string;
   icon?: React.ReactNode;
   onClick: (row: T) => void;
-  variant?: 'primary' | 'secondary' | 'danger';
+  variant?: "primary" | "secondary" | "danger";
   disabled?: boolean | ((row: T) => boolean);
   visible?: boolean | ((row: T) => boolean);
 }
@@ -88,7 +88,7 @@ export interface TableAction<T = any> {
 /**
  * 테이블 Props
  */
-export interface TableProps<T = any> {
+export interface TableProps<T = Record<string, unknown>> {
   columns: TableColumn<T>[];
   data: T[];
   loading?: boolean;

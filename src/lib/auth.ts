@@ -4,10 +4,56 @@
  */
 
 import { AuthUser, LoginCredentials, UserRole } from "@/types/auth";
-import {
-  findAccountByCredentials,
-  type UnifiedAccount,
-} from "@/data/login/unifiedAccountData";
+import { findAccountByCredentials, type UnifiedAccount } from "@/data/login/unifiedAccountData";
+
+// 로컬 스토리지 계정 데이터 파싱용 내부 타입
+interface StoredUserAccount {
+  id?: string;
+  email?: string;
+  name?: string;
+  nickname?: string;
+  phone?: string;
+  address?: string;
+  detail_address?: string;
+  postal_code?: string;
+  profile_image?: string;
+  channels?: string[];
+  channel_details?: StoredChannelDetail[];
+  grade?: string;
+  daily_visits?: number;
+  total_visits?: number;
+  neighbors?: number;
+  [key: string]: unknown;
+}
+
+interface StoredPartnerAccount {
+  id?: string;
+  email?: string;
+  name?: string;
+  representative_name?: string;
+  phone?: string;
+  business_name?: string;
+  business_number?: string;
+  approval_status?: string;
+  address?: string;
+  detail_address?: string;
+  postal_code?: string;
+  contact_phone?: string;
+  business_type?: string;
+  [key: string]: unknown;
+}
+
+interface StoredChannelDetail {
+  name: string;
+  url?: string;
+  status?: string;
+  daily_visits?: number;
+  total_visits?: number;
+  neighbors?: number;
+  followers?: number;
+  subscribers?: number;
+  [key: string]: unknown;
+}
 
 /**
  * UnifiedAccount를 AuthUser로 변환
@@ -48,8 +94,8 @@ function mapToAuthUser(account: UnifiedAccount): AuthUser {
         const storedAccounts = localStorage.getItem("user_accounts");
         if (storedAccounts) {
           const accounts = JSON.parse(storedAccounts);
-          const userAccount = accounts.find(
-            (a: any) => a.id === account.id || a.email === account.email,
+          const userAccount = (accounts as StoredUserAccount[]).find(
+            (a) => a.id === account.id || a.email === account.email
           );
           if (userAccount) {
             // 기본 닉네임 데이터 매핑 (user_accounts에 nickname이 없을 때 사용)
@@ -65,27 +111,20 @@ function mapToAuthUser(account: UnifiedAccount): AuthUser {
 
               // user_accounts에 nickname 업데이트
               if (nickname) {
-                const accountIndex = accounts.findIndex(
-                  (a: any) =>
-                    a.id === userAccount.id || a.email === userAccount.email,
+                const accountIndex = (accounts as StoredUserAccount[]).findIndex(
+                  (a) => a.id === userAccount.id || a.email === userAccount.email
                 );
                 if (accountIndex >= 0) {
                   accounts[accountIndex] = {
                     ...accounts[accountIndex],
                     nickname: nickname,
                   };
-                  localStorage.setItem(
-                    "user_accounts",
-                    JSON.stringify(accounts),
-                  );
-                  console.log(
-                    "✅ [mapToAuthUser] user_accounts nickname 자동 업데이트:",
-                    {
-                      id: userAccount.id,
-                      oldNickname: userAccount.nickname,
-                      newNickname: nickname,
-                    },
-                  );
+                  localStorage.setItem("user_accounts", JSON.stringify(accounts));
+                  console.log("✅ [mapToAuthUser] user_accounts nickname 자동 업데이트:", {
+                    id: userAccount.id,
+                    oldNickname: userAccount.nickname,
+                    newNickname: nickname,
+                  });
                 }
               }
             }
@@ -115,7 +154,7 @@ function mapToAuthUser(account: UnifiedAccount): AuthUser {
             // user_accounts에 없으면 기본값 사용
             authUser.id = account.id;
             authUser.name = account.name;
-            authUser.nickname = (account as any).nickname || ""; // name을 fallback으로 사용하지 않음
+            authUser.nickname = (account as UnifiedAccount & { nickname?: string }).nickname || ""; // name을 fallback으로 사용하지 않음
             authUser.phone = account.phone;
             authUser.grade = account.grade || "gold";
             authUser.channels = account.channels || [];
@@ -124,7 +163,7 @@ function mapToAuthUser(account: UnifiedAccount): AuthUser {
           // localStorage에 user_accounts가 없으면 기본값 사용
           authUser.id = account.id;
           authUser.name = account.name;
-          authUser.nickname = (account as any).nickname || ""; // name을 fallback으로 사용하지 않음
+          authUser.nickname = (account as UnifiedAccount & { nickname?: string }).nickname || ""; // name을 fallback으로 사용하지 않음
           authUser.phone = account.phone;
           authUser.grade = account.grade || "gold";
           authUser.channels = account.channels || [];
@@ -150,20 +189,17 @@ function mapToAuthUser(account: UnifiedAccount): AuthUser {
         const storedAccounts = localStorage.getItem("partner_accounts");
         if (storedAccounts) {
           const accounts = JSON.parse(storedAccounts);
-          const partnerAccount = accounts.find(
-            (a: any) => a.email === account.email,
+          const partnerAccount = (accounts as StoredPartnerAccount[]).find(
+            (a) => a.email === account.email
           );
           if (partnerAccount) {
             authUser.id = partnerAccount.id || authUser.id;
             authUser.name =
-              partnerAccount.name ||
-              partnerAccount.representative_name ||
-              account.name;
+              partnerAccount.name || partnerAccount.representative_name || account.name;
             authUser.phone = partnerAccount.phone;
             authUser.business_name = partnerAccount.business_name;
             authUser.business_number = partnerAccount.business_number;
-            authUser.approval_status =
-              partnerAccount.approval_status || "approved";
+            authUser.approval_status = partnerAccount.approval_status || "approved";
             // 추가 정보도 저장
             authUser.representative_name = partnerAccount.representative_name;
             authUser.address = partnerAccount.address;
@@ -174,8 +210,7 @@ function mapToAuthUser(account: UnifiedAccount): AuthUser {
           } else {
             // partner_accounts에 없으면 기본값 사용
             authUser.business_name = account.business_name || "테스트 사업자";
-            authUser.business_number =
-              account.business_number || "123-45-67890";
+            authUser.business_number = account.business_number || "123-45-67890";
             authUser.approval_status = account.approval_status || "approved";
           }
         } else {
@@ -276,10 +311,7 @@ export function clearAuthStorage(): void {
 /**
  * 로그인 후 공통 후처리 (user_accounts / partner_accounts 관리)
  */
-function applyPostLoginSideEffects(
-  account: UnifiedAccount,
-  authUser: AuthUser,
-): void {
+function applyPostLoginSideEffects(account: UnifiedAccount, authUser: AuthUser): void {
   // 리뷰어 로그인 시 user_accounts에 기본 데이터 생성 (리뷰어 목록 데이터 기반)
   if (authUser.role === "user" && typeof window !== "undefined") {
     try {
@@ -287,12 +319,15 @@ function applyPostLoginSideEffects(
       const accounts = storedAccounts ? JSON.parse(storedAccounts) : [];
 
       // 이미 계정이 있는지 확인
-      const existingIndex = accounts.findIndex(
-        (a: any) => a.id === authUser.id || a.email === authUser.email,
+      const existingIndex = (accounts as StoredUserAccount[]).findIndex(
+        (a) => a.id === authUser.id || a.email === authUser.email
       );
 
       // ID에 따라 기본 정보 매핑
-      const reviewerDataMap: Record<string, any> = {
+      const reviewerDataMap: Record<
+        string,
+        StoredUserAccount & { withdrawn_points?: number; point_history?: unknown[] }
+      > = {
         user_kakao_001: {
           id: "user_kakao_001",
           number: "000001",
@@ -551,20 +586,11 @@ function applyPostLoginSideEffects(
           accounts.push({
             ...defaultData,
             withdrawn_points: defaultData.withdrawn_points ?? 0,
-            join_date: new Date()
-              .toISOString()
-              .replace("T", " ")
-              .substring(0, 16),
-            last_access_date: new Date()
-              .toISOString()
-              .replace("T", " ")
-              .substring(0, 16),
+            join_date: new Date().toISOString().replace("T", " ").substring(0, 16),
+            last_access_date: new Date().toISOString().replace("T", " ").substring(0, 16),
           });
           localStorage.setItem("user_accounts", JSON.stringify(accounts));
-          console.log(
-            "✅ [로그인] user_accounts 기본 데이터 생성:",
-            defaultData,
-          );
+          console.log("✅ [로그인] user_accounts 기본 데이터 생성:", defaultData);
         }
       } else {
         // 이미 계정이 있으면 nickname, channels, channel_details 업데이트
@@ -572,21 +598,16 @@ function applyPostLoginSideEffects(
         const existingAccount = accounts[existingIndex];
 
         // 업데이트할 필드들
-        const updates: any = {
-          last_access_date: new Date()
-            .toISOString()
-            .replace("T", " ")
-            .substring(0, 16),
+        const updates: Partial<StoredUserAccount> & { last_access_date: string } = {
+          last_access_date: new Date().toISOString().replace("T", " ").substring(0, 16),
         };
 
         // nickname이 없거나 name과 같은 경우 기본 데이터에서 가져오기
         if (
           defaultData &&
-          (!existingAccount.nickname ||
-            existingAccount.nickname === existingAccount.name)
+          (!existingAccount.nickname || existingAccount.nickname === existingAccount.name)
         ) {
-          updates.nickname =
-            defaultData.nickname || existingAccount.nickname || "";
+          updates.nickname = defaultData.nickname || existingAccount.nickname || "";
         }
 
         // channels 배열 업데이트 (기본 데이터에 더 많은 채널이 있으면 병합)
@@ -594,9 +615,7 @@ function applyPostLoginSideEffects(
           const existingChannels = existingAccount.channels || [];
           const defaultChannels = defaultData.channels || [];
           // 기본 데이터의 채널이 더 많으면 업데이트 (중복 제거)
-          const mergedChannels = Array.from(
-            new Set([...existingChannels, ...defaultChannels]),
-          );
+          const mergedChannels = Array.from(new Set([...existingChannels, ...defaultChannels]));
           if (mergedChannels.length > existingChannels.length) {
             updates.channels = mergedChannels;
             console.log("✅ [로그인] user_accounts channels 업데이트:", {
@@ -615,9 +634,9 @@ function applyPostLoginSideEffects(
           // 기본 데이터의 channel_details를 기준으로 병합
           // 기존에 있던 채널은 유지하고, 기본 데이터에만 있는 채널은 추가
           const mergedDetails = [...existingDetails];
-          defaultDetails.forEach((defaultDetail: any) => {
+          defaultDetails.forEach((defaultDetail: StoredChannelDetail) => {
             const existingIndex = mergedDetails.findIndex(
-              (d: any) => d.name === defaultDetail.name,
+              (d: StoredChannelDetail) => d.name === defaultDetail.name
             );
             if (existingIndex >= 0) {
               // 기존 채널이 있으면 status가 'connected'인 경우 URL과 통계 정보도 업데이트
@@ -640,13 +659,11 @@ function applyPostLoginSideEffects(
                   ...existingDetail,
                   // 통계 정보가 없거나 0이면 기본 데이터의 통계 정보로 업데이트
                   daily_visits:
-                    existingDetail.daily_visits &&
-                    existingDetail.daily_visits > 0
+                    existingDetail.daily_visits && existingDetail.daily_visits > 0
                       ? existingDetail.daily_visits
                       : defaultDetail.daily_visits,
                   total_visits:
-                    existingDetail.total_visits &&
-                    existingDetail.total_visits > 0
+                    existingDetail.total_visits && existingDetail.total_visits > 0
                       ? existingDetail.total_visits
                       : defaultDetail.total_visits,
                   neighbors:
@@ -670,12 +687,7 @@ function applyPostLoginSideEffects(
           });
 
           // 정렬: 네이버 블로그, 네이버 클립, 인스타그램, 유튜브 순서
-          const order = [
-            "네이버 블로그",
-            "네이버 클립",
-            "인스타그램",
-            "유튜브",
-          ];
+          const order = ["네이버 블로그", "네이버 클립", "인스타그램", "유튜브"];
           mergedDetails.sort((a, b) => {
             const aIndex = order.indexOf(a.name);
             const bIndex = order.indexOf(b.name);
@@ -697,15 +709,13 @@ function applyPostLoginSideEffects(
         if (defaultData) {
           if (
             defaultData.daily_visits !== undefined &&
-            (!existingAccount.daily_visits ||
-              existingAccount.daily_visits === 0)
+            (!existingAccount.daily_visits || existingAccount.daily_visits === 0)
           ) {
             updates.daily_visits = defaultData.daily_visits;
           }
           if (
             defaultData.total_visits !== undefined &&
-            (!existingAccount.total_visits ||
-              existingAccount.total_visits === 0)
+            (!existingAccount.total_visits || existingAccount.total_visits === 0)
           ) {
             updates.total_visits = defaultData.total_visits;
           }
@@ -724,12 +734,7 @@ function applyPostLoginSideEffects(
         };
         localStorage.setItem("user_accounts", JSON.stringify(accounts));
 
-        if (
-          updates.nickname ||
-          updates.daily_visits ||
-          updates.total_visits ||
-          updates.neighbors
-        ) {
+        if (updates.nickname || updates.daily_visits || updates.total_visits || updates.neighbors) {
           console.log("✅ [로그인] user_accounts 업데이트:", {
             id: authUser.id,
             nickname: updates.nickname,
@@ -751,18 +756,15 @@ function applyPostLoginSideEffects(
     try {
       const storedAccounts = localStorage.getItem("partner_accounts");
       const accounts = storedAccounts ? JSON.parse(storedAccounts) : [];
-      const accountIndex = accounts.findIndex(
-        (a: any) => a.id === authUser.id || a.email === authUser.email,
+      const accountIndex = (accounts as StoredPartnerAccount[]).findIndex(
+        (a) => a.id === authUser.id || a.email === authUser.email
       );
 
       if (accountIndex >= 0) {
         // 기존 계정이 있으면 접속 시간만 업데이트
         accounts[accountIndex] = {
           ...accounts[accountIndex],
-          last_access_date: new Date()
-            .toISOString()
-            .replace("T", " ")
-            .substring(0, 16),
+          last_access_date: new Date().toISOString().replace("T", " ").substring(0, 16),
         };
         localStorage.setItem("partner_accounts", JSON.stringify(accounts));
         console.log("✅ [로그인] partner_accounts 접속 시간 업데이트");
@@ -776,27 +778,18 @@ function applyPostLoginSideEffects(
           email: authUser.email || account.email,
           name: authUser.name || account.name,
           phone: authUser.phone || account.phone,
-          business_name:
-            authUser.business_name ||
-            account.business_name ||
-            "테스트 주식회사",
-          business_number:
-            authUser.business_number ||
-            account.business_number ||
-            "123-45-67890",
-          representative_name:
-            authUser.representative_name || authUser.name || account.name,
+          business_name: authUser.business_name || account.business_name || "테스트 주식회사",
+          business_number: authUser.business_number || account.business_number || "123-45-67890",
+          representative_name: authUser.representative_name || authUser.name || account.name,
           business_type: authUser.business_type || "개인사업자",
           division: "개인" as const,
           address: authUser.address || "",
           detail_address: authUser.detail_address || "",
           postal_code: authUser.postal_code || "",
-          contact_phone:
-            authUser.contact_phone || authUser.phone || account.phone,
+          contact_phone: authUser.contact_phone || authUser.phone || account.phone,
           approval_status: authUser.approval_status || ("approved" as const),
           signupDate:
-            account.signupDate ||
-            new Date().toISOString().split("T")[0].replace(/-/g, ". "),
+            account.signupDate || new Date().toISOString().split("T")[0].replace(/-/g, ". "),
           isBlocked: false,
           isBanned: false,
           redirectUrl: "/partner",
@@ -808,14 +801,8 @@ function applyPostLoginSideEffects(
           used_points: 0,
           status_type: "일반 회원" as const,
           status: "정상" as const,
-          last_access_date: new Date()
-            .toISOString()
-            .replace("T", " ")
-            .substring(0, 16),
-          join_date: new Date()
-            .toISOString()
-            .replace("T", " ")
-            .substring(0, 16),
+          last_access_date: new Date().toISOString().replace("T", " ").substring(0, 16),
+          join_date: new Date().toISOString().replace("T", " ").substring(0, 16),
         };
         accounts.push(newPartnerAccount);
         localStorage.setItem("partner_accounts", JSON.stringify(accounts));
@@ -823,7 +810,7 @@ function applyPostLoginSideEffects(
           "✅ [로그인] partner_accounts 생성 (초기 포인트:",
           initialPoints,
           "):",
-          newPartnerAccount,
+          newPartnerAccount
         );
       }
     } catch (error) {
@@ -837,13 +824,10 @@ function applyPostLoginSideEffects(
  */
 export async function authenticateUser(
   credentials: LoginCredentials,
-  role?: UserRole,
+  role?: UserRole
 ): Promise<AuthUser> {
   // Mock 데이터에서 사용자 찾기
-  const account = findAccountByCredentials(
-    credentials.email,
-    credentials.password,
-  );
+  const account = findAccountByCredentials(credentials.email, credentials.password);
 
   if (!account) {
     throw new Error("이메일 또는 비밀번호가 일치하지 않습니다.");
@@ -886,9 +870,7 @@ export async function authenticateUser(
  * 통합 계정 객체(UnifiedAccount)를 직접 받아서 로그인 처리
  * (SNS 로그인 등 이메일/비밀번호가 없는 경우에 사용)
  */
-export async function authenticateUnifiedAccount(
-  account: UnifiedAccount,
-): Promise<AuthUser> {
+export async function authenticateUnifiedAccount(account: UnifiedAccount): Promise<AuthUser> {
   // AuthUser 객체 생성 (매핑 함수 사용)
   const authUser = mapToAuthUser(account);
 

@@ -8,14 +8,8 @@ import {
   deliveryCampaigns,
   type DeliveryCampaignData,
 } from "@/data/campaign/delivery/deliveryCampaigns";
-import {
-  visitCampaigns,
-  type VisitCampaignData,
-} from "@/data/campaign/visit/visitCampaigns";
-import {
-  reviewCampaigns,
-  type ReviewCampaignData,
-} from "@/data/campaign/review/reviewCampaigns";
+import { visitCampaigns, type VisitCampaignData } from "@/data/campaign/visit/visitCampaigns";
+import { reviewCampaigns, type ReviewCampaignData } from "@/data/campaign/review/reviewCampaigns";
 import {
   missionCampaigns,
   type MissionCampaignData,
@@ -25,6 +19,21 @@ import {
   type ReporterCampaignData,
 } from "@/data/campaign/reporter/reporterCampaigns";
 import type { CampaignWithApplicants } from "@/types/domain/partner";
+
+// localStorage에서 불러온 캠페인 데이터의 추가 필드 타입 정의
+interface StoredCampaignExtra extends CampaignWithApplicants {
+  description?: string;
+  keywords?: string;
+  isUrgent?: boolean;
+  registeredAt?: string;
+  promotionLink?: string;
+  visitAddress?: string;
+  addressGuide?: string;
+  visitLink?: string;
+  purchasePeriod?: string;
+  purchaseLink?: string;
+  productLink?: string;
+}
 
 export type MergedCampaigns = {
   allDelivery: DeliveryCampaignData[];
@@ -52,19 +61,11 @@ export function getStaticCampaigns(): MergedCampaigns {
  * SSR 시에는 정적만 반환.
  */
 export function getAllMergedCampaigns(): MergedCampaigns {
-  let allDelivery: DeliveryCampaignData[] = enrichStaticCampaigns([
-    ...deliveryCampaigns,
-  ]);
+  let allDelivery: DeliveryCampaignData[] = enrichStaticCampaigns([...deliveryCampaigns]);
   let allVisit: VisitCampaignData[] = enrichStaticCampaigns([...visitCampaigns]);
-  let allReview: ReviewCampaignData[] = enrichStaticCampaigns([
-    ...reviewCampaigns,
-  ]);
-  let allMission: MissionCampaignData[] = enrichStaticCampaigns([
-    ...missionCampaigns,
-  ]);
-  let allReporter: ReporterCampaignData[] = enrichStaticCampaigns([
-    ...reporterCampaigns,
-  ]);
+  let allReview: ReviewCampaignData[] = enrichStaticCampaigns([...reviewCampaigns]);
+  let allMission: MissionCampaignData[] = enrichStaticCampaigns([...missionCampaigns]);
+  let allReporter: ReporterCampaignData[] = enrichStaticCampaigns([...reporterCampaigns]);
 
   if (typeof window === "undefined") {
     return {
@@ -91,9 +92,7 @@ export function getAllMergedCampaigns(): MergedCampaigns {
       if (Array.isArray(storedCampaigns)) {
         const converted = storedCampaigns.map((c) => {
           const info = c.campaignInfo;
-          const { applicationStart, applicationEnd } = parsePeriod(
-            info.recruitmentPeriod || ""
-          );
+          const { applicationStart, applicationEnd } = parsePeriod(info.recruitmentPeriod || "");
           return {
             id: info.id,
             title: info.title,
@@ -101,7 +100,7 @@ export function getAllMergedCampaigns(): MergedCampaigns {
             image: info.image,
             subcategory: info.category || "기타",
             points: 0,
-            description: (c as any).description || "",
+            description: (c as StoredCampaignExtra).description || "",
             recruitment: {
               current: info.recruitedCount || 0,
               total: info.totalCount || 0,
@@ -117,12 +116,12 @@ export function getAllMergedCampaigns(): MergedCampaigns {
             },
             campaign_detail_image: info.image,
             channel: info.brandName || "",
-            keyword: (c as any).keywords || "",
-            promotionLink: (c as any).promotionLink || "",
+            keyword: (c as StoredCampaignExtra).keywords || "",
+            promotionLink: (c as StoredCampaignExtra).promotionLink || "",
             requirements: [],
             guidelineTexts: [],
-            isUrgent: (c as any).isUrgent === true,
-            registeredAt: (c as any).registeredAt || undefined,
+            isUrgent: (c as StoredCampaignExtra).isUrgent === true,
+            registeredAt: (c as StoredCampaignExtra).registeredAt || undefined,
           } as DeliveryCampaignData;
         });
         const staticIds = new Set(deliveryCampaigns.map((c) => c.id));
@@ -141,9 +140,7 @@ export function getAllMergedCampaigns(): MergedCampaigns {
       if (Array.isArray(storedCampaigns)) {
         const converted = storedCampaigns.map((c) => {
           const info = c.campaignInfo;
-          const { applicationStart, applicationEnd } = parsePeriod(
-            info.recruitmentPeriod || ""
-          );
+          const { applicationStart, applicationEnd } = parsePeriod(info.recruitmentPeriod || "");
           return {
             id: info.id,
             title: info.title,
@@ -152,7 +149,7 @@ export function getAllMergedCampaigns(): MergedCampaigns {
             subcategory: info.category || "기타",
             region: "",
             points: 0,
-            description: (c as any).description || "",
+            description: (c as StoredCampaignExtra).description || "",
             recruitment: {
               current: info.recruitedCount || 0,
               total: info.totalCount || 0,
@@ -167,14 +164,14 @@ export function getAllMergedCampaigns(): MergedCampaigns {
             },
             campaign_detail_image: info.image,
             channel: info.brandName || "",
-            keyword: (c as any).keywords || "",
+            keyword: (c as StoredCampaignExtra).keywords || "",
             guidelineTexts: [],
             requirements: [],
-            visitAddress: (c as any).visitAddress || "",
-            addressGuide: (c as any).addressGuide || "",
-            visitLink: (c as any).visitLink || "",
-            isUrgent: (c as any).isUrgent === true,
-            registeredAt: (c as any).registeredAt || undefined,
+            visitAddress: (c as StoredCampaignExtra).visitAddress || "",
+            addressGuide: (c as StoredCampaignExtra).addressGuide || "",
+            visitLink: (c as StoredCampaignExtra).visitLink || "",
+            isUrgent: (c as StoredCampaignExtra).isUrgent === true,
+            registeredAt: (c as StoredCampaignExtra).registeredAt || undefined,
           } as VisitCampaignData;
         });
         const staticIds = new Set(allVisit.map((c) => c.id));
@@ -193,10 +190,8 @@ export function getAllMergedCampaigns(): MergedCampaigns {
       if (Array.isArray(storedCampaigns)) {
         const converted = storedCampaigns.map((c) => {
           const info = c.campaignInfo;
-          const { applicationStart, applicationEnd } = parsePeriod(
-            info.recruitmentPeriod || ""
-          );
-          const isUrgentValue = (c as any).isUrgent === true;
+          const { applicationStart, applicationEnd } = parsePeriod(info.recruitmentPeriod || "");
+          const isUrgentValue = (c as StoredCampaignExtra).isUrgent === true;
           return {
             id: info.id,
             title: info.title,
@@ -205,7 +200,7 @@ export function getAllMergedCampaigns(): MergedCampaigns {
             subcategory: info.category || "기타",
             channel: info.brandName || "",
             points: 0,
-            description: (c as any).description || "",
+            description: (c as StoredCampaignExtra).description || "",
             recruitment: {
               current: info.recruitedCount || 0,
               total: info.totalCount || 0,
@@ -216,24 +211,22 @@ export function getAllMergedCampaigns(): MergedCampaigns {
               applicationStart,
               applicationEnd,
               announcement: info.announcementDate || "",
-              purchasePeriod: (c as any).purchasePeriod || "",
+              purchasePeriod: (c as StoredCampaignExtra).purchasePeriod || "",
               registrationPeriod: info.registrationPeriod || "",
             },
             campaign_detail_image: info.image,
-            keyword: (c as any).keywords || "",
-            purchaseLink: (c as any).purchaseLink || "",
+            keyword: (c as StoredCampaignExtra).keywords || "",
+            purchaseLink: (c as StoredCampaignExtra).purchaseLink || "",
             requirements: [],
             guidelineTexts: [],
             isUrgent: isUrgentValue,
-            registeredAt: (c as any).registeredAt || undefined,
+            registeredAt: (c as StoredCampaignExtra).registeredAt || undefined,
           } as ReviewCampaignData;
         });
         const staticIds = new Set(reviewCampaigns.map((c) => c.id));
         const newCampaigns = converted.filter((c) => !staticIds.has(c.id));
         const updatedStaticCampaigns = reviewCampaigns.map((staticCampaign) => {
-          const localStorageCampaign = converted.find(
-            (c) => c.id === staticCampaign.id
-          );
+          const localStorageCampaign = converted.find((c) => c.id === staticCampaign.id);
           return localStorageCampaign || staticCampaign;
         });
         allReview = [...updatedStaticCampaigns, ...newCampaigns];
@@ -250,9 +243,7 @@ export function getAllMergedCampaigns(): MergedCampaigns {
       if (Array.isArray(storedCampaigns)) {
         const converted = storedCampaigns.map((c) => {
           const info = c.campaignInfo;
-          const { applicationStart, applicationEnd } = parsePeriod(
-            info.recruitmentPeriod || ""
-          );
+          const { applicationStart, applicationEnd } = parsePeriod(info.recruitmentPeriod || "");
           return {
             id: info.id,
             title: info.title,
@@ -260,7 +251,7 @@ export function getAllMergedCampaigns(): MergedCampaigns {
             image: info.image,
             subcategory: info.category || "기타",
             points: 0,
-            description: (c as any).description || "",
+            description: (c as StoredCampaignExtra).description || "",
             recruitment: {
               current: info.recruitedCount || 0,
               total: info.totalCount || 0,
@@ -275,12 +266,12 @@ export function getAllMergedCampaigns(): MergedCampaigns {
             },
             campaign_detail_image: info.image,
             channel: info.brandName || "",
-            keyword: (c as any).keywords || "",
-            productLink: (c as any).productLink || "",
+            keyword: (c as StoredCampaignExtra).keywords || "",
+            productLink: (c as StoredCampaignExtra).productLink || "",
             requirements: [],
             guidelineTexts: [],
-            isUrgent: (c as any).isUrgent === true,
-            registeredAt: (c as any).registeredAt || undefined,
+            isUrgent: (c as StoredCampaignExtra).isUrgent === true,
+            registeredAt: (c as StoredCampaignExtra).registeredAt || undefined,
           } as ReporterCampaignData;
         });
         const staticIds = new Set(reporterCampaigns.map((c) => c.id));
@@ -299,9 +290,7 @@ export function getAllMergedCampaigns(): MergedCampaigns {
       if (Array.isArray(storedCampaigns)) {
         const converted = storedCampaigns.map((c) => {
           const info = c.campaignInfo;
-          const { applicationStart, applicationEnd } = parsePeriod(
-            info.recruitmentPeriod || ""
-          );
+          const { applicationStart, applicationEnd } = parsePeriod(info.recruitmentPeriod || "");
           return {
             id: info.id,
             title: info.title,
@@ -310,7 +299,7 @@ export function getAllMergedCampaigns(): MergedCampaigns {
             subcategory: info.category || "기타",
             channel: info.brandName || "",
             points: 0,
-            description: (c as any).description || "",
+            description: (c as StoredCampaignExtra).description || "",
             recruitment: {
               current: info.recruitedCount || 0,
               total: info.totalCount || 0,
@@ -324,12 +313,12 @@ export function getAllMergedCampaigns(): MergedCampaigns {
               registrationPeriod: info.registrationPeriod || "",
             },
             campaign_detail_image: info.image,
-            keyword: (c as any).keywords || "",
-            productLink: (c as any).productLink || "",
+            keyword: (c as StoredCampaignExtra).keywords || "",
+            productLink: (c as StoredCampaignExtra).productLink || "",
             requirements: [],
             guidelineTexts: [],
-            isUrgent: (c as any).isUrgent === true,
-            registeredAt: (c as any).registeredAt || undefined,
+            isUrgent: (c as StoredCampaignExtra).isUrgent === true,
+            registeredAt: (c as StoredCampaignExtra).registeredAt || undefined,
           } as MissionCampaignData;
         });
         const staticIds = new Set(missionCampaigns.map((c) => c.id));

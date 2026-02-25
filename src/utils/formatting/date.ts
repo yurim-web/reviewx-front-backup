@@ -163,6 +163,41 @@ export const formatDateForMobile = (dateString: string): string => {
 };
 
 /**
+ * 시간 정보를 제거하고 날짜만 비교용 Date 반환 (00:00:00으로 설정)
+ *
+ * @param d - Date 객체
+ * @returns 시간이 00:00:00으로 초기화된 Date 객체
+ */
+export function toDateOnly(d: Date): Date {
+  const r = new Date(d);
+  r.setHours(0, 0, 0, 0);
+  return r;
+}
+
+/**
+ * "A ~ B" 또는 "A~B" 형식의 기간 문자열을 파싱합니다.
+ * 단일 날짜면 start === end 로 취급합니다.
+ *
+ * @param value - 기간 문자열 (예: "2025-01-01 ~ 2025-01-31")
+ * @returns { start: Date; end: Date } 또는 유효하지 않으면 null
+ */
+export function parseDateRange(value: string): { start: Date; end: Date } | null {
+  if (!value?.trim()) return null;
+  const sep = value.includes(" ~ ") ? " ~ " : "~";
+  const parts = value
+    .split(sep)
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const startStr = parts[0];
+  const endStr = parts[1] ?? parts[0];
+  if (!startStr) return null;
+  const start = new Date(startStr);
+  const end = new Date(endStr);
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) return null;
+  return { start: toDateOnly(start), end: toDateOnly(end) };
+}
+
+/**
  * 등록 기간 문자열에서 마감 날짜(기한) 추출
  *
  * @param registrationPeriod - 등록 기간 문자열 (예: "2025-12-08 ~ 2025-12-25" 또는 "~2025-12-25")
