@@ -18,6 +18,7 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import BaseModal from "@/components/common/modal/BaseModal";
 import ErrorText from "@/components/common/error_text/ErrorText";
+import { validateImageFiles, IMAGE_UPLOAD_CONSTRAINTS } from "@/utils/validation/imageUpload";
 import styles from "../../../../styles/user/campaign_management/modals/campaign_modal_common.module.css";
 
 /**
@@ -137,52 +138,28 @@ export default function ReceiptRegistrationModal({
 
     const newFiles = Array.from(files);
 
-    // 파일 개수 체크 (최대 7장) - 기존 이미지와 새로 업로드할 이미지 합산
-    const totalImages = existingImageUrls.length + uploadedImages.length + newFiles.length;
+    // 파일 개수 체크 및 형식/크기 검증 (공통 유틸 사용)
+    const currentCount = existingImageUrls.length + uploadedImages.length;
+    const { validFiles, isOverLimit, hasExtensionError, hasSizeError } = validateImageFiles(
+      newFiles,
+      currentCount
+    );
 
-    if (totalImages > 7) {
+    if (isOverLimit) {
       setErrorModal({
         isOpen: true,
-        message: "이미지는 최대 7장까지 등록할 수 있습니다.",
+        message: `이미지는 최대 ${IMAGE_UPLOAD_CONSTRAINTS.MAX_COUNT}장까지 등록할 수 있습니다.`,
       });
-      // 파일 입력 초기화
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      if (fileInputRef.current) fileInputRef.current.value = "";
       return;
     }
 
-    // 파일 크기 및 형식 체크
-    const validFiles: File[] = [];
-    let hasExtensionError = false;
-    let hasSizeError = false;
-
-    for (const file of newFiles) {
-      // 파일 형식 체크
-      if (!file.type.match(/^image\/(jpeg|jpg|png|gif)$/i)) {
-        hasExtensionError = true;
-        continue;
-      }
-
-      // 파일 크기 체크 (10MB)
-      if (file.size > 10 * 1024 * 1024) {
-        hasSizeError = true;
-        continue;
-      }
-
-      validFiles.push(file);
-    }
-
-    // 오류 모달 표시
     if (hasExtensionError) {
       setErrorModal({
         isOpen: true,
         message: "지정된 확장자(JPG, PNG, GIF)만\n업로드할 수 있습니다.",
       });
-      // 파일 입력 초기화
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      if (fileInputRef.current) fileInputRef.current.value = "";
       return;
     }
 
@@ -191,18 +168,12 @@ export default function ReceiptRegistrationModal({
         isOpen: true,
         message: "10mb 이하의 파일만 업로드할 수 있습니다.",
       });
-      // 파일 입력 초기화
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      if (fileInputRef.current) fileInputRef.current.value = "";
       return;
     }
 
     if (validFiles.length === 0) {
-      // 파일 입력 초기화
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      if (fileInputRef.current) fileInputRef.current.value = "";
       return;
     }
 
