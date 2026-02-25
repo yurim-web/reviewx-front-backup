@@ -2,7 +2,7 @@
    📅 날짜 포맷팅 유틸리티
    ======================================== */
 
-import { format } from 'date-fns';
+import { format } from "date-fns";
 
 /**
  * 날짜 포맷팅 유틸리티
@@ -19,8 +19,8 @@ import { format } from 'date-fns';
  * @returns 포맷된 날짜 문자열 (예: "2024-01-20")
  */
 export const formatDate = (date: Date | string): string => {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
-  return format(dateObj, 'yyyy-MM-dd');
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+  return format(dateObj, "yyyy-MM-dd");
 };
 
 /**
@@ -30,8 +30,8 @@ export const formatDate = (date: Date | string): string => {
  * @returns 포맷된 날짜 문자열 (예: "2024년 01월 20일")
  */
 export const formatDateKorean = (date: Date | string): string => {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
-  return format(dateObj, 'yyyy년 MM월 dd일');
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+  return format(dateObj, "yyyy년 MM월 dd일");
 };
 
 /**
@@ -41,8 +41,8 @@ export const formatDateKorean = (date: Date | string): string => {
  * @returns 포맷된 날짜시간 문자열 (예: "2024-01-20 14:30:00")
  */
 export const formatDateTime = (date: Date | string): string => {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
-  return format(dateObj, 'yyyy-MM-dd HH:mm:ss');
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+  return format(dateObj, "yyyy-MM-dd HH:mm:ss");
 };
 
 /**
@@ -52,8 +52,8 @@ export const formatDateTime = (date: Date | string): string => {
  * @returns 포맷된 날짜시간 문자열 (예: "2024년 01월 20일 14:30")
  */
 export const formatDateTimeKorean = (date: Date | string): string => {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
-  return format(dateObj, 'yyyy년 MM월 dd일 HH:mm');
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+  return format(dateObj, "yyyy년 MM월 dd일 HH:mm");
 };
 
 /**
@@ -63,8 +63,8 @@ export const formatDateTimeKorean = (date: Date | string): string => {
  * @returns 포맷된 시간 문자열 (예: "14:30:00")
  */
 export const formatTime = (date: Date | string): string => {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
-  return format(dateObj, 'HH:mm:ss');
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+  return format(dateObj, "HH:mm:ss");
 };
 
 /**
@@ -76,7 +76,7 @@ export const formatTime = (date: Date | string): string => {
 export const formatTimer = (seconds: number): string => {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
-  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
 };
 
 /**
@@ -86,7 +86,7 @@ export const formatTimer = (seconds: number): string => {
  * @returns 상대 시간 문자열
  */
 export const formatRelativeTime = (date: Date | string): string => {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  const dateObj = typeof date === "string" ? new Date(date) : date;
   const now = new Date();
   const diffMs = now.getTime() - dateObj.getTime();
   const diffSecs = Math.floor(diffMs / 1000);
@@ -97,7 +97,58 @@ export const formatRelativeTime = (date: Date | string): string => {
   if (diffDays > 0) return `${diffDays}일 전`;
   if (diffHours > 0) return `${diffHours}시간 전`;
   if (diffMins > 0) return `${diffMins}분 전`;
-  return '방금 전';
+  return "방금 전";
+};
+
+/**
+ * 날짜 문자열이 특정 날짜 범위 내에 있는지 확인
+ *
+ * @param dateStr - "YYYY-MM-DD" 또는 "YYYY-MM-DD HH:mm" 형식의 날짜 문자열
+ * @param startDate - 범위 시작 날짜
+ * @param endDate - 범위 종료 날짜
+ * @returns 범위 내에 있으면 true
+ */
+export const isDateInRange = (dateStr: string, startDate: Date, endDate: Date): boolean => {
+  const itemDateStr = dateStr.split(" ")[0];
+  const itemDate = new Date(itemDateStr);
+  itemDate.setHours(0, 0, 0, 0);
+  const start = new Date(startDate);
+  start.setHours(0, 0, 0, 0);
+  const end = new Date(endDate);
+  end.setHours(23, 59, 59, 999);
+  return itemDate >= start && itemDate <= end;
+};
+
+/**
+ * 이번 주(월~일)의 시작일과 종료일 반환
+ *
+ * @returns { start: 월요일 00:00:00, end: 일요일 23:59:59 }
+ */
+export const getCurrentWeekRange = (): { start: Date; end: Date } => {
+  const now = new Date();
+  const day = now.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  const monday = new Date(now);
+  monday.setDate(now.getDate() + diff);
+  monday.setHours(0, 0, 0, 0);
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  sunday.setHours(23, 59, 59, 999);
+  return { start: monday, end: sunday };
+};
+
+/**
+ * 이번 달의 시작일과 종료일 반환
+ *
+ * @returns { start: 1일 00:00:00, end: 말일 23:59:59 }
+ */
+export const getCurrentMonthRange = (): { start: Date; end: Date } => {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), now.getMonth(), 1);
+  start.setHours(0, 0, 0, 0);
+  const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  end.setHours(23, 59, 59, 999);
+  return { start, end };
 };
 
 /**
@@ -108,7 +159,7 @@ export const formatRelativeTime = (date: Date | string): string => {
  */
 export const formatDateForMobile = (dateString: string): string => {
   // 날짜에서 시간 부분 제거 (공백 이전까지만 추출)
-  return dateString.split(' ')[0];
+  return dateString.split(" ")[0];
 };
 
 /**
