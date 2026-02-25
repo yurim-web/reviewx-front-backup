@@ -14,6 +14,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Image from "next/image";
 import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
@@ -252,7 +253,6 @@ export default function PaymentHistoryFilterSection({
    */
   const handle_download_click = () => {
     // TODO: 실제 다운로드 로직 구현
-    console.log("세금계산서 발행 양식 다운로드");
   };
 
   return (
@@ -452,7 +452,13 @@ export default function PaymentHistoryFilterSection({
         // 오른쪽 버튼: 세금계산서 발행 양식 다운로드 버튼
         right_buttons={
           <div className={styles.download_button} onClick={handle_download_click}>
-            <img src="/images/excel_icon.png" alt="다운로드" className={styles.download_icon} />
+            <Image
+              src="/images/excel_icon.png"
+              alt="다운로드"
+              width={20}
+              height={20}
+              className={styles.download_icon}
+            />
             <span className={styles.download_text}>세금계산서 발행 양식 다운로드</span>
           </div>
         }

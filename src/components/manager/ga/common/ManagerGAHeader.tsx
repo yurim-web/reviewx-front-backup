@@ -1,5 +1,5 @@
 /* ========================================
-   🔧 GA 관리자 헤더 컴포넌트
+   GA
    ======================================== */
 
 /**
@@ -9,11 +9,6 @@
  *
  * 사용 페이지:
  * - /manager_ga (GA 관리자 페이지)
- *
- * 주요 기능:
- * - 로고 표시 (관리자 헤더 전용 로고 이미지)
- * - 가이드 버튼 (외부 링크)
- * - 마이페이지 버튼
  *
  */
 
@@ -31,27 +26,21 @@ interface ManagerGAHeaderProps {
   managerType?: "ga" | "sa";
 }
 
-export default function ManagerGAHeader({
-  managerType,
-}: ManagerGAHeaderProps = {}) {
+export default function ManagerGAHeader({ managerType }: ManagerGAHeaderProps = {}) {
   const pathname = usePathname();
-  const router = useRouter();
+  const _router = useRouter();
   const { isAuthenticated } = useAuth();
   const [is_logout_menu_open, setIsLogoutMenuOpen] = useState(false);
   const user_menu_ref = useRef<HTMLDivElement>(null);
 
   // managerType이 prop으로 전달되지 않으면 경로에서 자동 감지
-  const detectedType =
-    managerType || (pathname?.includes("/manager_sa") ? "sa" : "ga");
+  const detectedType = managerType || (pathname?.includes("/manager_sa") ? "sa" : "ga");
   const homePath = detectedType === "sa" ? "/manager_sa" : "/manager_ga";
   const notificationPath =
-    detectedType === "sa"
-      ? "/manager_sa/notification"
-      : "/manager_ga/notification";
+    detectedType === "sa" ? "/manager_sa/notification" : "/manager_ga/notification";
 
   // 비로그인 → 무조건 비활성 아이콘 / 로그인 + 알림 1개 이상 → 활성 아이콘
-  const has_notifications =
-    isAuthenticated && mockManagerGANotifications.length > 0;
+  const has_notifications = isAuthenticated && mockManagerGANotifications.length > 0;
   // 📌 관리자 헤더 전용 흰색 알림 아이콘 사용
   const notification_icon_src = has_notifications
     ? "/images/header/manager/notification_ok_white.svg"
@@ -60,10 +49,7 @@ export default function ManagerGAHeader({
   // 외부 클릭 시 메뉴 닫기
   useEffect(() => {
     const handle_click_outside = (event: MouseEvent) => {
-      if (
-        user_menu_ref.current &&
-        !user_menu_ref.current.contains(event.target as Node)
-      ) {
+      if (user_menu_ref.current && !user_menu_ref.current.contains(event.target as Node)) {
         setIsLogoutMenuOpen(false);
       }
     };
@@ -97,10 +83,7 @@ export default function ManagerGAHeader({
       <div className={styles.header_container}>
         {/* 로고 - 관리자 헤더 전용 로고 이미지 */}
         <Link href={homePath} className={styles.header_logo}>
-          <img
-            src="/images/header/manager/admin_header_logo.svg"
-            alt="VX로고"
-          />
+          <img src="/images/header/manager/admin_header_logo.svg" alt="VX로고" />
         </Link>
 
         {/* 우측 버튼 영역 - 가이드와 마이페이지 버튼 */}
@@ -118,18 +101,11 @@ export default function ManagerGAHeader({
               className={styles.user_icon_button}
             >
               {/* 📌 관리자 헤더 전용 흰색 사용자 아이콘 */}
-              <img
-                src="/images/header/manager/header_user_white.svg"
-                alt="user"
-              />
+              <img src="/images/header/manager/header_user_white.svg" alt="user" />
             </button>
             {/* 클릭 시 표시되는 로그아웃 버튼 */}
             {is_logout_menu_open && (
-              <button
-                type="button"
-                className={styles.logout_button}
-                onClick={handle_logout_click}
-              >
+              <button type="button" className={styles.logout_button} onClick={handle_logout_click}>
                 로그아웃
               </button>
             )}

@@ -1,21 +1,15 @@
 /* ========================================
-   🔽 유형 필터 드롭다운 컴포넌트
+   회원 유형 필터 드롭다운 컴포넌트
    ======================================== */
 
 /**
- * 유형 필터 드롭다운 컴포넌트
+ * MemberTypeFilterDropdown
  *
  * 목적: 결제 내역 페이지에서 회원 유형을 필터링하는 드롭다운입니다.
  *       모달 대신 버튼 아래에 드롭다운 형태로 표시됩니다.
  *
- * 📍 사용 위치:
- * - src/components/manager/sa/settlement/payment_history/section/PaymentHistoryFilterSection.tsx
- *
- * 학습 포인트:
- * - BaseFilterDropdown: 공통 필터 드롭다운 컴포넌트를 재사용합니다
- * - 제네릭 타입: BaseFilterDropdown<MemberType>으로 타입 안정성을 보장합니다
- * - FilterOption: 필터 옵션을 value와 label로 구조화합니다
- * - 배열 메서드 map(): 각 옵션을 FilterOption 형태로 변환합니다
+ * 사용 페이지:
+ * - /manager_sa/settlement/payment_history (결제 내역 페이지)
  */
 
 "use client";
@@ -29,10 +23,7 @@ import BaseFilterDropdown, {
 // - "일반 회원": 일반 회원 유형 (데이터에서는 "모범 회원"으로 표시됨)
 // - "주의 회원": 주의 회원 유형
 // - "이용 제한 회원": 이용 제한 회원 유형
-export type MemberType =
-  | "일반 회원"
-  | "주의 회원"
-  | "이용 제한 회원";
+export type MemberType = "일반 회원" | "주의 회원" | "이용 제한 회원";
 
 interface MemberTypeFilterDropdownProps {
   // 드롭다운 열림/닫힘 상태
@@ -50,22 +41,17 @@ interface MemberTypeFilterDropdownProps {
 // 회원 유형 필터 옵션 배열
 // 학습 포인트:
 // - const: 상수로 선언하여 값이 변경되지 않음을 보장합니다
-const member_type_options: MemberType[] = [
-  "일반 회원",
-  "주의 회원",
-  "이용 제한 회원",
-];
+const member_type_options: MemberType[] = ["일반 회원", "주의 회원", "이용 제한 회원"];
 
 // 회원 유형 옵션을 FilterOption 형태로 변환
 // 학습 포인트:
 // - map(): 배열의 각 요소를 변환하여 새로운 배열을 생성합니다
 // - 화살표 함수: (type) => ({ value: type, label: type })
 // - 객체 리터럴: { value, label } 형태로 객체를 반환합니다
-const filter_options: FilterOption<MemberType>[] =
-  member_type_options.map((type) => ({
-    value: type,
-    label: type,
-  }));
+const filter_options: FilterOption<MemberType>[] = member_type_options.map((type) => ({
+  value: type,
+  label: type,
+}));
 
 /**
  * 유형 필터 드롭다운 컴포넌트
@@ -96,12 +82,3 @@ export default function MemberTypeFilterDropdown({
     />
   );
 }
-
-
-
-
-
-
-
-
-

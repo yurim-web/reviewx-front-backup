@@ -34,12 +34,6 @@ export default meta;
 
 type Story = StoryObj<typeof PartnerFilterSection>;
 
-// 안정적인 render 함수를 컴포넌트 외부에 정의 (깜빡임 방지)
-// args를 받아서 컴포넌트에 전달해야 합니다
-const renderPartnerFilterSection = (args: any) => {
-  return <PartnerFilterSection {...args} />;
-};
-
 /**
  * 기본 필터 섹션
  *
@@ -50,6 +44,7 @@ export const Default: Story = {
     const [searchQuery, setSearchQuery] = useState(args.search_query || "");
     return (
       <PartnerFilterSection
+        {...({} as any)}
         search_query={searchQuery}
         on_search_change={(query) => {
           setSearchQuery(query);
@@ -74,6 +69,7 @@ export const WithSearchQuery: Story = {
     const [searchQuery, setSearchQuery] = useState("프로모즈");
     return (
       <PartnerFilterSection
+        {...({} as any)}
         search_query={searchQuery}
         on_search_change={(query) => {
           setSearchQuery(query);
@@ -107,7 +103,3 @@ export const WithSearchQuery: Story = {
  * 4. 다운로드 기능
  *    - 파트너 목록을 엑셀로 다운로드할 수 있습니다
  */
-
-
-
-

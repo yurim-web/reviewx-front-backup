@@ -15,6 +15,7 @@
 
 import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
@@ -204,7 +205,7 @@ const AdminTable = forwardRef<AdminTableRef, AdminTableProps>(function AdminTabl
         return admin_list_data.find((admin) => admin.id === selected_id) || null;
       },
     }),
-    [selected_admin_ids]
+    [selected_admin_ids, admin_list_data]
   );
 
   // 숫자를 천 단위로 포맷팅하는 함수
@@ -275,7 +276,13 @@ const AdminTable = forwardRef<AdminTableRef, AdminTableProps>(function AdminTabl
                 }}
                 aria-label="수정"
               >
-                <img src="/images/icons/pencil_icon.svg" alt="수정" className={styles.edit_icon} />
+                <Image
+                  src="/images/icons/pencil_icon.svg"
+                  alt="수정"
+                  className={styles.edit_icon}
+                  width={16}
+                  height={16}
+                />
               </button>
             );
           default:

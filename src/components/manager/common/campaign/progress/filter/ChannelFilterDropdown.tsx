@@ -33,6 +33,7 @@ export type Channel =
   | "Instagram"
   | "Mission"
   | "Reels"
+  | "Review"
   | "Shorts"
   | "Store"
   | "Youtube";
@@ -45,6 +46,7 @@ export const channel_label_map: Record<Channel, string> = {
   Youtube: "유튜브",
   Clip: "클립",
   Reels: "릴스",
+  Review: "구매평",
   Shorts: "쇼츠",
   Mission: "미션",
   Store: "스토어",
@@ -60,28 +62,19 @@ interface ChannelFilterDropdownProps {
   // 필터 적용 함수
   on_apply: (channels: Channel[]) => void;
   // 드롭다운 컨테이너 ref (위치 계산용)
-  container_ref?: React.RefObject<HTMLDivElement>;
+  container_ref?: React.RefObject<HTMLDivElement | null>;
 }
 
 // 채널 옵션 목록
-const channel_options: Channel[] = [
-  "Blog",
-  "Instagram",
-  "Youtube",
-  "Clip",
-  "Reels",
-  "Shorts",
-];
+const channel_options: Channel[] = ["Blog", "Instagram", "Youtube", "Clip", "Reels", "Shorts"];
 
 // FilterOption 배열로 변환
 // map 함수: 배열을 순회하며 각 요소를 FilterOption 형태로 변환합니다
 // channel_label_map을 사용하여 영문 코드를 한글 이름으로 변환합니다
-const filter_options: FilterOption<Channel>[] = channel_options.map(
-  (channel) => ({
-    value: channel,
-    label: channel_label_map[channel], // 영문 코드를 한글 이름으로 변환
-  })
-);
+const filter_options: FilterOption<Channel>[] = channel_options.map((channel) => ({
+  value: channel,
+  label: channel_label_map[channel], // 영문 코드를 한글 이름으로 변환
+}));
 
 /**
  * 채널 필터 드롭다운 컴포넌트
@@ -107,4 +100,3 @@ export default function ChannelFilterDropdown({
     />
   );
 }
-

@@ -25,8 +25,6 @@
 import MemberStatusTag from "@/components/manager/common/tags/MemberStatusTag";
 import type { MemberStatus } from "@/components/manager/common/tags/MemberStatusTag";
 import PenaltyTypeTag from "@/components/manager/common/tags/PenaltyTypeTag";
-import type { PenaltyType } from "@/components/manager/common/tags/PenaltyTypeTag";
-import tagStyles from "@/styles/common/tags.module.css";
 
 // 패널티 내역 아이템 타입 정의 (리뷰어와 파트너 모두에서 사용)
 export interface PenaltyHistoryItem {
@@ -94,26 +92,15 @@ export default function PenaltyHistoryModal({
 
   return (
     <div className={cssStyles.modal_overlay} onClick={handle_overlay_click}>
-      <div
-        className={cssStyles.modal_container}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className={cssStyles.modal_container} onClick={(e) => e.stopPropagation()}>
         {/* 모달 헤더와 바디를 하나로 통합 */}
         <div className={cssStyles.modal_content}>
           {/* 모달 헤더 */}
           <div className={cssStyles.modal_header}>
             <h2 className={cssStyles.modal_title}>패널티 내역</h2>
             {/* 닫기 버튼 */}
-            <button
-              className={cssStyles.close_button}
-              onClick={on_close}
-              aria-label="닫기"
-            >
-              <img
-                src="/images/icons/modal_x.svg"
-                alt="닫기"
-                className={cssStyles.close_icon}
-              />
+            <button className={cssStyles.close_button} onClick={on_close} aria-label="닫기">
+              <img src="/images/icons/modal_x.svg" alt="닫기" className={cssStyles.close_icon} />
             </button>
           </div>
 
@@ -132,9 +119,7 @@ export default function PenaltyHistoryModal({
               {/* 조건부 렌더링: 데이터가 없을 때 빈 상태 메시지 표시 */}
               {sorted_penalty_history.length === 0 ? (
                 <div className={cssStyles.empty_state}>
-                  <p className={cssStyles.empty_message}>
-                    패널티 내역이 없습니다.
-                  </p>
+                  <p className={cssStyles.empty_message}>패널티 내역이 없습니다.</p>
                 </div>
               ) : (
                 /* map 함수를 사용하여 테이블 행을 렌더링합니다 */
@@ -145,9 +130,7 @@ export default function PenaltyHistoryModal({
                   // 상태 값에 따라 표시할 값을 결정합니다
                   // '일시정지'를 '일시 정지'로 변환하여 표시합니다
                   const display_status =
-                    penalty.status === "일시정지"
-                      ? "일시 정지"
-                      : penalty.status;
+                    penalty.status === "일시정지" ? "일시 정지" : penalty.status;
 
                   // 사유: reason이 있으면 reason을, 없으면 type을 사유로 사용
                   const display_reason = penalty.reason || penalty.type;
@@ -160,20 +143,14 @@ export default function PenaltyHistoryModal({
                       </div>
 
                       {/* 사유: type 값(지각 제출, 선정 후 취소 등)을 텍스트로 표시 */}
-                      <div className={cssStyles.table_cell}>
-                        {display_reason}
-                      </div>
+                      <div className={cssStyles.table_cell}>{display_reason}</div>
 
                       {/* 처리일 */}
-                      <div className={cssStyles.table_cell}>
-                        {penalty.processed_date}
-                      </div>
+                      <div className={cssStyles.table_cell}>{penalty.processed_date}</div>
 
                       {/* 상태: 일시 정지(빨간색) 또는 정상(파란색) 태그로 표시 */}
                       <div className={cssStyles.table_cell}>
-                        <MemberStatusTag
-                          status={display_status as MemberStatus}
-                        />
+                        <MemberStatusTag status={display_status as MemberStatus} />
                       </div>
                     </div>
                   );

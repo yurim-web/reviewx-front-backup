@@ -6,7 +6,6 @@
 
 import type { Meta, StoryObj } from "@storybook/react";
 import MemberDetailLayout from "./MemberDetailLayout";
-import styles from "@/styles/manager/common/member/member_detail/member_detail_layout.module.css";
 
 const meta: Meta<typeof MemberDetailLayout> = {
   title: "Manager/Common/Member/MemberDetail/MemberDetailLayout",
@@ -47,6 +46,7 @@ type Story = StoryObj<typeof MemberDetailLayout>;
 
 // 안정적인 render 함수를 컴포넌트 외부에 정의 (깜빡임 방지)
 // args를 받아서 컴포넌트에 전달해야 합니다
+
 const renderMemberDetailLayout = (args: any) => {
   return <MemberDetailLayout {...args} />;
 };

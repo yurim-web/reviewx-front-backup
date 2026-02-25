@@ -19,10 +19,7 @@ import GradeFilterDropdown from "@/components/manager/common/member/reviewers/fi
 import TypeFilterDropdown from "@/components/manager/common/member/reviewers/filter/TypeFilterDropdown";
 import StatusFilterDropdown from "@/components/manager/common/member/reviewers/filter/StatusFilterDropdown";
 import type { Channel } from "@/data/manager/common/filterOptions";
-import type {
-  ReviewerStatus,
-  ReviewerStatusType,
-} from "@/data/manager_ga/common/filterOptions";
+import type { ReviewerStatus, ReviewerStatusType } from "@/data/manager_ga/common/filterOptions";
 import type { ReviewerGrade } from "@/components/manager/common/member/reviewers/filter/GradeFilterModal";
 
 interface ReviewerFilterSectionProps {
@@ -82,10 +79,14 @@ export default function ReviewerFilterSection({
       on_statuses_change={on_statuses_change}
       on_restriction_click={on_restriction_click}
       channel_name_map={channel_name_map}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ChannelFilterDropdown={ChannelFilterDropdown as any}
       grade_or_division_label="구분"
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       GradeOrDivisionFilterDropdown={GradeFilterDropdown as any}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       TypeFilterDropdown={TypeFilterDropdown as any}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       StatusFilterDropdown={StatusFilterDropdown as any}
       download_button_text="리뷰어 목록 다운로드"
     />

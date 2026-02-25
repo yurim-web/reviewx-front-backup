@@ -1,5 +1,5 @@
 /* ========================================
-   🔍 공통 필터 섹션 컴포넌트 (베이스)
+   ()
    ======================================== */
 
 /**
@@ -22,11 +22,6 @@
  *   - RejectCode, ReportCode, PartnerDivision, PartnerStatus, PartnerStatusType
  *   - ReviewerType, ReviewerStatus, ReviewerStatusType
  *   - BlacklistDivision, BlockCode, PostDivision
- *
- * 주요 기능:
- * - 검색 필터
- * - 필터 모달 버튼
- * - 활성 필터 태그 표시
  *
  */
 
@@ -63,10 +58,7 @@ interface BaseFilterSectionProps<T extends string | number> {
   // 검색어 debounce 시간 (밀리초, 기본값: 300ms)
   search_debounce_ms?: number;
   // 필터 적용 콜백 (필터가 변경될 때 호출)
-  on_filter_apply?: (filters: {
-    search_query: string;
-    active_filters: T[];
-  }) => void;
+  on_filter_apply?: (filters: { search_query: string; active_filters: T[] }) => void;
   // 검색 입력 placeholder (미지정 시 "검색")
   search_placeholder?: string;
 }
@@ -88,8 +80,7 @@ export default function BaseFilterSection<T extends string | number>({
 }: BaseFilterSectionProps<T>) {
   // 내부 검색어 상태 (debounce를 위한)
   // useState: React Hook으로 컴포넌트의 검색어 상태를 관리합니다
-  const [internal_search_query, set_internal_search_query] =
-    useState(search_query);
+  const [internal_search_query, set_internal_search_query] = useState(search_query);
 
   // 검색어 debounce 처리
   // useEffect: 컴포넌트가 렌더링된 후에 실행됩니다
@@ -128,17 +119,14 @@ export default function BaseFilterSection<T extends string | number>({
 
   // 검색어 변경 핸들러
   // 화살표 함수로 이벤트 핸들러를 정의합니다
-  const handle_search_change = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const new_query = e.target.value;
-      set_internal_search_query(new_query);
-    },
-    []
-  );
+  const handle_search_change = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const new_query = e.target.value;
+    set_internal_search_query(new_query);
+  }, []);
 
   // 검색어 초기화 핸들러
   // 화살표 함수로 이벤트 핸들러를 정의합니다
-  const handle_search_clear = useCallback(() => {
+  const _handle_search_clear = useCallback(() => {
     set_internal_search_query("");
     on_search_change("");
 
@@ -170,17 +158,12 @@ export default function BaseFilterSection<T extends string | number>({
         });
       }
     },
-    [
-      on_filter_tag_remove,
-      on_filter_apply,
-      active_filter_tags,
-      internal_search_query,
-    ]
+    [on_filter_tag_remove, on_filter_apply, active_filter_tags, internal_search_query]
   );
 
   // 필터 초기화 핸들러
   // 화살표 함수로 이벤트 핸들러를 정의합니다
-  const handle_filter_reset = useCallback(() => {
+  const _handle_filter_reset = useCallback(() => {
     // 검색어 초기화
     set_internal_search_query("");
     on_search_change("");
@@ -201,8 +184,7 @@ export default function BaseFilterSection<T extends string | number>({
 
   // 활성 필터가 있는지 확인
   // 삼항 연산자: 조건 ? 참일 때 값 : 거짓일 때 값
-  const has_active_filters =
-    internal_search_query.trim() !== "" || active_filter_tags.length > 0;
+  const _has_active_filters = internal_search_query.trim() !== "" || active_filter_tags.length > 0;
 
   return (
     <div>
@@ -220,11 +202,7 @@ export default function BaseFilterSection<T extends string | number>({
 
           {/* 검색 필터 */}
           <div className={styles.search_filter_item}>
-            <img
-              src="/images/icons/search_icon.svg"
-              alt="검색"
-              className={styles.search_icon}
-            />
+            <img src="/images/icons/search_icon.svg" alt="검색" className={styles.search_icon} />
             <input
               type="text"
               placeholder={search_placeholder ?? "검색"}
@@ -240,9 +218,7 @@ export default function BaseFilterSection<T extends string | number>({
         </div>
 
         {/* 오른쪽 그룹: 오른쪽에 위치할 버튼들 (선택적) */}
-        {right_buttons && (
-          <div className={styles.filter_group_right}>{right_buttons}</div>
-        )}
+        {right_buttons && <div className={styles.filter_group_right}>{right_buttons}</div>}
       </div>
 
       {/* 활성 필터 태그 영역 */}
@@ -257,11 +233,7 @@ export default function BaseFilterSection<T extends string | number>({
                   onClick={() => handle_filter_tag_remove_internal(tag.value)}
                   aria-label={`${tag.label} 필터 제거`}
                 >
-                  <img
-                    src="/images/filter/x_small.svg"
-                    alt="제거"
-                    className={styles.remove_icon}
-                  />
+                  <img src="/images/filter/x_small.svg" alt="제거" className={styles.remove_icon} />
                 </button>
               )}
             </div>

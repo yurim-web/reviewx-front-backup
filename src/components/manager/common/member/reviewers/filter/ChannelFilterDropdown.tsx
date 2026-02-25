@@ -24,7 +24,7 @@ interface ChannelFilterDropdownProps {
   on_close: () => void;
   selected_channels: Channel[];
   on_apply: (channels: Channel[]) => void;
-  container_ref?: React.RefObject<HTMLDivElement>;
+  container_ref?: React.RefObject<HTMLDivElement | null>;
 }
 
 // 채널 필터 옵션 배열
@@ -36,12 +36,10 @@ const channel_options: { value: Channel; label: string }[] = [
 ];
 
 // 채널 옵션을 FilterOption 형태로 변환
-const filter_options: FilterOption<Channel>[] = channel_options.map(
-  (option) => ({
-    value: option.value,
-    label: option.label,
-  })
-);
+const filter_options: FilterOption<Channel>[] = channel_options.map((option) => ({
+  value: option.value,
+  label: option.label,
+}));
 
 export default function ChannelFilterDropdown({
   is_open,

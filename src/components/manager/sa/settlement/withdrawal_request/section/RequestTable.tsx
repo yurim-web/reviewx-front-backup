@@ -14,6 +14,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import Image from "next/image";
 import type { ReactNode, ReactElement } from "react";
 import CommonTableWithTooltip from "@/components/manager/common/table/CommonTableWithTooltip";
 import type { TableColumn, TableRowData } from "@/components/manager/common/table/CommonTable";
@@ -763,13 +764,15 @@ export default function RequestTable({
               type="button"
               aria-label="승인"
             >
-              <img
+              <Image
                 src={
                   is_action_disabled
                     ? "/images/icons/sign_ok_grey.svg"
                     : "/images/icons/sign_ok.svg"
                 }
                 alt={is_action_disabled ? "승인 불가" : "승인"}
+                width={20}
+                height={20}
                 className={styles.action_icon}
               />
             </button>
@@ -785,11 +788,13 @@ export default function RequestTable({
               type="button"
               aria-label="반려"
             >
-              <img
+              <Image
                 src={
                   is_action_disabled ? "/images/icons/sign_x_grey.svg" : "/images/icons/sign_x.svg"
                 }
                 alt={is_action_disabled ? "반려 불가" : "반려"}
+                width={20}
+                height={20}
                 className={styles.action_icon}
               />
             </button>

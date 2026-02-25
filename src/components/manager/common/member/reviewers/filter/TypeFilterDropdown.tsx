@@ -28,15 +28,16 @@ interface TypeFilterDropdownProps {
   on_close: () => void;
   selected_types: ReviewerType[];
   on_apply: (types: ReviewerType[]) => void;
-  container_ref?: React.RefObject<HTMLDivElement>;
+  container_ref?: React.RefObject<HTMLDivElement | null>;
 }
 
 // 유형 옵션을 FilterOption 형태로 변환
-const filter_options: FilterOption<ReviewerType>[] =
-  reviewer_status_type_filter_options.map((type) => ({
+const filter_options: FilterOption<ReviewerType>[] = reviewer_status_type_filter_options.map(
+  (type) => ({
     value: type,
     label: type,
-  }));
+  })
+);
 
 export default function TypeFilterDropdown({
   is_open,
@@ -56,4 +57,3 @@ export default function TypeFilterDropdown({
     />
   );
 }
-

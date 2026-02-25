@@ -7,14 +7,8 @@
  *
  * 목적: 채널별 회원 등록 통계를 파이 차트로 표시합니다.
  *
- * 사용 위치:
- * - ChannelMemberSection 컴포넌트 (채널별 회원 통계 카드)
- *
- * 주요 기능:
- * - 블로그 등록: 50% (어두운 회색)
- * - 인스타그램 등록: 25% (중간 회색)
- * - 클립 등록: 20% (밝은 회색)
- * - 유튜브 등록: 5% (가장 밝은 회색)
+ * 사용 페이지:
+ * - /manager_sa (대시보드 페이지) - ChannelMemberSection
  */
 
 "use client";
@@ -22,7 +16,7 @@
 import { useRef, useEffect, useState } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Sector } from "recharts";
 import { ChannelData } from "@/data/manager_sa/dashboard/dashboardData";
-import { use_pie_chart_click_handler } from "@/components/manager/ga/dashboard/chart/chart_event_handlers";
+import { usePieChartClickHandler } from "@/components/manager/ga/dashboard/chart/chart_event_handlers";
 
 interface ChannelMemberPieChartProps {
   channelData: ChannelData[];
@@ -76,7 +70,7 @@ interface PieLabelProps {
 interface PieTooltipProps {
   active?: boolean;
   payload?: Array<{ payload: { name: string; value: number }; midAngle: number }>;
-  containerRef: React.RefObject<HTMLDivElement>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
   setTooltipState: (state: {
     visible: boolean;
     x: number;
@@ -257,7 +251,7 @@ const CustomTooltip = ({ active, payload, containerRef, setTooltipState }: PieTo
         y: tooltipYLocal,
       };
     }
-  }, [active, payload, containerRef]);
+  }, [active, payload, containerRef, setTooltipState]);
 
   return null; // 툴팁은 컨테이너 밖에 렌더링
 };
@@ -301,7 +295,7 @@ export default function ChannelMemberPieChart({ channelData }: ChannelMemberPieC
   // 흰색 선 유지 및 클릭 이벤트 처리
   // 파이 차트의 경계선을 흰색으로 유지하고, 바깥으로 튀어나오는 선 제거
   // 공용 유틸리티 함수를 사용하여 코드 중복 제거
-  use_pie_chart_click_handler(containerRef);
+  usePieChartClickHandler(containerRef);
 
   // 파이 차트 전용 추가 처리 (clipPath, 불필요한 선 제거)
   // 이 부분은 파이 차트에만 특화된 기능이므로 여기에 유지
@@ -374,8 +368,8 @@ export default function ChannelMemberPieChart({ channelData }: ChannelMemberPieC
       const allLines = container.querySelectorAll<SVGLineElement>("line");
       allLines.forEach((line) => {
         // 선의 시작점과 끝점 좌표 가져오기
-        const x1 = parseFloat(line.getAttribute("x1") || "0");
-        const y1 = parseFloat(line.getAttribute("y1") || "0");
+        const _x1 = parseFloat(line.getAttribute("x1") || "0");
+        const _y1 = parseFloat(line.getAttribute("y1") || "0");
         const x2 = parseFloat(line.getAttribute("x2") || "0");
         const y2 = parseFloat(line.getAttribute("y2") || "0");
 

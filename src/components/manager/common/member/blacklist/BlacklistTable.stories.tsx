@@ -5,7 +5,6 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
-import React, { useMemo } from "react";
 import BlacklistTable from "./BlacklistTable";
 
 const meta: Meta<typeof BlacklistTable> = {
@@ -47,7 +46,3 @@ export const NoSearchResults: Story = {
     search_query: "존재하지않는사용자",
   },
 };
-
-
-
-

@@ -9,7 +9,7 @@
 
 "use client";
 
-import { useState, useRef, ReactNode, useEffect } from "react";
+import { useState, ReactNode, useEffect } from "react";
 import { createPortal } from "react-dom";
 import tooltip_styles from "@/styles/manager/common/table/table_tooltip.module.css";
 
@@ -86,9 +86,7 @@ export default function EllipsisTooltip({
               zIndex: 99999,
             }}
           >
-            {typeof content === "string" || typeof content === "number"
-              ? String(content)
-              : content}
+            {typeof content === "string" || typeof content === "number" ? String(content) : content}
           </div>,
           document.body
         )}

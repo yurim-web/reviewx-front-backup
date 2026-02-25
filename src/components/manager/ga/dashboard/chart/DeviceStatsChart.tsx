@@ -1,16 +1,11 @@
 /* ========================================
-   📊 디바이스 통계 차트 컴포넌트
+   
    ======================================== */
 
 /**
  * 디바이스 통계 차트 컴포넌트
  *
  * 목적: All, PC, Tablet, Mobile, App 등 디바이스별 접속 통계를 가로 막대 차트로 표시합니다.
- *
- * 주요 기능:
- * - All: 여러 디바이스 비율을 스택형 막대로 표시 (파란색, 노란색, 핑크색, 보라색)
- * - PC, Tablet, Mobile, App: 각각 단일 막대로 표시
- * - 회색 배경에 색상 막대가 채워지는 형태
  *
  */
 
@@ -20,18 +15,14 @@ import chartStyles from "@/styles/manager_ga/dashboard/charts.module.css";
 import deviceStyles from "@/styles/manager_ga/dashboard/device_stats.module.css";
 
 /* ========================================
-   📊 디바이스 통계 차트 (Progress Bar 버전)
+   (Progress Bar )
    ======================================== */
 
 /**
  * 디바이스 통계 차트
  */
 
-import {
-  deviceProgressData,
-  DeviceProgress,
-  DeviceColorKey,
-} from "@/data/manager_ga/dashboard/dashboardData";
+import { deviceProgressData, type DeviceColorKey } from "@/data/manager_ga/dashboard/dashboardData";
 
 // 색상 모듈 클래스 매핑 (JS 객체 -> CSS 모듈 연결)
 const progress_bar_color_map: Record<DeviceColorKey, string> = {
@@ -60,9 +51,7 @@ export default function DeviceStatsChart() {
             <li key={device.label} className={deviceStyles.device_progress_row}>
               {/* 디바이스명 + 값 */}
               <div className={deviceStyles.device_progress_label_group}>
-                <span className={deviceStyles.device_progress_label}>
-                  {device.label}
-                </span>
+                <span className={deviceStyles.device_progress_label}>{device.label}</span>
               </div>
 
               {/* 진행 바: 접근성 위해 role/aria-label 추가 */}
@@ -88,9 +77,7 @@ export default function DeviceStatsChart() {
                 ) : (
                   <div
                     className={`${deviceStyles.device_progress_bar_fill} ${
-                      device.colorKey
-                        ? progress_bar_color_map[device.colorKey]
-                        : ""
+                      device.colorKey ? progress_bar_color_map[device.colorKey] : ""
                     }`}
                     style={{ width: `${device.percentage}%` }} // 구조분해 + 템플릿 리터럴 설명용
                   />

@@ -27,7 +27,6 @@ import CampaignStatusTag from "@/components/manager/common/tags/CampaignStatusTa
 import type { CampaignStatus } from "@/components/manager/common/tags/CampaignStatusTag";
 import CampaignTypeTag from "@/components/manager/common/tags/CampaignTypeTag";
 import type { CampaignType } from "@/components/manager/common/tags/CampaignTypeTag";
-import tagStyles from "@/styles/common/tags.module.css";
 
 // 캠페인 내역 아이템 타입 정의 (리뷰어와 파트너 모두에서 사용)
 export interface CampaignHistoryItem {
@@ -40,7 +39,15 @@ export interface CampaignHistoryItem {
 }
 
 // 채널 타입 정의
-export type Channel = "Blog" | "Clip" | "Instagram" | "Youtube" | "Store" | "Mission" | "Reels" | "Shorts";
+export type Channel =
+  | "Blog"
+  | "Clip"
+  | "Instagram"
+  | "Youtube"
+  | "Store"
+  | "Mission"
+  | "Reels"
+  | "Shorts";
 
 interface CampaignHistoryModalProps {
   // 모달 열림/닫힘 상태
@@ -121,40 +128,29 @@ export default function CampaignHistoryModal({
     // undefined나 null인 경우 빈 문자열로 처리하여 맨 뒤로 보냅니다
     const a_number = a.campaign_number || "";
     const b_number = b.campaign_number || "";
-    
+
     // 둘 다 빈 문자열이면 순서 유지
     if (!a_number && !b_number) return 0;
     // a만 빈 문자열이면 b를 앞으로
     if (!a_number) return 1;
     // b만 빈 문자열이면 a를 앞으로
     if (!b_number) return -1;
-    
+
     // 내림차순: b가 a보다 크면 음수 반환 (b가 앞으로)
     return b_number.localeCompare(a_number);
   });
 
   return (
     <div className={cssStyles.modal_overlay} onClick={handle_overlay_click}>
-      <div
-        className={cssStyles.modal_container}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className={cssStyles.modal_container} onClick={(e) => e.stopPropagation()}>
         {/* 모달 헤더와 바디를 하나로 통합 */}
         <div className={cssStyles.modal_content}>
           {/* 모달 헤더 */}
           <div className={cssStyles.modal_header}>
             <h2 className={cssStyles.modal_title}>캠페인 진행 내역</h2>
             {/* 닫기 버튼 */}
-            <button
-              className={cssStyles.close_button}
-              onClick={on_close}
-              aria-label="닫기"
-            >
-              <img
-                src="/images/icons/modal_x.svg"
-                alt="닫기"
-                className={cssStyles.close_icon}
-              />
+            <button className={cssStyles.close_button} onClick={on_close} aria-label="닫기">
+              <img src="/images/icons/modal_x.svg" alt="닫기" className={cssStyles.close_icon} />
             </button>
           </div>
 
@@ -175,9 +171,7 @@ export default function CampaignHistoryModal({
               {/* 조건부 렌더링: 데이터가 없을 때 빈 상태 메시지 표시 */}
               {sorted_campaigns.length === 0 ? (
                 <div className={cssStyles.empty_state}>
-                  <p className={cssStyles.empty_message}>
-                    캠페인 진행 내역이 없습니다.
-                  </p>
+                  <p className={cssStyles.empty_message}>캠페인 진행 내역이 없습니다.</p>
                 </div>
               ) : (
                 /* map 함수를 사용하여 campaigns 배열을 순회하며 테이블 행을 렌더링합니다 */
@@ -187,9 +181,7 @@ export default function CampaignHistoryModal({
                 sorted_campaigns.map((campaign, index) => (
                   <div key={index} className={cssStyles.table_row}>
                     {/* 캠페인 번호 */}
-                    <div className={cssStyles.table_cell}>
-                      {campaign.campaign_number}
-                    </div>
+                    <div className={cssStyles.table_cell}>{campaign.campaign_number}</div>
 
                     {/* 캠페인명 */}
                     <div className={cssStyles.table_cell_campaign_name}>
@@ -211,8 +203,7 @@ export default function CampaignHistoryModal({
                       <div className={cssStyles.channel_icon_wrapper}>
                         <Image
                           src={
-                            channel_icon_map[campaign.channel as Channel] ||
-                            channel_icon_map.Blog
+                            channel_icon_map[campaign.channel as Channel] || channel_icon_map.Blog
                           }
                           alt={campaign.channel || "채널"}
                           width={20}
@@ -223,9 +214,7 @@ export default function CampaignHistoryModal({
                     </div>
 
                     {/* 지급 포인트 */}
-                    <div className={cssStyles.table_cell}>
-                      {format_number(campaign.points)}
-                    </div>
+                    <div className={cssStyles.table_cell}>{format_number(campaign.points)}</div>
                   </div>
                 ))
               )}

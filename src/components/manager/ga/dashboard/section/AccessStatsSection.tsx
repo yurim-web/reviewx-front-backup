@@ -1,5 +1,5 @@
 /* ========================================
-   📊 접속 통계 섹션 컴포넌트
+   
    ======================================== */
 
 /**
@@ -7,9 +7,6 @@
  *
  * 목적: 접속 통계와 디바이스 통계를 표시하는 섹션 컴포넌트입니다.
  *
- * 주요 기능:
- * - 방문 수와 유입 수 통계 표시
- * - 디바이스별 접속 통계 차트 표시
  
  */
 
@@ -38,31 +35,25 @@ export default function AccessStatsSection() {
             {/* changeType에 따라 화살표와 색상이 달라집니다 */}
             <p
               className={
-                styles[
-                  `access_stats_section_stat_card_change_${accessStats.visits.changeType}`
-                ]
+                styles[`access_stats_section_stat_card_change_${accessStats.visits.changeType}`]
               }
             >
               {accessStats.visits.changeType === "positive" && (
                 <>
                   {/* 상승: 초록색 위쪽 화살표 */}
-                  <span>↑</span>{" "}
-                  {accessStats.visits.change.replace(/^[+-]\s*/, "")}
+                  <span>↑</span> {accessStats.visits.change.replace(/^[+-]\s*/, "")}
                 </>
               )}
               {accessStats.visits.changeType === "negative" && (
                 <>
                   {/* 하락: 빨간색 아래쪽 화살표 */}
-                  <span>↓</span>{" "}
-                  {accessStats.visits.change.replace(/^[+-]\s*/, "")}
+                  <span>↓</span> {accessStats.visits.change.replace(/^[+-]\s*/, "")}
                 </>
               )}
             </p>
           </div>
           {/* 값 표시 */}
-          <p className={styles.access_stats_section_stat_card_value}>
-            {accessStats.visits.value}
-          </p>
+          <p className={styles.access_stats_section_stat_card_value}>{accessStats.visits.value}</p>
         </div>
 
         {/* 유입 수 카드 */}
@@ -76,23 +67,19 @@ export default function AccessStatsSection() {
             {/* changeType에 따라 화살표와 색상이 달라집니다 */}
             <p
               className={
-                styles[
-                  `access_stats_section_stat_card_change_${accessStats.referrals.changeType}`
-                ]
+                styles[`access_stats_section_stat_card_change_${accessStats.referrals.changeType}`]
               }
             >
               {accessStats.referrals.changeType === "positive" && (
                 <>
                   {/* 상승: 초록색 위쪽 화살표 */}
-                  <span>↑</span>{" "}
-                  {accessStats.referrals.change.replace(/^[+-]\s*/, "")}
+                  <span>↑</span> {accessStats.referrals.change.replace(/^[+-]\s*/, "")}
                 </>
               )}
               {accessStats.referrals.changeType === "negative" && (
                 <>
                   {/* 하락: 빨간색 아래쪽 화살표 */}
-                  <span>↓</span>{" "}
-                  {accessStats.referrals.change.replace(/^[+-]\s*/, "")}
+                  <span>↓</span> {accessStats.referrals.change.replace(/^[+-]\s*/, "")}
                 </>
               )}
             </p>
@@ -106,9 +93,7 @@ export default function AccessStatsSection() {
 
       {/* 디바이스 통계 섹션 */}
       <div className={styles.access_stats_section_device_stats_section}>
-        <h3 className={styles.access_stats_section_device_stats_title}>
-          디바이스 통계
-        </h3>
+        <h3 className={styles.access_stats_section_device_stats_title}>디바이스 통계</h3>
         {/* recharts 라이브러리를 사용한 막대 차트 */}
         <DeviceStatsChart />
       </div>

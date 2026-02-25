@@ -6,15 +6,9 @@
  * 지급 필터 드롭다운 컴포넌트
  *
  * 목적: 출금 현황 페이지에서 지급 상태를 필터링하는 드롭다운입니다.
- *       모달 대신 버튼 아래에 드롭다운 형태로 표시됩니다.
  *
- * 📍 사용 위치:
- * - src/components/manager/sa/settlement/withdrawal/section/WithdrawalFilterSection.tsx
- *
- * 주요 기능:
- * - 체크박스 방식의 다중 선택 필터링
- * - 선택 시 즉시 적용
- * - 외부 클릭으로 닫기
+ * 사용 페이지:
+ * - /manager_sa/settlement/withdrawal (출금 현황 페이지)
  */
 
 "use client";
@@ -72,4 +66,3 @@ export default function PaymentStatusFilterDropdown({
     />
   );
 }
-

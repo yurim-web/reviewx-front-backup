@@ -5,12 +5,8 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
 import CampaignProgressDetailLayout from "./CampaignProgressDetailLayout";
-import type {
-  CampaignWithApplicants,
-  AllApplicant,
-} from "@/data/partner/sharedCampaigns";
+import type { CampaignWithApplicants, AllApplicant } from "@/data/partner/sharedCampaigns";
 import type {
   SortOption,
   TabType,
@@ -20,22 +16,29 @@ import styles from "@/styles/partner/campaign_application/campaign_application.m
 
 // Mock 캠페인 데이터
 const mockCampaignData: CampaignWithApplicants = {
-  id: "1",
   campaignInfo: {
+    id: "1",
     title: "프리미엄 뷰티 제품 체험 캠페인",
     brandName: "테스트 브랜드",
+    image: "/images/test_img/product_test.png",
+    status: "모집 중",
+    campaignType: "배송형",
     category: "뷰티",
-    points: 5000,
-    recruitmentCount: 10,
     recruitmentPeriod: "2024-01-01 ~ 2024-01-31",
     announcementDate: "2024-02-01",
     registrationPeriod: "2024-02-01 ~ 2024-02-15",
-    thumbnail: "/images/test_img/product_test.png",
+    recruitedCount: 0,
+    totalCount: 10,
+    daysLeft: 5,
   },
-  applicants: [],
+  applicantData: {
+    applicants: [],
+    selectedApplicants: [],
+  },
 };
 
-// Mock 신청자 데이터
+// Mock 신청자 데이터 (스토리북 전용 - 실제 타입과 일부 상이)
+
 const mockApplicants: AllApplicant[] = [
   {
     id: "1",
@@ -45,7 +48,7 @@ const mockApplicants: AllApplicant[] = [
     channel: "네이버블로그",
     channelId: "blog.naver.com/test1",
     registrationDate: "2024-01-15 17:37",
-    selectionStatus: "신청",
+    selectionStatus: "미선택",
     memo: "",
   },
   {
@@ -56,7 +59,7 @@ const mockApplicants: AllApplicant[] = [
     channel: "인스타그램",
     channelId: "instagram.com/test1",
     registrationDate: "2024-01-16 10:20",
-    selectionStatus: "신청",
+    selectionStatus: "미선택",
     memo: "",
   },
   {
@@ -67,10 +70,10 @@ const mockApplicants: AllApplicant[] = [
     channel: "유튜브",
     channelId: "youtube.com/test1",
     registrationDate: "2024-01-17 14:30",
-    selectionStatus: "선정",
+    selectionStatus: "선정하기",
     memo: "",
   },
-];
+] as any[] as AllApplicant[];
 
 // Mock 카드 렌더링 함수
 const mockRenderCard = (
@@ -137,6 +140,7 @@ type Story = StoryObj<typeof CampaignProgressDetailLayout>;
 
 // 안정적인 render 함수를 컴포넌트 외부에 정의 (깜빡임 방지)
 // args를 받아서 컴포넌트에 전달해야 합니다
+
 const renderCampaignProgressDetailLayout = (args: any) => {
   return <CampaignProgressDetailLayout {...args} />;
 };
@@ -162,9 +166,7 @@ export const Default: Story = {
     ],
     applicants_count: 2,
     selected_count: 1,
-    current_applicants: mockApplicants.filter(
-      (a) => a.selectionStatus === "신청"
-    ),
+    current_applicants: mockApplicants.filter((a) => a.selectionStatus === "미선택"),
     handle_select_applicant: (id) => console.log("Select applicant:", id),
     handle_cancel_applicant: (id) => console.log("Cancel applicant:", id),
     handle_download_applicants: () => console.log("Download applicants"),
@@ -200,9 +202,7 @@ export const SelectedTab: Story = {
     ],
     applicants_count: 2,
     selected_count: 1,
-    current_applicants: mockApplicants.filter(
-      (a) => a.selectionStatus === "선정"
-    ),
+    current_applicants: mockApplicants.filter((a) => a.selectionStatus === "선정하기"),
     handle_select_applicant: (id) => console.log("Select applicant:", id),
     handle_cancel_applicant: (id) => console.log("Cancel applicant:", id),
     handle_download_applicants: () => console.log("Download applicants"),

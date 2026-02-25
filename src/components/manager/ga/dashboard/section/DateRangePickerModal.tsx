@@ -1,5 +1,5 @@
 /* ========================================
-   📅 날짜 범위 선택 드롭다운 컴포넌트 (Figma 디자인 기반)
+   (Figma  )
    ======================================== */
 
 /**
@@ -8,22 +8,13 @@
  * 목적: Figma 디자인에 맞춘 날짜 범위 선택 드롭다운입니다.
  * 버튼을 클릭하면 버튼 바로 아래에 드롭다운이 표시됩니다.
  *
- * 주요 기능:
- * - 날짜 범위 선택 (시작일 ~ 종료일)
- * - 2개월 동시 표시
- * - 한국어 로케일 지원
- * - 날짜 선택 시 자동 적용
- * - 외부 클릭 시 자동 닫힘
- *
  * 내부적으로 RangeCalendar 컴포넌트를 사용합니다.
  */
 
 "use client";
 
 import { useState, useEffect } from "react";
-import RangeCalendar, {
-  type DateRange,
-} from "@/components/common/date_range_picker/RangeCalendar";
+import RangeCalendar, { type DateRange } from "@/components/common/date_range_picker/RangeCalendar";
 import styles from "@/components/common/date_range_picker/range_calendar.module.css";
 
 // DateRange 타입을 export하여 다른 컴포넌트에서도 사용 가능하도록 함
@@ -63,9 +54,7 @@ export default function DateRangePickerModal({
   // 드롭다운 내부에서 관리하는 임시 선택 상태
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
   // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
-  const [temp_range, set_temp_range] = useState<DateRange | undefined>(
-    selected_range
-  );
+  const [temp_range, set_temp_range] = useState<DateRange | undefined>(selected_range);
 
   // 드롭다운이 열릴 때마다 임시 선택 상태를 초기화
   // useEffect는 React의 Hook으로, 컴포넌트가 렌더링된 후에 실행됩니다
@@ -92,7 +81,7 @@ export default function DateRangePickerModal({
   // 외부 클릭 시 적용 및 닫기 핸들러
   // DateFilterSection에서 외부 클릭을 감지하면 이 함수를 호출합니다
   // 또는 사용자가 명시적으로 닫을 때 호출됩니다
-  const handle_close_with_apply = () => {
+  const _handle_close_with_apply = () => {
     // 현재 선택된 임시 범위를 적용
     on_apply(temp_range);
     // 드롭다운 닫기
@@ -106,9 +95,7 @@ export default function DateRangePickerModal({
   // 드롭다운 위치 스타일 - align prop에 따라 left 또는 right로 정렬
   // CSS 모듈의 right: 0을 오버라이드하기 위해 인라인 스타일 사용
   const dropdown_style: React.CSSProperties = {
-    ...(align === "left"
-      ? { left: "0", right: "auto" }
-      : { right: "0", left: "auto" }),
+    ...(align === "left" ? { left: "0", right: "auto" } : { right: "0", left: "auto" }),
   };
 
   return (

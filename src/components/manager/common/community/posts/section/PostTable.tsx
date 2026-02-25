@@ -30,18 +30,13 @@ import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
 import styles from "@/styles/manager/common/community/posts/post_table.module.css";
-import {
-  posts_data,
-  type PostItem,
-} from "@/data/manager_ga/community/postsData";
+import { type PostItem } from "@/data/manager_ga/community/postsData";
 import CommonTableWithTooltip, {
   type TooltipConfig,
 } from "@/components/manager/common/table/CommonTableWithTooltip";
 import type { TableColumn, TableRowData } from "@/components/manager/common/table/CommonTable";
 import { useRouter } from "next/navigation";
-import UserTypeTag, {
-  type UserType,
-} from "@/components/manager/common/tags/UserTypeTag";
+import UserTypeTag, { type UserType } from "@/components/manager/common/tags/UserTypeTag";
 import type { PostDivision, PostTarget } from "@/data/manager_ga/community/postsData";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 
@@ -126,9 +121,7 @@ export default function PostTable({
 
   // manager_type에 따른 base path 설정
   const base_path =
-    manager_type === "ga"
-      ? "/manager_ga/community/posts"
-      : "/manager_sa/community/posts";
+    manager_type === "ga" ? "/manager_ga/community/posts" : "/manager_sa/community/posts";
   const [hovered_row_id, set_hovered_row_id] = useState<string | null>(null);
 
   const filtered_posts = posts.filter((item) => {
@@ -141,10 +134,7 @@ export default function PostTable({
     }
 
     // 구분 필터
-    if (
-      selected_divisions.length > 0 &&
-      !selected_divisions.includes(item.division)
-    ) {
+    if (selected_divisions.length > 0 && !selected_divisions.includes(item.division)) {
       return false;
     }
 
@@ -202,8 +192,7 @@ export default function PostTable({
   // 커스텀 헤더 렌더링 (SortableTableHeader 공통 컴포넌트 사용)
   const render_table_header = () => {
     const is_all_selected =
-      sorted_posts.length > 0 &&
-      selected_post_ids.length === sorted_posts.length;
+      sorted_posts.length > 0 && selected_post_ids.length === sorted_posts.length;
 
     const handle_select_all = () => {
       if (is_all_selected) {

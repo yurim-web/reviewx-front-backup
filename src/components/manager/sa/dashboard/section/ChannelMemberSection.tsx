@@ -7,10 +7,8 @@
  *
  * 목적: 채널별 회원 등록 통계를 표시하는 섹션 컴포넌트입니다.
  *
- * 주요 기능:
- * - 채널별 회원 파이 차트 표시
- * - 블로그, 인스타그램, 클립, 유튜브 등록 수 표시
- *
+ * 사용 페이지:
+ * - /manager_sa (대시보드 페이지)
  */
 
 import ChannelMemberSectionCommon from "@/components/manager/common/dashboard/ChannelMemberSection";

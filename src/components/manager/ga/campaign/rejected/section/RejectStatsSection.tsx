@@ -1,5 +1,5 @@
 /* ========================================
-   📊 반려 내역 통계 섹션 컴포넌트
+   
    ======================================== */
 
 /**
@@ -7,13 +7,8 @@
  *
  * 목적: GA 관리자 반려내역 페이지의 반려 내역 통계 섹션을 표시합니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /manager_ga/campaign/rejected (반려내역 페이지)
- *
- * 주요 기능:
- * - 반려 코드별 반려 횟수를 표시합니다
- * - 필터(검색어, 반려 코드, 날짜 범위)에 따라 동적으로 통계를 계산합니다
- * - 숫자를 천 단위로 포맷팅하여 표시합니다
  *
  */
 
@@ -21,10 +16,7 @@
 
 import { useMemo } from "react";
 import styles from "@/styles/manager_ga/campaign/campaign_common.module.css";
-import {
-  rejected_campaign_list,
-  type RejectCode,
-} from "@/data/manager_ga/rejected";
+import { rejected_campaign_list, type RejectCode } from "@/data/manager_ga/rejected";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 
 interface RejectStatsSectionProps {
@@ -75,10 +67,7 @@ export default function RejectStatsSection({
 
       // 반려 코드 필터
       // selected_reject_codes가 비어있지 않고, 현재 항목의 반려 코드가 선택된 코드 목록에 없으면 제외
-      if (
-        selected_reject_codes.length > 0 &&
-        !selected_reject_codes.includes(item.reject_code)
-      ) {
+      if (selected_reject_codes.length > 0 && !selected_reject_codes.includes(item.reject_code)) {
         return false;
       }
 
@@ -138,9 +127,7 @@ export default function RejectStatsSection({
           <div key={code} className={styles.reject_stats_item}>
             <span className={styles.code}>{code}</span>
             <span className={styles.reject_stats_separator}>·</span>
-            <span className={styles.text}>
-              {format_number(stats_by_code[code])}회
-            </span>
+            <span className={styles.text}>{format_number(stats_by_code[code])}회</span>
           </div>
         ))}
       </div>

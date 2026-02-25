@@ -29,16 +29,13 @@ import { useState, Fragment, useMemo, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import BaseModal from "@/components/common/modal/BaseModal";
 import styles from "@/styles/manager/common/member/blacklist/blacklist_table.module.css";
-import tag_styles from "@/styles/common/tags.module.css";
 import {
   get_blacklist_data,
   remove_blacklist_item,
   blacklist_data,
   type BlacklistItem,
 } from "@/data/manager_ga/member/blacklist";
-import CommonTableWithTooltip, {
-  type TooltipConfig,
-} from "@/components/manager/common/table/CommonTableWithTooltip";
+import CommonTableWithTooltip from "@/components/manager/common/table/CommonTableWithTooltip";
 import type { TableColumn, TableRowData } from "@/components/manager/common/table/CommonTable";
 import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
@@ -47,10 +44,7 @@ import UserTypeTag from "@/components/manager/common/tags/UserTypeTag";
 import type { UserType } from "@/components/manager/common/tags/UserTypeTag";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 import UnblockConfirmModal from "./UnblockConfirmModal";
-import type {
-  BlacklistDivision,
-  BlockCode,
-} from "@/data/manager_ga/common/filterOptions";
+import type { BlacklistDivision, BlockCode } from "@/data/manager_ga/common/filterOptions";
 
 interface BlacklistTableProps {
   search_query: string;
@@ -137,8 +131,7 @@ export default function BlacklistTable({
     row_id: null,
   });
   // 해제 완료 모달 상태
-  const [unblock_complete_modal_state, set_unblock_complete_modal_state] =
-    useState<boolean>(false);
+  const [unblock_complete_modal_state, set_unblock_complete_modal_state] = useState<boolean>(false);
   // 블랙리스트 데이터 업데이트를 위한 상태 (리렌더링 트리거)
   const [blacklist_update_key, set_blacklist_update_key] = useState<number>(0);
   // 클라이언트 마운트 여부 (Hydration 오류 방지)
@@ -334,9 +327,7 @@ export default function BlacklistTable({
 
     return (
       <div
-        className={`${styles.table_row_wrapper} ${
-          is_clickable ? styles.clickable_row : ""
-        }`}
+        className={`${styles.table_row_wrapper} ${is_clickable ? styles.clickable_row : ""}`}
         onMouseEnter={() => set_hovered_row_id(row.id)}
         onMouseLeave={() => set_hovered_row_id(null)}
         onClick={() => handle_row_click(row)}
@@ -350,11 +341,7 @@ export default function BlacklistTable({
             handle_row_click(row);
           }
         }}
-        aria-label={
-          is_clickable
-            ? `${row.name} ${row.division} 상세 페이지로 이동`
-            : undefined
-        }
+        aria-label={is_clickable ? `${row.name} ${row.division} 상세 페이지로 이동` : undefined}
       >
         {row_content}
         {/* 호버 시 삭제 버튼 표시 */}
@@ -369,11 +356,7 @@ export default function BlacklistTable({
             }}
             aria-label="해제"
           >
-            <img
-              src="/images/icons/clear_icon.svg"
-              alt="해제"
-              className={styles.delete_icon}
-            />
+            <img src="/images/icons/clear_icon.svg" alt="해제" className={styles.delete_icon} />
           </button>
         )}
       </div>

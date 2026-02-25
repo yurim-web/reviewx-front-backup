@@ -39,26 +39,18 @@ interface TypeFilterDropdownProps {
   // 필터 적용 함수
   on_apply: (types: CampaignType[]) => void;
   // 드롭다운 컨테이너 ref (위치 계산용)
-  container_ref?: React.RefObject<HTMLDivElement>;
+  container_ref?: React.RefObject<HTMLDivElement | null>;
 }
 
 // 유형 옵션 목록
-const type_options: CampaignType[] = [
-  "배송형",
-  "방문형",
-  "구매평",
-  "기자단",
-  "미션형",
-];
+const type_options: CampaignType[] = ["배송형", "방문형", "구매평", "기자단", "미션형"];
 
 // FilterOption 배열로 변환
 // map 함수: 배열을 순회하며 각 요소를 FilterOption 형태로 변환합니다
-const filter_options: FilterOption<CampaignType>[] = type_options.map(
-  (type) => ({
-    value: type,
-    label: type,
-  })
-);
+const filter_options: FilterOption<CampaignType>[] = type_options.map((type) => ({
+  value: type,
+  label: type,
+}));
 
 /**
  * 유형 필터 드롭다운 컴포넌트
@@ -84,4 +76,3 @@ export default function TypeFilterDropdown({
     />
   );
 }
-

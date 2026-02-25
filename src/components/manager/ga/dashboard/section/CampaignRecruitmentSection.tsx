@@ -1,15 +1,11 @@
 /* ========================================
-   📊 캠페인 모집 통계 섹션 컴포넌트
+   
    ======================================== */
 
 /**
  * 캠페인 모집 통계 섹션 컴포넌트
  *
  * 목적: 캠페인 모집 통계 차트를 표시하는 섹션 컴포넌트입니다.
- *
- * 주요 기능:
- * - 캠페인 모집 통계 차트 표시
- * - 카테고리별 모집률, 달성률, 평균 진행 기간 시각화
  *
  */
 
@@ -22,9 +18,7 @@ export default function CampaignRecruitmentSection() {
       {/* 제목과 범례를 같은 줄에 배치 (제목: 왼쪽, 범례: 오른쪽) */}
       <div className={styles.campaign_recruitment_section_header}>
         {/* 섹션 제목 */}
-        <h2 className={styles.campaign_recruitment_section_title}>
-          캠페인 카테고리별 모집 통계
-        </h2>
+        <h2 className={styles.campaign_recruitment_section_title}>캠페인 카테고리별 모집 통계</h2>
 
         {/* 커스텀 범례 */}
         <div className={styles.campaign_recruitment_section_legend}>

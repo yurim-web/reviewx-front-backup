@@ -14,6 +14,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import { createPortal } from "react-dom";
 import CommonTableWithTooltip, {
   type TooltipConfig,
@@ -468,9 +469,11 @@ export default function PaymentHistoryTable({
                 aria-expanded={is_menu_open}
                 aria-haspopup="menu"
               >
-                <img
+                <Image
                   src="/images/management_page/table/more_icon.svg"
                   alt=""
+                  width={20}
+                  height={20}
                   className={styles.menu_trigger_icon}
                 />
               </button>

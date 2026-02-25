@@ -24,7 +24,7 @@ interface BlockCodeFilterDropdownProps {
   on_close: () => void;
   selected_block_codes: BlockCode[];
   on_apply: (block_codes: BlockCode[]) => void;
-  container_ref?: React.RefObject<HTMLDivElement>;
+  container_ref?: React.RefObject<HTMLDivElement | null>;
 }
 
 // 차단 코드 필터 옵션
@@ -42,12 +42,10 @@ const block_code_options: BlockCode[] = [
 ];
 
 // 차단 코드 옵션을 FilterOption 형태로 변환
-const filter_options: FilterOption<BlockCode>[] = block_code_options.map(
-  (code) => ({
-    value: code,
-    label: code,
-  })
-);
+const filter_options: FilterOption<BlockCode>[] = block_code_options.map((code) => ({
+  value: code,
+  label: code,
+}));
 
 export default function BlockCodeFilterDropdown({
   is_open,
@@ -68,4 +66,3 @@ export default function BlockCodeFilterDropdown({
     />
   );
 }
-

@@ -1,5 +1,5 @@
 /* ========================================
-   🥧 채널별 회원 파이 차트 컴포넌트
+   채널별 회원 분포 파이 차트
    ======================================== */
 
 /**
@@ -7,47 +7,74 @@
  *
  * 목적: 채널별 회원 등록 통계를 파이 차트로 표시합니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - MemberStatsSection 컴포넌트 (채널별 회원 통계 카드)
  *
- * 주요 기능:
- * - 블로그 등록: 50% (어두운 회색)
- * - 인스타그램 등록: 25% (중간 회색)
- * - 클립 등록: 20% (밝은 회색)
- * - 유튜브 등록: 5% (가장 밝은 회색)
  
  */
 
-'use client';
+"use client";
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from "react";
 import {
   PieChart,
   Pie,
   Cell,
   ResponsiveContainer,
-  Label,
   Tooltip,
   Sector,
-} from 'recharts';
-import styles from '@/styles/manager/common/dashboard/chart/member_stats.module.css';
-import { ChannelData } from '@/data/manager_ga/dashboard/dashboardData';
-import { use_pie_chart_click_handler } from './chart_event_handlers';
+  type SectorProps,
+} from "recharts";
+import { ChannelData } from "@/data/manager_ga/dashboard/dashboardData";
+import { usePieChartClickHandler } from "./chart_event_handlers";
+
+// recharts 커스텀 컴포넌트 Props 타입
+// label prop에 JSX element로 전달하면 recharts가 런타임에 props를 주입하므로 선택적으로 정의
+interface PieLabelProps {
+  cx?: number;
+  cy?: number;
+  midAngle?: number;
+  innerRadius?: number;
+  outerRadius?: number;
+  percent?: number;
+}
+
+type TooltipState = {
+  visible: boolean;
+  x: number;
+  y: number;
+  name: string;
+  value?: number;
+  useFixed?: boolean;
+};
+
+interface PieTooltipPayloadItem {
+  value: number;
+  payload: ChannelData;
+  midAngle: number;
+}
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: PieTooltipPayloadItem[];
+  containerRef: React.RefObject<HTMLDivElement | null>;
+  setTooltipState: React.Dispatch<React.SetStateAction<TooltipState>>;
+}
 
 interface ChannelMemberPieChartProps {
   channelData: ChannelData[];
 }
 
 /* ========================================
-   🎨 색상 관련 함수
+   
    ======================================== */
 
 // 색상 정의
 const colors = {
-  blog: '#2DC469', // 초록색 (블로그)
-  instagram: '#FF5694', // 핑크색 (인스타그램)
-  clip: '#9747FF', // 보라색 (클립)
-  youtube: '#FF2626', // 빨간색 (유튜브)
+  blog: "#2DC469", // 초록색 (블로그)
+  instagram: "#FF5694", // 핑크색 (인스타그램)
+  clip: "#9747FF", // 보라색 (클립)
+  youtube: "#FF2626", // 빨간색 (유튜브)
 };
 
 // ──────────────────────────────────────
@@ -57,13 +84,13 @@ const colors = {
 // 출력: 해당 채널의 색상 코드 (예: "#666666")
 const getChannelColor = (channel: string): string => {
   switch (channel) {
-    case '블로그':
+    case "블로그":
       return colors.blog; // 초록색
-    case '인스타그램':
+    case "인스타그램":
       return colors.instagram; // 핑크색
-    case '클립':
+    case "클립":
       return colors.clip; // 보라색
-    case '유튜브':
+    case "유튜브":
       return colors.youtube; // 빨간색
     default:
       return colors.blog; // 기본값 (블로그 색상)
@@ -71,14 +98,14 @@ const getChannelColor = (channel: string): string => {
 };
 
 /* ========================================
-   🏷️ 커스텀 라벨 컴포넌트
+   
    ======================================== */
 
 // 각 섹션에 퍼센트를 표시하는 커스텀 라벨 컴포넌트
 // 파이 차트의 각 조각 안에 "50%", "25%" 같은 텍스트를 표시
-const CustomLabel = (props: any) => {
+const CustomLabel = (props: PieLabelProps) => {
   // props에서 필요한 값들 가져오기
-  const { cx, cy, midAngle, innerRadius, outerRadius, percent } = props;
+  const { cx = 0, cy = 0, midAngle = 0, innerRadius = 0, outerRadius = 0, percent = 0 } = props;
   // cx, cy: 차트의 중심 좌표
   // midAngle: 섹션의 중앙 각도
   // innerRadius: 내부 반지름
@@ -111,25 +138,19 @@ const CustomLabel = (props: any) => {
       fontWeight={600} // 폰트 굵기
       letterSpacing="-0.28px" // 글자 간격
     >
-      {`${(percent * 100).toFixed(0)}%`}{' '}
-      {/* 비율을 퍼센트로 변환 (예: 0.5 → "50%") */}
+      {`${(percent * 100).toFixed(0)}%`} {/* 비율을 퍼센트로 변환 (예: 0.5 → "50%") */}
     </text>
   );
 };
 
 /* ========================================
-   💬 커스텀 툴팁 컴포넌트
+   
    ======================================== */
 
 // 호버 시 표시할 커스텀 툴팁
 // 마우스를 파이 차트 위에 올리면 채널 이름을 보여주는 툴팁 표시
 // containerRef를 사용하여 정확한 위치 계산
-const CustomTooltip = ({
-  active,
-  payload,
-  containerRef,
-  setTooltipState,
-}: any) => {
+const CustomTooltip = ({ active, payload, containerRef, setTooltipState }: CustomTooltipProps) => {
   // active: 툴팁이 활성화되었는지 여부
   // payload: 차트 데이터 정보
   // containerRef: 차트 컨테이너의 ref
@@ -146,7 +167,7 @@ const CustomTooltip = ({
   useEffect(() => {
     // active가 false이거나 payload가 없으면 툴팁 즉시 숨김 (잔상 방지)
     if (!active || !payload || !payload.length || !containerRef?.current) {
-      setTooltipState({ visible: false, x: 0, y: 0, name: '', value: undefined });
+      setTooltipState({ visible: false, x: 0, y: 0, name: "", value: undefined });
       prev_calculated_ref.current = null;
       return;
     }
@@ -165,15 +186,15 @@ const CustomTooltip = ({
     }
 
     const container = containerRef.current;
-    const svgElement = container.querySelector('svg');
+    const svgElement = container.querySelector("svg");
 
     if (svgElement) {
       const svgRect = svgElement.getBoundingClientRect();
       const containerRect = container.getBoundingClientRect();
-      const viewBox = svgElement.getAttribute('viewBox');
+      const viewBox = svgElement.getAttribute("viewBox");
       if (!viewBox) return;
 
-      const [vbX, vbY, vbW, vbH] = viewBox.split(' ').map(Number);
+      const [vbX, vbY, vbW, vbH] = viewBox.split(" ").map(Number);
       const scaleX = svgRect.width / vbW;
       const scaleY = svgRect.height / vbH;
       const offsetX = 8;
@@ -184,7 +205,7 @@ const CustomTooltip = ({
       // 원 안에 퍼센트 라벨이 있으면(8% 이상) 그 텍스트 오른쪽에 툴팁 배치
       const percent_value = data.value;
       const percent_text = `${Math.round(percent_value)}%`;
-      const text_elements = svgElement.querySelectorAll('text') as NodeListOf<SVGTextElement>;
+      const text_elements = svgElement.querySelectorAll("text") as NodeListOf<SVGTextElement>;
       let target_text_element: SVGTextElement | null = null;
       for (const text_el of text_elements) {
         if (text_el.textContent?.trim() === percent_text) {
@@ -198,8 +219,8 @@ const CustomTooltip = ({
 
       if (target_text_element) {
         // 8% 이상: 라벨 텍스트 오른쪽에 툴팁 배치
-        const text_x = parseFloat(target_text_element.getAttribute('x') || '0');
-        const text_y = parseFloat(target_text_element.getAttribute('y') || '0');
+        const text_x = parseFloat(target_text_element.getAttribute("x") || "0");
+        const text_y = parseFloat(target_text_element.getAttribute("y") || "0");
         const px = (text_x - vbX) * scaleX;
         const py = (text_y - vbY) * scaleY;
         const fx = px + (svgRect.left - containerRect.left);
@@ -243,13 +264,11 @@ const CustomTooltip = ({
 };
 
 /* ========================================
-   🎯 메인 컴포넌트
+   
    ======================================== */
 
 // 파이 차트를 렌더링하는 메인 컴포넌트
-export default function ChannelMemberPieChart({
-  channelData,
-}: ChannelMemberPieChartProps) {
+export default function ChannelMemberPieChart({ channelData }: ChannelMemberPieChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   // 툴팁 상태 관리
   const [tooltip_state, set_tooltip_state] = useState<{
@@ -259,18 +278,18 @@ export default function ChannelMemberPieChart({
     name: string;
     value?: number;
     useFixed?: boolean;
-  }>({ visible: false, x: 0, y: 0, name: '' });
+  }>({ visible: false, x: 0, y: 0, name: "" });
   // 채널별 회원 통계 전용: 툴팁이 조금 더 느리게 나오도록 0.5s
   const [tooltip_opacity, set_tooltip_opacity] = useState(0);
 
   /* ========================================
-     🔧 부가 기능 처리 (공용 유틸리티 사용)
+     (  )
      ======================================== */
 
   // 흰색 선 유지 및 클릭 이벤트 처리
   // 파이 차트의 경계선을 흰색으로 유지하고, 바깥으로 튀어나오는 선 제거
   // 공용 유틸리티 함수를 사용하여 코드 중복 제거
-  use_pie_chart_click_handler(containerRef);
+  usePieChartClickHandler(containerRef);
 
   // 툴팁 페이드인: 채널별 회원 통계는 조금 더 느리게 (opacity 0.5s ease)
   useEffect(() => {
@@ -293,62 +312,49 @@ export default function ChannelMemberPieChart({
 
     const check_interval = setInterval(() => {
       const paths = container.querySelectorAll<SVGPathElement>(
-        'path.recharts-pie-sector, path.recharts-sector',
+        "path.recharts-pie-sector, path.recharts-sector"
       );
       paths.forEach((path) => {
         // ──────────────────────────────────────
         // clipPath 적용: 바깥으로 튀어나오는 선 제거
         // ──────────────────────────────────────
-        const svg = path.closest('svg');
+        const svg = path.closest("svg");
         if (svg) {
           // SVG에 clipPath 추가 (원 모양으로 잘라내기)
-          const clipPathId = 'pie-clip-path';
+          const clipPathId = "pie-clip-path";
           let clipPath = svg.querySelector(`#${clipPathId}`);
           if (!clipPath) {
-            let defs = svg.querySelector('defs');
+            let defs = svg.querySelector("defs");
             if (!defs) {
-              defs = document.createElementNS(
-                'http://www.w3.org/2000/svg',
-                'defs',
-              );
+              defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
               svg.insertBefore(defs, svg.firstChild);
             }
-            clipPath = document.createElementNS(
-              'http://www.w3.org/2000/svg',
-              'clipPath',
-            );
-            clipPath.setAttribute('id', clipPathId);
-            const circle = document.createElementNS(
-              'http://www.w3.org/2000/svg',
-              'circle',
-            );
+            clipPath = document.createElementNS("http://www.w3.org/2000/svg", "clipPath");
+            clipPath.setAttribute("id", clipPathId);
+            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
             // viewBox를 기반으로 중심점 계산
-            const viewBox = svg.getAttribute('viewBox');
+            const viewBox = svg.getAttribute("viewBox");
             if (viewBox) {
-              const [x, y, width, height] = viewBox.split(' ').map(Number);
+              const [x, y, width, height] = viewBox.split(" ").map(Number);
               const centerX = x + width / 2;
               const centerY = y + height / 2;
-              circle.setAttribute('cx', centerX.toString());
-              circle.setAttribute('cy', centerY.toString());
+              circle.setAttribute("cx", centerX.toString());
+              circle.setAttribute("cy", centerY.toString());
             } else {
               // viewBox가 없으면 SVG의 실제 크기 사용
               const svgRect = svg.getBoundingClientRect();
               const centerX = svgRect.width / 2;
               const centerY = svgRect.height / 2;
-              circle.setAttribute('cx', centerX.toString());
-              circle.setAttribute('cy', centerY.toString());
+              circle.setAttribute("cx", centerX.toString());
+              circle.setAttribute("cy", centerY.toString());
             }
-            circle.setAttribute('r', '100');
+            circle.setAttribute("r", "100");
             clipPath.appendChild(circle);
             defs.appendChild(clipPath);
           }
           // path에 clipPath 적용
-          path.setAttribute('clip-path', `url(#${clipPathId})`);
-          path.style.setProperty(
-            'clip-path',
-            `url(#${clipPathId})`,
-            'important',
-          );
+          path.setAttribute("clip-path", `url(#${clipPathId})`);
+          path.style.setProperty("clip-path", `url(#${clipPathId})`, "important");
         }
       });
 
@@ -358,21 +364,21 @@ export default function ChannelMemberPieChart({
 
       // Recharts가 자동으로 만드는 선들 제거
       const lines = container.querySelectorAll<SVGLineElement>(
-        'line.recharts-tooltip-cursor, line.recharts-active-shape',
+        "line.recharts-tooltip-cursor, line.recharts-active-shape"
       );
       lines.forEach((line) => {
-        line.style.setProperty('display', 'none', 'important');
-        line.setAttribute('display', 'none');
+        line.style.setProperty("display", "none", "important");
+        line.setAttribute("display", "none");
       });
 
       // 모든 line 요소 중 바깥으로 나가는 선 제거
-      const allLines = container.querySelectorAll<SVGLineElement>('line');
+      const allLines = container.querySelectorAll<SVGLineElement>("line");
       allLines.forEach((line) => {
         // 선의 시작점과 끝점 좌표 가져오기
-        const x1 = parseFloat(line.getAttribute('x1') || '0');
-        const y1 = parseFloat(line.getAttribute('y1') || '0');
-        const x2 = parseFloat(line.getAttribute('x2') || '0');
-        const y2 = parseFloat(line.getAttribute('y2') || '0');
+        const _x1 = parseFloat(line.getAttribute("x1") || "0");
+        const _y1 = parseFloat(line.getAttribute("y1") || "0");
+        const x2 = parseFloat(line.getAttribute("x2") || "0");
+        const y2 = parseFloat(line.getAttribute("y2") || "0");
 
         // ──────────────────────────────────────
         // 중심점에서 멀리 떨어진 선 제거 (바깥으로 나가는 선)
@@ -380,13 +386,11 @@ export default function ChannelMemberPieChart({
         const centerX = 100; // 차트 중심 X (200px 차트 기준)
         const centerY = 100; // 차트 중심 Y (200px 차트 기준)
         // 선의 끝점과 중심점 사이의 거리 계산 (피타고라스 정리)
-        const distance = Math.sqrt(
-          Math.pow(x2 - centerX, 2) + Math.pow(y2 - centerY, 2),
-        );
+        const distance = Math.sqrt(Math.pow(x2 - centerX, 2) + Math.pow(y2 - centerY, 2));
         // 외부 반지름(100)보다 멀리 나가는 선은 제거
         if (distance > 100) {
-          line.style.setProperty('display', 'none', 'important');
-          line.setAttribute('display', 'none');
+          line.style.setProperty("display", "none", "important");
+          line.setAttribute("display", "none");
         }
       });
     }, 100);
@@ -397,24 +401,24 @@ export default function ChannelMemberPieChart({
   }, []);
 
   /* ========================================
-     🎨 렌더링 부분 (화면에 그려지는 부분)
+     (  )
      ======================================== */
 
   return (
     <div
       ref={containerRef}
       style={{
-        width: '200px',
-        height: '200px',
-        minWidth: '200px',
-        minHeight: '200px',
-        aspectRatio: '1',
-        position: 'relative',
-        backgroundColor: 'transparent',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden',
+        width: "200px",
+        height: "200px",
+        minWidth: "200px",
+        minHeight: "200px",
+        aspectRatio: "1",
+        position: "relative",
+        backgroundColor: "transparent",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "hidden",
       }}
     >
       {/* 반응형 컨테이너: 부모와 동일 200×200, 원형 유지 */}
@@ -430,20 +434,17 @@ export default function ChannelMemberPieChart({
           {/* 툴팁 설정: 마우스 호버 시 채널 이름 표시 (래퍼는 숨겨서 잔상 방지) */}
           <Tooltip
             content={
-              <CustomTooltip
-                containerRef={containerRef}
-                setTooltipState={set_tooltip_state}
-              />
+              <CustomTooltip containerRef={containerRef} setTooltipState={set_tooltip_state} />
             }
             cursor={false}
             animationDuration={0}
             animationEasing="linear"
-            wrapperStyle={{ visibility: 'hidden', pointerEvents: 'none' }}
+            wrapperStyle={{ visibility: "hidden", pointerEvents: "none" }}
           />
 
           {/* 파이 차트 메인 설정 - 호버 시 크기 변경/지직거림 방지: activeShape로 동일 크기 유지 */}
           <Pie
-            data={channelData as any} // 차트 데이터
+            data={channelData as unknown as Parameters<typeof Pie>[0]["data"]}
             cx="50%" // 중심 X 좌표
             cy="50%" // 중심 Y 좌표
             innerRadius={0} // 내부 반지름 (0이면 파이 차트, 0보다 크면 도넛 차트)
@@ -459,7 +460,7 @@ export default function ChannelMemberPieChart({
             strokeLinecap="butt" // 선 끝을 둥글게 하지 않음
             clipPath="url(#pie-clip)" // 외부로 튀어나오는 선 제거
             isAnimationActive={false} // 애니메이션 비활성화
-            activeShape={(props: any) => <Sector {...props} />} // 호버 시 크기 그대로 (커지지 않음)
+            activeShape={(props: SectorProps) => <Sector {...props} />} // 호버 시 크기 그대로 (커지지 않음)
           >
             {/* 각 섹션에 색상 적용 */}
             {channelData.map((entry, index) => {
@@ -482,30 +483,28 @@ export default function ChannelMemberPieChart({
       {tooltip_state.visible && (
         <div
           style={{
-            position: tooltip_state.useFixed ? 'fixed' : 'absolute',
+            position: tooltip_state.useFixed ? "fixed" : "absolute",
             left: `${tooltip_state.x}px`,
             top: `${tooltip_state.y}px`,
-            transform: 'translateY(-50%)',
-            backgroundColor: '#444444',
-            color: 'white',
-            padding: '8px',
-            borderRadius: '4px',
-            fontSize: '14px',
+            transform: "translateY(-50%)",
+            backgroundColor: "#444444",
+            color: "white",
+            padding: "8px",
+            borderRadius: "4px",
+            fontSize: "14px",
             fontWeight: 500,
-            pointerEvents: 'none',
-            whiteSpace: 'nowrap',
+            pointerEvents: "none",
+            whiteSpace: "nowrap",
             zIndex: 10000,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
             opacity: tooltip_opacity,
-            transition: 'opacity 0.5s ease',
+            transition: "opacity 0.5s ease",
           }}
         >
           <span>{tooltip_state.name}</span>
-          {tooltip_state.value != null && (
-            <span>{tooltip_state.value}%</span>
-          )}
+          {tooltip_state.value != null && <span>{tooltip_state.value}%</span>}
         </div>
       )}
     </div>

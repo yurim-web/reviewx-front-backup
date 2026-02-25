@@ -52,7 +52,7 @@ export const Default: Story = {
       [searchQuery, handleSearchChange]
     );
 
-    return React.createElement(BlacklistFilterSection, props);
+    return React.createElement(BlacklistFilterSection, props as any);
   },
   args: {
     search_query: "",
@@ -81,14 +81,10 @@ export const WithSearchQuery: Story = {
       [searchQuery, handleSearchChange]
     );
 
-    return React.createElement(BlacklistFilterSection, props);
+    return React.createElement(BlacklistFilterSection, props as any);
   },
   args: {
     search_query: "홍길동",
     on_search_change: (query) => console.log("Search changed:", query),
   },
 };
-
-
-
-

@@ -1,7 +1,15 @@
 /* ========================================
-   📄 관리자 - 거래명세서 조회 모달
-   Figma: 4490-23257
+   거래명세서 조회 모달 컴포넌트
    ======================================== */
+
+/**
+ * ManagerReceiptLookupModal
+ *
+ * 목적: 결제 내역 항목의 거래명세서를 조회하는 모달입니다.
+ *
+ * 사용 페이지:
+ * - /manager_sa/settlement/payment_history (결제 내역 페이지)
+ */
 
 "use client";
 
@@ -56,10 +64,7 @@ export default function ManagerReceiptLookupModal({
     >
       <div className={styles.modal_content} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modal_header}>
-          <h2
-            id="manager_receipt_modal_title"
-            className={styles.modal_title}
-          >
+          <h2 id="manager_receipt_modal_title" className={styles.modal_title}>
             거래명세서
           </h2>
         </div>

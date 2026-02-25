@@ -1,5 +1,5 @@
 /* ========================================
-   📋 GA 관리자 사이드바 메뉴 컴포넌트
+   GA
    ======================================== */
 
 /**
@@ -9,13 +9,6 @@
  *
  * 사용 페이지:
  * - /manager_ga (GA 관리자 페이지)
- *
- * 주요 기능:
- * - 홈 메뉴 (대시보드)
- * - 캠페인 메뉴 (진행 현황)
- * - 운영 메뉴 (반려 내역, 신고 내역, 이용 제한 내역)
- * - 회원 메뉴 (리뷰어 목록, 파트너 목록)
- * - 커뮤니티 메뉴 (게시글 목록, 카테고리 관리)
  *
  */
 
@@ -48,9 +41,7 @@ export default function SidebarMenu() {
   const menuCategories: MenuCategory[] = [
     {
       title: "홈",
-      items: [
-        { label: "대시보드", path: "/manager_ga", icon_name: "dashboard" },
-      ],
+      items: [{ label: "대시보드", path: "/manager_ga", icon_name: "dashboard" }],
     },
     {
       title: "캠페인",
@@ -154,9 +145,7 @@ export default function SidebarMenu() {
               <Link
                 key={itemIndex}
                 href={item.path}
-                className={`${styles.menu_item} ${
-                  active ? styles.menu_item_active : ""
-                }`}
+                className={`${styles.menu_item} ${active ? styles.menu_item_active : ""}`}
               >
                 {/* 메뉴 아이템 아이콘 */}
                 {/* Next.js의 Image 컴포넌트를 사용하여 SVG 아이콘을 표시합니다 */}
@@ -168,11 +157,7 @@ export default function SidebarMenu() {
                   className={styles.menu_icon}
                 />
                 {/* 메뉴 아이템 라벨 */}
-                <span
-                  className={`${styles.menu_label} ${
-                    active ? styles.menu_label_active : ""
-                  }`}
-                >
+                <span className={`${styles.menu_label} ${active ? styles.menu_label_active : ""}`}>
                   {item.label}
                 </span>
               </Link>

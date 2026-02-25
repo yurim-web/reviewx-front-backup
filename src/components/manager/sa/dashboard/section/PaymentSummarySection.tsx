@@ -7,12 +7,8 @@
  *
  * 목적: 결제 요약 통계와 결제 금액 통계 차트를 한 박스 안에 표시하는 섹션 컴포넌트입니다.
  *
- * 주요 기능:
- * - 위쪽: 총결제 금액, 입금 총액, 카드 결제 금액, 예상 수수료 통계 표시
- * - 아래쪽: 결제 금액 통계 차트 표시
- * - 결제 내역 데이터를 기반으로 통계 계산
- * - 날짜 필터에 따라 통계 값이 변경됨
- *
+ * 사용 페이지:
+ * - /manager_sa (대시보드 페이지)
  */
 
 "use client";
@@ -21,9 +17,20 @@ import { useMemo, useState, useEffect } from "react";
 import styles from "@/styles/manager_sa/dashboard/sections/summary_section.module.css";
 import StatCard, { StatCardData } from "../StatCard";
 import AmountChart from "../chart/AmountChart";
-import { getPaymentHistoryList, type PaymentHistoryItem } from "@/data/manager_sa/settlement/paymentHistoryData";
+import {
+  getPaymentHistoryList,
+  type PaymentHistoryItem,
+} from "@/data/manager_sa/settlement/paymentHistoryData";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
-import { format, parse, eachDayOfInterval, differenceInDays, startOfWeek, endOfWeek, subDays } from "date-fns";
+import {
+  format,
+  parse,
+  eachDayOfInterval,
+  differenceInDays,
+  startOfWeek,
+  endOfWeek,
+  subDays,
+} from "date-fns";
 
 // PaymentSummarySection 컴포넌트의 props 타입 정의
 interface PaymentSummarySectionProps {
@@ -50,33 +57,23 @@ const format_amount = (amount: number): string => {
 };
 
 // 날짜 문자열이 특정 날짜 범위 내에 있는지 확인하는 함수
-const is_date_in_range = (
-  date_str: string,
-  start_date: Date,
-  end_date: Date
-): boolean => {
+const is_date_in_range = (date_str: string, start_date: Date, end_date: Date): boolean => {
   const item_date_str = date_str.split(" ")[0];
   const item_date = parse(item_date_str, "yyyy-MM-dd", new Date());
   item_date.setHours(0, 0, 0, 0);
   return item_date >= start_date && item_date <= end_date;
 };
 
-export default function PaymentSummarySection({
-  dateRange,
-}: PaymentSummarySectionProps) {
+export default function PaymentSummarySection({ dateRange }: PaymentSummarySectionProps) {
   // 결제 내역 데이터 로드
-  const [payment_history, set_payment_history] = useState<
-    PaymentHistoryItem[]
-  >([]);
+  const [payment_history, set_payment_history] = useState<PaymentHistoryItem[]>([]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       try {
         const history = getPaymentHistoryList();
         set_payment_history(history);
-      } catch (error) {
-        console.error("결제 내역 로드 실패:", error);
-      }
+      } catch (_error) {}
     }
   }, []);
 
@@ -93,7 +90,7 @@ export default function PaymentSummarySection({
     }
 
     const percentage = Math.round(((current - previous) / previous) * 100);
-    
+
     if (percentage > 0) {
       return { change: `↑ ${percentage}%`, changeType: "positive" };
     } else if (percentage < 0) {
@@ -138,8 +135,7 @@ export default function PaymentSummarySection({
     // 현재 기간의 완료된 결제만 필터링
     const completed_items = payment_history.filter(
       (item) =>
-        item.paymentStatus === "완료" &&
-        is_date_in_range(item.approvalDate, start_date, end_date)
+        item.paymentStatus === "완료" && is_date_in_range(item.approvalDate, start_date, end_date)
     );
 
     // 이전 기간의 완료된 결제만 필터링
@@ -161,9 +157,7 @@ export default function PaymentSummarySection({
     const total_payment_change = calculate_change_percentage(total_payment, previous_total_payment);
 
     // 2. 입금 총액: 무통장 입금이고 완료된 항목들의 chargedPoints 합계
-    const deposit_items = completed_items.filter(
-      (item) => item.paymentMethod === "무통장 입금"
-    );
+    const deposit_items = completed_items.filter((item) => item.paymentMethod === "무통장 입금");
     const deposit_increase = deposit_items.reduce(
       (sum, item) => sum + parse_amount(item.chargedPoints),
       0
@@ -175,7 +169,10 @@ export default function PaymentSummarySection({
       (sum, item) => sum + parse_amount(item.chargedPoints),
       0
     );
-    const deposit_increase_change = calculate_change_percentage(deposit_increase, previous_deposit_increase);
+    const deposit_increase_change = calculate_change_percentage(
+      deposit_increase,
+      previous_deposit_increase
+    );
 
     // 3. 카드 결제 금액: 카드 결제 또는 포인트 충전이고 완료된 항목들의 chargedPoints 합계
     const card_items = completed_items.filter(

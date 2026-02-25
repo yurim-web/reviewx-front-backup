@@ -28,15 +28,14 @@ interface GradeFilterDropdownProps {
   selected_grades?: ReviewerGrade[];
   selected_divisions?: ReviewerGrade[];
   on_apply: (grades: ReviewerGrade[]) => void;
-  container_ref?: React.RefObject<HTMLDivElement>;
+  container_ref?: React.RefObject<HTMLDivElement | null>;
 }
 
 // 구분 옵션을 FilterOption 형태로 변환
-const filter_options: FilterOption<ReviewerGrade>[] =
-  reviewer_type_filter_options.map((grade) => ({
-    value: grade,
-    label: grade,
-  }));
+const filter_options: FilterOption<ReviewerGrade>[] = reviewer_type_filter_options.map((grade) => ({
+  value: grade,
+  label: grade,
+}));
 
 export default function GradeFilterDropdown({
   is_open,
@@ -46,8 +45,7 @@ export default function GradeFilterDropdown({
   on_apply,
   container_ref,
 }: GradeFilterDropdownProps) {
-  const selected_values =
-    selected_grades ?? selected_divisions ?? [];
+  const selected_values = selected_grades ?? selected_divisions ?? [];
   return (
     <BaseFilterDropdown<ReviewerGrade>
       is_open={is_open}

@@ -1,7 +1,15 @@
 /* ========================================
-   🏦 관리자 - 환불 계좌 조회 모달
-   Figma: 4483-22748
+   환불 계좌 조회 모달 컴포넌트
    ======================================== */
+
+/**
+ * ManagerRefundAccountModal
+ *
+ * 목적: 결제 내역 항목의 환불 계좌 정보를 조회하는 모달입니다.
+ *
+ * 사용 페이지:
+ * - /manager_sa/settlement/payment_history (결제 내역 페이지)
+ */
 
 "use client";
 
@@ -60,10 +68,7 @@ export default function ManagerRefundAccountModal({
     >
       <div className={styles.modal_content} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modal_header}>
-          <h2
-            id="manager_refund_account_modal_title"
-            className={styles.modal_title}
-          >
+          <h2 id="manager_refund_account_modal_title" className={styles.modal_title}>
             환불 계좌 조회
           </h2>
         </div>
@@ -90,18 +95,10 @@ export default function ManagerRefundAccountModal({
           )}
         </div>
         <div className={styles.modal_actions}>
-          <button
-            type="button"
-            className={styles.btn_close}
-            onClick={on_close}
-          >
+          <button type="button" className={styles.btn_close} onClick={on_close}>
             닫기
           </button>
-          <button
-            type="button"
-            className={styles.btn_copy}
-            onClick={handle_copy}
-          >
+          <button type="button" className={styles.btn_copy} onClick={handle_copy}>
             복사
           </button>
         </div>

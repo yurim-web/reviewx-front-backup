@@ -13,10 +13,7 @@ import DivisionFilterDropdown from "@/components/manager/common/member/partners/
 import TypeFilterDropdown from "@/components/manager/common/member/partners/filter/TypeFilterDropdown";
 import StatusFilterDropdown from "@/components/manager/common/member/partners/filter/StatusFilterDropdown";
 import type { Channel } from "@/data/manager_ga/member/partners";
-import type {
-  PartnerDivision,
-  PartnerStatus,
-} from "@/data/manager_ga/member/partners";
+import type { PartnerDivision, PartnerStatus } from "@/data/manager_ga/member/partners";
 import type { PartnerType } from "@/components/manager/common/member/partners/filter/TypeFilterDropdown";
 
 // 채널 이름 매핑 객체
@@ -24,8 +21,12 @@ const channel_name_map: Record<Channel, string> = {
   Blog: "네이버 블로그",
   Clip: "네이버 클립",
   Instagram: "인스타그램",
-  Youtube: "유튜브",
+  Mission: "미션",
+  Reels: "릴스",
+  Review: "구매평",
+  Shorts: "쇼츠",
   Store: "네이버 스토어",
+  Youtube: "유튜브",
 };
 
 const meta: Meta<typeof MemberFilterSection> = {
@@ -53,16 +54,6 @@ const meta: Meta<typeof MemberFilterSection> = {
 export default meta;
 
 type Story = StoryObj<typeof MemberFilterSection>;
-
-// 안정적인 render 함수를 컴포넌트 외부에 정의 (깜빡임 방지)
-// args를 받아서 컴포넌트에 전달해야 합니다
-const renderMemberFilterSection = (args: any) => {
-  return (
-    <MemberFilterSection<Channel, PartnerDivision, PartnerType, PartnerStatus>
-      {...args}
-    />
-  );
-};
 
 /**
  * 기본 필터 섹션 (파트너 예시)

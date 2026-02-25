@@ -7,17 +7,8 @@
  *
  * 목적: 정산/결제 금액의 시간별 추이를 라인 차트로 표시하는 재사용 가능한 컴포넌트입니다.
  *
- * 주요 기능:
- * - 날짜별 금액을 라인 차트로 표시
- * - Y축에 금액 범위 표시 (0, 2천, 4천, 6천, 8천, 1억)
- * - X축에 날짜 표시 (11/1, 11/6, 11/11)
- *
- * 사용 위치:
- * - SettlementSummarySection (정산 요약 섹션)
- * - PaymentSummarySection (결제 요약 섹션)
- * - SettlementChartSection (정산 차트 섹션)
- * - PaymentChartSection (결제 차트 섹션)
- *
+ * 사용 페이지:
+ * - /manager_sa (대시보드 페이지) - SettlementSummarySection, PaymentSummarySection, SettlementChartSection, PaymentChartSection
  */
 
 "use client";

@@ -1,5 +1,5 @@
 /* ========================================
-   🔍 공통 필터 모달 컴포넌트 (베이스)
+   ()
    ======================================== */
 
 /**
@@ -22,12 +22,6 @@
  * - src/components/manager_ga/member/reviewers/filter/GradeFilterModal.tsx
  * - src/components/manager_ga/member/blacklist/filter/DivisionFilterModal.tsx
  * - src/components/manager_ga/member/blacklist/filter/BlockCodeFilterModal.tsx
- *
- * 주요 기능:
- * - 체크박스 방식의 다중 선택 필터링
- * - 필터 적용/초기화 기능
- * - 모달 오버레이 클릭으로 닫기
- * - 제네릭 타입으로 다양한 타입의 옵션 지원
  *
  */
 
@@ -137,10 +131,7 @@ export default function BaseFilterModal<T extends string | number>({
 
   return (
     <div className={styles.modal_overlay} onClick={handle_backdrop_click}>
-      <div
-        className={styles.modal_content}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className={styles.modal_content} onClick={(e) => e.stopPropagation()}>
         {/* 모달 헤더 */}
         <div className={styles.modal_header}>
           <h3 className={styles.modal_title}>{modal_title}</h3>

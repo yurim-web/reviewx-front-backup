@@ -5,7 +5,6 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
-import React from "react";
 import ProfileSection from "./ProfileSection";
 
 const meta: Meta<typeof ProfileSection> = {
@@ -40,14 +39,7 @@ export const Reviewer: Story = {
   args: {
     name: "홍길동",
     status_type: "모범 회원",
-    basic_info_items: [
-      "리뷰어",
-      "김철수",
-      "남성",
-      "만 30세",
-      "hong@example.com",
-      "010-1234-5678",
-    ],
+    basic_info_items: ["리뷰어", "김철수", "남성", "만 30세", "hong@example.com", "010-1234-5678"],
   },
 };
 
@@ -56,13 +48,7 @@ export const Partner: Story = {
   args: {
     name: "(주)샘플 브랜드",
     status_type: "정상",
-    basic_info_items: [
-      "파트너",
-      "법인",
-      "contact@sample.com",
-      "02-1234-5678",
-      "서울시 강남구",
-    ],
+    basic_info_items: ["파트너", "법인", "contact@sample.com", "02-1234-5678", "서울시 강남구"],
   },
 };
 
@@ -71,17 +57,6 @@ export const CautionMember: Story = {
   args: {
     name: "이영희",
     status_type: "주의 회원",
-    basic_info_items: [
-      "리뷰어",
-      "이영희",
-      "여성",
-      "만 25세",
-      "lee@example.com",
-      "010-9876-5432",
-    ],
+    basic_info_items: ["리뷰어", "이영희", "여성", "만 25세", "lee@example.com", "010-9876-5432"],
   },
 };
-
-
-
-
