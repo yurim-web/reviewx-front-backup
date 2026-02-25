@@ -13,7 +13,7 @@
  * - 기타 정렬 기능이 필요한 테이블 컴포넌트들
  */
 
-import { useState, useMemo, type Dispatch, type SetStateAction } from "react";
+import { useState, useMemo } from "react";
 import {
   type SortState,
   type SortDirection,
@@ -76,9 +76,9 @@ interface UseTableSortReturn<T> {
  * });
  * ```
  */
-export function useTableSort<T extends Record<string, any>>({
+export function useTableSort<T extends Record<string, unknown>>({
   data,
-  initial_column_key = null,
+  initial_column_key = undefined,
   initial_direction = "asc",
   column_config,
 }: UseTableSortOptions<T>): UseTableSortReturn<T> {
