@@ -95,6 +95,7 @@ function convertStoredToVisitCampaignData(
     requireKeywordAttachment?: boolean;
     additionalPoints?: string | number;
     isUrgent?: boolean; // 긴급 캠페인 여부
+    registeredAt?: string; // 등록 시간
   }
 ): VisitCampaignData {
   const info = campaign.campaignInfo;
@@ -213,8 +214,8 @@ function convertStoredToVisitCampaignData(
     visitAddress: campaign.visitAddress || "",
     addressGuide: campaign.addressGuide || "",
     visitLink: campaign.visitLink || "",
-    isUrgent: (campaign as any).isUrgent === true, // 긴급 캠페인 여부
-    registeredAt: (campaign as any).registeredAt || undefined, // 등록 시간
+    isUrgent: campaign.isUrgent === true, // 긴급 캠페인 여부
+    registeredAt: campaign.registeredAt || undefined, // 등록 시간
   };
 }
 
@@ -226,9 +227,7 @@ function convertStoredToVisitCampaignData(
  * - 오픈 예정일 때는 schedule을 생성하고, dayCount는 빈 문자열로 설정합니다.
  * - 진행 중일 때는 dayCount를 계산하고, schedule은 빈 문자열로 설정합니다.
  */
-function enrichStaticVisitCampaigns(
-  campaigns: VisitCampaignData[]
-): VisitCampaignData[] {
+function enrichStaticVisitCampaigns(campaigns: VisitCampaignData[]): VisitCampaignData[] {
   return campaigns.map((campaign) => {
     if (!campaign.detailedSchedule) {
       return campaign;
@@ -354,27 +353,20 @@ export default function VisitPage() {
       convertedCampaigns.forEach((campaign) => {
         uniqueStoredCampaigns.set(campaign.id, campaign);
       });
-      const deduplicatedStoredCampaigns = Array.from(
-        uniqueStoredCampaigns.values()
-      );
+      const deduplicatedStoredCampaigns = Array.from(uniqueStoredCampaigns.values());
 
       // 정적 데이터와 합치기 (중복 제거: 같은 ID가 있으면 localStorage 데이터 우선)
       // 정적 데이터의 schedule과 dayCount를 자동으로 계산
-      const enrichedStaticCampaigns =
-        enrichStaticVisitCampaigns(visitCampaigns);
+      const enrichedStaticCampaigns = enrichStaticVisitCampaigns(visitCampaigns);
       const staticIds = new Set(enrichedStaticCampaigns.map((c) => c.id));
-      const newCampaigns = deduplicatedStoredCampaigns.filter(
-        (c) => !staticIds.has(c.id)
-      );
+      const newCampaigns = deduplicatedStoredCampaigns.filter((c) => !staticIds.has(c.id));
       // localStorage에 있는 캠페인 중 정적 데이터에도 있는 것은 localStorage 버전으로 교체 (최신 데이터 우선)
-      const updatedStaticCampaigns = enrichedStaticCampaigns.map(
-        (staticCampaign) => {
-          const localStorageCampaign = deduplicatedStoredCampaigns.find(
-            (c) => c.id === staticCampaign.id
-          );
-          return localStorageCampaign || staticCampaign;
-        }
-      );
+      const updatedStaticCampaigns = enrichedStaticCampaigns.map((staticCampaign) => {
+        const localStorageCampaign = deduplicatedStoredCampaigns.find(
+          (c) => c.id === staticCampaign.id
+        );
+        return localStorageCampaign || staticCampaign;
+      });
       const mergedCampaigns = [...updatedStaticCampaigns, ...newCampaigns];
 
       setAllCampaigns(mergedCampaigns);

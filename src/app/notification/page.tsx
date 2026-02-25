@@ -32,7 +32,6 @@ import PartnerHeader from "@/components/fragments/PartnerHeader";
 import ManagerGAHeader from "@/components/manager/ga/common/ManagerGAHeader";
 import SidebarMenuGA from "@/components/manager/ga/common/SidebarMenu";
 import SidebarMenuSA from "@/components/manager/sa/common/SidebarMenu";
-import PageTitle from "@/components/fragments/PageTitle";
 // 관리자 페이지 레이아웃 스타일 (사이드바가 있을 때 사용)
 import "@/styles/manager_ga/layout.css";
 // 알림 목업 데이터
@@ -83,9 +82,9 @@ export default function NotificationPage() {
    * - 초기값: "user" (서버와 클라이언트에서 동일하게 유지하여 Hydration 오류 방지)
    * - mounted: 클라이언트에서 마운트되었는지 여부 (Hydration 오류 방지)
    */
-  const [headerType, setHeaderType] = useState<
-    "user" | "partner" | "manager_ga" | "manager_sa"
-  >("user");
+  const [headerType, setHeaderType] = useState<"user" | "partner" | "manager_ga" | "manager_sa">(
+    "user"
+  );
 
   // 클라이언트에서만 실행되도록 mounted 상태 추가
   const [mounted, setMounted] = useState(false);
@@ -207,9 +206,7 @@ export default function NotificationPage() {
                         )}
                       </p>
                     </div>
-                    <p className={styles.notification_time}>
-                      {notification.time}
-                    </p>
+                    <p className={styles.notification_time}>{notification.time}</p>
                   </div>
                 </div>
               ))
@@ -227,9 +224,7 @@ export default function NotificationPage() {
   return (
     <div
       className={`${styles.notification_container} ${
-        headerType === "manager_ga" || headerType === "manager_sa"
-          ? styles.has_sidebar
-          : ""
+        headerType === "manager_ga" || headerType === "manager_sa" ? styles.has_sidebar : ""
       }`.trim()}
     >
       {/* 
@@ -317,9 +312,7 @@ export default function NotificationPage() {
                   </div>
 
                   {/* 오른쪽 영역: 시간 */}
-                  <p className={styles.notification_time}>
-                    {notification.time}
-                  </p>
+                  <p className={styles.notification_time}>{notification.time}</p>
                 </div>
               </div>
             ))

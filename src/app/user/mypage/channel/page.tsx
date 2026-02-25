@@ -48,9 +48,7 @@ const DEFAULT_CHANNELS = [
 export default function ChannelPage() {
   const { user } = useAuth();
   const [activeTopTab, setActiveTopTab] = useState<MainTab>("account");
-  const [activeSubTab, _setActiveSubTab] = useState<"profile" | "channel">(
-    "channel",
-  );
+  const [activeSubTab, _setActiveSubTab] = useState<"profile" | "channel">("channel");
 
   // SubHeader 표시 여부 (모달에서 들어온 경우에만 표시)
   const [showSubHeader, setShowSubHeader] = useState(false);
@@ -63,7 +61,10 @@ export default function ChannelPage() {
     }
   }, []);
 
-  const [channels, setChannels] = useState(DEFAULT_CHANNELS);
+  const [channels, setChannels] =
+    useState<{ name: string; url: string; status: "connected" | "disconnected" }[]>(
+      DEFAULT_CHANNELS
+    );
 
   // user_accounts에서 채널 정보 로드
   useEffect(() => {
@@ -72,15 +73,11 @@ export default function ChannelPage() {
         const storedAccounts = localStorage.getItem("user_accounts");
         if (storedAccounts) {
           const accounts = JSON.parse(storedAccounts) as LocalAccount[];
-          const userAccount = accounts.find(
-            (a) => a.id === user.id || a.email === user.email,
-          );
+          const userAccount = accounts.find((a) => a.id === user.id || a.email === user.email);
 
           if (userAccount?.channel_details) {
             const loadedChannels = DEFAULT_CHANNELS.map((channel) => {
-              const detail = userAccount.channel_details!.find(
-                (d) => d.name === channel.name,
-              );
+              const detail = userAccount.channel_details!.find((d) => d.name === channel.name);
               if (detail) {
                 return {
                   name: channel.name,
@@ -93,8 +90,7 @@ export default function ChannelPage() {
             setChannels(loadedChannels);
           }
         }
-      } catch (_error) {
-      }
+      } catch (_error) {}
     }
   }, [user]);
 
@@ -108,27 +104,20 @@ export default function ChannelPage() {
     }
   };
 
-  const handleChannelUpdate = (
-    channelName: string,
-    channelInfo: { url: string },
-  ) => {
+  const handleChannelUpdate = (channelName: string, channelInfo: { url: string }) => {
     const updatedChannels = channels.map((channel) =>
       channel.name === channelName
         ? { ...channel, url: channelInfo.url, status: "connected" as const }
-        : channel,
+        : channel
     );
     setChannels(updatedChannels);
 
     if (typeof window !== "undefined" && user) {
       try {
         const storedAccounts = localStorage.getItem("user_accounts");
-        const accounts: LocalAccount[] = storedAccounts
-          ? JSON.parse(storedAccounts)
-          : [];
+        const accounts: LocalAccount[] = storedAccounts ? JSON.parse(storedAccounts) : [];
 
-        const accountIndex = accounts.findIndex(
-          (a) => a.id === user.id || a.email === user.email,
-        );
+        const accountIndex = accounts.findIndex((a) => a.id === user.id || a.email === user.email);
 
         if (accountIndex >= 0) {
           accounts[accountIndex] = {
@@ -137,8 +126,7 @@ export default function ChannelPage() {
           };
           localStorage.setItem("user_accounts", JSON.stringify(accounts));
         }
-      } catch (_error) {
-      }
+      } catch (_error) {}
     }
   };
 
@@ -149,10 +137,7 @@ export default function ChannelPage() {
 
       <main className={layoutStyles.main_content}>
         {/* 상단 탭 네비게이션: 캠페인/포인트/계정/커뮤니티 */}
-        <TabNavigation
-          activeTab={activeTopTab}
-          setActiveTab={setActiveTopTab}
-        />
+        <TabNavigation activeTab={activeTopTab} setActiveTab={setActiveTopTab} />
 
         {/* 서브 탭 (프로필/채널·스토어) */}
         <SubTabNavigation
@@ -163,10 +148,7 @@ export default function ChannelPage() {
         />
 
         {/* 채널 섹션 */}
-        <ChannelSection
-          channels={channels}
-          onChannelUpdate={handleChannelUpdate}
-        />
+        <ChannelSection channels={channels} onChannelUpdate={handleChannelUpdate} />
       </main>
     </div>
   );

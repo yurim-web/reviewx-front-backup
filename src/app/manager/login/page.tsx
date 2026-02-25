@@ -21,7 +21,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/fragments/Header";
 import pageStyles from "@/styles/login/login/login_page.module.css";
@@ -36,8 +35,6 @@ import { unifiedAccountData } from "@/data/login/unifiedAccountData";
  * @returns JSX.Element - 사용자 로그인 페이지 UI
  */
 export default function AdminLoginPage() {
-  // Next.js의 useRouter 훅: 페이지 이동을 위한 라우터 객체
-  const router = useRouter();
   const { login, isLoading } = useAuth();
 
   // ========================================
@@ -240,7 +237,7 @@ export default function AdminLoginPage() {
               aria-label="로그인"
               disabled={isLoading}
             >
-              {isLoading ? '로그인 중...' : '로그인'}
+              {isLoading ? "로그인 중..." : "로그인"}
             </button>
           </div>
         </form>

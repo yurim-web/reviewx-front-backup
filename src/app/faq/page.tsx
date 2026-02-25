@@ -24,7 +24,6 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import styles from "../../styles/user/faq/faq.module.css";
 import richtext_styles from "@/styles/common/html_richtext_content.module.css";
@@ -32,14 +31,10 @@ import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import { posts_data } from "@/data/manager_ga/community/postsData";
 import { get_post_detail } from "@/data/manager_ga/community/postsData";
-import { convertPostsToFAQs, type FAQItem } from "@/utils/faq/convertPostToFAQ";
-import {
-  categories_data,
-  type CategoryItem,
-} from "@/data/manager_ga/community/categoriesData";
+import { convertPostsToFAQs } from "@/utils/faq/convertPostToFAQ";
+import { categories_data, type CategoryItem } from "@/data/manager_ga/community/categoriesData";
 
 export default function FAQPage() {
-  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const [expandedItems, setExpandedItems] = useState<number[]>([]);
 
@@ -50,9 +45,7 @@ export default function FAQPage() {
    */
   const categories = useMemo(() => {
     const faq_categories = categories_data
-      .filter(
-        (category: CategoryItem) => category.division === "자주 묻는 질문"
-      )
+      .filter((category: CategoryItem) => category.division === "자주 묻는 질문")
       .map((category: CategoryItem) => category.category_name);
 
     const unique_categories = Array.from(new Set(faq_categories));
@@ -132,18 +125,14 @@ export default function FAQPage() {
                     <div className={styles.question_content}>
                       <span
                         className={`${styles.question_number} ${
-                          expandedItems.includes(faq.id)
-                            ? styles.expanded_question
-                            : ""
+                          expandedItems.includes(faq.id) ? styles.expanded_question : ""
                         }`}
                       >
                         Q.
                       </span>
                       <span
                         className={`${styles.question_text} ${
-                          expandedItems.includes(faq.id)
-                            ? styles.expanded_question
-                            : ""
+                          expandedItems.includes(faq.id) ? styles.expanded_question : ""
                         }`}
                       >
                         {faq.question}
