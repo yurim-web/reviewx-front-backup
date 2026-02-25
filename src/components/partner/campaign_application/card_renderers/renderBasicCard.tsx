@@ -22,27 +22,17 @@ import BasicSelectedCard from "@/components/partner/campaign_application/card_ty
  * Basic 카드 렌더링 함수 (review, mission 공용)
  */
 export function renderBasicCard(
-  handleSelectApplicant: (applicant: AllApplicant) => void,
-  handleCancelApplicant: (applicant: AllApplicant) => void
+  handleSelectApplicant: (applicantId: string) => void,
+  handleCancelApplicant: (applicantId: string) => void
 ) {
   // eslint-disable-next-line react/display-name
   return (applicant: AllApplicant, isSelected: boolean = false): React.ReactNode => {
     const basicApplicant = applicant as BasicApplicant;
 
     if (isSelected) {
-      return (
-        <BasicSelectedCard
-          applicant={basicApplicant}
-          onCancel={handleCancelApplicant}
-        />
-      );
+      return <BasicSelectedCard applicant={basicApplicant} onCancel={handleCancelApplicant} />;
     }
 
-    return (
-      <BasicCard
-        applicant={basicApplicant}
-        onSelect={handleSelectApplicant}
-      />
-    );
+    return <BasicCard applicant={basicApplicant} onSelect={handleSelectApplicant} />;
   };
 }
