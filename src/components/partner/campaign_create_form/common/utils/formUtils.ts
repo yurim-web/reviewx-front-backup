@@ -232,6 +232,44 @@ export function validateImagesForUpload(
 }
 
 /**
+ * 지역명을 sub_regions 키로 변환
+ *
+ * 설명:
+ * - 방문형 캠페인에서 시/도 선택 시 sub_regions 데이터의 키로 변환합니다.
+ * - 예: "서울특별시" → "서울", "경기도" → "경기"
+ *
+ * @param regionName - 변환할 지역명
+ * @returns sub_regions 키 문자열
+ */
+export function getRegionKey(regionName: string): string {
+  if (!regionName) return "";
+
+  const regionMapping: Record<string, string> = {
+    서울특별시: "서울",
+    인천광역시: "인천",
+    경기도: "경기",
+    강원특별자치도: "강원",
+    대전광역시: "대전",
+    세종특별자치시: "세종",
+    충청북도: "충북",
+    충청남도: "충남",
+    전라북도: "전북",
+    전라남도: "전남",
+    광주광역시: "광주",
+    대구광역시: "대구",
+    경상북도: "경북",
+    경상남도: "경남",
+    부산광역시: "부산",
+    울산광역시: "울산",
+    제주특별자치도: "제주",
+  };
+
+  return (
+    regionMapping[regionName] || regionName.replace(/특별시|광역시|특별자치시|도|특별자치도/g, "")
+  );
+}
+
+/**
  * 날짜 기본값 생성 함수
  *
  * 설명:

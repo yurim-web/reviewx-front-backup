@@ -12,6 +12,7 @@
  */
 
 import { RefObject } from "react";
+import Image from "next/image";
 import customDropdownStyles from "@/styles/partner/campaign_create/custom_dropdown.module.css";
 
 interface BankDropdownProps {
@@ -48,12 +49,14 @@ export default function BankDropdown({
         <span className={customDropdownStyles.dropdown_text} data-placeholder="은행 선택">
           {selectedBank || ""}
         </span>
-        <img
+        <Image
           src="/images/icons/dropdown_arrow.svg"
           alt=""
           className={`${customDropdownStyles.dropdown_arrow} ${
             isOpen ? customDropdownStyles.rotated : ""
           }`}
+          width={16}
+          height={16}
         />
       </button>
       {isOpen && (

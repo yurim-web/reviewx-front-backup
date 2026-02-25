@@ -16,6 +16,7 @@
  *
  */
 
+import Image from "next/image";
 import styles from "@/styles/partner/campaign_application/excel_download_btn.module.css";
 
 interface ContentExcelDownloadBtnProps {
@@ -52,19 +53,19 @@ export default function ContentExcelDownloadBtn({
     <div className={styles.download_btn_group}>
       {/* 검수 중인 콘텐츠 목록 다운로드 버튼 */}
       <button className={styles.download_button} onClick={onDownloadReview}>
-        <img src="/images/excel_icon.png" alt="다운로드" />
+        <Image src="/images/excel_icon.png" alt="다운로드" width={16} height={16} />
         검수 중인 콘텐츠 다운로드
       </button>
 
       {/* 완료된 콘텐츠 목록 다운로드 버튼 */}
       <button className={styles.download_button} onClick={onDownloadCompleted}>
-        <img src="/images/excel_icon.png" alt="다운로드" />
+        <Image src="/images/excel_icon.png" alt="다운로드" width={16} height={16} />
         완료된 콘텐츠 다운로드
       </button>
 
       {/* 결과 보고서 다운로드 버튼 */}
       <button className={styles.download_button} onClick={onDownloadReport}>
-        <img src="/images/excel_icon.png" alt="다운로드" />
+        <Image src="/images/excel_icon.png" alt="다운로드" width={16} height={16} />
         결과 보고서 다운로드
       </button>
     </div>

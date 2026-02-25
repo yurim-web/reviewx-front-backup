@@ -44,7 +44,7 @@ interface RenderMissionCardParams {
  */
 export function createMissionCardRenderer(params: RenderMissionCardParams) {
   // eslint-disable-next-line react/display-name
-  return (item: ContentItem, index: number): React.ReactNode => {
+  return (item: ContentItem, _index: number): React.ReactNode => {
     const brandChannel = params.campaignBrandName ?? item.channel;
     const applicant: CampaignApplicant = {
       id: item.id,

@@ -13,6 +13,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import checkboxStyles from "@/styles/partner/campaign_create/campaign_guide/checkboxes.module.css";
 
@@ -29,16 +30,6 @@ export default function PageHeader({
 }: PageHeaderProps) {
   const router = useRouter();
   const [isUrgent, setIsUrgent] = useState(initialUrgent);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
 
   /**
    * initialUrgent prop이 변경될 때 state 업데이트
@@ -74,7 +65,7 @@ export default function PageHeader({
         onClick={handleGoBack}
         aria-label="뒤로가기"
       >
-        <img src="/images/header/header_arrow_back.svg" alt="뒤로가기" width={16} height={16} />
+        <Image src="/images/header/header_arrow_back.svg" alt="뒤로가기" width={16} height={16} />
       </button>
 
       <h1 className={headerStyles.page_title}>{title}</h1>

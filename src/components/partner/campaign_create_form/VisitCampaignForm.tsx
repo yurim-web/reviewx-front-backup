@@ -38,7 +38,7 @@ import { ContactPhoneField } from "./common/fields/ContactPhoneField";
 import { GuidelinesTextarea } from "./common/fields/GuidelinesTextarea";
 import { FairTradeAgreement } from "./common/fields/FairTradeAgreement";
 import { FloatingActionButtons } from "./common/layout/FloatingActionButtons";
-import { formatNumberWithComma } from "./common/utils/formUtils";
+import { formatNumberWithComma, getRegionKey } from "./common/utils/formUtils";
 import BaseModal from "@/components/common/modal/BaseModal";
 import Toast from "@/components/common/toast/Toast";
 
@@ -159,7 +159,7 @@ export default function VisitCampaignForm({
     if (formData.isUrgent !== isUrgent) {
       updateFormData("isUrgent", isUrgent);
     }
-  }, [isUrgent]);
+  }, [isUrgent, formData.isUrgent, updateFormData]);
 
   /**
    * 캠페인 유형 변경 시 페이지 이동
@@ -175,37 +175,6 @@ export default function VisitCampaignForm({
     };
 
     router.push(typeRoutes[type]);
-  };
-
-  /**
-   * 지역명을 sub_regions 키로 변환
-   */
-  const getRegionKey = (regionName: string): string => {
-    if (!regionName) return "";
-
-    const regionMapping: Record<string, string> = {
-      서울특별시: "서울",
-      인천광역시: "인천",
-      경기도: "경기",
-      강원특별자치도: "강원",
-      대전광역시: "대전",
-      세종특별자치시: "세종",
-      충청북도: "충북",
-      충청남도: "충남",
-      전라북도: "전북",
-      전라남도: "전남",
-      광주광역시: "광주",
-      대구광역시: "대구",
-      경상북도: "경북",
-      경상남도: "경남",
-      부산광역시: "부산",
-      울산광역시: "울산",
-      제주특별자치도: "제주",
-    };
-
-    return (
-      regionMapping[regionName] || regionName.replace(/특별시|광역시|특별자치시|도|특별자치도/g, "")
-    );
   };
 
   /**

@@ -4,6 +4,7 @@
 
 "use client";
 
+import Image from "next/image";
 import { NaverClipApplicant } from "@/data/partner/campaign_application/delivery_applicants";
 import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
 import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
@@ -16,27 +17,23 @@ interface NaverClipCardProps {
   onSelect: (applicantId: string) => void;
 }
 
-export default function NaverClipCard({
-  applicant,
-  onSelect,
-}: NaverClipCardProps) {
+export default function NaverClipCard({ applicant, onSelect }: NaverClipCardProps) {
   const channel_icon_src = getChannelLogo("네이버클립");
 
   return (
     <article
       className={`${baseStyles.applicant_card} ${
-        applicant.selectionStatus === "이용제한 계정"
-          ? baseStyles.restricted_card
-          : ""
+        applicant.selectionStatus === "이용제한 계정" ? baseStyles.restricted_card : ""
       }`}
     >
       {/* 프로필 영역 */}
       <div className={contentStyles.profile_section}>
         <div className={contentStyles.profile_image_container}>
-          <img
+          <Image
             src={applicant.profileImage || "/images/mypage/profile.svg"}
             alt="프로필"
             className={contentStyles.profile_image}
+            fill
           />
         </div>
 
@@ -48,10 +45,11 @@ export default function NaverClipCard({
 
       {/* 채널 정보 영역 */}
       <div className={contentStyles.channel_section}>
-        <img
+        <Image
           src={channel_icon_src}
           alt="네이버 클립"
           className={contentStyles.channel_icon}
+          fill
         />
         <a
           href={getChannelUrl("네이버클립", applicant.Id)}
@@ -85,9 +83,7 @@ export default function NaverClipCard({
       {/* 메모 */}
       <div className={contentStyles.memo_section}>
         <div className={contentStyles.memo_text}>
-          {applicant.memo && applicant.memo.trim() !== ""
-            ? applicant.memo
-            : "메모 미작성"}
+          {applicant.memo && applicant.memo.trim() !== "" ? applicant.memo : "메모 미작성"}
         </div>
       </div>
 

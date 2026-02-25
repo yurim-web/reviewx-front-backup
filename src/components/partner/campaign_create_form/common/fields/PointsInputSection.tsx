@@ -58,7 +58,7 @@ interface PointsInputSectionProps {
 export function PointsInputSection({
   label,
   required = false,
-  value,
+  value: _value,
   displayValue,
   onChange,
   onKeyDown,

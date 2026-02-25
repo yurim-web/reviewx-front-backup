@@ -23,6 +23,7 @@
 
 "use client";
 
+import Image from "next/image";
 import { Applicant } from "@/data/partner/campaign_application/delivery_applicants";
 import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
 import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
@@ -92,9 +93,11 @@ export default function ApplicantCard({ applicant, onSelect }: ApplicantCardProp
     <div className={baseStyles.applicant_card}>
       {/* 프로필 영역: 프로필 이미지, 닉네임, 사용자 타입 */}
       <div className={contentStyles.profile_section}>
-        <img
+        <Image
           src={applicant.profileImage || "/images/mypage/profile.svg"}
           alt="프로필"
+          width={40}
+          height={40}
           className={contentStyles.profile_image}
         />
         <div className={contentStyles.profile_info}>
@@ -107,7 +110,13 @@ export default function ApplicantCard({ applicant, onSelect }: ApplicantCardProp
 
       {/* 채널 정보 영역: 채널 아이콘, 채널 ID */}
       <div className={contentStyles.channel_section}>
-        <img src={channel_icon_src} alt="채널" className={contentStyles.channel_icon} />
+        <Image
+          src={channel_icon_src}
+          alt="채널"
+          width={14}
+          height={14}
+          className={contentStyles.channel_icon}
+        />
         {/*
           📌 하드코딩된 텍스트:
           - 현재 "id"로 고정되어 있음

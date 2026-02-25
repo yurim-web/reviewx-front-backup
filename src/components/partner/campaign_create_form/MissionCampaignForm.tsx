@@ -151,7 +151,7 @@ export default function MissionCampaignForm({
     if (formData.isUrgent !== isUrgent) {
       updateFormData("isUrgent", isUrgent);
     }
-  }, [isUrgent]);
+  }, [isUrgent, formData.isUrgent, updateFormData]);
 
   /**
    * 캠페인 유형 변경 시 페이지 이동

@@ -4,6 +4,7 @@
 
 "use client";
 
+import Image from "next/image";
 import { BasicApplicant } from "@/data/partner/campaign_application/delivery_applicants";
 import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
 import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
@@ -41,10 +42,11 @@ export default function BasicSelectedCard({ applicant, onCancel }: BasicSelected
       {/* 프로필 영역 */}
       <div className={contentStyles.profile_section}>
         <div className={contentStyles.profile_image_container}>
-          <img
+          <Image
             src={applicant.profileImage || "/images/mypage/profile.svg"}
             alt="프로필"
             className={contentStyles.profile_image}
+            fill
           />
         </div>
 

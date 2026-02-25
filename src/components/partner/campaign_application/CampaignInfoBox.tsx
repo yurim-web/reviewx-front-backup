@@ -16,6 +16,7 @@
  *
  */
 
+import Image from "next/image";
 import styles from "@/styles/partner/campaign_application/campaign_infocard.module.css";
 import CampaignSchedule from "./CampaignSchedule";
 import { getBrandLogo } from "@/data/partner/utils/campaignHelpers";
@@ -150,7 +151,7 @@ export default function Campaignbanner({
         <div className={styles.campaign_info_top}>
           {/* 캠페인 이미지 */}
           <div className={styles.campaign_image}>
-            <img src={campaignInfo.image} alt="캠페인 이미지" />
+            <Image src={campaignInfo.image} alt="캠페인 이미지" width={92} height={92} />
           </div>
 
           {/* 캠페인 정보 */}
@@ -158,12 +159,14 @@ export default function Campaignbanner({
             <div className={styles.campaign_header}>
               {/* 캠페인 카테고리 - 브랜드 로고 표시 */}
               <div className={styles.campaign_category}>
-                <img
+                <Image
                   src={getBrandLogo(
                     campaignInfo.brandName || campaignInfo.channel || "기본",
                     campaignInfo.campaignType
                   )}
                   alt={`${campaignInfo.campaignType} 브랜드 로고`}
+                  width={20}
+                  height={20}
                 />
                 <span>{campaignInfo.campaignType}</span>
               </div>

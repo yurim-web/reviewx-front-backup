@@ -28,7 +28,7 @@ interface ReceiptRegistrationModalProps {
 export default function ReceiptRegistrationModal({
   isOpen,
   onClose,
-  campaignTitle,
+  campaignTitle: _campaignTitle,
 }: ReceiptRegistrationModalProps) {
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -88,8 +88,7 @@ export default function ReceiptRegistrationModal({
       // 성공 시 모달 닫기
       alert("영수증이 성공적으로 등록되었습니다.");
       onClose();
-    } catch (error) {
-      console.error("영수증 등록 실패:", error);
+    } catch (_error) {
       alert("영수증 등록에 실패했습니다. 다시 시도해주세요.");
     } finally {
       setIsUploading(false);
@@ -134,6 +133,7 @@ export default function ReceiptRegistrationModal({
                 <div className={styles.image_grid}>
                   {uploadedImages.map((file, index) => (
                     <div key={index} className={styles.image_preview}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={URL.createObjectURL(file)}
                         alt={`영수증 ${index + 1}`}

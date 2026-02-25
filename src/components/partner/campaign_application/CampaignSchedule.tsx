@@ -73,7 +73,7 @@ interface CampaignScheduleProps {
  */
 export default function CampaignSchedule({
   scheduleData,
-  campaignType,
+  campaignType: _campaignType,
   status,
 }: CampaignScheduleProps) {
   /**

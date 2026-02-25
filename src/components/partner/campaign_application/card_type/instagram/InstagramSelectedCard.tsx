@@ -29,6 +29,7 @@
 
 "use client";
 
+import Image from "next/image";
 import { InstagramApplicant } from "@/data/partner/campaign_application/delivery_applicants";
 import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
 import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
@@ -80,10 +81,11 @@ export default function InstagramSelectedCard({ applicant, onCancel }: Instagram
       {/* 프로필 영역: 프로필 이미지, 닉네임, 사용자 타입 */}
       <div className={contentStyles.profile_section}>
         <div className={contentStyles.profile_image_container}>
-          <img
+          <Image
             src={applicant.profileImage || "/images/mypage/profile.svg"}
             alt="프로필"
             className={contentStyles.profile_image}
+            fill
           />
         </div>
         <div className={contentStyles.profile_info}>
@@ -102,7 +104,12 @@ export default function InstagramSelectedCard({ applicant, onCancel }: Instagram
 
       {/* 채널 정보 영역: 인스타그램 아이콘, 채널 ID */}
       <div className={contentStyles.channel_section}>
-        <img src={channel_icon_src} alt="인스타그램" className={contentStyles.channel_icon} />
+        <Image
+          src={channel_icon_src}
+          alt="인스타그램"
+          className={contentStyles.channel_icon}
+          fill
+        />
 
         <a
           href={getChannelUrl("인스타그램", applicant.Id)}

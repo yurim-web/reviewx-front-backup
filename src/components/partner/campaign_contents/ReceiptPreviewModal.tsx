@@ -6,6 +6,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import styles from "@/styles/partner/campaign_contents/receipt_preview_modal.module.css";
 
 interface ReceiptPreviewModalProps {
@@ -62,13 +63,13 @@ export default function ReceiptPreviewModal({
       // 터치 시작이 없으면 스와이프가 아니므로 이벤트 전파 허용
       return;
     }
-    
+
     if (touchEndX === null) {
       // 터치 이동이 없으면 단순 탭이므로 이벤트 전파 허용
       setTouchStartX(null);
       return;
     }
-    
+
     const deltaX = touchStartX - touchEndX;
     const threshold = 40; // 스와이프 임계값
     // 📌 무한루프 제거: 스와이프도 경계 체크
@@ -130,17 +131,8 @@ export default function ReceiptPreviewModal({
         onTouchEnd={(e) => e.stopPropagation()}
       >
         {/* 닫기 버튼 - 우측 상단 */}
-        <button
-          className={styles.close_button}
-          onClick={onClose}
-          aria-label="닫기"
-        >
-          <img
-            src="/images/modal/modal_x.svg"
-            alt="닫기"
-            width={64}
-            height={64}
-          />
+        <button className={styles.close_button} onClick={onClose} aria-label="닫기">
+          <Image src="/images/modal/modal_x.svg" alt="닫기" width={64} height={64} />
         </button>
 
         <div
@@ -151,9 +143,7 @@ export default function ReceiptPreviewModal({
           onClick={(e) => e.stopPropagation()}
         >
           {validImages.length === 0 ? (
-            <div className={styles.empty_state}>
-              표시할 영수증 이미지가 없습니다.
-            </div>
+            <div className={styles.empty_state}>표시할 영수증 이미지가 없습니다.</div>
           ) : (
             <>
               <div className={styles.image_viewer}>
@@ -165,12 +155,7 @@ export default function ReceiptPreviewModal({
                   disabled={!hasPrev}
                   aria-label="이전"
                 >
-                  <img
-                    src="/images/modal/modal_arrow.svg"
-                    alt="이전"
-                    width={64}
-                    height={64}
-                  />
+                  <Image src="/images/modal/modal_arrow.svg" alt="이전" width={64} height={64} />
                 </button>
                 <div className={styles.image_wrapper}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -188,12 +173,7 @@ export default function ReceiptPreviewModal({
                   disabled={!hasNext}
                   aria-label="다음"
                 >
-                  <img
-                    src="/images/modal/modal_next.svg"
-                    alt="다음"
-                    width={64}
-                    height={64}
-                  />
+                  <Image src="/images/modal/modal_next.svg" alt="다음" width={64} height={64} />
                 </button>
               </div>
               {/* 하단 인디케이터 */}
@@ -203,9 +183,7 @@ export default function ReceiptPreviewModal({
                     <button
                       key={index}
                       className={`${styles.indicator_dot} ${
-                        index === currentIndex
-                          ? styles.indicator_dot_active
-                          : ""
+                        index === currentIndex ? styles.indicator_dot_active : ""
                       }`}
                       onClick={() => setCurrentIndex(index)}
                       aria-label={`${index + 1}번째 이미지`}

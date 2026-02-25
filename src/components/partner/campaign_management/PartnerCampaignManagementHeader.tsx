@@ -60,7 +60,7 @@ export default function PartnerCampaignManagementHeader({
   activeTab,
   setActiveTab,
   activeStatTab,
-  setActiveStatTab,
+  setActiveStatTab: _setActiveStatTab,
 }: PartnerCampaignManagementHeaderProps) {
   /* ========================================
      통계 상태 관리 (Statistics State Management)

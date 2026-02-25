@@ -12,6 +12,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
 
 /**
@@ -61,7 +62,7 @@ interface ThumbnailAndDetailImagesProps {
  * - 각 이미지는 미리보기와 제거 버튼을 제공합니다.
  */
 export function ThumbnailAndDetailImages({
-  thumbnailImage,
+  thumbnailImage: _thumbnailImage,
   thumbnailPreview,
   detailImages,
   detailPreviews,
@@ -103,10 +104,11 @@ export function ThumbnailAndDetailImages({
           {/* 썸네일 미리보기 */}
           {thumbnailPreview && (
             <div className={infoStyles.image_preview_container}>
-              <img
+              <Image
                 src={thumbnailPreview}
                 alt="썸네일 이미지"
                 className={infoStyles.image_preview}
+                fill
               />
               {!(isEditMode && !isEditable) && (
                 <button
@@ -115,7 +117,7 @@ export function ThumbnailAndDetailImages({
                   onClick={onThumbnailRemove}
                   aria-label="썸네일 제거"
                 >
-                  <img src="/images/icons/img_delete_btn.svg" alt="제거" />
+                  <Image src="/images/icons/img_delete_btn.svg" alt="제거" width={24} height={24} />
                 </button>
               )}
             </div>
@@ -130,7 +132,7 @@ export function ThumbnailAndDetailImages({
                 isEditMode && !isEditable ? { pointerEvents: "none", opacity: 0.5 } : undefined
               }
             >
-              <img src="/images/icons/plus_icon.svg" alt="썸네일 추가" />
+              <Image src="/images/icons/plus_icon.svg" alt="썸네일 추가" width={56} height={56} />
             </div>
           )}
 
@@ -157,10 +159,11 @@ export function ThumbnailAndDetailImages({
           {/* 상세 이미지 미리보기 */}
           {detailPreviews.map((preview, index) => (
             <div key={index} className={infoStyles.image_preview_container}>
-              <img
+              <Image
                 src={preview}
                 alt={`상세 이미지 ${index + 1}`}
                 className={infoStyles.image_preview}
+                fill
               />
               {!(isEditMode && !isEditable) && (
                 <button
@@ -169,7 +172,7 @@ export function ThumbnailAndDetailImages({
                   onClick={() => onDetailImageRemove(index)}
                   aria-label={`상세 이미지 ${index + 1} 제거`}
                 >
-                  <img src="/images/icons/img_delete_btn.svg" alt="제거" />
+                  <Image src="/images/icons/img_delete_btn.svg" alt="제거" width={24} height={24} />
                 </button>
               )}
             </div>
@@ -184,7 +187,12 @@ export function ThumbnailAndDetailImages({
                 isEditMode && !isEditable ? { pointerEvents: "none", opacity: 0.5 } : undefined
               }
             >
-              <img src="/images/icons/plus_icon.svg" alt="상세 이미지 추가" />
+              <Image
+                src="/images/icons/plus_icon.svg"
+                alt="상세 이미지 추가"
+                width={56}
+                height={56}
+              />
             </div>
           )}
 

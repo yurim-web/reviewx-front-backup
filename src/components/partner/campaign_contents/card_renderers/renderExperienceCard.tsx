@@ -44,7 +44,7 @@ interface RenderExperienceCardParams {
  */
 export function createExperienceCardRenderer(params: RenderExperienceCardParams) {
   // eslint-disable-next-line react/display-name
-  return (item: ContentItem, index: number): React.ReactNode => {
+  return (item: ContentItem, _index: number): React.ReactNode => {
     const applicant: ExperienceApplicant = {
       id: item.id,
       userType: item.userType,
