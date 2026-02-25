@@ -109,7 +109,21 @@
       "Bash(cmd /c \"py --version\")",
       "Bash(npx playwright --version)",
       "Bash(__NEW_LINE_20e7f63e9082b1fb__ echo \"=== 2. 사용 위치: ===\")",
-      "Bash(__NEW_LINE_5e66aec24462ec8b__ echo \"=== 3. 사용처: ===\")"
+      "Bash(__NEW_LINE_5e66aec24462ec8b__ echo \"=== 3. 사용처: ===\")",
+      "Bash(npx next build)",
+      "Bash(npx tsc --noEmit --skipLibCheck)",
+      "Bash(py --version)",
+      "Bash(python3 -c \"import playwright; print\\(''playwright ok''\\)\")",
+      "Bash(git apply .git/lint-staged_unstaged.patch)",
+      "Bash(git stash push --keep-index -u -m \"temp: unstaged during commit 1\")",
+      "Bash(git reset HEAD)",
+      "Bash(git stash push --keep-index -u -m \"temp: unstaged during commit 2\")",
+      "Bash(git stash drop stash@{0})",
+      "Bash(git rm --cached \"src/components/partner/campaign_contents/card_type/experience_card/ExperienceTypes.ts\")",
+      "Bash(echo \"Exit code: $?\")",
+      "Bash(python3 -c \"import json,sys; data=json.load\\(sys.stdin\\); [print\\(f[''filePath''].split\\(''src/''\\)[-1]\\) for f in data if f[''errorCount'']>0]\")",
+      "Bash(for f in src/data/campaign/mission/missionCampaigns.ts src/data/campaign/reporter/reporterCampaigns.ts src/data/campaign/review/reviewCampaigns.ts src/data/campaign/visit/visitCampaigns.ts)",
+      "Bash(do echo \"=== $f ===\")"
     ]
   },
   "hooks": {
