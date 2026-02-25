@@ -19,7 +19,7 @@ import baseStyles from "@/styles/partner/campaign_application/card/applicant_car
 import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
 import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
-import type { CampaignApplicant } from "../shared_card/CampaignTypes";
+import type { CampaignApplicant } from "../shared_card/campaignTypes";
 import ReportModal, { type ReportOption } from "@/components/common/modal/ReportModal";
 import BaseModal from "@/components/common/modal/BaseModal";
 import TextareaModal from "@/components/common/modal/TextareaModal";

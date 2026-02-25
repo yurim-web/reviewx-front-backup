@@ -1,13 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-require-imports */
 /**
  * 미션형 캠페인 데이터 타입 정의
  */
 
 import type { CampaignFormData } from "@/types/domain/user";
-import type {
-  ContentByTab,
-  CampaignWithApplicants,
-} from "@/data/partner/sharedCampaigns";
-import { calculateDaysLeft, calculateCampaignStatus } from "../delivery/utils";
+import type { ContentByTab, CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
+import { calculateDaysLeft, calculateCampaignStatus } from "../delivery/deliveryUtils";
 
 export interface MissionCampaignData {
   id: string; // 캠페인 고유 식별자
@@ -81,13 +80,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#스킨케어체험 #뷰티미션형 #화장품체험 #올리브영 #솔직후기",
     productLink: "https://example.com/skincare-product",
-    requirements: [
-      "text_2000",
-      "photo_15",
-      "video_1_180",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_2000", "photo_15", "video_1_180", "product_link", "keyword"],
     guidelineTexts: [
       "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★제품 수령 후 충분한 체험 기간을 가지고 솔직한 후기를 작성해주세요!!★",
@@ -124,13 +117,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#헬스케어체험 #건강관리 #미션형 #유튜브 #솔직후기",
     productLink: "https://example.com/healthcare-product",
-    requirements: [
-      "text_1800",
-      "photo_12",
-      "video_2_240",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_1800", "photo_12", "video_2_240", "product_link", "keyword"],
     guidelineTexts: [
       "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★제품 수령 후 충분한 체험 기간을 가지고 솔직한 후기를 작성해주세요!!★",
@@ -167,13 +154,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#홈데코체험 #인테리어 #미션형 #블로그 #홈스타일링",
-    requirements: [
-      "text_1200",
-      "photo_20",
-      "video_90",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_1200", "photo_20", "video_90", "product_link", "keyword"],
     guidelineTexts: [
       "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★제품을 실제 홈 인테리어에 적용하여 체험해주세요!!★",
@@ -206,13 +187,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#패션체험 #OOTD #스타일링 #인스타그램 #패션리뷰",
-    requirements: [
-      "text_800",
-      "photo_8",
-      "video_1_60",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_800", "photo_8", "video_1_60", "product_link", "keyword"],
     guidelineTexts: [
       "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★실제 착용 모습과 스타일링 과정을 자세히 보여주세요!!★",
@@ -246,13 +221,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#식품체험 #건강식품 #유기농 #쿠팡 #맛후기",
-    requirements: [
-      "text_1000",
-      "photo_6",
-      "video_3_120",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_1000", "photo_6", "video_3_120", "product_link", "keyword"],
     guidelineTexts: [
       "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★실제 섭취 과정과 맛, 효과를 상세히 기록해주세요!!★",
@@ -287,13 +256,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#디지털체험 #최신기술 #가전제품 #네이버쇼핑 #테크리뷰",
-    requirements: [
-      "text_2500",
-      "photo_25",
-      "video_2_300",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_2500", "photo_25", "video_2_300", "product_link", "keyword"],
     guidelineTexts: [
       "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★기기의 기능과 성능을 상세히 테스트하고 기록해주세요!!★",
@@ -360,13 +323,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#반려동물체험 #펫케어 #펫용품 #블로그 #반려동물리뷰",
-    requirements: [
-      "text_1300",
-      "photo_18",
-      "video_150",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_1300", "photo_18", "video_150", "product_link", "keyword"],
     guidelineTexts: [
       "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★반려동물의 실제 사용 모습과 반응을 자세히 기록해주세요!!★",
@@ -400,13 +357,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#스포츠체험 #운동용품 #피트니스 #유튜브 #운동리뷰",
-    requirements: [
-      "text_1600",
-      "photo_14",
-      "video_1_200",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_1600", "photo_14", "video_1_200", "product_link", "keyword"],
     guidelineTexts: [
       "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★실제 운동 시 사용 모습과 성능을 자세히 보여주세요!!★",
@@ -440,13 +391,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#뷰티체험 #화장품리뷰 #올리브영 #뷰티블로거 #메이크업",
-    requirements: [
-      "text_2200",
-      "photo_22",
-      "video_180",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_2200", "photo_22", "video_180", "product_link", "keyword"],
     guidelineTexts: [
       "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★사용 전후 비교와 실제 발색, 지속력을 상세히 기록해주세요!!★",
@@ -480,13 +425,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#여행체험 #트래블로그 #여행리뷰 #인스타그램 #여행스타그램",
-    requirements: [
-      "text_3000",
-      "photo_30",
-      "video_3_360",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_3000", "photo_30", "video_3_360", "product_link", "keyword"],
     guidelineTexts: [
       "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★여행 전 과정과 서비스 경험을 자세히 기록해주세요!!★",
@@ -503,8 +442,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     subcategory: "뷰티",
     channel: "", // 미션형은 채널 없음
     points: 55000,
-    description:
-      "모든 피부 타입에 맞는 프리미엄 스킨케어 세트 미션형 모집 예정",
+    description: "모든 피부 타입에 맞는 프리미엄 스킨케어 세트 미션형 모집 예정",
     recruitment: {
       current: 0,
       total: 8,
@@ -523,13 +461,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#스킨케어미션 #뷰티체험 #프리미엄스킨케어 #미션형 #솔직후기",
     productLink: "https://example.com/premium-skincare-set",
-    requirements: [
-      "text_2500",
-      "photo_25",
-      "video_2_300",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_2500", "photo_25", "video_2_300", "product_link", "keyword"],
     guidelineTexts: [
       "미션형 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★제품 수령 후 충분한 체험 기간을 가지고 솔직한 후기를 작성해주세요!!★",
@@ -686,13 +618,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#테스트 #미션형 #링크이미지",
-    requirements: [
-      "text_2000",
-      "photo_15",
-      "video_1_180",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_2000", "photo_15", "video_1_180", "product_link", "keyword"],
     guidelineTexts: [
       "미션형 링크+이미지 테스트 캠페인입니다.",
       "링크 확인 및 이미지 확인 기능을 테스트할 수 있습니다.",
@@ -1402,8 +1328,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           channel: "인스타그램",
           profileImage: "",
           actionType: 3, // 이미지만 (contentType: "image")
-          extension_request_reason:
-            "촬영 일정이 지연되어 2일 연장을 요청드립니다.",
+          extension_request_reason: "촬영 일정이 지연되어 2일 연장을 요청드립니다.",
           isExtensionApproved: true,
           extendedDeadline: "2026-02-10",
         },
@@ -1808,8 +1733,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           channel: "올리브영",
           profileImage: "",
           actionType: 2, // 이미지+링크 (contentType: "both")
-          extension_request_reason:
-            "개인 사정으로 인해 등록 기한을 연장해주시면 감사하겠습니다.",
+          extension_request_reason: "개인 사정으로 인해 등록 기한을 연장해주시면 감사하겠습니다.",
         },
         // 3. 연장 승인 후 아직 등록 안함 (이미지+링크)
         {
@@ -2438,8 +2362,7 @@ function generateNewMissionCampaignId(): string {
     try {
       const stored = localStorage.getItem("missionCampaigns");
       if (stored) {
-        const storedCampaigns: Array<{ campaignInfo: { id: string } }> =
-          JSON.parse(stored);
+        const storedCampaigns: Array<{ campaignInfo: { id: string } }> = JSON.parse(stored);
         if (Array.isArray(storedCampaigns)) {
           storedCampaigns.forEach((campaign) => {
             if (campaign.campaignInfo && campaign.campaignInfo.id) {
@@ -2481,7 +2404,7 @@ function generateNewMissionCampaignId(): string {
  */
 export function createMissionCampaign(
   formData: CampaignFormData,
-  imageUrl: string = "/images/main/campaign_img/eximg_4.png",
+  imageUrl: string = "/images/main/campaign_img/eximg_4.png"
 ): CampaignWithApplicants {
   // 새 캠페인 ID 생성
   const newId = generateNewMissionCampaignId();
@@ -2499,7 +2422,7 @@ export function createMissionCampaign(
   const calculatedStatus = calculateCampaignStatus(
     formData.recruitmentPeriod,
     formData.announcementDate,
-    formData.registrationPeriod,
+    formData.registrationPeriod
   );
 
   // calculateCampaignStatus는 "대기 중" | "모집 중" | "진행 중" | "종료"를 반환
@@ -2522,9 +2445,7 @@ export function createMissionCampaign(
 
   // 날짜 파싱
   const recruitmentPeriod = formData.recruitmentPeriod || "";
-  const [applicationStart, applicationEnd] = recruitmentPeriod
-    .split(" ~ ")
-    .map((d) => d.trim());
+  const [applicationStart, applicationEnd] = recruitmentPeriod.split(" ~ ").map((d) => d.trim());
 
   return {
     campaignInfo: {
@@ -2569,7 +2490,7 @@ export function createMissionCampaign(
 export function updateMissionCampaign(
   campaignId: string,
   formData: CampaignFormData,
-  imageUrl: string = "/images/main/campaign_img/eximg_4.png",
+  imageUrl: string = "/images/main/campaign_img/eximg_4.png"
 ): CampaignWithApplicants {
   // 기존 캠페인 데이터 찾기 (sharedCampaigns에서)
   const { getCampaignById } = require("@/data/partner/sharedCampaigns");
@@ -2594,7 +2515,7 @@ export function updateMissionCampaign(
   const calculatedStatus = calculateCampaignStatus(
     formData.recruitmentPeriod,
     formData.announcementDate,
-    formData.registrationPeriod,
+    formData.registrationPeriod
   );
 
   // calculateCampaignStatus는 "대기 중" | "모집 중" | "진행 중" | "종료"를 반환
@@ -2648,7 +2569,7 @@ export function updateMissionCampaign(
  */
 export function addMissionCampaign(
   formData: CampaignFormData,
-  imageUrl: string = "/images/main/campaign_img/eximg_4.png",
+  imageUrl: string = "/images/main/campaign_img/eximg_4.png"
 ): CampaignWithApplicants {
   return createMissionCampaign(formData, imageUrl);
 }

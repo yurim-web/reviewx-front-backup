@@ -20,7 +20,7 @@ import contentStyles from "@/styles/partner/campaign_application/card/applicant_
 import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
 import { getChannelLogo } from "@/utils/channelLogoMap";
 import { formatDateForMobile } from "@/utils/formatting/date";
-import type { CampaignApplicant } from "../../shared_card/CampaignTypes";
+import type { CampaignApplicant } from "../../shared_card/campaignTypes";
 import ReportModal, { type ReportOption } from "@/components/common/modal/ReportModal";
 import ReceiptPreviewModal from "../../../ReceiptPreviewModal";
 

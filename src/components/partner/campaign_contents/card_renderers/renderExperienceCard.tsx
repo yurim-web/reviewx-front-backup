@@ -18,7 +18,7 @@ import type { ContentItem } from "@/data/partner/sharedCampaigns";
 import ExperiencePendingCard from "@/components/partner/campaign_contents/card_type/experience_card/ExperiencePendingCard";
 import ExperienceInspectionCard from "@/components/partner/campaign_contents/card_type/experience_card/ExperienceInspectionCard";
 import ExperienceCompletedCard from "@/components/partner/campaign_contents/card_type/experience_card/ExperienceCompletedCard";
-import type { ExperienceApplicant } from "@/components/partner/campaign_contents/card_type/experience_card/ExperienceTypes";
+import type { ExperienceApplicant } from "@/components/partner/campaign_contents/card_type/experience_card/experienceTypes";
 import { openChannelUrl } from "@/utils/helpers/url";
 
 interface ContentItemExtended extends ContentItem {
@@ -59,16 +59,13 @@ export function createExperienceCardRenderer(params: RenderExperienceCardParams)
     const dateLabel: "등록" | "수정" | "지각 등록" = item.isLateSubmission
       ? "지각 등록"
       : item.updatedAt
-      ? "수정"
-      : "등록";
+        ? "수정"
+        : "등록";
 
     // 대기 탭
     if (params.activeTab === "대기") {
-      let pendingState:
-        | "content_not_registered"
-        | "extension_requested"
-        | "rejected"
-        | "reported" = "content_not_registered";
+      let pendingState: "content_not_registered" | "extension_requested" | "rejected" | "reported" =
+        "content_not_registered";
       let isExtensionApproved = false;
       let extendedDeadline: string | undefined;
       let localDeadlineDate = params.deadlineDate;
@@ -91,7 +88,9 @@ export function createExperienceCardRenderer(params: RenderExperienceCardParams)
       }
 
       const reportedDateValue = params.reportedDates.get(item.id) || item.reportedDate;
-      const formattedReportedDate = reportedDateValue ? params.formatDateTime(reportedDateValue) : undefined;
+      const formattedReportedDate = reportedDateValue
+        ? params.formatDateTime(reportedDateValue)
+        : undefined;
 
       return (
         <ExperiencePendingCard

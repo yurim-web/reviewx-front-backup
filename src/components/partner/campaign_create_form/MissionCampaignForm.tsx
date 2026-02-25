@@ -22,7 +22,7 @@ import styles from "@/styles/partner/campaign_create/campaign_create.module.css"
 // 공통 컴포넌트들 import
 import { CampaignTypeSelector } from "./common/selectors/CampaignTypeSelector";
 import { CustomDropdown } from "./common/selectors/CustomDropdown";
-import { categories } from "./common/constants/constants";
+import { categories } from "./common/constants/campaignFormConstants";
 import NoticeSection from "./common/sections/NoticeSection";
 import { ThumbnailAndDetailImages } from "./common/images/ThumbnailAndDetailImages";
 import { PointsManagementSection } from "./common/sections/PointsManagementSection";
