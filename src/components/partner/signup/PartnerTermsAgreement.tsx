@@ -18,9 +18,9 @@
 
 import { useState } from "react";
 import commonStyles from "@/styles/common/signup/signup.module.css";
-import PartnerTermsViewModal, {
-  type PartnerTermsViewModalType,
-} from "@/components/partner/signup/PartnerTermsViewModal";
+import TermsViewModal, { type PartnerTermsType } from "@/components/common/signup/TermsViewModal";
+
+type TermsViewModalType = PartnerTermsType | null;
 
 interface PartnerTermsAgreementProps {
   allAgreed: boolean;
@@ -57,16 +57,15 @@ export default function PartnerTermsAgreement({
   onMarketingAgreedChange,
   onThirdPartyMarketingAgreedChange,
 }: PartnerTermsAgreementProps) {
-  const [terms_modal_type, set_terms_modal_type] =
-    useState<PartnerTermsViewModalType>(null);
+  const [terms_modal_type, set_terms_modal_type] = useState<TermsViewModalType>(null);
 
-  const handle_terms_view_click = (modalType: PartnerTermsViewModalType) => {
+  const handle_terms_view_click = (modalType: TermsViewModalType) => {
     set_terms_modal_type(modalType);
   };
 
   return (
     <>
-      <PartnerTermsViewModal
+      <TermsViewModal
         is_open={terms_modal_type !== null}
         on_close={() => set_terms_modal_type(null)}
         type={terms_modal_type}
@@ -96,17 +95,12 @@ export default function PartnerTermsAgreement({
             onChange={(e) => onServiceTermsAgreedChange(e.target.checked)}
           />
           <div className={commonStyles.terms_label_row}>
-            <label
-              htmlFor="service-terms-agree"
-              className={commonStyles.checkbox_label}
-            >
+            <label htmlFor="service-terms-agree" className={commonStyles.checkbox_label}>
               [필수] 서비스 이용 약관 동의
             </label>
             <button
               type="button"
-              onClick={() =>
-                handle_terms_view_click("partner_service_terms")
-              }
+              onClick={() => handle_terms_view_click("partner_service_terms")}
               className={commonStyles.terms_view_link}
               aria-label="서비스 이용 약관 보기"
             >
@@ -124,10 +118,7 @@ export default function PartnerTermsAgreement({
             onChange={(e) => onPrivacyAgreedChange(e.target.checked)}
           />
           <div className={commonStyles.terms_label_row}>
-            <label
-              htmlFor="privacy-agree"
-              className={commonStyles.checkbox_label}
-            >
+            <label htmlFor="privacy-agree" className={commonStyles.checkbox_label}>
               [필수] 개인정보 수집 및 이용 동의
             </label>
             <button
@@ -150,10 +141,7 @@ export default function PartnerTermsAgreement({
             onChange={(e) => onThirdPartyAgreedChange(e.target.checked)}
           />
           <div className={commonStyles.terms_label_row}>
-            <label
-              htmlFor="third-party-agree"
-              className={commonStyles.checkbox_label}
-            >
+            <label htmlFor="third-party-agree" className={commonStyles.checkbox_label}>
               [필수] 개인정보 제3자 제공 동의
             </label>
             <button
@@ -176,10 +164,7 @@ export default function PartnerTermsAgreement({
             onChange={(e) => onAdvertisingAgreedChange(e.target.checked)}
           />
           <div className={commonStyles.terms_label_row}>
-            <label
-              htmlFor="advertising-agree"
-              className={commonStyles.checkbox_label}
-            >
+            <label htmlFor="advertising-agree" className={commonStyles.checkbox_label}>
               [필수] 광고 · 홍보 관련 준수 사항 동의
             </label>
             <button
@@ -202,10 +187,7 @@ export default function PartnerTermsAgreement({
             onChange={(e) => onMarketingAgreedChange(e.target.checked)}
           />
           <div className={commonStyles.terms_label_row}>
-            <label
-              htmlFor="marketing-agree"
-              className={commonStyles.checkbox_label}
-            >
+            <label htmlFor="marketing-agree" className={commonStyles.checkbox_label}>
               [선택] 마케팅 목적의 개인정보 수집 및 이용 동의
             </label>
             <button
@@ -225,22 +207,15 @@ export default function PartnerTermsAgreement({
             type="checkbox"
             className={commonStyles.checkbox}
             checked={thirdPartyMarketingAgreed}
-            onChange={(e) =>
-              onThirdPartyMarketingAgreedChange(e.target.checked)
-            }
+            onChange={(e) => onThirdPartyMarketingAgreedChange(e.target.checked)}
           />
           <div className={commonStyles.terms_label_row}>
-            <label
-              htmlFor="third-party-marketing-agree"
-              className={commonStyles.checkbox_label}
-            >
+            <label htmlFor="third-party-marketing-agree" className={commonStyles.checkbox_label}>
               [선택] 제3자 정보 제공(마케팅/프로모션 목적) 동의
             </label>
             <button
               type="button"
-              onClick={() =>
-                handle_terms_view_click("partner_third_party_marketing")
-              }
+              onClick={() => handle_terms_view_click("partner_third_party_marketing")}
               className={commonStyles.terms_view_link}
               aria-label="제3자 정보 제공(마케팅/프로모션 목적) 약관 보기"
             >
@@ -250,9 +225,7 @@ export default function PartnerTermsAgreement({
         </div>
       </div>
 
-      {error && (
-        <div className={commonStyles.error_message}>{error}</div>
-      )}
+      {error && <div className={commonStyles.error_message}>{error}</div>}
     </>
   );
 }

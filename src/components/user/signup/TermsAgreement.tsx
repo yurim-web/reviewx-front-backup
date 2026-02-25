@@ -15,7 +15,7 @@
 
 import { useState } from "react";
 import commonStyles from "@/styles/common/signup/signup.module.css";
-import TermsViewModal, { type TermsViewModalType } from "@/components/user/signup/TermsViewModal";
+import TermsViewModal, { type TermsViewModalType } from "@/components/common/signup/TermsViewModal";
 
 interface TermsAgreementProps {
   allAgreed: boolean;

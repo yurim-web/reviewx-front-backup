@@ -11,7 +11,11 @@
  * - /user/signup (유저 회원가입 > 폼 제출 시 검증)
  */
 
-import { validateEmail } from "@/utils/validation";
+import {
+  validateSignupEmailField,
+  validateSignupNameField,
+  validateSignupPhoneField,
+} from "@/utils/validation/signup";
 
 export interface SignupFormErrors {
   email?: string;
@@ -39,23 +43,21 @@ export interface SignupFormData {
 export function validateSignupForm(formData: SignupFormData): SignupFormErrors {
   const errors: SignupFormErrors = {};
 
-  // 이메일 검증 (리뷰어 회원가입에서는 선택사항 - 소셜 로그인으로 가져온 이메일이므로)
-  // 이메일이 입력된 경우에만 형식 검증
-  if (formData.email && !validateEmail(formData.email)) {
-    errors.email = "올바른 이메일 형식을 입력해주세요.";
-  }
+  // 이메일 검증 (선택사항: 소셜 로그인으로 가져온 이메일이므로 빈 값은 통과)
+  const emailError = validateSignupEmailField(formData.email, false);
+  if (emailError !== undefined) errors.email = emailError;
 
   // 이름 검증
-  if (!formData.name) {
-    errors.name = "이름을 입력해주세요.";
-  }
+  const nameError = validateSignupNameField(formData.name, "이름을 입력해주세요.");
+  if (nameError !== undefined) errors.name = nameError;
 
-  // 휴대폰 번호 검증
-  if (!formData.phone) {
-    errors.phone = "휴대폰 번호를 입력해주세요.";
-  } else if (!formData.isPhoneVerified) {
-    errors.phone = "휴대폰 인증을 완료해주세요.";
-  }
+  // 휴대폰 번호 + 인증 검증
+  const phoneError = validateSignupPhoneField(
+    formData.phone,
+    formData.isPhoneVerified,
+    "휴대폰 번호를 입력해주세요."
+  );
+  if (phoneError !== undefined) errors.phone = phoneError;
 
   // 약관 동의 검증
   if (!formData.termsAgreed || !formData.privacyAgreed) {

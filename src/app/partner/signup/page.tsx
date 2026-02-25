@@ -20,19 +20,19 @@ import PartnerHeader from "@/components/fragments/PartnerHeader";
 import PhoneVerification from "@/components/common/phone_verification/PhoneVerification";
 import PartnerTermsAgreement from "@/components/partner/signup/PartnerTermsAgreement";
 import BusinessDocumentUpload from "@/components/partner/mypage/BusinessDocumentUpload";
-import AddressInput from "@/components/partner/signup/AddressInput";
+import AddressInput from "@/components/common/mypage/AddressInput";
 import ErrorText from "@/components/common/error_text/ErrorText";
 import PasswordField from "@/components/common/signup/PasswordField";
 import FormInputField from "@/components/common/signup/FormInputField";
 import EmailInputField from "@/components/common/signup/EmailInputField";
-import BusinessNumberInput from "@/components/partner/signup/BusinessNumberInput";
-import ContactPhoneInput from "@/components/partner/signup/ContactPhoneInput";
+import BusinessNumberInput from "@/components/common/signup/BusinessNumberInput";
+import ContactPhoneInput from "@/components/common/signup/ContactPhoneInput";
 import { usePartnerTermsAgreement } from "@/hooks/partner/signup/usePartnerTermsAgreement";
 import { usePhoneVerification } from "@/hooks/usePhoneVerification/usePhoneVerification";
 import {
   validatePartnerSignupForm,
   type PartnerSignupFormErrors,
-} from "@/components/partner/signup/utils/formValidation";
+} from "@/utils/validation/partnerSignup";
 import PageTitle from "@/components/fragments/PageTitle";
 import { getAccountsByType } from "@/data/login/unifiedAccountData";
 import commonStyles from "@/styles/common/signup/signup.module.css";
@@ -596,6 +596,7 @@ export default function PartnerSignupPage() {
 
           {/* 주소 입력 */}
           <AddressInput
+            variant="signup"
             postalCode={postalCode}
             address={address}
             detailAddress={detailAddress}

@@ -13,8 +13,8 @@
  *                     file_upload_wrapper, file_select_button, address_postal_code_wrapper,
  *                     postal_code_input, postal_code_search_button, submit_button
  *
- * 2️⃣ 파트너 회원가입 전용 컴포넌트:
- *    - src/components/partner/signup/AddressInput.tsx
+ * 2️⃣ 공통 컴포넌트 (signup 변형):
+ *    - src/components/common/mypage/AddressInput.tsx (variant="signup")
  *      → 사용 클래스: address_postal_code_wrapper, postal_code_input, postal_code_search_button
  *
  * 주요 스타일:
