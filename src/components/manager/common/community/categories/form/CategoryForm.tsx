@@ -41,17 +41,11 @@ interface CategoryFormProps {
 
 // 구분 옵션 목록
 // CategoryDivision 타입의 모든 값을 배열로 정의하고 오름차순으로 정렬합니다
-const division_options: CategoryDivision[] = [
-  "공지사항",
-  "자주 묻는 질문",
-  "이벤트",
-].sort((a, b) => a.localeCompare(b, "ko-KR"));
+const division_options: CategoryDivision[] = (
+  ["공지사항", "자주 묻는 질문", "이벤트"] as CategoryDivision[]
+).sort((a, b) => a.localeCompare(b, "ko-KR"));
 
-export default function CategoryForm({
-  mode,
-  manager_type,
-  category_id,
-}: CategoryFormProps) {
+export default function CategoryForm({ mode, manager_type, category_id }: CategoryFormProps) {
   // Next.js 라우터 사용
   // useRouter: Next.js에서 페이지 이동을 위한 Hook입니다
   const router = useRouter();
@@ -95,7 +89,7 @@ export default function CategoryForm({
     // 현재는 목업 데이터에서 카테고리를 찾습니다
     // 실제 구현 시에는 API를 호출하여 카테고리 데이터를 불러옵니다
     const category: CategoryItem | undefined = categories_data.find(
-      (item) => item.id === category_id,
+      (item) => item.id === category_id
     );
 
     if (category) {
@@ -132,7 +126,7 @@ export default function CategoryForm({
         item.division === division &&
         item.category_name === trimmed_name &&
         // 수정 모드일 때는 현재 수정 중인 카테고리는 제외
-        (mode !== "edit" || item.id !== category_id),
+        (mode !== "edit" || item.id !== category_id)
     );
 
     if (duplicate_category) {
@@ -225,10 +219,8 @@ export default function CategoryForm({
   // 삼항 연산자: 조건 ? 참일 때 값 : 거짓일 때 값
   const page_title = mode === "create" ? "카테고리 등록" : "카테고리 수정";
   const button_text = mode === "create" ? "등록" : "저장";
-  const form_aria_label =
-    mode === "create" ? "카테고리 등록 폼" : "카테고리 수정 폼";
-  const button_aria_label =
-    mode === "create" ? "카테고리 등록" : "카테고리 저장";
+  const form_aria_label = mode === "create" ? "카테고리 등록 폼" : "카테고리 수정 폼";
+  const button_aria_label = mode === "create" ? "카테고리 등록" : "카테고리 저장";
 
   // 로딩 중일 때 표시할 내용 (수정 모드일 때만)
   // 조건부 렌더링: is_loading이 true일 때 로딩 메시지를 표시합니다

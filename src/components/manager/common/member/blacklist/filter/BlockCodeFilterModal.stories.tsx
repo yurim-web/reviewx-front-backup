@@ -6,7 +6,8 @@
 
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState, useCallback, useMemo } from "react";
-import BlockCodeFilterModal, { type BlockCode } from "./BlockCodeFilterModal";
+import BlockCodeFilterModal from "./BlockCodeFilterModal";
+import type { BlockCode } from "@/data/manager_ga/member/blacklist";
 
 const meta: Meta<typeof BlockCodeFilterModal> = {
   title: "Manager/Common/Member/Blacklist/Filter/BlockCodeFilterModal",
@@ -166,5 +167,3 @@ export const Interactive: Story = {
     on_apply: (codes) => console.log("Block codes applied:", codes),
   },
 };
-
-

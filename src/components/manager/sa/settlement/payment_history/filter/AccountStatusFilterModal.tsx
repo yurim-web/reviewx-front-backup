@@ -7,15 +7,8 @@
  *
  * 목적: 결제 내역 페이지에서 계정 상태를 필터링하는 모달입니다.
  *
- * 사용 위치:
- * - PaymentHistoryFilterSection 컴포넌트에서 상태 필터로 사용
+ * 사용 페이지:
  * - /manager_sa/settlement/payment_history (결제 내역 페이지)
- *
- * 주요 기능:
- * - 체크박스 방식의 다중 선택 필터링
- * - 계정 상태 옵션: 정상, 일시 정지, 영구 정지, 탈퇴
- * - 필터 적용/초기화 기능
- * - 모달 외부 클릭으로 닫기
  */
 
 "use client";
@@ -44,12 +37,7 @@ interface AccountStatusFilterModalProps {
 }
 
 // 계정 상태 필터 옵션 배열
-const account_status_options: AccountStatus[] = [
-  "정상",
-  "일시 정지",
-  "영구 정지",
-  "탈퇴",
-];
+const account_status_options: AccountStatus[] = ["정상", "일시 정지", "영구 정지", "탈퇴"];
 
 // 계정 상태 옵션을 FilterOption 형태로 변환하는 함수
 const get_account_status_options = (): FilterOption<AccountStatus>[] => {
@@ -78,4 +66,3 @@ export default function AccountStatusFilterModal({
     />
   );
 }
-

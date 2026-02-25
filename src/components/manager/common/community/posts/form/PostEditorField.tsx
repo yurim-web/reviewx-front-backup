@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  useEffect,
   type Dispatch,
   type MutableRefObject,
   type RefObject,
@@ -21,18 +20,18 @@ type ToastEditorProps = {
   placeholder?: string;
   autofocus?: boolean;
   hideModeSwitch?: boolean;
-  ref?: any;
+  ref?: unknown;
 };
 
 const ToastEditor = dynamic<ToastEditorProps>(
   () =>
     import("@toast-ui/react-editor").then(
-      (mod) => mod.Editor as unknown as ComponentType<ToastEditorProps>,
+      (mod) => mod.Editor as unknown as ComponentType<ToastEditorProps>
     ),
   {
     ssr: false,
     loading: () => <div className={styles.editor_skeleton}>에디터 로딩중…</div>,
-  },
+  }
 );
 
 interface PostEditorFieldProps {
@@ -45,7 +44,7 @@ interface PostEditorFieldProps {
   initial_data?: {
     body: string;
   } | null;
-  editor_instance_ref: MutableRefObject<any>;
+  editor_instance_ref: MutableRefObject<unknown>;
   title_input_ref: RefObject<HTMLInputElement | null>;
   body_label: string;
 }
@@ -81,25 +80,24 @@ export function PostEditorField({
           <>
             <div
               style={{
-                display:
-                  mode === "create" && !is_editor_ready ? "none" : "block",
+                display: mode === "create" && !is_editor_ready ? "none" : "block",
               }}
             >
               <ToastEditor
-                ref={(editor: any) => {
+                ref={(editor: Record<string, unknown> | null) => {
                   if (!editor) return;
                   try {
                     if (editor.getInstance) {
-                      editor_instance_ref.current = editor.getInstance();
+                      editor_instance_ref.current = (editor.getInstance as () => unknown)();
                     } else if (editor.getRootElement) {
-                      const rootElement = editor.getRootElement();
+                      const rootElement = (
+                        editor.getRootElement as () => Record<string, unknown> | null
+                      )();
                       if (rootElement) {
-                        editor_instance_ref.current = (
-                          rootElement as any
-                        ).__editor__;
+                        editor_instance_ref.current = rootElement.__editor__;
                       }
                     }
-                  } catch (e) {
+                  } catch (_e) {
                     // ignore
                   }
                   setIsEditorReady(true);

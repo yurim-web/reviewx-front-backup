@@ -1,5 +1,5 @@
 /* ========================================
-   📅 필터 섹션용 날짜 필터 버튼 컴포넌트
+   
    ======================================== */
 
 /**
@@ -9,14 +9,7 @@
  *       대시보드의 DateFilterSection과 동일한 방식으로 작동하지만,
  *       필터 섹션의 스타일에 맞춰 왼쪽 정렬로 위치합니다.
  *
- * 주요 기능:
- * - 날짜 범위 선택 버튼
- * - RangeCalendar를 사용한 날짜 범위 선택 모달
- * - 버튼 클릭 시 드롭다운 열기/닫기
- * - 외부 클릭 시 자동 닫기
- * - 선택된 날짜 범위 표시
- *
- * 사용 위치:
+ * 사용 페이지:
  * - BaseFilterSection의 date_filter prop
  * - FilterSection 컴포넌트들
  */
@@ -59,9 +52,7 @@ export default function DateFilterButton({
   // 📌 Hydration 오류 방지:
   // - 초기값을 undefined로 설정하여 서버와 클라이언트가 동일한 초기값을 사용합니다
   // - 클라이언트에서만 실제 날짜 범위를 설정합니다
-  const [selected_date_range, setSelectedDateRange] = useState<
-    DateRange | undefined
-  >(undefined);
+  const [selected_date_range, setSelectedDateRange] = useState<DateRange | undefined>(undefined);
 
   // useState: 클라이언트 마운트 여부 (Hydration 오류 방지용)
   // 서버 사이드에서는 false, 클라이언트에서 마운트되면 true가 됩니다
@@ -102,10 +93,7 @@ export default function DateFilterButton({
       // event.target: 클릭한 요소
       // picker_ref.current: 날짜 선택기 버튼 요소
       // contains(): 요소가 다른 요소의 자식인지 확인하는 메서드
-      if (
-        picker_ref.current &&
-        !picker_ref.current.contains(event.target as Node)
-      ) {
+      if (picker_ref.current && !picker_ref.current.contains(event.target as Node)) {
         // 드롭다운 외부를 클릭했으면 닫기
         setIsDateModalOpen(false);
       }
@@ -191,10 +179,7 @@ export default function DateFilterButton({
       // 시작일과 종료일이 모두 있으면 범위 형식으로 표시
       // format 함수: date-fns 라이브러리의 함수로, 날짜를 원하는 형식으로 변환합니다
       // "yyyy-MM-dd": 년도 4자리-월 2자리-일 2자리 형식
-      return `${format(range.from, "yyyy-MM-dd")} ~ ${format(
-        range.to,
-        "yyyy-MM-dd"
-      )}`;
+      return `${format(range.from, "yyyy-MM-dd")} ~ ${format(range.to, "yyyy-MM-dd")}`;
     } else if (range.from) {
       // 시작일만 있으면 시작일만 표시
       return `${format(range.from, "yyyy-MM-dd")} ~`;
@@ -205,10 +190,7 @@ export default function DateFilterButton({
   };
 
   return (
-    <div
-      className={date_filter_styles.date_filter_button_wrapper}
-      ref={picker_ref}
-    >
+    <div className={date_filter_styles.date_filter_button_wrapper} ref={picker_ref}>
       {/* 날짜 선택기 버튼 - 필터 아이템 스타일 사용 */}
       <div
         className={styles.filter_item}
@@ -226,17 +208,10 @@ export default function DateFilterButton({
       >
         {/* 날짜 선택 아이콘 - 캘린더 아이콘 SVG 사용 */}
         <div className={styles.filter_icon}>
-          <Image
-            src="/images/calendar/calendar_icon.svg"
-            alt="날짜 선택"
-            width={16}
-            height={16}
-          />
+          <Image src="/images/calendar/calendar_icon.svg" alt="날짜 선택" width={16} height={16} />
         </div>
         {/* 선택된 날짜 범위를 동적으로 표시 */}
-        <span className={styles.date_filter_text}>
-          {format_date_range(selected_date_range)}
-        </span>
+        <span className={styles.date_filter_text}>{format_date_range(selected_date_range)}</span>
       </div>
 
       {/* 날짜 범위 선택 드롭다운 - 버튼 왼쪽 아래에 표시 */}

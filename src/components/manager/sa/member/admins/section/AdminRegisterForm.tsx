@@ -1,26 +1,14 @@
 /* ========================================
-   📝 관리자 등록 폼 컴포넌트
+   관리자 등록 폼 컴포넌트
    ======================================== */
 
 /**
- * 관리자 등록 폼 컴포넌트
+ * AdminRegisterForm
  *
  * 목적: 관리자 등록 페이지에서 사용하는 등록 폼 컴포넌트입니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /manager_sa/member/admins/create (관리자 등록 페이지)
- *
- * 주요 기능:
- * - 아이디 입력
- * - 비밀번호 입력 및 확인
- * - 이름 입력
- * - 휴대폰 번호 입력
- * - 등록 버튼
- *
- * React 핵심 개념:
- * - useState: 폼 입력값 상태 관리
- * - 이벤트 핸들러: onChange로 입력값 변경 처리
- * - 폼 제출: onSubmit으로 등록 처리
  */
 
 "use client";
@@ -63,7 +51,6 @@ export default function AdminRegisterForm() {
   const handle_submit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // TODO: 관리자 등록 API 호출
-    console.log("등록 데이터:", form_data);
     // 등록 성공 후 관리자 목록 페이지로 이동
     router.push("/manager_sa/member/admins");
   };

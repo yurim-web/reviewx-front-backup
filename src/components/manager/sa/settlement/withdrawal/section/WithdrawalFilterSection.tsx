@@ -14,6 +14,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Image from "next/image";
 import BaseFilterSection, {
   type FilterTag,
 } from "@/components/manager/ga/common/filter/BaseFilterSection";
@@ -276,7 +277,13 @@ export default function WithdrawalFilterSection({
             }}
             style={{ cursor: "pointer" }}
           >
-            <img src="/images/excel_icon.png" alt="다운로드" className={styles.download_icon} />
+            <Image
+              src="/images/excel_icon.png"
+              alt="다운로드"
+              width={20}
+              height={20}
+              className={styles.download_icon}
+            />
             <span className={styles.download_button_text}>신청자 원천징수 양식 다운로드</span>
           </div>
         }

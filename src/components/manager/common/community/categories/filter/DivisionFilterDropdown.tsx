@@ -24,7 +24,7 @@ interface DivisionFilterDropdownProps {
   on_close: () => void;
   selected_divisions: CategoryDivision[];
   on_apply: (divisions: CategoryDivision[]) => void;
-  container_ref?: React.RefObject<HTMLDivElement>;
+  container_ref?: React.RefObject<HTMLDivElement | null>;
 }
 
 // 구분 필터 옵션 배열
@@ -35,12 +35,10 @@ const division_options: { value: CategoryDivision; label: string }[] = [
 ];
 
 // 구분 옵션을 FilterOption 형태로 변환
-const filter_options: FilterOption<CategoryDivision>[] = division_options.map(
-  (option) => ({
-    value: option.value,
-    label: option.label,
-  })
-);
+const filter_options: FilterOption<CategoryDivision>[] = division_options.map((option) => ({
+  value: option.value,
+  label: option.label,
+}));
 
 export default function DivisionFilterDropdown({
   is_open,
@@ -60,4 +58,3 @@ export default function DivisionFilterDropdown({
     />
   );
 }
-

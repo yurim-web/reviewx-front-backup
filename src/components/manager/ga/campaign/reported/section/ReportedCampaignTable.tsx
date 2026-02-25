@@ -1,26 +1,21 @@
 /* ========================================
-   📋 신고내역 테이블 컴포넌트
+   신고내역 테이블 컴포넌트
    ======================================== */
 
 /**
- * 신고내역 테이블 컴포넌트
+ * ReportedCampaignTable
  *
  * 목적: GA 관리자 신고내역 페이지의 신고 내역 목록을 테이블 형태로 표시합니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /manager_ga/campaign/reported (신고내역 페이지)
- *
- * 주요 기능:
- * - 신고 내역 목록을 테이블로 표시합니다
- * - 검색어와 신고 코드 필터를 적용합니다
- * - 사유 확인하기 버튼을 제공합니다
- *
  */
 
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState } from "react";
 import { format } from "date-fns";
+import { useCampaignCodeTableFilters } from "@/hooks/manager/ga/common/useCampaignCodeTableFilters";
 import {
   add_blacklist_item,
   get_blacklist_data,
@@ -49,10 +44,7 @@ import TextareaModal from "@/components/common/modal/TextareaModal";
 import CommonTableWithTooltip, {
   type TooltipConfig,
 } from "@/components/manager/common/table/CommonTableWithTooltip";
-import {
-  type TableColumn,
-  type TableRowData,
-} from "@/components/manager/common/table/CommonTable";
+import { type TableColumn, type TableRowData } from "@/components/manager/common/table/CommonTable";
 
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 
@@ -63,14 +55,18 @@ interface ReportedCampaignTableProps {
 }
 
 // ReportedCampaignItem이 TableRowData를 확장하도록 확장
-interface ReportedCampaignTableRowData
-  extends ReportedCampaignItem,
-    TableRowData {}
+interface ReportedCampaignTableRowData extends ReportedCampaignItem, TableRowData {}
 
 // 신고 코드 정보를 코드로 찾는 함수
 const get_report_code_info = (code: string): ReportCodeInfo | undefined => {
   return report_code_info.find((info) => info.code === code);
 };
+
+// 필터 훅용 모듈 레벨 접근자 함수 (안정적인 참조 보장)
+const get_item_name = (item: ReportedCampaignItem) => item.campaign_name;
+const get_item_number = (item: ReportedCampaignItem) => item.campaign_number;
+const get_item_code = (item: ReportedCampaignItem) => item.report_code;
+const get_item_date = (item: ReportedCampaignItem) => item.processed_date;
 
 // 컬럼 정의
 const get_columns = (styles: Record<string, string>): TableColumn[] => [
@@ -119,17 +115,6 @@ export default function ReportedCampaignTable({
   selected_date_range,
 }: ReportedCampaignTableProps) {
   const [hovered_row_id, set_hovered_row_id] = useState<string | null>(null);
-  // 신고 내역 목록 업데이트를 위한 상태 (리렌더링 트리거)
-  const [reported_update_key, set_reported_update_key] = useState<number>(0);
-  // 클라이언트 마운트 여부 (Hydration 오류 방지)
-  const [is_mounted, set_is_mounted] = useState<boolean>(false);
-
-  // 클라이언트에서만 마운트 후 localStorage 데이터 로드
-  useEffect(() => {
-    set_is_mounted(true);
-    // localStorage에서 데이터를 로드하여 상태 업데이트
-    set_reported_update_key((prev) => prev + 1);
-  }, []);
 
   const [block_modal_state, set_block_modal_state] = useState<{
     is_open: boolean;
@@ -159,8 +144,7 @@ export default function ReportedCampaignTable({
   });
 
   // 해제 완료 모달 상태
-  const [clear_complete_modal_state, set_clear_complete_modal_state] =
-    useState<boolean>(false);
+  const [clear_complete_modal_state, set_clear_complete_modal_state] = useState<boolean>(false);
 
   // 이미 처리된 요청 모달 상태
   const [already_processed_modal_state, set_already_processed_modal_state] =
@@ -175,10 +159,7 @@ export default function ReportedCampaignTable({
     item: null,
   });
 
-  const handle_block_click = (
-    campaign_id: string,
-    item: ReportedCampaignItem
-  ) => {
+  const handle_block_click = (campaign_id: string, item: ReportedCampaignItem) => {
     set_block_modal_state({
       is_open: true,
       campaign_id,
@@ -209,7 +190,7 @@ export default function ReportedCampaignTable({
       remove_reported_campaign(clear_confirm_modal_state.campaign_id);
 
       // 목록 업데이트를 위한 리렌더링 트리거
-      set_reported_update_key((prev) => prev + 1);
+      trigger_update();
     }
 
     // 확인 모달 닫기
@@ -247,9 +228,7 @@ export default function ReportedCampaignTable({
     // 이미 이용 제한된 계정인지 확인
     // 같은 이름으로 이미 블랙리스트에 등록된 내역이 있는지 체크
     const existing_blacklist = get_blacklist_data();
-    const is_already_blocked = existing_blacklist.some(
-      (item) => item.name === reviewer_name
-    );
+    const is_already_blocked = existing_blacklist.some((item) => item.name === reviewer_name);
 
     // 이미 이용 제한된 경우 예외 처리
     if (is_already_blocked) {
@@ -285,21 +264,12 @@ export default function ReportedCampaignTable({
 
     // 새로운 블랙리스트 항목 ID 생성
     const existing_data = get_blacklist_data();
-    const max_id = Math.max(
-      ...existing_data.map((item) => parseInt(item.id) || 0)
-    );
+    const max_id = Math.max(...existing_data.map((item) => parseInt(item.id) || 0));
     const new_id = (max_id + 1).toString();
 
     // 현재 날짜/시간 생성 (기존 데이터 형식과 동일하게)
     // 기존 데이터 형식: "2026-01-28 09:40"
     const current_date = format(new Date(), "yyyy-MM-dd HH:mm");
-
-    // 디버깅: 추가되는 항목 확인
-    console.log("새 블랙리스트 항목 추가:", {
-      name: reviewer_name,
-      registered_date: current_date,
-      block_reason: mapped_block_reason,
-    });
 
     // 블랙리스트 항목 생성
     const new_blacklist_item: BlacklistItem = {
@@ -321,68 +291,27 @@ export default function ReportedCampaignTable({
     // 신고 내역에서 제거 (localStorage에 저장)
     if (block_modal_state.item) {
       remove_reported_campaign(block_modal_state.item.id);
-      set_reported_update_key((prev) => prev + 1);
+      trigger_update();
     }
 
     // 모달은 완료 안내 모달에서 "닫기" 클릭 시 on_close로 닫힘 (페이지 이동 없음)
   };
 
-  // reported_update_key를 의존성으로 추가하여 리렌더링 트리거
-  const filtered_list = useMemo(() => {
-    // 필터 함수 (공통)
-    const filter_item = (item: ReportedCampaignItem): boolean => {
-      // 검색어 필터
-      if (
-        search_query &&
-        !item.campaign_name.includes(search_query) &&
-        !item.campaign_number.includes(search_query)
-      ) {
-        return false;
-      }
-
-      // 신고 코드 필터
-      if (
-        selected_report_codes.length > 0 &&
-        !selected_report_codes.includes(item.report_code)
-      ) {
-        return false;
-      }
-
-      // 날짜 범위 필터
-      if (selected_date_range?.from && selected_date_range?.to) {
-        // processed_date 형식: "2025-08-01 18:56"
-        const processed_date_str = item.processed_date.split(" ")[0]; // 날짜 부분만 추출
-        const processed_date = new Date(processed_date_str);
-        const from_date = new Date(selected_date_range.from);
-        const to_date = new Date(selected_date_range.to);
-        to_date.setHours(23, 59, 59, 999); // 종료일의 끝 시간까지 포함
-
-        // 날짜 비교 시 시간 부분을 제거하여 날짜만 비교
-        processed_date.setHours(0, 0, 0, 0);
-        from_date.setHours(0, 0, 0, 0);
-
-        if (processed_date < from_date || processed_date > to_date) {
-          return false;
-        }
-      }
-
-      return true;
-    };
-
-    // 서버 사이드에서는 기본 데이터만 반환 (Hydration 오류 방지)
-    if (!is_mounted) {
-      return reported_campaign_list.filter(filter_item);
-    }
-
-    // 클라이언트에서는 localStorage 데이터 포함
-    return get_reported_campaign_list().filter(filter_item);
-  }, [
+  // 공통 필터링 훅 (검색어·신고코드·날짜 범위 + Hydration 체크)
+  const { filtered_data: filtered_list, trigger_update } = useCampaignCodeTableFilters<
+    ReportedCampaignItem,
+    ReportCode
+  >({
+    static_data: reported_campaign_list,
+    get_dynamic_data: get_reported_campaign_list,
     search_query,
-    selected_report_codes,
+    selected_codes: selected_report_codes,
     selected_date_range,
-    reported_update_key,
-    is_mounted,
-  ]);
+    get_name: get_item_name,
+    get_number: get_item_number,
+    get_code: get_item_code,
+    get_date: get_item_date,
+  });
 
   // 컬럼별 타입 설정
   const column_config: SortColumnConfig = {
@@ -397,10 +326,10 @@ export default function ReportedCampaignTable({
     sort_state,
     handle_sort,
     sorted_data: sorted_filtered_list,
-  } = useTableSort({
-    data: filtered_list,
-    initial_column_key: "campaign_number", // 기본 정렬: 캠페인 번호 컬럼
-    initial_direction: "desc", // 번호 최신순
+  } = useTableSort<ReportedCampaignTableRowData>({
+    data: filtered_list as unknown as ReportedCampaignTableRowData[],
+    initial_column_key: "campaign_number",
+    initial_direction: "desc",
     column_config,
   });
 
@@ -422,12 +351,7 @@ export default function ReportedCampaignTable({
     // "block" 컬럼을 빈 셀로 렌더링
     const render_custom_cell = (column: TableColumn) => {
       if (column.key === "block") {
-        return (
-          <div
-            key={column.key}
-            className={styles.table_header_cell_block}
-          ></div>
-        );
+        return <div key={column.key} className={styles.table_header_cell_block}></div>;
       }
       return null;
     };
@@ -545,8 +469,9 @@ export default function ReportedCampaignTable({
             });
           }}
           on_confirm={(reason_text) => {
-            modal_state.item.report_reason = reason_text;
-            set_reported_update_key((prev) => prev + 1);
+            const item = modal_state.item;
+            if (item) item.report_reason = reason_text;
+            trigger_update();
           }}
           reason_text={
             modal_state.item.report_reason ||
@@ -597,8 +522,7 @@ export default function ReportedCampaignTable({
           title="신고 사유"
           value={
             report_reason_modal_state.item.report_reason ||
-            get_report_code_info(report_reason_modal_state.item.report_code)
-              ?.reason ||
+            get_report_code_info(report_reason_modal_state.item.report_code)?.reason ||
             "신고 사유가 없습니다."
           }
           readOnly={true}

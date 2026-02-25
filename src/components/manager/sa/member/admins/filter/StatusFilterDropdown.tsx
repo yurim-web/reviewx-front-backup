@@ -1,15 +1,15 @@
 /* ========================================
-   🔽 상태 필터 드롭다운 컴포넌트 (관리자)
+   관리자 상태 필터 드롭다운 컴포넌트
    ======================================== */
 
 /**
- * 상태 필터 드롭다운 컴포넌트 (관리자)
+ * StatusFilterDropdown
  *
- * 목적: SA 관리자 관리자 목록 페이지에서 상태를 필터링하는 드롭다운입니다.
+ * 목적: SA 관리자 목록 페이지에서 관리자 상태를 필터링하는 드롭다운입니다.
  *       모달 대신 버튼 아래에 드롭다운 형태로 표시됩니다.
  *
- * 📍 사용 위치:
- * - src/components/manager/sa/member/admins/section/AdminFilterSection.tsx
+ * 사용 페이지:
+ * - /manager_sa/member/admins (관리자 목록 페이지)
  */
 
 "use client";
@@ -31,12 +31,10 @@ interface StatusFilterDropdownProps {
 const status_options: AdminStatus[] = ["정상", "일시 정지", "영구 정지"];
 
 // 상태 옵션을 FilterOption 형태로 변환
-const filter_options: FilterOption<AdminStatus>[] = status_options.map(
-  (status) => ({
-    value: status,
-    label: status,
-  })
-);
+const filter_options: FilterOption<AdminStatus>[] = status_options.map((status) => ({
+  value: status,
+  label: status,
+}));
 
 export default function StatusFilterDropdown({
   is_open,
@@ -56,4 +54,3 @@ export default function StatusFilterDropdown({
     />
   );
 }
-

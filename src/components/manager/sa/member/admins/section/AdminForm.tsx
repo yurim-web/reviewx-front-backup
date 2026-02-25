@@ -15,7 +15,6 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
 import styles from "@/styles/manager_sa/member/admins/admin_create_page.module.css";
 import type { AdminItem } from "@/data/manager_sa/member/admins";
 import {
@@ -37,10 +36,6 @@ interface AdminFormProps {
 }
 
 export default function AdminForm({ mode, initial_data, admin_id }: AdminFormProps) {
-  // Next.js의 useRouter 훅을 사용하여 페이지 이동 기능 가져오기
-  // useRouter: Next.js에서 제공하는 클라이언트 사이드 라우팅 훅입니다
-  const router = useRouter();
-
   // 폼 입력값 타입
   type AdminFormData = {
     id: string;
@@ -434,13 +429,12 @@ export default function AdminForm({ mode, initial_data, admin_id }: AdminFormPro
     if (mode === "create") {
       // 등록 모드: localStorage에 관리자 추가
       // add_admin 함수를 사용하여 새로운 관리자를 추가합니다
-      const new_admin = add_admin({
+      const _new_admin = add_admin({
         id: form_data.id.trim(), // 사용자가 입력한 아이디 저장
         name: form_data.name,
         phone: form_data.phone, // 휴대폰 번호 저장
       });
 
-      console.log("등록된 관리자:", new_admin);
       // Toast 메시지 표시
       set_show_toast(true);
       // Toast 메시지가 표시된 후 목록 페이지로 이동
@@ -450,7 +444,6 @@ export default function AdminForm({ mode, initial_data, admin_id }: AdminFormPro
     } else {
       // 수정 모드: localStorage에 저장된 관리자 정보 업데이트
       if (!admin_id) {
-        console.error("관리자 ID가 없습니다.");
         return;
       }
 
@@ -461,11 +454,9 @@ export default function AdminForm({ mode, initial_data, admin_id }: AdminFormPro
       });
 
       if (!updated_admin) {
-        console.error("관리자를 찾을 수 없습니다.");
         return;
       }
 
-      console.log("수정된 관리자:", updated_admin);
       // Toast 메시지 표시
       set_show_toast(true);
       // Toast 메시지가 표시된 후 목록 페이지로 이동

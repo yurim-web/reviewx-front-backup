@@ -1,15 +1,15 @@
 /* ========================================
-   🔽 결제 수단 필터 드롭다운 컴포넌트
+   결제 수단 필터 드롭다운 컴포넌트
    ======================================== */
 
 /**
- * 결제 수단 필터 드롭다운 컴포넌트
+ * PaymentMethodFilterDropdown
  *
  * 목적: 결제 내역 페이지에서 결제 수단을 필터링하는 드롭다운입니다.
  *       모달 대신 버튼 아래에 드롭다운 형태로 표시됩니다.
  *
- * 📍 사용 위치:
- * - src/components/manager/sa/settlement/payment_history/section/PaymentHistoryFilterSection.tsx
+ * 사용 페이지:
+ * - /manager_sa/settlement/payment_history (결제 내역 페이지)
  */
 
 "use client";
@@ -29,11 +29,12 @@ interface PaymentMethodFilterDropdownProps {
 }
 
 // 결제 수단 옵션을 FilterOption 형태로 변환
-const filter_options: FilterOption<PaymentMethod>[] =
-  payment_method_filter_options.map((method) => ({
+const filter_options: FilterOption<PaymentMethod>[] = payment_method_filter_options.map(
+  (method) => ({
     value: method,
     label: method,
-  }));
+  })
+);
 
 export default function PaymentMethodFilterDropdown({
   is_open,
@@ -53,4 +54,3 @@ export default function PaymentMethodFilterDropdown({
     />
   );
 }
-

@@ -1,5 +1,5 @@
 /* ========================================
-   📊 캠페인 모집 통계 차트 컴포넌트
+   
    ======================================== */
 
 /**
@@ -7,11 +7,6 @@
  *
  * 목적: 카테고리별 캠페인 모집률, 달성률, 평균 진행 기간을 표시하는 차트입니다.
  *
- * 주요 기능:
- * - 모집률 라인 차트 (어두운 회색)
- * - 달성률 라인 차트 (밝은 회색)
- * - 평균 진행 기간 막대 차트 (밝은 회색)
- * - 이중 Y축 (왼쪽: %, 오른쪽: 일)
  
  */
 
@@ -36,6 +31,20 @@ interface ChartData {
   recruitmentRate: number; // 모집률 (%)
   achievementRate: number; // 달성률 (%)
   averageDuration: number; // 평균 진행 기간 (일)
+}
+
+// recharts 커스텀 컴포넌트 Props 타입
+// tick prop에 JSX element로 전달하면 recharts가 런타임에 props를 주입하므로 선택적으로 정의
+interface AxisTickProps {
+  x?: number;
+  y?: number;
+  payload?: { value: string | number };
+}
+
+interface ChartTooltipProps {
+  active?: boolean;
+  payload?: Array<{ payload: ChartData }>;
+  coordinate?: { x: number; y: number };
 }
 
 // 차트 데이터 (Figma 디자인 기반)
@@ -121,7 +130,7 @@ const chart_data: ChartData[] = [
 ];
 
 // 커스텀 X축 틱 컴포넌트 (카테고리 텍스트 스타일 적용)
-const CustomXAxisTick = ({ x, y, payload }: any) => {
+const CustomXAxisTick = ({ x, y, payload }: AxisTickProps) => {
   return (
     <text
       x={x}
@@ -138,13 +147,13 @@ const CustomXAxisTick = ({ x, y, payload }: any) => {
         lineHeight: "12px",
       }}
     >
-      {payload.value}
+      {payload?.value}
     </text>
   );
 };
 
 // 커스텀 Y축 틱 컴포넌트 (왼쪽 Y축 숫자 스타일 적용)
-const CustomYAxisTick = ({ x, y, payload }: any) => {
+const CustomYAxisTick = ({ x, y, payload }: AxisTickProps) => {
   return (
     <text
       x={x}
@@ -160,13 +169,13 @@ const CustomYAxisTick = ({ x, y, payload }: any) => {
         lineHeight: "12px",
       }}
     >
-      {payload.value}
+      {payload?.value}
     </text>
   );
 };
 
 // 커스텀 Y축 틱 컴포넌트 (오른쪽 Y축 숫자 스타일 적용)
-const CustomYAxisTickRight = ({ x, y, payload }: any) => {
+const CustomYAxisTickRight = ({ x, y, payload }: AxisTickProps) => {
   return (
     <text
       x={x}
@@ -182,20 +191,19 @@ const CustomYAxisTickRight = ({ x, y, payload }: any) => {
         lineHeight: "12px",
       }}
     >
-      {payload.value}
+      {payload?.value}
     </text>
   );
 };
 
 // 커스텀 툴팁: 모집률, 달성률, 진행 기간 (60일 이상이면 "60일+"), 항목 간 8px
-const CustomTooltip = ({ active, payload, coordinate }: any) => {
+const CustomTooltip = ({ active, payload, coordinate }: ChartTooltipProps) => {
   if (!active || !payload?.length || !coordinate) return null;
 
   const data = payload[0]?.payload as ChartData | undefined;
   if (!data) return null;
 
-  const durationText =
-    data.averageDuration >= 60 ? "60일+" : `${data.averageDuration}일`;
+  const durationText = data.averageDuration >= 60 ? "60일+" : `${data.averageDuration}일`;
 
   return (
     <div
@@ -211,21 +219,15 @@ const CustomTooltip = ({ active, payload, coordinate }: any) => {
     >
       <div className={styles.chart_tooltip_row}>
         <span className={styles.chart_tooltip_campaign_label}>모집률</span>
-        <span className={styles.chart_tooltip_campaign_value}>
-          {data.recruitmentRate}%
-        </span>
+        <span className={styles.chart_tooltip_campaign_value}>{data.recruitmentRate}%</span>
       </div>
       <div className={styles.chart_tooltip_row}>
         <span className={styles.chart_tooltip_campaign_label}>달성률</span>
-        <span className={styles.chart_tooltip_campaign_value}>
-          {data.achievementRate}%
-        </span>
+        <span className={styles.chart_tooltip_campaign_value}>{data.achievementRate}%</span>
       </div>
       <div className={styles.chart_tooltip_row}>
         <span className={styles.chart_tooltip_campaign_label}>진행 기간</span>
-        <span className={styles.chart_tooltip_campaign_value}>
-          {durationText}
-        </span>
+        <span className={styles.chart_tooltip_campaign_value}>{durationText}</span>
       </div>
     </div>
   );
@@ -246,12 +248,7 @@ export default function CampaignRecruitmentChart() {
         >
           {/* 애니메이션 설정 */}
           {/* 그리드 라인 - 수평선만 표시 (왼쪽 Y축 숫자에 맞춰) */}
-          <CartesianGrid
-            stroke="#F2F2F2"
-            vertical={false}
-            horizontal={true}
-            yAxisId="left"
-          />
+          <CartesianGrid stroke="#F2F2F2" vertical={false} horizontal={true} yAxisId="left" />
 
           {/* X축 (카테고리) */}
           <XAxis

@@ -6,9 +6,8 @@
 
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState, useCallback, useMemo } from "react";
-import DivisionFilterModal, {
-  type BlacklistDivision,
-} from "./DivisionFilterModal";
+import DivisionFilterModal from "./DivisionFilterModal";
+import type { BlacklistDivision } from "@/data/manager_ga/common/filterOptions";
 
 const meta: Meta<typeof DivisionFilterModal> = {
   title: "Manager/Common/Member/Blacklist/Filter/DivisionFilterModal",
@@ -91,9 +90,7 @@ export const Open: Story = {
 export const Interactive: Story = {
   render: (args) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedDivisions, setSelectedDivisions] = useState<
-      BlacklistDivision[]
-    >([]);
+    const [selectedDivisions, setSelectedDivisions] = useState<BlacklistDivision[]>([]);
 
     const handleOpen = useCallback(() => {
       setIsOpen(true);
@@ -170,5 +167,3 @@ export const Interactive: Story = {
     on_apply: (divisions) => console.log("Divisions applied:", divisions),
   },
 };
-
-

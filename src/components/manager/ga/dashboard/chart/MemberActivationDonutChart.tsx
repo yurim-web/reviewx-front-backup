@@ -1,5 +1,5 @@
 /* ========================================
-   🍩 회원 활성화 도넛 차트 컴포넌트 (원형 프로그래스 바)
+   (  )
    ======================================== */
 
 /**
@@ -7,18 +7,14 @@
  *
  * 목적: 전체 회원의 활성화 비율을 원형 프로그래스 바로 표시합니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - MemberStatsSection 컴포넌트 (전체 회원 통계 카드)
  *
- * 주요 기능:
- * - 활성화 비율을 원형 프로그래스 바로 표시
- * - 위에서부터 채워지는 프로그래스 바 효과
- * - 중앙에 "활성화" 텍스트와 퍼센트 값 표시
  */
 
-'use client';
+"use client";
 
-import styles from '@/styles/manager/common/dashboard/chart/member_stats.module.css';
+import styles from "@/styles/manager/common/dashboard/chart/member_stats.module.css";
 
 interface MemberActivationDonutChartProps {
   activePercentage: number;
@@ -34,7 +30,7 @@ export default function MemberActivationDonutChart({
   const size = 200; // 전체 크기
   const center = size / 2; // 중심점 100
   const radius = 86.1; // 반지름 (비율 유지: 77.5 * 200/180)
-  const strokeWidth = 25; // 도넛 두께
+  const _strokeWidth = 25; // 도넛 두께
   const circumference = 2 * Math.PI * radius; // 원주
 
   // 활성화 비율에 따른 stroke-dasharray 계산
@@ -49,12 +45,7 @@ export default function MemberActivationDonutChart({
       <svg width={size} height={size} className={styles.donut_progress_svg}>
         <g transform={groupTransform}>
           {/* 배경 원 (비활성화 부분) */}
-          <circle
-            cx={center}
-            cy={center}
-            r={radius}
-            className={styles.donut_progress_background}
-          />
+          <circle cx={center} cy={center} r={radius} className={styles.donut_progress_background} />
           {/* 활성화 프로그래스 원 - 12시부터 오른쪽(3시)으로 시계방향 */}
           <circle
             cx={center}

@@ -63,10 +63,9 @@ export default function WithdrawalTable({
         if (storedHistory) {
           const history = JSON.parse(storedHistory);
           set_withdrawal_history(history);
-          console.log("✅ [출금 현황] withdrawal_history 로드:", history);
         }
-      } catch (error) {
-        console.error("❌ [출금 현황] withdrawal_history 로드 실패:", error);
+      } catch (_error) {
+        // 로컬 스토리지 로드 실패 시 무시
       }
     }
   }, []);

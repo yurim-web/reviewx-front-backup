@@ -15,6 +15,7 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { format } from "date-fns";
 import BaseFilterSection, {
   type FilterTag,
@@ -44,7 +45,7 @@ interface AdminFilterSectionProps {
   selected_statuses?: AdminStatus[];
   on_statuses_change?: (statuses: AdminStatus[]) => void;
   // AdminTable의 ref를 받아서 선택된 관리자 정보에 접근
-  admin_table_ref?: React.RefObject<AdminTableRef>;
+  admin_table_ref?: React.RefObject<AdminTableRef | null>;
 }
 
 export default function AdminFilterSection({
@@ -131,9 +132,7 @@ export default function AdminFilterSection({
 
     // 여러 관리자를 한 번에 삭제
     // delete_multiple_admins 함수를 사용하여 localStorage에서 관리자를 삭제합니다
-    const deleted_count = delete_multiple_admins(selected_ids);
-
-    console.log(`${deleted_count}명의 관리자가 삭제되었습니다.`);
+    const _deleted_count = delete_multiple_admins(selected_ids);
 
     // 삭제 확인 모달 닫기
     set_delete_confirm_modal_open(false);
@@ -292,10 +291,12 @@ export default function AdminFilterSection({
         // 검색 필터 뒤에 올 버튼 (관리자 목록 다운로드)
         search_after_buttons={
           <div className={baseFilterStyles.filter_item} onClick={handle_download}>
-            <img
+            <Image
               src="/images/excel_icon.png"
               alt="다운로드"
               className={baseFilterStyles.download_icon}
+              width={20}
+              height={20}
             />
             <span className={baseFilterStyles.download_button_text}>관리자 목록 다운로드</span>
           </div>
@@ -305,29 +306,35 @@ export default function AdminFilterSection({
           <>
             {/* 등록 버튼 */}
             <div className={baseFilterStyles.filter_item} onClick={handle_register}>
-              <img
+              <Image
                 src="/images/icons/sign_plus.svg"
                 alt="등록"
                 className={baseFilterStyles.action_icon}
+                width={16}
+                height={16}
               />
               <span className={baseFilterStyles.post_action_text}>등록</span>
             </div>
             {/* 삭제 버튼 */}
             <div className={baseFilterStyles.filter_item} onClick={handle_delete}>
-              <img
+              <Image
                 src="/images/icons/sign_x.svg"
                 alt="삭제"
                 className={baseFilterStyles.action_icon}
+                width={16}
+                height={16}
               />
               <span className={baseFilterStyles.post_action_text}>삭제</span>
             </div>
 
             {/* 이용제한 버튼 */}
             <div className={baseFilterStyles.filter_item} onClick={handle_block}>
-              <img
+              <Image
                 src="/images/icons/block_btn_icon.svg"
                 alt="이용제한"
                 className={baseFilterStyles.block_icon}
+                width={16}
+                height={16}
               />
               <span className={baseFilterStyles.post_action_text}>이용 제한</span>
             </div>

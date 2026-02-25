@@ -1,5 +1,5 @@
 /* ========================================
-   👥 전체 회원 통계 섹션 컴포넌트 (활성화 통계)
+   ( )
    ======================================== */
 
 /**
@@ -7,17 +7,13 @@
  *
  * 목적: 전체 회원의 활성화 비율과 파트너/리뷰어 통계를 표시하는 섹션 컴포넌트입니다.
  *
- * 주요 기능:
- * - 회원 활성화 도넛 차트 표시
- * - 전체 파트너 수, 활성 파트너 수 표시
- * - 전체 리뷰어 수, 활성 리뷰어 수 표시
  
  */
 
-'use client';
+"use client";
 
-import { useMemo, useState, useEffect } from 'react';
-import { parse, format, differenceInDays, subDays } from 'date-fns';
+import { useMemo, useState, useEffect } from "react";
+import { parse, differenceInDays, subDays } from "date-fns";
 import styles from "@/styles/manager/common/dashboard/section/stats_section.module.css";
 import MemberActivationDonutChart from "../chart/MemberActivationDonutChart";
 import { get_reviewer_list } from "@/data/manager_ga/member/reviewers";
@@ -28,9 +24,7 @@ interface MemberActivationSectionProps {
   dateRange: DateRange;
 }
 
-export default function MemberActivationSection({
-  dateRange,
-}: MemberActivationSectionProps) {
+export default function MemberActivationSection({ dateRange }: MemberActivationSectionProps) {
   // 클라이언트에서만 데이터 로드 (Hydration 오류 방지)
   const [isClient, setIsClient] = useState(false);
 
@@ -46,7 +40,7 @@ export default function MemberActivationSection({
         activeMembers: 0,
         inactiveMembers: 0,
         activePercentage: 0,
-        totalMembersChange: { percentage: 0, type: 'neutral' as const },
+        totalMembersChange: { percentage: 0, type: "neutral" as const },
       };
     }
 
@@ -57,7 +51,7 @@ export default function MemberActivationSection({
         activeMembers: 0,
         inactiveMembers: 0,
         activePercentage: 0,
-        totalMembersChange: { percentage: 0, type: 'neutral' as const },
+        totalMembersChange: { percentage: 0, type: "neutral" as const },
       };
     }
 
@@ -80,8 +74,8 @@ export default function MemberActivationSection({
     // 리뷰어 활성 회원 수
     reviewers.forEach((reviewer) => {
       if (reviewer.last_access_date) {
-        const access_date_str = reviewer.last_access_date.split(' ')[0];
-        const access_date = parse(access_date_str, 'yyyy-MM-dd', new Date());
+        const access_date_str = reviewer.last_access_date.split(" ")[0];
+        const access_date = parse(access_date_str, "yyyy-MM-dd", new Date());
         access_date.setHours(0, 0, 0, 0);
 
         if (access_date >= start_date && access_date <= end_date) {
@@ -93,8 +87,8 @@ export default function MemberActivationSection({
     // 파트너 활성 회원 수
     partners.forEach((partner) => {
       if (partner.last_access_date) {
-        const access_date_str = partner.last_access_date.split(' ')[0];
-        const access_date = parse(access_date_str, 'yyyy-MM-dd', new Date());
+        const access_date_str = partner.last_access_date.split(" ")[0];
+        const access_date = parse(access_date_str, "yyyy-MM-dd", new Date());
         access_date.setHours(0, 0, 0, 0);
 
         if (access_date >= start_date && access_date <= end_date) {
@@ -108,9 +102,7 @@ export default function MemberActivationSection({
 
     // 활성화 비율 계산
     const active_percentage =
-      total_members > 0
-        ? Math.round((active_members / total_members) * 100)
-        : 0;
+      total_members > 0 ? Math.round((active_members / total_members) * 100) : 0;
 
     // 전월 대비 증감 계산
     // 선택된 기간의 길이를 계산하여 그만큼 이전 기간과 비교
@@ -124,8 +116,8 @@ export default function MemberActivationSection({
     let previous_total_members = 0;
     reviewers.forEach((reviewer) => {
       if (reviewer.join_date) {
-        const join_date_str = reviewer.join_date.split(' ')[0];
-        const join_date = parse(join_date_str, 'yyyy-MM-dd', new Date());
+        const join_date_str = reviewer.join_date.split(" ")[0];
+        const join_date = parse(join_date_str, "yyyy-MM-dd", new Date());
         join_date.setHours(0, 0, 0, 0);
 
         if (join_date <= previous_end_date) {
@@ -135,8 +127,8 @@ export default function MemberActivationSection({
     });
     partners.forEach((partner) => {
       if (partner.join_date) {
-        const join_date_str = partner.join_date.split(' ')[0];
-        const join_date = parse(join_date_str, 'yyyy-MM-dd', new Date());
+        const join_date_str = partner.join_date.split(" ")[0];
+        const join_date = parse(join_date_str, "yyyy-MM-dd", new Date());
         join_date.setHours(0, 0, 0, 0);
 
         if (join_date <= previous_end_date) {
@@ -146,32 +138,26 @@ export default function MemberActivationSection({
     });
 
     // 이전 기간의 활성 회원 수 계산
-    let previous_active_members = 0;
+    let _previous_active_members = 0;
     reviewers.forEach((reviewer) => {
       if (reviewer.last_access_date) {
-        const access_date_str = reviewer.last_access_date.split(' ')[0];
-        const access_date = parse(access_date_str, 'yyyy-MM-dd', new Date());
+        const access_date_str = reviewer.last_access_date.split(" ")[0];
+        const access_date = parse(access_date_str, "yyyy-MM-dd", new Date());
         access_date.setHours(0, 0, 0, 0);
 
-        if (
-          access_date >= previous_start_date &&
-          access_date <= previous_end_date
-        ) {
-          previous_active_members++;
+        if (access_date >= previous_start_date && access_date <= previous_end_date) {
+          _previous_active_members++;
         }
       }
     });
     partners.forEach((partner) => {
       if (partner.last_access_date) {
-        const access_date_str = partner.last_access_date.split(' ')[0];
-        const access_date = parse(access_date_str, 'yyyy-MM-dd', new Date());
+        const access_date_str = partner.last_access_date.split(" ")[0];
+        const access_date = parse(access_date_str, "yyyy-MM-dd", new Date());
         access_date.setHours(0, 0, 0, 0);
 
-        if (
-          access_date >= previous_start_date &&
-          access_date <= previous_end_date
-        ) {
-          previous_active_members++;
+        if (access_date >= previous_start_date && access_date <= previous_end_date) {
+          _previous_active_members++;
         }
       }
     });
@@ -180,29 +166,26 @@ export default function MemberActivationSection({
     const calculate_change_percentage = (
       current: number,
       previous: number
-    ): { percentage: number; type: 'positive' | 'negative' | 'neutral' } => {
+    ): { percentage: number; type: "positive" | "negative" | "neutral" } => {
       if (previous === 0) {
         if (current > 0) {
-          return { percentage: 100, type: 'positive' };
+          return { percentage: 100, type: "positive" };
         }
-        return { percentage: 0, type: 'neutral' };
+        return { percentage: 0, type: "neutral" };
       }
       const change = ((current - previous) / previous) * 100;
       const rounded_change = Math.round(change);
       if (rounded_change > 0) {
-        return { percentage: rounded_change, type: 'positive' };
+        return { percentage: rounded_change, type: "positive" };
       } else if (rounded_change < 0) {
-        return { percentage: Math.abs(rounded_change), type: 'negative' };
+        return { percentage: Math.abs(rounded_change), type: "negative" };
       } else {
-        return { percentage: 0, type: 'neutral' };
+        return { percentage: 0, type: "neutral" };
       }
     };
 
     // 전체 회원 수 증감률
-    const total_members_change = calculate_change_percentage(
-      total_members,
-      previous_total_members
-    );
+    const total_members_change = calculate_change_percentage(total_members, previous_total_members);
 
     return {
       totalMembers: total_members,
@@ -215,7 +198,7 @@ export default function MemberActivationSection({
 
   // 숫자를 천 단위로 포맷팅하는 함수
   const format_number = (num: number): string => {
-    return num.toLocaleString('ko-KR');
+    return num.toLocaleString("ko-KR");
   };
   return (
     <div className={styles.member_activation_section_card}>
@@ -227,7 +210,9 @@ export default function MemberActivationSection({
         {/* 왼쪽: 도넛 차트 */}
         <div className={styles.member_activation_section_donut_chart_container}>
           <MemberActivationDonutChart
-            key={isClient ? `${dateRange.from?.toISOString()}-${dateRange.to?.toISOString()}` : 'init'}
+            key={
+              isClient ? `${dateRange.from?.toISOString()}-${dateRange.to?.toISOString()}` : "init"
+            }
             activePercentage={stats.activePercentage}
           />
         </div>
@@ -236,9 +221,7 @@ export default function MemberActivationSection({
         <div className={styles.member_activation_section_stats_info}>
           {/* 상단: 전체 회원 수 (전체 너비) */}
           <div className={styles.member_activation_section_info_card_full}>
-            <p className={styles.member_activation_section_info_label}>
-              전체 회원 수
-            </p>
+            <p className={styles.member_activation_section_info_label}>전체 회원 수</p>
             {/* 값 표시 */}
             <p className={styles.member_activation_section_info_value}>
               {format_number(stats.totalMembers)}명
@@ -246,22 +229,20 @@ export default function MemberActivationSection({
             {/* 변화율 표시 */}
             <p
               className={
-                styles[
-                  `member_activation_section_info_change_${stats.totalMembersChange.type}`
-                ]
+                styles[`member_activation_section_info_change_${stats.totalMembersChange.type}`]
               }
             >
-              {stats.totalMembersChange.type === 'positive' && (
+              {stats.totalMembersChange.type === "positive" && (
                 <>
                   <span>↑</span> {stats.totalMembersChange.percentage}%
                 </>
               )}
-              {stats.totalMembersChange.type === 'negative' && (
+              {stats.totalMembersChange.type === "negative" && (
                 <>
                   <span>↓</span> {stats.totalMembersChange.percentage}%
                 </>
               )}
-              {stats.totalMembersChange.type === 'neutral' && (
+              {stats.totalMembersChange.type === "neutral" && (
                 <>
                   <span>-</span> 0%
                 </>
@@ -273,9 +254,7 @@ export default function MemberActivationSection({
           <div className={styles.member_activation_section_info_grid}>
             {/* 활성 회원 수 */}
             <div className={styles.member_activation_section_info_card}>
-              <p className={styles.member_activation_section_info_label}>
-                활성 회원 수
-              </p>
+              <p className={styles.member_activation_section_info_label}>활성 회원 수</p>
               <p className={styles.member_activation_section_info_value}>
                 {format_number(stats.activeMembers)}명
               </p>
@@ -287,9 +266,7 @@ export default function MemberActivationSection({
 
             {/* 비활성 회원 수 */}
             <div className={styles.member_activation_section_info_card}>
-              <p className={styles.member_activation_section_info_label}>
-                비활성 회원 수
-              </p>
+              <p className={styles.member_activation_section_info_label}>비활성 회원 수</p>
               <p className={styles.member_activation_section_info_value}>
                 {format_number(stats.inactiveMembers)}명
               </p>

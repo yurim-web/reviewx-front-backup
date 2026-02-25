@@ -24,18 +24,17 @@ interface DivisionFilterDropdownProps {
   on_close: () => void;
   selected_divisions: BlacklistDivision[];
   on_apply: (divisions: BlacklistDivision[]) => void;
-  container_ref?: React.RefObject<HTMLDivElement>;
+  container_ref?: React.RefObject<HTMLDivElement | null>;
 }
 
 // 구분 필터 옵션
 const division_options: BlacklistDivision[] = ["리뷰어", "파트너", "관리자"];
 
 // 구분 옵션을 FilterOption 형태로 변환
-const filter_options: FilterOption<BlacklistDivision>[] =
-  division_options.map((division) => ({
-    value: division,
-    label: division,
-  }));
+const filter_options: FilterOption<BlacklistDivision>[] = division_options.map((division) => ({
+  value: division,
+  label: division,
+}));
 
 export default function DivisionFilterDropdown({
   is_open,
@@ -55,4 +54,3 @@ export default function DivisionFilterDropdown({
     />
   );
 }
-

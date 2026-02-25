@@ -5,7 +5,6 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
-import React, { useMemo } from "react";
 import PostTable from "./PostTable";
 
 const meta: Meta<typeof PostTable> = {
@@ -47,6 +46,3 @@ export const NoSearchResults: Story = {
     search_query: "존재하지않는게시글",
   },
 };
-
-
-

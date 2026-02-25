@@ -1,5 +1,5 @@
 /* ========================================
-   📅 날짜 필터 섹션 컴포넌트
+   
    ======================================== */
 
 /**
@@ -10,12 +10,6 @@
  * 📍 사용 위치:
  * - /manager_ga (GA 관리자 대시보드 메인 페이지)
  * - /manager_sa (SA 관리자 대시보드 메인 페이지)
- *
- * 주요 기능:
- * - 날짜 필터 버튼 (오늘/이번 주/이번 달)
- * - 커스텀 날짜 선택기 (스카이스캐너 스타일)
- * - 날짜 범위 선택 모달
- * - 기본값: 이번 달 (오늘 날짜 기준 이번 달의 첫날 ~ 마지막날)
  *
  */
 
@@ -61,9 +55,7 @@ export default function DateFilterSection({
   // 기본값: 이번 달 (오늘 날짜 기준 이번 달의 첫날 ~ 마지막날)
   // startOfMonth: 주어진 날짜의 월의 첫날을 반환합니다 (예: 2026-01-13 -> 2026-01-01)
   // endOfMonth: 주어진 날짜의 월의 마지막날을 반환합니다 (예: 2026-01-13 -> 2026-01-31)
-  const [selected_date_range, setSelectedDateRange] = useState<
-    DateRange | undefined
-  >(() => {
+  const [selected_date_range, setSelectedDateRange] = useState<DateRange | undefined>(() => {
     const today = new Date();
     return {
       from: startOfMonth(today),
@@ -126,10 +118,7 @@ export default function DateFilterSection({
       // event.target: 클릭한 요소
       // picker_ref.current: 날짜 선택기 버튼 요소
       // contains(): 요소가 다른 요소의 자식인지 확인하는 메서드
-      if (
-        picker_ref.current &&
-        !picker_ref.current.contains(event.target as Node)
-      ) {
+      if (picker_ref.current && !picker_ref.current.contains(event.target as Node)) {
         // 드롭다운 외부를 클릭했으면 닫기
         setIsDateModalOpen(false);
       }
@@ -173,10 +162,7 @@ export default function DateFilterSection({
 
     if (range.from && range.to) {
       // 시작일과 종료일이 모두 있으면 범위 형식으로 표시
-      return `${format(range.from, "yyyy-MM-dd")}~${format(
-        range.to,
-        "yyyy-MM-dd"
-      )}`;
+      return `${format(range.from, "yyyy-MM-dd")}~${format(range.to, "yyyy-MM-dd")}`;
     } else if (range.from) {
       // 시작일만 있으면 시작일만 표시
       return `${format(range.from, "yyyy-MM-dd")}~`;
@@ -192,9 +178,7 @@ export default function DateFilterSection({
       <div className={styles.date_filter_section_button_group}>
         <button
           className={`${styles.date_filter_section_button} ${
-            dateFilter === "today"
-              ? styles.date_filter_section_button_active
-              : ""
+            dateFilter === "today" ? styles.date_filter_section_button_active : ""
           }`}
           onClick={() => onFilterChange("today")}
         >
@@ -202,9 +186,7 @@ export default function DateFilterSection({
         </button>
         <button
           className={`${styles.date_filter_section_button} ${
-            dateFilter === "week"
-              ? styles.date_filter_section_button_active
-              : ""
+            dateFilter === "week" ? styles.date_filter_section_button_active : ""
           }`}
           onClick={() => onFilterChange("week")}
         >
@@ -212,9 +194,7 @@ export default function DateFilterSection({
         </button>
         <button
           className={`${styles.date_filter_section_button} ${
-            dateFilter === "month"
-              ? styles.date_filter_section_button_active
-              : ""
+            dateFilter === "month" ? styles.date_filter_section_button_active : ""
           }`}
           onClick={() => onFilterChange("month")}
         >
@@ -223,10 +203,7 @@ export default function DateFilterSection({
       </div>
 
       {/* 날짜 선택기 컨테이너 - relative positioning을 위해 래퍼 추가 */}
-      <div
-        className={styles.date_filter_section_picker_wrapper}
-        ref={picker_ref}
-      >
+      <div className={styles.date_filter_section_picker_wrapper} ref={picker_ref}>
         {/* 날짜 선택기 - 클릭하면 드롭다운이 열립니다 */}
         <div
           className={styles.date_filter_section_picker}

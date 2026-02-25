@@ -20,10 +20,7 @@ import PartnerTableCommon, {
 import styles from "@/styles/manager/common/member/partners/partner_table.module.css";
 
 import type { Channel } from "@/data/manager/common/filterOptions";
-import type {
-  PartnerDivision,
-  PartnerStatus,
-} from "@/data/manager_ga/common/filterOptions";
+import type { PartnerDivision, PartnerStatus } from "@/data/manager_ga/common/filterOptions";
 import type { PartnerType } from "@/components/manager/common/member/partners/filter/TypeFilterModal";
 
 interface PartnerTableProps {
@@ -39,70 +36,68 @@ interface PartnerTableProps {
 }
 
 // forwardRef를 사용하여 ref를 PartnerTableCommon에 전달합니다
-const PartnerTable = forwardRef<PartnerTableRef, PartnerTableProps>(
-  function PartnerTable(
-    {
-      search_query,
-      selected_channels,
-      selected_divisions,
-      selected_types,
-      selected_statuses,
-      detail_path,
-    },
-    ref
-  ) {
-    return (
-      <PartnerTableCommon
-        ref={ref}
-        search_query={search_query}
-        selected_channels={selected_channels}
-        selected_divisions={selected_divisions}
-        selected_types={selected_types}
-        selected_statuses={selected_statuses}
-        styles={
-          styles as {
-            table_container: string;
-            table_header_wrapper: string;
-            table_header: string;
-            table_body: string;
-            table_row: string;
-            table_cell_checkbox: string;
-            table_cell_number: string;
-            table_cell_business_name: string;
-            table_cell_division: string;
-            table_cell_last_access: string;
-            table_cell_join_date: string;
-            table_cell_campaign_in_progress: string;
-            table_cell_campaign_completed: string;
-            table_cell_current_points: string;
-            table_cell_used_points: string;
-            table_cell_status_type: string;
-            table_cell_status: string;
-            checkbox: string;
-            sort_icon: string;
-            business_name_wrapper: string;
-            business_name_row: string;
-            business_name_text: string;
-            business_info_text: string;
-            download_info_button: string;
-            download_info_icon: string;
-            division_tag: string;
-            division_tag_corporate: string;
-            division_tag_individual: string;
-            status_tag: string;
-            status_tag_normal: string;
-            status_tag_suspended: string;
-            status_tag_permanent: string;
-            restriction_button: string;
-            restriction_button_icon: string;
-            restriction_button_text: string;
-            empty_message: string;
-          }
+const PartnerTable = forwardRef<PartnerTableRef, PartnerTableProps>(function PartnerTable(
+  {
+    search_query,
+    selected_channels,
+    selected_divisions,
+    selected_types,
+    selected_statuses,
+    detail_path,
+  },
+  ref
+) {
+  return (
+    <PartnerTableCommon
+      ref={ref}
+      search_query={search_query}
+      selected_channels={selected_channels}
+      selected_divisions={selected_divisions}
+      selected_types={selected_types}
+      selected_statuses={selected_statuses}
+      styles={
+        styles as Record<string, string> & {
+          table_container: string;
+          table_grid_wrapper: string;
+          table_header: string;
+          table_body: string;
+          table_row: string;
+          table_cell_checkbox: string;
+          table_cell_number: string;
+          table_cell_business_name: string;
+          table_cell_division: string;
+          table_cell_last_access: string;
+          table_cell_join_date: string;
+          table_cell_campaign_in_progress: string;
+          table_cell_campaign_completed: string;
+          table_cell_current_points: string;
+          table_cell_used_points: string;
+          table_cell_status_type: string;
+          table_cell_status: string;
+          checkbox: string;
+          sort_icon: string;
+          business_name_wrapper: string;
+          business_name_row: string;
+          business_name_text: string;
+          business_info_text: string;
+          download_info_button: string;
+          download_info_icon: string;
+          division_tag: string;
+          division_tag_corporate: string;
+          division_tag_individual: string;
+          status_tag: string;
+          status_tag_normal: string;
+          status_tag_suspended: string;
+          status_tag_permanent: string;
+          restriction_button: string;
+          restriction_button_icon: string;
+          restriction_button_text: string;
+          empty_message: string;
         }
-        detail_path={detail_path}
-      />
-    );
-  }
-);
+      }
+      detail_path={detail_path}
+    />
+  );
+});
 
 export default PartnerTable;

@@ -23,6 +23,13 @@ export const Default: Story = {
       <PostFilterSection
         search_query={searchQuery}
         on_search_change={setSearchQuery}
+        selected_divisions={[]}
+        on_divisions_change={() => {}}
+        selected_targets={[]}
+        on_targets_change={() => {}}
+        selected_date_range={undefined}
+        on_date_range_change={() => {}}
+        manager_type="ga"
       />
     );
   },

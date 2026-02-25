@@ -19,7 +19,6 @@
 
 "use client";
 
-import Image from "next/image";
 import Section from "@/components/manager/common/member/member_detail/Section";
 import type { ChannelDetail } from "@/data/manager_ga/member/reviewers";
 import styles from "@/styles/manager/common/member/member_detail/reviewers/channel_info_section.module.css";
@@ -46,9 +45,7 @@ interface ChannelInfoSectionProps {
   channel_details: ChannelDetail[];
 }
 
-export default function ChannelInfoSection({
-  channel_details,
-}: ChannelInfoSectionProps) {
+export default function ChannelInfoSection({ channel_details }: ChannelInfoSectionProps) {
   // 숫자를 천 단위로 포맷하는 함수
   const format_number = (num: number): string => {
     return num.toLocaleString();
@@ -60,8 +57,7 @@ export default function ChannelInfoSection({
         {channel_details.map((channel_detail, index) => (
           <div key={index} className={styles.channel_card}>
             <div className={styles.channel_name}>
-              {channel_name_map[channel_detail.channel] ||
-                channel_detail.channel}
+              {channel_name_map[channel_detail.channel] || channel_detail.channel}
             </div>
 
             {channel_detail.is_connected ? (
@@ -70,21 +66,15 @@ export default function ChannelInfoSection({
                   <>
                     <div className={styles.channel_stat_row}>
                       <span>일방문</span>
-                      <span>
-                        {format_number(channel_detail.daily_visits || 0)}
-                      </span>
+                      <span>{format_number(channel_detail.daily_visits || 0)}</span>
                     </div>
                     <div className={styles.channel_stat_row}>
                       <span>총방문</span>
-                      <span>
-                        {format_number(channel_detail.total_visits || 0)}
-                      </span>
+                      <span>{format_number(channel_detail.total_visits || 0)}</span>
                     </div>
                     <div className={styles.channel_stat_row}>
                       <span>이웃수</span>
-                      <span>
-                        {format_number(channel_detail.neighbors || 0)}
-                      </span>
+                      <span>{format_number(channel_detail.neighbors || 0)}</span>
                     </div>
                   </>
                 )}
@@ -109,9 +99,7 @@ export default function ChannelInfoSection({
                 {channel_detail.channel === "Youtube" && (
                   <div className={styles.channel_stat_row}>
                     <span>구독자</span>
-                    <span>
-                      {format_number(channel_detail.subscribers || 0)}
-                    </span>
+                    <span>{format_number(channel_detail.subscribers || 0)}</span>
                   </div>
                 )}
               </div>

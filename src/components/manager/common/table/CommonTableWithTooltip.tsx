@@ -24,7 +24,6 @@
 import { useState, useEffect, useRef, ReactNode } from "react";
 import { createPortal } from "react-dom";
 import CommonTable, {
-  type TableColumn,
   type TableRowData,
   type CommonTableProps,
   type CellRenderer,
@@ -42,7 +41,7 @@ export interface TooltipConfig {
   /** 툴팁에서 제외할 컬럼 키 (column_key가 "all"일 때만 사용) */
   exclude_column_keys?: string[];
   /** 커스텀 툴팁 내용. (row, column_key) => ReactNode. column_key가 "all"일 때 두 번째 인자 전달 */
-  tooltip_content?: (row: any, column_key?: string) => ReactNode;
+  tooltip_content?: (row: TableRowData, column_key?: string) => ReactNode;
   tooltip_class_name?: string;
   text_class_name?: string;
   /** 컬럼별 overflow 검사 대상 CSS 선택자. 말줄임이 내부 요소(예: .title_text)에서 나는 경우 해당 선택자로 요소를 찾아 검사 */
@@ -50,8 +49,10 @@ export interface TooltipConfig {
 }
 
 // CommonTableWithTooltip Props 타입
-export interface CommonTableWithTooltipProps<T extends TableRowData>
-  extends Omit<CommonTableProps<T>, "render_cell"> {
+export interface CommonTableWithTooltipProps<T extends TableRowData> extends Omit<
+  CommonTableProps<T>,
+  "render_cell"
+> {
   render_cell: CellRenderer<T>;
   tooltip_config?: TooltipConfig; // 툴팁 설정 (선택사항)
   on_row_wrapper_hover?: (row_id: string | null) => void; // row_wrapper 호버 이벤트 (신고 아이콘 등용)
@@ -142,10 +143,7 @@ export default function CommonTableWithTooltip<T extends TableRowData>({
   };
 
   // overflow 검사 및 위치 계산에 쓸 요소 (제목처럼 내부 요소에서 말줄임 나는 경우 대비)
-  const get_overflow_element = (
-    wrapper: HTMLElement,
-    column_key: string
-  ): HTMLElement => {
+  const get_overflow_element = (wrapper: HTMLElement, column_key: string): HTMLElement => {
     const selector = tooltip_config?.overflow_selector_by_column?.[column_key];
     if (selector) {
       const el = wrapper.querySelector<HTMLElement>(selector);
@@ -219,9 +217,7 @@ export default function CommonTableWithTooltip<T extends TableRowData>({
                   whiteSpace: "nowrap",
                 }
           }
-          onMouseEnter={(e) =>
-            handle_tooltip_cell_mouse_enter(row.id, column.key, e)
-          }
+          onMouseEnter={(e) => handle_tooltip_cell_mouse_enter(row.id, column.key, e)}
           onMouseLeave={handle_tooltip_cell_mouse_leave}
         >
           {cell_content}
@@ -294,9 +290,7 @@ export default function CommonTableWithTooltip<T extends TableRowData>({
     "";
 
   const hovered_row =
-    tooltip_hovered_cell && data
-      ? data.find((r) => r.id === tooltip_hovered_cell.row_id)
-      : null;
+    tooltip_hovered_cell && data ? data.find((r) => r.id === tooltip_hovered_cell.row_id) : null;
 
   const tooltip_portal =
     mounted &&
@@ -331,9 +325,7 @@ export default function CommonTableWithTooltip<T extends TableRowData>({
           data={data}
           render_cell={render_cell_with_tooltip}
           styles={styles}
-          render_row_wrapper={
-            tooltip_config ? render_row_wrapper_with_tooltip : render_row_wrapper
-          }
+          render_row_wrapper={tooltip_config ? render_row_wrapper_with_tooltip : render_row_wrapper}
         />
       </div>
       {tooltip_portal}

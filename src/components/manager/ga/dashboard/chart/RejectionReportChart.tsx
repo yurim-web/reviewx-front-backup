@@ -1,5 +1,5 @@
 /* ========================================
-   📊 반려/신고 통계 차트 컴포넌트
+   /
    ======================================== */
 
 /**
@@ -7,11 +7,6 @@
  *
  * 목적: 반려와 신고 통계를 라인 차트로 표시하는 컴포넌트입니다.
  *
- * 주요 기능:
- * - 반려 건수 라인 차트 (오렌지색)
- * - 신고 건수 라인 차트 (빨간색)
- * - 날짜별 데이터 표시
- * - 툴팁으로 상세 정보 표시
  */
 
 "use client";
@@ -33,7 +28,6 @@ import {
   differenceInDays,
   startOfWeek,
   endOfWeek,
-  isSameDay,
   parse,
 } from "date-fns";
 import styles from "@/styles/manager_ga/dashboard/charts.module.css";
@@ -52,8 +46,14 @@ interface RejectionReportChartProps {
   dateRange: DateRange;
 }
 
+interface ChartTooltipProps {
+  active?: boolean;
+  payload?: Array<{ value: number; payload: ChartData }>;
+  coordinate?: { x: number; y: number };
+}
+
 // 커스텀 툴팁 - 형태/크로스헤어 유지, 툴팁 등장만 캠페인 모집 차트처럼 애니메이션 없음(coordinate 배치)
-const CustomTooltip = ({ active, payload, coordinate }: any) => {
+const CustomTooltip = ({ active, payload, coordinate }: ChartTooltipProps) => {
   if (!active || !payload?.length || !coordinate) return null;
 
   const rejection_value = payload[0].value ?? 0;
@@ -79,9 +79,7 @@ const CustomTooltip = ({ active, payload, coordinate }: any) => {
   );
 };
 
-export default function RejectionReportChart({
-  dateRange,
-}: RejectionReportChartProps) {
+export default function RejectionReportChart({ dateRange }: RejectionReportChartProps) {
   // 데이터 로딩 상태 관리
   const [is_loading, setIsLoading] = useState<boolean>(true);
   const [error_message, setErrorMessage] = useState<string | null>(null);
@@ -181,10 +179,7 @@ export default function RejectionReportChart({
         const reported_list = get_reported_campaign_list();
 
         // 날짜별로 반려/신고 건수 집계
-        const data_map = new Map<
-          string,
-          { rejection: number; report: number }
-        >();
+        const data_map = new Map<string, { rejection: number; report: number }>();
 
         // 모든 날짜를 초기화 (0으로 시작)
         all_dates.forEach((date) => {
@@ -196,11 +191,7 @@ export default function RejectionReportChart({
         rejected_list.forEach((item) => {
           // processed_date 형식: "2026-02-01 14:23"
           const processed_date_str = item.processed_date.split(" ")[0]; // 날짜 부분만 추출
-          const processed_date = parse(
-            processed_date_str,
-            "yyyy-MM-dd",
-            new Date(),
-          );
+          const processed_date = parse(processed_date_str, "yyyy-MM-dd", new Date());
           // 시간 부분 제거하여 날짜만 비교
           processed_date.setHours(0, 0, 0, 0);
 
@@ -228,11 +219,7 @@ export default function RejectionReportChart({
         reported_list.forEach((item) => {
           // processed_date 형식: "2026-02-01 18:56"
           const processed_date_str = item.processed_date.split(" ")[0]; // 날짜 부분만 추출
-          const processed_date = parse(
-            processed_date_str,
-            "yyyy-MM-dd",
-            new Date(),
-          );
+          const processed_date = parse(processed_date_str, "yyyy-MM-dd", new Date());
           // 시간 부분 제거하여 날짜만 비교
           processed_date.setHours(0, 0, 0, 0);
 
@@ -340,10 +327,7 @@ export default function RejectionReportChart({
       onFocus={(e) => e.target.blur()} // 포커스 시 즉시 블러 처리
     >
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          data={chart_data}
-          margin={{ top: 20, right: 28, left: 12, bottom: 10 }}
-        >
+        <LineChart data={chart_data} margin={{ top: 20, right: 28, left: 12, bottom: 10 }}>
           {/* 그리드 라인 - 수평선만 표시 (Y축 구분선 5개, 일반 선) */}
           <CartesianGrid stroke="#F2F2F2" vertical={false} horizontal={true} />
 

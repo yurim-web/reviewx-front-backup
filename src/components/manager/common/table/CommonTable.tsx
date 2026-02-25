@@ -90,6 +90,7 @@ export interface TableColumn {
 // 테이블 행 데이터 타입 (제네릭)
 export type TableRowData = {
   id: string; // 각 행의 고유 ID (필수)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any; // 기타 데이터 필드들
 };
 
@@ -133,11 +134,7 @@ export interface CommonTableProps<T extends TableRowData> {
 
   // 커스텀 행 래퍼 (각 행을 감쌀 요소, 추가 기능용)
   // 주의: 툴팁 기능이 필요한 경우 CommonTableWithTooltip 컴포넌트를 사용하세요
-  render_row_wrapper?: (
-    row: T,
-    row_content: ReactNode,
-    index: number
-  ) => ReactNode;
+  render_row_wrapper?: (row: T, row_content: ReactNode, index: number) => ReactNode;
 }
 
 /* ========================================
@@ -205,9 +202,7 @@ export default function CommonTable<T extends TableRowData>({
     on_select_change(new_selected_ids);
 
     // 전체 선택 상태 업데이트
-    set_is_all_selected(
-      new_selected_ids.length === data.length && data.length > 0
-    );
+    set_is_all_selected(new_selected_ids.length === data.length && data.length > 0);
   };
 
   // 전체 선택/해제 핸들러
@@ -273,10 +268,7 @@ export default function CommonTable<T extends TableRowData>({
 
         {/* 일반 컬럼들 */}
         {columns.map((column) => (
-          <div
-            key={column.key}
-            className={`${styles.table_header_cell} ${column.className || ""}`}
-          >
+          <div key={column.key} className={`${styles.table_header_cell} ${column.className || ""}`}>
             <span>{column.label}</span>
             {/* 정렬 가능한 컬럼은 화살표 아이콘 표시 */}
             {column.sortable && (
@@ -326,10 +318,7 @@ export default function CommonTable<T extends TableRowData>({
 
         {/* 각 컬럼에 대한 셀 렌더링 */}
         {columns.map((column) => (
-          <div
-            key={column.key}
-            className={`${styles.table_cell} ${column.className || ""}`}
-          >
+          <div key={column.key} className={`${styles.table_cell} ${column.className || ""}`}>
             {render_cell(row, column, index)}
           </div>
         ))}
@@ -360,10 +349,7 @@ export default function CommonTable<T extends TableRowData>({
     return (
       <div className={`${styles.table_body} ${body_class_name}`}>
         {data.map((row, index) => (
-          <div
-            key={`${row.id}-${index}`}
-            className={row_wrapper_class || undefined}
-          >
+          <div key={`${row.id}-${index}`} className={row_wrapper_class || undefined}>
             {render_table_row(row, index)}
           </div>
         ))}
@@ -382,11 +368,7 @@ export default function CommonTable<T extends TableRowData>({
 
   // 메인 렌더링 (table_grid_wrapper가 있으면 헤더+바디를 한 그리드로 감쌈)
   return (
-    <div
-      className={`${
-        styles.table_container || styles.table_section
-      } ${container_class_name}`}
-    >
+    <div className={`${styles.table_container || styles.table_section} ${container_class_name}`}>
       {styles.table_grid_wrapper ? (
         <div className={styles.table_grid_wrapper}>{table_content}</div>
       ) : (

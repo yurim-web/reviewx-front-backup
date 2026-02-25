@@ -21,10 +21,7 @@ import TypeFilterDropdown, {
 } from "@/components/manager/common/member/partners/filter/TypeFilterDropdown";
 import StatusFilterDropdown from "@/components/manager/common/member/partners/filter/StatusFilterDropdown";
 import type { Channel } from "@/data/manager/common/filterOptions";
-import type {
-  PartnerDivision,
-  PartnerStatus,
-} from "@/data/manager_ga/common/filterOptions";
+import type { PartnerDivision, PartnerStatus } from "@/data/manager_ga/common/filterOptions";
 
 interface PartnerFilterSectionProps {
   // 검색어 상태
@@ -54,6 +51,7 @@ const channel_name_map: Record<Channel, string> = {
   Mission: "미션",
   Reels: "릴스",
   Shorts: "쇼츠",
+  Review: "구매평",
 };
 
 export default function PartnerFilterSection({
@@ -83,10 +81,14 @@ export default function PartnerFilterSection({
       on_statuses_change={on_statuses_change}
       on_restriction_click={on_restriction_click}
       channel_name_map={channel_name_map}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ChannelFilterDropdown={ChannelFilterDropdown as any}
       grade_or_division_label="구분"
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       GradeOrDivisionFilterDropdown={DivisionFilterDropdown as any}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       TypeFilterDropdown={TypeFilterDropdown as any}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       StatusFilterDropdown={StatusFilterDropdown as any}
       download_button_text="파트너 목록 다운로드"
     />

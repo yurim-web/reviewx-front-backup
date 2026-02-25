@@ -38,6 +38,7 @@ import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.
 
 // 필터 모달 컴포넌트 타입 정의 (유연하게 받기 위해 any 사용)
 // 실제 필터 모달들은 selected_channels, selected_grades 등 다양한 prop 이름을 사용합니다
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type FilterModalComponent<T> = React.ComponentType<any>;
 
 interface MemberFilterSectionProps<TChannel, TGradeOrDivision, TType, TStatus> {
@@ -57,13 +58,17 @@ interface MemberFilterSectionProps<TChannel, TGradeOrDivision, TType, TStatus> {
   on_restriction_click?: () => void;
   // 채널 필터 관련
   channel_name_map: Record<string, string>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ChannelFilterDropdown: React.ComponentType<any>;
   // 등급/구분 필터 관련 (리뷰어는 등급, 파트너는 구분)
   grade_or_division_label: string; // "등급" 또는 "구분"
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   GradeOrDivisionFilterDropdown: React.ComponentType<any>;
   // 유형 필터 관련
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   TypeFilterDropdown: React.ComponentType<any>;
   // 상태 필터 관련
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   StatusFilterDropdown: React.ComponentType<any>;
   // 다운로드 버튼 텍스트
   download_button_text: string;
@@ -73,7 +78,7 @@ export default function MemberFilterSection<
   TChannel extends string,
   TGradeOrDivision extends string,
   TType extends string,
-  TStatus extends string
+  TStatus extends string,
 >({
   search_query,
   on_search_change,
@@ -95,21 +100,17 @@ export default function MemberFilterSection<
   download_button_text,
 }: MemberFilterSectionProps<TChannel, TGradeOrDivision, TType, TStatus>) {
   // 필터 드롭다운 열림/닫힘 상태 관리
-  const [is_channel_dropdown_open, set_is_channel_dropdown_open] =
-    useState(false);
+  const [is_channel_dropdown_open, set_is_channel_dropdown_open] = useState(false);
   const channel_filter_button_ref = useRef<HTMLDivElement>(null);
 
-  const [
-    is_grade_or_division_dropdown_open,
-    set_is_grade_or_division_dropdown_open,
-  ] = useState(false);
+  const [is_grade_or_division_dropdown_open, set_is_grade_or_division_dropdown_open] =
+    useState(false);
   const grade_or_division_filter_button_ref = useRef<HTMLDivElement>(null);
 
   const [is_type_dropdown_open, set_is_type_dropdown_open] = useState(false);
   const type_filter_button_ref = useRef<HTMLDivElement>(null);
 
-  const [is_status_dropdown_open, set_is_status_dropdown_open] =
-    useState(false);
+  const [is_status_dropdown_open, set_is_status_dropdown_open] = useState(false);
   const status_filter_button_ref = useRef<HTMLDivElement>(null);
 
   const [selected_sort, set_selected_sort] = useState("최신순");
@@ -241,14 +242,12 @@ export default function MemberFilterSection<
                 styles={{
                   filter_item: filterStyles.filter_item,
                   checkbox_icon: filterStyles.checkbox_icon,
-                  checkbox_icon_checked:
-                    filterButtonStyles.checkbox_icon_checked,
+                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
                   filter_text: filterStyles.filter_text,
                   dropdown_arrow: filterStyles.dropdown_arrow,
                   filter_item_active: filterButtonStyles.filter_item_active,
                   filter_text_active: filterButtonStyles.filter_text_active,
-                  dropdown_arrow_active:
-                    filterButtonStyles.dropdown_arrow_active,
+                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
                 }}
               />
               <ChannelFilterDropdown
@@ -267,31 +266,27 @@ export default function MemberFilterSection<
             >
               <FilterButton
                 label={grade_or_division_label}
-                onClick={() =>
-                  set_is_grade_or_division_dropdown_open((prev) => !prev)
-                }
+                onClick={() => set_is_grade_or_division_dropdown_open((prev) => !prev)}
                 isActive={selected_divisions.length > 0}
                 styles={{
                   filter_item: filterStyles.filter_item,
                   checkbox_icon: filterStyles.checkbox_icon,
-                  checkbox_icon_checked:
-                    filterButtonStyles.checkbox_icon_checked,
+                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
                   filter_text: filterStyles.filter_text,
                   dropdown_arrow: filterStyles.dropdown_arrow,
                   filter_item_active: filterButtonStyles.filter_item_active,
                   filter_text_active: filterButtonStyles.filter_text_active,
-                  dropdown_arrow_active:
-                    filterButtonStyles.dropdown_arrow_active,
+                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
                 }}
               />
               {React.createElement(GradeOrDivisionFilterDropdown, {
                 is_open: is_grade_or_division_dropdown_open,
                 on_close: () => set_is_grade_or_division_dropdown_open(false),
-                [grade_or_division_label === "등급"
-                  ? "selected_grades"
-                  : "selected_divisions"]: selected_divisions,
+                [grade_or_division_label === "등급" ? "selected_grades" : "selected_divisions"]:
+                  selected_divisions,
                 on_apply: handle_grade_or_division_apply,
                 container_ref: grade_or_division_filter_button_ref,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
               } as any)}
             </div>
 
@@ -307,14 +302,12 @@ export default function MemberFilterSection<
                 styles={{
                   filter_item: filterStyles.filter_item,
                   checkbox_icon: filterStyles.checkbox_icon,
-                  checkbox_icon_checked:
-                    filterButtonStyles.checkbox_icon_checked,
+                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
                   filter_text: filterStyles.filter_text,
                   dropdown_arrow: filterStyles.dropdown_arrow,
                   filter_item_active: filterButtonStyles.filter_item_active,
                   filter_text_active: filterButtonStyles.filter_text_active,
-                  dropdown_arrow_active:
-                    filterButtonStyles.dropdown_arrow_active,
+                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
                 }}
               />
               <TypeFilterDropdown
@@ -338,14 +331,12 @@ export default function MemberFilterSection<
                 styles={{
                   filter_item: filterStyles.filter_item,
                   checkbox_icon: filterStyles.checkbox_icon,
-                  checkbox_icon_checked:
-                    filterButtonStyles.checkbox_icon_checked,
+                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
                   filter_text: filterStyles.filter_text,
                   dropdown_arrow: filterStyles.dropdown_arrow,
                   filter_item_active: filterButtonStyles.filter_item_active,
                   filter_text_active: filterButtonStyles.filter_text_active,
-                  dropdown_arrow_active:
-                    filterButtonStyles.dropdown_arrow_active,
+                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
                 }}
               />
               <StatusFilterDropdown
@@ -373,9 +364,7 @@ export default function MemberFilterSection<
               alt="다운로드"
               className={filterStyles.download_icon}
             />
-            <span className={filterStyles.download_button_text}>
-              {download_button_text}
-            </span>
+            <span className={filterStyles.download_button_text}>{download_button_text}</span>
           </div>
         }
         // 오른쪽에 위치할 버튼 (차단--> 이용제한)
@@ -397,10 +386,7 @@ export default function MemberFilterSection<
             tabIndex={on_restriction_click ? 0 : -1}
             onKeyDown={(e) => {
               // 키보드 접근성: Enter 키나 Space 키를 누르면 클릭과 동일하게 동작합니다
-              if (
-                on_restriction_click &&
-                (e.key === "Enter" || e.key === " ")
-              ) {
+              if (on_restriction_click && (e.key === "Enter" || e.key === " ")) {
                 e.preventDefault();
                 on_restriction_click();
               }
@@ -412,9 +398,7 @@ export default function MemberFilterSection<
               alt="차단"
               className={filterStyles.block_icon}
             />
-            <span className={filterStyles.restriction_button_text}>
-              이용 제한
-            </span>
+            <span className={filterStyles.restriction_button_text}>이용 제한</span>
           </div>
         }
         // 활성 필터 태그들

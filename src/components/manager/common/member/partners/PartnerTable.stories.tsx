@@ -5,7 +5,6 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
-import React, { useMemo } from "react";
 import PartnerTable from "./PartnerTable";
 
 const meta: Meta<typeof PartnerTable> = {
@@ -54,7 +53,3 @@ export const SAAdmin: Story = {
     detail_path: "/manager_sa/member/partners",
   },
 };
-
-
-
-

@@ -1,5 +1,5 @@
 /* ========================================
-   🔘 필터 버튼 컴포넌트 (공통)
+   ()
    ======================================== */
 
 /**
@@ -12,11 +12,6 @@
  * - CampaignProgressFilterSection.tsx (캠페인 진행 상황 필터)
  * - MemberFilterSection.tsx (회원 필터)
  * - 기타 필터가 필요한 모든 페이지
- *
- * 주요 기능:
- * - 필터 버튼 UI 제공 (체크박스 아이콘, 텍스트, 드롭다운 화살표)
- * - 선택 상태 표시 (나중에 아이콘으로 표시 예정)
- * - 클릭 이벤트 처리
  *
  * React 핵심 개념:
  * - props: 부모 컴포넌트에서 전달받는 데이터
@@ -88,31 +83,19 @@ export default function FilterButton({
    * 배열을 사용하여 클래스를 조합하고, filter로 undefined를 제거한 후 join으로 연결합니다.
    * 이렇게 하면 CSS 모듈에서 클래스가 올바르게 적용됩니다.
    */
-  const checkboxIconClassName = [
-    styles.checkbox_icon,
-    isActive && styles.checkbox_icon_checked,
-  ]
+  const checkboxIconClassName = [styles.checkbox_icon, isActive && styles.checkbox_icon_checked]
     .filter(Boolean)
     .join(" ");
 
-  const filterItemClassName = [
-    styles.filter_item,
-    isActive && styles.filter_item_active,
-  ]
+  const filterItemClassName = [styles.filter_item, isActive && styles.filter_item_active]
     .filter(Boolean)
     .join(" ");
 
-  const filterTextClassName = [
-    styles.filter_text,
-    isActive && styles.filter_text_active,
-  ]
+  const filterTextClassName = [styles.filter_text, isActive && styles.filter_text_active]
     .filter(Boolean)
     .join(" ");
 
-  const dropdownArrowClassName = [
-    styles.dropdown_arrow,
-    isActive && styles.dropdown_arrow_active,
-  ]
+  const dropdownArrowClassName = [styles.dropdown_arrow, isActive && styles.dropdown_arrow_active]
     .filter(Boolean)
     .join(" ");
 
@@ -149,11 +132,7 @@ export default function FilterButton({
         - 활성화 상태(isActive=true): manager_dropdown_ok.svg (핑크색 화살표)
         - 조건부 렌더링으로 상태에 따라 다른 아이콘 표시
       */}
-      <img
-        src={dropdownIconSrc}
-        alt="드롭다운"
-        className={dropdownArrowClassName}
-      />
+      <img src={dropdownIconSrc} alt="드롭다운" className={dropdownArrowClassName} />
     </div>
   );
 }

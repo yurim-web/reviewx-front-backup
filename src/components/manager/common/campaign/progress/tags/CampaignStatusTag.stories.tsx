@@ -45,10 +45,6 @@ const meta: Meta<typeof CampaignStatusTag> = {
       control: "select",
       options: ["예정", "신청", "진행", "종료", "취소", "긴급"],
     },
-    styles: {
-      description: "CSS 모듈 스타일 객체",
-      control: false,
-    },
   },
 };
 
@@ -60,7 +56,6 @@ type Story = StoryObj<typeof CampaignStatusTag>;
 export const Scheduled: Story = {
   args: {
     status: "예정",
-    styles: tagsStyles,
   },
 };
 
@@ -68,7 +63,6 @@ export const Scheduled: Story = {
 export const Applied: Story = {
   args: {
     status: "신청",
-    styles: tagsStyles,
   },
 };
 
@@ -76,7 +70,6 @@ export const Applied: Story = {
 export const Progress: Story = {
   args: {
     status: "진행",
-    styles: tagsStyles,
   },
 };
 
@@ -84,7 +77,6 @@ export const Progress: Story = {
 export const Ended: Story = {
   args: {
     status: "종료",
-    styles: tagsStyles,
   },
 };
 
@@ -92,7 +84,6 @@ export const Ended: Story = {
 export const Cancelled: Story = {
   args: {
     status: "취소",
-    styles: tagsStyles,
   },
 };
 
@@ -100,21 +91,13 @@ export const Cancelled: Story = {
 export const Urgent: Story = {
   args: {
     status: "긴급",
-    styles: tagsStyles,
   },
 };
 
 // 모든 상태 태그 비교
 export const AllStatuses: Story = {
   render: () => {
-    const statuses: CampaignStatus[] = [
-      "예정",
-      "신청",
-      "진행",
-      "종료",
-      "취소",
-      "긴급",
-    ];
+    const statuses: CampaignStatus[] = ["예정", "신청", "진행", "종료", "취소", "긴급"];
 
     return React.createElement(
       "div",
@@ -130,7 +113,6 @@ export const AllStatuses: Story = {
         React.createElement(CampaignStatusTag, {
           key: status,
           status,
-          styles: tagsStyles,
         })
       )
     );

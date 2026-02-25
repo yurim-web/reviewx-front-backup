@@ -18,6 +18,7 @@ export type Channel =
   | "Instagram"
   | "Mission"
   | "Reels"
+  | "Review"
   | "Shorts"
   | "Store"
   | "Youtube";
@@ -28,6 +29,7 @@ export const channel_label_map: Record<Channel, string> = {
   Youtube: "유튜브",
   Clip: "클립",
   Reels: "릴스",
+  Review: "구매평",
   Shorts: "쇼츠",
   Mission: "미션",
   Store: "스토어",
@@ -40,14 +42,7 @@ interface ChannelFilterModalProps {
   on_apply: (channels: Channel[]) => void;
 }
 
-const channel_options: Channel[] = [
-  "Blog",
-  "Instagram",
-  "Youtube",
-  "Clip",
-  "Reels",
-  "Shorts",
-];
+const channel_options: Channel[] = ["Blog", "Instagram", "Youtube", "Clip", "Reels", "Shorts"];
 
 const ChannelFilterModalComponent = createFilterModal<Channel>({
   options: channel_options,

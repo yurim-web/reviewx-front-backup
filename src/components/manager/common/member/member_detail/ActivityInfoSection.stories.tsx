@@ -5,10 +5,7 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
-import React from "react";
-import ActivityInfoSection, {
-  type ActivityInfoItem,
-} from "./ActivityInfoSection";
+import ActivityInfoSection from "./ActivityInfoSection";
 
 const meta: Meta<typeof ActivityInfoSection> = {
   title: "Manager/Common/Member/MemberDetail/ActivityInfoSection",
@@ -132,7 +129,3 @@ export const Empty: Story = {
     ],
   },
 };
-
-
-
-

@@ -28,7 +28,6 @@
 
 "use client";
 
-import Image from "next/image";
 import styles from "@/styles/manager/common/member/member_detail/info_card.module.css";
 
 interface InfoCardProps {
@@ -83,11 +82,7 @@ export default function InfoCard({
 
         {on_button_click && (
           <span className={styles.arrow_button} aria-hidden>
-            <img
-              src="/images/icons/arronw_btn.svg"
-              alt=""
-              className={styles.arrow_icon}
-            />
+            <img src="/images/icons/arronw_btn.svg" alt="" className={styles.arrow_icon} />
           </span>
         )}
 

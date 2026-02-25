@@ -1,5 +1,5 @@
 /* ========================================
-   📊 신고 내역 통계 섹션 컴포넌트
+   
    ======================================== */
 
 /**
@@ -7,13 +7,8 @@
  *
  * 목적: GA 관리자 신고내역 페이지의 신고 내역 통계 섹션을 표시합니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /manager_ga/campaign/reported (신고내역 페이지)
- *
- * 주요 기능:
- * - 신고 코드별 신고 횟수를 표시합니다
- * - 필터(검색어, 신고 코드, 날짜 범위)에 따라 동적으로 통계를 계산합니다
- * - 숫자를 천 단위로 포맷팅하여 표시합니다
  *
  */
 
@@ -21,10 +16,7 @@
 
 import { useMemo } from "react";
 import styles from "@/styles/manager_ga/campaign/campaign_common.module.css";
-import {
-  reported_campaign_list,
-  type ReportCode,
-} from "@/data/manager_ga/reported";
+import { reported_campaign_list, type ReportCode } from "@/data/manager_ga/reported";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 
 interface ReportStatsSectionProps {
@@ -80,10 +72,7 @@ export default function ReportStatsSection({
 
       // 신고 코드 필터
       // selected_report_codes가 비어있지 않고, 현재 항목의 신고 코드가 선택된 코드 목록에 없으면 제외
-      if (
-        selected_report_codes.length > 0 &&
-        !selected_report_codes.includes(item.report_code)
-      ) {
+      if (selected_report_codes.length > 0 && !selected_report_codes.includes(item.report_code)) {
         return false;
       }
 
@@ -148,9 +137,7 @@ export default function ReportStatsSection({
           <div key={code} className={styles.report_stats_item}>
             <span className={styles.report_code}>{code}</span>
             <span className={styles.report_stats_separator}>·</span>
-            <span className={styles.text}>
-              {format_number(stats_by_code[code])}회
-            </span>
+            <span className={styles.text}>{format_number(stats_by_code[code])}회</span>
           </div>
         ))}
       </div>

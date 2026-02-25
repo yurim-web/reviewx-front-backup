@@ -7,15 +7,8 @@
  *
  * 목적: 출금 요청을 반려할 때 반려 사유를 입력하도록 하는 모달입니다.
  *
- * 📍 사용 위치:
- * - RequestTable 컴포넌트의 반려 버튼 클릭 시
- *
- * - 최종 사용 페이지:
- *   - /manager_sa/settlement/withdrawal_request (SA 관리자 출금 요청 페이지)
- *
- * 주요 기능:
- * - 반려 사유 텍스트 입력
- * - 모달 오버레이 클릭으로 닫기
+ * 사용 페이지:
+ * - /manager_sa/settlement/withdrawal_request (출금 요청 페이지)
  */
 
 "use client";

@@ -25,15 +25,16 @@ interface StatusFilterDropdownProps {
   on_close: () => void;
   selected_statuses: PartnerStatus[];
   on_apply: (statuses: PartnerStatus[]) => void;
-  container_ref?: React.RefObject<HTMLDivElement>;
+  container_ref?: React.RefObject<HTMLDivElement | null>;
 }
 
 // 상태 옵션을 FilterOption 형태로 변환
-const filter_options: FilterOption<PartnerStatus>[] =
-  partner_status_filter_options.map((status) => ({
+const filter_options: FilterOption<PartnerStatus>[] = partner_status_filter_options.map(
+  (status) => ({
     value: status,
     label: status,
-  }));
+  })
+);
 
 export default function StatusFilterDropdown({
   is_open,

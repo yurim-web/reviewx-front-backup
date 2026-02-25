@@ -1,5 +1,5 @@
 /* ========================================
-   🔽 정렬 드롭다운 공통 컴포넌트
+   
    ======================================== */
 
 /**
@@ -24,11 +24,6 @@
  *   (직접 import하여 사용)
  * - src/components/manager_ga/community/posts/section/PostFilterSection.tsx
  *   (직접 import하여 사용)
- *
- * 주요 기능:
- * - 정렬 옵션 선택
- * - 외부 클릭 시 드롭다운 닫기
- * - 선택된 옵션 표시
  *
  */
 
@@ -67,10 +62,7 @@ export default function SortDropdown({
     const handle_click_outside = (event: MouseEvent) => {
       // dropdown_ref.current: 참조한 DOM 요소
       // contains: DOM 요소가 특정 노드를 포함하는지 확인합니다
-      if (
-        dropdown_ref.current &&
-        !dropdown_ref.current.contains(event.target as Node)
-      ) {
+      if (dropdown_ref.current && !dropdown_ref.current.contains(event.target as Node)) {
         set_is_open(false);
       }
     };
@@ -108,9 +100,7 @@ export default function SortDropdown({
         <img
           src="/images/icons/dropdown_arrow.svg"
           alt="드롭다운"
-          className={`${styles.dropdown_arrow} ${
-            is_open ? styles.dropdown_arrow_rotated : ""
-          }`}
+          className={`${styles.dropdown_arrow} ${is_open ? styles.dropdown_arrow_rotated : ""}`}
         />
       </div>
 
@@ -121,9 +111,7 @@ export default function SortDropdown({
             <button
               key={option}
               className={`${styles.sort_dropdown_item} ${
-                selected_sort === option
-                  ? styles.sort_dropdown_item_selected
-                  : ""
+                selected_sort === option ? styles.sort_dropdown_item_selected : ""
               }`}
               onClick={() => handle_select(option)}
             >

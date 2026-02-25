@@ -1,5 +1,5 @@
 /* ========================================
-   👥 전체 회원 통계 섹션 컴포넌트 (회원 유형 통계)
+   (  )
    ======================================== */
 
 /**
@@ -7,9 +7,6 @@
  *
  * 목적: 파트너, 리뷰어의 비율을 표시하는 섹션 컴포넌트입니다.
  *
- * 주요 기능:
- * - 회원 유형 막대 차트 표시
- * - 전체 회원 수, 활성 파트너 수, 전체 리뷰어 수, 활성 리뷰어 수 표시
  */
 
 "use client";
@@ -26,9 +23,7 @@ interface MemberTypeSectionProps {
   dateRange: DateRange;
 }
 
-export default function MemberTypeSection({
-  dateRange,
-}: MemberTypeSectionProps) {
+export default function MemberTypeSection({ dateRange }: MemberTypeSectionProps) {
   // 클라이언트에서만 데이터 로드 (Hydration 오류 방지)
   const [isClient, setIsClient] = useState(false);
 
@@ -123,35 +118,29 @@ export default function MemberTypeSection({
     previous_end_date.setHours(23, 59, 59, 999);
 
     // 이전 기간의 활성 파트너 수 계산
-    let previous_active_partners = 0;
+    let _previous_active_partners = 0;
     partners.forEach((partner) => {
       if (partner.last_access_date) {
         const access_date_str = partner.last_access_date.split(" ")[0];
         const access_date = parse(access_date_str, "yyyy-MM-dd", new Date());
         access_date.setHours(0, 0, 0, 0);
 
-        if (
-          access_date >= previous_start_date &&
-          access_date <= previous_end_date
-        ) {
-          previous_active_partners++;
+        if (access_date >= previous_start_date && access_date <= previous_end_date) {
+          _previous_active_partners++;
         }
       }
     });
 
     // 이전 기간의 활성 리뷰어 수 계산
-    let previous_active_reviewers = 0;
+    let _previous_active_reviewers = 0;
     reviewers.forEach((reviewer) => {
       if (reviewer.last_access_date) {
         const access_date_str = reviewer.last_access_date.split(" ")[0];
         const access_date = parse(access_date_str, "yyyy-MM-dd", new Date());
         access_date.setHours(0, 0, 0, 0);
 
-        if (
-          access_date >= previous_start_date &&
-          access_date <= previous_end_date
-        ) {
-          previous_active_reviewers++;
+        if (access_date >= previous_start_date && access_date <= previous_end_date) {
+          _previous_active_reviewers++;
         }
       }
     });
@@ -187,7 +176,7 @@ export default function MemberTypeSection({
     // 증감률 계산 함수
     const calculate_change_percentage = (
       current: number,
-      previous: number,
+      previous: number
     ): { percentage: number; type: "positive" | "negative" | "neutral" } => {
       if (previous === 0) {
         if (current > 0) {
@@ -209,32 +198,24 @@ export default function MemberTypeSection({
     // 전체 파트너 수 증감률
     const total_partners_change = calculate_change_percentage(
       total_partners,
-      previous_total_partners,
+      previous_total_partners
     );
 
     // 전체 리뷰어 수 증감률
     const total_reviewers_change = calculate_change_percentage(
       total_reviewers,
-      previous_total_reviewers,
+      previous_total_reviewers
     );
 
     // 비율 계산
     const partner_percentage =
-      total_members > 0
-        ? Math.round((total_partners / total_members) * 100 * 10) / 10
-        : 0;
+      total_members > 0 ? Math.round((total_partners / total_members) * 100 * 10) / 10 : 0;
     const reviewer_percentage =
-      total_members > 0
-        ? Math.round((total_reviewers / total_members) * 100 * 10) / 10
-        : 0;
+      total_members > 0 ? Math.round((total_reviewers / total_members) * 100 * 10) / 10 : 0;
     const active_partner_percentage =
-      total_partners > 0
-        ? Math.round((active_partners / total_partners) * 100)
-        : 0;
+      total_partners > 0 ? Math.round((active_partners / total_partners) * 100) : 0;
     const active_reviewer_percentage =
-      total_reviewers > 0
-        ? Math.round((active_reviewers / total_reviewers) * 100)
-        : 0;
+      total_reviewers > 0 ? Math.round((active_reviewers / total_reviewers) * 100) : 0;
 
     return {
       totalMembers: total_members,
@@ -265,7 +246,9 @@ export default function MemberTypeSection({
         {/* 왼쪽: 막대 차트 */}
         <div className={styles.member_type_section_bar_chart_container}>
           <MemberTypeBarChart
-            key={isClient ? `${dateRange.from?.toISOString()}-${dateRange.to?.toISOString()}` : 'init'}
+            key={
+              isClient ? `${dateRange.from?.toISOString()}-${dateRange.to?.toISOString()}` : "init"
+            }
             totalPartnerPercentage={stats.partnerPercentage}
             totalReviewerPercentage={stats.reviewerPercentage}
             activePartnerPercentage={stats.activePartnerPercentage}
@@ -279,18 +262,14 @@ export default function MemberTypeSection({
           <div className={styles.member_type_section_info_grid_three}>
             {/* 전체 파트너 수 */}
             <div className={styles.member_type_section_info_card}>
-              <p className={styles.member_type_section_info_label}>
-                전체 파트너 수
-              </p>
+              <p className={styles.member_type_section_info_label}>전체 파트너 수</p>
               <p className={styles.member_type_section_info_value}>
                 {format_number(stats.totalPartners)}명
               </p>
               {/* 변화율 표시 */}
               <p
                 className={
-                  styles[
-                    `member_type_section_info_change_${stats.totalPartnersChange.type}`
-                  ]
+                  styles[`member_type_section_info_change_${stats.totalPartnersChange.type}`]
                 }
               >
                 {stats.totalPartnersChange.type === "positive" && (
@@ -313,9 +292,7 @@ export default function MemberTypeSection({
 
             {/* 활성 파트너 수 */}
             <div className={styles.member_type_section_info_card}>
-              <p className={styles.member_type_section_info_label}>
-                활성 파트너 수
-              </p>
+              <p className={styles.member_type_section_info_label}>활성 파트너 수</p>
               <p className={styles.member_type_section_info_value}>
                 {format_number(stats.activePartners)}명
               </p>
@@ -327,18 +304,14 @@ export default function MemberTypeSection({
 
             {/* 전체 리뷰어 수 */}
             <div className={styles.member_type_section_info_card}>
-              <p className={styles.member_type_section_info_label}>
-                전체 리뷰어 수
-              </p>
+              <p className={styles.member_type_section_info_label}>전체 리뷰어 수</p>
               <p className={styles.member_type_section_info_value}>
                 {format_number(stats.totalReviewers)}명
               </p>
               {/* 변화율 표시 */}
               <p
                 className={
-                  styles[
-                    `member_type_section_info_change_${stats.totalReviewersChange.type}`
-                  ]
+                  styles[`member_type_section_info_change_${stats.totalReviewersChange.type}`]
                 }
               >
                 {stats.totalReviewersChange.type === "positive" && (
@@ -361,9 +334,7 @@ export default function MemberTypeSection({
 
             {/* 활성 리뷰어 수 */}
             <div className={styles.member_type_section_info_card}>
-              <p className={styles.member_type_section_info_label}>
-                활성 리뷰어 수
-              </p>
+              <p className={styles.member_type_section_info_label}>활성 리뷰어 수</p>
               <p className={styles.member_type_section_info_value}>
                 {format_number(stats.activeReviewers)}명
               </p>

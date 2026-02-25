@@ -101,7 +101,7 @@ export const Default: Story = {
 export const WithSelectedGrades: Story = {
   render: GradeFilterModalWrapper,
   args: {
-    selected_grades: ["모범 회원"],
+    selected_grades: ["서포터즈"],
     on_apply: (grades) => console.log("Grades applied:", grades),
   },
 };
@@ -123,5 +123,3 @@ export const WithSelectedGrades: Story = {
  *    - 공통 BaseFilterModal 컴포넌트를 사용합니다
  *    - 일관된 UI와 동작을 제공합니다
  */
-
-

@@ -1,5 +1,5 @@
 /* ========================================
-   📊 통계 카드 컴포넌트
+   
    ======================================== */
 
 /**
@@ -7,12 +7,7 @@
  *
  * 목적: 통계 데이터를 카드 형태로 표시하는 재사용 가능한 컴포넌트입니다.
  *
- * 주요 기능:
- * - 통계 제목, 값, 변화율 표시
- * - 진행 바 표시
- * - 변화율에 따른 색상 구분 (증가/감소/변화없음)
- *
- * 사용 위치:
+ * 사용 페이지:
  * 1. GA 관리자 대시보드
  *    - /manager_ga (대시보드 페이지)
  *    - CampaignSummarySection 컴포넌트에서 사용
@@ -54,9 +49,7 @@ export default function StatCard({ stat }: StatCardProps) {
         }}
       >
         {/* 통계 카드 제목 (예: "캠페인 모집률") */}
-        <p className={styles.campaign_summary_section_stat_card_title}>
-          {stat.title}
-        </p>
+        <p className={styles.campaign_summary_section_stat_card_title}>{stat.title}</p>
         {/* 변화율 텍스트 (예: "↑ 50%", "↓ 50%", "- 0%") */}
         {/* 조건부 클래스명: 변화율 타입에 따라 색상이 달라짐 (녹색/빨간색/회색) */}
         <p
@@ -64,8 +57,8 @@ export default function StatCard({ stat }: StatCardProps) {
             stat.changeType === "positive"
               ? styles.campaign_summary_section_stat_card_change_positive
               : stat.changeType === "negative"
-              ? styles.campaign_summary_section_stat_card_change_negative
-              : styles.campaign_summary_section_stat_card_change_neutral
+                ? styles.campaign_summary_section_stat_card_change_negative
+                : styles.campaign_summary_section_stat_card_change_neutral
           }`}
         >
           {/* 변화율 타입에 따라 화살표와 색상이 달라집니다 */}
@@ -98,9 +91,7 @@ export default function StatCard({ stat }: StatCardProps) {
       {/* 조건부 클래스명: progressColor가 'red'이면 값도 빨간색으로 표시 */}
       <p
         className={`${styles.campaign_summary_section_stat_card_value} ${
-          stat.progressColor === "red"
-            ? styles.campaign_summary_section_stat_card_value_red
-            : ""
+          stat.progressColor === "red" ? styles.campaign_summary_section_stat_card_value_red : ""
         }`}
       >
         {stat.value}
@@ -111,9 +102,7 @@ export default function StatCard({ stat }: StatCardProps) {
         {/* 진행 바 (진행률에 따라 너비가 달라짐) */}
         <div
           className={`${styles.campaign_summary_section_progress_bar} ${
-            stat.progressColor === "red"
-              ? styles.campaign_summary_section_progress_bar_red
-              : ""
+            stat.progressColor === "red" ? styles.campaign_summary_section_progress_bar_red : ""
           }`}
           style={{ width: `${stat.progress}%` }}
         />

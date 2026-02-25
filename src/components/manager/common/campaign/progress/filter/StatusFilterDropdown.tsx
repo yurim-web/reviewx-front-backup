@@ -27,13 +27,7 @@ import BaseFilterDropdown, {
   type FilterOption,
 } from "@/components/manager/ga/common/filter/BaseFilterDropdown";
 
-export type CampaignStatus =
-  | "예정"
-  | "신청"
-  | "진행"
-  | "종료"
-  | "취소"
-  | "긴급";
+export type CampaignStatus = "예정" | "신청" | "진행" | "종료" | "취소" | "긴급";
 
 interface StatusFilterDropdownProps {
   // 드롭다운 열림/닫힘 상태
@@ -45,26 +39,18 @@ interface StatusFilterDropdownProps {
   // 필터 적용 함수
   on_apply: (statuses: CampaignStatus[]) => void;
   // 드롭다운 컨테이너 ref (위치 계산용)
-  container_ref?: React.RefObject<HTMLDivElement>;
+  container_ref?: React.RefObject<HTMLDivElement | null>;
 }
 
 // 상태 옵션 목록
-const status_options: CampaignStatus[] = [
-  "예정",
-  "긴급",
-  "신청",
-  "진행",
-  "종료",
-];
+const status_options: CampaignStatus[] = ["예정", "긴급", "신청", "진행", "종료"];
 
 // FilterOption 배열로 변환
 // map 함수: 배열을 순회하며 각 요소를 FilterOption 형태로 변환합니다
-const filter_options: FilterOption<CampaignStatus>[] = status_options.map(
-  (status) => ({
-    value: status,
-    label: status,
-  })
-);
+const filter_options: FilterOption<CampaignStatus>[] = status_options.map((status) => ({
+  value: status,
+  label: status,
+}));
 
 /**
  * 상태 필터 드롭다운 컴포넌트
@@ -90,4 +76,3 @@ export default function StatusFilterDropdown({
     />
   );
 }
-
