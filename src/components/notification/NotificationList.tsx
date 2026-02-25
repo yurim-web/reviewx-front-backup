@@ -24,14 +24,17 @@
 
 import React from "react";
 import styles from "@/styles/user/notification/notification.module.css";
-import type {
-  NotificationItem,
-  NotificationColor,
-} from "@/data/notification/notificationData";
+import type { NotificationItem, NotificationColor } from "@/data/notification/notificationData";
 import {
   format_notification_message,
   get_notification_template,
 } from "@/data/notification/notificationData";
+
+// 확장된 알림 아이템 타입 (직접 message와 _source 필드를 포함할 수 있음)
+type ExtendedNotificationItem = NotificationItem & {
+  message?: string;
+  _source?: string;
+};
 
 /**
  * NotificationList Props 타입
@@ -93,18 +96,18 @@ export default function NotificationList({
          * - key는 배열의 인덱스가 아닌 고유한 id를 사용하는 것이 권장됨
          */
         notifications.map((notification) => {
+          const extNotification = notification as ExtendedNotificationItem;
           // 카테고리에 해당하는 템플릿 가져오기
           const template = get_notification_template(notification.category);
 
           // 메시지 결정: 직접 전달된 message가 있으면 사용, 없으면 템플릿 사용
-          const message = (notification as any).message || format_notification_message(
-            template.message_template,
-            notification.message_params
-          );
+          const message =
+            extNotification.message ||
+            format_notification_message(template.message_template, notification.message_params);
 
           // 고유한 키 생성: 출처와 id를 조합하여 중복 방지
-          const uniqueKey = (notification as any)._source 
-            ? `${(notification as any)._source}-${notification.id}`
+          const uniqueKey = extNotification._source
+            ? `${extNotification._source}-${notification.id}`
             : `default-${notification.id}`;
 
           return (

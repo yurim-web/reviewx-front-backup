@@ -20,7 +20,6 @@ import { ReactNode, useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import SubHeader from "@/components/fragments/SubHeader";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
-import MainMenu from "@/components/main/MainMenu";
 import DetailHeader from "@/components/user/campaign_detail/DetailHeader";
 import DetailProductInfo from "@/components/user/campaign_detail/DetailProductInfo";
 import DetailScheduleInfo from "@/components/user/campaign_detail/DetailScheduleInfo";
@@ -50,14 +49,15 @@ interface BaseCampaign {
     applicationStart: string;
     applicationEnd: string;
     announcement: string;
-    [key: string]: any;
+    [key: string]: string;
   };
   campaign_detail_image: string;
+  campaign_detail_images?: string[];
+  channel?: string;
   region?: string; // 방문형만
   dayCount?: string; // 남은 일수 또는 상태 (예: "D-5", "마감임박")
   isUrgent?: boolean; // 긴급 캠페인 여부 (기본값: false)
   adultOnly?: boolean; // 성인 전용 여부 (만 19세 이상만 참여 가능)
-  [key: string]: any;
 }
 
 // 컴포넌트 props 타입
@@ -109,8 +109,7 @@ export default function CampaignDetailPage({
   const resolvedIsLoggedIn = isLoggedIn ?? isAuthenticated;
 
   // 스크롤 이벨 고정 훅 사용
-  const { isCampaignInfoFixed, campaignInfoLabelRef } =
-    useCampaignDetailScroll();
+  const { isCampaignInfoFixed, campaignInfoLabelRef } = useCampaignDetailScroll();
 
   // 현재 경로 확인 (뒤로가기 감지용)
   const pathname = usePathname();
@@ -141,43 +140,6 @@ export default function CampaignDetailPage({
       setIsMinorBlockModalOpen(true);
     }
   }, [campaign, isMinor]);
-
-  // 캠페인 데이터가 없으면 렌더링하지 않음 (에러 모달만 표시)
-  if (!campaign) {
-    return (
-      <>
-        {/* 서브헤더: 항상 상단에 고정 */}
-        {/* 📌 조건부 렌더링:
-            - 파트너인 경우 PartnerSubHeader 사용
-            - 일반 사용자인 경우 SubHeader 사용
-        */}
-        {isPartner ? <PartnerSubHeader /> : <SubHeader />}
-        {/* 에러 모달 */}
-        <BaseModal
-          is_open={isErrorModalOpen}
-          on_close={() => setIsErrorModalOpen(false)}
-          message="오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."
-          buttons={["확인"]}
-        />
-      </>
-    );
-  }
-
-  // 오늘 날짜와 신청 기간(applicationStart, applicationEnd)을 기준으로
-  // 남은 일수/상태 텍스트(dayCount)를 계산합니다.
-  const computedDayCount = calculateDayCount(
-    campaign.detailedSchedule.applicationStart,
-    campaign.detailedSchedule.applicationEnd,
-    campaign.dayCount
-  );
-
-  // 계산된 dayCount 를 포함한 캠페인 객체 (긴급/마감/오픈 예정 계산 반영)
-  const campaignWithDayCount: BaseCampaign = {
-    ...campaign,
-    dayCount: computedDayCount,
-    // isUrgent는 원본 campaign에서 가져옴 (dayCount 계산과 무관)
-    isUrgent: campaign.isUrgent,
-  };
 
   // 파트너 여부 확인 (sessionStorage와 document.referrer 모두 확인)
   // 파트너 페이지(/partner)에서 온 경우 파트너로 판단
@@ -229,6 +191,43 @@ export default function CampaignDetailPage({
     }
   }, [pathname]); // pathname이 변경될 때마다 실행 (뒤로가기 감지)
 
+  // 캠페인 데이터가 없으면 렌더링하지 않음 (에러 모달만 표시)
+  if (!campaign) {
+    return (
+      <>
+        {/* 서브헤더: 항상 상단에 고정 */}
+        {/* 📌 조건부 렌더링:
+            - 파트너인 경우 PartnerSubHeader 사용
+            - 일반 사용자인 경우 SubHeader 사용
+        */}
+        {isPartner ? <PartnerSubHeader /> : <SubHeader />}
+        {/* 에러 모달 */}
+        <BaseModal
+          is_open={isErrorModalOpen}
+          on_close={() => setIsErrorModalOpen(false)}
+          message="오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."
+          buttons={["확인"]}
+        />
+      </>
+    );
+  }
+
+  // 오늘 날짜와 신청 기간(applicationStart, applicationEnd)을 기준으로
+  // 남은 일수/상태 텍스트(dayCount)를 계산합니다.
+  const computedDayCount = calculateDayCount(
+    campaign.detailedSchedule.applicationStart,
+    campaign.detailedSchedule.applicationEnd,
+    campaign.dayCount
+  );
+
+  // 계산된 dayCount 를 포함한 캠페인 객체 (긴급/마감/오픈 예정 계산 반영)
+  const campaignWithDayCount: BaseCampaign = {
+    ...campaign,
+    dayCount: computedDayCount,
+    // isUrgent는 원본 campaign에서 가져옴 (dayCount 계산과 무관)
+    isUrgent: campaign.isUrgent,
+  };
+
   /**
    * 캠페인 신청 버튼 클릭 핸들러
    *
@@ -275,12 +274,10 @@ export default function CampaignDetailPage({
       <section className={styles.campaign_detail_container}>
         {/* 태그 및 포인트 */}
         <DetailHeader
-          channel={campaignWithDayCount.channel}
+          channel={campaignWithDayCount.channel ?? ""}
           category={campaignWithDayCount.category}
           subcategory={campaignWithDayCount.subcategory}
-          {...(campaignWithDayCount.region
-            ? { region: campaignWithDayCount.region }
-            : {})}
+          {...(campaignWithDayCount.region ? { region: campaignWithDayCount.region } : {})}
           points={campaignWithDayCount.points}
           altText={altText}
           dayCount={campaignWithDayCount.dayCount}
@@ -297,12 +294,8 @@ export default function CampaignDetailPage({
           <DetailScheduleInfo
             currentRecruitment={campaignWithDayCount.recruitment.current}
             totalRecruitment={campaignWithDayCount.recruitment.total}
-            applicationStart={
-              campaignWithDayCount.detailedSchedule.applicationStart
-            }
-            applicationEnd={
-              campaignWithDayCount.detailedSchedule.applicationEnd
-            }
+            applicationStart={campaignWithDayCount.detailedSchedule.applicationStart}
+            applicationEnd={campaignWithDayCount.detailedSchedule.applicationEnd}
             announcement={campaignWithDayCount.detailedSchedule.announcement}
             additionalSchedules={additionalSchedules}
           />
@@ -312,21 +305,17 @@ export default function CampaignDetailPage({
         {/* 스크롤이 이 요소에 도달하면 fixed 클래스 추가하여 상단 고정 */}
         <div
           ref={campaignInfoLabelRef}
-          className={`${styles.campaign_info_text_line} ${
-            isCampaignInfoFixed ? styles.fixed : ""
-          }`}
+          className={`${styles.campaign_info_text_line} ${isCampaignInfoFixed ? styles.fixed : ""}`}
         >
           캠페인 정보
         </div>
 
         {/* 캠페인 정보가 fixed될 때 레이아웃 시프트 방지용 placeholder */}
-        {isCampaignInfoFixed && (
-          <div className={styles.campaign_info_placeholder}></div>
-        )}
+        {isCampaignInfoFixed && <div className={styles.campaign_info_placeholder}></div>}
 
         {/* 상세 이미지 */}
-        <DetailImage 
-          image={campaign.campaign_detail_image} 
+        <DetailImage
+          image={campaign.campaign_detail_image}
           images={campaign.campaign_detail_images}
         />
 
@@ -336,9 +325,7 @@ export default function CampaignDetailPage({
 
       {/* 하단 고정 영역: 그라데이션 + 신청 버튼 */}
       <CampaignApplyButton
-        applicationStart={
-          campaignWithDayCount.detailedSchedule.applicationStart
-        }
+        applicationStart={campaignWithDayCount.detailedSchedule.applicationStart}
         applicationEnd={campaignWithDayCount.detailedSchedule.applicationEnd}
         dayCount={campaignWithDayCount.dayCount}
         isUrgent={campaignWithDayCount.isUrgent}

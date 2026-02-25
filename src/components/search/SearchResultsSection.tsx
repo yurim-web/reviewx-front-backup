@@ -8,8 +8,31 @@ import home_styles from "@/styles/home/home.module.css";
 import mainStyles from "@/styles/filter/filter_bar/main.module.css";
 import SortModalFilter from "@/components/campaign/filter/SortModalFilter";
 
+interface SearchCampaign {
+  id: string;
+  title: string;
+  category: string;
+  channel?: string;
+  image: string;
+  dayCount?: string;
+  isUrgent?: boolean;
+  points?: number;
+  recruitment: {
+    current: number;
+    total: number;
+  };
+  schedule?: string;
+  detailedSchedule?: {
+    applicationStart: string;
+    applicationEnd: string;
+    announcement?: string;
+    purchasePeriod?: string;
+    registrationPeriod?: string;
+  };
+}
+
 interface SearchResultsSectionProps {
-  campaigns: any[];
+  campaigns: SearchCampaign[];
 }
 
 const SORT_OPTIONS = ["최신순", "인기순", "마감임박순", "포인트높은순"];
@@ -31,20 +54,17 @@ const get_day_count_value = (day_count?: string): number => {
   return Number.MAX_SAFE_INTEGER;
 };
 
-const sort_campaigns = (campaigns: any[], sort_by: string) => {
+const sort_campaigns = (campaigns: SearchCampaign[], sort_by: string) => {
   const copied = [...campaigns];
 
   switch (sort_by) {
     case "인기순":
       // 지원자 수가 많은 순
-      return copied.sort(
-        (a, b) => (b.recruitment?.current ?? 0) - (a.recruitment?.current ?? 0)
-      );
+      return copied.sort((a, b) => (b.recruitment?.current ?? 0) - (a.recruitment?.current ?? 0));
     case "마감임박순":
       // 남은 일수가 적은 순 (긴급 우선)
       return copied.sort(
-        (a, b) =>
-          get_day_count_value(a.dayCount) - get_day_count_value(b.dayCount)
+        (a, b) => get_day_count_value(a.dayCount) - get_day_count_value(b.dayCount)
       );
     case "포인트높은순":
       // 포인트가 높은 순
@@ -56,9 +76,7 @@ const sort_campaigns = (campaigns: any[], sort_by: string) => {
   }
 };
 
-export default function SearchResultsSection({
-  campaigns,
-}: SearchResultsSectionProps) {
+export default function SearchResultsSection({ campaigns }: SearchResultsSectionProps) {
   const [selected_sort, set_selected_sort] = useState<string>(DEFAULT_SORT);
   const [is_sort_modal_open, set_is_sort_modal_open] = useState(false);
   const [temp_sort, set_temp_sort] = useState<string>(DEFAULT_SORT);
@@ -75,9 +93,7 @@ export default function SearchResultsSection({
     set_is_sort_modal_open(false);
   };
 
-  const handle_change_sort_option = (
-    option: string | { value: string; label: string }
-  ) => {
+  const handle_change_sort_option = (option: string | { value: string; label: string }) => {
     const sort_value = typeof option === "string" ? option : option.value;
 
     set_temp_sort(sort_value);
