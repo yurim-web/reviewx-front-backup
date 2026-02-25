@@ -58,15 +58,14 @@ type BaseCampaign = {
     total: number;
   };
   schedule?: string;
-  [key: string]: any; // 추가 필드 허용
 };
 
 // 컴포넌트 props 타입
 interface CampaignListPageProps {
   // 페이지 제목
   title: string;
-  // 캠페인 데이터 (any로 타입 단언하여 다양한 캠페인 타입 허용)
-  campaigns: any[];
+  // 캠페인 데이터 (다양한 캠페인 타입 허용)
+  campaigns: BaseCampaign[];
   // basePath (상세 페이지 경로)
   basePath: string;
   // FilterBar props
@@ -113,11 +112,7 @@ export default function CampaignListPage({
           <div className={styles.campaign_grid}>
             {campaigns.length > 0 &&
               campaigns.map((campaign) => (
-                <CampaignBox
-                  key={campaign.id}
-                  campaign={campaign}
-                  basePath={basePath}
-                />
+                <CampaignBox key={campaign.id} campaign={campaign} basePath={basePath} />
               ))}
           </div>
         </section>

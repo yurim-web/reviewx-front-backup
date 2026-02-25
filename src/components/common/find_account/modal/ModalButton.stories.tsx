@@ -94,27 +94,19 @@ export const AllVariants: Story = {
           padding: "20px",
         },
       },
-      React.createElement(ModalButton, {
-        variant: "primary",
-        onClick: () => {},
-      }, "Primary 버튼"),
-      React.createElement(ModalButton, {
-        variant: "secondary",
-        onClick: () => {},
-      }, "Secondary 버튼"),
-      React.createElement(ModalButton, {
-        variant: "close",
-        onClick: () => {},
-      }, "Close 버튼"),
-      React.createElement(ModalButton, {
-        variant: "kakao",
-        onClick: () => {},
-      }, "Kakao 버튼"),
-      React.createElement(ModalButton, {
-        variant: "sns-secondary",
-        onClick: () => {},
-      }, "SNS Secondary 버튼")
+      React.createElement(ModalButton, { variant: "primary", onClick: () => {} }, "Primary 버튼"),
+      React.createElement(
+        ModalButton,
+        { variant: "secondary", onClick: () => {} },
+        "Secondary 버튼"
+      ),
+      React.createElement(ModalButton, { variant: "close", onClick: () => {} }, "Close 버튼"),
+      React.createElement(ModalButton, { variant: "kakao", onClick: () => {} }, "Kakao 버튼"),
+      React.createElement(
+        ModalButton,
+        { variant: "sns-secondary", onClick: () => {} },
+        "SNS Secondary 버튼"
+      )
     );
   },
 };
-

@@ -189,7 +189,7 @@ export default function CampaignBox({
   };
 
   // 캠페인 타입에 따른 올바른 경로 결정
-  const getCampaignPath = (campaign: any) => {
+  const getCampaignPath = (campaign: { id: string; category: string }) => {
     switch (campaign.category) {
       case "배송형":
         return `/campaign/delivery/${campaign.id}`;
@@ -231,9 +231,7 @@ export default function CampaignBox({
 
   // useState: 상태 관리 Hook
   // 초기값은 서버와 클라이언트가 동일하게 설정 (hydration 오류 방지)
-  const [statusTag, setStatusTag] = useState<string | null>(
-    getInitialStatusTag()
-  );
+  const [statusTag, setStatusTag] = useState<string | null>(getInitialStatusTag());
   const [isUpcoming, setIsUpcoming] = useState<boolean>(false);
 
   // useEffect: 컴포넌트가 마운트된 후(클라이언트에서만) 실행
@@ -242,54 +240,11 @@ export default function CampaignBox({
   // dependency array에 campaign의 날짜 관련 속성을 포함하여
   // 캠페인 정보가 변경될 때만 재계산하도록 합니다
   useEffect(() => {
-    // 클라이언트에서만 실행되는 코드
-
-    // 디버깅: isUrgent 값 확인 (모든 캠페인에 대해)
-    if (
-      campaign.isUrgent === true ||
-      campaign.title?.includes("긴급") ||
-      campaign.id === "review_13"
-    ) {
-      console.log("[CampaignBox] useEffect 실행 - 긴급 캠페인 디버깅:", {
-        id: campaign.id,
-        title: campaign.title,
-        isUrgent: campaign.isUrgent,
-        isUrgentType: typeof campaign.isUrgent,
-        isUrgentStrict: campaign.isUrgent === true,
-        campaignObject: campaign,
-      });
-    }
-
     const calculatedStatusTag = getCampaignStatusTag();
     const calculatedIsUpcoming = checkIsUpcoming();
 
-    // 디버깅: 계산된 태그 확인
-    if (
-      campaign.isUrgent === true ||
-      campaign.title?.includes("긴급") ||
-      campaign.id === "review_13"
-    ) {
-      console.log("[CampaignBox] 계산된 태그:", {
-        id: campaign.id,
-        calculatedStatusTag,
-        calculatedIsUpcoming,
-        detailedSchedule: campaign.detailedSchedule,
-        dayCount: campaign.dayCount,
-      });
-    }
-
     setStatusTag(calculatedStatusTag);
     setIsUpcoming(calculatedIsUpcoming);
-
-    // 디버깅: 오픈 예정 캠페인 확인
-    if (calculatedIsUpcoming && campaign.id === "visit_11") {
-      console.log(
-        "[CampaignBox] visit_11 isUpcoming:",
-        calculatedIsUpcoming,
-        "schedule:",
-        campaign.schedule
-      );
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     campaign.id, // 캠페인 ID 변경 시 재계산
@@ -336,19 +291,13 @@ export default function CampaignBox({
 
         {/* 제품 이미지 영역 */}
         <div className={styles.product_image_container}>
-          <img
-            src={campaign.image}
-            alt={campaign.title}
-            className={styles.product_image}
-          />
+          <img src={campaign.image} alt={campaign.title} className={styles.product_image} />
 
           {/* 조건부 렌더링: 오픈 예정일 때만 스케줄 오버레이 표시 */}
           {/* 오픈 예정인 경우 (오늘 < applicationStart) schedule 오버레이 표시 */}
           {isUpcoming && campaign.schedule && (
             <div className={styles.schedule_overlay}>
-              <span className={styles.schedule_overlay_text}>
-                {campaign.schedule}
-              </span>
+              <span className={styles.schedule_overlay_text}>{campaign.schedule}</span>
             </div>
           )}
         </div>
@@ -381,13 +330,9 @@ export default function CampaignBox({
           </div>
           <h3 className={styles.product_title}>{campaign.title}</h3>
           <div className={styles.recruitment_status}>
-            <span className={styles.recruitment_total}>
-              신청 {campaign.recruitment.current}명
-            </span>
+            <span className={styles.recruitment_total}>신청 {campaign.recruitment.current}명</span>
             <span className={styles.recruitment_separator}>|</span>
-            <span className={styles.recruitment_current}>
-              모집 {campaign.recruitment.total}명
-            </span>
+            <span className={styles.recruitment_current}>모집 {campaign.recruitment.total}명</span>
           </div>
         </div>
       </div>

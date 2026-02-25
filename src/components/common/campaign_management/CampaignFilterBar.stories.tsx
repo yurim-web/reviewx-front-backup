@@ -7,7 +7,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { useMemo, useCallback } from "react";
 import CampaignFilterBar from "./CampaignFilterBar";
-import type { FilterableCampaign } from "./types";
+import type { FilterableCampaign, FilterChangeParams } from "./types";
 
 const meta: Meta<typeof CampaignFilterBar> = {
   title: "Common/CampaignManagement/CampaignFilterBar",
@@ -103,7 +103,7 @@ const mockCampaigns: FilterableCampaign[] = [
 export const Default: Story = {
   render: (args) => {
     const handleFilterChange = useCallback(
-      (filters: any) => {
+      (filters: FilterChangeParams) => {
         args.onFilterChange?.(filters);
       },
       [args.onFilterChange]
@@ -132,19 +132,11 @@ export const Default: Story = {
     campaigns: mockCampaigns,
     activeFilters: {},
     typeOptions: ["배송형", "방문형", "구매평", "기자단", "미션형"],
-    channelOptions: [
-      "네이버 블로그",
-      "클립",
-      "인스타그램",
-      "릴스",
-      "유튜브",
-      "쇼츠",
-    ],
+    channelOptions: ["네이버 블로그", "클립", "인스타그램", "릴스", "유튜브", "쇼츠"],
     sortOptions: ["최신순", "인기순", "마감임박순"],
     defaultSort: "최신순",
     onFilterChange: (filters) => console.log("Filter changed:", filters),
-    onFilteredCampaignsChange: (campaigns) =>
-      console.log("Filtered campaigns:", campaigns),
+    onFilteredCampaignsChange: (campaigns) => console.log("Filtered campaigns:", campaigns),
   },
 };
 
@@ -152,7 +144,7 @@ export const Default: Story = {
 export const WithActiveFilters: Story = {
   render: (args) => {
     const handleFilterChange = useCallback(
-      (filters: any) => {
+      (filters: FilterChangeParams) => {
         args.onFilterChange?.(filters);
       },
       [args.onFilterChange]
@@ -185,19 +177,11 @@ export const WithActiveFilters: Story = {
       searchQuery: "",
     },
     typeOptions: ["배송형", "방문형", "구매평", "기자단", "미션형"],
-    channelOptions: [
-      "네이버 블로그",
-      "클립",
-      "인스타그램",
-      "릴스",
-      "유튜브",
-      "쇼츠",
-    ],
+    channelOptions: ["네이버 블로그", "클립", "인스타그램", "릴스", "유튜브", "쇼츠"],
     sortOptions: ["최신순", "인기순", "마감임박순"],
     defaultSort: "최신순",
     onFilterChange: (filters) => console.log("Filter changed:", filters),
-    onFilteredCampaignsChange: (campaigns) =>
-      console.log("Filtered campaigns:", campaigns),
+    onFilteredCampaignsChange: (campaigns) => console.log("Filtered campaigns:", campaigns),
   },
 };
 
@@ -205,7 +189,7 @@ export const WithActiveFilters: Story = {
 export const EmptyCampaigns: Story = {
   render: (args) => {
     const handleFilterChange = useCallback(
-      (filters: any) => {
+      (filters: FilterChangeParams) => {
         args.onFilterChange?.(filters);
       },
       [args.onFilterChange]
@@ -234,20 +218,10 @@ export const EmptyCampaigns: Story = {
     campaigns: [],
     activeFilters: {},
     typeOptions: ["배송형", "방문형", "구매평", "기자단", "미션형"],
-    channelOptions: [
-      "네이버 블로그",
-      "클립",
-      "인스타그램",
-      "릴스",
-      "유튜브",
-      "쇼츠",
-    ],
+    channelOptions: ["네이버 블로그", "클립", "인스타그램", "릴스", "유튜브", "쇼츠"],
     sortOptions: ["최신순", "인기순", "마감임박순"],
     defaultSort: "최신순",
     onFilterChange: (filters) => console.log("Filter changed:", filters),
-    onFilteredCampaignsChange: (campaigns) =>
-      console.log("Filtered campaigns:", campaigns),
+    onFilteredCampaignsChange: (campaigns) => console.log("Filtered campaigns:", campaigns),
   },
 };
-
-
