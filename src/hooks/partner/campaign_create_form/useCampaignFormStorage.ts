@@ -46,13 +46,9 @@ interface UseCampaignFormStorageProps {
   /** 수정 모드 여부 */
   isEditMode: boolean;
   /** 불러오기 모달 열기 */
-  setLoadConfirmModal: React.Dispatch<
-    React.SetStateAction<{ is_open: boolean }>
-  >;
+  setLoadConfirmModal: React.Dispatch<React.SetStateAction<{ is_open: boolean }>>;
   /** 토스트 메시지 설정 */
-  setToast: React.Dispatch<
-    React.SetStateAction<{ is_open: boolean; message: string }>
-  >;
+  setToast: React.Dispatch<React.SetStateAction<{ is_open: boolean; message: string }>>;
   /** 긴급 상태 부모 전달 콜백 */
   onUrgentLoad?: (isUrgent: boolean) => void;
   /** 불러오기 버튼 비활성화 설정 */
@@ -194,8 +190,11 @@ export function useCampaignFormStorage({
       // 사용자가 다시 업로드해야 함
 
       // 체크박스 상태 복원
-      if ((savedData as any).checkboxStates) {
-        const savedCheckboxStates = (savedData as any).checkboxStates;
+      const savedDataWithCheckbox = savedData as CampaignFormData & {
+        checkboxStates?: { minTextLength?: boolean; minImageCount?: boolean; videoCount?: boolean };
+      };
+      if (savedDataWithCheckbox.checkboxStates) {
+        const savedCheckboxStates = savedDataWithCheckbox.checkboxStates;
         if (savedCheckboxStates.minTextLength !== undefined) {
           updateCheckboxState("minTextLength", savedCheckboxStates.minTextLength);
         }
@@ -231,10 +230,7 @@ export function useCampaignFormStorage({
     const fromCampaignCreate = sessionStorage.getItem("from_campaign_create");
 
     // 포인트 업데이트
-    if (
-      availablePoints &&
-      (fromCampaignCreate === "true" || formData.currentPoints === "")
-    ) {
+    if (availablePoints && (fromCampaignCreate === "true" || formData.currentPoints === "")) {
       setFormData((prev) => ({
         ...prev,
         currentPoints: availablePoints,
@@ -253,11 +249,7 @@ export function useCampaignFormStorage({
 
       const savedData = JSON.parse(saved);
 
-      if (
-        savedData &&
-        typeof savedData === "object" &&
-        Object.keys(savedData).length > 0
-      ) {
+      if (savedData && typeof savedData === "object" && Object.keys(savedData).length > 0) {
         // 포인트 충전 페이지에서 돌아왔다면 자동으로 불러오기
         if (fromCampaignCreate === "true") {
           // 긴급 상태를 먼저 복원
@@ -278,8 +270,15 @@ export function useCampaignFormStorage({
           // 이미지는 용량 문제로 임시저장하지 않으므로 복원하지 않음
 
           // 체크박스 상태 복원
-          if ((savedData as any).checkboxStates) {
-            const savedCheckboxStates = (savedData as any).checkboxStates;
+          const savedDataWithCheckbox2 = savedData as CampaignFormData & {
+            checkboxStates?: {
+              minTextLength?: boolean;
+              minImageCount?: boolean;
+              videoCount?: boolean;
+            };
+          };
+          if (savedDataWithCheckbox2.checkboxStates) {
+            const savedCheckboxStates = savedDataWithCheckbox2.checkboxStates;
             if (savedCheckboxStates.minTextLength !== undefined) {
               updateCheckboxState("minTextLength", savedCheckboxStates.minTextLength);
             }

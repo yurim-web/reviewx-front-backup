@@ -41,7 +41,6 @@ interface BaseCampaign {
   points?: number; // 포인트는 선택적 필드 (없을 수 있음)
   schedule?: string;
   region?: string; // 방문형 캠페인에만 있음
-  [key: string]: any; // 추가 필드 허용
 }
 
 /**
@@ -76,7 +75,7 @@ interface UseCampaignFiltersParams<T extends BaseCampaign> {
  * - setClosingSoon: 긴급 필터 변경 함수
  * - filteredAndSortedCampaigns: 필터링 및 정렬된 캠페인 목록
  */
-interface UseCampaignFiltersReturn {
+interface UseCampaignFiltersReturn<T extends BaseCampaign> {
   // 필터 상태
   activeFilters: FilterState;
   closingSoon: boolean;
@@ -91,7 +90,7 @@ interface UseCampaignFiltersReturn {
   // 긴급 필터 변경 핸들러
   setClosingSoon: (closingSoon: boolean) => void;
   // 필터링 및 정렬된 캠페인 목록
-  filteredAndSortedCampaigns: BaseCampaign[];
+  filteredAndSortedCampaigns: T[];
 }
 
 /* ========================================
@@ -108,7 +107,7 @@ interface UseCampaignFiltersReturn {
 export function useCampaignFilters<T extends BaseCampaign>({
   campaigns,
   enableRegionFilter = false,
-}: UseCampaignFiltersParams<T>): UseCampaignFiltersReturn {
+}: UseCampaignFiltersParams<T>): UseCampaignFiltersReturn<T> {
   /* ========================================
      상태 관리
      ======================================== */
@@ -235,9 +234,7 @@ export function useCampaignFilters<T extends BaseCampaign>({
     // 4단계: 채널 필터 적용
     // 선택된 채널에 해당하는 캠페인만 필터링
     if (activeFilters.channels.length > 0) {
-      filtered = filtered.filter((campaign) =>
-        activeFilters.channels.includes(campaign.channel)
-      );
+      filtered = filtered.filter((campaign) => activeFilters.channels.includes(campaign.channel));
     }
 
     // 5단계: 지역 필터 적용 (방문형만)
@@ -245,11 +242,7 @@ export function useCampaignFilters<T extends BaseCampaign>({
     // - "지역 전체"가 선택되면 모든 지역 포함 (필터링 건너뛰기)
     // - 정확한 매칭: "서울 > 강남구" === "서울 > 강남구"
     // - 전체 지역 매칭: "서울 > 서울 전체"와 "서울 > 강남구" 매칭
-    if (
-      enableRegionFilter &&
-      activeFilters.regions &&
-      activeFilters.regions.length > 0
-    ) {
+    if (enableRegionFilter && activeFilters.regions && activeFilters.regions.length > 0) {
       // "지역 전체"가 선택되어 있으면 모든 지역 포함 (필터링 건너뛰기)
       if (activeFilters.regions.includes("지역 전체")) {
         // 필터링하지 않음 (모든 지역 포함)
@@ -324,15 +317,12 @@ export function useCampaignFilters<T extends BaseCampaign>({
         // 등록 시간(registeredAt) 기준으로 내림차순 정렬 (최신이 먼저)
         // registeredAt이 없으면 ID 기준으로 정렬 (하위 호환성)
         filtered.sort((a, b) => {
-          const registeredAtA = (a as any).registeredAt;
-          const registeredAtB = (b as any).registeredAt;
+          const registeredAtA = (a as BaseCampaign).registeredAt;
+          const registeredAtB = (b as BaseCampaign).registeredAt;
 
           // 둘 다 등록 시간이 있으면 등록 시간 기준으로 정렬
           if (registeredAtA && registeredAtB) {
-            return (
-              new Date(registeredAtB).getTime() -
-              new Date(registeredAtA).getTime()
-            );
+            return new Date(registeredAtB).getTime() - new Date(registeredAtA).getTime();
           }
 
           // 하나만 등록 시간이 있으면 등록 시간이 있는 캠페인이 먼저
@@ -365,6 +355,6 @@ export function useCampaignFilters<T extends BaseCampaign>({
     closingSoon,
     handleFilterChange,
     setClosingSoon,
-    filteredAndSortedCampaigns: filteredAndSortedCampaigns as BaseCampaign[],
+    filteredAndSortedCampaigns: filteredAndSortedCampaigns as T[],
   };
 }

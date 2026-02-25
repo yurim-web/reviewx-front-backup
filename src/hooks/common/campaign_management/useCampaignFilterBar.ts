@@ -27,7 +27,6 @@ import {
 } from "@/components/common/campaign_management/utils/campaign_filter_helpers";
 import type {
   ActiveFilters,
-  CampaignFilterBarProps,
   FilterableCampaign,
   FilterChangeParams,
 } from "@/components/common/campaign_management/types";
@@ -37,9 +36,7 @@ import type {
 // ========================================
 
 // 훅의 입력 파라미터 타입
-interface UseCampaignFilterBarParams<
-  T extends FilterableCampaign = FilterableCampaign
-> {
+interface UseCampaignFilterBarParams<T extends FilterableCampaign = FilterableCampaign> {
   campaigns: T[]; // 필터링할 캠페인 목록
   onFilterChange?: (filters: FilterChangeParams) => void; // 필터 변경 콜백
   onFilteredCampaignsChange: (filteredCampaigns: T[]) => void; // 필터링된 캠페인 변경 콜백
@@ -72,19 +69,13 @@ export interface UseCampaignFilterBarReturn {
     closeTypeModal: () => void; // 타입 필터 모달 닫기
     closeChannelModal: () => void; // 채널 필터 모달 닫기
     closeSortModal: () => void; // 정렬 모달 닫기
-    handleTypeToggle: (
-      option: string | { value: string; label: string }
-    ) => void; // 타입 선택/해제 토글
-    handleChannelToggle: (
-      option: string | { value: string; label: string }
-    ) => void; // 채널 선택/해제 토글
+    handleTypeToggle: (option: string | { value: string; label: string }) => void; // 타입 선택/해제 토글
+    handleChannelToggle: (option: string | { value: string; label: string }) => void; // 채널 선택/해제 토글
     handleTypeApply: () => void; // 타입 필터 적용
     handleChannelApply: () => void; // 채널 필터 적용
     handleTypeReset: () => void; // 타입 필터 초기화
     handleChannelReset: () => void; // 채널 필터 초기화
-    handleSortToggle: (
-      option: string | { value: string; label: string }
-    ) => void; // 정렬 옵션 선택
+    handleSortToggle: (option: string | { value: string; label: string }) => void; // 정렬 옵션 선택
     handleSortReset: () => void; // 정렬 초기화
     handleSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void; // 검색어 변경
     handleTypeRemove: (type: string) => void; // 선택된 타입 제거
@@ -95,9 +86,7 @@ export interface UseCampaignFilterBarReturn {
 // ========================================
 // 🪝 훅 함수
 // ========================================
-export function useCampaignFilterBar<
-  T extends FilterableCampaign = FilterableCampaign
->({
+export function useCampaignFilterBar<T extends FilterableCampaign = FilterableCampaign>({
   campaigns,
   onFilterChange,
   onFilteredCampaignsChange,
@@ -119,7 +108,7 @@ export function useCampaignFilterBar<
   const [tempSort, setTempSort] = useState<string>(defaultSort);
 
   // activeFilters가 있는지 확인 (외부에서 필터 상태를 제어하는 경우)
-  const hasActiveFilters = 
+  const hasActiveFilters =
     activeFilters.types?.length ||
     activeFilters.channels?.length ||
     activeFilters.searchQuery ||
@@ -129,7 +118,7 @@ export function useCampaignFilterBar<
   const [selectedSort, setSelectedSort] = useState<string>(() => {
     return activeFilters.sortBy || defaultSort;
   });
-  
+
   const [searchQuery, setSearchQuery] = useState<string>(() => {
     return activeFilters.searchQuery || "";
   });
@@ -178,8 +167,7 @@ export function useCampaignFilterBar<
 
   // 필터링된 캠페인 목록 (필터와 정렬 적용)
   const filteredCampaigns = useMemo(
-    () =>
-      filterCampaigns<T>(campaigns, currentFilters, selectedSort, defaultSort),
+    () => filterCampaigns<T>(campaigns, currentFilters, selectedSort, defaultSort),
     [campaigns, currentFilters, selectedSort, defaultSort]
   );
 
@@ -229,8 +217,7 @@ export function useCampaignFilterBar<
 
   // 모달이 열려있을 때 body 스크롤 방지
   useEffect(() => {
-    const hasOpenModal =
-      isTypeModalOpen || isChannelModalOpen || isSortModalOpen;
+    const hasOpenModal = isTypeModalOpen || isChannelModalOpen || isSortModalOpen;
     document.body.style.overflow = hasOpenModal ? "hidden" : "unset";
     return () => {
       document.body.style.overflow = "unset";
@@ -264,29 +251,21 @@ export function useCampaignFilterBar<
   // 🔄 필터 토글 함수 (모달 내에서 선택/해제)
   // ========================================
 
-  const handleTypeToggle = useCallback(
-    (option: string | { value: string; label: string }) => {
-      const typeValue = typeof option === "string" ? option : option.value;
-      setTempTypes((prev) =>
-        prev.includes(typeValue)
-          ? prev.filter((item) => item !== typeValue)
-          : [...prev, typeValue]
-      );
-    },
-    []
-  );
+  const handleTypeToggle = useCallback((option: string | { value: string; label: string }) => {
+    const typeValue = typeof option === "string" ? option : option.value;
+    setTempTypes((prev) =>
+      prev.includes(typeValue) ? prev.filter((item) => item !== typeValue) : [...prev, typeValue]
+    );
+  }, []);
 
-  const handleChannelToggle = useCallback(
-    (option: string | { value: string; label: string }) => {
-      const channelValue = typeof option === "string" ? option : option.value;
-      setTempChannels((prev) =>
-        prev.includes(channelValue)
-          ? prev.filter((item) => item !== channelValue)
-          : [...prev, channelValue]
-      );
-    },
-    []
-  );
+  const handleChannelToggle = useCallback((option: string | { value: string; label: string }) => {
+    const channelValue = typeof option === "string" ? option : option.value;
+    setTempChannels((prev) =>
+      prev.includes(channelValue)
+        ? prev.filter((item) => item !== channelValue)
+        : [...prev, channelValue]
+    );
+  }, []);
 
   // ========================================
   // ✅ 필터 적용 함수
@@ -313,14 +292,7 @@ export function useCampaignFilterBar<
       searchQuery,
       sortBy: selectedSort,
     });
-  }, [
-    closeTypeModal,
-    applyFilters,
-    tempTypes,
-    currentFilters.channels,
-    searchQuery,
-    selectedSort,
-  ]);
+  }, [closeTypeModal, applyFilters, tempTypes, currentFilters.channels, searchQuery, selectedSort]);
 
   const handleChannelApply = useCallback(() => {
     closeChannelModal();
@@ -356,13 +328,7 @@ export function useCampaignFilterBar<
         sortBy: sortValue,
       });
     },
-    [
-      closeSortModal,
-      applyFilters,
-      currentFilters.types,
-      currentFilters.channels,
-      searchQuery,
-    ]
+    [closeSortModal, applyFilters, currentFilters.types, currentFilters.channels, searchQuery]
   );
 
   const handleSortReset = useCallback(() => {
@@ -374,13 +340,7 @@ export function useCampaignFilterBar<
       searchQuery,
       sortBy: defaultSort,
     });
-  }, [
-    applyFilters,
-    currentFilters.types,
-    currentFilters.channels,
-    searchQuery,
-    defaultSort,
-  ]);
+  }, [applyFilters, currentFilters.types, currentFilters.channels, searchQuery, defaultSort]);
 
   // ========================================
   // 🔄 필터 초기화 핸들러
@@ -413,8 +373,7 @@ export function useCampaignFilterBar<
 
   const handleTypeRemove = useCallback(
     (type: string) => {
-      const newTypes =
-        currentFilters.types?.filter((item) => item !== type) || [];
+      const newTypes = currentFilters.types?.filter((item) => item !== type) || [];
       applyFilters({
         types: newTypes.length > 0 ? newTypes : undefined,
         channels: currentFilters.channels,
@@ -422,19 +381,12 @@ export function useCampaignFilterBar<
         sortBy: selectedSort,
       });
     },
-    [
-      applyFilters,
-      currentFilters.types,
-      currentFilters.channels,
-      searchQuery,
-      selectedSort,
-    ]
+    [applyFilters, currentFilters.types, currentFilters.channels, searchQuery, selectedSort]
   );
 
   const handleChannelRemove = useCallback(
     (channel: string) => {
-      const newChannels =
-        currentFilters.channels?.filter((item) => item !== channel) || [];
+      const newChannels = currentFilters.channels?.filter((item) => item !== channel) || [];
       applyFilters({
         types: currentFilters.types,
         channels: newChannels.length > 0 ? newChannels : undefined,
@@ -442,13 +394,7 @@ export function useCampaignFilterBar<
         sortBy: selectedSort,
       });
     },
-    [
-      applyFilters,
-      currentFilters.types,
-      currentFilters.channels,
-      searchQuery,
-      selectedSort,
-    ]
+    [applyFilters, currentFilters.types, currentFilters.channels, searchQuery, selectedSort]
   );
 
   // ========================================

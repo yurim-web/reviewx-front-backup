@@ -230,8 +230,7 @@ export function useCampaignForm({
     return {
       ...initialData,
       visitZipCode: initialData.visitZipCode ?? "",
-      visitBaseAddress:
-        initialData.visitBaseAddress ?? initialData.visitAddress ?? "",
+      visitBaseAddress: initialData.visitBaseAddress ?? initialData.visitAddress ?? "",
       visitDetailAddress: initialData.visitDetailAddress ?? "",
     };
   });
@@ -275,7 +274,10 @@ export function useCampaignForm({
   /**
    * 폼 데이터 업데이트
    */
-  const updateFormData = (field: keyof CampaignFormData, value: any) => {
+  const updateFormData = (
+    field: keyof CampaignFormData,
+    value: CampaignFormData[keyof CampaignFormData]
+  ) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
@@ -307,10 +309,7 @@ export function useCampaignForm({
       }
 
       // 상세 이미지 미리보기 설정
-      if (
-        initialData.detailImagePreviews &&
-        initialData.detailImagePreviews.length > 0
-      ) {
+      if (initialData.detailImagePreviews && initialData.detailImagePreviews.length > 0) {
         setDetailPreviews(initialData.detailImagePreviews);
       }
 
@@ -326,10 +325,7 @@ export function useCampaignForm({
   /**
    * 체크박스 상태 업데이트
    */
-  const updateCheckboxState = (
-    field: keyof typeof checkboxStates,
-    checked: boolean
-  ) => {
+  const updateCheckboxState = (field: keyof typeof checkboxStates, checked: boolean) => {
     setCheckboxStates((prev) => ({
       ...prev,
       [field]: checked,
@@ -339,20 +335,14 @@ export function useCampaignForm({
   /**
    * 숫자 입력 핸들러 래퍼 함수
    */
-  const handleNumericInputWrapper = (
-    field: string,
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) => {
+  const handleNumericInputWrapper = (field: string, e: React.KeyboardEvent<HTMLInputElement>) => {
     utilHandleNumericInput(e);
   };
 
   /**
    * 숫자 입력 변경 핸들러 래퍼 함수
    */
-  const handleNumericChangeWrapper = (
-    field: string,
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleNumericChangeWrapper = (field: string, e: React.ChangeEvent<HTMLInputElement>) => {
     utilHandleNumericChange(e, (value) => {
       updateFormData(field as keyof CampaignFormData, value);
     });
@@ -361,9 +351,7 @@ export function useCampaignForm({
   /**
    * 썸네일 이미지 선택 처리
    */
-  const handleThumbnailSelect = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleThumbnailSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -403,20 +391,14 @@ export function useCampaignForm({
   /**
    * 상세 이미지 선택 처리
    */
-  const handleDetailImagesSelect = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleDetailImagesSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files) return;
 
     const newFiles = Array.from(files);
 
     // 이미지 업로드 검증 (최대 7장)
-    const validation = validateImagesForUpload(
-      newFiles,
-      detailImages.length,
-      7
-    );
+    const validation = validateImagesForUpload(newFiles, detailImages.length, 7);
 
     if (!validation.isValid && validation.errorMessage) {
       setImageErrorModal({
@@ -457,8 +439,7 @@ export function useCampaignForm({
    */
   const deductedPoints = useMemo(() => {
     const recruitmentCount = Number(formData.recruitmentCount) || 0;
-    const additionalPoints =
-      Number(String(formData.additionalPoints).replace(/,/g, "")) || 0;
+    const additionalPoints = Number(String(formData.additionalPoints).replace(/,/g, "")) || 0;
     return additionalPoints * recruitmentCount;
   }, [formData.recruitmentCount, formData.additionalPoints]);
 
@@ -466,8 +447,7 @@ export function useCampaignForm({
    * 포인트 부족 경고 표시 여부
    */
   const showInsufficientPointsWarning = useMemo(() => {
-    const currentPoints =
-      Number(String(formData.currentPoints).replace(/,/g, "")) || 0;
+    const currentPoints = Number(String(formData.currentPoints).replace(/,/g, "")) || 0;
     return currentPoints < deductedPoints;
   }, [formData.currentPoints, deductedPoints]);
 
