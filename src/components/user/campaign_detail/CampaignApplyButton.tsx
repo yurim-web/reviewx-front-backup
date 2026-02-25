@@ -13,6 +13,7 @@
 
 "use client";
 
+import Image from "next/image";
 import { useModalState } from "@/hooks/useModalState";
 import styles from "@/styles/user/campaign/campaign_detail.module.css";
 import BaseModal from "@/components/common/modal/BaseModal";
@@ -119,9 +120,11 @@ export default function CampaignApplyButton({
           </button>
           {isUrgent && (
             <div className={styles.urgent_notice}>
-              <img
+              <Image
                 src="/images/campaign_detail/detail_info.svg"
                 alt="정보 아이콘"
+                width={16}
+                height={16}
                 className={styles.urgent_notice_icon}
               />
               <span className={styles.urgent_notice_text}>

@@ -25,8 +25,9 @@ import TextareaModal from "@/components/common/modal/TextareaModal";
 import BaseModal from "@/components/common/modal/BaseModal";
 import PendingPointModal from "@/components/user/point/PendingPointModal";
 import { MainTab, PointTab, PointHistory } from "@/types/domain/user";
-import { pointHistoryData, pendingPointListData } from "@/data/user/point/pointData";
+import { pointHistoryData } from "@/data/user/point/pointData";
 import { useAuth } from "@/hooks/useAuth";
+import { usePointData } from "@/hooks/user/point/usePointData";
 import styles from "@/styles/user/point/point.module.css";
 
 type FilterFunction = (history: PointHistory) => boolean;
@@ -36,28 +37,13 @@ interface PointHistoryPageProps {
   filterFunction: FilterFunction;
 }
 
-interface StoredUserAccount {
-  id?: string | number;
-  email?: string;
-  name?: string;
-  available_points?: number;
-  pending_points?: number;
-  current_points?: number;
-  account_holder?: string;
-  bank?: string;
-  account_number?: string;
-  ssn_front?: string;
-  ssn_back?: string;
-  point_history?: PointHistory[];
-  pending_point_list?: typeof pendingPointListData;
-}
-
 export default function PointHistoryPage({
   activePointTab,
   filterFunction,
 }: PointHistoryPageProps) {
   const router = useRouter();
   const { user } = useAuth();
+  const { pointInfo, userPointHistory, pendingPointList, isAccountInfoValid } = usePointData();
 
   const [activeMainTab, setActiveMainTab] = useState<MainTab>("point");
   const rejectionModal = useModalState();
@@ -66,68 +52,6 @@ export default function PointHistoryPage({
   const [isMobile, setIsMobile] = useState(false);
   const [selectedRejectionReason, setSelectedRejectionReason] = useState("");
   const [modalTitle, setModalTitle] = useState("사유 확인");
-  const [pointInfo, setPointInfo] = useState({
-    available_points: 0,
-    pending_points: 0,
-    current_points: 0,
-  });
-  const [accountInfo, setAccountInfo] = useState({
-    name: "",
-    bank: "",
-    accountNumber: "",
-    residentNumber: "",
-  });
-  const [userPointHistory, setUserPointHistory] = useState<PointHistory[]>([]);
-  const [pendingPointList, setPendingPointList] = useState(() => pendingPointListData);
-
-  const loadPointData = () => {
-    if (typeof window === "undefined" || !user) return;
-    try {
-      const storedAccounts = localStorage.getItem("user_accounts");
-      if (storedAccounts) {
-        const accounts: StoredUserAccount[] = JSON.parse(storedAccounts);
-        const userAccount = accounts.find((a) => a.id === user.id || a.email === user.email);
-        if (userAccount) {
-          setPointInfo({
-            available_points: userAccount.available_points || 0,
-            pending_points: userAccount.pending_points || 0,
-            current_points: userAccount.current_points || 0,
-          });
-          setAccountInfo({
-            name: userAccount.account_holder || userAccount.name || "",
-            bank: userAccount.bank || "",
-            accountNumber: userAccount.account_number || "",
-            residentNumber:
-              userAccount.ssn_front && userAccount.ssn_back
-                ? `${userAccount.ssn_front}-${userAccount.ssn_back}`
-                : "",
-          });
-          setUserPointHistory(userAccount.point_history || []);
-          if (userAccount.pending_point_list?.length !== undefined) {
-            setPendingPointList(userAccount.pending_point_list);
-          }
-        }
-      }
-    } catch (_error) {
-      // 포인트 정보 로드 실패 시 기본값 유지
-    }
-  };
-
-  useEffect(() => {
-    loadPointData();
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        loadPointData();
-      }
-    };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth <= 768);
@@ -149,12 +73,6 @@ export default function PointHistoryPage({
         break;
     }
   };
-
-  const isAccountInfoValid = () =>
-    accountInfo.name.trim() !== "" &&
-    accountInfo.bank.trim() !== "" &&
-    accountInfo.accountNumber.trim() !== "" &&
-    accountInfo.residentNumber.trim() !== "";
 
   const handleWithdrawalClick = () => {
     if (!isAccountInfoValid()) {

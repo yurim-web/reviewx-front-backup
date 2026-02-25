@@ -11,6 +11,7 @@
  * - /user/campaign/[type]/[id] (캠페인 상세 페이지)
  */
 
+import { toDateOnly, parseDateRange } from "@/utils/formatting/date";
 import styles from "@/styles/user/campaign/campaign_detail/detail_schedule_info.module.css";
 
 /**
@@ -34,38 +35,12 @@ interface CampaignScheduleInfoProps {
   additionalSchedules?: ScheduleItem[]; // 추가 일정 (선택사항)
 }
 
-/* ----- 날짜 유틸 (오늘 기준 포인트 판별용) ----- */
-
-/** 시간 제거 후 날짜만 비교용 Date 반환 */
-function to_date_only(d: Date): Date {
-  const r = new Date(d);
-  r.setHours(0, 0, 0, 0);
-  return r;
-}
-
-/**
- * "A ~ B" 또는 "A~B" 형식의 기간 문자열을 파싱합니다.
- * 단일 날짜면 start === end 로 취급합니다.
- */
-function parse_date_range(value: string): { start: Date; end: Date } | null {
-  if (!value?.trim()) return null;
-  const sep = value.includes(" ~ ") ? " ~ " : "~";
-  const parts = value.split(sep).map((s) => s.trim()).filter(Boolean);
-  const startStr = parts[0];
-  const endStr = parts[1] ?? parts[0];
-  if (!startStr) return null;
-  const start = new Date(startStr);
-  const end = new Date(endStr);
-  if (isNaN(start.getTime()) || isNaN(end.getTime())) return null;
-  return { start: to_date_only(start), end: to_date_only(end) };
-}
-
 /** 오늘이 [applicationStart, applicationEnd] 모집 기간 안에 있는지 */
 function is_today_in_recruitment(start: string, end: string): boolean {
   if (!start?.trim() || !end?.trim()) return false;
-  const range = parse_date_range(`${start} ~ ${end}`);
+  const range = parseDateRange(`${start} ~ ${end}`);
   if (!range) return false;
-  const today = to_date_only(new Date());
+  const today = toDateOnly(new Date());
   return today >= range.start && today <= range.end;
 }
 
@@ -74,16 +49,16 @@ function is_today_announcement(announcement: string): boolean {
   if (!announcement?.trim()) return false;
   const d = new Date(announcement.trim());
   if (isNaN(d.getTime())) return false;
-  const today = to_date_only(new Date());
-  const ann = to_date_only(d);
+  const today = toDateOnly(new Date());
+  const ann = toDateOnly(d);
   return today.getTime() === ann.getTime();
 }
 
 /** 오늘이 해당 기간 value("A ~ B") 안에 있는지 (등록/구매 기간 등) */
 function is_today_in_schedule_value(value: string): boolean {
-  const range = parse_date_range(value);
+  const range = parseDateRange(value);
   if (!range) return false;
-  const today = to_date_only(new Date());
+  const today = toDateOnly(new Date());
   return today >= range.start && today <= range.end;
 }
 
@@ -113,79 +88,70 @@ export default function CampaignScheduleInfo({
     if (is_announcement_point || is_recruitment_point) return -1;
     return additionalSchedules.findIndex(
       (s) =>
-        (s.label === "등록 기간" || s.label === "구매 기간") &&
-        is_today_in_schedule_value(s.value)
+        (s.label === "등록 기간" || s.label === "구매 기간") && is_today_in_schedule_value(s.value)
     );
   })();
 
   return (
     <>
-    <article className={styles.campaign_info}>
-      {/* 모집 인원 — 라벨 + 신청 인원(앞 n명)만 포인트, 총 모집 인원(뒤 n명)은 기본 */}
-      <div className={styles.info_item_container}>
-        <span className={`${styles.label} ${styles.label_point}`}>모집 인원</span>
-        <span className={styles.value}>
-          <span className={`${styles.current_count} ${styles.current_count_point}`}>
-            {currentRecruitment}명
+      <article className={styles.campaign_info}>
+        {/* 모집 인원 — 라벨 + 신청 인원(앞 n명)만 포인트, 총 모집 인원(뒤 n명)은 기본 */}
+        <div className={styles.info_item_container}>
+          <span className={`${styles.label} ${styles.label_point}`}>모집 인원</span>
+          <span className={styles.value}>
+            <span className={`${styles.current_count} ${styles.current_count_point}`}>
+              {currentRecruitment}명
+            </span>
+            <span className={styles.separator}> / </span>
+            <span className={styles.total_count}>{totalRecruitment}명</span>
           </span>
-          <span className={styles.separator}> / </span>
-          <span className={styles.total_count}>{totalRecruitment}명</span>
-        </span>
-      </div>
+        </div>
 
-      {/* 모집 기간 — 오늘이 모집 기간이면 포인트 */}
-      <div className={styles.info_item_container}>
-        <span
-          className={`${styles.label} ${is_recruitment_point ? styles.label_point : ""}`}
-        >
-          모집 기간
-        </span>
-        <span
-          className={`${styles.value} ${styles.recruitment_info} ${is_recruitment_point ? styles.value_point : ""}`}
-        >
-          {applicationStart} ~ {applicationEnd}
-        </span>
-      </div>
+        {/* 모집 기간 — 오늘이 모집 기간이면 포인트 */}
+        <div className={styles.info_item_container}>
+          <span className={`${styles.label} ${is_recruitment_point ? styles.label_point : ""}`}>
+            모집 기간
+          </span>
+          <span
+            className={`${styles.value} ${styles.recruitment_info} ${is_recruitment_point ? styles.value_point : ""}`}
+          >
+            {applicationStart} ~ {applicationEnd}
+          </span>
+        </div>
 
-      {/* 선정 발표 — 오늘이 선정 발표일이면 포인트 */}
-      <div className={styles.info_item_container}>
-        <span
-          className={`${styles.label} ${is_announcement_point ? styles.label_point : ""}`}
-        >
-          선정 발표
-        </span>
-        <span
-          className={`${styles.value} ${is_announcement_point ? styles.value_point : ""}`}
-        >
-          {announcement}
-        </span>
-      </div>
+        {/* 선정 발표 — 오늘이 선정 발표일이면 포인트 */}
+        <div className={styles.info_item_container}>
+          <span className={`${styles.label} ${is_announcement_point ? styles.label_point : ""}`}>
+            선정 발표
+          </span>
+          <span className={`${styles.value} ${is_announcement_point ? styles.value_point : ""}`}>
+            {announcement}
+          </span>
+        </div>
 
-      {/*
-       * 추가 일정 (등록 기간, 구매 기간 등) — 오늘이 해당 기간이면 포인트
-       * map(): 배열 각 항목을 JSX로 변환, key는 React 리스트 렌더링 필수
-       */}
-      {additionalSchedules.map((schedule, index) => {
-        const is_point = index === highlighted_additional_index;
-        return (
-          <div key={index} className={styles.info_item_container}>
-            <span
-              className={`${styles.label} ${is_point ? styles.label_point : ""}`}
-            >
-              {schedule.label}
-            </span>
-            <span
-              className={`${styles.value} ${schedule.isRecruitmentInfo ? styles.recruitment_info : ""} ${is_point ? styles.value_point : ""}`}
-            >
-              {schedule.value}
-            </span>
-          </div>
-        );
-      })}
-    </article>
+        {/*
+         * 추가 일정 (등록 기간, 구매 기간 등) — 오늘이 해당 기간이면 포인트
+         * map(): 배열 각 항목을 JSX로 변환, key는 React 리스트 렌더링 필수
+         */}
+        {additionalSchedules.map((schedule, index) => {
+          const is_point = index === highlighted_additional_index;
+          return (
+            <div key={index} className={styles.info_item_container}>
+              <span className={`${styles.label} ${is_point ? styles.label_point : ""}`}>
+                {schedule.label}
+              </span>
+              <span
+                className={`${styles.value} ${schedule.isRecruitmentInfo ? styles.recruitment_info : ""} ${is_point ? styles.value_point : ""}`}
+              >
+                {schedule.value}
+              </span>
+            </div>
+          );
+        })}
+      </article>
 
-    {/* 회색 구분선 - article 밖, 양옆 공간 없이 전체 너비 */}
-    <div className={styles.separator_line} aria-hidden="true" />
+      {/* 회색 구분선 - article 밖, 양옆 공간 없이 전체 너비 */}
+      <div className={styles.separator_line} aria-hidden="true" />
     </>
   );
 }

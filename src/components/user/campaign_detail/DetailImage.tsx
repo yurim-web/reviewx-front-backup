@@ -14,6 +14,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import styles from "@/styles/user/campaign/campaign_detail/detail_image.module.css";
 
 /**
@@ -73,7 +74,12 @@ export default function CampaignDetailImage({
                 isAllExpanded ? styles.expanded : ""
               }`}
             >
-              <img src={imageList[0]} alt={`${alt} 1`} />
+              <Image
+                src={imageList[0]}
+                alt={`${alt} 1`}
+                fill
+                style={{ objectFit: "cover", objectPosition: "top" }}
+              />
             </div>
 
             {/* 
@@ -89,7 +95,12 @@ export default function CampaignDetailImage({
                   className={`${styles.campaign_detail_image_container} ${styles.expanded}`}
                 >
                   {/* 상세 이미지 */}
-                  <img src={img} alt={`${alt} ${index + 2}`} />
+                  <Image
+                    src={img}
+                    alt={`${alt} ${index + 2}`}
+                    fill
+                    style={{ objectFit: "contain" }}
+                  />
                 </div>
               ))}
 
@@ -100,10 +111,7 @@ export default function CampaignDetailImage({
               - 화살표 함수로 상태 토글 (true ↔ false)
             */}
             {imageList.length > 0 && (
-              <button
-                className={styles.expand_image_button}
-                onClick={toggleAllImages}
-              >
+              <button className={styles.expand_image_button} onClick={toggleAllImages}>
                 {/* 
                   조건부 렌더링: 삼항 연산자 사용
                   isAllExpanded가 true면 "이미지 접기", false면 "이미지 펼쳐보기"
