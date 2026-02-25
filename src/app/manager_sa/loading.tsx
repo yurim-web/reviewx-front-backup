@@ -11,6 +11,7 @@
  * - /manager_sa 및 하위 페이지들
  */
 
+import Image from "next/image";
 import styles from "@/styles/error_page/loading.module.css";
 
 export default function Loading() {
@@ -20,7 +21,13 @@ export default function Loading() {
         <div className={styles.loading_illustration}>
           <div className={styles.loading_container_wrapper}>
             <div className={styles.white_circle}>
-              <img src="/images/loading_icon.svg" alt="Loading" className={styles.loading_icon} />
+              <Image
+                src="/images/loading_icon.svg"
+                alt="Loading"
+                width={64}
+                height={64}
+                className={styles.loading_icon}
+              />
             </div>
           </div>
         </div>

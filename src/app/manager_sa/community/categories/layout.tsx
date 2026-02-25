@@ -11,19 +11,14 @@
  * - /manager_sa/community/categories (카테고리 관리 페이지)
  * - /manager_sa/community/categories/create (카테고리 등록 페이지)
  * - /manager_sa/community/categories/[id]/edit (카테고리 수정 페이지)
- *
- * 주요 기능:
- * - 페이지 메타데이터 설정 (제목, 설명)
- * - 부모 레이아웃(manager_sa/layout.tsx)을 상속받아 헤더와 사이드바가 자동으로 표시됩니다
- *
  */
 
-import { Metadata } from 'next';
+import { Metadata } from "next";
 
 // 페이지 메타데이터 설정
 export const metadata: Metadata = {
-  title: 'ReviewX | 카테고리 관리',
-  description: 'SA 관리자 카테고리 관리 페이지입니다',
+  title: "ReviewX | 카테고리 관리",
+  description: "SA 관리자 카테고리 관리 페이지입니다",
 };
 
 /**
@@ -33,11 +28,6 @@ export const metadata: Metadata = {
  * @returns 레이아웃으로 감싼 페이지 컴포넌트
  *
  */
-export default function ManagerSACategoriesLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ManagerSACategoriesLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
-

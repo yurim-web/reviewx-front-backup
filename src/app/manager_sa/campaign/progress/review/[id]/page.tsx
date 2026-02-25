@@ -29,10 +29,7 @@ import BasicCard from "@/components/partner/campaign_application/card_type/basic
 import BasicSelectedCard from "@/components/partner/campaign_application/card_type/basic/BasicSelectedCard";
 
 // 타입 정의
-import type {
-  AllApplicant,
-  CampaignWithApplicants,
-} from "@/data/partner/sharedCampaigns";
+import type { AllApplicant, CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import { type BasicApplicant } from "@/data/partner/campaign_application/delivery_applicants";
 
 /**
@@ -86,9 +83,7 @@ export default function ManagerReviewProgressDetailPage() {
         <div className={styles.page_header}>
           <h1 className={styles.page_title}>캠페인 상세 보기</h1>
         </div>
-        <div style={{ padding: "40px", textAlign: "center", color: "red" }}>
-          {error_message}
-        </div>
+        <div style={{ padding: "40px", textAlign: "center", color: "red" }}>{error_message}</div>
       </section>
     );
   }
@@ -103,9 +98,9 @@ export default function ManagerReviewProgressDetailPage() {
   const render_card: RenderCardFunction = (
     applicant: AllApplicant,
     is_selected: boolean,
-    campaign_data: CampaignWithApplicants | null,
-    handle_select: (id: string) => void,
-    handle_cancel: (id: string) => void
+    _campaign_data: CampaignWithApplicants | null,
+    _handle_select: (id: string) => void,
+    _handle_cancel: (id: string) => void
   ) => {
     // 관리자 모드: 버튼 비활성화를 위한 빈 함수
     const empty_handler = () => {};
@@ -114,12 +109,7 @@ export default function ManagerReviewProgressDetailPage() {
     const basic_applicant = applicant as BasicApplicant;
 
     if (is_selected) {
-      return (
-        <BasicSelectedCard
-          applicant={basic_applicant}
-          onCancel={empty_handler}
-        />
-      );
+      return <BasicSelectedCard applicant={basic_applicant} onCancel={empty_handler} />;
     } else {
       return <BasicCard applicant={basic_applicant} onSelect={empty_handler} />;
     }

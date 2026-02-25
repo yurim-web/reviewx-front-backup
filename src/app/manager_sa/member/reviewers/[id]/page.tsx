@@ -21,6 +21,7 @@ import {
   reviewer_list,
   type ReviewerDetail,
   type Channel,
+  type RecentCampaign,
 } from "@/data/manager_ga/member/reviewers";
 import { deliveryCampaigns } from "@/data/campaign/delivery/deliveryCampaigns";
 import { visitCampaigns } from "@/data/campaign/visit/visitCampaigns";
@@ -122,6 +123,7 @@ const channel_icon_map: Record<Channel, string> = {
   Store: "/images/brand_logo/navershop.svg",
   Mission: "/images/brand_logo/misssion.svg",
   Reels: "/images/brand_logo/reels.svg",
+  Review: "/images/brand_logo/navershop.svg",
   Shorts: "/images/brand_logo/shots.svg",
 };
 
@@ -272,7 +274,7 @@ export default function ReviewerDetailPage() {
                     ).length;
 
                     // 실제 캠페인 데이터에서 포인트 정보 가져오기
-                    const getCampaignPoints = (
+                    const _getCampaignPoints = (
                       campaignId: string,
                       campaignType: string
                     ): number => {
@@ -712,7 +714,7 @@ export default function ReviewerDetailPage() {
                   userAccount.last_access_date ||
                   new Date().toISOString().replace("T", " ").substring(0, 16),
                 join_date: userAccount.join_date || "2024-04-01 10:00",
-                gender: userAccount.gender || "여성",
+                gender: (userAccount.gender || "여성") as "남성" | "여성",
                 age: userAccount.age || 30,
                 email: userAccount.email || "",
                 phone: userAccount.phone || "010-1111-1111",
@@ -731,7 +733,7 @@ export default function ReviewerDetailPage() {
                       ? `${userAccount.ssn_front}-${userAccount.ssn_back}`
                       : "",
                 },
-                recent_campaigns: recentCampaigns,
+                recent_campaigns: recentCampaigns as RecentCampaign[],
                 penalty_history: [],
               };
 

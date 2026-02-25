@@ -15,7 +15,11 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { get_partner_detail_by_id, type PartnerDetail } from "@/data/manager_ga/member/partners";
+import {
+  get_partner_detail_by_id,
+  type PartnerDetail,
+  type RecentCampaign,
+} from "@/data/manager_ga/member/partners";
 import CampaignHistoryModal from "@/components/manager/common/member/partners/CampaignHistoryModal";
 import PenaltyHistoryModal from "@/components/manager/common/member/partners/PenaltyHistoryModal";
 import MemberDetailLayout from "@/components/manager/common/member/member_detail/MemberDetailLayout";
@@ -275,9 +279,10 @@ export default function PartnerDetailPage() {
                 business_number: testAccount.business_number || "123-45-67890",
                 representative_name:
                   testAccount.representative_name || testAccount.name || "테스트파트너",
-                division:
-                  testAccount.division ||
-                  (testAccount.business_type === "개인사업자" ? "개인" : "법인"),
+                division: (testAccount.division ||
+                  (testAccount.business_type === "개인사업자" ? "개인" : "법인")) as
+                  | "개인"
+                  | "법인",
                 campaign_in_progress: campaignCount,
                 campaign_completed: 0,
                 current_points: currentPoints,
@@ -297,7 +302,7 @@ export default function PartnerDetailPage() {
                 contact_phone: testAccount.contact_phone || testAccount.phone || "010-5555-5555",
                 penalty_count: 0,
                 payment_points: paymentPoints,
-                recent_campaigns: recentCampaigns,
+                recent_campaigns: recentCampaigns as RecentCampaign[],
                 penalty_history: [],
                 profile_image: testAccount.profile_image || null,
               };
