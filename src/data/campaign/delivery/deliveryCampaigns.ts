@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * 배송형 캠페인 데이터 타입 정의
  */
 
 import type { CampaignFormData } from "@/types/domain/user";
 import type { ContentByTab } from "@/data/partner/sharedCampaigns";
-import { calculateDaysLeft, calculateCampaignStatus } from "./utils";
+import { calculateDaysLeft, calculateCampaignStatus } from "./deliveryUtils";
 
 export interface DeliveryCampaignData {
   id: string; // 캠페인 고유 식별자
@@ -103,13 +104,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     keyword: "#세르프 #박신혜리프팅 #뷰티 #스킨케어 #리프팅크림",
     promotionLink:
       "https://smartstore.naver.com/example-store/products/1234564565656565656565656565656565664545454545454545456456",
-    requirements: [
-      "text_2000",
-      "photo_15",
-      "video_1_180",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_2000", "photo_15", "video_1_180", "product_link", "keyword"],
     guidelineTexts: [
       "배송형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★안내된 가격과 주문 가격이 상이한 경우 임의 주문하지 마시고, 꼭 1:1문의로 제보 부탁드립니다!! 네이버 멤버십 계정이시면 가격이 낮은 경우가 간혹 발생하여 안내드린 가격과 다를 경우, [ 멤버십이 아닌 네이버 계정으로 고지된 금액에 맞게 구매 ] 부탁드립니다★",
@@ -118,7 +113,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 구매처 착오 및 제품 잘못 구매할 경우 : 페이백 미지급 및 선정취소 <br /> - 구매평 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험형의 경우 지도와 함께 매장 주소,영업시간,주차유무등을 기재해주세요. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
     contactPhone: "010-1234-5678",
-  partnerName: "레더리아",
+    partnerName: "레더리아",
   },
   {
     id: "962",
@@ -148,13 +143,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     channel: "네이버블로그",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
-    requirements: [
-      "text_1200",
-      "photo_8",
-      "video_2_240",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_1200", "photo_8", "video_2_240", "product_link", "keyword"],
     guidelineTexts: [
       "배송형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★안내된 가격과 주문 가격이 상이한 경우 임의 주문하지 마시고, 꼭 1:1문의로 제보 부탁드립니다!! 네이버 멤버십 계정이시면 가격이 낮은 경우가 간혹 발생하여 안내드린 가격과 다를 경우, [ 멤버십이 아닌 네이버 계정으로 고지된 금액에 맞게 구매 ] 부탁드립니다★",
@@ -163,7 +152,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 구매처 착오 및 제품 잘못 구매할 경우 : 페이백 미지급 및 선정취소 <br /> - 구매평 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험형의 경우 지도와 함께 매장 주소,영업시간,주차유무등을 기재해주세요. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
     contactPhone: "010-2345-6789",
-  partnerName: "ABC쇼핑몰",
+    partnerName: "ABC쇼핑몰",
   },
   {
     id: "963",
@@ -192,13 +181,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     channel: "인스타그램",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
-    requirements: [
-      "text_1500",
-      "photo_10",
-      "video_120",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_1500", "photo_10", "video_120", "product_link", "keyword"],
     guidelineTexts: [
       "배송형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★안내된 가격과 주문 가격이 상이한 경우 임의 주문하지 마시고, 꼭 1:1문의로 제보 부탁드립니다!! 네이버 멤버십 계정이시면 가격이 낮은 경우가 간혹 발생하여 안내드린 가격과 다를 경우, [ 멤버십이 아닌 네이버 계정으로 고지된 금액에 맞게 구매 ] 부탁드립니다★",
@@ -207,7 +190,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 구매처 착오 및 제품 잘못 구매할 경우 : 페이백 미지급 및 선정취소 <br /> - 구매평 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험형의 경우 지도와 함께 매장 주소,영업시간,주차유무등을 기재해주세요. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
     contactPhone: "010-3456-7890",
-  partnerName: "에코라이프",
+    partnerName: "에코라이프",
   },
   {
     id: "964",
@@ -236,13 +219,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     channel: "네이버블로그",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
-    requirements: [
-      "text_1500",
-      "photo_10",
-      "video_120",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_1500", "photo_10", "video_120", "product_link", "keyword"],
     guidelineTexts: [
       "배송형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★안내된 가격과 주문 가격이 상이한 경우 임의 주문하지 마시고, 꼭 1:1문의로 제보 부탁드립니다!! 네이버 멤버십 계정이시면 가격이 낮은 경우가 간혹 발생하여 안내드린 가격과 다를 경우, [ 멤버십이 아닌 네이버 계정으로 고지된 금액에 맞게 구매 ] 부탁드립니다★",
@@ -251,7 +228,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 구매처 착오 및 제품 잘못 구매할 경우 : 페이백 미지급 및 선정취소 <br /> - 구매평 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험형의 경우 지도와 함께 매장 주소,영업시간,주차유무등을 기재해주세요. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
     contactPhone: "010-4567-8901",
-  partnerName: "세르프코리아",
+    partnerName: "세르프코리아",
   },
   {
     id: "965",
@@ -280,13 +257,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     channel: "인스타그램",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
-    requirements: [
-      "text_1500",
-      "photo_10",
-      "video_120",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_1500", "photo_10", "video_120", "product_link", "keyword"],
     guidelineTexts: [
       "배송형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★안내된 가격과 주문 가격이 상이한 경우 임의 주문하지 마시고, 꼭 1:1문의로 제보 부탁드립니다!! 네이버 멤버십 계정이시면 가격이 낮은 경우가 간혹 발생하여 안내드린 가격과 다를 경우, [ 멤버십이 아닌 네이버 계정으로 고지된 금액에 맞게 구매 ] 부탁드립니다★",
@@ -295,7 +266,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 구매처 착오 및 제품 잘못 구매할 경우 : 페이백 미지급 및 선정취소 <br /> - 구매평 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험형의 경우 지도와 함께 매장 주소,영업시간,주차유무등을 기재해주세요. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
     contactPhone: "010-5678-9012",
-  partnerName: "테크솔루션",
+    partnerName: "테크솔루션",
   },
   {
     id: "966",
@@ -324,13 +295,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     channel: "유튜브",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
-    requirements: [
-      "text_1500",
-      "photo_10",
-      "video_120",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_1500", "photo_10", "video_120", "product_link", "keyword"],
     guidelineTexts: [
       "배송형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★안내된 가격과 주문 가격이 상이한 경우 임의 주문하지 마시고, 꼭 1:1문의로 제보 부탁드립니다!! 네이버 멤버십 계정이시면 가격이 낮은 경우가 간혹 발생하여 안내드린 가격과 다를 경우, [ 멤버십이 아닌 네이버 계정으로 고지된 금액에 맞게 구매 ] 부탁드립니다★",
@@ -339,7 +304,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 구매처 착오 및 제품 잘못 구매할 경우 : 페이백 미지급 및 선정취소 <br /> - 구매평 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험형의 경우 지도와 함께 매장 주소,영업시간,주차유무등을 기재해주세요. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
     contactPhone: "010-6789-0123",
-  partnerName: "세르프코리아",
+    partnerName: "세르프코리아",
   },
   {
     id: "967",
@@ -374,13 +339,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     channel: "네이버클립",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
-    requirements: [
-      "text_1500",
-      "photo_10",
-      "video_120",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_1500", "photo_10", "video_120", "product_link", "keyword"],
     guidelineTexts: [
       "배송형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★안내된 가격과 주문 가격이 상이한 경우 임의 주문하지 마시고, 꼭 1:1문의로 제보 부탁드립니다!! 네이버 멤버십 계정이시면 가격이 낮은 경우가 간혹 발생하여 안내드린 가격과 다를 경우, [ 멤버십이 아닌 네이버 계정으로 고지된 금액에 맞게 구매 ] 부탁드립니다★",
@@ -389,7 +348,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 구매처 착오 및 제품 잘못 구매할 경우 : 페이백 미지급 및 선정취소 <br /> - 구매평 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험형의 경우 지도와 함께 매장 주소,영업시간,주차유무등을 기재해주세요. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
     contactPhone: "010-7890-1234",
-  partnerName: "라이프스타일",
+    partnerName: "라이프스타일",
   },
   {
     id: "968",
@@ -418,13 +377,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     channel: "네이버블로그",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
-    requirements: [
-      "text_1500",
-      "photo_10",
-      "video_120",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_1500", "photo_10", "video_120", "product_link", "keyword"],
     guidelineTexts: [
       "배송형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★안내된 가격과 주문 가격이 상이한 경우 임의 주문하지 마시고, 꼭 1:1문의로 제보 부탁드립니다!! 네이버 멤버십 계정이시면 가격이 낮은 경우가 간혹 발생하여 안내드린 가격과 다를 경우, [ 멤버십이 아닌 네이버 계정으로 고지된 금액에 맞게 구매 ] 부탁드립니다★",
@@ -433,7 +386,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 구매처 착오 및 제품 잘못 구매할 경우 : 페이백 미지급 및 선정취소 <br /> - 구매평 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험형의 경우 지도와 함께 매장 주소,영업시간,주차유무등을 기재해주세요. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
     contactPhone: "010-8901-2345",
-  partnerName: "ABC쇼핑몰",
+    partnerName: "ABC쇼핑몰",
   },
   {
     id: "969",
@@ -462,13 +415,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     channel: "인스타그램",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
-    requirements: [
-      "text_1500",
-      "photo_10",
-      "video_120",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_1500", "photo_10", "video_120", "product_link", "keyword"],
     guidelineTexts: [
       "배송형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★안내된 가격과 주문 가격이 상이한 경우 임의 주문하지 마시고, 꼭 1:1문의로 제보 부탁드립니다!! 네이버 멤버십 계정이시면 가격이 낮은 경우가 간혹 발생하여 안내드린 가격과 다를 경우, [ 멤버십이 아닌 네이버 계정으로 고지된 금액에 맞게 구매 ] 부탁드립니다★",
@@ -477,7 +424,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 구매처 착오 및 제품 잘못 구매할 경우 : 페이백 미지급 및 선정취소 <br /> - 구매평 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험형의 경우 지도와 함께 매장 주소,영업시간,주차유무등을 기재해주세요. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
     contactPhone: "010-9012-3456",
-  partnerName: "테크솔루션",
+    partnerName: "테크솔루션",
   },
   {
     id: "970",
@@ -506,13 +453,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     channel: "유튜브",
     keyword: "#키워드예시 #예시1 #예시2 #예시3 #예시4",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
-    requirements: [
-      "text_1500",
-      "photo_10",
-      "video_120",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_1500", "photo_10", "video_120", "product_link", "keyword"],
     guidelineTexts: [
       "배송형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★안내된 가격과 주문 가격이 상이한 경우 임의 주문하지 마시고, 꼭 1:1문의로 제보 부탁드립니다!! 네이버 멤버십 계정이시면 가격이 낮은 경우가 간혹 발생하여 안내드린 가격과 다를 경우, [ 멤버십이 아닌 네이버 계정으로 고지된 금액에 맞게 구매 ] 부탁드립니다★",
@@ -521,7 +462,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 구매처 착오 및 제품 잘못 구매할 경우 : 페이백 미지급 및 선정취소 <br /> - 구매평 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험형의 경우 지도와 함께 매장 주소,영업시간,주차유무등을 기재해주세요. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
     contactPhone: "010-0123-4567",
-  partnerName: "레더리아",
+    partnerName: "레더리아",
   },
   {
     id: "972",
@@ -549,13 +490,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     channel: "네이버블로그",
     keyword: "#스마트워치 #디지털 #체험단 #블로그리뷰 #테크",
     promotionLink: "https://smartstore.naver.com/example-store/products/123456",
-    requirements: [
-      "text_2000",
-      "photo_15",
-      "video_1_180",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_2000", "photo_15", "video_1_180", "product_link", "keyword"],
     guidelineTexts: [
       "배송형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★안내된 가격과 주문 가격이 상이한 경우 임의 주문하지 마시고, 꼭 1:1문의로 제보 부탁드립니다!! 네이버 멤버십 계정이시면 가격이 낮은 경우가 간혹 발생하여 안내드린 가격과 다를 경우, [ 멤버십이 아닌 네이버 계정으로 고지된 금액에 맞게 구매 ] 부탁드립니다★",
@@ -564,7 +499,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 구매처 착오 및 제품 잘못 구매할 경우 : 페이백 미지급 및 선정취소 <br /> - 구매평 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 체험형의 경우 지도와 함께 매장 주소,영업시간,주차유무등을 기재해주세요. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
     contactPhone: "010-0123-4567",
-  partnerName: "에코라이프",
+    partnerName: "에코라이프",
   },
   // delivery_13: 마감임박 - 네이버 클립 채널
   {
@@ -593,15 +528,8 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "클립",
     keyword: "#무선이어버드 #디지털 #체험단 #네이버클립 #테크",
-    promotionLink:
-      "https://smartstore.naver.com/example-store/products/wireless-earbuds",
-    requirements: [
-      "text_2000",
-      "photo_15",
-      "video_1_180",
-      "product_link",
-      "keyword",
-    ],
+    promotionLink: "https://smartstore.naver.com/example-store/products/wireless-earbuds",
+    requirements: ["text_2000", "photo_15", "video_1_180", "product_link", "keyword"],
     guidelineTexts: [
       "배송형 캠페인 작성시 아래의 내용을 참고하여 작성을 진행해 주세요.",
       "★★안내된 가격과 주문 가격이 상이한 경우 임의 주문하지 마시고, 꼭 1:1문의로 제보 부탁드립니다!! 네이버 멤버십 계정이시면 가격이 낮은 경우가 간혹 발생하여 안내드린 가격과 다를 경우, [ 멤버십이 아닌 네이버 계정으로 고지된 금액에 맞게 구매 ] 부탁드립니다★",
@@ -610,7 +538,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
       "- 미준수 시 처리 방향에 대한 책임은 리뷰어에게 있는 점 주의 부탁드립니다 <br /> - 제품 수령 불가 및 제품 착오할 경우 : 페이백 미지급 및 선정취소 <br /> - 리뷰 작성 불가할 경우 : 페이백 미지급 및 선정취소 <br />- 촬영은 DSLR로 촬영해주세요 (DSLR 급 휴대폰 대체가능) - 성의없는 리뷰는 다음 캠페인 참여에 어려울 수 있습니다. 정성껏 포스팅 해주세요! <br />- 공정배너의 경우 리뷰등록화면 내에 코드를 복사하여 등록 부탁드립니다.(스크린샷 불가) <br />- 제공받은 제품으로 리뷰 용도 외 재판매는 절대 불가합니다.<br />- 재판매건 적발 시 제품 가격 환불 및 캠페인 참여 제한됩니다.<br /> - 리뷰 등록기간 내 리뷰 미등록시 서비스이용료 및 제품 가격에 대하여 비용이 청구됩니다.<br /> - 리뷰 등록기간 필수로 지켜주시기 바랍니다. <br />- 배송형 캠페인의 경우 구매링크를 꼭 넣어주세요",
     ],
     contactPhone: "010-1357-2468",
-  partnerName: "레더리아",
+    partnerName: "레더리아",
   },
   // delivery_test: 배송형 테스트 (유저단 노출용)
   {
@@ -639,11 +567,8 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     channel: "네이버블로그",
     keyword: "#테스트 #배송형 #체험단",
     requirements: ["text_2000", "photo_15", "video_1_180", "product_link", "keyword"],
-    guidelineTexts: [
-      "배송형 테스트 캠페인입니다.",
-      "링크 확인 기능을 테스트할 수 있습니다.",
-    ],
-  partnerName: "펫프렌즈",
+    guidelineTexts: ["배송형 테스트 캠페인입니다.", "링크 확인 기능을 테스트할 수 있습니다."],
+    partnerName: "펫프렌즈",
   },
 ];
 
@@ -2123,9 +2048,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           profileImage: "",
           updatedAt: "2026-02-04T16:00:00.000Z",
           isLateSubmission: true,
-          receiptImages: [
-            "https://via.placeholder.com/800x600/FFD700/FFFFFF?text=Late+Submission",
-          ],
+          receiptImages: ["https://via.placeholder.com/800x600/FFD700/FFFFFF?text=Late+Submission"],
           receiptUrl: "/images/test_img/eximg.png",
         },
       ],
@@ -2224,14 +2147,7 @@ export interface DeliveryCampaignDataItem {
     id: string;
     title: string;
     image: string;
-    status:
-      | "진행 중"
-      | "대기 중"
-      | "모집 중"
-      | "종료"
-      | "마감"
-      | "취소"
-      | "긴급";
+    status: "진행 중" | "대기 중" | "모집 중" | "종료" | "마감" | "취소" | "긴급";
     campaignType: "배송형";
     category: string;
     brandName: string;
@@ -2319,18 +2235,14 @@ export interface DeliveryCampaignDataItem {
  */
 function generateNewCampaignId(): string {
   // 기존 캠페인 ID 중 최대값 찾기
-  const allCampaigns = [
-    ...deliveryCampaignsExtended,
-    ...deliveryClosedCampaignsExtended,
-  ];
+  const allCampaigns = [...deliveryCampaignsExtended, ...deliveryClosedCampaignsExtended];
 
   // localStorage에 저장된 캠페인도 확인
   if (typeof window !== "undefined") {
     try {
       const stored = localStorage.getItem("deliveryCampaigns");
       if (stored) {
-        const storedCampaigns: Array<{ campaignInfo: { id: string } }> =
-          JSON.parse(stored);
+        const storedCampaigns: Array<{ campaignInfo: { id: string } }> = JSON.parse(stored);
         if (Array.isArray(storedCampaigns)) {
           // localStorage의 캠페인들을 allCampaigns에 추가
           storedCampaigns.forEach((campaign) => {
@@ -2402,9 +2314,7 @@ export function createDeliveryCampaign(
       : (calculatedStatus as DeliveryCampaignDataItem["campaignInfo"]["status"]);
 
   // 플랫폼명 정규화 (공백 제거하여 로고 매핑 일치시키기)
-  const normalizedBrandName = formData.platform
-    ? formData.platform.replace(/\s+/g, "")
-    : "기본";
+  const normalizedBrandName = formData.platform ? formData.platform.replace(/\s+/g, "") : "기본";
 
   // 포인트 계산 (additionalPoints를 숫자로 변환)
   const points = Number(formData.additionalPoints) || 0;
@@ -2453,10 +2363,7 @@ export function updateDeliveryCampaign(
   imageUrl: string = "/images/main/campaign_img/eximg_1.png"
 ): DeliveryCampaignDataItem {
   // 기존 캠페인 데이터 찾기
-  const allCampaigns = [
-    ...deliveryCampaignsExtended,
-    ...deliveryClosedCampaignsExtended,
-  ];
+  const allCampaigns = [...deliveryCampaignsExtended, ...deliveryClosedCampaignsExtended];
   const existingCampaign = allCampaigns.find((c) => c.id === campaignId);
 
   // 기존 신청자 데이터 유지
@@ -2489,9 +2396,7 @@ export function updateDeliveryCampaign(
       : (calculatedStatus as DeliveryCampaignDataItem["campaignInfo"]["status"]);
 
   // 플랫폼명 정규화
-  const normalizedBrandName = formData.platform
-    ? formData.platform.replace(/\s+/g, "")
-    : "기본";
+  const normalizedBrandName = formData.platform ? formData.platform.replace(/\s+/g, "") : "기본";
 
   return {
     campaignInfo: {
@@ -2544,9 +2449,7 @@ export function addDeliveryCampaign(
  */
 export function getDeliveryContentsById(campaignId: string): ContentByTab {
   // 종료/취소 캠페인에서 찾기
-  const closedCampaign = deliveryClosedCampaignsExtended.find(
-    (c) => c.id === campaignId
-  );
+  const closedCampaign = deliveryClosedCampaignsExtended.find((c) => c.id === campaignId);
   if (closedCampaign?.contents) {
     return closedCampaign.contents;
   }
