@@ -50,6 +50,7 @@ const channel_name_map: Record<Channel, string> = {
   Mission: "미션",
   Reels: "릴스",
   Shorts: "쇼츠",
+  Review: "구매평",
 };
 
 export default function ReviewerFilterSection({
