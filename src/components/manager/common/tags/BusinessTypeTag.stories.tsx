@@ -10,20 +10,6 @@ import BusinessTypeTag, {
   type BusinessType,
 } from "@/components/manager/common/tags/BusinessTypeTag";
 
-// CSS 모듈 import
-import tagsStylesModule from "@/styles/common/tags.module.css";
-
-// CSS 모듈 객체를 타입 단언하여 사용
-const tagsStyles = (tagsStylesModule || {
-  division_tag: "division_tag",
-  division_tag_corporate: "division_tag_corporate",
-  division_tag_individual: "division_tag_individual",
-}) as Record<string, string> & {
-  division_tag: string;
-  division_tag_corporate: string;
-  division_tag_individual: string;
-};
-
 const meta: Meta<typeof BusinessTypeTag> = {
   title: "Manager/Common/Tags/BusinessTypeTag",
   component: BusinessTypeTag,
@@ -37,10 +23,6 @@ const meta: Meta<typeof BusinessTypeTag> = {
       control: "select",
       options: ["법인", "개인"],
     },
-    styles: {
-      description: "CSS 모듈 스타일 객체",
-      control: false,
-    },
   },
 };
 
@@ -52,7 +34,6 @@ type Story = StoryObj<typeof BusinessTypeTag>;
 export const Corporate: Story = {
   args: {
     type: "법인",
-    styles: tagsStyles,
   },
 };
 
@@ -60,7 +41,6 @@ export const Corporate: Story = {
 export const Individual: Story = {
   args: {
     type: "개인",
-    styles: tagsStyles,
   },
 };
 
@@ -83,10 +63,8 @@ export const AllTypes: Story = {
         React.createElement(BusinessTypeTag, {
           key: type,
           type,
-          styles: tagsStyles,
         })
       )
     );
   },
 };
-

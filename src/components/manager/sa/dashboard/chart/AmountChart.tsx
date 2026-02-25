@@ -77,7 +77,7 @@ interface CustomTooltipProps {
 const createCustomYAxisTick = (displayTicks: number[]) => {
   function CustomYAxisTick({ x, y, payload }: AxisTickProps) {
     // payload.value를 정수로 반올림
-    const value = Math.round(payload.value);
+    const value = Math.round(Number(payload.value));
 
     // 가장 가까운 틱 찾기 (오차 허용 범위: 틱 간격의 20% 또는 최소 200만)
     // 틱 간격이 2천만이므로 tolerance는 최소 400만 이상이어야 함
@@ -138,7 +138,7 @@ const createCustomYAxisTick = (displayTicks: number[]) => {
 const createCustomXAxisTick = (x_axis_ticks: string[]) => {
   function CustomXAxisTick({ x, y, payload }: AxisTickProps) {
     // 표시할 날짜인지 확인
-    const shouldDisplay = x_axis_ticks.includes(payload.value);
+    const shouldDisplay = x_axis_ticks.includes(String(payload.value));
 
     if (shouldDisplay) {
       return (

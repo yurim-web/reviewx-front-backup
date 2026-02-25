@@ -30,7 +30,9 @@ type Story = StoryObj<typeof RejectionReportChart>;
 export const Default: Story = {
   render: () => (
     <div style={{ width: "100%", height: "400px", padding: "20px" }}>
-      <RejectionReportChart />
+      <RejectionReportChart
+        dateRange={{ from: new Date("2026-02-01"), to: new Date("2026-02-25") }}
+      />
     </div>
   ),
 };

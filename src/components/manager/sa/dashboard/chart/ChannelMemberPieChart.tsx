@@ -437,7 +437,7 @@ export default function ChannelMemberPieChart({ channelData }: ChannelMemberPieC
 
           {/* 파이 차트 메인 설정 - 호버 시 크기 변경/지직거림 방지: activeShape로 동일 크기 유지 */}
           <Pie
-            data={channelData} // 차트 데이터
+            data={channelData as unknown as Parameters<typeof Pie>[0]["data"]} // 차트 데이터
             cx="50%" // 중심 X 좌표
             cy="50%" // 중심 Y 좌표
             innerRadius={0} // 내부 반지름 (0이면 파이 차트, 0보다 크면 도넛 차트)
@@ -447,7 +447,8 @@ export default function ChannelMemberPieChart({ channelData }: ChannelMemberPieC
             endAngle={-270} // 끝 각도 (한 바퀴 돌아서 12시 방향으로)
             paddingAngle={0} // 섹션 간 간격 (0이면 붙어있음)
             minAngle={5} // 최소 각도 (5도) - 작은 섹션도 최소한의 너비를 가지도록 설정
-            label={<CustomLabel />} // 각 섹션에 퍼센트 표시
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            label={CustomLabel as any} // 각 섹션에 퍼센트 표시
             stroke="white" // 섹션 사이 흰색 선
             strokeWidth={2} // 경계선 두께
             strokeLinecap="butt" // 선 끝을 둥글게 하지 않음

@@ -6,25 +6,7 @@
 
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
-import UserTypeTag, {
-  type UserType,
-} from "@/components/manager/common/tags/UserTypeTag";
-
-// CSS 모듈 import
-import tagsStylesModule from "@/styles/common/tags.module.css";
-
-// CSS 모듈 객체를 타입 단언하여 사용
-const tagsStyles = (tagsStylesModule || {
-  division_tag: "division_tag",
-  division_tag_reviewer: "division_tag_reviewer",
-  division_tag_partner: "division_tag_partner",
-  division_tag_admin: "division_tag_admin",
-}) as Record<string, string> & {
-  division_tag: string;
-  division_tag_reviewer: string;
-  division_tag_partner: string;
-  division_tag_admin: string;
-};
+import UserTypeTag, { type UserType } from "@/components/manager/common/tags/UserTypeTag";
 
 const meta: Meta<typeof UserTypeTag> = {
   title: "Manager/Common/Tags/UserTypeTag",
@@ -39,10 +21,6 @@ const meta: Meta<typeof UserTypeTag> = {
       control: "select",
       options: ["리뷰어", "파트너", "관리자"],
     },
-    styles: {
-      description: "CSS 모듈 스타일 객체",
-      control: false,
-    },
   },
 };
 
@@ -54,7 +32,6 @@ type Story = StoryObj<typeof UserTypeTag>;
 export const Reviewer: Story = {
   args: {
     type: "리뷰어",
-    styles: tagsStyles,
   },
 };
 
@@ -62,7 +39,6 @@ export const Reviewer: Story = {
 export const Partner: Story = {
   args: {
     type: "파트너",
-    styles: tagsStyles,
   },
 };
 
@@ -70,7 +46,6 @@ export const Partner: Story = {
 export const Admin: Story = {
   args: {
     type: "관리자",
-    styles: tagsStyles,
   },
 };
 
@@ -93,10 +68,8 @@ export const AllTypes: Story = {
         React.createElement(UserTypeTag, {
           key: type,
           type,
-          styles: tagsStyles,
         })
       )
     );
   },
 };
-

@@ -10,16 +10,6 @@ import CampaignTypeTag, {
   type CampaignType,
 } from "@/components/manager/common/tags/CampaignTypeTag";
 
-// CSS 모듈 import
-import tagsStylesModule from "@/styles/common/tags.module.css";
-
-// CSS 모듈 객체를 타입 단언하여 사용
-const tagsStyles = (tagsStylesModule || {
-  type_tag: "type_tag",
-}) as Record<string, string> & {
-  type_tag: string;
-};
-
 const meta: Meta<typeof CampaignTypeTag> = {
   title: "Manager/Common/Tags/CampaignTypeTag",
   component: CampaignTypeTag,
@@ -33,10 +23,6 @@ const meta: Meta<typeof CampaignTypeTag> = {
       control: "select",
       options: ["배송형", "방문형", "구매평", "기자단", "미션형"],
     },
-    styles: {
-      description: "CSS 모듈 스타일 객체",
-      control: false,
-    },
   },
 };
 
@@ -48,7 +34,6 @@ type Story = StoryObj<typeof CampaignTypeTag>;
 export const Delivery: Story = {
   args: {
     type: "배송형",
-    styles: tagsStyles,
   },
 };
 
@@ -56,7 +41,6 @@ export const Delivery: Story = {
 export const Visit: Story = {
   args: {
     type: "방문형",
-    styles: tagsStyles,
   },
 };
 
@@ -64,7 +48,6 @@ export const Visit: Story = {
 export const Review: Story = {
   args: {
     type: "구매평",
-    styles: tagsStyles,
   },
 };
 
@@ -72,7 +55,6 @@ export const Review: Story = {
 export const Reporter: Story = {
   args: {
     type: "기자단",
-    styles: tagsStyles,
   },
 };
 
@@ -80,20 +62,13 @@ export const Reporter: Story = {
 export const Mission: Story = {
   args: {
     type: "미션형",
-    styles: tagsStyles,
   },
 };
 
 // 모든 타입 태그 비교
 export const AllTypes: Story = {
   render: () => {
-    const types: CampaignType[] = [
-      "배송형",
-      "방문형",
-      "구매평",
-      "기자단",
-      "미션형",
-    ];
+    const types: CampaignType[] = ["배송형", "방문형", "구매평", "기자단", "미션형"];
 
     return React.createElement(
       "div",
@@ -109,10 +84,8 @@ export const AllTypes: Story = {
         React.createElement(CampaignTypeTag, {
           key: type,
           type,
-          styles: tagsStyles,
         })
       )
     );
   },
 };
-

@@ -15,5 +15,6 @@ const meta: Meta<typeof MemberActivationDonutChart> = {
 export default meta;
 type Story = StoryObj<typeof MemberActivationDonutChart>;
 
-export const Default: Story = { render: () => <MemberActivationDonutChart /> };
-
+export const Default: Story = {
+  render: () => <MemberActivationDonutChart activePercentage={75} />,
+};

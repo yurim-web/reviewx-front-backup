@@ -10,24 +10,6 @@ import PayoutStatusTag, {
   type PayoutStatus,
 } from "@/components/manager/common/tags/PayoutStatusTag";
 
-// CSS 모듈 import
-import tagsStylesModule from "@/styles/common/tags.module.css";
-
-// CSS 모듈 객체를 타입 단언하여 사용
-const tagsStyles = (tagsStylesModule || {
-  status_tag: "status_tag",
-  status_tag_request: "status_tag_request",
-  status_tag_urgent: "status_tag_urgent",
-  status_tag_completed: "status_tag_completed",
-  status_tag_rejected: "status_tag_rejected",
-}) as Record<string, string> & {
-  status_tag: string;
-  status_tag_request: string;
-  status_tag_urgent: string;
-  status_tag_completed: string;
-  status_tag_rejected: string;
-};
-
 const meta: Meta<typeof PayoutStatusTag> = {
   title: "Manager/Common/Tags/PayoutStatusTag",
   component: PayoutStatusTag,
@@ -41,10 +23,6 @@ const meta: Meta<typeof PayoutStatusTag> = {
       control: "select",
       options: ["신청", "긴급", "완료", "반려"],
     },
-    styles: {
-      description: "CSS 모듈 스타일 객체",
-      control: false,
-    },
   },
 };
 
@@ -56,7 +34,6 @@ type Story = StoryObj<typeof PayoutStatusTag>;
 export const Request: Story = {
   args: {
     status: "신청",
-    styles: tagsStyles,
   },
 };
 
@@ -64,7 +41,6 @@ export const Request: Story = {
 export const Urgent: Story = {
   args: {
     status: "긴급",
-    styles: tagsStyles,
   },
 };
 
@@ -72,7 +48,6 @@ export const Urgent: Story = {
 export const Completed: Story = {
   args: {
     status: "완료",
-    styles: tagsStyles,
   },
 };
 
@@ -80,7 +55,6 @@ export const Completed: Story = {
 export const Rejected: Story = {
   args: {
     status: "반려",
-    styles: tagsStyles,
   },
 };
 
@@ -103,10 +77,8 @@ export const AllStatuses: Story = {
         React.createElement(PayoutStatusTag, {
           key: status,
           status,
-          styles: tagsStyles,
         })
       )
     );
   },
 };
-

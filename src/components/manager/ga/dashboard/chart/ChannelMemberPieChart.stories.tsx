@@ -15,5 +15,6 @@ const meta: Meta<typeof ChannelMemberPieChart> = {
 export default meta;
 type Story = StoryObj<typeof ChannelMemberPieChart>;
 
-export const Default: Story = { render: () => <ChannelMemberPieChart /> };
-
+export const Default: Story = {
+  render: () => <ChannelMemberPieChart channelData={[]} />,
+};

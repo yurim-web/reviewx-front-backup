@@ -52,7 +52,9 @@ export const Default: Story = {
             flex-direction: column !important;
           }
         `}</style>
-        <RejectionReportSection />
+        <RejectionReportSection
+          dateRange={{ from: new Date("2026-02-01"), to: new Date("2026-02-25") }}
+        />
       </div>
     </div>
   ),

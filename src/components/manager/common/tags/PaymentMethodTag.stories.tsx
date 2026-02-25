@@ -10,20 +10,6 @@ import PaymentMethodTag, {
   type PaymentMethod,
 } from "@/components/manager/common/tags/PaymentMethodTag";
 
-// CSS 모듈 import
-import tagsStylesModule from "@/styles/common/tags.module.css";
-
-// CSS 모듈 객체를 타입 단언하여 사용
-const tagsStyles = (tagsStylesModule || {
-  payment_method_tag: "payment_method_tag",
-  payment_method_card: "payment_method_card",
-  payment_method_bank: "payment_method_bank",
-}) as Record<string, string> & {
-  payment_method_tag: string;
-  payment_method_card: string;
-  payment_method_bank: string;
-};
-
 const meta: Meta<typeof PaymentMethodTag> = {
   title: "Manager/Common/Tags/PaymentMethodTag",
   component: PaymentMethodTag,
@@ -37,10 +23,6 @@ const meta: Meta<typeof PaymentMethodTag> = {
       control: "select",
       options: ["카드 결제", "무통장 입금"],
     },
-    styles: {
-      description: "CSS 모듈 스타일 객체",
-      control: false,
-    },
   },
 };
 
@@ -52,7 +34,6 @@ type Story = StoryObj<typeof PaymentMethodTag>;
 export const Card: Story = {
   args: {
     method: "카드 결제",
-    styles: tagsStyles,
   },
 };
 
@@ -60,7 +41,6 @@ export const Card: Story = {
 export const Bank: Story = {
   args: {
     method: "무통장 입금",
-    styles: tagsStyles,
   },
 };
 
@@ -83,10 +63,8 @@ export const AllMethods: Story = {
         React.createElement(PaymentMethodTag, {
           key: method,
           method,
-          styles: tagsStyles,
         })
       )
     );
   },
 };
-

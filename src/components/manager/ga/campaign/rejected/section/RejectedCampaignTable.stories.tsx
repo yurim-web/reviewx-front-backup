@@ -55,7 +55,6 @@ export const WithFilters: Story = {
   render: (args) => React.createElement(RejectedCampaignTable, args),
   args: {
     search_query: "",
-    selected_reject_codes: ["RJ001", "RJ002"] as RejectCode[],
+    selected_reject_codes: ["RJ001", "RJ002"] as unknown as RejectCode[],
   },
 };
-

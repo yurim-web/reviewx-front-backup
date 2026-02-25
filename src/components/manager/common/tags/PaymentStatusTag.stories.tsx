@@ -10,22 +10,6 @@ import PaymentStatusTag, {
   type PaymentStatus,
 } from "@/components/manager/common/tags/PaymentStatusTag";
 
-// CSS 모듈 import
-import tagsStylesModule from "@/styles/common/tags.module.css";
-
-// CSS 모듈 객체를 타입 단언하여 사용
-const tagsStyles = (tagsStylesModule || {
-  payment_status_tag: "payment_status_tag",
-  payment_status_pending: "payment_status_pending",
-  payment_status_completed: "payment_status_completed",
-  payment_status_cancelled: "payment_status_cancelled",
-}) as Record<string, string> & {
-  payment_status_tag: string;
-  payment_status_pending: string;
-  payment_status_completed: string;
-  payment_status_cancelled: string;
-};
-
 const meta: Meta<typeof PaymentStatusTag> = {
   title: "Manager/Common/Tags/PaymentStatusTag",
   component: PaymentStatusTag,
@@ -39,10 +23,6 @@ const meta: Meta<typeof PaymentStatusTag> = {
       control: "select",
       options: ["대기", "완료", "취소"],
     },
-    styles: {
-      description: "CSS 모듈 스타일 객체",
-      control: false,
-    },
   },
 };
 
@@ -54,7 +34,6 @@ type Story = StoryObj<typeof PaymentStatusTag>;
 export const Pending: Story = {
   args: {
     status: "대기",
-    styles: tagsStyles,
   },
 };
 
@@ -62,7 +41,6 @@ export const Pending: Story = {
 export const Completed: Story = {
   args: {
     status: "완료",
-    styles: tagsStyles,
   },
 };
 
@@ -70,7 +48,6 @@ export const Completed: Story = {
 export const Cancelled: Story = {
   args: {
     status: "취소",
-    styles: tagsStyles,
   },
 };
 
@@ -93,10 +70,8 @@ export const AllStatuses: Story = {
         React.createElement(PaymentStatusTag, {
           key: status,
           status,
-          styles: tagsStyles,
         })
       )
     );
   },
 };
-
