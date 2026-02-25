@@ -11,13 +11,7 @@
 import type { CampaignType, PlatformType } from "@/types/domain/user";
 
 // 캠페인 유형 옵션
-export const campaign_types: CampaignType[] = [
-  "배송형",
-  "방문형",
-  "구매평",
-  "기자단",
-  "미션형",
-];
+export const campaign_types: CampaignType[] = ["배송형", "방문형", "구매평", "기자단", "미션형"];
 
 // 플랫폼 옵션
 export const platforms: PlatformType[] = [

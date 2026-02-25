@@ -21,7 +21,7 @@ import actionStyles from "@/styles/partner/campaign_application/card/applicant_c
 import { getChannelLogo } from "@/utils/channelLogoMap";
 import { getChannelUrl } from "@/utils/helpers/url";
 import { formatDateForMobile } from "@/utils/formatting/date";
-import type { ExperienceApplicant } from "./ExperienceTypes";
+import type { ExperienceApplicant } from "./experienceTypes";
 import TextareaModal from "@/components/common/modal/TextareaModal";
 import ReportModal, { type ReportOption } from "@/components/common/modal/ReportModal";
 import BaseModal from "@/components/common/modal/BaseModal";

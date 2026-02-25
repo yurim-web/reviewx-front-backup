@@ -106,9 +106,7 @@ export function calculateCampaignStatus(
             if (startDate <= today && today <= endDate) {
               // 선정 날짜가 미래인지 확인 (선정 전이어야 "모집 중")
               if (announcementDate) {
-                const announcementDateStr = announcementDate
-                  .split(" ")[0]
-                  ?.trim();
+                const announcementDateStr = announcementDate.split(" ")[0]?.trim();
                 if (announcementDateStr) {
                   const announcementDateObj = new Date(announcementDateStr);
 
@@ -136,9 +134,7 @@ export function calculateCampaignStatus(
             } else if (today > endDate) {
               // 모집 기간이 지났으면 선정 날짜 확인
               if (announcementDate) {
-                const announcementDateStr = announcementDate
-                  .split(" ")[0]
-                  ?.trim();
+                const announcementDateStr = announcementDate.split(" ")[0]?.trim();
                 if (announcementDateStr) {
                   const announcementDateObj = new Date(announcementDateStr);
 

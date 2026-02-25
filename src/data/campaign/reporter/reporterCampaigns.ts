@@ -1,13 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-require-imports */
 /**
  * 기자단 캠페인 데이터 타입 정의
  */
 
 import type { CampaignFormData } from "@/types/domain/user";
-import type {
-  ContentByTab,
-  CampaignWithApplicants,
-} from "@/data/partner/sharedCampaigns";
-import { calculateDaysLeft, calculateCampaignStatus } from "../delivery/utils";
+import type { ContentByTab, CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
+import { calculateDaysLeft, calculateCampaignStatus } from "../delivery/deliveryUtils";
 
 export interface ReporterCampaignData {
   id: string; // 캠페인 고유 식별자
@@ -64,7 +63,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       current: 45,
       total: 3,
       partnerName: "크리에이터스튜디오",
-  },
+    },
     schedule: "",
     dayCount: "D-5",
     registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
@@ -79,13 +78,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     channel: "릴스",
     keyword: "#테크기자단 #IT리뷰 #기술리포팅 #릴스 #전문리뷰",
     productLink: "https://example.com/tech-product",
-    requirements: [
-      "text_3000",
-      "photo_25",
-      "video_2_600",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_3000", "photo_25", "video_2_600", "product_link", "keyword"],
     guidelineTexts: [
       "기자단 캠페인 작성시 아래의 내용을 참고하여 작성 진행해 주세요.",
       "★기자단 활동의 전문적이고 객관적인 각도로 작성해주세요!! IT 기술 분야에서는 깊이있는 지식과 경험을 바탕으로 작성해주세요.",
@@ -107,7 +100,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       current: 78,
       total: 5,
       partnerName: "패션하우스",
-  },
+    },
     schedule: "",
     dayCount: "D-3",
     registeredAt: "2026-01-08T11:15:00.000Z", // 등록 시간
@@ -122,13 +115,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     channel: "인스타그램",
     keyword: "#뷰티기자단 #트렌드리뷰 #뷰티트렌드 #인스타그램 #전문리뷰",
     productLink: "https://example.com/beauty-product",
-    requirements: [
-      "text_2000",
-      "photo_15",
-      "video_report",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_2000", "photo_15", "video_report", "product_link", "keyword"],
     guidelineTexts: [
       "기자단 캠페인 작성시 아래의 내용을 참고하여 작성 진행해 주세요.",
       "★기자단 활동의 전문적이고 객관적인 각도로 작성해주세요!! 뷰티 분야에서는 깊이있는 지식과 경험을 바탕으로 작성해주세요.",
@@ -150,7 +137,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       current: 56,
       total: 4,
       partnerName: "스마트리빙",
-  },
+    },
     schedule: "",
     dayCount: "",
     isUrgent: true, // 긴급 캠페인
@@ -165,13 +152,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
     keyword: "#패션기자단 #패션트렌드 #패션리뷰 #블로그 #전문리뷰",
-    requirements: [
-      "text_1500",
-      "photo_12",
-      "video_report",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_1500", "photo_12", "video_report", "product_link", "keyword"],
     guidelineTexts: [
       "기자단 캠페인 작성시 아래의 내용을 참고하여 작성 진행해 주세요.",
       "★기자단 활동의 전문적이고 객관적인 각도로 작성해주세요!! 패션 분야에서는 깊이있는 지식과 경험을 바탕으로 작성해주세요.",
@@ -193,7 +174,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       current: 89,
       total: 6,
       partnerName: "레더리아",
-  },
+    },
     schedule: "",
     dayCount: "D-7",
     registeredAt: "2026-01-09T13:30:00.000Z", // 등록 시간
@@ -207,13 +188,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
     keyword: "#푸드기자단 #맛집리뷰 #제품리뷰 #블로그 #전문리뷰",
-    requirements: [
-      "text_1800",
-      "photo_15",
-      "video_report",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_1800", "photo_15", "video_report", "product_link", "keyword"],
     guidelineTexts: [
       "기자단 캠페인 작성시 아래의 내용을 참고하여 작성 진행해 주세요.",
       "★기자단 활동의 전문적이고 객관적인 각도로 작성해주세요!! 푸드 분야에서는 깊이있는 지식과 경험을 바탕으로 작성해주세요.",
@@ -235,7 +210,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       current: 34,
       total: 2,
       partnerName: "프리미엄뷰티",
-  },
+    },
     schedule: "",
     dayCount: "D-6",
     registeredAt: "2025-10-28T10:00:00.000Z", // 등록 시간
@@ -249,13 +224,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
     keyword: "#여행기자단 #여행리뷰 #여행정보 #유튜브 #전문리뷰",
-    requirements: [
-      "text_2000",
-      "photo_20",
-      "video_report",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_2000", "photo_20", "video_report", "product_link", "keyword"],
     guidelineTexts: [
       "기자단 캠페인 작성시 아래의 내용을 참고하여 작성 진행해 주세요.",
       "★기자단 활동의 전문적이고 객관적인 각도로 작성해주세요!! 여행 분야에서는 깊이있는 지식과 경험을 바탕으로 작성해주세요.",
@@ -277,7 +246,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       current: 67,
       total: 8,
       partnerName: "홈트레이닝",
-  },
+    },
     schedule: "",
     dayCount: "D-4",
     registeredAt: "2026-01-07T15:20:00.000Z", // 등록 시간
@@ -290,15 +259,8 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
-    keyword:
-      "#라이프스타일기자단 #생활리뷰 #라이프트렌드 #인스타그램 #전문리뷰",
-    requirements: [
-      "text_1600",
-      "photo_18",
-      "video_report",
-      "product_link",
-      "keyword",
-    ],
+    keyword: "#라이프스타일기자단 #생활리뷰 #라이프트렌드 #인스타그램 #전문리뷰",
+    requirements: ["text_1600", "photo_18", "video_report", "product_link", "keyword"],
     guidelineTexts: [
       "기자단 캠페인 작성시 아래의 내용을 참고하여 작성 진행해 주세요.",
       "★기자단 활동의 전문적이고 객관적인 각도로 작성해주세요!! 라이프스타일 분야에서는 깊이있는 지식과 경험을 바탕으로 작성해주세요.",
@@ -320,7 +282,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       current: 45,
       total: 5,
       partnerName: "펫프렌즈",
-  },
+    },
     schedule: "",
     dayCount: "D-2",
     registeredAt: "2025-11-10T09:15:00.000Z", // 등록 시간
@@ -334,13 +296,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
     keyword: "#게임기자단 #게임리뷰 #게임플레이 #유튜브 #전문리뷰",
-    requirements: [
-      "text_1700",
-      "photo_16",
-      "video_report",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_1700", "photo_16", "video_report", "product_link", "keyword"],
     guidelineTexts: [
       "기자단 캠페인 작성시 아래의 내용을 참고하여 작성 진행해 주세요.",
       "★기자단 활동의 전문적이고 객관적인 각도로 작성해주세요!! 게임 분야에서는 깊이있는 지식과 경험을 바탕으로 작성해주세요.",
@@ -362,7 +318,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       current: 78,
       total: 6,
       partnerName: "웰빙코리아",
-  },
+    },
     schedule: "",
     dayCount: "D-8",
     registeredAt: "2025-11-05T14:00:00.000Z", // 등록 시간
@@ -376,13 +332,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
     keyword: "#건강기자단 #건강정보 #케어리뷰 #블로그 #전문리뷰",
-    requirements: [
-      "text_1600",
-      "photo_14",
-      "video_report",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_1600", "photo_14", "video_report", "product_link", "keyword"],
     guidelineTexts: [
       "기자단 캠페인 작성시 아래의 내용을 참고하여 작성 진행해 주세요.",
       "★기자단 활동의 전문적이고 객관적인 각도로 작성해주세요!! 건강 분야에서는 깊이있는 지식과 경험을 바탕으로 작성해주세요.",
@@ -404,7 +354,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       current: 56,
       total: 7,
       partnerName: "키즈월드",
-  },
+    },
     schedule: "",
     dayCount: "D-1",
     registeredAt: "2025-11-15T10:50:00.000Z", // 등록 시간
@@ -418,13 +368,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
     keyword: "#문화기자단 #예술리뷰 #전시리뷰 #인스타그램 #전문리뷰",
-    requirements: [
-      "text_1500",
-      "photo_13",
-      "video_report",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_1500", "photo_13", "video_report", "product_link", "keyword"],
     guidelineTexts: [
       "기자단 캠페인 작성시 아래의 내용을 참고하여 작성 진행해 주세요.",
       "★기자단 활동의 전문적이고 객관적인 각도로 작성해주세요!! 문화 분야에서는 깊이있는 지식과 경험을 바탕으로 작성해주세요.",
@@ -446,7 +390,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       current: 34,
       total: 3,
       partnerName: "스포츠존",
-  },
+    },
     schedule: "",
     dayCount: "D-9",
     registeredAt: "2025-11-01T08:00:00.000Z", // 등록 시간
@@ -460,13 +404,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
     keyword: "#스포츠기자단 #스포츠리뷰 #스포츠이벤트 #유튜브 #전문리뷰",
-    requirements: [
-      "text_1900",
-      "photo_17",
-      "video_report",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_1900", "photo_17", "video_report", "product_link", "keyword"],
     guidelineTexts: [
       "기자단 캠페인 작성시 아래의 내용을 참고하여 작성 진행해 주세요.",
       "★기자단 활동의 전문적이고 객관적인 각도로 작성해주세요!! 스포츠 분야에서는 깊이있는 지식과 경험을 바탕으로 작성해주세요.",
@@ -487,7 +425,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       current: 0,
       total: 5,
       partnerName: "내추럴푸드",
-  },
+    },
     schedule: "1/15 (목) 10:00\n모집 오픈",
     dayCount: "",
     registeredAt: "2026-01-10T12:00:00.000Z", // 등록 시간
@@ -502,13 +440,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     channel: "네이버클립",
     keyword: "#뷰티트렌드 #뷰티기자단 #2026뷰티 #뷰티리포팅 #전문리뷰",
     productLink: "https://blog.naver.com/example-beauty-trend",
-    requirements: [
-      "text_2500",
-      "photo_20",
-      "video_report",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_2500", "photo_20", "video_report", "product_link", "keyword"],
     guidelineTexts: [
       "기자단 캠페인 작성시 아래의 내용을 참고하여 작성 진행해 주세요.",
       "★기자단 활동의 전문적이고 객관적인 각도로 작성해주세요!! 뷰티 분야에서는 최신 트렌드와 전문적인 분석을 바탕으로 작성해주세요.",
@@ -530,7 +462,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       current: 2, // 신청자 수 적게 설정
       total: 5,
       partnerName: "글로벌트레이드",
-  },
+    },
     schedule: "",
     dayCount: "마감임박",
     registeredAt: "2026-01-11T11:30:00.000Z", // 등록 시간
@@ -545,13 +477,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     channel: "클립",
     keyword: "#디지털기자단 #IT리뷰 #기술리포팅 #네이버클립 #전문리뷰",
     productLink: "https://example.com/digital-product",
-    requirements: [
-      "text_3000",
-      "photo_25",
-      "video_2_600",
-      "product_link",
-      "keyword",
-    ],
+    requirements: ["text_3000", "photo_25", "video_2_600", "product_link", "keyword"],
     guidelineTexts: [
       "기자단 캠페인 작성시 아래의 내용을 참고하여 작성 진행해 주세요.",
       "★기자단 활동의 전문적이고 객관적인 각도로 작성해주세요!! IT 기술 분야에서는 깊이있는 지식과 경험을 바탕으로 작성해주세요.",
@@ -573,7 +499,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       current: 7,
       total: 10,
       partnerName: "에코라이프",
-  },
+    },
     schedule: "",
     dayCount: "D-8",
     registeredAt: "2026-01-10T10:00:00.000Z",
@@ -587,10 +513,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     channel: "유튜브",
     keyword: "#테스트 #기자단 #IT리뷰",
     requirements: ["text_3000", "photo_25", "video_2_600", "product_link", "keyword"],
-    guidelineTexts: [
-      "기자단 테스트 캠페인입니다.",
-      "링크 확인 기능을 테스트할 수 있습니다.",
-    ],
+    guidelineTexts: ["기자단 테스트 캠페인입니다.", "링크 확인 기능을 테스트할 수 있습니다."],
   },
 ];
 
@@ -716,7 +639,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "릴스",
           registrationDate: "2025-12-15",
-  },
+        },
         {
           id: "app_reporter_1_릴스_002",
           Id: "reviewer_reporter_1_002",
@@ -731,7 +654,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "릴스",
           registrationDate: "2025-12-16",
-  },
+        },
         {
           id: "app_reporter_1_릴스_003",
           Id: "reviewer_reporter_1_003",
@@ -746,7 +669,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "릴스",
           registrationDate: "2025-12-17",
-  },
+        },
         {
           id: "app_reporter_1_릴스_004",
           Id: "reviewer_reporter_1_004",
@@ -761,7 +684,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "릴스",
           registrationDate: "2025-12-18",
-  },
+        },
         {
           id: "app_reporter_1_릴스_005",
           Id: "reviewer_reporter_1_005",
@@ -776,7 +699,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "릴스",
           registrationDate: "2025-12-19",
-  },
+        },
       ],
       selectedApplicants: [
         {
@@ -793,7 +716,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "선정하기" as const,
           channel: "릴스",
           registrationDate: "2025-12-15",
-  },
+        },
         {
           id: "sel_reporter_1_릴스_002",
           Id: "selected_reporter_1_002",
@@ -808,7 +731,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "선정하기" as const,
           channel: "릴스",
           registrationDate: "2025-12-17",
-  },
+        },
       ],
     },
   },
@@ -831,7 +754,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "인스타그램",
           registrationDate: "2025-12-18",
-  },
+        },
         {
           id: "app_reporter_2_인스타그램_002",
           Id: "reviewer_reporter_2_002",
@@ -846,7 +769,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "인스타그램",
           registrationDate: "2025-12-19",
-  },
+        },
         {
           id: "app_reporter_2_인스타그램_003",
           Id: "reviewer_reporter_2_003",
@@ -861,7 +784,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "인스타그램",
           registrationDate: "2025-12-20",
-  },
+        },
       ],
       selectedApplicants: [
         {
@@ -878,7 +801,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "선정하기" as const,
           channel: "인스타그램",
           registrationDate: "2025-12-18",
-  },
+        },
       ],
     },
     contents: {
@@ -892,7 +815,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           channelId: "insta_023",
           channel: "인스타그램",
           profileImage: "",
-  },
+        },
         {
           id: "content_reporter_2_waiting_002",
           createdAt: "2025-12-21T11:00:00.000Z",
@@ -902,7 +825,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           channelId: "insta_024",
           channel: "인스타그램",
           profileImage: "",
-  },
+        },
       ],
       reviewing: [
         {
@@ -917,7 +840,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           isRejected: false,
           isLate: false,
           profileImage: "",
-  },
+        },
       ],
       completed: [
         {
@@ -931,7 +854,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           updatedAt: "2025-12-16T09:00:00.000Z",
           isLate: false,
           profileImage: "",
-  },
+        },
       ],
     },
   },
@@ -955,7 +878,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-20",
-  },
+        },
         {
           id: "app_reporter_3_네이버블로그_002",
           Id: "reviewer_reporter_3_002",
@@ -970,7 +893,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-21",
-  },
+        },
         {
           id: "app_reporter_3_네이버블로그_003",
           Id: "reviewer_reporter_3_003",
@@ -985,7 +908,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-22",
-  },
+        },
       ],
       selectedApplicants: [
         {
@@ -1002,7 +925,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "선정하기" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-20",
-  },
+        },
       ],
     },
   },
@@ -1025,7 +948,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-25",
-  },
+        },
         {
           id: "app_reporter_4_네이버블로그_002",
           Id: "reviewer_reporter_4_002",
@@ -1040,7 +963,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-26",
-  },
+        },
       ],
       selectedApplicants: [],
     },
@@ -1064,7 +987,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "유튜브",
           registrationDate: "2025-12-10",
-  },
+        },
       ],
       selectedApplicants: [],
     },
@@ -1082,7 +1005,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           updatedAt: "2025-11-25",
           isRejected: false,
           isLate: false,
-  },
+        },
         {
           id: "content_reporter_5_002",
           createdAt: "2025-11-21",
@@ -1094,7 +1017,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           updatedAt: "2025-11-26",
           isRejected: false,
           isLate: false,
-  },
+        },
       ],
       completed: [
         {
@@ -1107,7 +1030,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           channel: "유튜브",
           updatedAt: "2025-11-27",
           isLate: false,
-  },
+        },
         {
           id: "content_reporter_5_004",
           createdAt: "2025-11-23",
@@ -1118,7 +1041,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           channel: "유튜브",
           updatedAt: "2025-11-28",
           isLate: false,
-  },
+        },
       ],
     },
   },
@@ -1141,7 +1064,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "인스타그램",
           registrationDate: "2025-12-19",
-  },
+        },
         {
           id: "app_reporter_6_인스타그램_002",
           Id: "reviewer_reporter_6_002",
@@ -1156,7 +1079,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "인스타그램",
           registrationDate: "2025-12-20",
-  },
+        },
         {
           id: "app_reporter_6_인스타그램_003",
           Id: "reviewer_reporter_6_003",
@@ -1171,7 +1094,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "인스타그램",
           registrationDate: "2025-12-21",
-  },
+        },
       ],
       selectedApplicants: [
         {
@@ -1188,7 +1111,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "선정하기" as const,
           channel: "인스타그램",
           registrationDate: "2025-12-19",
-  },
+        },
       ],
     },
   },
@@ -1211,7 +1134,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "유튜브",
           registrationDate: "2025-12-28",
-  },
+        },
         {
           id: "app_reporter_7_유튜브_002",
           Id: "reviewer_reporter_7_002",
@@ -1226,7 +1149,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "유튜브",
           registrationDate: "2025-12-29",
-  },
+        },
       ],
       selectedApplicants: [],
     },
@@ -1241,7 +1164,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           channelId: "youtube_025",
           channel: "유튜브",
           profileImage: "",
-  },
+        },
       ],
       reviewing: [
         {
@@ -1256,7 +1179,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           isRejected: false,
           isLate: false,
           profileImage: "",
-  },
+        },
       ],
       completed: [
         {
@@ -1270,7 +1193,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           updatedAt: "2025-12-25T09:00:00.000Z",
           isLate: false,
           profileImage: "",
-  },
+        },
       ],
     },
   },
@@ -1293,7 +1216,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버블로그",
           registrationDate: "2025-12-12",
-  },
+        },
       ],
       selectedApplicants: [],
     },
@@ -1312,7 +1235,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           isRejected: false,
           isLate: false,
           profileImage: "",
-  },
+        },
       ],
       completed: [
         {
@@ -1326,7 +1249,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           updatedAt: "2025-12-07T11:00:00.000Z",
           isLate: false,
           profileImage: "",
-  },
+        },
         {
           id: "content_reporter_8_003",
           createdAt: "2025-12-02T12:00:00.000Z",
@@ -1338,7 +1261,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           updatedAt: "2025-12-07T12:00:00.000Z",
           isLate: false,
           profileImage: "",
-  },
+        },
       ],
     },
   },
@@ -1361,7 +1284,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "인스타그램",
           registrationDate: "2025-12-30",
-  },
+        },
         {
           id: "app_reporter_9_인스타그램_002",
           Id: "reviewer_reporter_9_002",
@@ -1376,7 +1299,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "인스타그램",
           registrationDate: "2025-12-31",
-  },
+        },
       ],
       selectedApplicants: [],
     },
@@ -1391,7 +1314,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           channelId: "insta_027",
           channel: "인스타그램",
           profileImage: "",
-  },
+        },
         {
           id: "content_reporter_9_waiting_002",
           createdAt: "2025-12-31T11:00:00.000Z",
@@ -1401,7 +1324,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           channelId: "insta_028",
           channel: "인스타그램",
           profileImage: "",
-  },
+        },
       ],
       reviewing: [
         {
@@ -1416,7 +1339,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           isRejected: false,
           isLate: false,
           profileImage: "",
-  },
+        },
       ],
       completed: [
         {
@@ -1430,7 +1353,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           updatedAt: "2025-12-27T09:00:00.000Z",
           isLate: false,
           profileImage: "",
-  },
+        },
       ],
     },
   },
@@ -1453,7 +1376,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "유튜브",
           registrationDate: "2025-12-08",
-  },
+        },
       ],
       selectedApplicants: [],
     },
@@ -1475,7 +1398,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버클립" as const,
           registrationDate: "2026-01-20",
-  } as any,
+        } as any,
         {
           id: "app_reporter_11_네이버클립_002",
           Id: "reviewer_reporter_11_002",
@@ -1488,7 +1411,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버클립" as const,
           registrationDate: "2026-01-22",
-  } as any,
+        } as any,
         {
           id: "app_reporter_11_네이버클립_003",
           Id: "reviewer_reporter_11_003",
@@ -1501,7 +1424,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버클립" as const,
           registrationDate: "2026-01-25",
-  } as any,
+        } as any,
         {
           id: "app_reporter_11_네이버클립_004",
           Id: "reviewer_reporter_11_004",
@@ -1514,7 +1437,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버클립" as const,
           registrationDate: "2026-01-26",
-  } as any,
+        } as any,
         {
           id: "app_reporter_11_네이버클립_005",
           Id: "reviewer_reporter_11_005",
@@ -1527,7 +1450,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버클립" as const,
           registrationDate: "2026-01-27",
-  } as any,
+        } as any,
       ],
       selectedApplicants: [
         {
@@ -1542,7 +1465,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "선정하기" as const,
           channel: "네이버클립" as const,
           registrationDate: "2026-01-18",
-  } as any,
+        } as any,
         {
           id: "sel_reporter_11_네이버클립_002",
           Id: "selected_reporter_11_002",
@@ -1555,7 +1478,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "선정하기" as const,
           channel: "네이버클립" as const,
           registrationDate: "2026-01-19",
-  } as any,
+        } as any,
       ],
     },
   },
@@ -1578,7 +1501,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버클립" as const,
           registrationDate: "2026-01-13",
-  } as any,
+        } as any,
         {
           id: "app_reporter_12_네이버클립_002",
           Id: "reviewer_reporter_12_002",
@@ -1591,7 +1514,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버클립" as const,
           registrationDate: "2026-01-14",
-  } as any,
+        } as any,
         {
           id: "app_reporter_12_네이버클립_003",
           Id: "reviewer_reporter_12_003",
@@ -1604,7 +1527,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버클립" as const,
           registrationDate: "2026-01-15",
-  } as any,
+        } as any,
         {
           id: "app_reporter_12_네이버클립_004",
           Id: "reviewer_reporter_12_004",
@@ -1617,7 +1540,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "미선택" as const,
           channel: "네이버클립" as const,
           registrationDate: "2026-01-16",
-  } as any,
+        } as any,
       ],
       selectedApplicants: [
         {
@@ -1632,7 +1555,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "선정하기" as const,
           channel: "네이버클립" as const,
           registrationDate: "2026-01-13",
-  } as any,
+        } as any,
         {
           id: "sel_reporter_12_네이버클립_002",
           Id: "selected_reporter_12_002",
@@ -1645,7 +1568,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           selectionStatus: "선정하기" as const,
           channel: "네이버클립" as const,
           registrationDate: "2026-01-14",
-  } as any,
+        } as any,
       ],
     },
     contents: {
@@ -1658,8 +1581,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           nickname: "디지털기자단리뷰어A",
           channelId: "naverclip_021",
           channel: "네이버클립",
-
-  },
+        },
         {
           id: "content_reporter_12_waiting_002",
           createdAt: "2026-02-01T11:00:00.000Z",
@@ -1668,8 +1590,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           nickname: "디지털인플루언서B",
           channelId: "naverclip_022",
           channel: "네이버클립",
-         
-  },
+        },
       ],
       reviewing: [
         {
@@ -1683,8 +1604,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           updatedAt: "2026-01-30T10:00:00.000Z",
           isRejected: false,
           isLate: false,
-      
-  },
+        },
         {
           id: "content_reporter_12_reviewing_002",
           createdAt: "2026-01-30T14:00:00.000Z",
@@ -1696,8 +1616,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           updatedAt: "2026-01-31T15:00:00.000Z",
           isRejected: false,
           isLate: false,
-         
-  },
+        },
       ],
       completed: [
         {
@@ -1710,8 +1629,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           channel: "네이버클립",
           updatedAt: "2026-01-27T09:00:00.000Z",
           isLate: false,
-      
-  },
+        },
         {
           id: "content_reporter_12_completed_002",
           createdAt: "2026-01-26T10:00:00.000Z",
@@ -1722,8 +1640,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           channel: "네이버클립",
           updatedAt: "2026-01-28T11:00:00.000Z",
           isLate: false,
-
-  },
+        },
       ],
     },
   },
@@ -1735,7 +1652,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
     recruitment: {
       current: 7,
       total: 10,
-  },
+    },
     detailedSchedule: {
       applicationStart: "2026-02-01",
       applicationEnd: "2026-02-28",
@@ -1759,7 +1676,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           channel: "유튜브",
           profileImage: "",
           receiptUrl: "/images/test_img/eximg.png",
-  },
+        },
         // 경우의 수 2: 연장 요청됨
         {
           id: "reporter_test_waiting_002",
@@ -1772,7 +1689,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           profileImage: "",
           extension_request_reason: "기자단 자료 정리로 3일 연장 요청드립니다.",
           receiptUrl: "/images/test_img/eximg.png",
-  },
+        },
         // 경우의 수 3: 반려됨
         {
           id: "reporter_test_waiting_003",
@@ -1785,7 +1702,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           profileImage: "",
           isRejected: true,
           receiptUrl: "/images/test_img/eximg.png",
-  },
+        },
         // 경우의 수 4: 신고됨
         {
           id: "reporter_test_waiting_004",
@@ -1799,7 +1716,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           isReported: true,
           reportedDate: "2026-02-04T14:30:00.000Z",
           receiptUrl: "/images/test_img/eximg.png",
-  },
+        },
       ],
       reviewing: [
         // 확인 탭 경우의 수 1: 검수 중 상태
@@ -1813,7 +1730,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           channel: "유튜브",
           profileImage: "",
           receiptUrl: "/images/test_img/eximg.png",
-  },
+        },
       ],
       completed: [
         // 완료 탭 경우의 수 1: 승인 완료 상태
@@ -1828,7 +1745,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           profileImage: "",
           updatedAt: "2026-01-29T09:00:00.000Z",
           receiptUrl: "/images/test_img/eximg.png",
-  },
+        },
         // 완료 탭 경우의 수 2: 지각등록 승인 완료 상태
         {
           id: "reporter_test_completed_002",
@@ -1842,7 +1759,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           updatedAt: "2026-02-04T16:00:00.000Z",
           isLateSubmission: true,
           receiptUrl: "/images/test_img/eximg.png",
-  },
+        },
       ],
     },
   },
@@ -1887,8 +1804,7 @@ function generateNewReporterCampaignId(): string {
     try {
       const stored = localStorage.getItem("reporterCampaigns");
       if (stored) {
-        const storedCampaigns: Array<{ campaignInfo: { id: string } }> =
-          JSON.parse(stored);
+        const storedCampaigns: Array<{ campaignInfo: { id: string } }> = JSON.parse(stored);
         if (Array.isArray(storedCampaigns)) {
           storedCampaigns.forEach((campaign) => {
             if (campaign.campaignInfo && campaign.campaignInfo.id) {
@@ -1962,9 +1878,7 @@ export function createReporterCampaign(
   }
 
   // 플랫폼명 정규화
-  const normalizedBrandName = formData.platform
-    ? formData.platform.replace(/\s+/g, "")
-    : "유튜브";
+  const normalizedBrandName = formData.platform ? formData.platform.replace(/\s+/g, "") : "유튜브";
 
   // 포인트 계산 (additionalPoints를 숫자로 변환)
   const points = Number(formData.additionalPoints) || 0;
@@ -1978,10 +1892,10 @@ export function createReporterCampaign(
         finalStatus === "대기 중"
           ? "대기 중"
           : finalStatus === "모집 중"
-          ? "모집 중"
-          : finalStatus === "마감"
-          ? "마감"
-          : "등록 중",
+            ? "모집 중"
+            : finalStatus === "마감"
+              ? "마감"
+              : "등록 중",
       campaignType: "기자단",
       category: formData.category || "기타",
       brandName: normalizedBrandName,
@@ -2051,9 +1965,7 @@ export function updateReporterCampaign(
   }
 
   // 플랫폼명 정규화
-  const normalizedBrandName = formData.platform
-    ? formData.platform.replace(/\s+/g, "")
-    : "유튜브";
+  const normalizedBrandName = formData.platform ? formData.platform.replace(/\s+/g, "") : "유튜브";
 
   return {
     campaignInfo: {
@@ -2064,10 +1976,10 @@ export function updateReporterCampaign(
         finalStatus === "대기 중"
           ? "대기 중"
           : finalStatus === "모집 중"
-          ? "모집 중"
-          : finalStatus === "마감"
-          ? "마감"
-          : "등록 중",
+            ? "모집 중"
+            : finalStatus === "마감"
+              ? "마감"
+              : "등록 중",
       campaignType: "기자단",
       category: formData.category || "기타",
       brandName: normalizedBrandName,

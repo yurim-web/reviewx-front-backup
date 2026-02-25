@@ -11,7 +11,7 @@
  * - /partner/campaign/[id]/contents (구매평/미션형 > 대기·확인·완료 탭)
  */
 
-import type { ExperienceApplicant as BaseExperienceApplicant } from "../experience_card/ExperienceTypes";
+import type { ExperienceApplicant as BaseExperienceApplicant } from "../experience_card/experienceTypes";
 
 /**
  * 구매평 카드 타입

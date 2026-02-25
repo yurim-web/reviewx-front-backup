@@ -22,7 +22,7 @@ import PurchaseFirstCompletedCard from "@/components/partner/campaign_contents/c
 import PurchaseSecondPendingCard from "@/components/partner/campaign_contents/card_type/purchase_card/purchase_second_card/PurchaseSecondPendingCard";
 import PurchaseSecondInspectionCard from "@/components/partner/campaign_contents/card_type/purchase_card/purchase_second_card/PurchaseSecondInspectionCard";
 import PurchaseSecondCompletedCard from "@/components/partner/campaign_contents/card_type/purchase_card/purchase_second_card/PurchaseSecondCompletedCard";
-import type { CampaignApplicant } from "@/components/partner/campaign_contents/card_type/shared_card/CampaignTypes";
+import type { CampaignApplicant } from "@/components/partner/campaign_contents/card_type/shared_card/campaignTypes";
 import { openChannelUrl } from "@/utils/helpers/url";
 
 interface RenderReviewCardParams {
@@ -70,14 +70,15 @@ export function createReviewCardRenderer(renderParams: RenderReviewCardParams) {
     const dateLabel: "등록" | "수정" | "지각 등록" = item.isLateSubmission
       ? "지각 등록"
       : item.updatedAt
-      ? "수정"
-      : "등록";
+        ? "수정"
+        : "등록";
 
     // 대기 탭
     if (renderParams.activeTab === "대기") {
       // 구매 기간인 경우 구매평 1차 카드 사용
       if (renderParams.checkIsInPurchasePeriod()) {
-        let pendingState: "receipt_not_registered" | "rejected" | "reported" = "receipt_not_registered";
+        let pendingState: "receipt_not_registered" | "rejected" | "reported" =
+          "receipt_not_registered";
 
         if (item.isReported) {
           pendingState = "reported";
@@ -105,11 +106,8 @@ export function createReviewCardRenderer(renderParams: RenderReviewCardParams) {
       }
 
       // 구매 기간이 아닌 경우: 구매평 2차 카드 사용
-      let pendingState:
-        | "content_not_registered"
-        | "extension_requested"
-        | "rejected"
-        | "reported" = "content_not_registered";
+      let pendingState: "content_not_registered" | "extension_requested" | "rejected" | "reported" =
+        "content_not_registered";
       const isExtensionApproved = false;
       let extendedDeadline: string | undefined;
 
@@ -127,8 +125,8 @@ export function createReviewCardRenderer(renderParams: RenderReviewCardParams) {
         item.receiptImages && item.receiptImages.length > 0
           ? item.receiptImages
           : item.thumbnailSrc
-          ? [item.thumbnailSrc]
-          : [];
+            ? [item.thumbnailSrc]
+            : [];
 
       const reportedDateValue = renderParams.reportedDates.get(item.id) || item.reportedDate;
       const formattedReportedDate = reportedDateValue
@@ -179,8 +177,8 @@ export function createReviewCardRenderer(renderParams: RenderReviewCardParams) {
           item.receiptImages && item.receiptImages.length > 0
             ? item.receiptImages
             : item.thumbnailSrc
-            ? [item.thumbnailSrc]
-            : [];
+              ? [item.thumbnailSrc]
+              : [];
 
         return (
           <PurchaseSecondInspectionCard
@@ -267,14 +265,12 @@ export function createReviewCardRenderer(renderParams: RenderReviewCardParams) {
         item.receiptImages && item.receiptImages.length > 0
           ? item.receiptImages
           : item.thumbnailSrc
-          ? [item.thumbnailSrc]
-          : [];
+            ? [item.thumbnailSrc]
+            : [];
 
       return (
         <PurchaseSecondCompletedCard
-          key=
-
-{item.id}
+          key={item.id}
           applicant={applicant}
           onCheckReview={() => renderParams.openReceiptModal(reviewImagesForCompleted)}
           onReport={renderParams.handleReport}
