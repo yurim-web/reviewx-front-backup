@@ -1,5 +1,5 @@
 /* ========================================
-   📝 GA 관리자 게시글 목록 목업 데이터
+   GA
    ======================================== */
 
 /**
@@ -9,9 +9,6 @@
  *
  * 사용 페이지:
  * - /manager_ga/community/posts (게시글 목록 페이지)
- *
- * 주요 기능:
- * - 게시글 목록 데이터
  *
  */
 
@@ -87,8 +84,7 @@ const default_posts_data: PostItem[] = [
     division: "공지사항",
     category: "공지사항",
     target: "파트너",
-    title:
-      "내 브랜드에 참여한 인플루언서의 중복 당첨 이력을 확인 할 수 있습니다.",
+    title: "내 브랜드에 참여한 인플루언서의 중복 당첨 이력을 확인 할 수 있습니다.",
     view_count: 0,
     registered_date: "2026-02-03 09:30",
     registered_by: "관리자 C",
@@ -304,12 +300,8 @@ function load_posts_from_storage(): PostItem[] {
     // 2. Update existing posts from localStorage (by ID)
     // 3. Add new posts from localStorage that don't exist in mock data
 
-    const mock_data_map = new Map(
-      default_posts_data.map((post) => [post.id, post]),
-    );
-    const storage_data_map = new Map(
-      parsed_data.map((post) => [post.id, post]),
-    );
+    const mock_data_map = new Map(default_posts_data.map((post) => [post.id, post]));
+    const storage_data_map = new Map(parsed_data.map((post) => [post.id, post]));
 
     // Update mock data with localStorage changes and add new localStorage posts
     const merged_data: PostItem[] = [];
@@ -390,18 +382,13 @@ function load_post_details_from_storage(): Record<string, PostDetail> {
  *
  * @param post_details - 저장할 게시글 상세 데이터 객체
  */
-function save_post_details_to_storage(
-  post_details: Record<string, PostDetail>,
-): void {
+function save_post_details_to_storage(post_details: Record<string, PostDetail>): void {
   if (typeof window === "undefined") {
     return;
   }
 
   try {
-    localStorage.setItem(
-      STORAGE_KEY_POST_DETAILS,
-      JSON.stringify(post_details),
-    );
+    localStorage.setItem(STORAGE_KEY_POST_DETAILS, JSON.stringify(post_details));
   } catch (error) {
     console.error("localStorage에 게시글 상세 데이터 저장 실패:", error);
   }
@@ -462,11 +449,7 @@ export function add_post(post: PostItem, content: string): void {
  * @param updated_post - 수정된 게시글 데이터
  * @param content - 수정된 게시글 본문 내용 (HTML 형식)
  */
-export function update_post(
-  post_id: string,
-  updated_post: PostItem,
-  content: string,
-): void {
+export function update_post(post_id: string, updated_post: PostItem, content: string): void {
   // 게시글 목록에서 찾아서 수정
   const index = posts_data.findIndex((p) => p.id === post_id);
   if (index !== -1) {
@@ -577,8 +560,7 @@ export const get_post_detail = (id: string): PostDetail | null => {
   };
 
   // 게시글 ID에 해당하는 내용이 있으면 사용하고, 없으면 기본 내용 반환
-  const content =
-    post_contents[id] || `<p>${post.title}에 대한 내용입니다.</p>`;
+  const content = post_contents[id] || `<p>${post.title}에 대한 내용입니다.</p>`;
 
   return {
     ...post,

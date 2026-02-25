@@ -1,5 +1,5 @@
 /* ========================================
-   📝 GA 관리자 카테고리 목록 목업 데이터
+   GA
    ======================================== */
 
 /**
@@ -10,9 +10,6 @@
  * 사용 페이지:
  * - /manager_ga/community/categories (카테고리 관리 페이지)
  * - /manager_sa/community/categories (카테고리 관리 페이지)
- *
- * 주요 기능:
- * - 카테고리 목록 데이터
  *
  */
 
@@ -121,7 +118,7 @@ function load_categories_from_storage(): CategoryItem[] {
 
     // JSON 문자열을 객체 배열로 변환
     const parsed_data: CategoryItem[] = JSON.parse(stored);
-    
+
     // 배열인지 확인 (타입 안전성 확보)
     if (!Array.isArray(parsed_data)) {
       return default_categories_data;
@@ -186,10 +183,7 @@ export function initialize_categories_data(): void {
  * @param category_name - 카테고리명
  *
  */
-export function add_category(
-  division: CategoryDivision,
-  category_name: string
-): void {
+export function add_category(division: CategoryDivision, category_name: string): void {
   // 새로운 ID 생성
   // 기존 카테고리들의 ID를 숫자로 변환하여 최대값을 찾습니다
   // Number(): 문자열을 숫자로 변환합니다
@@ -201,10 +195,7 @@ export function add_category(
 
   // 새로운 번호 생성
   // 기존 카테고리들의 번호를 숫자로 변환하여 최대값을 찾습니다
-  const max_number = Math.max(
-    ...categories_data.map((item) => Number(item.number)),
-    0
-  );
+  const max_number = Math.max(...categories_data.map((item) => Number(item.number)), 0);
   // 새로운 번호는 최대값 + 1을 6자리 문자열로 변환합니다
   // padStart(6, "0"): 문자열이 6자리가 되도록 앞쪽을 "0"으로 채웁니다
   // 예: 1 -> "000001", 22 -> "000022"
@@ -269,9 +260,7 @@ export function update_category(
 export function delete_categories(category_ids: string[]): void {
   // filter(): 배열에서 조건에 맞는 요소만 남긴 새로운 배열을 반환합니다
   // includes(): 배열에 특정 값이 포함되어 있는지 확인합니다
-  categories_data = categories_data.filter(
-    (item) => !category_ids.includes(item.id)
-  );
+  categories_data = categories_data.filter((item) => !category_ids.includes(item.id));
 
   // localStorage에 저장
   // 카테고리 삭제 후 localStorage에 최신 데이터를 저장합니다

@@ -1,5 +1,5 @@
 /* ========================================
-   📊 GA 관리자 리뷰어 목록 목업 데이터
+   GA
    ======================================== */
 
 /**
@@ -9,10 +9,6 @@
  *
  * 사용 페이지:
  * - /manager_ga/member/reviewers (리뷰어 목록 페이지)
- *
- * 주요 기능:
- * - 리뷰어 통계 데이터
- * - 리뷰어 목록 데이터
  *
  */
 
@@ -28,6 +24,26 @@ import type { Channel } from "@/data/manager/common/filterOptions";
 
 // 타입 재export (기존 코드와의 호환성을 위해)
 export type { Channel, ReviewerType, ReviewerStatus, ReviewerStatusType };
+
+// localStorage 파싱용 내부 타입
+interface RawUserAccount {
+  id: string;
+  current_points?: number;
+  withdrawn_points?: number;
+  channel_details?: RawChannelDetail[];
+  last_access_date?: string;
+  join_date?: string;
+  [key: string]: unknown;
+}
+interface RawAppliedCampaign {
+  userId: string;
+  campaigns?: Array<{ status: string }>;
+}
+interface RawChannelDetail {
+  status: string;
+  name: string;
+  platform?: string;
+}
 
 // 리뷰어 통계 타입 정의
 export interface ReviewerStats {
@@ -429,9 +445,7 @@ export const reviewer_list: ReviewerItem[] = [
 
 // 리뷰어 ID로 디테일 정보를 가져오는 함수
 // 실제 프로젝트에서는 API 호출로 대체됩니다
-export function get_reviewer_detail_by_id(
-  reviewer_id: string,
-): ReviewerDetail | null {
+export function get_reviewer_detail_by_id(reviewer_id: string): ReviewerDetail | null {
   // 목록에서 해당 리뷰어 찾기
   const reviewer = reviewer_list.find((r) => r.id === reviewer_id);
   if (!reviewer) {
@@ -471,14 +485,8 @@ export function get_reviewer_detail_by_id(
       const actualStatus = i === 0 && penalty_count >= 5 ? "일시정지" : "정상";
 
       penalty_history.push({
-        type:
-          i === penalty_count - 1 && penalty_count > 1
-            ? "선정 후 취소"
-            : "지각 제출",
-        reason:
-          i === penalty_count - 1 && penalty_count > 1
-            ? "선정 후 취소"
-            : "지각 제출",
+        type: i === penalty_count - 1 && penalty_count > 1 ? "선정 후 취소" : "지각 제출",
+        reason: i === penalty_count - 1 && penalty_count > 1 ? "선정 후 취소" : "지각 제출",
         processed_date: `2025-08-${String(i + 1).padStart(2, "0")} 18:56`,
         status: actualStatus,
       });
@@ -723,8 +731,7 @@ export function get_reviewer_detail_by_id(
     },
   };
 
-  const personal_info =
-    personal_info_map[reviewer.id] || personal_info_map["1"];
+  const personal_info = personal_info_map[reviewer.id] || personal_info_map["1"];
 
   // 채널 정보 4개 칸은 무조건 모두 표시 (Blog, Clip, Instagram, Youtube)
   // 리뷰어가 보유한 채널인지 여부에 따라 연결 상태를 결정
@@ -755,6 +762,20 @@ export function get_reviewer_detail_by_id(
     Store: {
       is_connected: reviewer.channels.includes("Store"),
     },
+    Mission: {
+      is_connected: reviewer.channels.includes("Mission"),
+    },
+    Reels: {
+      followers: ((seed * 345) % 10000) + 1000,
+      is_connected: reviewer.channels.includes("Reels"),
+    },
+    Review: {
+      is_connected: reviewer.channels.includes("Review"),
+    },
+    Shorts: {
+      subscribers: ((seed * 678) % 100000) + 5000,
+      is_connected: reviewer.channels.includes("Shorts"),
+    },
   };
 
   // 연결된 채널별 목업 URL (클릭 시 이동용, 리뷰어 ID 기반)
@@ -767,6 +788,7 @@ export function get_reviewer_detail_by_id(
     Store: `https://smartstore.naver.com/${reviewer_slug}`,
     Mission: "#",
     Reels: `https://instagram.com/${reviewer_slug}`,
+    Review: "#",
     Shorts: `https://youtube.com/@${reviewer_slug}`,
   };
 
@@ -838,10 +860,7 @@ const STORAGE_KEY_REVIEWER_STATUS_UPDATES = "reviewer_status_type_updates";
 const STORAGE_KEY_REVIEWER_PREVIOUS_STATUS = "reviewer_previous_status_type";
 
 // localStorage에서 상태 업데이트 정보 로드
-function load_status_updates_from_storage(): Record<
-  string,
-  ReviewerStatusType
-> {
+function load_status_updates_from_storage(): Record<string, ReviewerStatusType> {
   if (typeof window === "undefined") {
     return {};
   }
@@ -856,10 +875,7 @@ function load_status_updates_from_storage(): Record<
 }
 
 // localStorage에서 이전 상태 정보 로드 (해제 시 복원용)
-function load_previous_status_from_storage(): Record<
-  string,
-  ReviewerStatusType
-> {
+function load_previous_status_from_storage(): Record<string, ReviewerStatusType> {
   if (typeof window === "undefined") {
     return {};
   }
@@ -874,18 +890,13 @@ function load_previous_status_from_storage(): Record<
 }
 
 // 상태 업데이트 정보를 localStorage에 저장
-function save_status_updates_to_storage(
-  updates: Record<string, ReviewerStatusType>,
-): void {
+function save_status_updates_to_storage(updates: Record<string, ReviewerStatusType>): void {
   if (typeof window === "undefined") {
     return;
   }
 
   try {
-    localStorage.setItem(
-      STORAGE_KEY_REVIEWER_STATUS_UPDATES,
-      JSON.stringify(updates),
-    );
+    localStorage.setItem(STORAGE_KEY_REVIEWER_STATUS_UPDATES, JSON.stringify(updates));
   } catch (error) {
     console.error("localStorage에 리뷰어 상태 업데이트 저장 실패:", error);
   }
@@ -893,17 +904,14 @@ function save_status_updates_to_storage(
 
 // 이전 상태 정보를 localStorage에 저장
 function save_previous_status_to_storage(
-  previous_status: Record<string, ReviewerStatusType>,
+  previous_status: Record<string, ReviewerStatusType>
 ): void {
   if (typeof window === "undefined") {
     return;
   }
 
   try {
-    localStorage.setItem(
-      STORAGE_KEY_REVIEWER_PREVIOUS_STATUS,
-      JSON.stringify(previous_status),
-    );
+    localStorage.setItem(STORAGE_KEY_REVIEWER_PREVIOUS_STATUS, JSON.stringify(previous_status));
   } catch (error) {
     console.error("localStorage에 리뷰어 이전 상태 저장 실패:", error);
   }
@@ -916,8 +924,8 @@ export function get_reviewer_list(): ReviewerItem[] {
   const status_type_updates = load_status_updates_from_storage();
 
   // user_accounts와 user_applied_campaigns에서 최신 정보 가져오기
-  let userAccountsMap: Record<string, any> = {};
-  let userCampaignsMap: Record<string, any> = {};
+  const userAccountsMap: Record<string, RawUserAccount> = {};
+  const userCampaignsMap: Record<string, { participated: number; completed: number }> = {};
 
   if (typeof window !== "undefined") {
     try {
@@ -925,28 +933,24 @@ export function get_reviewer_list(): ReviewerItem[] {
       const storedAccounts = localStorage.getItem("user_accounts");
       if (storedAccounts) {
         const accounts = JSON.parse(storedAccounts);
-        accounts.forEach((account: any) => {
+        (accounts as RawUserAccount[]).forEach((account) => {
           userAccountsMap[account.id] = account;
         });
       }
 
       // user_applied_campaigns에서 캠페인 통계 가져오기
-      const userAppliedCampaigns = localStorage.getItem(
-        "user_applied_campaigns",
-      );
+      const userAppliedCampaigns = localStorage.getItem("user_applied_campaigns");
       if (userAppliedCampaigns) {
         const allAppliedCampaigns = JSON.parse(userAppliedCampaigns);
-        allAppliedCampaigns.forEach((uc: any) => {
+        (allAppliedCampaigns as RawAppliedCampaign[]).forEach((uc) => {
           if (uc.campaigns) {
             const campaigns = uc.campaigns;
             // 캠페인 진행 = 대기 + 선정 상태인 캠페인 수
             const participated = campaigns.filter(
-              (c: any) => c.status === "대기" || c.status === "선정",
+              (c) => c.status === "대기" || c.status === "선정"
             ).length;
             // 캠페인 완료 = 완료 상태인 캠페인 수
-            const completed = campaigns.filter(
-              (c: any) => c.status === "완료",
-            ).length;
+            const completed = campaigns.filter((c) => c.status === "완료").length;
             userCampaignsMap[uc.userId] = { participated, completed };
           }
         });
@@ -958,7 +962,7 @@ export function get_reviewer_list(): ReviewerItem[] {
 
   return reviewer_list.map((reviewer) => {
     // 기본값은 목업 데이터 사용
-    let updatedReviewer: ReviewerItem = { ...reviewer };
+    const updatedReviewer: ReviewerItem = { ...reviewer };
 
     // localStorage에 저장된 상태 업데이트가 있으면 적용
     if (status_type_updates[reviewer.id] !== undefined) {
@@ -967,38 +971,29 @@ export function get_reviewer_list(): ReviewerItem[] {
 
     // ID 매핑: 1 -> user_kakao_001, 2 -> user_naver_001
     const mappedId =
-      reviewer.id === "1"
-        ? "user_kakao_001"
-        : reviewer.id === "2"
-          ? "user_naver_001"
-          : reviewer.id;
+      reviewer.id === "1" ? "user_kakao_001" : reviewer.id === "2" ? "user_naver_001" : reviewer.id;
 
     // user_accounts에서 최신 정보 가져오기
-    const userAccount =
-      userAccountsMap[mappedId] || userAccountsMap[reviewer.id];
+    const userAccount = userAccountsMap[mappedId] || userAccountsMap[reviewer.id];
     if (userAccount) {
       // 포인트 정보 업데이트
-      updatedReviewer.current_points =
-        userAccount.current_points ?? updatedReviewer.current_points;
+      updatedReviewer.current_points = userAccount.current_points ?? updatedReviewer.current_points;
       // 출금 포인트는 user_accounts에서 가져오되, 없으면 0으로 설정
       updatedReviewer.withdrawn_points =
-        userAccount.withdrawn_points !== undefined &&
-        userAccount.withdrawn_points !== null
+        userAccount.withdrawn_points !== undefined && userAccount.withdrawn_points !== null
           ? userAccount.withdrawn_points
           : 0;
 
       // 채널 정보 업데이트 (channel_details에서 연결된 채널만)
       if (userAccount.channel_details) {
         const connectedChannels: Channel[] = [];
-        userAccount.channel_details.forEach((ch: any) => {
+        userAccount.channel_details.forEach((ch) => {
           if (ch.status === "connected") {
             // 채널 이름을 Channel 타입으로 변환
             const channelMap: Record<string, Channel> = {
               "네이버 블로그": "Blog",
-              "네이버 블로그": "Blog",
               블로그: "Blog",
               Blog: "Blog",
-              "네이버 클립": "Clip",
               "네이버 클립": "Clip",
               클립: "Clip",
               Clip: "Clip",
@@ -1008,8 +1003,7 @@ export function get_reviewer_list(): ReviewerItem[] {
               Youtube: "Youtube",
             };
             const normalizedChannel = ch.name.replace(/\s+/g, "");
-            const channel =
-              channelMap[normalizedChannel] || channelMap[ch.name];
+            const channel = channelMap[normalizedChannel] || channelMap[ch.name];
             if (channel) {
               connectedChannels.push(channel);
             }
@@ -1030,8 +1024,7 @@ export function get_reviewer_list(): ReviewerItem[] {
     }
 
     // user_applied_campaigns에서 캠페인 통계 가져오기
-    const userCampaigns =
-      userCampaignsMap[mappedId] || userCampaignsMap[reviewer.id];
+    const userCampaigns = userCampaignsMap[mappedId] || userCampaignsMap[reviewer.id];
     if (userCampaigns) {
       updatedReviewer.campaign_participated = userCampaigns.participated;
       updatedReviewer.campaign_completed = userCampaigns.completed;
@@ -1051,7 +1044,6 @@ export function reset_reviewer_status_storage(): void {
   try {
     localStorage.removeItem(STORAGE_KEY_REVIEWER_STATUS_UPDATES);
     localStorage.removeItem(STORAGE_KEY_REVIEWER_PREVIOUS_STATUS);
-    console.log("리뷰어 상태 localStorage가 초기화되었습니다.");
   } catch (error) {
     console.error("localStorage 초기화 실패:", error);
   }
@@ -1092,7 +1084,7 @@ export function sync_reviewer_status_with_initial_data(): void {
 // 이용 제한 시 이전 상태를 저장하고, 해제 시 복원할 수 있도록 합니다
 export function update_reviewer_status_type(
   reviewer_id: string,
-  new_status_type: ReviewerStatusType,
+  new_status_type: ReviewerStatusType
 ): void {
   // 매번 최신 상태를 localStorage에서 로드
   const status_type_updates = load_status_updates_from_storage();
@@ -1105,10 +1097,7 @@ export function update_reviewer_status_type(
     (current_reviewer ? current_reviewer.status_type : "일반 회원");
 
   // "이용 제한 회원"으로 변경하는 경우에만 이전 상태 저장
-  if (
-    new_status_type === "이용 제한 회원" &&
-    current_status_type !== "이용 제한 회원"
-  ) {
+  if (new_status_type === "이용 제한 회원" && current_status_type !== "이용 제한 회원") {
     const updated_previous_status = {
       ...previous_status_types,
       [reviewer_id]: current_status_type,

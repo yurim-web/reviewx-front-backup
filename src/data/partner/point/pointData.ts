@@ -2,16 +2,13 @@
    💰 파트너 포인트 데이터
    ======================================== */
 
-import {
-  PartnerPointHistory,
-  PartnerPointSummary,
-} from "@/types/domain/partner";
+import { PartnerPointHistory, PartnerPointSummary } from "@/types/domain/partner";
 
 /**
  * 파트너 포인트 요약 정보 가져오기 (LocalStorage 기반)
  */
 export function getPartnerPointSummary(userId?: string): PartnerPointSummary {
-  if (typeof window === 'undefined' || !userId) {
+  if (typeof window === "undefined" || !userId) {
     return {
       total_points: 0,
       available_points: 0,
@@ -33,10 +30,12 @@ export function getPartnerPointSummary(userId?: string): PartnerPointSummary {
     }
 
     // partner_accounts에서 current_points를 확인
-    const storedAccounts = localStorage.getItem('partner_accounts');
+    const storedAccounts = localStorage.getItem("partner_accounts");
     if (storedAccounts) {
       const accounts = JSON.parse(storedAccounts);
-      const account = accounts.find((a: any) => a.id === userId);
+      const account = accounts.find(
+        (a: { id?: string; current_points?: number }) => a.id === userId
+      );
 
       if (account && account.current_points) {
         // partner_accounts에 포인트가 있으면 partner_points에 동기화
@@ -51,7 +50,7 @@ export function getPartnerPointSummary(userId?: string): PartnerPointSummary {
     }
 
     // partner_test_001의 경우 목업 데이터 포인트로 초기화
-    if (userId === 'partner_test_001') {
+    if (userId === "partner_test_001") {
       const initialPoints = {
         total_points: 425000,
         available_points: 425000,
@@ -62,10 +61,10 @@ export function getPartnerPointSummary(userId?: string): PartnerPointSummary {
       // partner_accounts에도 동기화
       if (storedAccounts) {
         const accounts = JSON.parse(storedAccounts);
-        const accountIndex = accounts.findIndex((a: any) => a.id === userId);
+        const accountIndex = accounts.findIndex((a: { id?: string }) => a.id === userId);
         if (accountIndex >= 0) {
           accounts[accountIndex].current_points = 425000;
-          localStorage.setItem('partner_accounts', JSON.stringify(accounts));
+          localStorage.setItem("partner_accounts", JSON.stringify(accounts));
         }
       }
 
@@ -81,7 +80,7 @@ export function getPartnerPointSummary(userId?: string): PartnerPointSummary {
     localStorage.setItem(pointsKey, JSON.stringify(initialPoints));
     return initialPoints;
   } catch (error) {
-    console.error('포인트 요약 정보 로드 중 오류:', error);
+    console.error("포인트 요약 정보 로드 중 오류:", error);
     return {
       total_points: 0,
       available_points: 0,
@@ -214,14 +213,14 @@ export const partnerPointHistoryData: PartnerPointHistory[] = [
 
 /**
  * 파트너 포인트 내역 가져오기 (LocalStorage 기반)
- * 
+ *
  * 📌 동작 방식:
  * - 항상 목업 데이터(partnerPointHistoryData)를 포함합니다
  * - localStorage에 저장된 데이터가 있으면 추가로 합칩니다
  * - 같은 id가 있으면 localStorage 데이터를 우선합니다 (중복 제거)
  */
 export function getPartnerPointHistory(userId?: string): PartnerPointHistory[] {
-  if (typeof window === 'undefined' || !userId) {
+  if (typeof window === "undefined" || !userId) {
     // userId가 없어도 목업 데이터는 반환
     return [...partnerPointHistoryData];
   }
@@ -232,14 +231,14 @@ export function getPartnerPointHistory(userId?: string): PartnerPointHistory[] {
 
     // 목업 데이터를 기본으로 시작
     const mockDataMap = new Map<string, PartnerPointHistory>();
-    partnerPointHistoryData.forEach(item => {
+    partnerPointHistoryData.forEach((item) => {
       mockDataMap.set(item.id, item);
     });
 
     // localStorage에 저장된 데이터가 있으면 추가/업데이트
     if (storedHistory) {
       const storedData: PartnerPointHistory[] = JSON.parse(storedHistory);
-      storedData.forEach(item => {
+      storedData.forEach((item) => {
         // localStorage 데이터가 목업 데이터보다 우선 (같은 id면 덮어쓰기)
         mockDataMap.set(item.id, item);
       });
@@ -248,7 +247,7 @@ export function getPartnerPointHistory(userId?: string): PartnerPointHistory[] {
     // Map을 배열로 변환하여 반환
     return Array.from(mockDataMap.values());
   } catch (error) {
-    console.error('포인트 내역 로드 중 오류:', error);
+    console.error("포인트 내역 로드 중 오류:", error);
     // 오류 발생 시에도 목업 데이터는 반환
     return [...partnerPointHistoryData];
   }
@@ -262,10 +261,10 @@ export function getPartnerPointHistory(userId?: string): PartnerPointHistory[] {
 export function addPointCharge(
   userId: string,
   amount: number,
-  description: string = '포인트 충전',
-  options?: { addToHistory?: boolean; payment_method?: 'card' | 'bank' }
+  description: string = "포인트 충전",
+  options?: { addToHistory?: boolean; payment_method?: "card" | "bank" }
 ): void {
-  if (typeof window === 'undefined' || !userId) return;
+  if (typeof window === "undefined" || !userId) return;
 
   const addToHistory = options?.addToHistory !== false;
 
@@ -287,15 +286,15 @@ export function addPointCharge(
     );
 
     // partner_accounts의 current_points도 업데이트
-    const storedAccounts = localStorage.getItem('partner_accounts');
+    const storedAccounts = localStorage.getItem("partner_accounts");
     if (storedAccounts) {
       const accounts = JSON.parse(storedAccounts);
-      const accountIndex = accounts.findIndex((a: any) => a.id === userId);
+      const accountIndex = accounts.findIndex((a: { id?: string }) => a.id === userId);
 
       if (accountIndex >= 0) {
         accounts[accountIndex].current_points = newAvailablePoints;
-        localStorage.setItem('partner_accounts', JSON.stringify(accounts));
-        console.log('✅ partner_accounts current_points 업데이트:', newAvailablePoints);
+        localStorage.setItem("partner_accounts", JSON.stringify(accounts));
+        console.log("✅ partner_accounts current_points 업데이트:", newAvailablePoints);
       }
     }
 
@@ -304,17 +303,17 @@ export function addPointCharge(
     // 포인트 내역 추가 (localStorage에만 저장, 목업 데이터는 제외)
     const historyKey = `partner_point_history_${userId}`;
     const storedHistoryJson = localStorage.getItem(historyKey);
-    const storedHistory: PartnerPointHistory[] = storedHistoryJson 
-      ? JSON.parse(storedHistoryJson) 
+    const storedHistory: PartnerPointHistory[] = storedHistoryJson
+      ? JSON.parse(storedHistoryJson)
       : [];
-    
+
     const newHistory: PartnerPointHistory = {
       id: `point_${Date.now()}`,
-      type: 'earned',
+      type: "earned",
       amount,
       description,
-      date: new Date().toISOString().split('T')[0],
-      status: 'earned',
+      date: new Date().toISOString().split("T")[0],
+      status: "earned",
       balance: newAvailablePoints,
       ...(options?.payment_method && { payment_method: options.payment_method }),
     };
@@ -322,9 +321,9 @@ export function addPointCharge(
     storedHistory.unshift(newHistory); // 최신 내역을 맨 앞에 추가
     localStorage.setItem(historyKey, JSON.stringify(storedHistory));
 
-    console.log('포인트 충전 완료:', newHistory);
+    console.log("포인트 충전 완료:", newHistory);
   } catch (error) {
-    console.error('포인트 충전 중 오류:', error);
+    console.error("포인트 충전 중 오류:", error);
   }
 }
 
@@ -334,16 +333,16 @@ export function addPointCharge(
 export function usePartnerPoints(
   userId: string,
   amount: number,
-  description: string = '리뷰어 포인트 지급'
+  description: string = "리뷰어 포인트 지급"
 ): boolean {
-  if (typeof window === 'undefined' || !userId) return false;
+  if (typeof window === "undefined" || !userId) return false;
 
   try {
     const summary = getPartnerPointSummary(userId);
 
     // 사용 가능한 포인트가 부족한 경우
     if (summary.available_points < amount) {
-      alert('보유 포인트가 부족합니다.');
+      alert("보유 포인트가 부족합니다.");
       return false;
     }
 
@@ -361,43 +360,48 @@ export function usePartnerPoints(
     );
 
     // partner_accounts의 current_points와 used_points도 업데이트
-    const storedAccounts = localStorage.getItem('partner_accounts');
+    const storedAccounts = localStorage.getItem("partner_accounts");
     if (storedAccounts) {
       const accounts = JSON.parse(storedAccounts);
-      const accountIndex = accounts.findIndex((a: any) => a.id === userId);
+      const accountIndex = accounts.findIndex((a: { id?: string }) => a.id === userId);
 
       if (accountIndex >= 0) {
         accounts[accountIndex].current_points = newAvailablePoints;
         accounts[accountIndex].used_points = (accounts[accountIndex].used_points || 0) + amount;
-        localStorage.setItem('partner_accounts', JSON.stringify(accounts));
-        console.log('✅ partner_accounts 포인트 업데이트 - current:', newAvailablePoints, 'used:', accounts[accountIndex].used_points);
+        localStorage.setItem("partner_accounts", JSON.stringify(accounts));
+        console.log(
+          "✅ partner_accounts 포인트 업데이트 - current:",
+          newAvailablePoints,
+          "used:",
+          accounts[accountIndex].used_points
+        );
       }
     }
 
     // 포인트 내역 추가 (localStorage에만 저장, 목업 데이터는 제외)
     const historyKey = `partner_point_history_${userId}`;
     const storedHistoryJson = localStorage.getItem(historyKey);
-    const storedHistory: PartnerPointHistory[] = storedHistoryJson 
-      ? JSON.parse(storedHistoryJson) 
+    const storedHistory: PartnerPointHistory[] = storedHistoryJson
+      ? JSON.parse(storedHistoryJson)
       : [];
-    
+
     const newHistory: PartnerPointHistory = {
       id: `point_${Date.now()}`,
-      type: 'withdrawn',
+      type: "withdrawn",
       amount: -amount,
       description,
-      date: new Date().toISOString().split('T')[0],
-      status: 'completed',
+      date: new Date().toISOString().split("T")[0],
+      status: "completed",
       balance: newAvailablePoints,
     };
 
     storedHistory.unshift(newHistory);
     localStorage.setItem(historyKey, JSON.stringify(storedHistory));
 
-    console.log('포인트 사용 완료:', newHistory);
+    console.log("포인트 사용 완료:", newHistory);
     return true;
   } catch (error) {
-    console.error('포인트 사용 중 오류:', error);
+    console.error("포인트 사용 중 오류:", error);
     return false;
   }
 }

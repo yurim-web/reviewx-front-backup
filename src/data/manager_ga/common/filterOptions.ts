@@ -1,5 +1,5 @@
 /* ========================================
-   🔍 GA 관리자 전용 필터 옵션
+   GA
    ======================================== */
 
 /**
@@ -20,19 +20,10 @@
  * - Channel, CampaignStatus, CampaignType은 manager_ga와 manager_sa 공통이므로
  *   src/data/manager/common/filterOptions.ts에서 import하여 사용합니다.
  *
- * 주요 기능:
- * - GA 관리자 전용 필터 타입 정의
- * - 필터 옵션 배열 정의
- * - 필터 라벨 매핑 객체 정의
- *
  */
 
 // 공통 필터 옵션에서 import (재export)
-export type {
-  Channel,
-  CampaignStatus,
-  CampaignType,
-} from "@/data/manager/common/filterOptions";
+export type { Channel, CampaignStatus, CampaignType } from "@/data/manager/common/filterOptions";
 
 export {
   channel_filter_options,
@@ -42,7 +33,7 @@ export {
 } from "@/data/manager/common/filterOptions";
 
 /* ========================================
-   🚫 반려 코드 필터 옵션
+   
    ======================================== */
 
 /**
@@ -51,15 +42,7 @@ export {
  * 설명:
  * - 반려 내역 페이지에서 사용하는 반려 코드입니다.
  */
-export type RejectCode =
-  | "R001"
-  | "R002"
-  | "R003"
-  | "R004"
-  | "R005"
-  | "R006"
-  | "R007"
-  | "R008";
+export type RejectCode = "R001" | "R002" | "R003" | "R004" | "R005" | "R006" | "R007" | "R008";
 
 /**
  * 반려 코드 필터 옵션 배열
@@ -76,7 +59,7 @@ export const reject_code_filter_options: RejectCode[] = [
 ];
 
 /* ========================================
-   ⚠️ 신고 코드 필터 옵션
+   
    ======================================== */
 
 /**
@@ -120,7 +103,7 @@ export const report_code_filter_options: ReportCode[] = [
 ];
 
 /* ========================================
-   👥 파트너 필터 옵션
+   
    ======================================== */
 
 /**
@@ -134,10 +117,7 @@ export type PartnerDivision = "법인" | "개인";
 /**
  * 파트너 구분 필터 옵션 배열
  */
-export const partner_division_filter_options: PartnerDivision[] = [
-  "법인",
-  "개인",
-];
+export const partner_division_filter_options: PartnerDivision[] = ["법인", "개인"];
 
 /**
  * 파트너 상태 타입 정의
@@ -157,10 +137,7 @@ export const partner_status_filter_options: PartnerStatus[] = [
 /**
  * 파트너 상태 유형 타입 정의
  */
-export type PartnerStatusType =
-  | "일반 회원"
-  | "주의 회원"
-  | "이용 제한 회원";
+export type PartnerStatusType = "일반 회원" | "주의 회원" | "이용 제한 회원";
 
 /**
  * 파트너 상태 유형 필터 옵션 배열
@@ -172,7 +149,7 @@ export const partner_status_type_filter_options: PartnerStatusType[] = [
 ];
 
 /* ========================================
-   ✍️ 리뷰어 필터 옵션
+   
    ======================================== */
 
 /**
@@ -186,11 +163,7 @@ export type ReviewerType = "서포터즈" | "일반" | "인플루언서";
 /**
  * 리뷰어 유형 필터 옵션 배열
  */
-export const reviewer_type_filter_options: ReviewerType[] = [
-  "일반",
-  "서포터즈",
-  "인플루언서",
-];
+export const reviewer_type_filter_options: ReviewerType[] = ["일반", "서포터즈", "인플루언서"];
 
 /**
  * 리뷰어 상태 타입 정의
@@ -222,7 +195,7 @@ export const reviewer_status_type_filter_options: ReviewerStatusType[] = [
 ];
 
 /* ========================================
-   🚫 차단 내역 필터 옵션
+   
    ======================================== */
 
 /**
@@ -274,7 +247,7 @@ export const block_code_filter_options: BlockCode[] = [
 ];
 
 /* ========================================
-   📝 게시글 필터 옵션
+   
    ======================================== */
 
 /**
