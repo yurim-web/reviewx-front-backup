@@ -37,9 +37,7 @@ export default function ManagerGANotificationPage() {
   /**
    * 알림 클릭 핸들러 (향후 구현)
    */
-  const handle_notification_click = (
-    notification: (typeof mockManagerGANotifications)[0]
-  ) => {
+  const handle_notification_click = (_notification: (typeof mockManagerGANotifications)[0]) => {
     // TODO: 알림 상세 페이지로 이동 또는 모달 열기
   };
 
@@ -50,9 +48,7 @@ export default function ManagerGANotificationPage() {
   };
 
   return (
-    <div
-      className={`${styles.notification_container} ${styles.has_sidebar}`.trim()}
-    >
+    <div className={`${styles.notification_container} ${styles.has_sidebar}`.trim()}>
       {/* GA 관리자 헤더 */}
       <ManagerGAHeader managerType="ga" />
 

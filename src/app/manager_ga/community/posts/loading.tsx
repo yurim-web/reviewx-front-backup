@@ -21,18 +21,21 @@
  * - 레이아웃 깜빡임 방지를 위한 전체 화면 커버
  */
 
+import Image from "next/image";
 import styles from "@/styles/error_page/loading.module.css";
 
 export default function Loading() {
   return (
-    <div className={styles.loading_container} style={{ backgroundColor: 'white' }}>
+    <div className={styles.loading_container} style={{ backgroundColor: "white" }}>
       <div className={styles.loading_content}>
         <div className={styles.loading_illustration}>
           <div className={styles.loading_container_wrapper}>
             <div className={styles.white_circle}>
-              <img
+              <Image
                 src="/images/loading_icon.svg"
                 alt="Loading"
+                width={48}
+                height={48}
                 className={styles.loading_icon}
               />
             </div>
@@ -42,4 +45,3 @@ export default function Loading() {
     </div>
   );
 }
-
