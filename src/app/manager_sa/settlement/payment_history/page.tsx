@@ -1,20 +1,14 @@
 /* ========================================
-   💳 SA 관리자 결제 내역 페이지
+   SA 관리자 결제 내역 페이지
    ======================================== */
 
 /**
- * SA 관리자 결제 내역 페이지
+ * PaymentHistoryPage
  *
  * 목적: SA 관리자가 결제 내역을 확인하고 관리할 수 있는 페이지입니다.
  *
- * 페이지 경로:
+ * 사용 페이지:
  * - /manager_sa/settlement/payment_history
- *
- * 주요 기능:
- * - 상단 통계 카드 3개 (이번 달 입금 내역, 이번 달 카드 결제 금액, 이번 달 총계)
- * - 필터 섹션 (날짜, 구분, 결제 수단, 세금계산서 발행, 결제, 상태, 검색어, 세금계산서 발행 영수증 다운로드)
- * - 결제 내역 테이블 (체크박스, 번호, 상호명, 세금계산서명, 구분, 결제 수단, 세금계산서, 충전 포인트, 결제, 신청일, 인증일, 유형, 상태)
- *
  */
 
 "use client";
@@ -48,20 +42,20 @@ import type { MemberType } from "@/components/manager/sa/settlement/payment_hist
 function get_current_month_range(): DateRange {
   // 현재 날짜를 가져옵니다
   const now = new Date();
-  
+
   // 이번 달의 시작일: 년, 월, 1일로 설정
   // 예: 2025년 1월이면 2025-01-01 00:00:00
   const start_of_month = new Date(now.getFullYear(), now.getMonth(), 1);
-  
+
   // 이번 달의 종료일: 다음 달의 0일은 이번 달의 마지막 날입니다
   // 예: 2025년 1월이면 2025-02-00 = 2025-01-31 00:00:00
   const end_of_month = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-  
+
   // 시간 부분을 제거하여 날짜만 사용합니다
   // setHours(0, 0, 0, 0): 시간, 분, 초, 밀리초를 모두 0으로 설정
   start_of_month.setHours(0, 0, 0, 0);
   end_of_month.setHours(23, 59, 59, 999); // 종료일은 23:59:59로 설정하여 하루 전체를 포함
-  
+
   return {
     from: start_of_month,
     to: end_of_month,
@@ -76,10 +70,8 @@ export default function PaymentHistoryPage() {
   // 📌 초기값은 undefined로 설정하고, useEffect에서 이번 달로 설정합니다
   // 이렇게 하면 서버 사이드 렌더링(SSR)과 클라이언트 사이드 렌더링(CSR) 간의
   // Hydration 오류를 방지할 수 있습니다
-  const [selected_date_range, set_selected_date_range] = useState<
-    DateRange | undefined
-  >(undefined);
-  
+  const [selected_date_range, set_selected_date_range] = useState<DateRange | undefined>(undefined);
+
   // useEffect: 컴포넌트가 마운트될 때 이번 달로 날짜 범위 초기화
   // 📌 React Hook - useEffect 설명:
   // - 컴포넌트가 렌더링된 후에 실행되는 함수입니다
@@ -90,24 +82,14 @@ export default function PaymentHistoryPage() {
     const current_month_range = get_current_month_range();
     set_selected_date_range(current_month_range);
   }, []); // 빈 의존성 배열: 컴포넌트가 처음 마운트될 때만 실행
-  const [selected_business_types, set_selected_business_types] = useState<
-    BusinessType[]
-  >([]);
-  const [selected_payment_methods, set_selected_payment_methods] = useState<
-    PaymentMethod[]
-  >([]);
-  const [selected_tax_invoice_types, set_selected_tax_invoice_types] = useState<
-    TaxInvoiceType[]
-  >([]);
-  const [selected_payment_statuses, set_selected_payment_statuses] = useState<
-    PaymentStatus[]
-  >([]);
-  const [selected_member_types, set_selected_member_types] = useState<
-    MemberType[]
-  >([]);
-  const [selected_account_statuses, set_selected_account_statuses] = useState<
-    AccountStatus[]
-  >([]);
+  const [selected_business_types, set_selected_business_types] = useState<BusinessType[]>([]);
+  const [selected_payment_methods, set_selected_payment_methods] = useState<PaymentMethod[]>([]);
+  const [selected_tax_invoice_types, set_selected_tax_invoice_types] = useState<TaxInvoiceType[]>(
+    []
+  );
+  const [selected_payment_statuses, set_selected_payment_statuses] = useState<PaymentStatus[]>([]);
+  const [selected_member_types, set_selected_member_types] = useState<MemberType[]>([]);
+  const [selected_account_statuses, set_selected_account_statuses] = useState<AccountStatus[]>([]);
 
   return (
     <div className={styles.container}>

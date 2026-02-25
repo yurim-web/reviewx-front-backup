@@ -1,6 +1,7 @@
 /* ========================================
    📊 SA 관리자 진행 현황 목업 데이터
    ======================================== */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 /**
  * SA 관리자 진행 현황 목업 데이터
@@ -27,7 +28,7 @@ import { reporterCampaignsExtended as reporterCampaigns } from "@/data/campaign/
 import { reviewCampaignsExtended as reviewCampaigns } from "@/data/campaign/review/reviewCampaigns";
 import { visitCampaignsExtended as visitCampaigns } from "@/data/campaign/visit/visitCampaigns";
 import type { DeliveryCampaignDataItem } from "@/data/campaign/delivery/deliveryCampaigns";
-import { calculateCampaignStatus } from "@/data/campaign/delivery/utils";
+import { calculateCampaignStatus } from "@/data/campaign/delivery/deliveryUtils";
 
 /**
  * DeliveryCampaignDataExtended를 DeliveryCampaignDataItem으로 변환
@@ -36,21 +37,13 @@ import { calculateCampaignStatus } from "@/data/campaign/delivery/utils";
  * - extended.status가 "종료", "취소", "긴급"인 경우 그대로 사용
  * - 그 외의 경우 날짜 기반으로 상태를 계산 (calculateCampaignStatus 사용)
  */
-function convertExtendedToItem(
-  extended: DeliveryCampaignDataExtended
-): DeliveryCampaignDataItem {
+function convertExtendedToItem(extended: DeliveryCampaignDataExtended): DeliveryCampaignDataItem {
   const recruitmentPeriod = `${extended.detailedSchedule.applicationStart} ~ ${extended.detailedSchedule.applicationEnd}`;
   const announcementDate = extended.detailedSchedule.announcement;
   const registrationPeriod = extended.detailedSchedule.registrationPeriod;
 
   // 취소, 긴급 상태는 데이터에서 직접 가져오고, 그 외는 날짜 기반으로 계산
-  let calculatedStatus:
-    | "진행 중"
-    | "대기 중"
-    | "모집 중"
-    | "종료"
-    | "취소"
-    | "긴급";
+  let calculatedStatus: "진행 중" | "대기 중" | "모집 중" | "종료" | "취소" | "긴급";
 
   // isUrgent가 true이면 무조건 "긴급" 상태로 설정 (최우선)
   if (extended.isUrgent === true) {
@@ -105,11 +98,7 @@ import type { ReviewCampaignDataExtended as ReviewCampaignDataItem } from "@/dat
 import type { VisitCampaignDataExtended as VisitCampaignDataItem } from "@/data/campaign/visit/visitCampaigns";
 
 // 공통 필터 옵션에서 import (manager_ga와 manager_sa 공통)
-import type {
-  CampaignStatus,
-  CampaignType,
-  Channel,
-} from "@/data/manager/common/filterOptions";
+import type { CampaignStatus, CampaignType, Channel } from "@/data/manager/common/filterOptions";
 
 // 타입 재export (기존 코드와의 호환성을 위해)
 export type { CampaignStatus, CampaignType, Channel };
@@ -174,9 +163,7 @@ export function calculate_stat_card_values() {
   const total_count = current_campaign_list.length;
 
   // 종료된 캠페인 (status가 '종료'인 것)
-  const ended_count = current_campaign_list.filter(
-    (campaign) => campaign.status === "종료"
-  ).length;
+  const ended_count = current_campaign_list.filter((campaign) => campaign.status === "종료").length;
 
   // 취소된 캠페인 (status가 '취소'인 것)
   const cancelled_count = current_campaign_list.filter(
@@ -214,10 +201,7 @@ export function calculate_stat_card_values() {
  * @param campaignType - 캠페인 타입 (미션형의 경우 빈 문자열을 'Mission'으로 변환)
  * @returns Channel 타입
  */
-function map_brand_name_to_channel(
-  brandName: string,
-  campaignType: CampaignType
-): Channel {
+function map_brand_name_to_channel(brandName: string, campaignType: CampaignType): Channel {
   // 구매평은 항상 "Review"로 변환 (구매평 전용 아이콘)
   if (campaignType === "구매평") {
     return "Review";
@@ -301,9 +285,7 @@ function format_campaign_number(id: string): string {
  * @param recruitmentPeriod - 모집 기간 문자열 (예: "2025-10-20 ~ 2025-10-30")
  * @returns Date 객체 또는 undefined
  */
-function parse_recruitment_start_date(
-  recruitmentPeriod: string | undefined
-): Date | undefined {
+function parse_recruitment_start_date(recruitmentPeriod: string | undefined): Date | undefined {
   if (!recruitmentPeriod || recruitmentPeriod.trim() === "") {
     return undefined;
   }
@@ -329,13 +311,7 @@ function convert_delivery_to_progress_item(
   const { campaignInfo, applicantData } = campaign;
 
   // 취소, 긴급 상태는 데이터에서 직접 가져오고, 그 외는 날짜 기반으로 계산
-  let calculatedStatus:
-    | "진행 중"
-    | "대기 중"
-    | "모집 중"
-    | "종료"
-    | "취소"
-    | "긴급";
+  let calculatedStatus: "진행 중" | "대기 중" | "모집 중" | "종료" | "취소" | "긴급";
 
   // campaign에 isUrgent 필드가 있는지 확인 (DeliveryCampaignDataItem에는 없지만, 확장된 데이터에는 있을 수 있음)
   const isUrgent = (campaign as any).isUrgent === true;
@@ -361,14 +337,18 @@ function convert_delivery_to_progress_item(
     partner_name: campaignInfo.partnerName ?? "", // 파트너명 (데이터가 없으면 빈 문자열)
     campaign_name: campaignInfo.title,
     type: "배송형",
-    channel: map_brand_name_to_channel(campaignInfo.channel || campaignInfo.brandName || "", "배송형"),
+    channel: map_brand_name_to_channel(
+      campaignInfo.channel || campaignInfo.brandName || "",
+      "배송형"
+    ),
     status: map_status_to_progress_status(calculatedStatus),
     recruit_count: campaignInfo.totalCount,
     apply_count: applicantData?.applicants?.length ?? 0,
     // 지급 포인트: campaignInfo.point 또는 campaign.point 사용
-    point: campaignInfo.point !== undefined && campaignInfo.point !== null
-      ? campaignInfo.point
-      : (campaign as any).point || (campaign as any).points || 0,
+    point:
+      campaignInfo.point !== undefined && campaignInfo.point !== null
+        ? campaignInfo.point
+        : (campaign as any).point || (campaign as any).points || 0,
     detail_campaign_id: campaignInfo.id,
     created_at: parse_recruitment_start_date(campaignInfo.recruitmentPeriod),
   };
@@ -390,10 +370,7 @@ function convert_mission_to_progress_item(
   // campaignInfo가 없는 경우 안전하게 처리
   // MissionCampaignDataExtended는 직접 필드들을 가지고 있으므로 campaign 자체를 사용
   if (!campaign || !campaign.id) {
-    console.warn(
-      "convert_mission_to_progress_item: 유효하지 않은 캠페인 데이터",
-      campaign
-    );
+    console.warn("convert_mission_to_progress_item: 유효하지 않은 캠페인 데이터", campaign);
     return null;
   }
 
@@ -407,13 +384,7 @@ function convert_mission_to_progress_item(
   const registrationPeriod = campaign.detailedSchedule?.registrationPeriod;
 
   // 취소, 긴급 상태는 데이터에서 직접 가져오고, 그 외는 날짜 기반으로 계산
-  let calculatedStatus:
-    | "진행 중"
-    | "대기 중"
-    | "모집 중"
-    | "종료"
-    | "취소"
-    | "긴급";
+  let calculatedStatus: "진행 중" | "대기 중" | "모집 중" | "종료" | "취소" | "긴급";
 
   // isUrgent가 true이면 무조건 "긴급" 상태로 설정 (최우선)
   if (campaign.isUrgent === true) {
@@ -462,10 +433,7 @@ function convert_reporter_to_progress_item(
   // campaignInfo가 없는 경우 안전하게 처리
   // ReporterCampaignDataExtended는 직접 필드들을 가지고 있으므로 campaign 자체를 사용
   if (!campaign || !campaign.id) {
-    console.warn(
-      "convert_reporter_to_progress_item: 유효하지 않은 캠페인 데이터",
-      campaign
-    );
+    console.warn("convert_reporter_to_progress_item: 유효하지 않은 캠페인 데이터", campaign);
     return null;
   }
 
@@ -479,19 +447,16 @@ function convert_reporter_to_progress_item(
   const registrationPeriod = campaign.detailedSchedule?.registrationPeriod;
 
   // 취소, 긴급, 등록 중 상태는 데이터에서 직접 가져오고, 그 외는 날짜 기반으로 계산
-  let calculatedStatus:
-    | "진행 중"
-    | "대기 중"
-    | "모집 중"
-    | "종료"
-    | "취소"
-    | "긴급"
-    | "등록 중";
+  let calculatedStatus: "진행 중" | "대기 중" | "모집 중" | "종료" | "취소" | "긴급" | "등록 중";
 
   // isUrgent가 true이면 무조건 "긴급" 상태로 설정 (최우선)
   if (campaign.isUrgent === true) {
     calculatedStatus = "긴급";
-  } else if (campaign.status === "취소" || campaign.status === "긴급" || campaign.status === "등록 중") {
+  } else if (
+    campaign.status === "취소" ||
+    campaign.status === "긴급" ||
+    campaign.status === "등록 중"
+  ) {
     calculatedStatus = campaign.status as any;
   } else {
     // 날짜 기반으로 상태 계산 (등록 기간 종료일도 확인)
@@ -514,7 +479,10 @@ function convert_reporter_to_progress_item(
     partner_name: campaign.partnerName ?? "", // 파트너명 (데이터가 없으면 빈 문자열)
     campaign_name: campaign.title,
     type: "기자단",
-    channel: map_brand_name_to_channel((campaign as any).channel || campaign.brandName || "", "기자단"),
+    channel: map_brand_name_to_channel(
+      (campaign as any).channel || campaign.brandName || "",
+      "기자단"
+    ),
     status: map_status_to_progress_status(calculatedStatus),
     recruit_count: campaign.recruitment?.total ?? 0,
     apply_count: applicantData?.applicants?.length ?? 0,
@@ -540,10 +508,7 @@ function convert_review_to_progress_item(
   // campaignInfo가 없는 경우 안전하게 처리
   // ReviewCampaignDataExtended는 직접 필드들을 가지고 있으므로 campaign 자체를 사용
   if (!campaign || !campaign.id) {
-    console.warn(
-      "convert_review_to_progress_item: 유효하지 않은 캠페인 데이터",
-      campaign
-    );
+    console.warn("convert_review_to_progress_item: 유효하지 않은 캠페인 데이터", campaign);
     return null;
   }
 
@@ -557,13 +522,7 @@ function convert_review_to_progress_item(
   const registrationPeriod = campaign.detailedSchedule?.registrationPeriod;
 
   // 취소, 긴급 상태는 데이터에서 직접 가져오고, 그 외는 날짜 기반으로 계산
-  let calculatedStatus:
-    | "진행 중"
-    | "대기 중"
-    | "모집 중"
-    | "종료"
-    | "취소"
-    | "긴급";
+  let calculatedStatus: "진행 중" | "대기 중" | "모집 중" | "종료" | "취소" | "긴급";
 
   // isUrgent가 true이면 무조건 "긴급" 상태로 설정 (최우선)
   if (campaign.isUrgent === true) {
@@ -586,7 +545,10 @@ function convert_review_to_progress_item(
     partner_name: campaign.partnerName ?? "", // 파트너명 (데이터가 없으면 빈 문자열)
     campaign_name: campaign.title,
     type: "구매평",
-    channel: map_brand_name_to_channel((campaign as any).channel || campaign.brandName || "", "구매평"),
+    channel: map_brand_name_to_channel(
+      (campaign as any).channel || campaign.brandName || "",
+      "구매평"
+    ),
     status: map_status_to_progress_status(calculatedStatus),
     recruit_count: campaign.recruitment?.total ?? 0,
     apply_count: applicantData?.applicants?.length ?? 0,
@@ -612,10 +574,7 @@ function convert_visit_to_progress_item(
   // campaignInfo가 없는 경우 안전하게 처리
   // VisitCampaignDataExtended는 직접 필드들을 가지고 있으므로 campaign 자체를 사용
   if (!campaign || !campaign.id) {
-    console.warn(
-      "convert_visit_to_progress_item: 유효하지 않은 캠페인 데이터",
-      campaign
-    );
+    console.warn("convert_visit_to_progress_item: 유효하지 않은 캠페인 데이터", campaign);
     return null;
   }
 
@@ -632,13 +591,7 @@ function convert_visit_to_progress_item(
     (campaign.detailedSchedule as any)?.purchasePeriod;
 
   // 취소, 긴급 상태는 데이터에서 직접 가져오고, 그 외는 날짜 기반으로 계산
-  let calculatedStatus:
-    | "진행 중"
-    | "대기 중"
-    | "모집 중"
-    | "종료"
-    | "취소"
-    | "긴급";
+  let calculatedStatus: "진행 중" | "대기 중" | "모집 중" | "종료" | "취소" | "긴급";
 
   // isUrgent가 true이면 무조건 "긴급" 상태로 설정 (최우선)
   if (campaign.isUrgent === true) {
@@ -661,7 +614,10 @@ function convert_visit_to_progress_item(
     partner_name: campaign.partnerName ?? "", // 파트너명 (데이터가 없으면 빈 문자열)
     campaign_name: campaign.title,
     type: "방문형",
-    channel: map_brand_name_to_channel((campaign as any).channel || campaign.brandName || "", "방문형"),
+    channel: map_brand_name_to_channel(
+      (campaign as any).channel || campaign.brandName || "",
+      "방문형"
+    ),
     status: map_status_to_progress_status(calculatedStatus),
     recruit_count: campaign.recruitment?.total ?? 0,
     apply_count: applicantData?.applicants?.length ?? 0,
@@ -697,13 +653,7 @@ function convert_campaign_with_applicants_to_progress_item(
 
   // 상태 계산: localStorage 캠페인은 날짜 기반으로 상태를 재계산해야 함
   // 📌 중요: localStorage에 저장된 캠페인은 날짜가 변경될 수 있으므로 항상 재계산합니다
-  let calculatedStatus:
-    | "진행 중"
-    | "대기 중"
-    | "모집 중"
-    | "종료"
-    | "취소"
-    | "긴급";
+  let calculatedStatus: "진행 중" | "대기 중" | "모집 중" | "종료" | "취소" | "긴급";
 
   // isUrgent가 true이면 무조건 "긴급" 상태로 설정 (최우선)
   if (isUrgent) {
@@ -747,24 +697,21 @@ function convert_campaign_with_applicants_to_progress_item(
   // 캠페인 타입 확인 (미션형의 경우 채널 처리 방식이 다름)
   const campaignType = campaignInfo.campaignType as CampaignType;
   const isMissionType = campaignType === "미션형";
-  
+
   // 채널 정보 추출: brandName 우선, 없으면 channel 필드 확인 (기자단 캠페인 등)
   const brandName = campaignInfo.brandName || (campaign as any).brandName || "";
   const channelField = (campaignInfo as any).channel || (campaign as any).channel || "";
-  
+
   // brandName이 없고 channel 필드가 있으면 channel 필드를 brandName으로 사용
   const finalBrandName = brandName || channelField;
-  
+
   // 채널 매핑: 미션형의 경우 항상 "Mission"으로 설정
   let finalChannel: Channel;
   if (isMissionType) {
     // 미션형은 항상 "Mission"으로 설정
     finalChannel = "Mission";
   } else if (finalBrandName) {
-    finalChannel = map_brand_name_to_channel(
-      finalBrandName,
-      campaignType
-    );
+    finalChannel = map_brand_name_to_channel(finalBrandName, campaignType);
   } else {
     // brandName과 channel 필드 모두 없으면 기본값 (미션형이 아닌 경우만)
     finalChannel = "Store";
@@ -772,7 +719,7 @@ function convert_campaign_with_applicants_to_progress_item(
 
   // 파트너명 추출: 여러 소스에서 시도
   let partnerName = (campaignInfo as any).partnerName || (campaign as any).partnerName || "";
-  
+
   // partnerName이 없고 partner_id가 있으면 partner_accounts에서 찾기
   if (!partnerName && (campaign as any).partner_id) {
     try {
@@ -780,9 +727,7 @@ function convert_campaign_with_applicants_to_progress_item(
         const storedAccounts = localStorage.getItem("partner_accounts");
         if (storedAccounts) {
           const accounts = JSON.parse(storedAccounts);
-          const partnerAccount = accounts.find(
-            (a: any) => a.id === (campaign as any).partner_id
-          );
+          const partnerAccount = accounts.find((a: any) => a.id === (campaign as any).partner_id);
           if (partnerAccount) {
             // business_name 우선, 없으면 name 사용
             partnerName = partnerAccount.business_name || partnerAccount.name || "";
@@ -809,48 +754,40 @@ function convert_campaign_with_applicants_to_progress_item(
     // additionalPoints는 문자열일 수 있으므로 숫자로 변환합니다
     point: (() => {
       // 미션형의 경우 campaign.points를 우선 확인
-      if (isMissionType && (campaign as any).points !== undefined && (campaign as any).points !== null) {
+      if (
+        isMissionType &&
+        (campaign as any).points !== undefined &&
+        (campaign as any).points !== null
+      ) {
         const pointsValue = (campaign as any).points;
-        if (typeof pointsValue === 'number' && pointsValue > 0) {
+        if (typeof pointsValue === "number" && pointsValue > 0) {
           return pointsValue;
         }
-        if (typeof pointsValue === 'string') {
-          const parsed = parseInt(pointsValue.replace(/,/g, ''), 10);
+        if (typeof pointsValue === "string") {
+          const parsed = parseInt(pointsValue.replace(/,/g, ""), 10);
           if (!isNaN(parsed) && parsed > 0) {
             return parsed;
           }
         }
       }
-      
+
       // 1순위: campaignInfo.point
-      if (
-        (campaignInfo as any).point !== undefined &&
-        (campaignInfo as any).point !== null
-      ) {
+      if ((campaignInfo as any).point !== undefined && (campaignInfo as any).point !== null) {
         const pointValue = (campaignInfo as any).point;
         return typeof pointValue === "number" ? pointValue : Number(pointValue) || 0;
       }
       // 2순위: campaign.point
-      if (
-        (campaign as any).point !== undefined &&
-        (campaign as any).point !== null
-      ) {
+      if ((campaign as any).point !== undefined && (campaign as any).point !== null) {
         const pointValue = (campaign as any).point;
         return typeof pointValue === "number" ? pointValue : Number(pointValue) || 0;
       }
       // 3순위: campaign.points (복수형 - 정적 데이터에서 사용)
-      if (
-        (campaign as any).points !== undefined &&
-        (campaign as any).points !== null
-      ) {
+      if ((campaign as any).points !== undefined && (campaign as any).points !== null) {
         const pointsValue = (campaign as any).points;
         return typeof pointsValue === "number" ? pointsValue : Number(pointsValue) || 0;
       }
       // 4순위: campaignInfo.points (복수형)
-      if (
-        (campaignInfo as any).points !== undefined &&
-        (campaignInfo as any).points !== null
-      ) {
+      if ((campaignInfo as any).points !== undefined && (campaignInfo as any).points !== null) {
         const pointsValue = (campaignInfo as any).points;
         return typeof pointsValue === "number" ? pointsValue : Number(pointsValue) || 0;
       }
@@ -899,8 +836,7 @@ function get_stored_campaigns_as_progress_items(): CampaignProgressItem[] {
         campaigns.forEach((campaign) => {
           if (campaign.campaignInfo) {
             // CampaignWithApplicants 형식
-            const converted =
-              convert_campaign_with_applicants_to_progress_item(campaign);
+            const converted = convert_campaign_with_applicants_to_progress_item(campaign);
             if (converted) stored_items.push(converted);
           } else if (campaign.campaignInfo?.id) {
             // DeliveryCampaignDataItem 형식 (하위 호환성)
@@ -918,8 +854,7 @@ function get_stored_campaigns_as_progress_items(): CampaignProgressItem[] {
         campaigns.forEach((campaign) => {
           if (campaign.campaignInfo) {
             // CampaignWithApplicants 형식
-            const converted =
-              convert_campaign_with_applicants_to_progress_item(campaign);
+            const converted = convert_campaign_with_applicants_to_progress_item(campaign);
             if (converted) stored_items.push(converted);
           } else if (campaign.id) {
             // MissionCampaignDataExtended 형식 (하위 호환성)
@@ -938,8 +873,7 @@ function get_stored_campaigns_as_progress_items(): CampaignProgressItem[] {
         campaigns.forEach((campaign) => {
           if (campaign.campaignInfo) {
             // CampaignWithApplicants 형식
-            const converted =
-              convert_campaign_with_applicants_to_progress_item(campaign);
+            const converted = convert_campaign_with_applicants_to_progress_item(campaign);
             if (converted) stored_items.push(converted);
           } else if (campaign.id) {
             // ReporterCampaignDataExtended 형식 (하위 호환성)
@@ -958,8 +892,7 @@ function get_stored_campaigns_as_progress_items(): CampaignProgressItem[] {
         campaigns.forEach((campaign) => {
           if (campaign.campaignInfo) {
             // CampaignWithApplicants 형식
-            const converted =
-              convert_campaign_with_applicants_to_progress_item(campaign);
+            const converted = convert_campaign_with_applicants_to_progress_item(campaign);
             if (converted) stored_items.push(converted);
           } else if (campaign.id) {
             // ReviewCampaignDataExtended 형식 (하위 호환성)
@@ -978,8 +911,7 @@ function get_stored_campaigns_as_progress_items(): CampaignProgressItem[] {
         campaigns.forEach((campaign) => {
           if (campaign.campaignInfo) {
             // CampaignWithApplicants 형식
-            const converted =
-              convert_campaign_with_applicants_to_progress_item(campaign);
+            const converted = convert_campaign_with_applicants_to_progress_item(campaign);
             if (converted) stored_items.push(converted);
           } else if (campaign.id) {
             // VisitCampaignDataExtended 형식 (하위 호환성)
@@ -1039,16 +971,12 @@ export function get_campaign_list(): CampaignProgressItem[] {
   // 정적 데이터와 localStorage 데이터 병합
   // 중복 제거: 같은 ID가 있으면 localStorage 데이터 우선 (최신 데이터)
   const static_ids = new Set(static_campaigns.map((c) => c.id));
-  const new_stored_campaigns = stored_campaigns.filter(
-    (c) => !static_ids.has(c.id)
-  );
+  const new_stored_campaigns = stored_campaigns.filter((c) => !static_ids.has(c.id));
 
   // localStorage에 있는 캠페인 중 정적 데이터에도 있는 것은 localStorage 버전으로 교체
   // 단, point 값이 0이거나 없는 경우 정적 데이터의 point 값을 유지
   const updated_static_campaigns = static_campaigns.map((static_campaign) => {
-    const stored_campaign = stored_campaigns.find(
-      (c) => c.id === static_campaign.id
-    );
+    const stored_campaign = stored_campaigns.find((c) => c.id === static_campaign.id);
     if (stored_campaign) {
       // localStorage 데이터가 있으면 사용하되, point가 0이거나 없으면 정적 데이터의 point 사용
       return {

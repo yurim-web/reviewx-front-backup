@@ -35,13 +35,7 @@ import {
 import styles from "@/styles/manager_sa/dashboard/charts.module.css";
 import { ChartDataPoint } from "@/data/manager_sa/dashboard/dashboardData";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
-import {
-  format,
-  eachDayOfInterval,
-  differenceInDays,
-  startOfWeek,
-  endOfWeek,
-} from "date-fns";
+import { format, eachDayOfInterval, differenceInDays, startOfWeek, endOfWeek } from "date-fns";
 
 // AmountChart 컴포넌트의 props 타입 정의
 interface AmountChartProps {
@@ -75,9 +69,22 @@ const format_amount = (value: number): string => {
   return `${(value / 10000000).toFixed(1)}천`;
 };
 
+interface AxisTickProps {
+  x: number;
+  y: number;
+  payload: { value: number | string };
+}
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: Array<{ payload: { date: string; value: number } }>;
+  coordinate?: { x: number; y: number };
+  is_payment_chart?: boolean;
+}
+
 // 커스텀 Y축 틱 컴포넌트 (동적 틱 지원)
 const createCustomYAxisTick = (displayTicks: number[]) => {
-  return ({ x, y, payload }: any) => {
+  function CustomYAxisTick({ x, y, payload }: AxisTickProps) {
     // payload.value를 정수로 반올림
     const value = Math.round(payload.value);
 
@@ -89,9 +96,7 @@ const createCustomYAxisTick = (displayTicks: number[]) => {
       tolerance = Math.max(2000000, tick_interval * 0.2);
     }
 
-    const matchedTick = displayTicks.find(
-      (tick) => Math.abs(tick - value) <= tolerance,
-    );
+    const matchedTick = displayTicks.find((tick) => Math.abs(tick - value) <= tolerance);
 
     // 매칭된 틱이 있으면 표시
     if (matchedTick !== undefined) {
@@ -134,12 +139,13 @@ const createCustomYAxisTick = (displayTicks: number[]) => {
         {""}
       </text>
     );
-  };
+  }
+  return CustomYAxisTick;
 };
 
 // 커스텀 X축 틱 컴포넌트 (날짜 범위에 따라 동적으로 생성)
 const createCustomXAxisTick = (x_axis_ticks: string[]) => {
-  return ({ x, y, payload }: any) => {
+  function CustomXAxisTick({ x, y, payload }: AxisTickProps) {
     // 표시할 날짜인지 확인
     const shouldDisplay = x_axis_ticks.includes(payload.value);
 
@@ -185,19 +191,15 @@ const createCustomXAxisTick = (x_axis_ticks: string[]) => {
         {""}
       </text>
     );
-  };
+  }
+  return CustomXAxisTick;
 };
 
 // 커스텀 툴팁 컴포넌트
 // - 결제(payment) 차트: 흰색 배경(#ffffff), 날짜(#848484), 금액(#ff5694)
 // - 정산(settlement) 차트: 어두운 배경(#444444), 날짜(#d9d9d9), 금액(#ffffff)
 // - 위치에 따라 말풍선 꼭지(삼각형) 방향 자동 변경
-const CustomTooltip = ({
-  active,
-  payload,
-  coordinate,
-  is_payment_chart,
-}: any) => {
+const CustomTooltip = ({ active, payload, coordinate, is_payment_chart }: CustomTooltipProps) => {
   if (active && payload && payload.length && coordinate) {
     const data = payload[0].payload;
 
@@ -211,9 +213,7 @@ const CustomTooltip = ({
     const tooltip_background_color = is_payment_chart ? "#ffffff" : "#444444";
     const tooltip_date_color = is_payment_chart ? "#848484" : "#d9d9d9";
     const tooltip_value_color = is_payment_chart ? "#ff5694" : "#ffffff";
-    const tooltip_box_shadow = is_payment_chart
-      ? "0 2px 8px rgba(0, 0, 0, 0.15)"
-      : "none";
+    const tooltip_box_shadow = is_payment_chart ? "0 2px 8px rgba(0, 0, 0, 0.15)" : "none";
 
     // 툴팁 위치 스타일 결정
     const tooltip_transform = is_tooltip_below
@@ -431,9 +431,7 @@ export default function AmountChart({
           </defs>
 
           {/* 툴팁 */}
-          <Tooltip
-            content={<CustomTooltip is_payment_chart={is_payment_chart} />}
-          />
+          <Tooltip content={<CustomTooltip is_payment_chart={is_payment_chart} />} />
 
           {/* 영역 채우기 - 그라데이션으로 투명하게, 뾰족뾰족한 형태 */}
           <Area

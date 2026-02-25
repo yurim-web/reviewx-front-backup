@@ -3,7 +3,6 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
 import AdminTable from "./AdminTable";
 
 const meta: Meta<typeof AdminTable> = {

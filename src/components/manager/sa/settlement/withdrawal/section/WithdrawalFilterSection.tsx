@@ -1,23 +1,14 @@
 /* ========================================
-   🔍 출금 현황 필터 섹션 컴포넌트
+   출금 현황 필터 섹션 컴포넌트
    ======================================== */
 
 /**
- * 출금 현황 필터 섹션 컴포넌트
+ * WithdrawalFilterSection
  *
  * 목적: 출금 현황 페이지의 필터 옵션들을 표시합니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /manager_sa/settlement/withdrawal (출금 현황 페이지)
- *
- * 주요 기능:
- * - 날짜 필터
- * - 지급 필터 (드롭다운)
- * - 유형 필터 (드롭다운) - 일반 회원, 주의 회원, 이용 제한 회원
- * - 상태 필터 (드롭다운)
- * - 검색 입력창
- * - 활성 필터 태그 표시 및 제거
- * - 신청자 원천징수 양식 다운로드 버튼
  */
 
 "use client";
@@ -69,30 +60,26 @@ export default function WithdrawalFilterSection({
   on_normal_statuses_change,
 }: WithdrawalFilterSectionProps) {
   // 지급 필터 드롭다운 열림/닫힘 상태
-  const [is_payment_dropdown_open, set_is_payment_dropdown_open] =
-    useState(false);
+  const [is_payment_dropdown_open, set_is_payment_dropdown_open] = useState(false);
 
   // 지급 필터 버튼 컨테이너 ref (드롭다운 위치 계산용)
   const payment_filter_button_ref = useRef<HTMLDivElement>(null);
 
   // 유형 필터 드롭다운 열림/닫힘 상태
-  const [is_member_type_dropdown_open, set_is_member_type_dropdown_open] =
-    useState(false);
+  const [is_member_type_dropdown_open, set_is_member_type_dropdown_open] = useState(false);
 
   // 유형 필터 버튼 컨테이너 ref (드롭다운 위치 계산용)
   const member_type_filter_button_ref = useRef<HTMLDivElement>(null);
 
   // 상태 필터 드롭다운 열림/닫힘 상태
-  const [is_normal_dropdown_open, set_is_normal_dropdown_open] =
-    useState(false);
+  const [is_normal_dropdown_open, set_is_normal_dropdown_open] = useState(false);
 
   // 상태 필터 버튼 컨테이너 ref (드롭다운 위치 계산용)
   const normal_filter_button_ref = useRef<HTMLDivElement>(null);
 
   // 내부 검색어 상태 (props가 없을 때 사용)
   const [internal_search_query, set_internal_search_query] = useState("");
-  const current_search_query =
-    search_query !== undefined ? search_query : internal_search_query;
+  const current_search_query = search_query !== undefined ? search_query : internal_search_query;
   const handle_search_change = (query: string) => {
     if (on_search_change) {
       on_search_change(query);
@@ -123,9 +110,7 @@ export default function WithdrawalFilterSection({
 
   // 지급 필터 태그 제거 핸들러
   const handle_remove_payment_status = (status: WithdrawalPaymentStatus) => {
-    on_payment_statuses_change?.(
-      selected_payment_statuses.filter((s) => s !== status),
-    );
+    on_payment_statuses_change?.(selected_payment_statuses.filter((s) => s !== status));
   };
 
   // 유형 필터 태그 제거 핸들러
@@ -135,9 +120,7 @@ export default function WithdrawalFilterSection({
 
   // 상태 필터 태그 제거 핸들러
   const handle_remove_normal_status = (status: NormalStatus) => {
-    on_normal_statuses_change?.(
-      selected_normal_statuses.filter((s) => s !== status),
-    );
+    on_normal_statuses_change?.(selected_normal_statuses.filter((s) => s !== status));
   };
 
   // 활성 필터 태그 목록 생성
@@ -201,14 +184,12 @@ export default function WithdrawalFilterSection({
                 styles={{
                   filter_item: styles.filter_item,
                   checkbox_icon: styles.checkbox_icon,
-                  checkbox_icon_checked:
-                    filterButtonStyles.checkbox_icon_checked,
+                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
                   filter_text: styles.filter_text,
                   dropdown_arrow: styles.dropdown_arrow,
                   filter_item_active: filterButtonStyles.filter_item_active,
                   filter_text_active: filterButtonStyles.filter_text_active,
-                  dropdown_arrow_active:
-                    filterButtonStyles.dropdown_arrow_active,
+                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
                 }}
               />
               {/* 지급 필터 드롭다운 */}
@@ -228,21 +209,17 @@ export default function WithdrawalFilterSection({
             >
               <FilterButton
                 label="유형"
-                onClick={() =>
-                  set_is_member_type_dropdown_open((prev) => !prev)
-                }
+                onClick={() => set_is_member_type_dropdown_open((prev) => !prev)}
                 isActive={selected_member_types.length > 0}
                 styles={{
                   filter_item: styles.filter_item,
                   checkbox_icon: styles.checkbox_icon,
-                  checkbox_icon_checked:
-                    filterButtonStyles.checkbox_icon_checked,
+                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
                   filter_text: styles.filter_text,
                   dropdown_arrow: styles.dropdown_arrow,
                   filter_item_active: filterButtonStyles.filter_item_active,
                   filter_text_active: filterButtonStyles.filter_text_active,
-                  dropdown_arrow_active:
-                    filterButtonStyles.dropdown_arrow_active,
+                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
                 }}
               />
               {/* 유형 필터 드롭다운 */}
@@ -267,14 +244,12 @@ export default function WithdrawalFilterSection({
                 styles={{
                   filter_item: styles.filter_item,
                   checkbox_icon: styles.checkbox_icon,
-                  checkbox_icon_checked:
-                    filterButtonStyles.checkbox_icon_checked,
+                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
                   filter_text: styles.filter_text,
                   dropdown_arrow: styles.dropdown_arrow,
                   filter_item_active: filterButtonStyles.filter_item_active,
                   filter_text_active: filterButtonStyles.filter_text_active,
-                  dropdown_arrow_active:
-                    filterButtonStyles.dropdown_arrow_active,
+                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
                 }}
               />
               {/* 상태 필터 드롭다운 */}
@@ -301,14 +276,8 @@ export default function WithdrawalFilterSection({
             }}
             style={{ cursor: "pointer" }}
           >
-            <img
-              src="/images/excel_icon.png"
-              alt="다운로드"
-              className={styles.download_icon}
-            />
-            <span className={styles.download_button_text}>
-              신청자 원천징수 양식 다운로드
-            </span>
+            <img src="/images/excel_icon.png" alt="다운로드" className={styles.download_icon} />
+            <span className={styles.download_button_text}>신청자 원천징수 양식 다운로드</span>
           </div>
         }
       />

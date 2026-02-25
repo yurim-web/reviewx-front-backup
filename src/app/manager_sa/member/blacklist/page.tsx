@@ -1,26 +1,14 @@
 /* ========================================
-   🚫 SA 관리자 차단 이력 페이지
+   SA 관리자 차단 이력 페이지
    ======================================== */
 
 /**
- * SA 관리자 차단 이력 페이지
+ * BlacklistPage
  *
  * 목적: SA 관리자가 차단된 회원 목록을 확인하고 관리할 수 있는 페이지입니다.
  *
- * 페이지 경로:
+ * 사용 페이지:
  * - /manager_sa/member/blacklist
- *
- * 주요 기능:
- * - 필터 섹션 (선택 기간 조회, 구분, 차단 코드, 검색어, 정렬, 삭제)
- * - 차단 이력 테이블 (체크박스, 이름/상호명, 구분, 보유 포인트, 등급, 차단 코드, 차단 사유, 등록일, 등록자)
- * - 관리자도 차단할 수 있음 (manager_ga와의 차이점)
- *
- * 컴포넌트 구조:
- * - BlacklistFilterSection: 필터 섹션
- * - BlacklistTable: 차단 이력 테이블
- *
- *
- * @returns 차단 이력 페이지 JSX
  */
 
 "use client";
@@ -32,10 +20,7 @@ import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageT
 import BlacklistFilterSection from "@/components/manager/common/member/blacklist/BlacklistFilterSection";
 import BlacklistTable from "@/components/manager/common/member/blacklist/BlacklistTable";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
-import type {
-  BlacklistDivision,
-  BlockCode,
-} from "@/data/manager_ga/common/filterOptions";
+import type { BlacklistDivision, BlockCode } from "@/data/manager_ga/common/filterOptions";
 
 export default function BlacklistPage() {
   // 검색어 상태 관리
@@ -48,21 +33,15 @@ export default function BlacklistPage() {
   // 날짜 범위 필터 기본값: 이번 달 (오늘 날짜 기준 이번 달의 첫날 ~ 마지막날)
   // startOfMonth: 주어진 날짜의 월의 첫날을 반환합니다 (예: 2026-01-13 -> 2026-01-01)
   // endOfMonth: 주어진 날짜의 월의 마지막날을 반환합니다 (예: 2026-01-13 -> 2026-01-31)
-  const [selected_date_range, set_selected_date_range] = useState<
-    DateRange | undefined
-  >(() => {
+  const [selected_date_range, set_selected_date_range] = useState<DateRange | undefined>(() => {
     const today = new Date();
     return {
       from: startOfMonth(today),
       to: endOfMonth(today),
     };
   });
-  const [selected_divisions, set_selected_divisions] = useState<
-    BlacklistDivision[]
-  >([]);
-  const [selected_block_codes, set_selected_block_codes] = useState<
-    BlockCode[]
-  >([]);
+  const [selected_divisions, set_selected_divisions] = useState<BlacklistDivision[]>([]);
+  const [selected_block_codes, set_selected_block_codes] = useState<BlockCode[]>([]);
 
   return (
     <div className={styles.container}>

@@ -20,16 +20,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Label,
-  Tooltip,
-  Sector,
-} from "recharts";
-import styles from "@/styles/manager/common/dashboard/chart/member_stats.module.css";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Sector } from "recharts";
 import { ChannelData } from "@/data/manager_sa/dashboard/dashboardData";
 import { use_pie_chart_click_handler } from "@/components/manager/ga/dashboard/chart/chart_event_handlers";
 
@@ -73,9 +64,45 @@ const getChannelColor = (channel: string): string => {
    🏷️ 커스텀 라벨 컴포넌트
    ======================================== */
 
+interface PieLabelProps {
+  cx: number;
+  cy: number;
+  midAngle: number;
+  innerRadius: number;
+  outerRadius: number;
+  percent: number;
+}
+
+interface PieTooltipProps {
+  active?: boolean;
+  payload?: Array<{ payload: { name: string; value: number }; midAngle: number }>;
+  containerRef: React.RefObject<HTMLDivElement>;
+  setTooltipState: (state: {
+    visible: boolean;
+    x: number;
+    y: number;
+    name: string;
+    value?: number;
+    useFixed?: boolean;
+  }) => void;
+}
+
+interface SectorShapeProps {
+  cx?: number;
+  cy?: number;
+  innerRadius?: number;
+  outerRadius?: number;
+  startAngle?: number;
+  endAngle?: number;
+  fill?: string;
+  stroke?: string;
+  strokeWidth?: number;
+  [key: string]: unknown;
+}
+
 // 각 섹션에 퍼센트를 표시하는 커스텀 라벨 컴포넌트
 // 파이 차트의 각 조각 안에 "50%", "25%" 같은 텍스트를 표시
-const CustomLabel = (props: any) => {
+const CustomLabel = (props: PieLabelProps) => {
   // props에서 필요한 값들 가져오기
   const { cx, cy, midAngle, innerRadius, outerRadius, percent } = props;
   // cx, cy: 차트의 중심 좌표
@@ -110,8 +137,7 @@ const CustomLabel = (props: any) => {
       fontWeight={600} // 폰트 굵기
       letterSpacing="-0.28px" // 글자 간격
     >
-      {`${(percent * 100).toFixed(0)}%`}{" "}
-      {/* 비율을 퍼센트로 변환 (예: 0.5 → "50%") */}
+      {`${(percent * 100).toFixed(0)}%`} {/* 비율을 퍼센트로 변환 (예: 0.5 → "50%") */}
     </text>
   );
 };
@@ -123,12 +149,7 @@ const CustomLabel = (props: any) => {
 // 호버 시 표시할 커스텀 툴팁
 // 마우스를 파이 차트 위에 올리면 채널 이름을 보여주는 툴팁 표시
 // containerRef를 사용하여 정확한 위치 계산
-const CustomTooltip = ({
-  active,
-  payload,
-  containerRef,
-  setTooltipState,
-}: any) => {
+const CustomTooltip = ({ active, payload, containerRef, setTooltipState }: PieTooltipProps) => {
   // active: 툴팁이 활성화되었는지 여부
   // payload: 차트 데이터 정보
   // containerRef: 차트 컨테이너의 ref
@@ -246,9 +267,7 @@ const CustomTooltip = ({
    ======================================== */
 
 // 파이 차트를 렌더링하는 메인 컴포넌트
-export default function ChannelMemberPieChart({
-  channelData,
-}: ChannelMemberPieChartProps) {
+export default function ChannelMemberPieChart({ channelData }: ChannelMemberPieChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   // 툴팁 상태 관리
   const [tooltip_state, set_tooltip_state] = useState<{
@@ -306,21 +325,12 @@ export default function ChannelMemberPieChart({
           if (!clipPath) {
             let defs = svg.querySelector("defs");
             if (!defs) {
-              defs = document.createElementNS(
-                "http://www.w3.org/2000/svg",
-                "defs"
-              );
+              defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
               svg.insertBefore(defs, svg.firstChild);
             }
-            clipPath = document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              "clipPath"
-            );
+            clipPath = document.createElementNS("http://www.w3.org/2000/svg", "clipPath");
             clipPath.setAttribute("id", clipPathId);
-            const circle = document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              "circle"
-            );
+            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
             // viewBox를 기반으로 중심점 계산
             const viewBox = svg.getAttribute("viewBox");
             if (viewBox) {
@@ -343,11 +353,7 @@ export default function ChannelMemberPieChart({
           }
           // path에 clipPath 적용
           path.setAttribute("clip-path", `url(#${clipPathId})`);
-          path.style.setProperty(
-            "clip-path",
-            `url(#${clipPathId})`,
-            "important"
-          );
+          path.style.setProperty("clip-path", `url(#${clipPathId})`, "important");
         }
       });
 
@@ -379,9 +385,7 @@ export default function ChannelMemberPieChart({
         const centerX = 100; // 차트 중심 X (200px 차트 기준)
         const centerY = 100; // 차트 중심 Y (200px 차트 기준)
         // 선의 끝점과 중심점 사이의 거리 계산 (피타고라스 정리)
-        const distance = Math.sqrt(
-          Math.pow(x2 - centerX, 2) + Math.pow(y2 - centerY, 2)
-        );
+        const distance = Math.sqrt(Math.pow(x2 - centerX, 2) + Math.pow(y2 - centerY, 2));
         // 외부 반지름(100)보다 멀리 나가는 선은 제거
         if (distance > 100) {
           line.style.setProperty("display", "none", "important");
@@ -429,10 +433,7 @@ export default function ChannelMemberPieChart({
           {/* 툴팁 설정: 마우스 호버 시 채널 이름 표시 (래퍼는 숨겨서 잔상 방지) */}
           <Tooltip
             content={
-              <CustomTooltip
-                containerRef={containerRef}
-                setTooltipState={set_tooltip_state}
-              />
+              <CustomTooltip containerRef={containerRef} setTooltipState={set_tooltip_state} />
             }
             cursor={false}
             animationDuration={0}
@@ -442,7 +443,7 @@ export default function ChannelMemberPieChart({
 
           {/* 파이 차트 메인 설정 - 호버 시 크기 변경/지직거림 방지: activeShape로 동일 크기 유지 */}
           <Pie
-            data={channelData as any} // 차트 데이터
+            data={channelData} // 차트 데이터
             cx="50%" // 중심 X 좌표
             cy="50%" // 중심 Y 좌표
             innerRadius={0} // 내부 반지름 (0이면 파이 차트, 0보다 크면 도넛 차트)
@@ -458,7 +459,9 @@ export default function ChannelMemberPieChart({
             strokeLinecap="butt" // 선 끝을 둥글게 하지 않음
             clipPath="url(#pie-clip)" // 외부로 튀어나오는 선 제거
             isAnimationActive={false} // 애니메이션 비활성화
-            activeShape={(props: any) => <Sector {...props} />} // 호버 시 크기 그대로 (커지지 않음)
+            activeShape={(props: SectorShapeProps) => (
+              <Sector {...(props as React.ComponentProps<typeof Sector>)} />
+            )} // 호버 시 크기 그대로 (커지지 않음)
           >
             {/* 각 섹션에 색상 적용 */}
             {channelData.map((entry, index) => {

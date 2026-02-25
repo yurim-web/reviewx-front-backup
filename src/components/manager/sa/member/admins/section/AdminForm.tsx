@@ -1,24 +1,15 @@
 /* ========================================
-   📝 관리자 등록/수정 폼 컴포넌트 (통합)
+   관리자 등록/수정 폼 컴포넌트 (통합)
    ======================================== */
 
 /**
- * 관리자 등록/수정 폼 컴포넌트 (통합)
+ * AdminForm
  *
  * 목적: 관리자 등록 및 수정 페이지에서 공통으로 사용하는 폼 컴포넌트입니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /manager_sa/member/admins/create (관리자 등록 페이지)
  * - /manager_sa/member/admins/[id]/edit (관리자 수정 페이지)
- *
- * 주요 기능:
- * - 아이디 입력 (등록 모드) / 표시 (수정 모드, 비활성화)
- * - 비밀번호 입력 및 확인
- * - 이름 입력
- * - 휴대폰 번호 입력
- * - 등록/저장 버튼
- *
- *
  */
 
 "use client";
@@ -45,11 +36,7 @@ interface AdminFormProps {
   admin_id?: string;
 }
 
-export default function AdminForm({
-  mode,
-  initial_data,
-  admin_id,
-}: AdminFormProps) {
+export default function AdminForm({ mode, initial_data, admin_id }: AdminFormProps) {
   // Next.js의 useRouter 훅을 사용하여 페이지 이동 기능 가져오기
   // useRouter: Next.js에서 제공하는 클라이언트 사이드 라우팅 훅입니다
   const router = useRouter();
@@ -75,22 +62,17 @@ export default function AdminForm({
   });
 
   // 에러 메시지 상태 관리 (각 필드별 에러 메시지, 없으면 undefined)
-  const [error_messages, set_error_messages] = useState<
-    Record<string, string | undefined>
-  >({});
+  const [error_messages, set_error_messages] = useState<Record<string, string | undefined>>({});
 
   // 필수값 에러(빈 값)에 대한 테두리 표시 여부
-  const [show_required_errors, set_show_required_errors] =
-    useState<boolean>(false);
+  const [show_required_errors, set_show_required_errors] = useState<boolean>(false);
 
   // 토스트 메시지 표시 상태 관리
   const [show_toast, set_show_toast] = useState<boolean>(false);
 
   // 수정 모드일 때 localStorage에서 데이터 확인 및 폼에 로드
   const [is_loading, set_is_loading] = useState(mode === "edit");
-  const [edit_admin_data, set_edit_admin_data] = useState<AdminItem | null>(
-    null,
-  );
+  const [edit_admin_data, set_edit_admin_data] = useState<AdminItem | null>(null);
 
   // 수정 모드일 때 localStorage에서 관리자 데이터 가져오기 및 폼에 채우기
   // useEffect: 컴포넌트가 렌더링된 후 실행되는 훅입니다
@@ -134,9 +116,7 @@ export default function AdminForm({
     // 수정 모드이고 현재 관리자의 아이디와 같으면 중복이 아님
     if (mode === "edit" && admin_id) {
       const stored_admin_list = get_admin_list_from_storage();
-      const current_admin = stored_admin_list.find(
-        (admin) => admin.id === admin_id,
-      );
+      const current_admin = stored_admin_list.find((admin) => admin.id === admin_id);
       if (current_admin && current_admin.id === id) {
         return false;
       }
@@ -154,9 +134,7 @@ export default function AdminForm({
     // 수정 모드이고 현재 관리자의 휴대폰 번호와 같으면 중복이 아님
     if (mode === "edit" && admin_id) {
       const stored_admin_list = get_admin_list_from_storage();
-      const current_admin = stored_admin_list.find(
-        (admin) => admin.id === admin_id,
-      );
+      const current_admin = stored_admin_list.find((admin) => admin.id === admin_id);
       if (current_admin && current_admin.phone === phone) {
         return false;
       }
@@ -331,9 +309,7 @@ export default function AdminForm({
 
     // Ctrl, Cmd 키와 함께 사용되는 키 (복사, 붙여넣기 등)
     const is_ctrl_key = e.ctrlKey || e.metaKey;
-    const is_allowed_key_with_ctrl = ["a", "c", "v", "x"].includes(
-      e.key.toLowerCase(),
-    );
+    const is_allowed_key_with_ctrl = ["a", "c", "v", "x"].includes(e.key.toLowerCase());
 
     // 입력된 키가 숫자인지 확인
     const is_numeric = /^[0-9]$/.test(e.key);
@@ -598,11 +574,7 @@ export default function AdminForm({
     }
 
     if (!edit_admin_data && !initial_data) {
-      return (
-        <div className={styles.error_message || ""}>
-          관리자를 찾을 수 없습니다.
-        </div>
-      );
+      return <div className={styles.error_message || ""}>관리자를 찾을 수 없습니다.</div>;
     }
   }
 
@@ -656,9 +628,7 @@ export default function AdminForm({
             value={form_data.password}
             onChange={handle_input_change}
             className={`${styles.form_input} ${
-              show_required_errors &&
-              !is_edit_mode &&
-              !form_data.password.trim()
+              show_required_errors && !is_edit_mode && !form_data.password.trim()
                 ? styles.form_input_error
                 : ""
             }`}
@@ -683,15 +653,11 @@ export default function AdminForm({
             value={form_data.password_confirm}
             onChange={handle_input_change}
             className={`${styles.form_input} ${
-              show_required_errors &&
-              !is_edit_mode &&
-              !form_data.password_confirm.trim()
+              show_required_errors && !is_edit_mode && !form_data.password_confirm.trim()
                 ? styles.form_input_error
                 : ""
             }`}
-            placeholder={
-              is_edit_mode ? "변경 시 비밀번호 재입력" : "비밀번호 재입력"
-            }
+            placeholder={is_edit_mode ? "변경 시 비밀번호 재입력" : "비밀번호 재입력"}
           />
           <ErrorText message={error_messages.password_confirm} />
         </div>
@@ -708,9 +674,7 @@ export default function AdminForm({
             value={form_data.name}
             onChange={handle_input_change}
             className={`${styles.form_input} ${
-              show_required_errors && !form_data.name.trim()
-                ? styles.form_input_error
-                : ""
+              show_required_errors && !form_data.name.trim() ? styles.form_input_error : ""
             }`}
             placeholder=""
           />
@@ -729,9 +693,7 @@ export default function AdminForm({
             onChange={handle_input_change}
             onKeyDown={handle_phone_key_down}
             className={`${styles.form_input} ${
-              show_required_errors && !form_data.phone.trim()
-                ? styles.form_input_error
-                : ""
+              show_required_errors && !form_data.phone.trim() ? styles.form_input_error : ""
             }`}
             placeholder="- 제외 입력"
             maxLength={13} // 010-1234-5678 (13자)
