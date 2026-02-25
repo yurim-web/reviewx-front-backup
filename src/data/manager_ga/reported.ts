@@ -1,5 +1,5 @@
 /* ========================================
-   📊 GA 관리자 신고내역 목업 데이터
+   GA
    ======================================== */
 
 /**
@@ -9,11 +9,6 @@
  *
  * 사용 페이지:
  * - /manager_ga/campaign/reported (신고내역 페이지)
- *
- * 주요 기능:
- * - 신고 코드 안내 데이터
- * - 신고 내역 통계 데이터
- * - 신고 내역 목록 데이터
  *
  */
 
@@ -189,12 +184,8 @@ function load_removed_ids_from_storage(): Set<string> {
   }
 
   try {
-    const stored_removed = localStorage.getItem(
-      STORAGE_KEY_REMOVED_REPORTED_IDS,
-    );
-    const removed_ids_array: string[] = stored_removed
-      ? JSON.parse(stored_removed)
-      : [];
+    const stored_removed = localStorage.getItem(STORAGE_KEY_REMOVED_REPORTED_IDS);
+    const removed_ids_array: string[] = stored_removed ? JSON.parse(stored_removed) : [];
     return new Set(removed_ids_array);
   } catch (error) {
     console.error("localStorage에서 제거된 신고 내역 ID 로드 실패:", error);
@@ -208,10 +199,7 @@ function save_removed_ids_to_storage(removed_ids: Set<string>): void {
 
   try {
     const removed_ids_array = Array.from(removed_ids);
-    localStorage.setItem(
-      STORAGE_KEY_REMOVED_REPORTED_IDS,
-      JSON.stringify(removed_ids_array),
-    );
+    localStorage.setItem(STORAGE_KEY_REMOVED_REPORTED_IDS, JSON.stringify(removed_ids_array));
   } catch (error) {
     console.error("localStorage에 제거된 신고 내역 ID 저장 실패:", error);
   }
@@ -236,8 +224,7 @@ export function remove_reported_campaign(item_id: string): void {
 }
 
 // localStorage 키 (추가된 신고 내역)
-const STORAGE_KEY_ADDITIONAL_REPORTED_ITEMS =
-  "reported_campaign_additional_items";
+const STORAGE_KEY_ADDITIONAL_REPORTED_ITEMS = "reported_campaign_additional_items";
 
 // localStorage에서 추가된 신고 내역 로드 함수
 function load_additional_items_from_storage(): ReportedCampaignItem[] {
@@ -246,9 +233,7 @@ function load_additional_items_from_storage(): ReportedCampaignItem[] {
   }
 
   try {
-    const stored_additional = localStorage.getItem(
-      STORAGE_KEY_ADDITIONAL_REPORTED_ITEMS,
-    );
+    const stored_additional = localStorage.getItem(STORAGE_KEY_ADDITIONAL_REPORTED_ITEMS);
     const additional_items: ReportedCampaignItem[] = stored_additional
       ? JSON.parse(stored_additional)
       : [];
@@ -260,16 +245,11 @@ function load_additional_items_from_storage(): ReportedCampaignItem[] {
 }
 
 // localStorage에 추가된 신고 내역 저장 함수
-function save_additional_items_to_storage(
-  additional_items: ReportedCampaignItem[],
-): void {
+function save_additional_items_to_storage(additional_items: ReportedCampaignItem[]): void {
   if (typeof window === "undefined") return;
 
   try {
-    localStorage.setItem(
-      STORAGE_KEY_ADDITIONAL_REPORTED_ITEMS,
-      JSON.stringify(additional_items),
-    );
+    localStorage.setItem(STORAGE_KEY_ADDITIONAL_REPORTED_ITEMS, JSON.stringify(additional_items));
   } catch (error) {
     console.error("localStorage에 추가된 신고 내역 저장 실패:", error);
   }
@@ -281,8 +261,7 @@ let additional_reported_campaign_items: ReportedCampaignItem[] = [];
 // 클라이언트에서만 localStorage에서 데이터 로드 (SSR Hydration 오류 방지)
 let is_additional_reported_storage_loaded = false;
 function ensure_additional_reported_storage_loaded(): void {
-  if (typeof window === "undefined" || is_additional_reported_storage_loaded)
-    return;
+  if (typeof window === "undefined" || is_additional_reported_storage_loaded) return;
 
   additional_reported_campaign_items = load_additional_items_from_storage();
   is_additional_reported_storage_loaded = true;
@@ -304,12 +283,12 @@ export function get_reported_campaign_list(): ReportedCampaignItem[] {
 
   // 제거된 항목을 제외한 기본 목록
   const filtered_base_list = reported_campaign_list.filter(
-    (item) => !removed_reported_campaign_ids.has(item.id),
+    (item) => !removed_reported_campaign_ids.has(item.id)
   );
 
   // 추가된 항목 (제거되지 않은 것만)
   const filtered_additional_items = additional_reported_campaign_items.filter(
-    (item) => !removed_reported_campaign_ids.has(item.id),
+    (item) => !removed_reported_campaign_ids.has(item.id)
   );
 
   // FIXED: Mock data FIRST, then localStorage data (기본 목록 + 추가된 항목)

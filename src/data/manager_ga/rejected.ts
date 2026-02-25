@@ -1,5 +1,5 @@
 /* ========================================
-   📊 GA 관리자 반려내역 목업 데이터
+   GA
    ======================================== */
 
 /**
@@ -10,11 +10,6 @@
  * 사용 페이지:
  * - /manager_ga/campaign/rejected (반려내역 페이지)
  *
- * 주요 기능:
- * - 반려 코드 안내 데이터
- * - 반려 내역 통계 데이터
- * - 반려 내역 목록 데이터
- *
  */
 
 // 공통 필터 옵션에서 import
@@ -24,12 +19,7 @@ import type { RejectCode } from "@/data/manager_ga/common/filterOptions";
 export type { RejectCode };
 
 // 반려 코드 카테고리 타입 정의
-export type RejectCategory =
-  | "콘텐츠"
-  | "리뷰어/파트너"
-  | "캠페인"
-  | "정산"
-  | "기타";
+export type RejectCategory = "콘텐츠" | "리뷰어/파트너" | "캠페인" | "정산" | "기타";
 
 // 반려 코드 안내 데이터 타입
 export interface RejectCodeInfo {
@@ -556,12 +546,8 @@ function load_removed_ids_from_storage(): Set<string> {
     return new Set();
   }
   try {
-    const stored_removed = localStorage.getItem(
-      STORAGE_KEY_REMOVED_REJECTED_IDS
-    );
-    const removed_ids_array: string[] = stored_removed
-      ? JSON.parse(stored_removed)
-      : [];
+    const stored_removed = localStorage.getItem(STORAGE_KEY_REMOVED_REJECTED_IDS);
+    const removed_ids_array: string[] = stored_removed ? JSON.parse(stored_removed) : [];
     return new Set(removed_ids_array);
   } catch (error) {
     console.error("localStorage에서 제거된 반려 내역 ID 로드 실패:", error);
@@ -574,10 +560,7 @@ function save_removed_ids_to_storage(removed_ids: Set<string>): void {
   if (typeof window === "undefined") return;
   try {
     const removed_ids_array = Array.from(removed_ids);
-    localStorage.setItem(
-      STORAGE_KEY_REMOVED_REJECTED_IDS,
-      JSON.stringify(removed_ids_array)
-    );
+    localStorage.setItem(STORAGE_KEY_REMOVED_REJECTED_IDS, JSON.stringify(removed_ids_array));
   } catch (error) {
     console.error("localStorage에 제거된 반려 내역 ID 저장 실패:", error);
   }
@@ -604,9 +587,7 @@ export function remove_rejected_campaign(item_id: string): void {
 // 반려 내역 목록 데이터 가져오기 함수 (제거된 항목 필터링)
 export function get_rejected_campaign_list(): RejectedCampaignItem[] {
   ensure_rejected_storage_loaded(); // Ensure loaded before filtering
-  return rejected_campaign_list.filter(
-    (item) => !removed_rejected_campaign_ids.has(item.id)
-  );
+  return rejected_campaign_list.filter((item) => !removed_rejected_campaign_ids.has(item.id));
 }
 
 // localStorage 초기화 함수 (개발/디버깅용)

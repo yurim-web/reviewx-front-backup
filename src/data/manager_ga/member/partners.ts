@@ -1,5 +1,5 @@
 /* ========================================
-   📊 GA 관리자 파트너 목록 목업 데이터
+   GA
    ======================================== */
 
 /**
@@ -9,10 +9,6 @@
  *
  * 사용 페이지:
  * - /manager_ga/member/partners (파트너 목록 페이지)
- *
- * 주요 기능:
- * - 파트너 통계 데이터
- * - 파트너 목록 데이터
  *
  */
 
@@ -31,6 +27,47 @@ import { getPartnerPointSummary } from "@/data/partner/point/pointData";
 
 // 타입 재export (기존 코드와의 호환성을 위해)
 export type { PartnerDivision, PartnerStatus, PartnerStatusType, Channel };
+
+// localStorage 파싱용 내부 타입
+interface RawPartnerAccount {
+  id?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  detail_address?: string;
+  contact_phone?: string;
+  name?: string;
+  representative_name?: string;
+  business_name?: string;
+  business_number?: string;
+  companyName?: string;
+  businessNumber?: string;
+  division?: string;
+  business_type?: string;
+  join_date?: string;
+  created_at?: string;
+  last_access_date?: string;
+  campaign_in_progress?: number;
+  campaign_completed?: number;
+  current_points?: number;
+  used_points?: number;
+  status_type?: string;
+  status?: string;
+  number?: string;
+  [key: string]: unknown;
+}
+interface RawCampaign {
+  id?: string;
+  partner_id?: string;
+  name?: string;
+  title?: string;
+  status?: string;
+  type?: string;
+  platform?: string;
+  points?: number;
+  totalPoints?: number;
+  [key: string]: unknown;
+}
 
 // 파트너 통계 타입 정의
 export interface PartnerStats {
@@ -385,34 +422,29 @@ export const partner_list: PartnerItem[] = [
 
 // 파트너 ID로 디테일 정보를 가져오는 함수
 // 실제 프로젝트에서는 API 호출로 대체됩니다
-export function get_partner_detail_by_id(
-  partner_id: string
-): PartnerDetail | null {
+export function get_partner_detail_by_id(partner_id: string): PartnerDetail | null {
   // partner_test_001인 경우 직접 localStorage에서 읽기
-  if (partner_id === 'partner_test_001' && typeof window !== 'undefined') {
+  if (partner_id === "partner_test_001" && typeof window !== "undefined") {
     try {
-      const storedAccounts = localStorage.getItem('partner_accounts');
-      console.log('💾 get_partner_detail_by_id에서 직접 읽은 partner_accounts:', storedAccounts);
+      const storedAccounts = localStorage.getItem("partner_accounts");
 
       if (storedAccounts) {
         const accounts = JSON.parse(storedAccounts);
-        const testAccount = accounts.find((a: any) =>
-          a.email === 'test@test.com' || a.id === 'partner_test_001'
+        const testAccount = (accounts as RawPartnerAccount[]).find(
+          (a) => a.email === "test@test.com" || a.id === "partner_test_001"
         );
 
         if (testAccount) {
-          console.log('✅ test 계정 찾음:', testAccount);
-
           // 캠페인 개수 계산
           let campaignCount = 0;
           try {
-            const deliveryCampaigns = localStorage.getItem('deliveryCampaigns');
-            const missionCampaigns = localStorage.getItem('missionCampaigns');
-            const reviewCampaigns = localStorage.getItem('reviewCampaigns');
-            const visitCampaigns = localStorage.getItem('visitCampaigns');
-            const reporterCampaigns = localStorage.getItem('reporterCampaigns');
+            const deliveryCampaigns = localStorage.getItem("deliveryCampaigns");
+            const missionCampaigns = localStorage.getItem("missionCampaigns");
+            const reviewCampaigns = localStorage.getItem("reviewCampaigns");
+            const visitCampaigns = localStorage.getItem("visitCampaigns");
+            const reporterCampaigns = localStorage.getItem("reporterCampaigns");
 
-            const allCampaigns = [
+            const allCampaigns: RawCampaign[] = [
               ...(deliveryCampaigns ? JSON.parse(deliveryCampaigns) : []),
               ...(missionCampaigns ? JSON.parse(missionCampaigns) : []),
               ...(reviewCampaigns ? JSON.parse(reviewCampaigns) : []),
@@ -420,30 +452,32 @@ export function get_partner_detail_by_id(
               ...(reporterCampaigns ? JSON.parse(reporterCampaigns) : []),
             ];
 
-            campaignCount = allCampaigns.filter((c: any) => c.partner_id === 'partner_test_001').length;
+            campaignCount = allCampaigns.filter((c) => c.partner_id === "partner_test_001").length;
           } catch (error) {
-            console.error('캠페인 개수 계산 중 오류:', error);
+            console.error("캠페인 개수 계산 중 오류:", error);
           }
 
           // 포인트 가져오기
-          const testPartnerPoints = getPartnerPointSummary('partner_test_001');
+          const testPartnerPoints = getPartnerPointSummary("partner_test_001");
 
           // PartnerItem 생성
           const partner: PartnerItem = {
-            id: 'partner_test_001',
-            number: '999999',
-            business_name: testAccount.business_name || '테스트 주식회사',
-            business_number: testAccount.business_number || '123-45-67890',
-            representative_name: testAccount.representative_name || testAccount.name || '테스트파트너',
-            division: testAccount.division || (testAccount.business_type === '개인사업자' ? '개인' : '법인'),
+            id: "partner_test_001",
+            number: "999999",
+            business_name: testAccount.business_name || "테스트 주식회사",
+            business_number: testAccount.business_number || "123-45-67890",
+            representative_name:
+              testAccount.representative_name || testAccount.name || "테스트파트너",
+            division: (testAccount.division ||
+              (testAccount.business_type === "개인사업자" ? "개인" : "법인")) as PartnerDivision,
             campaign_in_progress: campaignCount,
             campaign_completed: 0,
             current_points: testPartnerPoints.available_points,
             used_points: 0,
-            status_type: '일반 회원',
-            status: '정상',
-            last_access_date: new Date().toISOString().replace('T', ' ').substring(0, 16),
-            join_date: testAccount.join_date || testAccount.created_at || '2024-03-01 10:00',
+            status_type: "일반 회원",
+            status: "정상",
+            last_access_date: new Date().toISOString().replace("T", " ").substring(0, 16),
+            join_date: testAccount.join_date || testAccount.created_at || "2024-03-01 10:00",
           };
 
           // 여기서부터 기존 로직 계속 (패널티, 연락처 정보 등)
@@ -455,7 +489,7 @@ export function get_partner_detail_by_id(
             email: testAccount.email || "test@test.com",
             phone: testAccount.phone || "010-5555-5555",
             address: testAccount.address
-              ? `${testAccount.address}${testAccount.detail_address ? ' ' + testAccount.detail_address : ''}`
+              ? `${testAccount.address}${testAccount.detail_address ? " " + testAccount.detail_address : ""}`
               : "서울시 강남구 테헤란로 123",
             contact_name: testAccount.name || testAccount.representative_name || "테스트파트너",
             contact_phone: testAccount.contact_phone || testAccount.phone || "010-5555-5555",
@@ -464,8 +498,9 @@ export function get_partner_detail_by_id(
           // 캠페인 내역 생성
           const recent_campaigns: RecentCampaign[] = [];
 
-          // 포인트 정보
-          const payment_points = testPartnerPoints.used_points;
+          // 포인트 정보 (사용 포인트 = 총 보유 - 사용 가능)
+          const payment_points =
+            testPartnerPoints.total_points - testPartnerPoints.available_points;
 
           // PartnerDetail 반환
           return {
@@ -483,15 +518,13 @@ export function get_partner_detail_by_id(
         }
       }
     } catch (error) {
-      console.error('test 파트너 정보 직접 로드 중 오류:', error);
+      console.error("test 파트너 정보 직접 로드 중 오류:", error);
     }
   }
 
   // 기존 로직: 다른 파트너들은 get_partner_list 사용
   const allPartners = get_partner_list();
-  console.log('전체 파트너 목록:', allPartners);
   const partner = allPartners.find((p) => p.id === partner_id);
-  console.log(`파트너 ${partner_id} 찾기 결과:`, partner);
   if (!partner) {
     return null;
   }
@@ -516,7 +549,7 @@ export function get_partner_detail_by_id(
     "15": 0, // 데이터 없음 테스트용
     "16": 0, // 탈퇴 회원 테스트용
     "17": 0, // 탈퇴 회원 테스트용
-    "partner_test_001": 0, // 테스트 계정
+    partner_test_001: 0, // 테스트 계정
   };
   const penalty_count = penalty_count_map[partner.id] || 0;
 
@@ -529,14 +562,8 @@ export function get_partner_detail_by_id(
       const actualStatus = i === 0 && penalty_count >= 3 ? "일시정지" : "정상";
 
       penalty_history.push({
-        type:
-          i === penalty_count - 1 && penalty_count > 1
-            ? "선정 후 취소"
-            : "지각 제출",
-        reason:
-          i === penalty_count - 1 && penalty_count > 1
-            ? "선정 후 취소"
-            : "지각 제출",
+        type: i === penalty_count - 1 && penalty_count > 1 ? "선정 후 취소" : "지각 제출",
+        reason: i === penalty_count - 1 && penalty_count > 1 ? "선정 후 취소" : "지각 제출",
         processed_date: `2025-08-${String(i + 1).padStart(2, "0")} 18:56`,
         status: actualStatus,
       });
@@ -673,7 +700,7 @@ export function get_partner_detail_by_id(
       contact_name: "이탈퇴",
       contact_phone: "010-2222-2222",
     },
-    "partner_test_001": {
+    partner_test_001: {
       email: "test@test.com",
       phone: "010-5555-5555",
       address: "서울시 강남구 테헤란로 123",
@@ -686,20 +713,20 @@ export function get_partner_detail_by_id(
   let contact_info = contact_info_map[partner.id];
 
   // test@test.com 파트너인 경우 localStorage에서 실제 정보 가져오기
-  if (partner.id === 'partner_test_001' && typeof window !== 'undefined') {
+  if (partner.id === "partner_test_001" && typeof window !== "undefined") {
     try {
-      const storedAccounts = localStorage.getItem('partner_accounts');
+      const storedAccounts = localStorage.getItem("partner_accounts");
       if (storedAccounts) {
         const accounts = JSON.parse(storedAccounts);
-        const testAccount = accounts.find((a: any) =>
-          a.email === 'test@test.com' || a.id === 'partner_test_001'
+        const testAccount = (accounts as RawPartnerAccount[]).find(
+          (a) => a.email === "test@test.com" || a.id === "partner_test_001"
         );
         if (testAccount) {
           contact_info = {
             email: testAccount.email || "test@test.com",
             phone: testAccount.phone || "010-5555-5555",
             address: testAccount.address
-              ? `${testAccount.address}${testAccount.detail_address ? ' ' + testAccount.detail_address : ''}`
+              ? `${testAccount.address}${testAccount.detail_address ? " " + testAccount.detail_address : ""}`
               : "서울시 강남구 테헤란로 123",
             contact_name: testAccount.name || testAccount.representative_name || "테스트파트너",
             contact_phone: testAccount.contact_phone || testAccount.phone || "010-5555-5555",
@@ -707,7 +734,7 @@ export function get_partner_detail_by_id(
         }
       }
     } catch (error) {
-      console.error('파트너 계정 정보 로드 중 오류:', error);
+      console.error("파트너 계정 정보 로드 중 오류:", error);
     }
   }
 
@@ -728,13 +755,13 @@ export function get_partner_detail_by_id(
   let actualCampaignCount = partner.campaign_in_progress;
 
   // LocalStorage에서 파트너의 실제 캠페인 가져오기
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     try {
-      const deliveryCampaigns = localStorage.getItem('deliveryCampaigns');
-      const missionCampaigns = localStorage.getItem('missionCampaigns');
-      const reviewCampaigns = localStorage.getItem('reviewCampaigns');
-      const visitCampaigns = localStorage.getItem('visitCampaigns');
-      const reporterCampaigns = localStorage.getItem('reporterCampaigns');
+      const deliveryCampaigns = localStorage.getItem("deliveryCampaigns");
+      const missionCampaigns = localStorage.getItem("missionCampaigns");
+      const reviewCampaigns = localStorage.getItem("reviewCampaigns");
+      const visitCampaigns = localStorage.getItem("visitCampaigns");
+      const reporterCampaigns = localStorage.getItem("reporterCampaigns");
 
       const allCampaigns = [
         ...(deliveryCampaigns ? JSON.parse(deliveryCampaigns) : []),
@@ -745,22 +772,34 @@ export function get_partner_detail_by_id(
       ];
 
       // 해당 파트너의 캠페인만 필터링
-      const partnerCampaigns = allCampaigns.filter((c: any) => c.partner_id === partner.id);
+      const partnerCampaigns = (allCampaigns as RawCampaign[]).filter(
+        (c) => c.partner_id === partner.id
+      );
 
       // 캠페인 데이터를 RecentCampaign 형식으로 변환
-      recent_campaigns = partnerCampaigns.slice(0, 100).map((c: any, index: number) => ({
-        campaign_number: c.id || String(index + 1).padStart(6, '0'),
-        campaign_name: c.name || c.title || '캠페인명 없음',
-        status: c.status === '예정' || c.status === '진행중' ? '진행' : '종료',
-        type: c.type === 'delivery' ? '배송형' : c.type === 'mission' ? '미션형' : c.type === 'review' ? '구매평' : c.type === 'visit' ? '방문형' : '기자단',
-        channel: c.platform || 'Blog',
+      recent_campaigns = partnerCampaigns.slice(0, 100).map((c, index) => ({
+        campaign_number: c.id || String(index + 1).padStart(6, "0"),
+        campaign_name: c.name || c.title || "캠페인명 없음",
+        status: (c.status === "예정" || c.status === "진행중"
+          ? "진행"
+          : "종료") as RecentCampaign["status"],
+        type: (c.type === "delivery"
+          ? "배송형"
+          : c.type === "mission"
+            ? "미션형"
+            : c.type === "review"
+              ? "구매평"
+              : c.type === "visit"
+                ? "방문형"
+                : "기자단") as RecentCampaign["type"],
+        channel: (c.platform || "Blog") as RecentCampaign["channel"],
         points: c.points || c.totalPoints || 0,
       }));
 
       // 실제 캠페인 개수 업데이트
       actualCampaignCount = partnerCampaigns.length;
     } catch (error) {
-      console.error('캠페인 데이터 로드 중 오류:', error);
+      console.error("캠페인 데이터 로드 중 오류:", error);
     }
   }
 
@@ -844,13 +883,12 @@ export function get_partner_detail_by_id(
 
   // 파트너 포인트 가져오기 (브라우저 환경에서만)
   let partnerPoints = 0;
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     try {
       const points = getPartnerPointSummary(partner.id);
       partnerPoints = points.available_points;
-      console.log(`파트너 ${partner.id} 상세 페이지 포인트:`, points);
     } catch (error) {
-      console.error('파트너 포인트 로드 중 오류:', error);
+      console.error("파트너 포인트 로드 중 오류:", error);
     }
   }
 
@@ -868,9 +906,6 @@ export function get_partner_detail_by_id(
     penalty_history: penalty_history,
     recent_campaigns: recent_campaigns,
   };
-
-  console.log('생성된 파트너 상세 정보:', detail);
-  console.log('current_points:', detail.current_points, 'payment_points:', detail.payment_points);
 
   return detail;
 }
@@ -895,10 +930,7 @@ function load_status_updates_from_storage(): Record<string, PartnerStatusType> {
 }
 
 // localStorage에서 이전 상태 정보 로드 (해제 시 복원용)
-function load_previous_status_from_storage(): Record<
-  string,
-  PartnerStatusType
-> {
+function load_previous_status_from_storage(): Record<string, PartnerStatusType> {
   if (typeof window === "undefined") {
     return {};
   }
@@ -913,36 +945,26 @@ function load_previous_status_from_storage(): Record<
 }
 
 // 상태 업데이트 정보를 localStorage에 저장
-function save_status_updates_to_storage(
-  updates: Record<string, PartnerStatusType>
-): void {
+function save_status_updates_to_storage(updates: Record<string, PartnerStatusType>): void {
   if (typeof window === "undefined") {
     return;
   }
 
   try {
-    localStorage.setItem(
-      STORAGE_KEY_PARTNER_STATUS_UPDATES,
-      JSON.stringify(updates)
-    );
+    localStorage.setItem(STORAGE_KEY_PARTNER_STATUS_UPDATES, JSON.stringify(updates));
   } catch (error) {
     console.error("localStorage에 파트너 상태 업데이트 저장 실패:", error);
   }
 }
 
 // 이전 상태 정보를 localStorage에 저장
-function save_previous_status_to_storage(
-  previous_status: Record<string, PartnerStatusType>
-): void {
+function save_previous_status_to_storage(previous_status: Record<string, PartnerStatusType>): void {
   if (typeof window === "undefined") {
     return;
   }
 
   try {
-    localStorage.setItem(
-      STORAGE_KEY_PARTNER_PREVIOUS_STATUS,
-      JSON.stringify(previous_status)
-    );
+    localStorage.setItem(STORAGE_KEY_PARTNER_PREVIOUS_STATUS, JSON.stringify(previous_status));
   } catch (error) {
     console.error("localStorage에 파트너 이전 상태 저장 실패:", error);
   }
@@ -967,33 +989,30 @@ export function get_partner_list(): PartnerItem[] {
   });
 
   // LocalStorage에서 파트너 계정 가져오기
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     try {
       // 회원가입으로 추가된 파트너 계정
-      const storedPartnerAccounts = localStorage.getItem('partner_accounts');
-      console.log('🔑 localStorage에서 읽은 partner_accounts (raw):', storedPartnerAccounts);
+      const storedPartnerAccounts = localStorage.getItem("partner_accounts");
       const partnerAccounts = storedPartnerAccounts ? JSON.parse(storedPartnerAccounts) : [];
-      console.log('📋 파싱된 partnerAccounts 배열:', partnerAccounts);
-      console.log('📏 배열 길이:', partnerAccounts.length);
 
       // unifiedAccountData에서 test@test.com 파트너 정보 가져오기 (항상 추가)
       // 현재 시간을 YYYY-MM-DD HH:mm 형식으로 포맷
       const now = new Date();
       const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const day = String(now.getDate()).padStart(2, '0');
-      const hours = String(now.getHours()).padStart(2, '0');
-      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      const hours = String(now.getHours()).padStart(2, "0");
+      const minutes = String(now.getMinutes()).padStart(2, "0");
       const currentDateTime = `${year}-${month}-${day} ${hours}:${minutes}`;
 
       // LocalStorage에서 test@test.com 파트너의 실제 캠페인 개수 계산
       let testPartnerCampaignCount = 0;
       try {
-        const deliveryCampaigns = localStorage.getItem('deliveryCampaigns');
-        const missionCampaigns = localStorage.getItem('missionCampaigns');
-        const reviewCampaigns = localStorage.getItem('reviewCampaigns');
-        const visitCampaigns = localStorage.getItem('visitCampaigns');
-        const reporterCampaigns = localStorage.getItem('reporterCampaigns');
+        const deliveryCampaigns = localStorage.getItem("deliveryCampaigns");
+        const missionCampaigns = localStorage.getItem("missionCampaigns");
+        const reviewCampaigns = localStorage.getItem("reviewCampaigns");
+        const visitCampaigns = localStorage.getItem("visitCampaigns");
+        const reporterCampaigns = localStorage.getItem("reporterCampaigns");
 
         const allCampaigns = [
           ...(deliveryCampaigns ? JSON.parse(deliveryCampaigns) : []),
@@ -1003,102 +1022,103 @@ export function get_partner_list(): PartnerItem[] {
           ...(reporterCampaigns ? JSON.parse(reporterCampaigns) : []),
         ];
 
-        testPartnerCampaignCount = allCampaigns.filter((c: any) => c.partner_id === 'partner_test_001').length;
+        testPartnerCampaignCount = (allCampaigns as RawCampaign[]).filter(
+          (c) => c.partner_id === "partner_test_001"
+        ).length;
       } catch (error) {
-        console.error('캠페인 개수 계산 중 오류:', error);
+        console.error("캠페인 개수 계산 중 오류:", error);
       }
 
       // 테스트 파트너의 실제 포인트 가져오기
-      const testPartnerPoints = getPartnerPointSummary('partner_test_001');
-      console.log('테스트 파트너 포인트:', testPartnerPoints);
+      const testPartnerPoints = getPartnerPointSummary("partner_test_001");
 
       // test@test.com 파트너 정보를 partner_accounts에서 찾기
-      const testPartnerAccount = partnerAccounts.find((account: any) =>
-        account.email === 'test@test.com' || account.id === 'partner_test_001'
+      const testPartnerAccount = (partnerAccounts as RawPartnerAccount[]).find(
+        (account) => account.email === "test@test.com" || account.id === "partner_test_001"
       );
 
-      console.log('🔍 testPartnerAccount 찾기 결과:', testPartnerAccount);
-      console.log('📦 partnerAccounts 배열:', partnerAccounts);
-
       const testPartner: PartnerItem = {
-        id: 'partner_test_001', // 고정 ID 사용
-        number: '999999',
-        business_name: testPartnerAccount?.business_name || '테스트 주식회사',
-        business_number: testPartnerAccount?.business_number || '123-45-67890',
-        representative_name: testPartnerAccount?.representative_name || testPartnerAccount?.name || '테스트파트너',
-        division: testPartnerAccount?.division || (testPartnerAccount?.business_type === '개인사업자' ? '개인' : '법인'),
+        id: "partner_test_001", // 고정 ID 사용
+        number: "999999",
+        business_name: testPartnerAccount?.business_name || "테스트 주식회사",
+        business_number: testPartnerAccount?.business_number || "123-45-67890",
+        representative_name:
+          testPartnerAccount?.representative_name || testPartnerAccount?.name || "테스트파트너",
+        division: (testPartnerAccount?.division ||
+          (testPartnerAccount?.business_type === "개인사업자"
+            ? "개인"
+            : "법인")) as PartnerDivision,
         campaign_in_progress: testPartnerCampaignCount,
         campaign_completed: 0,
         current_points: testPartnerPoints.available_points,
         used_points: 0,
-        status_type: '일반 회원',
-        status: '정상',
+        status_type: "일반 회원",
+        status: "정상",
         last_access_date: currentDateTime,
-        join_date: testPartnerAccount?.join_date || testPartnerAccount?.created_at || '2024-03-01 10:00',
+        join_date:
+          testPartnerAccount?.join_date || testPartnerAccount?.created_at || "2024-03-01 10:00",
       };
 
-      console.log('✅ 생성된 testPartner:', testPartner);
-
       // 중복 확인 후 추가 (ID 기준으로 확인)
-      const existsInMock = mockPartners.some(p => p.id === 'partner_test_001');
+      const existsInMock = mockPartners.some((p) => p.id === "partner_test_001");
       if (!existsInMock) {
         mockPartners.push(testPartner);
       }
 
       // LocalStorage 파트너 계정들을 PartnerItem 형식으로 변환하여 추가
       // test@test.com 계정은 이미 위에서 추가했으므로 제외
-      const localStoragePartners = partnerAccounts
-        .filter((account: any) => account.email !== 'test@test.com' && account.id !== 'partner_test_001')
-        .map((account: any) => {
-        // 날짜 포맷 함수 - YYYY-MM-DD HH:mm 형식으로 변환
-        const formatDateTime = (dateStr?: string): string => {
-          if (!dateStr) {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            return `${year}-${month}-${day} ${hours}:${minutes}`;
-          }
-          // 이미 올바른 형식인지 확인 (YYYY-MM-DD HH:mm)
-          if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(dateStr)) {
+      const localStoragePartners = (partnerAccounts as RawPartnerAccount[])
+        .filter((account) => account.email !== "test@test.com" && account.id !== "partner_test_001")
+        .map((account) => {
+          // 날짜 포맷 함수 - YYYY-MM-DD HH:mm 형식으로 변환
+          const formatDateTime = (dateStr?: string): string => {
+            if (!dateStr) {
+              const now = new Date();
+              const year = now.getFullYear();
+              const month = String(now.getMonth() + 1).padStart(2, "0");
+              const day = String(now.getDate()).padStart(2, "0");
+              const hours = String(now.getHours()).padStart(2, "0");
+              const minutes = String(now.getMinutes()).padStart(2, "0");
+              return `${year}-${month}-${day} ${hours}:${minutes}`;
+            }
+            // 이미 올바른 형식인지 확인 (YYYY-MM-DD HH:mm)
+            if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(dateStr)) {
+              return dateStr;
+            }
+            // ISO 형식이면 변환 (YYYY-MM-DDTHH:mm:ss.sssZ)
+            if (dateStr.includes("T")) {
+              const date = new Date(dateStr);
+              const year = date.getFullYear();
+              const month = String(date.getMonth() + 1).padStart(2, "0");
+              const day = String(date.getDate()).padStart(2, "0");
+              const hours = String(date.getHours()).padStart(2, "0");
+              const minutes = String(date.getMinutes()).padStart(2, "0");
+              return `${year}-${month}-${day} ${hours}:${minutes}`;
+            }
             return dateStr;
-          }
-          // ISO 형식이면 변환 (YYYY-MM-DDTHH:mm:ss.sssZ)
-          if (dateStr.includes('T')) {
-            const date = new Date(dateStr);
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            return `${year}-${month}-${day} ${hours}:${minutes}`;
-          }
-          return dateStr;
-        };
+          };
 
-        return {
-          id: account.id,
-          number: account.number || String(mockPartners.length + 1).padStart(6, '0'),
-          business_name: account.business_name || account.companyName || '상호명 미등록',
-          business_number: account.business_number || account.businessNumber || '-',
-          representative_name: account.representative_name || account.name || '대표자명 미등록',
-          division: account.division || '개인',
-          campaign_in_progress: account.campaign_in_progress || 0,
-          campaign_completed: account.campaign_completed || 0,
-          current_points: account.current_points || 0,
-          used_points: account.used_points || 0,
-          status_type: account.status_type || '일반 회원',
-          status: account.status || '정상',
-          last_access_date: formatDateTime(account.last_access_date || account.join_date),
-          join_date: formatDateTime(account.join_date),
-        };
-      });
+          return {
+            id: account.id ?? `partner_local_${Date.now()}`,
+            number: account.number || String(mockPartners.length + 1).padStart(6, "0"),
+            business_name: account.business_name || account.companyName || "상호명 미등록",
+            business_number: account.business_number || account.businessNumber || "-",
+            representative_name: account.representative_name || account.name || "대표자명 미등록",
+            division: (account.division || "개인") as PartnerDivision,
+            campaign_in_progress: account.campaign_in_progress || 0,
+            campaign_completed: account.campaign_completed || 0,
+            current_points: account.current_points || 0,
+            used_points: account.used_points || 0,
+            status_type: (account.status_type || "일반 회원") as PartnerStatusType,
+            status: (account.status || "정상") as PartnerStatus,
+            last_access_date: formatDateTime(account.last_access_date || account.join_date),
+            join_date: formatDateTime(account.join_date),
+          };
+        });
 
       return [...mockPartners, ...localStoragePartners];
     } catch (error) {
-      console.error('LocalStorage 파트너 데이터 로드 중 오류:', error);
+      console.error("LocalStorage 파트너 데이터 로드 중 오류:", error);
       return mockPartners;
     }
   }
@@ -1119,10 +1139,7 @@ export function update_partner_status_type(
     (current_partner ? current_partner.status_type : "일반 회원");
 
   // "이용 제한 회원"으로 변경하는 경우에만 이전 상태 저장
-  if (
-    new_status_type === "이용 제한 회원" &&
-    current_status_type !== "이용 제한 회원"
-  ) {
+  if (new_status_type === "이용 제한 회원" && current_status_type !== "이용 제한 회원") {
     previous_status_types[partner_id] = current_status_type;
     save_previous_status_to_storage(previous_status_types);
   }

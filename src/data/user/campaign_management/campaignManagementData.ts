@@ -124,17 +124,11 @@ const registeredContentData: Record<
   },
   "4013": {
     link: "https://blog.naver.com/example-mission-4013",
-    images: [
-      "/images/main/campaign_img/eximg_1.png",
-      "/images/main/campaign_img/eximg_2.png",
-    ],
+    images: ["/images/main/campaign_img/eximg_1.png", "/images/main/campaign_img/eximg_2.png"],
   },
   // 구매평: 콘텐츠(이미지) 이미 등록된 캠페인
   "2013": {
-    images: [
-      "/images/main/campaign_img/eximg_1.png",
-      "/images/main/campaign_img/eximg_2.png",
-    ],
+    images: ["/images/main/campaign_img/eximg_1.png", "/images/main/campaign_img/eximg_2.png"],
   },
 };
 
@@ -167,12 +161,12 @@ function convertToCampaignApplication(
 
   // 타입 결정 (실제 데이터 기반)
   const type: CampaignApplication["type"] =
-    (actualCampaign as any).category ?? "배송형";
+    (actualCampaign as { category?: string }).category ?? "배송형";
 
   // 카테고리 결정
   let category = "";
-  if ("channel" in (actualCampaign as any)) {
-    category = (actualCampaign as any).channel || "";
+  if ("channel" in actualCampaign) {
+    category = (actualCampaign as { channel?: string }).channel || "";
   }
 
   // remainingDays·isUrgent 계산 (탭별 규칙 통일 — 선정탭/전체탭 동일 표시)
@@ -213,10 +207,10 @@ function convertToCampaignApplication(
     (status === "신청"
       ? `캠페인 선정 발표까지 ${remainingDays}일 남았습니다.`
       : status === "선정"
-      ? "콘텐츠를 등록해주세요."
-      : status === "완료"
-      ? "캠페인이 완료되었습니다."
-      : "캠페인 상태를 확인해주세요.");
+        ? "콘텐츠를 등록해주세요."
+        : status === "완료"
+          ? "캠페인이 완료되었습니다."
+          : "캠페인 상태를 확인해주세요.");
 
   // 등록된 콘텐츠 데이터 가져오기
   const contentData = registeredContentData[campaignId];
@@ -237,15 +231,12 @@ function convertToCampaignApplication(
     contentType:
       contentType ||
       (type === "미션형" && "contentType" in actualCampaign
-        ? (actualCampaign as any).contentType
+        ? (actualCampaign as { contentType?: string }).contentType
         : undefined),
     rejectionReason,
-    registeredContentLink:
-      registeredContentLink ?? contentData?.link ?? undefined,
-    registeredContentImages:
-      registeredContentImages ?? contentData?.images ?? undefined,
-    registeredReceiptImages:
-      registeredReceiptImages ?? contentData?.receiptImages ?? undefined,
+    registeredContentLink: registeredContentLink ?? contentData?.link ?? undefined,
+    registeredContentImages: registeredContentImages ?? contentData?.images ?? undefined,
+    registeredReceiptImages: registeredReceiptImages ?? contentData?.receiptImages ?? undefined,
   };
 }
 
@@ -276,12 +267,7 @@ function filterSelectedCampaigns(
       // 구매 영수증 이미 등록된 구매평 캠페인 (수정 가능)
       const receiptRegisteredReviewIds = ["2002", "2007"];
       // 콘텐츠 이미 등록된 캠페인 (수정 가능)
-      const contentRegisteredIds = [
-        "972",
-        "1002",
-        "4013",
-        "2013",
-      ];
+      const contentRegisteredIds = ["972", "1002", "4013", "2013"];
 
       let subStatus: CampaignApplication["subStatus"];
       let hasContent = false;
@@ -297,9 +283,7 @@ function filterSelectedCampaigns(
       } else {
         // 기본 상태: 미등록 상태
         const isReview = reviewCampaigns.some((c) => c.id === id);
-        subStatus = isReview
-          ? "receipt_not_registered"
-          : "content_not_registered";
+        subStatus = isReview ? "receipt_not_registered" : "content_not_registered";
       }
 
       return convertToCampaignApplication(id, "선정", subStatus, hasContent);
@@ -321,8 +305,7 @@ function isAnnouncementDatePassed(campaignId: string): boolean {
   ];
   const actualCampaign = allCampaigns.find((c) => c.id === campaignId);
   if (!actualCampaign?.detailedSchedule?.announcement) return false;
-  const announcementDateStr =
-    actualCampaign.detailedSchedule.announcement.trim();
+  const announcementDateStr = actualCampaign.detailedSchedule.announcement.trim();
   const [year, month, day] = announcementDateStr.split("-").map(Number);
   if (!year || !month || !day || isNaN(year) || isNaN(month) || isNaN(day)) {
     return false;
@@ -410,23 +393,17 @@ function filterCompletedCampaigns(
   additionalCompletedIds: string[] = []
 ): CampaignApplication[] {
   // 기존 완료 탭 캠페인 + 새로 등록 완료된 캠페인 합치기
-  const allCompletedIds = [
-    ...new Set([...campaignIds, ...additionalCompletedIds]),
-  ];
+  const allCompletedIds = [...new Set([...campaignIds, ...additionalCompletedIds])];
 
   return allCompletedIds
-    .map((id) =>
-      convertToCampaignApplication(id, "완료", "content_registered", true)
-    )
+    .map((id) => convertToCampaignApplication(id, "완료", "content_registered", true))
     .filter((c): c is CampaignApplication => c !== null);
 }
 
 /**
  * 취소/반려 탭: 조건 없이 모든 캠페인 반환
  */
-function filterCancelledCampaigns(
-  campaignIds: string[]
-): CampaignApplication[] {
+function filterCancelledCampaigns(campaignIds: string[]): CampaignApplication[] {
   return campaignIds
     .map((id) => {
       const isPenalty = id === "2007" || id === "4005";
@@ -455,12 +432,8 @@ function filterCancelledCampaigns(
 /**
  * 신청 탭용: 선정 발표일이 지나지 않은 캠페인만 (탭 숫자·목록 공통 기준)
  */
-function filterAppliedCampaignsAfterAnnouncement(
-  campaignIds: string[]
-): CampaignApplication[] {
-  return filterAppliedCampaigns(campaignIds).filter(
-    (c) => !isAnnouncementDatePassed(c.id)
-  );
+function filterAppliedCampaignsAfterAnnouncement(campaignIds: string[]): CampaignApplication[] {
+  return filterAppliedCampaigns(campaignIds).filter((c) => !isAnnouncementDatePassed(c.id));
 }
 
 /**
@@ -490,9 +463,7 @@ export const getCampaignsByTab = (
       ];
     case "패널티":
       // 패널티는 취소/반려 중에서 isPenalty가 true인 것들
-      return filterCancelledCampaigns(취소반려_탭_캠페인_IDS).filter(
-        (c) => c.isPenalty === true
-      );
+      return filterCancelledCampaigns(취소반려_탭_캠페인_IDS).filter((c) => c.isPenalty === true);
     default:
       return [];
   }

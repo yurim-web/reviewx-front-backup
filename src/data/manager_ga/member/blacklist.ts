@@ -1,5 +1,5 @@
 /* ========================================
-   🚫 이용제한 내역 목업 데이터
+   
    ======================================== */
 
 /**
@@ -10,18 +10,11 @@
  * 사용 페이지:
  * - /manager_ga/member/blacklist (이용제한 내역 페이지)
  *
- * 주요 기능:
- * - 이용제한 내역 목록 데이터
- * - 파트너, 리뷰어, 관리자의 이용 제한 항목을 표시
- * - 구분(division)을 "파트너", "리뷰어", "관리자"로 설정
- *
  */
 
-// 공통 필터 옵션에서 import (타입만 사용, 재export는 하지 않음)
-import type {
-  BlacklistDivision,
-  BlockCode,
-} from "@/data/manager_ga/common/filterOptions";
+// 공통 필터 옵션에서 import (BlockCode는 컴포넌트에서 직접 사용하므로 re-export)
+import type { BlacklistDivision, BlockCode } from "@/data/manager_ga/common/filterOptions";
+export type { BlockCode };
 
 // 차단 사유 타입 정의
 export type BlockReason =
@@ -79,18 +72,14 @@ function load_from_storage(): {
 
   try {
     // 추가된 항목 로드
-    const stored_additional = localStorage.getItem(
-      STORAGE_KEY_ADDITIONAL_ITEMS,
-    );
+    const stored_additional = localStorage.getItem(STORAGE_KEY_ADDITIONAL_ITEMS);
     const additional_items: BlacklistItem[] = stored_additional
       ? JSON.parse(stored_additional)
       : [];
 
     // 제거된 ID 로드
     const stored_removed = localStorage.getItem(STORAGE_KEY_REMOVED_IDS);
-    const removed_ids_array: string[] = stored_removed
-      ? JSON.parse(stored_removed)
-      : [];
+    const removed_ids_array: string[] = stored_removed ? JSON.parse(stored_removed) : [];
     const removed_ids = new Set(removed_ids_array);
 
     return { additional_items, removed_ids };
@@ -101,25 +90,16 @@ function load_from_storage(): {
 }
 
 // localStorage에 데이터 저장 함수
-function save_to_storage(
-  additional_items: BlacklistItem[],
-  removed_ids: Set<string>,
-): void {
+function save_to_storage(additional_items: BlacklistItem[], removed_ids: Set<string>): void {
   if (typeof window === "undefined") return;
 
   try {
     // 추가된 항목 저장
-    localStorage.setItem(
-      STORAGE_KEY_ADDITIONAL_ITEMS,
-      JSON.stringify(additional_items),
-    );
+    localStorage.setItem(STORAGE_KEY_ADDITIONAL_ITEMS, JSON.stringify(additional_items));
 
     // 제거된 ID 저장
     const removed_ids_array = Array.from(removed_ids);
-    localStorage.setItem(
-      STORAGE_KEY_REMOVED_IDS,
-      JSON.stringify(removed_ids_array),
-    );
+    localStorage.setItem(STORAGE_KEY_REMOVED_IDS, JSON.stringify(removed_ids_array));
   } catch (error) {
     console.error("localStorage에 블랙리스트 데이터 저장 실패:", error);
   }
@@ -156,15 +136,12 @@ export function add_blacklist_item(item: BlacklistItem): void {
 // 블랙리스트 항목 제거 함수
 export function remove_blacklist_item(item_id: string): void {
   // 해제할 항목 찾기 (user_id와 division을 확인하여 이전 상태 복원)
-  const item_to_remove = [
-    ...additional_blacklist_items,
-    ...blacklist_data,
-  ].find((item) => item.id === item_id);
+  const item_to_remove = [...additional_blacklist_items, ...blacklist_data].find(
+    (item) => item.id === item_id
+  );
 
   // 추가된 항목에서 제거
-  additional_blacklist_items = additional_blacklist_items.filter(
-    (item) => item.id !== item_id,
-  );
+  additional_blacklist_items = additional_blacklist_items.filter((item) => item.id !== item_id);
   // 제거된 항목 ID를 Set에 추가 (기본 데이터에서도 필터링하기 위해)
   removed_blacklist_item_ids.add(item_id);
   // localStorage에 저장
@@ -178,7 +155,9 @@ export function remove_blacklist_item(item_id: string): void {
       import("@/data/manager_ga/member/reviewers").then((module) => {
         // 타입 단언을 사용하여 함수 존재 여부 확인
         if ("restore_reviewer_status_type" in module) {
-          (module as any).restore_reviewer_status_type(item_to_remove.user_id);
+          (
+            module as { restore_reviewer_status_type: (id: string) => void }
+          ).restore_reviewer_status_type(item_to_remove.user_id);
         }
       });
     } else if (item_to_remove.division === "파트너") {
@@ -186,7 +165,9 @@ export function remove_blacklist_item(item_id: string): void {
       import("@/data/manager_ga/member/partners").then((module) => {
         // 타입 단언을 사용하여 함수 존재 여부 확인
         if ("restore_partner_status_type" in module) {
-          (module as any).restore_partner_status_type(item_to_remove.user_id);
+          (
+            module as { restore_partner_status_type: (id: string) => void }
+          ).restore_partner_status_type(item_to_remove.user_id);
         }
       });
     }
@@ -205,12 +186,12 @@ export function get_blacklist_data(): BlacklistItem[] {
 
   // 제거된 항목을 제외한 기본 데이터
   const filtered_base_data = blacklist_data.filter(
-    (item) => !removed_blacklist_item_ids.has(item.id),
+    (item) => !removed_blacklist_item_ids.has(item.id)
   );
 
   // 제거된 항목을 제외한 추가 데이터
   const filtered_additional_data = additional_blacklist_items.filter(
-    (item) => !removed_blacklist_item_ids.has(item.id),
+    (item) => !removed_blacklist_item_ids.has(item.id)
   );
 
   // FIXED: Mock data FIRST, then localStorage data (기본 데이터 + 추가된 데이터)
