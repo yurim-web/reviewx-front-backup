@@ -7,21 +7,8 @@
  *
  * 목적: SA 관리자가 커뮤니티 게시글을 수정할 수 있는 페이지입니다.
  *
- * 페이지 경로:
+ * 사용 페이지:
  * - /manager_sa/community/posts/[id]/edit
- *
- * 주요 기능:
- * - 게시글 수정 폼 제공
- * - ToastUI Editor를 사용한 게시글 본문 수정
- * - 기존 게시글 데이터를 불러와서 폼에 표시
- *
- * 컴포넌트 구조:
- * - PostFormPageClient: 게시글 작성/수정 공통 컴포넌트
- *   - mode="edit": 수정 모드
- *   - manager_type="sa": SA 관리자 타입
- *   - initial_data: 기존 게시글 데이터
- *
- * @returns 게시글 수정 페이지 JSX
  */
 
 import type { Metadata } from "next";
@@ -55,7 +42,5 @@ interface PageProps {
  */
 export default function EditPostPage({ params }: PageProps) {
   // 클라이언트 컴포넌트로 위임 (localStorage 접근을 위해)
-  return (
-    <EditPostPageClient post_id={params.id} manager_type="sa" />
-  );
+  return <EditPostPageClient post_id={params.id} manager_type="sa" />;
 }

@@ -7,14 +7,8 @@
  *
  * 목적: SA 관리자 단에서 사용되는 알림 페이지입니다.
  *
- * 페이지 경로:
+ * 사용 페이지:
  * - /manager_sa/notification
- *
- * 주요 기능:
- * - SA 관리자 전용 헤더 표시
- * - 사이드바 메뉴 표시
- * - 알림 목록 표시
- *
  */
 
 "use client";
@@ -37,9 +31,7 @@ export default function ManagerSANotificationPage() {
   /**
    * 알림 클릭 핸들러 (향후 구현)
    */
-  const handle_notification_click = (
-    notification: (typeof mockManagerSANotifications)[0]
-  ) => {
+  const handle_notification_click = (_notification: (typeof mockManagerSANotifications)[0]) => {
     // TODO: 알림 상세 페이지로 이동 또는 모달 열기
   };
 
@@ -50,9 +42,7 @@ export default function ManagerSANotificationPage() {
   };
 
   return (
-    <div
-      className={`${styles.notification_container} ${styles.has_sidebar}`.trim()}
-    >
+    <div className={`${styles.notification_container} ${styles.has_sidebar}`.trim()}>
       {/* SA 관리자 헤더 */}
       <ManagerGAHeader managerType="sa" />
 

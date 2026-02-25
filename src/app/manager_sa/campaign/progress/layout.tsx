@@ -21,11 +21,10 @@ export const metadata: Metadata = {
 };
 
 /**
- * GA 관리자 진행 현황 레이아웃 컴포넌트
+ * SA 관리자 진행 현황 레이아웃 컴포넌트
  *
  * @param children - 하위 페이지 컴포넌트 (Next.js가 자동으로 전달)
  * @returns 레이아웃으로 감싼 페이지 컴포넌트
- *
  */
 export default function ProgressLayout({ children }: { children: React.ReactNode }) {
   // children만 반환하면 부모 레이아웃이 자동으로 적용됩니다

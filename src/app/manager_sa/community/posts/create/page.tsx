@@ -7,21 +7,8 @@
  *
  * 목적: SA 관리자가 커뮤니티 게시글을 작성할 수 있는 페이지입니다.
  *
- * 페이지 경로:
+ * 사용 페이지:
  * - /manager_sa/community/posts/create
- *
- * 주요 기능:
- * - 게시글 작성 폼 제공
- * - ToastUI Editor를 사용한 게시글 본문 작성
- * - 카테고리, 대상, 제목, 본문 입력
- *
- * 컴포넌트 구조:
- * - PostFormPageClient: 게시글 작성/수정 공통 컴포넌트
- *   - mode="create": 작성 모드
- *   - manager_type="sa": SA 관리자 타입
- *
- *
- * @returns 게시글 작성 페이지 JSX
  */
 
 import type { Metadata } from "next";
