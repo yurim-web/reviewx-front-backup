@@ -30,7 +30,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import styles from "@/styles/manager_sa/member/admins/admin_register_form.module.css";
-import { admin_list, type AdminItem } from "@/data/manager_sa/member/admins";
+import { admin_list } from "@/data/manager_sa/member/admins";
 
 export default function AdminEditForm() {
   // Next.js의 useRouter 훅을 사용하여 페이지 이동 기능 가져오기
@@ -71,9 +71,7 @@ export default function AdminEditForm() {
 
   // 관리자 데이터가 없으면 에러 메시지 표시
   if (!admin_data) {
-    return (
-      <div className={styles.error_message}>관리자를 찾을 수 없습니다.</div>
-    );
+    return <div className={styles.error_message}>관리자를 찾을 수 없습니다.</div>;
   }
 
   // 입력값 변경 핸들러

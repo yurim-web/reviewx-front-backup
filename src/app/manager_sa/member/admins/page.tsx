@@ -1,25 +1,14 @@
 /* ========================================
-   👤 SA 관리자 관리자 목록 페이지
+   SA 관리자 관리자 목록 페이지
    ======================================== */
 
 /**
- * SA 관리자 관리자 목록 페이지
+ * AdminsPage
  *
  * 목적: SA 관리자가 관리자 목록을 확인하고 관리할 수 있는 페이지입니다.
  *
- * 페이지 경로:
+ * 사용 페이지:
  * - /manager_sa/member/admins
- *
- * 주요 기능:
- * - 필터 섹션 (채널, 등급, 유형, 상태, 검색어, 정렬, 등록, 삭제)
- * - 관리자 목록 테이블 (번호, 이름, 신고 횟수, 차단 횟수, 가입일, 상태)
- *
- * 컴포넌트 구조:
- * - AdminFilterSection: 필터 섹션
- * - AdminTable: 관리자 목록 테이블
- *
- *
- * @returns 관리자 목록 페이지 JSX
  */
 
 "use client";
@@ -40,9 +29,7 @@ export default function AdminsPage() {
   const [search_query, set_search_query] = useState<string>("");
 
   // 필터 상태 관리
-  const [selected_statuses, set_selected_statuses] = useState<
-    AdminStatus[]
-  >([]);
+  const [selected_statuses, set_selected_statuses] = useState<AdminStatus[]>([]);
 
   // AdminTable의 ref 생성
   // useRef: React Hook으로 DOM 요소나 컴포넌트 인스턴스에 접근할 수 있게 해줍니다

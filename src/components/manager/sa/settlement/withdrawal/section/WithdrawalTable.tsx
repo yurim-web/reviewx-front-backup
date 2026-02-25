@@ -1,26 +1,14 @@
 /* ========================================
-   📋 출금 현황 테이블 컴포넌트
+   출금 현황 테이블 컴포넌트
    ======================================== */
 
 /**
- * 출금 현황 테이블 컴포넌트
+ * WithdrawalTable
  *
  * 목적: 출금 현황 페이지의 출금 목록을 테이블 형태로 표시합니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /manager_sa/settlement/withdrawal (출금 현황 페이지)
- *
- * 주요 기능:
- * - 체크박스로 출금 항목 선택/해제
- * - 전체 선택/해제 기능
- * - 출금 정보 표시 (번호, 회차, 이름, 계좌번호, 주민등록번호, 출금 포인트, 지급, 신청일, 지급일, 유형, 상태)
- * - 출금 포인트 열에 금액과 잔여 금액 표시
- * - 지급 열에 상태 태그 (긴급, 신청, 완료, 반려) 표시
- * - 상태 열에 정상 태그 표시
- *
- * 기술 스택:
- * - CommonTable: 범용 테이블 컴포넌트를 사용하여 테이블 구조 제공
- * - Render Props 패턴: render_cell 함수를 통해 각 셀을 커스텀 렌더링
  */
 
 "use client";
@@ -34,10 +22,7 @@ import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
 import styles from "@/styles/manager_sa/settlement/withdrawal/withdrawal_table.module.css";
-import {
-  withdrawalList,
-  type WithdrawalItem,
-} from "@/data/manager_sa/settlement/withdrawalData";
+import { withdrawalList, type WithdrawalItem } from "@/data/manager_sa/settlement/withdrawalData";
 import MemberStatusTag from "@/components/manager/common/tags/MemberStatusTag";
 import type { MemberStatus } from "@/components/manager/common/tags/MemberStatusTag";
 import PayoutStatusTag from "@/components/manager/common/tags/PayoutStatusTag";
@@ -72,16 +57,16 @@ export default function WithdrawalTable({
   const [withdrawal_history, set_withdrawal_history] = useState<WithdrawalItem[]>([]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       try {
-        const storedHistory = localStorage.getItem('withdrawal_history');
+        const storedHistory = localStorage.getItem("withdrawal_history");
         if (storedHistory) {
           const history = JSON.parse(storedHistory);
           set_withdrawal_history(history);
-          console.log('✅ [출금 현황] withdrawal_history 로드:', history);
+          console.log("✅ [출금 현황] withdrawal_history 로드:", history);
         }
       } catch (error) {
-        console.error('❌ [출금 현황] withdrawal_history 로드 실패:', error);
+        console.error("❌ [출금 현황] withdrawal_history 로드 실패:", error);
       }
     }
   }, []);
@@ -132,14 +117,12 @@ export default function WithdrawalTable({
 
     // 유형 필터
     if (selected_member_types.length > 0) {
-      if (!selected_member_types.includes(item.type as WithdrawalMemberType))
-        return false;
+      if (!selected_member_types.includes(item.type as WithdrawalMemberType)) return false;
     }
 
     // 상태 필터
     if (selected_normal_statuses.length > 0) {
-      if (!selected_normal_statuses.includes(item.status as NormalStatus))
-        return false;
+      if (!selected_normal_statuses.includes(item.status as NormalStatus)) return false;
     }
 
     return true;
@@ -225,8 +208,7 @@ export default function WithdrawalTable({
   // SortableTableHeader 공통 컴포넌트를 사용하여 헤더 렌더링
   const render_table_header = () => {
     const is_all_selected =
-      sorted_withdrawal_list.length > 0 &&
-      selectedIds.length === sorted_withdrawal_list.length;
+      sorted_withdrawal_list.length > 0 && selectedIds.length === sorted_withdrawal_list.length;
 
     const handle_select_all = () => {
       if (is_all_selected) {
@@ -268,17 +250,13 @@ export default function WithdrawalTable({
         return (
           <div className={styles.amount_container}>
             <span className={styles.cell_text}>{row.amount}</span>
-            <span className={styles.cell_text_secondary}>
-              잔여 {row.remaining}
-            </span>
+            <span className={styles.cell_text_secondary}>잔여 {row.remaining}</span>
           </div>
         );
       case "paymentStatus":
         // 지급 열: 출금 처리 상태 태그 표시
         return (
-          <PayoutStatusTag
-            status={convert_payment_status_to_payout_status(row.paymentStatus)}
-          />
+          <PayoutStatusTag status={convert_payment_status_to_payout_status(row.paymentStatus)} />
         );
       case "requestDate":
         return row.requestDate;

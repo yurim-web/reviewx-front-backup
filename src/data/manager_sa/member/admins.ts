@@ -233,7 +233,7 @@ const STORAGE_KEY = "reviewx_admin_list";
  * @param raw_list - localStorage에서 읽어온 원본 데이터
  * @returns 마이그레이션된 관리자 목록
  */
-function migrate_admin_list(raw_list: any): AdminItem[] {
+function migrate_admin_list(raw_list: unknown): AdminItem[] {
   // 배열이 아니면 기본 목업 데이터 반환
   if (!Array.isArray(raw_list)) {
     return admin_list;
@@ -255,9 +255,7 @@ function migrate_admin_list(raw_list: any): AdminItem[] {
     const is_numeric_id = /^[0-9]+$/.test(raw_id);
 
     // 숫자 id → admin0001 형태로 변환
-    const migrated_id = is_numeric_id
-      ? `admin${raw_id.padStart(4, "0")}`
-      : raw_id;
+    const migrated_id = is_numeric_id ? `admin${raw_id.padStart(4, "0")}` : raw_id;
 
     const normalized_item: AdminItem = {
       ...raw_item,
@@ -364,12 +362,7 @@ export function save_admin_list_to_storage(admin_list_data: AdminItem[]): void {
 export function add_admin(
   admin_data: Omit<
     AdminItem,
-    | "number"
-    | "join_date"
-    | "report_count"
-    | "block_count"
-    | "last_access_date"
-    | "status"
+    "number" | "join_date" | "report_count" | "block_count" | "last_access_date" | "status"
   >
 ): AdminItem {
   // 현재 저장된 관리자 목록 가져오기
@@ -379,10 +372,7 @@ export function add_admin(
   const new_id = admin_data.id;
 
   // 새로운 관리자 번호 생성 (기존 번호 중 가장 큰 값 + 1, 6자리로 포맷팅)
-  const max_number = Math.max(
-    ...current_list.map((admin) => parseInt(admin.number) || 0),
-    0
-  );
+  const max_number = Math.max(...current_list.map((admin) => parseInt(admin.number) || 0), 0);
   const new_number = String(max_number + 1).padStart(6, "0");
 
   // 현재 날짜/시간 생성
@@ -432,12 +422,7 @@ export function update_admin(
   update_data: Partial<
     Omit<
       AdminItem,
-      | "id"
-      | "number"
-      | "join_date"
-      | "report_count"
-      | "block_count"
-      | "last_access_date"
+      "id" | "number" | "join_date" | "report_count" | "block_count" | "last_access_date"
     >
   >
 ): AdminItem | null {
@@ -476,10 +461,7 @@ export function update_admin(
  * @param {AdminStatus} new_status - 새로운 상태 (정상/일시 정지/영구 정지)
  * @returns {AdminItem | null} 업데이트된 관리자 데이터 (없으면 null)
  */
-export function update_admin_status(
-  admin_id: string,
-  new_status: AdminStatus
-): AdminItem | null {
+export function update_admin_status(admin_id: string, new_status: AdminStatus): AdminItem | null {
   return update_admin(admin_id, { status: new_status });
 }
 
@@ -531,9 +513,7 @@ export function delete_multiple_admins(admin_ids: string[]): number {
   const ids_to_delete = new Set(admin_ids);
 
   // 관리자 목록에서 삭제할 관리자들을 제외한 목록 생성
-  const updated_list = current_list.filter(
-    (admin) => !ids_to_delete.has(admin.id)
-  );
+  const updated_list = current_list.filter((admin) => !ids_to_delete.has(admin.id));
 
   // 삭제된 관리자 수 계산
   const deleted_count = current_list.length - updated_list.length;

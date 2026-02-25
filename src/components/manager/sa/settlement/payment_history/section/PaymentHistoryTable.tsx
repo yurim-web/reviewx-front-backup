@@ -1,23 +1,14 @@
 /* ========================================
-   📋 결제 내역 테이블 컴포넌트
+   결제 내역 테이블 컴포넌트
    ======================================== */
 
 /**
- * 결제 내역 테이블 컴포넌트
+ * PaymentHistoryTable
  *
  * 목적: 결제 내역 페이지의 결제 목록을 테이블 형태로 표시합니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /manager_sa/settlement/payment_history (결제 내역 페이지)
- *
- * 주요 기능:
- * - 체크박스로 결제 항목 선택/해제
- * - 전체 선택/해제 기능
- * - 결제 정보 표시 (번호, 상호명, 입금자명, 구분, 결제 수단, 세금계산서, 충전 포인트, 결제, 신청일, 승인일, 유형, 상태)
- *
- * 기술 스택:
- * - CommonTable: 범용 테이블 컴포넌트를 사용하여 테이블 구조 제공
- * - Render Props 패턴: render_cell 함수를 통해 각 셀을 커스텀 렌더링
  */
 
 "use client";
@@ -85,7 +76,9 @@ export default function PaymentHistoryTable({
   /** 거래명세서 조회 모달에 넘길 행 */
   const [receiptModalItem, setReceiptModalItem] = useState<PaymentHistoryItem | null>(null);
   /** 환불 계좌 조회 모달에 넘길 행 */
-  const [refundAccountModalItem, setRefundAccountModalItem] = useState<PaymentHistoryItem | null>(null);
+  const [refundAccountModalItem, setRefundAccountModalItem] = useState<PaymentHistoryItem | null>(
+    null
+  );
   const menu_wrapper_ref = useRef<HTMLDivElement | null>(null);
   /** 드롭다운 위치 갱신용: 메뉴가 열린 행의 트리거 버튼 */
   const menu_trigger_button_ref = useRef<HTMLButtonElement | null>(null);
@@ -116,8 +109,7 @@ export default function PaymentHistoryTable({
   // 결제 내역 데이터 상태
   // 초기값은 Mock 데이터(paymentHistoryList)를 사용하여 서버와 클라이언트의 초기 렌더링을 일치시킵니다.
   // 클라이언트 마운트 후 useEffect에서 LocalStorage 데이터를 병합한 실제 리스트로 교체합니다.
-  const [paymentHistory, setPaymentHistory] =
-    useState<PaymentHistoryItem[]>(paymentHistoryList);
+  const [paymentHistory, setPaymentHistory] = useState<PaymentHistoryItem[]>(paymentHistoryList);
 
   /**
    * 클라이언트 마운트 후 결제 내역 데이터 로드
@@ -174,9 +166,7 @@ export default function PaymentHistoryTable({
     return () => {
       window.removeEventListener("scroll", update_position);
       window.removeEventListener("resize", update_position);
-      scroll_parents.forEach((parent) =>
-        parent.removeEventListener("scroll", update_position)
-      );
+      scroll_parents.forEach((parent) => parent.removeEventListener("scroll", update_position));
     };
   }, [openMenuRowId]);
 
@@ -262,10 +252,10 @@ export default function PaymentHistoryTable({
         item.memberType === "모범 회원"
           ? "일반 회원"
           : item.memberType === "주의 회원"
-          ? "주의 회원"
-          : item.memberType === "이용 제한 회원"
-          ? "이용 제한 회원"
-          : null;
+            ? "주의 회원"
+            : item.memberType === "이용 제한 회원"
+              ? "이용 제한 회원"
+              : null;
 
       // 선택된 유형 목록에 해당 항목의 유형이 없으면 필터링 제외
       if (!item_member_type || !selected_member_types.includes(item_member_type)) {
@@ -285,12 +275,12 @@ export default function PaymentHistoryTable({
         item.accountStatus === "정상"
           ? "정상"
           : item.accountStatus === "일시정지"
-          ? "일시 정지"
-          : item.accountStatus === "영구정지"
-          ? "영구 정지"
-          : item.accountStatus === "탈퇴"
-          ? "탈퇴"
-          : null;
+            ? "일시 정지"
+            : item.accountStatus === "영구정지"
+              ? "영구 정지"
+              : item.accountStatus === "탈퇴"
+                ? "탈퇴"
+                : null;
 
       // 선택된 상태 목록에 해당 항목의 상태가 없으면 필터링 제외
       if (!item_account_status || !selected_account_statuses.includes(item_account_status)) {
@@ -439,10 +429,7 @@ export default function PaymentHistoryTable({
   // row: 현재 행의 데이터, column: 현재 컬럼 정의
   // Render Props 패턴: 함수를 props로 전달하여 컴포넌트의 렌더링 로직을 커스터마이징하는 패턴입니다.
   // 툴팁이 적용되는 텍스트 셀은 span으로 감싸지 않고 직접 반환 (CommonTableWithTooltip이 자동으로 처리)
-  const render_cell = (
-    row: PaymentHistoryTableRowData,
-    column: TableColumn
-  ) => {
+  const render_cell = (row: PaymentHistoryTableRowData, column: TableColumn) => {
     // switch 문: 여러 조건에 따라 다른 코드를 실행하는 제어문입니다.
     switch (column.key) {
       case "number":
@@ -500,14 +487,10 @@ export default function PaymentHistoryTable({
         return row.depositorName;
       case "businessType":
         // BusinessTypeTag 컴포넌트를 사용하여 사업자 구분 태그 표시
-        return (
-          <BusinessTypeTag type={row.businessType as BusinessType} />
-        );
+        return <BusinessTypeTag type={row.businessType as BusinessType} />;
       case "paymentMethod":
         // PaymentMethodTag 컴포넌트를 사용하여 결제 수단 태그 표시
-        return (
-          <PaymentMethodTag method={row.paymentMethod as PaymentMethod} />
-        );
+        return <PaymentMethodTag method={row.paymentMethod as PaymentMethod} />;
       case "taxInvoiceType":
         // 발행 열: 세금계산서 발행 유형 표시
         // 카드 결제인 경우 "-" 표시 (카드 결제는 세금계산서 발행 불가)
@@ -551,16 +534,12 @@ export default function PaymentHistoryTable({
         return (
           <div className={styles.charged_points_container}>
             <span className={styles.cell_text}>{row.chargedPoints}</span>
-            <span className={styles.cell_text_secondary}>
-              보유 {row.heldPoints}
-            </span>
+            <span className={styles.cell_text_secondary}>보유 {row.heldPoints}</span>
           </div>
         );
       case "paymentStatus":
         // 결제 상태 열: 결제 상태 태그 표시
-        return (
-          <PaymentStatusTag status={row.paymentStatus as PaymentStatus} />
-        );
+        return <PaymentStatusTag status={row.paymentStatus as PaymentStatus} />;
       case "requestDate":
         return row.requestDate;
       case "approvalDate":
@@ -569,11 +548,7 @@ export default function PaymentHistoryTable({
         return row.memberType;
       case "accountStatus":
         // 계정 상태 열: 회원 상태 태그 표시
-        return (
-          <MemberStatusTag
-            status={row.accountStatus as MemberStatus}
-          />
-        );
+        return <MemberStatusTag status={row.accountStatus as MemberStatus} />;
       default:
         return null;
     }
@@ -596,7 +571,9 @@ export default function PaymentHistoryTable({
   /** 열린 메뉴의 행 데이터 (Portal 드롭다운용) */
   const menu_row =
     openMenuRowId != null
-      ? (sorted_payment_history_list.find((r) => r.id === openMenuRowId) as PaymentHistoryItem | undefined)
+      ? (sorted_payment_history_list.find((r) => r.id === openMenuRowId) as
+          | PaymentHistoryItem
+          | undefined)
       : null;
 
   return (

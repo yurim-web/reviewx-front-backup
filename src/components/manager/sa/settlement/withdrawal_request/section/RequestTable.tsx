@@ -1,44 +1,26 @@
 /* ========================================
-   📋 출금 요청 테이블 컴포넌트
+   출금 요청 테이블 컴포넌트
    ======================================== */
 
 /**
- * 출금 요청 테이블 컴포넌트
+ * RequestTable
  *
  * 목적: 출금 요청 목록을 테이블 형태로 표시합니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /manager_sa/settlement/withdrawal_request (출금 요청 페이지)
- *
- * 주요 기능:
- * - 체크박스로 출금 요청 선택/해제
- * - 전체 선택/해제 기능
- * - 출금 요청 정보 표시 (번호, 회차, 이름, 계좌번호, 주민등록번호, 출금 포인트, 신청일, 유형, 상태)
- * - 출금 액션 버튼 (승인/반려)
- * - 합계 행 표시
- * - 정렬 기능 (번호, 이름, 출금 포인트, 신청일)
- *
- * 기술 스택:
- * - CommonTable: 범용 테이블 컴포넌트를 사용하여 테이블 구조 제공
- * - Render Props 패턴: render_cell 함수를 통해 각 셀을 커스텀 렌더링
- * - useTableSort: 테이블 정렬 기능 제공
  */
 
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import type { ReactNode, ReactElement } from "react";
-import CommonTableWithTooltip, {
-  type TooltipConfig,
-} from "@/components/manager/common/table/CommonTableWithTooltip";
-import type {
-  TableColumn,
-  TableRowData,
-} from "@/components/manager/common/table/CommonTable";
+import CommonTableWithTooltip from "@/components/manager/common/table/CommonTableWithTooltip";
+import type { TableColumn, TableRowData } from "@/components/manager/common/table/CommonTable";
 import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
-import styles from "@/styles/manager_sa/settlement/withdrawal_request/request_table_ORIGINAL_BACKUP.module.css";
+import styles from "@/styles/manager_sa/settlement/withdrawal_request/request_table.module.css";
 import {
   calculate_total_amount,
   type WithdrawalRequestItem,
@@ -51,6 +33,41 @@ import BaseModal from "@/components/common/modal/BaseModal";
 
 // WithdrawalRequestItem을 TableRowData로 확장
 interface RequestTableRowData extends TableRowData, WithdrawalRequestItem {}
+
+// localStorage에 저장된 출금 요청 항목 타입
+interface StoredRequest {
+  id: string;
+  status: string;
+  processed_date?: string;
+  rejection_reason?: string;
+  requested_amount: number;
+  user_id: string;
+}
+
+// localStorage에 저장된 사용자 계좌 타입
+interface StoredAccount {
+  id: string;
+  available_points: number;
+  pending_points: number;
+  withdrawn_points: number;
+  point_history?: PointHistoryEntry[];
+}
+
+// 포인트 내역 항목 타입
+interface PointHistoryEntry {
+  id: string;
+  type: string;
+  status: string;
+  description: string;
+  rejection_reason?: string;
+  balance: number;
+}
+
+// 필터 섹션에 주입하는 콜백 props 타입
+interface FilterSectionInjectedProps {
+  on_approve_selected?: () => void;
+  on_reject_selected?: () => void;
+}
 
 /**
  * RequestTable 컴포넌트 Props 인터페이스
@@ -99,13 +116,9 @@ export default function RequestTable({
    * - pending_approve_items: 승인할 항목 정보 배열 (단일/다중 선택 모두 처리)
    *
    */
-  const [is_approve_confirm_modal_open, setIsApproveConfirmModalOpen] =
-    useState(false);
-  const [is_approve_success_modal_open, setIsApproveSuccessModalOpen] =
-    useState(false);
-  const [pending_approve_items, setPendingApproveItems] = useState<
-    WithdrawalRequestItem[]
-  >([]);
+  const [is_approve_confirm_modal_open, setIsApproveConfirmModalOpen] = useState(false);
+  const [is_approve_success_modal_open, setIsApproveSuccessModalOpen] = useState(false);
+  const [pending_approve_items, setPendingApproveItems] = useState<WithdrawalRequestItem[]>([]);
 
   // (디버깅 로그 제거됨)
 
@@ -199,7 +212,7 @@ export default function RequestTable({
         key: "action",
         label: "출금",
         className: styles.table_cell_action,
-      },
+      }
     );
 
     return base_columns;
@@ -230,11 +243,10 @@ export default function RequestTable({
 
     // 유효한 항목만 필터링 (undefined 제거)
     const valid_items = items_to_approve.filter(
-      (item): item is WithdrawalRequestItem => item !== undefined,
+      (item): item is WithdrawalRequestItem => item !== undefined
     );
 
     if (valid_items.length === 0) {
-      console.error("승인할 항목을 찾을 수 없습니다:", id);
       return;
     }
 
@@ -284,17 +296,15 @@ export default function RequestTable({
         if (storedRequests) {
           const requests = JSON.parse(storedRequests);
 
-          requests.forEach((req: any) => {
+          requests.forEach((req: StoredRequest) => {
             if (approve_ids.includes(req.id)) {
               req.status = "approved";
               req.processed_date = now.toISOString();
-              // 나중에 사용하기 위해 맵에 저장
               requestsMap.set(req.id, req);
             }
           });
 
           localStorage.setItem("withdrawal_requests", JSON.stringify(requests));
-          console.log("✅ [출금 승인] withdrawal_requests 업데이트 완료");
         }
 
         // 2. user_accounts에서 포인트 처리 (pending → withdrawn으로 변경)
@@ -302,89 +312,49 @@ export default function RequestTable({
         if (storedAccounts) {
           const accounts = JSON.parse(storedAccounts);
 
-          pending_approve_items.forEach((item: any) => {
-            // withdrawal_requests에서 실제 금액 정보 가져오기
-            const requestData = requestsMap.get(item.id);
-            if (!requestData) {
-              console.error(
-                "❌ [출금 승인] withdrawal_requests에서 데이터를 찾을 수 없음:",
-                item.id,
-              );
-              return;
-            }
+          pending_approve_items.forEach((item: WithdrawalRequestItem) => {
+            const requestData = requestsMap.get(item.id) as StoredRequest | undefined;
+            if (!requestData) return;
 
             const requestAmount = requestData.requested_amount;
-            console.log("💰 [출금 승인] 처리할 금액:", requestAmount);
 
             const accountIndex = accounts.findIndex(
-              (a: any) => a.id === requestData.user_id,
+              (a: StoredAccount) => a.id === requestData.user_id
             );
 
             if (accountIndex !== -1) {
-              const account = accounts[accountIndex];
-              console.log("📝 [출금 승인] 승인 전 account:", {
-                user_id: requestData.user_id,
-                available_points: account.available_points,
-                pending_points: account.pending_points,
-                withdrawn_points: account.withdrawn_points,
-              });
+              const account = accounts[accountIndex] as StoredAccount;
 
-              // 승인 시 available_points에서 차감하고 pending_points 차감
-              account.available_points =
-                (account.available_points || 0) - requestAmount;
-              account.pending_points =
-                (account.pending_points || 0) - requestAmount;
+              account.available_points = (account.available_points || 0) - requestAmount;
+              account.pending_points = (account.pending_points || 0) - requestAmount;
 
-              // 포인트 내역에서 withdrawal_pending을 withdrawn으로 변경
               if (account.point_history) {
                 const historyIndex = account.point_history.findIndex(
-                  (h: any) => h.id === item.id,
+                  (h: PointHistoryEntry) => h.id === item.id
                 );
                 if (historyIndex !== -1) {
                   account.point_history[historyIndex].type = "withdrawn";
                   account.point_history[historyIndex].status = "completed";
                   account.point_history[historyIndex].description = "출금 완료";
-                  account.point_history[historyIndex].balance =
-                    account.available_points;
-                  console.log(
-                    "📝 [출금 승인] 포인트 내역 업데이트:",
-                    account.point_history[historyIndex],
-                  );
+                  account.point_history[historyIndex].balance = account.available_points;
                 }
               }
 
-              // withdrawn_points 증가
-              account.withdrawn_points =
-                (account.withdrawn_points || 0) + requestAmount;
-
-              console.log("📝 [출금 승인] 승인 후 account:", {
-                user_id: requestData.user_id,
-                available_points: account.available_points,
-                pending_points: account.pending_points,
-                withdrawn_points: account.withdrawn_points,
-              });
+              account.withdrawn_points = (account.withdrawn_points || 0) + requestAmount;
 
               accounts[accountIndex] = account;
-            } else {
-              console.error(
-                "❌ [출금 승인] user_id를 찾을 수 없음:",
-                requestData.user_id,
-              );
             }
           });
 
           localStorage.setItem("user_accounts", JSON.stringify(accounts));
-          console.log("✅ [출금 승인] user_accounts 업데이트 완료");
         }
 
         // 3. 알람 추가 (출금 완료 알람)
         const storedNotifications = localStorage.getItem("notifications");
-        const notifications = storedNotifications
-          ? JSON.parse(storedNotifications)
-          : [];
+        const notifications = storedNotifications ? JSON.parse(storedNotifications) : [];
 
-        pending_approve_items.forEach((item: any) => {
-          const requestData = requestsMap.get(item.id);
+        pending_approve_items.forEach((item: WithdrawalRequestItem) => {
+          const requestData = requestsMap.get(item.id) as StoredRequest | undefined;
           if (requestData) {
             const notification = {
               id: `notif_${item.id}_${now.getTime()}`,
@@ -400,27 +370,22 @@ export default function RequestTable({
         });
 
         localStorage.setItem("notifications", JSON.stringify(notifications));
-        console.log("✅ [출금 승인] 알람 추가 완료");
 
         // 4. withdrawal_history에 출금 완료 기록 추가
-        const storedWithdrawalHistory =
-          localStorage.getItem("withdrawal_history");
+        const storedWithdrawalHistory = localStorage.getItem("withdrawal_history");
         const withdrawalHistory = storedWithdrawalHistory
           ? JSON.parse(storedWithdrawalHistory)
           : [];
 
         // localStorage에서 최신 업데이트된 user_accounts 읽기
         const updatedStoredAccounts = localStorage.getItem("user_accounts");
-        const updatedAccounts = updatedStoredAccounts
-          ? JSON.parse(updatedStoredAccounts)
-          : [];
+        const updatedAccounts = updatedStoredAccounts ? JSON.parse(updatedStoredAccounts) : [];
 
-        pending_approve_items.forEach((item: any) => {
-          const requestData = requestsMap.get(item.id);
+        pending_approve_items.forEach((item: WithdrawalRequestItem) => {
+          const requestData = requestsMap.get(item.id) as StoredRequest | undefined;
           if (requestData) {
-            // 업데이트된 잔여 포인트 가져오기
-            const userAccount = updatedAccounts.find(
-              (a: any) => a.id === requestData.user_id,
+            const userAccount = (updatedAccounts as StoredAccount[]).find(
+              (a) => a.id === requestData.user_id
             );
             const updatedRemaining = userAccount
               ? (userAccount.available_points || 0).toLocaleString()
@@ -457,17 +422,11 @@ export default function RequestTable({
           }
         });
 
-        localStorage.setItem(
-          "withdrawal_history",
-          JSON.stringify(withdrawalHistory),
-        );
-        console.log("✅ [출금 승인] withdrawal_history 추가 완료");
+        localStorage.setItem("withdrawal_history", JSON.stringify(withdrawalHistory));
       }
-    } catch (error) {
-      console.error("❌ [출금 승인] 처리 실패:", error);
-      console.error("❌ [출금 승인] 에러 상세:", error);
-      alert("출금 승인 처리 중 오류가 발생했습니다: " + error);
-      return; // 에러 발생 시 모달 열지 않고 리턴
+    } catch (_error) {
+      alert("출금 승인 처리 중 오류가 발생했습니다.");
+      return;
     }
 
     // 승인 처리 후 선택 초기화
@@ -521,7 +480,7 @@ export default function RequestTable({
     // 현재 시간을 KST(Asia/Seoul) 기준으로 계산
     const now_utc = new Date();
     const now_kst = new Date(
-      now_utc.getTime() + now_utc.getTimezoneOffset() * 60000 + 9 * 60 * 60000,
+      now_utc.getTime() + now_utc.getTimezoneOffset() * 60000 + 9 * 60 * 60000
     );
 
     const day = now_kst.getDay(); // 0: 일요일, 1: 월요일, 2: 화요일, 3: 수요일 ...
@@ -605,18 +564,16 @@ export default function RequestTable({
         if (storedRequests) {
           const requests = JSON.parse(storedRequests);
 
-          requests.forEach((req: any) => {
+          requests.forEach((req: StoredRequest) => {
             if (pending_reject_ids.includes(req.id)) {
               req.status = "rejected";
               req.processed_date = now.toISOString();
               req.rejection_reason = reason;
-              // 나중에 사용하기 위해 맵에 저장
               requestsMap.set(req.id, req);
             }
           });
 
           localStorage.setItem("withdrawal_requests", JSON.stringify(requests));
-          console.log("✅ [출금 반려] withdrawal_requests 업데이트 완료");
         }
 
         // 2. user_accounts에서 포인트 처리 (pending_points 복원)
@@ -625,78 +582,42 @@ export default function RequestTable({
           const accounts = JSON.parse(storedAccounts);
 
           pending_reject_ids.forEach((id: string) => {
-            // withdrawal_requests에서 실제 금액 정보 가져오기
-            const requestData = requestsMap.get(id);
-            if (!requestData) {
-              console.error(
-                "❌ [출금 반려] withdrawal_requests에서 데이터를 찾을 수 없음:",
-                id,
-              );
-              return;
-            }
+            const requestData = requestsMap.get(id) as StoredRequest | undefined;
+            if (!requestData) return;
 
             const requestAmount = requestData.requested_amount;
-            console.log("💰 [출금 반려] 처리할 금액:", requestAmount);
 
             const accountIndex = accounts.findIndex(
-              (a: any) => a.id === requestData.user_id,
+              (a: StoredAccount) => a.id === requestData.user_id
             );
 
             if (accountIndex !== -1) {
-              const account = accounts[accountIndex];
-              console.log("📝 [출금 반려] 반려 전 account:", {
-                user_id: requestData.user_id,
-                available_points: account.available_points,
-                pending_points: account.pending_points,
-              });
+              const account = accounts[accountIndex] as StoredAccount;
 
-              // 반려 시 pending_points 차감 (available_points는 그대로)
-              account.pending_points =
-                (account.pending_points || 0) - requestAmount;
+              account.pending_points = (account.pending_points || 0) - requestAmount;
 
-              // 포인트 내역에서 withdrawal_pending을 failed로 변경
               if (account.point_history) {
                 const historyIndex = account.point_history.findIndex(
-                  (h: any) => h.id === id,
+                  (h: PointHistoryEntry) => h.id === id
                 );
                 if (historyIndex !== -1) {
                   account.point_history[historyIndex].status = "failed";
-                  account.point_history[historyIndex].description =
-                    "출금 신청 반려";
+                  account.point_history[historyIndex].description = "출금 신청 반려";
                   account.point_history[historyIndex].rejection_reason = reason;
-                  account.point_history[historyIndex].balance =
-                    account.available_points;
-                  console.log(
-                    "📝 [출금 반려] 포인트 내역 업데이트:",
-                    account.point_history[historyIndex],
-                  );
+                  account.point_history[historyIndex].balance = account.available_points;
                 }
               }
 
-              console.log("📝 [출금 반려] 반려 후 account:", {
-                user_id: requestData.user_id,
-                available_points: account.available_points,
-                pending_points: account.pending_points,
-              });
-
               accounts[accountIndex] = account;
-            } else {
-              console.error(
-                "❌ [출금 반려] user_id를 찾을 수 없음:",
-                requestData.user_id,
-              );
             }
           });
 
           localStorage.setItem("user_accounts", JSON.stringify(accounts));
-          console.log("✅ [출금 반려] user_accounts 업데이트 완료");
         }
 
         // 3. 알람 추가 (출금 반려 알람)
         const storedNotifications = localStorage.getItem("notifications");
-        const notifications = storedNotifications
-          ? JSON.parse(storedNotifications)
-          : [];
+        const notifications = storedNotifications ? JSON.parse(storedNotifications) : [];
 
         pending_reject_ids.forEach((id: string) => {
           const requestData = requestsMap.get(id);
@@ -715,11 +636,9 @@ export default function RequestTable({
         });
 
         localStorage.setItem("notifications", JSON.stringify(notifications));
-        console.log("✅ [출금 반려] 알람 추가 완료");
       }
-    } catch (error) {
-      console.error("❌ [출금 반려] 처리 실패:", error);
-      alert("출금 반려 처리 중 오류가 발생했습니다: " + error);
+    } catch (_error) {
+      alert("출금 반려 처리 중 오류가 발생했습니다.");
       return;
     }
 
@@ -735,9 +654,7 @@ export default function RequestTable({
   };
 
   // 합계 금액 계산
-  const total_amount = show_total
-    ? calculate_total_amount(sorted_request_list)
-    : 0;
+  const total_amount = show_total ? calculate_total_amount(sorted_request_list) : 0;
 
   /**
    * 선택된 항목 합계/건수 계산
@@ -749,13 +666,11 @@ export default function RequestTable({
    */
   const selected_items = useMemo(
     () => sorted_request_list.filter((item) => selected_ids.includes(item.id)),
-    [sorted_request_list, selected_ids],
+    [sorted_request_list, selected_ids]
   );
 
   // 선택된 항목들의 출금 포인트 합계 (체크된 항목만 합산)
-  const selected_total_amount = show_total
-    ? calculate_total_amount(selected_items)
-    : 0;
+  const selected_total_amount = show_total ? calculate_total_amount(selected_items) : 0;
 
   // 선택된 건수 (체크된 행의 개수)
   const selected_count = selected_items.length;
@@ -769,8 +684,7 @@ export default function RequestTable({
   // grid 레이아웃은 CSS 클래스로 적용 (table_header_emergency / table_header_round)
   const render_table_header = () => {
     const is_all_selected =
-      sorted_request_list.length > 0 &&
-      selected_ids.length === sorted_request_list.length;
+      sorted_request_list.length > 0 && selected_ids.length === sorted_request_list.length;
 
     const handle_select_all_click = () => {
       if (is_all_selected) {
@@ -799,10 +713,7 @@ export default function RequestTable({
   // 각 셀 렌더링 함수 (Render Props 패턴)
   // row: 현재 행의 데이터, column: 현재 컬럼 정의
   // 툴팁이 적용되는 텍스트 셀은 span으로 감싸지 않고 직접 반환 (CommonTableWithTooltip이 자동으로 처리)
-  const render_cell = (
-    row: RequestTableRowData,
-    column: TableColumn,
-  ): ReactNode => {
+  const render_cell = (row: RequestTableRowData, column: TableColumn): ReactNode => {
     switch (column.key) {
       case "number":
         return row.number;
@@ -820,9 +731,7 @@ export default function RequestTable({
         return (
           <>
             <span className={styles.cell_text}>{row.amount}</span>
-            <span className={styles.cell_text_secondary}>
-              잔여 {row.remaining}
-            </span>
+            <span className={styles.cell_text_secondary}>잔여 {row.remaining}</span>
           </>
         );
       case "requestDate":
@@ -835,7 +744,7 @@ export default function RequestTable({
         // row.status는 문자열이므로, 타입 단언(as)을 사용하여 MemberStatus 타입으로 변환합니다.
         // MemberStatusTag는 공백 없는 형태("일시정지")도 처리할 수 있으므로 타입 단언 사용
         // 데이터의 status 값이 "일시정지" 형태일 수 있지만, MemberStatusTag가 내부에서 정규화하여 처리합니다.
-        return <MemberStatusTag status={row.status as any as MemberStatus} />;
+        return <MemberStatusTag status={row.status as MemberStatus} />;
       case "action":
         // 출금 액션 열: 승인/반려 버튼 표시
         // 회차 정산 테이블에서는 특정 요일/시간 전에는 비활성화
@@ -878,9 +787,7 @@ export default function RequestTable({
             >
               <img
                 src={
-                  is_action_disabled
-                    ? "/images/icons/sign_x_grey.svg"
-                    : "/images/icons/sign_x.svg"
+                  is_action_disabled ? "/images/icons/sign_x_grey.svg" : "/images/icons/sign_x.svg"
                 }
                 alt={is_action_disabled ? "반려 불가" : "반려"}
                 className={styles.action_icon}
@@ -894,10 +801,7 @@ export default function RequestTable({
   };
 
   /** 행 클릭 시 해당 행 체크박스 선택/해제 (체크박스·승인·반려 버튼은 기존 동작 유지) */
-  const render_row_wrapper = (
-    row: RequestTableRowData,
-    row_content: ReactNode,
-  ): ReactNode => (
+  const render_row_wrapper = (row: RequestTableRowData, row_content: ReactNode): ReactNode => (
     <div
       role="button"
       tabIndex={0}
@@ -932,7 +836,7 @@ export default function RequestTable({
   const enhance_filter_section = (section?: ReactNode): ReactNode => {
     if (!section || !React.isValidElement(section)) return section;
 
-    const element = section as ReactElement<any>;
+    const element = section as ReactElement<FilterSectionInjectedProps>;
 
     // 상단 "승인" 버튼 클릭 시 호출할 핸들러
     const handle_filter_approve_click = () => {
@@ -947,9 +851,7 @@ export default function RequestTable({
       }
 
       // 현재 선택된 항목들을 승인할 항목으로 설정
-      const items_to_approve = sorted_request_list.filter((item) =>
-        selected_ids.includes(item.id),
-      );
+      const items_to_approve = sorted_request_list.filter((item) => selected_ids.includes(item.id));
 
       if (items_to_approve.length === 0) {
         return;
@@ -1022,9 +924,7 @@ export default function RequestTable({
           <div className={styles.table_footer}>
             <div
               className={`${styles.table_footer_row} ${
-                is_emergency
-                  ? styles.table_footer_row_emergency
-                  : styles.table_footer_row_round
+                is_emergency ? styles.table_footer_row_emergency : styles.table_footer_row_round
               }`}
             >
               {/* 빈 공간들 */}
@@ -1125,9 +1025,7 @@ export default function RequestTable({
                 }
                 // 다중 항목일 때: 선택된 n건을 출금 완료 처리하시겠습니까?
                 else {
-                  const total_amount = calculate_total_amount(
-                    pending_approve_items,
-                  );
+                  const total_amount = calculate_total_amount(pending_approve_items);
                   const count = pending_approve_items.length;
                   return `선택된 ${count}건을 출금 완료 처리하시겠습니까?<br />처리 후 되돌릴 수 없습니다.<br /><span style="color: #FF5694;">[${count}건 - ${total_amount.toLocaleString()}원]</span>`;
                 }

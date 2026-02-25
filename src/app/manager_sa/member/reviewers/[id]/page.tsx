@@ -1,24 +1,14 @@
 /* ========================================
-   👤 SA 관리자 리뷰어 디테일 페이지
+   SA 관리자 리뷰어 디테일 페이지
    ======================================== */
 
 /**
- * SA 관리자 리뷰어 디테일 페이지
+ * ReviewerDetailPage
  *
  * 목적: SA 관리자가 특정 리뷰어의 상세 정보를 확인할 수 있는 페이지입니다.
  *
- * 페이지 경로:
+ * 사용 페이지:
  * - /manager_sa/member/reviewers/[id] (동적 라우트)
- *
- * 주요 기능:
- * - 리뷰어 프로필 정보 (닉네임, 이름, 성별, 나이, 이메일, 전화번호, 주소)
- * - 활동 정보 (채널 정보, 캠페인 진행/완료, 패널티, 접속일, 가입일, 보유 포인트, 출금 포인트)
- * - 채널 상세 정보 (네이버 블로그, 네이버 클립, 인스타그램, 유튜브)
- * - 계좌 정보 (예금주, 은행, 계좌번호, 주민등록번호)
- * - 최근 진행 캠페인 정보 테이블
- *
- *
- * @returns 리뷰어 디테일 페이지 JSX
  */
 
 "use client";
@@ -50,6 +40,79 @@ import AccountInfoSection from "@/components/manager/common/member/reviewers/sec
 import styles from "@/styles/manager/common/member/member_detail/member_detail_page.module.css";
 import infoCardStyles from "@/styles/manager/common/member/member_detail/info_card.module.css";
 
+interface StoredUserAccount {
+  id?: string;
+  number?: string;
+  name?: string;
+  nickname?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  detail_address?: string;
+  gender?: string;
+  age?: number;
+  current_points?: number;
+  withdrawn_points?: number;
+  last_access_date?: string;
+  join_date?: string;
+  profile_image?: string | null;
+  account_holder?: string;
+  bank?: string;
+  account_number?: string;
+  ssn_front?: string;
+  ssn_back?: string;
+  channel_details?: StoredChannelDetail[];
+}
+
+interface StoredChannelDetail {
+  name: string;
+  status: string;
+  url?: string;
+}
+
+interface StoredAppliedCampaign {
+  userId: string;
+  campaigns: StoredUserCampaign[];
+}
+
+interface StoredUserCampaign {
+  campaignId: string;
+  campaignType: string;
+  campaignTitle?: string;
+  status: string;
+}
+
+interface StoredCampaignData {
+  campaignInfo?: {
+    id?: string;
+    title?: string;
+    campaignType?: string;
+    brandName?: string;
+    channel?: string;
+    point?: number;
+    points?: number;
+    totalPoints?: number;
+  };
+  id?: string;
+  title?: string;
+  campaignType?: string;
+  brandName?: string;
+  channel?: string;
+  point?: number;
+  points?: number;
+  totalPoints?: number;
+}
+
+interface RecentCampaignItem {
+  campaign_number: string;
+  partner_name: string;
+  campaign_name: string;
+  status: "신청" | "진행" | "종료" | "취소" | "예정" | "긴급";
+  type: string;
+  channel: Channel;
+  points: number;
+}
+
 // 채널 아이콘 경로 매핑
 const channel_icon_map: Record<Channel, string> = {
   Blog: "/images/brand_logo/naverblog.svg",
@@ -69,18 +132,15 @@ export default function ReviewerDetailPage() {
   const reviewer_id = params.id as string;
 
   // 리뷰어 디테일 정보 상태 관리
-  const [reviewer_detail, set_reviewer_detail] =
-    useState<ReviewerDetail | null>(null);
+  const [reviewer_detail, set_reviewer_detail] = useState<ReviewerDetail | null>(null);
   const [is_loading, set_is_loading] = useState(true);
 
   // 캠페인 진행 내역 모달 상태 관리
   // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
-  const [is_campaign_history_modal_open, set_is_campaign_history_modal_open] =
-    useState(false);
+  const [is_campaign_history_modal_open, set_is_campaign_history_modal_open] = useState(false);
 
   // 패널티 내역 모달 상태 관리
-  const [is_penalty_history_modal_open, set_is_penalty_history_modal_open] =
-    useState(false);
+  const [is_penalty_history_modal_open, set_is_penalty_history_modal_open] = useState(false);
 
   // 컴포넌트가 마운트될 때 리뷰어 정보를 가져옵니다
   // useEffect: React의 Hook으로, 컴포넌트가 렌더링된 후에 실행됩니다
@@ -90,39 +150,45 @@ export default function ReviewerDetailPage() {
       set_is_loading(true);
 
       // user_kakao_001, user_naver_001, 1, 2의 경우 직접 localStorage에서 데이터 로드
-      if ((reviewer_id === 'user_kakao_001' || reviewer_id === 'user_naver_001' || reviewer_id === '1' || reviewer_id === '2') && typeof window !== 'undefined') {
+      if (
+        (reviewer_id === "user_kakao_001" ||
+          reviewer_id === "user_naver_001" ||
+          reviewer_id === "1" ||
+          reviewer_id === "2") &&
+        typeof window !== "undefined"
+      ) {
         try {
-          const storedAccounts = localStorage.getItem('user_accounts');
-          console.log('🔍 [리뷰어 상세 SA] useEffect에서 읽은 user_accounts:', storedAccounts);
+          const storedAccounts = localStorage.getItem("user_accounts");
 
           if (storedAccounts) {
             const accounts = JSON.parse(storedAccounts);
             // ID 매핑: 1 -> user_kakao_001, 2 -> user_naver_001
-            const mappedId = reviewer_id === '1' ? 'user_kakao_001' : reviewer_id === '2' ? 'user_naver_001' : reviewer_id;
-            const userAccount = accounts.find((a: any) =>
-              a.id === mappedId
-            );
-
-            console.log('✅ [리뷰어 상세 SA] useEffect에서 찾은 user 계정:', userAccount);
+            const mappedId =
+              reviewer_id === "1"
+                ? "user_kakao_001"
+                : reviewer_id === "2"
+                  ? "user_naver_001"
+                  : reviewer_id;
+            const userAccount = (accounts as StoredUserAccount[]).find((a) => a.id === mappedId);
 
             if (userAccount) {
               // 채널 이름 매핑 (한글 -> 영문)
               const channelNameMap: Record<string, Channel> = {
-                '네이버 블로그': 'Blog',
-                '네이버 클립': 'Clip',
-                '인스타그램': 'Instagram',
-                '유튜브': 'Youtube',
+                "네이버 블로그": "Blog",
+                "네이버 클립": "Clip",
+                인스타그램: "Instagram",
+                유튜브: "Youtube",
               };
 
               // channel_details에서 모든 채널 추출 (연결, 미연결 모두 포함)
               const connectedChannels: Channel[] = [];
-              const channelDetails: any[] = [];
+              const channelDetails: ReviewerDetail["channel_details"] = [];
 
               if (userAccount.channel_details) {
-                userAccount.channel_details.forEach((ch: any) => {
+                userAccount.channel_details.forEach((ch) => {
                   const channelType = channelNameMap[ch.name];
                   if (channelType) {
-                    const isConnected = ch.status === 'connected';
+                    const isConnected = ch.status === "connected";
 
                     // 연결된 채널만 connectedChannels에 추가
                     if (isConnected) {
@@ -131,7 +197,7 @@ export default function ReviewerDetailPage() {
 
                     // 모든 채널을 channelDetails에 추가 (연결 여부 + URL 포함)
                     const channelUrl = ch.url ? String(ch.url) : undefined;
-                    if (channelType === 'Blog') {
+                    if (channelType === "Blog") {
                       channelDetails.push({
                         channel: channelType,
                         daily_visits: isConnected ? 100 : undefined,
@@ -140,14 +206,18 @@ export default function ReviewerDetailPage() {
                         is_connected: isConnected,
                         channel_url: channelUrl,
                       });
-                    } else if (channelType === 'Clip' || channelType === 'Instagram') {
+                    } else if (channelType === "Clip" || channelType === "Instagram") {
                       channelDetails.push({
                         channel: channelType,
-                        followers: isConnected ? (channelType === 'Instagram' ? 5000 : 1000) : undefined,
+                        followers: isConnected
+                          ? channelType === "Instagram"
+                            ? 5000
+                            : 1000
+                          : undefined,
                         is_connected: isConnected,
                         channel_url: channelUrl,
                       });
-                    } else if (channelType === 'Youtube') {
+                    } else if (channelType === "Youtube") {
                       channelDetails.push({
                         channel: channelType,
                         subscribers: isConnected ? 2000 : undefined,
@@ -162,166 +232,209 @@ export default function ReviewerDetailPage() {
               // channel_details가 없으면 기본값 설정 (모든 채널을 미연결 상태로)
               if (channelDetails.length === 0) {
                 channelDetails.push(
-                  { channel: 'Blog', daily_visits: undefined, total_visits: undefined, neighbors: undefined, is_connected: false },
-                  { channel: 'Clip', followers: undefined, is_connected: false },
-                  { channel: 'Instagram', followers: undefined, is_connected: false },
-                  { channel: 'Youtube', subscribers: undefined, is_connected: false }
+                  {
+                    channel: "Blog",
+                    daily_visits: undefined,
+                    total_visits: undefined,
+                    neighbors: undefined,
+                    is_connected: false,
+                  },
+                  { channel: "Clip", followers: undefined, is_connected: false },
+                  { channel: "Instagram", followers: undefined, is_connected: false },
+                  { channel: "Youtube", subscribers: undefined, is_connected: false }
                 );
               }
 
               // localStorage에서 신청한 캠페인 정보 가져오기
               let campaignParticipated = 0;
               let campaignCompleted = 0;
-              let recentCampaigns: any[] = [];
+              let recentCampaigns: RecentCampaignItem[] = [];
 
               try {
-                const userAppliedCampaigns = localStorage.getItem('user_applied_campaigns');
+                const userAppliedCampaigns = localStorage.getItem("user_applied_campaigns");
                 if (userAppliedCampaigns) {
                   const allAppliedCampaigns = JSON.parse(userAppliedCampaigns);
-                  const userCampaigns = allAppliedCampaigns.find((uc: any) => uc.userId === mappedId);
+                  const userCampaigns = (allAppliedCampaigns as StoredAppliedCampaign[]).find(
+                    (uc) => uc.userId === mappedId
+                  );
 
                   if (userCampaigns && userCampaigns.campaigns) {
                     const campaigns = userCampaigns.campaigns;
 
                     // 캠페인 진행 = 대기 + 선정 상태인 캠페인 수
-                    campaignParticipated = campaigns.filter((c: any) =>
-                      c.status === '대기' || c.status === '선정'
+                    campaignParticipated = campaigns.filter(
+                      (c: StoredUserCampaign) => c.status === "대기" || c.status === "선정"
                     ).length;
 
                     // 캠페인 완료 = 완료 상태인 캠페인 수
-                    campaignCompleted = campaigns.filter((c: any) => c.status === '완료').length;
+                    campaignCompleted = campaigns.filter(
+                      (c: StoredUserCampaign) => c.status === "완료"
+                    ).length;
 
                     // 실제 캠페인 데이터에서 포인트 정보 가져오기
-                    const getCampaignPoints = (campaignId: string, campaignType: string): number => {
+                    const getCampaignPoints = (
+                      campaignId: string,
+                      campaignType: string
+                    ): number => {
                       try {
-                        const campaignTypeKey = campaignType === 'delivery' ? 'deliveryCampaigns' :
-                                                 campaignType === 'review' ? 'reviewCampaigns' :
-                                                 campaignType === 'mission' ? 'missionCampaigns' :
-                                                 campaignType === 'reporter' ? 'reporterCampaigns' :
-                                                 campaignType === 'visit' ? 'visitCampaigns' : null;
-                        
+                        const campaignTypeKey =
+                          campaignType === "delivery"
+                            ? "deliveryCampaigns"
+                            : campaignType === "review"
+                              ? "reviewCampaigns"
+                              : campaignType === "mission"
+                                ? "missionCampaigns"
+                                : campaignType === "reporter"
+                                  ? "reporterCampaigns"
+                                  : campaignType === "visit"
+                                    ? "visitCampaigns"
+                                    : null;
+
                         if (!campaignTypeKey) return 0;
-                        
+
                         const storedCampaigns = localStorage.getItem(campaignTypeKey);
                         if (storedCampaigns) {
                           const allCampaigns = JSON.parse(storedCampaigns);
-                          const campaign = allCampaigns.find((c: any) => 
-                            (c.campaignInfo?.id || c.id) === campaignId
+                          const campaign = (allCampaigns as StoredCampaignData[]).find(
+                            (c) => (c.campaignInfo?.id || c.id) === campaignId
                           );
-                          
+
                           if (campaign) {
                             // 포인트 정보 찾기 (다양한 경로 확인)
-                            return campaign.campaignInfo?.points || 
-                                   campaign.points || 
-                                   campaign.totalPoints || 
-                                   0;
+                            return (
+                              campaign.campaignInfo?.points ||
+                              campaign.points ||
+                              campaign.totalPoints ||
+                              0
+                            );
                           }
                         }
-                      } catch (error) {
-                        console.error('캠페인 포인트 정보 가져오기 실패:', error);
+                      } catch (_error) {
+                        // 캠페인 포인트 정보 가져오기 실패 시 0 반환
                       }
                       return 0;
                     };
 
                     // 캠페인 정보 가져오기 함수 (points와 channel 모두 반환)
-                    const getCampaignInfo = (campaignId: string, campaignType: string): { points: number; channel: Channel } => {
+                    const getCampaignInfo = (
+                      campaignId: string,
+                      campaignType: string
+                    ): { points: number; channel: Channel } => {
                       try {
-                        const campaignTypeKey = campaignType === 'delivery' ? 'deliveryCampaigns' :
-                                                 campaignType === 'review' ? 'reviewCampaigns' :
-                                                 campaignType === 'mission' ? 'missionCampaigns' :
-                                                 campaignType === 'reporter' ? 'reporterCampaigns' :
-                                                 campaignType === 'visit' ? 'visitCampaigns' : null;
-                        
-                        if (!campaignTypeKey) return { points: 0, channel: 'Blog' as Channel };
-                        
+                        const campaignTypeKey =
+                          campaignType === "delivery"
+                            ? "deliveryCampaigns"
+                            : campaignType === "review"
+                              ? "reviewCampaigns"
+                              : campaignType === "mission"
+                                ? "missionCampaigns"
+                                : campaignType === "reporter"
+                                  ? "reporterCampaigns"
+                                  : campaignType === "visit"
+                                    ? "visitCampaigns"
+                                    : null;
+
+                        if (!campaignTypeKey) return { points: 0, channel: "Blog" as Channel };
+
                         const storedCampaigns = localStorage.getItem(campaignTypeKey);
                         if (storedCampaigns) {
                           const allCampaigns = JSON.parse(storedCampaigns);
-                          
+
                           // ID 매칭 로직 개선 (다양한 ID 형식 지원)
-                          const campaign = allCampaigns.find((c: any) => {
+                          const campaign = (allCampaigns as StoredCampaignData[]).find((c) => {
                             // localStorage의 캠페인은 campaignInfo 구조를 가지고 있음
-                            const campId = String(c.campaignInfo?.id || c.id || '');
+                            const campId = String(c.campaignInfo?.id || c.id || "");
                             const storedId = String(campaignId);
-                            
+
                             // 정확히 일치하는 경우
                             if (campId === storedId) return true;
-                            
+
                             // ID 형식 변환 시도
-                            const typePrefix = campaignType === 'delivery' ? 'delivery_' :
-                                               campaignType === 'visit' ? 'visit_' :
-                                               campaignType === 'review' ? 'review_' :
-                                               campaignType === 'reporter' ? 'reporter_' :
-                                               campaignType === 'mission' ? 'mission_' : '';
-                            
+                            const typePrefix =
+                              campaignType === "delivery"
+                                ? "delivery_"
+                                : campaignType === "visit"
+                                  ? "visit_"
+                                  : campaignType === "review"
+                                    ? "review_"
+                                    : campaignType === "reporter"
+                                      ? "reporter_"
+                                      : campaignType === "mission"
+                                        ? "mission_"
+                                        : "";
+
                             if (typePrefix) {
                               // storedId가 "reporter_13"이고 campId가 "reporter_13"인 경우
-                              if (storedId.startsWith(typePrefix) && campId === storedId) return true;
+                              if (storedId.startsWith(typePrefix) && campId === storedId)
+                                return true;
                               // storedId가 "reporter_13"이고 campId가 "13"인 경우
                               if (storedId.startsWith(typePrefix)) {
-                                const storedIdWithoutPrefix = storedId.replace(new RegExp(`^${typePrefix}`), '');
+                                const storedIdWithoutPrefix = storedId.replace(
+                                  new RegExp(`^${typePrefix}`),
+                                  ""
+                                );
                                 if (campId === storedIdWithoutPrefix) return true;
                               }
                               // storedId가 "13"이고 campId가 "reporter_13"인 경우
                               if (campId.startsWith(typePrefix)) {
-                                const campIdWithoutPrefix = campId.replace(new RegExp(`^${typePrefix}`), '');
+                                const campIdWithoutPrefix = campId.replace(
+                                  new RegExp(`^${typePrefix}`),
+                                  ""
+                                );
                                 if (campIdWithoutPrefix === storedId) return true;
                               }
                               // storedId가 "13"이고 campId가 "13"인 경우 (둘 다 prefix 없음)
-                              if (!storedId.startsWith(typePrefix) && !campId.startsWith(typePrefix)) {
+                              if (
+                                !storedId.startsWith(typePrefix) &&
+                                !campId.startsWith(typePrefix)
+                              ) {
                                 if (campId === storedId) return true;
                               }
                             }
-                            
+
                             return false;
                           });
-                          
+
                           if (campaign) {
                             // 포인트 정보 찾기 (다양한 경로 확인)
-                            const points = campaign.campaignInfo?.points || 
-                                          campaign.points || 
-                                          campaign.totalPoints || 
-                                          0;
-                            
+                            const points =
+                              campaign.campaignInfo?.points ||
+                              campaign.points ||
+                              campaign.totalPoints ||
+                              0;
+
                             // 채널 정보 찾기
-                            let channel: Channel = 'Blog';
-                            const channelName = campaign.campaignInfo?.channel || campaign.channel || '';
-                            
+                            let channel: Channel = "Blog";
+                            const channelName =
+                              campaign.campaignInfo?.channel || campaign.channel || "";
+
                             // 채널 이름을 Channel 타입으로 변환
                             if (channelName) {
                               const channelMap: Record<string, Channel> = {
-                                '네이버블로그': 'Blog',
-                                '네이버 블로그': 'Blog',
-                                '블로그': 'Blog',
-                                'Blog': 'Blog',
-                                '네이버클립': 'Clip',
-                                '네이버 클립': 'Clip',
-                                '클립': 'Clip',
-                                'Clip': 'Clip',
-                                '인스타그램': 'Instagram',
-                                'Instagram': 'Instagram',
-                                '유튜브': 'Youtube',
-                                'Youtube': 'Youtube',
-                                '릴스': 'Reels',
-                                'Reels': 'Reels',
-                                '쇼츠': 'Shorts',
-                                'Shorts': 'Shorts',
-                                '숏츠': 'Shorts',
+                                네이버블로그: "Blog",
+                                "네이버 블로그": "Blog",
+                                블로그: "Blog",
+                                Blog: "Blog",
+                                네이버클립: "Clip",
+                                "네이버 클립": "Clip",
+                                클립: "Clip",
+                                Clip: "Clip",
+                                인스타그램: "Instagram",
+                                Instagram: "Instagram",
+                                유튜브: "Youtube",
+                                Youtube: "Youtube",
+                                릴스: "Reels",
+                                Reels: "Reels",
+                                쇼츠: "Shorts",
+                                Shorts: "Shorts",
+                                숏츠: "Shorts",
                               };
-                              
-                              const normalizedChannel = channelName.replace(/\s+/g, '');
-                              channel = channelMap[normalizedChannel] || channelMap[channelName] || 'Blog';
+
+                              const normalizedChannel = channelName.replace(/\s+/g, "");
+                              channel =
+                                channelMap[normalizedChannel] || channelMap[channelName] || "Blog";
                             }
-                            
-                            console.log(`[SA 리뷰어 상세] 캠페인 정보 찾음:`, {
-                              campaignId,
-                              campaignType,
-                              foundCampaignId: campaign.campaignInfo?.id || campaign.id,
-                              points,
-                              channel,
-                              channelName,
-                            });
-                            
+
                             return { points, channel };
                           } else {
                             // localStorage에서 찾지 못한 경우 정적 데이터에서 찾기
@@ -332,96 +445,107 @@ export default function ReviewerDetailPage() {
                               ...reporterCampaigns,
                               ...missionCampaigns,
                             ];
-                            
-                            const foundInStatic = allStaticCampaigns.find((c: any) => {
-                              // 정적 데이터는 campaignInfo 구조가 없을 수 있으므로 직접 id 확인
-                              const campId = String(c.campaignInfo?.id || c.id || '');
-                              const storedId = String(campaignId);
-                              
-                              // 정확히 일치하는 경우
-                              if (campId === storedId) return true;
-                              
-                              // ID 형식 변환 시도
-                              const typePrefix = campaignType === 'delivery' ? 'delivery_' :
-                                                 campaignType === 'visit' ? 'visit_' :
-                                                 campaignType === 'review' ? 'review_' :
-                                                 campaignType === 'reporter' ? 'reporter_' :
-                                                 campaignType === 'mission' ? 'mission_' : '';
-                              
-                              // prefix가 있는 경우와 없는 경우 모두 처리
-                              if (typePrefix) {
-                                // storedId가 "reporter_13"이고 campId가 "reporter_13"인 경우
-                                if (storedId.startsWith(typePrefix) && campId === storedId) return true;
-                                // storedId가 "reporter_13"이고 campId가 "13"인 경우
-                                if (storedId.startsWith(typePrefix)) {
-                                  const storedIdWithoutPrefix = storedId.replace(new RegExp(`^${typePrefix}`), '');
-                                  if (campId === storedIdWithoutPrefix) return true;
+
+                            const foundInStatic = (allStaticCampaigns as StoredCampaignData[]).find(
+                              (c) => {
+                                // 정적 데이터는 campaignInfo 구조가 없을 수 있으므로 직접 id 확인
+                                const campId = String(c.campaignInfo?.id || c.id || "");
+                                const storedId = String(campaignId);
+
+                                // 정확히 일치하는 경우
+                                if (campId === storedId) return true;
+
+                                // ID 형식 변환 시도
+                                const typePrefix =
+                                  campaignType === "delivery"
+                                    ? "delivery_"
+                                    : campaignType === "visit"
+                                      ? "visit_"
+                                      : campaignType === "review"
+                                        ? "review_"
+                                        : campaignType === "reporter"
+                                          ? "reporter_"
+                                          : campaignType === "mission"
+                                            ? "mission_"
+                                            : "";
+
+                                // prefix가 있는 경우와 없는 경우 모두 처리
+                                if (typePrefix) {
+                                  // storedId가 "reporter_13"이고 campId가 "reporter_13"인 경우
+                                  if (storedId.startsWith(typePrefix) && campId === storedId)
+                                    return true;
+                                  // storedId가 "reporter_13"이고 campId가 "13"인 경우
+                                  if (storedId.startsWith(typePrefix)) {
+                                    const storedIdWithoutPrefix = storedId.replace(
+                                      new RegExp(`^${typePrefix}`),
+                                      ""
+                                    );
+                                    if (campId === storedIdWithoutPrefix) return true;
+                                  }
+                                  // storedId가 "13"이고 campId가 "reporter_13"인 경우
+                                  if (campId.startsWith(typePrefix)) {
+                                    const campIdWithoutPrefix = campId.replace(
+                                      new RegExp(`^${typePrefix}`),
+                                      ""
+                                    );
+                                    if (campIdWithoutPrefix === storedId) return true;
+                                  }
+                                  // storedId가 "13"이고 campId가 "13"인 경우 (둘 다 prefix 없음)
+                                  if (
+                                    !storedId.startsWith(typePrefix) &&
+                                    !campId.startsWith(typePrefix)
+                                  ) {
+                                    if (campId === storedId) return true;
+                                  }
                                 }
-                                // storedId가 "13"이고 campId가 "reporter_13"인 경우
-                                if (campId.startsWith(typePrefix)) {
-                                  const campIdWithoutPrefix = campId.replace(new RegExp(`^${typePrefix}`), '');
-                                  if (campIdWithoutPrefix === storedId) return true;
-                                }
-                                // storedId가 "13"이고 campId가 "13"인 경우 (둘 다 prefix 없음)
-                                if (!storedId.startsWith(typePrefix) && !campId.startsWith(typePrefix)) {
-                                  if (campId === storedId) return true;
-                                }
+
+                                return false;
                               }
-                              
-                              return false;
-                            });
-                            
+                            );
+
                             if (foundInStatic) {
                               // 정적 데이터는 campaignInfo 구조가 없을 수 있으므로 직접 필드 확인
-                              const points = (foundInStatic as any)?.campaignInfo?.points || 
-                                           (foundInStatic as any)?.points || 
-                                           (foundInStatic as any)?.totalPoints || 
-                                           0;
-                              const channelName = (foundInStatic as any)?.campaignInfo?.channel || 
-                                                 (foundInStatic as any)?.channel || 
-                                                 '';
-                              
+                              const points =
+                                foundInStatic.campaignInfo?.points ||
+                                foundInStatic.points ||
+                                foundInStatic.totalPoints ||
+                                0;
+                              const channelName =
+                                foundInStatic.campaignInfo?.channel || foundInStatic.channel || "";
+
                               // 채널 이름을 Channel 타입으로 변환
                               const channelMap: Record<string, Channel> = {
-                                '네이버블로그': 'Blog',
-                                '네이버 블로그': 'Blog',
-                                '블로그': 'Blog',
-                                'Blog': 'Blog',
-                                '네이버클립': 'Clip',
-                                '네이버 클립': 'Clip',
-                                '클립': 'Clip',
-                                'Clip': 'Clip',
-                                '인스타그램': 'Instagram',
-                                'Instagram': 'Instagram',
-                                '유튜브': 'Youtube',
-                                'Youtube': 'Youtube',
-                                '릴스': 'Reels',
-                                'Reels': 'Reels',
-                                '쇼츠': 'Shorts',
-                                'Shorts': 'Shorts',
-                                '숏츠': 'Shorts',
+                                네이버블로그: "Blog",
+                                "네이버 블로그": "Blog",
+                                블로그: "Blog",
+                                Blog: "Blog",
+                                네이버클립: "Clip",
+                                "네이버 클립": "Clip",
+                                클립: "Clip",
+                                Clip: "Clip",
+                                인스타그램: "Instagram",
+                                Instagram: "Instagram",
+                                유튜브: "Youtube",
+                                Youtube: "Youtube",
+                                릴스: "Reels",
+                                Reels: "Reels",
+                                쇼츠: "Shorts",
+                                Shorts: "Shorts",
+                                숏츠: "Shorts",
                               };
-                              
-                              const normalizedChannel = channelName.replace(/\s+/g, '');
-                              const channel: Channel = channelMap[normalizedChannel] || channelMap[channelName] || 'Blog';
-                              
-                              console.log(`[SA 리뷰어 상세] 정적 데이터에서 캠페인 정보 찾음:`, {
-                                campaignId,
-                                campaignType,
-                                foundCampaignId: (foundInStatic as any)?.campaignInfo?.id || (foundInStatic as any)?.id,
-                                points,
-                                channel,
-                                channelName,
-                              });
-                              
+
+                              const normalizedChannel = channelName.replace(/\s+/g, "");
+                              const channel: Channel =
+                                channelMap[normalizedChannel] || channelMap[channelName] || "Blog";
+
                               return { points, channel };
                             }
                           }
                         }
-                      } catch (error) {
-                        console.error('캠페인 정보 가져오기 실패:', error);
+                      } catch (_error) {
+                        // 캠페인 정보 가져오기 실패 시 기본값 반환
                       }
-                      return { points: 0, channel: 'Blog' as Channel };
+                      return { points: 0, channel: "Blog" as Channel };
                     };
 
                     // 캠페인 진행 페이지와 동일한 로직으로 데이터 변환
@@ -432,76 +556,95 @@ export default function ReviewerDetailPage() {
                       if (numMatch) {
                         const num_id = parseInt(numMatch[0], 10);
                         if (!isNaN(num_id)) {
-                          return String(num_id).padStart(6, '0');
+                          return String(num_id).padStart(6, "0");
                         }
                       }
-                      return '000000';
+                      return "000000";
                     };
 
-                    const map_brand_name_to_channel = (brandName: string, campaignType: string): Channel => {
+                    const map_brand_name_to_channel = (
+                      brandName: string,
+                      campaignType: string
+                    ): Channel => {
                       // 미션형은 brandName이 빈 문자열이므로 'Mission'으로 변환
-                      if (campaignType === '미션형' && !brandName) {
-                        return 'Mission';
+                      if (campaignType === "미션형" && !brandName) {
+                        return "Mission";
                       }
 
                       // 브랜드명 매핑
                       const brand_map: Record<string, Channel> = {
-                        '네이버블로그': 'Blog',
-                        '인스타그램': 'Instagram',
-                        '네이버클립': 'Clip',
-                        '유튜브': 'Youtube',
-                        '릴스': 'Reels',
-                        '쇼츠': 'Shorts',
-                        '스토어': 'Store',
-                        '기본': 'Store',
+                        네이버블로그: "Blog",
+                        인스타그램: "Instagram",
+                        네이버클립: "Clip",
+                        유튜브: "Youtube",
+                        릴스: "Reels",
+                        쇼츠: "Shorts",
+                        스토어: "Store",
+                        기본: "Store",
                       };
 
-                      return brand_map[brandName] || 'Store';
+                      return brand_map[brandName] || "Store";
                     };
 
                     // 최근 진행 캠페인 목록 (최대 10개)
                     recentCampaigns = campaigns
-                      .filter((c: any) => c.status === '대기' || c.status === '선정' || c.status === '완료')
+                      .filter(
+                        (c: StoredUserCampaign) =>
+                          c.status === "대기" || c.status === "선정" || c.status === "완료"
+                      )
                       .slice(0, 10)
-                      .map((c: any) => {
+                      .map((c: StoredUserCampaign) => {
                         // getCampaignById로 실제 캠페인 데이터 가져오기
                         const actualCampaign = getCampaignById(c.campaignId);
-                        
+
                         if (actualCampaign) {
                           // 캠페인 진행 페이지와 동일한 로직 사용
                           const campaignType = actualCampaign.campaignInfo.campaignType;
-                          const campaignNumber = format_campaign_number(actualCampaign.campaignInfo.id);
+                          const campaignNumber = format_campaign_number(
+                            actualCampaign.campaignInfo.id
+                          );
                           const channel = map_brand_name_to_channel(
-                            actualCampaign.campaignInfo.brandName || '',
+                            actualCampaign.campaignInfo.brandName || "",
                             campaignType
                           );
                           // 지급 포인트: campaignInfo.point 또는 campaignInfo.points 확인
-                          const points = (actualCampaign.campaignInfo as any).point !== undefined 
-                            ? (actualCampaign.campaignInfo as any).point 
-                            : (actualCampaign as any).points || 0;
+                          const campaignInfoExt =
+                            actualCampaign.campaignInfo as StoredCampaignData["campaignInfo"];
+                          const points =
+                            campaignInfoExt?.point !== undefined
+                              ? campaignInfoExt.point
+                              : (actualCampaign as StoredCampaignData).points || 0;
 
                           return {
                             campaign_number: campaignNumber,
-                            partner_name: '', // 리뷰어용이므로 빈 문자열
+                            partner_name: "", // 리뷰어용이므로 빈 문자열
                             campaign_name: actualCampaign.campaignInfo.title,
-                            status: (c.status === '대기' || c.status === '선정') ? '진행' : '종료',
+                            status: c.status === "대기" || c.status === "선정" ? "진행" : "종료",
                             type: campaignType,
                             channel: channel,
                             points: points,
                           };
                         } else {
                           // 캠페인을 찾지 못한 경우 기본값 사용
-                          const { points: campaignPoints, channel: campaignChannel } = getCampaignInfo(c.campaignId, c.campaignType);
+                          const { points: campaignPoints, channel: campaignChannel } =
+                            getCampaignInfo(c.campaignId, c.campaignType);
                           return {
-                            campaign_number: format_campaign_number(c.campaignId || '0'),
-                            partner_name: '',
-                            campaign_name: c.campaignTitle || '캠페인명 없음',
-                            status: (c.status === '대기' || c.status === '선정') ? '진행' : '종료',
-                            type: c.campaignType === 'delivery' ? '배송형' :
-                                  c.campaignType === 'review' ? '구매평' :
-                                  c.campaignType === 'mission' ? '미션형' :
-                                  c.campaignType === 'reporter' ? '기자단' :
-                                  c.campaignType === 'visit' ? '방문형' : '배송형',
+                            campaign_number: format_campaign_number(c.campaignId || "0"),
+                            partner_name: "",
+                            campaign_name: c.campaignTitle || "캠페인명 없음",
+                            status: c.status === "대기" || c.status === "선정" ? "진행" : "종료",
+                            type:
+                              c.campaignType === "delivery"
+                                ? "배송형"
+                                : c.campaignType === "review"
+                                  ? "구매평"
+                                  : c.campaignType === "mission"
+                                    ? "미션형"
+                                    : c.campaignType === "reporter"
+                                      ? "기자단"
+                                      : c.campaignType === "visit"
+                                        ? "방문형"
+                                        : "배송형",
                             channel: campaignChannel,
                             points: campaignPoints,
                           };
@@ -509,14 +652,14 @@ export default function ReviewerDetailPage() {
                       });
                   }
                 }
-              } catch (error) {
-                console.error('[리뷰어 상세 SA] 캠페인 정보 로드 중 오류:', error);
+              } catch (_error) {
+                // 캠페인 정보 로드 실패 시 빈 목록 유지
               }
 
               // localStorage에서 status_type 업데이트 정보 가져오기
-              let statusType: '일반 회원' | '주의 회원' | '이용 제한 회원' = '일반 회원';
+              let statusType: "일반 회원" | "주의 회원" | "이용 제한 회원" = "일반 회원";
               try {
-                const statusUpdates = localStorage.getItem('reviewer_status_type_updates');
+                const statusUpdates = localStorage.getItem("reviewer_status_type_updates");
                 if (statusUpdates) {
                   const updates = JSON.parse(statusUpdates);
                   // ID 매핑: 1 -> user_kakao_001, 2 -> user_naver_001
@@ -525,22 +668,27 @@ export default function ReviewerDetailPage() {
                     statusType = statusForMappedId;
                   } else {
                     // reviewer_list에서 기본값 가져오기
-                    const reviewerFromList = reviewer_list.find(r => r.id === reviewer_id || r.id === mappedId);
+                    const reviewerFromList = reviewer_list.find(
+                      (r) => r.id === reviewer_id || r.id === mappedId
+                    );
                     if (reviewerFromList) {
                       statusType = reviewerFromList.status_type;
                     }
                   }
                 } else {
                   // reviewer_list에서 기본값 가져오기
-                  const reviewerFromList = reviewer_list.find(r => r.id === reviewer_id || r.id === mappedId);
+                  const reviewerFromList = reviewer_list.find(
+                    (r) => r.id === reviewer_id || r.id === mappedId
+                  );
                   if (reviewerFromList) {
                     statusType = reviewerFromList.status_type;
                   }
                 }
-              } catch (error) {
-                console.error('[리뷰어 상세 SA] status_type 로드 실패:', error);
-                // reviewer_list에서 기본값 가져오기
-                const reviewerFromList = reviewer_list.find(r => r.id === reviewer_id || r.id === mappedId);
+              } catch (_error) {
+                // status_type 로드 실패 시 reviewer_list에서 기본값 가져오기
+                const reviewerFromList = reviewer_list.find(
+                  (r) => r.id === reviewer_id || r.id === mappedId
+                );
                 if (reviewerFromList) {
                   statusType = reviewerFromList.status_type;
                 }
@@ -549,49 +697,51 @@ export default function ReviewerDetailPage() {
               // ReviewerDetail 직접 생성
               const detail: ReviewerDetail = {
                 id: reviewer_id,
-                number: userAccount.number || (mappedId === 'user_kakao_001' ? '000001' : '000002'),
-                name: userAccount.name || '카카오유저',
-                nickname: userAccount.nickname || '테스트닉네임',
+                number: userAccount.number || (mappedId === "user_kakao_001" ? "000001" : "000002"),
+                name: userAccount.name || "카카오유저",
+                nickname: userAccount.nickname || "테스트닉네임",
                 channels: connectedChannels,
-                type: '일반',
+                type: "일반",
                 campaign_participated: campaignParticipated,
                 campaign_completed: campaignCompleted,
                 current_points: userAccount.current_points || 0,
                 withdrawn_points: userAccount.withdrawn_points || 0,
                 status_type: statusType,
-                status: '정상',
-                last_access_date: userAccount.last_access_date || new Date().toISOString().replace('T', ' ').substring(0, 16),
-                join_date: userAccount.join_date || '2024-04-01 10:00',
-                gender: userAccount.gender || '여성',
+                status: "정상",
+                last_access_date:
+                  userAccount.last_access_date ||
+                  new Date().toISOString().replace("T", " ").substring(0, 16),
+                join_date: userAccount.join_date || "2024-04-01 10:00",
+                gender: userAccount.gender || "여성",
                 age: userAccount.age || 30,
-                email: userAccount.email || '',
-                phone: userAccount.phone || '010-1111-1111',
+                email: userAccount.email || "",
+                phone: userAccount.phone || "010-1111-1111",
                 address: userAccount.address
-                  ? `${userAccount.address}${userAccount.detail_address ? ' ' + userAccount.detail_address : ''}`
-                  : '서울시 강남구 테헤란로 123',
+                  ? `${userAccount.address}${userAccount.detail_address ? " " + userAccount.detail_address : ""}`
+                  : "서울시 강남구 테헤란로 123",
                 profile_image: userAccount.profile_image || null,
                 penalty_count: 0,
                 channel_details: channelDetails,
                 account_info: {
-                  account_holder: userAccount.account_holder || userAccount.name || '',
-                  bank: userAccount.bank || '',
-                  account_number: userAccount.account_number || '',
-                  resident_number: userAccount.ssn_front && userAccount.ssn_back
-                    ? `${userAccount.ssn_front}-${userAccount.ssn_back}`
-                    : '',
+                  account_holder: userAccount.account_holder || userAccount.name || "",
+                  bank: userAccount.bank || "",
+                  account_number: userAccount.account_number || "",
+                  resident_number:
+                    userAccount.ssn_front && userAccount.ssn_back
+                      ? `${userAccount.ssn_front}-${userAccount.ssn_back}`
+                      : "",
                 },
                 recent_campaigns: recentCampaigns,
                 penalty_history: [],
               };
 
-              console.log('📄 [리뷰어 상세 SA] 최종 생성된 detail:', detail);
               set_reviewer_detail(detail);
               set_is_loading(false);
               return;
             }
           }
-        } catch (error) {
-          console.error('[리뷰어 상세 SA] user 정보 로드 중 오류:', error);
+        } catch (_error) {
+          // user 정보 로드 실패 시 기존 함수로 폴백
         }
       }
 
@@ -605,16 +755,15 @@ export default function ReviewerDetailPage() {
 
     // 페이지가 포커스될 때마다 데이터 다시 로드 (user_accounts 변경 감지용)
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        console.log('🔄 [리뷰어 상세 SA] 페이지 포커스 - 데이터 다시 로드');
+      if (document.visibilityState === "visible") {
         fetch_reviewer_detail();
       }
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [reviewer_id]);
 
@@ -634,61 +783,55 @@ export default function ReviewerDetailPage() {
           {(reviewer_detail?.channel_details ?? [])
             .filter((channel_detail) => channel_detail.is_connected)
             .map((channel_detail, index) => {
-            const icon = (
-              <Image
-                src={channel_icon_map[channel_detail.channel]}
-                alt={channel_detail.channel}
-                width={16}
-                height={16}
-                className={infoCardStyles.channel_icon}
-              />
-            );
-            const wrapperClass = infoCardStyles.channel_icon_wrapper;
-            if (channel_detail.is_connected && channel_detail.channel_url) {
-              return (
-                <a
-                  key={index}
-                  href={channel_detail.channel_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${wrapperClass} ${infoCardStyles.channel_icon_link}`}
-                  aria-label={`${channel_detail.channel} 채널 열기`}
-                >
-                  {icon}
-                </a>
+              const icon = (
+                <Image
+                  src={channel_icon_map[channel_detail.channel]}
+                  alt={channel_detail.channel}
+                  width={16}
+                  height={16}
+                  className={infoCardStyles.channel_icon}
+                />
               );
-            }
-            return (
-              <div key={index} className={wrapperClass}>
-                {icon}
-              </div>
-            );
-          })}
+              const wrapperClass = infoCardStyles.channel_icon_wrapper;
+              if (channel_detail.is_connected && channel_detail.channel_url) {
+                return (
+                  <a
+                    key={index}
+                    href={channel_detail.channel_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`${wrapperClass} ${infoCardStyles.channel_icon_link}`}
+                    aria-label={`${channel_detail.channel} 채널 열기`}
+                  >
+                    {icon}
+                  </a>
+                );
+              }
+              return (
+                <div key={index} className={wrapperClass}>
+                  {icon}
+                </div>
+              );
+            })}
         </div>
       ),
     },
     // 캠페인 진행
     {
       label: "캠페인 진행",
-      value: reviewer_detail
-        ? `${format_number(reviewer_detail.campaign_participated)}회`
-        : "0회",
+      value: reviewer_detail ? `${format_number(reviewer_detail.campaign_participated)}회` : "0회",
       on_button_click: () => set_is_campaign_history_modal_open(true),
       button_aria_label: "캠페인 진행 내역 보기",
     },
     // 캠페인 완료
     {
       label: "캠페인 완료",
-      value: reviewer_detail
-        ? `${format_number(reviewer_detail.campaign_completed)}회`
-        : "0회",
+      value: reviewer_detail ? `${format_number(reviewer_detail.campaign_completed)}회` : "0회",
     },
     // 패널티
     {
       label: "패널티",
-      value: reviewer_detail
-        ? `${format_number(reviewer_detail.penalty_count)}회`
-        : "0회",
+      value: reviewer_detail ? `${format_number(reviewer_detail.penalty_count)}회` : "0회",
       on_button_click: () => set_is_penalty_history_modal_open(true),
       button_aria_label: "패널티 내역 보기",
     },
@@ -705,16 +848,12 @@ export default function ReviewerDetailPage() {
     // 보유 포인트
     {
       label: "보유 포인트",
-      value: reviewer_detail
-        ? format_number(reviewer_detail.current_points)
-        : "0",
+      value: reviewer_detail ? format_number(reviewer_detail.current_points) : "0",
     },
     // 출금 포인트
     {
       label: "출금 포인트",
-      value: reviewer_detail
-        ? format_number(reviewer_detail.withdrawn_points)
-        : "0",
+      value: reviewer_detail ? format_number(reviewer_detail.withdrawn_points) : "0",
     },
   ];
 
@@ -749,15 +888,11 @@ export default function ReviewerDetailPage() {
 
         {/* 채널 정보 섹션 */}
         {reviewer_detail && (
-          <ChannelInfoSection
-            channel_details={reviewer_detail.channel_details}
-          />
+          <ChannelInfoSection channel_details={reviewer_detail.channel_details} />
         )}
 
         {/* 계좌 정보 섹션 */}
-        {reviewer_detail && (
-          <AccountInfoSection account_info={reviewer_detail.account_info} />
-        )}
+        {reviewer_detail && <AccountInfoSection account_info={reviewer_detail.account_info} />}
       </div>
 
       {/* 캠페인 진행 내역 모달 */}

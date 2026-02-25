@@ -1,27 +1,14 @@
 /* ========================================
-   🔍 결제 내역 필터 섹션 컴포넌트
+   결제 내역 필터 섹션 컴포넌트
    ======================================== */
 
 /**
- * 결제 내역 필터 섹션 컴포넌트
+ * PaymentHistoryFilterSection
  *
  * 목적: 결제 내역 페이지의 필터 옵션들을 표시합니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /manager_sa/settlement/payment_history (결제 내역 페이지)
- *
- * 주요 기능:
- * - 날짜 필터 (날짜 범위 선택)
- * - 구분 필터 (드롭다운)
- * - 결제 수단 필터 (드롭다운)
- * - 세금계산서 발행 필터 (드롭다운)
- * - 결제 필터 (드롭다운)
- * - 유형 필터 (드롭다운)
- * - 상태 필터 (드롭다운)
- * - 검색 입력창
- * - 활성 필터 태그 표시 및 제거
- * - 세금계산서 발행 양식 다운로드 버튼
- *
  */
 
 "use client";
@@ -94,18 +81,15 @@ export default function PaymentHistoryFilterSection({
   on_account_statuses_change,
 }: PaymentHistoryFilterSectionProps) {
   // 구분 필터 드롭다운 열림/닫힘 상태
-  const [is_business_type_dropdown_open, set_is_business_type_dropdown_open] =
-    useState(false);
+  const [is_business_type_dropdown_open, set_is_business_type_dropdown_open] = useState(false);
   const business_type_filter_button_ref = useRef<HTMLDivElement>(null);
 
   // 결제 수단 필터 드롭다운 열림/닫힘 상태
-  const [is_payment_method_dropdown_open, set_is_payment_method_dropdown_open] =
-    useState(false);
+  const [is_payment_method_dropdown_open, set_is_payment_method_dropdown_open] = useState(false);
   const payment_method_filter_button_ref = useRef<HTMLDivElement>(null);
 
   // 결제 필터 드롭다운 열림/닫힘 상태
-  const [is_payment_status_dropdown_open, set_is_payment_status_dropdown_open] =
-    useState(false);
+  const [is_payment_status_dropdown_open, set_is_payment_status_dropdown_open] = useState(false);
   const payment_status_filter_button_ref = useRef<HTMLDivElement>(null);
 
   // 세금계산서 발행 필터 드롭다운 열림/닫힘 상태
@@ -114,19 +98,16 @@ export default function PaymentHistoryFilterSection({
   const tax_invoice_type_filter_button_ref = useRef<HTMLDivElement>(null);
 
   // 유형 필터 드롭다운 열림/닫힘 상태
-  const [is_member_type_dropdown_open, set_is_member_type_dropdown_open] =
-    useState(false);
+  const [is_member_type_dropdown_open, set_is_member_type_dropdown_open] = useState(false);
   const member_type_filter_button_ref = useRef<HTMLDivElement>(null);
 
   // 상태 필터 드롭다운 열림/닫힘 상태
-  const [is_account_status_dropdown_open, set_is_account_status_dropdown_open] =
-    useState(false);
+  const [is_account_status_dropdown_open, set_is_account_status_dropdown_open] = useState(false);
   const account_status_filter_button_ref = useRef<HTMLDivElement>(null);
 
   // 내부 검색어 상태 (props가 없을 때 사용)
   const [internal_search_query, set_internal_search_query] = useState("");
-  const current_search_query =
-    search_query !== undefined ? search_query : internal_search_query;
+  const current_search_query = search_query !== undefined ? search_query : internal_search_query;
   const handle_search_change = (query: string) => {
     if (on_search_change) {
       on_search_change(query);
@@ -172,44 +153,32 @@ export default function PaymentHistoryFilterSection({
 
   // 구분 필터 태그 제거 핸들러
   const handle_remove_business_type = (type: BusinessType) => {
-    on_business_types_change?.(
-      selected_business_types.filter((t) => t !== type)
-    );
+    on_business_types_change?.(selected_business_types.filter((t) => t !== type));
   };
 
   // 결제 수단 필터 태그 제거 핸들러
   const handle_remove_payment_method = (method: PaymentMethod) => {
-    on_payment_methods_change?.(
-      selected_payment_methods.filter((m) => m !== method)
-    );
+    on_payment_methods_change?.(selected_payment_methods.filter((m) => m !== method));
   };
 
   // 세금계산서 발행 필터 태그 제거 핸들러
   const handle_remove_tax_invoice_type = (type: TaxInvoiceType) => {
-    on_tax_invoice_types_change?.(
-      selected_tax_invoice_types.filter((t) => t !== type)
-    );
+    on_tax_invoice_types_change?.(selected_tax_invoice_types.filter((t) => t !== type));
   };
 
   // 결제 필터 태그 제거 핸들러
   const handle_remove_payment_status = (status: PaymentStatus) => {
-    on_payment_statuses_change?.(
-      selected_payment_statuses.filter((s) => s !== status)
-    );
+    on_payment_statuses_change?.(selected_payment_statuses.filter((s) => s !== status));
   };
 
   // 유형 필터 태그 제거 핸들러
   const handle_remove_member_type = (type: MemberType) => {
-    on_member_types_change?.(
-      selected_member_types.filter((t) => t !== type)
-    );
+    on_member_types_change?.(selected_member_types.filter((t) => t !== type));
   };
 
   // 상태 필터 태그 제거 핸들러
   const handle_remove_account_status = (status: AccountStatus) => {
-    on_account_statuses_change?.(
-      selected_account_statuses.filter((s) => s !== status)
-    );
+    on_account_statuses_change?.(selected_account_statuses.filter((s) => s !== status));
   };
 
   // 활성 필터 태그 목록 생성
@@ -367,9 +336,7 @@ export default function PaymentHistoryFilterSection({
             >
               <FilterButton
                 label="발행"
-                onClick={() =>
-                  set_is_tax_invoice_type_dropdown_open((prev) => !prev)
-                }
+                onClick={() => set_is_tax_invoice_type_dropdown_open((prev) => !prev)}
                 isActive={selected_tax_invoice_types.length > 0}
                 styles={{
                   filter_item: baseFilterStyles.filter_item,
@@ -484,23 +451,12 @@ export default function PaymentHistoryFilterSection({
         on_filter_tag_remove={handle_filter_tag_remove}
         // 오른쪽 버튼: 세금계산서 발행 양식 다운로드 버튼
         right_buttons={
-          <div
-            className={styles.download_button}
-            onClick={handle_download_click}
-          >
-            <img
-              src="/images/excel_icon.png"
-              alt="다운로드"
-              className={styles.download_icon}
-            />
-            <span className={styles.download_text}>
-              세금계산서 발행 양식 다운로드
-            </span>
+          <div className={styles.download_button} onClick={handle_download_click}>
+            <img src="/images/excel_icon.png" alt="다운로드" className={styles.download_icon} />
+            <span className={styles.download_text}>세금계산서 발행 양식 다운로드</span>
           </div>
         }
       />
-
-    
     </div>
   );
 }

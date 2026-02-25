@@ -1,30 +1,26 @@
 /* ========================================
-   📊 결제 내역 통계 카드 섹션 컴포넌트
+   결제 내역 통계 카드 섹션 컴포넌트
    ======================================== */
 
 /**
- * 결제 내역 통계 카드 섹션 컴포넌트
+ * StatCardsSection
  *
  * 목적: 결제 내역 페이지의 상단 통계 카드들을 표시합니다.
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /manager_sa/settlement/payment_history (결제 내역 페이지)
- *
- * 주요 기능:
- * - 통계 카드 3개를 표시합니다
- * - 이번 주 입금 내역: 무통장 입금 + 완료 상태
- * - 이번 주 카드 결제 금액: 카드 결제 + 완료 상태
- * - 이번 달 총 합계: 전체 + 완료 상태
- * - 테이블 데이터를 기반으로 실시간 계산
- * - 0건이면 0원으로 표시
- *
  */
 
 "use client";
 
 import { useMemo } from "react";
-import styles from '@/styles/manager/common/settlement/stat_cards_section.module.css';
-import { getPaymentHistoryList, type PaymentHistoryItem } from '@/data/manager_sa/settlement/paymentHistoryData';
+import styles from "@/styles/manager/common/settlement/stat_cards_section.module.css";
+import {
+  getPaymentHistoryList,
+  type PaymentHistoryItem,
+} from "@/data/manager_sa/settlement/paymentHistoryData";
+import { parseFormattedAmount, formatCurrency } from "@/utils/formatting/amount";
+import { isDateInRange, getCurrentWeekRange, getCurrentMonthRange } from "@/utils/formatting/date";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 import type { BusinessType } from "@/components/manager/sa/settlement/payment_history/filter/BusinessTypeFilterModal";
 import type { PaymentMethod } from "@/data/manager_sa/common/filterOptions";
@@ -34,7 +30,6 @@ import type { TaxInvoiceType } from "@/components/manager/sa/settlement/payment_
 import type { MemberType } from "@/components/manager/sa/settlement/payment_history/filter/MemberTypeFilterDropdown";
 
 interface StatCardsSectionProps {
-  // 필터 상태 (테이블과 동일한 필터 사용)
   selected_date_range?: DateRange | undefined;
   selected_business_types?: BusinessType[];
   selected_payment_methods?: PaymentMethod[];
@@ -42,94 +37,6 @@ interface StatCardsSectionProps {
   selected_payment_statuses?: PaymentStatus[];
   selected_member_types?: MemberType[];
   selected_account_statuses?: AccountStatus[];
-}
-
-/**
- * 문자열 금액을 숫자로 변환하는 함수
- * 
- * @param amountStr - "10,000" 형식의 문자열
- * @returns 숫자 (예: 10000)
- * 
- * 학습 포인트:
- * - replace(/,/g, ''): 모든 쉼표를 제거합니다 (g 플래그는 전역 검색)
- * - parseInt(): 문자열을 정수로 변환합니다
- * - || 0: 변환 실패 시 0을 반환합니다
- */
-function parse_amount(amount_str: string): number {
-  return parseInt(amount_str.replace(/,/g, ''), 10) || 0;
-}
-
-/**
- * 숫자를 금액 형식 문자열로 변환하는 함수
- * 
- * @param amount - 숫자 금액
- * @returns "10,000원" 형식의 문자열
- * 
- * 학습 포인트:
- * - toLocaleString(): 숫자를 천 단위 구분 기호가 있는 문자열로 변환합니다
- * - 'ko-KR': 한국 로케일을 사용합니다
- */
-function format_amount(amount: number): string {
-  return `${amount.toLocaleString('ko-KR')}원`;
-}
-
-/**
- * 날짜가 주어진 기간 내에 있는지 확인하는 함수
- * 
- * @param date_str - "2025-12-01 14:32" 형식의 날짜 문자열
- * @param start_date - 시작 날짜
- * @param end_date - 종료 날짜
- * @returns 기간 내에 있으면 true
- */
-function is_date_in_range(date_str: string, start_date: Date, end_date: Date): boolean {
-  const item_date_str = date_str.split(" ")[0]; // "2025-12-01"
-  const item_date = new Date(item_date_str);
-  item_date.setHours(0, 0, 0, 0);
-  
-  const start = new Date(start_date);
-  start.setHours(0, 0, 0, 0);
-  
-  const end = new Date(end_date);
-  end.setHours(23, 59, 59, 999);
-  
-  return item_date >= start && item_date <= end;
-}
-
-/**
- * 이번 주의 시작일과 종료일을 계산하는 함수
- * 
- * @returns 이번 주의 시작일과 종료일
- */
-function get_current_week_range(): { start: Date; end: Date } {
-  const now = new Date();
-  const day_of_week = now.getDay(); // 0: 일요일, 6: 토요일
-  const days_to_monday = day_of_week === 0 ? 6 : day_of_week - 1; // 월요일까지의 일수
-  
-  const start = new Date(now);
-  start.setDate(now.getDate() - days_to_monday);
-  start.setHours(0, 0, 0, 0);
-  
-  const end = new Date(start);
-  end.setDate(start.getDate() + 6);
-  end.setHours(23, 59, 59, 999);
-  
-  return { start, end };
-}
-
-/**
- * 이번 달의 시작일과 종료일을 계산하는 함수
- * 
- * @returns 이번 달의 시작일과 종료일
- */
-function get_current_month_range(): { start: Date; end: Date } {
-  const now = new Date();
-  const start = new Date(now.getFullYear(), now.getMonth(), 1);
-  start.setHours(0, 0, 0, 0);
-  
-  const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-  end.setHours(23, 59, 59, 999);
-  
-  return { start, end };
 }
 
 export default function StatCardsSection({
@@ -150,7 +57,7 @@ export default function StatCardsSection({
     return list.filter((item) => {
       // 날짜 범위 필터 (신청일 기준)
       if (selected_date_range?.from && selected_date_range?.to) {
-        if (!is_date_in_range(item.requestDate, selected_date_range.from, selected_date_range.to)) {
+        if (!isDateInRange(item.requestDate, selected_date_range.from, selected_date_range.to)) {
           return false;
         }
       }
@@ -168,11 +75,7 @@ export default function StatCardsSection({
       // 세금계산서 발행 필터
       if (selected_tax_invoice_types.length > 0) {
         const item_tax_invoice_type: TaxInvoiceType | null =
-          item.taxInvoice === "O"
-            ? "세금계산서"
-            : item.taxInvoice === "X"
-            ? "미발행"
-            : null;
+          item.taxInvoice === "O" ? "세금계산서" : item.taxInvoice === "X" ? "미발행" : null;
 
         if (!item_tax_invoice_type || !selected_tax_invoice_types.includes(item_tax_invoice_type)) {
           return false;
@@ -190,10 +93,10 @@ export default function StatCardsSection({
           item.memberType === "모범 회원"
             ? "일반 회원"
             : item.memberType === "주의 회원"
-            ? "주의 회원"
-            : item.memberType === "이용 제한 회원"
-            ? "이용 제한 회원"
-            : null;
+              ? "주의 회원"
+              : item.memberType === "이용 제한 회원"
+                ? "이용 제한 회원"
+                : null;
 
         if (!item_member_type || !selected_member_types.includes(item_member_type)) {
           return false;
@@ -208,12 +111,12 @@ export default function StatCardsSection({
           item.accountStatus === "정상"
             ? "정상"
             : item.accountStatus === "일시정지"
-            ? "일시 정지"
-            : item.accountStatus === "영구정지"
-            ? "영구 정지"
-            : item.accountStatus === "탈퇴"
-            ? "탈퇴"
-            : null;
+              ? "일시 정지"
+              : item.accountStatus === "영구정지"
+                ? "영구 정지"
+                : item.accountStatus === "탈퇴"
+                  ? "탈퇴"
+                  : null;
 
         if (!item_account_status || !selected_account_statuses.includes(item_account_status)) {
           return false;
@@ -233,10 +136,10 @@ export default function StatCardsSection({
   ]);
 
   // 이번 주 범위 계산
-  const week_range = useMemo(() => get_current_week_range(), []);
+  const week_range = useMemo(() => getCurrentWeekRange(), []);
 
   // 이번 달 범위 계산
-  const month_range = useMemo(() => get_current_month_range(), []);
+  const month_range = useMemo(() => getCurrentMonthRange(), []);
 
   // 통계 계산
   const stats = useMemo(() => {
@@ -247,24 +150,24 @@ export default function StatCardsSection({
     const week_deposit_items = completed_items.filter(
       (item) =>
         item.paymentMethod === "무통장 입금" &&
-        is_date_in_range(item.requestDate, week_range.start, week_range.end)
+        isDateInRange(item.requestDate, week_range.start, week_range.end)
     );
 
     // 2. 이번 주 카드 결제: 카드 결제 또는 포인트 충전 + 완료 + 이번 주
     const week_card_items = completed_items.filter(
       (item) =>
         (item.paymentMethod === "카드 결제" || item.paymentMethod === "포인트 충전") &&
-        is_date_in_range(item.requestDate, week_range.start, week_range.end)
+        isDateInRange(item.requestDate, week_range.start, week_range.end)
     );
 
     // 3. 이번 달 총 합계: 전체 + 완료 + 이번 달
     const month_total_items = completed_items.filter((item) =>
-      is_date_in_range(item.requestDate, month_range.start, month_range.end)
+      isDateInRange(item.requestDate, month_range.start, month_range.end)
     );
 
     // 금액 계산
     const calculate_total_amount = (items: PaymentHistoryItem[]): number => {
-      return items.reduce((sum, item) => sum + parse_amount(item.chargedPoints), 0);
+      return items.reduce((sum, item) => sum + parseFormattedAmount(item.chargedPoints), 0);
     };
 
     const week_deposit_count = week_deposit_items.length;
@@ -280,17 +183,17 @@ export default function StatCardsSection({
       weekDeposit: {
         label: "이번 주 입금 내역",
         count: `${week_deposit_count}건`,
-        amount: week_deposit_count > 0 ? format_amount(week_deposit_amount) : "0원",
+        amount: week_deposit_count > 0 ? formatCurrency(week_deposit_amount) : "0원",
       },
       weekCardPayment: {
         label: "이번 주 카드 결제 금액",
-        amount: week_card_count > 0 ? format_amount(week_card_amount) : "0원",
+        amount: week_card_count > 0 ? formatCurrency(week_card_amount) : "0원",
         count: `${week_card_count}건`,
       },
       monthTotal: {
         label: "이번 달 총 합계",
         count: `${month_total_count}건`,
-        amount: month_total_count > 0 ? format_amount(month_total_amount) : "0원",
+        amount: month_total_count > 0 ? formatCurrency(month_total_amount) : "0원",
       },
     };
   }, [filtered_data, week_range, month_range]);
@@ -326,4 +229,3 @@ export default function StatCardsSection({
     </div>
   );
 }
-

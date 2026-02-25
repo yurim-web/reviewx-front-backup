@@ -1,25 +1,14 @@
 /* ========================================
-   🔍 관리자 필터 섹션 컴포넌트
+   관리자 필터 섹션 컴포넌트
    ======================================== */
 
 /**
- * 관리자 필터 섹션 컴포넌트
+ * AdminFilterSection
  *
  * 목적: 관리자 목록을 필터링하기 위한 필터 버튼들을 표시하는 섹션입니다.
  *
  * 사용 페이지:
  * - /manager_sa/member/admins (관리자 목록 페이지)
- *
- * 주요 기능:
- * - 채널 필터
- * - 등급 필터
- * - 유형 필터
- * - 상태 필터
- * - 검색어 필터
- * - 정렬 필터 (최신순)
- * - 등록 버튼
- * - 삭제 버튼
- *
  */
 
 "use client";
@@ -46,10 +35,7 @@ import {
 } from "@/data/manager_ga/member/blacklist";
 import type { BlockCode } from "@/data/manager_ga/common/filterOptions";
 import type { AdminTableRef } from "./AdminTable";
-import {
-  update_admin_status,
-  delete_multiple_admins,
-} from "@/data/manager_sa/member/admins";
+import { update_admin_status, delete_multiple_admins } from "@/data/manager_sa/member/admins";
 
 interface AdminFilterSectionProps {
   search_query: string;
@@ -72,8 +58,7 @@ export default function AdminFilterSection({
   const router = useRouter();
 
   // 상태 필터 드롭다운 열림/닫힘 상태 관리
-  const [is_status_dropdown_open, set_is_status_dropdown_open] =
-    useState(false);
+  const [is_status_dropdown_open, set_is_status_dropdown_open] = useState(false);
   // useRef: DOM 요소에 대한 참조를 생성하는 React Hook입니다
   // <HTMLDivElement | null>: ref가 가리킬 수 있는 타입을 명시합니다 (null도 포함)
   const status_filter_button_ref = useRef<HTMLDivElement | null>(null);
@@ -88,8 +73,7 @@ export default function AdminFilterSection({
 
   // 삭제 확인 모달 상태 관리
   // useState: React Hook으로 컴포넌트의 상태를 관리합니다
-  const [delete_confirm_modal_open, set_delete_confirm_modal_open] =
-    useState(false);
+  const [delete_confirm_modal_open, set_delete_confirm_modal_open] = useState(false);
 
   // 상태 필터 핸들러
   const handle_status_apply = (statuses: AdminStatus[]) => {
@@ -103,9 +87,7 @@ export default function AdminFilterSection({
 
   // 필터 태그 제거 핸들러
   const handle_filter_tag_remove = (value: string) => {
-    on_statuses_change?.(
-      selected_statuses.filter((s) => s !== (value as AdminStatus))
-    );
+    on_statuses_change?.(selected_statuses.filter((s) => s !== (value as AdminStatus)));
   };
 
   // 등록 버튼 핸들러
@@ -222,9 +204,7 @@ export default function AdminFilterSection({
     // 새로운 블랙리스트 항목 ID 생성
     // 기존 블랙리스트 데이터에서 가장 큰 ID를 찾아서 +1 합니다
     const existing_data = get_blacklist_data();
-    const max_id = Math.max(
-      ...existing_data.map((item) => parseInt(item.id) || 0)
-    );
+    const max_id = Math.max(...existing_data.map((item) => parseInt(item.id) || 0));
     const new_id = (max_id + 1).toString();
 
     // 현재 날짜/시간 생성
@@ -252,8 +232,7 @@ export default function AdminFilterSection({
     // 차단 사유에 따라 상태 결정
     // "영구 정지" 사유인 경우 "영구 정지", 그 외는 "일시 정지"
     const new_status: "일시 정지" | "영구 정지" =
-      mapped_block_reason === "외부 결제 · 금전 요구" ||
-      mapped_block_reason === "비정상 운영 행위"
+      mapped_block_reason === "외부 결제 · 금전 요구" || mapped_block_reason === "비정상 운영 행위"
         ? "영구 정지"
         : "일시 정지";
 
@@ -342,7 +321,7 @@ export default function AdminFilterSection({
               />
               <span className={baseFilterStyles.post_action_text}>삭제</span>
             </div>
-            
+
             {/* 이용제한 버튼 */}
             <div className={baseFilterStyles.filter_item} onClick={handle_block}>
               <img

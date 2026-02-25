@@ -1,27 +1,14 @@
 /* ========================================
-   👥 SA 관리자 리뷰어 목록 페이지
+   SA 관리자 리뷰어 목록 페이지
    ======================================== */
 
 /**
- * SA 관리자 리뷰어 목록 페이지
+ * ReviewersPage
  *
  * 목적: SA 관리자가 리뷰어 목록을 확인하고 관리할 수 있는 페이지입니다.
  *
- * 페이지 경로:
+ * 사용 페이지:
  * - /manager_sa/member/reviewers
- *
- * 주요 기능:
- * - 리뷰어 통계 섹션 (전체 가입자 수, 간단 활동 회원, 간단 정규 가입자 수, 면제 회원)
- * - 필터 섹션 (채널, 등급, 유형, 상태, 검색어, 정렬, 차단, 다운로드)
- * - 리뷰어 목록 테이블 (번호, 이름, 채널, 구분, 캠페인 참여, 캠페인 완료, 보유 포인트, 출금 포인트, 유형, 상태, 가입일)
- *
- * 컴포넌트 구조:
- * - ReviewerStatsSection: 리뷰어 통계 섹션
- * - ReviewerFilterSection: 필터 섹션
- * - ReviewerTable: 리뷰어 목록 테이블
- *
- *
- * @returns 리뷰어 목록 페이지 JSX
  */
 
 "use client";
@@ -33,10 +20,7 @@ import ReviewerStatsSection from "@/components/manager/common/member/reviewers/R
 import ReviewerFilterSection from "@/components/manager/common/member/reviewers/ReviewerFilterSection";
 import ReviewerTable from "@/components/manager/common/member/reviewers/ReviewerTable";
 import type { Channel } from "@/data/manager/common/filterOptions";
-import type {
-  ReviewerStatus,
-  ReviewerStatusType,
-} from "@/data/manager_ga/common/filterOptions";
+import type { ReviewerStatus, ReviewerStatusType } from "@/data/manager_ga/common/filterOptions";
 import type { ReviewerGrade } from "@/components/manager/common/member/reviewers/filter/GradeFilterModal";
 
 export default function ReviewersPage() {
@@ -49,12 +33,8 @@ export default function ReviewersPage() {
   // 각 필터의 선택된 값들을 배열로 관리합니다
   const [selected_channels, set_selected_channels] = useState<Channel[]>([]);
   const [selected_grades, set_selected_grades] = useState<ReviewerGrade[]>([]);
-  const [selected_types, set_selected_types] = useState<ReviewerStatusType[]>(
-    []
-  );
-  const [selected_statuses, set_selected_statuses] = useState<ReviewerStatus[]>(
-    []
-  );
+  const [selected_types, set_selected_types] = useState<ReviewerStatusType[]>([]);
+  const [selected_statuses, set_selected_statuses] = useState<ReviewerStatus[]>([]);
 
   // 테이블 참조 (모달 열기 함수 호출용)
   // useRef: React Hook으로 DOM 요소나 컴포넌트 인스턴스에 접근할 수 있게 해줍니다
