@@ -46,9 +46,7 @@ export default function ProfilePage() {
   const [activeTopTab, setActiveTopTab] = useState<MainTab>("account");
 
   // activeSubTab: 현재 활성화된 서브 탭 (프로필/채널)
-  const [activeSubTab, _setActiveSubTab] = useState<"profile" | "channel">(
-    "profile",
-  );
+  const [activeSubTab, _setActiveSubTab] = useState<"profile" | "channel">("profile");
 
   // 유저 정보 상태
   const [userNickname, setUserNickname] = useState("리뷰어");
@@ -67,10 +65,9 @@ export default function ProfilePage() {
         if (storedAccounts) {
           const accounts = JSON.parse(storedAccounts) as LocalAccount[];
           const userAccountIndex = accounts.findIndex(
-            (a) => a.id === user.id || a.email === user.email,
+            (a) => a.id === user.id || a.email === user.email
           );
-          const userAccount =
-            userAccountIndex >= 0 ? accounts[userAccountIndex] : null;
+          const userAccount = userAccountIndex >= 0 ? accounts[userAccountIndex] : null;
 
           if (userAccount) {
             const defaultNicknameMap: Record<string, string> = {
@@ -80,18 +77,14 @@ export default function ProfilePage() {
 
             let nickname = userAccount.nickname || "";
             if (!nickname || nickname === userAccount.name) {
-              nickname =
-                defaultNicknameMap[userAccount.id || user.id] || "";
+              nickname = defaultNicknameMap[userAccount.id || user.id] || "";
 
               if (nickname && userAccountIndex >= 0) {
                 accounts[userAccountIndex] = {
                   ...accounts[userAccountIndex],
                   nickname,
                 };
-                localStorage.setItem(
-                  "user_accounts",
-                  JSON.stringify(accounts),
-                );
+                localStorage.setItem("user_accounts", JSON.stringify(accounts));
               }
             }
 
@@ -102,8 +95,7 @@ export default function ProfilePage() {
             }
           }
         }
-      } catch (_error) {
-      }
+      } catch (_error) {}
     }
   }, [user]);
 
@@ -140,9 +132,7 @@ export default function ProfilePage() {
       try {
         const stored = localStorage.getItem("partner_accounts");
         const accounts = stored ? (JSON.parse(stored) as { id?: string; email?: string }[]) : [];
-        const hasPartnerInfo = accounts.some(
-          (a) => a.id === user?.id || a.email === user?.email,
-        );
+        const hasPartnerInfo = accounts.some((a) => a.id === user?.id || a.email === user?.email);
         if (!hasPartnerInfo) {
           setShowPartnerInfoModal(true);
           return;
@@ -163,10 +153,7 @@ export default function ProfilePage() {
       {/* 메인 컨텐츠 */}
       <main className={layoutStyles.main_content}>
         {/* 상단 탭 네비게이션: 캠페인/포인트/계정/커뮤니티 */}
-        <TabNavigation
-          activeTab={activeTopTab}
-          setActiveTab={setActiveTopTab}
-        />
+        <TabNavigation activeTab={activeTopTab} setActiveTab={setActiveTopTab} />
 
         {/* 서브 탭 (프로필/채널·스토어) */}
         <SubTabNavigation
@@ -204,7 +191,7 @@ export default function ProfilePage() {
           on_cancel={() => setShowPartnerInfoModal(false)}
           on_confirm={() => {
             setShowPartnerInfoModal(false);
-            router.push("/partner/mypage/edit");
+            router.push("/user/mypage/edit");
           }}
           type="center"
         />
