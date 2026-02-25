@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-require-imports */
 /* ========================================
    📊 공용 캠페인 데이터
    ======================================== */
@@ -17,10 +19,7 @@
  * - 중복 데이터 제거
  */
 
-import type {
-  PartnerCampaign,
-  PartnerCampaignStats,
-} from "@/types/domain/partner";
+import type { PartnerCampaign, PartnerCampaignStats } from "@/types/domain/partner";
 import {
   getStatusMessage,
   getBrandLogo,
@@ -192,8 +191,7 @@ export function getClosedCampaigns(): CampaignWithContents[] {
       const applicationStart = item.detailedSchedule?.applicationStart || "";
       const applicationEnd = item.detailedSchedule?.applicationEnd || "";
       const announcement = item.detailedSchedule?.announcement || "";
-      const registrationPeriod =
-        item.detailedSchedule?.registrationPeriod || "";
+      const registrationPeriod = item.detailedSchedule?.registrationPeriod || "";
 
       // recruitment가 없는 경우를 대비한 기본값 설정
       const recruitmentCurrent = item.recruitment?.current || 0;
@@ -209,9 +207,7 @@ export function getClosedCampaigns(): CampaignWithContents[] {
           category: item.subcategory || "",
           brandName: item.brandName || "",
           recruitmentPeriod:
-            applicationStart && applicationEnd
-              ? `${applicationStart} ~ ${applicationEnd}`
-              : "",
+            applicationStart && applicationEnd ? `${applicationStart} ~ ${applicationEnd}` : "",
           announcementDate: announcement,
           registrationPeriod: registrationPeriod,
           recruitedCount: recruitmentCurrent,
@@ -245,9 +241,7 @@ export function getClosedCampaigns(): CampaignWithContents[] {
 // 하위 호환성을 위해 상수로도 export (내부적으로 함수 호출)
 export const closedCampaigns: CampaignWithContents[] = getClosedCampaigns();
 
-export function getClosedContentsById(
-  campaignId: string
-): ContentByTab | undefined {
+export function getClosedContentsById(campaignId: string): ContentByTab | undefined {
   const found = closedCampaigns.find((c) => c.campaignInfo.id === campaignId);
   return found?.contents;
 }
@@ -296,16 +290,16 @@ function getStoredCampaigns(): CampaignWithApplicants[] {
 */
 /**
  * 채널 이름을 정규화하여 표준 채널 이름으로 변환하는 함수
- * 
+ *
  * @param channelName - 원본 채널 이름 (예: "클립", "네이버 클립", "네이버클립")
  * @returns 표준 채널 이름 (예: "네이버클립", "네이버블로그", "인스타그램" 등)
  */
 const normalizeChannelName = (channelName: string | undefined | null): string => {
   if (!channelName) return "네이버블로그";
-  
+
   // 공백 제거하여 정규화
   const normalized = channelName.replace(/\s+/g, "").toLowerCase();
-  
+
   // 채널 이름 매핑
   if (normalized === "네이버블로그" || normalized === "블로그") {
     return "네이버블로그";
@@ -325,7 +319,7 @@ const normalizeChannelName = (channelName: string | undefined | null): string =>
   if (normalized === "쇼츠" || normalized === "숏츠" || normalized === "shorts") {
     return "쇼츠";
   }
-  
+
   // 기본값
   return "네이버블로그";
 };
@@ -333,20 +327,23 @@ const normalizeChannelName = (channelName: string | undefined | null): string =>
 const transformApplicantData = (applicant: any) => {
   // 취소된 신청자는 변환하지 않음 (필터링은 호출 전에 수행)
   // 하지만 안전을 위해 여기서도 체크
-  if (applicant.status === '취소') {
+  if (applicant.status === "취소") {
     return null;
   }
 
   // 채널 이름 정규화 (먼저 수행하여 채널 타입 확인)
   const normalizedChannel = normalizeChannelName(applicant.channelName || applicant.channel);
-  
+
   // 채널 URL에서 채널 ID 추출
   let channelId = "";
   if (applicant.channelUrl) {
     // 클립의 경우 전체 URL을 그대로 사용하거나 ID만 있을 수 있음
     if (normalizedChannel === "네이버클립") {
       // 클립은 URL 전체를 사용하거나 ID만 있을 수 있음
-      if (applicant.channelUrl.startsWith("http://") || applicant.channelUrl.startsWith("https://")) {
+      if (
+        applicant.channelUrl.startsWith("http://") ||
+        applicant.channelUrl.startsWith("https://")
+      ) {
         channelId = applicant.channelUrl; // 전체 URL 사용
       } else {
         channelId = applicant.channelUrl; // ID만 있는 경우
@@ -354,10 +351,10 @@ const transformApplicantData = (applicant: any) => {
     } else {
       // 다른 채널의 경우 URL에서 ID 추출
       // 예: https://blog.naver.com/eunji123 -> eunji123
-      const urlParts = applicant.channelUrl.split('/');
+      const urlParts = applicant.channelUrl.split("/");
       channelId = urlParts[urlParts.length - 1] || "";
       // @ 기호 제거 (인스타그램, 유튜브)
-      if (channelId.startsWith('@')) {
+      if (channelId.startsWith("@")) {
         channelId = channelId.substring(1);
       }
     }
@@ -374,67 +371,79 @@ const transformApplicantData = (applicant: any) => {
   let latestTotalVisits = applicant.totalVisits ?? applicant.total_visits ?? 0;
   let latestNeighbors = applicant.neighbors ?? 0;
 
-  if (typeof window !== 'undefined' && (applicant.id || applicant.userId)) {
+  if (typeof window !== "undefined" && (applicant.id || applicant.userId)) {
     try {
-      const storedAccounts = localStorage.getItem('user_accounts');
+      const storedAccounts = localStorage.getItem("user_accounts");
       if (storedAccounts) {
         const accounts = JSON.parse(storedAccounts);
-        const userAccount = accounts.find((a: any) =>
-          a.id === applicant.id || a.id === applicant.userId || a.email === applicant.email
+        const userAccount = accounts.find(
+          (a: any) =>
+            a.id === applicant.id || a.id === applicant.userId || a.email === applicant.email
         );
         if (userAccount) {
           // user_accounts에서 최신 정보 가져오기 (항상 최신 정보 우선)
           latestNickname = userAccount.nickname || latestNickname;
           latestProfileImage = userAccount.profile_image || latestProfileImage;
-          
+
           // 채널 이름을 Channel 타입으로 매핑
           const channelNameMap: Record<string, string> = {
-            '네이버블로그': 'Blog',
-            '네이버 블로그': 'Blog',
-            '블로그': 'Blog',
-            'Blog': 'Blog',
-            '네이버클립': 'Clip',
-            '네이버 클립': 'Clip',
-            '클립': 'Clip',
-            'Clip': 'Clip',
-            '인스타그램': 'Instagram',
-            'Instagram': 'Instagram',
-            '유튜브': 'Youtube',
-            'Youtube': 'Youtube',
+            네이버블로그: "Blog",
+            "네이버 블로그": "Blog",
+            블로그: "Blog",
+            Blog: "Blog",
+            네이버클립: "Clip",
+            "네이버 클립": "Clip",
+            클립: "Clip",
+            Clip: "Clip",
+            인스타그램: "Instagram",
+            Instagram: "Instagram",
+            유튜브: "Youtube",
+            Youtube: "Youtube",
           };
-          
-          const channelType = channelNameMap[normalizedChannel] || 'Blog';
-          
+
+          const channelType = channelNameMap[normalizedChannel] || "Blog";
+
           // channel_details에서 해당 채널 정보 찾기
           let isChannelConnected = false;
           let channelDetail: any = null;
-          
+
           if (userAccount.channel_details && Array.isArray(userAccount.channel_details)) {
             channelDetail = userAccount.channel_details.find((ch: any) => {
-              const chName = ch.name || '';
+              const chName = ch.name || "";
               // 채널 이름 매칭 (한글 이름 또는 영문 이름)
-              if (channelType === 'Blog') {
-                return chName.includes('블로그') || chName.includes('Blog');
-              } else if (channelType === 'Clip') {
-                return chName.includes('클립') || chName.includes('Clip');
-              } else if (channelType === 'Instagram') {
-                return chName.includes('인스타그램') || chName.includes('Instagram');
-              } else if (channelType === 'Youtube') {
-                return chName.includes('유튜브') || chName.includes('Youtube') || chName.includes('유튜브');
+              if (channelType === "Blog") {
+                return chName.includes("블로그") || chName.includes("Blog");
+              } else if (channelType === "Clip") {
+                return chName.includes("클립") || chName.includes("Clip");
+              } else if (channelType === "Instagram") {
+                return chName.includes("인스타그램") || chName.includes("Instagram");
+              } else if (channelType === "Youtube") {
+                return (
+                  chName.includes("유튜브") ||
+                  chName.includes("Youtube") ||
+                  chName.includes("유튜브")
+                );
               }
               return ch.channel === channelType;
             });
-            
+
             if (channelDetail) {
-              isChannelConnected = channelDetail.status === 'connected' || channelDetail.is_connected === true;
-              
+              isChannelConnected =
+                channelDetail.status === "connected" || channelDetail.is_connected === true;
+
               // channel_details에서 통계 정보 가져오기 (우선순위 1)
-              if (channelType === 'Blog' && isChannelConnected) {
+              if (channelType === "Blog" && isChannelConnected) {
                 // 네이버 블로그: daily_visits, total_visits, neighbors
-                if (channelDetail.daily_visits !== undefined && channelDetail.daily_visits !== null) {
+                if (
+                  channelDetail.daily_visits !== undefined &&
+                  channelDetail.daily_visits !== null
+                ) {
                   latestDailyVisits = channelDetail.daily_visits;
                 }
-                if (channelDetail.total_visits !== undefined && channelDetail.total_visits !== null) {
+                if (
+                  channelDetail.total_visits !== undefined &&
+                  channelDetail.total_visits !== null
+                ) {
                   latestTotalVisits = channelDetail.total_visits;
                 }
                 if (channelDetail.neighbors !== undefined && channelDetail.neighbors !== null) {
@@ -443,26 +452,41 @@ const transformApplicantData = (applicant: any) => {
               }
             }
           }
-          
+
           // channel_details에서 찾지 못한 경우 최상위 레벨에서 가져오기 (하위 호환성)
-          if (channelType === 'Blog' && isChannelConnected) {
+          if (channelType === "Blog" && isChannelConnected) {
             // 최상위 레벨에서 통계 정보 가져오기 (daily_visits, total_visits, neighbors)
             const topLevelDailyVisits = userAccount.daily_visits ?? userAccount.dailyVisits;
             const topLevelTotalVisits = userAccount.total_visits ?? userAccount.totalVisits;
             const topLevelNeighbors = userAccount.neighbors;
-            
+
             // 최상위 레벨에 값이 있고, channel_details에서 가져온 값이 0이면 사용
-            if (latestDailyVisits === 0 && topLevelDailyVisits !== undefined && topLevelDailyVisits !== null && topLevelDailyVisits > 0) {
+            if (
+              latestDailyVisits === 0 &&
+              topLevelDailyVisits !== undefined &&
+              topLevelDailyVisits !== null &&
+              topLevelDailyVisits > 0
+            ) {
               latestDailyVisits = topLevelDailyVisits;
             }
-            if (latestTotalVisits === 0 && topLevelTotalVisits !== undefined && topLevelTotalVisits !== null && topLevelTotalVisits > 0) {
+            if (
+              latestTotalVisits === 0 &&
+              topLevelTotalVisits !== undefined &&
+              topLevelTotalVisits !== null &&
+              topLevelTotalVisits > 0
+            ) {
               latestTotalVisits = topLevelTotalVisits;
             }
-            if (latestNeighbors === 0 && topLevelNeighbors !== undefined && topLevelNeighbors !== null && topLevelNeighbors > 0) {
+            if (
+              latestNeighbors === 0 &&
+              topLevelNeighbors !== undefined &&
+              topLevelNeighbors !== null &&
+              topLevelNeighbors > 0
+            ) {
               latestNeighbors = topLevelNeighbors;
             }
           }
-          
+
           // console.log('✅ [transformApplicantData] user_accounts에서 최신 정보 로드:', {
           //   id: applicant.id || applicant.userId,
           //   applicantId: applicant.id,
@@ -518,7 +542,9 @@ const transformApplicantData = (applicant: any) => {
     memo: applicant.memo || "",
     selectionStatus: applicant.status === "선정" ? "선정하기" : "미선택",
     channel: normalizedChannel,
-    registrationDate: applicant.appliedAt ? new Date(applicant.appliedAt).toISOString().split('T')[0] : undefined,
+    registrationDate: applicant.appliedAt
+      ? new Date(applicant.appliedAt).toISOString().split("T")[0]
+      : undefined,
   };
 };
 
@@ -531,7 +557,7 @@ const transformBasicApplicantData = (applicant: any) => {
   // nickname만 사용하고, name은 절대 사용하지 않음
   // applicant.nickname이 없으면 빈 문자열 사용 (name을 fallback으로 사용하지 않음)
   const nickname = applicant.nickname || "";
-  
+
   // 디버깅: name이 있는데 nickname이 없는 경우 경고
   // if (applicant.name && !applicant.nickname) {
   //   console.warn('[transformBasicApplicantData] ⚠️ nickname이 없고 name만 있음 (name은 사용하지 않음):', {
@@ -541,7 +567,7 @@ const transformBasicApplicantData = (applicant: any) => {
   //     finalNickname: nickname,
   //   });
   // }
-  
+
   // 디버깅: nickname이 name과 같은 경우 경고 (잘못된 데이터)
   // if (applicant.nickname && applicant.name && applicant.nickname === applicant.name) {
   //   console.warn('[transformBasicApplicantData] ⚠️ nickname과 name이 동일함 (잘못된 데이터일 수 있음):', {
@@ -550,16 +576,17 @@ const transformBasicApplicantData = (applicant: any) => {
   //     nickname: applicant.nickname,
   //   });
   // }
-  
+
   return {
     id: applicant.id || applicant.userId,
     Id: applicant.Id || applicant.id || applicant.userId || "", // BasicApplicant에 Id 필드 필요
     // 닉네임만 사용 (name은 절대 사용하지 않음)
     nickname: nickname,
     userType: applicant.userType || "리뷰어",
-    profileImage: applicant.profileImage === "/images/default_profile.png"
-      ? "/images/mypage/profile.svg"
-      : (applicant.profileImage || "/images/mypage/profile.svg"),
+    profileImage:
+      applicant.profileImage === "/images/default_profile.png"
+        ? "/images/mypage/profile.svg"
+        : applicant.profileImage || "/images/mypage/profile.svg",
     memberType: applicant.memberType || "일반 회원",
     memo: applicant.memo || "",
     selectionStatus: applicant.status === "선정" ? "선정하기" : "미선택",
@@ -598,7 +625,7 @@ function getStoredDeliveryCampaigns(): CampaignWithApplicants[] {
 
     try {
       // /data/campaign/delivery/utils.ts에서 가져오기
-      const deliveryUtils = require("@/data/campaign/delivery/utils");
+      const deliveryUtils = require("@/data/campaign/delivery/deliveryUtils");
       calculateCampaignStatus = deliveryUtils.calculateCampaignStatus;
       calculateDaysLeft = deliveryUtils.calculateDaysLeft;
     } catch (error) {
@@ -623,22 +650,21 @@ function getStoredDeliveryCampaigns(): CampaignWithApplicants[] {
       // daysLeft도 재계산
       let daysLeft = 0;
       if (campaign.campaignInfo.announcementDate) {
-        daysLeft =
-          calculateDaysLeft(
-            campaign.campaignInfo.announcementDate.split(" ")[0]
-          ) || 0;
+        daysLeft = calculateDaysLeft(campaign.campaignInfo.announcementDate.split(" ")[0]) || 0;
       }
 
       // 신청자 데이터 변환: localStorage 형식 -> NaverBlogCard 형식
       // 취소된 신청자는 제외하고 변환
-      const transformedApplicants = campaign.applicantData?.applicants
-        ?.filter((a: any) => a.status !== '취소')
-        ?.map(transformApplicantData)
-        ?.filter((a: any) => a !== null) || [];
-      const transformedSelectedApplicants = campaign.applicantData?.selectedApplicants
-        ?.filter((a: any) => a.status !== '취소')
-        ?.map(transformApplicantData)
-        ?.filter((a: any) => a !== null) || [];
+      const transformedApplicants =
+        campaign.applicantData?.applicants
+          ?.filter((a: any) => a.status !== "취소")
+          ?.map(transformApplicantData)
+          ?.filter((a: any) => a !== null) || [];
+      const transformedSelectedApplicants =
+        campaign.applicantData?.selectedApplicants
+          ?.filter((a: any) => a.status !== "취소")
+          ?.map(transformApplicantData)
+          ?.filter((a: any) => a !== null) || [];
 
       return {
         ...campaign,
@@ -681,7 +707,7 @@ function getStoredVisitCampaigns(): CampaignWithApplicants[] {
     ) => "대기 중" | "모집 중" | "진행 중" | "종료" = () => "대기 중";
 
     try {
-      const deliveryUtils = require("@/data/campaign/delivery/utils");
+      const deliveryUtils = require("@/data/campaign/delivery/deliveryUtils");
       calculateCampaignStatus = deliveryUtils.calculateCampaignStatus;
     } catch (error) {
       console.error("calculateCampaignStatus 함수 로드 실패:", error);
@@ -705,11 +731,10 @@ function getStoredVisitCampaigns(): CampaignWithApplicants[] {
       let daysLeft = 0;
       if (campaign.campaignInfo.announcementDate) {
         try {
-          const deliveryUtils = require("@/data/campaign/delivery/utils");
+          const deliveryUtils = require("@/data/campaign/delivery/deliveryUtils");
           daysLeft =
-            deliveryUtils.calculateDaysLeft(
-              campaign.campaignInfo.announcementDate.split(" ")[0]
-            ) || 0;
+            deliveryUtils.calculateDaysLeft(campaign.campaignInfo.announcementDate.split(" ")[0]) ||
+            0;
         } catch (error) {
           console.error("calculateDaysLeft 함수 로드 실패:", error);
         }
@@ -717,14 +742,16 @@ function getStoredVisitCampaigns(): CampaignWithApplicants[] {
 
       // 신청자 데이터 변환: localStorage 형식 -> NaverBlogCard 형식
       // 취소된 신청자는 제외하고 변환
-      const transformedApplicants = campaign.applicantData?.applicants
-        ?.filter((a: any) => a.status !== '취소')
-        ?.map(transformApplicantData)
-        ?.filter((a: any) => a !== null) || [];
-      const transformedSelectedApplicants = campaign.applicantData?.selectedApplicants
-        ?.filter((a: any) => a.status !== '취소')
-        ?.map(transformApplicantData)
-        ?.filter((a: any) => a !== null) || [];
+      const transformedApplicants =
+        campaign.applicantData?.applicants
+          ?.filter((a: any) => a.status !== "취소")
+          ?.map(transformApplicantData)
+          ?.filter((a: any) => a !== null) || [];
+      const transformedSelectedApplicants =
+        campaign.applicantData?.selectedApplicants
+          ?.filter((a: any) => a.status !== "취소")
+          ?.map(transformApplicantData)
+          ?.filter((a: any) => a !== null) || [];
 
       return {
         ...campaign,
@@ -767,7 +794,7 @@ function getStoredReviewCampaigns(): CampaignWithApplicants[] {
     ) => "대기 중" | "모집 중" | "진행 중" | "종료" = () => "대기 중";
 
     try {
-      const deliveryUtils = require("@/data/campaign/delivery/utils");
+      const deliveryUtils = require("@/data/campaign/delivery/deliveryUtils");
       calculateCampaignStatus = deliveryUtils.calculateCampaignStatus;
     } catch (error) {
       console.error("calculateCampaignStatus 함수 로드 실패:", error);
@@ -791,11 +818,10 @@ function getStoredReviewCampaigns(): CampaignWithApplicants[] {
       let daysLeft = 0;
       if (campaign.campaignInfo.announcementDate) {
         try {
-          const deliveryUtils = require("@/data/campaign/delivery/utils");
+          const deliveryUtils = require("@/data/campaign/delivery/deliveryUtils");
           daysLeft =
-            deliveryUtils.calculateDaysLeft(
-              campaign.campaignInfo.announcementDate.split(" ")[0]
-            ) || 0;
+            deliveryUtils.calculateDaysLeft(campaign.campaignInfo.announcementDate.split(" ")[0]) ||
+            0;
         } catch (error) {
           console.error("calculateDaysLeft 함수 로드 실패:", error);
         }
@@ -803,14 +829,16 @@ function getStoredReviewCampaigns(): CampaignWithApplicants[] {
 
       // 신청자 데이터 변환: localStorage 형식 -> BasicApplicant 형식 (구매평은 채널 정보 없음)
       // 취소된 신청자는 제외하고 변환
-      const transformedApplicants = campaign.applicantData?.applicants
-        ?.filter((a: any) => a.status !== '취소')
-        ?.map(transformBasicApplicantData)
-        ?.filter((a: any) => a !== null) || [];
-      const transformedSelectedApplicants = campaign.applicantData?.selectedApplicants
-        ?.filter((a: any) => a.status !== '취소')
-        ?.map(transformBasicApplicantData)
-        ?.filter((a: any) => a !== null) || [];
+      const transformedApplicants =
+        campaign.applicantData?.applicants
+          ?.filter((a: any) => a.status !== "취소")
+          ?.map(transformBasicApplicantData)
+          ?.filter((a: any) => a !== null) || [];
+      const transformedSelectedApplicants =
+        campaign.applicantData?.selectedApplicants
+          ?.filter((a: any) => a.status !== "취소")
+          ?.map(transformBasicApplicantData)
+          ?.filter((a: any) => a !== null) || [];
 
       return {
         ...campaign,
@@ -853,7 +881,7 @@ function getStoredReporterCampaigns(): CampaignWithApplicants[] {
     ) => "대기 중" | "모집 중" | "진행 중" | "종료" = () => "대기 중";
 
     try {
-      const deliveryUtils = require("@/data/campaign/delivery/utils");
+      const deliveryUtils = require("@/data/campaign/delivery/deliveryUtils");
       calculateCampaignStatus = deliveryUtils.calculateCampaignStatus;
     } catch (error) {
       console.error("calculateCampaignStatus 함수 로드 실패:", error);
@@ -877,11 +905,10 @@ function getStoredReporterCampaigns(): CampaignWithApplicants[] {
       let daysLeft = 0;
       if (campaign.campaignInfo.announcementDate) {
         try {
-          const deliveryUtils = require("@/data/campaign/delivery/utils");
+          const deliveryUtils = require("@/data/campaign/delivery/deliveryUtils");
           daysLeft =
-            deliveryUtils.calculateDaysLeft(
-              campaign.campaignInfo.announcementDate.split(" ")[0]
-            ) || 0;
+            deliveryUtils.calculateDaysLeft(campaign.campaignInfo.announcementDate.split(" ")[0]) ||
+            0;
         } catch (error) {
           console.error("calculateDaysLeft 함수 로드 실패:", error);
         }
@@ -889,14 +916,16 @@ function getStoredReporterCampaigns(): CampaignWithApplicants[] {
 
       // 신청자 데이터 변환: localStorage 형식 -> NaverBlogCard 형식
       // 취소된 신청자는 제외하고 변환
-      const transformedApplicants = campaign.applicantData?.applicants
-        ?.filter((a: any) => a.status !== '취소')
-        ?.map(transformApplicantData)
-        ?.filter((a: any) => a !== null) || [];
-      const transformedSelectedApplicants = campaign.applicantData?.selectedApplicants
-        ?.filter((a: any) => a.status !== '취소')
-        ?.map(transformApplicantData)
-        ?.filter((a: any) => a !== null) || [];
+      const transformedApplicants =
+        campaign.applicantData?.applicants
+          ?.filter((a: any) => a.status !== "취소")
+          ?.map(transformApplicantData)
+          ?.filter((a: any) => a !== null) || [];
+      const transformedSelectedApplicants =
+        campaign.applicantData?.selectedApplicants
+          ?.filter((a: any) => a.status !== "취소")
+          ?.map(transformApplicantData)
+          ?.filter((a: any) => a !== null) || [];
 
       return {
         ...campaign,
@@ -939,7 +968,7 @@ function getStoredMissionCampaigns(): CampaignWithApplicants[] {
     ) => "대기 중" | "모집 중" | "진행 중" | "종료" = () => "대기 중";
 
     try {
-      const deliveryUtils = require("@/data/campaign/delivery/utils");
+      const deliveryUtils = require("@/data/campaign/delivery/deliveryUtils");
       calculateCampaignStatus = deliveryUtils.calculateCampaignStatus;
     } catch (error) {
       console.error("calculateCampaignStatus 함수 로드 실패:", error);
@@ -963,11 +992,10 @@ function getStoredMissionCampaigns(): CampaignWithApplicants[] {
       let daysLeft = 0;
       if (campaign.campaignInfo.announcementDate) {
         try {
-          const deliveryUtils = require("@/data/campaign/delivery/utils");
+          const deliveryUtils = require("@/data/campaign/delivery/deliveryUtils");
           daysLeft =
-            deliveryUtils.calculateDaysLeft(
-              campaign.campaignInfo.announcementDate.split(" ")[0]
-            ) || 0;
+            deliveryUtils.calculateDaysLeft(campaign.campaignInfo.announcementDate.split(" ")[0]) ||
+            0;
         } catch (error) {
           console.error("calculateDaysLeft 함수 로드 실패:", error);
         }
@@ -975,14 +1003,16 @@ function getStoredMissionCampaigns(): CampaignWithApplicants[] {
 
       // 신청자 데이터 변환: localStorage 형식 -> BasicApplicant 형식 (미션형은 채널 정보 없음)
       // 취소된 신청자는 제외하고 변환
-      const transformedApplicants = campaign.applicantData?.applicants
-        ?.filter((a: any) => a.status !== '취소')
-        ?.map(transformBasicApplicantData)
-        ?.filter((a: any) => a !== null) || [];
-      const transformedSelectedApplicants = campaign.applicantData?.selectedApplicants
-        ?.filter((a: any) => a.status !== '취소')
-        ?.map(transformBasicApplicantData)
-        ?.filter((a: any) => a !== null) || [];
+      const transformedApplicants =
+        campaign.applicantData?.applicants
+          ?.filter((a: any) => a.status !== "취소")
+          ?.map(transformBasicApplicantData)
+          ?.filter((a: any) => a !== null) || [];
+      const transformedSelectedApplicants =
+        campaign.applicantData?.selectedApplicants
+          ?.filter((a: any) => a.status !== "취소")
+          ?.map(transformBasicApplicantData)
+          ?.filter((a: any) => a !== null) || [];
 
       return {
         ...campaign,
@@ -1011,9 +1041,7 @@ function getStoredMissionCampaigns(): CampaignWithApplicants[] {
    - 사용자가 보는 캠페인 목록과 파트너 관리 페이지의 캠페인 목록을 동기화합니다.
    - 같은 데이터 소스를 사용하므로 변환만 수행합니다.
 */
-function convertCampaignDataToPartnerFormat(
-  campaign: any
-): CampaignWithApplicants {
+function convertCampaignDataToPartnerFormat(campaign: any): CampaignWithApplicants {
   // 날짜 형식 변환: "2025-12-15" → "2025-12-15 ~ 2025-12-30"
   const formatRecruitmentPeriod = (start: string, end: string): string => {
     return `${start} ~ ${end}`;
@@ -1023,7 +1051,7 @@ function convertCampaignDataToPartnerFormat(
   let calculateDaysLeft: (announcementDate: string) => number = () => 0;
   try {
     // /data/campaign/delivery/utils.ts에서 가져오기
-    const deliveryUtils = require("@/data/campaign/delivery/utils");
+    const deliveryUtils = require("@/data/campaign/delivery/deliveryUtils");
     calculateDaysLeft = deliveryUtils.calculateDaysLeft;
   } catch (error) {
     console.error("calculateDaysLeft 함수 로드 실패:", error);
@@ -1087,27 +1115,15 @@ function convertCampaignDataToPartnerFormat(
     "";
 
   // 캠페인 타입 확인
-  const campaignType = campaign.category as
-    | "배송형"
-    | "방문형"
-    | "구매평"
-    | "기자단"
-    | "미션형";
+  const campaignType = campaign.category as "배송형" | "방문형" | "구매평" | "기자단" | "미션형";
 
   // 구매 기간 (구매평 캠페인에만 있음)
   const purchasePeriod =
-    campaignType === "구매평"
-      ? campaign.detailedSchedule?.purchasePeriod || ""
-      : undefined;
+    campaignType === "구매평" ? campaign.detailedSchedule?.purchasePeriod || "" : undefined;
 
   const status =
     applicationStart && applicationEnd && announcement
-      ? calculateStatus(
-          applicationStart,
-          applicationEnd,
-          announcement,
-          registrationPeriod
-        )
+      ? calculateStatus(applicationStart, applicationEnd, announcement, registrationPeriod)
       : "대기 중";
 
   const daysLeft = announcement ? calculateDaysLeft(announcement) || 0 : 0;
@@ -1217,13 +1233,11 @@ function convertExtendedStatusToCampaignStatus(
  * Extended 캠페인 데이터를 CampaignWithApplicants로 변환하는 함수
  * 배송형, 기자단, 미션형, 구매평, 방문형 모두 처리
  */
-function convertExtendedToCampaignWithApplicants(
-  extended: any
-): CampaignWithApplicants {
+function convertExtendedToCampaignWithApplicants(extended: any): CampaignWithApplicants {
   // daysLeft 계산
   let calculateDaysLeft: (announcementDate: string) => number = () => 0;
   try {
-    const deliveryUtils = require("@/data/campaign/delivery/utils");
+    const deliveryUtils = require("@/data/campaign/delivery/deliveryUtils");
     calculateDaysLeft = deliveryUtils.calculateDaysLeft;
   } catch (error) {
     console.error("calculateDaysLeft 함수 로드 실패:", error);
@@ -1290,28 +1304,21 @@ function convertExtendedToCampaignWithApplicants(
 
   // 취소 상태는 그대로 유지 (변환하지 않음)
   // 날짜 기반 계산을 우선 적용 (status 필드가 없거나 날짜 정보가 있으면 날짜 기반 계산 사용)
-  const finalStatus:
-    | "대기 중"
-    | "모집 중"
-    | "선정 중"
-    | "구매 중"
-    | "등록 중"
-    | "마감"
-    | "취소" =
+  const finalStatus: "대기 중" | "모집 중" | "선정 중" | "구매 중" | "등록 중" | "마감" | "취소" =
     extended.status === "취소"
       ? "취소"
       : applicationStart && applicationEnd && announcement
-      ? calculateStatusFromDates(
-          applicationStart,
-          applicationEnd,
-          announcement,
-          registrationPeriod
-        )
-      : convertExtendedStatusToCampaignStatus(
-          extended.status,
-          extended.detailedSchedule?.announcement,
-          registrationPeriod
-        );
+        ? calculateStatusFromDates(
+            applicationStart,
+            applicationEnd,
+            announcement,
+            registrationPeriod
+          )
+        : convertExtendedStatusToCampaignStatus(
+            extended.status,
+            extended.detailedSchedule?.announcement,
+            registrationPeriod
+          );
 
   // category를 기반으로 campaignType 결정
   const getCampaignType = (
@@ -1330,9 +1337,7 @@ function convertExtendedToCampaignWithApplicants(
 
   // 구매 기간 (구매평 캠페인에만 있음)
   const purchasePeriod =
-    campaignType === "구매평"
-      ? extended.detailedSchedule?.purchasePeriod || ""
-      : undefined;
+    campaignType === "구매평" ? extended.detailedSchedule?.purchasePeriod || "" : undefined;
 
   // recruitment가 없는 경우를 대비한 기본값 설정
   const recruitmentCurrent = extended.recruitment?.current || 0;
@@ -1349,9 +1354,7 @@ function convertExtendedToCampaignWithApplicants(
       brandName: extended.brandName || extended.channel || "",
       channel: extended.channel || extended.brandName || "",
       recruitmentPeriod:
-        applicationStart && applicationEnd
-          ? `${applicationStart} ~ ${applicationEnd}`
-          : "",
+        applicationStart && applicationEnd ? `${applicationStart} ~ ${applicationEnd}` : "",
       announcementDate: announcement,
       purchasePeriod: purchasePeriod,
       registrationPeriod: registrationPeriod,
@@ -1413,12 +1416,12 @@ export function getSharedCampaigns(): CampaignWithApplicants[] {
         status: (c.campaignInfo.status === "취소"
           ? "취소"
           : c.campaignInfo.status === "종료"
-          ? "마감"
-          : c.campaignInfo.status === "대기 중"
-          ? "대기 중"
-          : c.campaignInfo.status === "모집 중"
-          ? "모집 중"
-          : "마감") as
+            ? "마감"
+            : c.campaignInfo.status === "대기 중"
+              ? "대기 중"
+              : c.campaignInfo.status === "모집 중"
+                ? "모집 중"
+                : "마감") as
           | "대기 중"
           | "모집 중"
           | "선정 중"
@@ -1580,19 +1583,14 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
 
           // 모집 기간 파싱
           if (recruitmentPeriod) {
-            const recruitParts = recruitmentPeriod
-              .split("~")
-              .map((s) => s.trim());
+            const recruitParts = recruitmentPeriod.split("~").map((s) => s.trim());
             if (recruitParts.length === 2) {
               const recruitStartStr = recruitParts[0].split(" ")[0];
               const recruitEndStr = recruitParts[1].split(" ")[0];
               const recruitStart = new Date(recruitStartStr);
               const recruitEnd = new Date(recruitEndStr);
 
-              if (
-                !isNaN(recruitStart.getTime()) &&
-                !isNaN(recruitEnd.getTime())
-              ) {
+              if (!isNaN(recruitStart.getTime()) && !isNaN(recruitEnd.getTime())) {
                 recruitStart.setHours(0, 0, 0, 0);
                 recruitEnd.setHours(0, 0, 0, 0);
 
@@ -1608,19 +1606,14 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
                 else if (today > recruitEnd) {
                   // 등록 기간 확인
                   if (registrationPeriod) {
-                    const regParts = registrationPeriod
-                      .split("~")
-                      .map((s) => s.trim());
+                    const regParts = registrationPeriod.split("~").map((s) => s.trim());
                     if (regParts.length === 2) {
                       const regStartStr = regParts[0].split(" ")[0];
                       const regEndStr = regParts[1].split(" ")[0];
                       const regStart = new Date(regStartStr);
                       const regEnd = new Date(regEndStr);
 
-                      if (
-                        !isNaN(regStart.getTime()) &&
-                        !isNaN(regEnd.getTime())
-                      ) {
+                      if (!isNaN(regStart.getTime()) && !isNaN(regEnd.getTime())) {
                         regStart.setHours(0, 0, 0, 0);
                         regEnd.setHours(0, 0, 0, 0);
 
@@ -1674,25 +1667,19 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
     }
 
     // calculatedTab을 PartnerCampaign의 status로 매핑
-    const calculatedStatus:
-      | "대기 중"
-      | "모집 중"
-      | "진행 중"
-      | "종료"
-      | "취소" =
+    const calculatedStatus: "대기 중" | "모집 중" | "진행 중" | "종료" | "취소" =
       calculatedTab === "예정"
         ? "대기 중"
         : calculatedTab === "신청"
-        ? "모집 중"
-        : calculatedTab === "진행"
-        ? "진행 중"
-        : calculatedTab === "종료"
-        ? "종료"
-        : "취소";
+          ? "모집 중"
+          : calculatedTab === "진행"
+            ? "진행 중"
+            : calculatedTab === "종료"
+              ? "종료"
+              : "취소";
 
     const applicantsCount = campaign.applicantData?.applicants?.length ?? 0;
-    const selectedCount =
-      campaign.applicantData?.selectedApplicants?.length ?? 0;
+    const selectedCount = campaign.applicantData?.selectedApplicants?.length ?? 0;
     const recruitsCount = campaign.campaignInfo.totalCount ?? 0;
 
     // 탭별 daysLeft 재계산
@@ -1703,7 +1690,7 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
 
     let calculateDaysLeft: (dateString: string) => number = () => 0;
     try {
-      const deliveryUtils = require("@/data/campaign/delivery/utils");
+      const deliveryUtils = require("@/data/campaign/delivery/deliveryUtils");
       calculateDaysLeft = deliveryUtils.calculateDaysLeft;
     } catch (error) {
       console.error("calculateDaysLeft 함수 로드 실패:", error);
@@ -1789,22 +1776,15 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
         campaign.campaignInfo.campaignType
       ),
       subStatus: (() => {
-        const baseSubStatus = getSubStatus(
-          calculatedTab,
-          applicantsCount,
-          selectedCount
-        );
+        const baseSubStatus = getSubStatus(calculatedTab, applicantsCount, selectedCount);
 
         // 연장 요청한 리뷰어가 있는지 확인
         // ✅ 조건:
         // 1. 선정자가 있어야 함 (selectedApplicants가 있어야 함)
         // 2. contents.waiting에 extension_request_reason이 있는 항목이 있어야 함
-        const hasSelectedApplicants =
-          (campaign.applicantData?.selectedApplicants?.length ?? 0) > 0;
+        const hasSelectedApplicants = (campaign.applicantData?.selectedApplicants?.length ?? 0) > 0;
         const hasExtensionRequest =
-          campaign.contents?.waiting?.some(
-            (item) => item.extension_request_reason
-          ) || false;
+          campaign.contents?.waiting?.some((item) => item.extension_request_reason) || false;
 
         // 등록 기간이 진행 중인지 확인 (등록 기간이 끝나지 않았는지)
         const registrationPeriod = campaign.campaignInfo.registrationPeriod;
@@ -1813,9 +1793,7 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
           const today = new Date();
           today.setHours(0, 0, 0, 0);
           // "~" 또는 " ~ "로 분리 (공백 처리)
-          const regParts = registrationPeriod
-            .split(/~\s*/)
-            .map((s) => s.trim());
+          const regParts = registrationPeriod.split(/~\s*/).map((s) => s.trim());
           if (regParts.length === 2) {
             const regStartStr = regParts[0].split(" ")[0];
             const regEndStr = regParts[1].split(" ")[0];
@@ -1855,8 +1833,7 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
 
         // 캠페인이 종료되지 않았는지 확인 (종료된 캠페인은 종료 탭으로 이동해야 함)
         // calculatedTab이 "종료"가 아닐 때만 연장 요청 탭에 표시
-        const isCampaignNotEnded =
-          calculatedTab !== "종료" && calculatedTab !== "취소";
+        const isCampaignNotEnded = calculatedTab !== "종료" && calculatedTab !== "취소";
 
         // 연장 요청 탭에 표시될 캠페인들에 extension_request 추가
         // ✅ 조건:
@@ -1923,9 +1900,7 @@ export const getCampaignById = (id: string): CampaignWithApplicants | null => {
   // 1. localStorage에 저장된 새 캠페인을 먼저 검색 (우선순위, 모든 타입)
   // 이렇게 하면 새로 등록한 캠페인이 ID 중복이 있어도 우선적으로 반환됩니다
   const storedCampaigns = getStoredCampaigns();
-  const storedFound = storedCampaigns.find(
-    (campaign) => campaign.campaignInfo.id === id
-  );
+  const storedFound = storedCampaigns.find((campaign) => campaign.campaignInfo.id === id);
 
   // 2. 목업 데이터에서 검색 (getSharedCampaigns는 localStorage + 목업을 합친 것이므로 분리 필요)
   // getSharedCampaigns 대신 목업 데이터만 직접 조회
@@ -1947,12 +1922,12 @@ export const getCampaignById = (id: string): CampaignWithApplicants | null => {
           status: (closedFound.campaignInfo.status === "취소"
             ? "취소"
             : closedFound.campaignInfo.status === "종료"
-            ? "마감"
-            : closedFound.campaignInfo.status === "대기 중"
-            ? "대기 중"
-            : closedFound.campaignInfo.status === "모집 중"
-            ? "모집 중"
-            : "마감") as
+              ? "마감"
+              : closedFound.campaignInfo.status === "대기 중"
+                ? "대기 중"
+                : closedFound.campaignInfo.status === "모집 중"
+                  ? "모집 중"
+                  : "마감") as
             | "대기 중"
             | "모집 중"
             | "선정 중"
@@ -1983,12 +1958,14 @@ export const getCampaignById = (id: string): CampaignWithApplicants | null => {
       return {
         ...storedFound,
         applicantData: {
-          applicants: storedApplicantsCount > 0
-            ? storedFound.applicantData.applicants
-            : mockFound.applicantData?.applicants || [],
-          selectedApplicants: storedSelectedCount > 0
-            ? storedFound.applicantData.selectedApplicants
-            : mockFound.applicantData?.selectedApplicants || [],
+          applicants:
+            storedApplicantsCount > 0
+              ? storedFound.applicantData.applicants
+              : mockFound.applicantData?.applicants || [],
+          selectedApplicants:
+            storedSelectedCount > 0
+              ? storedFound.applicantData.selectedApplicants
+              : mockFound.applicantData?.selectedApplicants || [],
         },
       };
     }
@@ -2080,8 +2057,7 @@ export const getCampaignsByTab = (tab: string): PartnerCampaign[] => {
        */
       return partnerCampaigns.filter(
         (campaign) =>
-          campaign.status === "대기 중" &&
-          !campaign.subStatus?.includes("extension_request")
+          campaign.status === "대기 중" && !campaign.subStatus?.includes("extension_request")
       );
     case "신청":
       /**
@@ -2107,9 +2083,7 @@ export const getCampaignsByTab = (tab: string): PartnerCampaign[] => {
           const today = new Date();
           today.setHours(0, 0, 0, 0);
 
-          const announcementDateStr = campaign.announcementDate
-            .split(" ")[0]
-            ?.trim();
+          const announcementDateStr = campaign.announcementDate.split(" ")[0]?.trim();
           if (announcementDateStr) {
             const announcementDate = new Date(announcementDateStr);
             if (!isNaN(announcementDate.getTime())) {
@@ -2182,8 +2156,7 @@ export const getCampaignsByTab = (tab: string): PartnerCampaign[] => {
        */
       return partnerCampaigns.filter(
         (campaign) =>
-          campaign.status === "취소" &&
-          !campaign.subStatus?.includes("extension_request")
+          campaign.status === "취소" && !campaign.subStatus?.includes("extension_request")
       );
     case "연장 요청":
       /**
@@ -2285,9 +2258,7 @@ export const getInitialCampaignStats = (): PartnerCampaignStats => {
   const campaignReviewList = (campaignReviewCampaigns || []).map(
     convertCampaignDataToPartnerFormat
   );
-  const campaignVisitList = (campaignVisitCampaigns || []).map(
-    convertCampaignDataToPartnerFormat
-  );
+  const campaignVisitList = (campaignVisitCampaigns || []).map(convertCampaignDataToPartnerFormat);
   const campaignReporterList = (campaignReporterCampaigns || []).map(
     convertCampaignDataToPartnerFormat
   );
@@ -2304,12 +2275,7 @@ export const getInitialCampaignStats = (): PartnerCampaignStats => {
     ...closedCampaigns.map((c) => ({
       campaignInfo: {
         ...c.campaignInfo,
-        status: c.campaignInfo.status as
-          | "진행 중"
-          | "모집 중"
-          | "대기 중"
-          | "종료"
-          | "취소",
+        status: c.campaignInfo.status as "진행 중" | "모집 중" | "대기 중" | "종료" | "취소",
       },
       applicantData: { applicants: [], selectedApplicants: [] },
     })),
@@ -2354,21 +2320,16 @@ export const getInitialCampaignStats = (): PartnerCampaignStats => {
     }
 
     // calculatedTab을 PartnerCampaign의 status로 매핑
-    const calculatedStatus:
-      | "대기 중"
-      | "모집 중"
-      | "진행 중"
-      | "종료"
-      | "취소" =
+    const calculatedStatus: "대기 중" | "모집 중" | "진행 중" | "종료" | "취소" =
       calculatedTab === "예정"
         ? "대기 중"
         : calculatedTab === "신청"
-        ? "모집 중"
-        : calculatedTab === "진행"
-        ? "진행 중"
-        : calculatedTab === "종료"
-        ? "종료"
-        : "취소";
+          ? "모집 중"
+          : calculatedTab === "진행"
+            ? "진행 중"
+            : calculatedTab === "종료"
+              ? "종료"
+              : "취소";
 
     return {
       id: campaign.campaignInfo.id,
@@ -2397,9 +2358,8 @@ export const getInitialCampaignStats = (): PartnerCampaignStats => {
     진행: partnerCampaigns.filter((c) => c.status === "진행 중").length,
     종료: partnerCampaigns.filter((c) => c.status === "종료").length,
     취소: partnerCampaigns.filter((c) => c.status === "취소").length,
-    "연장 요청": partnerCampaigns.filter(
-      (c) => c.subStatus?.includes("extension_request") || false
-    ).length,
+    "연장 요청": partnerCampaigns.filter((c) => c.subStatus?.includes("extension_request") || false)
+      .length,
     패널티: 0,
   };
 };
@@ -2427,9 +2387,7 @@ function getDeletedCampaignIds(): string[] {
     }
 
     const deletedIds: string[] = JSON.parse(stored);
-    const result = Array.isArray(deletedIds)
-      ? deletedIds.map((id) => String(id))
-      : [];
+    const result = Array.isArray(deletedIds) ? deletedIds.map((id) => String(id)) : [];
     // console.log(`[getDeletedCampaignIds] 삭제된 캠페인 ID 목록:`, result);
     return result;
   } catch (error) {
@@ -2490,9 +2448,7 @@ function getCancelledCampaignIds(): string[] {
     }
 
     const cancelledIds: string[] = JSON.parse(stored);
-    const result = Array.isArray(cancelledIds)
-      ? cancelledIds.map((id) => String(id))
-      : [];
+    const result = Array.isArray(cancelledIds) ? cancelledIds.map((id) => String(id)) : [];
     // console.log(`[getCancelledCampaignIds] 취소된 캠페인 ID 목록:`, result);
     return result;
   } catch (error) {
@@ -2516,10 +2472,7 @@ function addCancelledCampaignId(campaignId: string): void {
 
     if (!cancelledIds.includes(campaignIdStr)) {
       cancelledIds.push(campaignIdStr);
-      localStorage.setItem(
-        "cancelledCampaignIds",
-        JSON.stringify(cancelledIds)
-      );
+      localStorage.setItem("cancelledCampaignIds", JSON.stringify(cancelledIds));
       // console.log(
       //   `[addCancelledCampaignId] 취소 목록에 추가됨: ID=${campaignIdStr}, 현재 취소 목록:`,
       //   cancelledIds
@@ -2799,9 +2752,7 @@ export function updateCampaignApplicants(
 
     // localStorage에서 해당 타입의 캠페인 배열 불러오기
     const stored = localStorage.getItem(storageKey);
-    let campaigns: CampaignWithApplicants[] = stored
-      ? JSON.parse(stored)
-      : [];
+    let campaigns: CampaignWithApplicants[] = stored ? JSON.parse(stored) : [];
 
     if (!Array.isArray(campaigns)) {
       campaigns = [];
@@ -2840,9 +2791,7 @@ export function updateCampaignApplicants(
         //   `localStorage에 캠페인 신청자 데이터 추가 완료: ID=${campaignId}, 타입=${campaignType}, 신청자=${applicants.length}명, 선정자=${selectedApplicants.length}명`
         // );
       } else {
-        console.error(
-          `캠페인을 찾을 수 없습니다: ID=${campaignId}, 타입=${campaignType}`
-        );
+        console.error(`캠페인을 찾을 수 없습니다: ID=${campaignId}, 타입=${campaignType}`);
         return false;
       }
     }

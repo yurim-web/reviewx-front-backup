@@ -32,7 +32,24 @@ import headerStyles from "@/styles/partner/campaign_create/campaign_header.modul
 import checkboxStyles from "@/styles/partner/campaign_create/campaign_guide/checkboxes.module.css";
 import { campaignToFormData } from "@/utils/partner/campaignEdit/campaignToFormData";
 
-type StoredCampaignRaw = { campaignInfo?: { id?: string }; id?: string };
+type StoredCampaignRaw = {
+  campaignInfo?: { id?: string };
+  id?: string;
+  contentType?: string;
+  isUrgent?: boolean;
+  registeredAt?: string;
+  description?: string;
+  productLink?: string;
+  keywords?: string;
+  guidelines?: string;
+  minTextLength?: number | string;
+  minImageCount?: number | string;
+  videoCount?: number | string;
+  videoDuration?: number | string;
+  requireLinkAttachment?: boolean;
+  requireKeywordAttachment?: boolean;
+  contactPhone?: string;
+};
 
 export default function MissionCampaignEditPage() {
   const router = useRouter();
@@ -215,8 +232,11 @@ export default function MissionCampaignEditPage() {
         productLink: formData.promotionLink || originalData?.productLink || "",
         keywords: formData.keywords || originalData?.keyword || "",
         subcategory: formData.category || originalData?.subcategory || "",
-        channel: originalData?.channel || "",
-        points: Number(formData.additionalPoints?.replace(/,/g, "")) || originalData?.points || 0,
+        channel: (originalData as { channel?: string } | undefined)?.channel || "",
+        points:
+          Number(String(formData.additionalPoints || "").replace(/,/g, "")) ||
+          originalData?.points ||
+          0,
         adultOnly: formData.adultOnly ?? originalData?.adultOnly ?? false,
         allowReParticipation:
           formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,

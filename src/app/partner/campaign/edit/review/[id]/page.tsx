@@ -280,7 +280,9 @@ export default function ReviewCampaignEditPage() {
               subcategory: formData.category || originalData?.subcategory || "",
               channel: originalData?.channel || "",
               points:
-                Number(formData.additionalPoints?.replace(/,/g, "")) || originalData?.points || 0,
+                Number(String(formData.additionalPoints || "").replace(/,/g, "")) ||
+                originalData?.points ||
+                0,
               adultOnly: formData.adultOnly ?? originalData?.adultOnly ?? false,
               allowReParticipation:
                 formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,

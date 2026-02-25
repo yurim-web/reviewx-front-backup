@@ -92,7 +92,7 @@ const checkServerStatus = async (): Promise<void> => {
     //   throw new Error("서버 오류");
     // }
   } catch (_error) {
-    throw error;
+    throw _error;
   }
 };
 

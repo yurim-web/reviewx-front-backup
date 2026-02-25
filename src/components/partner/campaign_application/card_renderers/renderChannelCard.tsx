@@ -32,8 +32,8 @@ import YoutubeSelectedCard from "@/components/partner/campaign_application/card_
  * Channel 카드 렌더링 함수 (delivery 전용)
  */
 export function renderChannelCard(
-  handleSelectApplicant: (applicant: AllApplicant) => void,
-  handleCancelApplicant: (applicant: AllApplicant) => void
+  handleSelectApplicant: (applicantId: string) => void,
+  handleCancelApplicant: (applicantId: string) => void
 ) {
   // eslint-disable-next-line react/display-name
   return (applicant: AllApplicant, isSelected: boolean = false): React.ReactNode => {

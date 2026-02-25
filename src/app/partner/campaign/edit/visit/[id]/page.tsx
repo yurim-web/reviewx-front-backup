@@ -193,7 +193,9 @@ export default function VisitCampaignEditPage() {
             isUrgent: isUrgent,
             registeredAt:
               originalData?.registeredAt ||
-              ((existingCampaign as Record<string, unknown>).registeredAt as string | undefined),
+              ((existingCampaign as unknown as Record<string, unknown>).registeredAt as
+                | string
+                | undefined),
             description: formData.providedItems || originalData?.description || "",
             visitLink: formData.visitLink || originalData?.visitLink || "",
             visitAddress: formData.visitAddress || originalData?.visitAddress || "",

@@ -22,7 +22,7 @@ interface BankDropdownProps {
   onToggle: () => void;
   onSelect: (bank: string) => void;
   banks: readonly string[];
-  dropdownRef?: RefObject<HTMLDivElement>;
+  dropdownRef?: RefObject<HTMLDivElement | null>;
 }
 
 export default function BankDropdown({

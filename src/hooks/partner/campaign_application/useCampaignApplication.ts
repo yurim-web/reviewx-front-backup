@@ -52,62 +52,55 @@ function updateUserAppliedCampaignStatus(
     // localStorage에서 user_applied_campaigns 가져오기
     const userAppliedCampaigns = localStorage.getItem("user_applied_campaigns");
     if (!userAppliedCampaigns) {
-      console.log(
-        `[updateUserAppliedCampaignStatus] user_applied_campaigns가 없습니다`
-      );
+      console.log(`[updateUserAppliedCampaignStatus] user_applied_campaigns가 없습니다`);
       return;
     }
 
     const appliedCampaigns = JSON.parse(userAppliedCampaigns);
     if (!Array.isArray(appliedCampaigns)) {
-      console.error(
-        `[updateUserAppliedCampaignStatus] user_applied_campaigns가 배열이 아닙니다`
-      );
+      console.error(`[updateUserAppliedCampaignStatus] user_applied_campaigns가 배열이 아닙니다`);
       return;
     }
 
     // 해당 유저의 신청 내역 찾기
     const userCampaigns = appliedCampaigns.find(
-      (uc: any) => uc.userId === userId
+      (uc: {
+        userId: string;
+        campaigns?: { campaignId: string | number; [key: string]: unknown }[];
+      }) => uc.userId === userId
     );
     if (!userCampaigns || !userCampaigns.campaigns) {
-      console.log(
-        `[updateUserAppliedCampaignStatus] 유저 ${userId}의 신청 내역이 없습니다`
-      );
+      console.log(`[updateUserAppliedCampaignStatus] 유저 ${userId}의 신청 내역이 없습니다`);
       return;
     }
 
     // 해당 캠페인 찾기 (다양한 ID 형식 지원)
-    const campaignIndex = userCampaigns.campaigns.findIndex((c: any) => {
-      const storedCampaignId = String(c.campaignId);
-      const searchCampaignId = String(campaignId);
+    const campaignIndex = userCampaigns.campaigns.findIndex(
+      (c: { campaignId: string | number; [key: string]: unknown }) => {
+        const storedCampaignId = String(c.campaignId);
+        const searchCampaignId = String(campaignId);
 
-      // 정확히 일치하는 경우
-      if (storedCampaignId === searchCampaignId) return true;
+        // 정확히 일치하는 경우
+        if (storedCampaignId === searchCampaignId) return true;
 
-      // ID 형식 변환 시도 (prefix 제거/추가)
-      const prefixes = ["delivery_", "visit_", "review_", "reporter_", "mission_"];
-      for (const prefix of prefixes) {
-        // searchCampaignId가 prefix를 포함하는 경우
-        if (searchCampaignId.startsWith(prefix)) {
-          const idWithoutPrefix = searchCampaignId.replace(
-            new RegExp(`^${prefix}`),
-            ""
-          );
-          if (storedCampaignId === idWithoutPrefix) return true;
+        // ID 형식 변환 시도 (prefix 제거/추가)
+        const prefixes = ["delivery_", "visit_", "review_", "reporter_", "mission_"];
+        for (const prefix of prefixes) {
+          // searchCampaignId가 prefix를 포함하는 경우
+          if (searchCampaignId.startsWith(prefix)) {
+            const idWithoutPrefix = searchCampaignId.replace(new RegExp(`^${prefix}`), "");
+            if (storedCampaignId === idWithoutPrefix) return true;
+          }
+          // storedCampaignId가 prefix를 포함하는 경우
+          if (storedCampaignId.startsWith(prefix)) {
+            const idWithoutPrefix = storedCampaignId.replace(new RegExp(`^${prefix}`), "");
+            if (idWithoutPrefix === searchCampaignId) return true;
+          }
         }
-        // storedCampaignId가 prefix를 포함하는 경우
-        if (storedCampaignId.startsWith(prefix)) {
-          const idWithoutPrefix = storedCampaignId.replace(
-            new RegExp(`^${prefix}`),
-            ""
-          );
-          if (idWithoutPrefix === searchCampaignId) return true;
-        }
+
+        return false;
       }
-
-      return false;
-    });
+    );
 
     if (campaignIndex === -1) {
       console.log(
@@ -121,10 +114,7 @@ function updateUserAppliedCampaignStatus(
     userCampaigns.campaigns[campaignIndex].status = newStatus;
 
     // localStorage에 다시 저장
-    localStorage.setItem(
-      "user_applied_campaigns",
-      JSON.stringify(appliedCampaigns)
-    );
+    localStorage.setItem("user_applied_campaigns", JSON.stringify(appliedCampaigns));
 
     console.log(
       `✅ [updateUserAppliedCampaignStatus] 유저 신청 내역 상태 업데이트: userId=${userId}, campaignId=${campaignId}, ${oldStatus} -> ${newStatus}`
@@ -133,10 +123,7 @@ function updateUserAppliedCampaignStatus(
     // storage 이벤트 트리거 (다른 탭에서 변경사항 감지)
     window.dispatchEvent(new Event("storage"));
   } catch (error) {
-    console.error(
-      `[updateUserAppliedCampaignStatus] 오류 발생:`,
-      error
-    );
+    console.error(`[updateUserAppliedCampaignStatus] 오류 발생:`, error);
   }
 }
 
@@ -157,8 +144,8 @@ function addUserNotification(
   userId: string,
   campaignId: string,
   campaignTitle: string,
-  campaignType: 'delivery' | 'visit' | 'review' | 'mission' | 'reporter',
-  type: '선정' | '탈락' | '제출' | '승인'
+  campaignType: string,
+  type: "선정" | "탈락" | "제출" | "승인"
 ): void {
   if (typeof window === "undefined") return;
 
@@ -168,7 +155,7 @@ function addUserNotification(
     const notifications = storedNotifications ? JSON.parse(storedNotifications) : [];
 
     // 새로운 알림 ID 생성 (기존 알림 중 가장 큰 ID + 1)
-    const maxId = notifications.reduce((max: number, notif: any) => {
+    const maxId = notifications.reduce((max: number, notif: { id?: number }) => {
       return Math.max(max, notif.id || 0);
     }, 0);
     const newId = maxId + 1;
@@ -194,7 +181,12 @@ function addUserNotification(
     const newNotification = {
       id: newId,
       user_id: userId,
-      type: type === "선정" ? "campaign_selected" : type === "탈락" ? "campaign_rejected" : "campaign_update",
+      type:
+        type === "선정"
+          ? "campaign_selected"
+          : type === "탈락"
+            ? "campaign_rejected"
+            : "campaign_update",
       campaign_id: campaignId,
       campaign_title: campaignTitle,
       campaign_type: campaignType,
@@ -216,10 +208,7 @@ function addUserNotification(
     // storage 이벤트 트리거 (다른 탭에서 변경사항 감지)
     window.dispatchEvent(new Event("storage"));
   } catch (error) {
-    console.error(
-      `[addUserNotification] 오류 발생:`,
-      error
-    );
+    console.error(`[addUserNotification] 오류 발생:`, error);
   }
 }
 
@@ -305,8 +294,7 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
   // 📌 React 상태 관리:
   // - useState: 컴포넌트의 상태를 관리하는 React 훅
   // - 제네릭 타입으로 상태의 타입을 명시하여 타입 안정성 확보
-  const [campaignData, setCampaignData] =
-    useState<CampaignWithApplicants | null>(null);
+  const [campaignData, setCampaignData] = useState<CampaignWithApplicants | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -331,8 +319,7 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
 
   // 모달 상태 관리
   const [is_modal_open, setIsModalOpen] = useState(false);
-  const [is_already_selected_modal_open, setIsAlreadySelectedModalOpen] =
-    useState(false);
+  const [is_already_selected_modal_open, setIsAlreadySelectedModalOpen] = useState(false);
 
   // 정렬 옵션 정의
   // 📌 상수 배열:
@@ -495,10 +482,7 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
     setApplicantsState((prevApplicants) => {
       const target = prevApplicants.find((a) => a.id === applicantId);
       if (!target) {
-        console.log(
-          "신청 목록에서 해당 신청자를 찾을 수 없습니다:",
-          applicantId
-        );
+        console.log("신청 목록에서 해당 신청자를 찾을 수 없습니다:", applicantId);
         return prevApplicants;
       }
 
@@ -523,9 +507,7 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
       // - 신청 목록에서 제거된 신청자를 선정 리스트에 추가
       setSelectedState((prevSelected) => {
         // 이미 선정 리스트에 있는지 확인
-        const isAlreadyInSelected = prevSelected.some(
-          (a) => a.id === applicantId
-        );
+        const isAlreadyInSelected = prevSelected.some((a) => a.id === applicantId);
         if (isAlreadyInSelected) {
           console.log("이미 선정 리스트에 있는 신청자입니다:", applicantId);
           return prevSelected;
@@ -580,10 +562,7 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
     setSelectedState((prevSelected) => {
       const target = prevSelected.find((a) => a.id === applicantId);
       if (!target) {
-        console.log(
-          "선정 목록에서 해당 신청자를 찾을 수 없습니다:",
-          applicantId
-        );
+        console.log("선정 목록에서 해당 신청자를 찾을 수 없습니다:", applicantId);
         return prevSelected;
       }
 
@@ -599,9 +578,7 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
       // 신청 리스트에 추가 (별도로 처리)
       setApplicantsState((prevApplicants) => {
         // 이미 신청 리스트에 있는지 확인
-        const isAlreadyInApplicants = prevApplicants.some(
-          (a) => a.id === applicantId
-        );
+        const isAlreadyInApplicants = prevApplicants.some((a) => a.id === applicantId);
         if (isAlreadyInApplicants) {
           console.log("이미 신청 리스트에 있는 신청자입니다:", applicantId);
           return prevApplicants;

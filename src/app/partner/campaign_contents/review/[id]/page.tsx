@@ -13,7 +13,8 @@
 
 "use client";
 
-import React, { useState, useParams } from "react";
+import React, { useState } from "react";
+import { useParams } from "next/navigation";
 import { useCampaignContents } from "@/hooks/partner/campaign_contents/useCampaignContents";
 import CampaignContentsLayout from "@/components/partner/campaign_contents/CampaignContentsLayout";
 import { createReviewCardRenderer } from "@/components/partner/campaign_contents/card_renderers/renderReviewCard";
