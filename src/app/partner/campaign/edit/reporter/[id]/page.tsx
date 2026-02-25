@@ -1,5 +1,5 @@
 /* ========================================
-   📰 기자단 캠페인 수정 페이지
+   기자단 캠페인 수정 페이지
    ======================================== */
 
 /**
@@ -7,7 +7,7 @@
  *
  * 목적: 파트너가 기자단 캠페인을 수정하는 페이지입니다.
  *
- * 페이지 경로:
+ * 사용 페이지:
  * - /partner/campaign/edit/reporter/[id]
  */
 
@@ -30,6 +30,7 @@ import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import Toast from "@/components/common/toast/Toast";
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import checkboxStyles from "@/styles/partner/campaign_create/campaign_guide/checkboxes.module.css";
+import Image from "next/image";
 import { campaignToFormData } from "@/utils/partner/campaignEdit/campaignToFormData";
 
 export default function ReporterCampaignEditPage() {
@@ -67,8 +68,7 @@ export default function ReporterCampaignEditPage() {
       today.setHours(0, 0, 0, 0);
 
       return startDate <= today;
-    } catch (error) {
-      console.error("캠페인 오픈 여부 확인 실패:", error);
+    } catch (_error) {
       return false;
     }
   };
@@ -119,8 +119,7 @@ export default function ReporterCampaignEditPage() {
       setIsOpen(openStatus);
 
       setIsLoading(false);
-    } catch (err) {
-      console.error("캠페인 로드 실패:", err);
+    } catch (_err) {
       setError("캠페인을 불러오는 중 오류가 발생했습니다.");
       setIsLoading(false);
     }
@@ -296,8 +295,7 @@ export default function ReporterCampaignEditPage() {
 
       // 페이지 새로고침
       router.refresh();
-    } catch (error) {
-      console.error("기자단 캠페인 수정 실패:", error);
+    } catch (_error) {
       alert("캠페인 수정에 실패했습니다. 다시 시도해주세요.");
     } finally {
       setIsSubmitting(false);
@@ -332,7 +330,7 @@ export default function ReporterCampaignEditPage() {
           onClick={() => router.back()}
           aria-label="뒤로가기"
         >
-          <img src="/images/header/header_arrow_back.svg" alt="뒤로가기" width={16} height={16} />
+          <Image src="/images/header/header_arrow_back.svg" alt="뒤로가기" width={16} height={16} />
         </button>
 
         <h1 className={headerStyles.page_title}>캠페인 수정</h1>

@@ -5,15 +5,10 @@
 /**
  * 파트너 알림 페이지
  *
- * 목적: 파트너 단에서 사용되는 알림 페이지입니다.
+ * 목적: 파트너 전용 알림 목록을 표시하는 페이지입니다.
  *
- * 페이지 경로:
+ * 사용 페이지:
  * - /partner/notification
- *
- * 주요 기능:
- * - 파트너 전용 헤더 표시
- * - 알림 목록 표시
- *
  */
 
 "use client";
@@ -68,19 +63,13 @@ function PartnerNotificationPage() {
    *
    * @param notification - 클릭된 알림 아이템
    */
-  const handle_notification_click = (
-    notification: (typeof mockPartnerNotifications)[0]
-  ) => {
+  const handle_notification_click = (_notification: (typeof mockPartnerNotifications)[0]) => {
     // TODO: 알림 상세 페이지로 이동 또는 모달 열기
     // 예시: router.push(`/partner/notification/${notification.id}`)
   };
 
   return (
-    <div
-      className={`${styles.notification_container} ${
-        isMobile ? styles.mobile : ""
-      }`}
-    >
+    <div className={`${styles.notification_container} ${isMobile ? styles.mobile : ""}`}>
       {/* 파트너 전용 서브헤더 (PC 전용) - 모바일에서는 렌더링하지 않음 */}
       {!isMobile && <PartnerSubHeader />}
 
@@ -90,10 +79,7 @@ function PartnerNotificationPage() {
         <PageTitle
           title="알림"
           right_content={
-            <button
-              className={styles.delete_all_button}
-              onClick={handle_delete_all_click}
-            >
+            <button className={styles.delete_all_button} onClick={handle_delete_all_click}>
               전체 삭제
             </button>
           }
@@ -101,10 +87,7 @@ function PartnerNotificationPage() {
       ) : (
         <div className={styles.notification_header}>
           <h1 className={styles.notification_header_title}>알림</h1>
-          <button
-            className={styles.delete_all_button}
-            onClick={handle_delete_all_click}
-          >
+          <button className={styles.delete_all_button} onClick={handle_delete_all_click}>
             전체 삭제
           </button>
         </div>

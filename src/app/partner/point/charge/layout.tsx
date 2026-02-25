@@ -18,17 +18,9 @@ import { useLayoutEffect } from "react";
 /**
  * 파트너 포인트 충전 레이아웃 컴포넌트
  *
- * 주요 기능:
- * 1. 포인트 충전 페이지에서는 항상 PartnerHeader를 숨깁니다.
- * 2. SubHeader는 page.tsx에서 렌더링되며, 자동으로 PartnerHeader를 숨깁니다.
- *
  * @param children - 포인트 충전 페이지 컴포넌트 (page.tsx)
  */
-export default function PartnerPointChargeLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PartnerPointChargeLayout({ children }: { children: React.ReactNode }) {
   /**
    * useLayoutEffect Hook: DOM 업데이트 직후 동기적으로 실행되는 부수 효과 처리
    *

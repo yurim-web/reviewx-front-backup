@@ -6,21 +6,16 @@
  * 파트너 비밀번호 변경 페이지
  *
  * 목적: 파트너(광고주)가 로그인한 상태에서
- *       현재 비밀번호를 확인하고 새 비밀번호로 변경할 수 있는 페이지입니다.
+ *       현재 비밀번호를 확인하고 새 비밀번호로 변경하는 페이지입니다.
  *
- * 페이지 경로:
+ * 사용 페이지:
  * - /partner/reset-password
- *
- * 주요 기능:
- * - 현재 비밀번호 입력 (비밀번호 표시/숨김 토글 포함)
- * - 새 비밀번호 입력 (비밀번호 표시/숨김 토글 포함)
- * - 새 비밀번호 확인 입력 (비밀번호 표시/숨김 토글 포함)
- * - 간단한 유효성 검사 (길이/일치 여부)
  */
 
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import ErrorText from "@/components/common/error_text/ErrorText";
@@ -31,18 +26,12 @@ export default function PartnerResetPasswordPage() {
   const [currentPassword, setCurrentPassword] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [passwordConfirm, setPasswordConfirm] = useState<string>("");
-  const [showCurrentPassword, setShowCurrentPassword] =
-    useState<boolean>(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showPasswordConfirm, setShowPasswordConfirm] =
-    useState<boolean>(false);
-  const [currentPasswordError, setCurrentPasswordError] = useState<
-    string | undefined
-  >();
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState<boolean>(false);
+  const [currentPasswordError, setCurrentPasswordError] = useState<string | undefined>();
   const [passwordError, setPasswordError] = useState<string | undefined>();
-  const [passwordConfirmError, setPasswordConfirmError] = useState<
-    string | undefined
-  >();
+  const [passwordConfirmError, setPasswordConfirmError] = useState<string | undefined>();
 
   useEffect(() => {
     const header = document.querySelector("header");
@@ -150,22 +139,16 @@ export default function PartnerResetPasswordPage() {
       }
 
       alert("비밀번호가 변경되었습니다.");
-    } catch (error) {
-      console.error("비밀번호 변경 오류:", error);
+    } catch (_error) {
       alert("비밀번호 변경 중 오류가 발생했습니다.");
     }
   };
 
-  const isCurrentPasswordValid =
-    currentPassword.length > 0 && !currentPasswordError;
-  const isPasswordValid =
-    password.length > 0 && !validatePassword(password) && !passwordError;
+  const isCurrentPasswordValid = currentPassword.length > 0 && !currentPasswordError;
+  const isPasswordValid = password.length > 0 && !validatePassword(password) && !passwordError;
   const isPasswordConfirmValid =
-    passwordConfirm.length > 0 &&
-    passwordConfirm === password &&
-    !passwordConfirmError;
-  const isFormValid =
-    isCurrentPasswordValid && isPasswordValid && isPasswordConfirmValid;
+    passwordConfirm.length > 0 && passwordConfirm === password && !passwordConfirmError;
+  const isFormValid = isCurrentPasswordValid && isPasswordValid && isPasswordConfirmValid;
 
   return (
     <div className={styles.reset_password_page_container}>
@@ -210,19 +193,15 @@ export default function PartnerResetPasswordPage() {
                   type="button"
                   className={styles.eye_toggle_button}
                   onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                  aria-label={
-                    showCurrentPassword ? "비밀번호 숨기기" : "비밀번호 보기"
-                  }
+                  aria-label={showCurrentPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
                 >
-                  <img
+                  <Image
                     src={
                       showCurrentPassword
                         ? "/images/icons/signup/sign_show.svg"
                         : "/images/icons/signup/sign_none.svg"
                     }
-                    alt={
-                      showCurrentPassword ? "비밀번호 숨기기" : "비밀번호 보기"
-                    }
+                    alt={showCurrentPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
                     width={16}
                     height={16}
                   />
@@ -259,9 +238,7 @@ export default function PartnerResetPasswordPage() {
 
                     if (passwordConfirm) {
                       if (newPassword !== passwordConfirm) {
-                        setPasswordConfirmError(
-                          "비밀번호가 일치하지 않습니다."
-                        );
+                        setPasswordConfirmError("비밀번호가 일치하지 않습니다.");
                       } else {
                         setPasswordConfirmError(undefined);
                       }
@@ -272,11 +249,9 @@ export default function PartnerResetPasswordPage() {
                   type="button"
                   className={styles.eye_toggle_button}
                   onClick={() => setShowPassword(!showPassword)}
-                  aria-label={
-                    showPassword ? "비밀번호 숨기기" : "비밀번호 보기"
-                  }
+                  aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
                 >
-                  <img
+                  <Image
                     src={
                       showPassword
                         ? "/images/icons/signup/sign_show.svg"
@@ -293,10 +268,7 @@ export default function PartnerResetPasswordPage() {
 
             {/* 새 비밀번호 확인 입력 필드 */}
             <div className={styles.form_field}>
-              <label
-                className={styles.field_label}
-                htmlFor="new-password-confirm"
-              >
+              <label className={styles.field_label} htmlFor="new-password-confirm">
                 비밀번호 확인
               </label>
               <div className={styles.password_input_wrapper}>
@@ -321,19 +293,15 @@ export default function PartnerResetPasswordPage() {
                   type="button"
                   className={styles.eye_toggle_button}
                   onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
-                  aria-label={
-                    showPasswordConfirm ? "비밀번호 숨기기" : "비밀번호 보기"
-                  }
+                  aria-label={showPasswordConfirm ? "비밀번호 숨기기" : "비밀번호 보기"}
                 >
-                  <img
+                  <Image
                     src={
                       showPasswordConfirm
                         ? "/images/icons/signup/sign_show.svg"
                         : "/images/icons/signup/sign_none.svg"
                     }
-                    alt={
-                      showPasswordConfirm ? "비밀번호 숨기기" : "비밀번호 보기"
-                    }
+                    alt={showPasswordConfirm ? "비밀번호 숨기기" : "비밀번호 보기"}
                     width={16}
                     height={16}
                   />

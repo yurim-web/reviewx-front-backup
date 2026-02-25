@@ -7,14 +7,8 @@
  *
  * 목적: 배송형 캠페인 신청내역 페이지의 공통 레이아웃을 제공합니다.
  *
- * 페이지 경로:
+ * 사용 페이지:
  * - /partner/campaign_application/delivery/[id] (동적 라우팅)
- *
- * 주요 기능:
- * - 파트너 헤더 포함
- * - 페이지별 공통 스타일 적용
- * - 메타데이터 설정
- * - 공통 레이아웃 구조 제공
  */
 
 import { ReactNode } from "react";
@@ -27,16 +21,8 @@ interface DeliveryCampaignLayoutProps {
 
 /**
  * 배송형 캠페인 신청내역 레이아웃 컴포넌트
- *
- * 레이아웃 구조:
- * 1. 파트너 헤더 (모든 파트너 페이지 공통)
- * 2. 메인 컨테이너 (children으로 페이지 내용 포함)
- * 3. 공통 스타일 적용
- * 4. 메타데이터 설정
  */
-export default function DeliveryCampaignLayout({
-  children,
-}: DeliveryCampaignLayoutProps) {
+export default function DeliveryCampaignLayout({ children }: DeliveryCampaignLayoutProps) {
   return (
     <div className={layoutStyles.container}>
       {/* 파트너 서브헤더 - 뒤로가기 버튼이 있는 서브헤더 */}

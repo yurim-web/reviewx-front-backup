@@ -16,7 +16,6 @@
 import React, { useState, useMemo } from "react";
 import { useCampaignContents } from "@/hooks/partner/campaign_contents/useCampaignContents";
 import CampaignContentsLayout from "@/components/partner/campaign_contents/CampaignContentsLayout";
-import type { ContentItem } from "@/data/partner/sharedCampaigns";
 import { createExperienceCardRenderer } from "@/components/partner/campaign_contents/card_renderers/renderExperienceCard";
 import { extractDeadlineDate } from "@/utils/formatting/date";
 import { getVisitContentsById } from "@/data/campaign/visit/visitCampaigns";
@@ -26,9 +25,6 @@ export default function VisitContentsDetailPage() {
     campaignInfo,
     activeTab,
     setActiveTab,
-    waitingCount,
-    reviewCount,
-    completedCount,
     sortOrder,
     setSortOrder,
     sortOptions,

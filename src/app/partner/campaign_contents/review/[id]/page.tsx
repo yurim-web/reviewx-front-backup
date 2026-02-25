@@ -164,7 +164,7 @@ export default function PurchaseReviewContentsDetailPage() {
     return false;
   }, [campaignId]);
 
-  const handleExtend = (applicantId: string) => {
+  const handleExtend = (_applicantId: string) => {
     // TODO: 연장 기능 구현
   };
 

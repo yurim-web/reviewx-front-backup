@@ -1,5 +1,5 @@
 /* ========================================
-   🔐 파트너 로그인 페이지
+   파트너 로그인 페이지
    ======================================== */
 
 /**
@@ -7,21 +7,13 @@
  *
  * 목적: 파트너 회원이 아이디(이메일)와 비밀번호를 입력하여 로그인할 수 있는 페이지입니다.
  *
- * 페이지 경로:
+ * 사용 페이지:
  * - /partner/login
- *
- * 주요 기능:
- * - 아이디(이메일) 입력
- * - 비밀번호 입력
- * - 자동 로그인 체크박스
- * - 로그인 버튼
- * - 파트너 회원가입 / 계정찾기 / 문의 / 리뷰어 로그인 링크
  */
 
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import PartnerHeader from "@/components/fragments/PartnerHeader";
 import pageStyles from "@/styles/login/login/login_page.module.css";
@@ -31,7 +23,6 @@ import linksStyles from "@/styles/login/login/links.module.css";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function PartnerLoginPage() {
-  const router = useRouter();
   const { login, isLoading } = useAuth();
 
   // ========================================
@@ -149,27 +140,18 @@ export default function PartnerLoginPage() {
                   onChange={handleAutoLoginChange}
                   aria-label="자동 로그인"
                 />
-                <label
-                  htmlFor="auto-login"
-                  className={optionsStyles.checkbox_label}
-                >
+                <label htmlFor="auto-login" className={optionsStyles.checkbox_label}>
                   자동 로그인
                 </label>
               </div>
 
               {/* 파트너 회원가입 / 계정찾기 링크 */}
               <div className={optionsStyles.links_group}>
-                <Link
-                  href="/partner/signup"
-                  className={optionsStyles.link_text}
-                >
+                <Link href="/partner/signup" className={optionsStyles.link_text}>
                   파트너 회원가입
                 </Link>
                 <span className={optionsStyles.link_divider}>|</span>
-                <Link
-                  href="/partner/find-account"
-                  className={optionsStyles.link_text}
-                >
+                <Link href="/partner/find-account" className={optionsStyles.link_text}>
                   아이디 · 비밀번호 찾기
                 </Link>
               </div>

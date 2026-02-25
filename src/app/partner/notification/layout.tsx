@@ -10,9 +10,6 @@
  * 사용 페이지:
  * - /partner/notification
  *
- * 주요 기능:
- * - 페이지 메타데이터 설정 (제목, 설명)
- * - 공통 레이아웃 구조 제공
  */
 
 import { Metadata } from "next";
@@ -22,10 +19,6 @@ export const metadata: Metadata = {
   description: "파트너 알림 내역을 확인하세요",
 };
 
-export default function PartnerNotificationLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PartnerNotificationLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }

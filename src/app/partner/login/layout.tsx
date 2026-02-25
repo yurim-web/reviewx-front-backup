@@ -7,17 +7,16 @@
  *
  * 목적: 파트너 로그인 페이지에서만 적용되는 레이아웃 설정
  *
- * 주요 기능:
- * - 파트너 로그인 페이지 전용 메타데이터 설정
- * - 페이지별 레이아웃 커스터마이징
+ * 사용 페이지:
+ * - /partner/login
  */
 
-import type { Metadata } from 'next';
+import type { Metadata } from "next";
 
 // 파트너 로그인 페이지 메타데이터
 export const metadata: Metadata = {
-  title: '파트너 로그인 | ReviewX',
-  description: 'ReviewX 파트너 로그인 페이지 - 아이디/비밀번호 로그인',
+  title: "파트너 로그인 | ReviewX",
+  description: "ReviewX 파트너 로그인 페이지 - 아이디/비밀번호 로그인",
 };
 
 /**

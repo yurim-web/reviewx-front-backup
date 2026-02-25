@@ -8,14 +8,8 @@
  * 목적: 패널티 상태의 캠페인 목록을 보여주는 페이지입니다.
  * 이제 공통 헤더 컴포넌트를 사용하여 중복 코드를 제거합니다.
  *
- * 페이지 경로:
+ * 사용 페이지:
  * - /partner/campaign_management/penalty
- *
- * 주요 기능:
- * - 패널티 상태의 캠페인 목록 표시
- * - 캠페인별 액션 버튼 (수정, 삭제, 검수 등)
- * - 공통 헤더 컴포넌트 사용으로 일관성 보장
- * - URL 기반 라우팅으로 새로고침 시에도 페이지 유지
  */
 
 "use client";
@@ -29,10 +23,7 @@ import type { PartnerMainTab } from "@/types/domain/partner";
 import type { PartnerStatTab } from "@/types/domain/partner";
 import layoutStyles from "@/styles/partner/partner_layout.module.css";
 import cardStyles from "../../../../styles/partner/campaign_card.module.css";
-import {
-  partnerPenaltyData,
-  partnerPenaltyStatus,
-} from "@/data/partner/penaltyData";
+import { partnerPenaltyData, partnerPenaltyStatus } from "@/data/partner/penaltyData";
 
 /**
  * 패널티 탭 페이지 컴포넌트
@@ -127,10 +118,7 @@ export default function PenaltyPage() {
 
         {/* 패널티 컨텐츠 영역 */}
         <div className={cardStyles.campaign_list}>
-          <PenaltyContent
-            penaltyData={partnerPenaltyData}
-            userStatus={partnerPenaltyStatus}
-          />
+          <PenaltyContent penaltyData={partnerPenaltyData} userStatus={partnerPenaltyStatus} />
         </div>
       </div>
     </div>
