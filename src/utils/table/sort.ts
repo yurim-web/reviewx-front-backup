@@ -94,7 +94,7 @@ export function compare_values(
  * @param column_config - 컬럼별 타입 설정 (옵션)
  * @returns 정렬된 데이터 배열
  */
-export function sort_table_data<T extends Record<string, unknown>>(
+export function sort_table_data<T extends object>(
   data: T[],
   sort_state: SortState,
   column_config?: SortColumnConfig
@@ -107,8 +107,8 @@ export function sort_table_data<T extends Record<string, unknown>>(
   const { column_key, direction } = sort_state;
 
   sorted.sort((a, b) => {
-    const a_value = a[column_key];
-    const b_value = b[column_key];
+    const a_value = (a as Record<string, unknown>)[column_key];
+    const b_value = (b as Record<string, unknown>)[column_key];
 
     // 컬럼 타입 확인
     let column_type: ColumnType = "string";
@@ -172,10 +172,7 @@ export function create_sort_handler(
  * @param column_key - 컬럼 키
  * @returns CSS transform 값
  */
-export function get_sort_arrow_transform(
-  sort_state: SortState,
-  column_key: string
-): string {
+export function get_sort_arrow_transform(sort_state: SortState, column_key: string): string {
   const is_current_sorted = sort_state.column_key === column_key;
   const is_asc = sort_state.direction === "asc";
 
@@ -201,10 +198,7 @@ export function get_sort_arrow_transform(
  * @param column_key - 컬럼 키
  * @returns alt 텍스트
  */
-export function get_sort_arrow_alt(
-  sort_state: SortState,
-  column_key: string
-): string {
+export function get_sort_arrow_alt(sort_state: SortState, column_key: string): string {
   if (sort_state.column_key === column_key) {
     return sort_state.direction === "asc" ? "오름차순 정렬" : "내림차순 정렬";
   }

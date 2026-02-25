@@ -18,12 +18,12 @@
 /**
  * 모달 크기
  */
-export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
+export type ModalSize = "sm" | "md" | "lg" | "xl" | "full";
 
 /**
  * 모달 타입
  */
-export type ModalType = 'info' | 'success' | 'warning' | 'error' | 'confirm';
+export type ModalType = "info" | "success" | "warning" | "error" | "confirm";
 
 /**
  * 모달 기본 Props
@@ -48,7 +48,7 @@ export interface ConfirmModalProps extends BaseModalProps {
   cancelLabel?: string;
   onConfirm: () => void | Promise<void>;
   onCancel?: () => void;
-  confirmVariant?: 'primary' | 'danger';
+  confirmVariant?: "primary" | "danger";
   isLoading?: boolean;
 }
 
@@ -66,7 +66,7 @@ export interface AlertModalProps extends BaseModalProps {
  * 폼 모달 Props
  */
 export interface FormModalProps extends BaseModalProps {
-  onSubmit: (data: any) => void | Promise<void>;
+  onSubmit: (data: unknown) => void | Promise<void>;
   submitLabel?: string;
   cancelLabel?: string;
   isLoading?: boolean;
@@ -108,7 +108,7 @@ export interface FilterOption {
  */
 export interface ModalButton {
   label: string;
-  variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
+  variant?: "primary" | "secondary" | "danger" | "ghost";
   onClick: () => void | Promise<void>;
   disabled?: boolean;
   loading?: boolean;
@@ -128,7 +128,7 @@ export interface CustomModalProps extends BaseModalProps {
  */
 export interface ModalState {
   isOpen: boolean;
-  data?: any;
+  data?: unknown;
 }
 
 /**
@@ -136,8 +136,8 @@ export interface ModalState {
  */
 export interface UseModalReturn {
   isOpen: boolean;
-  data?: any;
-  open: (data?: any) => void;
+  data?: unknown;
+  open: (data?: unknown) => void;
   close: () => void;
   toggle: () => void;
 }
@@ -146,7 +146,7 @@ export interface UseModalReturn {
  * 드로어 Props (측면 모달)
  */
 export interface DrawerProps extends BaseModalProps {
-  position?: 'left' | 'right' | 'top' | 'bottom';
+  position?: "left" | "right" | "top" | "bottom";
   children: React.ReactNode;
 }
 

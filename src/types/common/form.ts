@@ -25,12 +25,12 @@ export interface FormFieldError {
 /**
  * 폼 상태
  */
-export type FormStatus = 'idle' | 'validating' | 'submitting' | 'success' | 'error';
+export type FormStatus = "idle" | "validating" | "submitting" | "success" | "error";
 
 /**
  * 폼 전체 상태
  */
-export interface FormState<T = any> {
+export interface FormState<T = Record<string, unknown>> {
   status: FormStatus;
   errors: FormFieldError[];
   values: T;
@@ -45,7 +45,7 @@ export interface FormSubmitResult {
   success: boolean;
   message?: string;
   errors?: FormFieldError[];
-  data?: any;
+  data?: unknown;
 }
 
 /**
@@ -133,10 +133,10 @@ export interface DatePickerFieldProps {
  * 유효성 검증 규칙
  */
 export interface ValidationRule {
-  type: 'required' | 'email' | 'phone' | 'password' | 'min' | 'max' | 'pattern' | 'custom';
+  type: "required" | "email" | "phone" | "password" | "min" | "max" | "pattern" | "custom";
   message: string;
-  value?: any; // min, max, pattern 등에 사용
-  validator?: (value: any) => boolean; // custom 검증 함수
+  value?: string | number | RegExp; // min, max, pattern 등에 사용
+  validator?: (value: unknown) => boolean; // custom 검증 함수
 }
 
 /**
@@ -145,8 +145,18 @@ export interface ValidationRule {
 export interface FieldConfig {
   name: string;
   label: string;
-  type: 'text' | 'email' | 'password' | 'tel' | 'number' | 'textarea' | 'select' | 'checkbox' | 'file' | 'date';
-  defaultValue?: any;
+  type:
+    | "text"
+    | "email"
+    | "password"
+    | "tel"
+    | "number"
+    | "textarea"
+    | "select"
+    | "checkbox"
+    | "file"
+    | "date";
+  defaultValue?: string | number | boolean;
   validationRules?: ValidationRule[];
   placeholder?: string;
   options?: SelectOption[]; // select일 때
@@ -157,6 +167,6 @@ export interface FieldConfig {
  */
 export interface FormConfig {
   fields: FieldConfig[];
-  onSubmit: (values: Record<string, any>) => Promise<FormSubmitResult>;
-  initialValues?: Record<string, any>;
+  onSubmit: (values: Record<string, unknown>) => Promise<FormSubmitResult>;
+  initialValues?: Record<string, unknown>;
 }

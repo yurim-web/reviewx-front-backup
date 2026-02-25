@@ -9,6 +9,7 @@
  * import { CHANNEL_NAMES, ERROR_MESSAGES, REGEX_PATTERNS } from '@/utils/constants';
  */
 
-export * from './channels';
-export * from './validation';
-export * from './messages';
+export * from "./channels";
+export * from "./validation";
+export * from "./messages";
+export * from "./bank";
