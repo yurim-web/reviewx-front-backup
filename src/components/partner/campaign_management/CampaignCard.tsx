@@ -13,6 +13,7 @@
  */
 
 import Link from "next/link";
+import Image from "next/image";
 import type { PartnerStatTab } from "@/types/domain/partner";
 import type { PartnerCampaign } from "@/types/domain/partner";
 import cardStyles from "../../../styles/partner/campaign_card.module.css";
@@ -127,14 +128,14 @@ export default function CampaignCard({ campaign, activeTab }: CampaignCardProps)
       <Link
         href={detailPath}
         className={cardStyles.campaign_content_container}
-        onClick={(e) => {
+        onClick={(_e) => {
           // 버튼 영역 클릭 시에는 상세페이지로 이동하지 않도록 처리
           // 버튼은 Link 밖에 있어서 자동으로 처리되지만, 안전을 위해 추가
         }}
       >
         {/* 캠페인 이미지 */}
         <div className={cardStyles.campaign_image}>
-          {campaign.image ? <img src={campaign.image} alt="캠페인 이미지" /> : null}
+          {campaign.image ? <Image src={campaign.image} alt="캠페인 이미지" fill /> : null}
         </div>
 
         {/* 캠페인 상세 정보 */}
@@ -143,10 +144,12 @@ export default function CampaignCard({ campaign, activeTab }: CampaignCardProps)
           <div className={cardStyles.campaign_header}>
             <div className={cardStyles.campaign_type}>
               {campaign.brandLogo ? (
-                <img
+                <Image
                   src={campaign.brandLogo}
                   alt={campaign.brandName || campaign.campaignType}
                   className={cardStyles.brand_logo}
+                  width={40}
+                  height={40}
                 />
               ) : (
                 <div

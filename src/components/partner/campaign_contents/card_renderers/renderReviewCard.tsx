@@ -51,7 +51,7 @@ interface RenderReviewCardParams {
  */
 export function createReviewCardRenderer(renderParams: RenderReviewCardParams) {
   // eslint-disable-next-line react/display-name
-  return (item: ContentItem, index: number): React.ReactNode => {
+  return (item: ContentItem, _index: number): React.ReactNode => {
     const brandChannel = renderParams.campaignBrandName ?? item.channel;
     const isReceiptFlow = item.actionType === 1;
     const applicant: CampaignApplicant = {

@@ -4,6 +4,7 @@
 
 "use client";
 
+import Image from "next/image";
 import { YoutubeApplicant } from "@/data/partner/campaign_application/delivery_applicants";
 import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
 import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
@@ -22,17 +23,16 @@ export default function ShortsCard({ applicant, onSelect }: ShortsCardProps) {
   return (
     <article
       className={`${baseStyles.applicant_card} ${
-        applicant.selectionStatus === "이용제한 계정"
-          ? baseStyles.restricted_card
-          : ""
+        applicant.selectionStatus === "이용제한 계정" ? baseStyles.restricted_card : ""
       }`}
     >
       <div className={contentStyles.profile_section}>
         <div className={contentStyles.profile_image_container}>
-          <img
+          <Image
             src={applicant.profileImage || "/images/mypage/profile.svg"}
             alt="프로필"
             className={contentStyles.profile_image}
+            fill
           />
         </div>
 
@@ -43,11 +43,7 @@ export default function ShortsCard({ applicant, onSelect }: ShortsCardProps) {
       </div>
 
       <div className={contentStyles.channel_section}>
-        <img
-          src={channel_icon_src}
-          alt="숏츠"
-          className={contentStyles.channel_icon}
-        />
+        <Image src={channel_icon_src} alt="숏츠" className={contentStyles.channel_icon} fill />
         <a
           href={getChannelUrl("쇼츠", applicant.Id)}
           target="_blank"
@@ -70,18 +66,14 @@ export default function ShortsCard({ applicant, onSelect }: ShortsCardProps) {
         <div className={contentStyles.stat_item}>
           <span className={contentStyles.stat_label}>구독자</span>
           <span className={contentStyles.stat_value}>
-            {applicant.subscribers
-              ? applicant.subscribers.toLocaleString()
-              : "0"}
+            {applicant.subscribers ? applicant.subscribers.toLocaleString() : "0"}
           </span>
         </div>
       </div>
 
       <div className={contentStyles.memo_section}>
         <div className={contentStyles.memo_text}>
-          {applicant.memo && applicant.memo.trim() !== ""
-            ? applicant.memo
-            : "메모 미작성"}
+          {applicant.memo && applicant.memo.trim() !== "" ? applicant.memo : "메모 미작성"}
         </div>
       </div>
 

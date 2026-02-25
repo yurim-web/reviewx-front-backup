@@ -15,6 +15,7 @@
 "use client";
 
 import { useMemo } from "react";
+import Image from "next/image";
 import { useModalState } from "@/hooks/useModalState";
 import sort_dropdown_styles from "@/styles/partner/campaign_application/sort_dropdown.module.css";
 
@@ -74,9 +75,11 @@ export default function SortFilterControl({
         onClick={() => sortModal.open()}
       >
         <span className={sort_dropdown_styles.sort_trigger_text}>{currentLabel}</span>
-        <img
+        <Image
           src="/images/filter/part_dropdown_arrow.svg"
           alt="정렬 선택"
+          width={16}
+          height={16}
           className={sort_dropdown_styles.sort_trigger_arrow}
         />
       </button>
@@ -100,10 +103,10 @@ export default function SortFilterControl({
               <button
                 type="button"
                 className={sort_dropdown_styles.sort_modal_close_button}
-                onClick={() => setIsOpen(false)}
+                onClick={() => sortModal.close()}
                 aria-label="모달 닫기"
               >
-                <img src="/images/filter/x_icon.svg" alt="닫기" />
+                <Image src="/images/filter/x_icon.svg" alt="닫기" width={20} height={20} />
               </button>
             </div>
 

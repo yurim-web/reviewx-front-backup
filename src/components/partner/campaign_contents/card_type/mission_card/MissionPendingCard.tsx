@@ -14,6 +14,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useModalState } from "@/hooks/useModalState";
 import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
 import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
@@ -64,7 +65,7 @@ export default function MissionPendingCard({
   onExtend,
   onReport,
 }: MissionPendingCardProps) {
-  const channel_icon_src = getChannelLogo(applicant.channel);
+  const _channel_icon_src = getChannelLogo(applicant.channel);
 
   const reportModal = useModalState();
   const [selectedReportOption, setSelectedReportOption] = useState<string>("");
@@ -134,7 +135,7 @@ export default function MissionPendingCard({
   // 1. onReport 콜백을 호출하여 부모 컴포넌트에 신고 알림
   // 2. 카드 상태를 "reported"로 변경
   // 3. 신고 날짜/시간을 현재 시간으로 설정
-  const handleReportConfirm = (selectedOption: string, otherReason?: string) => {
+  const handleReportConfirm = (_selectedOption: string, _otherReason?: string) => {
     if (onReport) {
       onReport(applicant.id);
     }
@@ -304,10 +305,12 @@ export default function MissionPendingCard({
         {/* 프로필 영역 */}
         <div className={contentStyles.profile_section}>
           <div className={contentStyles.profile_image_container}>
-            <img
+            <Image
               src={applicant.profileImage || "/images/mypage/profile.svg"}
               alt="프로필"
               className={contentStyles.profile_image}
+              width={40}
+              height={40}
             />
           </div>
           <div className={contentStyles.profile_info}>
@@ -399,10 +402,12 @@ export default function MissionPendingCard({
             onClick={handleFooterExtendClick}
             aria-label={`${applicant.nickname} 연장`}
           >
-            <img
+            <Image
               src="/images/management_page/clock_icon.svg"
               alt="연장 아이콘"
               className={actionStyles.extension_icon}
+              width={16}
+              height={16}
             />
             <span>연장</span>
           </button>
@@ -412,10 +417,12 @@ export default function MissionPendingCard({
             onClick={handleReportClick}
             aria-label={`${applicant.nickname} 신고`}
           >
-            <img
+            <Image
               src="/images/management_page/report_icon.svg"
               alt="신고 아이콘"
               className={actionStyles.report_icon}
+              width={16}
+              height={16}
             />
             <span>신고</span>
           </button>

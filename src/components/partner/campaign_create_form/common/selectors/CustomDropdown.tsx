@@ -16,6 +16,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import dropdown_styles from "@/styles/partner/campaign_create/custom_dropdown.module.css";
 
 /**
@@ -189,10 +190,12 @@ export function CustomDropdown({
       >
         <span className={dropdown_styles.dropdown_text}>{display_text}</span>
         {/* 화살표 아이콘 */}
-        <img
+        <Image
           src="/images/icons/dropdown_arrow.svg"
           alt="드롭다운 화살표"
           className={`${dropdown_styles.dropdown_arrow} ${is_open ? dropdown_styles.rotated : ""}`}
+          width={16}
+          height={16}
         />
       </button>
 

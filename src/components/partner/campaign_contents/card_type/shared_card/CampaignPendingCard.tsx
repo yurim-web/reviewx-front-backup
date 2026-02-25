@@ -14,6 +14,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useModalState } from "@/hooks/useModalState";
 import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
 import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
@@ -85,9 +86,9 @@ export default function CampaignPendingCard({
   onReject,
   onExtend,
   onReport,
-  extension_request_reason = "",
+  extension_request_reason: _extension_request_reason = "",
   contentType = "link",
-  dateLabel = "등록",
+  dateLabel: _dateLabel = "등록",
 }: CampaignPendingCardProps) {
   const channel_icon_src = getChannelLogo(applicant.channel);
   const isReview = applicant.campaignType === "review";
@@ -128,11 +129,10 @@ export default function CampaignPendingCard({
   };
 
   // 신고 확인 처리
-  const handleReportConfirm = (selectedOption: string, otherReason?: string) => {
+  const handleReportConfirm = (_selectedOption: string, _otherReason?: string) => {
     if (onReport) {
       onReport(applicant.id);
     }
-    // console.log("신고 사유:", selectedOption, "기타 사유:", otherReason);
     handleReportModalClose();
   };
 
@@ -183,13 +183,11 @@ export default function CampaignPendingCard({
     // 부모 컴포넌트에서 탭 이동과 날짜 업데이트를 처리합니다
     if (onExtend) {
       onExtend(applicant.id);
-    } else {
-      console.warn("onExtend가 전달되지 않았습니다!");
     }
   };
 
   // 반려 모달 열기 (미션형만)
-  const handleRejectClick = () => {
+  const _handleRejectClick = () => {
     rejectModal.open();
   };
 
@@ -255,7 +253,7 @@ export default function CampaignPendingCard({
     return [];
   };
 
-  const missionButtons = getMissionButtons();
+  const _missionButtons = getMissionButtons();
 
   return (
     <div className={baseStyles.card_wrapper}>
@@ -263,10 +261,12 @@ export default function CampaignPendingCard({
         {/* 프로필 영역 */}
         <div className={contentStyles.profile_section}>
           <div className={contentStyles.profile_image_container}>
-            <img
+            <Image
               src={applicant.profileImage || "/images/mypage/profile.svg"}
               alt="프로필"
               className={contentStyles.profile_image}
+              width={40}
+              height={40}
             />
           </div>
           <div className={contentStyles.profile_info}>
@@ -277,10 +277,12 @@ export default function CampaignPendingCard({
 
         {/* 채널 정보 */}
         <div className={contentStyles.channel_section}>
-          <img
+          <Image
             src={channel_icon_src}
             alt={applicant.channel}
             className={contentStyles.channel_icon}
+            width={20}
+            height={20}
           />
           <a
             href={getChannelUrl(applicant.channel, applicant.channelId)}
@@ -429,10 +431,12 @@ export default function CampaignPendingCard({
           onClick={handleExtendClick}
           aria-label={`${applicant.nickname} 연장`}
         >
-          <img
+          <Image
             src="/images/management_page/clock_icon.svg"
             alt="연장 아이콘"
             className={actionStyles.extension_icon}
+            width={16}
+            height={16}
           />
           <span>연장</span>
         </button>
@@ -442,10 +446,12 @@ export default function CampaignPendingCard({
           onClick={handleReportClick}
           aria-label={`${applicant.nickname} 신고`}
         >
-          <img
+          <Image
             src="/images/management_page/report_icon.svg"
             alt="신고 아이콘"
             className={actionStyles.report_icon}
+            width={16}
+            height={16}
           />
           <span>신고</span>
         </button>

@@ -27,6 +27,7 @@
 
 "use client";
 
+import Image from "next/image";
 import { Applicant } from "@/data/partner/campaign_application/delivery_applicants";
 import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
 import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
@@ -73,10 +74,11 @@ export default function NaverBlogRestrictedCard({ applicant }: DeliveryRestricte
       {/* 프로필 영역: 프로필 이미지, 닉네임, 사용자 타입 */}
       <div className={contentStyles.profile_section}>
         <div className={contentStyles.profile_image_container}>
-          <img
+          <Image
             src={applicant.profileImage || "/images/mypage/profile.svg"}
             alt="프로필"
             className={contentStyles.profile_image}
+            fill
           />
         </div>
         <div className={contentStyles.profile_info}>
@@ -89,10 +91,11 @@ export default function NaverBlogRestrictedCard({ applicant }: DeliveryRestricte
 
       {/* 채널 정보 영역: 채널 아이콘, 채널 ID */}
       <div className={contentStyles.channel_section}>
-        <img
+        <Image
           src={channel_icon_src}
           alt={`${applicant.channel} 채널`}
           className={contentStyles.channel_icon}
+          fill
         />
         {/* 
           📌 하드코딩된 텍스트:

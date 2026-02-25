@@ -12,6 +12,7 @@
  */
 
 import { RefObject } from "react";
+import Image from "next/image";
 import customDropdownStyles from "@/styles/partner/campaign_create/custom_dropdown.module.css";
 
 export type InvoiceType = "none" | "cash_income" | "cash_expense" | "tax_invoice";
@@ -57,12 +58,14 @@ export default function InvoiceTypeDropdown({
         <span className={customDropdownStyles.dropdown_text} data-placeholder="옵션 선택">
           {getInvoiceLabel(selectedType)}
         </span>
-        <img
+        <Image
           src="/images/icons/dropdown_arrow.svg"
           alt=""
           className={`${customDropdownStyles.dropdown_arrow} ${
             isOpen ? customDropdownStyles.rotated : ""
           }`}
+          width={16}
+          height={16}
         />
       </button>
       {isOpen && (

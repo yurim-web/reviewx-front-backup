@@ -4,6 +4,7 @@
 
 "use client";
 
+import Image from "next/image";
 import { InstagramApplicant } from "@/data/partner/campaign_application/delivery_applicants";
 import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
 import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
@@ -16,26 +17,22 @@ interface ReelsSelectedCardProps {
   onCancel: (applicantId: string) => void;
 }
 
-export default function ReelsSelectedCard({
-  applicant,
-  onCancel,
-}: ReelsSelectedCardProps) {
+export default function ReelsSelectedCard({ applicant, onCancel }: ReelsSelectedCardProps) {
   const channel_icon_src = getChannelLogo("릴스");
 
   return (
     <article
       className={`${baseStyles.applicant_card} ${baseStyles.selected_card} ${
-        applicant.userType === "인플루언서"
-          ? baseStyles.selected_card_influencer
-          : ""
+        applicant.userType === "인플루언서" ? baseStyles.selected_card_influencer : ""
       }`}
     >
       <div className={contentStyles.profile_section}>
         <div className={contentStyles.profile_image_container}>
-          <img
+          <Image
             src={applicant.profileImage || "/images/mypage/profile.svg"}
             alt="프로필"
             className={contentStyles.profile_image}
+            fill
           />
         </div>
         <div className={contentStyles.profile_info}>
@@ -43,9 +40,7 @@ export default function ReelsSelectedCard({
           {/* 닉네임 표시 - 인플루언서일 때 특별한 스타일 적용 */}
           <span
             className={`${contentStyles.nickname} ${
-              applicant.userType === "인플루언서"
-                ? contentStyles.influencer_nickname
-                : ""
+              applicant.userType === "인플루언서" ? contentStyles.influencer_nickname : ""
             }`}
           >
             {applicant.nickname}
@@ -54,11 +49,7 @@ export default function ReelsSelectedCard({
       </div>
 
       <div className={contentStyles.channel_section}>
-        <img
-          src={channel_icon_src}
-          alt="릴스"
-          className={contentStyles.channel_icon}
-        />
+        <Image src={channel_icon_src} alt="릴스" className={contentStyles.channel_icon} fill />
         <a
           href={getChannelUrl("릴스", applicant.Id)}
           target="_blank"
@@ -90,9 +81,7 @@ export default function ReelsSelectedCard({
 
       <div className={contentStyles.memo_section}>
         <div className={contentStyles.memo_text}>
-          {applicant.memo && applicant.memo.trim() !== ""
-            ? applicant.memo
-            : "메모 미작성"}
+          {applicant.memo && applicant.memo.trim() !== "" ? applicant.memo : "메모 미작성"}
         </div>
         <div className={contentStyles.memo_divider}></div>
       </div>

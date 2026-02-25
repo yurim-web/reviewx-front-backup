@@ -16,7 +16,7 @@
 
 "use client";
 
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useModalState } from "@/hooks/useModalState";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -70,9 +70,6 @@ export default function PartnerPointPageLayout({
 }: PartnerPointPageLayoutProps) {
   const router = useRouter();
   const [activeMainTab, setActiveMainTab] = useState<PartnerMainTab>("point");
-  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
-  const [showTooltip, setShowTooltip] = useState(false);
-  const tooltipRef = useRef<HTMLSpanElement>(null);
   // 📌 반려 사유 모달 상태 관리:
   // - 반려 사유 모달을 보여줄지 말지를 결정하는 boolean 상태입니다
   const rejectionModal = useModalState();
@@ -117,27 +114,6 @@ export default function PartnerPointPageLayout({
    */
   const handleWithdrawalClick = () => {
     router.push("/partner/point/charge");
-  };
-
-  /**
-   * 툴팁 표시 핸들러
-   * 마우스 오버 시 툴팁 위치 설정
-   */
-  const handleMouseEnter = (e: React.MouseEvent) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    setTooltipPosition({
-      x: rect.right + 8,
-      y: rect.top + rect.height / 2,
-    });
-    setShowTooltip(true);
-  };
-
-  /**
-   * 툴팁 숨김 핸들러
-   * 마우스 아웃 시 툴팁 숨김
-   */
-  const handleMouseLeave = () => {
-    setShowTooltip(false);
   };
 
   /**
@@ -235,9 +211,7 @@ export default function PartnerPointPageLayout({
 
         // 처리 완료 후 localStorage에서 삭제 (중복 추가 방지)
         localStorage.removeItem("partner_new_point_history");
-      } catch (error) {
-        // JSON 파싱 오류 시 에러 처리
-        console.error("새 충전 내역 파싱 오류:", error);
+      } catch (_error) {
         localStorage.removeItem("partner_new_point_history");
       }
     }

@@ -82,9 +82,7 @@ export default function PartnerPaymentInfoModal({
       link.download = filename;
       link.href = data_url;
       link.click();
-    } catch (err) {
-      console.error("거래명세서 이미지 생성 실패:", err);
-    }
+    } catch (_err) {}
   };
 
   return (

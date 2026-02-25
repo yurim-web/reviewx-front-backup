@@ -146,9 +146,8 @@ export default function CampaignManagementModal({
         // 서버 오류: 서버 오류 모달 표시
         errorModal.open();
       }
-    } catch (error) {
+    } catch (_error) {
       // 예상치 못한 오류: 서버 오류 모달 표시
-      console.error("[CampaignManagementModal] 캠페인 취소 중 예외 발생:", error);
       errorModal.open();
     }
   };
@@ -204,9 +203,8 @@ export default function CampaignManagementModal({
             // 서버 오류: 서버 오류 모달 표시
             errorModal.open();
           }
-        } catch (error) {
+        } catch (_error) {
           // 예상치 못한 오류: 서버 오류 모달 표시
-          console.error("[CampaignManagementModal] 캠페인 취소 중 예외 발생:", error);
           errorModal.open();
         }
       } else {

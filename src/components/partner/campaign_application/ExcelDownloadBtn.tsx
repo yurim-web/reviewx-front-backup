@@ -18,6 +18,7 @@
 
 "use client";
 
+import Image from "next/image";
 import styles from "@/styles/partner/campaign_application/excel_download_btn.module.css";
 import BaseModal from "@/components/common/modal/BaseModal";
 import { useModalState } from "@/hooks/useModalState";
@@ -89,7 +90,7 @@ export default function ExcelDownloadBtn({
         {/* 신청자 목록 다운로드 버튼 (옵션) */}
         {showApplicantsButton && (
           <button className={styles.download_button} onClick={handleDownloadApplicants}>
-            <img src="/images/excel_icon.png" alt="다운로드" />
+            <Image src="/images/excel_icon.png" alt="다운로드" width={16} height={16} />
             신청자 목록 다운로드
           </button>
         )}
@@ -97,7 +98,7 @@ export default function ExcelDownloadBtn({
         {/* 선정자 목록 다운로드 버튼 (옵션) */}
         {onDownloadSelected ? (
           <button className={styles.download_button} onClick={handleDownloadSelected}>
-            <img src="/images/excel_icon.png" alt="다운로드" />
+            <Image src="/images/excel_icon.png" alt="다운로드" width={16} height={16} />
             선정자 목록 다운로드
           </button>
         ) : null}
@@ -105,7 +106,7 @@ export default function ExcelDownloadBtn({
         {/* 결과보고서 다운로드 버튼 (옵션) */}
         {onDownloadReport ? (
           <button className={styles.download_button} onClick={handleDownloadReport}>
-            <img src="/images/excel_icon.png" alt="다운로드" />
+            <Image src="/images/excel_icon.png" alt="다운로드" width={16} height={16} />
             결과보고서 다운로드
           </button>
         ) : null}

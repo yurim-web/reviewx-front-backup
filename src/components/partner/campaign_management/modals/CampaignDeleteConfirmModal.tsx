@@ -60,7 +60,7 @@ export default function CampaignDeleteConfirmModal({
   isOpen,
   onClose,
   campaignTitle,
-  campaignId,
+  campaignId: _campaignId,
   onConfirm,
 }: CampaignDeleteConfirmModalProps) {
   // 조건부 렌더링: 모달이 열려있지 않으면 아무것도 렌더링하지 않음

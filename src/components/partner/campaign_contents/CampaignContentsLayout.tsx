@@ -296,8 +296,8 @@ export default function CampaignContentsLayout({
                   // TODO: 실제 다운로드 API 호출 구현
                   // 현재는 개발 중이므로 파일 생성 오류 시뮬레이션
                   throw new Error("파일 생성 실패");
-                } catch (error) {
-                  // 파일 생성 오류 시 모달 표시ㄷㄷ
+                } catch (_error) {
+                  // 파일 생성 오류 시 모달 표시
                   downloadErrorModal.open();
                 }
               }
@@ -312,7 +312,7 @@ export default function CampaignContentsLayout({
                       // TODO: 실제 결과보고서 다운로드 API 호출 구현
                       // 현재는 개발 중이므로 파일 생성 오류 시뮬레이션
                       throw new Error("파일 생성 실패");
-                    } catch (error) {
+                    } catch (_error) {
                       // 파일 생성 오류 시 모달 표시
                       downloadErrorModal.open();
                     }

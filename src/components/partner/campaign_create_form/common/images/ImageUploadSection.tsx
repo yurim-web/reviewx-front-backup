@@ -12,6 +12,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
 
 /**
@@ -80,10 +81,11 @@ export function ImageUploadSection({
         {/* 업로드된 이미지 미리보기 */}
         {imagePreviews.map((preview, index) => (
           <div key={index} className={infoStyles.image_preview_container}>
-            <img
+            <Image
               src={preview}
               alt={`업로드된 이미지 ${index + 1}`}
               className={infoStyles.image_preview}
+              fill
             />
             <button
               type="button"
@@ -104,7 +106,7 @@ export function ImageUploadSection({
             onClick={isEditMode && !isEditable ? undefined : handleUploadClick}
             style={isEditMode && !isEditable ? { pointerEvents: "none", opacity: 0.5 } : undefined}
           >
-            <img src="/images/icons/plus_icon.svg" alt="이미지 추가" width="56" height="56" />
+            <Image src="/images/icons/plus_icon.svg" alt="이미지 추가" width={56} height={56} />
           </div>
         )}
       </div>

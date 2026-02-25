@@ -5,6 +5,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import app_styles from "@/styles/partner/campaign_application/campaign_application.module.css";
 
@@ -28,12 +29,7 @@ export default function PageHeader({ title, right }: PageHeaderProps) {
         onClick={handleGoBack}
         aria-label="뒤로가기"
       >
-        <img
-          src="/images/header/header_arrow_back.svg"
-          alt="뒤로가기"
-          width={16}
-          height={16}
-        />
+        <Image src="/images/header/header_arrow_back.svg" alt="뒤로가기" width={16} height={16} />
       </button>
       <h1 className={app_styles.page_title}>{title}</h1>
       {right}

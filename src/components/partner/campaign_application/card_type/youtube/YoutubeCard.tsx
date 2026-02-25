@@ -4,6 +4,7 @@
 
 "use client";
 
+import Image from "next/image";
 import { YoutubeApplicant } from "@/data/partner/campaign_application/delivery_applicants";
 import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
 import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
@@ -22,18 +23,17 @@ export default function YoutubeCard({ applicant, onSelect }: YoutubeCardProps) {
   return (
     <article
       className={`${baseStyles.applicant_card} ${
-        applicant.selectionStatus === "이용제한 계정"
-          ? baseStyles.restricted_card
-          : ""
+        applicant.selectionStatus === "이용제한 계정" ? baseStyles.restricted_card : ""
       }`}
     >
       {/* 프로필 영역 */}
       <div className={contentStyles.profile_section}>
         <div className={contentStyles.profile_image_container}>
-          <img
+          <Image
             src={applicant.profileImage || "/images/mypage/profile.svg"}
             alt="프로필"
             className={contentStyles.profile_image}
+            fill
           />
         </div>
 
@@ -45,11 +45,7 @@ export default function YoutubeCard({ applicant, onSelect }: YoutubeCardProps) {
 
       {/* 채널 정보 */}
       <div className={contentStyles.channel_section}>
-        <img
-          src={channel_icon_src}
-          alt="유튜브"
-          className={contentStyles.channel_icon}
-        />
+        <Image src={channel_icon_src} alt="유튜브" className={contentStyles.channel_icon} fill />
         <a
           href={getChannelUrl("유튜브", applicant.Id)}
           target="_blank"
@@ -74,9 +70,7 @@ export default function YoutubeCard({ applicant, onSelect }: YoutubeCardProps) {
         <div className={contentStyles.stat_item}>
           <span className={contentStyles.stat_label}>구독자</span>
           <span className={contentStyles.stat_value}>
-            {applicant.subscribers
-              ? applicant.subscribers.toLocaleString()
-              : "0"}
+            {applicant.subscribers ? applicant.subscribers.toLocaleString() : "0"}
           </span>
         </div>
       </div>
@@ -84,9 +78,7 @@ export default function YoutubeCard({ applicant, onSelect }: YoutubeCardProps) {
       {/* 메모 */}
       <div className={contentStyles.memo_section}>
         <div className={contentStyles.memo_text}>
-          {applicant.memo && applicant.memo.trim() !== ""
-            ? applicant.memo
-            : "메모 미작성"}
+          {applicant.memo && applicant.memo.trim() !== "" ? applicant.memo : "메모 미작성"}
         </div>
       </div>
 
