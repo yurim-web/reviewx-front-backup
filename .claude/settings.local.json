@@ -123,7 +123,9 @@
       "Bash(echo \"Exit code: $?\")",
       "Bash(python3 -c \"import json,sys; data=json.load\\(sys.stdin\\); [print\\(f[''filePath''].split\\(''src/''\\)[-1]\\) for f in data if f[''errorCount'']>0]\")",
       "Bash(for f in src/data/campaign/mission/missionCampaigns.ts src/data/campaign/reporter/reporterCampaigns.ts src/data/campaign/review/reviewCampaigns.ts src/data/campaign/visit/visitCampaigns.ts)",
-      "Bash(do echo \"=== $f ===\")"
+      "Bash(do echo \"=== $f ===\")",
+      "Bash(env)",
+      "Bash(uniq -d -f1)"
     ]
   },
   "hooks": {
