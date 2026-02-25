@@ -22,10 +22,7 @@ import CampaignProgressDetailLayout, {
 } from "@/components/manager/common/campaign/progress/CampaignProgressDetailLayout";
 import BasicCard from "@/components/partner/campaign_application/card_type/basic/BasicCard";
 import BasicSelectedCard from "@/components/partner/campaign_application/card_type/basic/BasicSelectedCard";
-import type {
-  AllApplicant,
-  CampaignWithApplicants,
-} from "@/data/partner/sharedCampaigns";
+import type { AllApplicant, CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import { type BasicApplicant } from "@/data/partner/campaign_application/delivery_applicants";
 
 export default function ManagerMissionProgressDetailPage() {
@@ -72,9 +69,7 @@ export default function ManagerMissionProgressDetailPage() {
         <div className={styles.page_header}>
           <h1 className={styles.page_title}>캠페인 상세 보기</h1>
         </div>
-        <div style={{ padding: "40px", textAlign: "center", color: "red" }}>
-          {error_message}
-        </div>
+        <div style={{ padding: "40px", textAlign: "center", color: "red" }}>{error_message}</div>
       </section>
     );
   }
@@ -87,9 +82,9 @@ export default function ManagerMissionProgressDetailPage() {
   const render_card: RenderCardFunction = (
     applicant: AllApplicant,
     is_selected: boolean,
-    campaign_data: CampaignWithApplicants | null,
-    handle_select: (id: string) => void,
-    handle_cancel: (id: string) => void
+    _campaign_data: CampaignWithApplicants | null,
+    _handle_select: (id: string) => void,
+    _handle_cancel: (id: string) => void
   ) => {
     // 관리자 모드: 버튼 비활성화를 위한 빈 함수
     const empty_handler = () => {};
