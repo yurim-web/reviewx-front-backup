@@ -200,7 +200,8 @@ export default function UserNotificationPage() {
       <main className={styles.main_content}>
         {/* 알림 목록 컴포넌트 */}
         <NotificationList
-          notifications={notifications}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          notifications={notifications as any}
           on_notification_click={handleNotificationClick}
         />
       </main>

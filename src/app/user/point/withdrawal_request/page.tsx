@@ -23,114 +23,39 @@ import AvailablePointsDisplay from "@/components/point/AvailablePointsDisplay";
 import ReadOnlyFormField from "@/components/point/ReadOnlyFormField";
 import { parseFormattedAmount } from "@/utils/formatting/amount";
 import { validateAmount } from "@/utils/validation/amount";
-import { useAuth } from "@/hooks/useAuth";
+import { useWithdrawalInfo } from "@/hooks/user/point/useWithdrawalInfo";
 import styles from "../../../../styles/user/point/withdrawal_request.module.css";
 
 const MIN_AMOUNT = 10000;
 const MAX_AMOUNT = 500000;
 
-interface LocalUserAccount {
-  id?: string;
-  email?: string;
-  account_holder?: string;
-  name?: string;
-  bank?: string;
-  account_number?: string;
-  ssn_front?: string;
-  ssn_back?: string;
-  available_points?: number;
-  pending_points?: number;
-  last_withdrawal_date?: string;
-  point_history?: {
-    id: string;
-    type: string;
-    amount: number;
-    description: string;
-    date: string;
-    status: string;
-    balance: number;
-  }[];
-}
-
 export default function WithdrawalRequestPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const {
+    userInfo,
+    calculateNetAmount,
+    getDaysSinceLastWithdrawal,
+    canWithdraw,
+    isAccountInfoValid,
+    submitWithdrawal,
+  } = useWithdrawalInfo();
+
   const [withdrawalAmount, setWithdrawalAmount] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState<boolean>(false);
   const [isAccountWarningModalOpen, setIsAccountWarningModalOpen] = useState<boolean>(false);
-  const [isWithdrawalBlockedModalOpen, setIsWithdrawalBlockedModalOpen] =
-    useState<boolean>(false);
-
+  const [isWithdrawalBlockedModalOpen, setIsWithdrawalBlockedModalOpen] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState(false);
+
   useEffect(() => {
-    const check = () =>
-      setIsMobile(typeof window !== "undefined" && window.innerWidth <= 768);
+    const check = () => setIsMobile(typeof window !== "undefined" && window.innerWidth <= 768);
     check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  const [userInfo, setUserInfo] = useState({
-    name: "",
-    bank: "",
-    accountNumber: "",
-    residentNumber: "",
-    availablePoints: 0,
-    lastWithdrawalDate: null as Date | null,
-  });
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && user) {
-      try {
-        const storedAccounts = localStorage.getItem("user_accounts");
-        if (storedAccounts) {
-          const accounts: LocalUserAccount[] = JSON.parse(storedAccounts);
-          const userAccount = accounts.find(
-            (a) => a.id === user.id || a.email === user.email
-          );
-          if (userAccount) {
-            setUserInfo({
-              name: userAccount.account_holder ?? userAccount.name ?? "",
-              bank: userAccount.bank ?? "",
-              accountNumber: userAccount.account_number ?? "",
-              residentNumber:
-                userAccount.ssn_front && userAccount.ssn_back
-                  ? `${userAccount.ssn_front}-${userAccount.ssn_back}`
-                  : "",
-              availablePoints: userAccount.available_points ?? 0,
-              lastWithdrawalDate: userAccount.last_withdrawal_date
-                ? new Date(userAccount.last_withdrawal_date)
-                : null,
-            });
-          }
-        }
-      } catch {
-        // localStorage 읽기 실패 시 무시
-      }
-    }
-  }, [user]);
-
-  const calculateNetAmount = (amount: number): number => Math.floor(amount * 0.967);
-
   const amount = withdrawalAmount ? Number(withdrawalAmount.replace(/,/g, "")) : 0;
   const netAmount = amount > 0 ? calculateNetAmount(amount) : 0;
-
-  const getDaysSinceLastWithdrawal = (): number | null => {
-    if (!userInfo.lastWithdrawalDate) return null;
-
-    const today = new Date();
-    const lastDate = new Date(userInfo.lastWithdrawalDate);
-    today.setHours(0, 0, 0, 0);
-    lastDate.setHours(0, 0, 0, 0);
-
-    return Math.floor((today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
-  };
-
-  const canWithdraw = (): boolean => {
-    const daysSince = getDaysSinceLastWithdrawal();
-    return daysSince === null || daysSince >= 7;
-  };
 
   const isButtonEnabled = (): boolean => {
     if (amount === 0) return false;
@@ -138,15 +63,6 @@ export default function WithdrawalRequestPage() {
     if (amount > MAX_AMOUNT) return false;
     if (amount > userInfo.availablePoints) return false;
     return true;
-  };
-
-  const isAccountInfoValid = (): boolean => {
-    return (
-      userInfo.name.trim() !== "" &&
-      userInfo.bank.trim() !== "" &&
-      userInfo.accountNumber.trim() !== "" &&
-      userInfo.residentNumber.trim() !== ""
-    );
   };
 
   const handleSubmit = () => {
@@ -163,71 +79,7 @@ export default function WithdrawalRequestPage() {
     }
 
     try {
-      if (typeof window !== "undefined" && user) {
-        const now = new Date();
-        const requestId = `withdrawal_${user.id}_${now.getTime()}`;
-
-        const storedAccounts = localStorage.getItem("user_accounts");
-        if (storedAccounts) {
-          const accounts: LocalUserAccount[] = JSON.parse(storedAccounts);
-          const accountIndex = accounts.findIndex(
-            (a) => a.id === user.id || a.email === user.email
-          );
-
-          if (accountIndex !== -1) {
-            const account = accounts[accountIndex];
-            account.pending_points = (account.pending_points ?? 0) + amount;
-
-            if (!account.point_history) account.point_history = [];
-            account.point_history.unshift({
-              id: requestId,
-              type: "withdrawal_pending",
-              amount: -amount,
-              description: "출금 신청 대기중",
-              date: now.toISOString().split("T")[0],
-              status: "pending",
-              balance: account.available_points ?? 0,
-            });
-
-            account.last_withdrawal_date = now.toISOString();
-            accounts[accountIndex] = account;
-            localStorage.setItem("user_accounts", JSON.stringify(accounts));
-          }
-        }
-
-        const storedRequests = localStorage.getItem("withdrawal_requests");
-        const requests = storedRequests ? JSON.parse(storedRequests) : [];
-        requests.unshift({
-          id: requestId,
-          user_id: user.id,
-          user_name: userInfo.name,
-          user_number: user.id.includes("kakao") ? "000001" : "000002",
-          requested_amount: amount,
-          net_amount: netAmount,
-          tax_amount: amount - netAmount,
-          bank: userInfo.bank,
-          account_number: userInfo.accountNumber,
-          account_holder: userInfo.name,
-          status: "pending",
-          request_date: now.toISOString(),
-          processed_date: null,
-        });
-        localStorage.setItem("withdrawal_requests", JSON.stringify(requests));
-
-        const storedNotifications = localStorage.getItem("notifications");
-        const notifications = storedNotifications ? JSON.parse(storedNotifications) : [];
-        notifications.unshift({
-          id: `notif_${requestId}_${now.getTime()}`,
-          user_id: user.id,
-          type: "withdrawal_requested",
-          title: "포인트 출금 신청",
-          message: "포인트 출금 신청이 접수되었습니다.",
-          is_read: false,
-          created_at: now.toISOString(),
-        });
-        localStorage.setItem("notifications", JSON.stringify(notifications));
-      }
-
+      submitWithdrawal(amount, netAmount);
       setIsCompleteModalOpen(true);
     } catch {
       alert("출금 신청 처리 중 오류가 발생했습니다.");
@@ -346,8 +198,8 @@ export default function WithdrawalRequestPage() {
                     마지막으로 출금 신청한 날로부터 7일 이후에 가능합니다.
                   </li>
                   <li>
-                    매주 수요일 16시까지 출금 신청 건에 한하여 금요일에 입금됩니다. 수요일 오후
-                    16시 이후 정산 건은 그 다음 주 금요일에 입금됩니다.
+                    매주 수요일 16시까지 출금 신청 건에 한하여 금요일에 입금됩니다. 수요일 오후 16시
+                    이후 정산 건은 그 다음 주 금요일에 입금됩니다.
                   </li>
                   <li>지급일이 공휴일인 경우 이전 영업일에 지급됩니다.</li>
                 </ul>

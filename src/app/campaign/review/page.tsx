@@ -27,10 +27,7 @@ import { ko } from "date-fns/locale";
 import CampaignListPage from "@/components/campaign/CampaignListPage";
 import { useCampaignFilters } from "@/hooks/common/campaign/useCampaignFilters";
 import { reviewCampaigns } from "@/data/campaign/review/reviewCampaigns";
-import {
-  reviewCategoryOptions,
-  reviewSortOptions,
-} from "@/data/campaign/campaignFilterOptions";
+import { reviewCategoryOptions, reviewSortOptions } from "@/data/campaign/campaignFilterOptions";
 import type { CampaignWithApplicants } from "@/types/domain/partner";
 import type { ReviewCampaignData } from "@/data/campaign/review/reviewCampaigns";
 
@@ -88,6 +85,7 @@ function convertStoredToReviewCampaignData(
     requireKeywordAttachment?: boolean;
     additionalPoints?: string | number;
     isUrgent?: boolean; // 긴급 캠페인 여부
+    registeredAt?: string; // 등록 시간
   }
 ): ReviewCampaignData {
   const info = campaign.campaignInfo;
@@ -196,15 +194,14 @@ function convertStoredToReviewCampaignData(
     purchaseLink: campaign.purchaseLink || "",
     requirements: requirements.length > 0 ? requirements : [],
     guidelineTexts,
-    isUrgent: (campaign as any).isUrgent === true, // 긴급 캠페인 여부
-    registeredAt: (campaign as any).registeredAt || undefined, // 등록 시간
+    isUrgent: campaign.isUrgent === true, // 긴급 캠페인 여부
+    registeredAt: campaign.registeredAt || undefined, // 등록 시간
   };
 }
 
 export default function ReviewPage() {
   // localStorage에서 가져온 캠페인과 정적 데이터를 합친 배열
-  const [allCampaigns, setAllCampaigns] =
-    useState<ReviewCampaignData[]>(reviewCampaigns);
+  const [allCampaigns, setAllCampaigns] = useState<ReviewCampaignData[]>(reviewCampaigns);
 
   // localStorage에서 데이터를 가져와서 정적 데이터와 합치기
   useEffect(() => {
@@ -233,15 +230,11 @@ export default function ReviewPage() {
       convertedCampaigns.forEach((campaign) => {
         uniqueStoredCampaigns.set(campaign.id, campaign);
       });
-      const deduplicatedStoredCampaigns = Array.from(
-        uniqueStoredCampaigns.values()
-      );
+      const deduplicatedStoredCampaigns = Array.from(uniqueStoredCampaigns.values());
 
       // 정적 데이터와 합치기 (중복 제거: 같은 ID가 있으면 localStorage 데이터 우선)
       const staticIds = new Set(reviewCampaigns.map((c) => c.id));
-      const newCampaigns = deduplicatedStoredCampaigns.filter(
-        (c) => !staticIds.has(c.id)
-      );
+      const newCampaigns = deduplicatedStoredCampaigns.filter((c) => !staticIds.has(c.id));
       // localStorage에 있는 캠페인 중 정적 데이터에도 있는 것은 localStorage 버전으로 교체 (최신 데이터 우선)
       const updatedStaticCampaigns = reviewCampaigns.map((staticCampaign) => {
         const localStorageCampaign = deduplicatedStoredCampaigns.find(

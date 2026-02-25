@@ -25,7 +25,10 @@ import CampaignDetailPage from "@/components/campaign/CampaignDetailPage";
 import ApplicationModal from "@/components/user/campaign_detail/modal/ApplicationModal";
 import DetailGuidelinesSectionDelivery from "@/components/user/campaign_detail/guidelines/DetailGuidelinesSectionDelivery";
 import Toast from "@/components/common/toast/Toast";
-import { deliveryCampaigns, deliveryCampaignsExtended, deliveryClosedCampaignsExtended } from "@/data/campaign/delivery/deliveryCampaigns";
+import {
+  deliveryCampaignsExtended,
+  deliveryClosedCampaignsExtended,
+} from "@/data/campaign/delivery/deliveryCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import type { DeliveryCampaignData } from "@/data/campaign/delivery/deliveryCampaigns";
 
@@ -102,6 +105,7 @@ function convertToDeliveryCampaignData(
     detailImagePreviews?: string[]; // 상세 이미지 미리보기 URL 배열
     campaign_detail_images?: string[]; // localStorage에 저장된 상세 이미지 배열
     campaign_detail_image?: string; // localStorage에 저장된 단일 상세 이미지
+    guidelineTexts?: string[]; // localStorage에 저장된 가이드라인 텍스트 배열
     // formData 필드들 (requirements 생성용)
     minTextLength?: string | number;
     minImageCount?: string | number;
@@ -111,6 +115,7 @@ function convertToDeliveryCampaignData(
     requireKeywordAttachment?: boolean;
     // points 계산용
     additionalPoints?: string | number;
+    points?: string | number; // localStorage에 저장된 포인트
     isUrgent?: boolean; // 긴급 캠페인 여부
   }
 ): DeliveryCampaignData {
@@ -129,33 +134,33 @@ function convertToDeliveryCampaignData(
   // guidelines를 배열로 변환 (줄바꿈 기준)
   // 줄바꿈(\n)을 <br>로 변환하여 HTML로 표시
   // localStorage에 guidelineTexts 배열이 있으면 우선 사용
-  const guidelineTexts = 
-    (campaign as any).guidelineTexts && Array.isArray((campaign as any).guidelineTexts)
-      ? (campaign as any).guidelineTexts.map((text: string) => 
-          typeof text === 'string' ? text.replace(/\n/g, "<br>") : text
+  const guidelineTexts =
+    campaign.guidelineTexts && Array.isArray(campaign.guidelineTexts)
+      ? campaign.guidelineTexts.map((text: string) =>
+          typeof text === "string" ? text.replace(/\n/g, "<br>") : text
         )
       : campaign.guidelines
-      ? campaign.guidelines
-          .split("\n\n")
-          .filter((text) => text.trim() !== "")
-          .map((text) => text.replace(/\n/g, "<br>"))
-      : [];
+        ? campaign.guidelines
+            .split("\n\n")
+            .filter((text) => text.trim() !== "")
+            .map((text) => text.replace(/\n/g, "<br>"))
+        : [];
 
-  // 상세 이미지 배열 결정: 
+  // 상세 이미지 배열 결정:
   // 1. campaign_detail_images가 있으면 사용 (localStorage 데이터)
   // 2. detailImagePreviews가 있으면 사용 (폼 데이터)
   // 3. campaign_detail_image가 있으면 단일 이미지로 배열 생성
   // 4. 없으면 썸네일 이미지 사용
   const detailImages =
-    (campaign as any).campaign_detail_images && 
-    Array.isArray((campaign as any).campaign_detail_images) && 
-    (campaign as any).campaign_detail_images.length > 0
-      ? (campaign as any).campaign_detail_images
+    campaign.campaign_detail_images &&
+    Array.isArray(campaign.campaign_detail_images) &&
+    campaign.campaign_detail_images.length > 0
+      ? campaign.campaign_detail_images
       : campaign.detailImagePreviews && campaign.detailImagePreviews.length > 0
-      ? campaign.detailImagePreviews
-      : (campaign as any).campaign_detail_image
-      ? [(campaign as any).campaign_detail_image]
-      : [info.image];
+        ? campaign.detailImagePreviews
+        : campaign.campaign_detail_image
+          ? [campaign.campaign_detail_image]
+          : [info.image];
 
   // requirements 배열 생성
   const requirements = generateRequirementsFromFormData({
@@ -167,12 +172,12 @@ function convertToDeliveryCampaignData(
     requireKeywordAttachment: campaign.requireKeywordAttachment,
   });
 
-  // points 계산 
+  // points 계산
   // 1. localStorage에 저장된 points 필드 확인
   // 2. additionalPoints 필드 확인
   let points = 0;
-  if ((campaign as any).points !== undefined && (campaign as any).points !== null) {
-    points = Number((campaign as any).points) || 0;
+  if (campaign.points !== undefined && campaign.points !== null) {
+    points = Number(campaign.points) || 0;
   } else if (campaign.additionalPoints) {
     const pointsStr = String(campaign.additionalPoints).replace(/,/g, "");
     points = parseInt(pointsStr, 10) || 0;
@@ -256,9 +261,7 @@ function convertToDeliveryCampaignData(
   };
 }
 
-export default function DeliveryDetailPage({
-  params,
-}: DeliveryDetailPageProps) {
+export default function DeliveryDetailPage({ params }: DeliveryDetailPageProps) {
   const { id } = use(params);
   const [campaign, setCampaign] = useState<DeliveryCampaignData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -274,7 +277,9 @@ export default function DeliveryDetailPage({
 
     const staticCampaign = deliveryCampaignsExtended.find((c) => {
       const campaignId = String(c.id);
-      const normalizedCampaignId = campaignId.startsWith("delivery_") ? campaignId.replace(/^delivery_/, "") : campaignId;
+      const normalizedCampaignId = campaignId.startsWith("delivery_")
+        ? campaignId.replace(/^delivery_/, "")
+        : campaignId;
       return normalizedCampaignId === normalizedUrlId;
     });
 
@@ -293,7 +298,9 @@ export default function DeliveryDetailPage({
     // 2. 목업 데이터에서 찾지 못했으면 취소된 캠페인에서 찾기
     const closedCampaign = deliveryClosedCampaignsExtended.find((c) => {
       const campaignId = String(c.id);
-      const normalizedCampaignId = campaignId.startsWith("delivery_") ? campaignId.replace(/^delivery_/, "") : campaignId;
+      const normalizedCampaignId = campaignId.startsWith("delivery_")
+        ? campaignId.replace(/^delivery_/, "")
+        : campaignId;
       return normalizedCampaignId === normalizedUrlId;
     });
 
@@ -318,11 +325,15 @@ export default function DeliveryDetailPage({
           const campaigns: CampaignWithApplicants[] = JSON.parse(storedCampaigns);
           const storedCampaign = campaigns.find((c) => {
             const campaignId = String(c.campaignInfo.id);
-            const normalizedCampaignId = campaignId.startsWith("delivery_") ? campaignId.replace(/^delivery_/, "") : campaignId;
+            const normalizedCampaignId = campaignId.startsWith("delivery_")
+              ? campaignId.replace(/^delivery_/, "")
+              : campaignId;
             return normalizedCampaignId === normalizedUrlId;
           });
           if (storedCampaign) {
-            console.log(`[배송형 캠페인] localStorage에서 캠페인 찾음: ID=${storedCampaign.campaignInfo.id}`);
+            console.log(
+              `[배송형 캠페인] localStorage에서 캠페인 찾음: ID=${storedCampaign.campaignInfo.id}`
+            );
             const convertedCampaign = convertToDeliveryCampaignData(storedCampaign);
             setCampaign(convertedCampaign);
             setIsLoading(false);

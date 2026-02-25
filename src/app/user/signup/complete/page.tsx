@@ -7,13 +7,8 @@
  *
  * 목적: 회원가입이 성공적으로 완료되었음을 알리는 페이지입니다.
  *
- * 페이지 경로:
- * - /user/signup/complete
- *
- * 주요 기능:
- * - 회원가입 완료 메시지 표시
- * - 캠페인 보러 가기 버튼 (홈으로 이동)
- * - 로그인하기 버튼 (로그인 페이지로 이동)
+ * 사용 페이지:
+ * - /user/signup/complete (회원가입 완료 페이지)
  */
 
 "use client";
@@ -81,9 +76,7 @@ export default function UserSignupCompletePage() {
             <h1 className={styles.welcome_title}>
               {displayNickname !== "회원" ? (
                 <>
-                  <span className={styles.nickname_text}>
-                    {displayNickname}
-                  </span>
+                  <span className={styles.nickname_text}>{displayNickname}</span>
                   <span className={styles.nickname_honorific}>님,</span>
                   <br className={styles.desktop_br} />
                   리뷰엑스의 리뷰어가
@@ -98,26 +91,17 @@ export default function UserSignupCompletePage() {
             </h1>
             <p className={styles.welcome_message}>
               지금 바로 리뷰엑스의
-              <br className={styles.mobile_br} /> 다양한 서비스를 이용해 보세요!
-              🔥🙌
+              <br className={styles.mobile_br} /> 다양한 서비스를 이용해 보세요! 🔥🙌
             </p>
           </div>
         </div>
 
         {/* 버튼 섹션 */}
         <div className={styles.button_section}>
-          <button
-            type="button"
-            className={styles.campaign_button}
-            onClick={handleGoToCampaigns}
-          >
+          <button type="button" className={styles.campaign_button} onClick={handleGoToCampaigns}>
             캠페인 신청하러 가기
           </button>
-          <button
-            type="button"
-            className={styles.login_button}
-            onClick={handleGoToLogin}
-          >
+          <button type="button" className={styles.login_button} onClick={handleGoToLogin}>
             로그인
           </button>
         </div>

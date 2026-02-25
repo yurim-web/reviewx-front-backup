@@ -89,6 +89,7 @@ function convertStoredToReporterCampaignData(
     requireKeywordAttachment?: boolean;
     additionalPoints?: string | number;
     isUrgent?: boolean; // 긴급 캠페인 여부
+    registeredAt?: string; // 등록 시간
   }
 ): ReporterCampaignData {
   const info = campaign.campaignInfo;
@@ -196,15 +197,14 @@ function convertStoredToReporterCampaignData(
     productLink: campaign.productLink || "",
     requirements: requirements.length > 0 ? requirements : [],
     guidelineTexts,
-    isUrgent: (campaign as any).isUrgent === true, // 긴급 캠페인 여부
-    registeredAt: (campaign as any).registeredAt || undefined, // 등록 시간
+    isUrgent: campaign.isUrgent === true, // 긴급 캠페인 여부
+    registeredAt: campaign.registeredAt || undefined, // 등록 시간
   };
 }
 
 export default function ReporterPage() {
   // localStorage에서 가져온 캠페인과 정적 데이터를 합친 배열
-  const [allCampaigns, setAllCampaigns] =
-    useState<ReporterCampaignData[]>(reporterCampaigns);
+  const [allCampaigns, setAllCampaigns] = useState<ReporterCampaignData[]>(reporterCampaigns);
 
   // localStorage에서 데이터를 가져와서 정적 데이터와 합치기
   useEffect(() => {
@@ -233,15 +233,11 @@ export default function ReporterPage() {
       convertedCampaigns.forEach((campaign) => {
         uniqueStoredCampaigns.set(campaign.id, campaign);
       });
-      const deduplicatedStoredCampaigns = Array.from(
-        uniqueStoredCampaigns.values()
-      );
+      const deduplicatedStoredCampaigns = Array.from(uniqueStoredCampaigns.values());
 
       // 정적 데이터와 합치기 (중복 제거: 같은 ID가 있으면 localStorage 데이터 우선)
       const staticIds = new Set(reporterCampaigns.map((c) => c.id));
-      const newCampaigns = deduplicatedStoredCampaigns.filter(
-        (c) => !staticIds.has(c.id)
-      );
+      const newCampaigns = deduplicatedStoredCampaigns.filter((c) => !staticIds.has(c.id));
       // localStorage에 있는 캠페인 중 정적 데이터에도 있는 것은 localStorage 버전으로 교체 (최신 데이터 우선)
       const updatedStaticCampaigns = reporterCampaigns.map((staticCampaign) => {
         const localStorageCampaign = deduplicatedStoredCampaigns.find(

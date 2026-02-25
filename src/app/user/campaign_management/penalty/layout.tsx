@@ -9,10 +9,6 @@
  *
  * 사용 페이지:
  * - /user/campaign_management/penalty (패널티 페이지)
- *
- * 주요 기능:
- * - 페이지 메타데이터 설정 (제목, 설명)
- * - 공통 레이아웃 구조 제공
  */
 
 import { Metadata } from "next";
@@ -22,11 +18,6 @@ export const metadata: Metadata = {
   description: "유저의 패널티 현황과 내역을 확인하세요",
 };
 
-export default function PenaltyLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PenaltyLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
-
