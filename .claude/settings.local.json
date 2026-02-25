@@ -125,7 +125,21 @@
       "Bash(for f in src/data/campaign/mission/missionCampaigns.ts src/data/campaign/reporter/reporterCampaigns.ts src/data/campaign/review/reviewCampaigns.ts src/data/campaign/visit/visitCampaigns.ts)",
       "Bash(do echo \"=== $f ===\")",
       "Bash(env)",
-      "Bash(uniq -d -f1)"
+      "Bash(uniq -d -f1)",
+      "Bash(# Count total files that need \"\"주요 기능\"\" header fix grep -rln \"\"주요 기능\"\" /c/develop/reviewx-web/src/app/user /c/develop/reviewx-web/src/components/user)",
+      "Bash(then)",
+      "Bash(echo \"MISSING HEADER: $f\")",
+      "Bash(fi)",
+      "Bash(# Check if there are any tsx/ts/css files in user without the header find /c/develop/reviewx-web/src/components/user /c/develop/reviewx-web/src/app/user -name \"\"*.tsx\"\" -o -name \"\"*.ts\"\" | xargs grep -L \"\"^/\\\\* ======\"\")",
+      "Bash(python3 scripts/with_server.py --help)",
+      "Bash(py -c \"import playwright; print\\(''playwright ok''\\)\")",
+      "Bash(lsof -i :3002)",
+      "Bash(python3 smoke_test_step58.py)",
+      "Bash(py smoke_test_step58.py)",
+      "Bash(/c/Users/청명/AppData/Local/Microsoft/WindowsApps/python3 smoke_test_step58.py)",
+      "Bash(/c/Users/청명/AppData/Local/Microsoft/WindowsApps/python3 scripts/with_server.py --help)",
+      "Bash(ss -tlnp)",
+      "Bash(npx kill-port 3002 3003)"
     ]
   },
   "hooks": {
