@@ -113,4 +113,6 @@ export interface CampaignWithApplicants {
   };
   /** 선택: 진행/검수 상세에서 바로 사용할 콘텐츠 데이터 */
   contents?: ContentByTab;
+  /** 캠페인 등록 일시 */
+  registeredAt?: string;
 }

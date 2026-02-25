@@ -13,7 +13,8 @@
 
 "use client";
 
-import React, { useParams } from "react";
+import React from "react";
+import { useParams } from "next/navigation";
 import { useCampaignContents } from "@/hooks/partner/campaign_contents/useCampaignContents";
 import CampaignContentsLayout from "@/components/partner/campaign_contents/CampaignContentsLayout";
 import { createMissionCardRenderer } from "@/components/partner/campaign_contents/card_renderers/renderMissionCard";
@@ -22,7 +23,7 @@ import {
   getMissionContentsById,
   missionCampaignsExtended,
 } from "@/data/campaign/mission/missionCampaigns";
-import { getCampaignById } from "@/data/partner/sharedCampaigns";
+import { getCampaignById, type ContentByTab } from "@/data/partner/sharedCampaigns";
 
 export default function MissionContentsDetailPage() {
   const {
@@ -44,7 +45,7 @@ export default function MissionContentsDetailPage() {
     formatDateTime,
   } = useCampaignContents((campaignId) => {
     const shared = getCampaignById(campaignId);
-    const sharedWithContents = shared as unknown as { contents?: any[] };
+    const sharedWithContents = shared as unknown as { contents?: ContentByTab };
     if (shared && sharedWithContents.contents) {
       return sharedWithContents.contents;
     }
@@ -55,7 +56,8 @@ export default function MissionContentsDetailPage() {
   const campaignId = params_url.id as string;
 
   const params = React.useMemo(() => {
-    if (!campaignId) return { contentType: "link" as "link" | "image" | "both", deadlineDate: undefined };
+    if (!campaignId)
+      return { contentType: "link" as "link" | "image" | "both", deadlineDate: undefined };
 
     const campaignData = missionCampaignsExtended.find((c) => c.id === campaignId);
     const contentType = (campaignData?.contentType || "link") as "link" | "image" | "both";

@@ -20,17 +20,15 @@ import { RefObject, useEffect } from "react";
  * @param handler - 외부 클릭 시 실행할 핸들러
  */
 export function useOutsideClick(
-  refs: Array<RefObject<HTMLElement> | null>,
-  handler: () => void,
+  refs: Array<RefObject<HTMLElement | null> | null>,
+  handler: () => void
 ) {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
 
       // 모든 ref를 확인하여 클릭이 외부에서 발생했는지 체크
-      const isOutside = refs.every(
-        (ref) => ref && ref.current && !ref.current.contains(target),
-      );
+      const isOutside = refs.every((ref) => ref && ref.current && !ref.current.contains(target));
 
       if (isOutside) {
         handler();

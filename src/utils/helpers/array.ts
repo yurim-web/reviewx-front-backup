@@ -55,7 +55,7 @@ export const shuffle = <T>(array: T[]): T[] => {
  * @param array - 검사할 배열
  * @returns 비어있으면 true
  */
-export const isEmpty = <T>(array: T[] | null | undefined): boolean => {
+export const isArrayEmpty = <T>(array: T[] | null | undefined): boolean => {
   return !array || array.length === 0;
 };
 
@@ -101,12 +101,15 @@ export const first = <T>(array: T[]): T | undefined => {
  * ```
  */
 export const groupBy = <T>(array: T[], key: keyof T): Record<string, T[]> => {
-  return array.reduce((result, item) => {
-    const groupKey = String(item[key]);
-    if (!result[groupKey]) {
-      result[groupKey] = [];
-    }
-    result[groupKey].push(item);
-    return result;
-  }, {} as Record<string, T[]>);
+  return array.reduce(
+    (result, item) => {
+      const groupKey = String(item[key]);
+      if (!result[groupKey]) {
+        result[groupKey] = [];
+      }
+      result[groupKey].push(item);
+      return result;
+    },
+    {} as Record<string, T[]>
+  );
 };

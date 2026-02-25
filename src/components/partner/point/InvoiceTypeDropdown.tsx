@@ -22,7 +22,7 @@ interface InvoiceTypeDropdownProps {
   isOpen: boolean;
   onToggle: () => void;
   onSelect: (type: InvoiceType) => void;
-  dropdownRef?: RefObject<HTMLDivElement>;
+  dropdownRef?: RefObject<HTMLDivElement | null>;
 }
 
 const INVOICE_OPTIONS: { value: InvoiceType; label: string }[] = [

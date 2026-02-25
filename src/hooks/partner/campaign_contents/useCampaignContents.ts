@@ -89,7 +89,7 @@ export interface UseCampaignContentsReturn {
   handleReport: (contentId: string) => void;
 
   // 유틸리티 함수
-  formatDateTime: (iso: string) => string;
+  formatDateTime: (iso: string | Date) => string;
 }
 
 /**
@@ -108,9 +108,7 @@ export interface UseCampaignContentsReturn {
  * } = useCampaignContents(getDeliveryContentsById);
  * ```
  */
-export function useCampaignContents(
-  contentsLoader: ContentsLoader
-): UseCampaignContentsReturn {
+export function useCampaignContents(contentsLoader: ContentsLoader): UseCampaignContentsReturn {
   // URL 파라미터에서 캠페인 ID 가져오기
   // 📌 Next.js 훅 사용:
   // - useParams(): URL의 동적 파라미터를 가져옵니다 (예: /campaign/[id]에서 id 값)
@@ -191,41 +189,31 @@ export function useCampaignContents(
   // 📌 Set 자료구조 사용:
   // - 중복을 자동으로 제거하는 자료구조
   // - has(), add() 메서드로 빠른 조회 및 추가 가능
-  const [approvedContentIds, setApprovedContentIds] = useState<Set<string>>(
-    new Set()
-  );
+  const [approvedContentIds, setApprovedContentIds] = useState<Set<string>>(new Set());
 
   // 반려된 콘텐츠 ID 목록 (로컬 상태 관리)
   // 📌 반려 처리:
   // - 반려된 콘텐츠는 reviewing에서 waiting으로 이동합니다
   // - 반려 사유는 콘텐츠 객체에 저장됩니다
-  const [rejectedContentIds, setRejectedContentIds] = useState<Set<string>>(
-    new Set()
-  );
+  const [rejectedContentIds, setRejectedContentIds] = useState<Set<string>>(new Set());
 
   // 반려 사유 저장 (콘텐츠 ID -> 반려 사유)
   // 📌 Map 자료구조 사용:
   // - 키(콘텐츠 ID)와 값(반려 사유)을 쌍으로 저장
   // - 반려 사유를 콘텐츠별로 관리
-  const [rejectReasons, setRejectReasons] = useState<Map<string, string>>(
-    new Map()
-  );
+  const [rejectReasons, setRejectReasons] = useState<Map<string, string>>(new Map());
 
   // 신고된 콘텐츠 ID 목록 (로컬 상태 관리)
   // 📌 신고 처리:
   // - 신고된 콘텐츠는 reviewing/completed에서 waiting으로 이동합니다
   // - 신고 날짜/시간은 콘텐츠 객체에 저장됩니다
-  const [reportedContentIds, setReportedContentIds] = useState<Set<string>>(
-    new Set()
-  );
+  const [reportedContentIds, setReportedContentIds] = useState<Set<string>>(new Set());
 
   // 신고 날짜/시간 저장 (콘텐츠 ID -> 신고 날짜/시간)
   // 📌 Map 자료구조 사용:
   // - 키(콘텐츠 ID)와 값(신고 날짜/시간)을 쌍으로 저장
   // - 신고 날짜/시간을 콘텐츠별로 관리
-  const [reportedDates, setReportedDates] = useState<Map<string, string>>(
-    new Map()
-  );
+  const [reportedDates, setReportedDates] = useState<Map<string, string>>(new Map());
 
   // 정렬 옵션 정의
   const sortOptions: Array<{ value: SortOption; label: string }> = [
@@ -249,9 +237,7 @@ export function useCampaignContents(
   }, []);
 
   // 캠페인 정보 가져오기
-  const campaignInfo = campaignId
-    ? getCampaignById(campaignId)?.campaignInfo
-    : undefined;
+  const campaignInfo = campaignId ? getCampaignById(campaignId)?.campaignInfo : undefined;
 
   // 캠페인 상태에 따라 데이터 소스 분기
   // 📌 즉시 실행 함수(IIFE) 패턴:
@@ -260,10 +246,7 @@ export function useCampaignContents(
   const baseContents = (() => {
     if (!campaignId) return { waiting: [], reviewing: [], completed: [] };
     const info = campaignInfo;
-    if (
-      info &&
-      (String(info.status) === "종료" || String(info.status) === "취소")
-    ) {
+    if (info && (String(info.status) === "종료" || String(info.status) === "취소")) {
       // 종료/취소된 캠페인은 closed 데이터 사용
       const closed = getClosedContentsById(campaignId);
       return closed || { waiting: [], reviewing: [], completed: [] };
@@ -287,9 +270,7 @@ export function useCampaignContents(
     const waiting = baseContents.waiting || [];
 
     // 승인된 콘텐츠 필터링
-    const approvedItems = reviewing.filter((item) =>
-      approvedContentIds.has(item.id)
-    );
+    const approvedItems = reviewing.filter((item) => approvedContentIds.has(item.id));
 
     // 반려된 콘텐츠 필터링 (isRejected: true로 표시, 반려 사유 포함)
     const rejectedItems = reviewing
@@ -326,17 +307,10 @@ export function useCampaignContents(
     );
 
     // 남은 completed 콘텐츠 (신고되지 않은 것들)
-    const remainingCompleted = completed.filter(
-      (item) => !reportedContentIds.has(item.id)
-    );
+    const remainingCompleted = completed.filter((item) => !reportedContentIds.has(item.id));
 
     return {
-      waiting: [
-        ...waiting,
-        ...rejectedItems,
-        ...reportedFromReviewing,
-        ...reportedFromCompleted,
-      ],
+      waiting: [...waiting, ...rejectedItems, ...reportedFromReviewing, ...reportedFromCompleted],
       reviewing: remainingReviewing,
       completed: [...remainingCompleted, ...approvedItems],
     };
@@ -351,7 +325,7 @@ export function useCampaignContents(
   // 📌 문자열 메서드:
   // - slice(0, 16): ISO 문자열의 처음 16자만 가져옵니다 (예: "2025-01-15T10:00")
   // - replace("T", " "): T를 공백으로 변경하여 "2025-01-15 10:00" 형식으로 변환
-  const formatDateTime = (iso: string) => iso.slice(0, 16).replace("T", " ");
+  const formatDateTime = (iso: string | Date) => String(iso).slice(0, 16).replace("T", " ");
 
   /**
    * 승인 핸들러: 콘텐츠를 완료 상태로 변경하고 완료 탭으로 이동

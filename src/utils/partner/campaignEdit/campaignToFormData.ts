@@ -172,11 +172,11 @@ function formatRecruitmentPeriod(
  */
 export function campaignToFormData(
   campaign: CampaignWithApplicants,
-  originalData?: Record<string, unknown>,
+  originalData?: object,
   options?: CampaignConversionOptions
 ): CampaignFormData {
   const info = campaign.campaignInfo;
-  const extended = originalData;
+  const extended = originalData as Record<string, unknown> | undefined;
   const campaignType = info.campaignType as CampaignType;
 
   // Requirements 파싱 (공통)

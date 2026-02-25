@@ -152,7 +152,7 @@ export default function DeliveryCampaignEditPage() {
       setInitialData(formData);
 
       // isUrgent 상태 설정
-      setIsUrgent(dataToUse?.isUrgent || false);
+      setIsUrgent((dataToUse as { isUrgent?: boolean } | null | undefined)?.isUrgent ?? false);
 
       // 캠페인 오픈 여부 확인
       const openStatus = isCampaignOpen(campaign.campaignInfo.recruitmentPeriod);
@@ -247,7 +247,9 @@ export default function DeliveryCampaignEditPage() {
             isUrgent: isUrgent,
             registeredAt:
               originalData?.registeredAt ||
-              ((existingCampaign as Record<string, unknown>).registeredAt as string | undefined),
+              ((existingCampaign as unknown as Record<string, unknown>).registeredAt as
+                | string
+                | undefined),
             description: formData.providedItems || originalData?.description || "",
             promotionLink: formData.promotionLink || originalData?.promotionLink || "",
             keyword: formData.keywords || originalData?.keyword || "",
