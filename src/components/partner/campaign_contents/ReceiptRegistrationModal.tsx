@@ -16,6 +16,7 @@
 
 import { useState, useRef } from "react";
 import Image from "next/image";
+import { validateImageFiles, IMAGE_UPLOAD_CONSTRAINTS } from "@/utils/validation/imageUpload";
 import styles from "../../../styles/partner/receipt_registration.module.css";
 
 interface ReceiptRegistrationModalProps {
@@ -40,30 +41,22 @@ export default function ReceiptRegistrationModal({
     const files = e.target.files;
     if (!files) return;
 
-    const newFiles = Array.from(files);
+    const { validFiles, isOverLimit, hasExtensionError, hasSizeError } = validateImageFiles(
+      Array.from(files),
+      uploadedImages.length
+    );
 
-    // 파일 개수 체크 (최대 7장)
-    if (uploadedImages.length + newFiles.length > 7) {
-      alert("최대 7장까지만 업로드 가능합니다.");
+    if (isOverLimit) {
+      alert(`최대 ${IMAGE_UPLOAD_CONSTRAINTS.MAX_COUNT}장까지만 업로드 가능합니다.`);
       return;
     }
-
-    // 파일 크기 및 형식 체크
-    const validFiles: File[] = [];
-    for (const file of newFiles) {
-      // 파일 크기 체크 (10MB)
-      if (file.size > 10 * 1024 * 1024) {
-        alert(`${file.name} 파일 크기는 10MB 이하여야 합니다.`);
-        continue;
-      }
-
-      // 파일 형식 체크
-      if (!file.type.match(/^image\/(jpeg|jpg|png|gif)$/i)) {
-        alert(`${file.name}은(는) JPG, PNG, GIF 파일만 업로드 가능합니다.`);
-        continue;
-      }
-
-      validFiles.push(file);
+    if (hasExtensionError) {
+      alert("JPG, PNG, GIF 파일만 업로드 가능합니다.");
+      return;
+    }
+    if (hasSizeError) {
+      alert("10MB 이하의 파일만 업로드할 수 있습니다.");
+      return;
     }
 
     setUploadedImages((prev) => [...prev, ...validFiles]);
