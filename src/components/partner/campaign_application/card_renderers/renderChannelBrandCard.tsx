@@ -13,8 +13,7 @@
  */
 
 import React from "react";
-import type { AllApplicant } from "@/data/partner/sharedCampaigns";
-import type { CampaignData } from "@/data/partner/campaign_application/delivery_applicants";
+import type { AllApplicant, CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import {
   type Applicant,
   type NaverClipApplicant,
@@ -38,9 +37,9 @@ import ShortsSelectedCard from "@/components/partner/campaign_application/card_t
  * Channel Brand 카드 렌더링 함수 (visit/reporter 공용)
  */
 export function renderChannelBrandCard(
-  handleSelectApplicant: (applicant: AllApplicant) => void,
-  handleCancelApplicant: (applicant: AllApplicant) => void,
-  campaignData: CampaignData | null
+  handleSelectApplicant: (applicantId: string) => void,
+  handleCancelApplicant: (applicantId: string) => void,
+  campaignData: CampaignWithApplicants | null
 ) {
   // eslint-disable-next-line react/display-name
   return (applicant: AllApplicant, isSelected: boolean = false): React.ReactNode => {
@@ -54,10 +53,7 @@ export function renderChannelBrandCard(
           onCancel={handleCancelApplicant}
         />
       ) : (
-        <ReelsCard
-          applicant={applicant as InstagramApplicant}
-          onSelect={handleSelectApplicant}
-        />
+        <ReelsCard applicant={applicant as InstagramApplicant} onSelect={handleSelectApplicant} />
       );
     }
 
@@ -133,10 +129,7 @@ export function renderChannelBrandCard(
             onCancel={handleCancelApplicant}
           />
         ) : (
-          <YoutubeCard
-            applicant={applicant as YoutubeApplicant}
-            onSelect={handleSelectApplicant}
-          />
+          <YoutubeCard applicant={applicant as YoutubeApplicant} onSelect={handleSelectApplicant} />
         );
 
       default:
