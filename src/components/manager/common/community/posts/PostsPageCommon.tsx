@@ -58,16 +58,12 @@ interface PostsPageCommonProps {
  * @param props.manager_type - 관리자 타입 ('ga' 또는 'sa')
  * @returns 게시글 목록 페이지 JSX 요소
  */
-export default function PostsPageCommon({
-  manager_type,
-}: PostsPageCommonProps) {
+export default function PostsPageCommon({ manager_type }: PostsPageCommonProps) {
   // 검색어 상태 관리
   const [search_query, set_search_query] = useState<string>("");
 
   // 구분 필터 상태 관리
-  const [selected_divisions, set_selected_divisions] = useState<PostDivision[]>(
-    []
-  );
+  const [selected_divisions, set_selected_divisions] = useState<PostDivision[]>([]);
 
   // 대상 필터 상태 관리
   const [selected_targets, set_selected_targets] = useState<PostTarget[]>([]);
@@ -76,9 +72,7 @@ export default function PostsPageCommon({
   // 기본값: 이번 달 (오늘 날짜 기준 이번 달의 첫날 ~ 마지막날)
   // startOfMonth: 주어진 날짜의 월의 첫날을 반환합니다 (예: 2026-01-13 -> 2026-01-01)
   // endOfMonth: 주어진 날짜의 월의 마지막날을 반환합니다 (예: 2026-01-13 -> 2026-01-31)
-  const [selected_date_range, set_selected_date_range] = useState<
-    DateRange | undefined
-  >(() => {
+  const [selected_date_range, set_selected_date_range] = useState<DateRange | undefined>(() => {
     const today = new Date();
     return {
       from: startOfMonth(today),
@@ -114,19 +108,22 @@ export default function PostsPageCommon({
         return;
       }
 
-      const updated_posts = apply_pinned_state_to_posts(
-        posts_data,
-        pinned_state
-      );
+      const updated_posts = apply_pinned_state_to_posts(posts_data, pinned_state);
       set_posts(updated_posts);
     };
 
     // 초기 마운트 시 게시글 목록 업데이트
     update_posts();
 
-    // 주기적으로 게시글 목록 업데이트 (1초마다)
-    // 관리자에서 새로 등록한 게시글이 즉시 반영되도록 합니다
-    const interval_id = setInterval(update_posts, 1000);
+    // 주기적으로 게시글 목록 업데이트 (5초마다)
+    // 관리자에서 새로 등록한 게시글이 반영되도록 합니다
+    const interval_id = setInterval(update_posts, 5000);
+
+    // 탭이 다시 활성화될 때 즉시 업데이트
+    const handle_visibility_change = () => {
+      if (!document.hidden) update_posts();
+    };
+    document.addEventListener("visibilitychange", handle_visibility_change);
 
     // 페이지가 포커스될 때도 업데이트
     const handle_focus = () => {
@@ -137,6 +134,7 @@ export default function PostsPageCommon({
     // 컴포넌트가 언마운트될 때 interval과 이벤트 리스너 정리
     return () => {
       clearInterval(interval_id);
+      document.removeEventListener("visibilitychange", handle_visibility_change);
       window.removeEventListener("focus", handle_focus);
     };
   }, []);
@@ -164,9 +162,7 @@ export default function PostsPageCommon({
        localStorage에도 함께 반영합니다.
      ======================================== */
 
-  const update_posts_and_persist_pins = (
-    updater: (posts: PostItem[]) => PostItem[]
-  ) => {
+  const update_posts_and_persist_pins = (updater: (posts: PostItem[]) => PostItem[]) => {
     set_posts((previous_posts) => {
       const updated_posts = updater(previous_posts);
 
@@ -189,9 +185,7 @@ export default function PostsPageCommon({
 
     update_posts_and_persist_pins((previous_posts) =>
       previous_posts.map((post) =>
-        selected_post_ids.includes(post.id)
-          ? { ...post, is_pinned: true }
-          : post
+        selected_post_ids.includes(post.id) ? { ...post, is_pinned: true } : post
       )
     );
     set_toast({ is_open: true, message: "저장되었습니다." });
@@ -203,9 +197,7 @@ export default function PostsPageCommon({
 
     update_posts_and_persist_pins((previous_posts) =>
       previous_posts.map((post) =>
-        selected_post_ids.includes(post.id)
-          ? { ...post, is_pinned: false }
-          : post
+        selected_post_ids.includes(post.id) ? { ...post, is_pinned: false } : post
       )
     );
     set_toast({ is_open: true, message: "저장되었습니다." });
@@ -245,10 +237,7 @@ export default function PostsPageCommon({
     if (!updated_pinned_state || Object.keys(updated_pinned_state).length === 0) {
       set_posts([...posts_data]);
     } else {
-      const updated_posts = apply_pinned_state_to_posts(
-        posts_data,
-        updated_pinned_state
-      );
+      const updated_posts = apply_pinned_state_to_posts(posts_data, updated_pinned_state);
       set_posts(updated_posts);
     }
 
