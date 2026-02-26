@@ -1,21 +1,14 @@
 /* ========================================
-   🔐 관리자 로그인 페이지
+   관리자 로그인 페이지
    ======================================== */
 
 /**
- * 관리자 로그인 페이지
+ * ManagerLoginPage
  *
- * 목적: 관리자가 아이디와 비밀번호를 입력하여 로그인할 수 있는 페이지입니다.
+ * 목적: 관리자 아이디·비밀번호 로그인 처리
  *
- * 페이지 경로:
- * - /manager/login
- *
- * 주요 기능:
- * - 아이디 입력
- * - 비밀번호 입력
- * - 자동 로그인 체크박스
- * - 로그인 버튼
- * - 아이디 · 비밀번호 찾기 링크
+ * 사용 페이지:
+ * - /manager/login (관리자 로그인)
  */
 
 "use client";
@@ -131,10 +124,6 @@ export default function AdminLoginPage() {
       await login({ email: username, password }, account.role);
 
       // login 함수에서 자동으로 리다이렉트하므로 여기서는 추가 처리 불필요
-      console.log("✅ [관리자 로그인] 로그인 성공:", {
-        role: account.role,
-        name: account.name,
-      });
     } catch (error) {
       // 에러 메시지 표시
       if (error instanceof Error) {

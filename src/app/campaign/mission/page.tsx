@@ -1,22 +1,14 @@
 /* ========================================
-   🎯 미션형 캠페인 목록 페이지
+   미션형 캠페인 목록 페이지
    ======================================== */
 
 /**
- * 미션형 캠페인 목록 페이지
+ * MissionPage
  *
- * 페이지 경로:
- * - /mission (기존 /user/mission에서 변경)
+ * 목적: 미션형 캠페인 목록 표시 및 필터링
  *
- * 필터 종류:
- * - 카테고리(옵션O): 카테고리 필터 옵션 선택 가능
- * - 긴급(옵션X): 긴급 필터 옵션 선택 불가능
- *
- * 사용 파일:
- * - 컴포넌트: CampaignListPage
- * - 훅: useCampaignFilters
- * - 데이터: missionCampaigns, missionCategoryOptions, missionSortOptions
- * - CSS: mission.module.css
+ * 사용 페이지:
+ * - /campaign/mission (미션형 캠페인 목록)
  */
 
 "use client";
@@ -159,9 +151,7 @@ function convertStoredToMissionCampaignData(
         // "모집 오픈" 텍스트와 함께 반환
         return `${formattedDate}\n모집 오픈`;
       }
-    } catch (error) {
-      console.error("[generateSchedule] 날짜 포맷팅 실패:", error);
-    }
+    } catch (_error) {}
 
     return "";
   };
@@ -243,8 +233,7 @@ export default function MissionPage() {
       const mergedCampaigns = [...updatedStaticCampaigns, ...newCampaigns];
 
       setAllCampaigns(mergedCampaigns);
-    } catch (error) {
-      console.error("localStorage에서 미션형 캠페인 불러오기 실패:", error);
+    } catch (_error) {
       setAllCampaigns(missionCampaigns);
     }
   }, []);
@@ -288,9 +277,7 @@ export default function MissionPage() {
         // "모집 오픈" 텍스트와 함께 반환
         return `${formattedDate}\n모집 오픈`;
       }
-    } catch (error) {
-      console.error("[generateSchedule] 날짜 포맷팅 실패:", error);
-    }
+    } catch (_error) {}
 
     return "";
   };

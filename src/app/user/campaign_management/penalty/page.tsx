@@ -17,7 +17,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import CampaignManagementHeader from "@/components/user/campaign_management/CampaignManagementHeader";
 import PenaltyContent from "@/components/common/campaign_management/penalty/PenaltyContent";
-import type { MainTab } from "@/types/domain/user";
+import type { MainTab, StatTab } from "@/types/domain/user";
 import layoutStyles from "@/styles/user/campaign_management/campaign_management_layout.module.css";
 import cardStyles from "../../../../styles/user/campaign_management/campaign_card.module.css";
 import { userPenaltyData, userPenaltyStatus } from "@/data/user/penaltyData";
@@ -26,11 +26,9 @@ export default function PenaltyPage() {
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<MainTab>("campaign");
-  const [activeStatTab, setActiveStatTab] = useState<
-    "신청" | "선정" | "완료" | "취소/반려" | "패널티"
-  >("패널티");
+  const [activeStatTab, setActiveStatTab] = useState<StatTab>("패널티");
 
-  const handleStatTabChange = (tab: "신청" | "선정" | "완료" | "취소/반려" | "전체" | "패널티") => {
+  const handleStatTabChange = (tab: StatTab) => {
     if (tab === "패널티") {
       setActiveStatTab(tab);
     } else {

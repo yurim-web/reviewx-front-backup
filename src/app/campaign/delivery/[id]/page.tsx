@@ -1,18 +1,14 @@
 /* ========================================
-   🚚 배송형 캠페인 상세 페이지
+   배송형 캠페인 상세 페이지
    ======================================== */
 
 /**
- * 배송형 캠페인 상세 페이지
+ * DeliveryDetailPage
  *
- * 페이지 경로:
- * - /delivery/[id] (기존 /user/delivery/[id]에서 변경)
+ * 목적: 배송형 캠페인 상세 정보 표시
  *
- * 사용 파일:
- * - 컴포넌트: CampaignDetailPage
- * - 훅: useCampaignDetailScroll
- * - 데이터: deliveryCampaigns
- * - CSS: campaign_detail.module.css
+ * 사용 페이지:
+ * - /campaign/delivery/[id] (배송형 캠페인 상세)
  */
 
 "use client";
@@ -221,9 +217,7 @@ function convertToDeliveryCampaignData(
         // "모집 오픈" 텍스트와 함께 반환
         return `${formattedDate}\n모집 오픈`;
       }
-    } catch (error) {
-      console.error("[generateSchedule] 날짜 포맷팅 실패:", error);
-    }
+    } catch (_error) {}
 
     return "";
   };
@@ -284,7 +278,6 @@ export default function DeliveryDetailPage({ params }: DeliveryDetailPageProps) 
     });
 
     if (staticCampaign) {
-      console.log(`[배송형 캠페인] 목업 데이터에서 캠페인 찾음: ID=${staticCampaign.id}`);
       // staticCampaign은 이미 DeliveryCampaignData 형식
       const finalCampaign: DeliveryCampaignData = {
         ...staticCampaign,
@@ -305,7 +298,6 @@ export default function DeliveryDetailPage({ params }: DeliveryDetailPageProps) 
     });
 
     if (closedCampaign) {
-      console.log(`[배송형 캠페인] 취소된 캠페인에서 캠페인 찾음: ID=${closedCampaign.id}`);
       const finalCampaign: DeliveryCampaignData = {
         ...closedCampaign,
         guidelineTexts: closedCampaign.guidelineTexts || [],
@@ -331,22 +323,16 @@ export default function DeliveryDetailPage({ params }: DeliveryDetailPageProps) 
             return normalizedCampaignId === normalizedUrlId;
           });
           if (storedCampaign) {
-            console.log(
-              `[배송형 캠페인] localStorage에서 캠페인 찾음: ID=${storedCampaign.campaignInfo.id}`
-            );
             const convertedCampaign = convertToDeliveryCampaignData(storedCampaign);
             setCampaign(convertedCampaign);
             setIsLoading(false);
             return;
           }
         }
-      } catch (error) {
-        console.error("localStorage에서 캠페인 불러오기 실패:", error);
-      }
+      } catch (_error) {}
     }
 
     // 4. 목업과 localStorage 모두에서 찾지 못한 경우
-    console.warn(`[배송형 캠페인] 캠페인을 찾을 수 없습니다: ID=${id}`);
     setCampaign(null);
     setIsLoading(false);
   }, [id]);

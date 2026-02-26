@@ -1,18 +1,14 @@
 /* ========================================
-   🚶 방문형 캠페인 상세 페이지
+   방문형 캠페인 상세 페이지
    ======================================== */
 
 /**
- * 방문형 캠페인 상세 페이지
+ * VisitDetailPage
  *
- * 페이지 경로:
- * - /visit/[id] (기존 /user/visit/[id]에서 변경)
+ * 목적: 방문형 캠페인 상세 정보 표시
  *
- * 사용 파일:
- * - 컴포넌트: CampaignDetailPage
- * - 훅: useCampaignDetailScroll
- * - 데이터: visitCampaigns
- * - CSS: campaign_detail.module.css
+ * 사용 페이지:
+ * - /campaign/visit/[id] (방문형 캠페인 상세)
  */
 
 "use client";
@@ -207,9 +203,7 @@ function convertToVisitCampaignData(
         // "모집 오픈" 텍스트와 함께 반환
         return `${formattedDate}\n모집 오픈`;
       }
-    } catch (error) {
-      console.error("[generateSchedule] 날짜 포맷팅 실패:", error);
-    }
+    } catch (_error) {}
 
     return "";
   };
@@ -272,7 +266,6 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
     });
 
     if (staticCampaign) {
-      console.log(`[방문형 캠페인] 목업 데이터에서 캠페인 찾음: ID=${staticCampaign.id}`);
       // staticCampaign은 이미 VisitCampaignData 형식
       const finalCampaign: VisitCampaignData = {
         ...staticCampaign,
@@ -297,22 +290,16 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
             return normalizedCampaignId === normalizedUrlId;
           });
           if (storedCampaign) {
-            console.log(
-              `[방문형 캠페인] localStorage에서 캠페인 찾음: ID=${storedCampaign.campaignInfo.id}`
-            );
             const convertedCampaign = convertToVisitCampaignData(storedCampaign);
             setCampaign(convertedCampaign);
             setIsLoading(false);
             return;
           }
         }
-      } catch (error) {
-        console.error("localStorage에서 캠페인 불러오기 실패:", error);
-      }
+      } catch (_error) {}
     }
 
     // 3. 목업과 localStorage 모두에서 찾지 못한 경우
-    console.warn(`[방문형 캠페인] 캠페인을 찾을 수 없습니다: ID=${id}`);
     setCampaign(null);
     setIsLoading(false);
   }, [id]);
@@ -327,12 +314,6 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
 
   // 디버깅: guidelineTexts 확인
   if (campaign && (campaign.id === "1006" || campaign.id === "6")) {
-    console.log("[visit_6 디버깅] campaign before render:", {
-      id: campaign.id,
-      hasGuidelineTexts: !!campaign.guidelineTexts,
-      guidelineTextsLength: campaign.guidelineTexts?.length || 0,
-      guidelineTexts: campaign.guidelineTexts,
-    });
   }
 
   return (
