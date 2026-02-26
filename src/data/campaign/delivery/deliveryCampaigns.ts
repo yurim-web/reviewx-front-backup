@@ -1,6 +1,16 @@
+/* ========================================
+   배송형 캠페인 데이터
+   ======================================== */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 /**
- * 배송형 캠페인 데이터 타입 정의
+ * deliveryCampaigns
+ *
+ * 목적: 배송형 캠페인 목업 데이터 및 타입 정의
+ *
+ * 사용 페이지:
+ * - /campaign/delivery (배송형 캠페인 목록)
+ * - /campaign/delivery/[id] (배송형 캠페인 상세)
  */
 
 import type { CampaignFormData } from "@/types/domain/user";
@@ -69,6 +79,7 @@ export interface DeliveryCampaignData {
   allowLateSubmission?: boolean; // 지각 제출 허용
   // 문의 담당자 정보
   contactPhone?: string; // 문의 담당자 휴대폰 번호
+  partnerName?: string; // 파트너사 이름
 }
 
 /**
@@ -132,12 +143,12 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     isUrgent: true, // 긴급 캠페인
     registeredAt: "2026-01-11T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 모집 진행 중 (오늘 날짜 포함)
-      applicationStart: "2025-01-10",
-      applicationEnd: "2025-01-28",
-      announcement: "2025-01-30",
-      purchasePeriod: "2025-01-30 ~ 2025-02-02",
-      registrationPeriod: "2025-02-02 ~ 2025-02-18",
+      // 항상 신청 내역 테스트가 가능하도록, 현재 날짜(2026-02-26) 기준으로 모집 진행 중 상태로 유지
+      applicationStart: "2026-02-01",
+      applicationEnd: "2026-03-31",
+      announcement: "2026-04-02",
+      purchasePeriod: "2026-04-02 ~ 2026-04-10",
+      registrationPeriod: "2026-04-10 ~ 2026-04-30",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
@@ -1958,7 +1969,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           channelId: "youtube_test_001",
           channel: "유튜브",
           profileImage: "",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 2: 연장 요청됨
         {
@@ -1971,7 +1982,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           channel: "유튜브",
           profileImage: "",
           extension_request_reason: "개인 사정으로 3일 연장 요청드립니다.",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 3: 반려됨
         {
@@ -1984,7 +1995,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           channel: "유튜브",
           profileImage: "",
           isRejected: true,
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 4: 신고됨
         {
@@ -1998,7 +2009,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           profileImage: "",
           isReported: true,
           reportedDate: "2026-02-04T14:30:00.000Z",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
       ],
       reviewing: [
@@ -2016,7 +2027,6 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
             "https://via.placeholder.com/800x600/FFB6C1/FFFFFF?text=Receipt+Image+1",
             "https://via.placeholder.com/800x600/87CEEB/FFFFFF?text=Receipt+Image+2",
           ],
-          receiptUrl: "/images/test_img/eximg.png",
         },
       ],
       completed: [
@@ -2034,7 +2044,6 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           receiptImages: [
             "https://via.placeholder.com/800x600/98FB98/FFFFFF?text=Receipt+Image+Completed",
           ],
-          receiptUrl: "/images/test_img/eximg.png",
         },
         // 완료 탭 경우의 수 2: 지각등록 승인 완료 상태
         {
@@ -2048,8 +2057,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           profileImage: "",
           updatedAt: "2026-02-04T16:00:00.000Z",
           isLateSubmission: true,
-          receiptImages: ["https://via.placeholder.com/800x600/FFD700/FFFFFF?text=Late+Submission"],
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
       ],
     },
@@ -2201,7 +2209,7 @@ export interface DeliveryCampaignDataItem {
     reviewing: Array<{
       id: string;
       createdAt: string;
-      status: "검수";
+      status: "검수" | "검수중";
       userType: "리뷰어" | "인플루언서";
       nickname: string;
       channelId: string;
@@ -2255,9 +2263,7 @@ function generateNewCampaignId(): string {
           });
         }
       }
-    } catch (error) {
-      console.error("localStorage에서 캠페인 ID 확인 실패:", error);
-    }
+    } catch (_error) {}
   }
 
   const existingIds = allCampaigns

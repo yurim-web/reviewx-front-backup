@@ -1,5 +1,5 @@
 /* ========================================
-   GA
+   GA 관리자 리뷰어 데이터
    ======================================== */
 
 /**
@@ -868,8 +868,7 @@ function load_status_updates_from_storage(): Record<string, ReviewerStatusType> 
   try {
     const stored = localStorage.getItem(STORAGE_KEY_REVIEWER_STATUS_UPDATES);
     return stored ? JSON.parse(stored) : {};
-  } catch (error) {
-    console.error("localStorage에서 리뷰어 상태 업데이트 로드 실패:", error);
+  } catch (_error) {
     return {};
   }
 }
@@ -883,8 +882,7 @@ function load_previous_status_from_storage(): Record<string, ReviewerStatusType>
   try {
     const stored = localStorage.getItem(STORAGE_KEY_REVIEWER_PREVIOUS_STATUS);
     return stored ? JSON.parse(stored) : {};
-  } catch (error) {
-    console.error("localStorage에서 리뷰어 이전 상태 로드 실패:", error);
+  } catch (_error) {
     return {};
   }
 }
@@ -897,9 +895,7 @@ function save_status_updates_to_storage(updates: Record<string, ReviewerStatusTy
 
   try {
     localStorage.setItem(STORAGE_KEY_REVIEWER_STATUS_UPDATES, JSON.stringify(updates));
-  } catch (error) {
-    console.error("localStorage에 리뷰어 상태 업데이트 저장 실패:", error);
-  }
+  } catch (_error) {}
 }
 
 // 이전 상태 정보를 localStorage에 저장
@@ -912,9 +908,7 @@ function save_previous_status_to_storage(
 
   try {
     localStorage.setItem(STORAGE_KEY_REVIEWER_PREVIOUS_STATUS, JSON.stringify(previous_status));
-  } catch (error) {
-    console.error("localStorage에 리뷰어 이전 상태 저장 실패:", error);
-  }
+  } catch (_error) {}
 }
 
 // 리뷰어 목록 가져오기 (상태 업데이트 반영)
@@ -955,9 +949,7 @@ export function get_reviewer_list(): ReviewerItem[] {
           }
         });
       }
-    } catch (error) {
-      console.error("리뷰어 목록 데이터 로드 실패:", error);
-    }
+    } catch (_error) {}
   }
 
   return reviewer_list.map((reviewer) => {
@@ -1044,9 +1036,7 @@ export function reset_reviewer_status_storage(): void {
   try {
     localStorage.removeItem(STORAGE_KEY_REVIEWER_STATUS_UPDATES);
     localStorage.removeItem(STORAGE_KEY_REVIEWER_PREVIOUS_STATUS);
-  } catch (error) {
-    console.error("localStorage 초기화 실패:", error);
-  }
+  } catch (_error) {}
 }
 
 // 초기 데이터와 localStorage 동기화 함수
@@ -1075,9 +1065,7 @@ export function sync_reviewer_status_with_initial_data(): void {
     });
 
     save_status_updates_to_storage(updated_status);
-  } catch (error) {
-    console.error("리뷰어 상태 동기화 실패:", error);
-  }
+  } catch (_error) {}
 }
 
 // 리뷰어 상태 타입 업데이트

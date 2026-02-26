@@ -1,7 +1,17 @@
+/* ========================================
+   미션형 캠페인 데이터
+   ======================================== */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-require-imports */
+
 /**
- * 미션형 캠페인 데이터 타입 정의
+ * missionCampaigns
+ *
+ * 목적: 미션형 캠페인 목업 데이터 및 타입 정의
+ *
+ * 사용 페이지:
+ * - /campaign/mission (미션형 캠페인 목록)
+ * - /campaign/mission/[id] (미션형 캠페인 상세)
  */
 
 import type { CampaignFormData } from "@/types/domain/user";
@@ -45,6 +55,7 @@ export interface MissionCampaignData {
   allowLateSubmission?: boolean; // 지각 제출 허용
   // 문의 담당자 정보
   contactPhone?: string; // 문의 담당자 휴대폰 번호
+  partnerName?: string; // 파트너사 이름
 }
 
 /**
@@ -65,8 +76,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     recruitment: {
       current: 289,
       total: 5,
-      partnerName: "ABC쇼핑몰",
     },
+    partnerName: "ABC쇼핑몰",
     schedule: "",
     dayCount: "D-5",
     registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
@@ -101,18 +112,18 @@ export const missionCampaigns: MissionCampaignData[] = [
     recruitment: {
       current: 156,
       total: 8,
-      partnerName: "그린라이프",
     },
+    partnerName: "그린라이프",
     schedule: "",
     dayCount: "",
     isUrgent: true, // 긴급 캠페인
     registeredAt: "2026-01-08T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 진행 중 - 등록 기간 중
-      applicationStart: "2026-01-20",
-      applicationEnd: "2026-02-10",
-      announcement: "2026-02-12",
-      registrationPeriod: "2026-02-14 ~ 2026-03-10",
+      // 항상 신청 내역 테스트가 가능하도록, 현재 날짜(2026-02-26) 기준으로 모집 진행 중 상태로 유지
+      applicationStart: "2026-02-01",
+      applicationEnd: "2026-03-31",
+      announcement: "2026-04-02",
+      registrationPeriod: "2026-04-05 ~ 2026-04-30",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#헬스케어체험 #건강관리 #미션형 #유튜브 #솔직후기",
@@ -140,8 +151,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     recruitment: {
       current: 89,
       total: 6,
-      partnerName: "내추럴푸드",
     },
+    partnerName: "내추럴푸드",
     schedule: "",
     dayCount: "D-3",
     registeredAt: "2026-01-06T11:15:00.000Z", // 등록 시간
@@ -173,8 +184,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     recruitment: {
       current: 178,
       total: 10,
-      partnerName: "테크솔루션",
     },
+    partnerName: "테크솔루션",
     schedule: "",
     dayCount: "D-7",
     registeredAt: "2026-01-09T13:30:00.000Z", // 등록 시간
@@ -207,8 +218,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     recruitment: {
       current: 145,
       total: 15,
-      partnerName: "펫프렌즈",
     },
+    partnerName: "펫프렌즈",
     schedule: "",
     dayCount: "D-6",
     registeredAt: "2025-10-28T10:00:00.000Z", // 등록 시간
@@ -242,8 +253,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     recruitment: {
       current: 98,
       total: 4,
-      partnerName: "베이비케어",
     },
+    partnerName: "베이비케어",
     schedule: "",
     dayCount: "D-4",
     registeredAt: "2026-01-07T13:30:00.000Z", // 등록 시간
@@ -276,8 +287,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     recruitment: {
       current: 120,
       total: 5,
-      partnerName: "그린라이프",
     },
+    partnerName: "그린라이프",
     schedule: "",
     dayCount: "D-5",
     registeredAt: "2026-01-11T10:00:00.000Z", // 등록 시간
@@ -309,8 +320,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     recruitment: {
       current: 67,
       total: 8,
-      partnerName: "키즈월드",
     },
+    partnerName: "키즈월드",
     schedule: "",
     dayCount: "D-2",
     registeredAt: "2025-11-10T09:15:00.000Z", // 등록 시간
@@ -343,8 +354,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     recruitment: {
       current: 123,
       total: 7,
-      partnerName: "키즈월드",
     },
+    partnerName: "키즈월드",
     schedule: "",
     dayCount: "D-8",
     registeredAt: "2025-11-05T14:00:00.000Z", // 등록 시간
@@ -377,8 +388,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     recruitment: {
       current: 45,
       total: 3,
-      partnerName: "테크솔루션",
     },
+    partnerName: "테크솔루션",
     schedule: "",
     dayCount: "D-1",
     registeredAt: "2025-11-15T10:50:00.000Z", // 등록 시간
@@ -411,8 +422,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     recruitment: {
       current: 167,
       total: 2,
-      partnerName: "홈데코라이프",
     },
+    partnerName: "홈데코라이프",
     schedule: "",
     dayCount: "D-9",
     registeredAt: "2025-11-01T08:00:00.000Z", // 등록 시간
@@ -446,8 +457,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     recruitment: {
       current: 0,
       total: 8,
-      partnerName: "패션하우스",
     },
+    partnerName: "패션하우스",
     schedule: "1/15 (목) 10:00\n모집 오픈",
     dayCount: "",
     registeredAt: "2026-01-10T12:00:00.000Z", // 등록 시간
@@ -491,8 +502,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     recruitment: {
       current: 234,
       total: 10,
-      partnerName: "펫프렌즈",
     },
+    partnerName: "펫프렌즈",
     schedule: "",
     dayCount: "D-1",
     registeredAt: "2026-01-05T10:00:00.000Z", // 등록 시간
@@ -529,8 +540,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     recruitment: {
       current: 156,
       total: 8,
-      partnerName: "레더리아",
     },
+    partnerName: "레더리아",
     schedule: "",
     dayCount: "D-1",
     registeredAt: "2026-01-05T11:00:00.000Z", // 등록 시간
@@ -567,8 +578,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     recruitment: {
       current: 189,
       total: 12,
-      partnerName: "헬스앤라이프",
     },
+    partnerName: "헬스앤라이프",
     schedule: "",
     dayCount: "D-1",
     registeredAt: "2026-01-06T09:30:00.000Z", // 등록 시간
@@ -605,8 +616,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     recruitment: {
       current: 7,
       total: 10,
-      partnerName: "홈트레이닝",
     },
+    partnerName: "홈트레이닝",
     schedule: "",
     dayCount: "D-4",
     registeredAt: "2026-01-12T10:00:00.000Z",
@@ -638,8 +649,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     recruitment: {
       current: 7,
       total: 10,
-      partnerName: "라이프스타일",
     },
+    partnerName: "라이프스타일",
     schedule: "",
     dayCount: "D-2",
     registeredAt: "2026-01-22T10:00:00.000Z",
@@ -671,8 +682,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     recruitment: {
       current: 7,
       total: 10,
-      partnerName: "레더리아",
     },
+    partnerName: "레더리아",
     schedule: "",
     dayCount: "D-1",
     registeredAt: "2026-01-25T10:00:00.000Z",
@@ -785,7 +796,9 @@ export interface MissionCampaignDataExtended {
       channelId: string;
       channel: string;
       profileImage?: string;
-      actionType?: number;
+      actionType?: number | string;
+      missionType?: string;
+      receiptImages?: string[];
       extension_request_reason?: string;
       isExtensionApproved?: boolean;
       extendedDeadline?: string;
@@ -806,7 +819,10 @@ export interface MissionCampaignDataExtended {
       isRejected?: boolean;
       isLate?: boolean;
       profileImage?: string;
-      actionType?: number;
+      actionType?: number | string;
+      missionType?: string;
+      receiptImages?: string[];
+      thumbnailSrc?: string;
     }>;
     completed?: Array<{
       id: string;
@@ -819,7 +835,11 @@ export interface MissionCampaignDataExtended {
       updatedAt?: string;
       isLate?: boolean;
       profileImage?: string;
-      actionType?: number;
+      actionType?: number | string;
+      missionType?: string;
+      receiptImages?: string[];
+      thumbnailSrc?: string;
+      isLateSubmission?: boolean;
     }>;
   };
 }
@@ -1961,7 +1981,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           channel: "네이버블로그",
           profileImage: "",
           missionType: "both",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 2: 연장 요청됨
         {
@@ -1975,7 +1995,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           profileImage: "",
           missionType: "both",
           extension_request_reason: "개인 사정으로 3일 연장 요청드립니다.",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 3: 반려됨
         {
@@ -1989,7 +2009,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           profileImage: "",
           missionType: "both",
           isRejected: true,
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 4: 신고됨
         {
@@ -2004,7 +2024,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           missionType: "both",
           isReported: true,
           reportedDate: "2026-02-04T14:30:00.000Z",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
       ],
       reviewing: [
@@ -2020,7 +2040,6 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           profileImage: "",
           missionType: "both",
           receiptImages: ["/images/test_img/eximg.png"],
-          receiptUrl: "/images/test_img/eximg.png",
         },
       ],
       completed: [
@@ -2037,7 +2056,6 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           missionType: "both",
           updatedAt: "2026-01-29T09:00:00.000Z",
           receiptImages: ["/images/test_img/eximg.png"],
-          receiptUrl: "/images/test_img/eximg.png",
         },
         // 완료 탭 경우의 수 2: 지각등록 승인 완료 상태
         {
@@ -2053,7 +2071,6 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           updatedAt: "2026-02-04T16:00:00.000Z",
           isLateSubmission: true,
           receiptImages: ["/images/test_img/eximg.png"],
-          receiptUrl: "/images/test_img/eximg.png",
         },
       ],
     },
@@ -2091,7 +2108,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           channel: "네이버블로그",
           profileImage: "",
           missionType: "link",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 2: 연장 요청됨
         {
@@ -2105,7 +2122,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           profileImage: "",
           missionType: "link",
           extension_request_reason: "개인 사정으로 3일 연장 요청드립니다.",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 3: 반려됨
         {
@@ -2119,7 +2136,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           profileImage: "",
           missionType: "link",
           isRejected: true,
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 4: 신고됨
         {
@@ -2134,7 +2151,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           missionType: "link",
           isReported: true,
           reportedDate: "2026-02-04T14:30:00.000Z",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
       ],
       reviewing: [
@@ -2150,7 +2167,6 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           profileImage: "",
           missionType: "link",
           receiptImages: ["/images/test_img/eximg.png"],
-          receiptUrl: "/images/test_img/eximg.png",
         },
       ],
       completed: [
@@ -2167,7 +2183,6 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           missionType: "link",
           updatedAt: "2026-01-29T09:00:00.000Z",
           receiptImages: ["/images/test_img/eximg.png"],
-          receiptUrl: "/images/test_img/eximg.png",
         },
         // 완료 탭 경우의 수 2: 지각등록 승인 완료 상태
         {
@@ -2183,7 +2198,6 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           updatedAt: "2026-02-04T16:00:00.000Z",
           isLateSubmission: true,
           receiptImages: ["/images/test_img/eximg.png"],
-          receiptUrl: "/images/test_img/eximg.png",
         },
       ],
     },
@@ -2221,7 +2235,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           channel: "네이버블로그",
           profileImage: "",
           missionType: "image",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 2: 연장 요청됨
         {
@@ -2235,7 +2249,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           profileImage: "",
           missionType: "image",
           extension_request_reason: "개인 사정으로 3일 연장 요청드립니다.",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 3: 반려됨
         {
@@ -2249,7 +2263,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           profileImage: "",
           missionType: "image",
           isRejected: true,
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 4: 신고됨
         {
@@ -2264,7 +2278,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           missionType: "image",
           isReported: true,
           reportedDate: "2026-02-04T14:30:00.000Z",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
       ],
       reviewing: [
@@ -2280,7 +2294,6 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           profileImage: "",
           missionType: "image",
           receiptImages: ["/images/test_img/eximg.png"],
-          receiptUrl: "/images/test_img/eximg.png",
         },
       ],
       completed: [
@@ -2297,7 +2310,6 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           missionType: "image",
           updatedAt: "2026-01-29T09:00:00.000Z",
           receiptImages: ["/images/test_img/eximg.png"],
-          receiptUrl: "/images/test_img/eximg.png",
         },
         // 완료 탭 경우의 수 2: 지각등록 승인 완료 상태
         {
@@ -2312,7 +2324,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           missionType: "image",
           updatedAt: "2026-02-04T16:00:00.000Z",
           isLateSubmission: true,
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
       ],
     },
@@ -2373,9 +2385,7 @@ function generateNewMissionCampaignId(): string {
           });
         }
       }
-    } catch (error) {
-      console.error("localStorage에서 미션형 캠페인 ID 확인 실패:", error);
-    }
+    } catch (_error) {}
   }
 
   // 배송형처럼 숫자만 사용 (미션형은 4000번대부터 시작)
@@ -2445,7 +2455,7 @@ export function createMissionCampaign(
 
   // 날짜 파싱
   const recruitmentPeriod = formData.recruitmentPeriod || "";
-  const [applicationStart, applicationEnd] = recruitmentPeriod.split(" ~ ").map((d) => d.trim());
+  const [_applicationStart, _applicationEnd] = recruitmentPeriod.split(" ~ ").map((d) => d.trim());
 
   return {
     campaignInfo: {

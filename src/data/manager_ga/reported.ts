@@ -1,5 +1,5 @@
 /* ========================================
-   GA
+   GA 관리자 신고내역 데이터
    ======================================== */
 
 /**
@@ -187,8 +187,7 @@ function load_removed_ids_from_storage(): Set<string> {
     const stored_removed = localStorage.getItem(STORAGE_KEY_REMOVED_REPORTED_IDS);
     const removed_ids_array: string[] = stored_removed ? JSON.parse(stored_removed) : [];
     return new Set(removed_ids_array);
-  } catch (error) {
-    console.error("localStorage에서 제거된 신고 내역 ID 로드 실패:", error);
+  } catch (_error) {
     return new Set();
   }
 }
@@ -200,9 +199,7 @@ function save_removed_ids_to_storage(removed_ids: Set<string>): void {
   try {
     const removed_ids_array = Array.from(removed_ids);
     localStorage.setItem(STORAGE_KEY_REMOVED_REPORTED_IDS, JSON.stringify(removed_ids_array));
-  } catch (error) {
-    console.error("localStorage에 제거된 신고 내역 ID 저장 실패:", error);
-  }
+  } catch (_error) {}
 }
 
 // 제거된 신고 내역 ID를 저장하는 Set
@@ -238,8 +235,7 @@ function load_additional_items_from_storage(): ReportedCampaignItem[] {
       ? JSON.parse(stored_additional)
       : [];
     return additional_items;
-  } catch (error) {
-    console.error("localStorage에서 추가된 신고 내역 로드 실패:", error);
+  } catch (_error) {
     return [];
   }
 }
@@ -250,9 +246,7 @@ function save_additional_items_to_storage(additional_items: ReportedCampaignItem
 
   try {
     localStorage.setItem(STORAGE_KEY_ADDITIONAL_REPORTED_ITEMS, JSON.stringify(additional_items));
-  } catch (error) {
-    console.error("localStorage에 추가된 신고 내역 저장 실패:", error);
-  }
+  } catch (_error) {}
 }
 
 // 동적으로 추가된 신고 내역 항목을 저장하는 배열

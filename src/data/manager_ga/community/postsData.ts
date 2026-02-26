@@ -1,5 +1,5 @@
 /* ========================================
-   GA
+   GA 관리자 게시글 데이터
    ======================================== */
 
 /**
@@ -320,9 +320,8 @@ function load_posts_from_storage(): PostItem[] {
     }
 
     return merged_data;
-  } catch (error) {
+  } catch (_error) {
     // JSON 파싱 에러 등 예외 상황에서는 기본 데이터 반환
-    console.error("localStorage에서 게시글 목록 데이터 로드 실패:", error);
     return default_posts_data;
   }
 }
@@ -343,9 +342,8 @@ function save_posts_to_storage(posts: PostItem[]): void {
   try {
     // 배열을 JSON 문자열로 변환하여 localStorage에 저장
     localStorage.setItem(STORAGE_KEY_POSTS, JSON.stringify(posts));
-  } catch (error) {
+  } catch (_error) {
     // 저장 실패 시 에러 로그 출력
-    console.error("localStorage에 게시글 목록 데이터 저장 실패:", error);
   }
 }
 
@@ -371,8 +369,7 @@ function load_post_details_from_storage(): Record<string, PostDetail> {
     }
 
     return parsed_data;
-  } catch (error) {
-    console.error("localStorage에서 게시글 상세 데이터 로드 실패:", error);
+  } catch (_error) {
     return {};
   }
 }
@@ -389,9 +386,7 @@ function save_post_details_to_storage(post_details: Record<string, PostDetail>):
 
   try {
     localStorage.setItem(STORAGE_KEY_POST_DETAILS, JSON.stringify(post_details));
-  } catch (error) {
-    console.error("localStorage에 게시글 상세 데이터 저장 실패:", error);
-  }
+  } catch (_error) {}
 }
 
 // 게시글 목록 데이터

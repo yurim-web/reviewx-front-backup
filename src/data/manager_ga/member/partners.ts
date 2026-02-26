@@ -1,5 +1,5 @@
 /* ========================================
-   GA
+   GA 관리자 파트너 데이터
    ======================================== */
 
 /**
@@ -453,9 +453,7 @@ export function get_partner_detail_by_id(partner_id: string): PartnerDetail | nu
             ];
 
             campaignCount = allCampaigns.filter((c) => c.partner_id === "partner_test_001").length;
-          } catch (error) {
-            console.error("캠페인 개수 계산 중 오류:", error);
-          }
+          } catch (_error) {}
 
           // 포인트 가져오기
           const testPartnerPoints = getPartnerPointSummary("partner_test_001");
@@ -517,9 +515,7 @@ export function get_partner_detail_by_id(partner_id: string): PartnerDetail | nu
           };
         }
       }
-    } catch (error) {
-      console.error("test 파트너 정보 직접 로드 중 오류:", error);
-    }
+    } catch (_error) {}
   }
 
   // 기존 로직: 다른 파트너들은 get_partner_list 사용
@@ -733,9 +729,7 @@ export function get_partner_detail_by_id(partner_id: string): PartnerDetail | nu
           };
         }
       }
-    } catch (error) {
-      console.error("파트너 계정 정보 로드 중 오류:", error);
-    }
+    } catch (_error) {}
   }
 
   // 연락처 정보가 없으면 기본값 사용
@@ -752,7 +746,7 @@ export function get_partner_detail_by_id(partner_id: string): PartnerDetail | nu
   // 캠페인 진행 내역 생성: LocalStorage에서 실제 데이터 가져오기
   // 각 파트너마다 다른 캠페인 데이터를 가지도록 다양하게 설정
   let recent_campaigns: RecentCampaign[] = [];
-  let actualCampaignCount = partner.campaign_in_progress;
+  let _actualCampaignCount = partner.campaign_in_progress;
 
   // LocalStorage에서 파트너의 실제 캠페인 가져오기
   if (typeof window !== "undefined") {
@@ -797,10 +791,8 @@ export function get_partner_detail_by_id(partner_id: string): PartnerDetail | nu
       }));
 
       // 실제 캠페인 개수 업데이트
-      actualCampaignCount = partnerCampaigns.length;
-    } catch (error) {
-      console.error("캠페인 데이터 로드 중 오류:", error);
-    }
+      _actualCampaignCount = partnerCampaigns.length;
+    } catch (_error) {}
   }
 
   // LocalStorage에 캠페인이 없으면 Mock 데이터 사용
@@ -887,9 +879,7 @@ export function get_partner_detail_by_id(partner_id: string): PartnerDetail | nu
     try {
       const points = getPartnerPointSummary(partner.id);
       partnerPoints = points.available_points;
-    } catch (error) {
-      console.error("파트너 포인트 로드 중 오류:", error);
-    }
+    } catch (_error) {}
   }
 
   // 디테일 정보 생성 (목업 데이터)
@@ -923,8 +913,7 @@ function load_status_updates_from_storage(): Record<string, PartnerStatusType> {
   try {
     const stored = localStorage.getItem(STORAGE_KEY_PARTNER_STATUS_UPDATES);
     return stored ? JSON.parse(stored) : {};
-  } catch (error) {
-    console.error("localStorage에서 파트너 상태 업데이트 로드 실패:", error);
+  } catch (_error) {
     return {};
   }
 }
@@ -938,8 +927,7 @@ function load_previous_status_from_storage(): Record<string, PartnerStatusType> 
   try {
     const stored = localStorage.getItem(STORAGE_KEY_PARTNER_PREVIOUS_STATUS);
     return stored ? JSON.parse(stored) : {};
-  } catch (error) {
-    console.error("localStorage에서 파트너 이전 상태 로드 실패:", error);
+  } catch (_error) {
     return {};
   }
 }
@@ -952,9 +940,7 @@ function save_status_updates_to_storage(updates: Record<string, PartnerStatusTyp
 
   try {
     localStorage.setItem(STORAGE_KEY_PARTNER_STATUS_UPDATES, JSON.stringify(updates));
-  } catch (error) {
-    console.error("localStorage에 파트너 상태 업데이트 저장 실패:", error);
-  }
+  } catch (_error) {}
 }
 
 // 이전 상태 정보를 localStorage에 저장
@@ -965,9 +951,7 @@ function save_previous_status_to_storage(previous_status: Record<string, Partner
 
   try {
     localStorage.setItem(STORAGE_KEY_PARTNER_PREVIOUS_STATUS, JSON.stringify(previous_status));
-  } catch (error) {
-    console.error("localStorage에 파트너 이전 상태 저장 실패:", error);
-  }
+  } catch (_error) {}
 }
 
 // 초기 상태 업데이트 로드
@@ -1025,9 +1009,7 @@ export function get_partner_list(): PartnerItem[] {
         testPartnerCampaignCount = (allCampaigns as RawCampaign[]).filter(
           (c) => c.partner_id === "partner_test_001"
         ).length;
-      } catch (error) {
-        console.error("캠페인 개수 계산 중 오류:", error);
-      }
+      } catch (_error) {}
 
       // 테스트 파트너의 실제 포인트 가져오기
       const testPartnerPoints = getPartnerPointSummary("partner_test_001");
@@ -1117,8 +1099,7 @@ export function get_partner_list(): PartnerItem[] {
         });
 
       return [...mockPartners, ...localStoragePartners];
-    } catch (error) {
-      console.error("LocalStorage 파트너 데이터 로드 중 오류:", error);
+    } catch (_error) {
       return mockPartners;
     }
   }

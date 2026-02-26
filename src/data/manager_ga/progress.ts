@@ -1,5 +1,5 @@
 /* ========================================
-   GA
+   GA 관리자 진행 현황 데이터
    ======================================== */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -722,9 +722,7 @@ function convert_campaign_with_applicants_to_progress_item(
           }
         }
       }
-    } catch (error) {
-      console.error("파트너명 조회 중 오류:", error);
-    }
+    } catch (_error) {}
   }
 
   return {
@@ -909,9 +907,7 @@ function get_stored_campaigns_as_progress_items(): CampaignProgressItem[] {
         });
       }
     }
-  } catch (error) {
-    console.error("localStorage에서 캠페인 로드 실패:", error);
-  }
+  } catch (_error) {}
 
   return stored_items;
 }

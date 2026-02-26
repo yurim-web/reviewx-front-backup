@@ -1,5 +1,5 @@
 /* ========================================
-   GA
+   GA 관리자 반려내역 데이터
    ======================================== */
 
 /**
@@ -549,8 +549,7 @@ function load_removed_ids_from_storage(): Set<string> {
     const stored_removed = localStorage.getItem(STORAGE_KEY_REMOVED_REJECTED_IDS);
     const removed_ids_array: string[] = stored_removed ? JSON.parse(stored_removed) : [];
     return new Set(removed_ids_array);
-  } catch (error) {
-    console.error("localStorage에서 제거된 반려 내역 ID 로드 실패:", error);
+  } catch (_error) {
     return new Set();
   }
 }
@@ -561,9 +560,7 @@ function save_removed_ids_to_storage(removed_ids: Set<string>): void {
   try {
     const removed_ids_array = Array.from(removed_ids);
     localStorage.setItem(STORAGE_KEY_REMOVED_REJECTED_IDS, JSON.stringify(removed_ids_array));
-  } catch (error) {
-    console.error("localStorage에 제거된 반려 내역 ID 저장 실패:", error);
-  }
+  } catch (_error) {}
 }
 
 // 제거된 반려 내역 ID를 저장하는 Set
@@ -597,7 +594,5 @@ export function reset_rejected_campaign_storage(): void {
     localStorage.removeItem(STORAGE_KEY_REMOVED_REJECTED_IDS);
     removed_rejected_campaign_ids = new Set();
     is_rejected_storage_loaded = false;
-  } catch (error) {
-    console.error("localStorage 초기화 실패:", error);
-  }
+  } catch (_error) {}
 }

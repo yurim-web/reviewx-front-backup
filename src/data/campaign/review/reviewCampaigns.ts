@@ -1,7 +1,17 @@
+/* ========================================
+   구매평 캠페인 데이터
+   ======================================== */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-require-imports */
+
 /**
- * 구매평 캠페인 데이터 타입 정의
+ * reviewCampaigns
+ *
+ * 목적: 구매평 캠페인 목업 데이터 및 타입 정의
+ *
+ * 사용 페이지:
+ * - /campaign/review (구매평 캠페인 목록)
+ * - /campaign/review/[id] (구매평 캠페인 상세)
  */
 
 import type { CampaignFormData } from "@/types/domain/user";
@@ -45,6 +55,7 @@ export interface ReviewCampaignData {
   allowLateSubmission?: boolean; // 지각 제출 허용
   // 문의 담당자 정보
   contactPhone?: string; // 문의 담당자 휴대폰 번호
+  partnerName?: string; // 파트너사 이름
 }
 
 /**
@@ -65,8 +76,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 234,
       total: 8,
-      partnerName: "비타글로우",
     },
+    partnerName: "비타글로우",
     schedule: "",
     dayCount: "D-5",
     registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
@@ -104,8 +115,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 156,
       total: 12,
-      partnerName: "세르프코리아",
     },
+    partnerName: "세르프코리아",
     schedule: "",
     dayCount: "",
     isUrgent: true, // 긴급 캠페인
@@ -145,18 +156,18 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 89,
       total: 6,
-      partnerName: "테크솔루션",
     },
+    partnerName: "테크솔루션",
     schedule: "",
     dayCount: "D-3",
     registeredAt: "2026-01-06T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 모집 진행 중
-      applicationStart: "2026-01-04",
-      applicationEnd: "2026-01-17",
-      announcement: "2026-01-19",
-      purchasePeriod: "2026-01-19 ~ 2026-01-22",
-      registrationPeriod: "2026-01-22 ~ 2026-01-29",
+      // 항상 신청 내역 테스트가 가능하도록, 현재 날짜(2026-02-26) 기준으로 모집 진행 중 상태로 유지
+      applicationStart: "2026-02-01",
+      applicationEnd: "2026-03-31",
+      announcement: "2026-04-02",
+      purchasePeriod: "2026-04-02 ~ 2026-04-10",
+      registrationPeriod: "2026-04-10 ~ 2026-04-25",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#가전제품리뷰 #주방가전 #생활용품 #구매후기 #솔직리뷰",
@@ -184,8 +195,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 178,
       total: 15,
-      partnerName: "닥터뮬",
     },
+    partnerName: "닥터뮬",
     schedule: "",
     dayCount: "D-7",
     registeredAt: "2026-01-09T13:30:00.000Z", // 등록 시간
@@ -223,8 +234,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 145,
       total: 18,
-      partnerName: "그린라이프",
     },
+    partnerName: "그린라이프",
     schedule: "",
     dayCount: "D-6",
     registeredAt: "2025-10-28T10:00:00.000Z", // 등록 시간
@@ -262,8 +273,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 98,
       total: 20,
-      partnerName: "레더리아",
     },
+    partnerName: "레더리아",
     schedule: "",
     dayCount: "D-4",
     registeredAt: "2025-12-20T15:20:00.000Z", // 등록 시간
@@ -301,8 +312,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 67,
       total: 5,
-      partnerName: "에코라이프",
     },
+    partnerName: "에코라이프",
     schedule: "",
     dayCount: "D-1",
     registeredAt: "2025-12-25T10:00:00.000Z", // 등록 시간
@@ -344,8 +355,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 123,
       total: 10,
-      partnerName: "웰빙코리아",
     },
+    partnerName: "웰빙코리아",
     schedule: "",
     dayCount: "D-8",
     registeredAt: "2025-11-05T14:00:00.000Z", // 등록 시간
@@ -383,8 +394,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 45,
       total: 4,
-      partnerName: "프리미엄뷰티",
     },
+    partnerName: "프리미엄뷰티",
     schedule: "",
     dayCount: "D-1",
     registeredAt: "2025-11-15T10:50:00.000Z", // 등록 시간
@@ -422,8 +433,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 167,
       total: 12,
-      partnerName: "테크솔루션",
     },
+    partnerName: "테크솔루션",
     schedule: "",
     dayCount: "D-9",
     registeredAt: "2025-11-01T08:00:00.000Z", // 등록 시간
@@ -460,8 +471,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 0,
       total: 8,
-      partnerName: "웰빙코리아",
     },
+    partnerName: "웰빙코리아",
     schedule: "1/15 (목) 10:00\n모집 오픈",
     dayCount: "",
     registeredAt: "2026-01-10T12:00:00.000Z", // 등록 시간
@@ -499,8 +510,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 3, // 신청자 수 적게 설정
       total: 5,
-      partnerName: "내추럴푸드",
     },
+    partnerName: "내추럴푸드",
     schedule: "",
     dayCount: "D-2",
     registeredAt: "2026-01-11T11:30:00.000Z", // 등록 시간
@@ -538,8 +549,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 5,
       total: 10,
-      partnerName: "테크솔루션",
     },
+    partnerName: "테크솔루션",
     schedule: "",
     dayCount: "D-8",
     registeredAt: "2025-12-20T10:00:00.000Z",
@@ -578,8 +589,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 7,
       total: 10,
-      partnerName: "ABC쇼핑몰",
     },
+    partnerName: "ABC쇼핑몰",
     schedule: "",
     dayCount: "D-5",
     registeredAt: "2026-01-15T10:00:00.000Z",
@@ -613,8 +624,8 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     recruitment: {
       current: 7,
       total: 10,
-      partnerName: "라이프스타일",
     },
+    partnerName: "라이프스타일",
     schedule: "",
     dayCount: "D-3",
     registeredAt: "2026-01-15T10:00:00.000Z",
@@ -776,9 +787,10 @@ export interface ReviewCampaignDataExtended {
       updatedAt?: string;
       isLate?: boolean;
       profileImage?: string;
-      actionType?: number;
+      actionType?: number | string;
       receiptImages?: string[];
       thumbnailSrc?: string;
+      isLateSubmission?: boolean;
     }>;
   };
 }
@@ -2619,7 +2631,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           channel: "네이버블로그",
           profileImage: "",
           actionType: 0,
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 2: 연장 요청됨
         {
@@ -2633,7 +2645,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           extension_request_reason: "구매 일정 조율로 3일 연장 요청드립니다.",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 3: 반려됨
         {
@@ -2647,7 +2659,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           actionType: 0,
           isRejected: true,
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 4: 신고됨
         {
@@ -2662,7 +2674,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           actionType: 0,
           isReported: true,
           reportedDate: "2026-02-04T14:30:00.000Z",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
       ],
       reviewing: [
@@ -2679,7 +2691,6 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           actionType: 0,
           receiptImages: ["/images/test_img/eximg.png"],
           thumbnailSrc: "/images/test_img/eximg.png",
-          receiptUrl: "/images/test_img/eximg.png",
         },
       ],
       completed: [
@@ -2700,7 +2711,6 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
             "/images/main/campaign_img/eximg_1.png",
           ],
           thumbnailSrc: "/images/test_img/eximg3.png",
-          receiptUrl: "/images/test_img/eximg3.png",
         },
         // 완료 탭 경우의 수 2: 지각등록 구매 인증 완료
         {
@@ -2721,7 +2731,6 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
             "/images/main/campaign_img/eximg_3.png",
           ],
           thumbnailSrc: "/images/test_img/eximg.png",
-          receiptUrl: "/images/test_img/eximg.png",
         },
       ],
     },
@@ -2758,7 +2767,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           channelId: "blog_test_001",
           channel: "네이버블로그",
           profileImage: "",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 2: 연장 요청됨
         {
@@ -2771,7 +2780,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           channel: "네이버블로그",
           profileImage: "",
           extension_request_reason: "개인 사정으로 3일 연장 요청드립니다.",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 3: 반려됨
         {
@@ -2784,7 +2793,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           channel: "인스타그램",
           profileImage: "",
           isRejected: true,
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 4: 신고됨
         {
@@ -2798,7 +2807,7 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           isReported: true,
           reportedDate: "2026-02-04T14:30:00.000Z",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
       ],
       reviewing: [
@@ -2812,7 +2821,6 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           channelId: "insta_test_002",
           channel: "인스타그램",
           profileImage: "",
-          receiptUrl: "/images/test_img/eximg.png",
           receiptImages: [
             "/images/test_img/eximg.png",
             "/images/test_img/eximg.png",
@@ -2832,7 +2840,6 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           channel: "네이버블로그",
           profileImage: "",
           updatedAt: "2026-01-29T09:00:00.000Z",
-          receiptUrl: "/images/test_img/eximg.png",
           receiptImages: ["/images/test_img/eximg.png"],
         },
         // 완료 탭 경우의 수 2: 지각등록 승인 완료
@@ -2847,7 +2854,6 @@ export const reviewCampaignsExtended: ReviewCampaignDataExtended[] = [
           profileImage: "",
           updatedAt: "2026-02-04T16:00:00.000Z",
           isLateSubmission: true,
-          receiptUrl: "/images/test_img/eximg.png",
           receiptImages: ["/images/test_img/eximg.png"],
         },
       ],
@@ -2870,7 +2876,6 @@ export function getPurchaseReviewContentsById(campaignId: string): ContentByTab 
   const campaign = reviewCampaignsExtended.find((c) => c.id === campaignId);
 
   if (!campaign) {
-    console.warn(`[getPurchaseReviewContentsById] 캠페인을 찾을 수 없습니다: ${campaignId}`);
     return undefined;
   }
 
@@ -2881,12 +2886,6 @@ export function getPurchaseReviewContentsById(campaignId: string): ContentByTab 
       reviewing: campaign.contents.reviewing || [],
       completed: campaign.contents.completed || [],
     };
-
-    console.log(`[getPurchaseReviewContentsById] 캠페인 ${campaignId}의 콘텐츠:`, {
-      waiting: result.waiting.length,
-      reviewing: result.reviewing.length,
-      completed: result.completed.length,
-    });
 
     return result;
   }
@@ -2924,9 +2923,7 @@ function generateNewReviewCampaignId(): string {
           });
         }
       }
-    } catch (error) {
-      console.error("localStorage에서 구매평 캠페인 ID 확인 실패:", error);
-    }
+    } catch (_error) {}
   }
 
   // 배송형처럼 숫자만 사용 (구매평은 2000번대부터 시작)

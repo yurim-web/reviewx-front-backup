@@ -1,5 +1,5 @@
 /* ========================================
-   GA
+   GA 관리자 카테고리 데이터
    ======================================== */
 
 /**
@@ -125,9 +125,8 @@ function load_categories_from_storage(): CategoryItem[] {
     }
 
     return parsed_data;
-  } catch (error) {
+  } catch (_error) {
     // JSON 파싱 에러 등 예외 상황에서는 기본 데이터 반환
-    console.error("localStorage에서 카테고리 데이터 로드 실패:", error);
     return default_categories_data;
   }
 }
@@ -148,9 +147,8 @@ function save_categories_to_storage(categories: CategoryItem[]): void {
   try {
     // 배열을 JSON 문자열로 변환하여 localStorage에 저장
     localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(categories));
-  } catch (error) {
+  } catch (_error) {
     // 저장 실패 시 에러 로그 출력
-    console.error("localStorage에 카테고리 데이터 저장 실패:", error);
   }
 }
 
