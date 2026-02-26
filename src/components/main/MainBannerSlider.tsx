@@ -1,21 +1,15 @@
 /* ========================================
-   🎠 메인 배너 슬라이드 컴포넌트
+   메인 배너 슬라이더 컴포넌트
    ======================================== */
+/* eslint-disable @next/next/no-img-element */
 
 /**
- * 메인 배너 슬라이드 컴포넌트
+ * MainBannerSlider
  *
- * 목적: 메인 페이지 상단에 여러 배너 이미지를 슬라이드로 표시합니다.
+ * 목적: 홈 상단 배너 이미지를 슬라이드로 표시
  *
- * 주요 기능:
- * - 여러 배너 이미지를 슬라이드로 표시
- * - 자동 슬라이드 전환 (5초마다)
- * - 페이지네이션 도트로 현재 슬라이드 표시
- * - 도트 클릭으로 특정 슬라이드로 이동
- * - 마우스 호버 시 자동 슬라이드 일시 정지
- *
- * 사용 위치:
- * - HomePageClient.tsx (메인 홈 페이지)
+ * 사용 페이지:
+ * - / (홈 페이지)
  */
 
 "use client";
@@ -71,7 +65,7 @@ export default function MainBannerSlider({
   // 드래그 관련 상태
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
-  const [currentX, setCurrentX] = useState(0);
+  const [_currentX, setCurrentX] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
 
   /**
@@ -245,9 +239,7 @@ export default function MainBannerSlider({
         {banners.map((banner, index) => (
           <div
             key={index}
-            className={`${styles.slide} ${
-              index === currentSlide ? styles.slide_active : ""
-            }`}
+            className={`${styles.slide} ${index === currentSlide ? styles.slide_active : ""}`}
           >
             <img src={banner} alt={`배너 ${index + 1}`} />
           </div>
@@ -260,9 +252,7 @@ export default function MainBannerSlider({
           <button
             key={index}
             type="button"
-            className={`${styles.dot} ${
-              index === currentSlide ? styles.dot_active : ""
-            }`}
+            className={`${styles.dot} ${index === currentSlide ? styles.dot_active : ""}`}
             onClick={() => goToSlide(index)}
             aria-label={`${index + 1}번째 배너로 이동`}
           />

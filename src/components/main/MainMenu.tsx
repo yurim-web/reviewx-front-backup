@@ -1,4 +1,15 @@
-// 메인 카테고리 메뉴
+/* ========================================
+   메인 메뉴 컴포넌트
+   ======================================== */
+
+/**
+ * MainMenu
+ *
+ * 목적: 홈 페이지 카테고리 메뉴 표시
+ *
+ * 사용 페이지:
+ * - / (홈 페이지)
+ */
 
 "use client";
 
@@ -23,9 +34,7 @@ export default function MainMenu() {
    * - "user": 사용자 컨텍스트
    * - null: 컨텍스트 없음 (루트 경로)
    */
-  const [headerContext, setHeaderContext] = useState<"partner" | "user" | null>(
-    null
-  );
+  const [_headerContext, setHeaderContext] = useState<"partner" | "user" | null>(null);
 
   /**
    * 홈 링크 상태

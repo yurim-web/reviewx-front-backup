@@ -1,6 +1,7 @@
 /* ========================================
    📋 모달 필터 컴포넌트
    ======================================== */
+/* eslint-disable @next/next/no-img-element */
 
 /**
  * 모달 필터 컴포넌트
@@ -98,10 +99,7 @@ export default function ModalFilter({
 
   return (
     <div className={modalStyles.modal_overlay} onClick={handleBackdropClick}>
-      <div
-        className={modalStyles.modal_content}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className={modalStyles.modal_content} onClick={(e) => e.stopPropagation()}>
         {/* 모달 헤더 */}
         <div className={modalStyles.modal_header}>
           <h3 className={modalStyles.modal_title}>{title}</h3>
@@ -115,23 +113,17 @@ export default function ModalFilter({
           className={`${modalStyles.modal_body} ${!hasScroll ? modalStyles.modal_body_no_margin : ""}`}
         >
           {/* 섹션 제목 */}
-          {sectionTitle && (
-            <h4 className={regionStyles.region_section_title}>{sectionTitle}</h4>
-          )}
+          {sectionTitle && <h4 className={regionStyles.region_section_title}>{sectionTitle}</h4>}
 
           <div
             ref={optionsRef}
             className={`${
-              layout === "vertical"
-                ? optionsStyles.options_vertical
-                : optionsStyles.options_grid
+              layout === "vertical" ? optionsStyles.options_vertical : optionsStyles.options_grid
             } ${noScroll && layout === "vertical" ? optionsStyles.no_scroll : ""}`}
           >
             {options.map((option, index) => (
               <label
-                key={
-                  typeof option === "object" ? option.value || index : option
-                }
+                key={typeof option === "object" ? option.value || index : option}
                 className={optionsStyles.option_item}
               >
                 <input
@@ -141,9 +133,7 @@ export default function ModalFilter({
                   checked={isSelected(option)}
                   onChange={() => onOptionChange(option)}
                   className={
-                    type === "radio"
-                      ? optionsStyles.option_radio
-                      : optionsStyles.option_checkbox
+                    type === "radio" ? optionsStyles.option_radio : optionsStyles.option_checkbox
                   }
                 />
                 <span className={optionsStyles.option_label}>

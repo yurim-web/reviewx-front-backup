@@ -1,17 +1,18 @@
+/* ========================================
+   캠페인 상세 페이지 컴포넌트
+   ======================================== */
+
 /**
- * 캠페인 상세 페이지 공용 컴포넌트
+ * CampaignDetailPage
  *
- * 사용 파일:
- * - src/app/campaign/delivery/[id]/page.tsx
- * - src/app/campaign/mission/[id]/page.tsx
- * - src/app/campaign/reporter/[id]/page.tsx
- * - src/app/campaign/review/[id]/page.tsx
- * - src/app/campaign/visit/[id]/page.tsx
+ * 목적: 캠페인 유형별 상세 정보 렌더링
  *
- * 주요 기능:
- * - 공통 레이아웃 구조 제공 (SubHeader, MainMenu, DetailHeader 등)
- * - 스크롤 이벨 고정 처리
- * - 하단 고정 신청 버튼
+ * 사용 페이지:
+ * - /campaign/delivery/[id] (배송형 캠페인 상세)
+ * - /campaign/visit/[id] (방문형 캠페인 상세)
+ * - /campaign/review/[id] (구매평 캠페인 상세)
+ * - /campaign/mission/[id] (미션형 캠페인 상세)
+ * - /campaign/reporter/[id] (기자단 캠페인 상세)
  */
 
 "use client";
