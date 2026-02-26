@@ -1,12 +1,15 @@
+/* ========================================
+   서브 헤더 컴포넌트
+   ======================================== */
+
 /**
- * 서브헤더 컴포넌트
- * 캠페인 상세 페이지 등에서 사용되는 헤더
- * - 뒤로가기 버튼
- * - 검색 아이콘
- * - 알림 아이콘
- * - 마이페이지 링크
- * - 항상 상단에 고정됨 (position: fixed)
- * - 메인 헤더를 자동으로 숨김 (SubHeader가 표시될 때는 메인 헤더 숨김)
+ * SubHeader
+ *
+ * 목적: 캠페인 상세 등 하위 페이지에서 사용하는 고정 헤더 (뒤로가기, 알림, 마이페이지)
+ *
+ * 사용 페이지:
+ * - /campaign/:type/:id (캠페인 상세 페이지)
+ * - 기타 하위 페이지
  */
 
 "use client";
@@ -24,7 +27,7 @@ interface SubHeaderProps {
   showBackButton?: boolean;
 }
 
-export default function SubHeader({ title, showBackButton }: SubHeaderProps = {}) {
+export default function SubHeader({ title, showBackButton: _showBackButton }: SubHeaderProps = {}) {
   const router = useRouter();
   const pathname = usePathname();
   const { user } = useAuth();
@@ -40,8 +43,8 @@ export default function SubHeader({ title, showBackButton }: SubHeaderProps = {}
       setIsMobile(window.innerWidth <= 768);
     };
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // 메인 헤더 숨기기 처리
@@ -70,9 +73,7 @@ export default function SubHeader({ title, showBackButton }: SubHeaderProps = {}
 
   // 검색 아이콘 경로 (모바일/PC 구분)
   const getSearchIconSrc = () => {
-    return isMobile
-      ? "/images/header/mobile/mo_search.svg"
-      : "/images/header/header_search.svg";
+    return isMobile ? "/images/header/mobile/mo_search.svg" : "/images/header/header_search.svg";
   };
 
   // 알림 아이콘: 비로그인 → 무조건 비활성(알림 X), 로그인 시 알림 1개 이상이면 활성
@@ -99,9 +100,7 @@ export default function SubHeader({ title, showBackButton }: SubHeaderProps = {}
 
   // 사용자 아이콘 경로 (모바일/PC 구분)
   const getUserIconSrc = () => {
-    return isMobile
-      ? "/images/header/mobile/mo_user.svg"
-      : "/images/header/header_user.svg";
+    return isMobile ? "/images/header/mobile/mo_user.svg" : "/images/header/header_user.svg";
   };
 
   // 로고 이미지 경로 (모바일/PC 구분)
@@ -161,9 +160,7 @@ export default function SubHeader({ title, showBackButton }: SubHeaderProps = {}
           {/* 마이페이지로 연결 */}
           <Link
             href={
-              pathname?.startsWith("/partner")
-                ? "/partner/campaign_management"
-                : "/user/mypage"
+              pathname?.startsWith("/partner") ? "/partner/campaign_management" : "/user/mypage"
             }
             className={styles.user_icon}
           >

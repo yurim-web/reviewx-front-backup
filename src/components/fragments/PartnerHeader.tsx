@@ -48,8 +48,8 @@ export default function PartnerHeader() {
       setIsMobile(window.innerWidth <= 768);
     };
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // 마운트 전(isMobile=null)에는 아이콘 영역을 숨김 처리
@@ -102,29 +102,27 @@ export default function PartnerHeader() {
     : "/images/header/header_user.svg";
 
   return (
-    <header>
+    <header className={styles.header_root}>
       <nav className={styles.header_container}>
         <Link href="/partner" className={styles.header_logo} style={iconVisibility}>
           <img src={logoSrc} alt="VX 로고" />
         </Link>
         <div className={styles.menu_icon_box} style={iconVisibility}>
           {/* 새로운 캠페인 등록: 로그인한 상태에서만 표시, PC에서는 버튼, 모바일에서는 아이콘 */}
-          {user && (isMobile ? (
-            <Link
-              href="/partner/campaign/create"
-              className={styles.notification_icon}
-              aria-label="새 캠페인 등록"
-            >
-              <img src="/images/header/mobile/mo_partner_campaign.svg" alt="새 캠페인 등록" />
-            </Link>
-          ) : (
-            <Link
-              href="/partner/campaign/create"
-              className={styles.new_campaign_button}
-            >
-              새 캠페인 등록
-            </Link>
-          ))}
+          {user &&
+            (isMobile ? (
+              <Link
+                href="/partner/campaign/create"
+                className={styles.notification_icon}
+                aria-label="새 캠페인 등록"
+              >
+                <img src="/images/header/mobile/mo_partner_campaign.svg" alt="새 캠페인 등록" />
+              </Link>
+            ) : (
+              <Link href="/partner/campaign/create" className={styles.new_campaign_button}>
+                새 캠페인 등록
+              </Link>
+            ))}
 
           {/* 검색창 - 파트너 전용 검색 결과 페이지로 이동 */}
           <HeaderSearch searchIconSrc={searchIconSrc} search_path="/partner/search" />
