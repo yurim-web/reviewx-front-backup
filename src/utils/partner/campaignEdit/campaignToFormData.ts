@@ -122,7 +122,8 @@ function formatPoints(points: number | undefined): string {
  *
  * 3가지 소스를 체크하여 상세 이미지 URL 배열을 추출합니다.
  */
-function extractDetailImageUrls(extended: Record<string, unknown> | undefined): string[] {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function extractDetailImageUrls(extended: Record<string, any> | undefined): string[] {
   if (!extended) return [];
 
   // 1순위: detailImagePreviews
@@ -176,7 +177,8 @@ export function campaignToFormData(
   options?: CampaignConversionOptions
 ): CampaignFormData {
   const info = campaign.campaignInfo;
-  const extended = originalData as Record<string, unknown> | undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const extended = originalData as Record<string, any> | undefined;
   const campaignType = info.campaignType as CampaignType;
 
   // Requirements 파싱 (공통)

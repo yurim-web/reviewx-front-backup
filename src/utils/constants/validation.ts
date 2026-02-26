@@ -43,7 +43,7 @@ export const PASSWORD_CONSTRAINTS = {
   MAX_LENGTH: 16,
 
   /** 필수 포함 조건 설명 */
-  REQUIREMENTS: '영문, 숫자, 특수문자(!@#$%^&*()-_=+) 포함',
+  REQUIREMENTS: "영문, 숫자, 특수문자(!@#$%^&*()-_=+) 포함",
 } as const;
 
 /**
@@ -62,7 +62,7 @@ export const AMOUNT_CONSTRAINTS = {
  */
 export const VERIFICATION_TIMER = {
   /** 인증번호 유효 시간 (초) */
-  DURATION_SECONDS: 180, // 3분
+  DURATION_SECONDS: 240, // 4분
 
   /** 인증번호 재발송 대기 시간 (초) */
   RESEND_DELAY_SECONDS: 60, // 1분

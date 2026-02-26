@@ -39,7 +39,7 @@ export interface PartnerCampaign {
   id: string; // 캠페인 고유 식별자
   title: string; // 캠페인 제목
   image: string; // 캠페인 대표 이미지 URL
-  status: "대기 중" | "모집 중" | "진행 중" | "종료" | "취소"; // 캠페인 상태 - 실제 데이터에서 사용하는 상태 값들
+  status: "대기 중" | "모집 중" | "선정 중" | "등록 중" | "진행 중" | "종료" | "마감" | "취소"; // 캠페인 상태 - 실제 데이터에서 사용하는 상태 값들
   campaignType: "배송형" | "방문형" | "구매평" | "기자단" | "미션형"; // 캠페인 유형
   category: string; // 카테고리 - 식품, 뷰티, 가전, 유아동, 여가, 서비스, 생활, 패션, 가구, 디지털, 문화, 반려동물, 기타
   brandName: string; // 브랜드명 - 플랫폼명 (예: "네이버블로그", "인스타그램", "쿠팡") 또는 빈 문자열
@@ -310,6 +310,8 @@ export interface CampaignInfo {
   statusText?: string; // 캠페인 상태 설명 텍스트
   region?: string; // 방문 지역 시/도 (방문형 캠페인용, 선택적)
   subRegion?: string; // 방문 지역 시/구/군 (방문형 캠페인용, 선택적)
+  point?: number; // 포인트 (미션형 등)
+  channel?: string; // 채널명 (미션형 등)
 }
 
 /**
