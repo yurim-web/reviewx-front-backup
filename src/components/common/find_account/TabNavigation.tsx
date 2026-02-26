@@ -1,10 +1,14 @@
+/* ========================================
+   계정 찾기 탭 네비게이션 컴포넌트
+   ======================================== */
+
 /**
- * 탭 네비게이션 컴포넌트
+ * TabNavigation
  *
- * 아이디 찾기 / 비밀번호 찾기 탭을 표시합니다.
+ * 목적: 아이디 찾기 / 비밀번호 찾기 탭 전환 UI
  *
  * 사용 페이지:
- * - src/components/common/FindAccountPage.tsx
+ * - src/components/common/find_account/page/FindAccountPage.tsx (계정 찾기 페이지)
  */
 
 "use client";
@@ -26,9 +30,10 @@ export default function TabNavigation({ activeTab, onTabChange }: TabNavigationP
   };
 
   return (
-    <section className={styles.tab_section}>
+    <section className={styles.tab_section} role="tablist">
       <button
         type="button"
+        role="tab"
         className={`${styles.tab_button} ${activeTab === "id" ? styles.tab_button_active : ""}`}
         onClick={(e) => handleTabClick("id", e)}
         aria-label="아이디 찾기"
@@ -38,6 +43,7 @@ export default function TabNavigation({ activeTab, onTabChange }: TabNavigationP
       </button>
       <button
         type="button"
+        role="tab"
         className={`${styles.tab_button} ${
           activeTab === "password" ? styles.tab_button_active : ""
         }`}

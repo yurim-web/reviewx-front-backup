@@ -1,11 +1,15 @@
+/* ========================================
+   입력 필드 + 버튼 조합 컴포넌트
+   ======================================== */
+
 /**
- * 입력 필드와 버튼 조합 컴포넌트
+ * InputWithButton
  *
- * input_with_button 패턴을 재사용하는 컴포넌트입니다.
+ * 목적: input_with_button 패턴을 재사용하는 인라인 레이아웃 컴포넌트
  *
  * 사용 페이지:
  * - src/components/common/mypage/AddressInput.tsx
- * - src/components/common/phone_verification/PhoneVerification.tsx (마이페이지 스타일)
+ * - src/components/common/phone_verification/PhoneVerification.tsx
  */
 
 "use client";

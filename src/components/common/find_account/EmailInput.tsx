@@ -1,10 +1,14 @@
+/* ========================================
+   계정 찾기 이메일 입력 컴포넌트
+   ======================================== */
+
 /**
- * 이메일 입력 컴포넌트
+ * EmailInput
  *
- * 비밀번호 찾기 탭에서 사용하는 이메일 입력 필드입니다.
+ * 목적: 비밀번호 찾기 탭에서 이메일(아이디)을 입력받는 필드
  *
  * 사용 페이지:
- * - src/components/common/FindAccountPage.tsx
+ * - src/components/common/find_account/page/FindAccountPage.tsx (계정 찾기 페이지)
  */
 
 "use client";

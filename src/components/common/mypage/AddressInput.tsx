@@ -1,12 +1,16 @@
+/* ========================================
+   주소 입력 공통 컴포넌트
+   ======================================== */
+
 /**
- * 주소 입력 컴포넌트
+ * AddressInput
  *
- * 우편번호, 기본 주소, 상세 주소를 입력할 수 있는 컴포넌트입니다.
+ * 목적: 우편번호·기본 주소·상세 주소를 입력받는 공통 주소 입력 컴포넌트
  *
  * 사용 페이지:
- * - /partner/mypage/edit (파트너 내 정보 수정 페이지)
- * - /user/mypage/edit (유저 내 정보 수정 페이지)
- * - /partner/signup (파트너 회원가입 - variant="signup")
+ * - /partner/mypage/edit (파트너 내 정보 수정)
+ * - /user/mypage/edit (유저 내 정보 수정)
+ * - /partner/signup (파트너 회원가입, variant=signup)
  */
 
 "use client";

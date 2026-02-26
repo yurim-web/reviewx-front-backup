@@ -1,10 +1,14 @@
+/* ========================================
+   계정 찾기 다음 단계 버튼 컴포넌트
+   ======================================== */
+
 /**
- * 다음 버튼 컴포넌트
+ * NextButton
  *
- * 인증 완료 후 다음 단계로 진행하는 버튼입니다.
+ * 목적: 인증 완료 후 다음 단계로 진행하는 버튼
  *
  * 사용 페이지:
- * - src/components/common/FindAccountPage.tsx
+ * - src/components/common/find_account/page/FindAccountPage.tsx (계정 찾기 페이지)
  */
 
 "use client";

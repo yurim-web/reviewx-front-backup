@@ -1,6 +1,7 @@
 /* ========================================
    🔒 비밀번호 입력 컴포넌트 (공통)
    ======================================== */
+/* eslint-disable @next/next/no-img-element */
 
 /**
  * 비밀번호 입력 컴포넌트
@@ -53,10 +54,7 @@ export default function PasswordField({
     if (type === "password") {
       // 비밀번호 형식 검증
       if (newValue.length > 0) {
-        const isValid =
-          newValue.length >= 8 &&
-          newValue.length <= 16 &&
-          validatePassword(newValue);
+        const isValid = newValue.length >= 8 && newValue.length <= 16 && validatePassword(newValue);
         onErrorChange(isValid ? undefined : PASSWORD_ERROR_MESSAGE);
       } else {
         onErrorChange(undefined);
@@ -85,9 +83,7 @@ export default function PasswordField({
     >
       <img
         src={
-          showPassword
-            ? "/images/icons/signup/sign_show.svg"
-            : "/images/icons/signup/sign_none.svg"
+          showPassword ? "/images/icons/signup/sign_show.svg" : "/images/icons/signup/sign_none.svg"
         }
         alt={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
         width={16}
@@ -99,17 +95,13 @@ export default function PasswordField({
   /** 에러 메시지 렌더링 */
   const renderErrorMessage = () => {
     if (!error || value.length === 0) return null;
-    return (
-      <div className={styles.error_message}>{error}</div>
-    );
+    return <div className={styles.error_message}>{error}</div>;
   };
 
   const fieldId = type === "password" ? "password" : "password_confirm";
   const label = type === "password" ? "비밀번호" : "비밀번호 확인";
   const placeholder =
-    type === "password"
-      ? "8~16자 영문, 숫자, 특수문자 조합 입력"
-      : "비밀번호 재입력";
+    type === "password" ? "8~16자 영문, 숫자, 특수문자 조합 입력" : "비밀번호 재입력";
 
   return (
     <div className={styles.form_field}>

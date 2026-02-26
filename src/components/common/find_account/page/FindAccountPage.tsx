@@ -1,10 +1,14 @@
+/* ========================================
+   아이디/비밀번호 찾기 공용 페이지 컴포넌트
+   ======================================== */
+
 /**
- * 아이디/비밀번호 찾기 페이지 컴포넌트
+ * FindAccountPage
  *
- * 사용자와 파트너가 아이디와 비밀번호를 찾을 수 있는 공용 페이지입니다.
+ * 목적: 사용자와 파트너가 공통으로 사용하는 아이디/비밀번호 찾기 페이지
  *
  * 사용 페이지:
- * - /find-account (사용자 아이디/비밀번호 찾기)
+ * - /find-account (관리자 아이디/비밀번호 찾기)
  * - /partner/find-account (파트너 아이디/비밀번호 찾기)
  */
 
@@ -77,12 +81,8 @@ export default function FindAccountPage() {
             timer={phoneVerification.timer}
             error={phoneVerification.phoneError}
             verificationCodeError={phoneVerification.verificationCodeError}
-            accountNotFoundError={
-              activeTab === "id" ? findAccount.accountNotFoundError : undefined
-            }
-            blockedAccountError={
-              activeTab === "id" ? findAccount.blockedAccountError : undefined
-            }
+            accountNotFoundError={activeTab === "id" ? findAccount.accountNotFoundError : undefined}
+            blockedAccountError={activeTab === "id" ? findAccount.blockedAccountError : undefined}
             onPhoneChange={(phone) => {
               phoneVerification.handlePhoneChange(phone);
               // 전화번호 변경 시 계정 없음 에러 및 정지/탈퇴 에러 초기화
@@ -96,9 +96,7 @@ export default function FindAccountPage() {
             onVerificationRequest={phoneVerification.handleVerificationRequest}
             onResend={phoneVerification.handleVerificationRequest}
             onVerify={phoneVerification.handleVerifyCode}
-            onVerificationCodeChange={
-              phoneVerification.handleVerificationCodeChange
-            }
+            onVerificationCodeChange={phoneVerification.handleVerificationCodeChange}
           />
         </section>
 
@@ -130,9 +128,7 @@ export default function FindAccountPage() {
         isPhoneAccountModalOpen={false}
         foundAccountInfo={findAccount.foundAccountInfo}
         onCloseResultModal={() => findAccount.setIsResultModalOpen(false)}
-        onClosePhoneAccountModal={() =>
-          findAccount.setIsPhoneAccountModalOpen(false)
-        }
+        onClosePhoneAccountModal={() => findAccount.setIsPhoneAccountModalOpen(false)}
         onLogin={() => {
           // TODO: 실제 로그인 페이지로 이동 로직 추가 (user / partner 구분 필요)
         }}

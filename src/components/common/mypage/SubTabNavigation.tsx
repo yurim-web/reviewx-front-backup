@@ -1,7 +1,11 @@
+/* ========================================
+   마이페이지 서브 탭 네비게이션 컴포넌트
+   ======================================== */
+
 /**
- * 마이페이지 서브 탭 네비게이션 컴포넌트
+ * SubTabNavigation
  *
- * 마이페이지에서 프로필과 채널 탭을 전환하는 네비게이션입니다.
+ * 목적: 마이페이지 내 프로필·채널 탭 전환 UI
  *
  * 사용 페이지:
  * - /user/mypage/profile (사용자 마이페이지 프로필)
@@ -48,7 +52,7 @@ const TAB_CONFIG: Record<SubTab, TabInfo> = {
 
 export default function SubTabNavigation({
   activeSubTab,
-  setActiveSubTab,
+  setActiveSubTab: _setActiveSubTab,
   basePath,
   availableTabs,
 }: SubTabNavigationProps) {
@@ -65,9 +69,7 @@ export default function SubTabNavigation({
     return (
       <button
         key={tab}
-        className={`${styles.sub_tab_item} ${
-          activeSubTab === tab ? styles.active : ""
-        }`}
+        className={`${styles.sub_tab_item} ${activeSubTab === tab ? styles.active : ""}`}
         onClick={() => handleSubTabClick(tab)}
       >
         {tabInfo.label}
@@ -79,9 +81,7 @@ export default function SubTabNavigation({
     <div className={styles.sub_tab_container}>
       {renderTabButton("profile")}
       {renderTabButton("channel")}
-      {TAB_CONFIG[activeSubTab] && (
-        <div className={TAB_CONFIG[activeSubTab].indicatorClass} />
-      )}
+      {TAB_CONFIG[activeSubTab] && <div className={TAB_CONFIG[activeSubTab].indicatorClass} />}
     </div>
   );
 }

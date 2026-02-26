@@ -1,7 +1,11 @@
+/* ========================================
+   계정 찾기 모달 공통 버튼 컴포넌트
+   ======================================== */
+
 /**
- * 모달 버튼 컴포넌트
+ * ModalButton
  *
- * find_account 모달에서 사용하는 공통 버튼 컴포넌트
+ * 목적: 계정 찾기 모달에서 사용하는 variant 기반 공통 버튼
  *
  * 사용 페이지:
  * - src/components/common/find_account/modal/AccountFoundModal.tsx

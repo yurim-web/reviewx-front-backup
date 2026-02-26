@@ -1,18 +1,15 @@
+/* ========================================
+   계정 찾기 모달 통합 관리 컴포넌트
+   ======================================== */
+
 /**
- * 계정 찾기 모달 관리 컴포넌트
+ * FindAccountModals
  *
- * 목적:
- * - 아이디/비밀번호 찾기 흐름에서 발생하는 모든 모달을 한 곳에서 관리합니다.
- * - 개별 모달(아이디 찾기 결과, SNS 로그인 유도)을
- *   부모 페이지에서 쉽게 제어할 수 있도록 props로 상태와 핸들러를 전달받습니다.
+ * 목적: 계정 찾기 흐름에서 발생하는 모든 모달(결과·SNS 로그인)을 한 곳에서 관리
  *
  * 사용 페이지:
- * - 공용 계정찾기 페이지: src/components/common/find_account/page/FindAccountPage.tsx
- *   - /find-account, /partner/find-account 경로에서 사용
- * - 사용자 계정찾기 페이지: src/app/user/find-account/page.tsx
- *   - /user/find-account 경로에서 사용
- *
- *
+ * - src/components/common/find_account/page/FindAccountPage.tsx
+ * - /user/find-account (사용자 계정 찾기)
  */
 
 "use client";

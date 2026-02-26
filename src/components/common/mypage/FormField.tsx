@@ -1,12 +1,16 @@
+/* ========================================
+   마이페이지 폼 필드 래퍼 컴포넌트
+   ======================================== */
+
 /**
- * 폼 필드 래퍼 컴포넌트
+ * FormField
  *
- * field_article + label + required asterisk 패턴을 재사용하는 컴포넌트입니다.
+ * 목적: field_article + label + required asterisk 패턴을 재사용하는 레이아웃 래퍼
  *
  * 사용 페이지:
  * - src/components/common/mypage/AddressInput.tsx
  * - src/components/common/mypage/ProfilePhotoUpload.tsx
- * - src/components/common/phone_verification/PhoneVerification.tsx (마이페이지 스타일)
+ * - src/components/common/phone_verification/PhoneVerification.tsx
  */
 
 "use client";
