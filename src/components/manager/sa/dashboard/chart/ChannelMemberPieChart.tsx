@@ -1,14 +1,14 @@
 /* ========================================
-   🥧 채널별 회원 파이 차트 컴포넌트
+   채널별 회원 파이 차트 컴포넌트
    ======================================== */
 
 /**
- * 채널별 회원 파이 차트 컴포넌트
+ * ChannelMemberPieChart
  *
- * 목적: 채널별 회원 등록 통계를 파이 차트로 표시합니다.
+ * 목적: 채널별 회원 등록 통계를 파이 차트로 표시
  *
  * 사용 페이지:
- * - /manager_sa (대시보드 페이지) - ChannelMemberSection
+ * - /manager_sa/dashboard (SA 대시보드 - ChannelMemberSection 내부)
  */
 
 "use client";
@@ -79,19 +79,6 @@ interface PieTooltipProps {
     value?: number;
     useFixed?: boolean;
   }) => void;
-}
-
-interface SectorShapeProps {
-  cx?: number;
-  cy?: number;
-  innerRadius?: number;
-  outerRadius?: number;
-  startAngle?: number;
-  endAngle?: number;
-  fill?: string;
-  stroke?: string;
-  strokeWidth?: number;
-  [key: string]: unknown;
 }
 
 // 각 섹션에 퍼센트를 표시하는 커스텀 라벨 컴포넌트
@@ -454,7 +441,8 @@ export default function ChannelMemberPieChart({ channelData }: ChannelMemberPieC
             strokeLinecap="butt" // 선 끝을 둥글게 하지 않음
             clipPath="url(#pie-clip)" // 외부로 튀어나오는 선 제거
             isAnimationActive={false} // 애니메이션 비활성화
-            activeShape={(props: SectorShapeProps) => (
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            activeShape={(props: any) => (
               <Sector {...(props as React.ComponentProps<typeof Sector>)} />
             )} // 호버 시 크기 그대로 (커지지 않음)
           >

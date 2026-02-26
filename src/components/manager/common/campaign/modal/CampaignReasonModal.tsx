@@ -1,6 +1,7 @@
 /* ========================================
    📋 반려/신고 사유 모달 컴포넌트
    ======================================== */
+/* eslint-disable @next/next/no-img-element */
 
 /**
  * 반려/신고 사유 모달 컴포넌트
@@ -66,8 +67,7 @@ interface CommonProps {
 }
 
 // Props 타입: 공통 Props + 모드별 Props
-type CampaignReasonModalProps = CommonProps &
-  (RejectModeProps | ReportModeProps);
+type CampaignReasonModalProps = CommonProps & (RejectModeProps | ReportModeProps);
 
 export default function CampaignReasonModal({
   is_open,
@@ -76,9 +76,7 @@ export default function CampaignReasonModal({
   ...modeProps
 }: CampaignReasonModalProps) {
   // 코드 정보 가져오기 (반려 코드 또는 신고 코드)
-  const code_info = modeProps.code_info_list.find(
-    (info) => info.code === modeProps.code
-  );
+  const code_info = modeProps.code_info_list.find((info) => info.code === modeProps.code);
 
   // 모달이 열릴 때 표시할 초기 사유·선택 분류 (첫 페인트에서 바로 사용해 잔상 방지)
   const get_initial_reason = () =>
@@ -91,9 +89,7 @@ export default function CampaignReasonModal({
     return same_category_reasons.includes(initial_reason) ? initial_reason : null;
   };
 
-  const [selected_classification, set_selected_classification] = useState<
-    string | null
-  >(null);
+  const [selected_classification, set_selected_classification] = useState<string | null>(null);
   const [reason_text, set_reason_text] = useState<string>(get_default_message());
 
   // 모달이 열릴 때 한 번만 동기화했는지 (닫을 때 리셋)
@@ -109,30 +105,29 @@ export default function CampaignReasonModal({
     } else {
       synced_for_open_ref.current = false;
     }
-  }, [is_open, modeProps.reason_text, code_info?.reason, code_info?.category, modeProps.code_info_list]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    is_open,
+    modeProps.reason_text,
+    code_info?.reason,
+    code_info?.category,
+    modeProps.code_info_list,
+  ]);
 
   // 모달이 열려 있는데 아직 state가 동기화되기 전 첫 렌더: 표시만 초기값으로 해서 잔상 방지
   const display_reason_text =
-    is_open && !synced_for_open_ref.current
-      ? get_initial_reason()
-      : reason_text;
+    is_open && !synced_for_open_ref.current ? get_initial_reason() : reason_text;
   const display_selection =
-    is_open && !synced_for_open_ref.current
-      ? get_initial_selected()
-      : selected_classification;
+    is_open && !synced_for_open_ref.current ? get_initial_selected() : selected_classification;
 
   // 모드에 따른 기본 메시지 반환 함수
   function get_default_message(): string {
-    return modeProps.mode === "reject"
-      ? "반려 사유가 없습니다."
-      : "신고 사유가 없습니다.";
+    return modeProps.mode === "reject" ? "반려 사유가 없습니다." : "신고 사유가 없습니다.";
   }
 
   // 모드에 따른 placeholder 텍스트 반환 함수
   function get_placeholder(): string {
-    return modeProps.mode === "reject"
-      ? "반려 사유를 입력하세요"
-      : "신고 사유를 입력하세요";
+    return modeProps.mode === "reject" ? "반려 사유를 입력하세요" : "신고 사유를 입력하세요";
   }
 
   // 모달이 닫혀있으면 아무것도 렌더링하지 않음
@@ -184,10 +179,7 @@ export default function CampaignReasonModal({
 
   return (
     <div className={styles.modal_overlay} onClick={handle_overlay_click}>
-      <div
-        className={styles.modal_container}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className={styles.modal_container} onClick={(e) => e.stopPropagation()}>
         {/* 모달 제목 */}
         <h2 className={styles.modal_title}>{modal_title}</h2>
 

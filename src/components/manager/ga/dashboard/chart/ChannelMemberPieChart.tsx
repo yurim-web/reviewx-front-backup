@@ -258,7 +258,7 @@ const CustomTooltip = ({ active, payload, containerRef, setTooltipState }: Custo
         y: tooltipYLocal,
       };
     }
-  }, [active, payload, containerRef]);
+  }, [active, payload, containerRef, setTooltipState]);
 
   return null; // 툴팁은 컨테이너 밖에 렌더링
 };

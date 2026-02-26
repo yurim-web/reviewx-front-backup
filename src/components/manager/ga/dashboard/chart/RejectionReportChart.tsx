@@ -1,12 +1,14 @@
 /* ========================================
-   /
+   반려/신고 통계 차트 컴포넌트
    ======================================== */
 
 /**
- * 반려/신고 통계 차트 컴포넌트
+ * RejectionReportChart
  *
- * 목적: 반려와 신고 통계를 라인 차트로 표시하는 컴포넌트입니다.
+ * 목적: 반려·신고 통계를 라인 차트로 표시
  *
+ * 사용 페이지:
+ * - /manager_ga/dashboard (GA 대시보드)
  */
 
 "use client";
@@ -268,8 +270,7 @@ export default function RejectionReportChart({ dateRange }: RejectionReportChart
         } else {
           setChartData(data);
         }
-      } catch (error) {
-        console.error("반려/신고 통계 데이터 로딩 실패:", error);
+      } catch (_error) {
         setErrorMessage("데이터를 불러오지 못 했습니다.");
         setChartData([]);
       } finally {

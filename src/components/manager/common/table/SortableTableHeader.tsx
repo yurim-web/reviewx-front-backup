@@ -1,6 +1,7 @@
 /* ========================================
    📋 정렬 가능한 테이블 헤더 컴포넌트 (공통)
    ======================================== */
+/* eslint-disable @next/next/no-img-element */
 
 /**
  * 정렬 가능한 테이블 헤더 컴포넌트
@@ -57,10 +58,7 @@
 import { ReactNode } from "react";
 import type { TableColumn } from "./CommonTable";
 import type { SortState } from "@/utils/table/sort";
-import {
-  get_sort_arrow_transform,
-  get_sort_arrow_alt,
-} from "@/utils/table/sort";
+import { get_sort_arrow_transform, get_sort_arrow_alt } from "@/utils/table/sort";
 
 /**
  * SortableTableHeader Props 인터페이스
@@ -159,9 +157,7 @@ export default function SortableTableHeader({
           }
 
           // 커스텀 헤더 클래스 가져오기
-          const custom_class = get_custom_header_class
-            ? get_custom_header_class(column.key)
-            : "";
+          const custom_class = get_custom_header_class ? get_custom_header_class(column.key) : "";
 
           // header_text 클래스가 없으면 기본 span 사용 (일부 테이블은 header_text 클래스가 없음)
           const header_text_class = styles.header_text || "";
@@ -169,9 +165,7 @@ export default function SortableTableHeader({
           return (
             <div
               key={column.key}
-              className={`${styles.table_header_cell} ${
-                column.className || ""
-              } ${custom_class}`}
+              className={`${styles.table_header_cell} ${column.className || ""} ${custom_class}`}
             >
               {header_text_class ? (
                 <span className={header_text_class}>{column.label}</span>
@@ -199,10 +193,7 @@ export default function SortableTableHeader({
                     alt={get_sort_arrow_alt(sort_state, column.key)}
                     className={styles.sort_icon || styles.table_header_arrow}
                     style={{
-                      transform: get_sort_arrow_transform(
-                        sort_state,
-                        column.key
-                      ),
+                      transform: get_sort_arrow_transform(sort_state, column.key),
                       transition: "transform 0.2s",
                     }}
                   />

@@ -1,26 +1,16 @@
 /* ========================================
-   📋 차단 내역 테이블 컴포넌트 (공통)
+   차단 내역 테이블 컴포넌트 (공통)
    ======================================== */
+/* eslint-disable @next/next/no-img-element */
 
 /**
- * 차단 내역 테이블 컴포넌트 (공통)
+ * BlacklistTable
  *
- * 목적: GA/SA 관리자 차단 내역 페이지의 차단 내역 목록을 테이블 형태로 표시합니다.
+ * 목적: GA/SA 관리자 차단 내역 목록 테이블 (코드·사유 표시, 상세 이동)
  *
- * 사용 위치:
- * - /manager_ga/member/blacklist (GA 관리자 차단 내역 페이지)
- * - /manager_sa/member/blacklist (SA 관리자 차단 내역 페이지)
- *
- * 주요 기능:
- * - 차단 내역 목록을 테이블로 표시합니다
- * - 검색어 필터를 적용합니다
- * - 행 호버 시 삭제 버튼이 표시됩니다
- * - 구분 태그를 표시합니다 (파트너/리뷰어/관리자)
- * - 차단 코드와 차단 사유를 표시합니다
- * - 파트너/리뷰어 행 클릭 시 해당 상세 페이지로 이동합니다
- *   - 파트너: /manager_ga/member/partners/[user_id] 또는 /manager_sa/member/partners/[user_id]
- *   - 리뷰어: /manager_ga/member/reviewers/[user_id] 또는 /manager_sa/member/reviewers/[user_id]
- *
+ * 사용 페이지:
+ * - /manager_ga/member/blacklist (GA 차단 내역)
+ * - /manager_sa/member/blacklist (SA 차단 내역)
  */
 
 "use client";
@@ -197,6 +187,7 @@ export default function BlacklistTable({
 
     // 클라이언트에서는 localStorage 데이터 포함
     return get_blacklist_data().filter(filter_item);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     search_query,
     selected_date_range,
@@ -319,7 +310,7 @@ export default function BlacklistTable({
   const render_row_wrapper = (
     row: BlacklistTableRowData,
     row_content: React.ReactNode,
-    index: number
+    _index: number
   ) => {
     const is_hovered = hovered_row_id === row.id;
     // 파트너나 리뷰어일 때만 클릭 가능하도록 커서 스타일 적용

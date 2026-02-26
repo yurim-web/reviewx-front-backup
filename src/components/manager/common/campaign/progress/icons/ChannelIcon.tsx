@@ -1,6 +1,7 @@
 /* ========================================
    🎨 채널 아이콘 컴포넌트 (공통)
    ======================================== */
+/* eslint-disable @next/next/no-img-element */
 
 /**
  * 채널 아이콘 컴포넌트 (공통)
@@ -19,15 +20,15 @@
 
 // 채널 타입 정의
 export type Channel =
-  | 'Blog'
-  | 'Clip'
-  | 'Instagram'
-  | 'Mission'
-  | 'Reels'
-  | 'Review'
-  | 'Shorts'
-  | 'Store'
-  | 'Youtube';
+  | "Blog"
+  | "Clip"
+  | "Instagram"
+  | "Mission"
+  | "Reels"
+  | "Review"
+  | "Shorts"
+  | "Store"
+  | "Youtube";
 
 // 채널 아이콘 props 타입 정의
 interface ChannelIconProps {
@@ -40,15 +41,15 @@ interface ChannelIconProps {
 
 // 채널별 아이콘 경로 매핑
 const channel_icon_map: Record<Channel, string> = {
-  Blog: '/images/brand_logo/naverblog.svg',
-  Clip: '/images/brand_logo/naverclip.svg',
-  Instagram: '/images/brand_logo/insta.svg',
-  Youtube: '/images/brand_logo/youtube.svg',
-  Reels: '/images/brand_logo/reels.svg',
-  Review: '/images/brand_logo/review.svg',
-  Shorts: '/images/brand_logo/shots.svg',
-  Mission: '/images/brand_logo/misssion.svg',
-  Store: '/images/brand_logo/navershop.svg',
+  Blog: "/images/brand_logo/naverblog.svg",
+  Clip: "/images/brand_logo/naverclip.svg",
+  Instagram: "/images/brand_logo/insta.svg",
+  Youtube: "/images/brand_logo/youtube.svg",
+  Reels: "/images/brand_logo/reels.svg",
+  Review: "/images/brand_logo/review.svg",
+  Shorts: "/images/brand_logo/shots.svg",
+  Mission: "/images/brand_logo/misssion.svg",
+  Store: "/images/brand_logo/navershop.svg",
 };
 
 /**
@@ -57,20 +58,12 @@ const channel_icon_map: Record<Channel, string> = {
  * @param channel - 채널 타입
  * @param styles - CSS 모듈 스타일 객체
  */
-export default function ChannelIcon({
-  channel,
-  styles: cssStyles,
-}: ChannelIconProps) {
-  const icon_path =
-    channel_icon_map[channel] || '/images/icons/phone_verified.svg';
+export default function ChannelIcon({ channel, styles: cssStyles }: ChannelIconProps) {
+  const icon_path = channel_icon_map[channel] || "/images/icons/phone_verified.svg";
 
   return (
     <div className={cssStyles.channel_icon}>
-      <img
-        src={icon_path}
-        alt={channel}
-        className={cssStyles.channel_icon_image}
-      />
+      <img src={icon_path} alt={channel} className={cssStyles.channel_icon_image} />
     </div>
   );
 }

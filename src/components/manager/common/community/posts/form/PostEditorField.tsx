@@ -1,3 +1,16 @@
+/* ========================================
+   ToastUI 에디터 필드 컴포넌트
+   ======================================== */
+
+/**
+ * PostEditorField
+ *
+ * 목적: ToastUI Editor를 동적 로드하는 게시글 본문 에디터 필드
+ *
+ * 사용 페이지:
+ * - PostFormPageClient (게시글 작성·수정 공통 폼 내부)
+ */
+
 "use client";
 
 import {
@@ -58,7 +71,7 @@ export function PostEditorField({
   mode,
   initial_data,
   editor_instance_ref,
-  title_input_ref,
+  title_input_ref: _title_input_ref,
   body_label,
 }: PostEditorFieldProps) {
   // ----------------------------------------

@@ -1,32 +1,15 @@
 /* ========================================
-   📊 캠페인 진행 상황 페이지 (공통 컴포넌트)
+   캠페인 진행 상황 페이지 공통 컴포넌트
    ======================================== */
 
 /**
- * 캠페인 진행 상황 페이지 (공통 컴포넌트)
+ * ProgressPageCommon
  *
- * 목적: GA/SA 관리자 진행 상황 페이지에서 공통으로 사용하는 페이지 컴포넌트입니다.
- *       manager_type에 따라 데이터 소스와 스타일을 동적으로 결정합니다.
+ * 목적: GA/SA 관리자 캠페인 진행 상황 페이지 공통 컴포넌트 (manager_type으로 분기)
  *
- * 두 가지 사용 위치:
- * - /manager_ga/campaign/progress (GA 관리자 진행 상황 페이지)
- * - /manager_sa/campaign/progress (SA 관리자 진행 상황 페이지)
- *
- * 실무에서 사용하는 패턴:
- * - 공통 컴포넌트를 만들어서 중복 코드 제거
- * - Props로 manager_type을 받아서 데이터와 스타일을 주입
- * - 각 경로에서는 이 컴포넌트를 wrapper로 사용
- *
- * 주요 기능:
- * - 상단 통계 카드 (오픈 예정, 진행 중, 신청 중, 전체, 종료, 취소)
- * - 필터 섹션 (날짜, 검색, 상태, 유형, 채널, 정렬, 저장)
- * - 캠페인 목록 테이블
- *
- * 컴포넌트 구조:
- * - StatCardsSectionCommon: 통계 카드 섹션 (공통)
- * - CampaignProgressFilterSection: 필터 섹션 (공통)
- * - CampaignTableCommon: 캠페인 테이블 (공통)
- *
+ * 사용 페이지:
+ * - /manager_ga/campaign/progress (GA 관리자 진행 상황)
+ * - /manager_sa/campaign/progress (SA 관리자 진행 상황)
  */
 
 "use client";
@@ -80,9 +63,7 @@ interface ProgressPageCommonProps {
  * @returns 캠페인 진행 상황 페이지 JSX 요소
  *
  */
-export default function ProgressPageCommon({
-  manager_type,
-}: ProgressPageCommonProps) {
+export default function ProgressPageCommon({ manager_type }: ProgressPageCommonProps) {
   /* ========================================
      📌 필터 상태 관리
      ======================================== */
@@ -108,7 +89,7 @@ export default function ProgressPageCommon({
    *
    * @returns 현재 달의 첫날과 마지막 날을 포함한 DateRange 객체
    */
-  const get_current_month_date_range = (): DateRange | undefined => {
+  const _get_current_month_date_range = (): DateRange | undefined => {
     // 서버 사이드에서는 undefined 반환 (Hydration 오류 방지)
     if (typeof window === "undefined") {
       return undefined;
@@ -139,29 +120,22 @@ export default function ProgressPageCommon({
   };
 
   // 필터 상태
-  const [selected_statuses, set_selected_statuses] = useState<CampaignStatus[]>(
-    []
-  );
+  const [selected_statuses, set_selected_statuses] = useState<CampaignStatus[]>([]);
   const [selected_types, set_selected_types] = useState<CampaignType[]>([]);
   const [selected_channels, set_selected_channels] = useState<Channel[]>([]);
   // 날짜 범위 필터: 초기값을 undefined로 설정 (모든 캠페인 표시)
   // useState의 초기값을 함수로 설정하면 클라이언트에서만 실행됩니다
   // 📌 페이지 로드 시 날짜 필터 없이 모든 캠페인이 표시됩니다
-  const [selected_date_range, set_selected_date_range] = useState<
-    DateRange | undefined
-  >(undefined);
+  const [selected_date_range, set_selected_date_range] = useState<DateRange | undefined>(undefined);
 
   // manager_type에 따라 데이터를 선택합니다
   // 스타일은 공통 스타일을 사용하므로 선택하지 않습니다
 
   // 캠페인 리스트 가져오기 함수 선택
-  const getCampaignList =
-    manager_type === "ga" ? getGACampaignList : getSACampaignList;
+  const getCampaignList = manager_type === "ga" ? getGACampaignList : getSACampaignList;
 
   // 캠페인 리스트 상태 (클라이언트에서만 로드하여 Hydration 오류 방지)
-  const [allCampaignList, setAllCampaignList] = useState<
-    CampaignProgressItem[]
-  >([]);
+  const [allCampaignList, setAllCampaignList] = useState<CampaignProgressItem[]>([]);
 
   // useEffect: 클라이언트에서만 실행되어 localStorage 데이터를 포함한 캠페인 리스트 로드
   // 📌 Hydration 오류 방지:
@@ -191,26 +165,17 @@ export default function ProgressPageCommon({
   const filtered_campaign_list = useMemo(() => {
     return allCampaignList.filter((campaign) => {
       // 상태 필터: 선택된 상태가 없으면 모든 상태 통과, 있으면 선택된 상태만 통과
-      if (
-        selected_statuses.length > 0 &&
-        !selected_statuses.includes(campaign.status)
-      ) {
+      if (selected_statuses.length > 0 && !selected_statuses.includes(campaign.status)) {
         return false;
       }
 
       // 유형 필터: 선택된 유형이 없으면 모든 유형 통과, 있으면 선택된 유형만 통과
-      if (
-        selected_types.length > 0 &&
-        !selected_types.includes(campaign.type)
-      ) {
+      if (selected_types.length > 0 && !selected_types.includes(campaign.type)) {
         return false;
       }
 
       // 채널 필터: 선택된 채널이 없으면 모든 채널 통과, 있으면 선택된 채널만 통과
-      if (
-        selected_channels.length > 0 &&
-        !selected_channels.includes(campaign.channel)
-      ) {
+      if (selected_channels.length > 0 && !selected_channels.includes(campaign.channel)) {
         return false;
       }
 
@@ -230,11 +195,7 @@ export default function ProgressPageCommon({
       }
 
       // 날짜 범위 필터: 선택된 날짜 범위가 있으면 해당 범위 내의 캠페인만 통과
-      if (
-        selected_date_range?.from &&
-        selected_date_range?.to &&
-        campaign.created_at
-      ) {
+      if (selected_date_range?.from && selected_date_range?.to && campaign.created_at) {
         const campaign_date = new Date(campaign.created_at);
         const from_date = new Date(selected_date_range.from);
         const to_date = new Date(selected_date_range.to);
@@ -305,9 +266,7 @@ export default function ProgressPageCommon({
 
   // base_path 선택 (URL 경로)
   const basePath =
-    manager_type === "ga"
-      ? "/manager_ga/campaign/progress"
-      : "/manager_sa/campaign/progress";
+    manager_type === "ga" ? "/manager_ga/campaign/progress" : "/manager_sa/campaign/progress";
 
   /* ========================================
      📊 통계 카드 값 계산 (필터링된 데이터 기준)
@@ -324,36 +283,26 @@ export default function ProgressPageCommon({
    * @param campaign_list - 통계를 계산할 캠페인 리스트
    * @returns 통계 카드 값들 (오픈 예정, 진행 중, 신청 중, 전체, 종료, 취소)
    */
-  const calculate_stat_card_values_from_list = (
-    campaign_list: CampaignProgressItem[]
-  ) => {
+  const calculate_stat_card_values_from_list = (campaign_list: CampaignProgressItem[]) => {
     // 오픈 예정 캠페인 (status가 '예정'인 것)
     const open_scheduled_count = campaign_list.filter(
       (campaign) => campaign.status === "예정"
     ).length;
 
     // 진행 중인 캠페인 (status가 '진행'인 것)
-    const in_progress_count = campaign_list.filter(
-      (campaign) => campaign.status === "진행"
-    ).length;
+    const in_progress_count = campaign_list.filter((campaign) => campaign.status === "진행").length;
 
     // 신청 중인 캠페인 (status가 '신청'인 것)
-    const applying_count = campaign_list.filter(
-      (campaign) => campaign.status === "신청"
-    ).length;
+    const applying_count = campaign_list.filter((campaign) => campaign.status === "신청").length;
 
     // 전체 캠페인
     const total_count = campaign_list.length;
 
     // 종료된 캠페인 (status가 '종료'인 것)
-    const ended_count = campaign_list.filter(
-      (campaign) => campaign.status === "종료"
-    ).length;
+    const ended_count = campaign_list.filter((campaign) => campaign.status === "종료").length;
 
     // 취소된 캠페인 (status가 '취소'인 것)
-    const cancelled_count = campaign_list.filter(
-      (campaign) => campaign.status === "취소"
-    ).length;
+    const cancelled_count = campaign_list.filter((campaign) => campaign.status === "취소").length;
 
     // 숫자를 천 단위로 포맷팅하는 함수
     // toLocaleString: 숫자를 지역화된 문자열로 변환합니다 (예: 1000 -> "1,000")
@@ -449,9 +398,7 @@ export default function ProgressPageCommon({
           base_path={basePath}
           ReportModal={ReportModal}
           styles={tableStyles}
-          tagStyles={
-            commonTagStyles as Record<string, string> & { type_tag: string }
-          }
+          tagStyles={commonTagStyles as Record<string, string> & { type_tag: string }}
           channelIconStyles={
             channelIconStyles as Record<string, string> & {
               channel_icon: string;

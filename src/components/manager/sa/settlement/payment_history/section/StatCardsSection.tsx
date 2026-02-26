@@ -75,7 +75,11 @@ export default function StatCardsSection({
       // 세금계산서 발행 필터
       if (selected_tax_invoice_types.length > 0) {
         const item_tax_invoice_type: TaxInvoiceType | null =
-          item.taxInvoice === "O" ? "세금계산서" : item.taxInvoice === "X" ? "미발행" : null;
+          item.taxInvoiceType === "세금계산서"
+            ? "세금계산서"
+            : item.taxInvoiceType === "미발행"
+              ? "미발행"
+              : null;
 
         if (!item_tax_invoice_type || !selected_tax_invoice_types.includes(item_tax_invoice_type)) {
           return false;

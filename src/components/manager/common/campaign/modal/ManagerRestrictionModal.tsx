@@ -1,15 +1,15 @@
 /* ========================================
-   📋 이용 제한 사유 모달 컴포넌트
+   이용 제한 사유 모달 컴포넌트
    ======================================== */
 
 /**
- * 이용 제한 사유 모달 컴포넌트
+ * ManagerRestrictionModal
  *
- * 📝 사용처:
- * - src/components/manager/ga/campaign/reported/section/ReportedCampaignTable.tsx
- * - src/components/manager/common/member/table/ReviewerTable.tsx
- * - src/components/manager/common/member/table/PartnerTable.tsx
- * - src/components/manager/sa/member/admins/section/AdminFilterSection.tsx
+ * 목적: 관리자가 회원 이용 제한 사유를 확인·처리하는 모달
+ *
+ * 사용 페이지:
+ * - /manager_ga/campaign/reported (신고 내역)
+ * - /manager_ga/member, /manager_sa/member (회원 관리)
  */
 
 "use client";
@@ -42,12 +42,10 @@ export interface ManagerRestrictionModalProps {
 export default function ManagerRestrictionModal({
   is_open,
   on_close,
-  campaign_id,
+  campaign_id: _campaign_id,
   on_block,
 }: ManagerRestrictionModalProps) {
-  const [selected_block_reason, set_selected_block_reason] = useState<
-    string | null
-  >(null);
+  const [selected_block_reason, set_selected_block_reason] = useState<string | null>(null);
   const [show_completion_modal, set_show_completion_modal] = useState(false);
   const pending_restriction_reason_ref = useRef<string | null>(null);
 
@@ -56,7 +54,6 @@ export default function ManagerRestrictionModal({
       set_selected_block_reason(null);
       set_show_completion_modal(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [is_open]);
 
   // 옵션 선택 핸들러
@@ -110,10 +107,7 @@ export default function ManagerRestrictionModal({
 
   return (
     <div className={styles.modal_overlay} onClick={handle_backdrop_click}>
-      <div
-        className={styles.modal_content}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className={styles.modal_content} onClick={(e) => e.stopPropagation()}>
         {/* 모달 제목 */}
         <h3 className={styles.modal_title}>이용 제한 사유</h3>
 

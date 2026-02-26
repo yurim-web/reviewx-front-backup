@@ -1,20 +1,15 @@
 /* ========================================
-   📌 채널 정보 섹션 컴포넌트 (공통)
+   채널 정보 섹션 컴포넌트 (공통)
    ======================================== */
 
 /**
- * 채널 정보 섹션 컴포넌트 (공통)
+ * ChannelInfoSection
  *
- * 목적: GA/SA 관리자 리뷰어 상세 페이지에서 채널 정보를 표시하는 섹션입니다.
+ * 목적: GA/SA 관리자 리뷰어 상세 페이지 채널 통계 정보 표시
  *
- * 사용 위치:
- * - /manager_ga/member/reviewers/[id] (GA 관리자 리뷰어 상세 페이지)
- * - /manager_sa/member/reviewers/[id] (SA 관리자 리뷰어 상세 페이지)
- *
- * 주요 기능:
- * - 리뷰어의 채널 목록을 표시합니다.
- * - 각 채널의 통계 정보를 표시합니다. (일방문, 총방문, 이웃수, 팔로워, 구독자)
- * - 연결되지 않은 채널은 "연결 필요" 메시지를 표시합니다.
+ * 사용 페이지:
+ * - /manager_ga/member/reviewers/[id] (GA 리뷰어 상세)
+ * - /manager_sa/member/reviewers/[id] (SA 리뷰어 상세)
  */
 
 "use client";
@@ -24,7 +19,7 @@ import type { ChannelDetail } from "@/data/manager_ga/member/reviewers";
 import styles from "@/styles/manager/common/member/member_detail/reviewers/channel_info_section.module.css";
 
 // 채널 아이콘 경로 매핑 객체
-const channel_icon_map: Record<string, string> = {
+const _channel_icon_map: Record<string, string> = {
   Blog: "/images/brand_logo/naverblog.svg",
   Clip: "/images/brand_logo/naverclip.svg",
   Instagram: "/images/brand_logo/insta.svg",

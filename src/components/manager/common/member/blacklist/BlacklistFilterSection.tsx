@@ -1,23 +1,15 @@
 /* ========================================
-   🔍 이용제한내역 이력 필터 섹션 컴포넌트 (공통)
+   차단 이력 필터 섹션 컴포넌트 (공통)
    ======================================== */
 
 /**
- * 차단 이력 필터 섹션 컴포넌트 (공통)
+ * BlacklistFilterSection
  *
- * 목적: GA/SA 관리자 차단 이력 목록을 필터링하기 위한 필터 버튼들을 표시하는 섹션입니다.
+ * 목적: GA/SA 관리자 차단 이력 목록의 기간·구분·코드·검색 필터
  *
  * 사용 페이지:
- * - /manager_ga/member/blacklist (GA 관리자 차단 이력 페이지)
- * - /manager_sa/member/blacklist (SA 관리자 차단 이력 페이지)
- *
- * 주요 기능:
- * - 선택 기간 조회 필터
- * - 구분 필터 (파트너/리뷰어/관리자)
- * - 차단 코드 필터
- * - 검색어 필터
- * - 정렬 필터 (최신순)
- *
+ * - /manager_ga/member/blacklist (GA 차단 이력)
+ * - /manager_sa/member/blacklist (SA 차단 이력)
  */
 
 "use client";
@@ -31,10 +23,7 @@ import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 import DivisionFilterDropdown from "@/components/manager/common/member/blacklist/filter/DivisionFilterDropdown";
 import BlockCodeFilterDropdown from "@/components/manager/common/member/blacklist/filter/BlockCodeFilterDropdown";
-import type {
-  BlacklistDivision,
-  BlockCode,
-} from "@/data/manager_ga/common/filterOptions";
+import type { BlacklistDivision, BlockCode } from "@/data/manager_ga/common/filterOptions";
 import filterStyles from "@/styles/manager/common/section/filter_section.module.css";
 import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.module.css";
 
@@ -60,15 +49,13 @@ export default function BlacklistFilterSection({
   selected_block_codes,
   on_block_codes_change,
 }: BlacklistFilterSectionProps) {
-  const [is_division_dropdown_open, set_is_division_dropdown_open] =
-    useState(false);
+  const [is_division_dropdown_open, set_is_division_dropdown_open] = useState(false);
   const division_filter_button_ref = useRef<HTMLDivElement>(null);
 
-  const [is_block_code_dropdown_open, set_is_block_code_dropdown_open] =
-    useState(false);
+  const [is_block_code_dropdown_open, set_is_block_code_dropdown_open] = useState(false);
   const block_code_filter_button_ref = useRef<HTMLDivElement>(null);
 
-  const [selected_sort, set_selected_sort] = useState("최신순");
+  const [_selected_sort, set_selected_sort] = useState("최신순");
 
   const handle_division_apply = (divisions: BlacklistDivision[]) => {
     on_divisions_change(divisions);
@@ -86,9 +73,9 @@ export default function BlacklistFilterSection({
     on_block_codes_change(selected_block_codes.filter((c) => c !== block_code));
   };
 
-  const sort_options = ["최신순", "오래된순"];
+  const _sort_options = ["최신순", "오래된순"];
 
-  const handle_sort_change = (sort: string) => {
+  const _handle_sort_change = (sort: string) => {
     set_selected_sort(sort);
     // TODO: 정렬 로직 구현
   };
@@ -144,14 +131,12 @@ export default function BlacklistFilterSection({
                 styles={{
                   filter_item: filterStyles.filter_item,
                   checkbox_icon: filterStyles.checkbox_icon,
-                  checkbox_icon_checked:
-                    filterButtonStyles.checkbox_icon_checked,
+                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
                   filter_text: filterStyles.filter_text,
                   dropdown_arrow: filterStyles.dropdown_arrow,
                   filter_item_active: filterButtonStyles.filter_item_active,
                   filter_text_active: filterButtonStyles.filter_text_active,
-                  dropdown_arrow_active:
-                    filterButtonStyles.dropdown_arrow_active,
+                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
                 }}
               />
               <DivisionFilterDropdown
@@ -174,14 +159,12 @@ export default function BlacklistFilterSection({
                 styles={{
                   filter_item: filterStyles.filter_item,
                   checkbox_icon: filterStyles.checkbox_icon,
-                  checkbox_icon_checked:
-                    filterButtonStyles.checkbox_icon_checked,
+                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
                   filter_text: filterStyles.filter_text,
                   dropdown_arrow: filterStyles.dropdown_arrow,
                   filter_item_active: filterButtonStyles.filter_item_active,
                   filter_text_active: filterButtonStyles.filter_text_active,
-                  dropdown_arrow_active:
-                    filterButtonStyles.dropdown_arrow_active,
+                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
                 }}
               />
               <BlockCodeFilterDropdown

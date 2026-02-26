@@ -1,20 +1,18 @@
-"use client";
 /* ========================================
-   📝 게시글 작성/수정 페이지 컴포넌트 (공통)
+   게시글 작성/수정 페이지 컴포넌트 (공통)
    ======================================== */
 
 /**
- * 게시글 작성/수정 페이지 컴포넌트 (공통)
+ * PostFormPageClient
  *
- * 목적: GA/SA 관리자 게시글 작성 및 수정 페이지에서 공통으로 사용하는 게시글 폼 컴포넌트입니다.
- *       ToastUI Editor를 사용하여 게시글을 작성하거나 수정할 수 있습니다.
+ * 목적: GA/SA 관리자 게시글 작성·수정 공통 폼 (ToastUI Editor 사용)
  *
  * 사용 페이지:
- * - /manager_ga/community/posts/create (GA 관리자 게시글 작성 페이지)
- * - /manager_sa/community/posts/create (SA 관리자 게시글 작성 페이지)
- * - /manager_ga/community/posts/[id]/edit (GA 관리자 게시글 수정 페이지)
- * - /manager_sa/community/posts/[id]/edit (SA 관리자 게시글 수정 페이지)
+ * - /manager_ga/community/posts/create, /manager_ga/community/posts/[id]/edit
+ * - /manager_sa/community/posts/create, /manager_sa/community/posts/[id]/edit
  */
+
+"use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import "@toast-ui/editor/dist/toastui-editor.css";
@@ -97,7 +95,7 @@ export default function PostFormPageClient({
   manager_type,
 }: PostFormPageClientProps) {
   // Next.js 라우터 사용
-  const router = useRouter();
+  const _router = useRouter();
 
   // manager_type에 따른 base path 설정
   const base_path =
@@ -201,7 +199,7 @@ export default function PostFormPageClient({
         setTimeout(() => {
           editor_instance_ref.current?.focus?.();
         }, 100);
-      } catch (e) {
+      } catch (_e) {
         // ignore
       }
     }
@@ -280,9 +278,7 @@ export default function PostFormPageClient({
         try {
           const content = editor.getHTML() || "";
           setEditorContent(content);
-        } catch (error) {
-          console.error("에디터 내용 가져오기 실패:", error);
-        }
+        } catch (_error) {}
       };
 
       // ToastUI Editor의 change 이벤트 리스너 추가
@@ -314,7 +310,7 @@ export default function PostFormPageClient({
             // 강제 리렌더링을 위한 카운터 업데이트
             setForceCheck((prev) => prev + 1);
           }
-        } catch (error) {
+        } catch (_error) {
           // ignore
         }
       }, 300); // 0.3초마다 체크
@@ -329,9 +325,7 @@ export default function PostFormPageClient({
         }
         clearInterval(interval_id);
       };
-    } catch (error) {
-      console.error("에디터 이벤트 리스너 추가 실패:", error);
-    }
+    } catch (_error) {}
   }, [is_editor_ready]);
 
   /**
@@ -371,12 +365,13 @@ export default function PostFormPageClient({
       if (!text_content) {
         return true;
       }
-    } catch (error) {
+    } catch (_error) {
       // 에디터 내용을 가져올 수 없으면 비활성화
       return true;
     }
 
     return false;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     mode,
     initial_data,
@@ -426,8 +421,7 @@ export default function PostFormPageClient({
         // ToastUI Editor에서 HTML 내용 가져오기
         content = editor_instance_ref.current.getHTML() || "";
       }
-    } catch (error) {
-      console.error("에디터 내용 가져오기 실패:", error);
+    } catch (_error) {
       alert("에디터 내용을 가져오는데 실패했습니다.");
       return;
     }

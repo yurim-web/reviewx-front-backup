@@ -1,6 +1,7 @@
 /* ========================================
    📋 카테고리 목록 테이블 컴포넌트
    ======================================== */
+/* eslint-disable @next/next/no-img-element */
 
 /**
  * 카테고리 목록 테이블 컴포넌트
@@ -177,8 +178,7 @@ export default function CategoryTable({
     // 전체 선택 여부 확인
     // 배열 length 속성을 사용하여 전체 개수를 확인합니다
     const is_all_selected =
-      sorted_categories.length > 0 &&
-      selected_category_ids.length === sorted_categories.length;
+      sorted_categories.length > 0 && selected_category_ids.length === sorted_categories.length;
 
     // 전체 선택/해제 핸들러
     // 화살표 함수로 이벤트 핸들러를 정의합니다
@@ -246,17 +246,11 @@ export default function CategoryTable({
                   e.stopPropagation();
                   // 카테고리 수정 페이지로 이동
                   // router.push: Next.js에서 페이지를 이동하는 메서드입니다
-                  router.push(
-                    `/manager_${manager_type}/community/categories/${row.id}/edit`
-                  );
+                  router.push(`/manager_${manager_type}/community/categories/${row.id}/edit`);
                 }}
                 aria-label="수정"
               >
-                <img
-                  src="/images/icons/pencil_icon.svg"
-                  alt="수정"
-                  className={styles.edit_icon}
-                />
+                <img src="/images/icons/pencil_icon.svg" alt="수정" className={styles.edit_icon} />
               </button>
             ) : null;
           default:

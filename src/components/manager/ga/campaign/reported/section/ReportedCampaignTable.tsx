@@ -1,6 +1,7 @@
 /* ========================================
    신고내역 테이블 컴포넌트
    ======================================== */
+/* eslint-disable @next/next/no-img-element */
 
 /**
  * ReportedCampaignTable

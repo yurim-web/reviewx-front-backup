@@ -1,25 +1,15 @@
 /* ========================================
-   📐 캠페인 진행현황 상세 페이지 공통 레이아웃
+   캠페인 진행현황 상세 페이지 공통 레이아웃
    ======================================== */
 
 /**
- * 캠페인 진행현황 상세 페이지 공통 레이아웃 컴포넌트
+ * CampaignProgressDetailLayout
  *
- * 목적: 배송형, 미션형, 기자단, 구매평, 방문형 캠페인 상세 페이지에서
- *       공통으로 사용하는 JSX 구조를 재사용 가능한 컴포넌트로 추출합니다.
+ * 목적: GA/SA 관리자 캠페인 진행현황 상세 페이지 공통 레이아웃
  *
- * 📍 사용 위치:
- * - src/app/manager_ga/campaign/progress/delivery/[id]/page.tsx
- * - src/app/manager_ga/campaign/progress/mission/[id]/page.tsx
- * - src/app/manager_ga/campaign/progress/reporter/[id]/page.tsx
- * - src/app/manager_ga/campaign/progress/review/[id]/page.tsx
- * - src/app/manager_ga/campaign/progress/visit/[id]/page.tsx
- * - src/app/manager_sa/campaign/progress/delivery/[id]/page.tsx
- * - src/app/manager_sa/campaign/progress/mission/[id]/page.tsx
- * - src/app/manager_sa/campaign/progress/reporter/[id]/page.tsx
- * - src/app/manager_sa/campaign/progress/review/[id]/page.tsx
- * - src/app/manager_sa/campaign/progress/visit/[id]/page.tsx
- *
+ * 사용 페이지:
+ * - /manager_ga/campaign/progress/:type/:id (GA 캠페인 진행현황 상세)
+ * - /manager_sa/campaign/progress/:type/:id (SA 캠페인 진행현황 상세)
  */
 
 "use client";
@@ -30,14 +20,8 @@ import styles from "@/styles/partner/campaign_application/campaign_application.m
 import SortFilterControl from "@/components/partner/campaign_application/SortFilterControl";
 import Campaignbanner from "@/components/partner/campaign_application/CampaignInfoBox";
 import EmptyApplicantsList from "@/components/partner/campaign_application/EmptyApplicantsList";
-import {
-  getCampaignDetailPath,
-  type CampaignType,
-} from "@/utils/helpers/url";
-import type {
-  CampaignWithApplicants,
-  AllApplicant,
-} from "@/data/partner/sharedCampaigns";
+import { getCampaignDetailPath, type CampaignType } from "@/utils/helpers/url";
+import type { CampaignWithApplicants, AllApplicant } from "@/data/partner/sharedCampaigns";
 import type {
   SortOption,
   TabType,
@@ -112,8 +96,8 @@ export default function CampaignProgressDetailLayout({
   current_applicants,
   handle_select_applicant,
   handle_cancel_applicant,
-  handle_download_applicants,
-  handle_download_selected,
+  handle_download_applicants: _handle_download_applicants,
+  handle_download_selected: _handle_download_selected,
   render_card,
   campaign_id,
   detailStyles,
@@ -161,12 +145,8 @@ export default function CampaignProgressDetailLayout({
                  *   공통 상세 페이지 URL을 생성합니다.
                  * - 관리자 종류(GA/SA)와 상관없이 동일한 상세 페이지로 이동합니다.
                  */
-                const campaign_type =
-                  campaign_data.campaignInfo.campaignType as CampaignType;
-                const detail_path = getCampaignDetailPath(
-                  campaign_type,
-                  campaign_id
-                );
+                const campaign_type = campaign_data.campaignInfo.campaignType as CampaignType;
+                const detail_path = getCampaignDetailPath(campaign_type, campaign_id);
                 router.push(detail_path);
               }}
               aria-label="캠페인 보기"
@@ -181,12 +161,7 @@ export default function CampaignProgressDetailLayout({
                 - alt: 빈 문자열("")은 장식용 이미지임을 나타냅니다
               */}
               <span className={styles.view_campaign_button_icon}>
-                <Image
-                  src="/images/icons/chevron_right.svg"
-                  alt=""
-                  width={16}
-                  height={16}
-                />
+                <Image src="/images/icons/chevron_right.svg" alt="" width={16} height={16} />
               </span>
             </button>
           </div>
@@ -217,9 +192,7 @@ export default function CampaignProgressDetailLayout({
               <SortFilterControl
                 options={sort_options}
                 value={sort_order}
-                onChange={(option) =>
-                  set_sort_order(option.value as SortOption)
-                }
+                onChange={(option) => set_sort_order(option.value as SortOption)}
                 defaultSort="latest"
               />
             </article>
@@ -236,14 +209,11 @@ export default function CampaignProgressDetailLayout({
                 }`}
                 onClick={() => set_active_tab("applicants")}
               >
-                신청{" "}
-                <span className={styles.tab_count}>{applicants_count}</span>
+                신청 <span className={styles.tab_count}>{applicants_count}</span>
               </button>
               {/* 선정 탭 버튼 */}
               <button
-                className={`${styles.tab_button} ${
-                  active_tab === "selected" ? styles.active : ""
-                }`}
+                className={`${styles.tab_button} ${active_tab === "selected" ? styles.active : ""}`}
                 onClick={() => set_active_tab("selected")}
               >
                 선정 <span className={styles.tab_count}>{selected_count}</span>

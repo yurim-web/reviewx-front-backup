@@ -1,7 +1,14 @@
+/* ========================================
+   CampaignStatusTag 스토리북
+   ======================================== */
+
 /**
- * CampaignStatusTag 컴포넌트 스토리북
+ * CampaignStatusTag.stories
  *
- * 캠페인 상태 태그 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 캠페인 상태 태그 컴포넌트의 다양한 사용 예시 문서화
+ *
+ * 사용 페이지:
+ * - Storybook (개발 환경 컴포넌트 문서)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
@@ -14,7 +21,7 @@ import CampaignStatusTag, {
 import tagsStylesModule from "@/styles/common/tags.module.css";
 
 // CSS 모듈 객체를 타입 단언하여 사용
-const tagsStyles = (tagsStylesModule || {
+const _tagsStyles = (tagsStylesModule || {
   status_tag: "status_tag",
   status_tag_scheduled: "status_tag_scheduled",
   status_tag_applied: "status_tag_applied",
