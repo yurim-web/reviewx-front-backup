@@ -1,5 +1,5 @@
 /* ========================================
-   🎣 캠페인 진행현황 상세 페이지 공통 훅
+   캠페인 진행현황 상세 페이지 공통 훅
    ======================================== */
 
 /**
@@ -8,7 +8,7 @@
  * 목적: 배송형, 미션형, 기자단, 구매평, 방문형 캠페인 상세 페이지에서
  *       공통으로 사용하는 상태 관리와 데이터 로딩 로직을 재사용 가능한 훅으로 추출합니다.
  *
- * 📍 사용 위치:
+ * 사용 페이지:
  * - src/app/manager_ga/campaign/progress/delivery/[id]/page.tsx
  * - src/app/manager_ga/campaign/progress/mission/[id]/page.tsx
  * - src/app/manager_ga/campaign/progress/reporter/[id]/page.tsx
@@ -24,15 +24,15 @@
  * - src/hooks/manager/common/campaign/useCampaignProgressDetail.ts
  */
 
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   getCampaignById,
   type CampaignWithApplicants,
   type AllApplicant,
-} from '@/data/partner/sharedCampaigns';
+} from "@/data/partner/sharedCampaigns";
 
 /**
  * 정렬 옵션 타입 정의
@@ -41,14 +41,14 @@ import {
  * - deadline: 마감임박순
  * - point: 포인트순
  */
-export type SortOption = 'latest' | 'popular' | 'deadline' | 'point';
+export type SortOption = "latest" | "popular" | "deadline" | "point";
 
 /**
  * 탭 타입 정의
  * - applicants: 신청 탭
  * - selected: 선정 탭
  */
-export type TabType = 'applicants' | 'selected';
+export type TabType = "applicants" | "selected";
 
 /**
  * 커스텀 훅의 반환 타입 정의
@@ -95,7 +95,7 @@ export interface UseCampaignProgressDetailReturn {
  */
 export function useCampaignProgressDetail(
   campaign_id: string,
-  error_log_prefix: string = 'GA',
+  error_log_prefix: string = "GA"
 ): UseCampaignProgressDetailReturn {
   /**
    * 1) URL 쿼리 파라미터 처리
@@ -110,8 +110,7 @@ export function useCampaignProgressDetail(
    * - is_loading: 데이터 로딩 중인지 여부를 나타내는 상태
    * - error_message: 에러 발생 시 사용자에게 보여줄 메시지
    */
-  const [campaign_data, set_campaign_data] =
-    useState<CampaignWithApplicants | null>(null);
+  const [campaign_data, set_campaign_data] = useState<CampaignWithApplicants | null>(null);
   const [is_loading, set_is_loading] = useState(true);
   const [error_message, set_error_message] = useState<string | null>(null);
 
@@ -121,8 +120,8 @@ export function useCampaignProgressDetail(
    * - URL 쿼리에 tab=selected가 있으면 선정 탭으로 시작합니다
    */
   const [active_tab, set_active_tab] = useState<TabType>(() => {
-    const tab_param = search_params.get('tab');
-    return tab_param === 'selected' ? 'selected' : 'applicants';
+    const tab_param = search_params.get("tab");
+    return tab_param === "selected" ? "selected" : "applicants";
   });
 
   /**
@@ -130,12 +129,12 @@ export function useCampaignProgressDetail(
    * - sort_order: 현재 선택된 정렬 옵션
    * - sort_options: 정렬 옵션 목록 (드롭다운에 표시)
    */
-  const [sort_order, set_sort_order] = useState<SortOption>('latest');
+  const [sort_order, set_sort_order] = useState<SortOption>("latest");
   const sort_options: Array<{ value: SortOption; label: string }> = [
-    { value: 'latest', label: '최신순' },
-    { value: 'popular', label: '인기순' },
-    { value: 'deadline', label: '마감임박순' },
-    { value: 'point', label: '포인트순' },
+    { value: "latest", label: "최신순" },
+    { value: "popular", label: "인기순" },
+    { value: "deadline", label: "마감임박순" },
+    { value: "point", label: "포인트순" },
   ];
 
   /**
@@ -182,10 +181,9 @@ export function useCampaignProgressDetail(
       set_applicants_state(data.applicantData?.applicants ?? []);
       set_selected_state(data.applicantData?.selectedApplicants ?? []);
       set_is_loading(false);
-    } catch (error) {
+    } catch (_error) {
       // 에러 발생 시 콘솔에 로그 출력 및 사용자에게 메시지 표시
-      console.error(`${error_log_prefix} 진행현황 데이터 로딩 실패:`, error);
-      set_error_message('데이터를 불러오는 중 오류가 발생했습니다.');
+      set_error_message("데이터를 불러오는 중 오류가 발생했습니다.");
       set_is_loading(false);
     }
   };
@@ -195,7 +193,8 @@ export function useCampaignProgressDetail(
     if (campaign_id) {
       load_campaign_data();
     }
-  }, [campaign_id, error_log_prefix]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [campaign_id, error_log_prefix]); // load_campaign_data는 deps 제외 (추가 시 무한루프)
 
   /**
    * 페이지 포커스 시 데이터 다시 로드
@@ -220,7 +219,8 @@ export function useCampaignProgressDetail(
     return () => {
       window.removeEventListener("focus", handle_focus);
     };
-  }, [campaign_id, error_log_prefix]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [campaign_id, error_log_prefix]); // load_campaign_data는 deps 제외 (추가 시 무한루프)
 
   // ============================================================
   // 7) 카운트 계산
@@ -239,9 +239,9 @@ export function useCampaignProgressDetail(
    */
   const get_current_applicants = (): AllApplicant[] => {
     switch (active_tab) {
-      case 'applicants':
+      case "applicants":
         return applicants_state;
-      case 'selected':
+      case "selected":
         return selected_state;
       default:
         return applicants_state;
@@ -264,21 +264,17 @@ export function useCampaignProgressDetail(
       if (!target) return prev; // 찾지 못하면 이전 상태 그대로 반환
 
       // 신청자 목록에서 해당 신청자 제거
-      const next_applicants = prev.filter(
-        (applicant) => applicant.id !== applicant_id,
-      );
+      const next_applicants = prev.filter((applicant) => applicant.id !== applicant_id);
 
       // 선정 상태로 변경하여 선정자 목록에 추가
       const moved: AllApplicant = {
         ...target,
-        selectionStatus: '선정하기',
+        selectionStatus: "선정하기",
       } as AllApplicant;
 
       // 선정자 목록에 추가 (중복 방지)
       set_selected_state((prev_selected) => {
-        const already = prev_selected.some(
-          (applicant) => applicant.id === applicant_id,
-        );
+        const already = prev_selected.some((applicant) => applicant.id === applicant_id);
         if (already) return prev_selected; // 이미 있으면 추가하지 않음
         return [moved, ...prev_selected]; // 맨 앞에 추가
       });
@@ -297,20 +293,16 @@ export function useCampaignProgressDetail(
   const handle_cancel_applicant = (applicant_id: string) => {
     set_selected_state((prev_selected) => {
       // 선정자 목록에서 해당 ID를 가진 선정자 찾기
-      const target = prev_selected.find(
-        (applicant) => applicant.id === applicant_id,
-      );
+      const target = prev_selected.find((applicant) => applicant.id === applicant_id);
       if (!target) return prev_selected;
 
       // 선정자 목록에서 해당 선정자 제거
-      const next_selected = prev_selected.filter(
-        (applicant) => applicant.id !== applicant_id,
-      );
+      const next_selected = prev_selected.filter((applicant) => applicant.id !== applicant_id);
 
       // 미선택 상태로 변경하여 신청자 목록에 추가
       const moved: AllApplicant = {
         ...target,
-        selectionStatus: '미선택',
+        selectionStatus: "미선택",
       } as AllApplicant;
 
       // 신청자 목록에 추가 (중복 방지)
@@ -368,4 +360,3 @@ export function useCampaignProgressDetail(
     handle_download_selected,
   };
 }
-

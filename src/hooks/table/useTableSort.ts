@@ -84,7 +84,7 @@ export function useTableSort<T extends object>({
 }: UseTableSortOptions<T>): UseTableSortReturn<T> {
   // 정렬 상태 관리
   const [sort_state, set_sort_state] = useState<SortState>({
-    column_key: initial_column_key,
+    column_key: initial_column_key ?? null,
     direction: initial_direction,
   });
 

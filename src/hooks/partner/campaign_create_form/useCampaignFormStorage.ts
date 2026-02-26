@@ -1,17 +1,14 @@
 /* ========================================
-   📍 캠페인 폼 localStorage 관리 훅
+   캠페인 폼 localStorage 관리 훅
    ======================================== */
 
 /**
- * 캠페인 폼 localStorage 관리 훅
+ * useCampaignFormStorage
  *
- * 목적: 캠페인 폼의 임시 저장/불러오기 기능을 제공합니다.
+ * 목적: 캠페인 폼 임시 저장/불러오기 기능 (localStorage 기반)
  *
- * 주요 기능:
- * - localStorage에 폼 데이터 저장
- * - localStorage에서 폼 데이터 불러오기
- * - 포인트 충전 페이지 연동
- * - 자동 저장/불러오기 처리
+ * 사용 페이지:
+ * - /partner/campaign/create/* (캠페인 등록 페이지)
  */
 
 "use client";
@@ -89,8 +86,8 @@ export function useCampaignFormStorage({
   isSubmitting,
   thumbnailPreview,
   detailPreviews,
-  setThumbnailPreview,
-  setDetailPreviews,
+  setThumbnailPreview: _setThumbnailPreview,
+  setDetailPreviews: _setDetailPreviews,
   checkboxStates,
   updateCheckboxState,
 }: UseCampaignFormStorageProps) {
@@ -107,8 +104,7 @@ export function useCampaignFormStorage({
     try {
       const summary = getPartnerPointSummary(user.id);
       return String(summary.available_points || 0);
-    } catch (error) {
-      console.error("보유 포인트 가져오기 실패:", error);
+    } catch (_error) {
       return "0";
     }
   };
@@ -130,9 +126,7 @@ export function useCampaignFormStorage({
           checkboxStates: checkboxStates,
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
-      } catch (error) {
-        console.error("포인트 충전 전 자동 저장 실패:", error);
-      }
+      } catch (_error) {}
     }
     router.push("/partner/point/charge");
   };
@@ -156,8 +150,7 @@ export function useCampaignFormStorage({
       localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
 
       setToast({ is_open: true, message: "저장되었습니다. (이미지 제외)" });
-    } catch (error) {
-      console.error("임시 저장 실패:", error);
+    } catch (_error) {
       alert("임시 저장에 실패했습니다.");
     }
   };
@@ -208,8 +201,7 @@ export function useCampaignFormStorage({
 
       setLoadConfirmModal({ is_open: false });
       setToast({ is_open: true, message: "불러오기 완료 (이미지는 재업로드 필요)" });
-    } catch (error) {
-      console.error("임시 저장 데이터 불러오기 실패:", error);
+    } catch (_error) {
       alert("임시 저장 데이터를 불러오는데 실패했습니다.");
       setLoadConfirmModal({ is_open: false });
     }
@@ -296,8 +288,7 @@ export function useCampaignFormStorage({
           setLoadConfirmModal({ is_open: true });
         }
       }
-    } catch (error) {
-      console.error("임시 저장 데이터 확인 실패:", error);
+    } catch (_error) {
       if (fromCampaignCreate) {
         sessionStorage.removeItem("from_campaign_create");
       }

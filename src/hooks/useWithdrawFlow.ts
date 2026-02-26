@@ -1,15 +1,14 @@
 /* ========================================
-   🚪 회원 탈퇴 플로우 커스텀 훅
+   리뷰어 포인트 출금 신청 플로우 훅
    ======================================== */
 
 /**
- * 회원 탈퇴 플로우 커스텀 훅
+ * useWithdrawFlow
  *
- * 목적: 회원 탈퇴 시 모달 관리 및 플로우 제어
+ * 목적: 리뷰어 포인트 출금 신청 플로우 관리
  *
- * 사용 위치:
- * - /user/mypage/edit
- * - /partner/mypage/edit
+ * 사용 페이지:
+ * - /user/point (포인트 출금 신청)
  */
 
 import { useState } from "react";
@@ -53,11 +52,7 @@ interface UseWithdrawFlowReturn {
  */
 export function useWithdrawFlow(options: UseWithdrawFlowOptions = {}): UseWithdrawFlowReturn {
   const router = useRouter();
-  const {
-    redirectPath = "/",
-    checkOngoingCampaigns,
-    withdrawApi
-  } = options;
+  const { redirectPath = "/", checkOngoingCampaigns, withdrawApi } = options;
 
   const [isWithdrawConfirmModalOpen, setIsWithdrawConfirmModalOpen] = useState(false);
   const [isWithdrawCompleteModalOpen, setIsWithdrawCompleteModalOpen] = useState(false);
@@ -88,8 +83,7 @@ export function useWithdrawFlow(options: UseWithdrawFlowOptions = {}): UseWithdr
     if (withdrawApi) {
       try {
         await withdrawApi();
-      } catch (error) {
-        console.error("탈퇴 API 호출 중 오류:", error);
+      } catch (_error) {
         // TODO: 에러 처리 개선
       }
     }

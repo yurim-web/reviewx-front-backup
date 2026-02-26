@@ -1,13 +1,13 @@
 /* ========================================
-🔧 캠페인 등록 커스텀 훅
-======================================== */
+   캠페인 등록 커스텀 훅
+   ======================================== */
 
 /**
- * 캠페인 등록 커스텀 훅
+ * useCampaignCreate
  *
  * 목적: 5개 캠페인 등록 페이지의 공통 로직(state, 모달, handler)을 통합 관리
  *
- * 사용처:
+ * 사용 페이지:
  * - /partner/campaign/create/delivery
  * - /partner/campaign/create/visit
  * - /partner/campaign/create/review
@@ -44,7 +44,10 @@ interface UseCampaignCreateOptions {
 /**
  * 캠페인 등록 공통 로직 훅
  */
-export function useCampaignCreate({ onRegister, useConfirmModal = true }: UseCampaignCreateOptions) {
+export function useCampaignCreate({
+  onRegister,
+  useConfirmModal = true,
+}: UseCampaignCreateOptions) {
   const router = useRouter();
   const { user } = useAuth();
 
@@ -105,8 +108,7 @@ export function useCampaignCreate({ onRegister, useConfirmModal = true }: UseCam
         // 저장 실패 (QuotaExceeded 등)
         setIsErrorModalOpen(true);
       }
-    } catch (error) {
-      console.error("캠페인 등록 실패:", error);
+    } catch (_error) {
       setIsErrorModalOpen(true);
     } finally {
       setIsSubmitting(false);

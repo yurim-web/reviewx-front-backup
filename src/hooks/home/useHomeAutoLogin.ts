@@ -2,6 +2,15 @@
    홈 URL 기반 자동 로그인 (개발용)
    ======================================== */
 
+/**
+ * useHomeAutoLogin
+ *
+ * 목적: 홈 URL 경로에 따라 개발 환경에서 자동 로그인 처리
+ *
+ * 사용 페이지:
+ * - / (홈)
+ */
+
 import { useEffect } from "react";
 
 /**
@@ -10,8 +19,7 @@ import { useEffect } from "react";
  */
 export function useHomeAutoLogin(pathname: string) {
   useEffect(() => {
-    if (typeof window === "undefined" || process.env.NODE_ENV !== "development")
-      return;
+    if (typeof window === "undefined" || process.env.NODE_ENV !== "development") return;
 
     const currentToken = localStorage.getItem("reviewx_auth_token");
     const currentUser = localStorage.getItem("reviewx_auth_user");
@@ -27,7 +35,6 @@ export function useHomeAutoLogin(pathname: string) {
           role: "user",
         });
         localStorage.setItem("reviewx_auth_user_reviewer", reviewerAuth);
-        console.log("✅ 리뷰어 계정으로 자동 로그인");
       }
       localStorage.setItem("reviewx_auth_user", reviewerAuth);
       localStorage.setItem("reviewx_auth_token", "test_token_reviewer");
@@ -44,7 +51,6 @@ export function useHomeAutoLogin(pathname: string) {
           role: "partner",
         });
         localStorage.setItem("reviewx_auth_user_partner", partnerAuth);
-        console.log("✅ 파트너 계정으로 자동 로그인");
       }
       localStorage.setItem("reviewx_auth_user", partnerAuth);
       localStorage.setItem("reviewx_auth_token", "test_token_partner");

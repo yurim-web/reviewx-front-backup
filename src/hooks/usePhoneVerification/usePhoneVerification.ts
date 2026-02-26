@@ -1,65 +1,21 @@
+/* ========================================
+   휴대폰 인증 커스텀 훅
+   ======================================== */
+
 /**
- * 휴대폰 인증 관련 로직을 관리하는 커스텀 훅 (공통)
+ * usePhoneVerification
  *
- * 사용 컴포넌트:
- * - src/components/common/FindAccountPage.tsx
- * - src/app/user/signup/page.tsx
- * - src/app/partner/signup/page.tsx
- * - src/app/user/find-account/page.tsx
+ * 목적: 휴대폰 인증 요청·코드 검증·타이머 관리 공통 로직 제공
  *
  * 사용 페이지:
  * - /find-account (사용자 아이디/비밀번호 찾기)
  * - /partner/find-account (파트너 아이디/비밀번호 찾기)
  * - /user/signup (사용자 회원가입)
  * - /partner/signup (파트너 회원가입)
- * - /user/find-account (사용자 계정 찾기)
- *
- * ================================================================================================
- * 📋 에러 메시지 종류 정리 (Error Message Types)
- * ================================================================================================
- *
- * 이 훅에서 관리하는 에러는 2가지 타입이 있습니다:
- *
- * 1️⃣ phoneError (휴대폰 번호 관련 에러)
- *    - 발생 위치: handleVerificationRequest 함수
- *    - 에러 종류:
- *      ✅ "MAX_VERIFICATION_REQUEST_EXCEEDED"
- *         → 발생 조건: 인증번호 요청 횟수가 5회를 초과했을 때
- *         → UI 표시: PhoneVerification 컴포넌트에서 "인증번호 요청 횟수를 모두 사용했습니다. 24시간 후 다시 시도해 주세요."로 변환되어 표시
- *         → 표시 위치: 인증번호 입력 영역 (휴대폰 번호 입력 필드 아래가 아님)
- *
- *      ✅ "올바른 휴대폰 번호 형식을 입력해주세요."
- *         → 발생 조건: validatePhone 함수 검증 실패 시
- *         → UI 표시: 휴대폰 번호 입력 필드 아래에 그대로 표시
- *
- * 2️⃣ verificationCodeError (인증번호 관련 에러)
- *    - 발생 위치: handleVerifyCode 함수, 타이머 useEffect
- *    - 에러 종류:
- *      ✅ "인증번호 6자리를 입력해주세요."
- *         → 발생 조건: 인증번호가 비어있거나 validateVerificationCode 함수 검증 실패 시
- *         → UI 표시: 인증번호 입력 필드 아래에 그대로 표시
- *
- *      ✅ "인증번호가 일치하지 않습니다."
- *         → 발생 조건: checkTestVerificationCode 함수에서 인증번호 불일치 시
- *         → UI 표시: PhoneVerification 컴포넌트에서 그대로 표시
- *
- *      ✅ "인증번호 입력 시간을 초과했습니다."
- *         → 발생 조건: 타이머가 0이 되고 인증이 완료되지 않았을 때 (useEffect에서 자동 설정)
- *         → UI 표시: 인증번호 입력 필드 아래에 그대로 표시
- *
- * ⚠️ 주의사항:
- *    - "MAX_VERIFICATION_REQUEST_EXCEEDED"는 phoneError로 설정되지만,
- *      PhoneVerification 컴포넌트에서 휴대폰 번호 입력 필드 아래에는 표시하지 않고,
- *      인증번호 입력 영역에만 표시됩니다.
- *    - 타이머가 0이 되었을 때 "인증번호 입력 시간을 초과했습니다." 에러는
- *      이 훅의 useEffect에서 자동으로 verificationCodeError에 설정됩니다.
  */
 
 import { useEffect, useState, useRef } from "react";
-import {
-  validatePhone,
-  validateVerificationCode,
-} from "@/utils/validation";
+import { validatePhone, validateVerificationCode } from "@/utils/validation";
 import { checkTestVerificationCode } from "@/data/signup/testVerificationData";
 
 interface UsePhoneVerificationReturn {
@@ -89,15 +45,12 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
   const [phone, setPhone] = useState<string>("");
   const [verificationCode, setVerificationCode] = useState<string>("");
   const [isVerified, setIsVerified] = useState<boolean>(false);
-  const [isVerificationRequested, setIsVerificationRequested] =
-    useState<boolean>(false);
+  const [isVerificationRequested, setIsVerificationRequested] = useState<boolean>(false);
   const [timer, setTimer] = useState<number>(0);
   const [requestCount, setRequestCount] = useState<number>(0); // 인증번호 요청 횟수
   const MAX_REQUEST_COUNT = 5; // 최대 요청 가능 횟수
   const [phoneError, setPhoneError] = useState<string | undefined>();
-  const [verificationCodeError, setVerificationCodeError] = useState<
-    string | undefined
-  >();
+  const [verificationCodeError, setVerificationCodeError] = useState<string | undefined>();
 
   // 타이머 ID를 저장하기 위한 ref
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -187,13 +140,11 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
     // try {
     //   const response = await requestVerificationAPI({ phone });
     //   if (response.success) {
-    //     console.log("인증번호 전송 완료");
-    //   } else {
+    //    //   } else {
     //     alert("인증번호 전송에 실패했습니다. 다시 시도해주세요.");
     //   }
-    // } catch (error) {
-    //   console.error("인증 요청 오류:", error);
-    //   alert("인증번호 전송 중 오류가 발생했습니다.");
+    // } catch (_error) {
+    //    //   alert("인증번호 전송 중 오류가 발생했습니다.");
     // }
 
     // 인증번호 요청 상태로 변경
@@ -204,7 +155,6 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
     setVerificationCodeError(undefined); // 재전송 시 인증번호 에러도 초기화 (시간 초과 에러 포함)
     setRequestCount((prev) => prev + 1); // 요청 횟수 증가
     setTimer(240); // 4분 = 240초 타이머 시작
-    console.log("인증번호 요청:", phone);
   };
 
   /** 인증번호 확인 핸들러 - 실제 구현 시 서버에 검증 요청해야 함 */
@@ -223,7 +173,6 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
       setVerificationCode(""); // 인증번호 입력 필드 초기화
       setTimer(0); // 타이머 정지
       setVerificationCodeError(undefined); // 에러 초기화
-      console.log("인증 완료");
     } else {
       // 실제 에러 문구는 UI 컴포넌트(PhoneVerification)에서 관리하므로
       // 여기서는 "에러가 있다"는 신호만 전달합니다.

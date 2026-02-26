@@ -1,24 +1,14 @@
 /* ========================================
-   🎣 캠페인 신청내역 페이지 공통 로직 훅
+   캠페인 신청내역 페이지 공통 로직 훅
    ======================================== */
 
 /**
- * 캠페인 신청내역 페이지에서 공통으로 사용되는 로직을 추출한 커스텀 훅
+ * useCampaignApplication
  *
- * 📌 커스텀 훅이란?
- * - React의 기본 훅들(useState, useEffect 등)을 조합하여 만든 재사용 가능한 로직 묶음
- * - 여러 컴포넌트에서 동일한 로직을 사용할 때 중복을 제거하고 유지보수를 쉽게 합니다
+ * 목적: 캠페인 신청내역 페이지 공통 상태 관리 및 핸들러 로직
  *
- * 주요 기능:
- * - 캠페인 데이터 로딩 및 상태 관리
- * - 신청자/선정자 상태 관리
- * - 선정하기/선택 취소 핸들러
- * - 모달 상태 관리
- * - 정렬 옵션 관리
- *
- * 📌 파일 위치:
- * - src/hooks/partner/campaign_application/useCampaignApplication.ts
- * - 캠페인 신청내역 페이지 전용 훅이므로 campaign_application 폴더에 위치
+ * 사용 페이지:
+ * - /partner/campaign_application (캠페인 신청내역 페이지)
  */
 
 import { useState, useEffect } from "react";
@@ -52,13 +42,11 @@ function updateUserAppliedCampaignStatus(
     // localStorage에서 user_applied_campaigns 가져오기
     const userAppliedCampaigns = localStorage.getItem("user_applied_campaigns");
     if (!userAppliedCampaigns) {
-      console.log(`[updateUserAppliedCampaignStatus] user_applied_campaigns가 없습니다`);
       return;
     }
 
     const appliedCampaigns = JSON.parse(userAppliedCampaigns);
     if (!Array.isArray(appliedCampaigns)) {
-      console.error(`[updateUserAppliedCampaignStatus] user_applied_campaigns가 배열이 아닙니다`);
       return;
     }
 
@@ -70,7 +58,6 @@ function updateUserAppliedCampaignStatus(
       }) => uc.userId === userId
     );
     if (!userCampaigns || !userCampaigns.campaigns) {
-      console.log(`[updateUserAppliedCampaignStatus] 유저 ${userId}의 신청 내역이 없습니다`);
       return;
     }
 
@@ -103,28 +90,19 @@ function updateUserAppliedCampaignStatus(
     );
 
     if (campaignIndex === -1) {
-      console.log(
-        `[updateUserAppliedCampaignStatus] 유저 ${userId}의 캠페인 ${campaignId} 신청 내역이 없습니다`
-      );
       return;
     }
 
     // 상태 업데이트
-    const oldStatus = userCampaigns.campaigns[campaignIndex].status;
+    const _oldStatus = userCampaigns.campaigns[campaignIndex].status;
     userCampaigns.campaigns[campaignIndex].status = newStatus;
 
     // localStorage에 다시 저장
     localStorage.setItem("user_applied_campaigns", JSON.stringify(appliedCampaigns));
 
-    console.log(
-      `✅ [updateUserAppliedCampaignStatus] 유저 신청 내역 상태 업데이트: userId=${userId}, campaignId=${campaignId}, ${oldStatus} -> ${newStatus}`
-    );
-
     // storage 이벤트 트리거 (다른 탭에서 변경사항 감지)
     window.dispatchEvent(new Event("storage"));
-  } catch (error) {
-    console.error(`[updateUserAppliedCampaignStatus] 오류 발생:`, error);
-  }
+  } catch (_error) {}
 }
 
 /**
@@ -201,15 +179,9 @@ function addUserNotification(
     // localStorage에 저장
     localStorage.setItem("notifications", JSON.stringify(notifications));
 
-    console.log(
-      `✅ [addUserNotification] 알림 추가 완료: userId=${userId}, campaignId=${campaignId}, type=${type}`
-    );
-
     // storage 이벤트 트리거 (다른 탭에서 변경사항 감지)
     window.dispatchEvent(new Event("storage"));
-  } catch (error) {
-    console.error(`[addUserNotification] 오류 발생:`, error);
-  }
+  } catch (_error) {}
 }
 
 /**
@@ -357,9 +329,8 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
         // 캠페인 데이터가 로드되면 신청자 상태도 초기화
         setApplicantsState(data.applicantData.applicants);
         setSelectedState(data.applicantData.selectedApplicants);
-      } catch (err) {
+      } catch (_err) {
         setError("데이터를 불러오는 중 오류가 발생했습니다.");
-        console.error("캠페인 데이터 로딩 오류:", err);
       } finally {
         // 📌 finally 블록:
         // - try나 catch 블록 실행 후 무조건 실행됩니다
@@ -408,9 +379,6 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
     );
 
     if (success) {
-      console.log(
-        `신청자 데이터 localStorage 저장 완료: 신청자=${applicantsState.length}명, 선정자=${selectedState.length}명`
-      );
     }
   }, [applicantsState, selectedState, campaignData, isLoading]);
 
@@ -449,8 +417,6 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
    * - user_applied_campaigns의 상태도 '대기' -> '선정'으로 업데이트합니다
    */
   const handleSelectApplicant = (applicantId: string) => {
-    console.log("선정하기:", applicantId);
-
     // 모집 인원 초과 체크
     if (!campaignData) return;
 
@@ -482,7 +448,6 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
     setApplicantsState((prevApplicants) => {
       const target = prevApplicants.find((a) => a.id === applicantId);
       if (!target) {
-        console.log("신청 목록에서 해당 신청자를 찾을 수 없습니다:", applicantId);
         return prevApplicants;
       }
 
@@ -509,7 +474,6 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
         // 이미 선정 리스트에 있는지 확인
         const isAlreadyInSelected = prevSelected.some((a) => a.id === applicantId);
         if (isAlreadyInSelected) {
-          console.log("이미 선정 리스트에 있는 신청자입니다:", applicantId);
           return prevSelected;
         }
         // 📌 배열 스프레드 연산자:
@@ -556,13 +520,10 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
    * - user_applied_campaigns의 상태도 '선정' -> '대기'로 업데이트합니다
    */
   const handleCancelApplicant = (applicantId: string) => {
-    console.log("선택 취소:", applicantId);
-
     // 선정 목록에서 해당 신청자 찾기
     setSelectedState((prevSelected) => {
       const target = prevSelected.find((a) => a.id === applicantId);
       if (!target) {
-        console.log("선정 목록에서 해당 신청자를 찾을 수 없습니다:", applicantId);
         return prevSelected;
       }
 
@@ -580,7 +541,6 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
         // 이미 신청 리스트에 있는지 확인
         const isAlreadyInApplicants = prevApplicants.some((a) => a.id === applicantId);
         if (isAlreadyInApplicants) {
-          console.log("이미 신청 리스트에 있는 신청자입니다:", applicantId);
           return prevApplicants;
         }
         return [moved, ...prevApplicants];
