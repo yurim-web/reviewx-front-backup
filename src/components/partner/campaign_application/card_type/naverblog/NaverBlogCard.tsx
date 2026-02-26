@@ -111,7 +111,13 @@ export default function NaverBlogCard({
       {/* 채널 정보 영역: 채널 아이콘, 신청자 ID */}
       <div className={contentStyles.channel_section}>
         {/* 채널이미지 로고 */}
-        <Image src={channel_icon_src} alt="채널" className={contentStyles.channel_icon} fill />
+        <Image
+          src={channel_icon_src}
+          alt="채널"
+          className={contentStyles.channel_icon}
+          width={14}
+          height={14}
+        />
         {/* 신청자 아이디 표시 - 클릭 시 해당 채널로 이동 */}
         <a
           href={getChannelUrl(applicant.channel, applicant.Id)}

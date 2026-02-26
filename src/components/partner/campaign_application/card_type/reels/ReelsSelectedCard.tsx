@@ -49,7 +49,13 @@ export default function ReelsSelectedCard({ applicant, onCancel }: ReelsSelected
       </div>
 
       <div className={contentStyles.channel_section}>
-        <Image src={channel_icon_src} alt="릴스" className={contentStyles.channel_icon} fill />
+        <Image
+          src={channel_icon_src}
+          alt="릴스"
+          className={contentStyles.channel_icon}
+          width={14}
+          height={14}
+        />
         <a
           href={getChannelUrl("릴스", applicant.Id)}
           target="_blank"
