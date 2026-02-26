@@ -122,7 +122,7 @@ export default function ProfileContent({
             )}
 
             {/* 모바일 전용: 리뷰어 전환 버튼 (파트너 마이페이지에서만) */}
-            {editPath.startsWith("/partner") && onMemberTypeChange && (
+            {showMemberTypeToggle && editPath.startsWith("/partner") && onMemberTypeChange && (
               <button
                 type="button"
                 className={profileStyles.partner_switch_button_mobile_only}

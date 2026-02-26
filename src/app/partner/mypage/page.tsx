@@ -149,7 +149,8 @@ function PartnerMypagePage() {
           editPath="/partner/mypage/edit"
           onLogout={handleLogout}
           profileImage={profileImage}
-          showMemberTypeToggle={true}
+          // 광고주,리뷰어 토글 버튼 -- 숨김처리
+          showMemberTypeToggle={false}
           activeMemberType={memberType}
           onMemberTypeChange={handleMemberTypeChange}
         />
