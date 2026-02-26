@@ -252,7 +252,7 @@ export function useEditProfile() {
 
   const handleVerificationRequest = async () => {
     await handleVerificationRequestHook();
-    setTimer(180);
+    setTimer(240);
   };
 
   const handleVerify = () => {

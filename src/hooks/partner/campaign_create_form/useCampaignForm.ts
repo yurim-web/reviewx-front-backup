@@ -1,20 +1,18 @@
 /* ========================================
-   📍 캠페인 폼 공통 훅
+   캠페인 폼 공통 훅
    ======================================== */
 
 /**
- * 캠페인 폼 공통 상태 관리 훅
+ * useCampaignForm
  *
- * 목적: 모든 캠페인 폼(방문형, 구매평, 미션형, 배송형, 기자단)에서
- *       공통으로 사용하는 폼 상태 관리 및 핸들러 로직을 제공합니다.
+ * 목적: 모든 캠페인 폼(방문형, 구매평, 미션형, 배송형, 기자단) 공통 폼 상태 관리
  *
- * 주요 기능:
- * - 폼 데이터 상태 관리
- * - 이미지 업로드 상태 관리
- * - 체크박스 상태 관리
- * - 모달/토스트 상태 관리
- * - 입력 핸들러 (텍스트, 숫자, 이미지 등)
- * - 수정 모드 필드 편집 가능 여부 판단
+ * 사용 페이지:
+ * - /partner/campaign/create/delivery (배송형 캠페인 등록)
+ * - /partner/campaign/create/visit (방문형 캠페인 등록)
+ * - /partner/campaign/create/review (구매평 캠페인 등록)
+ * - /partner/campaign/create/mission (미션형 캠페인 등록)
+ * - /partner/campaign/create/reporter (기자단 캠페인 등록)
  */
 
 "use client";
@@ -135,7 +133,7 @@ export function useCampaignForm({
   initialData,
   mode = "create",
   isOpen = false,
-  onUrgentLoad,
+  onUrgentLoad: _onUrgentLoad,
 }: UseCampaignFormProps) {
   const { user } = useAuth();
   const isEditMode = mode === "edit";

@@ -1,21 +1,19 @@
+/* ========================================
+   계정 찾기 폼 상태 및 로직 관리 훅
+   ======================================== */
+
 /**
- * 계정 찾기 관련 로직을 관리하는 커스텀 훅
+ * useFindAccount
  *
- * 사용 컴포넌트:
- * - src/components/common/FindAccountPage.tsx
- * - src/app/user/find-account/page.tsx
+ * 목적: 아이디/비밀번호 찾기 폼 상태 및 로직 관리
  *
  * 사용 페이지:
- * - /find-account (사용자 아이디/비밀번호 찾기)
- * - /partner/find-account (파트너 아이디/비밀번호 찾기)
  * - /user/find-account (사용자 계정 찾기)
+ * - /partner/find-account (파트너 계정 찾기)
  */
 
 import { useState } from "react";
-import type {
-  AccountInfo,
-  AccountStatus,
-} from "@/components/common/find_account/types";
+import type { AccountInfo, AccountStatus } from "@/components/common/find_account/types";
 import {
   findAccountByPhoneWithTypes,
   type UnifiedAccount,
@@ -68,7 +66,7 @@ const getAccountStatus = (account: UnifiedAccount): AccountStatus => {
  * 계정 타입별 우선순위 (같은 전화번호가 여러 계정 타입에 있을 경우)
  * partner > admin_ga > admin_sa > user
  */
-const ACCOUNT_TYPE_PRIORITY: Record<AccountType, number> = {
+const _ACCOUNT_TYPE_PRIORITY: Record<AccountType, number> = {
   partner: 4,
   admin_ga: 3,
   admin_sa: 2,
@@ -113,10 +111,7 @@ interface UseFindAccountReturn {
   setIsPhoneAccountModalOpen: (value: boolean) => void;
   setAccountNotFoundError: (value: string | undefined) => void;
   setBlockedAccountError: (value: string | undefined) => void;
-  processAccountStatus: (
-    account: UnifiedAccount | undefined,
-    activeTab: "id" | "password"
-  ) => void;
+  processAccountStatus: (account: UnifiedAccount | undefined, activeTab: "id" | "password") => void;
   handleNext: (
     isVerified: boolean,
     activeTab: "id" | "password",
@@ -148,9 +143,7 @@ interface UseFindAccountOptions {
  * - 계정 조회 및 상태 처리 로직
  * - 계정 관련 상태 초기화
  */
-export function useFindAccount(
-  options: UseFindAccountOptions = {}
-): UseFindAccountReturn {
+export function useFindAccount(options: UseFindAccountOptions = {}): UseFindAccountReturn {
   // ============================================================================================
   // 📊 상태 관리 (State Management)
   // ============================================================================================
@@ -162,26 +155,19 @@ export function useFindAccount(
   const [emailError, setEmailError] = useState<string | undefined>();
 
   /** 찾은 계정 정보 (이메일, 가입일) */
-  const [foundAccountInfo, setFoundAccountInfo] = useState<AccountInfo | null>(
-    null
-  );
+  const [foundAccountInfo, setFoundAccountInfo] = useState<AccountInfo | null>(null);
 
   /** 아이디 찾기 결과 모달 표시 여부 */
   const [isResultModalOpen, setIsResultModalOpen] = useState<boolean>(false);
 
   /** SNS 로그인 유도 모달 표시 여부 */
-  const [isPhoneAccountModalOpen, setIsPhoneAccountModalOpen] =
-    useState<boolean>(false);
+  const [isPhoneAccountModalOpen, setIsPhoneAccountModalOpen] = useState<boolean>(false);
 
   /** 계정 없음 인라인 에러 메시지 (인증 완료 후 바로 표시) */
-  const [accountNotFoundError, setAccountNotFoundError] = useState<
-    string | undefined
-  >(undefined);
+  const [accountNotFoundError, setAccountNotFoundError] = useState<string | undefined>(undefined);
 
   /** 정지/탈퇴 계정 인라인 에러 메시지 */
-  const [blockedAccountError, setBlockedAccountError] = useState<
-    string | undefined
-  >(undefined);
+  const [blockedAccountError, setBlockedAccountError] = useState<string | undefined>(undefined);
 
   /** SNS 로그인 모달에 표시할 소셜 타입 (카카오 또는 네이버) */
   const [socialType, setSocialType] = useState<"kakao" | "naver">("kakao");
@@ -207,23 +193,14 @@ export function useFindAccount(
   ): boolean => {
     // ❌ 계정을 찾지 못했을 때 (인라인 에러 메시지 표시)
     if (!account) {
-      setAccountNotFoundError(
-        "입력하신 정보와 일치하는 계정을 찾을 수 없습니다."
-      );
+      setAccountNotFoundError("입력하신 정보와 일치하는 계정을 찾을 수 없습니다.");
       return false;
     }
 
     // 통합 계정 데이터에서 계정 상태 결정
     const status = getAccountStatus(account);
-    
-    // 디버깅: 계정 상태 확인
-    console.log("🔍 계정 상태:", {
-      status,
-      userType: account.userType,
-      snsType: account.snsType,
-      isBanned: account.isBanned,
-    });
 
+    // 디버깅: 계정 상태 확인
     // 🚫 정지/탈퇴된 계정일 때 (인라인 에러 메시지 표시)
     if (status === "blocked") {
       setBlockedAccountError("정지되었거나 탈퇴된 계정입니다.");
@@ -236,10 +213,8 @@ export function useFindAccount(
     if (status === "sns_only") {
       // SNS로만 가입된 계정인 경우, 소셜 타입을 설정하고 모달 표시
       // (/user/find-account 페이지에서만 실제로 모달이 표시됨)
-      console.log("🔐 SNS 계정 감지:", account.snsType);
       setSocialType(account.snsType || "kakao");
       setIsPhoneAccountModalOpen(true);
-      console.log("✅ SNS 모달 열기:", account.snsType);
       return false; // SNS 계정은 비밀번호 찾기 불가
     }
 
@@ -307,41 +282,24 @@ export function useFindAccount(
     //     return true;
     //   }
     //   return false;
-    // } catch (error) {
-    //   console.error("계정 조회 오류:", error);
-    //   alert("계정 조회 중 오류가 발생했습니다.");
+    // } catch (_error) {
+    //    //   alert("계정 조회 중 오류가 발생했습니다.");
     //   return false;
     // }
 
     // 🧪 테스트용 코드 - 실제 API 연결 시 전체 삭제 필요
     // 통합 계정 데이터에서 전화번호로 계정 찾기
     const normalized_input_phone = normalizePhone(phone);
-    const normalized_whitelist = (options.snsOnlyPhoneWhitelist || []).map(
-      normalizePhone
-    );
+    const normalized_whitelist = (options.snsOnlyPhoneWhitelist || []).map(normalizePhone);
 
     const is_phone_whitelisted =
-      normalized_whitelist.length === 0 ||
-      normalized_whitelist.includes(normalized_input_phone);
+      normalized_whitelist.length === 0 || normalized_whitelist.includes(normalized_input_phone);
 
     const foundAccount = is_phone_whitelisted
       ? findAccountByPhoneWithTypes(phone, options.allowedAccountTypes)
       : undefined;
-    
-    // 디버깅: 계정 조회 결과 확인
-    console.log("🔍 계정 조회 결과:", {
-      phone,
-      allowedAccountTypes: options.allowedAccountTypes,
-      snsOnlyPhoneWhitelist: options.snsOnlyPhoneWhitelist,
-      isPhoneWhitelisted: is_phone_whitelisted,
-      foundAccount: foundAccount ? {
-        userType: foundAccount.userType,
-        snsType: foundAccount.snsType,
-        email: foundAccount.email,
-        isBanned: foundAccount.isBanned,
-      } : null,
-    });
 
+    // 디버깅: 계정 조회 결과 확인
     // 에러 초기화
     setAccountNotFoundError(undefined);
     setBlockedAccountError(undefined);

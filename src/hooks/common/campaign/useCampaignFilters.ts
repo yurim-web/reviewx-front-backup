@@ -1,17 +1,18 @@
+/* ========================================
+   캠페인 필터 훅
+   ======================================== */
+
 /**
- * 캠페인 필터링 및 정렬 공용 훅
+ * useCampaignFilters
  *
- * 사용 파일:
- * - src/app/campaign/delivery/page.tsx
- * - src/app/campaign/mission/page.tsx
- * - src/app/campaign/reporter/page.tsx
- * - src/app/campaign/review/page.tsx
- * - src/app/campaign/visit/page.tsx
+ * 목적: 캠페인 목록 필터링 상태 및 로직 관리
  *
- * 주요 기능:
- * - 필터 상태 관리 (카테고리, 채널, 지역, 정렬, 마감임박)
- * - 필터 변경 핸들러
- * - 필터링 및 정렬된 캠페인 목록 반환
+ * 사용 페이지:
+ * - /campaign/delivery (배송형 캠페인 목록)
+ * - /campaign/visit (방문형 캠페인 목록)
+ * - /campaign/review (구매평 캠페인 목록)
+ * - /campaign/mission (미션형 캠페인 목록)
+ * - /campaign/reporter (기자단 캠페인 목록)
  */
 
 import { useState, useMemo } from "react";

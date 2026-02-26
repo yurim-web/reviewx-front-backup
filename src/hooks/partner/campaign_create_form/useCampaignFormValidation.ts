@@ -1,18 +1,14 @@
 /* ========================================
-   📍 캠페인 폼 유효성 검증 훅
+   캠페인 폼 유효성 검증 훅
    ======================================== */
 
 /**
- * 캠페인 폼 유효성 검증 훅
+ * useCampaignFormValidation
  *
- * 목적: 캠페인 폼의 필수 입력 항목 검증 로직을 제공합니다.
+ * 목적: 캠페인 폼 필수 입력 항목 유효성 검증 로직
  *
- * 주요 기능:
- * - 필수 필드 검증
- * - 이미지 업로드 검증
- * - 기본 미션 설정 검증
- * - 포인트 검증
- * - 휴대폰 번호 검증
+ * 사용 페이지:
+ * - /partner/campaign/create/* (캠페인 등록 페이지)
  */
 
 "use client";
@@ -60,10 +56,8 @@ export function useCampaignFormValidation({
    */
   const isFormValid = useMemo(() => {
     // 포인트 검증: 보유 포인트가 0보다 커야 함
-    const currentPoints =
-      Number(String(formData.currentPoints).replace(/,/g, "")) || 0;
+    const currentPoints = Number(String(formData.currentPoints).replace(/,/g, "")) || 0;
     if (currentPoints <= 0) {
-      console.log("❌ 포인트 검증 실패:", currentPoints);
       return false;
     }
 
@@ -74,12 +68,6 @@ export function useCampaignFormValidation({
       : thumbnailImage !== null && detailImages.length > 0;
 
     if (!hasImages) {
-      console.log("❌ 이미지 검증 실패:", {
-        thumbnailImage: !!thumbnailImage,
-        thumbnailPreview: !!thumbnailPreview,
-        detailImagesCount: detailImages.length,
-        detailPreviewsCount: detailPreviews.length,
-      });
     }
 
     /**
@@ -107,13 +95,6 @@ export function useCampaignFormValidation({
           Number(String(formData.videoDuration).replace(/,/g, "")) > 0));
 
     if (!hasValidMissionSettings) {
-      console.log("❌ 미션 설정 검증 실패:", {
-        checkboxStates,
-        minTextLength: formData.minTextLength,
-        minImageCount: formData.minImageCount,
-        videoCount: formData.videoCount,
-        videoDuration: formData.videoDuration,
-      });
     }
 
     // 캠페인 타입별 필수 필드 검증
@@ -124,19 +105,9 @@ export function useCampaignFormValidation({
     );
 
     if (!hasRequiredFields) {
-      console.log("❌ 필수 필드 검증 실패");
     }
 
     const isValid = hasImages && hasRequiredFields;
-
-    console.log("=== 폼 유효성 검증 결과 ===", {
-      campaignType,
-      currentPoints,
-      hasImages,
-      hasValidMissionSettings,
-      hasRequiredFields,
-      isValid,
-    });
 
     return isValid;
   }, [
@@ -179,10 +150,9 @@ function validateRequiredFieldsByCampaignType(
     hasValidMissionSettings: hasValidMissionSettings,
   };
 
-  const baseFieldsValid = Object.values(checks).every(v => v === true);
+  const baseFieldsValid = Object.values(checks).every((v) => v === true);
 
   if (!baseFieldsValid) {
-    console.log("❌ 기본 필드 검증 실패:", checks);
   }
 
   // 캠페인 타입별 추가 필수 필드 검증
@@ -201,9 +171,8 @@ function validateRequiredFieldsByCampaignType(
         baseFieldsValid,
         platform: (formData.platform || "").trim() !== "",
       };
-      const deliveryValid = Object.values(deliveryChecks).every(v => v === true);
+      const deliveryValid = Object.values(deliveryChecks).every((v) => v === true);
       if (!deliveryValid) {
-        console.log("❌ 배송형 추가 필드 검증 실패:", deliveryChecks);
       }
       return deliveryValid;
 
@@ -215,10 +184,7 @@ function validateRequiredFieldsByCampaignType(
       );
 
     case "기자단":
-      return (
-        baseFieldsValid &&
-        (formData.platform || "").trim() !== ""
-      );
+      return baseFieldsValid && (formData.platform || "").trim() !== "";
 
     case "미션형":
       // 미션형은 platform 필드가 없음

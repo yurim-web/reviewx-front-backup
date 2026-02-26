@@ -57,7 +57,7 @@ export type ContentsLoader = (campaignId: string) => ContentByTab | undefined;
  */
 export interface UseCampaignContentsReturn {
   // 캠페인 정보
-  campaignInfo: ReturnType<typeof getCampaignById>["campaignInfo"] | undefined;
+  campaignInfo: NonNullable<ReturnType<typeof getCampaignById>>["campaignInfo"] | undefined;
 
   // 탭 관련
   activeTab: TabKey;
@@ -416,7 +416,7 @@ export function useCampaignContents(contentsLoader: ContentsLoader): UseCampaign
       // 대기 탭으로 이동 (setActiveTab이 URL도 함께 업데이트합니다)
       setActiveTab("대기");
     },
-    [setActiveTab, formatDateTime]
+    [setActiveTab]
   );
 
   // 📌 객체 반환:
