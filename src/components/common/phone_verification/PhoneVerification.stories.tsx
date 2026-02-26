@@ -127,7 +127,7 @@ export const AfterRequest: Story = {
     verificationCode: "",
     isVerificationRequested: true,
     isPhoneVerified: false,
-    timer: 180,
+    timer: 240,
     onPhoneChange: (phone) => console.log("Phone changed:", phone),
     onVerificationRequest: () => console.log("Verification requested"),
     onResend: () => console.log("Resend"),
