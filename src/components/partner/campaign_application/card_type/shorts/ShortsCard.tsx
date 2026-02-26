@@ -43,7 +43,13 @@ export default function ShortsCard({ applicant, onSelect }: ShortsCardProps) {
       </div>
 
       <div className={contentStyles.channel_section}>
-        <Image src={channel_icon_src} alt="숏츠" className={contentStyles.channel_icon} fill />
+        <Image
+          src={channel_icon_src}
+          alt="숏츠"
+          className={contentStyles.channel_icon}
+          width={14}
+          height={14}
+        />
         <a
           href={getChannelUrl("쇼츠", applicant.Id)}
           target="_blank"

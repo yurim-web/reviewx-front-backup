@@ -51,7 +51,13 @@ export default function YoutubeSelectedCard({ applicant, onCancel }: YoutubeSele
 
       {/* 채널 정보 */}
       <div className={contentStyles.channel_section}>
-        <Image src={channel_icon_src} alt="유튜브" className={contentStyles.channel_icon} fill />
+        <Image
+          src={channel_icon_src}
+          alt="유튜브"
+          className={contentStyles.channel_icon}
+          width={14}
+          height={14}
+        />
         <a
           href={getChannelUrl("유튜브", applicant.Id)}
           target="_blank"
