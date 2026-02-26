@@ -14,7 +14,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState } from "react";
 import CampaignManagementHeader from "./CampaignManagementHeader";
-import type { MainTab } from "@/types/domain/user";
+import type { MainTab, StatTab } from "@/types/domain/user";
 
 const meta: Meta<typeof CampaignManagementHeader> = {
   title: "User/CampaignManagement/CampaignManagementHeader",
@@ -59,9 +59,7 @@ type Story = StoryObj<typeof CampaignManagementHeader>;
 export const AppliedStatTab: Story = {
   render: (args) => {
     const [activeTab, setActiveTab] = useState<MainTab>("campaign");
-    const [activeStatTab, setActiveStatTab] = useState<
-      "신청" | "선정" | "완료" | "취소/반려" | "패널티"
-    >("신청");
+    const [activeStatTab, setActiveStatTab] = useState<StatTab>("신청");
     return React.createElement(CampaignManagementHeader, {
       ...args,
       activeTab,
@@ -88,9 +86,7 @@ export const AppliedStatTab: Story = {
 export const SelectedStatTab: Story = {
   render: (args) => {
     const [activeTab, setActiveTab] = useState<MainTab>("campaign");
-    const [activeStatTab, setActiveStatTab] = useState<
-      "신청" | "선정" | "완료" | "취소/반려" | "패널티"
-    >("선정");
+    const [activeStatTab, setActiveStatTab] = useState<StatTab>("선정");
     return React.createElement(CampaignManagementHeader, {
       ...args,
       activeTab,
@@ -112,4 +108,3 @@ export const SelectedStatTab: Story = {
     setActiveStatTab: (tab) => console.log("Stat tab changed to:", tab),
   },
 };
-

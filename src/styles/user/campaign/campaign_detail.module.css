@@ -182,7 +182,7 @@
    ======================================== */
 @media (max-width: 768px) {
   /* 캠페인 상세 페이지에서 MainMenu 숨김 */
-  :global(.main_menu_container) {
+  .campaign_detail_container :global(.main_menu_container) {
     display: none !important;
   }
 

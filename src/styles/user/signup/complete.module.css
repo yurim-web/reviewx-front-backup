@@ -33,7 +33,7 @@
 }
 
 /* 회원가입 완료 페이지에서 헤더 보더 색상 흰색으로 */
-:global(body.signup_complete_page) header {
+.complete_page_container :global(header) {
   border-bottom-color: #ffffff;
 }
 
@@ -77,7 +77,7 @@
 /* 로고 텍스트 */
 .logo_text {
   color: #444;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 20px;
   font-style: normal;
   font-weight: 700;
@@ -110,7 +110,7 @@
 
 /* 닉네임 텍스트 (핑크색 강조) */
 .nickname_text {
-  color: #FF5694;
+  color: #ff5694;
 }
 
 /* 닉네임 뒤 "님," (PC에서만 표시) */
@@ -160,7 +160,7 @@
 .campaign_button {
   width: calc(50% - 12px);
   height: 56px;
-  background-color: #FF5694;
+  background-color: #ff5694;
   border: none;
   border-radius: 8px;
   color: #ffffff;
@@ -174,15 +174,14 @@
   transition: background-color 0.2s ease;
 }
 
-
 /* 로그인하기 버튼 */
 .login_button {
   width: calc(50% - 12px);
   height: 56px;
   background-color: #ffffff;
-  border: 1px solid #FF5694;
+  border: 1px solid #ff5694;
   border-radius: 8px;
-  color: #FF5694;
+  color: #ff5694;
   font-size: 16px;
   font-weight: 600;
   font-style: normal;
@@ -192,7 +191,6 @@
   cursor: pointer;
   transition: all 0.2s ease;
 }
-
 
 /* 📱 ================================================================================================
 
@@ -207,7 +205,7 @@
   }
 
   /* 모바일에서 헤더 border-bottom 흰색으로 */
-  :global(body.signup_complete_page) header {
+  .complete_page_container :global(header) {
     border-bottom-color: #e5e5e5;
   }
 
@@ -220,7 +218,7 @@
   /* 로고 텍스트 */
   .logo_text {
     color: #444;
-    font-family: 'Poppins', sans-serif;
+    font-family: "Poppins", sans-serif;
     font-size: 20px;
     font-weight: 700;
     line-height: 24px;
@@ -238,9 +236,9 @@
     text-align: center;
     font-size: 24px;
     font-weight: 600;
-    line-height: 140%; 
+    line-height: 140%;
     letter-spacing: -0.48px;
-    padding-bottom:0px;
+    padding-bottom: 0px;
   }
 
   /* 모바일에서 닉네임 숨기기 */

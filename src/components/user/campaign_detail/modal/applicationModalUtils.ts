@@ -225,8 +225,8 @@ export function buildApplicantData(params: BuildApplicantParams): AllApplicant {
   })();
 
   const base_applicant = {
-    id: userId,
-    Id: channel_id,
+    id: String(userId),
+    Id: String(channel_id),
     nickname: userAccount?.nickname || "",
     userType: normalized_user_type as "리뷰어" | "인플루언서",
     profileImage: userAccount?.profile_image || "/images/mypage/profile.svg",

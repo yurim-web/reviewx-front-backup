@@ -14,7 +14,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { CampaignApplication, CampaignType } from "@/types/domain/user";
-import { getCampaignTypePath } from "@/utils/helpers/url";
+import { getCampaignTypePath, convertToCampaignDataId } from "@/utils/helpers/url";
 import cardStyles from "../../../../styles/user/campaign_management/campaign_card.module.css";
 import { CamTag, CamCateIcon } from "../CampaignTag";
 
@@ -23,14 +23,6 @@ interface CampaignCardBaseProps {
   statusText: string;
   children: React.ReactNode;
 }
-
-const convertToCampaignDataId = (type: CampaignType, id: string): string => {
-  const typePath = getCampaignTypePath(type as Parameters<typeof getCampaignTypePath>[0]);
-  if (id.startsWith(`${typePath}_`)) {
-    return id;
-  }
-  return `${typePath}_${id}`;
-};
 
 const getCampaignDetailPath = (
   type: CampaignType,

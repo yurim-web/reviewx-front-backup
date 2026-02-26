@@ -17,10 +17,12 @@ import StatisticsTab from "./StatisticsTab";
 import type { CampaignStats, StatTab } from "@/types/domain/user";
 
 const mockStats: CampaignStats = {
+  전체: 48,
   신청: 5,
   선정: 12,
   완료: 28,
   "취소/반려": 3,
+  패널티: 0,
 };
 
 const meta: Meta<typeof StatisticsTab> = {
@@ -123,9 +125,7 @@ export const CompletedTab: Story = {
 // 인터랙티브 예시
 export const Interactive: Story = {
   render: (args) => {
-    const [activeTab, setActiveTab] = useState<StatTab>(
-      args.activeStatTab || "신청"
-    );
+    const [activeTab, setActiveTab] = useState<StatTab>(args.activeStatTab || "신청");
     return React.createElement(StatisticsTab, {
       ...args,
       activeStatTab: activeTab,
@@ -142,4 +142,3 @@ export const Interactive: Story = {
     setActiveStatTab: (tab) => console.log("Stat tab changed to:", tab),
   },
 };
-
