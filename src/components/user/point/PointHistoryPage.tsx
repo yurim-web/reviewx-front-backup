@@ -35,11 +35,13 @@ type FilterFunction = (history: PointHistory) => boolean;
 interface PointHistoryPageProps {
   activePointTab: PointTab;
   filterFunction: FilterFunction;
+  isEmptyView?: boolean;
 }
 
 export default function PointHistoryPage({
   activePointTab,
   filterFunction,
+  isEmptyView = false,
 }: PointHistoryPageProps) {
   const router = useRouter();
   const { user } = useAuth();
@@ -105,7 +107,8 @@ export default function PointHistoryPage({
   // ========================================
 
   const historyDataSource = user ? userPointHistory : pointHistoryData;
-  const filteredHistoryData = historyDataSource
+  const effectiveHistoryData = isEmptyView ? [] : historyDataSource;
+  const filteredHistoryData = effectiveHistoryData
     .filter(filterFunction)
     .sort((a, b) => b.date.localeCompare(a.date));
 

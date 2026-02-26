@@ -37,6 +37,7 @@ export default function StatisticsTab({
   const router = useRouter();
   const tabRefs = useRef<Record<StatTab, HTMLButtonElement | null>>({
     전체: null,
+    예정: null,
     신청: null,
     선정: null,
     완료: null,
@@ -46,8 +47,7 @@ export default function StatisticsTab({
 
   // 모바일에서 선택된 탭이 오른쪽 끝에 보이도록 스크롤
   useEffect(() => {
-    if (typeof window === "undefined" || window.innerWidth > MOBILE_BREAKPOINT)
-      return;
+    if (typeof window === "undefined" || window.innerWidth > MOBILE_BREAKPOINT) return;
     const el = tabRefs.current[activeStatTab];
     if (!el) return;
     const timer = requestAnimationFrame(() => {
@@ -56,9 +56,7 @@ export default function StatisticsTab({
     return () => cancelAnimationFrame(timer);
   }, [activeStatTab]);
 
-  const handleStatTabClick = (
-    tab: "신청" | "선정" | "완료" | "취소/반려" | "전체" | "패널티",
-  ) => {
+  const handleStatTabClick = (tab: "신청" | "선정" | "완료" | "취소/반려" | "전체" | "패널티") => {
     if (setActiveStatTab) {
       setActiveStatTab(tab);
       return;
@@ -93,9 +91,7 @@ export default function StatisticsTab({
             ref={(el) => {
               tabRefs.current["전체"] = el;
             }}
-            className={`${styles.stat_tab} ${
-              activeStatTab === "전체" ? styles.active : ""
-            }`}
+            className={`${styles.stat_tab} ${activeStatTab === "전체" ? styles.active : ""}`}
             onClick={() => handleStatTabClick("전체")}
           >
             <span>전체</span>
@@ -106,9 +102,7 @@ export default function StatisticsTab({
             ref={(el) => {
               tabRefs.current["신청"] = el;
             }}
-            className={`${styles.stat_tab} ${
-              activeStatTab === "신청" ? styles.active : ""
-            }`}
+            className={`${styles.stat_tab} ${activeStatTab === "신청" ? styles.active : ""}`}
             onClick={() => handleStatTabClick("신청")}
           >
             <span>신청</span>
@@ -119,9 +113,7 @@ export default function StatisticsTab({
             ref={(el) => {
               tabRefs.current["선정"] = el;
             }}
-            className={`${styles.stat_tab} ${
-              activeStatTab === "선정" ? styles.active : ""
-            }`}
+            className={`${styles.stat_tab} ${activeStatTab === "선정" ? styles.active : ""}`}
             onClick={() => handleStatTabClick("선정")}
           >
             <span>선정</span>
@@ -132,9 +124,7 @@ export default function StatisticsTab({
             ref={(el) => {
               tabRefs.current["완료"] = el;
             }}
-            className={`${styles.stat_tab} ${
-              activeStatTab === "완료" ? styles.active : ""
-            }`}
+            className={`${styles.stat_tab} ${activeStatTab === "완료" ? styles.active : ""}`}
             onClick={() => handleStatTabClick("완료")}
           >
             <span>완료</span>
@@ -145,9 +135,7 @@ export default function StatisticsTab({
             ref={(el) => {
               tabRefs.current["취소/반려"] = el;
             }}
-            className={`${styles.stat_tab} ${
-              activeStatTab === "취소/반려" ? styles.active : ""
-            }`}
+            className={`${styles.stat_tab} ${activeStatTab === "취소/반려" ? styles.active : ""}`}
             onClick={() => handleStatTabClick("취소/반려")}
           >
             <span>취소/반려</span>
@@ -159,9 +147,7 @@ export default function StatisticsTab({
           ref={(el) => {
             tabRefs.current["패널티"] = el;
           }}
-          className={`${styles.stat_tab} ${
-            activeStatTab === "패널티" ? styles.active : ""
-          }`}
+          className={`${styles.stat_tab} ${activeStatTab === "패널티" ? styles.active : ""}`}
           onClick={() => handleStatTabClick("패널티")}
         >
           <span>패널티</span>

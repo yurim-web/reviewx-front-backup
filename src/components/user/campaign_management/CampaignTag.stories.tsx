@@ -25,24 +25,20 @@ export default meta;
 
 /**
  * 마감 임박 태그
- * 
+ *
  * 긴급 마감 태그가 표시됩니다.
  */
 export const UrgentTag: StoryObj = {
-  render: () => (
-    <CamTag isUrgent={true} remainingDays={1} />
-  ),
+  render: () => <CamTag isUrgent={true} remainingDays={1} />,
 };
 
 /**
  * 일반 D-day 태그
- * 
+ *
  * 남은 일수가 표시되는 일반 태그입니다.
  */
 export const NormalTag: StoryObj = {
-  render: () => (
-    <CamTag isUrgent={false} remainingDays={5} />
-  ),
+  render: () => <CamTag isUrgent={false} remainingDays={5} />,
 };
 
 /**
@@ -84,23 +80,14 @@ export const MissionType: StoryObj = {
  * 브랜드 아이콘
  */
 export const BrandIcon: StoryObj = {
-  render: () => (
-    <CamIcon icon="/images/brand_logo/coupang.svg" />
-  ),
+  render: () => <CamIcon icon="/images/brand_logo/coupang.svg" />,
 };
 
 /**
  * 카테고리 아이콘 + 타입 조합
- * 
+ *
  * 브랜드 아이콘과 캠페인 타입이 함께 표시됩니다.
  */
 export const CategoryWithType: StoryObj = {
-  render: () => (
-    <CamCateIcon
-      category="쿠팡"
-      icon="/images/brand_logo/coupang.svg"
-      type="배송형"
-    />
-  ),
+  render: () => <CamCateIcon category="쿠팡" type="배송형" />,
 };
-

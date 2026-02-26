@@ -22,7 +22,7 @@ import { useState, useEffect, useLayoutEffect } from "react";
 import { usePathname } from "next/navigation";
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 import StatisticsTab from "@/components/user/campaign_management/StatisticsTab";
-import type { MainTab } from "@/types/domain/user";
+import type { MainTab, StatTab } from "@/types/domain/user";
 
 // 임시 데이터 import
 import {
@@ -35,12 +35,10 @@ interface CampaignManagementHeaderProps {
   activeTab: MainTab;
   /** 메인 탭 변경 핸들러 */
   setActiveTab: (tab: MainTab) => void;
-  /** 현재 활성 통계 탭 (신청/선정/완료/취소반려/전체/패널티) */
-  activeStatTab: "신청" | "선정" | "완료" | "취소/반려" | "전체" | "패널티";
+  /** 현재 활성 통계 탭 */
+  activeStatTab: StatTab;
   /** 통계 탭 변경 핸들러 (선택적: 제공되지 않으면 StatisticsTab 내부에서 라우팅 처리) */
-  setActiveStatTab?: (
-    tab: "신청" | "선정" | "완료" | "취소/반려" | "전체" | "패널티"
-  ) => void;
+  setActiveStatTab?: (tab: StatTab) => void;
   /** 통계 데이터 (선택적: 제공되지 않으면 기본 데이터 사용) */
   stats?: {
     신청: number;
@@ -49,6 +47,7 @@ interface CampaignManagementHeaderProps {
     "취소/반려": number;
     전체: number;
     패널티: number;
+    예정?: number;
   };
 }
 

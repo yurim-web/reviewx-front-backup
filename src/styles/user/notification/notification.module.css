@@ -10,8 +10,8 @@
  * - /notification (알림 페이지)
  */
 
-/* 전역 main 태그 스타일 override */
-:global(body > main) {
+/* 알림 페이지인 main 영역 스타일 override (로컬 클래스로 스코프) */
+:global(main):has(.notification_container) {
   max-width: none !important;
   margin: 0 !important;
   width: 100% !important;

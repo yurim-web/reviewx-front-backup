@@ -20,13 +20,13 @@ const mockCampaign: CampaignApplication = {
   id: "1",
   title: "샘플 캠페인 제목",
   category: "배송형",
-  categoryIcon: "/images/brand_logo/coupang.svg",
   type: "배송형",
-  status: "applied",
+  status: "신청",
   subStatus: "content_not_registered",
   isUrgent: false,
   remainingDays: 5,
   image: "/images/main/main_banner.png",
+  statusMessage: "신청 완료",
 };
 
 const meta: Meta<typeof CampaignCard> = {
@@ -69,7 +69,7 @@ export const AppliedTab: Story = {
   args: {
     campaign: mockCampaign,
     activeTab: "신청",
-    onTabChange: (tab) => console.log("Tab changed to:", tab),
+    onTabChange: (_tab) => {},
   },
 };
 
@@ -79,11 +79,12 @@ export const SelectedTab: Story = {
   args: {
     campaign: {
       ...mockCampaign,
-      status: "selected",
+      status: "선정",
       subStatus: "content_not_registered",
+      statusMessage: "선정 완료",
     },
     activeTab: "선정",
-    onTabChange: (tab) => console.log("Tab changed to:", tab),
+    onTabChange: (_tab) => {},
   },
 };
 
@@ -93,10 +94,11 @@ export const CompletedTab: Story = {
   args: {
     campaign: {
       ...mockCampaign,
-      status: "completed",
+      status: "완료",
+      statusMessage: "캠페인 완료",
     },
     activeTab: "완료",
-    onTabChange: (tab) => console.log("Tab changed to:", tab),
+    onTabChange: (_tab) => {},
   },
 };
 
@@ -106,24 +108,11 @@ export const CancelledTab: Story = {
   args: {
     campaign: {
       ...mockCampaign,
-      status: "cancelled",
+      status: "취소/반려",
       subStatus: "content_rejected,re_register",
+      statusMessage: "콘텐츠 반려",
     },
     activeTab: "취소/반려",
-    onTabChange: (tab) => console.log("Tab changed to:", tab),
+    onTabChange: (_tab) => {},
   },
 };
-
-// 패널티 탭
-export const PenaltyTab: Story = {
-  render: (args) => React.createElement(CampaignCard, args),
-  args: {
-    campaign: {
-      ...mockCampaign,
-      status: "penalty",
-    },
-    activeTab: "패널티",
-    onTabChange: (tab) => console.log("Tab changed to:", tab),
-  },
-};
-

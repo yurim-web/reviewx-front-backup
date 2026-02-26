@@ -12,6 +12,7 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
+import React from "react";
 import CampaignHeader from "./DetailHeader";
 
 const meta: Meta<typeof CampaignHeader> = {
@@ -22,8 +23,8 @@ const meta: Meta<typeof CampaignHeader> = {
     layout: "padded",
   },
   argTypes: {
-    categoryIcon: {
-      description: "카테고리 아이콘 이미지 경로",
+    channel: {
+      description: "채널 정보 (예: 네이버블로그, 인스타그램)",
       control: "text",
     },
     category: {
@@ -53,21 +54,15 @@ export default meta;
 
 type Story = StoryObj<typeof CampaignHeader>;
 
-// 안정적인 render 함수를 컴포넌트 외부에 정의 (깜빡임 방지)
-// args를 받아서 컴포넌트에 전달합니다
-const renderCampaignHeader = (args: any) => {
-  return <CampaignHeader {...args} />;
-};
-
 /**
  * 기본 캠페인 헤더
  *
  * 배송형 캠페인의 헤더입니다.
  */
 export const Default: Story = {
-  render: renderCampaignHeader,
+  render: (args) => React.createElement(CampaignHeader, args),
   args: {
-    categoryIcon: "/images/icons/delivery_icon.svg",
+    channel: "네이버블로그",
     category: "배송형",
     subcategory: "뷰티",
     points: 5000,
@@ -81,9 +76,9 @@ export const Default: Story = {
  * 지역 정보가 포함된 캠페인 헤더입니다.
  */
 export const WithRegion: Story = {
-  render: renderCampaignHeader,
+  render: (args) => React.createElement(CampaignHeader, args),
   args: {
-    categoryIcon: "/images/icons/visit_icon.svg",
+    channel: "인스타그램",
     category: "방문형",
     subcategory: "푸드",
     region: "서울 강남/서초",
@@ -91,18 +86,3 @@ export const WithRegion: Story = {
     altText: "방문형 카테고리",
   },
 };
-
-/**
- * 학습 포인트:
- *
- * 1. 캠페인 헤더 컴포넌트
- *    - 캠페인 상세 페이지 상단의 태그와 포인트 정보를 표시합니다
- *    - 카테고리 아이콘, 태그, 서브카테고리, 포인트를 표시합니다
- *
- * 2. 선택적 props
- *    - region과 altText는 선택적(optional) props입니다
- *    - ? 기호로 표시되어 있어서 제공하지 않아도 됩니다
- *
- * 3. 시맨틱 HTML
- *    - article 태그를 사용하여 의미있는 구조로 마크업합니다
- */
