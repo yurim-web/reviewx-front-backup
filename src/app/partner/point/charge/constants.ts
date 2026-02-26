@@ -11,30 +11,10 @@
  * - /partner/point/charge
  */
 
-export const REFUND_BANKS = [
-  "KB국민은행",
-  "신한은행",
-  "우리은행",
-  "하나은행",
-  "IBK기업은행",
-  "NH농협은행",
-  "SC제일은행",
-  "한국씨티은행",
-  "카카오뱅크",
-  "케이뱅크",
-  "토스뱅크",
-  "부산은행",
-  "경남은행",
-  "대구은행",
-  "광주은행",
-  "전북은행",
-  "제주은행",
-  "수협은행",
-  "우체국",
-  "새마을금고",
-  "신협",
-  "저축은행",
-] as const;
+import { BANK_OPTIONS } from "@/utils/constants/bank";
+
+/** 환불 은행 목록 (utils/constants/bank.ts와 동일) */
+export const REFUND_BANKS = [...BANK_OPTIONS] as const;
 
 export const AMOUNT_OPTIONS = [50000, 100000, 150000, 200000, 300000, 500000, 1000000] as const;
 

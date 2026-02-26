@@ -110,7 +110,8 @@ function PartnerEditProfilePage() {
     },
   });
 
-  const [isBusinessDocumentUploaded, setIsBusinessDocumentUploaded] = useState(false); // 사업자등록증 업로드 여부 (새로고침 시 완료 배지 비표시)
+  const [isBusinessDocumentUploaded, setIsBusinessDocumentUploaded] = useState(false); // 사업자등록증 저장 완료 여부
+  const [hasSelectedNewFileThisSession, setHasSelectedNewFileThisSession] = useState(false); // 이번 세션에서 파일 재선택 여부 (재선택 시 저장 전까지 파일명만 표시)
   const [profileImage, setProfileImage] = useState<string | null>(null); // 프로필 사진 미리보기 URL
   const [contactPhoneError, setContactPhoneError] = useState<string | undefined>(undefined); // 문의 담당자 휴대폰 번호 에러 메시지
 
@@ -145,6 +146,7 @@ function PartnerEditProfilePage() {
   const handleBusinessDocumentSelect = (file: File | null) => {
     if (!file) {
       setIsBusinessDocumentUploaded(false);
+      setHasSelectedNewFileThisSession(true);
       return;
     }
     const file_name = file.name;
@@ -153,6 +155,7 @@ function PartnerEditProfilePage() {
       businessDocument: file_name,
     }));
     setIsBusinessDocumentUploaded(false);
+    setHasSelectedNewFileThisSession(true); // 재선택했으므로 저장 전까지 파일명만 표시
 
     // 파일 선택 시점에 localStorage에 반영 (저장 버튼 없이 새로고침해도 파일명 유지)
     try {
@@ -254,6 +257,7 @@ function PartnerEditProfilePage() {
       // 저장 성공 시 토스트 메시지 표시 및 등록 완료 배지 표시
       setShowToast(true);
       setIsBusinessDocumentUploaded(true);
+      setHasSelectedNewFileThisSession(false); // 저장했으므로 다시 "등록 완료" 표시
     } catch (_error) {
       alert("정보 저장에 실패했습니다.");
     }
@@ -401,12 +405,15 @@ function PartnerEditProfilePage() {
             inputClassName={inputStyles.input_field}
           />
 
-          {/* 사업자등록증 - 새로 등록(파일 선택) 클릭 시 완료 배지 숨김 */}
+          {/* 사업자등록증 - 처음 진입 시 파일 있으면 등록 완료, 재선택 시 저장 전까지 파일명만 표시 */}
           <BusinessDocumentUpload
             fileName={formData.businessDocument}
-            isUploaded={isBusinessDocumentUploaded}
+            isUploaded={
+              (isBusinessDocumentUploaded || !!formData.businessDocument?.trim()) &&
+              !hasSelectedNewFileThisSession
+            }
             onFileSelect={handleBusinessDocumentSelect}
-            onSelectClick={() => setIsBusinessDocumentUploaded(false)}
+            onSelectClick={() => setHasSelectedNewFileThisSession(true)}
           />
 
           {/* 주소 입력 */}
