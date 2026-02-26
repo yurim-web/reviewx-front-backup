@@ -146,6 +146,10 @@
   border-top: 1px solid #e5e5e5;
 }
 
+.pending_item:last-child {
+  border-bottom: 1px solid #e5e5e5;
+}
+
 /* 예정 뱃지 (녹색) */
 .item_badge {
   flex-shrink: 0;
