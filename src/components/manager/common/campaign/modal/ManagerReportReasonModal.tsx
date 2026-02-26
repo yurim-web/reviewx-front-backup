@@ -1,13 +1,15 @@
 /* ========================================
-   📋 신고 사유 모달 컴포넌트
+   신고 사유 모달 컴포넌트
    ======================================== */
 
 /**
- * 신고 사유 모달 컴포넌트
+ * ManagerReportReasonModal
  *
- * 📝 사용처:
- * - src/components/manager/common/campaign/progress/ProgressPageCommon.tsx
- * - src/components/manager/ga/campaign/rejected/section/RejectedCampaignTable.tsx
+ * 목적: 관리자 캠페인 신고 사유 확인 모달
+ *
+ * 사용 페이지:
+ * - /manager_ga/campaign/progress (캠페인 진행 현황)
+ * - /manager_ga/campaign/rejected (반려 내역)
  */
 
 "use client";
@@ -124,15 +126,14 @@ export interface ManagerReportReasonModalProps {
 export default function ManagerReportReasonModal({
   is_open,
   on_close,
-  campaign_id,
+  campaign_id: _campaign_id,
   on_report,
   report_code_options,
   report_item,
 }: ManagerReportReasonModalProps) {
   // useState: 선택된 신고 코드를 관리하는 React Hook
   // [상태값, 상태를 변경하는 함수] = useState(초기값)
-  const [selected_report_code, set_selected_report_code] =
-    useState<ReportCode | null>(null);
+  const [selected_report_code, set_selected_report_code] = useState<ReportCode | null>(null);
 
   // useState: 기타 비매너 행위 선택 시 입력할 텍스트를 관리하는 React Hook
   // W013 코드(그외 비매너 행위) 선택 시 textarea에 입력한 내용을 저장합니다
@@ -161,7 +162,6 @@ export default function ManagerReportReasonModal({
       set_has_error(false);
       set_show_completion_modal(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [is_open]);
 
   // 옵션 선택 핸들러
@@ -195,9 +195,7 @@ export default function ManagerReportReasonModal({
 
   // textarea 변경 핸들러
   // 사용자가 입력을 시작하면 에러 상태를 false로 리셋합니다
-  const handle_textarea_change = (
-    e: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
+  const handle_textarea_change = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     // 입력을 시작하면 에러 상태를 해제합니다
     if (has_error) {
@@ -239,10 +237,7 @@ export default function ManagerReportReasonModal({
 
   return (
     <div className={styles.modal_overlay} onClick={handle_backdrop_click}>
-      <div
-        className={styles.modal_content}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className={styles.modal_content} onClick={(e) => e.stopPropagation()}>
         {/* 모달 제목 */}
         <h3 className={styles.modal_title}>신고 사유</h3>
 
@@ -260,9 +255,7 @@ export default function ManagerReportReasonModal({
                   onChange={() => handle_report_option_change(code)}
                   className={styles.option_radio}
                 />
-                <span className={styles.option_label}>
-                  {code_info?.reason || code}
-                </span>
+                <span className={styles.option_label}>{code_info?.reason || code}</span>
               </label>
             );
           })}

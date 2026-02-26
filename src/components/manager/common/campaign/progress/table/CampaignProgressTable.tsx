@@ -1,30 +1,16 @@
 /* ========================================
-   📋 캠페인 진행 현황 테이블 컴포넌트 (공통)
+   캠페인 진행 현황 테이블 컴포넌트 (공통)
    ======================================== */
+/* eslint-disable @next/next/no-img-element */
 
 /**
- * 캠페인 진행 현황 테이블 컴포넌트 (공통)
+ * CampaignProgressTable
  *
- * 목적: manager_ga와 manager_sa에서 공통으로 사용하는
- *       캠페인 진행 현황 테이블 컴포넌트입니다.
+ * 목적: GA/SA 관리자 캠페인 진행 현황 목록 테이블
  *
- * 📍 사용 위치:
- * - 직접 사용 컴포넌트:
- *   - ProgressPageCommon 컴포넌트 (캠페인 진행 상황 페이지 공통 컴포넌트)
- *
- * - 최종 사용 페이지:
- *   - /manager_ga/campaign/progress (GA 관리자 진행 현황 페이지)
- *   - /manager_sa/campaign/progress (SA 관리자 진행 현황 페이지)
- *
- * 사용 흐름:
- * GA 관리자 진행 현황 페이지 (/manager_ga/campaign/progress)
- *   └─> ProgressPageCommon 컴포넌트 (manager_type="ga")
- *       └─> CampaignProgressTable 컴포넌트
- *
- * SA 관리자 진행 현황 페이지 (/manager_sa/campaign/progress)
- *   └─> ProgressPageCommon 컴포넌트 (manager_type="sa")
- *       └─> CampaignProgressTable 컴포넌트
- *
+ * 사용 페이지:
+ * - /manager_ga/campaign/progress (GA 진행 현황)
+ * - /manager_sa/campaign/progress (SA 진행 현황)
  */
 
 "use client";
@@ -96,10 +82,7 @@ interface CampaignTableProps {
 }
 
 // 캠페인 타입별 상세 페이지 경로 매핑
-const campaign_detail_map: Record<
-  CampaignType,
-  { slug: string; sample_id: string }
-> = {
+const campaign_detail_map: Record<CampaignType, { slug: string; sample_id: string }> = {
   배송형: { slug: "delivery", sample_id: "961" },
   방문형: { slug: "visit", sample_id: "1" },
   구매평: { slug: "review", sample_id: "18" },
@@ -162,7 +145,7 @@ export default function CampaignProgressTable({
   base_path,
   ReportModal,
   styles: cssStyles,
-  tagStyles,
+  tagStyles: _tagStyles,
   channelIconStyles,
   search_query = "",
   has_active_filters = false,
@@ -227,10 +210,7 @@ export default function CampaignProgressTable({
     });
   };
 
-  const handle_report_submit = (
-    report_code: string,
-    report_item_from_modal?: unknown
-  ) => {
+  const handle_report_submit = (report_code: string, report_item_from_modal?: unknown) => {
     const row = report_item_from_modal as CampaignProgressItem | null;
     if (!row?.campaign_number) return;
 
@@ -266,8 +246,7 @@ export default function CampaignProgressTable({
       return null;
     }
     const detail_id =
-      (campaign.detail_campaign_id &&
-        String(campaign.detail_campaign_id).trim()) ||
+      (campaign.detail_campaign_id && String(campaign.detail_campaign_id).trim()) ||
       detail_info.sample_id;
     return `${base_path}/${detail_info.slug}/${detail_id}`;
   };
@@ -277,8 +256,7 @@ export default function CampaignProgressTable({
   // 헤더용 컬럼 정의 (className 제거하여 헤더 스타일이 바디 스타일에 영향받지 않도록)
   const header_columns: TableColumn[] = columns.map((column) => ({
     ...column,
-    className:
-      column.key === "report" ? cssStyles.table_header_cell_report : undefined,
+    className: column.key === "report" ? cssStyles.table_header_cell_report : undefined,
   }));
 
   // 빈 메시지 결정: 필터/검색이 적용되어 있으면 "검색 결과가 없습니다.", 아니면 "캠페인이 없습니다."
@@ -301,7 +279,7 @@ export default function CampaignProgressTable({
   const render_row_wrapper = (
     row: CampaignTableRowData,
     row_content: React.ReactNode,
-    index: number
+    _index: number
   ) => {
     const detail_href = get_detail_href(row);
 
@@ -318,26 +296,17 @@ export default function CampaignProgressTable({
         onClick={(e) => {
           // report 셀 또는 report 버튼을 클릭한 경우 링크 이동 방지
           const target = e.target as HTMLElement;
-          const currentTarget = e.currentTarget as HTMLElement;
+          const _currentTarget = e.currentTarget as HTMLElement;
 
           // data 속성으로 report 셀 확인
           const report_cell = target.closest('[data-report-cell="true"]');
           const report_button = target.closest('[data-report-button="true"]');
 
           // report 셀의 클래스명으로도 확인 (CSS 모듈 클래스명)
-          const is_report_cell = target.closest(
-            `.${cssStyles.table_cell_report}`
-          );
-          const is_report_button = target.closest(
-            `.${cssStyles.report_button}`
-          );
+          const is_report_cell = target.closest(`.${cssStyles.table_cell_report}`);
+          const is_report_button = target.closest(`.${cssStyles.report_button}`);
 
-          if (
-            report_cell ||
-            report_button ||
-            is_report_cell ||
-            is_report_button
-          ) {
+          if (report_cell || report_button || is_report_cell || is_report_button) {
             e.preventDefault();
             e.stopPropagation();
             e.nativeEvent.stopImmediatePropagation();
@@ -348,9 +317,7 @@ export default function CampaignProgressTable({
           // report 셀 클릭 시 Link의 클릭 이벤트 차단
           const target = e.target as HTMLElement;
           const report_cell = target.closest('[data-report-cell="true"]');
-          const is_report_cell = target.closest(
-            `.${cssStyles.table_cell_report}`
-          );
+          const is_report_cell = target.closest(`.${cssStyles.table_cell_report}`);
 
           if (report_cell || is_report_cell) {
             e.preventDefault();
@@ -373,12 +340,7 @@ export default function CampaignProgressTable({
     // "report" 컬럼을 빈 셀로 렌더링
     const render_custom_cell = (column: TableColumn) => {
       if (column.key === "report") {
-        return (
-          <div
-            key={column.key}
-            className={cssStyles.table_header_cell_report}
-          ></div>
-        );
+        return <div key={column.key} className={cssStyles.table_header_cell_report}></div>;
       }
       return null;
     };
@@ -423,9 +385,7 @@ export default function CampaignProgressTable({
             case "type":
               return <CampaignTypeTag type={row.type} />;
             case "channel":
-              return (
-                <ChannelIcon channel={row.channel} styles={channelIconStyles} />
-              );
+              return <ChannelIcon channel={row.channel} styles={channelIconStyles} />;
             case "apply_count":
               return <span>{format_number(row.apply_count)}</span>;
             case "recruit_count":

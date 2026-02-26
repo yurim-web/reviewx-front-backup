@@ -1,21 +1,15 @@
 /* ========================================
-   📌 사업자 정보 섹션 컴포넌트 (공통)
+   사업자 정보 섹션 컴포넌트 (공통)
    ======================================== */
 
 /**
- * 사업자 정보 섹션 컴포넌트 (공통)
+ * BusinessInfoSection
  *
- * 목적: GA/SA 관리자 파트너 상세 페이지에서 사업자 정보를 표시하는 섹션입니다.
+ * 목적: GA/SA 관리자 파트너 상세 페이지 사업자 정보(상호명·대표자·등록번호·등록증) 표시
  *
- * 사용 위치:
- * - /manager_ga/member/partners/[id] (GA 관리자 파트너 상세 페이지)
- * - /manager_sa/member/partners/[id] (SA 관리자 파트너 상세 페이지)
- *
- * 주요 기능:
- * - 상호명 정보
- * - 대표자명 정보
- * - 사업자등록번호 정보
- * - 사업자등록증 다운로드 버튼
+ * 사용 페이지:
+ * - /manager_ga/member/partners/[id] (GA 파트너 상세)
+ * - /manager_sa/member/partners/[id] (SA 파트너 상세)
  */
 
 "use client";
@@ -60,7 +54,7 @@ export default function BusinessInfoSection({
         <div className={styles.info_card}>
           <div className={styles.info_label}>사업자등록증</div>
           <button
-            onClick={(e) => {
+            onClick={(_e) => {
               // alert: 브라우저에서 제공하는 기본 알림 창을 띄우는 함수입니다
               // 사업자등록증 다운로드 기능이 아직 구현되지 않았음을 사용자에게 알립니다
               alert("사업자등록증 다운로드 기능은 준비 중입니다.");

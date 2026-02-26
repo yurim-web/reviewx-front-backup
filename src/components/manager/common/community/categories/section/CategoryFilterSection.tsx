@@ -1,6 +1,7 @@
 /* ========================================
    🔍 카테고리 목록 필터 섹션 컴포넌트
    ======================================== */
+/* eslint-disable @next/next/no-img-element */
 
 /**
  * 카테고리 목록 필터 섹션 컴포넌트
@@ -29,14 +30,8 @@ import BaseFilterSection, {
 import BaseModal from "@/components/common/modal/BaseModal";
 import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
 import type { CategoryDivision } from "@/data/manager_ga/community/categoriesData";
-import {
-  categories_data,
-  delete_categories,
-} from "@/data/manager_ga/community/categoriesData";
-import {
-  posts_data,
-  initialize_posts_data,
-} from "@/data/manager_ga/community/postsData";
+import { categories_data, delete_categories } from "@/data/manager_ga/community/categoriesData";
+import { posts_data, initialize_posts_data } from "@/data/manager_ga/community/postsData";
 import DivisionFilterDropdown from "@/components/manager/common/community/categories/filter/DivisionFilterDropdown";
 import filterStyles from "@/styles/manager/common/section/filter_section.module.css";
 import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.module.css";
@@ -66,9 +61,7 @@ export default function CategoryFilterSection({
   // useState: React Hook으로 컴포넌트의 구분 필터 상태를 관리합니다
   // [현재 값, 값을 변경하는 함수] = useState(초기값)
   // 배열로 관리하여 여러 구분을 선택할 수 있도록 합니다
-  const [selected_divisions, set_selected_divisions] = useState<
-    CategoryDivision[]
-  >([]);
+  const [selected_divisions, set_selected_divisions] = useState<CategoryDivision[]>([]);
 
   // 구분 필터 드롭다운 열림/닫힘 상태 관리
   const [is_division_dropdown_open, set_is_division_dropdown_open] = useState(false);
@@ -76,12 +69,10 @@ export default function CategoryFilterSection({
 
   // 게시글 존재 모달 열림/닫힘 상태 관리
   // useState: React Hook으로 게시글 존재 모달의 열림/닫힘 상태를 관리합니다
-  const [is_post_exists_modal_open, set_is_post_exists_modal_open] =
-    useState(false);
+  const [is_post_exists_modal_open, set_is_post_exists_modal_open] = useState(false);
 
   // 삭제 확인 모달 열림/닫힘 상태 관리
-  const [is_delete_confirm_modal_open, set_is_delete_confirm_modal_open] =
-    useState(false);
+  const [is_delete_confirm_modal_open, set_is_delete_confirm_modal_open] = useState(false);
 
   // 구분 필터 적용 핸들러
   const handle_division_apply = (divisions: CategoryDivision[]) => {
@@ -119,9 +110,7 @@ export default function CategoryFilterSection({
       // 해당 카테고리명과 구분을 가진 게시글이 있는지 확인
       // posts_data에서 category 필드가 카테고리명과 일치하는 게시글을 찾습니다
       const post_exists = posts_data.some(
-        (post) =>
-          post.category === category.category_name &&
-          post.division === category.division
+        (post) => post.category === category.category_name && post.division === category.division
       );
 
       return post_exists;
@@ -149,20 +138,17 @@ export default function CategoryFilterSection({
   // 활성 필터 태그 목록 생성
   // 배열 map 메서드를 사용하여 필터 태그를 생성합니다
   // selected_divisions 배열의 각 구분에 대해 필터 태그를 생성합니다
-  const active_filter_tags: FilterTag<CategoryDivision>[] =
-    selected_divisions.map((division) => ({
-      value: division,
-      label: division, // "구분: " 접두사 제거
-    }));
+  const active_filter_tags: FilterTag<CategoryDivision>[] = selected_divisions.map((division) => ({
+    value: division,
+    label: division, // "구분: " 접두사 제거
+  }));
 
   // 필터 태그 제거 핸들러
   // 화살표 함수로 이벤트 핸들러를 정의합니다
   // 특정 구분을 선택된 목록에서 제거합니다
   const handle_filter_tag_remove = (value: CategoryDivision) => {
     // filter 메서드: 조건에 맞는 요소만 남긴 새로운 배열을 반환합니다
-    set_selected_divisions(
-      selected_divisions.filter((division) => division !== value)
-    );
+    set_selected_divisions(selected_divisions.filter((division) => division !== value));
   };
 
   return (
@@ -223,11 +209,7 @@ export default function CategoryFilterSection({
               onClick={handle_delete}
               aria-label="카테고리 삭제"
             >
-              <img
-                src="/images/icons/sign_x.svg"
-                alt="삭제"
-                className={filterStyles.action_icon}
-              />
+              <img src="/images/icons/sign_x.svg" alt="삭제" className={filterStyles.action_icon} />
               <span className={filterStyles.post_action_text}>삭제</span>
             </div>
           </>

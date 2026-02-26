@@ -1,6 +1,7 @@
 /* ========================================
    반려 이력 테이블 컴포넌트
    ======================================== */
+/* eslint-disable @next/next/no-img-element */
 
 /**
  * RejectedCampaignTable

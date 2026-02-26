@@ -1,15 +1,16 @@
 /* ========================================
-   📋 파트너 목록 테이블 컴포넌트 (공통)
+   파트너 목록 테이블 컴포넌트 (공통)
    ======================================== */
+/* eslint-disable @next/next/no-img-element */
 
 /**
- * 파트너 목록 테이블 컴포넌트 (공통)
+ * PartnerTable
  *
- * 목적: GA/SA 관리자 파트너 목록 페이지에서 공통으로 사용하는 테이블
+ * 목적: GA/SA 관리자 파트너 목록 테이블
  *
  * 사용 페이지:
- * - /manager_ga/member/partners
- * - /manager_sa/member/partners
+ * - /manager_ga/member/partners (GA 파트너 목록)
+ * - /manager_sa/member/partners (SA 파트너 목록)
  */
 
 "use client";
@@ -103,7 +104,7 @@ export interface PartnerTableRef {
 const PartnerTable = forwardRef<PartnerTableRef, PartnerTableProps>(function PartnerTable(
   {
     search_query,
-    selected_channels = [],
+    selected_channels: _selected_channels = [],
     selected_divisions = [],
     selected_types = [],
     selected_statuses = [],

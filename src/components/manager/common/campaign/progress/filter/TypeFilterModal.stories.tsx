@@ -3,6 +3,7 @@
  *
  * 유형 필터 모달 컴포넌트의 다양한 사용 예시를 보여줍니다.
  */
+/* eslint-disable react-hooks/exhaustive-deps */
 
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState, useCallback, useMemo } from "react";
@@ -166,4 +167,3 @@ export const Interactive: Story = {
     on_apply: (types) => console.log("Types applied:", types),
   },
 };
-

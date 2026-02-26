@@ -1,17 +1,15 @@
 /* ========================================
-   📝 카테고리 등록/수정 폼 컴포넌트 (공통)
+   카테고리 등록/수정 폼 컴포넌트 (공통)
    ======================================== */
 
 /**
- * 카테고리 등록/수정 폼 컴포넌트 (공통)
+ * CategoryForm
  *
- * 목적: 카테고리 등록과 수정을 하나의 컴포넌트로 재사용합니다.
+ * 목적: GA/SA 관리자 커뮤니티 카테고리 등록·수정 공통 폼
  *
- * 사용 위치:
- * - /manager_ga/community/categories/create (카테고리 등록 페이지)
- * - /manager_ga/community/categories/[id]/edit (카테고리 수정 페이지)
- * - /manager_sa/community/categories/create (카테고리 등록 페이지)
- * - /manager_sa/community/categories/[id]/edit (카테고리 수정 페이지)
+ * 사용 페이지:
+ * - /manager_ga/community/categories/create, /manager_ga/community/categories/[id]/edit
+ * - /manager_sa/community/categories/create, /manager_sa/community/categories/[id]/edit
  */
 
 "use client";
@@ -157,7 +155,6 @@ export default function CategoryForm({ mode, manager_type, category_id }: Catego
       // add_category: 목업 데이터에 새로운 카테고리를 추가하는 함수입니다
       // CategoryTable 컴포넌트에서 categories_data를 사용하므로, 추가된 내용이 테이블에 반영됩니다
       add_category(division, category_name.trim());
-      console.log("카테고리 등록:", { division, category_name });
       // Toast 메시지 표시
       set_show_toast(true);
     } else {
@@ -169,7 +166,6 @@ export default function CategoryForm({ mode, manager_type, category_id }: Catego
         // update_category: 목업 데이터에서 카테고리를 수정하는 함수입니다
         // CategoryTable 컴포넌트에서 categories_data를 사용하므로, 수정된 내용이 테이블에 반영됩니다
         update_category(category_id, division, category_name.trim());
-        console.log("카테고리 수정:", { category_id, division, category_name });
       }
       // 토스트 메시지 표시
       set_show_toast(true);
@@ -189,7 +185,7 @@ export default function CategoryForm({ mode, manager_type, category_id }: Catego
 
   // 취소 버튼 클릭 핸들러 (뒤로 가기)
   // 화살표 함수로 이벤트 핸들러를 정의합니다
-  const handle_cancel = () => {
+  const _handle_cancel = () => {
     // router.back: 이전 페이지로 돌아가는 메서드입니다
     router.back();
   };

@@ -1,20 +1,15 @@
 /* ========================================
-   📊 채널별 회원 통계 섹션 공통 컴포넌트
+   채널별 회원 통계 섹션 공통 컴포넌트
    ======================================== */
 
 /**
- * 채널별 회원 통계 섹션 공통 컴포넌트
+ * ChannelMemberSection
  *
- * 목적: 채널별 회원 등록 통계를 파이 차트와 2x2 카드로 표시합니다.
+ * 목적: 채널별 회원 등록 통계를 파이 차트와 카드로 표시
  *
- * 사용 위치:
- * - GA/SA 대시보드의 채널별 회원 통계 카드
- *
- * 주요 기능:
- * - 파이 차트 영역 렌더링 (props로 전달받음)
- * - 블로그/인스타그램/클립/유튜브 통계 카드 표시
- * - 리뷰어 목록 데이터를 기반으로 채널별 통계 계산
- * - 날짜 필터에 따라 통계 값이 변경됨
+ * 사용 페이지:
+ * - /manager_ga/dashboard (GA 대시보드)
+ * - /manager_sa/dashboard (SA 대시보드)
  */
 
 "use client";
@@ -69,23 +64,16 @@ interface ChannelMemberSectionProps {
  * - props로 받은 데이터/차트를 화면에 배치합니다.
  * - JSX로 레이아웃을 구성하고, props로 UI를 재사용합니다.
  */
-export default function ChannelMemberSection({
-  title,
-  chart,
-}: ChannelMemberSectionProps) {
+export default function ChannelMemberSection({ title, chart }: ChannelMemberSectionProps) {
   // 리뷰어 목록 데이터 로드
-  const [reviewer_list, set_reviewer_list] = useState<
-    ReturnType<typeof get_reviewer_list>
-  >([]);
+  const [reviewer_list, set_reviewer_list] = useState<ReturnType<typeof get_reviewer_list>>([]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       try {
         const list = get_reviewer_list();
         set_reviewer_list(list);
-      } catch (error) {
-        console.error("리뷰어 목록 로드 실패:", error);
-      }
+      } catch (_error) {}
     }
   }, []);
 
@@ -109,12 +97,9 @@ export default function ChannelMemberSection({
 
     // 비율 계산
     const blog_percentage = total > 0 ? Math.round((blog_count / total) * 100) : 0;
-    const instagram_percentage =
-      total > 0 ? Math.round((instagram_count / total) * 100) : 0;
-    const clip_percentage =
-      total > 0 ? Math.round((clip_count / total) * 100) : 0;
-    const youtube_percentage =
-      total > 0 ? Math.round((youtube_count / total) * 100) : 0;
+    const instagram_percentage = total > 0 ? Math.round((instagram_count / total) * 100) : 0;
+    const clip_percentage = total > 0 ? Math.round((clip_count / total) * 100) : 0;
+    const youtube_percentage = total > 0 ? Math.round((youtube_count / total) * 100) : 0;
 
     // 안내 섹션: 괄호 없이 표시
     return {
@@ -146,10 +131,8 @@ export default function ChannelMemberSection({
 
   // 파이 차트용 데이터 생성 (표시용 괄호 제거 후 숫자만 파싱)
   const pie_chart_data = useMemo(() => {
-    const parse_percentage = (s: string) =>
-      parseInt(s.replace(/%|\(|\)/g, ""), 10) || 0;
-    const parse_count = (s: string) =>
-      parseInt(s.replace(/명|\(|\)/g, ""), 10) || 0;
+    const parse_percentage = (s: string) => parseInt(s.replace(/%|\(|\)/g, ""), 10) || 0;
+    const parse_count = (s: string) => parseInt(s.replace(/명|\(|\)/g, ""), 10) || 0;
 
     const blog_percentage = parse_percentage(blog.percentage);
     const instagram_percentage = parse_percentage(instagram.percentage);
@@ -186,60 +169,36 @@ export default function ChannelMemberSection({
           <div className={styles.channel_member_section_info_grid}>
             {/* 블로그 등록 */}
             <div className={styles.channel_member_section_info_card}>
-              <p className={styles.channel_member_section_info_label}>
-                {blog.label}
-              </p>
-              <p className={styles.channel_member_section_info_value}>
-                {blog.value}
-              </p>
+              <p className={styles.channel_member_section_info_label}>{blog.label}</p>
+              <p className={styles.channel_member_section_info_value}>{blog.value}</p>
               {/* 비율 표시 */}
-              <p className={styles.channel_member_section_info_percentage}>
-                {blog.percentage}
-              </p>
+              <p className={styles.channel_member_section_info_percentage}>{blog.percentage}</p>
             </div>
 
-                {/* 클립 등록 */}
-                <div className={styles.channel_member_section_info_card}>
-              <p className={styles.channel_member_section_info_label}>
-                {clip.label}
-              </p>
-              <p className={styles.channel_member_section_info_value}>
-                {clip.value}
-              </p>
+            {/* 클립 등록 */}
+            <div className={styles.channel_member_section_info_card}>
+              <p className={styles.channel_member_section_info_label}>{clip.label}</p>
+              <p className={styles.channel_member_section_info_value}>{clip.value}</p>
               {/* 비율 표시 */}
-              <p className={styles.channel_member_section_info_percentage}>
-                {clip.percentage}
-              </p>
+              <p className={styles.channel_member_section_info_percentage}>{clip.percentage}</p>
             </div>
 
             {/* 인스타그램 등록 */}
             <div className={styles.channel_member_section_info_card}>
-              <p className={styles.channel_member_section_info_label}>
-                {instagram.label}
-              </p>
-              <p className={styles.channel_member_section_info_value}>
-                {instagram.value}
-              </p>
+              <p className={styles.channel_member_section_info_label}>{instagram.label}</p>
+              <p className={styles.channel_member_section_info_value}>{instagram.value}</p>
               {/* 비율 표시 */}
               <p className={styles.channel_member_section_info_percentage}>
                 {instagram.percentage}
               </p>
             </div>
 
-        
-
             {/* 유튜브 등록 */}
             <div className={styles.channel_member_section_info_card}>
-              <p className={styles.channel_member_section_info_label}>
-                {youtube.label}
-              </p>
-              <p className={styles.channel_member_section_info_value}>
-                {youtube.value}
-              </p>
+              <p className={styles.channel_member_section_info_label}>{youtube.label}</p>
+              <p className={styles.channel_member_section_info_value}>{youtube.value}</p>
               {/* 비율 표시 */}
-              <p className={styles.channel_member_section_info_percentage}>
-                {youtube.percentage}
-              </p>
+              <p className={styles.channel_member_section_info_percentage}>{youtube.percentage}</p>
             </div>
           </div>
         </div>
@@ -247,4 +206,3 @@ export default function ChannelMemberSection({
     </div>
   );
 }
-

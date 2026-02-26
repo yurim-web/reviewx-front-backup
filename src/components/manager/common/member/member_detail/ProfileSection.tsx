@@ -1,6 +1,7 @@
 /* ========================================
    👤 프로필 섹션 컴포넌트
    ======================================== */
+/* eslint-disable @next/next/no-img-element */
 
 /**
  * 프로필 섹션 컴포넌트
@@ -53,11 +54,7 @@ export default function ProfileSection({
       <div className={styles.profile_image_wrapper}>
         {/* 프로필 이미지 또는 기본 이미지 표시 */}
 
-        <img
-          src={profile_image_url}
-          alt={`${name} 프로필`}
-          className={styles.profile_image}
-        />
+        <img src={profile_image_url} alt={`${name} 프로필`} className={styles.profile_image} />
       </div>
 
       <div className={styles.profile_info}>
@@ -69,19 +66,13 @@ export default function ProfileSection({
           {status_type}
         </div>
 
-        <h1
-          className={`${styles.name} ${is_partner ? styles.name_partner : ""}`}
-        >
-          {name}
-        </h1>
+        <h1 className={`${styles.name} ${is_partner ? styles.name_partner : ""}`}>{name}</h1>
 
         <div className={styles.basic_info}>
           {basic_info_items.map((item, index) => (
             <span key={index}>
               {item}
-              {index < basic_info_items.length - 1 && (
-                <span className={styles.separator}>·</span>
-              )}
+              {index < basic_info_items.length - 1 && <span className={styles.separator}>·</span>}
             </span>
           ))}
         </div>

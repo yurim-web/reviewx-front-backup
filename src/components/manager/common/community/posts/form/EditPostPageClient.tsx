@@ -1,36 +1,30 @@
 /* ========================================
-   📝 게시글 수정 페이지 클라이언트 컴포넌트
+   게시글 수정 페이지 클라이언트 컴포넌트
    ======================================== */
 
 /**
- * 게시글 수정 페이지 클라이언트 컴포넌트
+ * EditPostPageClient
  *
- * 목적: localStorage에서 게시글 데이터를 로드하여 수정 폼에 전달합니다.
- *       서버 컴포넌트에서는 localStorage에 접근할 수 없으므로
- *       클라이언트 컴포넌트로 분리했습니다.
+ * 목적: localStorage에서 게시글 데이터를 로드하여 수정 폼에 전달
+ *
+ * 사용 페이지:
+ * - /manager_ga/community/posts/[id]/edit (GA 게시글 수정)
+ * - /manager_sa/community/posts/[id]/edit (SA 게시글 수정)
  */
 
 "use client";
 
 import { useEffect, useState } from "react";
 import PostFormPageClient from "./PostFormPageClient";
-import {
-  get_post_detail,
-  initialize_posts_data,
-} from "@/data/manager_ga/community/postsData";
+import { get_post_detail, initialize_posts_data } from "@/data/manager_ga/community/postsData";
 
 interface EditPostPageClientProps {
   post_id: string;
   manager_type: "ga" | "sa";
 }
 
-export default function EditPostPageClient({
-  post_id,
-  manager_type,
-}: EditPostPageClientProps) {
-  const [post_detail, set_post_detail] = useState<ReturnType<
-    typeof get_post_detail
-  > | null>(null);
+export default function EditPostPageClient({ post_id, manager_type }: EditPostPageClientProps) {
+  const [post_detail, set_post_detail] = useState<ReturnType<typeof get_post_detail> | null>(null);
   const [is_loading, set_is_loading] = useState(true);
 
   useEffect(() => {
@@ -44,9 +38,6 @@ export default function EditPostPageClient({
 
     // 게시글 상세 정보 가져오기
     const detail = get_post_detail(post_id);
-    console.log("=== EditPostPageClient Debug ===");
-    console.log("post_id:", post_id);
-    console.log("게시글 상세 정보:", detail);
     set_post_detail(detail);
     set_is_loading(false);
   }, [post_id]);
@@ -70,8 +61,6 @@ export default function EditPostPageClient({
     body: post_detail.content,
   };
 
-  console.log("PostFormPageClient에 전달하는 initial_data:", initial_form_data);
-
   return (
     <PostFormPageClient
       mode="edit"
@@ -81,4 +70,3 @@ export default function EditPostPageClient({
     />
   );
 }
-

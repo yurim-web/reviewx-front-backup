@@ -1,24 +1,24 @@
+/* ========================================
+   관리자 레이아웃 래퍼 컴포넌트
+   ======================================== */
+
+/**
+ * ManagerLayoutWrapper
+ *
+ * 목적: 관리자 인증 확인 및 레이아웃 깜빡임 방지 래퍼
+ *
+ * 사용 페이지:
+ * - /manager_ga/* (GA 관리자 전체 레이아웃)
+ * - /manager_sa/* (SA 관리자 전체 레이아웃)
+ */
+
 "use client";
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Loading from "@/app/manager_ga/loading";
 import { useAuth } from "@/hooks/useAuth";
-
-/**
- * 관리자 레이아웃 래퍼 컴포넌트
- *
- * 목적:
- * - 관리자 레이아웃 속성(data-manager-layout)이 적용되기 전까지 로딩 화면 표시
- * - 레이아웃 깜빡임 완전 방지
- * - 인증되지 않은 사용자 접근 차단 (토큰 기반 인증)
- * - 관리자 권한 확인 (SA/GA)
- */
-export default function ManagerLayoutWrapper({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ManagerLayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
@@ -40,7 +40,6 @@ export default function ManagerLayoutWrapper({
         // 인증되지 않은 경우 로그인 페이지로 리다이렉트
         // 전체 페이지 이동을 사용해 로그인 페이지가 올바른 레이아웃(max-width)으로 로드되도록 함
         if (!isAuthenticated || !user) {
-          console.log("🔒 [ManagerLayoutWrapper] 미인증 사용자 - 로그인 페이지로 이동");
           window.location.replace("/manager/login");
           return;
         }
@@ -50,21 +49,14 @@ export default function ManagerLayoutWrapper({
         const isGAPath = pathname === "/manager_ga" || pathname.startsWith("/manager_ga/");
 
         if (isSAPath && user.role !== "manager_sa") {
-          console.log("🚫 [ManagerLayoutWrapper] SA 권한 없음 - 로그인 페이지로 이동");
           window.location.replace("/manager/login");
           return;
         }
 
         if (isGAPath && user.role !== "manager_ga") {
-          console.log("🚫 [ManagerLayoutWrapper] GA 권한 없음 - 로그인 페이지로 이동");
           window.location.replace("/manager/login");
           return;
         }
-
-        console.log("✅ [ManagerLayoutWrapper] 인증 확인 완료:", {
-          role: user.role,
-          name: user.name,
-        });
       }
 
       // 관리자 레이아웃 속성 추가

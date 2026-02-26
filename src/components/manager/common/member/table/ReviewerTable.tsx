@@ -1,15 +1,16 @@
 /* ========================================
-   📋 리뷰어 목록 테이블 컴포넌트 (공통)
+   리뷰어 목록 테이블 컴포넌트 (공통)
    ======================================== */
+/* eslint-disable @next/next/no-img-element */
 
 /**
- * 리뷰어 목록 테이블 컴포넌트 (공통)
+ * ReviewerTable
  *
- * 목적: GA/SA 관리자 리뷰어 목록 페이지에서 공통으로 사용하는 테이블
+ * 목적: GA/SA 관리자 리뷰어 목록 테이블
  *
  * 사용 페이지:
- * - /manager_ga/member/reviewers
- * - /manager_sa/member/reviewers
+ * - /manager_ga/member/reviewers (GA 리뷰어 목록)
+ * - /manager_sa/member/reviewers (SA 리뷰어 목록)
  */
 
 "use client";
@@ -117,7 +118,7 @@ const ReviewerTable = forwardRef<ReviewerTableRef, ReviewerTableProps>(function 
     selected_grades = [],
     selected_types = [],
     selected_statuses = [],
-    on_restriction_click,
+    on_restriction_click: _on_restriction_click,
     styles: cssStyles,
     detail_path,
   },

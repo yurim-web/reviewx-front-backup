@@ -1,27 +1,16 @@
 /* ========================================
-   🔍 게시글 목록 필터 섹션 컴포넌트
+   게시글 목록 필터 섹션 컴포넌트
    ======================================== */
+/* eslint-disable @next/next/no-img-element */
 
 /**
- * 게시글 목록 필터 섹션 컴포넌트
+ * PostFilterSection
  *
- * 목적: 게시글 목록을 필터링하기 위한 필터 버튼들을 표시하는 섹션입니다.
+ * 목적: GA/SA 관리자 게시글 목록의 기간·구분·검색 필터 및 액션 버튼
  *
  * 사용 페이지:
- * - /manager_ga/community/posts (GA 관리자 게시글 목록 페이지)
- * - /manager_sa/community/posts (SA 관리자 게시글 목록 페이지)
- *
- * 주요 기능:
- * - 선택 기간 조회 필터
- * - 구분 필터 (공지사항/자주 묻는 질문/이벤트)
- * - 검색어 필터
- * - 고정 버튼
- * - 해제 버튼
- * - 수정 버튼
- * - 등록 버튼
- * - 삭제 버튼
- * - 정렬 필터 (최신순)
- *
+ * - /manager_ga/community/posts (GA 게시글 목록)
+ * - /manager_sa/community/posts (SA 게시글 목록)
  */
 
 "use client";
@@ -81,18 +70,14 @@ export default function PostFilterSection({
 
   // manager_type에 따른 base path 설정
   const base_path =
-    manager_type === "ga"
-      ? "/manager_ga/community/posts"
-      : "/manager_sa/community/posts";
+    manager_type === "ga" ? "/manager_ga/community/posts" : "/manager_sa/community/posts";
 
   // 드롭다운 열림/닫힘 상태 관리
-  const [is_division_dropdown_open, set_is_division_dropdown_open] =
-    useState(false);
-  const [is_target_dropdown_open, set_is_target_dropdown_open] =
-    useState(false);
+  const [is_division_dropdown_open, set_is_division_dropdown_open] = useState(false);
+  const [is_target_dropdown_open, set_is_target_dropdown_open] = useState(false);
   const division_filter_button_ref = useRef<HTMLDivElement | null>(null);
   const target_filter_button_ref = useRef<HTMLDivElement | null>(null);
-  const [selected_sort, set_selected_sort] = useState("최신순");
+  const [_selected_sort, set_selected_sort] = useState("최신순");
 
   /* ========================================
      🔧 구분(division) 필터 관련 핸들러
@@ -144,7 +129,7 @@ export default function PostFilterSection({
      ======================================== */
 
   // 수정 버튼 핸들러
-  const handle_edit = () => {
+  const _handle_edit = () => {
     // TODO: 선택된 게시글 수정 기능 구현
   };
 
@@ -166,10 +151,10 @@ export default function PostFilterSection({
      ======================================== */
 
   // 정렬 옵션
-  const sort_options = ["최신순", "오래된순"];
+  const _sort_options = ["최신순", "오래된순"];
 
   // 정렬 옵션 선택 핸들러
-  const handle_sort_change = (sort: string) => {
+  const _handle_sort_change = (sort: string) => {
     set_selected_sort(sort);
     // TODO: 정렬 로직 구현
   };
@@ -291,11 +276,7 @@ export default function PostFilterSection({
           on_pin_selected && on_unpin_selected ? (
             <>
               {/* 고정 버튼 */}
-              <div
-                key="pin"
-                className={filterStyles.filter_item}
-                onClick={handle_pin}
-              >
+              <div key="pin" className={filterStyles.filter_item} onClick={handle_pin}>
                 <img
                   src="/images/icons/pin_table_icon.svg"
                   alt="고정"
@@ -304,11 +285,7 @@ export default function PostFilterSection({
                 <span className={filterStyles.pin_action_text}>고정</span>
               </div>
               {/* 해제 버튼 */}
-              <div
-                key="unpin"
-                className={filterStyles.filter_item}
-                onClick={handle_unpin}
-              >
+              <div key="unpin" className={filterStyles.filter_item} onClick={handle_unpin}>
                 <img
                   src="/images/icons/pin_icon_grey.svg"
                   alt="해제"
@@ -322,11 +299,7 @@ export default function PostFilterSection({
         // 오른쪽 액션 버튼들 (등록, 삭제)
         right_buttons={
           <>
-            <div
-              key="create"
-              className={filterStyles.filter_item}
-              onClick={handle_create}
-            >
+            <div key="create" className={filterStyles.filter_item} onClick={handle_create}>
               <img
                 src="/images/icons/sign_plus.svg"
                 alt="등록"
@@ -334,16 +307,8 @@ export default function PostFilterSection({
               />
               <span className={filterStyles.post_action_text}>등록</span>
             </div>
-            <div
-              key="delete"
-              className={filterStyles.filter_item}
-              onClick={handle_delete}
-            >
-              <img
-                src="/images/icons/sign_x.svg"
-                alt="삭제"
-                className={filterStyles.action_icon}
-              />
+            <div key="delete" className={filterStyles.filter_item} onClick={handle_delete}>
+              <img src="/images/icons/sign_x.svg" alt="삭제" className={filterStyles.action_icon} />
               <span className={filterStyles.post_action_text}>삭제</span>
             </div>
           </>

@@ -1,24 +1,15 @@
 /* ========================================
-   🔍 필터 섹션 컴포넌트 (공통)
+   캠페인 진행 상황 필터 섹션 컴포넌트 (공통)
    ======================================== */
 
 /**
- * 캠페인 진행 상황 필터 섹션 컴포넌트
+ * CampaignProgressFilterSection
  *
- * 목적: GA/SA 관리자 진행 상황 페이지에서 필터 섹션을 표시합니다.
+ * 목적: GA/SA 관리자 캠페인 진행 상황 페이지의 날짜·검색·상태·유형·채널 필터
  *
- * 두 가지 사용 위치:
- * - /manager_ga/campaign/progress (GA 관리자 진행 상황 페이지)
- * - /manager_sa/campaign/progress (SA 관리자 진행 상황 페이지)
- *
- * 주요 기능:
- * - 날짜 필터
- * - 검색 필터
- * - 상태 필터
- * - 유형 필터
- * - 채널 필터
- * - 정렬 필터
- *
+ * 사용 페이지:
+ * - /manager_ga/campaign/progress (GA 진행 상황)
+ * - /manager_sa/campaign/progress (SA 진행 상황)
  */
 
 "use client";
@@ -32,9 +23,7 @@ import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 import StatusFilterDropdown from "../filter/StatusFilterDropdown";
 import TypeFilterDropdown from "../filter/TypeFilterDropdown";
-import ChannelFilterDropdown, {
-  channel_label_map,
-} from "../filter/ChannelFilterDropdown";
+import ChannelFilterDropdown, { channel_label_map } from "../filter/ChannelFilterDropdown";
 import type { CampaignStatus } from "../filter/StatusFilterModal";
 import type { CampaignType } from "../filter/TypeFilterModal";
 import type { Channel } from "../filter/ChannelFilterModal";
@@ -84,8 +73,7 @@ export default function CampaignProgressFilterSection({
      ======================================== */
 
   // 상태 필터 드롭다운 열림/닫힘 상태
-  const [is_status_dropdown_open, set_is_status_dropdown_open] =
-    useState(false);
+  const [is_status_dropdown_open, set_is_status_dropdown_open] = useState(false);
 
   // 상태 필터 버튼 컨테이너 ref (드롭다운 위치 계산용)
   // useRef: DOM 요소에 직접 접근하기 위한 React Hook
@@ -98,17 +86,16 @@ export default function CampaignProgressFilterSection({
   const type_filter_button_ref = useRef<HTMLDivElement>(null);
 
   // 채널 필터 드롭다운 열림/닫힘 상태
-  const [is_channel_dropdown_open, set_is_channel_dropdown_open] =
-    useState(false);
+  const [is_channel_dropdown_open, set_is_channel_dropdown_open] = useState(false);
 
   // 채널 필터 버튼 컨테이너 ref (드롭다운 위치 계산용)
   const channel_filter_button_ref = useRef<HTMLDivElement>(null);
 
   // 선택된 정렬 옵션
-  const [selected_sort, set_selected_sort] = useState<string>("최신순");
+  const [_selected_sort, set_selected_sort] = useState<string>("최신순");
 
   // 정렬 옵션 목록
-  const sort_options = ["최신순", "오래된순"];
+  const _sort_options = ["최신순", "오래된순"];
 
   /* ========================================
      🎯 이벤트 핸들러 (Event Handlers)
@@ -178,7 +165,7 @@ export default function CampaignProgressFilterSection({
   };
 
   // 정렬 옵션 선택 핸들러
-  const handle_sort_select = (sort: string) => {
+  const _handle_sort_select = (sort: string) => {
     set_selected_sort(sort);
     // TODO: 정렬 로직 구현
   };
@@ -247,12 +234,10 @@ export default function CampaignProgressFilterSection({
                 isActive={selected_statuses.length > 0}
                 styles={{
                   ...styles,
-                  checkbox_icon_checked:
-                    filterButtonStyles.checkbox_icon_checked,
+                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
                   filter_item_active: filterButtonStyles.filter_item_active,
                   filter_text_active: filterButtonStyles.filter_text_active,
-                  dropdown_arrow_active:
-                    filterButtonStyles.dropdown_arrow_active,
+                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
                 }}
               />
               {/* 상태 필터 드롭다운 */}
@@ -276,12 +261,10 @@ export default function CampaignProgressFilterSection({
                 isActive={selected_types.length > 0}
                 styles={{
                   ...styles,
-                  checkbox_icon_checked:
-                    filterButtonStyles.checkbox_icon_checked,
+                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
                   filter_item_active: filterButtonStyles.filter_item_active,
                   filter_text_active: filterButtonStyles.filter_text_active,
-                  dropdown_arrow_active:
-                    filterButtonStyles.dropdown_arrow_active,
+                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
                 }}
               />
               {/* 유형 필터 드롭다운 */}
@@ -305,12 +288,10 @@ export default function CampaignProgressFilterSection({
                 isActive={selected_channels.length > 0}
                 styles={{
                   ...styles,
-                  checkbox_icon_checked:
-                    filterButtonStyles.checkbox_icon_checked,
+                  checkbox_icon_checked: filterButtonStyles.checkbox_icon_checked,
                   filter_item_active: filterButtonStyles.filter_item_active,
                   filter_text_active: filterButtonStyles.filter_text_active,
-                  dropdown_arrow_active:
-                    filterButtonStyles.dropdown_arrow_active,
+                  dropdown_arrow_active: filterButtonStyles.dropdown_arrow_active,
                 }}
               />
               {/* 채널 필터 드롭다운 */}

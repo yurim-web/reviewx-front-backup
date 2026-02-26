@@ -1,28 +1,16 @@
 /* ========================================
-   🔍 회원 필터 섹션 컴포넌트 (공통)
+   회원 필터 섹션 컴포넌트 (공통)
    ======================================== */
+/* eslint-disable @next/next/no-img-element */
 
 /**
- * 회원 필터 섹션 컴포넌트 (공통)
+ * MemberFilterSection
  *
- * 목적: 리뷰어/파트너 목록 페이지에서 필터링을 위한 필터 버튼들을 표시하는 섹션입니다.
+ * 목적: GA/SA 관리자 리뷰어·파트너 목록의 채널·등급·상태·검색 필터
  *
- * 사용 위치:
- * - /manager_ga/member/reviewers (GA 관리자 리뷰어 목록 페이지)
- * - /manager_sa/member/reviewers (SA 관리자 리뷰어 목록 페이지)
- * - /manager_ga/member/partners (GA 관리자 파트너 목록 페이지)
- * - /manager_sa/member/partners (SA 관리자 파트너 목록 페이지)
- *
- * 주요 기능:
- * - 채널 필터
- * - 등급/구분 필터 (리뷰어는 등급, 파트너는 구분)
- * - 유형 필터
- * - 상태 필터
- * - 검색어 필터
- * - 정렬 필터 (최신순)
- * - 차단 버튼
- * - 목록 다운로드 버튼
- *
+ * 사용 페이지:
+ * - /manager_ga/member/reviewers, /manager_ga/member/partners
+ * - /manager_sa/member/reviewers, /manager_sa/member/partners
  */
 
 "use client";
@@ -39,7 +27,7 @@ import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.
 // 필터 모달 컴포넌트 타입 정의 (유연하게 받기 위해 any 사용)
 // 실제 필터 모달들은 selected_channels, selected_grades 등 다양한 prop 이름을 사용합니다
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type FilterModalComponent<T> = React.ComponentType<any>;
+type _FilterModalComponent<_T> = React.ComponentType<any>;
 
 interface MemberFilterSectionProps<TChannel, TGradeOrDivision, TType, TStatus> {
   // 검색어 상태와 변경 함수
@@ -113,7 +101,7 @@ export default function MemberFilterSection<
   const [is_status_dropdown_open, set_is_status_dropdown_open] = useState(false);
   const status_filter_button_ref = useRef<HTMLDivElement>(null);
 
-  const [selected_sort, set_selected_sort] = useState("최신순");
+  const [_selected_sort, set_selected_sort] = useState("최신순");
 
   // 채널 필터 핸들러
   const handle_channel_apply = (channels: TChannel[]) => {
@@ -160,10 +148,10 @@ export default function MemberFilterSection<
   };
 
   // 정렬 옵션
-  const sort_options = ["최신순", "오래된순"];
+  const _sort_options = ["최신순", "오래된순"];
 
   // 정렬 옵션 선택 핸들러
-  const handle_sort_change = (sort: string) => {
+  const _handle_sort_change = (sort: string) => {
     set_selected_sort(sort);
     // TODO: 정렬 로직 구현
   };

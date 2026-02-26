@@ -1,73 +1,15 @@
 /* ========================================
-   📋 범용 테이블 컴포넌트 (CommonTable)
+   범용 테이블 컴포넌트 (CommonTable)
    ======================================== */
+/* eslint-disable @next/next/no-img-element */
 
 /**
- * 범용 테이블 컴포넌트
+ * CommonTable
  *
- * 목적: 여러 테이블 컴포넌트에서 공통으로 사용되는 테이블 구조를 제공하는 범용 컴포넌트입니다.
+ * 목적: 관리자 페이지 전반에서 공통으로 사용하는 테이블 구조 컴포넌트
  *
- * 📍 사용 위치:
- * - 직접 사용 컴포넌트:
- *   - CampaignTable (캠페인 진행 상황 테이블)
- *     - src/components/manager/common/campaign/progress/table/CampaignTable.tsx
- *     - 사용 페이지: /manager_ga/campaign/progress, /manager_sa/campaign/progress
- *
- *   - PostTable (게시글 목록 테이블)
- *     - src/components/manager/common/community/posts/section/PostTable.tsx
- *     - 사용 페이지: /manager_ga/community/posts, /manager_sa/community/posts
- *
- *   - BlacklistTable (차단 내역 테이블)
- *     - src/components/manager/common/member/blacklist/BlacklistTable.tsx
- *     - 사용 페이지: /manager_ga/member/blacklist, /manager_sa/member/blacklist
- *
- *   - CategoryTable (카테고리 테이블)
- *     - src/components/manager/common/community/categories/section/CategoryTable.tsx
- *     - 사용 페이지: /manager_ga/community/categories, /manager_sa/community/categories
- *
- *   - PaymentHistoryTable (결제 내역 테이블)
- *     - src/components/manager/sa/settlement/payment_history/section/PaymentHistoryTable.tsx
- *     - 사용 페이지: /manager_sa/settlement/payment_history
- *
- *   - WithdrawalTable (출금 현황 테이블)
- *     - src/components/manager/sa/settlement/withdrawal/section/WithdrawalTable.tsx
- *     - 사용 페이지: /manager_sa/settlement/withdrawal
- *
- *   - RequestTable (출금 요청 테이블)
- *     - src/components/manager/sa/settlement/withdrawal_request/section/RequestTable.tsx
- *     - 사용 페이지: /manager_sa/settlement/withdrawal_request
- *
- *   - AdminTable (관리자 테이블)
- *     - src/components/manager/sa/member/admins/section/AdminTable.tsx
- *     - 사용 페이지: /manager_sa/member/admins
- *
- * - CommonTableWithTooltip을 통해 간접 사용:
- *   - RejectedCampaignTable (반려 내역 캠페인 테이블)
- *     - src/components/manager/ga/campaign/rejected/section/RejectedCampaignTable.tsx
- *     - 사용 페이지: /manager_ga/campaign/rejected
- *
- *   - ReportedCampaignTable (신고 내역 캠페인 테이블)
- *     - src/components/manager/ga/campaign/reported/section/ReportedCampaignTable.tsx
- *     - 사용 페이지: /manager_ga/campaign/reported
- *
- * - 타입만 사용 (TableColumn, TableRowData):
- *   - ReviewerTable (리뷰어 목록 테이블)
- *     - src/components/manager/common/member/table/ReviewerTable.tsx
- *     - CommonTable 직접 사용하지 않음, 독립적인 테이블 구조 사용
- *
- *   - PartnerTable (파트너 목록 테이블)
- *     - src/components/manager/common/member/table/PartnerTable.tsx
- *     - CommonTable 직접 사용하지 않음, 독립적인 테이블 구조 사용
- *
- *   - SortableTableHeader (정렬 가능한 테이블 헤더)
- *     - src/components/manager/common/table/SortableTableHeader.tsx
- *     - TableColumn 타입만 사용
- *
- * 참고:
- * - 툴팁 기능이 필요한 경우 CommonTableWithTooltip 컴포넌트를 사용하세요
- * - CommonTableWithTooltip은 CommonTable을 래핑하여 툴팁 기능을 추가합니다
- *
-
+ * 사용 페이지:
+ * - /manager_ga/*, /manager_sa/* (관리자 전체 테이블 공통 사용)
  */
 
 "use client";
@@ -76,7 +18,7 @@ import { useState, ReactNode } from "react";
 import EmptyTableState from "./EmptyTableState";
 
 /* ========================================
-   📌 타입 정의
+   타입 정의
    ======================================== */
 
 // 테이블 헤더 컬럼 정의
@@ -287,7 +229,7 @@ export default function CommonTable<T extends TableRowData>({
   // 테이블 행 렌더링
   const render_table_row = (row: T, index: number) => {
     const is_selected = selected_ids.includes(row.id);
-    const is_hovered = hovered_row_id === row.id;
+    const _is_hovered = hovered_row_id === row.id;
 
     // 각 셀 렌더링
     const row_content = (
