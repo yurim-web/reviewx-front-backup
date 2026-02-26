@@ -2,6 +2,15 @@
    홈 캠페인 병합: 정적 데이터 + localStorage
    ======================================== */
 
+/**
+ * mergedCampaigns
+ *
+ * 목적: 정적 캠페인 데이터와 localStorage 임시 데이터를 병합하여 홈 화면에 제공
+ *
+ * 사용 페이지:
+ * - / (홈)
+ */
+
 import { generateSchedule } from "@/utils/home/campaignUtils";
 import { enrichStaticCampaigns } from "@/utils/home/enrichCampaigns";
 import {
@@ -129,9 +138,7 @@ export function getAllMergedCampaigns(): MergedCampaigns {
         allDelivery = [...deliveryCampaigns, ...newCampaigns];
       }
     }
-  } catch (error) {
-    console.error("localStorage에서 배송형 캠페인 불러오기 실패:", error);
-  }
+  } catch (_error) {}
 
   try {
     const stored = localStorage.getItem("visitCampaigns");
@@ -179,9 +186,7 @@ export function getAllMergedCampaigns(): MergedCampaigns {
         allVisit = [...allVisit, ...newCampaigns];
       }
     }
-  } catch (error) {
-    console.error("localStorage에서 방문형 캠페인 불러오기 실패:", error);
-  }
+  } catch (_error) {}
 
   try {
     const stored = localStorage.getItem("reviewCampaigns");
@@ -232,9 +237,7 @@ export function getAllMergedCampaigns(): MergedCampaigns {
         allReview = [...updatedStaticCampaigns, ...newCampaigns];
       }
     }
-  } catch (error) {
-    console.error("localStorage에서 구매평 캠페인 불러오기 실패:", error);
-  }
+  } catch (_error) {}
 
   try {
     const stored = localStorage.getItem("reporterCampaigns");
@@ -279,9 +282,7 @@ export function getAllMergedCampaigns(): MergedCampaigns {
         allReporter = [...reporterCampaigns, ...newCampaigns];
       }
     }
-  } catch (error) {
-    console.error("localStorage에서 기자단 캠페인 불러오기 실패:", error);
-  }
+  } catch (_error) {}
 
   try {
     const stored = localStorage.getItem("missionCampaigns");
@@ -326,9 +327,7 @@ export function getAllMergedCampaigns(): MergedCampaigns {
         allMission = [...missionCampaigns, ...newCampaigns];
       }
     }
-  } catch (error) {
-    console.error("localStorage에서 미션형 캠페인 불러오기 실패:", error);
-  }
+  } catch (_error) {}
 
   return {
     allDelivery,
