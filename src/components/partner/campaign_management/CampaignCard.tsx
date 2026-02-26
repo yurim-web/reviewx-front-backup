@@ -21,7 +21,7 @@ import buttonStyles from "../../../styles/partner/partner_campaign_buttons.modul
 import ReceiptRegistrationModal from "../campaign_contents/ReceiptRegistrationModal";
 import CampaignManagementModal from "./modals/CampaignManagementModal";
 import BaseModal from "@/components/common/modal/BaseModal";
-import { getCampaignTypePath } from "./utils/campaign_card_helpers";
+import { getCampaignTypePath, convertToCampaignDataId } from "./utils/campaign_card_helpers";
 import { useCampaignCard } from "@/hooks/partner/campaign_management/useCampaignCard";
 import { getButtonClassName } from "@/components/common/campaign_management/utils/button_style_utils";
 import { deleteCampaign, cancelCampaign } from "@/data/partner/sharedCampaigns";
@@ -63,39 +63,6 @@ export default function CampaignCard({ campaign, activeTab }: CampaignCardProps)
    * 2. 캠페인 ID를 URL 파라미터로 전달
    * 3. Next.js router를 사용한 프로그래밍적 네비게이션
    */
-  /**
-   * 버튼 텍스트에 따른 스타일 클래스 결정
-   *
-   * 설명:
-   * - 공통 유틸리티 함수를 사용하여 버튼 스타일을 결정합니다.
-   * - User와 Partner의 CampaignCard에서 동일한 로직을 공유합니다.
-   */
-  const getButtonStyle = () => {
-    return getButtonClassName(primaryButtonText, buttonStyles);
-  };
-
-  /**
-   * 캠페인 ID를 실제 캠페인 데이터의 ID 형식으로 변환하는 함수
-   *
-   * 설명:
-   * - campaign.id가 이미 "mission_3" 형식이면 그대로 사용
-   * - "3" 같은 숫자만 있으면 "mission_3" 형식으로 변환
-   * - user 캠페인 카드의 convertToCampaignDataId 함수와 동일한 로직
-   */
-  const convertToCampaignDataId = (type: string, id: string): string => {
-    const campaignTypePath = getCampaignTypePath(type as PartnerCampaign["campaignType"]);
-
-    // ID가 이미 "mission_3" 형식인지 확인
-    if (id.startsWith(`${campaignTypePath}_`)) {
-      // 이미 올바른 형식이면 그대로 반환
-      return id;
-    }
-
-    // ID를 실제 캠페인 데이터 형식으로 변환
-    // 예: "3" → "mission_3"
-    return `${campaignTypePath}_${id}`;
-  };
-
   /**
    * 캠페인 상세 페이지 경로 생성
    *
@@ -413,7 +380,7 @@ export default function CampaignCard({ campaign, activeTab }: CampaignCardProps)
         ) : (
           /* 그 외의 경우: 상태에 맞는 1개 버튼 표시 (당첨자 선정, 패널티 내역 확인 등) */
           <button
-            className={`${getButtonStyle()} ${
+            className={`${getButtonClassName(primaryButtonText, buttonStyles)} ${
               primaryButtonText === "당첨자 선정" &&
               (activeTab === "진행" || campaignStatus === "진행 중")
                 ? cardStyles.winner_selection_button

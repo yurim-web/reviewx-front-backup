@@ -1,7 +1,14 @@
+/* ========================================
+   숏츠 신청자 카드 스토리북
+   ======================================== */
+
 /**
- * ShortsCard 컴포넌트 스토리북
+ * ShortsCard.stories
  *
- * 숏츠 신청자 카드 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 유튜브 숏츠 채널 신청자 카드 컴포넌트 문서화
+ *
+ * 사용 페이지:
+ * - Storybook (개발 환경 컴포넌트 문서)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
@@ -46,7 +53,7 @@ export default meta;
 
 type Story = StoryObj<typeof ShortsCard>;
 
-const renderShortsCard = (args: typeof ShortsCard) => {
+const renderShortsCard = (args: React.ComponentProps<typeof ShortsCard>) => {
   return React.createElement(ShortsCard, args);
 };
 
@@ -80,16 +87,3 @@ export const HighSubscribers: Story = {
     onSelect: (id) => console.log("Selected applicant:", id),
   },
 };
-
-/**
- * 학습 포인트:
- *
- * 1. 숏츠 특화 카드 컴포넌트
- *    - 유튜브 숏츠 채널 신청자 전용 카드입니다
- *    - YoutubeApplicant 타입을 사용합니다 (구독자 수 포함)
- *
- * 2. 숏츠 특화 기능
- *    - 짧은 영상 콘텐츠 중심의 리뷰에 최적화
- *    - 세로형 영상 콘텐츠 활용
- */
-

@@ -115,6 +115,8 @@ export const EditMode: Story = {
       videoDuration: "",
       requireLinkAttachment: true,
       requireKeywordAttachment: true,
+      guidelines: "",
+      isUrgent: false,
     },
   },
 };
@@ -138,4 +140,3 @@ export const EditMode: Story = {
  *    - useRouter를 사용하므로 Storybook에서 Next.js 모킹이 필요합니다
  *    - parameters.nextjs로 Next.js 환경을 모킹합니다
  */
-

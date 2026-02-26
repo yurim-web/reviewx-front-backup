@@ -20,6 +20,8 @@ import { getDeliveryContentsById } from "@/data/campaign/delivery/deliveryCampai
 import { getReporterContentsById } from "@/data/campaign/reporter/reporterCampaigns";
 import { getPurchaseReviewContentsById } from "@/data/campaign/review/reviewCampaigns";
 import { getMissionContentsById } from "@/data/campaign/mission/missionCampaigns";
+// getCampaignTypePath, convertToCampaignDataId는 url.ts의 중앙 함수 사용 (중복 제거)
+export { getCampaignTypePath, convertToCampaignDataId } from "@/utils/helpers/url";
 
 /** 콘텐츠 항목 타입 */
 interface ContentItem {
@@ -91,12 +93,12 @@ export function calculateContentCounts(campaign: PartnerCampaign): CampaignConte
     }
 
     const campaignData = getCampaignById(id);
-    if (campaignData && (campaignData as CampaignWithContents).contents) {
-      const contents = (campaignData as CampaignWithContents).contents;
+    const contentsData = (campaignData as CampaignWithContents)?.contents;
+    if (campaignData && contentsData) {
       return {
-        waitingCount: contents.waiting?.length ?? 0,
-        reviewingCount: contents.reviewing?.length ?? 0,
-        completedCount: contents.completed?.length ?? 0,
+        waitingCount: contentsData.waiting?.length ?? 0,
+        reviewingCount: contentsData.reviewing?.length ?? 0,
+        completedCount: contentsData.completed?.length ?? 0,
       };
     }
 
@@ -105,12 +107,12 @@ export function calculateContentCounts(campaign: PartnerCampaign): CampaignConte
 
   // 진행/신청 캠페인: 우선 원본 데이터 contents 확인
   const campaignData = getCampaignById(id);
-  if (campaignData && (campaignData as CampaignWithContents).contents) {
-    const contents = (campaignData as CampaignWithContents).contents;
+  const contentsData2 = (campaignData as CampaignWithContents)?.contents;
+  if (campaignData && contentsData2) {
     return {
-      waitingCount: contents.waiting?.length ?? 0,
-      reviewingCount: contents.reviewing?.length ?? 0,
-      completedCount: contents.completed?.length ?? 0,
+      waitingCount: contentsData2.waiting?.length ?? 0,
+      reviewingCount: contentsData2.reviewing?.length ?? 0,
+      completedCount: contentsData2.completed?.length ?? 0,
     };
   }
 
@@ -147,32 +149,6 @@ export function isContentStage(
   }
 
   return false;
-}
-
-/* ========================================
-   🧭 라우팅 & 타입 변환 헬퍼
-   ----------------------------------------
-   - 캠페인 타입을 기반으로 페이지 경로를 산출합니다.
-*/
-
-/**
- * 캠페인 타입을 URL 경로 세그먼트로 변환
- */
-export function getCampaignTypePath(campaignType: PartnerCampaign["campaignType"]): string {
-  switch (campaignType) {
-    case "배송형":
-      return "delivery";
-    case "방문형":
-      return "visit";
-    case "구매평":
-      return "review";
-    case "기자단":
-      return "reporter";
-    case "미션형":
-      return "mission";
-    default:
-      return "delivery";
-  }
 }
 
 /* ========================================
@@ -428,20 +404,19 @@ export function calculateExtensionRequestCount(campaign: PartnerCampaign): numbe
     // 1️⃣ 종료/취소 캠페인은 closed 데이터에서 먼저 확인
     const closedContents = getClosedContentsById(id);
     if (closedContents && closedContents.waiting) {
-      const count = closedContents.waiting.filter(
-        (item: ContentItem) => item.extension_request_reason
-      ).length;
+      const count = closedContents.waiting.filter((item) => item.extension_request_reason).length;
       if (count > 0) return count;
     }
 
     // 2️⃣ 그 외에는 일반 캠페인 데이터에서 contents 확인
     const fullCampaign = getCampaignById(id);
-    if (!fullCampaign || !(fullCampaign as CampaignWithContents).contents) {
+    const fullContents = (fullCampaign as CampaignWithContents)?.contents;
+    if (!fullCampaign || !fullContents) {
       return 0;
     }
 
-    const waitingItems = (fullCampaign as CampaignWithContents).contents.waiting || [];
-    const count = waitingItems.filter((item: ContentItem) => item.extension_request_reason).length;
+    const waitingItems = fullContents.waiting || [];
+    const count = waitingItems.filter((item) => item.extension_request_reason).length;
 
     return count;
   } catch (_error) {

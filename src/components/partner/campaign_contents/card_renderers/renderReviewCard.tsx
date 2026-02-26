@@ -1,11 +1,11 @@
 /* ========================================
-🎴 Review 카드 렌더러
-======================================== */
+   Review 카드 렌더러
+   ======================================== */
 
 /**
- * Review 카드 렌더러
+ * renderReviewCard
  *
- * 목적: review 캠페인에서 사용하는 Purchase/Campaign 카드 렌더링 로직
+ * 목적: review 캠페인의 Purchase/Campaign 카드 렌더링 로직
  *
  * 사용 페이지:
  * - /partner/campaign_contents/review/[id]
@@ -24,6 +24,10 @@ import PurchaseSecondInspectionCard from "@/components/partner/campaign_contents
 import PurchaseSecondCompletedCard from "@/components/partner/campaign_contents/card_type/purchase_card/purchase_second_card/PurchaseSecondCompletedCard";
 import type { CampaignApplicant } from "@/components/partner/campaign_contents/card_type/shared_card/campaignTypes";
 import { openChannelUrl } from "@/utils/helpers/url";
+
+interface ContentItemExtended extends ContentItem {
+  isLateSubmission?: boolean;
+}
 
 interface RenderReviewCardParams {
   activeTab: string;
@@ -67,7 +71,7 @@ export function createReviewCardRenderer(renderParams: RenderReviewCardParams) {
       receiptImages: item.receiptImages || [],
     };
 
-    const dateLabel: "등록" | "수정" | "지각 등록" = item.isLateSubmission
+    const dateLabel: "등록" | "수정" | "지각 등록" = (item as ContentItemExtended).isLateSubmission
       ? "지각 등록"
       : item.updatedAt
         ? "수정"
@@ -162,7 +166,7 @@ export function createReviewCardRenderer(renderParams: RenderReviewCardParams) {
             applicant={applicant}
             onCheckReceipt={() => renderParams.openReceiptModal(item.receiptImages || [])}
             onApprove={renderParams.handleApprove}
-            onReject={renderParams.handleReject}
+            onReject={(id, reason) => renderParams.handleReject(id, reason ?? "")}
             onExtend={renderParams.handleExtend}
             onReport={renderParams.handleReport}
             dateLabel={dateLabel}
@@ -186,7 +190,7 @@ export function createReviewCardRenderer(renderParams: RenderReviewCardParams) {
             applicant={applicant}
             onCheckReview={() => renderParams.openReceiptModal(reviewImages)}
             onApprove={renderParams.handleApprove}
-            onReject={renderParams.handleReject}
+            onReject={(id, reason) => renderParams.handleReject(id, reason ?? "")}
             onExtend={renderParams.handleExtend}
             onReport={renderParams.handleReport}
             dateLabel={dateLabel}
@@ -197,12 +201,12 @@ export function createReviewCardRenderer(renderParams: RenderReviewCardParams) {
       }
 
       // 리뷰 대기 중 (영수증 완료 후 리뷰 대기)
-      if (isReceiptFlow && item.isLateSubmission) {
+      if (isReceiptFlow && (item as ContentItemExtended).isLateSubmission) {
         return (
           <CampaignPendingCard
             key={item.id}
             applicant={{ ...applicant, reviewType: 4 }}
-            onCheckReceipt={() => renderParams.openReceiptModal(item.receiptImages)}
+            onCheckReceipt={() => renderParams.openReceiptModal(item.receiptImages ?? [])}
             dateLabel={dateLabel}
           />
         );
@@ -214,7 +218,7 @@ export function createReviewCardRenderer(renderParams: RenderReviewCardParams) {
           <CampaignInspectionCard
             key={item.id}
             applicant={{ ...applicant, reviewType: 2 }}
-            onCheckReceipt={() => renderParams.openReceiptModal(item.receiptImages)}
+            onCheckReceipt={() => renderParams.openReceiptModal(item.receiptImages ?? [])}
             onApprove={renderParams.handleApprove}
             onReject={() => {}}
             contentType={renderParams.params.contentType}
@@ -292,7 +296,7 @@ export function createReviewCardRenderer(renderParams: RenderReviewCardParams) {
         }}
         onCheckReceipt={
           shouldShowReceiptCheck
-            ? () => renderParams.openReceiptModal(item.receiptImages)
+            ? () => renderParams.openReceiptModal(item.receiptImages ?? [])
             : undefined
         }
         onCheckReview={

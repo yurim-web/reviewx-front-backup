@@ -55,11 +55,11 @@ interface CampaignCompletedCardProps {
 export default function CampaignCompletedCard({
   applicant,
   onCheckReview,
-  onCheckReceipt,
+  onCheckReceipt: _onCheckReceipt,
   onCheckImage,
   onCheckLink,
   contentType = "link",
-  onApprove,
+  onApprove: _onApprove,
   onReject,
   onExtend,
   onReport,
@@ -148,8 +148,7 @@ export default function CampaignCompletedCard({
     if (onReject) {
       onReject(applicant.id);
     }
-    // console.log("반려 사유:", rejectReason);
-    handleRejectModalClose();
+    //    handleRejectModalClose();
   };
 
   // 연장 버튼 클릭 핸들러
@@ -199,8 +198,7 @@ export default function CampaignCompletedCard({
       return {
         label: "구매 영수증 확인",
         onClick: () => {
-          // console.log("구매 영수증 확인 클릭", applicant.id);
-          onCheckReceipt?.(applicant.id);
+          //          onCheckReceipt?.(applicant.id);
         },
       };
     }
@@ -208,8 +206,7 @@ export default function CampaignCompletedCard({
     return {
       label: "리뷰 확인",
       onClick: () => {
-        // console.log("리뷰 확인 클릭", applicant.id);
-        onCheckReview?.(applicant.id);
+        //        onCheckReview?.(applicant.id);
       },
     };
   };
@@ -224,15 +221,13 @@ export default function CampaignCompletedCard({
         buttons.push({
           label: "이미지 확인",
           onClick: () => {
-            // console.log("이미지 확인 클릭", applicant.id);
-            onCheckImage?.(applicant.id);
+            //            onCheckImage?.(applicant.id);
           },
         });
         buttons.push({
           label: "링크 확인",
           onClick: () => {
-            // console.log("링크 확인 클릭", applicant.id);
-            onCheckLink?.(applicant.id);
+            //            onCheckLink?.(applicant.id);
           },
         });
       }
@@ -241,8 +236,7 @@ export default function CampaignCompletedCard({
         buttons.push({
           label: "이미지 확인",
           onClick: () => {
-            // console.log("이미지 확인 클릭", applicant.id);
-            onCheckImage?.(applicant.id);
+            //            onCheckImage?.(applicant.id);
           },
         });
       }
@@ -251,8 +245,7 @@ export default function CampaignCompletedCard({
         buttons.push({
           label: "링크 확인",
           onClick: () => {
-            // console.log("링크 확인 클릭", applicant.id);
-            onCheckLink?.(applicant.id);
+            //            onCheckLink?.(applicant.id);
           },
         });
       }
@@ -321,8 +314,7 @@ export default function CampaignCompletedCard({
             <button
               className={actionStyles.content_check_button}
               onClick={() => {
-                // console.log("이미지 확인 클릭", applicant.id);
-                onCheckImage?.(applicant.id);
+                //                onCheckImage?.(applicant.id);
               }}
             >
               이미지 확인
@@ -362,8 +354,7 @@ export default function CampaignCompletedCard({
               <button
                 className={`${actionStyles.action_button} ${actionStyles.approve_button}`}
                 onClick={() => {
-                  // console.log("승인 클릭", applicant.id);
-                  onApprove?.(applicant.id);
+                  //                  onApprove?.(applicant.id);
                 }}
               >
                 승인

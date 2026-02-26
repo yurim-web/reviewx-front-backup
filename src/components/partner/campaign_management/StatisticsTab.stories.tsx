@@ -11,10 +11,13 @@ import type { PartnerStatTab } from "@/types/domain/partner";
 
 const mockStats = {
   전체: 10,
-  진행중: 5,
-  모집중: 3,
-  모집완료: 2,
-  마감: 0,
+  예정: 1,
+  신청: 3,
+  진행: 5,
+  종료: 1,
+  취소: 0,
+  "연장 요청": 0,
+  패널티: 0,
 };
 
 const meta: Meta<typeof StatisticsTab> = {
@@ -31,16 +34,16 @@ const meta: Meta<typeof StatisticsTab> = {
     },
   },
   argTypes: {
-    activeTab: {
+    activeStatTab: {
       description: "현재 활성화된 통계 탭",
       control: "select",
-      options: ["전체", "진행중", "모집중", "모집완료", "마감"],
+      options: ["전체", "예정", "신청", "진행", "종료", "취소", "연장 요청", "패널티"],
     },
     stats: {
       description: "캠페인 통계 데이터",
       control: "object",
     },
-    setActiveTab: {
+    setActiveStatTab: {
       description: "통계 탭 변경 핸들러",
       action: "stat tab changed",
     },
@@ -54,65 +57,61 @@ type Story = StoryObj<typeof StatisticsTab>;
 // 전체 탭 활성화
 export const AllTab: Story = {
   render: (args) => {
-    const [activeTab, setActiveTab] = useState<PartnerStatTab>("전체");
+    const [activeStatTab, setActiveStatTab] = useState<PartnerStatTab>("전체");
     return React.createElement(StatisticsTab, {
       ...args,
-      activeTab,
-      setActiveTab: (tab) => {
-        setActiveTab(tab);
-        args.setActiveTab?.(tab);
-        console.log("[Storybook] Stat tab changed to:", tab);
+      activeStatTab,
+      setActiveStatTab: (tab) => {
+        setActiveStatTab(tab);
+        args.setActiveStatTab?.(tab);
       },
     });
   },
   args: {
-    activeTab: "전체",
+    activeStatTab: "전체",
     stats: mockStats,
-    setActiveTab: (tab) => console.log("Stat tab changed to:", tab),
+    setActiveStatTab: (_tab) => {},
   },
 };
 
-// 진행중 탭 활성화
+// 진행 탭 활성화
 export const OngoingTab: Story = {
   render: (args) => {
-    const [activeTab, setActiveTab] = useState<PartnerStatTab>("진행중");
+    const [activeStatTab, setActiveStatTab] = useState<PartnerStatTab>("진행");
     return React.createElement(StatisticsTab, {
       ...args,
-      activeTab,
-      setActiveTab: (tab) => {
-        setActiveTab(tab);
-        args.setActiveTab?.(tab);
-        console.log("[Storybook] Stat tab changed to:", tab);
+      activeStatTab,
+      setActiveStatTab: (tab) => {
+        setActiveStatTab(tab);
+        args.setActiveStatTab?.(tab);
       },
     });
   },
   args: {
-    activeTab: "진행중",
+    activeStatTab: "진행",
     stats: mockStats,
-    setActiveTab: (tab) => console.log("Stat tab changed to:", tab),
+    setActiveStatTab: (_tab) => {},
   },
 };
 
 // 인터랙티브 예시
 export const Interactive: Story = {
   render: (args) => {
-    const [activeTab, setActiveTab] = useState<PartnerStatTab>(
-      args.activeTab || "전체"
+    const [activeStatTab, setActiveStatTab] = useState<PartnerStatTab>(
+      args.activeStatTab || "전체"
     );
     return React.createElement(StatisticsTab, {
       ...args,
-      activeTab,
-      setActiveTab: (tab) => {
-        setActiveTab(tab);
-        args.setActiveTab?.(tab);
-        console.log("[Storybook] Stat tab changed to:", tab);
+      activeStatTab,
+      setActiveStatTab: (tab) => {
+        setActiveStatTab(tab);
+        args.setActiveStatTab?.(tab);
       },
     });
   },
   args: {
-    activeTab: "전체",
+    activeStatTab: "전체",
     stats: mockStats,
-    setActiveTab: (tab) => console.log("Stat tab changed to:", tab),
+    setActiveStatTab: (_tab) => {},
   },
 };
-

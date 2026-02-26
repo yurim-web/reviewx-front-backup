@@ -1,7 +1,14 @@
+/* ========================================
+   네이버블로그 신청자/선정자 카드 스토리북
+   ======================================== */
+
 /**
- * NaverBlogCard 컴포넌트 스토리북
+ * NaverBlogCard.stories
  *
- * 네이버블로그 신청자/선정자 카드 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 네이버블로그 채널 신청자/선정자 카드 컴포넌트 문서화
+ *
+ * 사용 페이지:
+ * - Storybook (개발 환경 컴포넌트 문서)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
@@ -57,7 +64,7 @@ export default meta;
 
 type Story = StoryObj<typeof NaverBlogCard>;
 
-const renderNaverBlogCard = (args: typeof NaverBlogCard) => {
+const renderNaverBlogCard = (args: React.ComponentProps<typeof NaverBlogCard>) => {
   return React.createElement(NaverBlogCard, args);
 };
 
@@ -67,7 +74,7 @@ const renderNaverBlogCard = (args: typeof NaverBlogCard) => {
  * 미선택 상태의 네이버블로그 신청자 카드입니다.
  * 일방문, 총방문, 이웃수 통계가 표시됩니다.
  */
-export const Applicant: Story = {
+export const ApplicantCard: Story = {
   render: (args) => renderNaverBlogCard(args),
   args: {
     applicant: mockApplicant,
@@ -150,25 +157,3 @@ export const Restricted: Story = {
     onSelect: (id) => console.log("Selected applicant:", id),
   },
 };
-
-/**
- * 학습 포인트:
- *
- * 1. 통합 카드 컴포넌트
- *    - 신청자와 선정자 카드를 하나의 컴포넌트로 통합했습니다
- *    - variant prop으로 "applicant" 또는 "selected"를 구분합니다
- *
- * 2. 네이버블로그 특화 통계
- *    - 일방문, 총방문, 이웃수 통계를 표시합니다
- *    - toLocaleString()으로 숫자를 천 단위 콤마로 표시합니다
- *
- * 3. 인플루언서 전용 스타일
- *    - userType이 "인플루언서"일 때 특별한 스타일이 적용됩니다
- *    - selected_card_influencer 클래스로 선정된 인플루언서를 강조합니다
- *
- * 4. 조건부 렌더링
- *    - variant에 따라 다른 버튼을 표시합니다
- *    - "applicant": "선정하기" 버튼
- *    - "selected": "선택 취소" 버튼
- */
-

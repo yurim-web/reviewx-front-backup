@@ -1,12 +1,14 @@
+/* ========================================
+   기본 신청자 카드 스토리북
+   ======================================== */
+
 /**
- * BasicCard 컴포넌트 스토리북
+ * BasicCard.stories
  *
- * 기본 신청자 카드 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 미션형/구매평 캠페인 기본 신청자 카드 컴포넌트 문서화
  *
- * Storybook이란?
- * - 컴포넌트를 독립적으로 개발하고 테스트할 수 있는 도구입니다
- * - 다양한 props 조합으로 컴포넌트의 동작을 확인할 수 있습니다
- * - 디자이너와 개발자가 협업하기 좋은 도구입니다
+ * 사용 페이지:
+ * - Storybook (개발 환경 컴포넌트 문서)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
@@ -28,10 +30,6 @@ const mockBasicApplicant: BasicApplicant = {
   registrationDate: "2024-01-15",
 };
 
-// Meta 타입: Storybook에서 컴포넌트의 메타데이터를 정의합니다
-// title: Storybook 사이드바에서 보이는 경로 (슬래시로 계층 구조 표현)
-// component: 스토리를 생성할 컴포넌트
-// tags: 자동 문서 생성 등의 기능을 활성화
 const meta: Meta<typeof BasicCard> = {
   title: "Partner/CampaignApplication/CardType/Basic/BasicCard",
   component: BasicCard,
@@ -53,11 +51,9 @@ const meta: Meta<typeof BasicCard> = {
 
 export default meta;
 
-// StoryObj 타입: 개별 스토리의 타입을 정의합니다
 type Story = StoryObj<typeof BasicCard>;
 
-// 안정적인 render 함수를 컴포넌트 외부에 정의 (깜빡임 방지)
-const renderBasicCard = (args: typeof BasicCard) => {
+const renderBasicCard = (args: React.ComponentProps<typeof BasicCard>) => {
   return React.createElement(BasicCard, args);
 };
 
@@ -141,35 +137,3 @@ export const Influencer: Story = {
     onSelect: (id) => console.log("Selected applicant:", id),
   },
 };
-
-/**
- * 학습 포인트:
- *
- * 1. 기본 카드 컴포넌트
- *    - 미션형과 구매평 캠페인에서 사용되는 기본 신청자 카드입니다
- *    - 채널별 특화 정보 없이 기본 정보만 표시합니다
- *
- * 2. 조건부 렌더링
- *    - selectionStatus에 따라 다른 버튼을 표시합니다
- *    - "미선택" 상태: "선정하기" 버튼
- *    - "이용제한 계정" 상태: "이용 제한 계정" 버튼 (disabled)
- *
- * 3. 메모 처리
- *    - 메모가 있으면 메모를 표시하고, 없으면 "메모 미작성"을 표시합니다
- *    - trim()으로 공백만 있는 경우도 처리합니다
- *
- * 4. 프로필 이미지 처리
- *    - profileImage가 있으면 이미지를 표시하고, 없으면 placeholder를 표시합니다
- *    - 조건부 렌더링으로 처리합니다
- *
- * 5. CSS 모듈 사용
- *    - 분리된 CSS 모듈을 사용하여 스타일을 관리합니다:
- *      - applicant_card_base.module.css (카드 기본 레이아웃)
- *      - applicant_card_content.module.css (콘텐츠 영역)
- *      - applicant_card_actions.module.css (버튼 및 액션)
- *    - restricted_card 클래스로 이용 제한 계정을 시각적으로 구분합니다
- *
- * 6. 접근성 (Accessibility)
- *    - aria-label로 버튼의 목적을 명시합니다
- *    - 시맨틱 HTML(article)을 사용합니다
- */

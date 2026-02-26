@@ -1,7 +1,14 @@
+/* ========================================
+   유튜브 신청자 카드 스토리북
+   ======================================== */
+
 /**
- * YoutubeCard 컴포넌트 스토리북
+ * YoutubeCard.stories
  *
- * 유튜브 신청자 카드 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 유튜브 채널 신청자 카드 컴포넌트 문서화
+ *
+ * 사용 페이지:
+ * - Storybook (개발 환경 컴포넌트 문서)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
@@ -46,7 +53,7 @@ export default meta;
 
 type Story = StoryObj<typeof YoutubeCard>;
 
-const renderYoutubeCard = (args: typeof YoutubeCard) => {
+const renderYoutubeCard = (args: React.ComponentProps<typeof YoutubeCard>) => {
   return React.createElement(YoutubeCard, args);
 };
 
@@ -97,20 +104,3 @@ export const Restricted: Story = {
     onSelect: (id) => console.log("Selected applicant:", id),
   },
 };
-
-/**
- * 학습 포인트:
- *
- * 1. 유튜브 특화 카드 컴포넌트
- *    - 유튜브 채널 신청자 전용 카드입니다
- *    - 구독자 수를 중심으로 통계를 표시합니다
- *
- * 2. 구독자 수 표시
- *    - toLocaleString()으로 숫자를 천 단위 콤마로 표시합니다
- *    - 예: 50000 -> "50,000"
- *
- * 3. 유튜브 특화 기능
- *    - 비디오 콘텐츠 중심의 리뷰에 최적화
- *    - 썸네일과 영상 링크 활용
- */
-

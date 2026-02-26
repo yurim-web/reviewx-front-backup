@@ -32,7 +32,8 @@ export default function ReelsCard({ applicant, onSelect }: ReelsCardProps) {
             src={applicant.profileImage || "/images/mypage/profile.svg"}
             alt="프로필"
             className={contentStyles.profile_image}
-            fill
+            width={40}
+            height={40}
           />
         </div>
 

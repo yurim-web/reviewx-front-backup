@@ -89,7 +89,8 @@ export default function NaverBlogReviewCard({
             src={applicant.profileImage || "/images/mypage/profile.svg"}
             alt="프로필"
             className={contentStyles.profile_image}
-            fill
+            width={40}
+            height={40}
           />
         </div>
         <div className={contentStyles.profile_info}>
@@ -106,7 +107,8 @@ export default function NaverBlogReviewCard({
           src={channel_icon_src}
           alt={`${applicant.channel} 채널`}
           className={contentStyles.channel_icon}
-          fill
+          width={14}
+          height={14}
         />
 
         <span className={contentStyles.applicant_id}>{applicant.Id}</span>

@@ -129,8 +129,7 @@ export default function PurchaseFirstPendingCard({
     const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}`;
     setLocalReportedDate(formattedDate);
 
-    // console.log("신고 사유:", selectedOption, "기타 사유:", otherReason);
-    handleReportModalClose();
+    //    handleReportModalClose();
   };
 
   // 연장 버튼 클릭 핸들러

@@ -108,8 +108,7 @@ export default function ExperienceCompletedCard({
     if (onReport) {
       onReport(applicant.id);
     }
-    // console.log("신고 사유:", selectedOption, "기타 사유:", otherReason);
-    handleReportModalClose();
+    //    handleReportModalClose();
   };
 
   // footer는 항상 필요 (신고 버튼 노출)

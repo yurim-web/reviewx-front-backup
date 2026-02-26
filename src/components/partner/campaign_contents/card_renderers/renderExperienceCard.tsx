@@ -1,11 +1,11 @@
 /* ========================================
-🎴 Experience 카드 렌더러
-======================================== */
+   Experience 카드 렌더러
+   ======================================== */
 
 /**
- * Experience 카드 렌더러
+ * renderExperienceCard
  *
- * 목적: delivery, visit, reporter 캠페인에서 사용하는 Experience 카드 렌더링 로직
+ * 목적: delivery·visit·reporter 캠페인의 Experience 카드 렌더링 로직
  *
  * 사용 페이지:
  * - /partner/campaign_contents/delivery/[id]
@@ -25,6 +25,7 @@ interface ContentItemExtended extends ContentItem {
   extension_request_reason?: string;
   isExtensionApproved?: boolean;
   extendedDeadline?: string;
+  isLateSubmission?: boolean;
 }
 
 interface RenderExperienceCardParams {
@@ -56,7 +57,7 @@ export function createExperienceCardRenderer(params: RenderExperienceCardParams)
       updatedAt: item.updatedAt ? params.formatDateTime(item.updatedAt) : undefined,
     };
 
-    const dateLabel: "등록" | "수정" | "지각 등록" = item.isLateSubmission
+    const dateLabel: "등록" | "수정" | "지각 등록" = (item as ContentItemExtended).isLateSubmission
       ? "지각 등록"
       : item.updatedAt
         ? "수정"

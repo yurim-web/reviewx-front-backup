@@ -1,7 +1,14 @@
+/* ========================================
+   신청자 카드 스토리북
+   ======================================== */
+
 /**
- * ApplicantCard 컴포넌트 스토리북
+ * ApplicantCard.stories
  *
- * 신청자 카드 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 파트너 캠페인 신청자 카드 컴포넌트 문서화
+ *
+ * 사용 페이지:
+ * - Storybook (개발 환경 컴포넌트 문서)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
@@ -11,18 +18,17 @@ import type { Applicant } from "@/data/partner/campaign_application/delivery_app
 
 const mockApplicant: Applicant = {
   id: "1",
+  Id: "blog_test",
   nickname: "홍길동",
-  userType: "일반",
+  userType: "리뷰어",
   profileImage: "/images/test_img/profile_test.png",
-  channel: "네이버 블로그",
-  channelId: "blog.naver.com/test",
+  channel: "네이버블로그",
   memberType: "모범 회원",
   dailyVisits: 500,
   totalVisits: 10000,
   neighbors: 100,
   memo: "안녕하세요. 열심히 참여하겠습니다.",
-  isSelected: false,
-  isRestricted: false,
+  selectionStatus: "미선택",
 };
 
 const meta: Meta<typeof ApplicantCard> = {
@@ -63,8 +69,8 @@ export const Restricted: Story = {
   args: {
     applicant: {
       ...mockApplicant,
-      isRestricted: true,
       memberType: "이용 제한",
+      selectionStatus: "이용제한 계정",
     },
     onSelect: (id) => console.log("Selected applicant:", id),
   },
@@ -76,9 +82,8 @@ export const Selected: Story = {
   args: {
     applicant: {
       ...mockApplicant,
-      isSelected: true,
+      selectionStatus: "선정하기",
     },
     onSelect: (id) => console.log("Selected applicant:", id),
   },
 };
-

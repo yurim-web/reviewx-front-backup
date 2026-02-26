@@ -1,7 +1,14 @@
+/* ========================================
+   네이버블로그 완료 카드 스토리북
+   ======================================== */
+
 /**
- * NaverBlogCompletedCard 컴포넌트 스토리북
+ * NaverBlogCompletedCard.stories
  *
- * 네이버블로그 완료 카드 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 네이버블로그 완료 카드 컴포넌트 문서화
+ *
+ * 사용 페이지:
+ * - Storybook (개발 환경 컴포넌트 문서)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
@@ -14,8 +21,9 @@ const mockCompletedApplicant: CompletedApplicant = {
   nickname: "네이버블로거",
   userType: "리뷰어",
   profileImage: "/images/test_img/profile_test.png",
+  selectionStatus: "완료",
   channel: "네이버블로그",
-  completedDate: "2024-01-20",
+  completionDate: "2024-01-20",
 };
 
 const meta: Meta<typeof NaverBlogCompletedCard> = {

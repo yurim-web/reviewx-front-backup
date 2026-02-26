@@ -33,7 +33,8 @@ export default function NaverClipSelectedCard({ applicant, onCancel }: NaverClip
             src={applicant.profileImage || "/images/mypage/profile.svg"}
             alt="프로필"
             className={contentStyles.profile_image}
-            fill
+            width={40}
+            height={40}
           />
         </div>
         <div className={contentStyles.profile_info}>
@@ -55,7 +56,8 @@ export default function NaverClipSelectedCard({ applicant, onCancel }: NaverClip
           src={channel_icon_src}
           alt="네이버 클립"
           className={contentStyles.channel_icon}
-          fill
+          width={14}
+          height={14}
         />
         <a
           href={getChannelUrl("네이버클립", applicant.Id)}
