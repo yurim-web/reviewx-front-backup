@@ -1,16 +1,24 @@
-'use client';
+/* ========================================
+   인증 보호 HOC
+   ======================================== */
 
 /**
- * 보호된 라우트를 위한 HOC (Higher-Order Component)
- * 로그인하지 않은 사용자가 접근 시 로그인 페이지로 리다이렉트
+ * withAuth
+ *
+ * 목적: 로그인하지 않은 사용자를 로그인 페이지로 리다이렉트하는 HOC
+ *
+ * 사용 페이지:
+ * - 인증이 필요한 모든 보호 라우트
  */
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth';
-import type { UserRole } from '@/types/auth';
-import { getLoginPathForRole } from '@/lib/auth';
-import Loading from '@/app/loading';
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
+import type { UserRole } from "@/types/auth";
+import { getLoginPathForRole } from "@/lib/auth";
+import Loading from "@/app/loading";
 
 interface WithAuthOptions {
   /**
@@ -61,16 +69,13 @@ export function withAuth<P extends object>(
           // 허용된 역할 중 첫 번째 역할의 로그인 페이지로 이동
           const targetRole = options.allowedRoles[0];
           redirectPath = getLoginPathForRole(targetRole);
-          console.log('[withAuth] No user, redirecting:', { targetRole, redirectPath, allowedRoles: options.allowedRoles });
         }
 
         // 기본값은 유저 로그인 페이지 (redirectPath가 여전히 없는 경우에만)
         if (!redirectPath) {
-          redirectPath = '/user/login';
-          console.log('[withAuth] Using default redirect:', redirectPath);
+          redirectPath = "/user/login";
         }
 
-        console.log('[withAuth] Final redirect:', redirectPath);
         router.push(redirectPath);
         return;
       }
@@ -81,7 +86,6 @@ export function withAuth<P extends object>(
         // (현재 로그인된 사용자의 역할이 아니라, 이 페이지가 필요로 하는 역할의 로그인 페이지로 이동)
         const targetRole = options.allowedRoles[0];
         const loginPath = getLoginPathForRole(targetRole);
-        console.log('[withAuth] Wrong role, redirecting to target role login:', { currentRole: user.role, targetRole, loginPath });
         router.push(loginPath);
         return;
       }
@@ -108,25 +112,25 @@ export function withAuth<P extends object>(
 
 // 리뷰어 전용
 export function withUserAuth<P extends object>(Component: React.ComponentType<P>) {
-  return withAuth(Component, { allowedRoles: ['user'] });
+  return withAuth(Component, { allowedRoles: ["user"] });
 }
 
 // 파트너 전용
 export function withPartnerAuth<P extends object>(Component: React.ComponentType<P>) {
-  return withAuth(Component, { allowedRoles: ['partner'] });
+  return withAuth(Component, { allowedRoles: ["partner"] });
 }
 
 // 관리자 전용 (GA + SA)
 export function withAdminAuth<P extends object>(Component: React.ComponentType<P>) {
-  return withAuth(Component, { allowedRoles: ['manager_ga', 'manager_sa'] });
+  return withAuth(Component, { allowedRoles: ["manager_ga", "manager_sa"] });
 }
 
 // GA 전용
 export function withGAAuth<P extends object>(Component: React.ComponentType<P>) {
-  return withAuth(Component, { allowedRoles: ['manager_ga'] });
+  return withAuth(Component, { allowedRoles: ["manager_ga"] });
 }
 
 // SA 전용
 export function withSAAuth<P extends object>(Component: React.ComponentType<P>) {
-  return withAuth(Component, { allowedRoles: ['manager_sa'] });
+  return withAuth(Component, { allowedRoles: ["manager_sa"] });
 }

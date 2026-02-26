@@ -1,12 +1,15 @@
+/* ========================================
+   캠페인 관리 공통 타입 정의
+   ======================================== */
+
 /**
- * 캠페인 필터 관련 타입 정의
+ * campaign_management/types
  *
- * user와 partner 캠페인 관리 페이지에서 공통으로 사용하는 타입
+ * 목적: user·partner 캠페인 관리 페이지에서 공통으로 사용하는 타입 모음
  *
  * 사용 페이지:
- * - src/hooks/common/campaign_management/useCampaignFilterBar.ts
  * - src/components/common/campaign_management/CampaignFilterBar.tsx
- * - src/components/common/campaign_management/utils/campaign_filter_helpers.ts
+ * - src/hooks/common/campaign_management/useCampaignFilterBar.ts
  */
 
 import type { PartnerCampaign } from "@/types/domain/partner";

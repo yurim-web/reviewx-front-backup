@@ -3,6 +3,7 @@
  *
  * 캠페인 관리 필터 바 컴포넌트의 다양한 사용 예시를 보여줍니다.
  */
+/* eslint-disable react-hooks/exhaustive-deps */
 
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { useMemo, useCallback } from "react";

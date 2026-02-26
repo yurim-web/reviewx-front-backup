@@ -1,21 +1,25 @@
+/* ========================================
+   캠페인 관리 공통 필터 바 컴포넌트
+   ======================================== */
+/* eslint-disable @next/next/no-img-element */
+
 /**
- * 캠페인 관리 필터 바 컴포넌트
+ * CampaignFilterBar
  *
- * 캠페인 관리 페이지에서 사용하는 필터 바 UI
- * 유형, 채널, 검색, 정렬 기능 제공
+ * 목적: 캠페인 유형·채널 필터, 검색, 정렬 기능을 제공하는 공통 필터 바
  *
  * 사용 페이지:
- * - src/app/user/campaign_management/* (사용자 캠페인 관리 페이지들)
- * - src/app/partner/campaign_management/* (파트너 캠페인 관리 페이지들)
+ * - src/app/user/campaign_management/* (사용자 캠페인 관리)
+ * - src/app/partner/campaign_management/* (파트너 캠페인 관리)
  */
 
 "use client";
 
-import { useRef, useState, useCallback } from "react";
 import styles from "@/styles/partner/campaign_management/campaign_filter.module.css";
 import ModalFilter from "@/components/campaign/filter/ModalFilter";
 import { CampaignFilterBarProps, FilterableCampaign } from "./types";
 import { useCampaignFilterBar } from "@/hooks/common/campaign_management/useCampaignFilterBar";
+import { useDragScroll } from "@/hooks/common/useDragScroll";
 
 const DEFAULT_TYPE_OPTIONS = ["배송형", "방문형", "구매평", "기자단", "미션형"];
 const DEFAULT_CHANNEL_OPTIONS = ["네이버 블로그", "클립", "인스타그램", "릴스", "유튜브", "쇼츠"];
@@ -77,38 +81,11 @@ export default function CampaignFilterBar<T extends FilterableCampaign = Filtera
     (currentFilters.types?.length ?? 0) > 0 || (currentFilters.channels?.length ?? 0) > 0;
 
   /* PC에서 활성 필터 태그 영역 마우스 드래그로 가로 스크롤 */
-  const activeFiltersRef = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const startXRef = useRef(0);
-
-  const handleDragMove = useCallback((e: MouseEvent) => {
-    if (!activeFiltersRef.current) return;
-    const dx = startXRef.current - e.clientX;
-    activeFiltersRef.current.scrollLeft += dx;
-    startXRef.current = e.clientX;
-  }, []);
-
-  const handleDragEnd = useCallback(() => {
-    setIsDragging(false);
-    document.removeEventListener("mousemove", handleDragMove);
-    document.removeEventListener("mouseup", handleDragEnd);
-    document.body.style.userSelect = "";
-    document.body.style.cursor = "";
-  }, [handleDragMove]);
-
-  const handleDragStart = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if ((e.target as HTMLElement).closest(`.${styles.remove_tag}`)) return;
-      if (!activeFiltersRef.current) return;
-      setIsDragging(true);
-      startXRef.current = e.clientX;
-      document.addEventListener("mousemove", handleDragMove);
-      document.addEventListener("mouseup", handleDragEnd);
-      document.body.style.userSelect = "none";
-      document.body.style.cursor = "pointer";
-    },
-    [handleDragMove, handleDragEnd]
-  );
+  const {
+    containerRef: activeFiltersRef,
+    isDragging,
+    handleDragStart,
+  } = useDragScroll({ skipSelector: `.${styles.remove_tag}` });
 
   const renderFilterButton = (label: string, isActive: boolean, onClick: () => void) => (
     <button

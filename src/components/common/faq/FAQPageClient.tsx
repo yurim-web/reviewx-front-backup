@@ -1,20 +1,15 @@
 /* ========================================
-   ❓ FAQ 페이지 컴포넌트 (공통)
+   FAQ 페이지 컴포넌트 (공통)
    ======================================== */
 
 /**
- * FAQ 페이지 컴포넌트 (공통)
+ * FAQPageClient
  *
- * 목적: 유저와 파트너 FAQ 페이지에서 공통으로 사용하는 컴포넌트입니다.
+ * 목적: 유저·파트너 FAQ 페이지 공통 컴포넌트
  *
  * 사용 페이지:
- * - /user/faq (유저 FAQ 페이지)
- * - /partner/faq (파트너 FAQ 페이지)
- *
- * Props 설명:
- * - header_component: 헤더 컴포넌트 (SubHeader 또는 PartnerHeader)
- * - target: FAQ 대상 ("user" | "partner")
- * - detail_page_path: 상세 페이지 경로 (현재는 사용하지 않지만 호환성을 위해 유지)
+ * - /user/faq (유저 FAQ)
+ * - /partner/faq (파트너 FAQ)
  */
 
 "use client";
@@ -66,7 +61,7 @@ interface FAQPageClientProps {
 export default function FAQPageClient({
   header_component,
   target,
-  detail_page_path,
+  detail_page_path: _detail_page_path,
 }: FAQPageClientProps) {
   // 선택된 카테고리 상태 관리
   const [selected_category, set_selected_category] = useState("전체");

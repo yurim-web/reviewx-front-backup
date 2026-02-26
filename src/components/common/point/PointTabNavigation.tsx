@@ -1,20 +1,15 @@
 /* ========================================
-   💰 포인트 세부 탭 네비게이션 컴포넌트 (공통)
+   포인트 세부 탭 네비게이션 컴포넌트 (공통)
    ======================================== */
 
 /**
- * 포인트 세부 탭 네비게이션 컴포넌트
+ * PointTabNavigation
  *
- * 📍 사용 페이지:
- * - /user/point/all (사용자 포인트 전체 페이지)
- * - /user/point/earned (사용자 포인트 적립 페이지)
- * - /user/point/withdrawn (사용자 포인트 출금 페이지)
- * - /partner/point/all (파트너 포인트 전체 페이지)
- * - /partner/point/earned (파트너 포인트 충전 페이지)
- * - /partner/point/withdrawn (파트너 포인트 사용 페이지)
+ * 목적: 포인트 페이지에서 전체/적립(충전)/출금(사용) 탭 전환 네비게이션
  *
- * 목적: 포인트 페이지에서 전체/적립(충전)/출금(사용) 탭을 전환하는 네비게이션입니다.
- *
+ * 사용 페이지:
+ * - /user/point/all, /user/point/earned, /user/point/withdrawn
+ * - /partner/point/all, /partner/point/earned, /partner/point/withdrawn
  */
 
 "use client";
@@ -49,7 +44,7 @@ interface PointTabNavigationProps {
  */
 export default function PointTabNavigation({
   activePointTab,
-  setActivePointTab,
+  setActivePointTab: _setActivePointTab,
   basePath,
   tabLabels,
 }: PointTabNavigationProps) {
