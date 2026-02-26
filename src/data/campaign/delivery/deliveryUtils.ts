@@ -1,9 +1,14 @@
+/* ========================================
+   배송형 캠페인 유틸리티 함수
+   ======================================== */
+
 /**
- * 배송형 캠페인 유틸리티 함수
+ * deliveryUtils
  *
- * 설명:
- * - 배송형 캠페인 관련 헬퍼 함수들을 모아놓은 파일입니다.
- * - 캠페인 상태 계산, 날짜 계산 등의 공통 로직을 제공합니다.
+ * 목적: 배송형 캠페인 날짜·상태 계산 헬퍼 함수 모음
+ *
+ * 사용 페이지:
+ * - /campaign/delivery (배송형 캠페인 목록·상세)
  */
 
 /**
@@ -84,7 +89,6 @@ export function calculateCampaignStatus(
 
       // 유효한 날짜인지 확인
       if (isNaN(startDate.getTime())) {
-        console.error(`유효하지 않은 모집 시작일: ${startDateStr}`);
         return campaignStatus;
       }
 
@@ -175,7 +179,6 @@ export function calculateCampaignStatus(
 
       // 유효한 날짜인지 확인
       if (isNaN(announcementDateObj.getTime())) {
-        console.error(`유효하지 않은 선정 날짜: ${announcementDateStr}`);
         return campaignStatus;
       }
 

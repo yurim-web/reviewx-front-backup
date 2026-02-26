@@ -1,18 +1,14 @@
 /* ========================================
-   👤 SA 관리자 관리자 목록 목업 데이터
+   SA 관리자 목록 데이터
    ======================================== */
 
 /**
  * SA 관리자 관리자 목록 목업 데이터
  *
- * 목적: SA 관리자 관리자 목록 페이지에서 사용하는 임시 목업 데이터입니다.
+ * 목적: SA 관리자 관리자 목록 페이지에서 사용하는 임시 목업 데이터
  *
  * 사용 페이지:
  * - /manager_sa/member/admins (관리자 목록 페이지)
- *
- * 주요 기능:
- * - 관리자 목록 데이터
- *
  */
 
 // SA 관리자 전용 필터 옵션에서 import
@@ -318,9 +314,8 @@ export function get_admin_list_from_storage(): AdminItem[] {
     save_admin_list_to_storage(migrated_data);
 
     return migrated_data;
-  } catch (error) {
+  } catch (_error) {
     // 에러 발생 시 초기 목업 데이터 반환
-    console.error("관리자 목록을 가져오는 중 오류 발생:", error);
     return admin_list;
   }
 }
@@ -343,9 +338,7 @@ export function save_admin_list_to_storage(admin_list_data: AdminItem[]): void {
   try {
     // JavaScript 객체 배열을 JSON 문자열로 변환하여 저장
     localStorage.setItem(STORAGE_KEY, JSON.stringify(admin_list_data));
-  } catch (error) {
-    console.error("관리자 목록을 저장하는 중 오류 발생:", error);
-  }
+  } catch (_error) {}
 }
 
 /**

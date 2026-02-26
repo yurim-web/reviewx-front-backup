@@ -1,18 +1,14 @@
 /* ========================================
-   📊 유저 캠페인 관리 임시 데이터
+   유저 캠페인 관리 데이터
    ======================================== */
 
 /**
- * 유저 캠페인 관리 임시 데이터
+ * campaignManagementData
  *
  * 목적: 유저 캠페인 관리 페이지에서 사용할 테스트 데이터
  *
- * 사용 위치:
- * - /user/campaign_management 페이지의 캠페인 목록 표시
- *
- * 주요 기능:
- * - 실제 캠페인 데이터에서 ID로 참조하여 가져오기
- * - 날짜 기반 필터링 적용
+ * 사용 페이지:
+ * - /user/campaign_management (캠페인 목록 표시)
  */
 
 import type { CampaignApplication } from "@/types/domain/user";
@@ -161,7 +157,7 @@ function convertToCampaignApplication(
 
   // 타입 결정 (실제 데이터 기반)
   const type: CampaignApplication["type"] =
-    (actualCampaign as { category?: string }).category ?? "배송형";
+    ((actualCampaign as { category?: string }).category as CampaignApplication["type"]) ?? "배송형";
 
   // 카테고리 결정
   let category = "";
@@ -228,11 +224,10 @@ function convertToCampaignApplication(
     subStatus,
     hasContent: hasContent ?? false,
     isPenalty: isPenalty ?? false,
-    contentType:
-      contentType ||
+    contentType: (contentType ||
       (type === "미션형" && "contentType" in actualCampaign
         ? (actualCampaign as { contentType?: string }).contentType
-        : undefined),
+        : undefined)) as CampaignApplication["contentType"],
     rejectionReason,
     registeredContentLink: registeredContentLink ?? contentData?.link ?? undefined,
     registeredContentImages: registeredContentImages ?? contentData?.images ?? undefined,
@@ -359,8 +354,7 @@ function getCompletedCampaignIds(): string[] {
   try {
     const completed = localStorage.getItem("completedCampaignIds");
     return completed ? JSON.parse(completed) : [];
-  } catch (error) {
-    console.error("Failed to get completed campaign IDs:", error);
+  } catch (_error) {
     return [];
   }
 }
@@ -379,9 +373,7 @@ export function addCompletedCampaignId(campaignId: string): void {
       completed.push(campaignId);
       localStorage.setItem("completedCampaignIds", JSON.stringify(completed));
     }
-  } catch (error) {
-    console.error("Failed to add completed campaign ID:", error);
-  }
+  } catch (_error) {}
 }
 
 /**

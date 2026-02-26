@@ -1,7 +1,17 @@
+/* ========================================
+   기자단 캠페인 데이터
+   ======================================== */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-require-imports */
+
 /**
- * 기자단 캠페인 데이터 타입 정의
+ * reporterCampaigns
+ *
+ * 목적: 기자단 캠페인 목업 데이터 및 타입 정의
+ *
+ * 사용 페이지:
+ * - /campaign/reporter (기자단 캠페인 목록)
+ * - /campaign/reporter/[id] (기자단 캠페인 상세)
  */
 
 import type { CampaignFormData } from "@/types/domain/user";
@@ -43,6 +53,7 @@ export interface ReporterCampaignData {
   allowLateSubmission?: boolean; // 지각 제출 허용
   // 문의 담당자 정보
   contactPhone?: string; // 문의 담당자 휴대폰 번호
+  partnerName?: string; // 파트너사 이름
 }
 
 /**
@@ -62,8 +73,8 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     recruitment: {
       current: 45,
       total: 3,
-      partnerName: "크리에이터스튜디오",
     },
+    partnerName: "크리에이터스튜디오",
     schedule: "",
     dayCount: "D-5",
     registeredAt: "2025-12-15T09:30:00.000Z", // 등록 시간
@@ -99,8 +110,8 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     recruitment: {
       current: 78,
       total: 5,
-      partnerName: "패션하우스",
     },
+    partnerName: "패션하우스",
     schedule: "",
     dayCount: "D-3",
     registeredAt: "2026-01-08T11:15:00.000Z", // 등록 시간
@@ -136,18 +147,18 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     recruitment: {
       current: 56,
       total: 4,
-      partnerName: "스마트리빙",
     },
+    partnerName: "스마트리빙",
     schedule: "",
     dayCount: "",
     isUrgent: true, // 긴급 캠페인
     registeredAt: "2026-01-06T13:45:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 모집 진행 중
-      applicationStart: "2026-01-04",
-      applicationEnd: "2026-01-17",
-      announcement: "2026-01-19",
-      registrationPeriod: "2026-01-21 ~ 2026-01-28",
+      // 항상 신청 내역 테스트가 가능하도록, 현재 날짜(2026-02-26) 기준으로 모집 진행 중 상태로 유지
+      applicationStart: "2026-02-01",
+      applicationEnd: "2026-03-31",
+      announcement: "2026-04-02",
+      registrationPeriod: "2026-04-05 ~ 2026-04-25",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
@@ -173,8 +184,8 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     recruitment: {
       current: 89,
       total: 6,
-      partnerName: "레더리아",
     },
+    partnerName: "레더리아",
     schedule: "",
     dayCount: "D-7",
     registeredAt: "2026-01-09T13:30:00.000Z", // 등록 시간
@@ -209,8 +220,8 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     recruitment: {
       current: 34,
       total: 2,
-      partnerName: "프리미엄뷰티",
     },
+    partnerName: "프리미엄뷰티",
     schedule: "",
     dayCount: "D-6",
     registeredAt: "2025-10-28T10:00:00.000Z", // 등록 시간
@@ -245,8 +256,8 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     recruitment: {
       current: 67,
       total: 8,
-      partnerName: "홈트레이닝",
     },
+    partnerName: "홈트레이닝",
     schedule: "",
     dayCount: "D-4",
     registeredAt: "2026-01-07T15:20:00.000Z", // 등록 시간
@@ -281,8 +292,8 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     recruitment: {
       current: 45,
       total: 5,
-      partnerName: "펫프렌즈",
     },
+    partnerName: "펫프렌즈",
     schedule: "",
     dayCount: "D-2",
     registeredAt: "2025-11-10T09:15:00.000Z", // 등록 시간
@@ -317,8 +328,8 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     recruitment: {
       current: 78,
       total: 6,
-      partnerName: "웰빙코리아",
     },
+    partnerName: "웰빙코리아",
     schedule: "",
     dayCount: "D-8",
     registeredAt: "2025-11-05T14:00:00.000Z", // 등록 시간
@@ -353,8 +364,8 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     recruitment: {
       current: 56,
       total: 7,
-      partnerName: "키즈월드",
     },
+    partnerName: "키즈월드",
     schedule: "",
     dayCount: "D-1",
     registeredAt: "2025-11-15T10:50:00.000Z", // 등록 시간
@@ -389,8 +400,8 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     recruitment: {
       current: 34,
       total: 3,
-      partnerName: "스포츠존",
     },
+    partnerName: "스포츠존",
     schedule: "",
     dayCount: "D-9",
     registeredAt: "2025-11-01T08:00:00.000Z", // 등록 시간
@@ -424,8 +435,8 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     recruitment: {
       current: 0,
       total: 5,
-      partnerName: "내추럴푸드",
     },
+    partnerName: "내추럴푸드",
     schedule: "1/15 (목) 10:00\n모집 오픈",
     dayCount: "",
     registeredAt: "2026-01-10T12:00:00.000Z", // 등록 시간
@@ -461,8 +472,8 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     recruitment: {
       current: 2, // 신청자 수 적게 설정
       total: 5,
-      partnerName: "글로벌트레이드",
     },
+    partnerName: "글로벌트레이드",
     schedule: "",
     dayCount: "마감임박",
     registeredAt: "2026-01-11T11:30:00.000Z", // 등록 시간
@@ -498,8 +509,8 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     recruitment: {
       current: 7,
       total: 10,
-      partnerName: "에코라이프",
     },
+    partnerName: "에코라이프",
     schedule: "",
     dayCount: "D-8",
     registeredAt: "2026-01-10T10:00:00.000Z",
@@ -1675,7 +1686,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           channelId: "youtube_test_001",
           channel: "유튜브",
           profileImage: "",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 2: 연장 요청됨
         {
@@ -1688,7 +1699,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           channel: "유튜브",
           profileImage: "",
           extension_request_reason: "기자단 자료 정리로 3일 연장 요청드립니다.",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 3: 반려됨
         {
@@ -1701,7 +1712,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           channel: "유튜브",
           profileImage: "",
           isRejected: true,
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 4: 신고됨
         {
@@ -1715,7 +1726,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           profileImage: "",
           isReported: true,
           reportedDate: "2026-02-04T14:30:00.000Z",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
       ],
       reviewing: [
@@ -1729,7 +1740,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           channelId: "youtube_test_007",
           channel: "유튜브",
           profileImage: "",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
       ],
       completed: [
@@ -1744,7 +1755,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           channel: "유튜브",
           profileImage: "",
           updatedAt: "2026-01-29T09:00:00.000Z",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 완료 탭 경우의 수 2: 지각등록 승인 완료 상태
         {
@@ -1758,7 +1769,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           profileImage: "",
           updatedAt: "2026-02-04T16:00:00.000Z",
           isLateSubmission: true,
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
       ],
     },
@@ -1815,9 +1826,7 @@ function generateNewReporterCampaignId(): string {
           });
         }
       }
-    } catch (error) {
-      console.error("localStorage에서 기자단 캠페인 ID 확인 실패:", error);
-    }
+    } catch (_error) {}
   }
 
   // 배송형처럼 숫자만 사용 (기자단은 3000번대부터 시작)

@@ -1,6 +1,18 @@
+/* ========================================
+   방문형 캠페인 데이터
+   ======================================== */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-require-imports */
-// 방문형 페이지 임시 목업 데이터!
+
+/**
+ * visitCampaigns
+ *
+ * 목적: 방문형 캠페인 목업 데이터 및 타입 정의
+ *
+ * 사용 페이지:
+ * - /campaign/visit (방문형 캠페인 목록)
+ * - /campaign/visit/[id] (방문형 캠페인 상세)
+ */
 
 import type { CampaignFormData } from "@/types/domain/user";
 import type { ContentByTab, CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
@@ -25,6 +37,7 @@ export interface VisitCampaignData {
     applicationEnd: string; // 신청 마감일
     announcement: string; // 선정 발표일
     purchasePeriod: string; // 등록 기간
+    registrationPeriod?: string; // 리뷰 등록 기간 (선택)
   };
   campaign_detail_image: string; // 캠페인 상세 이미지 경로 (첫 번째 이미지, 하위 호환성)
   campaign_detail_images?: string[]; // 캠페인 상세 이미지 경로 배열 (여러 이미지)
@@ -43,6 +56,7 @@ export interface VisitCampaignData {
   allowLateSubmission?: boolean; // 지각 제출 허용
   // 문의 담당자 정보
   contactPhone?: string; // 문의 담당자 휴대폰 번호
+  partnerName?: string; // 파트너사 이름
 }
 
 export const visitCampaigns: VisitCampaignData[] = [
@@ -66,8 +80,8 @@ export const visitCampaigns: VisitCampaignData[] = [
       applicationEnd: "2026-06-30",
       announcement: "2026-07-02",
       purchasePeriod: "2026-07-05 ~ 2026-07-25",
-      partnerName: "내추럴푸드",
     },
+    partnerName: "내추럴푸드",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
     keyword: "#맛집추천 #강남식당 #방문후기 #솔직리뷰",
@@ -104,8 +118,8 @@ export const visitCampaigns: VisitCampaignData[] = [
       applicationEnd: "2026-02-20",
       announcement: "2026-02-22",
       purchasePeriod: "2026-02-22 ~ 2026-03-10",
-      partnerName: "펫프렌즈",
     },
+    partnerName: "펫프렌즈",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
     keyword: "#홍대카페 #신상카페 #카페투어 #디저트맛집",
@@ -137,13 +151,13 @@ export const visitCampaigns: VisitCampaignData[] = [
     dayCount: "D-3",
     registeredAt: "2026-01-09T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 모집 진행 중
-      applicationStart: "2026-01-22",
-      applicationEnd: "2026-02-08",
-      announcement: "2026-02-10",
-      purchasePeriod: "2026-02-10 ~ 2026-02-17",
-      partnerName: "레더리아",
+      // 항상 신청 내역 테스트가 가능하도록, 현재 날짜(2026-02-26) 기준으로 모집 진행 중 상태로 유지
+      applicationStart: "2026-02-01",
+      applicationEnd: "2026-03-31",
+      announcement: "2026-04-02",
+      purchasePeriod: "2026-04-02 ~ 2026-04-17",
     },
+    partnerName: "레더리아",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
     keyword: "#뷰티샵추천 #압구정네일샵 #미용실후기 #뷰티체험",
@@ -179,8 +193,8 @@ export const visitCampaigns: VisitCampaignData[] = [
       applicationEnd: "2026-02-18",
       announcement: "2026-02-20",
       purchasePeriod: "2026-02-20 ~ 2026-02-27",
-      partnerName: "글로벌트레이드",
     },
+    partnerName: "글로벌트레이드",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
     keyword: "#헬스장추천 #피트니스센터 #송파헬스장 #운동브이로그",
@@ -216,8 +230,8 @@ export const visitCampaigns: VisitCampaignData[] = [
       applicationEnd: "2026-01-18",
       announcement: "2026-01-20",
       purchasePeriod: "2026-01-20 ~ 2026-02-05",
-      partnerName: "테크솔루션",
     },
+    partnerName: "테크솔루션",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
     keyword: "#명동쇼핑몰 #쇼핑투어 #명동쇼핑추천 #패션쇼핑",
@@ -253,8 +267,8 @@ export const visitCampaigns: VisitCampaignData[] = [
       applicationEnd: "2026-02-10",
       announcement: "2026-02-12",
       purchasePeriod: "2026-02-12 ~ 2026-02-19",
-      partnerName: "홈트레이닝",
     },
+    partnerName: "홈트레이닝",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
     keyword: "#미술관추천 #전시후기 #예술체험 #문화생활",
@@ -290,8 +304,8 @@ export const visitCampaigns: VisitCampaignData[] = [
       applicationEnd: "2026-01-15",
       announcement: "2026-01-17",
       purchasePeriod: "2026-01-17 ~ 2026-02-05",
-      partnerName: "ABC쇼핑몰",
     },
+    partnerName: "ABC쇼핑몰",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
     keyword: "#프리미엄스파 #한남동스파 #힐링스파 #마사지체험",
@@ -327,8 +341,8 @@ export const visitCampaigns: VisitCampaignData[] = [
       applicationEnd: "2026-01-17",
       announcement: "2026-01-19",
       purchasePeriod: "2026-01-19 ~ 2026-02-08",
-      partnerName: "그린라이프",
     },
+    partnerName: "그린라이프",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
     keyword: "#반려동물카페 #펫카페 #강아지카페 #분당카페",
@@ -364,8 +378,8 @@ export const visitCampaigns: VisitCampaignData[] = [
       applicationEnd: "2026-02-10",
       announcement: "2026-02-12",
       purchasePeriod: "2026-02-12 ~ 2026-03-10",
-      partnerName: "헬스앤라이프",
     },
+    partnerName: "헬스앤라이프",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
     keyword: "#놀이공원후기 #테마파크 #용인놀이공원 #가족나들이",
@@ -401,8 +415,8 @@ export const visitCampaigns: VisitCampaignData[] = [
       applicationEnd: "2025-11-20",
       announcement: "2025-11-22",
       purchasePeriod: "2025-11-25 ~ 2025-12-02",
-      partnerName: "헬스앤라이프",
     },
+    partnerName: "헬스앤라이프",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
     keyword: "#도서관추천 #독서공간 #공공도서관 #문화시설후기",
@@ -438,8 +452,8 @@ export const visitCampaigns: VisitCampaignData[] = [
       applicationEnd: "2026-02-25",
       announcement: "2026-02-27",
       purchasePeriod: "2026-02-27 ~ 2026-03-10",
-      partnerName: "테크솔루션",
     },
+    partnerName: "테크솔루션",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
     keyword: "#한우돼지갈비 #강남맛집 #서초맛집 #식당체험 #맛집리뷰",
@@ -475,8 +489,8 @@ export const visitCampaigns: VisitCampaignData[] = [
       applicationEnd: "2026-01-29",
       announcement: "2026-01-31",
       purchasePeriod: "2026-01-31 ~ 2026-02-10",
-      partnerName: "홈트레이닝",
     },
+    partnerName: "홈트레이닝",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
     keyword: "#스테이크하우스 #강남맛집 #프리미엄식당 #고급레스토랑 #맛집리뷰",
@@ -512,8 +526,8 @@ export const visitCampaigns: VisitCampaignData[] = [
       applicationEnd: "2026-01-30",
       announcement: "2026-02-01",
       purchasePeriod: "2026-02-01 ~ 2026-02-12",
-      partnerName: "테크솔루션",
     },
+    partnerName: "테크솔루션",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "클립",
     keyword: "#프리미엄카페 #강남카페 #네이버클립 #카페리뷰 #맛집추천",
@@ -548,8 +562,8 @@ export const visitCampaigns: VisitCampaignData[] = [
       applicationEnd: "2026-02-28",
       announcement: "2026-03-02",
       purchasePeriod: "2026-02-04 ~ 2026-05-05",
-      partnerName: "글로벌트레이드",
     },
+    partnerName: "글로벌트레이드",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
     keyword: "#테스트 #방문형 #맛집",
@@ -640,45 +654,7 @@ export interface VisitCampaignDataExtended {
   };
 
   // 콘텐츠 데이터 (선택사항 - 종료/취소 캠페인에는 필수, 진행/예정/신청 캠페인에는 선택)
-  contents?: {
-    waiting: Array<{
-      id: string;
-      createdAt: string;
-      status: "검수";
-      userType: "리뷰어" | "인플루언서";
-      nickname: string;
-      channelId: string;
-      channel: string;
-      profileImage?: string;
-      extension_request_reason?: string;
-      isRejected?: boolean;
-    }>;
-    reviewing: Array<{
-      id: string;
-      createdAt: string;
-      status: "검수" | "검수중";
-      userType: "리뷰어" | "인플루언서";
-      nickname: string;
-      channelId: string;
-      channel: string;
-      updatedAt?: string;
-      isRejected?: boolean;
-      isLate?: boolean;
-      profileImage?: string;
-    }>;
-    completed: Array<{
-      id: string;
-      createdAt: string;
-      status: "완료";
-      userType: "리뷰어" | "인플루언서";
-      nickname: string;
-      channelId: string;
-      channel: string;
-      updatedAt?: string;
-      isLate?: boolean;
-      profileImage?: string;
-    }>;
-  };
+  contents?: ContentByTab;
 }
 
 /**
@@ -2076,8 +2052,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
       applicationStart: "2026-02-01",
       applicationEnd: "2026-02-28",
       announcement: "2026-03-02",
-      purchasePeriod: "2026-01-30 ~ 2026-02-04",
-      registrationPeriod: "2026-02-04 ~ 2026-05-05",
+      purchasePeriod: "2026-01-30 ~ 2026-05-05",
     },
     applicantData: {
       applicants: [],
@@ -2095,7 +2070,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channelId: "blog_test_001",
           channel: "네이버블로그",
           profileImage: "",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 2: 연장 요청됨
         {
@@ -2108,7 +2083,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "네이버블로그",
           profileImage: "",
           extension_request_reason: "방문 일정 조율 중이라 3일 연장 요청드립니다.",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 3: 반려됨
         {
@@ -2121,7 +2096,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "네이버블로그",
           profileImage: "",
           isRejected: true,
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 경우의 수 4: 신고됨
         {
@@ -2135,7 +2110,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           profileImage: "",
           isReported: true,
           reportedDate: "2026-02-04T14:30:00.000Z",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
       ],
       reviewing: [
@@ -2149,7 +2124,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channelId: "blog_test_002",
           channel: "네이버블로그",
           profileImage: "",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
       ],
       completed: [
@@ -2164,7 +2139,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "네이버블로그",
           profileImage: "",
           updatedAt: "2026-01-29T09:00:00.000Z",
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
         // 완료 탭 경우의 수 2: 지각등록 승인 완료 상태
         {
@@ -2178,7 +2153,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           profileImage: "",
           updatedAt: "2026-02-04T16:00:00.000Z",
           isLateSubmission: true,
-          receiptUrl: "/images/test_img/eximg.png",
+          receiptImages: ["/images/test_img/eximg.png"],
         },
       ],
     },
@@ -2235,9 +2210,7 @@ function generateNewVisitCampaignId(): string {
           });
         }
       }
-    } catch (error) {
-      console.error("localStorage에서 방문형 캠페인 ID 확인 실패:", error);
-    }
+    } catch (_error) {}
   }
 
   // 배송형처럼 숫자만 사용 (방문형은 1000번대부터 시작)

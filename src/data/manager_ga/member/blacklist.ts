@@ -1,5 +1,5 @@
 /* ========================================
-   
+   GA 관리자 이용제한 내역 데이터
    ======================================== */
 
 /**
@@ -83,8 +83,7 @@ function load_from_storage(): {
     const removed_ids = new Set(removed_ids_array);
 
     return { additional_items, removed_ids };
-  } catch (error) {
-    console.error("localStorage에서 블랙리스트 데이터 로드 실패:", error);
+  } catch (_error) {
     return { additional_items: [], removed_ids: new Set() };
   }
 }
@@ -100,9 +99,7 @@ function save_to_storage(additional_items: BlacklistItem[], removed_ids: Set<str
     // 제거된 ID 저장
     const removed_ids_array = Array.from(removed_ids);
     localStorage.setItem(STORAGE_KEY_REMOVED_IDS, JSON.stringify(removed_ids_array));
-  } catch (error) {
-    console.error("localStorage에 블랙리스트 데이터 저장 실패:", error);
-  }
+  } catch (_error) {}
 }
 
 // 동적으로 추가된 블랙리스트 항목을 저장하는 배열

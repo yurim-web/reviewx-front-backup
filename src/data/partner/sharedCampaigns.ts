@@ -1,22 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* ========================================
-   📊 공용 캠페인 데이터
+   공용 캠페인 데이터
    ======================================== */
 
 /**
- * 공용 캠페인 데이터
+ * sharedCampaigns
  *
  * 목적: 관리 페이지와 신청내역 페이지에서 공통으로 사용하는 캠페인 데이터
  *
- * 사용 위치:
+ * 사용 페이지:
  * - /partner/campaign_management (관리 페이지)
  * - /partner/campaign_application (신청내역 페이지)
- *
- * 주요 기능:
- * - 캠페인 기본 정보와 신청자 데이터를 하나의 파일에서 관리
- * - 데이터 일관성 보장
- * - 중복 데이터 제거
  */
 
 import type { PartnerCampaign, PartnerCampaignStats } from "@/types/domain/partner";
@@ -110,6 +105,10 @@ export interface ContentItem {
   missionType?: string;
   /** 구매 영수증 이미지 목록 (구매평 영수증 흐름 전용) */
   receiptImages?: string[];
+  /** 영수증 단일 URL (구매평 전용) */
+  receiptUrl?: string;
+  /** 지각 제출 여부 */
+  isLateSubmission?: boolean;
   /** 등록 기한 연장 요청 사유 (대기 탭 전용, 선택사항) */
   extension_request_reason?: string;
   /** 연장 승인 여부 (대기 탭 전용, 선택사항) */
@@ -224,9 +223,7 @@ export function getClosedCampaigns(): CampaignWithContents[] {
           : { waiting: [], reviewing: [], completed: [] },
       };
     });
-  } catch (error) {
-    console.error("deliveryClosedCampaignsExtended 로드 실패:", error);
-  }
+  } catch (_error) {}
 
   // missionClosedCampaigns, visitClosedCampaigns, reviewClosedCampaigns는
   // /data/campaign으로 통합되었으므로 현재는 빈 배열로 처리
@@ -516,8 +513,8 @@ const transformApplicantData = (applicant: any) => {
           // });
         }
       }
-    } catch (error) {
-      // console.error('❌ [transformApplicantData] user_accounts 로드 실패:', error);
+    } catch (_error) {
+      // console.error('❌ [transformApplicantData] user_accounts 로드 실패:', _error);
     }
   }
 
@@ -628,9 +625,7 @@ function getStoredDeliveryCampaigns(): CampaignWithApplicants[] {
       const deliveryUtils = require("@/data/campaign/delivery/deliveryUtils");
       calculateCampaignStatus = deliveryUtils.calculateCampaignStatus;
       calculateDaysLeft = deliveryUtils.calculateDaysLeft;
-    } catch (error) {
-      console.error("헬퍼 함수 로드 실패:", error);
-    }
+    } catch (_error) {}
 
     return campaigns.map((campaign) => {
       // registrationPeriod를 전달하여 등록 기간 종료일 체크가 정확하게 이루어지도록 함
@@ -642,7 +637,18 @@ function getStoredDeliveryCampaigns(): CampaignWithApplicants[] {
 
       // calculateCampaignStatus는 "대기 중" | "모집 중" | "진행 중" | "종료"를 반환
       // "종료" 상태를 "마감"으로 변환 (UI 표시용)
-      let updatedStatus: string = calculatedStatus;
+      type CampaignInfoStatus =
+        | "대기 중"
+        | "모집 중"
+        | "선정 중"
+        | "등록 중"
+        | "진행 중"
+        | "종료"
+        | "마감"
+        | "취소"
+        | "구매 중"
+        | "긴급";
+      let updatedStatus: CampaignInfoStatus = calculatedStatus;
       if (calculatedStatus === "종료") {
         updatedStatus = "마감";
       }
@@ -655,16 +661,15 @@ function getStoredDeliveryCampaigns(): CampaignWithApplicants[] {
 
       // 신청자 데이터 변환: localStorage 형식 -> NaverBlogCard 형식
       // 취소된 신청자는 제외하고 변환
-      const transformedApplicants =
-        campaign.applicantData?.applicants
+      const transformedApplicants: AllApplicant[] = (campaign.applicantData?.applicants
+        ?.filter((a: any) => a.status !== "취소")
+        ?.map(transformApplicantData)
+        ?.filter((a: any): a is AllApplicant => a !== null) || []) as AllApplicant[];
+      const transformedSelectedApplicants: AllApplicant[] =
+        (campaign.applicantData?.selectedApplicants
           ?.filter((a: any) => a.status !== "취소")
           ?.map(transformApplicantData)
-          ?.filter((a: any) => a !== null) || [];
-      const transformedSelectedApplicants =
-        campaign.applicantData?.selectedApplicants
-          ?.filter((a: any) => a.status !== "취소")
-          ?.map(transformApplicantData)
-          ?.filter((a: any) => a !== null) || [];
+          ?.filter((a: any): a is AllApplicant => a !== null) || []) as AllApplicant[];
 
       return {
         ...campaign,
@@ -679,8 +684,7 @@ function getStoredDeliveryCampaigns(): CampaignWithApplicants[] {
         },
       };
     });
-  } catch (error) {
-    console.error("localStorage에서 배송형 캠페인 불러오기 실패:", error);
+  } catch (_error) {
     return [];
   }
 }
@@ -709,9 +713,7 @@ function getStoredVisitCampaigns(): CampaignWithApplicants[] {
     try {
       const deliveryUtils = require("@/data/campaign/delivery/deliveryUtils");
       calculateCampaignStatus = deliveryUtils.calculateCampaignStatus;
-    } catch (error) {
-      console.error("calculateCampaignStatus 함수 로드 실패:", error);
-    }
+    } catch (_error) {}
 
     return campaigns.map((campaign) => {
       // registrationPeriod를 전달하여 등록 기간 종료일 체크가 정확하게 이루어지도록 함
@@ -723,7 +725,18 @@ function getStoredVisitCampaigns(): CampaignWithApplicants[] {
 
       // calculateCampaignStatus는 "대기 중" | "모집 중" | "진행 중" | "종료"를 반환
       // "종료" 상태를 "마감"으로 변환 (UI 표시용)
-      let updatedStatus: string = calculatedStatus;
+      type CampaignInfoStatus4 =
+        | "대기 중"
+        | "모집 중"
+        | "선정 중"
+        | "등록 중"
+        | "진행 중"
+        | "종료"
+        | "마감"
+        | "취소"
+        | "구매 중"
+        | "긴급";
+      let updatedStatus: CampaignInfoStatus4 = calculatedStatus;
       if (calculatedStatus === "종료") {
         updatedStatus = "마감";
       }
@@ -735,23 +748,20 @@ function getStoredVisitCampaigns(): CampaignWithApplicants[] {
           daysLeft =
             deliveryUtils.calculateDaysLeft(campaign.campaignInfo.announcementDate.split(" ")[0]) ||
             0;
-        } catch (error) {
-          console.error("calculateDaysLeft 함수 로드 실패:", error);
-        }
+        } catch (_error) {}
       }
 
       // 신청자 데이터 변환: localStorage 형식 -> NaverBlogCard 형식
       // 취소된 신청자는 제외하고 변환
-      const transformedApplicants =
-        campaign.applicantData?.applicants
+      const transformedApplicants: AllApplicant[] = (campaign.applicantData?.applicants
+        ?.filter((a: any) => a.status !== "취소")
+        ?.map(transformApplicantData)
+        ?.filter((a: any): a is AllApplicant => a !== null) || []) as AllApplicant[];
+      const transformedSelectedApplicants: AllApplicant[] =
+        (campaign.applicantData?.selectedApplicants
           ?.filter((a: any) => a.status !== "취소")
           ?.map(transformApplicantData)
-          ?.filter((a: any) => a !== null) || [];
-      const transformedSelectedApplicants =
-        campaign.applicantData?.selectedApplicants
-          ?.filter((a: any) => a.status !== "취소")
-          ?.map(transformApplicantData)
-          ?.filter((a: any) => a !== null) || [];
+          ?.filter((a: any): a is AllApplicant => a !== null) || []) as AllApplicant[];
 
       return {
         ...campaign,
@@ -766,8 +776,7 @@ function getStoredVisitCampaigns(): CampaignWithApplicants[] {
         },
       };
     });
-  } catch (error) {
-    console.error("localStorage에서 방문형 캠페인 불러오기 실패:", error);
+  } catch (_error) {
     return [];
   }
 }
@@ -796,9 +805,7 @@ function getStoredReviewCampaigns(): CampaignWithApplicants[] {
     try {
       const deliveryUtils = require("@/data/campaign/delivery/deliveryUtils");
       calculateCampaignStatus = deliveryUtils.calculateCampaignStatus;
-    } catch (error) {
-      console.error("calculateCampaignStatus 함수 로드 실패:", error);
-    }
+    } catch (_error) {}
 
     return campaigns.map((campaign) => {
       // registrationPeriod를 전달하여 등록 기간 종료일 체크가 정확하게 이루어지도록 함
@@ -810,7 +817,18 @@ function getStoredReviewCampaigns(): CampaignWithApplicants[] {
 
       // calculateCampaignStatus는 "대기 중" | "모집 중" | "진행 중" | "종료"를 반환
       // "종료" 상태를 "마감"으로 변환 (UI 표시용)
-      let updatedStatus: string = calculatedStatus;
+      type CampaignInfoStatus2 =
+        | "대기 중"
+        | "모집 중"
+        | "선정 중"
+        | "등록 중"
+        | "진행 중"
+        | "종료"
+        | "마감"
+        | "취소"
+        | "구매 중"
+        | "긴급";
+      let updatedStatus: CampaignInfoStatus2 = calculatedStatus;
       if (calculatedStatus === "종료") {
         updatedStatus = "마감";
       }
@@ -822,23 +840,20 @@ function getStoredReviewCampaigns(): CampaignWithApplicants[] {
           daysLeft =
             deliveryUtils.calculateDaysLeft(campaign.campaignInfo.announcementDate.split(" ")[0]) ||
             0;
-        } catch (error) {
-          console.error("calculateDaysLeft 함수 로드 실패:", error);
-        }
+        } catch (_error) {}
       }
 
       // 신청자 데이터 변환: localStorage 형식 -> BasicApplicant 형식 (구매평은 채널 정보 없음)
       // 취소된 신청자는 제외하고 변환
-      const transformedApplicants =
-        campaign.applicantData?.applicants
+      const transformedApplicants: AllApplicant[] = (campaign.applicantData?.applicants
+        ?.filter((a: any) => a.status !== "취소")
+        ?.map(transformBasicApplicantData)
+        ?.filter((a: any): a is AllApplicant => a !== null) || []) as AllApplicant[];
+      const transformedSelectedApplicants: AllApplicant[] =
+        (campaign.applicantData?.selectedApplicants
           ?.filter((a: any) => a.status !== "취소")
           ?.map(transformBasicApplicantData)
-          ?.filter((a: any) => a !== null) || [];
-      const transformedSelectedApplicants =
-        campaign.applicantData?.selectedApplicants
-          ?.filter((a: any) => a.status !== "취소")
-          ?.map(transformBasicApplicantData)
-          ?.filter((a: any) => a !== null) || [];
+          ?.filter((a: any): a is AllApplicant => a !== null) || []) as AllApplicant[];
 
       return {
         ...campaign,
@@ -853,8 +868,7 @@ function getStoredReviewCampaigns(): CampaignWithApplicants[] {
         },
       };
     });
-  } catch (error) {
-    console.error("localStorage에서 구매평 캠페인 불러오기 실패:", error);
+  } catch (_error) {
     return [];
   }
 }
@@ -883,9 +897,7 @@ function getStoredReporterCampaigns(): CampaignWithApplicants[] {
     try {
       const deliveryUtils = require("@/data/campaign/delivery/deliveryUtils");
       calculateCampaignStatus = deliveryUtils.calculateCampaignStatus;
-    } catch (error) {
-      console.error("calculateCampaignStatus 함수 로드 실패:", error);
-    }
+    } catch (_error) {}
 
     return campaigns.map((campaign) => {
       // registrationPeriod를 전달하여 등록 기간 종료일 체크가 정확하게 이루어지도록 함
@@ -897,7 +909,18 @@ function getStoredReporterCampaigns(): CampaignWithApplicants[] {
 
       // calculateCampaignStatus는 "대기 중" | "모집 중" | "진행 중" | "종료"를 반환
       // "종료" 상태를 "마감"으로 변환 (UI 표시용)
-      let updatedStatus: string = calculatedStatus;
+      type CampaignInfoStatus5 =
+        | "대기 중"
+        | "모집 중"
+        | "선정 중"
+        | "등록 중"
+        | "진행 중"
+        | "종료"
+        | "마감"
+        | "취소"
+        | "구매 중"
+        | "긴급";
+      let updatedStatus: CampaignInfoStatus5 = calculatedStatus;
       if (calculatedStatus === "종료") {
         updatedStatus = "마감";
       }
@@ -909,23 +932,20 @@ function getStoredReporterCampaigns(): CampaignWithApplicants[] {
           daysLeft =
             deliveryUtils.calculateDaysLeft(campaign.campaignInfo.announcementDate.split(" ")[0]) ||
             0;
-        } catch (error) {
-          console.error("calculateDaysLeft 함수 로드 실패:", error);
-        }
+        } catch (_error) {}
       }
 
       // 신청자 데이터 변환: localStorage 형식 -> NaverBlogCard 형식
       // 취소된 신청자는 제외하고 변환
-      const transformedApplicants =
-        campaign.applicantData?.applicants
+      const transformedApplicants: AllApplicant[] = (campaign.applicantData?.applicants
+        ?.filter((a: any) => a.status !== "취소")
+        ?.map(transformApplicantData)
+        ?.filter((a: any): a is AllApplicant => a !== null) || []) as AllApplicant[];
+      const transformedSelectedApplicants: AllApplicant[] =
+        (campaign.applicantData?.selectedApplicants
           ?.filter((a: any) => a.status !== "취소")
           ?.map(transformApplicantData)
-          ?.filter((a: any) => a !== null) || [];
-      const transformedSelectedApplicants =
-        campaign.applicantData?.selectedApplicants
-          ?.filter((a: any) => a.status !== "취소")
-          ?.map(transformApplicantData)
-          ?.filter((a: any) => a !== null) || [];
+          ?.filter((a: any): a is AllApplicant => a !== null) || []) as AllApplicant[];
 
       return {
         ...campaign,
@@ -940,8 +960,7 @@ function getStoredReporterCampaigns(): CampaignWithApplicants[] {
         },
       };
     });
-  } catch (error) {
-    console.error("localStorage에서 기자단 캠페인 불러오기 실패:", error);
+  } catch (_error) {
     return [];
   }
 }
@@ -970,9 +989,7 @@ function getStoredMissionCampaigns(): CampaignWithApplicants[] {
     try {
       const deliveryUtils = require("@/data/campaign/delivery/deliveryUtils");
       calculateCampaignStatus = deliveryUtils.calculateCampaignStatus;
-    } catch (error) {
-      console.error("calculateCampaignStatus 함수 로드 실패:", error);
-    }
+    } catch (_error) {}
 
     return campaigns.map((campaign) => {
       // registrationPeriod를 전달하여 등록 기간 종료일 체크가 정확하게 이루어지도록 함
@@ -984,7 +1001,18 @@ function getStoredMissionCampaigns(): CampaignWithApplicants[] {
 
       // calculateCampaignStatus는 "대기 중" | "모집 중" | "진행 중" | "종료"를 반환
       // "종료" 상태를 "마감"으로 변환 (UI 표시용)
-      let updatedStatus: string = calculatedStatus;
+      type CampaignInfoStatus3 =
+        | "대기 중"
+        | "모집 중"
+        | "선정 중"
+        | "등록 중"
+        | "진행 중"
+        | "종료"
+        | "마감"
+        | "취소"
+        | "구매 중"
+        | "긴급";
+      let updatedStatus: CampaignInfoStatus3 = calculatedStatus;
       if (calculatedStatus === "종료") {
         updatedStatus = "마감";
       }
@@ -996,23 +1024,20 @@ function getStoredMissionCampaigns(): CampaignWithApplicants[] {
           daysLeft =
             deliveryUtils.calculateDaysLeft(campaign.campaignInfo.announcementDate.split(" ")[0]) ||
             0;
-        } catch (error) {
-          console.error("calculateDaysLeft 함수 로드 실패:", error);
-        }
+        } catch (_error) {}
       }
 
       // 신청자 데이터 변환: localStorage 형식 -> BasicApplicant 형식 (미션형은 채널 정보 없음)
       // 취소된 신청자는 제외하고 변환
-      const transformedApplicants =
-        campaign.applicantData?.applicants
+      const transformedApplicants: AllApplicant[] = (campaign.applicantData?.applicants
+        ?.filter((a: any) => a.status !== "취소")
+        ?.map(transformBasicApplicantData)
+        ?.filter((a: any): a is AllApplicant => a !== null) || []) as AllApplicant[];
+      const transformedSelectedApplicants: AllApplicant[] =
+        (campaign.applicantData?.selectedApplicants
           ?.filter((a: any) => a.status !== "취소")
           ?.map(transformBasicApplicantData)
-          ?.filter((a: any) => a !== null) || [];
-      const transformedSelectedApplicants =
-        campaign.applicantData?.selectedApplicants
-          ?.filter((a: any) => a.status !== "취소")
-          ?.map(transformBasicApplicantData)
-          ?.filter((a: any) => a !== null) || [];
+          ?.filter((a: any): a is AllApplicant => a !== null) || []) as AllApplicant[];
 
       return {
         ...campaign,
@@ -1027,8 +1052,7 @@ function getStoredMissionCampaigns(): CampaignWithApplicants[] {
         },
       };
     });
-  } catch (error) {
-    console.error("localStorage에서 미션형 캠페인 불러오기 실패:", error);
+  } catch (_error) {
     return [];
   }
 }
@@ -1053,9 +1077,7 @@ function convertCampaignDataToPartnerFormat(campaign: any): CampaignWithApplican
     // /data/campaign/delivery/utils.ts에서 가져오기
     const deliveryUtils = require("@/data/campaign/delivery/deliveryUtils");
     calculateDaysLeft = deliveryUtils.calculateDaysLeft;
-  } catch (error) {
-    console.error("calculateDaysLeft 함수 로드 실패:", error);
-  }
+  } catch (_error) {}
 
   // 날짜 기반 상태 계산 (CampaignInfo 형식에 맞게)
   const calculateStatus = (
@@ -1239,9 +1261,7 @@ function convertExtendedToCampaignWithApplicants(extended: any): CampaignWithApp
   try {
     const deliveryUtils = require("@/data/campaign/delivery/deliveryUtils");
     calculateDaysLeft = deliveryUtils.calculateDaysLeft;
-  } catch (error) {
-    console.error("calculateDaysLeft 함수 로드 실패:", error);
-  }
+  } catch (_error) {}
 
   const daysLeft = extended.detailedSchedule?.announcement
     ? calculateDaysLeft(extended.detailedSchedule.announcement)
@@ -1445,11 +1465,6 @@ export function getSharedCampaigns(): CampaignWithApplicants[] {
   const filteredCampaigns = allCampaigns.filter((campaign) => {
     // ID가 없거나 undefined인 캠페인 제외
     if (!campaign.campaignInfo.id || campaign.campaignInfo.id === undefined) {
-      console.warn(
-        `[getSharedCampaigns] ID가 없는 캠페인 필터링: 제목=${
-          campaign.campaignInfo.title || "제목 없음"
-        }`
-      );
       return false;
     }
 
@@ -1502,11 +1517,6 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
   // ID가 없거나 undefined인 캠페인 필터링
   const validCampaigns = sharedCampaigns.filter((campaign) => {
     if (!campaign.campaignInfo.id || campaign.campaignInfo.id === undefined) {
-      console.warn(
-        `[convertToPartnerCampaigns] ID가 없는 캠페인 필터링: 제목=${
-          campaign.campaignInfo.title || "제목 없음"
-        }`
-      );
       return false;
     }
     return true;
@@ -1692,9 +1702,7 @@ export const convertToPartnerCampaigns = (): PartnerCampaign[] => {
     try {
       const deliveryUtils = require("@/data/campaign/delivery/deliveryUtils");
       calculateDaysLeft = deliveryUtils.calculateDaysLeft;
-    } catch (error) {
-      console.error("calculateDaysLeft 함수 로드 실패:", error);
-    }
+    } catch (_error) {}
 
     if (calculatedTab === "예정") {
       // 예정 탭: 모집 시작일까지의 카운트
@@ -1990,7 +1998,6 @@ export const getCampaignById = (id: string): CampaignWithApplicants | null => {
   }
 
   // 7. 모두 없는 경우
-  console.warn(`[getCampaignById] 캠페인을 찾을 수 없습니다: ${id}`);
   return null;
 };
 
@@ -2390,8 +2397,7 @@ function getDeletedCampaignIds(): string[] {
     const result = Array.isArray(deletedIds) ? deletedIds.map((id) => String(id)) : [];
     // console.log(`[getDeletedCampaignIds] 삭제된 캠페인 ID 목록:`, result);
     return result;
-  } catch (error) {
-    console.error("삭제된 캠페인 ID 목록 불러오기 실패:", error);
+  } catch (_error) {
     return [];
   }
 }
@@ -2421,9 +2427,7 @@ function addDeletedCampaignId(campaignId: string): void {
       //   `[addDeletedCampaignId] 이미 삭제 목록에 있음: ID=${campaignIdStr}`
       // );
     }
-  } catch (error) {
-    console.error("삭제된 캠페인 ID 추가 실패:", error);
-  }
+  } catch (_error) {}
 }
 
 /* ----------------------------------------
@@ -2451,8 +2455,7 @@ function getCancelledCampaignIds(): string[] {
     const result = Array.isArray(cancelledIds) ? cancelledIds.map((id) => String(id)) : [];
     // console.log(`[getCancelledCampaignIds] 취소된 캠페인 ID 목록:`, result);
     return result;
-  } catch (error) {
-    console.error("취소된 캠페인 ID 목록 불러오기 실패:", error);
+  } catch (_error) {
     return [];
   }
 }
@@ -2482,9 +2485,7 @@ function addCancelledCampaignId(campaignId: string): void {
       //   `[addCancelledCampaignId] 이미 취소 목록에 있음: ID=${campaignIdStr}`
       // );
     }
-  } catch (error) {
-    console.error("취소된 캠페인 ID 추가 실패:", error);
-  }
+  } catch (_error) {}
 }
 
 /**
@@ -2506,9 +2507,7 @@ export function removeCancelledCampaignId(campaignId: string): void {
       //   `[removeCancelledCampaignId] 취소 목록에서 제거됨: ID=${campaignIdStr}`
       // );
     }
-  } catch (error) {
-    console.error("취소된 캠페인 ID 제거 실패:", error);
-  }
+  } catch (_error) {}
 }
 
 /* ========================================
@@ -2528,7 +2527,6 @@ export function deleteCampaign(
   campaignType: "배송형" | "방문형" | "구매평" | "기자단" | "미션형"
 ): boolean {
   if (typeof window === "undefined") {
-    console.error("localStorage는 브라우저 환경에서만 사용할 수 있습니다.");
     return false;
   }
 
@@ -2552,13 +2550,12 @@ export function deleteCampaign(
         storageKey = "missionCampaigns";
         break;
       default:
-        console.error(`알 수 없는 캠페인 타입: ${campaignType}`);
         return false;
     }
 
     // 1. localStorage에서 해당 타입의 캠페인 배열 불러오기
     const stored = localStorage.getItem(storageKey);
-    let deletedFromLocalStorage = false;
+    let _deletedFromLocalStorage = false;
 
     if (stored) {
       const campaigns: CampaignWithApplicants[] = JSON.parse(stored);
@@ -2572,7 +2569,7 @@ export function deleteCampaign(
         if (filteredCampaigns.length < campaigns.length) {
           // 필터링된 배열을 다시 localStorage에 저장
           localStorage.setItem(storageKey, JSON.stringify(filteredCampaigns));
-          deletedFromLocalStorage = true;
+          _deletedFromLocalStorage = true;
           // console.log(
           //   `localStorage에서 캠페인 삭제 완료: ID=${campaignId}, 타입=${campaignType}, 남은 캠페인 수=${filteredCampaigns.length}`
           // );
@@ -2588,8 +2585,7 @@ export function deleteCampaign(
     //   `캠페인 삭제 처리 완료: ID=${campaignId}, 타입=${campaignType}, localStorage에서 삭제=${deletedFromLocalStorage}, 삭제 목록에 추가됨`
     // );
     return true;
-  } catch (error) {
-    console.error("캠페인 삭제 중 오류 발생:", error);
+  } catch (_error) {
     return false;
   }
 }
@@ -2616,7 +2612,6 @@ export function cancelCampaign(
   campaignType: "배송형" | "방문형" | "구매평" | "기자단" | "미션형"
 ): { success: boolean; error?: string } {
   if (typeof window === "undefined") {
-    console.error("localStorage는 브라우저 환경에서만 사용할 수 있습니다.");
     return { success: false, error: "SERVER_ERROR" };
   }
 
@@ -2651,13 +2646,12 @@ export function cancelCampaign(
         storageKey = "missionCampaigns";
         break;
       default:
-        console.error(`알 수 없는 캠페인 타입: ${campaignType}`);
         return { success: false, error: "SERVER_ERROR" };
     }
 
     // localStorage에서 해당 타입의 캠페인 배열 불러오기 (있는 경우 상태 업데이트)
     const stored = localStorage.getItem(storageKey);
-    let updatedInLocalStorage = false;
+    let _updatedInLocalStorage = false;
 
     if (stored) {
       const campaigns: CampaignWithApplicants[] = JSON.parse(stored);
@@ -2665,7 +2659,7 @@ export function cancelCampaign(
         // 취소할 캠페인을 찾아서 상태를 "취소"로 변경
         const updatedCampaigns = campaigns.map((campaign) => {
           if (campaign.campaignInfo.id === campaignId) {
-            updatedInLocalStorage = true;
+            _updatedInLocalStorage = true;
             return {
               ...campaign,
               campaignInfo: {
@@ -2692,8 +2686,7 @@ export function cancelCampaign(
     //   `캠페인 취소 처리 완료: ID=${campaignId}, 타입=${campaignType}, localStorage 업데이트=${updatedInLocalStorage}, 취소 목록에 추가됨`
     // );
     return { success: true };
-  } catch (error) {
-    console.error("캠페인 취소 중 오류 발생:", error);
+  } catch (_error) {
     return { success: false, error: "SERVER_ERROR" };
   }
 }
@@ -2722,7 +2715,6 @@ export function updateCampaignApplicants(
   selectedApplicants: AllApplicant[]
 ): boolean {
   if (typeof window === "undefined") {
-    console.error("localStorage는 브라우저 환경에서만 사용할 수 있습니다.");
     return false;
   }
 
@@ -2746,7 +2738,6 @@ export function updateCampaignApplicants(
         storageKey = "missionCampaigns";
         break;
       default:
-        console.error(`알 수 없는 캠페인 타입: ${campaignType}`);
         return false;
     }
 
@@ -2791,7 +2782,6 @@ export function updateCampaignApplicants(
         //   `localStorage에 캠페인 신청자 데이터 추가 완료: ID=${campaignId}, 타입=${campaignType}, 신청자=${applicants.length}명, 선정자=${selectedApplicants.length}명`
         // );
       } else {
-        console.error(`캠페인을 찾을 수 없습니다: ID=${campaignId}, 타입=${campaignType}`);
         return false;
       }
     }
@@ -2804,8 +2794,7 @@ export function updateCampaignApplicants(
     window.dispatchEvent(new Event("storage"));
 
     return true;
-  } catch (error) {
-    console.error("캠페인 신청자 데이터 업데이트 중 오류 발생:", error);
+  } catch (_error) {
     return false;
   }
 }

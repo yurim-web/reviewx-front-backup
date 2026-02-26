@@ -1,5 +1,5 @@
 /* ========================================
-   📊 SA 관리자 진행 현황 목업 데이터
+   SA 관리자 진행 현황 데이터
    ======================================== */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -10,10 +10,6 @@
  *
  * 사용 페이지:
  * - /manager_sa/campaign/progress (진행 현황 페이지)
- *
- * 주요 기능:
- * - 캠페인 통계 데이터
- * - 캠페인 목록 데이터 (각 캠페인 타입별 데이터에서 자동 생성)
  *
  */
 
@@ -370,7 +366,6 @@ function convert_mission_to_progress_item(
   // campaignInfo가 없는 경우 안전하게 처리
   // MissionCampaignDataExtended는 직접 필드들을 가지고 있으므로 campaign 자체를 사용
   if (!campaign || !campaign.id) {
-    console.warn("convert_mission_to_progress_item: 유효하지 않은 캠페인 데이터", campaign);
     return null;
   }
 
@@ -433,7 +428,6 @@ function convert_reporter_to_progress_item(
   // campaignInfo가 없는 경우 안전하게 처리
   // ReporterCampaignDataExtended는 직접 필드들을 가지고 있으므로 campaign 자체를 사용
   if (!campaign || !campaign.id) {
-    console.warn("convert_reporter_to_progress_item: 유효하지 않은 캠페인 데이터", campaign);
     return null;
   }
 
@@ -452,11 +446,7 @@ function convert_reporter_to_progress_item(
   // isUrgent가 true이면 무조건 "긴급" 상태로 설정 (최우선)
   if (campaign.isUrgent === true) {
     calculatedStatus = "긴급";
-  } else if (
-    campaign.status === "취소" ||
-    campaign.status === "긴급" ||
-    campaign.status === "등록 중"
-  ) {
+  } else if (campaign.status === "취소" || campaign.status === "긴급") {
     calculatedStatus = campaign.status as any;
   } else {
     // 날짜 기반으로 상태 계산 (등록 기간 종료일도 확인)
@@ -508,7 +498,6 @@ function convert_review_to_progress_item(
   // campaignInfo가 없는 경우 안전하게 처리
   // ReviewCampaignDataExtended는 직접 필드들을 가지고 있으므로 campaign 자체를 사용
   if (!campaign || !campaign.id) {
-    console.warn("convert_review_to_progress_item: 유효하지 않은 캠페인 데이터", campaign);
     return null;
   }
 
@@ -574,7 +563,6 @@ function convert_visit_to_progress_item(
   // campaignInfo가 없는 경우 안전하게 처리
   // VisitCampaignDataExtended는 직접 필드들을 가지고 있으므로 campaign 자체를 사용
   if (!campaign || !campaign.id) {
-    console.warn("convert_visit_to_progress_item: 유효하지 않은 캠페인 데이터", campaign);
     return null;
   }
 
@@ -734,9 +722,7 @@ function convert_campaign_with_applicants_to_progress_item(
           }
         }
       }
-    } catch (error) {
-      console.error("파트너명 조회 중 오류:", error);
-    }
+    } catch (_error) {}
   }
 
   return {
@@ -921,9 +907,7 @@ function get_stored_campaigns_as_progress_items(): CampaignProgressItem[] {
         });
       }
     }
-  } catch (error) {
-    console.error("localStorage에서 캠페인 로드 실패:", error);
-  }
+  } catch (_error) {}
 
   return stored_items;
 }

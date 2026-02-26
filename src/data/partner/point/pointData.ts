@@ -1,5 +1,5 @@
 /* ========================================
-   💰 파트너 포인트 데이터
+   파트너 포인트 데이터
    ======================================== */
 
 import { PartnerPointHistory, PartnerPointSummary } from "@/types/domain/partner";
@@ -79,8 +79,7 @@ export function getPartnerPointSummary(userId?: string): PartnerPointSummary {
     };
     localStorage.setItem(pointsKey, JSON.stringify(initialPoints));
     return initialPoints;
-  } catch (error) {
-    console.error("포인트 요약 정보 로드 중 오류:", error);
+  } catch (_error) {
     return {
       total_points: 0,
       available_points: 0,
@@ -246,8 +245,7 @@ export function getPartnerPointHistory(userId?: string): PartnerPointHistory[] {
 
     // Map을 배열로 변환하여 반환
     return Array.from(mockDataMap.values());
-  } catch (error) {
-    console.error("포인트 내역 로드 중 오류:", error);
+  } catch (_error) {
     // 오류 발생 시에도 목업 데이터는 반환
     return [...partnerPointHistoryData];
   }
@@ -294,7 +292,6 @@ export function addPointCharge(
       if (accountIndex >= 0) {
         accounts[accountIndex].current_points = newAvailablePoints;
         localStorage.setItem("partner_accounts", JSON.stringify(accounts));
-        console.log("✅ partner_accounts current_points 업데이트:", newAvailablePoints);
       }
     }
 
@@ -320,11 +317,7 @@ export function addPointCharge(
 
     storedHistory.unshift(newHistory); // 최신 내역을 맨 앞에 추가
     localStorage.setItem(historyKey, JSON.stringify(storedHistory));
-
-    console.log("포인트 충전 완료:", newHistory);
-  } catch (error) {
-    console.error("포인트 충전 중 오류:", error);
-  }
+  } catch (_error) {}
 }
 
 /**
@@ -369,12 +362,6 @@ export function usePartnerPoints(
         accounts[accountIndex].current_points = newAvailablePoints;
         accounts[accountIndex].used_points = (accounts[accountIndex].used_points || 0) + amount;
         localStorage.setItem("partner_accounts", JSON.stringify(accounts));
-        console.log(
-          "✅ partner_accounts 포인트 업데이트 - current:",
-          newAvailablePoints,
-          "used:",
-          accounts[accountIndex].used_points
-        );
       }
     }
 
@@ -398,10 +385,8 @@ export function usePartnerPoints(
     storedHistory.unshift(newHistory);
     localStorage.setItem(historyKey, JSON.stringify(storedHistory));
 
-    console.log("포인트 사용 완료:", newHistory);
     return true;
-  } catch (error) {
-    console.error("포인트 사용 중 오류:", error);
+  } catch (_error) {
     return false;
   }
 }
