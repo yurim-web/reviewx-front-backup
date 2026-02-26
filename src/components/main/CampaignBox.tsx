@@ -1,32 +1,21 @@
-// 메인 -> 캠페인 박스 컴포넌트
-// 이 컴포넌트는 메인페이지에서 각 캠페인을 카드 형태로 보여주는 역할을 합니다
+/* ========================================
+   홈 캠페인 박스 컴포넌트
+   ======================================== */
+/* eslint-disable @next/next/no-img-element */
 
 /**
- * 캠페인 박스 컴포넌트
+ * CampaignBox
  *
- * 사용처:
- * 1. HomePageClient.tsx - 메인 홈 페이지
- *    - 선정 확률 높은 캠페인 섹션
- *    - 지금 인기 많은 캠페인 섹션
- *    - 진행 중인 캠페인 섹션
+ * 목적: 홈 페이지에서 캠페인 카드를 그리드로 표시
  *
- * 2. CampaignListPage.tsx - 캠페인 목록 페이지
- *    - 배송형 캠페인 목록 페이지 (/campaign/delivery)
- *    - 방문형 캠페인 목록 페이지 (/campaign/visit)
- *    - 구매평 캠페인 목록 페이지 (/campaign/review)
- *    - 미션형 캠페인 목록 페이지 (/campaign/mission)
- *    - 기자단 캠페인 목록 페이지 (/campaign/reporter)
- *
- * 3. SearchResultsSection.tsx - 검색 결과 섹션
- *    - 검색 결과 캠페인 목록 표시
- *
- * 클라이언트 컴포넌트로 선언
- *
- * 설명:
- * - "use client" 지시어를 사용하여 이 컴포넌트를 클라이언트 컴포넌트로 만듭니다.
- * - new Date()를 사용하여 날짜를 계산하므로 서버와 클라이언트에서 다른 결과가 나올 수 있습니다.
- * - useState와 useEffect를 사용하여 클라이언트에서만 날짜를 계산하여 Hydration 오류를 방지합니다.
- *
+ * 사용 페이지:
+ * - / (홈 페이지 - 선정 확률 높은 캠페인, 인기 캠페인, 진행 중 캠페인 섹션)
+ * - /campaign/delivery (배송형 캠페인 목록)
+ * - /campaign/visit (방문형 캠페인 목록)
+ * - /campaign/review (구매평 캠페인 목록)
+ * - /campaign/mission (미션형 캠페인 목록)
+ * - /campaign/reporter (기자단 캠페인 목록)
+ * - /search (검색 결과 페이지)
  */
 "use client";
 

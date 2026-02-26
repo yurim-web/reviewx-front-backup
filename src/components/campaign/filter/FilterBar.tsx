@@ -1,6 +1,7 @@
 /* ========================================
    🔍 필터/정렬 바 컴포넌트
    ======================================== */
+/* eslint-disable @next/next/no-img-element */
 
 /**
  * 필터/정렬 바 컴포넌트
@@ -27,11 +28,12 @@
 
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect } from "react";
 import mainStyles from "../../../styles/filter/filter_bar/main.module.css";
 import ModalFilter from "./ModalFilter";
 import RegionFilter from "./RegionFilter";
 import SortModalFilter from "./SortModalFilter";
+import { useDragScroll } from "@/hooks/common/useDragScroll";
 
 // FilterBar 컴포넌트의 props 타입 정의
 interface FilterBarProps {
@@ -87,10 +89,7 @@ export default function FilterBar({
   // 모달이 열릴 때 body 스크롤 방지
   useEffect(() => {
     const hasOpenModal =
-      isCategoryModalOpen ||
-      isChannelModalOpen ||
-      isRegionModalOpen ||
-      isSortModalOpen;
+      isCategoryModalOpen || isChannelModalOpen || isRegionModalOpen || isSortModalOpen;
 
     if (hasOpenModal) {
       document.body.style.overflow = "hidden";
@@ -102,12 +101,7 @@ export default function FilterBar({
     return () => {
       document.body.style.overflow = "unset";
     };
-  }, [
-    isCategoryModalOpen,
-    isChannelModalOpen,
-    isRegionModalOpen,
-    isSortModalOpen,
-  ]);
+  }, [isCategoryModalOpen, isChannelModalOpen, isRegionModalOpen, isSortModalOpen]);
 
   /* ========================================
      모달 열기 함수
@@ -147,9 +141,7 @@ export default function FilterBar({
   };
 
   // 정렬 선택/해제 핸들러 (모달 내부용) - 선택 즉시 적용
-  const handleSortToggle = (
-    option: string | { value: string; label: string }
-  ) => {
+  const handleSortToggle = (option: string | { value: string; label: string }) => {
     const sort = typeof option === "string" ? option : option.value;
     setTempSort(sort);
     setSelectedSort(sort);
@@ -162,9 +154,7 @@ export default function FilterBar({
      ======================================== */
 
   // 모달 내에서 카테고리 선택/해제 핸들러
-  const handleCategoryToggle = (
-    option: string | { value: string; label: string }
-  ) => {
+  const handleCategoryToggle = (option: string | { value: string; label: string }) => {
     const category = typeof option === "string" ? option : option.value;
     if (category === "전체") {
       // "전체" 선택 시: 모든 항목이 선택되어 있으면 전체 해제, 아니면 전체 선택
@@ -185,9 +175,7 @@ export default function FilterBar({
   };
 
   // 모달 내에서 채널 선택/해제 핸들러
-  const handleChannelToggle = (
-    option: string | { value: string; label: string }
-  ) => {
+  const handleChannelToggle = (option: string | { value: string; label: string }) => {
     const channel = typeof option === "string" ? option : option.value;
     if (channel === "전체") {
       // "전체" 선택 시: 모든 항목이 선택되어 있으면 전체 해제, 아니면 전체 선택
@@ -257,38 +245,11 @@ export default function FilterBar({
   /* ========================================
      PC에서 활성 필터 태그 영역 마우스 드래그로 가로 스크롤
      ======================================== */
-  const activeFiltersRef = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const startXRef = useRef(0);
-
-  const handleDragMove = useCallback((e: MouseEvent) => {
-    if (!activeFiltersRef.current) return;
-    const dx = startXRef.current - e.clientX;
-    activeFiltersRef.current.scrollLeft += dx;
-    startXRef.current = e.clientX;
-  }, []);
-
-  const handleDragEnd = useCallback(() => {
-    setIsDragging(false);
-    document.removeEventListener("mousemove", handleDragMove);
-    document.removeEventListener("mouseup", handleDragEnd);
-    document.body.style.userSelect = "";
-    document.body.style.cursor = "";
-  }, [handleDragMove]);
-
-  const handleDragStart = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if ((e.target as HTMLElement).closest(`.${mainStyles.remove_tag}`)) return;
-      if (!activeFiltersRef.current) return;
-      setIsDragging(true);
-      startXRef.current = e.clientX;
-      document.addEventListener("mousemove", handleDragMove);
-      document.addEventListener("mouseup", handleDragEnd);
-      document.body.style.userSelect = "none";
-      document.body.style.cursor = "pointer";
-    },
-    [handleDragMove, handleDragEnd]
-  );
+  const {
+    containerRef: activeFiltersRef,
+    isDragging,
+    handleDragStart,
+  } = useDragScroll({ skipSelector: `.${mainStyles.remove_tag}` });
 
   /* ========================================
      필터 제거 함수
@@ -297,8 +258,7 @@ export default function FilterBar({
   // 활성 필터 태그에서 채널 제거하는 함수
   const handleChannelRemove = (channel: string) => {
     // 현재 활성화된 채널 목록에서 해당 채널을 제거
-    const newChannels =
-      activeFilters.channels?.filter((c) => c !== channel) || [];
+    const newChannels = activeFilters.channels?.filter((c) => c !== channel) || [];
     // 부모 컴포넌트에 변경된 채널 목록을 전달
     onFilterChange?.({
       channel: newChannels.join(","),
@@ -308,8 +268,7 @@ export default function FilterBar({
   // 활성 필터 태그에서 카테고리 제거하는 함수
   const handleCategoryRemove = (category: string) => {
     // 현재 활성화된 카테고리 목록에서 해당 카테고리를 제거
-    const newCategories =
-      activeFilters.categories?.filter((c) => c !== category) || [];
+    const newCategories = activeFilters.categories?.filter((c) => c !== category) || [];
     // 부모 컴포넌트에 변경된 카테고리 목록을 전달
     onFilterChange?.({
       category: newCategories.join(","),
@@ -424,10 +383,7 @@ export default function FilterBar({
           </div>
 
           {/* 정렬 버튼 (모달 열기) - 데스크톱용 */}
-          <button
-            className={mainStyles.sort_button}
-            onClick={handleSortButtonClick}
-          >
+          <button className={mainStyles.sort_button} onClick={handleSortButtonClick}>
             <span>{selectedSort}</span>
             <img
               src="/images/filter/dropdown_icon.svg"
@@ -520,10 +476,7 @@ export default function FilterBar({
 
       {/* 정렬 버튼 (모달 열기) - 모바일용 (필터 바 border 아래) */}
       <div className={mainStyles.sort_button_container}>
-        <button
-          className={mainStyles.sort_button}
-          onClick={handleSortButtonClick}
-        >
+        <button className={mainStyles.sort_button} onClick={handleSortButtonClick}>
           <span>{selectedSort}</span>
           <img
             src="/images/filter/dropdown_icon.svg"

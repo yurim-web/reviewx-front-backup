@@ -1,27 +1,15 @@
 /* ========================================
-   📄 메인 푸터 컴포넌트
+   푸터 컴포넌트
    ======================================== */
+/* eslint-disable @next/next/no-img-element */
 
 /**
- * 메인 푸터 컴포넌트
+ * Footer
  *
- * 목적: 메인 홈, 캠페인 목록, 검색 결과 페이지 하단에 표시되는 푸터입니다.
+ * 목적: 앱 전체 하단 푸터 표시
  *
- * 사용 위치:
- * - / (메인 홈 페이지)
- * - /user (유저 메인 홈 페이지)
- * - /partner (파트너 메인 홈 페이지)
- * - /campaign/delivery (배송형 캠페인 목록)
- * - /campaign/visit (방문형 캠페인 목록)
- * - /campaign/review (구매평 캠페인 목록)
- * - /campaign/mission (미션형 캠페인 목록)
- * - /campaign/reporter (기자단 캠페인 목록)
- * - /search (검색 결과 페이지)
- *
- * 주요 기능:
- * - 회사 정보 표시
- * - 개인정보처리방침, 이용약관, 사업자 정보 링크
- * - 저작권 정보 표시
+ * 사용 페이지:
+ * - 전체 레이아웃 (홈, 캠페인 목록, 검색 결과 등 모든 페이지)
  */
 
 "use client";
@@ -45,11 +33,7 @@ export default function Footer() {
           <div className={styles.left_group}>
             {/* 로고 + 회사명 (모바일에서 회사명 표시) */}
             <div className={styles.logo_container}>
-              <img
-                src="/images/footer/footer_logo.svg"
-                alt="Mark-X"
-                className={styles.logo}
-              />
+              <img src="/images/footer/footer_logo.svg" alt="Mark-X" className={styles.logo} />
               <span className={styles.company_name}>주식회사 마크엑스</span>
             </div>
 
@@ -80,9 +64,7 @@ export default function Footer() {
           </div>
 
           {/* 저작권 정보 */}
-          <p className={styles.copyright}>
-            © 2025 Mark-X Co., Ltd. All rights reserved.
-          </p>
+          <p className={styles.copyright}>© 2025 Mark-X Co., Ltd. All rights reserved.</p>
         </div>
 
         {is_business_info_open && (
