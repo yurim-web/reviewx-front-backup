@@ -304,9 +304,7 @@ export default function ReviewCampaignEditPage() {
         );
       }
 
-      // console.log("구매평 캠페인 수정 완료:", updatedCampaign);
-
-      // 토스트 메시지 표시
+      //      // 토스트 메시지 표시
       setToast({ is_open: true, message: "저장되었습니다." });
 
       // 페이지 새로고침

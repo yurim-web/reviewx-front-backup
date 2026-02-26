@@ -234,27 +234,19 @@ function PartnerEditProfilePage() {
         business_document_file_name: formData.businessDocument, // 사업자등록증 파일명 저장 (새로고침 후 복원)
       };
 
-      // console.log('🖼️ [수정 페이지] 저장할 profileImage:', profileImage);
-      // console.log('📝 [수정 페이지] updatedAccount:', updatedAccount);
-      // console.log('📍 [수정 페이지] accountIndex:', accountIndex);
-
-      if (accountIndex >= 0) {
-        // 기존 계정 업데이트
-        accounts[accountIndex] = {
-          ...accounts[accountIndex],
-          ...updatedAccount,
-        };
-        // console.log('🔄 [수정 페이지] 기존 계정 업데이트됨');
-      } else {
-        // 새 계정 추가
-        accounts.push(updatedAccount);
-        // console.log('➕ [수정 페이지] 새 계정 추가됨');
-      }
+      //      //      //      if (accountIndex >= 0) {
+      // 기존 계정 업데이트
+      accounts[accountIndex] = {
+        ...accounts[accountIndex],
+        ...updatedAccount,
+      };
+      //      } else {
+      // 새 계정 추가
+      accounts.push(updatedAccount);
+      //      }
 
       localStorage.setItem("partner_accounts", JSON.stringify(accounts));
-      // console.log('✅ [수정 페이지] partner_accounts 저장 완료:', accounts);
-
-      // 저장 성공 시 토스트 메시지 표시 및 등록 완료 배지 표시
+      //      // 저장 성공 시 토스트 메시지 표시 및 등록 완료 배지 표시
       setShowToast(true);
       setIsBusinessDocumentUploaded(true);
       setHasSelectedNewFileThisSession(false); // 저장했으므로 다시 "등록 완료" 표시

@@ -1,18 +1,14 @@
 /* ========================================
-   🎯 미션형 캠페인 상세 페이지
+   미션형 캠페인 상세 페이지
    ======================================== */
 
 /**
- * 미션형 캠페인 상세 페이지
+ * MissionDetailPage
  *
- * 페이지 경로:
- * - /mission/[id] (기존 /user/mission/[id]에서 변경)
+ * 목적: 미션형 캠페인 상세 정보 표시
  *
- * 사용 파일:
- * - 컴포넌트: CampaignDetailPage
- * - 훅: useCampaignDetailScroll
- * - 데이터: missionCampaigns
- * - CSS: campaign_detail.module.css
+ * 사용 페이지:
+ * - /campaign/mission/[id] (미션형 캠페인 상세)
  */
 
 "use client";
@@ -195,9 +191,7 @@ function convertToMissionCampaignData(
         // "모집 오픈" 텍스트와 함께 반환
         return `${formattedDate}\n모집 오픈`;
       }
-    } catch (error) {
-      console.error("[generateSchedule] 날짜 포맷팅 실패:", error);
-    }
+    } catch (_error) {}
 
     return "";
   };
@@ -257,7 +251,6 @@ export default function MissionDetailPage({ params }: MissionDetailPageProps) {
     });
 
     if (staticCampaign) {
-      console.log(`[미션형 캠페인] 목업 데이터에서 캠페인 찾음: ID=${staticCampaign.id}`);
       // staticCampaign은 이미 MissionCampaignData 형식
       const finalCampaign: MissionCampaignData = {
         ...staticCampaign,
@@ -283,22 +276,16 @@ export default function MissionDetailPage({ params }: MissionDetailPageProps) {
             return normalizedCampaignId === normalizedUrlId;
           });
           if (storedCampaign) {
-            console.log(
-              `[미션형 캠페인] localStorage에서 캠페인 찾음: ID=${storedCampaign.campaignInfo.id}`
-            );
             const convertedCampaign = convertToMissionCampaignData(storedCampaign);
             setCampaign(convertedCampaign);
             setIsLoading(false);
             return;
           }
         }
-      } catch (error) {
-        console.error("localStorage에서 캠페인 불러오기 실패:", error);
-      }
+      } catch (_error) {}
     }
 
     // 3. 목업과 localStorage 모두에서 찾지 못한 경우
-    console.warn(`[미션형 캠페인] 캠페인을 찾을 수 없습니다: ID=${id}`);
     setCampaign(null);
     setIsLoading(false);
   }, [id]);

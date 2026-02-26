@@ -116,7 +116,7 @@ import styles from "@/styles/partner/signup/partner_signup.module.css";
  *    - 휴대폰 인증 관련 에러는 PhoneVerification 컴포넌트 내부에서 관리됩니다.
  */
 export default function PartnerSignupPage() {
-  const router = useRouter();
+  const _router = useRouter();
 
   // ========================================
   // 상태 관리 (State Management)
@@ -389,8 +389,7 @@ export default function PartnerSignupPage() {
 
       partnerAccounts.push(newPartnerAccount);
       localStorage.setItem("partner_accounts", JSON.stringify(partnerAccounts));
-      // console.log('파트너 회원가입 성공!', newPartnerAccount);
-      router.push(`/partner/signup/complete?name=${encodeURIComponent(name)}`);
+      //      router.push(`/partner/signup/complete?name=${encodeURIComponent(name)}`);
     } catch (_error) {
       alert("회원가입 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
     }
