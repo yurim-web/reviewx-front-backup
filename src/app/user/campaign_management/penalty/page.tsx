@@ -20,7 +20,6 @@ import PenaltyContent from "@/components/common/campaign_management/penalty/Pena
 import type { MainTab, StatTab } from "@/types/domain/user";
 import layoutStyles from "@/styles/user/campaign_management/campaign_management_layout.module.css";
 import cardStyles from "../../../../styles/user/campaign_management/campaign_card.module.css";
-import { userPenaltyData, userPenaltyStatus } from "@/data/user/penaltyData";
 
 export default function PenaltyPage() {
   const router = useRouter();
@@ -63,7 +62,10 @@ export default function PenaltyPage() {
         />
 
         <div className={cardStyles.penalty_list}>
-          <PenaltyContent penaltyData={userPenaltyData} userStatus={userPenaltyStatus} />
+          <PenaltyContent
+            penaltyData={[]}
+            userStatus={{ currentStatus: "활동 가능", penaltyCount: 0 }}
+          />
         </div>
       </div>
     </div>
