@@ -1,4 +1,16 @@
-// 헤더
+/* ========================================
+   메인 헤더 컴포넌트
+   ======================================== */
+
+/**
+ * Header
+ *
+ * 목적: 앱 상단 메인 헤더 (검색, 알림, 내비게이션)
+ *
+ * 사용 페이지:
+ * - / (홈 및 리뷰어 전체 레이아웃)
+ */
+
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -16,7 +28,7 @@ export default function Header({ has_notifications }: HeaderProps) {
   const { user, logout } = useAuth();
   const pathname = usePathname();
 
-  const handleLogout = () => {
+  const _handleLogout = () => {
     logout();
   };
 
@@ -32,8 +44,7 @@ export default function Header({ has_notifications }: HeaderProps) {
   }, []);
 
   // 알림 활성 여부 계산
-  const effective_has_notifications =
-    has_notifications ?? mockReviewerNotifications.length > 0;
+  const effective_has_notifications = has_notifications ?? mockReviewerNotifications.length > 0;
 
   // 관리자 로그인 페이지 또는 비로그인 시 알림 비활성
   const showNotificationActive =
@@ -60,15 +71,19 @@ export default function Header({ has_notifications }: HeaderProps) {
     : "/images/header/header_search.svg";
 
   const notificationIconSrc = isMobile
-    ? (showNotificationActive ? "/images/header/mobile/mo_notification_ok.svg" : "/images/header/mobile/mo_notification_icon.svg")
-    : (showNotificationActive ? "/images/header/notification_ok.svg" : "/images/header/notification_icon.svg");
+    ? showNotificationActive
+      ? "/images/header/mobile/mo_notification_ok.svg"
+      : "/images/header/mobile/mo_notification_icon.svg"
+    : showNotificationActive
+      ? "/images/header/notification_ok.svg"
+      : "/images/header/notification_icon.svg";
 
   const userIconSrc = isMobile
     ? "/images/header/mobile/mo_user.svg"
     : "/images/header/header_user.svg";
 
   return (
-    <header>
+    <header className={styles.header_root}>
       <nav className={styles.header_container}>
         <Link href="/user" className={styles.header_logo} style={iconVisibility}>
           <img src={logoSrc} alt="VX 로고" />
@@ -77,11 +92,7 @@ export default function Header({ has_notifications }: HeaderProps) {
           <HeaderSearch searchIconSrc={searchIconSrc} />
 
           {user && (
-            <Link
-              href="/user/notification"
-              className={styles.notification_icon}
-              aria-label="알림"
-            >
+            <Link href="/user/notification" className={styles.notification_icon} aria-label="알림">
               <img src={notificationIconSrc} alt="bell_icon" />
             </Link>
           )}

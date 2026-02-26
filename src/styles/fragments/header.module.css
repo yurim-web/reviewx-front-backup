@@ -21,7 +21,7 @@
  * - /partner/campaign_contents/* (파트너 캠페인 콘텐츠 내역 페이지)
  */
 /* 상단에 고정되는 메인 헤더 */
-:global(header) {
+.header_root {
   position: fixed;
   top: 0;
   left: 0;
@@ -46,8 +46,8 @@
 
 /* 헤더로고 부분 */
 .header_logo {
-  color: #FF5694;
-  font-family: 'Poppins', sans-serif;
+  color: #ff5694;
+  font-family: "Poppins", sans-serif;
   font-size: 20px;
   font-style: normal;
   font-weight: 700;
@@ -118,9 +118,9 @@
   gap: 8px;
   padding: 16px 20px;
   height: 48px;
-  border-radius: 24px; 
+  border-radius: 24px;
   background-color: #ffffff;
-  border: 1px solid #ff5694; 
+  border: 1px solid #ff5694;
   max-width: 240px; /* 기본 최대 */
   flex: 1 1 auto; /* 남는 공간만큼 커지고, 필요하면 줄어듦 */
   min-width: 0; /* flex 아이템 축소 허용 */
@@ -133,10 +133,10 @@
   background: transparent;
 
   color: #444;
-font-size: 16px;
-font-weight: 500;
-line-height: 16px; 
-letter-spacing: -0.32px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.32px;
   flex: 1;
   min-width: 0;
   max-width: none;
@@ -167,8 +167,8 @@ letter-spacing: -0.32px;
 
 /* 새로운 캠페인 등록 버튼 */
 .new_campaign_button {
-  background: #ff5694; 
-  color: #ffffff; 
+  background: #ff5694;
+  color: #ffffff;
   padding: 8px 12px;
   border-radius: 4px;
   text-align: right;
@@ -176,11 +176,11 @@ letter-spacing: -0.32px;
   font-size: 16px;
   font-style: normal;
   font-weight: 600;
-  line-height: 16px; 
+  line-height: 16px;
   letter-spacing: -0.32px;
   cursor: pointer;
-  text-decoration: none; 
-  display: inline-block; 
+  text-decoration: none;
+  display: inline-block;
   width: 113px !important;
   white-space: nowrap;
 }
@@ -302,8 +302,6 @@ letter-spacing: -0.32px;
   object-fit: contain;
 }
 
-
-
 /* 📱 ================================================================================================
    모바일 반응형 스타일 (max-width: 768px)
 ================================================================================================ 📱 */
@@ -331,7 +329,7 @@ letter-spacing: -0.32px;
   .menu_icon_box > button {
     width: 24px;
     height: 24px;
-   
+
     display: flex;
     align-items: center;
     justify-content: center;
@@ -378,7 +376,7 @@ letter-spacing: -0.32px;
     max-width: none;
     color: #444;
     font-size: 14px;
-    line-height: 14px; 
+    line-height: 14px;
   }
 
   .search_icon_button {
@@ -469,7 +467,7 @@ letter-spacing: -0.32px;
 
 /* 헤더 높이 조정 - 전역 설정 */
 @media (max-width: 768px) {
-  :global(header) {
+  .header_root {
     height: 64px;
   }
 }
@@ -478,5 +476,3 @@ letter-spacing: -0.32px;
 .hide_on_mobile {
   display: none !important;
 }
-
-
