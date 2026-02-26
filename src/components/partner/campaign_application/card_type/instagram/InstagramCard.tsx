@@ -84,7 +84,8 @@ export default function InstagramCard({ applicant, onSelect }: InstagramCardProp
             src={applicant.profileImage || "/images/mypage/profile.svg"}
             alt="프로필"
             className={contentStyles.profile_image}
-            fill
+            width={40}
+            height={40}
           />
         </div>
 
@@ -103,7 +104,8 @@ export default function InstagramCard({ applicant, onSelect }: InstagramCardProp
           src={channel_icon_src}
           alt="인스타그램"
           className={contentStyles.channel_icon}
-          fill
+          width={14}
+          height={14}
         />
         {/* 신청자 아이디 표시 - 클릭 시 해당 채널로 이동 */}
         <a

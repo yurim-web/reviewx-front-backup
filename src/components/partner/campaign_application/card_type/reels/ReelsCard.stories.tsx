@@ -1,7 +1,14 @@
+/* ========================================
+   릴스 신청자 카드 스토리북
+   ======================================== */
+
 /**
- * ReelsCard 컴포넌트 스토리북
+ * ReelsCard.stories
  *
- * 릴스 신청자 카드 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 인스타그램 릴스 채널 신청자 카드 컴포넌트 문서화
+ *
+ * 사용 페이지:
+ * - Storybook (개발 환경 컴포넌트 문서)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
@@ -46,7 +53,7 @@ export default meta;
 
 type Story = StoryObj<typeof ReelsCard>;
 
-const renderReelsCard = (args: typeof ReelsCard) => {
+const renderReelsCard = (args: React.ComponentProps<typeof ReelsCard>) => {
   return React.createElement(ReelsCard, args);
 };
 
@@ -80,16 +87,3 @@ export const HighFollowers: Story = {
     onSelect: (id) => console.log("Selected applicant:", id),
   },
 };
-
-/**
- * 학습 포인트:
- *
- * 1. 릴스 특화 카드 컴포넌트
- *    - 릴스 채널 신청자 전용 카드입니다
- *    - InstagramApplicant 타입을 사용합니다 (팔로워 수 포함)
- *
- * 2. 릴스 특화 기능
- *    - 짧은 영상 콘텐츠 중심의 리뷰에 최적화
- *    - 세로형 영상 콘텐츠 활용
- */
-

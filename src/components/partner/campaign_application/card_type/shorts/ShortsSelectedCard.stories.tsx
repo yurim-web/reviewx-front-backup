@@ -1,7 +1,14 @@
+/* ========================================
+   숏츠 선정자 카드 스토리북
+   ======================================== */
+
 /**
- * ShortsSelectedCard 컴포넌트 스토리북
+ * ShortsSelectedCard.stories
  *
- * 숏츠 선정된 카드 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 유튜브 숏츠 채널 선정자 카드 컴포넌트 문서화
+ *
+ * 사용 페이지:
+ * - Storybook (개발 환경 컴포넌트 문서)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
@@ -16,8 +23,9 @@ const mockYoutubeApplicant: YoutubeApplicant = {
   profileImage: "/images/test_img/profile_test.png",
   memberType: "모범 회원",
   subscribers: 10000,
-  videos: 200,
-  channel: "숏츠",
+  memo: "",
+  selectionStatus: "미선택",
+  channel: "유튜브",
   registrationDate: "2024-01-15",
 };
 

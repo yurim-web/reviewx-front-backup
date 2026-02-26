@@ -67,7 +67,7 @@ export const Default: Story = {
  */
 export const UrgentChecked: Story = {
   render: (args) => {
-    const [isUrgent, setIsUrgent] = useState(args.initialUrgent || true);
+    const [isUrgent, setIsUrgent] = useState<boolean>(args.initialUrgent ?? true);
 
     return React.createElement(PageHeader, {
       ...args,
@@ -126,4 +126,3 @@ export const CustomTitle: Story = {
  *    - isUrgent에 따라 urgent_checked 클래스와 색상을 변경합니다
  *    - 인라인 스타일과 CSS 클래스를 함께 사용합니다
  */
-

@@ -85,7 +85,8 @@ export default function InstagramSelectedCard({ applicant, onCancel }: Instagram
             src={applicant.profileImage || "/images/mypage/profile.svg"}
             alt="프로필"
             className={contentStyles.profile_image}
-            fill
+            width={40}
+            height={40}
           />
         </div>
         <div className={contentStyles.profile_info}>
@@ -108,7 +109,8 @@ export default function InstagramSelectedCard({ applicant, onCancel }: Instagram
           src={channel_icon_src}
           alt="인스타그램"
           className={contentStyles.channel_icon}
-          fill
+          width={14}
+          height={14}
         />
 
         <a

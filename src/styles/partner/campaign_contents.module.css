@@ -75,7 +75,7 @@
    ======================================== */
 @media (max-width: 768px) {
   /* Hide PartnerSubHeader on mobile for campaign contents pages */
-  :global(.gradient_bar) {
+  .contents_wrapper :global(.gradient_bar) {
     display: none !important;
   }
 }

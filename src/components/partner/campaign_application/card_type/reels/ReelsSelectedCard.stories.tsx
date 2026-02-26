@@ -1,7 +1,14 @@
+/* ========================================
+   릴스 선정자 카드 스토리북
+   ======================================== */
+
 /**
- * ReelsSelectedCard 컴포넌트 스토리북
+ * ReelsSelectedCard.stories
  *
- * 릴스 선정된 카드 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 인스타그램 릴스 채널 선정자 카드 컴포넌트 문서화
+ *
+ * 사용 페이지:
+ * - Storybook (개발 환경 컴포넌트 문서)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
@@ -16,7 +23,8 @@ const mockInstagramApplicant: InstagramApplicant = {
   profileImage: "/images/test_img/profile_test.png",
   memberType: "모범 회원",
   followers: 5000,
-  posts: 100,
+  memo: "",
+  selectionStatus: "미선택",
   channel: "릴스",
   registrationDate: "2024-01-15",
 };

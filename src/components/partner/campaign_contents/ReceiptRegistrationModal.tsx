@@ -1,15 +1,14 @@
 /* ========================================
-   📄 구매 영수증 등록 모달 컴포넌트
+   구매 영수증 등록 모달 컴포넌트
    ======================================== */
 
 /**
- * 구매 영수증 등록 모달 컴포넌트
+ * ReceiptRegistrationModal
  *
- * 목적: 파트너가 구매 영수증을 등록할 수 있는 모달입니다.
+ * 목적: 파트너 구매 영수증 등록 모달
  *
  * 사용 페이지:
- * - 파트너 캠페인 관리 페이지에서 "구매 영수증 등록하기" 버튼 클릭 시
- *
+ * - /partner/campaign/[id]/contents (구매평 캠페인 콘텐츠 관리)
  */
 
 "use client";
@@ -83,9 +82,7 @@ export default function ReceiptRegistrationModal({
 
     try {
       // TODO: 실제 API 호출로 영수증 등록
-      // console.log("영수증 등록:", uploadedImages);
-
-      // 성공 시 모달 닫기
+      //      // 성공 시 모달 닫기
       alert("영수증이 성공적으로 등록되었습니다.");
       onClose();
     } catch (_error) {

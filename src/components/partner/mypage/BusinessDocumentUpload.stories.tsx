@@ -40,9 +40,7 @@ export const Default: Story = {
   args: {
     fileName: "",
     isUploaded: false,
-    onFileSelect: (file) => {
-      console.log("File selected:", file.name);
-    },
+    onFileSelect: (_file) => {},
   },
 };
 
@@ -55,8 +53,6 @@ export const Uploaded: Story = {
   args: {
     fileName: "사업자등록증.pdf",
     isUploaded: true,
-    onFileSelect: (file) => {
-      console.log("File selected:", file.name);
-    },
+    onFileSelect: (_file) => {},
   },
 };

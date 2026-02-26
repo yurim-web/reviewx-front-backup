@@ -89,12 +89,11 @@ export default function AmountInput({
 
     if (onValidationChange) {
       const amount = parseFormattedAmount(formattedValue);
-      const validation = validateAmount(
-        amount,
+      const validation = validateAmount(amount, {
         minAmount,
         maxAmount,
-        availablePoints
-      );
+        availablePoints,
+      });
       onValidationChange(validation.isValid, validation.errorMessage);
     }
   };
@@ -102,10 +101,7 @@ export default function AmountInput({
   const displayErrorMessage = externalErrorMessage;
 
   return (
-    <div
-      className={className}
-      style={{ display: "flex", flexDirection: "column", gap: "12px" }}
-    >
+    <div className={className} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
       {label && <label className={labelClassName || ""}>{label}</label>}
       <input
         id={id}

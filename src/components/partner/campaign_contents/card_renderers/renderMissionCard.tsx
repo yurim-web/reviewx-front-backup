@@ -1,11 +1,11 @@
 /* ========================================
-🎴 Mission 카드 렌더러
-======================================== */
+   Mission 카드 렌더러
+   ======================================== */
 
 /**
- * Mission 카드 렌더러
+ * renderMissionCard
  *
- * 목적: mission 캠페인에서 사용하는 Mission 카드 렌더링 로직
+ * 목적: mission 캠페인의 Mission 카드 렌더링 로직
  *
  * 사용 페이지:
  * - /partner/campaign_contents/mission/[id]
@@ -23,6 +23,7 @@ interface ContentItemExtended extends ContentItem {
   extension_request_reason?: string;
   isExtensionApproved?: boolean;
   extendedDeadline?: string;
+  isLateSubmission?: boolean;
 }
 
 interface RenderMissionCardParams {
@@ -58,7 +59,7 @@ export function createMissionCardRenderer(params: RenderMissionCardParams) {
       missionType: 1,
     };
 
-    const dateLabel: "등록" | "수정" | "지각 등록" = item.isLateSubmission
+    const dateLabel: "등록" | "수정" | "지각 등록" = (item as ContentItemExtended).isLateSubmission
       ? "지각 등록"
       : item.updatedAt
         ? "수정"
@@ -113,7 +114,9 @@ export function createMissionCardRenderer(params: RenderMissionCardParams) {
             // TODO: 이미지 확인 모달 구현
           }}
           onApprove={params.handleApprove}
-          onReject={(applicantId, rejectReason) => params.handleReject(applicantId, rejectReason)}
+          onReject={(applicantId, rejectReason) =>
+            params.handleReject(applicantId, rejectReason ?? "")
+          }
           onExtend={params.handleExtend}
           onReport={params.handleReport}
           contentType={params.contentType}

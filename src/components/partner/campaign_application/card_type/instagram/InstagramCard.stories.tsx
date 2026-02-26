@@ -1,12 +1,14 @@
+/* ========================================
+   인스타그램 신청자 카드 스토리북
+   ======================================== */
+
 /**
- * InstagramCard 컴포넌트 스토리북
+ * InstagramCard.stories
  *
- * 인스타그램 신청자 카드 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 인스타그램 채널 신청자 카드 컴포넌트 문서화
  *
- * Storybook이란?
- * - 컴포넌트를 독립적으로 개발하고 테스트할 수 있는 도구입니다
- * - 다양한 props 조합으로 컴포넌트의 동작을 확인할 수 있습니다
- * - 디자이너와 개발자가 협업하기 좋은 도구입니다
+ * 사용 페이지:
+ * - Storybook (개발 환경 컴포넌트 문서)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
@@ -29,7 +31,6 @@ const mockInstagramApplicant: InstagramApplicant = {
   registrationDate: "2024-01-15",
 };
 
-// Meta 타입: Storybook에서 컴포넌트의 메타데이터를 정의합니다
 const meta: Meta<typeof InstagramCard> = {
   title: "Partner/CampaignApplication/CardType/Instagram/InstagramCard",
   component: InstagramCard,
@@ -51,11 +52,9 @@ const meta: Meta<typeof InstagramCard> = {
 
 export default meta;
 
-// StoryObj 타입: 개별 스토리의 타입을 정의합니다
 type Story = StoryObj<typeof InstagramCard>;
 
-// 안정적인 render 함수를 컴포넌트 외부에 정의 (깜빡임 방지)
-const renderInstagramCard = (args: typeof InstagramCard) => {
+const renderInstagramCard = (args: React.ComponentProps<typeof InstagramCard>) => {
   return React.createElement(InstagramCard, args);
 };
 
@@ -140,30 +139,3 @@ export const Reviewer: Story = {
     onSelect: (id) => console.log("Selected applicant:", id),
   },
 };
-
-/**
- * 학습 포인트:
- *
- * 1. 인스타그램 특화 카드 컴포넌트
- *    - 인스타그램 채널 신청자 전용 카드입니다
- *    - 팔로워 수를 중심으로 통계를 표시합니다
- *
- * 2. 팔로워 수 표시
- *    - toLocaleString()으로 숫자를 천 단위 콤마로 표시합니다
- *    - 예: 122838 -> "122,838"
- *    - 인스타그램에서는 팔로워 수가 가장 중요한 지표입니다
- *
- * 3. 채널 아이콘
- *    - getChannelLogo() 유틸리티 함수로 인스타그램 로고를 가져옵니다
- *    - 중앙 집중식 관리로 유지보수가 용이합니다
- *
- * 4. 인스타그램 특화 기능
- *    - 시각적 콘텐츠 중심의 리뷰에 최적화
- *    - 스토리/피드 게시물 활용
- *    - 해시태그 및 멘션 기능
- *
- * 5. 조건부 렌더링
- *    - selectionStatus에 따라 다른 버튼을 표시합니다
- *    - "미선택" 상태: "선정하기" 버튼
- *    - "이용제한 계정" 상태: "이용 제한 계정" 버튼 (disabled)
- */

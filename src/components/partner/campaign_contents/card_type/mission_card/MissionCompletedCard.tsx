@@ -133,8 +133,7 @@ export default function MissionCompletedCard({
             <button
               className={actionStyles.content_check_button}
               onClick={() => {
-                // console.log("이미지 확인 클릭", applicant.id);
-                receiptModal.open();
+                //                receiptModal.open();
               }}
             >
               이미지 확인
@@ -142,7 +141,6 @@ export default function MissionCompletedCard({
             <button
               className={actionStyles.content_check_button}
               onClick={() => {
-                // console.log("링크 확인 클릭", applicant.id);
                 const url = getChannelUrl(applicant.channel, applicant.channelId);
                 if (url && url !== "#") {
                   window.open(url, "_blank", "noopener,noreferrer");
@@ -157,8 +155,7 @@ export default function MissionCompletedCard({
           <button
             className={actionStyles.content_check_button}
             onClick={() => {
-              // console.log("이미지 확인 클릭", applicant.id);
-              receiptModal.open();
+              //              receiptModal.open();
             }}
           >
             이미지 확인
@@ -168,7 +165,6 @@ export default function MissionCompletedCard({
           <button
             className={actionStyles.content_check_button}
             onClick={() => {
-              // console.log("링크 확인 클릭", applicant.id);
               const url = getChannelUrl(applicant.channel, applicant.channelId);
               if (url && url !== "#") {
                 window.open(url, "_blank", "noopener,noreferrer");

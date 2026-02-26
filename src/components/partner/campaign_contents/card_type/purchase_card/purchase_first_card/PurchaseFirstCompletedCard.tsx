@@ -119,8 +119,7 @@ export default function PurchaseFirstCompletedCard({
         <button
           className={actionStyles.content_check_button}
           onClick={() => {
-            // console.log("구매 영수증 확인 클릭", applicant.id);
-            receiptModal.open();
+            //            receiptModal.open();
           }}
         >
           구매영수증 확인

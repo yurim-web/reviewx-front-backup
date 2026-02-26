@@ -1,7 +1,14 @@
+/* ========================================
+   네이버블로그 검수 카드 스토리북
+   ======================================== */
+
 /**
- * NaverBlogReviewCard 컴포넌트 스토리북
+ * NaverBlogReviewCard.stories
  *
- * 네이버블로그 검수 카드 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 네이버블로그 콘텐츠 검수 카드 컴포넌트 문서화
+ *
+ * 사용 페이지:
+ * - Storybook (개발 환경 컴포넌트 문서)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
@@ -14,6 +21,7 @@ const mockReviewApplicant: ReviewApplicant = {
   nickname: "네이버블로거",
   userType: "리뷰어",
   profileImage: "/images/test_img/profile_test.png",
+  selectionStatus: "검수중",
   channel: "네이버블로그",
   registrationDate: "2024-01-18",
 };

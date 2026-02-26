@@ -1,7 +1,14 @@
+/* ========================================
+   네이버클립 신청자 카드 스토리북
+   ======================================== */
+
 /**
- * NaverClipCard 컴포넌트 스토리북
+ * NaverClipCard.stories
  *
- * 네이버 클립 신청자 카드 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 네이버클립 채널 신청자 카드 컴포넌트 문서화
+ *
+ * 사용 페이지:
+ * - Storybook (개발 환경 컴포넌트 문서)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
@@ -46,7 +53,7 @@ export default meta;
 
 type Story = StoryObj<typeof NaverClipCard>;
 
-const renderNaverClipCard = (args: typeof NaverClipCard) => {
+const renderNaverClipCard = (args: React.ComponentProps<typeof NaverClipCard>) => {
   return React.createElement(NaverClipCard, args);
 };
 
@@ -97,20 +104,3 @@ export const Restricted: Story = {
     onSelect: (id) => console.log("Selected applicant:", id),
   },
 };
-
-/**
- * 학습 포인트:
- *
- * 1. 네이버 클립 특화 카드 컴포넌트
- *    - 네이버 클립 채널 신청자 전용 카드입니다
- *    - 팔로워 수를 중심으로 통계를 표시합니다
- *
- * 2. 팔로워 수 표시
- *    - toLocaleString()으로 숫자를 천 단위 콤마로 표시합니다
- *    - 예: 30000 -> "30,000"
- *
- * 3. 네이버 클립 특화 기능
- *    - 짧은 영상 콘텐츠 중심의 리뷰에 최적화
- *    - 클립 형태의 콘텐츠 활용
- */
-

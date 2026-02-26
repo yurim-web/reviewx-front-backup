@@ -13,17 +13,17 @@ const mockCampaign: PartnerCampaign = {
   id: "1",
   title: "샘플 캠페인 제목",
   category: "배송형",
-  categoryIcon: "/images/brand_logo/coupang.svg",
-  type: "배송형",
-  status: "ongoing",
+  campaignType: "배송형",
+  status: "진행 중",
   subStatus: undefined,
-  isUrgent: false,
-  remainingDays: 5,
   image: "/images/main/main_banner.png",
-  recruitmentCount: 50,
-  currentRecruitment: 25,
-  startDate: "2024-01-15",
-  endDate: "2024-01-30",
+  recruitedCount: 25,
+  totalCount: 50,
+  daysLeft: 5,
+  brandName: "테스트 브랜드",
+  recruitmentPeriod: "2024-01-01 ~ 2024-01-15",
+  announcementDate: "2024-01-20",
+  registrationPeriod: "2024-01-25 ~ 2024-02-10",
 };
 
 const meta: Meta<typeof CampaignCard> = {
@@ -61,7 +61,7 @@ export const OngoingTab: Story = {
   render: (args) => React.createElement(CampaignCard, args),
   args: {
     campaign: mockCampaign,
-    activeTab: "진행중",
+    activeTab: "진행",
   },
 };
 
@@ -71,9 +71,9 @@ export const RecruitingTab: Story = {
   args: {
     campaign: {
       ...mockCampaign,
-      status: "recruiting",
+      status: "모집 중",
     },
-    activeTab: "모집중",
+    activeTab: "신청",
   },
 };
 
@@ -83,9 +83,8 @@ export const CompletedTab: Story = {
   args: {
     campaign: {
       ...mockCampaign,
-      status: "completed",
+      status: "종료",
     },
-    activeTab: "모집완료",
+    activeTab: "종료",
   },
 };
-

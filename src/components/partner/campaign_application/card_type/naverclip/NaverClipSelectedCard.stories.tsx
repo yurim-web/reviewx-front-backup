@@ -1,7 +1,14 @@
+/* ========================================
+   네이버클립 선정자 카드 스토리북
+   ======================================== */
+
 /**
- * NaverClipSelectedCard 컴포넌트 스토리북
+ * NaverClipSelectedCard.stories
  *
- * 네이버 클립 선정자 카드 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 네이버클립 채널 선정자 카드 컴포넌트 문서화
+ *
+ * 사용 페이지:
+ * - Storybook (개발 환경 컴포넌트 문서)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
@@ -46,7 +53,7 @@ export default meta;
 
 type Story = StoryObj<typeof NaverClipSelectedCard>;
 
-const renderNaverClipSelectedCard = (args: typeof NaverClipSelectedCard) => {
+const renderNaverClipSelectedCard = (args: React.ComponentProps<typeof NaverClipSelectedCard>) => {
   return React.createElement(NaverClipSelectedCard, args);
 };
 
@@ -62,4 +69,3 @@ export const Default: Story = {
     onCancel: (id) => console.log("Cancelled selection:", id),
   },
 };
-

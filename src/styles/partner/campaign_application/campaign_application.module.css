@@ -79,6 +79,16 @@
   min-height: calc(100vh - 80px);
 }
 
+/* 캠페인 신청내역 섹션 내 이미지 공통 크기 제한
+   - 일부 썸네일/브랜드 로고가 비정상적으로 크게 표시되는 이슈 방지용
+   - 이 페이지 섹션 안에 있는 img만 대상으로 하여 전역 스타일 오염을 막습니다. */
+.campaign_application_section img {
+  max-width: 100%;
+  height: auto;
+  max-height: 120px;
+  object-fit: contain;
+}
+
 /* ========== 캠페인 신청내역 페이지 래퍼 ========== */
 /* 다른 페이지의 container 클래스 padding을 무효화하기 위한 래퍼 */
 .campaign_application_wrapper {
@@ -257,13 +267,13 @@
 
 /* ========== 📱 모바일 반응형 디자인 (375px 기준) ========== */
 @media (max-width: 768px) {
-  /* Hide PartnerSubHeader on mobile for campaign application pages */
-  :global(.gradient_bar) {
+  /* Hide PartnerSubHeader on mobile for campaign application pages (scoped to this layout) */
+  .campaign_application_wrapper :global(.gradient_bar) {
     display: none !important;
   }
 
-  /* Remove any inherited top padding from parent containers */
-  :global(.layout-module__container) {
+  /* Remove any inherited top padding from parent containers (scoped to this layout) */
+  .campaign_application_wrapper :global(.layout-module__container) {
     padding-top: 0 !important;
   }
 
@@ -434,8 +444,5 @@
     display: flex;
   }
 
-  /* 공지사항 상세 페이지 - SubHeader/PartnerSubHeader 숨김 */
-  :global(.notice_detail_hide_header_mobile) :global(.gradient_bar) {
-    display: none !important;
-  }
+  /* 공지사항 상세 페이지 - SubHeader/PartnerSubHeader 숨김 (현재 미사용 규칙 제거) */
 }

@@ -1,12 +1,14 @@
+/* ========================================
+   기본 선정자 카드 스토리북
+   ======================================== */
+
 /**
- * BasicSelectedCard 컴포넌트 스토리북
+ * BasicSelectedCard.stories
  *
- * 기본 선정자 카드 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 미션형/구매평 캠페인 선정자 카드 컴포넌트 문서화
  *
- * Storybook이란?
- * - 컴포넌트를 독립적으로 개발하고 테스트할 수 있는 도구입니다
- * - 다양한 props 조합으로 컴포넌트의 동작을 확인할 수 있습니다
- * - 디자이너와 개발자가 협업하기 좋은 도구입니다
+ * 사용 페이지:
+ * - Storybook (개발 환경 컴포넌트 문서)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
@@ -28,7 +30,6 @@ const mockSelectedApplicant: BasicApplicant = {
   registrationDate: "2024-01-15",
 };
 
-// Meta 타입: Storybook에서 컴포넌트의 메타데이터를 정의합니다
 const meta: Meta<typeof BasicSelectedCard> = {
   title: "Partner/CampaignApplication/CardType/Basic/BasicSelectedCard",
   component: BasicSelectedCard,
@@ -50,11 +51,9 @@ const meta: Meta<typeof BasicSelectedCard> = {
 
 export default meta;
 
-// StoryObj 타입: 개별 스토리의 타입을 정의합니다
 type Story = StoryObj<typeof BasicSelectedCard>;
 
-// 안정적인 render 함수를 컴포넌트 외부에 정의 (깜빡임 방지)
-const renderBasicSelectedCard = (args: typeof BasicSelectedCard) => {
+const renderBasicSelectedCard = (args: React.ComponentProps<typeof BasicSelectedCard>) => {
   return React.createElement(BasicSelectedCard, args);
 };
 
@@ -121,24 +120,3 @@ export const Influencer: Story = {
     onCancel: (id) => console.log("Cancelled selection:", id),
   },
 };
-
-/**
- * 학습 포인트:
- *
- * 1. 선정자 카드 컴포넌트
- *    - 미션형과 구매평 캠페인에서 선정된 신청자를 표시하는 카드입니다
- *    - BasicCard와 유사하지만 "선택 취소" 버튼이 표시됩니다
- *
- * 2. selected_card 클래스
- *    - 선정된 상태를 시각적으로 구분하기 위해 selected_card 클래스를 추가합니다
- *    - CSS로 선정된 카드를 강조 표시합니다
- *
- * 3. 선택 취소 기능
- *    - onCancel 콜백으로 선택 취소를 처리합니다
- *    - 부모 컴포넌트에서 선정 목록에서 제거합니다
- *
- * 4. BasicCard와의 차이점
- *    - BasicCard: "선정하기" 버튼 (미선택 상태)
- *    - BasicSelectedCard: "선택 취소" 버튼 (선정된 상태)
- *    - 동일한 데이터 구조를 사용하지만 다른 액션을 제공합니다
- */

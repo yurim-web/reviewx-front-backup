@@ -1,6 +1,7 @@
 /* ========================================
    📢 캠페인 신청 내역 배너 컴포넌트
    ======================================== */
+/* eslint-disable @next/next/no-img-element */
 
 /**
  * 캠페인 신청 내역 배너 컴포넌트
@@ -17,10 +18,14 @@
  */
 
 import Image from "next/image";
+import { useState, useEffect } from "react";
 import styles from "@/styles/partner/campaign_application/campaign_infocard.module.css";
 import CampaignSchedule from "./CampaignSchedule";
 import { getBrandLogo } from "@/data/partner/utils/campaignHelpers";
 import { deriveCampaignStatus, getStatusText } from "./utils/campaign_info_helpers";
+
+/** 캠페인 이미지 로드 실패 시 사용할 기본 이미지 */
+const FALLBACK_CAMPAIGN_IMAGE = "/images/main/campaign_img/eximg_1.png";
 
 /* ========================================
    🧭 파일 구조 한눈에 보기
@@ -80,6 +85,12 @@ export interface CampaignInfo {
   daysLeft: number;
   /** 캠페인 상태 설명 텍스트 */
   statusText?: string;
+  /** 포인트 (미션형 등) */
+  point?: number;
+  /** 방문 지역 (방문형 캠페인용, 선택적) */
+  region?: string;
+  /** 방문 하위 지역 (방문형 캠페인용, 선택적) */
+  subRegion?: string;
 }
 
 /**
@@ -143,15 +154,32 @@ export default function Campaignbanner({
     statusText: campaignInfo.statusText,
   };
   const derivedStatus = deriveCampaignStatus(campaignInfoForHelper);
+  const [campaignImageSrc, setCampaignImageSrc] = useState(
+    campaignInfo.image || FALLBACK_CAMPAIGN_IMAGE
+  );
+
+  useEffect(() => {
+    setCampaignImageSrc(campaignInfo.image || FALLBACK_CAMPAIGN_IMAGE);
+  }, [campaignInfo.image]);
+
+  const handleCampaignImageError = () => {
+    setCampaignImageSrc(FALLBACK_CAMPAIGN_IMAGE);
+  };
 
   return (
     <article className={styles.campaign_info_card_container}>
       {/* 캠페인 정보 카드 */}
       <div className={styles.campaign_info_card}>
         <div className={styles.campaign_info_top}>
-          {/* 캠페인 이미지 */}
+          {/* 캠페인 이미지 - 일반 img 사용 (Next/Image 블러 플레이스홀더 이슈 방지) */}
           <div className={styles.campaign_image}>
-            <Image src={campaignInfo.image} alt="캠페인 이미지" width={92} height={92} />
+            <img
+              src={campaignImageSrc}
+              alt="캠페인 이미지"
+              width={92}
+              height={92}
+              onError={handleCampaignImageError}
+            />
           </div>
 
           {/* 캠페인 정보 */}
@@ -167,6 +195,7 @@ export default function Campaignbanner({
                   alt={`${campaignInfo.campaignType} 브랜드 로고`}
                   width={20}
                   height={20}
+                  unoptimized
                 />
                 <span>{campaignInfo.campaignType}</span>
               </div>

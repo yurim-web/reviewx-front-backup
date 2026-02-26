@@ -32,7 +32,8 @@ export default function ShortsSelectedCard({ applicant, onCancel }: ShortsSelect
             src={applicant.profileImage || "/images/mypage/profile.svg"}
             alt="프로필"
             className={contentStyles.profile_image}
-            fill
+            width={40}
+            height={40}
           />
         </div>
         <div className={contentStyles.profile_info}>

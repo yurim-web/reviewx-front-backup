@@ -1,7 +1,14 @@
+/* ========================================
+   인스타그램 선정자 카드 스토리북
+   ======================================== */
+
 /**
- * InstagramSelectedCard 컴포넌트 스토리북
+ * InstagramSelectedCard.stories
  *
- * 인스타그램 선정자 카드 컴포넌트의 다양한 사용 예시를 보여줍니다.
+ * 목적: 인스타그램 채널 선정자 카드 컴포넌트 문서화
+ *
+ * 사용 페이지:
+ * - Storybook (개발 환경 컴포넌트 문서)
  */
 
 import type { Meta, StoryObj } from "@storybook/react";
@@ -46,7 +53,7 @@ export default meta;
 
 type Story = StoryObj<typeof InstagramSelectedCard>;
 
-const renderInstagramSelectedCard = (args: typeof InstagramSelectedCard) => {
+const renderInstagramSelectedCard = (args: React.ComponentProps<typeof InstagramSelectedCard>) => {
   return React.createElement(InstagramSelectedCard, args);
 };
 
@@ -80,20 +87,3 @@ export const HighFollowers: Story = {
     onCancel: (id) => console.log("Cancelled selection:", id),
   },
 };
-
-/**
- * 학습 포인트:
- *
- * 1. 선정된 카드 컴포넌트
- *    - 이미 선정된 상태의 신청자를 표시하는 카드입니다
- *    - selected_card 클래스로 점선 테두리와 배경색 변경
- *
- * 2. 선택 취소 기능
- *    - onCancel 콜백으로 선정 해제를 처리합니다
- *    - 부모 컴포넌트에서 선정 목록에서 제거합니다
- *
- * 3. InstagramCard와의 차이점
- *    - InstagramCard: "선정하기" 버튼 (미선택 상태)
- *    - InstagramSelectedCard: "선택 취소" 버튼 (선정된 상태)
- */
-
