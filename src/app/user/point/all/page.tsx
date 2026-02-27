@@ -33,9 +33,8 @@ export default function AllPointPage() {
    * - 필터링 없이 모든 데이터를 보여줍니다.
    *
    */
-  const filterAllHistory = (_history: PointHistory) => true;
+  const filterAllHistory = (history: PointHistory) =>
+    !(history.type === "withdrawal_pending" && history.status === "pending");
 
-  return (
-    <PointHistoryPage activePointTab="all" filterFunction={filterAllHistory} />
-  );
+  return <PointHistoryPage activePointTab="all" filterFunction={filterAllHistory} />;
 }
