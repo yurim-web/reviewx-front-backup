@@ -115,27 +115,23 @@ export default function PostsPageCommon({ manager_type }: PostsPageCommonProps) 
     // 초기 마운트 시 게시글 목록 업데이트
     update_posts();
 
-    // 주기적으로 게시글 목록 업데이트 (5초마다)
-    // 관리자에서 새로 등록한 게시글이 반영되도록 합니다
-    const interval_id = setInterval(update_posts, 5000);
-
-    // 탭이 다시 활성화될 때 즉시 업데이트
-    const handle_visibility_change = () => {
+    // 탭 전환/포커스 시 최신 데이터 반영 (이벤트 기반)
+    const handle_focus = () => update_posts();
+    const handle_visibility = () => {
       if (!document.hidden) update_posts();
     };
-    document.addEventListener("visibilitychange", handle_visibility_change);
-
-    // 페이지가 포커스될 때도 업데이트
-    const handle_focus = () => {
-      update_posts();
+    const handle_storage = (e: StorageEvent) => {
+      if (e.key?.includes("post")) update_posts();
     };
-    window.addEventListener("focus", handle_focus);
 
-    // 컴포넌트가 언마운트될 때 interval과 이벤트 리스너 정리
+    window.addEventListener("focus", handle_focus);
+    document.addEventListener("visibilitychange", handle_visibility);
+    window.addEventListener("storage", handle_storage);
+
     return () => {
-      clearInterval(interval_id);
-      document.removeEventListener("visibilitychange", handle_visibility_change);
       window.removeEventListener("focus", handle_focus);
+      document.removeEventListener("visibilitychange", handle_visibility);
+      window.removeEventListener("storage", handle_storage);
     };
   }, []);
 
