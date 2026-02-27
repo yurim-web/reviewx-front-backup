@@ -14,6 +14,7 @@
 "use client";
 
 import { useParticipantQuery } from "@/hooks/useParticipantQuery";
+import { sanitizeSimpleHtml } from "@/utils/security/sanitize";
 import { REVIEW_GUIDELINE_DEFAULTS } from "@/data/user/campaign_detail/guidelineDefaults";
 import styles from "@/styles/user/campaign/campaign_detail/detail_guidelines_section.module.css";
 import AdditionalGuidelines from "../AdditionalGuidelines";
@@ -109,7 +110,7 @@ export default function DetailGuidelinesSectionReview({
               <div
                 key={index}
                 className={styles.guideline_text}
-                dangerouslySetInnerHTML={{ __html: text }}
+                dangerouslySetInnerHTML={{ __html: sanitizeSimpleHtml(text) }}
               />
             ))}
           </div>

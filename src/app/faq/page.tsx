@@ -27,6 +27,7 @@ import { useState, useMemo } from "react";
 import Image from "next/image";
 import styles from "../../styles/user/faq/faq.module.css";
 import richtext_styles from "@/styles/common/html_richtext_content.module.css";
+import { sanitizeRichHtml } from "@/utils/security/sanitize";
 import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import { posts_data } from "@/data/manager_ga/community/postsData";
@@ -160,7 +161,7 @@ export default function FAQPage() {
                         <span className={styles.answer_number}>A.</span>
                         <div
                           className={`${styles.answer_text} ${richtext_styles.richtext_content}`}
-                          dangerouslySetInnerHTML={{ __html: faq.answer }}
+                          dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(faq.answer) }}
                         />
                       </div>
                     </div>

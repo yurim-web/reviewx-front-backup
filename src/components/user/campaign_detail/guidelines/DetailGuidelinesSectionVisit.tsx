@@ -14,6 +14,7 @@
 "use client";
 
 import { useParticipantQuery } from "@/hooks/useParticipantQuery";
+import { sanitizeSimpleHtml } from "@/utils/security/sanitize";
 import { VISIT_GUIDELINE_DEFAULTS } from "@/data/user/campaign_detail/guidelineDefaults";
 import AdditionalGuidelines from "../AdditionalGuidelines";
 import RequirementIcons from "../RequirementIcons";
@@ -77,10 +78,7 @@ export default function DetailGuidelinesSectionVisit({
           <div className={styles.label_box}>
             <div className={styles.label_keyword_box}>
               <span>방문 주소</span>
-              <button
-                className={styles.copy_tag_button}
-                onClick={onCopyVisitAddress}
-              >
+              <button className={styles.copy_tag_button} onClick={onCopyVisitAddress}>
                 복사
               </button>
             </div>
@@ -105,10 +103,7 @@ export default function DetailGuidelinesSectionVisit({
           <div className={styles.label_box}>
             <div className={styles.label_keyword_box}>
               <span>방문 링크</span>
-              <button
-                className={styles.copy_tag_button}
-                onClick={onCopyVisitLink}
-              >
+              <button className={styles.copy_tag_button} onClick={onCopyVisitLink}>
                 복사
               </button>
             </div>
@@ -134,18 +129,13 @@ export default function DetailGuidelinesSectionVisit({
           <div className={styles.label_box}>
             <div className={styles.label_keyword_box}>
               <span>키워드</span>
-              <button
-                className={styles.copy_tag_button}
-                onClick={onCopyKeyword}
-              >
+              <button className={styles.copy_tag_button} onClick={onCopyKeyword}>
                 복사
               </button>
             </div>
           </div>
           <div className={styles.content_box}>
-            <div className={styles.keyword_text_box}>
-              {keyword || "자유롭게 입력하세요."}
-            </div>
+            <div className={styles.keyword_text_box}>{keyword || "자유롭게 입력하세요."}</div>
           </div>
         </div>
       )}
@@ -158,14 +148,12 @@ export default function DetailGuidelinesSectionVisit({
           <RequirementIcons requirements={requirements} />
 
           {/* 상세 가이드라인 */}
-          <div
-            className={`${styles.requirement_container} ${styles.important_note_container}`}
-          >
+          <div className={`${styles.requirement_container} ${styles.important_note_container}`}>
             {activeGuidelineTexts.map((text, index) => (
               <div
                 key={index}
                 className={styles.guideline_text}
-                dangerouslySetInnerHTML={{ __html: text }}
+                dangerouslySetInnerHTML={{ __html: sanitizeSimpleHtml(text) }}
               />
             ))}
           </div>
@@ -177,10 +165,7 @@ export default function DetailGuidelinesSectionVisit({
 
       {/* 참여 캠페인 추가 안내 (공정위 가이드, 캠페인 문의) */}
       {isParticipant && (
-        <SelectedCampaignInfo
-          onGoToGuide={onCopyVisitLink}
-          onCopyContact={onCopyKeyword}
-        />
+        <SelectedCampaignInfo onGoToGuide={onCopyVisitLink} onCopyContact={onCopyKeyword} />
       )}
     </article>
   );

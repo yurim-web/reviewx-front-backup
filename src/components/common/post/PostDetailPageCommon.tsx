@@ -18,6 +18,7 @@
 import { useRouter } from "next/navigation";
 import { type ReactNode } from "react";
 import styles from "@/styles/common/post/post_detail_page.module.css";
+import { sanitizeRichHtml } from "@/utils/security/sanitize";
 import richtext_styles from "@/styles/common/html_richtext_content.module.css";
 
 /**
@@ -142,7 +143,7 @@ export default function PostDetailPageCommon({
           {/* 주의: XSS 공격에 취약할 수 있으므로 신뢰할 수 있는 데이터만 사용해야 합니다. */}
           <div
             className={`${styles.post_content} ${richtext_styles.richtext_content}`}
-            dangerouslySetInnerHTML={{ __html: post_detail.content }}
+            dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(post_detail.content) }}
           />
         </div>
       </section>

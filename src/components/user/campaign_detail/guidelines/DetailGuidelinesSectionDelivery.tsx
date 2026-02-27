@@ -14,6 +14,7 @@
 "use client";
 
 import { useParticipantQuery } from "@/hooks/useParticipantQuery";
+import { sanitizeSimpleHtml } from "@/utils/security/sanitize";
 import { DELIVERY_GUIDELINE_DEFAULTS } from "@/data/user/campaign_detail/guidelineDefaults";
 import AdditionalGuidelines from "../AdditionalGuidelines";
 import RequirementIcons from "../RequirementIcons";
@@ -71,10 +72,7 @@ export default function DetailGuidelinesSectionDelivery({
           <div className={styles.label_box}>
             <div className={styles.label_keyword_box}>
               <span>홍보링크</span>
-              <button
-                className={styles.copy_tag_button}
-                onClick={onCopyPromotionLink}
-              >
+              <button className={styles.copy_tag_button} onClick={onCopyPromotionLink}>
                 복사
               </button>
             </div>
@@ -100,18 +98,13 @@ export default function DetailGuidelinesSectionDelivery({
           <div className={styles.label_box}>
             <div className={styles.label_keyword_box}>
               <span>키워드</span>
-              <button
-                className={styles.copy_tag_button}
-                onClick={onCopyKeyword}
-              >
+              <button className={styles.copy_tag_button} onClick={onCopyKeyword}>
                 복사
               </button>
             </div>
           </div>
           <div className={styles.content_box}>
-            <div className={styles.keyword_text_box}>
-              {keyword || "자유롭게 입력하세요."}
-            </div>
+            <div className={styles.keyword_text_box}>{keyword || "자유롭게 입력하세요."}</div>
           </div>
         </div>
       )}
@@ -124,14 +117,12 @@ export default function DetailGuidelinesSectionDelivery({
           <RequirementIcons requirements={requirements} />
 
           {/* 상세 가이드라인 */}
-          <div
-            className={`${styles.requirement_container} ${styles.important_note_container}`}
-          >
+          <div className={`${styles.requirement_container} ${styles.important_note_container}`}>
             {activeGuidelineTexts.map((text, index) => (
               <div
                 key={index}
                 className={styles.guideline_text}
-                dangerouslySetInnerHTML={{ __html: text }}
+                dangerouslySetInnerHTML={{ __html: sanitizeSimpleHtml(text) }}
               />
             ))}
           </div>
@@ -143,10 +134,7 @@ export default function DetailGuidelinesSectionDelivery({
 
       {/* 참여 캠페인 추가 안내 (공정위 가이드, 캠페인 문의) */}
       {isParticipant && (
-        <SelectedCampaignInfo
-          onGoToGuide={onCopyPromotionLink}
-          onCopyContact={onCopyKeyword}
-        />
+        <SelectedCampaignInfo onGoToGuide={onCopyPromotionLink} onCopyContact={onCopyKeyword} />
       )}
     </article>
   );

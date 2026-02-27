@@ -18,6 +18,7 @@
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState, useMemo, type ReactNode } from "react";
 import styles from "@/styles/user/faq/faq_detail_page.module.css";
+import { sanitizeRichHtml } from "@/utils/security/sanitize";
 import { posts_data } from "@/data/manager_ga/community/postsData";
 import { get_post_detail } from "@/data/manager_ga/community/postsData";
 import { convertPostsToFAQs, type FAQItem, type FAQTarget } from "@/utils/faq/convertPostToFAQ";
@@ -128,7 +129,7 @@ export default function FAQDetailPageClient({
             <span className={styles.answer_label}>A.</span>
             <div
               className={styles.answer_text}
-              dangerouslySetInnerHTML={{ __html: faq_detail.answer }}
+              dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(faq_detail.answer) }}
             />
           </div>
         </div>
