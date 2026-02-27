@@ -234,7 +234,7 @@ export default function CommonTableWithTooltip<T extends TableRowData>({
     if (tooltip_config.tooltip_content) {
       return tooltip_config.tooltip_content(row, column_key);
     }
-    const value = row[column_key];
+    const value = (row as Record<string, unknown>)[column_key];
     return value !== undefined && value !== null ? String(value) : "";
   };
 

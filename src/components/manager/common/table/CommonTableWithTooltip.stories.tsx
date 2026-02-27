@@ -15,6 +15,7 @@ interface MockData extends TableRowData {
   name: string;
   description: string;
   status: string;
+  [key: string]: string;
 }
 
 // Mock 컬럼 정의
@@ -35,7 +36,8 @@ const mockData: MockData[] = [
   {
     id: "2",
     name: "매우 긴 이름입니다. 이 이름은 테이블 셀의 너비를 초과할 수 있습니다.",
-    description: "매우 긴 설명입니다. 이 설명은 테이블 셀의 너비를 초과하여 툴팁이 표시되어야 합니다.",
+    description:
+      "매우 긴 설명입니다. 이 설명은 테이블 셀의 너비를 초과하여 툴팁이 표시되어야 합니다.",
     status: "비활성",
   },
 ];
