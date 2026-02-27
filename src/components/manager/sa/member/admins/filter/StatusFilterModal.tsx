@@ -5,40 +5,28 @@
 /**
  * StatusFilterModal
  *
- * 목적: SA 관리자 관리자 목록 페이지에서 상태를 필터링하는 모달입니다.
+ * 목적: SA 관리자 관리자 목록 페이지에서 상태를 필터링하는 모달
  *
  * 사용 페이지:
- * - /manager_sa/member/admins (SA 관리자 관리자 목록 페이지)
+ * - /manager_sa/member/admins (SA 관리자 목록)
  */
 
 "use client";
 
-import BaseFilterModal, {
-  type FilterOption,
-} from "@/components/manager/ga/common/filter/BaseFilterModal";
+import { createFilterModal } from "@/components/manager/common/campaign/progress/filter/createFilterModal";
 import type { AdminStatus } from "@/data/manager_sa/member/admins";
 
 interface StatusFilterModalProps {
-  // 모달 열림/닫힘 상태
   is_open: boolean;
-  // 모달 닫기 함수
   on_close: () => void;
-  // 현재 선택된 상태들
   selected_statuses: AdminStatus[];
-  // 필터 적용 함수 (선택된 상태들을 부모 컴포넌트로 전달)
   on_apply: (statuses: AdminStatus[]) => void;
 }
 
-// 상태 필터 옵션 배열
-const status_options: AdminStatus[] = ["정상", "일시 정지", "영구 정지"];
-
-// 상태 옵션을 FilterOption 형태로 변환하는 함수
-const get_status_options = (): FilterOption<AdminStatus>[] => {
-  return status_options.map((status) => ({
-    value: status,
-    label: status,
-  }));
-};
+const StatusFilterModalComponent = createFilterModal<AdminStatus>({
+  options: ["정상", "일시 정지", "영구 정지"],
+  section_title: "상태",
+});
 
 export default function StatusFilterModal({
   is_open,
@@ -46,16 +34,12 @@ export default function StatusFilterModal({
   selected_statuses,
   on_apply,
 }: StatusFilterModalProps) {
-  const options = get_status_options();
-
   return (
-    <BaseFilterModal<AdminStatus>
+    <StatusFilterModalComponent
       is_open={is_open}
       on_close={on_close}
       selected_values={selected_statuses}
       on_apply={on_apply}
-      options={options}
-      section_title="상태"
     />
   );
 }
