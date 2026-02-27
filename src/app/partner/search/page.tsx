@@ -25,20 +25,17 @@ import { missionCampaigns } from "@/data/campaign/mission/missionCampaigns";
 import { reporterCampaigns } from "@/data/campaign/reporter/reporterCampaigns";
 
 type PartnerSearchPageProps = {
-  searchParams?: {
+  searchParams?: Promise<{
     keyword?: string | string[];
-  };
+  }>;
 };
 
-export default function PartnerSearchPage({
-  searchParams,
-}: PartnerSearchPageProps) {
-  const raw_keyword = searchParams?.keyword ?? "";
+export default async function PartnerSearchPage({ searchParams }: PartnerSearchPageProps) {
+  const resolved = await searchParams;
+  const raw_keyword = resolved?.keyword ?? "";
 
   const keyword =
-    typeof raw_keyword === "string"
-      ? raw_keyword.trim()
-      : raw_keyword[0]?.trim() ?? "";
+    typeof raw_keyword === "string" ? raw_keyword.trim() : (raw_keyword[0]?.trim() ?? "");
 
   const normalized_keyword = keyword.toLowerCase();
 
@@ -62,10 +59,7 @@ export default function PartnerSearchPage({
 
         const description = campaign.description?.toLowerCase() ?? "";
 
-        return (
-          title.includes(normalized_keyword) ||
-          description.includes(normalized_keyword)
-        );
+        return title.includes(normalized_keyword) || description.includes(normalized_keyword);
       })
     : all_campaigns;
 
@@ -87,5 +81,3 @@ export default function PartnerSearchPage({
     </>
   );
 }
-
-

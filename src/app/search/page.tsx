@@ -23,17 +23,16 @@ export const metadata: Metadata = {
 };
 
 type SearchPageProps = {
-  searchParams?: {
+  searchParams?: Promise<{
     keyword?: string | string[];
-  };
+  }>;
 };
 
-export default function SearchPage({ searchParams }: SearchPageProps) {
-  const raw_keyword = searchParams?.keyword ?? "";
+export default async function SearchPage({ searchParams }: SearchPageProps) {
+  const resolved = await searchParams;
+  const raw_keyword = resolved?.keyword ?? "";
   const keyword =
-    typeof raw_keyword === "string"
-      ? raw_keyword.trim()
-      : raw_keyword[0]?.trim() ?? "";
+    typeof raw_keyword === "string" ? raw_keyword.trim() : (raw_keyword[0]?.trim() ?? "");
 
   const normalized_keyword = keyword.toLowerCase();
 
@@ -51,10 +50,7 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
         const title = campaign.title?.toLowerCase() ?? "";
         const description = campaign.description?.toLowerCase() ?? "";
 
-        return (
-          title.includes(normalized_keyword) ||
-          description.includes(normalized_keyword)
-        );
+        return title.includes(normalized_keyword) || description.includes(normalized_keyword);
       })
     : all_campaigns;
 
