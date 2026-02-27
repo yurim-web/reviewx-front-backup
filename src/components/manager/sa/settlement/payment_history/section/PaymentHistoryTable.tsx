@@ -13,9 +13,10 @@
 
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { createPortal } from "react-dom";
+import usePortalDropdownMenu from "@/hooks/manager/common/usePortalDropdownMenu";
 import CommonTableWithTooltip, {
   type TooltipConfig,
 } from "@/components/manager/common/table/CommonTableWithTooltip";
@@ -70,42 +71,24 @@ export default function PaymentHistoryTable({
   selected_account_statuses = [],
 }: PaymentHistoryTableProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  /** 상호명 ... 메뉴 열린 행 ID (null이면 닫힘) */
-  const [openMenuRowId, setOpenMenuRowId] = useState<string | null>(null);
-  /** 드롭다운 위치 (Portal fixed용) */
-  const [dropdownRect, setDropdownRect] = useState<{ left: number; top: number } | null>(null);
   /** 거래명세서 조회 모달에 넘길 행 */
   const [receiptModalItem, setReceiptModalItem] = useState<PaymentHistoryItem | null>(null);
   /** 환불 계좌 조회 모달에 넘길 행 */
   const [refundAccountModalItem, setRefundAccountModalItem] = useState<PaymentHistoryItem | null>(
     null
   );
-  const menu_wrapper_ref = useRef<HTMLDivElement | null>(null);
-  /** 드롭다운 위치 갱신용: 메뉴가 열린 행의 트리거 버튼 */
-  const menu_trigger_button_ref = useRef<HTMLButtonElement | null>(null);
 
-  /** 드롭다운 위치 계산: 가로는 원래대로(트리거 왼쪽 기준), 하단 여유 없을 때만 위로 열기 */
-  const get_dropdown_position = (trigger_rect: DOMRect) => {
-    const DROPDOWN_ESTIMATED_HEIGHT = 145;
-    const GAP = 4;
-    const HORIZONTAL_PADDING = 8;
-    const MIN_DROPDOWN_WIDTH = 163;
-    /** 위로 열릴 때 트리거에서 너무 멀지 않게 살짝 아래로 내림 */
-    const OPEN_ABOVE_OFFSET_DOWN = 24;
-    const space_below =
-      typeof window !== "undefined" ? window.innerHeight - trigger_rect.bottom - GAP : 0;
-    const open_above = space_below < DROPDOWN_ESTIMATED_HEIGHT;
-    const top = open_above
-      ? trigger_rect.top - DROPDOWN_ESTIMATED_HEIGHT - GAP + OPEN_ABOVE_OFFSET_DOWN
-      : trigger_rect.bottom + GAP;
-    let left = trigger_rect.left;
-    if (typeof window !== "undefined") {
-      const max_left = window.innerWidth - MIN_DROPDOWN_WIDTH - HORIZONTAL_PADDING;
-      if (left > max_left) left = max_left;
-      if (left < HORIZONTAL_PADDING) left = HORIZONTAL_PADDING;
-    }
-    return { left, top };
-  };
+  // 포탈 드롭다운 메뉴 훅 (상호명 ... 메뉴)
+  const {
+    open_row_id: openMenuRowId,
+    dropdown_rect: dropdownRect,
+    menu_wrapper_ref,
+    trigger_button_ref: menu_trigger_button_ref,
+    toggle_menu,
+    close_menu,
+  } = usePortalDropdownMenu({
+    data_attribute: "payment-history-company-menu",
+  });
 
   // 결제 내역 데이터 상태
   // 초기값은 Mock 데이터(paymentHistoryList)를 사용하여 서버와 클라이언트의 초기 렌더링을 일치시킵니다.
@@ -125,51 +108,6 @@ export default function PaymentHistoryTable({
     const merged_list = getPaymentHistoryList();
     setPaymentHistory(merged_list);
   }, []);
-
-  /** 상호명 ... 메뉴 외부 클릭 시 닫기 */
-  useEffect(() => {
-    if (openMenuRowId === null) return;
-    const handle_click_outside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (menu_wrapper_ref.current?.contains(target)) return;
-      if (target.closest?.(`[data-dropdown-menu="payment-history-company-menu"]`)) return;
-      setOpenMenuRowId(null);
-      setDropdownRect(null);
-    };
-    document.addEventListener("mousedown", handle_click_outside);
-    return () => document.removeEventListener("mousedown", handle_click_outside);
-  }, [openMenuRowId]);
-
-  /** 스크롤/리사이즈 시 드롭다운 위치를 트리거 버튼에 맞춰 갱신 (뷰포트 안으로 유지) */
-  useEffect(() => {
-    if (openMenuRowId === null) return;
-    const trigger = menu_trigger_button_ref.current;
-    if (!trigger) return;
-
-    const update_position = () => {
-      const rect = trigger.getBoundingClientRect();
-      setDropdownRect(get_dropdown_position(rect));
-    };
-
-    const scroll_parents: Element[] = [];
-    let el: Element | null = trigger.parentElement;
-    while (el) {
-      const { scrollHeight, clientHeight, scrollWidth, clientWidth } = el;
-      if (scrollHeight > clientHeight || scrollWidth > clientWidth) {
-        el.addEventListener("scroll", update_position, { passive: true });
-        scroll_parents.push(el);
-      }
-      el = el.parentElement;
-    }
-    window.addEventListener("scroll", update_position, { passive: true });
-    window.addEventListener("resize", update_position);
-
-    return () => {
-      window.removeEventListener("scroll", update_position);
-      window.removeEventListener("resize", update_position);
-      scroll_parents.forEach((parent) => parent.removeEventListener("scroll", update_position));
-    };
-  }, [openMenuRowId]);
 
   // 컬럼별 타입 설정 (정렬을 위한 컬럼 타입 정의)
   // numeric_string: 숫자처럼 보이는 문자열 (예: "1,500,000", "999999")
@@ -455,15 +393,8 @@ export default function PaymentHistoryTable({
                 className={styles.menu_trigger_button}
                 onClick={(e) => {
                   e.stopPropagation();
-                  const btn = e.currentTarget as HTMLButtonElement;
-                  const rect = btn.getBoundingClientRect();
-                  if (openMenuRowId === row.id) {
-                    setOpenMenuRowId(null);
-                    setDropdownRect(null);
-                  } else {
-                    setDropdownRect(get_dropdown_position(rect));
-                    setOpenMenuRowId(row.id);
-                  }
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  toggle_menu(row.id, rect);
                 }}
                 aria-label={`${row.companyName} 메뉴`}
                 aria-expanded={is_menu_open}
@@ -615,8 +546,7 @@ export default function PaymentHistoryTable({
               className={styles.company_name_dropdown_item}
               role="menuitem"
               onClick={() => {
-                setOpenMenuRowId(null);
-                setDropdownRect(null);
+                close_menu();
                 alert("아직 구현 중입니다.");
               }}
             >
@@ -627,8 +557,7 @@ export default function PaymentHistoryTable({
               className={styles.company_name_dropdown_item}
               role="menuitem"
               onClick={() => {
-                setOpenMenuRowId(null);
-                setDropdownRect(null);
+                close_menu();
                 setReceiptModalItem(menu_row);
               }}
             >
@@ -639,8 +568,7 @@ export default function PaymentHistoryTable({
               className={styles.company_name_dropdown_item}
               role="menuitem"
               onClick={() => {
-                setOpenMenuRowId(null);
-                setDropdownRect(null);
+                close_menu();
                 setRefundAccountModalItem(menu_row);
               }}
             >
