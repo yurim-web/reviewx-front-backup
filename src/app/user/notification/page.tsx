@@ -13,7 +13,7 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import styles from "@/styles/user/notification/notification.module.css";
 import SubHeader from "@/components/fragments/SubHeader";
@@ -72,6 +72,32 @@ export default function UserNotificationPage() {
     mockReviewerNotifications as NotificationItem[]
   );
   const [isDeleteToastOpen, setIsDeleteToastOpen] = useState(false);
+
+  // 무한 스크롤
+  const PAGE_SIZE = 15;
+  const [displayCount, setDisplayCount] = useState(PAGE_SIZE);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  const loadMore = useCallback(() => {
+    setDisplayCount((prev) => Math.min(prev + PAGE_SIZE, notifications.length));
+  }, [notifications.length]);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          loadMore();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [loadMore]);
 
   /**
    * localStorage에서 알림 불러오기
@@ -156,6 +182,7 @@ export default function UserNotificationPage() {
   /** 전체 삭제 버튼 클릭 → 바로 삭제 후 토스트만 표시 */
   const handleDeleteAllClick = () => {
     setNotifications([]);
+    setDisplayCount(PAGE_SIZE);
     if (typeof window !== "undefined" && user) {
       try {
         const storedNotifications = localStorage.getItem("notifications");
@@ -198,12 +225,15 @@ export default function UserNotificationPage() {
 
       {/* 메인 콘텐츠 영역 */}
       <main className={styles.main_content}>
-        {/* 알림 목록 컴포넌트 */}
+        {/* 알림 목록 컴포넌트 (무한 스크롤: 15개씩 표시) */}
         <NotificationList
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          notifications={notifications as any}
+          notifications={notifications.slice(0, displayCount) as any}
           on_notification_click={handleNotificationClick}
         />
+
+        {/* 무한 스크롤 sentinel: 뷰포트에 들어오면 다음 15개 로드 */}
+        {displayCount < notifications.length && <div ref={sentinelRef} style={{ height: 1 }} />}
       </main>
 
       <Toast
