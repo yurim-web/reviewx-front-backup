@@ -15,10 +15,10 @@
 
 "use client";
 
-import { useState, useEffect, useMemo, forwardRef, useImperativeHandle, useCallback } from "react";
+import { useState, useEffect, useMemo, forwardRef, useImperativeHandle } from "react";
 import { useTableSelection } from "@/hooks/manager/common/member/useTableSelection";
+import { useRestrictionHandler } from "@/hooks/manager/common/member/useRestrictionHandler";
 import { useRouter } from "next/navigation";
-import { format } from "date-fns";
 import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
@@ -39,14 +39,6 @@ import BusinessTypeTag from "@/components/manager/common/tags/BusinessTypeTag";
 import type { BusinessType } from "@/components/manager/common/tags/BusinessTypeTag";
 import ManagerRestrictionModal from "@/components/manager/common/campaign/modal/ManagerRestrictionModal";
 import BaseModal from "@/components/common/modal/BaseModal";
-import {
-  add_blacklist_item,
-  get_blacklist_data,
-  type BlacklistItem,
-  type BlockReason,
-  block_code_reason_map,
-} from "@/data/manager_ga/member/blacklist";
-import type { BlockCode } from "@/data/manager_ga/common/filterOptions";
 
 interface PartnerTableProps {
   // 검색어 상태를 props로 받습니다
@@ -125,15 +117,6 @@ const PartnerTable = forwardRef<PartnerTableRef, PartnerTableProps>(function Par
     reset_selection,
   } = useTableSelection();
 
-  // 이용 제한 모달 상태 관리
-  const [restriction_modal_open, set_restriction_modal_open] = useState(false);
-
-  // 경고 모달 상태 관리 (이용 제한은 한 명만 가능하다는 메시지)
-  const [warning_modal_open, set_warning_modal_open] = useState(false);
-
-  // 이미 처리된 요청 모달 상태 관리
-  const [already_processed_modal_state, set_already_processed_modal_state] = useState(false);
-
   // 클라이언트 마운트 상태 관리 (SSR Hydration 오류 방지)
   const [is_mounted, set_is_mounted] = useState(false);
 
@@ -141,31 +124,6 @@ const PartnerTable = forwardRef<PartnerTableRef, PartnerTableProps>(function Par
   useEffect(() => {
     set_is_mounted(true);
   }, []);
-
-  // 외부에서 모달을 열 수 있도록 함수 노출
-  // useImperativeHandle: 부모 컴포넌트에서 자식 컴포넌트의 함수를 호출할 수 있게 해주는 Hook입니다
-  // useCallback을 사용하여 selected_partner_ids가 변경될 때마다 함수를 재생성합니다
-  const open_restriction_modal = useCallback(() => {
-    // 이용 제한은 한 번에 한 명만 가능합니다
-    if (selected_partner_ids.length === 0) {
-      return;
-    }
-    if (selected_partner_ids.length > 1) {
-      // 여러 명이 선택된 경우 경고 모달 표시
-      set_warning_modal_open(true);
-      return;
-    }
-    // 한 명만 선택된 경우에만 이용 제한 모달 열기
-    set_restriction_modal_open(true);
-  }, [selected_partner_ids]);
-
-  useImperativeHandle(
-    ref,
-    () => ({
-      open_restriction_modal,
-    }),
-    [open_restriction_modal] // 의존성 배열: open_restriction_modal이 변경될 때마다 ref를 업데이트합니다
-  );
 
   // 검색어 및 필터로 필터링된 파트너 목록
   // SSR Hydration 오류 방지를 위해 클라이언트에서만 localStorage 데이터를 반영합니다
@@ -203,6 +161,29 @@ const PartnerTable = forwardRef<PartnerTableRef, PartnerTableProps>(function Par
       return true;
     });
   }, [is_mounted, search_query, selected_divisions, selected_types, selected_statuses]);
+
+  // 이용 제한 처리 (공통 훅)
+  const restriction = useRestrictionHandler({
+    selectedIds: selected_partner_ids,
+    findMember: (id) => {
+      const p = filtered_partners.find((par) => par.id === id);
+      return p
+        ? { id: p.id, display_name: p.business_name, current_points: p.current_points }
+        : undefined;
+    },
+    division: "파트너",
+    updateStatusType: update_partner_status_type,
+    reset_selection,
+  });
+
+  // 외부에서 모달을 열 수 있도록 함수 노출
+  useImperativeHandle(
+    ref,
+    () => ({
+      open_restriction_modal: restriction.open_modal,
+    }),
+    [restriction.open_modal]
+  );
 
   // 컬럼별 타입 설정
   const column_config: SortColumnConfig = {
@@ -246,99 +227,6 @@ const PartnerTable = forwardRef<PartnerTableRef, PartnerTableProps>(function Par
   const handle_row_click = (partner_id: string) => {
     // router.push: Next.js에서 제공하는 페이지 이동 함수입니다
     router.push(`${detail_path}/${partner_id}`);
-  };
-
-  // 이용 제한 모달 닫기 핸들러
-  const handle_restriction_modal_close = () => {
-    set_restriction_modal_open(false);
-  };
-
-  // 이용 제한 확인 핸들러
-  // 모달에서 사유를 선택하고 "확인" 버튼을 클릭했을 때 실행됩니다
-  const handle_restriction_confirm = (restriction_reason: string) => {
-    // 선택된 파트너가 정확히 1명인지 확인
-    if (selected_partner_ids.length !== 1) {
-      return;
-    }
-
-    // 선택된 파트너 정보 가져오기
-    const selected_partner_id = selected_partner_ids[0];
-    const selected_partner = filtered_partners.find((p) => p.id === selected_partner_id);
-
-    if (!selected_partner) {
-      return;
-    }
-
-    // 이미 이용 제한된 계정인지 확인
-    const existing_blacklist = get_blacklist_data();
-    const is_already_blocked = existing_blacklist.some(
-      (item) => item.name === selected_partner.business_name
-    );
-
-    // 이미 이용 제한된 경우 예외 처리
-    if (is_already_blocked) {
-      // 이용 제한 모달 닫기
-      set_restriction_modal_open(false);
-      // 이미 처리된 요청 모달 표시
-      set_already_processed_modal_state(true);
-      return;
-    }
-
-    // 차단 사유를 BlockReason 타입으로 변환
-    const block_reason_map: Record<string, BlockReason> = {
-      "반복 반려 누적": "반복 반려 누적",
-      "반복 취소 누적": "반복 반려 누적",
-      "무단 이탈 · 노쇼 누적": "무단 이탈 · 노쇼 누적",
-      "공정위 위반 게시 요청 누적": "공정위 위반 게시 요청",
-      "부적절 캠페인 게시": "부적절 캠페인 게시",
-      "콘텐츠 도용 · 중복": "콘텐츠 중복 · 도용",
-      "비정상 요청 · 접근": "비정상 운영 행위",
-      "외부 결제 · 금전 요구": "외부 결제 · 금전 요구",
-      "비매너 행위": "커뮤니티 가이드 위반",
-    };
-
-    const mapped_block_reason: BlockReason =
-      block_reason_map[restriction_reason] || "커뮤니티 가이드 위반";
-
-    // 차단 코드 찾기
-    const block_code =
-      (Object.keys(block_code_reason_map) as BlockCode[]).find(
-        (code) => block_code_reason_map[code] === mapped_block_reason
-      ) || "B004";
-
-    // 새로운 블랙리스트 항목 ID 생성
-    const existing_data = get_blacklist_data();
-    const max_id = Math.max(...existing_data.map((item) => parseInt(item.id) || 0));
-    const new_id = (max_id + 1).toString();
-
-    // 현재 날짜/시간 생성
-    const current_date = format(new Date(), "yyyy-MM-dd HH:mm");
-
-    // 블랙리스트 항목 생성
-    const new_blacklist_item: BlacklistItem = {
-      id: new_id,
-      name: selected_partner.business_name,
-      user_id: selected_partner.id,
-      division: "파트너",
-      current_points: selected_partner.current_points,
-      ip_address: "0.0.0.0",
-      block_code: block_code as BlockCode,
-      block_reason: mapped_block_reason,
-      registered_date: current_date,
-      registered_by: "관리자",
-    };
-
-    // 블랙리스트에 추가
-    add_blacklist_item(new_blacklist_item);
-
-    // 파트너의 status_type을 "이용 제한 회원"으로 업데이트
-    update_partner_status_type(selected_partner_id, "이용 제한 회원");
-
-    // 이용 제한 처리 후 선택 해제
-    reset_selection();
-    set_restriction_modal_open(false);
-
-    // 페이지 이동 없이 현재 페이지에 머무릅니다
   };
 
   // 테이블 컬럼 정의
@@ -586,21 +474,21 @@ const PartnerTable = forwardRef<PartnerTableRef, PartnerTableProps>(function Par
       </div>
       {/* 이용 제한 사유 모달 */}
       <ManagerRestrictionModal
-        is_open={restriction_modal_open}
-        on_close={handle_restriction_modal_close}
-        on_block={handle_restriction_confirm}
+        is_open={restriction.restriction_modal_open}
+        on_close={restriction.handle_modal_close}
+        on_block={restriction.handle_confirm}
       />
       {/* 경고 모달: 이용 제한은 한 번에 한 명만 가능합니다 */}
       <BaseModal
-        is_open={warning_modal_open}
-        on_close={() => set_warning_modal_open(false)}
+        is_open={restriction.warning_modal_open}
+        on_close={restriction.close_warning_modal}
         message="이용 제한은 한 번에 한 명만 가능합니다."
         buttons={["확인"]}
       />
       {/* 이미 처리된 요청 모달 */}
       <BaseModal
-        is_open={already_processed_modal_state}
-        on_close={() => set_already_processed_modal_state(false)}
+        is_open={restriction.already_processed_modal_open}
+        on_close={restriction.close_already_processed_modal}
         message="이미 처리된 요청입니다."
         buttons={["닫기"]}
       />
