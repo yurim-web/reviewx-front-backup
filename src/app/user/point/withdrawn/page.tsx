@@ -34,12 +34,7 @@ export default function WithdrawnPointPage() {
    */
   const filterWithdrawnHistory = (history: PointHistory) =>
     (history.type === "withdrawn" || history.type === "withdrawal_pending") &&
-    ["completed", "pending", "failed"].includes(history.status);
+    ["completed", "failed"].includes(history.status);
 
-  return (
-    <PointHistoryPage
-      activePointTab="withdrawn"
-      filterFunction={filterWithdrawnHistory}
-    />
-  );
+  return <PointHistoryPage activePointTab="withdrawn" filterFunction={filterWithdrawnHistory} />;
 }
