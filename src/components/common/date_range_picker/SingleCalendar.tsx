@@ -17,7 +17,6 @@ import { DayPicker } from "react-day-picker";
 import { ko } from "date-fns/locale";
 import styles from "./range_calendar.module.css";
 import { PreviousMonthIcon, NextMonthIcon } from "./CalendarIcons";
-import { useSingleCalendarStyles } from "./hooks/useSingleCalendarStyles";
 
 // ========================================
 // 타입 정의
@@ -38,10 +37,8 @@ export default function SingleCalendar({
   on_select,
   show_outside_days = false,
 }: SingleCalendarProps) {
-  const calendar_ref = useSingleCalendarStyles(selected);
-
   return (
-    <div ref={calendar_ref} className={styles.single_calendar_wrapper}>
+    <div className={styles.single_calendar_wrapper}>
       <DayPicker
         mode="single"
         selected={selected}
