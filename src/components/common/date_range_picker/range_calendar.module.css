@@ -557,18 +557,20 @@
 
 /* ========================================
    날짜 범위 선택 스타일 (range mode)
+   모든 스타일은 CSS만으로 처리 (JS 훅 없음)
    ======================================== */
 
-/* range 관련 스타일은 RangeCalendar.tsx에서 인라인 스타일로 직접 적용됨 */
-
-/* 시작일과 종료일이 같은 날짜일 때 (단일 선택) - v8: rdp-day_range_*, v9: rdp-range_* */
+/* --- 시작일과 종료일이 같은 날짜일 때 (단일 선택) --- */
 .calendar :global(td.rdp-day.rdp-day_range_start.rdp-day_range_end),
 .calendar :global(td.rdp-day.rdp-range_start.rdp-range_end) {
   background-color: transparent !important;
+  background: transparent !important;
 }
 
 .calendar :global(td.rdp-day.rdp-day_range_start.rdp-day_range_end) button,
-.calendar :global(td.rdp-day.rdp-range_start.rdp-range_end) button {
+.calendar :global(td.rdp-day.rdp-day_range_start.rdp-day_range_end) :global(.rdp-day_button),
+.calendar :global(td.rdp-day.rdp-range_start.rdp-range_end) button,
+.calendar :global(td.rdp-day.rdp-range_start.rdp-range_end) :global(.rdp-day_button) {
   background-color: #ff5694 !important;
   color: white !important;
   border-radius: 50% !important;
@@ -586,19 +588,115 @@
   justify-content: center !important;
   font-weight: 500 !important;
   outline: none !important;
+  position: relative !important;
+  z-index: 1 !important;
 }
 
 .calendar :global(td.rdp-day.rdp-day_range_start.rdp-day_range_end) button *,
-.calendar :global(td.rdp-day.rdp-range_start.rdp-range_end) button * {
+.calendar :global(td.rdp-day.rdp-day_range_start.rdp-day_range_end) :global(.rdp-day_button) *,
+.calendar :global(td.rdp-day.rdp-range_start.rdp-range_end) button *,
+.calendar :global(td.rdp-day.rdp-range_start.rdp-range_end) :global(.rdp-day_button) * {
   color: white !important;
 }
 
-/* 텍스트 wrapper 스타일 */
-.calendar :global(.range-text-wrapper) {
-  color: white !important;
+/* --- range_start (시작일): 오른쪽 절반 연핑크 배경 + 핑크 원 --- */
+.calendar :global(td.rdp-day.rdp-range_start:not(.rdp-range_end)),
+.calendar :global(td.rdp-day.rdp-day_range_start:not(.rdp-day_range_end)) {
+  background: linear-gradient(to right, transparent 50%, rgba(255, 86, 148, 0.1) 50%) !important;
   position: relative !important;
-  z-index: 2 !important;
-  display: inline-block !important;
+}
+
+.calendar :global(td.rdp-day.rdp-range_start:not(.rdp-range_end)) button,
+.calendar :global(td.rdp-day.rdp-range_start:not(.rdp-range_end)) :global(.rdp-day_button),
+.calendar :global(td.rdp-day.rdp-day_range_start:not(.rdp-day_range_end)) button,
+.calendar :global(td.rdp-day.rdp-day_range_start:not(.rdp-day_range_end)) :global(.rdp-day_button) {
+  background-color: #ff5694 !important;
+  color: white !important;
+  border-radius: 50% !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  max-width: 32px !important;
+  max-height: 32px !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 500 !important;
+  outline: none !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.calendar :global(td.rdp-day.rdp-range_start:not(.rdp-range_end)) button *,
+.calendar :global(td.rdp-day.rdp-range_start:not(.rdp-range_end)) :global(.rdp-day_button) *,
+.calendar :global(td.rdp-day.rdp-day_range_start:not(.rdp-day_range_end)) button *,
+.calendar
+  :global(td.rdp-day.rdp-day_range_start:not(.rdp-day_range_end))
+  :global(.rdp-day_button)
+  * {
+  color: white !important;
+}
+
+/* --- range_end (종료일): 왼쪽 절반 연핑크 배경 + 핑크 원 --- */
+.calendar :global(td.rdp-day.rdp-range_end:not(.rdp-range_start)),
+.calendar :global(td.rdp-day.rdp-day_range_end:not(.rdp-day_range_start)) {
+  background: linear-gradient(to right, rgba(255, 86, 148, 0.1) 50%, transparent 50%) !important;
+  position: relative !important;
+}
+
+.calendar :global(td.rdp-day.rdp-range_end:not(.rdp-range_start)) button,
+.calendar :global(td.rdp-day.rdp-range_end:not(.rdp-range_start)) :global(.rdp-day_button),
+.calendar :global(td.rdp-day.rdp-day_range_end:not(.rdp-day_range_start)) button,
+.calendar :global(td.rdp-day.rdp-day_range_end:not(.rdp-day_range_start)) :global(.rdp-day_button) {
+  background-color: #ff5694 !important;
+  color: white !important;
+  border-radius: 50% !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  max-width: 32px !important;
+  max-height: 32px !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 500 !important;
+  outline: none !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.calendar :global(td.rdp-day.rdp-range_end:not(.rdp-range_start)) button *,
+.calendar :global(td.rdp-day.rdp-range_end:not(.rdp-range_start)) :global(.rdp-day_button) *,
+.calendar :global(td.rdp-day.rdp-day_range_end:not(.rdp-day_range_start)) button *,
+.calendar
+  :global(td.rdp-day.rdp-day_range_end:not(.rdp-day_range_start))
+  :global(.rdp-day_button)
+  * {
+  color: white !important;
+}
+
+/* --- range_middle (중간 날짜): 연핑크 배경 --- */
+.calendar :global(td.rdp-day.rdp-range_middle),
+.calendar :global(td.rdp-day.rdp-day_range_middle) {
+  background-color: rgba(255, 86, 148, 0.1) !important;
+}
+
+.calendar :global(td.rdp-day.rdp-range_middle) button,
+.calendar :global(td.rdp-day.rdp-range_middle) :global(.rdp-day_button),
+.calendar :global(td.rdp-day.rdp-day_range_middle) button,
+.calendar :global(td.rdp-day.rdp-day_range_middle) :global(.rdp-day_button) {
+  background-color: transparent !important;
+  color: #444444 !important;
+  border-radius: 0 !important;
+  border: none !important;
 }
 
 /* ========================================
@@ -1198,27 +1296,10 @@
 
   /* Range 달력 날짜 범위 시작 날짜 배경 */
   /* v9: rdp-range_start, v8: rdp-day_range_start */
-  .calendar_wrapper .calendar :global(.rdp-range_start),
-  .calendar_wrapper .calendar :global(.rdp-day_range_start) {
+  .calendar_wrapper .calendar :global(.rdp-range_start:not(.rdp-range_end)),
+  .calendar_wrapper .calendar :global(.rdp-day_range_start:not(.rdp-day_range_end)) {
     position: relative !important;
-    background-color: transparent !important;
-    height: 20px !important;
-    min-height: 20px !important;
-    max-height: 20px !important;
-    line-height: 20px !important;
-    padding: 0 !important;
-  }
-
-  .calendar_wrapper .calendar :global(.rdp-range_start)::before,
-  .calendar_wrapper .calendar :global(.rdp-day_range_start)::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 50%;
-    right: 0;
-    bottom: 0;
-    background-color: transparent !important;
-    z-index: 0;
+    background: linear-gradient(to right, transparent 50%, rgba(255, 86, 148, 0.1) 50%) !important;
     height: 20px !important;
     min-height: 20px !important;
     max-height: 20px !important;
@@ -1228,10 +1309,10 @@
 
   /* Range 달력 날짜 범위 끝 날짜 배경 */
   /* v9: rdp-range_end, v8: rdp-day_range_end */
-  .calendar_wrapper .calendar :global(.rdp-range_end),
-  .calendar_wrapper .calendar :global(.rdp-day_range_end) {
+  .calendar_wrapper .calendar :global(.rdp-range_end:not(.rdp-range_start)),
+  .calendar_wrapper .calendar :global(.rdp-day_range_end:not(.rdp-day_range_start)) {
     position: relative !important;
-    background-color: transparent !important;
+    background: linear-gradient(to right, rgba(255, 86, 148, 0.1) 50%, transparent 50%) !important;
     height: 20px !important;
     min-height: 20px !important;
     max-height: 20px !important;
@@ -1239,21 +1320,15 @@
     padding: 0 !important;
   }
 
-  .calendar_wrapper .calendar :global(.rdp-range_end)::before,
-  .calendar_wrapper .calendar :global(.rdp-day_range_end)::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 50%;
-    bottom: 0;
+  /* Range 달력 시작일+종료일 같은 날 (모바일) */
+  .calendar_wrapper .calendar :global(.rdp-range_start.rdp-range_end),
+  .calendar_wrapper .calendar :global(.rdp-day_range_start.rdp-day_range_end) {
+    position: relative !important;
+    background: transparent !important;
     background-color: transparent !important;
-    z-index: 0;
     height: 20px !important;
     min-height: 20px !important;
     max-height: 20px !important;
-    line-height: 20px !important;
-    padding: 0 !important;
   }
 
   /* Range 달력 시작/끝 날짜 버튼 스타일 */
@@ -1264,11 +1339,15 @@
   .calendar_wrapper .calendar :global(.rdp-range_start) :global(.rdp-button),
   .calendar_wrapper .calendar :global(.rdp-range_end) :global(.rdp-button),
   .calendar_wrapper .calendar :global(.rdp-day_range_start) :global(.rdp-button),
-  .calendar_wrapper .calendar :global(.rdp-day_range_end) :global(.rdp-button) {
+  .calendar_wrapper .calendar :global(.rdp-day_range_end) :global(.rdp-button),
+  .calendar_wrapper .calendar :global(.rdp-range_start) :global(.rdp-day_button),
+  .calendar_wrapper .calendar :global(.rdp-range_end) :global(.rdp-day_button),
+  .calendar_wrapper .calendar :global(.rdp-day_range_start) :global(.rdp-day_button),
+  .calendar_wrapper .calendar :global(.rdp-day_range_end) :global(.rdp-day_button) {
     position: relative !important;
     z-index: 1 !important;
     background-color: transparent !important;
-    color: #444 !important;
+    color: white !important;
     width: 100% !important;
     height: 20px !important;
     min-width: 100% !important;
@@ -1280,36 +1359,27 @@
     margin: 0 !important;
   }
 
-  /* Range 달력 시작/끝 날짜에 작은 원 추가 (JS range-start-circle 사용 시 CSS ::after 비활성화) */
-  .calendar_wrapper
-    .calendar
-    :global(.rdp-range_start)
-    button:not(:has(.range-start-circle))::after,
-  .calendar_wrapper .calendar :global(.rdp-range_end) button:not(:has(.range-end-circle))::after,
-  .calendar_wrapper
-    .calendar
-    :global(.rdp-day_range_start)
-    button:not(:has(.range-start-circle))::after,
-  .calendar_wrapper
-    .calendar
-    :global(.rdp-day_range_end)
-    button:not(:has(.range-end-circle))::after,
-  .calendar_wrapper
-    .calendar
-    :global(.rdp-range_start)
-    :global(.rdp-button):not(:has(.range-start-circle))::after,
-  .calendar_wrapper
-    .calendar
-    :global(.rdp-range_end)
-    :global(.rdp-button):not(:has(.range-end-circle))::after,
-  .calendar_wrapper
-    .calendar
-    :global(.rdp-day_range_start)
-    :global(.rdp-button):not(:has(.range-start-circle))::after,
-  .calendar_wrapper
-    .calendar
-    :global(.rdp-day_range_end)
-    :global(.rdp-button):not(:has(.range-end-circle))::after {
+  /* Range 달력 시작/끝 날짜 텍스트 흰색 */
+  .calendar_wrapper .calendar :global(.rdp-range_start) button *,
+  .calendar_wrapper .calendar :global(.rdp-range_end) button *,
+  .calendar_wrapper .calendar :global(.rdp-day_range_start) button *,
+  .calendar_wrapper .calendar :global(.rdp-day_range_end) button *,
+  .calendar_wrapper .calendar :global(.rdp-range_start) :global(.rdp-day_button) *,
+  .calendar_wrapper .calendar :global(.rdp-range_end) :global(.rdp-day_button) *,
+  .calendar_wrapper .calendar :global(.rdp-day_range_start) :global(.rdp-day_button) *,
+  .calendar_wrapper .calendar :global(.rdp-day_range_end) :global(.rdp-day_button) * {
+    color: white !important;
+  }
+
+  /* Range 달력 시작/끝 날짜에 작은 핑크 원 (CSS ::after) */
+  .calendar_wrapper .calendar :global(.rdp-range_start) button::after,
+  .calendar_wrapper .calendar :global(.rdp-range_end) button::after,
+  .calendar_wrapper .calendar :global(.rdp-day_range_start) button::after,
+  .calendar_wrapper .calendar :global(.rdp-day_range_end) button::after,
+  .calendar_wrapper .calendar :global(.rdp-range_start) :global(.rdp-day_button)::after,
+  .calendar_wrapper .calendar :global(.rdp-range_end) :global(.rdp-day_button)::after,
+  .calendar_wrapper .calendar :global(.rdp-day_range_start) :global(.rdp-day_button)::after,
+  .calendar_wrapper .calendar :global(.rdp-day_range_end) :global(.rdp-day_button)::after {
     content: "";
     position: absolute;
     top: 50%;
@@ -1319,15 +1389,7 @@
     height: 18px !important;
     background-color: #ff5694;
     border-radius: 50%;
-    z-index: 2;
-  }
-
-  /* Range 달력 모바일에서 range-start-circle, range-end-circle 크기 조정 */
-  .calendar_wrapper .calendar :global(.range-start-circle),
-  .calendar_wrapper .calendar :global(.range-end-circle) {
-    width: 18px !important;
-    height: 18px !important;
-    pointer-events: none !important;
+    z-index: -1;
   }
 
   /* Range 달력 CSS 변수 재정의 - 모바일용 (너비에 맞게 조정) */

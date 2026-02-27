@@ -14,12 +14,10 @@
 
 "use client";
 
-import { useRef } from "react";
 import { DayPicker, type DateRange as DayPickerDateRange } from "react-day-picker";
 import { ko } from "date-fns/locale";
 import styles from "./range_calendar.module.css";
 import { PreviousMonthIcon, NextMonthIcon } from "./CalendarIcons";
-import { useRangeCalendarStyles } from "./hooks/useRangeCalendarStyles";
 
 // ========================================
 // 타입 정의
@@ -46,12 +44,6 @@ export default function RangeCalendar({
   number_of_months = 2,
   show_outside_days = false,
 }: RangeCalendarProps) {
-  // ========================================
-  // Refs
-  // ========================================
-
-  const calendar_ref = useRef<HTMLDivElement>(null);
-
   // ========================================
   // 날짜 선택 핸들러
   // ========================================
@@ -124,15 +116,12 @@ export default function RangeCalendar({
     on_select(undefined);
   };
 
-  // 날짜 범위 스타일 적용 로직을 훅으로 분리
-  useRangeCalendarStyles(selected, calendar_ref);
-
   // ========================================
   // 렌더링
   // ========================================
 
   return (
-    <div ref={calendar_ref} className={styles.calendar_wrapper}>
+    <div className={styles.calendar_wrapper}>
       <DayPicker
         mode="range"
         selected={selected}
