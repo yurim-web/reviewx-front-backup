@@ -16,7 +16,7 @@ import type { DateRange } from "react-day-picker";
 
 export function useRangeCalendarStyles(
   selected: DateRange | undefined,
-  calendar_ref: RefObject<HTMLDivElement>
+  calendar_ref: RefObject<HTMLDivElement | null>
 ): void {
   const is_applying_styles_ref = useRef(false);
   const observer_ref = useRef<MutationObserver | null>(null);
