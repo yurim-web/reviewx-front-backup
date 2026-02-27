@@ -13,43 +13,31 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
 import Image from "next/image";
-import { useModalState } from "@/hooks/useModalState";
 import baseStyles from "@/styles/partner/campaign_application/card/applicant_card_base.module.css";
 import contentStyles from "@/styles/partner/campaign_application/card/applicant_card_content.module.css";
 import actionStyles from "@/styles/partner/campaign_application/card/applicant_card_actions.module.css";
-import { getChannelLogo } from "@/utils/channelLogoMap";
 import type { CampaignApplicant } from "../shared_card/campaignTypes";
-import ReportModal, { type ReportOption } from "@/components/common/modal/ReportModal";
+import ReportModal from "@/components/common/modal/ReportModal";
 import BaseModal from "@/components/common/modal/BaseModal";
 import TextareaModal from "@/components/common/modal/TextareaModal";
+import {
+  usePendingCardState,
+  REPORT_OPTIONS,
+} from "@/hooks/partner/campaign_contents/usePendingCardState";
 
-type PendingState =
-  | "content_not_registered" // 콘텐츠 미등록
-  | "extension_requested" // 등록 기한 연장 요청
-  | "rejected" // 반려 처리
-  | "reported"; // 신고 처리
+type PendingState = "content_not_registered" | "extension_requested" | "rejected" | "reported";
 
 interface MissionPendingCardProps {
   applicant: CampaignApplicant;
-  /** 대기 탭에서의 상태 유형 */
   pendingState?: PendingState;
-  /** 연장 승인 여부 (true면 기한이 "기한 연장" 형태로 표시) */
   isExtensionApproved?: boolean;
-  /** 연장된 기한 날짜 (예: "2025-11-05") */
   extendedDeadline?: string;
-  /** 실제 기한 날짜 (등록일과 다를 수 있음, 선택적) */
   deadlineDate?: string;
-  /** 반려 사유 (확인 탭에서 반려 처리 시 입력된 사유) */
   reject_reason?: string;
-  /** 등록 기한 연장 요청 사유 (데이터에서 불러옴) */
   extension_request_reason?: string;
-  /** 신고 처리된 날짜/시간 (예: "2025-11-02 17:37") */
   reportedDate?: string;
-  /** 연장 버튼 클릭 */
   onExtend?: (applicantId: string) => void;
-  /** 신고 버튼 클릭 */
   onReport?: (applicantId: string) => void;
 }
 
@@ -65,240 +53,26 @@ export default function MissionPendingCard({
   onExtend,
   onReport,
 }: MissionPendingCardProps) {
-  const _channel_icon_src = getChannelLogo(applicant.channel);
-
-  const reportModal = useModalState();
-  const [selectedReportOption, setSelectedReportOption] = useState<string>("");
-  const [otherReportReason, setOtherReportReason] = useState<string>("");
-  // 연장 관련 상태
-  const [extensionCount, setExtensionCount] = useState(0);
-  const extensionConfirmModal = useModalState();
-  const extensionCompleteModal = useModalState();
-  const extensionLimitModal = useModalState();
-  // 반려 사유 모달 상태
-  const rejectReasonModal = useModalState();
-  // 연장 요청 사유 모달 상태
-  const extendModal = useModalState();
-  const extendResultModal = useModalState();
-  const [extendResultMessage, setExtendResultMessage] = useState<string>("");
-
-  // 📌 로컬 상태 관리: 신고 시 카드 상태를 즉시 변경하기 위해 사용
-  const [localPendingState, setLocalPendingState] = useState<PendingState>(pendingState);
-  const [localIsExtensionApproved, setLocalIsExtensionApproved] = useState(isExtensionApproved);
-  const [localExtendedDeadline, setLocalExtendedDeadline] = useState(extendedDeadline);
-  // 📌 신고 날짜/시간 로컬 상태 (신고 버튼 클릭 시 즉시 표시하기 위해)
-  const [localReportedDate, setLocalReportedDate] = useState(reportedDate);
-
-  // 📌 prop이 변경되면 로컬 상태도 업데이트 (부모 컴포넌트에서 상태 변경 시)
-  useEffect(() => {
-    setLocalPendingState(pendingState);
-  }, [pendingState]);
-
-  useEffect(() => {
-    setLocalIsExtensionApproved(isExtensionApproved);
-  }, [isExtensionApproved]);
-
-  useEffect(() => {
-    setLocalExtendedDeadline(extendedDeadline);
-  }, [extendedDeadline]);
-
-  useEffect(() => {
-    setLocalReportedDate(reportedDate);
-  }, [reportedDate]);
-
-  // 신고 옵션 정의
-  const reportOptions: ReportOption[] = [
-    { value: "selection_cancelled", label: "선정 후 취소" },
-    { value: "no_show", label: "무단 이탈 · 노쇼" },
-    { value: "exposure_period", label: "노출 기간 불이행" },
-    { value: "modification_request", label: "수정 요청 불이행" },
-    { value: "other", label: "기타 비매너 행위", isOther: true },
-  ];
-
-  // 신고 모달 열기
-  const handleReportClick = () => {
-    reportModal.open();
-    if (!selectedReportOption && reportOptions.length > 0) {
-      setSelectedReportOption(reportOptions[0].value);
-    }
-  };
-
-  // 신고 모달 닫기
-  const handleReportModalClose = () => {
-    reportModal.close();
-    setSelectedReportOption("");
-    setOtherReportReason("");
-  };
-
-  // 신고 확인 처리
-  // 📌 신고 버튼 클릭 시:
-  // 1. onReport 콜백을 호출하여 부모 컴포넌트에 신고 알림
-  // 2. 카드 상태를 "reported"로 변경
-  // 3. 신고 날짜/시간을 현재 시간으로 설정
-  const handleReportConfirm = (_selectedOption: string, _otherReason?: string) => {
-    if (onReport) {
-      onReport(applicant.id);
-    }
-
-    // 📌 카드 상태를 신고 처리 상태로 변경
-    setLocalPendingState("reported");
-
-    // 📌 신고 날짜/시간을 현재 시간으로 설정 (YYYY-MM-DD HH:mm 형식)
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
-    const hours = String(now.getHours()).padStart(2, "0");
-    const minutes = String(now.getMinutes()).padStart(2, "0");
-    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}`;
-    setLocalReportedDate(formattedDate);
-
-    //    handleReportModalClose();
-  };
-
-  // 연장 버튼 클릭 핸들러 (footer 연장 버튼)
-  const handleFooterExtendClick = () => {
-    if (extensionCount >= 2) {
-      extensionLimitModal.open();
-      return;
-    }
-    extensionConfirmModal.open();
-  };
-
-  // 연장 확인 모달에서 연장 버튼 클릭
-  const handleExtensionConfirm = () => {
-    setExtensionCount((prev) => prev + 1);
-    extensionConfirmModal.close();
-    extensionCompleteModal.open();
-  };
-
-  // 연장 완료 모달 닫기 핸들러 (footer 연장 버튼용)
-  // 📌 footer 연장 버튼으로 연장 완료 후:
-  // - 연장 완료 모달의 "닫기" 버튼을 클릭하면 이 함수가 실행됩니다
-  // - 카드 상태를 3번째 상태(기한 연장)로 변경합니다
-  // - pendingState: "content_not_registered" → "content_not_registered" (유지)
-  // - isExtensionApproved: false → true
-  // - extendedDeadline: 현재 기한 날짜 기준으로 3일 후 계산
-  const handleExtensionCompleteClose = () => {
-    // 📌 카드 상태를 3번째 상태로 변경
-    // - isExtensionApproved: false → true
-    setLocalIsExtensionApproved(true);
-
-    // - extendedDeadline: 현재 기한 날짜 기준으로 3일 후 계산
-    // 📌 날짜 계산 우선순위:
-    // 1. 이미 연장된 날짜가 있으면 그것을 기준으로 +3일
-    // 2. deadlineDate가 있으면 그것을 기준으로 +3일
-    // 3. 둘 다 없으면 오늘 날짜 기준으로 +3일
-    const baseDate = localExtendedDeadline || deadlineDate;
-
-    if (baseDate) {
-      // 현재 기한 날짜를 기준으로 3일 추가
-      // baseDate 형식: "YYYY-MM-DD"
-      const deadline = new Date(baseDate + "T00:00:00");
-      deadline.setDate(deadline.getDate() + 3);
-      const formattedDate = deadline.toISOString().split("T")[0];
-      setLocalExtendedDeadline(formattedDate);
-    } else {
-      // 오늘 날짜 기준으로 3일 후
-      const today = new Date();
-      today.setDate(today.getDate() + 3);
-      const formattedDate = today.toISOString().split("T")[0];
-      setLocalExtendedDeadline(formattedDate);
-    }
-
-    extensionCompleteModal.close();
-
-    // 부모 컴포넌트에 연장 알림
-    if (onExtend) {
-      onExtend(applicant.id);
-    }
-  };
-
-  // 연장 모달 열기 (상단 "등록 기한 연장 요청" 버튼용)
-  const handleExtendClick = () => {
-    extendModal.open();
-  };
-
-  // 연장 모달 닫기
-  const handleExtendModalClose = () => {
-    extendModal.close();
-  };
-
-  // 연장 거절 처리
-  const handleExtendReject = () => {
-    extendModal.close();
-    setExtendResultMessage("등록 기간 연장이 거절되었습니다.");
-    extendResultModal.open();
-  };
-
-  // 연장 승인 처리
-  // 📌 "등록 기한 연장 요청" 모달에서 "승인" 버튼 클릭 시:
-  // 1. onExtend 콜백을 호출하여 부모 컴포넌트에 승인 알림
-  // 2. 완료 메시지 모달 표시
-  // 3. 카드 상태 변경은 완료 모달의 "닫기" 버튼을 눌렀을 때 수행
-  const handleExtendApprove = () => {
-    // 부모 컴포넌트에 승인 알림
-    if (onExtend) {
-      onExtend(applicant.id);
-    }
-
-    extendModal.close();
-    setExtendResultMessage("등록 기간 연장이 완료되었습니다.");
-    extendResultModal.open();
-  };
-
-  // 연장 결과 모달 닫기
-  // 📌 "등록 기간 연장이 완료되었습니다." 모달의 "닫기" 버튼 클릭 시:
-  // 1. 카드 상태를 3번째 상태로 변경
-  // 2. 모달 닫기
-  const handleExtendResultModalClose = () => {
-    // 📌 완료 메시지가 "등록 기간 연장이 완료되었습니다."인 경우에만 카드 상태 변경
-    // (거절 메시지인 경우는 상태 변경하지 않음)
-    if (extendResultMessage === "등록 기간 연장이 완료되었습니다.") {
-      // 📌 카드 상태를 3번째 상태로 변경
-      // - pendingState: "extension_requested" → "content_not_registered"
-      setLocalPendingState("content_not_registered");
-
-      // - isExtensionApproved: false → true
-      setLocalIsExtensionApproved(true);
-
-      // - extendedDeadline: 현재 날짜 기준으로 3일 후 계산 (또는 deadlineDate + 3일)
-      // deadlineDate가 있으면 그것을 기준으로, 없으면 오늘 날짜 기준
-      if (deadlineDate) {
-        // deadlineDate를 기준으로 3일 추가
-        // deadlineDate 형식: "YYYY-MM-DD"
-        const deadline = new Date(deadlineDate + "T00:00:00");
-        deadline.setDate(deadline.getDate() + 3);
-        const formattedDate = deadline.toISOString().split("T")[0];
-        setLocalExtendedDeadline(formattedDate);
-      } else {
-        // 오늘 날짜 기준으로 3일 후
-        const today = new Date();
-        today.setDate(today.getDate() + 3);
-        const formattedDate = today.toISOString().split("T")[0];
-        setLocalExtendedDeadline(formattedDate);
-      }
-    }
-
-    extendResultModal.close();
-    setExtendResultMessage("");
-  };
-
-  // 반려 사유 모달 열기
-  const handleRejectReasonClick = () => {
-    rejectReasonModal.open();
-  };
-
-  // 반려 사유 모달 닫기
-  const handleRejectReasonModalClose = () => {
-    rejectReasonModal.close();
-  };
+  const state = usePendingCardState<PendingState>({
+    applicantId: applicant.id,
+    pendingState,
+    isExtensionApproved,
+    extendedDeadline,
+    deadlineDate,
+    reportedDate,
+    onExtend,
+    onReport,
+    updateLocalOnReport: true,
+    calculateDateOnExtension: true,
+    callOnExtendAt: "onComplete",
+    supportsExtensionRequest: true,
+  });
 
   return (
     <div className={baseStyles.card_wrapper}>
       <article
         className={`${baseStyles.applicant_card} ${
-          localPendingState === "reported" ? baseStyles.applicant_card_no_footer : ""
+          state.localPendingState === "reported" ? baseStyles.applicant_card_no_footer : ""
         }`.trim()}
       >
         {/* 프로필 영역 */}
@@ -320,7 +94,7 @@ export default function MissionPendingCard({
 
         {/* 상태별 버튼 표시 */}
         <div className={actionStyles.action_button_section}>
-          {localPendingState === "content_not_registered" && (
+          {state.localPendingState === "content_not_registered" && (
             <button
               className={`${actionStyles.action_button} ${actionStyles.disabled_button}`}
               disabled
@@ -329,29 +103,29 @@ export default function MissionPendingCard({
             </button>
           )}
 
-          {localPendingState === "extension_requested" && (
+          {state.localPendingState === "extension_requested" && (
             <button
               className={`${actionStyles.action_button} ${actionStyles.extension_request_button}`}
-              onClick={handleExtendClick}
+              onClick={state.handleExtendRequestClick}
             >
               <span className={actionStyles.extension_request_text_pc}>등록 기한 연장 요청</span>
               <span className={actionStyles.extension_request_text_mobile}>기간 연장 요청</span>
             </button>
           )}
 
-          {localPendingState === "rejected" && (
+          {state.localPendingState === "rejected" && (
             <button
               className={`${actionStyles.action_button} ${actionStyles.reject_process_button}`}
-              onClick={handleRejectReasonClick}
+              onClick={state.handleRejectReasonClick}
               aria-label={`${applicant.nickname} 반려 사유 확인`}
             >
               콘텐츠 반려 처리
             </button>
           )}
 
-          {localPendingState === "reported" && (
+          {state.localPendingState === "reported" && (
             <button
-              className={`${actionStyles.action_button}`}
+              className={actionStyles.action_button}
               disabled
               style={{
                 backgroundColor: "rgba(255, 38, 38, 0.1)",
@@ -365,27 +139,29 @@ export default function MissionPendingCard({
           )}
         </div>
 
-        {/* 기한 표시 (미등록, 반려 처리) 또는 신고 날짜/시간 표시 (신고 처리) */}
-        {localPendingState === "reported" && localReportedDate ? (
+        {/* 기한 표시 또는 신고 날짜/시간 표시 */}
+        {state.localPendingState === "reported" && state.localReportedDate ? (
           <div className={actionStyles.registration_info}>
             <span>
-              {localReportedDate.split(" ")[0]}
+              {state.localReportedDate.split(" ")[0]}
               <span className={actionStyles.reported_time_mobile_hide}>
-                {localReportedDate.includes(" ") ? ` ${localReportedDate.split(" ")[1]}` : ""}
+                {state.localReportedDate.includes(" ")
+                  ? ` ${state.localReportedDate.split(" ")[1]}`
+                  : ""}
               </span>{" "}
               신고
             </span>
           </div>
         ) : (
-          (deadlineDate || localExtendedDeadline) && (
+          (deadlineDate || state.localExtendedDeadline) && (
             <div className={actionStyles.registration_info}>
               <span>
-                {localIsExtensionApproved && localExtendedDeadline
-                  ? `${localExtendedDeadline} 기한 연장`
+                {state.localIsExtensionApproved && state.localExtendedDeadline
+                  ? `${state.localExtendedDeadline} 기한 연장`
                   : deadlineDate
                     ? `${deadlineDate} 기한`
-                    : localExtendedDeadline
-                      ? `${localExtendedDeadline} 기한`
+                    : state.localExtendedDeadline
+                      ? `${state.localExtendedDeadline} 기한`
                       : ""}
               </span>
             </div>
@@ -393,12 +169,12 @@ export default function MissionPendingCard({
         )}
       </article>
 
-      {/* 연장/신고 버튼 footer (신고 처리된 경우 표시하지 않음) */}
-      {localPendingState !== "reported" && (
+      {/* 연장/신고 버튼 footer */}
+      {state.localPendingState !== "reported" && (
         <div className={actionStyles.extension_report_footer}>
           <button
             className={actionStyles.extension_button}
-            onClick={handleFooterExtendClick}
+            onClick={state.handleFooterExtendClick}
             aria-label={`${applicant.nickname} 연장`}
           >
             <Image
@@ -413,7 +189,7 @@ export default function MissionPendingCard({
           <div className={actionStyles.vertical_divider}></div>
           <button
             className={actionStyles.report_button}
-            onClick={handleReportClick}
+            onClick={state.handleReportClick}
             aria-label={`${applicant.nickname} 신고`}
           >
             <Image
@@ -430,90 +206,84 @@ export default function MissionPendingCard({
 
       {/* 신고 모달 */}
       <ReportModal
-        is_open={reportModal.isOpen}
-        on_close={handleReportModalClose}
+        is_open={state.reportModal.isOpen}
+        on_close={state.handleReportModalClose}
         title="콘텐츠 신고"
-        options={reportOptions}
-        selectedOption={selectedReportOption}
-        onOptionChange={setSelectedReportOption}
-        otherReason={otherReportReason}
-        onOtherReasonChange={setOtherReportReason}
+        options={REPORT_OPTIONS}
+        selectedOption={state.selectedReportOption}
+        onOptionChange={state.setSelectedReportOption}
+        otherReason={state.otherReportReason}
+        onOtherReasonChange={state.setOtherReportReason}
         buttons={["취소", "신고"]}
-        on_confirm={handleReportConfirm}
+        on_confirm={state.handleReportConfirm}
         type="center"
       />
 
       {/* 등록 기한 연장 요청 사유 모달 */}
-      {/* 📌 "등록 기한 연장 요청" 버튼 클릭 시 표시되는 모달:
-          - 리뷰어가 입력한 등록 기한 연장 요청 사유를 표시합니다
-          - "거절" 버튼: 연장 요청을 거절합니다
-          - "승인" 버튼: 연장 요청을 승인하고 카드를 3번째 상태(기한 연장)로 변경합니다
-      */}
-      <TextareaModal
-        is_open={extendModal.isOpen}
-        on_close={handleExtendModalClose}
-        title="등록 기한 연장 요청 사유"
-        value={extension_request_reason}
-        readOnly={true}
-        placeholder=""
-        buttons={["거절", "승인"]}
-        on_cancel={handleExtendReject}
-        on_confirm={handleExtendApprove}
-        type="center"
-        variant="extend"
-      />
+      {state.extendModal && (
+        <TextareaModal
+          is_open={state.extendModal.isOpen}
+          on_close={state.handleExtendRequestModalClose!}
+          title="등록 기한 연장 요청 사유"
+          value={extension_request_reason}
+          readOnly={true}
+          placeholder=""
+          buttons={["거절", "승인"]}
+          on_cancel={state.handleExtendReject!}
+          on_confirm={state.handleExtendApprove!}
+          type="center"
+          variant="extend"
+        />
+      )}
 
-      {/* 연장 결과 모달 (승인/거절 후 표시) */}
-      <BaseModal
-        is_open={extendResultModal.isOpen}
-        on_close={handleExtendResultModalClose}
-        message={extendResultMessage}
-        buttons={["닫기"]}
-        type="center"
-      />
+      {/* 연장 결과 모달 */}
+      {state.extendResultModal && (
+        <BaseModal
+          is_open={state.extendResultModal.isOpen}
+          on_close={state.handleExtendResultModalClose!}
+          message={state.extendResultMessage!}
+          buttons={["닫기"]}
+          type="center"
+        />
+      )}
 
       {/* 연장 확인 모달 (푸터 연장 버튼용) */}
       <BaseModal
-        is_open={extensionConfirmModal.isOpen}
-        on_close={() => extensionConfirmModal.close()}
+        is_open={state.extensionConfirmModal.isOpen}
+        on_close={() => state.extensionConfirmModal.close()}
         message={
-          extensionCount === 0
+          state.extensionCount === 0
             ? '콘텐츠 등록 기간을<br><span style="color: #FF2626;">3일 연장</span>하시겠습니까?'
             : '이미 연장한 내역이 있습니다.<br><span style="color: #FF2626;">3일 더 연장</span>하시겠습니까?'
         }
         buttons={["취소", "연장"]}
-        on_confirm={handleExtensionConfirm}
+        on_confirm={state.handleExtensionConfirm}
         type="center"
         button_variant="red"
       />
 
-      {/* 연장 완료 모달 (푸터 연장 버튼용) */}
-      {/* 📌 footer 연장 버튼으로 연장 완료 후:
-          - 연장 완료 모달의 "닫기" 버튼을 클릭하면 카드 상태가 변경됩니다
-          - 카드가 "기한 연장" 상태로 변경되고 날짜가 3일 추가됩니다
-      */}
+      {/* 연장 완료 모달 */}
       <BaseModal
-        is_open={extensionCompleteModal.isOpen}
-        on_close={handleExtensionCompleteClose}
+        is_open={state.extensionCompleteModal.isOpen}
+        on_close={state.handleExtensionCompleteClose}
         message="등록 기간 연장이 완료되었습니다."
         buttons={["닫기"]}
         type="center"
       />
 
-      {/* 연장 제한 초과 모달 (푸터 연장 버튼용) */}
+      {/* 연장 제한 초과 모달 */}
       <BaseModal
-        is_open={extensionLimitModal.isOpen}
-        on_close={() => extensionLimitModal.close()}
+        is_open={state.extensionLimitModal.isOpen}
+        on_close={() => state.extensionLimitModal.close()}
         message="연장은 최대 두 번까지만 가능합니다."
         buttons={["닫기"]}
         type="center"
       />
 
-      {/* 반려 사유 모달 (반려 처리된 카드에서 버튼 클릭 시 표시) */}
-      {/* 📌 "콘텐츠 반려 처리" 버튼 클릭 시 파트너가 입력한 반려 사유를 표시합니다 */}
+      {/* 반려 사유 모달 */}
       <TextareaModal
-        is_open={rejectReasonModal.isOpen}
-        on_close={handleRejectReasonModalClose}
+        is_open={state.rejectReasonModal.isOpen}
+        on_close={state.handleRejectReasonModalClose}
         title="반려 사유"
         titleColor="#ff2626"
         value={reject_reason || "반려 사유가 등록되지 않았습니다."}
