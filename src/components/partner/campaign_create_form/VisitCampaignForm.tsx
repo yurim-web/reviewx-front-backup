@@ -11,389 +11,45 @@
 
 "use client";
 
-import { useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 import { CampaignFormData, CampaignCreateFormBaseProps } from "@/types/domain/user";
-// 분리된 CSS 모듈들 import
 import infoStyles from "@/styles/partner/campaign_create/campaign_info.module.css";
-import buttonStyles from "@/styles/partner/campaign_create/campaign_guide/submit_buttons.module.css";
-import styles from "@/styles/partner/campaign_create/campaign_create.module.css";
-
-// 공통 컴포넌트들 import
-import { CampaignTypeSelector } from "./common/selectors/CampaignTypeSelector";
 import { CustomDropdown } from "./common/selectors/CustomDropdown";
-import {
-  platforms,
-  categories,
-  regions,
-  sub_regions,
-} from "./common/constants/campaignFormConstants";
-import NoticeSection from "./common/sections/NoticeSection";
-import { ThumbnailAndDetailImages } from "./common/images/ThumbnailAndDetailImages";
-import { PointsManagementSection } from "./common/sections/PointsManagementSection";
-import { RecruitmentFieldsSection } from "./common/sections/RecruitmentFieldsSection";
-import { SimpleGuideSection } from "./common/sections/SimpleGuideSection";
-import { ParticipationOptionsSection } from "./common/sections/ParticipationOptionsSection";
-import { ContactPhoneField } from "./common/fields/ContactPhoneField";
-import { GuidelinesTextarea } from "./common/fields/GuidelinesTextarea";
-import { FairTradeAgreement } from "./common/fields/FairTradeAgreement";
-import { FloatingActionButtons } from "./common/layout/FloatingActionButtons";
-import { formatNumberWithComma, getRegionKey } from "./common/utils/formUtils";
-import BaseModal from "@/components/common/modal/BaseModal";
-import Toast from "@/components/common/toast/Toast";
-
-// 커스텀 훅 import
-import { useCampaignForm } from "@/hooks/partner/campaign_create_form/useCampaignForm";
-import { useCampaignFormValidation } from "@/hooks/partner/campaign_create_form/useCampaignFormValidation";
-import { useCampaignFormStorage } from "@/hooks/partner/campaign_create_form/useCampaignFormStorage";
+import { platforms, regions, sub_regions } from "./common/constants/campaignFormConstants";
+import { getRegionKey } from "./common/utils/formUtils";
+import CampaignFormBase from "./CampaignFormBase";
 
 interface VisitCampaignFormProps extends Omit<CampaignCreateFormBaseProps, "campaignType"> {
-  /** 캠페인 수정 시 초기 데이터 (선택사항) */
   initialData?: CampaignFormData | null;
-  /** 폼 동작 모드: 생성/수정 */
   mode?: "create" | "edit";
-  /** 캠페인 오픈 여부 (수정 모드에서만 사용) */
   isOpen?: boolean;
-  /** 불러온 데이터의 긴급 상태를 부모 컴포넌트로 전달하는 콜백 */
   onUrgentLoad?: (isUrgent: boolean) => void;
-  /** 페이지의 긴급 상태 (PageHeader에서 변경된 값) */
   isUrgent?: boolean;
 }
 
-export default function VisitCampaignForm({
-  onSubmit,
-  isSubmitting,
-  initialData,
-  mode = "create",
-  isOpen = false,
-  onUrgentLoad,
-  isUrgent = false,
-}: VisitCampaignFormProps) {
-  const router = useRouter();
-
-  // 공통 폼 상태 관리 훅
-  const {
-    formData,
-    setFormData,
-    thumbnailImage,
-    thumbnailPreview,
-    detailImages,
-    detailPreviews,
-    checkboxStates,
-    imageErrorModal,
-    saveConfirmModal,
-    loadConfirmModal,
-    toast,
-    isLoadDisabled,
-    deductedPoints,
-    showInsufficientPointsWarning,
-    isEditMode,
-    setImageErrorModal,
-    setSaveConfirmModal,
-    setLoadConfirmModal,
-    setToast,
-    setIsLoadDisabled,
-    setThumbnailPreview,
-    setDetailPreviews,
-    updateFormData,
-    updateCheckboxState,
-    handleNumericInputWrapper,
-    handleNumericChangeWrapper,
-    handleThumbnailSelect,
-    handleThumbnailRemove,
-    handleDetailImagesSelect,
-    handleDetailImageRemove,
-    isEditableField,
-  } = useCampaignForm({
-    campaignType: "방문형",
-    initialData,
-    mode,
-    isOpen,
-    onUrgentLoad,
-  });
-
-  // 유효성 검증 훅
-  const { isFormValid } = useCampaignFormValidation({
-    campaignType: "방문형",
-    formData,
-    thumbnailImage,
-    thumbnailPreview,
-    detailImages,
-    detailPreviews,
-    checkboxStates,
-    isEditMode,
-  });
-
-  // localStorage 관리 훅
-  const { handleChargeClick, handleSaveConfirm, handleLoadConfirm } = useCampaignFormStorage({
-    campaignType: "방문형",
-    formData,
-    setFormData,
-    initialData,
-    isEditMode,
-    setLoadConfirmModal,
-    setToast,
-    onUrgentLoad,
-    setIsLoadDisabled,
-    isSubmitting,
-    thumbnailPreview,
-    detailPreviews,
-    setThumbnailPreview,
-    setDetailPreviews,
-    checkboxStates,
-    updateCheckboxState,
-  });
-
-  /**
-   * 우편번호 찾기 버튼 클릭 처리
-   */
-  const handlePostalCodeSearch = () => {
-    // TODO: 우편번호 찾기 API 연동
-    alert("우편번호 찾기 기능은 구현 예정입니다.");
-  };
-
-  /**
-   * 페이지의 isUrgent 상태가 변경될 때 formData 동기화
-   */
-  useEffect(() => {
-    if (formData.isUrgent !== isUrgent) {
-      updateFormData("isUrgent", isUrgent);
-    }
-  }, [isUrgent, formData.isUrgent, updateFormData]);
-
-  /**
-   * 캠페인 유형 변경 시 페이지 이동
-   */
-  const handleCampaignTypeChange = (type: string) => {
-    if (type === "방문형") return;
-
-    const typeRoutes: Record<string, string> = {
-      배송형: "/partner/campaign/create/delivery",
-      구매평: "/partner/campaign/create/review",
-      기자단: "/partner/campaign/create/reporter",
-      미션형: "/partner/campaign/create/mission",
-    };
-
-    router.push(typeRoutes[type]);
-  };
-
-  /**
-   * 시/구/군 placeholder 결정
-   */
-  const subRegionPlaceholder = useMemo(() => {
-    if (!formData.region) return "시/구/군 선택";
-
-    if (formData.region.endsWith("시")) {
-      return "구 선택";
-    } else if (formData.region.endsWith("도")) {
-      return "시/군 선택";
-    } else {
-      return "시/구/군 선택";
-    }
-  }, [formData.region]);
-
-  /**
-   * 폼 제출 처리
-   */
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // 방문 주소: 기본 주소 + 상세 주소 조합
-    const combinedVisitAddress = [
-      formData.visitBaseAddress?.trim(),
-      formData.visitDetailAddress?.trim(),
-    ]
-      .filter(Boolean)
-      .join(" ")
-      .trim();
-
-    // 업로드된 이미지 파일을 폼 데이터에 추가
-    const formDataWithImages = {
-      ...formData,
-      visitAddress: combinedVisitAddress,
-      thumbnailImage: thumbnailImage || undefined,
-      thumbnailImageUrl: thumbnailPreview || undefined,
-      detailImages: detailImages,
-      detailImagePreviews: detailPreviews,
-    };
-
-    onSubmit(formDataWithImages);
-  };
-
+export default function VisitCampaignForm(props: VisitCampaignFormProps) {
   return (
-    <>
-      {/* 이미지 업로드 오류 모달 */}
-      <BaseModal
-        is_open={imageErrorModal.is_open}
-        on_close={() => setImageErrorModal({ is_open: false, message: "" })}
-        message={imageErrorModal.message}
-        buttons={["확인"]}
-      />
-
-      {/* 임시 저장 확인 모달 */}
-      <BaseModal
-        is_open={saveConfirmModal.is_open}
-        on_close={() => setSaveConfirmModal({ is_open: false })}
-        message="임시 저장하시겠습니까?"
-        buttons={["취소", "확인"]}
-        on_confirm={handleSaveConfirm}
-      />
-
-      {/* 불러오기 확인 모달 */}
-      <BaseModal
-        is_open={loadConfirmModal.is_open}
-        on_close={() => setLoadConfirmModal({ is_open: false })}
-        message="마지막에 저장된 내용을 불러오시겠습니까?"
-        buttons={["취소", "확인"]}
-        on_confirm={handleLoadConfirm}
-      />
-
-      {/* 토스트 메시지 */}
-      <Toast
-        message={toast.message}
-        isOpen={toast.is_open}
-        onClose={() => setToast({ is_open: false, message: "" })}
-      />
-
-      {/* 플로팅 액션 버튼 */}
-      <FloatingActionButtons
-        onSave={() => setSaveConfirmModal({ is_open: true })}
-        onLoad={() => setLoadConfirmModal({ is_open: true })}
-        isSaveDisabled={isSubmitting}
-        isLoadDisabled={isLoadDisabled}
-      />
-
-      <form onSubmit={handleSubmit} className={infoStyles.campaign_form}>
-        {/* 캠페인 정보 섹션 */}
-        <section className={styles.section}>
-          <h2 className={styles.section_title}>캠페인 정보</h2>
-
-          {/* 캠페인 유형 선택 */}
-          <CampaignTypeSelector
-            currentType="방문형"
-            onTypeChange={handleCampaignTypeChange}
-            disabled={isEditMode}
+    <CampaignFormBase
+      {...props}
+      campaignType="방문형"
+      titlePlaceholder="지역, 브랜드, 제공하는 서비스/제품 등"
+      renderBeforeImages={({ formData, updateFormData, isEditMode, isEditableField }) => (
+        <article className={infoStyles.form_group}>
+          <label className={infoStyles.form_label}>
+            등록 플랫폼<span className={infoStyles.required}>*</span>
+          </label>
+          <CustomDropdown
+            value={formData.platform || ""}
+            options={platforms}
+            onChange={(value) => updateFormData("platform", value)}
+            disabled={isEditMode && !isEditableField("platform")}
+            placeholder="플랫폼 선택"
           />
-
-          {/* 플랫폼 선택 */}
-          <article className={infoStyles.form_group}>
-            <label className={infoStyles.form_label}>
-              등록 플랫폼<span className={infoStyles.required}>*</span>
-            </label>
-            <CustomDropdown
-              value={formData.platform || ""}
-              options={platforms}
-              onChange={(value) => updateFormData("platform", value)}
-              disabled={isEditMode && !isEditableField("platform")}
-              placeholder="플랫폼 선택"
-            />
-          </article>
-
-          {/* 썸네일 및 상세 이미지 업로드 */}
-          <ThumbnailAndDetailImages
-            thumbnailImage={thumbnailImage}
-            thumbnailPreview={thumbnailPreview}
-            detailImages={detailImages}
-            detailPreviews={detailPreviews}
-            onThumbnailSelect={handleThumbnailSelect}
-            onThumbnailRemove={handleThumbnailRemove}
-            onDetailImagesSelect={handleDetailImagesSelect}
-            onDetailImageRemove={handleDetailImageRemove}
-            isEditMode={isEditMode}
-            isEditable={isEditableField("images")}
-          />
-
-          {/* 캠페인 제목 */}
-          <article className={infoStyles.form_group}>
-            <label className={infoStyles.form_label}>
-              캠페인 제목<span className={infoStyles.required}>*</span>
-            </label>
-            <input
-              type="text"
-              className={`${infoStyles.form_input} ${isEditMode && !isEditableField("title") ? infoStyles.read_only_input : ""}`}
-              value={formData.title}
-              onChange={(e) => updateFormData("title", e.target.value)}
-              placeholder="지역, 브랜드, 제공하는 서비스/제품 등"
-              readOnly={isEditMode && !isEditableField("title")}
-            />
-          </article>
-
-          {/* 카테고리 */}
-          <article className={infoStyles.form_group}>
-            <label className={infoStyles.form_label}>
-              카테고리<span className={infoStyles.required}>*</span>
-            </label>
-            <CustomDropdown
-              value={formData.category}
-              options={categories}
-              onChange={(value) => updateFormData("category", value)}
-              disabled={isEditMode && !isEditableField("category")}
-              placeholder="카테고리 선택"
-            />
-          </article>
-
-          {/* 지역 선택 */}
-          <article className={infoStyles.form_group}>
-            <div className={infoStyles.region_select_group}>
-              <div className={infoStyles.region_dropdown_container}>
-                <label className={infoStyles.form_label}>
-                  시/도<span className={infoStyles.required}>*</span>
-                </label>
-                <CustomDropdown
-                  value={formData.region || ""}
-                  options={regions}
-                  onChange={(value) => {
-                    updateFormData("region", value);
-                    updateFormData("subRegion", "");
-                  }}
-                  disabled={isEditMode && !isEditableField("region")}
-                  placeholder="시/도 선택"
-                />
-              </div>
-              <div className={infoStyles.region_dropdown_container}>
-                <label className={infoStyles.form_label}>
-                  시/구/군<span className={infoStyles.required}>*</span>
-                </label>
-                <CustomDropdown
-                  value={formData.subRegion || ""}
-                  options={formData.region ? sub_regions[getRegionKey(formData.region)] || [] : []}
-                  onChange={(value) => updateFormData("subRegion", value)}
-                  disabled={!formData.region || (isEditMode && !isEditableField("region"))}
-                  placeholder={subRegionPlaceholder}
-                />
-              </div>
-            </div>
-          </article>
-
-          {/* 브랜드명 */}
-          <article className={infoStyles.form_group}>
-            <label className={infoStyles.form_label}>
-              브랜드명<span className={infoStyles.required}>*</span>
-            </label>
-            <input
-              type="text"
-              className={`${infoStyles.form_input} ${infoStyles.read_only_input}`}
-              value={formData.brandName}
-              readOnly
-              placeholder="{상호명}"
-            />
-          </article>
-
-          {/* 제공 내역 */}
-          <article className={infoStyles.form_group}>
-            <label className={infoStyles.form_label}>
-              제공 내역<span className={infoStyles.required}>*</span>
-            </label>
-            <input
-              type="text"
-              className={`${infoStyles.form_input} ${isEditMode && !isEditableField("providedItems") ? infoStyles.read_only_input : ""}`}
-              value={formData.providedItems}
-              onChange={(e) => updateFormData("providedItems", e.target.value)}
-              placeholder="제공하는 서비스/제품/포인트 등 한줄 설명"
-              readOnly={isEditMode && !isEditableField("providedItems")}
-            />
-          </article>
-
+        </article>
+      )}
+      renderAfterCategory={(ctx) => <VisitRegionSelector ctx={ctx} />}
+      renderAfterProvidedItems={({ formData, updateFormData, isEditMode, isEditableField }) => (
+        <>
           {/* 방문 주소 */}
           <article className={infoStyles.form_group}>
             <label className={infoStyles.form_label}>
@@ -412,7 +68,7 @@ export default function VisitCampaignForm({
               <button
                 type="button"
                 className={infoStyles.charge_button}
-                onClick={handlePostalCodeSearch}
+                onClick={() => alert("우편번호 찾기 기능은 구현 예정입니다.")}
                 disabled={isEditMode && !isEditableField("visitAddress")}
               >
                 우편번호 찾기
@@ -463,176 +119,62 @@ export default function VisitCampaignForm({
               readOnly={isEditMode && !isEditableField("visitLink")}
             />
           </article>
+        </>
+      )}
+      transformSubmitData={(data) => {
+        const base = (data.visitBaseAddress as string)?.trim() || "";
+        const detail = (data.visitDetailAddress as string)?.trim() || "";
+        return {
+          ...data,
+          visitAddress: [base, detail].filter(Boolean).join(" ").trim(),
+        };
+      }}
+    />
+  );
+}
 
-          {/* 모집 인원 */}
-          <article className={infoStyles.form_group}>
-            <label className={infoStyles.form_label}>
-              모집 인원<span className={infoStyles.required}>*</span>
-            </label>
-            <div className={infoStyles.count_input_group}>
-              <div style={{ position: "relative", flex: 1 }}>
-                <input
-                  type="number"
-                  className={`${infoStyles.form_input} ${isEditMode && !isEditableField("recruitmentCount") ? infoStyles.read_only_input : ""}`}
-                  value={formData.recruitmentCount}
-                  onChange={(e) => updateFormData("recruitmentCount", e.target.value)}
-                  placeholder="0"
-                  min="0"
-                  readOnly={isEditMode && !isEditableField("recruitmentCount")}
-                />
-                <span className={infoStyles.count_unit}>명</span>
-              </div>
-            </div>
-          </article>
+/** 방문형 지역 선택 (시/도 + 시/구/군) */
+function VisitRegionSelector({ ctx }: { ctx: import("./CampaignFormBase").CampaignFormContext }) {
+  const { formData, updateFormData, isEditMode, isEditableField, infoStyles } = ctx;
 
-          {/* 포인트 관리 섹션 */}
-          <PointsManagementSection
-            currentPoints={formData.currentPoints}
-            additionalPoints={formData.additionalPoints}
-            deductedPoints={deductedPoints}
-            onAdditionalPointsChange={(value) => updateFormData("additionalPoints", value)}
-            onChargeClick={handleChargeClick}
-            isEditMode={isEditMode}
-            isEditable={isEditableField("additionalPoints")}
-            showInsufficientPointsWarning={showInsufficientPointsWarning}
+  const subRegionPlaceholder = useMemo(() => {
+    if (!formData.region) return "시/구/군 선택";
+    if (formData.region.endsWith("시")) return "구 선택";
+    if (formData.region.endsWith("도")) return "시/군 선택";
+    return "시/구/군 선택";
+  }, [formData.region]);
+
+  return (
+    <article className={infoStyles.form_group}>
+      <div className={infoStyles.region_select_group}>
+        <div className={infoStyles.region_dropdown_container}>
+          <label className={infoStyles.form_label}>
+            시/도<span className={infoStyles.required}>*</span>
+          </label>
+          <CustomDropdown
+            value={formData.region || ""}
+            options={regions}
+            onChange={(value) => {
+              updateFormData("region", value);
+              updateFormData("subRegion", "");
+            }}
+            disabled={isEditMode && !isEditableField("region")}
+            placeholder="시/도 선택"
           />
-
-          {/* 모집 관련 필드 */}
-          <RecruitmentFieldsSection
-            recruitmentCount={String(formData.recruitmentCount || "")}
-            recruitmentPeriod={formData.recruitmentPeriod}
-            announcementDate={formData.announcementDate}
-            registrationPeriod={formData.registrationPeriod}
-            onRecruitmentCountChange={(value) => updateFormData("recruitmentCount", value)}
-            onRecruitmentPeriodChange={(value) => updateFormData("recruitmentPeriod", value)}
-            onAnnouncementDateChange={(value) => updateFormData("announcementDate", value)}
-            onRegistrationPeriodChange={(value) => updateFormData("registrationPeriod", value)}
-            isEditMode={isEditMode}
-            isEditableField={isEditableField}
-            showRecruitmentCount={false}
-          />
-        </section>
-
-        {/* 캠페인 안내 섹션 */}
-        <section className={styles.section}>
-          <h2 className={styles.section_title}>캠페인 안내</h2>
-
-          {/* 키워드 */}
-          <article className={infoStyles.form_group}>
-            <label className={infoStyles.form_label}>
-              키워드/태그<span className={infoStyles.required}>*</span>
-            </label>
-            <input
-              type="text"
-              className={`${infoStyles.form_input} ${isEditMode && !isEditableField("keywords") ? infoStyles.read_only_input : ""}`}
-              value={formData.keywords}
-              onChange={(e) => updateFormData("keywords", e.target.value)}
-              placeholder="본문 내 첨부 키워드/해시태그/계정 태그 등"
-              readOnly={isEditMode && !isEditableField("keywords")}
-            />
-          </article>
-
-          {/* 기본 미션 설정 */}
-          <article
-            className={`${infoStyles.form_group} ${isEditMode && isOpen ? infoStyles.form_group_locked : ""}`}
-          >
-            <label className={infoStyles.form_label}>기본 미션 설정</label>
-            <SimpleGuideSection
-              checkboxStates={checkboxStates}
-              formData={{
-                minTextLength: String(formData.minTextLength || ""),
-                minImageCount: String(formData.minImageCount || ""),
-                videoCount: String(formData.videoCount || ""),
-                videoDuration: String(formData.videoDuration || ""),
-                requireLinkAttachment: formData.requireLinkAttachment,
-                requireKeywordAttachment: formData.requireKeywordAttachment,
-              }}
-              onCheckboxChange={(field, checked) => {
-                updateCheckboxState(field, checked);
-                if (!checked) {
-                  if (field === "minTextLength") {
-                    updateFormData("minTextLength", "");
-                  } else if (field === "minImageCount") {
-                    updateFormData("minImageCount", "");
-                  } else if (field === "videoCount") {
-                    updateFormData("videoCount", "");
-                    updateFormData("videoDuration", "");
-                  }
-                }
-              }}
-              onNumericChange={handleNumericChangeWrapper}
-              onNumericKeyDown={handleNumericInputWrapper}
-              formatNumberWithComma={formatNumberWithComma}
-              onFieldClear={(field) => updateFormData(field as keyof CampaignFormData, "")}
-              onAttachmentChange={(field, value) => updateFormData(field, value)}
-              isEditMode={isEditMode}
-              isEditableField={isEditableField}
-              isOpen={isOpen}
-            />
-          </article>
-
-          {/* 참여/제출 옵션 */}
-          <ParticipationOptionsSection
-            adultOnly={formData.adultOnly}
-            allowReParticipation={formData.allowReParticipation}
-            allowLateSubmission={formData.allowLateSubmission}
-            onAdultOnlyChange={(value) => updateFormData("adultOnly", value)}
-            onAllowReParticipationChange={(value) => updateFormData("allowReParticipation", value)}
-            onAllowLateSubmissionChange={(value) => updateFormData("allowLateSubmission", value)}
-            isEditMode={isEditMode}
-            isEditableField={isEditableField}
-          />
-
-          {/* 안내 사항 */}
-          <article className={infoStyles.form_group}>
-            <label className={infoStyles.form_label}>
-              안내 사항<span className={infoStyles.required}>*</span>
-            </label>
-            <GuidelinesTextarea
-              value={formData.guidelines}
-              onChange={(e) => updateFormData("guidelines", e.target.value)}
-              placeholder="캠페인 전체 안내 사항, 미션, 기타 참고 사항 등"
-              readOnly={isEditMode && !isEditableField("guidelines")}
-            />
-          </article>
-
-          {/* 유의 사항 */}
-          <NoticeSection />
-
-          {/* 문의 담당자 휴대폰 번호 */}
-          <ContactPhoneField
-            value={formData.contactPhone || ""}
-            onChange={(value) => updateFormData("contactPhone", value)}
-            isEditMode={isEditMode}
-            isEditable={isEditableField("contactPhone")}
-          />
-        </section>
-
-        {/* 공정위 문구 동의 */}
-        <FairTradeAgreement
-          agreed={formData.fairTradeAgreement || false}
-          onChange={(agreed) => updateFormData("fairTradeAgreement", agreed)}
-          isEditMode={isEditMode}
-          isOpen={isOpen}
-        />
-
-        {/* 등록하기 버튼 */}
-        <div className={buttonStyles.submit_button_container}>
-          <button
-            type="submit"
-            className={buttonStyles.submit_button}
-            disabled={isSubmitting || !isFormValid}
-          >
-            {isSubmitting
-              ? isEditMode
-                ? "저장 중..."
-                : "등록 중..."
-              : isEditMode
-                ? "저장"
-                : "등록"}
-          </button>
         </div>
-      </form>
-    </>
+        <div className={infoStyles.region_dropdown_container}>
+          <label className={infoStyles.form_label}>
+            시/구/군<span className={infoStyles.required}>*</span>
+          </label>
+          <CustomDropdown
+            value={formData.subRegion || ""}
+            options={formData.region ? sub_regions[getRegionKey(formData.region)] || [] : []}
+            onChange={(value) => updateFormData("subRegion", value)}
+            disabled={!formData.region || (isEditMode && !isEditableField("region"))}
+            placeholder={subRegionPlaceholder}
+          />
+        </div>
+      </div>
+    </article>
   );
 }
