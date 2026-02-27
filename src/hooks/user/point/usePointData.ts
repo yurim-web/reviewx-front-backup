@@ -17,22 +17,12 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { PointHistory } from "@/types/domain/user";
 import { pendingPointListData } from "@/data/user/point/pointData";
+import { StoredUserAccount } from "@/lib/auth/types";
 
-interface StoredUserAccount {
-  id?: string | number;
-  email?: string;
-  name?: string;
-  available_points?: number;
-  pending_points?: number;
-  current_points?: number;
-  account_holder?: string;
-  bank?: string;
-  account_number?: string;
-  ssn_front?: string;
-  ssn_back?: string;
+type PointUserAccount = StoredUserAccount & {
   point_history?: PointHistory[];
   pending_point_list?: typeof pendingPointListData;
-}
+};
 
 export interface PointInfo {
   available_points: number;
@@ -77,7 +67,7 @@ export function usePointData(): UsePointDataReturn {
     try {
       const storedAccounts = localStorage.getItem("user_accounts");
       if (storedAccounts) {
-        const accounts: StoredUserAccount[] = JSON.parse(storedAccounts);
+        const accounts: PointUserAccount[] = JSON.parse(storedAccounts);
         const userAccount = accounts.find((a) => a.id === user.id || a.email === user.email);
         if (userAccount) {
           setPointInfo({

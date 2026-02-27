@@ -31,37 +31,7 @@ import { reviewCampaigns } from "@/data/campaign/review/reviewCampaigns";
 import { reporterCampaigns } from "@/data/campaign/reporter/reporterCampaigns";
 import { missionCampaigns } from "@/data/campaign/mission/missionCampaigns";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
-
-// localStorage 파싱용 로컬 인터페이스
-interface StoredChannelDetail {
-  name: string;
-  status: string;
-  url?: string;
-}
-
-interface StoredUserAccount {
-  id?: string;
-  number?: string;
-  name?: string;
-  nickname?: string;
-  email?: string;
-  phone?: string;
-  address?: string;
-  detail_address?: string;
-  gender?: string;
-  age?: number;
-  profile_image?: string | null;
-  current_points?: number;
-  withdrawn_points?: number;
-  last_access_date?: string;
-  join_date?: string;
-  account_holder?: string;
-  bank?: string;
-  account_number?: string;
-  ssn_front?: string;
-  ssn_back?: string;
-  channel_details?: StoredChannelDetail[];
-}
+import { StoredUserAccount, StoredChannelDetail } from "@/lib/auth/types";
 
 interface StoredAppliedCampaign {
   campaignId: string;

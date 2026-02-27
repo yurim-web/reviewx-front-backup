@@ -40,36 +40,7 @@ import ChannelInfoSection from "@/components/manager/common/member/reviewers/sec
 import AccountInfoSection from "@/components/manager/common/member/reviewers/section/AccountInfoSection";
 import styles from "@/styles/manager/common/member/member_detail/member_detail_page.module.css";
 import infoCardStyles from "@/styles/manager/common/member/member_detail/info_card.module.css";
-
-interface StoredUserAccount {
-  id?: string;
-  number?: string;
-  name?: string;
-  nickname?: string;
-  email?: string;
-  phone?: string;
-  address?: string;
-  detail_address?: string;
-  gender?: string;
-  age?: number;
-  current_points?: number;
-  withdrawn_points?: number;
-  last_access_date?: string;
-  join_date?: string;
-  profile_image?: string | null;
-  account_holder?: string;
-  bank?: string;
-  account_number?: string;
-  ssn_front?: string;
-  ssn_back?: string;
-  channel_details?: StoredChannelDetail[];
-}
-
-interface StoredChannelDetail {
-  name: string;
-  status: string;
-  url?: string;
-}
+import type { StoredUserAccount } from "@/lib/auth/types";
 
 interface StoredAppliedCampaign {
   userId: string;
