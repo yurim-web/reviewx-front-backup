@@ -32,8 +32,6 @@ export interface TableColumn {
 // 테이블 행 데이터 타입 (제네릭)
 export type TableRowData = {
   id: string; // 각 행의 고유 ID (필수)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any; // 기타 데이터 필드들
 };
 
 // 셀 렌더링 함수 타입

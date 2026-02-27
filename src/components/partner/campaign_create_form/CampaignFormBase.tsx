@@ -57,8 +57,10 @@ const CAMPAIGN_TYPE_ROUTES: Record<string, string> = {
 /** useCampaignForm 훅에서 반환하는 값들을 외부에 노출하는 컨텍스트 */
 export interface CampaignFormContext {
   formData: CampaignFormData;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  updateFormData: (field: keyof CampaignFormData, value: any) => void;
+  updateFormData: (
+    field: keyof CampaignFormData,
+    value: CampaignFormData[keyof CampaignFormData]
+  ) => void;
   isEditMode: boolean;
   isEditableField: (field: string) => boolean;
   handleNumericInputWrapper: (field: string, e: React.KeyboardEvent<HTMLInputElement>) => void;

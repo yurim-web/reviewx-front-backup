@@ -24,11 +24,6 @@ import FilterButton from "@/components/manager/ga/common/filter/FilterButton";
 import filterStyles from "@/styles/manager/common/section/filter_section.module.css";
 import filterButtonStyles from "@/styles/manager_ga/common/filter/filter_button.module.css";
 
-// 필터 모달 컴포넌트 타입 정의 (유연하게 받기 위해 any 사용)
-// 실제 필터 모달들은 selected_channels, selected_grades 등 다양한 prop 이름을 사용합니다
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type _FilterModalComponent<_T> = React.ComponentType<any>;
-
 interface MemberFilterSectionProps<TChannel, TGradeOrDivision, TType, TStatus> {
   // 검색어 상태와 변경 함수
   search_query: string;

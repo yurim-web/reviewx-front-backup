@@ -23,7 +23,11 @@ import {
   type BlockReason,
   block_code_reason_map,
 } from "@/data/manager_ga/member/blacklist";
-import type { BlockCode } from "@/data/manager_ga/common/filterOptions";
+import type {
+  BlockCode,
+  ReviewerStatusType,
+  PartnerStatusType,
+} from "@/data/manager_ga/common/filterOptions";
 
 /** 이용 제한 사유 → BlockReason 매핑 */
 const BLOCK_REASON_MAP: Record<string, BlockReason> = {
@@ -48,8 +52,7 @@ interface UseRestrictionHandlerConfig {
   selectedIds: string[];
   findMember: (id: string) => RestrictionMember | undefined;
   division: "리뷰어" | "파트너";
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  updateStatusType: (id: string, statusType: any) => void;
+  updateStatusType: (id: string, statusType: ReviewerStatusType | PartnerStatusType) => void;
   reset_selection: () => void;
 }
 
