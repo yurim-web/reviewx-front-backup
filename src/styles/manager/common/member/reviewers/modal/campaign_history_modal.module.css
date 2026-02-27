@@ -89,16 +89,6 @@
   object-fit: contain;
 }
 
-/* 테이블 컬럼 너비 정의 (헤더와 바디가 동일하게 사용) */
-:root {
-  --campaign-history-col-1: 1fr; /* 캠페인 번호 */
-  --campaign-history-col-2: 3fr; /* 캠페인명 */
-  --campaign-history-col-3: 1fr; /* 상태 */
-  --campaign-history-col-4: 1fr; /* 유형 */
-  --campaign-history-col-5: 1fr; /* 채널 */
-  --campaign-history-col-6: 1fr; /* 지급 포인트 */
-}
-
 /* 테이블 래퍼 */
 .table_wrapper {
   display: flex;
@@ -111,13 +101,7 @@
 /* 테이블 헤더 */
 .table_header {
   display: grid;
-  grid-template-columns:
-    var(--campaign-history-col-1) /* 캠페인 번호 */
-    var(--campaign-history-col-2) /* 캠페인명 */
-    var(--campaign-history-col-3) /* 상태 */
-    var(--campaign-history-col-4) /* 유형 */
-    var(--campaign-history-col-5) /* 채널 */
-    var(--campaign-history-col-6); /* 지급 포인트 */
+  grid-template-columns: 1fr 3fr 1fr 1fr 1fr 1fr; /* 번호 | 캠페인명 | 상태 | 유형 | 채널 | 지급포인트 */
   background-color: #f5f5f5;
   align-items: center;
   min-height: 56px;
@@ -150,13 +134,7 @@
 /* 테이블 행 */
 .table_row {
   display: grid;
-  grid-template-columns:
-    var(--campaign-history-col-1) /* 캠페인 번호 */
-    var(--campaign-history-col-2) /* 캠페인명 */
-    var(--campaign-history-col-3) /* 상태 */
-    var(--campaign-history-col-4) /* 유형 */
-    var(--campaign-history-col-5) /* 채널 */
-    var(--campaign-history-col-6); /* 지급 포인트 */
+  grid-template-columns: 1fr 3fr 1fr 1fr 1fr 1fr; /* 번호 | 캠페인명 | 상태 | 유형 | 채널 | 지급포인트 */
   border-bottom: 1px solid #f2f2f2;
   align-items: center;
   min-height: 62px;
