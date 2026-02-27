@@ -14,6 +14,7 @@
 
 import { useEffect } from "react";
 import styles from "@/styles/common/modal/base_modal.module.css";
+import { sanitizeSimpleHtml } from "@/utils/security/sanitize";
 
 export type ModalType = "center" | "bottom";
 
@@ -133,7 +134,7 @@ export default function BaseModal({
           <div className={styles.modal_message_wrapper}>
             <p
               className={styles.modal_message_text}
-              dangerouslySetInnerHTML={{ __html: message }}
+              dangerouslySetInnerHTML={{ __html: sanitizeSimpleHtml(message) }}
             />
           </div>
 

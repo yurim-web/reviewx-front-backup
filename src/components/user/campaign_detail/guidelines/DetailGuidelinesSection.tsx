@@ -12,6 +12,7 @@
  */
 
 import Image from "next/image";
+import { sanitizeSimpleHtml } from "@/utils/security/sanitize";
 import { getRequirementItems } from "../utils/requirementUtils";
 import AdditionalGuidelines from "../AdditionalGuidelines";
 import styles from "@/styles/user/campaign/campaign_detail/detail_guidelines_section.module.css";
@@ -285,7 +286,7 @@ export default function CampaignGuidelinesSection({
                 <div
                   key={index}
                   className={styles.guideline_text}
-                  dangerouslySetInnerHTML={{ __html: text }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeSimpleHtml(text) }}
                 />
               ))}
             </div>
