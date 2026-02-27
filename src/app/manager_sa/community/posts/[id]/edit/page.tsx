@@ -28,7 +28,7 @@ export const metadata: Metadata = {
  * 예: /manager_sa/community/posts/123/edit → params.id = "123"
  */
 interface PageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 /**
@@ -40,7 +40,8 @@ interface PageProps {
  * - 클라이언트 컴포넌트로 위임하여 localStorage에서 게시글 데이터를 로드합니다
  *
  */
-export default function EditPostPage({ params }: PageProps) {
+export default async function EditPostPage({ params }: PageProps) {
+  const { id } = await params;
   // 클라이언트 컴포넌트로 위임 (localStorage 접근을 위해)
-  return <EditPostPageClient post_id={params.id} manager_type="sa" />;
+  return <EditPostPageClient post_id={id} manager_type="sa" />;
 }

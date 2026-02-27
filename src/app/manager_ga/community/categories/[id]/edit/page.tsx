@@ -38,9 +38,7 @@ export const metadata: Metadata = {
  * 예: /manager_ga/community/categories/123/edit → params.id = "123"
  */
 interface PageProps {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 }
 
 /**
@@ -51,6 +49,7 @@ interface PageProps {
  * - 동적 라우트 파라미터([id])를 통해 카테고리 ID를 받습니다
  * - 클라이언트 컴포넌트로 위임하여 localStorage에서 카테고리 데이터를 로드합니다
  */
-export default function CategoryEditPage({ params }: PageProps) {
-  return <CategoryForm mode="edit" manager_type="ga" category_id={params.id} />;
+export default async function CategoryEditPage({ params }: PageProps) {
+  const { id } = await params;
+  return <CategoryForm mode="edit" manager_type="ga" category_id={id} />;
 }
