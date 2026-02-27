@@ -40,13 +40,7 @@ interface StoredWithdrawalRequest {
   request_date: string;
 }
 
-// localStorage에 저장된 사용자 계좌 타입
-interface StoredUserAccount {
-  id: string;
-  available_points?: number;
-  ssn_front?: string;
-  ssn_back?: string;
-}
+import type { StoredUserAccount } from "@/lib/auth/types";
 
 export default function WithdrawalRequestPage() {
   const [selected_filter, set_selected_filter] = useState<RequestFilterStatus>("all");

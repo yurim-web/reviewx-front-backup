@@ -12,6 +12,7 @@
  */
 
 import type { AllApplicant } from "@/data/partner/sharedCampaigns";
+import type { StoredUserAccount, StoredChannelDetail } from "@/lib/auth/types";
 
 // ========================================
 // 타입 및 인터페이스
@@ -19,33 +20,8 @@ import type { AllApplicant } from "@/data/partner/sharedCampaigns";
 
 export type ApplicationModalType = "delivery" | "review" | "mission" | "reporter" | "visit";
 
-export interface StoredChannelDetail {
-  name: string;
-  status?: string;
-  url?: string;
-}
-
-export interface StoredUserAccount {
-  id?: string | number;
-  email?: string;
-  name?: string;
-  nickname?: string;
-  address?: string;
-  detail_address?: string;
-  postal_code?: string;
-  address_details?: {
-    address?: string;
-    detailAddress?: string;
-    postalCode?: string;
-  };
-  channel_details?: StoredChannelDetail[];
-  user_type?: string;
-  member_type?: string;
-  profile_image?: string;
-  daily_visits?: number | string;
-  total_visits?: number | string;
-  neighbors?: number | string;
-}
+// re-export for consumers that import from this file
+export type { StoredUserAccount, StoredChannelDetail };
 
 export interface StoredApplicant {
   id?: string | number;

@@ -56,7 +56,7 @@ function enrichReviewerInfo(authUser: AuthUser, account: UnifiedAccount): void {
             }
           }
         }
-        authUser.id = userAccount.id || account.id;
+        authUser.id = String(userAccount.id || account.id);
         authUser.name = userAccount.name || account.name;
         authUser.nickname = nickname;
         authUser.phone = userAccount.phone;
@@ -64,7 +64,7 @@ function enrichReviewerInfo(authUser: AuthUser, account: UnifiedAccount): void {
         authUser.address = userAccount.address;
         authUser.detail_address = userAccount.detail_address;
         authUser.postal_code = userAccount.postal_code;
-        authUser.profile_image = userAccount.profile_image;
+        authUser.profile_image = userAccount.profile_image ?? undefined;
         authUser.channels = (userAccount.channels || []) as unknown as AuthUser["channels"];
         authUser.grade = (userAccount.grade || "gold") as AuthUser["grade"];
       } else {
