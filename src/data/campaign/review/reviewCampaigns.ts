@@ -201,12 +201,12 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     dayCount: "D-7",
     registeredAt: "2026-01-09T13:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2026-01-11 ~ 2026-01-24)
-      applicationStart: "2026-01-11",
-      applicationEnd: "2026-01-24",
-      announcement: "2026-01-26",
-      purchasePeriod: "2026-01-26 ~ 2026-01-29",
-      registrationPeriod: "2026-01-29 ~ 2026-02-06",
+      // 모집 중 - 현재 날짜(2026-03-03) 기준 신청 진행 중 상태 유지
+      applicationStart: "2026-02-15",
+      applicationEnd: "2026-03-31",
+      announcement: "2026-04-10",
+      purchasePeriod: "2026-04-10 ~ 2026-04-20",
+      registrationPeriod: "2026-04-20 ~ 2026-05-10",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#의류리뷰 #패션 #옷 #구매후기 #솔직리뷰",
@@ -279,12 +279,12 @@ export const reviewCampaigns: ReviewCampaignData[] = [
     dayCount: "D-4",
     registeredAt: "2025-12-20T15:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 구매 중 - 오늘 날짜 기준으로 구매 기간이 진행 중
-      applicationStart: "2025-12-15",
-      applicationEnd: "2026-01-05",
-      announcement: "2026-01-07",
-      purchasePeriod: "2026-01-12 ~ 2026-02-20",
-      registrationPeriod: "2026-02-20 ~ 2026-03-05",
+      // 모집 중 - 현재 날짜(2026-03-03) 기준 신청 진행 중 상태 유지
+      applicationStart: "2026-02-15",
+      applicationEnd: "2026-03-31",
+      announcement: "2026-04-10",
+      purchasePeriod: "2026-04-10 ~ 2026-04-20",
+      registrationPeriod: "2026-04-20 ~ 2026-05-10",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#책리뷰 #독서 #문화 #구매후기 #솔직리뷰",

@@ -181,12 +181,12 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     dayCount: "마감임박",
     registeredAt: "2025-12-20T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 진행 중 - 등록 기간 중 (연장 요청 테스트용)
-      applicationStart: "2025-12-10",
-      applicationEnd: "2025-12-25",
-      announcement: "2025-12-27",
-      purchasePeriod: "2025-12-27 ~ 2025-12-30",
-      registrationPeriod: "2025-12-20 ~ 2026-01-10",
+      // 모집 중 - 현재 날짜(2026-03-03) 기준 신청 진행 중 상태 유지
+      applicationStart: "2026-02-15",
+      applicationEnd: "2026-03-31",
+      announcement: "2026-04-10",
+      purchasePeriod: "2026-04-10 ~ 2026-04-20",
+      registrationPeriod: "2026-04-20 ~ 2026-05-10",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
@@ -453,12 +453,12 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     dayCount: "D-8",
     registeredAt: "2025-11-03T14:00:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 오픈 예정 - 모집 시작 전
-      applicationStart: "2026-02-08",
-      applicationEnd: "2026-02-22",
-      announcement: "2026-02-24",
-      purchasePeriod: "2026-02-24 ~ 2026-02-27",
-      registrationPeriod: "2026-02-27 ~ 2026-03-10",
+      // 모집 중 - 현재 날짜(2026-03-03) 기준 신청 진행 중 상태 유지
+      applicationStart: "2026-02-15",
+      applicationEnd: "2026-03-31",
+      announcement: "2026-04-10",
+      purchasePeriod: "2026-04-10 ~ 2026-04-20",
+      registrationPeriod: "2026-04-20 ~ 2026-05-10",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",

@@ -412,7 +412,7 @@ export default function ApplicationModal({
         is_open={participatedModal.isOpen}
         on_close={participatedModal.close}
         message="이미 참여한 캠페인입니다."
-        buttons={["확인"]}
+        buttons={["닫기"]}
       />
 
       {/* 등록 마감 모달 */}
@@ -447,7 +447,7 @@ export default function ApplicationModal({
           onClose();
         }}
         message="이미 참여한 캠페인입니다."
-        buttons={["확인"]}
+        buttons={["닫기"]}
       />
     </div>
   );
