@@ -1,0 +1,39 @@
+{
+  "/reviewer/campaign/delivery": "/campaigns?type=DELIVERY",
+  "/reviewer/campaign/visit": "/campaigns?type=VISIT",
+  "/reviewer/campaign/purchase-review": "/campaigns?type=PURCHASE_REVIEW",
+  "/reviewer/campaign/reporter": "/campaigns?type=REPORTER",
+  "/reviewer/campaign/mission": "/campaigns?type=MISSION",
+  "/reviewer/campaign/:id": "/campaigns/:id",
+
+  "/reviewer/mypage/point": "/reviewers/:id",
+  "/reviewer/mypage/point/history": "/point_history",
+  "/reviewer/mypage/withdrawal": "/withdrawal_requests",
+  "/reviewer/mypage/profile": "/reviewers/:id",
+  "/reviewer/mypage/campaigns/applied": "/campaign_applications",
+  "/reviewer/mypage/campaigns/selected": "/campaign_applications?status=SELECTED",
+  "/reviewer/mypage/campaigns/content": "/campaign_contents",
+
+  "/reviewer/notification": "/notifications",
+  "/reviewer/community": "/community_posts",
+  "/reviewer/community/:id": "/community_posts/:id",
+
+  "/partner/campaign": "/campaigns",
+  "/partner/campaign/:id": "/campaigns/:id",
+  "/partner/campaign/:id/applications": "/campaign_applications?campaign_id=:id",
+  "/partner/campaign/:id/contents": "/campaign_contents?campaign_id=:id",
+
+  "/admin/dashboard": "/admin_dashboard",
+  "/admin/campaign": "/campaigns",
+  "/admin/campaign/:id": "/campaigns/:id",
+  "/admin/reviewer": "/reviewers",
+  "/admin/reviewer/:id": "/reviewers/:id",
+  "/admin/partner": "/partners",
+  "/admin/partner/:id": "/partners/:id",
+  "/admin/withdrawal": "/withdrawal_requests",
+  "/admin/withdrawal/:id": "/withdrawal_requests/:id",
+  "/admin/rejection": "/rejection_history",
+  "/admin/report": "/report_history",
+  "/admin/community": "/community_posts",
+  "/admin/payment": "/payments"
+}
