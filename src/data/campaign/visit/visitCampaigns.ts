@@ -262,11 +262,11 @@ export const visitCampaigns: VisitCampaignData[] = [
     dayCount: "D-4",
     registeredAt: "2026-01-11T15:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 모집 진행 중
-      applicationStart: "2026-01-25",
-      applicationEnd: "2026-02-10",
-      announcement: "2026-02-12",
-      purchasePeriod: "2026-02-12 ~ 2026-02-19",
+      // 모집 중 - 현재 날짜(2026-03-03) 기준 신청 진행 중 상태 유지
+      applicationStart: "2026-02-15",
+      applicationEnd: "2026-03-31",
+      announcement: "2026-04-10",
+      purchasePeriod: "2026-04-10 ~ 2026-04-20",
     },
     partnerName: "홈트레이닝",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
@@ -373,11 +373,11 @@ export const visitCampaigns: VisitCampaignData[] = [
     dayCount: "D-1",
     registeredAt: "2025-11-15T10:50:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 진행 중 - 등록 기간 중
-      applicationStart: "2025-12-20",
-      applicationEnd: "2026-02-10",
-      announcement: "2026-02-12",
-      purchasePeriod: "2026-02-12 ~ 2026-03-10",
+      // 모집 중 - 현재 날짜(2026-03-03) 기준 신청 진행 중 상태 유지
+      applicationStart: "2026-02-15",
+      applicationEnd: "2026-03-31",
+      announcement: "2026-04-10",
+      purchasePeriod: "2026-04-10 ~ 2026-04-20",
     },
     partnerName: "헬스앤라이프",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",

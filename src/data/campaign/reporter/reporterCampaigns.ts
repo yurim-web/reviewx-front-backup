@@ -190,11 +190,11 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     dayCount: "D-7",
     registeredAt: "2026-01-09T13:30:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2026-01-11 ~ 2026-01-24)
-      applicationStart: "2026-01-11",
-      applicationEnd: "2026-01-24",
-      announcement: "2026-01-26",
-      registrationPeriod: "2026-01-29 ~ 2026-02-06",
+      // 모집 중 - 현재 날짜(2026-03-03) 기준 신청 진행 중 상태 유지
+      applicationStart: "2026-02-15",
+      applicationEnd: "2026-03-31",
+      announcement: "2026-04-10",
+      registrationPeriod: "2026-04-20 ~ 2026-05-10",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버블로그",
@@ -262,11 +262,11 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     dayCount: "D-4",
     registeredAt: "2026-01-07T15:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 모집 중 - 현재 날짜 기준 (2026-01-09 ~ 2026-01-25)
-      applicationStart: "2026-01-09",
-      applicationEnd: "2026-01-25",
-      announcement: "2026-01-27",
-      registrationPeriod: "2026-01-30 ~ 2026-02-07",
+      // 모집 중 - 현재 날짜(2026-03-03) 기준 신청 진행 중 상태 유지
+      applicationStart: "2026-02-15",
+      applicationEnd: "2026-03-31",
+      announcement: "2026-04-10",
+      registrationPeriod: "2026-04-20 ~ 2026-05-10",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
