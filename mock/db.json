@@ -1,0 +1,777 @@
+{
+  "campaigns": [
+    {
+      "id": 1,
+      "type": "DELIVERY",
+      "category": "배송형",
+      "title": "[배송형] 맛있는 간편식 체험단 모집",
+      "brand": "맛있는컴퍼니",
+      "platform": "인스타그램",
+      "thumbnail": "https://placehold.co/400x300/f0f0f0/999?text=배송형",
+      "promotion_link": "https://example.com/product/1",
+      "additional_points": 15000,
+      "recruitment": { "total": 30, "current": 12 },
+      "status": "RECRUITING",
+      "apply_start": "2026-02-20",
+      "apply_end": "2026-03-05",
+      "select_date": "2026-03-08",
+      "content_deadline": "2026-03-25",
+      "created_at": "2026-02-18T09:00:00Z"
+    },
+    {
+      "id": 2,
+      "type": "VISIT",
+      "category": "방문형",
+      "title": "[방문형] 강남 카페 방문 체험단",
+      "brand": "카페드림",
+      "platform": "인스타그램",
+      "thumbnail": "https://placehold.co/400x300/f0f0f0/999?text=방문형",
+      "promotion_link": "https://example.com/product/2",
+      "region": "서울 강남구",
+      "visit_place": "카페드림 강남점",
+      "additional_points": 20000,
+      "recruitment": { "total": 10, "current": 7 },
+      "status": "RECRUITING",
+      "apply_start": "2026-02-22",
+      "apply_end": "2026-03-03",
+      "select_date": "2026-03-05",
+      "content_deadline": "2026-03-20",
+      "created_at": "2026-02-20T10:00:00Z"
+    },
+    {
+      "id": 3,
+      "type": "PURCHASE_REVIEW",
+      "category": "구매평",
+      "title": "[구매평] 스킨케어 제품 구매 후기 모집",
+      "brand": "글로우스킨",
+      "platform": "네이버 스마트스토어",
+      "thumbnail": "https://placehold.co/400x300/f0f0f0/999?text=구매평",
+      "purchase_link": "https://smartstore.naver.com/example",
+      "purchase_points": 25000,
+      "additional_points": 10000,
+      "recruitment": { "total": 20, "current": 3 },
+      "status": "RECRUITING",
+      "apply_start": "2026-02-25",
+      "apply_end": "2026-03-10",
+      "select_date": "2026-03-12",
+      "content_deadline": "2026-03-30",
+      "created_at": "2026-02-23T11:00:00Z"
+    },
+    {
+      "id": 4,
+      "type": "REPORTER",
+      "category": "기자단",
+      "title": "[기자단] 신제품 블로그 리뷰 모집",
+      "brand": "테크브랜드",
+      "platform": "네이버 블로그",
+      "thumbnail": "https://placehold.co/400x300/f0f0f0/999?text=기자단",
+      "promotion_link": "https://example.com/product/4",
+      "additional_points": 30000,
+      "recruitment": { "total": 5, "current": 5 },
+      "status": "CLOSED",
+      "apply_start": "2026-02-01",
+      "apply_end": "2026-02-15",
+      "select_date": "2026-02-17",
+      "content_deadline": "2026-03-05",
+      "created_at": "2026-01-30T09:00:00Z"
+    },
+    {
+      "id": 5,
+      "type": "MISSION",
+      "category": "미션형",
+      "title": "[미션형] SNS 해시태그 미션 참여자 모집",
+      "brand": "패션브랜드",
+      "platform": "인스타그램",
+      "thumbnail": "https://placehold.co/400x300/f0f0f0/999?text=미션형",
+      "promotion_link": "https://example.com/product/5",
+      "additional_points": 12000,
+      "content_type": "LINK",
+      "recruitment": { "total": 50, "current": 18 },
+      "status": "RECRUITING",
+      "apply_start": "2026-02-24",
+      "apply_end": "2026-03-07",
+      "select_date": "2026-03-10",
+      "content_deadline": "2026-03-28",
+      "created_at": "2026-02-22T14:00:00Z"
+    }
+  ],
+
+  "campaign_applications": [
+    {
+      "id": 1,
+      "campaign_id": 1,
+      "reviewer_id": 1,
+      "status": "SELECTED",
+      "apply_date": "2026-02-21T10:30:00Z",
+      "channel_url": "https://instagram.com/reviewer1",
+      "follower_count": 3200,
+      "introduction": "안녕하세요! 음식 콘텐츠를 주로 올리고 있어요."
+    },
+    {
+      "id": 2,
+      "campaign_id": 2,
+      "reviewer_id": 1,
+      "status": "PENDING",
+      "apply_date": "2026-02-23T14:00:00Z",
+      "channel_url": "https://instagram.com/reviewer1",
+      "follower_count": 3200,
+      "introduction": "카페 방문 콘텐츠 즐겨 찍습니다."
+    },
+    {
+      "id": 3,
+      "campaign_id": 3,
+      "reviewer_id": 2,
+      "status": "CONTENT_SUBMITTED",
+      "apply_date": "2026-02-26T09:00:00Z",
+      "channel_url": "https://blog.naver.com/reviewer2",
+      "follower_count": 1500,
+      "introduction": "뷰티 제품 리뷰 전문입니다."
+    }
+  ],
+
+  "campaign_contents": [
+    {
+      "id": 1,
+      "application_id": 3,
+      "campaign_id": 3,
+      "reviewer_id": 2,
+      "content_url": "https://smartstore.naver.com/example/review/001",
+      "submitted_at": "2026-03-01T16:00:00Z",
+      "status": "APPROVED",
+      "admin_comment": null
+    }
+  ],
+
+  "reviewers": [
+    {
+      "id": 1, "number": "000001", "name": "오은영", "nickname": "양치하는고양이",
+      "gender": "남성", "age": 37, "email": "oheunyoung@naver.com", "phone": "010-1111-1111",
+      "address": "서울시 강남구 테헤란로 123", "channels": ["Blog", "Clip", "Instagram", "Youtube"],
+      "type": "일반", "campaign_participated": 85, "campaign_completed": 80,
+      "current_points": 1500000, "withdrawn_points": 11500000,
+      "status_type": "일반 회원", "status": "정상", "penalty_count": 5,
+      "bank": "KB국민은행", "account_holder": "오은영",
+      "last_access_date": "2026-01-15 14:30", "join_date": "2025-12-05 10:20"
+    },
+    {
+      "id": 2, "number": "000002", "name": "김은지", "nickname": "은지블로그",
+      "gender": "여성", "age": 28, "email": "kimeunji@gmail.com", "phone": "010-2222-2222",
+      "address": "서울시 서초구 서초대로 456", "channels": ["Blog", "Clip"],
+      "type": "일반", "campaign_participated": 12, "campaign_completed": 10,
+      "current_points": 1500000, "withdrawn_points": 132500000,
+      "status_type": "이용 제한 회원", "status": "일시 정지", "penalty_count": 0,
+      "bank": "신한은행", "account_holder": "김은지",
+      "last_access_date": "2026-01-20 16:45", "join_date": "2025-12-12 14:30"
+    },
+    {
+      "id": 3, "number": "000003", "name": "홍길동", "nickname": "홍길동의리뷰",
+      "gender": "남성", "age": 45, "email": "honggildong@daum.net", "phone": "010-3333-3333",
+      "address": "부산시 해운대구 해운대해변로 789", "channels": ["Blog", "Instagram"],
+      "type": "서포터즈", "campaign_participated": 569, "campaign_completed": 560,
+      "current_points": 999999999, "withdrawn_points": 999999999,
+      "status_type": "이용 제한 회원", "status": "일시 정지", "penalty_count": 0,
+      "bank": "하나은행", "account_holder": "홍길동",
+      "last_access_date": "2026-01-25 09:20", "join_date": "2025-12-18 16:45"
+    },
+    {
+      "id": 4, "number": "000004", "name": "유연희", "nickname": "연희의일상",
+      "gender": "여성", "age": 32, "email": "yuyeonhee@naver.com", "phone": "010-4444-4444",
+      "address": "인천시 남동구 장자로 14", "channels": ["Blog"],
+      "type": "인플루언서", "campaign_participated": 8, "campaign_completed": 7,
+      "current_points": 1500000, "withdrawn_points": 900000000,
+      "status_type": "이용 제한 회원", "status": "영구 정지", "penalty_count": 1,
+      "bank": "NH농협은행", "account_holder": "유연희",
+      "last_access_date": "2026-01-28 11:15", "join_date": "2025-12-22 11:15"
+    },
+    {
+      "id": 5, "number": "000005", "name": "김히어라가나다라마바사아자자자자자자", "nickname": "히어라리뷰",
+      "gender": "여성", "age": 26, "email": "kimheera@naver.com", "phone": "010-5555-5555",
+      "address": "대전시 유성구 대학로 321", "channels": ["Blog", "Instagram"],
+      "type": "일반", "campaign_participated": 5, "campaign_completed": 5,
+      "current_points": 1500000, "withdrawn_points": 500000,
+      "status_type": "주의 회원", "status": "정상", "penalty_count": 2,
+      "bank": "카카오뱅크", "account_holder": "김히어라",
+      "last_access_date": "2026-01-30 18:30", "join_date": "2025-12-28 09:30"
+    },
+    {
+      "id": 6, "number": "000006", "name": "일이삼사오육칠팔구십", "nickname": "일이삼사오",
+      "gender": "남성", "age": 35, "email": "ilsamsa@naver.com", "phone": "010-6666-6666",
+      "address": "광주시 북구 첨단과기로 654", "channels": ["Blog"],
+      "type": "일반", "campaign_participated": 25, "campaign_completed": 23,
+      "current_points": 1500000, "withdrawn_points": 1500000,
+      "status_type": "일반 회원", "status": "정상", "penalty_count": 0,
+      "bank": "토스뱅크", "account_holder": "일이삼",
+      "last_access_date": "2026-01-31 15:20", "join_date": "2025-12-31 15:20"
+    },
+    {
+      "id": 7, "number": "000007", "name": "이은", "nickname": "이은의블로그",
+      "gender": "여성", "age": 29, "email": "leeun@naver.com", "phone": "010-7777-7777",
+      "address": "대구시 수성구 범어천로 987", "channels": ["Blog"],
+      "type": "일반", "campaign_participated": 18, "campaign_completed": 16,
+      "current_points": 1500000, "withdrawn_points": 1500000,
+      "status_type": "일반 회원", "status": "정상", "penalty_count": 0,
+      "bank": "우리은행", "account_holder": "이은",
+      "last_access_date": "2026-02-01 10:45", "join_date": "2026-01-03 10:45"
+    },
+    {
+      "id": 8, "number": "000008", "name": "김휘수", "nickname": "휘수의리뷰",
+      "gender": "남성", "age": 41, "email": "kimhwisu@naver.com", "phone": "010-8888-8888",
+      "address": "울산시 남구 삼산로 147", "channels": ["Blog"],
+      "type": "일반", "campaign_participated": 32, "campaign_completed": 30,
+      "current_points": 1500000, "withdrawn_points": 1500000,
+      "status_type": "일반 회원", "status": "정상", "penalty_count": 0,
+      "bank": "KB국민은행", "account_holder": "김휘수",
+      "last_access_date": "2026-02-02 14:20", "join_date": "2026-01-08 14:20"
+    },
+    {
+      "id": 9, "number": "000009", "name": "황보선혜", "nickname": "황보선혜",
+      "gender": "여성", "age": 33, "email": "hwangboseonhye@naver.com", "phone": "010-9999-9999",
+      "address": "경기도 성남시 분당구 정자로 258", "channels": ["Blog"],
+      "type": "일반", "campaign_participated": 15, "campaign_completed": 14,
+      "current_points": 1500000, "withdrawn_points": 1500000,
+      "status_type": "일반 회원", "status": "정상", "penalty_count": 0,
+      "bank": "신한은행", "account_holder": "황보선혜",
+      "last_access_date": "2026-02-03 16:30", "join_date": "2026-01-15 16:30"
+    },
+    {
+      "id": 10, "number": "000010", "name": "장세희", "nickname": "장세희블로그",
+      "gender": "여성", "age": 27, "email": "jangsehee@naver.com", "phone": "010-1010-1010",
+      "address": "경기도 수원시 영통구 광교로 369", "channels": ["Blog", "Instagram"],
+      "type": "일반", "campaign_participated": 42, "campaign_completed": 40,
+      "current_points": 1500000, "withdrawn_points": 1500000,
+      "status_type": "일반 회원", "status": "정상", "penalty_count": 0,
+      "bank": "하나은행", "account_holder": "장세희",
+      "last_access_date": "2026-02-04 11:10", "join_date": "2026-01-20 11:10"
+    },
+    {
+      "id": 11, "number": "000011", "name": "김은빛", "nickname": "은빛의일상",
+      "gender": "여성", "age": 30, "email": "kimeunbit@naver.com", "phone": "010-2020-2020",
+      "address": "경기도 고양시 일산동구 정발산로 741", "channels": ["Blog", "Instagram"],
+      "type": "일반", "campaign_participated": 28, "campaign_completed": 26,
+      "current_points": 1500000, "withdrawn_points": 1500000,
+      "status_type": "일반 회원", "status": "정상", "penalty_count": 0,
+      "bank": "NH농협은행", "account_holder": "김은빛",
+      "last_access_date": "2026-02-05 13:40", "join_date": "2026-01-25 13:40"
+    },
+    {
+      "id": 12, "number": "000012", "name": "김도토리", "nickname": "도토리리뷰",
+      "gender": "남성", "age": 38, "email": "kimdotori@naver.com", "phone": "010-3030-3030",
+      "address": "경기도 부천시 원미구 상동로 852", "channels": ["Blog", "Instagram"],
+      "type": "일반", "campaign_participated": 35, "campaign_completed": 33,
+      "current_points": 1500000, "withdrawn_points": 1500000,
+      "status_type": "일반 회원", "status": "정상", "penalty_count": 0,
+      "bank": "카카오뱅크", "account_holder": "김도토리",
+      "last_access_date": "2026-02-06 17:50", "join_date": "2026-01-31 17:50"
+    },
+    {
+      "id": 13, "number": "000013", "name": "박요셉", "nickname": "요셉의블로그",
+      "gender": "남성", "age": 36, "email": "parkyoseb@naver.com", "phone": "010-4040-4040",
+      "address": "경기도 안양시 만안구 안양로 963", "channels": ["Blog", "Instagram"],
+      "type": "일반", "campaign_participated": 22, "campaign_completed": 20,
+      "current_points": 1500000, "withdrawn_points": 1500000,
+      "status_type": "일반 회원", "status": "정상", "penalty_count": 0,
+      "bank": "토스뱅크", "account_holder": "박요셉",
+      "last_access_date": "2026-02-07 09:15", "join_date": "2026-02-01 09:15"
+    },
+    {
+      "id": 14, "number": "000014", "name": "황에스더", "nickname": "에스더리뷰",
+      "gender": "여성", "age": 31, "email": "hwangesder@naver.com", "phone": "010-5050-5050",
+      "address": "경기도 용인시 기흥구 신갈로 159", "channels": ["Blog", "Instagram"],
+      "type": "일반", "campaign_participated": 19, "campaign_completed": 17,
+      "current_points": 1500000, "withdrawn_points": 1500000,
+      "status_type": "일반 회원", "status": "정상", "penalty_count": 0,
+      "bank": "우리은행", "account_holder": "황에스더",
+      "last_access_date": "2026-02-08 14:25", "join_date": "2026-02-02 14:25"
+    },
+    {
+      "id": 15, "number": "000015", "name": "조로이스", "nickname": "로이스의일상",
+      "gender": "여성", "age": 34, "email": "jorois@naver.com", "phone": "010-6060-6060",
+      "address": "경기도 화성시 동탄대로 357", "channels": ["Blog", "Instagram"],
+      "type": "일반", "campaign_participated": 38, "campaign_completed": 36,
+      "current_points": 1500000, "withdrawn_points": 1500000,
+      "status_type": "일반 회원", "status": "정상", "penalty_count": 0,
+      "bank": "KB국민은행", "account_holder": "조로이스",
+      "last_access_date": "2026-02-09 10:35", "join_date": "2026-02-03 10:35"
+    },
+    {
+      "id": 16, "number": "000016", "name": "데이터없음테스트", "nickname": "데이터없음테스트",
+      "gender": "남성", "age": 30, "email": "nodata@test.com", "phone": "010-9999-9999",
+      "address": "서울시 강남구 테헤란로 999", "channels": ["Blog"],
+      "type": "일반", "campaign_participated": 0, "campaign_completed": 0,
+      "current_points": 0, "withdrawn_points": 0,
+      "status_type": "일반 회원", "status": "정상", "penalty_count": 0,
+      "bank": "신한은행", "account_holder": "데이터없음",
+      "last_access_date": "2026-02-10 16:45", "join_date": "2026-02-04 16:45"
+    },
+    {
+      "id": 17, "number": "000017", "name": "탈퇴회원테스트", "nickname": "탈퇴회원테스트",
+      "gender": "여성", "age": 28, "email": "withdrawn@test.com", "phone": "010-7070-7070",
+      "address": "서울시 마포구 홍대입구로 123", "channels": ["Blog", "Instagram"],
+      "type": "일반", "campaign_participated": 10, "campaign_completed": 8,
+      "current_points": 0, "withdrawn_points": 500000,
+      "status_type": "이용 제한 회원", "status": "탈퇴", "penalty_count": 0,
+      "bank": "하나은행", "account_holder": "탈퇴회원",
+      "last_access_date": "2025-07-15 10:30", "join_date": "2024-01-15 14:20"
+    },
+    {
+      "id": 18, "number": "000018", "name": "이클립", "nickname": "클립의일상",
+      "gender": "여성", "age": 27, "email": "leclip@naver.com", "phone": "010-8080-8080",
+      "address": "서울시 강북구 미아로 123", "channels": ["Blog", "Clip"],
+      "type": "일반", "campaign_participated": 5, "campaign_completed": 4,
+      "current_points": 500000, "withdrawn_points": 1000000,
+      "status_type": "일반 회원", "status": "정상", "penalty_count": 0,
+      "bank": "NH농협은행", "account_holder": "이클립",
+      "last_access_date": "2026-02-11 12:00", "join_date": "2026-02-05 12:00"
+    },
+    {
+      "id": 19, "number": "000019", "name": "김유튜브", "nickname": "유튜브리뷰어",
+      "gender": "남성", "age": 33, "email": "kimyoutube@naver.com", "phone": "010-9090-9090",
+      "address": "경기도 파주시 금촌로 456", "channels": ["Blog", "Youtube"],
+      "type": "일반", "campaign_participated": 8, "campaign_completed": 7,
+      "current_points": 800000, "withdrawn_points": 1200000,
+      "status_type": "일반 회원", "status": "정상", "penalty_count": 0,
+      "bank": "카카오뱅크", "account_holder": "김유튜브",
+      "last_access_date": "2026-02-12 15:30", "join_date": "2026-02-06 15:30"
+    },
+    {
+      "id": 20, "number": "000020", "name": "박클립유튜브가나다다라라라라라라ㅏ라라라라라라라라", "nickname": "클립유튜버",
+      "gender": "남성", "age": 29, "email": "parkclipy@naver.com", "phone": "010-1100-1100",
+      "address": "서울시 성북구 정릉로 789", "channels": ["Clip", "Youtube"],
+      "type": "서포터즈", "campaign_participated": 12, "campaign_completed": 11,
+      "current_points": 1000000, "withdrawn_points": 2000000,
+      "status_type": "일반 회원", "status": "정상", "penalty_count": 0,
+      "bank": "토스뱅크", "account_holder": "박클립유튜브",
+      "last_access_date": "2026-02-13 09:20", "join_date": "2026-02-07 09:20"
+    }
+  ],
+
+  "partners": [
+    {
+      "id": 1, "number": "000001", "business_name": "주식회사 청명종합광고기획", "business_number": "122-86-45790",
+      "representative_name": "김민회", "division": "법인", "email": "contact@cmcm.co.kr",
+      "phone": "02-1234-5678", "address": "서울시 강남구 테헤란로 123",
+      "contact_name": "홍길동", "contact_phone": "010-1234-5678",
+      "campaign_in_progress": 1521, "campaign_completed": 1521,
+      "current_points": 0, "used_points": 11500000,
+      "status_type": "이용 제한 회원", "status": "일시 정지", "penalty_count": 3,
+      "last_access_date": "2026-01-18 14:30", "join_date": "2025-12-07 10:20"
+    },
+    {
+      "id": 2, "number": "000002", "business_name": "청불 천막집 방이점", "business_number": "211-23-55991",
+      "representative_name": "장민석외 2명", "division": "개인", "email": "cheongbul@example.com",
+      "phone": "010-2345-6789", "address": "서울시 송파구 올림픽로 456",
+      "contact_name": "김철수", "contact_phone": "010-2345-6789",
+      "campaign_in_progress": 12, "campaign_completed": 10,
+      "current_points": 0, "used_points": 32500000,
+      "status_type": "이용 제한 회원", "status": "탈퇴", "penalty_count": 1,
+      "last_access_date": "2026-01-22 16:45", "join_date": "2025-12-14 11:15"
+    },
+    {
+      "id": 3, "number": "000003", "business_name": "명륜진사갈비 수원광교점", "business_number": "211-23-55991",
+      "representative_name": "도선애, 이종근", "division": "개인", "email": "myeongryunjinsa@example.com",
+      "phone": "031-3456-7890", "address": "경기도 수원시 영통구 광교로 789",
+      "contact_name": "이영희", "contact_phone": "010-3456-7890",
+      "campaign_in_progress": 569, "campaign_completed": 560,
+      "current_points": 100000, "used_points": 999999999,
+      "status_type": "이용 제한 회원", "status": "일시 정지", "penalty_count": 2,
+      "last_access_date": "2026-01-27 09:20", "join_date": "2025-12-19 14:30"
+    },
+    {
+      "id": 4, "number": "000004", "business_name": "(주) 레인보우8", "business_number": "110-86-08583",
+      "representative_name": "고광웅", "division": "법인", "email": "rainbow8@example.com",
+      "phone": "02-4567-8901", "address": "서울시 서초구 서초대로 321",
+      "contact_name": "박민수", "contact_phone": "010-4567-8901",
+      "campaign_in_progress": 5, "campaign_completed": 5,
+      "current_points": 1200, "used_points": 1580000,
+      "status_type": "주의 회원", "status": "정상", "penalty_count": 0,
+      "last_access_date": "2026-01-29 18:30", "join_date": "2025-12-23 15:45"
+    },
+    {
+      "id": 5, "number": "000005", "business_name": "(주)플레티어", "business_number": "000-00-00000",
+      "representative_name": "이상훈", "division": "개인", "email": "playtier@example.com",
+      "phone": "010-5678-9012", "address": "서울시 마포구 홍대로 654",
+      "contact_name": "최지영", "contact_phone": "010-5678-9012",
+      "campaign_in_progress": 8, "campaign_completed": 7,
+      "current_points": 0, "used_points": 500000,
+      "status_type": "이용 제한 회원", "status": "영구 정지", "penalty_count": 1,
+      "last_access_date": "2026-01-31 12:00", "join_date": "2025-12-29 09:30"
+    },
+    {
+      "id": 6, "number": "000006", "business_name": "꽃초롱", "business_number": "000-00-00000",
+      "representative_name": "김초롱", "division": "개인", "email": "flower@example.com",
+      "phone": "010-6789-0123", "address": "서울시 강동구 천호대로 987",
+      "contact_name": "정수진", "contact_phone": "010-6789-0123",
+      "campaign_in_progress": 25, "campaign_completed": 23,
+      "current_points": 5400, "used_points": 1500000,
+      "status_type": "일반 회원", "status": "정상", "penalty_count": 0,
+      "last_access_date": "2026-02-01 10:15", "join_date": "2025-12-30 16:20"
+    },
+    {
+      "id": 7, "number": "000007", "business_name": "주식회사 와이디컴퍼니그룹", "business_number": "000-00-00000",
+      "representative_name": "양동찬", "division": "개인", "email": "ydcompany@example.com",
+      "phone": "02-7890-1234", "address": "서울시 종로구 종로 147",
+      "contact_name": "강동욱", "contact_phone": "010-7890-1234",
+      "campaign_in_progress": 18, "campaign_completed": 16,
+      "current_points": 251450, "used_points": 589000,
+      "status_type": "일반 회원", "status": "정상", "penalty_count": 0,
+      "last_access_date": "2026-02-02 14:50", "join_date": "2026-01-04 10:30"
+    },
+    {
+      "id": 8, "number": "000008", "business_name": "(주)아이엠에스커뮤니케이션", "business_number": "000-00-00000",
+      "representative_name": "정만수", "division": "개인", "email": "ims@example.com",
+      "phone": "010-8901-2345", "address": "서울시 용산구 한강대로 258",
+      "contact_name": "윤서연", "contact_phone": "010-8901-2345",
+      "campaign_in_progress": 32, "campaign_completed": 30,
+      "current_points": 0, "used_points": 0,
+      "status_type": "주의 회원", "status": "정상", "penalty_count": 0,
+      "last_access_date": "2026-02-03 11:25", "join_date": "2026-01-09 13:40"
+    },
+    {
+      "id": 9, "number": "000009", "business_name": "주식회사 청명미디어", "business_number": "234-86-01377",
+      "representative_name": "유기수", "division": "개인", "email": "cheongmyeong@example.com",
+      "phone": "032-9012-3456", "address": "인천시 연수구 송도과학로 369",
+      "contact_name": "임태호", "contact_phone": "010-9012-3456",
+      "campaign_in_progress": 15, "campaign_completed": 14,
+      "current_points": 0, "used_points": 0,
+      "status_type": "일반 회원", "status": "정상", "penalty_count": 0,
+      "last_access_date": "2026-02-04 15:10", "join_date": "2026-01-16 09:15"
+    },
+    {
+      "id": 10, "number": "000010", "business_name": "(주)아이엠에스커뮤니케이션", "business_number": "000-00-00000",
+      "representative_name": "정만수", "division": "개인", "email": "ims2@example.com",
+      "phone": "010-0123-4567", "address": "서울시 노원구 상계로 741",
+      "contact_name": "한소희", "contact_phone": "010-0123-4567",
+      "campaign_in_progress": 42, "campaign_completed": 40,
+      "current_points": 0, "used_points": 0,
+      "status_type": "주의 회원", "status": "정상", "penalty_count": 0,
+      "last_access_date": "2026-02-05 12:30", "join_date": "2026-01-21 14:20"
+    },
+    {
+      "id": 11, "number": "000011", "business_name": "(주)아이엠에스커뮤니케이션", "business_number": "000-00-00000",
+      "representative_name": "정만수", "division": "개인", "email": "ims3@example.com",
+      "phone": "010-1234-5678", "address": "서울시 양천구 목동로 852",
+      "contact_name": "오현우", "contact_phone": "010-1234-5678",
+      "campaign_in_progress": 28, "campaign_completed": 26,
+      "current_points": 0, "used_points": 0,
+      "status_type": "일반 회원", "status": "정상", "penalty_count": 0,
+      "last_access_date": "2026-02-06 10:45", "join_date": "2026-01-26 11:30"
+    },
+    {
+      "id": 12, "number": "000012", "business_name": "(주)아이엠에스커뮤니케이션", "business_number": "000-00-00000",
+      "representative_name": "정만수", "division": "개인", "email": "ims4@example.com",
+      "phone": "010-2345-6789", "address": "서울시 강서구 공항대로 963",
+      "contact_name": "신미래", "contact_phone": "010-2345-6789",
+      "campaign_in_progress": 35, "campaign_completed": 33,
+      "current_points": 0, "used_points": 0,
+      "status_type": "주의 회원", "status": "정상", "penalty_count": 0,
+      "last_access_date": "2026-02-07 13:20", "join_date": "2026-01-30 16:10"
+    },
+    {
+      "id": 13, "number": "000013", "business_name": "(주)아이엠에스커뮤니케이션", "business_number": "000-00-00000",
+      "representative_name": "정만수", "division": "개인", "email": "ims5@example.com",
+      "phone": "010-3456-7890", "address": "서울시 은평구 은평로 159",
+      "contact_name": "류성민", "contact_phone": "010-3456-7890",
+      "campaign_in_progress": 22, "campaign_completed": 20,
+      "current_points": 0, "used_points": 0,
+      "status_type": "일반 회원", "status": "정상", "penalty_count": 0,
+      "last_access_date": "2026-02-08 09:30", "join_date": "2026-02-01 10:45"
+    },
+    {
+      "id": 14, "number": "000014", "business_name": "주식회사 재밌는걸참좋아하고하고싶은거하는노신사", "business_number": "000-00-00000",
+      "representative_name": "노홍철", "division": "개인", "email": "nohongchul@example.com",
+      "phone": "010-4567-8901", "address": "서울시 성동구 왕십리로 357",
+      "contact_name": "노홍철", "contact_phone": "010-4567-8901",
+      "campaign_in_progress": 19, "campaign_completed": 17,
+      "current_points": 0, "used_points": 0,
+      "status_type": "주의 회원", "status": "정상", "penalty_count": 0,
+      "last_access_date": "2026-02-09 17:40", "join_date": "2026-02-02 12:00"
+    },
+    {
+      "id": 15, "number": "000015", "business_name": "데이터없음테스트", "business_number": "999-99-99999",
+      "representative_name": "테스트", "division": "개인", "email": "test@example.com",
+      "phone": "010-0000-0000", "address": "인천 남동구 장자로 6번길 2",
+      "contact_name": "테스트", "contact_phone": "010-1234-5678",
+      "campaign_in_progress": 0, "campaign_completed": 0,
+      "current_points": 0, "used_points": 0,
+      "status_type": "일반 회원", "status": "정상", "penalty_count": 0,
+      "last_access_date": "2026-02-10 08:20", "join_date": "2026-02-03 14:15"
+    },
+    {
+      "id": 16, "number": "000016", "business_name": "탈퇴회원테스트1", "business_number": "888-88-88888",
+      "representative_name": "김탈퇴", "division": "법인", "email": "withdrawn1@test.com",
+      "phone": "02-1111-1111", "address": "서울시 강남구 테헤란로 111",
+      "contact_name": "김탈퇴", "contact_phone": "010-1111-1111",
+      "campaign_in_progress": 15, "campaign_completed": 12,
+      "current_points": 0, "used_points": 2500000,
+      "status_type": "이용 제한 회원", "status": "탈퇴", "penalty_count": 0,
+      "last_access_date": "2024-12-20 14:30", "join_date": "2023-05-10 10:00"
+    },
+    {
+      "id": 17, "number": "000017", "business_name": "탈퇴회원테스트2", "business_number": "777-77-77777",
+      "representative_name": "이탈퇴", "division": "개인", "email": "withdrawn2@test.com",
+      "phone": "010-2222-2222", "address": "서울시 마포구 홍대입구로 222",
+      "contact_name": "이탈퇴", "contact_phone": "010-2222-2222",
+      "campaign_in_progress": 8, "campaign_completed": 6,
+      "current_points": 0, "used_points": 1800000,
+      "status_type": "주의 회원", "status": "탈퇴", "penalty_count": 0,
+      "last_access_date": "2024-11-15 16:20", "join_date": "2023-08-20 11:30"
+    }
+  ],
+
+  "withdrawal_requests": [
+    {
+      "id": 1,
+      "reviewer_id": 2,
+      "user_name": "이블로그",
+      "requested_amount": 25000,
+      "net_amount": 24175,
+      "tax_amount": 825,
+      "bank": "신한은행",
+      "account_number": "987-654-321098",
+      "account_holder": "이블로그",
+      "status": "PENDING",
+      "request_date": "2026-02-26T10:00:00Z",
+      "processed_date": null
+    },
+    {
+      "id": 2,
+      "reviewer_id": 1,
+      "user_name": "김리뷰",
+      "requested_amount": 45000,
+      "net_amount": 43515,
+      "tax_amount": 1485,
+      "bank": "국민은행",
+      "account_number": "123-456-789012",
+      "account_holder": "김리뷰",
+      "status": "APPROVED",
+      "request_date": "2026-02-19T14:00:00Z",
+      "processed_date": "2026-02-21T16:00:00Z"
+    }
+  ],
+
+  "point_history": [
+    {
+      "id": 1,
+      "reviewer_id": 1,
+      "type": "EARNED",
+      "amount": 15000,
+      "description": "[배송형] 맛있는 간편식 체험단 포인트 지급",
+      "status": "COMPLETED",
+      "date": "2026-02-10T10:00:00Z",
+      "balance": 45000
+    },
+    {
+      "id": 2,
+      "reviewer_id": 1,
+      "type": "WITHDRAWAL",
+      "amount": -45000,
+      "description": "포인트 출금",
+      "status": "COMPLETED",
+      "date": "2026-02-21T16:00:00Z",
+      "balance": 0
+    },
+    {
+      "id": 3,
+      "reviewer_id": 2,
+      "type": "EARNED",
+      "amount": 25000,
+      "description": "[구매평] 스킨케어 제품 구매 후기 포인트 지급",
+      "status": "PENDING",
+      "date": "2026-03-01T16:00:00Z",
+      "balance": 12000
+    }
+  ],
+
+  "notifications": [
+    {
+      "id": 1,
+      "reviewer_id": 1,
+      "type": "CAMPAIGN_SELECTED",
+      "title": "캠페인 선정 안내",
+      "message": "[배송형] 맛있는 간편식 체험단에 선정되었습니다!",
+      "is_read": false,
+      "created_at": "2026-03-08T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "reviewer_id": 2,
+      "type": "POINT_EARNED",
+      "title": "포인트 지급 안내",
+      "message": "25,000 포인트가 지급될 예정입니다.",
+      "is_read": true,
+      "created_at": "2026-03-01T16:00:00Z"
+    },
+    {
+      "id": 3,
+      "reviewer_id": 1,
+      "type": "WITHDRAWAL_COMPLETED",
+      "title": "출금 완료",
+      "message": "45,000원 출금이 완료되었습니다.",
+      "is_read": false,
+      "created_at": "2026-02-21T16:30:00Z"
+    }
+  ],
+
+  "community_posts": [
+    {
+      "id": 1,
+      "reviewer_id": 1,
+      "author_nickname": "맛집탐험가",
+      "category": "후기",
+      "title": "첫 캠페인 후기 남겨요!",
+      "content": "처음으로 배송형 캠페인에 참여해봤는데 너무 좋았어요. 제품도 좋고 포인트도 빠르게 지급됐어요!",
+      "view_count": 124,
+      "like_count": 18,
+      "comment_count": 5,
+      "is_reported": false,
+      "status": "ACTIVE",
+      "created_at": "2026-02-15T14:00:00Z"
+    },
+    {
+      "id": 2,
+      "reviewer_id": 2,
+      "author_nickname": "뷰티로그",
+      "category": "질문",
+      "title": "구매평 캠페인 구매 영수증 어떻게 올리나요?",
+      "content": "구매평 캠페인 처음인데 구매 영수증을 어디서 업로드해야 하는지 모르겠어요.",
+      "view_count": 87,
+      "like_count": 3,
+      "comment_count": 2,
+      "is_reported": false,
+      "status": "ACTIVE",
+      "created_at": "2026-02-22T11:00:00Z"
+    }
+  ],
+
+  "rejection_history": [
+    { "id": 1, "campaign_number": "000160", "campaign_name": "푸러블 고농축 캡슐세제 플라워향, 1개, 110개입", "reject_code": "R001", "reject_reason": "푸러블 고농축 캡슐세제 플라워향, 1개, 110개입, 구매 정보 불일치", "inspector": "(주)청명종합광고기획", "target": "홍길동", "processed_date": "2026-02-01 14:23", "reject_count": 1 },
+    { "id": 2, "campaign_number": "000159", "campaign_name": "어쩌구 미션일이삼사오육칠팔구십일이삼사오육칠팔구십", "reject_code": "R002", "reject_reason": "", "inspector": "AI 자동 탐지", "target": "일이삼사오육칠팔구십", "processed_date": "2026-02-02 09:45", "reject_count": 3 },
+    { "id": 3, "campaign_number": "000099", "campaign_name": "어쩌구 미션", "reject_code": "R003", "reject_reason": "", "inspector": "AI 자동 탐지", "target": "일이삼사오육칠팔구십", "processed_date": "2026-02-03 16:12", "reject_count": 7 },
+    { "id": 4, "campaign_number": "000068", "campaign_name": "어쩌구 미션", "reject_code": "R004", "reject_reason": "", "inspector": "AI 자동 탐지", "target": "일이삼사오육칠팔구십", "processed_date": "2026-02-04 11:30", "reject_count": 5 },
+    { "id": 5, "campaign_number": "000062", "campaign_name": "어쩌구 미션", "reject_code": "R005", "reject_reason": "", "inspector": "일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육", "target": "일이삼사오육칠팔구십일이삼사오", "processed_date": "2026-02-05 13:55", "reject_count": 3 },
+    { "id": 6, "campaign_number": "000031", "campaign_name": "어쩌구 미션", "reject_code": "R006", "reject_reason": "", "inspector": "주식회사 아이엠에스커뮤니케이션", "target": "(주)아이엠에스커뮤니케이션", "processed_date": "2026-02-06 10:18", "reject_count": 1 },
+    { "id": 7, "campaign_number": "000016", "campaign_name": "어쩌구 미션", "reject_code": "R007", "reject_reason": "", "inspector": "네이버 주식회사", "target": "(주)아이엠에스커뮤니케이션", "processed_date": "2026-02-07 15:42", "reject_count": 1 },
+    { "id": 8, "campaign_number": "000005", "campaign_name": "어쩌구 미션 어쩌구 미션 어쩌구 미션 어쩌구 미션", "reject_code": "R007", "reject_reason": "", "inspector": "주식회사 청명미디어", "target": "(주)아이엠에스커뮤니케이션", "processed_date": "2026-02-08 08:30", "reject_count": 1 },
+    { "id": 9, "campaign_number": "000015", "campaign_name": "어쩌구 미션", "reject_code": "R007", "reject_reason": "", "inspector": "(주)청명종합광고기획", "target": "(주)아이엠에스커뮤니케이션", "processed_date": "2026-02-09 17:25", "reject_count": 1 },
+    { "id": 10, "campaign_number": "000200", "campaign_name": "신제품 런칭 캠페인 - 프리미엄 세트", "reject_code": "R001", "reject_reason": "구매 영수증의 상품명과 캠페인 상품명이 일치하지 않습니다", "inspector": "AI 자동 탐지", "target": "김철수", "processed_date": "2026-02-10 10:15", "reject_count": 2 },
+    { "id": 11, "campaign_number": "000201", "campaign_name": "뷰티 제품 체험 후기 캠페인", "reject_code": "R002", "reject_reason": "가이드라인에 명시된 필수 사항을 누락했습니다", "inspector": "(주)마케팅프로", "target": "이영희", "processed_date": "2026-02-11 14:32", "reject_count": 1 },
+    { "id": 12, "campaign_number": "000202", "campaign_name": "홈데코 아이템 리뷰", "reject_code": "R003", "reject_reason": "", "inspector": "AI 자동 탐지", "target": "박민수", "processed_date": "2026-02-12 09:20", "reject_count": 3 },
+    { "id": 13, "campaign_number": "000203", "campaign_name": "식품 체험단 모집 캠페인", "reject_code": "R004", "reject_reason": "제공된 이미지가 타인의 작품과 유사도가 높습니다", "inspector": "(주)콘텐츠리뷰", "target": "최지영", "processed_date": "2026-02-13 16:45", "reject_count": 1 },
+    { "id": 14, "campaign_number": "000204", "campaign_name": "패션 아이템 스타일링 캠페인", "reject_code": "R005", "reject_reason": "동일한 패턴의 반려가 반복적으로 발생했습니다", "inspector": "네이버 주식회사", "target": "정수진", "processed_date": "2026-02-14 11:30", "reject_count": 5 },
+    { "id": 15, "campaign_number": "000205", "campaign_name": "전자제품 사용 후기", "reject_code": "R006", "reject_reason": "", "inspector": "주식회사 아이엠에스커뮤니케이션", "target": "강호영", "processed_date": "2026-02-15 13:15", "reject_count": 1 },
+    { "id": 16, "campaign_number": "000206", "campaign_name": "생활용품 리뷰 캠페인", "reject_code": "R008", "reject_reason": "부적절한 언어 사용 및 비매너 행위가 확인되었습니다", "inspector": "(주)청명종합광고기획", "target": "윤서연", "processed_date": "2026-02-16 15:50", "reject_count": 2 },
+    { "id": 17, "campaign_number": "000207", "campaign_name": "건강식품 체험단 모집", "reject_code": "R001", "reject_reason": "", "inspector": "AI 자동 탐지", "target": "장미래", "processed_date": "2026-02-17 10:25", "reject_count": 1 },
+    { "id": 18, "campaign_number": "000208", "campaign_name": "인테리어 소품 리뷰", "reject_code": "R002", "reject_reason": "필수 해시태그 및 링크가 누락되었습니다", "inspector": "(주)마케팅프로", "target": "오준호", "processed_date": "2026-02-18 14:10", "reject_count": 1 },
+    { "id": 19, "campaign_number": "000209", "campaign_name": "뷰티 브랜드 신제품 체험", "reject_code": "R003", "reject_reason": "", "inspector": "AI 자동 탐지", "target": "한소희", "processed_date": "2026-02-19 09:40", "reject_count": 2 },
+    { "id": 20, "campaign_number": "000210", "campaign_name": "패션 액세서리 스타일링", "reject_code": "R004", "reject_reason": "", "inspector": "(주)콘텐츠리뷰", "target": "신동욱", "processed_date": "2026-02-20 16:20", "reject_count": 1 },
+    { "id": 21, "campaign_number": "000211", "campaign_name": "식품 체험 후기 캠페인", "reject_code": "R007", "reject_reason": "출금 계좌 정보가 등록된 정보와 일치하지 않습니다", "inspector": "네이버 주식회사", "target": "조은지", "processed_date": "2026-02-21 11:55", "reject_count": 1 },
+    { "id": 22, "campaign_number": "000212", "campaign_name": "홈케어 제품 리뷰", "reject_code": "R005", "reject_reason": "", "inspector": "주식회사 아이엠에스커뮤니케이션", "target": "배성민", "processed_date": "2026-02-22 13:30", "reject_count": 4 },
+    { "id": 23, "campaign_number": "000213", "campaign_name": "전자제품 사용기 캠페인", "reject_code": "R006", "reject_reason": "", "inspector": "(주)청명종합광고기획", "target": "류현우", "processed_date": "2026-02-23 10:05", "reject_count": 1 },
+    { "id": 24, "campaign_number": "000214", "campaign_name": "뷰티 제품 체험단", "reject_code": "R008", "reject_reason": "", "inspector": "AI 자동 탐지", "target": "임태영", "processed_date": "2026-02-24 15:25", "reject_count": 1 },
+    { "id": 25, "campaign_number": "000215", "campaign_name": "인테리어 소품 스타일링", "reject_code": "R001", "reject_reason": "구매 정보가 캠페인 가이드와 일치하지 않습니다", "inspector": "(주)마케팅프로", "target": "송하늘", "processed_date": "2026-02-25 12:40", "reject_count": 1 },
+    { "id": 26, "campaign_number": "000216", "campaign_name": "생활용품 체험 후기", "reject_code": "R002", "reject_reason": "", "inspector": "(주)콘텐츠리뷰", "target": "문지훈", "processed_date": "2026-02-26 09:15", "reject_count": 2 },
+    { "id": 27, "campaign_number": "000217", "campaign_name": "패션 아이템 리뷰 캠페인", "reject_code": "R003", "reject_reason": "", "inspector": "네이버 주식회사", "target": "양지은", "processed_date": "2026-02-27 14:50", "reject_count": 1 },
+    { "id": 28, "campaign_number": "000218", "campaign_name": "건강식품 체험단 모집", "reject_code": "R004", "reject_reason": "", "inspector": "AI 자동 탐지", "target": "노승현", "processed_date": "2026-02-28 11:20", "reject_count": 1 },
+    { "id": 29, "campaign_number": "000219", "campaign_name": "뷰티 브랜드 신제품 리뷰", "reject_code": "R007", "reject_reason": "", "inspector": "주식회사 아이엠에스커뮤니케이션", "target": "도현수", "processed_date": "2026-02-29 16:35", "reject_count": 1 },
+    { "id": 30, "campaign_number": "000220", "campaign_name": "전자제품 사용 후기 캠페인", "reject_code": "R008", "reject_reason": "", "inspector": "(주)청명종합광고기획", "target": "구민재", "processed_date": "2026-02-01 10:45", "reject_count": 1 },
+    { "id": 31, "campaign_number": "000221", "campaign_name": "홈데코 아이템 체험단", "reject_code": "R001", "reject_reason": "", "inspector": "(주)마케팅프로", "target": "남지호", "processed_date": "2026-02-02 13:10", "reject_count": 1 },
+    { "id": 32, "campaign_number": "000222", "campaign_name": "식품 리뷰 캠페인", "reject_code": "R005", "reject_reason": "", "inspector": "AI 자동 탐지", "target": "백준영", "processed_date": "2026-02-03 15:20", "reject_count": 3 },
+    { "id": 33, "campaign_number": "000223", "campaign_name": "뷰티 제품 스타일링", "reject_code": "R006", "reject_reason": "", "inspector": "(주)콘텐츠리뷰", "target": "서유진", "processed_date": "2026-02-04 09:30", "reject_count": 1 },
+    { "id": 34, "campaign_number": "000224", "campaign_name": "패션 액세서리 체험 후기", "reject_code": "R007", "reject_reason": "", "inspector": "네이버 주식회사", "target": "유재석", "processed_date": "2026-02-05 12:55", "reject_count": 1 },
+    { "id": 35, "campaign_number": "000225", "campaign_name": "인테리어 소품 리뷰 캠페인", "reject_code": "R002", "reject_reason": "", "inspector": "주식회사 아이엠에스커뮤니케이션", "target": "강동원", "processed_date": "2026-02-06 14:15", "reject_count": 1 },
+    { "id": 36, "campaign_number": "000226", "campaign_name": "생활용품 사용기", "reject_code": "R003", "reject_reason": "", "inspector": "(주)청명종합광고기획", "target": "이병헌", "processed_date": "2026-02-07 11:40", "reject_count": 2 }
+  ],
+
+  "report_history": [
+    { "id": 1, "campaign_number": "000456", "campaign_name": "푸러블 고농축 캡슐세제 플라워향, 1개, 110개입", "report_code": "W001", "report_reason": "선정 후 취소", "inspector": "(주)청명종합광고기획", "target": "홍길동", "processed_date": "2026-02-01 18:56", "report_count": 1 },
+    { "id": 2, "campaign_number": "000041", "campaign_name": "어쩌구 미션", "report_code": "W002", "report_reason": "지각 제출", "inspector": "관리자 A", "target": "일이삼사오육칠팔구십", "processed_date": "2026-02-01 18:56", "report_count": 3 },
+    { "id": 3, "campaign_number": "000451", "campaign_name": "일이삼사오육칠팔구십일이삼사오육칠팔구십", "report_code": "W003", "report_reason": "무단 이탈 · 노쇼", "inspector": "AI 자동 탐지", "target": "일이삼사오육칠팔구십", "processed_date": "2026-02-01 18:56", "report_count": 1 },
+    { "id": 4, "campaign_number": "008914", "campaign_name": "어쩌구 미션", "report_code": "W004", "report_reason": "노출 기간 불이행", "inspector": "AI 자동 탐지", "target": "일이삼사오육칠팔구십", "processed_date": "2026-02-02 18:59", "report_count": 1 },
+    { "id": 5, "campaign_number": "000001", "campaign_name": "어쩌구 미션", "report_code": "W005", "report_reason": "수정 요청 불이행", "inspector": "일이삼사오육칠팔구십일이삼사오육", "target": "일이삼사오육칠팔구십일이삼사오", "processed_date": "2026-02-03 18:56", "report_count": 1 },
+    { "id": 6, "campaign_number": "000001", "campaign_name": "일이삼사오육칠팔구십일이삼사오육칠팔구십일이삼사오육", "report_code": "W006", "report_reason": "게시 후 취소", "inspector": "네이버 주식회사", "target": "(주)아이엠에스커뮤니케이션", "processed_date": "2026-02-04 18:56", "report_count": 1 },
+    { "id": 7, "campaign_number": "000001", "campaign_name": "어쩌구 미션", "report_code": "W007", "report_reason": "부적절한 캠페인 게시", "inspector": "관리자 A", "target": "(주)아이엠에스커뮤니케이션", "processed_date": "2026-02-01 18:56", "report_count": 1 },
+    { "id": 8, "campaign_number": "000001", "campaign_name": "어쩌구 미션", "report_code": "W008", "report_reason": "공정위 위반 요청", "inspector": "주식회사 청명미디어", "target": "(주)아이엠에스커뮤니케이션", "processed_date": "2026-02-01 18:56", "report_count": 1 },
+    { "id": 9, "campaign_number": "000001", "campaign_name": "어쩌구 미션", "report_code": "W009", "report_reason": "비정상 요청 반복", "inspector": "관리자 F", "target": "(주)아이엠에스커뮤니케이션", "processed_date": "2026-02-01 18:56", "report_count": 1 },
+    { "id": 10, "campaign_number": "000001", "campaign_name": "어쩌구 미션", "report_code": "W010", "report_reason": "중복 계정 탐지", "inspector": "관리자 A", "target": "(주)아이엠에스커뮤니케이션", "processed_date": "2026-02-01 18:56", "report_count": 1 },
+    { "id": 11, "campaign_number": "000001", "campaign_name": "어쩌구 미션", "report_code": "W011", "report_reason": "콘텐츠 중복 탐지", "inspector": "관리자 A", "target": "(주)아이엠에스커뮤니케이션", "processed_date": "2026-02-01 18:56", "report_count": 1 },
+    { "id": 12, "campaign_number": "000300", "campaign_name": "프리미엄 뷰티 세트 체험 캠페인", "report_code": "W001", "report_reason": "선정 후 무단 취소", "inspector": "AI 자동 탐지", "target": "김민지", "processed_date": "2026-02-05 09:15", "report_count": 1 },
+    { "id": 13, "campaign_number": "000301", "campaign_name": "홈데코 아이템 리뷰 캠페인", "report_code": "W002", "report_reason": "제출 기한을 초과하여 제출했습니다", "inspector": "(주)마케팅프로", "target": "이수진", "processed_date": "2026-02-06 14:30", "report_count": 2 },
+    { "id": 14, "campaign_number": "000302", "campaign_name": "식품 체험단 모집", "report_code": "W003", "report_reason": "약속된 일정에 무단 이탈했습니다", "inspector": "AI 자동 탐지", "target": "박준호", "processed_date": "2026-02-07 11:20", "report_count": 1 },
+    { "id": 15, "campaign_number": "000303", "campaign_name": "패션 아이템 스타일링 캠페인", "report_code": "W004", "report_reason": "노출 기간을 준수하지 않았습니다", "inspector": "(주)콘텐츠리뷰", "target": "최영희", "processed_date": "2026-02-08 16:45", "report_count": 1 },
+    { "id": 16, "campaign_number": "000304", "campaign_name": "전자제품 사용 후기", "report_code": "W005", "report_reason": "수정 요청을 반복적으로 무시했습니다", "inspector": "네이버 주식회사", "target": "정민수", "processed_date": "2026-02-09 10:10", "report_count": 3 },
+    { "id": 17, "campaign_number": "000305", "campaign_name": "뷰티 제품 체험 후기 캠페인", "report_code": "W006", "report_reason": "게시 후 일방적으로 취소했습니다", "inspector": "주식회사 아이엠에스커뮤니케이션", "target": "강지영", "processed_date": "2026-02-10 13:25", "report_count": 1 },
+    { "id": 18, "campaign_number": "000306", "campaign_name": "생활용품 리뷰 캠페인", "report_code": "W007", "report_reason": "부적절한 콘텐츠로 게시했습니다", "inspector": "(주)청명종합광고기획", "target": "윤서연", "processed_date": "2026-02-11 15:50", "report_count": 1 },
+    { "id": 19, "campaign_number": "000307", "campaign_name": "인테리어 소품 체험단", "report_code": "W008", "report_reason": "공정거래위원회 위반 요청을 했습니다", "inspector": "AI 자동 탐지", "target": "장미래", "processed_date": "2026-02-12 09:40", "report_count": 1 },
+    { "id": 20, "campaign_number": "000308", "campaign_name": "건강식품 체험 후기", "report_code": "W009", "report_reason": "비정상적인 요청이 반복적으로 발생했습니다", "inspector": "(주)마케팅프로", "target": "오준호", "processed_date": "2026-02-13 12:15", "report_count": 2 },
+    { "id": 21, "campaign_number": "000309", "campaign_name": "뷰티 브랜드 신제품 리뷰", "report_code": "W010", "report_reason": "중복 계정 사용이 탐지되었습니다", "inspector": "(주)콘텐츠리뷰", "target": "한소희", "processed_date": "2026-02-14 14:30", "report_count": 1 },
+    { "id": 22, "campaign_number": "000310", "campaign_name": "패션 액세서리 스타일링", "report_code": "W011", "report_reason": "콘텐츠 중복 사용이 확인되었습니다", "inspector": "네이버 주식회사", "target": "신동욱", "processed_date": "2026-02-15 10:55", "report_count": 1 },
+    { "id": 23, "campaign_number": "000311", "campaign_name": "식품 체험 후기 캠페인", "report_code": "W012", "report_reason": "비정상적인 접근 패턴이 기록되었습니다", "inspector": "AI 자동 탐지", "target": "조은지", "processed_date": "2026-02-16 16:20", "report_count": 1 },
+    { "id": 24, "campaign_number": "000312", "campaign_name": "홈케어 제품 리뷰", "report_code": "W013", "report_reason": "비매너 행위가 확인되었습니다", "inspector": "주식회사 아이엠에스커뮤니케이션", "target": "배성민", "processed_date": "2026-02-17 11:35", "report_count": 1 },
+    { "id": 25, "campaign_number": "000313", "campaign_name": "전자제품 사용기 캠페인", "report_code": "W001", "report_reason": "", "inspector": "(주)청명종합광고기획", "target": "류현우", "processed_date": "2026-02-18 13:10", "report_count": 1 },
+    { "id": 26, "campaign_number": "000314", "campaign_name": "뷰티 제품 체험단", "report_code": "W002", "report_reason": "", "inspector": "AI 자동 탐지", "target": "임태영", "processed_date": "2026-02-19 09:25", "report_count": 2 },
+    { "id": 27, "campaign_number": "000315", "campaign_name": "인테리어 소품 스타일링", "report_code": "W003", "report_reason": "", "inspector": "(주)마케팅프로", "target": "송하늘", "processed_date": "2026-02-20 15:40", "report_count": 1 },
+    { "id": 28, "campaign_number": "000316", "campaign_name": "생활용품 체험 후기", "report_code": "W004", "report_reason": "", "inspector": "(주)콘텐츠리뷰", "target": "문지훈", "processed_date": "2026-02-21 10:50", "report_count": 1 },
+    { "id": 29, "campaign_number": "000317", "campaign_name": "패션 아이템 리뷰 캠페인", "report_code": "W005", "report_reason": "", "inspector": "네이버 주식회사", "target": "양지은", "processed_date": "2026-02-22 14:15", "report_count": 1 },
+    { "id": 30, "campaign_number": "000318", "campaign_name": "건강식품 체험단 모집", "report_code": "W006", "report_reason": "", "inspector": "AI 자동 탐지", "target": "노승현", "processed_date": "2026-02-23 11:30", "report_count": 1 },
+    { "id": 31, "campaign_number": "000319", "campaign_name": "뷰티 브랜드 신제품 리뷰", "report_code": "W007", "report_reason": "", "inspector": "주식회사 아이엠에스커뮤니케이션", "target": "도현수", "processed_date": "2026-02-24 16:45", "report_count": 1 },
+    { "id": 32, "campaign_number": "000320", "campaign_name": "전자제품 사용 후기 캠페인", "report_code": "W008", "report_reason": "", "inspector": "(주)청명종합광고기획", "target": "구민재", "processed_date": "2026-02-25 09:20", "report_count": 1 },
+    { "id": 33, "campaign_number": "000321", "campaign_name": "홈데코 아이템 체험단", "report_code": "W009", "report_reason": "", "inspector": "(주)마케팅프로", "target": "남지호", "processed_date": "2026-02-26 13:55", "report_count": 1 },
+    { "id": 34, "campaign_number": "000322", "campaign_name": "식품 리뷰 캠페인", "report_code": "W010", "report_reason": "", "inspector": "AI 자동 탐지", "target": "백준영", "processed_date": "2026-02-27 10:10", "report_count": 1 },
+    { "id": 35, "campaign_number": "000323", "campaign_name": "뷰티 제품 스타일링", "report_code": "W011", "report_reason": "", "inspector": "(주)콘텐츠리뷰", "target": "서유진", "processed_date": "2026-02-28 15:25", "report_count": 1 },
+    { "id": 36, "campaign_number": "000324", "campaign_name": "패션 액세서리 체험 후기", "report_code": "W012", "report_reason": "", "inspector": "네이버 주식회사", "target": "유재석", "processed_date": "2026-02-29 12:40", "report_count": 1 },
+    { "id": 37, "campaign_number": "000325", "campaign_name": "인테리어 소품 리뷰 캠페인", "report_code": "W013", "report_reason": "타인에 대한 모욕적인 발언 및 비매너 행위가 확인되었습니다", "inspector": "주식회사 아이엠에스커뮤니케이션", "target": "강동원", "processed_date": "2026-02-01 14:50", "report_count": 1 },
+    { "id": 38, "campaign_number": "000326", "campaign_name": "생활용품 사용기", "report_code": "W001", "report_reason": "", "inspector": "(주)청명종합광고기획", "target": "이병헌", "processed_date": "2026-02-02 11:15", "report_count": 2 },
+    { "id": 39, "campaign_number": "000327", "campaign_name": "뷰티 제품 체험 후기", "report_code": "W002", "report_reason": "", "inspector": "AI 자동 탐지", "target": "김태희", "processed_date": "2026-02-03 09:30", "report_count": 1 },
+    { "id": 40, "campaign_number": "000328", "campaign_name": "전자제품 리뷰 캠페인", "report_code": "W003", "report_reason": "", "inspector": "(주)마케팅프로", "target": "전지현", "processed_date": "2026-02-04 16:20", "report_count": 1 },
+    { "id": 41, "campaign_number": "000329", "campaign_name": "홈케어 제품 체험단", "report_code": "W004", "report_reason": "", "inspector": "(주)콘텐츠리뷰", "target": "송혜교", "processed_date": "2026-02-05 13:45", "report_count": 1 },
+    { "id": 42, "campaign_number": "000330", "campaign_name": "프리미엄 스킨케어 세트 체험", "report_code": "W013", "report_reason": "부적절한 언어 사용 및 비매너 행위가 확인되었습니다", "inspector": "AI 자동 탐지", "target": "이영희", "processed_date": "2026-02-06 10:20", "report_count": 1 },
+    { "id": 43, "campaign_number": "000331", "campaign_name": "스포츠웨어 리뷰 캠페인", "report_code": "W013", "report_reason": "타인에 대한 비방 및 비매너 행위", "inspector": "(주)마케팅프로", "target": "박민수", "processed_date": "2026-02-07 14:35", "report_count": 2 },
+    { "id": 44, "campaign_number": "000332", "campaign_name": "건강식품 체험 후기", "report_code": "W013", "report_reason": "부적절한 행동 및 커뮤니티 규칙 위반으로 인한 신고", "inspector": "네이버 주식회사", "target": "최지영", "processed_date": "2026-02-08 09:15", "report_count": 1 },
+    { "id": 45, "campaign_number": "000333", "campaign_name": "뷰티 제품 신제품 리뷰", "report_code": "W013", "report_reason": "욕설 및 비방 댓글 작성으로 인한 신고", "inspector": "주식회사 아이엠에스커뮤니케이션", "target": "김수진", "processed_date": "2026-02-09 16:50", "report_count": 3 }
+  ],
+
+  "payments": [
+    {
+      "id": 1,
+      "partner_id": 1,
+      "amount": 1500000,
+      "payment_method": "CARD",
+      "status": "COMPLETED",
+      "paid_at": "2026-01-10T10:00:00Z",
+      "points_charged": 1500000
+    },
+    {
+      "id": 2,
+      "partner_id": 2,
+      "amount": 800000,
+      "payment_method": "TRANSFER",
+      "status": "COMPLETED",
+      "paid_at": "2026-01-20T14:00:00Z",
+      "points_charged": 800000
+    }
+  ],
+
+  "admin_dashboard": [
+    {
+      "id": 1,
+      "date": "2026-02-27",
+      "total_reviewers": 5120,
+      "total_partners": 1251,
+      "active_campaigns": 4,
+      "total_campaigns": 5,
+      "pending_withdrawals": 1,
+      "pending_withdrawals_amount": 25000,
+      "total_points_paid": 2300000,
+      "new_reviewers_today": 3,
+      "new_partners_today": 1,
+      "monthly_active_reviewers": 1523,
+      "monthly_new_reviewers": 120,
+      "dormant_reviewers": 125,
+      "monthly_active_partners": 78,
+      "monthly_new_partners": 2,
+      "dormant_partners": 568,
+      "rejection_total": 1232,
+      "report_total": 5778
+    }
+  ]
+}
