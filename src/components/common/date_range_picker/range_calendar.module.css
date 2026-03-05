@@ -206,14 +206,28 @@
 }
 
 /* 날짜 셀 내부 버튼 기본 스타일 */
+/* v8 range 클래스(rdp-day_range_start/end/middle), v9 range 클래스(rdp-range_start/end/middle),
+   v9 단일선택(rdp-selected), v8 단일선택(rdp-day_selected) 모두 제외 */
 .calendar
-  :global(.rdp-day:not(.rdp-day_range_start):not(.rdp-day_range_end):not(.rdp-day_range_middle))
+  :global(
+    .rdp-day:not(.rdp-day_range_start):not(.rdp-day_range_end):not(.rdp-day_range_middle):not(
+        .rdp-range_start
+      ):not(.rdp-range_end):not(.rdp-range_middle):not(.rdp-selected):not(.rdp-day_selected)
+  )
   button,
 .calendar
-  :global(.rdp-day:not(.rdp-day_range_start):not(.rdp-day_range_end):not(.rdp-day_range_middle))
+  :global(
+    .rdp-day:not(.rdp-day_range_start):not(.rdp-day_range_end):not(.rdp-day_range_middle):not(
+        .rdp-range_start
+      ):not(.rdp-range_end):not(.rdp-range_middle):not(.rdp-selected):not(.rdp-day_selected)
+  )
   :global(.rdp-button),
 .calendar
-  :global(.rdp-day:not(.rdp-day_range_start):not(.rdp-day_range_end):not(.rdp-day_range_middle))
+  :global(
+    .rdp-day:not(.rdp-day_range_start):not(.rdp-day_range_end):not(.rdp-day_range_middle):not(
+        .rdp-range_start
+      ):not(.rdp-range_end):not(.rdp-range_middle):not(.rdp-selected):not(.rdp-day_selected)
+  )
   :global(.rdp-day_button) {
   width: 100%;
   height: 100%;
@@ -268,15 +282,15 @@
   width: 100%;
   max-width: calc(var(--rdp-cell-size) * 7);
   border-collapse: separate !important;
-  border-spacing: 0 12px !important;
+  border-spacing: 0 18px !important;
   display: table;
   margin-top: 0;
 }
 
 /* 테이블 셀 패딩 */
 .calendar :global(.rdp-table tbody tr td) {
-  padding-top: 6px !important;
-  padding-bottom: 6px !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
 }
 
 /* 달력 그리드 컨테이너 */
@@ -599,11 +613,110 @@
   color: white !important;
 }
 
-/* --- range_start (시작일): 오른쪽 절반 연핑크 배경 + 핑크 원 --- */
+/* --- v9 단일 날짜 선택 (시작일만 선택, 종료일 미선택 대기 상태)
+   v9에서 { from, to } 같은 날 → rdp-selected만 붙음 (rdp-range_start/end 없음) --- */
+.calendar
+  :global(td.rdp-day.rdp-selected:not(.rdp-range_start):not(.rdp-range_end):not(.rdp-range_middle)),
+.calendar
+  :global(
+    td.rdp-day.rdp-day_selected:not(.rdp-day_range_start):not(.rdp-day_range_end):not(
+        .rdp-day_range_middle
+      )
+  ) {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+.calendar
+  :global(td.rdp-day.rdp-selected:not(.rdp-range_start):not(.rdp-range_end):not(.rdp-range_middle))
+  button,
+.calendar
+  :global(td.rdp-day.rdp-selected:not(.rdp-range_start):not(.rdp-range_end):not(.rdp-range_middle))
+  :global(.rdp-day_button),
+.calendar
+  :global(
+    td.rdp-day.rdp-day_selected:not(.rdp-day_range_start):not(.rdp-day_range_end):not(
+        .rdp-day_range_middle
+      )
+  )
+  button,
+.calendar
+  :global(
+    td.rdp-day.rdp-day_selected:not(.rdp-day_range_start):not(.rdp-day_range_end):not(
+        .rdp-day_range_middle
+      )
+  )
+  :global(.rdp-day_button) {
+  background-color: #ff5694 !important;
+  color: white !important;
+  border-radius: 50% !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  max-width: 32px !important;
+  max-height: 32px !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 500 !important;
+  outline: none !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.calendar
+  :global(td.rdp-day.rdp-selected:not(.rdp-range_start):not(.rdp-range_end):not(.rdp-range_middle))
+  button
+  *,
+.calendar
+  :global(td.rdp-day.rdp-selected:not(.rdp-range_start):not(.rdp-range_end):not(.rdp-range_middle))
+  :global(.rdp-day_button)
+  *,
+.calendar
+  :global(
+    td.rdp-day.rdp-day_selected:not(.rdp-day_range_start):not(.rdp-day_range_end):not(
+        .rdp-day_range_middle
+      )
+  )
+  button
+  *,
+.calendar
+  :global(
+    td.rdp-day.rdp-day_selected:not(.rdp-day_range_start):not(.rdp-day_range_end):not(
+        .rdp-day_range_middle
+      )
+  )
+  :global(.rdp-day_button)
+  * {
+  color: white !important;
+}
+
+/* --- range_start (시작일): 오른쪽 절반 연핑크 배경 + 핑크 원 ---
+   ::before로 상하 inset 적용, :has()로 range_middle 존재 시에만 표시 */
 .calendar :global(td.rdp-day.rdp-range_start:not(.rdp-range_end)),
 .calendar :global(td.rdp-day.rdp-day_range_start:not(.rdp-day_range_end)) {
-  background: linear-gradient(to right, transparent 50%, rgba(255, 86, 148, 0.1) 50%) !important;
+  background: transparent !important;
   position: relative !important;
+}
+
+.calendar
+  :global(table:has(td.rdp-range_middle) td.rdp-day.rdp-range_start:not(.rdp-range_end))::before,
+.calendar
+  :global(
+    table:has(td.rdp-day_range_middle) td.rdp-day.rdp-day_range_start:not(.rdp-day_range_end)
+  )::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 2px !important;
+  bottom: 2px !important;
+  left: 50% !important;
+  right: 0 !important;
+  background-color: rgba(255, 86, 148, 0.1) !important;
+  z-index: 0 !important;
 }
 
 .calendar :global(td.rdp-day.rdp-range_start:not(.rdp-range_end)) button,
@@ -641,11 +754,28 @@
   color: white !important;
 }
 
-/* --- range_end (종료일): 왼쪽 절반 연핑크 배경 + 핑크 원 --- */
+/* --- range_end (종료일): 왼쪽 절반 연핑크 배경 + 핑크 원 ---
+   ::before로 상하 inset 적용, :has()로 range_middle 존재 시에만 표시 */
 .calendar :global(td.rdp-day.rdp-range_end:not(.rdp-range_start)),
 .calendar :global(td.rdp-day.rdp-day_range_end:not(.rdp-day_range_start)) {
-  background: linear-gradient(to right, rgba(255, 86, 148, 0.1) 50%, transparent 50%) !important;
+  background: transparent !important;
   position: relative !important;
+}
+
+.calendar
+  :global(table:has(td.rdp-range_middle) td.rdp-day.rdp-range_end:not(.rdp-range_start))::before,
+.calendar
+  :global(
+    table:has(td.rdp-day_range_middle) td.rdp-day.rdp-day_range_end:not(.rdp-day_range_start)
+  )::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 2px !important;
+  bottom: 2px !important;
+  left: 0 !important;
+  right: 50% !important;
+  background-color: rgba(255, 86, 148, 0.1) !important;
+  z-index: 0 !important;
 }
 
 .calendar :global(td.rdp-day.rdp-range_end:not(.rdp-range_start)) button,
@@ -683,10 +813,23 @@
   color: white !important;
 }
 
-/* --- range_middle (중간 날짜): 연핑크 배경 --- */
+/* --- range_middle (중간 날짜): 연핑크 배경 (::before로 상하 inset → 행 간 여백 표현) --- */
 .calendar :global(td.rdp-day.rdp-range_middle),
 .calendar :global(td.rdp-day.rdp-day_range_middle) {
+  background-color: transparent !important;
+  position: relative !important;
+}
+
+.calendar :global(td.rdp-day.rdp-range_middle)::before,
+.calendar :global(td.rdp-day.rdp-day_range_middle)::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 2px !important;
+  bottom: 2px !important;
+  left: 0 !important;
+  right: 0 !important;
   background-color: rgba(255, 86, 148, 0.1) !important;
+  z-index: 0 !important;
 }
 
 .calendar :global(td.rdp-day.rdp-range_middle) button,
@@ -697,6 +840,8 @@
   color: #444444 !important;
   border-radius: 0 !important;
   border: none !important;
+  position: relative !important;
+  z-index: 1 !important;
 }
 
 /* ========================================
@@ -1175,14 +1320,14 @@
     height: 16px;
   }
 
-  /* Range 달력 테이블 간격 조정 - 더 좁게 */
+  /* Range 달력 테이블 간격 조정 */
   .calendar_wrapper .calendar :global(.rdp-table) {
-    border-spacing: 0 2px !important;
+    border-spacing: 0 6px !important;
   }
 
   .calendar_wrapper .calendar :global(.rdp-table tbody tr td) {
-    padding-top: 1px !important;
-    padding-bottom: 1px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
     height: 20px !important;
@@ -1266,9 +1411,75 @@
     color: white !important;
   }
 
-  /* Range 달력 날짜 범위 중간 날짜들의 배경 연결 */
-  .calendar_wrapper .calendar :global(.rdp-day_range_middle) {
-    background-color: rgba(255, 86, 148, 0.1) !important;
+  /* v9 단일 선택(rdp-selected) 모바일 - td.rdp-day 포함으로 데스크톱 특이도 초과 */
+  .calendar_wrapper
+    .calendar
+    :global(
+      td.rdp-day.rdp-selected:not(.rdp-range_start):not(.rdp-range_end):not(.rdp-range_middle)
+    ) {
+    height: 20px !important;
+    min-height: 20px !important;
+    max-height: 20px !important;
+  }
+
+  .calendar_wrapper
+    .calendar
+    :global(
+      td.rdp-day.rdp-selected:not(.rdp-range_start):not(.rdp-range_end):not(.rdp-range_middle)
+    )
+    button,
+  .calendar_wrapper
+    .calendar
+    :global(
+      td.rdp-day.rdp-selected:not(.rdp-range_start):not(.rdp-range_end):not(.rdp-range_middle)
+    )
+    :global(.rdp-day_button) {
+    width: 100% !important;
+    height: 20px !important;
+    min-width: 100% !important;
+    min-height: 20px !important;
+    max-width: 100% !important;
+    max-height: 20px !important;
+    font-size: 9px !important;
+    background-color: transparent !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: relative !important;
+    z-index: 1 !important;
+    color: white !important;
+  }
+
+  /* v9 단일 선택 핑크 원 (::after) */
+  .calendar_wrapper
+    .calendar
+    :global(
+      td.rdp-day.rdp-selected:not(.rdp-range_start):not(.rdp-range_end):not(.rdp-range_middle)
+    )
+    button::after,
+  .calendar_wrapper
+    .calendar
+    :global(
+      td.rdp-day.rdp-selected:not(.rdp-range_start):not(.rdp-range_end):not(.rdp-range_middle)
+    )
+    :global(.rdp-day_button)::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 18px !important;
+    height: 18px !important;
+    background-color: #ff5694;
+    border-radius: 50%;
+    z-index: -1;
+  }
+
+  /* Range 달력 날짜 범위 중간 날짜들의 배경 (::before로 상하 inset → 행 간 여백 표현) */
+  .calendar_wrapper .calendar :global(.rdp-day_range_middle),
+  .calendar_wrapper .calendar :global(.rdp-range_middle) {
+    background-color: transparent !important;
+    background: transparent !important;
     position: relative !important;
     height: 20px !important;
     min-height: 20px !important;
@@ -1277,9 +1488,23 @@
     padding: 0 !important;
   }
 
+  .calendar_wrapper .calendar :global(.rdp-day_range_middle)::before,
+  .calendar_wrapper .calendar :global(.rdp-range_middle)::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 1px !important;
+    bottom: 1px !important;
+    left: 0 !important;
+    right: 0 !important;
+    background-color: rgba(255, 86, 148, 0.1) !important;
+    z-index: 0 !important;
+  }
+
   /* Range 달력 날짜 범위 중간 날짜 버튼 배경 */
   .calendar_wrapper .calendar :global(.rdp-day_range_middle) button,
-  .calendar_wrapper .calendar :global(.rdp-day_range_middle) :global(.rdp-button) {
+  .calendar_wrapper .calendar :global(.rdp-day_range_middle) :global(.rdp-button),
+  .calendar_wrapper .calendar :global(.rdp-range_middle) button,
+  .calendar_wrapper .calendar :global(.rdp-range_middle) :global(.rdp-day_button) {
     background-color: transparent !important;
     position: relative !important;
     z-index: 1 !important;
@@ -1294,12 +1519,13 @@
     margin: 0 !important;
   }
 
-  /* Range 달력 날짜 범위 시작 날짜 배경 */
+  /* Range 달력 날짜 범위 시작 날짜 배경 (::before로 오른쪽 절반 + 상하 inset) */
   /* v9: rdp-range_start, v8: rdp-day_range_start */
   .calendar_wrapper .calendar :global(.rdp-range_start:not(.rdp-range_end)),
   .calendar_wrapper .calendar :global(.rdp-day_range_start:not(.rdp-day_range_end)) {
     position: relative !important;
-    background: linear-gradient(to right, transparent 50%, rgba(255, 86, 148, 0.1) 50%) !important;
+    background: transparent !important;
+    background-color: transparent !important;
     height: 20px !important;
     min-height: 20px !important;
     max-height: 20px !important;
@@ -1307,17 +1533,42 @@
     padding: 0 !important;
   }
 
-  /* Range 달력 날짜 범위 끝 날짜 배경 */
+  .calendar_wrapper .calendar :global(.rdp-range_start:not(.rdp-range_end))::before,
+  .calendar_wrapper .calendar :global(.rdp-day_range_start:not(.rdp-day_range_end))::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 1px !important;
+    bottom: 1px !important;
+    left: 50% !important;
+    right: 0 !important;
+    background-color: rgba(255, 86, 148, 0.1) !important;
+    z-index: 0 !important;
+  }
+
+  /* Range 달력 날짜 범위 끝 날짜 배경 (::before로 왼쪽 절반 + 상하 inset) */
   /* v9: rdp-range_end, v8: rdp-day_range_end */
   .calendar_wrapper .calendar :global(.rdp-range_end:not(.rdp-range_start)),
   .calendar_wrapper .calendar :global(.rdp-day_range_end:not(.rdp-day_range_start)) {
     position: relative !important;
-    background: linear-gradient(to right, rgba(255, 86, 148, 0.1) 50%, transparent 50%) !important;
+    background: transparent !important;
+    background-color: transparent !important;
     height: 20px !important;
     min-height: 20px !important;
     max-height: 20px !important;
     line-height: 20px !important;
     padding: 0 !important;
+  }
+
+  .calendar_wrapper .calendar :global(.rdp-range_end:not(.rdp-range_start))::before,
+  .calendar_wrapper .calendar :global(.rdp-day_range_end:not(.rdp-day_range_start))::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 1px !important;
+    bottom: 1px !important;
+    left: 0 !important;
+    right: 50% !important;
+    background-color: rgba(255, 86, 148, 0.1) !important;
+    z-index: 0 !important;
   }
 
   /* Range 달력 시작일+종료일 같은 날 (모바일) */
@@ -1331,19 +1582,20 @@
     max-height: 20px !important;
   }
 
-  /* Range 달력 시작/끝 날짜 버튼 스타일 */
-  .calendar_wrapper .calendar :global(.rdp-range_start) button,
-  .calendar_wrapper .calendar :global(.rdp-range_end) button,
-  .calendar_wrapper .calendar :global(.rdp-day_range_start) button,
-  .calendar_wrapper .calendar :global(.rdp-day_range_end) button,
-  .calendar_wrapper .calendar :global(.rdp-range_start) :global(.rdp-button),
-  .calendar_wrapper .calendar :global(.rdp-range_end) :global(.rdp-button),
-  .calendar_wrapper .calendar :global(.rdp-day_range_start) :global(.rdp-button),
-  .calendar_wrapper .calendar :global(.rdp-day_range_end) :global(.rdp-button),
-  .calendar_wrapper .calendar :global(.rdp-range_start) :global(.rdp-day_button),
-  .calendar_wrapper .calendar :global(.rdp-range_end) :global(.rdp-day_button),
-  .calendar_wrapper .calendar :global(.rdp-day_range_start) :global(.rdp-day_button),
-  .calendar_wrapper .calendar :global(.rdp-day_range_end) :global(.rdp-day_button) {
+  /* Range 달력 시작/끝 날짜 버튼 스타일
+     td.rdp-day 포함으로 데스크톱 규칙(5001) 특이도 초과 → 모바일 오버라이드 보장 */
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-range_start) button,
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-range_end) button,
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-day_range_start) button,
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-day_range_end) button,
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-range_start) :global(.rdp-button),
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-range_end) :global(.rdp-button),
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-day_range_start) :global(.rdp-button),
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-day_range_end) :global(.rdp-button),
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-range_start) :global(.rdp-day_button),
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-range_end) :global(.rdp-day_button),
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-day_range_start) :global(.rdp-day_button),
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-day_range_end) :global(.rdp-day_button) {
     position: relative !important;
     z-index: 1 !important;
     background-color: transparent !important;
@@ -1354,32 +1606,39 @@
     min-height: 20px !important;
     max-width: 100% !important;
     max-height: 20px !important;
+    border-radius: 0 !important;
     line-height: 20px !important;
     padding: 0 !important;
     margin: 0 !important;
   }
 
   /* Range 달력 시작/끝 날짜 텍스트 흰색 */
-  .calendar_wrapper .calendar :global(.rdp-range_start) button *,
-  .calendar_wrapper .calendar :global(.rdp-range_end) button *,
-  .calendar_wrapper .calendar :global(.rdp-day_range_start) button *,
-  .calendar_wrapper .calendar :global(.rdp-day_range_end) button *,
-  .calendar_wrapper .calendar :global(.rdp-range_start) :global(.rdp-day_button) *,
-  .calendar_wrapper .calendar :global(.rdp-range_end) :global(.rdp-day_button) *,
-  .calendar_wrapper .calendar :global(.rdp-day_range_start) :global(.rdp-day_button) *,
-  .calendar_wrapper .calendar :global(.rdp-day_range_end) :global(.rdp-day_button) * {
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-range_start) button *,
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-range_end) button *,
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-day_range_start) button *,
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-day_range_end) button *,
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-range_start) :global(.rdp-day_button) *,
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-range_end) :global(.rdp-day_button) *,
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-day_range_start) :global(.rdp-day_button) *,
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-day_range_end) :global(.rdp-day_button) * {
     color: white !important;
   }
 
-  /* Range 달력 시작/끝 날짜에 작은 핑크 원 (CSS ::after) */
-  .calendar_wrapper .calendar :global(.rdp-range_start) button::after,
-  .calendar_wrapper .calendar :global(.rdp-range_end) button::after,
-  .calendar_wrapper .calendar :global(.rdp-day_range_start) button::after,
-  .calendar_wrapper .calendar :global(.rdp-day_range_end) button::after,
-  .calendar_wrapper .calendar :global(.rdp-range_start) :global(.rdp-day_button)::after,
-  .calendar_wrapper .calendar :global(.rdp-range_end) :global(.rdp-day_button)::after,
-  .calendar_wrapper .calendar :global(.rdp-day_range_start) :global(.rdp-day_button)::after,
-  .calendar_wrapper .calendar :global(.rdp-day_range_end) :global(.rdp-day_button)::after {
+  /* Range 달력 시작/끝 날짜에 핑크 원 (::after, z-index: -1 → 버튼 뒤에서 배경으로 표시) */
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-range_start) button::after,
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-range_end) button::after,
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-day_range_start) button::after,
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-day_range_end) button::after,
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-range_start) :global(.rdp-day_button)::after,
+  .calendar_wrapper .calendar :global(td.rdp-day.rdp-range_end) :global(.rdp-day_button)::after,
+  .calendar_wrapper
+    .calendar
+    :global(td.rdp-day.rdp-day_range_start)
+    :global(.rdp-day_button)::after,
+  .calendar_wrapper
+    .calendar
+    :global(td.rdp-day.rdp-day_range_end)
+    :global(.rdp-day_button)::after {
     content: "";
     position: absolute;
     top: 50%;
