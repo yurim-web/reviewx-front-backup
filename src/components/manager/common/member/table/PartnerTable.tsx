@@ -29,6 +29,7 @@ import {
   partner_list,
   get_partner_list,
   update_partner_status_type,
+  type PartnerItem,
   type PartnerDivision,
   type PartnerStatus,
 } from "@/data/manager_ga/member/partners";
@@ -41,6 +42,8 @@ import ManagerRestrictionModal from "@/components/manager/common/campaign/modal/
 import BaseModal from "@/components/common/modal/BaseModal";
 
 interface PartnerTableProps {
+  // API 데이터 (제공 시 정적 데이터 대신 사용)
+  partners?: PartnerItem[];
   // 검색어 상태를 props로 받습니다
   search_query: string;
   // 필터 상태
@@ -95,6 +98,7 @@ export interface PartnerTableRef {
 
 const PartnerTable = forwardRef<PartnerTableRef, PartnerTableProps>(function PartnerTable(
   {
+    partners: partnersProp,
     search_query,
     selected_channels: _selected_channels = [],
     selected_divisions = [],
@@ -128,8 +132,8 @@ const PartnerTable = forwardRef<PartnerTableRef, PartnerTableProps>(function Par
   // 검색어 및 필터로 필터링된 파트너 목록
   // SSR Hydration 오류 방지를 위해 클라이언트에서만 localStorage 데이터를 반영합니다
   const filtered_partners = useMemo(() => {
-    // 서버 사이드에서는 기본 데이터만 사용
-    const partners_to_filter = is_mounted ? get_partner_list() : partner_list;
+    // API 데이터 우선, 없으면 localStorage → 정적 데이터 순으로 사용
+    const partners_to_filter = partnersProp ?? (is_mounted ? get_partner_list() : partner_list);
 
     return partners_to_filter.filter((partner) => {
       // 검색어 필터
@@ -160,7 +164,14 @@ const PartnerTable = forwardRef<PartnerTableRef, PartnerTableProps>(function Par
 
       return true;
     });
-  }, [is_mounted, search_query, selected_divisions, selected_types, selected_statuses]);
+  }, [
+    partnersProp,
+    is_mounted,
+    search_query,
+    selected_divisions,
+    selected_types,
+    selected_statuses,
+  ]);
 
   // 이용 제한 처리 (공통 훅)
   const restriction = useRestrictionHandler({

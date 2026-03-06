@@ -25,11 +25,8 @@ import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
 import styles from "@/styles/manager_sa/settlement/payment_history/payment_history_table.module.css";
-import {
-  paymentHistoryList,
-  getPaymentHistoryList,
-  type PaymentHistoryItem,
-} from "@/data/manager_sa/settlement/paymentHistoryData";
+import { type PaymentHistoryItem } from "@/data/manager_sa/settlement/paymentHistoryData";
+import { useAdminPayments } from "@/hooks/manager/ga/useAdminPayments";
 import PaymentMethodTag from "@/components/manager/common/tags/PaymentMethodTag";
 import type { PaymentMethod } from "@/components/manager/common/tags/PaymentMethodTag";
 import BusinessTypeTag from "@/components/manager/common/tags/BusinessTypeTag";
@@ -90,24 +87,15 @@ export default function PaymentHistoryTable({
     data_attribute: "payment-history-company-menu",
   });
 
-  // 결제 내역 데이터 상태
-  // 초기값은 Mock 데이터(paymentHistoryList)를 사용하여 서버와 클라이언트의 초기 렌더링을 일치시킵니다.
-  // 클라이언트 마운트 후 useEffect에서 LocalStorage 데이터를 병합한 실제 리스트로 교체합니다.
-  const [paymentHistory, setPaymentHistory] = useState<PaymentHistoryItem[]>(paymentHistoryList);
+  // API 또는 static fallback 데이터
+  const { payments: api_payments } = useAdminPayments();
 
-  /**
-   * 클라이언트 마운트 후 결제 내역 데이터 로드
-   *
-   * 설명:
-   * - Hydration 에러를 방지하기 위해 서버 렌더링 시에는 paymentHistoryList(고정된 Mock 데이터)만 사용합니다.
-   * - 클라이언트 마운트 후에만 getPaymentHistoryList()를 호출하여
-   *   LocalStorage에 저장된 결제 내역과 Mock 데이터를 병합합니다.
-   * - 이렇게 하면 서버와 클라이언트의 초기 HTML이 동일하게 유지되어 Hydration mismatch가 발생하지 않습니다.
-   */
+  // 결제 내역 데이터 상태 (API 데이터 또는 localStorage 병합)
+  const [paymentHistory, setPaymentHistory] = useState<PaymentHistoryItem[]>(api_payments);
+
   useEffect(() => {
-    const merged_list = getPaymentHistoryList();
-    setPaymentHistory(merged_list);
-  }, []);
+    setPaymentHistory(api_payments);
+  }, [api_payments]);
 
   // 컬럼별 타입 설정 (정렬을 위한 컬럼 타입 정의)
   // numeric_string: 숫자처럼 보이는 문자열 (예: "1,500,000", "999999")

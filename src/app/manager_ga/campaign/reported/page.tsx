@@ -28,6 +28,7 @@ import ReportCodeInfoSection from "@/components/manager/ga/campaign/reported/sec
 import ReportStatsSection from "@/components/manager/ga/campaign/reported/section/ReportStatsSection";
 import CampaignReportedFilterSection from "@/components/manager/ga/campaign/reported/section/CampaignReportedFilterSection";
 import ReportedCampaignTable from "@/components/manager/ga/campaign/reported/section/ReportedCampaignTable";
+import { useAdminReports } from "@/hooks/manager/ga/useAdminReports";
 import type { ReportCode } from "@/data/manager_ga/reported";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 
@@ -55,23 +56,19 @@ import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRa
  * @returns 신고 이력 페이지 JSX
  */
 export default function ReportedPage() {
+  const { reports } = useAdminReports();
+
   // 검색어 상태 관리
-  // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
-  // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
   const [search_query, set_search_query] = useState<string>("");
 
   // 신고 코드 필터 상태 관리 (배열로 변경)
-  const [selected_report_codes, set_selected_report_codes] = useState<
-    ReportCode[]
-  >([]);
+  const [selected_report_codes, set_selected_report_codes] = useState<ReportCode[]>([]);
 
   // 날짜 범위 필터 상태 관리
   // 기본값: 이번 달 (오늘 날짜 기준 이번 달의 첫날 ~ 마지막날)
   // startOfMonth: 주어진 날짜의 월의 첫날을 반환합니다 (예: 2026-01-13 -> 2026-01-01)
   // endOfMonth: 주어진 날짜의 월의 마지막날을 반환합니다 (예: 2026-01-13 -> 2026-01-31)
-  const [selected_date_range, set_selected_date_range] = useState<
-    DateRange | undefined
-  >(() => {
+  const [selected_date_range, set_selected_date_range] = useState<DateRange | undefined>(() => {
     const today = new Date();
     return {
       from: startOfMonth(today),
@@ -104,6 +101,7 @@ export default function ReportedPage() {
         {/* 신고 이력 통계 섹션 */}
         {/* 필터에 따라 동적으로 통계를 계산하여 표시 */}
         <ReportStatsSection
+          reports={reports}
           search_query={search_query}
           selected_report_codes={selected_report_codes}
           selected_date_range={selected_date_range}
@@ -111,6 +109,7 @@ export default function ReportedPage() {
 
         {/* 신고 이력 테이블 */}
         <ReportedCampaignTable
+          reports={reports}
           search_query={search_query}
           selected_report_codes={selected_report_codes}
           selected_date_range={selected_date_range}

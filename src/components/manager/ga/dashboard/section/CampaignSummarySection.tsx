@@ -11,12 +11,12 @@
 
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo } from "react";
 import styles from "@/styles/manager_ga/dashboard/sections/campaign_summary_section.module.css";
 import StatCard, { StatCardData } from "../StatCard";
-import { get_campaign_list } from "@/data/manager_ga/progress";
-import { get_rejected_campaign_list } from "@/data/manager_ga/rejected";
-import { get_reported_campaign_list } from "@/data/manager_ga/reported";
+import { useAdminCampaigns } from "@/hooks/manager/ga/useAdminCampaigns";
+import { useAdminRejections } from "@/hooks/manager/ga/useAdminRejections";
+import { useAdminReports } from "@/hooks/manager/ga/useAdminReports";
 import type { DateRange } from "./DateRangePickerModal";
 import { differenceInDays, subDays } from "date-fns";
 import { isDateInRange } from "@/utils/formatting/date";
@@ -28,26 +28,10 @@ interface CampaignSummarySectionProps {
 }
 
 export default function CampaignSummarySection({ dateRange }: CampaignSummarySectionProps) {
-  // 데이터 로드
-  const [campaign_list, set_campaign_list] = useState<ReturnType<typeof get_campaign_list>>([]);
-  const [rejected_list, set_rejected_list] = useState<
-    ReturnType<typeof get_rejected_campaign_list>
-  >([]);
-  const [reported_list, set_reported_list] = useState<
-    ReturnType<typeof get_reported_campaign_list>
-  >([]);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        set_campaign_list(get_campaign_list());
-        set_rejected_list(get_rejected_campaign_list());
-        set_reported_list(get_reported_campaign_list());
-      } catch (_error) {
-        // 데이터 로드 실패 시 빈 목록 유지
-      }
-    }
-  }, []);
+  // React Query 훅으로 데이터 로드 (API 우선, 정적 데이터 fallback)
+  const { campaigns: campaign_list } = useAdminCampaigns();
+  const { rejections: rejected_list } = useAdminRejections();
+  const { reports: reported_list } = useAdminReports();
 
   // 증감률 계산 함수
   const calculate_change_percentage = (

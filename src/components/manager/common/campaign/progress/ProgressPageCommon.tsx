@@ -53,6 +53,8 @@ export type ManagerType = "ga" | "sa";
  */
 interface ProgressPageCommonProps {
   manager_type: ManagerType;
+  // API 데이터 (제공 시 정적 데이터 대신 사용)
+  campaigns?: CampaignProgressItem[];
 }
 
 /**
@@ -63,7 +65,10 @@ interface ProgressPageCommonProps {
  * @returns 캠페인 진행 상황 페이지 JSX 요소
  *
  */
-export default function ProgressPageCommon({ manager_type }: ProgressPageCommonProps) {
+export default function ProgressPageCommon({
+  manager_type,
+  campaigns: campaignsProp,
+}: ProgressPageCommonProps) {
   /* ========================================
      📌 필터 상태 관리
      ======================================== */
@@ -138,14 +143,16 @@ export default function ProgressPageCommon({ manager_type }: ProgressPageCommonP
   const [allCampaignList, setAllCampaignList] = useState<CampaignProgressItem[]>([]);
 
   // useEffect: 클라이언트에서만 실행되어 localStorage 데이터를 포함한 캠페인 리스트 로드
-  // 📌 Hydration 오류 방지:
-  // - 서버 사이드에서는 localStorage가 없어서 다른 결과를 반환할 수 있습니다
-  // - useEffect는 클라이언트에서만 실행되므로 서버와 클라이언트의 렌더링 결과가 동일합니다
+  // API 데이터가 있으면 우선 사용, 없으면 localStorage → 정적 데이터 순으로 사용
   useEffect(() => {
-    const campaignList = getCampaignList();
-    setAllCampaignList(campaignList);
+    if (campaignsProp && campaignsProp.length > 0) {
+      setAllCampaignList(campaignsProp);
+    } else {
+      const campaignList = getCampaignList();
+      setAllCampaignList(campaignList);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [manager_type]); // manager_type이 변경될 때만 재로드
+  }, [manager_type, campaignsProp]); // manager_type 또는 API 데이터 변경 시 재로드
 
   /* ========================================
      🔍 필터링 로직

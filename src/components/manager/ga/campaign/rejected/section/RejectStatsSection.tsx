@@ -16,10 +16,16 @@
 
 import { useMemo } from "react";
 import styles from "@/styles/manager_ga/campaign/campaign_common.module.css";
-import { rejected_campaign_list, type RejectCode } from "@/data/manager_ga/rejected";
+import {
+  rejected_campaign_list,
+  type RejectedCampaignItem,
+  type RejectCode,
+} from "@/data/manager_ga/rejected";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 
 interface RejectStatsSectionProps {
+  // API 데이터 (제공 시 정적 데이터 대신 사용)
+  rejections?: RejectedCampaignItem[];
   // 검색어 필터
   search_query: string;
   // 선택된 반려 코드 필터
@@ -41,10 +47,12 @@ const all_reject_codes: RejectCode[] = [
 ];
 
 export default function RejectStatsSection({
+  rejections,
   search_query,
   selected_reject_codes,
   selected_date_range,
 }: RejectStatsSectionProps) {
+  const source = rejections ?? rejected_campaign_list;
   // 숫자를 천 단위로 포맷팅하는 함수
   // 예: 19999 -> "19,999"
   const format_number = (num: number): string => {
@@ -54,7 +62,7 @@ export default function RejectStatsSection({
   // 필터링된 데이터를 기반으로 통계를 계산
   // useMemo: 의존성이 변경될 때만 재계산하여 성능을 최적화합니다
   const filtered_list = useMemo(() => {
-    return rejected_campaign_list.filter((item) => {
+    return source.filter((item) => {
       // 검색어 필터
       // includes(): 문자열이 다른 문자열에 포함되어 있는지 확인하는 메서드
       if (
@@ -93,7 +101,7 @@ export default function RejectStatsSection({
 
       return true;
     });
-  }, [search_query, selected_reject_codes, selected_date_range]);
+  }, [source, search_query, selected_reject_codes, selected_date_range]);
 
   // 반려 코드별 통계 계산
   // reduce(): 배열을 순회하며 누적값을 계산하는 메서드

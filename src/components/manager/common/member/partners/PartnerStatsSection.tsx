@@ -18,11 +18,17 @@
 import { useMemo, useEffect, useState } from "react";
 import MemberStatsSectionCommon from "@/components/manager/common/member/stats/MemberStatsSection";
 import styles from "@/styles/manager/common/member/partners/partner_stats_section.module.css";
-import { get_partner_list } from "@/data/manager_ga/member/partners";
+import { get_partner_list, type PartnerItem } from "@/data/manager_ga/member/partners";
 import type { MemberStats } from "@/components/manager/common/member/stats/MemberStatsSection";
 import { subMonths, isWithinInterval } from "date-fns";
 
-export default function PartnerStatsSection() {
+interface PartnerStatsSectionProps {
+  partners?: PartnerItem[];
+}
+
+export default function PartnerStatsSection({
+  partners: partnersProp,
+}: PartnerStatsSectionProps = {}) {
   // 클라이언트 마운트 상태 관리 (SSR Hydration 오류 방지)
   const [is_mounted, set_is_mounted] = useState(false);
 
@@ -34,8 +40,8 @@ export default function PartnerStatsSection() {
   // 실제 파트너 목록 데이터에서 통계 계산
   // SSR Hydration 오류 방지를 위해 클라이언트에서만 localStorage 데이터를 반영합니다
   const stats: MemberStats = useMemo(() => {
-    // 서버 사이드에서는 빈 통계 반환
-    if (!is_mounted) {
+    // API 데이터 없고 SSR이면 빈 통계 반환
+    if (!partnersProp && !is_mounted) {
       return {
         total_members: 0,
         monthly_active: 0,
@@ -44,8 +50,8 @@ export default function PartnerStatsSection() {
       };
     }
 
-    // 클라이언트에서 실제 파트너 목록 가져오기
-    const partner_list = get_partner_list();
+    // API 데이터 또는 localStorage 데이터 사용
+    const partner_list = partnersProp ?? get_partner_list();
     const now = new Date();
     const one_month_ago = subMonths(now, 1);
     const three_months_ago = subMonths(now, 3);
@@ -56,9 +62,7 @@ export default function PartnerStatsSection() {
     // 월간 활동 회원 (최근 한 달 이내 접속한 회원)
     // last_access_date 형식: "2025-08-01 18:56"
     const monthly_active = partner_list.filter((partner) => {
-      const last_access_date = new Date(
-        partner.last_access_date.replace(" ", "T")
-      );
+      const last_access_date = new Date(partner.last_access_date.replace(" ", "T"));
       return isWithinInterval(last_access_date, {
         start: one_month_ago,
         end: now,
@@ -77,9 +81,7 @@ export default function PartnerStatsSection() {
 
     // 휴면 회원 (3개월 이상 접속하지 않은 회원)
     const dormant = partner_list.filter((partner) => {
-      const last_access_date = new Date(
-        partner.last_access_date.replace(" ", "T")
-      );
+      const last_access_date = new Date(partner.last_access_date.replace(" ", "T"));
       return last_access_date < three_months_ago;
     }).length;
 
@@ -89,7 +91,7 @@ export default function PartnerStatsSection() {
       monthly_new,
       dormant,
     };
-  }, [is_mounted]);
+  }, [partnersProp, is_mounted]);
 
   return (
     <MemberStatsSectionCommon

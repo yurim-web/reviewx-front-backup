@@ -16,8 +16,8 @@ import { useMemo, useState, useEffect } from "react";
 import { parse, differenceInDays, subDays } from "date-fns";
 import styles from "@/styles/manager/common/dashboard/section/stats_section.module.css";
 import MemberActivationDonutChart from "../chart/MemberActivationDonutChart";
-import { get_reviewer_list } from "@/data/manager_ga/member/reviewers";
-import { get_partner_list } from "@/data/manager_ga/member/partners";
+import { useAdminReviewers } from "@/hooks/manager/ga/useAdminReviewers";
+import { useAdminPartners } from "@/hooks/manager/ga/useAdminPartners";
 import type { DateRange } from "./DateRangePickerModal";
 
 interface MemberActivationSectionProps {
@@ -31,6 +31,10 @@ export default function MemberActivationSection({ dateRange }: MemberActivationS
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  // React Query 훅으로 데이터 로드 (API 우선, 정적 데이터 fallback)
+  const { reviewers } = useAdminReviewers();
+  const { partners } = useAdminPartners();
 
   // 날짜 범위에 따라 회원 통계 계산
   const stats = useMemo(() => {
@@ -54,10 +58,6 @@ export default function MemberActivationSection({ dateRange }: MemberActivationS
         totalMembersChange: { percentage: 0, type: "neutral" as const },
       };
     }
-
-    // 리뷰어와 파트너 목록 가져오기
-    const reviewers = get_reviewer_list();
-    const partners = get_partner_list();
 
     // 날짜 범위 설정 (시간 부분 제거)
     const start_date = new Date(dateRange.from);
@@ -194,7 +194,7 @@ export default function MemberActivationSection({ dateRange }: MemberActivationS
       activePercentage: active_percentage,
       totalMembersChange: total_members_change,
     };
-  }, [dateRange, isClient]);
+  }, [dateRange, isClient, reviewers, partners]);
 
   // 숫자를 천 단위로 포맷팅하는 함수
   const format_number = (num: number): string => {

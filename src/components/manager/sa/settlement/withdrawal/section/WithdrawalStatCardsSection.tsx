@@ -15,7 +15,8 @@
 
 import { useMemo, useState, useEffect } from "react";
 import styles from "@/styles/manager/common/settlement/stat_cards_section.module.css";
-import { withdrawalList, type WithdrawalItem } from "@/data/manager_sa/settlement/withdrawalData";
+import { type WithdrawalItem } from "@/data/manager_sa/settlement/withdrawalData";
+import { useAdminWithdrawal } from "@/hooks/manager/ga/useAdminWithdrawal";
 import { parseFormattedAmount, formatCurrency } from "@/utils/formatting/amount";
 import { isDateInRange, getCurrentWeekRange, getCurrentMonthRange } from "@/utils/formatting/date";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
@@ -38,6 +39,9 @@ export default function WithdrawalStatCardsSection({
   selected_member_types = [],
   selected_normal_statuses = [],
 }: WithdrawalStatCardsSectionProps) {
+  // API 또는 static fallback 데이터
+  const { withdrawals: api_withdrawals } = useAdminWithdrawal();
+
   // localStorage에서 출금 완료 내역 로드
   const [withdrawal_history, set_withdrawal_history] = useState<WithdrawalItem[]>([]);
 
@@ -61,8 +65,8 @@ export default function WithdrawalStatCardsSection({
   // - useMemo: 계산 결과를 캐싱하여 불필요한 재계산을 방지합니다.
   // - 의존성 배열: 필터 값들이 변경될 때마다 재계산됩니다.
   const stats = useMemo(() => {
-    // 목업 데이터와 실제 데이터 합치기
-    const all_withdrawal_list = [...withdrawalList, ...withdrawal_history];
+    // API 데이터(또는 static fallback)와 localStorage 내역 합치기
+    const all_withdrawal_list = [...api_withdrawals, ...withdrawal_history];
 
     // 검색어 및 필터로 필터링된 출금 현황 목록 (WithdrawalTable과 동일한 로직)
     const filtered_withdrawal_list = all_withdrawal_list.filter((item) => {
@@ -165,6 +169,7 @@ export default function WithdrawalStatCardsSection({
       },
     };
   }, [
+    api_withdrawals,
     search_query,
     selected_date_range,
     selected_payment_statuses,

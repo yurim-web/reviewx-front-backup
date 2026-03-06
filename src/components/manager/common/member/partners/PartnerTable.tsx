@@ -21,9 +21,12 @@ import styles from "@/styles/manager/common/member/partners/partner_table.module
 
 import type { Channel } from "@/data/manager/common/filterOptions";
 import type { PartnerDivision, PartnerStatus } from "@/data/manager_ga/common/filterOptions";
+import type { PartnerItem } from "@/data/manager_ga/member/partners";
 import type { PartnerType } from "@/components/manager/common/member/partners/filter/TypeFilterModal";
 
 interface PartnerTableProps {
+  // API 데이터 (제공 시 정적 데이터 대신 사용)
+  partners?: PartnerItem[];
   // 검색어
   search_query: string;
   // 필터 상태
@@ -38,6 +41,7 @@ interface PartnerTableProps {
 // forwardRef를 사용하여 ref를 PartnerTableCommon에 전달합니다
 const PartnerTable = forwardRef<PartnerTableRef, PartnerTableProps>(function PartnerTable(
   {
+    partners,
     search_query,
     selected_channels,
     selected_divisions,
@@ -50,6 +54,7 @@ const PartnerTable = forwardRef<PartnerTableRef, PartnerTableProps>(function Par
   return (
     <PartnerTableCommon
       ref={ref}
+      partners={partners}
       search_query={search_query}
       selected_channels={selected_channels}
       selected_divisions={selected_divisions}

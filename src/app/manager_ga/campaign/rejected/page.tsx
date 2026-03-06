@@ -28,6 +28,7 @@ import RejectCodeInfoSection from "@/components/manager/ga/campaign/rejected/sec
 import RejectStatsSection from "@/components/manager/ga/campaign/rejected/section/RejectStatsSection";
 import CampaignRejectedFilterSection from "@/components/manager/ga/campaign/rejected/section/CampaignRejectedFilterSection";
 import RejectedCampaignTable from "@/components/manager/ga/campaign/rejected/section/RejectedCampaignTable";
+import { useAdminRejections } from "@/hooks/manager/ga/useAdminRejections";
 import type { RejectCode } from "@/data/manager_ga/rejected";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 
@@ -55,23 +56,19 @@ import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRa
  * @returns 전체 반려 내역 페이지 JSX
  */
 export default function RejectedPage() {
+  const { rejections } = useAdminRejections();
+
   // 검색어 상태 관리
-  // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
-  // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
   const [search_query, set_search_query] = useState<string>("");
 
   // 반려 코드 필터 상태 관리 (배열로 변경)
-  const [selected_reject_codes, set_selected_reject_codes] = useState<
-    RejectCode[]
-  >([]);
+  const [selected_reject_codes, set_selected_reject_codes] = useState<RejectCode[]>([]);
 
   // 날짜 범위 필터 상태 관리
   // 기본값: 이번 달 (오늘 날짜 기준 이번 달의 첫날 ~ 마지막날)
   // startOfMonth: 주어진 날짜의 월의 첫날을 반환합니다 (예: 2026-01-13 -> 2026-01-01)
   // endOfMonth: 주어진 날짜의 월의 마지막날을 반환합니다 (예: 2026-01-13 -> 2026-01-31)
-  const [selected_date_range, set_selected_date_range] = useState<
-    DateRange | undefined
-  >(() => {
+  const [selected_date_range, set_selected_date_range] = useState<DateRange | undefined>(() => {
     const today = new Date();
     return {
       from: startOfMonth(today),
@@ -104,6 +101,7 @@ export default function RejectedPage() {
         {/* 반려 이력 통계 섹션 */}
         {/* 필터에 따라 동적으로 통계를 계산하여 표시 */}
         <RejectStatsSection
+          rejections={rejections}
           search_query={search_query}
           selected_reject_codes={selected_reject_codes}
           selected_date_range={selected_date_range}
@@ -111,6 +109,7 @@ export default function RejectedPage() {
 
         {/* 반려 이력 테이블 */}
         <RejectedCampaignTable
+          rejections={rejections}
           search_query={search_query}
           selected_reject_codes={selected_reject_codes}
           selected_date_range={selected_date_range}

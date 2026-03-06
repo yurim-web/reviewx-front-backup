@@ -30,6 +30,7 @@ import {
   get_reviewer_list,
   update_reviewer_status_type,
   sync_reviewer_status_with_initial_data,
+  type ReviewerItem,
   type Channel,
   type ReviewerStatus,
 } from "@/data/manager_ga/member/reviewers";
@@ -41,6 +42,8 @@ import ManagerRestrictionModal from "@/components/manager/common/campaign/modal/
 import BaseModal from "@/components/common/modal/BaseModal";
 
 interface ReviewerTableProps {
+  // API 데이터 (제공 시 정적 데이터 대신 사용)
+  reviewers?: ReviewerItem[];
   // 검색어 상태를 props로 받습니다
   search_query: string;
   // 필터 상태
@@ -105,6 +108,7 @@ export interface ReviewerTableRef {
 
 const ReviewerTable = forwardRef<ReviewerTableRef, ReviewerTableProps>(function ReviewerTable(
   {
+    reviewers: reviewersProp,
     search_query,
     selected_channels = [],
     selected_grades = [],
@@ -142,8 +146,8 @@ const ReviewerTable = forwardRef<ReviewerTableRef, ReviewerTableProps>(function 
   // 검색어 및 필터로 필터링된 리뷰어 목록
   // SSR Hydration 오류 방지를 위해 클라이언트에서만 localStorage 데이터를 반영합니다
   const filtered_reviewers = useMemo(() => {
-    // 서버 사이드에서는 기본 데이터만 사용
-    const reviewers_to_filter = is_mounted ? get_reviewer_list() : reviewer_list;
+    // API 데이터 우선, 없으면 localStorage → 정적 데이터 순으로 사용
+    const reviewers_to_filter = reviewersProp ?? (is_mounted ? get_reviewer_list() : reviewer_list);
 
     return reviewers_to_filter.filter((reviewer) => {
       // 검색어 필터
@@ -178,6 +182,7 @@ const ReviewerTable = forwardRef<ReviewerTableRef, ReviewerTableProps>(function 
       return true;
     });
   }, [
+    reviewersProp,
     is_mounted,
     search_query,
     selected_channels,

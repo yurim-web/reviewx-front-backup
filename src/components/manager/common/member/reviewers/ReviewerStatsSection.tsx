@@ -19,9 +19,17 @@ import { useMemo } from "react";
 import MemberStatsSectionCommon from "@/components/manager/common/member/stats/MemberStatsSection";
 import styles from "@/styles/manager/common/member/reviewers/reviewer_stats_section.module.css";
 import { reviewer_list } from "@/data/manager_ga/member/reviewers";
+import type { ReviewerItem } from "@/data/manager_ga/member/reviewers";
 import type { MemberStats } from "@/components/manager/common/member/stats/MemberStatsSection";
 
-export default function ReviewerStatsSection() {
+interface ReviewerStatsSectionProps {
+  reviewers?: ReviewerItem[];
+}
+
+export default function ReviewerStatsSection({ reviewers }: ReviewerStatsSectionProps = {}) {
+  // API 데이터 또는 정적 데이터 사용
+  const source = reviewers ?? reviewer_list;
+
   // 실제 리뷰어 목록 데이터에서 통계 계산
   const stats: MemberStats = useMemo(() => {
     const now = new Date();
@@ -29,18 +37,16 @@ export default function ReviewerStatsSection() {
     oneMonthAgo.setMonth(now.getMonth() - 1);
 
     // 전체 가입자 수
-    const total_members = reviewer_list.length;
+    const total_members = source.length;
 
     // 월간 활동 회원 (최근 한 달 이내 접속한 회원)
-    const monthly_active = reviewer_list.filter((reviewer) => {
-      const lastAccessDate = new Date(
-        reviewer.last_access_date.replace(" ", "T")
-      );
+    const monthly_active = source.filter((reviewer) => {
+      const lastAccessDate = new Date(reviewer.last_access_date.replace(" ", "T"));
       return lastAccessDate >= oneMonthAgo;
     }).length;
 
     // 월간 신규 가입자 수 (최근 한 달 이내 가입한 회원)
-    const monthly_new = reviewer_list.filter((reviewer) => {
+    const monthly_new = source.filter((reviewer) => {
       const joinDate = new Date(reviewer.join_date.replace(" ", "T"));
       return joinDate >= oneMonthAgo;
     }).length;
@@ -48,10 +54,8 @@ export default function ReviewerStatsSection() {
     // 휴면 회원 (3개월 이상 접속하지 않은 회원)
     const threeMonthsAgo = new Date(now);
     threeMonthsAgo.setMonth(now.getMonth() - 3);
-    const dormant = reviewer_list.filter((reviewer) => {
-      const lastAccessDate = new Date(
-        reviewer.last_access_date.replace(" ", "T")
-      );
+    const dormant = source.filter((reviewer) => {
+      const lastAccessDate = new Date(reviewer.last_access_date.replace(" ", "T"));
       return lastAccessDate < threeMonthsAgo;
     }).length;
 
@@ -61,7 +65,7 @@ export default function ReviewerStatsSection() {
       monthly_new,
       dormant,
     };
-  }, []);
+  }, [source]);
 
   return (
     <MemberStatsSectionCommon

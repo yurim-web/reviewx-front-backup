@@ -19,14 +19,15 @@ import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageT
 import PartnerStatsSection from "@/components/manager/common/member/partners/PartnerStatsSection";
 import PartnerFilterSection from "@/components/manager/common/member/partners/PartnerFilterSection";
 import PartnerTable from "@/components/manager/common/member/partners/PartnerTable";
+import { useAdminPartners } from "@/hooks/manager/ga/useAdminPartners";
 import type { Channel } from "@/data/manager/common/filterOptions";
 import type { PartnerDivision, PartnerStatus } from "@/data/manager_ga/common/filterOptions";
 import type { PartnerType } from "@/components/manager/common/member/partners/filter/TypeFilterModal";
 
 export default function PartnersPage() {
+  const { partners } = useAdminPartners();
+
   // 검색어 상태 관리
-  // useState는 React의 Hook으로, 컴포넌트의 상태를 관리합니다
-  // [현재 값, 값을 변경하는 함수] 형태로 반환됩니다
   const [search_query, set_search_query] = useState<string>("");
 
   // 필터 상태 관리
@@ -55,7 +56,7 @@ export default function PartnersPage() {
         <ManagerPageTitle title="파트너 목록" />
 
         {/* 파트너 통계 섹션 */}
-        <PartnerStatsSection />
+        <PartnerStatsSection partners={partners} />
 
         {/* 필터 섹션 */}
         <PartnerFilterSection
@@ -75,6 +76,7 @@ export default function PartnersPage() {
         {/* 파트너 목록 테이블 */}
         <PartnerTable
           ref={table_ref}
+          partners={partners}
           search_query={search_query}
           selected_channels={selected_channels}
           selected_divisions={selected_divisions}

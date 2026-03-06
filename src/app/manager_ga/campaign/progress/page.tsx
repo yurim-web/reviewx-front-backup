@@ -25,15 +25,12 @@
 "use client";
 
 import ProgressPageCommon from "@/components/manager/common/campaign/progress/ProgressPageCommon";
+import { useAdminCampaigns } from "@/hooks/manager/ga/useAdminCampaigns";
 
 /**
  * GA 관리자 진행 상황 페이지 컴포넌트
- *
- *
- * @returns GA 관리자 진행 상황 페이지 JSX 요소
  */
 export default function ProgressPage() {
-  // 공통 페이지 컴포넌트를 사용합니다
-  // manager_type='ga'를 전달하여 GA 관리자에 맞는 데이터와 스타일을 사용합니다
-  return <ProgressPageCommon manager_type="ga" />;
+  const { campaigns } = useAdminCampaigns();
+  return <ProgressPageCommon manager_type="ga" campaigns={campaigns} />;
 }

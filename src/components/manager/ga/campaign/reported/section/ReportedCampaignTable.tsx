@@ -50,6 +50,8 @@ import { type TableColumn, type TableRowData } from "@/components/manager/common
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 
 interface ReportedCampaignTableProps {
+  // API 데이터 (제공 시 정적 데이터 대신 사용)
+  reports?: ReportedCampaignItem[];
   search_query: string;
   selected_report_codes: ReportCode[];
   selected_date_range?: DateRange | undefined;
@@ -111,6 +113,7 @@ const get_columns = (styles: Record<string, string>): TableColumn[] => [
 ];
 
 export default function ReportedCampaignTable({
+  reports,
   search_query,
   selected_report_codes,
   selected_date_range,
@@ -303,8 +306,8 @@ export default function ReportedCampaignTable({
     ReportedCampaignItem,
     ReportCode
   >({
-    static_data: reported_campaign_list,
-    get_dynamic_data: get_reported_campaign_list,
+    static_data: reports ?? reported_campaign_list,
+    get_dynamic_data: reports ? () => reports : get_reported_campaign_list,
     search_query,
     selected_codes: selected_report_codes,
     selected_date_range,
