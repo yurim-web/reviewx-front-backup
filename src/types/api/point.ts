@@ -13,27 +13,27 @@
  * - 출금 신청 페이지
  */
 
-import { ApiResponse } from './auth';
+import { ApiResponse } from "./auth";
 
 /**
  * 포인트 거래 타입
  */
 export type PointTransactionType =
-  | 'charge'           // 충전 (파트너)
-  | 'campaign_reward'  // 캠페인 보상 (리뷰어)
-  | 'campaign_payment' // 캠페인 지급 (파트너)
-  | 'withdrawal'       // 출금 (리뷰어)
-  | 'refund'          // 환불
-  | 'penalty';        // 페널티
+  | "charge" // 충전 (파트너)
+  | "campaign_reward" // 캠페인 보상 (리뷰어)
+  | "campaign_payment" // 캠페인 지급 (파트너)
+  | "withdrawal" // 출금 (리뷰어)
+  | "refund" // 환불
+  | "penalty"; // 페널티
 
 /**
  * 포인트 거래 상태
  */
 export type PointTransactionStatus =
-  | 'pending'    // 대기중
-  | 'completed'  // 완료
-  | 'cancelled'  // 취소
-  | 'failed';    // 실패
+  | "pending" // 대기중
+  | "completed" // 완료
+  | "cancelled" // 취소
+  | "failed"; // 실패
 
 /**
  * 포인트 거래 내역
@@ -64,8 +64,8 @@ export interface PointTransaction {
 export interface PointBalanceResponse extends ApiResponse {
   data: {
     total_points: number;
-    available_points: number;  // 출금 가능 포인트
-    pending_points: number;    // 보류 중인 포인트
+    available_points: number; // 출금 가능 포인트
+    pending_points: number; // 보류 중인 포인트
   };
 }
 
@@ -88,7 +88,7 @@ export interface PointHistoryResponse extends ApiResponse {
 export interface PointChargeInfo {
   charge_id: string;
   amount: number;
-  payment_method: 'card' | 'bank_transfer' | 'virtual_account';
+  payment_method: "card" | "bank_transfer" | "virtual_account";
   status: PointTransactionStatus;
   created_at: string;
 
@@ -122,7 +122,7 @@ export interface WithdrawalRequest {
   id: string;
   user_id: string;
   amount: number;
-  status: 'pending' | 'approved' | 'rejected' | 'completed';
+  status: "pending" | "approved" | "rejected" | "completed";
   requested_at: string;
   processed_at?: string;
 
@@ -142,7 +142,7 @@ export interface WithdrawalRequestResponse extends ApiResponse {
   data: {
     withdrawal_id: string;
     amount: number;
-    status: 'pending';
+    status: "pending";
     requested_at: string;
   };
 }
@@ -174,10 +174,10 @@ export interface WithdrawableAmountResponse extends ApiResponse {
  * 포인트 통계 (리뷰어)
  */
 export interface UserPointStats {
-  total_earned: number;        // 총 획득 포인트
-  total_withdrawn: number;     // 총 출금 포인트
-  pending_withdrawal: number;  // 출금 신청 중
-  available_points: number;    // 출금 가능 포인트
+  total_earned: number; // 총 획득 포인트
+  total_withdrawn: number; // 총 출금 포인트
+  pending_withdrawal: number; // 출금 신청 중
+  available_points: number; // 출금 가능 포인트
 }
 
 /**
@@ -191,10 +191,10 @@ export interface UserPointStatsResponse extends ApiResponse {
  * 포인트 통계 (파트너)
  */
 export interface PartnerPointStats {
-  total_charged: number;      // 총 충전 금액
-  total_spent: number;        // 총 사용 금액
-  available_points: number;   // 사용 가능 포인트
-  pending_points: number;     // 보류 중인 포인트 (진행중인 캠페인)
+  total_charged: number; // 총 충전 금액
+  total_spent: number; // 총 사용 금액
+  available_points: number; // 사용 가능 포인트
+  pending_points: number; // 보류 중인 포인트 (진행중인 캠페인)
 }
 
 /**
@@ -202,4 +202,59 @@ export interface PartnerPointStats {
  */
 export interface PartnerPointStatsResponse extends ApiResponse {
   data: PartnerPointStats;
+}
+
+// ========================================
+// mock json-server 응답 타입
+// ========================================
+
+/**
+ * GET /reviewer/mypage/point/:id → /reviewers/:id
+ * 리뷰어 포인트 잔액 정보 (mock)
+ */
+export interface ReviewerPointApiItem {
+  id: number;
+  current_points: number;
+  withdrawn_points: number;
+  bank?: string;
+  account_holder?: string;
+  account_number?: string;
+}
+
+/**
+ * GET /reviewer/mypage/point/history → /point_history
+ * 포인트 거래 내역 항목 (mock)
+ */
+export interface PointHistoryApiItem {
+  id: number;
+  reviewer_id: number;
+  type: "EARNED" | "WITHDRAWAL";
+  amount: number;
+  description: string;
+  status: "COMPLETED" | "PENDING" | "FAILED";
+  date: string; // ISO 8601 (e.g. "2026-02-10T10:00:00Z")
+  balance: number;
+  rejection_reason?: string;
+}
+
+// ========================================
+// mock json-server 쓰기 타입
+// ========================================
+
+/**
+ * POST /reviewer/mypage/withdrawal → /withdrawal_requests
+ * 출금 신청 Request body (mock)
+ */
+export interface WithdrawalPostBody {
+  reviewer_id: number;
+  user_name: string;
+  requested_amount: number;
+  net_amount: number;
+  tax_amount: number;
+  bank: string;
+  account_number: string;
+  account_holder: string;
+  status: "PENDING";
+  request_date: string;
+  processed_date: null;
 }

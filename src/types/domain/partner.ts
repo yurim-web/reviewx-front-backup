@@ -64,6 +64,7 @@ export interface PartnerCampaign {
   statusText?: string; // 캠페인 상태 설명 텍스트 - 예: "캠페인 콘텐츠를 검수해 주세요."
   brandLogo?: string; // 브랜드 로고 URL - UI에서 자동 계산되거나 별도 제공
   subStatus?: string; // 서브 상태 - 버튼 종류 결정용
+  extensionRequested?: boolean; // 연장 요청 여부
 }
 
 /**
