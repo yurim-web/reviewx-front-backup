@@ -14,11 +14,8 @@
 
 import { useState } from "react";
 import type { AccountInfo, AccountStatus } from "@/components/common/find_account/types";
-import {
-  findAccountByPhoneWithTypes,
-  type UnifiedAccount,
-  type AccountType,
-} from "@/data/login/unifiedAccountData";
+import type { UnifiedAccount, AccountType } from "@/data/login/unifiedAccountData";
+import { fetchAccountByPhone } from "@/lib/api/admin";
 
 // ================================================================================================
 // 🔧 유틸리티 함수 (Utility Functions)
@@ -60,17 +57,6 @@ const getAccountStatus = (account: UnifiedAccount): AccountStatus => {
 
   // 그 외는 찾은 계정
   return "found";
-};
-
-/**
- * 계정 타입별 우선순위 (같은 전화번호가 여러 계정 타입에 있을 경우)
- * partner > admin_ga > admin_sa > user
- */
-const _ACCOUNT_TYPE_PRIORITY: Record<AccountType, number> = {
-  partner: 4,
-  admin_ga: 3,
-  admin_sa: 2,
-  user: 1,
 };
 
 /**
@@ -287,8 +273,7 @@ export function useFindAccount(options: UseFindAccountOptions = {}): UseFindAcco
     //   return false;
     // }
 
-    // 🧪 테스트용 코드 - 실제 API 연결 시 전체 삭제 필요
-    // 통합 계정 데이터에서 전화번호로 계정 찾기
+    // DB(accounts 컬렉션)에서 전화번호로 계정 찾기
     const normalized_input_phone = normalizePhone(phone);
     const normalized_whitelist = (options.snsOnlyPhoneWhitelist || []).map(normalizePhone);
 
@@ -296,10 +281,9 @@ export function useFindAccount(options: UseFindAccountOptions = {}): UseFindAcco
       normalized_whitelist.length === 0 || normalized_whitelist.includes(normalized_input_phone);
 
     const foundAccount = is_phone_whitelisted
-      ? findAccountByPhoneWithTypes(phone, options.allowedAccountTypes)
+      ? await fetchAccountByPhone(phone, options.allowedAccountTypes)
       : undefined;
 
-    // 디버깅: 계정 조회 결과 확인
     // 에러 초기화
     setAccountNotFoundError(undefined);
     setBlockedAccountError(undefined);

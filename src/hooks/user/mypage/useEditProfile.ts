@@ -14,6 +14,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { usePhoneVerification } from "@/hooks/usePhoneVerification/usePhoneVerification";
+import { patchReviewerProfile } from "@/lib/api/reviewer";
 
 const ACCOUNT_STORAGE_KEY = "userAccountVerification";
 
@@ -346,6 +347,24 @@ export function useEditProfile() {
       }
 
       localStorage.setItem("user_accounts", JSON.stringify(accounts));
+
+      // mock API에 프로필 저장 (best-effort)
+      if (user?.id) {
+        const reviewerIdNum = user.id.includes("kakao") ? 1 : user.id.includes("naver") ? 2 : 1;
+        patchReviewerProfile(reviewerIdNum, {
+          name: formData.name,
+          nickname: formData.nickname,
+          phone,
+          postal_code: formData.postalCode,
+          address: formData.address,
+          detail_address: formData.detailAddress,
+          bank: formData.bank,
+          account_number: formData.accountNumber,
+          account_holder: formData.accountHolder,
+          ssn_front: formData.ssnFront,
+          ssn_back: formData.ssnBack,
+        }).catch(() => {});
+      }
 
       if (user?.id) {
         const freshAccounts: UserAccount[] = JSON.parse(

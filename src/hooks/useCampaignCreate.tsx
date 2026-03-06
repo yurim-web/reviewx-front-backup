@@ -129,7 +129,7 @@ export function useCampaignCreate({
             setPendingFormData(null);
           }}
           message="캠페인 진행 시에는 삭제/수정이 불가합니다.<br>캠페인을 등록하시겠습니까?"
-          buttons={["취소", "확인"]}
+          buttons={["취소", "등록"]}
           on_confirm={handleConfirm}
         />
       )}

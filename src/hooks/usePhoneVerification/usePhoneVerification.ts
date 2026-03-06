@@ -67,8 +67,7 @@ export function usePhoneVerification(): UsePhoneVerificationReturn {
             if (timerIntervalRef.current) {
               clearInterval(timerIntervalRef.current);
             }
-            setIsVerificationRequested(false);
-            // 타이머가 0이 되고 인증이 완료되지 않았으면 에러 메시지 설정
+            // I_E10: 인증 만료 시 에러 표시 후 재발송 유도 (인증 영역은 유지)
             if (!isVerified) {
               setVerificationCodeError("인증번호 입력 시간을 초과했습니다.");
             }

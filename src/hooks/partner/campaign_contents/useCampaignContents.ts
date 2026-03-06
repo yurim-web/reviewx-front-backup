@@ -29,6 +29,7 @@ import {
   getClosedContentsById,
   type ContentByTab,
 } from "@/data/partner/sharedCampaigns";
+import { patchCampaignContent } from "@/lib/api/campaignContents";
 
 /**
  * 탭 타입 정의
@@ -344,6 +345,16 @@ export function useCampaignContents(contentsLoader: ContentsLoader): UseCampaign
 
     // 완료 탭으로 이동 (setActiveTab이 URL도 함께 업데이트합니다)
     setActiveTab("완료");
+
+    // mock DB의 campaign_contents 상태도 APPROVED로 업데이트 (실패해도 UI는 유지)
+    const numericId = parseInt(String(contentId).replace(/\D/g, ""), 10);
+    if (!Number.isNaN(numericId)) {
+      try {
+        void patchCampaignContent(numericId, { status: "APPROVED" });
+      } catch {
+        // ignore mock API error
+      }
+    }
   };
 
   /**
@@ -375,6 +386,19 @@ export function useCampaignContents(contentsLoader: ContentsLoader): UseCampaign
 
       // 대기 탭으로 이동 (setActiveTab이 URL도 함께 업데이트합니다)
       setActiveTab("대기");
+
+      // mock DB의 campaign_contents 상태도 REJECTED로 업데이트 (실패해도 UI는 유지)
+      const numericId = parseInt(String(contentId).replace(/\D/g, ""), 10);
+      if (!Number.isNaN(numericId)) {
+        try {
+          void patchCampaignContent(numericId, {
+            status: "REJECTED",
+            admin_comment: rejectReason ?? null,
+          });
+        } catch {
+          // ignore mock API error
+        }
+      }
     },
     [setActiveTab]
   );
@@ -415,6 +439,16 @@ export function useCampaignContents(contentsLoader: ContentsLoader): UseCampaign
 
       // 대기 탭으로 이동 (setActiveTab이 URL도 함께 업데이트합니다)
       setActiveTab("대기");
+
+      // mock DB의 campaign_contents 상태도 REPORTED로 업데이트 (실패해도 UI는 유지)
+      const numericId = parseInt(String(contentId).replace(/\D/g, ""), 10);
+      if (!Number.isNaN(numericId)) {
+        try {
+          void patchCampaignContent(numericId, { status: "REPORTED" });
+        } catch {
+          // ignore mock API error
+        }
+      }
     },
     [setActiveTab]
   );

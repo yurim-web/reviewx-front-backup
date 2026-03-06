@@ -19,6 +19,7 @@ import {
   type CampaignWithApplicants,
   type AllApplicant,
 } from "@/data/partner/sharedCampaigns";
+import { patchCampaign } from "@/lib/api/partner";
 
 /**
  * 유저 신청 내역 상태 업데이트 헬퍼 함수
@@ -481,6 +482,8 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
         return [moved, ...prevSelected];
       });
 
+      const nextSelectedCount = current_selected_count + 1;
+
       // 📌 유저 신청 내역 업데이트:
       // - user_applied_campaigns에서 해당 유저의 신청 내역을 찾아서 상태를 '대기' -> '선정'으로 변경
       updateUserAppliedCampaignStatus(applicantId, campaignData.campaignInfo.id, "선정");
@@ -494,6 +497,13 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
         campaignData.campaignInfo.campaignType,
         "선정"
       );
+
+      // 📌 mock DB의 campaigns.selectedCount도 업데이트 (실패해도 UI는 유지)
+      try {
+        void patchCampaign(campaignData.campaignInfo.id, { selectedCount: nextSelectedCount });
+      } catch {
+        // ignore mock API error
+      }
 
       return nextApplicants;
     });
@@ -560,6 +570,14 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
           campaignData.campaignInfo.campaignType,
           "탈락"
         );
+
+        // 📌 mock DB의 campaigns.selectedCount도 감소 반영 (실패해도 UI는 유지)
+        const nextSelectedCount = Math.max(0, nextSelected.length);
+        try {
+          void patchCampaign(campaignData.campaignInfo.id, { selectedCount: nextSelectedCount });
+        } catch {
+          // ignore mock API error
+        }
       }
 
       return nextSelected;

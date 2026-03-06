@@ -26,6 +26,7 @@ import {
   type PostTarget,
   type PostDivision,
 } from "@/data/manager_ga/community/postsData";
+import { postCommunityPost, patchCommunityPost } from "@/lib/api/community";
 
 interface UsePostFormConfig {
   mode: "create" | "edit";
@@ -200,6 +201,8 @@ export default function usePostForm({
         is_pinned: false,
       };
       add_post(new_post, content);
+      // mock DB에 게시글 저장 (best-effort)
+      postCommunityPost({ ...new_post, content }).catch(() => {});
     } else {
       if (!post_id) {
         alert("게시글 ID가 없습니다.");
@@ -221,6 +224,14 @@ export default function usePostForm({
         },
         content
       );
+      // mock DB에 게시글 수정 저장 (best-effort)
+      patchCommunityPost(post_id, {
+        division: category_type as PostDivision,
+        category,
+        target: target as PostTarget,
+        title: title.trim(),
+        content,
+      }).catch(() => {});
     }
 
     set_show_toast(true);
