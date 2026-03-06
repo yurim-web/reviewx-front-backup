@@ -34,6 +34,7 @@ import {
 } from "@/utils/validation/partnerSignup";
 import PageTitle from "@/components/fragments/PageTitle";
 import { getAccountsByType } from "@/data/login/unifiedAccountData";
+import { postPartner } from "@/lib/api/partner";
 import commonStyles from "@/styles/common/signup/signup.module.css";
 import styles from "@/styles/partner/signup/partner_signup.module.css";
 
@@ -116,7 +117,7 @@ import styles from "@/styles/partner/signup/partner_signup.module.css";
  *    - 휴대폰 인증 관련 에러는 PhoneVerification 컴포넌트 내부에서 관리됩니다.
  */
 export default function PartnerSignupPage() {
-  const _router = useRouter();
+  const router = useRouter();
 
   // ========================================
   // 상태 관리 (State Management)
@@ -389,7 +390,11 @@ export default function PartnerSignupPage() {
 
       partnerAccounts.push(newPartnerAccount);
       localStorage.setItem("partner_accounts", JSON.stringify(partnerAccounts));
-      //      router.push(`/partner/signup/complete?name=${encodeURIComponent(name)}`);
+
+      // mock DB에 파트너 저장 (best-effort)
+      postPartner(newPartnerAccount as unknown as Record<string, unknown>).catch(() => {});
+
+      router.push(`/partner/signup/complete?name=${encodeURIComponent(name)}`);
     } catch (_error) {
       alert("회원가입 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
     }

@@ -21,15 +21,11 @@
 
 "use client";
 
-import { useState } from "react";
 import { usePathname } from "next/navigation";
 import TabNavigation from "./TabNavigation";
 import StatisticsTab from "./StatisticsTab";
 import type { PartnerMainTab } from "@/types/domain/partner";
 import type { PartnerStatTab, PartnerCampaignStats } from "@/types/domain/partner";
-
-// 공용 데이터 import
-import { getCampaignStats } from "@/data/partner/sharedCampaigns";
 
 interface PartnerCampaignManagementHeaderProps {
   /** 현재 활성 메인 탭 (캠페인/포인트/계정) */
@@ -40,6 +36,8 @@ interface PartnerCampaignManagementHeaderProps {
   activeStatTab: PartnerStatTab;
   /** 통계 탭 변경 핸들러 (선택적 - 없으면 내부에서 페이지 이동 처리) */
   setActiveStatTab?: (tab: PartnerStatTab) => void;
+  /** API 기반 통계 데이터 (외부 전달) */
+  apiStats?: Record<string, number>;
 }
 
 /**
@@ -61,52 +59,24 @@ export default function PartnerCampaignManagementHeader({
   setActiveTab,
   activeStatTab,
   setActiveStatTab: _setActiveStatTab,
+  apiStats,
 }: PartnerCampaignManagementHeaderProps) {
-  /* ========================================
-     통계 상태 관리 (Statistics State Management)
-     ======================================== */
-
-  /**
-   * useState로 통계 상태 관리
-   *
-   * 설명:
-   * - 초기값을 getInitialCampaignStats()로 설정하여 즉시 실제 숫자를 표시합니다.
-   * - useEffect에서 localStorage를 포함한 전체 통계를 계산하여 업데이트합니다.
-   * - 이렇게 하면 숫자가 바뀌는 잔상 없이 바로 표시됩니다.
-   */
-  // 현재 경로 확인 (페이지 이동 여부 판단용)
   const pathname = usePathname();
 
-  const [stats] = useState<PartnerCampaignStats>(() => {
-    // SSR에서는 기본값 반환
-    if (typeof window === "undefined") {
-      return {
-        전체: 0,
-        예정: 0,
-        신청: 0,
-        진행: 0,
-        종료: 0,
-        취소: 0,
-        "연장 요청": 0,
-        패널티: 0,
-      };
-    }
-    // 클라이언트에서는 즉시 전체 통계 반환 (localStorage 포함)
-    try {
-      return getCampaignStats();
-    } catch {
-      return {
-        전체: 0,
-        예정: 0,
-        신청: 0,
-        진행: 0,
-        종료: 0,
-        취소: 0,
-        "연장 요청": 0,
-        패널티: 0,
-      };
-    }
-  });
+  const defaultStats: PartnerCampaignStats = {
+    전체: 0,
+    예정: 0,
+    신청: 0,
+    진행: 0,
+    종료: 0,
+    취소: 0,
+    "연장 요청": 0,
+    패널티: 0,
+  };
+
+  const stats: PartnerCampaignStats = apiStats
+    ? ({ ...defaultStats, ...apiStats } as PartnerCampaignStats)
+    : defaultStats;
 
   /* ========================================
      통계 탭 변경 핸들러 (Statistics Tab Change Handler)

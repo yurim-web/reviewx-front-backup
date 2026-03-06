@@ -102,32 +102,12 @@ export default function CampaignList({
       case "취소":
         return campaign.status === "취소" && !campaign.subStatus?.includes("extension_request");
       case "연장 요청":
-        /**
-         * 연장 요청 탭 필터링
-         *
-         * 포함되는 조건:
-         * - 캠페인이 종료되지 않았을 때 (진행 중)
-         * - 등록 기간이 진행 중일 때 (등록 기간이 끝나지 않았을 때)
-         * - 연장 요청한 리뷰어가 있는 캠페인
-         *
-         * 주의:
-         * - 캠페인이 종료되었으면 무조건 종료 탭으로 이동
-         * - 등록 기간이 끝났으면 연장 요청 탭에 표시되지 않음
-         * - 등록 기간 중일 때만 연장 요청 탭에 표시됨
-         *
-         * 참고:
-         * - getCampaignsByTab에서 이미 필터링이 완료되었으므로,
-         *   여기서는 subStatus만 확인하면 됩니다.
-         */
         // 캠페인이 종료되었으면 제외
         if (campaign.status === "종료" || campaign.status === "마감") {
           return false;
         }
-
-        // subStatus에 extension_request가 포함되어 있어야 함
-        // getCampaignsByTab에서 이미 필터링이 완료되었으므로,
-        // 여기서는 subStatus만 확인하면 됩니다.
-        return campaign.subStatus?.includes("extension_request") || false;
+        // extensionRequested 필드로 연장 요청 캠페인 판별
+        return campaign.extensionRequested === true;
       default:
         return true;
     }
