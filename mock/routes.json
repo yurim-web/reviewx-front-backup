@@ -1,25 +1,32 @@
 {
+  "/reviewer/dashboard": "/dashboard",
+  "/reviewer/search": "/search",
   "/reviewer/campaign/delivery": "/campaigns?type=DELIVERY",
   "/reviewer/campaign/visit": "/campaigns?type=VISIT",
-  "/reviewer/campaign/purchase-review": "/campaigns?type=PURCHASE_REVIEW",
+  "/reviewer/campaign/purchase-review": "/campaigns?type=PURCHASE",
   "/reviewer/campaign/reporter": "/campaigns?type=REPORTER",
   "/reviewer/campaign/mission": "/campaigns?type=MISSION",
+  "/reviewer/campaign/apply": "/campaign_applications",
+  "/reviewer/campaign/apply/:id": "/campaign_applications/:id",
   "/reviewer/campaign/:id": "/campaigns/:id",
 
-  "/reviewer/mypage/point": "/reviewers/:id",
   "/reviewer/mypage/point/history": "/point_history",
+  "/reviewer/mypage/point/:id": "/reviewers/:id",
   "/reviewer/mypage/withdrawal": "/withdrawal_requests",
-  "/reviewer/mypage/profile": "/reviewers/:id",
-  "/reviewer/mypage/campaigns/applied": "/campaign_applications",
-  "/reviewer/mypage/campaigns/selected": "/campaign_applications?status=SELECTED",
-  "/reviewer/mypage/campaigns/content": "/campaign_contents",
+  "/reviewer/mypage/profile/:id": "/reviewers/:id",
+
+  "/reviewer/mypage/campaigns/applied": "/reviewer_campaign_management?status=신청완료",
+  "/reviewer/mypage/campaigns/selected": "/reviewer_campaign_management?status=선정완료",
+  "/reviewer/mypage/campaigns/content": "/reviewer_campaign_management?status=콘텐츠등록",
+  "/reviewer/mypage/campaigns": "/reviewer_campaign_management",
+  "/reviewer/mypage/campaigns/:id": "/reviewer_campaign_management/:id",
 
   "/reviewer/notification": "/notifications",
   "/reviewer/community": "/community_posts",
   "/reviewer/community/:id": "/community_posts/:id",
 
-  "/partner/campaign": "/campaigns",
-  "/partner/campaign/:id": "/campaigns/:id",
+  "/partner/campaign": "/partner_campaigns",
+  "/partner/campaign/:id": "/partner_campaigns/:id",
   "/partner/campaign/:id/applications": "/campaign_applications?campaign_id=:id",
   "/partner/campaign/:id/contents": "/campaign_contents?campaign_id=:id",
 
@@ -35,5 +42,9 @@
   "/admin/rejection": "/rejection_history",
   "/admin/report": "/report_history",
   "/admin/community": "/community_posts",
-  "/admin/payment": "/payments"
+  "/admin/community/:id": "/community_posts/:id",
+  "/admin/payment": "/payments",
+  "/admin/payment/:id": "/payments/:id",
+  "/admin/accounts": "/accounts",
+  "/admin/accounts/:id": "/accounts/:id"
 }

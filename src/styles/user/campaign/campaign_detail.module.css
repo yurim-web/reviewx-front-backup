@@ -51,6 +51,8 @@
 
 /* 하단 고정 컨테이너 (버튼 담는 영역) */
 .bottom_fixed_container {
+  max-width: 1000px;
+  margin: 0 auto;
   position: fixed;
   left: 0;
   right: 0;

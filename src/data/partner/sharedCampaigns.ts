@@ -21,6 +21,7 @@ import {
   getSubStatus,
   getPartnerTabByDates,
 } from "./utils/campaignHelpers";
+import { deleteCampaignApi } from "@/lib/api/partner";
 import type {
   CampaignWithApplicants,
   AllApplicant,
@@ -2580,6 +2581,12 @@ export function deleteCampaign(
     // 2. 삭제된 캠페인 ID 목록에 추가 (정적 데이터에 있는 캠페인도 제외하기 위해)
     // 이렇게 하면 localStorage에 없는 정적 데이터의 캠페인도 목록에서 제외됩니다
     addDeletedCampaignId(campaignId);
+    // 3. mock DB(json-server)에서도 캠페인 삭제 (비동기, 실패해도 UI는 유지)
+    try {
+      void deleteCampaignApi(campaignId);
+    } catch (_apiError) {
+      // mock 서버 오류는 로컬 상태에는 영향을 주지 않음
+    }
 
     // console.log(
     //   `캠페인 삭제 처리 완료: ID=${campaignId}, 타입=${campaignType}, localStorage에서 삭제=${deletedFromLocalStorage}, 삭제 목록에 추가됨`
