@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { CampaignFormData } from "@/types/domain/user";
 import { useAuth } from "@/hooks/useAuth";
 import { getPartnerPointSummary } from "@/data/partner/point/pointData";
+import { fetchDraftCampaign, postDraftCampaign, putDraftCampaign } from "@/lib/api/partner";
 import type { CampaignType } from "./useCampaignForm";
 
 /**
@@ -86,8 +87,8 @@ export function useCampaignFormStorage({
   isSubmitting,
   thumbnailPreview,
   detailPreviews,
-  setThumbnailPreview: _setThumbnailPreview,
-  setDetailPreviews: _setDetailPreviews,
+  setThumbnailPreview,
+  setDetailPreviews,
   checkboxStates,
   updateCheckboxState,
 }: UseCampaignFormStorageProps) {
@@ -117,10 +118,13 @@ export function useCampaignFormStorage({
       // 포인트 충전 페이지에서 돌아왔을 때 플래그 저장
       sessionStorage.setItem("from_campaign_create", "true");
 
-      // 현재 폼 데이터 자동 저장 (이미지는 용량 문제로 제외)
+      // 현재 폼 데이터 자동 저장 (이미지 Data URL 포함)
       try {
+        const { thumbnailImage: _tImg, detailImages: _dImg, ...restFormData } = formData;
         const dataToSave = {
-          ...formData,
+          ...restFormData,
+          thumbnailImageUrl: thumbnailPreview || undefined,
+          detailImagePreviews: detailPreviews.length > 0 ? detailPreviews : undefined,
           hasThumbnailImage: thumbnailPreview !== null,
           hasDetailImages: detailPreviews.length > 0,
           checkboxStates: checkboxStates,
@@ -133,23 +137,46 @@ export function useCampaignFormStorage({
 
   /**
    * 임시 저장 확인 처리
+   * - 썸네일/상세 이미지는 Data URL로 저장하여 불러오기 시 복원
    */
   const handleSaveConfirm = () => {
     try {
       if (typeof window === "undefined") return;
 
-      // 이미지는 용량 문제로 저장하지 않고, 플래그만 저장
+      // File 객체는 JSON 직렬화 불가 → 제외하고, 이미지 미리보기 Data URL 저장
+      const { thumbnailImage: _tImg2, detailImages: _dImg2, ...restFormData } = formData;
       const dataToSave = {
-        ...formData,
-        // 이미지 미리보기 URL은 base64로 너무 커서 localStorage 용량 초과 발생
-        // 대신 이미지가 있었다는 플래그만 저장
+        ...restFormData,
+        thumbnailImageUrl: thumbnailPreview || undefined,
+        detailImagePreviews: detailPreviews.length > 0 ? detailPreviews : undefined,
         hasThumbnailImage: thumbnailPreview !== null,
         hasDetailImages: detailPreviews.length > 0,
         checkboxStates: checkboxStates,
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
 
-      setToast({ is_open: true, message: "저장되었습니다. (이미지 제외)" });
+      // mock DB에도 저장 (이미지 Data URL 제외, 폼 필드만)
+      if (user?.id) {
+        const { thumbnailImageUrl: _t, detailImagePreviews: _d, ...dbFields } = dataToSave;
+        const dbPayload = {
+          ...dbFields,
+          partner_id: user.id,
+          campaignType,
+          updated_at: new Date().toISOString(),
+        };
+        // 기존 draft가 있으면 업데이트, 없으면 새로 생성
+        fetchDraftCampaign(user.id, campaignType)
+          .then((existing) => {
+            if (existing?.id) {
+              return putDraftCampaign(Number(existing.id), dbPayload);
+            } else {
+              return postDraftCampaign(dbPayload).then(() => undefined);
+            }
+          })
+          .catch(() => {});
+      }
+
+      setToast({ is_open: true, message: "저장되었습니다." });
     } catch (_error) {
       alert("임시 저장에 실패했습니다.");
     }
@@ -179,8 +206,21 @@ export function useCampaignFormStorage({
       // 저장된 데이터로 formData 업데이트
       setFormData(savedData);
 
-      // 이미지는 용량 문제로 임시저장하지 않으므로 복원하지 않음
-      // 사용자가 다시 업로드해야 함
+      // 썸네일/상세 이미지 미리보기 복원 (Data URL)
+      const savedWithImages = savedData as CampaignFormData & {
+        thumbnailImageUrl?: string;
+        detailImagePreviews?: string[];
+      };
+      if (savedWithImages.thumbnailImageUrl) {
+        setThumbnailPreview(savedWithImages.thumbnailImageUrl);
+      } else {
+        setThumbnailPreview(null);
+      }
+      if (savedWithImages.detailImagePreviews?.length) {
+        setDetailPreviews(savedWithImages.detailImagePreviews);
+      } else {
+        setDetailPreviews([]);
+      }
 
       // 체크박스 상태 복원
       const savedDataWithCheckbox = savedData as CampaignFormData & {
@@ -200,7 +240,7 @@ export function useCampaignFormStorage({
       }
 
       setLoadConfirmModal({ is_open: false });
-      setToast({ is_open: true, message: "불러오기 완료 (이미지는 재업로드 필요)" });
+      setToast({ is_open: true, message: "불러오기 완료" });
     } catch (_error) {
       alert("임시 저장 데이터를 불러오는데 실패했습니다.");
       setLoadConfirmModal({ is_open: false });
@@ -259,7 +299,21 @@ export function useCampaignFormStorage({
           };
           setFormData(updatedData);
 
-          // 이미지는 용량 문제로 임시저장하지 않으므로 복원하지 않음
+          // 썸네일/상세 이미지 미리보기 복원 (Data URL)
+          const savedWithImages2 = savedData as CampaignFormData & {
+            thumbnailImageUrl?: string;
+            detailImagePreviews?: string[];
+          };
+          if (savedWithImages2.thumbnailImageUrl) {
+            setThumbnailPreview(savedWithImages2.thumbnailImageUrl);
+          } else {
+            setThumbnailPreview(null);
+          }
+          if (savedWithImages2.detailImagePreviews?.length) {
+            setDetailPreviews(savedWithImages2.detailImagePreviews);
+          } else {
+            setDetailPreviews([]);
+          }
 
           // 체크박스 상태 복원
           const savedDataWithCheckbox2 = savedData as CampaignFormData & {

@@ -14,6 +14,7 @@
 import { useState } from "react";
 import type { WithdrawalRequestItem } from "@/data/manager_sa/settlement/withdrawalRequestData";
 import type { StoredRequest, StoredAccount, PointHistoryEntry } from "./withdrawalTypes";
+import { patchWithdrawalStatus } from "@/lib/api/point";
 
 interface UseWithdrawalApproveParams {
   sorted_request_list: WithdrawalRequestItem[];
@@ -170,6 +171,17 @@ export function useWithdrawalApprove({
           }
         });
         localStorage.setItem("withdrawal_history", JSON.stringify(withdrawalHistory));
+
+        // 5. mock DB에도 출금 상태 업데이트 (best-effort)
+        pending_approve_items.forEach((item: WithdrawalRequestItem) => {
+          const numericId = parseInt(String(item.id).replace(/\D/g, ""), 10);
+          if (numericId) {
+            patchWithdrawalStatus(numericId, {
+              status: "APPROVED",
+              processed_date: now.toISOString(),
+            }).catch(() => {});
+          }
+        });
       }
     } catch (_error) {
       alert("출금 승인 처리 중 오류가 발생했습니다.");

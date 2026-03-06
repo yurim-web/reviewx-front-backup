@@ -14,6 +14,7 @@
 import { useCallback } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
+import { postCampaignApplication } from "@/lib/api/campaign";
 import {
   type ApplicationModalType,
   type StoredUserAccount,
@@ -124,6 +125,18 @@ export function useApplicationSubmit(params: UseApplicationSubmitParams) {
         if (idx >= 0) updatedCampaigns[idx] = campaign;
       }
       localStorage.setItem(storageKey, JSON.stringify(updatedCampaigns));
+
+      // mock API에 신청 데이터 저장 (best-effort)
+      const campaignIdNum = parseInt(campaignId.replace(/\D+/g, ""), 10) || 0;
+      const reviewerIdNum = user.id.includes("kakao") ? 1 : user.id.includes("naver") ? 2 : 1;
+      postCampaignApplication({
+        campaign_id: campaignIdNum,
+        reviewer_id: reviewerIdNum,
+        status: "APPLIED",
+        apply_date: new Date().toISOString(),
+        channel_url: currentChannelUrl,
+        introduction: memo,
+      }).catch(() => {});
 
       const appliedAt = new Date().toISOString();
       addToUserAppliedCampaigns({

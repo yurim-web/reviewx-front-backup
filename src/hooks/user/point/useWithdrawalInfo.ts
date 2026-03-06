@@ -12,7 +12,10 @@
  */
 
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
+import { fetchReviewerPoint, postWithdrawalRequest } from "@/lib/api/point";
+import { pointSummary } from "@/data/user/point/pointData";
 
 interface LocalUserAccount {
   id?: string;
@@ -55,8 +58,23 @@ export interface UseWithdrawalInfoReturn {
   submitWithdrawal: (amount: number, netAmount: number) => void;
 }
 
+function getReviewerId(userId: string): number {
+  if (userId.includes("kakao")) return 1;
+  if (userId.includes("naver")) return 2;
+  return 1;
+}
+
 export function useWithdrawalInfo(): UseWithdrawalInfoReturn {
   const { user } = useAuth();
+  const reviewerId = user ? getReviewerId(user.id) : 0;
+
+  // 포인트 잔액 (API)
+  const { data: reviewerData } = useQuery({
+    queryKey: ["reviewerPoint", reviewerId],
+    queryFn: () => fetchReviewerPoint(reviewerId),
+    enabled: reviewerId > 0,
+    staleTime: 30_000,
+  });
 
   const [userInfo, setUserInfo] = useState<WithdrawalUserInfo>({
     name: "",
@@ -83,6 +101,7 @@ export function useWithdrawalInfo(): UseWithdrawalInfoReturn {
                 userAccount.ssn_front && userAccount.ssn_back
                   ? `${userAccount.ssn_front}-${userAccount.ssn_back}`
                   : "",
+              // availablePoints는 useEffect 밖에서 API 데이터로 덮어씀
               availablePoints: userAccount.available_points ?? 0,
               lastWithdrawalDate: userAccount.last_withdrawal_date
                 ? new Date(userAccount.last_withdrawal_date)
@@ -168,6 +187,21 @@ export function useWithdrawalInfo(): UseWithdrawalInfoReturn {
     });
     localStorage.setItem("withdrawal_requests", JSON.stringify(requests));
 
+    // mock API에 출금 신청 데이터 저장 (best-effort)
+    postWithdrawalRequest({
+      reviewer_id: getReviewerId(user.id),
+      user_name: userInfo.name,
+      requested_amount: amount,
+      net_amount: netAmount,
+      tax_amount: amount - netAmount,
+      bank: userInfo.bank,
+      account_number: userInfo.accountNumber,
+      account_holder: userInfo.name,
+      status: "PENDING",
+      request_date: now.toISOString(),
+      processed_date: null,
+    }).catch(() => {});
+
     // notifications 추가
     const storedNotifications = localStorage.getItem("notifications");
     const notifications = storedNotifications ? JSON.parse(storedNotifications) : [];
@@ -183,8 +217,11 @@ export function useWithdrawalInfo(): UseWithdrawalInfoReturn {
     localStorage.setItem("notifications", JSON.stringify(notifications));
   };
 
+  // API 잔액 우선, 없으면 정적 fallback
+  const availablePoints = reviewerData?.current_points ?? pointSummary.available_points;
+
   return {
-    userInfo,
+    userInfo: { ...userInfo, availablePoints },
     calculateNetAmount,
     getDaysSinceLastWithdrawal,
     canWithdraw,
