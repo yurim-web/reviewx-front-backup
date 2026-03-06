@@ -14,33 +14,33 @@
  * - 캠페인 관리 페이지
  */
 
-import { ApiResponse } from './auth';
+import { ApiResponse } from "./auth";
 
 /**
  * 사업자 유형
  */
-export type BusinessType = 'individual' | 'corporate';
+export type BusinessType = "individual" | "corporate";
 
 /**
  * 파트너 승인 상태
  */
-export type PartnerApprovalStatus = 'pending' | 'approved' | 'rejected';
+export type PartnerApprovalStatus = "pending" | "approved" | "rejected";
 
 /**
  * 사업자 정보
  */
 export interface BusinessInfo {
   business_type: BusinessType;
-  business_number: string;         // 사업자등록번호
-  company_name: string;             // 상호명
-  representative_name: string;      // 대표자명
-  business_address: string;         // 사업장 주소
-  business_category: string;        // 업종
-  registration_date: string;        // 개업일
+  business_number: string; // 사업자등록번호
+  company_name: string; // 상호명
+  representative_name: string; // 대표자명
+  business_address: string; // 사업장 주소
+  business_category: string; // 업종
+  registration_date: string; // 개업일
 
   // 첨부 서류
-  business_registration_file?: string;  // 사업자등록증
-  tax_registration_file?: string;       // 세금계산서 발행용 서류
+  business_registration_file?: string; // 사업자등록증
+  tax_registration_file?: string; // 세금계산서 발행용 서류
 }
 
 /**
@@ -100,7 +100,7 @@ export interface UpdatePartnerProfileResponse extends ApiResponse {
 export interface UploadBusinessDocumentResponse extends ApiResponse {
   data: {
     file_url: string;
-    file_type: 'business_registration' | 'tax_registration';
+    file_type: "business_registration" | "tax_registration";
   };
 }
 
@@ -130,12 +130,12 @@ export interface UpdateContactPersonResponse extends ApiResponse {
  * 파트너 활동 통계
  */
 export interface PartnerActivityStats {
-  total_campaigns: number;          // 총 캠페인 수
-  active_campaigns: number;         // 진행 중인 캠페인
-  completed_campaigns: number;      // 완료된 캠페인
-  total_applicants: number;         // 총 신청자 수
-  approved_applicants: number;      // 승인된 신청자 수
-  total_spent_points: number;       // 총 사용 포인트
+  total_campaigns: number; // 총 캠페인 수
+  active_campaigns: number; // 진행 중인 캠페인
+  completed_campaigns: number; // 완료된 캠페인
+  total_applicants: number; // 총 신청자 수
+  approved_applicants: number; // 승인된 신청자 수
+  total_spent_points: number; // 총 사용 포인트
   average_campaign_performance: number; // 평균 캠페인 성과 (완료율)
 }
 
@@ -188,12 +188,12 @@ export interface GetPartnerDashboardResponse extends ApiResponse {
  * 파트너 캠페인 목록 필터
  */
 export type PartnerCampaignFilter =
-  | 'all'
-  | 'recruiting'
-  | 'in_progress'
-  | 'completed'
-  | 'cancelled'
-  | 'pending_approval';
+  | "all"
+  | "recruiting"
+  | "in_progress"
+  | "completed"
+  | "cancelled"
+  | "pending_approval";
 
 /**
  * 파트너의 캠페인 항목
@@ -248,7 +248,7 @@ export interface PartnerCampaignsResponse extends ApiResponse {
 export interface RequestPartnerApprovalResponse extends ApiResponse {
   data: {
     partner_id: string;
-    approval_status: 'pending';
+    approval_status: "pending";
     requested_at: string;
   };
   message: string;
@@ -259,4 +259,37 @@ export interface RequestPartnerApprovalResponse extends ApiResponse {
  */
 export interface DeletePartnerAccountResponse extends ApiResponse {
   message: string;
+}
+
+// ========================================
+// mock API (json-server) 전용 타입
+// ========================================
+
+/**
+ * mock DB 캠페인 응답 타입 (파트너용)
+ * GET /partner/campaign?partner_id=:id → /campaigns?partner_id=:id
+ */
+export interface PartnerCampaignApiItem {
+  id: number;
+  partner_id: number;
+  type: string; // "DELIVERY" | "VISIT" | "PURCHASE" | "REPORTER" | "MISSION"
+  status: string; // "REGISTERING" | "RECRUITING" | "SELECTED" | "IN_PROGRESS" | "COMPLETED" | "CLOSED" | "CANCELLED"
+  title: string;
+  thumbnailUrl: string;
+  category: { categoryId: number; categoryName: string };
+  requiredPlatform: { channelId: number; channelName: string };
+  recruitLimit: number;
+  appliedCount: number;
+  selectedCount?: number;
+  recruitStartAt: string; // ISO 8601
+  recruitEndAt: string;
+  content: { contentStartAt: string; contentEndAt: string };
+  reward: { extraRewardPoint: number; paymentRewardPoint: number };
+  description?: string;
+  extensionRequested?: boolean;
+
+  /** 참여/제출 옵션 (캠페인 수정 시 폼에 반영) */
+  adultOnly?: boolean;
+  allowReParticipation?: boolean;
+  allowLateSubmission?: boolean;
 }
