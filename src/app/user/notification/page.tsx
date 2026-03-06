@@ -15,13 +15,16 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import styles from "@/styles/user/notification/notification.module.css";
 import SubHeader from "@/components/fragments/SubHeader";
 import NotificationList from "@/components/notification/NotificationList";
 import PageTitle from "@/components/fragments/PageTitle";
 import Toast from "@/components/common/toast/Toast";
 import { useAuth } from "@/hooks/useAuth";
-// 알림 목업 데이터 (향후 API로 대체)
+import { fetchNotifications } from "@/lib/api/notification";
+import type { NotificationApiItem } from "@/types/api/notification";
+// 알림 정적 fallback 데이터
 import { mockReviewerNotifications } from "@/data/notification/notificationData";
 
 interface StoredNotification {
@@ -38,7 +41,7 @@ interface StoredNotification {
 interface NotificationItem {
   id: string | number;
   category: string;
-  message: string;
+  message?: string;
   time?: string;
   campaign_id?: number;
   campaign_name?: string;
@@ -46,9 +49,69 @@ interface NotificationItem {
   _source?: string;
 }
 
+function getReviewerId(userId: string): number {
+  if (userId.includes("kakao")) return 1;
+  if (userId.includes("naver")) return 2;
+  return 1;
+}
+
+const TYPE_TO_CATEGORY: Record<string, string> = {
+  CAMPAIGN_SELECTED: "A_R1",
+  CAMPAIGN_UPDATED: "A_R2",
+  CONTENT_REGISTRATION: "A_R3",
+  CONTENT_REGISTRATION_REMINDER: "A_R4",
+  CONTENT_APPROVED: "A_R5",
+  CONTENT_REJECTED: "A_R6",
+  LATE_SUBMISSION: "A_R7",
+  CONTENT_EXTENDED: "A_R8",
+  POINT_EARNED: "A_R9",
+  WITHDRAWAL_REQUESTED: "A_R10",
+  WITHDRAWAL_COMPLETED: "A_R11",
+  WITHDRAWAL_REJECTED: "A_R12",
+  PENALTY_GIVEN: "A_R13",
+  PENALTY_RELEASED: "A_R14",
+  ACCOUNT_SUSPENDED: "A_R15",
+  ACCOUNT_BLOCKED: "A_R16",
+  CHANNEL_ERROR: "A_R17",
+};
+
+function adaptApiNotification(item: NotificationApiItem): NotificationItem {
+  return {
+    id: item.id,
+    category: TYPE_TO_CATEGORY[item.type] ?? "A_R1",
+    message: item.message,
+    time: new Date(item.created_at)
+      .toLocaleString("ko-KR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      })
+      .replace(/\. /g, "-")
+      .replace(".", "")
+      .replace(",", ""),
+    campaign_id: item.campaign_id,
+    campaign_name: item.campaign_name,
+    is_read: item.is_read,
+    _source: "api",
+  };
+}
+
 export default function UserNotificationPage() {
   const { user } = useAuth();
   const router = useRouter();
+  const reviewerId = user ? getReviewerId(user.id) : 0;
+
+  // 알림 목록 (API)
+  const { data: apiNotifications } = useQuery({
+    queryKey: ["notifications", reviewerId],
+    queryFn: () => fetchNotifications(reviewerId),
+    enabled: reviewerId > 0,
+    staleTime: 30_000,
+    retry: false,
+  });
 
   // 모바일 여부 감지
   const [isMobile, setIsMobile] = useState(false);
@@ -100,84 +163,62 @@ export default function UserNotificationPage() {
   }, [loadMore]);
 
   /**
-   * localStorage에서 알림 불러오기
+   * 알림 목록 구성: API 데이터 + localStorage 병합
+   * API 로드 성공 → API 데이터 사용 / 실패·로딩 중 → mockReviewerNotifications fallback
    */
   useEffect(() => {
+    // base: API 데이터 또는 정적 fallback
+    const baseNotifications: NotificationItem[] =
+      apiNotifications != null
+        ? apiNotifications.map(adaptApiNotification)
+        : (mockReviewerNotifications as unknown as NotificationItem[]);
+
     if (typeof window !== "undefined" && user) {
       try {
         const storedNotifications = localStorage.getItem("notifications");
         if (storedNotifications) {
           const allNotifications = JSON.parse(storedNotifications);
 
-          // 현재 유저의 알림만 필터링
-          const userNotifications = (allNotifications as StoredNotification[])
+          // 현재 유저의 localStorage 알림만 필터링·변환
+          const LOCAL_TYPE_MAP: Record<string, string> = {
+            campaign_selected: "A_R1",
+            campaign_rejected: "A_R2",
+            campaign_update: "A_R2",
+            withdrawal_completed: "A_R11",
+            withdrawal_requested: "A_R10",
+            withdrawal_rejected: "A_R12",
+          };
+          const localNotifications = (allNotifications as StoredNotification[])
             .filter((notif) => notif.user_id === user.id)
-            .map((notif) => {
-              // 기존 알림 형식에 맞게 변환
-              let category = "A_R10"; // 기본값: 출금 신청 카테고리
+            .map((notif) => ({
+              id: notif.id,
+              category: LOCAL_TYPE_MAP[notif.type] ?? "A_R10",
+              message: notif.message,
+              time: new Date(notif.created_at)
+                .toLocaleString("ko-KR", {
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: false,
+                })
+                .replace(/\. /g, "-")
+                .replace(".", "")
+                .replace(",", ""),
+              campaign_id: notif.campaign_id ? parseInt(notif.campaign_id) : undefined,
+              campaign_name: notif.campaign_title,
+              is_read: notif.is_read,
+              _source: "localStorage",
+            }));
 
-              // 알림 타입에 따라 카테고리 매핑
-              if (notif.type === "campaign_selected") {
-                category = "A_R1"; // 캠페인 선정
-              } else if (notif.type === "campaign_rejected") {
-                category = "A_R2"; // 캠페인 탈락 (A_R2를 임시로 사용)
-              } else if (notif.type === "campaign_update") {
-                category = "A_R2"; // 캠페인 수정
-              } else if (notif.type === "withdrawal_completed") {
-                category = "A_R11"; // 출금 승인
-              } else if (notif.type === "withdrawal_requested") {
-                category = "A_R10"; // 출금 신청
-              } else if (notif.type === "withdrawal_rejected") {
-                category = "A_R12"; // 출금 반려
-              }
-
-              return {
-                id: notif.id,
-                category: category,
-                message: notif.message,
-                time: new Date(notif.created_at)
-                  .toLocaleString("ko-KR", {
-                    year: "numeric",
-                    month: "2-digit",
-                    day: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: false,
-                  })
-                  .replace(/\. /g, "-")
-                  .replace(".", "")
-                  .replace(",", ""),
-                campaign_id: notif.campaign_id ? parseInt(notif.campaign_id) : undefined,
-                campaign_name: notif.campaign_title,
-                is_read: notif.is_read,
-                _source: "localStorage", // 출처 구분을 위한 속성
-              };
-            });
-
-          // localStorage 알림 + mock 알림 합치기
-          // 각 알림에 출처를 표시하여 고유한 키 생성 가능
-          const mockNotificationsWithSource = mockReviewerNotifications.map((notif) => ({
-            ...notif,
-            _source: "mock", // 출처 구분을 위한 속성
-          }));
-          setNotifications([
-            ...userNotifications,
-            ...(mockNotificationsWithSource as NotificationItem[]),
-          ]);
+          setNotifications([...localNotifications, ...baseNotifications]);
+          return;
         }
       } catch (_error) {}
     }
-  }, [user]);
-
-  /**
-   * 알림 클릭 핸들러 (향후 구현)
-   * 알림 클릭 시 상세 페이지로 이동하거나 모달을 열 수 있습니다.
-   *
-   * @param notification - 클릭된 알림 아이템
-   */
-  const handleNotificationClick = (_notification: (typeof mockReviewerNotifications)[0]) => {
-    // TODO: 알림 상세 페이지로 이동 또는 모달 열기
-  };
+    setNotifications(baseNotifications);
+  }, [user, apiNotifications]);
 
   /** 전체 삭제 버튼 클릭 → 바로 삭제 후 토스트만 표시 */
   const handleDeleteAllClick = () => {
@@ -229,7 +270,6 @@ export default function UserNotificationPage() {
         <NotificationList
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           notifications={notifications.slice(0, displayCount) as any}
-          on_notification_click={handleNotificationClick}
         />
 
         {/* 무한 스크롤 sentinel: 뷰포트에 들어오면 다음 15개 로드 */}

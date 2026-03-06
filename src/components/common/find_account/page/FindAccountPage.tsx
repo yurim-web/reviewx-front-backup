@@ -116,7 +116,14 @@ export default function FindAccountPage() {
             // 비밀번호 찾기 탭이고 성공했을 때만 새 비밀번호 설정 페이지로 이동
             // (에러가 하나라도 있으면 success가 false이므로 이동하지 않음)
             if (activeTab === "password" && success) {
-              router.push("/reset-password");
+              if (pathname.startsWith("/partner")) {
+                if (typeof window !== "undefined" && findAccount.email) {
+                  window.localStorage.setItem("partner_email", findAccount.email);
+                }
+                router.push("/partner/reset-password");
+              } else {
+                router.push("/reset-password");
+              }
             }
           }}
         />

@@ -132,16 +132,19 @@ export default function SubHeader({ title, showBackButton: _showBackButton }: Su
         {isMobile && title ? (
           <>
             <button className={styles.back_button} onClick={handleGoBack}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/images/header/mobile/mo_back_btn.svg" alt="뒤로가기" />
             </button>
             <h1 className={styles.mobile_title}>{title}</h1>
           </>
         ) : isMobile ? (
           <Link href="/user" className={styles.header_logo}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={getLogoSrc()} alt="VX 로고" />
           </Link>
         ) : (
           <button className={styles.back_button} onClick={handleGoBack}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/images/header/header_arrow_back.svg" alt="뒤로가기" />
           </button>
         )}
@@ -155,6 +158,7 @@ export default function SubHeader({ title, showBackButton: _showBackButton }: Su
             onClick={handleNotificationClick}
             aria-label="알림"
           >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={getNotificationIconSrc()} alt="bell_icon" />
           </Link>
           {/* 마이페이지로 연결 */}
@@ -164,6 +168,7 @@ export default function SubHeader({ title, showBackButton: _showBackButton }: Su
             }
             className={styles.user_icon}
           >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={getUserIconSrc()} alt="user" />
           </Link>
         </div>

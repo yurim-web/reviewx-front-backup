@@ -86,6 +86,7 @@ export default function Header({ has_notifications }: HeaderProps) {
     <header className={styles.header_root}>
       <nav className={styles.header_container}>
         <Link href="/user" className={styles.header_logo} style={iconVisibility}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={logoSrc} alt="VX 로고" />
         </Link>
         <div className={styles.menu_icon_box} style={iconVisibility}>
@@ -93,6 +94,7 @@ export default function Header({ has_notifications }: HeaderProps) {
 
           {user && (
             <Link href="/user/notification" className={styles.notification_icon} aria-label="알림">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={notificationIconSrc} alt="bell_icon" />
             </Link>
           )}
@@ -102,6 +104,7 @@ export default function Header({ has_notifications }: HeaderProps) {
             className={styles.user_icon}
             onClick={handleUserIconClick}
           >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={userIconSrc} alt="user" />
           </Link>
         </div>

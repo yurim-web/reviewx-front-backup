@@ -32,6 +32,7 @@ import PageTitle from "@/components/fragments/PageTitle";
 import { getChannelLogo } from "@/utils/channelLogoMap";
 import ChannelSection from "@/components/user/mypage/ChannelSection";
 import { useAuth } from "@/hooks/useAuth";
+import { patchReviewerProfile } from "@/lib/api/reviewer";
 import layoutStyles from "@/styles/user/mypage/edit_profile/edit_profile_layout.module.css";
 import headerStyles from "@/styles/user/mypage/edit_profile/header.module.css";
 
@@ -62,15 +63,11 @@ export default function ChannelConnectPage() {
         const storedAccounts = localStorage.getItem("user_accounts");
         if (storedAccounts) {
           const accounts = JSON.parse(storedAccounts) as LocalAccount[];
-          const userAccount = accounts.find(
-            (a) => a.id === user.id || a.email === user.email,
-          );
+          const userAccount = accounts.find((a) => a.id === user.id || a.email === user.email);
 
           if (userAccount?.channel_details) {
             const loadedChannels = defaultChannels.map((channel) => {
-              const detail = userAccount.channel_details!.find(
-                (d) => d.name === channel.name,
-              );
+              const detail = userAccount.channel_details!.find((d) => d.name === channel.name);
               if (detail) {
                 return {
                   name: channel.name,
@@ -83,8 +80,7 @@ export default function ChannelConnectPage() {
             setChannels(loadedChannels);
           }
         }
-      } catch (_error) {
-      }
+      } catch (_error) {}
     }
   }, [user]);
 
@@ -94,14 +90,9 @@ export default function ChannelConnectPage() {
    * - localStorage의 user_accounts에 저장
    * - 캠페인 신청 모달에서 온 경우 sessionStorage에 채널 정보 저장
    */
-  const handleChannelUpdate = (
-    channelName: string,
-    channelInfo: { url: string },
-  ) => {
+  const handleChannelUpdate = (channelName: string, channelInfo: { url: string }) => {
     const updatedChannels = channels.map((ch) =>
-      ch.name === channelName
-        ? { ...ch, url: channelInfo.url, status: "connected" as const }
-        : ch,
+      ch.name === channelName ? { ...ch, url: channelInfo.url, status: "connected" as const } : ch
     );
     setChannels(updatedChannels);
 
@@ -109,12 +100,8 @@ export default function ChannelConnectPage() {
     if (typeof window !== "undefined" && user) {
       try {
         const storedAccounts = localStorage.getItem("user_accounts");
-        const accounts: LocalAccount[] = storedAccounts
-          ? JSON.parse(storedAccounts)
-          : [];
-        const accountIndex = accounts.findIndex(
-          (a) => a.id === user.id || a.email === user.email,
-        );
+        const accounts: LocalAccount[] = storedAccounts ? JSON.parse(storedAccounts) : [];
+        const accountIndex = accounts.findIndex((a) => a.id === user.id || a.email === user.email);
 
         if (accountIndex >= 0) {
           accounts[accountIndex] = {
@@ -122,22 +109,29 @@ export default function ChannelConnectPage() {
             channel_details: updatedChannels,
           };
           localStorage.setItem("user_accounts", JSON.stringify(accounts));
+
+          // mock API에 채널 정보 저장 (best-effort)
+          const reviewerIdNum = user.id.includes("kakao") ? 1 : user.id.includes("naver") ? 2 : 1;
+          patchReviewerProfile(reviewerIdNum, {
+            channel_details: updatedChannels.map((ch) => ({
+              name: ch.name,
+              url: ch.url ?? "",
+              status: ch.status,
+            })),
+          }).catch(() => {});
         }
-      } catch (_error) {
-      }
+      } catch (_error) {}
     }
 
     // 캠페인 신청 모달에서 온 경우 sessionStorage에 저장
-    const shouldOpenModal = sessionStorage.getItem(
-      "shouldOpenApplicationModal",
-    );
+    const shouldOpenModal = sessionStorage.getItem("shouldOpenApplicationModal");
     if (shouldOpenModal === "true") {
       sessionStorage.setItem(
         "userChannelInfo",
         JSON.stringify({
           channelName,
           channelUrl: channelInfo.url,
-        }),
+        })
       );
     }
   };

@@ -38,6 +38,7 @@ import Loading from "./loading";
 import ConsoleFilter from "@/components/dev/ConsoleFilter";
 import BuildIdLocalStorageClear from "@/components/dev/BuildIdLocalStorageClear";
 import { AuthProvider } from "@/contexts/AuthContext";
+import ReactQueryProvider from "@/providers/ReactQueryProvider";
 
 // 전체 애플리케이션의 메타데이터 설정
 export const metadata: Metadata = {
@@ -65,15 +66,8 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
         />
         {/* Poppins 폰트 (Google Fonts) - 영문 로고용 */}
-        <link
-          rel="preconnect"
-          href="https://fonts.googleapis.com"
-        />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin=""
-        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap"
@@ -81,24 +75,23 @@ export default function RootLayout({
       </head>
 
       {/* 실제 보이는 콘텐츠 영역 (서버/클라이언트 스타일 일치로 hydration 오류 방지) */}
-      <body
-        className="antialiased"
-        style={{ WebkitTextSizeAdjust: "100%" } as React.CSSProperties}
-      >
-        <AuthProvider>
-          {/* 새 빌드 시 localStorage 비우기 (빌드 시점 ID로 판별) */}
-          <BuildIdLocalStorageClear />
-          {/* 공통 상단 헤더 (경로에 따라 파트너 헤더 또는 일반 헤더 표시) */}
-          <ConditionalHeader />
-          {/* 개발환경 콘솔 노이즈 필터 */}
-          <ConsoleFilter />
+      <body className="antialiased" style={{ WebkitTextSizeAdjust: "100%" } as React.CSSProperties}>
+        <ReactQueryProvider>
+          <AuthProvider>
+            {/* 새 빌드 시 localStorage 비우기 (빌드 시점 ID로 판별) */}
+            <BuildIdLocalStorageClear />
+            {/* 공통 상단 헤더 (경로에 따라 파트너 헤더 또는 일반 헤더 표시) */}
+            <ConditionalHeader />
+            {/* 개발환경 콘솔 노이즈 필터 */}
+            <ConsoleFilter />
 
-          {/* 메인 콘텐츠 영역 */}
-          <main>
-            {/* 페이지별 컴포넌트를 Suspense로 감싸서 로딩 처리 */}
-            <Suspense fallback={<Loading />}>{children}</Suspense>
-          </main>
-        </AuthProvider>
+            {/* 메인 콘텐츠 영역 */}
+            <main>
+              {/* 페이지별 컴포넌트를 Suspense로 감싸서 로딩 처리 */}
+              <Suspense fallback={<Loading />}>{children}</Suspense>
+            </main>
+          </AuthProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );

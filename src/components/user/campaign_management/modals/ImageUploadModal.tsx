@@ -19,6 +19,7 @@ import Image from "next/image";
 import BaseModal from "@/components/common/modal/BaseModal";
 import ContentVerificationModal from "./content_verification/ContentVerificationModal";
 import { useModalState } from "@/hooks/useModalState";
+import { postCampaignContent } from "@/lib/api/campaignContents";
 import styles from "../../../../styles/user/campaign_management/modals/campaign_modal_common.module.css";
 import type { CampaignType } from "@/types/domain/user";
 
@@ -290,7 +291,24 @@ export default function ImageUploadModal({
           onClose();
         }, 0);
       } else {
-        // TODO: 실제 API 호출로 이미지 콘텐츠 등록
+        // 실제 API 호출로 이미지 콘텐츠 등록 (mock DB: campaign_contents)
+        if (campaignId) {
+          const numericCampaignId = parseInt(campaignId.replace(/\D/g, ""), 10);
+          if (!Number.isNaN(numericCampaignId)) {
+            try {
+              await postCampaignContent({
+                campaign_id: numericCampaignId,
+                // 이미지 전용 콘텐츠는 URL이 없으므로 설명 텍스트로 대체 저장
+                content_url: "IMAGE_CONTENT",
+                submitted_at: new Date().toISOString(),
+                status: "SUBMITTED",
+                admin_comment: null,
+              });
+            } catch (_apiError) {
+              // mock 서버 오류는 UI 흐름에 영향을 주지 않도록 무시
+            }
+          }
+        }
         // 콘텐츠 확인 모달 닫기
         verificationModal.close();
         // 성공 모달 먼저 표시
