@@ -25,7 +25,7 @@ import CampaignFilterBar from "@/components/common/campaign_management/CampaignF
 import Loading from "@/app/loading";
 import type { PartnerMainTab, PartnerStatTab, PartnerCampaign } from "@/types/domain/partner";
 import layoutStyles from "@/styles/partner/partner_layout.module.css";
-import { getCampaignsByTab } from "@/data/partner/sharedCampaigns";
+import { usePartnerCampaigns } from "@/hooks/partner/campaign_management/usePartnerCampaigns";
 
 interface CampaignManagementTabPageProps {
   statTab: PartnerStatTab;
@@ -34,15 +34,13 @@ interface CampaignManagementTabPageProps {
 /**
  * 캠페인 관리 탭 페이지 공통 컴포넌트
  */
-export default function CampaignManagementTabPage({
-  statTab,
-}: CampaignManagementTabPageProps) {
+export default function CampaignManagementTabPage({ statTab }: CampaignManagementTabPageProps) {
   const [activeTab, setActiveTab] = useState<PartnerMainTab>("campaign");
   const [activeStatTab] = useState<PartnerStatTab>(statTab);
   const [filteredCampaigns, setFilteredCampaigns] = useState<PartnerCampaign[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const campaigns = getCampaignsByTab(activeStatTab);
+  const { campaigns, stats } = usePartnerCampaigns(activeStatTab);
 
   const handleFilteredCampaignsChange = (filtered: PartnerCampaign[]) => {
     setFilteredCampaigns(filtered);
@@ -74,6 +72,7 @@ export default function CampaignManagementTabPage({
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           activeStatTab={activeStatTab}
+          apiStats={stats}
         />
 
         <CampaignFilterBar
@@ -82,10 +81,7 @@ export default function CampaignManagementTabPage({
           isPartner={true}
         />
 
-        <CampaignList
-          campaigns={filteredCampaigns}
-          activeStatTab={activeStatTab}
-        />
+        <CampaignList campaigns={filteredCampaigns} activeStatTab={activeStatTab} />
       </div>
     </div>
   );

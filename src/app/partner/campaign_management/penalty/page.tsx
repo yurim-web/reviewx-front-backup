@@ -24,6 +24,7 @@ import type { PartnerStatTab } from "@/types/domain/partner";
 import layoutStyles from "@/styles/partner/partner_layout.module.css";
 import cardStyles from "../../../../styles/partner/campaign_card.module.css";
 import { partnerPenaltyData, partnerPenaltyStatus } from "@/data/partner/penaltyData";
+import { usePartnerCampaigns } from "@/hooks/partner/campaign_management/usePartnerCampaigns";
 
 /**
  * 패널티 탭 페이지 컴포넌트
@@ -39,6 +40,9 @@ export default function PenaltyPage() {
 
   // 로딩 상태
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  // 캠페인 통계 데이터 (메인 캠페인 관리 페이지와 동일한 로직 사용)
+  const { stats } = usePartnerCampaigns("전체");
 
   /**
    * 통계 탭 변경 핸들러
@@ -114,6 +118,7 @@ export default function PenaltyPage() {
           setActiveTab={setActiveTab}
           activeStatTab={activeStatTab}
           setActiveStatTab={handleStatTabChange}
+          apiStats={stats}
         />
 
         {/* 패널티 컨텐츠 영역 */}

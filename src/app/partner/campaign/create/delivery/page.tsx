@@ -22,12 +22,13 @@ import PageHeader from "@/components/partner/campaign_create_form/common/layout/
 import layoutStyles from "@/styles/partner/partner_layout.module.css";
 
 export default function DeliveryCampaignCreatePage() {
-  const { user, isSubmitting, isUrgent, setIsUrgent, handleSubmit, renderModals } = useCampaignCreate({
-    onRegister: async (formData, isUrgent) => {
-      return await registerDeliveryCampaign(formData, isUrgent, user?.id || "partner_test_001");
-    },
-    useConfirmModal: false, // delivery는 폼에서 확인 모달 처리
-  });
+  const { user, isSubmitting, isUrgent, setIsUrgent, handleSubmit, renderModals } =
+    useCampaignCreate({
+      onRegister: async (formData, isUrgent) => {
+        return await registerDeliveryCampaign(formData, isUrgent, user?.id || "partner_test_001");
+      },
+      useConfirmModal: true,
+    });
 
   // 모바일 여부 감지 및 헤더 숨기기 처리
   useEffect(() => {

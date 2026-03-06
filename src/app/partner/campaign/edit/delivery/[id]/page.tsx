@@ -34,6 +34,8 @@ import Toast from "@/components/common/toast/Toast";
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import checkboxStyles from "@/styles/partner/campaign_create/campaign_guide/checkboxes.module.css";
 import { campaignToFormData } from "@/utils/partner/campaignEdit/campaignToFormData";
+import { patchCampaign, fetchCampaignById } from "@/lib/api/partner";
+import { apiCampaignToFormData } from "@/utils/partner/campaignEdit/apiToFormData";
 
 type StoredCampaignRaw = { campaignInfo?: { id?: string }; id?: string };
 
@@ -94,8 +96,17 @@ export default function DeliveryCampaignEditPage() {
     try {
       const campaign = getCampaignById(campaignId);
       if (!campaign) {
-        setError("캠페인을 찾을 수 없습니다.");
-        setIsLoading(false);
+        // API fallback: DB에서 캠페인 조회
+        fetchCampaignById(campaignId).then((apiItem) => {
+          if (apiItem) {
+            const formData = apiCampaignToFormData(apiItem);
+            setInitialData(formData);
+            setIsOpen(isCampaignOpen(formData.recruitmentPeriod));
+          } else {
+            setError("캠페인을 찾을 수 없습니다.");
+          }
+          setIsLoading(false);
+        });
         return;
       }
 
@@ -359,7 +370,12 @@ export default function DeliveryCampaignEditPage() {
         );
       }
 
-      //      // 토스트 메시지 표시
+      // mock DB에 캠페인 수정 저장 (best-effort)
+      patchCampaign(campaignId, {
+        title: formData.title,
+        description: formData.providedItems,
+      }).catch(() => {});
+
       setToast({ is_open: true, message: "저장되었습니다." });
 
       // 페이지 새로고침

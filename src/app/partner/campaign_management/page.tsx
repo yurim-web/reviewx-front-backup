@@ -26,8 +26,8 @@ import type { PartnerStatTab } from "@/types/domain/partner";
 import type { PartnerCampaign } from "@/types/domain/partner";
 import layoutStyles from "@/styles/partner/partner_layout.module.css";
 
-// 공용 데이터 import
-import { getCampaignsByTab } from "@/data/partner/sharedCampaigns";
+// API 훅 import
+import { usePartnerCampaigns } from "@/hooks/partner/campaign_management/usePartnerCampaigns";
 
 /**
  * 파트너 캠페인 관리 메인 페이지 컴포넌트
@@ -56,8 +56,8 @@ function PartnerCampaignManagementPage() {
     sortBy?: string;
   }>({});
 
-  // 탭별 캠페인 목록 가져오기
-  const campaigns = getCampaignsByTab(activeStatTab);
+  // 탭별 캠페인 목록 (API → static fallback)
+  const { campaigns, stats } = usePartnerCampaigns(activeStatTab);
 
   /**
    * 필터 변경 핸들러
@@ -145,6 +145,7 @@ function PartnerCampaignManagementPage() {
             setActiveTab={setActiveTab}
             activeStatTab={activeStatTab}
             setActiveStatTab={setActiveStatTab}
+            apiStats={stats}
           />
 
           {/* 필터 바: 유형, 채널 필터 및 검색 */}
