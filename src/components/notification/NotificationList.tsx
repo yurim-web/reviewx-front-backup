@@ -33,6 +33,7 @@ import {
 // 확장된 알림 아이템 타입 (직접 message와 _source 필드를 포함할 수 있음)
 type ExtendedNotificationItem = NotificationItem & {
   message?: string;
+  is_read: boolean;
   _source?: string;
 };
 

@@ -74,14 +74,13 @@ const nextConfig: NextConfig = {
       // 2) SourceMapDevToolPlugin으로 CSS .map 파일 생성
       //    devtool:false를 우회해서 CSS만 별도 source map 출력
       config.plugins = config.plugins ?? [];
-      config.plugins.push(
-        new webpack.SourceMapDevToolPlugin({
-          test: /\.css(\?.*)?$/,
-          filename: "[file].map",
-          moduleFilenameTemplate: "[resource-path]",
-          fallbackModuleFilenameTemplate: "[resource-path]?[hash]",
-        })
-      );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      config.plugins.push(new webpack.SourceMapDevToolPlugin({
+        test: /\.css(\?.*)?$/,
+        filename: "[file].map",
+        moduleFilenameTemplate: "[resource-path]",
+        fallbackModuleFilenameTemplate: "[resource-path]?[hash]",
+      }) as any);
     }
     return config;
   },
