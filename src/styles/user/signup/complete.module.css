@@ -32,11 +32,6 @@
   background-color: #ffffff;
 }
 
-/* 회원가입 완료 페이지에서 헤더 보더 색상 흰색으로 */
-.complete_page_container :global(header) {
-  border-bottom-color: #ffffff;
-}
-
 /* ========================================
    2. 메인 콘텐츠 영역
    ======================================== */

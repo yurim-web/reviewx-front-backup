@@ -15,9 +15,7 @@ type CampaignWithSchedule = {
  * 정적 캠페인에 schedule, dayCount를 detailedSchedule 기준으로 계산해 붙입니다.
  * 오픈 예정이면 schedule만, 진행 중이면 dayCount만 채움.
  */
-export function enrichStaticCampaigns<T extends CampaignWithSchedule>(
-  campaigns: T[]
-): T[] {
+export function enrichStaticCampaigns<T extends CampaignWithSchedule>(campaigns: T[]): T[] {
   return campaigns.map((campaign) => {
     if (!campaign.detailedSchedule) return campaign;
     const { applicationStart, applicationEnd } = campaign.detailedSchedule;
@@ -37,7 +35,7 @@ export function enrichStaticCampaigns<T extends CampaignWithSchedule>(
       const diffTime = endDate.getTime() - today.getTime();
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       if (diffDays <= 1) return "마감임박";
-      return `D-${diffDays}`;
+      return `${diffDays}일 전`;
     };
 
     const dayCount = calculateDayCount();

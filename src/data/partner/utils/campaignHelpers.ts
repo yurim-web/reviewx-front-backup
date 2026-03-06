@@ -65,12 +65,9 @@ export const getStatusMessage = (status: string, daysLeft: number): string => {
  * - 캠페인 유형(구매평/미션형) 우선, 그 외는 브랜드명 매핑
  * - 브랜드명 정규화: 공백 제거하여 "네이버 블로그" → "네이버블로그" 변환
  */
-export const getBrandLogo = (
-  brandName: string,
-  campaignType?: string
-): string => {
+export const getBrandLogo = (brandName: string, campaignType?: string): string => {
   if (campaignType === "구매평") return "/images/brand_logo/review.svg";
-  if (campaignType === "미션형") return "/images/brand_logo/misssion.svg";
+  if (campaignType === "미션형") return "/images/brand_logo/mission.svg";
 
   // 브랜드명 정규화 (공백 제거)
   // 예: "네이버 블로그" → "네이버블로그", "네이버 클립" → "네이버클립"
@@ -92,7 +89,7 @@ export const getBrandLogo = (
     case "쇼츠":
       return "/images/brand_logo/shots.svg";
     default:
-      return "/images/icons/phone_verified.svg";
+      return "";
   }
 };
 
@@ -132,9 +129,7 @@ export const getSubStatus = (
       // 진행 탭: 선정자 수에 따라 버튼 결정
       // 선정자가 0명이면 → "당첨자 선정" 버튼만
       // 선정자가 1명 이상이면 → "콘텐츠 확인" + "콘텐츠 확인 완료" 버튼 2개
-      return selectedCount > 0
-        ? "content_review,content_approval"
-        : "winner_selection";
+      return selectedCount > 0 ? "content_review,content_approval" : "winner_selection";
     case "종료":
       // 종료 탭: 콘텐츠 확인 + 콘텐츠 확인 완료
       return "content_review,content_approval";
@@ -188,11 +183,7 @@ export function getPartnerTabByDates(
   if (recruitStart && isBefore(today, recruitStart)) return "예정";
 
   // 신청: 모집기간 내 (모집기간에 오늘 날짜가 존재할 때)
-  if (
-    recruitStart &&
-    recruitEnd &&
-    isWithinInclusive(today, recruitStart, recruitEnd)
-  ) {
+  if (recruitStart && recruitEnd && isWithinInclusive(today, recruitStart, recruitEnd)) {
     return "신청";
   }
 
@@ -211,7 +202,7 @@ export function getPartnerTabByDates(
     if (announcement) {
       return "진행";
     }
-    
+
     // 선정 발표일 정보가 없고 등록기간이 시작 전이면 예정 탭
     if (regStart && isBefore(today, regStart)) {
       return "예정";

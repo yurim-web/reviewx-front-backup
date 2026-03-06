@@ -14,6 +14,7 @@
 
 // 공통 필터 옵션에서 import
 import type { PostDivision } from "@/data/manager_ga/common/filterOptions";
+import { deleteAdminCommunityPost } from "@/lib/api/admin";
 
 // 타입 재export (기존 코드와의 호환성을 위해)
 export type { PostDivision };
@@ -610,6 +611,16 @@ export function delete_posts(post_ids: string[]): void {
   // localStorage에 저장
   save_posts_to_storage(posts_data);
   save_post_details_to_storage(current_post_details);
+
+  // mock DB(json-server)에서도 게시글 삭제 (비동기, 실패해도 UI는 유지)
+  try {
+    post_ids.forEach((post_id) => {
+      const numericId = Number(post_id);
+      void deleteAdminCommunityPost(Number.isNaN(numericId) ? post_id : numericId);
+    });
+  } catch (_apiError) {
+    // 목업 서버 오류는 UI에 영향을 주지 않음
+  }
 }
 
 /**
