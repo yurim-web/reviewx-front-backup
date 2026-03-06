@@ -70,24 +70,23 @@ export default function PartnerSubHeader() {
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth <= 768);
     check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
   }, []);
 
   // 캠페인 콘텐츠 내역 / 캠페인 신청 내역 페이지에서는 모바일에서 숨김 처리 (페이지 전용 헤더 사용)
-  const isCampaignContentsPage = pathname?.includes('/partner/campaign_contents/');
-  const isCampaignApplicationPage = pathname?.includes('/partner/campaign_application/');
-  const shouldHideOnMobile = (isCampaignContentsPage || isCampaignApplicationPage) && isMobile === true;
+  const isCampaignContentsPage = pathname?.includes("/partner/campaign_contents/");
+  const isCampaignApplicationPage = pathname?.includes("/partner/campaign_application/");
+  const shouldHideOnMobile =
+    (isCampaignContentsPage || isCampaignApplicationPage) && isMobile === true;
 
   /**
    * 알림 아이콘: 비로그인 시 무조건 비활성(알림 X), 로그인 시 알림 1개 이상이면 활성
    */
-  const has_notifications =
-    isAuthenticated && mockPartnerNotifications.length > 0;
+  const has_notifications = isAuthenticated && mockPartnerNotifications.length > 0;
 
   // 마운트 전에는 아이콘 영역을 숨김 처리 (PC 아이콘이 잠깐 보이는 깜빡임 방지)
   const iconVisibility = isMobile === null ? { visibility: "hidden" as const } : {};
-
 
   /**
    * 메인 헤더 숨기기 처리
@@ -142,49 +141,59 @@ export default function PartnerSubHeader() {
      * - 고정 위치(position: fixed)로 상단에 고정
      * - 모바일에서는 숨김 처리 (캠페인 콘텐츠 내역 페이지에서만)
      */
-    <div className={`${styles.gradient_bar} ${shouldHideOnMobile ? styles.hide_on_mobile : ''}`}>
+    <div className={`${styles.gradient_bar} ${shouldHideOnMobile ? styles.hide_on_mobile : ""}`}>
       <div className={styles.header_controls}>
         {/* 뒤로가기 버튼 */}
-        <button
-          className={styles.back_button}
-          onClick={handleGoBack}
-          aria-label="뒤로가기"
-        >
+        <button className={styles.back_button} onClick={handleGoBack} aria-label="뒤로가기">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/images/header/header_arrow_back.svg" alt="뒤로가기" />
         </button>
 
         {/* 오른쪽 아이콘 그룹 - 마운트 전 visibility:hidden으로 PC 아이콘 깜빡임 방지 */}
         <div className={styles.right_icons} style={iconVisibility}>
           {/* 새 캠페인 등록: PC에서는 버튼, 모바일에서는 아이콘 */}
-          {user && (isMobile ? (
-            <Link
-              href="/partner/campaign/create"
-              className={styles.notification_icon}
-              aria-label="새 캠페인 등록"
-            >
-              <img src="/images/header/mobile/mo_partner_campaign.svg" alt="새 캠페인 등록" />
-            </Link>
-          ) : (
-            <Link href="/partner/campaign/create" className={styles.new_campaign_button}>
-              새 캠페인 등록
-            </Link>
-          ))}
+          {user &&
+            (isMobile ? (
+              <Link
+                href="/partner/campaign/create"
+                className={styles.notification_icon}
+                aria-label="새 캠페인 등록"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/images/header/mobile/mo_partner_campaign.svg" alt="새 캠페인 등록" />
+              </Link>
+            ) : (
+              <Link href="/partner/campaign/create" className={styles.new_campaign_button}>
+                새 캠페인 등록
+              </Link>
+            ))}
 
           {/* 검색 아이콘 */}
           <HeaderSearch
-            searchIconSrc={isMobile
-              ? "/images/header/mobile/mo_search.svg"
-              : "/images/header/header_search.svg"}
+            searchIconSrc={
+              isMobile ? "/images/header/mobile/mo_search.svg" : "/images/header/header_search.svg"
+            }
             search_path="/partner/search"
           />
 
           {/* 알림 아이콘 */}
           {user && (
-            <Link href="/partner/notification" className={styles.notification_icon} aria-label="알림">
+            <Link
+              href="/partner/notification"
+              className={styles.notification_icon}
+              aria-label="알림"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={isMobile
-                  ? (has_notifications ? "/images/header/mobile/mo_notification_ok.svg" : "/images/header/mobile/mo_notification_icon.svg")
-                  : (has_notifications ? "/images/header/notification_ok.svg" : "/images/header/notification_icon.svg")}
+                src={
+                  isMobile
+                    ? has_notifications
+                      ? "/images/header/mobile/mo_notification_ok.svg"
+                      : "/images/header/mobile/mo_notification_icon.svg"
+                    : has_notifications
+                      ? "/images/header/notification_ok.svg"
+                      : "/images/header/notification_icon.svg"
+                }
                 alt="알림"
               />
             </Link>
@@ -199,16 +208,22 @@ export default function PartnerSubHeader() {
               className={styles.bookmark_icon}
               aria-label="가이드북"
             >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/images/header/header_book.svg" alt="가이드북" />
             </a>
           )}
 
           {/* 사용자 아이콘 */}
-          <Link href="/partner/campaign_management" className={styles.user_icon} aria-label="마이페이지">
+          <Link
+            href="/partner/campaign_management"
+            className={styles.user_icon}
+            aria-label="마이페이지"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={isMobile
-                ? "/images/header/mobile/mo_user.svg"
-                : "/images/header/header_user.svg"}
+              src={
+                isMobile ? "/images/header/mobile/mo_user.svg" : "/images/header/header_user.svg"
+              }
               alt="사용자"
             />
           </Link>

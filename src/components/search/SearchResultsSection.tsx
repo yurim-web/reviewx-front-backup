@@ -115,6 +115,7 @@ export default function SearchResultsSection({ campaigns }: SearchResultsSection
             onClick={handle_click_sort_button}
           >
             <span>{selected_sort}</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/images/filter/dropdown_icon.svg"
               alt="정렬"

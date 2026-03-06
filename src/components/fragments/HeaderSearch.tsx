@@ -123,6 +123,7 @@ export default function HeaderSearch({
             aria-label="검색"
           >
             {/* 검색창이 열렸을 때 사용하는 내부 검색 아이콘 */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/images/header/header_search_inner.svg" alt="검색" />
           </button>
         </div>
@@ -133,6 +134,7 @@ export default function HeaderSearch({
           onClick={handle_click_search_toggle}
           aria-label="검색 열기"
         >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={searchIconSrc} alt="검색" suppressHydrationWarning />
         </button>
       )}

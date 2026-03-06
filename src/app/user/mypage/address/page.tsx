@@ -35,6 +35,7 @@ import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import AddressInput from "@/components/common/mypage/AddressInput";
 import { useAuth } from "@/hooks/useAuth";
+import { patchReviewerProfile } from "@/lib/api/reviewer";
 import layoutStyles from "@/styles/user/mypage/edit_profile/edit_profile_layout.module.css";
 import buttonStyles from "@/styles/user/mypage/edit_profile/profile_buttons.module.css";
 
@@ -77,9 +78,7 @@ export default function AddressPage() {
         const storedAccounts = localStorage.getItem("user_accounts");
         if (storedAccounts) {
           const accounts = JSON.parse(storedAccounts) as LocalAccount[];
-          const userAccount = accounts.find(
-            (a) => a.id === user.id || a.email === user.email,
-          );
+          const userAccount = accounts.find((a) => a.id === user.id || a.email === user.email);
 
           if (userAccount?.address_details) {
             setAddressData({
@@ -117,8 +116,7 @@ export default function AddressPage() {
             detailAddress: parsedAddress.detailAddress || "",
           });
         }
-      } catch (_error) {
-      }
+      } catch (_error) {}
     }
   }, [user]);
 
@@ -185,25 +183,16 @@ export default function AddressPage() {
 
     // 전체 주소 문자열 생성 (기본 주소 + 상세 주소 | 우편번호 + 우편번호값)
     // 예: "인천 남동구 장자로 6번길 2, 1층 | 우편번호 12345"
-    const addressPart =
-      `${addressData.address} ${addressData.detailAddress}`.trim();
-    const postalCodePart = addressData.postalCode
-      ? `우편번호 ${addressData.postalCode}`
-      : "";
-    const fullAddress = postalCodePart
-      ? `${addressPart} | ${postalCodePart}`
-      : addressPart;
+    const addressPart = `${addressData.address} ${addressData.detailAddress}`.trim();
+    const postalCodePart = addressData.postalCode ? `우편번호 ${addressData.postalCode}` : "";
+    const fullAddress = postalCodePart ? `${addressPart} | ${postalCodePart}` : addressPart;
 
     if (typeof window !== "undefined" && user) {
       try {
         const storedAccounts = localStorage.getItem("user_accounts");
-        const accounts: LocalAccount[] = storedAccounts
-          ? JSON.parse(storedAccounts)
-          : [];
+        const accounts: LocalAccount[] = storedAccounts ? JSON.parse(storedAccounts) : [];
 
-        const accountIndex = accounts.findIndex(
-          (a) => a.id === user.id || a.email === user.email,
-        );
+        const accountIndex = accounts.findIndex((a) => a.id === user.id || a.email === user.email);
 
         if (accountIndex >= 0) {
           accounts[accountIndex] = {
@@ -215,9 +204,16 @@ export default function AddressPage() {
             },
           };
           localStorage.setItem("user_accounts", JSON.stringify(accounts));
+
+          // mock API에 주소 정보 저장 (best-effort)
+          const reviewerIdNum = user.id.includes("kakao") ? 1 : user.id.includes("naver") ? 2 : 1;
+          patchReviewerProfile(reviewerIdNum, {
+            postal_code: addressData.postalCode,
+            address: addressData.address,
+            detail_address: addressData.detailAddress,
+          }).catch(() => {});
         }
-      } catch (_error) {
-      }
+      } catch (_error) {}
     }
 
     if (typeof window !== "undefined") {
@@ -228,7 +224,7 @@ export default function AddressPage() {
           address: addressData.address,
           detailAddress: addressData.detailAddress,
           fullAddress,
-        }),
+        })
       );
     }
 

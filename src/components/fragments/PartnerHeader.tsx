@@ -105,6 +105,7 @@ export default function PartnerHeader() {
     <header className={styles.header_root}>
       <nav className={styles.header_container}>
         <Link href="/partner" className={styles.header_logo} style={iconVisibility}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={logoSrc} alt="VX 로고" />
         </Link>
         <div className={styles.menu_icon_box} style={iconVisibility}>
@@ -116,6 +117,7 @@ export default function PartnerHeader() {
                 className={styles.notification_icon}
                 aria-label="새 캠페인 등록"
               >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/images/header/mobile/mo_partner_campaign.svg" alt="새 캠페인 등록" />
               </Link>
             ) : (
@@ -134,6 +136,7 @@ export default function PartnerHeader() {
               className={styles.notification_icon}
               aria-label="알림"
             >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={notificationIconSrc} alt="알림" />
             </Link>
           )}
@@ -147,6 +150,7 @@ export default function PartnerHeader() {
               className={styles.bookmark_icon}
               aria-label="가이드북"
             >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/images/header/header_book.svg" alt="가이드북" />
             </a>
           )}
@@ -157,6 +161,7 @@ export default function PartnerHeader() {
             className={styles.user_icon}
             aria-label="마이페이지"
           >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={userIconSrc} alt="사용자" />
           </Link>
         </div>

@@ -29,11 +29,7 @@ interface PageTitleProps {
   right_content?: ReactNode;
 }
 
-export default function PageTitle({
-  title,
-  className,
-  right_content,
-}: PageTitleProps) {
+export default function PageTitle({ title, className, right_content }: PageTitleProps) {
   const router = useRouter();
   const combinedClassName = className
     ? `${styles.page_title} ${className}`.trim()
@@ -47,17 +43,11 @@ export default function PageTitle({
         onClick={() => router.back()}
         aria-label="뒤로가기"
       >
-        <img
-          src="/images/header/mobile/mo_back_btn.svg"
-          alt="뒤로가기"
-          width={16}
-          height={16}
-        />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/images/header/mobile/mo_back_btn.svg" alt="뒤로가기" />
       </button>
       <h1 className={combinedClassName}>{title}</h1>
-      {right_content && (
-        <div className={styles.page_title_right}>{right_content}</div>
-      )}
+      {right_content && <div className={styles.page_title_right}>{right_content}</div>}
     </div>
   );
 }
