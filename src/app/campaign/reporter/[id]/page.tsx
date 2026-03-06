@@ -24,6 +24,8 @@ import Toast from "@/components/common/toast/Toast";
 import { reporterCampaignsExtended } from "@/data/campaign/reporter/reporterCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import type { ReporterCampaignData } from "@/data/campaign/reporter/reporterCampaigns";
+import { useCampaignDetail } from "@/hooks/user/campaign/useCampaignDetail";
+import type { CampaignDetailAdapted } from "@/hooks/user/campaign/useCampaignDetail";
 
 interface ReporterDetailPageProps {
   params: Promise<{ id: string }>;
@@ -228,6 +230,34 @@ function convertToReporterCampaignData(
   };
 }
 
+function adaptApiToReporter(api: CampaignDetailAdapted): ReporterCampaignData {
+  return {
+    id: api.id,
+    title: api.title,
+    category: "기자단",
+    image: api.image,
+    subcategory: api.subcategory,
+    points: api.points,
+    description: api.description,
+    recruitment: api.recruitment,
+    schedule: api.schedule,
+    dayCount: api.dayCount,
+    detailedSchedule: {
+      applicationStart: api.detailedSchedule.applicationStart,
+      applicationEnd: api.detailedSchedule.applicationEnd,
+      announcement: api.detailedSchedule.announcement,
+      registrationPeriod: api.detailedSchedule.registrationPeriod,
+    },
+    campaign_detail_image: api.image,
+    campaign_detail_images: [api.image],
+    channel: api.channel,
+    keyword: api.keyword,
+    requirements: api.requirements,
+    guidelineTexts: api.guidelineTexts,
+    isUrgent: api.isUrgent,
+  };
+}
+
 export default function ReporterDetailPage({ params }: ReporterDetailPageProps) {
   const { id } = use(params);
   const [campaign, setCampaign] = useState<ReporterCampaignData | null>(null);
@@ -235,11 +265,20 @@ export default function ReporterDetailPage({ params }: ReporterDetailPageProps) 
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
-  // 목업 데이터를 우선으로 확인 (목업 데이터가 있으면 무조건 표시), 그 다음 localStorage 확인
+  const { data: apiCampaign, isLoading: isApiLoading } = useCampaignDetail(id);
+
   useEffect(() => {
+    if (isApiLoading) return;
+
+    if (apiCampaign) {
+      setCampaign(adaptApiToReporter(apiCampaign));
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
 
-    // 1. 목업 데이터에서 먼저 찾기 (Extended 버전 사용 - guidelineTexts 포함)
+    // 1. 정적 목업 데이터에서 먼저 찾기
     const normalizedUrlId = id.startsWith("reporter_") ? id.replace(/^reporter_/, "") : id;
 
     const staticCampaign = reporterCampaignsExtended.find((c) => {
@@ -287,7 +326,7 @@ export default function ReporterDetailPage({ params }: ReporterDetailPageProps) 
     // 3. 목업과 localStorage 모두에서 찾지 못한 경우
     setCampaign(null);
     setIsLoading(false);
-  }, [id]);
+  }, [id, apiCampaign, isApiLoading]);
 
   // 로딩 중일 때는 아무것도 표시하지 않음 (또는 로딩 스피너 표시)
   if (isLoading) {

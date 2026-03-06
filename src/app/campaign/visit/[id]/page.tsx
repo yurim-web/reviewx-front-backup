@@ -24,6 +24,8 @@ import Toast from "@/components/common/toast/Toast";
 import { visitCampaignsExtended } from "@/data/campaign/visit/visitCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import type { VisitCampaignData } from "@/data/campaign/visit/visitCampaigns";
+import { useCampaignDetail } from "@/hooks/user/campaign/useCampaignDetail";
+import type { CampaignDetailAdapted } from "@/hooks/user/campaign/useCampaignDetail";
 
 interface VisitDetailPageProps {
   params: Promise<{ id: string }>;
@@ -243,6 +245,39 @@ function convertToVisitCampaignData(
   };
 }
 
+function adaptApiToVisit(api: CampaignDetailAdapted): VisitCampaignData {
+  return {
+    id: api.id,
+    title: api.title,
+    category: "방문형",
+    image: api.image,
+    subcategory: api.subcategory,
+    points: api.points,
+    description: api.description,
+    recruitment: api.recruitment,
+    schedule: api.schedule,
+    dayCount: api.dayCount,
+    region: (api as CampaignDetailAdapted & { region?: string }).region ?? "",
+    detailedSchedule: {
+      applicationStart: api.detailedSchedule.applicationStart,
+      applicationEnd: api.detailedSchedule.applicationEnd,
+      announcement: api.detailedSchedule.announcement,
+      purchasePeriod: api.detailedSchedule.purchasePeriod,
+      registrationPeriod: api.detailedSchedule.registrationPeriod,
+    },
+    campaign_detail_image: api.image,
+    campaign_detail_images: [api.image],
+    channel: api.channel,
+    keyword: api.keyword,
+    requirements: api.requirements,
+    guidelineTexts: api.guidelineTexts,
+    isUrgent: api.isUrgent,
+    visitAddress: api.visitAddress,
+    addressGuide: "",
+    visitLink: "",
+  };
+}
+
 export default function VisitDetailPage({ params }: VisitDetailPageProps) {
   const { id } = use(params);
   const [campaign, setCampaign] = useState<VisitCampaignData | null>(null);
@@ -250,11 +285,20 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
-  // 목업 데이터를 우선으로 확인 (목업 데이터가 있으면 무조건 표시), 그 다음 localStorage 확인
+  const { data: apiCampaign, isLoading: isApiLoading } = useCampaignDetail(id);
+
   useEffect(() => {
+    if (isApiLoading) return;
+
+    if (apiCampaign) {
+      setCampaign(adaptApiToVisit(apiCampaign));
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
 
-    // 1. 목업 데이터에서 먼저 찾기 (Extended 버전 사용 - guidelineTexts, applicantData 포함)
+    // 1. 정적 목업 데이터에서 먼저 찾기
     const normalizedUrlId = id.startsWith("visit_") ? id.replace(/^visit_/, "") : id;
 
     const staticCampaign = visitCampaignsExtended.find((c) => {
@@ -302,7 +346,7 @@ export default function VisitDetailPage({ params }: VisitDetailPageProps) {
     // 3. 목업과 localStorage 모두에서 찾지 못한 경우
     setCampaign(null);
     setIsLoading(false);
-  }, [id]);
+  }, [id, apiCampaign, isApiLoading]);
 
   // 로딩 중일 때는 아무것도 표시하지 않음 (또는 로딩 스피너 표시)
   if (isLoading) {
