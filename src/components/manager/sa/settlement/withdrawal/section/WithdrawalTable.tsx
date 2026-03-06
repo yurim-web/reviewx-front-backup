@@ -22,7 +22,8 @@ import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
 import styles from "@/styles/manager_sa/settlement/withdrawal/withdrawal_table.module.css";
-import { withdrawalList, type WithdrawalItem } from "@/data/manager_sa/settlement/withdrawalData";
+import { type WithdrawalItem } from "@/data/manager_sa/settlement/withdrawalData";
+import { useAdminWithdrawal } from "@/hooks/manager/ga/useAdminWithdrawal";
 import MemberStatusTag from "@/components/manager/common/tags/MemberStatusTag";
 import type { MemberStatus } from "@/components/manager/common/tags/MemberStatusTag";
 import PayoutStatusTag from "@/components/manager/common/tags/PayoutStatusTag";
@@ -53,6 +54,9 @@ export default function WithdrawalTable({
   // 선택된 항목 ID 배열 관리
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
+  // API 또는 static fallback 데이터
+  const { withdrawals: api_withdrawals } = useAdminWithdrawal();
+
   // localStorage에서 출금 완료 내역 로드
   const [withdrawal_history, set_withdrawal_history] = useState<WithdrawalItem[]>([]);
 
@@ -82,8 +86,8 @@ export default function WithdrawalTable({
     paymentDate: "date",
   };
 
-  // 목업 데이터와 실제 데이터 합치기
-  const all_withdrawal_list = [...withdrawalList, ...withdrawal_history];
+  // API 데이터(또는 static fallback)와 localStorage 내역 합치기
+  const all_withdrawal_list = [...api_withdrawals, ...withdrawal_history];
 
   // 검색어 및 필터로 필터링된 출금 현황 목록
   const filtered_withdrawal_list = all_withdrawal_list.filter((item) => {

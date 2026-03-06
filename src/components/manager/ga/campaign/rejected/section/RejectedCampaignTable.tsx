@@ -49,6 +49,8 @@ import { type TableColumn, type TableRowData } from "@/components/manager/common
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
 
 interface RejectedCampaignTableProps {
+  // API 데이터 (제공 시 정적 데이터 대신 사용)
+  rejections?: RejectedCampaignItem[];
   search_query: string;
   selected_reject_codes: RejectCode[];
   selected_date_range?: DateRange | undefined;
@@ -114,6 +116,7 @@ const get_columns = (styles: Record<string, string>): TableColumn[] => [
 ];
 
 export default function RejectedCampaignTable({
+  rejections,
   search_query,
   selected_reject_codes,
   selected_date_range,
@@ -236,8 +239,8 @@ export default function RejectedCampaignTable({
     RejectedCampaignItem,
     RejectCode
   >({
-    static_data: rejected_campaign_list,
-    get_dynamic_data: get_rejected_campaign_list,
+    static_data: rejections ?? rejected_campaign_list,
+    get_dynamic_data: rejections ? () => rejections : get_rejected_campaign_list,
     search_query,
     selected_codes: selected_reject_codes,
     selected_date_range,

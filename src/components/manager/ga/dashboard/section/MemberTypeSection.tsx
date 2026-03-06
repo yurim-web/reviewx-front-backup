@@ -15,8 +15,8 @@ import { useMemo, useState, useEffect } from "react";
 import { parse, differenceInDays, subDays } from "date-fns";
 import styles from "@/styles/manager_ga/dashboard/sections/member_type_section.module.css";
 import MemberTypeBarChart from "../chart/MemberTypeBarChart";
-import { get_reviewer_list } from "@/data/manager_ga/member/reviewers";
-import { get_partner_list } from "@/data/manager_ga/member/partners";
+import { useAdminReviewers } from "@/hooks/manager/ga/useAdminReviewers";
+import { useAdminPartners } from "@/hooks/manager/ga/useAdminPartners";
 import type { DateRange } from "./DateRangePickerModal";
 
 interface MemberTypeSectionProps {
@@ -30,6 +30,10 @@ export default function MemberTypeSection({ dateRange }: MemberTypeSectionProps)
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  // React Query 훅으로 데이터 로드 (API 우선, 정적 데이터 fallback)
+  const { reviewers } = useAdminReviewers();
+  const { partners } = useAdminPartners();
 
   // 날짜 범위에 따라 회원 유형 통계 계산
   const stats = useMemo(() => {
@@ -65,10 +69,6 @@ export default function MemberTypeSection({ dateRange }: MemberTypeSectionProps)
         totalReviewersChange: { percentage: 0, type: "neutral" as const },
       };
     }
-
-    // 리뷰어와 파트너 목록 가져오기
-    const reviewers = get_reviewer_list();
-    const partners = get_partner_list();
 
     // 날짜 범위 설정 (시간 부분 제거)
     const start_date = new Date(dateRange.from);
@@ -230,7 +230,7 @@ export default function MemberTypeSection({ dateRange }: MemberTypeSectionProps)
       totalPartnersChange: total_partners_change,
       totalReviewersChange: total_reviewers_change,
     };
-  }, [dateRange, isClient]);
+  }, [dateRange, isClient, reviewers, partners]);
 
   // 숫자를 천 단위로 포맷팅하는 함수
   const format_number = (num: number): string => {

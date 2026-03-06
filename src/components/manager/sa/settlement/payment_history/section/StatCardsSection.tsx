@@ -15,10 +15,8 @@
 
 import { useMemo } from "react";
 import styles from "@/styles/manager/common/settlement/stat_cards_section.module.css";
-import {
-  getPaymentHistoryList,
-  type PaymentHistoryItem,
-} from "@/data/manager_sa/settlement/paymentHistoryData";
+import { type PaymentHistoryItem } from "@/data/manager_sa/settlement/paymentHistoryData";
+import { useAdminPayments } from "@/hooks/manager/ga/useAdminPayments";
 import { parseFormattedAmount, formatCurrency } from "@/utils/formatting/amount";
 import { isDateInRange, getCurrentWeekRange, getCurrentMonthRange } from "@/utils/formatting/date";
 import type { DateRange } from "@/components/manager/ga/dashboard/section/DateRangePickerModal";
@@ -48,12 +46,12 @@ export default function StatCardsSection({
   selected_member_types = [],
   selected_account_statuses = [],
 }: StatCardsSectionProps) {
+  // API 또는 static fallback 데이터
+  const { payments: api_payments } = useAdminPayments();
+
   // 필터링된 데이터를 계산하는 useMemo
-  // 학습 포인트:
-  // - useMemo: 의존성 배열의 값이 변경될 때만 함수를 실행하여 성능을 최적화합니다
-  // - 테이블과 동일한 필터링 로직을 사용합니다
   const filtered_data = useMemo(() => {
-    const list = getPaymentHistoryList();
+    const list = api_payments;
     return list.filter((item) => {
       // 날짜 범위 필터 (신청일 기준)
       if (selected_date_range?.from && selected_date_range?.to) {
@@ -130,6 +128,7 @@ export default function StatCardsSection({
       return true;
     });
   }, [
+    api_payments,
     selected_date_range,
     selected_business_types,
     selected_payment_methods,

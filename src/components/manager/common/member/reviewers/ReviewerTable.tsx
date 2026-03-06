@@ -20,14 +20,13 @@ import ReviewerTableCommon, {
 import styles from "@/styles/manager/common/member/reviewers/reviewer_table.module.css";
 
 import type { Channel } from "@/data/manager/common/filterOptions";
-import type {
-  ReviewerStatus,
-  ReviewerStatusType,
-} from "@/data/manager_ga/common/filterOptions";
-
+import type { ReviewerStatus, ReviewerStatusType } from "@/data/manager_ga/common/filterOptions";
+import type { ReviewerItem } from "@/data/manager_ga/member/reviewers";
 import type { ReviewerGrade } from "@/components/manager/common/member/reviewers/filter/GradeFilterModal";
 
 interface ReviewerTableProps {
+  // API 데이터 (제공 시 정적 데이터 대신 사용)
+  reviewers?: ReviewerItem[];
   // 검색어
   search_query: string;
   // 필터 상태
@@ -40,70 +39,70 @@ interface ReviewerTableProps {
 }
 
 // forwardRef를 사용하여 ref를 ReviewerTableCommon에 전달합니다
-const ReviewerTable = forwardRef<ReviewerTableRef, ReviewerTableProps>(
-  function ReviewerTable(
-    {
-      search_query,
-      selected_channels,
-      selected_grades,
-      selected_types,
-      selected_statuses,
-      detail_path,
-    },
-    ref
-  ) {
-    return (
-      <ReviewerTableCommon
-        ref={ref}
-        search_query={search_query}
-        selected_channels={selected_channels}
-        selected_grades={selected_grades}
-        selected_types={selected_types}
-        selected_statuses={selected_statuses}
-        styles={
-          styles as {
-            table_container: string;
-            table_grid_wrapper: string;
-            table_header_wrapper: string;
-            table_header: string;
-            table_body: string;
-            table_row: string;
-            table_cell_checkbox: string;
-            table_cell_number: string;
-            table_cell_name: string;
-            table_cell_channel: string;
-            table_cell_type: string;
-            table_cell_last_access: string;
-            table_cell_join_date: string;
-            table_cell_campaign_participated: string;
-            table_cell_campaign_completed: string;
-            table_cell_current_points: string;
-            table_cell_withdrawn_points: string;
-            table_cell_status_type: string;
-            table_cell_status: string;
-            checkbox: string;
-            sort_icon: string;
-            channel_icons: string;
-            channel_icon_wrapper: string;
-            channel_icon: string;
-            type_tag: string;
-            type_tag_supporter: string;
-            type_tag_normal: string;
-            type_tag_influencer: string;
-            status_tag: string;
-            status_tag_normal: string;
-            status_tag_suspended: string;
-            status_tag_permanent: string;
-            restriction_button: string;
-            restriction_button_icon: string;
-            restriction_button_text: string;
-            empty_message: string;
-          }
+const ReviewerTable = forwardRef<ReviewerTableRef, ReviewerTableProps>(function ReviewerTable(
+  {
+    reviewers,
+    search_query,
+    selected_channels,
+    selected_grades,
+    selected_types,
+    selected_statuses,
+    detail_path,
+  },
+  ref
+) {
+  return (
+    <ReviewerTableCommon
+      ref={ref}
+      reviewers={reviewers}
+      search_query={search_query}
+      selected_channels={selected_channels}
+      selected_grades={selected_grades}
+      selected_types={selected_types}
+      selected_statuses={selected_statuses}
+      styles={
+        styles as {
+          table_container: string;
+          table_grid_wrapper: string;
+          table_header_wrapper: string;
+          table_header: string;
+          table_body: string;
+          table_row: string;
+          table_cell_checkbox: string;
+          table_cell_number: string;
+          table_cell_name: string;
+          table_cell_channel: string;
+          table_cell_type: string;
+          table_cell_last_access: string;
+          table_cell_join_date: string;
+          table_cell_campaign_participated: string;
+          table_cell_campaign_completed: string;
+          table_cell_current_points: string;
+          table_cell_withdrawn_points: string;
+          table_cell_status_type: string;
+          table_cell_status: string;
+          checkbox: string;
+          sort_icon: string;
+          channel_icons: string;
+          channel_icon_wrapper: string;
+          channel_icon: string;
+          type_tag: string;
+          type_tag_supporter: string;
+          type_tag_normal: string;
+          type_tag_influencer: string;
+          status_tag: string;
+          status_tag_normal: string;
+          status_tag_suspended: string;
+          status_tag_permanent: string;
+          restriction_button: string;
+          restriction_button_icon: string;
+          restriction_button_text: string;
+          empty_message: string;
         }
-        detail_path={detail_path}
-      />
-    );
-  }
-);
+      }
+      detail_path={detail_path}
+    />
+  );
+});
 
 export default ReviewerTable;

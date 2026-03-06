@@ -34,8 +34,8 @@ import {
 } from "date-fns";
 import styles from "@/styles/manager_ga/dashboard/charts.module.css";
 import type { DateRange } from "../section/DateRangePickerModal";
-import { get_rejected_campaign_list } from "@/data/manager_ga/rejected";
-import { get_reported_campaign_list } from "@/data/manager_ga/reported";
+import { useAdminRejections } from "@/hooks/manager/ga/useAdminRejections";
+import { useAdminReports } from "@/hooks/manager/ga/useAdminReports";
 
 // 차트 데이터 타입 정의
 interface ChartData {
@@ -82,6 +82,10 @@ const CustomTooltip = ({ active, payload, coordinate }: ChartTooltipProps) => {
 };
 
 export default function RejectionReportChart({ dateRange }: RejectionReportChartProps) {
+  // React Query 훅으로 데이터 로드 (API 우선, 정적 데이터 fallback)
+  const { rejections: rejected_list_data } = useAdminRejections();
+  const { reports: reported_list_data } = useAdminReports();
+
   // 데이터 로딩 상태 관리
   const [is_loading, setIsLoading] = useState<boolean>(true);
   const [error_message, setErrorMessage] = useState<string | null>(null);
@@ -176,9 +180,9 @@ export default function RejectionReportChart({ dateRange }: RejectionReportChart
           end: chart_end_date,
         });
 
-        // 반려 내역과 신고 내역 데이터 가져오기
-        const rejected_list = get_rejected_campaign_list();
-        const reported_list = get_reported_campaign_list();
+        // 반려 내역과 신고 내역 데이터 (API 우선, 정적 fallback)
+        const rejected_list = rejected_list_data;
+        const reported_list = reported_list_data;
 
         // 날짜별로 반려/신고 건수 집계
         const data_map = new Map<string, { rejection: number; report: number }>();
@@ -279,7 +283,7 @@ export default function RejectionReportChart({ dateRange }: RejectionReportChart
     };
 
     load_data();
-  }, [dateRange]);
+  }, [dateRange, rejected_list_data, reported_list_data]);
 
   // 데이터가 없거나 에러가 발생한 경우 에러 메시지 표시
   if (error_message || (!is_loading && chart_data.length === 0)) {
