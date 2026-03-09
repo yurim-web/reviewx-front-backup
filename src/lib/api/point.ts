@@ -45,8 +45,8 @@ export const fetchPointHistory = (reviewerId: number): Promise<PointHistoryApiIt
 export const postWithdrawalRequest = (body: WithdrawalPostBody): Promise<{ id: number }> =>
   apiClient.post<{ id: number }>("/reviewer/mypage/withdrawal", body).then((res) => res.data);
 
-/** 출금 승인 (PATCH /admin/withdrawal/:id → /withdrawal_requests/:id) */
+/** 출금 상태 변경 (승인/반려) (PATCH /admin/withdrawal/:id → /withdrawal_requests/:id) */
 export const patchWithdrawalStatus = (
   id: number,
-  body: { status: string; processed_date: string }
+  body: { status: string; processed_date: string; rejection_reason?: string }
 ): Promise<void> => apiClient.patch(`/admin/withdrawal/${id}`, body).then(() => undefined);

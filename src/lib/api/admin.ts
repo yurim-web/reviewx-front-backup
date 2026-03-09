@@ -45,6 +45,10 @@ export const fetchAdminReviewers = (): Promise<AdminReviewerApiItem[]> =>
     .get<AdminReviewerApiItem[]>("/admin/reviewer")
     .then((res) => asArray<AdminReviewerApiItem>(res.data));
 
+/** 리뷰어 상세 조회  GET /admin/reviewer/:id → /reviewers/:id */
+export const fetchAdminReviewerDetail = (id: number): Promise<AdminReviewerApiItem> =>
+  apiClient.get<AdminReviewerApiItem>(`/admin/reviewer/${id}`).then((res) => res.data);
+
 /** 파트너 목록 조회  GET /admin/partner */
 export const fetchAdminPartners = (): Promise<AdminPartnerApiItem[]> =>
   apiClient
