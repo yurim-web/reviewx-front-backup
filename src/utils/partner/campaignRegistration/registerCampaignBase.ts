@@ -202,13 +202,18 @@ export async function registerCampaignBase(
       config.storageKey
     );
 
-    // mock DB에 캠페인 저장 (DB 스키마 호환 payload)
-    if (saved) {
-      const dbPayload = buildDbPayload(processedFormData, config.imageUrl, userId);
-      postPartnerCampaign(dbPayload).catch(() => {});
+    if (!saved) return false;
+
+    // mock DB에 캠페인 저장 (DB 스키마 호환 payload, 서버 응답 확인)
+    const dbPayload = buildDbPayload(processedFormData, config.imageUrl, userId);
+    try {
+      await postPartnerCampaign(dbPayload);
+    } catch (_apiError) {
+      // mock 서버 미실행 시에도 localStorage 저장은 완료됐으므로 성공 처리
+      console.warn("캠페인 등록 API 호출 실패 (localStorage 저장 완료):", _apiError);
     }
 
-    return saved;
+    return true;
   } catch (_error) {
     return false;
   }

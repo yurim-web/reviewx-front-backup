@@ -16,29 +16,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchReviewerPoint, postWithdrawalRequest } from "@/lib/api/point";
 import { pointSummary } from "@/data/user/point/pointData";
-
-interface LocalUserAccount {
-  id?: string;
-  email?: string;
-  account_holder?: string;
-  name?: string;
-  bank?: string;
-  account_number?: string;
-  ssn_front?: string;
-  ssn_back?: string;
-  available_points?: number;
-  pending_points?: number;
-  last_withdrawal_date?: string;
-  point_history?: {
-    id: string;
-    type: string;
-    amount: number;
-    description: string;
-    date: string;
-    status: string;
-    balance: number;
-  }[];
-}
+import { useReviewerProfile } from "@/hooks/user/mypage/useReviewerProfile";
 
 export interface WithdrawalUserInfo {
   name: string;
@@ -55,7 +33,7 @@ export interface UseWithdrawalInfoReturn {
   getDaysSinceLastWithdrawal: () => number | null;
   canWithdraw: () => boolean;
   isAccountInfoValid: () => boolean;
-  submitWithdrawal: (amount: number, netAmount: number) => void;
+  submitWithdrawal: (amount: number, netAmount: number) => Promise<boolean>;
 }
 
 function getReviewerId(userId: string): number {
@@ -67,6 +45,7 @@ function getReviewerId(userId: string): number {
 export function useWithdrawalInfo(): UseWithdrawalInfoReturn {
   const { user } = useAuth();
   const reviewerId = user ? getReviewerId(user.id) : 0;
+  const { data: profile } = useReviewerProfile(user?.id);
 
   // 포인트 잔액 (API)
   const { data: reviewerData } = useQuery({
@@ -85,35 +64,18 @@ export function useWithdrawalInfo(): UseWithdrawalInfoReturn {
     lastWithdrawalDate: null,
   });
 
+  // 서버 프로필에서 계좌 정보 로드
   useEffect(() => {
-    if (typeof window !== "undefined" && user) {
-      try {
-        const storedAccounts = localStorage.getItem("user_accounts");
-        if (storedAccounts) {
-          const accounts: LocalUserAccount[] = JSON.parse(storedAccounts);
-          const userAccount = accounts.find((a) => a.id === user.id || a.email === user.email);
-          if (userAccount) {
-            setUserInfo({
-              name: userAccount.account_holder ?? userAccount.name ?? "",
-              bank: userAccount.bank ?? "",
-              accountNumber: userAccount.account_number ?? "",
-              residentNumber:
-                userAccount.ssn_front && userAccount.ssn_back
-                  ? `${userAccount.ssn_front}-${userAccount.ssn_back}`
-                  : "",
-              // availablePoints는 useEffect 밖에서 API 데이터로 덮어씀
-              availablePoints: userAccount.available_points ?? 0,
-              lastWithdrawalDate: userAccount.last_withdrawal_date
-                ? new Date(userAccount.last_withdrawal_date)
-                : null,
-            });
-          }
-        }
-      } catch {
-        // localStorage 읽기 실패 시 무시
-      }
-    }
-  }, [user]);
+    if (!user || !profile) return;
+    setUserInfo((prev) => ({
+      ...prev,
+      name: profile.account_holder ?? profile.name ?? "",
+      bank: profile.bank ?? "",
+      accountNumber: profile.account_number ?? "",
+      residentNumber:
+        profile.ssn_front && profile.ssn_back ? `${profile.ssn_front}-${profile.ssn_back}` : "",
+    }));
+  }, [user, profile]);
 
   const calculateNetAmount = (amount: number): number => Math.floor(amount * 0.967);
 
@@ -137,39 +99,37 @@ export function useWithdrawalInfo(): UseWithdrawalInfoReturn {
     userInfo.accountNumber.trim() !== "" &&
     userInfo.residentNumber.trim() !== "";
 
-  const submitWithdrawal = (amount: number, netAmount: number): void => {
-    if (typeof window === "undefined" || !user) return;
+  const submitWithdrawal = async (amount: number, netAmount: number): Promise<boolean> => {
+    if (typeof window === "undefined" || !user) return false;
 
     const now = new Date();
     const requestId = `withdrawal_${user.id}_${now.getTime()}`;
 
-    // user_accounts 업데이트
-    const storedAccounts = localStorage.getItem("user_accounts");
-    if (storedAccounts) {
-      const accounts: LocalUserAccount[] = JSON.parse(storedAccounts);
-      const accountIndex = accounts.findIndex((a) => a.id === user.id || a.email === user.email);
-      if (accountIndex !== -1) {
-        const account = accounts[accountIndex];
-        account.pending_points = (account.pending_points ?? 0) + amount;
-        if (!account.point_history) account.point_history = [];
-        account.point_history.unshift({
-          id: requestId,
-          type: "withdrawal_pending",
-          amount: -amount,
-          description: "출금 신청 대기중",
-          date: now.toISOString().split("T")[0],
-          status: "pending",
-          balance: account.available_points ?? 0,
-        });
-        account.last_withdrawal_date = now.toISOString();
-        accounts[accountIndex] = account;
-        localStorage.setItem("user_accounts", JSON.stringify(accounts));
-      }
+    const payload = {
+      reviewer_id: getReviewerId(user.id),
+      user_name: userInfo.name,
+      requested_amount: amount,
+      net_amount: netAmount,
+      tax_amount: amount - netAmount,
+      bank: userInfo.bank,
+      account_number: userInfo.accountNumber,
+      account_holder: userInfo.name,
+      status: "PENDING" as const,
+      request_date: now.toISOString(),
+      processed_date: null,
+    };
+
+    // mock API 출금 신청 (서버 응답 확인)
+    try {
+      await postWithdrawalRequest(payload);
+    } catch (_apiError) {
+      // mock 서버 미실행 시 localStorage fallback
+      console.warn("출금 신청 API 호출 실패 (localStorage fallback):", _apiError);
     }
 
-    // withdrawal_requests 추가
+    // localStorage 동기화 (오프라인 fallback 겸 캐시)
     const storedRequests = localStorage.getItem("withdrawal_requests");
-    const requests = storedRequests ? JSON.parse(storedRequests) : [];
+    const requests = storedRequests ? (JSON.parse(storedRequests) as unknown[]) : [];
     requests.unshift({
       id: requestId,
       user_id: user.id,
@@ -187,24 +147,9 @@ export function useWithdrawalInfo(): UseWithdrawalInfoReturn {
     });
     localStorage.setItem("withdrawal_requests", JSON.stringify(requests));
 
-    // mock API에 출금 신청 데이터 저장 (best-effort)
-    postWithdrawalRequest({
-      reviewer_id: getReviewerId(user.id),
-      user_name: userInfo.name,
-      requested_amount: amount,
-      net_amount: netAmount,
-      tax_amount: amount - netAmount,
-      bank: userInfo.bank,
-      account_number: userInfo.accountNumber,
-      account_holder: userInfo.name,
-      status: "PENDING",
-      request_date: now.toISOString(),
-      processed_date: null,
-    }).catch(() => {});
-
-    // notifications 추가
+    // 알림 추가
     const storedNotifications = localStorage.getItem("notifications");
-    const notifications = storedNotifications ? JSON.parse(storedNotifications) : [];
+    const notifications = storedNotifications ? (JSON.parse(storedNotifications) as unknown[]) : [];
     notifications.unshift({
       id: `notif_${requestId}_${now.getTime()}`,
       user_id: user.id,
@@ -215,6 +160,8 @@ export function useWithdrawalInfo(): UseWithdrawalInfoReturn {
       created_at: now.toISOString(),
     });
     localStorage.setItem("notifications", JSON.stringify(notifications));
+
+    return true;
   };
 
   // API 잔액 우선, 없으면 정적 fallback

@@ -442,71 +442,31 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
       }
     }
 
-    // 신청 목록에서 해당 신청자 찾기
-    // 📌 React 상태 업데이트 패턴:
-    // - setState의 콜백 함수를 사용하여 이전 상태를 기반으로 업데이트
-    // - 함수형 업데이트: (prevState) => newState 형태
-    setApplicantsState((prevApplicants) => {
-      const target = prevApplicants.find((a) => a.id === applicantId);
-      if (!target) {
-        return prevApplicants;
-      }
+    // state setter 밖에서 target 찾기
+    const target = applicantsState.find((a) => a.id === applicantId);
+    if (!target) return;
 
-      // 신청 리스트에서 제거
-      // 📌 배열 메서드 filter():
-      // - 조건에 맞는 요소만 추출하여 새 배열을 만듭니다
-      // - 원본 배열을 변경하지 않고 새 배열을 반환 (불변성 유지)
-      const nextApplicants = prevApplicants.filter((a) => a.id !== applicantId);
+    const moved: AllApplicant = { ...target, selectionStatus: "선정하기" } as AllApplicant;
+    const nextSelectedCount = current_selected_count + 1;
 
-      // 상태값 업데이트: selectionStatus를 "선정하기"로 변경하여 선정 리스트로 이동
-      // 📌 객체 스프레드 연산자:
-      // - ...target: 기존 신청자 데이터의 모든 속성을 복사합니다
-      // - selectionStatus: "선정하기"로 변경하여 선정된 상태로 표시합니다
-      const moved: AllApplicant = {
-        ...target,
-        selectionStatus: "선정하기",
-      } as AllApplicant;
+    // 상태 업데이트
+    setApplicantsState((prev) => prev.filter((a) => a.id !== applicantId));
+    setSelectedState((prev) => (prev.some((a) => a.id === applicantId) ? prev : [moved, ...prev]));
 
-      // 선정 리스트에 추가 (별도로 처리)
-      // 📌 신청 탭에서 선정하기를 누른 경우:
-      // - 이미 선정 리스트에 있는지 확인하여 중복 추가 방지
-      // - 신청 목록에서 제거된 신청자를 선정 리스트에 추가
-      setSelectedState((prevSelected) => {
-        // 이미 선정 리스트에 있는지 확인
-        const isAlreadyInSelected = prevSelected.some((a) => a.id === applicantId);
-        if (isAlreadyInSelected) {
-          return prevSelected;
-        }
-        // 📌 배열 스프레드 연산자:
-        // - [moved, ...prevSelected]: 선정된 신청자를 맨 앞에 추가하고, 기존 선정 리스트를 뒤에 붙입니다
-        return [moved, ...prevSelected];
-      });
+    // localStorage 동기화
+    updateUserAppliedCampaignStatus(applicantId, campaignData.campaignInfo.id, "선정");
+    addUserNotification(
+      applicantId,
+      campaignData.campaignInfo.id,
+      campaignData.campaignInfo.title,
+      campaignData.campaignInfo.campaignType,
+      "선정"
+    );
 
-      const nextSelectedCount = current_selected_count + 1;
-
-      // 📌 유저 신청 내역 업데이트:
-      // - user_applied_campaigns에서 해당 유저의 신청 내역을 찾아서 상태를 '대기' -> '선정'으로 변경
-      updateUserAppliedCampaignStatus(applicantId, campaignData.campaignInfo.id, "선정");
-
-      // 📌 유저 알림 추가:
-      // - localStorage의 notifications에 선정 알림 추가
-      addUserNotification(
-        applicantId,
-        campaignData.campaignInfo.id,
-        campaignData.campaignInfo.title,
-        campaignData.campaignInfo.campaignType,
-        "선정"
-      );
-
-      // 📌 mock DB의 campaigns.selectedCount도 업데이트 (실패해도 UI는 유지)
-      try {
-        void patchCampaign(campaignData.campaignInfo.id, { selectedCount: nextSelectedCount });
-      } catch {
-        // ignore mock API error
-      }
-
-      return nextApplicants;
-    });
+    // mock API 선정 카운트 업데이트 (state setter 밖, 서버 응답 확인)
+    patchCampaign(campaignData.campaignInfo.id, { selectedCount: nextSelectedCount }).catch(
+      (_err) => console.warn("선정 API 업데이트 실패:", _err)
+    );
   };
 
   /**
@@ -530,58 +490,35 @@ export function useCampaignApplication(): UseCampaignApplicationReturn {
    * - user_applied_campaigns의 상태도 '선정' -> '대기'로 업데이트합니다
    */
   const handleCancelApplicant = (applicantId: string) => {
-    // 선정 목록에서 해당 신청자 찾기
-    setSelectedState((prevSelected) => {
-      const target = prevSelected.find((a) => a.id === applicantId);
-      if (!target) {
-        return prevSelected;
-      }
+    if (!campaignData) return;
 
-      // 선정 리스트에서 제거
-      const nextSelected = prevSelected.filter((a) => a.id !== applicantId);
+    // state setter 밖에서 target 찾기
+    const target = selectedState.find((a) => a.id === applicantId);
+    if (!target) return;
 
-      // 상태값 업데이트: selectionStatus를 "미선택"으로 변경하여 신청 리스트로 이동
-      const moved: AllApplicant = {
-        ...target,
-        selectionStatus: "미선택",
-      } as AllApplicant;
+    const moved: AllApplicant = { ...target, selectionStatus: "미선택" } as AllApplicant;
+    const nextSelectedCount = Math.max(0, selectedState.length - 1);
 
-      // 신청 리스트에 추가 (별도로 처리)
-      setApplicantsState((prevApplicants) => {
-        // 이미 신청 리스트에 있는지 확인
-        const isAlreadyInApplicants = prevApplicants.some((a) => a.id === applicantId);
-        if (isAlreadyInApplicants) {
-          return prevApplicants;
-        }
-        return [moved, ...prevApplicants];
-      });
+    // 상태 업데이트
+    setSelectedState((prev) => prev.filter((a) => a.id !== applicantId));
+    setApplicantsState((prev) =>
+      prev.some((a) => a.id === applicantId) ? prev : [moved, ...prev]
+    );
 
-      // 📌 유저 신청 내역 업데이트:
-      // - user_applied_campaigns에서 해당 유저의 신청 내역을 찾아서 상태를 '선정' -> '대기'로 변경
-      if (campaignData) {
-        updateUserAppliedCampaignStatus(applicantId, campaignData.campaignInfo.id, "대기");
+    // localStorage 동기화
+    updateUserAppliedCampaignStatus(applicantId, campaignData.campaignInfo.id, "대기");
+    addUserNotification(
+      applicantId,
+      campaignData.campaignInfo.id,
+      campaignData.campaignInfo.title,
+      campaignData.campaignInfo.campaignType,
+      "탈락"
+    );
 
-        // 📌 선정 취소 알림 추가:
-        // - localStorage의 notifications에 선정 취소 알림 추가
-        addUserNotification(
-          applicantId,
-          campaignData.campaignInfo.id,
-          campaignData.campaignInfo.title,
-          campaignData.campaignInfo.campaignType,
-          "탈락"
-        );
-
-        // 📌 mock DB의 campaigns.selectedCount도 감소 반영 (실패해도 UI는 유지)
-        const nextSelectedCount = Math.max(0, nextSelected.length);
-        try {
-          void patchCampaign(campaignData.campaignInfo.id, { selectedCount: nextSelectedCount });
-        } catch {
-          // ignore mock API error
-        }
-      }
-
-      return nextSelected;
-    });
+    // mock API 선정 취소 카운트 업데이트 (state setter 밖, 서버 응답 확인)
+    patchCampaign(campaignData.campaignInfo.id, { selectedCount: nextSelectedCount }).catch(
+      (_err) => console.warn("선정 취소 API 업데이트 실패:", _err)
+    );
   };
 
   // 📌 객체 반환:

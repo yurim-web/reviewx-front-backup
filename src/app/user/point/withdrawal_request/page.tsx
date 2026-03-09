@@ -65,7 +65,7 @@ export default function WithdrawalRequestPage() {
     return true;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!isButtonEnabled()) return;
 
     if (!isAccountInfoValid()) {
@@ -79,8 +79,12 @@ export default function WithdrawalRequestPage() {
     }
 
     try {
-      submitWithdrawal(amount, netAmount);
-      setIsCompleteModalOpen(true);
+      const success = await submitWithdrawal(amount, netAmount);
+      if (success) {
+        setIsCompleteModalOpen(true);
+      } else {
+        alert("출금 신청 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
+      }
     } catch {
       alert("출금 신청 처리 중 오류가 발생했습니다.");
     }
