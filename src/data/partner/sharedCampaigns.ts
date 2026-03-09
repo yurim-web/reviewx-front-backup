@@ -537,6 +537,8 @@ const transformApplicantData = (applicant: any) => {
     dailyVisits: Number(latestDailyVisits) || 0,
     totalVisits: Number(latestTotalVisits) || 0,
     neighbors: Number(latestNeighbors) || 0,
+    followers: Number(applicant.followers) || 0,
+    subscribers: Number(applicant.subscribers) || 0,
     memo: applicant.memo || "",
     selectionStatus: applicant.status === "선정" ? "선정하기" : "미선택",
     channel: normalizedChannel,
