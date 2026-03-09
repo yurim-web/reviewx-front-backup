@@ -15,12 +15,6 @@ import { useState, useEffect, useRef } from "react";
 
 const STORAGE_KEY = "userAccountVerification";
 
-interface StoredAccount {
-  bank?: string;
-  account_number?: string;
-  account_holder?: string;
-}
-
 interface StoredVerification {
   bank: string;
   accountNumber: string;
@@ -44,23 +38,6 @@ function getStoredVerification(
   const accountHolderValue = accountHolder.trim();
 
   try {
-    const userAccounts = localStorage.getItem("user_accounts");
-    if (userAccounts) {
-      const accounts: StoredAccount[] = JSON.parse(userAccounts);
-      const match = accounts.find(
-        (acc) =>
-          acc.bank === bankValue &&
-          acc.account_number === accountNumberValue &&
-          acc.account_holder === accountHolderValue
-      );
-      if (match) {
-        return {
-          queriedAccountHolder: accountHolderValue,
-          accountHolderAtQueryTime: accountHolderValue,
-        };
-      }
-    }
-
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       const verificationData: StoredVerification = JSON.parse(stored);
