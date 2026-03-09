@@ -22,18 +22,12 @@ import SubHeader from "@/components/fragments/SubHeader";
 import type { MainTab } from "@/types/domain/user";
 import layoutStyles from "@/styles/user/mypage/mypage_layout.module.css";
 import { useAuth } from "@/hooks/useAuth";
-
-interface ChannelDetail {
-  name: string;
-  url?: string;
-  status?: "connected" | "disconnected";
-}
-
-interface LocalAccount {
-  id?: string;
-  email?: string;
-  channel_details?: ChannelDetail[];
-}
+import { patchReviewerProfile } from "@/lib/api/reviewer";
+import {
+  useReviewerProfile,
+  useInvalidateReviewerProfile,
+  getReviewerIdNum,
+} from "@/hooks/user/mypage/useReviewerProfile";
 
 const DEFAULT_CHANNELS = [
   { name: "네이버 블로그", url: "", status: "disconnected" as const },
@@ -42,15 +36,13 @@ const DEFAULT_CHANNELS = [
   { name: "유튜브", url: "", status: "disconnected" as const },
 ];
 
-/**
- * 채널 탭 전용 페이지 컴포넌트
- */
 export default function ChannelPage() {
   const { user } = useAuth();
+  const { data: profile } = useReviewerProfile(user?.id);
+  const invalidateProfile = useInvalidateReviewerProfile();
   const [activeTopTab, setActiveTopTab] = useState<MainTab>("account");
   const [activeSubTab, _setActiveSubTab] = useState<"profile" | "channel">("channel");
 
-  // SubHeader 표시 여부 (모달에서 들어온 경우에만 표시)
   const [showSubHeader, setShowSubHeader] = useState(false);
 
   useEffect(() => {
@@ -66,33 +58,23 @@ export default function ChannelPage() {
       DEFAULT_CHANNELS
     );
 
-  // user_accounts에서 채널 정보 로드
+  // 서버 프로필에서 채널 정보 로드
   useEffect(() => {
-    if (typeof window !== "undefined" && user) {
-      try {
-        const storedAccounts = localStorage.getItem("user_accounts");
-        if (storedAccounts) {
-          const accounts = JSON.parse(storedAccounts) as LocalAccount[];
-          const userAccount = accounts.find((a) => a.id === user.id || a.email === user.email);
+    if (!user || !profile?.channel_details) return;
 
-          if (userAccount?.channel_details) {
-            const loadedChannels = DEFAULT_CHANNELS.map((channel) => {
-              const detail = userAccount.channel_details!.find((d) => d.name === channel.name);
-              if (detail) {
-                return {
-                  name: channel.name,
-                  url: detail.url || "",
-                  status: detail.status || ("disconnected" as const),
-                };
-              }
-              return channel;
-            });
-            setChannels(loadedChannels);
-          }
-        }
-      } catch (_error) {}
-    }
-  }, [user]);
+    const loadedChannels = DEFAULT_CHANNELS.map((channel) => {
+      const detail = profile.channel_details!.find((d) => d.name === channel.name);
+      if (detail) {
+        return {
+          name: channel.name,
+          url: detail.url || "",
+          status: detail.status || ("disconnected" as const),
+        };
+      }
+      return channel;
+    });
+    setChannels(loadedChannels);
+  }, [user, profile]);
 
   const handleSubTabChange = (tab: "profile" | "channel") => {
     switch (tab) {
@@ -112,34 +94,30 @@ export default function ChannelPage() {
     );
     setChannels(updatedChannels);
 
-    if (typeof window !== "undefined" && user) {
-      try {
-        const storedAccounts = localStorage.getItem("user_accounts");
-        const accounts: LocalAccount[] = storedAccounts ? JSON.parse(storedAccounts) : [];
-
-        const accountIndex = accounts.findIndex((a) => a.id === user.id || a.email === user.email);
-
-        if (accountIndex >= 0) {
-          accounts[accountIndex] = {
-            ...accounts[accountIndex],
-            channel_details: updatedChannels,
-          };
-          localStorage.setItem("user_accounts", JSON.stringify(accounts));
-        }
-      } catch (_error) {}
+    // 서버에 채널 정보 저장
+    const reviewerIdNum = getReviewerIdNum(user?.id);
+    if (reviewerIdNum) {
+      patchReviewerProfile(reviewerIdNum, {
+        channel_details: updatedChannels.map((ch) => ({
+          name: ch.name,
+          url: ch.url ?? "",
+          status: ch.status,
+        })),
+      })
+        .then(() => invalidateProfile(user?.id))
+        .catch((_apiError) => {
+          console.error("채널 수정 API 호출 실패:", _apiError);
+        });
     }
   };
 
   return (
     <div className={layoutStyles.mypage_container}>
-      {/* SubHeader - 모달에서 들어온 경우에만 표시 */}
       {showSubHeader && <SubHeader />}
 
       <main className={layoutStyles.main_content}>
-        {/* 상단 탭 네비게이션: 캠페인/포인트/계정/커뮤니티 */}
         <TabNavigation activeTab={activeTopTab} setActiveTab={setActiveTopTab} />
 
-        {/* 서브 탭 (프로필/채널·스토어) */}
         <SubTabNavigation
           activeSubTab={activeSubTab}
           setActiveSubTab={handleSubTabChange}
@@ -147,7 +125,6 @@ export default function ChannelPage() {
           availableTabs={["profile", "channel"]}
         />
 
-        {/* 채널 섹션 */}
         <ChannelSection channels={channels} onChannelUpdate={handleChannelUpdate} />
       </main>
     </div>
