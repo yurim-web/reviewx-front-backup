@@ -441,11 +441,10 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     dayCount: "",
     registeredAt: "2026-01-10T12:00:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 오픈 예정 - 현재 날짜보다 미래 (2026-01-15 ~ 2026-03-01)
-      applicationStart: "2026-01-15",
-      applicationEnd: "2026-03-01",
-      announcement: "2026-03-03",
-      registrationPeriod: "2026-03-05 ~ 2026-03-19",
+      applicationStart: "2026-03-01",
+      applicationEnd: "2026-04-15",
+      announcement: "2026-04-18",
+      registrationPeriod: "2026-04-20 ~ 2026-05-05",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "클립",
@@ -1407,7 +1406,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           followers: 2800,
           memo: "뷰티 트렌드 리포팅 전문 기자단 리뷰어입니다.",
           selectionStatus: "미선택" as const,
-          channel: "클립" as const,
+          channel: "네이버클립" as const,
           registrationDate: "2026-01-20",
         } as any,
         {
@@ -1420,7 +1419,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           followers: 3500,
           memo: "뷰티 전문 인플루언서입니다.",
           selectionStatus: "미선택" as const,
-          channel: "클립" as const,
+          channel: "네이버클립" as const,
           registrationDate: "2026-01-22",
         } as any,
         {
@@ -1433,7 +1432,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           followers: 2100,
           memo: "뷰티 제품 리뷰 전문가입니다.",
           selectionStatus: "미선택" as const,
-          channel: "클립" as const,
+          channel: "네이버클립" as const,
           registrationDate: "2026-01-25",
         } as any,
         {
@@ -1446,7 +1445,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           followers: 3200,
           memo: "뷰티 트렌드 분석 전문가입니다.",
           selectionStatus: "미선택" as const,
-          channel: "클립" as const,
+          channel: "네이버클립" as const,
           registrationDate: "2026-01-26",
         } as any,
         {
@@ -1459,7 +1458,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           followers: 4200,
           memo: "스킨케어 전문 인플루언서입니다.",
           selectionStatus: "미선택" as const,
-          channel: "클립" as const,
+          channel: "네이버클립" as const,
           registrationDate: "2026-01-27",
         } as any,
       ],
@@ -1474,7 +1473,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           followers: 3200,
           memo: "이미 선정된 우수 뷰티 기자단 리뷰어입니다.",
           selectionStatus: "선정하기" as const,
-          channel: "클립" as const,
+          channel: "네이버클립" as const,
           registrationDate: "2026-01-18",
         } as any,
         {
@@ -1487,7 +1486,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           followers: 4100,
           memo: "이미 선정된 우수 뷰티 인플루언서입니다.",
           selectionStatus: "선정하기" as const,
-          channel: "클립" as const,
+          channel: "네이버클립" as const,
           registrationDate: "2026-01-19",
         } as any,
       ],
