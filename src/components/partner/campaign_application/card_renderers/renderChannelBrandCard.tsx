@@ -109,8 +109,11 @@ export function renderChannelBrandCard(
         );
 
       case "유튜브":
-        // 브랜드가 숏츠인 경우 전용 카드 사용
-        if (campaignData?.campaignInfo.brandName === "숏츠") {
+        // 브랜드가 숏츠/쇼츠인 경우 전용 카드 사용
+        if (
+          campaignData?.campaignInfo.brandName === "숏츠" ||
+          campaignData?.campaignInfo.brandName === "쇼츠"
+        ) {
           return isSelected ? (
             <ShortsSelectedCard
               applicant={applicant as YoutubeApplicant}

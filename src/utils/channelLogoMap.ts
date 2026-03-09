@@ -65,6 +65,7 @@ export const category_icon_map: Record<string, string> = {
   클립: "/images/brand_logo/naverclip.svg",
   유튜브: "/images/brand_logo/youtube.svg",
   쇼츠: "/images/brand_logo/shots.svg",
+  숏츠: "/images/brand_logo/shots.svg",
   릴스: "/images/brand_logo/reels.svg",
   인스타그램: "/images/brand_logo/insta.svg",
 };
