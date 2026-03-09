@@ -187,16 +187,21 @@ export default function Campaignbanner({
             <div className={styles.campaign_header}>
               {/* 캠페인 카테고리 - 브랜드 로고 표시 */}
               <div className={styles.campaign_category}>
-                <Image
-                  src={getBrandLogo(
+                {(() => {
+                  const logoSrc = getBrandLogo(
                     campaignInfo.brandName || campaignInfo.channel || "기본",
                     campaignInfo.campaignType
-                  )}
-                  alt={`${campaignInfo.campaignType} 브랜드 로고`}
-                  width={20}
-                  height={20}
-                  unoptimized
-                />
+                  );
+                  return logoSrc ? (
+                    <Image
+                      src={logoSrc}
+                      alt={`${campaignInfo.campaignType} 브랜드 로고`}
+                      width={20}
+                      height={20}
+                      unoptimized
+                    />
+                  ) : null;
+                })()}
                 <span>{campaignInfo.campaignType}</span>
               </div>
 

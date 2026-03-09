@@ -100,7 +100,7 @@ export default function VisitCampaignForm(props: VisitCampaignFormProps) {
             <input
               type="text"
               className={`${infoStyles.form_input} ${isEditMode && !isEditableField("addressDetail") ? infoStyles.read_only_input : ""}`}
-              value={formData.addressDetail}
+              value={formData.addressDetail ?? ""}
               onChange={(e) => updateFormData("addressDetail", e.target.value)}
               placeholder="캠페인 방문 상세 주소 안내"
               readOnly={isEditMode && !isEditableField("addressDetail")}
@@ -113,7 +113,7 @@ export default function VisitCampaignForm(props: VisitCampaignFormProps) {
             <input
               type="url"
               className={`${infoStyles.form_input} ${isEditMode && !isEditableField("visitLink") ? infoStyles.read_only_input : ""}`}
-              value={formData.visitLink}
+              value={formData.visitLink ?? ""}
               onChange={(e) => updateFormData("visitLink", e.target.value)}
               placeholder="캠페인 방문 링크"
               readOnly={isEditMode && !isEditableField("visitLink")}
