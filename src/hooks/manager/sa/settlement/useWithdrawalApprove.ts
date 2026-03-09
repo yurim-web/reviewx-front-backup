@@ -172,14 +172,16 @@ export function useWithdrawalApprove({
         });
         localStorage.setItem("withdrawal_history", JSON.stringify(withdrawalHistory));
 
-        // 5. mock DB에도 출금 상태 업데이트 (best-effort)
+        // 5. mock DB에도 출금 상태 업데이트
         pending_approve_items.forEach((item: WithdrawalRequestItem) => {
           const numericId = parseInt(String(item.id).replace(/\D/g, ""), 10);
           if (numericId) {
             patchWithdrawalStatus(numericId, {
               status: "APPROVED",
               processed_date: now.toISOString(),
-            }).catch(() => {});
+            }).catch((_apiError) => {
+              console.error("출금 승인 API 호출 실패:", _apiError);
+            });
           }
         });
       }
