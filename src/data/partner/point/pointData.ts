@@ -220,7 +220,6 @@ export const partnerPointHistoryData: PartnerPointHistory[] = [
  */
 export function getPartnerPointHistory(userId?: string): PartnerPointHistory[] {
   if (typeof window === "undefined" || !userId) {
-    // userId가 없어도 목업 데이터는 반환
     return [...partnerPointHistoryData];
   }
 
@@ -228,26 +227,22 @@ export function getPartnerPointHistory(userId?: string): PartnerPointHistory[] {
     const historyKey = `partner_point_history_${userId}`;
     const storedHistory = localStorage.getItem(historyKey);
 
-    // 목업 데이터를 기본으로 시작
-    const mockDataMap = new Map<string, PartnerPointHistory>();
-    partnerPointHistoryData.forEach((item) => {
-      mockDataMap.set(item.id, item);
-    });
+    // partner_test_001(test@test.com)만 목업 데이터 기본 제공
+    // 다른 계정은 localStorage 데이터만 사용 (빈 내역으로 시작)
+    const baseData = userId === "partner_test_001" ? [...partnerPointHistoryData] : [];
+    const baseMap = new Map<string, PartnerPointHistory>();
+    baseData.forEach((item) => baseMap.set(item.id, item));
 
-    // localStorage에 저장된 데이터가 있으면 추가/업데이트
     if (storedHistory) {
       const storedData: PartnerPointHistory[] = JSON.parse(storedHistory);
       storedData.forEach((item) => {
-        // localStorage 데이터가 목업 데이터보다 우선 (같은 id면 덮어쓰기)
-        mockDataMap.set(item.id, item);
+        baseMap.set(item.id, item);
       });
     }
 
-    // Map을 배열로 변환하여 반환
-    return Array.from(mockDataMap.values());
+    return Array.from(baseMap.values());
   } catch (_error) {
-    // 오류 발생 시에도 목업 데이터는 반환
-    return [...partnerPointHistoryData];
+    return userId === "partner_test_001" ? [...partnerPointHistoryData] : [];
   }
 }
 
