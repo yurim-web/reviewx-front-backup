@@ -53,7 +53,7 @@ export default function MissionCampaignForm(props: MissionCampaignFormProps) {
           <input
             type="url"
             className={`${infoStyles.form_input} ${isEditMode && !isEditableField("promotionLink") ? infoStyles.read_only_input : ""}`}
-            value={formData.promotionLink}
+            value={formData.promotionLink ?? ""}
             onChange={(e) => updateFormData("promotionLink", e.target.value)}
             placeholder="캠페인 홍보 링크"
             readOnly={isEditMode && !isEditableField("promotionLink")}

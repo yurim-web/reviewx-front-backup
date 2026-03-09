@@ -40,7 +40,7 @@ export default function ReviewCampaignForm(props: ReviewCampaignFormProps) {
           <input
             type="url"
             className={`${infoStyles.form_input} ${isEditMode && !isEditableField("promotionLink") ? infoStyles.read_only_input : ""}`}
-            value={formData.promotionLink}
+            value={formData.promotionLink ?? ""}
             onChange={(e) => updateFormData("promotionLink", e.target.value)}
             placeholder="제품 구매 링크"
             readOnly={isEditMode && !isEditableField("promotionLink")}
