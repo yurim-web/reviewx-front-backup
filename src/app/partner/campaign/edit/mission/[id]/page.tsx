@@ -24,14 +24,12 @@ import {
 } from "@/data/campaign/mission/missionCampaigns";
 import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
-import type { MissionCampaignDataExtended } from "@/data/campaign/mission/missionCampaigns";
 import layoutStyles from "@/styles/partner/partner_layout.module.css";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import Toast from "@/components/common/toast/Toast";
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import checkboxStyles from "@/styles/partner/campaign_create/campaign_guide/checkboxes.module.css";
 import Image from "next/image";
-import { campaignToFormData } from "@/utils/partner/campaignEdit/campaignToFormData";
 import { patchCampaign, fetchCampaignById } from "@/lib/api/partner";
 import { apiCampaignToFormData } from "@/utils/partner/campaignEdit/apiToFormData";
 
@@ -96,89 +94,24 @@ export default function MissionCampaignEditPage() {
 
   const [isOpen, setIsOpen] = useState(false);
 
+  // 서버 API에서 캠페인 데이터 로드
   useEffect(() => {
-    try {
-      const campaign = getCampaignById(campaignId);
-      if (!campaign) {
-        fetchCampaignById(campaignId).then((apiItem) => {
-          if (apiItem) {
-            const formData = apiCampaignToFormData(apiItem);
-            setInitialData(formData);
-            setIsOpen(isCampaignOpen(formData.recruitmentPeriod));
-          } else {
-            setError("캠페인을 찾을 수 없습니다.");
-          }
-          setIsLoading(false);
-        });
-        return;
-      }
-
-      if (campaign.campaignInfo.campaignType !== "미션형") {
-        setError("미션형 캠페인이 아닙니다.");
-        setIsLoading(false);
-        return;
-      }
-
-      // 원본 확장 데이터 찾기
-      const originalData = missionCampaignsExtended.find((c) => c.id === campaignId);
-
-      // localStorage에서 저장된 캠페인 확인 (최신 데이터 우선)
-      let storedOriginalData: MissionCampaignDataExtended | undefined;
-      if (typeof window !== "undefined") {
-        const storedCampaigns = localStorage.getItem("missionCampaigns");
-        if (storedCampaigns) {
-          const campaigns: StoredCampaignRaw[] = JSON.parse(storedCampaigns);
-          const storedCampaign = campaigns.find((c) => c.campaignInfo?.id === campaignId);
-          if (storedCampaign) {
-            // localStorage에 저장된 캠페인에서 확장 데이터 재구성
-            // contentType 등 확장 필드를 포함하여 원본 데이터와 병합
-            storedOriginalData = {
-              ...(originalData || {}),
-              contentType: storedCampaign.contentType || originalData?.contentType,
-              isUrgent: storedCampaign.isUrgent ?? originalData?.isUrgent,
-              registeredAt: storedCampaign.registeredAt || originalData?.registeredAt,
-              description: storedCampaign.description || originalData?.description,
-              productLink: storedCampaign.productLink || originalData?.productLink,
-              keywords: storedCampaign.keywords || originalData?.keyword,
-              guidelineTexts: storedCampaign.guidelines
-                ? [storedCampaign.guidelines]
-                : originalData?.guidelineTexts,
-              minTextLength: storedCampaign.minTextLength,
-              minImageCount: storedCampaign.minImageCount,
-              videoCount: storedCampaign.videoCount,
-              videoDuration: storedCampaign.videoDuration,
-              requireLinkAttachment: storedCampaign.requireLinkAttachment,
-              requireKeywordAttachment: storedCampaign.requireKeywordAttachment,
-              contactPhone: storedCampaign.contactPhone || originalData?.contactPhone,
-            } as MissionCampaignDataExtended;
-          }
+    fetchCampaignById(campaignId)
+      .then((apiItem) => {
+        if (apiItem) {
+          const formData = apiCampaignToFormData(apiItem);
+          setInitialData(formData);
+          setIsUrgent(formData.isUrgent ?? false);
+          setIsOpen(isCampaignOpen(formData.recruitmentPeriod));
+        } else {
+          setError("캠페인을 찾을 수 없습니다.");
         }
-      }
-
-      // 원본 확장 데이터 우선 사용 (localStorage에 저장된 것이 있으면 그것 사용)
-      const dataToUse = storedOriginalData || originalData;
-
-      const formData = campaignToFormData(campaign, dataToUse);
-      setInitialData(formData);
-
-      // isUrgent 상태 설정
-      setIsUrgent(dataToUse?.isUrgent || false);
-
-      // 상세 이미지 URL을 formData에 추가 (MissionCampaignForm에서 사용)
-      if (dataToUse?.campaign_detail_image) {
-        // formData에 detailImageUrl 추가 (임시로 thumbnailImageUrl에 저장하거나 별도 처리)
-        // 실제로는 MissionCampaignForm에서 원본 데이터를 직접 가져와야 함
-      }
-
-      // 캠페인 오픈 여부 확인
-      const openStatus = isCampaignOpen(campaign.campaignInfo.recruitmentPeriod);
-      setIsOpen(openStatus);
-
-      setIsLoading(false);
-    } catch (_err) {
-      setError("캠페인을 불러오는 중 오류가 발생했습니다.");
-      setIsLoading(false);
-    }
+        setIsLoading(false);
+      })
+      .catch((_err) => {
+        setError("캠페인을 불러오는 중 오류가 발생했습니다.");
+        setIsLoading(false);
+      });
   }, [campaignId]);
 
   const handleSubmit = async (formData: CampaignFormData) => {
@@ -301,11 +234,13 @@ export default function MissionCampaignEditPage() {
         localStorage.setItem("missionCampaigns", JSON.stringify([extendedCampaign]));
       }
 
-      // mock DB에 캠페인 수정 저장 (best-effort)
+      // mock DB에 캠페인 수정 저장
       patchCampaign(campaignId, {
         title: formData.title,
         description: formData.providedItems,
-      }).catch(() => {});
+      }).catch((_apiError) => {
+        console.error("캠페인 수정 API 호출 실패:", _apiError);
+      });
 
       setToast({ is_open: true, message: "저장되었습니다." });
 
