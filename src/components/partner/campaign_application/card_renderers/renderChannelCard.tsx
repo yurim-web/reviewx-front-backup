@@ -12,7 +12,7 @@
  */
 
 import React from "react";
-import type { AllApplicant } from "@/data/partner/sharedCampaigns";
+import type { AllApplicant, CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import {
   type Applicant,
   type NaverClipApplicant,
@@ -27,17 +27,36 @@ import InstagramCard from "@/components/partner/campaign_application/card_type/i
 import InstagramSelectedCard from "@/components/partner/campaign_application/card_type/instagram/InstagramSelectedCard";
 import YoutubeCard from "@/components/partner/campaign_application/card_type/youtube/YoutubeCard";
 import YoutubeSelectedCard from "@/components/partner/campaign_application/card_type/youtube/YoutubeSelectedCard";
+import ReelsCard from "@/components/partner/campaign_application/card_type/reels/ReelsCard";
+import ReelsSelectedCard from "@/components/partner/campaign_application/card_type/reels/ReelsSelectedCard";
+import ShortsCard from "@/components/partner/campaign_application/card_type/shorts/ShortsCard";
+import ShortsSelectedCard from "@/components/partner/campaign_application/card_type/shorts/ShortsSelectedCard";
 
 /**
  * Channel 카드 렌더링 함수 (delivery 전용)
  */
 export function renderChannelCard(
   handleSelectApplicant: (applicantId: string) => void,
-  handleCancelApplicant: (applicantId: string) => void
+  handleCancelApplicant: (applicantId: string) => void,
+  campaignData: CampaignWithApplicants | null = null
 ) {
   // eslint-disable-next-line react/display-name
   return (applicant: AllApplicant, isSelected: boolean = false): React.ReactNode => {
-    switch (applicant.channel) {
+    const channel = applicant.channel as string;
+
+    // channel이 "릴스"인 경우
+    if (channel === "릴스") {
+      return isSelected ? (
+        <ReelsSelectedCard
+          applicant={applicant as InstagramApplicant}
+          onCancel={handleCancelApplicant}
+        />
+      ) : (
+        <ReelsCard applicant={applicant as InstagramApplicant} onSelect={handleSelectApplicant} />
+      );
+    }
+
+    switch (channel) {
       case "네이버블로그":
         return (
           <NaverBlogCard
@@ -49,55 +68,71 @@ export function renderChannelCard(
         );
 
       case "네이버클립":
-        if (isSelected) {
-          return (
-            <NaverClipSelectedCard
-              applicant={applicant as NaverClipApplicant}
-              onCancel={handleCancelApplicant}
-            />
-          );
-        } else {
-          return (
-            <NaverClipCard
-              applicant={applicant as NaverClipApplicant}
-              onSelect={handleSelectApplicant}
-            />
-          );
-        }
+        return isSelected ? (
+          <NaverClipSelectedCard
+            applicant={applicant as NaverClipApplicant}
+            onCancel={handleCancelApplicant}
+          />
+        ) : (
+          <NaverClipCard
+            applicant={applicant as NaverClipApplicant}
+            onSelect={handleSelectApplicant}
+          />
+        );
 
       case "인스타그램":
-        if (isSelected) {
-          return (
-            <InstagramSelectedCard
+        // 브랜드가 릴스인 경우 전용 카드 사용
+        if (campaignData?.campaignInfo.brandName === "릴스") {
+          return isSelected ? (
+            <ReelsSelectedCard
               applicant={applicant as InstagramApplicant}
               onCancel={handleCancelApplicant}
             />
-          );
-        } else {
-          return (
-            <InstagramCard
+          ) : (
+            <ReelsCard
               applicant={applicant as InstagramApplicant}
               onSelect={handleSelectApplicant}
             />
           );
         }
+        return isSelected ? (
+          <InstagramSelectedCard
+            applicant={applicant as InstagramApplicant}
+            onCancel={handleCancelApplicant}
+          />
+        ) : (
+          <InstagramCard
+            applicant={applicant as InstagramApplicant}
+            onSelect={handleSelectApplicant}
+          />
+        );
 
       case "유튜브":
-        if (isSelected) {
-          return (
-            <YoutubeSelectedCard
+        // 브랜드가 숏츠/쇼츠인 경우 전용 카드 사용
+        if (
+          campaignData?.campaignInfo.brandName === "숏츠" ||
+          campaignData?.campaignInfo.brandName === "쇼츠"
+        ) {
+          return isSelected ? (
+            <ShortsSelectedCard
               applicant={applicant as YoutubeApplicant}
               onCancel={handleCancelApplicant}
             />
-          );
-        } else {
-          return (
-            <YoutubeCard
+          ) : (
+            <ShortsCard
               applicant={applicant as YoutubeApplicant}
               onSelect={handleSelectApplicant}
             />
           );
         }
+        return isSelected ? (
+          <YoutubeSelectedCard
+            applicant={applicant as YoutubeApplicant}
+            onCancel={handleCancelApplicant}
+          />
+        ) : (
+          <YoutubeCard applicant={applicant as YoutubeApplicant} onSelect={handleSelectApplicant} />
+        );
 
       default:
         return (

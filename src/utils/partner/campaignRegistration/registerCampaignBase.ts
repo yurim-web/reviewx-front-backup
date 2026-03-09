@@ -56,6 +56,7 @@ const PLATFORM_TO_API: Record<string, string> = {
   릴스: "REELS",
   유튜브: "YOUTUBE",
   쇼츠: "YOUTUBE_SHORTS",
+  숏츠: "YOUTUBE_SHORTS",
 };
 
 // ----------------------------------------
