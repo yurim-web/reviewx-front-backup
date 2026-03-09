@@ -68,6 +68,7 @@ const CAMPAIGN_TYPE_MAP: Record<string, PartnerCampaign["campaignType"]> = {
 // ----------------------------------------
 const STATUS_MAP: Record<string, PartnerCampaign["status"]> = {
   SCHEDULED: "대기 중",
+  approved: "대기 중",
   RECRUITING: "모집 중",
   SELECTED: "선정 중",
   REGISTERING: "등록 중",
@@ -83,6 +84,7 @@ const STATUS_MAP: Record<string, PartnerCampaign["status"]> = {
 // ----------------------------------------
 const STATUS_TO_TAB: Record<string, string> = {
   SCHEDULED: "예정",
+  approved: "예정",
   RECRUITING: "신청",
   SELECTED: "진행",
   REGISTERING: "진행",
@@ -129,6 +131,24 @@ function computeSubStatus(tab: string, selectedCount: number): string {
 }
 
 // ----------------------------------------
+// 날짜 기반 실제 탭 결정
+// mock DB의 status가 날짜와 맞지 않을 때 보정
+// ----------------------------------------
+function resolveTab(dbStatus: string, recruitStartAt: string): string {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const recruitStart = new Date(recruitStartAt);
+  recruitStart.setHours(0, 0, 0, 0);
+
+  // RECRUITING이지만 모집 시작일이 오늘 이후면 → 예정
+  if (dbStatus === "RECRUITING" && recruitStart > today) {
+    return "예정";
+  }
+
+  return STATUS_TO_TAB[dbStatus] ?? "예정";
+}
+
+// ----------------------------------------
 // API 아이템 → PartnerCampaign 어댑터
 // ----------------------------------------
 function adaptToCampaign(item: PartnerCampaignApiItem): PartnerCampaign | null {
@@ -144,14 +164,17 @@ function adaptToCampaign(item: PartnerCampaignApiItem): PartnerCampaign | null {
   const campaignType = CAMPAIGN_TYPE_MAP[item.type] ?? "배송형";
   const brandName =
     PLATFORM_MAP[item.requiredPlatform?.channelName] ?? item.requiredPlatform?.channelName ?? "";
-  const tab = STATUS_TO_TAB[item.status] ?? "신청";
+  const tab = resolveTab(item.status, recruitStart);
   const selectedCount = item.selectedCount ?? 0;
 
   return {
     id: String(item.id),
     title: item.title,
     image: item.thumbnailUrl,
-    status: STATUS_MAP[item.status] ?? "모집 중",
+    status:
+      tab === "예정" && STATUS_MAP[item.status] === "모집 중"
+        ? "대기 중" // 날짜 보정으로 예정으로 변경된 경우
+        : (STATUS_MAP[item.status] ?? "대기 중"),
     campaignType,
     category: typeof item.category?.categoryName === "string" ? item.category.categoryName : "",
     brandName,

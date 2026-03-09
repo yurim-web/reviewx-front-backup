@@ -28,8 +28,71 @@ import {
   getCampaignById,
   getClosedContentsById,
   type ContentByTab,
+  type ContentItem,
 } from "@/data/partner/sharedCampaigns";
-import { patchCampaignContent } from "@/lib/api/campaignContents";
+import { patchCampaignContent, fetchCampaignContents } from "@/lib/api/campaignContents";
+import { fetchCampaignById } from "@/lib/api/partner";
+import type { PartnerCampaignApiItem } from "@/types/api/partner";
+
+// API 캠페인 타입 → campaignInfo 매핑
+const TYPE_MAP: Record<string, string> = {
+  DELIVERY: "배송형",
+  VISIT: "방문형",
+  PURCHASE: "구매평",
+  REPORTER: "기자단",
+  MISSION: "미션형",
+};
+import type { CampaignInfo } from "@/types/domain/partner";
+
+// recruitEndAt + 7일을 선정 발표일로 유도 (API에 announcementDate 없을 때)
+function deriveAnnouncementDate(recruitEndAt?: string): string {
+  if (!recruitEndAt) return "";
+  try {
+    const date = new Date(recruitEndAt);
+    if (isNaN(date.getTime())) return "";
+    date.setDate(date.getDate() + 7);
+    return date.toISOString().slice(0, 10);
+  } catch {
+    return "";
+  }
+}
+
+const STATUS_MAP: Record<string, CampaignInfo["status"]> = {
+  SCHEDULED: "대기 중",
+  REGISTERING: "모집 중",
+  RECRUITING: "모집 중",
+  SELECTED: "선정 중",
+  IN_PROGRESS: "진행 중",
+  COMPLETED: "종료",
+  CLOSED: "종료",
+  CANCELLED: "취소",
+};
+
+function mapApiToCampaignInfo(item: PartnerCampaignApiItem): CampaignInfo {
+  const fmt = (iso: string) => iso?.slice(0, 10) ?? "";
+  return {
+    id: String(item.id),
+    title: item.title ?? "",
+    image: item.thumbnailUrl ?? "",
+    status: STATUS_MAP[item.status] ?? "대기 중",
+    campaignType: (TYPE_MAP[item.type] ?? "배송형") as CampaignInfo["campaignType"],
+    category: item.category?.categoryName ?? "",
+    brandName: item.requiredPlatform?.channelName ?? "",
+    channel: item.requiredPlatform?.channelName ?? "",
+    recruitmentPeriod:
+      item.recruitStartAt && item.recruitEndAt
+        ? `${fmt(item.recruitStartAt)} ~ ${fmt(item.recruitEndAt)}`
+        : "",
+    announcementDate: deriveAnnouncementDate(item.recruitEndAt),
+    registrationPeriod:
+      item.content?.contentStartAt && item.content?.contentEndAt
+        ? `${fmt(item.content.contentStartAt)} ~ ${fmt(item.content.contentEndAt)}`
+        : "",
+    recruitedCount: item.appliedCount ?? 0,
+    totalCount: item.recruitLimit ?? 0,
+    daysLeft: 0,
+  };
+}
 
 /**
  * 탭 타입 정의
@@ -237,24 +300,70 @@ export function useCampaignContents(contentsLoader: ContentsLoader): UseCampaign
     };
   }, []);
 
-  // 캠페인 정보 가져오기
-  const campaignInfo = campaignId ? getCampaignById(campaignId)?.campaignInfo : undefined;
+  // 캠페인 정보: 정적 데이터 우선, 없으면 API fallback
+  const staticCampaignInfo = campaignId ? getCampaignById(campaignId)?.campaignInfo : undefined;
+  const [apiCampaignInfo, setApiCampaignInfo] = useState<CampaignInfo | null>(null);
+  const [apiContents, setApiContents] = useState<ContentByTab>({
+    waiting: [],
+    reviewing: [],
+    completed: [],
+  });
+
+  useEffect(() => {
+    if (!campaignId) return;
+    // 정적 데이터에 없으면 API에서 캠페인 정보 + 콘텐츠 가져오기
+    if (!staticCampaignInfo) {
+      fetchCampaignById(campaignId).then((data) => {
+        if (data) setApiCampaignInfo(mapApiToCampaignInfo(data));
+      });
+    }
+    // 콘텐츠는 항상 API에서도 가져오기
+    fetchCampaignContents(campaignId).then((items) => {
+      if (!items.length) return;
+      const waiting: ContentItem[] = [];
+      const reviewing: ContentItem[] = [];
+      const completed: ContentItem[] = [];
+      items.forEach((item) => {
+        const base: ContentItem = {
+          id: String(item.id),
+          createdAt: item.submitted_at ?? new Date().toISOString(),
+          status: item.status === "APPROVED" ? "완료" : "검수중",
+          userType: "리뷰어",
+          nickname: `리뷰어${item.reviewer_id ?? ""}`,
+          channelId: String(item.reviewer_id ?? ""),
+          channel: "",
+        };
+        if (item.status === "APPROVED") completed.push(base);
+        else if (item.status === "SUBMITTED") reviewing.push(base);
+        else waiting.push(base);
+      });
+      setApiContents({ waiting, reviewing, completed });
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [campaignId]);
+
+  const campaignInfo = staticCampaignInfo ?? apiCampaignInfo ?? undefined;
 
   // 캠페인 상태에 따라 데이터 소스 분기
-  // 📌 즉시 실행 함수(IIFE) 패턴:
-  // - (() => { ... })() 형태로 함수를 정의하고 즉시 실행
-  // - 변수 스코프를 제한하여 코드를 깔끔하게 유지
   const baseContents = (() => {
     if (!campaignId) return { waiting: [], reviewing: [], completed: [] };
     const info = campaignInfo;
     if (info && (String(info.status) === "종료" || String(info.status) === "취소")) {
-      // 종료/취소된 캠페인은 closed 데이터 사용
       const closed = getClosedContentsById(campaignId);
       return closed || { waiting: [], reviewing: [], completed: [] };
     }
-    // 일반 상태는 각 캠페인 유형별 로더 함수 사용
-    const contents = contentsLoader(campaignId);
-    return contents || { waiting: [], reviewing: [], completed: [] };
+    // 정적 데이터 우선, 없으면 API 콘텐츠 사용
+    const staticContents = contentsLoader(campaignId);
+    if (
+      staticContents &&
+      staticContents.waiting.length +
+        staticContents.reviewing.length +
+        staticContents.completed.length >
+        0
+    ) {
+      return staticContents;
+    }
+    return apiContents;
   })();
 
   // 승인된 콘텐츠를 reviewing에서 completed로 이동
