@@ -54,7 +54,8 @@
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 962,
@@ -105,12 +106,13 @@
         "selectedCount": 0,
         "applicationRate": 10.6
       },
-      "partner_id": 1,
+      "partner_id": 2,
       "additionalPoint": 25000,
       "selectedCount": 5,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 963,
@@ -161,12 +163,13 @@
         "selectedCount": 0,
         "applicationRate": 5.93
       },
-      "partner_id": 1,
+      "partner_id": 3,
       "additionalPoint": 20000,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 964,
@@ -217,13 +220,14 @@
         "selectedCount": 7,
         "applicationRate": 29.25
       },
-      "partner_id": 1,
+      "partner_id": 4,
       "additionalPoint": 35000,
       "selectedCount": 7,
       "extensionRequested": true,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 966,
@@ -274,13 +278,14 @@
         "selectedCount": 10,
         "applicationRate": 6.5
       },
-      "partner_id": 1,
+      "partner_id": 5,
       "additionalPoint": 28000,
       "selectedCount": 10,
       "extensionRequested": true,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 967,
@@ -331,13 +336,14 @@
         "selectedCount": 4,
         "applicationRate": 69
       },
-      "partner_id": 1,
+      "partner_id": 6,
       "additionalPoint": 40000,
       "selectedCount": 4,
       "extensionRequested": true,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 968,
@@ -388,7 +394,7 @@
         "selectedCount": 8,
         "applicationRate": 19.8
       },
-      "partner_id": 1,
+      "partner_id": 7,
       "additionalPoint": 32000,
       "selectedCount": 8,
       "extensionRequested": true,
@@ -445,7 +451,7 @@
         "selectedCount": 5,
         "applicationRate": 36.13
       },
-      "partner_id": 1,
+      "partner_id": 8,
       "additionalPoint": 45000,
       "selectedCount": 5,
       "adultOnly": false,
@@ -501,7 +507,7 @@
         "selectedCount": 0,
         "applicationRate": 5.36
       },
-      "partner_id": 1,
+      "partner_id": 9,
       "additionalPoint": 22000,
       "selectedCount": 0,
       "adultOnly": false,
@@ -557,7 +563,7 @@
         "selectedCount": 3,
         "applicationRate": 0.4
       },
-      "partner_id": 1,
+      "partner_id": 10,
       "additionalPoint": 50000,
       "selectedCount": 3,
       "adultOnly": false,
@@ -613,7 +619,7 @@
         "selectedCount": 3,
         "applicationRate": 0.4
       },
-      "partner_id": 1,
+      "partner_id": 11,
       "additionalPoint": 45000,
       "selectedCount": 3,
       "adultOnly": false,
@@ -669,7 +675,7 @@
         "selectedCount": 0,
         "applicationRate": 11.17
       },
-      "partner_id": 1,
+      "partner_id": 12,
       "additionalPoint": 22000,
       "selectedCount": 0,
       "visitAddress": "서울특별시 강남구 테헤란로 123",
@@ -729,7 +735,7 @@
         "selectedCount": 0,
         "applicationRate": 11.13
       },
-      "partner_id": 1,
+      "partner_id": 13,
       "additionalPoint": 18000,
       "selectedCount": 0,
       "visitAddress": "강원 양양군 현북면 법수치길 59 부라보 캠프펜션&캠핑장",
@@ -789,7 +795,7 @@
         "selectedCount": 0,
         "applicationRate": 11.25
       },
-      "partner_id": 1,
+      "partner_id": 14,
       "additionalPoint": 35000,
       "selectedCount": 0,
       "visitAddress": "서울특별시 강남구 압구정로 456",
@@ -849,7 +855,7 @@
         "selectedCount": 7,
         "applicationRate": 12.3
       },
-      "partner_id": 1,
+      "partner_id": 15,
       "additionalPoint": 28000,
       "selectedCount": 7,
       "visitAddress": "서울특별시 강동구 천호대로 789",
@@ -909,7 +915,7 @@
         "selectedCount": 8,
         "applicationRate": 13
       },
-      "partner_id": 1,
+      "partner_id": 16,
       "additionalPoint": 25000,
       "selectedCount": 8,
       "visitAddress": "서울특별시 중구 명동길 321",
@@ -969,7 +975,7 @@
         "selectedCount": 0,
         "applicationRate": 5.2
       },
-      "partner_id": 1,
+      "partner_id": 17,
       "additionalPoint": 20000,
       "selectedCount": 0,
       "visitAddress": "서울특별시 종로구 세종대로 654",
@@ -1029,7 +1035,7 @@
         "selectedCount": 2,
         "applicationRate": 11.33
       },
-      "partner_id": 1,
+      "partner_id": 18,
       "additionalPoint": 42000,
       "selectedCount": 2,
       "visitAddress": "서울특별시 용산구 이태원로 987",
@@ -1149,7 +1155,7 @@
         "selectedCount": 0,
         "applicationRate": 13.4
       },
-      "partner_id": 1,
+      "partner_id": 2,
       "additionalPoint": 38000,
       "selectedCount": 0,
       "visitAddress": "경기도 용인시 기흥구 에버랜드로 199",
@@ -1209,7 +1215,7 @@
         "selectedCount": 14,
         "applicationRate": 4.45
       },
-      "partner_id": 1,
+      "partner_id": 3,
       "additionalPoint": 16000,
       "selectedCount": 14,
       "visitAddress": "서울특별시 성동구 왕십리로 258",
@@ -1269,7 +1275,7 @@
         "selectedCount": 3,
         "applicationRate": 0
       },
-      "partner_id": 1,
+      "partner_id": 4,
       "additionalPoint": 4000000,
       "selectedCount": 3,
       "visitAddress": "서울특별시 강남구 테헤란로 123",
@@ -1329,7 +1335,7 @@
         "selectedCount": 3,
         "applicationRate": 0.6
       },
-      "partner_id": 1,
+      "partner_id": 5,
       "additionalPoint": 45000,
       "selectedCount": 3,
       "visitAddress": "서울특별시 강남구 테헤란로 789",
@@ -1389,7 +1395,7 @@
         "selectedCount": 3,
         "applicationRate": 0.4
       },
-      "partner_id": 1,
+      "partner_id": 6,
       "additionalPoint": 35000,
       "selectedCount": 3,
       "visitAddress": "서울특별시 강남구 테헤란로 456",
@@ -1449,7 +1455,7 @@
         "selectedCount": 0,
         "applicationRate": 29.25
       },
-      "partner_id": 1,
+      "partner_id": 7,
       "additionalPoint": 45000,
       "selectedCount": 0,
       "purchaseLink": "https://smartstore.naver.com/example-store/products/smartphone123",
@@ -1507,7 +1513,7 @@
         "selectedCount": 0,
         "applicationRate": 13
       },
-      "partner_id": 1,
+      "partner_id": 8,
       "additionalPoint": 32000,
       "selectedCount": 0,
       "purchaseLink": "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000123456",
@@ -1565,7 +1571,7 @@
         "selectedCount": 0,
         "applicationRate": 14.83
       },
-      "partner_id": 1,
+      "partner_id": 9,
       "additionalPoint": 38000,
       "selectedCount": 0,
       "purchaseLink": "https://www.coupang.com/vp/products/1234567890",
@@ -1623,7 +1629,7 @@
         "selectedCount": 0,
         "applicationRate": 11.87
       },
-      "partner_id": 1,
+      "partner_id": 10,
       "additionalPoint": 28000,
       "selectedCount": 0,
       "purchaseLink": "https://www.instagram.com/shopping/example-product",
@@ -1681,7 +1687,7 @@
         "selectedCount": 12,
         "applicationRate": 8.06
       },
-      "partner_id": 1,
+      "partner_id": 11,
       "additionalPoint": 22000,
       "selectedCount": 12,
       "purchaseLink": "https://blog.naver.com/example-food-review",
@@ -1739,7 +1745,7 @@
         "selectedCount": 0,
         "applicationRate": 4.9
       },
-      "partner_id": 1,
+      "partner_id": 12,
       "additionalPoint": 18000,
       "selectedCount": 0,
       "purchaseLink": "https://shopping.naver.com/example-book",
@@ -1797,7 +1803,7 @@
         "selectedCount": 3,
         "applicationRate": 13.4
       },
-      "partner_id": 1,
+      "partner_id": 13,
       "additionalPoint": 35000,
       "selectedCount": 3,
       "purchaseLink": "https://www.youtube.com/watch?v=example-shoes",
@@ -1855,7 +1861,7 @@
         "selectedCount": 7,
         "applicationRate": 12.3
       },
-      "partner_id": 1,
+      "partner_id": 14,
       "additionalPoint": 26000,
       "selectedCount": 7,
       "purchaseLink": "https://www.coupang.com/vp/products/pet-supplies-123",
@@ -1913,7 +1919,7 @@
         "selectedCount": 2,
         "applicationRate": 11.25
       },
-      "partner_id": 1,
+      "partner_id": 15,
       "additionalPoint": 42000,
       "selectedCount": 2,
       "purchaseLink": "https://shopping.naver.com/example-car-accessories",
@@ -1971,7 +1977,7 @@
         "selectedCount": 8,
         "applicationRate": 13.92
       },
-      "partner_id": 1,
+      "partner_id": 16,
       "additionalPoint": 30000,
       "selectedCount": 8,
       "purchaseLink": "https://blog.naver.com/example-homedeco-review",
@@ -2029,7 +2035,7 @@
         "selectedCount": 5,
         "applicationRate": 0
       },
-      "partner_id": 1,
+      "partner_id": 17,
       "additionalPoint": 35000,
       "selectedCount": 5,
       "purchaseLink": "https://smartstore.naver.com/example-store/products/123456",
@@ -2087,7 +2093,7 @@
         "selectedCount": 3,
         "applicationRate": 0.6
       },
-      "partner_id": 1,
+      "partner_id": 18,
       "additionalPoint": 28000,
       "selectedCount": 3,
       "purchaseLink": "https://smartstore.naver.com/example-store/products/wireless-earphone",
@@ -2203,7 +2209,7 @@
         "selectedCount": 0,
         "applicationRate": 15
       },
-      "partner_id": 1,
+      "partner_id": 2,
       "additionalPoint": 80000,
       "selectedCount": 0,
       "productLink": "https://example.com/tech-product",
@@ -2260,7 +2266,7 @@
         "selectedCount": 3,
         "applicationRate": 15.6
       },
-      "partner_id": 1,
+      "partner_id": 3,
       "additionalPoint": 75000,
       "selectedCount": 3,
       "productLink": "https://example.com/beauty-product",
@@ -2317,7 +2323,7 @@
         "selectedCount": 0,
         "applicationRate": 14
       },
-      "partner_id": 1,
+      "partner_id": 4,
       "additionalPoint": 70000,
       "selectedCount": 0,
       "adultOnly": false,
@@ -2373,7 +2379,7 @@
         "selectedCount": 0,
         "applicationRate": 14.83
       },
-      "partner_id": 1,
+      "partner_id": 5,
       "additionalPoint": 65000,
       "selectedCount": 0,
       "adultOnly": false,
@@ -2429,7 +2435,7 @@
         "selectedCount": 1,
         "applicationRate": 17
       },
-      "partner_id": 1,
+      "partner_id": 6,
       "additionalPoint": 90000,
       "selectedCount": 1,
       "adultOnly": false,
@@ -2485,7 +2491,7 @@
         "selectedCount": 0,
         "applicationRate": 8.38
       },
-      "partner_id": 1,
+      "partner_id": 7,
       "additionalPoint": 60000,
       "selectedCount": 0,
       "adultOnly": false,
@@ -2541,7 +2547,7 @@
         "selectedCount": 3,
         "applicationRate": 9
       },
-      "partner_id": 1,
+      "partner_id": 8,
       "additionalPoint": 70000,
       "selectedCount": 3,
       "adultOnly": false,
@@ -2597,7 +2603,7 @@
         "selectedCount": 4,
         "applicationRate": 13
       },
-      "partner_id": 1,
+      "partner_id": 9,
       "additionalPoint": 65000,
       "selectedCount": 4,
       "adultOnly": false,
@@ -2653,7 +2659,7 @@
         "selectedCount": 4,
         "applicationRate": 8
       },
-      "partner_id": 1,
+      "partner_id": 10,
       "additionalPoint": 60000,
       "selectedCount": 4,
       "adultOnly": false,
@@ -2709,7 +2715,7 @@
         "selectedCount": 2,
         "applicationRate": 11.33
       },
-      "partner_id": 1,
+      "partner_id": 11,
       "additionalPoint": 75000,
       "selectedCount": 2,
       "adultOnly": false,
@@ -2765,7 +2771,7 @@
         "selectedCount": 3,
         "applicationRate": 0
       },
-      "partner_id": 1,
+      "partner_id": 12,
       "additionalPoint": 60000,
       "selectedCount": 3,
       "productLink": "https://blog.naver.com/example-beauty-trend",
@@ -2822,7 +2828,7 @@
         "selectedCount": 3,
         "applicationRate": 0.4
       },
-      "partner_id": 1,
+      "partner_id": 13,
       "additionalPoint": 85000,
       "selectedCount": 3,
       "productLink": "https://example.com/digital-product",
@@ -2879,7 +2885,7 @@
         "selectedCount": 0,
         "applicationRate": 57.8
       },
-      "partner_id": 1,
+      "partner_id": 14,
       "additionalPoint": 50000,
       "selectedCount": 0,
       "productLink": "https://example.com/skincare-product",
@@ -2937,7 +2943,7 @@
         "selectedCount": 0,
         "applicationRate": 19.5
       },
-      "partner_id": 1,
+      "partner_id": 15,
       "additionalPoint": 45000,
       "selectedCount": 0,
       "productLink": "https://example.com/healthcare-product",
@@ -2995,7 +3001,7 @@
         "selectedCount": 0,
         "applicationRate": 14.83
       },
-      "partner_id": 1,
+      "partner_id": 16,
       "additionalPoint": 38000,
       "selectedCount": 0,
       "contentType": "link",
@@ -3052,7 +3058,7 @@
         "selectedCount": 0,
         "applicationRate": 17.8
       },
-      "partner_id": 1,
+      "partner_id": 17,
       "additionalPoint": 42000,
       "selectedCount": 0,
       "contentType": "link",
@@ -3109,7 +3115,7 @@
         "selectedCount": 10,
         "applicationRate": 9.67
       },
-      "partner_id": 1,
+      "partner_id": 18,
       "additionalPoint": 32000,
       "selectedCount": 10,
       "contentType": "both",
@@ -3223,7 +3229,7 @@
         "selectedCount": 3,
         "applicationRate": 24
       },
-      "partner_id": 1,
+      "partner_id": 2,
       "additionalPoint": 40000,
       "selectedCount": 3,
       "contentType": "image",
@@ -3280,7 +3286,7 @@
         "selectedCount": 5,
         "applicationRate": 8.38
       },
-      "partner_id": 1,
+      "partner_id": 3,
       "additionalPoint": 35000,
       "selectedCount": 5,
       "contentType": "link",
@@ -3337,7 +3343,7 @@
         "selectedCount": 4,
         "applicationRate": 17.57
       },
-      "partner_id": 1,
+      "partner_id": 4,
       "additionalPoint": 40000,
       "selectedCount": 4,
       "contentType": "image",
@@ -3394,7 +3400,7 @@
         "selectedCount": 2,
         "applicationRate": 15
       },
-      "partner_id": 1,
+      "partner_id": 5,
       "additionalPoint": 48000,
       "selectedCount": 2,
       "contentType": "both",
@@ -3451,7 +3457,7 @@
         "selectedCount": 1,
         "applicationRate": 83.5
       },
-      "partner_id": 1,
+      "partner_id": 6,
       "additionalPoint": 60000,
       "selectedCount": 1,
       "contentType": "link",
@@ -3508,7 +3514,7 @@
         "selectedCount": 5,
         "applicationRate": 0
       },
-      "partner_id": 1,
+      "partner_id": 7,
       "additionalPoint": 55000,
       "selectedCount": 5,
       "productLink": "https://example.com/premium-skincare-set",
@@ -3566,7 +3572,7 @@
         "selectedCount": 7,
         "applicationRate": 23.4
       },
-      "partner_id": 1,
+      "partner_id": 8,
       "additionalPoint": 40000,
       "selectedCount": 7,
       "productLink": "https://example.com/beauty-product",
@@ -3624,7 +3630,7 @@
         "selectedCount": 5,
         "applicationRate": 19.5
       },
-      "partner_id": 1,
+      "partner_id": 9,
       "additionalPoint": 35000,
       "selectedCount": 5,
       "contentType": "image",
@@ -3681,7 +3687,7 @@
         "selectedCount": 8,
         "applicationRate": 15.75
       },
-      "partner_id": 1,
+      "partner_id": 10,
       "additionalPoint": 45000,
       "selectedCount": 8,
       "productLink": "https://example.com/food-product",
@@ -3739,7 +3745,7 @@
         "selectedCount": 4,
         "applicationRate": 5425
       },
-      "partner_id": 1,
+      "partner_id": 11,
       "selectedCount": 8,
       "visitInfo": {
         "address": "제주시 연동 321-5",
@@ -3802,7 +3808,7 @@
         "selectedCount": 6,
         "applicationRate": 7366.7
       },
-      "partner_id": 1,
+      "partner_id": 12,
       "selectedCount": 5,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -3857,7 +3863,7 @@
         "selectedCount": 10,
         "applicationRate": 4987.5
       },
-      "partner_id": 1,
+      "partner_id": 13,
       "selectedCount": 16,
       "purchaseInfo": {
         "purchaseLink": "https://example.com/product/4018",
@@ -3917,7 +3923,7 @@
         "selectedCount": 5,
         "applicationRate": 5128.6
       },
-      "partner_id": 1,
+      "partner_id": 14,
       "selectedCount": 13,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -3972,7 +3978,7 @@
         "selectedCount": 0,
         "applicationRate": 4680
       },
-      "partner_id": 1,
+      "partner_id": 15,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -4027,7 +4033,7 @@
         "selectedCount": 5,
         "applicationRate": 60
       },
-      "partner_id": 1,
+      "partner_id": 16,
       "selectedCount": 5,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -4082,7 +4088,7 @@
         "selectedCount": 0,
         "applicationRate": 3005
       },
-      "partner_id": 1,
+      "partner_id": 17,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -4137,7 +4143,7 @@
         "selectedCount": 1,
         "applicationRate": 12300
       },
-      "partner_id": 1,
+      "partner_id": 18,
       "selectedCount": 1,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -4247,7 +4253,7 @@
         "selectedCount": 0,
         "applicationRate": 4333.3
       },
-      "partner_id": 1,
+      "partner_id": 2,
       "selectedCount": 0,
       "visitInfo": {
         "address": "부산시 해운대구 우동 789-1",
@@ -4309,7 +4315,7 @@
         "selectedCount": 0,
         "applicationRate": 1573.7
       },
-      "partner_id": 1,
+      "partner_id": 3,
       "selectedCount": 0,
       "purchaseInfo": {
         "purchaseLink": "https://example.com/product/4026",
@@ -4368,7 +4374,7 @@
         "selectedCount": 7,
         "applicationRate": 4816.7
       },
-      "partner_id": 1,
+      "partner_id": 4,
       "selectedCount": 12,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -4423,7 +4429,7 @@
         "selectedCount": 4,
         "applicationRate": 17375
       },
-      "partner_id": 1,
+      "partner_id": 5,
       "selectedCount": 4,
       "visitInfo": {
         "address": "서울시 마포구 합정동 456-7",
@@ -4486,7 +4492,7 @@
         "selectedCount": 0,
         "applicationRate": 668.4
       },
-      "partner_id": 1,
+      "partner_id": 6,
       "selectedCount": 0,
       "purchaseInfo": {
         "purchaseLink": "https://example.com/product/4029",
@@ -4545,7 +4551,7 @@
         "selectedCount": 3,
         "applicationRate": 10950
       },
-      "partner_id": 1,
+      "partner_id": 7,
       "selectedCount": 3,
       "purchaseInfo": {
         "purchaseLink": "https://example.com/product/4030",
@@ -4604,7 +4610,7 @@
         "selectedCount": 4,
         "applicationRate": 1444.4
       },
-      "partner_id": 1,
+      "partner_id": 8,
       "selectedCount": 17,
       "visitInfo": {
         "address": "서울시 강남구 역삼동 123-4",
@@ -4667,7 +4673,7 @@
         "selectedCount": 0,
         "applicationRate": 8662.5
       },
-      "partner_id": 1,
+      "partner_id": 9,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -4722,7 +4728,7 @@
         "selectedCount": 0,
         "applicationRate": 1430.8
       },
-      "partner_id": 1,
+      "partner_id": 10,
       "selectedCount": 0,
       "purchaseInfo": {
         "purchaseLink": "https://example.com/product/4033",
@@ -4781,7 +4787,7 @@
         "selectedCount": 0,
         "applicationRate": 1313.3
       },
-      "partner_id": 1,
+      "partner_id": 11,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -4836,7 +4842,7 @@
         "selectedCount": 1,
         "applicationRate": 2325
       },
-      "partner_id": 1,
+      "partner_id": 12,
       "selectedCount": 12,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -4891,7 +4897,7 @@
         "selectedCount": 4,
         "applicationRate": 6827.3
       },
-      "partner_id": 1,
+      "partner_id": 13,
       "selectedCount": 7,
       "purchaseInfo": {
         "purchaseLink": "https://example.com/product/4036",
@@ -4950,7 +4956,7 @@
         "selectedCount": 0,
         "applicationRate": 6433.3
       },
-      "partner_id": 1,
+      "partner_id": 14,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -5005,7 +5011,7 @@
         "selectedCount": 0,
         "applicationRate": 7050
       },
-      "partner_id": 1,
+      "partner_id": 15,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -5060,7 +5066,7 @@
         "selectedCount": 0,
         "applicationRate": 3600
       },
-      "partner_id": 1,
+      "partner_id": 16,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -5115,7 +5121,7 @@
         "selectedCount": 0,
         "applicationRate": 2305.3
       },
-      "partner_id": 1,
+      "partner_id": 17,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -5170,7 +5176,7 @@
         "selectedCount": 12,
         "applicationRate": 5233.3
       },
-      "partner_id": 1,
+      "partner_id": 18,
       "selectedCount": 7,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -5280,7 +5286,7 @@
         "selectedCount": 0,
         "applicationRate": 7000
       },
-      "partner_id": 1,
+      "partner_id": 2,
       "selectedCount": 0,
       "visitInfo": {
         "address": "서울시 강남구 역삼동 123-4",
@@ -5342,7 +5348,7 @@
         "selectedCount": 4,
         "applicationRate": 757.1
       },
-      "partner_id": 1,
+      "partner_id": 3,
       "selectedCount": 6,
       "visitInfo": {
         "address": "서울시 강남구 역삼동 123-4",
@@ -5404,7 +5410,7 @@
         "selectedCount": 11,
         "applicationRate": 4511.8
       },
-      "partner_id": 1,
+      "partner_id": 4,
       "selectedCount": 13,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -5459,7 +5465,7 @@
         "selectedCount": 0,
         "applicationRate": 2727.8
       },
-      "partner_id": 1,
+      "partner_id": 5,
       "selectedCount": 0,
       "purchaseInfo": {
         "purchaseLink": "https://example.com/product/4046",
@@ -5518,7 +5524,7 @@
         "selectedCount": 0,
         "applicationRate": 5250
       },
-      "partner_id": 1,
+      "partner_id": 6,
       "selectedCount": 0,
       "purchaseInfo": {
         "purchaseLink": "https://example.com/product/4047",
@@ -5577,7 +5583,7 @@
         "selectedCount": 0,
         "applicationRate": 2090.9
       },
-      "partner_id": 1,
+      "partner_id": 7,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -5632,7 +5638,7 @@
         "selectedCount": 3,
         "applicationRate": 6690.9
       },
-      "partner_id": 1,
+      "partner_id": 8,
       "selectedCount": 1,
       "purchaseInfo": {
         "purchaseLink": "https://example.com/product/4049",
@@ -5691,7 +5697,7 @@
         "selectedCount": 0,
         "applicationRate": 560
       },
-      "partner_id": 1,
+      "partner_id": 9,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -5746,7 +5752,7 @@
         "selectedCount": 0,
         "applicationRate": 3647.4
       },
-      "partner_id": 1,
+      "partner_id": 10,
       "selectedCount": 0,
       "visitInfo": {
         "address": "제주시 연동 321-5",
@@ -5808,7 +5814,7 @@
         "selectedCount": 0,
         "applicationRate": 31800
       },
-      "partner_id": 1,
+      "partner_id": 11,
       "selectedCount": 0,
       "purchaseInfo": {
         "purchaseLink": "https://example.com/product/4052",
@@ -5867,7 +5873,7 @@
         "selectedCount": 0,
         "applicationRate": 3529.4
       },
-      "partner_id": 1,
+      "partner_id": 12,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -5922,7 +5928,7 @@
         "selectedCount": 2,
         "applicationRate": 2066.7
       },
-      "partner_id": 1,
+      "partner_id": 13,
       "selectedCount": 3,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -5977,7 +5983,7 @@
         "selectedCount": 0,
         "applicationRate": 6488.9
       },
-      "partner_id": 1,
+      "partner_id": 14,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -6032,7 +6038,7 @@
         "selectedCount": 0,
         "applicationRate": 2587.5
       },
-      "partner_id": 1,
+      "partner_id": 15,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -6087,7 +6093,7 @@
         "selectedCount": 0,
         "applicationRate": 435
       },
-      "partner_id": 1,
+      "partner_id": 16,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -6142,7 +6148,7 @@
         "selectedCount": 0,
         "applicationRate": 4640
       },
-      "partner_id": 1,
+      "partner_id": 17,
       "selectedCount": 0,
       "purchaseInfo": {
         "purchaseLink": "https://example.com/product/4058",
@@ -6201,7 +6207,7 @@
         "selectedCount": 0,
         "applicationRate": 10500
       },
-      "partner_id": 1,
+      "partner_id": 18,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
@@ -7602,21 +7608,24 @@
       },
       "time": "2025-09-01 15:10",
       "campaign_id": 4,
-      "campaign_name": "[부산/해운대구] 해변 맛집 캠페인"
+      "campaign_name": "[부산/해운대구] 해변 맛집 캠페인",
+      "reviewer_id": 2
     },
     {
       "id": 5,
       "category": "A_R5",
       "time": "2025-09-01 14:05",
       "campaign_id": 5,
-      "campaign_name": "[경기/성남시] 신상품 체험 캠페인"
+      "campaign_name": "[경기/성남시] 신상품 체험 캠페인",
+      "reviewer_id": 1
     },
     {
       "id": 6,
       "category": "A_R6",
       "time": "2025-09-01 13:00",
       "campaign_id": 6,
-      "campaign_name": "[인천/연수구] 생활용품 리뷰 캠페인"
+      "campaign_name": "[인천/연수구] 생활용품 리뷰 캠페인",
+      "reviewer_id": 2
     },
     {
       "id": 7,
@@ -7626,14 +7635,16 @@
       },
       "time": "2025-09-01 11:55",
       "campaign_id": 7,
-      "campaign_name": "[서울/홍대] 패션 브랜드 캠페인"
+      "campaign_name": "[서울/홍대] 패션 브랜드 캠페인",
+      "reviewer_id": 1
     },
     {
       "id": 8,
       "category": "A_R8",
       "time": "2025-09-01 10:50",
       "campaign_id": 8,
-      "campaign_name": "[대전/유성구] 테크 리뷰 캠페인"
+      "campaign_name": "[대전/유성구] 테크 리뷰 캠페인",
+      "reviewer_id": 2
     },
     {
       "id": 9,
@@ -7643,32 +7654,38 @@
       },
       "time": "2025-09-01 09:45",
       "campaign_id": 9,
-      "campaign_name": "[광주/북구] 뷰티 제품 캠페인"
+      "campaign_name": "[광주/북구] 뷰티 제품 캠페인",
+      "reviewer_id": 1
     },
     {
       "id": 10,
       "category": "A_R10",
-      "time": "2025-08-31 20:30"
+      "time": "2025-08-31 20:30",
+      "reviewer_id": 2
     },
     {
       "id": 11,
       "category": "A_R11",
-      "time": "2025-08-31 19:25"
+      "time": "2025-08-31 19:25",
+      "reviewer_id": 1
     },
     {
       "id": 12,
       "category": "A_R12",
-      "time": "2025-08-31 18:20"
+      "time": "2025-08-31 18:20",
+      "reviewer_id": 2
     },
     {
       "id": 13,
       "category": "A_R13",
-      "time": "2025-08-31 17:15"
+      "time": "2025-08-31 17:15",
+      "reviewer_id": 1
     },
     {
       "id": 14,
       "category": "A_R14",
-      "time": "2025-08-31 16:10"
+      "time": "2025-08-31 16:10",
+      "reviewer_id": 2
     },
     {
       "id": 15,
@@ -7676,17 +7693,20 @@
       "message_params": {
         "정지기간": "7"
       },
-      "time": "2025-08-31 15:05"
+      "time": "2025-08-31 15:05",
+      "reviewer_id": 1
     },
     {
       "id": 16,
       "category": "A_R16",
-      "time": "2025-08-31 14:00"
+      "time": "2025-08-31 14:00",
+      "reviewer_id": 2
     },
     {
       "id": 17,
       "category": "A_R17",
-      "time": "2025-08-31 12:55"
+      "time": "2025-08-31 12:55",
+      "reviewer_id": 1
     }
   ],
   "community_posts": [
@@ -16666,47 +16686,50 @@
       "title": "세르프 (박신혜리프팅)",
       "category": "네이버 블로그",
       "image": "/images/main/campaign_img/eximg_9.png",
-      "status": "신청",
+      "status": "신청완료",
       "remainingDays": 119,
       "statusMessage": "캠페인 선정 발표까지 119일 남았습니다.",
       "type": "배송형",
       "isUrgent": false,
       "hasContent": false,
-      "isPenalty": false
+      "isPenalty": false,
+      "reviewer_id": 1
     },
     {
       "id": "4002",
       "title": "헬스케어 미션형",
       "category": "",
       "image": "/images/main/campaign_img/eximg_2.png",
-      "status": "신청",
+      "status": "신청완료",
       "remainingDays": 28,
       "statusMessage": "캠페인 선정 발표까지 28일 남았습니다.",
       "type": "미션형",
       "isUrgent": true,
       "hasContent": false,
       "isPenalty": false,
-      "contentType": "image"
+      "contentType": "image",
+      "reviewer_id": 2
     },
     {
       "id": "3001",
       "title": "테크 기자단",
       "category": "릴스",
       "image": "/images/main/campaign_img/eximg_1.png",
-      "status": "신청",
+      "status": "신청완료",
       "remainingDays": 119,
       "statusMessage": "캠페인 선정 발표까지 119일 남았습니다.",
       "type": "기자단",
       "isUrgent": false,
       "hasContent": false,
-      "isPenalty": false
+      "isPenalty": false,
+      "reviewer_id": 3
     },
     {
       "id": "2002",
       "title": "화장품 구매평 리뷰",
       "category": "네이버 블로그",
       "image": "/images/main/campaign_img/eximg_2.png",
-      "status": "신청",
+      "status": "신청완료",
       "remainingDays": 28,
       "statusMessage": "캠페인 선정 발표까지 28일 남았습니다.",
       "type": "구매평",
@@ -16716,27 +16739,29 @@
       "registeredReceiptImages": [
         "/images/main/campaign_img/eximg_1.png",
         "/images/main/campaign_img/eximg_2.png"
-      ]
+      ],
+      "reviewer_id": 4
     },
     {
       "id": "1009",
       "title": "놀이공원 방문 체험",
       "category": "유튜브",
       "image": "/images/main/campaign_img/eximg_3.png",
-      "status": "신청",
+      "status": "신청완료",
       "remainingDays": 36,
       "statusMessage": "캠페인 선정 발표까지 36일 남았습니다.",
       "type": "방문형",
       "isUrgent": false,
       "hasContent": false,
-      "isPenalty": false
+      "isPenalty": false,
+      "reviewer_id": 5
     },
     {
       "id": "2007",
       "title": "운동화 구매평 리뷰",
       "category": "네이버 블로그",
       "image": "/images/main/campaign_img/eximg_7.png",
-      "status": "선정",
+      "status": "콘텐츠등록",
       "remainingDays": -44,
       "statusMessage": "콘텐츠를 등록해주세요.",
       "type": "구매평",
@@ -16747,42 +16772,45 @@
       "registeredReceiptImages": [
         "/images/main/campaign_img/eximg_1.png",
         "/images/main/campaign_img/eximg_2.png"
-      ]
+      ],
+      "reviewer_id": 6
     },
     {
       "id": "2009",
       "title": "자동차 용품 구매평 리뷰",
       "category": "네이버 블로그",
       "image": "/images/main/campaign_img/eximg_9.png",
-      "status": "선정",
+      "status": "선정완료",
       "remainingDays": -39,
       "statusMessage": "콘텐츠를 등록해주세요.",
       "type": "구매평",
       "isUrgent": true,
       "subStatus": "receipt_not_registered",
       "hasContent": false,
-      "isPenalty": false
+      "isPenalty": false,
+      "reviewer_id": 7
     },
     {
       "id": "2012",
       "title": "[마감임박] 프리미엄 무선 이어폰 구매평",
       "category": "",
       "image": "/images/main/campaign_img/eximg_1.png",
-      "status": "선정",
+      "status": "선정완료",
       "remainingDays": -25,
       "statusMessage": "콘텐츠를 등록해주세요.",
       "type": "구매평",
       "isUrgent": true,
       "subStatus": "receipt_not_registered",
       "hasContent": false,
-      "isPenalty": false
+      "isPenalty": false,
+      "reviewer_id": 8
     },
     {
       "id": "2013",
       "title": "테스트용 구매평 리뷰 캠페인",
       "category": "네이버 블로그",
       "image": "/images/main/campaign_img/eximg_1.png",
-      "status": "선정",
+      "status": "콘텐츠등록",
       "remainingDays": -49,
       "statusMessage": "콘텐츠를 등록해주세요.",
       "type": "구매평",
@@ -16793,28 +16821,30 @@
       "registeredContentImages": [
         "/images/main/campaign_img/eximg_1.png",
         "/images/main/campaign_img/eximg_2.png"
-      ]
+      ],
+      "reviewer_id": 9
     },
     {
       "id": "review_test_1st_all_cases",
       "title": "[테스트] 구매평 1차 모든 카드 경우의 수",
       "category": "",
       "image": "/images/main/campaign_img/eximg_1.png",
-      "status": "선정",
+      "status": "선정완료",
       "remainingDays": 76,
       "statusMessage": "콘텐츠를 등록해주세요.",
       "type": "구매평",
       "isUrgent": false,
       "subStatus": "receipt_not_registered",
       "hasContent": false,
-      "isPenalty": false
+      "isPenalty": false,
+      "reviewer_id": 10
     },
     {
       "id": "972",
       "title": "[마감임박] 프리미엄 스마트워치 체험단",
       "category": "네이버 블로그",
       "image": "/images/main/campaign_img/eximg_8.png",
-      "status": "선정",
+      "status": "콘텐츠등록",
       "remainingDays": -407,
       "statusMessage": "콘텐츠를 등록해주세요.",
       "type": "배송형",
@@ -16822,28 +16852,30 @@
       "subStatus": "content_registered",
       "hasContent": true,
       "isPenalty": false,
-      "registeredContentLink": "https://blog.naver.com/example-delivery-972"
+      "registeredContentLink": "https://blog.naver.com/example-delivery-972",
+      "reviewer_id": 11
     },
     {
       "id": "973",
       "title": "[마감임박] 프리미엄 무선 이어버드 체험단",
       "category": "클립",
       "image": "/images/main/campaign_img/eximg_9.png",
-      "status": "선정",
+      "status": "선정완료",
       "remainingDays": -407,
       "statusMessage": "콘텐츠를 등록해주세요.",
       "type": "배송형",
       "isUrgent": true,
       "subStatus": "content_not_registered",
       "hasContent": false,
-      "isPenalty": false
+      "isPenalty": false,
+      "reviewer_id": 12
     },
     {
       "id": "1002",
       "title": "카페 방문 체험",
       "category": "인스타그램",
       "image": "/images/main/campaign_img/eximg_9.png",
-      "status": "선정",
+      "status": "콘텐츠등록",
       "remainingDays": 46,
       "statusMessage": "콘텐츠를 등록해주세요.",
       "type": "방문형",
@@ -16851,70 +16883,75 @@
       "subStatus": "content_registered",
       "hasContent": true,
       "isPenalty": false,
-      "registeredContentLink": "https://blog.naver.com/example-visit-1002"
+      "registeredContentLink": "https://blog.naver.com/example-visit-1002",
+      "reviewer_id": 13
     },
     {
       "id": "1007",
       "title": "스파 방문 체험",
       "category": "인스타그램",
       "image": "/images/main/campaign_img/eximg_1.png",
-      "status": "선정",
+      "status": "선정완료",
       "remainingDays": -28,
       "statusMessage": "콘텐츠를 등록해주세요.",
       "type": "방문형",
       "isUrgent": true,
       "subStatus": "content_not_registered",
       "hasContent": false,
-      "isPenalty": false
+      "isPenalty": false,
+      "reviewer_id": 14
     },
     {
       "id": "1011",
       "title": "[강남/서초] 통큰 한우 돼지갈비 체험단가나다라마바사아자잦자자ㅏ자자한줄테스트한줄테스트트한줄테스트한줄테스트트한줄테스트한줄테스트트한줄테스트한줄테스트트한줄테스트한줄테스트트한줄테스트한줄테스트트한줄테스트한줄테스트트",
       "category": "네이버 블로그",
       "image": "/images/main/campaign_img/eximg_5.png",
-      "status": "선정",
+      "status": "선정완료",
       "remainingDays": 5,
       "statusMessage": "콘텐츠를 등록해주세요.",
       "type": "방문형",
       "isUrgent": false,
       "subStatus": "content_not_registered",
       "hasContent": false,
-      "isPenalty": false
+      "isPenalty": false,
+      "reviewer_id": 15
     },
     {
       "id": "1012",
       "title": "[마감임박] 프리미엄 스테이크하우스 방문 체험",
       "category": "네이버 블로그",
       "image": "/images/main/campaign_img/eximg_1.png",
-      "status": "선정",
+      "status": "선정완료",
       "remainingDays": -23,
       "statusMessage": "콘텐츠를 등록해주세요.",
       "type": "방문형",
       "isUrgent": true,
       "subStatus": "content_not_registered",
       "hasContent": false,
-      "isPenalty": false
+      "isPenalty": false,
+      "reviewer_id": 16
     },
     {
       "id": "3002",
       "title": "뷰티 기자단",
       "category": "인스타그램",
       "image": "/images/main/campaign_img/eximg_2.png",
-      "status": "선정",
+      "status": "선정완료",
       "remainingDays": 10,
       "statusMessage": "콘텐츠를 등록해주세요.",
       "type": "기자단",
       "isUrgent": false,
       "subStatus": "content_not_registered",
       "hasContent": false,
-      "isPenalty": false
+      "isPenalty": false,
+      "reviewer_id": 17
     },
     {
       "id": "4013",
       "title": "링크 전용 뷰티 미션형",
       "category": "",
       "image": "/images/main/campaign_img/eximg_2.png",
-      "status": "선정",
+      "status": "콘텐츠등록",
       "remainingDays": 3,
       "statusMessage": "콘텐츠를 등록해주세요.",
       "type": "미션형",
@@ -16927,14 +16964,15 @@
       "registeredContentImages": [
         "/images/main/campaign_img/eximg_1.png",
         "/images/main/campaign_img/eximg_2.png"
-      ]
+      ],
+      "reviewer_id": 18
     },
     {
       "id": "4014",
       "title": "이미지 전용 생활용품 미션형",
       "category": "",
       "image": "/images/main/campaign_img/eximg_3.png",
-      "status": "선정",
+      "status": "선정완료",
       "remainingDays": 10,
       "statusMessage": "콘텐츠를 등록해주세요.",
       "type": "미션형",
@@ -16942,14 +16980,15 @@
       "subStatus": "content_not_registered",
       "hasContent": false,
       "isPenalty": false,
-      "contentType": "image"
+      "contentType": "image",
+      "reviewer_id": 19
     },
     {
       "id": "4015",
       "title": "종합 리뷰 식품 미션형종합 리뷰 식품 미션형종합 리뷰 식품 미션형종합 리뷰 식품 미션형ㅇㅇㅇㄴㅇㄹㄴㅇㄹ",
       "category": "",
       "image": "/images/main/campaign_img/eximg_4.png",
-      "status": "선정",
+      "status": "선정완료",
       "remainingDays": 5,
       "statusMessage": "콘텐츠를 등록해주세요.",
       "type": "미션형",
@@ -16957,14 +16996,15 @@
       "subStatus": "content_not_registered",
       "hasContent": false,
       "isPenalty": false,
-      "contentType": "both"
+      "contentType": "both",
+      "reviewer_id": 20
     },
     {
       "id": "4005",
       "title": "식품 미션형",
       "category": "",
       "image": "/images/main/campaign_img/eximg_5.png",
-      "status": "선정",
+      "status": "선정완료",
       "remainingDays": -98,
       "statusMessage": "콘텐츠를 등록해주세요.",
       "type": "미션형",
@@ -16972,7 +17012,8 @@
       "subStatus": "content_not_registered",
       "hasContent": false,
       "isPenalty": false,
-      "contentType": "both"
+      "contentType": "both",
+      "reviewer_id": 1
     },
     {
       "id": "962",
@@ -16986,7 +17027,8 @@
       "isUrgent": true,
       "subStatus": "content_registered",
       "hasContent": true,
-      "isPenalty": false
+      "isPenalty": false,
+      "reviewer_id": 2
     },
     {
       "id": "970",
@@ -17000,7 +17042,8 @@
       "isUrgent": false,
       "subStatus": "content_registered",
       "hasContent": true,
-      "isPenalty": false
+      "isPenalty": false,
+      "reviewer_id": 3
     },
     {
       "id": "4004",
@@ -17015,7 +17058,8 @@
       "subStatus": "content_registered",
       "hasContent": true,
       "isPenalty": false,
-      "contentType": "link"
+      "contentType": "link",
+      "reviewer_id": 4
     },
     {
       "id": "3004",
@@ -17029,7 +17073,8 @@
       "isUrgent": false,
       "subStatus": "content_registered",
       "hasContent": true,
-      "isPenalty": false
+      "isPenalty": false,
+      "reviewer_id": 5
     },
     {
       "id": "965",
@@ -17044,7 +17089,8 @@
       "subStatus": "content_rejected,re_register",
       "hasContent": true,
       "isPenalty": false,
-      "rejectionReason": "제품 사진이 명확하지 않습니다. 제품의 특징이 잘 보이도록 재촬영하여 등록해 주세요.긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스"
+      "rejectionReason": "제품 사진이 명확하지 않습니다. 제품의 특징이 잘 보이도록 재촬영하여 등록해 주세요.긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스",
+      "reviewer_id": 6
     },
     {
       "id": "1003",
@@ -17059,7 +17105,8 @@
       "subStatus": "content_rejected,re_register",
       "hasContent": true,
       "isPenalty": false,
-      "rejectionReason": "제품 사진이 명확하지 않습니다. 제품의 특징이 잘 보이도록 재촬영하여 등록해 주세요.긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스"
+      "rejectionReason": "제품 사진이 명확하지 않습니다. 제품의 특징이 잘 보이도록 재촬영하여 등록해 주세요.긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스",
+      "reviewer_id": 7
     },
     {
       "id": "3005",
@@ -17074,7 +17121,8 @@
       "subStatus": "content_rejected,re_register",
       "hasContent": true,
       "isPenalty": false,
-      "rejectionReason": "제품 사진이 명확하지 않습니다. 제품의 특징이 잘 보이도록 재촬영하여 등록해 주세요.긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스"
+      "rejectionReason": "제품 사진이 명확하지 않습니다. 제품의 특징이 잘 보이도록 재촬영하여 등록해 주세요.긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스",
+      "reviewer_id": 8
     }
   ],
   "accounts": [
