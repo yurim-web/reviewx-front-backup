@@ -14,6 +14,7 @@
 import { useState } from "react";
 import type { WithdrawalRequestItem } from "@/data/manager_sa/settlement/withdrawalRequestData";
 import type { StoredRequest, StoredAccount, PointHistoryEntry } from "./withdrawalTypes";
+import { patchWithdrawalStatus } from "@/lib/api/point";
 
 interface UseWithdrawalRejectParams {
   selected_ids: string[];
@@ -109,6 +110,21 @@ export function useWithdrawalReject({ selected_ids, setSelectedIds }: UseWithdra
           }
         });
         localStorage.setItem("notifications", JSON.stringify(notifications));
+
+        // 4. mock 서버 출금 상태 업데이트 (PATCH /admin/withdrawal/:id)
+        const now_iso = now.toISOString();
+        pending_reject_ids.forEach((id: string) => {
+          const numericId = parseInt(id.replace(/\D/g, ""), 10);
+          if (numericId) {
+            patchWithdrawalStatus(numericId, {
+              status: "REJECTED",
+              processed_date: now_iso,
+              rejection_reason: reason,
+            }).catch((_apiError) => {
+              console.warn("출금 반려 API 호출 실패 (localStorage 처리 완료):", _apiError);
+            });
+          }
+        });
       }
     } catch (_error) {
       alert("출금 반려 처리 중 오류가 발생했습니다.");

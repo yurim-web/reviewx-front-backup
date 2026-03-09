@@ -65,7 +65,7 @@ function adaptPaymentItem(
     businessType: (partner?.division as "법인" | "개인") ?? "법인",
     paymentMethod,
     taxInvoiceType,
-    chargedPoints: payment.points_charged.toLocaleString("ko-KR"),
+    chargedPoints: (payment.points_charged ?? payment.amount ?? 0).toLocaleString("ko-KR"),
     heldPoints: (partner?.current_points ?? 0).toLocaleString("ko-KR"),
     paymentStatus,
     requestDate: formatDate(payment.paid_at),

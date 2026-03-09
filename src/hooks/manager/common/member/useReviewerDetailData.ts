@@ -21,6 +21,8 @@ import {
   type ChannelDetail,
   type RecentCampaign,
 } from "@/data/manager_ga/member/reviewers";
+import { fetchAdminReviewerDetail } from "@/lib/api/admin";
+import type { AdminReviewerApiItem } from "@/types/api/admin";
 import {
   format_campaign_number,
   map_brand_name_to_channel,
@@ -399,6 +401,48 @@ async function fetch_from_local_storage(
   };
 }
 
+// API 응답 → ReviewerDetail 변환 함수
+function map_api_to_reviewer_detail(api: AdminReviewerApiItem): ReviewerDetail {
+  const channel_details: ChannelDetail[] = (api.channels ?? []).map((ch) => ({
+    channel: ch as Channel,
+    is_connected: true,
+    channel_url: "",
+  }));
+
+  return {
+    id: String(api.id),
+    number: api.number,
+    name: api.name,
+    nickname: api.nickname ?? "",
+    gender: (api.gender as "남성" | "여성") ?? "남성",
+    age: api.age ?? 0,
+    email: api.email ?? "",
+    phone: api.phone ?? "",
+    address: api.address ?? "",
+    profile_image: null,
+    channels: (api.channels ?? []) as Channel[],
+    type: api.type as ReviewerDetail["type"],
+    campaign_participated: api.campaign_participated ?? 0,
+    campaign_completed: api.campaign_completed ?? 0,
+    current_points: api.current_points ?? 0,
+    withdrawn_points: api.withdrawn_points ?? 0,
+    status_type: api.status_type as ReviewerDetail["status_type"],
+    status: api.status as ReviewerDetail["status"],
+    penalty_count: api.penalty_count ?? 0,
+    last_access_date: api.last_access_date ?? "",
+    join_date: api.join_date ?? "",
+    channel_details,
+    account_info: {
+      account_holder: api.account_holder ?? "",
+      bank: api.bank ?? "",
+      account_number: "",
+      resident_number: "",
+    },
+    recent_campaigns: [] as RecentCampaign[],
+    penalty_history: [],
+  };
+}
+
 export function useReviewerDetailData(reviewer_id: string): UseReviewerDetailDataResult {
   const [reviewer_detail, set_reviewer_detail] = useState<ReviewerDetail | null>(null);
   const [is_loading, set_is_loading] = useState(true);
@@ -408,7 +452,44 @@ export function useReviewerDetailData(reviewer_id: string): UseReviewerDetailDat
     const fetch_reviewer_detail = async () => {
       set_is_loading(true);
 
-      // 특수 ID는 localStorage에서 데이터 로드
+      // 1. mock 서버 API 먼저 시도 (숫자 ID인 경우)
+      const numericId = parseInt(reviewer_id, 10);
+      if (!isNaN(numericId) && numericId > 0) {
+        try {
+          const apiData = await fetchAdminReviewerDetail(numericId);
+          if (apiData) {
+            // 특수 ID(1, 2)는 localStorage로 채널/캠페인 정보 보강
+            const SPECIAL_IDS = ["1", "2"];
+            if (SPECIAL_IDS.includes(reviewer_id) && typeof window !== "undefined") {
+              const mappedId = reviewer_id === "1" ? "user_kakao_001" : "user_naver_001";
+              const localDetail = await fetch_from_local_storage(reviewer_id, mappedId);
+              if (localDetail) {
+                // API 기본 정보 + localStorage 채널/캠페인 정보 병합
+                const merged: ReviewerDetail = {
+                  ...map_api_to_reviewer_detail(apiData),
+                  channel_details: localDetail.channel_details,
+                  account_info: localDetail.account_info,
+                  recent_campaigns: localDetail.recent_campaigns,
+                  penalty_history: localDetail.penalty_history,
+                };
+                set_reviewer_detail(merged);
+                if (merged.status === "탈퇴") set_is_withdrawn_modal_open(true);
+                set_is_loading(false);
+                return;
+              }
+            }
+            const detail = map_api_to_reviewer_detail(apiData);
+            set_reviewer_detail(detail);
+            if (detail.status === "탈퇴") set_is_withdrawn_modal_open(true);
+            set_is_loading(false);
+            return;
+          }
+        } catch (_apiError) {
+          // API 실패 시 하위 fallback으로 진행
+        }
+      }
+
+      // 2. 특수 ID localStorage fallback
       const SPECIAL_IDS = ["user_kakao_001", "user_naver_001", "1", "2"];
       if (SPECIAL_IDS.includes(reviewer_id) && typeof window !== "undefined") {
         try {
@@ -426,11 +507,11 @@ export function useReviewerDetailData(reviewer_id: string): UseReviewerDetailDat
             return;
           }
         } catch (_error) {
-          // 로드 실패 시 기존 데이터 사용
+          // 로드 실패 시 정적 데이터 사용
         }
       }
 
-      // 일반 리뷰어는 정적 데이터 사용
+      // 3. 최종 fallback: 정적 데이터
       const detail = get_reviewer_detail_by_id(reviewer_id);
       set_reviewer_detail(detail);
 

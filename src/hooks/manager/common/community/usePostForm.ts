@@ -164,7 +164,7 @@ export default function usePostForm({
   ]);
 
   // 제출 핸들러
-  const handle_submit = () => {
+  const handle_submit = async () => {
     if (!category_type || !category || !target || !title.trim()) {
       alert("모든 필드를 입력해주세요.");
       return;
@@ -201,8 +201,12 @@ export default function usePostForm({
         is_pinned: false,
       };
       add_post(new_post, content);
-      // mock DB에 게시글 저장 (best-effort)
-      postCommunityPost({ ...new_post, content }).catch(() => {});
+      // mock DB에 게시글 저장
+      try {
+        await postCommunityPost({ ...new_post, content });
+      } catch (_apiError) {
+        console.warn("게시글 작성 API 호출 실패 (로컬 저장 완료):", _apiError);
+      }
     } else {
       if (!post_id) {
         alert("게시글 ID가 없습니다.");
@@ -224,14 +228,18 @@ export default function usePostForm({
         },
         content
       );
-      // mock DB에 게시글 수정 저장 (best-effort)
-      patchCommunityPost(post_id, {
-        division: category_type as PostDivision,
-        category,
-        target: target as PostTarget,
-        title: title.trim(),
-        content,
-      }).catch(() => {});
+      // mock DB에 게시글 수정 저장
+      try {
+        await patchCommunityPost(post_id, {
+          division: category_type as PostDivision,
+          category,
+          target: target as PostTarget,
+          title: title.trim(),
+          content,
+        });
+      } catch (_apiError) {
+        console.warn("게시글 수정 API 호출 실패 (로컬 저장 완료):", _apiError);
+      }
     }
 
     set_show_toast(true);

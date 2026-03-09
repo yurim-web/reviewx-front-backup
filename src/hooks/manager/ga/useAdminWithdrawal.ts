@@ -43,7 +43,7 @@ function adaptWithdrawalItem(item: AdminWithdrawalApiItem, index: number): Withd
     name: item.user_name,
     account: `${item.bank} ${item.account_number} ${item.account_holder}`,
     ssn: "------*******",
-    amount: item.net_amount.toLocaleString("ko-KR"),
+    amount: (item.net_amount ?? item.requested_amount ?? 0).toLocaleString("ko-KR"),
     remaining: "-",
     requestDate: formatDate(item.request_date),
     paymentDate: item.processed_date ? formatDate(item.processed_date) : "-",
