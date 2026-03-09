@@ -23,7 +23,11 @@ export default function DeliveryCampaignApplicationPage() {
   return (
     <CampaignApplicationLayout
       {...hookValues}
-      renderCard={renderChannelCard(hookValues.handleSelectApplicant, hookValues.handleCancelApplicant)}
+      renderCard={renderChannelCard(
+        hookValues.handleSelectApplicant,
+        hookValues.handleCancelApplicant,
+        hookValues.campaignData
+      )}
     />
   );
 }

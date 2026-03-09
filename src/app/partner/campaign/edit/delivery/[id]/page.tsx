@@ -26,14 +26,12 @@ import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
-import { getPartnerPointSummary } from "@/data/partner/point/pointData";
 // 분리된 CSS 모듈들 import
 import layoutStyles from "@/styles/partner/partner_layout.module.css";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import Toast from "@/components/common/toast/Toast";
 import headerStyles from "@/styles/partner/campaign_create/campaign_header.module.css";
 import checkboxStyles from "@/styles/partner/campaign_create/campaign_guide/checkboxes.module.css";
-import { campaignToFormData } from "@/utils/partner/campaignEdit/campaignToFormData";
 import { patchCampaign, fetchCampaignById } from "@/lib/api/partner";
 import { apiCampaignToFormData } from "@/utils/partner/campaignEdit/apiToFormData";
 
@@ -91,82 +89,25 @@ export default function DeliveryCampaignEditPage() {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  // 캠페인 데이터 로드
+  // 서버 API에서 캠페인 데이터 로드
   useEffect(() => {
-    try {
-      const campaign = getCampaignById(campaignId);
-      if (!campaign) {
-        // API fallback: DB에서 캠페인 조회
-        fetchCampaignById(campaignId).then((apiItem) => {
-          if (apiItem) {
-            const formData = apiCampaignToFormData(apiItem);
-            setInitialData(formData);
-            setIsOpen(isCampaignOpen(formData.recruitmentPeriod));
-          } else {
-            setError("캠페인을 찾을 수 없습니다.");
-          }
-          setIsLoading(false);
-        });
-        return;
-      }
-
-      // 배송형 캠페인이 아닌 경우
-      if (campaign.campaignInfo.campaignType !== "배송형") {
-        setError("배송형 캠페인이 아닙니다.");
-        setIsLoading(false);
-        return;
-      }
-
-      // 원본 확장 데이터 찾기
-      const originalData = deliveryCampaignsExtended.find((c) => c.id === campaignId);
-
-      // localStorage에서 저장된 캠페인 확인 (최신 데이터 우선)
-      let storedCampaign: Record<string, unknown> | null = null;
-      if (typeof window !== "undefined") {
-        const storedCampaigns = localStorage.getItem("deliveryCampaigns");
-        if (storedCampaigns) {
-          const campaigns: StoredCampaignRaw[] = JSON.parse(storedCampaigns);
-          storedCampaign =
-            (campaigns.find((c) => (c.campaignInfo?.id || c.id) === campaignId) as Record<
-              string,
-              unknown
-            >) ?? null;
+    fetchCampaignById(campaignId)
+      .then((apiItem) => {
+        if (apiItem) {
+          const formData = apiCampaignToFormData(apiItem);
+          setInitialData(formData);
+          setIsUrgent(formData.isUrgent ?? false);
+          setIsOpen(isCampaignOpen(formData.recruitmentPeriod));
+        } else {
+          setError("캠페인을 찾을 수 없습니다.");
         }
-      }
-
-      // localStorage에 있는 캠페인이면 그것을 사용, 없으면 정적 데이터 사용
-      const dataToUse = storedCampaign || originalData;
-
-      // console.log('🔍 캠페인 수정 - 불러온 데이터:', {
-      //   campaignId,
-      //   storedCampaign,
-      //   originalData,
-      //   dataToUse,
-      // });
-
-      // 현재 포인트 가져오기
-      const currentPoints = user?.id ? getPartnerPointSummary(user.id).available_points : 0;
-
-      // 캠페인 데이터를 폼 데이터로 변환
-      const formData = campaignToFormData(campaign, dataToUse, {
-        userBusinessName: user?.business_name,
-        currentPoints: currentPoints,
+        setIsLoading(false);
+      })
+      .catch((_err) => {
+        setError("캠페인을 불러오는 중 오류가 발생했습니다.");
+        setIsLoading(false);
       });
-      setInitialData(formData);
-
-      // isUrgent 상태 설정
-      setIsUrgent((dataToUse as { isUrgent?: boolean } | null | undefined)?.isUrgent ?? false);
-
-      // 캠페인 오픈 여부 확인
-      const openStatus = isCampaignOpen(campaign.campaignInfo.recruitmentPeriod);
-      setIsOpen(openStatus);
-
-      setIsLoading(false);
-    } catch (_err) {
-      setError("캠페인을 불러오는 중 오류가 발생했습니다.");
-      setIsLoading(false);
-    }
-  }, [campaignId, user?.id, user?.business_name]);
+  }, [campaignId]);
 
   /**
    * 캠페인 수정 처리
@@ -370,11 +311,13 @@ export default function DeliveryCampaignEditPage() {
         );
       }
 
-      // mock DB에 캠페인 수정 저장 (best-effort)
+      // mock DB에 캠페인 수정 저장
       patchCampaign(campaignId, {
         title: formData.title,
         description: formData.providedItems,
-      }).catch(() => {});
+      }).catch((_apiError) => {
+        console.error("캠페인 수정 API 호출 실패:", _apiError);
+      });
 
       setToast({ is_open: true, message: "저장되었습니다." });
 

@@ -391,8 +391,10 @@ export default function PartnerSignupPage() {
       partnerAccounts.push(newPartnerAccount);
       localStorage.setItem("partner_accounts", JSON.stringify(partnerAccounts));
 
-      // mock DB에 파트너 저장 (best-effort)
-      postPartner(newPartnerAccount as unknown as Record<string, unknown>).catch(() => {});
+      // mock DB에 파트너 저장
+      postPartner(newPartnerAccount as unknown as Record<string, unknown>).catch((_apiError) => {
+        console.error("파트너 가입 API 호출 실패:", _apiError);
+      });
 
       router.push(`/partner/signup/complete?name=${encodeURIComponent(name)}`);
     } catch (_error) {
