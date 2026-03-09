@@ -17,7 +17,6 @@ import { getCampaignById } from "@/data/partner/sharedCampaigns";
 import { postCampaignApplication } from "@/lib/api/campaign";
 import {
   type ApplicationModalType,
-  type StoredUserAccount,
   type StoredApplicant,
   type StoredCampaign,
   getStorageKey,
@@ -26,6 +25,7 @@ import {
   buildApplicantData,
   addToUserAppliedCampaigns,
 } from "@/components/user/campaign_detail/modal/applicationModalUtils";
+import { useReviewerProfile } from "@/hooks/user/mypage/useReviewerProfile";
 
 interface UseApplicationSubmitParams {
   campaignId?: string;
@@ -69,15 +69,16 @@ export function useApplicationSubmit(params: UseApplicationSubmitParams) {
   } = params;
 
   const { user } = useAuth();
+  const { data: profile } = useReviewerProfile(user?.id);
 
-  /** 캠페인 데이터에 신청자를 추가하고 localStorage에 저장 */
+  /** 캠페인 데이터에 신청자를 추가하고 localStorage + API에 저장 */
   const addApplicantToCampaign = useCallback(
-    (
+    async (
       campaign: StoredCampaign,
       campaigns: StoredCampaign[],
       storageKey: string,
       insertAtEnd: boolean
-    ): boolean => {
+    ): Promise<boolean> => {
       if (!user || !campaignId) return false;
 
       if (!campaign.applicantData) {
@@ -92,16 +93,19 @@ export function useApplicationSubmit(params: UseApplicationSubmitParams) {
         return false;
       }
 
-      const userAccount = (() => {
-        try {
-          const raw = localStorage.getItem("user_accounts");
-          if (!raw) return null;
-          const accounts = JSON.parse(raw) as StoredUserAccount[];
-          return accounts.find((a) => a.id === user.id || a.email === user.email) ?? null;
-        } catch {
-          return null;
-        }
-      })();
+      // 서버 프로필 데이터를 userAccount 형식으로 변환
+      const userAccount = profile
+        ? {
+            id: String(profile.id),
+            name: profile.name,
+            nickname: profile.nickname,
+            profile_image: profile.profile_image,
+            daily_visits: profile.daily_visits,
+            total_visits: profile.total_visits,
+            neighbors: profile.neighbors,
+            channel_details: profile.channel_details,
+          }
+        : null;
 
       const applicantData = buildApplicantData({
         userId: user.id,
@@ -126,17 +130,22 @@ export function useApplicationSubmit(params: UseApplicationSubmitParams) {
       }
       localStorage.setItem(storageKey, JSON.stringify(updatedCampaigns));
 
-      // mock API에 신청 데이터 저장 (best-effort)
+      // mock API에 신청 데이터 저장 (서버 응답 확인)
       const campaignIdNum = parseInt(campaignId.replace(/\D+/g, ""), 10) || 0;
       const reviewerIdNum = user.id.includes("kakao") ? 1 : user.id.includes("naver") ? 2 : 1;
-      postCampaignApplication({
-        campaign_id: campaignIdNum,
-        reviewer_id: reviewerIdNum,
-        status: "APPLIED",
-        apply_date: new Date().toISOString(),
-        channel_url: currentChannelUrl,
-        introduction: memo,
-      }).catch(() => {});
+      try {
+        await postCampaignApplication({
+          campaign_id: campaignIdNum,
+          reviewer_id: reviewerIdNum,
+          status: "APPLIED",
+          apply_date: new Date().toISOString(),
+          channel_url: currentChannelUrl,
+          introduction: memo,
+        });
+      } catch (_apiError) {
+        // mock 서버 미실행 시 localStorage 저장 완료 상태로 진행
+        console.warn("캠페인 신청 API 호출 실패 (localStorage 저장 완료):", _apiError);
+      }
 
       const appliedAt = new Date().toISOString();
       addToUserAppliedCampaigns({
@@ -153,6 +162,7 @@ export function useApplicationSubmit(params: UseApplicationSubmitParams) {
     },
     [
       user,
+      profile,
       campaignId,
       type,
       showChannel,
@@ -181,7 +191,7 @@ export function useApplicationSubmit(params: UseApplicationSubmitParams) {
     [type]
   );
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
     if (!campaignId) {
       alert("캠페인 정보를 불러올 수 없습니다. 페이지를 새로고침하고 다시 시도해주세요.");
       return;
@@ -207,38 +217,34 @@ export function useApplicationSubmit(params: UseApplicationSubmitParams) {
       const rawCampaigns = localStorage.getItem(storageKey);
 
       if (rawCampaigns) {
-        // localStorage에 해당 타입 캠페인이 있는 경우
         const campaigns: StoredCampaign[] = JSON.parse(rawCampaigns);
         const idx = findCampaignIndex(campaigns, campaignId, type);
 
         if (idx >= 0) {
-          // localStorage에서 캠페인을 찾은 경우
-          const ok = addApplicantToCampaign(campaigns[idx], campaigns, storageKey, false);
+          const ok = await addApplicantToCampaign(campaigns[idx], campaigns, storageKey, false);
           if (ok) {
             clearFormData();
             onSuccess();
           }
         } else {
-          // localStorage에 있지만 해당 캠페인이 없는 경우 → 목업 데이터에서 찾기
           const mockCampaign = findMockCampaign(campaignId);
           if (!mockCampaign) {
             alert("캠페인을 찾을 수 없습니다. 페이지를 새로고침하고 다시 시도해주세요.");
             return;
           }
-          const ok = addApplicantToCampaign(mockCampaign, campaigns, storageKey, true);
+          const ok = await addApplicantToCampaign(mockCampaign, campaigns, storageKey, true);
           if (ok) {
             clearFormData();
             onSuccess();
           }
         }
       } else {
-        // localStorage에 캠페인 데이터가 없는 경우 → 목업 데이터로 초기화
         const mockCampaign = findMockCampaign(campaignId);
         if (!mockCampaign) {
           alert("캠페인 데이터를 불러올 수 없습니다. 페이지를 새로고침하고 다시 시도해주세요.");
           return;
         }
-        const ok = addApplicantToCampaign(mockCampaign, [], storageKey, true);
+        const ok = await addApplicantToCampaign(mockCampaign, [], storageKey, true);
         if (ok) {
           clearFormData();
           onSuccess();
