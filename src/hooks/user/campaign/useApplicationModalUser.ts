@@ -13,10 +13,9 @@
 
 import { useState, useEffect } from "react";
 import type { AuthUser } from "@/types/auth";
-import {
-  type StoredUserAccount,
-  resolveUserChannelUrl,
-} from "@/components/user/campaign_detail/modal/applicationModalUtils";
+import { resolveUserChannelUrl } from "@/components/user/campaign_detail/modal/applicationModalUtils";
+import { useReviewerProfile } from "@/hooks/user/mypage/useReviewerProfile";
+import type { ReviewerProfileResponse } from "@/types/api/reviewer";
 
 interface UseApplicationModalUserParams {
   isOpen: boolean;
@@ -36,78 +35,52 @@ export function useApplicationModalUser({
   const [userName, setUserName] = useState("");
   const [userAddress, setUserAddress] = useState("");
   const [currentChannelUrl, setCurrentChannelUrl] = useState(userChannelUrl || "");
+  const { data: profile } = useReviewerProfile(user?.id);
 
-  /** localStorage user_accounts에서 주소 문자열 조합 */
-  function resolveAddress(account: StoredUserAccount): string {
-    const addrSrc = account.address_details;
-    if (addrSrc?.address) {
-      const addressPart = addrSrc.detailAddress
-        ? `${addrSrc.address} ${addrSrc.detailAddress}`.trim()
-        : addrSrc.address;
-      return addrSrc.postalCode ? `${addressPart} | ${addrSrc.postalCode}` : addressPart;
+  /** 서버 프로필에서 주소 문자열 조합 */
+  function resolveAddress(p: ReviewerProfileResponse): string {
+    if (p.address && p.postal_code) {
+      const addressPart = p.detail_address ? `${p.address} ${p.detail_address}`.trim() : p.address;
+      return `${addressPart} | ${p.postal_code}`;
     }
-    if (account.address && account.postal_code) {
-      const addressPart = account.detail_address
-        ? `${account.address} ${account.detail_address}`.trim()
-        : account.address;
-      return `${addressPart} | ${account.postal_code}`;
-    }
-    return "";
+    return p.address || "";
   }
 
   useEffect(() => {
     if (!isOpen) return;
 
-    const loadFromStorage = (applyUserAccount: (account: StoredUserAccount) => void) => {
-      if (typeof window === "undefined" || !user) return;
-      try {
-        const raw = localStorage.getItem("user_accounts");
-        if (!raw) return;
-        const accounts = JSON.parse(raw) as StoredUserAccount[];
-        const account = accounts.find((a) => a.id === user.id || a.email === user.email);
-        if (account) applyUserAccount(account);
-      } catch {
-        // 파싱 실패 시 기본값 유지
-      }
-    };
-
     if (user) {
       const shouldRestore = sessionStorage.getItem("shouldRestoreFormData");
 
       if (shouldRestore === "true") {
-        // 수정 버튼을 통해 돌아온 경우: 채널·주소는 최신 localStorage에서 로드
-        loadFromStorage((account) => {
-          setUserName(account.name || user.name || "");
-          setUserAddress(resolveAddress(account));
-          if (showChannel && account.channel_details && campaignChannelName) {
+        // 수정 버튼을 통해 돌아온 경우
+        if (profile) {
+          setUserName(profile.name || user.name || "");
+          setUserAddress(resolveAddress(profile));
+          if (showChannel && profile.channel_details && campaignChannelName) {
             setCurrentChannelUrl(
-              resolveUserChannelUrl(account.channel_details, campaignChannelName)
+              resolveUserChannelUrl(profile.channel_details, campaignChannelName)
             );
           }
-        });
+        }
         sessionStorage.removeItem("shouldRestoreFormData");
       } else {
-        // 일반 진입: 입력값 초기화 후 user_accounts에서 로드
-        loadFromStorage((account) => {
-          setUserName(account.name || user.name || "");
-          setUserAddress(resolveAddress(account));
-          if (account.channel_details && campaignChannelName) {
+        // 일반 진입
+        if (profile) {
+          setUserName(profile.name || user.name || "");
+          setUserAddress(resolveAddress(profile));
+          if (profile.channel_details && campaignChannelName) {
             setCurrentChannelUrl(
-              resolveUserChannelUrl(account.channel_details, campaignChannelName)
+              resolveUserChannelUrl(profile.channel_details, campaignChannelName)
             );
           } else {
             setCurrentChannelUrl(userChannelUrl || "");
           }
-        });
-
-        // user_accounts가 없거나 계정을 못 찾은 경우 user 기본값 사용
-        if (typeof window !== "undefined" && user) {
-          const raw = localStorage.getItem("user_accounts");
-          if (!raw) {
-            setUserName(user.name || "");
-            setUserAddress("");
-            setCurrentChannelUrl(userChannelUrl || "");
-          }
+        } else {
+          // 서버 프로필이 없으면 user 기본값 사용
+          setUserName(user.name || "");
+          setUserAddress("");
+          setCurrentChannelUrl(userChannelUrl || "");
         }
       }
     } else {
@@ -116,7 +89,7 @@ export function useApplicationModalUser({
       setUserAddress("");
       setCurrentChannelUrl(userChannelUrl || "");
     }
-  }, [isOpen, user, campaignChannelName, userChannelUrl, showChannel]);
+  }, [isOpen, user, profile, campaignChannelName, userChannelUrl, showChannel]);
 
   return { userName, userAddress, currentChannelUrl };
 }

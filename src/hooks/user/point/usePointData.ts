@@ -18,9 +18,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import type { PointHistory } from "@/types/domain/user";
 import { pointHistoryData, pendingPointListData, pointSummary } from "@/data/user/point/pointData";
-import type { StoredUserAccount } from "@/lib/auth/types";
 import { fetchReviewerPoint, fetchPointHistory } from "@/lib/api/point";
 import type { PointHistoryApiItem } from "@/types/api/point";
+import { useReviewerProfile } from "@/hooks/user/mypage/useReviewerProfile";
 
 // ========================================
 // 유틸: 사용자 ID → 리뷰어 ID (mock 전용)
@@ -102,6 +102,7 @@ export interface UsePointDataReturn {
 export function usePointData(): UsePointDataReturn {
   const { user } = useAuth();
   const reviewerId = user ? getReviewerId(user.id) : 0;
+  const { data: profile } = useReviewerProfile(user?.id);
 
   // 포인트 잔액 (API)
   const { data: reviewerData } = useQuery({
@@ -122,7 +123,7 @@ export function usePointData(): UsePointDataReturn {
     select: (data) => data.map(adaptHistoryItem),
   });
 
-  // 계좌 정보 (localStorage — 은행 계좌는 내 정보 수정에서 별도 관리)
+  // 계좌 정보 (서버 프로필에서 로드)
   const [accountInfo, setAccountInfo] = useState<AccountInfo>({
     name: "",
     bank: "",
@@ -131,28 +132,15 @@ export function usePointData(): UsePointDataReturn {
   });
 
   useEffect(() => {
-    if (typeof window === "undefined" || !user) return;
-    try {
-      const storedAccounts = localStorage.getItem("user_accounts");
-      if (storedAccounts) {
-        const accounts: StoredUserAccount[] = JSON.parse(storedAccounts);
-        const userAccount = accounts.find((a) => a.id === user.id || a.email === user.email);
-        if (userAccount) {
-          setAccountInfo({
-            name: userAccount.account_holder ?? userAccount.name ?? "",
-            bank: userAccount.bank ?? "",
-            accountNumber: userAccount.account_number ?? "",
-            residentNumber:
-              userAccount.ssn_front && userAccount.ssn_back
-                ? `${userAccount.ssn_front}-${userAccount.ssn_back}`
-                : "",
-          });
-        }
-      }
-    } catch {
-      // localStorage 읽기 실패 시 기본값 유지
-    }
-  }, [user]);
+    if (!user || !profile) return;
+    setAccountInfo({
+      name: profile.account_holder ?? profile.name ?? "",
+      bank: profile.bank ?? "",
+      accountNumber: profile.account_number ?? "",
+      residentNumber:
+        profile.ssn_front && profile.ssn_back ? `${profile.ssn_front}-${profile.ssn_back}` : "",
+    });
+  }, [user, profile]);
 
   const pointInfo: PointInfo = {
     available_points: reviewerData?.current_points ?? pointSummary.available_points,
