@@ -55,7 +55,8 @@
       "adultOnly": false,
       "allowReParticipation": true,
       "allowLateSubmission": true,
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "promotionLink": "https://blog.naver.com/delivery-promo-1"
     },
     {
       "id": 962,
@@ -106,13 +107,14 @@
         "selectedCount": 0,
         "applicationRate": 10.6
       },
-      "partner_id": 2,
+      "partner_id": 1,
       "additionalPoint": 25000,
       "selectedCount": 5,
       "adultOnly": false,
       "allowReParticipation": true,
       "allowLateSubmission": true,
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "promotionLink": "https://www.instagram.com/delivery_promo_2"
     },
     {
       "id": 963,
@@ -163,13 +165,14 @@
         "selectedCount": 0,
         "applicationRate": 5.93
       },
-      "partner_id": 3,
+      "partner_id": 1,
       "additionalPoint": 20000,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
       "allowLateSubmission": true,
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "promotionLink": "https://blog.naver.com/delivery-promo-3"
     },
     {
       "id": 964,
@@ -220,14 +223,15 @@
         "selectedCount": 7,
         "applicationRate": 29.25
       },
-      "partner_id": 4,
+      "partner_id": 1,
       "additionalPoint": 35000,
       "selectedCount": 7,
       "extensionRequested": true,
       "adultOnly": false,
       "allowReParticipation": true,
       "allowLateSubmission": true,
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "promotionLink": "https://www.youtube.com/@delivery-promo-4"
     },
     {
       "id": 966,
@@ -278,14 +282,15 @@
         "selectedCount": 10,
         "applicationRate": 6.5
       },
-      "partner_id": 5,
+      "partner_id": 1,
       "additionalPoint": 28000,
       "selectedCount": 10,
       "extensionRequested": true,
       "adultOnly": false,
       "allowReParticipation": true,
       "allowLateSubmission": true,
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "promotionLink": "https://blog.naver.com/delivery-promo-5"
     },
     {
       "id": 967,
@@ -336,14 +341,15 @@
         "selectedCount": 4,
         "applicationRate": 69
       },
-      "partner_id": 6,
+      "partner_id": 1,
       "additionalPoint": 40000,
       "selectedCount": 4,
       "extensionRequested": true,
       "adultOnly": false,
       "allowReParticipation": true,
       "allowLateSubmission": true,
-      "contact_phone": "010-1234-5678"
+      "contact_phone": "010-1234-5678",
+      "promotionLink": "https://blog.naver.com/delivery-promo-1"
     },
     {
       "id": 968,
@@ -394,13 +400,15 @@
         "selectedCount": 8,
         "applicationRate": 19.8
       },
-      "partner_id": 7,
+      "partner_id": 1,
       "additionalPoint": 32000,
       "selectedCount": 8,
       "extensionRequested": true,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://www.instagram.com/delivery_promo_2",
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 969,
@@ -451,12 +459,14 @@
         "selectedCount": 5,
         "applicationRate": 36.13
       },
-      "partner_id": 8,
+      "partner_id": 1,
       "additionalPoint": 45000,
       "selectedCount": 5,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/delivery-promo-3",
+      "contact_phone": "010-2345-6789"
     },
     {
       "id": 970,
@@ -507,12 +517,14 @@
         "selectedCount": 0,
         "applicationRate": 5.36
       },
-      "partner_id": 9,
+      "partner_id": 1,
       "additionalPoint": 22000,
-      "selectedCount": 0,
+      "selectedCount": 1,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://www.youtube.com/@delivery-promo-4",
+      "contact_phone": "010-3456-7890"
     },
     {
       "id": 972,
@@ -563,12 +575,14 @@
         "selectedCount": 3,
         "applicationRate": 0.4
       },
-      "partner_id": 10,
+      "partner_id": 1,
       "additionalPoint": 50000,
       "selectedCount": 3,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/delivery-promo-5",
+      "contact_phone": "010-4567-8901"
     },
     {
       "id": 973,
@@ -619,12 +633,14 @@
         "selectedCount": 3,
         "applicationRate": 0.4
       },
-      "partner_id": 11,
+      "partner_id": 1,
       "additionalPoint": 45000,
       "selectedCount": 3,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/delivery-promo-1",
+      "contact_phone": "010-5678-9012"
     },
     {
       "id": 1001,
@@ -675,7 +691,7 @@
         "selectedCount": 0,
         "applicationRate": 11.17
       },
-      "partner_id": 12,
+      "partner_id": 1,
       "additionalPoint": 22000,
       "selectedCount": 0,
       "visitAddress": "서울특별시 강남구 테헤란로 123",
@@ -684,7 +700,8 @@
       "region": "서울 > 강남구",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 1002,
@@ -735,7 +752,7 @@
         "selectedCount": 0,
         "applicationRate": 11.13
       },
-      "partner_id": 13,
+      "partner_id": 1,
       "additionalPoint": 18000,
       "selectedCount": 0,
       "visitAddress": "강원 양양군 현북면 법수치길 59 부라보 캠프펜션&캠핑장",
@@ -744,7 +761,8 @@
       "region": "서울 > 마포구",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-2345-6789"
     },
     {
       "id": 1003,
@@ -795,16 +813,17 @@
         "selectedCount": 0,
         "applicationRate": 11.25
       },
-      "partner_id": 14,
+      "partner_id": 1,
       "additionalPoint": 35000,
-      "selectedCount": 0,
+      "selectedCount": 4,
       "visitAddress": "서울특별시 강남구 압구정로 456",
       "addressGuide": "압구정역 1번 출구에서 도보 3분, 갤러리아 백화점 근처",
       "visitLink": "https://naver.me/DEF456",
       "region": "서울 > 강남구",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-3456-7890"
     },
     {
       "id": 1004,
@@ -855,7 +874,7 @@
         "selectedCount": 7,
         "applicationRate": 12.3
       },
-      "partner_id": 15,
+      "partner_id": 1,
       "additionalPoint": 28000,
       "selectedCount": 7,
       "visitAddress": "서울특별시 강동구 천호대로 789",
@@ -864,7 +883,8 @@
       "region": "서울 > 송파구",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-4567-8901"
     },
     {
       "id": 1005,
@@ -915,7 +935,7 @@
         "selectedCount": 8,
         "applicationRate": 13
       },
-      "partner_id": 16,
+      "partner_id": 1,
       "additionalPoint": 25000,
       "selectedCount": 8,
       "visitAddress": "서울특별시 중구 명동길 321",
@@ -924,7 +944,8 @@
       "region": "서울 > 중구",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-5678-9012"
     },
     {
       "id": 1006,
@@ -975,16 +996,17 @@
         "selectedCount": 0,
         "applicationRate": 5.2
       },
-      "partner_id": 17,
+      "partner_id": 1,
       "additionalPoint": 20000,
-      "selectedCount": 0,
+      "selectedCount": 4,
       "visitAddress": "서울특별시 종로구 세종대로 654",
       "addressGuide": "광화문역 2번 출구에서 도보 6분, 국립중앙박물관 옆",
       "visitLink": "https://naver.me/MNO654",
       "region": "서울 > 종로구",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 1007,
@@ -1035,7 +1057,7 @@
         "selectedCount": 2,
         "applicationRate": 11.33
       },
-      "partner_id": 18,
+      "partner_id": 1,
       "additionalPoint": 42000,
       "selectedCount": 2,
       "visitAddress": "서울특별시 용산구 이태원로 987",
@@ -1044,7 +1066,8 @@
       "region": "서울 > 용산구",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-2345-6789"
     },
     {
       "id": 1008,
@@ -1104,7 +1127,8 @@
       "region": "경기 > 성남시",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-3456-7890"
     },
     {
       "id": 1009,
@@ -1155,7 +1179,7 @@
         "selectedCount": 0,
         "applicationRate": 13.4
       },
-      "partner_id": 2,
+      "partner_id": 1,
       "additionalPoint": 38000,
       "selectedCount": 0,
       "visitAddress": "경기도 용인시 기흥구 에버랜드로 199",
@@ -1164,7 +1188,8 @@
       "region": "경기 > 용인시",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-4567-8901"
     },
     {
       "id": 1010,
@@ -1215,7 +1240,7 @@
         "selectedCount": 14,
         "applicationRate": 4.45
       },
-      "partner_id": 3,
+      "partner_id": 1,
       "additionalPoint": 16000,
       "selectedCount": 14,
       "visitAddress": "서울특별시 성동구 왕십리로 258",
@@ -1224,7 +1249,8 @@
       "region": "서울 > 동대문구",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-5678-9012"
     },
     {
       "id": 1011,
@@ -1275,7 +1301,7 @@
         "selectedCount": 3,
         "applicationRate": 0
       },
-      "partner_id": 4,
+      "partner_id": 1,
       "additionalPoint": 4000000,
       "selectedCount": 3,
       "visitAddress": "서울특별시 강남구 테헤란로 123",
@@ -1284,7 +1310,8 @@
       "region": "서울 > 강남/서초",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 1012,
@@ -1335,7 +1362,7 @@
         "selectedCount": 3,
         "applicationRate": 0.6
       },
-      "partner_id": 5,
+      "partner_id": 1,
       "additionalPoint": 45000,
       "selectedCount": 3,
       "visitAddress": "서울특별시 강남구 테헤란로 789",
@@ -1344,7 +1371,8 @@
       "region": "서울 > 강남구",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-2345-6789"
     },
     {
       "id": 1013,
@@ -1395,7 +1423,7 @@
         "selectedCount": 3,
         "applicationRate": 0.4
       },
-      "partner_id": 6,
+      "partner_id": 1,
       "additionalPoint": 35000,
       "selectedCount": 3,
       "visitAddress": "서울특별시 강남구 테헤란로 456",
@@ -1404,7 +1432,8 @@
       "region": "서울 > 강남구",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-3456-7890"
     },
     {
       "id": 2001,
@@ -1440,7 +1469,7 @@
       },
       "reward": {
         "extraRewardPoint": 45000,
-        "paymentRewardPoint": 0
+        "paymentRewardPoint": 18000
       },
       "keywordPolicy": {
         "keyword": "#스마트폰리뷰 #최신폰 #구매후기 #솔직리뷰 #디지털기기",
@@ -1455,14 +1484,16 @@
         "selectedCount": 0,
         "applicationRate": 29.25
       },
-      "partner_id": 7,
+      "partner_id": 1,
       "additionalPoint": 45000,
       "selectedCount": 0,
       "purchaseLink": "https://smartstore.naver.com/example-store/products/smartphone123",
       "contentType": "both",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2026-06-01 ~ 2026-07-02",
+      "contact_phone": "010-4567-8901"
     },
     {
       "id": 2002,
@@ -1498,7 +1529,7 @@
       },
       "reward": {
         "extraRewardPoint": 32000,
-        "paymentRewardPoint": 0
+        "paymentRewardPoint": 13000
       },
       "keywordPolicy": {
         "keyword": "#화장품리뷰 #뷰티 #스킨케어 #구매후기 #솔직리뷰",
@@ -1513,14 +1544,16 @@
         "selectedCount": 0,
         "applicationRate": 13
       },
-      "partner_id": 8,
+      "partner_id": 1,
       "additionalPoint": 32000,
-      "selectedCount": 0,
+      "selectedCount": 4,
       "purchaseLink": "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000123456",
       "contentType": "both",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2026-02-01 ~ 2026-04-07",
+      "contact_phone": "010-5678-9012"
     },
     {
       "id": 2003,
@@ -1556,7 +1589,7 @@
       },
       "reward": {
         "extraRewardPoint": 38000,
-        "paymentRewardPoint": 0
+        "paymentRewardPoint": 15000
       },
       "keywordPolicy": {
         "keyword": "#가전제품리뷰 #주방가전 #생활용품 #구매후기 #솔직리뷰",
@@ -1571,14 +1604,16 @@
         "selectedCount": 0,
         "applicationRate": 14.83
       },
-      "partner_id": 9,
+      "partner_id": 1,
       "additionalPoint": 38000,
       "selectedCount": 0,
       "purchaseLink": "https://www.coupang.com/vp/products/1234567890",
       "contentType": "image",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2026-02-01 ~ 2026-04-07",
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 2004,
@@ -1614,7 +1649,7 @@
       },
       "reward": {
         "extraRewardPoint": 28000,
-        "paymentRewardPoint": 0
+        "paymentRewardPoint": 11000
       },
       "keywordPolicy": {
         "keyword": "#의류리뷰 #패션 #옷 #구매후기 #솔직리뷰",
@@ -1629,14 +1664,16 @@
         "selectedCount": 0,
         "applicationRate": 11.87
       },
-      "partner_id": 10,
+      "partner_id": 1,
       "additionalPoint": 28000,
       "selectedCount": 0,
       "purchaseLink": "https://www.instagram.com/shopping/example-product",
       "contentType": "both",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2026-02-15 ~ 2026-04-17",
+      "contact_phone": "010-2345-6789"
     },
     {
       "id": 2005,
@@ -1672,7 +1709,7 @@
       },
       "reward": {
         "extraRewardPoint": 22000,
-        "paymentRewardPoint": 0
+        "paymentRewardPoint": 9000
       },
       "keywordPolicy": {
         "keyword": "#식품리뷰 #음식 #구매후기 #솔직리뷰 #맛집",
@@ -1687,14 +1724,16 @@
         "selectedCount": 12,
         "applicationRate": 8.06
       },
-      "partner_id": 11,
+      "partner_id": 1,
       "additionalPoint": 22000,
       "selectedCount": 12,
       "purchaseLink": "https://blog.naver.com/example-food-review",
       "contentType": "image",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2026-01-15 ~ 2025-11-17",
+      "contact_phone": "010-3456-7890"
     },
     {
       "id": 2006,
@@ -1730,7 +1769,7 @@
       },
       "reward": {
         "extraRewardPoint": 18000,
-        "paymentRewardPoint": 0
+        "paymentRewardPoint": 7000
       },
       "keywordPolicy": {
         "keyword": "#책리뷰 #독서 #문화 #구매후기 #솔직리뷰",
@@ -1745,14 +1784,16 @@
         "selectedCount": 0,
         "applicationRate": 4.9
       },
-      "partner_id": 12,
+      "partner_id": 1,
       "additionalPoint": 18000,
       "selectedCount": 0,
       "purchaseLink": "https://shopping.naver.com/example-book",
       "contentType": "image",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2026-02-15 ~ 2026-04-17",
+      "contact_phone": "010-4567-8901"
     },
     {
       "id": 2007,
@@ -1788,7 +1829,7 @@
       },
       "reward": {
         "extraRewardPoint": 35000,
-        "paymentRewardPoint": 0
+        "paymentRewardPoint": 14000
       },
       "keywordPolicy": {
         "keyword": "#운동화리뷰 #신발 #패션 #구매후기 #솔직리뷰",
@@ -1803,14 +1844,16 @@
         "selectedCount": 3,
         "applicationRate": 13.4
       },
-      "partner_id": 13,
+      "partner_id": 1,
       "additionalPoint": 35000,
       "selectedCount": 3,
       "purchaseLink": "https://www.youtube.com/watch?v=example-shoes",
       "contentType": "link",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2026-01-28 ~ 2026-01-07",
+      "contact_phone": "010-5678-9012"
     },
     {
       "id": 2008,
@@ -1846,7 +1889,7 @@
       },
       "reward": {
         "extraRewardPoint": 26000,
-        "paymentRewardPoint": 0
+        "paymentRewardPoint": 10000
       },
       "keywordPolicy": {
         "keyword": "#반려동물용품 #펫용품 #구매후기 #솔직리뷰 #반려동물",
@@ -1861,14 +1904,16 @@
         "selectedCount": 7,
         "applicationRate": 12.3
       },
-      "partner_id": 14,
+      "partner_id": 1,
       "additionalPoint": 26000,
       "selectedCount": 7,
       "purchaseLink": "https://www.coupang.com/vp/products/pet-supplies-123",
       "contentType": "link",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2026-02-05 ~ 2025-11-27",
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 2009,
@@ -1904,7 +1949,7 @@
       },
       "reward": {
         "extraRewardPoint": 42000,
-        "paymentRewardPoint": 0
+        "paymentRewardPoint": 17000
       },
       "keywordPolicy": {
         "keyword": "#자동차용품 #액세서리 #구매후기 #솔직리뷰 #자동차",
@@ -1919,14 +1964,16 @@
         "selectedCount": 2,
         "applicationRate": 11.25
       },
-      "partner_id": 15,
+      "partner_id": 1,
       "additionalPoint": 42000,
       "selectedCount": 2,
       "purchaseLink": "https://shopping.naver.com/example-car-accessories",
       "contentType": "both",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2025-12-28 ~ 2025-12-05",
+      "contact_phone": "010-2345-6789"
     },
     {
       "id": 2010,
@@ -1962,7 +2009,7 @@
       },
       "reward": {
         "extraRewardPoint": 30000,
-        "paymentRewardPoint": 0
+        "paymentRewardPoint": 12000
       },
       "keywordPolicy": {
         "keyword": "#홈데코 #인테리어 #구매후기 #솔직리뷰 #생활용품",
@@ -1977,14 +2024,16 @@
         "selectedCount": 8,
         "applicationRate": 13.92
       },
-      "partner_id": 16,
+      "partner_id": 1,
       "additionalPoint": 30000,
       "selectedCount": 8,
       "purchaseLink": "https://blog.naver.com/example-homedeco-review",
       "contentType": "link",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2026-02-10 ~ 2025-11-22",
+      "contact_phone": "010-3456-7890"
     },
     {
       "id": 2011,
@@ -2020,7 +2069,7 @@
       },
       "reward": {
         "extraRewardPoint": 35000,
-        "paymentRewardPoint": 0
+        "paymentRewardPoint": 14000
       },
       "keywordPolicy": {
         "keyword": "#비타민C세럼 #뷰티 #스킨케어 #구매평 #솔직후기",
@@ -2035,14 +2084,16 @@
         "selectedCount": 5,
         "applicationRate": 0
       },
-      "partner_id": 17,
+      "partner_id": 1,
       "additionalPoint": 35000,
       "selectedCount": 5,
       "purchaseLink": "https://smartstore.naver.com/example-store/products/123456",
       "contentType": "both",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2026-01-15 ~ 2026-02-07",
+      "contact_phone": "010-4567-8901"
     },
     {
       "id": 2012,
@@ -2078,7 +2129,7 @@
       },
       "reward": {
         "extraRewardPoint": 28000,
-        "paymentRewardPoint": 0
+        "paymentRewardPoint": 11000
       },
       "keywordPolicy": {
         "keyword": "#무선이어폰 #구매평 #오디오 #디지털기기 #솔직후기",
@@ -2093,14 +2144,16 @@
         "selectedCount": 3,
         "applicationRate": 0.6
       },
-      "partner_id": 18,
+      "partner_id": 1,
       "additionalPoint": 28000,
       "selectedCount": 3,
       "purchaseLink": "https://smartstore.naver.com/example-store/products/wireless-earphone",
       "contentType": "both",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2026-01-13 ~ 2026-01-28",
+      "contact_phone": "010-5678-9012"
     },
     {
       "id": 2013,
@@ -2136,7 +2189,7 @@
       },
       "reward": {
         "extraRewardPoint": 30000,
-        "paymentRewardPoint": 0
+        "paymentRewardPoint": 12000
       },
       "keywordPolicy": {
         "keyword": "#테스트 #구매평 #리뷰 #생활용품",
@@ -2158,7 +2211,9 @@
       "contentType": "both",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2026-01-12 ~ 2026-01-03",
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 3001,
@@ -2209,13 +2264,14 @@
         "selectedCount": 0,
         "applicationRate": 15
       },
-      "partner_id": 2,
+      "partner_id": 1,
       "additionalPoint": 80000,
       "selectedCount": 0,
-      "productLink": "https://example.com/tech-product",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://example.com/tech-product",
+      "contact_phone": "010-2345-6789"
     },
     {
       "id": 3002,
@@ -2266,13 +2322,14 @@
         "selectedCount": 3,
         "applicationRate": 15.6
       },
-      "partner_id": 3,
+      "partner_id": 1,
       "additionalPoint": 75000,
       "selectedCount": 3,
-      "productLink": "https://example.com/beauty-product",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://example.com/beauty-product",
+      "contact_phone": "010-3456-7890"
     },
     {
       "id": 3003,
@@ -2323,12 +2380,14 @@
         "selectedCount": 0,
         "applicationRate": 14
       },
-      "partner_id": 4,
+      "partner_id": 1,
       "additionalPoint": 70000,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/reporter-promo-1",
+      "contact_phone": "010-4567-8901"
     },
     {
       "id": 3004,
@@ -2379,12 +2438,14 @@
         "selectedCount": 0,
         "applicationRate": 14.83
       },
-      "partner_id": 5,
+      "partner_id": 1,
       "additionalPoint": 65000,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://www.instagram.com/reporter_promo_2",
+      "contact_phone": "010-5678-9012"
     },
     {
       "id": 3005,
@@ -2435,12 +2496,14 @@
         "selectedCount": 1,
         "applicationRate": 17
       },
-      "partner_id": 6,
+      "partner_id": 1,
       "additionalPoint": 90000,
       "selectedCount": 1,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/reporter-promo-3",
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 3006,
@@ -2491,12 +2554,14 @@
         "selectedCount": 0,
         "applicationRate": 8.38
       },
-      "partner_id": 7,
+      "partner_id": 1,
       "additionalPoint": 60000,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://www.youtube.com/@reporter-promo-4",
+      "contact_phone": "010-2345-6789"
     },
     {
       "id": 3007,
@@ -2547,12 +2612,14 @@
         "selectedCount": 3,
         "applicationRate": 9
       },
-      "partner_id": 8,
+      "partner_id": 1,
       "additionalPoint": 70000,
       "selectedCount": 3,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/reporter-promo-5",
+      "contact_phone": "010-3456-7890"
     },
     {
       "id": 3008,
@@ -2603,12 +2670,14 @@
         "selectedCount": 4,
         "applicationRate": 13
       },
-      "partner_id": 9,
+      "partner_id": 1,
       "additionalPoint": 65000,
       "selectedCount": 4,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/reporter-promo-1",
+      "contact_phone": "010-4567-8901"
     },
     {
       "id": 3009,
@@ -2659,12 +2728,14 @@
         "selectedCount": 4,
         "applicationRate": 8
       },
-      "partner_id": 10,
+      "partner_id": 1,
       "additionalPoint": 60000,
       "selectedCount": 4,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://www.instagram.com/reporter_promo_2",
+      "contact_phone": "010-5678-9012"
     },
     {
       "id": 3010,
@@ -2715,12 +2786,14 @@
         "selectedCount": 2,
         "applicationRate": 11.33
       },
-      "partner_id": 11,
+      "partner_id": 1,
       "additionalPoint": 75000,
       "selectedCount": 2,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/reporter-promo-3",
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 3011,
@@ -2743,16 +2816,16 @@
       },
       "recruitLimit": 5,
       "appliedCount": 0,
-      "recruitStartAt": "2026-01-15T00:00:00+09:00",
-      "recruitEndAt": "2026-03-01T23:59:59+09:00",
+      "recruitStartAt": "2026-03-01T00:00:00+09:00",
+      "recruitEndAt": "2026-04-15T23:59:59+09:00",
       "recruit": {
         "recruitLimit": 5,
-        "recruitStartAt": "2026-01-15T00:00:00+09:00",
-        "recruitEndAt": "2026-03-01T23:59:59+09:00"
+        "recruitStartAt": "2026-03-01T00:00:00+09:00",
+        "recruitEndAt": "2026-04-15T23:59:59+09:00"
       },
       "content": {
-        "contentStartAt": "2026-03-05T00:00:00+09:00",
-        "contentEndAt": "2026-03-19T23:59:59+09:00"
+        "contentStartAt": "2026-04-20T00:00:00+09:00",
+        "contentEndAt": "2026-05-05T23:59:59+09:00"
       },
       "reward": {
         "extraRewardPoint": 60000,
@@ -2771,13 +2844,14 @@
         "selectedCount": 3,
         "applicationRate": 0
       },
-      "partner_id": 12,
+      "partner_id": 1,
       "additionalPoint": 60000,
       "selectedCount": 3,
-      "productLink": "https://blog.naver.com/example-beauty-trend",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/example-beauty-trend",
+      "contact_phone": "010-2345-6789"
     },
     {
       "id": 3012,
@@ -2828,13 +2902,14 @@
         "selectedCount": 3,
         "applicationRate": 0.4
       },
-      "partner_id": 13,
+      "partner_id": 1,
       "additionalPoint": 85000,
       "selectedCount": 3,
-      "productLink": "https://example.com/digital-product",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://example.com/digital-product",
+      "contact_phone": "010-3456-7890"
     },
     {
       "id": 4001,
@@ -2885,14 +2960,18 @@
         "selectedCount": 0,
         "applicationRate": 57.8
       },
-      "partner_id": 14,
+      "partner_id": 1,
       "additionalPoint": 50000,
       "selectedCount": 0,
       "productLink": "https://example.com/skincare-product",
       "contentType": "both",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/mission-promo-1",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-4567-8901"
     },
     {
       "id": 4002,
@@ -2943,14 +3022,18 @@
         "selectedCount": 0,
         "applicationRate": 19.5
       },
-      "partner_id": 15,
+      "partner_id": 1,
       "additionalPoint": 45000,
       "selectedCount": 0,
       "productLink": "https://example.com/healthcare-product",
       "contentType": "image",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://www.instagram.com/mission_promo_2",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-5678-9012"
     },
     {
       "id": 4003,
@@ -3001,13 +3084,17 @@
         "selectedCount": 0,
         "applicationRate": 14.83
       },
-      "partner_id": 16,
+      "partner_id": 1,
       "additionalPoint": 38000,
       "selectedCount": 0,
       "contentType": "link",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/mission-promo-3",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 4004,
@@ -3058,13 +3145,17 @@
         "selectedCount": 0,
         "applicationRate": 17.8
       },
-      "partner_id": 17,
+      "partner_id": 1,
       "additionalPoint": 42000,
       "selectedCount": 0,
       "contentType": "link",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://www.youtube.com/@mission-promo-4",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-2345-6789"
     },
     {
       "id": 4005,
@@ -3115,13 +3206,17 @@
         "selectedCount": 10,
         "applicationRate": 9.67
       },
-      "partner_id": 18,
+      "partner_id": 1,
       "additionalPoint": 32000,
       "selectedCount": 10,
       "contentType": "both",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/mission-promo-5",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-3456-7890"
     },
     {
       "id": 4006,
@@ -3178,7 +3273,11 @@
       "contentType": "image",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/mission-promo-1",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-4567-8901"
     },
     {
       "id": 4012,
@@ -3229,13 +3328,17 @@
         "selectedCount": 3,
         "applicationRate": 24
       },
-      "partner_id": 2,
+      "partner_id": 1,
       "additionalPoint": 40000,
       "selectedCount": 3,
       "contentType": "image",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://www.instagram.com/mission_promo_2",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-5678-9012"
     },
     {
       "id": 4007,
@@ -3286,13 +3389,17 @@
         "selectedCount": 5,
         "applicationRate": 8.38
       },
-      "partner_id": 3,
+      "partner_id": 1,
       "additionalPoint": 35000,
       "selectedCount": 5,
       "contentType": "link",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/mission-promo-3",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 4008,
@@ -3343,13 +3450,17 @@
         "selectedCount": 4,
         "applicationRate": 17.57
       },
-      "partner_id": 4,
+      "partner_id": 1,
       "additionalPoint": 40000,
       "selectedCount": 4,
       "contentType": "image",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://www.youtube.com/@mission-promo-4",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-2345-6789"
     },
     {
       "id": 4009,
@@ -3400,13 +3511,17 @@
         "selectedCount": 2,
         "applicationRate": 15
       },
-      "partner_id": 5,
+      "partner_id": 1,
       "additionalPoint": 48000,
       "selectedCount": 2,
       "contentType": "both",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/mission-promo-5",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-3456-7890"
     },
     {
       "id": 4010,
@@ -3457,13 +3572,17 @@
         "selectedCount": 1,
         "applicationRate": 83.5
       },
-      "partner_id": 6,
+      "partner_id": 1,
       "additionalPoint": 60000,
       "selectedCount": 1,
       "contentType": "link",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/mission-promo-1",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-4567-8901"
     },
     {
       "id": 4011,
@@ -3514,14 +3633,18 @@
         "selectedCount": 5,
         "applicationRate": 0
       },
-      "partner_id": 7,
+      "partner_id": 1,
       "additionalPoint": 55000,
       "selectedCount": 5,
       "productLink": "https://example.com/premium-skincare-set",
       "contentType": "both",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://www.instagram.com/mission_promo_2",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-5678-9012"
     },
     {
       "id": 4013,
@@ -3572,14 +3695,18 @@
         "selectedCount": 7,
         "applicationRate": 23.4
       },
-      "partner_id": 8,
+      "partner_id": 1,
       "additionalPoint": 40000,
       "selectedCount": 7,
       "productLink": "https://example.com/beauty-product",
       "contentType": "link",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/mission-promo-3",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 4014,
@@ -3630,13 +3757,17 @@
         "selectedCount": 5,
         "applicationRate": 19.5
       },
-      "partner_id": 9,
+      "partner_id": 1,
       "additionalPoint": 35000,
       "selectedCount": 5,
       "contentType": "image",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://www.youtube.com/@mission-promo-4",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-2345-6789"
     },
     {
       "id": 4015,
@@ -3687,14 +3818,18 @@
         "selectedCount": 8,
         "applicationRate": 15.75
       },
-      "partner_id": 10,
+      "partner_id": 1,
       "additionalPoint": 45000,
       "selectedCount": 8,
       "productLink": "https://example.com/food-product",
       "contentType": "both",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/mission-promo-5",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-3456-7890"
     },
     {
       "id": 4016,
@@ -3745,19 +3880,20 @@
         "selectedCount": 4,
         "applicationRate": 5425
       },
-      "partner_id": 11,
+      "partner_id": 1,
       "selectedCount": 8,
       "visitInfo": {
         "address": "제주시 연동 321-5",
         "reservationRequired": false
       },
-      "region": {
-        "name": "경기"
-      },
+      "region": "서울 > 강남구",
       "extensionRequested": true,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-4567-8901",
+      "visitAddress": "서울특별시 강남구 강남대로 396",
+      "visitLink": "https://naver.me/ABC4016"
     },
     {
       "id": 4017,
@@ -3808,11 +3944,13 @@
         "selectedCount": 6,
         "applicationRate": 7366.7
       },
-      "partner_id": 12,
+      "partner_id": 1,
       "selectedCount": 5,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://www.instagram.com/delivery_promo_2",
+      "contact_phone": "010-5678-9012"
     },
     {
       "id": 4018,
@@ -3863,7 +4001,7 @@
         "selectedCount": 10,
         "applicationRate": 4987.5
       },
-      "partner_id": 13,
+      "partner_id": 1,
       "selectedCount": 16,
       "purchaseInfo": {
         "purchaseLink": "https://example.com/product/4018",
@@ -3872,7 +4010,9 @@
       "extensionRequested": true,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2026-03-01 ~ 2026-04-02",
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 4019,
@@ -3923,11 +4063,13 @@
         "selectedCount": 5,
         "applicationRate": 5128.6
       },
-      "partner_id": 14,
+      "partner_id": 1,
       "selectedCount": 13,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/delivery-promo-3",
+      "contact_phone": "010-2345-6789"
     },
     {
       "id": 4020,
@@ -3978,11 +4120,15 @@
         "selectedCount": 0,
         "applicationRate": 4680
       },
-      "partner_id": 15,
+      "partner_id": 1,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/mission-promo-1",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-3456-7890"
     },
     {
       "id": 4021,
@@ -4033,11 +4179,15 @@
         "selectedCount": 5,
         "applicationRate": 60
       },
-      "partner_id": 16,
+      "partner_id": 1,
       "selectedCount": 5,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://www.instagram.com/mission_promo_2",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-4567-8901"
     },
     {
       "id": 4022,
@@ -4088,11 +4238,15 @@
         "selectedCount": 0,
         "applicationRate": 3005
       },
-      "partner_id": 17,
+      "partner_id": 1,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/mission-promo-3",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-5678-9012"
     },
     {
       "id": 4023,
@@ -4143,11 +4297,15 @@
         "selectedCount": 1,
         "applicationRate": 12300
       },
-      "partner_id": 18,
+      "partner_id": 1,
       "selectedCount": 1,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://www.youtube.com/@mission-promo-4",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 4024,
@@ -4202,7 +4360,9 @@
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://www.youtube.com/@reporter-promo-4",
+      "contact_phone": "010-2345-6789"
     },
     {
       "id": 4025,
@@ -4253,18 +4413,19 @@
         "selectedCount": 0,
         "applicationRate": 4333.3
       },
-      "partner_id": 2,
+      "partner_id": 1,
       "selectedCount": 0,
       "visitInfo": {
         "address": "부산시 해운대구 우동 789-1",
         "reservationRequired": true
       },
-      "region": {
-        "name": "부산"
-      },
+      "region": "전북 > 전주시",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-3456-7890",
+      "visitAddress": "전라북도 전주시 완산구 기린대로 99",
+      "visitLink": "https://naver.me/ABC4025"
     },
     {
       "id": 4026,
@@ -4315,7 +4476,7 @@
         "selectedCount": 0,
         "applicationRate": 1573.7
       },
-      "partner_id": 3,
+      "partner_id": 1,
       "selectedCount": 0,
       "purchaseInfo": {
         "purchaseLink": "https://example.com/product/4026",
@@ -4323,7 +4484,9 @@
       },
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2026-07-01 ~ 2026-08-02",
+      "contact_phone": "010-4567-8901"
     },
     {
       "id": 4027,
@@ -4374,11 +4537,13 @@
         "selectedCount": 7,
         "applicationRate": 4816.7
       },
-      "partner_id": 4,
+      "partner_id": 1,
       "selectedCount": 12,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/reporter-promo-5",
+      "contact_phone": "010-5678-9012"
     },
     {
       "id": 4028,
@@ -4429,19 +4594,20 @@
         "selectedCount": 4,
         "applicationRate": 17375
       },
-      "partner_id": 5,
+      "partner_id": 1,
       "selectedCount": 4,
       "visitInfo": {
         "address": "서울시 마포구 합정동 456-7",
         "reservationRequired": true
       },
-      "region": {
-        "name": "부산"
-      },
+      "region": "서울 > 강남구",
       "extensionRequested": true,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-1234-5678",
+      "visitAddress": "서울특별시 강남구 테헤란로 152",
+      "visitLink": "https://naver.me/ABC4028"
     },
     {
       "id": 4029,
@@ -4492,7 +4658,7 @@
         "selectedCount": 0,
         "applicationRate": 668.4
       },
-      "partner_id": 6,
+      "partner_id": 1,
       "selectedCount": 0,
       "purchaseInfo": {
         "purchaseLink": "https://example.com/product/4029",
@@ -4500,7 +4666,9 @@
       },
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2026-07-01 ~ 2026-08-02",
+      "contact_phone": "010-2345-6789"
     },
     {
       "id": 4030,
@@ -4551,7 +4719,7 @@
         "selectedCount": 3,
         "applicationRate": 10950
       },
-      "partner_id": 7,
+      "partner_id": 1,
       "selectedCount": 3,
       "purchaseInfo": {
         "purchaseLink": "https://example.com/product/4030",
@@ -4559,7 +4727,9 @@
       },
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2026-07-01 ~ 2026-08-02",
+      "contact_phone": "010-3456-7890"
     },
     {
       "id": 4031,
@@ -4610,19 +4780,20 @@
         "selectedCount": 4,
         "applicationRate": 1444.4
       },
-      "partner_id": 8,
+      "partner_id": 1,
       "selectedCount": 17,
       "visitInfo": {
         "address": "서울시 강남구 역삼동 123-4",
         "reservationRequired": false
       },
-      "region": {
-        "name": "제주"
-      },
+      "region": "서울 > 성동구",
       "extensionRequested": true,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-4567-8901",
+      "visitAddress": "서울특별시 성동구 연무장5가길 7",
+      "visitLink": "https://naver.me/ABC4031"
     },
     {
       "id": 4032,
@@ -4673,11 +4844,13 @@
         "selectedCount": 0,
         "applicationRate": 8662.5
       },
-      "partner_id": 9,
+      "partner_id": 1,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://www.youtube.com/@delivery-promo-4",
+      "contact_phone": "010-5678-9012"
     },
     {
       "id": 4033,
@@ -4728,7 +4901,7 @@
         "selectedCount": 0,
         "applicationRate": 1430.8
       },
-      "partner_id": 10,
+      "partner_id": 1,
       "selectedCount": 0,
       "purchaseInfo": {
         "purchaseLink": "https://example.com/product/4033",
@@ -4736,7 +4909,9 @@
       },
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2026-08-01 ~ 2026-09-02",
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 4034,
@@ -4787,11 +4962,15 @@
         "selectedCount": 0,
         "applicationRate": 1313.3
       },
-      "partner_id": 11,
+      "partner_id": 1,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/mission-promo-5",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-2345-6789"
     },
     {
       "id": 4035,
@@ -4842,11 +5021,13 @@
         "selectedCount": 1,
         "applicationRate": 2325
       },
-      "partner_id": 12,
+      "partner_id": 1,
       "selectedCount": 12,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/delivery-promo-5",
+      "contact_phone": "010-3456-7890"
     },
     {
       "id": 4036,
@@ -4897,7 +5078,7 @@
         "selectedCount": 4,
         "applicationRate": 6827.3
       },
-      "partner_id": 13,
+      "partner_id": 1,
       "selectedCount": 7,
       "purchaseInfo": {
         "purchaseLink": "https://example.com/product/4036",
@@ -4905,7 +5086,9 @@
       },
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2026-05-01 ~ 2026-06-02",
+      "contact_phone": "010-4567-8901"
     },
     {
       "id": 4037,
@@ -4956,11 +5139,15 @@
         "selectedCount": 0,
         "applicationRate": 6433.3
       },
-      "partner_id": 14,
+      "partner_id": 1,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/mission-promo-1",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-5678-9012"
     },
     {
       "id": 4038,
@@ -5011,11 +5198,15 @@
         "selectedCount": 0,
         "applicationRate": 7050
       },
-      "partner_id": 15,
+      "partner_id": 1,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://www.instagram.com/mission_promo_2",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 4039,
@@ -5066,11 +5257,13 @@
         "selectedCount": 0,
         "applicationRate": 3600
       },
-      "partner_id": 16,
+      "partner_id": 1,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/delivery-promo-1",
+      "contact_phone": "010-2345-6789"
     },
     {
       "id": 4040,
@@ -5121,11 +5314,13 @@
         "selectedCount": 0,
         "applicationRate": 2305.3
       },
-      "partner_id": 17,
+      "partner_id": 1,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/reporter-promo-1",
+      "contact_phone": "010-3456-7890"
     },
     {
       "id": 4041,
@@ -5176,11 +5371,13 @@
         "selectedCount": 12,
         "applicationRate": 5233.3
       },
-      "partner_id": 18,
+      "partner_id": 1,
       "selectedCount": 7,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://www.instagram.com/reporter_promo_2",
+      "contact_phone": "010-4567-8901"
     },
     {
       "id": 4042,
@@ -5235,7 +5432,9 @@
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://www.instagram.com/delivery_promo_2",
+      "contact_phone": "010-5678-9012"
     },
     {
       "id": 4043,
@@ -5286,18 +5485,19 @@
         "selectedCount": 0,
         "applicationRate": 7000
       },
-      "partner_id": 2,
+      "partner_id": 1,
       "selectedCount": 0,
       "visitInfo": {
         "address": "서울시 강남구 역삼동 123-4",
         "reservationRequired": true
       },
-      "region": {
-        "name": "부산"
-      },
+      "region": "서울 > 성동구",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-1234-5678",
+      "visitAddress": "서울특별시 성동구 성수이로 93",
+      "visitLink": "https://naver.me/ABC4043"
     },
     {
       "id": 4044,
@@ -5348,18 +5548,19 @@
         "selectedCount": 4,
         "applicationRate": 757.1
       },
-      "partner_id": 3,
+      "partner_id": 1,
       "selectedCount": 6,
       "visitInfo": {
         "address": "서울시 강남구 역삼동 123-4",
         "reservationRequired": false
       },
-      "region": {
-        "name": "경기"
-      },
+      "region": "경기 > 성남시",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-2345-6789",
+      "visitAddress": "경기도 성남시 분당구 판교역로 235",
+      "visitLink": "https://naver.me/ABC4044"
     },
     {
       "id": 4045,
@@ -5410,11 +5611,13 @@
         "selectedCount": 11,
         "applicationRate": 4511.8
       },
-      "partner_id": 4,
+      "partner_id": 1,
       "selectedCount": 13,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/reporter-promo-3",
+      "contact_phone": "010-3456-7890"
     },
     {
       "id": 4046,
@@ -5465,7 +5668,7 @@
         "selectedCount": 0,
         "applicationRate": 2727.8
       },
-      "partner_id": 5,
+      "partner_id": 1,
       "selectedCount": 0,
       "purchaseInfo": {
         "purchaseLink": "https://example.com/product/4046",
@@ -5473,7 +5676,9 @@
       },
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2026-04-01 ~ 2026-05-02",
+      "contact_phone": "010-4567-8901"
     },
     {
       "id": 4047,
@@ -5524,7 +5729,7 @@
         "selectedCount": 0,
         "applicationRate": 5250
       },
-      "partner_id": 6,
+      "partner_id": 1,
       "selectedCount": 0,
       "purchaseInfo": {
         "purchaseLink": "https://example.com/product/4047",
@@ -5532,7 +5737,9 @@
       },
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2026-08-01 ~ 2026-09-02",
+      "contact_phone": "010-5678-9012"
     },
     {
       "id": 4048,
@@ -5583,11 +5790,13 @@
         "selectedCount": 0,
         "applicationRate": 2090.9
       },
-      "partner_id": 7,
+      "partner_id": 1,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/delivery-promo-3",
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 4049,
@@ -5638,7 +5847,7 @@
         "selectedCount": 3,
         "applicationRate": 6690.9
       },
-      "partner_id": 8,
+      "partner_id": 1,
       "selectedCount": 1,
       "purchaseInfo": {
         "purchaseLink": "https://example.com/product/4049",
@@ -5646,7 +5855,9 @@
       },
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2026-05-01 ~ 2026-06-02",
+      "contact_phone": "010-2345-6789"
     },
     {
       "id": 4050,
@@ -5697,11 +5908,15 @@
         "selectedCount": 0,
         "applicationRate": 560
       },
-      "partner_id": 9,
+      "partner_id": 1,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/mission-promo-3",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-3456-7890"
     },
     {
       "id": 4051,
@@ -5752,18 +5967,19 @@
         "selectedCount": 0,
         "applicationRate": 3647.4
       },
-      "partner_id": 10,
+      "partner_id": 1,
       "selectedCount": 0,
       "visitInfo": {
         "address": "제주시 연동 321-5",
         "reservationRequired": false
       },
-      "region": {
-        "name": "제주"
-      },
+      "region": "경북 > 경주시",
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "contact_phone": "010-4567-8901",
+      "visitAddress": "경상북도 경주시 첨성로 133",
+      "visitLink": "https://naver.me/ABC4051"
     },
     {
       "id": 4052,
@@ -5814,7 +6030,7 @@
         "selectedCount": 0,
         "applicationRate": 31800
       },
-      "partner_id": 11,
+      "partner_id": 1,
       "selectedCount": 0,
       "purchaseInfo": {
         "purchaseLink": "https://example.com/product/4052",
@@ -5822,7 +6038,9 @@
       },
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2026-03-01 ~ 2026-04-02",
+      "contact_phone": "010-5678-9012"
     },
     {
       "id": 4053,
@@ -5873,11 +6091,15 @@
         "selectedCount": 0,
         "applicationRate": 3529.4
       },
-      "partner_id": 12,
+      "partner_id": 1,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://www.youtube.com/@mission-promo-4",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 4054,
@@ -5928,11 +6150,13 @@
         "selectedCount": 2,
         "applicationRate": 2066.7
       },
-      "partner_id": 13,
+      "partner_id": 1,
       "selectedCount": 3,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://www.youtube.com/@delivery-promo-4",
+      "contact_phone": "010-2345-6789"
     },
     {
       "id": 4055,
@@ -5983,11 +6207,13 @@
         "selectedCount": 0,
         "applicationRate": 6488.9
       },
-      "partner_id": 14,
+      "partner_id": 1,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/delivery-promo-5",
+      "contact_phone": "010-3456-7890"
     },
     {
       "id": 4056,
@@ -6038,11 +6264,13 @@
         "selectedCount": 0,
         "applicationRate": 2587.5
       },
-      "partner_id": 15,
+      "partner_id": 1,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/delivery-promo-1",
+      "contact_phone": "010-4567-8901"
     },
     {
       "id": 4057,
@@ -6093,11 +6321,15 @@
         "selectedCount": 0,
         "applicationRate": 435
       },
-      "partner_id": 16,
+      "partner_id": 1,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/mission-promo-5",
+      "requireContentLink": true,
+      "requireContentImage": true,
+      "contact_phone": "010-5678-9012"
     },
     {
       "id": 4058,
@@ -6148,7 +6380,7 @@
         "selectedCount": 0,
         "applicationRate": 4640
       },
-      "partner_id": 17,
+      "partner_id": 1,
       "selectedCount": 0,
       "purchaseInfo": {
         "purchaseLink": "https://example.com/product/4058",
@@ -6156,7 +6388,9 @@
       },
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "purchasePeriod": "2026-04-01 ~ 2026-05-02",
+      "contact_phone": "010-1234-5678"
     },
     {
       "id": 4059,
@@ -6207,11 +6441,13 @@
         "selectedCount": 0,
         "applicationRate": 10500
       },
-      "partner_id": 18,
+      "partner_id": 1,
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://www.youtube.com/@reporter-promo-4",
+      "contact_phone": "010-2345-6789"
     },
     {
       "id": 4060,
@@ -6266,7 +6502,9 @@
       "selectedCount": 0,
       "adultOnly": false,
       "allowReParticipation": true,
-      "allowLateSubmission": true
+      "allowLateSubmission": true,
+      "promotionLink": "https://blog.naver.com/reporter-promo-5",
+      "contact_phone": "010-3456-7890"
     }
   ],
   "campaign_applications": [
@@ -8982,143 +9220,66 @@
     },
     {
       "id": "6",
-      "number": "000001",
-      "companyName": "꽃초롱",
-      "businessInfo": {
-        "registrationNumber": "000-00-00000",
-        "representativeName": "김초롱"
-      },
-      "depositorName": "꽃초롱",
-      "businessType": "개인",
-      "paymentMethod": "카드 결제",
-      "taxInvoiceType": "미발행",
-      "chargedPoints": "12,500,000",
-      "heldPoints": "280,000",
-      "paymentStatus": "완료",
-      "requestDate": "2025-02-06 10:30",
-      "approvalDate": "2025-02-06 10:32",
-      "memberType": "주의 회원",
-      "accountStatus": "일시정지"
+      "partner_id": 6,
+      "amount": 12500000,
+      "payment_method": "CARD",
+      "status": "COMPLETED",
+      "paid_at": "2025-02-06T10:30:00Z",
+      "points_charged": 12500000
     },
     {
       "id": "7",
-      "number": "000001",
-      "companyName": "주식회사 와이디컴퍼니그룹",
-      "businessInfo": {
-        "registrationNumber": "000-00-00000",
-        "representativeName": "양동찬"
-      },
-      "depositorName": "주식회사 와이디컴퍼",
-      "businessType": "개인",
-      "paymentMethod": "카드 결제",
-      "taxInvoiceType": "미발행",
-      "chargedPoints": "4,600,000",
-      "heldPoints": "0",
-      "paymentStatus": "완료",
-      "requestDate": "2025-02-07 15:18",
-      "approvalDate": "2025-02-07 15:20",
-      "memberType": "이용 제한 회원",
-      "accountStatus": "영구정지"
+      "partner_id": 7,
+      "amount": 4600000,
+      "payment_method": "CARD",
+      "status": "COMPLETED",
+      "paid_at": "2025-02-07T15:18:00Z",
+      "points_charged": 4600000
     },
     {
       "id": "8",
-      "number": "000001",
-      "companyName": "(주)아이엠에스커뮤니케이션",
-      "businessInfo": {
-        "registrationNumber": "000-00-00000",
-        "representativeName": "정만수"
-      },
-      "depositorName": "(주)아이엠에스",
-      "businessType": "개인",
-      "paymentMethod": "카드 결제",
-      "taxInvoiceType": "미발행",
-      "chargedPoints": "9,300,000",
-      "heldPoints": "0",
-      "paymentStatus": "완료",
-      "requestDate": "2025-02-08 17:45",
-      "approvalDate": "2025-02-08 17:47",
-      "memberType": "주의 회원",
-      "accountStatus": "영구정지"
+      "partner_id": 8,
+      "amount": 9300000,
+      "payment_method": "CARD",
+      "status": "COMPLETED",
+      "paid_at": "2025-02-08T17:45:00Z",
+      "points_charged": 9300000
     },
     {
       "id": "9",
-      "number": "000001",
-      "companyName": "주식회사 청명미디어",
-      "businessInfo": {
-        "registrationNumber": "234-86-01377",
-        "representativeName": "유기수"
-      },
-      "depositorName": "주식회사 청명미디어",
-      "businessType": "개인",
-      "paymentMethod": "카드 결제",
-      "taxInvoiceType": "미발행",
-      "chargedPoints": "38,800,000",
-      "heldPoints": "0",
-      "paymentStatus": "완료",
-      "requestDate": "2025-02-09 12:10",
-      "approvalDate": "2025-02-09 12:12",
-      "memberType": "주의 회원",
-      "accountStatus": "영구정지"
+      "partner_id": 9,
+      "amount": 38800000,
+      "payment_method": "CARD",
+      "status": "COMPLETED",
+      "paid_at": "2025-02-09T12:10:00Z",
+      "points_charged": 38800000
     },
     {
       "id": "10",
-      "number": "000001",
-      "companyName": "(주)아이엠에스커뮤니케이션",
-      "businessInfo": {
-        "registrationNumber": "000-00-00000",
-        "representativeName": "정만수"
-      },
-      "depositorName": "(주)아이엠에스",
-      "businessType": "개인",
-      "paymentMethod": "무통장 입금",
-      "taxInvoiceType": "미발행",
-      "chargedPoints": "7,100,000",
-      "heldPoints": "0",
-      "paymentStatus": "완료",
-      "requestDate": "2025-02-10 09:25",
-      "approvalDate": "2025-02-10 09:30",
-      "memberType": "이용 제한 회원",
-      "accountStatus": "탈퇴"
+      "partner_id": 10,
+      "amount": 7100000,
+      "payment_method": "TRANSFER",
+      "status": "COMPLETED",
+      "paid_at": "2025-02-10T09:25:00Z",
+      "points_charged": 7100000
     },
     {
       "id": "11",
-      "number": "000001",
-      "companyName": "(주)아이엠에스커뮤니케이션",
-      "businessInfo": {
-        "registrationNumber": "000-00-00000",
-        "representativeName": "정만수"
-      },
-      "depositorName": "최대 열글자입니다",
-      "businessType": "개인",
-      "paymentMethod": "무통장 입금",
-      "taxInvoiceType": "세금계산서",
-      "chargedPoints": "55,500,000",
-      "heldPoints": "0",
-      "paymentStatus": "완료",
-      "requestDate": "2025-02-11 14:50",
-      "approvalDate": "2025-02-11 14:55",
-      "memberType": "이용 제한 회원",
-      "accountStatus": "탈퇴"
+      "partner_id": 11,
+      "amount": 55500000,
+      "payment_method": "TRANSFER",
+      "status": "COMPLETED",
+      "paid_at": "2025-02-11T14:50:00Z",
+      "points_charged": 55500000
     },
     {
       "id": "12",
-      "number": "000001",
-      "companyName": "주식회사 재밌는걸참좋아하고하고싶은거하는노신사",
-      "businessInfo": {
-        "registrationNumber": "000-00-00000",
-        "representativeName": "노홍철"
-      },
-      "depositorName": "노홍철",
-      "businessType": "개인",
-      "paymentMethod": "무통장 입금",
-      "taxInvoiceType": "세금계산서",
-      "chargedPoints": "2,400,000",
-      "heldPoints": "0",
-      "paymentStatus": "완료",
-      "requestDate": "2025-02-12 16:33",
-      "approvalDate": "2025-02-12 16:38",
-      "memberType": "이용 제한 회원",
-      "accountStatus": "탈퇴"
+      "partner_id": 12,
+      "amount": 2400000,
+      "payment_method": "TRANSFER",
+      "status": "COMPLETED",
+      "paid_at": "2025-02-12T16:33:00Z",
+      "points_charged": 2400000
     }
   ],
   "admin_dashboard": [
@@ -17123,6 +17284,82 @@
       "isPenalty": false,
       "rejectionReason": "제품 사진이 명확하지 않습니다. 제품의 특징이 잘 보이도록 재촬영하여 등록해 주세요.긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스긴글테스트테스트테스트테스트테스트테스트테스틋테ㅡ틑테틋스",
       "reviewer_id": 8
+    },
+    {
+      "id": "972",
+      "title": "프리미엄 스킨케어 세트",
+      "category": "네이버 블로그",
+      "image": "/images/main/campaign_img/eximg_7.png",
+      "status": "콘텐츠등록",
+      "remainingDays": 3,
+      "statusMessage": "콘텐츠 등록 기한이 3일 남았습니다.",
+      "type": "배송형",
+      "isUrgent": true,
+      "subStatus": "content_registered",
+      "hasContent": true,
+      "isPenalty": false,
+      "reviewer_id": 1
+    },
+    {
+      "id": "962",
+      "title": "닥터뮬 뮬차 붓기차",
+      "category": "네이버 블로그",
+      "image": "/images/main/campaign_img/eximg_10.png",
+      "status": "완료",
+      "remainingDays": 0,
+      "statusMessage": "캠페인이 완료되었습니다.",
+      "type": "배송형",
+      "isUrgent": false,
+      "subStatus": "content_registered",
+      "hasContent": true,
+      "isPenalty": false,
+      "reviewer_id": 1
+    },
+    {
+      "id": "3004",
+      "title": "푸드 기자단",
+      "category": "네이버 블로그",
+      "image": "/images/main/campaign_img/eximg_4.png",
+      "status": "완료",
+      "remainingDays": 0,
+      "statusMessage": "캠페인이 완료되었습니다.",
+      "type": "기자단",
+      "isUrgent": false,
+      "subStatus": "content_registered",
+      "hasContent": true,
+      "isPenalty": false,
+      "reviewer_id": 1
+    },
+    {
+      "id": "965",
+      "title": "유기농 아기용 세제",
+      "category": "인스타그램",
+      "image": "/images/main/campaign_img/eximg_4.png",
+      "status": "취소/반려",
+      "remainingDays": 0,
+      "statusMessage": "등록한 콘텐츠가 반려되었습니다. 반려 사유 확인 후 다시 등록해 주세요.",
+      "type": "배송형",
+      "isUrgent": false,
+      "subStatus": "content_rejected,re_register",
+      "hasContent": true,
+      "isPenalty": false,
+      "rejectionReason": "제품 사진이 명확하지 않습니다. 제품의 특징이 잘 보이도록 재촬영하여 등록해 주세요.",
+      "reviewer_id": 1
+    },
+    {
+      "id": "2007",
+      "title": "프리미엄 에코백",
+      "category": "인스타그램",
+      "image": "/images/main/campaign_img/eximg_8.png",
+      "status": "취소/반려",
+      "remainingDays": 0,
+      "statusMessage": "콘텐츠 등록 기간이 지났습니다.",
+      "type": "구매평",
+      "isUrgent": false,
+      "subStatus": "penalty",
+      "hasContent": false,
+      "isPenalty": true,
+      "reviewer_id": 1
     }
   ],
   "accounts": [
@@ -25749,12 +25986,12 @@
         "category": "뷰티",
         "brandName": "클립",
         "channel": "클립",
-        "recruitmentPeriod": "2026-01-15 ~ 2026-03-01",
-        "announcementDate": "2026-03-03",
-        "registrationPeriod": "2026-03-05 ~ 2026-03-19",
+        "recruitmentPeriod": "2026-03-01 ~ 2026-04-15",
+        "announcementDate": "2026-04-18",
+        "registrationPeriod": "2026-04-20 ~ 2026-05-05",
         "recruitedCount": 0,
         "totalCount": 5,
-        "daysLeft": -2,
+        "daysLeft": 37,
         "additionalPoint": 0
       },
       "applicantData": {
