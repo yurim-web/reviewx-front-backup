@@ -27,6 +27,13 @@ export interface CampaignContentApiItem {
   admin_comment?: string | null;
 }
 
+/** 캠페인 콘텐츠 목록 조회 (GET /partner/campaign/:id/contents → /campaign_contents?campaign_id=:id) */
+export const fetchCampaignContents = (campaignId: string): Promise<CampaignContentApiItem[]> =>
+  apiClient
+    .get<CampaignContentApiItem[]>(`/partner/campaign/${campaignId}/contents`)
+    .then((res) => (Array.isArray(res.data) ? res.data : []))
+    .catch(() => []);
+
 /** 콘텐츠 제출 (POST /campaign_contents) */
 export const postCampaignContent = (
   body: Omit<CampaignContentApiItem, "id">
