@@ -280,7 +280,13 @@ export default function PartnerPointPageLayout({
           {/* 포인트 내역 리스트 */}
           <article className={styles.history_list}>
             {filtered_and_sorted_history.length === 0 ? (
-              <div className={styles.empty_state}>포인트 내역이 없습니다.</div>
+              <div className={styles.empty_state}>
+                {activePointTab === "earned"
+                  ? "포인트 충전 내역이 없습니다."
+                  : activePointTab === "withdrawn"
+                    ? "포인트 사용 내역이 없습니다."
+                    : "포인트 내역이 없습니다."}
+              </div>
             ) : (
               filtered_and_sorted_history.map((history) => (
                 <div key={history.id} className={styles.history_item}>
