@@ -16,27 +16,20 @@
 
 import { useState, useEffect } from "react";
 
-interface ChannelDetail {
-  name: string;
-  url?: string;
-  status?: "connected" | "disconnected";
-}
-
-interface LocalAccount {
-  id?: string;
-  email?: string;
-  channel_details?: ChannelDetail[];
-}
 import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import { getChannelLogo } from "@/utils/channelLogoMap";
 import ChannelSection from "@/components/user/mypage/ChannelSection";
 import { useAuth } from "@/hooks/useAuth";
 import { patchReviewerProfile } from "@/lib/api/reviewer";
+import {
+  useReviewerProfile,
+  useInvalidateReviewerProfile,
+  getReviewerIdNum,
+} from "@/hooks/user/mypage/useReviewerProfile";
 import layoutStyles from "@/styles/user/mypage/edit_profile/edit_profile_layout.module.css";
 import headerStyles from "@/styles/user/mypage/edit_profile/header.module.css";
 
-// 채널 정보 타입
 interface ChannelInfo {
   name: string;
   url?: string;
@@ -52,75 +45,49 @@ const defaultChannels: ChannelInfo[] = [
 
 export default function ChannelConnectPage() {
   const { user } = useAuth();
+  const { data: profile } = useReviewerProfile(user?.id);
+  const invalidateProfile = useInvalidateReviewerProfile();
   const [channels, setChannels] = useState<ChannelInfo[]>(defaultChannels);
 
-  /**
-   * localStorage에서 채널 정보 로드
-   */
+  // 서버 프로필에서 채널 정보 로드
   useEffect(() => {
-    if (typeof window !== "undefined" && user) {
-      try {
-        const storedAccounts = localStorage.getItem("user_accounts");
-        if (storedAccounts) {
-          const accounts = JSON.parse(storedAccounts) as LocalAccount[];
-          const userAccount = accounts.find((a) => a.id === user.id || a.email === user.email);
+    if (!user || !profile?.channel_details) return;
 
-          if (userAccount?.channel_details) {
-            const loadedChannels = defaultChannels.map((channel) => {
-              const detail = userAccount.channel_details!.find((d) => d.name === channel.name);
-              if (detail) {
-                return {
-                  name: channel.name,
-                  url: detail.url || "",
-                  status: detail.status || ("disconnected" as const),
-                };
-              }
-              return channel;
-            });
-            setChannels(loadedChannels);
-          }
-        }
-      } catch (_error) {}
-    }
-  }, [user]);
+    const loadedChannels = defaultChannels.map((channel) => {
+      const detail = profile.channel_details!.find((d) => d.name === channel.name);
+      if (detail) {
+        return {
+          name: channel.name,
+          url: detail.url || "",
+          status: detail.status || ("disconnected" as const),
+        };
+      }
+      return channel;
+    });
+    setChannels(loadedChannels);
+  }, [user, profile]);
 
-  /**
-   * 채널 연결/수정 핸들러
-   * - 채널 정보 업데이트
-   * - localStorage의 user_accounts에 저장
-   * - 캠페인 신청 모달에서 온 경우 sessionStorage에 채널 정보 저장
-   */
+  // 채널 연결/수정 핸들러
   const handleChannelUpdate = (channelName: string, channelInfo: { url: string }) => {
     const updatedChannels = channels.map((ch) =>
       ch.name === channelName ? { ...ch, url: channelInfo.url, status: "connected" as const } : ch
     );
     setChannels(updatedChannels);
 
-    // localStorage에 저장
-    if (typeof window !== "undefined" && user) {
-      try {
-        const storedAccounts = localStorage.getItem("user_accounts");
-        const accounts: LocalAccount[] = storedAccounts ? JSON.parse(storedAccounts) : [];
-        const accountIndex = accounts.findIndex((a) => a.id === user.id || a.email === user.email);
-
-        if (accountIndex >= 0) {
-          accounts[accountIndex] = {
-            ...accounts[accountIndex],
-            channel_details: updatedChannels,
-          };
-          localStorage.setItem("user_accounts", JSON.stringify(accounts));
-
-          // mock API에 채널 정보 저장 (best-effort)
-          const reviewerIdNum = user.id.includes("kakao") ? 1 : user.id.includes("naver") ? 2 : 1;
-          patchReviewerProfile(reviewerIdNum, {
-            channel_details: updatedChannels.map((ch) => ({
-              name: ch.name,
-              url: ch.url ?? "",
-              status: ch.status,
-            })),
-          }).catch(() => {});
-        }
-      } catch (_error) {}
+    // 서버에 채널 정보 저장
+    const reviewerIdNum = getReviewerIdNum(user?.id);
+    if (reviewerIdNum) {
+      patchReviewerProfile(reviewerIdNum, {
+        channel_details: updatedChannels.map((ch) => ({
+          name: ch.name,
+          url: ch.url ?? "",
+          status: ch.status,
+        })),
+      })
+        .then(() => invalidateProfile(user?.id))
+        .catch((_apiError) => {
+          console.error("채널 연결 API 호출 실패:", _apiError);
+        });
     }
 
     // 캠페인 신청 모달에서 온 경우 sessionStorage에 저장

@@ -13,29 +13,41 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import CampaignManagementHeader from "@/components/user/campaign_management/CampaignManagementHeader";
 import CampaignList from "@/components/user/campaign_management/CampaignList";
 import CampaignFilterBar from "@/components/common/campaign_management/CampaignFilterBar";
 import type { MainTab, CampaignApplication } from "@/types/domain/user";
 import layoutStyles from "@/styles/user/campaign_management/campaign_management_layout.module.css";
 import { withUserAuth } from "@/components/auth/withAuth";
-import { useAppliedCampaigns } from "@/hooks/user/campaign_management/useAppliedCampaigns";
+import { useWindowFocus } from "@/hooks/common/useWindowFocus";
+import {
+  getCampaignsByTab,
+  getClientCampaignStats,
+} from "@/data/user/campaign_management/campaignManagementData";
 
 function AppliedPage() {
   const [activeTab, setActiveTab] = useState<MainTab>("campaign");
   const [activeStatTab] = useState<"신청">("신청");
   const [filteredCampaigns, setFilteredCampaigns] = useState<CampaignApplication[]>([]);
+  const [campaigns, setCampaigns] = useState<CampaignApplication[]>(() =>
+    getCampaignsByTab("신청")
+  );
+  const [stats, setStats] = useState(() => getClientCampaignStats());
 
-  const { campaigns, setCampaigns, displayStats, statsReady } = useAppliedCampaigns();
+  const loadCampaigns = useCallback(() => {
+    setCampaigns(getCampaignsByTab("신청"));
+    setStats(getClientCampaignStats());
+  }, []);
+
+  useEffect(() => {
+    loadCampaigns();
+  }, [loadCampaigns]);
+
+  useWindowFocus(loadCampaigns);
 
   const handleFilteredCampaignsChange = (filtered: CampaignApplication[]) => {
     setFilteredCampaigns(filtered);
-  };
-
-  const handleCancelSuccess = (campaignId: string) => {
-    setCampaigns((prev) => prev.filter((c) => c.id !== campaignId));
-    setFilteredCampaigns((prev) => prev.filter((c) => c.id !== campaignId));
   };
 
   return (
@@ -45,7 +57,7 @@ function AppliedPage() {
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           activeStatTab={activeStatTab}
-          stats={statsReady ? displayStats : undefined}
+          stats={stats}
         />
         <CampaignFilterBar<CampaignApplication>
           campaigns={campaigns}
@@ -55,7 +67,6 @@ function AppliedPage() {
         <CampaignList
           campaigns={filteredCampaigns}
           activeStatTab="신청"
-          onCancelSuccess={handleCancelSuccess}
           originalCampaigns={campaigns}
         />
       </div>
