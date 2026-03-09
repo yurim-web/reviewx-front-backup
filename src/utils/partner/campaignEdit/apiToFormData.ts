@@ -50,10 +50,54 @@ interface DbCampaignExtra extends PartnerCampaignApiItem {
   };
   notification?: string;
   isEmergency?: boolean;
+  contact_phone?: string;
+  // 배송형·기자단·미션형 홍보 링크
+  promotionLink?: string;
+  productLink?: string;
+  // 방문형
+  visitLink?: string;
+  visitAddress?: string;
+  region?: string;
+  visitZipCode?: string;
+  visitBaseAddress?: string;
+  visitDetailAddress?: string;
+  addressDetail?: string;
+  // 구매평
+  purchaseLink?: string;
+  purchasePeriod?: string;
+  purchaseInfo?: {
+    purchaseLink?: string;
+    purchasePoint?: number;
+  };
+  // 미션형
+  requireContentLink?: boolean;
+  requireContentImage?: boolean;
 }
 
 export function apiCampaignToFormData(item: PartnerCampaignApiItem): CampaignFormData {
   const ext = item as DbCampaignExtra;
+
+  // 구매평 구매 링크: purchaseInfo.purchaseLink > root purchaseLink > promotionLink 순
+  const purchaseLink =
+    ext.purchaseInfo?.purchaseLink ?? ext.purchaseLink ?? ext.promotionLink ?? "";
+
+  // 구매평 구매 포인트: purchaseInfo.purchasePoint > reward.paymentRewardPoint 순
+  const purchasePoints = ext.purchaseInfo?.purchasePoint ?? item.reward?.paymentRewardPoint ?? 0;
+
+  // 배송형·기자단·미션형 홍보 링크: promotionLink > productLink 순
+  const promotionLink =
+    item.type === "PURCHASE_REVIEW" || item.type === "PURCHASE"
+      ? purchaseLink
+      : (ext.promotionLink ?? ext.productLink ?? "");
+
+  // 방문형 region 분리: "서울 > 강남구" → region="서울", subRegion="강남구"
+  let region = "";
+  let subRegion = "";
+  if (ext.region) {
+    const parts = ext.region.split(">").map((s) => s.trim());
+    region = parts[0] ?? "";
+    subRegion = parts[1] ?? "";
+  }
 
   return {
     campaignType: TYPE_MAP[item.type] ?? "배송형",
@@ -65,7 +109,7 @@ export function apiCampaignToFormData(item: PartnerCampaignApiItem): CampaignFor
     providedItems: item.description ?? "",
     additionalPoints: item.reward?.extraRewardPoint ?? 0,
     currentPoints: 0,
-    purchasePoints: item.reward?.paymentRewardPoint ?? 0,
+    purchasePoints,
     recruitmentCount: item.recruitLimit,
     recruitmentPeriod: formatPeriod(item.recruitStartAt, item.recruitEndAt),
     announcementDate: formatDate(item.content.contentStartAt),
@@ -79,6 +123,27 @@ export function apiCampaignToFormData(item: PartnerCampaignApiItem): CampaignFor
     requireLinkAttachment: ext.keywordPolicy?.requireBodyLink ?? false,
     requireKeywordAttachment: true,
     guidelines: ext.notification ?? "",
+    contactPhone: ext.contact_phone ?? "",
     isUrgent: ext.isEmergency ?? false,
+    // 수정 모드에서는 기 등록 시 이미 동의한 것으로 간주 → 체크박스 자동 체크
+    fairTradeAgreement: true,
+    // 홍보·구매 링크
+    promotionLink,
+    // 방문형
+    visitLink: ext.visitLink ?? "",
+    region,
+    subRegion,
+    visitZipCode: ext.visitZipCode ?? "",
+    visitBaseAddress: ext.visitBaseAddress ?? ext.visitAddress ?? "",
+    visitDetailAddress: ext.visitDetailAddress ?? "",
+    addressDetail: ext.addressDetail ?? "",
+    // 구매평
+    purchasePeriod: ext.purchasePeriod ?? "",
+    // 미션형
+    requireContentLink: ext.requireContentLink ?? false,
+    requireContentImage: ext.requireContentImage ?? false,
+    // ⚠️ TODO(실서버 연동 시 제거): mock DB에 상세 이미지 필드가 없어 썸네일을 임시 fallback으로 사용
+    // 실제 API 연동 시 → response의 detailImageUrls 배열을 그대로 매핑할 것
+    detailImagePreviews: item.thumbnailUrl ? [item.thumbnailUrl] : [],
   };
 }
