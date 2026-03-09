@@ -173,7 +173,9 @@ export function useCampaignFormStorage({
               return postDraftCampaign(dbPayload).then(() => undefined);
             }
           })
-          .catch(() => {});
+          .catch((_apiError) => {
+            console.error("임시저장 API 호출 실패:", _apiError);
+          });
       }
 
       setToast({ is_open: true, message: "저장되었습니다." });

@@ -55,16 +55,19 @@ export function useCampaignFormValidation({
    * 필수 요소 유효성 검사
    */
   const isFormValid = useMemo(() => {
-    // 포인트 검증: 보유 포인트가 0보다 커야 함
-    const currentPoints = Number(String(formData.currentPoints).replace(/,/g, "")) || 0;
-    if (currentPoints <= 0) {
-      return false;
+    // 포인트 검증: 등록 모드에서만 보유 포인트 확인 (수정 모드는 포인트 차감 없음)
+    if (!isEditMode) {
+      const currentPoints = Number(String(formData.currentPoints).replace(/,/g, "")) || 0;
+      if (currentPoints <= 0) {
+        return false;
+      }
     }
 
     // 이미지 검증
+    // 수정 모드: 썸네일만 있으면 OK (상세 이미지는 이미 서버에 저장된 것으로 간주)
+    // 등록 모드: 썸네일 + 상세 이미지 모두 필요
     const hasImages = isEditMode
-      ? (thumbnailPreview !== null || thumbnailImage !== null) &&
-        (detailPreviews.length > 0 || detailImages.length > 0)
+      ? thumbnailPreview !== null || thumbnailImage !== null
       : thumbnailImage !== null && detailImages.length > 0;
 
     if (!hasImages) {
@@ -180,7 +183,8 @@ function validateRequiredFieldsByCampaignType(
       return (
         baseFieldsValid &&
         (formData.platform || "").trim() !== "" &&
-        (formData.purchaseLink?.trim() ?? "") !== ""
+        (formData.promotionLink?.trim() ?? "") !== "" &&
+        (formData.purchasePeriod?.trim() ?? "") !== ""
       );
 
     case "기자단":
