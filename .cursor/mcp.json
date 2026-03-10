@@ -2,6 +2,9 @@
   "mcpServers": {
     "Figma": {
       "url": "https://mcp.figma.com/mcp"
+    },
+    "atlassian-confluence": {
+      "url": "https://mcp.atlassian.com/v1/mcp"
     }
   }
 }
