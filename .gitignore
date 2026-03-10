@@ -48,3 +48,38 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.env.atlassian
+
+# 임시 스크린샷 및 디버그 파일
+tmp_*.png
+*.png
+calendar_*.png
+check_*.png
+extension_*.png
+partner_*.png
+progress_*.png
+
+# 임시 JSON 파일
+tmp_*.json
+temp_*.json
+
+# 임시 스크립트 (일회성 데이터 조작용)
+scripts/
+
+# 테스트 파일
+tests/
+*.mjs
+check_*.js
+check_*.py
+check_*.ts
+
+# Claude 스킬 작업 파일
+.claude/skills/webapp-testing/
+.playwright-mcp/
+
+# 기타 임시 파일
+AGENTS.md
+SKILL.md
+docs/CODEX_MEMORY.md
+docs/WORKFLOW_CHECKLIST.md
+mock/db.backup.json

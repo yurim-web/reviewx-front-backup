@@ -39,6 +39,14 @@
         "rotate"
       ],
       "timeout": 100
+    },
+    "atlassian-confluence": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.atlassian.com/v1/mcp"
+      ]
     }
   }
 }
