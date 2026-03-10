@@ -13,38 +13,19 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import CampaignManagementHeader from "@/components/user/campaign_management/CampaignManagementHeader";
 import CampaignList from "@/components/user/campaign_management/CampaignList";
 import CampaignFilterBar from "@/components/common/campaign_management/CampaignFilterBar";
 import type { MainTab, CampaignApplication } from "@/types/domain/user";
 import layoutStyles from "@/styles/user/campaign_management/campaign_management_layout.module.css";
 import { withUserAuth } from "@/components/auth/withAuth";
-import { useWindowFocus } from "@/hooks/common/useWindowFocus";
-import {
-  getCampaignsByTab,
-  getClientCampaignStats,
-} from "@/data/user/campaign_management/campaignManagementData";
+import { useAppliedCampaigns } from "@/hooks/user/campaign_management/useAppliedCampaigns";
 
 function AppliedPage() {
   const [activeTab, setActiveTab] = useState<MainTab>("campaign");
-  const [activeStatTab] = useState<"신청">("신청");
   const [filteredCampaigns, setFilteredCampaigns] = useState<CampaignApplication[]>([]);
-  const [campaigns, setCampaigns] = useState<CampaignApplication[]>(() =>
-    getCampaignsByTab("신청")
-  );
-  const [stats, setStats] = useState(() => getClientCampaignStats());
-
-  const loadCampaigns = useCallback(() => {
-    setCampaigns(getCampaignsByTab("신청"));
-    setStats(getClientCampaignStats());
-  }, []);
-
-  useEffect(() => {
-    loadCampaigns();
-  }, [loadCampaigns]);
-
-  useWindowFocus(loadCampaigns);
+  const { campaigns, displayStats } = useAppliedCampaigns();
 
   const handleFilteredCampaignsChange = (filtered: CampaignApplication[]) => {
     setFilteredCampaigns(filtered);
@@ -56,8 +37,8 @@ function AppliedPage() {
         <CampaignManagementHeader
           activeTab={activeTab}
           setActiveTab={setActiveTab}
-          activeStatTab={activeStatTab}
-          stats={stats}
+          activeStatTab="신청"
+          stats={displayStats}
         />
         <CampaignFilterBar<CampaignApplication>
           campaigns={campaigns}

@@ -15,18 +15,13 @@
 
 import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
 import PageTitle from "@/components/fragments/PageTitle";
-import { pendingPointListData } from "@/data/user/point/pointData";
-import { useAuth } from "@/hooks/useAuth";
-import { useReviewerProfile } from "@/hooks/user/mypage/useReviewerProfile";
-import type { PendingPointItem } from "@/types/domain/user";
+import { usePointData } from "@/hooks/user/point/usePointData";
 import pointStyles from "@/styles/user/point/point.module.css";
 
 export default function PendingPointPage() {
-  const { user } = useAuth();
-  const { data: profile } = useReviewerProfile(user?.id);
+  const { pointInfo, pendingPointList: pending_list } = usePointData();
   const list_container_ref = useRef<HTMLElement>(null);
-  const [available_points, setAvailablePoints] = useState(0);
-  const [pending_list] = useState<PendingPointItem[]>(() => pendingPointListData);
+  const available_points = pointInfo.available_points;
   const [point_col_width, set_point_col_width] = useState<number | null>(null);
 
   /* 모바일: 포인트 영역 너비를 목록에서 가장 긴 값에 맞춰 동일하게 적용 */
@@ -55,12 +50,6 @@ export default function PendingPointPage() {
     window.addEventListener("resize", on_resize);
     return () => window.removeEventListener("resize", on_resize);
   }, [measure_point_width]);
-
-  // 서버 프로필에서 포인트 정보 로드
-  useEffect(() => {
-    if (!user || !profile) return;
-    setAvailablePoints(profile.current_points ?? 0);
-  }, [user, profile]);
 
   /* 기본 헤더 숨김 (모바일에서 PageTitle만 사용) */
   useEffect(() => {

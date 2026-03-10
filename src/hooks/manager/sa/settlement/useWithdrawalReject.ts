@@ -12,7 +12,7 @@
  */
 
 import { useState } from "react";
-import type { WithdrawalRequestItem } from "@/data/manager_sa/settlement/withdrawalRequestData";
+import type { AdminWithdrawalRequestItem } from "@/types/api/admin";
 import type { StoredRequest, StoredAccount, PointHistoryEntry } from "./withdrawalTypes";
 import { patchWithdrawalStatus } from "@/lib/api/point";
 
@@ -25,7 +25,7 @@ export function useWithdrawalReject({ selected_ids, setSelectedIds }: UseWithdra
   const [is_reject_modal_open, setIsRejectModalOpen] = useState(false);
   const [pending_reject_ids, setPendingRejectIds] = useState<string[]>([]);
 
-  const handle_reject = (item: WithdrawalRequestItem) => {
+  const handle_reject = (item: AdminWithdrawalRequestItem) => {
     const ids_to_reject = selected_ids.length > 0 ? selected_ids : [item.id];
     setPendingRejectIds(ids_to_reject);
     if (selected_ids.length === 0) setSelectedIds([item.id]);

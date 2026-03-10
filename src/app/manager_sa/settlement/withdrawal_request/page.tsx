@@ -20,11 +20,10 @@ import WithdrawalRequestFilterSection, {
   type RequestFilterStatus,
 } from "@/components/manager/sa/settlement/withdrawal_request/section/WithdrawalRequestFilterSection";
 import RequestTable from "@/components/manager/sa/settlement/withdrawal_request/section/RequestTable";
-import {
-  urgentRequestList,
-  currentRoundRequestList,
-  type WithdrawalRequestItem,
-} from "@/data/manager_sa/settlement/withdrawalRequestData";
+import { useAdminWithdrawalRequests } from "@/hooks/manager/ga/useAdminWithdrawalRequests";
+import type { AdminWithdrawalRequestItem } from "@/types/api/admin";
+
+import type { StoredUserAccount } from "@/lib/auth/types";
 
 // localStorage에 저장된 출금 요청 항목 타입
 interface StoredWithdrawalRequest {
@@ -40,12 +39,16 @@ interface StoredWithdrawalRequest {
   request_date: string;
 }
 
-import type { StoredUserAccount } from "@/lib/auth/types";
-
 export default function WithdrawalRequestPage() {
   const [selected_filter, set_selected_filter] = useState<RequestFilterStatus>("all");
 
-  const [withdrawal_requests, set_withdrawal_requests] = useState<WithdrawalRequestItem[]>([]);
+  // API 훅으로 출금 요청 목록 조회
+  const { requests } = useAdminWithdrawalRequests();
+
+  // localStorage에서 pending 상태 출금 요청을 가져와 API 데이터와 합산
+  const [local_withdrawal_requests, set_local_withdrawal_requests] = useState<
+    AdminWithdrawalRequestItem[]
+  >([]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -54,10 +57,10 @@ export default function WithdrawalRequestPage() {
         const storedAccounts = localStorage.getItem("user_accounts");
 
         if (storedRequests) {
-          const requests: StoredWithdrawalRequest[] = JSON.parse(storedRequests);
+          const stored: StoredWithdrawalRequest[] = JSON.parse(storedRequests);
           const accounts: StoredUserAccount[] = storedAccounts ? JSON.parse(storedAccounts) : [];
 
-          const formattedRequests: WithdrawalRequestItem[] = requests
+          const formattedRequests: AdminWithdrawalRequestItem[] = stored
             .filter((req) => req.status === "pending")
             .map((req, index) => {
               const userAccount = accounts.find((a) => a.id === req.user_id);
@@ -94,17 +97,20 @@ export default function WithdrawalRequestPage() {
                   .replace(",", ""),
                 type: "일반 회원",
                 status: "정상",
-                isSelected: false,
               };
             });
 
-          set_withdrawal_requests(formattedRequests);
+          set_local_withdrawal_requests(formattedRequests);
         }
       } catch (_error) {
         // 출금 요청 로드 실패 시 빈 배열 유지
       }
     }
   }, []);
+
+  // 긴급(round === "-") / 회차 정산(round !== "-") 분류
+  const urgent_requests = requests.filter((r) => r.round === "-");
+  const round_requests = requests.filter((r) => r.round !== "-");
 
   return (
     <div className={styles.container}>
@@ -114,7 +120,7 @@ export default function WithdrawalRequestPage() {
         {/* 긴급 출금 요청 테이블 */}
         <RequestTable
           title="긴급"
-          data={[...urgentRequestList, ...withdrawal_requests]}
+          data={[...urgent_requests, ...local_withdrawal_requests]}
           show_total={true}
           filter_section={
             <WithdrawalRequestFilterSection
@@ -127,7 +133,7 @@ export default function WithdrawalRequestPage() {
         {/* 이번 순차 정산 출금 요청 테이블 */}
         <RequestTable
           title="회차 정산"
-          data={[...currentRoundRequestList, ...withdrawal_requests]}
+          data={[...round_requests, ...local_withdrawal_requests]}
           show_total={true}
           filter_section={
             <WithdrawalRequestFilterSection

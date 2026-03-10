@@ -1,8 +1,16 @@
 /* ========================================
-   🔎 캠페인 검색 결과 페이지
-   - 헤더 검색에서 이동
-   - 메인 홈 페이지와 동일한 캠페인 카드 레이아웃
+   캠페인 검색 결과 페이지
    ======================================== */
+
+/**
+ * SearchPage
+ *
+ * 목적: 헤더 검색에서 이동하는 캠페인 검색 결과 페이지
+ *       json-server API(/reviewer/search) 호출, 실패 시 정적 데이터 fallback
+ *
+ * 사용 페이지:
+ * - /search (캠페인 검색 결과)
+ */
 
 import type { Metadata } from "next";
 
@@ -22,6 +30,47 @@ export const metadata: Metadata = {
   description: "리뷰 캠페인 검색 결과 페이지입니다",
 };
 
+interface SearchApiItem {
+  campaignId: number;
+  title: string;
+  recruitLimit: number;
+  campaignApplicationCount: number;
+  imageUrl: string;
+  categoryId: number;
+  channelId: number;
+}
+
+function adaptApiItem(item: SearchApiItem) {
+  return {
+    id: String(item.campaignId),
+    title: item.title,
+    category: "캠페인",
+    image: item.imageUrl,
+    recruitment: {
+      current: item.campaignApplicationCount,
+      total: item.recruitLimit,
+    },
+    dayCount: "",
+    isUrgent: false,
+  };
+}
+
+async function fetchSearchResults(keyword: string) {
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+    const url = keyword
+      ? `${apiUrl}/reviewer/search?keyword=${encodeURIComponent(keyword)}`
+      : `${apiUrl}/reviewer/search`;
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error(`API error: ${res.status}`);
+    const data: SearchApiItem[] | { items?: SearchApiItem[] } = await res.json();
+    const items = Array.isArray(data) ? data : (data.items ?? []);
+    return items.map(adaptApiItem);
+  } catch {
+    return null;
+  }
+}
+
 type SearchPageProps = {
   searchParams?: Promise<{
     keyword?: string | string[];
@@ -34,25 +83,31 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const keyword =
     typeof raw_keyword === "string" ? raw_keyword.trim() : (raw_keyword[0]?.trim() ?? "");
 
-  const normalized_keyword = keyword.toLowerCase();
+  // API 호출 시도
+  const apiResults = await fetchSearchResults(keyword);
 
-  // 메인 홈에서 사용하는 모든 캠페인 데이터를 하나로 합친 뒤 검색
-  const all_campaigns = [
-    ...deliveryCampaigns,
-    ...reviewCampaigns,
-    ...visitCampaigns,
-    ...missionCampaigns,
-    ...reporterCampaigns,
-  ];
-
-  const filtered_campaigns = keyword
-    ? all_campaigns.filter((campaign) => {
-        const title = campaign.title?.toLowerCase() ?? "";
-        const description = campaign.description?.toLowerCase() ?? "";
-
-        return title.includes(normalized_keyword) || description.includes(normalized_keyword);
-      })
-    : all_campaigns;
+  // API 성공 시 API 결과 사용, 실패 시 정적 데이터 fallback
+  let filtered_campaigns;
+  if (apiResults !== null) {
+    filtered_campaigns = apiResults;
+  } else {
+    const normalized_keyword = keyword.toLowerCase();
+    const all_campaigns = [
+      ...deliveryCampaigns,
+      ...reviewCampaigns,
+      ...visitCampaigns,
+      ...missionCampaigns,
+      ...reporterCampaigns,
+    ];
+    filtered_campaigns = keyword
+      ? all_campaigns.filter((campaign) => {
+          const title = campaign.title?.toLowerCase() ?? "";
+          const description =
+            (campaign as { description?: string }).description?.toLowerCase() ?? "";
+          return title.includes(normalized_keyword) || description.includes(normalized_keyword);
+        })
+      : all_campaigns;
+  }
 
   return (
     <>

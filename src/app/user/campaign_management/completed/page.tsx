@@ -13,43 +13,19 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import CampaignManagementHeader from "@/components/user/campaign_management/CampaignManagementHeader";
 import CampaignList from "@/components/user/campaign_management/CampaignList";
 import CampaignFilterBar from "@/components/common/campaign_management/CampaignFilterBar";
-import type { MainTab } from "@/types/domain/user";
-import type { CampaignApplication } from "@/types/domain/user";
+import type { MainTab, CampaignApplication } from "@/types/domain/user";
 import layoutStyles from "@/styles/user/campaign_management/campaign_management_layout.module.css";
-import { useWindowFocus } from "@/hooks/common/useWindowFocus";
-import { getCampaignsByTab } from "@/data/user/campaign_management/campaignManagementData";
+import { withUserAuth } from "@/components/auth/withAuth";
+import { useCompletedCampaigns } from "@/hooks/user/campaign_management/useCompletedCampaigns";
 
-export default function CompletedPage() {
+function CompletedPage() {
   const [activeTab, setActiveTab] = useState<MainTab>("campaign");
-  const [activeStatTab] = useState<"완료">("완료");
   const [filteredCampaigns, setFilteredCampaigns] = useState<CampaignApplication[]>([]);
-  const [campaigns, setCampaigns] = useState<CampaignApplication[]>(() =>
-    getCampaignsByTab("완료")
-  );
-
-  const getCompletedCampaignIds = (): string[] => {
-    if (typeof window === "undefined") return [];
-    try {
-      const completed = localStorage.getItem("completedCampaignIds");
-      return completed ? JSON.parse(completed) : [];
-    } catch {
-      return [];
-    }
-  };
-
-  const loadCampaigns = useCallback(() => {
-    setCampaigns(getCampaignsByTab("완료", getCompletedCampaignIds()));
-  }, []);
-
-  useEffect(() => {
-    loadCampaigns();
-  }, [loadCampaigns]);
-
-  useWindowFocus(loadCampaigns);
+  const { campaigns, stats } = useCompletedCampaigns();
 
   const handleFilteredCampaignsChange = (filtered: CampaignApplication[]) => {
     setFilteredCampaigns(filtered);
@@ -61,7 +37,8 @@ export default function CompletedPage() {
         <CampaignManagementHeader
           activeTab={activeTab}
           setActiveTab={setActiveTab}
-          activeStatTab={activeStatTab}
+          activeStatTab="완료"
+          stats={stats}
         />
         <CampaignFilterBar<CampaignApplication>
           campaigns={campaigns}
@@ -77,3 +54,5 @@ export default function CompletedPage() {
     </div>
   );
 }
+
+export default withUserAuth(CompletedPage);

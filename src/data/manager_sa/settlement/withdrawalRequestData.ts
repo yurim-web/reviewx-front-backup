@@ -422,14 +422,14 @@ export const currentRoundRequestList: WithdrawalRequestItem[] = [
  * @param list - 출금 요청 목록
  * @returns 합계 금액 (숫자)
  */
-export function calculate_total_amount(list: WithdrawalRequestItem[]): number {
+export function calculate_total_amount(list: { amount: string | number }[]): number {
   return list.reduce((sum, item) => {
     // amount가 숫자인 경우와 문자열인 경우를 모두 처리
     let amount = 0;
-    if (typeof item.amount === 'string') {
+    if (typeof item.amount === "string") {
       // 문자열인 경우 쉼표 제거 후 숫자로 변환
       amount = parseInt(item.amount.replace(/,/g, ""), 10);
-    } else if (typeof item.amount === 'number') {
+    } else if (typeof item.amount === "number") {
       // 이미 숫자인 경우 그대로 사용
       amount = item.amount;
     }
@@ -445,9 +445,7 @@ export const urgent_total_amount = calculate_total_amount(urgentRequestList);
 /**
  * 이번 회차 정산 합계 금액
  */
-export const current_round_total_amount = calculate_total_amount(
-  currentRoundRequestList
-);
+export const current_round_total_amount = calculate_total_amount(currentRoundRequestList);
 
 /**
  * 전체 출금 요청 목록 (긴급 + 이번 회차)

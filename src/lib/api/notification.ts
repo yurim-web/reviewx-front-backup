@@ -33,3 +33,21 @@ export const fetchNotifications = (reviewerId: number): Promise<NotificationApiI
  */
 export const patchNotificationRead = (id: number | string): Promise<void> =>
   apiClient.patch(`/notifications/${id}`, { is_read: true }).then(() => undefined);
+
+/**
+ * 관리자(GA/SA) 알림 목록 조회
+ * GET /admin/notification → /admin_notifications
+ */
+export const fetchAdminNotifications = (): Promise<NotificationApiItem[]> =>
+  apiClient
+    .get<NotificationApiItem[]>("/admin/notification")
+    .then((res) => (Array.isArray(res.data) ? res.data : []));
+
+/**
+ * 파트너 알림 목록 조회
+ * GET /partner/notification → /partner_notifications
+ */
+export const fetchPartnerNotifications = (): Promise<NotificationApiItem[]> =>
+  apiClient
+    .get<NotificationApiItem[]>("/partner/notification")
+    .then((res) => (Array.isArray(res.data) ? res.data : []));

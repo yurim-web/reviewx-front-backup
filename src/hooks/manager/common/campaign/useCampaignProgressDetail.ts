@@ -28,11 +28,11 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import {
-  getCampaignById,
-  type CampaignWithApplicants,
-  type AllApplicant,
-} from "@/data/partner/sharedCampaigns";
+import { useQuery } from "@tanstack/react-query";
+import { fetchAdminCampaignDetail, fetchCampaignApplications } from "@/lib/api/admin";
+import type { AdminCampaignApiItem, CampaignApplicationApiItem } from "@/types/api/admin";
+import type { CampaignWithApplicants, AllApplicant } from "@/data/partner/sharedCampaigns";
+import type { CampaignInfo } from "@/components/partner/campaign_application/CampaignInfoBox";
 
 /**
  * 정렬 옵션 타입 정의
@@ -86,6 +86,153 @@ export interface UseCampaignProgressDetailReturn {
   handle_download_selected: () => void;
 }
 
+// ============================================================
+// 매핑 유틸 함수
+// ============================================================
+
+/**
+ * channelName(영문) → 한글 채널명 변환
+ */
+function mapChannelName(channelName: string): string {
+  const map: Record<string, string> = {
+    NAVER_BLOG: "네이버블로그",
+    NAVER_CLIP: "네이버클립",
+    INSTAGRAM: "인스타그램",
+    INSTAGRAM_REELS: "릴스",
+    REELS: "릴스",
+    YOUTUBE: "유튜브",
+    YOUTUBE_SHORTS: "유튜브",
+  };
+  return map[channelName] ?? "네이버블로그";
+}
+
+/**
+ * campaign type(영문) → 한글 캠페인 유형 변환
+ */
+function mapCampaignType(type: string): CampaignInfo["campaignType"] {
+  const map: Record<string, CampaignInfo["campaignType"]> = {
+    DELIVERY: "배송형",
+    VISIT: "방문형",
+    PURCHASE_REVIEW: "구매평",
+    REPORTER: "기자단",
+    MISSION: "미션형",
+  };
+  return map[type] ?? "배송형";
+}
+
+/**
+ * AdminCampaignApiItem → CampaignInfo 매핑
+ */
+function mapToCampaignInfo(campaign: AdminCampaignApiItem): CampaignInfo {
+  const channelName = campaign.requiredPlatform?.channelName ?? "";
+  const recruitStart = campaign.recruitStartAt ?? "";
+  const recruitEnd =
+    campaign.recruitEndAt ?? (campaign as Record<string, unknown>).recruitEndAt ?? "";
+  const contentStart = campaign.content?.contentStartAt ?? "";
+  const contentEnd = campaign.content?.contentEndAt ?? "";
+  const extraPoint = campaign.reward?.extraRewardPoint ?? 0;
+
+  return {
+    id: String(campaign.id),
+    title: campaign.title ?? "",
+    image: campaign.thumbnailUrl ?? "",
+    status: "진행 중",
+    campaignType: mapCampaignType(campaign.type ?? ""),
+    category: campaign.category?.categoryName ?? "",
+    channel: mapChannelName(channelName),
+    recruitmentPeriod:
+      recruitStart && recruitEnd ? `${recruitStart.slice(0, 10)} ~ ${recruitEnd.slice(0, 10)}` : "",
+    announcementDate: "",
+    registrationPeriod:
+      contentStart && contentEnd ? `${contentStart.slice(0, 10)} ~ ${contentEnd.slice(0, 10)}` : "",
+    recruitedCount: campaign.appliedCount ?? 0,
+    totalCount: campaign.recruitLimit ?? 0,
+    daysLeft: 0,
+    point: extraPoint,
+  };
+}
+
+/**
+ * campaign channel → AllApplicant.channel 매핑
+ */
+function mapApplicantChannel(channelName: string): AllApplicant["channel"] {
+  const map: Record<string, AllApplicant["channel"]> = {
+    NAVER_BLOG: "네이버블로그",
+    NAVER_CLIP: "네이버클립",
+    INSTAGRAM: "인스타그램",
+    INSTAGRAM_REELS: "릴스",
+    REELS: "릴스",
+    YOUTUBE: "유튜브",
+    YOUTUBE_SHORTS: "유튜브",
+  };
+  return (map[channelName] ?? "기본") as AllApplicant["channel"];
+}
+
+/**
+ * CampaignApplicationApiItem → AllApplicant 매핑
+ * (campaign의 channelName을 참조해 AllApplicant 구체 타입 결정)
+ */
+function mapToAllApplicant(
+  app: CampaignApplicationApiItem,
+  channelName: string,
+  isSelected: boolean
+): AllApplicant {
+  const channel = mapApplicantChannel(channelName);
+  const selectionStatus: AllApplicant["selectionStatus"] = isSelected ? "선정하기" : "미선택";
+
+  const base = {
+    id: String(app.id),
+    Id: String(app.reviewer_id),
+    nickname: `리뷰어${app.reviewer_id}`,
+    userType: "리뷰어" as const,
+    profileImage: "",
+    memberType: "모범 회원" as const,
+    memo: app.introduction ?? "",
+    selectionStatus,
+    registrationDate: app.apply_date ? app.apply_date.slice(0, 10) : "",
+  };
+
+  switch (channel) {
+    case "네이버블로그":
+      return {
+        ...base,
+        channel: "네이버블로그",
+        dailyVisits: 0,
+        totalVisits: 0,
+        neighbors: app.follower_count ?? 0,
+      };
+    case "네이버클립":
+      return {
+        ...base,
+        channel: "네이버클립",
+        followers: app.follower_count ?? 0,
+      };
+    case "인스타그램":
+      return {
+        ...base,
+        channel: "인스타그램",
+        followers: app.follower_count ?? 0,
+      };
+    case "릴스":
+      return {
+        ...base,
+        channel: "릴스",
+        followers: app.follower_count ?? 0,
+      };
+    case "유튜브":
+      return {
+        ...base,
+        channel: "유튜브",
+        subscribers: app.follower_count ?? 0,
+      };
+    default:
+      return {
+        ...base,
+        channel: "기본",
+      };
+  }
+}
+
 /**
  * 캠페인 진행현황 상세 페이지 공통 로직 훅
  *
@@ -99,25 +246,11 @@ export function useCampaignProgressDetail(
 ): UseCampaignProgressDetailReturn {
   /**
    * 1) URL 쿼리 파라미터 처리
-   * - useSearchParams: Next.js에서 URL 쿼리 파라미터를 읽는 Hook입니다
-   * - ?tab=selected 같은 쿼리로 초기 탭을 설정할 수 있습니다
    */
   const search_params = useSearchParams();
 
   /**
-   * 2) 캠페인 데이터 상태
-   * - campaign_data: 캠페인 기본 정보와 신청자 데이터를 담는 상태
-   * - is_loading: 데이터 로딩 중인지 여부를 나타내는 상태
-   * - error_message: 에러 발생 시 사용자에게 보여줄 메시지
-   */
-  const [campaign_data, set_campaign_data] = useState<CampaignWithApplicants | null>(null);
-  const [is_loading, set_is_loading] = useState(true);
-  const [error_message, set_error_message] = useState<string | null>(null);
-
-  /**
-   * 3) 탭 상태
-   * - useState의 초기값을 함수로 전달: 초기 렌더링 시에만 실행됩니다
-   * - URL 쿼리에 tab=selected가 있으면 선정 탭으로 시작합니다
+   * 2) 탭 상태
    */
   const [active_tab, set_active_tab] = useState<TabType>(() => {
     const tab_param = search_params.get("tab");
@@ -125,9 +258,7 @@ export function useCampaignProgressDetail(
   });
 
   /**
-   * 4) 정렬 상태
-   * - sort_order: 현재 선택된 정렬 옵션
-   * - sort_options: 정렬 옵션 목록 (드롭다운에 표시)
+   * 3) 정렬 상태
    */
   const [sort_order, set_sort_order] = useState<SortOption>("latest");
   const sort_options: Array<{ value: SortOption; label: string }> = [
@@ -138,105 +269,91 @@ export function useCampaignProgressDetail(
   ];
 
   /**
-   * 5) 신청자/선정자 목록 상태
-   * - applicants_state: 신청 탭에 표시할 신청자 목록
-   * - selected_state: 선정 탭에 표시할 선정자 목록
-   * - 카드 이동 시 이 두 상태를 업데이트합니다
+   * 4) 신청자/선정자 목록 상태
    */
   const [applicants_state, set_applicants_state] = useState<AllApplicant[]>([]);
   const [selected_state, set_selected_state] = useState<AllApplicant[]>([]);
 
   // ============================================================
-  // 6) 캠페인 데이터 로딩
+  // 5) API 호출 (useQuery)
   // ============================================================
-  /**
-   * - useEffect: 컴포넌트가 마운트되거나 campaign_id가 변경될 때 실행됩니다
-   * - try/catch/finally: 에러 처리를 위한 패턴입니다
-   */
-  /**
-   * 캠페인 데이터 로딩 함수
-   *
-   * 📌 함수 분리:
-   * - 로딩 로직을 별도 함수로 분리하여 재사용 가능하게 함
-   * - 페이지 포커스 시에도 동일한 로직을 사용할 수 있음
-   */
-  const load_campaign_data = () => {
-    try {
-      // 로딩 시작
-      set_is_loading(true);
-      set_error_message(null);
 
-      // 캠페인 데이터 가져오기
-      const data = getCampaignById(campaign_id);
-      if (!data) {
-        set_error_message(`캠페인을 찾을 수 없습니다. (ID: ${campaign_id})`);
-        set_is_loading(false);
-        return;
+  /**
+   * 캠페인 상세 조회  GET /admin/campaign/:id
+   */
+  const {
+    data: campaign_api_data,
+    isLoading: is_campaign_loading,
+    isError: is_campaign_error,
+  } = useQuery({
+    queryKey: ["admin-campaign-detail", campaign_id, error_log_prefix],
+    queryFn: () => fetchAdminCampaignDetail(campaign_id),
+    enabled: !!campaign_id,
+    staleTime: 30_000,
+  });
+
+  /**
+   * 캠페인 신청자 목록 조회  GET /partner/campaign/:id/applications
+   */
+  const { data: applications_data, isLoading: is_applications_loading } = useQuery({
+    queryKey: ["campaign-applications", campaign_id],
+    queryFn: () => fetchCampaignApplications(campaign_id),
+    enabled: !!campaign_id,
+    staleTime: 30_000,
+  });
+
+  // ============================================================
+  // 6) API 응답 → 상태 동기화
+  // ============================================================
+  useEffect(() => {
+    if (!applications_data || !campaign_api_data) return;
+
+    const channelName = campaign_api_data.requiredPlatform?.channelName ?? "";
+
+    const applicants: AllApplicant[] = [];
+    const selected: AllApplicant[] = [];
+
+    for (const app of applications_data) {
+      const isSelected = app.status === "SELECTED";
+      const mapped = mapToAllApplicant(app, channelName, isSelected);
+      if (isSelected) {
+        selected.push(mapped);
+      } else {
+        applicants.push(mapped);
       }
-
-      // 데이터 설정
-      set_campaign_data(data);
-      // 옵셔널 체이닝(?.)과 null 병합 연산자(??)를 사용하여 안전하게 데이터 설정
-      // applicantData가 없을 수 있으므로 빈 배열을 기본값으로 사용합니다
-      set_applicants_state(data.applicantData?.applicants ?? []);
-      set_selected_state(data.applicantData?.selectedApplicants ?? []);
-      set_is_loading(false);
-    } catch (_error) {
-      // 에러 발생 시 콘솔에 로그 출력 및 사용자에게 메시지 표시
-      set_error_message("데이터를 불러오는 중 오류가 발생했습니다.");
-      set_is_loading(false);
     }
-  };
 
-  useEffect(() => {
-    // campaign_id가 있을 때만 데이터 로딩
-    if (campaign_id) {
-      load_campaign_data();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [campaign_id, error_log_prefix]); // load_campaign_data는 deps 제외 (추가 시 무한루프)
-
-  /**
-   * 페이지 포커스 시 데이터 다시 로드
-   *
-   * 📌 useEffect와 window 이벤트 리스너:
-   * - 페이지가 포커스를 받을 때 데이터를 다시 로드합니다
-   * - 파트너 페이지에서 선정을 한 후 관리자 페이지로 돌아오면 최신 데이터를 볼 수 있습니다
-   * - cleanup 함수에서 이벤트 리스너를 제거하여 메모리 누수 방지
-   */
-  useEffect(() => {
-    if (typeof window === "undefined" || !campaign_id) return;
-
-    const handle_focus = () => {
-      // 포커스를 받을 때 데이터 다시 로드
-      load_campaign_data();
-    };
-
-    // 포커스 이벤트 리스너 등록
-    window.addEventListener("focus", handle_focus);
-
-    // cleanup 함수: 컴포넌트 언마운트 시 이벤트 리스너 제거
-    return () => {
-      window.removeEventListener("focus", handle_focus);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [campaign_id, error_log_prefix]); // load_campaign_data는 deps 제외 (추가 시 무한루프)
+    set_applicants_state(applicants);
+    set_selected_state(selected);
+  }, [applications_data, campaign_api_data]);
 
   // ============================================================
-  // 7) 카운트 계산
+  // 7) campaign_data 조립 (CampaignWithApplicants 형태)
   // ============================================================
-  /**
-   * - 배열의 length 속성을 사용하여 개수를 계산합니다
-   */
+  const is_loading = is_campaign_loading || is_applications_loading;
+  const error_message = is_campaign_error
+    ? `캠페인을 찾을 수 없습니다. (ID: ${campaign_id})`
+    : null;
+
+  const campaign_data: CampaignWithApplicants | null = campaign_api_data
+    ? {
+        campaignInfo: mapToCampaignInfo(campaign_api_data),
+        applicantData: {
+          applicants: applicants_state,
+          selectedApplicants: selected_state,
+        },
+      }
+    : null;
+
+  // ============================================================
+  // 8) 카운트 계산
+  // ============================================================
   const applicants_count = applicants_state.length;
   const selected_count = selected_state.length;
 
   // ============================================================
-  // 8) 현재 탭에 표시할 신청자 목록 계산
+  // 9) 현재 탭에 표시할 신청자 목록 계산
   // ============================================================
-  /**
-   * - active_tab에 따라 다른 배열을 반환합니다
-   */
   const get_current_applicants = (): AllApplicant[] => {
     switch (active_tab) {
       case "applicants":
@@ -251,78 +368,58 @@ export function useCampaignProgressDetail(
   const current_applicants = get_current_applicants();
 
   // ============================================================
-  // 9) 신청자 선정 핸들러
+  // 10) 신청자 선정 핸들러
   // ============================================================
-  /**
-   * - 신청 탭에서 선정 탭으로 카드를 이동시킵니다
-   * - 함수형 업데이트: setState에 함수를 전달하여 이전 상태를 기반으로 업데이트합니다
-   */
   const handle_select_applicant = (applicant_id: string) => {
     set_applicants_state((prev) => {
-      // 신청자 목록에서 해당 ID를 가진 신청자 찾기
       const target = prev.find((applicant) => applicant.id === applicant_id);
-      if (!target) return prev; // 찾지 못하면 이전 상태 그대로 반환
+      if (!target) return prev;
 
-      // 신청자 목록에서 해당 신청자 제거
       const next_applicants = prev.filter((applicant) => applicant.id !== applicant_id);
 
-      // 선정 상태로 변경하여 선정자 목록에 추가
       const moved: AllApplicant = {
         ...target,
         selectionStatus: "선정하기",
       } as AllApplicant;
 
-      // 선정자 목록에 추가 (중복 방지)
       set_selected_state((prev_selected) => {
         const already = prev_selected.some((applicant) => applicant.id === applicant_id);
-        if (already) return prev_selected; // 이미 있으면 추가하지 않음
-        return [moved, ...prev_selected]; // 맨 앞에 추가
+        if (already) return prev_selected;
+        return [moved, ...prev_selected];
       });
 
-      // 업데이트된 신청자 목록 반환
       return next_applicants;
     });
   };
 
   // ============================================================
-  // 10) 선정 취소 핸들러
+  // 11) 선정 취소 핸들러
   // ============================================================
-  /**
-   * - 선정 탭에서 신청 탭으로 카드를 이동시킵니다
-   */
   const handle_cancel_applicant = (applicant_id: string) => {
     set_selected_state((prev_selected) => {
-      // 선정자 목록에서 해당 ID를 가진 선정자 찾기
       const target = prev_selected.find((applicant) => applicant.id === applicant_id);
       if (!target) return prev_selected;
 
-      // 선정자 목록에서 해당 선정자 제거
       const next_selected = prev_selected.filter((applicant) => applicant.id !== applicant_id);
 
-      // 미선택 상태로 변경하여 신청자 목록에 추가
       const moved: AllApplicant = {
         ...target,
         selectionStatus: "미선택",
       } as AllApplicant;
 
-      // 신청자 목록에 추가 (중복 방지)
       set_applicants_state((prev) => {
         const already = prev.some((applicant) => applicant.id === applicant_id);
         if (already) return prev;
-        return [moved, ...prev]; // 맨 앞에 추가
+        return [moved, ...prev];
       });
 
-      // 업데이트된 선정자 목록 반환
       return next_selected;
     });
   };
 
   // ============================================================
-  // 11) 엑셀 다운로드 핸들러 (목업)
+  // 12) 엑셀 다운로드 핸들러 (목업)
   // ============================================================
-  /**
-   * - 현재는 빈 함수로, 추후 실제 다운로드 로직을 구현할 수 있습니다
-   */
   const handle_download_applicants = () => {
     // TODO: 신청자 목록 다운로드 기능 구현
   };
@@ -332,12 +429,8 @@ export function useCampaignProgressDetail(
   };
 
   // ============================================================
-  // 12) 훅 반환 값
+  // 13) 훅 반환 값
   // ============================================================
-  /**
-   * - 모든 상태와 핸들러 함수를 객체로 반환합니다
-   * - 이렇게 하면 사용하는 컴포넌트에서 필요한 것만 구조 분해 할당으로 가져올 수 있습니다
-   */
   return {
     campaign_data,
     is_loading,

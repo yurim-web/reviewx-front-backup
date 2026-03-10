@@ -13,24 +13,35 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import styles from "@/styles/user/notification/notification.module.css";
 import ManagerGAHeader from "@/components/manager/ga/common/ManagerGAHeader";
 import SidebarMenuSA from "@/components/manager/sa/common/SidebarMenu";
 import NotificationList from "@/components/notification/NotificationList";
 import Toast from "@/components/common/toast/Toast";
-// 관리자 페이지 레이아웃 스타일 (사이드바가 있을 때 사용)
 import "@/styles/manager_ga/layout.css";
-// 알림 목업 데이터 (향후 API로 대체)
+import { fetchAdminNotifications } from "@/lib/api/notification";
 import { mockManagerSANotifications } from "@/data/notification/notificationData";
 
 export default function ManagerSANotificationPage() {
   const [notifications, setNotifications] = useState(mockManagerSANotifications);
   const [is_delete_toast_open, set_is_delete_toast_open] = useState(false);
 
-  /**
-   * 알림 클릭 핸들러 (향후 구현)
-   */
+  const { data: apiData } = useQuery({
+    queryKey: ["adminNotifications"],
+    queryFn: fetchAdminNotifications,
+    retry: false,
+    staleTime: 30_000,
+  });
+
+  useEffect(() => {
+    if (apiData && apiData.length > 0) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setNotifications(apiData as any);
+    }
+  }, [apiData]);
+
   const handle_notification_click = (_notification: (typeof mockManagerSANotifications)[0]) => {
     // TODO: 알림 상세 페이지로 이동 또는 모달 열기
   };

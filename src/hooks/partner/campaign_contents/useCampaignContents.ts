@@ -39,6 +39,7 @@ const TYPE_MAP: Record<string, string> = {
   DELIVERY: "배송형",
   VISIT: "방문형",
   PURCHASE: "구매평",
+  PURCHASE_REVIEW: "구매평",
   REPORTER: "기자단",
   MISSION: "미션형",
 };
@@ -123,6 +124,9 @@ export interface UseCampaignContentsReturn {
   // 캠페인 정보
   campaignInfo: NonNullable<ReturnType<typeof getCampaignById>>["campaignInfo"] | undefined;
 
+  // API에서 받은 raw 캠페인 데이터 (contentType 등 추가 필드 접근용)
+  rawApiCampaign: PartnerCampaignApiItem | null;
+
   // 탭 관련
   activeTab: TabKey;
   setActiveTab: (tab: TabKey) => void;
@@ -159,20 +163,19 @@ export interface UseCampaignContentsReturn {
 /**
  * 캠페인 콘텐츠 내역 페이지 공통 로직 커스텀 훅
  *
- * @param contentsLoader - 캠페인 유형별 콘텐츠 로더 함수
+ * @param contentsLoader - (선택) 캠페인 유형별 정적 콘텐츠 로더 함수. 미전달 시 API만 사용.
  * @returns UseCampaignContentsReturn - 모든 상태와 핸들러 함수들
  *
  * 📌 사용 예시:
  * ```tsx
- * const {
- *   campaignInfo,
- *   activeTab,
- *   contents,
- *   handleApprove,
- * } = useCampaignContents(getDeliveryContentsById);
+ * // API 전용 (정적 데이터 없이)
+ * const { campaignInfo, activeTab, contents } = useCampaignContents();
+ *
+ * // 정적 데이터 fallback 포함
+ * const { campaignInfo, activeTab, contents } = useCampaignContents(getDeliveryContentsById);
  * ```
  */
-export function useCampaignContents(contentsLoader: ContentsLoader): UseCampaignContentsReturn {
+export function useCampaignContents(contentsLoader?: ContentsLoader): UseCampaignContentsReturn {
   // URL 파라미터에서 캠페인 ID 가져오기
   // 📌 Next.js 훅 사용:
   // - useParams(): URL의 동적 파라미터를 가져옵니다 (예: /campaign/[id]에서 id 값)
@@ -303,6 +306,7 @@ export function useCampaignContents(contentsLoader: ContentsLoader): UseCampaign
   // 캠페인 정보: 정적 데이터 우선, 없으면 API fallback
   const staticCampaignInfo = campaignId ? getCampaignById(campaignId)?.campaignInfo : undefined;
   const [apiCampaignInfo, setApiCampaignInfo] = useState<CampaignInfo | null>(null);
+  const [rawApiCampaign, setRawApiCampaign] = useState<PartnerCampaignApiItem | null>(null);
   const [apiContents, setApiContents] = useState<ContentByTab>({
     waiting: [],
     reviewing: [],
@@ -311,12 +315,15 @@ export function useCampaignContents(contentsLoader: ContentsLoader): UseCampaign
 
   useEffect(() => {
     if (!campaignId) return;
-    // 정적 데이터에 없으면 API에서 캠페인 정보 + 콘텐츠 가져오기
-    if (!staticCampaignInfo) {
-      fetchCampaignById(campaignId).then((data) => {
-        if (data) setApiCampaignInfo(mapApiToCampaignInfo(data));
-      });
-    }
+    // 캠페인 정보는 항상 API에서 가져오기 (rawApiCampaign 채우기 위해)
+    fetchCampaignById(campaignId).then((data) => {
+      if (data) {
+        setRawApiCampaign(data);
+        if (!staticCampaignInfo) {
+          setApiCampaignInfo(mapApiToCampaignInfo(data));
+        }
+      }
+    });
     // 콘텐츠는 항상 API에서도 가져오기
     fetchCampaignContents(campaignId).then((items) => {
       if (!items.length) return;
@@ -352,16 +359,18 @@ export function useCampaignContents(contentsLoader: ContentsLoader): UseCampaign
       const closed = getClosedContentsById(campaignId);
       return closed || { waiting: [], reviewing: [], completed: [] };
     }
-    // 정적 데이터 우선, 없으면 API 콘텐츠 사용
-    const staticContents = contentsLoader(campaignId);
-    if (
-      staticContents &&
-      staticContents.waiting.length +
-        staticContents.reviewing.length +
-        staticContents.completed.length >
-        0
-    ) {
-      return staticContents;
+    // 정적 loader가 제공된 경우 정적 데이터 우선, 없으면 API 콘텐츠 사용
+    if (contentsLoader) {
+      const staticContents = contentsLoader(campaignId);
+      if (
+        staticContents &&
+        staticContents.waiting.length +
+          staticContents.reviewing.length +
+          staticContents.completed.length >
+          0
+      ) {
+        return staticContents;
+      }
     }
     return apiContents;
   })();
@@ -567,6 +576,7 @@ export function useCampaignContents(contentsLoader: ContentsLoader): UseCampaign
   // - 구조분해할당으로 필요한 것만 가져와서 사용할 수 있습니다
   return {
     campaignInfo,
+    rawApiCampaign,
     activeTab,
     setActiveTab,
     waitingCount,

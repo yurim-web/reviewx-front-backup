@@ -22,10 +22,8 @@ import { useTableSort } from "@/hooks/table/useTableSort";
 import type { SortColumnConfig } from "@/utils/table/sort";
 import SortableTableHeader from "@/components/manager/common/table/SortableTableHeader";
 import styles from "@/styles/manager_sa/settlement/withdrawal_request/request_table.module.css";
-import {
-  calculate_total_amount,
-  type WithdrawalRequestItem,
-} from "@/data/manager_sa/settlement/withdrawalRequestData";
+import { calculate_total_amount } from "@/data/manager_sa/settlement/withdrawalRequestData";
+import type { AdminWithdrawalRequestItem } from "@/types/api/admin";
 import WithdrawalRejectModal from "@/components/manager/sa/settlement/withdrawal_request/modal/WithdrawalRejectModal";
 import MemberStatusTag, {
   type MemberStatus,
@@ -34,7 +32,7 @@ import BaseModal from "@/components/common/modal/BaseModal";
 import { useWithdrawalApprove } from "@/hooks/manager/sa/settlement/useWithdrawalApprove";
 import { useWithdrawalReject } from "@/hooks/manager/sa/settlement/useWithdrawalReject";
 
-interface RequestTableRowData extends TableRowData, WithdrawalRequestItem {}
+interface RequestTableRowData extends TableRowData, AdminWithdrawalRequestItem {}
 
 interface FilterSectionInjectedProps {
   on_approve_selected?: () => void;
@@ -43,7 +41,7 @@ interface FilterSectionInjectedProps {
 
 interface RequestTableProps {
   title: string;
-  data: WithdrawalRequestItem[];
+  data: AdminWithdrawalRequestItem[];
   show_total?: boolean;
   filter_section?: ReactNode;
 }

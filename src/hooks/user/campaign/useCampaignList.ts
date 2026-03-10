@@ -190,7 +190,7 @@ export function useDeliveryCampaignList() {
       } catch (_e) {}
       return deliveryCampaigns.map(adaptStaticCampaign);
     },
-    initialData: () => deliveryCampaigns.map(adaptStaticCampaign),
+    placeholderData: () => deliveryCampaigns.map(adaptStaticCampaign),
     staleTime: 30 * 1000,
   });
 }
@@ -205,7 +205,7 @@ export function useVisitCampaignList() {
       } catch (_e) {}
       return visitCampaigns.map(adaptStaticCampaign);
     },
-    initialData: () => visitCampaigns.map(adaptStaticCampaign),
+    placeholderData: () => visitCampaigns.map(adaptStaticCampaign),
     staleTime: 30 * 1000,
   });
 }
@@ -220,7 +220,7 @@ export function useReviewCampaignList() {
       } catch (_e) {}
       return reviewCampaigns.map(adaptStaticCampaign);
     },
-    initialData: () => reviewCampaigns.map(adaptStaticCampaign),
+    placeholderData: () => reviewCampaigns.map(adaptStaticCampaign),
     staleTime: 30 * 1000,
   });
 }
@@ -235,7 +235,7 @@ export function useReporterCampaignList() {
       } catch (_e) {}
       return reporterCampaigns.map(adaptStaticCampaign);
     },
-    initialData: () => reporterCampaigns.map(adaptStaticCampaign),
+    placeholderData: () => reporterCampaigns.map(adaptStaticCampaign),
     staleTime: 30 * 1000,
   });
 }
@@ -250,7 +250,7 @@ export function useMissionCampaignList() {
       } catch (_e) {}
       return missionCampaigns.map(adaptStaticCampaign);
     },
-    initialData: () => missionCampaigns.map(adaptStaticCampaign),
+    placeholderData: () => missionCampaigns.map(adaptStaticCampaign),
     staleTime: 30 * 1000,
   });
 }

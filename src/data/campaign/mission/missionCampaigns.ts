@@ -725,7 +725,6 @@ export const missionCampaigns: MissionCampaignData[] = [
       registrationPeriod: "2026-02-05 ~ 2026-02-25",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
-    channel: "쇼츠",
     keyword: "#운동루틴공유미션 #리뷰 #체험단",
     requirements: ["text_1694", "photo_8", "product_link", "keyword"],
     guidelineTexts: ["운동 루틴 공유 미션 캠페인 작성 시 아래 내용을 참고하여 진행해 주세요."],
@@ -2375,7 +2374,6 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
       announcement: "2026-06-25",
       registrationPeriod: "2026-07-05 ~ 2026-07-25",
     },
-    channel: "네이버블로그",
     keyword: "#독서리뷰미션 #리뷰 #체험단",
     requirements: ["text_2825", "photo_11", "product_link", "keyword"],
     guidelineTexts: ["독서 리뷰 미션 캠페인 작성 시 아래 내용을 참고하여 진행해 주세요."],
@@ -2422,7 +2420,6 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
     ...missionCampaigns[missionCampaigns.length - 1],
     id: "4020",
     title: "운동 루틴 공유 미션",
-    channel: "쇼츠",
     recruitment: { current: 0, total: 10 },
     detailedSchedule: {
       applicationStart: "2026-01-01",

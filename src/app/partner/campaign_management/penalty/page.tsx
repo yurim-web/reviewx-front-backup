@@ -23,14 +23,17 @@ import type { PartnerMainTab } from "@/types/domain/partner";
 import type { PartnerStatTab } from "@/types/domain/partner";
 import layoutStyles from "@/styles/partner/partner_layout.module.css";
 import cardStyles from "../../../../styles/partner/campaign_card.module.css";
-import { partnerPenaltyData, partnerPenaltyStatus } from "@/data/partner/penaltyData";
 import { usePartnerCampaigns } from "@/hooks/partner/campaign_management/usePartnerCampaigns";
+import { usePartnerPenalty } from "@/hooks/partner/usePartnerPenalty";
 
 /**
  * 패널티 탭 페이지 컴포넌트
  */
 export default function PenaltyPage() {
   const router = useRouter();
+
+  // 패널티 데이터 (API → fallback: 정적 목업)
+  const { penaltyData, penaltyStatus } = usePartnerPenalty();
 
   // 상단 메인 탭 상태 (캠페인 / 포인트)
   const [activeTab, setActiveTab] = useState<PartnerMainTab>("campaign");
@@ -123,7 +126,7 @@ export default function PenaltyPage() {
 
         {/* 패널티 컨텐츠 영역 */}
         <div className={cardStyles.campaign_list}>
-          <PenaltyContent penaltyData={partnerPenaltyData} userStatus={partnerPenaltyStatus} />
+          <PenaltyContent penaltyData={penaltyData} userStatus={penaltyStatus} />
         </div>
       </div>
     </div>
