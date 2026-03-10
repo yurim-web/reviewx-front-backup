@@ -1,6 +1,16 @@
 import type { Metadata } from "next";
-import { reporterCampaigns } from "@/data/campaign/reporter/reporterCampaigns";
 import CampaignLayoutScript from "@/components/campaign/CampaignLayoutScript";
+
+async function fetchCampaignMeta(id: string) {
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+    const res = await fetch(`${apiUrl}/admin/campaign/${id}`, { cache: "no-store" });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
 
 // 동적 메타데이터 생성
 export async function generateMetadata({
@@ -9,7 +19,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const campaign = reporterCampaigns.find((c) => String(c.id) === id);
+  const campaign = await fetchCampaignMeta(id);
 
   if (!campaign) {
     return {
@@ -20,15 +30,11 @@ export async function generateMetadata({
 
   return {
     title: `ReviewX | ${campaign.title}`,
-    description: campaign.description,
+    description: campaign.description ?? `ReviewX 기자단 캠페인 - ${campaign.title}`,
   };
 }
 
-export default function ReporterDetailLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ReporterDetailLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <CampaignLayoutScript />
@@ -36,5 +42,3 @@ export default function ReporterDetailLayout({
     </>
   );
 }
-
-

@@ -18,12 +18,6 @@ import { useRouter, useParams } from "next/navigation";
 import Loading from "@/app/loading";
 import MissionCampaignForm from "@/components/partner/campaign_create_form/MissionCampaignForm";
 import { CampaignFormData } from "@/types/domain/user";
-import {
-  updateMissionCampaign,
-  missionCampaignsExtended,
-} from "@/data/campaign/mission/missionCampaigns";
-import { getCampaignById } from "@/data/partner/sharedCampaigns";
-import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import layoutStyles from "@/styles/partner/partner_layout.module.css";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import Toast from "@/components/common/toast/Toast";
@@ -32,25 +26,6 @@ import checkboxStyles from "@/styles/partner/campaign_create/campaign_guide/chec
 import Image from "next/image";
 import { patchCampaign, fetchCampaignById } from "@/lib/api/partner";
 import { apiCampaignToFormData } from "@/utils/partner/campaignEdit/apiToFormData";
-
-type StoredCampaignRaw = {
-  campaignInfo?: { id?: string };
-  id?: string;
-  contentType?: string;
-  isUrgent?: boolean;
-  registeredAt?: string;
-  description?: string;
-  productLink?: string;
-  keywords?: string;
-  guidelines?: string;
-  minTextLength?: number | string;
-  minImageCount?: number | string;
-  videoCount?: number | string;
-  videoDuration?: number | string;
-  requireLinkAttachment?: boolean;
-  requireKeywordAttachment?: boolean;
-  contactPhone?: string;
-};
 
 export default function MissionCampaignEditPage() {
   const router = useRouter();
@@ -117,134 +92,19 @@ export default function MissionCampaignEditPage() {
   const handleSubmit = async (formData: CampaignFormData) => {
     setIsSubmitting(true);
     try {
-      const finalFormData = { ...formData, isUrgent };
+      const imageUrl =
+        formData.thumbnailImageUrl ||
+        initialData?.thumbnailImageUrl ||
+        "/images/main/campaign_img/eximg_4.png";
 
-      // 이미지 URL 처리
-      // 폼에서 전달받은 thumbnailImageUrl을 우선 사용 (새로 업로드한 이미지)
-      // 없으면 기존 이미지 URL 유지
-      let imageUrl = formData.thumbnailImageUrl;
-
-      // 새 이미지가 없으면 기존 이미지 URL 사용
-      if (!imageUrl) {
-        const existingCampaign = getCampaignById(campaignId);
-        if (existingCampaign) {
-          imageUrl = existingCampaign.campaignInfo.image;
-        } else {
-          imageUrl = "/images/main/campaign_img/eximg_4.png"; // 기본 이미지
-        }
-      }
-
-      const updatedCampaign = updateMissionCampaign(campaignId, finalFormData, imageUrl);
-
-      // contentType 결정: requireContentLink와 requireContentImage 체크박스에 따라 결정
-      // - requireContentLink만 true → "link"
-      // - requireContentImage만 true → "image"
-      // - 둘 다 true → "both"
-      let contentType: "link" | "image" | "both" | undefined = undefined;
-      if (finalFormData.requireContentLink && finalFormData.requireContentImage) {
-        contentType = "both";
-      } else if (finalFormData.requireContentLink) {
-        contentType = "link";
-      } else if (finalFormData.requireContentImage) {
-        contentType = "image";
-      }
-
-      // 원본 확장 데이터에서 상세 이미지 등 확장 필드 가져오기
-      const originalData = missionCampaignsExtended.find((c) => c.id === campaignId);
-
-      // 상세 이미지 URL 배열 변환
-      const detailImageUrls =
-        formData.detailImagePreviews && formData.detailImagePreviews.length > 0
-          ? formData.detailImagePreviews
-          : originalData?.campaign_detail_images && originalData.campaign_detail_images.length > 0
-            ? originalData.campaign_detail_images
-            : originalData?.campaign_detail_image
-              ? [originalData.campaign_detail_image]
-              : [];
-
-      // 확장 데이터에 contentType 추가
-      const extendedCampaign = {
-        ...updatedCampaign,
-        contentType: contentType,
-        campaign_detail_images: detailImageUrls,
-        campaign_detail_image: detailImageUrls[0] || originalData?.campaign_detail_image || "",
-        isUrgent: isUrgent,
-        registeredAt: originalData?.registeredAt,
-        description: formData.providedItems || originalData?.description || "",
-        productLink: formData.promotionLink || originalData?.productLink || "",
-        keywords: formData.keywords || originalData?.keyword || "",
-        subcategory: formData.category || originalData?.subcategory || "",
-        channel: (originalData as { channel?: string } | undefined)?.channel || "",
-        points:
-          Number(String(formData.additionalPoints || "").replace(/,/g, "")) ||
-          originalData?.points ||
-          0,
-        adultOnly: formData.adultOnly ?? originalData?.adultOnly ?? false,
-        allowReParticipation:
-          formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,
-        allowLateSubmission:
-          formData.allowLateSubmission ?? originalData?.allowLateSubmission ?? false,
-        contactPhone: formData.contactPhone || originalData?.contactPhone || "",
-        detailedSchedule: originalData?.detailedSchedule || {
-          applicationStart: formData.recruitmentPeriod.split("~")[0]?.trim() || "",
-          applicationEnd: formData.recruitmentPeriod.split("~")[1]?.trim() || "",
-          announcement: formData.announcementDate || "",
-          registrationPeriod: formData.registrationPeriod || "",
-        },
-        requirements: originalData?.requirements || [],
-        guidelineTexts: formData.guidelines
-          ? formData.guidelines.split("\n\n")
-          : originalData?.guidelineTexts || [],
-        // 기존 localStorage 데이터에서 추가 필드 유지
-        ...(typeof window !== "undefined" &&
-          (() => {
-            try {
-              const storedCampaigns = localStorage.getItem("missionCampaigns");
-              if (storedCampaigns) {
-                const campaigns: StoredCampaignRaw[] = JSON.parse(storedCampaigns);
-                const existing = campaigns.find((c) => c.campaignInfo?.id === campaignId);
-                if (existing) {
-                  return {
-                    minTextLength: existing.minTextLength,
-                    minImageCount: existing.minImageCount,
-                    videoCount: existing.videoCount,
-                    videoDuration: existing.videoDuration,
-                    requireLinkAttachment: existing.requireLinkAttachment,
-                    requireKeywordAttachment: existing.requireKeywordAttachment,
-                  };
-                }
-              }
-            } catch (_error) {}
-            return {};
-          })()),
-      };
-
-      const storedCampaigns = localStorage.getItem("missionCampaigns");
-      if (storedCampaigns) {
-        const campaigns: CampaignWithApplicants[] = JSON.parse(storedCampaigns);
-        const index = campaigns.findIndex((c) => c.campaignInfo.id === campaignId);
-        if (index !== -1) {
-          campaigns[index] = extendedCampaign as unknown as CampaignWithApplicants;
-          localStorage.setItem("missionCampaigns", JSON.stringify(campaigns));
-        } else {
-          campaigns.push(extendedCampaign as unknown as CampaignWithApplicants);
-          localStorage.setItem("missionCampaigns", JSON.stringify(campaigns));
-        }
-      } else {
-        localStorage.setItem("missionCampaigns", JSON.stringify([extendedCampaign]));
-      }
-
-      // mock DB에 캠페인 수정 저장
-      patchCampaign(campaignId, {
+      await patchCampaign(campaignId, {
         title: formData.title,
         description: formData.providedItems,
-      }).catch((_apiError) => {
-        console.error("캠페인 수정 API 호출 실패:", _apiError);
+        thumbnailUrl: imageUrl,
+        isEmergency: isUrgent,
       });
 
       setToast({ is_open: true, message: "저장되었습니다." });
-
-      // 페이지 새로고침
       router.refresh();
     } catch (_error) {
       alert("캠페인 수정에 실패했습니다. 다시 시도해주세요.");

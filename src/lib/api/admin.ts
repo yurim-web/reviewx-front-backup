@@ -22,6 +22,8 @@
  * - hooks/manager/ga/useAdminReports.ts
  * - hooks/manager/ga/useAdminCampaigns.ts
  * - hooks/manager/ga/useAdminDashboard.ts
+ * - hooks/manager/common/member/useReviewerDetailData.ts
+ * - hooks/manager/common/member/usePartnerDetailData.ts
  */
 
 import { apiClient } from "@/lib/api/client";
@@ -34,6 +36,10 @@ import type {
   AdminDashboardApiItem,
   AdminWithdrawalApiItem,
   AdminPaymentApiItem,
+  AdminBlacklistApiItem,
+  AdminMemberApiItem,
+  AdminWithdrawalRequestItem,
+  CampaignApplicationApiItem,
 } from "@/types/api/admin";
 import type { UnifiedAccount, AccountType } from "@/data/login/unifiedAccountData";
 
@@ -55,6 +61,10 @@ export const fetchAdminPartners = (): Promise<AdminPartnerApiItem[]> =>
     .get<AdminPartnerApiItem[]>("/admin/partner")
     .then((res) => asArray<AdminPartnerApiItem>(res.data));
 
+/** 파트너 상세 조회  GET /admin/partner/:id → /partners/:id */
+export const fetchAdminPartnerDetail = (id: number): Promise<AdminPartnerApiItem> =>
+  apiClient.get<AdminPartnerApiItem>(`/admin/partner/${id}`).then((res) => res.data);
+
 /** 반려 내역 조회  GET /admin/rejection */
 export const fetchAdminRejections = (): Promise<AdminRejectionApiItem[]> =>
   apiClient
@@ -72,6 +82,22 @@ export const fetchAdminCampaigns = (): Promise<AdminCampaignApiItem[]> =>
   apiClient
     .get<AdminCampaignApiItem[]>("/admin/campaign")
     .then((res) => asArray<AdminCampaignApiItem>(res.data));
+
+/** 캠페인 상세 조회  GET /admin/campaign/:id → /campaigns/:id */
+export const fetchAdminCampaignDetail = (id: string): Promise<AdminCampaignApiItem | null> =>
+  apiClient
+    .get<AdminCampaignApiItem>(`/admin/campaign/${id}`)
+    .then((res) => res.data)
+    .catch(() => null);
+
+/** 캠페인 신청자 목록 조회  GET /partner/campaign/:id/applications → /campaign_applications?campaign_id=:id */
+export const fetchCampaignApplications = (
+  campaignId: string
+): Promise<CampaignApplicationApiItem[]> =>
+  apiClient
+    .get<CampaignApplicationApiItem[]>(`/partner/campaign/${campaignId}/applications`)
+    .then((res) => asArray<CampaignApplicationApiItem>(res.data))
+    .catch(() => []);
 
 /** 출금 요청 목록 조회  GET /admin/withdrawal */
 export const fetchAdminWithdrawal = (): Promise<AdminWithdrawalApiItem[]> =>
@@ -97,6 +123,24 @@ export const fetchAdminDashboard = (): Promise<AdminDashboardApiItem | null> =>
  */
 export const deleteAdminCommunityPost = (id: number | string): Promise<void> =>
   apiClient.delete(`/admin/community/${id}`).then(() => undefined);
+
+/** 이용제한(차단) 목록 조회  GET /admin/blacklist */
+export const fetchAdminBlacklist = (): Promise<AdminBlacklistApiItem[]> =>
+  apiClient
+    .get<AdminBlacklistApiItem[]>("/admin/blacklist")
+    .then((res) => asArray<AdminBlacklistApiItem>(res.data));
+
+/** 관리자 목록 조회  GET /admin/member/admins */
+export const fetchAdminMembers = (): Promise<AdminMemberApiItem[]> =>
+  apiClient
+    .get<AdminMemberApiItem[]>("/admin/member/admins")
+    .then((res) => asArray<AdminMemberApiItem>(res.data));
+
+/** 출금 요청 목록 조회  GET /admin/withdrawal/requests */
+export const fetchAdminWithdrawalRequests = (): Promise<AdminWithdrawalRequestItem[]> =>
+  apiClient
+    .get<AdminWithdrawalRequestItem[]>("/admin/withdrawal/requests")
+    .then((res) => asArray<AdminWithdrawalRequestItem>(res.data));
 
 const ACCOUNT_TYPE_PRIORITY: Record<string, number> = {
   partner: 4,

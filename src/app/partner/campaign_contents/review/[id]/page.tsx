@@ -14,15 +14,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { useParams } from "next/navigation";
 import { useCampaignContents } from "@/hooks/partner/campaign_contents/useCampaignContents";
 import CampaignContentsLayout from "@/components/partner/campaign_contents/CampaignContentsLayout";
 import { createReviewCardRenderer } from "@/components/partner/campaign_contents/card_renderers/renderReviewCard";
 import ReceiptPreviewModal from "@/components/partner/campaign_contents/ReceiptPreviewModal";
-import {
-  getPurchaseReviewContentsById,
-  reviewCampaignsExtended,
-} from "@/data/campaign/review/reviewCampaigns";
 
 export default function PurchaseReviewContentsDetailPage() {
   const {
@@ -42,27 +37,14 @@ export default function PurchaseReviewContentsDetailPage() {
     handleReport,
     reportedDates,
     formatDateTime,
-  } = useCampaignContents(getPurchaseReviewContentsById);
+  } = useCampaignContents();
 
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
   const [receiptImages, setReceiptImages] = useState<string[]>([]);
 
-  const params_url = useParams();
-  const campaignId = params_url.id as string;
-
   const params = React.useMemo(() => {
-    if (!campaignId)
-      return {
-        contentType: "link" as "link" | "image" | "both",
-        deadlineDate: undefined,
-        isPurchasePeriod: false,
-        isRegistrationPeriod: false,
-        purchasePeriod: undefined,
-        isCampaignClosed: false,
-      };
-
-    const campaignData = reviewCampaignsExtended.find((c) => c.id === campaignId);
-    const contentType = (campaignData?.contentType || "link") as "link" | "image" | "both";
+    // contentType: API에 별도 필드 없으므로 기본값 "link"
+    const contentType = "link" as "link" | "image" | "both";
 
     const checkRegistrationPeriodEnded = (registrationPeriod?: string): boolean => {
       if (!registrationPeriod) return false;
@@ -79,36 +61,16 @@ export default function PurchaseReviewContentsDetailPage() {
 
     const isCampaignClosed =
       campaignInfo?.status === "마감" ||
-      campaignInfo?.statusText?.includes("마감") === true ||
       checkRegistrationPeriodEnded(campaignInfo?.registrationPeriod);
 
-    const purchasePeriod = campaignData?.detailedSchedule?.purchasePeriod;
+    // registrationPeriod를 구매 기간으로 간주
+    const registrationPeriod = campaignInfo?.registrationPeriod;
     let isPurchasePeriod = false;
+    let isRegistrationPeriod = false;
     let deadlineDate: string | undefined;
 
-    if (purchasePeriod) {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      const periodMatch = purchasePeriod.match(/(\d{4}-\d{2}-\d{2})\s*~\s*(\d{4}-\d{2}-\d{2})/);
-      if (periodMatch) {
-        const startDate = new Date(periodMatch[1]);
-        startDate.setHours(0, 0, 0, 0);
-        const endDate = new Date(periodMatch[2]);
-        endDate.setHours(0, 0, 0, 0);
-
-        isPurchasePeriod = !isCampaignClosed && today >= startDate && today <= endDate;
-
-        if (isPurchasePeriod) {
-          deadlineDate = periodMatch[2];
-        }
-      }
-    }
-
-    let isRegistrationPeriod = false;
-    if (!isPurchasePeriod && campaignData?.detailedSchedule?.registrationPeriod) {
-      const period = campaignData.detailedSchedule.registrationPeriod;
-      const match = period.match(/(\d{4}-\d{2}-\d{2})\s*~\s*(\d{4}-\d{2}-\d{2})/);
+    if (registrationPeriod) {
+      const match = registrationPeriod.match(/(\d{4}-\d{2}-\d{2})\s*~\s*(\d{4}-\d{2}-\d{2})/);
       if (match) {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -117,11 +79,9 @@ export default function PurchaseReviewContentsDetailPage() {
         const endDate = new Date(match[2]);
         endDate.setHours(0, 0, 0, 0);
 
-        isRegistrationPeriod = today >= startDate && today <= endDate;
+        isPurchasePeriod = !isCampaignClosed && today >= startDate && today <= endDate;
+        isRegistrationPeriod = isPurchasePeriod;
         deadlineDate = match[2];
-      } else {
-        const simpleMatch = period.match(/~\s*(\d{4}-\d{2}-\d{2})/);
-        deadlineDate = simpleMatch ? simpleMatch[1] : undefined;
       }
     }
 
@@ -130,10 +90,10 @@ export default function PurchaseReviewContentsDetailPage() {
       deadlineDate,
       isPurchasePeriod,
       isRegistrationPeriod,
-      purchasePeriod,
+      purchasePeriod: registrationPeriod,
       isCampaignClosed,
     };
-  }, [campaignId, campaignInfo]);
+  }, [campaignInfo]);
 
   const openReceiptModal = (images: string[] | undefined) => {
     setReceiptImages(images && images.length > 0 ? images : []);
@@ -146,14 +106,12 @@ export default function PurchaseReviewContentsDetailPage() {
   };
 
   const checkIsInPurchasePeriod = React.useCallback((): boolean => {
-    if (!campaignId) return false;
-    const campaignData = reviewCampaignsExtended.find((c) => c.id === campaignId);
-    const purchasePeriod = campaignData?.detailedSchedule?.purchasePeriod;
-    if (!purchasePeriod) return false;
+    const registrationPeriod = campaignInfo?.registrationPeriod;
+    if (!registrationPeriod) return false;
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const periodMatch = purchasePeriod.match(/(\d{4}-\d{2}-\d{2})\s*~\s*(\d{4}-\d{2}-\d{2})/);
+    const periodMatch = registrationPeriod.match(/(\d{4}-\d{2}-\d{2})\s*~\s*(\d{4}-\d{2}-\d{2})/);
     if (periodMatch) {
       const startDate = new Date(periodMatch[1]);
       startDate.setHours(0, 0, 0, 0);
@@ -162,7 +120,7 @@ export default function PurchaseReviewContentsDetailPage() {
       return today >= startDate && today <= endDate;
     }
     return false;
-  }, [campaignId]);
+  }, [campaignInfo]);
 
   const handleExtend = (_applicantId: string) => {
     // TODO: 연장 기능 구현

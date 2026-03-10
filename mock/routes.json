@@ -46,5 +46,31 @@
   "/admin/payment": "/payments",
   "/admin/payment/:id": "/payments/:id",
   "/admin/accounts": "/accounts",
-  "/admin/accounts/:id": "/accounts/:id"
+  "/admin/accounts/:id": "/accounts/:id",
+
+  "/admin/notification": "/admin_notifications",
+  "/partner/notification": "/partner_notifications",
+
+  "/admin/blacklist": "/blacklist",
+  "/admin/blacklist/:id": "/blacklist/:id",
+
+  "/admin/member/admins": "/admin_members",
+  "/admin/member/admins/:id": "/admin_members/:id",
+
+  "/admin/withdrawal/requests": "/withdrawal_request_items",
+  "/admin/withdrawal/requests/:id": "/withdrawal_request_items/:id",
+
+  "/partner/point/history": "/partner_point_history",
+  "/partner/point/history/:id": "/partner_point_history/:id",
+
+  "/partner/payment": "/payments",
+  "/reviewer/mypage/point/history/pending": "/point_history?status=PENDING",
+
+  "/reviewer/penalty": "/user_penalties",
+  "/reviewer/penalty/status": "/user_penalty_status",
+  "/partner/penalty": "/partner_penalties",
+  "/partner/penalty/status": "/partner_penalty_status",
+
+  "/community/categories": "/community_categories",
+  "/community/faq": "/faq_posts"
 }

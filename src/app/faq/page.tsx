@@ -1,5 +1,5 @@
 /* ========================================
-   ❓ 자주 묻는 질문 페이지
+   자주 묻는 질문 페이지
    ======================================== */
 
 /**
@@ -7,60 +7,26 @@
  *
  * 목적: 사용자들이 자주 묻는 질문과 답변을 카테고리별로 정리하여 보여주는 FAQ 페이지입니다.
  *
- * 페이지 경로:
+ * 사용 페이지:
  * - /faq
- *
- * 사용 파일:
- * - 컴포넌트: SubHeader
- * - CSS: faq.module.css
- *
- * 주요 기능:
- * - 카테고리별 FAQ 필터링 (관리자에서 등록한 카테고리 사용)
- * - 아코디언 형태의 Q&A 표시
- * - 질문 클릭 시 답변 펼치기/접기
- * - 관리자 게시글 데이터 연동
  */
 
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import styles from "../../styles/user/faq/faq.module.css";
 import richtext_styles from "@/styles/common/html_richtext_content.module.css";
 import { sanitizeRichHtml } from "@/utils/security/sanitize";
 import SubHeader from "@/components/fragments/SubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
-import { posts_data } from "@/data/manager_ga/community/postsData";
-import { get_post_detail } from "@/data/manager_ga/community/postsData";
-import { convertPostsToFAQs } from "@/utils/faq/convertPostToFAQ";
-import { categories_data, type CategoryItem } from "@/data/manager_ga/community/categoriesData";
+import { useFAQData } from "@/hooks/common/useFAQData";
 
 export default function FAQPage() {
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const [expandedItems, setExpandedItems] = useState<number[]>([]);
 
-  /**
-   * 관리자에서 등록한 카테고리 목록을 동적으로 가져오기
-   * - division이 "자주 묻는 질문"인 카테고리만 필터링
-   * - "전체" 카테고리를 맨 앞에 추가
-   */
-  const categories = useMemo(() => {
-    const faq_categories = categories_data
-      .filter((category: CategoryItem) => category.division === "자주 묻는 질문")
-      .map((category: CategoryItem) => category.category_name);
-
-    const unique_categories = Array.from(new Set(faq_categories));
-    return ["전체", ...unique_categories];
-  }, []);
-
-  /**
-   * 관리자 게시글 데이터를 FAQ로 변환
-   * - division이 "자주 묻는 질문"인 게시글만 변환
-   * - PostDetail의 content도 포함하여 변환
-   */
-  const converted_faqs = useMemo(() => {
-    return convertPostsToFAQs(posts_data, get_post_detail);
-  }, []);
+  const { faqs, categories, isLoading } = useFAQData();
 
   const handleToggleExpand = (id: number) => {
     setExpandedItems((prev) =>
@@ -76,9 +42,7 @@ export default function FAQPage() {
    *   2. 일반 글은 최신순 정렬
    */
   const filteredFAQs = (
-    selectedCategory === "전체"
-      ? converted_faqs
-      : converted_faqs.filter((faq) => faq.category === selectedCategory)
+    selectedCategory === "전체" ? faqs : faqs.filter((faq) => faq.category === selectedCategory)
   ).sort((a, b) => {
     // 1. 핀된 FAQ를 맨 위로 정렬
     if (a.is_pinned && !b.is_pinned) return -1;
@@ -115,7 +79,11 @@ export default function FAQPage() {
           </div>
 
           {/* FAQ 목록 또는 빈 상태 */}
-          {filteredFAQs.length > 0 ? (
+          {isLoading ? (
+            <div className={styles.empty_state}>
+              <p className={styles.empty_text}>로딩 중...</p>
+            </div>
+          ) : filteredFAQs.length > 0 ? (
             <div className={styles.faq_list}>
               {filteredFAQs.map((faq) => (
                 <div key={faq.id} className={styles.faq_item}>

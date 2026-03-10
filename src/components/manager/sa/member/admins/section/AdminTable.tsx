@@ -13,7 +13,7 @@
 
 "use client";
 
-import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
+import { useState, forwardRef, useImperativeHandle } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useTableSort } from "@/hooks/table/useTableSort";
@@ -24,11 +24,8 @@ import CommonTableWithTooltip, {
 } from "@/components/manager/common/table/CommonTableWithTooltip";
 import type { TableColumn, TableRowData } from "@/components/manager/common/table/CommonTable";
 import styles from "@/styles/manager_sa/member/admins/admin_table.module.css";
-import {
-  get_admin_list_from_storage,
-  type AdminItem,
-  type AdminStatus,
-} from "@/data/manager_sa/member/admins";
+import { type AdminItem, type AdminStatus } from "@/data/manager_sa/member/admins";
+import { useAdminMembers } from "@/hooks/manager/ga/useAdminMembers";
 import MemberStatusTag from "@/components/manager/common/tags/MemberStatusTag";
 
 interface AdminTableProps {
@@ -104,35 +101,11 @@ const AdminTable = forwardRef<AdminTableRef, AdminTableProps>(function AdminTabl
   // 선택된 관리자 ID 목록 상태 관리
   const [selected_admin_ids, set_selected_admin_ids] = useState<string[]>([]);
 
-  // localStorage에서 관리자 목록 가져오기
-  // useState: 관리자 목록을 상태로 관리합니다
-  const [admin_list_data, set_admin_list_data] = useState<AdminItem[]>([]);
+  // API 훅으로 관리자 목록 조회
+  const { adminMembers } = useAdminMembers();
 
-  // 컴포넌트가 마운트될 때 localStorage에서 관리자 목록 가져오기
-  // useEffect: 컴포넌트가 렌더링된 후 실행되는 훅입니다
-  // 의존성 배열이 빈 배열 []이므로 컴포넌트가 처음 마운트될 때 한 번만 실행됩니다
-  useEffect(() => {
-    // localStorage에서 관리자 목록 가져오기
-    const stored_admin_list = get_admin_list_from_storage();
-    set_admin_list_data(stored_admin_list);
-  }, []);
-
-  // 페이지가 포커스될 때마다 localStorage에서 최신 데이터 가져오기
-  // (다른 페이지에서 관리자를 추가/수정한 후 돌아왔을 때 최신 데이터를 표시하기 위함)
-  useEffect(() => {
-    const handle_focus = () => {
-      const stored_admin_list = get_admin_list_from_storage();
-      set_admin_list_data(stored_admin_list);
-    };
-
-    // window에 focus 이벤트 리스너 추가
-    window.addEventListener("focus", handle_focus);
-
-    // 컴포넌트가 언마운트될 때 이벤트 리스너 제거 (메모리 누수 방지)
-    return () => {
-      window.removeEventListener("focus", handle_focus);
-    };
-  }, []);
+  // AdminMemberApiItem → AdminItem 호환 (status 타입 캐스팅)
+  const admin_list_data: AdminItem[] = adminMembers as AdminItem[];
 
   // 검색어 및 필터로 필터링된 관리자 목록
   const filtered_admins = admin_list_data.filter((admin) => {

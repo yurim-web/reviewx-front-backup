@@ -1,5 +1,5 @@
 /* ========================================
-   💰 파트너 전체 포인트 내역 페이지
+   파트너 전체 포인트 내역 페이지
    ======================================== */
 
 /**
@@ -13,57 +13,11 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
 import PartnerPointPageLayout from "@/components/partner/point/PartnerPointPageLayout";
-import { PartnerPointHistory } from "@/types/domain/partner";
-import {
-  partnerPointSummary,
-  getPartnerPointHistory,
-  getPartnerPointSummary,
-} from "@/data/partner/point/pointData";
-import { useAuth } from "@/hooks/useAuth";
+import { usePartnerPointData } from "@/hooks/partner/usePartnerPointData";
 
-/**
- * 파트너 전체 포인트 내역 페이지 컴포넌트
- *
- */
 export default function PartnerAllPointPage() {
-  const { user } = useAuth();
+  const { history, summary } = usePartnerPointData();
 
-  // 포인트 내역 상태 관리 - 로그인된 사용자 기준
-  const [historyData, setHistoryData] = useState<PartnerPointHistory[]>([]);
-  // 포인트 요약 정보 상태 관리 - 로그인된 사용자 기준
-  const [summary, setSummary] = useState(partnerPointSummary);
-
-  // 사용자 포인트 정보 로드
-  useEffect(() => {
-    // console.log('🔍 [포인트 페이지] user:', user);
-    if (user?.id) {
-      // console.log('🔍 [포인트 페이지] user.id:', user.id);
-      // getPartnerPointHistory는 항상 목업 데이터를 포함하고 localStorage 데이터를 추가로 합칩니다
-      const userHistory = getPartnerPointHistory(user.id);
-      const userSummary = getPartnerPointSummary(user.id);
-      // console.log('🔍 [포인트 페이지] userHistory:', userHistory);
-      // console.log('🔍 [포인트 페이지] userSummary:', userSummary);
-      setHistoryData(userHistory);
-      setSummary(userSummary);
-    } else {
-      // console.log('⚠️ [포인트 페이지] 로그인되지 않음');
-      // 로그인되지 않은 경우 목업 데이터만 표시 (getPartnerPointHistory는 userId가 없어도 목업 데이터 반환)
-      const userHistory = getPartnerPointHistory();
-      setHistoryData(userHistory);
-      setSummary(partnerPointSummary);
-    }
-  }, [user]);
-
-  return (
-    <PartnerPointPageLayout
-      activePointTab="all"
-      historyData={historyData}
-      summary={summary}
-      onHistoryDataChange={setHistoryData}
-      onSummaryChange={setSummary}
-      // 필터 함수를 전달하지 않으면 전체 내역 표시
-    />
-  );
+  return <PartnerPointPageLayout activePointTab="all" historyData={history} summary={summary} />;
 }

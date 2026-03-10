@@ -16,13 +16,19 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import ErrorText from "@/components/common/error_text/ErrorText";
+import BaseModal from "@/components/common/modal/BaseModal";
 import { findAccountByEmail } from "@/data/login/unifiedAccountData";
 import styles from "@/styles/partner/reset_password/reset_password.module.css";
 
 export default function PartnerResetPasswordPage() {
+  const router = useRouter();
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const [isSessionExpiredModalOpen, setIsSessionExpiredModalOpen] = useState(false);
   const [currentPassword, setCurrentPassword] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [passwordConfirm, setPasswordConfirm] = useState<string>("");
@@ -132,15 +138,19 @@ export default function PartnerResetPasswordPage() {
       // 테스트용: 목업 데이터의 비밀번호 업데이트 (실제로는 API 호출)
       if (currentAccount) {
         currentAccount.password = password;
-        // console.log("비밀번호 변경 완료 (테스트 모드):", {
-        //   email: currentEmail,
-        //   newPassword: password,
-        // });
       }
 
-      alert("비밀번호가 변경되었습니다.");
-    } catch (_error) {
-      alert("비밀번호 변경 중 오류가 발생했습니다.");
+      // C_M12: 비밀번호 변경이 완료되었습니다.
+      setIsSuccessModalOpen(true);
+    } catch (err: unknown) {
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      if (status === 401) {
+        // E_M4: 세션 만료 → 로그인 페이지 리디렉트
+        setIsSessionExpiredModalOpen(true);
+      } else {
+        // E_M5: 서버 오류
+        setIsErrorModalOpen(true);
+      }
     }
   };
 
@@ -149,6 +159,11 @@ export default function PartnerResetPasswordPage() {
   const isPasswordConfirmValid =
     passwordConfirm.length > 0 && passwordConfirm === password && !passwordConfirmError;
   const isFormValid = isCurrentPasswordValid && isPasswordValid && isPasswordConfirmValid;
+
+  const handleSuccessClose = () => {
+    setIsSuccessModalOpen(false);
+    router.back();
+  };
 
   return (
     <div className={styles.reset_password_page_container}>
@@ -323,6 +338,36 @@ export default function PartnerResetPasswordPage() {
           </button>
         </section>
       </main>
+
+      {/* C_M12: 비밀번호 변경 완료 모달 */}
+      <BaseModal
+        is_open={isSuccessModalOpen}
+        on_close={handleSuccessClose}
+        message="비밀번호 변경이 완료되었습니다."
+        buttons={["닫기"]}
+        on_confirm={handleSuccessClose}
+        type="center"
+      />
+
+      {/* E_M5: 서버 오류 모달 */}
+      <BaseModal
+        is_open={isErrorModalOpen}
+        on_close={() => setIsErrorModalOpen(false)}
+        message="오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."
+        buttons={["확인"]}
+        on_confirm={() => setIsErrorModalOpen(false)}
+        type="center"
+      />
+
+      {/* E_M4: 세션 만료 모달 → 로그인 리디렉트 */}
+      <BaseModal
+        is_open={isSessionExpiredModalOpen}
+        on_close={() => router.push("/partner/login")}
+        message="로그인이 만료되었습니다.<br>다시 로그인해주세요."
+        buttons={["확인"]}
+        on_confirm={() => router.push("/partner/login")}
+        type="center"
+      />
     </div>
   );
 }

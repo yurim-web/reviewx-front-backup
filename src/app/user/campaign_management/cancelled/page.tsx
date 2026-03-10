@@ -13,7 +13,7 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import CampaignManagementHeader from "@/components/user/campaign_management/CampaignManagementHeader";
 import CampaignList from "@/components/user/campaign_management/CampaignList";
 import CampaignFilterBar from "@/components/common/campaign_management/CampaignFilterBar";
@@ -21,24 +21,12 @@ import type { MainTab } from "@/types/domain/user";
 import type { CampaignApplication } from "@/types/domain/user";
 import layoutStyles from "@/styles/user/campaign_management/campaign_management_layout.module.css";
 import { withUserAuth } from "@/components/auth/withAuth";
-import { useWindowFocus } from "@/hooks/common/useWindowFocus";
-import { getCampaignsByTab } from "@/data/user/campaign_management/campaignManagementData";
+import { useCancelledCampaigns } from "@/hooks/user/campaign_management/useCancelledCampaigns";
 
 function CancelledPage() {
   const [activeTab, setActiveTab] = useState<MainTab>("campaign");
-  const [activeStatTab] = useState<"취소/반려">("취소/반려");
   const [filteredCampaigns, setFilteredCampaigns] = useState<CampaignApplication[]>([]);
-  const [campaigns, setCampaigns] = useState<CampaignApplication[]>([]);
-
-  const loadCampaigns = useCallback(() => {
-    setCampaigns(getCampaignsByTab("취소/반려"));
-  }, []);
-
-  useEffect(() => {
-    loadCampaigns();
-  }, [loadCampaigns]);
-
-  useWindowFocus(loadCampaigns);
+  const { campaigns, stats } = useCancelledCampaigns();
 
   const handleFilteredCampaignsChange = (filtered: CampaignApplication[]) => {
     setFilteredCampaigns(filtered);
@@ -50,7 +38,8 @@ function CancelledPage() {
         <CampaignManagementHeader
           activeTab={activeTab}
           setActiveTab={setActiveTab}
-          activeStatTab={activeStatTab}
+          activeStatTab="취소/반려"
+          stats={stats}
         />
         <CampaignFilterBar<CampaignApplication>
           campaigns={campaigns}

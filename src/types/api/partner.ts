@@ -272,7 +272,7 @@ export interface DeletePartnerAccountResponse extends ApiResponse {
 export interface PartnerCampaignApiItem {
   id: number;
   partner_id: number;
-  type: string; // "DELIVERY" | "VISIT" | "PURCHASE" | "REPORTER" | "MISSION"
+  type: string; // "DELIVERY" | "VISIT" | "PURCHASE" | "PURCHASE_REVIEW" | "REPORTER" | "MISSION"
   status: string; // "REGISTERING" | "RECRUITING" | "SELECTED" | "IN_PROGRESS" | "COMPLETED" | "CLOSED" | "CANCELLED"
   title: string;
   thumbnailUrl: string;

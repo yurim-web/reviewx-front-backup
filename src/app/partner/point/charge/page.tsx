@@ -13,7 +13,7 @@
  * - /partner/point/charge
  */
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
@@ -32,8 +32,8 @@ import chargeAccountStyles from "@/styles/partner/point/charge_account.module.cs
 import chargeSubmitStyles from "@/styles/partner/point/charge_submit.module.css";
 import chargeTermsStyles from "@/styles/partner/point/charge_terms.module.css";
 import { useAuth } from "@/hooks/useAuth";
-import { getPartnerPointSummary } from "@/data/partner/point/pointData";
-import { addPaymentHistory } from "@/data/manager_sa/settlement/paymentHistoryData";
+import { usePartnerPointData } from "@/hooks/partner/usePartnerPointData";
+import { postPartnerPayment } from "@/lib/api/point";
 import { REFUND_BANKS } from "./constants";
 
 const styles = {
@@ -50,6 +50,7 @@ const styles = {
 export default function PartnerPointChargePage() {
   const router = useRouter();
   const { user } = useAuth();
+  const { summary } = usePartnerPointData();
   const [chargeAmount, setChargeAmount] = useState<string>("");
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [agreeTerms, setAgreeTerms] = useState<boolean>(false);
@@ -118,19 +119,8 @@ export default function PartnerPointChargePage() {
     return "미발행";
   };
 
-  // 파트너 정보 - 로그인된 사용자 정보 사용
-  const [currentPoints, setCurrentPoints] = useState(0);
-
-  // 사용자 포인트 정보 로드
-  useEffect(() => {
-    if (user?.id) {
-      const summary = getPartnerPointSummary(user.id);
-      setCurrentPoints(summary.available_points);
-    }
-  }, [user]);
-
   const partnerInfo = {
-    availablePoints: currentPoints,
+    availablePoints: summary.available_points,
     companyName: user?.business_name || "회사명 미등록",
     ownerName: user?.name || "이름 미등록",
     businessNumber: user?.business_number || "사업자번호 미등록",
@@ -222,11 +212,14 @@ export default function PartnerPointChargePage() {
     if (isSuccess) {
       // 관리자 승인 후 포인트 적립 예정 → 파트너 보유포인트/충전 내역에는 반영 안 함
       // 관리자 결제내역에 추가 (카드 결제 승인 시 '포인트 충전' 항목으로 생성)
-      addPaymentHistory(user.id, chargePoints, "포인트 충전", undefined, getTaxInvoiceType());
-
-      // 현재 포인트 업데이트 (모달 닫은 후에 업데이트되도록 하지 않음)
-      // const updatedSummary = getPartnerPointSummary(user.id);
-      // setCurrentPoints(updatedSummary.available_points);
+      postPartnerPayment({
+        partner_id: 1,
+        amount: chargePoints,
+        payment_method: "CARD",
+        status: "PENDING",
+        paid_at: new Date().toISOString(),
+        points_charged: chargePoints,
+      }).catch(() => {});
 
       // 결제 성공: 성공 모달 표시
       setCardPaymentSuccessModal({ is_open: true });
@@ -255,12 +248,6 @@ export default function PartnerPointChargePage() {
   const handleCardPaymentSuccessClose = () => {
     setCardPaymentSuccessModal({ is_open: false });
 
-    // 포인트 업데이트 (모달 닫을 때)
-    if (user?.id) {
-      const updatedSummary = getPartnerPointSummary(user.id);
-      setCurrentPoints(updatedSummary.available_points);
-    }
-
     // 이전 페이지로 돌아가기
     router.back();
   };
@@ -276,7 +263,14 @@ export default function PartnerPointChargePage() {
 
     // 무통장 입금은 관리자 승인 후 포인트 적립 → 파트너 보유포인트/충전 내역에는 반영 안 함
     // 관리자 결제내역에 추가
-    addPaymentHistory(user.id, chargePoints, "무통장 입금", depositorName, getTaxInvoiceType());
+    postPartnerPayment({
+      partner_id: 1,
+      amount: chargePoints,
+      payment_method: "BANK",
+      status: "PENDING",
+      paid_at: new Date().toISOString(),
+      points_charged: chargePoints,
+    }).catch(() => {});
 
     // 무통장 입금 신청 모달 표시
     setBankDepositModal({ is_open: true });
@@ -287,12 +281,6 @@ export default function PartnerPointChargePage() {
    */
   const handleBankDepositModalClose = () => {
     setBankDepositModal({ is_open: false });
-
-    // 포인트 업데이트 (모달 닫을 때)
-    if (user?.id) {
-      const updatedSummary = getPartnerPointSummary(user.id);
-      setCurrentPoints(updatedSummary.available_points);
-    }
 
     // 이전 페이지로 돌아가기
     router.back();

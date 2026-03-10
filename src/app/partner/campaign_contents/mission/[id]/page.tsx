@@ -14,16 +14,10 @@
 "use client";
 
 import React from "react";
-import { useParams } from "next/navigation";
 import { useCampaignContents } from "@/hooks/partner/campaign_contents/useCampaignContents";
 import CampaignContentsLayout from "@/components/partner/campaign_contents/CampaignContentsLayout";
 import { createMissionCardRenderer } from "@/components/partner/campaign_contents/card_renderers/renderMissionCard";
 import { extractDeadlineDate } from "@/utils/formatting/date";
-import {
-  getMissionContentsById,
-  missionCampaignsExtended,
-} from "@/data/campaign/mission/missionCampaigns";
-import { getCampaignById, type ContentByTab } from "@/data/partner/sharedCampaigns";
 
 export default function MissionContentsDetailPage() {
   const {
@@ -43,32 +37,19 @@ export default function MissionContentsDetailPage() {
     handleReport,
     reportedDates,
     formatDateTime,
-  } = useCampaignContents((campaignId) => {
-    const shared = getCampaignById(campaignId);
-    const sharedWithContents = shared as unknown as { contents?: ContentByTab };
-    if (shared && sharedWithContents.contents) {
-      return sharedWithContents.contents;
-    }
-    return getMissionContentsById(campaignId);
-  });
-
-  const params_url = useParams();
-  const campaignId = params_url.id as string;
+  } = useCampaignContents();
 
   const params = React.useMemo(() => {
-    if (!campaignId)
-      return { contentType: "link" as "link" | "image" | "both", deadlineDate: undefined };
-
-    const campaignData = missionCampaignsExtended.find((c) => c.id === campaignId);
-    const contentType = (campaignData?.contentType || "link") as "link" | "image" | "both";
+    // contentType: API에 별도 필드 없으므로 기본값 "link"
+    const contentType = "link" as "link" | "image" | "both";
 
     let deadlineDate: string | undefined;
-    if (campaignData?.detailedSchedule?.registrationPeriod) {
-      deadlineDate = extractDeadlineDate(campaignData.detailedSchedule.registrationPeriod);
+    if (campaignInfo?.registrationPeriod) {
+      deadlineDate = extractDeadlineDate(campaignInfo.registrationPeriod);
     }
 
     return { contentType, deadlineDate };
-  }, [campaignId]);
+  }, [campaignInfo]);
 
   const handleExtend = (_applicantId: string) => {
     // TODO: 실제 연장 로직 구현

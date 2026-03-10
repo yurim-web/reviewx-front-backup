@@ -1,11 +1,11 @@
 /* ========================================
-   🔔 파트너 알림 페이지
+   파트너 알림 페이지
    ======================================== */
 
 /**
- * 파트너 알림 페이지
+ * PartnerNotificationPage
  *
- * 목적: 파트너 전용 알림 목록을 표시하는 페이지입니다.
+ * 목적: 파트너 전용 알림 목록 표시 (API 연결, 정적 데이터 fallback)
  *
  * 사용 페이지:
  * - /partner/notification
@@ -14,17 +14,17 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import styles from "@/styles/user/notification/notification.module.css";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import PageTitle from "@/components/fragments/PageTitle";
 import NotificationList from "@/components/notification/NotificationList";
 import Toast from "@/components/common/toast/Toast";
 import { withPartnerAuth } from "@/components/auth/withAuth";
-// 알림 목업 데이터 (향후 API로 대체)
+import { fetchPartnerNotifications } from "@/lib/api/notification";
 import { mockPartnerNotifications } from "@/data/notification/notificationData";
 
 function PartnerNotificationPage() {
-  // 모바일 여부 감지
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -36,45 +36,36 @@ function PartnerNotificationPage() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  /**
-   * 알림 목록 상태
-   * 향후 API 연동 시 useState와 useEffect를 사용하여 서버에서 데이터를 가져올 수 있습니다.
-   *
-   * 예시:
-   * const [notifications, setNotifications] = useState<NotificationItem[]>([]);
-   *
-   * useEffect(() => {
-   *   // API 호출
-   *   fetchPartnerNotifications().then(setNotifications);
-   * }, []);
-   */
   const [notifications, setNotifications] = useState(mockPartnerNotifications);
   const [is_delete_toast_open, set_is_delete_toast_open] = useState(false);
 
-  /** 전체 삭제 버튼 클릭 → 바로 삭제 후 토스트만 표시 */
+  const { data: apiData } = useQuery({
+    queryKey: ["partnerNotifications"],
+    queryFn: fetchPartnerNotifications,
+    retry: false,
+    staleTime: 30_000,
+  });
+
+  useEffect(() => {
+    if (apiData && apiData.length > 0) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setNotifications(apiData as any);
+    }
+  }, [apiData]);
+
   const handle_delete_all_click = () => {
     setNotifications([]);
     set_is_delete_toast_open(true);
   };
 
-  /**
-   * 알림 클릭 핸들러 (향후 구현)
-   * 알림 클릭 시 상세 페이지로 이동하거나 모달을 열 수 있습니다.
-   *
-   * @param notification - 클릭된 알림 아이템
-   */
   const handle_notification_click = (_notification: (typeof mockPartnerNotifications)[0]) => {
     // TODO: 알림 상세 페이지로 이동 또는 모달 열기
-    // 예시: router.push(`/partner/notification/${notification.id}`)
   };
 
   return (
     <div className={`${styles.notification_container} ${isMobile ? styles.mobile : ""}`}>
-      {/* 파트너 전용 서브헤더 (PC 전용) - 모바일에서는 렌더링하지 않음 */}
       {!isMobile && <PartnerSubHeader />}
 
-      {/* 알림 페이지 헤더 */}
-      {/* 모바일: PageTitle (뒤로가기 + 알림 + 전체 삭제) / PC: 기존 notification_header */}
       {isMobile ? (
         <PageTitle
           title="알림"
@@ -93,9 +84,7 @@ function PartnerNotificationPage() {
         </div>
       )}
 
-      {/* 메인 콘텐츠 영역 */}
       <main className={styles.main_content}>
-        {/* 알림 목록 컴포넌트 */}
         <NotificationList
           notifications={notifications}
           on_notification_click={handle_notification_click}
@@ -112,5 +101,4 @@ function PartnerNotificationPage() {
   );
 }
 
-// 파트너 전용 페이지로 보호
 export default withPartnerAuth(PartnerNotificationPage);

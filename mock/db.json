@@ -6562,6 +6562,196 @@
       "reviewer_id": 1,
       "status": "APPLIED",
       "id": 8
+    },
+    {
+      "id": 10,
+      "campaign_id": 964,
+      "reviewer_id": 1,
+      "status": "PENDING",
+      "apply_date": "2026-01-10T09:00:00Z",
+      "channel_url": "https://blog.naver.com/reviewer1",
+      "follower_count": 0,
+      "introduction": "안녕하세요 뷰티 블로거입니다."
+    },
+    {
+      "id": 11,
+      "campaign_id": 964,
+      "reviewer_id": 2,
+      "status": "PENDING",
+      "apply_date": "2026-01-11T10:00:00Z",
+      "channel_url": "https://blog.naver.com/reviewer2",
+      "follower_count": 0,
+      "introduction": "스킨케어 관련 콘텐츠 전문입니다."
+    },
+    {
+      "id": 12,
+      "campaign_id": 964,
+      "reviewer_id": 3,
+      "status": "SELECTED",
+      "apply_date": "2026-01-09T08:00:00Z",
+      "channel_url": "https://blog.naver.com/reviewer3",
+      "follower_count": 0,
+      "introduction": "리뷰 전문 블로거입니다."
+    },
+    {
+      "id": 13,
+      "campaign_id": 964,
+      "reviewer_id": 4,
+      "status": "SELECTED",
+      "apply_date": "2026-01-08T11:00:00Z",
+      "channel_url": "https://blog.naver.com/reviewer4",
+      "follower_count": 0,
+      "introduction": "일상 뷰티 블로그 운영 중입니다."
+    },
+    {
+      "id": 14,
+      "campaign_id": 964,
+      "reviewer_id": 5,
+      "status": "PENDING",
+      "apply_date": "2026-01-12T14:00:00Z",
+      "channel_url": "https://blog.naver.com/reviewer5",
+      "follower_count": 0,
+      "introduction": "화장품 리뷰 전문 블로거입니다."
+    },
+    {
+      "id": 15,
+      "campaign_id": 966,
+      "reviewer_id": 6,
+      "status": "PENDING",
+      "apply_date": "2026-01-15T09:00:00Z",
+      "channel_url": "https://instagram.com/reviewer6",
+      "follower_count": 8500,
+      "introduction": "인스타그램 라이프스타일 계정입니다."
+    },
+    {
+      "id": 16,
+      "campaign_id": 966,
+      "reviewer_id": 7,
+      "status": "SELECTED",
+      "apply_date": "2026-01-14T10:00:00Z",
+      "channel_url": "https://instagram.com/reviewer7",
+      "follower_count": 12000,
+      "introduction": "음식/카페 전문 인플루언서입니다."
+    },
+    {
+      "id": 17,
+      "campaign_id": 966,
+      "reviewer_id": 8,
+      "status": "PENDING",
+      "apply_date": "2026-01-16T13:00:00Z",
+      "channel_url": "https://instagram.com/reviewer8",
+      "follower_count": 5200,
+      "introduction": "일상 리뷰어입니다."
+    },
+    {
+      "id": 18,
+      "campaign_id": 967,
+      "reviewer_id": 9,
+      "status": "PENDING",
+      "apply_date": "2026-01-20T09:00:00Z",
+      "channel_url": "https://clip.naver.com/reviewer9",
+      "follower_count": 3300,
+      "introduction": "네이버 클립 크리에이터입니다."
+    },
+    {
+      "id": 19,
+      "campaign_id": 967,
+      "reviewer_id": 10,
+      "status": "SELECTED",
+      "apply_date": "2026-01-19T10:00:00Z",
+      "channel_url": "https://clip.naver.com/reviewer10",
+      "follower_count": 7800,
+      "introduction": "트렌디한 영상 콘텐츠 제작자입니다."
+    },
+    {
+      "id": 20,
+      "campaign_id": 968,
+      "reviewer_id": 11,
+      "status": "PENDING",
+      "apply_date": "2026-01-22T09:00:00Z",
+      "channel_url": "https://youtube.com/c/reviewer11",
+      "follower_count": 15000,
+      "introduction": "홈트레이닝 전문 유튜버입니다."
+    },
+    {
+      "id": 21,
+      "campaign_id": 968,
+      "reviewer_id": 12,
+      "status": "SELECTED",
+      "apply_date": "2026-01-21T10:00:00Z",
+      "channel_url": "https://youtube.com/c/reviewer12",
+      "follower_count": 22000,
+      "introduction": "피트니스 전문 유튜버입니다."
+    },
+    {
+      "id": 22,
+      "campaign_id": 968,
+      "reviewer_id": 13,
+      "status": "PENDING",
+      "apply_date": "2026-01-23T13:00:00Z",
+      "channel_url": "https://youtube.com/c/reviewer13",
+      "follower_count": 9000,
+      "introduction": "운동 관련 콘텐츠 제작자입니다."
+    },
+    {
+      "id": 23,
+      "campaign_id": 4016,
+      "reviewer_id": 14,
+      "status": "PENDING",
+      "apply_date": "2026-02-01T09:00:00Z",
+      "channel_url": "https://blog.naver.com/reviewer14",
+      "follower_count": 0,
+      "introduction": "생활용품 전문 블로거입니다."
+    },
+    {
+      "id": 24,
+      "campaign_id": 4016,
+      "reviewer_id": 15,
+      "status": "SELECTED",
+      "apply_date": "2026-02-02T10:00:00Z",
+      "channel_url": "https://blog.naver.com/reviewer15",
+      "follower_count": 0,
+      "introduction": "리뷰 전문 블로거입니다."
+    },
+    {
+      "id": 25,
+      "campaign_id": 4035,
+      "reviewer_id": 16,
+      "status": "PENDING",
+      "apply_date": "2026-02-10T09:00:00Z",
+      "channel_url": "https://instagram.com/reviewer16",
+      "follower_count": 4500,
+      "introduction": "패션 인플루언서입니다."
+    },
+    {
+      "id": 26,
+      "campaign_id": 4035,
+      "reviewer_id": 17,
+      "status": "SELECTED",
+      "apply_date": "2026-02-11T10:00:00Z",
+      "channel_url": "https://instagram.com/reviewer17",
+      "follower_count": 6700,
+      "introduction": "스타일리스트입니다."
+    },
+    {
+      "id": 27,
+      "campaign_id": 4054,
+      "reviewer_id": 18,
+      "status": "PENDING",
+      "apply_date": "2026-02-15T09:00:00Z",
+      "channel_url": "https://blog.naver.com/reviewer18",
+      "follower_count": 0,
+      "introduction": "식품 전문 블로거입니다."
+    },
+    {
+      "id": 28,
+      "campaign_id": 4054,
+      "reviewer_id": 19,
+      "status": "SELECTED",
+      "apply_date": "2026-02-16T10:00:00Z",
+      "channel_url": "https://blog.naver.com/reviewer19",
+      "follower_count": 0,
+      "introduction": "맛집 탐방 블로거입니다."
     }
   ],
   "campaign_contents": [
@@ -6588,6 +6778,186 @@
       "content_url": "https://test.com",
       "status": "SUBMITTED",
       "id": 3
+    },
+    {
+      "id": 4,
+      "application_id": 10,
+      "campaign_id": 961,
+      "reviewer_id": 3,
+      "content_url": "https://blog.naver.com/delivery961_1",
+      "submitted_at": "2026-03-05T06:32:00.099Z",
+      "status": "SUBMITTED",
+      "admin_comment": null
+    },
+    {
+      "id": 5,
+      "application_id": 11,
+      "campaign_id": 961,
+      "reviewer_id": 4,
+      "content_url": "https://blog.naver.com/delivery961_2",
+      "submitted_at": "2026-03-06T06:32:00.099Z",
+      "status": "SUBMITTED",
+      "admin_comment": null
+    },
+    {
+      "id": 6,
+      "application_id": 12,
+      "campaign_id": 961,
+      "reviewer_id": 5,
+      "content_url": "https://blog.naver.com/delivery961_3",
+      "submitted_at": "2026-03-07T06:32:00.099Z",
+      "status": "APPROVED",
+      "admin_comment": null
+    },
+    {
+      "id": 7,
+      "application_id": 20,
+      "campaign_id": 1001,
+      "reviewer_id": 6,
+      "content_url": "https://blog.naver.com/visit1001_1",
+      "submitted_at": "2026-03-04T06:32:00.099Z",
+      "status": "SUBMITTED",
+      "admin_comment": null
+    },
+    {
+      "id": 8,
+      "application_id": 21,
+      "campaign_id": 1001,
+      "reviewer_id": 7,
+      "content_url": "https://blog.naver.com/visit1001_2",
+      "submitted_at": "2026-03-05T06:32:00.099Z",
+      "status": "SUBMITTED",
+      "admin_comment": null
+    },
+    {
+      "id": 9,
+      "application_id": 22,
+      "campaign_id": 1001,
+      "reviewer_id": 8,
+      "content_url": "https://blog.naver.com/visit1001_3",
+      "submitted_at": "2026-03-08T06:32:00.099Z",
+      "status": "APPROVED",
+      "admin_comment": null
+    },
+    {
+      "id": 10,
+      "application_id": 23,
+      "campaign_id": 1001,
+      "reviewer_id": 9,
+      "content_url": "https://blog.naver.com/visit1001_4",
+      "submitted_at": "2026-03-09T06:32:00.099Z",
+      "status": "SUBMITTED",
+      "admin_comment": null
+    },
+    {
+      "id": 11,
+      "application_id": 30,
+      "campaign_id": 2001,
+      "reviewer_id": 10,
+      "content_url": "https://smartstore.naver.com/review2001_1",
+      "submitted_at": "2026-03-03T06:32:00.099Z",
+      "status": "SUBMITTED",
+      "admin_comment": null
+    },
+    {
+      "id": 12,
+      "application_id": 31,
+      "campaign_id": 2001,
+      "reviewer_id": 11,
+      "content_url": "https://smartstore.naver.com/review2001_2",
+      "submitted_at": "2026-03-04T06:32:00.099Z",
+      "status": "APPROVED",
+      "admin_comment": null
+    },
+    {
+      "id": 13,
+      "application_id": 32,
+      "campaign_id": 2001,
+      "reviewer_id": 12,
+      "content_url": "https://smartstore.naver.com/review2001_3",
+      "submitted_at": "2026-03-06T06:32:00.099Z",
+      "status": "SUBMITTED",
+      "admin_comment": null
+    },
+    {
+      "id": 14,
+      "application_id": 33,
+      "campaign_id": 2001,
+      "reviewer_id": 13,
+      "content_url": "https://smartstore.naver.com/review2001_4",
+      "submitted_at": "2026-03-07T06:32:00.099Z",
+      "status": "APPROVED",
+      "admin_comment": null
+    },
+    {
+      "id": 15,
+      "application_id": 40,
+      "campaign_id": 3001,
+      "reviewer_id": 14,
+      "content_url": "https://blog.naver.com/reporter3001_1",
+      "submitted_at": "2026-03-02T06:32:00.099Z",
+      "status": "SUBMITTED",
+      "admin_comment": null
+    },
+    {
+      "id": 16,
+      "application_id": 41,
+      "campaign_id": 3001,
+      "reviewer_id": 15,
+      "content_url": "https://blog.naver.com/reporter3001_2",
+      "submitted_at": "2026-03-03T06:32:00.099Z",
+      "status": "APPROVED",
+      "admin_comment": null
+    },
+    {
+      "id": 17,
+      "application_id": 42,
+      "campaign_id": 3001,
+      "reviewer_id": 16,
+      "content_url": "https://blog.naver.com/reporter3001_3",
+      "submitted_at": "2026-03-07T06:32:00.099Z",
+      "status": "SUBMITTED",
+      "admin_comment": null
+    },
+    {
+      "id": 18,
+      "application_id": 50,
+      "campaign_id": 4001,
+      "reviewer_id": 17,
+      "content_url": "https://instagram.com/p/mission4001_1",
+      "submitted_at": "2026-03-05T06:32:00.099Z",
+      "status": "SUBMITTED",
+      "admin_comment": null
+    },
+    {
+      "id": 19,
+      "application_id": 51,
+      "campaign_id": 4001,
+      "reviewer_id": 18,
+      "content_url": "https://instagram.com/p/mission4001_2",
+      "submitted_at": "2026-03-06T06:32:00.099Z",
+      "status": "SUBMITTED",
+      "admin_comment": null
+    },
+    {
+      "id": 20,
+      "application_id": 52,
+      "campaign_id": 4001,
+      "reviewer_id": 19,
+      "content_url": "https://instagram.com/p/mission4001_3",
+      "submitted_at": "2026-03-08T06:32:00.099Z",
+      "status": "APPROVED",
+      "admin_comment": null
+    },
+    {
+      "id": 21,
+      "application_id": 53,
+      "campaign_id": 4001,
+      "reviewer_id": 20,
+      "content_url": "https://instagram.com/p/mission4001_4",
+      "submitted_at": "2026-03-09T06:32:00.099Z",
+      "status": "SUBMITTED",
+      "admin_comment": null
     }
   ],
   "reviewers": [
@@ -7808,6 +8178,36 @@
       "status": "failed",
       "balance": 7311885,
       "rejection_reason": "콘텐츠 내 키워드에 대한 정보를 넣어 달라고 말씀드렸음에도 불구하고 키워드가 없습니다."
+    },
+    {
+      "id": 7,
+      "reviewer_id": 1,
+      "type": "EARNED",
+      "amount": 150000,
+      "description": "[배송형] 풋필터 트롯바비 홍지윤 pick! 발 편한 자세 교정 키높이 깔창",
+      "status": "PENDING",
+      "date": "2026-03-15T00:00:00Z",
+      "balance": null
+    },
+    {
+      "id": 8,
+      "reviewer_id": 1,
+      "type": "EARNED",
+      "amount": 36000,
+      "description": "[방문형] 멜킨 엘프리 마사지 체험단",
+      "status": "PENDING",
+      "date": "2026-03-18T00:00:00Z",
+      "balance": null
+    },
+    {
+      "id": 9,
+      "reviewer_id": 1,
+      "type": "EARNED",
+      "amount": 25000,
+      "description": "[기자단] 스킨케어 브랜드 인플루언서 리뷰 캠페인",
+      "status": "PENDING",
+      "date": "2026-03-20T00:00:00Z",
+      "balance": null
     }
   ],
   "notifications": [
@@ -26535,5 +26935,697 @@
       "id": "iEPAA6A"
     }
   ],
-  "draft_campaigns": []
+  "draft_campaigns": [],
+  "admin_notifications": [
+    {
+      "id": 1,
+      "category": "A_A1",
+      "message_params": {
+        "개수": "2"
+      },
+      "time": "2026-03-08 18:35",
+      "is_read": false
+    },
+    {
+      "id": 2,
+      "category": "A_A2",
+      "message_params": {
+        "개수": "4"
+      },
+      "time": "2026-03-08 17:20",
+      "is_read": false
+    },
+    {
+      "id": 3,
+      "category": "A_A3",
+      "message_params": {
+        "개수": "1"
+      },
+      "time": "2026-03-08 16:15",
+      "is_read": true
+    },
+    {
+      "id": 4,
+      "category": "A_A4",
+      "message_params": {
+        "개수": "3"
+      },
+      "time": "2026-03-08 15:10",
+      "is_read": true
+    },
+    {
+      "id": 5,
+      "category": "A_A5",
+      "message_params": {
+        "개수": "6"
+      },
+      "time": "2026-03-08 14:05",
+      "is_read": true
+    },
+    {
+      "id": 6,
+      "category": "A_A6",
+      "message_params": {
+        "개수": "2"
+      },
+      "time": "2026-03-08 13:00",
+      "is_read": true
+    }
+  ],
+  "partner_notifications": [
+    {
+      "id": 1,
+      "category": "A_P1",
+      "time": "2026-03-08 18:35",
+      "campaign_id": 1,
+      "campaign_name": "[배송형] 맛있는 간편식 체험단",
+      "is_read": false
+    },
+    {
+      "id": 2,
+      "category": "A_P2",
+      "time": "2026-03-08 17:20",
+      "campaign_id": 2,
+      "campaign_name": "[방문형] 강남 카페 방문 체험단",
+      "is_read": false
+    },
+    {
+      "id": 3,
+      "category": "A_P3",
+      "time": "2026-03-08 16:15",
+      "campaign_id": 3,
+      "campaign_name": "[구매평] 스킨케어 제품 후기",
+      "is_read": true
+    },
+    {
+      "id": 4,
+      "category": "A_P4",
+      "time": "2026-03-08 15:10",
+      "campaign_id": 4,
+      "campaign_name": "[방문형] 부산 해운대 맛집",
+      "is_read": true
+    },
+    {
+      "id": 5,
+      "category": "A_P5",
+      "time": "2026-03-08 14:05",
+      "campaign_id": 5,
+      "campaign_name": "[미션형] SNS 해시태그 미션",
+      "is_read": true
+    }
+  ],
+  "blacklist": [
+    {
+      "id": "bl001",
+      "name": "김철수",
+      "user_id": "user001",
+      "division": "리뷰어",
+      "current_points": 15000,
+      "ip_address": "192.168.1.1",
+      "block_code": "B001",
+      "block_reason": "반복 반려 누적",
+      "registered_date": "2025-08-01 18:56",
+      "registered_by": "시스템"
+    },
+    {
+      "id": "bl002",
+      "name": "이마케팅",
+      "user_id": "partner001",
+      "division": "파트너",
+      "current_points": 250000,
+      "ip_address": "10.0.0.2",
+      "block_code": "B006",
+      "block_reason": "부적절 캠페인 게시",
+      "registered_date": "2025-09-15 10:30",
+      "registered_by": "관리자 A"
+    },
+    {
+      "id": "bl003",
+      "name": "박리뷰",
+      "user_id": "user002",
+      "division": "리뷰어",
+      "current_points": 0,
+      "ip_address": "172.16.0.5",
+      "block_code": "B002",
+      "block_reason": "무단 이탈 · 노쇼 누적",
+      "registered_date": "2025-10-20 14:22",
+      "registered_by": "시스템"
+    },
+    {
+      "id": "bl004",
+      "name": "최콘텐츠",
+      "user_id": "user003",
+      "division": "리뷰어",
+      "current_points": 5000,
+      "ip_address": "192.168.0.10",
+      "block_code": "B003",
+      "block_reason": "콘텐츠 중복 · 도용",
+      "registered_date": "2025-11-05 09:00",
+      "registered_by": "관리자 B"
+    },
+    {
+      "id": "bl005",
+      "name": "정파트너",
+      "user_id": "partner002",
+      "division": "파트너",
+      "current_points": 80000,
+      "ip_address": "10.10.0.3",
+      "block_code": "B008",
+      "block_reason": "검수 조작",
+      "registered_date": "2025-12-01 16:45",
+      "registered_by": "시스템"
+    }
+  ],
+  "admin_members": [
+    {
+      "id": "admin0001",
+      "number": "000025",
+      "name": "오은영",
+      "phone": "010-1234-5678",
+      "report_count": 1521,
+      "block_count": 1521,
+      "last_access_date": "2025-08-01 18:56",
+      "join_date": "2025-08-01 18:56",
+      "status": "일시 정지"
+    },
+    {
+      "id": "admin0002",
+      "number": "000024",
+      "name": "김은지",
+      "phone": "010-2345-6789",
+      "report_count": 1,
+      "block_count": 1,
+      "last_access_date": "2025-08-01 18:56",
+      "join_date": "2025-08-01 18:56",
+      "status": "일시 정지"
+    },
+    {
+      "id": "admin0003",
+      "number": "000023",
+      "name": "홍길동",
+      "phone": "010-3456-7890",
+      "report_count": 0,
+      "block_count": 0,
+      "last_access_date": "2026-01-15 09:00",
+      "join_date": "2024-03-01 10:00",
+      "status": "정상"
+    },
+    {
+      "id": "admin0004",
+      "number": "000022",
+      "name": "이관리",
+      "phone": "010-4567-8901",
+      "report_count": 3,
+      "block_count": 0,
+      "last_access_date": "2026-02-10 14:30",
+      "join_date": "2024-06-15 11:00",
+      "status": "정상"
+    },
+    {
+      "id": "admin0005",
+      "number": "000021",
+      "name": "박어드민",
+      "phone": "010-5678-9012",
+      "report_count": 0,
+      "block_count": 5,
+      "last_access_date": "2025-12-20 16:00",
+      "join_date": "2023-09-01 09:00",
+      "status": "영구 정지"
+    }
+  ],
+  "withdrawal_request_items": [
+    {
+      "id": "req001",
+      "number": "000001",
+      "round": "1",
+      "name": "조로이스",
+      "account": "우리은행 1002254541773 조로이스",
+      "ssn": "861256-2******",
+      "amount": "12,530",
+      "remaining": "437,470",
+      "requestDate": "2026-01-15 10:30",
+      "type": "리뷰어",
+      "status": "대기"
+    },
+    {
+      "id": "req002",
+      "number": "000002",
+      "round": "1",
+      "name": "김리뷰",
+      "account": "국민은행 123456789012 김리뷰",
+      "ssn": "901015-1******",
+      "amount": "50,000",
+      "remaining": "200,000",
+      "requestDate": "2026-01-16 14:20",
+      "type": "리뷰어",
+      "status": "대기"
+    },
+    {
+      "id": "req003",
+      "number": "000003",
+      "round": "-",
+      "name": "이긴급",
+      "account": "신한은행 110-123-456789 이긴급",
+      "ssn": "850505-2******",
+      "amount": "100,000",
+      "remaining": "50,000",
+      "requestDate": "2026-01-17 09:00",
+      "type": "리뷰어",
+      "status": "긴급"
+    },
+    {
+      "id": "req004",
+      "number": "000004",
+      "round": "2",
+      "name": "박출금",
+      "account": "하나은행 111-222-333456 박출금",
+      "ssn": "780320-1******",
+      "amount": "30,000",
+      "remaining": "120,000",
+      "requestDate": "2026-02-01 11:45",
+      "type": "리뷰어",
+      "status": "대기"
+    },
+    {
+      "id": "req005",
+      "number": "000005",
+      "round": "-",
+      "name": "최긴급",
+      "account": "카카오뱅크 333-44-5555555 최긴급",
+      "ssn": "921130-2******",
+      "amount": "75,000",
+      "remaining": "25,000",
+      "requestDate": "2026-02-05 08:30",
+      "type": "리뷰어",
+      "status": "긴급"
+    }
+  ],
+  "partner_point_history": [
+    {
+      "id": "pph001",
+      "partner_id": 1,
+      "type": "earned",
+      "amount": 500000,
+      "description": "포인트 충전",
+      "date": "2025-10-01",
+      "status": "earned",
+      "balance": 500000,
+      "payment_method": "card"
+    },
+    {
+      "id": "pph002",
+      "partner_id": 1,
+      "type": "withdrawn",
+      "amount": -50000,
+      "description": "리뷰어 포인트 지급",
+      "campaign_id": "camp001",
+      "date": "2025-10-05",
+      "status": "completed",
+      "balance": 450000
+    },
+    {
+      "id": "pph003",
+      "partner_id": 1,
+      "type": "earned",
+      "amount": 200000,
+      "description": "포인트 충전",
+      "date": "2025-11-01",
+      "status": "earned",
+      "balance": 650000,
+      "payment_method": "bank"
+    },
+    {
+      "id": "pph004",
+      "partner_id": 1,
+      "type": "withdrawn",
+      "amount": -100000,
+      "description": "리뷰어 포인트 지급",
+      "campaign_id": "camp002",
+      "date": "2025-11-10",
+      "status": "completed",
+      "balance": 550000
+    },
+    {
+      "id": "pph005",
+      "partner_id": 1,
+      "type": "returned",
+      "amount": 30000,
+      "description": "캠페인 포인트 반환",
+      "campaign_id": "camp001",
+      "date": "2025-11-15",
+      "status": "completed",
+      "balance": 580000,
+      "return_reason": "캠페인 취소"
+    },
+    {
+      "id": "pph006",
+      "partner_id": 1,
+      "type": "withdrawn",
+      "amount": -80000,
+      "description": "리뷰어 포인트 지급",
+      "campaign_id": "camp003",
+      "date": "2025-12-01",
+      "status": "pending",
+      "balance": 500000
+    },
+    {
+      "id": "pph007",
+      "partner_id": 1,
+      "type": "earned",
+      "amount": 300000,
+      "description": "포인트 충전",
+      "date": "2026-01-05",
+      "status": "earned",
+      "balance": 800000,
+      "payment_method": "card"
+    },
+    {
+      "id": "pph008",
+      "partner_id": 1,
+      "type": "withdrawn",
+      "amount": -150000,
+      "description": "리뷰어 포인트 지급",
+      "campaign_id": "camp004",
+      "date": "2026-01-20",
+      "status": "completed",
+      "balance": 650000
+    },
+    {
+      "id": "pph009",
+      "partner_id": 1,
+      "type": "returned",
+      "amount": 25000,
+      "description": "리뷰어 포인트 반환",
+      "campaign_id": "camp004",
+      "date": "2026-01-25",
+      "status": "completed",
+      "balance": 675000,
+      "return_reason": "리뷰어 취소"
+    },
+    {
+      "id": "pph010",
+      "partner_id": 1,
+      "type": "earned",
+      "amount": 100000,
+      "description": "포인트 충전",
+      "date": "2026-02-01",
+      "status": "earned",
+      "balance": 775000,
+      "payment_method": "card"
+    }
+  ],
+  "user_penalties": [
+    {
+      "id": 1,
+      "reviewer_id": 1,
+      "type": "경고",
+      "title": "캠페인 지각 제출",
+      "campaignTitle": "아이디헤어 지축점 맨즈 시술 모집",
+      "date": "2025-09-01"
+    },
+    {
+      "id": 2,
+      "reviewer_id": 1,
+      "type": "주의",
+      "title": "캠페인 지시 불이행",
+      "campaignTitle": "멜킨 엘프리 마사지 멜킨 엘프리 마사지멜킨 엘프리 마사지",
+      "date": "2025-09-01"
+    },
+    {
+      "id": 3,
+      "reviewer_id": 1,
+      "type": "정지",
+      "title": "캠페인 의무 노출 기간 불이행",
+      "campaignTitle": "밀리빙 두유제조기",
+      "date": "2025-09-01"
+    },
+    {
+      "id": 4,
+      "reviewer_id": 1,
+      "type": "제재",
+      "title": "캠페인 무단 이탈 (노쇼)",
+      "campaignTitle": "[충북/충북대점] '픽스팟' 2분만에 완성하는 나만의 폰케이스",
+      "date": "2025-09-01"
+    },
+    {
+      "id": 5,
+      "reviewer_id": 1,
+      "type": "경고",
+      "title": "캠페인 무단 이탈 (노쇼)",
+      "campaignTitle": "멜킨 엘프리 마사지 멜킨 엘프리 마사지멜킨 엘프리 마사지",
+      "date": "2025-09-01"
+    }
+  ],
+  "user_penalty_status": [
+    {
+      "id": 1,
+      "reviewer_id": 1,
+      "currentStatus": "경고 조치",
+      "penaltyCount": 12
+    }
+  ],
+  "partner_penalties": [
+    {
+      "id": 1,
+      "partner_id": 1,
+      "type": "경고",
+      "title": "캠페인 지시 불이행",
+      "campaignTitle": "파트너 캠페인 A - 제품 리뷰 요청",
+      "date": "2025-09-15"
+    },
+    {
+      "id": 2,
+      "partner_id": 1,
+      "type": "경고",
+      "title": "캠페인 의무 노출 기간 불이행",
+      "campaignTitle": "파트너 캠페인 B - 브랜드 소개",
+      "date": "2025-09-13"
+    },
+    {
+      "id": 3,
+      "partner_id": 1,
+      "type": "주의",
+      "title": "캠페인 반복 반려",
+      "campaignTitle": "파트너 캠페인 C - 이벤트 홍보",
+      "date": "2025-09-11"
+    },
+    {
+      "id": 4,
+      "partner_id": 1,
+      "type": "주의",
+      "title": "캠페인 지각 제출",
+      "campaignTitle": "파트너 캠페인 D - 신제품 런칭",
+      "date": "2025-09-09"
+    },
+    {
+      "id": 5,
+      "partner_id": 1,
+      "type": "정지",
+      "title": "캠페인 무단 취소",
+      "campaignTitle": "파트너 캠페인 E - 시즌 프로모션",
+      "date": "2025-09-07"
+    }
+  ],
+  "partner_penalty_status": [
+    {
+      "id": 1,
+      "partner_id": 1,
+      "currentStatus": "경고 조치",
+      "penaltyCount": 5
+    }
+  ],
+  "community_categories": [
+    {
+      "id": 1,
+      "number": "000001",
+      "division": "공지사항",
+      "category_name": "이벤트"
+    },
+    {
+      "id": 2,
+      "number": "000001",
+      "division": "공지사항",
+      "category_name": "공지사항"
+    },
+    {
+      "id": 10,
+      "number": "000001",
+      "division": "공지사항",
+      "category_name": "중요"
+    },
+    {
+      "id": 3,
+      "number": "000001",
+      "division": "자주 묻는 질문",
+      "category_name": "캠페인"
+    },
+    {
+      "id": 4,
+      "number": "000001",
+      "division": "자주 묻는 질문",
+      "category_name": "기타"
+    },
+    {
+      "id": 5,
+      "number": "000001",
+      "division": "자주 묻는 질문",
+      "category_name": "포인트"
+    },
+    {
+      "id": 6,
+      "number": "000022",
+      "division": "자주 묻는 질문",
+      "category_name": "취소/환불"
+    },
+    {
+      "id": 7,
+      "number": "000001",
+      "division": "자주 묻는 질문",
+      "category_name": "회원가입/로그인"
+    },
+    {
+      "id": 8,
+      "number": "000001",
+      "division": "자주 묻는 질문",
+      "category_name": "교환/반품"
+    },
+    {
+      "id": 9,
+      "number": "000001",
+      "division": "자주 묻는 질문",
+      "category_name": "주문/배송"
+    }
+  ],
+  "faq_posts": [
+    {
+      "id": 8,
+      "number": "000001",
+      "division": "자주 묻는 질문",
+      "category": "취소/환불",
+      "target": "리뷰어",
+      "title": "*체험단 구독 중지 시 모든 서비스 활용이 불가합니다.",
+      "content": "<p>체험단 구독을 중지하면 모든 서비스 활용이 불가능합니다.</p><p><strong>구독 중지 시 제한 사항</strong></p><p>- 체험단 등록 불가</p><p>- 체험단 관리 기능 사용 불가</p><p>- 기존 체험단 데이터 조회 제한</p><p>서비스를 계속 이용하시려면 구독을 유지해 주시기 바랍니다.</p>",
+      "view_count": 0,
+      "registered_date": "2026-02-08 15:10",
+      "registered_by": "관리자 C",
+      "is_pinned": false
+    },
+    {
+      "id": 9,
+      "number": "000001",
+      "division": "자주 묻는 질문",
+      "category": "회원가입/로그인",
+      "target": "리뷰어",
+      "title": "인플루언서 신청사유 추가 선정 시 참고/ 확인해주세요.",
+      "content": "<p>인플루언서 신청 시 신청사유를 추가로 작성해 주시면 선정 시 참고 자료로 활용됩니다.</p><p><strong>신청사유 작성 팁</strong></p><p>- 해당 제품/서비스에 대한 관심도와 경험을 구체적으로 작성</p><p>- 콘텐츠 제작 계획 및 아이디어 포함</p><p>- 기존 리뷰 경험 및 성과 간단히 소개</p><p>신청사유가 구체적일수록 선정 확률이 높아집니다.</p>",
+      "view_count": 0,
+      "registered_date": "2026-02-09 09:45",
+      "registered_by": "관리자 C",
+      "is_pinned": false
+    },
+    {
+      "id": 11,
+      "number": "000008",
+      "division": "자주 묻는 질문",
+      "category": "주문/배송",
+      "target": "파트너",
+      "title": "스타일씨 공식 홈페이지에 나오는 체험단 필터링이 리뉴얼 되었습니다!",
+      "content": "<p>스타일씨 공식 홈페이지에 나오는 체험단 필터링이 리뉴얼되었습니다.</p><p><strong>리뉴얼 내용</strong></p><p>- 카테고리별 필터링 기능 개선</p><p>- 검색 기능 강화</p><p>- 체험단 목록 UI 개선</p><p>더욱 편리하게 원하는 체험단을 찾을 수 있습니다.</p>",
+      "view_count": 0,
+      "registered_date": "2026-02-11 16:10",
+      "registered_by": "관리자 C",
+      "is_pinned": false
+    },
+    {
+      "id": 14,
+      "number": "000001",
+      "division": "자주 묻는 질문",
+      "category": "자주 묻는 질문",
+      "target": "파트너",
+      "title": "*중요* 블로그 리뷰 콘텐츠 스폰서 배너 표시 지침이 변경됩니다.",
+      "content": "<p>블로그 리뷰 콘텐츠에 스폰서 배너 표시 지침이 변경되었습니다.</p><p><strong>변경 사항</strong></p><p>- 스폰서 배너는 리뷰 상단에 명확하게 표시해야 합니다.</p><p>- 배너 크기 및 위치에 대한 가이드라인이 업데이트되었습니다.</p><p><strong>주의사항</strong></p><p>- 스폰서 배너 미표시 시 페널티가 부과될 수 있습니다.</p><p>- 자세한 가이드라인은 공지사항을 참고해 주세요.</p>",
+      "view_count": 0,
+      "registered_date": "2026-02-14 15:22",
+      "registered_by": "관리자 C",
+      "is_pinned": false
+    },
+    {
+      "id": 15,
+      "number": "000002",
+      "division": "자주 묻는 질문",
+      "category": "교환/반품",
+      "target": "파트너",
+      "title": "체험단 등록 시 불러오기 기능이 추가 되었습니다!",
+      "content": "<p>체험단 등록 시 불러오기 기능이 추가되었습니다.</p><p><strong>불러오기 기능이란?</strong></p><p>- 이전에 등록한 체험단 정보를 불러와서 재사용할 수 있는 기능입니다.</p><p>- 유사한 체험단을 등록할 때 시간을 절약할 수 있습니다.</p><p><strong>사용 방법</strong></p><p>1. 체험단 등록 페이지에서 \"불러오기\" 버튼 클릭</p><p>2. 이전에 등록한 체험단 목록에서 선택</p><p>3. 필요한 정보만 수정하여 등록</p><p>더욱 편리한 체험단 등록이 가능합니다.</p>",
+      "view_count": 0,
+      "registered_date": "2026-02-15 09:15",
+      "registered_by": "관리자 C",
+      "is_pinned": false
+    },
+    {
+      "id": 18,
+      "number": "000101",
+      "division": "자주 묻는 질문",
+      "category": "캠페인",
+      "target": "리뷰어",
+      "title": "[캠페인] 캠페인 신청은 어떻게 하나요?",
+      "content": "<p>캠페인 신청 방법을 안내드립니다.</p><p><strong>신청 방법</strong></p><p>1. 캠페인 목록에서 원하는 캠페인을 선택합니다.</p><p>2. 캠페인 상세 페이지에서 '신청하기' 버튼을 클릭합니다.</p><p>3. 신청 정보를 입력하고 제출합니다.</p><p>신청 후 선정 여부는 캠페인 종료 후 알림으로 안내됩니다.</p>",
+      "view_count": 0,
+      "registered_date": "2026-02-18 09:00",
+      "registered_by": "관리자 C",
+      "is_pinned": false
+    },
+    {
+      "id": 19,
+      "number": "000102",
+      "division": "자주 묻는 질문",
+      "category": "캠페인",
+      "target": "리뷰어",
+      "title": "[캠페인] 캠페인 당첨 결과는 언제 확인할 수 있나요?",
+      "content": "<p>캠페인 당첨 결과 확인 방법을 안내드립니다.</p><p><strong>당첨 결과 확인 방법</strong></p><p>- 캠페인 모집 마감 후 선정이 완료되면 알림이 발송됩니다.</p><p>- 마이페이지 > 캠페인 관리 > 선정완료 탭에서도 확인할 수 있습니다.</p><p>선정 기간은 캠페인마다 다를 수 있으니 캠페인 상세 페이지에서 확인해 주세요.</p>",
+      "view_count": 0,
+      "registered_date": "2026-02-18 09:10",
+      "registered_by": "관리자 C",
+      "is_pinned": false
+    },
+    {
+      "id": 20,
+      "number": "000103",
+      "division": "자주 묻는 질문",
+      "category": "캠페인",
+      "target": "리뷰어",
+      "title": "[캠페인] 캠페인별로 신청 가능한 횟수에 제한이 있나요?",
+      "content": "<p>동일한 캠페인에는 중복 신청이 불가능합니다.</p><p><strong>신청 제한 정책</strong></p><p>- 동일 캠페인 중복 신청 불가</p><p>- 이미 취소한 캠페인은 재신청이 제한될 수 있습니다.</p><p>- 패널티가 있는 경우 신청이 제한될 수 있습니다.</p><p>자세한 내용은 운영 정책을 참고해 주세요.</p>",
+      "view_count": 0,
+      "registered_date": "2026-02-18 09:20",
+      "registered_by": "관리자 C",
+      "is_pinned": false
+    },
+    {
+      "id": 21,
+      "number": "000104",
+      "division": "자주 묻는 질문",
+      "category": "캠페인",
+      "target": "리뷰어",
+      "title": "[캠페인] 이미 신청한 캠페인을 취소하고 다시 신청할 수 있나요?",
+      "content": "<p>신청 취소 후 재신청 가능 여부를 안내드립니다.</p><p><strong>취소 및 재신청 정책</strong></p><p>- 신청 취소는 선정 발표 전까지만 가능합니다.</p><p>- 취소 후 동일 캠페인 재신청은 원칙적으로 제한됩니다.</p><p>- 다만 캠페인 운영 정책에 따라 예외가 적용될 수 있습니다.</p><p>문의사항이 있으시면 고객센터로 연락 주세요.</p>",
+      "view_count": 0,
+      "registered_date": "2026-02-18 09:30",
+      "registered_by": "관리자 C",
+      "is_pinned": false
+    },
+    {
+      "id": 22,
+      "number": "000105",
+      "division": "자주 묻는 질문",
+      "category": "캠페인",
+      "target": "리뷰어",
+      "title": "[캠페인] 캠페인별 콘텐츠 제출 기한은 어디서 확인하나요?",
+      "content": "<p>콘텐츠 제출 기한 확인 방법을 안내드립니다.</p><p><strong>확인 방법</strong></p><p>1. 마이페이지 > 캠페인 관리 > 진행 중 탭을 선택합니다.</p><p>2. 해당 캠페인 카드에서 콘텐츠 제출 마감일을 확인합니다.</p><p>3. 캠페인 상세 페이지에서도 제출 기한을 확인할 수 있습니다.</p><p>기한 내 제출하지 않으면 패널티가 부과될 수 있으니 주의해 주세요.</p>",
+      "view_count": 0,
+      "registered_date": "2026-02-18 09:40",
+      "registered_by": "관리자 C",
+      "is_pinned": false
+    }
+  ]
 }

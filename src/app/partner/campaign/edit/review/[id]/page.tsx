@@ -18,12 +18,6 @@ import { useRouter, useParams } from "next/navigation";
 import Loading from "@/app/loading";
 import ReviewCampaignForm from "@/components/partner/campaign_create_form/ReviewCampaignForm";
 import { CampaignFormData } from "@/types/domain/user";
-import {
-  updateReviewCampaign,
-  reviewCampaignsExtended,
-} from "@/data/campaign/review/reviewCampaigns";
-import { getCampaignById } from "@/data/partner/sharedCampaigns";
-import type { CampaignWithApplicants } from "@/data/partner/sharedCampaigns";
 import layoutStyles from "@/styles/partner/partner_layout.module.css";
 import PartnerSubHeader from "@/components/fragments/PartnerSubHeader";
 import Toast from "@/components/common/toast/Toast";
@@ -98,193 +92,19 @@ export default function ReviewCampaignEditPage() {
   const handleSubmit = async (formData: CampaignFormData) => {
     setIsSubmitting(true);
     try {
-      const finalFormData = { ...formData, isUrgent };
+      const imageUrl =
+        formData.thumbnailImageUrl ||
+        initialData?.thumbnailImageUrl ||
+        "/images/main/campaign_img/eximg_5.png";
 
-      // 이미지 URL 처리
-      // 폼에서 전달받은 thumbnailImageUrl을 우선 사용 (새로 업로드한 이미지)
-      // 없으면 기존 이미지 URL 유지
-      let imageUrl = formData.thumbnailImageUrl;
-
-      // 새 이미지가 없으면 기존 이미지 URL 사용
-      if (!imageUrl) {
-        const existingCampaign = getCampaignById(campaignId);
-        if (existingCampaign) {
-          imageUrl = existingCampaign.campaignInfo.image;
-        } else {
-          imageUrl = "/images/main/campaign_img/eximg_5.png"; // 기본 이미지
-        }
-      }
-
-      const updatedCampaign = updateReviewCampaign(campaignId, finalFormData, imageUrl);
-
-      // 원본 확장 데이터에서 상세 이미지 등 확장 필드 가져오기
-      const originalData = reviewCampaignsExtended.find((c) => c.id === campaignId);
-
-      // 상세 이미지 URL 배열 변환
-      const detailImageUrls =
-        formData.detailImagePreviews && formData.detailImagePreviews.length > 0
-          ? formData.detailImagePreviews
-          : originalData?.campaign_detail_images && originalData.campaign_detail_images.length > 0
-            ? originalData.campaign_detail_images
-            : originalData?.campaign_detail_image
-              ? [originalData.campaign_detail_image]
-              : [];
-
-      // contentType 결정
-      let contentType: "link" | "image" | "both" | undefined = undefined;
-      if (finalFormData.requireContentLink && finalFormData.requireContentImage) {
-        contentType = "both";
-      } else if (finalFormData.requireContentLink) {
-        contentType = "link";
-      } else if (finalFormData.requireContentImage) {
-        contentType = "image";
-      }
-
-      const storedCampaigns = localStorage.getItem("reviewCampaigns");
-      if (storedCampaigns) {
-        const campaigns: CampaignWithApplicants[] = JSON.parse(storedCampaigns);
-        const index = campaigns.findIndex((c) => c.campaignInfo.id === campaignId);
-        if (index !== -1) {
-          const existingCampaign = campaigns[index];
-          campaigns[index] = {
-            ...updatedCampaign,
-            applicantData: updatedCampaign.applicantData ||
-              existingCampaign.applicantData || {
-                applicants: [],
-                selectedApplicants: [],
-              },
-            campaign_detail_images: detailImageUrls,
-            campaign_detail_image: detailImageUrls[0] || originalData?.campaign_detail_image || "",
-            contentType: contentType || originalData?.contentType,
-            isUrgent: isUrgent,
-            registeredAt: originalData?.registeredAt || existingCampaign.registeredAt,
-            description: formData.providedItems || originalData?.description || "",
-            purchaseLink: formData.promotionLink || originalData?.purchaseLink || "",
-            keyword: formData.keywords || originalData?.keyword || "",
-            subcategory: formData.category || originalData?.subcategory || "",
-            channel: originalData?.channel || "",
-            points:
-              Number(String(formData.additionalPoints || "").replace(/,/g, "")) ||
-              originalData?.points ||
-              0,
-            adultOnly: formData.adultOnly ?? originalData?.adultOnly ?? false,
-            allowReParticipation:
-              formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,
-            allowLateSubmission:
-              formData.allowLateSubmission ?? originalData?.allowLateSubmission ?? false,
-            contactPhone: formData.contactPhone || originalData?.contactPhone || "",
-            detailedSchedule: originalData?.detailedSchedule || {
-              applicationStart: formData.recruitmentPeriod.split("~")[0]?.trim() || "",
-              applicationEnd: formData.recruitmentPeriod.split("~")[1]?.trim() || "",
-              announcement: formData.announcementDate || "",
-              purchasePeriod: formData.purchasePeriod || "",
-              registrationPeriod: formData.registrationPeriod || "",
-            },
-            requirements: originalData?.requirements || [],
-            guidelineTexts: formData.guidelines
-              ? formData.guidelines.split("\n\n")
-              : originalData?.guidelineTexts || [],
-          } as unknown as CampaignWithApplicants;
-          localStorage.setItem("reviewCampaigns", JSON.stringify(campaigns));
-        } else {
-          campaigns.push({
-            ...updatedCampaign,
-            applicantData: updatedCampaign.applicantData || {
-              applicants: [],
-              selectedApplicants: [],
-            },
-            campaign_detail_images: detailImageUrls,
-            campaign_detail_image: detailImageUrls[0] || originalData?.campaign_detail_image || "",
-            contentType: contentType || originalData?.contentType,
-            isUrgent: isUrgent,
-            registeredAt: originalData?.registeredAt,
-            description: formData.providedItems || originalData?.description || "",
-            purchaseLink: formData.promotionLink || originalData?.purchaseLink || "",
-            keyword: formData.keywords || originalData?.keyword || "",
-            subcategory: formData.category || originalData?.subcategory || "",
-            channel: originalData?.channel || "",
-            points:
-              Number(String(formData.additionalPoints || "").replace(/,/g, "")) ||
-              originalData?.points ||
-              0,
-            adultOnly: formData.adultOnly ?? originalData?.adultOnly ?? false,
-            allowReParticipation:
-              formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,
-            allowLateSubmission:
-              formData.allowLateSubmission ?? originalData?.allowLateSubmission ?? false,
-            contactPhone: formData.contactPhone || originalData?.contactPhone || "",
-            detailedSchedule: originalData?.detailedSchedule || {
-              applicationStart: formData.recruitmentPeriod.split("~")[0]?.trim() || "",
-              applicationEnd: formData.recruitmentPeriod.split("~")[1]?.trim() || "",
-              announcement: formData.announcementDate || "",
-              purchasePeriod: formData.purchasePeriod || "",
-              registrationPeriod: formData.registrationPeriod || "",
-            },
-            requirements: originalData?.requirements || [],
-            guidelineTexts: formData.guidelines
-              ? formData.guidelines.split("\n\n")
-              : originalData?.guidelineTexts || [],
-          } as unknown as CampaignWithApplicants);
-          localStorage.setItem("reviewCampaigns", JSON.stringify(campaigns));
-        }
-      } else {
-        localStorage.setItem(
-          "reviewCampaigns",
-          JSON.stringify([
-            {
-              ...updatedCampaign,
-              applicantData: updatedCampaign.applicantData || {
-                applicants: [],
-                selectedApplicants: [],
-              },
-              campaign_detail_images: detailImageUrls,
-              campaign_detail_image:
-                detailImageUrls[0] || originalData?.campaign_detail_image || "",
-              contentType: contentType || originalData?.contentType,
-              isUrgent: isUrgent,
-              registeredAt: originalData?.registeredAt,
-              description: formData.providedItems || originalData?.description || "",
-              purchaseLink: formData.promotionLink || originalData?.purchaseLink || "",
-              keyword: formData.keywords || originalData?.keyword || "",
-              subcategory: formData.category || originalData?.subcategory || "",
-              channel: originalData?.channel || "",
-              points:
-                Number(String(formData.additionalPoints || "").replace(/,/g, "")) ||
-                originalData?.points ||
-                0,
-              adultOnly: formData.adultOnly ?? originalData?.adultOnly ?? false,
-              allowReParticipation:
-                formData.allowReParticipation ?? originalData?.allowReParticipation ?? false,
-              allowLateSubmission:
-                formData.allowLateSubmission ?? originalData?.allowLateSubmission ?? false,
-              contactPhone: formData.contactPhone || originalData?.contactPhone || "",
-              detailedSchedule: originalData?.detailedSchedule || {
-                applicationStart: formData.recruitmentPeriod.split("~")[0]?.trim() || "",
-                applicationEnd: formData.recruitmentPeriod.split("~")[1]?.trim() || "",
-                announcement: formData.announcementDate || "",
-                purchasePeriod: formData.purchasePeriod || "",
-                registrationPeriod: formData.registrationPeriod || "",
-              },
-              requirements: originalData?.requirements || [],
-              guidelineTexts: formData.guidelines
-                ? formData.guidelines.split("\n\n")
-                : originalData?.guidelineTexts || [],
-            } as unknown as CampaignWithApplicants,
-          ])
-        );
-      }
-
-      // mock DB에 캠페인 수정 저장
-      patchCampaign(campaignId, {
+      await patchCampaign(campaignId, {
         title: formData.title,
         description: formData.providedItems,
-      }).catch((_apiError) => {
-        console.error("캠페인 수정 API 호출 실패:", _apiError);
+        thumbnailUrl: imageUrl,
+        isEmergency: isUrgent,
       });
 
       setToast({ is_open: true, message: "저장되었습니다." });
-
-      // 페이지 새로고침
       router.refresh();
     } catch (_error) {
       alert("캠페인 수정에 실패했습니다. 다시 시도해주세요.");

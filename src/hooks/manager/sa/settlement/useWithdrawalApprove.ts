@@ -12,12 +12,12 @@
  */
 
 import { useState } from "react";
-import type { WithdrawalRequestItem } from "@/data/manager_sa/settlement/withdrawalRequestData";
+import type { AdminWithdrawalRequestItem } from "@/types/api/admin";
 import type { StoredRequest, StoredAccount, PointHistoryEntry } from "./withdrawalTypes";
 import { patchWithdrawalStatus } from "@/lib/api/point";
 
 interface UseWithdrawalApproveParams {
-  sorted_request_list: WithdrawalRequestItem[];
+  sorted_request_list: AdminWithdrawalRequestItem[];
   selected_ids: string[];
   setSelectedIds: (ids: string[]) => void;
 }
@@ -29,7 +29,9 @@ export function useWithdrawalApprove({
 }: UseWithdrawalApproveParams) {
   const [is_approve_confirm_modal_open, setIsApproveConfirmModalOpen] = useState(false);
   const [is_approve_success_modal_open, setIsApproveSuccessModalOpen] = useState(false);
-  const [pending_approve_items, setPendingApproveItems] = useState<WithdrawalRequestItem[]>([]);
+  const [pending_approve_items, setPendingApproveItems] = useState<AdminWithdrawalRequestItem[]>(
+    []
+  );
 
   const handle_approve = (id: string) => {
     const items_to_approve =
@@ -38,7 +40,7 @@ export function useWithdrawalApprove({
         : [sorted_request_list.find((item) => item.id === id)];
 
     const valid_items = items_to_approve.filter(
-      (item): item is WithdrawalRequestItem => item !== undefined
+      (item): item is AdminWithdrawalRequestItem => item !== undefined
     );
 
     if (valid_items.length === 0) return;
@@ -81,7 +83,7 @@ export function useWithdrawalApprove({
         const storedAccounts = localStorage.getItem("user_accounts");
         if (storedAccounts) {
           const accounts = JSON.parse(storedAccounts);
-          pending_approve_items.forEach((item: WithdrawalRequestItem) => {
+          pending_approve_items.forEach((item: AdminWithdrawalRequestItem) => {
             const requestData = requestsMap.get(item.id);
             if (!requestData) return;
             const requestAmount = requestData.requested_amount;
@@ -113,7 +115,7 @@ export function useWithdrawalApprove({
         // 3. 알림 추가
         const storedNotifications = localStorage.getItem("notifications");
         const notifications = storedNotifications ? JSON.parse(storedNotifications) : [];
-        pending_approve_items.forEach((item: WithdrawalRequestItem) => {
+        pending_approve_items.forEach((item: AdminWithdrawalRequestItem) => {
           const requestData = requestsMap.get(item.id);
           if (requestData) {
             notifications.unshift({
@@ -134,7 +136,7 @@ export function useWithdrawalApprove({
         const withdrawalHistory = storedHistory ? JSON.parse(storedHistory) : [];
         const updatedAccounts = JSON.parse(localStorage.getItem("user_accounts") || "[]");
 
-        pending_approve_items.forEach((item: WithdrawalRequestItem) => {
+        pending_approve_items.forEach((item: AdminWithdrawalRequestItem) => {
           const requestData = requestsMap.get(item.id);
           if (requestData) {
             const userAccount = (updatedAccounts as StoredAccount[]).find(
@@ -173,7 +175,7 @@ export function useWithdrawalApprove({
         localStorage.setItem("withdrawal_history", JSON.stringify(withdrawalHistory));
 
         // 5. mock DB에도 출금 상태 업데이트
-        pending_approve_items.forEach((item: WithdrawalRequestItem) => {
+        pending_approve_items.forEach((item: AdminWithdrawalRequestItem) => {
           const numericId = parseInt(String(item.id).replace(/\D/g, ""), 10);
           if (numericId) {
             patchWithdrawalStatus(numericId, {

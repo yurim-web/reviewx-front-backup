@@ -18,7 +18,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import type { PointHistory } from "@/types/domain/user";
 import { pointHistoryData, pendingPointListData, pointSummary } from "@/data/user/point/pointData";
-import { fetchReviewerPoint, fetchPointHistory } from "@/lib/api/point";
+import { fetchReviewerPoint, fetchPointHistory, fetchPendingPoints } from "@/lib/api/point";
 import type { PointHistoryApiItem } from "@/types/api/point";
 import { useReviewerProfile } from "@/hooks/user/mypage/useReviewerProfile";
 
@@ -91,7 +91,7 @@ export interface UsePointDataReturn {
   pointInfo: PointInfo;
   accountInfo: AccountInfo;
   userPointHistory: PointHistory[];
-  pendingPointList: typeof pendingPointListData;
+  pendingPointList: { id: string; description: string; date: string; amount: number }[];
   isAccountInfoValid: () => boolean;
 }
 
@@ -121,6 +121,22 @@ export function usePointData(): UsePointDataReturn {
     staleTime: 30_000,
     refetchOnWindowFocus: true,
     select: (data) => data.map(adaptHistoryItem),
+  });
+
+  // 적립 예정 포인트 (API)
+  const { data: apiPendingList } = useQuery({
+    queryKey: ["pendingPoints", reviewerId],
+    queryFn: () => fetchPendingPoints(reviewerId),
+    enabled: reviewerId > 0,
+    staleTime: 30_000,
+    refetchOnWindowFocus: true,
+    select: (data) =>
+      data.map((item) => ({
+        id: String(item.id),
+        description: item.description,
+        date: item.date.slice(0, 10),
+        amount: item.amount,
+      })),
   });
 
   // 계좌 정보 (서버 프로필에서 로드)
@@ -159,7 +175,7 @@ export function usePointData(): UsePointDataReturn {
     accountInfo,
     // API 로딩 중(undefined)이면 정적 데이터 표시, API 성공 시 API 데이터 사용
     userPointHistory: apiHistory ?? pointHistoryData,
-    pendingPointList: pendingPointListData,
+    pendingPointList: apiPendingList ?? pendingPointListData,
     isAccountInfoValid,
   };
 }

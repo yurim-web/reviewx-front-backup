@@ -18,7 +18,6 @@ import { useCampaignContents } from "@/hooks/partner/campaign_contents/useCampai
 import CampaignContentsLayout from "@/components/partner/campaign_contents/CampaignContentsLayout";
 import { createExperienceCardRenderer } from "@/components/partner/campaign_contents/card_renderers/renderExperienceCard";
 import { extractDeadlineDate } from "@/utils/formatting/date";
-import { getReporterContentsById } from "@/data/campaign/reporter/reporterCampaigns";
 
 export default function ReporterContentsDetailPage() {
   const {
@@ -33,7 +32,7 @@ export default function ReporterContentsDetailPage() {
     handleReport,
     reportedDates,
     formatDateTime,
-  } = useCampaignContents(getReporterContentsById);
+  } = useCampaignContents();
 
   const deadlineDate = extractDeadlineDate(campaignInfo?.registrationPeriod);
 

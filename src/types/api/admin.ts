@@ -153,6 +153,69 @@ export interface AdminPaymentApiItem {
 }
 
 // ----------------------------------------
+// 이용제한(차단) 목록
+// ----------------------------------------
+export interface AdminBlacklistApiItem {
+  id: string;
+  name: string;
+  user_id: string;
+  division: string;
+  current_points: number;
+  ip_address: string;
+  block_code: string;
+  block_reason: string;
+  registered_date: string;
+  registered_by: string;
+}
+
+// ----------------------------------------
+// 관리자 목록 (SA 전용)
+// ----------------------------------------
+export interface AdminMemberApiItem {
+  id: string;
+  number: string;
+  name: string;
+  phone: string;
+  report_count: number;
+  block_count: number;
+  last_access_date: string;
+  join_date: string;
+  status: string;
+}
+
+// ----------------------------------------
+// 출금 요청 목록 (SA 정산 - 새 엔드포인트)
+// ----------------------------------------
+export interface AdminWithdrawalRequestItem {
+  id: string;
+  number: string;
+  round: string;
+  name: string;
+  account: string;
+  ssn: string;
+  amount: string;
+  remaining: string;
+  requestDate: string;
+  type: string;
+  status: string;
+}
+
+// ----------------------------------------
+// 캠페인 신청자 (진행현황 상세)
+// ----------------------------------------
+export interface CampaignApplicationApiItem {
+  id: number;
+  campaign_id: number;
+  reviewer_id: number;
+  /** PENDING | SELECTED */
+  status: string;
+  apply_date: string;
+  channel_url: string;
+  follower_count: number;
+  introduction: string;
+}
+
+// ----------------------------------------
 // 대시보드
 // ----------------------------------------
 export interface AdminDashboardApiItem {
