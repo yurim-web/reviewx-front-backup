@@ -83,3 +83,6 @@ SKILL.md
 docs/CODEX_MEMORY.md
 docs/WORKFLOW_CHECKLIST.md
 mock/db.backup.json
+
+# Cursor IDE 설정 (Claude Code와 무관)
+.cursor/
