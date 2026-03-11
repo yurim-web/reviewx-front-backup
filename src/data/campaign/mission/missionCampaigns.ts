@@ -707,6 +707,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     id: "4020",
     title: "운동 루틴 공유 미션",
     category: "미션형",
+    channel: "쇼츠",
     image: "/images/main/campaign_img/eximg_9.png",
     subcategory: "여행",
     points: 25000,
