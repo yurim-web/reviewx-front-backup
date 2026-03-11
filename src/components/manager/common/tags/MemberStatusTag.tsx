@@ -54,7 +54,7 @@ export default function MemberStatusTag({ status }: MemberStatusTagProps) {
    * 예: "일시 정지" → "일시정지", "영구 정지" → "영구정지"
    */
   const normalize_status = (status_value: string): string => {
-    return status_value.replace(/\s+/g, "");
+    return (status_value ?? "").replace(/\s+/g, "");
   };
 
   /**
