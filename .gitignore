@@ -65,6 +65,7 @@ temp_*.json
 
 # 임시 스크립트 (일회성 데이터 조작용)
 scripts/
+!scripts/add_screenshots_*.js
 
 # 테스트 파일
 tests/
