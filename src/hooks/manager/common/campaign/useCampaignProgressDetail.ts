@@ -126,8 +126,7 @@ function mapCampaignType(type: string): CampaignInfo["campaignType"] {
 function mapToCampaignInfo(campaign: AdminCampaignApiItem): CampaignInfo {
   const channelName = campaign.requiredPlatform?.channelName ?? "";
   const recruitStart = campaign.recruitStartAt ?? "";
-  const recruitEnd =
-    campaign.recruitEndAt ?? (campaign as Record<string, unknown>).recruitEndAt ?? "";
+  const recruitEnd = campaign.recruitEndAt ?? "";
   const contentStart = campaign.content?.contentStartAt ?? "";
   const contentEnd = campaign.content?.contentEndAt ?? "";
   const extraPoint = campaign.reward?.extraRewardPoint ?? 0;

@@ -116,9 +116,12 @@ export interface AdminCampaignApiItem {
   appliedCount: number;
   recruitStartAt: string;
   recruitEndAt: string;
+  recruit?: { recruitLimit: number; recruitStartAt: string; recruitEndAt: string };
   content: { contentStartAt: string; contentEndAt: string };
   reward: { extraRewardPoint: number; paymentRewardPoint: number };
   description?: string;
+  selectedCount?: number;
+  metrics?: { appliedCount: number; selectedCount: number; applicationRate: number };
 }
 
 // ----------------------------------------
