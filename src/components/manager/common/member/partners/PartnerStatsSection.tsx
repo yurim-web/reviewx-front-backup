@@ -62,6 +62,7 @@ export default function PartnerStatsSection({
     // 월간 활동 회원 (최근 한 달 이내 접속한 회원)
     // last_access_date 형식: "2025-08-01 18:56"
     const monthly_active = partner_list.filter((partner) => {
+      if (!partner.last_access_date) return false;
       const last_access_date = new Date(partner.last_access_date.replace(" ", "T"));
       return isWithinInterval(last_access_date, {
         start: one_month_ago,
@@ -72,6 +73,7 @@ export default function PartnerStatsSection({
     // 월간 신규 가입자 수 (최근 한 달 이내 가입한 회원)
     // join_date 형식: "2025-08-01 18:56"
     const monthly_new = partner_list.filter((partner) => {
+      if (!partner.join_date) return false;
       const join_date = new Date(partner.join_date.replace(" ", "T"));
       return isWithinInterval(join_date, {
         start: one_month_ago,
@@ -81,6 +83,7 @@ export default function PartnerStatsSection({
 
     // 휴면 회원 (3개월 이상 접속하지 않은 회원)
     const dormant = partner_list.filter((partner) => {
+      if (!partner.last_access_date) return false;
       const last_access_date = new Date(partner.last_access_date.replace(" ", "T"));
       return last_access_date < three_months_ago;
     }).length;

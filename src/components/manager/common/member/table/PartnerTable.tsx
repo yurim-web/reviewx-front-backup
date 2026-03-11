@@ -438,29 +438,33 @@ const PartnerTable = forwardRef<PartnerTableRef, PartnerTableProps>(function Par
 
                   {/* 캠페인 진행 */}
                   <div className={cssStyles.table_cell_campaign_in_progress}>
-                    <EllipsisTooltip content={`${partner.campaign_in_progress.toLocaleString()}회`}>
-                      <span>{partner.campaign_in_progress.toLocaleString()}회</span>
+                    <EllipsisTooltip
+                      content={`${(partner.campaign_in_progress ?? 0).toLocaleString()}회`}
+                    >
+                      <span>{(partner.campaign_in_progress ?? 0).toLocaleString()}회</span>
                     </EllipsisTooltip>
                   </div>
 
                   {/* 캠페인 완료 */}
                   <div className={cssStyles.table_cell_campaign_completed}>
-                    <EllipsisTooltip content={`${partner.campaign_completed.toLocaleString()}회`}>
-                      <span>{partner.campaign_completed.toLocaleString()}회</span>
+                    <EllipsisTooltip
+                      content={`${(partner.campaign_completed ?? 0).toLocaleString()}회`}
+                    >
+                      <span>{(partner.campaign_completed ?? 0).toLocaleString()}회</span>
                     </EllipsisTooltip>
                   </div>
 
                   {/* 보유 포인트 */}
                   <div className={cssStyles.table_cell_current_points}>
-                    <EllipsisTooltip content={partner.current_points.toLocaleString()}>
-                      <span>{partner.current_points.toLocaleString()}</span>
+                    <EllipsisTooltip content={(partner.current_points ?? 0).toLocaleString()}>
+                      <span>{(partner.current_points ?? 0).toLocaleString()}</span>
                     </EllipsisTooltip>
                   </div>
 
                   {/* 사용 포인트 */}
                   <div className={cssStyles.table_cell_used_points}>
-                    <EllipsisTooltip content={partner.used_points.toLocaleString()}>
-                      <span>{partner.used_points.toLocaleString()}</span>
+                    <EllipsisTooltip content={(partner.used_points ?? 0).toLocaleString()}>
+                      <span>{(partner.used_points ?? 0).toLocaleString()}</span>
                     </EllipsisTooltip>
                   </div>
 
@@ -474,7 +478,7 @@ const PartnerTable = forwardRef<PartnerTableRef, PartnerTableProps>(function Par
                   {/* 상태 */}
                   <div className={cssStyles.table_cell_status}>
                     <MemberStatusTag
-                      status={partner.status as "정상" | "일시 정지" | "영구 정지"}
+                      status={(partner.status ?? "정상") as "정상" | "일시 정지" | "영구 정지"}
                     />
                   </div>
                 </div>
