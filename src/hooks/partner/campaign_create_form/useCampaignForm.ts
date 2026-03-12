@@ -395,8 +395,9 @@ export function useCampaignForm({
 
     const newFiles = Array.from(files);
 
-    // 이미지 업로드 검증 (최대 7장)
-    const validation = validateImagesForUpload(newFiles, detailImages.length, 7);
+    // 이미지 업로드 검증 (최대 7장) - 임시저장 복원된 previews도 포함하여 카운트
+    const currentCount = Math.max(detailImages.length, detailPreviews.length);
+    const validation = validateImagesForUpload(newFiles, currentCount, 7);
 
     if (!validation.isValid && validation.errorMessage) {
       setImageErrorModal({

@@ -152,7 +152,7 @@ export function ThumbnailAndDetailImages({
       {/* 상세 이미지 업로드 */}
       <article className={infoStyles.form_group}>
         <label className={infoStyles.form_label}>
-          상세 이미지 ({detailImages.length}/7)
+          상세 이미지 ({detailPreviews.length}/7)
           <span className={infoStyles.required}>*</span>
         </label>
         <div className={infoStyles.image_upload_area}>
@@ -179,7 +179,7 @@ export function ThumbnailAndDetailImages({
           ))}
 
           {/* 상세 이미지 업로드 버튼 (최대 7개까지) - 캠페인 오픈 후에는 숨김 */}
-          {detailImages.length < 7 && !(isEditMode && !isEditable) && (
+          {detailPreviews.length < 7 && !(isEditMode && !isEditable) && (
             <div
               className={infoStyles.image_upload_placeholder}
               onClick={isEditMode && !isEditable ? undefined : handleDetailImagesUploadClick}
