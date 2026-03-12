@@ -74,6 +74,9 @@ check_*.js
 check_*.py
 check_*.ts
 
+# Claude 설정 (API 토큰 포함)
+.claude/settings.local.json
+
 # Claude 스킬 작업 파일
 .claude/skills/webapp-testing/
 .playwright-mcp/
