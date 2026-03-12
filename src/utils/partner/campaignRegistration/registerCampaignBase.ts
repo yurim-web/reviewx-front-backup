@@ -92,13 +92,33 @@ function buildDbPayload(
   const extraReward = Number(formData.additionalPoints) || 0;
   const purchaseReward = Number(formData.purchasePoints) || 0;
 
+  // mock 환경: DataURL은 json-server body-parser 크기 제한에 걸리므로 정적 URL 사용
+  // 썸네일: config.imageUrl (eximg_1), 상세: eximg_2~8 순번 할당
+  const fd = formData as unknown as Record<string, unknown>;
+  const thumbnailUrl = imageUrl;
+  const detailPreviews = (fd.detailImagePreviews as string[]) || [];
+  // 상세이미지는 썸네일과 다른 정적 이미지 URL로 구별
+  const DETAIL_IMAGE_URLS = [
+    "/images/main/campaign_img/eximg_2.png",
+    "/images/main/campaign_img/eximg_3.png",
+    "/images/main/campaign_img/eximg_4.png",
+    "/images/main/campaign_img/eximg_5.png",
+    "/images/main/campaign_img/eximg_6.png",
+    "/images/main/campaign_img/eximg_7.png",
+    "/images/main/campaign_img/eximg_8.png",
+  ];
+  const detailImageUrls = detailPreviews.map(
+    (_url, i) => DETAIL_IMAGE_URLS[i % DETAIL_IMAGE_URLS.length]
+  );
+
   return {
     type: CAMPAIGN_TYPE_TO_API[formData.campaignType] || "DELIVERY",
     status: "SCHEDULED",
     isEmergency: formData.isUrgent === true,
     title: formData.title,
-    thumbnailUrl: imageUrl,
-    thumbnail: { url: imageUrl },
+    thumbnailUrl,
+    thumbnail: { url: thumbnailUrl },
+    detailImages: detailImageUrls,
     category: {
       categoryId: 0,
       categoryName: formData.category || "",
@@ -131,7 +151,7 @@ function buildDbPayload(
       requireBodyLink: formData.requireLinkAttachment === true,
     },
     description: formData.providedItems || "",
-    notification: "",
+    notification: formData.guidelines || "",
     metrics: {
       appliedCount: 0,
       selectedCount: 0,
@@ -205,13 +225,16 @@ export async function registerCampaignBase(
 
     if (!saved) return false;
 
-    // mock DB에 캠페인 저장 (DB 스키마 호환 payload, 서버 응답 확인)
+    // mock DB에 캠페인 저장 (DB 스키마 호환 payload)
+    // 타임아웃 3초: json-server 미실행/지연 시 빠르게 실패 처리
     const dbPayload = buildDbPayload(processedFormData, config.imageUrl, userId);
     try {
-      await postPartnerCampaign(dbPayload);
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("timeout")), 3000)
+      );
+      await Promise.race([postPartnerCampaign(dbPayload), timeoutPromise]);
     } catch (_apiError) {
-      // mock 서버 미실행 시에도 localStorage 저장은 완료됐으므로 성공 처리
-      console.warn("캠페인 등록 API 호출 실패 (localStorage 저장 완료):", _apiError);
+      // mock 서버 미실행/타임아웃 시에도 localStorage 저장은 완료됐으므로 성공 처리
     }
 
     return true;

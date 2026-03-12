@@ -78,16 +78,21 @@ export function useCampaignCreate({
 
   /**
    * 확인 모달에서 확인 버튼 클릭 시 실제 등록 처리
+   * BaseModal.handle_confirm이 on_confirm() 후 on_close()를 동기 호출하므로,
+   * 여기서는 모달 닫기 없이 등록만 트리거 (on_close에서 모달 닫김)
    */
-  const handleConfirm = async () => {
+  const handleConfirm = () => {
     if (!pendingFormData || isSubmitting) return;
 
-    setIsConfirmModalOpen(false);
-    await handleRegister(pendingFormData, pendingIsUrgent);
+    // pendingFormData를 로컬 변수로 캡처 (on_close 후에도 안전)
+    const formData = pendingFormData;
+    const urgentValue = pendingIsUrgent;
 
-    // Cleanup
-    setPendingFormData(null);
-    setPendingIsUrgent(false);
+    // cleanup은 여기서 하지 않음 — handleRegister 완료 후 처리
+    handleRegister(formData, urgentValue).then(() => {
+      setPendingFormData(null);
+      setPendingIsUrgent(false);
+    });
   };
 
   /**
@@ -102,8 +107,9 @@ export function useCampaignCreate({
       const success = await onRegister(formData, urgentValue);
 
       if (success) {
-        // 등록 성공 시 캠페인 관리 페이지로 이동
-        router.replace("/partner/campaign_management");
+        // 등록 성공 시 캠페인 관리 페이지로 이동 (새로고침 포함)
+        window.location.href = "/partner/campaign_management";
+        return;
       } else {
         // 저장 실패 (QuotaExceeded 등)
         setIsErrorModalOpen(true);
@@ -125,6 +131,9 @@ export function useCampaignCreate({
         <BaseModal
           is_open={isConfirmModalOpen}
           on_close={() => {
+            setIsConfirmModalOpen(false);
+          }}
+          on_cancel={() => {
             setIsConfirmModalOpen(false);
             setPendingFormData(null);
           }}

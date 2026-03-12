@@ -66,9 +66,10 @@ export function useCampaignFormValidation({
     // 이미지 검증
     // 수정 모드: 썸네일만 있으면 OK (상세 이미지는 이미 서버에 저장된 것으로 간주)
     // 등록 모드: 썸네일 + 상세 이미지 모두 필요
-    const hasImages = isEditMode
-      ? thumbnailPreview !== null || thumbnailImage !== null
-      : thumbnailImage !== null && detailImages.length > 0;
+    // 임시저장에서 불러온 경우 File 객체는 없지만 preview DataURL은 있으므로 둘 다 체크
+    const hasThumbnail = thumbnailImage !== null || thumbnailPreview !== null;
+    const hasDetailImages = detailImages.length > 0 || detailPreviews.length > 0;
+    const hasImages = isEditMode ? hasThumbnail : hasThumbnail && hasDetailImages;
 
     if (!hasImages) {
     }
