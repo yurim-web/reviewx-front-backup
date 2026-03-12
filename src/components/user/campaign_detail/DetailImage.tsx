@@ -14,7 +14,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import styles from "@/styles/user/campaign/campaign_detail/detail_image.module.css";
 
 /**
@@ -74,33 +73,19 @@ export default function CampaignDetailImage({
                 isAllExpanded ? styles.expanded : ""
               }`}
             >
-              <Image
-                src={imageList[0]}
-                alt={`${alt} 1`}
-                fill
-                style={{ objectFit: "cover", objectPosition: "top" }}
-              />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={imageList[0]} alt={`${alt} 1`} />
             </div>
 
-            {/* 
-              나머지 이미지들: 펼쳐져 있을 때만 표시
-              - slice(1): 첫 번째 이미지를 제외한 나머지 이미지들
-              - isAllExpanded가 true일 때만 렌더링됨
-              - 항상 expanded 클래스 적용하여 원본 크기로 표시
-            */}
+            {/* 나머지 이미지들: 펼쳐져 있을 때만 표시 */}
             {isAllExpanded &&
               imageList.slice(1).map((img, index) => (
                 <div
-                  key={index + 1} // index가 0부터 시작하므로 +1을 해서 2, 3, 4... 순서로
+                  key={index + 1}
                   className={`${styles.campaign_detail_image_container} ${styles.expanded}`}
                 >
-                  {/* 상세 이미지 */}
-                  <Image
-                    src={img}
-                    alt={`${alt} ${index + 2}`}
-                    fill
-                    style={{ objectFit: "contain" }}
-                  />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={img} alt={`${alt} ${index + 2}`} />
                 </div>
               ))}
 
