@@ -92,6 +92,7 @@ export interface CampaignDetailApiItem {
     requireBodyLink: boolean;
   };
   notification?: string;
+  detailImages?: string[]; // 상세 이미지 URL 배열 (mock DB)
   visitInfo?: { address: string; reservationRequired: boolean };
   purchaseInfo?: { purchaseLink: string; purchasePoint: number };
   missionInfo?: { requireContentLink: boolean; requireContentImage: boolean };

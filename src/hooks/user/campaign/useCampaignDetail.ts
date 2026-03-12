@@ -56,7 +56,8 @@ export interface CampaignDetailAdapted {
   category: string; // "배송형" etc.
   subcategory: string;
   channel: string;
-  image: string;
+  image: string; // 썸네일 이미지
+  detailImages: string[]; // 상세 이미지 배열
   points: number;
   description: string;
   recruitment: { current: number; total: number };
@@ -96,7 +97,7 @@ function calcDayCount(recruitEndAt: string): string {
   end.setHours(0, 0, 0, 0);
   const diff = Math.ceil((end.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
   if (diff < 0) return "마감";
-  if (diff <= 3) return "마감임박";
+  if (diff <= 1) return "마감임박";
   return `D-${diff}`;
 }
 
@@ -157,6 +158,8 @@ export function adaptCampaignDetail(item: CampaignDetailApiItem): CampaignDetail
     : "";
 
   const thumbnailUrl = item.thumbnail?.url ?? item.thumbnailUrl ?? "";
+  const detailImages =
+    item.detailImages && item.detailImages.length > 0 ? item.detailImages : [thumbnailUrl]; // fallback: 상세이미지 없으면 썸네일 사용
 
   const appliedCount = item.metrics?.appliedCount ?? item.appliedCount ?? 0;
   const recruitLimit = item.recruit?.recruitLimit ?? item.recruitLimit ?? 0;
@@ -170,6 +173,7 @@ export function adaptCampaignDetail(item: CampaignDetailApiItem): CampaignDetail
     channel:
       CHANNEL_LABEL[item.requiredPlatform?.channelName] ?? item.requiredPlatform?.channelName ?? "",
     image: thumbnailUrl,
+    detailImages,
     points: item.reward?.extraRewardPoint ?? 0,
     description: item.description ?? "",
     recruitment: { current: appliedCount, total: recruitLimit },
