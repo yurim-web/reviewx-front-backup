@@ -15,8 +15,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "@/styles/fragments/header.module.css";
-import { mockReviewerNotifications } from "@/data/notification/notificationData";
 import HeaderSearch from "@/components/fragments/HeaderSearch";
+import { useHasNotifications } from "@/hooks/useHasNotifications";
 import { MouseEvent, useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -43,8 +43,9 @@ export default function Header({ has_notifications }: HeaderProps) {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  // 알림 활성 여부 계산
-  const effective_has_notifications = has_notifications ?? mockReviewerNotifications.length > 0;
+  // 알림 활성 여부 계산 (API + localStorage 기준)
+  const apiHasNotifications = useHasNotifications();
+  const effective_has_notifications = has_notifications ?? apiHasNotifications;
 
   // 관리자 로그인 페이지 또는 비로그인 시 알림 비활성
   const showNotificationActive =

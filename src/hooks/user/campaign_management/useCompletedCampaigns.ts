@@ -22,13 +22,19 @@ export function useCompletedCampaigns() {
   const { user } = useAuth();
   const reviewerIdNum = getReviewerIdNum(user?.id);
 
-  const { data: rawCampaigns = [], isLoading } = useQuery({
+  const { data: allCampaigns = [], isLoading } = useQuery({
     queryKey: ["reviewerCampaigns", reviewerIdNum],
     queryFn: () => fetchReviewerCampaigns(reviewerIdNum!),
     enabled: !!reviewerIdNum,
     staleTime: 1000 * 30,
     retry: false,
   });
+
+  // mock: 클라이언트 reviewer_id 필터링
+  const rawCampaigns = useMemo(
+    () => allCampaigns.filter((c) => !c.reviewer_id || c.reviewer_id === reviewerIdNum),
+    [allCampaigns, reviewerIdNum]
+  );
 
   const campaigns: CampaignApplication[] = useMemo(
     () =>

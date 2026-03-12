@@ -18,17 +18,13 @@
 
 "use client";
 
-import { useState, useEffect, useLayoutEffect } from "react";
-import { usePathname } from "next/navigation";
+import { useMemo } from "react";
 import TabNavigation from "@/components/user/campaign_management/TabNavigation";
 import StatisticsTab from "@/components/user/campaign_management/StatisticsTab";
 import type { MainTab, StatTab } from "@/types/domain/user";
 
-// 임시 데이터 import
-import {
-  campaignManagementStats,
-  getClientCampaignStats,
-} from "@/data/user/campaign_management/campaignManagementData";
+// fallback 데이터 (propStats가 없을 때만 사용)
+import { campaignManagementStats } from "@/data/user/campaign_management/campaignManagementData";
 
 interface CampaignManagementHeaderProps {
   /** 현재 활성 메인 탭 (캠페인/포인트/계정) */
@@ -66,27 +62,8 @@ export default function CampaignManagementHeader({
   setActiveStatTab,
   stats: propStats,
 }: CampaignManagementHeaderProps) {
-  const pathname = usePathname();
-  // 신청 탭 등에서 propStats가 아직 undefined로 올 때 정적(5) 잔상 방지: 클라이언트에서는 곧바로 실제 통계로 초기화
-  const [stats, setStats] = useState(() => {
-    if (propStats != null) return propStats;
-    if (typeof window !== "undefined") return getClientCampaignStats();
-    return campaignManagementStats;
-  });
-
-  // 경로/prop 변경 시 통계 동기화 (첫 페인트 전에 맞춤)
-  useLayoutEffect(() => {
-    if (typeof window === "undefined") return;
-    if (propStats != null) {
-      setStats(propStats);
-      return;
-    }
-    setStats(getClientCampaignStats());
-  }, [pathname, propStats]);
-
-  useEffect(() => {
-    if (propStats != null) setStats(propStats);
-  }, [propStats]);
+  // propStats가 있으면 그대로 사용, 없으면 정적 fallback
+  const stats = useMemo(() => propStats ?? campaignManagementStats, [propStats]);
 
   return (
     <>
