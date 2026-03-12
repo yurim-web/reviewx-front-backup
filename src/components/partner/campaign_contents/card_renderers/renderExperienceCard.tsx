@@ -55,6 +55,7 @@ export function createExperienceCardRenderer(params: RenderExperienceCardParams)
       channelId: item.channelId || "",
       registrationDate: params.formatDateTime(item.createdAt),
       updatedAt: item.updatedAt ? params.formatDateTime(item.updatedAt) : undefined,
+      receiptImages: item.receiptImages,
     };
 
     const dateLabel: "등록" | "수정" | "지각 등록" = (item as ContentItemExtended).isLateSubmission

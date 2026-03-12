@@ -45,6 +45,19 @@ const TYPE_MAP: Record<string, string> = {
 };
 import type { CampaignInfo } from "@/types/domain/partner";
 
+// content_url에서 채널 ID(username/handle) 추출
+function extractChannelId(contentUrl: string | null | undefined): string {
+  if (!contentUrl) return "";
+  try {
+    const url = new URL(contentUrl);
+    // pathname의 첫 번째 segment 추출 (예: /username → "username")
+    const segment = url.pathname.split("/").filter(Boolean)[0];
+    return segment ?? "";
+  } catch {
+    return "";
+  }
+}
+
 // recruitEndAt + 7일을 선정 발표일로 유도 (API에 announcementDate 없을 때)
 function deriveAnnouncementDate(recruitEndAt?: string): string {
   if (!recruitEndAt) return "";
@@ -315,37 +328,39 @@ export function useCampaignContents(contentsLoader?: ContentsLoader): UseCampaig
 
   useEffect(() => {
     if (!campaignId) return;
-    // 캠페인 정보는 항상 API에서 가져오기 (rawApiCampaign 채우기 위해)
-    fetchCampaignById(campaignId).then((data) => {
-      if (data) {
-        setRawApiCampaign(data);
-        if (!staticCampaignInfo) {
-          setApiCampaignInfo(mapApiToCampaignInfo(data));
+    // 캠페인 정보와 콘텐츠를 함께 가져와서 channel 정보를 콘텐츠에 반영
+    Promise.all([fetchCampaignById(campaignId), fetchCampaignContents(campaignId)]).then(
+      ([campaignData, items]) => {
+        const channelName = campaignData?.requiredPlatform?.channelName ?? "";
+        if (campaignData) {
+          setRawApiCampaign(campaignData);
+          if (!staticCampaignInfo) {
+            setApiCampaignInfo(mapApiToCampaignInfo(campaignData));
+          }
         }
+        if (!items.length) return;
+        const waiting: ContentItem[] = [];
+        const reviewing: ContentItem[] = [];
+        const completed: ContentItem[] = [];
+        items.forEach((item) => {
+          const base: ContentItem = {
+            id: String(item.id),
+            createdAt: item.submitted_at ?? new Date().toISOString(),
+            status: item.status === "APPROVED" ? "완료" : "검수중",
+            userType: "리뷰어",
+            nickname: `리뷰어${item.reviewer_id ?? ""}`,
+            channelId: extractChannelId(item.content_url),
+            channel: channelName,
+            isLateSubmission: item.is_late_submission,
+            receiptImages: item.receipt_images,
+          };
+          if (item.status === "APPROVED") completed.push(base);
+          else if (item.status === "SUBMITTED") reviewing.push(base);
+          else waiting.push(base);
+        });
+        setApiContents({ waiting, reviewing, completed });
       }
-    });
-    // 콘텐츠는 항상 API에서도 가져오기
-    fetchCampaignContents(campaignId).then((items) => {
-      if (!items.length) return;
-      const waiting: ContentItem[] = [];
-      const reviewing: ContentItem[] = [];
-      const completed: ContentItem[] = [];
-      items.forEach((item) => {
-        const base: ContentItem = {
-          id: String(item.id),
-          createdAt: item.submitted_at ?? new Date().toISOString(),
-          status: item.status === "APPROVED" ? "완료" : "검수중",
-          userType: "리뷰어",
-          nickname: `리뷰어${item.reviewer_id ?? ""}`,
-          channelId: String(item.reviewer_id ?? ""),
-          channel: "",
-        };
-        if (item.status === "APPROVED") completed.push(base);
-        else if (item.status === "SUBMITTED") reviewing.push(base);
-        else waiting.push(base);
-      });
-      setApiContents({ waiting, reviewing, completed });
-    });
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [campaignId]);
 

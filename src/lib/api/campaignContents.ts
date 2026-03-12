@@ -21,10 +21,12 @@ export interface CampaignContentApiItem {
   application_id?: number;
   campaign_id: number;
   reviewer_id?: number;
-  content_url: string;
+  content_url: string | null;
   submitted_at: string;
   status?: string;
   admin_comment?: string | null;
+  is_late_submission?: boolean;
+  receipt_images?: string[];
 }
 
 /** 캠페인 콘텐츠 목록 조회 (GET /partner/campaign/:id/contents → /campaign_contents?campaign_id=:id) */
