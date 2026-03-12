@@ -68,7 +68,7 @@ function calcDayCount(recruitEndAt: string): string {
   end.setHours(0, 0, 0, 0);
   const diff = Math.ceil((end.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
   if (diff < 0) return "마감";
-  if (diff <= 3) return "마감임박";
+  if (diff <= 1) return "마감임박";
   return `D-${diff}`;
 }
 

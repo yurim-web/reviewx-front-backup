@@ -21,9 +21,11 @@ import type { MainTab, StatTab } from "@/types/domain/user";
 import layoutStyles from "@/styles/user/campaign_management/campaign_management_layout.module.css";
 import cardStyles from "../../../../styles/user/campaign_management/campaign_card.module.css";
 import { useUserPenalty } from "@/hooks/user/campaign_management/useUserPenalty";
+import { useAllCampaigns } from "@/hooks/user/campaign_management/useAllCampaigns";
 
 export default function PenaltyPage() {
   const { penaltyData, penaltyStatus } = useUserPenalty();
+  const { stats } = useAllCampaigns();
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<MainTab>("campaign");
@@ -61,6 +63,7 @@ export default function PenaltyPage() {
           setActiveTab={setActiveTab}
           activeStatTab={activeStatTab}
           setActiveStatTab={handleStatTabChange}
+          stats={stats}
         />
 
         <div className={cardStyles.penalty_list}>

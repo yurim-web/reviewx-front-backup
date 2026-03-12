@@ -15,7 +15,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import styles from "@/styles/user/notification/notification.module.css";
 import SubHeader from "@/components/fragments/SubHeader";
 import NotificationList from "@/components/notification/NotificationList";
@@ -102,6 +102,7 @@ function adaptApiNotification(item: NotificationApiItem): NotificationItem {
 export default function UserNotificationPage() {
   const { user } = useAuth();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const reviewerId = user ? getReviewerId(user.id) : 0;
 
   // 알림 목록 (API)
@@ -224,6 +225,8 @@ export default function UserNotificationPage() {
   const handleDeleteAllClick = () => {
     setNotifications([]);
     setDisplayCount(PAGE_SIZE);
+    // 헤더 알림 아이콘 즉시 비활성화 — 캐시를 빈 배열로 덮어씀
+    queryClient.setQueryData(["notifications", reviewerId], []);
     if (typeof window !== "undefined" && user) {
       try {
         const storedNotifications = localStorage.getItem("notifications");
