@@ -47,40 +47,37 @@ export function getChannelUrl(channel: string, channelId: string): string {
   // 채널별 URL 생성
   switch (channel) {
     case "네이버블로그":
+    case "NAVER_BLOG":
       return `https://blog.naver.com/${cleanId}`;
 
     case "네이버클립":
-      // 네이버클립은 이미 URL 형식이거나 클립 URL일 수 있음
-      if (cleanId.startsWith("http://") || cleanId.startsWith("https://")) {
-        return cleanId;
-      }
-      // 클립 ID만 있는 경우 네이버 클립 크리에이터 URL 생성
+    case "NAVER_CLIP":
       return `https://clipcreators.naver.com/${cleanId}`;
 
     case "인스타그램":
+    case "INSTAGRAM":
       return `https://www.instagram.com/${cleanId}/`;
 
     case "유튜브":
-      // @ 기호가 있으면 그대로 사용, 없으면 추가
+    case "YOUTUBE":
       if (cleanId.startsWith("@")) {
         return `https://www.youtube.com/${cleanId}`;
       }
-      // channel ID 형식인지 확인 (UC로 시작하는 경우)
       if (cleanId.startsWith("UC") && cleanId.length > 20) {
         return `https://www.youtube.com/channel/${cleanId}`;
       }
-      // 일반 핸들인 경우
       return `https://www.youtube.com/@${cleanId}`;
 
     case "릴스":
     case "Reels":
-      // 릴스는 인스타그램 릴스이므로 인스타그램 URL 사용
+    case "REELS":
+    case "INSTAGRAM_REELS":
       return `https://www.instagram.com/${cleanId}/`;
 
     case "쇼츠":
     case "숏츠":
     case "Shorts":
-      // 쇼츠는 유튜브 쇼츠이므로 유튜브 URL 사용
+    case "YOUTUBE_SHORTS":
       if (cleanId.startsWith("@")) {
         return `https://www.youtube.com/${cleanId}`;
       }
@@ -90,7 +87,6 @@ export function getChannelUrl(channel: string, channelId: string): string {
       return `https://www.youtube.com/@${cleanId}`;
 
     default:
-      // 알 수 없는 채널 타입인 경우 # 반환
       return "#";
   }
 }
@@ -124,16 +120,17 @@ export function getCampaignTypePath(type: CampaignType): string {
  * @param id - 캠페인 ID
  * @returns 변환된 캠페인 ID (예: "delivery_1")
  */
-export function convertToCampaignDataId(type: CampaignType, id: string): string {
+export function convertToCampaignDataId(type: CampaignType, id: string | number): string {
   const typePath = getCampaignTypePath(type);
+  const strId = String(id);
 
   // ID가 이미 "delivery_1" 형식인지 확인
-  if (id.startsWith(`${typePath}_`)) {
-    return id;
+  if (strId.startsWith(`${typePath}_`)) {
+    return strId;
   }
 
   // ID를 실제 캠페인 데이터 형식으로 변환
-  return `${typePath}_${id}`;
+  return `${typePath}_${strId}`;
 }
 
 /**
@@ -143,7 +140,7 @@ export function convertToCampaignDataId(type: CampaignType, id: string): string 
  * @param id - 캠페인 ID
  * @returns 상세 페이지 경로 (예: "/campaign/delivery/delivery_1")
  */
-export function getCampaignDetailPath(type: CampaignType, id: string): string {
+export function getCampaignDetailPath(type: CampaignType, id: string | number): string {
   const campaignTypePath = getCampaignTypePath(type);
   const campaignDataId = convertToCampaignDataId(type, id);
   return `/campaign/${campaignTypePath}/${campaignDataId}`;

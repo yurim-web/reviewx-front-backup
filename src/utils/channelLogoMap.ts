@@ -22,16 +22,27 @@
  */
 
 // KEY는 공백 제거한 정규화 문자열을 사용 (예: "네이버 클립" → "네이버클립")
+// API 영문 채널명도 함께 지원 (예: "NAVER_BLOG")
 export const channel_logo_map: Record<string, string> = {
+  // 한글 채널명
   네이버블로그: "/images/brand_logo/naverblog.svg",
   네이버클립: "/images/brand_logo/naverclip.svg",
-  클립: "/images/brand_logo/naverclip.svg", // "클립" 별도 지원
+  클립: "/images/brand_logo/naverclip.svg",
   인스타그램: "/images/brand_logo/insta.svg",
   유튜브: "/images/brand_logo/youtube.svg",
+  유튜브쇼츠: "/images/brand_logo/shots.svg",
   릴스: "/images/brand_logo/reels.svg",
   쇼츠: "/images/brand_logo/shots.svg",
-  숏츠: "/images/brand_logo/shots.svg", // "숏츠"도 지원 (기존 호환성)
+  숏츠: "/images/brand_logo/shots.svg",
   기본: "/images/icons/phone_verified.svg",
+  // API 영문 채널명
+  NAVER_BLOG: "/images/brand_logo/naverblog.svg",
+  NAVER_CLIP: "/images/brand_logo/naverclip.svg",
+  INSTAGRAM: "/images/brand_logo/insta.svg",
+  INSTAGRAM_REELS: "/images/brand_logo/reels.svg",
+  REELS: "/images/brand_logo/reels.svg",
+  YOUTUBE: "/images/brand_logo/youtube.svg",
+  YOUTUBE_SHORTS: "/images/brand_logo/shots.svg",
 };
 
 /**
@@ -95,7 +106,7 @@ export function getCategoryIcon(
   }
 
   // 그 외 타입은 카테고리에 따라 동적 아이콘 사용
-  if (!category) {
+  if (!category || typeof category !== "string") {
     return "/images/icons/phone_verified.svg";
   }
 
