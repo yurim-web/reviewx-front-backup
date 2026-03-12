@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3002",
+    "dev": "json-server mock/db.json --port 3001 --routes mock/routes.json & next dev --port 3002",
+    "dev:next": "next dev --port 3002",
     "dev:turbopack": "next dev --turbopack --port 3002",
     "build": "next build --turbopack",
     "start": "next start --port 3002",
@@ -16,7 +17,8 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:mobile": "playwright test --config=playwright-mobile-view.config.ts",
     "test:report": "playwright show-report",
-    "mock": "json-server mock/db.json --port 3001 --routes mock/routes.json"
+    "mock": "json-server mock/db.json --port 3001 --routes mock/routes.json",
+    "confluence:screenshots": "node scripts/playwright_confluence_screenshots.mjs"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
