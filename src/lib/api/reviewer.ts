@@ -46,14 +46,11 @@ export interface ReviewerCampaignItem {
 
 /**
  * 리뷰어 캠페인 관리 목록 조회
- * GET /reviewer/mypage/campaigns?reviewer_id=:id → /reviewer_campaign_management?reviewer_id=:id
+ * GET /reviewer/mypage/campaigns
+ * (리뷰어 ID는 Bearer 토큰으로 식별 — query param 불필요)
  */
-export const fetchReviewerCampaigns = (reviewerId: number): Promise<ReviewerCampaignItem[]> =>
-  apiClient
-    .get<ReviewerCampaignItem[]>("/reviewer/mypage/campaigns", {
-      params: { reviewer_id: reviewerId },
-    })
-    .then((r) => r.data);
+export const fetchReviewerCampaigns = (_reviewerId: number): Promise<ReviewerCampaignItem[]> =>
+  apiClient.get<ReviewerCampaignItem[]>("/reviewer/mypage/campaigns").then((r) => r.data);
 
 // ────────────────────────────────────────────────────────────────────────────────
 // 프로필 API
