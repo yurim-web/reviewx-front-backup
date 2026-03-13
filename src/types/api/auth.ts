@@ -32,7 +32,7 @@ export interface UserInfo {
   name: string;
   phone: string;
   profile_image?: string;
-  user_type: 'reviewer' | 'partner' | 'admin';
+  user_type: "reviewer" | "partner" | "admin";
   created_at: string;
 }
 
@@ -175,3 +175,20 @@ export interface LogoutResponse {
   success: boolean;
   message: string;
 }
+
+/**
+ * 계정 찾기 요청 (API 3: POST /api/v1/auth/find-account)
+ * ⚠️ 엔드포인트 백엔드 확정 후 경로 업데이트 필요
+ */
+export interface FindAccountRequest {
+  phoneNum: string;
+  verifiedPhoneToken: string;
+  accountType: "user";
+}
+
+/**
+ * 계정 찾기 응답
+ */
+export type FindAccountResponse =
+  | { result: "FOUND"; provider: "NAVER" | "KAKAO"; maskedEmail: string }
+  | { result: "NOT_FOUND" };
