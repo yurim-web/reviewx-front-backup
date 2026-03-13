@@ -212,23 +212,29 @@
   :global(
     .rdp-day:not(.rdp-day_range_start):not(.rdp-day_range_end):not(.rdp-day_range_middle):not(
         .rdp-range_start
-      ):not(.rdp-range_end):not(.rdp-range_middle):not(.rdp-selected):not(.rdp-day_selected)
-  )
-  button,
+      ):not(.rdp-range_end):not(.rdp-range_middle):not(.rdp-selected):not(.rdp-day_selected):not(
+        .rdp-today
+      ):not(.rdp-day_today)
+      > button
+  ),
 .calendar
   :global(
     .rdp-day:not(.rdp-day_range_start):not(.rdp-day_range_end):not(.rdp-day_range_middle):not(
         .rdp-range_start
-      ):not(.rdp-range_end):not(.rdp-range_middle):not(.rdp-selected):not(.rdp-day_selected)
-  )
-  :global(.rdp-button),
+      ):not(.rdp-range_end):not(.rdp-range_middle):not(.rdp-selected):not(.rdp-day_selected):not(
+        .rdp-today
+      ):not(.rdp-day_today)
+      > .rdp-button
+  ),
 .calendar
   :global(
     .rdp-day:not(.rdp-day_range_start):not(.rdp-day_range_end):not(.rdp-day_range_middle):not(
         .rdp-range_start
-      ):not(.rdp-range_end):not(.rdp-range_middle):not(.rdp-selected):not(.rdp-day_selected)
-  )
-  :global(.rdp-day_button) {
+      ):not(.rdp-range_end):not(.rdp-range_middle):not(.rdp-selected):not(.rdp-day_selected):not(
+        .rdp-today
+      ):not(.rdp-day_today)
+      > .rdp-day_button
+  ) {
   width: 100%;
   height: 100%;
   display: flex;
