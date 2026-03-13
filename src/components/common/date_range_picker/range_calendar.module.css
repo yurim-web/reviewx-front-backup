@@ -844,6 +844,19 @@
   z-index: 1 !important;
 }
 
+/* --- 빈 셀 (날짜 없는 칸) 범위 배경 제거 ---
+   showOutsideDays=false일 때 빈 td에 range 배경이 표시되지 않도록 함 */
+.calendar :global(td:not(.rdp-day)),
+.calendar :global(td:empty) {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+.calendar :global(td:not(.rdp-day))::before,
+.calendar :global(td:empty)::before {
+  display: none !important;
+}
+
 /* ========================================
    드롭다운 스타일
    ======================================== */
