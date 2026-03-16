@@ -308,7 +308,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "선정 후 취소",
     inspector: "(주)청명종합광고기획",
     target: "홍길동",
-    processed_date: "2026-02-01 18:56",
+    processed_date: "2026-03-01 18:56",
     report_count: 1,
   },
   {
@@ -319,7 +319,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "지각 제출",
     inspector: "관리자 A",
     target: "일이삼사오육칠팔구십",
-    processed_date: "2026-02-01 18:56",
+    processed_date: "2026-03-01 18:56",
     report_count: 3,
   },
   {
@@ -331,7 +331,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "무단 이탈 · 노쇼",
     inspector: "AI 자동 탐지",
     target: "일이삼사오육칠팔구십",
-    processed_date: "2026-02-01 18:56",
+    processed_date: "2026-03-01 18:56",
     report_count: 1,
   },
   {
@@ -342,7 +342,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "노출 기간 불이행",
     inspector: "AI 자동 탐지",
     target: "일이삼사오육칠팔구십",
-    processed_date: "2026-02-02 18:59",
+    processed_date: "2026-03-02 18:59",
     report_count: 1,
   },
   {
@@ -353,7 +353,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "수정 요청 불이행",
     inspector: "일이삼사오육칠팔구십일이삼사오육",
     target: "일이삼사오육칠팔구십일이삼사오",
-    processed_date: "2026-02-03 18:56",
+    processed_date: "2026-03-03 18:56",
     report_count: 1,
   },
   {
@@ -365,7 +365,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "게시 후 취소",
     inspector: "네이버 주식회사",
     target: "(주)아이엠에스커뮤니케이션",
-    processed_date: "2026-02-04 18:56",
+    processed_date: "2026-03-04 18:56",
     report_count: 1,
   },
   {
@@ -376,7 +376,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "부적절한 캠페인 게시",
     inspector: "관리자 A",
     target: "(주)아이엠에스커뮤니케이션",
-    processed_date: "2026-02-01 18:56",
+    processed_date: "2026-03-01 18:56",
     report_count: 1,
   },
   {
@@ -387,7 +387,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "공정위 위반 요청",
     inspector: "주식회사 청명미디어",
     target: "(주)아이엠에스커뮤니케이션",
-    processed_date: "2026-02-01 18:56",
+    processed_date: "2026-03-01 18:56",
     report_count: 1,
   },
   {
@@ -398,7 +398,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "비정상 요청 반복",
     inspector: "관리자 F",
     target: "(주)아이엠에스커뮤니케이션",
-    processed_date: "2026-02-01 18:56",
+    processed_date: "2026-03-01 18:56",
     report_count: 1,
   },
   {
@@ -409,7 +409,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "중복 계정 탐지",
     inspector: "관리자 A",
     target: "(주)아이엠에스커뮤니케이션",
-    processed_date: "2026-02-01 18:56",
+    processed_date: "2026-03-01 18:56",
     report_count: 1,
   },
   {
@@ -420,7 +420,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "콘텐츠 중복 탐지",
     inspector: "관리자 A",
     target: "(주)아이엠에스커뮤니케이션",
-    processed_date: "2026-02-01 18:56",
+    processed_date: "2026-03-01 18:56",
     report_count: 1,
   },
   {
@@ -431,7 +431,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "선정 후 무단 취소",
     inspector: "AI 자동 탐지",
     target: "김민지",
-    processed_date: "2026-02-05 09:15",
+    processed_date: "2026-03-05 09:15",
     report_count: 1,
   },
   {
@@ -442,7 +442,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "제출 기한을 초과하여 제출했습니다",
     inspector: "(주)마케팅프로",
     target: "이수진",
-    processed_date: "2026-02-06 14:30",
+    processed_date: "2026-03-06 14:30",
     report_count: 2,
   },
   {
@@ -453,7 +453,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "약속된 일정에 무단 이탈했습니다",
     inspector: "AI 자동 탐지",
     target: "박준호",
-    processed_date: "2026-02-07 11:20",
+    processed_date: "2026-03-07 11:20",
     report_count: 1,
   },
   {
@@ -464,7 +464,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "노출 기간을 준수하지 않았습니다",
     inspector: "(주)콘텐츠리뷰",
     target: "최영희",
-    processed_date: "2026-02-08 16:45",
+    processed_date: "2026-03-08 16:45",
     report_count: 1,
   },
   {
@@ -475,7 +475,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "수정 요청을 반복적으로 무시했습니다",
     inspector: "네이버 주식회사",
     target: "정민수",
-    processed_date: "2026-02-09 10:10",
+    processed_date: "2026-03-09 10:10",
     report_count: 3,
   },
   {
@@ -486,7 +486,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "게시 후 일방적으로 취소했습니다",
     inspector: "주식회사 아이엠에스커뮤니케이션",
     target: "강지영",
-    processed_date: "2026-02-10 13:25",
+    processed_date: "2026-03-10 13:25",
     report_count: 1,
   },
   {
@@ -497,7 +497,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "부적절한 콘텐츠로 게시했습니다",
     inspector: "(주)청명종합광고기획",
     target: "윤서연",
-    processed_date: "2026-02-11 15:50",
+    processed_date: "2026-03-11 15:50",
     report_count: 1,
   },
   {
@@ -508,7 +508,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "공정거래위원회 위반 요청을 했습니다",
     inspector: "AI 자동 탐지",
     target: "장미래",
-    processed_date: "2026-02-12 09:40",
+    processed_date: "2026-03-12 09:40",
     report_count: 1,
   },
   {
@@ -519,7 +519,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "비정상적인 요청이 반복적으로 발생했습니다",
     inspector: "(주)마케팅프로",
     target: "오준호",
-    processed_date: "2026-02-13 12:15",
+    processed_date: "2026-03-13 12:15",
     report_count: 2,
   },
   {
@@ -530,7 +530,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "중복 계정 사용이 탐지되었습니다",
     inspector: "(주)콘텐츠리뷰",
     target: "한소희",
-    processed_date: "2026-02-14 14:30",
+    processed_date: "2026-03-14 14:30",
     report_count: 1,
   },
   {
@@ -541,7 +541,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "콘텐츠 중복 사용이 확인되었습니다",
     inspector: "네이버 주식회사",
     target: "신동욱",
-    processed_date: "2026-02-15 10:55",
+    processed_date: "2026-03-15 10:55",
     report_count: 1,
   },
   {
@@ -552,7 +552,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "비정상적인 접근 패턴이 기록되었습니다",
     inspector: "AI 자동 탐지",
     target: "조은지",
-    processed_date: "2026-02-16 16:20",
+    processed_date: "2026-03-16 16:20",
     report_count: 1,
   },
   {
@@ -564,7 +564,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
       "비매너 행위가 확인되었습니다가나닫런ㄹ아ㅓㄹㄴ이너라앙런ㅇ리ㅏㄴㅇ러ㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅓㅇㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹㄴㄹ",
     inspector: "주식회사 아이엠에스커뮤니케이션",
     target: "배성민",
-    processed_date: "2026-02-17 11:35",
+    processed_date: "2026-03-17 11:35",
     report_count: 1,
   },
   {
@@ -575,7 +575,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "",
     inspector: "(주)청명종합광고기획",
     target: "류현우",
-    processed_date: "2026-02-18 13:10",
+    processed_date: "2026-03-18 13:10",
     report_count: 1,
   },
   {
@@ -586,7 +586,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "",
     inspector: "AI 자동 탐지",
     target: "임태영",
-    processed_date: "2026-02-19 09:25",
+    processed_date: "2026-03-19 09:25",
     report_count: 2,
   },
   {
@@ -597,7 +597,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "",
     inspector: "(주)마케팅프로",
     target: "송하늘",
-    processed_date: "2026-02-20 15:40",
+    processed_date: "2026-03-20 15:40",
     report_count: 1,
   },
   {
@@ -608,7 +608,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "",
     inspector: "(주)콘텐츠리뷰",
     target: "문지훈",
-    processed_date: "2026-02-21 10:50",
+    processed_date: "2026-03-21 10:50",
     report_count: 1,
   },
   {
@@ -619,7 +619,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "",
     inspector: "네이버 주식회사",
     target: "양지은",
-    processed_date: "2026-02-22 14:15",
+    processed_date: "2026-03-22 14:15",
     report_count: 1,
   },
   {
@@ -630,7 +630,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "",
     inspector: "AI 자동 탐지",
     target: "노승현",
-    processed_date: "2026-02-23 11:30",
+    processed_date: "2026-03-23 11:30",
     report_count: 1,
   },
   {
@@ -641,7 +641,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "",
     inspector: "주식회사 아이엠에스커뮤니케이션",
     target: "도현수",
-    processed_date: "2026-02-24 16:45",
+    processed_date: "2026-03-24 16:45",
     report_count: 1,
   },
   {
@@ -652,7 +652,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "",
     inspector: "(주)청명종합광고기획",
     target: "구민재",
-    processed_date: "2026-02-25 09:20",
+    processed_date: "2026-03-25 09:20",
     report_count: 1,
   },
   {
@@ -663,7 +663,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "",
     inspector: "(주)마케팅프로",
     target: "남지호",
-    processed_date: "2026-02-26 13:55",
+    processed_date: "2026-03-26 13:55",
     report_count: 1,
   },
   {
@@ -674,7 +674,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "",
     inspector: "AI 자동 탐지",
     target: "백준영",
-    processed_date: "2026-02-27 10:10",
+    processed_date: "2026-03-27 10:10",
     report_count: 1,
   },
   {
@@ -685,7 +685,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "",
     inspector: "(주)콘텐츠리뷰",
     target: "서유진",
-    processed_date: "2026-02-28 15:25",
+    processed_date: "2026-03-28 15:25",
     report_count: 1,
   },
   {
@@ -696,7 +696,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "",
     inspector: "네이버 주식회사",
     target: "유재석",
-    processed_date: "2026-02-29 12:40",
+    processed_date: "2026-03-29 12:40",
     report_count: 1,
   },
   {
@@ -708,7 +708,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
       "타인에 대한 모욕적인 발언 및 비매너 행위가 확인되었습니다타인에 대한 모욕적인 발언 및 비매너 행위가 확인되었습니다타인에 대한 모욕적인 발언 및 비매너 행위가 확인되었습니다타인에 대한 모욕적인 발언 및 비매너 행위가 확인되었습니다타인에 대한 모욕적인 발언 및 비매너 행위가 확인되었습니다타인에 대한 모욕적인 발언 및 비매너 행위가 확인되었습니다",
     inspector: "주식회사 아이엠에스커뮤니케이션",
     target: "강동원",
-    processed_date: "2026-02-01 14:50",
+    processed_date: "2026-03-01 14:50",
     report_count: 1,
   },
   {
@@ -719,7 +719,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "",
     inspector: "(주)청명종합광고기획",
     target: "이병헌",
-    processed_date: "2026-02-02 11:15",
+    processed_date: "2026-03-02 11:15",
     report_count: 2,
   },
   {
@@ -730,7 +730,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "",
     inspector: "AI 자동 탐지",
     target: "김태희",
-    processed_date: "2026-02-03 09:30",
+    processed_date: "2026-03-03 09:30",
     report_count: 1,
   },
   {
@@ -741,7 +741,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "",
     inspector: "(주)마케팅프로",
     target: "전지현",
-    processed_date: "2026-02-04 16:20",
+    processed_date: "2026-03-04 16:20",
     report_count: 1,
   },
   {
@@ -752,7 +752,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "",
     inspector: "(주)콘텐츠리뷰",
     target: "송혜교",
-    processed_date: "2026-02-05 13:45",
+    processed_date: "2026-03-05 13:45",
     report_count: 1,
   },
   {
@@ -763,7 +763,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "부적절한 언어 사용 및 비매너 행위가 확인되었습니다",
     inspector: "AI 자동 탐지",
     target: "이영희",
-    processed_date: "2026-02-06 10:20",
+    processed_date: "2026-03-06 10:20",
     report_count: 1,
   },
   {
@@ -774,7 +774,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "타인에 대한 비방 및 비매너 행위",
     inspector: "(주)마케팅프로",
     target: "박민수",
-    processed_date: "2026-02-07 14:35",
+    processed_date: "2026-03-07 14:35",
     report_count: 2,
   },
   {
@@ -785,7 +785,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "부적절한 행동 및 커뮤니티 규칙 위반으로 인한 신고",
     inspector: "네이버 주식회사",
     target: "최지영",
-    processed_date: "2026-02-08 09:15",
+    processed_date: "2026-03-08 09:15",
     report_count: 1,
   },
   {
@@ -796,7 +796,7 @@ export const reported_campaign_list: ReportedCampaignItem[] = [
     report_reason: "욕설 및 비방 댓글 작성으로 인한 신고",
     inspector: "주식회사 아이엠에스커뮤니케이션",
     target: "김수진",
-    processed_date: "2026-02-09 16:50",
+    processed_date: "2026-03-09 16:50",
     report_count: 3,
   },
 ];

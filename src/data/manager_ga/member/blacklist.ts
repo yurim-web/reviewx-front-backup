@@ -216,7 +216,7 @@ export const blacklist_data: BlacklistItem[] = [
     ip_address: "123.123.12.3",
     block_code: "B002",
     block_reason: "무단 이탈 · 노쇼 누적",
-    registered_date: "2026-02-01 10:20",
+    registered_date: "2026-03-01 10:20",
     registered_by: "시스템",
   },
   // 파트너: 청불 천막집 방이점 (id: "2")
@@ -229,7 +229,7 @@ export const blacklist_data: BlacklistItem[] = [
     ip_address: "158.176.19.2",
     block_code: "B002",
     block_reason: "무단 이탈 · 노쇼 누적",
-    registered_date: "2026-02-02 11:15",
+    registered_date: "2026-03-02 11:15",
     registered_by: "시스템",
   },
   // 파트너: 명륜진사갈비 수원광교점 (id: "3")
@@ -242,7 +242,7 @@ export const blacklist_data: BlacklistItem[] = [
     ip_address: "789.789.78.9",
     block_code: "B002",
     block_reason: "무단 이탈 · 노쇼 누적",
-    registered_date: "2026-02-03 14:30",
+    registered_date: "2026-03-03 14:30",
     registered_by: "시스템",
   },
   // 파트너: (주)플레티어 (id: "5")
@@ -255,7 +255,7 @@ export const blacklist_data: BlacklistItem[] = [
     ip_address: "345.345.34.5",
     block_code: "B005",
     block_reason: "비정상 운영 행위",
-    registered_date: "2026-02-04 09:30",
+    registered_date: "2026-03-04 09:30",
     registered_by: "시스템",
   },
   // 파트너: 탈퇴회원테스트1 (id: "16")
@@ -268,7 +268,7 @@ export const blacklist_data: BlacklistItem[] = [
     ip_address: "456.456.45.6",
     block_code: "B001",
     block_reason: "반복 반려 누적",
-    registered_date: "2026-02-05 10:00",
+    registered_date: "2026-03-05 10:00",
     registered_by: "시스템",
   },
   // 파트너: 탈퇴회원테스트2 (id: "17")
@@ -281,7 +281,7 @@ export const blacklist_data: BlacklistItem[] = [
     ip_address: "567.567.56.7",
     block_code: "B001",
     block_reason: "반복 반려 누적",
-    registered_date: "2026-02-06 11:30",
+    registered_date: "2026-03-06 11:30",
     registered_by: "시스템",
   },
   // 리뷰어: 김은지 (id: "2")
@@ -294,7 +294,7 @@ export const blacklist_data: BlacklistItem[] = [
     ip_address: "234.234.23.4",
     block_code: "B002",
     block_reason: "무단 이탈 · 노쇼 누적",
-    registered_date: "2026-02-07 18:56",
+    registered_date: "2026-03-07 18:56",
     registered_by: "시스템",
   },
   // 리뷰어: 홍길동 (id: "3")
@@ -307,7 +307,7 @@ export const blacklist_data: BlacklistItem[] = [
     ip_address: "345.345.34.5",
     block_code: "B002",
     block_reason: "무단 이탈 · 노쇼 누적",
-    registered_date: "2026-02-07 18:56",
+    registered_date: "2026-03-07 18:56",
     registered_by: "시스템",
   },
   // 리뷰어: 유연희 (id: "4")
@@ -320,7 +320,7 @@ export const blacklist_data: BlacklistItem[] = [
     ip_address: "456.456.45.6",
     block_code: "B005",
     block_reason: "비정상 운영 행위",
-    registered_date: "2026-02-07 18:56",
+    registered_date: "2026-03-07 18:56",
     registered_by: "시스템",
   },
   // 리뷰어: 탈퇴회원테스트 (id: "17")
@@ -333,7 +333,7 @@ export const blacklist_data: BlacklistItem[] = [
     ip_address: "567.567.56.7",
     block_code: "B001",
     block_reason: "반복 반려 누적",
-    registered_date: "2026-02-08 14:20",
+    registered_date: "2026-03-08 14:20",
     registered_by: "시스템",
   },
   // 관리자: 관리자 테스트 (id: "admin_1")
@@ -346,7 +346,7 @@ export const blacklist_data: BlacklistItem[] = [
     ip_address: "192.168.1.1",
     block_code: "B004",
     block_reason: "커뮤니티 가이드 위반",
-    registered_date: "2026-02-09 15:30",
+    registered_date: "2026-03-09 15:30",
     registered_by: "시스템",
   },
 ];

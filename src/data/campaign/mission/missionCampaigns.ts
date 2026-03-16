@@ -119,8 +119,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     isUrgent: true, // 긴급 캠페인
     registeredAt: "2026-01-08T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 항상 신청 내역 테스트가 가능하도록, 현재 날짜(2026-02-26) 기준으로 모집 진행 중 상태로 유지
-      applicationStart: "2026-02-01",
+      // 항상 신청 내역 테스트가 가능하도록, 현재 날짜(2026-03-26) 기준으로 모집 진행 중 상태로 유지
+      applicationStart: "2026-03-01",
       applicationEnd: "2026-03-31",
       announcement: "2026-04-02",
       registrationPeriod: "2026-04-05 ~ 2026-04-30",
@@ -158,7 +158,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     registeredAt: "2026-01-06T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜(2026-03-03) 기준 신청 진행 중 상태 유지
-      applicationStart: "2026-02-15",
+      applicationStart: "2026-03-15",
       applicationEnd: "2026-03-31",
       announcement: "2026-04-10",
       registrationPeriod: "2026-04-20 ~ 2026-05-10",
@@ -191,7 +191,7 @@ export const missionCampaigns: MissionCampaignData[] = [
     registeredAt: "2026-01-09T13:30:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜(2026-03-03) 기준 신청 진행 중 상태 유지
-      applicationStart: "2026-02-15",
+      applicationStart: "2026-03-15",
       applicationEnd: "2026-03-31",
       announcement: "2026-04-10",
       registrationPeriod: "2026-04-20 ~ 2026-05-10",
@@ -263,7 +263,7 @@ export const missionCampaigns: MissionCampaignData[] = [
       applicationStart: "2026-01-09",
       applicationEnd: "2026-01-25",
       announcement: "2026-01-27",
-      registrationPeriod: "2026-01-30 ~ 2026-02-07",
+      registrationPeriod: "2026-01-30 ~ 2026-03-07",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#디지털체험 #최신기술 #가전제품 #네이버쇼핑 #테크리뷰",
@@ -297,7 +297,7 @@ export const missionCampaigns: MissionCampaignData[] = [
       applicationStart: "2026-01-13",
       applicationEnd: "2026-01-26",
       announcement: "2026-01-28",
-      registrationPeriod: "2026-01-31 ~ 2026-02-08",
+      registrationPeriod: "2026-01-31 ~ 2026-03-08",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#이미지미션 #뷰티체험 #이미지전용 #인스타그램 #솔직후기",
@@ -361,8 +361,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     registeredAt: "2025-11-05T14:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 종료 탭 - registrationPeriod가 과거
-      applicationStart: "2026-02-01",
-      applicationEnd: "2026-02-15",
+      applicationStart: "2026-03-01",
+      applicationEnd: "2026-03-15",
       announcement: "2025-11-27",
       registrationPeriod: "2025-11-30 ~ 2025-12-07",
     },
@@ -395,10 +395,10 @@ export const missionCampaigns: MissionCampaignData[] = [
     registeredAt: "2025-11-15T10:50:00.000Z", // 등록 시간
     detailedSchedule: {
       // 진행 탭 - applicationEnd가 과거, registrationPeriod가 미래 (announcement <= 오늘 <= registrationPeriod 끝)
-      applicationStart: "2026-02-02",
-      applicationEnd: "2026-02-02",
-      announcement: "2026-02-02",
-      registrationPeriod: "2026-02-02 ~ 2026-02-28",
+      applicationStart: "2026-03-02",
+      applicationEnd: "2026-03-02",
+      announcement: "2026-03-02",
+      registrationPeriod: "2026-03-02 ~ 2026-03-28",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#뷰티체험 #화장품리뷰 #올리브영 #뷰티블로거 #메이크업",
@@ -429,8 +429,8 @@ export const missionCampaigns: MissionCampaignData[] = [
     registeredAt: "2025-11-01T08:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 취소 탭 - status가 "취소"로 설정됨
-      applicationStart: "2026-02-05",
-      applicationEnd: "2026-02-20",
+      applicationStart: "2026-03-05",
+      applicationEnd: "2026-03-20",
       announcement: "2025-11-22",
       registrationPeriod: "2025-11-25 ~ 2025-12-02",
     },
@@ -463,11 +463,11 @@ export const missionCampaigns: MissionCampaignData[] = [
     dayCount: "",
     registeredAt: "2026-01-10T12:00:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 오픈 예정 - 현재 날짜보다 미래 (2026-01-15 ~ 2026-02-05)
+      // 오픈 예정 - 현재 날짜보다 미래 (2026-01-15 ~ 2026-03-05)
       applicationStart: "2026-01-15",
-      applicationEnd: "2026-02-05",
-      announcement: "2026-02-07",
-      registrationPeriod: "2026-02-10 ~ 2026-02-24",
+      applicationEnd: "2026-03-05",
+      announcement: "2026-03-07",
+      registrationPeriod: "2026-03-10 ~ 2026-03-24",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#스킨케어미션 #뷰티체험 #프리미엄스킨케어 #미션형 #솔직후기",
@@ -511,8 +511,8 @@ export const missionCampaigns: MissionCampaignData[] = [
       // 선정 완료 - 등록기간 진행 중 (오늘 날짜 기준 2026-01-07)
       applicationStart: "2026-01-02",
       applicationEnd: "2026-01-16",
-      announcement: "2026-02-01",
-      registrationPeriod: "2026-02-02 ~ 2026-03-08", // 등록기간 길게 설정
+      announcement: "2026-03-01",
+      registrationPeriod: "2026-03-02 ~ 2026-03-08", // 등록기간 길게 설정
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#뷰티미션 #링크전용 #화장품체험 #블로그리뷰 #솔직후기",
@@ -622,10 +622,10 @@ export const missionCampaigns: MissionCampaignData[] = [
     dayCount: "D-4",
     registeredAt: "2026-01-12T10:00:00.000Z",
     detailedSchedule: {
-      applicationStart: "2026-02-01",
-      applicationEnd: "2026-02-28",
+      applicationStart: "2026-03-01",
+      applicationEnd: "2026-03-28",
       announcement: "2026-03-02",
-      registrationPeriod: "2026-02-04 ~ 2026-05-05",
+      registrationPeriod: "2026-03-04 ~ 2026-05-05",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#테스트 #미션형 #링크이미지",
@@ -655,10 +655,10 @@ export const missionCampaigns: MissionCampaignData[] = [
     dayCount: "D-2",
     registeredAt: "2026-01-22T10:00:00.000Z",
     detailedSchedule: {
-      applicationStart: "2026-02-01",
-      applicationEnd: "2026-02-28",
+      applicationStart: "2026-03-01",
+      applicationEnd: "2026-03-28",
       announcement: "2026-03-02",
-      registrationPeriod: "2026-02-04 ~ 2026-05-05",
+      registrationPeriod: "2026-03-04 ~ 2026-05-05",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#테스트 #미션형 #링크만",
@@ -688,10 +688,10 @@ export const missionCampaigns: MissionCampaignData[] = [
     dayCount: "D-1",
     registeredAt: "2026-01-25T10:00:00.000Z",
     detailedSchedule: {
-      applicationStart: "2026-02-01",
-      applicationEnd: "2026-02-28",
+      applicationStart: "2026-03-01",
+      applicationEnd: "2026-03-28",
       announcement: "2026-03-02",
-      registrationPeriod: "2026-02-04 ~ 2026-05-05",
+      registrationPeriod: "2026-03-04 ~ 2026-05-05",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#테스트 #미션형 #이미지만",
@@ -723,7 +723,7 @@ export const missionCampaigns: MissionCampaignData[] = [
       applicationStart: "2026-01-01",
       applicationEnd: "2026-01-25",
       announcement: "2026-01-28",
-      registrationPeriod: "2026-02-05 ~ 2026-02-25",
+      registrationPeriod: "2026-03-05 ~ 2026-03-25",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     keyword: "#운동루틴공유미션 #리뷰 #체험단",
@@ -1369,7 +1369,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
       waiting: [
         {
           id: "content_mission_12_waiting_001",
-          createdAt: "2026-02-01T10:00:00.000Z",
+          createdAt: "2026-03-01T10:00:00.000Z",
           status: "검수" as const,
           userType: "인플루언서" as const,
           nickname: "선정된이미지전문가",
@@ -1379,7 +1379,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           actionType: 3, // 이미지만 (contentType: "image")
           extension_request_reason: "촬영 일정이 지연되어 2일 연장을 요청드립니다.",
           isExtensionApproved: true,
-          extendedDeadline: "2026-02-10",
+          extendedDeadline: "2026-03-10",
         },
       ],
       reviewing: [
@@ -1988,10 +1988,10 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
       total: 10,
     },
     detailedSchedule: {
-      applicationStart: "2026-02-01",
-      applicationEnd: "2026-02-28",
+      applicationStart: "2026-03-01",
+      applicationEnd: "2026-03-28",
       announcement: "2026-03-02",
-      registrationPeriod: "2026-02-04 ~ 2026-05-05",
+      registrationPeriod: "2026-03-04 ~ 2026-05-05",
     },
     applicantData: {
       applicants: [],
@@ -2002,7 +2002,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
         // 경우의 수 1: 콘텐츠 미등록 (기한 내)
         {
           id: "mission_both_test_waiting_001",
-          createdAt: "2026-02-01T10:00:00.000Z",
+          createdAt: "2026-03-01T10:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "콘텐츠미등록유저",
@@ -2015,7 +2015,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
         // 경우의 수 2: 연장 요청됨
         {
           id: "mission_both_test_waiting_002",
-          createdAt: "2026-02-02T11:00:00.000Z",
+          createdAt: "2026-03-02T11:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "연장요청유저",
@@ -2029,7 +2029,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
         // 경우의 수 3: 반려됨
         {
           id: "mission_both_test_waiting_003",
-          createdAt: "2026-02-03T12:00:00.000Z",
+          createdAt: "2026-03-03T12:00:00.000Z",
           status: "검수" as const,
           userType: "인플루언서" as const,
           nickname: "반려당한유저",
@@ -2043,7 +2043,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
         // 경우의 수 4: 신고됨
         {
           id: "mission_both_test_waiting_004",
-          createdAt: "2026-02-04T13:00:00.000Z",
+          createdAt: "2026-03-04T13:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "신고당한유저",
@@ -2052,7 +2052,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           profileImage: "",
           missionType: "both",
           isReported: true,
-          reportedDate: "2026-02-04T14:30:00.000Z",
+          reportedDate: "2026-03-04T14:30:00.000Z",
           receiptImages: ["/images/test_img/eximg.png"],
         },
       ],
@@ -2060,7 +2060,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
         // 확인 탭 경우의 수 1: 검수 중 상태
         {
           id: "mission_both_test_reviewing_001",
-          createdAt: "2026-02-01T09:00:00.000Z",
+          createdAt: "2026-03-01T09:00:00.000Z",
           status: "검수중" as const,
           userType: "인플루언서" as const,
           nickname: "검수중유저",
@@ -2089,7 +2089,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
         // 완료 탭 경우의 수 2: 지각등록 승인 완료 상태
         {
           id: "mission_both_test_completed_002",
-          createdAt: "2026-02-04T15:00:00.000Z",
+          createdAt: "2026-03-04T15:00:00.000Z",
           status: "완료" as const,
           userType: "인플루언서" as const,
           nickname: "지각제출유저",
@@ -2097,7 +2097,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           channel: "인스타그램",
           profileImage: "",
           missionType: "both",
-          updatedAt: "2026-02-04T16:00:00.000Z",
+          updatedAt: "2026-03-04T16:00:00.000Z",
           isLateSubmission: true,
           receiptImages: ["/images/test_img/eximg.png"],
         },
@@ -2115,10 +2115,10 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
       total: 10,
     },
     detailedSchedule: {
-      applicationStart: "2026-02-01",
-      applicationEnd: "2026-02-28",
+      applicationStart: "2026-03-01",
+      applicationEnd: "2026-03-28",
       announcement: "2026-03-02",
-      registrationPeriod: "2026-02-04 ~ 2026-05-05",
+      registrationPeriod: "2026-03-04 ~ 2026-05-05",
     },
     applicantData: {
       applicants: [],
@@ -2129,7 +2129,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
         // 경우의 수 1: 콘텐츠 미등록 (기한 내)
         {
           id: "mission_link_test_waiting_001",
-          createdAt: "2026-02-01T10:00:00.000Z",
+          createdAt: "2026-03-01T10:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "콘텐츠미등록유저",
@@ -2142,7 +2142,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
         // 경우의 수 2: 연장 요청됨
         {
           id: "mission_link_test_waiting_002",
-          createdAt: "2026-02-02T11:00:00.000Z",
+          createdAt: "2026-03-02T11:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "연장요청유저",
@@ -2156,7 +2156,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
         // 경우의 수 3: 반려됨
         {
           id: "mission_link_test_waiting_003",
-          createdAt: "2026-02-03T12:00:00.000Z",
+          createdAt: "2026-03-03T12:00:00.000Z",
           status: "검수" as const,
           userType: "인플루언서" as const,
           nickname: "반려당한유저",
@@ -2170,7 +2170,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
         // 경우의 수 4: 신고됨
         {
           id: "mission_link_test_waiting_004",
-          createdAt: "2026-02-04T13:00:00.000Z",
+          createdAt: "2026-03-04T13:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "신고당한유저",
@@ -2179,7 +2179,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           profileImage: "",
           missionType: "link",
           isReported: true,
-          reportedDate: "2026-02-04T14:30:00.000Z",
+          reportedDate: "2026-03-04T14:30:00.000Z",
           receiptImages: ["/images/test_img/eximg.png"],
         },
       ],
@@ -2187,7 +2187,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
         // 확인 탭 경우의 수 1: 검수 중 상태
         {
           id: "mission_link_test_reviewing_001",
-          createdAt: "2026-02-01T09:00:00.000Z",
+          createdAt: "2026-03-01T09:00:00.000Z",
           status: "검수중" as const,
           userType: "인플루언서" as const,
           nickname: "검수중유저",
@@ -2216,7 +2216,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
         // 완료 탭 경우의 수 2: 지각등록 승인 완료 상태
         {
           id: "mission_link_test_completed_002",
-          createdAt: "2026-02-04T15:00:00.000Z",
+          createdAt: "2026-03-04T15:00:00.000Z",
           status: "완료" as const,
           userType: "리뷰어" as const,
           nickname: "지각제출유저",
@@ -2224,7 +2224,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           channel: "네이버 블로그",
           profileImage: "",
           missionType: "link",
-          updatedAt: "2026-02-04T16:00:00.000Z",
+          updatedAt: "2026-03-04T16:00:00.000Z",
           isLateSubmission: true,
           receiptImages: ["/images/test_img/eximg.png"],
         },
@@ -2242,10 +2242,10 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
       total: 10,
     },
     detailedSchedule: {
-      applicationStart: "2026-02-01",
-      applicationEnd: "2026-02-28",
+      applicationStart: "2026-03-01",
+      applicationEnd: "2026-03-28",
       announcement: "2026-03-02",
-      registrationPeriod: "2026-02-04 ~ 2026-05-05",
+      registrationPeriod: "2026-03-04 ~ 2026-05-05",
     },
     applicantData: {
       applicants: [],
@@ -2256,7 +2256,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
         // 경우의 수 1: 콘텐츠 미등록 (기한 내)
         {
           id: "mission_image_test_waiting_001",
-          createdAt: "2026-02-01T10:00:00.000Z",
+          createdAt: "2026-03-01T10:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "콘텐츠미등록유저",
@@ -2269,7 +2269,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
         // 경우의 수 2: 연장 요청됨
         {
           id: "mission_image_test_waiting_002",
-          createdAt: "2026-02-02T11:00:00.000Z",
+          createdAt: "2026-03-02T11:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "연장요청유저",
@@ -2283,7 +2283,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
         // 경우의 수 3: 반려됨
         {
           id: "mission_image_test_waiting_003",
-          createdAt: "2026-02-03T12:00:00.000Z",
+          createdAt: "2026-03-03T12:00:00.000Z",
           status: "검수" as const,
           userType: "인플루언서" as const,
           nickname: "반려당한유저",
@@ -2297,7 +2297,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
         // 경우의 수 4: 신고됨
         {
           id: "mission_image_test_waiting_004",
-          createdAt: "2026-02-04T13:00:00.000Z",
+          createdAt: "2026-03-04T13:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "신고당한유저",
@@ -2306,7 +2306,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           profileImage: "",
           missionType: "image",
           isReported: true,
-          reportedDate: "2026-02-04T14:30:00.000Z",
+          reportedDate: "2026-03-04T14:30:00.000Z",
           receiptImages: ["/images/test_img/eximg.png"],
         },
       ],
@@ -2314,7 +2314,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
         // 확인 탭 경우의 수 1: 검수 중 상태
         {
           id: "mission_image_test_reviewing_001",
-          createdAt: "2026-02-01T09:00:00.000Z",
+          createdAt: "2026-03-01T09:00:00.000Z",
           status: "검수중" as const,
           userType: "인플루언서" as const,
           nickname: "검수중유저",
@@ -2343,7 +2343,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
         // 완료 탭 경우의 수 2: 지각등록 승인 완료 상태
         {
           id: "mission_image_test_completed_002",
-          createdAt: "2026-02-04T15:00:00.000Z",
+          createdAt: "2026-03-04T15:00:00.000Z",
           status: "완료" as const,
           userType: "인플루언서" as const,
           nickname: "지각제출유저",
@@ -2351,7 +2351,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
           channel: "인스타그램",
           profileImage: "",
           missionType: "image",
-          updatedAt: "2026-02-04T16:00:00.000Z",
+          updatedAt: "2026-03-04T16:00:00.000Z",
           isLateSubmission: true,
           receiptImages: ["/images/test_img/eximg.png"],
         },
@@ -2426,7 +2426,7 @@ export const missionCampaignsExtended: MissionCampaignDataExtended[] = [
       applicationStart: "2026-01-01",
       applicationEnd: "2026-01-25",
       announcement: "2026-01-28",
-      registrationPeriod: "2026-02-05 ~ 2026-02-25",
+      registrationPeriod: "2026-03-05 ~ 2026-03-25",
     },
     applicantData: {
       applicants: [

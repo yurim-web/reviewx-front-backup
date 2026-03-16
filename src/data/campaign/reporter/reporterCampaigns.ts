@@ -117,10 +117,10 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     registeredAt: "2026-01-08T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
       // 오픈 예정 - 모집 시작 전
-      applicationStart: "2026-02-10",
-      applicationEnd: "2026-02-24",
-      announcement: "2026-02-26",
-      registrationPeriod: "2026-02-28 ~ 2026-03-15",
+      applicationStart: "2026-03-10",
+      applicationEnd: "2026-03-24",
+      announcement: "2026-03-26",
+      registrationPeriod: "2026-03-28 ~ 2026-03-15",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "인스타그램",
@@ -154,8 +154,8 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     isUrgent: true, // 긴급 캠페인
     registeredAt: "2026-01-06T13:45:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 항상 신청 내역 테스트가 가능하도록, 현재 날짜(2026-02-26) 기준으로 모집 진행 중 상태로 유지
-      applicationStart: "2026-02-01",
+      // 항상 신청 내역 테스트가 가능하도록, 현재 날짜(2026-03-26) 기준으로 모집 진행 중 상태로 유지
+      applicationStart: "2026-03-01",
       applicationEnd: "2026-03-31",
       announcement: "2026-04-02",
       registrationPeriod: "2026-04-05 ~ 2026-04-25",
@@ -191,7 +191,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     registeredAt: "2026-01-09T13:30:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜(2026-03-03) 기준 신청 진행 중 상태 유지
-      applicationStart: "2026-02-15",
+      applicationStart: "2026-03-15",
       applicationEnd: "2026-03-31",
       announcement: "2026-04-10",
       registrationPeriod: "2026-04-20 ~ 2026-05-10",
@@ -228,9 +228,9 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     detailedSchedule: {
       // 종료 탭 - registrationPeriod가 과거
       applicationStart: "2026-01-25",
-      applicationEnd: "2026-02-10",
+      applicationEnd: "2026-03-10",
       announcement: "2025-11-17",
-      registrationPeriod: "2025-11-20 ~ 2026-02-27",
+      registrationPeriod: "2025-11-20 ~ 2026-03-27",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
@@ -263,7 +263,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     registeredAt: "2026-01-07T15:20:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜(2026-03-03) 기준 신청 진행 중 상태 유지
-      applicationStart: "2026-02-15",
+      applicationStart: "2026-03-15",
       applicationEnd: "2026-03-31",
       announcement: "2026-04-10",
       registrationPeriod: "2026-04-20 ~ 2026-05-10",
@@ -300,7 +300,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     detailedSchedule: {
       // 진행 탭 - applicationEnd가 과거, registrationPeriod가 미래
       applicationStart: "2026-01-18",
-      applicationEnd: "2026-02-05",
+      applicationEnd: "2026-03-05",
       announcement: "2025-12-02",
       registrationPeriod: "2025-12-05 ~ 2025-12-20",
     },
@@ -335,8 +335,8 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     registeredAt: "2025-11-05T14:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 종료 탭 - registrationPeriod가 과거
-      applicationStart: "2026-02-08",
-      applicationEnd: "2026-02-23",
+      applicationStart: "2026-03-08",
+      applicationEnd: "2026-03-23",
       announcement: "2025-11-27",
       registrationPeriod: "2025-11-30 ~ 2025-12-07",
     },
@@ -407,8 +407,8 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     registeredAt: "2025-11-01T08:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 취소 탭 - status가 "취소"로 설정됨
-      applicationStart: "2026-02-12",
-      applicationEnd: "2026-02-27",
+      applicationStart: "2026-03-12",
+      applicationEnd: "2026-03-27",
       announcement: "2025-11-22",
       registrationPeriod: "2025-11-25 ~ 2025-12-02",
     },
@@ -481,7 +481,7 @@ export const reporterCampaigns: ReporterCampaignData[] = [
       applicationStart: "2026-01-13",
       applicationEnd: "2026-01-26",
       announcement: "2026-01-28",
-      registrationPeriod: "2026-01-31 ~ 2026-02-08",
+      registrationPeriod: "2026-01-31 ~ 2026-03-08",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "클립",
@@ -514,10 +514,10 @@ export const reporterCampaigns: ReporterCampaignData[] = [
     dayCount: "D-8",
     registeredAt: "2026-01-10T10:00:00.000Z",
     detailedSchedule: {
-      applicationStart: "2026-02-01",
-      applicationEnd: "2026-02-28",
+      applicationStart: "2026-03-01",
+      applicationEnd: "2026-03-28",
       announcement: "2026-03-02",
-      registrationPeriod: "2026-02-04 ~ 2026-05-05",
+      registrationPeriod: "2026-03-04 ~ 2026-05-05",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
@@ -1594,7 +1594,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
         },
         {
           id: "content_reporter_12_waiting_002",
-          createdAt: "2026-02-01T11:00:00.000Z",
+          createdAt: "2026-03-01T11:00:00.000Z",
           status: "검수" as const,
           userType: "인플루언서" as const,
           nickname: "디지털인플루언서B",
@@ -1664,10 +1664,10 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
       total: 10,
     },
     detailedSchedule: {
-      applicationStart: "2026-02-01",
-      applicationEnd: "2026-02-28",
+      applicationStart: "2026-03-01",
+      applicationEnd: "2026-03-28",
       announcement: "2026-03-02",
-      registrationPeriod: "2026-02-04 ~ 2026-05-05",
+      registrationPeriod: "2026-03-04 ~ 2026-05-05",
     },
     applicantData: {
       applicants: [],
@@ -1678,7 +1678,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
         // 경우의 수 1: 콘텐츠 미등록 (기한 내)
         {
           id: "reporter_test_waiting_001",
-          createdAt: "2026-02-01T10:00:00.000Z",
+          createdAt: "2026-03-01T10:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "콘텐츠미등록유저",
@@ -1690,7 +1690,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
         // 경우의 수 2: 연장 요청됨
         {
           id: "reporter_test_waiting_002",
-          createdAt: "2026-02-02T11:00:00.000Z",
+          createdAt: "2026-03-02T11:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "연장요청유저",
@@ -1703,7 +1703,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
         // 경우의 수 3: 반려됨
         {
           id: "reporter_test_waiting_003",
-          createdAt: "2026-02-03T12:00:00.000Z",
+          createdAt: "2026-03-03T12:00:00.000Z",
           status: "검수" as const,
           userType: "인플루언서" as const,
           nickname: "반려당한유저",
@@ -1716,7 +1716,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
         // 경우의 수 4: 신고됨
         {
           id: "reporter_test_waiting_004",
-          createdAt: "2026-02-04T13:00:00.000Z",
+          createdAt: "2026-03-04T13:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "신고당한유저",
@@ -1724,7 +1724,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
           channel: "유튜브",
           profileImage: "",
           isReported: true,
-          reportedDate: "2026-02-04T14:30:00.000Z",
+          reportedDate: "2026-03-04T14:30:00.000Z",
           receiptImages: ["/images/test_img/eximg.png"],
         },
       ],
@@ -1732,7 +1732,7 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
         // 확인 탭 경우의 수 1: 검수 중 상태
         {
           id: "reporter_test_reviewing_001",
-          createdAt: "2026-02-01T09:00:00.000Z",
+          createdAt: "2026-03-01T09:00:00.000Z",
           status: "검수중" as const,
           userType: "인플루언서" as const,
           nickname: "검수중유저",
@@ -1759,14 +1759,14 @@ export const reporterCampaignsExtended: ReporterCampaignDataExtended[] = [
         // 완료 탭 경우의 수 2: 지각등록 승인 완료 상태
         {
           id: "reporter_test_completed_002",
-          createdAt: "2026-02-04T15:00:00.000Z",
+          createdAt: "2026-03-04T15:00:00.000Z",
           status: "완료" as const,
           userType: "리뷰어" as const,
           nickname: "지각제출유저",
           channelId: "youtube_test_005",
           channel: "유튜브",
           profileImage: "",
-          updatedAt: "2026-02-04T16:00:00.000Z",
+          updatedAt: "2026-03-04T16:00:00.000Z",
           isLateSubmission: true,
           receiptImages: ["/images/test_img/eximg.png"],
         },

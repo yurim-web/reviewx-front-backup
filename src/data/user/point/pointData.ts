@@ -1,8 +1,4 @@
-import {
-  PointHistory,
-  PointSummary,
-  PendingPointItem,
-} from "@/types/domain/user";
+import { PointHistory, PointSummary, PendingPointItem } from "@/types/domain/user";
 
 /**
  * 포인트 요약 정보 (김은지 계정 데이터)
@@ -52,8 +48,7 @@ export const pointHistoryData: PointHistory[] = [
     id: "4",
     type: "earned",
     amount: 27500,
-    description:
-      "[라운지엑스24h] 라운지엑스24h 원그로브점 성수샌드 2개(낱개) + 음료 2잔 체험권",
+    description: "[라운지엑스24h] 라운지엑스24h 원그로브점 성수샌드 2개(낱개) + 음료 2잔 체험권",
     campaign_id: "camp_004",
     date: "2025-09-01",
     status: "earned",
@@ -111,8 +106,7 @@ export const pendingPointListData: PendingPointItem[] = [
   },
   {
     id: "p4",
-    description:
-      "[라운지엑스24h] 라운지엑스24h 원그로브점 성수샌드 2개(날개)+음료 2잔 체험권",
+    description: "[라운지엑스24h] 라운지엑스24h 원그로브점 성수샌드 2개(날개)+음료 2잔 체험권",
     date: "2025-09-01",
     amount: 27500,
   },
@@ -124,8 +118,7 @@ export const pendingPointListData: PendingPointItem[] = [
   },
   {
     id: "p6",
-    description:
-      "[스마트스토어 구매평] 피부과 재생크림 펩타이더마 크림 75ml 보습 미백 주름개선",
+    description: "[스마트스토어 구매평] 피부과 재생크림 펩타이더마 크림 75ml 보습 미백 주름개선",
     date: "2025-09-01",
     amount: 2000000,
   },
@@ -143,9 +136,8 @@ export const pendingPointListData: PendingPointItem[] = [
   },
   {
     id: "p9",
-    description:
-      "[스마트스토어 구매평] 피부과 재생크림 펩타이더마 크림 75ml 보습 미백 주름개선",
-    date: "2026-02-19",
+    description: "[스마트스토어 구매평] 피부과 재생크림 펩타이더마 크림 75ml 보습 미백 주름개선",
+    date: "2026-03-19",
     amount: 2000000,
   },
 ];

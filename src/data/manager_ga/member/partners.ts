@@ -239,7 +239,7 @@ export const partner_list: PartnerItem[] = [
     used_points: 1500000,
     status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2026-02-01 10:15",
+    last_access_date: "2026-03-01 10:15",
     join_date: "2025-12-30 16:20",
   },
   {
@@ -255,7 +255,7 @@ export const partner_list: PartnerItem[] = [
     used_points: 589000,
     status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2026-02-02 14:50",
+    last_access_date: "2026-03-02 14:50",
     join_date: "2026-01-04 10:30",
   },
   {
@@ -271,7 +271,7 @@ export const partner_list: PartnerItem[] = [
     used_points: 0,
     status_type: "주의 회원",
     status: "정상",
-    last_access_date: "2026-02-03 11:25",
+    last_access_date: "2026-03-03 11:25",
     join_date: "2026-01-09 13:40",
   },
   {
@@ -287,7 +287,7 @@ export const partner_list: PartnerItem[] = [
     used_points: 0,
     status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2026-02-04 15:10",
+    last_access_date: "2026-03-04 15:10",
     join_date: "2026-01-16 09:15",
   },
   {
@@ -303,7 +303,7 @@ export const partner_list: PartnerItem[] = [
     used_points: 0,
     status_type: "주의 회원",
     status: "정상",
-    last_access_date: "2026-02-05 12:30",
+    last_access_date: "2026-03-05 12:30",
     join_date: "2026-01-21 14:20",
   },
   {
@@ -319,7 +319,7 @@ export const partner_list: PartnerItem[] = [
     used_points: 0,
     status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2026-02-06 10:45",
+    last_access_date: "2026-03-06 10:45",
     join_date: "2026-01-26 11:30",
   },
   {
@@ -335,7 +335,7 @@ export const partner_list: PartnerItem[] = [
     used_points: 0,
     status_type: "주의 회원",
     status: "정상",
-    last_access_date: "2026-02-07 13:20",
+    last_access_date: "2026-03-07 13:20",
     join_date: "2026-01-30 16:10",
   },
   {
@@ -351,8 +351,8 @@ export const partner_list: PartnerItem[] = [
     used_points: 0,
     status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2026-02-08 09:30",
-    join_date: "2026-02-01 10:45",
+    last_access_date: "2026-03-08 09:30",
+    join_date: "2026-03-01 10:45",
   },
   {
     id: "14",
@@ -367,8 +367,8 @@ export const partner_list: PartnerItem[] = [
     used_points: 0,
     status_type: "주의 회원",
     status: "정상",
-    last_access_date: "2026-02-09 17:40",
-    join_date: "2026-02-02 12:00",
+    last_access_date: "2026-03-09 17:40",
+    join_date: "2026-03-02 12:00",
   },
   {
     id: "15",
@@ -383,8 +383,8 @@ export const partner_list: PartnerItem[] = [
     used_points: 0,
     status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2026-02-10 08:20",
-    join_date: "2026-02-03 14:15",
+    last_access_date: "2026-03-10 08:20",
+    join_date: "2026-03-03 14:15",
   },
   {
     id: "16",

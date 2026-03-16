@@ -243,7 +243,7 @@ export const reviewer_list: ReviewerItem[] = [
     withdrawn_points: 1500000,
     status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2026-02-01 10:45",
+    last_access_date: "2026-03-01 10:45",
     join_date: "2026-01-03 10:45",
   },
   {
@@ -258,7 +258,7 @@ export const reviewer_list: ReviewerItem[] = [
     withdrawn_points: 1500000,
     status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2026-02-02 14:20",
+    last_access_date: "2026-03-02 14:20",
     join_date: "2026-01-08 14:20",
   },
   {
@@ -273,7 +273,7 @@ export const reviewer_list: ReviewerItem[] = [
     withdrawn_points: 1500000,
     status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2026-02-03 16:30",
+    last_access_date: "2026-03-03 16:30",
     join_date: "2026-01-15 16:30",
   },
   {
@@ -288,7 +288,7 @@ export const reviewer_list: ReviewerItem[] = [
     withdrawn_points: 1500000,
     status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2026-02-04 11:10",
+    last_access_date: "2026-03-04 11:10",
     join_date: "2026-01-20 11:10",
   },
   {
@@ -303,7 +303,7 @@ export const reviewer_list: ReviewerItem[] = [
     withdrawn_points: 1500000,
     status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2026-02-05 13:40",
+    last_access_date: "2026-03-05 13:40",
     join_date: "2026-01-25 13:40",
   },
   {
@@ -318,7 +318,7 @@ export const reviewer_list: ReviewerItem[] = [
     withdrawn_points: 1500000,
     status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2026-02-06 17:50",
+    last_access_date: "2026-03-06 17:50",
     join_date: "2026-01-31 17:50",
   },
   {
@@ -333,8 +333,8 @@ export const reviewer_list: ReviewerItem[] = [
     withdrawn_points: 1500000,
     status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2026-02-07 09:15",
-    join_date: "2026-02-01 09:15",
+    last_access_date: "2026-03-07 09:15",
+    join_date: "2026-03-01 09:15",
   },
   {
     id: "14",
@@ -348,8 +348,8 @@ export const reviewer_list: ReviewerItem[] = [
     withdrawn_points: 1500000,
     status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2026-02-08 14:25",
-    join_date: "2026-02-02 14:25",
+    last_access_date: "2026-03-08 14:25",
+    join_date: "2026-03-02 14:25",
   },
   {
     id: "15",
@@ -363,8 +363,8 @@ export const reviewer_list: ReviewerItem[] = [
     withdrawn_points: 1500000,
     status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2026-02-09 10:35",
-    join_date: "2026-02-03 10:35",
+    last_access_date: "2026-03-09 10:35",
+    join_date: "2026-03-03 10:35",
   },
   {
     id: "16",
@@ -378,8 +378,8 @@ export const reviewer_list: ReviewerItem[] = [
     withdrawn_points: 0,
     status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2026-02-10 16:45",
-    join_date: "2026-02-04 16:45",
+    last_access_date: "2026-03-10 16:45",
+    join_date: "2026-03-04 16:45",
   },
   {
     id: "17",
@@ -408,8 +408,8 @@ export const reviewer_list: ReviewerItem[] = [
     withdrawn_points: 1000000,
     status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2026-02-11 12:00",
-    join_date: "2026-02-05 12:00",
+    last_access_date: "2026-03-11 12:00",
+    join_date: "2026-03-05 12:00",
   },
   {
     id: "19",
@@ -423,8 +423,8 @@ export const reviewer_list: ReviewerItem[] = [
     withdrawn_points: 1200000,
     status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2026-02-12 15:30",
-    join_date: "2026-02-06 15:30",
+    last_access_date: "2026-03-12 15:30",
+    join_date: "2026-03-06 15:30",
   },
   {
     id: "20",
@@ -438,8 +438,8 @@ export const reviewer_list: ReviewerItem[] = [
     withdrawn_points: 2000000,
     status_type: "일반 회원",
     status: "정상",
-    last_access_date: "2026-02-13 09:20",
-    join_date: "2026-02-07 09:20",
+    last_access_date: "2026-03-13 09:20",
+    join_date: "2026-03-07 09:20",
   },
 ];
 
