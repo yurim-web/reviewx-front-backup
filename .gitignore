@@ -90,3 +90,4 @@ mock/db.backup.json
 
 # Cursor IDE 설정 (Claude Code와 무관)
 .cursor/
+docs/screenshots/
