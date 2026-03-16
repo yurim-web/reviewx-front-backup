@@ -146,8 +146,8 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     isUrgent: true, // 긴급 캠페인
     registeredAt: "2026-01-11T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 항상 신청 내역 테스트가 가능하도록, 현재 날짜(2026-02-26) 기준으로 모집 진행 중 상태로 유지
-      applicationStart: "2026-02-01",
+      // 항상 신청 내역 테스트가 가능하도록, 현재 날짜(2026-03-26) 기준으로 모집 진행 중 상태로 유지
+      applicationStart: "2026-03-01",
       applicationEnd: "2026-03-31",
       announcement: "2026-04-02",
       purchasePeriod: "2026-04-02 ~ 2026-04-10",
@@ -188,7 +188,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     registeredAt: "2025-12-20T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜(2026-03-03) 기준 신청 진행 중 상태 유지
-      applicationStart: "2026-02-15",
+      applicationStart: "2026-03-15",
       applicationEnd: "2026-03-31",
       announcement: "2026-04-10",
       purchasePeriod: "2026-04-10 ~ 2026-04-20",
@@ -312,10 +312,10 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     detailedSchedule: {
       // 모집 중 - 현재 날짜 기준 모집 진행 중 (오늘 날짜 포함)
       applicationStart: "2026-01-15",
-      applicationEnd: "2026-02-05",
-      announcement: "2026-02-07",
-      purchasePeriod: "2026-02-07 ~ 2026-02-10",
-      registrationPeriod: "2026-02-10 ~ 2026-02-20",
+      applicationEnd: "2026-03-05",
+      announcement: "2026-03-07",
+      purchasePeriod: "2026-03-07 ~ 2026-03-10",
+      registrationPeriod: "2026-03-10 ~ 2026-03-20",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "유튜브",
@@ -481,7 +481,7 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     registeredAt: "2025-11-03T14:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜(2026-03-03) 기준 신청 진행 중 상태 유지
-      applicationStart: "2026-02-15",
+      applicationStart: "2026-03-15",
       applicationEnd: "2026-03-31",
       announcement: "2026-04-10",
       purchasePeriod: "2026-04-10 ~ 2026-04-20",
@@ -604,11 +604,11 @@ export const deliveryCampaigns: DeliveryCampaignData[] = [
     dayCount: "D-7",
     registeredAt: "2026-01-20T10:00:00.000Z",
     detailedSchedule: {
-      applicationStart: "2026-02-01",
-      applicationEnd: "2026-02-28",
+      applicationStart: "2026-03-01",
+      applicationEnd: "2026-03-28",
       announcement: "2026-03-02",
-      purchasePeriod: "2026-01-30 ~ 2026-02-04",
-      registrationPeriod: "2026-02-04 ~ 2026-05-05",
+      purchasePeriod: "2026-01-30 ~ 2026-03-04",
+      registrationPeriod: "2026-03-04 ~ 2026-05-05",
     },
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
     channel: "네이버 블로그",
@@ -2064,11 +2064,11 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
       total: 10,
     },
     detailedSchedule: {
-      applicationStart: "2026-02-01",
-      applicationEnd: "2026-02-28",
+      applicationStart: "2026-03-01",
+      applicationEnd: "2026-03-28",
       announcement: "2026-03-02",
-      purchasePeriod: "2026-01-30 ~ 2026-02-04",
-      registrationPeriod: "2026-02-04 ~ 2026-05-05",
+      purchasePeriod: "2026-01-30 ~ 2026-03-04",
+      registrationPeriod: "2026-03-04 ~ 2026-05-05",
     },
     applicantData: {
       applicants: [],
@@ -2079,7 +2079,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
         // 경우의 수 1: 콘텐츠 미등록 (기한 내)
         {
           id: "delivery_test_waiting_001",
-          createdAt: "2026-02-01T10:00:00.000Z",
+          createdAt: "2026-03-01T10:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "콘텐츠미등록유저",
@@ -2091,7 +2091,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
         // 경우의 수 2: 연장 요청됨
         {
           id: "delivery_test_waiting_002",
-          createdAt: "2026-02-02T11:00:00.000Z",
+          createdAt: "2026-03-02T11:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "연장요청유저",
@@ -2104,7 +2104,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
         // 경우의 수 3: 반려됨
         {
           id: "delivery_test_waiting_003",
-          createdAt: "2026-02-03T12:00:00.000Z",
+          createdAt: "2026-03-03T12:00:00.000Z",
           status: "검수" as const,
           userType: "인플루언서" as const,
           nickname: "반려당한유저",
@@ -2117,7 +2117,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
         // 경우의 수 4: 신고됨
         {
           id: "delivery_test_waiting_004",
-          createdAt: "2026-02-04T13:00:00.000Z",
+          createdAt: "2026-03-04T13:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "신고당한유저",
@@ -2125,7 +2125,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
           channel: "유튜브",
           profileImage: "",
           isReported: true,
-          reportedDate: "2026-02-04T14:30:00.000Z",
+          reportedDate: "2026-03-04T14:30:00.000Z",
           receiptImages: ["/images/test_img/eximg.png"],
         },
       ],
@@ -2133,7 +2133,7 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
         // 확인 탭 경우의 수 1: 검수 중 상태
         {
           id: "delivery_test_reviewing_001",
-          createdAt: "2026-02-01T09:00:00.000Z",
+          createdAt: "2026-03-01T09:00:00.000Z",
           status: "검수중" as const,
           userType: "인플루언서" as const,
           nickname: "검수중유저",
@@ -2165,14 +2165,14 @@ export const deliveryCampaignsExtended: DeliveryCampaignDataExtended[] = [
         // 완료 탭 경우의 수 2: 지각등록 승인 완료 상태
         {
           id: "delivery_test_completed_002",
-          createdAt: "2026-02-04T15:00:00.000Z",
+          createdAt: "2026-03-04T15:00:00.000Z",
           status: "완료" as const,
           userType: "리뷰어" as const,
           nickname: "지각제출유저",
           channelId: "youtube_test_007",
           channel: "유튜브",
           profileImage: "",
-          updatedAt: "2026-02-04T16:00:00.000Z",
+          updatedAt: "2026-03-04T16:00:00.000Z",
           isLateSubmission: true,
           receiptImages: ["/images/test_img/eximg.png"],
         },

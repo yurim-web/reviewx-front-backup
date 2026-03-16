@@ -114,7 +114,7 @@ export const visitCampaigns: VisitCampaignData[] = [
     registeredAt: "2026-01-08T14:20:00.000Z", // 등록 시간
     detailedSchedule: {
       // 항상 신청 내역 테스트가 가능하도록, 현재 날짜(2026-03-04) 기준으로 모집 진행 중 상태로 유지
-      applicationStart: "2026-02-01",
+      applicationStart: "2026-03-01",
       applicationEnd: "2026-03-31",
       announcement: "2026-04-02",
       purchasePeriod: "2026-04-02 ~ 2026-04-20",
@@ -151,8 +151,8 @@ export const visitCampaigns: VisitCampaignData[] = [
     dayCount: "D-3",
     registeredAt: "2026-01-09T11:15:00.000Z", // 등록 시간
     detailedSchedule: {
-      // 항상 신청 내역 테스트가 가능하도록, 현재 날짜(2026-02-26) 기준으로 모집 진행 중 상태로 유지
-      applicationStart: "2026-02-01",
+      // 항상 신청 내역 테스트가 가능하도록, 현재 날짜(2026-03-26) 기준으로 모집 진행 중 상태로 유지
+      applicationStart: "2026-03-01",
       applicationEnd: "2026-03-31",
       announcement: "2026-04-02",
       purchasePeriod: "2026-04-02 ~ 2026-04-17",
@@ -189,10 +189,10 @@ export const visitCampaigns: VisitCampaignData[] = [
     registeredAt: "2026-01-07T13:30:00.000Z", // 등록 시간
     detailedSchedule: {
       // 오픈 예정 - 모집 시작 전
-      applicationStart: "2026-02-05",
-      applicationEnd: "2026-02-18",
-      announcement: "2026-02-20",
-      purchasePeriod: "2026-02-20 ~ 2026-02-27",
+      applicationStart: "2026-03-05",
+      applicationEnd: "2026-03-18",
+      announcement: "2026-03-20",
+      purchasePeriod: "2026-03-20 ~ 2026-03-27",
     },
     partnerName: "글로벌트레이드",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
@@ -229,7 +229,7 @@ export const visitCampaigns: VisitCampaignData[] = [
       applicationStart: "2026-01-05",
       applicationEnd: "2026-01-18",
       announcement: "2026-01-20",
-      purchasePeriod: "2026-01-20 ~ 2026-02-05",
+      purchasePeriod: "2026-01-20 ~ 2026-03-05",
     },
     partnerName: "테크솔루션",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
@@ -263,7 +263,7 @@ export const visitCampaigns: VisitCampaignData[] = [
     registeredAt: "2026-01-11T15:20:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜(2026-03-03) 기준 신청 진행 중 상태 유지
-      applicationStart: "2026-02-15",
+      applicationStart: "2026-03-15",
       applicationEnd: "2026-03-31",
       announcement: "2026-04-10",
       purchasePeriod: "2026-04-10 ~ 2026-04-20",
@@ -303,7 +303,7 @@ export const visitCampaigns: VisitCampaignData[] = [
       applicationStart: "2026-01-01",
       applicationEnd: "2026-01-15",
       announcement: "2026-01-17",
-      purchasePeriod: "2026-01-17 ~ 2026-02-05",
+      purchasePeriod: "2026-01-17 ~ 2026-03-05",
     },
     partnerName: "ABC쇼핑몰",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
@@ -340,7 +340,7 @@ export const visitCampaigns: VisitCampaignData[] = [
       applicationStart: "2026-01-03",
       applicationEnd: "2026-01-17",
       announcement: "2026-01-19",
-      purchasePeriod: "2026-01-19 ~ 2026-02-08",
+      purchasePeriod: "2026-01-19 ~ 2026-03-08",
     },
     partnerName: "그린라이프",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
@@ -374,7 +374,7 @@ export const visitCampaigns: VisitCampaignData[] = [
     registeredAt: "2025-11-15T10:50:00.000Z", // 등록 시간
     detailedSchedule: {
       // 모집 중 - 현재 날짜(2026-03-03) 기준 신청 진행 중 상태 유지
-      applicationStart: "2026-02-15",
+      applicationStart: "2026-03-15",
       applicationEnd: "2026-03-31",
       announcement: "2026-04-10",
       purchasePeriod: "2026-04-10 ~ 2026-04-20",
@@ -448,10 +448,10 @@ export const visitCampaigns: VisitCampaignData[] = [
     registeredAt: "2026-01-10T12:00:00.000Z", // 등록 시간
     detailedSchedule: {
       // 오픈 예정 - 모집 시작 전
-      applicationStart: "2026-02-10",
-      applicationEnd: "2026-02-25",
-      announcement: "2026-02-27",
-      purchasePeriod: "2026-02-27 ~ 2026-03-10",
+      applicationStart: "2026-03-10",
+      applicationEnd: "2026-03-25",
+      announcement: "2026-03-27",
+      purchasePeriod: "2026-03-27 ~ 2026-03-10",
     },
     partnerName: "테크솔루션",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
@@ -488,7 +488,7 @@ export const visitCampaigns: VisitCampaignData[] = [
       applicationStart: "2026-01-15",
       applicationEnd: "2026-01-29",
       announcement: "2026-01-31",
-      purchasePeriod: "2026-01-31 ~ 2026-02-10",
+      purchasePeriod: "2026-01-31 ~ 2026-03-10",
     },
     partnerName: "홈트레이닝",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
@@ -524,8 +524,8 @@ export const visitCampaigns: VisitCampaignData[] = [
       // 모집 중 - 마감 임박
       applicationStart: "2026-01-18",
       applicationEnd: "2026-01-30",
-      announcement: "2026-02-01",
-      purchasePeriod: "2026-02-01 ~ 2026-02-12",
+      announcement: "2026-03-01",
+      purchasePeriod: "2026-03-01 ~ 2026-03-12",
     },
     partnerName: "테크솔루션",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
@@ -558,10 +558,10 @@ export const visitCampaigns: VisitCampaignData[] = [
     dayCount: "D-6",
     registeredAt: "2026-01-18T10:00:00.000Z",
     detailedSchedule: {
-      applicationStart: "2026-02-01",
-      applicationEnd: "2026-02-28",
+      applicationStart: "2026-03-01",
+      applicationEnd: "2026-03-28",
       announcement: "2026-03-02",
-      purchasePeriod: "2026-02-04 ~ 2026-05-05",
+      purchasePeriod: "2026-03-04 ~ 2026-05-05",
     },
     partnerName: "글로벌트레이드",
     campaign_detail_image: "/images/campaign_detail/exdetail_1.png",
@@ -2049,8 +2049,8 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
       total: 10,
     },
     detailedSchedule: {
-      applicationStart: "2026-02-01",
-      applicationEnd: "2026-02-28",
+      applicationStart: "2026-03-01",
+      applicationEnd: "2026-03-28",
       announcement: "2026-03-02",
       purchasePeriod: "2026-01-30 ~ 2026-05-05",
     },
@@ -2063,7 +2063,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
         // 경우의 수 1: 콘텐츠 미등록 (기한 내)
         {
           id: "visit_test_waiting_001",
-          createdAt: "2026-02-01T10:00:00.000Z",
+          createdAt: "2026-03-01T10:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "콘텐츠미등록유저",
@@ -2075,7 +2075,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
         // 경우의 수 2: 연장 요청됨
         {
           id: "visit_test_waiting_002",
-          createdAt: "2026-02-02T11:00:00.000Z",
+          createdAt: "2026-03-02T11:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "연장요청유저",
@@ -2088,7 +2088,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
         // 경우의 수 3: 반려됨
         {
           id: "visit_test_waiting_003",
-          createdAt: "2026-02-03T12:00:00.000Z",
+          createdAt: "2026-03-03T12:00:00.000Z",
           status: "검수" as const,
           userType: "인플루언서" as const,
           nickname: "반려당한유저",
@@ -2101,7 +2101,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
         // 경우의 수 4: 신고됨
         {
           id: "visit_test_waiting_004",
-          createdAt: "2026-02-04T13:00:00.000Z",
+          createdAt: "2026-03-04T13:00:00.000Z",
           status: "검수" as const,
           userType: "리뷰어" as const,
           nickname: "신고당한유저",
@@ -2109,7 +2109,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
           channel: "네이버 블로그",
           profileImage: "",
           isReported: true,
-          reportedDate: "2026-02-04T14:30:00.000Z",
+          reportedDate: "2026-03-04T14:30:00.000Z",
           receiptImages: ["/images/test_img/eximg.png"],
         },
       ],
@@ -2117,7 +2117,7 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
         // 확인 탭 경우의 수 1: 검수 중 상태
         {
           id: "visit_test_reviewing_001",
-          createdAt: "2026-02-01T09:00:00.000Z",
+          createdAt: "2026-03-01T09:00:00.000Z",
           status: "검수중" as const,
           userType: "인플루언서" as const,
           nickname: "검수중유저",
@@ -2144,14 +2144,14 @@ export const visitCampaignsExtended: VisitCampaignDataExtended[] = [
         // 완료 탭 경우의 수 2: 지각등록 승인 완료 상태
         {
           id: "visit_test_completed_002",
-          createdAt: "2026-02-04T15:00:00.000Z",
+          createdAt: "2026-03-04T15:00:00.000Z",
           status: "완료" as const,
           userType: "인플루언서" as const,
           nickname: "지각제출유저",
           channelId: "blog_test_003",
           channel: "네이버 블로그",
           profileImage: "",
-          updatedAt: "2026-02-04T16:00:00.000Z",
+          updatedAt: "2026-03-04T16:00:00.000Z",
           isLateSubmission: true,
           receiptImages: ["/images/test_img/eximg.png"],
         },
