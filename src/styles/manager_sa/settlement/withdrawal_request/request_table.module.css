@@ -152,8 +152,10 @@
   overscroll-behavior: contain;
 }
 
-/* CommonTable이 각 행을 감싸는 div를 grid 구조에 포함시키기 위해 */
-.table_body > div {
+/* CommonTable이 각 행을 감싸는 div를 grid 구조에 포함시키기 위해
+   빈 상태일 때는 table_body_emergency/round 클래스가 없으므로 EmptyTableState에는 적용 안됨 */
+.table_body_emergency > div,
+.table_body_round > div {
   display: contents;
 }
 

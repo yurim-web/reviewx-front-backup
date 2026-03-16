@@ -138,7 +138,10 @@ export interface AdminWithdrawalApiItem {
   bank: string;
   account_number: string;
   account_holder: string;
-  status: string; // PENDING | APPROVED | REJECTED
+  ssn?: string; // 주민등록번호 (마스킹 처리)
+  round?: number; // 출금 회차
+  remaining_amount?: number; // 잔여 포인트
+  status: string; // PENDING | APPROVED | REJECTED | URGENT
   request_date: string; // ISO 8601
   processed_date: string | null;
 }
