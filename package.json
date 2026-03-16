@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "json-server mock/db.json --port 3001 --routes mock/routes.json & next dev --port 3002",
+    "dev": "concurrently \"json-server mock/db.json --port 3001 --routes mock/routes.json\" \"next dev --port 3002\"",
     "dev:next": "next dev --port 3002",
     "dev:turbopack": "next dev --turbopack --port 3002",
     "build": "next build --turbopack",
@@ -67,6 +67,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-loader": "^9.2.1",
+    "concurrently": "^9.2.1",
     "copy-webpack-plugin": "^13.0.1",
     "eslint": "^9",
     "eslint-config-next": "15.5.3",
