@@ -125,11 +125,12 @@ function mapCampaignType(type: string): CampaignInfo["campaignType"] {
  */
 function mapToCampaignInfo(campaign: AdminCampaignApiItem): CampaignInfo {
   const channelName = campaign.requiredPlatform?.channelName ?? "";
-  const recruitStart = campaign.recruitStartAt ?? "";
-  const recruitEnd = campaign.recruitEndAt ?? "";
+  const recruitStart = campaign.recruitStartAt ?? campaign.recruit?.recruitStartAt ?? "";
+  const recruitEnd = campaign.recruitEndAt ?? campaign.recruit?.recruitEndAt ?? "";
   const contentStart = campaign.content?.contentStartAt ?? "";
   const contentEnd = campaign.content?.contentEndAt ?? "";
   const extraPoint = campaign.reward?.extraRewardPoint ?? 0;
+  const selectAt = campaign.selectAt ?? "";
 
   return {
     id: String(campaign.id),
@@ -141,7 +142,7 @@ function mapToCampaignInfo(campaign: AdminCampaignApiItem): CampaignInfo {
     channel: mapChannelName(channelName),
     recruitmentPeriod:
       recruitStart && recruitEnd ? `${recruitStart.slice(0, 10)} ~ ${recruitEnd.slice(0, 10)}` : "",
-    announcementDate: "",
+    announcementDate: selectAt ? selectAt.slice(0, 10) : recruitEnd ? recruitEnd.slice(0, 10) : "",
     registrationPeriod:
       contentStart && contentEnd ? `${contentStart.slice(0, 10)} ~ ${contentEnd.slice(0, 10)}` : "",
     recruitedCount: campaign.appliedCount ?? 0,

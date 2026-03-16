@@ -74,6 +74,11 @@ function adaptCampaign(
     apply_count: item.appliedCount ?? item.metrics?.appliedCount ?? 0,
     point: item.reward?.extraRewardPoint ?? item.points ?? 0,
     detail_campaign_id: String(item.id),
+    created_at: item.recruitStartAt
+      ? new Date(item.recruitStartAt)
+      : item.recruit?.recruitStartAt
+        ? new Date(item.recruit.recruitStartAt)
+        : undefined,
   };
 }
 
