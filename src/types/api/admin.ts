@@ -114,9 +114,10 @@ export interface AdminCampaignApiItem {
   requiredPlatform: { channelId: number; channelName: string };
   recruitLimit: number;
   appliedCount: number;
-  recruitStartAt: string;
-  recruitEndAt: string;
+  recruitStartAt?: string;
+  recruitEndAt?: string;
   recruit?: { recruitLimit: number; recruitStartAt: string; recruitEndAt: string };
+  selectAt?: string;
   content: { contentStartAt: string; contentEndAt: string };
   reward: { extraRewardPoint: number; paymentRewardPoint: number };
   description?: string;

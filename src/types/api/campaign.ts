@@ -22,6 +22,7 @@ import { ApiResponse } from "./auth";
  */
 export interface CampaignListApiItem {
   campaignId: number;
+  id?: number; // json-server 기본 키 fallback
   type: string; // "DELIVERY" | "VISIT" | "PURCHASE" | "REPORTER" | "MISSION"
   status: string; // "RECRUITING" | "CLOSED" | "SELECTING" | "EMERGENCY" 등
   isEmergency: boolean;
@@ -42,6 +43,7 @@ export interface CampaignListApiItem {
   recruitEndAt: string; // ISO 8601
   region?: string; // 방문형 전용 (지역)
   // mock DB 호환 fallback 필드
+  recruit?: { recruitLimit: number; recruitStartAt: string; recruitEndAt: string };
   reward?: { extraRewardPoint?: number; paymentRewardPoint?: number };
   points?: number;
 }
@@ -63,6 +65,7 @@ export interface CampaignListApiResponse {
  */
 export interface CampaignDetailApiItem {
   campaignId: number;
+  id?: number; // json-server 기본 키 fallback
   type: string;
   status: string;
   title: string;
