@@ -116,11 +116,17 @@ export function useDashboard() {
   return useQuery({
     queryKey: ["dashboard"],
     queryFn: () =>
-      fetchDashboard().then((res) => ({
-        highProbability: (res.sections?.highSelectionProbability ?? []).map(adaptItem),
-        popularNow: (res.sections?.popularNow ?? []).map(adaptItem),
-        ongoing: (res.sections?.ongoing ?? []).map(adaptItem),
-        similar: (res.sections?.similar ?? []).map(adaptItem),
-      })),
+      fetchDashboard().then((res) => {
+        const isOpen = (c: DashboardCampaign) => c.dayCount !== "마감";
+        return {
+          highProbability: (res.sections?.highSelectionProbability ?? [])
+            .map(adaptItem)
+            .filter(isOpen)
+            .slice(0, 8),
+          popularNow: (res.sections?.popularNow ?? []).map(adaptItem).filter(isOpen).slice(0, 8),
+          ongoing: (res.sections?.ongoing ?? []).map(adaptItem).filter(isOpen).slice(0, 32),
+          similar: (res.sections?.similar ?? []).map(adaptItem).filter(isOpen).slice(0, 8),
+        };
+      }),
   });
 }

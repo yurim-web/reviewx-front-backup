@@ -114,8 +114,12 @@ function calcSchedule(recruitStartAt: string): string {
 
 /** 백엔드 API 응답 → CampaignListAdapted */
 function adaptApiCampaign(item: CampaignListApiItem): CampaignListAdapted {
+  const recruitStartAt = item.recruitStartAt ?? item.recruit?.recruitStartAt ?? "";
+  const recruitEndAt = item.recruitEndAt ?? item.recruit?.recruitEndAt ?? "";
+  const recruitLimit = item.recruitLimit ?? item.recruit?.recruitLimit ?? 0;
+
   return {
-    id: String(item.campaignId),
+    id: String(item.campaignId ?? item.id),
     title: item.title,
     category: TYPE_LABEL[item.type] ?? item.type,
     subcategory: item.category?.categoryName ?? "기타",
@@ -124,17 +128,17 @@ function adaptApiCampaign(item: CampaignListApiItem): CampaignListAdapted {
     image: item.thumbnailUrl,
     recruitment: {
       current: item.appliedCount,
-      total: item.recruitLimit,
+      total: recruitLimit,
     },
-    dayCount: calcDayCount(item.recruitEndAt),
-    schedule: calcSchedule(item.recruitStartAt),
+    dayCount: calcDayCount(recruitEndAt),
+    schedule: calcSchedule(recruitStartAt),
     detailedSchedule: {
-      applicationStart: item.recruitStartAt ?? "",
-      applicationEnd: item.recruitEndAt ?? "",
+      applicationStart: recruitStartAt,
+      applicationEnd: recruitEndAt,
     },
     region: item.region,
     isUrgent: item.isEmergency === true,
-    registeredAt: item.recruitStartAt,
+    registeredAt: recruitStartAt,
   };
 }
 
