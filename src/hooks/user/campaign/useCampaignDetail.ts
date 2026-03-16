@@ -165,7 +165,7 @@ export function adaptCampaignDetail(item: CampaignDetailApiItem): CampaignDetail
   const recruitLimit = item.recruit?.recruitLimit ?? item.recruitLimit ?? 0;
 
   return {
-    id: String(item.campaignId),
+    id: String(item.campaignId ?? item.id),
     type: item.type,
     title: item.title,
     category: TYPE_LABEL[item.type] ?? item.type,
