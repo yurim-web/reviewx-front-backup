@@ -23,7 +23,7 @@
  * - "abc123" → "123"
  */
 export const extractNumericValue = (value: string): string => {
-  return value.replace(/[^0-9]/g, '');
+  return value.replace(/[^0-9]/g, "");
 };
 
 /**
@@ -38,9 +38,9 @@ export const extractNumericValue = (value: string): string => {
  * - "" → ""
  */
 export const formatAmountWithComma = (value: string | number): string => {
-  if (!value) return '';
-  const numericValue = typeof value === 'string' ? extractNumericValue(value) : String(value);
-  if (!numericValue) return '';
+  if (value === undefined || value === null || value === "") return "";
+  const numericValue = typeof value === "string" ? extractNumericValue(value) : String(value);
+  if (!numericValue) return "";
   return Number(numericValue).toLocaleString();
 };
 
