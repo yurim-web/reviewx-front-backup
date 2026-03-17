@@ -45,6 +45,10 @@ interface CategoryFilterSectionProps {
   manager_type: "ga" | "sa";
   // selected_category_ids: 선택된 카테고리 ID 목록
   selected_category_ids: string[];
+  // selected_divisions: 상위 컴포넌트에서 관리하는 구분 필터 상태
+  selected_divisions: CategoryDivision[];
+  // on_divisions_change: 구분 필터 변경 시 상위 컴포넌트에 알리는 핸들러
+  on_divisions_change: (divisions: CategoryDivision[]) => void;
 }
 
 export default function CategoryFilterSection({
@@ -52,16 +56,12 @@ export default function CategoryFilterSection({
   on_search_change,
   manager_type,
   selected_category_ids,
+  selected_divisions,
+  on_divisions_change,
 }: CategoryFilterSectionProps) {
   // Next.js 라우터 사용
   // useRouter: Next.js에서 페이지 이동을 위한 Hook입니다
   const router = useRouter();
-
-  // 구분 필터 상태 관리 (다중 선택을 위해 배열로 변경)
-  // useState: React Hook으로 컴포넌트의 구분 필터 상태를 관리합니다
-  // [현재 값, 값을 변경하는 함수] = useState(초기값)
-  // 배열로 관리하여 여러 구분을 선택할 수 있도록 합니다
-  const [selected_divisions, set_selected_divisions] = useState<CategoryDivision[]>([]);
 
   // 구분 필터 드롭다운 열림/닫힘 상태 관리
   const [is_division_dropdown_open, set_is_division_dropdown_open] = useState(false);
@@ -74,9 +74,9 @@ export default function CategoryFilterSection({
   // 삭제 확인 모달 열림/닫힘 상태 관리
   const [is_delete_confirm_modal_open, set_is_delete_confirm_modal_open] = useState(false);
 
-  // 구분 필터 적용 핸들러
+  // 구분 필터 적용 핸들러 — 상위 컴포넌트로 전달
   const handle_division_apply = (divisions: CategoryDivision[]) => {
-    set_selected_divisions(divisions);
+    on_divisions_change(divisions);
   };
 
   // 등록 버튼 핸들러
@@ -143,12 +143,9 @@ export default function CategoryFilterSection({
     label: division, // "구분: " 접두사 제거
   }));
 
-  // 필터 태그 제거 핸들러
-  // 화살표 함수로 이벤트 핸들러를 정의합니다
-  // 특정 구분을 선택된 목록에서 제거합니다
+  // 필터 태그 제거 핸들러 — 상위 컴포넌트로 전달
   const handle_filter_tag_remove = (value: CategoryDivision) => {
-    // filter 메서드: 조건에 맞는 요소만 남긴 새로운 배열을 반환합니다
-    set_selected_divisions(selected_divisions.filter((division) => division !== value));
+    on_divisions_change(selected_divisions.filter((division) => division !== value));
   };
 
   return (

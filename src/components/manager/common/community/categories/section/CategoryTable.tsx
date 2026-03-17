@@ -32,6 +32,7 @@ import {
   categories_data,
   initialize_categories_data,
   type CategoryItem,
+  type CategoryDivision,
 } from "@/data/manager_ga/community/categoriesData";
 import CommonTableWithTooltip, {
   type TooltipConfig,
@@ -47,6 +48,8 @@ interface CategoryTableProps {
   selected_category_ids: string[];
   // on_selected_category_ids_change: 선택된 카테고리 ID 목록 변경 핸들러
   on_selected_category_ids_change: (ids: string[]) => void;
+  // selected_divisions: 상위에서 관리되는 구분 필터 (빈 배열이면 전체 표시)
+  selected_divisions: CategoryDivision[];
 }
 
 // CategoryItem이 TableRowData를 확장하도록 확장
@@ -82,6 +85,7 @@ export default function CategoryTable({
   manager_type,
   selected_category_ids,
   on_selected_category_ids_change,
+  selected_divisions,
 }: CategoryTableProps) {
   // Next.js 라우터: 수정 페이지로 이동에 사용
   // useRouter: Next.js에서 페이지 이동을 위한 Hook입니다
@@ -145,15 +149,20 @@ export default function CategoryTable({
     };
   }, []);
 
-  // 검색어로 카테고리 필터링
-  // 배열 filter 메서드를 사용하여 검색어에 맞는 카테고리만 필터링합니다
+  // 검색어 + 구분 필터로 카테고리 필터링
   const filtered_categories = categories_list.filter((item) => {
-    if (!search_query) return true;
-    // 검색어가 카테고리명 또는 구분에 포함되어 있는지 확인합니다
-    return (
-      item.category_name.toLowerCase().includes(search_query.toLowerCase()) ||
-      item.division.toLowerCase().includes(search_query.toLowerCase())
-    );
+    // 구분 필터: 선택된 구분이 있으면 해당 구분만 표시
+    if (selected_divisions.length > 0 && !selected_divisions.includes(item.division)) {
+      return false;
+    }
+    // 검색어 필터: 카테고리명 또는 구분에 검색어가 포함되어 있는지 확인
+    if (search_query) {
+      return (
+        item.category_name.toLowerCase().includes(search_query.toLowerCase()) ||
+        item.division.toLowerCase().includes(search_query.toLowerCase())
+      );
+    }
+    return true;
   });
 
   // 컬럼별 타입 설정
