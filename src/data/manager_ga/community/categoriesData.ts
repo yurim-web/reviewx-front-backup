@@ -13,14 +13,14 @@
  *
  */
 
-// 게시글 구분 타입 정의 (공지사항, 자주 묻는 질문, 이벤트)
-export type CategoryDivision = "공지사항" | "자주 묻는 질문" | "이벤트";
+// 게시글 구분 타입 정의 (공지사항, 자주 묻는 질문)
+export type CategoryDivision = "공지사항" | "자주 묻는 질문";
 
 // 카테고리 아이템 타입 정의
 export interface CategoryItem {
   id: string; // 카테고리 ID
   number: string; // 번호 (예: 000001)
-  division: CategoryDivision; // 구분 (공지사항/자주 묻는 질문/이벤트)
+  division: CategoryDivision; // 구분 (공지사항/자주 묻는 질문)
   category_name: string; // 카테고리명
 }
 
