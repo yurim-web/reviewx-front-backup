@@ -14,6 +14,7 @@
 
 "use client";
 
+import Loading from "@/app/loading";
 import styles from "@/styles/manager_sa/member/admins/admin_create_page.module.css";
 import type { AdminItem } from "@/data/manager_sa/member/admins";
 import ErrorText from "@/components/common/error_text/ErrorText";
@@ -50,7 +51,7 @@ export default function AdminForm({ mode, initial_data, admin_id }: AdminFormPro
   // 수정 모드: 로딩/에러 상태 처리
   if (mode === "edit") {
     if (is_loading) {
-      return <div className={styles.error_message || ""}>로딩 중...</div>;
+      return <Loading />;
     }
     if (!edit_admin_data && !initial_data) {
       return <div className={styles.error_message || ""}>관리자를 찾을 수 없습니다.</div>;

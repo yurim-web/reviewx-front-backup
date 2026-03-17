@@ -15,6 +15,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
+import Loading from "@/app/loading";
 import styles from "@/styles/manager_sa/member/admins/admin_create_page.module.css";
 import ManagerPageTitle from "@/components/manager/common/fragments/ManagerPageTitle";
 import AdminForm from "@/components/manager/sa/member/admins/section/AdminForm";
@@ -54,14 +55,7 @@ export default function AdminEditPage() {
 
   // 로딩 중일 때 표시할 내용
   if (is_loading) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.main_content}>
-          <ManagerPageTitle title="관리자 수정" />
-          <div>로딩 중...</div>
-        </div>
-      </div>
-    );
+    return <Loading />;
   }
 
   // 관리자 데이터가 없을 때 표시할 내용
